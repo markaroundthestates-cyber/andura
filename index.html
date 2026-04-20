@@ -503,14 +503,27 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:4px">Greutate azi</div>
     <div class="wdsp"><span id="wds">—</span><span class="wu">kg</span></div>
     <div id="wtr2" class="wtr nt">—</div>
-    <input type="number" class="wdi" id="wdi" placeholder="110.0" step="0.1" inputmode="decimal" oninput="onDI(this.value)"/>
-    <div class="wq">
-      <button class="bq" onclick="adj(-0.5)">−0.5</button>
-      <button class="bq" onclick="adj(-0.1)">−0.1</button>
-      <button class="bq" onclick="adj(+0.1)">+0.1</button>
-      <button class="bq" onclick="adj(+0.5)">+0.5</button>
+
+    <!-- LOCK STATE: shown when saved -->
+    <div id="weight-saved-state" style="display:none;margin-top:10px;padding:13px 16px;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.3);border-radius:var(--rs);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:13px;color:var(--green);font-weight:600">✅ Salvat azi</div>
+        <div id="weight-saved-val" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);line-height:1">—</div>
+      </div>
+      <button onclick="unlockWeight()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif">🔓 Editează</button>
     </div>
-    <button class="bs" onclick="saveW()">✓ SALVEAZĂ GREUTATEA</button>
+
+    <!-- EDIT STATE: shown when not saved or editing -->
+    <div id="weight-edit-state">
+      <input type="number" class="wdi" id="wdi" placeholder="110.0" step="0.1" inputmode="decimal" oninput="onDI(this.value)"/>
+      <div class="wq">
+        <button class="bq" onclick="adj(-0.5)">−0.5</button>
+        <button class="bq" onclick="adj(-0.1)">−0.1</button>
+        <button class="bq" onclick="adj(+0.1)">+0.1</button>
+        <button class="bq" onclick="adj(+0.5)">+0.5</button>
+      </div>
+      <button class="bs" onclick="saveW()">✓ SALVEAZĂ GREUTATEA</button>
+    </div>
   </div>
   <!-- KCAL LOGGER -->
   <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
@@ -683,7 +696,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div id="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
     <label style="display:block;width:100%;padding:13px;background:var(--bg3);border:1px dashed var(--border);border-radius:var(--rs);text-align:center;cursor:pointer;font-size:13px;color:var(--text2)" id="photo-upload-label">
       📷 Adaugă foto azi
-      <input type="file" accept="image/*" capture="environment" id="photo-input" style="display:none" onchange="savePhoto(this)"/>
+      <input type="file" accept="image/*" id="photo-input" style="display:none" onchange="savePhoto(this)"/>
     </label>
     <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Stocată local pe telefon · Nu se trimite nicăieri</div>
   </div>
@@ -694,11 +707,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="st">Istoric zilnic</div>
   <div class="card"><div id="kcal-history"></div></div>
 
-  <!-- EXPORT + NOTIFICĂRI -->
+  <!-- EXPORT + NOTIFICĂRI + IMPORT -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px">
     <button onclick="exportCSV()" style="padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">📊 CSV</button>
     <button onclick="exportJSON()" style="padding:14px;background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.3);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">💾 BACKUP</button>
-    <button onclick="requestNotifications()" id="notif-btn" style="padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">
+    <button onclick="triggerMFPImport()" style="grid-column:1/-1;padding:14px;background:rgba(200,255,0,0.05);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
+      📲 Import MyFitnessPal (ZIP sau CSV)
+    </button>
+    <button onclick="requestNotifications()" id="notif-btn" style="grid-column:1/-1;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">
       🔔 Notificări
     </button>
   </div>
@@ -825,8 +841,8 @@ const EX_REPS={'DB Shoulder Press':'6–10','Incline DB Press':'6–10','Flat DB
 const PROG=[
   {day:'Luni',t:'off',lb:'OFF',tm:null,ex:[]},
   {day:'Marți',t:'free',lb:'PULL · Spate + Biceps',tm:'~75 min',ex:[{n:'Lat Pulldown – wide grip',s:'4×8–12',g:'spate'},{n:'Cable Row – neutral grip',s:'3×8–12',g:'spate'},{n:'Face Pulls (rope)',s:'3×15–20',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},{n:'Bayesian Curl (cable)',s:'3×10–12',g:'brate'}]},
-  {day:'Miercuri',t:'lim',lb:'PUSH · Umeri + Piept',tm:'MAX 65 MIN',ex:[{n:'DB Shoulder Press',s:'3×6–10',g:'umeri'},{n:'Incline DB Press',s:'4×6–10',g:'piept'},{n:'Pec Deck / Cable Crossover',s:'3×12–15',g:'piept'},{n:'Lateral Raises (cable)',s:'3×12–15',g:'umeri'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps',ss:1},{n:'Pushdown',s:'3×12',g:'triceps',ss:1}]},
-  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[{n:'Lateral Raises + drop',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},{n:'Cable Curl',s:'3×10–12',g:'brate',ss:1},{n:'Preacher Curl',s:'3×10–12',g:'brate',ss:1},{n:'Overhead Triceps (cable)',s:'3×10–12',g:'triceps'},{n:'Pushdown – rope',s:'2×12',g:'triceps'}]},
+  {day:'Miercuri',t:'lim',lb:'PUSH · Umeri + Piept',tm:'MAX 65 MIN',ex:[{n:'DB Shoulder Press',s:'3×6–10',g:'umeri'},{n:'Incline DB Press',s:'4×6–10',g:'piept'},{n:'Pec Deck / Cable Crossover',s:'3×12–15',g:'piept'},{n:'Lateral Raises (cable)',s:'3×12–15',g:'umeri'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'3×12',g:'triceps'}]},
+  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[{n:'Lateral Raises + drop',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},{n:'Cable Curl',s:'3×10–12',g:'brate'},{n:'Preacher Curl',s:'3×10–12',g:'brate'},{n:'Overhead Triceps (cable)',s:'3×10–12',g:'triceps'},{n:'Pushdown – rope',s:'2×12',g:'triceps'}]},
   {day:'Vineri',t:'free',lb:'UPPER PUMP + PICIOARE',tm:'~90 min',ex:[{n:'Incline DB Press pump',s:'3×12–15',g:'piept'},{n:'Cable Fly',s:'2×15',g:'piept'},{n:'Lateral Raises',s:'4×15–20',g:'umeri'},{n:'Rear Delt Cable',s:'2×15–20',g:'umeri'},{n:'Leg Press',s:'3×15–20',g:'picioare'},{n:'Romanian Deadlift',s:'3×12–15',g:'picioare'},{n:'Leg Curl',s:'3×15–20',g:'picioare'},{n:'Leg Extension',s:'3×15–20',g:'picioare'},{n:'Calf Raises',s:'4×15–20',g:'picioare'}]},
   {day:'Sâmbătă',t:'free',lb:'FULL UPPER',tm:'~110 min',ex:[{n:'DB Shoulder Press',s:'4×6–10',g:'umeri'},{n:'Incline DB Press',s:'3×6–10',g:'piept'},{n:'Flat DB Press',s:'3×8–12',g:'piept'},{n:'Pec Deck / Cable Fly',s:'2×12–15',g:'piept'},{n:'Lat Pulldown',s:'3×8–12',g:'spate'},{n:'Cable Row',s:'3×8–12',g:'spate'},{n:'Chest-Supported Row',s:'2×10–12',g:'spate'},{n:'Lateral Raises (cable)',s:'4×12–15+drop',g:'umeri'},{n:'Rear Delt Fly',s:'3×12–15',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'}]},
   {day:'Duminică',t:'off',lb:'OFF COMPLET',tm:null,ex:[]}
@@ -2344,10 +2360,26 @@ function exportCSV() {
 // ══════════════ NOTIFICĂRI ══════════════
 async function requestNotifications() {
   if (!('Notification' in window)) { toast('⚠ Browser-ul nu suportă notificări', 'var(--accent2)'); return; }
-  if (Notification.permission === 'granted') { scheduleNotifications(); toast('✅ Notificări active'); return; }
+  if (Notification.permission === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări active'); return; }
   const perm = await Notification.requestPermission();
-  if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); toast('✅ Notificări activate!', 'var(--green)'); }
-  else toast('⚠ Permisiune refuzată', 'var(--accent2)');
+  if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări activate!', 'var(--green)'); }
+  else { updateNotifBtn(false); toast('⚠ Permisiune refuzată', 'var(--accent2)'); }
+}
+
+function updateNotifBtn(active) {
+  const btn = $('notif-btn');
+  if (!btn) return;
+  if (active) {
+    btn.innerHTML = '🔔 Notificări ACTIVE';
+    btn.style.background = 'rgba(48,209,88,0.12)';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+  } else {
+    btn.innerHTML = '🔕 Notificări INACTIVE';
+    btn.style.background = 'rgba(255,59,48,0.08)';
+    btn.style.borderColor = 'var(--red)';
+    btn.style.color = 'var(--red)';
+  }
 }
 
 function scheduleNotifications() { DB.set('notif-enabled', true); checkDailyReminders(); }
@@ -2462,7 +2494,7 @@ function renderWater(liters) {
 
 // ══════════════ SOMN + ENERGIE ══════════════
 const SLEEP_LABELS=['','😩 F. prost','😴 Prost','😐 Ok','😊 Bun','🌟 Excelent'];
-const ENERGY_LABELS=['','🔋 Epuizat','😓 Obosit','⚡ Normal','💪 Energic','🚀 La maxim'];
+const ENERGY_LABELS=['','🔋 Epuizat','😓 Obosit','😐 Normal','💪 Energic','🌟 La maxim'];
 function setSleep(val) {
   const wb=DB.get('wellbeing')||{}; if(!wb[tod()])wb[tod()]={};
   wb[tod()].sleep=val; DB.set('wellbeing',wb); renderSleepEnergy(); checkSleepEnergyAlert();
@@ -2996,33 +3028,7 @@ function renderPlan() {
     }).join('')}
   </div>`;
 
-  // OFF day quest
-  const dayMap=[6,0,1,2,3,4,5];
-  const todayProg2 = PROG[dayMap[new Date().getDay()]];
-  const questEl = $('offday-quest');
-  if (todayProg2.t === 'off') {
-    questEl.style.display = 'block';
-    const quest = SYS.getOffDayQuest();
-    questEl.innerHTML = `<div class="quest-box">
-      <div class="quest-title">🚶 QUEST ZI DE OFF</div>
-      <div class="quest-desc">Mersul activ accelerează recuperarea, arde calorii suplimentare și îmbunătățește vascularizarea. Target: ${quest.target.toLocaleString()} pași.</div>
-      <div class="quest-progress"><div class="quest-fill" style="width:${quest.pct}%"></div></div>
-      <div class="quest-stats"><span>${quest.stepsToday.toLocaleString()} pași</span><span>${quest.target.toLocaleString()} target</span></div>
-      ${quest.done ? '<div class="quest-complete" style="margin-top:10px">✅ QUEST COMPLET · +1 streak zi</div>' : ''}
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <input type="number" id="steps-input" placeholder="Introdu pași" inputmode="numeric"
-          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none"
-          value="${quest.stepsToday || ''}"/>
-        <button onclick="saveSteps()" style="background:var(--purple);color:#fff;font-weight:700;font-size:13px;padding:10px 16px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">SALVEAZĂ</button>
-      </div>
-      <div style="margin-top:10px;display:flex;gap:16px;font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace">
-        <span>🔥 Streak: <span style="color:var(--purple)">${quest.streak} zile</span></span>
-        <span>📅 Total: <span style="color:var(--purple)">${quest.totalDays} zile</span></span>
-      </div>
-    </div>`;
-  } else {
-    questEl.style.display = 'none';
-  }
+
 }
 
 // ── PLAN ACTIONS ──────────────────────────────────────────────────────────
@@ -3205,6 +3211,124 @@ function renderFatigueScore(containerId) {
     </div>`;
 }
 
+
+// ══════════════ MFP IMPORT ══════════════
+function triggerMFPImport(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.zip,.csv';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    toast('⏳ Se procesează...', 'var(--accent)');
+    try {
+      if(file.name.endsWith('.zip')) {
+        await importMFPZip(file);
+      } else if(file.name.includes('Nutrition')) {
+        await importMFPNutritionCSV(await file.text());
+      } else if(file.name.includes('Measurement')) {
+        await importMFPMeasurementCSV(await file.text());
+      } else {
+        toast('⚠ Selectează ZIP sau CSV din MFP', 'var(--accent2)');
+      }
+    } catch(err) {
+      console.error(err);
+      toast('⚠ Eroare la import', 'var(--accent2)');
+    }
+  };
+  input.click();
+}
+
+async function importMFPZip(file) {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const text = new TextDecoder('utf-8', {fatal: false}).decode(bytes);
+  
+  // Find CSV sections by their headers
+  const nutritionIdx = text.indexOf('Date,Meal,Calories');
+  const measurementIdx = text.indexOf('Date,Weight');
+  
+  const extractCSV = (startIdx) => {
+    if(startIdx < 0) return null;
+    // Find next ZIP entry marker (PK signature = bytes 50,75)
+    let end = text.length;
+    for(let i = startIdx + 20; i < text.length - 1; i++) {
+      if(text.charCodeAt(i) === 80 && text.charCodeAt(i+1) === 75) { end = i; break; }
+    }
+    return text.slice(startIdx, end);
+  };
+  
+  let imported = 0;
+  const nutritionCSV = extractCSV(nutritionIdx);
+  const measurementCSV = extractCSV(measurementIdx);
+  
+  if(measurementCSV) imported += await importMFPMeasurementCSV(measurementCSV);
+  if(nutritionCSV) imported += await importMFPNutritionCSV(nutritionCSV);
+  
+  if(imported > 0) {
+    toast('MFP: ' + imported + ' zile importate', 'var(--green)');
+    renderWeight(); renderDash();
+  } else {
+    toast('Nu s-au gasit date in fisier', 'var(--accent2)');
+  }
+}
+
+async function importMFPNutritionCSV(csvText) {
+  const lines = csvText.trim().split('
+').filter(l => l.trim());
+  if(lines.length < 2) return 0;
+  
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  const dailyData = {};
+  
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    if(cols.length < 15) return;
+    const date = cols[0]?.trim();
+    const calories = parseFloat(cols[2]) || 0;
+    const protein = parseFloat(cols[14]) || 0;
+    if(!date || !date.match(/^\d{4}-\d{2}-\d{2}$/)) return;
+    if(!dailyData[date]) dailyData[date] = {kcal:0, prot:0};
+    dailyData[date].kcal += calories;
+    dailyData[date].prot += protein;
+  });
+  
+  let count = 0;
+  Object.entries(dailyData).forEach(([date, data]) => {
+    if(data.kcal > 0) { kcals[date] = Math.round(data.kcal); count++; }
+    if(data.prot > 0) { prots[date] = Math.round(data.prot); }
+  });
+  
+  DB.set('kcals', kcals);
+  DB.set('prots', prots);
+  return count;
+}
+
+async function importMFPMeasurementCSV(csvText) {
+  const lines = csvText.trim().split('
+').filter(l => l.trim());
+  if(lines.length < 2) return 0;
+  
+  const ws = DB.get('weights') || {};
+  let count = 0;
+  
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    if(cols.length < 2) return;
+    const date = cols[0]?.trim();
+    const weight = parseFloat(cols[1]);
+    if(!date || !date.match(/^\d{4}-\d{2}-\d{2}$/) || isNaN(weight)) return;
+    ws[date] = weight;
+    count++;
+  });
+  
+  DB.set('weights', ws);
+  return count;
+}
+
+window.triggerMFPImport=triggerMFPImport;
+
 // ── NAVIGATION HELPER ─────────────────────────────────────────────────────
 function navigateTo(page) {
   const navMap = {
@@ -3278,8 +3402,26 @@ function saveW(){
   const ws=DB.get('weights')||{};
   ws[getLogDate()]=curW;DB.set('weights',ws);
   const label=logDateOffset===0?'azi':getLogDateLabel();
-  toast(`✓ Greutate salvată (${label})`);renderWeight();renderDash();
+  toast(`✓ Greutate salvată (${label})`,'var(--green)');
+  if(logDateOffset===0) lockWeight(curW);
+  renderWeight();renderDash();
 }
+
+function lockWeight(kg){
+  const saved=$('weight-saved-state'), edit=$('weight-edit-state');
+  const val=$('weight-saved-val');
+  if(saved){saved.style.display='flex';}
+  if(edit){edit.style.display='none';}
+  if(val){val.textContent=kg.toFixed(1)+' kg';}
+}
+
+function unlockWeight(){
+  const saved=$('weight-saved-state'), edit=$('weight-edit-state');
+  if(saved){saved.style.display='none';}
+  if(edit){edit.style.display='block';}
+}
+
+window.unlockWeight=unlockWeight;
 function getTrend(){
   const ws=DB.get('weights')||{},dates=Object.keys(ws).sort();
   if(dates.length<4)return null;
@@ -3294,6 +3436,11 @@ function getTrend(){
 function renderWeight(){
   syncLogDateUI();
   initW();initKcal();initProt();initWater();initSuppl();syncW();
+  // Check if weight already saved today
+  const ws=DB.get('weights')||{};
+  const todayW=ws[getLogDate()];
+  if(todayW&&logDateOffset===0){lockWeight(todayW);}
+  else{unlockWeight();}
   const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),trend=getTrend();
   const tr=$('wtr2');
   if(tr){
@@ -3636,6 +3783,10 @@ function injectBaseline() {
 function init(){
   injectBaseline();
   initW(); initKcal(); initProt(); initWater(); initSuppl();
+  // Init notif button state
+  if(typeof Notification!=='undefined'&&Notification.permission==='granted'&&DB.get('notif-enabled')){
+    setTimeout(()=>updateNotifBtn(true),100);
+  }
   const onboardingDone = DB.get('onboarding-done') || (DB.get('logs')||[]).length > 0;
   if(!onboardingDone){
     checkOnboarding(); // shows overlay, skip all renders
