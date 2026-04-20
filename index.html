@@ -3274,8 +3274,7 @@ async function importMFPZip(file) {
 }
 
 async function importMFPNutritionCSV(csvText) {
-  const lines = csvText.trim().split('
-').filter(l => l.trim());
+  const lines = csvText.trim().split('\n').filter(l => l.trim());
   if(lines.length < 2) return 0;
   
   const kcals = DB.get('kcals') || {};
@@ -3306,8 +3305,7 @@ async function importMFPNutritionCSV(csvText) {
 }
 
 async function importMFPMeasurementCSV(csvText) {
-  const lines = csvText.trim().split('
-').filter(l => l.trim());
+  const lines = csvText.trim().split('\n').filter(l => l.trim());
   if(lines.length < 2) return 0;
   
   const ws = DB.get('weights') || {};
@@ -3437,11 +3435,10 @@ function renderWeight(){
   syncLogDateUI();
   initW();initKcal();initProt();initWater();initSuppl();syncW();
   // Check if weight already saved today
-  const ws=DB.get('weights')||{};
+  const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),trend=getTrend();
   const todayW=ws[getLogDate()];
   if(todayW&&logDateOffset===0){lockWeight(todayW);}
   else{unlockWeight();}
-  const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),trend=getTrend();
   const tr=$('wtr2');
   if(tr){
     if(trend===null){tr.className='wtr nt';tr.textContent='— completează câteva zile';}
