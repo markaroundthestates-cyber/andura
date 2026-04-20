@@ -1,4 +1,4 @@
-const CACHE = 'salafull-v10';
+const CACHE = 'salafull-v11';
 const BASE = '/salafull';
 const ASSETS = [
   BASE + '/',

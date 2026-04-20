@@ -2298,7 +2298,6 @@ function exportJSON() {
     'photos','onboarding-done','muted','bf-override','phase-override',
     'current-kcal','aa-cooldown'];
   const data = {version: 'salafull-v10', exported: new Date().toISOString()};
-  // Export all DB keys
   const allKeys = [];
   for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
   allKeys.forEach(k => {
@@ -2310,8 +2309,35 @@ function exportJSON() {
   a.href = url; a.download = `salafull-backup-${tod()}.json`;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
-  toast('✓ Backup complet exportat', 'var(--green)');
+  toast('✓ Backup exportat — trimite fișierul pe telefon', 'var(--green)');
 }
+
+function importJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      // Restore all keys except metadata
+      let count = 0;
+      Object.entries(data).forEach(([k, v]) => {
+        if(k === 'version' || k === 'exported') return;
+        localStorage.setItem(k, JSON.stringify(v));
+        count++;
+      });
+      toast(`✅ Restaurat ${count} chei — reîncarcă pagina`, 'var(--green)');
+      setTimeout(() => location.reload(), 1500);
+    } catch(err) {
+      toast('⚠ Fișier invalid', 'var(--accent2)');
+    }
+  };
+  input.click();
+}
+window.importJSON=importJSON;
 
 function importJSON() {
   const input = document.createElement('input');
@@ -3327,6 +3353,110 @@ async function importMFPMeasurementCSV(csvText) {
 
 window.triggerMFPImport=triggerMFPImport;
 
+
+// ══════════════ FIREBASE SYNC ══════════════
+const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
+const DEVICE_ID = (()=>{
+  let id = localStorage.getItem('device-id');
+  if(!id){ id = 'dev-' + Math.random().toString(36).substr(2,9); localStorage.setItem('device-id',id); }
+  return id;
+})();
+
+// Keys to sync to Firebase
+const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','muted','notif-enabled','suppl-list'];
+
+let syncTimer = null;
+let lastSyncTime = 0;
+
+async function fbGet(path) {
+  try {
+    const r = await fetch(`${FIREBASE_URL}/${path}.json`);
+    if(!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+async function fbSet(path, data) {
+  try {
+    await fetch(`${FIREBASE_URL}/${path}.json`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+async function syncToFirebase() {
+  const data = {};
+  SYNC_KEYS.forEach(k => {
+    const v = DB.get(k);
+    if(v !== null) data[k] = v;
+  });
+  data['_lastSync'] = Date.now();
+  data['_device'] = DEVICE_ID;
+  await fbSet('users/daniel', data);
+  lastSyncTime = Date.now();
+  console.log('✓ Sync to Firebase');
+}
+
+async function syncFromFirebase() {
+  const data = await fbGet('users/daniel');
+  if(!data) return false;
+  
+  // Merge strategy: Firebase wins for everything except today's local changes
+  const today = tod();
+  SYNC_KEYS.forEach(k => {
+    if(data[k] === undefined) return;
+    const local = DB.get(k);
+    
+    // For weights/kcals/prots: merge - don't overwrite today's local entry
+    if(['weights','kcals','prots','waters'].includes(k) && local) {
+      const merged = Object.assign({}, data[k], {});
+      // Keep local today if exists
+      if(local[today]) merged[today] = local[today];
+      else Object.assign(merged, local);
+      DB.set(k, merged);
+    } else if(k === 'logs') {
+      // Merge logs by timestamp
+      const localLogs = local || [];
+      const remoteLogs = data[k] || [];
+      const allTs = new Set(localLogs.map(l=>l.ts));
+      const merged = [...localLogs, ...remoteLogs.filter(l=>!allTs.has(l.ts))];
+      merged.sort((a,b)=>b.ts-a.ts);
+      DB.set(k, merged.slice(0,2000));
+    } else {
+      DB.set(k, data[k]);
+    }
+  });
+  
+  console.log('✓ Sync from Firebase');
+  return true;
+}
+
+function scheduleSyncToFirebase() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncToFirebase, 3000); // debounce 3s
+}
+
+// Override DB.set to auto-sync
+const _dbSetOriginal = DB.set.bind(DB);
+DB.set = function(key, value) {
+  _dbSetOriginal(key, value);
+  if(SYNC_KEYS.includes(key)) scheduleSyncToFirebase();
+};
+
+async function initFirebaseSync() {
+  // On app start: pull from Firebase first, then render
+  const synced = await syncFromFirebase();
+  if(synced) {
+    console.log('✓ Data loaded from Firebase');
+  }
+}
+
+window.syncToFirebase = syncToFirebase;
+window.syncFromFirebase = syncFromFirebase;
+
 // ── NAVIGATION HELPER ─────────────────────────────────────────────────────
 function navigateTo(page) {
   const navMap = {
@@ -3778,7 +3908,8 @@ function injectBaseline() {
 }
 
 function init(){
-  injectBaseline();
+  initFirebaseSync().then(()=>{
+    injectBaseline();
   initW(); initKcal(); initProt(); initWater(); initSuppl();
   // Init notif button state
   if(typeof Notification!=='undefined'&&Notification.permission==='granted'&&DB.get('notif-enabled')){
@@ -3793,6 +3924,7 @@ function init(){
     renderProg();
   }
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/salafull/sw.js').catch(()=>{});
+  });
 }
 init();
 </script>
