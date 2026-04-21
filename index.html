@@ -225,7 +225,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 :root{--purple:#bf5af2}
 .phase-btn.active-phase{border-color:var(--accent)!important;background:rgba(200,255,0,0.12)!important;color:var(--accent)!important}
 .checkpoint-item{background:var(--bg3);border-radius:var(--rs);padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid var(--accent)}
-.checkpoint-item.season{border-left-color:var(--accent2)}
+.checkpoint-item.season{border-left-color:var(--green)}
 .checkpoint-item.bulk{border-left-color:var(--accent3)}
 .ci-left{}
 .ci-label{font-size:13px;font-weight:500}
@@ -497,7 +497,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div><div class="pt">GREUTATE</div><div class="ps">Dimineața, pe nemâncat</div></div>
       <div style="display:flex;align-items:center;gap:6px">
         <button onclick="shiftLogDate(-1)" style="width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
-        <div id="log-date-display" onclick="toggleDatePicker()" style="font-size:12px;color:var(--accent);font-family:'JetBrains Mono',monospace;min-width:60px;text-align:center;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" title="Tap pentru calendar">AZI</div>
+        <div id="log-date-display" onclick="toggleDatePicker()" style="font-size:12px;color:var(--accent);font-family:'JetBrains Mono',monospace;min-width:60px;text-align:center;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" title="Selecteaza data">AZI 📅</div>
         <button onclick="shiftLogDate(+1)" id="log-date-fwd" style="width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
       </div>
     </div>
@@ -554,7 +554,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <input type="number" id="kcal-direct-input" class="wdi" placeholder="1800" inputmode="numeric" style="flex:1;font-size:18px;padding:10px 12px"/>
       <button onclick="setKcalDirect()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:10px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">SET</button>
     </div>
-    <button class="bs" onclick="saveKcal()" style="background:var(--accent)">✓ SALVEAZĂ KCAL</button>
+    <button class="bs" onclick="saveKcal()" style="background:var(--accent)" id="save-kcal-btn">✓ SALVEAZĂ KCAL</button>
+    <div id="kcal-saved-state" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.3);border-radius:var(--rs);flex;align-items:center;justify-content:space-between">
+      <span style="font-size:13px;color:var(--green)">✅ Kcal salvate azi</span>
+      <button onclick="unlockKcal()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editează</button>
+    </div>
     <div style="margin-top:10px;font-size:11px;color:var(--text3);text-align:center" id="kcal-save-note">—</div>
   </div>
 
@@ -611,7 +615,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <input type="number" id="prot-input" class="wdi" placeholder="180" inputmode="numeric" style="flex:1;font-size:18px;padding:10px 12px"/>
       <button onclick="setProtDirect()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:10px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">SET</button>
     </div>
-    <button class="bs" onclick="saveProt()" style="background:var(--green)">✓ SALVEAZĂ PROTEINĂ</button>
+    <button class="bs" onclick="saveProt()" style="background:var(--green)" id="save-prot-btn">✓ SALVEAZĂ PROTEINĂ</button>
+    <div id="prot-saved-state" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.3);border-radius:var(--rs);flex;align-items:center;justify-content:space-between">
+      <span style="font-size:13px;color:var(--green)">✅ Proteină salvată azi</span>
+      <button onclick="unlockProt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editează</button>
+    </div>
   </div>
 
   <!-- HIDRATARE -->
@@ -2563,21 +2571,31 @@ function renderWater(liters) {
 const SLEEP_LABELS=['','😩 F. prost','😴 Prost','😐 Ok','😊 Bun','🌟 Excelent'];
 const ENERGY_LABELS=['','🔋 Epuizat','😓 Obosit','😐 Normal','💪 Energic','🌟 La maxim'];
 function setSleep(val) {
-  const wb=DB.get('wellbeing')||{}; if(!wb[tod()])wb[tod()]={};
-  wb[tod()].sleep=val; DB.set('wellbeing',wb); renderSleepEnergy(); checkSleepEnergyAlert();
+  const wb=DB.get('wellbeing')||{}; 
+  const d=getLogDate();
+  if(!wb[d])wb[d]={};
+  wb[d].sleep=val; DB.set('wellbeing',wb); renderSleepEnergy(); checkSleepEnergyAlert();
 }
 function setEnergy(val) {
-  const wb=DB.get('wellbeing')||{}; if(!wb[tod()])wb[tod()]={};
-  wb[tod()].energy=val; DB.set('wellbeing',wb); renderSleepEnergy(); checkSleepEnergyAlert();
+  const wb=DB.get('wellbeing')||{}; 
+  const d=getLogDate();
+  if(!wb[d])wb[d]={};
+  wb[d].energy=val; DB.set('wellbeing',wb); renderSleepEnergy(); checkSleepEnergyAlert();
 }
 function renderSleepEnergy() {
-  const wb=DB.get('wellbeing')||{}, t=wb[tod()]||{};
+  // Use logDate (current selected date) not always today
+  const wb=DB.get('wellbeing')||{}, t=wb[getLogDate()]||{};
   const s=t.sleep||0, e=t.energy||0;
-  document.querySelectorAll('#sleep-stars .star-btn').forEach(b=>{b.style.opacity=parseInt(b.dataset.v)<=s?'1':'0.2';});
-  document.querySelectorAll('#energy-stars .star-btn').forEach(b=>{b.style.opacity=parseInt(b.dataset.v)<=e?'1':'0.2';});
+  // Always reset all buttons first to 0.2 opacity
+  document.querySelectorAll('#sleep-stars .star-btn').forEach(b=>{
+    b.style.opacity = (s > 0 && parseInt(b.dataset.v)<=s) ? '1' : '0.2';
+  });
+  document.querySelectorAll('#energy-stars .star-btn').forEach(b=>{
+    b.style.opacity = (e > 0 && parseInt(b.dataset.v)<=e) ? '1' : '0.2';
+  });
   const sl=$('sleep-label'),el2=$('energy-label');
-  if(sl){sl.textContent=s?SLEEP_LABELS[s]:'— netastat';sl.style.color=s<=2?'var(--accent2)':s>=4?'var(--green)':'var(--text3)';}
-  if(el2){el2.textContent=e?ENERGY_LABELS[e]:'— netastat';el2.style.color=e<=2?'var(--accent2)':e>=4?'var(--green)':'var(--text3)';}
+  if(sl){sl.textContent=s?SLEEP_LABELS[s]:'— nesetat';sl.style.color=s<=2?'var(--accent2)':s>=4?'var(--green)':'var(--text3)';}
+  if(el2){el2.textContent=e?ENERGY_LABELS[e]:'— nesetat';el2.style.color=e<=2?'var(--accent2)':e>=4?'var(--green)':'var(--text3)';}
 }
 function checkSleepEnergyAlert() {
   const wb=DB.get('wellbeing')||{}, dates=Object.keys(wb).sort().slice(-3);
@@ -2610,11 +2628,12 @@ function initSuppl() {
 }
 function renderSuppl() {
   const suppl=DB.get('suppl-list')||DEFAULT_SUPPL;
-  const taken=DB.get('suppl-taken-v2')||{}, today=tod();
-  if(!taken[today])taken[today]={};
+  const taken=DB.get('suppl-taken-v2')||{};
+  const logDay=getLogDate(); // use selected date not always today
+  if(!taken[logDay])taken[logDay]={};
   const el=$('suppl-grid'); if(!el)return;
   el.innerHTML=suppl.map((s,i)=>{
-    const done=taken[today][i]||false;
+    const done=taken[logDay][i]||false;
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:${done?'rgba(48,209,88,0.08)':'var(--bg3)'};border-radius:var(--rs);border:1px solid ${done?'rgba(48,209,88,0.25)':'var(--border)'}">
       <div style="display:flex;align-items:center;gap:10px">
         <div onclick="toggleSuppl(${i})" style="width:22px;height:22px;border-radius:50%;border:2px solid ${done?'var(--green)':'var(--border)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">${done?'<svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/></svg>':''}</div>
@@ -2625,9 +2644,10 @@ function renderSuppl() {
   }).join('');
 }
 function toggleSuppl(idx) {
-  const taken=DB.get('suppl-taken-v2')||{}, today=tod();
-  if(!taken[today])taken[today]={};
-  taken[today][idx]=!taken[today][idx]; DB.set('suppl-taken-v2',taken); renderSuppl();
+  const taken=DB.get('suppl-taken-v2')||{};
+  const logDay=getLogDate();
+  if(!taken[logDay])taken[logDay]={};
+  taken[logDay][idx]=!taken[logDay][idx]; DB.set('suppl-taken-v2',taken); renderSuppl();
 }
 function removeSuppl(idx) {
   const s=DB.get('suppl-list')||DEFAULT_SUPPL; s.splice(idx,1); DB.set('suppl-list',s); renderSuppl();
@@ -2854,16 +2874,27 @@ const SYS = {
     const kcalOverride = DB.get('kcal-override');
     if (kcalOverride) return kcalOverride;
 
-    // Înainte de 20 iulie: 1800 fix
+    // Override faza manuala — respectat si inainte de 20 iulie
+    const phaseOverride = DB.get('phase-override');
+    const tdee = this.estimateTDEE();
+
+    if (phaseOverride && phaseOverride !== 'AUTO') {
+      switch(phaseOverride) {
+        case 'CUT': return Math.round(tdee * 0.82);
+        case 'BULK': return Math.round(tdee * 1.08);
+        case 'MAINTENANCE': return tdee;
+        case 'STRENGTH': return Math.round(tdee * 1.05);
+      }
+    }
+
+    // Înainte de 20 iulie fara override: 1800 fix (CUT activ)
     if (!pilotActive) return 1800;
 
     // După 20 iulie: TDEE real calculat din date acumulate
     const phase = this.getPhase();
-    const tdee = this.estimateTDEE();
-
     switch(phase) {
-      case 'CUT': return Math.round(tdee * 0.82); // ~18% deficit, mai moderat
-      case 'BULK': return Math.round(tdee * 1.08); // surplus mic, lean bulk
+      case 'CUT': return Math.round(tdee * 0.82);
+      case 'BULK': return Math.round(tdee * 1.08);
       case 'MAINTENANCE': return tdee;
       case 'STRENGTH': return Math.round(tdee * 1.05);
       default: return 1800;
@@ -3043,24 +3074,26 @@ function renderPlan() {
   $('phase-name').textContent = phase;
   $('phase-detail').textContent = pc.detail;
 
-  // Stats
-  $('bf-display').textContent = bf.toFixed(1);
+  // Stats — BF% color: verde<15, albastru 15-20, portocaliu 20-25, rosu>25
+  const bfColor = bf >= 30 ? 'var(--red)' : bf >= 25 ? 'var(--accent2)' : bf >= 18 ? 'var(--accent3)' : 'var(--green)';
+  const bfEl = $('bf-display');
+  if(bfEl) { bfEl.textContent = bf.toFixed(1); bfEl.style.color = bfColor; }
   $('kcal-display').textContent = kcal;
   $('tdee-display').textContent = tdee;
   $('lbm-display').textContent = lbm;
 
-  // Protein status in plan
+  // Protein status in plan - use fresh data each render
   const prots = DB.get('prots') || {};
   const todProt = prots[tod()] || 0;
+  // Remove existing prot-plan-box first
+  document.querySelectorAll('#prot-plan-box').forEach(el => el.remove());
   $('kcal-display').parentElement.insertAdjacentHTML('afterend', `
     <div style="background:var(--card);border:1px solid ${todProt>=180?'rgba(48,209,88,0.3)':'var(--border)'};border-radius:var(--r);padding:14px;position:relative;overflow:hidden;margin-bottom:0" id="prot-plan-box">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${todProt>=180?'var(--green)':'var(--accent2)'}"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${todProt>=180?'var(--green)':'var(--text3)'}"></div>
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină azi</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=180?'var(--green)':'var(--accent2)'}">${todProt||'—'}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=180?'var(--green)':todProt>0?'var(--accent3)':'var(--text3)'}">${todProt||'—'}</div>
       <div style="font-size:10px;color:var(--text2);margin-top:2px">g / target 180g</div>
     </div>`);
-  // Remove duplicate if re-rendered
-  const existing = document.querySelectorAll('#prot-plan-box');
   if (existing.length > 1) existing[0].remove();
 
   // BF override status
@@ -3664,6 +3697,29 @@ function selectDateFromPicker(dateStr) {
 
 window.toggleDatePicker = toggleDatePicker;
 window.selectDateFromPicker = selectDateFromPicker;
+
+// ── LOCK KCAL + PROT ────────────────────────────────────────────────────────
+function lockKcal() {
+  const btn=$('save-kcal-btn'), saved=$('kcal-saved-state');
+  if(btn) btn.style.display='none';
+  if(saved) saved.style.display='flex';
+}
+function unlockKcal() {
+  const btn=$('save-kcal-btn'), saved=$('kcal-saved-state');
+  if(btn) btn.style.display='block';
+  if(saved) saved.style.display='none';
+}
+function lockProt() {
+  const btn=$('save-prot-btn'), saved=$('prot-saved-state');
+  if(btn) btn.style.display='none';
+  if(saved) saved.style.display='flex';
+}
+function unlockProt() {
+  const btn=$('save-prot-btn'), saved=$('prot-saved-state');
+  if(btn) btn.style.display='block';
+  if(saved) saved.style.display='none';
+}
+window.unlockKcal=unlockKcal; window.unlockProt=unlockProt;
 // ── NAVIGATION HELPER ──────────────────────────────────────────────────────
 function navigateTo(page) {
   const navMap = {
