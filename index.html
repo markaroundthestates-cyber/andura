@@ -1089,9 +1089,11 @@ const AA = {
     const adj = this.check(ex);
     if (!adj) return rec;
     const inc = (typeof DP !== 'undefined') ? DP.getIncrement(ex) : 2.5;
+    // Rotunjește la step-ul echipamentului
+    const roundedKg = (typeof DP !== 'undefined') ? DP.roundToStep(adj.newKg, ex) : adj.newKg;
     return {
       ...rec,
-      kg: adj.newKg,
+      kg: roundedKg,
       autoAdjusted: true,
       autoAdjustMsg: adj.reason,
       autoAdjustColor: adj.color,
@@ -1118,7 +1120,38 @@ const DP = {
     'Calf Raises':[15,20]
   },
 
-  // Microload increments
+  // Weight steps per equipment type
+  // Helcometre (weight stack cu plăci de 4kg): Lat Pulldown, Cable Row, Face Pulls, etc.
+  // Cabluri izolație (stack mai fin, 2.5kg): Lateral Raises cable, Bayesian, Cable Curl, Pushdown, Overhead, Pec Deck
+  // Gantere (DB): 2kg step (set de gantere standard: 10-12-14-16-18-20...)
+  // Legs (Leg Press, Leg Curl, Leg Extension): 5kg step
+  WEIGHT_STEPS: {
+    // Helcometre — stack din 4 în 4 kg
+    'Lat Pulldown': 4, 'Cable Row': 4, 'Chest-Supported Row': 4,
+    'Face Pulls': 2.5,
+    // Cabluri izolație — stack mai fin
+    'Lateral Raises (cable)': 2.5, 'Rear Delt Cable': 2.5,
+    'Bayesian Curl': 2.5, 'Cable Curl': 2.5,
+    'Overhead Triceps': 2.5, 'Pushdown': 2.5,
+    'Pec Deck / Cable Fly': 2.5, 'Cable Fly': 2.5,
+    // Gantere — seturi standard din 2 în 2
+    'Lateral Raises': 2, 'Lateral Raises + drop': 2,
+    'Rear Delt Fly': 2,
+    'Incline DB Curl': 2, 'Hammer Curl': 2,
+    'Preacher Curl': 2,
+    'DB Shoulder Press': 2, 'Incline DB Press': 2, 'Flat DB Press': 2,
+    // Picioare — plăci mari
+    'Leg Press': 5, 'Leg Curl': 5, 'Leg Extension': 5, 'Romanian Deadlift': 2.5,
+    'Calf Raises': 5,
+  },
+
+  // Rotunjește greutatea la step-ul corect al echipamentului
+  roundToStep(kg, ex) {
+    const step = this.WEIGHT_STEPS[ex] || 2.5;
+    return Math.round(kg / step) * step;
+  },
+
+  // Microload increments (o treaptă pe echipamentul respectiv)
   MICRO: {
     compound: 2.5, isolation: 1.0, legs: 2.5
   },
@@ -1158,9 +1191,8 @@ const DP = {
   },
 
   getIncrement(ex) {
-    if (COMPOUND_EX.includes(ex)) return this.MICRO.compound;
-    if (['Leg Press','Leg Curl','Leg Extension','Calf Raises'].includes(ex)) return this.MICRO.legs;
-    return this.MICRO.isolation;
+    // Incrementul = 1 treaptă pe echipamentul exercițiului
+    return this.WEIGHT_STEPS[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
   },
 
   // Get last N logs for exercise
@@ -1201,6 +1233,13 @@ const DP = {
 
   // MAIN RECOMMENDATION FUNCTION
   recommend(ex) {
+    const result = this._recommendRaw(ex);
+    // Rotunjește kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
+    if (result && result.kg) result.kg = this.roundToStep(result.kg, ex);
+    return result;
+  },
+
+  _recommendRaw(ex) {
     const state = this.getState(ex);
     const inc = this.getIncrement(ex);
     const range = this.REP_RANGES[ex] || [8,12];
@@ -1308,14 +1347,14 @@ const DP = {
       progressionNote: `Last: ${lastW}kg × ${lastReps} reps`,
       progressionStage: 0
     };
-  },
+  }, // end _recommendRaw
 
   // In-session RPE correction: if 2 sets RPE 10 → drop weight now
   checkInSessionAdjust(ex, recentRPEs) {
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
       const state = this.getState(ex);
       const inc = this.getIncrement(ex);
-      const newKg = Math.max(1, Math.round((state.lastW - inc) * 2) / 2);
+      const newKg = this.roundToStep(Math.max(1, state.lastW - inc), ex);
       return { adjust: true, newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
     }
     return { adjust: false };
@@ -1630,6 +1669,12 @@ function cancelWorkout(){
   if(!confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) return;
   clearInterval(sessTimer); sessTimer=null;
   stopPause(); sessActive=false;
+  // Șterge din DB toate logurile din sesiunea curentă (scrise la selectRPE)
+  if(sessStart) {
+    const logs = DB.get('logs') || [];
+    const cleaned = logs.filter(l => l.session !== sessStart);
+    DB.set('logs', cleaned);
+  }
   sessLog=[];
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   $('session-ui').style.display='none';
@@ -2068,8 +2113,8 @@ function showCoachFlash(type, title, sub){
 function showFlashFeedback(rpe,kg,ex){
   const isComp=COMPOUND_EX.includes(ex);
   const inc=DP.getIncrement(ex);
-  const nextUp=Math.round((kg+inc)*2)/2;
-  const nextDn=Math.max(1,Math.round((kg-inc)*2)/2);
+  const nextUp=DP.roundToStep(kg+inc, ex);
+  const nextDn=DP.roundToStep(Math.max(1,kg-inc), ex);
   if(rpe<=6.5){
     showCoachFlash('up',`↑ INCREASE NEXT SESSION: +${inc}kg`,`RPE ${rpe} → data viitoare ${nextUp}kg la ${ex}`);
     speak('Ușor. Crești greutatea.');
@@ -2218,6 +2263,7 @@ function initKcal() {
   const sysTarget = pilotActive ? SYS.getKcalTarget() : KCAL_TARGET;
   currentKcal = kcals[today] !== undefined ? kcals[today] : sysTarget;
   syncKcalDisplay();
+  if (logDateOffset === 0 && kcals[today] !== undefined) lockKcal(); else unlockKcal();
   const noteEl = $('kcal-save-note');
   if (noteEl) {
     if (!pilotActive) {
@@ -2262,6 +2308,7 @@ function saveKcal() {
   toast(diff === 0 ? '✓ 1800 kcal salvat' : diff > 0 ? `✓ Salvat (+${diff} față de target)` : `✓ Salvat (${diff} față de target)`,
     diff > 200 ? 'var(--accent2)' : 'var(--accent)');
   renderWeight();
+  if (logDateOffset === 0) lockKcal();
 }
 
 function renderKcalHistory() {
@@ -2293,6 +2340,7 @@ function initProt() {
   const prots = DB.get('prots') || {};
   currentProt = prots[getLogDate()] !== undefined ? prots[getLogDate()] : PROT_TARGET;
   syncProtDisplay();
+  if (logDateOffset === 0 && prots[getLogDate()] !== undefined) lockProt(); else unlockProt();
 }
 
 function syncProtDisplay() {
@@ -2318,6 +2366,7 @@ function saveProt() {
   const ok = currentProt >= PROT_TARGET;
   toast(ok ? `✓ ${currentProt}g ✅` : `✓ ${currentProt}g — mai ai ${PROT_TARGET - currentProt}g`, ok ? 'var(--green)' : 'var(--accent2)');
   renderKcalHistory();
+  if (logDateOffset === 0) lockProt();
 }
 
 // ══════════════ EXPORT CSV ══════════════
@@ -3715,8 +3764,8 @@ function getLogDate() {
 }
 
 function getLogDateLabel() {
-  if (logDateOffset === 0) return 'AZI';
-  if (logDateOffset === -1) return 'IERI';
+  if (logDateOffset === 0) return 'AZI 📅';
+  if (logDateOffset === -1) return 'IERI 📅';
   const d = new Date();
   d.setDate(d.getDate() + logDateOffset);
   return `${d.getDate()}/${d.getMonth()+1}`;
@@ -4005,11 +4054,13 @@ function renderProg(){
         <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:${col.text};margin-bottom:4px">😴 ${day.day} — OFF</div>
         <div style="font-size:12px;color:var(--text3)">Recuperare activă · Mobilitate · Stretching</div>
       </div>`;
+    // Folosește getDisplayTime (același ca Coach) — afișează timp adaptiv real, nu hardcodat
+    const displayTime = getDisplayTime(day);
     return `
       <div style="margin:0 16px 10px">
         <div style="background:${col.bg};border:1px solid ${col.border};border-radius:var(--rs);padding:8px 14px;margin-bottom:6px;display:inline-flex;align-items:center;gap:8px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:${col.text}">${day.day} · ${day.lb}</span>
-          ${day.tm?`<span style="font-size:10px;color:var(--text3)">· ${day.tm}</span>`:''}
+          ${displayTime?`<span style="font-size:10px;color:var(--text3)">· ${displayTime}</span>`:''}
         </div>
         <div class="el">${day.ex.map(e=>{
           const emoji = muscleEmoji[e.g] || '💪';
