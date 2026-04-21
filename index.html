@@ -320,7 +320,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <button onclick="toggleMute()" id="mute-btn" title="Toggle sunet" style="background:none;border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:var(--rs);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">🔊</button>
-          <button onclick="endSession()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">STOP</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button onclick="cancelWorkout()" style="background:none;border:1px solid var(--red);color:var(--red);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">ANULEAZĂ</button>
+            <button onclick="endSession()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">STOP</button>
+          </div>
         </div>
       </div>
       <!-- Progress bar -->
@@ -1613,6 +1616,20 @@ function startSession(){
   }
   renderSessLog();
 }
+
+function cancelWorkout(){
+  if(!confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) return;
+  clearInterval(sessTimer); sessTimer=null;
+  stopPause(); sessActive=false;
+  sessLog=[];
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  $('session-ui').style.display='none';
+  hidePauseScreen();
+  $('today-screen').style.display='block';
+  toast('❌ Antrenament anulat — nicio dată salvată','var(--red)');
+  renderCoachIdle();
+}
+window.cancelWorkout=cancelWorkout;
 
 function endSession(){
   if(!sessActive)return;
@@ -3836,8 +3853,10 @@ window.saveW=saveW;
 // ── INJECT DANIEL BASELINE (dacă nu există deja date) ────────────────────
 function injectBaseline() {
   const existing = DB.get('logs') || [];
+  // Only skip if we have REAL training data (not just baseline)
   const hasRealData = existing.some(l => !l.baseline);
-  if (existing.length > 0) return; // already has data
+  const hasBaseline = existing.some(l => l.baseline);
+  if (hasRealData || hasBaseline) return; // already has data
   
   const t = Date.now();
   const d = new Date(); d.setDate(d.getDate() - 3);
