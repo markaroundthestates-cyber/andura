@@ -192,7 +192,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .wtr{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px;font-size:13px;font-family:'JetBrains Mono',monospace}
 .wtr.gd{color:var(--green)}.wtr.sl{color:var(--accent2)}.wtr.ft{color:var(--accent3)}.wtr.nt{color:var(--text2)}
 .ed-spate,.edot.spate{background:var(--accent3)}.ed-piept,.edot.piept{background:var(--accent2)}.ed-umeri,.edot.umeri{background:var(--accent)}.ed-brate,.edot.brate{background:#ff9f0a}.ed-picioare,.edot.picioare{background:var(--purple)}.ed-triceps,.edot.triceps{background:#ff375f}
-.we{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+.we{display:grid;grid-template-columns:70px 1fr auto auto auto;align-items:center;gap:0 10px;padding:9px 16px;border-bottom:1px solid var(--border)}
 .we:last-child{border-bottom:none}
 .wd2{font-size:11px;color:var(--text2)}
 .wv{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700}
@@ -712,11 +712,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Stocată local pe telefon · Nu se trimite nicăieri</div>
   </div>
 
-  <div class="st">Istoric greutate</div>
-  <div class="card"><div id="wh"></div></div>
-
-  <div class="st">Istoric zilnic</div>
-  <div class="card"><div id="kcal-history"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
+    <span class="st" style="padding:0;margin:0">Istoric zilnic</span>
+    <button id="hist-expand-btn" onclick="toggleHistoryAll()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:10px;padding:3px 10px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif">TOATE ▾</button>
+  </div>
+  <div class="card"><div id="unified-history"></div></div>
 
   <!-- EXPORT + NOTIFICĂRI + IMPORT -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px">
@@ -2311,26 +2311,94 @@ function saveKcal() {
   if (logDateOffset === 0) lockKcal();
 }
 
-function renderKcalHistory() {
-  const kcals = DB.get('kcals') || {}, prots = DB.get('prots') || {}, ws = DB.get('weights') || {};
-  const allDates = [...new Set([...Object.keys(kcals), ...Object.keys(prots)])].sort().reverse().slice(0, 30);
-  const el = $('kcal-history'); if(!el) return;
-  if (!allDates.length) { el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio înregistrare</div>'; return; }
-  el.innerHTML = allDates.map((d, i) => {
-    const k = kcals[d] || '—', p = prots[d] || '—', w = ws[d] ? ws[d].toFixed(1) + 'kg' : '';
-    const kdiff = k !== '—' ? k - KCAL_TARGET : null;
+// ── UNIFIED HISTORY (greutate + kcal + prot) ─────────────────────────────
+let historyShowAll = false;
+
+function toggleHistoryAll() {
+  historyShowAll = !historyShowAll;
+  const btn = $('hist-expand-btn');
+  if (btn) btn.textContent = historyShowAll ? 'RESTRÂNGE ▴' : 'TOATE ▾';
+  renderUnifiedHistory();
+}
+
+function getKcalTargetForDate(dateStr) {
+  // Citește phase-log pentru a ști ce target era activ în data respectivă
+  const phaseLogs = DB.get('phase-log') || []; // [{date, phase, kcalTarget}]
+  // Sortate desc — găsim primul log cu data <= dateStr
+  const sorted = [...phaseLogs].sort((a,b) => b.date.localeCompare(a.date));
+  const entry = sorted.find(e => e.date <= dateStr);
+  return entry ? entry.kcalTarget : 1800; // default CUT 1800
+}
+
+function renderUnifiedHistory() {
+  const el = $('unified-history'); if(!el) return;
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  const ws = DB.get('weights') || {};
+
+  // Toate datele cu orice dată logată
+  const allDates = [...new Set([
+    ...Object.keys(kcals),
+    ...Object.keys(prots),
+    ...Object.keys(ws)
+  ])].sort().reverse();
+
+  if (!allDates.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio înregistrare</div>';
+    return;
+  }
+
+  const showDates = historyShowAll ? allDates : allDates.slice(0, 7);
+
+  // Header row
+  const header = `<div style="display:grid;grid-template-columns:70px 1fr 60px 60px 60px;gap:0 10px;padding:7px 16px;border-bottom:1px solid var(--border);background:var(--bg3)">
+    <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">DATA</span>
+    <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">GREUTATE</span>
+    <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;text-align:right">KCAL</span>
+    <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;text-align:right">PROT</span>
+    <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;text-align:right">DIFF</span>
+  </div>`;
+
+  const rows = showDates.map((d, i) => {
+    const isToday = d === tod();
+    const k = kcals[d];
+    const p = prots[d];
+    const w = ws[d];
+
+    // Greutate cu diff față de ziua anterioară
+    const prevDate = allDates[i + 1];
+    const prevW = prevDate ? ws[prevDate] : null;
+    const wDiff = (w && prevW) ? Math.round((w - prevW) * 10) / 10 : null;
+    const wDiffStr = wDiff === null ? '' : (wDiff > 0 ? `+${wDiff.toFixed(1)}` : wDiff.toFixed(1));
+    const wDiffColor = wDiff === null ? '' : wDiff < 0 ? 'var(--green)' : wDiff > 0 ? 'var(--red)' : 'var(--text3)';
+
+    // Kcal color bazat pe target-ul din data respectivă
+    const kcalTarget = getKcalTargetForDate(d);
+    const kdiff = k !== undefined ? k - kcalTarget : null;
     const kc = kdiff === null ? 'var(--text3)' : kdiff > 200 ? 'var(--accent2)' : kdiff < -200 ? 'var(--accent3)' : 'var(--green)';
-    const pc = p !== '—' ? (p >= PROT_TARGET ? 'var(--green)' : 'var(--accent2)') : 'var(--text3)';
-    return `<div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)${i===0?';background:rgba(200,255,0,0.02)':''}">
-      <div style="flex:1"><div style="font-size:11px;color:var(--text2)">${fmt(d)} <span style="color:var(--text3)">${w}</span></div></div>
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${kc}">${k}</div><div style="font-size:8px;color:var(--text3);text-transform:uppercase">kcal</div></div>
-        <div style="width:1px;height:24px;background:var(--border)"></div>
-        <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${pc}">${p}</div><div style="font-size:8px;color:var(--text3);text-transform:uppercase">prot g</div></div>
-      </div>
+
+    // Prot color
+    const pc = p !== undefined ? (p >= PROT_TARGET ? 'var(--green)' : 'var(--accent2)') : 'var(--text3)';
+
+    const bg = isToday ? 'background:rgba(200,255,0,0.03);' : '';
+
+    return `<div style="display:grid;grid-template-columns:70px 1fr 60px 60px 60px;align-items:center;gap:0 10px;padding:9px 16px;border-bottom:1px solid var(--border);${bg}">
+      <span style="font-size:11px;color:${isToday?'var(--accent)':'var(--text2)'};font-weight:${isToday?'600':'400'}">${isToday?'AZI':fmt(d)}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text)">${w ? w.toFixed(1)+' kg' : '<span style="color:var(--text3)">—</span>'}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:${kc};text-align:right">${k !== undefined ? k : '<span style="color:var(--text3)">—</span>'}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:${pc};text-align:right">${p !== undefined ? p+'g' : '<span style="color:var(--text3)">—</span>'}</span>
+      <span style="font-size:11px;color:${wDiffColor};text-align:right;font-family:'JetBrains Mono',monospace">${wDiffStr}</span>
     </div>`;
   }).join('');
+
+  const footer = !historyShowAll && allDates.length > 7
+    ? `<div style="padding:10px 16px;text-align:center;color:var(--text3);font-size:11px">+${allDates.length - 7} zile mai vechi — apasă TOATE</div>`
+    : '';
+
+  el.innerHTML = header + rows + footer;
 }
+
+function renderKcalHistory() { renderUnifiedHistory(); }
 
 // ══════════════ PROTEINĂ TRACKER ══════════════
 const PROT_TARGET = 180;
@@ -2374,7 +2442,7 @@ function exportJSON() {
   const keys = ['logs','weights','kcals','prots','waters','wellbeing',
     'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',
     'photos','onboarding-done','muted','bf-override','phase-override',
-    'current-kcal','aa-cooldown'];
+    'current-kcal','aa-cooldown','phase-log'];
   const data = {version: 'salafull-v11', exported: new Date().toISOString()};
   const allKeys = [];
   for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
@@ -3183,16 +3251,35 @@ function clearBFOverride() {
 
 function setPhaseOverride(phase) {
   DB.set('phase-override', phase);
-  toast(`✓ Fază setată: ${phase}`);
+  // Logăm schimbarea de fază cu data și kcalTarget — pentru culori corecte în istoric
+  const today = tod();
+  const phaseLogs = DB.get('phase-log') || [];
+  // Calculăm kcalTarget temporar (după ce setăm override-ul)
+  const tdee = SYS.estimateTDEE();
+  const kcalMap = { CUT: Math.round(tdee*0.82), BULK: Math.round(tdee*1.08), MAINTENANCE: tdee, STRENGTH: Math.round(tdee*1.05) };
+  const kcalTarget = kcalMap[phase] || 1800;
+  // Înlocuim sau adăugăm entry pentru azi
+  const filtered = phaseLogs.filter(e => e.date !== today);
+  filtered.push({ date: today, phase, kcalTarget });
+  DB.set('phase-log', filtered);
+  toast(`✓ Fază setată: ${phase} · ${kcalTarget} kcal`);
   renderPlan();
   renderDash();
+  renderUnifiedHistory();
 }
 
 function clearPhaseOverride() {
   DB.set('phase-override', null);
-  toast('✓ Fază setată: AUTO');
+  // La revenire pe AUTO, logăm target-ul 1800 (CUT fix până pe 20 iulie)
+  const today = tod();
+  const phaseLogs = DB.get('phase-log') || [];
+  const filtered = phaseLogs.filter(e => e.date !== today);
+  filtered.push({ date: today, phase: 'AUTO', kcalTarget: 1800 });
+  DB.set('phase-log', filtered);
+  toast('✓ Fază setată: AUTO · 1800 kcal');
   renderPlan();
   renderDash();
+  renderUnifiedHistory();
 }
 
 function saveSteps() {
@@ -3861,19 +3948,7 @@ function renderWeight(){
     else if(trend>-0.3){tr.className='wtr sl';tr.innerHTML=`→ ${Math.abs(trend).toFixed(2)} kg/7z · Prea lent → −100 kcal`;}
     else{tr.className='wtr gd';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · ✅ Pe traseu`;}
   }
-  const hist=$('wh');
-  const rev=[...dates].reverse().slice(0,20);
-  if(hist){
-    if(!rev.length){hist.innerHTML='<div class="we"><span style="color:var(--text3);font-size:12px">Nicio înregistrare</span></div>';}
-    else{hist.innerHTML=rev.map((d,i)=>{
-      const w=ws[d],prev2=rev[i+1]?ws[rev[i+1]]:null;
-      const diff=prev2?Math.round((w-prev2)*10)/10:null;
-      const dc=diff===null?'':diff<0?'dn':diff>0?'up':'sm';
-      const ds=diff===null?'':(diff>0?'+':'')+diff.toFixed(1)+' kg';
-      return `<div class="we"><span class="wd2">${fmt(d)}</span><span class="wv">${w.toFixed(1)} kg</span><span class="wdf ${dc}">${ds}</span></div>`;
-    }).join('');}
-  }
-  renderKcalHistory();
+  renderUnifiedHistory();
   renderPhotos();
   renderSleepEnergy();
   checkSleepEnergyAlert();
@@ -4127,7 +4202,7 @@ window.setDone=setDone; window.selectRPE=selectRPE;
 window.skipPause=skipPause; window.skipExercise=skipExercise;
 window.adjSessionReps=adjSessionReps;
 window.toggleNote=toggleNote;
-window.adjKcal=adjKcal; window.setKcalDirect=setKcalDirect; window.saveKcal=saveKcal;
+window.adjKcal=adjKcal; window.setKcalDirect=setKcalDirect; window.saveKcal=saveKcal; window.toggleHistoryAll=toggleHistoryAll; window.renderUnifiedHistory=renderUnifiedHistory;
 window.adjProt=adjProt; window.setProtDirect=setProtDirect; window.saveProt=saveProt;
 window.adjWater=adjWater;
 window.setSleep=setSleep; window.setEnergy=setEnergy;
