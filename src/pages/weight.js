@@ -8,6 +8,7 @@ import { state } from '../state.js';
 export let historyShowAll = false;
 export let currentKcal = 1800;
 export let currentProt = 180;
+export let curW = 0;
 
 
 export function initW(){
@@ -36,6 +37,7 @@ export function renderWeight(){
     else{tr.className='wtr gd';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · ✅ Pe traseu`;}
   }
   renderUnifiedHistory();
+  renderSessionHistory();
   renderPhotos();
   renderSleepEnergy();
   checkSleepEnergyAlert();
@@ -50,7 +52,7 @@ export function saveW(){
   const label=state.logDateOffset ===0?'azi':getLogDateLabel();
   toast(`✓ Greutate salvată (${label})`,'var(--green)');
   if(state.logDateOffset ===0) lockWeight(curW);
-  renderWeight();renderDash();
+  renderWeight();if(window.renderDash)window.renderDash();
 }
 
 export function lockWeight(kg){
@@ -410,3 +412,220 @@ export function toggleDatePicker() {
 }
 
 export function onDI(v){const n=parseFloat(v);if(!isNaN(n)&&n>50&&n<250){curW=n;const d=$('wds');if(d)d.textContent=n.toFixed(1);}}
+
+export function adj(delta) {
+  curW = Math.round((curW + delta) * 10) / 10;
+  const d = $('wds');
+  if (d) d.textContent = curW.toFixed(1);
+}
+
+export function getTrend() {
+  const ws = DB.get('weights') || {};
+  const dates = Object.keys(ws).sort().slice(-8);
+  if (dates.length < 4) return null;
+  const vals = dates.map(d => ws[d]);
+  const n = vals.length;
+  const sumX = n*(n-1)/2;
+  const sumY = vals.reduce((a,b)=>a+b,0);
+  const sumXY = vals.reduce((s,v,i)=>s+i*v,0);
+  const sumX2 = vals.reduce((s,_,i)=>s+i*i,0);
+  const slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX);
+  return Math.round(slope * 7 * 100) / 100;
+}
+
+export function selectDateFromPicker(val) {
+  const today = new Date();
+  const selected = new Date(val + 'T00:00:00');
+  const diff = Math.round((selected - today) / 86400000);
+  if (diff <= 0 && diff >= -30) {
+    state.logDateOffset = diff;
+    toggleDatePicker();
+    renderWeight();
+  }
+}
+
+let chartRange = 30;
+
+export function setChartRange(days, btn) {
+  chartRange = days;
+  document.querySelectorAll('.chart-range-btn').forEach(b => { b.style.background='transparent'; b.style.color='var(--text3)'; b.style.borderColor='var(--border)'; });
+  if (btn) { btn.style.background='rgba(200,255,0,0.12)'; btn.style.color='var(--accent)'; btn.style.borderColor='var(--accent)'; }
+  renderChart();
+}
+
+export function savePhoto(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const photos = DB.get('photos') || [];
+    photos.unshift({ date: tod(), src: e.target.result });
+    DB.set('photos', photos.slice(0, 20));
+    toast('✓ Poză salvată', 'var(--green)');
+  };
+  reader.readAsDataURL(file);
+}
+
+export function setBFOverride() {
+  const v = parseFloat(document.getElementById('bf-input')?.value);
+  if (!isNaN(v) && v > 3 && v < 50) {
+    DB.set('bf-override', v);
+    toast('✓ BF% setat: ' + v + '%', 'var(--green)');
+  }
+}
+
+export function clearBFOverride() {
+  localStorage.removeItem('bf-override');
+  toast('✓ BF override șters', 'var(--accent)');
+}
+
+function initWater() {}
+function initSuppl() {}
+function syncW() {}
+function renderPhotos() {}
+function checkClosedDay() {}
+function renderSleepEnergy() {}
+function checkSleepEnergyAlert() {}
+function renderChart() {
+  const canvas = $('weight-chart');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 320;
+  const H = 180;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const ws = DB.get('weights') || {};
+  let dates = Object.keys(ws).sort();
+  if (chartRange > 0) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - chartRange);
+    const cutStr = cutoff.toISOString().split('T')[0];
+    dates = dates.filter(d => d >= cutStr);
+  }
+  if (dates.length < 2) {
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.font = '12px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Adaugă cel puțin 2 zile de greutate', W / 2, H / 2);
+    return;
+  }
+
+  const vals = dates.map(d => ws[d]);
+  const minV = Math.min(...vals) - 0.5;
+  const maxV = Math.max(...vals) + 0.5;
+  const range = maxV - minV || 1;
+
+  const pad = { top: 16, bottom: 24, left: 4, right: 4 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  const toX = i => pad.left + (i / (dates.length - 1)) * cw;
+  const toY = v => pad.top + (1 - (v - minV) / range) * ch;
+
+  // gradient fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+  grad.addColorStop(0, 'rgba(200,255,0,0.18)');
+  grad.addColorStop(1, 'rgba(200,255,0,0)');
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(toX(i), toY(vals[i]));
+  ctx.lineTo(toX(vals.length - 1), H - pad.bottom);
+  ctx.lineTo(toX(0), H - pad.bottom);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // line
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(toX(i), toY(vals[i]));
+  ctx.strokeStyle = 'rgba(200,255,0,0.85)';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // dots at first and last
+  [0, vals.length - 1].forEach(i => {
+    ctx.beginPath();
+    ctx.arc(toX(i), toY(vals[i]), 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgb(200,255,0)';
+    ctx.fill();
+  });
+
+  // x-axis labels (first and last date)
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'left';
+  const d0 = new Date(dates[0]);
+  ctx.fillText(`${d0.getDate()}/${d0.getMonth() + 1}`, pad.left, H - 6);
+  const dN = new Date(dates[dates.length - 1]);
+  ctx.textAlign = 'right';
+  ctx.fillText(`${dN.getDate()}/${dN.getMonth() + 1}`, W - pad.right, H - 6);
+
+  // stats bar
+  const statsEl = $('chart-stats');
+  if (statsEl) {
+    const diff = vals[vals.length - 1] - vals[0];
+    const sign = diff > 0 ? '+' : '';
+    const col = diff > 0 ? 'var(--accent3)' : 'var(--green)';
+    statsEl.innerHTML = `
+      <span>${dates.length} zile</span>
+      <span style="color:${col};font-weight:700">${sign}${diff.toFixed(1)} kg</span>
+      <span>min: ${Math.min(...vals).toFixed(1)} kg</span>
+      <span>max: ${Math.max(...vals).toFixed(1)} kg</span>`;
+  }
+}
+function renderSuppl() {}
+
+function renderSessionHistory() {
+  const el = $('session-history'); if (!el) return;
+  const logs = DB.get('logs') || [];
+  const burns = DB.get('session-burns') || [];
+  const ratings = DB.get('session-ratings') || [];
+
+  // Group logs by session timestamp
+  const sessMap = {};
+  logs.filter(l => !l.baseline && l.session).forEach(l => {
+    if (!sessMap[l.session]) sessMap[l.session] = [];
+    sessMap[l.session].push(l);
+  });
+
+  const sessions = Object.entries(sessMap)
+    .map(([ts, sets]) => {
+      const date = sets[0].date;
+      const exCount = new Set(sets.map(s => s.ex)).size;
+      const burn = burns.find(b => b.date === date);
+      const rating = ratings.find(r => r.session === Number(ts));
+      return { ts: Number(ts), date, sets: sets.length, exCount,
+        mins: burn?.mins ?? null,
+        rating: rating?.rating ?? null };
+    })
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, 5);
+
+  if (!sessions.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio sesiune înregistrată</div>';
+    return;
+  }
+
+  const ratingLabel = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
+  const ratingColor = { easy: 'var(--green)', normal: 'var(--accent)', hard: 'var(--red)' };
+
+  el.innerHTML = sessions.map((s, i) => {
+    const d = new Date(s.date);
+    const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
+    const minsStr = s.mins !== null ? `${s.mins} min` : '—';
+    const rl = s.rating ? ratingLabel[s.rating] : '—';
+    const rc = s.rating ? ratingColor[s.rating] : 'var(--text3)';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;${i < sessions.length-1 ? 'border-bottom:1px solid var(--border)' : ''}">
+      <div style="font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:52px">${dateStr}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600">${s.exCount} exerciții · ${s.sets} seturi</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">${minsStr}</div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:${rc}">${rl}</div>
+    </div>`;
+  }).join('');
+}

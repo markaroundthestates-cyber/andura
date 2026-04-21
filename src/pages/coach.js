@@ -1,13 +1,45 @@
 // ══ COACH PAGE ══════════════════════════════════════════════
 import { DB, $, tod, cleanEx } from '../db.js';
+import { syncToFirebase } from '../firebase.js';
 import { PROG, EX_SETS, COMPOUND_EX, PAUSE_COMPOUND, PAUSE_ISO } from '../constants.js';
 import { DP } from '../engine/dp.js';
 import { AA } from '../engine/aa.js';
 import { SYS } from '../engine/sys.js';
 import { toast, beep, beepDone, beepAlert, speak, showCoachFlash, showFlashFeedback, showPauseScreen, hidePauseScreen } from '../ui/ui.js';
 import { state } from '../state.js';
+import { calculateFatigueScore } from '../engine/fatigue.js';
 
 const muscleEmoji = { spate:'🔵', piept:'🟡', umeri:'🟠', brate:'🟤', picioare:'🟢', triceps:'⚪' };
+
+let wakeLock = null;
+
+export function resetNotes() { state.activeNotes.clear(); }
+
+export function toggleMute() {
+  state.isMuted = !state.isMuted;
+  DB.set('muted', state.isMuted);
+  const btn = $('mute-btn');
+  if (btn) btn.textContent = state.isMuted ? '🔇' : '🔊';
+}
+
+export function skipPause() {
+  stopPause();
+  hidePauseScreen();
+  updateExCard();
+}
+
+export function getGroupColor(g) {
+  const c = {spate:'#4fc3f7',piept:'#ffd54f',umeri:'#ffb74d',brate:'#a1887f',picioare:'#81c784',triceps:'#e0e0e0'};
+  return c[g] || 'var(--text3)';
+}
+function renderFatigueScore(elId) {
+  const el = $(elId); if (!el) return;
+  const f = calculateFatigueScore();
+  el.innerHTML = `<span style="color:${f.color};font-size:11px;font-weight:600">${f.icon||''} ${f.label}</span><div style="font-size:10px;color:var(--text3);margin-top:2px">${f.detail}</div>`;
+}
+function renderTodayAlerts() {}
+function tickSess() {}
+function beepStart() { if (typeof beep === 'function') beep(660, 0.1); }
 const dayColors = {
   'Marți':   {bg:'rgba(10,132,255,0.06)', border:'rgba(10,132,255,0.2)',  text:'rgba(10,132,255,0.9)'},
   'Miercuri':{bg:'rgba(200,255,0,0.06)',  border:'rgba(200,255,0,0.2)',   text:'rgba(200,255,0,0.9)'},
@@ -231,6 +263,11 @@ export function updateExCard(){
   state.sessRepsInput = rec.repsTarget;
   $('session-reps').textContent=state.sessRepsInput;
 
+  // Always show action buttons, hide input screens
+  $('set-actions').style.display='flex';
+  $('rpe-inline').style.display='none';
+  $('rpe-screen').style.display='none';
+
   speak(`Set ${state.currentSet}. ${state.currentEx}. Metti ${rec.kg} chili. ${rec.repsTarget} repetizioni.`);
 }
 
@@ -238,75 +275,35 @@ export function setDone(){
   if(!state.currentEx){toast('⚠ Selectează exercițiu','var(--accent2)');return;}
   beepDone();
   $('set-actions').style.display='none';
-  $('rpe-inline').style.display='block'; // step 1: reps
-  $('rpe-screen').style.display='none';
-  state.awaitingRPE = false; // not yet — waiting for reps confirm first
+  $('rpe-inline').style.display='block';
 }
 
 export function confirmReps(){
-  // User confirmed reps — now show RPE picker
   $('rpe-inline').style.display='none';
-  $('rpe-screen').style.display='block';
-  const sumEl = $('rpe-reps-summary');
-  if(sumEl) sumEl.textContent = `${state.sessRepsInput} reps · ${state.currentEx}`;
-  state.awaitingRPE = true;
-}
-
-export function selectRPE(rpe){
-  if(!state.awaitingRPE)return;
-  state.awaitingRPE = false;
-  $('rpe-screen').style.display='none';
-  $('set-actions').style.display='flex';
 
   const rec=AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
   const totalSets=EX_SETS[state.currentEx]||3;
-  const isComp=COMPOUND_EX.includes(state.currentEx);
-  const inc=DP.getIncrement(state.currentEx);
 
-  // Save log
+  // Save log with neutral RPE — session rating at the end adjusts notes
   const logs=DB.get('logs')||[];
   const noteArr=[...state.activeNotes]; resetNotes();
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
-  state.sessionKgOverride = null; // reset după fiecare set
-  logs.unshift({date:tod(),ex:state.currentEx,w:logKg,sets:1,reps:String(state.sessRepsInput),rpe,notes:noteArr,ts:Date.now(),session:state.sessStart});
+  state.sessionKgOverride = null;
+  logs.unshift({date:tod(),ex:state.currentEx,w:logKg,sets:1,reps:String(state.sessRepsInput),rpe:8,notes:noteArr,ts:Date.now(),session:state.sessStart});
   DB.set('logs',logs.slice(0,500));
-  state.sessLog.push({ex:state.currentEx,kg:logKg,rpe,set:state.currentSet,reps:state.sessRepsInput});
+  state.sessLog.push({ex:state.currentEx,kg:logKg,rpe:8,set:state.currentSet,reps:state.sessRepsInput});
   const ssc=$('sess-progress-txt');if(ssc)ssc.textContent=`${state.completedExercises.size}/${state.sessionTotalExercises||getTodayExercises().length}`;
 
-  // In-session RPE 10 × 2 → immediate adjust
-  const thisExSessLogs=state.sessLog.filter(s=>s.ex===state.currentEx);
-  const thisExSessRPEs=thisExSessLogs.map(s=>s.rpe);
-  const thisExSessReps=thisExSessLogs.map(s=>s.reps||0);
-  const inSessAdj=DP.checkInSessionAdjust(state.currentEx,thisExSessRPEs,thisExSessReps);
-  if(inSessAdj.adjust){
-    if(inSessAdj.dir==='down'){
-      showCoachFlash('dn',`SCADE AZI LA ${inSessAdj.newKg} KG`,`2× RPE 10 — prea greu`);
-      speak(`Prea greu. Scade la ${inSessAdj.newKg} kilograme.`);
-    } else {
-      showCoachFlash('up',`CREȘTE AZI LA ${inSessAdj.newKg} KG`,`2× RPE 6 — prea ușor`);
-      speak(`Ușor. Crește la ${inSessAdj.newKg} kilograme.`);
-    }
-    // Forțează greutatea pentru setul următor
-    state.sessionKgOverride = inSessAdj.newKg;
-    // Actualizează afișajul imediat
-    const kgEl = $('rec-kg-big');
-    if(kgEl) { kgEl.textContent = inSessAdj.newKg; kgEl.style.color = inSessAdj.dir==='down'?'var(--red)':'var(--green)'; }
-  } else {
-    showFlashFeedback(rpe, logKg, state.currentEx, DP);
-  }
-
-  // Advance
+  // Advance to next set or next exercise
   if(state.currentSet>=totalSets){
-    // Exercise done — move to next
     state.completedExercises.add(state.currentEx);
     updateSessionProgress();
     const todayExs=getTodayExercises();
     const idx=todayExs.indexOf(state.currentEx);
     if(idx<todayExs.length-1){
       const nextEx=todayExs[idx+1];
-      const isCompound=COMPOUND_EX.includes(state.currentEx);
-      const pauseSec=isCompound?PAUSE_COMPOUND:PAUSE_ISO;
-      state.currentEx = nextEx; state.currentSet = 1;
+      const pauseSec=COMPOUND_EX.includes(state.currentEx)?PAUSE_COMPOUND:PAUSE_ISO;
+      state.currentEx=nextEx; state.currentSet=1;
       startPause(pauseSec, nextEx);
     } else {
       speak('Antrenament complet! Excelent!');
@@ -315,11 +312,12 @@ export function selectRPE(rpe){
     }
   } else {
     state.currentSet++;
-    const isComp2=COMPOUND_EX.includes(state.currentEx);
-    startPause(isComp2?PAUSE_COMPOUND:PAUSE_ISO, state.currentEx);
+    startPause(COMPOUND_EX.includes(state.currentEx)?PAUSE_COMPOUND:PAUSE_ISO, state.currentEx);
   }
   renderSessLog();
 }
+
+export function selectRPE(rpe){ /* no-op — RPE collected only at end-of-session via rateSession */ }
 
 export function startPause(sec, nextEx=''){
   stopPause();
@@ -391,6 +389,18 @@ export function endSession(){
   releaseWakeLock();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 
+  // Auto-delete test sessions (< 5 minutes)
+  if(Date.now() - state.sessStart < 5 * 60 * 1000){
+    const logs = DB.get('logs') || [];
+    DB.set('logs', logs.filter(l => l.session !== state.sessStart));
+    $('session-ui').style.display='none';
+    const ts=$('today-screen'); if(ts)ts.style.display='block';
+    toast('🧹 Sesiune test ștearsă automat','var(--accent2)');
+    renderCoachIdle();
+    if(window.renderDash) window.renderDash();
+    return;
+  }
+
   const mins=Math.round((Date.now()-state.sessStart)/60000);
   const kcal=Math.round(SYS.getCurrentKg()*0.09*mins);
   const burnLog=DB.get('session-burns')||[];
@@ -435,12 +445,30 @@ export function endSession(){
   showSessionRating({mins,kcal,totalVolume,totalSets,uniqueEx,avgRPE,prs});
 }
 
-function closeSummary(){
+export function closeSummary(){
   const m=document.getElementById('summary-modal');
   if(m) m.remove();
   const ts=$('today-screen'); if(ts)ts.style.display='block';
   renderCoachIdle();
-  renderDash();
+  if(window.renderDash)window.renderDash();
+  // Auto close day if it's evening (22:00–23:59)
+  const h = new Date().getHours();
+  if(h >= 22 && window.closeDayFromDash) window.closeDayFromDash();
+}
+
+function showSessionSummary(data) {
+  const modal = document.createElement('div');
+  modal.id = 'summary-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px;text-align:center">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);margin-bottom:4px">SESIUNE COMPLETĂ</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:20px">${data.moodLabel||''}</div>
+    <button onclick="closeSummary()"
+      style="width:100%;padding:14px;background:var(--accent);color:#000;font-weight:700;font-size:15px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif">
+      ✓ GATA
+    </button>
+  </div>`;
+  document.body.appendChild(modal);
 }
 
 function launchConfetti(){
@@ -525,6 +553,14 @@ export function rateSession(rating, summaryData) {
     DB.set('logs', logs);
   }
 
+  // Save session rating for AA engine
+  const sRatings = DB.get('session-ratings') || [];
+  sRatings.unshift({ session: state.sessStart, rating, date: tod() });
+  DB.set('session-ratings', sRatings.slice(0, 20));
+
+  // Push immediately — don't rely on 3s debounce since user may close app right after rating
+  syncToFirebase().catch(() => {});
+
   // Șterge modalul și arată summary
   const modal = document.getElementById('rating-modal');
   if (modal) modal.remove();
@@ -534,47 +570,49 @@ export function rateSession(rating, summaryData) {
 }
 
 export function editSessionKg() {
-  const big = $('rec-kg-big');
-  const wrap = $('kg-edit-input-wrap');
-  const inp = $('kg-edit-input');
-  if (!big || !wrap || !inp) return;
-  inp.value = big.textContent;
-  big.style.display = 'none';
-  wrap.style.display = 'block';
-  inp.focus();
-  inp.select();
+  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const startKg = state.sessionKgOverride !== null ? state.sessionKgOverride : (rec.kg || 20);
+  const step = DP.getIncrement(state.currentEx);
+  window._kgOvVal = startKg;
+
+  document.getElementById('kg-edit-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'kg-edit-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px';
+  overlay.innerHTML = `
+    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">GREUTATE · SET ${state.currentSet}</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:24px">${state.currentEx}</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <button onclick="adjSessionKg(-${step*2})" style="width:58px;height:58px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">−${step*2}</button>
+      <button onclick="adjSessionKg(-${step})" style="width:58px;height:58px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:18px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">−${step}</button>
+      <div id="kg-ov-val" style="font-family:'Bebas Neue',sans-serif;font-size:72px;color:var(--accent);min-width:120px;text-align:center;line-height:1">${startKg}</div>
+      <button onclick="adjSessionKg(${step})" style="width:58px;height:58px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:18px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">+${step}</button>
+      <button onclick="adjSessionKg(${step*2})" style="width:58px;height:58px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">+${step*2}</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:28px">Recomandat: ${rec.kg} kg</div>
+    <button onclick="confirmSessionKg()" style="width:100%;max-width:320px;padding:18px;background:var(--accent);color:#000;font-weight:700;font-size:20px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">✓ CONFIRMĂ</button>
+    <button onclick="document.getElementById('kg-edit-overlay')?.remove()" style="margin-top:12px;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anulează</button>
+  `;
+  document.body.appendChild(overlay);
 }
 
-export function confirmEditKg() {
-  const big = $('rec-kg-big');
-  const wrap = $('kg-edit-input-wrap');
-  const inp = $('kg-edit-input');
-  if (!big || !wrap || !inp) return;
-
-  const val = parseFloat(inp.value);
-  if (!isNaN(val) && val > 0 && val < 500) {
-    const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
-    const diff = Math.abs(val - rec.kg);
-    const pct = diff / rec.kg;
-
-    state.sessionKgOverride = DP.roundToStep(val, state.currentEx);
-    big.textContent = state.sessionKgOverride;
-
-    // Dacă diferă >30% — resetează baseline pentru exercițiu
-    if (pct > 0.3) {
-      toast(`GREUTATE CORECTATĂ: ${rec.kg}→${state.sessionKgOverride}kg — BASELINE ACTUALIZAT`, 'var(--accent2)');
-      // Marchează logurile baseline ca depășite
-      const logs = DB.get('logs') || [];
-      logs.filter(l => l.ex === state.currentEx && l.baseline).forEach(l => { l.baselineReset = true; });
-      DB.set('logs', logs);
-    } else {
-      toast(`${state.sessionKgOverride}kg ✓`, 'var(--accent)');
-    }
-  }
-
-  big.style.display = 'block';
-  wrap.style.display = 'none';
+export function adjSessionKg(delta) {
+  window._kgOvVal = Math.round((window._kgOvVal + delta) * 10) / 10;
+  const el = document.getElementById('kg-ov-val');
+  if (el) el.textContent = window._kgOvVal;
 }
+
+export function confirmSessionKg() {
+  const kg = window._kgOvVal;
+  if (!kg || kg <= 0) return;
+  state.sessionKgOverride = DP.roundToStep(kg, state.currentEx);
+  const big = $('rec-kg-big');
+  if (big) { big.textContent = state.sessionKgOverride; big.style.color = 'var(--accent2)'; }
+  document.getElementById('kg-edit-overlay')?.remove();
+  toast(`${state.sessionKgOverride} kg ✓`, 'var(--accent)');
+}
+
+export function confirmEditKg() { confirmSessionKg(); }
 
 export function renderSessLog(){
   const sl=$('sess-log');
@@ -687,89 +725,7 @@ export function getAdaptiveTime(dayLabel) {
   return avg;
 }
 
-export function calculateFatigueScore() {
-  const logs = DB.get('logs') || [];
-  const wb = DB.get('wellbeing') || {};
 
-  // Grupează ultimele 4 sesiuni
-  const sessions = {};
-  logs.filter(l => !l.baseline && l.session).forEach(l => {
-    if (!sessions[l.session]) sessions[l.session] = [];
-    sessions[l.session].push(l);
-  });
-  const last4 = Object.values(sessions)
-    .sort((a,b) => b[0].ts - a[0].ts)
-    .slice(0, 4);
-
-  if (last4.length < 2) {
-    return { score: 0, label: 'DATE INSUFICIENTE', color: 'var(--text3)',
-      detail: 'Completează 2+ sesiuni pentru fatigue score', recommend: 'none' };
-  }
-
-  // ── Semnale ──────────────────────────────────────────────────────────────
-  const allNotes = last4.flatMap(s => s.flatMap(l => l.notes || []));
-  const sleepBad  = allNotes.filter(n => n === 'sleep').length;
-  const fatigue   = allNotes.filter(n => n === 'fatigue').length;
-  const formBad   = allNotes.filter(n => n === 'form').length;
-  const strong    = allNotes.filter(n => n === 'strong').length;
-
-  // RPE mediu din ultimele 4 sesiuni (top sets)
-  const sessionRPEs = last4.map(s => {
-    const rpes = s.filter(l=>l.rpe).map(l=>l.rpe).sort((a,b)=>b-a).slice(0,2);
-    return rpes.length ? rpes.reduce((a,b)=>a+b,0)/rpes.length : 7;
-  });
-  const avgRPE = sessionRPEs.reduce((a,b)=>a+b,0) / sessionRPEs.length;
-  const rpeRising = sessionRPEs.length >= 3 &&
-    sessionRPEs[0] > sessionRPEs[sessionRPEs.length-1] + 0.6;
-
-  // Somn din wellbeing (ultimele 4 zile)
-  const recentDates = Object.keys(wb).sort().reverse().slice(0, 4);
-  const avgSleep = recentDates.length
-    ? recentDates.reduce((a,d) => a + (wb[d]?.sleep || 3), 0) / recentDates.length
-    : 3;
-
-  // ── Calculează scor (0-100, mai mare = mai obosit) ─────────────────────
-  let score = 0;
-  score += sleepBad  * 13;
-  score += fatigue   * 11;
-  score += formBad   * 7;
-  score -= strong    * 9;
-  score += Math.max(0, (avgRPE - 7.5) * 11);
-  score += rpeRising ? 12 : 0;
-  score += (avgSleep <= 2.5) ? 18 : (avgSleep <= 3.5) ? 7 : 0;
-  score = Math.max(0, Math.min(100, Math.round(score)));
-
-  // ── Verdict ──────────────────────────────────────────────────────────────
-  let label, color, recommend, detail, icon;
-
-  if (score >= 65 || fatigue >= 4 || sleepBad >= 3) {
-    label = 'DELOAD RECOMANDAT';
-    icon = '🔴';
-    color = 'var(--red)';
-    recommend = 'deload';
-    detail = `Scor ${score}/100 · ${fatigue}× oboseală + ${sleepBad}× somn prost · Redu volumul 30–40% săptămâna asta`;
-  } else if (score >= 40 || (avgRPE >= 8.7 && rpeRising)) {
-    label = 'RECUPERARE ACTIVĂ';
-    icon = '🟠';
-    color = 'var(--accent2)';
-    recommend = 'reduce';
-    detail = `Scor ${score}/100 · RPE ${avgRPE.toFixed(1)} ${rpeRising?'↑ în creștere':''} · Nu crești greutățile, focus tehnică`;
-  } else if (score <= 15 && strong >= 2) {
-    label = 'FORMĂ EXCELENTĂ';
-    icon = '🟢';
-    color = 'var(--green)';
-    recommend = 'push';
-    detail = `Scor ${score}/100 · Recuperare excelentă · Poți împinge mai mult azi`;
-  } else {
-    label = 'PROGRESEAZĂ NORMAL';
-    icon = '🟢';
-    color = 'var(--green)';
-    recommend = 'normal';
-    detail = `Scor ${score}/100 · Totul în limite normale`;
-  }
-
-  return { score, label, icon, color, recommend, detail, avgRPE, sleepBad, fatigue, strong };
-}
 
 export function checkMuscleBalance(){
   const logs=DB.get('logs')||[];
@@ -852,7 +808,7 @@ export function cleanFakeLogs() {
   const removed = before - cleaned.length;
   toast(`✅ Curățat ${removed} loguri (${cleaned.length} rămase)`, 'var(--green)');
   renderCoachIdle();
-  renderDash();
+  if(window.renderDash)window.renderDash();
   console.log(`cleanFakeLogs: ${before} → ${cleaned.length} (removed ${removed})`);
 }
 
