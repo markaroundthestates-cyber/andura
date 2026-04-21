@@ -2326,7 +2326,7 @@ function exportJSON() {
     'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',
     'photos','onboarding-done','muted','bf-override','phase-override',
     'current-kcal','aa-cooldown'];
-  const data = {version: 'salafull-v11', exported: new Date().toISOString()};
+  const data = {version: 'salafull-v10', exported: new Date().toISOString()};
   const allKeys = [];
   for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
   allKeys.forEach(k => {
@@ -2340,6 +2340,33 @@ function exportJSON() {
   document.body.removeChild(a); URL.revokeObjectURL(url);
   toast('✓ Backup exportat — trimite fișierul pe telefon', 'var(--green)');
 }
+
+function importJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      // Restore all keys except metadata
+      let count = 0;
+      Object.entries(data).forEach(([k, v]) => {
+        if(k === 'version' || k === 'exported') return;
+        localStorage.setItem(k, JSON.stringify(v));
+        count++;
+      });
+      toast(`✅ Restaurat ${count} chei — reîncarcă pagina`, 'var(--green)');
+      setTimeout(() => location.reload(), 1500);
+    } catch(err) {
+      toast('⚠ Fișier invalid', 'var(--accent2)');
+    }
+  };
+  input.click();
+}
+window.importJSON=importJSON;
 
 function importJSON() {
   const input = document.createElement('input');
@@ -3067,6 +3094,7 @@ function renderPlan() {
       <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=180?'var(--green)':todProt>0?'var(--accent3)':'var(--text3)'}">${todProt||'—'}</div>
       <div style="font-size:10px;color:var(--text2);margin-top:2px">g / target 180g</div>
     </div>`);
+  if (existing.length > 1) existing[0].remove();
 
   // BF override status
   const bfOvr = DB.get('bf-override');
@@ -4182,7 +4210,6 @@ function injectBaseline() {
 function init(){
   initFirebaseSync().then(()=>{
     injectBaseline();
-    injectMFPWeights();
   initW(); initKcal(); initProt(); initWater(); initSuppl();
   // Init notif button state
   if(typeof Notification!=='undefined'&&Notification.permission==='granted'&&DB.get('notif-enabled')){
