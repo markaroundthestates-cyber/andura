@@ -452,9 +452,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <!-- KPI GRID -->
   <div class="kgrid">
     <div class="kp a"><div class="kl">Greutate</div><div class="kv" id="kw">—</div><div class="ksub" id="kws">kg</div></div>
-    <div class="kp o"><div class="kl">Scăzut total</div><div class="kv" id="kl2">—</div><div class="ksub">kg vs 111.4</div></div>
+    <div class="kp" style="border-top:3px solid var(--accent3)"><div class="kl">Scăzut total</div><div class="kv" id="kl2" style="color:var(--accent3)">—</div><div class="ksub">kg vs 111.4</div></div>
     <div class="kp b"><div class="kl">Trend 7 zile</div><div class="kv" id="kt">—</div><div class="ksub" id="kts">—</div></div>
-    <div class="kp r" id="kpi-days-box"><div class="kl" id="kpi-days-label">Zile rămase</div><div class="kv" id="kd">—</div><div class="ksub" id="kpi-days-sub">până 20 iulie</div></div>
+    <div class="kp b" id="kpi-days-box"><div class="kl" id="kpi-days-label">Zile rămase</div><div class="kv" id="kd">—</div><div class="ksub" id="kpi-days-sub">până 20 iulie</div></div>
   </div>
 
   <!-- WEEKLY WORKOUTS + AUTO KCAL inline row -->
@@ -971,8 +971,8 @@ const AA = {
       if (daysSince < 4) return null;
     }
 
-    const logs = DP.getLogs(ex, 9);
-    if (logs.length < 4) return null;
+    const logs = DP.getLogs(ex, 9).filter(l => !l.baseline);
+    if (logs.length < 4) return null; // not enough real data yet
 
     // ── Citește contextul de recuperare din note ──────────────────────────
     const recovery = this.getRecoveryContext();
@@ -2309,7 +2309,7 @@ function saveProt() {
 // ══════════════ EXPORT CSV ══════════════
 function exportJSON() {
   const keys = ['logs','weights','kcals','prots','waters','wellbeing',
-    'suppl-list','suppl-taken','step-streaks','steps-today','closed-days',
+    'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',
     'photos','onboarding-done','muted','bf-override','phase-override',
     'current-kcal','aa-cooldown'];
   const data = {version: 'salafull-v10', exported: new Date().toISOString()};
@@ -2525,6 +2525,11 @@ function checkClosedDay() {
 }
 
 // ══════════════ HIDRATARE ══════════════
+// Recomandare hidratare: 35ml per kg greutate corporală
+function getWaterTarget() {
+  const kg = SYS.getCurrentKg() || 80;
+  return Math.round(kg * 0.035 * 10) / 10;
+}
 const WATER_TARGET = 3.0;
 function initWater() {
   const waters = DB.get('waters') || {};
@@ -2539,11 +2544,13 @@ function adjWater(delta) {
   renderWater(waters[logD]);
 }
 function renderWater(liters) {
-  const pct = Math.min(100, Math.round(liters / WATER_TARGET * 100));
+  const dynamicTarget = getWaterTarget();
+  const pct = Math.min(100, Math.round(liters / dynamicTarget * 100));
   const el = $('water-display'); if(el) el.textContent = liters.toFixed(1);
   const bar = $('water-bar'); if(bar) { bar.style.width = pct + '%'; bar.style.background = pct>=100?'var(--green)':pct>=60?'var(--accent3)':'var(--accent2)'; }
   const wd = $('water-display'); if(wd) wd.style.color = pct>=100?'var(--green)':pct>=60?'var(--accent3)':'var(--accent2)';
-  const wp = $('water-pct'); if(wp) wp.textContent = `${pct}% · ${Math.max(0,WATER_TARGET-liters).toFixed(1)}L rămase`;
+  const remaining = Math.max(0, dynamicTarget - liters);
+  const wp = $('water-pct'); if(wp) wp.textContent = `${pct}% · ${remaining.toFixed(1)}L rămase · recomandat ${dynamicTarget}L`;
 }
 
 // ══════════════ SOMN + ENERGIE ══════════════
@@ -2597,7 +2604,7 @@ function initSuppl() {
 }
 function renderSuppl() {
   const suppl=DB.get('suppl-list')||DEFAULT_SUPPL;
-  const taken=DB.get('suppl-taken')||{}, today=tod();
+  const taken=DB.get('suppl-taken-v2')||{}, today=tod();
   if(!taken[today])taken[today]={};
   const el=$('suppl-grid'); if(!el)return;
   el.innerHTML=suppl.map((s,i)=>{
@@ -2612,9 +2619,9 @@ function renderSuppl() {
   }).join('');
 }
 function toggleSuppl(idx) {
-  const taken=DB.get('suppl-taken')||{}, today=tod();
+  const taken=DB.get('suppl-taken-v2')||{}, today=tod();
   if(!taken[today])taken[today]={};
-  taken[today][idx]=!taken[today][idx]; DB.set('suppl-taken',taken); renderSuppl();
+  taken[today][idx]=!taken[today][idx]; DB.set('suppl-taken-v2',taken); renderSuppl();
 }
 function removeSuppl(idx) {
   const s=DB.get('suppl-list')||DEFAULT_SUPPL; s.splice(idx,1); DB.set('suppl-list',s); renderSuppl();
@@ -3019,7 +3026,7 @@ function renderPlan() {
 
   // Phase banner
   const phaseConfig = {
-    CUT: {color:'var(--accent2)', detail:`BF ${bf}% → obiectiv vară · Deficit caloric activ`},
+    CUT: {color:'var(--accent3)', detail:`BF ${bf}% → obiectiv vară · Deficit caloric activ`},
     BULK: {color:'var(--accent3)', detail:`BF ${bf}% → creștere masă musculară · Surplus controlat`},
     MAINTENANCE: {color:'var(--green)', detail:`BF ${bf}% → menții masa musculară · Sezon vară`},
     STRENGTH: {color:'var(--purple)', detail:`Focus forță · Volum redus, intensitate crescută`}
@@ -3666,6 +3673,7 @@ function renderWeight(){
   if(tr){
     if(trend===null){tr.className='wtr nt';tr.textContent='— completează câteva zile';}
     else if(trend<-1.2){tr.className='wtr ft';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · Scade rapid → +150 kcal`;}
+    else if(trend>0){tr.className='wtr sl';tr.innerHTML=`↑ ${trend.toFixed(2)} kg/7z · Probabil retenție apă — trendul pe 7 zile contează, nu ziua de azi`;}
     else if(trend>-0.3){tr.className='wtr sl';tr.innerHTML=`→ ${Math.abs(trend).toFixed(2)} kg/7z · Prea lent → −100 kcal`;}
     else{tr.className='wtr gd';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · ✅ Pe traseu`;}
   }
@@ -3709,7 +3717,7 @@ function getAlerts(){
   const prots=DB.get('prots')||{},todProt=prots[today];
   if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
   else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
-  const suppList=DB.get('suppl-list')||DEFAULT_SUPPL,suppTaken=DB.get('suppl-taken')||{};
+  const suppList=DB.get('suppl-list')||DEFAULT_SUPPL,suppTaken=DB.get('suppl-taken-v2')||{};
   const todTaken=suppTaken[today]||{},suppDone=Object.values(todTaken).filter(Boolean).length;
   if(suppList.length>0&&suppDone<suppList.length&&dates.length>=1)
     alerts.push({t:'o',i:'💊',tt:`SUPLIMENTE: ${suppDone}/${suppList.length}`,s:'Apasă pentru a bifa',nav:'weight'});
