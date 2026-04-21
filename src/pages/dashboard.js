@@ -1,0 +1,240 @@
+// ══ DASHBOARD PAGE ═══════════════════════════════════════════
+import { DB, $, tod, fmt } from '../db.js';
+import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE } from '../constants.js';
+import { SYS } from '../engine/sys.js';
+import { toast } from '../ui/ui.js';
+
+
+export function renderDash(){
+  initW();
+  const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),today=tod();
+  const todW=ws[today]||null,lastW=dates.length?ws[dates[dates.length-1]]:null,dW=todW||lastW;
+  const trend=getTrend();
+  const tgt=Math.round((SW-(SW-TW)*Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT)*10)/10;
+  const now=new Date(),PILOT=new Date('2026-07-20'),pilotActive=now>=PILOT;
+  const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]];
+  const sysKcal=SYS.getKcalTarget(),sysPhase=SYS.getPhase();
+  const kcals=DB.get('kcals')||{};
+  const todayKcal=kcals[today]!==undefined?kcals[today]:sysKcal;
+  const kcalColor=todayKcal>(sysKcal+200)?'var(--accent2)':todayKcal<(sysKcal-200)?'var(--accent3)':'var(--green)';
+  const workoutToday=tp.t==='off'?'ODIHNĂ':tp.lb.toUpperCase();
+  const statusToday=!dW?'—':dW<=tgt+0.3?'ON TRACK':dW<=tgt+1?'ÎN URMĂ':'OFF TRACK';
+  const statusColor=!dW?'var(--text2)':dW<=tgt+0.3?'var(--green)':dW<=tgt+1?'var(--accent2)':'var(--red)';
+  const ctaLabel=tp.t==='off'?'ODIHNĂ AZI':!todW?'LOG GREUTATE ▶':'ANTRENAMENT ▶';
+  const ctaAction=tp.t==='off'?null:!todW?`sp('weight',document.querySelectorAll('.nb')[2])`:`sp('coach',document.querySelectorAll('.nb')[0])`;
+  const dd=$('dd');if(dd)dd.textContent=now.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long'});
+  // Brutal alerts
+  const _prots = DB.get('prots')||{}, _kcals2 = DB.get('kcals')||{}, _ws2 = DB.get('weights')||{};
+  const _last3 = Array.from({length:3},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
+  const _last7 = Array.from({length:7},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
+  const _protBelow = _last3.filter(d=>_prots[d]!==undefined&&_prots[d]<160).length;
+  const _kcalBelow = _last3.filter(d=>_kcals2[d]!==undefined&&_kcals2[d]<1500).length;
+  const _wVals = _last7.map(d=>_ws2[d]).filter(Boolean);
+  const _wStagnant = _wVals.length>=5&&(Math.max(..._wVals)-Math.min(..._wVals))<0.3;
+  const _recentRPEs = (DB.get('logs')||[]).filter(l=>!l.baseline&&l.rpe).slice(0,15).map(l=>l.rpe);
+  const _avgRPE = _recentRPEs.length?_recentRPEs.reduce((a,b)=>a+b,0)/_recentRPEs.length:0;
+  let _brutAlerts=[];
+  if(_protBelow>=2) _brutAlerts.push({msg:`NU MĂNÂNCI DESTUL PROTEINĂ. PIERZI MASĂ.`,sub:`${_protBelow}/3 zile sub 160g`,color:'var(--red)'});
+  if(_kcalBelow>=2) _brutAlerts.push({msg:`DEFICIT EXTREM. METABOLISMUL ÎNCETINEȘTE.`,sub:`${_kcalBelow}/3 zile sub 1500 kcal`,color:'var(--red)'});
+  if(_wStagnant) _brutAlerts.push({msg:`TREND STAGNEAZĂ. VERIFICĂ KCAL ȘI SOMN.`,sub:`7 zile fără schimbare reală`,color:'var(--accent2)'});
+  if(_avgRPE>8.5) _brutAlerts.push({msg:`RPE MEDIU PREA MARE. SCADE GREUTATEA.`,sub:`Medie ${_avgRPE.toFixed(1)} — risc supraantrenament`,color:'var(--accent2)'});
+  const _alertHtml = _brutAlerts.length ? (()=>{const a=_brutAlerts[Math.floor(Date.now()/8000)%_brutAlerts.length];return `<div style="padding:14px 16px;background:${a.color}18;border-left:4px solid ${a.color};margin-bottom:8px"><div style="font-size:13px;font-weight:700;color:${a.color};letter-spacing:.5px">⚠ ${a.msg}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${a.sub}</div></div>`;})() : '';
+
+  const dcmd=$('daily-cmd');
+  if(dcmd)dcmd.innerHTML=_alertHtml+`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)">
+      <div style="padding:12px 14px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Kcal azi</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${kcalColor}">${todayKcal}</div>
+      </div>
+      <div style="padding:12px 14px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Antrenament</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;line-height:1.2">${workoutToday}</div>
+      </div>
+      <div style="padding:12px 14px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Status</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${statusColor}">${statusToday}</div>
+      </div>
+    </div>
+    ${ctaAction?`<button onclick="${ctaAction}" style="width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif">${ctaLabel}</button>`:'<div style="padding:12px;text-align:center;font-size:12px;color:var(--text2)">Zi de odihnă</div>'}
+  </div>`;
+  const sb=$('dsb');
+  if(sb){if(!dW)sb.innerHTML='';else if(dW<=tgt+0.3)sb.innerHTML='<div class="sbadge on">✅ ON TRACK</div>';
+  else if(dW<=tgt+1)sb.innerHTML='<div class="sbadge warn">⚠ ÎN URMĂ</div>';
+  else sb.innerHTML='<div class="sbadge off">❌ OFF TRACK</div>';}
+
+  // Close day banner in dashboard
+  const cdDash=$('close-day-dash-inline');
+  if(cdDash){
+    const closed=DB.get('closed-days')||{};
+    if(!closed[today]){
+      cdDash.style.display='flex';
+      cdDash.innerHTML=`<button onclick="closeDayFromDash()" style="background:var(--accent);color:#000;font-weight:700;font-size:12px;padding:8px 16px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">🌙 ÎNCHIDE ZIUA</button>`;
+    } else {
+      cdDash.style.display='none';
+    }
+  }
+  const alerts=getAlerts();
+  const dal=$('dal');
+  if(dal)dal.innerHTML=alerts.slice(0,4).map(a=>{
+    const arrow=a.nav?'<div style="font-size:20px;color:var(--text3);flex-shrink:0;margin-left:8px">›</div>':'';
+    const onclick=a.nav?` onclick="goTo('${a.nav}')" style="cursor:pointer"`:'';
+    return `<div class="abox ${a.t}"${onclick}><div class="ai2">${a.i}</div><div style="flex:1"><div class="at2">${a.tt}</div><div class="as2">${a.s}</div></div>${arrow}</div>`;
+  }).join('');
+  const kw=$('kw');if(kw){kw.textContent=dW?dW.toFixed(1):'—';$('kws').textContent=todW?'kg azi':dW?'kg (ultima)':'kg';}
+  const kl=$('kl2');if(kl)kl.textContent=dW?(SW-dW).toFixed(1):'—';
+  if(trend!==null){
+    const kt=$('kt'),kts=$('kts');
+    if(kt)kt.textContent=(trend>0?'+':'')+trend.toFixed(2);
+    if(kts)kts.textContent=trend<=-0.3&&trend>=-1.2?'kg/7z ✅':trend<-1.2?'kg/7z ⚠ rapid':'kg/7z ⚠ lent';
+  } else {
+    const need=Math.max(0,4-dates.length);
+    const kt=$('kt');if(kt)kt.textContent=need>0?`${need}`:dates.length;
+    const kts=$('kts');if(kts)kts.textContent=need>0?'zile până la trend':'zile date';
+  }
+  const kpib=$('kpi-days-box');
+  if(kpib){
+    if(pilotActive){$('kpi-days-label').textContent='TDEE Real';$('kd').textContent=SYS.estimateTDEE();$('kpi-days-sub').textContent='kcal mentenanță';}
+    else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie → pilot';}
+  }
+  const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
+  if(dv){
+    if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZĂ ${n} ZILE`:'1800 KCAL';dr.textContent=n>0?`${n} zile până la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
+    else if(trend<-1.2){dv.textContent='CREȘTE LA 1950 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+    else if(trend>-0.3){dv.textContent='SCADE LA 1700 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
+    else{dv.textContent='MENȚINE 1800 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
+  }
+  const filled=Math.min(dates.length,8);
+  // Weekly workouts counter
+  const weekStart=new Date();weekStart.setDate(weekStart.getDate()-weekStart.getDay());
+  const allLogs=DB.get('logs')||[];
+  const workoutDaysThisWeek=[...new Set(allLogs.filter(l=>!l.baseline&&new Date(l.date)>=weekStart).map(l=>l.date))].length;
+  const scheduledDays=5; // Mon OFF, Sun OFF → 5 workout days
+  const wwEl=$('weekly-workouts');
+  if(wwEl)wwEl.innerHTML=`
+    <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Săptămâna asta</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1">${workoutDaysThisWeek}<span style="font-size:16px;color:var(--text3)">/${scheduledDays}</span></div>
+    <div style="font-size:9px;color:var(--text3);margin-top:2px">antrenamente</div>`;
+  const streakMsgs=['0/8 – începe azi','1/8 – prima zi! Continuă mâine','2/8 – 2 zile, creierul observă','3/8 – încă 5 zile','4/8 – jumătate. NU RATA','5/8 – 3 zile rămase','6/8 – NU RATA. 2 zile','7/8 – O ZI. NU RATA','8/8 – ✅ Trend activ'];
+  const cwl=$('cwl');if(cwl)cwl.textContent=streakMsgs[Math.min(filled,8)];
+  const cpf=$('cpf');if(cpf)cpf.style.width=(filled/8*100)+'%';
+  const cwd=$('cwd');if(cwd)cwd.innerHTML=Array.from({length:8},(_,i)=>`<div class="dot ${i<filled?'ok':''}">${i<filled?'✓':i+1}</div>`).join('');
+  const last14=dates.slice(-14).map(d=>ws[d]);
+  const mc=$('mc');
+  if(mc){if(last14.length>1){const mn=Math.min(...last14)-.3,mx=Math.max(...last14)+.3;mc.innerHTML=last14.map((w,i)=>`<div class="bar ${i===last14.length-1?'t':'f'}" style="height:${Math.round(((w-mn)/(mx-mn))*55+8)}px"></div>`).join('');}
+  else mc.innerHTML='<div style="color:var(--text3);font-size:11px;align-self:center">Completează zilnic</div>';}
+  renderFatigueScore('fatigue-score-dash');
+  const dt2=$('dt2');
+  if(dt2){const todayProg=tp;
+    if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
+    else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
+  }
+}
+
+export function getAlerts(){
+  const alerts=[],ws=DB.get('weights')||{},logs=DB.get('logs')||[],today=tod();
+  const dates=Object.keys(ws).sort();
+  const now=new Date(),PILOT=new Date('2026-07-20'),pilotActive=now>=PILOT;
+  const daysToCheckpoint=Math.round((PILOT-now)/86400000);
+  if(!pilotActive&&daysToCheckpoint<=7&&daysToCheckpoint>0)
+    alerts.push({t:'y',i:'⏰',tt:`CHECKPOINT ÎN ${daysToCheckpoint} ZILE`,s:'Pe 20 iulie sistemul preia controlul kcal.'});
+  if(today==='2026-07-20')
+    alerts.push({t:'g',i:'🤖',tt:'PILOT AUTOMAT ACTIV',s:`TDEE: ${SYS.estimateTDEE()} kcal · Fază: ${SYS.getPhase()} · Kcal: ${SYS.getKcalTarget()}`});
+  if(pilotActive&&SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15&&!DB.get('phase-override'))
+    alerts.push({t:'y',i:'⚠️',tt:'BF >15% dar faza e mentenanță',s:'Override la CUT din tab Plan'});
+  const wb=DB.get('wellbeing')||{},todWell=wb[today]||{};
+  if(todWell.sleep&&todWell.sleep<=2) alerts.push({t:'y',i:'😴',tt:'SOMN PROST AZI',s:'RPE artificial ridicat. Nu crești greutatea azi.'});
+  const waters=DB.get('waters')||{};
+  // hidratare alert eliminat
+  const prots=DB.get('prots')||{},todProt=prots[today];
+  if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
+  else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
+  const suppList=DB.get('suppl-list')||DEFAULT_SUPPL,suppTaken=DB.get('suppl-taken-v2')||{};
+  const todTaken=suppTaken[today]||{},suppDone=Object.values(todTaken).filter(Boolean).length;
+  if(suppList.length>0&&suppDone<suppList.length&&dates.length>=1)
+    alerts.push({t:'o',i:'💊',tt:`SUPLIMENTE: ${suppDone}/${suppList.length}`,s:'Apasă pentru a bifa',nav:'weight'});
+  if(dates.length>=3&&!ws[today]) alerts.push({t:'r',i:'🚨',tt:'GREUTATE NELOGATĂ AZI',s:'Dimineața pe nemâncat → tab Greutate.'});
+  if(dates.length>=7){const l7=dates.slice(-7).map(d=>ws[d]);if(Math.max(...l7)-Math.min(...l7)<0.5) alerts.push({t:'r',i:'🔴',tt:'STAGNARE 7 ZILE',s:'→ scazi 100 kcal AZI'});}
+  const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);
+  const avgRPE=rRPE.length?rRPE.reduce((a,b)=>a+b,0)/rRPE.length:null;
+  if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% săptămâna asta'});
+  const tgt=Math.round((SW-(SW-TW)*Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT)*10)/10;
+  const todW=ws[today];
+  if(todW&&todW<=tgt+0.2&&!alerts.find(a=>a.t==='r')) alerts.push({t:'g',i:'✅',tt:'PE TRASEU',s:`${todW.toFixed(1)} kg · Ținta azi: ${tgt.toFixed(1)} kg`});
+  return alerts;
+}
+
+export function closeDayFromDash(){
+  const ws=DB.get('weights')||{}, kcals=DB.get('kcals')||{}, dates=Object.keys(ws).sort();
+  const closed=DB.get('closed-days')||{};
+  closed[tod()]=true; DB.set('closed-days',closed);
+  const p=calcProjection(ws,kcals,dates);
+  // Show projection in dashboard
+  const cdDash=$('close-day-dash-inline');
+  if(cdDash){
+    const pColor=p.gaining?'var(--red)':Math.abs(p.rate)<0.2?'var(--accent2)':Math.abs(p.rate)>1.2?'var(--accent3)':'var(--green)';
+    cdDash.innerHTML=`<div style="background:rgba(200,255,0,0.05);border:1px solid var(--accent);border-radius:var(--r);padding:14px 16px">
+      <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✅ ZIUA ÎNCHISĂ · PROIECȚIE</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg2w}kg</div>
+          <div style="font-size:9px;color:var(--text3)">2 SĂPTĂMÂNI</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px;border:1px solid ${pColor}44">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg4w}kg</div>
+          <div style="font-size:9px;color:var(--text3)">4 SĂPTĂMÂNI</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg8w}kg</div>
+          <div style="font-size:9px;color:var(--text3)">8 SĂPTĂMÂNI</div>
+        </div>
+      </div>
+      <div id="dash-proj-msg" style="font-size:12px;color:var(--text2);line-height:1.5;padding:10px;background:var(--bg3);border-radius:var(--rs)"></div>
+    </div>`;
+    // Fill message
+    const el=$('dash-proj-msg');
+    if(el){
+      if(p.gaining) el.innerHTML='⚠️ <strong style="color:var(--red)">Trend de creștere</strong> – verifică kcal';
+      else if(Math.abs(p.rate)<0.2) el.innerHTML='⚠️ <strong style="color:var(--accent2)">Scădere prea lentă</strong> – scade 100 kcal';
+      else if(Math.abs(p.rate)>1.2) el.innerHTML='⚡ <strong style="color:var(--accent3)">Scădere prea rapidă</strong> – adaugă 150 kcal';
+      else el.innerHTML=`✅ <strong style="color:var(--green)">Ritm perfect</strong> – ${Math.abs(p.rate).toFixed(2)} kg/săpt · continui`;
+    }
+  }
+}
+
+export function updateNotifBtn(active) {
+  const btn = $('notif-btn');
+  if (!btn) return;
+  if (active) {
+    btn.innerHTML = '🔔 Notificări ACTIVE';
+    btn.style.background = 'rgba(48,209,88,0.12)';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+  } else {
+    btn.innerHTML = '🔕 Notificări INACTIVE';
+    btn.style.background = 'rgba(255,59,48,0.08)';
+    btn.style.borderColor = 'var(--red)';
+    btn.style.color = 'var(--red)';
+  }
+}
+
+export async function requestNotifications() {
+  if (!('Notification' in window)) { toast('⚠ Browser-ul nu suportă notificări', 'var(--accent2)'); return; }
+  
+  // Toggle: dacă e activ, dezactivează
+  const isEnabled = DB.get('notif-enabled');
+  if (Notification.permission === 'granted' && isEnabled) {
+    DB.set('notif-enabled', false);
+    updateNotifBtn(false);
+    toast('🔕 Notificări dezactivate', 'var(--accent2)');
+    return;
+  }
+  
+  if (Notification.permission === 'granted') { 
+    scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); 
+    toast('✅ Notificări active', 'var(--green)'); return; 
+  }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări activate!', 'var(--green)'); }
+  else { updateNotifBtn(false); toast('⚠ Permisiune refuzată', 'var(--accent2)'); }
+}
