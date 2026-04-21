@@ -497,9 +497,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div><div class="pt">GREUTATE</div><div class="ps">Dimineața, pe nemâncat</div></div>
       <div style="display:flex;align-items:center;gap:6px">
         <button onclick="shiftLogDate(-1)" style="width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
-        <div id="log-date-display" style="font-size:12px;color:var(--accent);font-family:'JetBrains Mono',monospace;min-width:60px;text-align:center">AZI</div>
+        <div id="log-date-display" onclick="toggleDatePicker()" style="font-size:12px;color:var(--accent);font-family:'JetBrains Mono',monospace;min-width:60px;text-align:center;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" title="Tap pentru calendar">AZI</div>
         <button onclick="shiftLogDate(+1)" id="log-date-fwd" style="width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
       </div>
+    </div>
+    <!-- Calendar picker -->
+    <div id="date-picker-wrap" style="display:none;padding:10px 16px 0">
+      <input type="date" id="date-picker-input"
+        style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--accent);border-radius:var(--rs);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none"
+        onchange="selectDateFromPicker(this.value)"/>
     </div>
   </div>
   <div class="wi">
@@ -3254,28 +3260,38 @@ function renderFatigueScore(containerId) {
   // Arată mereu cardul — chiar și fără date suficiente
   el.style.display = 'block';
 
+  // Determine display label and color based on score
+  let displayLabel = f.label;
+  let displayColor = f.color;
+  let displayIcon = f.icon;
+  let displayDetail = f.detail;
+  
   if (f.recommend === 'none') {
-    el.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg3);border-radius:var(--rs);border:1px solid var(--border)">
-        <div style="font-size:20px">🧠</div>
-        <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text2)">FATIGUE SCORE</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Disponibil după 2 antrenamente cu note RPE</div>
-        </div>
-        <div style="margin-left:auto;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text3)">—</div>
-      </div>`;
-    return;
+    displayLabel = 'DATE INSUFICIENTE';
+    displayColor = 'var(--text3)';
+    displayIcon = '🧠';
+    displayDetail = 'Disponibil după 2 antrenamente cu note RPE';
+  } else if (f.score <= 15) {
+    displayLabel = 'RECUPERARE EXCELENTĂ';
+    displayColor = 'var(--green)';
+    displayIcon = '🟢';
+    displayDetail = `Scor ${f.score}/100 · Ești odihnit și pregătit · Poți împinge la maxim azi`;
+  } else if (f.score <= 30) {
+    displayLabel = 'FORMĂ BUNĂ';
+    displayColor = 'var(--green)';
+    displayIcon = '🟢';
+    displayDetail = `Scor ${f.score}/100 · Recuperare ok · Progresează normal`;
   }
 
   el.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${f.color}10;border-radius:var(--rs);border:1px solid ${f.color}33">
-      <div style="font-size:24px;flex-shrink:0">${f.icon}</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${displayColor}10;border-radius:var(--rs);border:1px solid ${displayColor}33">
+      <div style="font-size:24px;flex-shrink:0">${displayIcon}</div>
       <div style="flex:1">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${f.color};letter-spacing:1px">${f.label}</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5">${f.detail}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${displayColor};letter-spacing:1px">${displayLabel}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5">${displayDetail}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${f.color};line-height:1">${f.score}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${displayColor};line-height:1">${f.recommend === 'none' ? '—' : f.score}</div>
         <div style="font-size:9px;color:var(--text3)">/ 100</div>
       </div>
     </div>`;
@@ -3454,13 +3470,25 @@ async function syncFromFirebase() {
     if(data[k] === undefined) return;
     const local = DB.get(k);
     
-    // For weights/kcals/prots: merge - don't overwrite today's local entry
+    // For weights/kcals/prots/waters: merge - don't overwrite today's local entry
     if(['weights','kcals','prots','waters'].includes(k) && local) {
       const merged = Object.assign({}, data[k], {});
-      // Keep local today if exists
       if(local[today]) merged[today] = local[today];
       else Object.assign(merged, local);
       DB.set(k, merged);
+    
+    // For wellbeing: preserve today's local data
+    } else if(k === 'wellbeing') {
+      const merged = Object.assign({}, data[k] || {});
+      if(local && local[today]) merged[today] = local[today]; // keep today's sleep/energy
+      DB.set(k, merged);
+
+    // For suppl-taken-v2: preserve today's local checkmarks
+    } else if(k === 'suppl-taken-v2') {
+      const merged = Object.assign({}, data[k] || {});
+      if(local && local[today]) merged[today] = local[today]; // keep today's checkmarks
+      DB.set(k, merged);
+
     } else if(k === 'logs') {
       // Merge logs by timestamp
       const localLogs = local || [];
@@ -3511,14 +3539,7 @@ function getAdaptiveTime(dayLabel) {
   return avg;
 }
 
-function getDisplayTime(prog) {
-  if (!prog) return null;
-  const adaptive = getAdaptiveTime(prog.day);
-  if (adaptive) return `~${adaptive} min`;
-  // Fallback to theoretical
-  if (prog.tm) return prog.tm.includes('min') ? prog.tm : `~${prog.tm}`;
-  return null;
-}
+
 
 // ── INJECT MFP WEIGHT HISTORY ─────────────────────────────────────────────
 function injectMFPWeights() {
@@ -3557,6 +3578,92 @@ function releaseWakeLock() {
 window.requestWakeLock = requestWakeLock;
 window.releaseWakeLock = releaseWakeLock;
 
+
+// ── CALCUL TIMP ANTRENAMENT PRECIS ────────────────────────────────────────
+function calcAccurateTime(prog) {
+  if(!prog || !prog.ex || prog.ex.length === 0) return null;
+  
+  const COMPOUND_EX_LIST = ['Lat Pulldown','Cable Row','Incline DB Press',
+    'DB Shoulder Press','Flat DB Press','Chest-Supported Row','Romanian Deadlift',
+    'Leg Press','RDL'];
+  
+  let totalSeconds = 0;
+  
+  prog.ex.forEach(ex => {
+    const isCompound = COMPOUND_EX_LIST.some(c => ex.n && ex.n.includes(c.split(' ')[0]));
+    
+    // Parse sets from string like "4×8-12" or "3×15-20"
+    const setsMatch = ex.s ? ex.s.match(/^(\d+)/) : null;
+    const sets = setsMatch ? parseInt(setsMatch[1]) : 3;
+    
+    // Time per set (seconds)
+    const setTime = isCompound ? 45 : 30;
+    
+    // Rest time (seconds)  
+    const restTime = isCompound ? 180 : 90;
+    
+    // Total per exercise: sets × set_time + (sets-1) × rest + transition
+    const exTime = sets * setTime + (sets - 1) * restTime + 30; // 30s transition
+    totalSeconds += exTime;
+  });
+  
+  // Add: warmup (5min) + final cooldown (3min) + between-exercise transitions
+  totalSeconds += 8 * 60;
+  
+  return Math.round(totalSeconds / 60); // return minutes
+}
+
+function getDisplayTime(prog) {
+  if (!prog) return null;
+  
+  // After 3+ sessions: use adaptive average
+  const adaptive = getAdaptiveTime(prog.day);
+  if (adaptive) return `~${adaptive} min`;
+  
+  // Calculate accurately from program structure  
+  const accurate = calcAccurateTime(prog);
+  if (accurate) return `~${accurate} min`;
+  
+  // Fallback to stored tm
+  if (prog.tm) return prog.tm.includes('min') ? prog.tm : `~${prog.tm}`;
+  return null;
+}
+
+// ── DATE PICKER ────────────────────────────────────────────────────────────
+function toggleDatePicker() {
+  const wrap = $('date-picker-wrap');
+  if (!wrap) return;
+  const isVisible = wrap.style.display !== 'none';
+  wrap.style.display = isVisible ? 'none' : 'block';
+  if (!isVisible) {
+    // Set current date in picker
+    const input = $('date-picker-input');
+    if (input) {
+      input.value = getLogDate();
+      input.max = tod(); // can't select future
+      const minDate = new Date();
+      minDate.setDate(minDate.getDate() - 30);
+      input.min = minDate.toISOString().split('T')[0];
+    }
+  }
+}
+
+function selectDateFromPicker(dateStr) {
+  if (!dateStr) return;
+  const today = tod();
+  const selected = dateStr;
+  // Calculate offset from today
+  const todayMs = new Date(today).getTime();
+  const selectedMs = new Date(selected).getTime();
+  logDateOffset = Math.round((selectedMs - todayMs) / 86400000);
+  logDateOffset = Math.max(-30, Math.min(0, logDateOffset));
+  $('date-picker-wrap').style.display = 'none';
+  syncLogDateUI();
+  renderWeight();
+}
+
+window.toggleDatePicker = toggleDatePicker;
+window.selectDateFromPicker = selectDateFromPicker;
 // ── NAVIGATION HELPER ──────────────────────────────────────────────────────
 function navigateTo(page) {
   const navMap = {
