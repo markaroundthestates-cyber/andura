@@ -663,6 +663,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px">
     <button onclick="exportCSV()" style="padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">📊 CSV</button>
     <button onclick="exportJSON()" style="padding:14px;background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.3);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">💾 BACKUP</button>
+    <button onclick="cleanFakeLogs()" style="padding:14px;background:rgba(255,59,48,0.05);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;grid-column:1/-1">🧹 CURĂȚĂ LOGURI FALSE</button>
     <button onclick="triggerMFPImport()" style="grid-column:1/-1;padding:14px;background:rgba(200,255,0,0.05);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
       📲 Import MyFitnessPal (ZIP sau CSV)
     </button>
@@ -1291,14 +1292,33 @@ const DP = {
   }, // end _recommendRaw
 
   // In-session RPE correction: if 2 sets RPE 10 → drop weight now
-  checkInSessionAdjust(ex, recentRPEs) {
+  checkInSessionAdjust(ex, recentRPEs, recentReps) {
+    const state = this.getState(ex);
+    const inc = this.getIncrement(ex);
+    const [, rMax] = this.getRepsRange ? this.getRepsRange(ex) : [8, 12];
+
+    // Prea greu: 2× RPE 10 → scade imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
-      const state = this.getState(ex);
-      const inc = this.getIncrement(ex);
       const newKg = this.roundToStep(Math.max(1, state.lastW - inc), ex);
-      return { adjust: true, newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
+      return { adjust: true, dir: 'down', newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
+    }
+    // Prea ușor: 2× RPE ≤6 și reps > rMax → crește imediat
+    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6)) {
+      const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
+      if (lastReps >= rMax) {
+        const newKg = this.roundToStep(state.lastW + inc, ex);
+        return { adjust: true, dir: 'up', newKg, msg: `2× RPE 6 + reps maxime → crește la ${newKg}kg ACUM` };
+      }
     }
     return { adjust: false };
+  },
+
+  getRepsRange(ex) {
+    const COMPOUND_EX_LOCAL = ['Lat Pulldown','Cable Row','Chest-Supported Row','Incline DB Press','Flat DB Press','DB Shoulder Press'];
+    const LEGS_EX = ['Leg Press','Leg Curl','Leg Extension','Romanian Deadlift','Calf Raises'];
+    if (LEGS_EX.includes(ex)) return [10, 15];
+    if (COMPOUND_EX_LOCAL.includes(ex)) return [8, 12];
+    return [10, 15];
   }
 };
 
@@ -2086,11 +2106,23 @@ function selectRPE(rpe){
   const ssc=$('sess-progress-txt');if(ssc)ssc.textContent=`${completedExercises.size}/${sessionTotalExercises||getTodayExercises().length}`;
 
   // In-session RPE 10 × 2 → immediate adjust
-  const thisExSessRPEs=sessLog.filter(s=>s.ex===currentEx).map(s=>s.rpe);
-  const inSessAdj=DP.checkInSessionAdjust(currentEx,thisExSessRPEs);
+  const thisExSessLogs=sessLog.filter(s=>s.ex===currentEx);
+  const thisExSessRPEs=thisExSessLogs.map(s=>s.rpe);
+  const thisExSessReps=thisExSessLogs.map(s=>s.reps||0);
+  const inSessAdj=DP.checkInSessionAdjust(currentEx,thisExSessRPEs,thisExSessReps);
   if(inSessAdj.adjust){
-    showCoachFlash('dn',`↓ SCADE AZI LA ${inSessAdj.newKg} KG`,`2× RPE 10 la ${currentEx}. Ajustare imediată.`);
-    speak(`Prea greu. Scade la ${inSessAdj.newKg} kilograme.`);
+    if(inSessAdj.dir==='down'){
+      showCoachFlash('dn',`SCADE AZI LA ${inSessAdj.newKg} KG`,`2× RPE 10 — prea greu`);
+      speak(`Prea greu. Scade la ${inSessAdj.newKg} kilograme.`);
+    } else {
+      showCoachFlash('up',`CREȘTE AZI LA ${inSessAdj.newKg} KG`,`2× RPE 6 — prea ușor`);
+      speak(`Ușor. Crește la ${inSessAdj.newKg} kilograme.`);
+    }
+    // Forțează greutatea pentru setul următor
+    sessionKgOverride = inSessAdj.newKg;
+    // Actualizează afișajul imediat
+    const kgEl = $('rec-kg-big');
+    if(kgEl) { kgEl.textContent = inSessAdj.newKg; kgEl.style.color = inSessAdj.dir==='down'?'var(--red)':'var(--green)'; }
   } else {
     showFlashFeedback(rpe, logKg, currentEx);
   }
@@ -2499,6 +2531,39 @@ function saveProt() {
 }
 
 // ══════════════ EXPORT CSV ══════════════
+// Curăță loguri din sesiuni anulate sau cu date absurde
+function cleanFakeLogs() {
+  const logs = DB.get('logs') || [];
+  const before = logs.length;
+
+  // Găsim sesiunile complete (care au 3+ seturi per exercițiu)
+  const sessions = {};
+  logs.filter(l => !l.baseline).forEach(l => {
+    if (!sessions[l.session]) sessions[l.session] = [];
+    sessions[l.session].push(l);
+  });
+
+  // O sesiune e validă dacă are cel puțin 3 seturi la cel puțin 1 exercițiu
+  const validSessions = new Set(
+    Object.entries(sessions)
+      .filter(([, sets]) => {
+        const bySets = {};
+        sets.forEach(s => { bySets[s.ex] = (bySets[s.ex]||0)+1; });
+        return Object.values(bySets).some(n => n >= 2);
+      })
+      .map(([sid]) => sid)
+  );
+
+  const cleaned = logs.filter(l => l.baseline || validSessions.has(l.session));
+  DB.set('logs', cleaned);
+  const removed = before - cleaned.length;
+  toast(`✅ Curățat ${removed} loguri false (${cleaned.length} rămase)`, 'var(--green)');
+  renderCoachIdle();
+  renderDash();
+  console.log(`cleanFakeLogs: ${before} → ${cleaned.length} (removed ${removed})`);
+}
+window.cleanFakeLogs = cleanFakeLogs;
+
 function exportJSON() {
   const keys = ['logs','weights','kcals','prots','waters','wellbeing',
     'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',

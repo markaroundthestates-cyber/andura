@@ -21,22 +21,23 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Nu cachăm PUT/POST/DELETE - doar GET
   if(e.request.method !== 'GET') return;
-  
+  // Skip chrome-extension și alte scheme non-http
+  if(!e.request.url.startsWith('http')) return;
+
   if (e.request.mode === 'navigate') {
     e.respondWith(fetch(e.request).catch(() => caches.match(BASE + '/index.html')));
     return;
   }
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    fetch(e.request)
       .then(r => {
-        if (r) {
+        if (r && r.status === 200) {
           const rc = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, rc));
-          return r;
+          caches.open(CACHE).then(c => c.put(e.request, rc)).catch(()=>{});
         }
-        return caches.match(BASE + '/index.html');
+        return r;
       })
+      .catch(() => caches.match(e.request).then(r => r || caches.match(BASE + '/index.html')))
   );
 });
