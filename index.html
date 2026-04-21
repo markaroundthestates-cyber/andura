@@ -552,12 +552,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div style="margin-top:10px;font-size:11px;color:var(--text3);text-align:center" id="kcal-save-note">—</div>
   </div>
 
-  <!-- ÎNCHIDE ZIUA + PROIECȚIE -->
-  <div style="margin:0 16px 12px">
-    <button onclick="closeDay()" id="close-day-btn" style="width:100%;padding:15px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--r);color:var(--text2);font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.3px">
-      🌙 ÎNCHIDE ZIUA
-    </button>
-  </div>
+  <!-- ÎNCHIDE ZIUA - mutat in Dashboard -->
   <!-- PROIECȚIE BOX — apare după închidere -->
   <div id="projection-box" style="display:none;margin:0 16px 12px;border-radius:var(--r);overflow:hidden;border:2px solid var(--accent)">
     <div id="verdict-slot"></div>
@@ -655,11 +650,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Energie azi</div>
         <div style="display:flex;gap:4px" id="energy-stars">
-          <span class="star-btn" onclick="setEnergy(1)" data-v="1" style="font-size:24px;cursor:pointer;opacity:0.3">⚡</span>
-          <span class="star-btn" onclick="setEnergy(2)" data-v="2" style="font-size:24px;cursor:pointer;opacity:0.3">⚡</span>
-          <span class="star-btn" onclick="setEnergy(3)" data-v="3" style="font-size:24px;cursor:pointer;opacity:0.3">⚡</span>
-          <span class="star-btn" onclick="setEnergy(4)" data-v="4" style="font-size:24px;cursor:pointer;opacity:0.3">⚡</span>
-          <span class="star-btn" onclick="setEnergy(5)" data-v="5" style="font-size:24px;cursor:pointer;opacity:0.3">⚡</span>
+          <span class="star-btn" onclick="setEnergy(1)" data-v="1" title="Epuizat" style="font-size:24px;cursor:pointer;opacity:0.3">🔋</span>
+          <span class="star-btn" onclick="setEnergy(2)" data-v="2" title="Obosit" style="font-size:24px;cursor:pointer;opacity:0.3">😓</span>
+          <span class="star-btn" onclick="setEnergy(3)" data-v="3" title="Normal" style="font-size:24px;cursor:pointer;opacity:0.3">😐</span>
+          <span class="star-btn" onclick="setEnergy(4)" data-v="4" title="Energic" style="font-size:24px;cursor:pointer;opacity:0.3">💪</span>
         </div>
         <div id="energy-label" style="font-size:11px;color:var(--text3);margin-top:6px">— netastat</div>
       </div>
@@ -843,9 +837,9 @@ const EX_REPS={'DB Shoulder Press':'6–10','Incline DB Press':'6–10','Flat DB
 
 const PROG=[
   {day:'Luni',t:'off',lb:'OFF',tm:null,ex:[]},
-  {day:'Marți',t:'free',lb:'PULL · Spate + Biceps',tm:'~75 min',ex:[{n:'Lat Pulldown – wide grip',s:'4×8–12',g:'spate'},{n:'Cable Row – neutral grip',s:'3×8–12',g:'spate'},{n:'Face Pulls (rope)',s:'3×15–20',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},{n:'Bayesian Curl (cable)',s:'3×10–12',g:'brate'}]},
-  {day:'Miercuri',t:'lim',lb:'PUSH · Umeri + Piept',tm:'MAX 65 MIN',ex:[{n:'DB Shoulder Press',s:'3×6–10',g:'umeri'},{n:'Incline DB Press',s:'4×6–10',g:'piept'},{n:'Pec Deck / Cable Crossover',s:'3×12–15',g:'piept'},{n:'Lateral Raises (cable)',s:'3×12–15',g:'umeri'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'3×12',g:'triceps'}]},
-  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[{n:'Lateral Raises + drop',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},{n:'Cable Curl',s:'3×10–12',g:'brate'},{n:'Preacher Curl',s:'3×10–12',g:'brate'},{n:'Overhead Triceps (cable)',s:'3×10–12',g:'triceps'},{n:'Pushdown – rope',s:'2×12',g:'triceps'}]},
+  {day:'Marți',t:'free',lb:'PULL · Spate + Biceps',tm:'~75 min',ex:[{n:'Lat Pulldown',s:'4×8–12',g:'spate'},{n:'Cable Row',s:'3×8–12',g:'spate'},{n:'Face Pulls',s:'3×15–20',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},{n:'Bayesian Curl',s:'3×10–12',g:'brate'}]},
+  {day:'Miercuri',t:'lim',lb:'PUSH · Umeri + Piept',tm:'MAX 65 MIN',ex:[{n:'DB Shoulder Press',s:'3×6–10',g:'umeri'},{n:'Incline DB Press',s:'4×6–10',g:'piept'},{n:'Pec Deck / Cable Fly',s:'3×12–15',g:'piept'},{n:'Lateral Raises (cable)',s:'3×12–15',g:'umeri'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'3×12',g:'triceps'}]},
+  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[{n:'Lateral Raises + drop',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},{n:'Cable Curl',s:'3×10–12',g:'brate'},{n:'Preacher Curl',s:'3×10–12',g:'brate'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'2×12',g:'triceps'}]},
   {day:'Vineri',t:'free',lb:'UPPER PUMP + PICIOARE',tm:'~90 min',ex:[{n:'Incline DB Press pump',s:'3×12–15',g:'piept'},{n:'Cable Fly',s:'2×15',g:'piept'},{n:'Lateral Raises',s:'4×15–20',g:'umeri'},{n:'Rear Delt Cable',s:'2×15–20',g:'umeri'},{n:'Leg Press',s:'3×15–20',g:'picioare'},{n:'Romanian Deadlift',s:'3×12–15',g:'picioare'},{n:'Leg Curl',s:'3×15–20',g:'picioare'},{n:'Leg Extension',s:'3×15–20',g:'picioare'},{n:'Calf Raises',s:'4×15–20',g:'picioare'}]},
   {day:'Sâmbătă',t:'free',lb:'FULL UPPER',tm:'~110 min',ex:[{n:'DB Shoulder Press',s:'4×6–10',g:'umeri'},{n:'Incline DB Press',s:'3×6–10',g:'piept'},{n:'Flat DB Press',s:'3×8–12',g:'piept'},{n:'Pec Deck / Cable Fly',s:'2×12–15',g:'piept'},{n:'Lat Pulldown',s:'3×8–12',g:'spate'},{n:'Cable Row',s:'3×8–12',g:'spate'},{n:'Chest-Supported Row',s:'2×10–12',g:'spate'},{n:'Lateral Raises (cable)',s:'4×12–15+drop',g:'umeri'},{n:'Rear Delt Fly',s:'3×12–15',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},{n:'Overhead Triceps',s:'3×10–12',g:'triceps'}]},
   {day:'Duminică',t:'off',lb:'OFF COMPLET',tm:null,ex:[]}
@@ -1130,10 +1124,10 @@ const DP = {
     'Cable Curl': 35,
     'Preacher Curl': 30,
     // Triceps
-    'Overhead Triceps': 55, 'Overhead Triceps (cable)': 55,
-    'Pushdown': 55, 'Pushdown – rope': 50,
+    'Overhead Triceps': 55, 'Overhead Triceps': 55,
+    'Pushdown': 55, 'Pushdown': 50,
     // Piept izolație
-    'Pec Deck / Cable Fly': 60, 'Pec Deck / Cable Crossover': 55,
+    'Pec Deck / Cable Fly': 60, 'Pec Deck / Cable Fly': 55,
     // Picioare — Leg Press are mult loc
     'Leg Press': 400, 'Leg Curl': 160, 'Leg Extension': 160, 'Calf Raises': 200,
   },
@@ -1393,7 +1387,7 @@ function renderCoachIdle(){
     const qPct=Math.min(100,Math.round((quest.stepsToday||0)/8000*100));
     const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=`
       <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px">
-        <div style="font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚶 QUEST ZI DE OFF</div>
+        <div style="font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚶 OBIECTIVUL DE AZI</div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--purple);line-height:1">${(quest.stepsToday||0).toLocaleString()}</div>
           <div style="text-align:right">
@@ -1422,7 +1416,7 @@ function renderCoachIdle(){
     // WORKOUT day
     cmdEl.textContent=tp.lb.toUpperCase();
     cmdEl.style.color='var(--accent)';
-    if(timeEl)timeEl.textContent=`${dateStr} · ${tp.tm||''}`;
+    if(timeEl)timeEl.textContent=`${dateStr} · ${getDisplayTime(tp)||''}`;
     if(startBtn){
       startBtn.style.display='flex';
       const totalSets=tp.ex.reduce((a,e)=>{const s=EX_SETS[cleanEx(e.n)];return a+(s||3);},0);
@@ -1596,6 +1590,7 @@ function updateSessionProgress() {
 // ── SESSION FLOW ───────────────────────────────────────────────────────────
 function startSession(){
   sessActive=true;sessStart=Date.now();sessLog=[];sessKcalBurn=0;dropSetUsedThisSession=false;
+  requestWakeLock();
   completedExercises=new Set();
   isMuted=DB.get('muted')||false;
   const mb=$('mute-btn');if(mb){mb.textContent=isMuted?'🔇':'🔊';mb.style.color=isMuted?'var(--accent2)':'var(--text2)';}
@@ -1635,12 +1630,15 @@ function endSession(){
   if(!sessActive)return;
   clearInterval(sessTimer);sessTimer=null;
   stopPause();sessActive=false;
+  releaseWakeLock();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 
   const mins=Math.round((Date.now()-sessStart)/60000);
   const kcal=Math.round(SYS.getCurrentKg()*0.09*mins);
   const burnLog=DB.get('session-burns')||[];
-  burnLog.unshift({date:tod(),mins,kcal,sets:sessLog.length});
+  // Save with day key for adaptive timer
+  const dayKey = PROG[new Date().getDay()===0?6:new Date().getDay()-1]?.day || 'default';
+  burnLog.unshift({date:tod(),mins,kcal,sets:sessLog.length,day:dayKey});
   DB.set('session-burns',burnLog.slice(0,100));
 
   // ── Calculează sumar sesiune ──────────────────────────────────────────────
@@ -2083,7 +2081,7 @@ const INIT_EXERCISES = [
   {ex:'Face Pulls', label:'Face Pulls (cablu, greutate totală)', placeholder:'ex: 41'},
   {ex:'Incline DB Curl', label:'Incline DB Curl (per ganteră)', placeholder:'ex: 10'},
   {ex:'Bayesian Curl', label:'Bayesian Curl (cablu)', placeholder:'ex: 18'},
-  {ex:'Overhead Triceps (cable)', label:'Overhead Triceps (cablu)', placeholder:'ex: 41'},
+  {ex:'Overhead Triceps', label:'Overhead Triceps (cablu)', placeholder:'ex: 41'},
   {ex:'Pushdown', label:'Pushdown (cablu)', placeholder:'ex: 41'},
   {ex:'Leg Press', label:'Leg Press (greutate totală)', placeholder:'ex: 150'},
 ];
@@ -2403,7 +2401,20 @@ function exportCSV() {
 // ══════════════ NOTIFICĂRI ══════════════
 async function requestNotifications() {
   if (!('Notification' in window)) { toast('⚠ Browser-ul nu suportă notificări', 'var(--accent2)'); return; }
-  if (Notification.permission === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări active'); return; }
+  
+  // Toggle: dacă e activ, dezactivează
+  const isEnabled = DB.get('notif-enabled');
+  if (Notification.permission === 'granted' && isEnabled) {
+    DB.set('notif-enabled', false);
+    updateNotifBtn(false);
+    toast('🔕 Notificări dezactivate', 'var(--accent2)');
+    return;
+  }
+  
+  if (Notification.permission === 'granted') { 
+    scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); 
+    toast('✅ Notificări active', 'var(--green)'); return; 
+  }
   const perm = await Notification.requestPermission();
   if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări activate!', 'var(--green)'); }
   else { updateNotifBtn(false); toast('⚠ Permisiune refuzată', 'var(--accent2)'); }
@@ -2570,9 +2581,18 @@ function checkSleepEnergyAlert() {
 }
 
 // ══════════════ SUPLIMENTE ══════════════
-const DEFAULT_SUPPL=['Creatină 6g','Vitamina D','Omega 3'];
+const DEFAULT_SUPPL=['Creatină 6g'];
 function initSuppl() {
-  if(!DB.get('suppl-list')) DB.set('suppl-list',DEFAULT_SUPPL);
+  // Remove old defaults (Vitamina D, Omega 3) if they were auto-added
+  const existing = DB.get('suppl-list');
+  if(!existing) {
+    DB.set('suppl-list', DEFAULT_SUPPL);
+  } else {
+    // Clean up old auto-defaults if user didn't manually add them
+    const cleaned = existing.filter(s => s !== 'Vitamina D' && s !== 'Omega 3');
+    if(cleaned.length === 0) cleaned.push('Creatină 6g');
+    DB.set('suppl-list', cleaned);
+  }
   renderSuppl();
 }
 function renderSuppl() {
@@ -3474,7 +3494,63 @@ async function initFirebaseSync() {
 window.syncToFirebase = syncToFirebase;
 window.syncFromFirebase = syncFromFirebase;
 
-// ── NAVIGATION HELPER ─────────────────────────────────────────────────────
+
+// ── ADAPTIVE SESSION TIME ─────────────────────────────────────────────────
+function getAdaptiveTime(dayLabel) {
+  const burns = DB.get('session-burns') || [];
+  const dayBurns = burns.filter(b => b.day === dayLabel && b.mins > 10).slice(0, 5);
+  if (dayBurns.length < 3) return null; // not enough data yet
+  const avg = Math.round(dayBurns.reduce((a,b) => a + b.mins, 0) / dayBurns.length);
+  return avg;
+}
+
+function getDisplayTime(prog) {
+  if (!prog) return null;
+  const adaptive = getAdaptiveTime(prog.day);
+  if (adaptive) return `~${adaptive} min`;
+  // Fallback to theoretical
+  if (prog.tm) return prog.tm.includes('min') ? prog.tm : `~${prog.tm}`;
+  return null;
+}
+
+// ── INJECT MFP WEIGHT HISTORY ─────────────────────────────────────────────
+function injectMFPWeights() {
+  const ws = DB.get('weights') || {};
+  // Only inject if we don't have historical data
+  const dates = Object.keys(ws).sort();
+  const hasHistory = dates.some(d => d < '2026-04-20');
+  if (hasHistory) return;
+  
+  // Daniel's MFP weight history (from imported CSV)
+  const mfpWeights = {
+    '2026-04-15': 112.0,
+    '2026-04-16': 111.8,
+    '2026-04-17': 111.4,
+    '2026-04-18': 110.8,
+    '2026-04-19': 110.2,
+  };
+  
+  Object.assign(ws, mfpWeights);
+  DB.set('weights', ws);
+  console.log('✓ MFP weight history injected');
+}
+// ── WAKE LOCK ──────────────────────────────────────────────────────────────
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('✓ Wake Lock activ');
+    }
+  } catch(e) { console.log('Wake Lock:', e.message); }
+}
+function releaseWakeLock() {
+  try { if(wakeLock) { wakeLock.release(); wakeLock = null; } } catch(e) {}
+}
+window.requestWakeLock = requestWakeLock;
+window.releaseWakeLock = releaseWakeLock;
+
+// ── NAVIGATION HELPER ──────────────────────────────────────────────────────
 function navigateTo(page) {
   const navMap = {
     coach: document.getElementById('nav-coach'),
@@ -3760,9 +3836,43 @@ function renderDash(){
 // ══════════════ PROGRAM ══════════════
 function renderProg(){
   const pc=$('pc');if(!pc)return;
+
+  // Muscle group emoji map
+  const muscleEmoji = {
+    'spate': '🔙', 'piept': '💪', 'umeri': '🔝',
+    'brate': '💪', 'triceps': '💪', 'picioare': '🦵',
+    'core': '⚡', 'umeri+brate': '🔝'
+  };
+
+  // Day colors — consistent per day
+  const dayColors = {
+    'Luni':    {bg:'rgba(80,80,80,0.15)', border:'rgba(120,120,120,0.3)', text:'var(--text3)'},
+    'Marți':   {bg:'rgba(0,212,255,0.08)', border:'rgba(0,212,255,0.25)', text:'var(--accent3)'},
+    'Miercuri':{bg:'rgba(200,255,0,0.08)', border:'rgba(200,255,0,0.25)', text:'var(--accent)'},
+    'Joi':     {bg:'rgba(191,90,242,0.08)', border:'rgba(191,90,242,0.25)', text:'var(--purple)'},
+    'Vineri':  {bg:'rgba(255,107,53,0.08)', border:'rgba(255,107,53,0.25)', text:'var(--accent2)'},
+    'Sâmbătă': {bg:'rgba(48,209,88,0.08)', border:'rgba(48,209,88,0.25)', text:'var(--green)'},
+    'Duminică':{bg:'rgba(80,80,80,0.15)', border:'rgba(120,120,120,0.3)', text:'var(--text3)'},
+  };
+
   pc.innerHTML=PROG.map(day=>{
-    if(day.t==='off')return `<div class="db"><div class="dtag off">${day.day} – OFF</div><div style="padding:10px 14px;font-size:12px;color:var(--text3)">Recuperare activă</div></div>`;
-    return `<div class="db"><div class="dtag ${day.t}">${day.day} · ${day.lb}${day.tm?` · ${day.tm}`:''}</div><div class="el">${day.ex.map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g||''}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}</div></div>`;
+    const col = dayColors[day.day] || {bg:'var(--card)', border:'var(--border)', text:'var(--text2)'};
+    if(day.t==='off') return `
+      <div style="margin:0 16px 10px;background:${col.bg};border:1px solid ${col.border};border-radius:var(--r);padding:12px 16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:${col.text};margin-bottom:4px">😴 ${day.day} — OFF</div>
+        <div style="font-size:12px;color:var(--text3)">Recuperare activă · Mobilitate · Stretching</div>
+      </div>`;
+    return `
+      <div style="margin:0 16px 10px">
+        <div style="background:${col.bg};border:1px solid ${col.border};border-radius:var(--rs);padding:8px 14px;margin-bottom:6px;display:inline-flex;align-items:center;gap:8px">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:${col.text}">${day.day} · ${day.lb}</span>
+          ${day.tm?`<span style="font-size:10px;color:var(--text3)">· ${day.tm}</span>`:''}
+        </div>
+        <div class="el">${day.ex.map(e=>{
+          const emoji = muscleEmoji[e.g] || '💪';
+          return `<div class="ei"><span style="font-size:14px;margin-right:6px">${emoji}</span><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div></div>`;
+        }).join('')}</div>
+      </div>`;
   }).join('');
 }
 
@@ -3898,14 +4008,14 @@ function injectBaseline() {
     {date:baseDate,ex:'Pec Deck / Cable Fly',w:32,sets:1,reps:'10',rpe:7,ts:t-90000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Pec Deck / Cable Fly',w:32,sets:1,reps:'10',rpe:7,ts:t-91000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Pec Deck / Cable Fly',w:32,sets:1,reps:'10',rpe:7,ts:t-92000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Overhead Triceps (cable)',w:41,sets:1,reps:'10',rpe:7,ts:t-100000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Overhead Triceps (cable)',w:41,sets:1,reps:'10',rpe:7,ts:t-101000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Overhead Triceps (cable)',w:41,sets:1,reps:'10',rpe:7,ts:t-102000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Overhead Triceps',w:41,sets:1,reps:'10',rpe:7,ts:t-100000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Overhead Triceps',w:41,sets:1,reps:'10',rpe:7,ts:t-101000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Overhead Triceps',w:41,sets:1,reps:'10',rpe:7,ts:t-102000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Pushdown',w:41,sets:1,reps:'10',rpe:7,ts:t-110000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Pushdown',w:41,sets:1,reps:'10',rpe:7,ts:t-111000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Pushdown',w:41,sets:1,reps:'10',rpe:7,ts:t-112000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Pushdown – rope',w:41,sets:1,reps:'10',rpe:7,ts:t-120000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Pushdown – rope',w:41,sets:1,reps:'10',rpe:7,ts:t-121000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Pushdown',w:41,sets:1,reps:'10',rpe:7,ts:t-120000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Pushdown',w:41,sets:1,reps:'10',rpe:7,ts:t-121000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Leg Press',w:150,sets:1,reps:'12',rpe:4,ts:t-130000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Leg Press',w:150,sets:1,reps:'12',rpe:4,ts:t-131000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Leg Press',w:150,sets:1,reps:'12',rpe:4,ts:t-132000,session:t-86400000,baseline:true},

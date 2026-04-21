@@ -21,6 +21,13 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Nu cachăm PUT/POST/DELETE - doar GET
+  if(e.request.method !== 'GET') return;
+  
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).catch(() => caches.match(BASE + '/index.html')));
+    return;
+  }
   e.respondWith(
     fetch(e.request).catch(() => caches.match(e.request))
       .then(r => {
