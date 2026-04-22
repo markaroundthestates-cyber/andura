@@ -48,7 +48,7 @@ export const SYS = {
 
   estimateTDEE() {
     const ws = DB.get('weights') || {};
-    const dates = Object.keys(ws).sort();
+    const dates = Object.keys(ws).sort((a, b) => a.localeCompare(b));
     if (dates.length < 10) {
       // Mifflin-St Jeor estimate
       const kg = this.getCurrentKg();

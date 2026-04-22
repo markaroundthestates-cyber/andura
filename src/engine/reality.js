@@ -15,18 +15,26 @@ export function getRealityCheck() {
   const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
   const trend = Math.round(slope * 7 * 100) / 100; // kg per week
 
-  // Plateau: 7 consecutive days without weight decrease
-  if (dates.length >= 7) {
-    const last7 = dates.slice(-7).map(d => ws[d]);
-    const firstVal = last7[0];
-    const allNonDecreasing = last7.every(v => v >= firstVal - 0.05);
-    if (allNonDecreasing) {
-      return {
-        type: 'plateau',
-        icon: '🔴',
-        color: 'var(--red)',
-        message: 'Nicio scădere în 7 zile. Timp să ajustezi ceva.'
-      };
+  // Plateau: no meaningful decrease over a span of at least 7 calendar days.
+  // We check that: (a) we have at least 4 weigh-in entries, (b) the oldest of
+  // those entries is at least 7 calendar days ago, and (c) no entry is lower
+  // than the first by more than 0.05 kg (noise threshold).
+  // This avoids false plateaus when the user simply hasn't logged every day.
+  if (dates.length >= 4) {
+    const spanDays = Math.round(
+      (new Date(dates[dates.length - 1]) - new Date(dates[0])) / 86400000
+    );
+    if (spanDays >= 7) {
+      const firstVal = vals[0];
+      const allNonDecreasing = vals.every(v => v >= firstVal - 0.05);
+      if (allNonDecreasing) {
+        return {
+          type: 'plateau',
+          icon: '🔴',
+          color: 'var(--red)',
+          message: 'Nicio scădere în 7+ zile. Timp să ajustezi ceva.'
+        };
+      }
     }
   }
 

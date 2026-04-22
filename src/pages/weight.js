@@ -425,7 +425,6 @@ async function importMFPMeasurementCSV(text) {
 async function importMFPZip(file) {
   // ZIP import requires JSZip — not available, show informative message
   toast('⚠ Import ZIP: folosește CSV individual din MFP Export', 'var(--accent2)');
-  console.warn('ZIP import not supported — please export individual CSV files from MFP');
 }
 
 export function triggerMFPImport(){
@@ -448,7 +447,6 @@ export function triggerMFPImport(){
         await importMFPNutritionCSV(await file.text());
       }
     } catch(err) {
-      console.error(err);
       toast('⚠ Eroare la import: ' + err.message, 'var(--accent2)');
     }
   };
@@ -576,12 +574,19 @@ export function clearBFOverride() {
   toast('✓ BF override șters', 'var(--accent)');
 }
 
+// TODO: implement water tracking (currently not shown in UI)
 function initWater() {}
+// TODO: implement supplement tracking (currently not shown in UI)
 function initSuppl() {}
+// TODO: sync weight display with curW on page render
 function syncW() {}
+// TODO: render photo grid from 'photos' DB key into #photo-grid
 function renderPhotos() {}
+// TODO: show visual indicator if day is already closed
 function checkClosedDay() {}
+// TODO: render sleep/energy wellbeing inputs
 function renderSleepEnergy() {}
+// TODO: alert if sleep/energy below threshold
 function checkSleepEnergyAlert() {}
 function renderChart() {
   const canvas = $('weight-chart');
@@ -892,6 +897,7 @@ export function hideSessionDetail() {
   if (detailView) detailView.style.display = 'none';
 }
 
+// TODO: render supplement checklist from 'suppl-list' DB key
 function renderSuppl() {}
 
 function renderSessionHistory() {

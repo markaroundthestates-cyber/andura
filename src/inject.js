@@ -74,7 +74,6 @@ export function injectBaseline() {
   
   DB.set('logs', baseline);
   DB.set('onboarding-done', true);
-  console.log('✓ Baseline Daniel injectat:', baseline.length, 'seturi');
 }
 
 export function injectMFPWeights() {
@@ -95,5 +94,4 @@ export function injectMFPWeights() {
   
   Object.assign(ws, mfpWeights);
   DB.set('weights', ws);
-  console.log('✓ MFP weight history injected');
 }

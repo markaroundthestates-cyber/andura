@@ -271,11 +271,10 @@ export const DP = {
     return { adjust: false };
   },
 
+  // Returns rep range for ex — delegates to REP_RANGES for consistency.
+  // Previously had a hard-coded local lookup that returned [10,15] for legs
+  // instead of the correct [15,20] defined in REP_RANGES. Fixed.
   getRepsRange(ex) {
-    const COMPOUND_EX_LOCAL = ['Lat Pulldown','Cable Row','Chest-Supported Row','Incline DB Press','Flat DB Press','DB Shoulder Press'];
-    const LEGS_EX = ['Leg Press','Leg Curl','Leg Extension','Romanian Deadlift','Calf Raises'];
-    if (LEGS_EX.includes(ex)) return [10, 15];
-    if (COMPOUND_EX_LOCAL.includes(ex)) return [8, 12];
-    return [10, 15];
+    return this.REP_RANGES[ex] || [8, 12];
   }
 };

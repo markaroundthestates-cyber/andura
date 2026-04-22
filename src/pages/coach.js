@@ -9,8 +9,6 @@ import { toast, beep, beepDone, beepAlert, speak, showCoachFlash, showFlashFeedb
 import { state } from '../state.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 
-const muscleEmoji = { spate:'🔵', piept:'🟡', umeri:'🟠', brate:'🟤', picioare:'🟢', triceps:'⚪' };
-
 let wakeLock = null;
 
 // FIX 4: Exercise list dropdown — toggle per day index
@@ -47,16 +45,11 @@ function renderFatigueScore(elId) {
   el.style.display = 'block';
   el.innerHTML = `<span style="color:${f.color};font-size:11px;font-weight:600">${f.icon||''} ${f.label}</span><div style="font-size:10px;color:var(--text3);margin-top:2px">${f.detail}</div>`;
 }
+// TODO: render alerts into #today-alerts element (coach page)
 function renderTodayAlerts() {}
+// TODO: update session clock (#sess-clock) and kcal (#sess-kcal) every second
 function tickSess() {}
 function beepStart() { if (typeof beep === 'function') beep(660, 0.1); }
-const dayColors = {
-  'Marți':   {bg:'rgba(10,132,255,0.06)', border:'rgba(10,132,255,0.2)',  text:'rgba(10,132,255,0.9)'},
-  'Miercuri':{bg:'rgba(200,255,0,0.06)',  border:'rgba(200,255,0,0.2)',   text:'rgba(200,255,0,0.9)'},
-  'Joi':     {bg:'rgba(255,149,0,0.06)',  border:'rgba(255,149,0,0.2)',   text:'rgba(255,149,0,0.9)'},
-  'Vineri':  {bg:'rgba(48,209,88,0.06)',  border:'rgba(48,209,88,0.2)',   text:'rgba(48,209,88,0.9)'},
-  'Sâmbătă': {bg:'rgba(191,90,242,0.06)',border:'rgba(191,90,242,0.2)', text:'rgba(191,90,242,0.9)'},
-};
 
 
 export function renderCoachIdle(){
@@ -343,7 +336,11 @@ export function confirmReps(){
   renderSessLog();
 }
 
-export function selectRPE(rpe){ /* no-op — RPE collected only at end-of-session via rateSession */ }
+// selectRPE is called from HTML RPE buttons but is intentionally a no-op:
+// RPE is collected at end-of-session via rateSession() as a single global rating,
+// not per-set. The RPE screen in HTML is still shown for UI consistency but
+// the buttons don't save individual set RPE values.
+export function selectRPE(rpe){ }
 
 export function startPause(sec, nextEx=''){
   stopPause();
@@ -432,7 +429,8 @@ export function endSession(){
   const kcal=Math.round(SYS.getCurrentKg()*0.09*mins);
   const burnLog=DB.get('session-burns')||[];
   // Save with day key for adaptive timer
-  const dayKey = PROG[new Date().getDay()===0?6:new Date().getDay()-1]?.day || 'default';
+  const _dayMap = [6,0,1,2,3,4,5];
+  const dayKey = PROG[_dayMap[new Date().getDay()]]?.day || 'default';
   burnLog.unshift({date:tod(),mins,kcal,sets:state.sessLog.length,day:dayKey});
   DB.set('session-burns',burnLog.slice(0,100));
 
@@ -868,9 +866,6 @@ export function cleanFakeLogs() {
 
   const logs = DB.get('logs') || [];
   const before = logs.length;
-  const cleaned = logs.filter(l => !l.baseline);
-  const cleanedFull = logs.filter(l => l.baseline);
-  // Păstrează baseline + toate non-baseline (curăță doar baseline-urile din loc greșit)
   // Logica corectă: elimină doar logurile cu session singleton (test rapid)
   const sessions = {};
   logs.filter(l => !l.baseline).forEach(l => {
@@ -888,7 +883,6 @@ export function cleanFakeLogs() {
   toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
   renderCoachIdle();
   if (window.renderDash) window.renderDash();
-  console.log(`cleanFakeLogs: ${before} → ${result.length} (removed ${removed})`);
 }
 
 // ── FIX 2b: Finish Early — funcții ───────────────────────────────────────
@@ -1019,7 +1013,6 @@ export async function requestWakeLock() {
   try {
     if ('wakeLock' in navigator) {
       wakeLock = await navigator.wakeLock.request('screen');
-      console.log('✓ Wake Lock activ');
     }
-  } catch(e) { console.log('Wake Lock:', e.message); }
+  } catch(e) { /* Wake Lock not available — silently ignore */ }
 }

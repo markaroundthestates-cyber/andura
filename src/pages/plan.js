@@ -8,15 +8,6 @@ import { toast } from '../ui/ui.js';
 import { renderUnifiedHistory } from './weight.js';
 import { renderDash } from './dashboard.js';
 
-const dayColors = {
-  'Marți':   {bg:'rgba(10,132,255,0.06)', border:'rgba(10,132,255,0.2)',  text:'rgba(10,132,255,0.9)'},
-  'Miercuri':{bg:'rgba(200,255,0,0.06)',  border:'rgba(200,255,0,0.2)',   text:'rgba(200,255,0,0.9)'},
-  'Joi':     {bg:'rgba(255,149,0,0.06)',  border:'rgba(255,149,0,0.2)',   text:'rgba(255,149,0,0.9)'},
-  'Vineri':  {bg:'rgba(48,209,88,0.06)',  border:'rgba(48,209,88,0.2)',   text:'rgba(48,209,88,0.9)'},
-  'Sâmbătă': {bg:'rgba(191,90,242,0.06)',border:'rgba(191,90,242,0.2)', text:'rgba(191,90,242,0.9)'},
-
-};
-
 export function renderPlan() {
   const bf = SYS.getBF();
   const phase = SYS.getPhase();

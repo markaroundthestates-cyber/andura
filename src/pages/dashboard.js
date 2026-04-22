@@ -68,22 +68,22 @@ export function renderDash(){
   const ctaLabel=tp.t==='off'?'ODIHNĂ AZI':!todW?'LOG GREUTATE ▶':'ANTRENAMENT ▶';
   const ctaAction=tp.t==='off'?null:!todW?`sp('weight',document.querySelectorAll('.nb')[2])`:`sp('coach',document.querySelectorAll('.nb')[0])`;
   const dd=$('dd');if(dd)dd.textContent=now.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long'});
-  // Brutal alerts
-  const _prots = DB.get('prots')||{}, _kcals2 = DB.get('kcals')||{}, _ws2 = DB.get('weights')||{};
-  const _last3 = Array.from({length:3},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
-  const _last7 = Array.from({length:7},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
-  const _protBelow = _last3.filter(d=>_prots[d]!==undefined&&_prots[d]<160).length;
-  const _kcalBelow = _last3.filter(d=>_kcals2[d]!==undefined&&_kcals2[d]<1500).length;
-  const _wVals = _last7.map(d=>_ws2[d]).filter(Boolean);
-  const _wStagnant = _wVals.length>=5&&(Math.max(..._wVals)-Math.min(..._wVals))<0.3;
-  const _recentRPEs = (DB.get('logs')||[]).filter(l=>!l.baseline&&l.rpe).slice(0,15).map(l=>l.rpe);
-  const _avgRPE = _recentRPEs.length?_recentRPEs.reduce((a,b)=>a+b,0)/_recentRPEs.length:0;
-  let _brutAlerts=[];
-  if(_protBelow>=2) _brutAlerts.push({msg:`NU MĂNÂNCI DESTUL PROTEINĂ. PIERZI MASĂ.`,sub:`${_protBelow}/3 zile sub 160g`,color:'var(--red)'});
-  if(_kcalBelow>=2) _brutAlerts.push({msg:`DEFICIT EXTREM. METABOLISMUL ÎNCETINEȘTE.`,sub:`${_kcalBelow}/3 zile sub 1500 kcal`,color:'var(--red)'});
-  if(_wStagnant) _brutAlerts.push({msg:`TREND STAGNEAZĂ. VERIFICĂ KCAL ȘI SOMN.`,sub:`7 zile fără schimbare reală`,color:'var(--accent2)'});
-  if(_avgRPE>8.5) _brutAlerts.push({msg:`RPE MEDIU PREA MARE. SCADE GREUTATEA.`,sub:`Medie ${_avgRPE.toFixed(1)} — risc supraantrenament`,color:'var(--accent2)'});
-  const _alertHtml = _brutAlerts.length ? (()=>{const a=_brutAlerts[Math.floor(Date.now()/8000)%_brutAlerts.length];return `<div style="padding:14px 16px;background:${a.color}18;border-left:4px solid ${a.color};margin-bottom:8px"><div style="font-size:13px;font-weight:700;color:${a.color};letter-spacing:.5px">⚠ ${a.msg}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${a.sub}</div></div>`;})() : '';
+  // Brutal alerts — uses fresh reads to avoid stale closure values
+  const alertProts = DB.get('prots')||{}, alertKcals = DB.get('kcals')||{}, alertWs = DB.get('weights')||{};
+  const last3Days = Array.from({length:3},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
+  const last7Days = Array.from({length:7},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
+  const protBelowCount = last3Days.filter(d=>alertProts[d]!==undefined&&alertProts[d]<160).length;
+  const kcalBelowCount = last3Days.filter(d=>alertKcals[d]!==undefined&&alertKcals[d]<1500).length;
+  const recentWeightVals = last7Days.map(d=>alertWs[d]).filter(Boolean);
+  const weightStagnant = recentWeightVals.length>=5&&(Math.max(...recentWeightVals)-Math.min(...recentWeightVals))<0.3;
+  const recentRPEs = (DB.get('logs')||[]).filter(l=>!l.baseline&&l.rpe).slice(0,15).map(l=>l.rpe);
+  const avgRecentRPE = recentRPEs.length?recentRPEs.reduce((a,b)=>a+b,0)/recentRPEs.length:0;
+  let brutAlerts=[];
+  if(protBelowCount>=2) brutAlerts.push({msg:`NU MĂNÂNCI DESTUL PROTEINĂ. PIERZI MASĂ.`,sub:`${protBelowCount}/3 zile sub 160g`,color:'var(--red)'});
+  if(kcalBelowCount>=2) brutAlerts.push({msg:`DEFICIT EXTREM. METABOLISMUL ÎNCETINEȘTE.`,sub:`${kcalBelowCount}/3 zile sub 1500 kcal`,color:'var(--red)'});
+  if(weightStagnant) brutAlerts.push({msg:`TREND STAGNEAZĂ. VERIFICĂ KCAL ȘI SOMN.`,sub:`7 zile fără schimbare reală`,color:'var(--accent2)'});
+  if(avgRecentRPE>8.5) brutAlerts.push({msg:`RPE MEDIU PREA MARE. SCADE GREUTATEA.`,sub:`Medie ${avgRecentRPE.toFixed(1)} — risc supraantrenament`,color:'var(--accent2)'});
+  const _alertHtml = brutAlerts.length ? (()=>{const a=brutAlerts[Math.floor(Date.now()/8000)%brutAlerts.length];return `<div style="padding:14px 16px;background:${a.color}18;border-left:4px solid ${a.color};margin-bottom:8px"><div style="font-size:13px;font-weight:700;color:${a.color};letter-spacing:.5px">⚠ ${a.msg}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${a.sub}</div></div>`;})() : '';
 
   const dcmd=$('daily-cmd');
   if(dcmd)dcmd.innerHTML=_alertHtml+`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
@@ -331,8 +331,6 @@ export function getAlerts(){
     alerts.push({t:'y',i:'⚠️',tt:'BF >15% dar faza e mentenanță',s:'Override la CUT din tab Plan'});
   const wb=DB.get('wellbeing')||{},todWell=wb[today]||{};
   if(todWell.sleep&&todWell.sleep<=2) alerts.push({t:'y',i:'😴',tt:'SOMN PROST AZI',s:'RPE artificial ridicat. Nu crești greutatea azi.'});
-  const waters=DB.get('waters')||{};
-  // hidratare alert eliminat
   const prots=DB.get('prots')||{},todProt=prots[today];
   if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
   else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
