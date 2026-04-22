@@ -1,4 +1,4 @@
-const CACHE = 'salafull-v3';
+const CACHE = 'salafull-v2';
 const BASE = '/salafull';
 const ASSETS = [
   BASE + '/',
@@ -20,30 +20,21 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-function isNetworkFirst(url) {
-  return url.endsWith('.html') || url.endsWith('.js') || url.includes('/assets/');
-}
-
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  if (!e.request.url.startsWith('http')) return;
+  if(e.request.method !== 'GET') return;
+  // Skip chrome-extension și alte scheme non-http
+  if(!e.request.url.startsWith('http')) return;
 
-  // HTML and JS: network-first, no caching — always get fresh version
-  if (e.request.mode === 'navigate' || isNetworkFirst(e.request.url)) {
-    e.respondWith(
-      fetch(e.request, { cache: 'no-store' })
-        .catch(() => caches.match(e.request).then(r => r || caches.match(BASE + '/index.html')))
-    );
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).catch(() => caches.match(BASE + '/index.html')));
     return;
   }
-
-  // Static assets (images, fonts, CSS): network-first, cache as fallback
   e.respondWith(
     fetch(e.request)
       .then(r => {
         if (r && r.status === 200) {
           const rc = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, rc)).catch(() => {});
+          caches.open(CACHE).then(c => c.put(e.request, rc)).catch(()=>{});
         }
         return r;
       })
