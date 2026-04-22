@@ -77,7 +77,7 @@ function showOnboarding() {
 }
 
 const obRPEs = {};
-function setObRPE(idx, rpe) {
+export function setObRPE(idx, rpe) {
   obRPEs[idx] = rpe;
   [7,8,9,10,0].forEach(r => {
     const btn = document.getElementById(`ob-rpe-${idx}-${r}`);
@@ -89,7 +89,7 @@ function setObRPE(idx, rpe) {
   });
 }
 
-function saveOnboarding() {
+export function saveOnboarding() {
   const logs = DB.get('logs') || [];
   const today = new Date().toISOString().split('T')[0];
   let saved = 0;
@@ -121,7 +121,7 @@ function saveOnboarding() {
   renderDash();
 }
 
-function skipOnboarding() {
+export function skipOnboarding() {
   DB.set('onboarding-done', true);
   const el = document.getElementById('onboarding-overlay');
   if (el) el.remove();
