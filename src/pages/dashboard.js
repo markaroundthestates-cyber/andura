@@ -306,11 +306,11 @@ function renderWeightChart() {
       scales: {
         x: {
           grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#555', font: { size: 10, family: "'JetBrains Mono',monospace" }, maxTicksLimit: 8 }
+          ticks: { color: '#aaa', font: { size: 10, family: "'JetBrains Mono',monospace" }, maxTicksLimit: 8 }
         },
         y: {
           grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#555', font: { size: 10, family: "'JetBrains Mono',monospace" }, callback: v => v + ' kg' }
+          ticks: { color: '#aaa', font: { size: 10, family: "'JetBrains Mono',monospace" }, callback: v => v + ' kg' }
         }
       }
     }

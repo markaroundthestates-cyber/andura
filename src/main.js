@@ -21,7 +21,7 @@ import { saveW, saveKcal, adjKcal, setKcalDirect,
          selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride,
          renderDailyDropdown, showDayDetail, closeDayDetail,
          renderSessionsDropdown, showSessionDetail, hideSessionDetail } from './pages/weight.js';
-import { cleanFakeLogs, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall } from './pages/coach.js';
+import { cleanFakeLogs, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall, togglePRWall, toggleExList } from './pages/coach.js';
 import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
@@ -47,7 +47,7 @@ Object.assign(window, {
   updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt,
   renderDailyDropdown, showDayDetail, closeDayDetail,
   renderSessionsDropdown, showSessionDetail, hideSessionDetail,
-  renderPRWall,
+  renderPRWall, togglePRWall, toggleExList,
   sp: goTo, __v: 6,
 });
 

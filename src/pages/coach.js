@@ -13,7 +13,16 @@ const muscleEmoji = { spate:'🔵', piept:'🟡', umeri:'🟠', brate:'🟤', pi
 
 let wakeLock = null;
 
+// FIX 4: Exercise list dropdown — toggle per day index
+let exListExpanded = {};
+
 export function resetNotes() { state.activeNotes.clear(); }
+
+// FIX 4: Toggle exercise list expansion per day index
+export function toggleExList(dayIdx) {
+  exListExpanded[dayIdx] = !exListExpanded[dayIdx];
+  renderCoachIdle();
+}
 
 export function toggleMute() {
   state.isMuted = !state.isMuted;
@@ -123,19 +132,26 @@ export function renderCoachIdle(){
     // Check muscle lagging alerts
     const laggingAlerts=checkMuscleBalance()||[];
 
-    // Exercise preview with weights + lagging badges
+    // FIX 4: Exercise preview with weights + lagging badges + dropdown if >5 exercises
     const exList=tp.ex||[];
+    // Use today's day index (dayMap index) as the key for expansion state
+    const todayDayIdx=dayMap[new Date().getDay()];
+    const isExpanded=!!exListExpanded[todayDayIdx];
+    const SHOW_LIMIT=4;
+    const showAll=isExpanded||exList.length<=SHOW_LIMIT;
+    const visibleEx=showAll?exList:exList.slice(0,SHOW_LIMIT);
+    const hiddenCount=exList.length-SHOW_LIMIT;
     const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=`
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
       </div>`:''}
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 12px;overflow:hidden">
-        ${exList.map((e,i)=>{
+        ${visibleEx.map((e,i)=>{
           const cleanName=cleanEx(e.n);
           const rec=AA.applyTo(DP.recommend(cleanName), cleanName);
           const hasHistory=DP.getLogs(cleanName,1).length>0;
-          const isLagging=laggingAlerts.some(a=>a.includes(getExGroup(cleanName)));
-          return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;${i<exList.length-1?'border-bottom:1px solid var(--border)':''}">
+          const isLast=i===visibleEx.length-1&&!(exList.length>SHOW_LIMIT);
+          return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;${!isLast?'border-bottom:1px solid var(--border)':''}">
             <div style="width:6px;height:6px;border-radius:50%;background:${getGroupColor(e.g)};flex-shrink:0"></div>
             <div style="flex:1">
               <div style="font-size:13px;font-weight:500">${cleanName}</div>
@@ -147,6 +163,9 @@ export function renderCoachIdle(){
             </div>`:`<div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace">NOU</div>`}
           </div>`;
         }).join('')}
+        ${exList.length>SHOW_LIMIT?`<div onclick="toggleExList(${todayDayIdx})" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
+          ${isExpanded?'▴ Restrânge':`▾ +${hiddenCount} exerciții`}
+        </div>`:''}
       </div>`;
   }
 
@@ -588,6 +607,10 @@ export function rateSession(rating, summaryData) {
   sRatings.unshift({ session: state.sessStart, rating, date: tod() });
   DB.set('session-ratings', sRatings.slice(0, 20));
 
+  // FIX 1 + FIX 6: Apelează cleanFakeLogs DUPĂ ce ratingul a fost salvat
+  // (nu înainte, nu la load — doar la confirmarea ratingului)
+  cleanFakeLogs();
+
   // Push immediately — don't rely on 3s debounce since user may close app right after rating
   syncToFirebase().catch(() => {});
 
@@ -819,6 +842,13 @@ export function cleanFakeLogs() {
   const logs = DB.get('logs') || [];
   const before = logs.length;
 
+  // FIX 2: Calculează PR per exercițiu (greutatea maximă) ÎNAINTE de cleanup
+  const prMap = {};
+  logs.filter(l => !l.baseline && l.w).forEach(l => {
+    if (!prMap[l.ex] || l.w > prMap[l.ex].w) prMap[l.ex] = l;
+  });
+  const prTs = new Set(Object.values(prMap).map(l => l.ts));
+
   const sessions = {};
   logs.filter(l => !l.baseline).forEach(l => {
     if (!sessions[l.session]) sessions[l.session] = [];
@@ -833,7 +863,8 @@ export function cleanFakeLogs() {
       .map(([sid]) => sid)
   );
 
-  const cleaned = logs.filter(l => l.baseline || validSessions.has(l.session));
+  // Păstrează log-urile valide SAU log-urile PR (protejate de ștergere)
+  const cleaned = logs.filter(l => l.baseline || validSessions.has(l.session) || prTs.has(l.ts));
   DB.set('logs', cleaned);
   const removed = before - cleaned.length;
   toast(`✅ Curățat ${removed} loguri (${cleaned.length} rămase)`, 'var(--green)');
@@ -867,6 +898,14 @@ export function saveStepsQuick(){
   renderCoachIdle();
 }
 
+// FIX 3: PR Wall dropdown — toggle stare locală
+let prWallExpanded = false;
+
+export function togglePRWall() {
+  prWallExpanded = !prWallExpanded;
+  renderPRWall();
+}
+
 export function renderPRWall() {
   const el = $('pr-wall-list');
   if (!el) return;
@@ -893,10 +932,14 @@ export function renderPRWall() {
     return;
   }
 
-  el.innerHTML = entries.map((e, i) => {
+  const visible = prWallExpanded ? entries : entries.slice(0, 3);
+  const hasMore = entries.length > 3;
+
+  el.innerHTML = visible.map((e, i) => {
     const d = new Date(e.date);
     const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
-    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;${i < entries.length-1 ? 'border-bottom:1px solid var(--border)' : ''}">
+    const isLast = i === visible.length - 1 && !hasMore;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;${!isLast ? 'border-bottom:1px solid var(--border)' : ''}">
       <div style="flex:1">
         <div style="font-size:13px;font-weight:700">${e.ex}</div>
         <div style="font-size:11px;color:var(--text3)">${dateStr}</div>
@@ -904,7 +947,9 @@ export function renderPRWall() {
       <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">${e.kg} kg</div>
       <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps||'—'}</div>
     </div>`;
-  }).join('');
+  }).join('') + (hasMore ? `<div onclick="togglePRWall()" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
+    ${prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}
+  </div>` : '');
 }
 
 export function releaseWakeLock() {

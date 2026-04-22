@@ -568,7 +568,7 @@ function renderChart() {
   });
 
   // x-axis labels (first and last date)
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
   ctx.font = '10px JetBrains Mono, monospace';
   ctx.textAlign = 'left';
   const d0 = new Date(dates[0]);
