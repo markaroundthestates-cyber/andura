@@ -3,7 +3,7 @@ import { applyTheme, getActiveTheme } from './themes/themeManager.js';
 import { initFirebaseSync } from './firebase.js';
 import { DP } from './engine/dp.js';
 import { AA } from './engine/aa.js';
-import { injectBaseline, injectMFPWeights } from './inject.js';
+import { injectBaseline, injectMFPWeights, injectRealSessions } from './inject.js';
 import { initW, initKcal, initProt } from './pages/weight.js';
 import { renderCoachIdle, checkWeightReminder, closeSummary } from './pages/coach.js';
 import { renderDash } from './pages/dashboard.js';
@@ -59,6 +59,7 @@ Object.assign(window, {
   saveReadiness, getTodayReadiness,
   dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
+  injectRealSessions,
   sp: goTo, __v: 6,
 });
 
@@ -105,6 +106,11 @@ async function init() {
   await initFirebaseSync();
   injectBaseline();
   injectMFPWeights();
+  const injected = injectRealSessions();
+  if (injected.added > 0) {
+    extractAndSavePRs();
+    console.log(`[inject] +${injected.added} sets added (Apr21=${!injected.had21}, Apr22=${!injected.had22})`);
+  }
   initW();
   initKcal();
   initProt();
