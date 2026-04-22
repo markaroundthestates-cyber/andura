@@ -292,6 +292,7 @@ export const DP = {
 
     // Readiness check: don't increase if tired
     if (readinessScore != null && readinessScore < 60 && result.status === 'INCREASE') {
+      result.kg = this.getState(ex).lastW;
       result.status = 'CONSOLIDATE';
       result.statusLabel = '🟡 CONSOLIDARE REPS';
       result.statusColor = 'var(--accent)';
