@@ -564,7 +564,7 @@ export function rateSession(rating, summaryData) {
   const noteMap = {
     'easy':   ['strong'],
     'normal': [],
-    'hard':   ['fatigue', 'sleep']
+    'hard':   ['fatigue']
   };
   const notes = noteMap[rating] || [];
 

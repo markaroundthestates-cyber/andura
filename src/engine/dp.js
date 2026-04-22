@@ -66,10 +66,10 @@ export const DP = {
     'Cable Curl': 35,
     'Preacher Curl': 30,
     // Triceps
-    'Overhead Triceps': 55, 'Overhead Triceps': 55,
-    'Pushdown': 55, 'Pushdown': 50,
+    'Overhead Triceps': 55,
+    'Pushdown': 55,
     // Piept izolație
-    'Pec Deck / Cable Fly': 60, 'Pec Deck / Cable Fly': 55,
+    'Pec Deck / Cable Fly': 60,
     // Picioare — Leg Press are mult loc
     'Leg Press': 400, 'Leg Curl': 160, 'Leg Extension': 160, 'Calf Raises': 200,
   },

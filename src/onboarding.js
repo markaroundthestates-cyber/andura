@@ -4,6 +4,7 @@ import { COMPOUND_EX } from './constants.js';
 import { DP } from './engine/dp.js';
 import { toast } from './ui/ui.js';
 import { renderCoachIdle } from './pages/coach.js';
+import { renderDash } from './pages/dashboard.js';
 
 // ══════════════ ONBOARDING GREUTĂȚI INIȚIALE ══════════════
 const INIT_EXERCISES = [

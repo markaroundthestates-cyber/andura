@@ -1,9 +1,9 @@
 // ══ DASHBOARD PAGE ═══════════════════════════════════════════
-import { DB, $, tod, fmt } from '../db.js';
+import { DB, $, tod, fmt, cleanEx } from '../db.js';
 import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, DTOT } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
-import { getTrend } from './weight.js';
+import { getTrend, initW } from './weight.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;

@@ -1,11 +1,12 @@
 // ══ PLAN PAGE ════════════════════════════════════════════════
-import { DB, $, tod } from '../db.js';
+import { DB, $, tod, cleanEx } from '../db.js';
 import { PROG, KCAL_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getDisplayTime } from './coach.js';
 import { toast } from '../ui/ui.js';
 import { renderUnifiedHistory } from './weight.js';
+import { renderDash } from './dashboard.js';
 
 const dayColors = {
   'Marți':   {bg:'rgba(10,132,255,0.06)', border:'rgba(10,132,255,0.2)',  text:'rgba(10,132,255,0.9)'},
