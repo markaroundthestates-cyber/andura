@@ -24,7 +24,7 @@ import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
-import { updateNotifBtn, requestNotifications, closeDayFromDash } from './pages/dashboard.js';
+import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt } from './pages/dashboard.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -42,7 +42,7 @@ Object.assign(window, {
   setDone, confirmReps, selectRPE, startSession, cancelWorkout, endSession,
   skipExercise, adjSessionReps, editSessionKg, confirmEditKg, adjSessionKg, confirmSessionKg, rateSession,
   setPhaseOverride, clearPhaseOverride,
-  updateNotifBtn, requestNotifications, closeDayFromDash,
+  updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt,
   sp: goTo, __v: 6,
 });
 

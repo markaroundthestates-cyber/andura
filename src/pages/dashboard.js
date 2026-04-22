@@ -4,10 +4,48 @@ import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, 
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { getTrend } from './weight.js';
+import { calculateFatigueScore } from '../engine/fatigue.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
 let _dashWeightChart = null;
 
+function renderFatigueScore(elId) {
+  const el = $(elId); if (!el) return;
+  const f = calculateFatigueScore();
+  el.innerHTML = `<span style="color:${f.color};font-size:11px;font-weight:600">${f.icon||''} ${f.label}</span><div style="font-size:10px;color:var(--text3);margin-top:2px">${f.detail}</div>`;
+}
+
+function calcProjection(ws, kcals, dates) {
+  if (dates.length < 4) {
+    const lastW = dates.length ? ws[dates[dates.length-1]] : 100;
+    return { gaining: false, rate: 0, kg2w: lastW.toFixed(1), kg4w: lastW.toFixed(1), kg8w: lastW.toFixed(1) };
+  }
+  const recent = dates.slice(-8).map(d => ws[d]);
+  const n = recent.length;
+  const sumX = n*(n-1)/2, sumY = recent.reduce((a,b)=>a+b,0);
+  const sumXY = recent.reduce((s,v,i)=>s+i*v,0), sumX2 = recent.reduce((s,_,i)=>s+i*i,0);
+  const slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX);
+  const lastW = ws[dates[dates.length-1]];
+  return {
+    gaining: slope > 0,
+    rate: Math.round(slope * 7 * 100) / 100,
+    kg2w: (lastW + slope * 14).toFixed(1),
+    kg4w: (lastW + slope * 28).toFixed(1),
+    kg8w: (lastW + slope * 56).toFixed(1),
+  };
+}
+
+function scheduleNotifications() {
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SCHEDULE_NOTIF' });
+  }
+}
+
+
+export function dismissMFPPrompt() {
+  DB.set('mfp-prompt-dismissed', Date.now());
+  renderDash();
+}
 
 export function renderDash(){
   initW();
@@ -62,6 +100,23 @@ export function renderDash(){
     </div>
     ${ctaAction?`<button onclick="${ctaAction}" style="width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif">${ctaLabel}</button>`:'<div style="padding:12px;text-align:center;font-size:12px;color:var(--text2)">Zi de odihnă</div>'}
   </div>`;
+  // MFP periodic prompt every 3 days
+  const mfpEl=$('mfp-prompt-banner');
+  if(mfpEl){
+    const lastDismiss=DB.get('mfp-prompt-dismissed')||0;
+    const show=Date.now()-lastDismiss > 3*86400000;
+    if(show){
+      mfpEl.style.display='block';
+      mfpEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);margin-bottom:8px">
+        <div style="font-size:12px;color:var(--text2);flex:1">📲 Importă datele din MyFitnessPal pentru kcal și proteină exacte</div>
+        <button onclick="triggerMFPImport()" style="background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:6px 12px;border:none;border-radius:var(--rs);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Import MFP</button>
+        <button onclick="dismissMFPPrompt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
+      </div>`;
+    } else {
+      mfpEl.style.display='none';
+    }
+  }
+
   const sb=$('dsb');
   if(sb){if(!dW)sb.innerHTML='';else if(dW<=tgt+0.3)sb.innerHTML='<div class="sbadge on">✅ ON TRACK</div>';
   else if(dW<=tgt+1)sb.innerHTML='<div class="sbadge warn">⚠ ÎN URMĂ</div>';
@@ -247,7 +302,7 @@ export function getAlerts(){
   const prots=DB.get('prots')||{},todProt=prots[today];
   if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
   else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
-  const suppList=DB.get('suppl-list')||DEFAULT_SUPPL,suppTaken=DB.get('suppl-taken-v2')||{};
+  const suppList=DB.get('suppl-list')||[],suppTaken=DB.get('suppl-taken-v2')||{};
   const todTaken=suppTaken[today]||{},suppDone=Object.values(todTaken).filter(Boolean).length;
   if(suppList.length>0&&suppDone<suppList.length&&dates.length>=1)
     alerts.push({t:'o',i:'💊',tt:`SUPLIMENTE: ${suppDone}/${suppList.length}`,s:'Apasă pentru a bifa',nav:'weight'});

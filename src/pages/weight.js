@@ -75,8 +75,13 @@ export function initKcal() {
   const pilotActive = new Date() >= new Date('2026-07-20');
   const sysTarget = pilotActive ? SYS.getKcalTarget() : KCAL_TARGET;
   currentKcal = kcals[today] !== undefined ? kcals[today] : sysTarget;
+  // Auto-save default for today if not yet logged
+  if (state.logDateOffset === 0 && kcals[today] === undefined) {
+    kcals[today] = sysTarget;
+    DB.set('kcals', kcals);
+  }
   syncKcalDisplay();
-  if (state.logDateOffset === 0 && kcals[today] !== undefined) lockKcal(); else unlockKcal();
+  if (state.logDateOffset === 0) lockKcal(); else unlockKcal();
   const noteEl = $('kcal-save-note');
   if (noteEl) {
     if (!pilotActive) {
@@ -224,9 +229,15 @@ export function getKcalTargetForDate(dateStr) {
 
 export function initProt() {
   const prots = DB.get('prots') || {};
-  currentProt = prots[getLogDate()] !== undefined ? prots[getLogDate()] : PROT_TARGET;
+  const today = getLogDate();
+  currentProt = prots[today] !== undefined ? prots[today] : PROT_TARGET;
+  // Auto-save default for today if not yet logged
+  if (state.logDateOffset === 0 && prots[today] === undefined) {
+    prots[today] = PROT_TARGET;
+    DB.set('prots', prots);
+  }
   syncProtDisplay();
-  if (state.logDateOffset === 0 && prots[getLogDate()] !== undefined) lockProt(); else unlockProt();
+  if (state.logDateOffset === 0) lockProt(); else unlockProt();
 }
 
 export function syncProtDisplay() {
@@ -585,20 +596,23 @@ function renderSessionHistory() {
   const burns = DB.get('session-burns') || [];
   const ratings = DB.get('session-ratings') || [];
 
-  // Group logs by session timestamp
+  // Group logs by session timestamp; fall back to date for old logs without session field
   const sessMap = {};
-  logs.filter(l => !l.baseline && l.session).forEach(l => {
-    if (!sessMap[l.session]) sessMap[l.session] = [];
-    sessMap[l.session].push(l);
+  logs.filter(l => !l.baseline).forEach(l => {
+    const key = l.session != null ? String(l.session) : ('date:' + l.date);
+    if (!sessMap[key]) sessMap[key] = [];
+    sessMap[key].push(l);
   });
 
   const sessions = Object.entries(sessMap)
-    .map(([ts, sets]) => {
+    .map(([key, sets]) => {
+      const isDateKey = key.startsWith('date:');
+      const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
       const exCount = new Set(sets.map(s => s.ex)).size;
       const burn = burns.find(b => b.date === date);
-      const rating = ratings.find(r => r.session === Number(ts));
-      return { ts: Number(ts), date, sets: sets.length, exCount,
+      const rating = isDateKey ? null : ratings.find(r => r.session === Number(key));
+      return { ts, date, sets: sets.length, exCount,
         mins: burn?.mins ?? null,
         rating: rating?.rating ?? null };
     })
