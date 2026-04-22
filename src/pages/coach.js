@@ -213,11 +213,7 @@ export function renderCoachIdle(){
       </div>`;
   } else {
     // WORKOUT day
-    // Show readiness modal if not set today
     const todayR = getTodayReadiness();
-    if (todayR === null) {
-      setTimeout(() => showReadinessModal(), 100);
-    }
 
     cmdEl.textContent=tp.lb.toUpperCase();
     cmdEl.style.color='var(--accent)';
@@ -266,13 +262,22 @@ export function renderCoachIdle(){
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
       </div>`:''}
-      ${todayR != null ? `<div style="margin:0 16px 10px;padding:12px 14px;background:${verdict.color}12;border-radius:var(--rs);border:1px solid ${verdict.color}30;display:flex;align-items:center;gap:10px">
+      ${todayR == null ? `<div style="margin:0 16px 10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Cum te simți azi?</div>
+        <div style="display:flex;gap:6px">
+          ${[1,2,3,4,5].map(v => `<button onclick="selectReadiness(${v})" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 2px;cursor:pointer;transition:border-color .15s">
+            <div style="font-size:22px">${READINESS_LABELS[v].emoji}</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:4px;line-height:1.2">${READINESS_LABELS[v].label}</div>
+          </button>`).join('')}
+        </div>
+      </div>` : `<div style="margin:0 16px 10px;padding:12px 14px;background:${verdict.color}12;border-radius:var(--rs);border:1px solid ${verdict.color}30;display:flex;align-items:center;gap:10px">
         <div style="font-size:18px">🧠</div>
         <div style="flex:1">
           <div style="font-size:12px;font-weight:700;color:${verdict.color}">${verdict.label}</div>
           <div style="font-size:11px;color:var(--text3);margin-top:1px">Readiness ${readinessScore}/100${verdict.volumeMultiplier < 1 ? ` · volum ${Math.round(verdict.volumeMultiplier*100)}%` : ''}</div>
         </div>
-      </div>` : ''}
+        <button onclick="showReadinessModal()" style="background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;padding:4px">${READINESS_LABELS[todayR]?.emoji||'✏️'}</button>
+      </div>`}
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 12px;overflow:hidden">
         ${visibleEx.map((e,i)=>{
           const cleanName=cleanEx(e.n);
