@@ -235,6 +235,15 @@
     </div>
   </div>
 
+  <!-- WEIGHT EVOLUTION CHART -->
+  <div style="margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+    <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Evoluție greutate</div>
+    <div style="height:250px;width:100%;position:relative">
+      <canvas id="dash-weight-chart"></canvas>
+    </div>
+    <div id="dash-weight-chart-msg" style="display:none;color:var(--text3);font-size:12px;text-align:center;padding:20px 0"></div>
+  </div>
+
   <!-- ALERTE CLICKABILE -->
   <div id="dal" style="margin:0 16px 10px"></div>
   <div id="fatigue-score-dash" style="display:none;margin:0 16px 10px"></div>
@@ -548,6 +557,7 @@
 </nav>
 <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

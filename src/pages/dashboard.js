@@ -1,5 +1,7 @@
 // ══ DASHBOARD PAGE ═══════════════════════════════════════════
 import { DB, $, tod, fmt } from '../db.js';
+
+let _dashWeightChart = null;
 import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
@@ -124,11 +126,105 @@ export function renderDash(){
   if(mc){if(last14.length>1){const mn=Math.min(...last14)-.3,mx=Math.max(...last14)+.3;mc.innerHTML=last14.map((w,i)=>`<div class="bar ${i===last14.length-1?'t':'f'}" style="height:${Math.round(((w-mn)/(mx-mn))*55+8)}px"></div>`).join('');}
   else mc.innerHTML='<div style="color:var(--text3);font-size:11px;align-self:center">Completează zilnic</div>';}
   renderFatigueScore('fatigue-score-dash');
+  renderWeightChart();
   const dt2=$('dt2');
   if(dt2){const todayProg=tp;
     if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
     else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
   }
+}
+
+function renderWeightChart() {
+  const canvas = document.getElementById('dash-weight-chart');
+  const msgEl = document.getElementById('dash-weight-chart-msg');
+  if (!canvas) return;
+
+  const ws = DB.get('weights') || {};
+  const allDates = Object.keys(ws).sort();
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const filtered = allDates.filter(d => d >= cutoffStr);
+  const dates = filtered.length >= 2 ? filtered : allDates;
+
+  if (dates.length < 2) {
+    canvas.style.display = 'none';
+    if (msgEl) { msgEl.style.display = 'block'; msgEl.textContent = 'Mai ai nevoie de cel puțin 2 cântăriri pentru grafic.'; }
+    return;
+  }
+
+  canvas.style.display = 'block';
+  if (msgEl) msgEl.style.display = 'none';
+
+  const labels = dates.map(d => { const [, m, day] = d.split('-'); return `${day}.${m}`; });
+  const values = dates.map(d => ws[d]);
+  const targetLine = dates.map(() => 101.5);
+
+  if (_dashWeightChart) { _dashWeightChart.destroy(); _dashWeightChart = null; }
+
+  if (typeof window.Chart === 'undefined') return;
+
+  _dashWeightChart = new window.Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Greutate',
+          data: values,
+          borderColor: '#c8ff00',
+          backgroundColor: 'rgba(200,255,0,0.07)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 3,
+          pointBackgroundColor: '#c8ff00',
+          pointBorderColor: '#c8ff00',
+          pointHoverRadius: 5,
+        },
+        {
+          label: 'Target 101.5 kg',
+          data: targetLine,
+          borderColor: 'rgba(255,59,48,0.55)',
+          borderDash: [6, 4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => {
+              const d = dates[items[0].dataIndex];
+              const [y, m, day] = d.split('-');
+              return `${day}.${m}.${y}`;
+            },
+            label: (item) => item.datasetIndex === 0
+              ? `${Number(item.raw).toFixed(1)} kg`
+              : `Target: ${item.raw} kg`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#555', font: { size: 10, family: "'JetBrains Mono',monospace" }, maxTicksLimit: 8 }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#555', font: { size: 10, family: "'JetBrains Mono',monospace" }, callback: v => v + ' kg' }
+        }
+      }
+    }
+  });
 }
 
 export function getAlerts(){
