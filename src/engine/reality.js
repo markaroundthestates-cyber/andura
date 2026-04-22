@@ -1,6 +1,74 @@
 // ══ REALITY CHECK ENGINE ════════════════════════════════════
 import { DB } from '../db.js';
 import { SYS } from './sys.js';
+import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../config/weights.js';
+
+// EXERCISE_TO_EQUIPMENT — include alias 'Pec Deck' (fără '/ Cable Fly') pentru compatibilitate
+const EXERCISE_TO_EQUIPMENT = {
+  ...EXERCISE_EQUIPMENT_MAP,
+  'Pec Deck': 'pec_deck',
+};
+
+export function roundToEquipment(weight, exercise, preferLower = false) {
+  const equipKey = EXERCISE_TO_EQUIPMENT[exercise];
+  if (!equipKey || !EQUIPMENT_WEIGHTS[equipKey]) return weight;
+  const validWeights = EQUIPMENT_WEIGHTS[equipKey];
+  if (preferLower) {
+    const lower = validWeights.filter(w => w <= weight);
+    if (lower.length > 0) return lower[lower.length - 1];
+    return validWeights[0];
+  }
+  return validWeights.reduce((prev, curr) =>
+    Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
+  );
+}
+
+export function getEquipmentForExercise(exerciseName) {
+  return EXERCISE_TO_EQUIPMENT[exerciseName] || null;
+}
+
+export const realityEngine = {
+  validate(session, ctx) {
+    if (!session || !session.exercises) return session;
+    for (const exercise of session.exercises) {
+      if (!exercise.recommendation) continue;
+      const originalWeight = exercise.recommendation.weight;
+      const preferLower = ctx.isInCut;
+      exercise.recommendation.weight = roundToEquipment(originalWeight, exercise.name, preferLower);
+      if (originalWeight !== exercise.recommendation.weight) {
+        exercise.recommendation.realityAdjusted = true;
+        exercise.recommendation.originalWeight = originalWeight;
+      }
+      if (ctx.isInCut && exercise.recommendation.reps > 10) {
+        exercise.recommendation.reps = Math.max(8, exercise.recommendation.reps - 1);
+        exercise.recommendation.repsAdjustedForCut = true;
+      }
+      // Ține greutatea când readiness < 60 — nu crește în zile proaste
+      if (ctx.readiness.score !== null && ctx.readiness.score < 60) {
+        const lastLog = findLastLogForExercise(exercise.name, ctx.recentLogs);
+        if (lastLog && exercise.recommendation.weight > lastLog.weight) {
+          exercise.recommendation.weight = lastLog.weight;
+          exercise.recommendation.heldDueToReadiness = true;
+        }
+      }
+    }
+    // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează regula 1800 kcal
+    if (ctx.user.phase === 'AUTO' && ctx.isBeforeJuly20_2026) {
+      session.realityMessage = 'Menții 1800 kcal ✓';
+      session.suppressTrendMessages = true;
+    }
+    return session;
+  }
+};
+
+function findLastLogForExercise(exerciseName, recentLogs) {
+  for (const session of recentLogs) {
+    // Suportă format test (exercise/weight) și format real (ex/w)
+    const log = session.logs.find(l => (l.exercise || l.ex) === exerciseName);
+    if (log) return { weight: log.weight ?? log.w, ...log };
+  }
+  return null;
+}
 
 export function getRealityCheck() {
   const today = new Date().toISOString().slice(0, 10);
