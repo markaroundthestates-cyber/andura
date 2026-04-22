@@ -1,13 +1,13 @@
 // ══ AA ENGINE — Auto-Adjust (3-session pattern) ═════════════
 import { DB } from '../db.js';
 import { COMPOUND_EX } from '../constants.js';
+import { DP } from './dp.js';
 
 export const AA = {
   // Check last 3 sessions for a given exercise and return adjustment
-  // Analysează notele din ultimele N sesiuni globale (nu per exercițiu)
-  getRecoveryContext() {
+  // ex: exercise name — form signal is per-exercise; sleep/fatigue/strong are global per session
+  getRecoveryContext(ex) {
     const logs = DB.get('logs') || [];
-    // Ultimele 3 sesiuni distincte (după session timestamp)
     const sessions = {};
     logs.filter(l => !l.baseline && l.session).forEach(l => {
       if (!sessions[l.session]) sessions[l.session] = [];
@@ -19,13 +19,15 @@ export const AA = {
 
     if (!last3Sessions.length) return { ok: true, reason: null };
 
-    // Numără notele din ultimele 3 sesiuni
-    const allNotes = last3Sessions.flatMap(s => s.flatMap(l => l.notes || []));
-    const sleepBad = allNotes.filter(n => n === 'sleep').length;
-    const fatigue = allNotes.filter(n => n === 'fatigue').length;
-    const formBad = allNotes.filter(n => n === 'form').length;
-    const strong = allNotes.filter(n => n === 'strong').length;
-    const totalSets = last3Sessions.reduce((a,s) => a + s.length, 0);
+    // Global signals deduplicated per session (1 count per session, not per set)
+    const sleepBad = last3Sessions.filter(s => s.some(l => (l.notes||[]).includes('sleep'))).length;
+    const fatigue  = last3Sessions.filter(s => s.some(l => (l.notes||[]).includes('fatigue'))).length;
+    const strong   = last3Sessions.filter(s => s.some(l => (l.notes||[]).includes('strong'))).length;
+    // Form is per-exercise: only count sessions where this exercise had bad form
+    const exSessions = ex
+      ? last3Sessions.map(s => s.filter(l => l.ex === ex)).filter(s => s.length > 0)
+      : last3Sessions;
+    const formBad = exSessions.filter(s => s.some(l => (l.notes||[]).includes('form'))).length;
 
     // Somn prost în 2+ sesiuni → RPE artificial ridicat, IGNORE decrease
     if (sleepBad >= 2) {
@@ -88,7 +90,7 @@ export const AA = {
     if (logs.length < 4) return null; // not enough real data yet
 
     // ── Citește contextul de recuperare din note ──────────────────────────
-    const recovery = this.getRecoveryContext();
+    const recovery = this.getRecoveryContext(ex);
 
     // Group by session
     const sessions = [];
@@ -187,9 +189,8 @@ export const AA = {
   applyTo(rec, ex) {
     const adj = this.check(ex);
     if (!adj) return rec;
-    const inc = (typeof DP !== 'undefined') ? DP.getIncrement(ex) : 2.5;
-    // Rotunjește la step-ul echipamentului
-    const roundedKg = (typeof DP !== 'undefined') ? DP.roundToStep(adj.newKg, ex) : adj.newKg;
+    const inc = DP.getIncrement(ex);
+    const roundedKg = DP.roundToStep(adj.newKg, ex);
     return {
       ...rec,
       kg: roundedKg,

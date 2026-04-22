@@ -30,7 +30,8 @@ function getAlerts(){
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);
   const avgRPE=rRPE.length?rRPE.reduce((a,b)=>a+b,0)/rRPE.length:null;
   if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% săptămâna asta'});
-  const tgt=Math.round((SW-(SW-TW)*Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT)*10)/10;
+  const daysElapsed=Math.min(DTOT,Math.max(0,Math.round((new Date()-SD2)/86400000)));
+  const tgt=Math.round((SW-(SW-TW)*daysElapsed/DTOT)*10)/10;
   const todW=ws[today];
   if(todW&&todW<=tgt+0.2&&!alerts.find(a=>a.t==='r')) alerts.push({t:'g',i:'✅',tt:'PE TRASEU',s:`${todW.toFixed(1)} kg · Ținta azi: ${tgt.toFixed(1)} kg`});
   return alerts;

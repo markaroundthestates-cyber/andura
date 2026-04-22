@@ -10,7 +10,7 @@ export const SYS = {
 
   getCurrentKg() {
     const ws = DB.get('weights') || {};
-    const dates = Object.keys(ws).sort();
+    const dates = Object.keys(ws).sort((a,b) => a.localeCompare(b));
     if (!dates.length) return this.START_KG;
     return ws[dates[dates.length-1]];
   },
@@ -59,7 +59,9 @@ export const SYS = {
     const w1 = ws[last14[0]], w2 = ws[last14[last14.length-1]];
     const kgLost = w1 - w2;
     const currentKcal = DB.get('current-kcal') || 1800;
-    const dailyDeficit = (kgLost * 7700) / Math.max(1, last14.length);
+    // Use actual calendar days between first and last weigh-in, not count of weigh-in entries
+    const daysElapsed = Math.max(1, Math.round((new Date(last14[last14.length-1]) - new Date(last14[0])) / 86400000));
+    const dailyDeficit = (kgLost * 7700) / daysElapsed;
     return Math.round(Math.max(1800, Math.min(3500, currentKcal + dailyDeficit)));
   },
 

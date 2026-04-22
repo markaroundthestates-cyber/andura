@@ -16,7 +16,7 @@ export function initW(){
   const logDate=getLogDate();
   if(ws[logDate]){curW=ws[logDate];return;}
   // Fall back to last known weight as starting point
-  const dates=Object.keys(ws).sort();
+  const dates=Object.keys(ws).sort((a,b) => a.localeCompare(b));
   if(dates.length) curW=ws[dates[dates.length-1]];
 }
 
