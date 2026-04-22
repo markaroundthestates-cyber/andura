@@ -276,5 +276,36 @@ export const DP = {
   // instead of the correct [15,20] defined in REP_RANGES. Fixed.
   getRepsRange(ex) {
     return this.REP_RANGES[ex] || [8, 12];
+  },
+
+  getIntensityLabel(rir) {
+    if (rir <= 1) return '🔴 La limită';
+    if (rir <= 2) return '🟠 Greu';
+    if (rir <= 3) return '🟡 Provocator';
+    return '🟢 Confortabil';
+  },
+
+  getSmartRecommendation(ex, readinessScore, muscleState) {
+    const base = this.recommend(ex);
+    let result = { ...base };
+    result.intensityLabel = this.getIntensityLabel(result.rir ?? 2);
+
+    // Readiness check: don't increase if tired
+    if (readinessScore != null && readinessScore < 60 && result.status === 'INCREASE') {
+      result.status = 'CONSOLIDATE';
+      result.statusLabel = '🟡 CONSOLIDARE REPS';
+      result.statusColor = 'var(--accent)';
+      result.progressionNote = `Readiness redus (${readinessScore}) — menții ${result.kg}kg`;
+    }
+
+    // Rep range instead of fixed
+    const range = this.REP_RANGES[ex] || [8,12];
+    const [rMin, rMax] = range;
+    const rTarget = result.repsTarget || rMin;
+    const rLow = Math.max(rMin, rTarget - 1);
+    const rHigh = Math.min(rMax + 2, rTarget + 1);
+    result.repsRange = `${rLow}–${rHigh}`;
+
+    return result;
   }
 };

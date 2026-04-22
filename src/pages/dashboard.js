@@ -7,6 +7,8 @@ import { getTrend, initW } from './weight.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getRealityCheck } from '../engine/reality.js';
 import { getAdherenceScore } from '../engine/adherence.js';
+import { getTodayReadiness, saveReadiness, READINESS_LABELS } from '../engine/readiness.js';
+import { getAppliedPatterns, dismissPattern } from '../engine/patternLearning.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
 let _dashWeightChart = null;
@@ -234,6 +236,123 @@ export function renderDash(){
   if(dt2){const todayProg=tp;
     if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
     else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
+  }
+
+  // Readiness quick input banner
+  const rdBanner = $('readiness-banner');
+  if (rdBanner) {
+    const todayR = getTodayReadiness();
+    const hour = new Date().getHours();
+    if (todayR === null && hour >= 6 && tp.t !== 'off') {
+      rdBanner.style.display = 'block';
+      rdBanner.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:12px;color:var(--text2);flex:1">Cum te simți azi?</div>
+        <div style="display:flex;gap:6px">
+          ${[1,2,3,4,5].map(v => `<button onclick="dashSaveReadiness(${v})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:18px">${READINESS_LABELS[v].emoji}</button>`).join('')}
+        </div>
+      </div>`;
+    } else {
+      rdBanner.style.display = 'none';
+    }
+  }
+
+  // Auto-recommendations card
+  const autoRecEl = $('auto-rec-card');
+  if (autoRecEl) {
+    const patterns = getAppliedPatterns().filter(p => Date.now() - p.appliedAt < 14*86400000);
+    if (patterns.length) {
+      autoRecEl.style.display = 'block';
+      autoRecEl.innerHTML = `<div style="background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.15);border-radius:var(--r);padding:14px 16px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="font-size:16px">🤖</div>
+          <div style="font-size:13px;font-weight:700">Am ajustat programul automat</div>
+        </div>
+        ${patterns.slice(0,3).map((p,i) => `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
+          <div style="font-size:11px;color:var(--text3);flex:1">${p.description}</div>
+          <button onclick="dismissAutoPattern(${i})" style="background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;padding:0 4px;flex-shrink:0">✕</button>
+        </div>`).join('')}
+      </div>`;
+    } else {
+      autoRecEl.style.display = 'none';
+    }
+  }
+
+  // Today's session history
+  const sessHistEl = $('today-session-hist');
+  if (sessHistEl) {
+    const allLogs = DB.get('logs') || [];
+    const allBurns = DB.get('session-burns') || [];
+    const today2 = tod();
+    const todayLogs = allLogs.filter(l => !l.baseline && l.date === today2 && l.ex !== '__early_stop__');
+    if (todayLogs.length) {
+      const exMap2 = {};
+      todayLogs.forEach(l => {
+        if (!exMap2[l.ex]) exMap2[l.ex] = [];
+        exMap2[l.ex].push(l);
+      });
+      const burn2 = allBurns.find(b => b.date === today2);
+      const totalVol = todayLogs.reduce((s,l) => s + (l.w||0)*(parseInt(l.reps)||0), 0);
+      sessHistEl.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;font-weight:700">Sesiunea de azi</div>
+          <div style="font-size:11px;color:var(--text3)">${burn2?.mins ? burn2.mins+' min' : ''} · ${Math.round(totalVol/1000*10)/10}t volum</div>
+        </div>
+        ${Object.entries(exMap2).map(([ex,sets]) => {
+          const bestSet = sets.reduce((best,s) => (s.w||0)>(best.w||0)?s:best, sets[0]);
+          return `<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border)">
+            <div style="flex:1;font-size:12px;font-weight:600">${ex}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)">${sets.length}×${bestSet.reps||'?'} @ ${bestSet.w}kg</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    } else if (tp.t !== 'off') {
+      sessHistEl.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin-bottom:8px">
+        <div style="font-size:32px;margin-bottom:10px">💪</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune azi</div>
+        <button onclick="goTo('coach')" style="background:var(--accent);color:#000;font-weight:700;font-size:13px;padding:10px 20px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px">ÎNCEPE ANTRENAMENTUL</button>
+      </div>`;
+    } else {
+      sessHistEl.innerHTML = '';
+    }
+  }
+
+  // 7-day calendar
+  const calEl = $('week-calendar');
+  if (calEl) {
+    const allBurns2 = DB.get('session-burns') || [];
+    const earlyStops2 = DB.get('early-stops') || [];
+    const skips2 = DB.get('workout-skips') || [];
+    const days7 = ['L','M','M','J','V','S','D'];
+    const today3 = new Date();
+    const monday = new Date(today3);
+    monday.setDate(today3.getDate() - ((today3.getDay()+6)%7));
+    calEl.innerHTML = `<div style="display:flex;gap:4px;justify-content:space-between">
+      ${Array.from({length:7},(_,i)=>{
+        const d = new Date(monday); d.setDate(monday.getDate()+i);
+        const dStr = d.toISOString().slice(0,10);
+        const isToday = dStr === tod();
+        const isFuture = d > today3 && !isToday;
+        const hasBurn = allBurns2.some(b=>b.date===dStr);
+        const hasEarly = earlyStops2.some(e=>e.date===dStr);
+        const hasSkip = skips2.some(s=>s.date===dStr);
+        const dayMap2=[6,0,1,2,3,4,5];
+        const PROG_IDX = dayMap2[d.getDay()];
+        const PROG_DAYS_DATA = window.__constants?.PROG || [];
+        const isOff = PROG_DAYS_DATA[PROG_IDX]?.t === 'off';
+        let dotColor = 'var(--bg3)';
+        if (isFuture) dotColor = 'var(--bg3)';
+        else if (isOff) dotColor = 'rgba(80,120,200,0.5)';
+        else if (hasBurn && hasEarly) dotColor = 'var(--accent2)';
+        else if (hasBurn) dotColor = 'var(--green)';
+        else if (hasSkip) dotColor = 'var(--red)';
+        else if (!isFuture) dotColor = 'rgba(255,68,68,0.35)';
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 2px;background:${isToday?'var(--bg3)':'transparent'};border-radius:8px">
+          <div style="font-size:10px;font-weight:${isToday?'700':'400'};color:${isToday?'var(--accent)':'var(--text3)'}">${days7[i]}</div>
+          <div style="width:8px;height:8px;border-radius:50%;background:${dotColor}"></div>
+          <div style="font-size:9px;color:var(--text3)">${d.getDate()}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
   }
 }
 

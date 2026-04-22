@@ -6,7 +6,7 @@ const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebas
 const USER_PATH = 'users/daniel';
 // NOTE: 'photos' is intentionally excluded — base64 images are too large for Firebase RTDB free tier.
 // Photos are stored locally only. Users should be aware they are NOT backed up to the cloud.
-const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','bf-override','phase-override','current-kcal','phase-change-date'];
+const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','bf-override','phase-override','current-kcal','phase-change-date','readiness','unavailable-equipment','peak-hours','session-start-hours','auto-recommendations','applied-recommendations','applied-patterns','session-draft','workout-skips'];
 
 function getDeviceId() {
   let id = localStorage.getItem('device-id');

@@ -1,0 +1,57 @@
+import { DB, tod } from '../db.js';
+
+export const READINESS_LABELS = {
+  1: { emoji: '😴', label: 'Epuizat', sub: 'Somn prost, energie zero' },
+  2: { emoji: '😕', label: 'Obosit',  sub: 'Sub formă normală' },
+  3: { emoji: '😐', label: 'Normal',  sub: 'Ok, standard' },
+  4: { emoji: '😊', label: 'Bine',    sub: 'Somn bun, energie bună' },
+  5: { emoji: '🔥', label: 'Excelent', sub: 'Ready to crush it' },
+};
+
+export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, targetKcal, targetProt) {
+  const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
+  let score = 60 + (readinessPoints[readinessInput] ?? 25);
+
+  if (kcalYesterday != null && targetKcal) {
+    const ratio = kcalYesterday / targetKcal;
+    if (ratio < 0.70) score -= 20;
+    else if (ratio < 0.85) score -= 10;
+    else if (ratio < 0.95) score -= 5;
+  }
+  if (protYesterday != null && targetProt) {
+    const ratio = protYesterday / targetProt;
+    if (ratio < 0.70) score -= 10;
+    else if (ratio < 0.85) score -= 5;
+  }
+  return Math.max(10, Math.min(100, Math.round(score)));
+}
+
+export function getReadinessVerdict(score) {
+  if (score >= 85) return { label: 'Zi de PR', color: 'var(--green)',   volumeMultiplier: 1.1,  canPR: true };
+  if (score >= 70) return { label: 'Sesiune normală', color: 'var(--accent)', volumeMultiplier: 1.0,  canPR: false };
+  if (score >= 55) return { label: 'Sesiune moderată', color: 'var(--accent2)', volumeMultiplier: 0.85, canPR: false };
+  if (score >= 40) return { label: 'Sesiune ușoară', color: 'var(--accent3)', volumeMultiplier: 0.7,  canPR: false };
+  return { label: 'Odihnește-te', color: 'var(--red)', volumeMultiplier: 0, canPR: false };
+}
+
+export function saveReadiness(value) {
+  const all = DB.get('readiness') || {};
+  all[tod()] = Number(value);
+  DB.set('readiness', all);
+}
+
+export function getTodayReadiness() {
+  const all = DB.get('readiness') || {};
+  return all[tod()] ?? null;
+}
+
+export function getComputedReadinessScore() {
+  const r = getTodayReadiness();
+  if (r == null) return null;
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yDate = yesterday.toISOString().slice(0,10);
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  const { KCAL_TARGET, PROT_TARGET } = window.__constants || { KCAL_TARGET: 1800, PROT_TARGET: 180 };
+  return getReadinessScore(r, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
+}
