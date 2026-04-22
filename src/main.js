@@ -60,6 +60,9 @@ async function init() {
   initKcal();
   initProt();
 
+  // Populează pr-records din istoricul complet la fiecare init
+  extractAndSavePRs();
+
   const onboardingDone = DB.get('onboarding-done') || (DB.get('logs') || []).length > 0;
   if (!onboardingDone) {
     checkOnboarding();

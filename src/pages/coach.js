@@ -872,7 +872,7 @@ export function cleanFakeLogs() {
   });
   const validSessions = new Set(
     Object.entries(sessions)
-      .filter(([, sets]) => sets.length >= 2)
+      .filter(([, sets]) => sets.length >= 2 || sets.some(l => l.earlyStop))
       .map(([sid]) => sid)
   );
   const result = logs.filter(l => l.baseline || validSessions.has(l.session));
