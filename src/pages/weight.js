@@ -578,8 +578,15 @@ export function clearBFOverride() {
 function initWater() {}
 // TODO: implement supplement tracking (currently not shown in UI)
 function initSuppl() {}
-// TODO: sync weight display with curW on page render
-function syncW() {}
+function syncW() {
+  // Populate weight input and display with current value if known
+  if (curW > 0) {
+    const wdEl = $('wds');
+    const wdi = $('wdi');
+    if (wdEl) wdEl.textContent = curW.toFixed(1);
+    if (wdi) wdi.value = curW.toFixed(1);
+  }
+}
 // TODO: render photo grid from 'photos' DB key into #photo-grid
 function renderPhotos() {}
 // TODO: show visual indicator if day is already closed
@@ -741,8 +748,11 @@ export function showDayDetail(date) {
   const kc = k !== undefined ? (k > kcalTarget + 200 ? 'var(--accent2)' : k < kcalTarget - 200 ? 'var(--accent3)' : 'var(--green)') : 'var(--text3)';
   const pc = p !== undefined ? (p >= 150 ? 'var(--green)' : 'var(--accent2)') : 'var(--text3)';
 
-  const sleepEmoji = ['', '😴', '😐', '😊', '⚡', '🔥'][well.sleep || 0] || '—';
-  const energyEmoji = ['', '😩', '😐', '🙂', '💪', '🔥'][well.energy || 0] || '—';
+  const hasSleep = well.sleep != null && well.sleep > 0;
+  const hasEnergy = well.energy != null && well.energy > 0;
+  const hasWellbeing = hasSleep || hasEnergy;
+  const sleepEmoji = hasSleep ? (['', '😴', '😐', '😊', '⚡', '🔥'][well.sleep] || '—') : '—';
+  const energyEmoji = hasEnergy ? (['', '😩', '😐', '🙂', '💪', '🔥'][well.energy] || '—') : '—';
 
   panel.style.display = 'block';
   panel.innerHTML = `<div style="margin:0 0 0;border-top:1px solid var(--border);padding:16px">
@@ -763,11 +773,11 @@ export function showDayDetail(date) {
         <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${pc}">${p !== undefined ? p + 'g' : '—'}</div>
       </div>
-      <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
+      ${hasWellbeing ? `<div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
         <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Wellbeing</div>
         <div style="font-size:18px">${sleepEmoji} ${energyEmoji}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:2px">somn · energie</div>
-      </div>
+      </div>` : ''}
     </div>
   </div>`;
 }
@@ -794,13 +804,17 @@ export function renderSessionsDropdown() {
   });
 
   const sessions = Object.entries(sessMap)
+    .filter(([, sets]) => sets.length >= 1 || sets.some(l => l.earlyStop))
     .map(([key, sets]) => {
       const isDateKey = key.startsWith('date:');
       const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
-      const exCount = new Set(sets.map(s => s.ex)).size;
+      // Filter out the internal __early_stop__ placeholder when counting
+      const realSets = sets.filter(s => s.ex !== '__early_stop__');
+      const exCount = new Set(realSets.map(s => s.ex)).size;
+      const hasEarlyStop = sets.some(l => l.earlyStop);
       const burn = burns.find(b => b.date === date);
-      return { key, ts, date, sets: sets.length, exCount, mins: burn?.mins ?? null };
+      return { key, ts, date, sets: realSets.length, exCount, mins: burn?.mins ?? null, earlyStop: hasEarlyStop };
     })
     .sort((a, b) => b.ts - a.ts)
     .slice(0, 10);
@@ -820,7 +834,7 @@ export function renderSessionsDropdown() {
              background:transparent;border:none;cursor:pointer;text-align:left">
       <div style="font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:52px">${dateStr}</div>
       <div style="flex:1">
-        <div style="font-size:12px;font-weight:600;color:var(--text)">${s.exCount} exerciții · ${s.sets} seturi${minsStr}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">${s.exCount} exerciții · ${s.sets} seturi${minsStr}${s.earlyStop ? ' · <span style="color:var(--accent2)">stop timpuriu</span>' : ''}</div>
       </div>
       <div style="font-size:16px;color:var(--text3)">›</div>
     </button>`;

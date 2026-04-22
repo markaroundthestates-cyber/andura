@@ -89,15 +89,15 @@ export function renderDash(){
   if(dcmd)dcmd.innerHTML=_alertHtml+`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)">
       <div style="padding:12px 14px;border-right:1px solid var(--border)">
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Kcal azi</div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Kcal azi</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${kcalColor}">${todayKcal}</div>
       </div>
       <div style="padding:12px 14px;border-right:1px solid var(--border)">
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Antrenament</div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Antrenament</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;line-height:1.2">${workoutToday}</div>
       </div>
       <div style="padding:12px 14px">
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Status</div>
+        <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Status</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${statusColor}">${statusToday}</div>
       </div>
     </div>
@@ -157,12 +157,17 @@ export function renderDash(){
   const kpib=$('kpi-days-box');
   if(kpib){
     if(pilotActive){$('kpi-days-label').textContent='TDEE Real';$('kd').textContent=SYS.estimateTDEE();$('kpi-days-sub').textContent='kcal mentenanță';}
-    else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie → pilot';}
+    else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie';}
   }
   const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
   if(dv){
     if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZĂ ${n} ZILE`:`${sysKcal} KCAL`;dr.textContent=n>0?`${n} zile până la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
-    else if(trend<-1.2){dv.textContent=`CREȘTE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+    else if(trend<-1.2){
+      const kcalDiff=todayKcal-sysKcal;
+      if(todayKcal>=sysKcal+100){dv.textContent=`Depășești cu ${kcalDiff} kcal`;dr.textContent=`Azi: ${todayKcal} kcal · Trend prea rapid`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
+      else if(todayKcal>=sysKcal){dv.textContent=`Menții targetul ✓ · ${todayKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+      else{dv.textContent=`Mărește la ${sysKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+    }
     else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
     else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
     const _phOvr=DB.get('phase-override');
@@ -177,9 +182,9 @@ export function renderDash(){
   const scheduledDays=5; // Mon OFF, Sun OFF → 5 workout days
   const wwEl=$('weekly-workouts');
   if(wwEl)wwEl.innerHTML=`
-    <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Săptămâna asta</div>
+    <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Săptămâna asta</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1">${workoutDaysThisWeek}<span style="font-size:16px;color:var(--text3)">/${scheduledDays}</span></div>
-    <div style="font-size:9px;color:var(--text3);margin-top:2px">antrenamente</div>`;
+    <div style="font-size:12px;color:var(--text3);margin-top:2px">antrenamente</div>`;
   const streakMsgs=['0/8 – începe azi','1/8 – prima zi! Continuă mâine','2/8 – 2 zile, creierul observă','3/8 – încă 5 zile','4/8 – jumătate. NU RATA','5/8 – 3 zile rămase','6/8 – NU RATA. 2 zile','7/8 – O ZI. NU RATA','8/8 – ✅ Trend activ'];
   const cwl=$('cwl');if(cwl)cwl.textContent=streakMsgs[Math.min(filled,8)];
   const cpf=$('cpf');if(cpf)cpf.style.width=(filled/8*100)+'%';
@@ -394,19 +399,19 @@ export function closeDayFromDash(){
   if(cdDash){
     const pColor=p.gaining?'var(--red)':Math.abs(p.rate)<0.2?'var(--accent2)':Math.abs(p.rate)>1.2?'var(--accent3)':'var(--green)';
     cdDash.innerHTML=`<div style="background:rgba(200,255,0,0.05);border:1px solid var(--accent);border-radius:var(--r);padding:14px 16px">
-      <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✅ ZIUA ÎNCHISĂ · PROIECȚIE</div>
+      <div style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✅ ZIUA ÎNCHISĂ · PROIECȚIE</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg2w}kg</div>
-          <div style="font-size:9px;color:var(--text3)">2 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">2 SĂPTĂMÂNI</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px;border:1px solid ${pColor}44">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg4w}kg</div>
-          <div style="font-size:9px;color:var(--text3)">4 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">4 SĂPTĂMÂNI</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg8w}kg</div>
-          <div style="font-size:9px;color:var(--text3)">8 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">8 SĂPTĂMÂNI</div>
         </div>
       </div>
       <div id="dash-proj-msg" style="font-size:12px;color:var(--text2);line-height:1.5;padding:10px;background:var(--bg3);border-radius:var(--rs)"></div>
