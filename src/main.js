@@ -18,8 +18,10 @@ import { saveW, saveKcal, adjKcal, setKcalDirect,
          exportCSV, exportJSON, importJSON, triggerMFPImport,
          toggleHistoryAll, onDI, adj,
          lockWeight, unlockWeight, lockKcal, unlockKcal, lockProt, unlockProt,
-         selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride } from './pages/weight.js';
-import { cleanFakeLogs, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes } from './pages/coach.js';
+         selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride,
+         renderDailyDropdown, showDayDetail, closeDayDetail,
+         renderSessionsDropdown, showSessionDetail, hideSessionDetail } from './pages/weight.js';
+import { cleanFakeLogs, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall } from './pages/coach.js';
 import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
@@ -43,6 +45,9 @@ Object.assign(window, {
   skipExercise, adjSessionReps, editSessionKg, confirmEditKg, adjSessionKg, confirmSessionKg, rateSession,
   setPhaseOverride, clearPhaseOverride,
   updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt,
+  renderDailyDropdown, showDayDetail, closeDayDetail,
+  renderSessionsDropdown, showSessionDetail, hideSessionDetail,
+  renderPRWall,
   sp: goTo, __v: 6,
 });
 

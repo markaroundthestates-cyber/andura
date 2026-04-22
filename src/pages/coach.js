@@ -169,6 +169,7 @@ export function renderCoachIdle(){
 
   renderTodayAlerts();
   renderFatigueScore('fatigue-score-coach');
+  renderPRWall();
 }
 
 export function startSession(){
@@ -864,6 +865,46 @@ export function saveStepsQuick(){
     toast(`✓ ${steps.toLocaleString()} pași`);
   }
   renderCoachIdle();
+}
+
+export function renderPRWall() {
+  const el = $('pr-wall-list');
+  if (!el) return;
+  const logs = DB.get('logs') || [];
+  const nonBaseline = logs.filter(l => !l.baseline && l.w);
+
+  // Per exercise: find the record (max kg), store date + reps
+  const prMap = {};
+  nonBaseline.forEach(l => {
+    const ex = l.ex;
+    const kg = parseFloat(l.w) || 0;
+    const reps = parseInt(l.reps) || 0;
+    if (!prMap[ex] || kg > prMap[ex].kg || (kg === prMap[ex].kg && reps > prMap[ex].reps)) {
+      prMap[ex] = { kg, reps, date: l.date, ts: l.ts || 0 };
+    }
+  });
+
+  const entries = Object.entries(prMap)
+    .map(([ex, data]) => ({ ex, ...data }))
+    .sort((a, b) => b.ts - a.ts || b.date.localeCompare(a.date));
+
+  if (!entries.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Niciun record încă. Completează sesiuni pentru a vedea PR-uri.</div>';
+    return;
+  }
+
+  el.innerHTML = entries.map((e, i) => {
+    const d = new Date(e.date);
+    const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;${i < entries.length-1 ? 'border-bottom:1px solid var(--border)' : ''}">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">${e.ex}</div>
+        <div style="font-size:11px;color:var(--text3)">${dateStr}</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">${e.kg} kg</div>
+      <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps||'—'}</div>
+    </div>`;
+  }).join('');
 }
 
 export function releaseWakeLock() {

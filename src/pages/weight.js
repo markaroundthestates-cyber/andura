@@ -38,6 +38,8 @@ export function renderWeight(){
   }
   renderUnifiedHistory();
   renderSessionHistory();
+  renderDailyDropdown();
+  renderSessionsDropdown();
   renderPhotos();
   renderSleepEnergy();
   checkSleepEnergyAlert();
@@ -588,6 +590,223 @@ function renderChart() {
       <span>max: ${Math.max(...vals).toFixed(1)} kg</span>`;
   }
 }
+// ── FEATURE 4: Dropdown Istoric Zilnic ──────────────────────
+
+export function renderDailyDropdown() {
+  const el = $('daily-dropdown-wrap');
+  if (!el) return;
+
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  const ws = DB.get('weights') || {};
+
+  const allDates = [...new Set([
+    ...Object.keys(ws),
+    ...Object.keys(kcals),
+    ...Object.keys(prots)
+  ])].sort().reverse().slice(0, 30);
+
+  if (!allDates.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio înregistrare în ultimele 30 de zile.</div>';
+    return;
+  }
+
+  el.innerHTML = `<div style="padding:8px 16px 12px">
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Selectează ziua</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${allDates.map(d => {
+        const [, m, day] = d.split('-');
+        const isToday = d === tod();
+        return `<button onclick="showDayDetail('${d}')"
+          style="padding:6px 10px;border-radius:var(--rs);border:1px solid ${isToday ? 'var(--accent)' : 'var(--border)'};
+                 background:${isToday ? 'rgba(200,255,0,0.1)' : 'var(--bg3)'};
+                 color:${isToday ? 'var(--accent)' : 'var(--text2)'};
+                 font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer">
+          ${day}.${m}${isToday ? ' ★' : ''}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>
+  <div id="day-detail-panel" style="display:none"></div>`;
+}
+
+export function showDayDetail(date) {
+  const panel = $('day-detail-panel');
+  if (!panel) return;
+
+  const ws = DB.get('weights') || {};
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  const wb = DB.get('wellbeing') || {};
+
+  const w = ws[date];
+  const k = kcals[date];
+  const p = prots[date];
+  const well = wb[date] || {};
+
+  const d = new Date(date + 'T12:00:00');
+  const dateLabel = d.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const kcalTarget = 1800;
+  const kc = k !== undefined ? (k > kcalTarget + 200 ? 'var(--accent2)' : k < kcalTarget - 200 ? 'var(--accent3)' : 'var(--green)') : 'var(--text3)';
+  const pc = p !== undefined ? (p >= 150 ? 'var(--green)' : 'var(--accent2)') : 'var(--text3)';
+
+  const sleepEmoji = ['', '😴', '😐', '😊', '⚡', '🔥'][well.sleep || 0] || '—';
+  const energyEmoji = ['', '😩', '😐', '🙂', '💪', '🔥'][well.energy || 0] || '—';
+
+  panel.style.display = 'block';
+  panel.innerHTML = `<div style="margin:0 0 0;border-top:1px solid var(--border);padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent)">${dateLabel}</div>
+      <button onclick="closeDayDetail()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:5px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕ Închide</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Greutate</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text)">${w !== undefined ? w.toFixed(1) + ' kg' : '—'}</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Kcal</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${kc}">${k !== undefined ? k : '—'}</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${pc}">${p !== undefined ? p + 'g' : '—'}</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Wellbeing</div>
+        <div style="font-size:18px">${sleepEmoji} ${energyEmoji}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">somn · energie</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+export function closeDayDetail() {
+  const panel = $('day-detail-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+// ── FEATURE 5: Dropdown Sesiuni Recente ─────────────────────
+
+export function renderSessionsDropdown() {
+  const el = $('sessions-dropdown-wrap');
+  if (!el) return;
+
+  const logs = DB.get('logs') || [];
+  const burns = DB.get('session-burns') || [];
+
+  const sessMap = {};
+  logs.filter(l => !l.baseline).forEach(l => {
+    const key = l.session != null ? String(l.session) : ('date:' + l.date);
+    if (!sessMap[key]) sessMap[key] = [];
+    sessMap[key].push(l);
+  });
+
+  const sessions = Object.entries(sessMap)
+    .map(([key, sets]) => {
+      const isDateKey = key.startsWith('date:');
+      const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
+      const date = sets[0].date;
+      const exCount = new Set(sets.map(s => s.ex)).size;
+      const burn = burns.find(b => b.date === date);
+      return { key, ts, date, sets: sets.length, exCount, mins: burn?.mins ?? null };
+    })
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, 10);
+
+  if (!sessions.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio sesiune înregistrată.</div>';
+    return;
+  }
+
+  const listHtml = sessions.map((s, i) => {
+    const d = new Date(s.date);
+    const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
+    const minsStr = s.mins !== null ? ` · ${s.mins} min` : '';
+    return `<button onclick="showSessionDetail(${s.ts})"
+      style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 16px;
+             ${i < sessions.length-1 ? 'border-bottom:1px solid var(--border)' : ''};
+             background:transparent;border:none;cursor:pointer;text-align:left">
+      <div style="font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:52px">${dateStr}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--text)">${s.exCount} exerciții · ${s.sets} seturi${minsStr}</div>
+      </div>
+      <div style="font-size:16px;color:var(--text3)">›</div>
+    </button>`;
+  }).join('');
+
+  el.innerHTML = `<div id="sessions-list-view">${listHtml}</div><div id="session-detail-view" style="display:none"></div>`;
+}
+
+export function showSessionDetail(sessionTs) {
+  const listView = $('sessions-list-view');
+  const detailView = $('session-detail-view');
+  if (!listView || !detailView) return;
+
+  const logs = DB.get('logs') || [];
+  const tsNum = Number(sessionTs);
+
+  // Match by session timestamp or by date if old logs
+  let sessionLogs = logs.filter(l => !l.baseline && (
+    l.session === tsNum || String(l.session) === String(tsNum)
+  ));
+
+  // If no match by session, try matching date for old logs (dateKey sessions)
+  if (!sessionLogs.length) {
+    // sessionTs might be a date-based timestamp — find date-keyed entries
+    const dateObj = new Date(tsNum);
+    const dateStr = dateObj.toISOString().split('T')[0];
+    sessionLogs = logs.filter(l => !l.baseline && l.date === dateStr && l.session == null);
+  }
+
+  if (!sessionLogs.length) {
+    detailView.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio dată pentru această sesiune.</div>';
+  } else {
+    const date = sessionLogs[0].date;
+    const d = new Date(date);
+    const dateLabel = d.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
+    const exGroups = {};
+    sessionLogs.forEach(l => {
+      if (!exGroups[l.ex]) exGroups[l.ex] = [];
+      exGroups[l.ex].push(l);
+    });
+
+    const rowsHtml = Object.entries(exGroups).map(([ex, sets]) =>
+      sets.map((s, i) => {
+        const rpeColor = s.rpe >= 9 ? 'var(--red)' : s.rpe <= 6 ? 'var(--accent3)' : 'var(--green)';
+        return `<div style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:1px solid var(--border)">
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:${i===0?'700':'400'};color:${i===0?'var(--text)':'var(--text2)'}">${i===0?ex:'↳'}</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace">Set ${i+1}</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)">${s.w||'—'} kg</div>
+          <div style="font-size:12px;color:var(--text2);min-width:36px;text-align:right">×${s.reps||'—'}</div>
+          ${s.rpe ? `<div style="font-size:11px;font-weight:700;color:${rpeColor};min-width:32px;text-align:right">RPE ${s.rpe}</div>` : ''}
+        </div>`;
+      }).join('')
+    ).join('');
+
+    detailView.innerHTML = `<div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">
+        <button onclick="hideSessionDetail()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif">← Înapoi</button>
+        <div style="font-size:13px;font-weight:700;color:var(--accent)">${dateLabel}</div>
+      </div>
+      ${rowsHtml}
+    </div>`;
+  }
+
+  listView.style.display = 'none';
+  detailView.style.display = 'block';
+}
+
+export function hideSessionDetail() {
+  const listView = $('sessions-list-view');
+  const detailView = $('session-detail-view');
+  if (listView) listView.style.display = 'block';
+  if (detailView) detailView.style.display = 'none';
+}
+
 function renderSuppl() {}
 
 function renderSessionHistory() {

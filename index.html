@@ -59,6 +59,11 @@
         <span id="btn-start-label">START ANTRENAMENT</span>
       </button>
     </div>
+
+    <!-- PR WALL -->
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text3);padding:12px 16px 6px;text-transform:uppercase">Recorduri personale</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 16px;overflow:hidden"><div id="pr-wall-list"></div></div>
+
   </div>
 
   <!-- ── ACTIVE SESSION ── -->
@@ -208,6 +213,12 @@
 
   <!-- COMANDA ZILEI -->
   <div id="daily-cmd" style="margin:0 16px 10px;border-radius:var(--r);overflow:hidden"></div>
+
+  <!-- REALITY CHECK ALERT -->
+  <div id="reality-check-alert" style="margin:0 16px;display:none"></div>
+
+  <!-- ADHERENCE SCORE -->
+  <div id="adherence-score" style="margin:0 16px;display:none"></div>
 
   <!-- MFP PROMPT PERIODIC -->
   <div id="mfp-prompt-banner" style="margin:0 16px;display:none"></div>
@@ -432,11 +443,23 @@
   </div>
   <div class="card"><div id="unified-history"></div></div>
 
+  <!-- DROPDOWN ISTORIC ZILNIC -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
+    <span class="st" style="padding:0;margin:0">Detalii zi</span>
+  </div>
+  <div class="card" style="overflow:hidden"><div id="daily-dropdown-wrap"></div></div>
+
   <!-- SESIUNI RECENTE -->
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
     <span class="st" style="padding:0;margin:0">Sesiuni recente</span>
   </div>
   <div class="card"><div id="session-history"></div></div>
+
+  <!-- DROPDOWN SESIUNI -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
+    <span class="st" style="padding:0;margin:0">Detalii sesiune</span>
+  </div>
+  <div class="card" style="overflow:hidden"><div id="sessions-dropdown-wrap"></div></div>
 
   <!-- EXPORT + NOTIFICĂRI + IMPORT -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px">

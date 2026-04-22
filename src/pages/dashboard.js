@@ -5,6 +5,8 @@ import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { getTrend, initW } from './weight.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
+import { getRealityCheck } from '../engine/reality.js';
+import { getAdherenceScore } from '../engine/adherence.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
 let _dashWeightChart = null;
@@ -186,12 +188,40 @@ export function renderDash(){
   if(mc){if(last14.length>1){const mn=Math.min(...last14)-.3,mx=Math.max(...last14)+.3;mc.innerHTML=last14.map((w,i)=>`<div class="bar ${i===last14.length-1?'t':'f'}" style="height:${Math.round(((w-mn)/(mx-mn))*55+8)}px"></div>`).join('');}
   else mc.innerHTML='<div style="color:var(--text3);font-size:11px;align-self:center">Completează zilnic</div>';}
   renderFatigueScore('fatigue-score-dash');
+  renderRealityCheck();
+  renderAdherenceScore();
   renderWeightChart();
   const dt2=$('dt2');
   if(dt2){const todayProg=tp;
     if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
     else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
   }
+}
+
+function renderRealityCheck() {
+  const el = $('reality-check-alert');
+  if (!el) return;
+  const rc = getRealityCheck();
+  if (!rc) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `<div style="padding:12px 16px;background:${rc.color}18;border-left:4px solid ${rc.color};margin-bottom:8px;border-radius:0 var(--rs) var(--rs) 0">
+    <div style="font-size:13px;font-weight:700;color:${rc.color};letter-spacing:.3px">${rc.icon} REALITY CHECK</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:3px">${rc.message}</div>
+  </div>`;
+}
+
+function renderAdherenceScore() {
+  const el = $('adherence-score');
+  if (!el) return;
+  const a = getAdherenceScore();
+  el.style.display = 'block';
+  el.innerHTML = `<div style="padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Adherence azi</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:${a.color}">${a.score}%</div>
+      <div style="font-size:11px;font-weight:600;color:${a.color};padding:2px 8px;border-radius:10px;background:${a.color}18">${a.label}</div>
+    </div>
+  </div>`;
 }
 
 function renderWeightChart() {
