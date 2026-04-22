@@ -159,7 +159,11 @@ export function renderUnifiedHistory() {
   ])].sort().reverse();
 
   if (!allDates.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio înregistrare</div>';
+    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
+      <div style="font-size:32px;margin-bottom:10px">📋</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio înregistrare</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Loghează greutatea, kcal sau proteina pentru a vedea istoricul</div>
+    </div>`;
     return;
   }
 
@@ -803,38 +807,69 @@ export function renderSessionsDropdown() {
     sessMap[key].push(l);
   });
 
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const PUSH_EX = ['bench press', 'overhead press', 'incline press', 'chest', 'tricep', 'shoulder', 'dip', 'pec'];
+  const PULL_EX = ['row', 'pull-up', 'pulldown', 'lat', 'bicep', 'curl', 'deadlift', 'back'];
+  const LEG_EX  = ['squat', 'leg press', 'lunge', 'calf', 'hamstring', 'quad', 'glute', 'rdl', 'hip'];
+
+  function detectWorkoutType(exList) {
+    const lower = exList.map(e => e.toLowerCase());
+    let push = 0, pull = 0, leg = 0;
+    lower.forEach(e => {
+      if (PUSH_EX.some(k => e.includes(k))) push++;
+      if (PULL_EX.some(k => e.includes(k))) pull++;
+      if (LEG_EX.some(k => e.includes(k))) leg++;
+    });
+    if (leg >= push && leg >= pull && leg > 0) return 'LEG';
+    if (push > pull) return 'PUSH';
+    if (pull > push) return 'PULL';
+    if (push > 0 || pull > 0) return 'PPL';
+    return null;
+  }
+
   const sessions = Object.entries(sessMap)
     .filter(([, sets]) => sets.length >= 1 || sets.some(l => l.earlyStop))
     .map(([key, sets]) => {
       const isDateKey = key.startsWith('date:');
       const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
-      // Filter out the internal __early_stop__ placeholder when counting
       const realSets = sets.filter(s => s.ex !== '__early_stop__');
-      const exCount = new Set(realSets.map(s => s.ex)).size;
+      const exNames = [...new Set(realSets.map(s => s.ex))];
+      const exCount = exNames.length;
       const hasEarlyStop = sets.some(l => l.earlyStop);
       const burn = burns.find(b => b.date === date);
-      return { key, ts, date, sets: realSets.length, exCount, mins: burn?.mins ?? null, earlyStop: hasEarlyStop };
+      const wType = detectWorkoutType(exNames);
+      return { key, ts, date, sets: realSets.length, exCount, mins: burn?.mins ?? null, earlyStop: hasEarlyStop, wType, day: burn?.day ?? null };
     })
+    .filter(s => s.date >= cutoffStr)
     .sort((a, b) => b.ts - a.ts)
-    .slice(0, 10);
+    .slice(0, 14);
 
   if (!sessions.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio sesiune înregistrată.</div>';
+    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
+      <div style="font-size:32px;margin-bottom:10px">🏋️</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune în ultimele 14 zile</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completează primul antrenament pentru a vedea istoricul</div>
+    </div>`;
     return;
   }
 
+  const typeColor = { PUSH: 'var(--accent)', PULL: 'var(--accent2)', LEG: 'var(--green)', PPL: 'var(--purple)' };
   const listHtml = sessions.map((s, i) => {
     const d = new Date(s.date);
     const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
     const minsStr = s.mins !== null ? ` · ${s.mins} min` : '';
+    const typeTag = s.wType ? `<span style="font-size:9px;font-weight:700;color:${typeColor[s.wType]||'var(--text3)'};background:${typeColor[s.wType]||'var(--text3)'}18;padding:1px 5px;border-radius:3px;margin-left:4px">${s.wType}</span>` : '';
+    const dayTag = s.day ? `<span style="font-size:9px;color:var(--text3);margin-left:4px">${s.day}</span>` : '';
     return `<button onclick="showSessionDetail(${s.ts})"
       style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 16px;
              ${i < sessions.length-1 ? 'border-bottom:1px solid var(--border)' : ''};
              background:transparent;border:none;cursor:pointer;text-align:left">
       <div style="font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:52px">${dateStr}</div>
       <div style="flex:1">
-        <div style="font-size:12px;font-weight:600;color:var(--text)">${s.exCount} exerciții · ${s.sets} seturi${minsStr}${s.earlyStop ? ' · <span style="color:var(--accent2)">stop timpuriu</span>' : ''}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;flex-wrap:wrap;gap:2px">${s.exCount} ex · ${s.sets} sets${minsStr}${s.earlyStop ? ' · <span style="color:var(--accent2)">stop</span>' : ''}${typeTag}${dayTag}</div>
       </div>
       <div style="font-size:16px;color:var(--text3)">›</div>
     </button>`;
@@ -944,7 +979,11 @@ function renderSessionHistory() {
     .slice(0, 5);
 
   if (!sessions.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio sesiune înregistrată</div>';
+    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
+      <div style="font-size:32px;margin-bottom:10px">💪</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune înregistrată</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Antrenamentele tale vor apărea aici după primul workout</div>
+    </div>`;
     return;
   }
 

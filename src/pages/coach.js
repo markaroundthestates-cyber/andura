@@ -10,6 +10,113 @@ import { state } from '../state.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 
 let wakeLock = null;
+let inactivityTimer = null;
+const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes
+
+// ── Feature 1: Smart Rest Timer ──────────────────────────────
+function getSmartPause(ex) {
+  const base = COMPOUND_EX.includes(ex) ? PAUSE_COMPOUND : PAUSE_ISO;
+  const rir = SYS.getTempo(ex)?.rir ?? 2;
+  let adj = 0;
+  if (rir <= 1) adj = 30;       // La limită
+  else if (rir <= 2) adj = 0;   // Greu
+  else if (rir <= 3) adj = -15; // Provocator
+  else adj = -30;               // Confortabil
+  return Math.max(30, base + adj);
+}
+
+// ── Feature 2: Auto-Save Session Draft ───────────────────────
+function saveDraft() {
+  if (!state.sessActive || !state.sessStart) return;
+  DB.set('session-draft', {
+    date: tod(),
+    sessStart: state.sessStart,
+    sessLog: [...state.sessLog],
+    currentEx: state.currentEx,
+    currentSet: state.currentSet,
+    timestamp: Date.now()
+  });
+}
+function clearDraft() { localStorage.removeItem('session-draft'); }
+
+// ── Feature 5: Inactivity Auto-Pause ─────────────────────────
+function setupInactivity() {
+  teardownInactivity();
+  const handler = () => {
+    if (!state.sessActive) return;
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      if (state.sessActive && !state.pauseTimer) {
+        startPause(getSmartPause(state.currentEx || ''), state.currentEx || '');
+        toast('⏸ Pauză automată – inactivitate 2 min', 'var(--accent2)');
+      }
+    }, INACTIVITY_DELAY);
+  };
+  window._coachInactivityHandler = handler;
+  ['click','touchstart','keydown','mousemove'].forEach(ev =>
+    document.addEventListener(ev, handler, { passive: true })
+  );
+  handler();
+}
+function teardownInactivity() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = null;
+  if (window._coachInactivityHandler) {
+    ['click','touchstart','keydown','mousemove'].forEach(ev =>
+      document.removeEventListener(ev, window._coachInactivityHandler)
+    );
+    window._coachInactivityHandler = null;
+  }
+}
+
+// ── Feature 4: Smart Session Memory Card ─────────────────────
+function renderLastSessionMemory(dayLabel) {
+  const logs = DB.get('logs') || [];
+  const burns = DB.get('session-burns') || [];
+  const ratings = DB.get('session-ratings') || [];
+  const today = tod();
+  const sessMap = {};
+  logs.filter(l => !l.baseline && l.session).forEach(l => {
+    const key = String(l.session);
+    if (!sessMap[key]) sessMap[key] = [];
+    sessMap[key].push(l);
+  });
+  const sameDaySessions = Object.entries(sessMap)
+    .filter(([, sets]) => {
+      const date = sets[0]?.date;
+      const burn = burns.find(b => b.date === date);
+      return burn && burn.day === dayLabel && date !== today;
+    })
+    .map(([key, sets]) => ({
+      ts: Number(key),
+      date: sets[0].date,
+      sets: sets.filter(s => s.ex !== '__early_stop__'),
+      rating: ratings.find(r => r.session === Number(key))?.rating
+    }))
+    .sort((a, b) => b.ts - a.ts);
+  const last = sameDaySessions[0];
+  if (!last || !last.sets.length) return '';
+  const exMap = {};
+  last.sets.forEach(s => { if (!exMap[s.ex] || s.kg > exMap[s.ex].kg) exMap[s.ex] = s; });
+  const top3 = Object.values(exMap).sort((a, b) => b.kg - a.kg).slice(0, 3);
+  const validRPE = last.sets.filter(s => s.rpe);
+  const avgRPE = validRPE.length ? validRPE.reduce((a, s) => a + s.rpe, 0) / validRPE.length : 0;
+  const ratingLbl = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
+  const verdict = last.rating ? ratingLbl[last.rating] : (avgRPE > 8.5 ? '💀 Grea' : avgRPE < 7 ? '⚡ Ușoară' : '👍 Normală');
+  const d = new Date(last.date);
+  const dateStr = d.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `<div id="session-memory-card" style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative">
+    <button onclick="document.getElementById('session-memory-card').remove()"
+      style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;line-height:1;padding:2px 6px">✕</button>
+    <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">ULTIMA SESIUNE · ${dayLabel.toUpperCase()}</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${dateStr}</div>
+    ${top3.map(s => `<div style="font-size:12px;color:var(--text);margin-bottom:3px">· ${s.ex} <span style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${s.kg}kg×${s.reps||'?'}</span></div>`).join('')}
+    <div style="margin-top:8px;display:flex;align-items:center;gap:12px">
+      ${avgRPE > 0 ? `<span style="font-size:11px;color:var(--text3)">RPE: <span style="color:var(--text2)">${avgRPE.toFixed(1)}</span></span>` : ''}
+      <span style="font-size:11px;font-weight:600;color:var(--accent2)">${verdict}</span>
+    </div>
+  </div>`;
+}
 
 // FIX 4: Exercise list dropdown — toggle per day index
 let exListExpanded = {};
@@ -135,7 +242,8 @@ export function renderCoachIdle(){
     const showAll=isExpanded||exList.length<=SHOW_LIMIT;
     const visibleEx=showAll?exList:exList.slice(0,SHOW_LIMIT);
     const hiddenCount=exList.length-SHOW_LIMIT;
-    const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=`
+    const _prsData = DB.get('pr-records') || [];
+    const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=renderLastSessionMemory(tp.day)+`
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
       </div>`:''}
@@ -145,10 +253,12 @@ export function renderCoachIdle(){
           const rec=AA.applyTo(DP.recommend(cleanName), cleanName);
           const hasHistory=DP.getLogs(cleanName,1).length>0;
           const isLast=i===visibleEx.length-1&&!(exList.length>SHOW_LIMIT);
+          const exPR=_prsData.find(p=>p.ex===cleanName);
+          const nearPR=exPR&&rec.kg*(parseInt(rec.repsTarget)||8)>=exPR.kg*(parseInt(exPR.reps)||8)*0.9;
           return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;${!isLast?'border-bottom:1px solid var(--border)':''}">
             <div style="width:6px;height:6px;border-radius:50%;background:${getGroupColor(e.g)};flex-shrink:0"></div>
             <div style="flex:1">
-              <div style="font-size:13px;font-weight:500">${cleanName}</div>
+              <div style="font-size:13px;font-weight:500">${cleanName}${nearPR?' <span style="font-size:9px;color:var(--accent);font-weight:700;background:rgba(200,255,0,0.12);padding:1px 5px;border-radius:4px">🔥 PR!</span>':''}</div>
               <div style="font-size:10px;color:var(--text3);margin-top:1px">${e.s||''}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
             </div>
             ${hasHistory?`<div style="text-align:right">
@@ -186,6 +296,27 @@ export function renderCoachIdle(){
 }
 
 export function startSession(){
+  // Feature 2: Check for existing session draft from today
+  const draft = DB.get('session-draft');
+  if (draft && draft.date === tod() && draft.sessLog && draft.sessLog.length > 0) {
+    if (confirm(`Ai ${draft.sessLog.length} seturi nefinalizate din azi. Continui sesiunea anterioară?`)) {
+      state.sessActive = true; state.sessStart = draft.sessStart; state.sessLog = [...draft.sessLog];
+      state.currentEx = draft.currentEx || ''; state.currentSet = draft.currentSet || 1;
+      state.dropSetUsedThisSession = false; state.earlyStopReason = null;
+      state.completedExercises = new Set(); state.sessKcalBurn = 0;
+      requestWakeLock();
+      state.isMuted = DB.get('muted')||false;
+      const mb2=$('mute-btn');if(mb2){mb2.textContent=state.isMuted?'🔇':'🔊';mb2.style.color=state.isMuted?'var(--accent2)':'var(--text2)';}
+      state.sessionTotalExercises = getTodayExercises().length;
+      const ts2=$('today-screen');if(ts2)ts2.style.display='none';
+      const su2=$('session-ui');if(su2)su2.style.display='block';
+      state.sessTimer = setInterval(tickSess,1000);
+      setupInactivity();
+      toast('🔄 Sesiune restaurată!','var(--accent)');
+      updateExCard(); renderSessLog(); return;
+    } else { clearDraft(); }
+  }
+
   state.sessActive = true;state.sessStart = Date.now();state.sessLog = [];state.sessKcalBurn = 0;state.dropSetUsedThisSession = false;state.earlyStopReason = null;
   requestWakeLock();
   state.completedExercises = new Set();
@@ -198,6 +329,7 @@ export function startSession(){
   state.sessTimer = setInterval(tickSess,1000);
   beepStart();speak('Antrenament pornit.');
   toast('🔥 START!');
+  setupInactivity(); // Feature 5: Inactivity auto-pause
 
   // Auto-select first exercise of today
   const todayExs=getTodayExercises();
@@ -313,6 +445,8 @@ export function confirmReps(){
   state.sessLog.push({ex:state.currentEx,kg:logKg,rpe:8,set:state.currentSet,reps:state.sessRepsInput});
   const ssc=$('sess-progress-txt');if(ssc)ssc.textContent=`${state.completedExercises.size}/${state.sessionTotalExercises||getTodayExercises().length}`;
 
+  saveDraft(); // Feature 2: Auto-save after each set
+
   // Advance to next set or next exercise
   if(state.currentSet>=totalSets){
     state.completedExercises.add(state.currentEx);
@@ -321,7 +455,7 @@ export function confirmReps(){
     const idx=todayExs.indexOf(state.currentEx);
     if(idx<todayExs.length-1){
       const nextEx=todayExs[idx+1];
-      const pauseSec=COMPOUND_EX.includes(state.currentEx)?PAUSE_COMPOUND:PAUSE_ISO;
+      const pauseSec=getSmartPause(state.currentEx); // Feature 1: Smart pause
       state.currentEx=nextEx; state.currentSet=1;
       startPause(pauseSec, nextEx);
     } else {
@@ -331,7 +465,7 @@ export function confirmReps(){
     }
   } else {
     state.currentSet++;
-    startPause(COMPOUND_EX.includes(state.currentEx)?PAUSE_COMPOUND:PAUSE_ISO, state.currentEx);
+    startPause(getSmartPause(state.currentEx), state.currentEx); // Feature 1: Smart pause
   }
   renderSessLog();
 }
@@ -407,6 +541,7 @@ export function cancelWorkout(){
 
 export function endSession(){
   if(!state.sessActive)return;
+  clearDraft(); teardownInactivity(); // Feature 2+5
   clearInterval(state.sessTimer);state.sessTimer = null;
   stopPause();state.sessActive = false;
   releaseWakeLock();
@@ -586,6 +721,7 @@ export function showSessionRating(summaryData) {
 }
 
 export function rateSession(rating, summaryData) {
+  clearDraft(); // Feature 2: Clear draft when session rated
   // Convertește rating în notes pentru fatigue score
   const noteMap = {
     'easy':   ['strong'],
@@ -976,14 +1112,13 @@ export function renderPRWall() {
   // Citește din storage dedicat; dacă nu există, calculează din logs
   const prs = DB.get('pr-records') || extractAndSavePRs();
 
-  if (!prs.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Completează câteva antrenamente pentru a vedea recordurile</div>';
-    return;
-  }
-
   const entries = prs.filter(p => p.ex && p.ex !== '__early_stop__');
-  if (!entries.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Completează câteva antrenamente pentru a vedea recordurile</div>';
+  if (!prs.length || !entries.length) {
+    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
+      <div style="font-size:32px;margin-bottom:10px">🎯</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Niciun record personal încă</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completează primul antrenament pentru a-ți vedea recordurile personale</div>
+    </div>`;
     return;
   }
 

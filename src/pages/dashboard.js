@@ -45,6 +45,38 @@ function scheduleNotifications() {
 }
 
 
+export function showRecoveryModal() {
+  const existing = document.getElementById('recovery-modal');
+  if (existing) { existing.remove(); return; }
+  const modal = document.createElement('div');
+  modal.id = 'recovery-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9000;display:flex;align-items:flex-end;justify-content:center';
+  modal.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:500px;padding:20px 20px 32px;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">😴 Ziua de Recuperare</div>
+      <button onclick="document.getElementById('recovery-modal').remove()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;border-radius:var(--rs);cursor:pointer;font-size:13px">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[
+        ['🚶', 'Mers 20-30 min', 'Circulație activă fără stres muscular'],
+        ['🧘', 'Stretching / mobilitate', 'Concentrează-te pe grupele lucrate ieri'],
+        ['💧', 'Hidratare', 'Minim 2.5L apă — recuperarea depinde de asta'],
+        ['😴', 'Somn 7-9h', 'Cel mai important anabolizant natural'],
+        ['🥩', 'Proteină', 'Menține minimul de 160g chiar și în zilele OFF'],
+      ].map(([emoji, title, desc]) => `
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:22px;line-height:1">${emoji}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px">${title}</div>
+            <div style="font-size:11px;color:var(--text3)">${desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
 export function dismissMFPPrompt() {
   DB.set('mfp-prompt-dismissed', Date.now());
   renderDash();
@@ -101,7 +133,7 @@ export function renderDash(){
         <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${statusColor}">${statusToday}</div>
       </div>
     </div>
-    ${ctaAction?`<button onclick="${ctaAction}" style="width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif">${ctaLabel}</button>`:'<div style="padding:12px;text-align:center;font-size:12px;color:var(--text2)">Zi de odihnă</div>'}
+    ${ctaAction?`<button onclick="${ctaAction}" style="width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif">${ctaLabel}</button>`:`<button onclick="showRecoveryModal()" style="width:100%;padding:14px;background:transparent;border:none;color:var(--text2);font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">😴 Zi de Recuperare — sfaturi</button>`}
   </div>`;
   // MFP periodic prompt every 3 days
   const mfpEl=$('mfp-prompt-banner');
@@ -192,7 +224,7 @@ export function renderDash(){
   const last14=dates.slice(-14).map(d=>ws[d]);
   const mc=$('mc');
   if(mc){if(last14.length>1){const mn=Math.min(...last14)-.3,mx=Math.max(...last14)+.3;mc.innerHTML=last14.map((w,i)=>`<div class="bar ${i===last14.length-1?'t':'f'}" style="height:${Math.round(((w-mn)/(mx-mn))*55+8)}px"></div>`).join('');}
-  else mc.innerHTML='<div style="color:var(--text3);font-size:11px;align-self:center">Completează zilnic</div>';}
+  else mc.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:4px;align-self:center;width:100%"><div style="font-size:20px">📊</div><div style="color:var(--text3);font-size:11px;text-align:center">Completează zilnic greutatea</div></div>';}
   renderFatigueScore('fatigue-score-dash');
   renderRealityCheck();
   renderAdherenceScore();

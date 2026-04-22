@@ -15,6 +15,8 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;padding-bottom:84px}
 .page{display:none;padding-bottom:90px}
 .page.active{display:block;animation:fi .2s ease}
+.page-exit{display:block;animation:pageOut .12s ease forwards;pointer-events:none}
+@keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px)}}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* NAV */
@@ -27,7 +29,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 }
 .nb{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;cursor:pointer;border:none;background:none;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:10px;gap:4px;transition:color .2s}
 .nb.active{color:var(--accent)}
-.nb svg{width:21px;height:21px}
+.nb svg{width:21px;height:21px;filter:brightness(0.6);transition:filter .2s}
+.nb.active svg{filter:brightness(1)}
 .nb .badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--red);border-radius:50%;width:8px;height:8px}
 .nb{position:relative}
 

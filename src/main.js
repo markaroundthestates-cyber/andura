@@ -27,7 +27,7 @@ import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
-import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt } from './pages/dashboard.js';
+import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -46,16 +46,52 @@ Object.assign(window, {
   setDone, confirmReps, selectRPE, startSession, cancelWorkout, endSession,
   skipExercise, adjSessionReps, editSessionKg, confirmEditKg, adjSessionKg, confirmSessionKg, rateSession,
   setPhaseOverride, clearPhaseOverride,
-  updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt,
+  updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal,
   renderDailyDropdown, showDayDetail, closeDayDetail,
   renderSessionsDropdown, showSessionDetail, hideSessionDetail,
   renderPRWall, togglePRWall, toggleExList,
   sp: goTo, __v: 6,
 });
 
+// ── Feature 10: Clean Duplicate Logs ─────────────────────────
+function cleanDuplicateLogs() {
+  const logs = DB.get('logs') || [];
+  const seen = new Set();
+  const clean = logs.filter(l => {
+    const key = `${l.session||l.date}|${l.ex}|${l.set||0}|${l.kg}|${l.reps}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  if (clean.length < logs.length) DB.set('logs', clean);
+}
+
+// ── Feature 7: Offline Indicator ─────────────────────────────
+function setupOfflineIndicator() {
+  const el = document.getElementById('offline-indicator');
+  if (!el) return;
+  const update = () => {
+    if (navigator.onLine) {
+      el.style.display = 'none';
+      if (window._wasOffline) {
+        window._wasOffline = false;
+        import('./firebase.js').then(m => m.syncToFirebase && m.syncToFirebase());
+      }
+    } else {
+      el.style.display = 'flex';
+      window._wasOffline = true;
+    }
+  };
+  window.addEventListener('online', update);
+  window.addEventListener('offline', update);
+  update();
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 async function init() {
   applyTheme(getActiveTheme());
+  setupOfflineIndicator();
+  cleanDuplicateLogs();
   await initFirebaseSync();
   injectBaseline();
   injectMFPWeights();
