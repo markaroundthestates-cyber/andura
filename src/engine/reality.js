@@ -1,5 +1,6 @@
 // ══ REALITY CHECK ENGINE ════════════════════════════════════
 import { DB } from '../db.js';
+import { SYS } from './sys.js';
 
 export function getRealityCheck() {
   const ws = DB.get('weights') || {};
@@ -40,11 +41,12 @@ export function getRealityCheck() {
 
   // Too fast: losing more than 1 kg/week
   if (trend < -1) {
+    const suggestedKcal = SYS.getKcalTarget() + 100;
     return {
       type: 'warning',
       icon: '⚡',
       color: 'var(--accent2)',
-      message: 'Slăbești prea rapid — risc masă musculară. Mărește la 1900 kcal temporar.'
+      message: `Slăbești prea rapid — risc masă musculară. Mărește la ${suggestedKcal} kcal temporar.`
     };
   }
 

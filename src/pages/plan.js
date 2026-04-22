@@ -163,13 +163,13 @@ export function setPhaseOverride(phase) {
 
 export function clearPhaseOverride() {
   DB.set('phase-override', null);
-  // La revenire pe AUTO, logăm target-ul 1800 (CUT fix până pe 20 iulie)
   const today = tod();
   const phaseLogs = DB.get('phase-log') || [];
   const filtered = phaseLogs.filter(e => e.date !== today);
-  filtered.push({ date: today, phase: 'AUTO', kcalTarget: 1800 });
+  const autoKcal = SYS.getKcalTarget();
+  filtered.push({ date: today, phase: 'AUTO', kcalTarget: autoKcal });
   DB.set('phase-log', filtered);
-  toast('✓ Fază setată: AUTO · 1800 kcal');
+  toast(`✓ Fază setată: AUTO · ${autoKcal} kcal`);
   renderPlan();
   renderDash();
   renderUnifiedHistory();
