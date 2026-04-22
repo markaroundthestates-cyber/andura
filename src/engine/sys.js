@@ -108,38 +108,30 @@ export const SYS = {
   },
 
   getKcalTarget() {
-    const now = new Date();
-    const PILOT_DATE = new Date('2026-07-20');
-    const pilotActive = now >= PILOT_DATE;
-
-    // Override manual kcal bate orice
-    const kcalOverride = DB.get('kcal-override');
-    if (kcalOverride) return kcalOverride;
-
-    // Override faza manuala — respectat si inainte de 20 iulie
-    const phaseOverride = DB.get('phase-override');
     const tdee = this.estimateTDEE();
 
+    // Manual phase override → calculează kcal pentru faza respectivă, indiferent de dată
+    const phaseOverride = DB.get('phase-override');
     if (phaseOverride && phaseOverride !== 'AUTO') {
       switch(phaseOverride) {
-        case 'CUT': return Math.round(tdee * 0.82);
-        case 'BULK': return Math.round(tdee * 1.08);
+        case 'CUT':         return Math.round(tdee * 0.82);
+        case 'BULK':        return Math.round(tdee * 1.08);
         case 'MAINTENANCE': return tdee;
-        case 'STRENGTH': return Math.round(tdee * 1.05);
+        case 'STRENGTH':    return Math.round(tdee * 1.05);
       }
     }
 
-    // Înainte de 20 iulie fara override: 1800 fix (CUT activ)
+    // AUTO (sau null): înainte de 20 iulie = 1800 fix, după = TDEE-based
+    const pilotActive = new Date() >= new Date('2026-07-20');
     if (!pilotActive) return 1800;
 
-    // După 20 iulie: TDEE real calculat din date acumulate
     const phase = this.getPhase();
     switch(phase) {
-      case 'CUT': return Math.round(tdee * 0.82);
-      case 'BULK': return Math.round(tdee * 1.08);
+      case 'CUT':         return Math.round(tdee * 0.82);
+      case 'BULK':        return Math.round(tdee * 1.08);
       case 'MAINTENANCE': return tdee;
-      case 'STRENGTH': return Math.round(tdee * 1.05);
-      default: return 1800;
+      case 'STRENGTH':    return Math.round(tdee * 1.05);
+      default:            return 1800;
     }
   },
 

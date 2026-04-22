@@ -165,9 +165,9 @@ export function renderDash(){
     else if(trend<-1.2){dv.textContent=`CREȘTE LA ${sysKcal+150} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
     else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal-100} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
     else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
-    const _phOvr=DB.get('phase-override'),_kcalOvr=DB.get('kcal-override');
-    const _forced1800=!pilotActive&&!_kcalOvr&&(!_phOvr||_phOvr==='AUTO');
-    if(_forced1800&&dr){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
+    const _phOvr=DB.get('phase-override');
+    const _autoFixed=!pilotActive&&(!_phOvr||_phOvr==='AUTO');
+    if(_autoFixed&&dr){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
   }
   const filled=Math.min(dates.length,8);
   // Weekly workouts counter
@@ -191,12 +191,51 @@ export function renderDash(){
   renderFatigueScore('fatigue-score-dash');
   renderRealityCheck();
   renderAdherenceScore();
+  renderProjection4w();
   renderWeightChart();
   const dt2=$('dt2');
   if(dt2){const todayProg=tp;
     if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
     else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
   }
+}
+
+function renderProjection4w() {
+  const box = $('projection-box');
+  if (!box) return;
+  const ws = DB.get('weights') || {};
+  const dates = Object.keys(ws).sort();
+  if (dates.length < 4) { box.style.display = 'none'; return; }
+
+  const kcals = DB.get('kcals') || {};
+  const p = calcProjection(ws, kcals, dates);
+  const lastW = ws[dates[dates.length - 1]];
+  const pColor = p.gaining ? 'var(--red)' : Math.abs(p.rate) > 1.2 ? 'var(--accent3)' : Math.abs(p.rate) < 0.2 ? 'var(--accent2)' : 'var(--green)';
+
+  // ETA to target
+  let etaHtml = '';
+  if (!p.gaining && p.rate < -0.1 && parseFloat(p.kg4w) < TW + 0.5) {
+    const daysToTarget = Math.round((lastW - TW) / Math.abs(p.rate) * 7);
+    if (daysToTarget > 0) etaHtml = `<div style="margin-top:8px;font-size:11px;color:var(--green);text-align:center">🎯 Atingi targetul în ~${daysToTarget} zile</div>`;
+  }
+
+  let msg = '';
+  if (p.gaining)              msg = '⚠️ <strong style="color:var(--red)">Trendul actual duce la creștere în greutate.</strong> Verifică kcal.';
+  else if (Math.abs(p.rate) < 0.2) msg = `⚠️ <strong style="color:var(--accent2)">Scădere prea lentă</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — scade 100 kcal.`;
+  else if (Math.abs(p.rate) > 1.2) msg = `⚡ <strong style="color:var(--accent3)">Scădere prea rapidă</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — adaugă 150 kcal.`;
+  else                        msg = `✅ <strong style="color:var(--green)">Ritm perfect</strong> — ${Math.abs(p.rate).toFixed(2)} kg/săpt. Continuă.`;
+
+  box.style.display = 'block';
+  $('proj-2w').textContent = p.kg2w + ' kg';
+  $('proj-4w').textContent = p.kg4w + ' kg';
+  $('proj-8w').textContent = p.kg8w + ' kg';
+  $('proj-2w').style.color = pColor;
+  $('proj-4w').style.color = pColor;
+  $('proj-8w').style.color = pColor;
+  const msgEl = $('proj-message'); if (msgEl) msgEl.innerHTML = msg;
+  const dtEl  = $('proj-date-target'); if (dtEl) dtEl.innerHTML = etaHtml;
+  const basedEl = $('proj-based-on'); if (basedEl) basedEl.textContent = `Bazat pe ultimele ${Math.min(dates.length, 8)} zile`;
+  const rateEl  = $('proj-rate'); if (rateEl) rateEl.textContent = `${p.rate > 0 ? '+' : ''}${p.rate.toFixed(2)} kg/7z`;
 }
 
 function renderRealityCheck() {
