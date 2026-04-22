@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/salafull/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script type="module" crossorigin src="/salafull/assets/main-CsAku2oA.js"></script>
+  <script type="module" crossorigin src="/salafull/assets/main-CwPtkAFD.js"></script>
   <link rel="stylesheet" crossorigin href="/salafull/assets/main-Dhqtl7qh.css">
 </head>
 <body>
@@ -234,6 +234,15 @@
       <div class="dv2" id="dv2" style="font-size:13px;font-weight:700">—</div>
       <div class="dr2" id="dr2" style="font-size:9px;margin-top:2px"></div>
     </div>
+  </div>
+
+  <!-- WEIGHT EVOLUTION CHART -->
+  <div style="margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+    <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Evoluție greutate</div>
+    <div style="height:250px;width:100%;position:relative">
+      <canvas id="dash-weight-chart"></canvas>
+    </div>
+    <div id="dash-weight-chart-msg" style="display:none;color:var(--text3);font-size:12px;text-align:center;padding:20px 0"></div>
   </div>
 
   <!-- ALERTE CLICKABILE -->
@@ -549,5 +558,6 @@
 </nav>
 <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
