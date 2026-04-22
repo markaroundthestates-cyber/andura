@@ -16,7 +16,7 @@ export const themes = {
       '--red':      '#ff4444',
       '--text':     '#e8d4b0',
       '--text2':    '#b09070',
-      '--text3':    '#9a8a78',
+      '--text3':    '#aaa090',
       '--r':        '10px',
       '--rs':       '6px',
     }
@@ -38,7 +38,7 @@ export const themes = {
       '--red':      '#e05050',
       '--text':     '#c8dcc0',
       '--text2':    '#8aaa80',
-      '--text3':    '#7a9870',
+      '--text3':    '#aabb9a',
       '--r':        '12px',
       '--rs':       '8px',
     }
@@ -60,7 +60,7 @@ export const themes = {
       '--red':      '#ff0055',
       '--text':     '#b0c4ee',
       '--text2':    '#7088bb',
-      '--text3':    '#6a7598',
+      '--text3':    '#8899bb',
       '--r':        '4px',
       '--rs':       '2px',
     }
