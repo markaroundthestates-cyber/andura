@@ -1,10 +1,11 @@
 // ══ DASHBOARD PAGE ═══════════════════════════════════════════
 import { DB, $, tod, fmt } from '../db.js';
-
-let _dashWeightChart = null;
 import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
+import { getTrend } from './weight.js';
+
+let _dashWeightChart = null;
 
 
 export function renderDash(){
