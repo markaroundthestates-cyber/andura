@@ -5,11 +5,16 @@ export { themes };
 export function applyTheme(themeId) {
   const theme = themes[themeId] || themes.forge;
   const root = document.documentElement;
+  root.removeAttribute('data-theme');
   Object.entries(theme.vars).forEach(([k, v]) => root.style.setProperty(k, v));
   localStorage.setItem('active-theme', theme.id);
   loadGoogleFonts(theme);
   injectThemeAnimations(theme.id);
-  document.documentElement.setAttribute('data-theme', theme.id);
+  root.setAttribute('data-theme', theme.id);
+  setTimeout(() => {
+    if (window.renderDash) window.renderDash();
+    if (window.renderCoachIdle) window.renderCoachIdle();
+  }, 0);
 }
 
 export function getActiveTheme() {

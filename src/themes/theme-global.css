@@ -1,0 +1,71 @@
+/* ── Universal keyframes ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fireWiggle {
+  0%, 100% { transform: rotate(-8deg) scale(1); }
+  25%       { transform: rotate(8deg) scale(1.15); }
+  75%       { transform: rotate(-4deg) scale(1.08); }
+}
+@keyframes successPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.88) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* ── Staggered page entrance ── */
+.page-content.active > * {
+  animation: fadeInUp 0.3s ease both;
+}
+.page-content.active > *:nth-child(1)  { animation-delay: 0.02s; }
+.page-content.active > *:nth-child(2)  { animation-delay: 0.06s; }
+.page-content.active > *:nth-child(3)  { animation-delay: 0.10s; }
+.page-content.active > *:nth-child(4)  { animation-delay: 0.14s; }
+.page-content.active > *:nth-child(5)  { animation-delay: 0.18s; }
+.page-content.active > *:nth-child(6)  { animation-delay: 0.22s; }
+.page-content.active > *:nth-child(7)  { animation-delay: 0.26s; }
+.page-content.active > *:nth-child(8)  { animation-delay: 0.30s; }
+.page-content.active > *:nth-child(9)  { animation-delay: 0.34s; }
+.page-content.active > *:nth-child(10) { animation-delay: 0.38s; }
+
+/* ── Desktop phone shell ── */
+@media (min-width: 500px) {
+  html { background: #0a0a0a; }
+  body {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100%;
+    box-shadow: 0 0 80px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.04);
+  }
+}
+
+/* ── Theme switcher button round ── */
+#theme-switcher button {
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  justify-content: center;
+}
+#theme-menu {
+  animation: scaleIn 0.18s ease;
+  transform-origin: top right;
+}
+
+/* ── Custom thin scrollbar ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 3px; }
+
+/* ── Safe areas ── */
+.nav { padding-bottom: env(safe-area-inset-bottom); }
+body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }

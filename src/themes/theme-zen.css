@@ -1,0 +1,90 @@
+/* ══════════════════════════════════════
+   ZEN THEME  data-theme="zen"
+   bg:#0c1208  accent:#6aab3f
+   ══════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes zenBreath {
+  0%   { opacity: 0.45; transform: scale(1)    rotate(0deg); }
+  100% { opacity: 0.85; transform: scale(1.09) rotate(1deg); }
+}
+@keyframes zenRoot {
+  0%   { background-position: 0%   100%; opacity: 0.35; }
+  100% { background-position: 200% 100%; opacity: 0.75; }
+}
+@keyframes zenBtnBreath {
+  0%, 100% { box-shadow: 0 0 8px  rgba(106,171,63,.3), 0 0 20px rgba(106,171,63,.1); }
+  50%       { box-shadow: 0 0 18px rgba(106,171,63,.55), 0 0 40px rgba(106,171,63,.2); }
+}
+@keyframes zenFlow {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Aurora verde pulsând organic ── */
+[data-theme="zen"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 50% at 25% 25%, rgba(106,171,63,.09)  0%, transparent 60%),
+    radial-gradient(ellipse 55% 70% at 75% 75%, rgba(143,188,106,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 10%, rgba(200,168,75,.04)  0%, transparent 70%);
+  animation: zenBreath 8s ease-in-out infinite alternate;
+}
+
+/* ── Gradient flowing on card bottom border ── */
+[data-theme="zen"] .card { position: relative; }
+[data-theme="zen"] .card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+  background-size: 200% 100%;
+  animation: zenRoot 5s ease-in-out infinite alternate;
+  border-radius: 0 0 var(--r) var(--r);
+}
+
+/* ── Primary button glow ── */
+[data-theme="zen"] .btn-start,
+[data-theme="zen"] #btn-start-main,
+[data-theme="zen"] .btn-done {
+  animation: zenBtnBreath 3s ease-in-out infinite;
+}
+
+/* ── Progress bars organic flow ── */
+[data-theme="zen"] .pbf,
+[data-theme="zen"] .quest-fill,
+[data-theme="zen"] .pause-fill {
+  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+  background-size: 200% 100%;
+  animation: zenFlow 3.5s ease-in-out infinite;
+}
+
+/* ── Font overrides ── */
+[data-theme="zen"] body {
+  font-family: 'Jost', 'DM Sans', sans-serif;
+  font-weight: 400;
+}
+[data-theme="zen"] .pt,
+[data-theme="zen"] .start-title,
+[data-theme="zen"] .kv {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+[data-theme="zen"] .ct,
+[data-theme="zen"] .st,
+[data-theme="zen"] .sess-timer {
+  font-family: 'Jost', 'DM Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+[data-theme="zen"] .rec-range,
+[data-theme="zen"] .wdi,
+[data-theme="zen"] .rpe-btn {
+  font-family: 'JetBrains Mono', monospace;
+}

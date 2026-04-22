@@ -1,3 +1,8 @@
+@import '../themes/theme-global.css';
+@import '../themes/theme-forge.css';
+@import '../themes/theme-zen.css';
+@import '../themes/theme-anime.css';
+
 :root{
   --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--card:#16161f;
   --accent:#c8ff00;--accent2:#ff6b35;--accent3:#00d4ff;
@@ -212,7 +217,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 /* TOAST */
 .toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#000;font-weight:700;padding:11px 22px;border-radius:40px;font-size:13px;opacity:0;transition:all .3s;z-index:1000;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-::-webkit-scrollbar{width:0}
+/* scrollbar handled by theme-global.css */
 
 /* --purple already declared in :root above */
 .phase-btn.active-phase{border-color:var(--accent)!important;background:rgba(200,255,0,0.12)!important;color:var(--accent)!important}

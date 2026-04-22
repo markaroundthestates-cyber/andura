@@ -1,0 +1,104 @@
+/* ══════════════════════════════════════
+   FORGE THEME  data-theme="forge"
+   bg:#0f0c08  accent:#ff6b1a
+   ══════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes forgeEmbers {
+  0%   { opacity: 0.5; transform: scale(1)    rotate(0deg); }
+  100% { opacity: 0.9; transform: scale(1.06) rotate(1.5deg); }
+}
+@keyframes forgeLine {
+  from { left: -60%; }
+  to   { left: 120%; }
+}
+@keyframes forgeBtnPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255,107,26,.4), 0 0 30px rgba(255,107,26,.15); }
+  50%       { box-shadow: 0 0 22px rgba(255,107,26,.7), 0 0 50px rgba(255,107,26,.3); }
+}
+@keyframes forgeSheen {
+  from { left: -70%; }
+  to   { left: 130%; }
+}
+@keyframes forgeProgress {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Ambient background embers ── */
+[data-theme="forge"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 45% at 85% 15%, rgba(255,107,26,.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 65% at 15% 85%, rgba(255,170,0,.07)  0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,61,0,.04)   0%, transparent 70%);
+  animation: forgeEmbers 6s ease-in-out infinite alternate;
+}
+
+/* ── Card light-sweep line ── */
+[data-theme="forge"] .card { position: relative; }
+[data-theme="forge"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -70%;
+  width: 50%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,26,.6), transparent);
+  animation: forgeLine 5s ease-in-out infinite;
+  border-radius: 1px;
+}
+
+/* ── Primary button glow pulse ── */
+[data-theme="forge"] .btn-start,
+[data-theme="forge"] #btn-start-main,
+[data-theme="forge"] .btn-done {
+  animation: forgeBtnPulse 2.5s ease-in-out infinite;
+}
+
+/* ── Button sheen sweep ── */
+[data-theme="forge"] .btn-start,
+[data-theme="forge"] #btn-start-main {
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="forge"] .btn-start::after,
+[data-theme="forge"] #btn-start-main::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -70%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+  animation: forgeSheen 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Progress bars ── */
+[data-theme="forge"] .pbf,
+[data-theme="forge"] .quest-fill,
+[data-theme="forge"] .pause-fill,
+[data-theme="forge"] .sess-progress-bar {
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  background-size: 200% 100%;
+  animation: forgeProgress 2.5s linear infinite;
+}
+
+/* ── Font overrides ── */
+[data-theme="forge"] .pt,
+[data-theme="forge"] .ct,
+[data-theme="forge"] .start-title,
+[data-theme="forge"] .kv,
+[data-theme="forge"] .sess-timer {
+  font-family: 'Bebas Neue', sans-serif;
+}
+[data-theme="forge"] body {
+  font-family: 'DM Sans', sans-serif;
+}
+[data-theme="forge"] .sess-timer,
+[data-theme="forge"] .rec-range,
+[data-theme="forge"] .wdi,
+[data-theme="forge"] .rpe-btn {
+  font-family: 'DM Mono', 'JetBrains Mono', monospace;
+}

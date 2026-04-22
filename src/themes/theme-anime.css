@@ -1,0 +1,127 @@
+/* ══════════════════════════════════════
+   ANIME THEME  data-theme="anime"
+   bg:#05050f  accent:#00f0ff
+   ══════════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes animeAurora {
+  0%   { opacity: 0.55; }
+  100% { opacity: 1; }
+}
+@keyframes animeGrid {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 40px; }
+}
+@keyframes animeHoloRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes animeBtnPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(0,240,255,.5),
+      0 0 30px rgba(0,240,255,.2),
+      0 0 60px rgba(191,0,255,.1);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(0,240,255,.85),
+      0 0 55px rgba(0,240,255,.4),
+      0 0 90px rgba(191,0,255,.2);
+  }
+}
+@keyframes animeProgress {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Cyan/violet aurora ── */
+[data-theme="anime"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 55% at 15% 15%, rgba(0,240,255,.09)  0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 85% 85%, rgba(191,0,255,.09)  0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,230,0,.03)  0%, transparent 70%);
+  animation: animeAurora 5s ease-in-out infinite alternate;
+}
+
+/* ── Cyberpunk grid ── */
+[data-theme="anime"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,240,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,.028) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: animeGrid 18s linear infinite;
+}
+
+/* ── Holographic rotating border on cards ── */
+[data-theme="anime"] .card {
+  position: relative;
+  isolation: isolate;
+}
+[data-theme="anime"] .card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--r) + 1px);
+  background: conic-gradient(
+    from 0deg,
+    rgba(0,240,255,.25),
+    rgba(191,0,255,.25),
+    rgba(255,230,0,.12),
+    rgba(0,240,255,.25)
+  );
+  z-index: -1;
+  animation: animeHoloRotate 8s linear infinite;
+}
+
+/* ── Primary button dramatic glow ── */
+[data-theme="anime"] .btn-start,
+[data-theme="anime"] #btn-start-main,
+[data-theme="anime"] .btn-done {
+  animation: animeBtnPulse 2s ease-in-out infinite;
+}
+
+/* ── Progress bars ── */
+[data-theme="anime"] .pbf,
+[data-theme="anime"] .quest-fill,
+[data-theme="anime"] .pause-fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  background-size: 200% 100%;
+  animation: animeProgress 1.8s linear infinite;
+}
+
+/* ── Font overrides ── */
+[data-theme="anime"] body {
+  font-family: 'Rajdhani', 'DM Sans', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+[data-theme="anime"] .pt,
+[data-theme="anime"] .start-title,
+[data-theme="anime"] .kv,
+[data-theme="anime"] .sess-timer {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+[data-theme="anime"] .ct,
+[data-theme="anime"] .st {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+[data-theme="anime"] .rec-range,
+[data-theme="anime"] .wdi,
+[data-theme="anime"] .rpe-btn {
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+}

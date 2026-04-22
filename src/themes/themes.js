@@ -1,7 +1,7 @@
 export const themes = {
   forge: {
     id: 'forge', name: 'FORGE', emoji: '🔥',
-    fonts: 'Bebas+Neue:wght@400&family=DM+Sans:wght@400;600;700',
+    fonts: 'Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500',
     vars: {
       '--bg':       '#0f0c08',
       '--bg2':      '#1a1510',
@@ -24,7 +24,7 @@ export const themes = {
   },
   zen: {
     id: 'zen', name: 'ZEN', emoji: '🌿',
-    fonts: 'Playfair+Display:wght@400;700&family=Jost:wght@300;400;600',
+    fonts: 'Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Jost:wght@300;400;500;600',
     vars: {
       '--bg':       '#080c08',
       '--bg2':      '#0e160e',
@@ -47,7 +47,7 @@ export const themes = {
   },
   anime: {
     id: 'anime', name: 'ANIME', emoji: '⚡',
-    fonts: 'Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700',
+    fonts: 'Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono',
     vars: {
       '--bg':       '#05050f',
       '--bg2':      '#0a0a1a',
