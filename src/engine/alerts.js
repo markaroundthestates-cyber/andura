@@ -1,8 +1,10 @@
 // ══ ALERTS ══════════════════════════════════════════════════
 import { DB, tod } from '../db.js';
-import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE } from '../constants.js';
+import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, DTOT } from '../constants.js';
 import { SYS } from './sys.js';
 import { calculateFatigueScore } from './fatigue.js';
+
+const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
 
 
 function getAlerts(){
