@@ -108,8 +108,8 @@ export function renderDash(){
     if(show){
       mfpEl.style.display='block';
       mfpEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);margin-bottom:8px">
-        <div style="font-size:12px;color:var(--text2);flex:1">📲 Importă datele din MyFitnessPal pentru kcal și proteină exacte</div>
-        <button onclick="triggerMFPImport()" style="background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:6px 12px;border:none;border-radius:var(--rs);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Import MFP</button>
+        <div style="font-size:12px;color:var(--text2);flex:1">📲 Importă nutriție din CSV pentru kcal și proteină exacte</div>
+        <button onclick="triggerMFPImport()" style="background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:6px 12px;border:none;border-radius:var(--rs);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Import nutriție CSV</button>
         <button onclick="dismissMFPPrompt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
       </div>`;
     } else {
@@ -162,6 +162,9 @@ export function renderDash(){
     else if(trend<-1.2){dv.textContent='CREȘTE LA 1950 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
     else if(trend>-0.3){dv.textContent='SCADE LA 1700 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
     else{dv.textContent='MENȚINE 1800 KCAL';dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
+    const _phOvr=DB.get('phase-override'),_kcalOvr=DB.get('kcal-override');
+    const _forced1800=!pilotActive&&!_kcalOvr&&(!_phOvr||_phOvr==='AUTO');
+    if(_forced1800&&dr){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
   }
   const filled=Math.min(dates.length,8);
   // Weekly workouts counter
@@ -302,10 +305,6 @@ export function getAlerts(){
   const prots=DB.get('prots')||{},todProt=prots[today];
   if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
   else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
-  const suppList=DB.get('suppl-list')||[],suppTaken=DB.get('suppl-taken-v2')||{};
-  const todTaken=suppTaken[today]||{},suppDone=Object.values(todTaken).filter(Boolean).length;
-  if(suppList.length>0&&suppDone<suppList.length&&dates.length>=1)
-    alerts.push({t:'o',i:'💊',tt:`SUPLIMENTE: ${suppDone}/${suppList.length}`,s:'Apasă pentru a bifa',nav:'weight'});
   if(dates.length>=3&&!ws[today]) alerts.push({t:'r',i:'🚨',tt:'GREUTATE NELOGATĂ AZI',s:'Dimineața pe nemâncat → tab Greutate.'});
   if(dates.length>=7){const l7=dates.slice(-7).map(d=>ws[d]);if(Math.max(...l7)-Math.min(...l7)<0.5) alerts.push({t:'r',i:'🔴',tt:'STAGNARE 7 ZILE',s:'→ scazi 100 kcal AZI'});}
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);

@@ -25,10 +25,6 @@ function getAlerts(){
   const prots=DB.get('prots')||{},todProt=prots[today];
   if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target 180g · Deficit ${180-todProt}g`});
   else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:'180g+ esențial · Apasă pentru a loga',nav:'weight'});
-  const suppList=DB.get('suppl-list')||[],suppTaken=DB.get('suppl-taken-v2')||{};
-  const todTaken=suppTaken[today]||{},suppDone=Object.values(todTaken).filter(Boolean).length;
-  if(suppList.length>0&&suppDone<suppList.length&&dates.length>=1)
-    alerts.push({t:'o',i:'💊',tt:`SUPLIMENTE: ${suppDone}/${suppList.length}`,s:'Apasă pentru a bifa',nav:'weight'});
   if(dates.length>=3&&!ws[today]) alerts.push({t:'r',i:'🚨',tt:'GREUTATE NELOGATĂ AZI',s:'Dimineața pe nemâncat → tab Greutate.'});
   if(dates.length>=7){const l7=dates.slice(-7).map(d=>ws[d]);if(Math.max(...l7)-Math.min(...l7)<0.5) alerts.push({t:'r',i:'🔴',tt:'STAGNARE 7 ZILE',s:'→ scazi 100 kcal AZI'});}
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);

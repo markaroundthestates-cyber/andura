@@ -459,10 +459,19 @@ export function closeSummary(){
 function showSessionSummary(data) {
   const modal = document.createElement('div');
   modal.id = 'summary-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px';
+  const prsHtml = data.prs?.length
+    ? data.prs.map(pr => `<div style="padding:6px 10px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.15);border-radius:var(--rs);font-size:11px;color:var(--accent);margin-bottom:4px">🏆 ${pr.label}</div>`).join('')
+    : '';
   modal.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px;text-align:center">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);margin-bottom:4px">SESIUNE COMPLETĂ</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:20px">${data.moodLabel||''}</div>
+    <div style="font-size:15px;margin-bottom:16px">${data.moodLabel||''}</div>
+    ${data.totalSets ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:10px 4px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent)">${data.mins||0}</div><div style="font-size:9px;color:var(--text3)">MIN</div></div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:10px 4px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent)">${data.totalSets}</div><div style="font-size:9px;color:var(--text3)">SETURI</div></div>
+      <div style="background:var(--bg3);border-radius:var(--rs);padding:10px 4px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent)">${data.kcal||0}</div><div style="font-size:9px;color:var(--text3)">KCAL</div></div>
+    </div>` : ''}
+    ${prsHtml ? `<div style="margin-bottom:16px;text-align:left">${prsHtml}</div>` : ''}
     <button onclick="closeSummary()"
       style="width:100%;padding:14px;background:var(--accent);color:#000;font-weight:700;font-size:15px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif">
       ✓ GATA
@@ -505,24 +514,44 @@ export function showSessionRating(summaryData) {
   $('session-ui').style.display='none';
   hidePauseScreen();
 
+  const prsHtml = summaryData.prs?.length
+    ? summaryData.prs.map(pr => `<div style="padding:7px 12px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);font-size:11px;color:var(--accent);margin-bottom:5px">🏆 ${pr.label}</div>`).join('')
+    : '';
+
+  const sdJson = JSON.stringify(summaryData).replace(/"/g,'&quot;');
+
   const modal = document.createElement('div');
   modal.id = 'rating-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px';
+  modal.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px';
   modal.innerHTML = `
-    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">SESIUNE COMPLETĂ</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--text);margin-bottom:8px;text-align:center">CUM A FOST?</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:40px">${summaryData.totalSets} seturi · ${summaryData.mins} min</div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px">SESIUNE COMPLETĂ</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;max-width:340px;margin-bottom:16px">
+      <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 6px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${summaryData.mins}</div>
+        <div style="font-size:9px;color:var(--text3)">MIN</div>
+      </div>
+      <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 6px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${summaryData.totalSets}</div>
+        <div style="font-size:9px;color:var(--text3)">SETURI</div>
+      </div>
+      <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 6px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${summaryData.kcal}</div>
+        <div style="font-size:9px;color:var(--text3)">KCAL</div>
+      </div>
+    </div>
+    ${prsHtml ? `<div style="width:100%;max-width:340px;margin-bottom:14px">${prsHtml}</div>` : ''}
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);margin-bottom:16px;text-align:center">CUM A FOST?</div>
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px">
-      <button onclick="rateSession('easy', ${JSON.stringify(summaryData).replace(/"/g,'&quot;')})"
-        style="padding:20px;background:rgba(48,209,88,0.1);border:2px solid var(--green);border-radius:var(--rs);color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;cursor:pointer">
+      <button onclick="rateSession('easy', ${sdJson})"
+        style="padding:18px;background:rgba(48,209,88,0.1);border:2px solid var(--green);border-radius:var(--rs);color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         ⚡ UȘOARĂ — MAI POT
       </button>
-      <button onclick="rateSession('normal', ${JSON.stringify(summaryData).replace(/"/g,'&quot;')})"
-        style="padding:20px;background:rgba(200,255,0,0.08);border:2px solid var(--accent);border-radius:var(--rs);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;cursor:pointer">
+      <button onclick="rateSession('normal', ${sdJson})"
+        style="padding:18px;background:rgba(200,255,0,0.08);border:2px solid var(--accent);border-radius:var(--rs);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         👍 NORMALĂ — OK
       </button>
-      <button onclick="rateSession('hard', ${JSON.stringify(summaryData).replace(/"/g,'&quot;')})"
-        style="padding:20px;background:rgba(255,59,48,0.08);border:2px solid var(--red);border-radius:var(--rs);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;cursor:pointer">
+      <button onclick="rateSession('hard', ${sdJson})"
+        style="padding:18px;background:rgba(255,59,48,0.08);border:2px solid var(--red);border-radius:var(--rs);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         💀 GREA — LA LIMITĂ
       </button>
     </div>

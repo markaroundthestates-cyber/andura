@@ -477,7 +477,7 @@ export function savePhoto(input) {
 }
 
 export function setBFOverride() {
-  const v = parseFloat(document.getElementById('bf-input')?.value);
+  const v = parseFloat(document.getElementById('bf-override-input')?.value);
   if (!isNaN(v) && v > 3 && v < 50) {
     DB.set('bf-override', v);
     toast('✓ BF% setat: ' + v + '%', 'var(--green)');
