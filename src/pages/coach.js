@@ -607,8 +607,9 @@ export function rateSession(rating, summaryData) {
   sRatings.unshift({ session: state.sessStart, rating, date: tod() });
   DB.set('session-ratings', sRatings.slice(0, 20));
 
-  // FIX 1 + FIX 6: Apelează cleanFakeLogs DUPĂ ce ratingul a fost salvat
+  // FIX 1 + FIX 6: Extrage PR-uri și apelează cleanFakeLogs DUPĂ ce ratingul a fost salvat
   // (nu înainte, nu la load — doar la confirmarea ratingului)
+  extractAndSavePRs();
   cleanFakeLogs();
 
   // Push immediately — don't rely on 3s debounce since user may close app right after rating
@@ -838,39 +839,97 @@ export function checkWeightReminder() {
   }
 }
 
+// ── FIX 3a: Extrage și salvează PR-uri în storage dedicat ────────────────
+export function extractAndSavePRs() {
+  const logs = DB.get('logs') || [];
+  const prMap = {};
+  logs.filter(l => l.w && l.reps && !l.baseline).forEach(l => {
+    const score = l.w * (parseInt(l.reps) || 1);
+    if (!prMap[l.ex] || score > prMap[l.ex].score) {
+      prMap[l.ex] = { ex: l.ex, kg: l.w, reps: l.reps, date: l.date, ts: l.ts, score };
+    }
+  });
+  const prs = Object.values(prMap).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  DB.set('pr-records', prs);
+  return prs;
+}
+
+// ── FIX 3b: cleanFakeLogs simplificată — extrage PR-uri înainte ──────────
 export function cleanFakeLogs() {
+  // Salvează PR-urile ÎNAINTE de curățare
+  extractAndSavePRs();
+
   const logs = DB.get('logs') || [];
   const before = logs.length;
-
-  // FIX 2: Calculează PR per exercițiu (greutatea maximă) ÎNAINTE de cleanup
-  const prMap = {};
-  logs.filter(l => !l.baseline && l.w).forEach(l => {
-    if (!prMap[l.ex] || l.w > prMap[l.ex].w) prMap[l.ex] = l;
-  });
-  const prTs = new Set(Object.values(prMap).map(l => l.ts));
-
+  const cleaned = logs.filter(l => !l.baseline);
+  const cleanedFull = logs.filter(l => l.baseline);
+  // Păstrează baseline + toate non-baseline (curăță doar baseline-urile din loc greșit)
+  // Logica corectă: elimină doar logurile cu session singleton (test rapid)
   const sessions = {};
   logs.filter(l => !l.baseline).forEach(l => {
     if (!sessions[l.session]) sessions[l.session] = [];
     sessions[l.session].push(l);
   });
-
-  // O sesiune e INVALIDĂ doar dacă are exact 1 set total (testing rapid)
-  // Sesiunile cu 2+ seturi total sunt păstrate
   const validSessions = new Set(
     Object.entries(sessions)
       .filter(([, sets]) => sets.length >= 2)
       .map(([sid]) => sid)
   );
-
-  // Păstrează log-urile valide SAU log-urile PR (protejate de ștergere)
-  const cleaned = logs.filter(l => l.baseline || validSessions.has(l.session) || prTs.has(l.ts));
-  DB.set('logs', cleaned);
-  const removed = before - cleaned.length;
-  toast(`✅ Curățat ${removed} loguri (${cleaned.length} rămase)`, 'var(--green)');
+  const result = logs.filter(l => l.baseline || validSessions.has(l.session));
+  if (result.length !== logs.length) DB.set('logs', result);
+  const removed = before - result.length;
+  toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
   renderCoachIdle();
-  if(window.renderDash)window.renderDash();
-  console.log(`cleanFakeLogs: ${before} → ${cleaned.length} (removed ${removed})`);
+  if (window.renderDash) window.renderDash();
+  console.log(`cleanFakeLogs: ${before} → ${result.length} (removed ${removed})`);
+}
+
+// ── FIX 2b: Finish Early — funcții ───────────────────────────────────────
+export function finishEarly() {
+  const reasons = ['Oboseală extremă', 'Am dureri', 'Lipsă timp', 'Alt motiv'];
+  document.getElementById('early-stop-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'early-stop-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px';
+  modal.innerHTML = `
+    <div style="width:100%;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px 20px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent2);margin-bottom:6px;text-align:center">STOP DEVREME</div>
+      <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:20px">De ce oprești antrenamentul?</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${reasons.map(r => `<button onclick="confirmEarlyStop('${r}')"
+          style="padding:14px 16px;background:rgba(255,149,0,0.07);border:1px solid rgba(255,149,0,0.25);border-radius:var(--rs);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">${r}</button>`).join('')}
+      </div>
+      <button onclick="document.getElementById('early-stop-modal')?.remove()"
+        style="margin-top:16px;width:100%;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anulează</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+export function confirmEarlyStop(reason) {
+  // 1. Salvează în state
+  state.earlyStopReason = reason;
+
+  // 2. Salvează în log-ul sesiunii
+  const setsCompleted = state.sessLog.length;
+  const todayExs = getTodayExercises();
+  const avgSets = todayExs.length > 0 ? todayExs.reduce((a, ex) => a + (EX_SETS[ex] || 3), 0) / todayExs.length : 3;
+  const totalSets = Math.round(state.sessionTotalExercises * avgSets);
+  const earlyLog = { date: tod(), earlyStop: { reason, setsCompleted, totalSets }, session: state.sessStart };
+  const logs = DB.get('logs') || [];
+  logs.unshift({ ...earlyLog, ex: '__early_stop__', w: 0, reps: '0', ts: Date.now(), session: state.sessStart, earlyStop: { reason, setsCompleted, totalSets } });
+  DB.set('logs', logs.slice(0, 500));
+
+  // 3. Salvează în 'early-stops' key
+  const earlyStops = DB.get('early-stops') || [];
+  earlyStops.push({ date: tod(), reason, session: state.sessStart, setsCompleted, totalSets });
+  DB.set('early-stops', earlyStops.slice(-50));
+
+  // 4. Ascunde modalul
+  document.getElementById('early-stop-modal')?.remove();
+
+  // 5. Flow normal (rating etc.)
+  endSession();
 }
 
 export function saveStepsQuick(){
@@ -906,29 +965,22 @@ export function togglePRWall() {
   renderPRWall();
 }
 
+// ── FIX 3c: renderPRWall citește din 'pr-records' ────────────────────────
 export function renderPRWall() {
   const el = $('pr-wall-list');
   if (!el) return;
-  const logs = DB.get('logs') || [];
-  const nonBaseline = logs.filter(l => !l.baseline && l.w);
 
-  // Per exercise: find the record (max kg), store date + reps
-  const prMap = {};
-  nonBaseline.forEach(l => {
-    const ex = l.ex;
-    const kg = parseFloat(l.w) || 0;
-    const reps = parseInt(l.reps) || 0;
-    if (!prMap[ex] || kg > prMap[ex].kg || (kg === prMap[ex].kg && reps > prMap[ex].reps)) {
-      prMap[ex] = { kg, reps, date: l.date, ts: l.ts || 0 };
-    }
-  });
+  // Citește din storage dedicat; dacă nu există, calculează din logs
+  const prs = DB.get('pr-records') || extractAndSavePRs();
 
-  const entries = Object.entries(prMap)
-    .map(([ex, data]) => ({ ex, ...data }))
-    .sort((a, b) => b.ts - a.ts || b.date.localeCompare(a.date));
+  if (!prs.length) {
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Completează câteva antrenamente pentru a vedea recordurile</div>';
+    return;
+  }
 
+  const entries = prs.filter(p => p.ex && p.ex !== '__early_stop__');
   if (!entries.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Niciun record încă. Completează sesiuni pentru a vedea PR-uri.</div>';
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Completează câteva antrenamente pentru a vedea recordurile</div>';
     return;
   }
 
@@ -945,7 +997,7 @@ export function renderPRWall() {
         <div style="font-size:11px;color:var(--text3)">${dateStr}</div>
       </div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">${e.kg} kg</div>
-      <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps||'—'}</div>
+      <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps || '—'}</div>
     </div>`;
   }).join('') + (hasMore ? `<div onclick="togglePRWall()" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
     ${prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}

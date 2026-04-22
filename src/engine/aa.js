@@ -167,6 +167,24 @@ export const AA = {
       };
     }
 
+    // ── EARLY STOP: stop fizic recent → reduce volum ─────────────────────
+    const earlyStops = DB.get('early-stops') || [];
+    const last3Stops = earlyStops.slice(-3);
+    const hasPhysicalStop = last3Stops.some(s => s.reason === 'Oboseală extremă' || s.reason === 'Am dureri');
+    const consecutiveStops = earlyStops.length >= 2 &&
+      last3Stops.slice(-2).every(s => s.reason !== 'Lipsă timp' && s.reason !== 'Alt motiv');
+
+    if (hasPhysicalStop) {
+      return {
+        action: 'REDUCE_VOLUME',
+        newKg: lastW,
+        volumeReduction: 0.1,
+        autoFatigueNote: true,
+        reason: 'Early stop fizic recent → volum redus 10%',
+        color: 'var(--accent2)'
+      };
+    }
+
     // ── FORM ISSUE: formă slabă repetată → scade chiar dacă RPE e ok ────
     if (recovery.formIssue) {
       const exFormLogs = logs.filter(l => (l.notes||[]).includes('form'));

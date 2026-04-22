@@ -21,6 +21,7 @@ export const state = {
   logDateOffset: 0,
   sessionTotalExercises: 0,
   sessKcalBurn: 0,
+  earlyStopReason: null,
 };
 
 // Convenience destructure helpers (read-only snapshots)

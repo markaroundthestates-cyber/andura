@@ -21,7 +21,7 @@ import { saveW, saveKcal, adjKcal, setKcalDirect,
          selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride,
          renderDailyDropdown, showDayDetail, closeDayDetail,
          renderSessionsDropdown, showSessionDetail, hideSessionDetail } from './pages/weight.js';
-import { cleanFakeLogs, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall, togglePRWall, toggleExList } from './pages/coach.js';
+import { cleanFakeLogs, extractAndSavePRs, finishEarly, confirmEarlyStop, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall, togglePRWall, toggleExList } from './pages/coach.js';
 import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
@@ -40,7 +40,7 @@ Object.assign(window, {
   selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride,
   toggleMute, skipPause,
   setObRPE, saveOnboarding, skipOnboarding,
-  toggleHistoryAll, cleanFakeLogs, saveStepsQuick, getGroupColor, resetNotes,
+  toggleHistoryAll, cleanFakeLogs, extractAndSavePRs, finishEarly, confirmEarlyStop, saveStepsQuick, getGroupColor, resetNotes,
   setDone, confirmReps, selectRPE, startSession, cancelWorkout, endSession,
   skipExercise, adjSessionReps, editSessionKg, confirmEditKg, adjSessionKg, confirmSessionKg, rateSession,
   setPhaseOverride, clearPhaseOverride,

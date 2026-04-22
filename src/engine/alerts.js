@@ -30,6 +30,13 @@ function getAlerts(){
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);
   const avgRPE=rRPE.length?rRPE.reduce((a,b)=>a+b,0)/rRPE.length:null;
   if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% săptămâna asta'});
+  // Early stop alert
+  const earlyStops=DB.get('early-stops')||[];
+  if(earlyStops.length>=2){
+    const last2=earlyStops.slice(-2);
+    const bothPhysical=last2.every(s=>s.reason!=='Lipsă timp'&&s.reason!=='Alt motiv');
+    if(bothPhysical) alerts.push({t:'r',i:'⚠️',tt:'2 SESIUNI OPRITE DEVREME',s:'Consideră un deload această săptămână'});
+  }
   const daysElapsed=Math.min(DTOT,Math.max(0,Math.round((new Date()-SD2)/86400000)));
   const tgt=Math.round((SW-(SW-TW)*daysElapsed/DTOT)*10)/10;
   const todW=ws[today];

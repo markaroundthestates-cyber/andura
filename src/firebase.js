@@ -4,7 +4,7 @@ import { toast } from './ui/ui.js';
 
 const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
 const USER_PATH = 'users/daniel';
-const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list'];
+const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records'];
 
 function getDeviceId() {
   let id = localStorage.getItem('device-id');
