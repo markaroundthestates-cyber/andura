@@ -35,7 +35,6 @@ export const SYS = {
     const fatLost = kgLost * 0.75;
     const startFatKg = this.START_KG * (this.START_BF/100);
     const currentFatKg = Math.max(3, startFatKg - fatLost);
-    const currentLBM = kg - currentFatKg;
     const calculatedBF = (currentFatKg / kg) * 100;
     return Math.round(Math.max(5, Math.min(45, calculatedBF)) * 10) / 10;
   },

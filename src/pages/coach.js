@@ -194,7 +194,7 @@ export function startSession(){
   const todayExsForCount=getTodayExercises();
   state.sessionTotalExercises = todayExsForCount.length;
   const ts=$('today-screen');if(ts)ts.style.display='none';
-  $('session-ui').style.display='block';
+  const su=$('session-ui'); if(su) su.style.display='block';
   state.sessTimer = setInterval(tickSess,1000);
   beepStart();speak('Antrenament pornit.');
   toast('🔥 START!');
@@ -218,23 +218,20 @@ export function updateExCard(){
 
   // Exercise info
   const grp=getExGroup(state.currentEx);
-  $('ex-group-label').textContent=grp;
-  $('ex-name-display').textContent=state.currentEx;
+  const glEl=$('ex-group-label'); if(glEl) glEl.textContent=grp;
+  const ndEl=$('ex-name-display'); if(ndEl) ndEl.textContent=state.currentEx;
 
   // Progression badge
   const pb=$('progression-badge');
-  pb.textContent=rec.statusLabel;
-  pb.style.background=rec.statusColor+'22';
-  pb.style.color=rec.statusColor;
-  pb.style.border=`1px solid ${rec.statusColor}44`;
+  if(pb){pb.textContent=rec.statusLabel;pb.style.background=rec.statusColor+'22';pb.style.color=rec.statusColor;pb.style.border=`1px solid ${rec.statusColor}44`;}
 
   // Main numbers
-  $('rec-kg-big').textContent=rec.kg;
-  $('rec-kg-big').style.color=rec.status==='TOO HEAVY'?'var(--red)':rec.status==='INCREASE'?'var(--green)':'var(--accent)';
-  $('rec-reps-big').textContent=rec.repsTarget;
-  $('rec-rir').textContent=`RIR ${tempo.rir}`;
-  $('rec-set-big').textContent=state.currentSet;
-  $('rec-set-total').textContent=`din ${totalSets}`;
+  const kbEl=$('rec-kg-big');
+  if(kbEl){kbEl.textContent=rec.kg;kbEl.style.color=rec.status==='TOO HEAVY'?'var(--red)':rec.status==='INCREASE'?'var(--green)':'var(--accent)';}
+  const rbEl=$('rec-reps-big'); if(rbEl) rbEl.textContent=rec.repsTarget;
+  const rirEl=$('rec-rir'); if(rirEl) rirEl.textContent=`RIR ${tempo.rir}`;
+  const sbEl=$('rec-set-big'); if(sbEl) sbEl.textContent=state.currentSet;
+  const stEl=$('rec-set-total'); if(stEl) stEl.textContent=`din ${totalSets}`;
 
   // Last performance
   const lastLog=DP.getLogs(state.currentEx,1)[0];
@@ -257,35 +254,38 @@ export function updateExCard(){
 
   // Coach message — show auto-adjust OR progression note
   const msg=$('coach-msg-box');
-  if(rec.autoAdjusted){
-    msg.style.display='block';
-    msg.textContent=rec.autoAdjustMsg.includes('scad')?`⚙️ AUTO: TOO HEAVY → −${DP.getIncrement(state.currentEx)}kg`:`⚙️ AUTO: TOO EASY → +${DP.getIncrement(state.currentEx)}kg`;
-    msg.style.background=rec.autoAdjustColor+'15';
-    msg.style.color=rec.autoAdjustColor;
-    msg.style.border=`2px solid ${rec.autoAdjustColor}44`;
-  } else if(rec.progressionStage>=2){
-    msg.style.display='block';
-    msg.textContent=rec.progressionNote;
-    msg.style.background=rec.statusColor+'15';
-    msg.style.color=rec.statusColor;
-    msg.style.border=`2px solid ${rec.statusColor}44`;
-  } else {
-    msg.style.display='none';
+  if(msg){
+    if(rec.autoAdjusted){
+      msg.style.display='block';
+      msg.textContent=rec.autoAdjustMsg.includes('scad')?`⚙️ AUTO: TOO HEAVY → −${DP.getIncrement(state.currentEx)}kg`:`⚙️ AUTO: TOO EASY → +${DP.getIncrement(state.currentEx)}kg`;
+      msg.style.background=rec.autoAdjustColor+'15';
+      msg.style.color=rec.autoAdjustColor;
+      msg.style.border=`2px solid ${rec.autoAdjustColor}44`;
+    } else if(rec.progressionStage>=2){
+      msg.style.display='block';
+      msg.textContent=rec.progressionNote;
+      msg.style.background=rec.statusColor+'15';
+      msg.style.color=rec.statusColor;
+      msg.style.border=`2px solid ${rec.statusColor}44`;
+    } else {
+      msg.style.display='none';
+    }
   }
 
   // Sets dots
-  $('sets-dots').innerHTML=Array.from({length:totalSets},(_,i)=>`
+  const sdEl=$('sets-dots');
+  if(sdEl) sdEl.innerHTML=Array.from({length:totalSets},(_,i)=>`
     <div style="flex:1;height:6px;border-radius:3px;background:${i<state.currentSet-1?'var(--accent)':i===state.currentSet-1?'rgba(200,255,0,0.4)':'var(--bg3)'};transition:background .3s"></div>
   `).join('');
 
   // Reset reps input to target
   state.sessRepsInput = rec.repsTarget;
-  $('session-reps').textContent=state.sessRepsInput;
+  const srEl=$('session-reps'); if(srEl) srEl.textContent=state.sessRepsInput;
 
   // Always show action buttons, hide input screens
-  $('set-actions').style.display='flex';
-  $('rpe-inline').style.display='none';
-  $('rpe-screen').style.display='none';
+  const saEl=$('set-actions'); if(saEl) saEl.style.display='flex';
+  const riEl=$('rpe-inline'); if(riEl) riEl.style.display='none';
+  const rsEl=$('rpe-screen'); if(rsEl) rsEl.style.display='none';
 
   speak(`Set ${state.currentSet}. ${state.currentEx}. Metti ${rec.kg} chili. ${rec.repsTarget} repetizioni.`);
 }
@@ -293,12 +293,12 @@ export function updateExCard(){
 export function setDone(){
   if(!state.currentEx){toast('⚠ Selectează exercițiu','var(--accent2)');return;}
   beepDone();
-  $('set-actions').style.display='none';
-  $('rpe-inline').style.display='block';
+  const sa=$('set-actions'); if(sa) sa.style.display='none';
+  const ri=$('rpe-inline'); if(ri) ri.style.display='block';
 }
 
 export function confirmReps(){
-  $('rpe-inline').style.display='none';
+  const ri=$('rpe-inline'); if(ri) ri.style.display='none';
 
   const rec=AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
   const totalSets=EX_SETS[state.currentEx]||3;
@@ -398,9 +398,9 @@ export function cancelWorkout(){
   }
   state.sessLog = [];
   if(window.speechSynthesis) window.speechSynthesis.cancel();
-  $('session-ui').style.display='none';
+  const suEl=$('session-ui'); if(suEl) suEl.style.display='none';
   hidePauseScreen();
-  $('today-screen').style.display='block';
+  const tsEl=$('today-screen'); if(tsEl) tsEl.style.display='block';
   toast('❌ Antrenament anulat — nicio dată salvată','var(--red)');
   renderCoachIdle();
 }
@@ -417,8 +417,8 @@ export function endSession(){
   if(!hasEarlyStop && Date.now() - state.sessStart < 5 * 60 * 1000){
     const logs = DB.get('logs') || [];
     DB.set('logs', logs.filter(l => l.session !== state.sessStart));
-    $('session-ui').style.display='none';
-    const ts=$('today-screen'); if(ts)ts.style.display='block';
+    const suEl2=$('session-ui'); if(suEl2) suEl2.style.display='none';
+    const ts=$('today-screen'); if(ts) ts.style.display='block';
     toast('🧹 Sesiune test ștearsă automat','var(--accent2)');
     renderCoachIdle();
     if(window.renderDash) window.renderDash();
@@ -543,7 +543,8 @@ export function showSessionRating(summaryData) {
     ? summaryData.prs.map(pr => `<div style="padding:7px 12px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);font-size:11px;color:var(--accent);margin-bottom:5px">🏆 ${pr.label}</div>`).join('')
     : '';
 
-  const sdJson = JSON.stringify(summaryData).replace(/"/g,'&quot;');
+  // Store summaryData on window to avoid inline JSON injection issues
+  window._pendingRatingSummary = summaryData;
 
   const modal = document.createElement('div');
   modal.id = 'rating-modal';
@@ -567,15 +568,15 @@ export function showSessionRating(summaryData) {
     ${prsHtml ? `<div style="width:100%;max-width:340px;margin-bottom:14px">${prsHtml}</div>` : ''}
     <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);margin-bottom:16px;text-align:center">CUM A FOST?</div>
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px">
-      <button onclick="rateSession('easy', ${sdJson})"
+      <button onclick="rateSession('easy', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(48,209,88,0.1);border:2px solid var(--green);border-radius:var(--rs);color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         ⚡ UȘOARĂ — MAI POT
       </button>
-      <button onclick="rateSession('normal', ${sdJson})"
+      <button onclick="rateSession('normal', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(200,255,0,0.08);border:2px solid var(--accent);border-radius:var(--rs);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         👍 NORMALĂ — OK
       </button>
-      <button onclick="rateSession('hard', ${sdJson})"
+      <button onclick="rateSession('hard', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(255,59,48,0.08);border:2px solid var(--red);border-radius:var(--rs);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
         💀 GREA — LA LIMITĂ
       </button>
@@ -675,6 +676,7 @@ export function confirmEditKg() { confirmSessionKg(); }
 
 export function renderSessLog(){
   const sl=$('sess-log');
+  if(!sl) return;
   if(!state.sessLog.length){sl.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Niciun set</div>';return;}
   sl.innerHTML=[...state.sessLog].reverse().map(s=>{
     const nc=s.rpe>=9?'var(--red)':s.rpe<=6.5?'var(--accent3)':'var(--green)';

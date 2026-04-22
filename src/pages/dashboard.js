@@ -55,9 +55,9 @@ export function renderDash(){
   const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),today=tod();
   const todW=ws[today]||null,lastW=dates.length?ws[dates[dates.length-1]]:null,dW=todW||lastW;
   const trend=getTrend();
-  const tgt=Math.round((SW-(SW-TW)*Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT)*10)/10;
+  const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
   const now=new Date(),PILOT=new Date('2026-07-20'),pilotActive=now>=PILOT;
-  const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]];
+  const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]]||PROG[0];
   const sysKcal=SYS.getKcalTarget(),sysPhase=SYS.getPhase();
   const kcals=DB.get('kcals')||{};
   const todayKcal=kcals[today]!==undefined?kcals[today]:sysKcal;
@@ -160,7 +160,7 @@ export function renderDash(){
     else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie';}
   }
   const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
-  if(dv){
+  if(dv&&dr&&dec){
     if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZĂ ${n} ZILE`:`${sysKcal} KCAL`;dr.textContent=n>0?`${n} zile până la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
     else if(trend<-1.2){
       const kcalDiff=todayKcal-sysKcal;
@@ -172,7 +172,7 @@ export function renderDash(){
     else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
     const _phOvr=DB.get('phase-override');
     const _autoFixed=!pilotActive&&(!_phOvr||_phOvr==='AUTO');
-    if(_autoFixed&&dr){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
+    if(_autoFixed){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
   }
   const filled=Math.min(dates.length,8);
   // Weekly workouts counter
@@ -383,7 +383,7 @@ export function getAlerts(){
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);
   const avgRPE=rRPE.length?rRPE.reduce((a,b)=>a+b,0)/rRPE.length:null;
   if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% săptămâna asta'});
-  const tgt=Math.round((SW-(SW-TW)*Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT)*10)/10;
+  const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
   const todW=ws[today];
   if(todW&&todW<=tgt+0.2&&!alerts.find(a=>a.t==='r')) alerts.push({t:'g',i:'✅',tt:'PE TRASEU',s:`${todW.toFixed(1)} kg · Ținta azi: ${tgt.toFixed(1)} kg`});
   return alerts;

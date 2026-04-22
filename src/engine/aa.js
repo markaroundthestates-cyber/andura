@@ -209,6 +209,16 @@ export const AA = {
     if (!adj) return rec;
     const inc = DP.getIncrement(ex);
     const roundedKg = DP.roundToStep(adj.newKg, ex);
+    // For HOLD actions keep the original DP status/label — only update kg and message
+    if (adj.action === 'HOLD' || adj.action === 'REDUCE_VOLUME') {
+      return {
+        ...rec,
+        kg: roundedKg,
+        autoAdjusted: true,
+        autoAdjustMsg: adj.reason,
+        autoAdjustColor: adj.color,
+      };
+    }
     return {
       ...rec,
       kg: roundedKg,

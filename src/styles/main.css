@@ -214,7 +214,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 ::-webkit-scrollbar{width:0}
 
-:root{--purple:#bf5af2}
+/* --purple already declared in :root above */
 .phase-btn.active-phase{border-color:var(--accent)!important;background:rgba(200,255,0,0.12)!important;color:var(--accent)!important}
 .checkpoint-item{background:var(--bg3);border-radius:var(--rs);padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid var(--accent)}
 .checkpoint-item.season{border-left-color:var(--green)}
