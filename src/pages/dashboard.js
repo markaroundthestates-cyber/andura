@@ -162,8 +162,8 @@ export function renderDash(){
   const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
   if(dv){
     if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZĂ ${n} ZILE`:`${sysKcal} KCAL`;dr.textContent=n>0?`${n} zile până la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
-    else if(trend<-1.2){dv.textContent=`CREȘTE LA ${sysKcal+150} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
-    else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal-100} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
+    else if(trend<-1.2){dv.textContent=`CREȘTE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+    else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
     else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
     const _phOvr=DB.get('phase-override');
     const _autoFixed=!pilotActive&&(!_phOvr||_phOvr==='AUTO');

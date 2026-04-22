@@ -1,0 +1,68 @@
+export const themes = {
+  forge: {
+    id: 'forge', name: 'FORGE', emoji: '🔥',
+    fonts: 'Bebas+Neue:wght@400|DM+Sans:wght@400;600;700',
+    vars: {
+      '--bg':       '#0f0c08',
+      '--bg2':      '#1a1510',
+      '--bg3':      '#231e18',
+      '--card':     '#1e1810',
+      '--border':   '#3a2e20',
+      '--accent':   '#ff6b1a',
+      '--accent2':  '#ffaa00',
+      '--accent3':  '#ffd060',
+      '--purple':   '#c084fc',
+      '--green':    '#6acd6a',
+      '--red':      '#ff4444',
+      '--text':     '#e8d4b0',
+      '--text2':    '#b09070',
+      '--text3':    '#7a6050',
+      '--r':        '10px',
+      '--rs':       '6px',
+    }
+  },
+  zen: {
+    id: 'zen', name: 'ZEN', emoji: '🌿',
+    fonts: 'Playfair+Display:wght@400;700|Jost:wght@300;400;600',
+    vars: {
+      '--bg':       '#080c08',
+      '--bg2':      '#0e160e',
+      '--bg3':      '#141e14',
+      '--card':     '#101810',
+      '--border':   '#1e301e',
+      '--accent':   '#6aab3f',
+      '--accent2':  '#8fbc6a',
+      '--accent3':  '#b8d498',
+      '--purple':   '#9b8ec4',
+      '--green':    '#4acd4a',
+      '--red':      '#e05050',
+      '--text':     '#c8dcc0',
+      '--text2':    '#8aaa80',
+      '--text3':    '#5a7850',
+      '--r':        '12px',
+      '--rs':       '8px',
+    }
+  },
+  anime: {
+    id: 'anime', name: 'ANIME', emoji: '⚡',
+    fonts: 'Orbitron:wght@400;700;900|Rajdhani:wght@400;600;700',
+    vars: {
+      '--bg':       '#05050f',
+      '--bg2':      '#0a0a1a',
+      '--bg3':      '#0f0f25',
+      '--card':     '#080820',
+      '--border':   '#1a1a40',
+      '--accent':   '#00f0ff',
+      '--accent2':  '#bf00ff',
+      '--accent3':  '#ffe600',
+      '--purple':   '#bf00ff',
+      '--green':    '#00ff88',
+      '--red':      '#ff0055',
+      '--text':     '#b0c4ee',
+      '--text2':    '#7088bb',
+      '--text3':    '#4a5580',
+      '--r':        '4px',
+      '--rs':       '2px',
+    }
+  }
+};

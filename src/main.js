@@ -1,4 +1,5 @@
 // ══ MAIN ENTRY POINT ══════════════════════════════════════════
+import { applyTheme, getActiveTheme } from './themes/themeManager.js';
 import { initFirebaseSync } from './firebase.js';
 import { DP } from './engine/dp.js';
 import { AA } from './engine/aa.js';
@@ -30,6 +31,7 @@ import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPromp
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
+  applyTheme,
   goTo, toast, DP, AA, cleanEx,
   renderDash, renderCoachIdle, closeSummary,
   initW, onDI, adj,
@@ -53,6 +55,7 @@ Object.assign(window, {
 
 // ── INIT ─────────────────────────────────────────────────────
 async function init() {
+  applyTheme(getActiveTheme());
   await initFirebaseSync();
   injectBaseline();
   injectMFPWeights();

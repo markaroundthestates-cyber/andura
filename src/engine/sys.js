@@ -48,19 +48,30 @@ export const SYS = {
 
   estimateTDEE() {
     const ws = DB.get('weights') || {};
-    const dates = Object.keys(ws).sort((a, b) => a.localeCompare(b));
-    if (dates.length < 10) {
-      // Mifflin-St Jeor estimate
+    let dates = Object.keys(ws).sort((a, b) => a.localeCompare(b));
+
+    // Folosește greutăți din momentul schimbării fazei (sau ultimele 14 zile)
+    const phaseChangeDate = DB.get('phase-change-date');
+    if (phaseChangeDate) {
+      const filtered = dates.filter(d => d >= phaseChangeDate);
+      if (filtered.length >= 4) dates = filtered;
+      // Dacă sunt prea puține date din faza nouă, fallback la ultimele 14 zile
+      else dates = dates.slice(-14);
+    } else {
+      dates = dates.slice(-14);
+    }
+
+    if (dates.length < 4) {
+      // Mifflin-St Jeor fallback
       const kg = this.getCurrentKg();
       const bmr = 10*kg + 6.25*this.HEIGHT - 5*this.AGE + 5;
-      return Math.round(bmr * 1.55); // moderate activity
+      return Math.round(bmr * 1.55);
     }
-    const last14 = dates.slice(-14);
-    const w1 = ws[last14[0]], w2 = ws[last14[last14.length-1]];
+
+    const w1 = ws[dates[0]], w2 = ws[dates[dates.length-1]];
     const kgLost = w1 - w2;
     const currentKcal = DB.get('current-kcal') || 1800;
-    // Use actual calendar days between first and last weigh-in, not count of weigh-in entries
-    const daysElapsed = Math.max(1, Math.round((new Date(last14[last14.length-1]) - new Date(last14[0])) / 86400000));
+    const daysElapsed = Math.max(1, Math.round((new Date(dates[dates.length-1]) - new Date(dates[0])) / 86400000));
     const dailyDeficit = (kgLost * 7700) / daysElapsed;
     return Math.round(Math.max(1800, Math.min(3500, currentKcal + dailyDeficit)));
   },
