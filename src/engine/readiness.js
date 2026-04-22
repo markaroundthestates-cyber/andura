@@ -9,8 +9,9 @@ export const READINESS_LABELS = {
 };
 
 export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, targetKcal, targetProt) {
+  if (readinessInput == null) return null;
   const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
-  let score = 60 + (readinessPoints[readinessInput] ?? 25);
+  let score = 60 + (readinessPoints[readinessInput] ?? 0);
 
   if (kcalYesterday != null && targetKcal) {
     const ratio = kcalYesterday / targetKcal;

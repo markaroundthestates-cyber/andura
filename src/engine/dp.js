@@ -1,6 +1,7 @@
 // ══ DP ENGINE — Double Progression ══════════════════════════
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS } from '../constants.js';
+import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 
 export const DP = {
   // Rep ranges per exercise
@@ -40,10 +41,9 @@ export const DP = {
     'Calf Raises': 5,
   },
 
-  // Rotunjește greutatea la step-ul corect al echipamentului
+  // Rotunjește greutatea la cea mai apropiată valoare din lista reală a echipamentului
   roundToStep(kg, ex) {
-    const step = this.WEIGHT_STEPS[ex] || 2.5;
-    return Math.round(kg / step) * step;
+    return roundToEquipmentWeight(kg, ex);
   },
 
   // Microload increments (o treaptă pe echipamentul respectiv)
@@ -156,6 +156,18 @@ export const DP = {
 
     const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets } = state;
 
+    // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list
+    if (lastReps < Math.ceil(rMin * 0.5)) {
+      const prevKg = getPrevWeight(lastW, ex);
+      return {
+        kg: prevKg, repsTarget: rMin, rir: 3,
+        status: 'SCALE BACK', statusColor: 'var(--accent2)',
+        statusLabel: '⬇️ SCADE GREUTATEA',
+        progressionNote: `${lastW}kg → ${prevKg}kg · Reps insuficiente (${lastReps}/${rMin})`,
+        progressionStage: 1
+      };
+    }
+
     // ── CAP CHECK: at or above max sensible weight for this exercise
     if (maxKg && lastW >= maxKg) {
       // Don't add weight — focus on reps and quality
@@ -257,7 +269,7 @@ export const DP = {
 
     // Prea greu: 2× RPE 10 → scade imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
-      const newKg = this.roundToStep(Math.max(1, dpState.lastW - inc), ex);
+      const newKg = getPrevWeight(dpState.lastW, ex);
       return { adjust: true, dir: 'down', newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
     }
     // Prea ușor: 2× RPE ≤6 și reps > rMax → crește imediat

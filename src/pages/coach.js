@@ -143,6 +143,7 @@ export function skipPause() {
   stopPause();
   hidePauseScreen();
   updateExCard();
+  toast('⚠️ Pauza scurtă poate reduce performanța la setul următor', 'var(--accent2)');
 }
 
 export function getGroupColor(g) {
@@ -238,19 +239,27 @@ export function renderCoachIdle(){
     // Check muscle lagging alerts
     const laggingAlerts=checkMuscleBalance()||[];
 
-    // Readiness session card
+    // Readiness session card — null when not set (no default assumed)
     const readinessScore = (() => {
-      if (todayR == null) return 70;
+      if (todayR == null) return null;
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
       const yDate = yesterday.toISOString().slice(0,10);
       const kcals = DB.get('kcals')||{}, prots = DB.get('prots')||{};
       return getReadinessScore(todayR, kcals[yDate], prots[yDate], 1800, 180);
     })();
-    const verdict = getReadinessVerdict(readinessScore);
+    const verdict = readinessScore != null ? getReadinessVerdict(readinessScore) : null;
 
-    // FIX 4: Exercise preview with weights + lagging badges + dropdown if >5 exercises
-    const exList=tp.ex||[];
-    // Use today's day index (dayMap index) as the key for expansion state
+    // Exercise list — apply pattern filtering and skip occupied equipment
+    const occupiedEquip = DB.get('equipment-occupied-session') || [];
+    const unavailEquip = DB.get('unavailable-equipment') || [];
+    const patterns = DB.get('applied-patterns') || [];
+    const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
+    let rawExList = (tp.ex||[]).filter(e => !unavailEquip.includes(cleanEx(e.n||'')));
+    if (skipPattern) {
+      const compounds = rawExList.filter(e => COMPOUND_EX.includes(cleanEx(e.n||'')));
+      if (compounds.length >= 2) rawExList = compounds;
+    }
+    const exList = rawExList;
     const todayDayIdx=dayMap[new Date().getDay()];
     const isExpanded=!!exListExpanded[todayDayIdx];
     const SHOW_LIMIT=4;
@@ -259,6 +268,9 @@ export function renderCoachIdle(){
     const hiddenCount=exList.length-SHOW_LIMIT;
     const _prsData = DB.get('pr-records') || [];
     const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=renderLastSessionMemory(tp.day)+`
+      ${skipPattern?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
+        <div style="font-size:11px;color:var(--accent2);font-weight:600">📊 Program scurtat la ${exList.length} exerciții esențiale (${skipPattern.skipRate}% skip ${tp.day})</div>
+      </div>`:''}
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
       </div>`:''}
@@ -281,21 +293,26 @@ export function renderCoachIdle(){
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin:0 16px 12px;overflow:hidden">
         ${visibleEx.map((e,i)=>{
           const cleanName=cleanEx(e.n);
+          const isOccupied = occupiedEquip.includes(cleanName);
           const rec=AA.applyTo(DP.recommend(cleanName), cleanName);
           const hasHistory=DP.getLogs(cleanName,1).length>0;
           const isLast=i===visibleEx.length-1&&!(exList.length>SHOW_LIMIT);
           const exPR=_prsData.find(p=>p.ex===cleanName);
           const nearPR=exPR&&rec.kg*(parseInt(rec.repsTarget)||8)>=exPR.kg*(parseInt(exPR.reps)||8)*0.9;
-          return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;${!isLast?'border-bottom:1px solid var(--border)':''}">
-            <div style="width:6px;height:6px;border-radius:50%;background:${getGroupColor(e.g)};flex-shrink:0"></div>
-            <div style="flex:1">
+          return `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;${!isLast?'border-bottom:1px solid var(--border)':''}${isOccupied?';opacity:0.45':''}">
+            <div style="width:6px;height:6px;border-radius:50%;background:${getGroupColor(e.g)};flex-shrink:0;margin-top:5px"></div>
+            <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:500">${cleanName}${nearPR?' <span style="font-size:9px;color:var(--accent);font-weight:700;background:rgba(200,255,0,0.12);padding:1px 5px;border-radius:4px">🔥 PR!</span>':''}</div>
               <div style="font-size:10px;color:var(--text3);margin-top:1px">${e.s||''}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
+              <div style="display:flex;gap:4px;margin-top:5px">
+                <button onclick="markOccupied('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:4px;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif">⚠️ Ocupat</button>
+                <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsă</button>
+              </div>
             </div>
-            ${hasHistory?`<div style="text-align:right">
+            ${hasHistory?`<div style="text-align:right;flex-shrink:0">
               <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${rec.statusColor}">${rec.kg}kg</div>
-              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${rec.statusColor}22;color:${rec.statusColor};margin-top:2px">${rec.status==='INCREASE'?'🟢 CREȘTI':rec.status==='TOO HEAVY'?'🔴 PREA GREU':rec.status==='STAGNANT +SET'?'🟡 STAGNARE':rec.status==='CONSOLIDATE'?'🟡 REPS':'🟢 OK'}</div>
-            </div>`:`<div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace">NOU</div>`}
+              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${rec.statusColor}22;color:${rec.statusColor};margin-top:2px">${rec.status==='INCREASE'?'🟢 CREȘTI':rec.status==='TOO HEAVY'?'🔴 PREA GREU':rec.status==='STAGNANT +SET'?'🟡 STAGNARE':rec.status==='SCALE BACK'?'⬇️ SCADE':rec.status==='CONSOLIDATE'?'🟡 REPS':'🟢 OK'}</div>
+            </div>`:`<div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;flex-shrink:0">NOU</div>`}
           </div>`;
         }).join('')}
         ${exList.length>SHOW_LIMIT?`<div onclick="toggleExList(${todayDayIdx})" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
@@ -866,7 +883,15 @@ export function getTodayExercises() {
   const dayMap=[6,0,1,2,3,4,5];
   const tp=PROG[dayMap[new Date().getDay()]];
   if(!tp||tp.t==='off'||!tp.ex) return [];
-  return tp.ex.map(e => cleanEx(e.n||''));
+  const unavail = DB.get('unavailable-equipment') || [];
+  let exList = tp.ex.map(e => cleanEx(e.n||'')).filter(ex => !unavail.includes(ex));
+  const patterns = DB.get('applied-patterns') || [];
+  const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
+  if (skipPattern) {
+    const compounds = exList.filter(ex => COMPOUND_EX.includes(ex));
+    if (compounds.length >= 2) return compounds;
+  }
+  return exList;
 }
 
 export function getExGroup(ex){
@@ -1229,6 +1254,8 @@ export function confirmSkip(reason) {
   skips.push({ date: tod(), dayOfWeek: days[new Date().getDay()], reason, ts: Date.now() });
   DB.set('workout-skips', skips.slice(-100));
   toast('📌 Skip înregistrat', 'var(--text2)');
+  renderCoachIdle();
+  if (window.renderDash) window.renderDash();
 }
 
 export function showAlternativeModal(exerciseName) {
@@ -1302,6 +1329,20 @@ export function markEquipmentUnavailable(exerciseName) {
   if (!unavail.includes(exerciseName)) unavail.push(exerciseName);
   DB.set('unavailable-equipment', unavail);
   toast(`🚫 ${exerciseName} eliminat permanent`, 'var(--red)');
+  renderCoachIdle();
+}
+
+export function markOccupied(exerciseName) {
+  if (state.sessActive) {
+    showAlternativeModal(exerciseName);
+    return;
+  }
+  const occ = DB.get('equipment-occupied-session') || [];
+  if (!occ.includes(exerciseName)) {
+    occ.push(exerciseName);
+    DB.set('equipment-occupied-session', occ);
+  }
+  toast(`⚠️ ${exerciseName} marcat ocupat`, 'var(--accent2)');
   renderCoachIdle();
 }
 

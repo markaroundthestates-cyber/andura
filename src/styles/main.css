@@ -35,7 +35,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .nb{position:relative}
 
 /* HEADER */
-.ph{padding:52px 20px 14px;background:linear-gradient(180deg,var(--bg2) 0%,transparent 100%);position:sticky;top:0;z-index:10;backdrop-filter:blur(20px)}
+.ph{padding:52px 20px 14px;background:var(--bg);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);border-bottom:1px solid transparent}
 .pt{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;color:var(--accent);line-height:1}
 .ps{color:var(--text2);font-size:12px;margin-top:2px}
 

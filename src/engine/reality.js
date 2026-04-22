@@ -3,6 +3,17 @@ import { DB } from '../db.js';
 import { SYS } from './sys.js';
 
 export function getRealityCheck() {
+  const today = new Date().toISOString().slice(0, 10);
+  const phaseOverride = DB.get('phase-override');
+  if (today < '2026-07-20' && !phaseOverride) {
+    return {
+      type: 'fixed',
+      icon: '✅',
+      color: 'var(--green)',
+      message: 'Menții 1800 kcal fix până 20 iulie ✓'
+    };
+  }
+
   const ws = DB.get('weights') || {};
   const dates = Object.keys(ws).sort().slice(-8);
   if (dates.length < 4) return null;

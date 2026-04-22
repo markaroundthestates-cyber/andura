@@ -26,7 +26,7 @@ import { cleanFakeLogs, extractAndSavePRs, finishEarly, confirmEarlyStop, saveSt
 import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
-import { showReadinessModal, selectReadiness, showSkipModal, confirmSkip, showAlternativeModal, selectAlternative, markEquipmentUnavailable } from './pages/coach.js';
+import { showReadinessModal, selectReadiness, showSkipModal, confirmSkip, showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied } from './pages/coach.js';
 import { saveReadiness, getTodayReadiness } from './engine/readiness.js';
 import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js';
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
@@ -55,7 +55,7 @@ Object.assign(window, {
   renderSessionsDropdown, showSessionDetail, hideSessionDetail,
   renderPRWall, togglePRWall, toggleExList,
   showReadinessModal, selectReadiness, showSkipModal, confirmSkip,
-  showAlternativeModal, selectAlternative, markEquipmentUnavailable,
+  showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied,
   saveReadiness, getTodayReadiness,
   dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
