@@ -44,6 +44,7 @@ export function getGroupColor(g) {
 function renderFatigueScore(elId) {
   const el = $(elId); if (!el) return;
   const f = calculateFatigueScore();
+  el.style.display = 'block';
   el.innerHTML = `<span style="color:${f.color};font-size:11px;font-weight:600">${f.icon||''} ${f.label}</span><div style="font-size:10px;color:var(--text3);margin-top:2px">${f.detail}</div>`;
 }
 function renderTodayAlerts() {}
@@ -192,7 +193,7 @@ export function renderCoachIdle(){
 }
 
 export function startSession(){
-  state.sessActive = true;state.sessStart = Date.now();state.sessLog = [];state.sessKcalBurn = 0;state.dropSetUsedThisSession = false;
+  state.sessActive = true;state.sessStart = Date.now();state.sessLog = [];state.sessKcalBurn = 0;state.dropSetUsedThisSession = false;state.earlyStopReason = null;
   requestWakeLock();
   state.completedExercises = new Set();
   state.isMuted = DB.get('muted')||false;
@@ -244,17 +245,22 @@ export function updateExCard(){
 
   // Last performance
   const lastLog=DP.getLogs(state.currentEx,1)[0];
-  if(lastLog){
-    $('last-perf').textContent=`Last: ${lastLog.w}kg × ${lastLog.reps||'?'} reps · RPE ${lastLog.rpe||'?'}`;
-  } else {
-    $('last-perf').textContent='Prima sesiune la acest exercițiu';
+  const lastPerfEl=$('last-perf');
+  if(lastPerfEl){
+    lastPerfEl.style.display='block';
+    if(lastLog){
+      lastPerfEl.textContent=`Last: ${lastLog.w}kg × ${lastLog.reps||'?'} reps · RPE ${lastLog.rpe||'?'}`;
+    } else {
+      lastPerfEl.textContent='Prima sesiune la acest exercițiu';
+    }
   }
 
   // Tempo + technique
   let tempoTxt=`Tempo: ${tempo.tempo} · ${tempo.note}`;
   if(techniques.length) tempoTxt+=` · ${techniques[0].icon} ${techniques[0].label}`;
   if(rec.technique) tempoTxt=`⚡ ${rec.technique} · ${tempoTxt}`;
-  $('tempo-row').textContent=tempoTxt;
+  const tempoRowEl=$('tempo-row');
+  if(tempoRowEl){tempoRowEl.textContent=tempoTxt;tempoRowEl.style.display='block';}
 
   // Coach message — show auto-adjust OR progression note
   const msg=$('coach-msg-box');
@@ -409,8 +415,9 @@ export function endSession(){
   releaseWakeLock();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 
-  // Auto-delete test sessions (< 5 minutes)
-  if(Date.now() - state.sessStart < 5 * 60 * 1000){
+  // Auto-delete test sessions (< 5 minutes), but only if not an early stop
+  const hasEarlyStop = state.earlyStopReason !== null;
+  if(!hasEarlyStop && Date.now() - state.sessStart < 5 * 60 * 1000){
     const logs = DB.get('logs') || [];
     DB.set('logs', logs.filter(l => l.session !== state.sessStart));
     $('session-ui').style.display='none';

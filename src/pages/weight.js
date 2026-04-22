@@ -344,6 +344,90 @@ export function importJSON() {
   input.click();
 }
 
+async function importMFPNutritionCSV(text) {
+  // MFP Nutrition CSV format: Date,Calories,Carbohydrates,Fat,Protein,...
+  const lines = text.split('\n').filter(l => l.trim());
+  if (!lines.length) { toast('⚠ CSV gol', 'var(--accent2)'); return; }
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,'').toLowerCase());
+  const dateIdx = headers.findIndex(h => h.includes('date'));
+  const kcalIdx = headers.findIndex(h => h.includes('calori') || h.includes('kcal'));
+  const protIdx = headers.findIndex(h => h.includes('protein'));
+  if (dateIdx === -1) { toast('⚠ Nu am găsit coloana Date', 'var(--accent2)'); return; }
+
+  const kcals = DB.get('kcals') || {};
+  const prots = DB.get('prots') || {};
+  let countK = 0, countP = 0;
+
+  lines.slice(1).forEach(line => {
+    const parts = line.split(',').map(p => p.trim().replace(/"/g,''));
+    const rawDate = parts[dateIdx];
+    if (!rawDate) return;
+    // Parse date — MFP uses MM/DD/YYYY or YYYY-MM-DD
+    let dateStr = '';
+    if (rawDate.includes('/')) {
+      const [m,d,y] = rawDate.split('/');
+      dateStr = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    } else {
+      dateStr = rawDate.slice(0,10);
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return;
+    if (kcalIdx !== -1) {
+      const v = parseInt(parts[kcalIdx]);
+      if (!isNaN(v) && v > 0) { kcals[dateStr] = v; countK++; }
+    }
+    if (protIdx !== -1) {
+      const v = parseInt(parts[protIdx]);
+      if (!isNaN(v) && v >= 0) { prots[dateStr] = v; countP++; }
+    }
+  });
+
+  if (kcalIdx !== -1) DB.set('kcals', kcals);
+  if (protIdx !== -1) DB.set('prots', prots);
+  toast(`✓ Import nutriție: ${countK} kcal + ${countP} prot`, 'var(--green)');
+  renderWeight();
+  if (window.renderDash) window.renderDash();
+}
+
+async function importMFPMeasurementCSV(text) {
+  // MFP Measurement CSV format: Date,Value,Units
+  const lines = text.split('\n').filter(l => l.trim());
+  if (!lines.length) { toast('⚠ CSV gol', 'var(--accent2)'); return; }
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,'').toLowerCase());
+  const dateIdx = headers.findIndex(h => h.includes('date'));
+  const valIdx = headers.findIndex(h => h.includes('value') || h.includes('weight'));
+  if (dateIdx === -1 || valIdx === -1) { toast('⚠ Format CSV invalid', 'var(--accent2)'); return; }
+
+  const ws = DB.get('weights') || {};
+  let count = 0;
+  lines.slice(1).forEach(line => {
+    const parts = line.split(',').map(p => p.trim().replace(/"/g,''));
+    const rawDate = parts[dateIdx];
+    const rawVal = parts[valIdx];
+    if (!rawDate || !rawVal) return;
+    let dateStr = '';
+    if (rawDate.includes('/')) {
+      const [m,d,y] = rawDate.split('/');
+      dateStr = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    } else {
+      dateStr = rawDate.slice(0,10);
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return;
+    const v = parseFloat(rawVal);
+    if (!isNaN(v) && v > 30 && v < 300) { ws[dateStr] = v; count++; }
+  });
+
+  DB.set('weights', ws);
+  toast(`✓ Import greutăți: ${count} înregistrări`, 'var(--green)');
+  renderWeight();
+  if (window.renderDash) window.renderDash();
+}
+
+async function importMFPZip(file) {
+  // ZIP import requires JSZip — not available, show informative message
+  toast('⚠ Import ZIP: folosește CSV individual din MFP Export', 'var(--accent2)');
+  console.warn('ZIP import not supported — please export individual CSV files from MFP');
+}
+
 export function triggerMFPImport(){
   const input = document.createElement('input');
   input.type = 'file';
@@ -355,16 +439,17 @@ export function triggerMFPImport(){
     try {
       if(file.name.endsWith('.zip')) {
         await importMFPZip(file);
-      } else if(file.name.includes('Nutrition')) {
+      } else if(file.name.toLowerCase().includes('nutrition')) {
         await importMFPNutritionCSV(await file.text());
-      } else if(file.name.includes('Measurement')) {
+      } else if(file.name.toLowerCase().includes('measurement')) {
         await importMFPMeasurementCSV(await file.text());
       } else {
-        toast('⚠ Selectează ZIP sau CSV din MFP', 'var(--accent2)');
+        // Try as nutrition CSV generically
+        await importMFPNutritionCSV(await file.text());
       }
     } catch(err) {
       console.error(err);
-      toast('⚠ Eroare la import', 'var(--accent2)');
+      toast('⚠ Eroare la import: ' + err.message, 'var(--accent2)');
     }
   };
   input.click();

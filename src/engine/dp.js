@@ -246,20 +246,25 @@ export const DP = {
 
   // In-session RPE correction: if 2 sets RPE 10 → drop weight now
   checkInSessionAdjust(ex, recentRPEs, recentReps) {
-    const state = this.getState(ex);
+    const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
-    const [, rMax] = this.getRepsRange ? this.getRepsRange(ex) : [8, 12];
+    // Use REP_RANGES (same as recommendation engine) for consistency
+    const range = this.REP_RANGES[ex] || [8, 12];
+    const [, rMax] = range;
+
+    // No history yet — can't adjust
+    if (!dpState.lastW) return { adjust: false };
 
     // Prea greu: 2× RPE 10 → scade imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
-      const newKg = this.roundToStep(Math.max(1, state.lastW - inc), ex);
+      const newKg = this.roundToStep(Math.max(1, dpState.lastW - inc), ex);
       return { adjust: true, dir: 'down', newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
     }
     // Prea ușor: 2× RPE ≤6 și reps > rMax → crește imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6)) {
       const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
       if (lastReps >= rMax) {
-        const newKg = this.roundToStep(state.lastW + inc, ex);
+        const newKg = this.roundToStep(dpState.lastW + inc, ex);
         return { adjust: true, dir: 'up', newKg, msg: `2× RPE 6 + reps maxime → crește la ${newKg}kg ACUM` };
       }
     }

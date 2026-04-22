@@ -14,6 +14,7 @@ let _dashWeightChart = null;
 function renderFatigueScore(elId) {
   const el = $(elId); if (!el) return;
   const f = calculateFatigueScore();
+  el.style.display = 'block';
   el.innerHTML = `<span style="color:${f.color};font-size:11px;font-weight:600">${f.icon||''} ${f.label}</span><div style="font-size:10px;color:var(--text3);margin-top:2px">${f.detail}</div>`;
 }
 

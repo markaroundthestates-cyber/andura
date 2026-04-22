@@ -4,7 +4,7 @@ import { toast } from './ui/ui.js';
 
 const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
 const USER_PATH = 'users/daniel';
-const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records'];
+const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','photos','bf-override','phase-override','current-kcal'];
 
 function getDeviceId() {
   let id = localStorage.getItem('device-id');
@@ -34,7 +34,13 @@ async function fbSet(path, data) {
 export async function syncToFirebase() {
   try {
     const payload = {};
-    SYNC_KEYS.forEach(k => { const v = DB.get(k); if (v != null) payload[k] = v; });
+    SYNC_KEYS.forEach(k => {
+      const v = DB.get(k);
+      if (v == null) return;
+      // Skip photos — base64 images are too large for Firebase RTDB free tier
+      if (k === 'photos') return;
+      payload[k] = v;
+    });
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
     const ok = await fbSet(USER_PATH, payload);
