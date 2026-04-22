@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="/salafull/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script type="module" crossorigin src="/salafull/assets/main-6eJCPd3I.js"></script>
+  <script type="module" crossorigin src="/salafull/assets/main-CklW7QQq.js"></script>
   <link rel="stylesheet" crossorigin href="/salafull/assets/main-BFNN_ZAc.css">
 </head>
 <body>
@@ -64,6 +64,9 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
         <span id="btn-start-label">START ANTRENAMENT</span>
       </button>
+      <div style="display:flex;justify-content:center;margin-top:8px">
+        <button onclick="showSkipModal()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">Sari ziua</button>
+      </div>
     </div>
 
     <!-- PR WALL -->
@@ -218,6 +221,9 @@
 <div id="page-dash" class="page page-content">
   <div class="ph"><div class="pt">DASHBOARD</div><div class="ps" id="dd">—</div></div>
 
+  <!-- READINESS BANNER -->
+  <div id="readiness-banner" style="display:none;padding:0 16px"></div>
+
   <!-- COMANDA ZILEI -->
   <div id="daily-cmd" style="margin:0 16px 10px;border-radius:var(--r);overflow:hidden"></div>
 
@@ -284,6 +290,15 @@
   <!-- TODAY PROG -->
   <div class="st">Azi</div>
   <div id="dt2"></div>
+
+  <!-- TODAY SESSION HISTORY -->
+  <div id="today-session-hist" style="padding:0 16px"></div>
+
+  <!-- 7-DAY CALENDAR -->
+  <div id="week-calendar" style="padding:0 16px;margin-bottom:8px"></div>
+
+  <!-- AUTO-REC CARD -->
+  <div id="auto-rec-card" style="padding:0 16px;display:none"></div>
 </div>
 
 <!-- ══════════════ WEIGHT ══════════════ -->
