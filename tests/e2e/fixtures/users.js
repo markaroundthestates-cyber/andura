@@ -87,12 +87,14 @@ export const WITH_HISTORY = {
   'session-burns': WITH_HISTORY_BURNS,
 };
 
-// ── CONTAMINATED: has applied-patterns with skip rate 88% ────────────────────
+// ── CONTAMINATED: mature user (3 sessions) with stale applied-patterns ────────
+// Must have ≥3 sessions so clearStalePatternsIfColdStart does NOT fire on init.
 export const CONTAMINATED = {
   _suppressFirebaseSync: true,
   'onboarding-done': true,
   'phase-override': 'AUTO',
   'current-kcal': '1800',
+  logs: WITH_HISTORY_LOGS,
   'auto-recommendations': [
     {
       type: 'early_end',
