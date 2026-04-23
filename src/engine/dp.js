@@ -2,6 +2,7 @@
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
+import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 
 export const DP = {
   // Rep ranges per exercise
@@ -336,3 +337,88 @@ export const DP = {
     return result;
   }
 };
+
+// ── Estimare greutate inițială pentru exerciții fără istoric ──────────────────
+// Caută exerciții similare cu istoric și aplică un multiplicator conservativ.
+
+export function getInitialRecommendation(exerciseName, ctx) {
+  const recentLogs = (ctx && ctx.recentLogs) || [];
+
+  // Exact match in context (handles test log format 'exercise' field vs app 'ex' field)
+  const exactLog = _findLastLog(exerciseName, recentLogs);
+  if (exactLog && exactLog.weight) {
+    const rounded = roundToEquipmentWeight(exactLog.weight, exerciseName);
+    return {
+      kg: rounded, weight: rounded, repsTarget: 8, reps: 8, sets: 3, rir: 2,
+      status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 CONSOLIDARE',
+      isInitial: false, rationale: `Bazat pe ultimul log: ${exactLog.weight}kg`, confidence: 0.9
+    };
+  }
+
+  const similarList = SIMILAR_EXERCISES[exerciseName] || [];
+
+  for (const similarName of similarList) {
+    const lastLog = _findLastLog(similarName, recentLogs);
+    if (lastLog && lastLog.weight) {
+      const multiplier = getSimilarityMultiplier(exerciseName, similarName);
+      const estimated = lastLog.weight * multiplier;
+      const rounded = roundToEquipmentWeight(estimated, exerciseName);
+      return {
+        kg: rounded,
+        weight: rounded,
+        repsTarget: 10,
+        reps: 10,
+        sets: 3,
+        rir: 3,
+        status: 'INIT',
+        statusColor: 'var(--text3)',
+        statusLabel: '⚡ START ESTIMAT',
+        isInitial: true,
+        rationale: `Estimat din ${similarName} (${lastLog.weight}kg × ${multiplier})`,
+        confidence: 0.7
+      };
+    }
+  }
+
+  // Fallback — greutate minimă conservativă pe echipament
+  const minKg = _minWeightForExercise(exerciseName);
+  return {
+    kg: minKg,
+    weight: minKg,
+    repsTarget: 10,
+    reps: 10,
+    sets: 3,
+    rir: 3,
+    status: 'INIT',
+    statusColor: 'var(--text3)',
+    statusLabel: '⚡ START',
+    isInitial: true,
+    rationale: 'Start conservativ — ajustăm după primul set',
+    confidence: 0.4
+  };
+}
+
+function _findLastLog(name, recentLogs) {
+  for (const session of recentLogs) {
+    const logs = session.logs || [];
+    const log = logs.find(l => (l.exercise || l.ex) === name);
+    if (log) return { weight: log.weight ?? log.w, reps: log.reps };
+  }
+  return null;
+}
+
+function _minWeightForExercise(exerciseName) {
+  const equipMap = {
+    'Cable Curl': 'matrix_cable', 'Preacher Curl': 'matrix_cable',
+    'Hammer Curl': 'dumbbell', 'Overhead Triceps': 'matrix_cable',
+    'Pushdown': 'matrix_cable', 'Rear Delt Fly': 'pec_deck',
+    'Face Pulls': 'matrix_cable', 'Lateral Raises (cable)': 'matrix_cable',
+    'Cable Fly': 'matrix_cable', 'Leg Press': 'leg_press_plates'
+  };
+  const minByEquip = {
+    'dumbbell': 7, 'matrix_cable': 5, 'bailib_stack': 5,
+    'pec_deck': 18, 'leg_machine': 10, 'leg_press_plates': 20
+  };
+  const equip = equipMap[exerciseName] || (COMPOUND_EX.includes(exerciseName) ? 'bailib_stack' : 'matrix_cable');
+  return minByEquip[equip] || 10;
+}

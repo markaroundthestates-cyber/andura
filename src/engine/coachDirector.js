@@ -33,17 +33,30 @@ export class CoachDirector {
       session = this.fallbackSessionBuilder(sessionType, ctx);
     }
 
-    // TODO Week 2: conectează getSmartRecommendation ca export standalone din dp.js
     try {
       const dpModule = await import('./dp.js');
       for (const exercise of session.exercises) {
-        if (dpModule.getSmartRecommendation) {
+        if (dpModule.DP && dpModule.DP.getSmartRecommendation) {
+          const dpRec = dpModule.DP.getSmartRecommendation(exercise.name, ctx.readiness.score, null);
+          if (dpRec.status === 'INIT' && dpModule.getInitialRecommendation) {
+            // No DP history — estimate from similar exercises
+            exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
+          } else {
+            exercise.recommendation = dpRec;
+          }
+        } else if (dpModule.getSmartRecommendation) {
           exercise.recommendation = dpModule.getSmartRecommendation(exercise, ctx);
-        } else if (!exercise.recommendation) {
-          // Folosim ultima greutate logată ca bază — evită weight-uri imposibile
+        } else if (dpModule.getInitialRecommendation) {
+          exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
+        } else {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
           const baseWeight = lastLog ? (lastLog.weight ?? lastLog.w ?? 20) : 20;
-          exercise.recommendation = { weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
+          exercise.recommendation = { kg: baseWeight, weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
+        }
+
+        // Normalizează câmpul weight (DP folosește kg, getInitialRecommendation expune ambele)
+        if (!exercise.recommendation.weight && exercise.recommendation.kg) {
+          exercise.recommendation.weight = exercise.recommendation.kg;
         }
         // Propagă technique la nivelul exercițiului (accesat în teste și UI)
         if (exercise.recommendation?.technique) {
@@ -57,7 +70,7 @@ export class CoachDirector {
         if (!exercise.recommendation) {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
           const baseWeight = lastLog ? (lastLog.weight ?? lastLog.w ?? 20) : 20;
-          exercise.recommendation = { weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
+          exercise.recommendation = { kg: baseWeight, weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
         }
       }
     }
@@ -135,4 +148,12 @@ function getLastLogFromContext(exerciseName, recentLogs) {
     if (log) return log;
   }
   return null;
+}
+
+function _hasRecentLog(exerciseName, recentLogs) {
+  if (!recentLogs || !recentLogs.length) return false;
+  for (const session of recentLogs) {
+    if ((session.logs || []).some(l => (l.exercise || l.ex) === exerciseName)) return true;
+  }
+  return false;
 }

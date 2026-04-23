@@ -32,6 +32,7 @@ import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js'
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
+import { resetTestData, fullReset, inspectStorage } from './util/dataCleanup.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -57,8 +58,23 @@ Object.assign(window, {
   showReadinessModal, selectReadiness, showSkipModal, confirmSkip,
   showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied,
   saveReadiness, getTodayReadiness,
+  inspectStorage,
   dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
+  _devResetTest: () => {
+    if (confirm('Ștergi date de test (patterns, session drafts, etc.)?\nLogurile reale și greutățile rămân.')) {
+      resetTestData();
+      location.reload();
+    }
+  },
+  _devFullReset: () => {
+    if (confirm('⚠️ ATENȚIE: Ștergi TOT (loguri, greutăți, tot).\nEști sigur?')) {
+      if (confirm('Ultima confirmare: chiar ștergi TOATE datele?')) {
+        fullReset();
+        location.reload();
+      }
+    }
+  },
   injectRealSessions,
   sp: goTo, __v: 6,
 });

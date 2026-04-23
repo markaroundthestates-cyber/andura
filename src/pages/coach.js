@@ -330,10 +330,10 @@ export async function renderCoachIdle(){
                 <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsă</button>
               </div>
             </div>
-            ${hasHistory?`<div style="text-align:right;flex-shrink:0">
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${rec.statusColor}">${rec.kg}kg</div>
-              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${rec.statusColor}22;color:${rec.statusColor};margin-top:2px">${rec.status==='INCREASE'?'🟢 CREȘTI':rec.status==='TOO HEAVY'?'🔴 PREA GREU':rec.status==='STAGNANT +SET'?'🟡 STAGNARE':rec.status==='SCALE BACK'?'⬇️ SCADE':rec.status==='CONSOLIDATE'?'🟡 REPS':'🟢 OK'}</div>
-            </div>`:`<div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;flex-shrink:0">NOU</div>`}
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${hasHistory?rec.statusColor:'var(--text3)'}">${rec.kg}kg</div>
+              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${hasHistory?rec.statusColor+'22':'rgba(255,255,255,0.07)'};color:${hasHistory?rec.statusColor:'var(--text3)'};margin-top:2px">${hasHistory?(rec.status==='INCREASE'?'🟢 CREȘTI':rec.status==='TOO HEAVY'?'🔴 PREA GREU':rec.status==='STAGNANT +SET'?'🟡 STAGNARE':rec.status==='SCALE BACK'?'⬇️ SCADE':rec.status==='CONSOLIDATE'?'🟡 REPS':'🟢 OK'):'⚡ START'}</div>
+            </div>
           </div>`;
         }).join('')}
         ${exList.length>SHOW_LIMIT?`<div onclick="toggleExList(${todayDayIdx})" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
