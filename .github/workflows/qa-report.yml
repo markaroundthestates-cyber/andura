@@ -1,0 +1,140 @@
+name: QA Report
+
+on:
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+
+permissions:
+  contents: read
+  statuses: write
+  pull-requests: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    # Run regardless of deploy outcome so we always get a report, but skip if deploy itself was skipped
+    if: ${{ github.event.workflow_run.conclusion != 'skipped' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Wait for GitHub Pages to propagate
+        run: sleep 45
+
+      - name: Run Playwright tests
+        id: playwright
+        run: npx playwright test --reporter=json,html,list 2>&1 | tee playwright-output.txt
+        continue-on-error: true
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Parse results and post commit comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const sha = context.payload.workflow_run.head_sha;
+
+            // Read test output
+            let output = '';
+            try { output = fs.readFileSync('playwright-output.txt', 'utf8'); } catch {}
+
+            // Parse pass/fail counts
+            const passMatch = output.match(/(\d+) passed/);
+            const failMatch = output.match(/(\d+) failed/);
+            const passed = passMatch ? parseInt(passMatch[1]) : 0;
+            const failed = failMatch ? parseInt(failMatch[1]) : 0;
+            const total = passed + failed;
+
+            // Extract failed test names
+            const failedTests = [];
+            const lines = output.split('\n');
+            lines.forEach(line => {
+              if (line.includes('✘') || line.includes('FAILED')) {
+                failedTests.push(line.trim().replace(/^\d+\)\s*/, '').replace(/✘\s*\d+\s*/, ''));
+              }
+            });
+
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.payload.workflow_run.id}`;
+            const artifactUrl = `${runUrl}#artifacts`;
+
+            let body = '';
+            if (failed === 0) {
+              body = `## ✅ QA Automat — Toate testele trec\n\n` +
+                `**${passed}/${total} teste au trecut** în ${new Date().toLocaleTimeString('ro-RO')}.\n\n` +
+                `📊 [Raport HTML complet](${artifactUrl})`;
+            } else {
+              const urgency = failed >= 3 ? '🔴 CRITIC' : failed === 2 ? '🟠 IMPORTANT' : '🟡 ATENȚIE';
+              body = `## ❌ QA Automat — ${failed} test(e) picate\n\n` +
+                `**${urgency}** — ${failed} din ${total} teste au eșuat.\n\n` +
+                `### Teste picate:\n` +
+                failedTests.map(t => `- \`${t}\``).join('\n') + '\n\n' +
+                `### Ce înseamnă:\n`;
+
+              if (output.includes('ReferenceError') || output.includes('TypeError')) {
+                body += `- ⚠️ Eroare JS critică în aplicație — verifică consola\n`;
+              }
+              if (output.includes('intercepts pointer events')) {
+                body += `- ⚠️ Un element blochează interacțiunile UI (modal fullscreen?)\n`;
+              }
+              if (output.includes('400') && output.includes('fonts')) {
+                body += `- ⚠️ Fonturile Google nu se încarcă — verifică URL-ul în themes.js\n`;
+              }
+              if (output.includes('max-width') || output.includes('430')) {
+                body += `- ⚠️ Container prea lat pe desktop — verifică CSS max-width\n`;
+              }
+
+              body += `\n### Urgență: ${urgency}\n`;
+              if (failed >= 3) {
+                body += `Aplicația poate fi nefuncțională pentru utilizatori. Repară ACUM.\n`;
+              } else {
+                body += `Feature-uri minore afectate. Repară înainte de următorul push.\n`;
+              }
+
+              body += `\n📊 [Raport HTML complet](${artifactUrl}) | 🔗 [Run CI](${runUrl})`;
+            }
+
+            // Post as commit status
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: failed === 0 ? 'success' : 'failure',
+              description: failed === 0 ? `Toate ${total} teste trec` : `${failed}/${total} teste picate`,
+              context: 'QA / Playwright',
+              target_url: runUrl,
+            });
+
+            // Post commit comment only on failure
+            if (failed > 0) {
+              await github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: sha,
+                body,
+              });
+            }
+
+            // Fail the job if tests failed
+            if (failed > 0) {
+              core.setFailed(`${failed} test(e) picate`);
+            }
