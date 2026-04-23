@@ -33,6 +33,27 @@ async function fbSet(path, data) {
   } catch { return false; }
 }
 
+async function fbRemove(path) {
+  try {
+    const r = await fetch(`${FIREBASE_URL}/${path}.json`, { method: 'DELETE' });
+    return r.ok;
+  } catch { return false; }
+}
+
+export async function clearFirebaseKeys(keys) {
+  if (!keys || keys.length === 0) return;
+  const results = await Promise.allSettled(
+    keys.map(async key => {
+      const ok = await fbRemove(`${USER_PATH}/${key}`);
+      if (ok) console.log(`[Firebase] Removed key: ${key}`);
+      else console.warn(`[Firebase] Failed to remove key: ${key}`);
+      return ok;
+    })
+  );
+  const succeeded = results.filter(r => r.status === 'fulfilled' && r.value).length;
+  console.log(`[Firebase] clearFirebaseKeys: ${succeeded}/${keys.length} removed`);
+}
+
 export async function syncToFirebase() {
   try {
     const payload = {};
