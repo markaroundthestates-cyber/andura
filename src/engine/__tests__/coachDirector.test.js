@@ -223,6 +223,24 @@ describe('CoachDirector — Defensive programming', () => {
   });
 });
 
+describe('CoachDirector — Readiness null contract (Bug #9)', () => {
+  it('should return null readiness score when no data exists (not default 85)', async () => {
+    localStorage.clear();
+    const { buildCoachContext } = await import('../coachContext.js');
+    const ctx = buildCoachContext();
+    expect(ctx.readiness.score).toBeNull();
+    expect(ctx.readiness.isSet).toBe(false);
+  });
+
+  it('should NOT have 85 as fallback anywhere in readiness logic', async () => {
+    localStorage.clear();
+    const { buildCoachContext } = await import('../coachContext.js');
+    const ctx = buildCoachContext();
+    expect(ctx.readiness.score).not.toBe(85);
+    expect(ctx.readiness.volumeMultiplier).toBe(1.0); // null → multiplier 1.0 per spec
+  });
+});
+
 describe('CoachDirector — Week 1.5 fixes', () => {
   it('should not suggest drop sets in CUT phase', async () => {
     localStorage.setItem('phase-override', 'AUTO');
