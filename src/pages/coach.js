@@ -12,6 +12,7 @@ import { getTodayReadiness, saveReadiness, getReadinessVerdict, getReadinessScor
 import { getMuscleState, getMuscleBalance, EXERCISE_MUSCLES } from '../engine/muscleMap.js';
 import { analyzeAndApplyPatterns } from '../engine/patternLearning.js';
 import { coachDirector } from '../engine/coachDirector.js';
+import { filterValidLogs } from '../util/logFilter.js';
 
 const _sessionCache = {
   session: null,
@@ -1137,23 +1138,10 @@ export function extractAndSavePRs() {
 
 // ── FIX 3b: cleanFakeLogs simplificată — extrage PR-uri înainte ──────────
 export function cleanFakeLogs() {
-  // Salvează PR-urile ÎNAINTE de curățare
   extractAndSavePRs();
-
   const logs = DB.get('logs') || [];
   const before = logs.length;
-  // Logica corectă: elimină doar logurile cu session singleton (test rapid)
-  const sessions = {};
-  logs.filter(l => !l.baseline).forEach(l => {
-    if (!sessions[l.session]) sessions[l.session] = [];
-    sessions[l.session].push(l);
-  });
-  const validSessions = new Set(
-    Object.entries(sessions)
-      .filter(([, sets]) => sets.length >= 2 || sets.some(l => l.earlyStop))
-      .map(([sid]) => sid)
-  );
-  const result = logs.filter(l => l.baseline || validSessions.has(l.session));
+  const result = filterValidLogs(logs);
   if (result.length !== logs.length) DB.set('logs', result);
   const removed = before - result.length;
   toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
