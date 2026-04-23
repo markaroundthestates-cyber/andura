@@ -1,4 +1,7 @@
 // ══ MAIN ENTRY POINT ══════════════════════════════════════════
+import { initSentry } from './util/sentry.js';
+initSentry(); // fire-and-forget, production only
+
 import { applyTheme, getActiveTheme } from './themes/themeManager.js';
 import { initFirebaseSync } from './firebase.js';
 import { DP } from './engine/dp.js';

@@ -504,11 +504,39 @@
       <button onclick="if(confirm('Declanșează din nou onboarding-ul? Datele tale rămân.')){localStorage.removeItem('onboarding-completed');localStorage.removeItem('onboarding-done');window.location.reload()}" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔄 Re-run Onboarding</button>
       <button onclick="window.inspectStorage&&(window.inspectStorage(),alert('Verifică consola DevTools'))" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔍 Inspect Storage (console)</button>
       <button onclick="window._devFullReset()" style="padding:11px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">💥 Full Reset (șterge TOT)</button>
+      <button onclick="if(confirm('Restaurează antrenamentele reale Apr 21 (PULL) + Apr 22 (PUSH)?')){const r=window.restoreRealLogs&&window.restoreRealLogs();r?alert('Restaurat '+r.restored+' intrări. Total logs: '+r.total):alert('restoreRealLogs indisponibil')}" style="padding:11px;background:rgba(0,200,100,0.06);border:1px solid rgba(0,200,100,0.3);border-radius:var(--rs);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🏋️ Restore Real Logs (Apr 21-22)</button>
       <button onclick="if(confirm('Restaurează ultimul auto-backup? Datele curente vor fi înlocuite.')){window.restoreLastBackup&&window.restoreLastBackup()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">⏪ Restore Last Auto-Backup</button>
+      <!-- Granular Restore — quick buttons -->
+      <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--text3);align-self:center">Restore din:</span>
+        <button onclick="_restoreDaysAgo(1)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">Ieri</button>
+        <button onclick="_restoreDaysAgo(3)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">3 zile</button>
+        <button onclick="_restoreDaysAgo(7)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">7 zile</button>
+        <button onclick="_restoreDaysAgo(30)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">30 zile</button>
+        <button onclick="_showBackupList()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">📋 Listă</button>
+      </div>
       <label style="display:block;margin-top:8px;font-size:11px;color:var(--text3)">
         Upload backup JSON:
         <input type="file" accept=".json" onchange="const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(confirm('Restaurează din '+f.name+'?')){window.restoreFromBackup&&window.restoreFromBackup(e.target.result)}};r.readAsText(f)" style="display:block;margin-top:4px;font-size:11px;color:var(--text2)"/>
       </label>
+      <script>
+        function _restoreDaysAgo(days){
+          if(!confirm('Restaurează backup din acum '+days+' zi(le)? Datele curente vor fi înlocuite.'))return;
+          if(typeof window.restoreFromBackup==='function'){
+            const r=window.restoreFromBackup(days);
+            if(r&&r.restored)alert('Restaurat '+r.keysRestored+' chei din '+r.date+'. Se reîncarcă...');
+            else alert('Backup nu a fost găsit pentru '+(r&&r.reason?r.reason:'zile='+days));
+            if(r&&r.restored)location.reload();
+          }else{alert('restoreFromBackup nu este disponibil.');}
+        }
+        function _showBackupList(){
+          if(typeof window.listBackups!=='function'){alert('listBackups nu este disponibil.');return;}
+          const list=window.listBackups();
+          if(!list||list.length===0){alert('Nu există backup-uri salvate.');return;}
+          const lines=list.slice(0,10).map((b,i)=>i+'. '+b.date+' ('+b.key+')').join('\n');
+          alert('Backup-uri disponibile (cele mai recente 10):\n'+lines);
+        }
+      </script>
     </div>
   </div>
 </div>

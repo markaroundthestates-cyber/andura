@@ -353,6 +353,73 @@ export function inspectStorage() {
   return report;
 }
 
+// ── Restore real training logs (Apr 21–22, 2026) ─────────────────────────
+// Folosit pentru a reinjecta antrenamentele reale după un full reset accidental.
+// Datele sunt hardcodate ca sursă de adevăr verificată manual.
+
+export function restoreRealLogs({ merge = true } = {}) {
+  const PULL_SESSION_TS = new Date('2026-04-21T10:00:00').getTime();
+  const PUSH_SESSION_TS = new Date('2026-04-22T10:00:00').getTime();
+
+  const REAL_LOGS = [
+    // Apr 21 — PULL day
+    { ex: 'Lat Pulldown',   w: 64,  reps: 8,  rpe: 7, ts: PULL_SESSION_TS + 1000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Lat Pulldown',   w: 64,  reps: 8,  rpe: 7, ts: PULL_SESSION_TS + 2000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Lat Pulldown',   w: 64,  reps: 8,  rpe: 8, ts: PULL_SESSION_TS + 3000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Cable Row',      w: 72,  reps: 8,  rpe: 7, ts: PULL_SESSION_TS + 4000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Cable Row',      w: 72,  reps: 8,  rpe: 7, ts: PULL_SESSION_TS + 5000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Cable Row',      w: 72,  reps: 7,  rpe: 8, ts: PULL_SESSION_TS + 6000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Face Pulls',     w: 17,  reps: 15, rpe: 6, ts: PULL_SESSION_TS + 7000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Face Pulls',     w: 17,  reps: 15, rpe: 6, ts: PULL_SESSION_TS + 8000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Bayesian Curl',  w: 10,  reps: 12, rpe: 7, ts: PULL_SESSION_TS + 9000,  session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Bayesian Curl',  w: 10,  reps: 12, rpe: 7, ts: PULL_SESSION_TS + 10000, session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Incline DB Curl',w: 10,  reps: 12, rpe: 7, ts: PULL_SESSION_TS + 11000, session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+    { ex: 'Incline DB Curl',w: 10,  reps: 10, rpe: 8, ts: PULL_SESSION_TS + 12000, session: PULL_SESSION_TS, date: '2026-04-21', baseline: false },
+
+    // Apr 22 — PUSH day
+    { ex: 'Incline DB Press',   w: 32, reps: 10, rpe: 7, ts: PUSH_SESSION_TS + 1000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Incline DB Press',   w: 32, reps: 10, rpe: 7, ts: PUSH_SESSION_TS + 2000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Incline DB Press',   w: 32, reps: 9,  rpe: 8, ts: PUSH_SESSION_TS + 3000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Pec Deck / Cable Fly', w: 55, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 4000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Pec Deck / Cable Fly', w: 55, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 5000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Pec Deck / Cable Fly', w: 57, reps: 10, rpe: 8, ts: PUSH_SESSION_TS + 6000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'DB Shoulder Press',  w: 20, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 7000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'DB Shoulder Press',  w: 20, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 8000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'DB Shoulder Press',  w: 20, reps: 10, rpe: 8, ts: PUSH_SESSION_TS + 9000,  session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Lateral Raises',     w: 10, reps: 15, rpe: 7, ts: PUSH_SESSION_TS + 10000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Lateral Raises',     w: 10, reps: 15, rpe: 7, ts: PUSH_SESSION_TS + 11000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Pushdown',           w: 25, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 12000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Pushdown',           w: 25, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 13000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Overhead Triceps',   w: 20, reps: 12, rpe: 7, ts: PUSH_SESSION_TS + 14000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+    { ex: 'Overhead Triceps',   w: 20, reps: 10, rpe: 8, ts: PUSH_SESSION_TS + 15000, session: PUSH_SESSION_TS, date: '2026-04-22', baseline: false },
+  ];
+
+  try {
+    const existing = JSON.parse(localStorage.getItem('logs') ?? '[]');
+    let finalLogs;
+
+    if (merge) {
+      // Merge: skip duplicates by ts
+      const existingTs = new Set(existing.map(l => l.ts));
+      const newEntries = REAL_LOGS.filter(l => !existingTs.has(l.ts));
+      finalLogs = [...existing, ...newEntries].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    } else {
+      // Replace completely
+      finalLogs = [...REAL_LOGS].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    }
+
+    localStorage.setItem('logs', JSON.stringify(finalLogs));
+
+    if (window._directorCache) window._directorCache.invalidate();
+
+    console.log(`[DataCleanup] restoreRealLogs: ${REAL_LOGS.length} entries restored (merge=${merge}). Total logs: ${finalLogs.length}`);
+    return { restored: REAL_LOGS.length, total: finalLogs.length, merge };
+  } catch (e) {
+    console.error('[DataCleanup] restoreRealLogs failed:', e.message);
+    return { restored: 0, error: e.message };
+  }
+}
+
 if (typeof window !== 'undefined') {
   window.resetTestData = resetTestData;
   window.fullReset = fullReset;
@@ -361,4 +428,5 @@ if (typeof window !== 'undefined') {
   window.createAutoBackup = createAutoBackup;
   window.restoreFromBackup = restoreFromBackup;
   window.restoreLastBackup = restoreLastBackup;
+  window.restoreRealLogs = restoreRealLogs;
 }

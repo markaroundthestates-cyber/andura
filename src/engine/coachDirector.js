@@ -1,6 +1,14 @@
 // ══ COACH DIRECTOR — Orchestrare sesiune cu context unificat ══════════════
 import { buildCoachContext } from './coachContext.js';
 import { realityEngine } from './reality.js';
+import { evaluate } from './ruleEngine.js';
+import { detectWeakGroups } from './weaknessDetector.js';
+import { detectGlobalStagnation } from './stagnationDetector.js';
+import { predictToday } from './predictionEngine.js';
+import { recompileWeek } from './recompileEngine.js';
+import { resolveExercise } from './alternativeEngine.js';
+import { runProactiveChecks } from './proactiveEngine.js';
+import { initAutoBackup } from '../util/autoBackup.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -10,14 +18,52 @@ export class CoachDirector {
       return { requiresReadinessInput: true, message: 'Cum te simți azi?', exercises: [] };
     }
 
-    if (ctx.readiness.score < 40) {
+    // ── Augment context with new engine data ──────────────────────────────
+    try {
+      const allLogs = ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [];
+      const { weakGroups } = detectWeakGroups(allLogs);
+      const { maxStagnationWeeks } = detectGlobalStagnation(allLogs);
+      const workoutSkips = (() => {
+        try { return JSON.parse(localStorage.getItem('workout-skips') ?? '{}') ?? {}; } catch { return {}; }
+      })();
+      const todayPrediction = predictToday(allLogs, workoutSkips);
+      const recompile = recompileWeek({ logs: allLogs, readinessScore: ctx.readiness.score });
+
+      ctx.weakGroups = weakGroups;
+      ctx.stagnationWeeks = maxStagnationWeeks;
+      ctx.predictionToday = todayPrediction;
+      ctx.recompile = recompile;
+      ctx.missedSessions = recompile.deficit > 0 ? 1 : 0;
+      ctx.fatigueIndex = ctx.readiness.score < 55 ? 0.9 : 0;
+    } catch { /* augmentation is best-effort */ }
+
+    // ── Rule Engine decision ───────────────────────────────────────────────
+    const ruleResult = evaluate(ctx);
+    if (ruleResult.action === 'rest') {
       return {
         restDay: true,
         message: 'Odihnește-te azi. Recovery activ recomandat.',
         exercises: [],
-        readinessScore: ctx.readiness.score
+        readinessScore: ctx.readiness.score,
+        ruleTrace: ruleResult.trace,
       };
     }
+    if (ruleResult.action === 'deload') {
+      ctx._deload = true;
+    }
+
+    // ── Proactive alerts ──────────────────────────────────────────────────
+    let proactiveAlerts = [];
+    try {
+      proactiveAlerts = runProactiveChecks({
+        ...ctx,
+        prots: (() => { try { return JSON.parse(localStorage.getItem('prots') ?? '{}'); } catch { return {}; } })(),
+        weights: (() => { try { return JSON.parse(localStorage.getItem('weights') ?? '{}'); } catch { return {}; } })(),
+        kcals: (() => { try { return JSON.parse(localStorage.getItem('kcals') ?? '{}'); } catch { return {}; } })(),
+        waters: (() => { try { return JSON.parse(localStorage.getItem('waters') ?? '{}'); } catch { return {}; } })(),
+        logs: ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [],
+      });
+    } catch { /* proactive checks are non-blocking */ }
 
     let session;
     try {
@@ -33,13 +79,24 @@ export class CoachDirector {
       session = this.fallbackSessionBuilder(sessionType, ctx);
     }
 
+    // ── Resolve equipment alternatives ────────────────────────────────────
+    const unavailableEquipment = ctx.equipment?.unavailable ?? [];
+    if (unavailableEquipment.length > 0) {
+      session.exercises = session.exercises.map(ex => {
+        const resolved = resolveExercise(ex.name, unavailableEquipment);
+        if (resolved.isAlternative) {
+          return { ...ex, name: resolved.exercise, isAlternative: true, original: resolved.original };
+        }
+        return ex;
+      });
+    }
+
     try {
       const dpModule = await import('./dp.js');
       for (const exercise of session.exercises) {
         if (dpModule.DP && dpModule.DP.getSmartRecommendation) {
           const dpRec = dpModule.DP.getSmartRecommendation(exercise.name, ctx.readiness.score, null);
           if (dpRec.status === 'INIT' && dpModule.getInitialRecommendation) {
-            // No DP history — estimate from similar exercises
             exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
           } else {
             exercise.recommendation = dpRec;
@@ -54,11 +111,15 @@ export class CoachDirector {
           exercise.recommendation = { kg: baseWeight, weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
         }
 
-        // Normalizează câmpul weight (DP folosește kg, getInitialRecommendation expune ambele)
+        // Apply deload weight reduction
+        if (ctx._deload && exercise.recommendation?.kg) {
+          const deloadKg = Math.round(exercise.recommendation.kg * 0.7 * 2) / 2;
+          exercise.recommendation = { ...exercise.recommendation, kg: deloadKg, weight: deloadKg };
+        }
+
         if (!exercise.recommendation.weight && exercise.recommendation.kg) {
           exercise.recommendation.weight = exercise.recommendation.kg;
         }
-        // Propagă technique la nivelul exercițiului (accesat în teste și UI)
         if (exercise.recommendation?.technique) {
           exercise.technique = exercise.recommendation.technique.toLowerCase().startsWith('drop')
             ? 'drop'
@@ -83,8 +144,16 @@ export class CoachDirector {
       readinessScore: ctx.readiness.score,
       readinessEmoji: ctx.readiness.emoji,
       isDeficit: ctx.isDeficit,
-      phase: ctx.user.phase
+      phase: ctx.user.phase,
+      ruleAction: ruleResult.action,
+      weakGroups: ctx.weakGroups,
+      stagnationWeeks: ctx.stagnationWeeks,
+      proactiveAlerts,
+      recompile: ctx.recompile,
     };
+
+    // Daily backup — fire and forget
+    try { initAutoBackup(); } catch { /* non-blocking */ }
 
     return session;
   }
@@ -113,7 +182,6 @@ export class CoachDirector {
     return { type: sessionType, exercises: filtered.map(name => ({ name, sets: 3 })) };
   }
 
-  // TODO Week 2: conectează AA engine
   applyAAAdjustments(session, ctx) {
     return session;
   }
@@ -139,8 +207,6 @@ export class CoachDirector {
 
 export const coachDirector = new CoachDirector();
 
-// Caută ultima intrare logată pentru un exercițiu în sesiunile recente
-// Suportă format test (exercise/weight) și format real app (ex/w)
 function getLastLogFromContext(exerciseName, recentLogs) {
   if (!recentLogs || !recentLogs.length) return null;
   for (const session of recentLogs) {

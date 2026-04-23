@@ -320,6 +320,19 @@ export async function renderCoachIdle(){
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
       </div>`:''}
+      ${(()=>{
+        const proAlerts=_dirSession?.context?.proactiveAlerts||[];
+        if(!proAlerts.length)return'';
+        const top=proAlerts[0];
+        const color=top.severity==='warning'?'var(--accent2)':top.severity==='success'?'var(--green)':'var(--accent)';
+        const bg=top.severity==='warning'?'rgba(255,107,53,0.07)':top.severity==='success'?'rgba(0,200,100,0.07)':'rgba(100,150,255,0.07)';
+        const border=top.severity==='warning'?'rgba(255,107,53,0.2)':top.severity==='success'?'rgba(0,200,100,0.2)':'rgba(100,150,255,0.2)';
+        const icon=top.severity==='warning'?'⚠️':top.severity==='success'?'✅':'💡';
+        return`<div style="margin:0 16px 10px;padding:11px 14px;background:${bg};border-radius:var(--rs);border:1px solid ${border}">
+          <div style="font-size:12px;color:${color};font-weight:600">${icon} ${top.message}</div>
+          ${proAlerts.length>1?`<div style="font-size:10px;color:var(--text3);margin-top:4px">+${proAlerts.length-1} alte alerte</div>`:''}
+        </div>`;
+      })()}
       ${todayR == null ? `<div style="margin:0 16px 10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs)">
         <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Cum te simți azi?</div>
         <div style="display:flex;gap:6px">
@@ -350,9 +363,10 @@ export async function renderCoachIdle(){
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:500">${cleanName}${nearPR?' <span style="font-size:9px;color:var(--accent);font-weight:700;background:rgba(200,255,0,0.12);padding:1px 5px;border-radius:4px">🔥 PR!</span>':''}</div>
               <div style="font-size:10px;color:var(--text3);margin-top:1px">${e.s||''}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
-              <div style="display:flex;gap:4px;margin-top:5px">
+              <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap">
                 <button onclick="markOccupied('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:4px;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif">⚠️ Ocupat</button>
                 <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsă</button>
+                <button onclick="showWhyForExercise('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(100,150,255,0.08);border:1px solid rgba(100,150,255,0.2);border-radius:4px;color:var(--accent);cursor:pointer;font-family:'DM Sans',sans-serif">❓ De ce?</button>
               </div>
             </div>
             <div style="text-align:right;flex-shrink:0">
@@ -1377,6 +1391,34 @@ export function markEquipmentUnavailable(exerciseName) {
   DB.set('unavailable-equipment', unavail);
   toast(`🚫 ${exerciseName} eliminat permanent`, 'var(--red)');
   renderCoachIdle();
+}
+
+export function showWhyForExercise(exerciseName) {
+  // Build explanation using WhyEngine + Director session if available
+  import('../engine/whyEngine.js').then(({ explainRecommendation }) => {
+    const session = _cachedDirectorSession;
+    const exercise = session?.exercises?.find(e => (e.name || '').toLowerCase() === exerciseName.toLowerCase());
+    const ctx = {
+      readiness: { score: DB.get('readiness') ? (() => {
+        try {
+          const today = new Date().toISOString().slice(0,10);
+          const r = DB.get('readiness');
+          return typeof r === 'object' ? (r[today]?.score ?? r[today] ?? null) : null;
+        } catch { return null; }
+      })() : null },
+      isInCut: (() => {
+        const phase = DB.get('phase-override') || 'AUTO';
+        return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
+      })(),
+      patterns: DB.get('applied-patterns') || [],
+      user: { phase: DB.get('phase-override') || 'AUTO' },
+    };
+    const { summary, reasons } = explainRecommendation(exercise || { name: exerciseName }, ctx);
+    const lines = reasons.map(r => `[${r.category}] ${r.text}`).join('\n\n');
+    alert(`❓ De ce ${exerciseName}?\n\n${summary}\n\n${lines || '(Fără date suficiente pentru explicație detaliată)'}`);
+  }).catch(() => {
+    alert(`❓ De ce ${exerciseName}?\n\n(WhyEngine indisponibil momentan)`);
+  });
 }
 
 export function markOccupied(exerciseName) {
