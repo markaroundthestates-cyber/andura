@@ -115,8 +115,12 @@ export async function syncFromFirebase() {
 
 let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
+const COACH_RELEVANT_KEYS = ['logs', 'readiness', 'phase-override', 'current-kcal', 'weights'];
 DB.set = function(key, val) {
   _origSet(key, val);
+  if (COACH_RELEVANT_KEYS.includes(key) && window._directorCache) {
+    window._directorCache.invalidate();
+  }
   if (SYNC_KEYS.includes(key) && !window._suppressFirebaseSync) {
     clearTimeout(_syncTimer);
     _syncTimer = setTimeout(syncToFirebase, 3000);

@@ -971,20 +971,21 @@ function renderSessionHistory() {
       const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
       const realSets = sets.filter(s => s.ex !== '__early_stop__');
-      // Group by exercise name for distinct exercise count
+      // Group by exercise name for distinct exercise count + per-exercise details
       const byExercise = {};
       for (const log of realSets) {
         const name = log.exercise || log.ex;
         if (!name) continue;
-        if (!byExercise[name]) byExercise[name] = 0;
-        byExercise[name]++;
+        if (!byExercise[name]) byExercise[name] = [];
+        byExercise[name].push(log);
       }
       const exCount = Object.keys(byExercise).length;
-      const setCount = realSets.length; // total logs = total sets
+      const setCount = realSets.length;
       const burn = burns.find(b => b.date === date);
       const rating = isDateKey ? null : ratings.find(r => r.session === Number(key));
-      return { ts, date, sets: setCount, exCount,
+      return { ts, date, sets: setCount, exCount, byExercise,
         mins: burn?.mins ?? null,
+        day: burn?.day ?? null,
         rating: rating?.rating ?? null };
     })
     .sort((a, b) => b.ts - a.ts)
@@ -1002,19 +1003,32 @@ function renderSessionHistory() {
   const ratingLabel = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
   const ratingColor = { easy: 'var(--green)', normal: 'var(--accent)', hard: 'var(--red)' };
 
-  el.innerHTML = sessions.map((s, i) => {
+  el.innerHTML = sessions.map(s => {
     const d = new Date(s.date);
-    const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
-    const minsStr = s.mins !== null ? `${s.mins} min` : '—';
-    const rl = s.rating ? ratingLabel[s.rating] : '—';
+    const dateStr = d.toLocaleDateString('ro-RO', { weekday: 'short', day: 'numeric', month: 'short', year: '2-digit' });
+    const minsStr = s.mins !== null ? `${s.mins} min` : null;
+    const rl = s.rating ? ratingLabel[s.rating] : null;
     const rc = s.rating ? ratingColor[s.rating] : 'var(--text3)';
-    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 16px;${i < sessions.length-1 ? 'border-bottom:1px solid var(--border)' : ''}">
-      <div style="font-size:13px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:52px">${dateStr}</div>
-      <div style="flex:1">
-        <div style="font-size:12px;font-weight:600">${s.exCount} exerciții · ${s.sets} seturi</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:1px">${minsStr}</div>
-      </div>
-      <div style="font-size:12px;font-weight:700;color:${rc}">${rl}</div>
-    </div>`;
+    const typePart = s.day ? ` · ${s.day}` : '';
+    const ratePart = rl ? ` · <span style="color:${rc};font-weight:700">${rl}</span>` : '';
+    const summary = `${dateStr}${typePart} · ${s.exCount} ex · ${s.sets} seturi${minsStr ? ' · ' + minsStr : ''}${ratePart}`;
+
+    const exDetails = Object.entries(s.byExercise).map(([name, exSets]) => {
+      const best = exSets.reduce((best, cur) => (cur.w || cur.kg || 0) > (best.w || best.kg || 0) ? cur : best, exSets[0]);
+      const kg = best.w || best.kg || '?';
+      const reps = best.reps || best.r || '?';
+      return `<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text2)">${name}</span>
+        <span style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${kg}kg×${reps} <span style="color:var(--text3)">(${exSets.length} set${exSets.length>1?'uri':''})</span></span>
+      </div>`;
+    }).join('');
+
+    return `<details style="border-bottom:1px solid var(--border)">
+      <summary style="display:flex;align-items:center;padding:11px 16px;cursor:pointer;list-style:none;gap:8px">
+        <span style="flex:1;font-size:12px;color:var(--text)">${summary}</span>
+        <span style="font-size:14px;color:var(--text3)">›</span>
+      </summary>
+      <div style="padding:8px 16px 12px;background:var(--bg2)">${exDetails || '<div style="font-size:11px;color:var(--text3)">Nicio exerciție înregistrată</div>'}</div>
+    </details>`;
   }).join('');
 }

@@ -13,6 +13,21 @@ import { getMuscleState, getMuscleBalance, EXERCISE_MUSCLES } from '../engine/mu
 import { analyzeAndApplyPatterns } from '../engine/patternLearning.js';
 import { coachDirector } from '../engine/coachDirector.js';
 
+const _sessionCache = {
+  session: null,
+  timestamp: null,
+  TTL_MS: 5 * 60 * 1000,
+  get() {
+    if (!this.session) return null;
+    if (Date.now() - this.timestamp > this.TTL_MS) { this.session = null; return null; }
+    return this.session;
+  },
+  set(s) { this.session = s; this.timestamp = Date.now(); },
+  invalidate() { this.session = null; this.timestamp = null; console.log('[Cache] Director session invalidated'); }
+};
+if (typeof window !== 'undefined') window._directorCache = _sessionCache;
+
+// Legacy alias — kept so any external code referencing window._cachedDirectorSession still works
 let _cachedDirectorSession = null;
 let wakeLock = null;
 let inactivityTimer = null;
@@ -219,18 +234,24 @@ export async function renderCoachIdle(){
     const todayR = getTodayReadiness();
 
     // Construieste sesiunea prin Director — sursă unică de adevăr
-    try {
-      _cachedDirectorSession = await coachDirector.buildSession(tp.t.toUpperCase());
-    } catch(e) {
-      _cachedDirectorSession = null;
+    let _dirSession = _sessionCache.get();
+    if (!_dirSession) {
+      try {
+        _dirSession = await coachDirector.buildSession(tp.t.toUpperCase());
+        _sessionCache.set(_dirSession);
+      } catch(e) {
+        _dirSession = null;
+        _sessionCache.invalidate();
+      }
     }
+    _cachedDirectorSession = _dirSession; // legacy alias
     // Zi de odihnă forțată de Director (readiness < 40)
-    if (_cachedDirectorSession?.restDay) {
+    if (_dirSession?.restDay) {
       cmdEl.textContent = 'ZI DE ODIHNĂ';
       cmdEl.style.color = 'var(--text2)';
       if(startBtn) startBtn.style.display='none';
       const _tplOff=$('today-preview-list');
-      if(_tplOff) _tplOff.innerHTML=`<div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;text-align:center"><div style="font-size:28px;margin-bottom:8px">🛌</div><div style="font-size:14px;font-weight:600;color:var(--text2)">Zi de odihnă recomandată</div><div style="font-size:12px;color:var(--text3);margin-top:6px">${_cachedDirectorSession.message}</div></div>`;
+      if(_tplOff) _tplOff.innerHTML=`<div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;text-align:center"><div style="font-size:28px;margin-bottom:8px">🛌</div><div style="font-size:14px;font-weight:600;color:var(--text2)">Zi de odihnă recomandată</div><div style="font-size:12px;color:var(--text3);margin-top:6px">${_dirSession.message}</div></div>`;
       return;
     }
 
@@ -293,8 +314,8 @@ export async function renderCoachIdle(){
       ${skipPattern?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
         <div style="font-size:11px;color:var(--accent2);font-weight:600">📊 Program scurtat la ${exList.length} exerciții esențiale (${skipPattern.skipRate}% skip ${tp.day})</div>
       </div>`:''}
-      ${_cachedDirectorSession?.patternApplied?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(160,100,255,0.06);border-radius:var(--rs);border:1px solid rgba(160,100,255,0.2)">
-        <div style="font-size:11px;color:var(--purple);font-weight:600">🧠 ${_cachedDirectorSession.patternApplied.reason}</div>
+      ${_dirSession?.patternApplied?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(160,100,255,0.06);border-radius:var(--rs);border:1px solid rgba(160,100,255,0.2)">
+        <div style="font-size:11px;color:var(--purple);font-weight:600">🧠 ${_dirSession.patternApplied.reason}</div>
       </div>`:''}
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
