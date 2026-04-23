@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="/salafull/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script type="module" crossorigin src="/salafull/assets/main-BM7ROzsO.js"></script>
+  <script type="module" crossorigin src="/salafull/assets/main-DxppF44t.js"></script>
   <link rel="stylesheet" crossorigin href="/salafull/assets/main-CCHQbsh2.css">
 </head>
 <body>
@@ -505,6 +505,11 @@
       <button onclick="if(confirm('Declanșează din nou onboarding-ul? Datele tale rămân.')){localStorage.removeItem('onboarding-completed');localStorage.removeItem('onboarding-done');window.location.reload()}" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔄 Re-run Onboarding</button>
       <button onclick="window.inspectStorage&&(window.inspectStorage(),alert('Verifică consola DevTools'))" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔍 Inspect Storage (console)</button>
       <button onclick="window._devFullReset()" style="padding:11px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">💥 Full Reset (șterge TOT)</button>
+      <button onclick="if(confirm('Restaurează ultimul auto-backup? Datele curente vor fi înlocuite.')){window.restoreLastBackup&&window.restoreLastBackup()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">⏪ Restore Last Auto-Backup</button>
+      <label style="display:block;margin-top:8px;font-size:11px;color:var(--text3)">
+        Upload backup JSON:
+        <input type="file" accept=".json" onchange="const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(confirm('Restaurează din '+f.name+'?')){window.restoreFromBackup&&window.restoreFromBackup(e.target.result)}};r.readAsText(f)" style="display:block;margin-top:4px;font-size:11px;color:var(--text2)"/>
+      </label>
     </div>
   </div>
 </div>
