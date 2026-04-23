@@ -234,6 +234,20 @@ export const DP = {
 
     // Stage 4: TECHNIQUE — drop set (max 1/workout, already tracked)
     if (isStagnant && extraSets >= 1) {
+      // Drop set nu în CUT — în deficit menții greutatea, straight sets cu execuție perfectă
+      const phaseOverride = DB.get('phase-override') || 'AUTO';
+      const isInCut = phaseOverride === 'CUT' ||
+        (phaseOverride === 'AUTO' && new Date() < new Date('2026-07-20'));
+      if (isInCut) {
+        return {
+          kg: lastW, repsTarget: rMax, rir: 2,
+          status: 'MAINTAIN',
+          statusColor: 'var(--accent)',
+          statusLabel: '🟡 MENȚII',
+          progressionNote: `Stagnare detectată · În CUT menții ${lastW}kg — execuție perfectă`,
+          progressionStage: 3
+        };
+      }
       return {
         kg: lastW, repsTarget: rMax, rir: 1,
         status: 'TECHNIQUE',

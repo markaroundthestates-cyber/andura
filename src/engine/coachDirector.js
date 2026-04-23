@@ -45,6 +45,12 @@ export class CoachDirector {
           const baseWeight = lastLog ? (lastLog.weight ?? lastLog.w ?? 20) : 20;
           exercise.recommendation = { weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
         }
+        // Propagă technique la nivelul exercițiului (accesat în teste și UI)
+        if (exercise.recommendation?.technique) {
+          exercise.technique = exercise.recommendation.technique.toLowerCase().startsWith('drop')
+            ? 'drop'
+            : exercise.recommendation.technique;
+        }
       }
     } catch (e) {
       for (const exercise of session.exercises) {

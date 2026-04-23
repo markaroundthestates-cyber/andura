@@ -11,7 +11,9 @@ import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getTodayReadiness, saveReadiness, getReadinessVerdict, getReadinessScore, READINESS_LABELS } from '../engine/readiness.js';
 import { getMuscleState, getMuscleBalance, EXERCISE_MUSCLES } from '../engine/muscleMap.js';
 import { analyzeAndApplyPatterns } from '../engine/patternLearning.js';
+import { coachDirector } from '../engine/coachDirector.js';
 
+let _cachedDirectorSession = null;
 let wakeLock = null;
 let inactivityTimer = null;
 const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes
@@ -163,7 +165,7 @@ function tickSess() {}
 function beepStart() { if (typeof beep === 'function') beep(660, 0.1); }
 
 
-export function renderCoachIdle(){
+export async function renderCoachIdle(){
   const dayMap=[6,0,1,2,3,4,5];
   const tp=PROG[dayMap[new Date().getDay()]];
   const now=new Date();
@@ -215,6 +217,22 @@ export function renderCoachIdle(){
   } else {
     // WORKOUT day
     const todayR = getTodayReadiness();
+
+    // Construieste sesiunea prin Director — sursă unică de adevăr
+    try {
+      _cachedDirectorSession = await coachDirector.buildSession(tp.t.toUpperCase());
+    } catch(e) {
+      _cachedDirectorSession = null;
+    }
+    // Zi de odihnă forțată de Director (readiness < 40)
+    if (_cachedDirectorSession?.restDay) {
+      cmdEl.textContent = 'ZI DE ODIHNĂ';
+      cmdEl.style.color = 'var(--text2)';
+      if(startBtn) startBtn.style.display='none';
+      const _tplOff=$('today-preview-list');
+      if(_tplOff) _tplOff.innerHTML=`<div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;text-align:center"><div style="font-size:28px;margin-bottom:8px">🛌</div><div style="font-size:14px;font-weight:600;color:var(--text2)">Zi de odihnă recomandată</div><div style="font-size:12px;color:var(--text3);margin-top:6px">${_cachedDirectorSession.message}</div></div>`;
+      return;
+    }
 
     cmdEl.textContent=tp.lb.toUpperCase();
     cmdEl.style.color='var(--accent)';
@@ -270,6 +288,9 @@ export function renderCoachIdle(){
     const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=renderLastSessionMemory(tp.day)+`
       ${skipPattern?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
         <div style="font-size:11px;color:var(--accent2);font-weight:600">📊 Program scurtat la ${exList.length} exerciții esențiale (${skipPattern.skipRate}% skip ${tp.day})</div>
+      </div>`:''}
+      ${_cachedDirectorSession?.patternApplied?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(160,100,255,0.06);border-radius:var(--rs);border:1px solid rgba(160,100,255,0.2)">
+        <div style="font-size:11px;color:var(--purple);font-weight:600">🧠 ${_cachedDirectorSession.patternApplied.reason}</div>
       </div>`:''}
       ${laggingAlerts.length?`<div style="margin:0 16px 10px;padding:11px 14px;background:rgba(255,107,53,0.07);border-radius:var(--rs);border:1px solid rgba(255,107,53,0.2)">
         ${laggingAlerts.map(a=>`<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:3px">⚠️ ${a}</div>`).join('')}
@@ -533,7 +554,8 @@ export function startPause(sec, nextEx=''){
   const recNext=nextEx?DP.recommend(nextEx):{};
   $('ps-next').textContent=nextEx?`URMEAZĂ: ${nextEx}`:'';
   $('ps-rec-kg').textContent=recNext.kg?`${recNext.kg} kg`:'';
-  $('ps-rec-reps').textContent=recNext.repsTarget?`${recNext.repsTarget} reps · RIR ${SYS.getTempo(nextEx||'').rir||2}`:'';
+  $('ps-rec-reps').textContent=recNext.repsTarget?`${recNext.repsTarget} reps · ${DP.getIntensityLabel(SYS.getTempo(nextEx||'').rir||2)}`:'';
+
   showPauseScreen();
   speak(`Pauza de ${sec} secunde.`);
 
@@ -872,7 +894,7 @@ export function renderSessLog(){
         <div style="font-size:10px;color:var(--text2);margin-top:1px">Set ${s.set} · ${s.kg}kg · ${s.reps||'?'} reps${s.notes&&s.notes.length?' · <span style="color:var(--accent2)">'+ s.notes.join(', ') +'</span>':''}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${nc}">${s.rpe}</span>
+        <span style="font-size:22px">${s.rpe>=9?'🔴':s.rpe>=8?'🟠':s.rpe>=7?'🟡':'🟢'}</span>
         <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:${nc}22;color:${nc}">${nx}</span>
       </div>
     </div>`;

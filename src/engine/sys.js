@@ -261,8 +261,9 @@ export const SYS = {
     const techniques = [];
     const isIsolation = ['Lateral Raises','Rear Delt Fly','Cable Curl','Preacher Curl','Overhead Triceps','Pushdown','Leg Extension','Leg Curl','Calf Raises','Face Pulls'].includes(exName);
 
-    // Drop sets — only on last set of isolation in cut
-    if (isIsolation && setNumber === totalSets && phase === 'CUT') {
+    // Drop sets — NOT în CUT (deficit); recomandat în BULK/STRENGTH
+    const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
+    if (isIsolation && setNumber === totalSets && !isEffectivelyCut) {
       techniques.push({icon:'🔻', label:'DROP SET', desc:'Scade 30% greutatea, continuă până la eșec'});
     }
     // Partial reps — on last set of isolation

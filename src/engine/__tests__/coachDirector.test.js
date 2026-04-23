@@ -222,3 +222,34 @@ describe('CoachDirector — Defensive programming', () => {
     expect(session.exercises).toBeDefined();
   });
 });
+
+describe('CoachDirector — Week 1.5 fixes', () => {
+  it('should not suggest drop sets in CUT phase', async () => {
+    localStorage.setItem('phase-override', 'AUTO');
+    setupReadiness(75);
+    const session = await coachDirector.buildSession('PUSH');
+    for (const ex of session.exercises) {
+      expect(ex.technique).not.toBe('drop');
+      expect(ex.name).not.toMatch(/drop/i);
+    }
+  });
+
+  it('should require readiness input when not set today', async () => {
+    localStorage.clear();
+    localStorage.setItem('phase-override', 'AUTO');
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session.requiresReadinessInput).toBe(true);
+  });
+
+  it('should apply pattern early_end reducing exercises', async () => {
+    localStorage.clear();
+    setupReadiness(75);
+    localStorage.setItem('phase-override', 'AUTO');
+    localStorage.setItem('auto-recommendations', JSON.stringify([
+      { type: 'early_end', confidence: 0.75 }
+    ]));
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session.patternApplied).toBeDefined();
+    expect(session.patternApplied.type).toBe('early_end');
+  });
+});
