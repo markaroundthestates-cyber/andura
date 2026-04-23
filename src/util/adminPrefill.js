@@ -52,6 +52,11 @@ export function adminPrefillAll() {
     window.restoreRealLogs({ merge: true });
   }
 
+  // Prefill resets to cold-start state — stale patterns must not survive
+  localStorage.removeItem('applied-patterns');
+  localStorage.removeItem('pattern-learning-cache');
+  localStorage.removeItem('detected-patterns');
+
   console.log('[AdminPrefill] Imported: kcals+prots 9 days, weights 7 days, logs Apr 21-22');
 
   return {

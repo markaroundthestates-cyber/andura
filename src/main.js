@@ -3,7 +3,7 @@ import { initSentry } from './util/sentry.js';
 initSentry(); // fire-and-forget, production only
 
 import { applyTheme, getActiveTheme } from './themes/themeManager.js';
-import { initFirebaseSync } from './firebase.js';
+import { initFirebaseSync, clearFirebaseKeys } from './firebase.js';
 import { DP } from './engine/dp.js';
 import { AA } from './engine/aa.js';
 import { injectBaseline, injectMFPWeights, injectRealSessions } from './inject.js';
@@ -91,7 +91,8 @@ Object.assign(window, {
 });
 
 // ── Calibration: clear stale pattern caches for cold_start users ─────────────
-function clearStalePatternsIfColdStart() {
+// Must be called AFTER initFirebaseSync so Firebase doesn't restore cleared keys.
+async function clearStalePatternsIfColdStart() {
   try {
     const logs = JSON.parse(localStorage.getItem('logs') || '[]');
     const sessionKeys = new Set(logs.map(l => l.session ?? l.date).filter(Boolean));
@@ -100,6 +101,10 @@ function clearStalePatternsIfColdStart() {
       localStorage.removeItem('pattern-learning-cache');
       localStorage.removeItem('detected-patterns');
       console.log('[Calibration] Cleared stale pattern caches (cold_start)');
+      // Also clear from Firebase so the next sync doesn't restore them
+      if (!window._suppressFirebaseSync) {
+        await clearFirebaseKeys(['applied-patterns', 'pattern-learning-cache', 'detected-patterns']);
+      }
     }
   } catch { /* non-blocking */ }
 }
@@ -142,10 +147,10 @@ function setupOfflineIndicator() {
 async function init() {
   applyTheme(getActiveTheme());
   setupOfflineIndicator();
-  clearStalePatternsIfColdStart();
   cleanDuplicateLogs();
   window.__constants = { PROG, KCAL_TARGET, PROT_TARGET };
   await initFirebaseSync();
+  await clearStalePatternsIfColdStart(); // after sync: Firebase can't restore cleared keys
   injectBaseline();
   injectMFPWeights();
   const injected = injectRealSessions();

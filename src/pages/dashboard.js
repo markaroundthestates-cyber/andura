@@ -259,7 +259,17 @@ export function renderDash(){
   // Auto-recommendations card
   const autoRecEl = $('auto-rec-card');
   if (autoRecEl) {
-    const patterns = getAppliedPatterns().filter(p => Date.now() - p.appliedAt < 14*86400000);
+    const _calLvl = window._directorCache?.get()?.calibrationLevel;
+    const _patternsEnabled = _calLvl
+      ? _calLvl.patternsEnabled !== false
+      : (() => {
+          const ls = DB.get('logs') || [];
+          const sessionCount = new Set(ls.filter(l => !l.baseline).map(l => l.session ?? l.date).filter(Boolean)).size;
+          return sessionCount >= 3;
+        })();
+    const patterns = _patternsEnabled
+      ? getAppliedPatterns().filter(p => Date.now() - p.appliedAt < 14*86400000)
+      : [];
     if (patterns.length) {
       autoRecEl.style.display = 'block';
       autoRecEl.innerHTML = `<div style="background:rgba(0,240,255,0.04);border:1px solid rgba(0,240,255,0.15);border-radius:var(--r);padding:14px 16px;margin-bottom:8px">

@@ -90,6 +90,56 @@ test('Stale pattern caches cleared on cold_start init', async ({ page }) => {
   expect(patternCache,    'pattern-learning-cache should be cleared for cold_start user').toBeNull();
 });
 
+// ── Bug 2 regression tests ────────────────────────────────────────────────────
+
+test('Dashboard auto-rec card hidden for cold_start (patternsEnabled=false)', async ({ page }) => {
+  await page.addInitScript(() => {
+    window._suppressFirebaseSync = true;
+    localStorage.setItem('onboarding-done', 'true');
+    // Cold start: 0 real sessions
+    localStorage.removeItem('logs');
+    // Stale pattern present — should not reach the dashboard banner
+    localStorage.setItem('applied-patterns', JSON.stringify([
+      { type: 'SKIP_DAY', day: 'Marți', skipRate: 88, confidence: 0.88, appliedAt: Date.now(),
+        description: 'Marți are 88% skip rate — sesiune scurtată la esențiale' }
+    ]));
+  });
+
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(1200);
+
+  const bodyText = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  expect(bodyText).not.toMatch(/Am ajustat programul automat/i);
+  expect(bodyText).not.toMatch(/Marți are 88%/i);
+});
+
+test('clearStalePatternsIfColdStart runs after initFirebaseSync (no false restore)', async ({ page }) => {
+  await page.addInitScript(() => {
+    window._suppressFirebaseSync = true;
+    localStorage.setItem('onboarding-done', 'true');
+    // Single session = cold_start
+    localStorage.setItem('logs', JSON.stringify([
+      { ex: 'Lat Pulldown', w: 50, reps: 8, date: '2026-04-21', session: 'sess-1' }
+    ]));
+    localStorage.setItem('applied-patterns', JSON.stringify([
+      { type: 'SKIP_DAY', day: 'Joi', skipRate: 100 }
+    ]));
+    localStorage.setItem('pattern-learning-cache', '{"stale":true}');
+    localStorage.setItem('detected-patterns', '[]');
+  });
+
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(800);
+
+  const applied   = await page.evaluate(() => localStorage.getItem('applied-patterns'));
+  const cache     = await page.evaluate(() => localStorage.getItem('pattern-learning-cache'));
+  const detected  = await page.evaluate(() => localStorage.getItem('detected-patterns'));
+
+  expect(applied,   'applied-patterns cleared for cold_start').toBeNull();
+  expect(cache,     'pattern-learning-cache cleared for cold_start').toBeNull();
+  expect(detected,  'detected-patterns cleared for cold_start').toBeNull();
+});
+
 test('Mature user (initial tier) still sees patterns when enabled', async ({ page }) => {
   // 8 sessions over 14 days = INITIAL tier — patterns enabled at >=0.70 confidence
   const sessions = Array.from({ length: 8 }, (_, i) => ({
