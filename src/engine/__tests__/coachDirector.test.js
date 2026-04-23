@@ -265,6 +265,13 @@ describe('CoachDirector — Week 1.5 fixes', () => {
     localStorage.clear();
     setupReadiness(75);
     localStorage.setItem('phase-override', 'AUTO');
+    // Need INITIAL tier (>=3 sessions, >=7 days) for patterns to be enabled
+    const logs = Array.from({ length: 5 }, (_, i) => ({
+      ex: 'Lat Pulldown', w: 50, reps: 8, rpe: 7,
+      date: new Date(Date.now() - (10 + i) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+      session: `sess-pattern-${i}`,
+    }));
+    localStorage.setItem('logs', JSON.stringify(logs));
     localStorage.setItem('auto-recommendations', JSON.stringify([
       { type: 'early_end', confidence: 0.75 }
     ]));

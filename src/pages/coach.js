@@ -295,7 +295,8 @@ export async function renderCoachIdle(){
     // Exercise list — apply pattern filtering and skip occupied equipment
     const occupiedEquip = DB.get('equipment-occupied-session') || [];
     const unavailEquip = DB.get('unavailable-equipment') || [];
-    const patterns = DB.get('applied-patterns') || [];
+    const _calPatternsOn = _dirSession?.calibrationLevel?.patternsEnabled !== false;
+    const patterns = _calPatternsOn ? (DB.get('applied-patterns') || []) : [];
     const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
     let rawExList = (tp.ex||[]).filter(e => !unavailEquip.includes(cleanEx(e.n||'')));
     if (skipPattern) {
@@ -956,7 +957,16 @@ export function getTodayExercises() {
   if(!tp||tp.t==='off'||!tp.ex) return [];
   const unavail = DB.get('unavailable-equipment') || [];
   let exList = tp.ex.map(e => cleanEx(e.n||'')).filter(ex => !unavail.includes(ex));
-  const patterns = DB.get('applied-patterns') || [];
+  // Gate pattern reads by calibration level (via cached director session or session count)
+  const _cachedLvl = (_cachedDirectorSession || _sessionCache?.get())?.calibrationLevel;
+  const _patternsOn = _cachedLvl ? _cachedLvl.patternsEnabled : (() => {
+    try {
+      const logs = JSON.parse(localStorage.getItem('logs') || '[]');
+      const sessionKeys = new Set(logs.map(l => l.session ?? l.date).filter(Boolean));
+      return sessionKeys.size >= 3; // cold_start threshold
+    } catch { return true; }
+  })();
+  const patterns = _patternsOn ? (DB.get('applied-patterns') || []) : [];
   const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
   if (skipPattern) {
     const compounds = exList.filter(ex => COMPOUND_EX.includes(ex));
@@ -1420,7 +1430,10 @@ export function showWhyForExercise(exerciseName) {
         const phase = DB.get('phase-override') || 'AUTO';
         return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
       })(),
-      patterns: DB.get('applied-patterns') || [],
+      patterns: (() => {
+        const lvl = (_cachedDirectorSession || _sessionCache?.get())?.calibrationLevel;
+        return (lvl?.patternsEnabled !== false) ? (DB.get('applied-patterns') || []) : [];
+      })(),
       user: { phase: DB.get('phase-override') || 'AUTO' },
     };
     const { summary, reasons } = explainRecommendation(exercise || { name: exerciseName }, ctx);

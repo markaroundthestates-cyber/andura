@@ -90,6 +90,20 @@ Object.assign(window, {
   sp: goTo, __v: 6,
 });
 
+// ── Calibration: clear stale pattern caches for cold_start users ─────────────
+function clearStalePatternsIfColdStart() {
+  try {
+    const logs = JSON.parse(localStorage.getItem('logs') || '[]');
+    const sessionKeys = new Set(logs.map(l => l.session ?? l.date).filter(Boolean));
+    if (sessionKeys.size < 3) {
+      localStorage.removeItem('applied-patterns');
+      localStorage.removeItem('pattern-learning-cache');
+      localStorage.removeItem('detected-patterns');
+      console.log('[Calibration] Cleared stale pattern caches (cold_start)');
+    }
+  } catch { /* non-blocking */ }
+}
+
 // ── Feature 10: Clean Duplicate Logs ─────────────────────────
 function cleanDuplicateLogs() {
   const logs = DB.get('logs') || [];
@@ -128,6 +142,7 @@ function setupOfflineIndicator() {
 async function init() {
   applyTheme(getActiveTheme());
   setupOfflineIndicator();
+  clearStalePatternsIfColdStart();
   cleanDuplicateLogs();
   window.__constants = { PROG, KCAL_TARGET, PROT_TARGET };
   await initFirebaseSync();

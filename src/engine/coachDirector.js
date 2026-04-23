@@ -26,6 +26,15 @@ export class CoachDirector {
     ctx.calibrationLevel = calibration;
     console.log('[CoachDirector] Calibration:', calibration.name);
 
+    // Gate ctx.patterns — wipe before any engine sees them for under-threshold tiers
+    if (!calibration.patternsEnabled) {
+      ctx.patterns = [];
+    } else if (calibration.patternMinConfidence != null) {
+      ctx.patterns = (ctx.patterns || []).filter(
+        p => (p.confidence ?? 0.5) >= calibration.patternMinConfidence
+      );
+    }
+
     // Apply rolling window for mature users (OPTIMIZED only)
     if (calibration.rollingWindowMonths) {
       ctx.allLogs = applyRollingWindow(allLogs, calibration);

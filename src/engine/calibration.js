@@ -113,7 +113,10 @@ export function detectCalibrationLevel(ctx) {
   const sessionKeys = new Set();
   for (const log of allLogs) {
     const key = log.session ?? log.date ?? log.timestamp;
-    if (key) sessionKeys.add(String(key).slice(0, 10)); // normalize to date prefix
+    if (!key) continue;
+    const s = String(key);
+    // Normalize ISO timestamps to date part; keep arbitrary session IDs as-is
+    sessionKeys.add(/^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : s);
   }
   const sessionsCount = ctx.allSessions?.length ?? sessionKeys.size;
 
