@@ -34,6 +34,21 @@ let wakeLock = null;
 let inactivityTimer = null;
 const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes
 
+// ── Bug 3: CUT phase display helper ───────────────────────────
+// Transforms "3×10–12" → "3×10" for isolation exercises (rMax=12) in CUT phase.
+// Falls back to rawStr on parse failure. Does NOT touch compounds or higher-rep ranges.
+function formatSetsReps(rawStr, exName, isInCut) {
+  if (!isInCut || !rawStr || COMPOUND_EX.includes(exName)) return rawStr;
+  const m = rawStr.match(/^(\d+)×(\d+)(?:–(\d+))?(.*)$/u);
+  if (!m) return rawStr;
+  const sets = m[1];
+  const rMin = parseInt(m[2]);
+  const rMax = m[3] ? parseInt(m[3]) : rMin;
+  const suffix = m[4] || '';
+  if (rMax !== 12) return rawStr;
+  return `${sets}×${Math.min(rMin, 10)}${suffix}`;
+}
+
 // ── Feature 1: Smart Rest Timer ──────────────────────────────
 function getSmartPause(ex) {
   const base = COMPOUND_EX.includes(ex) ? PAUSE_COMPOUND : PAUSE_ISO;
@@ -374,7 +389,7 @@ export async function renderCoachIdle(){
             <div style="width:6px;height:6px;border-radius:50%;background:${getGroupColor(e.g)};flex-shrink:0;margin-top:5px"></div>
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:500">${cleanName}${nearPR?' <span style="font-size:9px;color:var(--accent);font-weight:700;background:rgba(200,255,0,0.12);padding:1px 5px;border-radius:4px">🔥 PR!</span>':''}</div>
-              <div style="font-size:10px;color:var(--text3);margin-top:1px">${e.s||''}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:1px">${formatSetsReps(e.s||'', cleanEx(e.n||''), _isInCut)}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
               <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap">
                 <button onclick="markOccupied('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:4px;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif">⚠️ Ocupat</button>
                 <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsă</button>

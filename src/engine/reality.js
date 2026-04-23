@@ -39,10 +39,6 @@ export const realityEngine = {
         exercise.recommendation.realityAdjusted = true;
         exercise.recommendation.originalWeight = originalWeight;
       }
-      if (ctx.isInCut && exercise.recommendation.reps > 10) {
-        exercise.recommendation.reps = Math.max(8, exercise.recommendation.reps - 1);
-        exercise.recommendation.repsAdjustedForCut = true;
-      }
       // Ține greutatea când readiness < 60 — nu crește în zile proaste
       if (ctx.readiness.score !== null && ctx.readiness.score < 60) {
         const lastLog = findLastLogForExercise(exercise.name, ctx.recentLogs);

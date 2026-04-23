@@ -85,6 +85,16 @@ export const DP = {
     'Overhead Triceps': 'reps', 'Pushdown': 'reps',
   },
 
+  // In CUT: isolation exercises with rMax=12 target fixed 10 reps — weight is the progression axis.
+  // Compounds and higher-rep isolation (15-20 range) keep their native range.
+  getPhaseAwareRepRange(ex, isInCut) {
+    const range = this.REP_RANGES[ex] || [8, 12];
+    if (!isInCut) return range;
+    const [rMin, rMax] = range;
+    if (rMax === 12 && !COMPOUND_EX.includes(ex)) return [rMin, 10];
+    return range;
+  },
+
   getIncrement(ex) {
     // Incrementul = 1 treaptă pe echipamentul exercițiului
     return this.WEIGHT_STEPS[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
@@ -137,7 +147,9 @@ export const DP = {
   _recommendRaw(ex) {
     const state = this.getState(ex);
     const inc = this.getIncrement(ex);
-    const range = this.REP_RANGES[ex] || [8,12];
+    const phaseOverride = DB.get('phase-override') || 'AUTO';
+    const isInCut = phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const range = this.getPhaseAwareRepRange(ex, isInCut);
     const [rMin, rMax] = range;
     const maxKg = this.MAX_KG[ex] || null;
     const capStrategy = this.WEIGHT_CAP_STRATEGY[ex] || null;
@@ -274,8 +286,9 @@ export const DP = {
   checkInSessionAdjust(ex, recentRPEs, recentReps) {
     const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
-    // Use REP_RANGES (same as recommendation engine) for consistency
-    const range = this.REP_RANGES[ex] || [8, 12];
+    const phOv = DB.get('phase-override') || 'AUTO';
+    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const range = this.getPhaseAwareRepRange(ex, inCut);
     const [, rMax] = range;
 
     // No history yet — can't adjust
@@ -297,11 +310,11 @@ export const DP = {
     return { adjust: false };
   },
 
-  // Returns rep range for ex — delegates to REP_RANGES for consistency.
-  // Previously had a hard-coded local lookup that returned [10,15] for legs
-  // instead of the correct [15,20] defined in REP_RANGES. Fixed.
+  // Returns phase-aware rep range for ex.
   getRepsRange(ex) {
-    return this.REP_RANGES[ex] || [8, 12];
+    const phOv = DB.get('phase-override') || 'AUTO';
+    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < new Date('2026-07-20'));
+    return this.getPhaseAwareRepRange(ex, inCut);
   },
 
   getIntensityLabel(rir) {
@@ -325,8 +338,10 @@ export const DP = {
       result.progressionNote = `Readiness redus (${readinessScore}) — menții ${result.kg}kg`;
     }
 
-    // Rep range instead of fixed
-    const range = this.REP_RANGES[ex] || [8,12];
+    // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
+    const phOv2 = DB.get('phase-override') || 'AUTO';
+    const inCut2 = phOv2 === 'CUT' || (phOv2 === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const range = this.getPhaseAwareRepRange(ex, inCut2);
     const [rMin, rMax] = range;
     const rTarget = result.repsTarget || rMin;
     const rLow = Math.max(rMin, rTarget - 1);
