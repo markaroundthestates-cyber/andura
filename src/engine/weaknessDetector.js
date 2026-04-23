@@ -109,8 +109,9 @@ export function detectWeakGroups(logs) {
 
   for (const [group, orm] of orm1RMByGroup) {
     const r = avg > 0 ? orm / avg : 1;
-    ratio[group] = parseFloat(r.toFixed(3));
-    if (r < 0.8) weakGroups.push(group);
+    const rounded = parseFloat(r.toFixed(3));
+    ratio[group] = rounded;
+    if (rounded < 0.8) weakGroups.push(group); // use rounded to avoid float precision mismatches
   }
 
   // Sort weakest first
