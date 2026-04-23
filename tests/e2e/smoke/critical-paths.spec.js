@@ -142,18 +142,18 @@ test('Session history shows correct counts for 5-exercise sessions', async ({ pa
   const histText = await sessionHistory.innerText({ timeout: 5000 }).catch(() => '');
   if (!histText.trim()) { test.skip(); return; }
 
-  // Each session has 5 exercises × 3 sets = 15 sets
-  // Should show "5 exerciții" NOT "3 exerciții"
+  // Each session has 5 unique exercises — verify correct exercise count appears
+  // New format uses "5 ex" (short form), not "3 ex"
   expect(
     histText,
-    'Session with 5 unique exercises should NOT show "3 exerciții"'
-  ).not.toContain('3 exerciții · 3 seturi');
+    'Session with 5 unique exercises should show "5 ex"'
+  ).toContain('5 ex');
 
-  // Verify correct counts appear
+  // Must NOT show "3 ex" (the old incorrect count)
   expect(
     histText,
-    'Session should show 5 exerciții and 15 seturi'
-  ).toContain('5 exerciții');
+    'Should not show wrong count of 3 exercises'
+  ).not.toMatch(/\b3 ex\b/);
 });
 
 // ── Test 6: Equipment validation — no impossible weights recommended ──────────
