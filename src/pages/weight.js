@@ -968,10 +968,20 @@ function renderSessionHistory() {
       const isDateKey = key.startsWith('date:');
       const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
-      const exCount = new Set(sets.map(s => s.ex)).size;
+      const realSets = sets.filter(s => s.ex !== '__early_stop__');
+      // Group by exercise name for distinct exercise count
+      const byExercise = {};
+      for (const log of realSets) {
+        const name = log.exercise || log.ex;
+        if (!name) continue;
+        if (!byExercise[name]) byExercise[name] = 0;
+        byExercise[name]++;
+      }
+      const exCount = Object.keys(byExercise).length;
+      const setCount = realSets.length; // total logs = total sets
       const burn = burns.find(b => b.date === date);
       const rating = isDateKey ? null : ratings.find(r => r.session === Number(key));
-      return { ts, date, sets: sets.length, exCount,
+      return { ts, date, sets: setCount, exCount,
         mins: burn?.mins ?? null,
         rating: rating?.rating ?? null };
     })

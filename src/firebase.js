@@ -49,6 +49,10 @@ export async function syncToFirebase() {
 }
 
 export async function syncFromFirebase() {
+  if (window._suppressFirebaseSync) {
+    console.log('[Firebase] Sync suppressed, skipping restore');
+    return false;
+  }
   try {
     const remote = await fbGet(USER_PATH);
     if (!remote) return false;
@@ -92,7 +96,7 @@ let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
 DB.set = function(key, val) {
   _origSet(key, val);
-  if (SYNC_KEYS.includes(key)) {
+  if (SYNC_KEYS.includes(key) && !window._suppressFirebaseSync) {
     clearTimeout(_syncTimer);
     _syncTimer = setTimeout(syncToFirebase, 3000);
   }

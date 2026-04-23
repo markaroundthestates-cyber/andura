@@ -61,17 +61,15 @@ Object.assign(window, {
   inspectStorage,
   dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
-  _devResetTest: () => {
+  _devResetTest: async () => {
     if (confirm('Ștergi date de test (patterns, session drafts, etc.)?\nLogurile reale și greutățile rămân.')) {
-      resetTestData();
-      location.reload();
+      await resetTestData();
     }
   },
-  _devFullReset: () => {
+  _devFullReset: async () => {
     if (confirm('⚠️ ATENȚIE: Ștergi TOT (loguri, greutăți, tot).\nEști sigur?')) {
       if (confirm('Ultima confirmare: chiar ștergi TOATE datele?')) {
-        fullReset();
-        location.reload();
+        await fullReset();
       }
     }
   },
