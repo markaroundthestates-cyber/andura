@@ -16,6 +16,7 @@ export const state = {
   pauseTimer: null,
   pauseTotal: 0,
   pauseLeft: 0,
+  lastPauseEndedAt: null,
   isMuted: false,
   activeNotes: new Set(),
   logDateOffset: 0,

@@ -82,7 +82,8 @@ function setupInactivity() {
     if (!state.sessActive) return;
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(() => {
-      if (state.sessActive && !state.pauseTimer) {
+      const sinceLastRest = Date.now() - (state.lastPauseEndedAt || 0);
+      if (state.sessActive && !state.pauseTimer && sinceLastRest > 5 * 60 * 1000) {
         startPause(getSmartPause(state.currentEx || ''), state.currentEx || '');
         toast('⏸ Pauză automată – inactivitate 2 min', 'var(--accent2)');
       }
@@ -566,6 +567,7 @@ export function setDone(){
 }
 
 export function confirmReps(){
+  state.lastPauseEndedAt = null; // Bug 4: user is active — inactivity can fire normally
   const ri=$('rpe-inline'); if(ri) ri.style.display='none';
 
   const rec=AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
@@ -632,6 +634,7 @@ export function startPause(sec, nextEx=''){
     if(state.pauseLeft ===10){beep(660,.1);speak('10 secunde.');}
     if(state.pauseLeft<=3&&state.pauseLeft>0) beep(880,.08);
     if(state.pauseLeft<=0){
+      state.lastPauseEndedAt = Date.now(); // Bug 4: suppress inactivity re-arm
       stopPause(); hidePauseScreen();
       beepAlert();
       speak(`${nextEx||state.currentEx}. Gata!`);
@@ -660,7 +663,7 @@ export function skipExercise(){
 export function cancelWorkout(){
   if(!confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) return;
   clearInterval(state.sessTimer); state.sessTimer = null;
-  stopPause(); state.sessActive = false;
+  stopPause(); state.sessActive = false; state.lastPauseEndedAt = null;
   // Șterge din DB toate logurile din sesiunea curentă (scrise la selectRPE)
   if(state.sessStart) {
     const logs = DB.get('logs') || [];
@@ -680,7 +683,7 @@ export function endSession(){
   if(!state.sessActive)return;
   clearDraft(); teardownInactivity(); // Feature 2+5
   clearInterval(state.sessTimer);state.sessTimer = null;
-  stopPause();state.sessActive = false;
+  stopPause();state.sessActive = false; state.lastPauseEndedAt = null;
   releaseWakeLock();
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 
