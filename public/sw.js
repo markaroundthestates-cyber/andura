@@ -1,4 +1,5 @@
-const CACHE = 'salafull-v2';
+const CACHE_VERSION = 'salafull-v3';
+const CACHE = CACHE_VERSION;
 const BASE = '/salafull';
 const ASSETS = [
   BASE + '/',
@@ -9,15 +10,28 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(k => k !== CACHE)
+          .map(k => {
+            console.log('[SW] Deleting old cache:', k);
+            return caches.delete(k);
+          })
+      )
+    ).then(() => {
+      console.log('[SW] Activate complete, claiming clients. Version:', CACHE_VERSION);
+      return self.clients.claim();
+    })
+  );
 });
 
 self.addEventListener('fetch', e => {

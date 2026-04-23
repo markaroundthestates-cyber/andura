@@ -32,7 +32,7 @@ export const DP = {
     'Overhead Triceps': 2.5, 'Pushdown': 2.5,
     'Pec Deck / Cable Fly': 2.5, 'Cable Fly': 2.5,
     // Gantere — seturi standard din 2 în 2
-    'Lateral Raises': 2, 'Lateral Raises + drop': 2,
+    'Lateral Raises': 2,
     'Rear Delt Fly': 2,
     'Incline DB Curl': 2, 'Hammer Curl': 2,
     'Preacher Curl': 2,
@@ -56,7 +56,7 @@ export const DP = {
   // Daniel: Lat Pulldown 64, Cable Row 72, Incline DB 30, Lateral Raises 10, Bayesian 18
   MAX_KG: {
     // Izolație umeri — cap real ~16-18kg/ganteră pentru lateral raises
-    'Lateral Raises': 18, 'Lateral Raises + drop': 18,
+    'Lateral Raises': 18,
     'Lateral Raises (cable)': 25, // cablu = greutate mai mare posibil
     'Rear Delt Fly': 16,
     'Face Pulls': 55, // cablu, poate crește mai mult
@@ -83,7 +83,6 @@ export const DP = {
     'Incline DB Curl': 'reps', 'Bayesian Curl': 'reps', 'Hammer Curl': 'reps',
     'Cable Curl': 'reps', 'Preacher Curl': 'reps',
     'Overhead Triceps': 'reps', 'Pushdown': 'reps',
-    'Lateral Raises + drop': 'reps',
   },
 
   getIncrement(ex) {

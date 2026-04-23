@@ -67,10 +67,10 @@ export function injectBaseline() {
     {date:baseDate,ex:'Leg Curl',w:100,sets:1,reps:'10',rpe:7,ts:t-150000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Leg Curl',w:100,sets:1,reps:'10',rpe:7,ts:t-151000,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Leg Curl',w:100,sets:1,reps:'10',rpe:7,ts:t-152000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Lateral Raises + drop',w:10,sets:1,reps:'12',rpe:8,ts:t-160000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Lateral Raises + drop',w:10,sets:1,reps:'12',rpe:8,ts:t-161000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Lateral Raises + drop',w:10,sets:1,reps:'12',rpe:8,ts:t-162000,session:t-86400000,baseline:true},
-    {date:baseDate,ex:'Lateral Raises + drop',w:10,sets:1,reps:'12',rpe:8,ts:t-163000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Lateral Raises',w:10,sets:1,reps:'12',rpe:8,ts:t-160000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Lateral Raises',w:10,sets:1,reps:'12',rpe:8,ts:t-161000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Lateral Raises',w:10,sets:1,reps:'12',rpe:8,ts:t-162000,session:t-86400000,baseline:true},
+    {date:baseDate,ex:'Lateral Raises',w:10,sets:1,reps:'12',rpe:8,ts:t-163000,session:t-86400000,baseline:true},
   ];
   
   DB.set('logs', baseline);

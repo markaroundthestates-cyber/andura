@@ -44,7 +44,7 @@ export const PROG = [
     {n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'3×12',g:'triceps'}
   ]},
   {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[
-    {n:'Lateral Raises + drop',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},
+    {n:'Lateral Raises',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},
     {n:'Cable Curl',s:'3×10–12',g:'brate'},{n:'Preacher Curl',s:'3×10–12',g:'brate'},
     {n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'2×12',g:'triceps'}
   ]},

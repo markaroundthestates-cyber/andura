@@ -32,7 +32,7 @@ import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js'
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
-import { resetTestData, fullReset, inspectStorage } from './util/dataCleanup.js';
+import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs } from './util/dataCleanup.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -59,6 +59,12 @@ Object.assign(window, {
   showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied,
   saveReadiness, getTodayReadiness,
   inspectStorage,
+  resetButKeepRealLogs,
+  _devSoftReset: async () => {
+    if (confirm('Soft Reset: șterge datele de test, păstrează loguri reale, greutăți, kcal. Continui?')) {
+      await resetButKeepRealLogs();
+    }
+  },
   dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
   _devResetTest: async () => {

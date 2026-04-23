@@ -109,6 +109,15 @@ export async function fullReset(options = {}) {
 
   const allKeys = [...TEST_RESIDUE_KEYS, ...USER_DATA_KEYS];
   allKeys.forEach(k => localStorage.removeItem(k));
+
+  // Clear sessionStorage
+  try {
+    sessionStorage.clear();
+    console.log('[DataCleanup] sessionStorage cleared');
+  } catch (e) {
+    console.warn('[DataCleanup] sessionStorage clear failed:', e.message);
+  }
+
   console.log('[DataCleanup] All local storage cleared');
 
   // Delete from Firebase if available
@@ -127,6 +136,44 @@ export async function fullReset(options = {}) {
     }
   }
 
+  // Unregister service workers
+  try {
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(r => r.unregister()));
+      console.log('[DataCleanup] Service workers unregistered:', registrations.length);
+    }
+  } catch (e) {
+    console.warn('[DataCleanup] SW unregister failed:', e.message);
+  }
+
+  // Clear all caches (Cache API)
+  try {
+    if ('caches' in window) {
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map(k => caches.delete(k)));
+      console.log('[DataCleanup] Cache API cleared:', cacheKeys.length, 'caches');
+    }
+  } catch (e) {
+    console.warn('[DataCleanup] Cache clear failed:', e.message);
+  }
+
+  // Clear IndexedDB databases
+  try {
+    if (indexedDB && typeof indexedDB.databases === 'function') {
+      const dbs = await indexedDB.databases();
+      await Promise.all(dbs.map(db => new Promise((res) => {
+        const req = indexedDB.deleteDatabase(db.name);
+        req.onsuccess = res;
+        req.onerror = res;
+        req.onblocked = res;
+      })));
+      console.log('[DataCleanup] IndexedDB cleared:', dbs.length, 'databases');
+    }
+  } catch (e) {
+    console.warn('[DataCleanup] IndexedDB clear failed:', e.message);
+  }
+
   // Invalidate CoachDirector cache
   if (window._cachedDirectorSession !== undefined) {
     window._cachedDirectorSession = null;
@@ -141,10 +188,60 @@ export async function fullReset(options = {}) {
   }, 3000);
 
   if (reload) {
-    setTimeout(() => { location.reload(); }, 500);
+    const base = window.location.href.split('?')[0];
+    setTimeout(() => {
+      window.location.href = base + '?nocache=' + Date.now();
+    }, 500);
   }
 
   return { cleared: 'all', firebase: clearFirebase };
+}
+
+export async function resetButKeepRealLogs(options = { reload: true }) {
+  console.log('[DataCleanup] Soft reset — keeping real workout logs and daily tracking');
+  window._suppressFirebaseSync = true;
+
+  const KEEP_KEYS = [
+    'logs', 'weights', 'kcals', 'prots', 'waters', 'pr-records',
+    'phase-log', 'phase-change-date', 'bf-override', 'readiness',
+    'session-burns', 'closed-days', 'wellbeing', 'suppl-list',
+    'active-theme', 'device-id', 'notif-enabled', 'muted', 'workout-skips',
+    'current-kcal', 'phase-override', 'onboarding-done'
+  ];
+
+  // Salvează temporar
+  const preserved = {};
+  KEEP_KEYS.forEach(k => {
+    const v = localStorage.getItem(k);
+    if (v !== null) preserved[k] = v;
+  });
+
+  // Clear total
+  localStorage.clear();
+  try { sessionStorage.clear(); } catch (e) { /* ignore */ }
+
+  // Restaurăm
+  Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
+
+  // Firebase cleanup pentru test residue
+  try {
+    const fbModule = await import('../firebase.js').catch(() => null);
+    if (fbModule && fbModule.removeKey) {
+      await Promise.all(TEST_RESIDUE_KEYS.map(k => fbModule.removeKey(k).catch(() => {})));
+    }
+  } catch (err) {
+    console.warn('[DataCleanup] Firebase residue clear:', err.message);
+  }
+
+  if (window._cachedDirectorSession !== undefined) window._cachedDirectorSession = null;
+
+  setTimeout(() => { window._suppressFirebaseSync = false; }, 3000);
+
+  if (options.reload) {
+    setTimeout(() => window.location.reload(), 500);
+  }
+
+  return { preserved: Object.keys(preserved).length, cleared: TEST_RESIDUE_KEYS.length };
 }
 
 export function inspectStorage() {
@@ -174,4 +271,5 @@ if (typeof window !== 'undefined') {
   window.resetTestData = resetTestData;
   window.fullReset = fullReset;
   window.inspectStorage = inspectStorage;
+  window.resetButKeepRealLogs = resetButKeepRealLogs;
 }

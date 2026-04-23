@@ -28,7 +28,6 @@ export const EXERCISE_MUSCLES = {
   'Incline DB Press pump':  { primary: ['chest_upper'], secondary: ['delt_front','tri_lateral'] },
   'DB Shoulder Press':      { primary: ['delt_front','delt_mid'], secondary: ['tri_lateral'] },
   'Lateral Raises':         { primary: ['delt_mid'], secondary: [] },
-  'Lateral Raises + drop':  { primary: ['delt_mid'], secondary: [] },
   'Lateral Raises (cable)': { primary: ['delt_mid'], secondary: [] },
   'Rear Delt Fly':          { primary: ['delt_rear','rear_delt_trap'], secondary: [] },
   'Rear Delt Cable':        { primary: ['delt_rear','rear_delt_trap'], secondary: [] },

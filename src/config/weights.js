@@ -44,7 +44,6 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'DB Shoulder Press':     'dumbbell',
   'Flat DB Press':         'dumbbell',
   'Lateral Raises':        'dumbbell',
-  'Lateral Raises + drop': 'dumbbell',
   'Incline DB Curl':       'dumbbell',
   'Hammer Curl':           'dumbbell',
   'Preacher Curl':         'dumbbell',
