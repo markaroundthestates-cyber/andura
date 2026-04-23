@@ -36,6 +36,7 @@ import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
 import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs, restoreRealLogs } from './util/dataCleanup.js';
+import { adminPrefillAll } from './util/adminPrefill.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -65,6 +66,7 @@ Object.assign(window, {
   inspectStorage,
   resetButKeepRealLogs,
   restoreRealLogs,
+  adminPrefillAll,
   _devSoftReset: async () => {
     if (confirm('Soft Reset: șterge datele de test, păstrează loguri reale, greutăți, kcal. Continui?')) {
       await resetButKeepRealLogs();
