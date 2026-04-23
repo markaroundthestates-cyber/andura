@@ -817,7 +817,7 @@ export function renderSessionsDropdown() {
   const LEG_EX  = ['squat', 'leg press', 'lunge', 'calf', 'hamstring', 'quad', 'glute', 'rdl', 'hip'];
 
   function detectWorkoutType(exList) {
-    const lower = exList.map(e => e.toLowerCase());
+    const lower = exList.filter(Boolean).map(e => e.toLowerCase());
     let push = 0, pull = 0, leg = 0;
     lower.forEach(e => {
       if (PUSH_EX.some(k => e.includes(k))) push++;
@@ -838,7 +838,7 @@ export function renderSessionsDropdown() {
       const ts = isDateKey ? new Date(sets[0].date).getTime() : Number(key);
       const date = sets[0].date;
       const realSets = sets.filter(s => s.ex !== '__early_stop__');
-      const exNames = [...new Set(realSets.map(s => s.ex))];
+      const exNames = [...new Set(realSets.map(s => s.ex || s.exercise).filter(Boolean))];
       const exCount = exNames.length;
       const hasEarlyStop = sets.some(l => l.earlyStop);
       const burn = burns.find(b => b.date === date);
