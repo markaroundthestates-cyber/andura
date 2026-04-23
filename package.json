@@ -15,6 +15,9 @@
     "test:e2e": "playwright test tests/e2e",
     "test:e2e:smoke": "playwright test tests/e2e/smoke",
     "test:all": "npm run test:run && npm run test:e2e",
+    "simulation:a": "node --experimental-vm-modules tests/simulation/sequential-load.js",
+    "simulation:b": "node --experimental-vm-modules tests/simulation/property-based.js",
+    "simulation:c": "playwright test tests/simulation/parallel-fuzz.spec.js",
     "prepare": "husky"
   },
   "devDependencies": {
