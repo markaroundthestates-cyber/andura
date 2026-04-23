@@ -9,6 +9,7 @@ import { recompileWeek } from './recompileEngine.js';
 import { resolveExercise } from './alternativeEngine.js';
 import { runProactiveChecks } from './proactiveEngine.js';
 import { initAutoBackup } from '../util/autoBackup.js';
+import { detectCalibrationLevel, applyRollingWindow } from './calibration.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -18,20 +19,38 @@ export class CoachDirector {
       return { requiresReadinessInput: true, message: 'Cum te simți azi?', exercises: [] };
     }
 
+    // ── Calibration level detection ────────────────────────────────────────
+    const allLogs = ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [];
+    ctx.allLogs = allLogs;
+    const calibration = detectCalibrationLevel(ctx);
+    ctx.calibrationLevel = calibration;
+    console.log('[CoachDirector] Calibration:', calibration.name);
+
+    // Apply rolling window for mature users (OPTIMIZED only)
+    if (calibration.rollingWindowMonths) {
+      ctx.allLogs = applyRollingWindow(allLogs, calibration);
+    }
+
     // ── Augment context with new engine data ──────────────────────────────
     try {
-      const allLogs = ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [];
-      const { weakGroups } = detectWeakGroups(allLogs);
-      const { maxStagnationWeeks } = detectGlobalStagnation(allLogs);
+      const logsForEngines = ctx.allLogs;
       const workoutSkips = (() => {
         try { return JSON.parse(localStorage.getItem('workout-skips') ?? '{}') ?? {}; } catch { return {}; }
       })();
-      const todayPrediction = predictToday(allLogs, workoutSkips);
-      const recompile = recompileWeek({ logs: allLogs, readinessScore: ctx.readiness.score });
 
-      ctx.weakGroups = weakGroups;
-      ctx.stagnationWeeks = maxStagnationWeeks;
-      ctx.predictionToday = todayPrediction;
+      ctx.weakGroups = calibration.weakGroupEnabled
+        ? detectWeakGroups(logsForEngines).weakGroups
+        : [];
+
+      ctx.stagnationWeeks = calibration.stagnationEnabled
+        ? detectGlobalStagnation(logsForEngines).maxStagnationWeeks
+        : 0;
+
+      ctx.predictionToday = calibration.predictionEnabled
+        ? predictToday(logsForEngines, workoutSkips)
+        : { isHighRisk: false, probability: 0, recommendation: null };
+
+      const recompile = recompileWeek({ logs: logsForEngines, readinessScore: ctx.readiness.score });
       ctx.recompile = recompile;
       ctx.missedSessions = recompile.deficit > 0 ? 1 : 0;
       ctx.fatigueIndex = ctx.readiness.score < 55 ? 0.9 : 0;
@@ -140,6 +159,9 @@ export class CoachDirector {
     session = realityEngine.validate(session, ctx);
     session = this.applyPatterns(session, ctx);
 
+    session.calibrationLevel  = ctx.calibrationLevel;
+    session.calibrationBanner = ctx.calibrationLevel.bannerText;
+
     session.context = {
       readinessScore: ctx.readiness.score,
       readinessEmoji: ctx.readiness.emoji,
@@ -150,6 +172,7 @@ export class CoachDirector {
       stagnationWeeks: ctx.stagnationWeeks,
       proactiveAlerts,
       recompile: ctx.recompile,
+      calibrationLevel: ctx.calibrationLevel,
     };
 
     // Daily backup — fire and forget

@@ -311,6 +311,16 @@ export async function renderCoachIdle(){
     const hiddenCount=exList.length-SHOW_LIMIT;
     const _prsData = DB.get('pr-records') || [];
     const _tpl=$('today-preview-list');if(_tpl)_tpl.innerHTML=renderLastSessionMemory(tp.day)+`
+      ${(()=>{
+        const banner=_dirSession?.calibrationBanner;
+        const lvl=_dirSession?.calibrationLevel;
+        if(!banner||!lvl)return'';
+        return`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(123,44,191,0.08);border-radius:var(--rs);border:1px solid rgba(123,44,191,0.35);display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:18px;flex-shrink:0">🧠</span>
+          <div><div style="font-size:12px;font-weight:700;color:#b57bee">${lvl.displayName}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${banner}</div></div>
+        </div>`;
+      })()}
       ${skipPattern?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
         <div style="font-size:11px;color:var(--accent2);font-weight:600">📊 Program scurtat la ${exList.length} exerciții esențiale (${skipPattern.skipRate}% skip ${tp.day})</div>
       </div>`:''}
