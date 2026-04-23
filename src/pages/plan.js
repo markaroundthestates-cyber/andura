@@ -164,6 +164,13 @@ export function setPhaseOverride(phase) {
   renderUnifiedHistory();
 }
 
+// Live-update BF override without page reload
+window.addEventListener('storage', (e) => {
+  if (e.key === 'bf-override') {
+    renderPlan();
+  }
+});
+
 export function clearPhaseOverride() {
   DB.set('phase-change-date', new Date().toISOString().split('T')[0]);
   DB.set('phase-override', null);

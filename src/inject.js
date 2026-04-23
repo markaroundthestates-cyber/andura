@@ -3,6 +3,7 @@ import { DB, tod } from './db.js';
 
 
 export function injectBaseline() {
+  if (localStorage.getItem('DEV_INJECT_BASELINE') !== 'true') return;
   const existing = DB.get('logs') || [];
   // Only skip if we have REAL training data (not just baseline)
   const hasRealData = existing.some(l => !l.baseline);
@@ -77,6 +78,7 @@ export function injectBaseline() {
 }
 
 export function injectMFPWeights() {
+  if (localStorage.getItem('DEV_INJECT_BASELINE') !== 'true') return;
   const ws = DB.get('weights') || {};
   // Only inject if we don't have historical data
   const dates = Object.keys(ws).sort();
@@ -97,6 +99,7 @@ export function injectMFPWeights() {
 }
 
 export function injectRealSessions() {
+  if (localStorage.getItem('DEV_INJECT_BASELINE') !== 'true') return { added: 0, had21: true, had22: true };
   const logs = DB.get('logs') || [];
 
   // Session timestamps — Apr 21 PULL ~18:00, Apr 22 PUSH ~18:00

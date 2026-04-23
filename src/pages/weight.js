@@ -569,12 +569,14 @@ export function setBFOverride() {
   const v = parseFloat(document.getElementById('bf-override-input')?.value);
   if (!isNaN(v) && v > 3 && v < 50) {
     DB.set('bf-override', v);
+    window.dispatchEvent(new StorageEvent('storage', { key: 'bf-override', newValue: String(v) }));
     toast('✓ BF% setat: ' + v + '%', 'var(--green)');
   }
 }
 
 export function clearBFOverride() {
   localStorage.removeItem('bf-override');
+  window.dispatchEvent(new StorageEvent('storage', { key: 'bf-override', newValue: null }));
   toast('✓ BF override șters', 'var(--accent)');
 }
 
