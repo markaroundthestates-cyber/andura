@@ -265,7 +265,11 @@ export async function renderCoachIdle(){
       const kcals = DB.get('kcals')||{}, prots = DB.get('prots')||{};
       return getReadinessScore(todayR, kcals[yDate], prots[yDate], 1800, 180);
     })();
-    const verdict = readinessScore != null ? getReadinessVerdict(readinessScore) : null;
+    const _now = new Date();
+    const _july20 = new Date('2026-07-20');
+    const _phase = DB.get('phase-override') || 'AUTO';
+    const _isInCut = _phase === 'CUT' || (_phase === 'AUTO' && _now < _july20);
+    const verdict = readinessScore != null ? getReadinessVerdict(readinessScore, { isInCut: _isInCut }) : null;
 
     // Exercise list — apply pattern filtering and skip occupied equipment
     const occupiedEquip = DB.get('equipment-occupied-session') || [];

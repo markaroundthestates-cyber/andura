@@ -15,4 +15,11 @@ export default defineConfig({
     actionTimeout: 15000,
   },
   reporter: 'list',
+  // Subdirectory-level test patterns (used by test:e2e scripts)
+  projects: [
+    {
+      name: 'all',
+      testDir: './tests',
+    },
+  ],
 });
