@@ -85,13 +85,14 @@ export const DP = {
     'Overhead Triceps': 'reps', 'Pushdown': 'reps',
   },
 
-  // In CUT: isolation exercises with rMax=12 target fixed 10 reps — weight is the progression axis.
-  // Compounds and higher-rep isolation (15-20 range) keep their native range.
+  // In CUT: isolation exercises with rMax in 11-15 range cap at 10 reps.
+  // Covers 10-12 and 12-15 ranges (Lateral Raises, Rear Delt Fly, etc.).
+  // High-rep leg exercises (15-20) are intentionally excluded.
   getPhaseAwareRepRange(ex, isInCut) {
     const range = this.REP_RANGES[ex] || [8, 12];
     if (!isInCut) return range;
     const [rMin, rMax] = range;
-    if (rMax === 12 && !COMPOUND_EX.includes(ex)) return [rMin, 10];
+    if (rMax > 10 && rMax <= 15 && !COMPOUND_EX.includes(ex)) return [Math.min(rMin, 10), 10];
     return range;
   },
 

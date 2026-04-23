@@ -39,9 +39,12 @@ describe('DP.getPhaseAwareRepRange', () => {
     expect(DP.getPhaseAwareRepRange('Chest-Supported Row', true)).toEqual([10, 12]);
   });
 
-  it('returns original range for high-rep isolation in CUT (Lateral Raises [12, 15])', () => {
-    expect(DP.getPhaseAwareRepRange('Lateral Raises', true)).toEqual([12, 15]);
-    expect(DP.getPhaseAwareRepRange('Rear Delt Fly', true)).toEqual([12, 15]);
+  it('caps 12-15 isolation range to [10,10] in CUT (Lateral Raises, Rear Delt Fly)', () => {
+    expect(DP.getPhaseAwareRepRange('Lateral Raises', true)).toEqual([10, 10]);
+    expect(DP.getPhaseAwareRepRange('Rear Delt Fly', true)).toEqual([10, 10]);
+  });
+
+  it('leaves 15-20 leg ranges unchanged in CUT (Leg Curl)', () => {
     expect(DP.getPhaseAwareRepRange('Leg Curl', true)).toEqual([15, 20]);
   });
 });

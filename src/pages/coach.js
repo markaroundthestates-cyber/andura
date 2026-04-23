@@ -35,8 +35,8 @@ let inactivityTimer = null;
 const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes
 
 // ── Bug 3: CUT phase display helper ───────────────────────────
-// Transforms "3×10–12" → "3×10" for isolation exercises (rMax=12) in CUT phase.
-// Falls back to rawStr on parse failure. Does NOT touch compounds or higher-rep ranges.
+// Caps isolation exercise rep display at 10 in CUT phase (e.g. "4×12–15" → "4×10").
+// Only affects 10-15 rep ranges. High-rep leg ranges (15-20) pass through unchanged.
 function formatSetsReps(rawStr, exName, isInCut) {
   if (!isInCut || !rawStr || COMPOUND_EX.includes(exName)) return rawStr;
   const m = rawStr.match(/^(\d+)×(\d+)(?:–(\d+))?(.*)$/u);
@@ -45,7 +45,7 @@ function formatSetsReps(rawStr, exName, isInCut) {
   const rMin = parseInt(m[2]);
   const rMax = m[3] ? parseInt(m[3]) : rMin;
   const suffix = m[4] || '';
-  if (rMax !== 12) return rawStr;
+  if (rMax <= 10 || rMax > 15) return rawStr;
   return `${sets}×${Math.min(rMin, 10)}${suffix}`;
 }
 

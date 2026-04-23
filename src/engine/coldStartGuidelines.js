@@ -141,10 +141,10 @@ export function generateColdStartSession(sessionType, onboardingData = {}) {
     const weight = suggestStartWeight(ex.name, experience);
     let reps = ex.reps;
 
-    // Cap rep range for CUT — lighter, more controlled
+    // Cap rep range for CUT — isolation capped at 10, floor at 6
     if (goal === 'cut' && typeof reps === 'string') {
       const [min, max] = reps.split('-').map(Number);
-      reps = `${Math.max(6, min)}-${Math.min(10, max)}`;
+      reps = `${Math.min(Math.max(6, min), 10)}-${Math.min(10, max)}`;
     }
 
     return {
