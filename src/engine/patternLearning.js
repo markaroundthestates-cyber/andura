@@ -29,6 +29,14 @@ function _analyze(logs) {
       if (recentBurns.some(b => b.date === dStr)) dayCompleted[progDay]++;
     }
   }
+  // Guard: need at least 4 total completed sessions AND 4 in last 4 weeks
+  // before flagging any day as high-skip. Without this, a user with 2 sessions
+  // across 56 days gets 87-100% skip rate on every workout day — false positive.
+  const totalCompleted = Object.values(dayCompleted).reduce((s, v) => s + v, 0);
+  if (totalCompleted < 4) return;
+  const fourWeeksAgo = new Date(now.getTime() - 28 * 86400000);
+  if (burns.filter(b => new Date(b.date) >= fourWeeksAgo).length < 4) return;
+
   Object.entries(dayScheduled).forEach(([day, scheduled]) => {
     if (scheduled < 4) return;
     const skipRate = 1 - (dayCompleted[day] || 0) / scheduled;

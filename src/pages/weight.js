@@ -77,11 +77,8 @@ export function initKcal() {
   const pilotActive = new Date() >= new Date('2026-07-20');
   const sysTarget = pilotActive ? SYS.getKcalTarget() : KCAL_TARGET;
   currentKcal = kcals[today] !== undefined ? kcals[today] : sysTarget;
-  // Auto-save default for today if not yet logged
-  if (state.logDateOffset === 0 && kcals[today] === undefined) {
-    kcals[today] = sysTarget;
-    DB.set('kcals', kcals);
-  }
+  // Don't auto-save default to storage — write only when user explicitly saves.
+  // Auto-saving 1800 contaminates history and prevents adminPrefill from showing real data.
   syncKcalDisplay();
   if (state.logDateOffset === 0) lockKcal(); else unlockKcal();
   const noteEl = $('kcal-save-note');
@@ -237,11 +234,7 @@ export function initProt() {
   const prots = DB.get('prots') || {};
   const today = getLogDate();
   currentProt = prots[today] !== undefined ? prots[today] : PROT_TARGET;
-  // Auto-save default for today if not yet logged
-  if (state.logDateOffset === 0 && prots[today] === undefined) {
-    prots[today] = PROT_TARGET;
-    DB.set('prots', prots);
-  }
+  // Don't auto-save default to storage — same reason as initKcal.
   syncProtDisplay();
   if (state.logDateOffset === 0) lockProt(); else unlockProt();
 }

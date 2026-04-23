@@ -36,13 +36,16 @@ export function adminPrefillAll() {
     '2026-04-23': 110.0,
   };
 
-  // Merge: existing user entries take priority over prefill defaults
+  // Admin real data overrides auto-saved defaults; only dates NOT in kcalsData
+  // are preserved from existing storage (weights are always merged both ways).
   const existingKcals   = JSON.parse(localStorage.getItem('kcals')   || '{}');
   const existingProts   = JSON.parse(localStorage.getItem('prots')   || '{}');
   const existingWeights = JSON.parse(localStorage.getItem('weights') || '{}');
 
-  localStorage.setItem('kcals',   JSON.stringify({ ...kcalsData,   ...existingKcals   }));
-  localStorage.setItem('prots',   JSON.stringify({ ...protsData,   ...existingProts   }));
+  // Real data wins for kcals/prots — auto-saved targets (1800/180) must not shadow real values
+  localStorage.setItem('kcals',   JSON.stringify({ ...existingKcals,   ...kcalsData   }));
+  localStorage.setItem('prots',   JSON.stringify({ ...existingProts,   ...protsData   }));
+  // Weights keep both directions — admin fills missing days, manual entries kept
   localStorage.setItem('weights', JSON.stringify({ ...weightsData, ...existingWeights }));
 
   if (typeof window !== 'undefined' && typeof window.restoreRealLogs === 'function') {

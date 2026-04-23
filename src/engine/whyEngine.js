@@ -90,11 +90,20 @@ export function explainRecommendation(exercise, ctx) {
     reasons.push({ category: 'performance', text: `Intensitate țintă: ${rirLabel}.` });
   }
 
-  const summary = reasons.length > 0
-    ? reasons[0].text
+  // Deduplicate: same (category, text) pair can arrive from multiple sources
+  const seen = new Set();
+  const uniqueReasons = reasons.filter(r => {
+    const key = r.category + ':' + r.text;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const summary = uniqueReasons.length > 0
+    ? uniqueReasons[0].text
     : `${rec.kg ?? rec.weight ?? '?'}kg recomandat pentru ${name}.`;
 
-  return { summary, reasons };
+  return { summary, reasons: uniqueReasons };
 }
 
 /**

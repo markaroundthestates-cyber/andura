@@ -75,6 +75,15 @@ describe('explainRecommendation', () => {
     const rirReason = result.reasons.find(r => r.text?.includes('RIR'));
     expect(rirReason).toBeDefined();
   });
+
+  it('deduplicates identical reasons from multiple sources', () => {
+    const duplicatePattern = { type: 'SKIP_DAY', message: 'Joi are 88% skip rate' };
+    const ctx = makeCtx({ patterns: [duplicatePattern, duplicatePattern, duplicatePattern] });
+    const ex = { name: 'Bench', recommendation: { kg: 80 } };
+    const result = explainRecommendation(ex, ctx);
+    const patternReasons = result.reasons.filter(r => r.category === 'pattern');
+    expect(patternReasons.length, 'Duplicate pattern reasons must be collapsed to 1').toBe(1);
+  });
 });
 
 describe('whySummary', () => {
