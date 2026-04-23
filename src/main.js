@@ -25,7 +25,7 @@ import { saveW, saveKcal, adjKcal, setKcalDirect,
          selectDateFromPicker, setChartRange, savePhoto, setBFOverride, clearBFOverride,
          renderDailyDropdown, showDayDetail, closeDayDetail,
          renderSessionsDropdown, showSessionDetail, hideSessionDetail } from './pages/weight.js';
-import { cleanFakeLogs, extractAndSavePRs, finishEarly, confirmEarlyStop, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall, togglePRWall, toggleExList } from './pages/coach.js';
+import { cleanFakeLogs, extractAndSavePRs, finishEarly, confirmEarlyStop, saveStepsQuick, getGroupColor, toggleMute, skipPause, resetNotes, renderPRWall, togglePRWall, toggleExList, showWhyForExercise } from './pages/coach.js';
 import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          skipExercise, adjSessionReps, editSessionKg, confirmEditKg,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
@@ -35,7 +35,7 @@ import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js'
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
-import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs } from './util/dataCleanup.js';
+import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs, restoreRealLogs } from './util/dataCleanup.js';
 
 // Toate funcțiile accesibile din HTML via onclick
 Object.assign(window, {
@@ -60,9 +60,11 @@ Object.assign(window, {
   renderPRWall, togglePRWall, toggleExList,
   showReadinessModal, selectReadiness, showSkipModal, confirmSkip,
   showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied,
+  showWhyForExercise,
   saveReadiness, getTodayReadiness,
   inspectStorage,
   resetButKeepRealLogs,
+  restoreRealLogs,
   _devSoftReset: async () => {
     if (confirm('Soft Reset: șterge datele de test, păstrează loguri reale, greutăți, kcal. Continui?')) {
       await resetButKeepRealLogs();
