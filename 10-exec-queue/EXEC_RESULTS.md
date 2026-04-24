@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #14 — DONE
+**Completed:** 2026-04-24 21:00
+**Duration:** 12min
+**Summary:** DECIZIE: ACTIVATE (minimal viable, notes-only). AA.check() eliminat logica RPE-based INCREASE/DECREASE (RPE nu e colectat → defaulta la 7 → false INCREASE). Păstrat: forceDeload pe fatigue/form, HOLD pe somn prost/oboseală, REDUCE_VOLUME pe early stop fizic, DECREASE pe formă slabă repetată. AA devine safety net defensiv — intervine NUMAI pe semnal negativ. 5 teste noi (aa.test.js): ok:true fără note, suppressDecrease pe sleep×2, forceDeload pe fatigue×3, null fără semnal (confirmă că RPE logic eliminat), null cu <4 logs.
+**Files changed:** src/engine/aa.js, src/engine/__tests__/aa.test.js (creat)
+**Tests:** 5 added — all pass; build clean; baseline menținut
+**Issues:** NONE
+
+---
+
 ## TASK #13 — DONE
 **Completed:** 2026-04-24 20:30
 **Duration:** 8min

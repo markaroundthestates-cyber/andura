@@ -203,7 +203,7 @@ PAȘI:
 ## TASK #14
 **Model:** Sonnet
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** FAZA 1.7 — AA Engine decizie: activate sau delete. Citește aa.js, decide ACTIVATE (minimal viable) sau DELETE (clean), implementează.
 **Acceptance:** Decizie luată și implementată, teste pass, build clean, git commit + push.

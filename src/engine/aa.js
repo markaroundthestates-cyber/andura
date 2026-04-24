@@ -77,8 +77,9 @@ export const AA = {
     return { ok: true, reason: null };
   },
 
+  // Notes-only safety net: intervine NUMAI când există semnal negativ din notes.
+  // RPE per-set nu e colectat → logica INCREASE/DECREASE bazată pe RPE eliminată.
   check(ex) {
-    // Cooldown: skip if auto-adjusted last session
     const cooldownKey = 'aa-cooldown-' + ex;
     const lastAdj = DB.get(cooldownKey);
     if (lastAdj) {
@@ -87,93 +88,38 @@ export const AA = {
     }
 
     const logs = DP.getLogs(ex, 9).filter(l => !l.baseline);
-    if (logs.length < 4) return null; // not enough real data yet
+    if (logs.length < 4) return null;
 
-    // ── Citește contextul de recuperare din note ──────────────────────────
     const recovery = this.getRecoveryContext(ex);
-
-    // Group by session
-    const sessions = [];
-    let curSession = [logs[0]];
-    for (let i = 1; i < logs.length; i++) {
-      const gap = Math.abs(logs[i-1].ts - logs[i].ts);
-      if (gap < 4 * 3600 * 1000) {
-        curSession.push(logs[i]);
-      } else {
-        sessions.push(curSession);
-        curSession = [logs[i]];
-      }
-    }
-    if (curSession.length) sessions.push(curSession);
-    if (sessions.length < 2) return null;
-
-    const last3 = sessions.slice(0, Math.min(3, sessions.length));
-    const rpes = last3.map(s => {
-      const setsWithRPE = s.filter(l=>l.rpe).sort((a,b)=>b.rpe-a.rpe);
-      if (!setsWithRPE.length) return 7;
-      const topSets = setsWithRPE.slice(0, Math.min(2, setsWithRPE.length));
-      return topSets.reduce((a,b)=>a+b.rpe,0) / topSets.length;
-    });
-    const avgRPE = rpes.reduce((a,b)=>a+b,0) / rpes.length;
-    const highCount = rpes.filter(r => r >= 9).length;
-    const lowCount = rpes.filter(r => r <= 7).length;
-
-    const inc = DP.getIncrement(ex);
     const lastW = logs[0].w || 20;
+    const inc = DP.getIncrement(ex);
 
-    // ── DECREASE: RPE ridicat ────────────────────────────────────────────
-    if (highCount >= 2) {
-      // Somn prost → RPE artificial → NU scade greutatea
-      if (recovery.suppressDecrease) {
-        return {
-          action: 'HOLD',
-          newKg: lastW,
-          reason: recovery.reason,
-          color: recovery.color
-        };
-      }
-      const newW = Math.max(1, Math.round((lastW - inc) * 2) / 2);
+    // Oboseală repetată + formă slabă → forțează deload
+    if (recovery.forceDeload) {
       DB.set('aa-cooldown-' + ex, Date.now());
       return {
         action: 'DECREASE',
-        newKg: newW,
-        reason: `RPE ≥9 în ${highCount}/3 sesiuni → scad ${inc}kg`,
-        color: 'var(--red)'
+        newKg: Math.max(1, Math.round((lastW - inc) * 2) / 2),
+        reason: recovery.reason,
+        color: recovery.color
       };
     }
 
-    // ── INCREASE: RPE scăzut ─────────────────────────────────────────────
-    if (lowCount >= 2) {
-      // Oboseală sau formă slabă → nu crește chiar dacă RPE e mic
-      if (recovery.suppressIncrease) {
-        return {
-          action: 'HOLD',
-          newKg: lastW,
-          reason: recovery.reason,
-          color: recovery.color
-        };
-      }
-      // Dacă e în formă excelentă → increment dublu o dată
-      const multiplier = recovery.aggressive ? 2 : 1;
-      const newW = Math.round((lastW + inc * multiplier) * 2) / 2;
-      DB.set('aa-cooldown-' + ex, Date.now());
+    // Somn prost / oboseală → ține greutatea, nu crește
+    if (!recovery.ok && recovery.suppressIncrease) {
       return {
-        action: 'INCREASE',
-        newKg: newW,
-        reason: recovery.aggressive
-          ? `💪 Formă excelentă + RPE ≤7 → +${inc*multiplier}kg`
-          : `RPE ≤7 în ${lowCount}/3 sesiuni → cresc ${inc}kg`,
-        color: recovery.aggressive ? 'var(--green)' : 'var(--green)'
+        action: 'HOLD',
+        newKg: lastW,
+        reason: recovery.reason,
+        color: recovery.color
       };
     }
 
-    // ── EARLY STOP: stop fizic recent → reduce volum ─────────────────────
+    // Stop fizic recent → reduce volum 10%
     const earlyStops = DB.get('early-stops') || [];
-    const last3Stops = earlyStops.slice(-3);
-    const hasPhysicalStop = last3Stops.some(s => s.reason === 'Oboseală extremă' || s.reason === 'Am dureri');
-    const consecutiveStops = earlyStops.length >= 2 &&
-      last3Stops.slice(-2).every(s => s.reason !== 'Lipsă timp' && s.reason !== 'Alt motiv');
-
+    const hasPhysicalStop = earlyStops.slice(-3).some(
+      s => s.reason === 'Oboseală extremă' || s.reason === 'Am dureri'
+    );
     if (hasPhysicalStop) {
       return {
         action: 'REDUCE_VOLUME',
@@ -185,19 +131,16 @@ export const AA = {
       };
     }
 
-    // ── FORM ISSUE: formă slabă repetată → scade chiar dacă RPE e ok ────
-    if (recovery.formIssue) {
-      const exFormLogs = logs.filter(l => (l.notes||[]).includes('form'));
-      if (exFormLogs.length >= 2) {
-        const newW = Math.max(1, Math.round((lastW - inc) * 2) / 2);
-        DB.set('aa-cooldown-' + ex, Date.now());
-        return {
-          action: 'DECREASE',
-          newKg: newW,
-          reason: `⚠️ Formă slabă repetată → scad ${inc}kg pentru execuție corectă`,
-          color: 'var(--accent2)'
-        };
-      }
+    // Formă slabă repetată → scade
+    if (recovery.formIssue && logs.filter(l => (l.notes||[]).includes('form')).length >= 2) {
+      const newW = Math.max(1, Math.round((lastW - inc) * 2) / 2);
+      DB.set('aa-cooldown-' + ex, Date.now());
+      return {
+        action: 'DECREASE',
+        newKg: newW,
+        reason: `⚠️ Formă slabă repetată → scad ${inc}kg pentru execuție corectă`,
+        color: 'var(--accent2)'
+      };
     }
 
     return null;
