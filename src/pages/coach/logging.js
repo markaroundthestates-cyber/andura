@@ -7,6 +7,7 @@ import { toast, beep, beepDone, speak } from '../../ui/ui.js';
 import { getSmartPause, startPause } from './restTimer.js';
 import { getTodayExercises, getExGroup, resetNotes } from './util.js';
 import { state } from '../../state.js';
+import { saveDraft, endSession, updateSessionProgress } from './session.js';
 
 export function updateExCard() {
   if (!state.currentEx) return;
@@ -100,12 +101,11 @@ export function confirmReps() {
   state.sessLog.push({ ex: state.currentEx, kg: logKg, rpe: 8, set: state.currentSet, reps: state.sessRepsInput });
   const ssc = $('sess-progress-txt'); if (ssc) ssc.textContent = `${state.completedExercises.size}/${state.sessionTotalExercises || getTodayExercises().length}`;
 
-  // CICLU B (temporar): saveDraft din session.js nu e extras încă
-  window.saveDraft?.();
+  saveDraft();
 
   if (state.currentSet >= totalSets) {
     state.completedExercises.add(state.currentEx);
-    window.updateSessionProgress?.();
+    updateSessionProgress();
     const todayExs = getTodayExercises();
     const idx = todayExs.indexOf(state.currentEx);
     if (idx < todayExs.length - 1) {
@@ -116,8 +116,7 @@ export function confirmReps() {
     } else {
       speak('Antrenament complet! Excelent!');
       toast('✅ Toate exercițiile completate!', 'var(--green)');
-      // CICLU B (temporar): endSession din session.js nu e extras încă
-      window.endSession?.();
+      endSession();
     }
   } else {
     state.currentSet++;
