@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #5 — DONE
+**Completed:** 2026-04-24 16:30
+**Duration:** 8min
+**Summary:** sys.js: import getUserConfig + const _bio = getUserConfig().bio → HEIGHT/AGE/START_BF/START_KG din _bio. coachContext.js: import getUserConfig → fallback 110.4 → currentKgFallback, targetWeight 101.5 → targetKg. Grep verificare: 3 match-uri rămase toate benigne (coef. Deurenberg 0.23, comentariu, string UI).
+**Files changed:** src/engine/sys.js, src/engine/coachContext.js
+**Tests:** baseline menținut — 41 pass / 2 fail pre-existente / 2 skipped
+**Issues:** NONE
+
+---
+
 ## TASK #4 — DONE
 **Completed:** 2026-04-24 16:15
 **Duration:** 5min

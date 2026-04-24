@@ -2,6 +2,7 @@
 // Engines nu mai citesc din localStorage direct — primesc context de aici.
 import { getMuscleState } from './muscleMap.js';
 import { DB } from '../db.js';
+import { getUserConfig } from '../config/user.js';
 
 export function buildCoachContext() {
   const now = new Date();
@@ -20,7 +21,7 @@ export function buildCoachContext() {
       weight: getCurrentWeight(),
       bodyweightTrend: getBodyweightTrend7d(),
       phaseChangeDate: getPhaseChangeDate(),
-      targetWeight: 101.5,
+      targetWeight: getUserConfig().bio.targetKg,
       targetDate: july20_2026
     },
     readiness: {
@@ -141,8 +142,8 @@ function getCurrentWeight() {
   try {
     const weights = JSON.parse(localStorage.getItem('weights') || '{}');
     const dates = Object.keys(weights).sort().reverse();
-    return dates.length > 0 ? weights[dates[0]] : 110.4;
-  } catch { return 110.4; }
+    return dates.length > 0 ? weights[dates[0]] : getUserConfig().bio.currentKgFallback;
+  } catch { return getUserConfig().bio.currentKgFallback; }
 }
 
 function getBodyweightTrend7d() {

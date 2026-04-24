@@ -1,12 +1,15 @@
 // ══ SYS ENGINE — TDEE / Phases / BF% ═══════════════════════
 import { DB } from '../db.js';
 import { SW_KG, TW_KG, START_DATE, TARGET_DATE, KCAL_TARGET } from '../constants.js';
+import { getUserConfig } from '../config/user.js';
+
+const _bio = getUserConfig().bio;
 
 export const SYS = {
-  HEIGHT: 183,
-  START_KG: 111.4,
-  START_BF: 23, // % baseline from photo analysis
-  AGE: 30,
+  HEIGHT: _bio.height,
+  START_KG: _bio.startKg,
+  START_BF: _bio.startBF,
+  AGE: _bio.age,
 
   getCurrentKg() {
     const ws = DB.get('weights') || {};

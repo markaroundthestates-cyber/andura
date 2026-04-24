@@ -68,3 +68,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** NONE
 
 ---
+
+## TASK #5
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.2 Step 2 — Refactor sys.js + coachContext.js să folosească USER_DEFAULTS din src/config/user.js. sys.js: import getUserConfig, înlocuiește HEIGHT/AGE/START_BF/START_KG cu getUserConfig().bio.*. coachContext.js: înlocuiește fallback 110.4 + targetWeight:101.5. Zero schimbare comportamentală. Verificare grep la final.
+**Acceptance:** sys.js + coachContext.js folosesc getUserConfig(), build clean, baseline teste menținute, grep benign, git commit + push.
+**Dependencies:** TASK #4 DONE ✅
+
+---
