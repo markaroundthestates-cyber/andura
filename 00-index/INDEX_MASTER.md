@@ -45,10 +45,11 @@
 - [[PROMPT_TEMPLATE]] — Template generic Claude Code
 
 ### 📊 Findings Tracker
-- [[FINDINGS_MASTER]] — 125 findings triate, status progress
+- [[FINDINGS_MASTER]] — 125 findings triate, status progress (3 OPEN: C10c, H30c, H31c)
 
 ### 📓 Sessions Log
 - [[GYM_SESSIONS]] — Sesiuni reale sală + observații produs
+- [[QA_MANUAL_24APR_2230]] — QA live 24 apr 22:30 — 3 bug-uri noi + observații
 
 ### 🔗 References
 - [[RESOURCES]] — Resurse externe, tools, inspirație

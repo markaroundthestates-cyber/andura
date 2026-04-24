@@ -482,3 +482,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** .obsidian/graph.json creat — JSON valid, 14 colorGroups, textFadeMultiplier 0, nodeSize 1.2x, linkDistance 250. Daniel: Ctrl+P → "Reload app without saving" în Obsidian.
 
 ---
+
+## TASK #24g
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** HIGH
+**Status:** DONE ✅
+**Created:** 2026-04-24
+**Completed:** 2026-04-24
+**Description:** Document QA findings 24 apr 2026 evening — input pentru Task #25 Opus Audit. Creează QA_MANUAL_24APR_2230.md + FINDINGS_MASTER.md cu status real.
+**Acceptance:** QA_MANUAL_24APR_2230.md creat, FINDINGS_MASTER updated, commit + push.
+**Dependencies:** TASK #24f DONE ✅
+**Result:** 07-sessions-log/QA_MANUAL_24APR_2230.md + 06-findings-tracker/FINDINGS_MASTER.md create. 3 OPEN: C10c (CRITICAL cache loop), H30c (pattern false positives), H31c (reset incomplet). 15 FIXED marcate din FAZA 1+2. INDEX_MASTER actualizat.
+
+---
