@@ -1,4 +1,6 @@
 // ══ COACH PAGE ══════════════════════════════════════════════
+import './coach/state.js';
+import { sessionCache, getCachedDirector, setCachedDirector, wakeLockRef, uiToggleFlags } from './coach/state.js';
 import { DB, $, tod, cleanEx } from '../db.js';
 import { syncToFirebase } from '../firebase.js';
 import { PROG, EX_SETS, COMPOUND_EX, PAUSE_COMPOUND, PAUSE_ISO } from '../constants.js';
@@ -14,25 +16,8 @@ import { analyzeAndApplyPatterns } from '../engine/patternLearning.js';
 import { coachDirector } from '../engine/coachDirector.js';
 import { filterValidLogs } from '../util/logFilter.js';
 
-const _sessionCache = {
-  session: null,
-  timestamp: null,
-  TTL_MS: 5 * 60 * 1000,
-  get() {
-    if (!this.session) return null;
-    if (Date.now() - this.timestamp > this.TTL_MS) { this.session = null; return null; }
-    return this.session;
-  },
-  set(s) { this.session = s; this.timestamp = Date.now(); },
-  invalidate() { this.session = null; this.timestamp = null; console.log('[Cache] Director session invalidated'); }
-};
-if (typeof window !== 'undefined') window._directorCache = _sessionCache;
-
-// Legacy alias — kept so any external code referencing window._cachedDirectorSession still works
-let _cachedDirectorSession = null;
-let wakeLock = null;
 let inactivityTimer = null;
-const INACTIVITY_DELAY = 2 * 60 * 1000; // 2 minutes
+const INACTIVITY_DELAY = 2 * 60 * 1000;
 
 // ── Bug 3: CUT phase display helper ───────────────────────────
 // Caps isolation exercise rep display at 10 in CUT phase (e.g. "4×12–15" → "4×10").
@@ -155,14 +140,10 @@ function renderLastSessionMemory(dayLabel) {
   </div>`;
 }
 
-// FIX 4: Exercise list dropdown — toggle per day index
-let exListExpanded = {};
-
 export function resetNotes() { state.activeNotes.clear(); }
 
-// FIX 4: Toggle exercise list expansion per day index
 export function toggleExList(dayIdx) {
-  exListExpanded[dayIdx] = !exListExpanded[dayIdx];
+  uiToggleFlags.exListExpanded[dayIdx] = !uiToggleFlags.exListExpanded[dayIdx];
   renderCoachIdle();
 }
 
@@ -251,17 +232,17 @@ export async function renderCoachIdle(){
     const todayR = getTodayReadiness();
 
     // Construieste sesiunea prin Director — sursă unică de adevăr
-    let _dirSession = _sessionCache.get();
+    let _dirSession = sessionCache.get();
     if (!_dirSession) {
       try {
         _dirSession = await coachDirector.buildSession(tp.t.toUpperCase());
-        _sessionCache.set(_dirSession);
+        sessionCache.set(_dirSession);
       } catch(e) {
         _dirSession = null;
-        _sessionCache.invalidate();
+        sessionCache.invalidate();
       }
     }
-    _cachedDirectorSession = _dirSession; // legacy alias
+    setCachedDirector(_dirSession);
     // Zi de odihnă forțată de Director (readiness < 40)
     if (_dirSession?.restDay) {
       cmdEl.textContent = 'ZI DE ODIHNĂ';
@@ -322,7 +303,7 @@ export async function renderCoachIdle(){
     }
     const exList = rawExList;
     const todayDayIdx=dayMap[new Date().getDay()];
-    const isExpanded=!!exListExpanded[todayDayIdx];
+    const isExpanded=!!uiToggleFlags.exListExpanded[todayDayIdx];
     const SHOW_LIMIT=4;
     const showAll=isExpanded||exList.length<=SHOW_LIMIT;
     const visibleEx=showAll?exList:exList.slice(0,SHOW_LIMIT);
@@ -977,7 +958,7 @@ export function getTodayExercises() {
   const unavail = DB.get('unavailable-equipment') || [];
   let exList = tp.ex.map(e => cleanEx(e.n||'')).filter(ex => !unavail.includes(ex));
   // Gate pattern reads by calibration level (via cached director session or session count)
-  const _cachedLvl = (_cachedDirectorSession || _sessionCache?.get())?.calibrationLevel;
+  const _cachedLvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
   const _patternsOn = _cachedLvl ? _cachedLvl.patternsEnabled : (() => {
     try {
       const logs = JSON.parse(localStorage.getItem('logs') || '[]');
@@ -1240,11 +1221,8 @@ export function saveStepsQuick(){
   renderCoachIdle();
 }
 
-// FIX 3: PR Wall dropdown — toggle stare locală
-let prWallExpanded = false;
-
 export function togglePRWall() {
-  prWallExpanded = !prWallExpanded;
+  uiToggleFlags.prWallExpanded = !uiToggleFlags.prWallExpanded;
   renderPRWall();
 }
 
@@ -1266,7 +1244,7 @@ export function renderPRWall() {
     return;
   }
 
-  const visible = prWallExpanded ? entries : entries.slice(0, 3);
+  const visible = uiToggleFlags.prWallExpanded ? entries : entries.slice(0, 3);
   const hasMore = entries.length > 3;
 
   el.innerHTML = visible.map((e, i) => {
@@ -1282,7 +1260,7 @@ export function renderPRWall() {
       <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps || '—'}</div>
     </div>`;
   }).join('') + (hasMore ? `<div onclick="togglePRWall()" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
-    ${prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}
+    ${uiToggleFlags.prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}
   </div>` : '');
 }
 
@@ -1422,7 +1400,7 @@ export function markEquipmentUnavailable(exerciseName) {
 export function showWhyForExercise(exerciseName) {
   // Build explanation using WhyEngine + Director session if available
   import('../engine/whyEngine.js').then(({ explainRecommendation }) => {
-    const session = _cachedDirectorSession;
+    const session = getCachedDirector();
     const exercise = session?.exercises?.find(e => (e.name || '').toLowerCase() === exerciseName.toLowerCase());
     const ctx = {
       readiness: { score: DB.get('readiness') ? (() => {
@@ -1437,7 +1415,7 @@ export function showWhyForExercise(exerciseName) {
         return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
       })(),
       patterns: (() => {
-        const lvl = (_cachedDirectorSession || _sessionCache?.get())?.calibrationLevel;
+        const lvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
         return (lvl?.patternsEnabled !== false) ? (DB.get('applied-patterns') || []) : [];
       })(),
       user: { phase: DB.get('phase-override') || 'AUTO' },
@@ -1465,13 +1443,13 @@ export function markOccupied(exerciseName) {
 }
 
 export function releaseWakeLock() {
-  try { if(wakeLock) { wakeLock.release(); wakeLock = null; } } catch(e) {}
+  try { if(wakeLockRef.current) { wakeLockRef.current.release(); wakeLockRef.current = null; } } catch(e) {}
 }
 
 export async function requestWakeLock() {
   try {
     if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLockRef.current = await navigator.wakeLock.request('screen');
     }
   } catch(e) { /* Wake Lock not available — silently ignore */ }
 }
