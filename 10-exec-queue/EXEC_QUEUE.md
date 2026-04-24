@@ -90,3 +90,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** TASK #4 + TASK #5 DONE ✅
 
 ---
+
+## TASK #7
+**Model:** Sonnet
+**Priority:** LOW
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Actualizează vault după finalizare FAZA 1.2. INDEX_MASTER.md: 1.2 → ✅ DONE, status header update. DECISION_LOG.md: adaugă entry FAZA 1.2 cu scope, approach, ce s-a făcut, commits.
+**Acceptance:** 2 fișiere updatate, git commit + push pe main.
+**Dependencies:** TASK #6 DONE ✅
+
+---

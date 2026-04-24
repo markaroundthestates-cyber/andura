@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #7 — DONE
+**Completed:** 2026-04-24 17:30
+**Duration:** 2min
+**Summary:** INDEX_MASTER.md: 1.2 → ✅ DONE, status header actualizat. DECISION_LOG.md: entry FAZA 1.2 adăugat cu scope, approach, commits.
+**Files changed:** 00-index/INDEX_MASTER.md, 03-decisions/DECISION_LOG.md
+**Tests:** N/A — vault only
+**Issues:** NONE
+
+---
+
 ## TASK #6 — DONE
 **Completed:** 2026-04-24 17:15
 **Duration:** 20min

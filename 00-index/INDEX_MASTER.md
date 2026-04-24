@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 24 apr 2026
-**Status:** FAZA 1 — Engine Bulletproof (1.1 DONE, 1.2+ pending)
+**Ultima actualizare:** 24 apr 2026 (seara)
+**Status:** FAZA 1 — Engine Bulletproof (1.1 + 1.2 DONE, 1.3+ pending)
 
 ---
 
@@ -64,7 +64,7 @@
 Sub-faze:
 - ✅ 1.0 Split coach.js planning (Opus) — DONE 24 apr 2026, COACH_SPLIT_PLAN.md 714 linii, confidence 82%
 - ✅ 1.1 Split coach.js execuție (Sonnet) — DONE 24 apr 2026, 9 module + orchestrator live, zero regresii, merged main commit 9875755
-- 🔜 1.2 Multi-tenancy decouple (hardcoded Daniel values)
+- ✅ 1.2 Multi-tenancy decouple (DONE 24 apr 2026)
 - ⏳ 1.3 Log schema fix + migration one-shot
 - ⏳ 1.4 cleanDuplicateLogs fix
 - ⏳ 1.5 ctx.allLogs real (calibration live)
