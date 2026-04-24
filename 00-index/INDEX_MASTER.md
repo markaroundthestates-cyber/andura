@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 24 apr 2026 (noapte)
-**Status:** FAZA 1 COMPLETE — FAZA 2 urmează (sessionBuilder real, bug fixes reliability)
+**Ultima actualizare:** 24 apr 2026 (seară)
+**Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii
 
 ---
 
@@ -72,12 +72,15 @@ Sub-faze:
 - ✅ 1.7 AA engine activate notes-only — DONE 24 apr 2026, RPE logic eliminat, safety net defensiv
 - ✅ 1.8 Firebase: audit + data loss fix 500→5000 + rules v1 plan — DONE 24 apr 2026 (rules = acțiune manuală)
 
-### ⏳ FAZA 2 — BUG FIXES + RELIABILITY (URMEAZĂ)
-Details: docs/FAZA_2_ROADMAP.md
-- Priority 1: sessionBuilder context-aware (OPT A, 3-4h)
-- Priority 2: crash/leak bugs (C2c, C3c, H4c, H6c, H9c, H11c)
-- Priority 3: logic bugs (M3g, H13g, H14g, M7c)
-- Exit: zero breakdown în 3-5 zile usage real
+### ✅ FAZA 2 — BUG FIXES + RELIABILITY (COMPLETE — 24 apr 2026)
+Details: docs/FAZA_2_ROADMAP.md | Raport: docs/FAZA_2_FINAL_REPORT.md
+- ✅ Tier 0: C4c log schema + C5c endSession auto-delete (commit 489480e)
+- ✅ P2 batch: H11c cache keys + C3c idempotency + H6c inflight guard (commit 2da734d)
+- ✅ Session: C2c cancelWorkout + H4c resume completedExercises (commit 03c5d8f)
+- ✅ Engines: isoWeek ISO 8601 + H14g checkRecoveryGroups (commit b7e662f)
+- ✅ sessionBuilder OPT C pure function (commit d8f17f0)
+- ✅ sessionBuilder OPT A weakness ordering + contextSelectionEnabled (commit 7c86288)
+- Metrici: 236 → 271 teste, 25 test files, zero regresii
 
 ### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
 ### ⏳ FAZA 4 — FEATURES NOI (144 programe, injury, health export)

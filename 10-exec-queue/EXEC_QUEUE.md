@@ -315,7 +315,7 @@ PAȘI:
 **Model:** Sonnet
 **Type:** BUG_FIX
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** P2 batch simple — H11c + C3c + H6c.
 H11c: adaugă 6 keys lipsă la COACH_RELEVANT_KEYS în firebase.js:118 ('unavailable-equipment','equipment-occupied-session','applied-patterns','session-burns','early-stops','workout-skips').
@@ -331,7 +331,7 @@ Minim 3 teste noi.
 **Model:** Sonnet
 **Type:** BUG_FIX
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** session.js batch — C2c cancelWorkout + H4c resume.
 C2c: cancelWorkout adaugă clearDraft(), teardownInactivity(), releaseWakeLock() + resetează completedExercises, dropSetUsedThisSession, earlyStopReason, sessionKgOverride, activeNotes.
@@ -346,7 +346,7 @@ Minim 2 teste noi.
 **Model:** Sonnet
 **Type:** BUG_FIX
 **Priority:** MEDIUM
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** Engines batch — isoWeek ISO 8601 Thursday rule + H14g checkRecoveryGroups.
 isoWeek: implementează regula Thursday (ISO 8601) în stagnationDetector.js + responseProfile.js — înlocuiește ambele implementări incorecte.
@@ -361,7 +361,7 @@ Minim 3 teste (isoWeek Dec29/Jan1 boundary + checkRecoveryGroups returnează ale
 **Model:** Sonnet
 **Type:** REFACTOR
 **Priority:** MEDIUM
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** sessionBuilder OPT C — extrage fallbackSessionBuilder din CoachDirector ca pure function.
 Creează src/engine/sessionBuilder.js cu export function buildSession(sessionType, ctx).
@@ -376,7 +376,7 @@ Minim 3 teste pentru buildSession (PUSH/CUT/RECOMP + edge case fără ctx.weakGr
 **Model:** Sonnet
 **Type:** FEATURE
 **Priority:** MEDIUM
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** sessionBuilder OPT A restrâns — weakness-prioritized ordering (NU adaugă exerciții noi).
 Reordonează exercițiile din buildSession (sessionBuilder.js) astfel încât exercițiile pentru weakGroups să apară pe pozițiile 1-2.
@@ -393,7 +393,7 @@ Teste: ctx.weakGroups=['delt_rear'] → exercițiu delt_rear în primele 2 pozi�
 **Model:** Sonnet
 **Type:** VAULT
 **Priority:** LOW
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-24
 **Description:** Vault update FAZA 2 — închidere completă.
 INDEX_MASTER.md: FAZA 2 → ✅ COMPLETE (24 apr 2026), update header "Ultima actualizare".

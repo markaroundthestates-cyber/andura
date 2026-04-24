@@ -1,5 +1,34 @@
 # DECISION LOG — SalaFull
 
+## 2026-04-24 — FAZA 2 COMPLETE (Bug Fixes + Reliability)
+
+**Scope:** 6 task groups, 10 bugs fixed, 2 refactors, 35 net new tests.
+
+**Livrări majore:**
+- Tier 0 (C4c + C5c): log schema completeness (kg/set fields) + eliminate endSession auto-delete for short sessions
+- P2 batch (H11c + C3c + H6c): COACH_RELEVANT_KEYS 5→11 keys, rateSession double-tap guard, analyzeAndApplyPatterns inflight guard
+- Session batch (C2c + H4c): cancelWorkout full state reset (parity with endSession), resume completedExercises from sessLog not empty Set
+- Engines batch (M3g + H13g + H14g): isoWeek ISO 8601 Thursday rule în 2 fișiere, checkRecoveryGroups computes daysSinceLast from logs (getMuscleState incompatibility fix)
+- sessionBuilder OPT C: fallbackSessionBuilder extras ca pure function în sessionBuilder.js
+- sessionBuilder OPT A: weakness-prioritized ordering + contextSelectionEnabled feature flag (default: false)
+
+**Metrici:**
+- Tests: 236 → 271 passing (+35)
+- Test files: 22 → 25
+- Regresii: 0
+- Commits FAZA 2: 6 (489480e → 7c86288)
+
+**Decizii cheie:**
+- C5c: eliminate auto-delete complet (nu confirm dialog) — orice sesiune cu loguri se păstrează implicit
+- H14g: nu restrucura getMuscleState (breaking change); în schimb fix site-ul de consum (checkRecoveryGroups)
+- isoWeek: Thursday rule (ISO 8601) — week belongs to year of its Thursday, nu jan1 offset
+- contextSelectionEnabled: default false — ordering activ doar explicit opt-in; previne regression pentru users fără weakGroups
+- OPT A scope restrâns (Opus review): nu adaugă exerciții noi, doar reordonare în lista existentă
+
+**Next:** FAZA 3 — Infrastructure + Observability (Firebase rules auth, logging observability, multi-user)
+
+---
+
 ## 2026-04-24 — FAZA 1 COMPLETE (Engine Bulletproof)
 
 **Scope închis în 1 zi:** Toate 9 sub-faze 1.0–1.8.
