@@ -254,3 +254,14 @@ PAȘI:
 **Dependencies:** NONE
 
 ---
+
+## TASK #19
+**Model:** Sonnet
+**Priority:** CRITICAL
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.8 Step 1 — Fix data loss critical (.slice(0, 500) → 5000). Creează src/util/logBackup.js cu backupLogsToLocal + restoreLogsFromBackup. Fix în 4 locații: logging.js, session.js, firebase.js, onboarding.js.
+**Acceptance:** 4 locații fixed, logBackup.js creat + testat, build + teste pass, git commit + push.
+**Dependencies:** TASK #18 DONE ✅
+
+---

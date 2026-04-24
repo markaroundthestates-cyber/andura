@@ -97,7 +97,7 @@ export function confirmReps() {
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
   state.sessionKgOverride = null;
   logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart });
-  DB.set('logs', logs.slice(0, 500));
+  DB.set('logs', logs.slice(0, 5000));
   state.sessLog.push({ ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) });
   const ssc = $('sess-progress-txt'); if (ssc) ssc.textContent = `${state.completedExercises.size}/${state.sessionTotalExercises || getTodayExercises().length}`;
 

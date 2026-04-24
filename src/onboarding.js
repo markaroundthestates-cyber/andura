@@ -113,7 +113,7 @@ export function saveOnboarding() {
       saved++;
     }
   });
-  DB.set('logs', logs.slice(0, 500));
+  DB.set('logs', logs.slice(0, 5000));
   DB.set('onboarding-done', true);
   const el = document.getElementById('onboarding-overlay');
   if (el) el.remove();

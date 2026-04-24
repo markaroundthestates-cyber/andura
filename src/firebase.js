@@ -99,7 +99,7 @@ export async function syncFromFirebase() {
         const merged = [...localArr];
         remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
         merged.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-        DB.set(k, merged.slice(0, 500));
+        DB.set(k, merged.slice(0, 5000));
       } else {
         // Scalar — keep local
       }

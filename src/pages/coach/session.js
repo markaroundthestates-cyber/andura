@@ -227,7 +227,7 @@ export function confirmEarlyStop(reason) {
   const earlyLog = { date: tod(), earlyStop: { reason, setsCompleted, totalSets }, session: state.sessStart };
   const logs = DB.get('logs') || [];
   logs.unshift({ ...earlyLog, ex: '__early_stop__', w: 0, reps: '0', ts: Date.now(), session: state.sessStart, earlyStop: { reason, setsCompleted, totalSets } });
-  DB.set('logs', logs.slice(0, 500));
+  DB.set('logs', logs.slice(0, 5000));
 
   // 3. Salvează în 'early-stops' key
   const earlyStops = DB.get('early-stops') || [];

@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #19 — DONE
+**Completed:** 2026-04-24 23:15
+**Duration:** 8min
+**Summary:** Fix data loss critical. 4 locații schimbate: logging.js:100, session.js:230, firebase.js:102, onboarding.js:116 — toate `slice(0, 500)` → `slice(0, 5000)`. Creeat src/util/logBackup.js cu backupLogsToLocal + restoreLogsFromBackup. Capacitate nouă: ~312 sesiuni (~1.5-2 ani la 3-4 sesiuni/săpt). Zero mai există slice(0,500) în production code.
+**Files changed:** src/pages/coach/logging.js, src/pages/coach/session.js, src/firebase.js, src/onboarding.js, src/util/logBackup.js (creat), src/util/__tests__/logBackup.test.js (creat)
+**Tests:** 6 added (logBackup) — all pass; baseline 226 unit menținut
+**Issues:** NONE
+
+---
+
 ## TASK #18 — DONE
 **Completed:** 2026-04-24 23:00
 **Duration:** 10min
