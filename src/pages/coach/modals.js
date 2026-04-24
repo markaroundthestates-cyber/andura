@@ -62,8 +62,7 @@ export function confirmSkip(reason) {
   skips.push({ date: tod(), dayOfWeek: days[new Date().getDay()], reason, ts: Date.now() });
   DB.set('workout-skips', skips.slice(-100));
   toast('📌 Skip înregistrat', 'var(--text2)');
-  // CICLU D (temporar)
-  window.renderCoachIdle?.();
+  renderCoachIdle();
   if (window.renderDash) window.renderDash();
 }
 
@@ -136,8 +135,7 @@ export function markEquipmentUnavailable(exerciseName) {
   if (!unavail.includes(exerciseName)) unavail.push(exerciseName);
   DB.set('unavailable-equipment', unavail);
   toast(`🚫 ${exerciseName} eliminat permanent`, 'var(--red)');
-  // CICLU D (temporar)
-  window.renderCoachIdle?.();
+  renderCoachIdle();
 }
 
 export function markOccupied(exerciseName) {
@@ -151,8 +149,7 @@ export function markOccupied(exerciseName) {
     DB.set('equipment-occupied-session', occ);
   }
   toast(`⚠️ ${exerciseName} marcat ocupat`, 'var(--accent2)');
-  // CICLU D (temporar)
-  window.renderCoachIdle?.();
+  renderCoachIdle();
 }
 
 export function showWhyForExercise(exerciseName) {

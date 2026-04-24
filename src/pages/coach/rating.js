@@ -3,6 +3,7 @@ import { syncToFirebase } from '../../firebase.js';
 import { extractAndSavePRs, cleanFakeLogs } from './pr.js';
 import { hidePauseScreen } from '../../ui/ui.js';
 import { state } from '../../state.js';
+import { clearDraft } from './session.js';
 
 export function showSessionRating(summaryData) {
   $('session-ui').style.display = 'none';
@@ -54,8 +55,7 @@ export function showSessionRating(summaryData) {
 }
 
 export function rateSession(rating, summaryData) {
-  // CICLU (temporar): clearDraft din session.js nu e extras încă
-  window.clearDraft?.();
+  clearDraft();
   const noteMap = { 'easy': ['strong'], 'normal': [], 'hard': ['fatigue'] };
   const notes = noteMap[rating] || [];
 

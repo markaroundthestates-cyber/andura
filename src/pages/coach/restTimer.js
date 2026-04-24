@@ -4,6 +4,7 @@ import { SYS } from '../../engine/sys.js';
 import { COMPOUND_EX, PAUSE_COMPOUND, PAUSE_ISO } from '../../constants.js';
 import { toast, beep, beepAlert, speak, showPauseScreen, hidePauseScreen } from '../../ui/ui.js';
 import { state } from '../../state.js';
+import { updateExCard } from './logging.js';
 
 const INACTIVITY_DELAY = 2 * 60 * 1000;
 let inactivityTimer = null;
@@ -43,8 +44,7 @@ export function startPause(sec, nextEx = '') {
       stopPause(); hidePauseScreen();
       beepAlert();
       speak(`${nextEx || state.currentEx}. Gata!`);
-      // CICLU C (temporar): updateExCard nu e extras încă
-      window.updateExCard?.();
+      updateExCard();
     }
   }, 1000);
 }
@@ -54,8 +54,7 @@ export function stopPause() { clearInterval(state.pauseTimer); state.pauseTimer 
 export function skipPause() {
   stopPause();
   hidePauseScreen();
-  // CICLU C (temporar): updateExCard nu e extras încă
-  window.updateExCard?.();
+  updateExCard();
   toast('⚠️ Pauza scurtă poate reduce performanța la setul următor', 'var(--accent2)');
 }
 
