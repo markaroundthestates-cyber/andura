@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #22a — DONE
+**Completed:** 2026-04-24 24:00
+**Duration:** 12min
+**Summary:** Tier 0 data integrity: (1) C4c — adăugat `set: state.currentSet, kg: logKg` la log write în logging.js:99 (schema completă; nota: cleanDuplicateLogs era deja fixat în TASK #8 să folosească l.ts, deci dedup collapse era deja rezolvat — fix-ul completează schema). (2) C5c — eliminat complet blocul auto-delete <5min din endSession (session.js:117-128). (3) dataIntegrity.test.js creat cu 4 teste: 3 seturi same ex/w/reps supraviețuiesc cleanDuplicateLogs, schema log are set+kg, sesiune <5min păstrează loguri.
+**Files changed:** src/pages/coach/logging.js, src/pages/coach/session.js, src/util/__tests__/dataIntegrity.test.js (creat)
+**Tests:** 4 added — all pass; 236 unit total (21 files)
+**Issues:** NONE
+
+---
+
 ## TASK #21bis — DONE
 **Completed:** 2026-04-24 23:59
 **Duration:** 20min

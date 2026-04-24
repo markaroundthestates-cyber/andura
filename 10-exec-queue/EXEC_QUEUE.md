@@ -298,3 +298,15 @@ PAȘI:
 **Dependencies:** TASK #21 DONE ✅
 
 ---
+
+## TASK #22a
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** CRITICAL
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Tier 0 Data Integrity — fix C4c (confirmReps missing set+kg fields → dedupe collapse) + C5c (endSession auto-delete <5min removed). Backup logs înainte. Teste noi.
+**Acceptance:** C4c+C5c fixed, tests pass, build clean, git commit + push.
+**Dependencies:** TASK #21bis DONE ✅
+
+---

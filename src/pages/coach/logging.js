@@ -96,7 +96,7 @@ export function confirmReps() {
   const noteArr = [...state.activeNotes]; resetNotes();
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
   state.sessionKgOverride = null;
-  logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart });
+  logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, kg: logKg, set: state.currentSet, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart });
   DB.set('logs', logs.slice(0, 5000));
   state.sessLog.push({ ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) });
   const ssc = $('sess-progress-txt'); if (ssc) ssc.textContent = `${state.completedExercises.size}/${state.sessionTotalExercises || getTodayExercises().length}`;

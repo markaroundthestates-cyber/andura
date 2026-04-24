@@ -114,18 +114,7 @@ export function endSession() {
   releaseWakeLock();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
 
-  // Auto-delete test sessions (< 5 minutes), but only if not an early stop
   const hasEarlyStop = state.earlyStopReason !== null;
-  if (!hasEarlyStop && Date.now() - state.sessStart < 5 * 60 * 1000) {
-    const logs = DB.get('logs') || [];
-    DB.set('logs', logs.filter(l => l.session !== state.sessStart));
-    const suEl2 = $('session-ui'); if (suEl2) suEl2.style.display = 'none';
-    const ts = $('today-screen'); if (ts) ts.style.display = 'block';
-    toast('🧹 Sesiune test ștearsă automat', 'var(--accent2)');
-    renderCoachIdle();
-    if (window.renderDash) window.renderDash();
-    return;
-  }
 
   const mins = Math.round((Date.now() - state.sessStart) / 60000);
   const kcal = Math.round(SYS.getCurrentKg() * 0.09 * mins);
