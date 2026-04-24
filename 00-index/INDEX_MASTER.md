@@ -57,6 +57,11 @@
 - [[CHAT_MIGRATION_PROTOCOL]] — Handoff între chat-uri
 - [[ASYNC_EXECUTION_PROTOCOL]] — Queue-based async workflow (LIVE 24 apr 2026)
 
+### 🗂️ Vault Setup
+- [[OBSIDIAN_SETUP_GUIDE]] — Graph View settings, plugins, shortcuts
+- [[VAULT_SYNC_DIAGNOSTIC]] — Lista completă 33 fișiere + instrucțiuni pull
+- [[VAULT_CONSOLIDATION_GUIDE]] — Clone fresh salafull ca vault Obsidian (Windows)
+
 ### 📋 Execution Queue
 - [[EXEC_QUEUE]] — Task-uri pending pentru Claude Code
 - [[EXEC_RESULTS]] — Log rezultate task-uri

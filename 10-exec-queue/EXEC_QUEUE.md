@@ -454,3 +454,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** docs/VAULT_SYNC_DIAGNOSTIC.md creat — 33 fișiere inventariate, 15 commits azi, 3 metode pull, troubleshooting auth/conflict/detached-HEAD.
 
 ---
+
+## TASK #24e
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** HIGH
+**Status:** DONE ✅
+**Created:** 2026-04-24
+**Completed:** 2026-04-24
+**Description:** Vault consolidation — verifică repo salafull-vault vs salafull, actualizează referințe, creează VAULT_CONSOLIDATION_GUIDE.md cu pași Windows pentru Daniel.
+**Acceptance:** Status salafull-vault raportat, referințe actualizate, docs/VAULT_CONSOLIDATION_GUIDE.md creat, git commit + push.
+**Dependencies:** TASK #24d DONE ✅
+**Result:** salafull-vault repo → 404 (nu există). 0 referințe "salafull-vault" în docs. VAULT_CONSOLIDATION_GUIDE.md creat cu clone fresh + Obsidian Git config. INDEX_MASTER actualizat cu secțiune Vault Setup.
+
+---
