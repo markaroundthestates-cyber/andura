@@ -46,3 +46,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** NONE
 
 ---
+
+## TASK #3
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Audit hardcoded Daniel-specific values în codebase. Grep exhaustiv în src/ pentru: "110.4", "1800", "180g"/"180 g", "2026-07-20", "users/daniel", "22.6", "1.83"/"1.85", "Daniel", alte numere magice user-specific. Pentru fiecare match: fișier + linie, context 2 linii, categorie USER_DATA|TARGET|PATH|DATE|OTHER. Creează docs/HARDCODED_AUDIT_1_2.md cu summary, findings table, recommendations.
+**Acceptance:** docs/HARDCODED_AUDIT_1_2.md creat, git commit + push pe main.
+**Dependencies:** NONE
+
+---

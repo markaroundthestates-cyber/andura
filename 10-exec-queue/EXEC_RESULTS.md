@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #3 — DONE
+**Completed:** 2026-04-24 16:00
+**Duration:** 8min
+**Summary:** Audit exhaustiv 12 fișiere din src/. 35 findings: 6 USER_DATA (HEIGHT/AGE/BF/weights în sys.js + coachContext.js), 12 TARGET (inline 1800/180/101.5 în 8 fișiere), 3 PATH (users/daniel duplicat în dataCleanup.js), 8 DATE (2026-07-20 inline în dp.js×5 + sys.js×3), 6 OTHER (comentarii "Daniel", threshold 150 în adherence.js).
+**Files changed:** docs/HARDCODED_AUDIT_1_2.md (creat)
+**Tests:** baseline neschimbat
+**Issues:** NONE
+
+---
+
 ## TASK #2 — DONE
 **Completed:** 2026-04-24 15:30
 **Duration:** 2min
