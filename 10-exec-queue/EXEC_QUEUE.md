@@ -221,3 +221,14 @@ PAȘI:
 **Dependencies:** TASK #13 DONE ✅
 
 ---
+
+## TASK #16
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.6 AUDIT — sessionBuilder scope + decizie. Zero modificări cod.
+**Acceptance:** docs/SESSIONBUILDER_AUDIT_1_6.md creat cu 3 opțiuni + recomandare, zero modificări cod, git commit + push.
+**Dependencies:** NONE
+
+---

@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #16 — DONE
+**Completed:** 2026-04-24 22:00
+**Duration:** 8min
+**Summary:** Audit complet sessionBuilder. Constat: sessionBuilder = null; coachDirector face dynamic import async → null check → 3 code paths → mereu ajunge la fallbackSessionBuilder static. Tot contextul calculat (weakGroups, stagnation, prediction, allLogs) este ignorat complet la selectarea exercițiilor. 3 opțiuni: A=IMPLEMENT (3-4h, FAZA 2), B=REMOVE dead code (15min, acum), C=STUB PROPERLY (1h, când e nevoie de testabilitate). Recomandare: OPT B acum.
+**Files changed:** docs/SESSIONBUILDER_AUDIT_1_6.md (creat)
+**Tests:** N/A — audit only
+**Issues:** NONE
+
+---
+
 ## TASK #15 — DONE
 **Completed:** 2026-04-24 21:30
 **Duration:** 8min
