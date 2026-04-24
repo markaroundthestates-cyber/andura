@@ -1,45 +1,9 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test și debugging ═══════
-import { FIREBASE_URL, USER_PATH } from '../firebase.js';
+import { FIREBASE_URL, USER_PATH, scheduleInvalidation } from '../firebase.js';
+import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, getAllDynamicKeys } from './dataRegistry.js';
 
-export const TEST_RESIDUE_KEYS = [
-  'auto-recommendations',
-  'applied-patterns',
-  'applied-recommendations',
-  'early-stops',
-  'session-draft',
-  'peak-hours',
-  'step-streaks',
-  'session-start-hours',
-  'session-ratings',
-  'dev-mode',
-  'unavailable-equipment'
-];
-
-export const USER_DATA_KEYS = [
-  'weights',
-  'kcals',
-  'prots',
-  'logs',
-  'readiness',
-  'phase-override',
-  'phase-log',
-  'phase-change-date',
-  'bf-override',
-  'pr-records',
-  'current-kcal',
-  'suppl-list',
-  'active-theme',
-  'waters',
-  'workout-skips',
-  'device-id',
-  'session-burns',
-  'wellbeing',
-  'notif-enabled',
-  'closed-days',
-  'muted',
-  'onboarding-done',
-  'onboarding-completed'
-];
+// Re-export for backward compat (tests and other importers)
+export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS };
 
 // ── Deduplicate Logs ──────────────────────────────────────────────────────
 // Removes truly duplicate log entries — defined as two entries with the exact
@@ -137,18 +101,14 @@ export async function resetTestData(options = {}) {
 
   console.log('[DataCleanup] Starting test residue cleanup...');
 
-  // Marker to suppress Firebase sync for 3 seconds
   window._suppressFirebaseSync = true;
   console.log('[DataCleanup] Firebase sync suppressed');
 
-  // Delete from localStorage
   TEST_RESIDUE_KEYS.forEach(k => localStorage.removeItem(k));
   console.log('[DataCleanup] Local storage cleared:', TEST_RESIDUE_KEYS.length, 'keys');
 
-  // Delete from Firebase if available
   if (clearFirebase) {
     try {
-      // Fetch current remote data, remove test keys, then PUT back
       const r = await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, { cache: 'no-store' });
       if (r.ok) {
         const remote = await r.json();
@@ -169,21 +129,15 @@ export async function resetTestData(options = {}) {
     }
   }
 
-  // Invalidate CoachDirector cache
-  if (window._directorCache) {
-    window._directorCache.invalidate();
-  } else if (window._cachedDirectorSession !== undefined) {
-    window._cachedDirectorSession = null;
-    console.log('[DataCleanup] Director cache invalidated (legacy)');
-  }
-
+  scheduleInvalidation();
   console.log('[DataCleanup] Test residue cleared:', TEST_RESIDUE_KEYS.length, 'keys');
 
-  // Re-enable Firebase sync after 3 seconds
-  setTimeout(() => {
-    window._suppressFirebaseSync = false;
-    console.log('[DataCleanup] Firebase sync re-enabled');
-  }, 3000);
+  // Persist suppression across reload — window property does not survive page load
+  if (reload) {
+    localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
+  }
+
+  setTimeout(() => { window._suppressFirebaseSync = false; }, 3000);
 
   if (reload) {
     setTimeout(() => { location.reload(); }, 500);
@@ -205,12 +159,22 @@ export async function fullReset(options = {}) {
     if (!confirm('Backup a eșuat. Continui oricum cu Full Reset?')) return;
   }
 
-  // Suppress Firebase sync during reset
   window._suppressFirebaseSync = true;
   console.log('[DataCleanup] Firebase sync suppressed');
 
-  const ALL_KEYS = [...TEST_RESIDUE_KEYS, ...USER_DATA_KEYS, 'onboarding-done', 'onboarding-completed'];
-  ALL_KEYS.forEach(k => localStorage.removeItem(k));
+  // Save values to preserve across the clear
+  const preserved = {};
+  PRESERVE_ON_RESET_KEYS.forEach(k => {
+    const v = localStorage.getItem(k);
+    if (v !== null) preserved[k] = v;
+  });
+
+  // Whitelist reset: clear everything, then restore preserve list
+  localStorage.clear();
+  Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
+
+  // Persist suppression across the reload — window._ does not survive page load
+  localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
 
   // Clear sessionStorage
   try {
@@ -222,7 +186,6 @@ export async function fullReset(options = {}) {
 
   console.log('[DataCleanup] All local storage cleared');
 
-  // Delete from Firebase if available
   if (clearFirebase) {
     try {
       await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, {
@@ -274,20 +237,8 @@ export async function fullReset(options = {}) {
     console.warn('[DataCleanup] IndexedDB clear failed:', e.message);
   }
 
-  // Invalidate CoachDirector cache
-  if (window._directorCache) {
-    window._directorCache.invalidate();
-  } else if (window._cachedDirectorSession !== undefined) {
-    window._cachedDirectorSession = null;
-  }
-
+  scheduleInvalidation();
   console.log('[DataCleanup] FULL RESET — all data cleared');
-
-  // Re-enable Firebase sync after 3 seconds
-  setTimeout(() => {
-    window._suppressFirebaseSync = false;
-    console.log('[DataCleanup] Firebase sync re-enabled');
-  }, 3000);
 
   if (reload) {
     const base = window.location.href.split('?')[0];
@@ -311,21 +262,17 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
     'current-kcal', 'phase-override', 'onboarding-done'
   ];
 
-  // Salvează temporar
   const preserved = {};
   KEEP_KEYS.forEach(k => {
     const v = localStorage.getItem(k);
     if (v !== null) preserved[k] = v;
   });
 
-  // Clear total
   localStorage.clear();
   try { sessionStorage.clear(); } catch (e) { /* ignore */ }
 
-  // Restaurăm
   Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
 
-  // Firebase cleanup pentru test residue
   try {
     const fbModule = await import('../firebase.js').catch(() => null);
     if (fbModule && fbModule.removeKey) {
@@ -335,16 +282,14 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
     console.warn('[DataCleanup] Firebase residue clear:', err.message);
   }
 
-  if (window._directorCache) {
-    window._directorCache.invalidate();
-  } else if (window._cachedDirectorSession !== undefined) {
-    window._cachedDirectorSession = null;
-  }
-
-  setTimeout(() => { window._suppressFirebaseSync = false; }, 3000);
+  scheduleInvalidation();
 
   if (options.reload) {
+    localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
+    setTimeout(() => { window._suppressFirebaseSync = false; }, 3000);
     setTimeout(() => window.location.reload(), 500);
+  } else {
+    setTimeout(() => { window._suppressFirebaseSync = false; }, 3000);
   }
 
   return { preserved: Object.keys(preserved).length, cleared: TEST_RESIDUE_KEYS.length };
@@ -419,18 +364,16 @@ export function restoreRealLogs({ merge = true } = {}) {
     let finalLogs;
 
     if (merge) {
-      // Merge: skip duplicates by ts
       const existingTs = new Set(existing.map(l => l.ts));
       const newEntries = REAL_LOGS.filter(l => !existingTs.has(l.ts));
       finalLogs = [...existing, ...newEntries].sort((a, b) => (b.ts || 0) - (a.ts || 0));
     } else {
-      // Replace completely
       finalLogs = [...REAL_LOGS].sort((a, b) => (b.ts || 0) - (a.ts || 0));
     }
 
     localStorage.setItem('logs', JSON.stringify(finalLogs));
 
-    if (window._directorCache) window._directorCache.invalidate();
+    scheduleInvalidation();
 
     console.log(`[DataCleanup] restoreRealLogs: ${REAL_LOGS.length} entries restored (merge=${merge}). Total logs: ${finalLogs.length}`);
     return { restored: REAL_LOGS.length, total: finalLogs.length, merge };

@@ -2,6 +2,8 @@
 import { initSentry } from './util/sentry.js';
 initSentry(); // fire-and-forget, production only
 
+window.__dataRegistryEnabled = true;
+
 import { applyTheme, getActiveTheme } from './themes/themeManager.js';
 import { initFirebaseSync, clearFirebaseKeys } from './firebase.js';
 import { DP } from './engine/dp.js';

@@ -1,6 +1,7 @@
 // ══ FIREBASE SYNC ═══════════════════════════════════════════
 import { DB, tod } from './db.js';
 import { toast } from './ui/ui.js';
+import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 
 export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
 export const USER_PATH = 'users/daniel';
@@ -74,6 +75,11 @@ export async function syncFromFirebase() {
     console.log('[Firebase] Sync suppressed, skipping restore');
     return false;
   }
+  const suppressUntil = localStorage.getItem('__suppressFirebaseSyncUntil');
+  if (suppressUntil && Date.now() < Number(suppressUntil)) {
+    console.log('[Firebase] Sync suppressed post-reset until', new Date(Number(suppressUntil)).toISOString());
+    return false;
+  }
   try {
     const remote = await fbGet(USER_PATH);
     if (!remote) return false;
@@ -117,7 +123,6 @@ export async function syncFromFirebase() {
 
 let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
-const COACH_RELEVANT_KEYS = ['logs', 'readiness', 'phase-override', 'current-kcal', 'weights', 'unavailable-equipment', 'equipment-occupied-session', 'applied-patterns', 'session-burns', 'early-stops', 'workout-skips'];
 
 // Coalesce cache invalidations triggered by DB.set. Two mechanisms:
 // 1. suppressInvalidations(fn) — batch-mode: all invalidations during fn are folded into one flush at the end.
@@ -128,7 +133,7 @@ let _pendingInvalidation = false;
 let _invalidateTimer = null;
 const INVALIDATE_DEBOUNCE_MS = 250;
 
-function scheduleInvalidation() {
+export function scheduleInvalidation() {
   if (!window._directorCache) return;
   if (_suppressed) { _pendingInvalidation = true; return; }
   clearTimeout(_invalidateTimer);

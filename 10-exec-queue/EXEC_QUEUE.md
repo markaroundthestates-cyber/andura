@@ -539,3 +539,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** QA_MANUAL_25APR_POSTFIX.md creat. C10c ✅ VALIDAT (12+ → 1 invalidare pe Firebase sync). Noi: **C11c CRITICAL** (reset cascade 12+ invalidări — Task #26 fix nu acoperă reset flow), **H32c HIGH** (Rerun onboarding down post-reset). FINDINGS_MASTER: 16 FIXED (+C10c), 4 OPEN (C11c, H30c, H31c, H32c). FR1-4 queued pt FAZA 4. Next: Task #27 cu scope EXTENDED (registry + coalesce reset flow + investigate onboarding).
 
 ---
+
+## TASK #27 — Data Registry + Full Reset Rewrite (C11c / H31c / H32c)
+**Model:** Sonnet
+**Type:** BUG FIX + REFACTOR
+**Priority:** CRITICAL
+**Status:** DONE ✅
+**Created:** 2026-04-25
+**Completed:** 2026-04-25
+**Description:** 7-part task: (A) `src/util/dataRegistry.js` — central localStorage key registry; (B) `fullReset` rewrite — whitelist (`localStorage.clear()` + PRESERVE list) instead of blacklist; (C) C11c — replace 4 direct `invalidate()` calls in dataCleanup with `scheduleInvalidation()`; (D) H32c — `__suppressFirebaseSyncUntil` in localStorage (survives reload) + check in syncFromFirebase; (E) feature flag `window.__dataRegistryEnabled`; (F) DATA_REGISTRY_SPEC.md + FINDINGS_MASTER; (G) 12+ tests.
+**Acceptance:** 301+ tests pass · dataRegistry.js canonical source of truth · fullReset clears dynamic keys (ex-extra-sets-*, muscle-extra-*, aa-cooldown-*) · device-id/active-theme preserved · __suppressFirebaseSyncUntil gate in syncFromFirebase · FINDINGS_MASTER: C11c+H31c+H32c FIXED.
+**Dependencies:** TASK #27a DONE ✅
+**Result:** 301 tests (23 new). C11c FIXED (scheduleInvalidation replaces 4 direct invalidate() calls). H31c FIXED (localStorage.clear() whitelist, all dynamic keys cleared). H32c FIXED (__suppressFirebaseSyncUntil survives reload, prevents stale Firebase pull post-reset). COACH_RELEVANT_KEYS moved to dataRegistry.js (firebase.js imports from there). scheduleInvalidation exported. docs/DATA_REGISTRY_SPEC.md created. Next: Task #28 + #29 (H30c pattern false positives).
+
+---

@@ -1,11 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
 
 describe('DataCleanup — Firebase aware', () => {
   beforeEach(() => {
     localStorage.clear();
     window._suppressFirebaseSync = false;
-    window._cachedDirectorSession = { stale: true };
   });
 
   it('should set _suppressFirebaseSync flag during reset', async () => {
@@ -15,20 +14,32 @@ describe('DataCleanup — Firebase aware', () => {
     await promise;
   });
 
-  it('should clear director cache', async () => {
+  it('resetTestData should schedule cache invalidation via debounce', async () => {
+    vi.useFakeTimers();
+    const invalidate = vi.fn();
+    window._directorCache = { invalidate };
+
     await resetTestData({ clearFirebase: false, reload: false });
-    expect(window._cachedDirectorSession).toBeNull();
+
+    expect(invalidate).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(250);
+    expect(invalidate).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
+    window._directorCache = undefined;
   });
 
   it('should remove test keys from localStorage', async () => {
     localStorage.setItem('auto-recommendations', '[]');
     localStorage.setItem('applied-patterns', '[]');
+    localStorage.setItem('equipment-occupied-session', '[]');
     await resetTestData({ clearFirebase: false, reload: false });
     expect(localStorage.getItem('auto-recommendations')).toBeNull();
     expect(localStorage.getItem('applied-patterns')).toBeNull();
+    expect(localStorage.getItem('equipment-occupied-session')).toBeNull();
   });
 
-  it('should preserve user data', async () => {
+  it('resetTestData should preserve user data', async () => {
     localStorage.setItem('logs', '[{"real":true}]');
     localStorage.setItem('weights', '{"110.4":true}');
     localStorage.setItem('active-theme', 'FORGE');
@@ -38,8 +49,7 @@ describe('DataCleanup — Firebase aware', () => {
     expect(localStorage.getItem('active-theme')).toBe('FORGE');
   });
 
-  it('USER_DATA_KEYS should include active-theme and other UI keys', () => {
-    expect(USER_DATA_KEYS).toContain('active-theme');
+  it('USER_DATA_KEYS should include notif-enabled, muted', () => {
     expect(USER_DATA_KEYS).toContain('notif-enabled');
     expect(USER_DATA_KEYS).toContain('muted');
   });
@@ -56,12 +66,50 @@ describe('DataCleanup — Firebase aware', () => {
     expect(overlap).toHaveLength(0);
   });
 
-  it('fullReset should remove both user and test keys', async () => {
+  it('TEST_RESIDUE_KEYS should include equipment-occupied-session', () => {
+    expect(TEST_RESIDUE_KEYS).toContain('equipment-occupied-session');
+  });
+
+  it('PRESERVE_ON_RESET_KEYS should include active-theme and device-id', () => {
+    expect(PRESERVE_ON_RESET_KEYS).toContain('active-theme');
+    expect(PRESERVE_ON_RESET_KEYS).toContain('device-id');
+  });
+
+  it('fullReset should remove user data and test keys', async () => {
     localStorage.setItem('logs', '[{"real":true}]');
     localStorage.setItem('auto-recommendations', '[]');
+    localStorage.setItem('ex-extra-sets-Bench Press', '1');
     await fullReset({ clearFirebase: false, reload: false });
     expect(localStorage.getItem('logs')).toBeNull();
     expect(localStorage.getItem('auto-recommendations')).toBeNull();
+  });
+
+  it('fullReset should clear dynamic keys (ex-extra-sets-*, muscle-extra-*, aa-cooldown-*)', async () => {
+    localStorage.setItem('ex-extra-sets-Bench Press', '1');
+    localStorage.setItem('muscle-extra-chest', 'true');
+    localStorage.setItem('aa-cooldown-Squat', '1714000000000');
+    await fullReset({ clearFirebase: false, reload: false });
+    expect(localStorage.getItem('ex-extra-sets-Bench Press')).toBeNull();
+    expect(localStorage.getItem('muscle-extra-chest')).toBeNull();
+    expect(localStorage.getItem('aa-cooldown-Squat')).toBeNull();
+  });
+
+  it('fullReset should preserve device-id and active-theme', async () => {
+    localStorage.setItem('device-id', 'dev-abc123');
+    localStorage.setItem('active-theme', 'forge');
+    localStorage.setItem('logs', '[{"real":true}]');
+    await fullReset({ clearFirebase: false, reload: false });
+    expect(localStorage.getItem('device-id')).toBe('dev-abc123');
+    expect(localStorage.getItem('active-theme')).toBe('forge');
+    expect(localStorage.getItem('logs')).toBeNull();
+  });
+
+  it('fullReset should write __suppressFirebaseSyncUntil for post-reload suppression', async () => {
+    const before = Date.now();
+    await fullReset({ clearFirebase: false, reload: false });
+    const suppressUntil = localStorage.getItem('__suppressFirebaseSyncUntil');
+    expect(suppressUntil).not.toBeNull();
+    expect(Number(suppressUntil)).toBeGreaterThan(before);
   });
 });
 

@@ -2,7 +2,7 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
 
-**Ultima actualizare:** 25 apr 2026 (post-Task #26 QA)  
+**Ultima actualizare:** 25 apr 2026 (post-Task #27)  
 **Total findings:** 127 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr)  
 **Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale)
 
@@ -41,7 +41,7 @@
 | C4c | Log schema incompletă — `kg` și `set` lipseau din `confirmReps` | 🟢 FIXED | FAZA 2 |
 | C5c | `endSession` șterge automat sesiunile < 5 min — data loss | 🟢 FIXED | FAZA 2 |
 | **C10c** | **Director cache invalidation loop — `[Cache] Director session invalidated` × 12+ per page load (Firebase sync scope)** | 🟢 FIXED | Task #26 (suppressInvalidations + debounce 250ms) |
-| **C11c** | **Full Reset declanșează cache cascade 12+ invalidări — `dataCleanup.js:174,279,339,433` direct invalidate() + post-reload sync** | 🔴 **OPEN** | Task #27 (scope extended) |
+| **C11c** | **Full Reset declanșează cache cascade 12+ invalidări — `dataCleanup.js:174,279,339,433` direct invalidate() + post-reload sync** | 🟢 FIXED | Task #27 (scheduleInvalidation + __suppressFirebaseSyncUntil) |
 
 ---
 
@@ -64,8 +64,8 @@
 | H11c | `COACH_RELEVANT_KEYS` 5 keys — cache invalidat incorect pe 6+ write paths | 🟢 FIXED | FAZA 2 |
 | H16c | `inactivityTimer` nu se re-armează corect după `skipPause` | 🟢 FIXED | FAZA 2 |
 | **H30c** | **Pattern learning false positives pe cold_start — 88-100% skip rate pe date inexistente** | 🔴 **OPEN** | Task #28 + #29 |
-| **H31c** | **Full Reset nu curăță `applied-patterns` + dinamice (muscle-extra-*, ex-extra-sets-*, aa-cooldown-*, equipment-occupied-session) — registry gap** | 🔴 **OPEN** | Task #27 (registry-based reset) |
-| **H32c** | **"Rerun onboarding" nu funcționează post Full Reset — `onboarding-done` persistă sau re-populat prin Firebase pull** | 🔴 **OPEN** | Task #27 (investigate în scope extended) |
+| **H31c** | **Full Reset nu curăță `applied-patterns` + dinamice (muscle-extra-*, ex-extra-sets-*, aa-cooldown-*, equipment-occupied-session) — registry gap** | 🟢 FIXED | Task #27 (localStorage.clear() whitelist + dataRegistry.js) |
+| **H32c** | **"Rerun onboarding" nu funcționează post Full Reset — `onboarding-done` persistă sau re-populat prin Firebase pull** | 🟢 FIXED | Task #27 (__suppressFirebaseSyncUntil survives reload, suppresses stale Firebase pull) |
 
 ---
 
@@ -102,11 +102,9 @@
 
 ## OPEN BUGS (prioritizate pentru sprint curent)
 
-### 🔴 C11c — Full Reset cache cascade 12+ invalidări (CRITICAL — NEW 25 apr)
-**Symptom:** Full Reset → reload → 12+ `[Cache] Director session invalidated` + 12+ `[CoachDirector] Calibration: cold_start`  
-**Root cause suspect:** `dataCleanup.js:174,279,339,433` apelează `window._directorCache.invalidate()` direct (bypass debounce Task #26) + post-reload `syncFromFirebase` cu `window._suppressFirebaseSync` reset  
-**QA context:** [[QA_MANUAL_25APR_POSTFIX]]  
-**Task:** #27 (scope extended)
+### 🟢 C11c — Full Reset cache cascade 12+ invalidări (FIXED Task #27)
+**Root cause:** `dataCleanup.js` 4 direct `invalidate()` calls bypassed debounce; `window._suppressFirebaseSync` lost on reload → stale Firebase pull restored data after reset.  
+**Fix:** (1) Direct calls replaced with `scheduleInvalidation()`. (2) `localStorage.__suppressFirebaseSyncUntil` written before reload, checked in `syncFromFirebase` — survives page reload.
 
 ### 🔴 H30c — Pattern false positives pe cold_start (HIGH)
 **Symptom:** "Marți 88% skip rate", "Miercuri 100% skip rate" după deploy fresh  
@@ -114,17 +112,13 @@
 **QA context:** [[QA_MANUAL_24APR_2230]], [[QA_MANUAL_25APR_POSTFIX]] (re-confirmat)  
 **Task:** #28 + #29
 
-### 🔴 H31c — Full Reset incomplet (HIGH)
-**Symptom:** `applied-patterns`, `muscle-extra-*`, `ex-extra-sets-*`, `aa-cooldown-*`, `equipment-occupied-session` supraviețuiesc Full Reset  
-**Root cause:** Niciun registry central al keys; `dataCleanup.js:212` listă statică incompletă  
-**QA context:** [[QA_MANUAL_24APR_2230]], [[QA_MANUAL_25APR_POSTFIX]] (extinsă)  
-**Task:** #27
+### 🟢 H31c — Full Reset incomplet (FIXED Task #27)
+**Root cause:** Blacklist approach missing dynamic keys. Fixed with whitelist: `localStorage.clear()` + restore `PRESERVE_ON_RESET_KEYS` = [device-id, active-theme, last-backup].  
+**Registry:** `src/util/dataRegistry.js` — central source of truth for all key lists.
 
-### 🔴 H32c — Rerun onboarding down post-reset (HIGH — NEW 25 apr)
-**Symptom:** Daniel: "Rerun onboarding down" — după Full Reset, onboarding nu se declanșează  
-**Root cause suspect:** `onboarding-done` re-populat prin Firebase pull dacă PUT null n-a propagat la timp; sau inject.js autoset  
-**QA context:** [[QA_MANUAL_25APR_POSTFIX]]  
-**Task:** #27 (investigate în scope extended)
+### 🟢 H32c — Rerun onboarding down post-reset (FIXED Task #27)
+**Root cause:** `window._suppressFirebaseSync` lost on reload → `syncFromFirebase` ran at post-reset load and restored stale Firebase data (onboarding-done, logs, etc.).  
+**Fix:** `localStorage.__suppressFirebaseSyncUntil` (10 s window) written before reload, gates `syncFromFirebase` on next page load.
 
 ---
 
@@ -153,10 +147,10 @@
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 16 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: **C10c**) |
-| 🔴 OPEN | 4 (C11c CRITICAL, H30c, H31c, H32c — toate escalate din QA) |
+| 🟢 FIXED | 19 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c**) |
+| 🔴 OPEN | 1 (H30c — pattern false positives, target Task #28 + #29) |
 | 🟡 DEFERRED | ~100 (majority — planificate FAZA 3/4) |
 | ⚪ WONTFIX | 0 |
 
 **Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]  
-**Next sprint:** Task #27 (CRITICAL extended) → Task #28 + #29 (HIGH)
+**Next sprint:** Task #28 + #29 (H30c pattern false positives)
