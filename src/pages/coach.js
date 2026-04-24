@@ -6,6 +6,8 @@ import { formatSetsReps, getGroupColor, getExGroup, isInCutPhase,
          getTodayExercises, beepStart, resetNotes } from './coach/util.js';
 export { getGroupColor, getExGroup, getDisplayTime, calcAccurateTime,
          getAdaptiveTime, getTodayExercises, resetNotes } from './coach/util.js';
+import { extractAndSavePRs, cleanFakeLogs, renderPRWall, togglePRWall as _togglePRWall } from './coach/pr.js';
+export { extractAndSavePRs, cleanFakeLogs, renderPRWall } from './coach/pr.js';
 import { DB, $, tod, cleanEx } from '../db.js';
 import { syncToFirebase } from '../firebase.js';
 import { PROG, EX_SETS, COMPOUND_EX, PAUSE_COMPOUND, PAUSE_ISO } from '../constants.js';
@@ -1004,33 +1006,6 @@ export function checkWeightReminder() {
   }
 }
 
-// ── FIX 3a: Extrage și salvează PR-uri în storage dedicat ────────────────
-export function extractAndSavePRs() {
-  const logs = DB.get('logs') || [];
-  const prMap = {};
-  logs.filter(l => l.w && l.reps && !l.baseline).forEach(l => {
-    const score = l.w * (parseInt(l.reps) || 1);
-    if (!prMap[l.ex] || score > prMap[l.ex].score) {
-      prMap[l.ex] = { ex: l.ex, kg: l.w, reps: l.reps, date: l.date, ts: l.ts, score };
-    }
-  });
-  const prs = Object.values(prMap).sort((a, b) => (b.ts || 0) - (a.ts || 0));
-  DB.set('pr-records', prs);
-  return prs;
-}
-
-// ── FIX 3b: cleanFakeLogs simplificată — extrage PR-uri înainte ──────────
-export function cleanFakeLogs() {
-  extractAndSavePRs();
-  const logs = DB.get('logs') || [];
-  const before = logs.length;
-  const result = filterValidLogs(logs);
-  if (result.length !== logs.length) DB.set('logs', result);
-  const removed = before - result.length;
-  toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
-  renderCoachIdle();
-  if (window.renderDash) window.renderDash();
-}
 
 // ── FIX 2b: Finish Early — funcții ───────────────────────────────────────
 export function finishEarly() {
@@ -1105,48 +1080,7 @@ export function saveStepsQuick(){
   renderCoachIdle();
 }
 
-export function togglePRWall() {
-  uiToggleFlags.prWallExpanded = !uiToggleFlags.prWallExpanded;
-  renderPRWall();
-}
-
-// ── FIX 3c: renderPRWall citește din 'pr-records' ────────────────────────
-export function renderPRWall() {
-  const el = $('pr-wall-list');
-  if (!el) return;
-
-  // Citește din storage dedicat; dacă nu există, calculează din logs
-  const prs = DB.get('pr-records') || extractAndSavePRs();
-
-  const entries = prs.filter(p => p.ex && p.ex !== '__early_stop__');
-  if (!prs.length || !entries.length) {
-    el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
-      <div style="font-size:32px;margin-bottom:10px">🎯</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Niciun record personal încă</div>
-      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completează primul antrenament pentru a-ți vedea recordurile personale</div>
-    </div>`;
-    return;
-  }
-
-  const visible = uiToggleFlags.prWallExpanded ? entries : entries.slice(0, 3);
-  const hasMore = entries.length > 3;
-
-  el.innerHTML = visible.map((e, i) => {
-    const d = new Date(e.date);
-    const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear().toString().slice(2)}`;
-    const isLast = i === visible.length - 1 && !hasMore;
-    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;${!isLast ? 'border-bottom:1px solid var(--border)' : ''}">
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700">${e.ex}</div>
-        <div style="font-size:11px;color:var(--text3)">${dateStr}</div>
-      </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">${e.kg} kg</div>
-      <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps || '—'}</div>
-    </div>`;
-  }).join('') + (hasMore ? `<div onclick="togglePRWall()" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
-    ${uiToggleFlags.prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}
-  </div>` : '');
-}
+export function togglePRWall() { _togglePRWall(); }
 
 export function showReadinessModal() {
   if (document.getElementById('readiness-modal')) return;
