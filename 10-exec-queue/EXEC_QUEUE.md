@@ -166,3 +166,14 @@ PAȘI:
 **Dependencies:** TASK #9 DONE ✅
 
 ---
+
+## TASK #11
+**Model:** Sonnet
+**Priority:** MEDIUM
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.3 Fix M1 — Elimină fallback-uri moarte (l.weight, l.exercise, l.timestamp). Creează src/util/logNormalize.js cu normalizeLog(). NU aplica normalizeLog la call sites acum.
+**Acceptance:** Fallback-uri moarte (.weight/.exercise/.timestamp) eliminate, logNormalize.js creat, build + teste baseline menținut, git commit + push pe main.
+**Dependencies:** TASK #10 DONE ✅
+
+---

@@ -416,8 +416,8 @@ export function getInitialRecommendation(exerciseName, ctx) {
 function _findLastLog(name, recentLogs) {
   for (const session of recentLogs) {
     const logs = session.logs || [];
-    const log = logs.find(l => (l.exercise || l.ex) === name);
-    if (log) return { weight: log.weight ?? log.w, reps: log.reps };
+    const log = logs.find(l => l.ex === name);
+    if (log) return { weight: log.w, reps: log.reps };
   }
   return null;
 }

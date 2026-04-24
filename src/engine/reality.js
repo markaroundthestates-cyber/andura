@@ -61,8 +61,8 @@ export const realityEngine = {
 function findLastLogForExercise(exerciseName, recentLogs) {
   for (const session of recentLogs) {
     // Suportă format test (exercise/weight) și format real (ex/w)
-    const log = session.logs.find(l => (l.exercise || l.ex) === exerciseName);
-    if (log) return { weight: log.weight ?? log.w, ...log };
+    const log = session.logs.find(l => l.ex === exerciseName);
+    if (log) return { weight: log.w, ...log };
   }
   return null;
 }

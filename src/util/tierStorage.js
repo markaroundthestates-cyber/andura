@@ -62,8 +62,8 @@ export function aggregateLogs(logs) {
     const day = new Date(ts).toISOString().slice(0, 10);
     if (!byDay[day]) byDay[day] = { sets: 0, totalWeight: 0, exercises: new Set() };
     byDay[day].sets++;
-    byDay[day].totalWeight += Number(log.w ?? log.weight ?? 0);
-    byDay[day].exercises.add(log.ex ?? log.exercise ?? '');
+    byDay[day].totalWeight += Number(log.w ?? 0);
+    byDay[day].exercises.add(log.ex ?? '');
   }
   const result = {};
   for (const [day, data] of Object.entries(byDay)) {
@@ -98,7 +98,7 @@ export function archiveLogs(logs) {
     byMonth[month].totalSets++;
     sessionsByMonth[month].add(sessionKey);
 
-    const ex = log.ex ?? log.exercise ?? '';
+    const ex = log.ex ?? '';
     if (ex) byMonth[month].exercises[ex] = (byMonth[month].exercises[ex] ?? 0) + 1;
   }
 

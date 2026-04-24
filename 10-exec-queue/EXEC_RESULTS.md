@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #11 — DONE
+**Completed:** 2026-04-24 19:30
+**Duration:** 15min
+**Summary:** Eliminat toate fallback-urile moarte (l.weight, l.exercise, l.timestamp) din 10 fișiere de producție (dp, responseProfile, stagnationDetector, weaknessDetector, reality, tierStorage, coachDirector, calibration, coachContext, weight). Fixture-ul din coachDirector.test.js (2 locuri) updatat de la {exercise,weight,timestamp} la {ex,w,ts}. Creat src/util/logNormalize.js cu normalizeLog() pentru viitor. Grep final — 0 fallback-uri dead rămase în producție.
+**Files changed:** src/engine/dp.js, responseProfile.js, stagnationDetector.js, weaknessDetector.js, reality.js, coachDirector.js, calibration.js, coachContext.js; src/util/tierStorage.js, logNormalize.js (creat); src/pages/weight.js; src/engine/__tests__/coachDirector.test.js
+**Tests:** 42 pass / 1 fail pre-existent e2e / 2 skipped — baseline menținut
+**Issues:** NONE
+
+---
+
 ## TASK #10 — DONE
 **Completed:** 2026-04-24 19:00
 **Duration:** 5min

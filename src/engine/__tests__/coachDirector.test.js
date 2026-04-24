@@ -13,9 +13,10 @@ function setupReadiness(score) {
 
 function setupLogsForWeight(exerciseName, weight) {
   const today = new Date().toISOString().split('T')[0];
+  const ts = Date.now();
   const logs = [{
-    exercise: exerciseName, weight, reps: 8, rpe: 7,
-    date: today, timestamp: new Date().toISOString()
+    ex: exerciseName, w: weight, reps: 8, rpe: 7,
+    date: today, ts, session: ts, baseline: false
   }];
   localStorage.setItem('logs', JSON.stringify(logs));
 }
@@ -305,7 +306,7 @@ describe('Initial Recommendations', () => {
   it('should estimate from similar exercise when history exists', () => {
     const today = new Date().toISOString().split('T')[0];
     const ctx = {
-      recentLogs: [{ date: today, logs: [{ exercise: 'Bayesian Curl', weight: 18, reps: 10 }] }]
+      recentLogs: [{ date: today, logs: [{ ex: 'Bayesian Curl', w: 18, reps: 10 }] }]
     };
     const rec = getInitialRecommendation('Cable Curl', ctx);
     expect(rec.isInitial).toBe(true);

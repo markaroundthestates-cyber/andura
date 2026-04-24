@@ -128,7 +128,7 @@ function getLastNSessions(n) {
   const logs = getAllLogs();
   const byDate = {};
   for (const log of logs) {
-    const date = log.date || (log.timestamp && log.timestamp.split('T')[0]);
+    const date = log.date;
     if (!date) continue;
     if (!byDate[date]) byDate[date] = [];
     byDate[date].push(log);

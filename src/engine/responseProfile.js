@@ -32,7 +32,7 @@ function setsInSession(sessionLogs) {
  */
 function avg1RMForSession(sessionLogs) {
   const orms = sessionLogs
-    .map(l => brzycki1RM(l.w ?? l.weight, parseInt(l.reps, 10) || l.reps))
+    .map(l => brzycki1RM(l.w, parseInt(l.reps, 10) || l.reps))
     .filter(Boolean);
   if (orms.length === 0) return null;
   return orms.reduce((a, b) => a + b, 0) / orms.length;

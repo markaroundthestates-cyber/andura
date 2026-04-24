@@ -967,7 +967,7 @@ function renderSessionHistory() {
       // Group by exercise name for distinct exercise count + per-exercise details
       const byExercise = {};
       for (const log of realSets) {
-        const name = log.exercise || log.ex;
+        const name = log.ex;
         if (!name) continue;
         if (!byExercise[name]) byExercise[name] = [];
         byExercise[name].push(log);

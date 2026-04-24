@@ -22,7 +22,7 @@ function isoWeek(ts) {
  */
 function avg1RM(logs) {
   const orms = logs
-    .map(l => brzycki1RM(l.w ?? l.weight, parseInt(l.reps, 10) || l.reps))
+    .map(l => brzycki1RM(l.w, parseInt(l.reps, 10) || l.reps))
     .filter(Boolean);
   if (orms.length === 0) return null;
   return orms.reduce((a, b) => a + b, 0) / orms.length;
@@ -37,7 +37,7 @@ function avg1RM(logs) {
 export function weeklyProgression(exerciseName, logs) {
   const byWeek = new Map();
   for (const log of logs) {
-    const ex = log.ex ?? log.exercise;
+    const ex = log.ex;
     if (!ex || ex.toLowerCase() !== exerciseName.toLowerCase()) continue;
     const ts = log.ts ?? (log.date ? new Date(log.date).getTime() : null);
     if (!ts) continue;
@@ -85,7 +85,7 @@ export function detectStagnation(exerciseName, logs) {
 export function detectGlobalStagnation(logs) {
   if (!logs || logs.length === 0) return { maxStagnationWeeks: 0, byExercise: {} };
 
-  const exercises = [...new Set(logs.map(l => l.ex ?? l.exercise).filter(Boolean))];
+  const exercises = [...new Set(logs.map(l => l.ex).filter(Boolean))];
   const byExercise = {};
   let maxStagnationWeeks = 0;
 

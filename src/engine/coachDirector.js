@@ -135,7 +135,7 @@ export class CoachDirector {
           exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
         } else {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
-          const baseWeight = lastLog ? (lastLog.weight ?? lastLog.w ?? 20) : 20;
+          const baseWeight = lastLog ? (lastLog.w ?? 20) : 20;
           exercise.recommendation = { kg: baseWeight, weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
         }
 
@@ -158,7 +158,7 @@ export class CoachDirector {
       for (const exercise of session.exercises) {
         if (!exercise.recommendation) {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
-          const baseWeight = lastLog ? (lastLog.weight ?? lastLog.w ?? 20) : 20;
+          const baseWeight = lastLog ? (lastLog.w ?? 20) : 20;
           exercise.recommendation = { kg: baseWeight, weight: baseWeight, reps: 8, sets: exercise.sets || 3 };
         }
       }
@@ -242,7 +242,7 @@ export const coachDirector = new CoachDirector();
 function getLastLogFromContext(exerciseName, recentLogs) {
   if (!recentLogs || !recentLogs.length) return null;
   for (const session of recentLogs) {
-    const log = (session.logs || []).find(l => (l.exercise || l.ex) === exerciseName);
+    const log = (session.logs || []).find(l => l.ex === exerciseName);
     if (log) return log;
   }
   return null;
@@ -251,7 +251,7 @@ function getLastLogFromContext(exerciseName, recentLogs) {
 function _hasRecentLog(exerciseName, recentLogs) {
   if (!recentLogs || !recentLogs.length) return false;
   for (const session of recentLogs) {
-    if ((session.logs || []).some(l => (l.exercise || l.ex) === exerciseName)) return true;
+    if ((session.logs || []).some(l => l.ex === exerciseName)) return true;
   }
   return false;
 }

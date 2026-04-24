@@ -112,7 +112,7 @@ export function detectCalibrationLevel(ctx) {
   // Count unique sessions — a session = unique session timestamp or workout date
   const sessionKeys = new Set();
   for (const log of allLogs) {
-    const key = log.session ?? log.date ?? log.timestamp;
+    const key = log.session ?? log.date;
     if (!key) continue;
     const s = String(key);
     // Normalize ISO timestamps to date part; keep arbitrary session IDs as-is
@@ -123,7 +123,7 @@ export function detectCalibrationLevel(ctx) {
   // First session date
   const dates = allLogs
     .map(l => {
-      const raw = l.date || l.timestamp || l.ts;
+      const raw = l.date || l.ts;
       const d = raw ? new Date(raw) : null;
       return d && !isNaN(d.getTime()) ? d : null;
     })
@@ -165,7 +165,7 @@ export function applyRollingWindow(logs, level) {
   if (!level.rollingWindowMonths) return logs;
   const cutoff = Date.now() - level.rollingWindowMonths * 30 * 24 * 60 * 60 * 1000;
   return logs.filter(log => {
-    const raw = log.date || log.timestamp || log.ts;
+    const raw = log.date || log.ts;
     const d = raw ? new Date(raw) : null;
     return d && !isNaN(d.getTime()) && d.getTime() >= cutoff;
   });

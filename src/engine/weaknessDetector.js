@@ -32,7 +32,7 @@ function _headToGroup(head) {
 function getLastLogPerExercise(logs) {
   const byEx = new Map();
   for (const log of logs) {
-    const ex = log.ex ?? log.exercise;
+    const ex = log.ex;
     if (!ex) continue;
     if (!byEx.has(ex)) byEx.set(ex, log);
   }
@@ -75,7 +75,7 @@ export function compute1RMByGroup(logs) {
   for (const [ex, log] of lastPerEx) {
     const group = resolveGroup(ex);
     if (!group) continue;
-    const w = log.w ?? log.weight;
+    const w = log.w;
     const r = parseInt(log.reps, 10) || log.reps;
     const orm = brzycki1RM(w, r);
     if (!orm) continue;
