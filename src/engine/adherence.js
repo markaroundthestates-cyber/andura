@@ -30,8 +30,8 @@ export function getAdherenceScore() {
     // Rest day = automatic compliance
     score += 30;
   } else {
-    // Check if there are non-baseline logs for today
-    const todayLogs = logs.filter(l => l.date === today && !l.baseline);
+    // Check if there are non-baseline, non-marker logs for today
+    const todayLogs = logs.filter(l => l.date === today && !l.baseline && l.ex !== '__early_stop__');
     if (todayLogs.length > 0) score += 30;
   }
 

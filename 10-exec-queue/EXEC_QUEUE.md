@@ -147,3 +147,22 @@ PAȘI:
 **Dependencies:** NONE
 
 ---
+
+## TASK #10
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.3 Fix M2 — adherence.js nu filtrează __early_stop__ marker.
+
+Referință: docs/LOG_SCHEMA_AUDIT_1_3.md secțiunea Mismatches, finding M2.
+
+PAȘI:
+1. Citește src/engine/adherence.js — identifică unde se contorizează workout sets.
+2. Adaugă filter pentru __early_stop__: loguri cu ex === '__early_stop__' NU trebuie să conteze ca workout sets legitime. Folosește filterValidLogs dacă există în src/util/logFilter.js, altfel filter inline.
+3. Scrie test: Input: 3 loguri normale + 1 log cu ex='__early_stop__'. Expected: adherence score calculat pe 3 loguri (nu 4).
+4. Verificare: npm run build — zero erori. npm run test:all — baseline menținut + test nou pass.
+**Acceptance:** adherence.js filtrează __early_stop__, test nou acoperă cazul, git commit + push pe main.
+**Dependencies:** TASK #9 DONE ✅
+
+---

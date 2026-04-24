@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #10 — DONE
+**Completed:** 2026-04-24 19:00
+**Duration:** 5min
+**Summary:** adherence.js:34 — adăugat `l.ex !== '__early_stop__'` la filter pentru todayLogs. Un __early_stop__ marker nu mai contează ca workout set legitim în adherence score. 3 teste noi: (1) 3 seturi reale = workout done, (2) numai marker = nu acordă punctaj, (3) seturi reale + marker = workout done corect.
+**Files changed:** src/engine/adherence.js, src/engine/__tests__/adherence.test.js (creat)
+**Tests:** 3 added — all pass; total 42 pass / 1 fail pre-existent / 2 skipped (session-logs-persist s-a rezolvat automat post TASK#8)
+**Issues:** NONE
+
+---
+
 ## TASK #9 — DONE
 **Completed:** 2026-04-24 18:30
 **Duration:** 15min
