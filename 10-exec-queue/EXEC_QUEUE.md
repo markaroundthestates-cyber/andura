@@ -440,3 +440,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Dependencies:** TASK #24 DONE ✅
 
 ---
+
+## TASK #24d
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** HIGH
+**Status:** DONE ✅
+**Created:** 2026-04-24
+**Completed:** 2026-04-24
+**Description:** Diagnostic sync vault Obsidian vs GitHub — creează VAULT_SYNC_DIAGNOSTIC.md cu lista completă fișiere .md pe main, commits azi, instrucțiuni pull forțat pentru Daniel.
+**Acceptance:** VAULT_SYNC_DIAGNOSTIC.md creat, raport terminal, git commit + push.
+**Dependencies:** TASK #24c DONE ✅
+**Result:** docs/VAULT_SYNC_DIAGNOSTIC.md creat — 33 fișiere inventariate, 15 commits azi, 3 metode pull, troubleshooting auth/conflict/detached-HEAD.
+
+---
