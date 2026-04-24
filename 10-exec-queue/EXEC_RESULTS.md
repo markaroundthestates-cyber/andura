@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #13 — DONE
+**Completed:** 2026-04-24 20:30
+**Duration:** 8min
+**Summary:** Bug identificat: coachContext.js apelează getAllLogs() (full history) dar NU îl pune în context. coachDirector.js derivă ctx.allLogs din recentLogs.flatMap() → max 3 sesiuni → COLD_START forever. Fix = 2 linii: expune allLogs în buildCoachContext() + înlocuiește derivarea din coachDirector. Performance: zero impact (getAllLogs() deja apelat). Audit complet în docs/CTX_ALLLOGS_AUDIT_1_5.md.
+**Files changed:** docs/CTX_ALLLOGS_AUDIT_1_5.md (creat)
+**Tests:** N/A — audit only
+**Issues:** NONE
+
+---
+
 ## TASK #12 — DONE
 **Completed:** 2026-04-24 20:00
 **Duration:** 10min

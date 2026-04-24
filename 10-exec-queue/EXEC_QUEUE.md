@@ -188,3 +188,25 @@ PAȘI:
 **Dependencies:** TASK #11 DONE ✅
 
 ---
+
+## TASK #13
+**Model:** Sonnet
+**Priority:** MEDIUM
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.5 AUDIT — ctx.allLogs calibration fix plan (ZERO execuție). Identifică unde se construiește ctx.allLogs, unde e folosit, impact, edge cases. Creează docs/CTX_ALLLOGS_AUDIT_1_5.md.
+**Acceptance:** docs/CTX_ALLLOGS_AUDIT_1_5.md creat cu toate secțiunile, zero modificări cod, git commit + push pe main.
+**Dependencies:** NONE
+
+---
+
+## TASK #14
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** FAZA 1.7 — AA Engine decizie: activate sau delete. Citește aa.js, decide ACTIVATE (minimal viable) sau DELETE (clean), implementează.
+**Acceptance:** Decizie luată și implementată, teste pass, build clean, git commit + push.
+**Dependencies:** TASK #12 DONE ✅
+
+---
