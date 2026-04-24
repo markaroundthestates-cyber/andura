@@ -468,3 +468,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** salafull-vault repo → 404 (nu există). 0 referințe "salafull-vault" în docs. VAULT_CONSOLIDATION_GUIDE.md creat cu clone fresh + Obsidian Git config. INDEX_MASTER actualizat cu secțiune Vault Setup.
 
 ---
+
+## TASK #24f
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** LOW
+**Status:** DONE ✅
+**Created:** 2026-04-24
+**Completed:** 2026-04-24
+**Description:** Obsidian Graph View visual config — colors per folder + layout optim. Creează .obsidian/graph.json cu 14 colorGroups.
+**Acceptance:** .obsidian/graph.json scris, JSON valid, git commit + push.
+**Dependencies:** TASK #24e DONE ✅
+**Result:** .obsidian/graph.json creat — JSON valid, 14 colorGroups, textFadeMultiplier 0, nodeSize 1.2x, linkDistance 250. Daniel: Ctrl+P → "Reload app without saving" în Obsidian.
+
+---
