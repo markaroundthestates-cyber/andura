@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 24 apr 2026 (noapte târziu)
-**Status:** FAZA 1 — Engine Bulletproof (1.1–1.6 DONE, 1.7+1.8 pending)
+**Ultima actualizare:** 24 apr 2026 (noapte)
+**Status:** FAZA 1 COMPLETE — FAZA 2 urmează (sessionBuilder real, bug fixes reliability)
 
 ---
 
@@ -60,19 +60,25 @@
 - Obsidian + Git sync PC work → GitHub privat
 - Pending: PC acasă setup, phone later (decidem Obsidian Sync $8/mo sau rămân Git)
 
-### 🔜 FAZA 1 — ENGINE BULLETPROOF (IN PROGRESS)
+### ✅ FAZA 1 — ENGINE BULLETPROOF (COMPLETE — 24 apr 2026)
 Sub-faze:
 - ✅ 1.0 Split coach.js planning (Opus) — DONE 24 apr 2026, COACH_SPLIT_PLAN.md 714 linii, confidence 82%
-- ✅ 1.1 Split coach.js execuție (Sonnet) — DONE 24 apr 2026, 9 module + orchestrator live, zero regresii, merged main commit 9875755
-- ✅ 1.2 Multi-tenancy decouple (DONE 24 apr 2026)
-- ✅ 1.3 Log schema cleanup (DONE 24 apr 2026)
-- ✅ 1.4 cleanDuplicateLogs fix (DONE 24 apr 2026)
-- ✅ 1.5 ctx.allLogs real — calibration live (DONE 24 apr 2026)
+- ✅ 1.1 Split coach.js execuție (Sonnet) — DONE 24 apr 2026, 9 module + orchestrator live, zero regresii, commit 9875755
+- ✅ 1.2 Multi-tenancy decouple — DONE 24 apr 2026, config/user.js + 14 fișiere decoupled
+- ✅ 1.3 Log schema cleanup — DONE 24 apr 2026, 7 mismatches rezolvate + logNormalize.js
+- ✅ 1.4 cleanDuplicateLogs fix — DONE 24 apr 2026, dedupe strict pe ts
+- ✅ 1.5 ctx.allLogs real — DONE 24 apr 2026, calibration funcționează pentru 80+ sesiuni
 - ✅ 1.6 sessionBuilder cleanup OPT B — DONE 24 apr 2026 (OPT A = FAZA 2 Priority 1)
-- ⏳ 1.7 AA engine decizie (activate sau delete)
-- ⏳ 1.8 Firebase security + sync cap
+- ✅ 1.7 AA engine activate notes-only — DONE 24 apr 2026, RPE logic eliminat, safety net defensiv
+- ✅ 1.8 Firebase: audit + data loss fix 500→5000 + rules v1 plan — DONE 24 apr 2026 (rules = acțiune manuală)
 
-### ⏳ FAZA 2 — BUG FIXES + RELIABILITY
+### ⏳ FAZA 2 — BUG FIXES + RELIABILITY (URMEAZĂ)
+Details: docs/FAZA_2_ROADMAP.md
+- Priority 1: sessionBuilder context-aware (OPT A, 3-4h)
+- Priority 2: crash/leak bugs (C2c, C3c, H4c, H6c, H9c, H11c)
+- Priority 3: logic bugs (M3g, H13g, H14g, M7c)
+- Exit: zero breakdown în 3-5 zile usage real
+
 ### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
 ### ⏳ FAZA 4 — FEATURES NOI (144 programe, injury, health export)
 
