@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #12 — DONE
+**Completed:** 2026-04-24 20:00
+**Duration:** 10min
+**Summary:** M3: eliminat rpe:8 fals din persisted log și sessLog în logging.js. M4: sessLog.reps normalizat la String(). M5: userOverride dead eliminat din inject.js (2 write sites). M6: sessLog.kg→w în logging.js+session.js (write + 3 read sites). M7: deja rezolvat în T#11. INDEX_MASTER actualizat (1.3+1.4 ✅ DONE). DECISION_LOG entry FAZA 1.3 adăugat.
+**Files changed:** src/pages/coach/logging.js, src/pages/coach/session.js, src/inject.js, 00-index/INDEX_MASTER.md, 03-decisions/DECISION_LOG.md
+**Tests:** 42 pass / 1 fail pre-existent / 2 skipped — baseline menținut
+**Issues:** NONE
+
+---
+
 ## TASK #11 — DONE
 **Completed:** 2026-04-24 19:30
 **Duration:** 15min

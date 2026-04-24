@@ -96,9 +96,9 @@ export function confirmReps() {
   const noteArr = [...state.activeNotes]; resetNotes();
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
   state.sessionKgOverride = null;
-  logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, sets: 1, reps: String(state.sessRepsInput), rpe: 8, notes: noteArr, ts: Date.now(), session: state.sessStart });
+  logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart });
   DB.set('logs', logs.slice(0, 500));
-  state.sessLog.push({ ex: state.currentEx, kg: logKg, rpe: 8, set: state.currentSet, reps: state.sessRepsInput });
+  state.sessLog.push({ ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) });
   const ssc = $('sess-progress-txt'); if (ssc) ssc.textContent = `${state.completedExercises.size}/${state.sessionTotalExercises || getTodayExercises().length}`;
 
   saveDraft();
@@ -142,7 +142,7 @@ export function renderSessLog() {
     return `<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-size:12px;font-weight:500">${s.ex}</div>
-        <div style="font-size:10px;color:var(--text2);margin-top:1px">Set ${s.set} · ${s.kg}kg · ${s.reps || '?'} reps${s.notes && s.notes.length ? ' · <span style="color:var(--accent2)">' + s.notes.join(', ') + '</span>' : ''}</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:1px">Set ${s.set} · ${s.w}kg · ${s.reps || '?'} reps${s.notes && s.notes.length ? ' · <span style="color:var(--accent2)">' + s.notes.join(', ') + '</span>' : ''}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:22px">${s.rpe >= 9 ? '🔴' : s.rpe >= 8 ? '🟠' : s.rpe >= 7 ? '🟡' : '🟢'}</span>

@@ -177,3 +177,14 @@ PAȘI:
 **Dependencies:** TASK #10 DONE ✅
 
 ---
+
+## TASK #12
+**Model:** Sonnet
+**Priority:** MEDIUM
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.3 Fix M3-M7 — Consolidare consistență schema. M3: omite rpe fals din logging.js. M4: tipuri consistente. M5: elimina userOverride dead. M6: aliniere sessLog (kg→w). M7: deja rezolvat. Update INDEX_MASTER + DECISION_LOG.
+**Acceptance:** M3-M7 rezolvate, INDEX_MASTER + DECISION_LOG actualizate, build + teste OK, git commit + push pe main.
+**Dependencies:** TASK #11 DONE ✅
+
+---

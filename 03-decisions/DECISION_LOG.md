@@ -12,6 +12,22 @@
 
 ---
 
+## 2026-04-24 — FAZA 1.3 Log Schema Cleanup (DONE)
+
+**Scope:** Curățare schema loguri, eliminare fallback-uri moarte, fix bug-uri schema.
+**Surprise:** Audit a găsit că NU e nevoie de migration one-shot. Schema actuală e OK, doar are fallback-uri moarte + 1 bug activ (adherence M2).
+
+**Ce s-a făcut:**
+- Task #9: Audit schema — 7 mismatches identificate (M1–M7)
+- Task #10: Fix M2 (adherence __early_stop__ filter) — bonus: reparat și 1 e2e test failing
+- Task #11: Eliminare fallback-uri moarte (l.weight/l.exercise/l.timestamp) din 10 fișiere + creat logNormalize.js
+- Task #12: Consolidare M3-M7 — omis rpe fals, aliniat sessLog.kg→w, eliminat userOverride dead
+
+**Validare:** Teste baseline menținute. 216 unit tests pass (vs 41 e2e inițial).
+**Commits:** 79081d1, 894e341, 28fe2b9, + commit curent
+
+---
+
 ## 2026-04-24 — FAZA 1.2 Multi-tenancy Decouple (DONE)
 
 **Scope:** Elimina Daniel-hardcoded values din codebase.

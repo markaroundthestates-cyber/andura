@@ -139,7 +139,6 @@ export function injectRealSessions() {
     pull.forEach((s, i) => newLogs.push({
       date:'2026-04-21', ex:s.ex, w:s.w, sets:1, reps:s.reps, rpe:s.rpe,
       ts: s21 + i * 3000, session: s21, baseline: false,
-      userOverride: false,
     }));
   }
 
@@ -175,7 +174,6 @@ export function injectRealSessions() {
     push.forEach((s, i) => newLogs.push({
       date:'2026-04-22', ex:s.ex, w:s.w, sets:1, reps:s.reps, rpe:s.rpe,
       ts: s22 + i * 3000, session: s22, baseline: false,
-      userOverride: s.userOverride || false,
     }));
   }
 

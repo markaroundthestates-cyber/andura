@@ -137,7 +137,7 @@ export function endSession() {
   DB.set('session-burns', burnLog.slice(0, 100));
 
   // ── Calculează sumar sesiune ──────────────────────────────────────────────
-  const totalVolume = state.sessLog.reduce((a, s) => a + (s.kg * (s.reps || 8)), 0);
+  const totalVolume = state.sessLog.reduce((a, s) => a + (s.w * (parseInt(s.reps) || 8)), 0);
   const totalSets = state.sessLog.length;
   const uniqueEx = [...new Set(state.sessLog.map(s => s.ex))];
   const avgRPE = state.sessLog.filter(s => s.rpe).reduce((a, s, _, arr) => a + s.rpe / arr.length, 0);
@@ -151,8 +151,8 @@ export function endSession() {
   const prs = [];
   uniqueEx.forEach(ex => {
     const thisSess = state.sessLog.filter(s => s.ex === ex);
-    const bestKg = Math.max(...thisSess.map(s => s.kg));
-    const bestReps = Math.max(...thisSess.filter(s => s.kg === bestKg).map(s => s.reps || 8));
+    const bestKg = Math.max(...thisSess.map(s => s.w));
+    const bestReps = Math.max(...thisSess.filter(s => s.w === bestKg).map(s => parseInt(s.reps) || 8));
     // Compare to historical (exclude today's session)
     const historical = allLogs.filter(l => l.ex === ex && l.session !== state.sessStart && !l.baseline);
     if (!historical.length) {
