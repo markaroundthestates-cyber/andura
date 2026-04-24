@@ -5,6 +5,7 @@ import { saveReadiness, READINESS_LABELS } from '../../engine/readiness.js';
 import { updateExCard } from './logging.js';
 import { getCachedDirector, sessionCache } from './state.js';
 import { state } from '../../state.js';
+import { renderCoachIdle } from './renderIdle.js';
 
 export function showReadinessModal() {
   if (document.getElementById('readiness-modal')) return;
@@ -32,8 +33,7 @@ export function selectReadiness(value) {
   saveReadiness(value);
   const modal = document.getElementById('readiness-modal');
   if (modal) modal.remove();
-  // CICLU D (temporar): renderCoachIdle nu e extras încă
-  window.renderCoachIdle?.();
+  renderCoachIdle();
   toast(`${READINESS_LABELS[value].emoji} ${READINESS_LABELS[value].label}`, 'var(--accent)');
 }
 

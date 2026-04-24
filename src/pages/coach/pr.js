@@ -2,6 +2,7 @@ import { DB, $ } from '../../db.js';
 import { toast } from '../../ui/ui.js';
 import { filterValidLogs } from '../../util/logFilter.js';
 import { uiToggleFlags } from './state.js';
+import { renderCoachIdle } from './renderIdle.js';
 
 export function extractAndSavePRs() {
   const logs = DB.get('logs') || [];
@@ -25,8 +26,7 @@ export function cleanFakeLogs() {
   if (result.length !== logs.length) DB.set('logs', result);
   const removed = before - result.length;
   toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
-  // CICLU A (temporar): renderCoachIdle nu e extras încă
-  window.renderCoachIdle?.();
+  renderCoachIdle();
   if (window.renderDash) window.renderDash();
 }
 

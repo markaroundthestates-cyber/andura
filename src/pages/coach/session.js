@@ -8,6 +8,7 @@ import { stopPause, setupInactivity, teardownInactivity } from './restTimer.js';
 import { showSessionRating } from './rating.js';
 import { wakeLockRef } from './state.js';
 import { state } from '../../state.js';
+import { renderCoachIdle } from './renderIdle.js';
 
 export function saveDraft() {
   if (!state.sessActive || !state.sessStart) return;
@@ -102,7 +103,7 @@ export function cancelWorkout() {
   hidePauseScreen();
   const tsEl = $('today-screen'); if (tsEl) tsEl.style.display = 'block';
   toast('❌ Antrenament anulat — nicio dată salvată', 'var(--red)');
-  window.renderCoachIdle?.(); // CICLU E (temporar)
+  renderCoachIdle();
 }
 
 export function endSession() {
@@ -121,7 +122,7 @@ export function endSession() {
     const suEl2 = $('session-ui'); if (suEl2) suEl2.style.display = 'none';
     const ts = $('today-screen'); if (ts) ts.style.display = 'block';
     toast('🧹 Sesiune test ștearsă automat', 'var(--accent2)');
-    window.renderCoachIdle?.(); // CICLU E (temporar)
+    renderCoachIdle();
     if (window.renderDash) window.renderDash();
     return;
   }
@@ -175,7 +176,7 @@ export function closeSummary() {
   const m = document.getElementById('summary-modal');
   if (m) m.remove();
   const ts = $('today-screen'); if (ts) ts.style.display = 'block';
-  window.renderCoachIdle?.(); // CICLU E (temporar)
+  renderCoachIdle();
   if (window.renderDash) window.renderDash();
   // Auto close day if it's evening (22:00–23:59)
   const h = new Date().getHours();
