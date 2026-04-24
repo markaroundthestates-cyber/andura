@@ -232,3 +232,14 @@ PAȘI:
 **Dependencies:** NONE
 
 ---
+
+## TASK #17
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.6 — Cleanup sessionBuilder dead code (OPT B). Șterge sessionBuilder.js, elimină dynamic import + null check din coachDirector. Creează docs/FAZA_2_ROADMAP.md. Update DECISION_LOG + INDEX_MASTER.
+**Acceptance:** sessionBuilder.js șters, imports curate, FAZA_2_ROADMAP.md creat, vault actualizat, build + teste OK, git commit + push.
+**Dependencies:** TASK #16 DONE ✅
+
+---

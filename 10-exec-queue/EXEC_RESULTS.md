@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #17 — DONE
+**Completed:** 2026-04-24 22:30
+**Duration:** 12min
+**Summary:** OPT B executat: șters src/engine/sessionBuilder.js (era `export const sessionBuilder = null`). Din coachDirector.js eliminat dynamic import block + null check + 3 code paths morți (linii 95-107), înlocuit cu `let session = this.fallbackSessionBuilder(sessionType, ctx)`. Build curat — chunk sessionBuilder dispărut din dist. Creat docs/FAZA_2_ROADMAP.md cu Priority 1 = context-aware session building (OPT A, 3-4h, FAZA 2). DECISION_LOG + INDEX_MASTER actualizate (1.1-1.6 DONE).
+**Files changed:** src/engine/sessionBuilder.js (șters), src/engine/coachDirector.js, docs/FAZA_2_ROADMAP.md (creat), 00-index/INDEX_MASTER.md, 03-decisions/DECISION_LOG.md
+**Tests:** 42 pass / 1 fail pre-existing / 2 skipped — baseline menținut
+**Issues:** NONE
+
+---
+
 ## TASK #16 — DONE
 **Completed:** 2026-04-24 22:00
 **Duration:** 8min

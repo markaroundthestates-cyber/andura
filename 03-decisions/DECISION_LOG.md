@@ -12,6 +12,20 @@
 
 ---
 
+## 2026-04-24 — FAZA 1.6 sessionBuilder cleanup + deferred real impl
+
+**Finding:** sessionBuilder = null literal forever. Tot contextul calculat de coachDirector era aruncat, fallback static selecta din listă hardcoded.
+
+**Decizie:** OPT B în FAZA 1 (cleanup dead code, ~15 min), OPT A escalat la FAZA 2 Priority 1 (3-4h, context-aware real selection).
+
+**Justificare:** FAZA 1 scope = Engine Bulletproof = infrastructure. OPT A = feature nou, nu bulletproofing. Nu mixăm scope-uri.
+
+**Risc acceptat:** FAZA 1.5 (ctx.allLogs real) nu va avea impact vizibil până la FAZA 2 Priority 1. Documentat explicit ca prima prioritate FAZA 2 în docs/FAZA_2_ROADMAP.md.
+
+**Commits FAZA 1.6:** d2dd940 (audit), + commit curent (OPT B exec)
+
+---
+
 ## 2026-04-24 — FAZA 1.3 Log Schema Cleanup (DONE)
 
 **Scope:** Curățare schema loguri, eliminare fallback-uri moarte, fix bug-uri schema.

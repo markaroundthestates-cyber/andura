@@ -92,19 +92,7 @@ export class CoachDirector {
       });
     } catch { /* proactive checks are non-blocking */ }
 
-    let session;
-    try {
-      const sessionBuilderModule = await import('./sessionBuilder.js');
-      if (sessionBuilderModule.sessionBuilder && sessionBuilderModule.sessionBuilder.build) {
-        session = sessionBuilderModule.sessionBuilder.build(sessionType, ctx);
-      } else if (sessionBuilderModule.buildSession) {
-        session = sessionBuilderModule.buildSession(sessionType, ctx);
-      } else {
-        session = this.fallbackSessionBuilder(sessionType, ctx);
-      }
-    } catch (e) {
-      session = this.fallbackSessionBuilder(sessionType, ctx);
-    }
+    let session = this.fallbackSessionBuilder(sessionType, ctx);
 
     // ── Resolve equipment alternatives ────────────────────────────────────
     const unavailableEquipment = ctx.equipment?.unavailable ?? [];
