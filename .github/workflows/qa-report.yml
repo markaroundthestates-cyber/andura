@@ -6,9 +6,10 @@ on:
     types: [completed]
 
 permissions:
-  contents: read
+  contents: write
   statuses: write
   pull-requests: write
+  issues: write
 
 jobs:
   qa:

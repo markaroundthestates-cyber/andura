@@ -416,3 +416,15 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Dependencies:** FAZA 2 DONE ✅
 
 ---
+
+## TASK #24
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** CI cleanup batch — fix 3 workflow-uri care pică din motive pre-existente: EBADPLATFORM esbuild netbsd-arm64, QA Report 403 permissions, data-integrity e2e test.
+**Acceptance:** 3 fix-uri aplicate (sau 2+1 skip justificat), CI curat pe next run, git commit + push.
+**Dependencies:** TASK #23 DONE ✅
+
+---

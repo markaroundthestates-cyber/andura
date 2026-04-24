@@ -8,9 +8,20 @@ const BASE_URL = '/salafull/';
 test.describe('Data integrity after reset', () => {
 
   test('No fake data injected after Full Reset', async ({ page }) => {
-    await setupUser(page, CONTAMINATED);
+    // Use addInitScript only for the suppress flag — NOT for contaminated data.
+    // addInitScript persists across reloads: injecting CONTAMINATED here would
+    // re-inject logs after localStorage.clear() + reload, making the test always fail.
+    await page.addInitScript(() => { window._suppressFirebaseSync = true; });
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle', { timeout: 20000 });
+
+    // Inject contaminated data via evaluate (does NOT persist across reloads)
+    await page.evaluate((data) => {
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === '_suppressFirebaseSync') return;
+        localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+      });
+    }, CONTAMINATED);
 
     // Simulate full reset: clear localStorage and reload
     await page.evaluate(() => {
