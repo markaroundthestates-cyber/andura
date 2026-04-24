@@ -1,12 +1,12 @@
 import { DB, cleanEx } from '../../db.js';
-import { PROG, COMPOUND_EX } from '../../constants.js';
+import { PROG, COMPOUND_EX, TARGET_DATE } from '../../constants.js';
 import { state } from '../../state.js';
 import { beep } from '../../ui/ui.js';
 import { sessionCache, getCachedDirector } from './state.js';
 
 export function isInCutPhase() {
   const phase = DB.get('phase-override') || 'AUTO';
-  return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
+  return phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
 }
 
 export function formatSetsReps(rawStr, exName, isInCut) {

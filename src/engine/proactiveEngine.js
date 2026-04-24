@@ -1,5 +1,6 @@
 // ══ PROACTIVE ENGINE — 10 verificări proactive ════════════════════════════
 // Returnează alerte acționabile pentru user (proteină, somn, PR, recuperare etc.)
+import { KCAL_TARGET } from '../constants.js';
 
 /**
  * Check 1: Deficit de proteină.
@@ -150,11 +151,11 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
   const values = last3.map(d => kcals[d]).filter(v => v !== undefined && v !== null);
   if (values.length === 0) return null;
   const avgKcal = values.reduce((a, b) => a + Number(b), 0) / values.length;
-  if (avgKcal < 1800) {
+  if (avgKcal < KCAL_TARGET) {
     return {
       type: 'kcal_too_low',
       severity: 'warning',
-      message: `Kcal medii ultimele ${values.length} zile: ${Math.round(avgKcal)}. Sub 1800 kcal — risc de masă musculară.`,
+      message: `Kcal medii ultimele ${values.length} zile: ${Math.round(avgKcal)}. Sub ${KCAL_TARGET} kcal — risc de masă musculară.`,
       avgKcal: Math.round(avgKcal),
     };
   }

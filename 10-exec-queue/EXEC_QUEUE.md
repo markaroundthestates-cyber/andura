@@ -79,3 +79,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** TASK #4 DONE ✅
 
 ---
+
+## TASK #6
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.2 Step 3 — Elimină inline duplicates TARGET (1800/180/101.5), DATE (2026-07-20), PATH (users/daniel). Folosește constants.js + getUserConfig() ca surse unice. Zero schimbare comportamentală.
+**Acceptance:** Zero inline duplicates, build clean, baseline teste menținute, grep centralizat, git commit + push.
+**Dependencies:** TASK #4 + TASK #5 DONE ✅
+
+---

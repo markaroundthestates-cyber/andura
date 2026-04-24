@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #6 — DONE
+**Completed:** 2026-04-24 17:15
+**Duration:** 20min
+**Summary:** Eliminat toate inline duplicates din 14 fișiere de producție. TARGET (1800/180/101.5): readiness.js, proactiveEngine.js, reality.js, renderIdle.js, weight.js (6 locuri), dashboard.js (4), plan.js (5). DATE (2026-07-20): dp.js (5), sys.js (3), coachContext.js, dashboard.js (3), weight.js (2), coach/util.js, coach/modals.js. PATH: firebase.js export + dataCleanup.js import (elimină 2 declarații inline). Grep final: 1 match rămas — comentariu JSDoc în proactiveEngine.js.
+**Files changed:** firebase.js, dataCleanup.js, dp.js, sys.js, coachContext.js, readiness.js, proactiveEngine.js, reality.js, renderIdle.js, weight.js, dashboard.js, plan.js, coach/util.js, coach/modals.js
+**Tests:** baseline menținut — 41 pass / 2 fail pre-existente / 2 skipped
+**Issues:** NONE
+
+---
+
 ## TASK #5 — DONE
 **Completed:** 2026-04-24 16:30
 **Duration:** 8min

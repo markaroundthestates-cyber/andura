@@ -1,5 +1,5 @@
 import { DB, $, tod, cleanEx } from '../../db.js';
-import { PROG, EX_SETS, COMPOUND_EX } from '../../constants.js';
+import { PROG, EX_SETS, COMPOUND_EX, KCAL_TARGET, PROT_TARGET } from '../../constants.js';
 import { DP } from '../../engine/dp.js';
 import { AA } from '../../engine/aa.js';
 import { SYS } from '../../engine/sys.js';
@@ -174,7 +174,7 @@ export async function renderCoachIdle(){
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
       const yDate = yesterday.toISOString().slice(0,10);
       const kcals = DB.get('kcals')||{}, prots = DB.get('prots')||{};
-      return getReadinessScore(todayR, kcals[yDate], prots[yDate], 1800, 180);
+      return getReadinessScore(todayR, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
     })();
     const _isInCut = isInCutPhase();
     const verdict = readinessScore != null ? getReadinessVerdict(readinessScore, { isInCut: _isInCut }) : null;

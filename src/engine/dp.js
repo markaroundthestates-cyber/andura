@@ -1,6 +1,6 @@
 // ══ DP ENGINE — Double Progression ══════════════════════════
 import { DB } from '../db.js';
-import { COMPOUND_EX, EX_SETS, EX_REPS } from '../constants.js';
+import { COMPOUND_EX, EX_SETS, EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 
@@ -149,7 +149,7 @@ export const DP = {
     const state = this.getState(ex);
     const inc = this.getIncrement(ex);
     const phaseOverride = DB.get('phase-override') || 'AUTO';
-    const isInCut = phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const isInCut = phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const [rMin, rMax] = range;
     const maxKg = this.MAX_KG[ex] || null;
@@ -250,7 +250,7 @@ export const DP = {
       // Drop set nu în CUT — în deficit menții greutatea, straight sets cu execuție perfectă
       const phaseOverride = DB.get('phase-override') || 'AUTO';
       const isInCut = phaseOverride === 'CUT' ||
-        (phaseOverride === 'AUTO' && new Date() < new Date('2026-07-20'));
+        (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
       if (isInCut) {
         return {
           kg: lastW, repsTarget: rMax, rir: 2,
@@ -288,7 +288,7 @@ export const DP = {
     const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
     const phOv = DB.get('phase-override') || 'AUTO';
-    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, inCut);
     const [, rMax] = range;
 
@@ -314,7 +314,7 @@ export const DP = {
   // Returns phase-aware rep range for ex.
   getRepsRange(ex) {
     const phOv = DB.get('phase-override') || 'AUTO';
-    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
     return this.getPhaseAwareRepRange(ex, inCut);
   },
 
@@ -341,7 +341,7 @@ export const DP = {
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
     const phOv2 = DB.get('phase-override') || 'AUTO';
-    const inCut2 = phOv2 === 'CUT' || (phOv2 === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const inCut2 = phOv2 === 'CUT' || (phOv2 === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, inCut2);
     const [rMin, rMax] = range;
     const rTarget = result.repsTarget || rMin;

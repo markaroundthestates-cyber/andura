@@ -1,6 +1,6 @@
 // ══ PLAN PAGE ════════════════════════════════════════════════
 import { DB, $, tod, cleanEx } from '../db.js';
-import { PROG, KCAL_TARGET } from '../constants.js';
+import { PROG, KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getDisplayTime } from './coach.js';
@@ -46,11 +46,11 @@ export function renderPlan() {
   // Remove existing prot-plan-box first
   document.querySelectorAll('#prot-plan-box').forEach(el => el.remove());
   $('kcal-display').parentElement.insertAdjacentHTML('afterend', `
-    <div style="background:var(--card);border:1px solid ${todProt>=180?'rgba(48,209,88,0.3)':'var(--border)'};border-radius:var(--r);padding:14px;position:relative;overflow:hidden;margin-bottom:0" id="prot-plan-box">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${todProt>=180?'var(--green)':'var(--text3)'}"></div>
+    <div style="background:var(--card);border:1px solid ${todProt>=PROT_TARGET?'rgba(48,209,88,0.3)':'var(--border)'};border-radius:var(--r);padding:14px;position:relative;overflow:hidden;margin-bottom:0" id="prot-plan-box">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${todProt>=PROT_TARGET?'var(--green)':'var(--text3)'}"></div>
       <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină azi</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=180?'var(--green)':todProt>0?'var(--accent3)':'var(--text3)'}">${todProt||'—'}</div>
-      <div style="font-size:10px;color:var(--text2);margin-top:2px">g / target 180g</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=PROT_TARGET?'var(--green)':todProt>0?'var(--accent3)':'var(--text3)'}">${todProt||'—'}</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px">g / target ${PROT_TARGET}g</div>
     </div>`);
 
   // BF override status
@@ -153,7 +153,7 @@ export function setPhaseOverride(phase) {
   // Calculăm kcalTarget temporar (după ce setăm override-ul)
   const tdee = SYS.estimateTDEE();
   const kcalMap = { CUT: Math.round(tdee*0.82), BULK: Math.round(tdee*1.08), MAINTENANCE: tdee, STRENGTH: Math.round(tdee*1.05) };
-  const kcalTarget = kcalMap[phase] || 1800;
+  const kcalTarget = kcalMap[phase] || KCAL_TARGET;
   // Înlocuim sau adăugăm entry pentru azi
   const filtered = phaseLogs.filter(e => e.date !== today);
   filtered.push({ date: today, phase, kcalTarget });

@@ -1,13 +1,13 @@
 // ══ WEIGHT PAGE ══════════════════════════════════════════════
 import { DB, $, tod, fmt } from '../db.js';
-import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
+import { KCAL_TARGET, PROT_TARGET, TARGET_DATE } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { state } from '../state.js';
 
 export let historyShowAll = false;
-export let currentKcal = 1800;
-export let currentProt = 180;
+export let currentKcal = KCAL_TARGET;
+export let currentProt = PROT_TARGET;
 export let curW = 0;
 
 
@@ -74,7 +74,7 @@ export function unlockWeight(){
 export function initKcal() {
   const kcals = DB.get('kcals') || {};
   const today = getLogDate();
-  const pilotActive = new Date() >= new Date('2026-07-20');
+  const pilotActive = new Date() >= TARGET_DATE;
   const sysTarget = pilotActive ? SYS.getKcalTarget() : KCAL_TARGET;
   currentKcal = kcals[today] !== undefined ? kcals[today] : sysTarget;
   // Don't auto-save default to storage — write only when user explicitly saves.
@@ -84,8 +84,8 @@ export function initKcal() {
   const noteEl = $('kcal-save-note');
   if (noteEl) {
     if (!pilotActive) {
-      const daysLeft = Math.max(0, Math.round((new Date('2026-07-20') - new Date()) / 86400000));
-      noteEl.textContent = `Target fix: 1800 kcal până pe 20 iulie (${daysLeft} zile)`;
+      const daysLeft = Math.max(0, Math.round((TARGET_DATE - new Date()) / 86400000));
+      noteEl.textContent = `Target fix: ${KCAL_TARGET} kcal până pe 20 iulie (${daysLeft} zile)`;
     } else {
       noteEl.textContent = `🤖 Pilot activ · TDEE real: ${SYS.estimateTDEE()} kcal · ${SYS.getPhase()}`;
       noteEl.style.color = 'var(--accent)';
@@ -122,7 +122,7 @@ export function saveKcal() {
   DB.set('kcals', kcals);
   if(state.logDateOffset ===0) DB.set('current-kcal', currentKcal);
   const diff = currentKcal - KCAL_TARGET;
-  toast(diff === 0 ? '✓ 1800 kcal salvat' : diff > 0 ? `✓ Salvat (+${diff} față de target)` : `✓ Salvat (${diff} față de target)`,
+  toast(diff === 0 ? `✓ ${KCAL_TARGET} kcal salvat` : diff > 0 ? `✓ Salvat (+${diff} față de target)` : `✓ Salvat (${diff} față de target)`,
     diff > 200 ? 'var(--accent2)' : 'var(--accent)');
   renderWeight();
   if (state.logDateOffset === 0) lockKcal();
@@ -227,7 +227,7 @@ export function getKcalTargetForDate(dateStr) {
   // Sortate desc — găsim primul log cu data <= dateStr
   const sorted = [...phaseLogs].sort((a,b) => b.date.localeCompare(a.date));
   const entry = sorted.find(e => e.date <= dateStr);
-  return entry ? entry.kcalTarget : 1800; // default CUT 1800
+  return entry ? entry.kcalTarget : KCAL_TARGET; // default CUT
 }
 
 export function initProt() {
@@ -743,7 +743,7 @@ export function showDayDetail(date) {
   const d = new Date(date + 'T12:00:00');
   const dateLabel = d.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
 
-  const kcalTarget = 1800;
+  const kcalTarget = KCAL_TARGET;
   const kc = k !== undefined ? (k > kcalTarget + 200 ? 'var(--accent2)' : k < kcalTarget - 200 ? 'var(--accent3)' : 'var(--green)') : 'var(--text3)';
   const pc = p !== undefined ? (p >= 150 ? 'var(--green)' : 'var(--accent2)') : 'var(--text3)';
 

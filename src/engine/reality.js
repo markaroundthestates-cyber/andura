@@ -1,6 +1,7 @@
 // ══ REALITY CHECK ENGINE ════════════════════════════════════
 import { DB } from '../db.js';
 import { SYS } from './sys.js';
+import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../config/weights.js';
 
 // EXERCISE_TO_EQUIPMENT — include alias 'Pec Deck' (fără '/ Cable Fly') pentru compatibilitate
@@ -50,7 +51,7 @@ export const realityEngine = {
     }
     // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează regula 1800 kcal
     if (ctx.user.phase === 'AUTO' && ctx.isBeforeJuly20_2026) {
-      session.realityMessage = 'Menții 1800 kcal ✓';
+      session.realityMessage = `Menții ${KCAL_TARGET} kcal ✓`;
       session.suppressTrendMessages = true;
     }
     return session;
@@ -69,12 +70,12 @@ function findLastLogForExercise(exerciseName, recentLogs) {
 export function getRealityCheck() {
   const today = new Date().toISOString().slice(0, 10);
   const phaseOverride = DB.get('phase-override');
-  if (today < '2026-07-20' && !phaseOverride) {
+  if (today < TARGET_DATE.toISOString().slice(0, 10) && !phaseOverride) {
     return {
       type: 'fixed',
       icon: '✅',
       color: 'var(--green)',
-      message: 'Menții 1800 kcal fix până 20 iulie ✓'
+      message: `Menții ${KCAL_TARGET} kcal fix până 20 iulie ✓`
     };
   }
 

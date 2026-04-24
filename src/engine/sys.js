@@ -72,10 +72,10 @@ export const SYS = {
 
     const w1 = ws[dates[0]], w2 = ws[dates[dates.length-1]];
     const kgLost = w1 - w2;
-    const currentKcal = DB.get('current-kcal') || 1800;
+    const currentKcal = DB.get('current-kcal') || KCAL_TARGET;
     const daysElapsed = Math.max(1, Math.round((new Date(dates[dates.length-1]) - new Date(dates[0])) / 86400000));
     const dailyDeficit = (kgLost * 7700) / daysElapsed;
-    return Math.round(Math.max(1800, Math.min(3500, currentKcal + dailyDeficit)));
+    return Math.round(Math.max(KCAL_TARGET, Math.min(3500, currentKcal + dailyDeficit)));
   },
 
   getPhase() {
@@ -85,7 +85,7 @@ export const SYS = {
 
     const bf = this.getBF();
     const now = new Date();
-    const PILOT_DATE = new Date('2026-07-20'); // data când sistemul preia controlul
+    const PILOT_DATE = TARGET_DATE; // data când sistemul preia controlul
     const pilotActive = now >= PILOT_DATE;
 
     // Înainte de 20 iulie: CUT fix, kcal controlate manual
@@ -135,8 +135,8 @@ export const SYS = {
     }
 
     // AUTO (sau null): înainte de 20 iulie = 1800 fix, după = TDEE-based
-    const pilotActive = new Date() >= new Date('2026-07-20');
-    if (!pilotActive) return 1800;
+    const pilotActive = new Date() >= TARGET_DATE;
+    if (!pilotActive) return KCAL_TARGET;
 
     const phase = this.getPhase();
     switch(phase) {
@@ -144,7 +144,7 @@ export const SYS = {
       case 'BULK':        return Math.round(tdee * 1.08);
       case 'MAINTENANCE': return tdee;
       case 'STRENGTH':    return Math.round(tdee * 1.05);
-      default:            return 1800;
+      default:            return KCAL_TARGET;
     }
   },
 
@@ -265,7 +265,7 @@ export const SYS = {
     const isIsolation = ['Lateral Raises','Rear Delt Fly','Cable Curl','Preacher Curl','Overhead Triceps','Pushdown','Leg Extension','Leg Curl','Calf Raises','Face Pulls'].includes(exName);
 
     // Drop sets — NOT în CUT (deficit); recomandat în BULK/STRENGTH
-    const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
+    const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
     if (isIsolation && setNumber === totalSets && !isEffectivelyCut) {
       techniques.push({icon:'🔻', label:'DROP SET', desc:'Scade 30% greutatea, continuă până la eșec'});
     }

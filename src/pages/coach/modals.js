@@ -1,5 +1,5 @@
 import { DB, tod } from '../../db.js';
-import { PROG } from '../../constants.js';
+import { PROG, TARGET_DATE } from '../../constants.js';
 import { toast } from '../../ui/ui.js';
 import { saveReadiness, READINESS_LABELS } from '../../engine/readiness.js';
 import { updateExCard } from './logging.js';
@@ -166,7 +166,7 @@ export function showWhyForExercise(exerciseName) {
       })() : null },
       isInCut: (() => {
         const phase = DB.get('phase-override') || 'AUTO';
-        return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
+        return phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
       })(),
       patterns: (() => {
         const lvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;

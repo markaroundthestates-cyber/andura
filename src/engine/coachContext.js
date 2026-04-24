@@ -3,10 +3,11 @@
 import { getMuscleState } from './muscleMap.js';
 import { DB } from '../db.js';
 import { getUserConfig } from '../config/user.js';
+import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 
 export function buildCoachContext() {
   const now = new Date();
-  const july20_2026 = new Date('2026-07-20');
+  const july20_2026 = TARGET_DATE;
 
   const allLogs = getAllLogs();
   const recentLogs = getLastNSessions(3);
@@ -105,10 +106,10 @@ function getPhaseFromStorage() {
 function getKcalTarget() {
   try {
     const raw = localStorage.getItem('current-kcal');
-    if (raw === null) return 1800;
+    if (raw === null) return KCAL_TARGET;
     const val = Number(raw);
-    return isNaN(val) ? 1800 : val;
-  } catch { return 1800; }
+    return isNaN(val) ? KCAL_TARGET : val;
+  } catch { return KCAL_TARGET; }
 }
 
 function getPhaseChangeDate() {

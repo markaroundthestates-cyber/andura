@@ -1,4 +1,5 @@
 import { DB, tod } from '../db.js';
+import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 
 export const READINESS_LABELS = {
   1: { emoji: '😴', label: 'Epuizat', sub: 'Somn prost, energie zero' },
@@ -64,6 +65,6 @@ export function getComputedReadinessScore() {
   const yDate = yesterday.toISOString().slice(0,10);
   const kcals = DB.get('kcals') || {};
   const prots = DB.get('prots') || {};
-  const { KCAL_TARGET, PROT_TARGET } = window.__constants || { KCAL_TARGET: 1800, PROT_TARGET: 180 };
+  // KCAL_TARGET and PROT_TARGET imported directly from constants.js
   return getReadinessScore(r, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
 }

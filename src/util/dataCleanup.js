@@ -1,4 +1,5 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test și debugging ═══════
+import { FIREBASE_URL, USER_PATH } from '../firebase.js';
 
 export const TEST_RESIDUE_KEYS = [
   'auto-recommendations',
@@ -124,8 +125,6 @@ export async function resetTestData(options = {}) {
   // Delete from Firebase if available
   if (clearFirebase) {
     try {
-      const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
-      const USER_PATH = 'users/daniel';
       // Fetch current remote data, remove test keys, then PUT back
       const r = await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, { cache: 'no-store' });
       if (r.ok) {
@@ -203,8 +202,6 @@ export async function fullReset(options = {}) {
   // Delete from Firebase if available
   if (clearFirebase) {
     try {
-      const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
-      const USER_PATH = 'users/daniel';
       await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, {
         method: 'PUT',
         body: JSON.stringify(null),

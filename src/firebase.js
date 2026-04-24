@@ -2,8 +2,8 @@
 import { DB, tod } from './db.js';
 import { toast } from './ui/ui.js';
 
-const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
-const USER_PATH = 'users/daniel';
+export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
+export const USER_PATH = 'users/daniel';
 // NOTE: 'photos' is intentionally excluded — base64 images are too large for Firebase RTDB free tier.
 // Photos are stored locally only. Users should be aware they are NOT backed up to the cloud.
 const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','bf-override','phase-override','current-kcal','phase-change-date','readiness','unavailable-equipment','peak-hours','session-start-hours','auto-recommendations','applied-recommendations','applied-patterns','session-draft','workout-skips'];
