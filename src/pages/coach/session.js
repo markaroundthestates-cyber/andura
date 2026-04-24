@@ -34,7 +34,13 @@ export function startSession() {
       state.sessActive = true; state.sessStart = draft.sessStart; state.sessLog = [...draft.sessLog];
       state.currentEx = draft.currentEx || ''; state.currentSet = draft.currentSet || 1;
       state.dropSetUsedThisSession = false; state.earlyStopReason = null;
-      state.completedExercises = new Set(); state.sessKcalBurn = 0;
+      state.sessKcalBurn = 0;
+      // H4c: derive completed exercises from saved sessLog instead of resetting to empty
+      const _exSetCounts = {};
+      draft.sessLog.forEach(s => { _exSetCounts[s.ex] = (_exSetCounts[s.ex] || 0) + 1; });
+      state.completedExercises = new Set(
+        Object.entries(_exSetCounts).filter(([ex, n]) => n >= (EX_SETS[ex] || 3)).map(([ex]) => ex)
+      );
       requestWakeLock();
       state.isMuted = DB.get('muted') || false;
       const mb2 = $('mute-btn'); if (mb2) { mb2.textContent = state.isMuted ? '🔇' : '🔊'; mb2.style.color = state.isMuted ? 'var(--accent2)' : 'var(--text2)'; }
@@ -89,15 +95,20 @@ export function skipExercise() {
 
 export function cancelWorkout() {
   if (!confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) return;
+  clearDraft(); teardownInactivity();
   clearInterval(state.sessTimer); state.sessTimer = null;
   stopPause(); state.sessActive = false; state.lastPauseEndedAt = null;
-  // Șterge din DB toate logurile din sesiunea curentă (scrise la selectRPE)
+  releaseWakeLock();
   if (state.sessStart) {
     const logs = DB.get('logs') || [];
-    const cleaned = logs.filter(l => l.session !== state.sessStart);
-    DB.set('logs', cleaned);
+    DB.set('logs', logs.filter(l => l.session !== state.sessStart));
   }
   state.sessLog = [];
+  state.completedExercises = new Set();
+  state.dropSetUsedThisSession = false;
+  state.earlyStopReason = null;
+  state.sessionKgOverride = null;
+  state.activeNotes = new Set();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   const suEl = $('session-ui'); if (suEl) suEl.style.display = 'none';
   hidePauseScreen();
