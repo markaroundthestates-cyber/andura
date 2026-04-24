@@ -115,7 +115,7 @@ export async function syncFromFirebase() {
 
 let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
-const COACH_RELEVANT_KEYS = ['logs', 'readiness', 'phase-override', 'current-kcal', 'weights'];
+const COACH_RELEVANT_KEYS = ['logs', 'readiness', 'phase-override', 'current-kcal', 'weights', 'unavailable-equipment', 'equipment-occupied-session', 'applied-patterns', 'session-burns', 'early-stops', 'workout-skips'];
 DB.set = function(key, val) {
   _origSet(key, val);
   if (COACH_RELEVANT_KEYS.includes(key) && window._directorCache) {

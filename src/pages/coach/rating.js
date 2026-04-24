@@ -55,6 +55,9 @@ export function showSessionRating(summaryData) {
 }
 
 export function rateSession(rating, summaryData) {
+  if (window._ratingSessionInFlight) return;
+  window._ratingSessionInFlight = true;
+  try {
   clearDraft();
   const noteMap = { 'easy': ['strong'], 'normal': [], 'hard': ['fatigue'] };
   const notes = noteMap[rating] || [];
@@ -85,6 +88,9 @@ export function rateSession(rating, summaryData) {
 
   const moodLabel = rating === 'easy' ? '⚡ Sesiune ușoară' : rating === 'hard' ? '💀 Sesiune grea' : '👍 Sesiune normală';
   showSessionSummary({ ...summaryData, moodLabel });
+  } finally {
+    window._ratingSessionInFlight = false;
+  }
 }
 
 export function showSessionSummary(data) {

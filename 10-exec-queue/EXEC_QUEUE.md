@@ -310,3 +310,97 @@ PAȘI:
 **Dependencies:** TASK #21bis DONE ✅
 
 ---
+
+## TASK #22b
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** P2 batch simple — H11c + C3c + H6c.
+H11c: adaugă 6 keys lipsă la COACH_RELEVANT_KEYS în firebase.js:118 ('unavailable-equipment','equipment-occupied-session','applied-patterns','session-burns','early-stops','workout-skips').
+C3c: adaugă window._ratingSessionInFlight guard la rateSession în rating.js:57 — funcția returnează imediat dacă flag=true, setează flag la start, șterge la final (indiferent de eroare).
+H6c: adaugă _patternAnalyzeInFlight guard la analyzeAndApplyPatterns în patternLearning.js — setTimeout-ul din _analyze nu rulează dacă flag=true.
+Minim 3 teste noi.
+**Acceptance:** 3 fixes aplicate, 3+ teste noi, build clean, 236+ teste pass, git commit + push.
+**Dependencies:** TASK #22a DONE ✅
+
+---
+
+## TASK #22c
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** session.js batch — C2c cancelWorkout + H4c resume.
+C2c: cancelWorkout adaugă clearDraft(), teardownInactivity(), releaseWakeLock() + resetează completedExercises, dropSetUsedThisSession, earlyStopReason, sessionKgOverride, activeNotes.
+H4c: resume path derivă completedExercises din sessLog (exerciții cu n >= EX_SETS[ex] || 3 seturi) în loc de new Set() gol.
+Minim 2 teste noi.
+**Acceptance:** C2c+H4c fixed, 2+ teste noi, build clean, 236+ teste pass, git commit + push.
+**Dependencies:** TASK #22b DONE ✅
+
+---
+
+## TASK #22d
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** MEDIUM
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** Engines batch — isoWeek ISO 8601 Thursday rule + H14g checkRecoveryGroups.
+isoWeek: implementează regula Thursday (ISO 8601) în stagnationDetector.js + responseProfile.js — înlocuiește ambele implementări incorecte.
+H14g: fix checkRecoveryGroups în proactiveEngine.js — calculează daysSinceLast direct din logs, nu din getMuscleState() care returnează număr, nu obiect.
+Minim 3 teste (isoWeek Dec29/Jan1 boundary + checkRecoveryGroups returnează alerte reale).
+**Acceptance:** 2 isoWeek fixes, H14g fix, 3+ teste, build clean, 236+ teste pass, git commit + push.
+**Dependencies:** TASK #22c DONE ✅
+
+---
+
+## TASK #22e
+**Model:** Sonnet
+**Type:** REFACTOR
+**Priority:** MEDIUM
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** sessionBuilder OPT C — extrage fallbackSessionBuilder din CoachDirector ca pure function.
+Creează src/engine/sessionBuilder.js cu export function buildSession(sessionType, ctx).
+Actualizează coachDirector.js să importe + apeleze buildSession.
+Minim 3 teste pentru buildSession (PUSH/CUT/RECOMP + edge case fără ctx.weakGroups).
+**Acceptance:** sessionBuilder.js creat cu buildSession, coachDirector importă funcția, 3+ teste, build clean, 236+ teste pass, git commit + push.
+**Dependencies:** TASK #22d DONE ✅
+
+---
+
+## TASK #22f
+**Model:** Sonnet
+**Type:** FEATURE
+**Priority:** MEDIUM
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** sessionBuilder OPT A restrâns — weakness-prioritized ordering (NU adaugă exerciții noi).
+Reordonează exercițiile din buildSession (sessionBuilder.js) astfel încât exercițiile pentru weakGroups să apară pe pozițiile 1-2.
+NU adaugă exerciții care nu sunt în lista statică curentă.
+Adaugă comentariu: "Weakness-prioritized ordering. Does NOT add missing exercises."
+Creează feature flag contextSelectionEnabled în calibration.js (default: false). Ordering se aplică doar dacă flag=true.
+Teste: ctx.weakGroups=['delt_rear'] → exercițiu delt_rear în primele 2 poziții; dacă weakGroup nu e în sesiune → ordering original păstrat.
+**Acceptance:** Ordering logic implementat, flag creat, 2+ teste, build clean, 236+ teste pass, git commit + push.
+**Dependencies:** TASK #22e DONE ✅
+
+---
+
+## TASK #22g
+**Model:** Sonnet
+**Type:** VAULT
+**Priority:** LOW
+**Status:** PENDING
+**Created:** 2026-04-24
+**Description:** Vault update FAZA 2 — închidere completă.
+INDEX_MASTER.md: FAZA 2 → ✅ COMPLETE (24 apr 2026), update header "Ultima actualizare".
+DECISION_LOG.md: adaugă entry FAZA 2 COMPLETE cu scope, approach, commits cheie.
+Creează docs/FAZA_2_FINAL_REPORT.md cu summary complet.
+Actualizează docs/FAZA_2_ROADMAP.md cu status final.
+**Acceptance:** 4 fișiere actualizate/create, git commit + push.
+**Dependencies:** TASK #22f DONE ✅
+
+---

@@ -1,8 +1,13 @@
 import { DB } from '../db.js';
 
+let _patternAnalyzeInFlight = false;
+
 export function analyzeAndApplyPatterns(logs) {
-  // Run async without blocking
-  setTimeout(() => _analyze(logs), 500);
+  if (_patternAnalyzeInFlight) return;
+  _patternAnalyzeInFlight = true;
+  setTimeout(() => {
+    try { _analyze(logs); } finally { _patternAnalyzeInFlight = false; }
+  }, 500);
 }
 
 function _analyze(logs) {
