@@ -2,6 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
+**See also:** [[DECISION_LOG]] | [[FAZA_1_FINAL_REPORT]] | [[005-vanilla-js-no-framework]]
 
 ## Context
 

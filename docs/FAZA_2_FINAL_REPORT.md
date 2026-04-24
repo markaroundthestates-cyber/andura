@@ -8,9 +8,9 @@
 
 ## Overview
 
-FAZA 2 a remediat 10 bugs din raportul de audit (Sonnet + Opus review), a refactorat
+FAZA 2 a remediat 10 bugs din raportul de audit ([[FAZA_2_EXECUTION_PLAN|Sonnet plan]] + [[FAZA_2_OPUS_REVIEW|Opus review]]), a refactorat
 sessionBuilder ca pure function testabilă, și a adăugat 35 de teste noi — totul fără
-nicio regresie față de baseline-ul FAZA 1.
+nicio regresie față de baseline-ul [[FAZA_1_FINAL_REPORT|FAZA 1]].
 
 ---
 
@@ -98,9 +98,11 @@ nicio regresie față de baseline-ul FAZA 1.
 
 ## What's Next — FAZA 3
 
-Per docs/FAZA_2_ROADMAP.md și DECISION_LOG:
+Per [[FAZA_2_ROADMAP]] și [[DECISION_LOG]]:
 - Firebase rules auth (Firebase Auth → per-UID security rules)
 - Observability (logging dashboard, error tracking)
 - Multi-user support (multi-tenant architecture)
 - H9c (findBestAlternative Infinity fix) — deferred FAZA 3
 - M7c (PROG mapping) — deferred FAZA 3
+
+Roadmap FAZA 3: [[FAZA_3_ROADMAP]]

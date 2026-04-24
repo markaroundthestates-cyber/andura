@@ -5,7 +5,7 @@
 
 **Exit criteria:** Zero breakdown în 3-5 zile de usage real consecutiv.
 
-**Raport final:** docs/FAZA_2_FINAL_REPORT.md
+**Raport final:** [[FAZA_2_FINAL_REPORT]]
 
 ---
 
@@ -30,7 +30,7 @@ până nu implementăm context-aware selection.
 **Approach:** OPT C first (move `fallbackSessionBuilder` to sessionBuilder.js
 as pure function, add tests), then OPT A on top.
 
-**Reference:** docs/SESSIONBUILDER_AUDIT_1_6.md
+**Reference:** [[SESSIONBUILDER_AUDIT_1_6]]
 
 **Status:** READY TO START (plan complet în audit)
 
@@ -38,7 +38,7 @@ as pure function, add tests), then OPT A on top.
 
 ## Priority 2 — Crash / Leak Bugs
 
-Referință audit coach.js 24 apr 2026 (AUDIT_COACH_JS_24APR.md).
+Referință audit coach.js 24 apr 2026: [[AUDIT_COACH_JS_24APR]].
 
 | ID | Finding | Severitate | Notes |
 |----|---------|------------|-------|
@@ -73,7 +73,7 @@ Referință audit coach.js 24 apr 2026 (AUDIT_COACH_JS_24APR.md).
 - Deploy rules v1 path-restricted (dacă nu e deja)
 - Test post-deploy că sync funcționează
 
-**Referință:** docs/FIREBASE_AUDIT_1_8.md
+**Referință:** [[FIREBASE_AUDIT_1_8]]
 
 ---
 
@@ -89,5 +89,5 @@ Referință audit coach.js 24 apr 2026 (AUDIT_COACH_JS_24APR.md).
 
 ## Notes FAZA 3 / FAZA 4
 
-- **FAZA 3:** Infrastructure + Observability (error tracking, performance monitoring, analytics)
+- **FAZA 3:** Infrastructure + Observability (error tracking, performance monitoring, analytics) → [[FAZA_3_ROADMAP]]
 - **FAZA 4:** Features noi (144 programe, injury tracking, health export, multi-user auth)

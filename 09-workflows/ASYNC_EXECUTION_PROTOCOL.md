@@ -2,7 +2,7 @@
 
 ## Overview
 
-Daniel pune task-uri în `10-exec-queue/EXEC_QUEUE.md`. Claude Code le execută în ordine de prioritate și scrie rezultatele în `10-exec-queue/EXEC_RESULTS.md`. Push automat via hook Stop.
+Daniel pune task-uri în [[EXEC_QUEUE]]. Claude Code le execută în ordine de prioritate și scrie rezultatele în [[EXEC_RESULTS]]. Push automat via hook Stop.
 
 ---
 
@@ -120,9 +120,11 @@ sau la finalul sesiunii (nu persistă între conversații).
 
 | Fișier | Rol |
 |--------|-----|
-| `10-exec-queue/EXEC_QUEUE.md` | Task-uri de executat |
-| `10-exec-queue/EXEC_RESULTS.md` | Rezultate și log execuție |
+| [[EXEC_QUEUE]] | Task-uri de executat |
+| [[EXEC_RESULTS]] | Rezultate și log execuție |
 | `.claude/settings.json` | Hook Stop — auto-push după fiecare task |
+| [[INDEX_MASTER]] | Navigare vault + status faze |
+| [[DECISION_LOG]] | Decizii luate în execuție |
 
 ---
 

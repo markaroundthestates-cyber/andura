@@ -428,3 +428,15 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Dependencies:** TASK #23 DONE ✅
 
 ---
+
+## TASK #24c
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** MEDIUM
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Vault wikilinks densification + OBSIDIAN_SETUP_GUIDE.md — transformă vault în graf dens pentru Obsidian Graph View.
+**Acceptance:** +50 wikilinks adăugate, OBSIDIAN_SETUP_GUIDE.md creat, git commit + push.
+**Dependencies:** TASK #24 DONE ✅
+
+---

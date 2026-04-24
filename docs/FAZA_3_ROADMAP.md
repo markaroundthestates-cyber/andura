@@ -1,7 +1,8 @@
 # FAZA 3 — Infrastructure + Observability + Tooling
 
-**Status:** READY TO START (FAZA 2 COMPLETE — 24 apr 2026)
-**Prerequisite:** ✅ FAZA 2 complete (271 teste, zero regresii)
+**Status:** READY TO START ([[FAZA_2_FINAL_REPORT|FAZA 2 COMPLETE]] — 24 apr 2026)
+**Prerequisite:** ✅ [[FAZA_2_ROADMAP|FAZA 2]] complete (271 teste, zero regresii)
+**Context anterior:** [[FAZA_1_FINAL_REPORT]] | [[DECISION_LOG]]
 
 ---
 
@@ -45,9 +46,11 @@ Ordinea de setup decisă cu Opus co-CTO 24 apr 2026.
 
 ## Priority 3 — CI/CD hardening
 
-- Fix EBADPLATFORM esbuild netbsd-arm64 (pre-existent din 23 apr)
-- Fix QA Report workflow permissions (403 on commit comments)
-- Fix data-integrity e2e test (1 fail pre-existent)
+- ✅ Fix EBADPLATFORM esbuild netbsd-arm64 — DONE (TASK #24)
+- ✅ Fix QA Report workflow permissions (403 on commit comments) — DONE (TASK #24)
+- ✅ Fix data-integrity e2e test — DONE (TASK #24)
+
+Executat în [[EXEC_QUEUE]] TASK #24.
 
 ---
 

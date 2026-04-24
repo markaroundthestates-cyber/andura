@@ -2,6 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
+**See also:** [[DECISION_LOG]] | [[FIREBASE_AUDIT_1_8]] | [[001-local-first-storage]] | [[002-firebase-rest-not-sdk]]
 
 ## Context
 

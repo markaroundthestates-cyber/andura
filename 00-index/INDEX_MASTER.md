@@ -24,6 +24,15 @@
 
 ### 🧠 Decisions
 - [[DECISION_LOG]] — Cronologic — de ce X nu Y
+- [[001-local-first-storage]] — ADR: localStorage + Firebase sync
+- [[002-firebase-rest-not-sdk]] — ADR: Firebase REST not SDK
+- [[003-double-progression-engine]] — ADR: Double Progression engine
+- [[004-rule-engine-numeric-priorities]] — ADR: Rule Engine priorities
+- [[005-vanilla-js-no-framework]] — ADR: Vanilla JS + Vite
+- [[006-tier-storage-for-logs]] — ADR: Three-Tier Log Storage
+- [[007-firebase-open-rules]] — ADR: Firebase open rules
+- [[008-vitest-playwright-testing]] — ADR: Vitest + Playwright
+- [[009-calibration-tiers]] — ADR: Calibration Tiers
 
 ### 🏗️ Architecture
 - [[STACK_CURRENT]] — Vanilla JS + Firebase + PWA
@@ -66,19 +75,20 @@
 - Pending: PC acasă setup, phone later (decidem Obsidian Sync $8/mo sau rămân Git)
 
 ### ✅ FAZA 1 — ENGINE BULLETPROOF (COMPLETE — 24 apr 2026)
+Raport: [[FAZA_1_FINAL_REPORT]]
 Sub-faze:
-- ✅ 1.0 Split coach.js planning (Opus) — DONE 24 apr 2026, COACH_SPLIT_PLAN.md 714 linii, confidence 82%
-- ✅ 1.1 Split coach.js execuție (Sonnet) — DONE 24 apr 2026, 9 module + orchestrator live, zero regresii, commit 9875755
-- ✅ 1.2 Multi-tenancy decouple — DONE 24 apr 2026, config/user.js + 14 fișiere decoupled
-- ✅ 1.3 Log schema cleanup — DONE 24 apr 2026, 7 mismatches rezolvate + logNormalize.js
-- ✅ 1.4 cleanDuplicateLogs fix — DONE 24 apr 2026, dedupe strict pe ts
-- ✅ 1.5 ctx.allLogs real — DONE 24 apr 2026, calibration funcționează pentru 80+ sesiuni
-- ✅ 1.6 sessionBuilder cleanup OPT B — DONE 24 apr 2026 (OPT A = FAZA 2 Priority 1)
-- ✅ 1.7 AA engine activate notes-only — DONE 24 apr 2026, RPE logic eliminat, safety net defensiv
-- ✅ 1.8 Firebase: audit + data loss fix 500→5000 + rules v1 plan — DONE 24 apr 2026 (rules = acțiune manuală)
+- ✅ 1.0 Split coach.js planning (Opus) — DONE, [[COACH_SPLIT_PLAN]] 714 linii, confidence 82%
+- ✅ 1.1 Split coach.js execuție (Sonnet) — DONE, 9 module + orchestrator live, zero regresii, commit 9875755
+- ✅ 1.2 Multi-tenancy decouple — DONE, config/user.js + 14 fișiere decoupled → [[HARDCODED_AUDIT_1_2]]
+- ✅ 1.3 Log schema cleanup — DONE, 7 mismatches rezolvate + logNormalize.js → [[LOG_SCHEMA_AUDIT_1_3]]
+- ✅ 1.4 cleanDuplicateLogs fix — DONE, dedupe strict pe ts
+- ✅ 1.5 ctx.allLogs real — DONE, calibration funcționează pentru 80+ sesiuni → [[CTX_ALLLOGS_AUDIT_1_5]]
+- ✅ 1.6 sessionBuilder cleanup OPT B — DONE (OPT A = FAZA 2 Priority 1) → [[SESSIONBUILDER_AUDIT_1_6]]
+- ✅ 1.7 AA engine activate notes-only — DONE, RPE logic eliminat, safety net defensiv
+- ✅ 1.8 Firebase: audit + data loss fix 500→5000 + rules v1 plan — DONE → [[FIREBASE_AUDIT_1_8]]
 
 ### ✅ FAZA 2 — BUG FIXES + RELIABILITY (COMPLETE — 24 apr 2026)
-Details: docs/FAZA_2_ROADMAP.md | Raport: docs/FAZA_2_FINAL_REPORT.md
+Details: [[FAZA_2_ROADMAP]] | Raport: [[FAZA_2_FINAL_REPORT]] | Plan execuție: [[FAZA_2_EXECUTION_PLAN]] | Review Opus: [[FAZA_2_OPUS_REVIEW]]
 - ✅ Tier 0: C4c log schema + C5c endSession auto-delete (commit 489480e)
 - ✅ P2 batch: H11c cache keys + C3c idempotency + H6c inflight guard (commit 2da734d)
 - ✅ Session: C2c cancelWorkout + H4c resume completedExercises (commit 03c5d8f)
@@ -88,6 +98,8 @@ Details: docs/FAZA_2_ROADMAP.md | Raport: docs/FAZA_2_FINAL_REPORT.md
 - Metrici: 236 → 271 teste, 25 test files, zero regresii
 
 ### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
+Details: [[FAZA_3_ROADMAP]] | [[OBSIDIAN_SETUP_GUIDE]]
+
 ### ⏳ FAZA 4 — FEATURES NOI (144 programe, injury, health export)
 
 ---

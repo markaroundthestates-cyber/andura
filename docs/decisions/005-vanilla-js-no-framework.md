@@ -2,6 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
+**See also:** [[DECISION_LOG]] | [[STACK_CURRENT]] | [[008-vitest-playwright-testing]]
 
 ## Context
 

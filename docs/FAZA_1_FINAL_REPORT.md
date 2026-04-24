@@ -13,7 +13,7 @@ FAZA 1 a transformat SalaFull dintr-un monolit fragil de 1477 linii într-o arhi
 
 Cel mai important bug descoperit și fix-at incidental: `ctx.allLogs` era derivat din ultimele 3 sesiuni în loc de istoricul complet — orice utilizator cu >3 sesiuni era blocat în `COLD_START` calibration forever, ignorând luni de date. Fix: 2 linii. Al doilea bug major: `.slice(0, 500)` pe logs cauza pierdere silențioasă de date după ~29 sesiuni (~7-10 săptămâni de utilizare). Fix: 4 locații, `500 → 5000`.
 
-Infrastructura de lucru creată azi — async execution queue + Claude Code hook Stop auto-push — a permis execuția serializată a 20 task-uri fără context switch manual, demonstrând viabilitatea workflow-ului Daniel-PM / Opus-CoPilot / Sonnet-Executor pentru FAZA 2+.
+Infrastructura de lucru creată azi — [[ASYNC_EXECUTION_PROTOCOL|async execution queue]] + Claude Code hook Stop auto-push — a permis execuția serializată a 20 task-uri fără context switch manual, demonstrând viabilitatea workflow-ului Daniel-PM / Opus-CoPilot / Sonnet-Executor pentru FAZA 2+.
 
 ---
 
@@ -21,7 +21,7 @@ Infrastructura de lucru creată azi — async execution queue + Claude Code hook
 
 | Sub-fază | Tasks | Durată est. | Commit principal |
 |----------|-------|-------------|-----------------|
-| 1.0 Plan (Opus) | — | Pre-sesiune | COACH_SPLIT_PLAN.md 714 linii |
+| 1.0 Plan (Opus) | — | Pre-sesiune | [[COACH_SPLIT_PLAN]] 714 linii |
 | 1.1 Split execuție | — | 8-12h | 9875755 |
 | 1.2 Multi-tenancy | #4, #5, #6, #7 | ~2h | 4d7a4a9 |
 | 1.3 Log schema | #9, #10, #11, #12 | ~2h | 332d37c |
@@ -120,10 +120,12 @@ Motivare: Connecting toate call sites în FAZA 1 = risc regressions fără benef
 **Acțiune manuală Daniel (Firebase Console):**
 - Verifică rules curente → dacă fully open, deploy rules v1 (path-restrict)
 - Backup JSON DB înainte de orice modificare
-- Referință: `docs/FIREBASE_AUDIT_1_8.md`
+- Referință: [[FIREBASE_AUDIT_1_8]]
 
 **FAZA 2 (urmează):**
 - Priority 1: sessionBuilder context-aware (OPT A, 3-4h) — cel mai mare impact UX
 - Priority 2: crash/leak bugs (C2c, C3c, H4c, H6c, H9c, H11c)
 - Priority 3: logic bugs (M3g, H13g, H14g, M7c)
-- Referință: `docs/FAZA_2_ROADMAP.md`
+- Referință: [[FAZA_2_ROADMAP]]
+- Plan detaliat execuție: [[FAZA_2_EXECUTION_PLAN]]
+- Review Opus: [[FAZA_2_OPUS_REVIEW]]

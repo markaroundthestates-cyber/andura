@@ -25,7 +25,9 @@
 - contextSelectionEnabled: default false — ordering activ doar explicit opt-in; previne regression pentru users fără weakGroups
 - OPT A scope restrâns (Opus review): nu adaugă exerciții noi, doar reordonare în lista existentă
 
-**Next:** FAZA 3 — Infrastructure + Observability (Firebase rules auth, logging observability, multi-user)
+**Next:** FAZA 3 — Infrastructure + Observability — plan complet în [[FAZA_3_ROADMAP]]
+
+Raport complet: [[FAZA_2_FINAL_REPORT]]
 
 ---
 
@@ -51,7 +53,7 @@
 
 **Workflow creat:**
 - Claude Code hook Stop → auto-push pe main
-- EXEC_QUEUE + EXEC_RESULTS async execution protocol
+- [[EXEC_QUEUE]] + [[EXEC_RESULTS]] — async execution protocol (vezi [[ASYNC_EXECUTION_PROTOCOL]])
 - Daniel = PM, Opus = Co-CTO (planning), Sonnet = executor (cod)
 
 **Decizii cheie:**
@@ -60,7 +62,9 @@
 - slice 5000 (nu remove cap, nu tierStorage) — optimal FAZA 1: 4 caractere, 1.5+ ani headroom
 - Rules v1 path-restricted (nu auth Firebase) — auth e FAZA 4
 
-**Next:** FAZA 2 — Priority 1 = sessionBuilder real (context-aware selection), detaliat în docs/FAZA_2_ROADMAP.md
+**Next:** FAZA 2 — Priority 1 = sessionBuilder real (context-aware selection), detaliat în [[FAZA_2_ROADMAP]]
+
+Raport complet: [[FAZA_1_FINAL_REPORT]]
 
 ---
 
@@ -84,7 +88,7 @@
 
 **Justificare:** FAZA 1 scope = Engine Bulletproof = infrastructure. OPT A = feature nou, nu bulletproofing. Nu mixăm scope-uri.
 
-**Risc acceptat:** FAZA 1.5 (ctx.allLogs real) nu va avea impact vizibil până la FAZA 2 Priority 1. Documentat explicit ca prima prioritate FAZA 2 în docs/FAZA_2_ROADMAP.md.
+**Risc acceptat:** FAZA 1.5 (ctx.allLogs real) nu va avea impact vizibil până la FAZA 2 Priority 1. Documentat explicit ca prima prioritate FAZA 2 în [[FAZA_2_ROADMAP]].
 
 **Commits FAZA 1.6:** d2dd940 (audit), + commit curent (OPT B exec)
 
@@ -96,7 +100,7 @@
 **Surprise:** Audit a găsit că NU e nevoie de migration one-shot. Schema actuală e OK, doar are fallback-uri moarte + 1 bug activ (adherence M2).
 
 **Ce s-a făcut:**
-- Task #9: Audit schema — 7 mismatches identificate (M1–M7)
+- Task #9: Audit schema — 7 mismatches identificate (M1–M7) → [[LOG_SCHEMA_AUDIT_1_3]]
 - Task #10: Fix M2 (adherence __early_stop__ filter) — bonus: reparat și 1 e2e test failing
 - Task #11: Eliminare fallback-uri moarte (l.weight/l.exercise/l.timestamp) din 10 fișiere + creat logNormalize.js
 - Task #12: Consolidare M3-M7 — omis rpe fals, aliniat sessLog.kg→w, eliminat userOverride dead
@@ -108,7 +112,7 @@
 
 ## 2026-04-24 — FAZA 1.2 Multi-tenancy Decouple (DONE)
 
-**Scope:** Elimina Daniel-hardcoded values din codebase.
+**Scope:** Elimina Daniel-hardcoded values din codebase. Audit: [[HARDCODED_AUDIT_1_2]]
 **Approach:** Scope minim + defaults.js + localStorage override (NU multi-user Firebase — asta vine în FAZA 4).
 
 **Ce s-a făcut (3 tasks, 14 fișiere):**

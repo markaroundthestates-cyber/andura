@@ -2,6 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
+**See also:** [[DECISION_LOG]] | [[ENGINE_ARCHITECTURE]] | [[004-rule-engine-numeric-priorities]]
 
 ## Context
 
