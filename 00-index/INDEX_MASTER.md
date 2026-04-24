@@ -12,6 +12,11 @@
 - [[USER_PROFILE_DANIEL]] — Profil owner
 - [[MOAT_STRATEGY]] — De ce SalaFull vs ChatGPT
 
+### 🗺️ Roadmaps
+- [[FAZA_3_ROADMAP]] — MCP Integrations + Observability + CI/CD hardening
+- [[FAZA_2_ROADMAP]] — Bug Fixes + Reliability (✅ COMPLETE)
+- [[FAZA_2_FINAL_REPORT]] — Raport final FAZA 2 (10 bugs, +35 teste)
+
 ### 🔍 Audits
 - [[AUDIT_SUMMARY_EXECUTIVE]] — Rezumat executiv (AICI pentru overview)
 - [[AUDIT_GENERAL_23APR]] — Audit general 1774 linii (gitignored, vezi Codespaces)

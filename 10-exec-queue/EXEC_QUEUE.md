@@ -404,3 +404,15 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Dependencies:** TASK #22f DONE ✅
 
 ---
+
+## TASK #23
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** LOW
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Update docs/FAZA_3_ROADMAP.md (creează dacă nu există) cu MCP integrations prioritized. Structura completă: P1 MCP Integrations (Playwright/Sentry/GitHub/Context7), P2 Observability, P3 CI/CD hardening, P4 Health integrations, Deferred. Update 00-index/INDEX_MASTER.md: link la FAZA_3_ROADMAP.md în secțiunea Navigare rapidă.
+**Acceptance:** FAZA_3_ROADMAP.md creat cu structura specificată, INDEX_MASTER updatat, git commit + push.
+**Dependencies:** FAZA 2 DONE ✅
+
+---
