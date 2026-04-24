@@ -57,3 +57,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** NONE
 
 ---
+
+## TASK #4
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.2 Step 1 — Creează src/config/user.js cu USER_DEFAULTS + getUserConfig() + updateUserConfig(). NU modifică alte fișiere. Scrie test src/config/__tests__/user.test.js (minim 2 teste).
+**Acceptance:** src/config/user.js + test creat, build zero erori, test:all pass, git commit + push.
+**Dependencies:** NONE
+
+---

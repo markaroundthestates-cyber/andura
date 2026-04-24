@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #4 — DONE
+**Completed:** 2026-04-24 16:15
+**Duration:** 5min
+**Summary:** Creat src/config/user.js (USER_DEFAULTS + getUserConfig + updateUserConfig) + src/config/__tests__/user.test.js (5 teste). Build ✓, 5 teste noi pass, baseline 41 pass / 2 fail pre-existente neschimbat.
+**Files changed:** src/config/user.js (creat), src/config/__tests__/user.test.js (creat)
+**Tests:** 5 added — all pass
+**Issues:** NONE
+
+---
+
 ## TASK #3 — DONE
 **Completed:** 2026-04-24 16:00
 **Duration:** 8min
