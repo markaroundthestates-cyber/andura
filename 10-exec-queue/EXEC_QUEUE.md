@@ -496,3 +496,18 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** 07-sessions-log/QA_MANUAL_24APR_2230.md + 06-findings-tracker/FINDINGS_MASTER.md create. 3 OPEN: C10c (CRITICAL cache loop), H30c (pattern false positives), H31c (reset incomplet). 15 FIXED marcate din FAZA 1+2. INDEX_MASTER actualizat.
 
 ---
+
+## TASK #25
+**Model:** Opus
+**Type:** AUDIT
+**Priority:** CRITICAL
+**Tag:** [NIGHT]
+**Status:** DONE ✅
+**Created:** 2026-04-25
+**Completed:** 2026-04-25
+**Description:** Nuclear Opus Audit v3 — adversarial, evidence-based, challenge-everything. Output: docs/OPUS_NUCLEAR_AUDIT_25APR.md cu 13 secțiuni + VERDICT binar + 20+ task-uri pre-queued + anti-reîncălzire (3+ probleme noi).
+**Acceptance:** OPUS_NUCLEAR_AUDIT_25APR.md complet, zero TBD, evidence file:line, INDEX_MASTER + DECISION_LOG updated, commit + push.
+**Dependencies:** TASK #24g DONE ✅
+**Result:** 1532 linii, 13 secțiuni cu VERDICT, 24 tasks ready-to-queue (TASK #26-49, 5 tiers), 7 probleme NOI (depășește target anti-reîncălzire 3), 5 FALSE/HALF DONE expuse din FAZA 1+2. TOP 5 blockers: C10c cache cascade, H31c reset spec gap, H30c pattern bypass, multi-tenancy fake, observability blackhole. VERDICT FINAL: FAIL — 4-6 luni până launch.
+
+---

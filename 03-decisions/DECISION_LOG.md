@@ -1,5 +1,46 @@
 # DECISION LOG — SalaFull
 
+## 2026-04-25 — Nuclear Opus Audit v3 completed
+
+**Scope:** Audit adversarial code-first pe arhitectura curentă, FAZA 1/2 "DONE" challenge, blueprint FAZA 3/4, launch readiness. Evidence-based (file:line pentru fiecare claim), zero "TBD". Output: [[OPUS_NUCLEAR_AUDIT_25APR]] (1500+ linii, 13 secțiuni, fiecare cu VERDICT binar).
+
+**Top 5 Absolute Blockers (launch):**
+1. **C10c Cache Invalidation Cascade** — `firebase.js:85-121` initial sync produce 8-11 invalidări în lanț; fix-ul H11c (extindere keys 5→11) a amplificat bug-ul.
+2. **H31c Full Reset Spec Gap** — `dataCleanup.js:212` șterge doar uniune TEST_RESIDUE_KEYS + USER_DATA_KEYS; keys dinamice (muscle-extra-*, aa-cooldown-*, ex-extra-sets-*) persistă. Fără registry central.
+3. **H30c Pattern Learning Bypass** — `renderIdle.js:186` citește `applied-patterns` direct, bypass la calibration filter; plus `patternLearning.js:31-35` numără zile calendar nu zile de plan.
+4. **Multi-Tenancy Still Fake** — `firebase.js:6 USER_PATH = 'users/daniel'` hardcodat, ignoră `config/user.js:19`. FAZA 1.2 FALSE DONE.
+5. **Observability Blackhole** — `C8g` Sentry filter neverificat + 3 catch blocks în coachDirector care înghit erori engine silent.
+
+**5 False/Half "DONE" expose:**
+- FAZA 1.2 multi-tenancy (firebase.js:6 still hardcoded)
+- FAZA 1.3 log schema (logNormalize creat dar neaplicat — by design)
+- FAZA 1.7 AA (RPE fix TRUE / registry FAIL — cooldown keys leak)
+- FAZA 1.8 rules v1 (cap OK / rules nu în repo)
+- FAZA 2 OPT A weakness ordering (cod TRUE / feature flag OFF dormant)
+
+**7 probleme NOI (anti-reîncălzire, nedetectate în FAZA_2_OPUS_REVIEW):**
+1. Cache invalidation cascade la Firebase sync (C10c deep root)
+2. renderIdle.js:186 banner bypass la calibration filter
+3. patternLearning counts calendar days, not plan days
+4. Dynamic `import('./dp.js')` în hot path (legacy FAZA 1.1)
+5. Keys dinamice write-only leak (muscle-extra-*, aa-cooldown-*, ex-extra-sets-*)
+6. Protein target schema drift (180 static vs bodyweight×2.2 dynamic)
+7. `_suppressFirebaseSync` nu supraviețuiește reload în Full Reset flow
+
+**Task list generated:** 24 task-uri pre-queued (TASK #26-49) în 5 tiers logice:
+- Tier 0 (THIS WEEK): 7 tasks — quick stability wins (C10c, H31c, H30c, dead code cleanup)
+- Tier 1 (Week 1): 3 tasks — observability (Sentry audit, logger, analytics)
+- Tier 2 (Week 2-3): 3 tasks — multi-tenancy real (Firebase Auth + migration)
+- Tier 3 (Week 3-4): 5 tasks — launch readiness (onboarding, landing, privacy, billing)
+- Tier 4 (Next Quarter): 3 tasks — schema & architecture refactor
+- Tier 5 (Next Quarter): 3 tasks — FAZA 4 features (programe, injury, recovery)
+
+**VERDICT FINAL: FAIL.** SalaFull are fundamente corecte dar NU e launch-ready în nicio dimensiune critică. 4-6 luni concentrate până la commercial launch realist.
+
+**Next action:** Daniel review audit, valid/reject task list, queue TASK #26-32 pentru execuție imediată (Tier 0 quick wins).
+
+---
+
 ## 2026-04-24 — FAZA 2 COMPLETE (Bug Fixes + Reliability)
 
 **Scope:** 6 task groups, 10 bugs fixed, 2 refactors, 35 net new tests.

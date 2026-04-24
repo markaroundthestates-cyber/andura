@@ -19,6 +19,7 @@
 
 ### 🔍 Audits
 - [[AUDIT_SUMMARY_EXECUTIVE]] — Rezumat executiv (AICI pentru overview)
+- [[OPUS_NUCLEAR_AUDIT_25APR]] — 🔴 Nuclear Opus Audit v3, adversarial (13 secțiuni, 24 tasks queued, 7 probleme NOI)
 - [[AUDIT_GENERAL_23APR]] — Audit general 1774 linii (gitignored, vezi Codespaces)
 - [[AUDIT_COACH_JS_24APR]] — Audit coach.js 2120 linii (gitignored, vezi Codespaces)
 
