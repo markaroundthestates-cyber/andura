@@ -511,3 +511,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** 1532 linii, 13 secțiuni cu VERDICT, 24 tasks ready-to-queue (TASK #26-49, 5 tiers), 7 probleme NOI (depășește target anti-reîncălzire 3), 5 FALSE/HALF DONE expuse din FAZA 1+2. TOP 5 blockers: C10c cache cascade, H31c reset spec gap, H30c pattern bypass, multi-tenancy fake, observability blackhole. VERDICT FINAL: FAIL — 4-6 luni până launch.
 
 ---
+
+## TASK #26 — C10c Cache Invalidation Coalesce
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** CRITICAL
+**Status:** DONE ✅
+**Created:** 2026-04-25
+**Completed:** 2026-04-25
+**Description:** Fix cache invalidation cascade din firebase.js. Pe syncFromFirebase, 11 DB.set calls invalidează director cache 11×. Adaugă suppressInvalidations(fn) wrapper + debounce 250ms pe invalidate() trigger.
+**Acceptance:** syncFromFirebase produce ≤ 1 invalidare netă. Test cache-coalesce cu spy pe invalidate. Build + 271 teste existente verzi.
+**Dependencies:** TASK #25 DONE ✅
+**Result:** firebase.js: `suppressInvalidations(fn)` batch mode + debounce 250ms pe invalidare reactiv (DB.set-triggered). syncFromFirebase wrapped în suppressInvalidations → 11 writes = 1 invalidare. Direct invalidate() bypass (unchanged semantics pt dataCleanup). Test nou: 7 cazuri (batch fold, no-invalidation-irrelevant, nested, throws-still-flushes, debounce, second-burst, direct-bypass). 271 → 278 teste, zero regresii. Build green.
+
+---

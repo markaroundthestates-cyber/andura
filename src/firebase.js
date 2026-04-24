@@ -79,30 +79,32 @@ export async function syncFromFirebase() {
     if (!remote) return false;
 
     const today = tod();
-    SYNC_KEYS.forEach(k => {
-      if (remote[k] == null) return;
-      const local = DB.get(k);
-      if (local == null) { DB.set(k, remote[k]); return; }
+    suppressInvalidations(() => {
+      SYNC_KEYS.forEach(k => {
+        if (remote[k] == null) return;
+        const local = DB.get(k);
+        if (local == null) { DB.set(k, remote[k]); return; }
 
-      // Merge objects (weights, kcals, prots, etc.).
-      // Strategy: union of remote + local, with local taking priority on conflicts.
-      // KNOWN LIMITATION: if the same date was edited on two devices, local always wins
-      // regardless of which edit was more recent. Proper last-write-wins requires
-      // per-entry timestamps — deferred until multi-device use becomes a real concern.
-      if (typeof remote[k] === 'object' && !Array.isArray(remote[k])) {
-        DB.set(k, Object.assign({}, remote[k], local));
-      } else if (Array.isArray(remote[k])) {
-        // For arrays (logs), merge by timestamp uniqueness
-        const localArr = Array.isArray(local) ? local : [];
-        const remoteArr = remote[k];
-        const tsSet = new Set(localArr.map(e => e.ts));
-        const merged = [...localArr];
-        remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
-        merged.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-        DB.set(k, merged.slice(0, 5000));
-      } else {
-        // Scalar — keep local
-      }
+        // Merge objects (weights, kcals, prots, etc.).
+        // Strategy: union of remote + local, with local taking priority on conflicts.
+        // KNOWN LIMITATION: if the same date was edited on two devices, local always wins
+        // regardless of which edit was more recent. Proper last-write-wins requires
+        // per-entry timestamps — deferred until multi-device use becomes a real concern.
+        if (typeof remote[k] === 'object' && !Array.isArray(remote[k])) {
+          DB.set(k, Object.assign({}, remote[k], local));
+        } else if (Array.isArray(remote[k])) {
+          // For arrays (logs), merge by timestamp uniqueness
+          const localArr = Array.isArray(local) ? local : [];
+          const remoteArr = remote[k];
+          const tsSet = new Set(localArr.map(e => e.ts));
+          const merged = [...localArr];
+          remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
+          merged.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+          DB.set(k, merged.slice(0, 5000));
+        } else {
+          // Scalar — keep local
+        }
+      });
     });
 
     // Warn about unknown remote keys so schema drift is visible
@@ -116,16 +118,52 @@ export async function syncFromFirebase() {
 let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
 const COACH_RELEVANT_KEYS = ['logs', 'readiness', 'phase-override', 'current-kcal', 'weights', 'unavailable-equipment', 'equipment-occupied-session', 'applied-patterns', 'session-burns', 'early-stops', 'workout-skips'];
+
+// Coalesce cache invalidations triggered by DB.set. Two mechanisms:
+// 1. suppressInvalidations(fn) — batch-mode: all invalidations during fn are folded into one flush at the end.
+// 2. Debounce 250ms — outside batch mode, rapid successive DB.set calls produce one invalidate per window.
+// Direct calls to window._directorCache.invalidate() from other modules bypass both (intentional).
+let _suppressed = false;
+let _pendingInvalidation = false;
+let _invalidateTimer = null;
+const INVALIDATE_DEBOUNCE_MS = 250;
+
+function scheduleInvalidation() {
+  if (!window._directorCache) return;
+  if (_suppressed) { _pendingInvalidation = true; return; }
+  clearTimeout(_invalidateTimer);
+  _invalidateTimer = setTimeout(() => {
+    _invalidateTimer = null;
+    if (window._directorCache) window._directorCache.invalidate();
+  }, INVALIDATE_DEBOUNCE_MS);
+}
+
+export function suppressInvalidations(fn) {
+  const wasSuppressed = _suppressed;
+  _suppressed = true;
+  try { return fn(); }
+  finally {
+    _suppressed = wasSuppressed;
+    if (!_suppressed && _pendingInvalidation) {
+      _pendingInvalidation = false;
+      if (window._directorCache) window._directorCache.invalidate();
+    }
+  }
+}
+
 DB.set = function(key, val) {
   _origSet(key, val);
-  if (COACH_RELEVANT_KEYS.includes(key) && window._directorCache) {
-    window._directorCache.invalidate();
+  if (COACH_RELEVANT_KEYS.includes(key)) {
+    scheduleInvalidation();
   }
   if (SYNC_KEYS.includes(key) && !window._suppressFirebaseSync) {
     clearTimeout(_syncTimer);
     _syncTimer = setTimeout(syncToFirebase, 3000);
   }
 };
+
+// Expose suppressInvalidations on DB for call-site convenience.
+DB.suppressInvalidations = suppressInvalidations;
 
 export async function initFirebaseSync() {
   const synced = await syncFromFirebase();
