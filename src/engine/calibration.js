@@ -158,6 +158,13 @@ export function shouldRecalibrate(level, lastRecalibration) {
 }
 
 /**
+ * Feature flag: weakness-prioritized session ordering.
+ * When true, buildSession moves weak-group exercises to positions 1-2.
+ * Default false — opt-in only.
+ */
+export const contextSelectionEnabled = false;
+
+/**
  * Filter logs to the rolling window defined for the level.
  * Only OPTIMIZED (6 months) currently has a window; others return all logs.
  */
