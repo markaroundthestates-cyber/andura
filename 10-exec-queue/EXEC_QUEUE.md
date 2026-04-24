@@ -525,3 +525,17 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** firebase.js: `suppressInvalidations(fn)` batch mode + debounce 250ms pe invalidare reactiv (DB.set-triggered). syncFromFirebase wrapped în suppressInvalidations → 11 writes = 1 invalidare. Direct invalidate() bypass (unchanged semantics pt dataCleanup). Test nou: 7 cazuri (batch fold, no-invalidation-irrelevant, nested, throws-still-flushes, debounce, second-burst, direct-bypass). 271 → 278 teste, zero regresii. Build green.
 
 ---
+
+## TASK #27a — QA Report 25 APR 2026 (Post C10c fix)
+**Model:** Sonnet
+**Type:** CLEANUP
+**Priority:** HIGH
+**Status:** DONE ✅
+**Created:** 2026-04-25
+**Completed:** 2026-04-25
+**Description:** Document QA findings Daniel live testing post-FAZA 2 + Task #26. Creează QA_MANUAL_25APR_POSTFIX.md cu validare C10c + bug-uri noi (reset cascade, rerun onboarding, ocupat persist) + FR1-4.
+**Acceptance:** QA_MANUAL_25APR_POSTFIX.md creat, FINDINGS_MASTER updated cu BUG A (reset cascade CRITICAL) + rerun onboarding (HIGH), commit + push.
+**Dependencies:** TASK #26 DONE ✅
+**Result:** QA_MANUAL_25APR_POSTFIX.md creat. C10c ✅ VALIDAT (12+ → 1 invalidare pe Firebase sync). Noi: **C11c CRITICAL** (reset cascade 12+ invalidări — Task #26 fix nu acoperă reset flow), **H32c HIGH** (Rerun onboarding down post-reset). FINDINGS_MASTER: 16 FIXED (+C10c), 4 OPEN (C11c, H30c, H31c, H32c). FR1-4 queued pt FAZA 4. Next: Task #27 cu scope EXTENDED (registry + coalesce reset flow + investigate onboarding).
+
+---
