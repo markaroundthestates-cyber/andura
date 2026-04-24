@@ -243,3 +243,14 @@ PAȘI:
 **Dependencies:** TASK #16 DONE ✅
 
 ---
+
+## TASK #18
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.8 AUDIT — Firebase security + sync cap (ZERO execuție). Audit exhaustiv: credentials expuse, rules curente, sync cap .slice(0,500), plan migration single-user + multi-user, safety nets. Creează docs/FIREBASE_AUDIT_1_8.md.
+**Acceptance:** docs/FIREBASE_AUDIT_1_8.md creat exhaustiv, zero modificări cod/config, git commit + push.
+**Dependencies:** NONE
+
+---

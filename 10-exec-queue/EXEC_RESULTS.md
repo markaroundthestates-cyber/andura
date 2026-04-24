@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #18 — DONE
+**Completed:** 2026-04-24 23:00
+**Duration:** 10min
+**Summary:** Audit exhaustiv Firebase security + sync cap. Key findings: (1) Nu există Firebase SDK sau API key în client — only raw REST cu FIREBASE_URL constant. Zero autentificare. Rules necunoscute (trebuie verificat Console). (2) slice(0,500) în 4 locuri (logging.js:100, session.js:230, firebase.js:102, onboarding.js:116) — pierde loguri vechi silențios din ~29 sesiune. La 3-4 sesiuni/săptămână = data loss după ~7-10 săptămâni. (3) tierStorage.js existent complet dar ZERO imports — scaffold gata pentru OPT C. Recomandate: deploy rules v1 (path-restrict, manual în Console) + slice 5000 (Claude Code, FAZA 1). Auth defer FAZA 4.
+**Files changed:** docs/FIREBASE_AUDIT_1_8.md (creat)
+**Tests:** N/A — audit only
+**Issues:** A1-A3 + A5-A6 necesită acțiune manuală de la Daniel (Firebase Console access)
+
+---
+
 ## TASK #17 — DONE
 **Completed:** 2026-04-24 22:30
 **Duration:** 12min
