@@ -75,7 +75,14 @@ function computeFrequencySensitivity(logs) {
     const ts = log.ts ?? (log.date ? new Date(log.date).getTime() : null);
     if (!ts) continue;
     const d = new Date(ts);
-    const week = `${d.getFullYear()}-W${String(Math.ceil((d - new Date(d.getFullYear(), 0, 1)) / 604800000)).padStart(2, '0')}`;
+    // ISO 8601: week belongs to the year of its Thursday
+    const thursday = new Date(d);
+    thursday.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 3);
+    const jan4 = new Date(thursday.getFullYear(), 0, 4);
+    const w1start = new Date(jan4);
+    w1start.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
+    const weekNum = Math.floor((thursday - w1start) / (7 * 86400000)) + 1;
+    const week = `${thursday.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
     if (!byWeek.has(week)) byWeek.set(week, []);
     byWeek.get(week).push(log);
   }

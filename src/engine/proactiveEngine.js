@@ -88,13 +88,30 @@ export function checkPROpportunity(readiness, logs) {
 }
 
 /**
- * Check 4: Grupe musculare sub-recuperate (recovery hours insuficiente).
+ * Check 4: Grupe musculare neantronate 5+ zile.
+ * Computes daysSinceLast from logs directly (getMuscleState returns {muscle:0-100}).
  */
-export function checkRecoveryGroups(logs, muscleState) {
-  if (!muscleState) return null;
-  const undertrained = Object.entries(muscleState)
-    .filter(([, state]) => state.fatigue === 'fresh' && state.daysSinceLast > 5)
+export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
+  if (!logs || logs.length === 0) return null;
+  if (!muscleExercises) return null;
+
+  const now = Date.now();
+  const daysSinceLast = {};
+
+  for (const [muscle, exercises] of Object.entries(muscleExercises)) {
+    const relevant = logs.filter(l => exercises.includes(l.ex) && !l.baseline);
+    if (relevant.length === 0) {
+      daysSinceLast[muscle] = Infinity;
+    } else {
+      const lastTs = Math.max(...relevant.map(l => l.ts || new Date(l.date).getTime()));
+      daysSinceLast[muscle] = (now - lastTs) / 86400000;
+    }
+  }
+
+  const undertrained = Object.entries(daysSinceLast)
+    .filter(([, days]) => days > 5)
     .map(([group]) => group);
+
   if (undertrained.length > 0) {
     return {
       type: 'undertrained_groups',
