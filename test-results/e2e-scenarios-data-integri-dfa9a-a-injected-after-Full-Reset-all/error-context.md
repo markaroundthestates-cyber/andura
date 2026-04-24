@@ -15,7 +15,7 @@
 Error: expect(received).toBe(expected) // Object.is equality
 
 Expected: 0
-Received: 15
+Received: 45
 ```
 
 # Page snapshot
@@ -32,7 +32,7 @@ Received: 15
       - generic [ref=e9]: vineri, 24 aprilie · ~81 min
     - generic [ref=e10]:
       - text: 🟢 PROGRESEAZĂ NORMAL
-      - generic [ref=e11]: Scor 7/100 · Totul în limite normale
+      - generic [ref=e11]: Scor 13/100 · Totul în limite normale
     - generic [ref=e12]:
       - generic [ref=e13]:
         - generic [ref=e14]: Cum te simți azi?
@@ -106,7 +106,7 @@ Received: 15
         - generic [ref=e86]: "501"
         - generic [ref=e87]: Kcal est.
       - generic [ref=e88]:
-        - generic [ref=e89]: "15"
+        - generic [ref=e89]: "45"
         - generic [ref=e90]: Seturi/săpt
     - generic [ref=e91]:
       - button "▶ START VINERI · ~72 MIN (±10)" [ref=e92] [cursor=pointer]:
