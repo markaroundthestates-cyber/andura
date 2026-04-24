@@ -1,6 +1,11 @@
 // ══ COACH PAGE ══════════════════════════════════════════════
 import './coach/state.js';
 import { sessionCache, getCachedDirector, setCachedDirector, wakeLockRef, uiToggleFlags } from './coach/state.js';
+import { formatSetsReps, getGroupColor, getExGroup, isInCutPhase,
+         getDisplayTime, calcAccurateTime, getAdaptiveTime,
+         getTodayExercises, beepStart, resetNotes } from './coach/util.js';
+export { getGroupColor, getExGroup, getDisplayTime, calcAccurateTime,
+         getAdaptiveTime, getTodayExercises, resetNotes } from './coach/util.js';
 import { DB, $, tod, cleanEx } from '../db.js';
 import { syncToFirebase } from '../firebase.js';
 import { PROG, EX_SETS, COMPOUND_EX, PAUSE_COMPOUND, PAUSE_ISO } from '../constants.js';
@@ -18,21 +23,6 @@ import { filterValidLogs } from '../util/logFilter.js';
 
 let inactivityTimer = null;
 const INACTIVITY_DELAY = 2 * 60 * 1000;
-
-// ── Bug 3: CUT phase display helper ───────────────────────────
-// Caps isolation exercise rep display at 10 in CUT phase (e.g. "4×12–15" → "4×10").
-// Only affects 10-15 rep ranges. High-rep leg ranges (15-20) pass through unchanged.
-function formatSetsReps(rawStr, exName, isInCut) {
-  if (!isInCut || !rawStr || COMPOUND_EX.includes(exName)) return rawStr;
-  const m = rawStr.match(/^(\d+)×(\d+)(?:–(\d+))?(.*)$/u);
-  if (!m) return rawStr;
-  const sets = m[1];
-  const rMin = parseInt(m[2]);
-  const rMax = m[3] ? parseInt(m[3]) : rMin;
-  const suffix = m[4] || '';
-  if (rMax <= 10 || rMax > 15) return rawStr;
-  return `${sets}×${Math.min(rMin, 10)}${suffix}`;
-}
 
 // ── Feature 1: Smart Rest Timer ──────────────────────────────
 function getSmartPause(ex) {
@@ -140,8 +130,6 @@ function renderLastSessionMemory(dayLabel) {
   </div>`;
 }
 
-export function resetNotes() { state.activeNotes.clear(); }
-
 export function toggleExList(dayIdx) {
   uiToggleFlags.exListExpanded[dayIdx] = !uiToggleFlags.exListExpanded[dayIdx];
   renderCoachIdle();
@@ -161,10 +149,6 @@ export function skipPause() {
   toast('⚠️ Pauza scurtă poate reduce performanța la setul următor', 'var(--accent2)');
 }
 
-export function getGroupColor(g) {
-  const c = {spate:'#4fc3f7',piept:'#ffd54f',umeri:'#ffb74d',brate:'#a1887f',picioare:'#81c784',triceps:'#e0e0e0'};
-  return c[g] || 'var(--text3)';
-}
 function renderFatigueScore(elId) {
   const el = $(elId); if (!el) return;
   const f = calculateFatigueScore();
@@ -175,7 +159,6 @@ function renderFatigueScore(elId) {
 function renderTodayAlerts() {}
 // TODO: update session clock (#sess-clock) and kcal (#sess-kcal) every second
 function tickSess() {}
-function beepStart() { if (typeof beep === 'function') beep(660, 0.1); }
 
 
 export async function renderCoachIdle(){
@@ -284,10 +267,7 @@ export async function renderCoachIdle(){
       const kcals = DB.get('kcals')||{}, prots = DB.get('prots')||{};
       return getReadinessScore(todayR, kcals[yDate], prots[yDate], 1800, 180);
     })();
-    const _now = new Date();
-    const _july20 = new Date('2026-07-20');
-    const _phase = DB.get('phase-override') || 'AUTO';
-    const _isInCut = _phase === 'CUT' || (_phase === 'AUTO' && _now < _july20);
+    const _isInCut = isInCutPhase();
     const verdict = readinessScore != null ? getReadinessVerdict(readinessScore, { isInCut: _isInCut }) : null;
 
     // Exercise list — apply pattern filtering and skip occupied equipment
@@ -951,43 +931,6 @@ export function renderSessLog(){
   }).join('');
 }
 
-export function getTodayExercises() {
-  const dayMap=[6,0,1,2,3,4,5];
-  const tp=PROG[dayMap[new Date().getDay()]];
-  if(!tp||tp.t==='off'||!tp.ex) return [];
-  const unavail = DB.get('unavailable-equipment') || [];
-  let exList = tp.ex.map(e => cleanEx(e.n||'')).filter(ex => !unavail.includes(ex));
-  // Gate pattern reads by calibration level (via cached director session or session count)
-  const _cachedLvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
-  const _patternsOn = _cachedLvl ? _cachedLvl.patternsEnabled : (() => {
-    try {
-      const logs = JSON.parse(localStorage.getItem('logs') || '[]');
-      const sessionKeys = new Set(logs.map(l => l.session ?? l.date).filter(Boolean));
-      return sessionKeys.size >= 3; // cold_start threshold
-    } catch { return true; }
-  })();
-  const patterns = _patternsOn ? (DB.get('applied-patterns') || []) : [];
-  const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
-  if (skipPattern) {
-    const compounds = exList.filter(ex => COMPOUND_EX.includes(ex));
-    if (compounds.length >= 2) return compounds;
-  }
-  return exList;
-}
-
-export function getExGroup(ex){
-  const g={
-    spate:['Lat Pulldown','Cable Row','Chest-Supported Row','Face Pulls'],
-    piept:['Incline DB Press','Flat DB Press','Pec Deck / Cable Fly'],
-    umeri:['DB Shoulder Press','Lateral Raises','Rear Delt Fly'],
-    brate:['Incline DB Curl','Bayesian Curl','Cable Curl','Preacher Curl'],
-    triceps:['Overhead Triceps','Pushdown'],
-    picioare:['Romanian Deadlift','Leg Press','Leg Curl','Leg Extension','Calf Raises']
-  };
-  for(const[grp,exs]of Object.entries(g)){if(exs.some(e=>ex.includes(e)))return grp.toUpperCase();}
-  return 'EXERCIȚIU';
-}
-
 export function adjSessionReps(d){
   state.sessRepsInput = Math.max(1,Math.min(30,state.sessRepsInput+d));
   $('session-reps').textContent=state.sessRepsInput;
@@ -1002,65 +945,6 @@ export function updateSessionProgress() {
   if(txtEl) txtEl.textContent = `${done}/${total}`;
   if(barEl) barEl.style.width = pct + '%';
 }
-
-export function getDisplayTime(prog) {
-  if (!prog) return null;
-  
-  // After 3+ sessions: use adaptive average
-  const adaptive = getAdaptiveTime(prog.day);
-  if (adaptive) return `~${adaptive} min`;
-  
-  // Calculate accurately from program structure  
-  const accurate = calcAccurateTime(prog);
-  if (accurate) return `~${accurate} min`;
-  
-  // Fallback to stored tm
-  if (prog.tm) return prog.tm.includes('min') ? prog.tm : `~${prog.tm}`;
-  return null;
-}
-
-export function calcAccurateTime(prog) {
-  if(!prog || !prog.ex || prog.ex.length === 0) return null;
-  
-  const COMPOUND_EX_LIST = ['Lat Pulldown','Cable Row','Incline DB Press',
-    'DB Shoulder Press','Flat DB Press','Chest-Supported Row','Romanian Deadlift',
-    'Leg Press','RDL'];
-  
-  let totalSeconds = 0;
-  
-  prog.ex.forEach(ex => {
-    const isCompound = COMPOUND_EX_LIST.some(c => ex.n && ex.n.includes(c.split(' ')[0]));
-    
-    // Parse sets from string like "4×8-12" or "3×15-20"
-    const setsMatch = ex.s ? ex.s.match(/^(\d+)/) : null;
-    const sets = setsMatch ? parseInt(setsMatch[1]) : 3;
-    
-    // Time per set (seconds)
-    const setTime = isCompound ? 45 : 30;
-    
-    // Rest time (seconds)  
-    const restTime = isCompound ? 180 : 90;
-    
-    // Total per exercise: sets × set_time + (sets-1) × rest + transition
-    const exTime = sets * setTime + (sets - 1) * restTime + 30; // 30s transition
-    totalSeconds += exTime;
-  });
-  
-  // Add: warmup (5min) + final cooldown (3min) + between-exercise transitions
-  totalSeconds += 8 * 60;
-  
-  return Math.round(totalSeconds / 60); // return minutes
-}
-
-export function getAdaptiveTime(dayLabel) {
-  const burns = DB.get('session-burns') || [];
-  const dayBurns = burns.filter(b => b.day === dayLabel && b.mins > 10).slice(0, 5);
-  if (dayBurns.length < 3) return null; // not enough data yet
-  const avg = Math.round(dayBurns.reduce((a,b) => a + b.mins, 0) / dayBurns.length);
-  return avg;
-}
-
-
 
 export function checkMuscleBalance(){
   const logs=DB.get('logs')||[];
@@ -1410,10 +1294,7 @@ export function showWhyForExercise(exerciseName) {
           return typeof r === 'object' ? (r[today]?.score ?? r[today] ?? null) : null;
         } catch { return null; }
       })() : null },
-      isInCut: (() => {
-        const phase = DB.get('phase-override') || 'AUTO';
-        return phase === 'CUT' || (phase === 'AUTO' && new Date() < new Date('2026-07-20'));
-      })(),
+      isInCut: isInCutPhase(),
       patterns: (() => {
         const lvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
         return (lvl?.patternsEnabled !== false) ? (DB.get('applied-patterns') || []) : [];
