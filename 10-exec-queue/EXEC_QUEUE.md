@@ -35,3 +35,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** NONE
 
 ---
+
+## TASK #2
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** Înlocuiește complet conținutul 00-index/INDEX_MASTER.md cu versiunea nouă (SALAFULL VAULT — INDEX MASTER) care include navigare rapidă, faze complete, concept produs, infrastructură live, workflow vault, contact AI, git sync status.
+**Acceptance:** INDEX_MASTER.md exact ca versiunea specificată, git commit + push pe main.
+**Dependencies:** NONE
+
+---
