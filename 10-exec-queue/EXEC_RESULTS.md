@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #15 — DONE
+**Completed:** 2026-04-24 21:30
+**Duration:** 8min
+**Summary:** Fix 2 linii conform audit: (1) coachContext.js — adăugat `allLogs` în return object; (2) coachDirector.js:23-24 — înlocuit `ctx.recentLogs.flatMap()` cu `ctx.allLogs ?? []`. Acum ctx.allLogs = full localStorage history, nu max 3 sesiuni. 5 teste noi: ctx.allLogs.length=30 cu 10 sesiuni stocate, allLogs > recentLogs cu >3 sesiuni, calibration COLD_START cu 2 sesiuni, PERSONALIZING cu 15 sesiuni/35 zile, PERSONALIZED/OPTIMIZED cu 85 sesiuni/190 zile.
+**Files changed:** src/engine/coachContext.js, src/engine/coachDirector.js, src/engine/__tests__/coachContext.test.js (creat), 00-index/INDEX_MASTER.md
+**Tests:** 5 added — all pass; baseline menținut
+**Issues:** NONE
+
+---
+
 ## TASK #14 — DONE
 **Completed:** 2026-04-24 21:00
 **Duration:** 12min

@@ -36,6 +36,7 @@ export function buildCoachContext() {
       available: getAvailableEquipment(),
       unavailable: getUnavailableEquipment()
     },
+    allLogs,
     recentLogs,
     patterns: getActivePatterns(),
     currentDate: now,

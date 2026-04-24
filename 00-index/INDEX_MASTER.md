@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
 **Ultima actualizare:** 24 apr 2026 (noapte)
-**Status:** FAZA 1 — Engine Bulletproof (1.1 + 1.2 + 1.3 + 1.4 DONE, 1.5+ pending)
+**Status:** FAZA 1 — Engine Bulletproof (1.1 + 1.2 + 1.3 + 1.4 + 1.5 DONE, 1.6+ pending)
 
 ---
 
@@ -67,7 +67,7 @@ Sub-faze:
 - ✅ 1.2 Multi-tenancy decouple (DONE 24 apr 2026)
 - ✅ 1.3 Log schema cleanup (DONE 24 apr 2026)
 - ✅ 1.4 cleanDuplicateLogs fix (DONE 24 apr 2026)
-- ⏳ 1.5 ctx.allLogs real (calibration live)
+- ✅ 1.5 ctx.allLogs real — calibration live (DONE 24 apr 2026)
 - ⏳ 1.6 sessionBuilder implementation
 - ⏳ 1.7 AA engine decizie (activate sau delete)
 - ⏳ 1.8 Firebase security + sync cap

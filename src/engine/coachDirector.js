@@ -20,8 +20,7 @@ export class CoachDirector {
     }
 
     // ── Calibration level detection ────────────────────────────────────────
-    const allLogs = ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [];
-    ctx.allLogs = allLogs;
+    const allLogs = ctx.allLogs ?? [];
     const calibration = detectCalibrationLevel(ctx);
     ctx.calibrationLevel = calibration;
     console.log('[CoachDirector] Calibration:', calibration.name);

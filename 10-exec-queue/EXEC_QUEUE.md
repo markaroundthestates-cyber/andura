@@ -210,3 +210,14 @@ PAȘI:
 **Dependencies:** TASK #12 DONE ✅
 
 ---
+
+## TASK #15
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.5 — Fix ctx.allLogs calibration. Expune allLogs în buildCoachContext, înlocuiește derivarea din recentLogs.flatMap în coachDirector. Teste: ctx.allLogs conține full history, calibration nu returnează COLD_START pentru 80+ sesiuni.
+**Acceptance:** Fix aplicat, 2+ teste noi, build clean, git commit + push. Marchează FAZA 1.5 DONE în INDEX_MASTER.
+**Dependencies:** TASK #13 DONE ✅
+
+---
