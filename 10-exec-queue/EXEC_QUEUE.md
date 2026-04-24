@@ -112,3 +112,38 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** NONE
 
 ---
+
+## TASK #9
+**Model:** Sonnet
+**Priority:** MEDIUM
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.3 AUDIT — Log schema actual + plan migration (ZERO execuție, doar audit).
+
+Referință: docs/AUDIT_BULLETPROOF_23APR.md — issues schema loguri, audit coach finding C4c (Dedupe colapse 2/3 seturi).
+
+SCOPE: Doar audit + plan. NU atinge cod, NU modifica loguri, NU migrate.
+
+PAȘI:
+
+1. Analizează schema loguri actuală:
+   - Caută toate locurile unde se CREEAZĂ un log (DB.set cu key-uri care conțin 'logs', push la arrays de loguri, etc.)
+   - Pentru fiecare loc: ce fields se setează? (ex, w, reps, rpe, ts, date, session, phase, set_number, etc.)
+   - Identifică fields OPTIONAL vs REQUIRED în practică
+   - Identifică INCONSISTENȚE: același logical field cu nume diferite (ex: "w" vs "weight", "ex" vs "exercise", "ts" vs "timestamp")
+
+2. Analizează schema loguri CITITĂ:
+   - Caută toate locurile unde se CITESC loguri
+   - Ce fields sunt așteptate să existe?
+   - Există fallbacks (ex: l.w ?? l.weight)?
+
+3. Identifică mismatch-uri:
+   - Fields scrise dar niciodată citite (dead data)
+   - Fields citite dar nu întotdeauna scrise (bug risk)
+   - Fields cu tipuri inconsistente (uneori string, uneori number)
+
+4. Creează docs/LOG_SCHEMA_AUDIT_1_3.md cu secțiunile: Schema actuală (DE FACTO), Schema propusă (TARGET), Mismatches găsite, Migration plan, Risk assessment.
+**Acceptance:** docs/LOG_SCHEMA_AUDIT_1_3.md creat cu toate secțiunile, NU modifică cod, git commit + push pe main.
+**Dependencies:** NONE
+
+---

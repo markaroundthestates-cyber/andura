@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #9 — DONE
+**Completed:** 2026-04-24 18:30
+**Duration:** 15min
+**Summary:** Audit complet schema loguri. 7 mismatches identificate: M1 (fallback-uri moarte l.weight/l.exercise/l.timestamp în 7+ fișiere), M2 BUG ACTIV (adherence.js nu filtrează __early_stop__ marker → contorizat ca workout set), M3 (rpe hardcodat la 8), M4 (reps tip string inconsistențe), M5 (sessLog in-memory folosește kg vs w în persisted logs), M6 (userOverride dead field), M7 (l.timestamp fallback mort). Schema TARGET definită. Migration plan cu backup/dry-run/rollback documentat. Recomandare: PROCEED, zero loss risk.
+**Files changed:** docs/LOG_SCHEMA_AUDIT_1_3.md (creat)
+**Tests:** N/A — audit only
+**Issues:** M2 (adherence.js earlyStop filter) — bug activ, recomandat fix separat
+
+---
+
 ## TASK #8 — DONE
 **Completed:** 2026-04-24 18:00
 **Duration:** 10min
