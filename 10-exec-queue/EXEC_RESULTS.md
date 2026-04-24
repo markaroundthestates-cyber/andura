@@ -21,6 +21,16 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #8 — DONE
+**Completed:** 2026-04-24 18:00
+**Duration:** 10min
+**Summary:** Mutat cleanDuplicateLogs din main.js în dataCleanup.js. Funcția veche dedupa pe business fields (bug: l.kg era undefined, elimina seturi legitime). Noua versiune: dedupe strict pe ts — same timestamp = duplicat, timestamps diferite = păstrate indiferent de ex/w/reps. main.js importă din dataCleanup.js, funcția inline ștearsă. 4 teste noi adăugate.
+**Files changed:** src/util/dataCleanup.js, src/main.js, src/util/__tests__/dataCleanup.test.js
+**Tests:** 4 added — all pass; baseline 41 pass / 2 fail pre-existente / 2 skipped menținut
+**Issues:** NONE
+
+---
+
 ## TASK #7 — DONE
 **Completed:** 2026-04-24 17:30
 **Duration:** 2min

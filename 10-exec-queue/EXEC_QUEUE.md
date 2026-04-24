@@ -101,3 +101,14 @@ TEMPLATE — copiază blocul de mai jos pentru fiecare task nou:
 **Dependencies:** TASK #6 DONE ✅
 
 ---
+
+## TASK #8
+**Model:** Sonnet
+**Priority:** HIGH
+**Status:** DONE
+**Created:** 2026-04-24
+**Description:** FAZA 1.4 — Fix cleanDuplicateLogs: dedupe strict pe timestamp (±2s), NU pe business fields. Seturi legitime cu same ex+kg+reps trebuie păstrate dacă timestamps diferite.
+**Acceptance:** dataCleanup.js fixed, test nou acoperă cazul, build + baseline menținut, git commit + push.
+**Dependencies:** NONE
+
+---

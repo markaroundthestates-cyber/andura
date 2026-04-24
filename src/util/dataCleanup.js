@@ -41,6 +41,29 @@ export const USER_DATA_KEYS = [
   'onboarding-completed'
 ];
 
+// ── Deduplicate Logs ──────────────────────────────────────────────────────
+// Removes truly duplicate log entries — defined as two entries with the exact
+// same timestamp. Legitimate multi-set data (same exercise, different ts) is preserved.
+
+export function cleanDuplicateLogs() {
+  let logs;
+  try {
+    logs = JSON.parse(localStorage.getItem('logs') || '[]');
+  } catch { return; }
+
+  const seen = new Set();
+  const clean = logs.filter(l => {
+    if (l.ts == null) return true;
+    if (seen.has(l.ts)) return false;
+    seen.add(l.ts);
+    return true;
+  });
+
+  if (clean.length < logs.length) {
+    localStorage.setItem('logs', JSON.stringify(clean));
+  }
+}
+
 // ── Auto-Backup / Restore ──────────────────────────────────────────────────
 
 export function createAutoBackup() {

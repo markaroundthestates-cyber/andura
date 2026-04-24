@@ -35,7 +35,7 @@ import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js'
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
-import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs, restoreRealLogs } from './util/dataCleanup.js';
+import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs, restoreRealLogs, cleanDuplicateLogs } from './util/dataCleanup.js';
 import { adminPrefillAll } from './util/adminPrefill.js';
 
 // Toate funcțiile accesibile din HTML via onclick
@@ -109,18 +109,6 @@ async function clearStalePatternsIfColdStart() {
   } catch { /* non-blocking */ }
 }
 
-// ── Feature 10: Clean Duplicate Logs ─────────────────────────
-function cleanDuplicateLogs() {
-  const logs = DB.get('logs') || [];
-  const seen = new Set();
-  const clean = logs.filter(l => {
-    const key = `${l.session||l.date}|${l.ex}|${l.set||0}|${l.kg}|${l.reps}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-  if (clean.length < logs.length) DB.set('logs', clean);
-}
 
 // ── Feature 7: Offline Indicator ─────────────────────────────
 function setupOfflineIndicator() {

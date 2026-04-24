@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS } from '../dataCleanup.js';
+import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
 
 describe('DataCleanup — Firebase aware', () => {
   beforeEach(() => {
@@ -62,5 +62,51 @@ describe('DataCleanup — Firebase aware', () => {
     await fullReset({ clearFirebase: false, reload: false });
     expect(localStorage.getItem('logs')).toBeNull();
     expect(localStorage.getItem('auto-recommendations')).toBeNull();
+  });
+});
+
+describe('cleanDuplicateLogs', () => {
+  beforeEach(() => { localStorage.clear(); });
+
+  it('keeps all logs when timestamps are different (same ex/w/reps)', () => {
+    const logs = [
+      { ts: 1000, ex: 'Bench', w: 80, reps: 8 },
+      { ts: 1060, ex: 'Bench', w: 80, reps: 8 },
+      { ts: 1120, ex: 'Bench', w: 80, reps: 8 },
+    ];
+    localStorage.setItem('logs', JSON.stringify(logs));
+    cleanDuplicateLogs();
+    const result = JSON.parse(localStorage.getItem('logs'));
+    expect(result).toHaveLength(3);
+  });
+
+  it('removes duplicate when two logs share the same timestamp', () => {
+    const logs = [
+      { ts: 1000, ex: 'Bench', w: 80, reps: 8 },
+      { ts: 1000, ex: 'Bench', w: 80, reps: 8 },
+    ];
+    localStorage.setItem('logs', JSON.stringify(logs));
+    cleanDuplicateLogs();
+    const result = JSON.parse(localStorage.getItem('logs'));
+    expect(result).toHaveLength(1);
+  });
+
+  it('keeps logs with no ts field intact', () => {
+    const logs = [
+      { ex: 'Squat', w: 100, reps: 5 },
+      { ex: 'Squat', w: 100, reps: 5 },
+    ];
+    localStorage.setItem('logs', JSON.stringify(logs));
+    cleanDuplicateLogs();
+    const result = JSON.parse(localStorage.getItem('logs'));
+    expect(result).toHaveLength(2);
+  });
+
+  it('does not write to localStorage when no duplicates exist', () => {
+    const logs = [{ ts: 1, ex: 'A' }, { ts: 2, ex: 'B' }];
+    localStorage.setItem('logs', JSON.stringify(logs));
+    const before = localStorage.getItem('logs');
+    cleanDuplicateLogs();
+    expect(localStorage.getItem('logs')).toBe(before);
   });
 });
