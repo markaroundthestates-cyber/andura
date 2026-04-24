@@ -10,6 +10,7 @@ import { resolveExercise } from './alternativeEngine.js';
 import { runProactiveChecks } from './proactiveEngine.js';
 import { initAutoBackup } from '../util/autoBackup.js';
 import { detectCalibrationLevel, applyRollingWindow } from './calibration.js';
+import { buildSession } from './sessionBuilder.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -92,7 +93,7 @@ export class CoachDirector {
       });
     } catch { /* proactive checks are non-blocking */ }
 
-    let session = this.fallbackSessionBuilder(sessionType, ctx);
+    let session = buildSession(sessionType, ctx);
 
     // ── Resolve equipment alternatives ────────────────────────────────────
     const unavailableEquipment = ctx.equipment?.unavailable ?? [];
@@ -175,30 +176,6 @@ export class CoachDirector {
     try { initAutoBackup(); } catch { /* non-blocking */ }
 
     return session;
-  }
-
-  fallbackSessionBuilder(sessionType, ctx) {
-    const exercisesByType = {
-      'PUSH': ['Incline DB Press', 'Pec Deck', 'DB Shoulder Press', 'Lateral Raises', 'Overhead Triceps', 'Pushdown'],
-      'PULL': ['Lat Pulldown', 'Cable Row', 'Face Pulls', 'Bayesian Curl', 'Incline DB Curl'],
-      'UMERI_BRATE': ['DB Shoulder Press', 'Lateral Raises', 'Rear Delt Fly', 'Bayesian Curl', 'Pushdown'],
-      'UPPER_PICIOARE': ['Lat Pulldown', 'Incline DB Press', 'Leg Press', 'Leg Extension', 'Leg Curl'],
-      'FULL_UPPER': ['Lat Pulldown', 'Incline DB Press', 'Cable Row', 'DB Shoulder Press', 'Bayesian Curl', 'Pushdown']
-    };
-    const names = exercisesByType[sessionType] || exercisesByType['FULL_UPPER'];
-    const available = ctx.equipment.available;
-    const equipMap = {
-      'Incline DB Press': 'dumbbell', 'DB Shoulder Press': 'dumbbell',
-      'Lateral Raises': 'dumbbell', 'Incline DB Curl': 'dumbbell',
-      'Pec Deck': 'pec_deck', 'Rear Delt Fly': 'pec_deck',
-      'Lat Pulldown': 'bailib_stack', 'Cable Row': 'bailib_stack',
-      'Face Pulls': 'matrix_cable', 'Bayesian Curl': 'matrix_cable',
-      'Overhead Triceps': 'matrix_cable', 'Pushdown': 'matrix_cable', 'Cable Fly': 'matrix_cable',
-      'Leg Extension': 'leg_machine', 'Leg Curl': 'leg_machine',
-      'Leg Press': 'leg_press_plates'
-    };
-    const filtered = names.filter(n => available.includes(equipMap[n]));
-    return { type: sessionType, exercises: filtered.map(name => ({ name, sets: 3 })) };
   }
 
   applyAAAdjustments(session, ctx) {
