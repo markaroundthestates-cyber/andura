@@ -24,7 +24,9 @@ function makeSkips(dayOfWeekCounts) {
     for (let i = 0; i < count; i++) {
       const d = new Date(baseDate.getTime() + i * 7 * 24 * 3600 * 1000);
       while (d.getDay() !== Number(dow)) d.setDate(d.getDate() + 1);
-      skips[d.toISOString().slice(0, 10)] = true;
+      // Use local date (not toISOString which is UTC) to avoid off-by-one around midnight
+      const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      skips[localDate] = true;
     }
   }
   return skips;

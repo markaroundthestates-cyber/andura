@@ -16,6 +16,7 @@ import { renderProg } from './pages/plan.js';
 import { goTo } from './ui/nav.js';
 import { checkOnboarding, setObRPE, saveOnboarding, skipOnboarding } from './onboarding.js';
 import { DB, cleanEx } from './db.js';
+import './util/cdlBackfill.js';
 
 // Expune funcții globale pentru onclick="" în HTML
 import { toast } from './ui/ui.js';
