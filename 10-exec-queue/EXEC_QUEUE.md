@@ -619,7 +619,7 @@ PAȘI Daniel:
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** CRITICAL
-**Status:** PENDING
+**Status:** DONE ✅
 **Created:** 2026-04-25
 **Description:** Creează `src/util/coachDecisionLog.js` ca primitive CDL conform schema și regulilor din ADR 011 (`docs/decisions/011-coach-decision-log-architecture.md`). Citește ADR 011 înainte de implementare — schema, idempotency rules, matchScore gate, TierStorage, Firebase sync sunt toate specificate acolo.
 

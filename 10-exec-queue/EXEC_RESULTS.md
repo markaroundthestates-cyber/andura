@@ -21,6 +21,21 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #30.2 — DONE ✅
+**Completed:** 2026-04-25 23:55
+**Duration:** ~20min
+**Summary:** Creat `src/util/coachDecisionLog.js` (260 LOC) cu API completă conform ADR 011: 8 export-uri publice (writeProposed, populateOutcome, readActiveForDate, readAllActive, readSupersedeChain, computeMatchScore, demoteToTier2, demoteToTier3) + STORAGE_KEYS + RESERVED_RATIONALE_IDS. Idempotency 4h window + 5 context-change rules. matchScore gate (null + deviation=true când sessionType diferă). TierStorage demotion tranzacțional (180d → Tier2, 365d → Tier3 monthly aggregate). firebase.js SYNC_KEYS extins cu 3 CDL keys. autoBackup.js hoocat cu daily demote (shouldDemoteCdlToday + try/catch). 17 teste adăugate, toate pass.
+**Files changed:** src/util/coachDecisionLog.js (creat), src/util/__tests__/coachDecisionLog.test.js (creat), src/firebase.js (SYNC_KEYS +3 keys), src/util/autoBackup.js (daily demote hook)
+**Tests:** 17 added — all pass; baseline 301 → 318 (28 test files)
+**Issues:** NONE
+**Pre-flight 1:** Un singur ## TASK #30 găsit (CDL umbrella) — niciun conflict de numerotare. Skipped.
+**Pre-flight 2:** Stable rule IDs verified — toate regulile au `id:` field în RULES const.
+**Pre-flight 3:** Pattern observat: mockStorage + vi.mock('../../db.js'), initAutoBackup cu shouldCreateDailyBackup, SYNC_KEYS array one-liner.
+**Commits:** vault 8be97fc (auto-sync parțial), main 532cc88 (feat CDL)
+**Note:** Subtask 30.2 done. Awaiting Daniel GATE A validation before proceeding to 30.3.
+
+---
+
 ## TASK #22a — DONE
 **Completed:** 2026-04-24 24:00
 **Duration:** 12min
