@@ -1,5 +1,48 @@
 # DECISION LOG — SalaFull
+## 2026-04-25 — REBRAND: ELIMINARE TRADEMARK ANTHROPIC DIN PUBLIC
 
+**Context:** Decizia anterioară din 24 apr 2026 ("CLAUDE AI OPUS 4.7 COACH" ca brand vision) violează Anthropic Consumer Terms of Service:
+
+> "You may not, without our prior written permission, use our name, logos, or other trademarks in connection with products or services other than the Services, or in any other way that implies our affiliation, endorsement, or sponsorship."
+
+Verificat 25 apr 2026 prin web search direct pe documentele legal Anthropic.
+
+**Decizie:** SalaFull NU referențiază Anthropic, Claude, sau orice trademark Anthropic în material public-facing.
+
+**Brand public:** SalaFull (sau successor TBD pre-launch).
+
+**Acceptabil intern (factual technical):**
+- ADRs, vault docs, technical specs
+- Privacy Policy / ToS (disclosure GDPR transparency)
+- Code comments, source code
+- Editorial third-party content
+
+**NU acceptabil public:**
+- Brand name cu "Claude" sau "Anthropic"
+- Logo Anthropic în UI / marketing
+- Tagline "Powered by Claude" / "Built with Claude" / "Made with Anthropic AI"
+- Implied partnership / endorsement
+
+**Beneficii strategice (forward-compatibility):**
+- Vendor independence: schimbăm backend AI fără să spargem brand-ul
+- Differentiation: vindem outcome (transformation), nu implementation detail
+- Pre-acquisition due diligence: clean trademark = mai puține probleme la exit
+- Industry standard: Coca-Cola nu reclamă zahărul brazilian, Stripe nu reclamă AWS
+
+**Implementare 25 apr 2026:**
+- PROJECT_VISION.md: rewrite secțiune CONCEPT BRAND
+- INDEX_MASTER.md: rewrite secțiune CONCEPT PRODUS + adăugat link [[010-no-anthropic-trademark-public]]
+- ADR nou: docs/decisions/010-no-anthropic-trademark-public.md
+- DECISION_LOG: această intrare
+
+**Reconsiderare trigger:**
+- Anthropic acordă written permission specifică
+- Anthropic lansează program oficial "Built on Claude" cu terms publici
+- Legal counsel confirmă nominative fair use în context specific
+
+**Supersedes:** decizia 24 apr 2026 "CLAUDE AI OPUS 4.7 COACH (branding)" — care rămâne în log ca istoric, dar e marcată ca SUPERSEDED.
+
+---
 ## 2026-04-25 — Nuclear Opus Audit v3 completed
 
 **Scope:** Audit adversarial code-first pe arhitectura curentă, FAZA 1/2 "DONE" challenge, blueprint FAZA 3/4, launch readiness. Evidence-based (file:line pentru fiecare claim), zero "TBD". Output: [[OPUS_NUCLEAR_AUDIT_25APR]] (1500+ linii, 13 secțiuni, fiecare cu VERDICT binar).
