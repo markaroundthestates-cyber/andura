@@ -126,12 +126,31 @@ export function restoreFromBackup(keyOrDaysAgo) {
   return { restored: true, date: backup.date, keysRestored };
 }
 
+function shouldDemoteCdlToday() {
+  const last = localStorage.getItem('cdl-last-demote-date');
+  const today = new Date().toISOString().slice(0, 10);
+  return last !== today;
+}
+
 /**
  * Inițializare: creează backup dacă nu există azi.
  */
 export function initAutoBackup() {
   if (shouldCreateDailyBackup()) {
     createDailyBackup();
+  }
+
+  try {
+    if (shouldDemoteCdlToday()) {
+      const tier2Result = demoteToTier2();
+      const tier3Result = demoteToTier3();
+      localStorage.setItem('cdl-last-demote-date', new Date().toISOString().slice(0, 10));
+      if (tier2Result.errors.length || tier3Result.errors.length) {
+        console.warn('[CDL] Demotion completed with errors:', { tier2Result, tier3Result });
+      }
+    }
+  } catch (err) {
+    console.error('[CDL] Demote hook failed:', err);
   }
 }
 
