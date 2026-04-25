@@ -6,9 +6,10 @@ import { getTodayExercises, beepStart } from './util.js';
 import { updateExCard, renderSessLog } from './logging.js';
 import { stopPause, setupInactivity, teardownInactivity } from './restTimer.js';
 import { showSessionRating } from './rating.js';
-import { wakeLockRef } from './state.js';
+import { wakeLockRef, getCachedDirector } from './state.js';
 import { state } from '../../state.js';
 import { renderCoachIdle } from './renderIdle.js';
+import { populateOutcome, computeMatchScore, readActiveForDate } from '../../util/coachDecisionLog.js';
 
 export function saveDraft() {
   if (!state.sessActive || !state.sessStart) return;
@@ -42,6 +43,8 @@ export function startSession() {
         Object.entries(_exSetCounts).filter(([ex, n]) => n >= (EX_SETS[ex] || 3)).map(([ex]) => ex)
       );
       requestWakeLock();
+      { const _ssMap = [6, 0, 1, 2, 3, 4, 5]; state.sessType = (PROG[_ssMap[new Date().getDay()]]?.t || '').toUpperCase() || null; }
+      state.cdlEntryId = getCachedDirector()?.cdlEntryId ?? null;
       state.isMuted = DB.get('muted') || false;
       const mb2 = $('mute-btn'); if (mb2) { mb2.textContent = state.isMuted ? '🔇' : '🔊'; mb2.style.color = state.isMuted ? 'var(--accent2)' : 'var(--text2)'; }
       state.sessionTotalExercises = getTodayExercises().length;
@@ -56,6 +59,8 @@ export function startSession() {
 
   state.sessActive = true; state.sessStart = Date.now(); state.sessLog = []; state.sessKcalBurn = 0; state.dropSetUsedThisSession = false; state.earlyStopReason = null;
   requestWakeLock();
+  { const _ssMap = [6, 0, 1, 2, 3, 4, 5]; state.sessType = (PROG[_ssMap[new Date().getDay()]]?.t || '').toUpperCase() || null; }
+  state.cdlEntryId = getCachedDirector()?.cdlEntryId ?? null;
   state.completedExercises = new Set();
   state.isMuted = DB.get('muted') || false;
   const mb = $('mute-btn'); if (mb) { mb.textContent = state.isMuted ? '🔇' : '🔊'; mb.style.color = state.isMuted ? 'var(--accent2)' : 'var(--text2)'; }
@@ -102,6 +107,32 @@ export function cancelWorkout() {
   if (state.sessStart) {
     const logs = DB.get('logs') || [];
     DB.set('logs', logs.filter(l => l.session !== state.sessStart));
+  }
+  // ── CDL outcome — cancel (ADR 011) ────────────────────────────────────
+  try {
+    if (state.cdlEntryId) {
+      const _today = new Date().toISOString().slice(0, 10);
+      populateOutcome(_today, {
+        executed: false,
+        earlyStop: false,
+        earlyStopReason: null,
+        actualExercises: [],
+        actualSets: 0,
+        actualDurationMins: state.sessStart ? Math.round((Date.now() - state.sessStart) / 60000) : 0,
+        matchScore: null,
+        deviation: false,
+        rating: null,
+      });
+    } else {
+      console.warn('[session] CDL cancel outcome skipped — cdlEntryId not set');
+    }
+  } catch (err) {
+    console.error('[session] CDL populateOutcome failed (degraded mode):', err);
+    try {
+      if (typeof window !== 'undefined' && window.Sentry?.captureException) {
+        window.Sentry.captureException(err, { tags: { component: 'session', op: 'cdl_cancel' } });
+      }
+    } catch (_) {}
   }
   state.sessLog = [];
   state.completedExercises = new Set();
@@ -167,6 +198,43 @@ export function endSession() {
       }
     }
   });
+
+  // ── CDL outcome (ADR 011) ─────────────────────────────────────────────
+  try {
+    if (state.cdlEntryId) {
+      const _today = new Date().toISOString().slice(0, 10);
+      const activeEntry = readActiveForDate(_today);
+      if (activeEntry) {
+        const actualExercises = [...new Set(state.sessLog.map(l => l.ex))];
+        const actualSets = state.sessLog.length;
+        const matchResult = computeMatchScore(activeEntry.proposed, {
+          actualSessionType: state.sessType,
+          actualExercises,
+          actualSets,
+        });
+        populateOutcome(_today, {
+          executed: hasEarlyStop ? 'partial' : true,
+          earlyStop: hasEarlyStop,
+          earlyStopReason: state.earlyStopReason,
+          actualExercises,
+          actualSets,
+          actualDurationMins: mins,
+          matchScore: matchResult.matchScore,
+          deviation: matchResult.deviation,
+          rating: null,
+        });
+      }
+    } else {
+      console.warn('[session] CDL outcome skipped — cdlEntryId not set');
+    }
+  } catch (err) {
+    console.error('[session] CDL populateOutcome failed (degraded mode):', err);
+    try {
+      if (typeof window !== 'undefined' && window.Sentry?.captureException) {
+        window.Sentry.captureException(err, { tags: { component: 'session', op: 'cdl_outcome' } });
+      }
+    } catch (_) {}
+  }
 
   // ── Întreabă cum a fost sesiunea (un singur tap) ─────────────────────────
   showSessionRating({ mins, kcal, totalVolume, totalSets, uniqueEx, avgRPE, prs });
