@@ -3,6 +3,7 @@
 // Stochează ultimele 30 de backup-uri. Permite restaurare granulară.
 
 import { DB } from '../db.js';
+import { demoteToTier2, demoteToTier3 } from './coachDecisionLog.js';
 
 const BACKUP_INDEX_KEY = 'backup-index';
 const BACKUP_PREFIX = 'backup-';
