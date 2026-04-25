@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 24 apr 2026 (seară)
-**Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii
+**Ultima actualizare:** 25 apr 2026 (rebrand cleanup — vezi [[010-no-anthropic-trademark-public]])
+**Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii. Task #25-#27 DONE (Nuclear audit + cache coalesce + data registry).
 
 ---
 
@@ -34,6 +34,7 @@
 - [[007-firebase-open-rules]] — ADR: Firebase open rules
 - [[008-vitest-playwright-testing]] — ADR: Vitest + Playwright
 - [[009-calibration-tiers]] — ADR: Calibration Tiers
+- [[010-no-anthropic-trademark-public]] — ADR: No Anthropic Trademark in Public Material
 
 ### 🏗️ Architecture
 - [[STACK_CURRENT]] — Vanilla JS + Firebase + PWA
@@ -46,11 +47,12 @@
 - [[PROMPT_TEMPLATE]] — Template generic Claude Code
 
 ### 📊 Findings Tracker
-- [[FINDINGS_MASTER]] — 125 findings triate, status progress (3 OPEN: C10c, H30c, H31c)
+- [[FINDINGS_MASTER]] — 125 findings triate, status progress (1 OPEN: H30c)
 
 ### 📓 Sessions Log
 - [[GYM_SESSIONS]] — Sesiuni reale sală + observații produs
 - [[QA_MANUAL_24APR_2230]] — QA live 24 apr 22:30 — 3 bug-uri noi + observații
+- [[QA_MANUAL_25APR_POSTFIX]] — QA post C10c fix + bug-uri noi descoperite (BUG A reset cascade)
 
 ### 🔗 References
 - [[RESOURCES]] — Resurse externe, tools, inspirație
@@ -58,6 +60,7 @@
 ### ⚙️ Workflows
 - [[CHAT_MIGRATION_PROTOCOL]] — Handoff între chat-uri
 - [[ASYNC_EXECUTION_PROTOCOL]] — Queue-based async workflow (LIVE 24 apr 2026)
+- [[CLAUDE_CHAT_INFRASTRUCTURE]] — Setup complet Claude chat ↔ vault ↔ repo (v2)
 
 ### 🗂️ Vault Setup
 - [[OBSIDIAN_SETUP_GUIDE]] — Graph View settings, plugins, shortcuts
@@ -79,7 +82,8 @@
 
 ### ✅ FAZA 0.5 — Vault Setup (COMPLETE)
 - Obsidian + Git sync PC work → GitHub privat
-- Pending: PC acasă setup, phone later (decidem Obsidian Sync $8/mo sau rămân Git)
+- ✅ PC home setup DONE (25 apr 2026) — desktop-first workflow
+- Phone deferred (decidem Obsidian Sync $8/mo vs Git după launch)
 
 ### ✅ FAZA 1 — ENGINE BULLETPROOF (COMPLETE — 24 apr 2026)
 Raport: [[FAZA_1_FINAL_REPORT]]
@@ -104,6 +108,12 @@ Details: [[FAZA_2_ROADMAP]] | Raport: [[FAZA_2_FINAL_REPORT]] | Plan execuție: 
 - ✅ sessionBuilder OPT A weakness ordering + contextSelectionEnabled (commit 7c86288)
 - Metrici: 236 → 271 teste, 25 test files, zero regresii
 
+### ✅ POST-FAZA 2 PATCHES (25 apr 2026)
+- ✅ Task #25 — Nuclear Opus Audit (1532 linii, VERDICT FAIL, 24 tasks queued, 7 probleme noi)
+- ✅ Task #26 — C10c Cache Invalidation Coalesce (suppressInvalidations + debounce 250ms)
+- ✅ Task #27 — Data Registry + Full Reset Rewrite (C11c, H31c, H32c FIXED)
+- Tests: 271 → 301 (+30)
+
 ### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
 Details: [[FAZA_3_ROADMAP]] | [[OBSIDIAN_SETUP_GUIDE]]
 
@@ -113,19 +123,30 @@ Details: [[FAZA_3_ROADMAP]] | [[OBSIDIAN_SETUP_GUIDE]]
 
 ## CONCEPT PRODUS
 
-**Claude AI Opus 4.7 Coach** — Coach personal AI bazat pe Opus 4.7
-Context persistent pe ani + reasoning semantic + personalitate coherentă + memorie continuă + decizii contextuale (nu calculator).
+**SalaFull** — Coach personal AI cu reasoning contextual real, memorie persistentă pe ani și decizii adaptive la user.
+
+Bionic human brain pentru fitness și sănătate, cu capacitatea de a depăși orice sistem existent pe domeniul lui specific.
+
+**Caracteristici core:**
+- Context persistent stratificat (90 zile detaliu + 1 an aggregate + arhivă forever)
+- Reasoning semantic, nu calculator if/else
+- Personalitate coherentă cu memorie continuă
+- Decizii contextuale (nu generice)
+- Învață din TINE, nu generic
+
+**Public positioning:** vezi [[PROJECT_VISION]] pentru detalii brand și diferențiatori.  
+**Brand compliance:** vezi [[010-no-anthropic-trademark-public]] pentru reguli de comunicare publică.
 
 ---
 
-## INFRASTRUCTURĂ LIVE (24 apr 2026)
+## INFRASTRUCTURĂ LIVE (25 apr 2026)
 
 - **Repo:** `markaroundthestates-cyber/salafull` (vault + cod în același repo)
 - **Deploy:** GitHub Pages → https://markaroundthestates-cyber.github.io/salafull/
-- **Sync Vault ↔ Obsidian:** Git auto-commit 10 min
+- **Sync Vault ↔ Obsidian:** Git auto-commit 15 min (Obsidian Git plugin)
 - **Claude Code auto-push:** hook Stop în `.claude/settings.json`
 - **Async execution:** queue-based, trigger "check queue"
-- **Claude Project:** GitHub connector sync → eu citesc direct din repo
+- **Claude Project:** GitHub connector sync → eu citesc direct din repo (162 files indexed)
 
 ---
 
@@ -142,8 +163,8 @@ Context persistent pe ani + reasoning semantic + personalitate coherentă + memo
 
 ## CONTACT AI
 
-- **Opus (strategy + planning)** → claude.ai chat
-- **Sonnet (execuție cod)** → Claude Code CLI în Codespaces
+- **Co-CTO (strategy + planning + review)** → claude.ai chat (Opus, sau next-gen model când disponibil)
+- **Sonnet (execuție cod)** → Claude Code CLI local desktop sau Codespaces
 - **Workflow async** → queue-based prin [[EXEC_QUEUE]]
 
 ---
@@ -151,6 +172,6 @@ Context persistent pe ani + reasoning semantic + personalitate coherentă + memo
 ## GIT SYNC STATUS
 
 - **Vault + cod:** GitHub `markaroundthestates-cyber/salafull` (privat)
-- **Auto commit-and-sync Obsidian:** 10 min
+- **Auto commit-and-sync Obsidian:** 15 min
 - **Auto pull on startup:** ON
 - **Claude Code auto-push:** activ (hook Stop)

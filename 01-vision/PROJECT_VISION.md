@@ -1,6 +1,6 @@
 # PROJECT VISION — SALAFULL
 
-**Ultima actualizare:** 24 apr 2026
+**Ultima actualizare:** 25 apr 2026 (rebrand cleanup — vezi [[010-no-anthropic-trademark-public]])
 
 ---
 
@@ -22,14 +22,18 @@ Toate deciziile motor pleacă de aici. Dacă se propune un feature care contrazi
 
 ## CONCEPT BRAND
 
-**Claude AI Opus 4.7 Coach** — coach personal AI construit pe Opus 4.7.
+**SalaFull** — coach personal AI cu reasoning contextual real.
 
-Caracteristici:
-- Context persistent pe ani
-- Reasoning semantic (nu calculator if/else)
-- Personalitate coherentă
-- Memorie continuă stratificată
-- Decizii contextuale adaptate la user
+**Public positioning:** un creier bionic specializat în fitness și sănătate, care depășește orice sistem existent — apps competitoare și AI-uri generice — pe domeniul lui specific.
+
+Caracteristici care definesc produsul (public-facing language):
+- **Context persistent pe ani** — își amintește totul, învață din tine
+- **Reasoning semantic** — gândește contextual, nu execută algoritmi rigizi
+- **Personalitate coherentă** — nu schizofrenie de chatbot
+- **Memorie continuă stratificată** — 90 zile detaliu + 1 an aggregate + arhivă forever
+- **Decizii contextuale adaptate** la user, mediu, moment
+
+**Internal note:** detalii de implementare tehnologică (vendor AI, modele specifice) rămân în documentația internă. Vezi [[010-no-anthropic-trademark-public]] pentru reguli de comunicare publică.
 
 ---
 
@@ -59,33 +63,57 @@ Engine-ul explică logic fiecare decizie (nu "black box").
 
 > "De ce ar folosi cineva app-ul meu în loc de ChatGPT? Asta e important. Și nu mă interesează să îmi zici de simplitate, ci de eficiență decizională."
 
+> "SalaFull e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
+
+---
+
+## QUALITY BAR (NON-NEGOTIABLE)
+
+> "Dacă senior staff engineers Anthropic (engineering + infrastructure + product + design + security + research) ar vedea SalaFull, să fie PROUD DE PRODUS — peer-to-peer respect, nu condescendență."
+
+> "Echipele Codex / Gemini / Grok / 5000 dev Big Tech să fie AMAZED — nu să dea cu noi de pământ."
+
+Reacția target la review: **"WTF, cine a construit asta? Architectura e gândită serios. Vreau să cunosc dev-ul."**
+
+NOT acceptable: "Drăguț pentru un solo dev", "Bine pentru cineva fără background tech", "OK considerând că folosește AI", "Promițător, dar...".
+
+Standard de calibrare: "Ar angaja Anthropic asta ca staff engineer pe baza acestui produs?"
+
 ---
 
 ## DIFERENȚIATORI vs COMPETIȚIE
 
-### vs ChatGPT
+### vs ChatGPT și AI-uri generice
 - Context persistent stratificat (90z detaliu + 1 an aggregate + arhivă forever)
 - Decizie <100ms, nu 8s prompting
 - Decizii verificabile (decision trace complet)
 - Acționare automată (nu sugerează, acționează)
+- Învață din tine, nu generic
 
 ### vs Fitbod / Strong / Hevy
 - Personalizare reală (nu "checkbox profil")
 - Behavioral injury detection (NU wizard formal)
 - Living learning (sistemul devine smart cu timpul)
 - Living recovery (coach-ul te întreabă, nu user face manual marker)
+- Reasoning semantic, nu algoritmi statici
+
+### vs Personal Trainer Uman
+- 1% din cost (€10/lună vs €100/sesiune)
+- Always-on, 24/7, oriunde
+- Memorie infinită, zero judgment
+- Scalabil
 
 ---
 
 ## ROADMAP CONCEPTUAL
 
-### FAZA 1 — Engine Bulletproof (ACUM)
+### FAZA 1 — Engine Bulletproof (DONE)
 Motor real funcțional, coherent, bulletproof. Fundație pentru tot.
 
-### FAZA 2 — Bug fixes + Reliability
+### FAZA 2 — Bug fixes + Reliability (DONE)
 Zero data loss, zero crashes, "merge 5 din 5".
 
-### FAZA 3 — Infrastructure + Observability
+### FAZA 3 — Infrastructure + Observability (în pregătire)
 Split code, Sentry proper, CI/CD, maintainability.
 
 ### FAZA 4 — Features NEW
@@ -94,11 +122,13 @@ Split code, Sentry proper, CI/CD, maintainability.
 - Recovery protocol living
 - Health export PDF (medical brief, kineto, full history)
 - UX revolution (premium, fonts 72pt, haptic, etc.)
+- Multi-language (i18n ready de la început)
 - React + Vite migration (post-launch)
 
 ### LAUNCH
-Timeline: "Perfect, indiferent cât durează."  
-Target inițial noiembrie-decembrie 2026 — flexibil.
+Timeline: **"Perfect, indiferent cât durează." Orizont 2-3 ani acceptat.**
+
+Quality > deadline, always.
 
 ---
 
@@ -119,3 +149,13 @@ Post-launch — feedback-driven pricing.
 3. **Nu simplifica inutil** — user inteligent merită interfață inteligentă
 4. **Adaptare peste standardizare** — un user ≠ alt user
 5. **Rezistență peste viteză** — motor bulletproof > feature fast shipping
+
+---
+
+## LEGAL & BRAND COMPLIANCE
+
+Vezi [[010-no-anthropic-trademark-public]] pentru reguli explicite de comunicare publică:
+- Brand public: SalaFull (sau successor TBD pre-launch)
+- Zero referințe Anthropic/Claude în material public
+- Tehnologia rămâne implementation detail, nu marketing point
+- Detalii tehnice OK în Privacy Policy / ToS pentru transparență GDPR
