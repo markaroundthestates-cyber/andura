@@ -177,9 +177,22 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
   "active": "761d7b3c720e2824",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "src/util/dataRegistry.js",
+    "src/util/__tests__/dataRegistry.test.js",
+    "src/__tests__/firebase-cache-coalesce.test.js",
+    "src/__tests__",
+    "docs/OPUS_NUCLEAR_AUDIT_25APR.md",
+    "docs/DATA_REGISTRY_SPEC.md",
+    "07-sessions-log/QA_MANUAL_25APR_POSTFIX.md",
+    "07-sessions-log/QA_MANUAL_24APR_2230.md",
+    "07-sessions-log",
+    "06-findings-tracker/FINDINGS_MASTER.md",
+    "06-findings-tracker"
+  ]
 }
