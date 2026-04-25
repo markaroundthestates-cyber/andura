@@ -21,6 +21,19 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #30.4 — DONE ✅
+**Completed:** 2026-04-26 01:26
+**Duration:** ~15min
+**Summary:** Integrat CDL write în `coachDirector.buildSession()` conform ADR 011. Scrie entry proposed cu context snapshot complet (calibrationLevel, readinessScore, fatigueIndex, daysSinceLastSession, lastSessionType, isInCut, weakGroups, stagnationWeeks, predictionToday, partial=false) și rationale din ruleEngine (winnerId, winnerPriority, overridden[]). Failure path: try/catch degraded mode cu `cdlEntryId: null`, `cdlWriteError: <message>`, Sentry capture (defensive). Session return extins cu cdlEntryId + cdlWriteError (non-breaking). Helpers private `_computeDaysSinceLastSession` + `_computeLastSessionType` adăugate; inferSessionType din cdlBackfill.js refolosit.
+**Files changed:** `src/engine/coachDirector.js` (modificat: +3 imports, +54 LOC CDL block, +2 helpers, return modificat), `src/engine/__tests__/coachDirector.test.js` (extins: +vi mock pentru coachDecisionLog, +7 teste noi)
+**Tests:** 343 → 350 pass (7 noi: happy path, context shape, rationale CUT_CONSERVATIVE, idempotency delegate, failure degraded, id captured, Sentry log). Zero existing broken.
+**Pre-flight:** ctx.calibrationLevel este obiect cu `.name` ✓; ruleResult (nu decisionResult) ✓; ctx.readiness.volumeMultiplier (nu ctx.volumeMultiplier) ✓; CDL write injectat după applyPatterns + session.context, înainte de initAutoBackup ✓.
+**Issues:** NONE
+**Commits:** b6c1fca (implementation + tests)
+**Note:** Subtask 30.4 done. Awaiting Daniel GATE C validation (production smoke test: deschide app, buildSession → verify `window.coachDirector` sau `DB.get('coach-decisions')` conține entry nou cu proposed populated, synthetic=false) before proceeding to 30.5.
+
+---
+
 ## TASK #30.3 — DONE ✅
 **Completed:** 2026-04-26 00:55
 **Duration:** ~25min

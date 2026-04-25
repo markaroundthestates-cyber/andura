@@ -931,7 +931,7 @@ Build + tests:
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** CRITICAL
-**Status:** PENDING
+**Status:** DONE ✅
 **Created:** 2026-04-25
 **Description:** Integrează CDL write în `coachDirector.buildSession()`. Când director produce o sesiune, scrie CDL entry cu `proposed` + `context` + `rationale` conform ADR 011. Idempotency verificată automat de `coachDecisionLog.writeProposed()`.
 
