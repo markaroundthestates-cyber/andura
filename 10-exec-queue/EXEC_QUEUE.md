@@ -553,3 +553,858 @@ Actualizează docs/FAZA_2_ROADMAP.md cu status final.
 **Result:** 301 tests (23 new). C11c FIXED (scheduleInvalidation replaces 4 direct invalidate() calls). H31c FIXED (localStorage.clear() whitelist, all dynamic keys cleared). H32c FIXED (__suppressFirebaseSyncUntil survives reload, prevents stale Firebase pull post-reset). COACH_RELEVANT_KEYS moved to dataRegistry.js (firebase.js imports from there). scheduleInvalidation exported. docs/DATA_REGISTRY_SPEC.md created. Next: Task #28 + #29 (H30c pattern false positives).
 
 ---
+# EXEC_QUEUE — TASK #30 ENTRIES (Coach Decision Log Implementation) — FINAL
+
+**Adaugă acest bloc în `10-exec-queue/EXEC_QUEUE.md` după ultimul TASK existent.**
+
+**Reference contract:** [[011-coach-decision-log-architecture]] — ADR 011, status Accepted 25 Apr 2026.
+
+---
+
+## TASK #30 — Coach Decision Log (CDL) Implementation
+**Type:** ARCHITECTURE
+**Priority:** CRITICAL
+**Status:** PENDING (umbrella — broken into 30.1 through 30.10)
+**Created:** 2026-04-25
+**Description:** Implementation umbrella pentru ADR 011 — Coach Decision Log ca primitive arhitectural. Înlocuiește H30c (banner bypass) ca fix izolat cu refactor structural. Supersedes Task #28 (H30c) and Task #29 (patternLearning calendar→plan days) — ambele se rezolvă natural prin CDL adoption.
+
+Subtasks executate secvențial cu Daniel gates între ele:
+- 30.1 — ADR 011 push (manual de Daniel, nu Sonnet)
+- 30.2 — coachDecisionLog.js primitive + 16+ tests
+- [DANIEL GATE A]
+- 30.3 — cdlBackfill.js + 10-sample validation hook + skipped entries handling
+- [DANIEL GATE B]
+- 30.4 — coachDirector integration (proposed write) + CDL write failure handling
+- 30.5 — endSession + cancelWorkout (outcome population, handles cdlEntryId null)
+- [DANIEL GATE C]
+- 30.6 — patternLearning reads CDL (parallel write applied-patterns)
+- 30.7 — adherence.js rewrite
+- [DANIEL GATE D — parallel period start]
+- 30.8 — renderIdle banner (CDL-sourced + suppression + new pattern UI strings)
+- [DANIEL GATE E — decommission triggers met]
+- 30.9 — Decommission applied-patterns (clean break)
+- 30.10 — H30c closed în FINDINGS_MASTER
+
+**Acceptance:** Toate 10 subtasks DONE, ADR 011 contract respectat în cod, H30c closed, FINDINGS_MASTER updated, EXEC_RESULTS contains all gate sign-offs.
+**Dependencies:** ADR 011 ACCEPTED și pushed în repo
+
+---
+
+## TASK #30.1 — ADR 011 Push to Repo
+**Model:** Daniel (manual, no Sonnet)
+**Type:** DOCS
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Push ADR 011 (artifact furnizat de Co-CTO chat) la `docs/decisions/011-coach-decision-log-architecture.md`. Contract pentru toate subtasks 30.2-30.10.
+
+PAȘI Daniel:
+1. Salvează artifact-ul ADR 011 în Downloads ca `011-coach-decision-log-architecture.md`
+2. PowerShell:
+   ```powershell
+   cd C:\Users\Daniel\Documents\salafull
+   Copy-Item C:\Users\Daniel\Downloads\011-coach-decision-log-architecture.md docs\decisions\011-coach-decision-log-architecture.md -Force
+   git add docs/decisions/011-coach-decision-log-architecture.md
+   git commit -m "docs(adr): ADR 011 - Coach Decision Log (CDL) as architectural primitive"
+   git push
+   ```
+3. Verifică în GitHub că fișierul apare în `docs/decisions/`
+
+**Acceptance:** ADR 011 file pushed la `docs/decisions/011-coach-decision-log-architecture.md`, commit hash în EXEC_RESULTS, sub-task marked DONE.
+**Dependencies:** NONE
+
+---
+
+## TASK #30.2 — coachDecisionLog.js Primitive + Tests
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Creează `src/util/coachDecisionLog.js` ca primitive CDL conform schema și regulilor din ADR 011 (`docs/decisions/011-coach-decision-log-architecture.md`). Citește ADR 011 înainte de implementare — schema, idempotency rules, matchScore gate, TierStorage, Firebase sync sunt toate specificate acolo.
+
+API publică:
+- `writeProposed(entry)` — scrie entry nou cu idempotency check (4h + key context unchanged → return existing; significant change → mark superseded + create new with supersedes ref)
+- `populateOutcome(date, outcome)` — populează `outcome` pe most-recent non-superseded entry pentru `date`. Outcome immutable după populare.
+- `readActiveForDate(date)` — return most-recent non-superseded entry pentru `date`
+- `readAllActive(filterFn)` — return entries non-superseded matching optional filter
+- `readSupersedeChain(entryId)` — audit-only, return chain de superseded entries
+- `computeMatchScore(proposed, actual)` — gate logic: deviation → null, else 0.6×volumeRatio + 0.4×exerciseOverlap (Jaccard)
+- `demoteToTier2()` + `demoteToTier3()` — TierStorage demotion (transactional, called din `initAutoBackup`)
+- Helpers private: `isKeyContextChanged(oldCtx, newCtx)` (delta readiness > 20, weakGroups changed, calibrationLevel changed, isInCut flip, predictionToday.isHighRisk flip)
+
+Storage:
+- localStorage keys: `coach-decisions`, `coach-decisions-aggregate`, `coach-decisions-archive`
+- Firebase sync: adăugare la `SYNC_KEYS` în `firebase.js`
+- Honor `_suppressFirebaseSync` flag (existing pattern din logs)
+
+Stable Rule IDs:
+- `rationale.winnerId` referențiază IDs din `RULES` const în `src/engine/ruleEngine.js` — verified existing
+- Reserved: `SYNTHETIC_BACKFILL`, `NO_PROPOSED` — pentru subtask 30.3 și edge cases
+
+Tests (`src/util/__tests__/coachDecisionLog.test.js`) — minim 16 cazuri, mandatory:
+1. writeProposed creates entry with valid schema
+2. writeProposed within 4h + same context returns existing (no duplicate)
+3. writeProposed after readinessScore delta > 20 → marks old superseded + creates new with supersedes ref
+4. writeProposed after weakGroups change → supersedes
+5. writeProposed after calibrationLevel transition → supersedes
+6. populateOutcome targets most recent non-superseded entry
+7. populateOutcome on entry with outcome already set throws (immutability)
+8. populateOutcome with deviation=true sets matchScore=null
+9. computeMatchScore returns null when sessionType differs (gate test)
+10. computeMatchScore returns weighted result when sessionType matches
+11. readActiveForDate filters out superseded entries
+12. readSupersedeChain returns full chain in chronological order
+13. demoteToTier2 moves entries older than 180 days, drops fields per schema
+14. demoteToTier3 aggregates entries older than 1 year into monthly metrics
+15. Concurrency: 2 simultaneous writeProposed calls for same date → only 1 active entry exists (idempotency)
+16. Superseded chain: 3 supersedes within a day → readActiveForDate returns the latest, chain is reachable
+
+Testing infrastructure:
+- Mock `Date.now()` pentru deterministic time tests
+- Mock `localStorage` (jsdom default OK)
+- Mock Firebase sync (verify call but don't actually network)
+
+Build + tests:
+- `npm run build` — zero errors
+- `npm run test:run` — 16+ new tests pass, zero existing tests break
+- Zero `console.log` în implementation (use existing logger pattern)
+
+Documentation in code:
+- File header: comment block referencing ADR 011 + status
+- JSDoc pe funcții publice cu schema reference
+- Inline comment la idempotency check explaining the 4h + significant change rule
+
+**Acceptance:**
+- `src/util/coachDecisionLog.js` exists with all public API specified above
+- `src/util/__tests__/coachDecisionLog.test.js` exists with 16+ tests, all pass
+- `firebase.js` updated with new keys in SYNC_KEYS
+- Build green, full test suite green (no regressions)
+- Git commit message: `feat(cdl): TASK #30.2 — coachDecisionLog.js primitive + 16 tests (ADR 011)`
+- Push to main
+
+**Dependencies:** TASK #30.1 DONE ✅
+
+---
+
+## DANIEL GATE A — Post 30.2 Validation
+
+**Required for TASK #30.3 to start.**
+
+**Daniel sign-off requires ALL:**
+
+1. **Build verification:**
+   ```powershell
+   cd C:\Users\Daniel\Documents\salafull
+   npm run build
+   ```
+   Expected: zero errors, zero warnings new față de pre-CDL baseline.
+
+2. **Test suite verification:**
+   ```powershell
+   npm run test:run
+   ```
+   Expected: 287+ tests pass (271 baseline + 16 noi minimum). Zero teste existente broken.
+
+3. **Manual smoke test în browser DevTools console:**
+   ```javascript
+   // Open https://markaroundthestates-cyber.github.io/salafull/ în browser
+   // F12 → Console
+   
+   const cdl = await import('/src/util/coachDecisionLog.js');
+   
+   // Test write
+   const testEntry = {
+     date: '2026-04-25',
+     context: { calibrationLevel: 'PERSONALIZING', readinessScore: 75, isInCut: true, weakGroups: [] },
+     proposed: {
+       sessionType: 'PUSH',
+       rationale: { winnerId: 'CUT_CONSERVATIVE', winnerPriority: 85, overridden: [] },
+       exercises: ['Incline DB Press', 'Pec Deck'],
+       volumeMultiplier: 0.9
+     }
+   };
+   const written = cdl.writeProposed(testEntry);
+   console.log('Written:', written);
+   
+   // Test read
+   const read = cdl.readActiveForDate('2026-04-25');
+   console.log('Read:', read);
+   
+   // Verify shape matches ADR 011 schema
+   // Verify localStorage 'coach-decisions' contains entry
+   console.log('Storage:', JSON.parse(localStorage.getItem('coach-decisions')));
+   
+   // Verify idempotency
+   const second = cdl.writeProposed(testEntry);
+   console.log('Second write same context:', second === written ? 'IDEMPOTENT OK' : 'BUG');
+   
+   // Cleanup
+   localStorage.removeItem('coach-decisions');
+   ```
+
+4. **Schema validation:**
+   - `written.id` matches pattern `cd_YYYY-MM-DD_HH:MM` sau similar unique
+   - `written.synthetic === false`
+   - `written.superseded === false`
+   - `written.outcome === null`
+   - `written.context` contains all fields from ADR 011 schema
+
+5. **Firebase sync verification (optional but recommended):**
+   - DevTools → Network tab
+   - Reload after writeProposed
+   - Verify PUT request to `coach-decisions` endpoint visible (or sync deferred per `_suppressFirebaseSync`)
+
+6. **EXEC_RESULTS.md entry written by Daniel:**
+   ```markdown
+   ## TASK #30.2 — DONE ✅
+   **Completed:** 2026-04-XX HH:MM
+   **Daniel sign-off:** YES
+   **Build:** ✅ zero errors
+   **Tests:** XXX pass (was 271 baseline, +16 new)
+   **Smoke test:** ✅ writeProposed/readActiveForDate/idempotency verified
+   **Firebase sync:** ✅ visible în Network tab / ⏸ deferred per suppress flag
+   **Commit:** <hash>
+   **Issues:** NONE | <description>
+   ```
+
+**If any check fails:** TASK #30.2 returns to Sonnet with specific failure description. NO progression to 30.3 until all 6 items pass.
+
+---
+
+## TASK #30.3 — cdlBackfill.js + 10-Sample Validation Hook + Malformed Handling
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Creează `src/util/cdlBackfill.js` care convertește `logs` istorice existente în CDL synthetic entries conform secțiunii "Backfill from existing logs" din ADR 011.
+
+API publică:
+- `runBackfill({ dryRun = false, force = false })` — main entry. Iterează prin sessions grouped by `session` timestamp, generează synthetic CDL entries, scrie în `coach-decisions` (sau dryRun mode → return entries fără write).
+- `inferSessionType(exercises)` — reverse-infer sessionType din muscle groups ale exercițiilor (folosește `EXERCISE_MUSCLES` din `muscleMap.js`)
+- `reconstructContext(sessionTs, allLogs)` — reconstruiește context retrospective: calibrationLevel la data aia (din logs count + days since first), isInCut din phase history, daysSinceLastSession calculabil. Fields ne-reconstructibile (readinessScore, weakGroups at moment) → null. Set `partial: true`.
+- `synthesizeOutcome(sessionLogs)` — populate outcome direct din logs: `executed: true`, `deviation: false` (synthetic assumes match), counts și sets calculate.
+- `getValidationSamples(count = 10)` — return random sample of synthetic entries pentru Daniel manual review (se folosește în GATE B).
+
+`runBackfill` return shape:
+```js
+{
+  entriesCreated: number,        // count of synthetic entries successfully written
+  errors: [                       // hard failures during processing
+    { sessionTs, error: <message>, stack? }
+  ],
+  skipped: [                      // logs/sessions skipped due to data quality
+    { sessionTs, reason: 'missing ts' | 'no exercises' | 'invalid format' | 'unknown muscle group' | <other>, sessionData: <partial> }
+  ]
+}
+```
+
+Skipped entries handling:
+- Sessions cu `ts` lipsă SAU `session` field lipsă → skipped, reason 'missing ts'
+- Sessions cu `exercises` array gol sau toate exercițiile fără muscle group cunoscut → skipped, reason 'no exercises' / 'unknown muscle group'
+- Logs cu shape neașteptat (ex: lipsește `ex`, `w`, `reps` simultan) → skipped, reason 'invalid format'
+- Skipped NU înseamnă fail al backfill-ului overall — backfill continuă cu restul. Final `entriesCreated` reflectă doar succesele.
+- Toate skipped entries logged cu detail suficient pentru Daniel să identifice ce log original le-a produs.
+
+Schema entries synthetic:
+- `synthetic: true`
+- `proposed.rationale = { winnerId: 'SYNTHETIC_BACKFILL', winnerPriority: null, overridden: [] }`
+- `context.partial: true` for fields ne-reconstructibile
+- Read-only after creation (no further writes from this script)
+
+Idempotency:
+- `runBackfill` checks if any synthetic entries exist → if yes, throw error "Backfill already executed. Use { force: true } to re-run"
+- `force: true` flag clears synthetic entries first then re-runs
+- Real entries (synthetic: false) NEVER touched by backfill
+
+Tests (`src/util/__tests__/cdlBackfill.test.js`) — minim 10 cazuri:
+1. inferSessionType returns 'PUSH' for chest/shoulders/triceps exercises
+2. inferSessionType returns 'PULL' for back/biceps exercises
+3. inferSessionType returns 'LEGS' for quads/hamstrings/glutes
+4. inferSessionType returns 'MIXED' for cross-cutting (full upper, etc.)
+5. reconstructContext sets calibrationLevel correctly for date with N sessions / D days
+6. reconstructContext sets context.partial = true
+7. synthesizeOutcome derives correct counts from logs
+8. runBackfill creates N entries from N session timestamps (idempotent — second call throws unless force)
+9. getValidationSamples returns random subset (different on each call) of synthetic entries
+10. **Skipped handling:** session with missing ts → entry skipped with reason 'missing ts', backfill continues; session with empty exercises → skipped with reason 'no exercises'; malformed log → skipped with reason 'invalid format'. Final result.skipped contains all 3.
+
+Build + tests:
+- `npm run build` — zero errors
+- `npm run test:run` — full suite + 10+ new pass
+
+**Acceptance:**
+- `src/util/cdlBackfill.js` exists with API above (including return shape with errors + skipped)
+- `src/util/__tests__/cdlBackfill.test.js` with 10+ tests passing (skipped handling test mandatory)
+- Script runnable from DevTools console (window.runBackfill exposed for Daniel)
+- Build + tests green
+- Commit: `feat(cdl): TASK #30.3 — cdlBackfill.js + validation hook + malformed handling (ADR 011)`
+- Push to main
+- **DOES NOT auto-run backfill** — Daniel triggers it manually in GATE B
+
+**Dependencies:** TASK #30.2 DONE ✅ + GATE A passed ✅
+
+---
+
+## DANIEL GATE B — Post 30.3 Backfill Execution + 10-Sample Review + Skipped Review
+
+**Required for TASK #30.4 to start.**
+
+**Daniel sign-off requires ALL:**
+
+1. **Run backfill manually:**
+   ```javascript
+   // DevTools console
+   const result = await window.runBackfill({ dryRun: false });
+   console.log('Backfill result:', result);
+   // Expected: { entriesCreated: ~20-30, errors: [], skipped: [...] }
+   ```
+
+2. **Review skipped entries:**
+   ```javascript
+   console.table(result.skipped.map(s => ({
+     sessionTs: new Date(s.sessionTs).toISOString().slice(0, 10),
+     reason: s.reason
+   })));
+   ```
+   
+   Daniel verdict per reason category:
+   - `missing ts`: dacă count < 5% din total sessions → acceptable (legacy garbage)
+   - `no exercises`: dacă count < 10% → acceptable (early test sessions Daniel did pre-tracking)
+   - `invalid format`: ZERO acceptable. Dacă > 0 → backfill script needs fix, return to Sonnet.
+   - `unknown muscle group`: dacă count > 0 → check exercitiile în question, possibly missing din EXERCISE_MUSCLES, fix muscle map sau add edge case în inferSessionType.
+
+3. **Get 10 random samples for review:**
+   ```javascript
+   const samples = window.cdlBackfill.getValidationSamples(10);
+   console.table(samples.map(s => ({
+     date: s.date,
+     sessionType: s.proposed.sessionType,
+     exerciseCount: s.proposed.exercises.length,
+     executed: s.outcome.executed,
+     completedExercises: s.outcome.completedExercises,
+     synthetic: s.synthetic
+   })));
+   ```
+
+4. **For each of the 10 samples, Daniel verifies in browser/Obsidian:**
+   - **sessionType match:** sample.proposed.sessionType corespunde tipului real de sesiune făcut în ziua aia
+   - **exercises list match:** sample.proposed.exercises corespunde exercițiilor logged în ziua aia
+   - **outcome.executed:** true (toate sesiunile istorice au fost executate prin definiție)
+   - **outcome.completedExercises:** count corect față de logs
+   - **outcome.actualSets:** count corect față de logs
+
+5. **Daniel marks fiecare sample + skipped review în EXEC_RESULTS.md:**
+   ```markdown
+   ## TASK #30.3 — Backfill Validation
+   **Date:** 2026-04-XX
+   **Total synthetic entries created:** XX
+   **Skipped entries:** YY total
+     - missing ts: A (acceptable / NOT acceptable: <reason>)
+     - no exercises: B (acceptable / NOT acceptable: <reason>)
+     - invalid format: C (MUST be 0, else REJECT)
+     - unknown muscle group: D (acceptable: list <exercises>; or REJECT)
+   **10-sample review:**
+   1. 2026-03-15 PUSH — PASS (Incline DB Press, Pec Deck, ...)
+   2. 2026-03-13 PULL — PASS (Lat Pulldown, Cable Row, ...)
+   ...
+   10. 2026-02-28 LEGS — PASS / FAIL: <description>
+   
+   **Verdict:** 10/10 samples PASS + skipped acceptable → proceed to 30.4
+   OR: X/10 FAIL OR skipped not acceptable → return to Sonnet with description
+   ```
+
+6. **If any sample FAILS or skipped contains 'invalid format':** TASK #30.3 returns to Sonnet, backfill script fixed, re-run on full history (with `force: true`), re-validate. NO progression to 30.4.
+
+7. **Commit hash recorded:**
+   ```markdown
+   **Backfill commit:** <hash>
+   **Daniel sign-off:** YES
+   ```
+
+**Critical:** synthetic entries become read-only baseline forever. Bug în backfill nedetectat AICI = corrupt baseline pentru toate engines downstream. NO compromises on validation.
+
+---
+
+## TASK #30.4 — coachDirector Integration (Proposed Write) + Failure Handling
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Integrează CDL write în `coachDirector.buildSession()`. Când director produce o sesiune, scrie CDL entry cu `proposed` + `context` + `rationale` conform ADR 011. Idempotency verificată automat de `coachDecisionLog.writeProposed()`.
+
+Modificări `src/engine/coachDirector.js`:
+- După `evaluate(ctx)` și `buildSession(sessionType, ctx)` (existing flow)
+- Build entry object din `ctx` snapshot + decision result
+- Call `coachDecisionLog.writeProposed(entry)` 
+- Capture returned entry ID în session result (pentru subtask 30.5 outcome population)
+- Wrap în try/catch — failure de CDL write NU blochează session generation (degraded mode acceptable)
+
+Mapping ctx → CDL context snapshot:
+- `calibrationLevel` ← ctx.calibrationLevel.name
+- `readinessScore` ← ctx.readiness?.score
+- `fatigueIndex` ← ctx.fatigueIndex
+- `daysSinceLastSession` ← compute din ctx.allLogs (existing helper sau new)
+- `lastSessionType` ← compute din ctx.allLogs (most recent session)
+- `isInCut` ← ctx.isInCut
+- `weakGroups` ← ctx.weakGroups (array)
+- `stagnationWeeks` ← ctx.stagnationWeeks
+- `predictionToday` ← { isHighRisk, probability } din ctx.predictionToday
+
+Mapping decision → CDL proposed:
+- `sessionType` ← input parameter (PUSH/PULL/LEGS/etc.)
+- `rationale.winnerId` ← decisionResult.winner?.id || 'NO_RULE_FIRED'
+- `rationale.winnerPriority` ← decisionResult.winner?.priority || null
+- `rationale.overridden` ← decisionResult.overridden.map(r => r.id)
+- `exercises` ← session.exercises.map(e => e.name)
+- `volumeMultiplier` ← derived from rule action sau ctx
+- `notes` ← optional, generated from key context flags
+
+CDL write failure handling:
+- Try block wraps `writeProposed(entry)` call
+- On success: session result includes `cdlEntryId: <id>` and `cdlWriteError: null`
+- On failure (catch): 
+  - session result includes `cdlEntryId: null` and `cdlWriteError: <error.message>`
+  - Log error to Sentry via existing logger pattern (severity: 'error')
+  - Session still returned to caller (degraded mode — coach works without CDL audit)
+- 30.5 must handle `cdlEntryId === null` case gracefully (skip outcome population, log warning)
+
+Tests (`src/engine/__tests__/coachDirector.test.js` — extend existing):
+1. buildSession writes CDL entry on success
+2. CDL entry contains correct context snapshot from ctx
+3. CDL entry contains correct rationale from ruleEngine result
+4. Idempotency: 2 buildSession calls within 4h + same context → 1 CDL entry
+5. CDL write failure → session still returned with cdlEntryId: null + cdlWriteError populated
+6. CDL entry ID captured in session result on success (cdlWriteError: null)
+7. Sentry error logged on CDL write failure (mock logger, verify call)
+
+Build + tests:
+- npm run build, npm run test:run — green
+
+**Acceptance:**
+- coachDirector writes CDL on every buildSession call
+- Failure path returns session with cdlEntryId: null + cdlWriteError + Sentry log
+- 7+ new test cases passing
+- Existing coachDirector tests still pass (no regression)
+- Commit: `feat(cdl): TASK #30.4 — coachDirector writes CDL proposed + failure handling (ADR 011)`
+- Push to main
+
+**Dependencies:** TASK #30.3 DONE ✅ + GATE B passed ✅
+
+---
+
+## TASK #30.5 — endSession + cancelWorkout Outcome Population
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Populează `outcome` pe CDL entry când user-ul finalizează sau anulează o sesiune.
+
+Modificări `src/pages/coach/session.js`:
+- `endSession()`: la final, după persist logs:
+  - Check `state.cdlEntryId` (set de coachDirector în 30.4)
+  - If `cdlEntryId === null` (CDL write failed in director): log warning "CDL outcome skipped — no proposed entry for today", DO NOT call populateOutcome. Continue normal endSession flow.
+  - If `cdlEntryId` valid: call `coachDecisionLog.populateOutcome(today, outcomeObj)` cu:
+    - `executed: true` (sau 'partial' dacă earlyStop)
+    - `deviation: false` (presupunând că sessionType actual === proposed; check explicit)
+    - `actualSessionType` ← din state.sessType
+    - `matchScore` ← computed via `cdl.computeMatchScore(proposed, actual)` — null dacă deviation
+    - `completedExercises`, `totalProposedExercises`, `actualSets`, `proposedSets` din state + last entry
+    - `earlyStop: false`
+    - `rating` ← din rating flow result
+    - `completedAt: Date.now()`
+
+- `cancelWorkout()`: same null check pe cdlEntryId. If valid, populate outcome:
+  - `executed: false`
+  - `deviation: false`
+  - `actualSessionType: null`
+  - `matchScore: null`
+  - All counts: 0
+  - `earlyStop: false`
+  - `rating: null`
+  - `completedAt: Date.now()`
+
+Edge cases:
+- Dacă `cdlEntryId` valid dar entry nu mai există (theoretical race): create synthetic outcome-only entry cu `rationale.winnerId = 'NO_PROPOSED'`. Log warning.
+- Multiple superseded entries existente pentru today → populate cel mai recent non-superseded (handled de coachDecisionLog API)
+- Outcome already populated → log warning, do NOT overwrite (immutability)
+
+Tests:
+1. endSession populates outcome on today's CDL entry (happy path)
+2. endSession with cdlEntryId === null skips populate, logs warning, continues normally
+3. cancelWorkout populates outcome.executed=false
+4. cancelWorkout with cdlEntryId === null skips, logs warning
+5. earlyStop sets outcome.executed='partial' + earlyStop=true
+6. Deviation case (user did PULL when proposed PUSH) → matchScore=null + deviation=true
+7. Match case → matchScore computed correctly
+8. No proposed entry but cdlEntryId set → orphan outcome entry created with NO_PROPOSED rationale (race edge case)
+
+**Acceptance:**
+- endSession + cancelWorkout populate CDL outcome correctly
+- Null cdlEntryId case handled gracefully (no crashes)
+- 8+ new tests passing
+- Commit: `feat(cdl): TASK #30.5 — outcome population + null entry handling (ADR 011)`
+- Push to main
+
+**Dependencies:** TASK #30.4 DONE ✅
+
+---
+
+## DANIEL GATE C — Post 30.4 + 30.5 Live Integration Test
+
+**Required for TASK #30.6 to start.**
+
+**Daniel sign-off requires ALL:**
+
+1. **Live session test (full flow):**
+   - Open app (post-deploy)
+   - Set readiness, start session
+   - Complete some exercises
+   - End session normally
+   - Open DevTools → check `localStorage.getItem('coach-decisions')`
+   - Verify entry exists for today with both `proposed` AND `outcome` populated correctly
+
+2. **Cancel session test:**
+   - Start a new session (different day or after clearing today's entry)
+   - Cancel mid-session
+   - Verify CDL entry has `outcome.executed = false`
+
+3. **Idempotency live test:**
+   - Refresh app multiple times within 4h same readiness
+   - Verify only 1 active CDL entry for today (not duplicated)
+
+4. **Significant context change test:**
+   - Change readiness score by > 20 points
+   - Trigger rebuild (e.g., navigate away and back)
+   - Verify old entry marked `superseded: true`, new entry created with `supersedes` ref
+
+5. **Test suite still green:**
+   ```powershell
+   npm run test:run
+   ```
+
+6. **EXEC_RESULTS.md entry:**
+   ```markdown
+   ## TASK #30.4 + #30.5 — DONE ✅
+   **Completed:** 2026-04-XX
+   **Daniel sign-off:** YES
+   **Live test:** ✅ end session → outcome populated
+   **Cancel test:** ✅ executed=false
+   **Idempotency:** ✅ 1 active entry per day
+   **Supersede test:** ✅ chain reachable
+   **Tests:** XXX pass
+   **Commits:** <hash1>, <hash2>
+   ```
+
+**Critical check:** la acest gate, CDL trebuie să conțină **real entries** (nu doar synthetic backfill). Subtask 30.6 va începe să conteze "30 real entries" pentru decommission gate.
+
+---
+
+## TASK #30.6 — patternLearning Reads CDL (Parallel Write Period)
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Refactor `src/engine/patternLearning.js` să citească CDL ca primary source. Continuă să scrie la `applied-patterns` (parallel period pentru decommission gate).
+
+Modificări:
+- `analyzeAndApplyPatterns(logs)` → renamed conceptual la `analyzeFromCDL()`. Old function rămâne ca wrapper care apelează new.
+- Read CDL entries via `coachDecisionLog.readAllActive()` (filtered by sessionType, calibrationLevel, etc. ca needed)
+- Compute patterns from CDL:
+  - **adherenceRate** = entries.where(executed && !deviation && !synthetic).count / entries.where(synthetic === false).count
+  - **deviationRate** = entries.where(deviation === true).count / entries.where(proposed && synthetic === false).count
+  - **earlyEndRate** = entries.where(executed === 'partial').count / entries.where(executed !== false).count
+  - **stagnation** patterns inferred din outcome.matchScore trends + actual logs (logs still authoritative pentru weight progression)
+- Synthetic entries weighted at 0.5× în orice aggregate
+- Banner-relevant patterns scrise în `applied-patterns` storage (parallel for backward compat)
+- New patterns scrise direct via `coachDecisionLog` API când relevant
+
+Pattern types updated:
+- `EARLY_END` — keep (acum bazat pe CDL outcome.executed='partial' rate)
+- `STAGNATION` — keep (logs based, unchanged)
+- `SKIP_DAY` — DEPRECATED (era H30c root cause). Replaced cu `LOW_ADHERENCE` (CDL adherenceRate < 50% pe last 30 days) și `HIGH_DEVIATION` (CDL deviationRate > 30% pe last 30 days)
+- `PEAK_HOURS` — keep (burns based, unchanged)
+
+Tests:
+1. analyzeFromCDL reads CDL entries correctly
+2. adherenceRate computed correctly cu mixed real + synthetic
+3. deviationRate distinguishes deviation from partial execution
+4. SKIP_DAY no longer generated
+5. LOW_ADHERENCE pattern fires when adherence < 50%
+6. HIGH_DEVIATION fires when deviation > 30%
+7. Synthetic entries get 0.5× weight în adherence calculation
+8. Parallel write: applied-patterns still updated
+
+**Acceptance:**
+- patternLearning reads CDL primary
+- applied-patterns still written (parallel)
+- 8+ new tests passing
+- Old SKIP_DAY logic removed
+- Commit: `feat(cdl): TASK #30.6 — patternLearning reads CDL + parallel applied-patterns (ADR 011)`
+- Push to main
+
+**Dependencies:** TASK #30.5 DONE ✅ + GATE C passed ✅
+
+---
+
+## TASK #30.7 — adherence.js Rewrite to Read CDL
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Rewrite `src/engine/adherence.js` să citească CDL ca primary source pentru adherence score. Înlocuiește current logic care contorizează raw logs against PROG static.
+
+New logic:
+- `computeAdherence(window = 30)` — CDL entries în last `window` days
+- Adherence score:
+  - `proposed.count` = entries.where(synthetic === false).count
+  - `executed.count` = entries.where(executed === true && !deviation && !synthetic).count
+  - `partial.count` = entries.where(executed === 'partial' && !synthetic).count
+  - `skipped.count` = entries.where(executed === false && !synthetic).count
+  - `deviated.count` = entries.where(deviation === true && !synthetic).count
+  - `score` = (executed × 1.0 + partial × 0.5) / proposed (capped 0-100, %)
+- `__early_stop__` markers no longer relevant — replaced by outcome.executed='partial'
+
+Backward compat:
+- Existing API (`getAdherenceScore`) returns same shape (number 0-100)
+- Internals re-routed la CDL
+
+Tests:
+1. computeAdherence returns 100 when all proposed executed
+2. Returns 0 when all proposed skipped
+3. partial weights 0.5×
+4. Deviation NOT counted as adherence (separate metric)
+5. Synthetic entries excluded
+6. Empty CDL → score = null (insufficient data, distinct from 0)
+
+**Acceptance:**
+- adherence.js rewritten
+- Tests 6+ new passing
+- Existing UI components consuming adherence still work (backward compat)
+- Commit: `feat(cdl): TASK #30.7 — adherence.js reads CDL (ADR 011)`
+- Push to main
+
+**Dependencies:** TASK #30.6 DONE ✅
+
+---
+
+## DANIEL GATE D — Parallel Period Start
+
+**Required for decommission gate (later, not for next subtask).**
+
+**Daniel sign-off marks parallel period START:**
+
+1. CDL write + applied-patterns write happen in parallel
+2. Daniel uses app normally for ≥2 weeks AND ≥30 real CDL entries accumulated
+3. During this period, Daniel observes:
+   - Patterns produced by patternLearning (from CDL) match intuition
+   - Adherence score (from CDL) seems sensible
+   - No regressions in existing UX
+
+**Tracking:**
+```markdown
+## TASK #30.7 — DONE ✅
+**Parallel period started:** 2026-04-XX
+**Real CDL entries accumulated:** counter incremented daily
+**Decommission gate target:** 30 real entries + zero mismatch + 7-day diff audit
+**Estimated date:** 2026-XX-XX (depending on training cadence)
+```
+
+NO subtask blocked by this gate — implementation continues with 30.8. This gate is for the FINAL decommission step (30.9).
+
+---
+
+## TASK #30.8 — renderIdle Banner CDL-Sourced + Suppression + New Pattern UI Strings
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Refactor `src/pages/coach/renderIdle.js` banner section să citească din `ctx.patterns` (CDL-backed via director filter) în loc de `DB.get('applied-patterns')` direct. Plus banner suppression când CDL real entries < 3. Plus UI strings pentru noile pattern types introduse în 30.6.
+
+Modificări `renderIdle.js:186` (banner pattern read):
+- Remove direct `DB.get('applied-patterns')` call
+- Read from `ctx.patterns` (already filtered by director per calibration tier)
+- Apply suppression: count real CDL entries (synthetic === false && executed !== null) — if < `CALIBRATION_LEVELS.INITIAL.minSessions` (3), banner is hidden entirely
+- No fallback to applied-patterns here — suppression takes precedence
+
+UI strings per pattern type (Romanian, consistent cu existing tone):
+- `EARLY_END`: păstrează existing string (e.g., "X% sesiuni terminate devreme — program scurtat 20%")
+- `STAGNATION`: păstrează existing string (e.g., "X exerciții stagnate 3+ săptămâni")
+- `LOW_ADHERENCE`: **NEW** — "Adherence scăzută ultimele 30 zile: X%. Reducem volum și verificăm contextul."
+- `HIGH_DEVIATION`: **NEW** — "Deviation crescut: Y% sesiuni diferite de propunere. Coach-ul ajustează propunerile."
+- `PEAK_HOURS`: păstrează existing
+- `SKIP_DAY`: **REMOVED** — pattern type deprecated în 30.6, no UI string needed (assert in test that no SKIP_DAY rendering path remains)
+
+Strings extracted la top of file ca constant `PATTERN_BANNER_STRINGS` cu key per pattern type — facilitates future i18n + testing.
+
+Helper:
+- Extract `shouldShowPatternBanner(ctx)` helper for testability
+- Extract `formatPatternMessage(pattern)` helper that maps pattern.type → UI string with substitution
+
+Tests (unit):
+1. Banner hidden when 0 real CDL entries (synthetic backfill only)
+2. Banner hidden when 2 real CDL entries (below threshold)
+3. Banner shown when 3+ real CDL entries AND ctx.patterns non-empty
+4. Banner content matches ctx.patterns (not applied-patterns)
+5. patternLearning's old DB.set('applied-patterns') visible parallel still, but renderIdle ignores it
+6. **LOW_ADHERENCE pattern renders correct string** with adherenceRate substituted
+7. **HIGH_DEVIATION pattern renders correct string** with deviationRate substituted
+8. **No SKIP_DAY rendering path** — assert grep test or function-level check that SKIP_DAY case throws or is unreachable
+9. EARLY_END pattern still renders existing string (backward compat)
+
+E2E test (`tests/e2e/scenarios/calibration-ui.spec.js` — extend existing):
+- Synthetic-only history → banner suppressed (verified in DOM)
+- Real entries ≥ 3 → banner shown
+- LOW_ADHERENCE pattern visible în DOM cu correct string (test fixture cu CDL adherence 40%)
+
+**Acceptance:**
+- renderIdle.js banner sourced from ctx.patterns (CDL)
+- Suppression logic implemented + tested
+- All pattern types have UI strings (including new LOW_ADHERENCE + HIGH_DEVIATION)
+- SKIP_DAY rendering removed
+- 9+ unit tests + 1+ E2E test passing
+- H30c symptom (false "Marți 88% skip rate") no longer reproducible
+- Commit: `feat(cdl): TASK #30.8 — banner CDL-sourced + suppression + new pattern strings (ADR 011, closes H30c symptom)`
+- Push to main
+
+**Dependencies:** TASK #30.7 DONE ✅
+
+---
+
+## DANIEL GATE E — Decommission Triggers Met
+
+**Required for TASK #30.9 to start.**
+
+**Daniel sign-off requires ALL THREE TRIGGERS:**
+
+**Trigger 1 — Volume:**
+- ≥30 real CDL entries (synthetic: false, outcome.executed != null) accumulated
+- Verified in DevTools:
+  ```javascript
+  const cdl = await import('/src/util/coachDecisionLog.js');
+  const all = cdl.readAllActive();
+  const real = all.filter(e => !e.synthetic && e.outcome?.executed != null);
+  console.log('Real entries:', real.length);
+  // Expected: ≥30
+  ```
+
+**Trigger 2 — Zero mismatch:**
+- Automated test verifies CDL.outcome.actualSessionType matches logs[ts].session for all 30+ real entries
+- Test added to `src/util/__tests__/coachDecisionLog.test.js` ca pre-decommission check
+- Run: `npm run test:run -- coachDecisionLog`
+- Expected: zero mismatches reported
+
+**Trigger 3 — Manual validation:**
+- Daniel reviews patternLearning output (CDL-derived) for last 30 days
+- Verified that patterns produced are sensible:
+  - LOW_ADHERENCE / HIGH_DEVIATION patterns fire when actually true
+  - No false positives from synthetic-only periods
+  - earlyEndRate matches Daniel's recollection of skipped sessions
+- Sign-off: "patternLearning produces sensible patterns on CDL"
+
+**PLUS Pre-Decommission 7-Day Diff Audit Gate (additional):**
+- Run script `scripts/cdlDiffAudit.js` (created in 30.9 if not earlier) — diffs CDL-derived patterns against legacy applied-patterns output for last 7 days
+- Daniel reviews diff:
+  - Expected: CDL produces strict subset (false positives filtered out — that's the point)
+  - Unexpected divergence (CDL missing patterns applied-patterns shows): investigate before decommission
+- Sign-off in EXEC_RESULTS:
+  ```markdown
+  ## TASK #30.8 — Decommission Audit
+  **Real entries:** 32 ✅
+  **Zero mismatch test:** ✅
+  **Manual pattern validation:** ✅
+  **7-day diff audit:** ✅ (CDL = applied-patterns - false positives)
+  **Daniel sign-off for 30.9:** YES
+  ```
+
+**If any trigger fails:** wait until met. NO partial decommission. NO time-based bypass.
+
+---
+
+## TASK #30.9 — Decommission applied-patterns (Clean Break)
+**Model:** Sonnet
+**Type:** EXEC
+**Priority:** CRITICAL
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Remove `applied-patterns` from code, storage, sync. Single source of truth = CDL.
+
+Modificări:
+- `patternLearning.js` — remove parallel write to applied-patterns. Remove `analyzeAndApplyPatterns` legacy wrapper if no longer needed.
+- `firebase.js` — remove `applied-patterns` from SYNC_KEYS și COACH_RELEVANT_KEYS
+- `dataCleanup.js` — add `applied-patterns` to deprecated keys list (cleanup on Full Reset). Plus add cleanup migration: on app load, if `applied-patterns` exists in localStorage, delete it (one-time migration on update).
+- `dataRegistry.js` (Task #27 follow-up) — remove `applied-patterns` from active keys, mark deprecated
+- Any remaining `DB.get('applied-patterns')` callers → delete (should be zero post-30.8)
+
+Pre-flight check (mandatory in script):
+- grep entire codebase for `applied-patterns` string
+- Output should be ONLY: dataCleanup.js (deprecated cleanup), tests (validation), docs (historical reference)
+- Any production code reference → ABORT and report
+
+Tests:
+1. After load, applied-patterns key removed from localStorage (migration test)
+2. firebase.js no longer syncs applied-patterns
+3. patternLearning no longer writes to applied-patterns
+4. Full Reset clears applied-patterns if present (legacy cleanup)
+
+E2E test:
+- Create user with applied-patterns set in localStorage
+- Load app
+- Verify applied-patterns removed automatically
+
+**Acceptance:**
+- All applied-patterns references removed from production code
+- Migration script clears existing applied-patterns
+- 4+ tests + 1 E2E
+- Commit: `feat(cdl): TASK #30.9 — decommission applied-patterns (ADR 011, single source CDL)`
+- Push to main
+
+**Dependencies:** TASK #30.8 DONE ✅ + GATE E passed ✅
+
+---
+
+## TASK #30.10 — H30c Closure în FINDINGS_MASTER
+**Model:** Sonnet
+**Type:** DOCS
+**Priority:** MEDIUM
+**Status:** PENDING
+**Created:** 2026-04-25
+**Description:** Update `06-findings-tracker/FINDINGS_MASTER.md` să marcheze H30c FIXED prin TASK #30 (CDL).
+
+Updates:
+- H30c row: 🔴 OPEN → 🟢 FIXED, Fix în column = "TASK #30 (CDL adoption)"
+- Stats: 19 FIXED → 20 FIXED, 1 OPEN → 0 OPEN
+- Note în "Ultima sesiune QA" sau separat: "TASK #30 CDL implementation closed H30c naturally — pattern banner now sourced from CDL real entries with insufficient-data suppression"
+- Update `00-index/INDEX_MASTER.md` cu link la ADR 011 + status FAZA 3 partial complete (CDL = arhitectură nouă)
+- Add entry în `03-decisions/DECISION_LOG.md`:
+  ```markdown
+  ## 2026-XX-XX — TASK #30 COMPLETE — Coach Decision Log Adopted
+  **Scope:** ADR 011 implementation. CDL ca primitive arhitectural. H30c rezolvat natural.
+  **Approach:** 10 subtasks ordered cu Daniel gates. Backfill synthetic entries pentru continuitate. Decommission applied-patterns trigger-based.
+  **Commits:** <list of all 30.X commit hashes>
+  **Next:** monitor patternLearning behavior pe CDL pe >60 entries pentru reconsideration trigger #1
+  ```
+
+**Acceptance:**
+- FINDINGS_MASTER updated
+- INDEX_MASTER updated
+- DECISION_LOG entry added
+- All 3 vault docs commit + push: `docs(vault): TASK #30.10 — close H30c, vault sync post-CDL adoption`
+
+**Dependencies:** TASK #30.9 DONE ✅
+
+---
+
+# END OF TASK #30 ENTRIES
+
+**Total subtasks:** 10
+**Daniel gates:** A, B, C, D, E (5 explicit gates)
+**Estimated calendar time:** 4-8 weeks (cadence-dependent)
+**Decommission gate:** 30 real entries + zero mismatch + 7-day diff audit (ALL three required)
+**Contract:** [[011-coach-decision-log-architecture]]
