@@ -5,3 +5,7 @@ dist/
 
 # Security audit files — contain vulnerability details, do not publish
 docs/AUDIT_BULLETPROOF_*.md
+# Obsidian plugins (keep local only, don't pollute indexing)
+.obsidian/plugins/
+.obsidian/workspace.json
+.obsidian/cache/
