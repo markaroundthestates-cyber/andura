@@ -21,6 +21,18 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #30.5 — DONE ✅
+**Completed:** 2026-04-26 02:00
+**Duration:** ~20min
+**Summary:** Populat CDL `outcome` în `endSession()` și `cancelWorkout()` conform ADR 011. `endSession`: citește entry activ via `readActiveForDate`, compută `matchScore/deviation` via `computeMatchScore(proposed, {actualSessionType, actualExercises, actualSets})`, populează cu `executed=true|'partial'`, `earlyStop`, `earlyStopReason`, `actualDurationMins`, `rating: null`. `cancelWorkout`: populează cu `executed=false`, empty arrays, zero sets. Ambele în try/catch degraded mode cu Sentry hook. `startSession` (ambele căi: fresh + draft restore) wirează `state.sessType` din PROG și `state.cdlEntryId` din `getCachedDirector()`. Stare globală extinsă cu `cdlEntryId` + `sessType` în state.js (comis anterior via vault sync).
+**Files changed:** `src/pages/coach/session.js` (modificat: +2 imports, +4 wiring lines în startSession x2 căi, +CDL block in cancelWorkout 25 LOC, +CDL block in endSession 33 LOC), `src/pages/coach/__tests__/sessionCdl.test.js` (creat: 8 teste)
+**Tests:** 350 → 358 pass (8 noi: happy path endSession, skip null id, earlyStop partial, deviation PULL→PUSH, matchScore computa 0.75, immutability catch, cancelWorkout executed=false, cancelWorkout skip null). Zero existing broken.
+**Pre-flight:** computeMatchScore signature verificat — `actual.actualSessionType` + `actual.actualExercises` (nu `sessionType`/`exercises`) ✓. `getCachedDirector` exportat din coach `state.js` ✓. PROG[7] e undefined (zi necunoscuta → `'' || null`) safe ✓.
+**Issues:** NONE
+**Commits:** 1b32079 (implementation + tests)
+
+---
+
 ## TASK #30.4 — DONE ✅
 **Completed:** 2026-04-26 01:26
 **Duration:** ~15min

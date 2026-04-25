@@ -999,8 +999,9 @@ Build + tests:
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** CRITICAL
-**Status:** PENDING
+**Status:** DONE ✅
 **Created:** 2026-04-25
+**Completed:** 2026-04-26
 **Description:** Populează `outcome` pe CDL entry când user-ul finalizează sau anulează o sesiune.
 
 Modificări `src/pages/coach/session.js`:
