@@ -1,5 +1,21 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { coachDirector } from '../coachDirector.js';
+
+vi.mock('../../util/coachDecisionLog.js', async () => {
+  const actual = await vi.importActual('../../util/coachDecisionLog.js');
+  return {
+    ...actual,
+    writeProposed: vi.fn(entry => ({
+      ...entry,
+      id: 'mock_cdl_id_123',
+      ts: Date.now(),
+      synthetic: false,
+      superseded: false,
+      supersedes: null,
+      outcome: null,
+    })),
+  };
+});
 import { roundToEquipment } from '../reality.js';
 import { resetTestData, fullReset } from '../../util/dataCleanup.js';
 import { getInitialRecommendation } from '../dp.js';
@@ -354,5 +370,100 @@ describe('Pattern learning credibility threshold', () => {
     // Ce garantăm: sesiunea e validă indiferent
     expect(session.exercises).toBeDefined();
     expect(session.exercises.length).toBeGreaterThan(0);
+  });
+});
+
+// ── CDL write integration (ADR 011) ──────────────────────────────────────────
+
+describe('CoachDirector — CDL write (ADR 011)', () => {
+  let writeProposedSpy;
+
+  beforeEach(async () => {
+    localStorage.clear();
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
+    localStorage.setItem('phase-override', 'AUTO');
+    localStorage.setItem('current-kcal', '1800');
+    const cdlModule = await import('../../util/coachDecisionLog.js');
+    writeProposedSpy = cdlModule.writeProposed;
+    writeProposedSpy.mockClear();
+  });
+
+  it('buildSession writes CDL entry on success', async () => {
+    const session = await coachDirector.buildSession('PUSH');
+    expect(writeProposedSpy).toHaveBeenCalledOnce();
+    const arg = writeProposedSpy.mock.calls[0][0];
+    expect(arg.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(arg.context).toBeDefined();
+    expect(arg.proposed).toBeDefined();
+    expect(session.cdlEntryId).toBe('mock_cdl_id_123');
+    expect(session.cdlWriteError).toBeNull();
+  });
+
+  it('CDL context snapshot has correct shape from ctx', async () => {
+    await coachDirector.buildSession('PUSH');
+    const ctx = writeProposedSpy.mock.lastCall[0].context;
+    expect(ctx.readinessScore).toBe(75);
+    expect(typeof ctx.fatigueIndex).toBe('number');
+    expect(ctx.partial).toBe(false);
+    expect(Array.isArray(ctx.weakGroups)).toBe(true);
+    expect(typeof ctx.stagnationWeeks).toBe('number');
+    expect(ctx.calibrationLevel).toBeDefined();
+    expect(ctx.isInCut).toBeDefined();
+  });
+
+  it('CDL proposed.rationale reflects ruleEngine winner', async () => {
+    // readiness=91 + phase=CUT → CUT_CONSERVATIVE fires (priority 85)
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 91, emoji: '🔥' } }));
+    localStorage.setItem('phase-override', 'CUT');
+
+    await coachDirector.buildSession('PUSH');
+
+    const rationale = writeProposedSpy.mock.lastCall[0].proposed.rationale;
+    expect(rationale.winnerId).toBe('CUT_CONSERVATIVE');
+    expect(rationale.winnerPriority).toBe(85);
+    expect(Array.isArray(rationale.overridden)).toBe(true);
+  });
+
+  it('director calls writeProposed on each buildSession (idempotency is primitive responsibility)', async () => {
+    await coachDirector.buildSession('PUSH');
+    await coachDirector.buildSession('PUSH');
+    expect(writeProposedSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('CDL write failure → session still returned with cdlEntryId: null', async () => {
+    writeProposedSpy.mockImplementationOnce(() => { throw new Error('Storage full'); });
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session).toBeDefined();
+    expect(session.exercises).toBeDefined();
+    expect(session.cdlEntryId).toBeNull();
+    expect(session.cdlWriteError).toBe('Storage full');
+  });
+
+  it('session.cdlEntryId is captured from writeProposed return value', async () => {
+    writeProposedSpy.mockImplementationOnce(entry => ({
+      ...entry, id: 'custom_test_id_xyz', ts: Date.now(),
+      synthetic: false, superseded: false, supersedes: null, outcome: null,
+    }));
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session.cdlEntryId).toBe('custom_test_id_xyz');
+    expect(session.cdlWriteError).toBeNull();
+  });
+
+  it('Sentry.captureException called on CDL write failure', async () => {
+    const captureException = vi.fn();
+    window.Sentry = { captureException };
+    writeProposedSpy.mockImplementationOnce(() => { throw new Error('CDL Sentry test'); });
+
+    const session = await coachDirector.buildSession('PUSH');
+
+    expect(session.cdlWriteError).toBe('CDL Sentry test');
+    expect(captureException).toHaveBeenCalledOnce();
+    expect(captureException.mock.calls[0][1]).toMatchObject({
+      tags: { component: 'coachDirector', op: 'cdl_write' }
+    });
+
+    delete window.Sentry;
   });
 });

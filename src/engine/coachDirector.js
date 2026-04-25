@@ -11,6 +11,9 @@ import { runProactiveChecks } from './proactiveEngine.js';
 import { initAutoBackup } from '../util/autoBackup.js';
 import { detectCalibrationLevel, applyRollingWindow } from './calibration.js';
 import { buildSession } from './sessionBuilder.js';
+import * as coachDecisionLog from '../util/coachDecisionLog.js';
+import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
+import { inferSessionType } from '../util/cdlBackfill.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -172,9 +175,68 @@ export class CoachDirector {
       calibrationLevel: ctx.calibrationLevel,
     };
 
+    // ── CDL write (ADR 011) ───────────────────────────────────────────────
+    let cdlEntryId = null;
+    let cdlWriteError = null;
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const cdlContext = {
+        calibrationLevel: ctx.calibrationLevel?.name || ctx.calibrationLevel || null,
+        readinessScore: ctx.readiness?.score ?? null,
+        fatigueIndex: ctx.fatigueIndex ?? null,
+        daysSinceLastSession: _computeDaysSinceLastSession(ctx.allLogs),
+        lastSessionType: _computeLastSessionType(ctx.allLogs),
+        isInCut: ctx.isInCut ?? null,
+        weakGroups: Array.isArray(ctx.weakGroups) ? ctx.weakGroups : [],
+        stagnationWeeks: ctx.stagnationWeeks ?? 0,
+        predictionToday: ctx.predictionToday ? {
+          isHighRisk: ctx.predictionToday.isHighRisk ?? false,
+          probability: ctx.predictionToday.probability ?? 0
+        } : null,
+        partial: false
+      };
+
+      const cdlProposed = {
+        sessionType,
+        rationale: {
+          winnerId: ruleResult?.winner?.id ?? RESERVED_RATIONALE_IDS.NO_RULE_FIRED,
+          winnerPriority: ruleResult?.winner?.priority ?? null,
+          overridden: Array.isArray(ruleResult?.overridden)
+            ? ruleResult.overridden.map(r => r?.id).filter(Boolean)
+            : []
+        },
+        exercises: Array.isArray(session?.exercises)
+          ? session.exercises.map(e => e?.name).filter(Boolean)
+          : [],
+        proposedSets: Array.isArray(session?.exercises)
+          ? session.exercises.reduce((sum, e) => sum + (e?.sets || 0), 0)
+          : 0,
+        volumeMultiplier: ctx.readiness?.volumeMultiplier ?? 1.0,
+        notes: ''
+      };
+
+      const written = coachDecisionLog.writeProposed({
+        date: today,
+        context: cdlContext,
+        proposed: cdlProposed
+      });
+      cdlEntryId = written.id;
+    } catch (err) {
+      cdlWriteError = err.message || String(err);
+      console.error('[CoachDirector] CDL write failed (degraded mode):', err);
+      try {
+        if (typeof window !== 'undefined' && window.Sentry?.captureException) {
+          window.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'cdl_write' } });
+        }
+      } catch (_) { /* swallow Sentry errors */ }
+    }
+
     // Daily backup — fire and forget
     try { initAutoBackup(); } catch { /* non-blocking */ }
 
+    session.cdlEntryId = cdlEntryId;
+    session.cdlWriteError = cdlWriteError;
     return session;
   }
 
@@ -218,4 +280,25 @@ function _hasRecentLog(exerciseName, recentLogs) {
     if ((session.logs || []).some(l => l.ex === exerciseName)) return true;
   }
   return false;
+}
+
+function _computeDaysSinceLastSession(allLogs) {
+  if (!Array.isArray(allLogs) || allLogs.length === 0) return null;
+  const sessionTimestamps = [...new Set(allLogs.map(l => l.session).filter(Boolean))];
+  if (sessionTimestamps.length === 0) return null;
+  const lastTs = Math.max(...sessionTimestamps);
+  return Math.floor((Date.now() - lastTs) / 86400000);
+}
+
+function _computeLastSessionType(allLogs) {
+  if (!Array.isArray(allLogs) || allLogs.length === 0) return null;
+  const bySession = {};
+  for (const l of allLogs) {
+    if (!l.session || !l.ex) continue;
+    bySession[l.session] = bySession[l.session] || new Set();
+    bySession[l.session].add(l.ex);
+  }
+  const sortedTs = Object.keys(bySession).sort((a, b) => Number(b) - Number(a));
+  if (sortedTs.length === 0) return null;
+  return inferSessionType([...bySession[sortedTs[0]]]);
 }
