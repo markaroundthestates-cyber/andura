@@ -776,7 +776,7 @@ Documentation in code:
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** CRITICAL
-**Status:** PENDING
+**Status:** DONE ✅
 **Created:** 2026-04-25
 **Description:** Creează `src/util/cdlBackfill.js` care convertește `logs` istorice existente în CDL synthetic entries conform secțiunii "Backfill from existing logs" din ADR 011.
 

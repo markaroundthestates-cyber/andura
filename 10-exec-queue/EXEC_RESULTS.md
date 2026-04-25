@@ -21,6 +21,19 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #30.3 — DONE ✅
+**Completed:** 2026-04-26 00:55
+**Duration:** ~25min
+**Summary:** Creat `src/util/cdlBackfill.js` (165 LOC) cu 5 export-uri: `runBackfill`, `inferSessionType`, `reconstructContext`, `synthesizeOutcome`, `getValidationSamples`. Skipped handling robust: missing ts, invalid format, no exercises, unknown muscle group. Idempotency via synthetic flag check + `force` option pentru re-run. Inferență sessionType cu 70% dominance threshold pe exerciții known (≥50% ratio required). Calibration retrospectivă session-count-only (0/3/10 thresholds). Fisher-Yates shuffle pentru GATE B samples. `window.runBackfill` + `window.getValidationSamples` expuse pentru Daniel DevTools.
+**Files changed:** `src/util/cdlBackfill.js` (creat), `src/util/__tests__/cdlBackfill.test.js` (creat)
+**Tests:** 25 added (14 mandatory + 11 bonus) — all pass; baseline 318 → 343 (29 test files)
+**Issues:** `'Bench Press'`, `'Squat'`, `'Pec Deck'` (singular) nu sunt în EXERCISE_MUSCLES (map-ul are `'Pec Deck / Cable Fly'`). Sesiunile cu TOATE exercițiile necunoscute → skipped cu reason `unknown muscle group`. Daniel trebuie să verifice la GATE B câte sesiuni sunt skipped și cu ce exerciții.
+**Pre-flight:** EXERCISE_MUSCLES verificat — 25 exerciții mapped, shape `{ primary: [...], secondary: [...] }` ✓. CALIBRATION_LEVELS thresholds în calibration.js folosesc AND(daysSinceFirst, sessionsCount) → diferit de task spec; folosit session-count-only (0/3/10) pentru consistență cu testele mandatare.
+**Commits:** c9c3704 (implementation), queue update separat
+**Note:** DOES NOT auto-run backfill. Daniel triggers manual în GATE B via `window.runBackfill()` în DevTools console. Subtask 30.3 done. Awaiting Daniel GATE B validation (manual review 10 random samples + force re-run if needed) before proceeding to 30.4.
+
+---
+
 ## TASK #30.2 — DONE ✅
 **Completed:** 2026-04-25 23:55
 **Duration:** ~20min
