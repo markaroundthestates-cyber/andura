@@ -23,6 +23,8 @@ export const state = {
   sessionTotalExercises: 0,
   sessKcalBurn: 0,
   earlyStopReason: null,
+  cdlEntryId: null,
+  sessType: null,
 };
 
 // Convenience destructure helpers (read-only snapshots)
