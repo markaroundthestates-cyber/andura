@@ -9,59 +9,101 @@
   "colorGroups": [
     {
       "query": "path:00-index",
-      "color": {"a": 1, "rgb": 14701138}
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
     },
     {
       "query": "path:01-vision",
-      "color": {"a": 1, "rgb": 14725458}
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
     },
     {
       "query": "path:02-audit",
-      "color": {"a": 1, "rgb": 16756480}
+      "color": {
+        "a": 1,
+        "rgb": 16756480
+      }
     },
     {
       "query": "path:03-decisions",
-      "color": {"a": 1, "rgb": 16776960}
+      "color": {
+        "a": 1,
+        "rgb": 16776960
+      }
     },
     {
       "query": "path:04-architecture",
-      "color": {"a": 1, "rgb": 8388352}
+      "color": {
+        "a": 1,
+        "rgb": 8388352
+      }
     },
     {
       "query": "path:05-prompts",
-      "color": {"a": 1, "rgb": 65535}
+      "color": {
+        "a": 1,
+        "rgb": 65535
+      }
     },
     {
       "query": "path:06-findings-tracker",
-      "color": {"a": 1, "rgb": 4886754}
+      "color": {
+        "a": 1,
+        "rgb": 4886754
+      }
     },
     {
       "query": "path:07-sessions-log",
-      "color": {"a": 1, "rgb": 9699539}
+      "color": {
+        "a": 1,
+        "rgb": 9699539
+      }
     },
     {
       "query": "path:09-workflows",
-      "color": {"a": 1, "rgb": 16711935}
+      "color": {
+        "a": 1,
+        "rgb": 16711935
+      }
     },
     {
       "query": "path:10-exec-queue",
-      "color": {"a": 1, "rgb": 16711680}
+      "color": {
+        "a": 1,
+        "rgb": 16711680
+      }
     },
     {
       "query": "path:docs",
-      "color": {"a": 1, "rgb": 6710886}
+      "color": {
+        "a": 1,
+        "rgb": 6710886
+      }
     },
     {
       "query": "path:src",
-      "color": {"a": 0.3, "rgb": 3355443}
+      "color": {
+        "a": 1,
+        "rgb": 3355443
+      }
     },
     {
       "query": "path:tests",
-      "color": {"a": 0.2, "rgb": 2105376}
+      "color": {
+        "a": 1,
+        "rgb": 2105376
+      }
     },
     {
       "query": "path:public",
-      "color": {"a": 0.1, "rgb": 1052688}
+      "color": {
+        "a": 1,
+        "rgb": 1052688
+      }
     }
   ],
   "collapse-display": false,
@@ -74,6 +116,6 @@
   "repelStrength": 15,
   "linkStrength": 0.8,
   "linkDistance": 250,
-  "scale": 0.8,
+  "scale": 0.5706203700979521,
   "close": true
 }
