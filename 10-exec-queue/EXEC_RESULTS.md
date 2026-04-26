@@ -5,6 +5,29 @@ Intrările noi se adaugă **la începutul fișierului** (cele mai recente primul
 
 ---
 
+## TASK #30.9 STEP 1 — DONE ✅
+**Completed:** 2026-04-26
+**Model:** claude-sonnet-4-6
+**Pre-flight findings:**
+- All 5 callers found at expected lines: YES ✅
+- Additional refs flagged: main.js:104,110 (clearStalePatternsIfColdStart — cold_start cleanup, Step 3 territory, neutins); dashboard.js:282 (dismissAutoPattern onclick HTML — handled ca parte din caller #5)
+
+**Summary:**
+- renderIdle.js: removed `analyzeAndApplyPatterns` import + trigger call (CDL is write path via coachDirector)
+- util.js: removed SKIP_DAY skipPattern branch (+ orphan imports `getCachedDirector`, `sessionCache`)
+- modals.js: `DB.get('applied-patterns')` → `_session?.context?.patterns` (CDL-backed)
+- dashboard.js: `getAppliedPatterns()` → `analyzeFromCDL()`; remove dismiss button (CDL patterns non-dismissable per ADR 011)
+- main.js: removed `dismissAutoPattern` + import `getAppliedPatterns, dismissPattern`
+- main.js:104,110 (clearStalePatternsIfColdStart): NOT touched — Step 3 territory
+
+**Files changed:** renderIdle.js, util.js, modals.js, dashboard.js, main.js
+**Tests:** 445/445 maintained ✅
+**Commit:** d33cefc
+**Next:** Step 2 (Daniel manual validation — ≥30 real CDL entries, zero mismatch, pattern sensibility check, 7-day diff audit) → Step 3 (storage decom: patternLearning.js write, firebase.js SYNC_KEYS, dataCleanup.js)
+**Issues:** NONE
+
+---
+
 ## TASK #AA-FIX — DONE ✅
 **Completed:** 2026-04-26
 **Model:** claude-sonnet-4-6
