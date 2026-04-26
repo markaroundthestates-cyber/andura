@@ -237,7 +237,9 @@ export function endSession() {
   }
 
   // ── Întreabă cum a fost sesiunea (un singur tap) ─────────────────────────
-  showSessionRating({ mins, kcal, totalVolume, totalSets, uniqueEx, avgRPE, prs });
+  const ratedSets = state.sessLog.filter(s => s.rpe !== undefined && s.rpe !== null).length;
+  const noneRated = state.sessLog.length > 0 && ratedSets === 0;
+  showSessionRating({ mins, kcal, totalVolume, totalSets, uniqueEx, avgRPE, prs, noneRated });
 }
 
 export function closeSummary() {

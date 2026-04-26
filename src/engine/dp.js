@@ -300,12 +300,12 @@ export const DP = {
       const newKg = getPrevWeight(dpState.lastW, ex);
       return { adjust: true, dir: 'down', newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
     }
-    // Prea ușor: 2× RPE ≤6 și reps > rMax → crește imediat
-    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6)) {
+    // Prea ușor: 2× Easy (RPE ≤6.5) și reps > rMax → crește imediat
+    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6.5)) {
       const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
       if (lastReps >= rMax) {
         const newKg = this.roundToStep(dpState.lastW + inc, ex);
-        return { adjust: true, dir: 'up', newKg, msg: `2× RPE 6 + reps maxime → crește la ${newKg}kg ACUM` };
+        return { adjust: true, dir: 'up', newKg, msg: `2× Easy + reps maxime → crește la ${newKg}kg ACUM` };
       }
     }
     return { adjust: false };

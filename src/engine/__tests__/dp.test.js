@@ -119,3 +119,60 @@ describe('DP._recommendRaw — CUT phase progression', () => {
     expect(result.repsTarget).toBe(8); // returns to rMin=8
   });
 });
+
+// ── checkInSessionAdjust — RPE 4-tap thresholds (TASK #AA-FIX) ───────────────
+
+describe('DP.checkInSessionAdjust — RPE 4-tap thresholds', () => {
+  beforeEach(() => {
+    DP.getState = vi.fn(() => ({ lastW: 60 }));
+  });
+
+  afterEach(() => {
+    DP.getState = DP.getState.mockRestore?.() || DP.getState;
+  });
+
+  it('drops weight on 2× Very Hard (RPE 10)', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [8, 8]);
+    expect(result.adjust).toBe(true);
+    expect(result.dir).toBe('down');
+  });
+
+  it('does NOT drop weight on 2× Hard (RPE 9)', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [9, 9], [8, 8]);
+    expect(result.adjust).toBe(false);
+  });
+
+  it('drops weight on mixed [10, 10] regardless of reps', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [5, 5]);
+    expect(result.adjust).toBe(true);
+    expect(result.dir).toBe('down');
+  });
+
+  it('ups weight on 2× Easy (RPE 6.5) with max reps', () => {
+    // Lat Pulldown CUT range = [8, 12], rMax=12
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [6.5, 6.5], [12, 12]);
+    expect(result.adjust).toBe(true);
+    expect(result.dir).toBe('up');
+  });
+
+  it('does NOT up weight on 2× Easy (RPE 6.5) with sub-max reps', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [6.5, 6.5], [8, 8]);
+    expect(result.adjust).toBe(false);
+  });
+
+  it('returns no adjust on mixed Hard/Very Hard (9, 10)', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [9, 10], [8, 8]);
+    expect(result.adjust).toBe(false);
+  });
+
+  it('returns no adjust with fewer than 2 RPE readings', () => {
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [10], [8]);
+    expect(result.adjust).toBe(false);
+  });
+
+  it('returns no adjust when no history (lastW = 0 / falsy)', () => {
+    DP.getState = vi.fn(() => ({ lastW: 0 }));
+    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [8, 8]);
+    expect(result.adjust).toBe(false);
+  });
+});

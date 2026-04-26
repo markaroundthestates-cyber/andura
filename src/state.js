@@ -25,6 +25,7 @@ export const state = {
   earlyStopReason: null,
   cdlEntryId: null,
   sessType: null,
+  lastSetRPE: null,
 };
 
 // Convenience destructure helpers (read-only snapshots)

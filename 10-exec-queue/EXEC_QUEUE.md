@@ -1419,6 +1419,30 @@ Updates:
 
 ---
 
+## TASK #AA-FIX
+**Model:** Sonnet
+**Type:** EXEC (UI + engine + docs bundle)
+**Priority:** HIGH
+**Status:** PENDING
+**Created:** 2026-04-26
+**Description:** Activate RPE per-set input (4-tap Easy/OK/Hard/Very Hard) + adapt DP checkInSessionAdjust threshold + update ADR 013 fatigue marker #2 wording. Closes loop pe AA broken (RPE=8 hardcoded → fake data) și deblochează composite fatigue marker accuracy din ADR 013.
+
+**Acceptance:**
+- `selectRPE(rpe)` în `src/pages/coach/logging.js` setează `state.lastSetRPE` (nu mai e no-op)
+- `confirmReps()` consumă `state.lastSetRPE`, persist `log.rpe` numeric (6.5/8/9/10) sau undefined dacă skipped, reset `state.lastSetRPE = null` după push
+- 4 butoane în `#rpe-inline` (HTML in coach view): Easy 🟢 / OK 🟡 / Hard 🟠 / Very Hard 🔴 + text label sub emoji (NU pure color coding, accesibilitate color-blind)
+- Skip-able: dacă user apasă "skip" sau direct confirm fără tap, `log.rpe = undefined`
+- End-of-session: dacă 0 seturi rated în sesiune → afișează rating modal existent (easy/normal/hard global) — NU prompt nou
+- DP `checkInSessionAdjust` în `src/engine/dp.js`: păstrează drop logic dar threshold = `RPE >= 10` (Very Hard), NU 10 strict equal. Up logic păstrată la `RPE <= 6` (Easy=6.5 trigger).
+- ADR 013 update în `docs/decisions/013-auto-aggression-detection.md`: composite fatigue marker #2 wording = "≥50% seturi rated Hard sau Very Hard într-o sesiune (Easy/OK NU counted)". Update și `Empirical Calibration Parameters` table corespunzător.
+- Tests: minim 8 noi (selectRPE state, confirmReps cu/fără RPE, DP threshold Very Hard trigger, DP threshold Hard NU trigger, integration log shape, end-of-session prompt 0 rated)
+- 422+ tests pass, build clean, commit + push
+- NO regression pe FAZA 1.7 AA notes-only logic (aa.js neatins în acest task)
+
+**Dependencies:** NONE (independent de 30.9 cleanup; AA engine nu e atins)
+
+---
+
 # END OF TASK #30 ENTRIES
 
 **Total subtasks:** 10

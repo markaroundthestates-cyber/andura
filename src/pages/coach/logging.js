@@ -85,20 +85,32 @@ export function setDone() {
   const ri = $('rpe-inline'); if (ri) ri.style.display = 'block';
 }
 
-export function confirmReps() {
+export function confirmReps(skipped = false) {
   state.lastPauseEndedAt = null;
   const ri = $('rpe-inline'); if (ri) ri.style.display = 'none';
 
   const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
   const totalSets = EX_SETS[state.currentEx] || 3;
 
+  const rpe = skipped ? undefined : state.lastSetRPE;
+  state.lastSetRPE = null;
+  // Reset RPE button highlight
+  ['easy', 'ok', 'hard', 'very-hard'].forEach(label => {
+    const btn = $(`rpe-btn-${label}`);
+    if (btn) btn.classList.remove('sel');
+  });
+
   const logs = DB.get('logs') || [];
   const noteArr = [...state.activeNotes]; resetNotes();
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
   state.sessionKgOverride = null;
-  logs.unshift({ date: tod(), ex: state.currentEx, w: logKg, kg: logKg, set: state.currentSet, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart });
+  const logEntry = { date: tod(), ex: state.currentEx, w: logKg, kg: logKg, set: state.currentSet, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart };
+  if (rpe !== undefined && rpe !== null) logEntry.rpe = rpe;
+  logs.unshift(logEntry);
   DB.set('logs', logs.slice(0, 5000));
-  state.sessLog.push({ ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) });
+  const sessEntry = { ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) };
+  if (rpe !== undefined && rpe !== null) sessEntry.rpe = rpe;
+  state.sessLog.push(sessEntry);
   const ssc = $('sess-progress-txt'); if (ssc) ssc.textContent = `${state.completedExercises.size}/${state.sessionTotalExercises || getTodayExercises().length}`;
 
   saveDraft();
@@ -125,7 +137,18 @@ export function confirmReps() {
   renderSessLog();
 }
 
-export function selectRPE(rpe) { }
+export function selectRPE(rpe) {
+  state.lastSetRPE = rpe;
+  ['easy', 'ok', 'hard', 'very-hard'].forEach(label => {
+    const btn = $(`rpe-btn-${label}`);
+    if (btn) btn.classList.remove('sel');
+  });
+  const labelMap = { 6.5: 'easy', 8: 'ok', 9: 'hard', 10: 'very-hard' };
+  const selBtn = $(`rpe-btn-${labelMap[rpe]}`);
+  if (selBtn) selBtn.classList.add('sel');
+}
+window.selectRPE = selectRPE;
+window.confirmReps = confirmReps;
 
 export function adjSessionReps(d) {
   state.sessRepsInput = Math.max(1, Math.min(30, state.sessRepsInput + d));

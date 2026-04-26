@@ -35,7 +35,8 @@ export function showSessionRating(summaryData) {
       </div>
     </div>
     ${prsHtml ? `<div style="width:100%;max-width:340px;margin-bottom:14px">${prsHtml}</div>` : ''}
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);margin-bottom:16px;text-align:center">CUM A FOST?</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);margin-bottom:${summaryData.noneRated ? '4px' : '16px'};text-align:center">CUM A FOST?</div>
+    ${summaryData.noneRated ? '<div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:12px">Niciun set rated — cum a fost sesiunea per ansamblu?</div>' : ''}
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px">
       <button onclick="rateSession('easy', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(48,209,88,0.1);border:2px solid var(--green);border-radius:var(--rs);color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
