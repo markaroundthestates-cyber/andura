@@ -1334,8 +1334,9 @@ E2E test (`tests/e2e/scenarios/calibration-ui.spec.js` — extend existing):
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** CRITICAL
-**Status:** PENDING
+**Status:** DEFERRED — blocked (caller cleanup + Daniel sign-off required)
 **Created:** 2026-04-25
+**Blocked:** 2026-04-26 — autonomous gate failure. See [[AUDIT_30_9_BLOCKED_STATE]] for full diagnosis + 3-step resume sequence.
 **Description:** Remove `applied-patterns` from code, storage, sync. Single source of truth = CDL.
 
 Modificări:
@@ -1376,7 +1377,8 @@ E2E test:
 **Model:** Sonnet
 **Type:** DOCS
 **Priority:** MEDIUM
-**Status:** PENDING
+**Status:** DONE ✅
+**Completed:** 2026-04-26 (autonomous revised run)
 **Created:** 2026-04-25
 **Description:** Update `06-findings-tracker/FINDINGS_MASTER.md` să marcheze H30c FIXED prin TASK #30 (CDL).
 

@@ -108,3 +108,15 @@ Tasks NOT executed:
 Daniel revine și decide:
 1. Dacă semnează 30.9 (după verificarea celor 4 trigger-uri din EXEC_QUEUE) → cleanup callers din lista de mai sus → re-run autonomous
 2. Dacă amână 30.9 → poate re-rula autonomous cu 30.9 scos din stack
+
+---
+
+### REVISED RUN — 2026-04-26 (30.9 SKIPPED, Daniel decision)
+
+**Status:** RUNNING  
+**Stack:** TASK #30.10 → ADR 012 + Tier Decay → Audit 30.9 docs → [BONUS] stack  
+**Baseline:** 414/414 tests, commit 23cf66e
+
+---
+
+### TASK #30.10 — H30c Closure docs — IN PROGRESS

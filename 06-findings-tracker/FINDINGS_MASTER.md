@@ -2,7 +2,7 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
 
-**Ultima actualizare:** 26 apr 2026 (post-Task #31.5)  
+**Ultima actualizare:** 26 apr 2026 (post-Task #30.10 — H30c FIXED)  
 **Total findings:** 128 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr + 1 nou S1 schema reconciliation)  
 **Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale)
 
@@ -63,7 +63,7 @@
 | H6c | `analyzeAndApplyPatterns` fără guard inflight — concurrent calls cumulează | 🟢 FIXED | FAZA 2 |
 | H11c | `COACH_RELEVANT_KEYS` 5 keys — cache invalidat incorect pe 6+ write paths | 🟢 FIXED | FAZA 2 |
 | H16c | `inactivityTimer` nu se re-armează corect după `skipPause` | 🟢 FIXED | FAZA 2 |
-| **H30c** | **Pattern learning false positives pe cold_start — 88-100% skip rate pe date inexistente** | 🔴 **OPEN** | Task #28 + #29 |
+| **H30c** | **Pattern learning false positives pe cold_start — 88-100% skip rate pe date inexistente** | 🟢 **FIXED** | TASK #30.8 + #30.8.1 (CDL-sourced banner — ADR 011) |
 | **H31c** | **Full Reset nu curăță `applied-patterns` + dinamice (muscle-extra-*, ex-extra-sets-*, aa-cooldown-*, equipment-occupied-session) — registry gap** | 🟢 FIXED | Task #27 (localStorage.clear() whitelist + dataRegistry.js) |
 | **H32c** | **"Rerun onboarding" nu funcționează post Full Reset — `onboarding-done` persistă sau re-populat prin Firebase pull** | 🟢 FIXED | Task #27 (__suppressFirebaseSyncUntil survives reload, suppresses stale Firebase pull) |
 
@@ -114,11 +114,14 @@
 **Fix:** ADR 011 updated cu cele 3 fields + rationale documentat. Reconsideration Trigger #8 adăugat. cdlBackfill earlyStop fix la false. actualDurationMins reconstruit în synthetic entries when ≥2 logs.
 **Commits:** TBD (Task #31.5)
 
-### 🔴 H30c — Pattern false positives pe cold_start (HIGH)
+### 🟢 H30c — Pattern false positives pe cold_start (FIXED — Task #30.8 + #30.8.1)
 **Symptom:** "Marți 88% skip rate", "Miercuri 100% skip rate" după deploy fresh  
-**Root cause suspect:** `renderIdle.js:186` bypass la calibration filter + `patternLearning.js:31-35` numără zile calendar (~8 Marți în 56 zile) nu zile plan  
-**QA context:** [[QA_MANUAL_24APR_2230]], [[QA_MANUAL_25APR_POSTFIX]] (re-confirmat)  
-**Task:** #28 + #29
+**Root cause:** `renderIdle.js:186` bypass la calibration filter — banner citea direct `applied-patterns` (legacy), nu prin CDL.  
+**Fix:** Banner acum sourced din `ctx.patterns` (CDL via `analyzeFromCDL`). Suppression când `realCDLCount < 3`. False "Marți 88% skip rate" no longer reproducible.  
+**ADR:** 011 — Coach Decision Log as architectural primitive  
+**Note:** `applied-patterns` storage key încă există în patternLearning.js pending caller cleanup + Daniel sign-off (TASK #30.9 deferred). Nu afectează H30c closure — bannerul este CDL-sourced.  
+**QA context:** [[QA_MANUAL_24APR_2230]], [[QA_MANUAL_25APR_POSTFIX]] (confirmat reproducibil pre-fix)  
+**Commits:** TASK #30.8 (renderIdle CDL banner) + #30.8.1 (ctx.patterns CDL unification)
 
 ### 🟢 H31c — Full Reset incomplet (FIXED Task #27)
 **Root cause:** Blacklist approach missing dynamic keys. Fixed with whitelist: `localStorage.clear()` + restore `PRESERVE_ON_RESET_KEYS` = [device-id, active-theme, last-backup].  
@@ -155,10 +158,10 @@
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 21 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1**) |
-| 🔴 OPEN | 1 (H30c — pattern false positives, target Task #28 + #29) |
+| 🟢 FIXED | 22 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1** · Task #30.8/8.1: **H30c**) |
+| 🔴 OPEN | 0 |
 | 🟡 DEFERRED | ~100 (majority — planificate FAZA 3/4) |
 | ⚪ WONTFIX | 0 |
 
 **Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]  
-**Next sprint:** Task #28 + #29 (H30c pattern false positives)
+**Next sprint:** TASK #30.9 (decommission applied-patterns — blocked pending Daniel sign-off, vezi [[AUDIT_30_9_BLOCKED_STATE]])

@@ -5,6 +5,22 @@ Intrările noi se adaugă **la începutul fișierului** (cele mai recente primul
 
 ---
 
+## TASK #30.10 — DONE ✅
+**Completed:** 2026-04-26 (autonomous revised run — 30.9 deferred)
+**Model:** claude-sonnet-4-6
+**Summary:** H30c marked FIXED in FINDINGS_MASTER. Fix attributed to TASK #30.8 + #30.8.1 (CDL-sourced banner with suppression). FINDINGS stats: 21→22 FIXED, 1→0 OPEN. INDEX_MASTER updated with ADR 011 + 012 links, CDL architecture noted as DONE (9/10), FAZA 4 reframe noted. DECISION_LOG entry added for TASK #30 partial completion (9/10). EXEC_QUEUE: 30.9 marked DEFERRED, 30.10 marked DONE.
+**Note:** 30.9 dependency overridden by Daniel (revised stack). Docs-only task — no code changes, no tests impacted.
+**Tests:** 414/414 (unchanged)
+
+---
+
+## TASK #30.9 — DEFERRED ⏸️
+**Status updated:** 2026-04-26 (autonomous pre-flight gate failure, then Daniel revised stack)
+**Reason:** 5 production callers still reference applied-patterns. 4 sign-off triggers not met. Caller cleanup + Daniel manual validation required first.
+**See:** [[AUDIT_30_9_BLOCKED_STATE]] for full diagnosis + 3-step resume sequence.
+
+---
+
 ## TASK #30.8 — DONE ✅
 **Completed:** 2026-04-26
 **Model:** claude-sonnet-4-6

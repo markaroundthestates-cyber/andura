@@ -1,4 +1,18 @@
 # DECISION LOG — SalaFull
+## 2026-04-26 — TASK #30 PARTIAL — Coach Decision Log Adopted (9/10 subtasks)
+
+**Scope:** ADR 011 implementation — Coach Decision Log (CDL) ca primitive arhitectural. Înlocuiește H30c (false banner) fix izolat cu refactor structural. Supersedes Task #28 + #29.
+
+**Approach:** 10 subtasks ordonate (30.1–30.10). 30.9 (decommission applied-patterns) pending Daniel sign-off + caller cleanup.
+
+**Outcome:** Single source of truth pentru pattern detection în engine + UI banner. Banner sourced din `ctx.patterns` (CDL via `analyzeFromCDL`) cu suppression când `realCDLCount < 3`. False "Marți 88% skip rate" banner no longer reproducible. H30c CLOSED.
+
+**30.9 deferral rationale:** 5 production callers identificați (renderIdle.js, util.js, modals.js, dashboard.js, main.js) necesită cleanup manual + 4 sign-off triggers validabile doar de Daniel. Caller cleanup estimat 30-45 min, urmat de 1h Daniel manual validation. Decom-ul efectiv = 15-20 min. Sequence documentată în [[AUDIT_30_9_BLOCKED_STATE]].
+
+**Tests:** 301 → 414 (+113 CDL + engine tests). Baseline: 414/414.
+
+---
+
 ## 2026-04-25 — REBRAND: ELIMINARE TRADEMARK ANTHROPIC DIN PUBLIC
 
 **Context:** Decizia anterioară din 24 apr 2026 ("CLAUDE AI OPUS 4.7 COACH" ca brand vision) violează Anthropic Consumer Terms of Service:
