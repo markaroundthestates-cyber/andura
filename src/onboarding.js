@@ -1,5 +1,5 @@
 // ══ ONBOARDING + BASELINE ════════════════════════════════════
-import { DB, $ } from './db.js';
+import { DB, $, tod } from './db.js';
 import { COMPOUND_EX } from './constants.js';
 import { DP } from './engine/dp.js';
 import { toast } from './ui/ui.js';
@@ -92,7 +92,7 @@ export function setObRPE(idx, rpe) {
 
 export function saveOnboarding() {
   const logs = DB.get('logs') || [];
-  const today = new Date().toISOString().split('T')[0];
+  const today = tod();
   let saved = 0;
   INIT_EXERCISES.forEach((e, i) => {
     const kgInput = document.getElementById(`ob-kg-${i}`);

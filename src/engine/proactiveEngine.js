@@ -1,6 +1,7 @@
 // ══ PROACTIVE ENGINE — 10 verificări proactive ════════════════════════════
 // Returnează alerte acționabile pentru user (proteină, somn, PR, recuperare etc.)
 import { KCAL_TARGET } from '../constants.js';
+import { tod, todDate, todTs } from '../db.js';
 
 /**
  * Check 1: Deficit de proteină.
@@ -8,11 +9,11 @@ import { KCAL_TARGET } from '../constants.js';
  */
 export function checkProteinDeficit(prots, bodyweightKg) {
   if (!prots || !bodyweightKg) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const last3 = Array.from({ length: 3 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    return d.toISOString().slice(0, 10);
+    return todDate(d);
   });
   const values = last3.map(d => prots[d]).filter(v => v !== undefined && v !== null);
   if (values.length === 0) return null;
@@ -39,7 +40,7 @@ export function checkSleepDebt(readiness) {
   const last5 = Array.from({ length: 5 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    return d.toISOString().slice(0, 10);
+    return todDate(d);
   });
   const values = last5
     .map(d => {
@@ -66,7 +67,7 @@ export function checkSleepDebt(readiness) {
  */
 export function checkPROpportunity(readiness, logs) {
   if (!readiness || !logs) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const todayScore = (() => {
     const r = readiness[today];
     return typeof r === 'object' ? r?.score : (typeof r === 'number' ? r : null);
@@ -131,7 +132,7 @@ export function checkTrainingStreak(logs) {
   const days = new Set(
     logs.map(l => {
       const ts = l.ts ?? (l.date ? new Date(l.date).getTime() : null);
-      return ts ? new Date(ts).toISOString().slice(0, 10) : null;
+      return ts ? todTs(ts) : null;
     }).filter(Boolean)
   );
   const sorted = [...days].sort().reverse();
@@ -140,7 +141,7 @@ export function checkTrainingStreak(logs) {
   for (let i = 0; ; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    if (days.has(d.toISOString().slice(0, 10))) streak++;
+    if (days.has(todDate(d))) streak++;
     else break;
   }
   if (streak >= 5) {
@@ -159,11 +160,11 @@ export function checkTrainingStreak(logs) {
  */
 export function checkKcalDeficit(kcals, currentKcalTarget) {
   if (!kcals || !currentKcalTarget) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const last3 = Array.from({ length: 3 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    return d.toISOString().slice(0, 10);
+    return todDate(d);
   });
   const values = last3.map(d => kcals[d]).filter(v => v !== undefined && v !== null);
   if (values.length === 0) return null;
@@ -205,7 +206,7 @@ export function checkWeightTrend(weights, isInCut) {
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    return d.toISOString().slice(0, 10);
+    return todDate(d);
   });
   const values = last7.map(d => weights[d]).filter(v => v !== undefined && v !== null).map(Number);
   if (values.length < 4) return null;
@@ -248,7 +249,7 @@ export function checkInactivity(logs) {
  */
 export function checkHydration(waters) {
   if (!waters) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const todayWater = waters[today];
   if (todayWater !== undefined && todayWater !== null && Number(todayWater) < 2000) {
     return {
@@ -273,7 +274,7 @@ export function runProactiveChecks(ctx) {
     user,
   } = ctx ?? {};
 
-  const bodyweightKg = user?.weight ?? weights?.[new Date().toISOString().slice(0, 10)] ?? null;
+  const bodyweightKg = user?.weight ?? weights?.[tod()] ?? null;
   const currentKcalTarget = user?.kcalTarget ?? null;
 
   const checks = [

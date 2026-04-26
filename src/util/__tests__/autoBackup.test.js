@@ -7,6 +7,7 @@ vi.mock('../../db.js', () => ({
     get: vi.fn(key => mockStorage[key] ?? null),
     set: vi.fn((key, val) => { mockStorage[key] = val; }),
   },
+  tod: () => new Date().toLocaleDateString('sv'),
 }));
 
 // Mock localStorage
@@ -43,13 +44,13 @@ describe('shouldCreateDailyBackup', () => {
   });
 
   it('returns false when backup already done today', () => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString('sv');
     mockStorage['backup-index'] = [{ key: 'backup-123', date: today, timestamp: Date.now() }];
     expect(shouldCreateDailyBackup()).toBe(false);
   });
 
   it('returns true when last backup was yesterday', () => {
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
     mockStorage['backup-index'] = [{ key: 'backup-123', date: yesterday, timestamp: Date.now() - 86400000 }];
     expect(shouldCreateDailyBackup()).toBe(true);
   });
@@ -60,7 +61,7 @@ describe('createDailyBackup', () => {
     const result = createDailyBackup();
     expect(result).not.toBeNull();
     expect(result.key).toBeTruthy();
-    expect(result.date).toBe(new Date().toISOString().slice(0, 10));
+    expect(result.date).toBe(new Date().toLocaleDateString('sv'));
     expect(typeof result.size).toBe('number');
   });
 
@@ -68,7 +69,7 @@ describe('createDailyBackup', () => {
     createDailyBackup();
     const index = mockStorage['backup-index'];
     expect(index).toHaveLength(1);
-    expect(index[0].date).toBe(new Date().toISOString().slice(0, 10));
+    expect(index[0].date).toBe(new Date().toLocaleDateString('sv'));
   });
 
   it('stores backup in localStorage', () => {

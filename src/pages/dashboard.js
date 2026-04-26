@@ -1,5 +1,5 @@
 // ══ DASHBOARD PAGE ═══════════════════════════════════════════
-import { DB, $, tod, fmt, cleanEx } from '../db.js';
+import { DB, $, tod, todDate, fmt, cleanEx } from '../db.js';
 import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, DTOT } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
@@ -104,8 +104,8 @@ export function renderDash(){
   const dd=$('dd');if(dd)dd.textContent=now.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long'});
   // Brutal alerts — uses fresh reads to avoid stale closure values
   const alertProts = DB.get('prots')||{}, alertKcals = DB.get('kcals')||{}, alertWs = DB.get('weights')||{};
-  const last3Days = Array.from({length:3},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
-  const last7Days = Array.from({length:7},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return dt.toISOString().slice(0,10);});
+  const last3Days = Array.from({length:3},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return todDate(dt);});
+  const last7Days = Array.from({length:7},(_,i)=>{const dt=new Date();dt.setDate(dt.getDate()-i-1);return todDate(dt);});
   const protBelowCount = last3Days.filter(d=>alertProts[d]!==undefined&&alertProts[d]<160).length;
   const kcalBelowCount = last3Days.filter(d=>alertKcals[d]!==undefined&&alertKcals[d]<1500).length;
   const recentWeightVals = last7Days.map(d=>alertWs[d]).filter(Boolean);
@@ -339,7 +339,7 @@ export function renderDash(){
     calEl.innerHTML = `<div style="display:flex;gap:4px;justify-content:space-between">
       ${Array.from({length:7},(_,i)=>{
         const d = new Date(monday); d.setDate(monday.getDate()+i);
-        const dStr = d.toISOString().slice(0,10);
+        const dStr = todDate(d);
         const isToday = dStr === tod();
         const isFuture = d > today3 && !isToday;
         const hasBurn = allBurns2.some(b=>b.date===dStr);
@@ -440,7 +440,7 @@ function renderWeightChart() {
 
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 30);
-  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const cutoffStr = todDate(cutoff);
   const filtered = allDates.filter(d => d >= cutoffStr);
   const dates = filtered.length >= 2 ? filtered : allDates;
 

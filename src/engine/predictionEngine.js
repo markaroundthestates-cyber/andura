@@ -2,6 +2,8 @@
 // Detectează zilele cu probabilitate mare de absență bazat pe istoricul
 // logurilor. Returnează predicții și recomandări de replanificare.
 
+import { todTs } from '../db.js';
+
 const DAY_NAMES = ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'];
 
 /**
@@ -15,7 +17,7 @@ function sessionsPerDayOfWeek(logs) {
     if (!ts) continue;
     const sessionKey = log.session
       ? String(log.session)
-      : new Date(ts).toISOString().slice(0, 10);
+      : todTs(ts);
     if (!sessions.has(sessionKey)) {
       sessions.set(sessionKey, new Date(ts).getDay());
     }

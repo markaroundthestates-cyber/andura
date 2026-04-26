@@ -3,7 +3,7 @@
 // aggregate: 90 zile – 1 an — agregate zilnice/săptămânale
 // archive:   > 1 an — sumar lunar comprimat
 
-import { DB } from '../db.js';
+import { DB, todTs, todDate } from '../db.js';
 
 const TIER_KEYS = {
   live: 'tier-live',
@@ -59,7 +59,7 @@ export function aggregateLogs(logs) {
   for (const log of logs ?? []) {
     const ts = log.ts ?? (log.date ? new Date(log.date).getTime() : null);
     if (!ts) continue;
-    const day = new Date(ts).toISOString().slice(0, 10);
+    const day = todTs(ts);
     if (!byDay[day]) byDay[day] = { sets: 0, totalWeight: 0, exercises: new Set() };
     byDay[day].sets++;
     byDay[day].totalWeight += Number(log.w ?? 0);
@@ -90,7 +90,7 @@ export function archiveLogs(logs) {
     if (!ts) continue;
     const d = new Date(ts);
     const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const sessionKey = log.session ? String(log.session) : d.toISOString().slice(0, 10);
+    const sessionKey = log.session ? String(log.session) : todDate(d);
 
     if (!byMonth[month]) byMonth[month] = { totalSets: 0, exercises: {} };
     if (!sessionsByMonth[month]) sessionsByMonth[month] = new Set();

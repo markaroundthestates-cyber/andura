@@ -2,7 +2,7 @@
 // Creează un backup complet al localStorage o dată pe zi.
 // Stochează ultimele 30 de backup-uri. Permite restaurare granulară.
 
-import { DB } from '../db.js';
+import { DB, tod } from '../db.js';
 import { demoteToTier2, demoteToTier3 } from './coachDecisionLog.js';
 
 const BACKUP_INDEX_KEY = 'backup-index';
@@ -25,7 +25,7 @@ export function shouldCreateDailyBackup() {
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
   if (index.length === 0) return true;
   const lastDate = index[index.length - 1]?.date;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   return lastDate !== today;
 }
 
@@ -34,7 +34,7 @@ export function shouldCreateDailyBackup() {
  * @returns {{ key: string, date: string, size: number }}
  */
 export function createDailyBackup() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const ts = Date.now();
   const key = `${BACKUP_PREFIX}${ts}`;
 
@@ -128,7 +128,7 @@ export function restoreFromBackup(keyOrDaysAgo) {
 
 function shouldDemoteCdlToday() {
   const last = localStorage.getItem('cdl-last-demote-date');
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   return last !== today;
 }
 
@@ -144,7 +144,7 @@ export function initAutoBackup() {
     if (shouldDemoteCdlToday()) {
       const tier2Result = demoteToTier2();
       const tier3Result = demoteToTier3();
-      localStorage.setItem('cdl-last-demote-date', new Date().toISOString().slice(0, 10));
+      localStorage.setItem('cdl-last-demote-date', tod());
       if (tier2Result.errors.length || tier3Result.errors.length) {
         console.warn('[CDL] Demotion completed with errors:', { tier2Result, tier3Result });
       }

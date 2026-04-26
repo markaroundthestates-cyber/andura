@@ -1,4 +1,4 @@
-import { DB, $, tod, cleanEx } from '../../db.js';
+import { DB, $, tod, todDate, cleanEx } from '../../db.js';
 import { PROG, EX_SETS, COMPOUND_EX, KCAL_TARGET, PROT_TARGET } from '../../constants.js';
 import { DP } from '../../engine/dp.js';
 import { AA } from '../../engine/aa.js';
@@ -172,7 +172,7 @@ export async function renderCoachIdle(){
     const readinessScore = (() => {
       if (todayR == null) return null;
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-      const yDate = yesterday.toISOString().slice(0,10);
+      const yDate = todDate(yesterday);
       const kcals = DB.get('kcals')||{}, prots = DB.get('prots')||{};
       return getReadinessScore(todayR, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
     })();
@@ -380,7 +380,7 @@ export function saveStepsQuick(){
     const today=tod();
     if(streaks.lastDate!==today){
       const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-      const yStr=yesterday.toISOString().split('T')[0];
+      const yStr=todDate(yesterday);
       streaks.count=streaks.lastDate===yStr?streaks.count+1:1;
       streaks.lastDate=today;
       streaks.totalDays=(streaks.totalDays||0)+1;

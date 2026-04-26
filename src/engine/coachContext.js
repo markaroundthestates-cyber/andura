@@ -1,7 +1,7 @@
 // ══ COACH CONTEXT — Sursă unică de adevăr pentru toate engines ══════════
 // Engines nu mai citesc din localStorage direct — primesc context de aici.
 import { getMuscleState } from './muscleMap.js';
-import { DB } from '../db.js';
+import { DB, tod } from '../db.js';
 import { getUserConfig } from '../config/user.js';
 import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 
@@ -60,7 +60,7 @@ function calculateVolumeMultiplier(readinessScore) {
 
 function getTodayReadinessScore() {
   try {
-    const todayDate = new Date().toISOString().split('T')[0];
+    const todayDate = tod();
     const all = JSON.parse(localStorage.getItem('readiness') || '{}');
     const val = all[todayDate];
     if (val === null || val === undefined) return null;
@@ -73,7 +73,7 @@ function getTodayReadinessScore() {
 
 function getTodayReadinessEmoji() {
   try {
-    const todayDate = new Date().toISOString().split('T')[0];
+    const todayDate = tod();
     const all = JSON.parse(localStorage.getItem('readiness') || '{}');
     const val = all[todayDate];
     if (!val) return '😐';
@@ -85,7 +85,7 @@ function getTodayReadinessEmoji() {
 
 function isTodayReadinessSet() {
   try {
-    const todayDate = new Date().toISOString().split('T')[0];
+    const todayDate = tod();
     const all = JSON.parse(localStorage.getItem('readiness') || '{}');
     const val = all[todayDate];
     return val !== undefined && val !== null;

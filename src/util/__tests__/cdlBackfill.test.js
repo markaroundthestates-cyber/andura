@@ -6,6 +6,7 @@ vi.mock('../../db.js', () => ({
     get: vi.fn(key => mockStorage[key] ?? null),
     set: vi.fn((key, val) => { mockStorage[key] = val; }),
   },
+  todTs: vi.fn(ts => new Date(ts).toLocaleDateString('sv')),
 }));
 
 import {

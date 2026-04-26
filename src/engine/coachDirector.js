@@ -14,6 +14,7 @@ import { buildSession } from './sessionBuilder.js';
 import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
 import { inferSessionType } from '../util/cdlBackfill.js';
+import { tod } from '../db.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -179,7 +180,7 @@ export class CoachDirector {
     let cdlEntryId = null;
     let cdlWriteError = null;
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = tod();
 
       const cdlContext = {
         calibrationLevel: ctx.calibrationLevel?.name || ctx.calibrationLevel || null,

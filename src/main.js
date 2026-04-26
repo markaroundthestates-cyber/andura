@@ -17,6 +17,7 @@ import { goTo } from './ui/nav.js';
 import { checkOnboarding, setObRPE, saveOnboarding, skipOnboarding } from './onboarding.js';
 import { DB, cleanEx } from './db.js';
 import './util/cdlBackfill.js';
+import { migrateLogsUtcToLocal } from './util/logsMigration.js';
 
 // Expune funcții globale pentru onclick="" în HTML
 import { toast } from './ui/ui.js';
@@ -139,6 +140,16 @@ async function init() {
   applyTheme(getActiveTheme());
   setupOfflineIndicator();
   cleanDuplicateLogs();
+  // Migration UTC → Local (idempotent, runs once)
+  try {
+    const migrationResult = migrateLogsUtcToLocal();
+    if (!migrationResult.skipped) {
+      console.log('[Migration] Logs/CDL date format updated to local timezone');
+    }
+  } catch (err) {
+    console.error('[Migration] Failed:', err);
+    // Continue boot — migration failure non-blocking
+  }
   window.__constants = { PROG, KCAL_TARGET, PROT_TARGET };
   await initFirebaseSync();
   await clearStalePatternsIfColdStart(); // after sync: Firebase can't restore cleared keys

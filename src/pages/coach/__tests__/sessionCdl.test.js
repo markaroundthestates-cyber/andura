@@ -58,8 +58,9 @@ vi.mock('../../../constants.js', () => ({
 import { writeProposed, readActiveForDate, STORAGE_KEYS } from '../../../util/coachDecisionLog.js';
 import { state } from '../../../state.js';
 import { endSession, cancelWorkout } from '../session.js';
+import { tod } from '../../../db.js';
 
-const TODAY = new Date().toISOString().slice(0, 10);
+const TODAY = tod();
 
 function makeProposed(overrides = {}) {
   return {

@@ -145,7 +145,7 @@ export function renderProg(){
 }
 
 export function setPhaseOverride(phase) {
-  DB.set('phase-change-date', new Date().toISOString().split('T')[0]);
+  DB.set('phase-change-date', tod());
   DB.set('phase-override', phase);
   // Logăm schimbarea de fază cu data și kcalTarget — pentru culori corecte în istoric
   const today = tod();
@@ -172,7 +172,7 @@ window.addEventListener('storage', (e) => {
 });
 
 export function clearPhaseOverride() {
-  DB.set('phase-change-date', new Date().toISOString().split('T')[0]);
+  DB.set('phase-change-date', tod());
   DB.set('phase-override', null);
   const today = tod();
   const phaseLogs = DB.get('phase-log') || [];

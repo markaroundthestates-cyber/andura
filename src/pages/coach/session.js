@@ -111,7 +111,7 @@ export function cancelWorkout() {
   // ── CDL outcome — cancel (ADR 011) ────────────────────────────────────
   try {
     if (state.cdlEntryId) {
-      const _today = new Date().toISOString().slice(0, 10);
+      const _today = tod();
       populateOutcome(_today, {
         executed: false,
         earlyStop: false,
@@ -202,7 +202,7 @@ export function endSession() {
   // ── CDL outcome (ADR 011) ─────────────────────────────────────────────
   try {
     if (state.cdlEntryId) {
-      const _today = new Date().toISOString().slice(0, 10);
+      const _today = tod();
       const activeEntry = readActiveForDate(_today);
       if (activeEntry) {
         const actualExercises = [...new Set(state.sessLog.map(l => l.ex))];

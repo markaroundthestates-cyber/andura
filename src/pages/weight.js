@@ -1,5 +1,5 @@
 // ══ WEIGHT PAGE ══════════════════════════════════════════════
-import { DB, $, tod, fmt } from '../db.js';
+import { DB, $, tod, todDate, todTs, fmt } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET, TARGET_DATE } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
@@ -475,7 +475,7 @@ export function syncLogDateUI() {
 export function getLogDate() {
   const d = new Date();
   d.setDate(d.getDate() + state.logDateOffset);
-  return d.toISOString().split('T')[0];
+  return todDate(d);
 }
 
 export function getLogDateLabel() {
@@ -499,7 +499,7 @@ export function toggleDatePicker() {
       input.max = tod(); // can't select future
       const minDate = new Date();
       minDate.setDate(minDate.getDate() - 30);
-      input.min = minDate.toISOString().split('T')[0];
+      input.min = todDate(minDate);
     }
   }
 }
@@ -610,7 +610,7 @@ function renderChart() {
   if (chartRange > 0) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - chartRange);
-    const cutStr = cutoff.toISOString().split('T')[0];
+    const cutStr = todDate(cutoff);
     dates = dates.filter(d => d >= cutStr);
   }
   if (dates.length < 2) {
@@ -803,7 +803,7 @@ export function renderSessionsDropdown() {
   });
 
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
-  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const cutoffStr = todDate(cutoff);
 
   const PUSH_EX = ['bench press', 'overhead press', 'incline press', 'chest', 'tricep', 'shoulder', 'dip', 'pec'];
   const PULL_EX = ['row', 'pull-up', 'pulldown', 'lat', 'bicep', 'curl', 'deadlift', 'back'];
@@ -890,7 +890,7 @@ export function showSessionDetail(sessionTs) {
   if (!sessionLogs.length) {
     // sessionTs might be a date-based timestamp — find date-keyed entries
     const dateObj = new Date(tsNum);
-    const dateStr = dateObj.toISOString().split('T')[0];
+    const dateStr = todDate(dateObj);
     sessionLogs = logs.filter(l => !l.baseline && l.date === dateStr && l.session == null);
   }
 

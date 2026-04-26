@@ -1,5 +1,5 @@
 // ══ REALITY CHECK ENGINE ════════════════════════════════════
-import { DB } from '../db.js';
+import { DB, tod } from '../db.js';
 import { SYS } from './sys.js';
 import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../config/weights.js';
@@ -68,7 +68,7 @@ function findLastLogForExercise(exerciseName, recentLogs) {
 }
 
 export function getRealityCheck() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = tod();
   const phaseOverride = DB.get('phase-override');
   if (today < TARGET_DATE.toISOString().slice(0, 10) && !phaseOverride) {
     return {

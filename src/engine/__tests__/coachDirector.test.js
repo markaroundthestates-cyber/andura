@@ -19,16 +19,17 @@ vi.mock('../../util/coachDecisionLog.js', async () => {
 import { roundToEquipment } from '../reality.js';
 import { resetTestData, fullReset } from '../../util/dataCleanup.js';
 import { getInitialRecommendation } from '../dp.js';
+import { tod } from '../../db.js';
 
 function setupReadiness(score) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = tod();
   const data = {};
   data[today] = { score, emoji: score >= 70 ? '😊' : '😕' };
   localStorage.setItem('readiness', JSON.stringify(data));
 }
 
 function setupLogsForWeight(exerciseName, weight) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = tod();
   const ts = Date.now();
   const logs = [{
     ex: exerciseName, w: weight, reps: 8, rpe: 7,
@@ -320,7 +321,7 @@ describe('Initial Recommendations', () => {
   beforeEach(() => { localStorage.clear(); });
 
   it('should estimate from similar exercise when history exists', () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = tod();
     const ctx = {
       recentLogs: [{ date: today, logs: [{ ex: 'Bayesian Curl', w: 18, reps: 10 }] }]
     };
@@ -340,7 +341,7 @@ describe('Initial Recommendations', () => {
 
   it('should NOT show zero weight in coachDirector output for any exercise', async () => {
     localStorage.setItem('phase-override', 'AUTO');
-    const today = new Date().toISOString().split('T')[0];
+    const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
     const session = await coachDirector.buildSession('UMERI_BRATE');
     for (const ex of session.exercises) {
@@ -355,7 +356,7 @@ describe('Pattern learning credibility threshold', () => {
   it('should NOT trigger early_end from applied-patterns with zero real sessions', async () => {
     localStorage.clear();
     localStorage.setItem('phase-override', 'AUTO');
-    const today = new Date().toISOString().split('T')[0];
+    const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
     // Pattern setat manual fără sesiuni reale
     localStorage.setItem('auto-recommendations', JSON.stringify([
@@ -380,7 +381,7 @@ describe('CoachDirector — CDL write (ADR 011)', () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    const today = new Date().toISOString().split('T')[0];
+    const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
     localStorage.setItem('phase-override', 'AUTO');
     localStorage.setItem('current-kcal', '1800');
@@ -414,7 +415,7 @@ describe('CoachDirector — CDL write (ADR 011)', () => {
 
   it('CDL proposed.rationale reflects ruleEngine winner', async () => {
     // readiness=91 + phase=CUT → CUT_CONSERVATIVE fires (priority 85)
-    const today = new Date().toISOString().split('T')[0];
+    const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 91, emoji: '🔥' } }));
     localStorage.setItem('phase-override', 'CUT');
 

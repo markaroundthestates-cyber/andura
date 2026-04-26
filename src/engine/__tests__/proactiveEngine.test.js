@@ -5,9 +5,9 @@ import {
   checkHydration, checkWeightTrend, runProactiveChecks,
 } from '../proactiveEngine.js';
 
-const today = new Date().toISOString().slice(0, 10);
-const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
+const today = new Date().toLocaleDateString('sv');
+const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
+const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toLocaleDateString('sv');
 
 describe('checkProteinDeficit', () => {
   it('returns null when no data', () => {

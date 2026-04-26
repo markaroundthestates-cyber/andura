@@ -6,7 +6,7 @@
 // IMPORTANT: synthetic entries weighted 0.5× in adherence/pattern calc (per ADR).
 // Daniel must manually review 10 random samples (GATE B) before unblocking 30.4.
 
-import { DB } from '../db.js';
+import { DB, todTs } from '../db.js';
 import { EXERCISE_MUSCLES } from '../engine/muscleMap.js';
 
 const CDL_KEY = 'coach-decisions';
@@ -205,7 +205,7 @@ export function runBackfill({ dryRun = false, force = false } = {}) {
     try {
       const context = reconstructContext(ts, logs);
       const outcome = synthesizeOutcome(sessionLogs);
-      const sessionDate = new Date(ts).toISOString().slice(0, 10);
+      const sessionDate = todTs(ts);
 
       const syntheticEntry = {
         id: `cdl_synth_${ts}_${rand4()}`,

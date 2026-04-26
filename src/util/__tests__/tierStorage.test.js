@@ -4,6 +4,8 @@ import { classifyLogs, aggregateLogs, archiveLogs, getTierBoundaries } from '../
 // Mock DB to prevent localStorage access in tests
 vi.mock('../../db.js', () => ({
   DB: { get: vi.fn(() => null), set: vi.fn() },
+  todTs: vi.fn(ts => new Date(ts).toLocaleDateString('sv')),
+  todDate: vi.fn(d => d.toLocaleDateString('sv')),
 }));
 
 const MS_DAY = 86400000;

@@ -159,7 +159,7 @@ export function showWhyForExercise(exerciseName) {
     const ctx = {
       readiness: { score: DB.get('readiness') ? (() => {
         try {
-          const today = new Date().toISOString().slice(0,10);
+          const today = tod();
           const r = DB.get('readiness');
           return typeof r === 'object' ? (r[today]?.score ?? r[today] ?? null) : null;
         } catch { return null; }

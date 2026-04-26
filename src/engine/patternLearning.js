@@ -1,4 +1,4 @@
-import { DB } from '../db.js';
+import { DB, todDate } from '../db.js';
 
 let _patternAnalyzeInFlight = false;
 
@@ -30,7 +30,7 @@ function _analyze(logs) {
     const progDay = PROG_DAYS[dayMap[d.getDay()]];
     if (dayScheduled[progDay] !== undefined) {
       dayScheduled[progDay]++;
-      const dStr = d.toISOString().slice(0,10);
+      const dStr = todDate(d);
       if (recentBurns.some(b => b.date === dStr)) dayCompleted[progDay]++;
     }
   }

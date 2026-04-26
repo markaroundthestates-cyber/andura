@@ -1,4 +1,4 @@
-import { DB, tod } from '../db.js';
+import { DB, tod, todDate } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 
 export const READINESS_LABELS = {
@@ -62,7 +62,7 @@ export function getComputedReadinessScore() {
   const r = getTodayReadiness();
   if (r == null) return null;
   const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-  const yDate = yesterday.toISOString().slice(0,10);
+  const yDate = todDate(yesterday);
   const kcals = DB.get('kcals') || {};
   const prots = DB.get('prots') || {};
   // KCAL_TARGET and PROT_TARGET imported directly from constants.js

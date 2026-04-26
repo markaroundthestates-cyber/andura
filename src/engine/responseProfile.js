@@ -3,6 +3,7 @@
 // intensitate și frecvență, returnând sensitivitate pe fiecare dimensiune.
 
 import { brzycki1RM } from './weaknessDetector.js';
+import { todTs } from '../db.js';
 
 /**
  * Grupează logurile pe sesiuni (timestamp-ul `session` sau zi din `ts`).
@@ -12,7 +13,7 @@ function groupBySessions(logs) {
   for (const log of logs) {
     const key = log.session
       ? String(log.session)
-      : (log.ts ? new Date(log.ts).toISOString().slice(0, 10) : null);
+      : (log.ts ? todTs(log.ts) : null);
     if (!key) continue;
     if (!sessions.has(key)) sessions.set(key, []);
     sessions.get(key).push(log);
@@ -88,7 +89,7 @@ function computeFrequencySensitivity(logs) {
   }
 
   const weekData = [...byWeek.values()].map(wLogs => ({
-    sessions: new Set(wLogs.map(l => l.session ? String(l.session) : new Date(l.ts).toISOString().slice(0, 10))).size,
+    sessions: new Set(wLogs.map(l => l.session ? String(l.session) : todTs(l.ts))).size,
     avg1RM: avg1RMForSession(wLogs),
   })).filter(w => w.avg1RM !== null);
 
