@@ -2,8 +2,8 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
 
-**Ultima actualizare:** 26 apr 2026 (post-Task #31)  
-**Total findings:** 127 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr)  
+**Ultima actualizare:** 26 apr 2026 (post-Task #31.5)  
+**Total findings:** 128 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr + 1 nou S1 schema reconciliation)  
 **Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale)
 
 ---
@@ -107,6 +107,13 @@
 **Root cause:** `dataCleanup.js` 4 direct `invalidate()` calls bypassed debounce; `window._suppressFirebaseSync` lost on reload → stale Firebase pull restored data after reset.  
 **Fix:** (1) Direct calls replaced with `scheduleInvalidation()`. (2) `localStorage.__suppressFirebaseSyncUntil` written before reload, checked in `syncFromFirebase` — survives page reload.
 
+### S1 — ADR 011 schema reconciliation (26 apr) 🟢 FIXED
+**Severity:** LOW (doc consistency)
+**Source:** Audit retrospectiv post-30.4+30.5 (chat Opus, 26 apr 2026)
+**Description:** 3 fields livrate de code dar absente din ADR 011 schema (proposed.proposedSets, outcome.actualExercises, outcome.actualDurationMins). Plus 1 inconsistență internă: cdlBackfill.synthesizeOutcome setează earlyStop:null în loc de false (vs session.js care setează false).
+**Fix:** ADR 011 updated cu cele 3 fields + rationale documentat. Reconsideration Trigger #8 adăugat. cdlBackfill earlyStop fix la false. actualDurationMins reconstruit în synthetic entries when ≥2 logs.
+**Commits:** TBD (Task #31.5)
+
 ### 🔴 H30c — Pattern false positives pe cold_start (HIGH)
 **Symptom:** "Marți 88% skip rate", "Miercuri 100% skip rate" după deploy fresh  
 **Root cause suspect:** `renderIdle.js:186` bypass la calibration filter + `patternLearning.js:31-35` numără zile calendar (~8 Marți în 56 zile) nu zile plan  
@@ -148,7 +155,7 @@
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 20 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9**) |
+| 🟢 FIXED | 21 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1**) |
 | 🔴 OPEN | 1 (H30c — pattern false positives, target Task #28 + #29) |
 | 🟡 DEFERRED | ~100 (majority — planificate FAZA 3/4) |
 | ⚪ WONTFIX | 0 |
