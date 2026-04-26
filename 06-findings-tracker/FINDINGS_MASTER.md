@@ -2,7 +2,7 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
 
-**Ultima actualizare:** 25 apr 2026 (post-Task #27)  
+**Ultima actualizare:** 26 apr 2026 (post-Task #31)  
 **Total findings:** 127 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr)  
 **Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale)
 
@@ -85,6 +85,7 @@
 | M10g | `restoreFromBackup` face `localStorage.clear()` — wipe neselective | 🟡 DEFERRED | FAZA 3 |
 | M14c | Onboarding 11 ex × 3 sets cu același `session: Date.now()` → cleanDuplicateLogs comasează | 🟡 DEFERRED | FAZA 3 |
 | M15c | `getReadinessScore` clamp 10-100 ascunde valori reale negative | 🟡 DEFERRED | FAZA 3 |
+| **MP9** | **`toISOString().slice(0,10)` returnează dată UTC — utilizatorii EU (UTC+3) între 00:00-03:00 local primesc data greșită pe log-uri și CDL** | 🟢 **FIXED** | Task #31 |
 
 ---
 
@@ -147,7 +148,7 @@
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 19 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c**) |
+| 🟢 FIXED | 20 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9**) |
 | 🔴 OPEN | 1 (H30c — pattern false positives, target Task #28 + #29) |
 | 🟡 DEFERRED | ~100 (majority — planificate FAZA 3/4) |
 | ⚪ WONTFIX | 0 |

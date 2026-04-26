@@ -1402,6 +1402,19 @@ Updates:
 
 ---
 
+## TASK #31
+**Model:** Sonnet
+**Type:** BUG_FIX
+**Priority:** HIGH
+**Status:** DONE ✅
+**Created:** 2026-04-26
+**Completed:** 2026-04-26 03:01
+**Description:** Fix UTC date bug global — `toISOString().slice(0,10)` returnează dată UTC, nu locală. Utilizatorii EU (UTC+3) între miezul nopții și ora 3 AM primesc data greșită pentru antrenamente.
+**Acceptance:** tod/todTs/todDate helpers în db.js, 20 production files updated, logsMigration.js idempotent, 369 tests pass, build clean, commit + push.
+**Dependencies:** NONE
+
+---
+
 # END OF TASK #30 ENTRIES
 
 **Total subtasks:** 10

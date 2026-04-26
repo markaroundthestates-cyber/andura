@@ -21,6 +21,19 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #31 — DONE ✅
+**Completed:** 2026-04-26 03:01
+**Duration:** ~60min (split over 2 sessions — context compaction between)
+**Summary:** Fix UTC date bug global în SalaFull (MP9). `toISOString().slice(0,10)` returna dată UTC — utilizatorii EU (UTC+3) între 00:00-03:00 local primeau data greșită. Fix: adăugat `tod()`, `todTs(ts)`, `todDate(d)` în `db.js` (toLocaleDateString('sv') = YYYY-MM-DD local). Înlocuite toate 60+ apeluri UTC din 20 fișiere producție. Creat `logsMigration.js` — migrare idempotentă one-time (flag `migration-utc-to-local-v1`) cu backup logs+CDL pre-migration. Chemat în `main.js` înainte de `initFirebaseSync()`. Actualizate 6 fișiere test care foloseau UTC pentru fixtures (sessionCdl, coachDirector, autoBackup, proactiveEngine, cdlBackfill, tierStorage) — minim necesar, doar pattern-urile rup post-fix.
+**Files changed:** `src/db.js`, `src/main.js`, `src/util/logsMigration.js` (creat), `src/tests/db.test.js` (creat), `src/util/tests/logsMigration.test.js` (creat), plus 15 fișiere producție (coachContext, coachDirector, patternLearning, predictionEngine, proactiveEngine, readiness, reality, responseProfile, inject, onboarding, modals, renderIdle, dashboard, plan, weight, autoBackup, cdlBackfill, tierStorage, session), plus 6 test files update.
+**Tests:** 358 → 369 pass (11 noi: 4 db.test.js + 7 logsMigration.test.js). Zero existing broken.
+**Pre-flight:** toLocaleDateString('sv') verificat în Node.js/jsdom → YYYY-MM-DD exact ✓. TARGET_DATE în reality.js lăsată neschimbată (spec: NU schimba constants.js TARGET_DATE) ✓. Migration flag idempotency testată (7 teste includ skip, empty, mismatched, already-correct, CDL, backup).
+**Issues:** NONE
+**Commits:** e2ef794 (implementation + tests + migration)
+**Design note:** Migration one-time: dacă user are log.date=2025-04-26 UTC dar ts corespunde 2025-04-27 local, date-ul e corectat. Backup creat în localStorage pre-migration pentru rollback manual dacă nevoie.
+
+---
+
 ## TASK #30.5 — DONE ✅
 **Completed:** 2026-04-26 02:00
 **Duration:** ~20min
