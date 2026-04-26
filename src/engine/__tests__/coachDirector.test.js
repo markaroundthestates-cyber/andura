@@ -181,13 +181,27 @@ describe('CoachDirector — Pattern learning real effect', () => {
     localStorage.setItem('phase-override', 'AUTO');
   });
 
-  it('should reduce exercises when early_end pattern detected', async () => {
-    localStorage.setItem('auto-recommendations', JSON.stringify([
-      { type: 'early_end', confidence: 0.75 }
-    ]));
+  it('should reduce exercises when EARLY_END pattern detected via CDL', async () => {
+    // Need 3+ real CDL entries for suppression gate + earlyStop data for EARLY_END
+    const cdlEntries = Array.from({ length: 5 }, (_, i) => ({
+      id: `cdl-re-${i}`,
+      date: new Date(Date.now() - (10 + i) * 86400000).toISOString().slice(0, 10),
+      ts: Date.now() - (10 + i) * 86400000,
+      synthetic: false, superseded: false,
+      context: { calibrationLevel: 'INITIAL' }, proposed: { sessionType: 'PUSH' },
+      outcome: { executed: true, deviation: false, earlyStop: i < 4 },
+    }));
+    localStorage.setItem('coach-decisions', JSON.stringify(cdlEntries));
+    // Enough logs for INITIAL tier
+    const logs = Array.from({ length: 5 }, (_, i) => ({
+      ex: 'Lat Pulldown', w: 50, reps: 8, rpe: 7,
+      date: new Date(Date.now() - (10 + i) * 86400000).toISOString().slice(0, 10),
+      session: `sess-re-${i}`,
+    }));
+    localStorage.setItem('logs', JSON.stringify(logs));
     const session = await coachDirector.buildSession('PUSH');
     if (session.patternApplied) {
-      expect(session.patternApplied.type).toBe('early_end');
+      expect(session.patternApplied.type).toBe('EARLY_END');
       expect(session.exercises.length).toBeLessThan(6);
     }
   });
@@ -279,7 +293,7 @@ describe('CoachDirector — Week 1.5 fixes', () => {
     expect(session.requiresReadinessInput).toBe(true);
   });
 
-  it('should apply pattern early_end reducing exercises', async () => {
+  it('should apply EARLY_END pattern from CDL reducing exercises', async () => {
     localStorage.clear();
     setupReadiness(75);
     localStorage.setItem('phase-override', 'AUTO');
@@ -290,12 +304,19 @@ describe('CoachDirector — Week 1.5 fixes', () => {
       session: `sess-pattern-${i}`,
     }));
     localStorage.setItem('logs', JSON.stringify(logs));
-    localStorage.setItem('auto-recommendations', JSON.stringify([
-      { type: 'early_end', confidence: 0.75 }
-    ]));
+    // CDL: 5 real entries with 4/5 earlyStop → EARLY_END pattern fires (80% > 40% threshold)
+    const cdlEntries = Array.from({ length: 5 }, (_, i) => ({
+      id: `cdl-ap-${i}`,
+      date: new Date(Date.now() - (10 + i) * 86400000).toISOString().slice(0, 10),
+      ts: Date.now() - (10 + i) * 86400000,
+      synthetic: false, superseded: false,
+      context: { calibrationLevel: 'INITIAL' }, proposed: { sessionType: 'PUSH' },
+      outcome: { executed: true, deviation: false, earlyStop: i < 4 },
+    }));
+    localStorage.setItem('coach-decisions', JSON.stringify(cdlEntries));
     const session = await coachDirector.buildSession('PUSH');
     expect(session.patternApplied).toBeDefined();
-    expect(session.patternApplied.type).toBe('early_end');
+    expect(session.patternApplied.type).toBe('EARLY_END');
   });
 });
 

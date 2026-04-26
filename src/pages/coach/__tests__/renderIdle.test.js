@@ -165,7 +165,7 @@ describe('ctx.patterns suppression flow', () => {
     vi.mocked(patternLearning.analyzeFromCDL).mockReturnValue([]);
   });
 
-  it('13. realCDLCount === 0 → patternsSuppressed === true, cdlPatterns === []', async () => {
+  it('13. realCDLCount === 0 → patternsSuppressed === true, patterns === []', async () => {
     vi.mocked(cdl.readAllActive).mockReturnValue([]);
 
     const { buildCoachContext } = await import('../../../engine/coachContext.js');
@@ -173,17 +173,16 @@ describe('ctx.patterns suppression flow', () => {
 
     expect(ctx.realCDLCount).toBe(0);
     expect(ctx.patternsSuppressed).toBe(true);
-    expect(ctx.cdlPatterns).toEqual([]);
+    expect(ctx.patterns).toEqual([]);
   });
 
-  it('14. realCDLCount === 2 (below 3) → patternsSuppressed === true, cdlPatterns === []', async () => {
+  it('14. realCDLCount === 2 (below 3) → patternsSuppressed === true, patterns === []', async () => {
     const entries = [
       { id: 'r1', date: '2026-04-10', synthetic: false, superseded: false,
         outcome: { executed: true, deviation: false } },
       { id: 'r2', date: '2026-04-11', synthetic: false, superseded: false,
         outcome: { executed: true, deviation: false } },
     ];
-    // readAllActive is called with a filterFn; mock returns pre-filtered entries
     vi.mocked(cdl.readAllActive).mockImplementation(filterFn =>
       filterFn ? entries.filter(filterFn) : entries
     );
@@ -193,10 +192,10 @@ describe('ctx.patterns suppression flow', () => {
 
     expect(ctx.realCDLCount).toBe(2);
     expect(ctx.patternsSuppressed).toBe(true);
-    expect(ctx.cdlPatterns).toEqual([]);
+    expect(ctx.patterns).toEqual([]);
   });
 
-  it('15. realCDLCount === 5 → patternsSuppressed === false, cdlPatterns from analyzeFromCDL', async () => {
+  it('15. realCDLCount === 5 → patternsSuppressed === false, patterns from analyzeFromCDL', async () => {
     const mockPatterns = [{ type: 'LOW_ADHERENCE', adherenceRate: 30, appliedAt: Date.now() }];
     vi.mocked(patternLearning.analyzeFromCDL).mockReturnValue(mockPatterns);
 
@@ -213,7 +212,10 @@ describe('ctx.patterns suppression flow', () => {
 
     expect(ctx.realCDLCount).toBe(5);
     expect(ctx.patternsSuppressed).toBe(false);
-    expect(ctx.cdlPatterns).toEqual(mockPatterns);
+    // patterns should contain mockPatterns with derived confidence added
+    expect(ctx.patterns.length).toBe(mockPatterns.length);
+    expect(ctx.patterns[0].type).toBe('LOW_ADHERENCE');
+    expect(typeof ctx.patterns[0].confidence).toBe('number');
   });
 
   it('16. Synthetic-only entries → realCDLCount === 0 → suppressed', async () => {
@@ -223,7 +225,6 @@ describe('ctx.patterns suppression flow', () => {
       { id: 's2', date: '2026-04-02', synthetic: true, superseded: false,
         outcome: { executed: true } },
     ];
-    // Filter in getCDLPatterns: e.synthetic !== true → these get filtered out → count = 0
     vi.mocked(cdl.readAllActive).mockImplementation(filterFn =>
       filterFn ? syntheticEntries.filter(filterFn) : syntheticEntries
     );
@@ -233,6 +234,6 @@ describe('ctx.patterns suppression flow', () => {
 
     expect(ctx.realCDLCount).toBe(0);
     expect(ctx.patternsSuppressed).toBe(true);
-    expect(ctx.cdlPatterns).toEqual([]);
+    expect(ctx.patterns).toEqual([]);
   });
 });

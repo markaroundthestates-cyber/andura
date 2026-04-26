@@ -41,8 +41,7 @@ export function buildCoachContext() {
     },
     allLogs,
     recentLogs,
-    patterns: getActivePatterns(),
-    ...getCDLPatterns(),
+    ..._buildCDLPatterns(),
     currentDate: now,
     isBeforeJuly20_2026: now < july20_2026,
     isDeficit: kcalTarget < 2200,
@@ -181,39 +180,41 @@ function getUnavailableEquipment() {
 }
 
 // ── CDL pattern helpers (ADR 011) ─────────────────────────────────────────
-// CDL-sourced patterns for banner — suppressed when real CDL entries < threshold.
-// Separate from getActivePatterns() to preserve coachDirector.applyPatterns compat.
+// ctx.patterns is the single source of truth — CDL-backed, suppressed below threshold.
 
-function getCDLPatterns() {
+function _getRealCDLEntryCount() {
   try {
-    const entries = coachDecisionLog.readAllActive(e =>
+    return coachDecisionLog.readAllActive(e =>
       e.synthetic !== true &&
       e.outcome != null &&
       e.outcome.executed != null
-    );
-    const realCDLCount = entries.length;
-    const minReal = CALIBRATION_LEVELS.INITIAL.minSessions;
-    const patternsSuppressed = realCDLCount < minReal;
-    const cdlPatterns = patternsSuppressed ? [] : analyzeFromCDL({ windowDays: 30 });
-    return { cdlPatterns, realCDLCount, patternsSuppressed };
-  } catch {
-    return { cdlPatterns: [], realCDLCount: 0, patternsSuppressed: true };
+    ).length;
+  } catch { return 0; }
+}
+
+function _deriveCDLConfidence(pattern) {
+  switch (pattern.type) {
+    case 'EARLY_END':    return (pattern.earlyEndRate ?? 0) / 100;
+    case 'LOW_ADHERENCE': return Math.max(0, (100 - (pattern.adherenceRate ?? 100)) / 100);
+    case 'HIGH_DEVIATION': return (pattern.deviationRate ?? 0) / 100;
+    case 'STAGNATION':   return 0.85;
+    default:             return 0.5;
   }
 }
 
-// ── Legacy pattern helpers ─────────────────────────────────────────────────
-// Citește din 'auto-recommendations' (teste/UI) și 'applied-patterns' (engine)
-// Normalizează type la lowercase pentru coachDirector.applyPatterns
-
-function getActivePatterns() {
-  try {
-    const autoRecs = JSON.parse(localStorage.getItem('auto-recommendations') || '[]');
-    const applied = JSON.parse(localStorage.getItem('applied-patterns') || '[]');
-    const all = [...autoRecs, ...applied];
-    return all.map(p => ({
-      ...p,
-      type: (p.type || '').toLowerCase(),
-      confidence: p.confidence ?? (p.earlyEndRate ? p.earlyEndRate / 100 : 0.5)
-    }));
-  } catch { return []; }
+function _buildCDLPatterns() {
+  const realCDLCount = _getRealCDLEntryCount();
+  const patternsSuppressed = realCDLCount < CALIBRATION_LEVELS.INITIAL.minSessions;
+  let patterns = [];
+  if (!patternsSuppressed) {
+    try {
+      patterns = analyzeFromCDL({ windowDays: 30 }).map(p => ({
+        ...p,
+        confidence: p.confidence ?? _deriveCDLConfidence(p),
+      }));
+    } catch (e) {
+      console.warn('[coachContext] analyzeFromCDL failed:', e);
+    }
+  }
+  return { patterns, realCDLCount, patternsSuppressed };
 }

@@ -90,7 +90,7 @@ export function evaluate(ctx) {
   }
 
   // Priority 30 — PATTERN_EARLY_END: early-stop patterns detected
-  const earlyEndPattern = ctx.patterns?.find(p => p.type === 'early_end' || p.type === 'session_short');
+  const earlyEndPattern = ctx.patterns?.find(p => p.type === 'EARLY_END' || p.type === 'early_end' || p.type === 'session_short');
   if (earlyEndPattern) {
     fired.push({
       ...RULES.PATTERN_EARLY_END,

@@ -174,7 +174,7 @@ export class CoachDirector {
       proactiveAlerts,
       recompile: ctx.recompile,
       calibrationLevel: ctx.calibrationLevel,
-      patterns: ctx.cdlPatterns ?? [],
+      patterns: ctx.patterns ?? [],
       patternsSuppressed: ctx.patternsSuppressed ?? true,
     };
 
@@ -250,15 +250,15 @@ export class CoachDirector {
   applyPatterns(session, ctx) {
     if (!ctx.patterns || ctx.patterns.length === 0) return session;
     for (const pattern of ctx.patterns) {
-      if (pattern.type === 'early_end' && pattern.confidence > 0.6) {
+      if (pattern.type === 'EARLY_END' && (pattern.earlyEndRate >= 60 || (pattern.confidence ?? 0) > 0.6)) {
         const originalCount = session.exercises.length;
         const newCount = Math.max(3, Math.ceil(originalCount * 0.8));
         session.exercises = session.exercises.slice(0, newCount);
         session.patternApplied = {
-          type: 'early_end',
-          reason: 'Pattern detectat: termini ' + Math.round(pattern.confidence * 100) + '% din sesiuni devreme. Redus la ' + newCount + ' exerciții.',
+          type: 'EARLY_END',
+          reason: `Pattern detectat: ${pattern.earlyEndRate || Math.round((pattern.confidence ?? 0) * 100)}% sesiuni terminate devreme. Redus la ${newCount} exerciții.`,
           originalCount,
-          newCount
+          newCount,
         };
       }
     }
