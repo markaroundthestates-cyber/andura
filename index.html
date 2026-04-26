@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="/salafull/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script type="module" crossorigin src="/salafull/assets/main-vLcW41nn.js"></script>
+  <script type="module" crossorigin src="/salafull/assets/main-D4p2GJ5Y.js"></script>
   <link rel="stylesheet" crossorigin href="/salafull/assets/main-CCHQbsh2.css">
 </head>
 <body>
@@ -175,7 +175,7 @@
         <div id="flash-sub" style="font-size:12px;color:var(--text2)">—</div>
       </div>
 
-      <!-- STEP 1: REPS CONFIRM -->
+      <!-- STEP 1: REPS CONFIRM + RPE INLINE -->
       <div id="rpe-inline" style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:12px;display:none">
         <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:12px">Câte reps ai făcut?</div>
         <div style="display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:16px">
@@ -183,8 +183,27 @@
           <div id="session-reps" style="font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--accent);min-width:60px;text-align:center;line-height:1">10</div>
           <button onclick="adjSessionReps(1)" style="width:52px;height:52px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:24px;cursor:pointer">+</button>
         </div>
-        <!-- Quick notes — ascunse din reps screen, apar la final sesiune -->
-        <button onclick="confirmReps()" style="width:100%;padding:16px;background:var(--accent);color:#000;font-weight:700;font-size:18px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">CONFIRMĂ →</button>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;text-align:center">Cum a fost setul?</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+          <button id="rpe-btn-easy" onclick="window.selectRPE(6.5)" class="rpe-btn" style="padding:10px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center">
+            <div style="font-size:18px">🟢</div>
+            <div style="font-size:11px;margin-top:2px;color:var(--text2)">Easy</div>
+          </button>
+          <button id="rpe-btn-ok" onclick="window.selectRPE(8)" class="rpe-btn" style="padding:10px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center">
+            <div style="font-size:18px">🟡</div>
+            <div style="font-size:11px;margin-top:2px;color:var(--text2)">OK</div>
+          </button>
+          <button id="rpe-btn-hard" onclick="window.selectRPE(9)" class="rpe-btn" style="padding:10px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center">
+            <div style="font-size:18px">🟠</div>
+            <div style="font-size:11px;margin-top:2px;color:var(--text2)">Hard</div>
+          </button>
+          <button id="rpe-btn-very-hard" onclick="window.selectRPE(10)" class="rpe-btn" style="padding:10px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center">
+            <div style="font-size:18px">🔴</div>
+            <div style="font-size:11px;margin-top:2px;color:var(--text2)">Very Hard</div>
+          </button>
+        </div>
+        <button onclick="window.confirmReps()" style="width:100%;padding:16px;background:var(--accent);color:#000;font-weight:700;font-size:18px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">CONFIRMĂ →</button>
+        <button onclick="window.confirmReps(true)" style="width:100%;padding:8px;margin-top:6px;background:transparent;color:var(--text3);font-size:11px;border:none;cursor:pointer">Skip rating</button>
       </div>
 
       <!-- STEP 2: RPE SCREEN -->
