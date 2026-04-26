@@ -2,7 +2,6 @@ import { DB, cleanEx } from '../../db.js';
 import { PROG, COMPOUND_EX, TARGET_DATE } from '../../constants.js';
 import { state } from '../../state.js';
 import { beep } from '../../ui/ui.js';
-import { sessionCache, getCachedDirector } from './state.js';
 
 export function isInCutPhase() {
   const phase = DB.get('phase-override') || 'AUTO';
@@ -82,20 +81,6 @@ export function getTodayExercises() {
   if (!tp || tp.t === 'off' || !tp.ex) return [];
   const unavail = DB.get('unavailable-equipment') || [];
   let exList = tp.ex.map(e => cleanEx(e.n || '')).filter(ex => !unavail.includes(ex));
-  const _cachedLvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
-  const _patternsOn = _cachedLvl ? _cachedLvl.patternsEnabled : (() => {
-    try {
-      const logs = JSON.parse(localStorage.getItem('logs') || '[]');
-      const sessionKeys = new Set(logs.map(l => l.session ?? l.date).filter(Boolean));
-      return sessionKeys.size >= 3;
-    } catch { return true; }
-  })();
-  const patterns = _patternsOn ? (DB.get('applied-patterns') || []) : [];
-  const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
-  if (skipPattern) {
-    const compounds = exList.filter(ex => COMPOUND_EX.includes(ex));
-    if (compounds.length >= 2) return compounds;
-  }
   return exList;
 }
 

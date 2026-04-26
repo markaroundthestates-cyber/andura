@@ -35,7 +35,6 @@ import { setDone, confirmReps, selectRPE, startSession, cancelWorkout,
          adjSessionKg, confirmSessionKg, rateSession, endSession } from './pages/coach.js';
 import { showReadinessModal, selectReadiness, showSkipModal, confirmSkip, showAlternativeModal, selectAlternative, markEquipmentUnavailable, markOccupied } from './pages/coach.js';
 import { saveReadiness, getTodayReadiness } from './engine/readiness.js';
-import { getAppliedPatterns, dismissPattern } from './engine/patternLearning.js';
 import { PROG, KCAL_TARGET, PROT_TARGET } from './constants.js';
 import { setPhaseOverride, clearPhaseOverride } from './pages/plan.js';
 import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPrompt, showRecoveryModal } from './pages/dashboard.js';
@@ -76,7 +75,6 @@ Object.assign(window, {
       await resetButKeepRealLogs();
     }
   },
-  dismissAutoPattern: (i) => { dismissPattern(i); renderDash(); },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
   _devResetTest: async () => {
     if (confirm('Ștergi date de test (patterns, session drafts, etc.)?\nLogurile reale și greutățile rămân.')) {

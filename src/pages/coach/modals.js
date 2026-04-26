@@ -170,7 +170,8 @@ export function showWhyForExercise(exerciseName) {
       })(),
       patterns: (() => {
         const lvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
-        return (lvl?.patternsEnabled !== false) ? (DB.get('applied-patterns') || []) : [];
+        const _session = getCachedDirector() || sessionCache?.get();
+        return (lvl?.patternsEnabled !== false) ? (_session?.context?.patterns || []) : [];
       })(),
       user: { phase: DB.get('phase-override') || 'AUTO' },
     };

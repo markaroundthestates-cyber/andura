@@ -6,7 +6,6 @@ import { SYS } from '../../engine/sys.js';
 import { toast } from '../../ui/ui.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { getTodayReadiness, getReadinessVerdict, getReadinessScore, READINESS_LABELS } from '../../engine/readiness.js';
-import { analyzeAndApplyPatterns } from '../../engine/patternLearning.js';
 import { coachDirector } from '../../engine/coachDirector.js';
 import { sessionCache, setCachedDirector, uiToggleFlags } from './state.js';
 import { formatSetsReps, getGroupColor, getDisplayTime, isInCutPhase } from './util.js';
@@ -331,9 +330,6 @@ export async function renderCoachIdle(){
   renderFatigueScore('fatigue-score-coach');
   renderPRWall();
 
-  // Pattern learning async
-  const allLogsForPattern = DB.get('logs') || [];
-  if (allLogsForPattern.length > 20) analyzeAndApplyPatterns(allLogsForPattern);
 }
 
 export function toggleExList(dayIdx) {

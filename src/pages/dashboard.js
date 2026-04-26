@@ -8,7 +8,7 @@ import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getRealityCheck } from '../engine/reality.js';
 import { getAdherenceScore } from '../engine/adherence.js';
 import { getTodayReadiness, saveReadiness, READINESS_LABELS } from '../engine/readiness.js';
-import { getAppliedPatterns, dismissPattern } from '../engine/patternLearning.js';
+import { analyzeFromCDL } from '../engine/patternLearning.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
 let _dashWeightChart = null;
@@ -268,7 +268,7 @@ export function renderDash(){
           return sessionCount >= 3;
         })();
     const patterns = _patternsEnabled
-      ? getAppliedPatterns().filter(p => Date.now() - p.appliedAt < 14*86400000)
+      ? analyzeFromCDL().filter(p => Date.now() - (p.appliedAt || Date.now()) < 14*86400000)
       : [];
     if (patterns.length) {
       autoRecEl.style.display = 'block';
@@ -277,9 +277,8 @@ export function renderDash(){
           <div style="font-size:16px">🤖</div>
           <div style="font-size:13px;font-weight:700">Am ajustat programul automat</div>
         </div>
-        ${patterns.slice(0,3).map((p,i) => `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
-          <div style="font-size:11px;color:var(--text3);flex:1">${p.description}</div>
-          <button onclick="dismissAutoPattern(${i})" style="background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;padding:0 4px;flex-shrink:0">✕</button>
+        ${patterns.slice(0,3).map(p => `<div style="margin-bottom:6px">
+          <div style="font-size:11px;color:var(--text3)">${p.description}</div>
         </div>`).join('')}
       </div>`;
     } else {
