@@ -5,6 +5,43 @@ Intrările noi se adaugă **la începutul fișierului** (cele mai recente primul
 
 ---
 
+## TASK #AA-FIX — DONE ✅
+**Completed:** 2026-04-26
+**Model:** claude-sonnet-4-6
+**Pre-flight findings:**
+- selectRPE state: confirmed no-op `export function selectRPE(rpe) { }` in logging.js:128
+- lastSetRPE: not found anywhere — added to src/state.js as `lastSetRPE: null`
+- l.rpe ?? fallback grep: zero hits — no residual fallbacks found ✅
+- DP checkInSessionAdjust shape: matches expected — drop `r>=10`, up `r<=6` (updated to `r<=6.5`)
+- ADR 013 composite fatigue wording: "Rating sesiune ≤2/5 (proxy temporar)" — updated as planned
+
+**Summary:**
+- `selectRPE(rpe)` → funcțional: setează state.lastSetRPE, highlight buton selectat, expus pe window
+- 4 butoane Easy🟢/OK🟡/Hard🟠/Very Hard🔴 cu text label adăugate în `#rpe-inline` sub reps section (skip button adăugat)
+- `confirmReps(skipped=false)` → consumă RPE, persistă `log.rpe` numeric sau omite field dacă skipped, resetează state.lastSetRPE
+- DP `checkInSessionAdjust`: up threshold `r<=6` → `r<=6.5` (Easy=6.5 trigger)
+- End-of-session: `noneRated` flag calculat; hint text în rating modal dacă 0 seturi rated
+- ADR 013: marker #2 updated, tabel Empirical Calibration updated, trigger #5 updated, status header updated, Implementation Updates section added
+- aa.js: NOT modified ✅
+
+**Files changed:**
+- src/state.js — +lastSetRPE: null
+- src/pages/coach/logging.js — selectRPE funcțional, confirmReps RPE consume
+- src/pages/coach/session.js — noneRated flag
+- src/pages/coach/rating.js — noneRated hint în modal
+- src/engine/dp.js — up threshold r<=6.5
+- index.html — 4 RPE buttons în #rpe-inline + skip button
+- docs/decisions/013-auto-aggression-detection.md — 4 updates + Implementation Updates section
+- 10-exec-queue/EXEC_QUEUE.md — TASK #AA-FIX entry added
+- src/pages/coach/__tests__/logging.test.js — NEW (15 tests)
+- src/engine/__tests__/dp.test.js — +8 checkInSessionAdjust tests
+
+**Tests:** 23 added (445/445 pass, baseline was 422)
+**Commit:** 246597f
+**Issues:** NONE
+
+---
+
 ## TASK #30.10 — DONE ✅
 **Completed:** 2026-04-26 (autonomous revised run — 30.9 deferred)
 **Model:** claude-sonnet-4-6

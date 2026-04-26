@@ -1423,7 +1423,7 @@ Updates:
 **Model:** Sonnet
 **Type:** EXEC (UI + engine + docs bundle)
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE ✅ Completed: 2026-04-26 (commit 246597f)
 **Created:** 2026-04-26
 **Description:** Activate RPE per-set input (4-tap Easy/OK/Hard/Very Hard) + adapt DP checkInSessionAdjust threshold + update ADR 013 fatigue marker #2 wording. Closes loop pe AA broken (RPE=8 hardcoded → fake data) și deblochează composite fatigue marker accuracy din ADR 013.
 
