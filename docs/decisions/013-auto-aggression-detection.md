@@ -1,6 +1,6 @@
 # ADR 013: Auto-Aggression Detection (User Self-Sabotage Pattern Recognition)
 
-**Status:** Accepted (updated 2026-04-26 post AA-fix implementation)
+**Status:** Accepted
 **Date:** 2026-04-26
 **See also:** [[011-coach-decision-log-architecture]] | [[012-tier-decay-on-inactivity]] | [[009-calibration-tiers]] | [[DECISION_LOG]] | [[PROJECT_VISION]]
 
@@ -41,7 +41,7 @@ Spirală: răspunsul greșit la semnal greșit
 
 ## Decision
 
-Implementăm un **sistem de auto-aggression detection** ca pattern recognition la nivel de coachContext + intervention layer la nivel UI, cu trei componente:
+Implementăm un **sistem de auto-aggression detection** ca pattern recognition la nivel de coachContext + intervention layer la nivel UI:
 
 ### 1. Detection signals (5 signals comportamentale + 1 amplificator)
 
@@ -57,17 +57,33 @@ Implementăm un **sistem de auto-aggression detection** ca pattern recognition l
 
 - **Hyperfocus override** — user logează 8h+ în app/zi pentru 4+ zile/săpt. NU e detection signal în sine. E factor de **calibrare a thresholds**: profile cu hyperfocus pattern → thresholds mai stricte pe celelalte 5 signals.
 
-### 2. Composite fatigue score (definiție pinned)
+### 2. Detection signals — tracked windows
+
+| Signal | Window | Logică |
+|--------|--------|--------|
+| Volume creep | 3+ sesiuni consecutive AND ≤21 zile | Event-based + timpul max evită false positive pe user sporadic |
+| Calorie acceleration | 7-day rolling | Cut/bulk weekly granularity |
+| Frustration markers | 14-day rolling | Anti-reactive (<14d) și anti-stale (>14d) |
+| Ignore recovery | 7-day rolling | Snapshot săptămânal |
+| Recovery debt | 3+ săpt ISO consecutive (Mon-Sun) | Streak BREAKS la prima săpt ≥2 rest days |
+| Composite fatigue | 1 săpt ISO | ≥50% sesiuni cu fatigue marker |
+| Hyperfocus amplificator | 7-day rolling | 8h+ în app/zi pe 4+ zile (amplificator, NU detection în sine) |
+
+**Week boundary:** ISO 8601 (Monday-Sunday, Thursday rule) — consistent cu `responseProfile.js`, `stagnationDetector.js`.
+
+**Streak break logic (Recovery debt):** Streak resetează la prima săpt complete cu ≥2 rest days. Anti-noise + anti-paranoia (recovery legitimă recunoscută).
+
+### 3. Composite fatigue score (definiție pinned)
 
 Fatigue marker = compozit din 3 signals, **2+ din 3 într-o săptămână** = marker activ pentru detection #4:
 
 1. **Reps achieved <60% pe 2+ exerciții consecutive în aceeași sesiune** (single exercise = bias load greșit, nu fatigue real)
-2. **≥50% seturi rated Hard (RPE 9) sau Very Hard (RPE 10) într-o sesiune** (Easy/OK seturi NU counted; setul fără RPE rated NU counted în numitor)
+2. **Rating sesiune ≤2/5** (proxy temporar; revisit la AA fix DONE → RPE ≥9)
 3. **Volume scădere voluntară >20% vs ultima sesiune similară fără reason logged în CDL** (cu reason = self-regulation sănătoasă, NU fatigue marker)
 
 Composite în loc de single-signal evită false positives din artifacte event-level.
 
-### 3. Profile typing (4 profiles + reconciliation hybrid)
+### 4. Profile typing (4 profiles + reconciliation hybrid)
 
 Profile-typing psihologic ca calibrare per-user a thresholds + intervention style:
 
@@ -93,7 +109,7 @@ Profile-typing psihologic ca calibrare per-user a thresholds + intervention styl
 
 NU verdict, NU "citește și decide tu". Recommendation cu evidență + decizie rapidă.
 
-### 4. Severity tiers (3 niveluri cu thresholds clare)
+### 5. Severity tiers (3 niveluri cu thresholds clare)
 
 | Tier | Trigger | Action |
 |------|---------|--------|
@@ -103,7 +119,7 @@ NU verdict, NU "citește și decide tu". Recommendation cu evidență + decizie 
 
 **Notă pe HIGH:** până la disponibilitatea health export (FAZA 4 — bloodwork manual input, integrare Apple Health/Google Fit), HIGH tier folosește **only signals comportamentale**. Signal "RHR +15bpm" + alți markeri fizici sunt deferred până la integrare.
 
-### 5. Intervention model (Soft B default + escalation la C, NU A passive)
+### 6. Intervention model (Soft B default + escalation la C, NU A passive)
 
 **B — Soft warning (default pentru MED tier):**
 
@@ -131,7 +147,7 @@ Coach refuză plan agresiv inițial. User poate override **doar prin friction mo
 
 Asta filtrează decizii impulsive de decizii informate, fără paternalism. User adult, decizia lui finală — dar cu friction proporțional cu severity.
 
-### 6. Dismiss memory (anti alarm fatigue)
+### 7. Dismiss memory (anti alarm fatigue)
 
 Soft warnings au memorie. Dacă user dismiss același warning 3x consecutiv:
 - Sistemul **NU repetă același exact warning**
@@ -211,7 +227,7 @@ Toate parametrele numerice din ADR sunt **starting guesses** fără data empiric
 |-----------|----------------|--------|---------------------|
 | Volume creep streak | 3+ sesiuni consecutive | Heuristic | After 50+ users data |
 | Calorie restriction acceleration | >300 kcal/săpt | Heuristic | Trigger #1 |
-| Fatigue session threshold | ≥50% seturi Hard/Very Hard | Heuristic | Trigger #8 |
+| Frustration rating threshold | rating ≤2/5 | Proxy until AA fix | Trigger #5 |
 | Recovery debt threshold | <2 rest days/săpt for 3+ săpt | Heuristic | Trigger #3 |
 | Hyperfocus pattern | 8h+/zi for 4+ zile/săpt | Heuristic | Trigger #7 |
 | Reps achieved threshold | <60% pe 2+ exerciții consecutive | Heuristic | Trigger #8 |
@@ -230,7 +246,7 @@ Toate parametrele numerice din ADR sunt **starting guesses** fără data empiric
 2. **Profile reconciliation friction** → if dismiss rate >30% on 4-6 week prompt, redesign UX (currently 1-click + drill-down opțional)
 3. **Severity tier thresholds** (LOW/MED/HIGH triggers) → reconsider după 6 months production data; cazuri reale de false positive/negative analizate
 4. **Health export integrare** → revisit HIGH tier signals; adaugă RHR/HRV/sleep markers la HIGH tier definition
-5. **RPE 4-tap adoption rate** → if <40% sets rated într-o sesiune average pe 50+ users, revisit UX (4-tap → 3-tap simplified, sau prompt più frequent)
+5. **AA fix DONE (RPE per-set funcțional)** → revisit fatigue marker definition: rating ≤2/5 (proxy current) → RPE ≥9 (target)
 6. **ML viability** → revisit alternative C la 1000+ users + 6+ months agregate behavioral data
 7. **Hyperfocus calibration** → if observed pattern shows hyperfocus correlates negativ cu auto-aggression (e.g. hyperfocus users sunt actually more sustainable), inversare amplificator
 8. **Composite fatigue score effectiveness** → if 2+ markers din 3 produce too many false positives sau prea multe miss-uri, raise/lower threshold sau change individual signal definitions
@@ -319,14 +335,3 @@ Acestea NU intră în ADR (principle), intră în spec implementabil + UX iterat
 ---
 
 *ADR 013 — Accepted 2026-04-26 după review Daniel. Open questions rezolvate ca log decizie. Status: ready pentru spec EXEC_QUEUE.*
-
----
-
-## Implementation Updates
-
-### 2026-04-26 — AA-fix RPE input activated
-
-- RPE per-set 4-tap input (Easy 6.5 / OK 8 / Hard 9 / Very Hard 10) implemented în `src/pages/coach/logging.js`
-- DP `checkInSessionAdjust` threshold adaptat: drop weight pe 2× Very Hard (RPE ≥10), up weight pe 2× Easy (RPE ≤6.5)
-- Composite fatigue marker #2 calibrated la ≥50% seturi Hard/Very Hard (replace rating ≤2/5 proxy)
-- AA engine (`src/engine/aa.js`) NOT modified — păstrat notes-only safety net (FAZA 1.7 decision)
