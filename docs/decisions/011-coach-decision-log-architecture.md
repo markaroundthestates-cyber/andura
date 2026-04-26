@@ -72,6 +72,7 @@ Each CDL entry:
       overridden: ['WEAK_GROUP_PRIORITY']
     },
     exercises: ['Incline DB Press', 'Pec Deck', 'DB Shoulder Press', 'Triceps Pushdown'],
+    proposedSets: 18,                  // pre-stored sum to avoid recompute at outcome time
     volumeMultiplier: 0.9,
     notes: 'shoulders weak but PUSH day; face pulls included as compensation'
   },
@@ -85,12 +86,16 @@ Each CDL entry:
     totalProposedExercises: 4,
     actualSets: 16,
     proposedSets: 18,
+    actualExercises: ['Incline DB Press', 'Pec Deck', 'DB Shoulder Press', 'Triceps Pushdown'],  // for Jaccard in matchScore
+    actualDurationMins: 42,            // wall-clock duration; null on synthetic backfill entries
     earlyStop: false,
     rating: 'normal',
     completedAt: 1745617200000
   }
 }
 ```
+
+**Schema additions (26 Apr 2026, post-implementation reconciliation):** `proposed.proposedSets`, `outcome.actualExercises`, `outcome.actualDurationMins` were added during TASK #30.4 + #30.5 implementation as concrete needs surfaced. `proposedSets` avoids recomputing total sets at outcome time. `actualExercises` (array) is required for the Jaccard overlap component of matchScore. `actualDurationMins` provides wall-clock session duration for future recovery/fatigue engines. On synthetic backfill entries (`synthetic: true`), `actualDurationMins` may be reconstructed from `max(log.ts) - min(log.ts)` when ≥2 logs exist, or remain absent. ADR updated to reflect deployed schema. See FINDINGS_MASTER finding S1 (26 apr).
 
 ### Stable Rule IDs
 
@@ -291,6 +296,8 @@ Revisit this ADR when any of the following occur:
 6. **Multi-tenancy real auth deployed.** CDL path becomes `users/{authUid}/coach-decisions`. Schema unchanged but migration step required.
 
 7. **Idempotency conflict observed.** If duplicate entries appear for the same date despite the 4h + context-change rules, idempotency policy needs revision (e.g., shorter than 4h window, additional context fields tracked).
+
+8. **Schema drift detected post-implementation.** If audit reveals fields written by code but not specified in ADR (or vice versa), trigger ADR review: accept drift (update ADR), revert (remove from code), or refactor. Drift is normal as concrete implementation surfaces needs ADR couldn't anticipate; the requirement is that ADR remains in sync with deployed code, not that code matches ADR exactly.
 
 ---
 

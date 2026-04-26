@@ -155,7 +155,7 @@ describe('synthesizeOutcome', () => {
     expect(outcome.deviation).toBe(false);
     expect(outcome.executed).toBe(true);
     expect(outcome.matchScore).toBe(1.0);
-    expect(outcome.earlyStop).toBeNull();
+    expect(outcome.earlyStop).toBe(false);
     expect(outcome.rating).toBeNull();
   });
 
@@ -173,6 +173,22 @@ describe('synthesizeOutcome', () => {
     ];
     const outcome = synthesizeOutcome(logs);
     expect(outcome.completedAt).toBe(3000);
+  });
+
+  it('computes actualDurationMins from log timestamps when ≥2 logs', () => {
+    const sessionLogs = [
+      { ex: 'Bench', w: 60, reps: 8, ts: 1000000, session: 1000000 },
+      { ex: 'Bench', w: 60, reps: 8, ts: 1000000 + 30 * 60000, session: 1000000 },
+    ];
+    const result = synthesizeOutcome(sessionLogs);
+    expect(result.actualDurationMins).toBe(30);
+    expect(result.earlyStop).toBe(false);
+  });
+
+  it('returns actualDurationMins=null when only 1 log', () => {
+    const sessionLogs = [{ ex: 'Bench', w: 60, reps: 8, ts: 1000000, session: 1000000 }];
+    const result = synthesizeOutcome(sessionLogs);
+    expect(result.actualDurationMins).toBe(null);
   });
 });
 

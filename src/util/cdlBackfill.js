@@ -131,6 +131,10 @@ export function synthesizeOutcome(sessionLogs) {
   const actualSets = sessionLogs.length;
   const timestamps = sessionLogs.map(l => l.ts ?? 0).filter(t => t > 0);
   const completedAt = timestamps.length > 0 ? Math.max(...timestamps) : 0;
+  const minTs = timestamps.length > 0 ? Math.min(...timestamps) : 0;
+  const actualDurationMins = (timestamps.length >= 2 && completedAt > minTs)
+    ? Math.round((completedAt - minTs) / 60000)
+    : null;
 
   return {
     executed: true,
@@ -138,12 +142,13 @@ export function synthesizeOutcome(sessionLogs) {
     actualSessionType: inferSessionType(exercises),
     actualExercises: exercises,
     actualSets,
+    actualDurationMins,
     proposedSets: actualSets,
     completedExercises: exercises.length,
     totalProposedExercises: exercises.length,
     deviation: false,
     matchScore: 1.0,
-    earlyStop: null,
+    earlyStop: false,
     rating: null,
   };
 }
