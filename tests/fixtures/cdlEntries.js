@@ -530,6 +530,177 @@ export function scenarioHyperfocus(opts = {}) {
   };
 }
 
+// ── Profile Typing scenarios ──────────────────────────────────────────────────
+
+/**
+ * Scenario: Sprinter behavioral signature.
+ * High volume creep frequency, frustration markers, recovery debt (zero rest), calorie acceleration.
+ * Uses absolute anchor date to avoid ISO week timezone ambiguity.
+ * @param {object} opts
+ * @param {string} [opts.baseDate] - YYYY-MM-DD of most recent entry (default '2026-04-01')
+ * @returns {object[]}
+ */
+export function scenarioSprinter(opts = {}) {
+  const { baseDate = '2026-04-01' } = opts;
+  const anchor = new Date(baseDate);
+
+  function d(offsetDays) {
+    const dt = new Date(anchor);
+    dt.setDate(anchor.getDate() - offsetDays);
+    return dt.toISOString().slice(0, 10);
+  }
+
+  return [
+    // Week 1 — frustration seed + volume creep burst (kcal high)
+    realWorkoutEntry({ date: d(23), rating: 2, kcal_target: 2400 }),  // frustration seed
+    deviationEntry({ date: d(21), proposedSets: 16, actualSets: 20, kcal_target: 2400 }),  // creep #1 (within 14d of rating 2)
+    deviationEntry({ date: d(19), proposedSets: 16, actualSets: 20, kcal_target: 2400 }),  // creep #2
+    deviationEntry({ date: d(17), proposedSets: 16, actualSets: 20, kcal_target: 2400 }),  // creep #3
+    // Week 2 — normal volume (kcal starts dropping)
+    realWorkoutEntry({ date: d(15), kcal_target: 2100 }),
+    realWorkoutEntry({ date: d(13), kcal_target: 2100 }),
+    realWorkoutEntry({ date: d(11), kcal_target: 2000 }),  // drop >300 within 7d of kcal=2400 at d(17)
+    // Week 3 — more creep
+    realWorkoutEntry({ date: d(9), kcal_target: 2000 }),
+    deviationEntry({ date: d(7), proposedSets: 16, actualSets: 20, kcal_target: 2000 }),   // creep #4
+    realWorkoutEntry({ date: d(5), kcal_target: 2000 }),
+    // Week 4 — continued push
+    realWorkoutEntry({ date: d(3), kcal_target: 2000 }),
+    realWorkoutEntry({ date: d(1), kcal_target: 2000 }),
+    // No rest_marked=true entries → recovery debt across all 4 weeks
+  ];
+}
+
+/**
+ * Scenario: Marathon behavioral signature.
+ * High consistency (≥80%), zero volume creep, regular rest days, stable ratings.
+ * @param {object} opts
+ * @param {string} [opts.baseDate] - YYYY-MM-DD of most recent entry (default '2026-04-01')
+ * @returns {object[]}
+ */
+export function scenarioMarathon(opts = {}) {
+  const { baseDate = '2026-04-01' } = opts;
+  const anchor = new Date(baseDate);
+
+  function d(offsetDays) {
+    const dt = new Date(anchor);
+    dt.setDate(anchor.getDate() - offsetDays);
+    return dt.toISOString().slice(0, 10);
+  }
+
+  return [
+    // 3 workout + 1 rest pattern, repeated over 4 weeks (~16 entries)
+    realWorkoutEntry({ date: d(27) }),
+    realWorkoutEntry({ date: d(25) }),
+    realWorkoutEntry({ date: d(23) }),
+    skipEntry({ date: d(22), restMarkedValue: true }),
+    skipEntry({ date: d(21), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(20) }),
+    realWorkoutEntry({ date: d(18) }),
+    realWorkoutEntry({ date: d(16) }),
+    skipEntry({ date: d(15), restMarkedValue: true }),
+    skipEntry({ date: d(14), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(13) }),
+    realWorkoutEntry({ date: d(11) }),
+    realWorkoutEntry({ date: d(9) }),
+    skipEntry({ date: d(8), restMarkedValue: true }),
+    skipEntry({ date: d(7), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(6) }),
+    realWorkoutEntry({ date: d(4) }),
+    realWorkoutEntry({ date: d(2) }),
+    skipEntry({ date: d(1), restMarkedValue: true }),
+  ];
+}
+
+/**
+ * Scenario: Yo-yo behavioral signature (pre-drop detection).
+ * Aggressive early volume, calorie acceleration, zero rest_marked, no frustration, hyperfocus.
+ * Returns { cdlEntries, hyperfocusData } — compound for profile typing tests.
+ * @param {object} opts
+ * @param {string} [opts.baseDate] - YYYY-MM-DD of most recent entry (default '2026-04-01')
+ * @returns {{ cdlEntries: object[], hyperfocusData: object }}
+ */
+export function scenarioYoyo(opts = {}) {
+  const { baseDate = '2026-04-01' } = opts;
+  const anchor = new Date(baseDate);
+
+  function d(offsetDays) {
+    const dt = new Date(anchor);
+    dt.setDate(anchor.getDate() - offsetDays);
+    return dt.toISOString().slice(0, 10);
+  }
+
+  const cdlEntries = [
+    // Week 1 — aggressive start (kcal high, 2 deviations in first 14d)
+    deviationEntry({ date: d(27), proposedSets: 16, actualSets: 22, kcal_target: 2600 }),  // aggressive #1
+    deviationEntry({ date: d(25), proposedSets: 16, actualSets: 22, kcal_target: 2600 }),  // aggressive #2 (≥2 in 14d ✓)
+    realWorkoutEntry({ date: d(23), kcal_target: 2600 }),
+    realWorkoutEntry({ date: d(21), kcal_target: 2200 }),  // kcal drops 400 within 7d of d(25) ✓
+    // Week 2
+    deviationEntry({ date: d(19), proposedSets: 16, actualSets: 22, kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(17), kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(15), kcal_target: 2200 }),
+    // Week 3
+    realWorkoutEntry({ date: d(13), kcal_target: 2200 }),
+    deviationEntry({ date: d(11), proposedSets: 16, actualSets: 22, kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(9), kcal_target: 2200 }),
+    // Week 4
+    realWorkoutEntry({ date: d(7), kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(5), kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(3), kcal_target: 2200 }),
+    realWorkoutEntry({ date: d(1), kcal_target: 2200 }),
+    // No rest_marked=true entries, no low ratings → all-in high commitment signature
+  ];
+
+  return {
+    cdlEntries,
+    hyperfocusData: { hoursInApp7d: 60, daysWithHyperfocus: 5 },
+  };
+}
+
+/**
+ * Scenario: Strategic behavioral signature.
+ * Conscious deviations with reason logged, reasoned early-stops, low impulsivity, stable ratings.
+ * @param {object} opts
+ * @param {string} [opts.baseDate] - YYYY-MM-DD of most recent entry (default '2026-04-01')
+ * @returns {object[]}
+ */
+export function scenarioStrategic(opts = {}) {
+  const { baseDate = '2026-04-01' } = opts;
+  const anchor = new Date(baseDate);
+
+  function d(offsetDays) {
+    const dt = new Date(anchor);
+    dt.setDate(anchor.getDate() - offsetDays);
+    return dt.toISOString().slice(0, 10);
+  }
+
+  return [
+    // 12+ sessions over 4 weeks, some with conscious deviation or reasoned early-stop
+    realWorkoutEntry({ date: d(27) }),
+    realWorkoutEntry({ date: d(25) }),
+    // Conscious deviation: session type swap + added volume WITH reason (not impulsive)
+    deviationEntry({ date: d(23), proposedSets: 16, actualSets: 18, deviationReason: 'extra_recovery_needed', addedExercises: [] }),
+    skipEntry({ date: d(22), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(21) }),
+    realWorkoutEntry({ date: d(19) }),
+    // Reasoned early-stop: leaves early with documented reason
+    realWorkoutEntry({ date: d(17), earlyStop: true }),
+    skipEntry({ date: d(16), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(15) }),
+    realWorkoutEntry({ date: d(13) }),
+    // Second conscious deviation with reason
+    deviationEntry({ date: d(11), proposedSets: 16, actualSets: 18, deviationReason: 'progression_check', addedExercises: [] }),
+    realWorkoutEntry({ date: d(9) }),
+    skipEntry({ date: d(8), restMarkedValue: true }),
+    realWorkoutEntry({ date: d(7) }),
+    realWorkoutEntry({ date: d(5) }),
+    realWorkoutEntry({ date: d(3) }),
+    realWorkoutEntry({ date: d(1) }),
+    // No impulsive volume creep (deviationReason always set), no low ratings
+  ];
+}
+
 /**
  * Scenario: clean profile — no AA signals, healthy pattern.
  * All workouts executed, normal RPE, proper rest days.
