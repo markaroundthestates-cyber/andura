@@ -2,6 +2,8 @@
 // 5 tiers from cold start (day 0) to optimized (180+ days).
 // Engines only run when enabled for the current tier — prevents false positives
 // and unnecessary computation for new users.
+//
+// ADR 012: tier decays -1 per 60 days inactivity, floor at INITIAL.
 
 export const CALIBRATION_LEVELS = {
   COLD_START: {
@@ -102,9 +104,26 @@ export const CALIBRATION_LEVELS = {
   },
 };
 
+const TIER_ORDER = ['COLD_START', 'INITIAL', 'PERSONALIZING', 'PERSONALIZED', 'OPTIMIZED'];
+
+/**
+ * Apply inactivity decay: -1 tier per 60 inactive days, floor at INITIAL.
+ * COLD_START is unaffected (separate cold-start path).
+ */
+export function _applyInactivityDecay(currentLevel, daysSinceLastSession) {
+  if (currentLevel === 'COLD_START') return 'COLD_START';
+  const decayLevels = Math.floor(daysSinceLastSession / 60);
+  if (decayLevels === 0) return currentLevel;
+  const currentIdx = TIER_ORDER.indexOf(currentLevel);
+  if (currentIdx === -1) return currentLevel;
+  const newIdx = Math.max(1, currentIdx - decayLevels); // 1 = INITIAL floor
+  return TIER_ORDER[newIdx];
+}
+
 /**
  * Detect calibration level from log history.
  * Uses unique session count (by session ID or date) and first-session age.
+ * Applies inactivity decay (ADR 012): -1 tier per 60 inactive days, floor INITIAL.
  */
 export function detectCalibrationLevel(ctx) {
   const allLogs = ctx.allLogs ?? [];
@@ -134,10 +153,30 @@ export function detectCalibrationLevel(ctx) {
   const daysSinceFirst = (Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
 
   if (daysSinceFirst < 7 || sessionsCount < 3)  return CALIBRATION_LEVELS.COLD_START;
-  if (daysSinceFirst < 28 || sessionsCount < 12) return CALIBRATION_LEVELS.INITIAL;
-  if (daysSinceFirst < 90 || sessionsCount < 40) return CALIBRATION_LEVELS.PERSONALIZING;
-  if (daysSinceFirst < 180 || sessionsCount < 80) return CALIBRATION_LEVELS.PERSONALIZED;
-  return CALIBRATION_LEVELS.OPTIMIZED;
+
+  let levelName;
+  if (daysSinceFirst < 28 || sessionsCount < 12)  levelName = 'INITIAL';
+  else if (daysSinceFirst < 90 || sessionsCount < 40)  levelName = 'PERSONALIZING';
+  else if (daysSinceFirst < 180 || sessionsCount < 80) levelName = 'PERSONALIZED';
+  else                                                  levelName = 'OPTIMIZED';
+
+  // ADR 012: apply inactivity decay using most-recent non-baseline log date
+  // Uses already-computed `dates` array (handles both l.date and l.ts fields).
+  const nonBaselineDates = allLogs
+    .filter(l => !l.baseline)
+    .map(l => {
+      const raw = l.date || l.ts;
+      const d = raw ? new Date(raw) : null;
+      return d && !isNaN(d.getTime()) ? d : null;
+    })
+    .filter(Boolean);
+  if (nonBaselineDates.length > 0) {
+    const lastDate = new Date(Math.max(...nonBaselineDates.map(d => d.getTime())));
+    const daysSince = Math.floor((Date.now() - lastDate.getTime()) / 86400000);
+    levelName = _applyInactivityDecay(levelName, daysSince);
+  }
+
+  return CALIBRATION_LEVELS[levelName];
 }
 
 /**

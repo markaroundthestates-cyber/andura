@@ -3,6 +3,7 @@ import {
   detectCalibrationLevel,
   shouldRecalibrate,
   applyRollingWindow,
+  _applyInactivityDecay,
   CALIBRATION_LEVELS,
 } from '../calibration.js';
 
@@ -152,6 +153,60 @@ describe('shouldRecalibrate', () => {
   it('returns false for per_session tier regardless of time', () => {
     const old = new Date(Date.now() - 100 * 24 * 60 * 60 * 1000).toISOString();
     expect(shouldRecalibrate(CALIBRATION_LEVELS.COLD_START, old)).toBe(false);
+  });
+});
+
+// ── _applyInactivityDecay (ADR 012) ─────────────────────────────────────────
+
+describe('_applyInactivityDecay', () => {
+  it('0 inactive days → no decay', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 0)).toBe('OPTIMIZED');
+  });
+
+  it('59 inactive days → no decay', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 59)).toBe('OPTIMIZED');
+  });
+
+  it('60 inactive days → -1 tier (OPTIMIZED → PERSONALIZED)', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 60)).toBe('PERSONALIZED');
+  });
+
+  it('119 inactive days → -1 tier (not yet 120)', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 119)).toBe('PERSONALIZED');
+  });
+
+  it('120 inactive days → -2 tiers (OPTIMIZED → PERSONALIZING)', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 120)).toBe('PERSONALIZING');
+  });
+
+  it('9999 inactive days → floored at INITIAL', () => {
+    expect(_applyInactivityDecay('OPTIMIZED', 9999)).toBe('INITIAL');
+  });
+
+  it('COLD_START → COLD_START (unaffected by decay)', () => {
+    expect(_applyInactivityDecay('COLD_START', 9999)).toBe('COLD_START');
+  });
+
+  it('detectCalibrationLevel: OPTIMIZED user inactive 90 days → PERSONALIZED', () => {
+    // 200 sessions spanning 400→90 days ago (oldest first, newest = 90 days ago)
+    // daysSinceFirst ≈ 400 → OPTIMIZED by count+age
+    // but most recent log ts = 90 days ago → floor(90/60)=1 decay → PERSONALIZED
+    const logs = [];
+    for (let i = 0; i < 200; i++) {
+      const daysAgo = 90 + Math.floor(i * (310 / 199)); // i=0 → 90d, i=199 → 400d
+      const d = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+      logs.push({
+        date: d.toISOString().slice(0, 10),
+        ts: d.getTime(),
+        ex: 'Lat Pulldown',
+        w: 30,
+        reps: 8,
+        session: `session-${i}`,
+      });
+    }
+    const ctx = { allLogs: logs };
+    const result = detectCalibrationLevel(ctx);
+    expect(result.name).toBe('personalized');
   });
 });
 
