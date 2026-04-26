@@ -1226,7 +1226,7 @@ NO subtask blocked by this gate — implementation continues with 30.8. This gat
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE
 **Created:** 2026-04-25
 **Description:** Refactor `src/pages/coach/renderIdle.js` banner section să citească din `ctx.patterns` (CDL-backed via director filter) în loc de `DB.get('applied-patterns')` direct. Plus banner suppression când CDL real entries < 3. Plus UI strings pentru noile pattern types introduse în 30.6.
 

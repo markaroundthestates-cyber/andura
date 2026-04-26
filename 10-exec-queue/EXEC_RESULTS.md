@@ -5,6 +5,19 @@ Intrările noi se adaugă **la începutul fișierului** (cele mai recente primul
 
 ---
 
+## TASK #30.8 — DONE ✅
+**Completed:** 2026-04-26
+**Model:** claude-sonnet-4-6
+**Commits:** `62e0f2b` (impl), queue commit below
+**Summary:** CDL-sourced pattern banner in renderIdle.js + suppression when real CDL entries < 3. Replaced direct `DB.get('applied-patterns')` + `skipPattern` rendering with `shouldShowPatternBanner` / `formatPatternMessage` helpers reading `_dirSession.context.patterns` (CDL-backed via coachDirector). coachContext.js now computes `cdlPatterns`, `realCDLCount`, `patternsSuppressed` via `analyzeFromCDL` gated by real CDL count. coachDirector exposes `patterns` + `patternsSuppressed` in `session.context`. New UI strings: LOW_ADHERENCE, HIGH_DEVIATION. SKIP_DAY rendering path eliminated (deprecated assertion throw). 16 unit tests + 3 e2e tests added.
+**Tests:** 414/414 pass (was 398 baseline, +16 new unit)
+**Banner suppression:** ✅ synthetic-only suppressed, ✅ <3 real entries suppressed, ✅ ≥3 real entries shown
+**UI strings:** ✅ LOW_ADHERENCE rendered, ✅ HIGH_DEVIATION rendered, ✅ SKIP_DAY removed
+**H30c symptom:** ✅ "Marți 88%" no longer renders
+**Issues:** NONE
+
+---
+
 ## TASK #30.7 — DONE ✅
 **Completed:** 2026-04-26
 **Summary:** Rewritten `adherence.js` — workout pillar (30p) now routes through CDL `outcome.executed` as primary, with logs fallback for cold start / pre-30.4 / in-progress sessions. Added `computeAdherence({ windowDays=30 })` export with pure CDL metrics (proposed, executed, partial, skipped, deviated, score).
