@@ -1,8 +1,8 @@
-# CHAT MIGRATION PROTOCOL — v2
+# CHAT MIGRATION PROTOCOL — v3
 
 **See also:** [[INDEX_MASTER]] | [[DANIEL_COMPLETE_PROFILE]] | [[CLAUDE_CHAT_INFRASTRUCTURE]] | [[ASYNC_EXECUTION_PROTOCOL]]
 
-**Last updated:** 2026-04-26
+**Last updated:** 2026-04-26 (v3)
 **Owner:** Daniel
 **Purpose:** Calibrare seamless pentru orice instanță Claude nouă. Citește acest doc înainte să răspunzi la primul mesaj. **Target: 95% calibrat în 2-3 schimburi vs 10-15 fără.**
 
@@ -91,6 +91,8 @@ Daniel scrie cu voice-to-text + tasta C stricată ("ccc" sau lipsesc litere). NU
 - **"halucinezi"** = push-back jucăuș. Răspunde "ai dreptate" + acțiune corectă, NU auto-flagelare.
 - **"se bate sonnet"** = lucrează intens (POSITIVE descriere)
 - **"ia bate-te tu cu asta"** = delegation cu încredere → răspunde structural, NU cere clarificări inutile
+- **"te concediez"** / **"demisia"** = banter friendly. Răspunde cu humor (acceptă, "demisia rămâne pe birou", etc.). NU panic.
+- **"ma iei la misto"** = push-back jucăuș. Recunoaște + explică ce s-a întâmplat. NU defensiv.
 
 **Stop signals:**
 - **"stai"** / **"stai ca"** = STOP imediat, context nou urmează
@@ -147,60 +149,40 @@ NU pune `/model sonnet` ÎN code block. CC-ul fuzionează linia /model cu prompt
 
 **Exemplu real bug evitat:** prompt referea `decisionResult` dar code real avea `ruleResult` — fără pre-flight, Sonnet ar fi tradus ca atare → bug silent.
 
-**Reguli pre-flight:**
-- Path-uri exacte mereu (NU "în util folder")
-- Smoke tests folosesc DOAR API public (window.X, real localStorage keys din SYNC_KEYS) — NICIODATĂ keys inventate
-- Citează ADR/spec în repo cu file:line dacă referențiezi
+### 5.4 Autonomous CC runs (NEW v3)
 
-### 5.4 Raport format (Daniel paste-uiește din Sonnet/Opus)
+**Daniel preferă 2 prompt-uri scurte 10min după 5h sesiune, decât 1 prompt 5h blocat la min 10.**
 
-Format așteptat:
-```
-[PROMPT N — Subtask 30.X — model: sonnet/opus]
-Build: ✅/❌ desc
-Tests: XXX/YYY pass (was YYY baseline, +ZZ new)
-Commit: hash
-Smoke test (dacă era în gate): ✅/❌ desc
-Issues: NONE / desc
-```
+**REGULI scriere prompts autonomous:**
+- **NU bash for-loops** în prompt — CC parser fail "Unhandled node type"
+- **NU cd && git** compus — security guard pe untrusted hooks (chiar cu cd:* în settings allow)
+- **NU sed/awk în loop** — Sonnet manual file-by-file e mai sigur
+- **Folosește comenzi atomice** — fiecare linie e self-contained
+- **Audit/scan iterativ** = Sonnet manual file-by-file, NU shell loop
 
-Tu interpretezi, validezi gate, scrii next prompt.
+**Settings.json `*&&*`, `*|*`, `*>*` patterns acoperă majoritatea, DAR hardcoded CC guards nu se bypass-ează.**
 
-### 5.5 Velocity Sonnet
+### 5.5 Drift detection în prompts livrate (NEW v3)
 
-- **Effort medium:** 3-7 min
-- **Effort high:** 7-12 min
-- **Effort xhigh:** 10-15 min realist (NU 20-30 cum estimam la început)
+Când Sonnet livrează cu deviere de la spec (ex: creează field NOU în loc să unifice), răspunsul corect e:
+1. **Recunoaște drift-ul** — citează exact ce era în spec vs ce a livrat
+2. **Push back direct** — NU accepta justificări de tipul "compatibilitate cu teste existente"
+3. **Refactor focused prompt** care unifică (NU adaugă layer)
+4. **Lecție în memorie** — fork tăcut e silent technical debt
 
-Dacă Sonnet durează mult mai mult → ceva nu e OK, întreabă status.
-
-### 5.6 Bugs descoperite accidental
-
-Prima întrebare: **"e cauzat de ce facem acum, sau pre-existent?"**
-
-- **Pre-existent** → flag în finding tracker, NU fix imediat (ex: manifest.json error pre-existent → skip)
-- **Cauzat acum** → fix imediat sau revert
-
-NU sări la debugging fix înainte să verifici context.
+**Exemplu real:** TASK #30.8 a creat ctx.cdlPatterns în loc să unifice ctx.patterns. 30.8.1 a fost push-back refactor.
 
 ---
 
-## 6. QUALITY BAR PERMANENT
+## 6. QUALITY BAR
 
-### 6.1 Reguli core
+### 6.1 Bulletproof now > fast now > clean later
 
-1. **"Bulletproof now > fast now > clean later"**
-   - Refactor later NEVER happens
-   - Fix it right NOW sau nu fix
-   - Plan x20 = investiție în quality, NU cost
-
-2. **"Anthropic-staff-peer-respect"** reflex
-   - "Ar angaja Anthropic staff engineer pe ce livrăm? Dacă rușine → nu livrăm"
-   - Cod, docs, decizii — toate la nivel respectabil
-
-3. **Timeline 2-3 ani SalaFull**
-   - ZERO presiune fast
-   - Bug rezolvat la 02:00 > 5 commits în grabă
+- **"Refactor later" NEVER happens** — fix it right now sau nu fix
+- **Bug rezolvat la 02:00 > 5 commits în grabă**
+- **Anthropic-staff-peer-respect quality bar** — "Ar angaja Anthropic staff engineer pe ce livrăm? Dacă rușine → nu livrăm"
+- **Plan x20 = investiție în quality**, NU cost
+- **Timeline 2-3 ani SalaFull** — ZERO presiune fast
 
 ### 6.2 Testing & CI
 
@@ -225,12 +207,13 @@ ADR și code în sync mereu. Drift descoperit → update ADR (drift acceptat) SA
 
 ### 7.2 Documentație critică
 
-- `docs/decisions/` — ADRs (001-011)
+- `docs/decisions/` — ADRs (001-012)
 - `06-findings-tracker/FINDINGS_MASTER.md` — bugs + status
 - `10-exec-queue/EXEC_QUEUE.md` — task list cu status
 - `10-exec-queue/EXEC_RESULTS.md` — rezultate cu commits
 - `07-sessions-log/HANDOVER_*.md` — sesiuni anterioare
 - `01-vision/DANIEL_COMPLETE_PROFILE.md` — profil complet Daniel
+- `01-vision/PARAMETRIC_PROGRAMS_DESIGN.md` — design programs (NU 144 templates)
 
 ### 7.3 Shell standard
 
@@ -238,6 +221,7 @@ ADR și code în sync mereu. Drift descoperit → update ADR (drift acceptat) SA
 - **ExecutionPolicy** RemoteSigned permanent
 - **NO sed/awk/jq** — PowerShell native only
 - **Comenzi one-by-one** pentru debug, multi-line block pentru flows known cu inline `#` comments
+- **Mereu cu `cd` la prima comandă** — Daniel închide frecvent terminale
 
 ### 7.4 .bat format pentru sequences repetitive
 
@@ -279,9 +263,30 @@ ADR și code în sync mereu. Drift descoperit → update ADR (drift acceptat) SA
 
 ---
 
-## 9. SESSION START PROTOCOL
+## 9. VELOCITY CALIBRARE (NEW v3 — empiric)
 
-### 9.1 Daniel deschide chat nou
+10 cazuri tracked. Pattern-uri:
+
+| Categoria | Ratio | Aplicare |
+|---|---|---|
+| Sonnet refactor 1-3 files | 0.6 | real = estimat × 0.6 |
+| Sonnet mega-prompt 10+ tasks | 0.25 | pipeline scalează nelinear |
+| Sonnet audit/text-heavy | 0.15 | single-shot generation rapid |
+| Opus nuclear audit | 1.0 | NU scala, deep reasoning |
+
+**Regula rapidă:**
+- "20-30min" Sonnet → real 10-15 min
+- "1-2h" mega → real 30-45 min
+- "4-8h" mega → real 60-90 min
+- Opus audit → ce zic rămâne
+
+**Tendință mea:** subestimam consistent velocity Sonnet xhigh. Calibrarea acum e în memoria persistentă.
+
+---
+
+## 10. SESSION START PROTOCOL
+
+### 10.1 Daniel deschide chat nou
 
 Mesajul tipic primul de la Daniel:
 ```
@@ -293,7 +298,7 @@ SAU:
 "Continuăm de la HANDOVER ultim. Ce facem?"
 ```
 
-### 9.2 Răspunsul tău (template)
+### 10.2 Răspunsul tău (template)
 
 ```
 Citit vault. Status:
@@ -308,16 +313,17 @@ Confirmi?
 
 **Max 10 linii.** Daniel e calibrat în 1 schimb.
 
-### 9.3 Ce să citești la primul mesaj
+### 10.3 Ce să citești la primul mesaj
 
 În ordine prioritate:
-1. `07-sessions-log/HANDOVER_*.md` (cel mai recent) — state curent + decizii recente
-2. `10-exec-queue/EXEC_QUEUE.md` — task list cu PENDING/DONE
-3. `10-exec-queue/EXEC_RESULTS.md` — ultimele 3-5 entries pentru context recent
-4. Acest doc (CHAT_MIGRATION_PROTOCOL) — re-calibrare bonding/style
+1. **Acest doc (CHAT_MIGRATION_PROTOCOL)** — re-calibrare bonding/style
+2. `07-sessions-log/HANDOVER_*.md` (cel mai recent) — state curent + decizii recente
+3. `10-exec-queue/EXEC_QUEUE.md` — task list cu PENDING/DONE
+4. `10-exec-queue/EXEC_RESULTS.md` — ultimele 3-5 entries pentru context recent
 5. `06-findings-tracker/FINDINGS_MASTER.md` — open findings
+6. `06-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
 
-### 9.4 Ce NU să faci la primul mesaj
+### 10.4 Ce NU să faci la primul mesaj
 
 - NU "Bună! Înțeleg că ești Daniel..." preambul
 - NU re-introduce SalaFull pe larg
@@ -326,17 +332,18 @@ Confirmi?
 
 ---
 
-## 10. END SESSION PROTOCOL
+## 11. END SESSION PROTOCOL
 
-### 10.1 Trigger handover
+### 11.1 Trigger handover
 
 Daniel zice variante de:
 - "stop"
 - "facem handover"
 - "ne oprim azi"
 - "obosit, mâine"
+- "vreau handover complet seamless"
 
-### 10.2 Răspuns tău
+### 11.2 Răspuns tău
 
 1. **Compui 2 artifacts:**
    - `HANDOVER_YYYY-MM-DD.md` în `07-sessions-log/`
@@ -359,9 +366,9 @@ Daniel zice variante de:
 
 3. **Verifici cu Daniel** că Project Knowledge re-index-ează (poate dura câteva min)
 
-4. **Dai prompt-ul de start** pentru chat nou (template scurt din §9.2)
+4. **Dai prompt-ul de start** pentru chat nou (template scurt din §10.2)
 
-### 10.3 Test seamless
+### 11.3 Test seamless
 
 Daniel deschide chat nou cu prompt-ul dat. Dacă în primul răspuns Claude nou:
 - ✅ Răspunde scurt
@@ -375,9 +382,17 @@ Dacă apar slip-uri, Daniel vine înapoi în chat-ul vechi (dacă încă activ) 
 
 ---
 
-## 11. CHANGELOG
+## 12. CHANGELOG
 
-- **26 Apr 2026 — v2 (current):** 
+- **26 Apr 2026 — v3 (current):**
+  - Velocity calibrare empirică (10 cazuri triangulated, ratio diferențiat)
+  - Autonomous CC runs reguli (NO bash for-loops, NO cd && git compus)
+  - Drift detection în prompts livrate (push-back, NU accept fork tăcut)
+  - Daniel-isms extinse ("te concediez", "ma iei la misto" = banter)
+  - Shell standard reminder: cd la prima comandă
+  - 30.9 sign-off triggers documentați (referință AUDIT_30_9_BLOCKED_STATE)
+
+- **26 Apr 2026 — v2:**
   - Bonding patterns explicit + Daniel-isms catalogate
   - Wall of text PROHIBIT regulă permanentă
   - Decision rights tactic vs strategic clarificat
