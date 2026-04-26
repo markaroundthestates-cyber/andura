@@ -1,4 +1,9 @@
 import { DB, todDate } from '../db.js';
+import { readAllActive } from '../util/coachDecisionLog.js';
+
+export const CDL_PATTERNS_KEY = 'cdl-patterns';
+
+const MIN_CDL_WEIGHT = 4;
 
 let _patternAnalyzeInFlight = false;
 
@@ -16,48 +21,21 @@ function _analyze(logs) {
   const applied = DB.get('applied-patterns') || [];
   const newPatterns = [];
 
-  // A. Skip day detection — last 8 weeks
   const now = new Date();
   const eightWeeksAgo = new Date(now.getTime() - 56 * 86400000);
-  const recentBurns = burns.filter(b => new Date(b.date) >= eightWeeksAgo);
-  const dayScheduled = { 'Marți': 0, 'Miercuri': 0, 'Joi': 0, 'Vineri': 0, 'Sâmbătă': 0 };
-  const dayCompleted = { ...dayScheduled };
-  // Count scheduled and completed per day
-  for (let i = 0; i < 56; i++) {
-    const d = new Date(now.getTime() - i * 86400000);
-    const dayMap = [6,0,1,2,3,4,5];
-    const PROG_DAYS = ['Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă','Duminică'];
-    const progDay = PROG_DAYS[dayMap[d.getDay()]];
-    if (dayScheduled[progDay] !== undefined) {
-      dayScheduled[progDay]++;
-      const dStr = todDate(d);
-      if (recentBurns.some(b => b.date === dStr)) dayCompleted[progDay]++;
-    }
-  }
-  // Guard: need at least 4 total completed sessions AND 4 in last 4 weeks
-  // before flagging any day as high-skip. Without this, a user with 2 sessions
-  // across 56 days gets 87-100% skip rate on every workout day — false positive.
-  const totalCompleted = Object.values(dayCompleted).reduce((s, v) => s + v, 0);
-  if (totalCompleted < 4) return;
   const fourWeeksAgo = new Date(now.getTime() - 28 * 86400000);
+  const recentBurns = burns.filter(b => new Date(b.date) >= eightWeeksAgo);
+
+  // Guard: insufficient history for reliable pattern detection
+  if (recentBurns.length < 4) return;
   if (burns.filter(b => new Date(b.date) >= fourWeeksAgo).length < 4) return;
 
-  Object.entries(dayScheduled).forEach(([day, scheduled]) => {
-    if (scheduled < 4) return;
-    const skipRate = 1 - (dayCompleted[day] || 0) / scheduled;
-    if (skipRate > 0.4) {
-      const alreadyApplied = applied.some(p => p.type === 'SKIP_DAY' && p.day === day);
-      if (!alreadyApplied) {
-        newPatterns.push({ type: 'SKIP_DAY', day, skipRate: Math.round(skipRate*100), appliedAt: Date.now(), description: `${day} are ${Math.round(skipRate*100)}% skip rate — sesiune scurtată la esențiale` });
-      }
-    }
-  });
+  // SKIP_DAY detection removed — deprecated pattern type replaced by CDL-based LOW_ADHERENCE/HIGH_DEVIATION
 
-  // B. Early end pattern
+  // B. Early end pattern (from session-burns + early-stops)
   const earlyStops = DB.get('early-stops') || [];
-  const recentSessions = burns.filter(b => new Date(b.date) >= eightWeeksAgo);
-  if (recentSessions.length >= 5) {
-    const earlyEndRate = earlyStops.filter(e => new Date(e.date || 0) >= eightWeeksAgo).length / recentSessions.length;
+  if (recentBurns.length >= 5) {
+    const earlyEndRate = earlyStops.filter(e => new Date(e.date || 0) >= eightWeeksAgo).length / recentBurns.length;
     if (earlyEndRate > 0.4) {
       const alreadyApplied = applied.some(p => p.type === 'EARLY_END');
       if (!alreadyApplied) {
@@ -102,6 +80,101 @@ function _analyze(logs) {
     const all = [...applied, ...newPatterns];
     DB.set('applied-patterns', all.slice(-20));
   }
+
+  // CDL parallel write — runs regardless of legacy pattern results
+  try {
+    const cdlPatterns = analyzeFromCDL({ windowDays: 30 });
+    DB.set(CDL_PATTERNS_KEY, cdlPatterns);
+  } catch (_) {
+    // CDL analysis failure must not break legacy pattern flow
+  }
+}
+
+/**
+ * Analyse CDL entries for adherence/deviation/earlyEnd patterns.
+ * Synthetic entries are weighted 0.5× per ADR 011.
+ * Returns pattern array — does NOT write to storage.
+ */
+export function analyzeFromCDL({ windowDays = 30 } = {}) {
+  const patterns = [];
+
+  // STAGNATION from logs — always checked; logs are authoritative for weight progression
+  const logs = DB.get('logs') || [];
+  const exStagnation = [];
+  const exNames = [...new Set((logs || []).filter(l => !l.baseline && l.ex).map(l => l.ex))];
+  exNames.forEach(ex => {
+    const exLogs = logs.filter(l => l.ex === ex && l.w).slice(0, 12);
+    if (exLogs.length < 9) return;
+    const last3w = exLogs.slice(0, 3).map(l => l.w);
+    const prev3w = exLogs.slice(6, 9).map(l => l.w);
+    if (last3w.every(w => w === last3w[0]) && prev3w.every(w => w === prev3w[0]) && last3w[0] === prev3w[0]) {
+      exStagnation.push(ex);
+    }
+  });
+  if (exStagnation.length) {
+    patterns.push({
+      type: 'STAGNATION',
+      exercises: exStagnation,
+      appliedAt: Date.now(),
+      description: `${exStagnation.length} exerciții stagnate 3+ săptămâni`,
+    });
+  }
+
+  // CDL-derived patterns — gated by MIN_CDL_WEIGHT to prevent false positives on sparse data
+  const cutoff = Date.now() - windowDays * 86400000;
+  const allEntries = readAllActive();
+  const relevant = allEntries.filter(e => e.ts >= cutoff && e.outcome != null);
+
+  let totalWeight = 0;
+  let adheredWeight = 0;
+  let deviatedWeight = 0;
+  let earlyEndWeight = 0;
+  let executedWeight = 0;
+
+  for (const entry of relevant) {
+    const w = entry.synthetic ? 0.5 : 1.0;
+    totalWeight += w;
+    const { executed, deviation, earlyStop } = entry.outcome;
+    if (executed !== false) executedWeight += w;
+    if (executed === true && !deviation) adheredWeight += w;
+    if (deviation) deviatedWeight += w;
+    if (executed === 'partial' || earlyStop === true) earlyEndWeight += w;
+  }
+
+  if (totalWeight < MIN_CDL_WEIGHT) return patterns;
+
+  const adherenceRate = adheredWeight / totalWeight;
+  const deviationRate = deviatedWeight / totalWeight;
+  const earlyEndRate = executedWeight > 0 ? earlyEndWeight / executedWeight : 0;
+
+  if (adherenceRate < 0.5) {
+    patterns.push({
+      type: 'LOW_ADHERENCE',
+      adherenceRate: Math.round(adherenceRate * 100),
+      appliedAt: Date.now(),
+      description: `Adherence scăzută ultimele ${windowDays} zile: ${Math.round(adherenceRate * 100)}%. Reducem volum și verificăm contextul.`,
+    });
+  }
+
+  if (deviationRate > 0.3) {
+    patterns.push({
+      type: 'HIGH_DEVIATION',
+      deviationRate: Math.round(deviationRate * 100),
+      appliedAt: Date.now(),
+      description: `Deviation crescut: ${Math.round(deviationRate * 100)}% sesiuni diferite de propunere. Coach-ul ajustează propunerile.`,
+    });
+  }
+
+  if (earlyEndRate > 0.4) {
+    patterns.push({
+      type: 'EARLY_END',
+      earlyEndRate: Math.round(earlyEndRate * 100),
+      appliedAt: Date.now(),
+      description: `${Math.round(earlyEndRate * 100)}% sesiuni terminate devreme — program scurtat 20%`,
+    });
+  }
+
+  return patterns;
 }
 
 export function getAppliedPatterns() {
