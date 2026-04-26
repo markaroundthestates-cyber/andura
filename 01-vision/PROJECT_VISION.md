@@ -117,7 +117,22 @@ Zero data loss, zero crashes, "merge 5 din 5".
 Split code, Sentry proper, CI/CD, maintainability.
 
 ### FAZA 4 — Features NEW
-- 144 programe generative (2 gender × 4 vârste × 3 freq × 3 exp × 2 focus)
+
+#### Programe generative — parametric engine
+
+Coach generează plan baseline + ajustări parametrice pe dimensiuni:
+- Vârstă: recovery factor (-5% per decadă peste 35)
+- Gender: hipertrofie volume (+10% bărbați chest/back, +10% femei glutes/legs)
+- Frequency: density adjustment (3×/săpt → split per muscle group; 5×/săpt → push/pull/legs split)
+- Experience: progression rate (beginner: linear; intermediate: undulating; advanced: block periodization)
+- Focus: emphasis multiplier (cut: -15% volume, +10% intensity hold; bulk: +20% volume, +5% sets)
+
+Output: dynamic plan funcție matematică pe parametri, NU 144 templates statice.
+
+Rationale: dimensiunile NU sunt independente. 144 templates = combinatoric explosion fără upside, plus maintenance hell pe bug shared logic.
+
+Design complet: [[PARAMETRIC_PROGRAMS_DESIGN]]
+
 - Injury detection 3-layer (onboarding + behavioral + manual report)
 - Recovery protocol living
 - Health export PDF (medical brief, kineto, full history)
