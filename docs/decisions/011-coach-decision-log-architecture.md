@@ -1,8 +1,8 @@
 # ADR 011: Coach Decision Log (CDL) as Architectural Primitive
 
-**Status:** Accepted
-**Date:** 2026-04-25
-**See also:** [[DECISION_LOG]] | [[009-calibration-tiers]] | [[006-tier-storage-for-logs]] | [[004-rule-engine-numeric-priorities]] | [[OPUS_NUCLEAR_AUDIT_25APR]] | [[FINDINGS_MASTER]] (H30c)
+**Status:** Accepted (schema extended 2026-04-26)
+**Date:** 2026-04-25 (extended 2026-04-26)
+**See also:** [[DECISION_LOG]] | [[009-calibration-tiers]] | [[006-tier-storage-for-logs]] | [[004-rule-engine-numeric-priorities]] | [[OPUS_NUCLEAR_AUDIT_25APR]] | [[FINDINGS_MASTER]] (H30c) | [[013-auto-aggression-detection]] | [[014-onboarding-profile-typing]]
 
 ---
 
@@ -127,6 +127,74 @@ exerciseOverlap = jaccard(actualExercises, proposedExercises)
 These categories drive different engine responses:
 - low adherence + zero deviation → user executes partially (volume too high? fatigue?)
 - high deviation → user does not accept proposals (UX issue or coach misreads needs)
+
+### Schema Extension 2026-04-26
+
+Two fields added to `outcome` to support AA detection (per ADR 013) and onboarding/reconciliation flow (per ADR 014). Both are nullable to preserve backward compatibility — existing entries (synthetic from backfill, real from pre-extension code) will have `null` for both fields, and aggregation engines must handle null gracefully.
+
+#### `outcome.autoAggression` — nullable object
+
+Populated by AA detection layer (see ADR 013) on `populateOutcome` write. Default `null` until AA detection module is implemented and active.
+
+```typescript
+outcome.autoAggression: {
+  tier: 'none' | 'LOW' | 'MED' | 'HIGH',
+  signals: string[],          // e.g., ['volume_creep', 'frustration', 'recovery_debt']
+                              // empty array if tier === 'none'
+  escalating: boolean,        // true if MED tier persisted 2+ consecutive weeks
+  amplified: boolean,         // true if hyperfocus pattern detected (per ADR 013)
+  amplifierReason: string | null  // e.g., 'hyperfocus_pattern_8h_4days_per_week'
+} | null
+```
+
+**Semantics:**
+- `null` = AA detection not yet computed for this entry (pre-extension, synthetic backfill, or AA module not yet active)
+- Object with `tier: 'none'` = AA detection ran, no signals fired
+- Object with `tier: 'LOW' | 'MED' | 'HIGH'` = AA detection ran, signals fired
+
+**Why nullable instead of always-object:**
+- Honest semantics: `null` means "not evaluated"; `tier: 'none'` means "evaluated, found nothing"
+- Backfill entries: synthetic entries cannot have AA evaluation (no real outcome data) — null is correct
+- Pre-extension entries: existing CDL entries written before this extension have null; aggregation must handle this
+
+**Aggregation rule:** any module reading `outcome.autoAggression` must treat null as "no data" and exclude from rate calculations (similar to synthetic weighting per existing ADR 011 rules).
+
+#### `outcome.rest_marked` — nullable 3-state
+
+Populated by user action via UI (rest day prompt — see ADR 014 for prompt timing). Default `null` until user prompted or manually marks.
+
+```typescript
+outcome.rest_marked: true | false | null
+```
+
+**Semantics:**
+- `null` = no prompt shown to user, no signal yet (default for new entries)
+- `true` = user marked this day as rest legitim (planned recovery)
+- `false` = user marked this day as skip explicit (NOT rest, deliberate skip)
+
+**Why 3-state instead of boolean:**
+- Distinction matters for AA detection signal #5 (Recovery debt). User who never received prompt (null) is different signal-wise from user who received prompt and explicitly declined (false). Collapsing to boolean would lose this distinction.
+- See ADR 013 §Rest day semantic for full disambiguation table.
+
+**Rest day semantic (CDL-based, 4 cases):**
+
+| CDL state | rest_marked | Semantic |
+|---|---|---|
+| `outcome.executed === true` | any value | workout day |
+| `outcome.executed === false` | `null` | SKIPPED (no prompt) |
+| `outcome.executed === false` | `false` | SKIPPED (user explicit decline) |
+| `outcome.executed === false` | `true` | REST legitim |
+| no CDL entry for day | n/a | REST legitim (PROG didn't plan) |
+
+**Field write semantics defined in ADR 014** (onboarding) or spec EXEC_QUEUE follow-up. ADR 011 only defines field shape; UI flow that triggers writes is out of scope here.
+
+#### Synthetic backfill entries
+
+Both new fields default to `null` for synthetic entries:
+- `autoAggression: null` (no detection on synthetic — reconstructed context insufficient)
+- `rest_marked: null` (no user input on synthetic)
+
+This is consistent with existing synthetic weighting policy (0.5× weight, `synthetic: true` flag).
 
 ### Idempotency
 
@@ -351,3 +419,22 @@ Each subtask has its own EXEC_QUEUE entry with acceptance criteria and tests.
 ---
 
 *Authored by: Co-CTO chat (Opus). Reviewed by: Daniel (CEO + Product). Implementation: Claude Code (Sonnet) per TASK #30 subtask sequence.*
+
+---
+
+## Changelog
+
+### 2026-04-26 — Schema extension
+
+Added two nullable fields to `outcome`:
+
+- `outcome.autoAggression` — nullable object populated by AA detection layer per ADR 013. Contains `tier`, `signals[]`, `escalating`, `amplified`, `amplifierReason`. Default null pre-AA-module-active.
+- `outcome.rest_marked` — nullable 3-state (null/true/false) distinguishing "no prompt" from "explicit decline" from "rest legitim". Default null until UI prompt added.
+
+Both fields support synthetic backfill entries via null. Aggregation engines must handle null as "no data" and exclude from rate calculations.
+
+Field write semantics defined in ADR 014 (onboarding UI) or spec EXEC_QUEUE follow-up. ADR 011 defines field shape only.
+
+References: ADR 013 (auto-aggression detection), ADR 014 (onboarding profile typing — pending).
+
+Schema Reconsideration Trigger #8 acoperă acest tip de adăugare ca normal evolution post-implementation.
