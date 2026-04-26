@@ -270,6 +270,8 @@ export function skipEntry(opts = {}) {
  * @param {number} [opts.actualSets] - should be > proposedSets for volume creep
  * @param {string[]} [opts.addedExercises] - exercises added beyond proposed
  * @param {number[]} [opts.setsRPE]
+ * @param {string|null} [opts.deviationReason] - reason for deviation (null=impulsive, string=conscious — for Strategic signature)
+ * @param {number} [opts.kcal_target] - override kcal_target on context
  */
 export function deviationEntry(opts = {}) {
   const {
@@ -279,6 +281,8 @@ export function deviationEntry(opts = {}) {
     actualSets = 20,
     addedExercises = ['Cable Fly'],
     setsRPE = [],
+    deviationReason = null,
+    kcal_target = 2200,
   } = opts;
 
   const proposedEx = exercisesForType(sessionType);
@@ -292,11 +296,12 @@ export function deviationEntry(opts = {}) {
     synthetic: false,
     superseded: false,
     supersedes: null,
-    context: defaultContext(),
+    context: defaultContext({ kcal_target }),
     proposed: defaultProposed(sessionType, proposedEx, proposedSets),
     outcome: {
       executed: true,
       deviation: true,
+      deviationReason,
       actualSessionType: sessionType,
       matchScore: null,
       completedExercises: actualEx.length,
