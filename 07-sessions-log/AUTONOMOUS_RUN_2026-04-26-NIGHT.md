@@ -10,3 +10,14 @@
 Progress log created. Starting stack execution.
 
 ---
+
+### TASK 1 — 2026-04-27 01:31 — DONE
+isoWeek audit. File: docs/ISOWEEK_AUDIT_2026-04-26-NIGHT.md. Commit: e1e76a5.
+
+### TASK 2 — 2026-04-27 01:36 — DONE
+Dead code DEEP verification. File: 06-findings-tracker/DEAD_CODE_VERIFICATION_2026-04-26-NIGHT.md. Commit: 8372783.
+
+### TASK 3 — 2026-04-27 01:40 — DONE
+Hardcoded audit follow-up. File: docs/HARDCODED_AUDIT_FOLLOWUP_2026-04-26-NIGHT.md. Commit: 8ffd746.
+
+---
