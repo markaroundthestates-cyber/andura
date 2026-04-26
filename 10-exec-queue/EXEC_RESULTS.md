@@ -21,6 +21,17 @@ TEMPLATE — Claude Code completează automat după fiecare task:
 
 <!-- Rezultatele apar mai jos, cele mai recente primul: -->
 
+## TASK #30.6 — DONE ✅
+**Completed:** 2026-04-26 04:01
+**Duration:** ~20min
+**Summary:** patternLearning.js refactorizat să citească CDL ca sursă primară prin `analyzeFromCDL()`. SKIP_DAY detection eliminat (H30c root cause). `analyzeFromCDL({ windowDays=30 })`: citește CDL via `readAllActive()`, filtrează windowDays+outcome!=null, computează rate weighted (synthetic 0.5×) pentru adherence/deviation/earlyEnd, emite LOW_ADHERENCE (<50%), HIGH_DEVIATION (>30%), EARLY_END (>40%). STAGNATION din logs (authoritative pentru weight progression) mutat înainte de MIN_CDL_WEIGHT guard. `_analyze()`: SKIP_DAY block șters, guard restructurat (recentBurns.length), CDL parallel write adăugat în try/catch post applied-patterns write. `firebase.js`: 'cdl-patterns' adăugat la SYNC_KEYS. `CDL_PATTERNS_KEY` exportat ca constant.
+**Files changed:** `src/engine/patternLearning.js` (rewrite SKIP_DAY removal + analyzeFromCDL), `src/firebase.js` (SYNC_KEYS +1), `src/engine/__tests__/patternLearning.test.js` (creat: 13 teste)
+**Tests:** 371 → 384 pass (13 noi: empty CDL, null outcome filter, MIN_WEIGHT guard, LOW_ADHERENCE fires/no-fire, HIGH_DEVIATION, synthetic 0.5x ×2, SKIP_DAY never produced, STAGNATION from logs, EARLY_END from CDL, parallel write ×2). Zero existing broken.
+**Issues:** STAGNATION trebuia mutat înainte de `return patterns` early exit (CDL gating nu se aplică stagnation din logs) — fixat.
+**Commits:** 99fea7f
+
+---
+
 ## TASK #31 — DONE ✅
 **Completed:** 2026-04-26 03:01
 **Duration:** ~60min (split over 2 sessions — context compaction between)
