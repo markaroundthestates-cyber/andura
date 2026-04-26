@@ -5,6 +5,15 @@ Intrările noi se adaugă **la începutul fișierului** (cele mai recente primul
 
 ---
 
+## TASK #30.7 — DONE ✅
+**Completed:** 2026-04-26
+**Summary:** Rewritten `adherence.js` — workout pillar (30p) now routes through CDL `outcome.executed` as primary, with logs fallback for cold start / pre-30.4 / in-progress sessions. Added `computeAdherence({ windowDays=30 })` export with pure CDL metrics (proposed, executed, partial, skipped, deviated, score).
+**Files changed:** `src/engine/adherence.js`, `src/engine/__tests__/adherence.test.js`
+**Tests:** 398 total passing (17 in adherence: 3 legacy + 7 CDL pillar + 7 computeAdherence)
+**Issues:** NONE
+
+---
+
 <!--
 TEMPLATE — Claude Code completează automat după fiecare task:
 

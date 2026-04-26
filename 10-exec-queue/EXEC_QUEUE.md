@@ -1157,8 +1157,9 @@ Tests:
 **Model:** Sonnet
 **Type:** EXEC
 **Priority:** HIGH
-**Status:** PENDING
+**Status:** DONE ✅
 **Created:** 2026-04-25
+**Completed:** 2026-04-26
 **Description:** Rewrite `src/engine/adherence.js` să citească CDL ca primary source pentru adherence score. Înlocuiește current logic care contorizează raw logs against PROG static.
 
 New logic:
