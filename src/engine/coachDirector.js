@@ -174,6 +174,8 @@ export class CoachDirector {
       proactiveAlerts,
       recompile: ctx.recompile,
       calibrationLevel: ctx.calibrationLevel,
+      patterns: ctx.cdlPatterns ?? [],
+      patternsSuppressed: ctx.patternsSuppressed ?? true,
     };
 
     // ── CDL write (ADR 011) ───────────────────────────────────────────────

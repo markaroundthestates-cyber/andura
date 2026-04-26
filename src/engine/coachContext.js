@@ -4,6 +4,9 @@ import { getMuscleState } from './muscleMap.js';
 import { DB, tod } from '../db.js';
 import { getUserConfig } from '../config/user.js';
 import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
+import { analyzeFromCDL } from './patternLearning.js';
+import * as coachDecisionLog from '../util/coachDecisionLog.js';
+import { CALIBRATION_LEVELS } from './calibration.js';
 
 export function buildCoachContext() {
   const now = new Date();
@@ -39,6 +42,7 @@ export function buildCoachContext() {
     allLogs,
     recentLogs,
     patterns: getActivePatterns(),
+    ...getCDLPatterns(),
     currentDate: now,
     isBeforeJuly20_2026: now < july20_2026,
     isDeficit: kcalTarget < 2200,
@@ -176,7 +180,28 @@ function getUnavailableEquipment() {
   catch { return []; }
 }
 
-// ── Pattern helpers ────────────────────────────────────────────────────────
+// ── CDL pattern helpers (ADR 011) ─────────────────────────────────────────
+// CDL-sourced patterns for banner — suppressed when real CDL entries < threshold.
+// Separate from getActivePatterns() to preserve coachDirector.applyPatterns compat.
+
+function getCDLPatterns() {
+  try {
+    const entries = coachDecisionLog.readAllActive(e =>
+      e.synthetic !== true &&
+      e.outcome != null &&
+      e.outcome.executed != null
+    );
+    const realCDLCount = entries.length;
+    const minReal = CALIBRATION_LEVELS.INITIAL.minSessions;
+    const patternsSuppressed = realCDLCount < minReal;
+    const cdlPatterns = patternsSuppressed ? [] : analyzeFromCDL({ windowDays: 30 });
+    return { cdlPatterns, realCDLCount, patternsSuppressed };
+  } catch {
+    return { cdlPatterns: [], realCDLCount: 0, patternsSuppressed: true };
+  }
+}
+
+// ── Legacy pattern helpers ─────────────────────────────────────────────────
 // Citește din 'auto-recommendations' (teste/UI) și 'applied-patterns' (engine)
 // Normalizează type la lowercase pentru coachDirector.applyPatterns
 

@@ -12,6 +12,36 @@ import { sessionCache, setCachedDirector, uiToggleFlags } from './state.js';
 import { formatSetsReps, getGroupColor, getDisplayTime, isInCutPhase } from './util.js';
 import { renderPRWall } from './pr.js';
 
+const PATTERN_BANNER_STRINGS = {
+  LOW_ADHERENCE: (p) => `📊 Adherence scăzută ultimele 30 zile: ${p.adherenceRate}%. Reducem volum și verificăm contextul.`,
+  HIGH_DEVIATION: (p) => `📊 Deviation crescut: ${p.deviationRate}% sesiuni diferite de propunere. Coach-ul ajustează propunerile.`,
+  EARLY_END: (p) => `📊 ${p.earlyEndRate}% sesiuni terminate devreme — program scurtat 20%`,
+  STAGNATION: (p) => `📊 ${p.exercises?.length || 0} exerciții stagnate 3+ săptămâni`,
+  PEAK_HOURS: (p) => `📊 Peak hours detectat: ${p.hours || 'analiză activă'}`,
+};
+
+export function shouldShowPatternBanner(ctx) {
+  if (!ctx) return false;
+  if (ctx.patternsSuppressed === true) return false;
+  if (!Array.isArray(ctx.patterns)) return false;
+  return ctx.patterns.length > 0;
+}
+
+export function formatPatternMessage(pattern) {
+  if (!pattern || !pattern.type) return null;
+  if (pattern.type === 'SKIP_DAY') {
+    throw new Error('SKIP_DAY pattern is deprecated — should not appear in ctx.patterns');
+  }
+  const formatter = PATTERN_BANNER_STRINGS[pattern.type];
+  if (!formatter) {
+    if (typeof console !== 'undefined') {
+      console.warn('[renderIdle] Unknown pattern type:', pattern.type);
+    }
+    return null;
+  }
+  return formatter(pattern);
+}
+
 function renderLastSessionMemory(dayLabel) {
   const logs = DB.get('logs') || [];
   const burns = DB.get('session-burns') || [];
@@ -179,17 +209,10 @@ export async function renderCoachIdle(){
     const _isInCut = isInCutPhase();
     const verdict = readinessScore != null ? getReadinessVerdict(readinessScore, { isInCut: _isInCut }) : null;
 
-    // Exercise list — apply pattern filtering and skip occupied equipment
+    // Exercise list — skip occupied/unavailable equipment
     const occupiedEquip = DB.get('equipment-occupied-session') || [];
     const unavailEquip = DB.get('unavailable-equipment') || [];
-    const _calPatternsOn = _dirSession?.calibrationLevel?.patternsEnabled !== false;
-    const patterns = _calPatternsOn ? (DB.get('applied-patterns') || []) : [];
-    const skipPattern = patterns.find(p => p.type === 'SKIP_DAY' && p.day === tp.day);
     let rawExList = (tp.ex||[]).filter(e => !unavailEquip.includes(cleanEx(e.n||'')));
-    if (skipPattern) {
-      const compounds = rawExList.filter(e => COMPOUND_EX.includes(cleanEx(e.n||'')));
-      if (compounds.length >= 2) rawExList = compounds;
-    }
     const exList = rawExList;
     const todayDayIdx=dayMap[new Date().getDay()];
     const isExpanded=!!uiToggleFlags.exListExpanded[todayDayIdx];
@@ -209,9 +232,17 @@ export async function renderCoachIdle(){
           <div style="font-size:11px;color:var(--text3);margin-top:2px">${banner}</div></div>
         </div>`;
       })()}
-      ${skipPattern?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
-        <div style="font-size:11px;color:var(--accent2);font-weight:600">📊 Program scurtat la ${exList.length} exerciții esențiale (${skipPattern.skipRate}% skip ${tp.day})</div>
-      </div>`:''}
+      ${(()=>{
+        if (!shouldShowPatternBanner(_dirSession?.context)) return '';
+        const ctx = _dirSession.context;
+        const messages = ctx.patterns
+          .map(formatPatternMessage)
+          .filter(m => m !== null);
+        if (messages.length === 0) return '';
+        return `<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(255,149,0,0.06);border-radius:var(--rs);border:1px solid rgba(255,149,0,0.2)">
+          ${messages.map(m => `<div style="font-size:11px;color:var(--accent2);font-weight:600">${m}</div>`).join('')}
+        </div>`;
+      })()}
       ${_dirSession?.patternApplied?`<div style="margin:0 16px 10px;padding:10px 14px;background:rgba(160,100,255,0.06);border-radius:var(--rs);border:1px solid rgba(160,100,255,0.2)">
         <div style="font-size:11px;color:var(--purple);font-weight:600">🧠 ${_dirSession.patternApplied.reason}</div>
       </div>`:''}

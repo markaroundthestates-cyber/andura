@@ -164,3 +164,68 @@ test('Mature user (initial tier) still sees patterns when enabled', async ({ pag
   const appliedPatterns = await page.evaluate(() => localStorage.getItem('applied-patterns'));
   expect(appliedPatterns, 'Patterns should be preserved for initial tier user').not.toBeNull();
 });
+
+// ── TASK #30.8 — CDL-sourced banner + suppression ────────────────────────────
+
+test('CDL synthetic-only history suppresses pattern banner', async ({ page }) => {
+  await page.addInitScript(() => {
+    window._suppressFirebaseSync = true;
+    localStorage.setItem('onboarding-done', 'true');
+    const syntheticEntries = [
+      { id: 's1', date: '2026-04-01', synthetic: true, superseded: false,
+        context: {}, proposed: {}, outcome: { executed: true } },
+      { id: 's2', date: '2026-04-02', synthetic: true, superseded: false,
+        context: {}, proposed: {}, outcome: { executed: true } },
+    ];
+    localStorage.setItem('coach-decisions', JSON.stringify(syntheticEntries));
+    localStorage.setItem('logs', JSON.stringify([
+      { ex: 'Bench', w: 60, reps: 8, date: '2026-04-01', session: 1 }
+    ]));
+  });
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(1500);
+  const bodyText = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  expect(bodyText).not.toMatch(/Adherence scăzută/i);
+  expect(bodyText).not.toMatch(/Deviation crescut/i);
+  expect(bodyText).not.toMatch(/sesiuni terminate devreme/i);
+});
+
+test('CDL with 5 real entries low adherence shows LOW_ADHERENCE banner', async ({ page }) => {
+  await page.addInitScript(() => {
+    window._suppressFirebaseSync = true;
+    localStorage.setItem('onboarding-done', 'true');
+    // 5 real entries, 4 skipped, 1 executed → ~20% adherence
+    const realEntries = Array.from({ length: 5 }, (_, i) => ({
+      id: `r${i}`, date: `2026-04-1${i}`, synthetic: false, superseded: false,
+      context: { calibrationLevel: 'INITIAL' }, proposed: { sessionType: 'PUSH' },
+      outcome: { executed: i === 0, deviation: false }
+    }));
+    localStorage.setItem('coach-decisions', JSON.stringify(realEntries));
+    localStorage.setItem('logs', JSON.stringify([
+      { ex: 'Bench', w: 60, reps: 8, date: '2026-04-10', session: 1 }
+    ]));
+  });
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(1500);
+  const bodyText = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  expect(bodyText).toMatch(/Adherence scăzută/i);
+});
+
+test('SKIP_DAY pattern from legacy applied-patterns NOT rendered post-30.8', async ({ page }) => {
+  await page.addInitScript(() => {
+    window._suppressFirebaseSync = true;
+    localStorage.setItem('onboarding-done', 'true');
+    // Legacy applied-patterns with SKIP_DAY — parallel write period, still present
+    localStorage.setItem('applied-patterns', JSON.stringify([
+      { type: 'SKIP_DAY', day: 'Marți', skipRate: 88, confidence: 0.88, appliedAt: Date.now() }
+    ]));
+    // CDL empty → ctx.cdlPatterns = [] → banner suppressed
+    localStorage.setItem('coach-decisions', '[]');
+    localStorage.setItem('logs', '[]');
+  });
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForTimeout(1500);
+  const bodyText = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  expect(bodyText).not.toMatch(/Marți are 88%/i);
+  expect(bodyText).not.toMatch(/Program scurtat la/i);
+});
