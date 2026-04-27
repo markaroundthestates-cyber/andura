@@ -113,7 +113,9 @@ test('Reset Test Data removes contaminated residue', async ({ page }) => {
   if (resetResult !== null) {
     const afterApplied = await page.evaluate(() => localStorage.getItem('applied-patterns'));
     const afterAutoRec = await page.evaluate(() => localStorage.getItem('auto-recommendations'));
-    expect(afterApplied, 'applied-patterns should be null after reset').toBeNull();
+    // applied-patterns PRESERVED post-resetTestData per ADR 011 CDL_KEYS semantic (TASK #2, 52e09f1)
+    expect(afterApplied, 'applied-patterns should be PRESERVED after resetTestData (CDL_KEYS per ADR 011)').not.toBeNull();
+    // auto-recommendations rămâne TEST_RESIDUE_KEYS — legitim wipe la resetTestData
     expect(afterAutoRec, 'auto-recommendations should be null after reset').toBeNull();
   } else {
     // resetTestData not exposed — skip rather than fail
