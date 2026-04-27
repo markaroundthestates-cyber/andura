@@ -1,4 +1,21 @@
 ﻿# DECISION LOG â€” SalaFull
+## 2026-04-27 — ADR 018 Engine Extensibility Architecture ACCEPTED
+
+**Status:** 7/7 decision points approved post-triangulation review.
+
+**Componente specificate:**
+1. Dimension Registry (static array)
+2. Standardized Dimension Contract (async-capable)
+3. Decision Cluster Engine (stacked stages: GATE → ADJUSTMENT → ENHANCEMENT)
+4. Schema Versioning + Migration Runner (eager, per-dimension)
+5. Feature Flags Infrastructure (per-user rollout, hash bucketing)
+
+**Migration path:** AA + Profile Typing port via gradual strangler pattern.
+
+**Cross-refs:** [[018-engine-extensibility-architecture]] | [[004-rule-engine-numeric-priorities]] | [[013-auto-aggression-detection]] | [[014-onboarding-profile-typing]]
+
+**Next:** ADR 016 Vitality Layer (depends ADR 018 done) sau build infrastructure ADR 018.
+
 ## 2026-04-27 â€” TASK #7 Friction Modal HIGH Tier LIVE + E2E Fix + 2 fail-uri pre-existing flagged
 
 **Scope:** 3 commits substanÈ›iale post-handover sesiunea 27 apr.
