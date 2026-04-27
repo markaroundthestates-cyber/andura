@@ -1,4 +1,26 @@
 ﻿# DECISION LOG â€” SalaFull
+## 2026-04-27 — ADR 017 Demographic Prior Database ACCEPTED
+
+**Status:** 7/7 decision points approved post-Opus draft review.
+
+**Componente specificate:**
+1. Profile schema — 11 dimensions (age, sex, kg, height, BMI, job, lifestyle, goal, training_history, equipment, time_availability)
+2. Profile mix — 50 manually crafted (6 anchor personas + 44 edge cases) + 450 algorithmic = 500 total
+3. Behavioral generator — rule-based shape + stochastic Gaussian noise (calibratabil, NU ML)
+4. Storage — runtime in-memory generation, ~10 MB, ~50ms startup, zero persistence
+5. Plugin architecture (ADR 018) — DemographicPriorDimension cu standardized contract, T0 active singura
+6. Tier gating — T0-only hard gate (T1+ skip dimension entirely)
+7. Lookup — K-NN linear scan K=10 (sub-ms la N=500)
+8. Lifecycle — 100+ users reali T1+ + Daniel manual review = trigger deprecation Phase 3
+
+**Anchor personas:** Daniel HR 36, Gigel mecanic 45, Ana educatoare 55, Iasmina OF 18, Marius office 28, Elena mama 35.
+
+**Cross-refs:** [[017-demographic-prior-database]] | [[018-engine-extensibility-architecture]] | [[016-vitality-layer]] | [[014-onboarding-profile-typing]] | [[011-coach-decision-log-architecture]]
+
+**Reconsider trigger:** N=100 users threshold poate sub-cover cohorts; Daniel manual review = sanity check implicit.
+
+**Next:** Sprint Foundation ADR 018 (build infrastructure: Dimension Registry + Standardized Contract + Decision Cluster + Schema Versioning + Feature Flags). LAST SPEC DONE — toate fundațiile arhitecturale locked.
+
 ## 2026-04-27 — ADR 014 Update Profile Typing Tier-Aware ACCEPTED
 
 **Status:** 3/3 decision points update approved post-Opus draft review.
