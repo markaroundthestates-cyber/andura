@@ -10,22 +10,8 @@
  *            ADR 011 (CDL schema, extension 2026-04-26 — autoAggression + rest_marked)
  */
 
-// ── ISO week (same algorithm as stagnationDetector.js — not exported from there) ─
-
-/**
- * Return ISO 8601 week string 'YYYY-WNN' for a date string ('YYYY-MM-DD') or timestamp.
- * Thursday rule: week belongs to the year containing its Thursday.
- */
-export function _isoWeek(date) {
-  const d = typeof date === 'string' ? new Date(date) : new Date(date);
-  const thursday = new Date(d);
-  thursday.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 3);
-  const jan4 = new Date(thursday.getFullYear(), 0, 4);
-  const startOfWeek1 = new Date(jan4);
-  startOfWeek1.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
-  const week = Math.floor((thursday - startOfWeek1) / (7 * 86400000)) + 1;
-  return `${thursday.getFullYear()}-W${String(week).padStart(2, '0')}`;
-}
+import { isoWeek } from '../util/isoWeek.js';
+export { isoWeek as _isoWeek };
 
 // ── Tier computation ──────────────────────────────────────────────────────────
 
@@ -212,7 +198,7 @@ export function _detectRecoveryDebt(entries) {
 
   for (const entry of entries) {
     if (!entry.date) continue;
-    const week = _isoWeek(entry.date);
+    const week = isoWeek(entry.date);
     if (!byWeek[week]) byWeek[week] = 0;
     // Only count explicit rest_marked=true on non-executed days (per ADR 011 rest semantics)
     if (entry.outcome?.executed === false && entry.outcome?.rest_marked === true) {
@@ -266,7 +252,7 @@ export function computeEscalation(cdlEntries) {
 
   const byWeek = {};
   for (const entry of withAA) {
-    const week = _isoWeek(entry.date);
+    const week = isoWeek(entry.date);
     if (!byWeek[week]) byWeek[week] = [];
     byWeek[week].push(entry.outcome.autoAggression.tier);
   }

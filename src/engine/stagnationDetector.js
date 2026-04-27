@@ -3,22 +3,7 @@
 // și numără câte săptămâni consecutive nu au progresat.
 
 import { brzycki1RM } from './weaknessDetector.js';
-
-/**
- * Returnează numărul săptămânii ISO (YYYY-WW) pentru un timestamp.
- */
-function isoWeek(ts) {
-  // ISO 8601: week containing the year's first Thursday.
-  const d = new Date(ts || Date.now());
-  // Move to nearest Thursday (ISO week belongs to the year of its Thursday)
-  const thursday = new Date(d);
-  thursday.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 3);
-  const jan4 = new Date(thursday.getFullYear(), 0, 4);
-  const startOfWeek1 = new Date(jan4);
-  startOfWeek1.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
-  const week = Math.floor((thursday - startOfWeek1) / (7 * 86400000)) + 1;
-  return `${thursday.getFullYear()}-W${String(week).padStart(2, '0')}`;
-}
+import { isoWeek } from '../util/isoWeek.js';
 
 /**
  * Calculează 1RM mediu pentru logs date (un singur exercițiu).
