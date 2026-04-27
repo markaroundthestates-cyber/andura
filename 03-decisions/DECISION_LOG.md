@@ -1,4 +1,43 @@
 # DECISION LOG — SalaFull
+## 2026-04-27 — Sprint A AA Pipeline LIVE + Cleanup Batch + getBF Dead Code Closed
+
+**Scope:** 13 commits substanțiale într-o sesiune.
+
+**Sprint A — AA detection pipeline integrat end-to-end (ADR 013):**
+- TASK #1: AA write-side în session.js (eded0c1) — populateOutcome cu autoAggression + setsRPE
+- TASK #4: AA read-side în coachContext.js (db798bc) — 30d window aggregation, ctx.autoAggression populated
+- TASK #5: applyAAAdjustments în coachDirector.js (6a30f1e) — MED → aaWarning, HIGH → aaBlocked + volume reduction 30%
+- TASK #2: CDL_KEYS category în dataRegistry.js (52e09f1)
+- TASK #3: sf.userConfig în SYNC_KEYS (8dde67f)
+
+**TASK #6 — sys.js coverage gap closed:**
+- Phase 1: lazy refactor _bio → getters (e344ecb) — getUserConfig() at call time, NU module load
+- Phase 2: 11 tests sys.js (207f40f) — TDEE/BF/phase coverage solidă
+
+**Cleanup batch (audit findings night closed):**
+- isoWeek centralization (4066d92): src/util/isoWeek.js + 7 tests boundary, 2 callers refactored — closes M3g+H13g
+- Readiness thresholds extract (23a3867): READINESS_PR/HIGH/MED/LOW exports + drift fix proactiveEngine `<60` → `<55` — closes M1
+- getBF dead code elimination (e97e468): Option B per Opus spec, calibration-only formula + invariance test — closes finding 810ea68
+
+**Profile Typing infrastructure (ADR 014 §6 Step 1):**
+- profile-history în USER_DATA_KEYS + SYNC_KEYS (17d08d9) — closes audit night gap (PROFILE_TYPING_INTEGRATION_AUDIT_NIGHT.md §6)
+
+**Quality bar:**
+- 524 → 559 tests (+35, zero regresii)
+- 7 audit findings closed
+- AA pipeline validation pending pe sesiune reală (mâine PUSH/PULL day)
+
+**Decizii cheie:**
+- getBF: **Option B** (calibration-only) per Opus 1m 30s audit. Anti-recommendation Opus: NU implementa hybrid cu fudge factors arbitrari. Așteaptă 30+ CDL entries + DEXA validation pentru sofistication.
+- Velocity calibrare confirmată: Sonnet refactor mecanic ~5-15 min real, Opus focused audit pe scope concentrat 1m 30s
+
+**ADR cross-refs:**
+- [[013-auto-aggression-detection]] — Sprint A integrare
+- [[014-onboarding-profile-typing]] §6 — Storage Step 1 done
+- [[015-getbf-calibration-only]] — getBF formula decision (NEW)
+
+---
+
 ## 2026-04-26 — TASK #30 PARTIAL — Coach Decision Log Adopted (9/10 subtasks)
 
 **Scope:** ADR 011 implementation — Coach Decision Log (CDL) ca primitive arhitectural. Înlocuiește H30c (false banner) fix izolat cu refactor structural. Supersedes Task #28 + #29.

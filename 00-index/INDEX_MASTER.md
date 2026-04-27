@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 26 apr 2026 (TASK #30.10 — H30c FIXED, CDL architecture adopted)
-**Status:** FAZA 2 ✅ COMPLETE + Task #28-#31.5 + TASK #30 (CDL, 9/10 subtasks). 414 tests. 0 OPEN bugs.
+**Ultima actualizare:** 27 apr 2026 (Sprint A AA pipeline LIVE + cleanup batch + audit findings closed)
+**Status:** FAZA 2 ✅ + CDL ✅ + AA pipeline LIVE end-to-end (ADR 013) + Profile typing storage ready (ADR 014 §6 Step 1). 559 tests. 0 OPEN bugs.
 
 ---
 
