@@ -1,6 +1,6 @@
 # ADR 018: Engine Extensibility Architecture
 
-**Status:** Draft
+**Status:** Accepted
 **Date:** 2026-04-27
 **See also:** [[004-rule-engine-numeric-priorities]] | [[011-coach-decision-log-architecture]] | [[013-auto-aggression-detection]] | [[014-onboarding-profile-typing]] | [[INSIGHTS_BACKLOG]] | [[DECISION_LOG]]
 
@@ -533,4 +533,16 @@ Vezi secțiunea finală.
 
 ---
 
-*ADR 018 — Draft 2026-04-27. Author: Co-CTO chat (Opus). Pending Daniel sign-off pe DP-1 până DP-7. Status: ready pentru review.*
+## Sign-Off — 2026-04-27
+
+Daniel approved 7/7 decision points after triangulation review (Claude chat pre-stance vs Opus draft).
+
+- DP-1 Registry static array: APPROVED
+- DP-2 Contract async-capable: APPROVED
+- DP-3 Recommendation numeric priority + semantic stage hybrid: APPROVED
+- DP-4 Cluster stacked stages (GATE→ADJUSTMENT→ENHANCEMENT): APPROVED
+- DP-5 Migration eager: APPROVED
+- DP-6 Feature flags per-user rollout cu hash bucketing: APPROVED
+- DP-7 Migration tempo gradual strangler: APPROVED
+
+*ADR 018 — Accepted 2026-04-27*
