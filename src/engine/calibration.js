@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from '../constants.js';
 // ══ CALIBRATION TIERS — User maturity levels for engine feature gating ═══════
 // 5 tiers from cold start (day 0) to optimized (180+ days).
 // Engines only run when enabled for the current tier — prevents false positives
@@ -172,7 +173,7 @@ export function detectCalibrationLevel(ctx) {
     .filter(Boolean);
   if (nonBaselineDates.length > 0) {
     const lastDate = new Date(Math.max(...nonBaselineDates.map(d => d.getTime())));
-    const daysSince = Math.floor((Date.now() - lastDate.getTime()) / 86400000);
+    const daysSince = Math.floor((Date.now() - lastDate.getTime()) / MS_PER_DAY);
     levelName = _applyInactivityDecay(levelName, daysSince);
   }
 
@@ -209,7 +210,7 @@ export const contextSelectionEnabled = false;
  */
 export function applyRollingWindow(logs, level) {
   if (!level.rollingWindowMonths) return logs;
-  const cutoff = Date.now() - level.rollingWindowMonths * 30 * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - level.rollingWindowMonths * 30 * MS_PER_DAY;
   return logs.filter(log => {
     const raw = log.date || log.ts;
     const d = raw ? new Date(raw) : null;

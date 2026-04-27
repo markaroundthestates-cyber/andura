@@ -16,6 +16,7 @@ import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
 import { inferSessionType } from '../util/cdlBackfill.js';
 import { tod } from '../db.js';
 import { READINESS_MED } from './readiness.js';
+import { MS_PER_DAY } from '../constants.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -320,7 +321,7 @@ function _computeDaysSinceLastSession(allLogs) {
   const sessionTimestamps = [...new Set(allLogs.map(l => l.session).filter(Boolean))];
   if (sessionTimestamps.length === 0) return null;
   const lastTs = Math.max(...sessionTimestamps);
-  return Math.floor((Date.now() - lastTs) / 86400000);
+  return Math.floor((Date.now() - lastTs) / MS_PER_DAY);
 }
 
 function _computeLastSessionType(allLogs) {

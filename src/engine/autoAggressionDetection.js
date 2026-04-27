@@ -11,6 +11,7 @@
  */
 
 import { isoWeek } from '../util/isoWeek.js';
+import { MS_PER_DAY } from '../constants.js';
 export { isoWeek as _isoWeek };
 
 // ── Tier computation ──────────────────────────────────────────────────────────
@@ -78,7 +79,7 @@ export function _detectVolumeCreep(entries) {
       if (streakLen === 0) streakStart = i;
       streakLen++;
       if (streakLen >= 3) {
-        const spanDays = (new Date(workouts[i].date) - new Date(workouts[streakStart].date)) / 86400000;
+        const spanDays = (new Date(workouts[i].date) - new Date(workouts[streakStart].date)) / MS_PER_DAY;
         if (spanDays <= 21) return true;  // 21-day anti-stale window
       }
     } else {

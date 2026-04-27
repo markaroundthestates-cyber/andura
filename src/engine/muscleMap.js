@@ -1,3 +1,5 @@
+import { MS_PER_HOUR } from '../constants.js';
+
 export const MUSCLE_HEADS = {
   chest_upper: { recoveryHours: 60, label: 'Piept sus' },
   chest_mid:   { recoveryHours: 60, label: 'Piept mijloc' },
@@ -62,13 +64,13 @@ export function getMuscleState(logs) {
     const rpeContrib = l.rpe ? Math.min(l.rpe / 10, 1) : 0.7;
     ms.primary.forEach(m => {
       const recovH = MUSCLE_HEADS[m]?.recoveryHours || 48;
-      const hoursAgo = (now - logTime) / 3600000;
+      const hoursAgo = (now - logTime) / MS_PER_HOUR;
       const decay = Math.exp(-hoursAgo / recovH);
       state[m] = Math.min(100, state[m] + 15 * 1.5 * rpeContrib * decay);
     });
     ms.secondary.forEach(m => {
       const recovH = MUSCLE_HEADS[m]?.recoveryHours || 48;
-      const hoursAgo = (now - logTime) / 3600000;
+      const hoursAgo = (now - logTime) / MS_PER_HOUR;
       const decay = Math.exp(-hoursAgo / recovH);
       state[m] = Math.min(100, state[m] + 15 * 1.0 * rpeContrib * decay);
     });

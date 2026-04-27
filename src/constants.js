@@ -21,6 +21,9 @@ export const EX_SETS = {
   'Pushdown':3,'Pec Deck / Cable Fly':3,'Leg Curl':3,'Leg Extension':3,'Calf Raises':4
 };
 
+export const MS_PER_DAY = 86400000;
+export const MS_PER_HOUR = 3600000;
+
 export const EX_REPS = {
   'DB Shoulder Press':'6–10','Incline DB Press':'6–10','Flat DB Press':'8–12',
   'Lat Pulldown':'8–12','Cable Row':'8–12','Chest-Supported Row':'10–12',

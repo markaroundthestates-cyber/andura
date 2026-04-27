@@ -1,4 +1,5 @@
 import { DB, todDate } from '../db.js';
+import { MS_PER_DAY } from '../constants.js';
 import { readAllActive } from '../util/coachDecisionLog.js';
 
 export const CDL_PATTERNS_KEY = 'cdl-patterns';
@@ -22,8 +23,8 @@ function _analyze(logs) {
   const newPatterns = [];
 
   const now = new Date();
-  const eightWeeksAgo = new Date(now.getTime() - 56 * 86400000);
-  const fourWeeksAgo = new Date(now.getTime() - 28 * 86400000);
+  const eightWeeksAgo = new Date(now.getTime() - 56 * MS_PER_DAY);
+  const fourWeeksAgo = new Date(now.getTime() - 28 * MS_PER_DAY);
   const recentBurns = burns.filter(b => new Date(b.date) >= eightWeeksAgo);
 
   // Guard: insufficient history for reliable pattern detection
@@ -121,7 +122,7 @@ export function analyzeFromCDL({ windowDays = 30 } = {}) {
   }
 
   // CDL-derived patterns — gated by MIN_CDL_WEIGHT to prevent false positives on sparse data
-  const cutoff = Date.now() - windowDays * 86400000;
+  const cutoff = Date.now() - windowDays * MS_PER_DAY;
   const allEntries = readAllActive();
   const relevant = allEntries.filter(e => e.ts >= cutoff && e.outcome != null);
 
