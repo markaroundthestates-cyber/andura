@@ -24,12 +24,16 @@ const sampleEntry = (overrides = {}) => ({
 });
 
 describe('dimensionRegistry — DIMENSIONS array', () => {
-  it('starts empty in Sprint Foundation Batch 1', () => {
+  it('contains AUTO_AGGRESSION dimension (Strangler Phase 1)', () => {
     expect(Array.isArray(DIMENSIONS)).toBe(true);
-    expect(DIMENSIONS).toHaveLength(0);
+    const aa = DIMENSIONS.find(d => d.id === 'AUTO_AGGRESSION');
+    expect(aa).toBeDefined();
+    expect(aa.stage).toBe('ENHANCEMENT');
+    expect(aa.enabledFlag).toBe('aa_via_cluster');
+    expect(typeof aa.module.analyze).toBe('function');
   });
 
-  it('passes registry validation when empty', () => {
+  it('passes registry validation', () => {
     expect(() => assertValidRegistry()).not.toThrow();
   });
 });

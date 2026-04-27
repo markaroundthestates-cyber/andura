@@ -8,6 +8,7 @@
 // dynamic register() API. YAGNI clearly at scale N=1.
 
 import { isEnabled } from '../util/featureFlags.js';
+import * as autoAggressionDimension from './dimensions/autoAggressionDimension.js';
 
 /**
  * @typedef {'GATE'|'ADJUSTMENT'|'ENHANCEMENT'} DimensionStage
@@ -54,7 +55,21 @@ import { isEnabled } from '../util/featureFlags.js';
  *
  * @type {Array<DimensionRegistryEntry>}
  */
-export const DIMENSIONS = [];
+export const DIMENSIONS = [
+  // Phase 1 — Strangler AA (ADR 018 §6). Always-on at every calibration tier
+  // (matches legacy applyAAAdjustments behavior); gated behind aa_via_cluster
+  // feature flag (default 0% rollout) so production keeps running the legacy
+  // path until parity is validated.
+  {
+    id: autoAggressionDimension.DIMENSION_ID,
+    module: autoAggressionDimension,
+    stage: 'ENHANCEMENT',
+    priority: 95,
+    enabledFlag: 'aa_via_cluster',
+    requiresCalibration: null,
+    schemaVersion: 1,
+  },
+];
 
 /**
  * Calibration tier ordering (ADR 009). Index = severity (higher = more demanding).
