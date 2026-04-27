@@ -19,22 +19,12 @@ export const SYS = {
   getBF() {
     const override = DB.get('bf-override');
     if (override !== null && override !== undefined) return parseFloat(override);
+
     const kg = this.getCurrentKg();
-    const bmi = kg / ((this.HEIGHT/100)**2);
-    // Refined for athletic males + age correction
-    let bf = (1.20 * bmi) + (0.23 * this.AGE) - 16.2;
-    // Muscular build correction — lifting history
-    const logs = DB.get('logs') || [];
-    const spLogs = logs.filter(l => l.ex === 'DB Shoulder Press' && l.w).slice(0,5);
-    if (spLogs.length > 0) {
-      const avgW = spLogs.reduce((a,b) => a+b.w, 0) / spLogs.length;
-      if (avgW / kg > 0.18) bf -= 1.5;
-    }
-    // Calibrate from start: if started at 23% with 111.4kg, adjust proportionally
     const kgLost = this.START_KG - kg;
     // Assume 75% fat loss, 25% muscle (realistic in deficit with training)
     const fatLost = kgLost * 0.75;
-    const startFatKg = this.START_KG * (this.START_BF/100);
+    const startFatKg = this.START_KG * (this.START_BF / 100);
     const currentFatKg = Math.max(3, startFatKg - fatLost);
     const calculatedBF = (currentFatKg / kg) * 100;
     return Math.round(Math.max(5, Math.min(45, calculatedBF)) * 10) / 10;

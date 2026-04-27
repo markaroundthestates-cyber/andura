@@ -51,25 +51,18 @@ describe('SYS — getBF()', () => {
     expect(bfLow).toBeLessThanOrEqual(45);
   });
 
-  it('T3: muscular build correction modifies unused `bf` var — calculatedBF (return value) unchanged', () => {
-    // The `bf` variable (BMI formula) is corrected by -1.5 when avgW/kg > 0.18,
-    // but the function returns `calculatedBF` (start/kgLost calibration), not `bf`.
-    // This test documents the dead code path and guards against accidental "fix" that changes behavior.
+  it('T3: BF independent de logs (calibration din start, nu din lifting history)', () => {
     mockStorage['weights'] = { '2026-04-27': 100 };
-
     mockStorage['logs'] = [
-      { ex: 'DB Shoulder Press', w: 22, ts: Date.now() },
-      { ex: 'DB Shoulder Press', w: 20, ts: Date.now() - 1000 },
-      { ex: 'DB Shoulder Press', w: 21, ts: Date.now() - 2000 },
-      // avgW=21, kg=100 → ratio 0.21 > 0.18 → correction fires on unused var
+      { ex: 'DB Shoulder Press', w: 25, ts: Date.now() },
+      { ex: 'DB Shoulder Press', w: 24, ts: Date.now() - 1000 },
     ];
-    const bfWithCorrection = SYS.getBF();
+    const bfWithLogs = SYS.getBF();
 
     mockStorage['logs'] = [];
-    const bfNoCorrection = SYS.getBF();
+    const bfNoLogs = SYS.getBF();
 
-    expect(typeof bfWithCorrection).toBe('number');
-    expect(bfWithCorrection).toBe(bfNoCorrection); // dead code — no effect on return
+    expect(bfWithLogs).toBe(bfNoLogs); // logs irrelevant pentru calibration formula
   });
 });
 
