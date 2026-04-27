@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   DIMENSIONS,
   CALIBRATION_TIER_ORDER,
@@ -8,6 +8,7 @@ import {
   assertValidDimensionEntry,
   assertValidRegistry,
 } from '../dimensionRegistry.js';
+import { DEV_FLAGS_KEY } from '../../util/featureFlags.js';
 
 const validModule = { analyze: () => ({}) };
 
@@ -123,10 +124,11 @@ describe('dimensionRegistry — getActiveDimensions', () => {
     expect(active).toHaveLength(1);
   });
 
-  it('ignores flag check entirely when no opts.flags is supplied', () => {
+  it('delegates to featureFlags.isEnabled when no opts.flags supplied (production path)', () => {
+    // Unknown flag, no dev override → isEnabled fails-closed → filtered out.
     const dims = [sampleEntry({ id: 'X', enabledFlag: 'whatever' })];
     const active = getActiveDimensions({ calibrationLevel: 'optimized' }, { dimensions: dims });
-    expect(active).toHaveLength(1);
+    expect(active).toHaveLength(0);
   });
 
   it('combines tier + flag filters', () => {
@@ -141,6 +143,54 @@ describe('dimensionRegistry — getActiveDimensions', () => {
     );
     // A: tier closed; B: flag off; C: passes
     expect(active.map(d => d.id)).toEqual(['C']);
+  });
+});
+
+describe('dimensionRegistry — getActiveDimensions integration with featureFlags', () => {
+  const cleanLs = () => {
+    try {
+      localStorage.removeItem(DEV_FLAGS_KEY);
+      localStorage.removeItem('user-id');
+      localStorage.removeItem('device-id');
+    } catch { /* ignore */ }
+  };
+  beforeEach(cleanLs);
+  afterEach(cleanLs);
+
+  it('uses real isEnabled when no opts.flags provided — dev override true keeps dimension', () => {
+    localStorage.setItem('device-id', 'dev-test-user');
+    localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ test_flag_v1: true }));
+    const dims = [sampleEntry({ id: 'X', enabledFlag: 'test_flag_v1' })];
+    const active = getActiveDimensions({ calibrationLevel: 'optimized' }, { dimensions: dims });
+    expect(active.map(d => d.id)).toEqual(['X']);
+  });
+
+  it('uses real isEnabled when no opts.flags provided — dev override false filters out', () => {
+    localStorage.setItem('device-id', 'dev-test-user');
+    localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ test_flag_v1: false }));
+    const dims = [sampleEntry({ id: 'X', enabledFlag: 'test_flag_v1' })];
+    const active = getActiveDimensions({ calibrationLevel: 'optimized' }, { dimensions: dims });
+    expect(active).toHaveLength(0);
+  });
+
+  it('unknown flag without dev override fails-closed (filters out)', () => {
+    // No dev override, no FLAGS entry → isEnabled returns false → dimension filtered.
+    const dims = [sampleEntry({ id: 'X', enabledFlag: 'never_registered_flag' })];
+    const active = getActiveDimensions({ calibrationLevel: 'optimized' }, { dimensions: dims });
+    expect(active).toHaveLength(0);
+  });
+
+  it('passes ctx.userId through to isEnabled (deterministic per-user resolution)', () => {
+    // Force-enable via dev override on specific flag; expect dimension active
+    // regardless of userId (dev override wins). Sanity that ctx.userId path
+    // doesn't crash when userId provided directly.
+    localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ test_flag_v1: true }));
+    const dims = [sampleEntry({ id: 'X', enabledFlag: 'test_flag_v1' })];
+    const active = getActiveDimensions(
+      { calibrationLevel: 'optimized', userId: 'explicit-user-id' },
+      { dimensions: dims }
+    );
+    expect(active).toHaveLength(1);
   });
 });
 

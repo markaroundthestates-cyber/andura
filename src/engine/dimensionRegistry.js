@@ -7,6 +7,8 @@
 // Per ADR 018 DP-1 (APPROVED 2026-04-27): static export-const array, NU
 // dynamic register() API. YAGNI clearly at scale N=1.
 
+import { isEnabled } from '../util/featureFlags.js';
+
 /**
  * @typedef {'GATE'|'ADJUSTMENT'|'ENHANCEMENT'} DimensionStage
  *
@@ -72,14 +74,16 @@ export const CALIBRATION_TIER_ORDER = [
  *
  * Active = (calibration gate open) AND (feature flag enabled OR no flag).
  *
- * In Batch 1 the flag check is best-effort: if `opts.flags` is provided,
- * a flag explicitly set to `false` disables the dimension; missing flag
- * keys default to enabled. Batch 2 wires this to the real Feature Flags
- * Infrastructure (ADR 018 §5) with per-user hash bucketing.
+ * Flag resolution order:
+ *   - When `opts.flags` is provided (testing path): explicit map, key set to
+ *     `false` disables the dimension; missing keys default to enabled.
+ *   - When `opts.flags` is NOT provided (production path): delegate to
+ *     `featureFlags.isEnabled(flagId, ctx.userId)` per ADR 018 §5 + DP-6
+ *     (per-user hash bucketing).
  *
- * @param {object} ctx - CoachContext snapshot (uses ctx.calibrationLevel)
+ * @param {object} ctx - CoachContext snapshot (uses ctx.calibrationLevel + ctx.userId)
  * @param {object} [opts]
- * @param {object} [opts.flags] - Resolved flag map { flagId: boolean }
+ * @param {object} [opts.flags] - Explicit flag map { flagId: boolean } — testing override
  * @param {Array<DimensionRegistryEntry>} [opts.dimensions] - Override registry (testing)
  * @returns {Array<DimensionRegistryEntry>}
  */
@@ -89,7 +93,13 @@ export function getActiveDimensions(ctx, opts = {}) {
 
   return dimensions.filter(dim => {
     if (!isCalibrationGateOpen(dim.requiresCalibration, ctxLevel)) return false;
-    if (dim.enabledFlag && flags && flags[dim.enabledFlag] === false) return false;
+    if (dim.enabledFlag) {
+      if (flags) {
+        if (flags[dim.enabledFlag] === false) return false;
+      } else if (!isEnabled(dim.enabledFlag, ctx?.userId)) {
+        return false;
+      }
+    }
     return true;
   });
 }
