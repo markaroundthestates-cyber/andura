@@ -73,7 +73,7 @@ export function runMigrations(opts = {}) {
       } catch (err) {
         const ctx = { migration: description, fromVersion, toVersion, storageKey: key, op: 'read' };
         logger.warn?.(`[Migrations] Failed to read storage key '${key}':`, err);
-        sentry.captureException?.(err, { tags: { component: 'migrationRunner', severity: 'warning', ...ctx } });
+        _safeSentry(sentry, err, { tags: { component: 'migrationRunner', severity: 'warning', ...ctx } });
         errors.push({ ...ctx, reason: _stringifyError(err) });
         continue;
       }
@@ -93,8 +93,8 @@ export function runMigrations(opts = {}) {
           continue;
         }
         const version = getEntryVersion(entry);
-        if (version >= toVersion) {
-          // Already at or beyond target — idempotent skip.
+        if (version !== fromVersion) {
+          // Chain integrity: skip if already past this step OR version gap (not our shape).
           next.push(entry);
           continue;
         }
@@ -115,7 +115,7 @@ export function runMigrations(opts = {}) {
             op: 'migrate',
           };
           logger.error?.(`[Migrations] CRITICAL: migrate() threw on '${key}':`, err, ctx);
-          sentry.captureException?.(err, { tags: { component: 'migrationRunner', severity: 'critical', ...ctx } });
+          _safeSentry(sentry, err, { tags: { component: 'migrationRunner', severity: 'critical', ...ctx } });
           errors.push({ ...ctx, reason: _stringifyError(err) });
           next.push(entry);
           aborted = true;
@@ -127,7 +127,7 @@ export function runMigrations(opts = {}) {
       } catch (err) {
         const ctx = { migration: description, fromVersion, toVersion, storageKey: key, op: 'persist' };
         logger.error?.(`[Migrations] CRITICAL: persist failed for '${key}':`, err);
-        sentry.captureException?.(err, { tags: { component: 'migrationRunner', severity: 'critical', ...ctx } });
+        _safeSentry(sentry, err, { tags: { component: 'migrationRunner', severity: 'critical', ...ctx } });
         errors.push({ ...ctx, reason: _stringifyError(err) });
       }
     }
@@ -143,7 +143,7 @@ export function runMigrations(opts = {}) {
       logger.warn?.(
         `[Migrations] Large migration: ${migratedThisMigration} entries (> ${LARGE_MIGRATION_THRESHOLD}) for '${description}'`
       );
-      sentry.captureException?.(new Error(`Large migration: ${migratedThisMigration} entries`), {
+      _safeSentry(sentry, new Error(`Large migration: ${migratedThisMigration} entries`), {
         tags: {
           component: 'migrationRunner',
           severity: 'warning',
@@ -158,6 +158,12 @@ export function runMigrations(opts = {}) {
   }
 
   return { migrationsRun: sorted.length, totalEntriesMigrated, perMigration, errors };
+}
+
+function _safeSentry(sentry, err, ctx) {
+  if (!sentry?.captureException) return;
+  try { sentry.captureException(err, ctx); }
+  catch { /* swallow Sentry errors so runner never dies from monitoring */ }
 }
 
 function _stringifyError(err) {

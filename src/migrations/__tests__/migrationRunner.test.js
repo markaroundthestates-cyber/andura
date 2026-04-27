@@ -166,6 +166,41 @@ describe('migrationRunner — chained migrations', () => {
     expect(db._store['cdl'][0]).toEqual({ id: 'a', foo: 1, bar: 2, schemaVersion: 3 });
   });
 
+  it('M2 skips v1 entries when M1 partial-failed (chain integrity, audit HIGH-1)', () => {
+    // M1: v1→v2, M2: v2→v3. M1 fails on entry 'BOOM', leaving it at v1.
+    // M2 must NOT attempt to migrate that v1 entry (would receive wrong shape).
+    const db = makeDb({ 'cdl': [{ id: 'ok' }, { id: 'BOOM' }] });
+    const m1 = {
+      fromVersion: 1, toVersion: 2, description: 'add foo',
+      storageKeys: ['cdl'],
+      migrate(e) {
+        if (e.id === 'BOOM') throw new Error('fail');
+        return { ...e, foo: 1 };
+      },
+    };
+    const m2 = {
+      fromVersion: 2, toVersion: 3, description: 'add bar',
+      storageKeys: ['cdl'],
+      migrate: e => ({ ...e, bar: 2 }),
+    };
+    runMigrations({ migrations: [m1, m2], db, sentry: makeSentry(), logger: makeLogger() });
+    const persisted = db._store['cdl'];
+    expect(persisted[0]).toEqual({ id: 'ok', foo: 1, bar: 2, schemaVersion: 3 }); // fully migrated
+    expect(persisted[1]).toEqual({ id: 'BOOM' }); // stuck at v1, untouched by M2
+  });
+
+  it('chain gap (M1 v1→v2 + M3 v3→v4, no M2) leaves v2 entries untouched by M3', () => {
+    // Entries at v2 must not be processed by M3 (fromVersion=3 → version !== fromVersion skips).
+    const db = makeDb({ 'cdl': [{ id: 'a', schemaVersion: 2 }] });
+    const m3 = {
+      fromVersion: 3, toVersion: 4, description: 'v3→v4',
+      storageKeys: ['cdl'],
+      migrate: e => ({ ...e, extra: true }),
+    };
+    runMigrations({ migrations: [m3], db, sentry: makeSentry(), logger: makeLogger() });
+    expect(db._store['cdl'][0]).toEqual({ id: 'a', schemaVersion: 2 }); // unchanged
+  });
+
   it('sorts out-of-order migrations by fromVersion ascending', () => {
     const db = makeDb({ 'cdl': [{ id: 'a' }] });
     const m2 = {
@@ -259,6 +294,19 @@ describe('migrationRunner — failsafe on migrate() throws', () => {
       expect.objectContaining({ tags: expect.objectContaining({ severity: 'critical', op: 'persist' }) })
     );
     expect(result.errors.some(e => e.op === 'persist')).toBe(true);
+  });
+
+  it('survives Sentry SDK throwing (fail-loud invariant, audit HIGH-2)', () => {
+    const db = makeDb({ 'cdl': [{ id: 'BOOM' }] });
+    const throwingSentry = { captureException: vi.fn(() => { throw new Error('Sentry SDK crash'); }) };
+    const m = {
+      fromVersion: 1, toVersion: 2, description: 'risky',
+      storageKeys: ['cdl'],
+      migrate() { throw new Error('entry boom'); },
+    };
+    expect(() =>
+      runMigrations({ migrations: [m], db, sentry: throwingSentry, logger: makeLogger() })
+    ).not.toThrow();
   });
 
   it('captures DB.get failure + skips key', () => {
