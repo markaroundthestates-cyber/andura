@@ -336,9 +336,10 @@ describe('demoteToTier2', () => {
 // ── Test 15 ────────────────────────────────────────────────────────────────
 describe('demoteToTier3', () => {
   it('aggregates entries older than 1 year into monthly archive', () => {
+    // Fixed mid-month to prevent month-boundary flakiness on tsBase+3d
     vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-15T12:00:00Z'));
     const now = Date.now();
-    vi.setSystemTime(now);
 
     // 4 entries from ~14 months ago, 2 PUSH and 2 PULL
     const tsBase = now - 425 * 86400000; // ~14 months ago
