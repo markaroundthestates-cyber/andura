@@ -9,7 +9,8 @@ import { showSessionRating } from './rating.js';
 import { wakeLockRef, getCachedDirector } from './state.js';
 import { state } from '../../state.js';
 import { renderCoachIdle } from './renderIdle.js';
-import { populateOutcome, computeMatchScore, readActiveForDate } from '../../util/coachDecisionLog.js';
+import { populateOutcome, computeMatchScore, readActiveForDate, readAllActive } from '../../util/coachDecisionLog.js';
+import { detectAutoAggression } from '../../engine/autoAggressionDetection.js';
 
 export function saveDraft() {
   if (!state.sessActive || !state.sessStart) return;
@@ -199,7 +200,7 @@ export function endSession() {
     }
   });
 
-  // ── CDL outcome (ADR 011) ─────────────────────────────────────────────
+  // ── CDL outcome (ADR 011 + ADR 013 AA detection) ──────────────────
   try {
     if (state.cdlEntryId) {
       const _today = tod();
@@ -212,16 +213,44 @@ export function endSession() {
           actualExercises,
           actualSets,
         });
-        populateOutcome(_today, {
+
+        // ADR 011 ext — collect per-set RPE for AA fatigue marker
+        const setsRPE = state.sessLog
+          .filter(s => typeof s.rpe === 'number')
+          .map(s => s.rpe);
+
+        // ADR 013 — compute auto-aggression on currentEntry + 30d history
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - 30);
+        const recentCDL = readAllActive(e =>
+          e.date < _today && new Date(e.date) >= cutoff
+        );
+
+        const outcomeBase = {
           executed: hasEarlyStop ? 'partial' : true,
           earlyStop: hasEarlyStop,
           earlyStopReason: state.earlyStopReason,
           actualExercises,
           actualSets,
+          proposedSets: activeEntry.proposed?.proposedSets ?? 0,  // CRITICAL — needed by AA detector
           actualDurationMins: mins,
           matchScore: matchResult.matchScore,
           deviation: matchResult.deviation,
+          deviationReason: null,
           rating: null,
+          rest_marked: null,  // ADR 011 — null pe workout days
+          setsRPE,
+        };
+
+        const aaResult = detectAutoAggression({
+          currentEntry: { date: _today, outcome: outcomeBase, context: activeEntry.context },
+          recentEntries: recentCDL,
+          hyperfocusData: null,  // FAZA 4 — analytics integration deferred
+        });
+
+        populateOutcome(_today, {
+          ...outcomeBase,
+          autoAggression: aaResult,
         });
       }
     } else {
