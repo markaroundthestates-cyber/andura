@@ -20,8 +20,8 @@ beforeEach(cleanLs);
 afterEach(cleanLs);
 
 describe('featureFlags — FLAGS registry', () => {
-  it('starts empty in Sprint Foundation Batch 2', () => {
-    expect(FLAGS).toEqual({});
+  it('exposes aa_via_cluster flag (Strangler AA Phase 1, default 0%)', () => {
+    expect(FLAGS.aa_via_cluster).toEqual({ rollout: 0, default: false });
   });
 
   it('FLAGS is frozen (immutable)', () => {

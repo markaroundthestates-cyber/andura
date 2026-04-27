@@ -32,7 +32,14 @@
  *
  * @type {Object<string, FlagDefinition>}
  */
-export const FLAGS = Object.freeze({});
+export const FLAGS = Object.freeze({
+  // Strangler switch + dimension-activation flag for AA detection (ADR 018 §6
+  // Phase 1). When ON, coachDirector routes AA through the Decision Cluster
+  // + autoAggressionAdapter; when OFF, legacy applyAAAdjustments runs.
+  // Default 0% — production behavior unchanged. Ramp via _devFlags or
+  // explicit edit here once golden-master parity is validated.
+  aa_via_cluster: { rollout: 0, default: false },
+});
 
 /** localStorage key holding the dev override JSON map. */
 export const DEV_FLAGS_KEY = '_devFlags';
