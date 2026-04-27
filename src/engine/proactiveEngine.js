@@ -2,6 +2,7 @@
 // Returnează alerte acționabile pentru user (proteină, somn, PR, recuperare etc.)
 import { KCAL_TARGET } from '../constants.js';
 import { tod, todDate, todTs } from '../db.js';
+import { READINESS_PR, READINESS_MED } from './readiness.js';
 
 /**
  * Check 1: Deficit de proteină.
@@ -50,12 +51,12 @@ export function checkSleepDebt(readiness) {
     .filter(v => v !== null);
 
   if (values.length < 3) return null;
-  const consecutiveLow = values.slice(0, 3).every(v => v < 60);
+  const consecutiveLow = values.slice(0, 3).every(v => v < READINESS_MED);
   if (consecutiveLow) {
     return {
       type: 'sleep_debt',
       severity: 'warning',
-      message: `Readiness sub 60 pentru ${values.slice(0, 3).length} zile consecutive. Prioritizează somnul.`,
+      message: `Readiness sub ${READINESS_MED} pentru ${values.slice(0, 3).length} zile consecutive. Prioritizează somnul.`,
       values: values.slice(0, 3),
     };
   }
@@ -72,7 +73,7 @@ export function checkPROpportunity(readiness, logs) {
     const r = readiness[today];
     return typeof r === 'object' ? r?.score : (typeof r === 'number' ? r : null);
   })();
-  if (!todayScore || todayScore < 85) return null;
+  if (!todayScore || todayScore < READINESS_PR) return null;
 
   // Check last PR
   const twoWeeksAgo = Date.now() - 14 * 24 * 3600 * 1000;

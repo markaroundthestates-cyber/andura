@@ -1,6 +1,11 @@
 import { DB, tod, todDate } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 
+export const READINESS_PR   = 85;
+export const READINESS_HIGH = 70;
+export const READINESS_MED  = 55;
+export const READINESS_LOW  = 40;
+
 export const READINESS_LABELS = {
   1: { emoji: '😴', label: 'Epuizat', sub: 'Somn prost, energie zero' },
   2: { emoji: '😕', label: 'Obosit',  sub: 'Sub formă normală' },
@@ -32,17 +37,17 @@ export function getReadinessVerdict(score, { isInCut = false } = {}) {
   if (score == null) return { label: null, color: 'var(--text3)', volumeMultiplier: 1.0, canPR: false };
   if (isInCut) {
     // În CUT, PR-urile sunt rare — nu promovăm 'Zi de PR'
-    if (score >= 85) return { label: 'Sesiune solidă',    color: 'var(--green)',    volumeMultiplier: 1.0,  canPR: false };
-    if (score >= 70) return { label: 'Sesiune normală',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
-    if (score >= 55) return { label: 'Sesiune moderată',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
-    if (score >= 40) return { label: 'Sesiune ușoară',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
+    if (score >= READINESS_PR)   return { label: 'Sesiune solidă',    color: 'var(--green)',    volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_HIGH) return { label: 'Sesiune normală',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_MED)  return { label: 'Sesiune moderată',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
+    if (score >= READINESS_LOW)  return { label: 'Sesiune ușoară',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
     return { label: 'Odihnă',             color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
   } else {
     // Phase normală / BULK — logica originală
-    if (score >= 85) return { label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
-    if (score >= 70) return { label: 'Sesiune normală',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
-    if (score >= 55) return { label: 'Sesiune moderată',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
-    if (score >= 40) return { label: 'Sesiune ușoară',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
+    if (score >= READINESS_PR)   return { label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
+    if (score >= READINESS_HIGH) return { label: 'Sesiune normală',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_MED)  return { label: 'Sesiune moderată',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
+    if (score >= READINESS_LOW)  return { label: 'Sesiune ușoară',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
     return { label: 'Odihnește-te',       color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
   }
 }

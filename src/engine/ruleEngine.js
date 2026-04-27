@@ -2,6 +2,7 @@
 // Fiecare regulă are o prioritate (100=critical, 0=lowest).
 // evaluate(ctx) returnează { action, trace, winner, overridden }
 // Dacă o regulă mai prioritară se activează, cele mai mici sunt înregistrate în `overridden`.
+import { READINESS_PR, READINESS_LOW } from './readiness.js';
 
 export const RULES = {
   REST_DAY:              { id: 'REST_DAY',              priority: 100, action: 'rest' },
@@ -24,10 +25,10 @@ export function evaluate(ctx) {
   const fired = [];
 
   // Priority 100 — REST: readiness critically low
-  if (ctx.readiness?.score !== null && ctx.readiness?.score < 40) {
+  if (ctx.readiness?.score !== null && ctx.readiness?.score < READINESS_LOW) {
     fired.push({
       ...RULES.REST_DAY,
-      reason: `readiness=${ctx.readiness.score} < 40`,
+      reason: `readiness=${ctx.readiness.score} < ${READINESS_LOW}`,
     });
   }
 
@@ -41,7 +42,7 @@ export function evaluate(ctx) {
   }
 
   // Priority 85 — CUT_CONSERVATIVE: in cut phase with high readiness → cap PR attempts
-  if (ctx.isInCut && (ctx.readiness?.score ?? 0) >= 85) {
+  if (ctx.isInCut && (ctx.readiness?.score ?? 0) >= READINESS_PR) {
     fired.push({
       ...RULES.CUT_CONSERVATIVE,
       reason: `CUT phase + readiness=${ctx.readiness?.score} ≥ 85 — no PR attempts`,

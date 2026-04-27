@@ -1,6 +1,7 @@
 // ══ WHY ENGINE — Explică recomandările coachului ══════════════════════════
 // explainRecommendation(exercise, ctx) returnează categorii de motive
 // structurate: performance, phase, readiness, equipment, pattern.
+import { READINESS_PR, READINESS_HIGH, READINESS_MED } from './readiness.js';
 
 /**
  * @param {object} exercise - { name, recommendation: { kg, status, statusLabel, rir, repsTarget } }
@@ -53,11 +54,11 @@ export function explainRecommendation(exercise, ctx) {
   // ── Category: readiness ────────────────────────────────────────────────
   const score = ctx?.readiness?.score;
   if (score !== null && score !== undefined) {
-    if (score >= 85) {
+    if (score >= READINESS_PR) {
       reasons.push({ category: 'readiness', text: `Readiness excelent (${score}) — poți da totul azi.` });
-    } else if (score >= 70) {
+    } else if (score >= READINESS_HIGH) {
       reasons.push({ category: 'readiness', text: `Readiness bun (${score}) — sesiune normală.` });
-    } else if (score >= 55) {
+    } else if (score >= READINESS_MED) {
       reasons.push({ category: 'readiness', text: `Readiness moderat (${score}) — volum redus cu 15%.` });
     } else {
       reasons.push({ category: 'readiness', text: `Readiness scăzut (${score}) — sesiune ușoară recomandată.` });

@@ -15,6 +15,7 @@ import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
 import { inferSessionType } from '../util/cdlBackfill.js';
 import { tod } from '../db.js';
+import { READINESS_MED } from './readiness.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -66,7 +67,7 @@ export class CoachDirector {
       const recompile = recompileWeek({ logs: logsForEngines, readinessScore: ctx.readiness.score });
       ctx.recompile = recompile;
       ctx.missedSessions = recompile.deficit > 0 ? 1 : 0;
-      ctx.fatigueIndex = ctx.readiness.score < 55 ? 0.9 : 0;
+      ctx.fatigueIndex = ctx.readiness.score < READINESS_MED ? 0.9 : 0;
     } catch { /* augmentation is best-effort */ }
 
     // ── Rule Engine decision ───────────────────────────────────────────────

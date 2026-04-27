@@ -8,6 +8,7 @@ import { analyzeFromCDL } from './patternLearning.js';
 import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { CALIBRATION_LEVELS } from './calibration.js';
 import { aggregateAutoAggression } from './autoAggressionDetection.js';
+import { READINESS_PR, READINESS_HIGH, READINESS_MED, READINESS_LOW } from './readiness.js';
 
 export function buildCoachContext() {
   const now = new Date();
@@ -62,10 +63,10 @@ export function buildCoachContext() {
 
 function calculateVolumeMultiplier(readinessScore) {
   if (readinessScore === null) return 1.0;
-  if (readinessScore >= 85) return 1.1;
-  if (readinessScore >= 70) return 1.0;
-  if (readinessScore >= 55) return 0.85;
-  if (readinessScore >= 40) return 0.7;
+  if (readinessScore >= READINESS_PR)   return 1.1;
+  if (readinessScore >= READINESS_HIGH) return 1.0;
+  if (readinessScore >= READINESS_MED)  return 0.85;
+  if (readinessScore >= READINESS_LOW)  return 0.7;
   return 0;
 }
 
