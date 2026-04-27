@@ -49,6 +49,65 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 
 ---
 
+## Strangler Integration Pre-work (Batch 2 Audit Defer-uri 2026-04-27)
+
+**Status:** Deferred. Findings de mai jos sunt non-blocante pentru Batch 2 mini-fix. Re-audit la strangler integration (prima dimensiune portată = AA detection).
+**Source:** Adversarial audit Batch 2 — 2026-04-27. Audit full: `docs/audit/BATCH_2_AUDIT_2026-04-27.md`.
+
+### MED-2 — `assertValidMigration` validator lipsește
+**Where:** `src/migrations/migrationRunner.js` — nu există validare pe shape-ul unui migration object la registration
+**Why deferred:** MIGRATIONS e empty în Batch 2. Bug surface zero până la prima dimensiune portată.
+**Proposed fix:** `assertValidMigration(m)` helper (verifică fromVersion, toVersion, storageKeys, migrate() signature) + apelat la module init în dev mode. Add tests.
+
+### MED-3 — `initSentry` ordering risc: migrations pot rula înainte de Sentry init
+**Where:** `src/util/sentry.js` + call site in `main.js` (sau echivalent app init)
+**Why deferred:** Migrations array e empty — zero Sentry calls în Batch 2. Becomes real la prima migration live.
+**Proposed fix:** `await initSentry()` înainte de `runMigrations()` în app init sequence. Document ordering în `initSentry` JSDoc.
+
+### MED-4 — `hasActiveDevFlags()` util lipsă
+**Where:** `src/util/featureFlags.js` — `readDevFlags()` e internal; nu există API public pentru "are dev overrides active?"
+**Why deferred:** Dev-only UX nicety. Zero impact prod.
+**Proposed fix:** `export function hasActiveDevFlags()` → `readDevFlags() !== null`. Util pentru dev overlay / warning banner.
+
+### LOW-1 — `_safeSentry` pattern nu e shared cu decisionCluster.js
+**Where:** `src/engine/decisionCluster.js` — direct `sentry?.captureException?.()` fără try/catch
+**Proposed fix:** Extrage `_safeSentry` într-un shared util (`src/util/safeSentry.js`) și importă în ambele.
+
+### LOW-2 — `runMigrations` nu validează shape-ul migration objects (assertValidMigration pending MED-2)
+**Where:** `src/migrations/migrationRunner.js:65` — `for (const migration of sorted)` fără shape check
+**Depends:** MED-2 fix above.
+
+### LOW-3 — `MIGRATIONS` nu se validează la module init în dev mode
+**Where:** `src/migrations/MIGRATIONS.js`
+**Proposed fix:** Dev bootstrap `assertValidRegistry(MIGRATIONS)` (similar LOW-3 Batch 1 pentru dimensionRegistry).
+
+### LOW-4 — `getEntryVersion` nu loghează când schemaVersion non-numeric (silent downgrade la v1)
+**Where:** `src/migrations/migrationRunner.js:26`
+**Proposed fix:** `if (entry && 'schemaVersion' in entry && typeof entry.schemaVersion !== 'number') logger.warn(...)` — only at DEBUG level.
+
+### LOW-5 — `resolveUserId` preferință 'user-id' over 'device-id' nedocumentată în ADR 011
+**Where:** `src/util/featureFlags.js:70` + ADR 011
+**Proposed fix:** Adaugă notă în ADR 011 §Implementation că 'user-id' e rezervat multi-tenant (post-auth), 'device-id' e UUID anon. În featureFlags.js JSDoc deja documentat.
+
+### LOW-6 — `hashStringDjb2` e exportat dar fără `@internal` sau `@private` marker
+**Where:** `src/util/featureFlags.js:50`
+**Proposed fix:** Adaugă `@internal` JSDoc tag. Alternativ nu exporta — dar exportul e util pentru tests.
+
+### LOW-7 — `isEnabled` nu loghează în dev mode când flag unknown (silent fail-closed)
+**Where:** `src/util/featureFlags.js:125`
+**Proposed fix:** `if (process.env.NODE_ENV !== 'production') console.warn('[FeatureFlags] Unknown flag:', flagId)` — ca să catches typos în development.
+
+### LOW-8 — `FLAGS` registry lipsă validare la freeze (non-boolean defaults / rollout out 0..1)
+**Where:** `src/util/featureFlags.js:35` — `Object.freeze({})` direct, fără assertValidFlags()
+**Proposed fix:** `assertValidFlags(FLAGS)` helper cu `rollout` ∈ [0,1] + `default` boolean check. Apelat la module init.
+
+### LOW-9 — `readDevFlags` nu validează că valorile din JSON sunt boolean
+**Where:** `src/util/featureFlags.js:83`
+**Issue:** `{ test_flag: 1 }` (number) trece prin readDevFlags și `dev[flagId] === true` check face `1 === true` = false (corect dar silent confusing în dev).
+**Proposed fix:** Filter non-boolean values + warn: `if (typeof v !== 'boolean') { console.warn(...); delete parsed[k]; }`.
+
+---
+
 ## ADR 018 — Engine Extensibility Architecture (PRIORITY 1, Sesiunea NEXT)
 
 **Status:** Spec NEXT priority, NU built încă.
