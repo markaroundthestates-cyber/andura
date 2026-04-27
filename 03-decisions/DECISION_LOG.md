@@ -1,4 +1,57 @@
 # DECISION LOG — SalaFull
+## 2026-04-27 — TASK #7 Friction Modal HIGH Tier LIVE + E2E Fix + 2 fail-uri pre-existing flagged
+
+**Scope:** 3 commits substanțiale post-handover sesiunea 27 apr.
+
+**E2E fix applied-patterns assertion (commit 8d2dae9):**
+- `tests/e2e/smoke/critical-paths.spec.js:116-119` — assertion update post TASK #2 CDL_KEYS migration
+- `applied-patterns` PRESERVED la resetTestData per ADR 011 (CDL_KEYS semantic), NU wiped
+- `auto-recommendations` rămâne wiped (TEST_RESIDUE_KEYS legitim)
+- Fix: 2 linii schimbate + 2 comment-uri. Strategie A (update assertion, NU split în 2 teste).
+- Motiv: unit tests dataCleanup acoperă deja fullReset wipe CDL — E2E split = duplicat cost zero benefit
+- 559/559 unit tests maintained. Push to main.
+
+**TASK #7 — HIGH tier friction modal UI complete (commit d4a167c):**
+- `src/pages/coach/aaFrictionModal.js` (NEW) + `aaFrictionModal.test.js` (24 tests, target era 12+)
+- Bottom-sheet mobile-first, swipe-down = cancel, force dark backdrop
+- Typing confirmation **data-injected** (decision update ADR 014 §5): `"continui peste {N} signals în 14 zile"` — frază unică per modal, anti-reflex paste
+- Escalation pattern: a 2-a override în 7 zile = phrase mai lung + warning vizibil
+- State persistence localStorage `aa-friction-pending` (refresh = state restored, NU reset)
+- Plan side-by-side comparison: original tăiat vs redus (transparency maxim, anti-manipulativ)
+- Override trust user (D6=A): restore plan original + log `outcome.aaOverride=true` în CDL — friction-ul = conștientizare, NU pedeapsă
+- `coachDirector.applyAAAdjustments` — preserve `aaOriginalSets` ÎNAINTE de reduction (1 line addition pentru override restore)
+- `session.js` populateOutcome — adaugă `aaOverride` + `aaOverrideRationale` fields
+- 583/583 tests passing (559 baseline + 24 new). Push to main.
+
+**Status final ADR 013:**
+- AA pipeline END-TO-END LIVE: detection → write CDL → read context → apply session → UI intervention
+- Sprint A (TASK #1+#4+#5) + TASK #7 = ADR 013 §6 implementare COMPLETĂ
+- Validation pending pe sesiune reală + manual UX testing (mâine PUSH/PULL day, AA real-world signals)
+
+**E2E pre-existing fail-uri (flagged în FINDINGS_MASTER, NU regression TASK #7):**
+- `calibration-ui.spec.js:193` — "CDL low adherence shows LOW_ADHERENCE banner" — page nu rendăruiește cu CDL setat în test
+- `integration.spec.js:97` — "selectând readiness verdict card apare" — verdict card nu apare după select
+- Verificat git checkout 1007ffe (înainte TASK #7) — fail identic. Pre-existing, NU blocker.
+- Decizie: flag în finding tracker, NU fix imediat (Memory #14 — bulletproof pe ce construim, NU sweep tot)
+
+**Decizii cheie:**
+- **TASK #7 strategy A (update E2E assertion 2 linii) > B (split test):** unit tests acoperă deja fullReset wipe CDL, E2E split = duplicat. Friction minim ADHD.
+- **ADR 014 §5 wording update:** static "Am văzut pattern-ul" → data-injected dynamic. Anti-reflex paste-buffer + cognitive lock-in real.
+- **Triangulation 2 chats Claude (active + previous):** 4/4 push-back-uri valide din chat precedent adoptate (Build vs Activate Q1-Q5, ordine roadmap, sequential vs parallel solo, API tier-based monetization). 1 push-back D2 chat curent acceptat (data-injection peste static phrase).
+- **Decisions strategice 6/6 finalizate:** Beta luna 4-5 (NU 6+), Q1-Q5 build luna 2-3 activate la beta, roadmap AA val→cleanup→#7→#8→bloodwork→parametric, calibration lunar prima review luna 3, bloodwork DUPĂ #8 NU înainte, API tier-based monetization NU subsidize all.
+
+**ADR cross-refs:**
+- [[013-auto-aggression-detection]] §6 — implementation COMPLETĂ post TASK #7
+- [[014-onboarding-profile-typing]] §5 — wording update data-injected (NEW)
+
+**Quality bar:**
+- 559 → 583 tests (+24, zero regresii)
+- 16 commits substanțiale azi (sesiune 27 apr completă)
+- AA pipeline LIVE end-to-end ADR 013 complete
+- 2 fail-uri E2E pre-existing flagged (NU regression)
+
+---
+
 ## 2026-04-27 — Sprint A AA Pipeline LIVE + Cleanup Batch + getBF Dead Code Closed
 
 **Scope:** 13 commits substanțiale într-o sesiune.

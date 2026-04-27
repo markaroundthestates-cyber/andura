@@ -2,9 +2,9 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
 
-**Ultima actualizare:** 26 apr 2026 (post-Task #30.10 — H30c FIXED)  
-**Total findings:** 128 unice (~15 overlap eliminate între cele 2 audituri + 2 noi din QA 25 apr + 1 nou S1 schema reconciliation)  
-**Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale)
+**Ultima actualizare:** 27 apr 2026 (post TASK #7 friction modal HIGH + E2E fix + 2 fail-uri pre-existing flagged)
+**Total findings:** 130 unice (+2 din E2E pre-existing scan)
+**Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale) + E2E pre-existing scan 27 apr (2 noi)
 
 ---
 
@@ -18,11 +18,11 @@
 | ⚪ WONTFIX | Respins deliberat |
 | 🔵 IN_PROGRESS | Lucru în curs |
 
-**Suffix ID:** `g` = din audit general 23 apr · `c` = din audit coach.js 24 apr · fără sufix = FAZA 1 sub-task
+**Suffix ID:** `g` = din audit general 23 apr · `c` = din audit coach.js 24 apr · `e` = E2E test desync · fără sufix = FAZA 1 sub-task
 
 ---
 
-## CRITICAL (14 total)
+## CRITICAL (16 total)
 
 | ID | Descriere | Status | Fix în |
 |----|-----------|--------|--------|
@@ -101,6 +101,50 @@
 
 ---
 
+## E2E TEST DESYNC (pre-existing, low priority — flagged 27 apr 2026)
+
+Aceste fail-uri E2E au fost descoperite la rularea locală post TASK #7. Verificat git checkout 1007ffe (commit anterior TASK #7) — fail identic. **Pre-existing, NU regression de la TASK #7 sau alte commits recente sesiunea 27 apr.** Producție GH Pages = HEALTHY (deploy green).
+
+| ID | Test | File:Line | Symptom | Status |
+|----|------|-----------|---------|--------|
+| **E2E-1e** | "CDL with 5 real entries low adherence shows LOW_ADHERENCE banner" | `tests/e2e/scenarios/calibration-ui.spec.js:193` | Test setează 5 CDL real entries cu adherence scăzută, așteaptă banner "Adherence scăzută". Page actual rendăruiește "OFF – RECUPERARE / DATE INSUFICIENTE" — banner nu apare. CDL setup în test nu trigger-uiește pattern detection în UI. | 🟡 DEFERRED |
+| **E2E-2e** | "selectând readiness îl salvează și ascunde selectorul" | `tests/integration.spec.js:97` | Test selectează readiness, așteaptă verdict card cu "Sesiune"/"Readiness"/"🧠". Body actual conține doar "OBIECTIVUL DE AZI / 0 pași". Verdict card nu apare după select. | 🟡 DEFERRED |
+
+**Decizie:** Quality bar bulletproof pe ce construim, NU sweep tot la fiecare commit (Memory #14). Cele 2 fail-uri E2E rămân roșii pe CI dar **NU blochează deploy production** (deploy GH Pages = green pe commit-uri sesiunea 27 apr). Investigare + fix programat pentru sesiune dedicată viitoare cu Opus audit pe E2E suite (memory #23 — audit = exclusiv Opus).
+
+**Reproducere:**
+```
+cd C:\Users\Daniel\Documents\salafull
+npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integration.spec.js:97 --reporter=list
+```
+
+**NU sunt cauzate de:**
+- TASK #7 (commit d4a167c) — verificat git checkout 1007ffe înainte
+- TASK #2 CDL_KEYS migration (52e09f1) — applied-patterns assertion fix-uit separat (commit 8d2dae9)
+- AA pipeline LIVE (Sprint A) — fail-uri prezente și înainte
+
+**Ipoteze fix viitor:**
+- CDL setup în page.evaluate() poate fi run prea devreme (înainte de sync sau init pattern engine)
+- Test environment differs de production prin lipsa unor flag-uri (cold_start logic, calibration tier)
+- Possible flaky timing — `waitForTimeout` insuficient
+
+---
+
+## TASK #7 — Friction Modal HIGH Tier (closed 27 apr 2026)
+
+| ID | Descriere | Status | Fix în |
+|----|-----------|--------|--------|
+| **T7-1** | **HIGH tier AA detection setează `session.aaBlocked` dar nu există UI care să-l consume — feature invisible la user real** | 🟢 **FIXED** | TASK #7 (commit d4a167c) — friction modal mobile-first, typing data-injected, escalation pattern, state persistence |
+| **T7-2** | **ADR 014 §5 typing decision wording static "Am văzut pattern-ul" — vulnerable la reflex paste-buffer după 2-3 expuneri** | 🟢 **FIXED** | TASK #7 — wording update la data-injected dynamic: "continui peste {N} signals în 14 zile" |
+
+**Quality bar TASK #7:**
+- 24 tests aaFrictionModal (target era 12+, livrat dublu)
+- 559 → 583 tests (+24, zero regresii)
+- ADR 013 §6 implementation COMPLETĂ
+- Validation pending pe sesiune reală + manual UX testing (mâine PUSH/PULL day)
+
+---
+
 ## OPEN BUGS (prioritizate pentru sprint curent)
 
 ### 🟢 C11c — Full Reset cache cascade 12+ invalidări (FIXED Task #27)
@@ -158,10 +202,11 @@
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 22 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1** · Task #30.8/8.1: **H30c**) |
+| 🟢 FIXED | 24 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1** · Task #30.8/8.1: **H30c** · TASK #7: **T7-1, T7-2**) |
 | 🔴 OPEN | 0 |
-| 🟡 DEFERRED | ~100 (majority — planificate FAZA 3/4) |
+| 🟡 DEFERRED | ~102 (majority — planificate FAZA 3/4 + 2 noi E2E pre-existing) |
 | ⚪ WONTFIX | 0 |
 
-**Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]  
-**Next sprint:** TASK #30.9 (decommission applied-patterns — blocked pending Daniel sign-off, vezi [[AUDIT_30_9_BLOCKED_STATE]])
+**Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]
+**Ultima sesiune dev:** 27 apr 2026 — TASK #7 friction modal LIVE + E2E fix + 2 fail-uri pre-existing flagged
+**Next sprint:** Cleanup backlog (dead code 3 files + magic numbers) sau bloodwork integration spec

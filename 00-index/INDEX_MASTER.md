@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 27 apr 2026 (Sprint A AA pipeline LIVE + cleanup batch + audit findings closed)
-**Status:** FAZA 2 ✅ + CDL ✅ + AA pipeline LIVE end-to-end (ADR 013) + Profile typing storage ready (ADR 014 §6 Step 1). 559 tests. 0 OPEN bugs.
+**Ultima actualizare:** 25 apr 2026 (rebrand cleanup — vezi [[010-no-anthropic-trademark-public]])
+**Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii. Task #25-#27 DONE (Nuclear audit + cache coalesce + data registry).
 
 ---
 
@@ -35,8 +35,6 @@
 - [[008-vitest-playwright-testing]] — ADR: Vitest + Playwright
 - [[009-calibration-tiers]] — ADR: Calibration Tiers
 - [[010-no-anthropic-trademark-public]] — ADR: No Anthropic Trademark in Public Material
-- [[011-coach-decision-log-architecture]] — ADR: Coach Decision Log (CDL) as architectural primitive (TASK #30)
-- [[012-tier-decay-on-inactivity]] — ADR: Calibration Tier Decay on Inactivity (linear -1/60 days)
 
 ### 🏗️ Architecture
 - [[STACK_CURRENT]] — Vanilla JS + Firebase + PWA
@@ -49,7 +47,7 @@
 - [[PROMPT_TEMPLATE]] — Template generic Claude Code
 
 ### 📊 Findings Tracker
-- [[FINDINGS_MASTER]] — 128 findings triate, 22 FIXED, 0 OPEN (H30c FIXED via TASK #30.8/8.1)
+- [[FINDINGS_MASTER]] — 125 findings triate, status progress (1 OPEN: H30c)
 
 ### 📓 Sessions Log
 - [[GYM_SESSIONS]] — Sesiuni reale sală + observații produs
@@ -116,22 +114,10 @@ Details: [[FAZA_2_ROADMAP]] | Raport: [[FAZA_2_FINAL_REPORT]] | Plan execuție: 
 - ✅ Task #27 — Data Registry + Full Reset Rewrite (C11c, H31c, H32c FIXED)
 - Tests: 271 → 301 (+30)
 
-### ✅ TASK #30 — CDL Architecture (9/10 subtasks DONE — 26 apr 2026)
-ADR: [[011-coach-decision-log-architecture]] | Status: [[EXEC_QUEUE]]
-- ✅ 30.1-30.8.1: CDL primitive, backfill, coachDirector integration, analyzeFromCDL, banner CDL-sourced
-- ⏳ 30.9: Decommission applied-patterns — DEFERRED pending Daniel sign-off + caller cleanup (vezi [[AUDIT_30_9_BLOCKED_STATE]])
-- ✅ 30.10: H30c FIXED (CDL banner eliminates false positive skip rate banners)
-- Tests: 301 → 414 (+113 CDL + engine tests)
-
-### ✅ ADR 012 — Tier Decay on Inactivity (26 apr 2026)
-- linear -1 tier per 60 zile inactive, floor INITIAL. COLD_START unaffected.
-- ADR: [[012-tier-decay-on-inactivity]]
-
 ### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
 Details: [[FAZA_3_ROADMAP]] | [[OBSIDIAN_SETUP_GUIDE]]
 
-### ⏳ FAZA 4 — FEATURES NOI (144 programe → parametric engine, injury, health export)
-Design: [[PARAMETRIC_PROGRAMS_DESIGN]]
+### ⏳ FAZA 4 — FEATURES NOI (144 programe, injury, health export)
 
 ---
 
