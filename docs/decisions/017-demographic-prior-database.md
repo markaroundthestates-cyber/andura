@@ -1,6 +1,6 @@
 # ADR 017: Demographic Prior Database
 
-**Status:** Draft
+**Status:** Accepted
 **Date:** 2026-04-27
 **See also:** [[018-engine-extensibility-architecture]] | [[016-vitality-layer]] | [[014-onboarding-profile-typing]] | [[013-auto-aggression-detection]] | [[011-coach-decision-log-architecture]] | [[009-calibration-tiers]] | [[INSIGHTS_BACKLOG]] | [[DECISION_LOG]]
 
@@ -992,4 +992,20 @@ Demographic Prior = greenfield dimension build pe ADR 018 foundation:
 
 ---
 
-*ADR 017 — Draft 2026-04-27. Pending Daniel sign-off pe DP-1 până DP-7. Status: spec architectural complete, gata pentru triangulation review.*
+## Sign-Off — 2026-04-27
+
+Daniel approved 7/7 decision points după review post-Opus draft.
+
+- DP-1 Profile dimensions: B — 11 dimensions APPROVED
+- DP-2 Profile mix ratio: A — 50/450 manual/algorithmic APPROVED
+- DP-3 Behavioral generator: A — rule-based shape + stochastic noise APPROVED
+- DP-4 Storage strategy: A — runtime in-memory APPROVED
+- DP-5 Tier gating: A — T0-only hard gate APPROVED
+- DP-6 Lookup algorithm: A — K-NN linear K=10 APPROVED
+- DP-7 Deprecation trigger: A — 100+ users threshold + Daniel manual review APPROVED
+
+**Reconsider trigger DP-7:** pure N threshold poate deprecate prematur pentru cohorts under-represented (ex: 100 users dar 0 women 50+). Daniel manual review = implicit cohort sanity check. Recalibrate dacă cohort skew real observat post-launch.
+
+---
+
+*ADR 017 — Accepted 2026-04-27. Status: spec architectural complete, gata pentru spec EXEC_QUEUE follow-up post Sprint Foundation ADR 018.*
