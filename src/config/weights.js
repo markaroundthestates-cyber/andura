@@ -82,10 +82,6 @@ export function getEquipmentType(exerciseName) {
   return EXERCISE_EQUIPMENT_MAP[exerciseName] || 'bailib_stack';
 }
 
-// Backwards-compat aliases
-export const DUMBBELL_WEIGHTS = EQUIPMENT_WEIGHTS['dumbbell'];
-export const CABLE_WEIGHTS    = EQUIPMENT_WEIGHTS['bailib_stack'];
-export const MACHINE_WEIGHTS  = EQUIPMENT_WEIGHTS['leg_machine'];
 
 // Legacy EXERCISE_EQUIPMENT_TYPE alias (used nowhere currently, kept for safety)
 export const EXERCISE_EQUIPMENT_TYPE = Object.fromEntries(

@@ -49,22 +49,6 @@ export const EXERCISE_MUSCLES = {
   'Calf Raises':            { primary: ['calf'], secondary: [] },
 };
 
-export const VOLUME_LANDMARKS = {
-  delt_mid:    { MEV: 6,  MAV: 16, MRV: 26 },
-  chest_upper: { MEV: 4,  MAV: 12, MRV: 20 },
-  chest_mid:   { MEV: 4,  MAV: 12, MRV: 20 },
-  lat:         { MEV: 4,  MAV: 12, MRV: 20 },
-  tri_long:    { MEV: 4,  MAV: 10, MRV: 18 },
-  tri_lateral: { MEV: 4,  MAV: 10, MRV: 18 },
-  bi_long:     { MEV: 4,  MAV: 10, MRV: 20 },
-  bi_short:    { MEV: 2,  MAV:  8, MRV: 16 },
-  delt_rear:   { MEV: 4,  MAV: 12, MRV: 20 },
-  quad:        { MEV: 4,  MAV: 12, MRV: 20 },
-  hamstring:   { MEV: 4,  MAV: 10, MRV: 16 },
-  glute:       { MEV: 4,  MAV: 10, MRV: 16 },
-  mid_trap:    { MEV: 4,  MAV: 12, MRV: 20 },
-};
-
 export function getMuscleState(logs) {
   const now = Date.now();
   const state = {};
@@ -91,39 +75,4 @@ export function getMuscleState(logs) {
   });
 
   return state;
-}
-
-export function getWeeklyVolume(logs, days = 7) {
-  const cutoff = Date.now() - days * 86400000;
-  const vol = {};
-  Object.keys(MUSCLE_HEADS).forEach(m => { vol[m] = 0; });
-  (logs || []).filter(l => !l.baseline && l.ex && l.w && (l.ts || new Date(l.date).getTime()) > cutoff).forEach(l => {
-    const ms = EXERCISE_MUSCLES[l.ex];
-    if (!ms) return;
-    ms.primary.forEach(m => { vol[m] = (vol[m] || 0) + 1; });
-    ms.secondary.forEach(m => { vol[m] = (vol[m] || 0) + 0.5; });
-  });
-  return vol;
-}
-
-export function getMuscleBalance(logs) {
-  const vol = getWeeklyVolume(logs, 14);
-  const alerts = [];
-  const pairs = [
-    ['tri_long', 'tri_lateral', 'Triceps lung vs lateral'],
-    ['bi_long',  'bi_short',    'Biceps lung vs scurt'],
-    ['delt_mid', 'delt_rear',   'Umăr lateral vs spate'],
-    ['chest_upper','chest_mid', 'Piept sus vs mijloc'],
-  ];
-  pairs.forEach(([a, b, label]) => {
-    const va = vol[a] || 0, vb = vol[b] || 0;
-    const total = va + vb;
-    if (total < 4) return;
-    if (va > 0 && vb > 0 && Math.abs(va - vb) / Math.max(va, vb) > 0.4) {
-      const dominant = va > vb ? MUSCLE_HEADS[a]?.label : MUSCLE_HEADS[b]?.label;
-      const lagging  = va > vb ? MUSCLE_HEADS[b]?.label : MUSCLE_HEADS[a]?.label;
-      alerts.push({ a, b, label, dominant, lagging, volA: va, volB: vb });
-    }
-  });
-  return alerts;
 }

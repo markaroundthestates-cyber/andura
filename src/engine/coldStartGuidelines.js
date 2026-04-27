@@ -1,3 +1,4 @@
+// FAZA-4: not yet wired up — planned cold start session generation per ADR-009
 // ══ COLD START GUIDELINES — Intelligent defaults for new users ═════════════
 // Cold start does NOT mean silence. It means population-prior guidelines
 // scaled by onboarding data (experience, goal, equipment).

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(node *)",
-      "Bash(gh run *)"
+      "Bash(gh run *)",
+      "Bash(npx vitest *)"
     ]
   }
 }
