@@ -1,9 +1,9 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test și debugging ═══════
 import { FIREBASE_URL, USER_PATH, scheduleInvalidation } from '../firebase.js';
-import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, getAllDynamicKeys } from './dataRegistry.js';
+import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, getAllDynamicKeys } from './dataRegistry.js';
 
 // Re-export for backward compat (tests and other importers)
-export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS };
+export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS };
 
 // ── Deduplicate Logs ──────────────────────────────────────────────────────
 // Removes truly duplicate log entries — defined as two entries with the exact

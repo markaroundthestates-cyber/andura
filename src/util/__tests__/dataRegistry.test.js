@@ -16,6 +16,7 @@ import {
   COACH_RELEVANT_KEYS,
   DYNAMIC_KEY_PREFIXES,
   PRESERVE_ON_RESET_KEYS,
+  CDL_KEYS,
   getAllDynamicKeys,
 } from '../dataRegistry.js';
 
@@ -27,7 +28,7 @@ describe('dataRegistry — key list integrity', () => {
   });
 
   it('TEST_RESIDUE_KEYS contains all expected transient coach/session keys', () => {
-    const required = ['applied-patterns', 'equipment-occupied-session',
+    const required = ['equipment-occupied-session',
       'session-draft', 'unavailable-equipment', 'early-stops',
       'weak-group-cache', 'response-profile'];
     required.forEach(k => expect(TEST_RESIDUE_KEYS, `missing: ${k}`).toContain(k));
@@ -54,8 +55,8 @@ describe('dataRegistry — key list integrity', () => {
     expect(PRESERVE_ON_RESET_KEYS).toContain('last-backup');
   });
 
-  it('COACH_RELEVANT_KEYS is a strict subset of USER_DATA_KEYS ∪ TEST_RESIDUE_KEYS', () => {
-    const all = new Set([...USER_DATA_KEYS, ...TEST_RESIDUE_KEYS]);
+  it('COACH_RELEVANT_KEYS is a strict subset of USER_DATA_KEYS ∪ TEST_RESIDUE_KEYS ∪ CDL_KEYS', () => {
+    const all = new Set([...USER_DATA_KEYS, ...TEST_RESIDUE_KEYS, ...CDL_KEYS]);
     const outside = COACH_RELEVANT_KEYS.filter(k => !all.has(k));
     expect(outside).toHaveLength(0);
   });

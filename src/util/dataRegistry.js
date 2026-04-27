@@ -13,7 +13,7 @@ export const USER_DATA_KEYS = [
 
 // Coach/session transient state — deleted by both resetTestData and fullReset
 export const TEST_RESIDUE_KEYS = [
-  'auto-recommendations', 'applied-patterns', 'applied-recommendations',
+  'auto-recommendations', 'applied-recommendations',
   'early-stops', 'session-draft', 'peak-hours', 'step-streaks',
   'session-start-hours', 'session-ratings', 'dev-mode',
   'unavailable-equipment', 'equipment-occupied-session',
@@ -38,6 +38,18 @@ export const DYNAMIC_KEY_PREFIXES = [
 
 // Keys that survive fullReset: device identity + UI preferences + last backup for undo
 export const PRESERVE_ON_RESET_KEYS = ['device-id', 'active-theme', 'last-backup'];
+
+// Coach Decision Log + derived behavioral state (ADR 011, 013, 014).
+// Semantic: derived behavioral history, not raw input.
+// resetTestData: PRESERVE (real history, not test residue).
+// fullReset: WIPE (start-over semantic — fresh history for clean coaching).
+export const CDL_KEYS = [
+  'coach-decisions',
+  'coach-decisions-aggregate',
+  'coach-decisions-archive',
+  'cdl-patterns',
+  'applied-patterns',
+];
 
 // Returns all currently-stored keys that match a DYNAMIC_KEY_PREFIXES entry
 export function getAllDynamicKeys() {

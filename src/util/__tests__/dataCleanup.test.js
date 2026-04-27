@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
+import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
 
 describe('DataCleanup — Firebase aware', () => {
   beforeEach(() => {
@@ -31,12 +31,28 @@ describe('DataCleanup — Firebase aware', () => {
 
   it('should remove test keys from localStorage', async () => {
     localStorage.setItem('auto-recommendations', '[]');
-    localStorage.setItem('applied-patterns', '[]');
     localStorage.setItem('equipment-occupied-session', '[]');
     await resetTestData({ clearFirebase: false, reload: false });
     expect(localStorage.getItem('auto-recommendations')).toBeNull();
-    expect(localStorage.getItem('applied-patterns')).toBeNull();
     expect(localStorage.getItem('equipment-occupied-session')).toBeNull();
+  });
+
+  it('resetTestData preserves CDL_KEYS (behavioral history survives test cleanup)', async () => {
+    localStorage.setItem('coach-decisions', '[{"id":"cd_test"}]');
+    localStorage.setItem('applied-patterns', '[{"type":"EARLY_END"}]');
+    localStorage.setItem('auto-recommendations', '[]');
+    await resetTestData({ clearFirebase: false, reload: false });
+    expect(localStorage.getItem('coach-decisions')).toBe('[{"id":"cd_test"}]');
+    expect(localStorage.getItem('applied-patterns')).toBe('[{"type":"EARLY_END"}]');
+    expect(localStorage.getItem('auto-recommendations')).toBeNull();
+  });
+
+  it('fullReset wipes CDL_KEYS (fresh history for clean coaching)', async () => {
+    localStorage.setItem('coach-decisions', '[{"id":"cd_test"}]');
+    localStorage.setItem('applied-patterns', '[{"type":"EARLY_END"}]');
+    await fullReset({ clearFirebase: false, reload: false });
+    expect(localStorage.getItem('coach-decisions')).toBeNull();
+    expect(localStorage.getItem('applied-patterns')).toBeNull();
   });
 
   it('resetTestData should preserve user data', async () => {
