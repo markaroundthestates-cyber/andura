@@ -8,7 +8,8 @@ export const USER_DATA_KEYS = [
   'phase-override', 'phase-log', 'phase-change-date', 'bf-override',
   'pr-records', 'current-kcal', 'suppl-list', 'waters', 'workout-skips',
   'session-burns', 'wellbeing', 'notif-enabled', 'closed-days', 'muted',
-  'onboarding-done', 'onboarding-completed', 'last-recalibration', 'sf.userConfig'
+  'onboarding-done', 'onboarding-completed', 'last-recalibration', 'sf.userConfig',
+  'profile-history'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset

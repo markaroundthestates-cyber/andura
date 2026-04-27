@@ -19,6 +19,7 @@ import {
   CDL_KEYS,
   getAllDynamicKeys,
 } from '../dataRegistry.js';
+import { SYNC_KEYS } from '../../firebase.js';
 
 describe('dataRegistry — key list integrity', () => {
   it('USER_DATA_KEYS contains all expected training data keys', () => {
@@ -83,6 +84,14 @@ describe('dataRegistry — key list integrity', () => {
         seen.set(k, idx);
       });
     });
+  });
+
+  it('profile-history is in USER_DATA_KEYS (per ADR 014 §6)', () => {
+    expect(USER_DATA_KEYS).toContain('profile-history');
+  });
+
+  it('profile-history is in SYNC_KEYS (Firebase backup, per ADR 014 §6)', () => {
+    expect(SYNC_KEYS).toContain('profile-history');
   });
 });
 
