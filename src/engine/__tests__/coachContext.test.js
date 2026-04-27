@@ -70,3 +70,25 @@ describe('detectCalibrationLevel — correct tier with full history', () => {
     expect(['personalized', 'optimized']).toContain(level.name);
   });
 });
+
+describe('buildCoachContext — autoAggression field (ADR 013)', () => {
+  beforeEach(() => { localStorage.clear(); });
+
+  it('ctx.autoAggression has valid shape when CDL is empty', () => {
+    const ctx = buildCoachContext();
+    expect(ctx.autoAggression).toBeDefined();
+    expect(ctx.autoAggression).toHaveProperty('tier');
+    expect(ctx.autoAggression).toHaveProperty('signals');
+    expect(ctx.autoAggression).toHaveProperty('escalating');
+    expect(ctx.autoAggression).toHaveProperty('amplified');
+    expect(Array.isArray(ctx.autoAggression.signals)).toBe(true);
+  });
+
+  it('ctx.autoAggression returns safe defaults (tier=none) when CDL is empty', () => {
+    const ctx = buildCoachContext();
+    expect(ctx.autoAggression.tier).toBe('none');
+    expect(ctx.autoAggression.signals).toHaveLength(0);
+    expect(ctx.autoAggression.escalating).toBe(false);
+    expect(ctx.autoAggression.amplified).toBe(false);
+  });
+});

@@ -7,6 +7,7 @@ import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 import { analyzeFromCDL } from './patternLearning.js';
 import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { CALIBRATION_LEVELS } from './calibration.js';
+import { aggregateAutoAggression } from './autoAggressionDetection.js';
 
 export function buildCoachContext() {
   const now = new Date();
@@ -17,6 +18,15 @@ export function buildCoachContext() {
 
   const phase = getPhaseFromStorage();
   const kcalTarget = getKcalTarget();
+
+  // ADR 013 — aggregate AA signals over 30d window (include today, idempotent)
+  const _aaCutoff = new Date();
+  _aaCutoff.setDate(_aaCutoff.getDate() - 30);
+  const _recentCDLForAA = coachDecisionLog.readAllActive(e => {
+    const d = new Date(e.date);
+    return d >= _aaCutoff;
+  });
+  const autoAggression = aggregateAutoAggression(_recentCDLForAA);
 
   return {
     user: {
@@ -42,6 +52,7 @@ export function buildCoachContext() {
     allLogs,
     recentLogs,
     ..._buildCDLPatterns(),
+    autoAggression,
     currentDate: now,
     isBeforeJuly20_2026: now < july20_2026,
     isDeficit: kcalTarget < 2200,
