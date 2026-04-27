@@ -115,13 +115,26 @@ describe('dimensionRegistry — getActiveDimensions', () => {
     expect(active.map(d => d.id)).toEqual(['FLAG_ON']);
   });
 
-  it('keeps dimensions whose flag is missing from the resolved map (default-on)', () => {
+  it('skips dimensions whose flag is missing from resolved map (fail-closed, audit MED-5)', () => {
     const dims = [sampleEntry({ id: 'NEW_FLAG', enabledFlag: 'unknown_flag' })];
     const active = getActiveDimensions(
       { calibrationLevel: 'optimized' },
       { dimensions: dims, flags: {} }
     );
-    expect(active).toHaveLength(1);
+    expect(active).toHaveLength(0);
+  });
+
+  it('opts.flags fail-closed: missing key = dimension skipped (matches production)', () => {
+    const dims = [
+      sampleEntry({ id: 'EXPLICIT_TRUE',  enabledFlag: 'f_on'  }),
+      sampleEntry({ id: 'EXPLICIT_FALSE', enabledFlag: 'f_off' }),
+      sampleEntry({ id: 'MISSING_KEY',    enabledFlag: 'f_missing' }),
+    ];
+    const active = getActiveDimensions(
+      { calibrationLevel: 'optimized' },
+      { dimensions: dims, flags: { f_on: true, f_off: false } }
+    );
+    expect(active.map(d => d.id)).toEqual(['EXPLICIT_TRUE']);
   });
 
   it('delegates to featureFlags.isEnabled when no opts.flags supplied (production path)', () => {

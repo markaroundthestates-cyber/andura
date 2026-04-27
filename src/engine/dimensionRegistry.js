@@ -75,8 +75,8 @@ export const CALIBRATION_TIER_ORDER = [
  * Active = (calibration gate open) AND (feature flag enabled OR no flag).
  *
  * Flag resolution order:
- *   - When `opts.flags` is provided (testing path): explicit map, key set to
- *     `false` disables the dimension; missing keys default to enabled.
+ *   - When `opts.flags` is provided (testing path): explicit map, key must be
+ *     explicitly `true` to enable; missing keys or `false` both disable (fail-closed).
  *   - When `opts.flags` is NOT provided (production path): delegate to
  *     `featureFlags.isEnabled(flagId, ctx.userId)` per ADR 018 §5 + DP-6
  *     (per-user hash bucketing).
@@ -95,7 +95,7 @@ export function getActiveDimensions(ctx, opts = {}) {
     if (!isCalibrationGateOpen(dim.requiresCalibration, ctxLevel)) return false;
     if (dim.enabledFlag) {
       if (flags) {
-        if (flags[dim.enabledFlag] === false) return false;
+        if (!flags[dim.enabledFlag]) return false;
       } else if (!isEnabled(dim.enabledFlag, ctx?.userId)) {
         return false;
       }
