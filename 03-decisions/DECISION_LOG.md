@@ -1,4 +1,22 @@
 ﻿# DECISION LOG â€” SalaFull
+## 2026-04-27 — ADR 016 Vitality Layer ACCEPTED
+
+**Status:** 6/6 decision points approved post-Opus draft review.
+
+**Componente specificate:**
+1. Delivery — background prompt cu dismiss (T2 trigger, opt-in friction-zero)
+2. Response format — Numeric Likert 4-point (UI labels, engine numeric)
+3. Coupling Profile Typing — independent dimensions, cluster cross-reference
+4. Tier gating — T2 PERSONALIZING (28 zile + 12 sesiuni)
+5. Storage — dual (vitality-responses key + CDL context.vitality snapshot)
+6. Rollout — conservative 0%→10%→50%→100% per ADR 018 §5
+
+**Cross-refs:** [[016-vitality-layer]] | [[018-engine-extensibility-architecture]] | [[014-onboarding-profile-typing]] | [[011-coach-decision-log-architecture]]
+
+**Reconsider trigger:** completion rate threshold ≥30% Phase 1 recalibrate după date reale.
+
+**Next:** ADR 014 update Profile Typing tier-aware.
+
 ## 2026-04-27 — ADR 018 Engine Extensibility Architecture ACCEPTED
 
 **Status:** 7/7 decision points approved post-triangulation review.
