@@ -3,13 +3,11 @@ import { DB } from '../db.js';
 import { SW_KG, TW_KG, START_DATE, TARGET_DATE, KCAL_TARGET } from '../constants.js';
 import { getUserConfig } from '../config/user.js';
 
-const _bio = getUserConfig().bio;
-
 export const SYS = {
-  HEIGHT: _bio.height,
-  START_KG: _bio.startKg,
-  START_BF: _bio.startBF,
-  AGE: _bio.age,
+  get HEIGHT() { return getUserConfig().bio.height; },
+  get START_KG() { return getUserConfig().bio.startKg; },
+  get START_BF() { return getUserConfig().bio.startBF; },
+  get AGE() { return getUserConfig().bio.age; },
 
   getCurrentKg() {
     const ws = DB.get('weights') || {};
