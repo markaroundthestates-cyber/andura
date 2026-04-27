@@ -17,6 +17,11 @@ import { inferSessionType } from '../util/cdlBackfill.js';
 import { tod } from '../db.js';
 import { READINESS_MED } from './readiness.js';
 import { MS_PER_DAY } from '../constants.js';
+import { isEnabled } from '../util/featureFlags.js';
+import { DecisionCluster, clusterTraceToRationale } from './decisionCluster.js';
+import { getActiveDimensions } from './dimensionRegistry.js';
+import { aaClusterOutputToLegacyShape } from './dimensions/autoAggressionAdapter.js';
+import { DIMENSION_ID as AA_DIMENSION_ID } from './dimensions/autoAggressionDimension.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -158,7 +163,40 @@ export class CoachDirector {
       }
     }
 
-    session = this.applyAAAdjustments(session, ctx);
+    // ── AA detection: Strangler branch (ADR 018 §6 Phase 1) ──────────────
+    // Default 0% rollout — production keeps running legacy applyAAAdjustments.
+    // Cluster + adapter route is byte-equivalent (golden-master parity tests).
+    let _aaClusterTrace = null;
+    const _useClusterForAA = isEnabled('aa_via_cluster');
+    if (_useClusterForAA) {
+      try {
+        const baseSessionForAA = session;
+        const activeDims = getActiveDimensions(ctx, { flags: { aa_via_cluster: true } });
+        const aaEntries = activeDims.filter(d => d.id === AA_DIMENSION_ID);
+        if (aaEntries.length > 0) {
+          const dimInput = { ctx, cdl: [], userProfile: ctx.user ?? {}, flags: { aa_via_cluster: true } };
+          const results = await Promise.all(
+            aaEntries.map(d => Promise.resolve(d.module.analyze(dimInput)))
+          );
+          const cluster = new DecisionCluster();
+          const { session: clusterSession, trace } = await cluster.execute(
+            results, baseSessionForAA, { entries: aaEntries }
+          );
+          session = aaClusterOutputToLegacyShape(clusterSession, baseSessionForAA);
+          _aaClusterTrace = trace;
+        }
+      } catch (err) {
+        console.error('[CoachDirector] AA cluster route failed — falling back to legacy:', err);
+        try {
+          if (typeof window !== 'undefined' && window.Sentry?.captureException) {
+            window.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'aa_cluster_route' } });
+          }
+        } catch (_) { /* swallow */ }
+        session = this.applyAAAdjustments(session, ctx);
+      }
+    } else {
+      session = this.applyAAAdjustments(session, ctx);
+    }
     session = realityEngine.validate(session, ctx);
     session = this.applyPatterns(session, ctx);
 
@@ -202,15 +240,24 @@ export class CoachDirector {
         partial: false
       };
 
+      const _legacyRationale = {
+        winnerId: ruleResult?.winner?.id ?? RESERVED_RATIONALE_IDS.NO_RULE_FIRED,
+        winnerPriority: ruleResult?.winner?.priority ?? null,
+        overridden: Array.isArray(ruleResult?.overridden)
+          ? ruleResult.overridden.map(r => r?.id).filter(Boolean)
+          : []
+      };
+      let _rationale = _legacyRationale;
+      if (_useClusterForAA && _aaClusterTrace) {
+        const _clusterRationale = clusterTraceToRationale(_aaClusterTrace);
+        if (_clusterRationale.winnerId !== RESERVED_RATIONALE_IDS.NO_RULE_FIRED) {
+          _rationale = _clusterRationale;
+        }
+      }
+
       const cdlProposed = {
         sessionType,
-        rationale: {
-          winnerId: ruleResult?.winner?.id ?? RESERVED_RATIONALE_IDS.NO_RULE_FIRED,
-          winnerPriority: ruleResult?.winner?.priority ?? null,
-          overridden: Array.isArray(ruleResult?.overridden)
-            ? ruleResult.overridden.map(r => r?.id).filter(Boolean)
-            : []
-        },
+        rationale: _rationale,
         exercises: Array.isArray(session?.exercises)
           ? session.exercises.map(e => e?.name).filter(Boolean)
           : [],
