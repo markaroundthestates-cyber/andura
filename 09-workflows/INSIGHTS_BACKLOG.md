@@ -4,6 +4,51 @@ Entries care NU intră în v1 dar trebuie documentate pentru future design.
 
 ---
 
+## Strangler Integration Pre-work (defer-uri Batch 1 Audit — rezolvate la strangler sprint)
+
+**Status:** Deferred. Toate findings de mai jos sunt non-blocante pentru Batch 2. Re-audit la strangler integration (prima dimensiune portată = AA detection).
+**Source:** Adversarial audit Batch 1 — 2026-04-27. Audit full: `docs/audit/BATCH_1_AUDIT_2026-04-27.md`.
+
+### HIGH-1 — CDL adapter: clusterTrace → ADR 011 rationale shape
+**Where:** `src/engine/decisionCluster.js` — export `clusterTraceToADR011Rationale(trace)`
+**Why deferred:** Mapping e prezentă implicit în trace; adapter explicit necesar doar când coachDirector CDL write (`coachDirector.js:208-222`) se portează la cluster.
+**Proposed fix in audit:** `export function clusterTraceToADR011Rationale(trace)` cu gate-branch (shortCircuited) și non-gate branch (highest-priority ADJUSTMENT = winner). Add tests + JSDoc.
+
+### MED-1 — Compound `shorten_session` → originalCount fals
+**Where:** `decisionCluster.js:_applyEnhancement` SHORTEN_SESSION handler
+**Issue:** Al doilea shorten citește lungimea deja-trunchiat ca originalCount. Trace CDL consumers văd "shortened from 3 to 2" în loc de "from 5 to 2".
+**Proposed fix:** Winner-takes-all pe `shorten_session` (lowest count wins) pre-pipeline, sau captura `baseExercisesLength` la intrarea în `_runEnhancementStage`.
+
+### MED-4 — Contract guarantees pure/deterministic neenforced runtime
+**Where:** `dimensionContract.js` — nicio validare runtime pentru side effects / Date.now / Math.random în `analyze()`
+**Proposed fix:** `runDimensionConformanceCheck(module)` helper în tests/ — run analyze() × 2 cu input identic + spy pe globals. Scaffold per dimensiune la strangler.
+
+### LOW-1 — `STAGES` importat dar nefolosit în `decisionCluster.test.js:3`
+**Fix:** Înlocuiește string literals `'GATE'` (lines 288, 320) cu `STAGES.GATE`.
+
+### LOW-3 — `assertValidRegistry` nu se apelează la module init
+**Fix:** Dev-mode bootstrap în `dimensionRegistry.js`:
+```js
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+  assertValidRegistry();
+}
+```
+
+### LOW-4 — `shorten_session` newCount în trace nu clampează la exercises.length
+**Fix:** `newCount: Math.min(Math.max(0, count), session.exercises.length)` în `_applyEnhancement`.
+
+### LOW-7 — `CDLEntry` typedef fără property list
+**Fix:** Adaugă proprietăți ADR 011 schema (id, ts, date, context, proposed, outcome) în `dimensionContract.js:26-27`.
+
+### LOW 2/5/6/8/9 — TODOs cosmetic / speculative
+- LOW-2: `findDimension` exported but unused — OK, documented future use
+- LOW-5: `REDUCE_VOLUME` multiplier > 1 nu e clamped — caller responsibility
+- LOW-6: multiplier 0/negative/NaN nevalidat în `assertValidRecommendation` — add `Number.isFinite && >= 0` check
+- LOW-8: Registry nu verifică path convention `src/engine/dimensions/<id>.js` — out of scope foundation
+- LOW-9: `tier` + `confidence` fields din DimensionResult ignorate de cluster — by design (informational)
+
+---
+
 ## ADR 018 — Engine Extensibility Architecture (PRIORITY 1, Sesiunea NEXT)
 
 **Status:** Spec NEXT priority, NU built încă.
