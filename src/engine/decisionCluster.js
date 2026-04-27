@@ -20,6 +20,7 @@ import {
   assertValidDimensionResult,
   isActionStageCompatible,
 } from './dimensionContract.js';
+import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
 
 /**
  * @typedef {import('./dimensionContract.js').DimensionResult} DimensionResult
@@ -475,3 +476,49 @@ export class DecisionCluster {
  * construct their own instance with strict + custom logger.
  */
 export const decisionCluster = new DecisionCluster();
+
+/**
+ * Project a cluster trace down to the ADR 011 CDL rationale shape used by
+ * coachDirector.writeProposed. Strangler adapter — lets the CDL writer accept
+ * cluster output the same way it accepts the legacy ruleResult.
+ *
+ *   - shortCircuited (gate fired)        → GATE winner is the rationale winner
+ *   - else, ANY ADJUSTMENT/ENHANCEMENT   → highest-priority fired = winner
+ *   - nothing fired                       → NO_RULE_FIRED
+ *
+ * @param {ClusterTrace|null|undefined} trace
+ * @returns {{ winnerId: string, winnerPriority: number|null, overridden: string[] }}
+ */
+export function clusterTraceToRationale(trace) {
+  if (!trace) {
+    return { winnerId: RESERVED_RATIONALE_IDS.NO_RULE_FIRED, winnerPriority: null, overridden: [] };
+  }
+
+  if (trace.shortCircuited) {
+    const winner = trace.stages?.GATE?.winner;
+    return {
+      winnerId: winner?.source ?? RESERVED_RATIONALE_IDS.NO_RULE_FIRED,
+      winnerPriority: winner?.priority ?? null,
+      overridden: (trace.stages?.GATE?.overridden ?? [])
+        .map(o => o?.source)
+        .filter(Boolean),
+    };
+  }
+
+  const fired = [
+    ...(trace.stages?.ADJUSTMENT?.fired ?? []),
+    ...(trace.stages?.ENHANCEMENT?.fired ?? []),
+  ];
+
+  if (fired.length === 0) {
+    return { winnerId: RESERVED_RATIONALE_IDS.NO_RULE_FIRED, winnerPriority: null, overridden: [] };
+  }
+
+  const sorted = [...fired].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  const winner = sorted[0];
+  return {
+    winnerId: winner.source,
+    winnerPriority: winner.priority ?? null,
+    overridden: sorted.slice(1).map(o => o.source).filter(Boolean),
+  };
+}
