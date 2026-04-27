@@ -489,3 +489,61 @@ describe('CoachDirector — CDL write (ADR 011)', () => {
     delete window.Sentry;
   });
 });
+
+describe('CoachDirector — applyAAAdjustments (ADR 013)', () => {
+  function makeSession(sets = 4) {
+    return {
+      exercises: [
+        { name: 'Bench Press', sets },
+        { name: 'Incline Press', sets },
+      ],
+    };
+  }
+  function makeCtx(tier, signals = [], escalating = false) {
+    return { autoAggression: { tier, signals, escalating, amplified: false } };
+  }
+
+  it('tier none — session returned unchanged, no aaWarning/aaBlocked', () => {
+    const session = makeSession(4);
+    const result = coachDirector.applyAAAdjustments(session, makeCtx('none'));
+    expect(result).toBe(session);
+    expect(result.aaWarning).toBeUndefined();
+    expect(result.aaBlocked).toBeUndefined();
+    expect(result.exercises[0].sets).toBe(4);
+  });
+
+  it('tier LOW — session returned unchanged, no aaWarning/aaBlocked', () => {
+    const session = makeSession(4);
+    const result = coachDirector.applyAAAdjustments(session, makeCtx('LOW', ['volume_creep']));
+    expect(result).toBe(session);
+    expect(result.aaWarning).toBeUndefined();
+    expect(result.aaBlocked).toBeUndefined();
+    expect(result.exercises[0].sets).toBe(4);
+  });
+
+  it('tier MED — aaWarning populated with signals+escalating, exercises NOT reduced', () => {
+    const signals = ['volume_creep', 'ignore_recovery'];
+    const session = makeSession(4);
+    const result = coachDirector.applyAAAdjustments(session, makeCtx('MED', signals, true));
+    expect(result.aaWarning).toBeDefined();
+    expect(result.aaWarning.level).toBe('soft');
+    expect(result.aaWarning.signals).toEqual(signals);
+    expect(result.aaWarning.escalating).toBe(true);
+    expect(result.aaBlocked).toBeUndefined();
+    expect(result.exercises[0].sets).toBe(4);
+  });
+
+  it('tier HIGH — aaBlocked populated, sets reduced 30% (Math.max(2, floor(sets*0.7)))', () => {
+    const signals = ['volume_creep', 'frustration', 'recovery_debt'];
+    const session = makeSession(4);
+    const result = coachDirector.applyAAAdjustments(session, makeCtx('HIGH', signals));
+    expect(result.aaBlocked).toBeDefined();
+    expect(result.aaBlocked.level).toBe('hard');
+    expect(result.aaBlocked.requiresFrictionConfirmation).toBe(true);
+    expect(result.aaBlocked.signals).toEqual(signals);
+    expect(result.exercises[0].sets).toBe(2); // Math.max(2, floor(4*0.7)) = max(2,2) = 2
+    expect(result.exercises[0].aaReduced).toBe(true);
+    expect(result.exercises[1].sets).toBe(2);
+    expect(result.aaWarning).toBeUndefined();
+  });
+});

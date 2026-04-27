@@ -244,6 +244,34 @@ export class CoachDirector {
   }
 
   applyAAAdjustments(session, ctx) {
+    const aa = ctx.autoAggression;
+    if (!aa || aa.tier === 'none' || aa.tier === 'LOW') return session;
+
+    // MED tier — soft warning banner (UI consumes session.aaWarning)
+    if (aa.tier === 'MED') {
+      session.aaWarning = {
+        level: 'soft',
+        signals: aa.signals,
+        escalating: aa.escalating,
+      };
+      return session;
+    }
+
+    // HIGH tier — friction modal blocker (ADR 013 §6 — coach refuses initial aggressive plan)
+    session.aaBlocked = {
+      level: 'hard',
+      signals: aa.signals,
+      escalating: aa.escalating,
+      requiresFrictionConfirmation: true,
+    };
+
+    // Anti-overreach default — volume reduction 30%
+    session.exercises = session.exercises.map(e => ({
+      ...e,
+      sets: Math.max(2, Math.floor((e.sets || 3) * 0.7)),
+      aaReduced: true,
+    }));
+
     return session;
   }
 
