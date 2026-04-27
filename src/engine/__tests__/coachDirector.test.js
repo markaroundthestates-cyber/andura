@@ -543,7 +543,9 @@ describe('CoachDirector — applyAAAdjustments (ADR 013)', () => {
     expect(result.aaBlocked.signals).toEqual(signals);
     expect(result.exercises[0].sets).toBe(2); // Math.max(2, floor(4*0.7)) = max(2,2) = 2
     expect(result.exercises[0].aaReduced).toBe(true);
+    expect(result.exercises[0].aaOriginalSets).toBe(4); // preserved for override restore (ADR 014 §5, TASK #7)
     expect(result.exercises[1].sets).toBe(2);
+    expect(result.exercises[1].aaOriginalSets).toBe(4);
     expect(result.aaWarning).toBeUndefined();
   });
 });

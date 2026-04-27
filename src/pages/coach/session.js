@@ -248,9 +248,15 @@ export function endSession() {
           hyperfocusData: null,  // FAZA 4 — analytics integration deferred
         });
 
+        // ADR 014 §5 — AA override fields (TASK #7)
+        const _cachedDir = getCachedDirector();
+        const _aaOverride = _cachedDir?.aaOverride ?? null;
+
         populateOutcome(_today, {
           ...outcomeBase,
           autoAggression: aaResult,
+          aaOverride: _aaOverride ? true : false,
+          aaOverrideRationale: _aaOverride?.rationale ?? null,
         });
       }
     } else {

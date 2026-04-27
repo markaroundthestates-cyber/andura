@@ -223,15 +223,27 @@ Discrimination prin comportament hipotetic + valori + reflection cu data fresh. 
 - Type confirmation (NU click checkbox — tactile commitment)
 - Submit doar dacă text match exact (case-insensitive, whitespace-trimmed)
 
-**Wording rigid intentional:**
-- Type-in match exact previne paste-uire reflexă (user trebuie să citească ce tipărește)
-- "Am văzut pattern-ul" forțează acknowledgment FĂRĂ să dictate emotion
-- "Aleg să continui" reflexivă — active choice, NU passive
+**Data injection (TASK #7 implementation):**
+
+Fraza generată dinamic: `"continui peste {N} signals în {windowDays} zile"` unde `N = ctx.autoAggression.signals.length`, `windowDays = 14`. NU template static — anti-reflex paste-buffer (fiecare sesiune generează frază diferită per signal count).
+
+Escalation: a 2-a override în 7 zile → fraza mai lungă: `"continui peste {N} signals — a {count+1}-a override în 7 zile"`.
+
+State persistence: `aa-friction-pending` localStorage key — aceeași `sessionDate` → restore phrase (anti-stale la refresh); altă dată → clear și regenerează.
+
+**Reconsideration triggers:**
+- Typing completion rate <50% → friction prea mare, redesign mecanism
+- Typing completion rate >95% → friction prea mică, escalează
+
+**Wording rigid intentional (TASK #7 adoption):**
+- Type-in match exact previne paste-uire reflexă — user trebuie să citească ce tipărește
+- Fraza data-injected (N signals, window days) — NU poate fi pre-memorizată sau paste-uită reflex
+- Escalation phrase mai lungă — cost cognitiv crescut la al doilea override
 
 **Rejected wordings:**
 - "Continui pe propria răspundere" → legal-flavored, hostile
 - "Înțeleg pattern-ul observat și aleg să continui" → corporate, scripted
-- "Văd că împingem prin oboseală. Continui conștient." → prescriptiv, dictate emotion ("oboseală")
+- Static phrase fără data injection → paste-buffer bypass trivial
 
 **Tap countdown alternative respinsă:** 3-tap sequence cu pause 3s între → gimmicky, taps pot fi reflex. Typing forțează engagement cognitive.
 

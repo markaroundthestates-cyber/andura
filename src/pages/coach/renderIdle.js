@@ -10,6 +10,7 @@ import { coachDirector } from '../../engine/coachDirector.js';
 import { sessionCache, setCachedDirector, uiToggleFlags } from './state.js';
 import { formatSetsReps, getGroupColor, getDisplayTime, isInCutPhase } from './util.js';
 import { renderPRWall } from './pr.js';
+import { showAAFrictionModal } from './aaFrictionModal.js';
 
 const PATTERN_BANNER_STRINGS = {
   LOW_ADHERENCE: (p) => `📊 Adherence scăzută ultimele 30 zile: ${p.adherenceRate}%. Reducem volum și verificăm contextul.`,
@@ -164,6 +165,22 @@ export async function renderCoachIdle(){
       }
     }
     setCachedDirector(_dirSession);
+
+    // HIGH tier AA friction modal (ADR 013 §6, ADR 014 §5, TASK #7)
+    if (_dirSession?.aaBlocked?.requiresFrictionConfirmation) {
+      const result = await showAAFrictionModal(_dirSession, _dirSession.context);
+      if (result.action === 'override') {
+        _dirSession.exercises = _dirSession.exercises.map(e => ({
+          ...e,
+          sets: e.aaOriginalSets ?? e.sets,
+          aaReduced: false,
+          aaOverridden: true,
+        }));
+        _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
+      }
+      // result.action === 'cancel' → keep reduced exercises as-is
+    }
+
     // Zi de odihnă forțată de Director (readiness < 40)
     if (_dirSession?.restDay) {
       cmdEl.textContent = 'ZI DE ODIHNĂ';

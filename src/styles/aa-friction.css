@@ -1,0 +1,131 @@
+.aa-friction-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+
+.aa-friction-sheet {
+  background: var(--bg2);
+  width: 100%; max-width: 600px;
+  max-height: 90vh; overflow-y: auto;
+  border-top: 3px solid var(--red);
+  border-radius: 16px 16px 0 0;
+  padding: 16px 20px 24px;
+  animation: aaSlideUp 300ms ease-out;
+}
+
+@keyframes aaSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes aaSlideDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+
+.aa-friction-sheet.slide-down {
+  animation: aaSlideDown 200ms ease-in forwards;
+}
+
+.aa-friction-handle {
+  width: 40px; height: 4px;
+  background: var(--text3);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+  cursor: grab;
+}
+
+.aa-friction-sheet h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 1px;
+  color: var(--red);
+  margin: 0 0 12px;
+}
+
+.aa-friction-signals {
+  list-style: none; padding: 0; margin: 0 0 12px;
+}
+.aa-friction-signals li {
+  font-size: 12px; color: var(--text2);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.aa-friction-signals li::before { content: '⚠ '; color: var(--accent2); }
+
+.aa-friction-context {
+  font-size: 13px; color: var(--text); margin: 0 0 12px;
+}
+
+.aa-friction-comparison {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin: 16px 0;
+}
+.aa-friction-comparison .label {
+  display: block;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 6px; color: var(--text3);
+}
+.aa-friction-comparison ul {
+  list-style: none; padding: 0; margin: 0;
+}
+.aa-friction-comparison li { font-size: 12px; padding: 2px 0; }
+
+.plan-original { opacity: 0.6; }
+.plan-original li { text-decoration: line-through; color: var(--text2); }
+.plan-reduced li { color: var(--accent); font-weight: 600; }
+
+.btn-cancel {
+  display: block; width: 100%; padding: 16px;
+  background: var(--accent); color: #000;
+  font-size: 16px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  border: none; border-radius: 8px; margin-top: 16px;
+  cursor: pointer;
+}
+
+.aa-friction-override {
+  margin-top: 16px;
+  border: 1px solid rgba(255,59,48,0.25);
+  border-radius: 8px; padding: 12px;
+}
+.aa-friction-override summary {
+  font-size: 12px; color: var(--text3); cursor: pointer;
+}
+.aa-friction-override .warning-text {
+  font-size: 11px; color: var(--accent2); margin: 8px 0 4px;
+}
+.aa-friction-override p { font-size: 12px; color: var(--text2); margin: 6px 0; }
+.aa-friction-override code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text);
+  background: var(--bg3); padding: 2px 6px; border-radius: 4px;
+}
+
+.aa-friction-input {
+  width: 100%; padding: 12px;
+  border: 2px solid var(--red);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--bg3); color: var(--text);
+  box-sizing: border-box; margin-top: 8px;
+  outline: none;
+}
+
+.btn-override {
+  display: block; width: 100%; padding: 12px;
+  background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--text3);
+  border-radius: 8px; margin-top: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer;
+}
+.btn-override:not(:disabled) { background: var(--red); color: white; border-color: var(--red); }
+
+.aa-friction-details {
+  margin-top: 12px;
+  font-size: 11px; color: var(--text3);
+}
+.aa-friction-details summary { cursor: pointer; }
+.signals-detailed {
+  list-style: none; padding: 0; margin: 8px 0 0;
+}
+.signals-detailed li {
+  font-size: 11px; color: var(--text2); padding: 3px 0;
+}

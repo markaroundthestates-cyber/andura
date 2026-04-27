@@ -269,6 +269,7 @@ export class CoachDirector {
     // Anti-overreach default — volume reduction 30%
     session.exercises = session.exercises.map(e => ({
       ...e,
+      aaOriginalSets: e.sets,  // preserve pentru override restore (ADR 014 §5, TASK #7)
       sets: Math.max(2, Math.floor((e.sets || 3) * 0.7)),
       aaReduced: true,
     }));
