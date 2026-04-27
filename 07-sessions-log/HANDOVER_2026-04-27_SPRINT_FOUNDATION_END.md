@@ -292,7 +292,7 @@ Când next chat începe, dacă vrei să verifici că calibration e corect:
 - **583 → 737 tests** (+154 net astăzi, zero regresii)
 - **Sprint Foundation ADR 018 = 100% LIVE** (5 componente complete)
 - **30 audit findings** total (Batch 1: 14, Batch 2: 16) — 0 critical, 16 fixed-it-now, 14 deferred în backlog cu trigger explicit
-- **23 + 3 + 7 = 33 DP-uri** approved post-Opus drafts (ADR 018 + 016 + 014 update + 017)
+- **7 + 6 + 3 + 7 = 23 DP-uri** approved post-Opus drafts (ADR 018 + 016 + 014 update + 017)
 - **Vault aliniat la reality** (INSIGHTS_BACKLOG cu Strangler Pre-work Batch 1 + Batch 2 entries)
 - **Memory cleanup:** 28 → 29 entries (#21 updated cu excepție foundation, #29 added pentru verify automat post-CC)
 
