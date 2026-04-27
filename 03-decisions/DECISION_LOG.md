@@ -1,4 +1,22 @@
 ﻿# DECISION LOG â€” SalaFull
+## 2026-04-27 — ADR 014 Update Profile Typing Tier-Aware ACCEPTED
+
+**Status:** 3/3 decision points update approved post-Opus draft review.
+
+**Update scope:**
+1. Tier-Based Personalization Pattern — T0 skip (demographic prior), T1+ Profile Typing activate, T2+ Vitality activate
+2. Plugin Architecture Integration (ADR 018) — Profile Typing devine dimension cu standardized contract, stage ADJUSTMENT, priority 65, enabledFlag profile_typing_v1, schemaVersion 1
+3. Reconciliation cu Vitality Layer (ADR 016) — independent dimensions, cluster helper resolveProfileVitalitySignals, source attribution în signals
+
+**Decision points approved:**
+- DP-1 Tier gating: B — T1 INITIAL
+- DP-2 Stage assignment: A — ADJUSTMENT primary cu ENHANCEMENT secundar
+- DP-3 Overlap signal handling: A — Keep all flags + source attribution
+
+**Cross-refs:** [[014-onboarding-profile-typing]] | [[018-engine-extensibility-architecture]] | [[016-vitality-layer]] | [[011-coach-decision-log-architecture]]
+
+**Next:** ADR 017 Demographic Prior Database (last spec înainte de Sprint Foundation).
+
 ## 2026-04-27 — ADR 016 Vitality Layer ACCEPTED
 
 **Status:** 6/6 decision points approved post-Opus draft review.
