@@ -60,8 +60,14 @@ export async function initSentry() {
 export function captureException(error, context = {}) {
   if (!_initialized || !_Sentry) return;
   _Sentry.withScope(scope => {
-    for (const [key, value] of Object.entries(context)) {
-      scope.setExtra(key, value);
+    if (context.tags && typeof context.tags === 'object') {
+      for (const [k, v] of Object.entries(context.tags)) scope.setTag(k, String(v));
+    }
+    if (context.extra && typeof context.extra === 'object') {
+      for (const [k, v] of Object.entries(context.extra)) scope.setExtra(k, v);
+    }
+    for (const [k, v] of Object.entries(context)) {
+      if (k !== 'tags' && k !== 'extra') scope.setExtra(k, v);
     }
     _Sentry.captureException(error);
   });
