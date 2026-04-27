@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-04-26
-**See also:** [[011-coach-decision-log-architecture]] | [[013-auto-aggression-detection]] | [[001-local-first-storage]] | [[DECISION_LOG]] | [[PROJECT_VISION]]
+**See also:** [[011-coach-decision-log-architecture]] | [[013-auto-aggression-detection]] | [[016-vitality-layer]] | [[018-engine-extensibility-architecture]] | [[001-local-first-storage]] | [[DECISION_LOG]] | [[PROJECT_VISION]]
 
 ---
 
@@ -533,4 +533,337 @@ Acestea NU intră în ADR (principle), intră în spec implementabil + UX iterat
 
 ---
 
-*ADR 014 — Accepted 2026-04-26 după strategic discussion + storage decision triangulated. Status: ready pentru spec EXEC_QUEUE follow-up (Onboarding component + Reconciliation prompt + Friction modal + profileHistory storage layer + Integration).*
+## Tier-Based Personalization Pattern
+
+### Context
+
+ADR 014 acceptat 2026-04-26 specifică Q1-Q5 onboarding fără diferențiere explicită pe calibration tier (ADR 009). Decizia 2026-04-27 (Memory rule #25 + DECISION_LOG entry sesiune END 27 apr): **engine-ul aplică Profile Typing tier-aware**, NU "always-on dacă onboarding completed".
+
+Două motivații strategice:
+
+1. **Self-selection = feature, NU bug.** User care completează onboarding la day 1 = high-engagement signal. User care skip = engine acceptabil din demographic prior, NU degraded mode. Engine se calibrează la efort user, NU forțează personalizare premature.
+
+2. **Profile Typing primary self-report only la T0/T1.** Behavioral inference (data care corectează self-perception bias — cf. ADR 014 §1) necesită ≥ 12 sesiuni real (per §scoring + reconciliation triggers). Activarea Profile Typing recommendations înainte de behavioral data = self-report bias la putere maximă, fără counter-balance. T1+ activare respectă natural acest gate.
+
+### Decision
+
+**Tier-aware Profile Typing activation:**
+
+| Tier | Days/Sessions | Profile Typing primary collected? | Profile Typing recommendations active? | Behavior |
+|---|---|---|---|---|
+| T0 COLD_START | < 7 zile, < 3 sesiuni | YES (la onboarding) | NO | Engine = demographic prior + cold-start session (ADR 009). Profile Typing data stocată dar NU consumată. |
+| T1 INITIAL | 7-28 zile, 3-12 sesiuni | YES | YES (self-report only) | Profile Typing dimension activă; recommendations aplicate. Behavioral inference NU disponibil încă. |
+| T2 PERSONALIZING | 28-90 zile, 12-40 sesiuni | YES | YES (self-report + behavioral) | Behavioral inference activ post-Q5 (sesiunea 3+). Reconciliation triggered la săpt 4 + ≥12 sesiuni. |
+| T3+ PERSONALIZED / OPTIMIZED | 90+ zile, 40+ sesiuni | YES | YES (full) | Profile Typing full functionality + reconciliation cycle. |
+
+**Skip semantics:**
+- User T0 skip onboarding → engine = demographic prior din age/sex/kg/height/BMI. Profile Typing dimension skipped în cluster (no data). NU degraded mode.
+- User T1+ skip onboarding (atypical edge case) → tratat ca T0 indefinitely până când onboarding completed manual din settings.
+- User T0 partial onboarding (Q1-Q3 da, Q4 skip) → tratat per ADR 014 §3 edge cases (LOW confidence + flag), Profile Typing dimension active la T1 cu confidence flag propagated.
+
+### Self-selection feature rationale
+
+Engine NU forțează personalizare premature. Daniel articulation (DECISION_LOG sesiune END 27 apr):
+
+> "T0 skip = engine generic + demographic prior din synthetic. T1+ Profile Typing activate. T2+ Vitality activate. T3+ behavioral real. Self-selection = feature, NU bug."
+
+Implications:
+- **Onboarding NU mandatory** pentru engine functional. Cold-start session (ADR 009) e baseline acceptable.
+- **Friction-zero opt-in** preserved la fiecare tier transition. User care complete onboarding la day 14 (post-T1) primește Profile Typing recommendations imediat post-completion.
+- **Demographic prior** (planned ADR 017) acoperă golul T0. Profile Typing = upgrade signal, NU foundation.
+
+### Implementation notes
+
+- Tier check: dimension `profileTyping.js` `analyze(input)` early-return cu `tier: 'none'` dacă `ctx.calibrationLevel === 'COLD_START'` (T0). Per ADR 018 §1 registry, `requiresCalibration: 'INITIAL'` filtered de helper `getActiveDimensions(ctx)` — alternative path, equivalent semantic.
+- Profile Typing data collected la onboarding stocate în `profile-history` localStorage key (per ADR 014 §6 existing) indiferent de tier. Data persistence ≠ data consumption.
+- DimensionResult.meta.confidence reflectă tier: T1 self-report-only → `confidence: 'medium'` (lipsește behavioral); T2+ post-reconciliation → `'high'` dacă self-report match behavioral, `'medium'` dacă mismatch deferred, `'low'` dacă mismatch sustained ≥ 4 săpt fără update.
+
+### DP-1: Profile Typing tier gating — T1 INITIAL vs T0 immediate vs T2 PERSONALIZING
+
+Vezi secțiunea finală update.
+
+---
+
+## Plugin Architecture Integration (ADR 018)
+
+### Context
+
+ADR 018 acceptat 2026-04-27 cu 5 componente structurale (Dimension Registry + Standardized Contract + Decision Cluster + Schema Versioning + Feature Flags). ADR 018 §migration Phase 2 specifică explicit Profile Typing **implement direct as dimension, skip legacy path entirely** — Profile Typing NU e legacy code de migrat (spec ADR 014 nu implementat încă), e greenfield la momentul ADR 018.
+
+ADR 014 §implementation notes (existing) listează 5 subtasks (Onboarding component + Reconciliation prompt + Friction modal + profileHistory storage + Integration coachContext). Aceste subtasks rămân valide dar reorganizate pe ADR 018 contract — NU manual integration în `coachDirector.buildSession()`, ci dimension plugin în registry.
+
+### Decision
+
+**Profile Typing implementată end-to-end ca dimension plugin per ADR 018 contract.**
+
+**Registry entry (`src/engine/dimensionRegistry.js`):**
+
+```js
+import * as profileTyping from './dimensions/profileTyping.js';
+
+export const DIMENSIONS = [
+  // ... existing entries
+  {
+    id: 'PROFILE_TYPING',
+    module: profileTyping,
+    stage: 'ADJUSTMENT',           // primary impact: session content per profile
+    priority: 65,                  // mid-priority within ADJUSTMENT (above weakGroups, below AA MED)
+    enabledFlag: 'profile_typing_v1',
+    requiresCalibration: 'INITIAL',
+    schemaVersion: 1
+  }
+];
+```
+
+**Module signature (`src/engine/dimensions/profileTyping.js`):**
+
+```js
+export function analyze(input) {
+  const { ctx, cdl, userProfile, flags } = input;
+  const profileData = userProfile?.profileTyping;  // populated from profile-history latest non-deferred entry
+
+  if (!profileData || profileData.primary === null) {
+    return {
+      id: 'PROFILE_TYPING',
+      tier: 'none',
+      confidence: 'low',
+      signals: [],
+      recommendations: [],
+      trace: { reason: 'no_self_report' },
+      meta: { primary: null, secondary: null, confidence: 'low', scores: null, flags: [] }
+    };
+  }
+
+  // Behavioral inference path (T2+ post-reconciliation) — see §4 reconciliation flow
+  const behavioralPrimary = ctx.behavioralProfile?.primary || null;
+  const reconciliationStatus = computeReconciliation(profileData, behavioralPrimary, ctx);
+
+  const recommendations = buildRecommendationsForProfile(profileData.primary, ctx);
+
+  return {
+    id: 'PROFILE_TYPING',
+    tier: profileData.confidence === 'high' ? 'HIGH' : profileData.confidence === 'medium' ? 'MED' : 'LOW',
+    confidence: profileData.confidence,
+    signals: profileData.flags,                // existing shape per ADR 014 §6
+    recommendations,
+    trace: { reconciliationStatus, behavioralPrimary, scores: profileData.scores },
+    meta: {
+      primary: profileData.primary,
+      secondary: profileData.secondary,
+      confidence: profileData.confidence,
+      scores: profileData.scores,
+      flags: profileData.flags
+    }
+  };
+}
+```
+
+**Stage rationale (ADR 018 §3):**
+- `stage: 'ADJUSTMENT'` — Profile Typing recommendations modify session content (volume, exercise selection, deload tolerance per profile). NU short-circuit (NU GATE), NU presentation-only (NU ENHANCEMENT primary).
+- ENHANCEMENT use-case secundar: per-profile banner copy + tone (Sprinter "menținem intensitatea" vs Marathon "consistență peste viteză"). Implementation: aceeași dimension emite recommendations cu mix de actions — `action: 'reduce_volume_cap'` (ADJUSTMENT) + `action: 'inject_banner'` (ENHANCEMENT). Decision Cluster routes per stage automat.
+
+**Priority 65 rationale (within ADJUSTMENT stage):**
+- AA HIGH GATE = 95 (separate stage)
+- AA MED ADJUSTMENT = 75
+- Weak group priority = 70
+- **Profile Typing = 65** (mid-tier ADJUSTMENT)
+- Vitality LOW = 65 (parity — see ADR 016 §6)
+- Cut conservative = 55
+
+Profile Typing + Vitality at parity 65 reflectă status equal: ambele state-derived dimensions, NU short-circuit gates. Conflict resolution între ele = priority numeric tie-break + cluster cross-reference helper (§reconciliation Vitality below).
+
+**Feature flag `profile_typing_v1`:**
+- Rollout 1.0 default (always-on). Profile Typing acceptat pre-ADR 018 (26 apr 2026) — flag există pentru emergency rollback, NU gradual rollout.
+- Decision inline (NU DP): pattern parity cu AA detection (ADR 018 §migration AA = `aa_detection_v1` rollout 1.0 already-live).
+- Local override `_devFlags` per ADR 018 §5 disponibil pentru dev disable.
+
+**Schema versioning v1:**
+- DimensionResult.meta shape pinned per ADR 014 §6 existing: `{primary, secondary, confidence, scores, flags}`.
+- Schema migration runner (ADR 018 §4) preg pentru v1 → v2 dacă shape evolves. Initial migration v0 → v1 trivial: existing profile-history entries pre-dimension-port = compatibility shim (read shim normalizes shape).
+
+### DP-2: Stage assignment — ADJUSTMENT primary vs ENHANCEMENT only vs hybrid
+
+Vezi secțiunea finală update.
+
+### Implementation notes
+
+- Per ADR 018 contract, `analyze()` must be pure + deterministic + total. `computeReconciliation()` + `buildRecommendationsForProfile()` helpers sunt pure functions în profileTyping.js, NU side-effects.
+- Reconciliation flow (ADR 014 §4) UI prompts NU triggered din `analyze()` — separate concern (banner injection via Stage 3 ENHANCEMENT recommendations sau separate UI hook). `analyze()` întoarce reconciliation status în trace; UI layer consume.
+- Existing 5 subtasks ADR 014 §implementation notes valide cu re-mapping:
+  1. Onboarding component → emite în `profile-history` storage (unchanged)
+  2. Reconciliation prompt component → consume DimensionResult.trace.reconciliationStatus
+  3. Friction modal → unchanged (AA-driven, NU profile-driven)
+  4. profile-history storage layer → unchanged
+  5. Integration coachContext → înlocuit cu dimension registration (ADR 018 plugin)
+
+---
+
+## Reconciliation cu Vitality Layer (ADR 016)
+
+### Context
+
+ADR 016 acceptat 2026-04-27 cu Vitality Layer ca dimension nouă (T2+ activate, per §4 ADR 016). ADR 016 DP-3 a decis: **Profile Typing și Vitality = independent dimensions**, cross-reference DOAR în Decision Cluster Stage 2 logic, NU în `analyze()` direct (ar viola ADR 018 §2 contract guarantee "pure function, deterministic, total").
+
+Două surse de overlap concrete între Profile Typing și Vitality:
+
+1. **Signal flag overlap.** Profile Typing existing flags pot include `'high_stress'`, `'low_motivation'`, `'recovery_lent'` — derivate din self-report Q1-Q5 + behavioral inference. Vitality emite același flag set (per ADR 016 §2 scoring) — derivate din Q1-Q6 vitality responses fresh state.
+2. **Recommendation overlap.** Profile Typing Sprinter primary → recommend volume cap (anti-overreach). Vitality LOW → recommend volume reduction (recovery prioritar). Ambele recommend reduce_volume action către cluster.
+
+### Decision
+
+**Cluster cross-reference helper `resolveProfileVitalitySignals(profileResult, vitalityResult, ctx)` — explicit pure function, separate de ambele dimensions.**
+
+**Helper signature (`src/engine/decisionCluster.js`):**
+
+```js
+function resolveProfileVitalitySignals(profileResult, vitalityResult, ctx) {
+  // Returns: { mergedSignals, rationale } pentru trace logging
+  
+  const profileSignals = (profileResult.signals || []).map(s => ({ src: 'PROFILE_TYPING', signal: s }));
+  const vitalitySignals = (vitalityResult.signals || []).map(s => ({ src: 'VITALITY', signal: s }));
+  
+  // Overlap signal IDs prefixed cu dimension id în trace
+  // Conflict resolution: numeric priority within ADJUSTMENT stage decides winner per recommendation action
+  
+  return {
+    mergedSignals: [...profileSignals, ...vitalitySignals],
+    overlap: detectOverlap(profileSignals, vitalitySignals),
+    rationale: 'profile + vitality signals merged with source attribution'
+  };
+}
+```
+
+**Conflict resolution rules:**
+
+1. **Signal flags overlap (string identical):** Both retained în trace cu `src: 'PROFILE_TYPING'` / `src: 'VITALITY'` prefix. NO deduplication. Engine treats as independent observations — Profile Typing self-report + Vitality fresh state = correlated but NU identical (Profile = identitate, Vitality = stare curentă).
+
+2. **Recommendation overlap (same action, different priority):** Numeric priority within ADJUSTMENT stage decide winner per ADR 018 §3 stage compose semantics. Volume multipliers compose multiplicativ:
+   - Profile Typing Sprinter recommendation: volumeMultiplier 0.95 (subtle anti-overreach)
+   - Vitality LOW recommendation: volumeMultiplier 0.85 (recovery)
+   - Final: 0.95 × 0.85 = 0.8075 (compose multiplicativ per ADR 018 §3)
+
+3. **Recommendation overlap (same action, identical priority):** Tie-break = registry order (PROFILE_TYPING listed before VITALITY in DIMENSIONS array). Effectively non-deterministic from user perspective; documented behavior.
+
+4. **Conflict (contradictory recommendations):** Currently impossible by design — both dimensions emit `reduce_volume` direction, NU `increase_volume`. Future cross-recommendation contradictions = reconsideration trigger (per ADR 018 §reconsideration trigger #5 cross-dimension dependencies).
+
+**Independence preserved:**
+- Profile Typing `analyze()` NU citește vitalityResult. Vitality `analyze()` NU citește profileResult. Both independent per ADR 018 §2 contract.
+- Cluster helper `resolveProfileVitalitySignals` invoked DOAR la Stage 2 ADJUSTMENT compose phase. Pure function, testabil isolate.
+
+**Vitality null handling (T0/T1 user, sau T2+ skipped):**
+- Cluster helper detects `vitalityResult.tier === 'none'` → fallback: Profile Typing flags consumed as-is, no merge needed.
+- Profile Typing dimension recommendations active independent. NO degraded mode.
+- Trace logs explicit `vitality: 'no_data'` pentru transparency.
+
+### DP-3: Overlap signal handling — keep existing flags vs drop overlapping vs prefix-only
+
+Vezi secțiunea finală update.
+
+### Implementation notes
+
+- Helper `resolveProfileVitalitySignals` + `detectOverlap` în `src/engine/decisionCluster.js`. Tested cu mock combinations: (Profile=Sprinter, Vitality=LOW), (Profile=Marathon, Vitality=HIGH), (Profile=Strategic, Vitality=null), (Profile=null, Vitality=LOW), etc.
+- Trace structure consumed de CDL `proposed.rationale.overridden` (ADR 011 + ADR 018 §3) — overlap entries logged cu source attribution. Audit-friendly.
+- Reconciliation prompt UX (ADR 014 §4) NU affected by Vitality. Profile = identitate, Vitality = stare. Cross-feed în UI prompt = reserved pentru v2 dacă signal warrants (currently NO planned trigger).
+
+---
+
+## Update 2026-04-27 — Tier-Aware + ADR 018 Integration
+
+### Changelog
+
+3 secțiuni noi adăugate post-ADR 014 sign-off (26 apr 2026):
+
+1. **Tier-Based Personalization Pattern** — Profile Typing activation gated pe ADR 009 calibration tier. T0 skip = engine demographic prior. T1+ activate cu confidence reflectând data quality.
+2. **Plugin Architecture Integration (ADR 018)** — Profile Typing implementată ca dimension în registry per ADR 018 §1-§3 contract. Stage ADJUSTMENT, priority 65, feature flag `profile_typing_v1` rollout 1.0.
+3. **Reconciliation cu Vitality Layer (ADR 016)** — Independent dimensions per ADR 016 DP-3. Cluster cross-reference helper `resolveProfileVitalitySignals`. Source-attributed signal merging. Volume multiplier compose multiplicativ.
+
+### NU modificat
+
+Existing spec preserved verbatim:
+- Q1-Q5 wording v1 strategic (§2)
+- Scoring rules + edge cases (§3)
+- Reconciliation flow 5+1 cases + decline behavior + frequency cap (§4)
+- Friction modal HIGH tier wording + typing confirmation (§5) — actualizat indirect prin TASK #7 implementation 27 apr (data-injection wording, vezi DECISION_LOG)
+- Storage strategy `profile-history` separate localStorage key (§6)
+- Alternatives + trade-offs + reconsideration triggers + resolved questions
+- Empirical calibration parameters
+
+### Cross-refs nous
+
+- [[016-vitality-layer]] — DP-3 ADR 016 (independent dimensions decision)
+- [[018-engine-extensibility-architecture]] — DP-1 până DP-7 ADR 018 (plugin contract foundation)
+
+---
+
+## Decision Points — Daniel Sign-Off Required (Update 2026-04-27)
+
+3 decision points marcate pentru update. Decisions cosmetic (priority numeric exact 65, helper naming `resolveProfileVitalitySignals`, registry order Profile înainte Vitality) decise în-line cu rationale scurtă.
+
+### DP-1: Profile Typing tier gating — T0 immediate vs T1 INITIAL vs T2 PERSONALIZING
+
+**Options:**
+- **A:** T0 immediate — Profile Typing recommendations active de la prima sesiune dacă onboarding completed
+  - Pros: maximum personalization speed; user care complete onboarding day 1 simte imediat efectul
+  - Cons: self-report bias la putere maximă; behavioral inference NU disponibil până sesiunea 12+, deci primul 1-3 săpt = pure self-report fără counter-balance. Risk: user "Strategic" claim fals → engine learns greșit pre-correction
+- **B:** T1 INITIAL (7+ zile + 3+ sesiuni) — Profile Typing recommendations active după minimum tier threshold
+  - Pros: respectă ADR 009 calibration tier semantic; demographic prior gives way la user signal după minimum data; aliniat cu Memory rule #25
+  - Cons: 7-day delay între onboarding completion și Profile Typing impact (acceptabil — cold-start session disponibil)
+- **C:** T2 PERSONALIZING (28+ zile + 12+ sesiuni) — Profile Typing recommendations active DOAR post-reconciliation eligibility
+  - Pros: behavioral inference disponibil de la start; self-report bias counter-balanced
+  - Cons: 28-day delay = personalization lag mare; engine = generic 4 săpt chiar dacă user complete onboarding day 1
+
+**Recommendation:** B — T1 INITIAL activate. Match ADR 009 + Memory rule #25 + Daniel articulation 27 apr. T0 immediate = bias risk. T2 only = lag prea mare. T1 = balanced — minimum data threshold + self-report-only acceptabil cu confidence flag medium.
+
+**Need Daniel sign-off:** YES
+
+---
+
+### DP-2: Profile Typing stage assignment — ADJUSTMENT primary vs ENHANCEMENT only vs hybrid
+
+**Options:**
+- **A:** ADJUSTMENT primary — Profile Typing emits recommendations care modifică session content (volume cap per Sprinter, progression rate per Marathon, deload tolerance per Yo-yo)
+  - Pros: Profile Typing has real coaching impact; leverages discrimination power la maximum; per-profile session adjustments = key differentiator vs generic apps
+  - Cons: per-profile adjustment logic adds spec complexity; risk de bugs în volume compose dacă Profile Typing + Vitality + AA stack
+- **B:** ENHANCEMENT only — Profile Typing affects banner/wording/tone DOAR
+  - Pros: simplest implementation; zero risk pe session content; existing engine logic unchanged
+  - Cons: Profile Typing reduced la UI theatre; effort onboarding (Q1-Q5) doesn't translate to coaching impact; user reaction "completed survey for nothing"
+- **C:** Hybrid — ADJUSTMENT pentru AA threshold calibration only (cross-reference în cluster), ENHANCEMENT pentru everything else
+  - Pros: focused integration via AA cross-reference (already specified ADR 016 + 013); minimal session content changes
+  - Cons: secondary Profile Typing impact (volume cap, progression rate) unused — wastes self-report bandwidth
+
+**Recommendation:** A — ADJUSTMENT primary cu ENHANCEMENT secundar (mixed actions în same dimension, routed per stage de cluster). Profile Typing has real coaching value, NU UI theatre. Existing ADR 014 design intent (4 profile differentiation) requires ADJUSTMENT-level impact. Implementation complexity acceptable post-ADR 018 plugin foundation.
+
+**Need Daniel sign-off:** YES
+
+---
+
+### DP-3: Overlap signal handling Profile Typing ↔ Vitality — keep all flags vs drop overlapping vs prefix-only
+
+**Options:**
+- **A:** Keep all existing flags. Cluster helper attributes source (`src: 'PROFILE_TYPING'` / `src: 'VITALITY'`). NO deduplication. Both dimensions independent.
+  - Pros: Profile Typing works fully independent (Vitality null at T0/T1 sau skipped → Profile flags fallback); signal redundancy = robustness; explicit trace per source
+  - Cons: double-counting risk dacă cluster aggregation naive; test surface complex (multiple overlap combinations)
+- **B:** Drop overlapping flags from Profile Typing — Profile Typing emits doar pure profile-derived flags (`'sprinter_intensity_craving'`, `'marathon_consistency_need'`, etc.). Overlapping flags (`'high_stress'`, `'low_motivation'`) DOAR în Vitality
+  - Pros: clean separation, no double-counting, easy mental model
+  - Cons: Profile Typing scope reduced; if Vitality null (T0/T1, sau T2+ skipped), Profile typing loses fallback signal; effective regression vs ADR 014 existing scope
+- **C:** Prefix-only — Profile Typing keeps existing flags but renames cu `pt_` prefix (`pt_high_stress`, `pt_low_motivation`). Vitality keeps `vit_` prefix
+  - Pros: explicit trace, debugging-friendly, no logic change
+  - Cons: doesn't solve double-counting (just makes it visible în logs); cluster aggregation logic still needs explicit handling
+
+**Recommendation:** A — Keep all flags + source attribution. Vitality is opt-in (T2+ AND user complete) — Profile Typing must work independent fallback. Cluster helper handles overlap explicit cu source trace; double-counting prevented prin recommendation priority compose (ADR 018 §3), NU prin signal dedup.
+
+**Need Daniel sign-off:** YES
+
+---
+
+## Sign-Off Update — 2026-04-27
+
+Daniel approved 3/3 decision points update.
+
+- DP-1 Tier gating: B — T1 INITIAL (7+ zile + 3+ sesiuni) APPROVED
+- DP-2 Stage assignment: A — ADJUSTMENT primary cu ENHANCEMENT secundar APPROVED
+- DP-3 Overlap signal handling: A — Keep all flags + source attribution APPROVED
+
+---
+
+*ADR 014 — Accepted 2026-04-26. Update 2026-04-27 ACCEPTED cu tier-aware + ADR 018 plugin integration + ADR 016 reconciliation. Status: ready pentru spec EXEC_QUEUE follow-up.*
