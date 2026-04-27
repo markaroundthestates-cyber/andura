@@ -177,6 +177,15 @@ describe('decisionCluster — Stage 2 ADJUSTMENT', () => {
     expect(trace.stages.ADJUSTMENT.fired).toHaveLength(1);
     expect(session.volumeMultiplier).toBe(1);
   });
+
+  it('tie-break on identical priorities: input order wins (registry order)', async () => {
+    const cluster = new DecisionCluster();
+    const a = result('A', { recommendations: [rec({ action: ACTIONS.REDUCE_VOLUME, priority: 65, payload: { multiplier: 0.9 } })] });
+    const b = result('B', { recommendations: [rec({ action: ACTIONS.REDUCE_VOLUME, priority: 65, payload: { multiplier: 0.95 } })] });
+    const { trace } = await cluster.execute([a, b], {});
+    expect(trace.stages.ADJUSTMENT.fired[0].source).toBe('A');
+    expect(trace.stages.ADJUSTMENT.fired[1].source).toBe('B');
+  });
 });
 
 describe('decisionCluster — Stage 3 ENHANCEMENT', () => {

@@ -175,7 +175,8 @@ export class DecisionCluster {
       };
     }
 
-    // Sort by priority DESC — highest wins
+    // Stable sort: ties broken by input order (registry order at registration time).
+    // V8 stable sort guarantee per ECMA-2019. Determinism contract guarantee (ADR 018 §2).
     gateRecs.sort((a, b) => b.rec.priority - a.rec.priority);
     const [winner, ...rest] = gateRecs;
 
@@ -233,7 +234,8 @@ export class DecisionCluster {
       }
     }
 
-    // Sort by priority DESC — deterministic application order for trace
+    // Stable sort: ties broken by input order (registry order at registration time).
+    // V8 stable sort guarantee per ECMA-2019. Determinism contract guarantee (ADR 018 §2).
     adjustments.sort((a, b) => b.rec.priority - a.rec.priority);
 
     for (const { source, rec } of adjustments) {
@@ -242,6 +244,10 @@ export class DecisionCluster {
         composedVolumeMultiplier *= rec.payload.multiplier;
       }
       if (rec.action === ACTIONS.REDUCE_SETS && typeof rec.payload?.cap === 'number') {
+        // Sets caps compose via MIN (most restrictive wins). Equivalent to sequential
+        // application — `min(cap_so_far, new_cap) = new_cap` iff new_cap < cap_so_far.
+        // SUM interpretation would be nonsensical (caps don't stack additively).
+        // Locked semantic — see test 'composes sets caps via minimum (most restrictive wins)'.
         composedSetsCap = composedSetsCap == null
           ? rec.payload.cap
           : Math.min(composedSetsCap, rec.payload.cap);
@@ -288,6 +294,8 @@ export class DecisionCluster {
       }
     }
 
+    // Stable sort: ties broken by input order (registry order at registration time).
+    // V8 stable sort guarantee per ECMA-2019. Determinism contract guarantee (ADR 018 §2).
     enhancements.sort((a, b) => b.rec.priority - a.rec.priority);
 
     for (const { source, rec } of enhancements) {
