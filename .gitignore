@@ -9,3 +9,7 @@ docs/AUDIT_BULLETPROOF_*.md
 .obsidian/plugins/
 .obsidian/workspace.json
 .obsidian/cache/
+
+# Playwright test artifacts (auto-generated, not source)
+test-results/
+
