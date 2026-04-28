@@ -137,7 +137,7 @@ All "See also" references were verified:
 | [[OPUS_NUCLEAR_AUDIT_25APR]] | docs/OPUS_NUCLEAR_AUDIT_25APR.md | ✓ | Valid |
 | [[LOG_SCHEMA_AUDIT_1_3]] | docs/LOG_SCHEMA_AUDIT_1_3.md | ✓ | Valid |
 | [[PROJECT_VISION]] | 01-vision/ (referenced vault) | ✓ | Valid |
-| [[STACK_CURRENT]] | 00-index/ (referenced vault) | ✓ (inferred) | Valid |
+| STACK_CURRENT | 00-index/ (referenced vault) | ✓ (inferred) | Valid |
 | [[FINDINGS_MASTER]] | 06-findings-tracker/ (referenced vault) | ✓ | Valid |
 
 **Result:** ZERO broken cross-references. All vault docs referenced exist.

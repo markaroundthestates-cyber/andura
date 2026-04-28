@@ -136,7 +136,7 @@ In DECISION_LOG, append entry:
 **Top blockers:** [count + brief]
 **New problems found:** [count]
 **Tasks queued:** [count]
-**Reference:** [[AUDIT_<MODEL>_<DATE>]]
+**Reference:** AUDIT_<MODEL>_<DATE>
 ```
 
 In INDEX_MASTER, add link to audit doc under Audits section.

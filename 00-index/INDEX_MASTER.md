@@ -59,20 +59,15 @@ salafull/
 - [[010-no-anthropic-trademark-public]] — ADR: No Anthropic Trademark in Public Material
 
 ### 🏗️ Architecture
-- [[STACK_CURRENT]] — Vanilla JS + Firebase + PWA
 - [[ENGINE_ARCHITECTURE]] — Coach Brain v3
-- [[STATE_MACHINES]] — Session/Timer/Draft/Drop Set (din audit coach.js)
 
 ### 📝 Prompts
-- [[PROMPT_FAZA_1_0_SPLIT_PLANNING]] — Split planning (DONE 24 apr 2026)
 - [[PROMPT_FAZA_1_1_SPLIT_EXECUTION]] — Split execution (DONE 24 apr 2026)
-- [[PROMPT_TEMPLATE]] — Template generic Claude Code
 
 ### 📊 Findings Tracker
 - [[FINDINGS_MASTER]] — 125 findings triate, status progress (1 OPEN: H30c)
 
 ### 📓 Sessions Log
-- [[GYM_SESSIONS]] — Sesiuni reale sală + observații produs
 - [[QA_MANUAL_24APR_2230]] — QA live 24 apr 22:30 — 3 bug-uri noi + observații
 - [[QA_MANUAL_25APR_POSTFIX]] — QA post C10c fix + bug-uri noi descoperite (BUG A reset cascade)
 
@@ -177,7 +172,7 @@ Bionic human brain pentru fitness și sănătate, cu capacitatea de a depăși o
 - **Începutul zilei:** deschid INDEX MASTER → văd where I left off
 - **Conversație cu Claude:** linkuiesc fișierele relevante (ex: "Citește [[PROJECT_VISION]] și [[FINDINGS_MASTER]]")
 - **Task nou pentru Claude Code:** adaug în [[EXEC_QUEUE]], zic "check queue"
-- **Sesiune sală:** update [[GYM_SESSIONS]] cu observații
+- **Sesiune sală:** update GYM_SESSIONS cu observații
 - **Decizie nouă:** add în [[DECISION_LOG]] cu data + motivație
 - **Bug fix:** update [[FINDINGS_MASTER]] cu status
 
