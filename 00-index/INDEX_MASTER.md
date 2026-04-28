@@ -1,7 +1,29 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 25 apr 2026 (rebrand cleanup — vezi [[010-no-anthropic-trademark-public]])
+**Ultima actualizare:** 28 apr 2026 — vault cleanup Batch 1-5 complete
 **Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii. Task #25-#27 DONE (Nuclear audit + cache coalesce + data registry).
+
+---
+
+## STRUCTURA VAULT
+
+```
+salafull/
+├── 00-index/                  ← Master index
+├── 01-vision/                 ← Product vision
+├── 02-audit/                  ← All audit reports (22 files)
+├── 03-decisions/              ← All ADRs (20 files: DECISION_LOG + 19 ADRs)
+├── 04-architecture/           ← Architecture: FAZA/ROADMAP/PLAN/SPEC + ENGINE_ARCHITECTURE
+├── 05-prompts/                ← Claude prompts (CC + chat)
+├── 06-findings-tracker/       ← Findings + bugs tracker
+├── 07-sessions-log/           ← HANDOVER + AUTONOMOUS_RUN files
+├── 08-meta/                   ← Meta docs (Obsidian, Claude Code rules, vault sync)
+├── 09-workflows/              ← Workflows + protocols
+├── 10-exec-queue/             ← EXEC_QUEUE
+├── src/                       ← Code source
+├── tests/                     ← Tests
+└── README.md                  ← Repo intro
+```
 
 ---
 
