@@ -10,7 +10,7 @@ import { coachDirector } from '../../engine/coachDirector.js';
 import { sessionCache, setCachedDirector, uiToggleFlags } from './state.js';
 import { formatSetsReps, getGroupColor, getDisplayTime, isInCutPhase } from './util.js';
 import { renderPRWall } from './pr.js';
-import { showAAFrictionModal } from './aaFrictionModal.js';
+import { showAAFrictionModal, isAAFrictionDismissedToday } from './aaFrictionModal.js';
 import { modalManager } from '../../components/modalManager.js';
 
 const PATTERN_BANNER_STRINGS = {
@@ -321,7 +321,11 @@ export async function renderCoachIdle(){
     // DOM is already rendered with the reduced plan; modal appears on top ~100ms later.
     // If user overrides, session is updated and re-rendered. If user dismisses 3×
     // consecutively (backdrop/swipe), modalManager.isSuppressed() silences it.
-    if (_dirSession?.aaBlocked?.requiresFrictionConfirmation && !modalManager.isSuppressed('aa-friction')) {
+    if (
+      _dirSession?.aaBlocked?.requiresFrictionConfirmation
+      && !modalManager.isSuppressed('aa-friction')
+      && !isAAFrictionDismissedToday()
+    ) {
       setTimeout(() => {
         modalManager.show({
           id: 'aa-friction',
@@ -337,7 +341,7 @@ export async function renderCoachIdle(){
                 aaReduced: false,
                 aaOverridden: true,
               }));
-              _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
+              _dirSession.aaOverride = { rationale: result.overrideRationale ?? 'override-button', timestamp: Date.now() };
               sessionCache.set(_dirSession);
               renderCoachIdle();
             } else {

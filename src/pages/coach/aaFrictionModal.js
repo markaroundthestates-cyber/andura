@@ -1,41 +1,56 @@
 import '../../styles/aa-friction.css';
-import { readAllActive } from '../../util/coachDecisionLog.js';
+
+// ── Storage keys ─────────────────────────────────────────────────────────────
+//
+// FRICTION_PENDING_KEY — short-lived state used during the modal lifecycle
+// (cleared on cleanup). Retained for tests that import it.
+//
+// FRICTION_DISMISSED_DATE_KEY — calendar-day persistence:
+//   When user dismisses (backdrop / swipe / override), we write today's date.
+//   On the next render we check the value: if it equals today, we skip the
+//   modal entirely. Reset is implicit via the date rolling forward — i.e. the
+//   next calendar day, the value no longer matches and the modal can show
+//   again. A real session START (separate event) also resets the gate.
 
 export const FRICTION_PENDING_KEY = 'aa-friction-pending';
+export const FRICTION_DISMISSED_DATE_KEY = 'aa-friction-dismissed-date';
 
-// Signal type → user-facing wording. {N} and {dates} interpolated where available.
-export const SIGNAL_WORDING = {
-  volume_creep:         (n, dates) => `Volume creep: ${n} sesiuni cu volum adăugat după rating ≤2${dates ? ' (' + dates + ')' : ''}`,
-  frustration:          (n)        => `Frustration markers: ${n} sesiuni rated 1-2/5`,
-  recovery_debt:        (n, weeks) => `Recovery debt: ${n} rest days în ${weeks || '?'} săpt`,
-  ignore_recovery:      (n)        => `Ignore recovery: composite fatigue ${n} sesiuni fără volume drop`,
-  calorie_acceleration: (n)        => `Calorie acceleration: drop ${n}+ kcal pe 7 zile`,
-};
-
-function formatSignal(type) {
-  const fn = SIGNAL_WORDING[type];
-  // default n=? when metadata not available
-  return fn ? fn('?') : type;
+function todayLocalDateStr() {
+  return new Date().toLocaleDateString('sv'); // YYYY-MM-DD, local timezone
 }
 
-export function getRecentOverrideCount() {
+/**
+ * True when the user has already dismissed the friction modal today.
+ * Caller (renderIdle) should skip showing the modal in that case.
+ */
+export function isAAFrictionDismissedToday() {
   try {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 7);
-    const cutoffStr = cutoff.toISOString().slice(0, 10);
-    const recent = readAllActive(e => e.date >= cutoffStr && e.outcome?.aaOverride === true);
-    return recent.length;
+    return localStorage.getItem(FRICTION_DISMISSED_DATE_KEY) === todayLocalDateStr();
   } catch {
-    return 0;
+    return false;
   }
 }
 
-export function generateExpectedPhrase(signalCount, escalated, overrideCount) {
-  if (escalated && overrideCount > 0) {
-    return `continui peste ${signalCount} signals — a ${overrideCount + 1}-a override în 7 zile`;
-  }
-  return `continui peste ${signalCount} signals în 14 zile`;
+/**
+ * Mark the modal as dismissed for today. Persists across page refreshes.
+ * Called for every "user did not accept the reduced plan" outcome:
+ *   - backdrop tap, swipe-down, or override click.
+ * NOT called for the "Acceptă plan redus" button (that is acceptance, not dismiss).
+ */
+export function markAAFrictionDismissedToday() {
+  try {
+    localStorage.setItem(FRICTION_DISMISSED_DATE_KEY, todayLocalDateStr());
+  } catch { /* storage full — soft fail */ }
 }
+
+/** Test/admin escape hatch — clear the per-day dismiss flag. */
+export function clearAAFrictionDismissedDate() {
+  try {
+    localStorage.removeItem(FRICTION_DISMISSED_DATE_KEY);
+  } catch { /* swallow */ }
+}
+
+// ── Pending state (modal lifecycle) ──────────────────────────────────────────
 
 export function isAAFrictionPending() {
   try {
@@ -66,7 +81,8 @@ function readPendingState() {
   }
 }
 
-// Build comparison HTML lists
+// ── Comparison list rendering ────────────────────────────────────────────────
+
 function renderComparisonLists(session) {
   const reduced = session.exercises ?? [];
   const original = reduced.map(e => ({ ...e, sets: e.aaOriginalSets ?? e.sets }));
@@ -81,43 +97,25 @@ function renderComparisonLists(session) {
   return { origHtml, redHtml };
 }
 
-export function showAAFrictionModal(session, ctx) {
+// ── Public modal entry point ─────────────────────────────────────────────────
+
+export function showAAFrictionModal(session /*, ctx */) {
   return new Promise((resolve) => {
-    const signals = session.aaBlocked?.signals ?? ctx?.autoAggression?.signals ?? [];
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayLocalDateStr();
 
-    // Escalation check
-    const overrideCount = getRecentOverrideCount();
-    const escalated = overrideCount >= 1;
-
-    // State persistence (D8)
+    // Lifecycle state — pending key only used to survive an in-progress
+    // modal across an accidental refresh on the same day.
     let state = readPendingState();
-    if (state) {
-      if (state.sessionDate !== today) {
-        // stale — clear and regenerate
-        clearPendingState();
-        state = null;
-      }
+    if (state && state.sessionDate !== today) {
+      clearPendingState();
+      state = null;
     }
-
     if (!state) {
-      state = {
-        sessionDate: today,
-        signals,
-        expectedPhrase: generateExpectedPhrase(signals.length, escalated, overrideCount),
-        escalated,
-      };
+      state = { sessionDate: today };
       writePendingState(state);
     }
 
-    const activePhrase = state.expectedPhrase;
-    const activeEscalated = state.escalated;
-
     const { origHtml, redHtml } = renderComparisonLists(session);
-
-    const warningText = activeEscalated
-      ? '⚠ Override repetat detectat. Friction crescut.'
-      : '⚠ A 2-a override în 7 zile escalează friction.';
 
     // Build DOM
     const backdrop = document.createElement('div');
@@ -130,13 +128,11 @@ export function showAAFrictionModal(session, ctx) {
 
     sheet.innerHTML = `
       <div class="aa-friction-handle"></div>
-      <h2 id="aa-friction-title">Plan ajustat — ${signals.length} signals detectate</h2>
+      <h2 id="aa-friction-title">Plan ajustat — recovery</h2>
 
-      <ul class="aa-friction-signals">
-        ${signals.map(s => `<li>${formatSignal(s)}</li>`).join('')}
-      </ul>
-
-      <p class="aa-friction-context">Pattern de overreaching detectat. Coach-ul propune plan redus 30%.</p>
+      <p class="aa-friction-context">
+        Coach-ul observă oboseală acumulată. Plan redus 30% astăzi pentru recovery.
+      </p>
 
       <div class="aa-friction-comparison">
         <div class="plan-original">
@@ -150,29 +146,19 @@ export function showAAFrictionModal(session, ctx) {
       </div>
 
       <button class="btn-primary btn-cancel">Acceptă plan redus</button>
+      <button class="btn-override-simple">Override (înțeleg riscurile)</button>
 
-      <details class="aa-friction-override">
-        <summary>Override (typing required)</summary>
-        <p class="warning-text">${warningText}</p>
-        <p>Tastează exact: <code>${activePhrase}</code></p>
-        <input type="text" class="aa-friction-input" placeholder="tastează aici..." autocomplete="off" />
-        <button class="btn-override" disabled>Confirm override</button>
-      </details>
-
-      <details class="aa-friction-details">
-        <summary>Detalii signals</summary>
-        <ul class="signals-detailed">
-          ${signals.map(s => `<li>${formatSignal(s)}</li>`).join('')}
-        </ul>
+      <details class="aa-friction-more">
+        <summary>Mai multe?</summary>
+        <p>Coach-ul ajustează automat când vede pattern-uri de oboseală. Te ajută să eviți accidentări.</p>
       </details>
     `;
 
     backdrop.appendChild(sheet);
     document.body.appendChild(backdrop);
 
-    const inputEl = sheet.querySelector('.aa-friction-input');
-    const overrideBtn = sheet.querySelector('.btn-override');
     const cancelBtn = sheet.querySelector('.btn-cancel');
+    const overrideBtn = sheet.querySelector('.btn-override-simple');
     const handle = sheet.querySelector('.aa-friction-handle');
 
     let resolved = false;
@@ -188,28 +174,26 @@ export function showAAFrictionModal(session, ctx) {
       }, 200);
     }
 
-    // Typing validation
-    inputEl.addEventListener('input', () => {
-      const val = inputEl.value.trim().toLowerCase();
-      const match = val === activePhrase.trim().toLowerCase();
-      overrideBtn.disabled = !match;
-    });
-
+    // "Acceptă plan redus" — accept = NOT a dismiss; do not write the day flag.
     cancelBtn.addEventListener('click', () => {
       cleanup(() => resolve({ action: 'cancel', source: 'accept' }));
     });
 
+    // Single-click override — silent learning continues via CDL ext.
     overrideBtn.addEventListener('click', () => {
-      if (overrideBtn.disabled) return;
-      cleanup(() => resolve({ action: 'override', overrideRationale: activePhrase, source: 'override' }));
+      markAAFrictionDismissedToday();
+      cleanup(() => resolve({ action: 'override', source: 'override-button' }));
     });
 
-    // Backdrop tap — user-dismiss (learning signal for ModalManager)
+    // Backdrop tap — dismiss, learn.
     backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) cleanup(() => resolve({ action: 'cancel', source: 'backdrop' }));
+      if (e.target === backdrop) {
+        markAAFrictionDismissedToday();
+        cleanup(() => resolve({ action: 'cancel', source: 'backdrop' }));
+      }
     });
 
-    // Swipe-down on handle
+    // Swipe-down on handle — dismiss, learn.
     let touchStartY = 0;
     let swipeCancelled = false;
 
@@ -223,6 +207,7 @@ export function showAAFrictionModal(session, ctx) {
       const delta = e.touches[0].clientY - touchStartY;
       if (delta > 100) {
         swipeCancelled = true;
+        markAAFrictionDismissedToday();
         cleanup(() => resolve({ action: 'cancel', source: 'swipe' }));
       }
     }, { passive: true });
