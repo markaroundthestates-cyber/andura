@@ -62,4 +62,39 @@ JSON report cu:
 
 ## gdpr_k_anonymity_check.js
 
-(Va fi adăugat în Acțiunea 8 Sprint 2.)
+**Purpose:** Validates k-anonymity (k=5 minim per [[ADR_GDPR_AMENDMENT_K_ANONYMITY_v1]]) for arbitration_log anonymized dataset. Pre-publication / pre-data-lake / pre-ML-training validation.
+
+**Quasi-identifiers (5 fields per ADR amendment SSOT):**
+- `age_bucket` (5-year buckets: 18-22, 23-27, ..., 58-62, 65+)
+- `sex` (M / F / X)
+- `experience_tier` (beginner / intermediate / advanced)
+- `decision_type` (DELOAD / AA_HIGH / REST_DAY / etc.)
+- `timestamp_week` (ISO YYYY-Www)
+
+**Inputs:**
+- `--dataset` JSON array of anonymized arbitration_log entries
+- `--k` Minimum group size (default 5 per SSOT)
+- `--output` Path where JSON report is written
+
+**Usage:**
+
+```bash
+node scripts/gdpr_k_anonymity_check.js \
+  --dataset path/to/arbitration_log.json \
+  --k 5 \
+  --output cc-reports/gdpr_k_anonymity_report.json
+```
+
+**Output:**
+
+JSON report cu:
+- `summary` — totalEntries, totalCombinations, passCombinations, failCombinations, kThreshold, min/max group sizes
+- `recommendation` — `PROCEED` (all combinations ≥ k) sau `BLOCK` (any combination < k)
+- `atRiskCombinations` — flagged combinations cu count + percentage + suggestedMitigation per combination + sampleIds
+- `mitigationGuidance` — general suggestions (generalize age, drop timestamp granularity, bucket decision_type)
+
+**Exit code:** 0 PROCEED, 1 BLOCK (CI-friendly).
+
+**Workflow pre-publication:** run validation → if BLOCK, apply mitigation (generalize age 5y→10y / drop week granularity / bucket decision_type into broad categories) → re-run → iterate până PROCEED → document mitigation aplicat în publication metadata.
+
+**Cross-ref:** [[ADR_GDPR_AMENDMENT_K_ANONYMITY_v1]] + AUDIT_5000Q Q-0049/Q-0570/Q-1100.
