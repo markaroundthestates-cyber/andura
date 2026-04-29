@@ -11,6 +11,7 @@ import { sessionCache, setCachedDirector, uiToggleFlags } from './state.js';
 import { formatSetsReps, getGroupColor, getDisplayTime, isInCutPhase } from './util.js';
 import { renderPRWall } from './pr.js';
 import { showAAFrictionModal } from './aaFrictionModal.js';
+import { modalManager } from '../../components/modalManager.js';
 
 const PATTERN_BANNER_STRINGS = {
   LOW_ADHERENCE: (p) => `📊 Adherence scăzută ultimele 30 zile: ${p.adherenceRate}%. Reducem volum și verificăm contextul.`,
@@ -165,21 +166,6 @@ export async function renderCoachIdle(){
       }
     }
     setCachedDirector(_dirSession);
-
-    // HIGH tier AA friction modal (ADR 013 §6, ADR 014 §5, TASK #7)
-    if (_dirSession?.aaBlocked?.requiresFrictionConfirmation) {
-      const result = await showAAFrictionModal(_dirSession, _dirSession.context);
-      if (result.action === 'override') {
-        _dirSession.exercises = _dirSession.exercises.map(e => ({
-          ...e,
-          sets: e.aaOriginalSets ?? e.sets,
-          aaReduced: false,
-          aaOverridden: true,
-        }));
-        _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
-      }
-      // result.action === 'cancel' → keep reduced exercises as-is
-    }
 
     // Zi de odihnă forțată de Director (readiness < 40)
     if (_dirSession?.restDay) {
@@ -346,6 +332,37 @@ export async function renderCoachIdle(){
   renderTodayAlerts();
   renderFatigueScore('fatigue-score-coach');
   renderPRWall();
+
+  // AA friction modal — fires after DOM is flushed, non-blocking (ADR 013 §6 §7)
+  // DOM is already rendered with the reduced plan; modal appears on top ~100ms later.
+  // If user overrides, session is updated and re-rendered. If user dismisses 3×
+  // consecutively (backdrop/swipe), modalManager.isSuppressed() silences it.
+  if (_dirSession?.aaBlocked?.requiresFrictionConfirmation && !modalManager.isSuppressed('aa-friction')) {
+    setTimeout(() => {
+      modalManager.show({
+        id: 'aa-friction',
+        category: 'coaching',
+        present: () => showAAFrictionModal(_dirSession, _dirSession.context),
+        onComplete: (result) => {
+          // Mark handled so subsequent renders don't re-trigger.
+          if (_dirSession?.aaBlocked) _dirSession.aaBlocked.requiresFrictionConfirmation = false;
+          if (result?.action === 'override') {
+            _dirSession.exercises = _dirSession.exercises.map(e => ({
+              ...e,
+              sets: e.aaOriginalSets ?? e.sets,
+              aaReduced: false,
+              aaOverridden: true,
+            }));
+            _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
+            sessionCache.set(_dirSession);
+            renderCoachIdle();
+          } else {
+            sessionCache.set(_dirSession);
+          }
+        },
+      });
+    }, 100);
+  }
 
 }
 
