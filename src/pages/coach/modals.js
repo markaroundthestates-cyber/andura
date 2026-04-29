@@ -33,6 +33,7 @@ export function selectReadiness(value) {
   saveReadiness(value);
   const modal = document.getElementById('readiness-modal');
   if (modal) modal.remove();
+  sessionCache.invalidate();
   renderCoachIdle();
   toast(`${READINESS_LABELS[value].emoji} ${READINESS_LABELS[value].label}`, 'var(--accent)');
 }

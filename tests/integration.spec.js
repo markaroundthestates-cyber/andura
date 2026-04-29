@@ -40,6 +40,10 @@ function seedStorage(extraOverrides = {}) {
       localStorage.setItem('pr-records',     JSON.stringify(prs));
       localStorage.setItem('session-burns',  JSON.stringify(burns));
       localStorage.setItem('onboarding-done', 'true');
+      // Prevent Firebase sync from overwriting test data or pulling in production state.
+      // Without this, real user data merges in and can trigger AA friction modals,
+      // stagnation banners, and other non-deterministic behaviour during tests.
+      window._suppressFirebaseSync = true;
       // Apply any extra overrides
       Object.entries(overrides).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
     }, { logs: SEED_LOGS, prs: SEED_PR_RECORDS, burns: SEED_BURNS, today: TODAY, overrides: extraOverrides });
@@ -100,8 +104,10 @@ test.describe('Integration — Readiness Card', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-preview-list', { timeout: 10000 });
 
-    // Click the first readiness button (emoji button for value 1–5)
-    const readinessBtn = page.locator('#today-preview-list button').first();
+    // Click the first readiness emoji button (onclick="selectReadiness(N)")
+    // Note: #today-preview-list may also contain a session-memory dismiss ✕ button first,
+    // so we must target readiness buttons specifically.
+    const readinessBtn = page.locator('#today-preview-list button[onclick^="selectReadiness"]').first();
     if (await readinessBtn.isVisible()) {
       await readinessBtn.click();
       await page.waitForTimeout(400);
