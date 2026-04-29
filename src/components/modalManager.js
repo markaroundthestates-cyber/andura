@@ -116,6 +116,15 @@ export const modalManager = {
    * }} config
    */
   show(config) {
+    // Test isolation: tests opting out of the AA friction modal can set
+    // window._suppressAAFrictionModal = true via addInitScript. This avoids
+    // the modal backdrop intercepting clicks on UI under test.
+    if (typeof window !== 'undefined'
+        && config.id === 'aa-friction'
+        && window._suppressAAFrictionModal === true) {
+      return;
+    }
+
     // Deduplication: skip if the same id is already active or queued.
     if (_active.some(m => m.id === config.id) || _queue.some(m => m.id === config.id)) {
       return;

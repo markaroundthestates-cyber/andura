@@ -12,9 +12,16 @@ export async function setupUser(page, userData) {
   await page.addInitScript((data) => {
     // Always suppress Firebase to avoid network calls in tests
     window._suppressFirebaseSync = true;
+    // Default-suppress AA friction modal — tests targeting AA flow can opt in
+    // via userData._suppressAAFrictionModal === false
+    window._suppressAAFrictionModal = true;
 
     Object.entries(data).forEach(([key, value]) => {
       if (key === '_suppressFirebaseSync') return; // handled above
+      if (key === '_suppressAAFrictionModal') {
+        window._suppressAAFrictionModal = !!value;
+        return;
+      }
       if (typeof value === 'object' && value !== null) {
         localStorage.setItem(key, JSON.stringify(value));
       } else {
@@ -32,5 +39,6 @@ export async function resetBetweenTests(page) {
   await page.evaluate(() => {
     localStorage.clear();
     window._suppressFirebaseSync = true;
+    window._suppressAAFrictionModal = true;
   });
 }

@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Visual / structural tests', () => {
   test.beforeEach(async ({ page }) => {
+    // Suppress AA friction modal — backdrop would intercept theme/nav clicks.
+    // (Firebase sync stays enabled so production data flows naturally.)
+    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
     await page.goto('/salafull/');
     // Wait for the SPA to fully bootstrap (networkidle = no pending requests)
     await page.waitForLoadState('networkidle');

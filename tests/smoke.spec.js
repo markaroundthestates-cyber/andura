@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Smoke tests', () => {
+  test.beforeEach(async ({ page }) => {
+    // AA friction modal is suppressed for smoke tests so its backdrop never
+    // intercepts UI clicks (smoke isn't validating coach engine behaviour).
+    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+  });
+
   test('app loads in under 5 seconds', async ({ page }) => {
     const start = Date.now();
 
