@@ -5425,3 +5425,1183 @@ STATUS: pending review Daniel cross-ref Q-0493
 **BATCH 2 PARTIAL — Q0501-Q0660 COMPLETE** (target was Q1000-Q2000; quality > quantity per directive)
 
 Domain 4 Strategy Q501-Q550, Domain 5 GDPR Q551-Q585, Domain 6 UX Q586-Q660.
+
+---
+
+## BATCH 3 — MOAT + Cognitive Architecture (Q0661-Q1000)
+
+### DOMAIN 7: MOAT & ANTI-REVERSE-ENGINEERING
+
+#### 7.1 Display categorical NU numeric
+
+Q-0661 [Domain 7.1 — Display categorical anti-RE pattern]
+DECIZIE: Display: target round number OK ("~180g protein"), status categoric ("✓ Excelent / OK / Slab"). NU expune numere precise actual vs target.
+RAȚIONAL: Anti-RE; user-friendly; competitor copy hard.
+IMPACT dacă greșită: SEVERE — exposing exact numbers = competitor copies thresholds.
+SURSA: HANDOVER §6 line 105-107.
+PUSH-BACK: Categorical reduces transparency; advanced users want detail.
+STATUS: pending review Daniel cross-ref Q-0662
+
+Q-0662 [Domain 7.1 — Status icons ✓ Excelent / OK / Slab]
+DECIZIE: Status icons categorical 3-level: ✓ Excelent, OK, Slab.
+RAȚIONAL: Visual + categorical; quick read.
+IMPACT dacă greșită: MINOR — icons choice; can iterate.
+SURSA: HANDOVER §6 line 106.
+PUSH-BACK: 3 levels coarse; nuance lost.
+STATUS: pending review Daniel cross-ref Q-0661
+
+Q-0663 [Domain 7.1 — Pattern arhitectural ÎNTREG engine]
+DECIZIE: Pattern aplicabil ÎNTREG engine NU doar Bayesian Nutrition.
+RAȚIONAL: Universal anti-RE; consistency; brand pattern.
+IMPACT dacă greșită: SEVERE — applied selectively = inconsistent UX; partial = leak vectors.
+SURSA: HANDOVER §6 line 107.
+PUSH-BACK: Universal application = some engines lose nuance; granular preferable.
+STATUS: pending review Daniel cross-ref Q-0661
+
+Q-0664 [Domain 7.1 — Banner contextual neutru NU expose signals]
+DECIZIE: Banner contextual neutru. NU expune signals triggered, counting windows, cross-pillar logic.
+RAȚIONAL: Complete anti-RE; engine logic protected.
+IMPACT dacă greșită: CATASTROFIC — competitor reverse-engineers engine = MOAT lost.
+SURSA: HANDOVER §6 line 105-107.
+PUSH-BACK: User loses transparency = trust erosion.
+STATUS: pending review Daniel cross-ref Q-0214
+
+Q-0665 [Domain 7.1 — Round number target user-facing]
+DECIZIE: Target round number OK ("~180g protein"). User-facing rounded.
+RAȚIONAL: Cognitively manageable; precision irrelevant ±5g.
+IMPACT dacă greșită: MINOR — over-precise = friction; rounded = manageable.
+SURSA: HANDOVER §6 line 105-106.
+PUSH-BACK: Rounding loses calibration signal back to engine.
+STATUS: pending review Daniel cross-ref Q-0661
+
+#### 7.2 Banner wording neutru
+
+Q-0666 [Domain 7.2 — Wording "Coach-ul observă..."]
+DECIZIE: Wording "Coach-ul observă..." NU "5 signals detectate".
+RAȚIONAL: Anti-RE; user-friendly.
+IMPACT dacă greșită: CATASTROFIC — exposing signal count = competitor copies framework.
+SURSA: HANDOVER §6 line 106 + ADR 013 wording rules.
+PUSH-BACK: Generic "observă" = vague; user wants specific.
+STATUS: pending review Daniel cross-ref Q-0664
+
+Q-0667 [Domain 7.2 — Wording forbidden "te auto-sabotezi"]
+DECIZIE: NU "te auto-sabotezi" (judgmental).
+RAȚIONAL: Trust; non-judgmental.
+IMPACT dacă greșită: SEVERE — judgmental = user defensive = ignored.
+SURSA: ADR 013 §Soft warning rules line 130.
+PUSH-BACK: Harsh truth may trigger awareness; subjective.
+STATUS: pending review Daniel cross-ref Q-0668
+
+Q-0668 [Domain 7.2 — Wording forbidden "ai grijă" (vag)]
+DECIZIE: NU "ai grijă" (vag).
+RAȚIONAL: Vague = no information; user dismisses.
+IMPACT dacă greșită: SEVERE — vague = wasted opportunity.
+SURSA: ADR 013 §Soft warning rules line 131.
+PUSH-BACK: "Ai grijă" Romanian colloquial; tone debate.
+STATUS: pending review Daniel cross-ref Q-0667
+
+Q-0669 [Domain 7.2 — Wording forbidden "ești sigur că vrei?" (passive-aggressive)]
+DECIZIE: NU "ești sigur că vrei?" (passive-aggressive).
+RAȚIONAL: Doubts user without data; condescending.
+IMPACT dacă greșită: SEVERE — condescending = user revolt.
+SURSA: ADR 013 §Soft warning rules line 132.
+PUSH-BACK: Confirmation prompts standard UX; reframe direct better.
+STATUS: pending review Daniel cross-ref Q-0670
+
+Q-0670 [Domain 7.2 — Wording template observation→pattern→user decide]
+DECIZIE: Wording template: observation → pattern → return decision to user.
+RAȚIONAL: Data-driven; non-judgmental; user agency final.
+IMPACT dacă greșită: SEVERE — wrong template = confusion; correct = clarity.
+SURSA: ADR 013 §Soft warning wording line 124-138.
+PUSH-BACK: "Decizia ta?" burden user; some want recommendation.
+STATUS: pending review Daniel cross-ref Q-0238
+
+#### 7.3 Engine logic NU expusă
+
+Q-0671 [Domain 7.3 — Counting windows hidden]
+DECIZIE: Counting windows (3+ sesiuni, 7-day, 14-day) NU expuse user.
+RAȚIONAL: Anti-RE; competitor cannot copy thresholds.
+IMPACT dacă greșită: CATASTROFIC — exposing windows = competitor replicates detection.
+SURSA: HANDOVER §6 line 105-107; ADR 013 §Detection signals.
+PUSH-BACK: Hidden = user can't optimize behavior; transparency tradeoff.
+STATUS: pending review Daniel cross-ref Q-0672
+
+Q-0672 [Domain 7.3 — Threshold values hidden]
+DECIZIE: Threshold values (300 kcal/săpt, 8h hyperfocus, 60% reps) hidden.
+RAȚIONAL: Anti-RE; numerical specifics protected.
+IMPACT dacă greșită: CATASTROFIC — exposed = competitor benchmarks.
+SURSA: ADR 013 §Empirical Calibration Parameters; HANDOVER §6.
+PUSH-BACK: Some thresholds public knowledge (RPE 9-10); selective hiding.
+STATUS: pending review Daniel cross-ref Q-0671
+
+Q-0673 [Domain 7.3 — Escalation logic hidden]
+DECIZIE: Escalation pattern (consecutive MED 2+ săpt → HIGH) hidden.
+RAȚIONAL: Logic protected; users see effects not mechanism.
+IMPACT dacă greșită: CATASTROFIC — exposing escalation = competitor copies.
+SURSA: ADR 013 §Severity tiers line 117.
+PUSH-BACK: Users may not understand why severity escalates; confusion.
+STATUS: pending review Daniel cross-ref Q-0672
+
+Q-0674 [Domain 7.3 — Modal AA friction rewrite eliminat signals]
+DECIZIE: Modal AA Friction rewrite eliminat signal exposure, force-typing, escalation logic.
+RAȚIONAL: Anti-RE complete; UX improved.
+IMPACT dacă greșită: SEVERE — exposed signals = competitor copies; force-typing = UX hostile.
+SURSA: HANDOVER §1.95 line 46-48.
+PUSH-BACK: Eliminated escalation = HIGH tier intervention reduces.
+STATUS: pending review Daniel cross-ref Q-0215
+
+Q-0675 [Domain 7.3 — Dismiss persistence + override mechanism]
+DECIZIE: Dismiss persistence + override mechanism (eliminat force-typing).
+RAȚIONAL: User agency; reduce friction; anti-RE.
+IMPACT dacă greșită: SEVERE — force-typing = friction; no persistence = repeat dismiss.
+SURSA: HANDOVER §1.95 line 47.
+PUSH-BACK: Force-typing was friction-by-design for HIGH tier; trade-off.
+STATUS: pending review Daniel cross-ref Q-0298
+
+#### 7.4 Modal AA friction rewrite (anti-RE complete)
+
+Q-0676 [Domain 7.4 — Anti-RE rewrite verified clean console]
+DECIZIE: Production verified clean console (Daniel screenshots). HEAD b24aaae.
+RAȚIONAL: Verification gate; clean signals exposure cleanup.
+IMPACT dacă greșită: SEVERE — verification gap = bugs persist; verified = production-ready.
+SURSA: HANDOVER §Production verified line 49-51.
+PUSH-BACK: Single screenshot session limited; broader testing needed.
+STATUS: pending review Daniel cross-ref Q-0677
+
+Q-0677 [Domain 7.4 — Tests 752/752 PASS post-rewrite]
+DECIZIE: Tests 752/752 PASS unit + 9/9 integration + 9/9 calibration-ui + 7/7 visual + smoke 3/3 PASS.
+RAȚIONAL: Comprehensive regression; quality gate.
+IMPACT dacă greșită: SEVERE — failing tests merged = regression.
+SURSA: HANDOVER §STATUS FINAL line 219-220.
+PUSH-BACK: Test count baseline; coverage % unmentioned.
+STATUS: pending review Daniel cross-ref Q-0042
+
+Q-0678 [Domain 7.4 — 11 e2e tests recovered]
+DECIZIE: 11 e2e tests recovered (post-AA rewrite).
+RAȚIONAL: Test isolation fixed; recovery indicator.
+IMPACT dacă greșită: SEVERE — broken e2e = blind to UI regressions.
+SURSA: HANDOVER §1.95 line 47-48.
+PUSH-BACK: 11 tests recovered = 11 previously broken; technical debt indicator.
+STATUS: pending review Daniel cross-ref Q-0676
+
+Q-0679 [Domain 7.4 — Modal architecture refactor ModalManager singleton]
+DECIZIE: ModalManager singleton + Compatible Write Rule + dismiss persistence.
+RAȚIONAL: Centralized modal state; conflict resolution.
+IMPACT dacă greșită: SEVERE — multiple modal systems = race conditions; singleton = clean.
+SURSA: HANDOVER §1.75 line 40-41.
+PUSH-BACK: Singleton pattern global state; testing harder.
+STATUS: pending review Daniel cross-ref Q-0680
+
+Q-0680 [Domain 7.4 — ModalManager unit tests pending]
+DECIZIE: ModalManager unit tests pending. Backlog Wave 6.
+RAȚIONAL: Implementation first; tests follow.
+IMPACT dacă greșită: MODERATE — untested critical infrastructure; bug surface.
+SURSA: HANDOVER §Pre-existing bugs flagged line 169-171.
+PUSH-BACK: Critical infrastructure should be tested first; technical debt accruing.
+STATUS: pending review Daniel cross-ref Q-0679
+
+#### 7.5 Cognitive Architecture cross-pillar = MOAT real
+
+Q-0681 [Domain 7.5 — Cross-pillar reasoning = MOAT]
+DECIZIE: Cognitive Architecture cross-pillar reasoning = MOAT real (NU formule publice).
+RAȚIONAL: Differentiation = engine REASONING NOT formulas.
+IMPACT dacă greșită: CATASTROFIC — claiming "secret formulas" = exposed via public app inspection; reasoning = real protection.
+SURSA: MOAT_STRATEGY §1-5; HANDOVER §6.
+PUSH-BACK: "Reasoning" abstract; competitor can copy patterns over time.
+STATUS: pending review Daniel cross-ref Q-0682
+
+Q-0682 [Domain 7.5 — Bayesian Layer 5 Caz A/B/C cross-pillar = MOAT]
+DECIZIE: Bayesian reconciliation Layer 5 = MOAT (Caz A/B/C cross-pillar).
+RAȚIONAL: Multi-signal reconciliation = unique; competitor single-signal apps can't replicate.
+IMPACT dacă greșită: CATASTROFIC — exposing logic = competitor replicates; protected = MOAT.
+SURSA: HANDOVER §6 line 107; §2 Layer 5 line 81.
+PUSH-BACK: Bayesian framework public; specific cases reproducible.
+STATUS: pending review Daniel cross-ref Q-0467
+
+Q-0683 [Domain 7.5 — 5-engine cognitive = differentiation]
+DECIZIE: 5-engine cognitive architecture = MOAT differentiation. Strong/Hevy = "agende digitale". Fitbod = "algoritm rigid". SalaFull = singurul Cognitive AI Coach.
+RAȚIONAL: Architecture story; brand positioning.
+IMPACT dacă greșită: CATASTROFIC — undelivered cognitive = brand fraud; delivered = differentiation.
+SURSA: PRODUCT_STRATEGY §1.5 line 38-43; MOAT_STRATEGY.
+PUSH-BACK: Architecture invisible to user; story unfold via behavior.
+STATUS: pending review Daniel cross-ref Q-0684
+
+Q-0684 [Domain 7.5 — USP "Singurul antrenor AI care gândește ca un om"]
+DECIZIE: USP: "Singurul antrenor AI care gândește ca un om: îți știe istoricul, îți citește oboseala de azi și arbitrează antrenamentul perfect în timp real."
+RAȚIONAL: Tag-line; brand essence; cross-pillar reasoning.
+IMPACT dacă greșită: CATASTROFIC — overpromise = backlash; deliver = differentiation.
+SURSA: PRODUCT_STRATEGY §1.6 line 44-46.
+PUSH-BACK: "Gândește ca un om" anthropomorphism; ML legal liability.
+STATUS: pending review Daniel cross-ref Q-0683
+
+Q-0685 [Domain 7.5 — Context persistent stratificat MOAT pillar 1]
+DECIZIE: Context persistent stratificat: Short-term 4 săpt, Medium-term 90 zile, Long-term forever.
+RAȚIONAL: ChatGPT uită fiecare sesiune; SalaFull persistent.
+IMPACT dacă greșită: CATASTROFIC — context lost = competitor parity; preserved = MOAT.
+SURSA: MOAT_STRATEGY §1 line 16-23.
+PUSH-BACK: Context stratification = storage tiers correctly aligned with ADR 011 Tier 1/2/3.
+STATUS: pending review Daniel cross-ref Q-0102
+
+Q-0686 [Domain 7.5 — Decizie <100ms NU 8s prompting MOAT pillar 2]
+DECIZIE: Decizie <100ms NU 8s prompting. Engine pre-computed. ChatGPT 200 cuvinte → 8s → 500 cuvinte.
+RAȚIONAL: 40× faster; instant value.
+IMPACT dacă greșită: SEVERE — slow = parity with prompting; fast = differentiation.
+SURSA: MOAT_STRATEGY §2 line 24-28.
+PUSH-BACK: <100ms ambitious; ARBITRATOR sequential 150ms total.
+STATUS: pending review Daniel cross-ref Q-0033
+
+Q-0687 [Domain 7.5 — Decizii verificabile MOAT pillar 3]
+DECIZIE: Fiecare recomandare = decision trace complet (input, engines, why). ChatGPT = black box.
+RAȚIONAL: Trust building; transparency moat.
+IMPACT dacă greșită: CATASTROFIC — black box = no trust; transparent = trust.
+SURSA: MOAT_STRATEGY §3 line 29-35.
+PUSH-BACK: Trace exposes engine logic = anti-RE concern; balance.
+STATUS: pending review Daniel cross-ref Q-0498
+
+Q-0688 [Domain 7.5 — Acționare automată MOAT pillar 4]
+DECIZIE: Engine acționează: generează program, recalculează la schimbări, detectează probleme proactiv, propune soluții auto. NOT just suggests.
+RAȚIONAL: Action layer; not just advisor.
+IMPACT dacă greșită: SEVERE — only suggests = parity; acts = differentiation.
+SURSA: MOAT_STRATEGY §4 line 36-43.
+PUSH-BACK: "Acționare" line between helpful and paternal.
+STATUS: pending review Daniel cross-ref Q-0017
+
+Q-0689 [Domain 7.5 — Învață din TINE MOAT pillar 5]
+DECIZIE: Engine învață din USER (response profile, calibration tiers, pattern learning). ChatGPT învață generic.
+RAȚIONAL: Personal data > general; user-specific moat.
+IMPACT dacă greșită: CATASTROFIC — generic = no value beyond ChatGPT; personalized = MOAT.
+SURSA: MOAT_STRATEGY §5 line 44-53.
+PUSH-BACK: Personalization requires data; cold start gap.
+STATUS: pending review Daniel cross-ref Q-0596
+
+Q-0690 [Domain 7.5 — Adaptive Intelligence scenarii diferențiator]
+DECIZIE: Engine handles user honest, lying, confused, stressed, post-injury cu reasoning semantic contextual.
+RAȚIONAL: Adaptive intelligence > algorithm fix.
+IMPACT dacă greșită: SEVERE — rigid algorithm = parity; adaptive = differentiation.
+SURSA: MOAT_STRATEGY §"Adaptive Intelligence" line 56-77.
+PUSH-BACK: Scenarii subjective; algorithmic differentiation hard verify.
+STATUS: pending review Daniel cross-ref Q-0689
+
+Q-0691 [Domain 7.5 — vs Personal Trainer 1% cost 80% value]
+DECIZIE: vs Personal Trainer Human: 1% cost (10€/lună vs 50-100€/sesiune), 24/7, memory forever.
+RAȚIONAL: Strong value proposition.
+IMPACT dacă greșită: SEVERE — undervalued = price reduce; overvalued = brand inflation.
+SURSA: MOAT_STRATEGY line 89-93.
+PUSH-BACK: 80% value subjective; some users want human.
+STATUS: pending review Daniel cross-ref Q-0507
+
+Q-0692 [Domain 7.5 — Algorithm vs personalized trust relation]
+DECIZIE: Time → user → data → moat. Mai lung timpul, mai adânc moat-ul.
+RAȚIONAL: Compounding moat; first-mover advantage.
+IMPACT dacă greșită: CATASTROFIC — failing to build moat = competitor catches; building = lock-in.
+SURSA: MOAT_STRATEGY line 109-111.
+PUSH-BACK: Moat compounding requires user retention; not automatic.
+STATUS: pending review Daniel cross-ref Q-0689
+
+#### 7.6 Cognitive Architecture cross-pillar = MOAT real
+
+Q-0693 [Domain 7.6 — 5 piloni MOAT enumerate]
+DECIZIE: 5 piloni MOAT: Context Persistent, Decizie <100ms, Decizii Verificabile, Acționare, Învață din Tine.
+RAȚIONAL: Comprehensive moat narrative.
+IMPACT dacă greșită: CATASTROFIC — partial delivery = brand promise broken.
+SURSA: MOAT_STRATEGY §"5 PILONI" line 14-53.
+PUSH-BACK: 5 pillars overpromise; deliver gradual.
+STATUS: pending review Daniel cross-ref Q-0681
+
+Q-0694 [Domain 7.6 — Anti-RE applies MOAT preserves]
+DECIZIE: Anti-RE applies entire engine; preserves MOAT.
+RAȚIONAL: Logic exposure = MOAT erosion; anti-RE protects.
+IMPACT dacă greșită: CATASTROFIC — leak = MOAT lost.
+SURSA: HANDOVER §6 line 105-107.
+PUSH-BACK: Anti-RE = transparency tradeoff.
+STATUS: pending review Daniel cross-ref Q-0664
+
+Q-0695 [Domain 7.6 — Architecture story for tech-lifters]
+DECIZIE: First 100 users tech-lifters explained ARCHITECTURE not UI.
+RAȚIONAL: Technical depth resonates; word-of-mouth.
+IMPACT dacă greșită: SEVERE — wrong audience targeting = no traction.
+SURSA: PRODUCT_STRATEGY §1.10 line 66-68.
+PUSH-BACK: Architecture invisible to tech-lifter on first try; rely on result.
+STATUS: pending review Daniel cross-ref Q-0503
+
+#### 7.7 Bayesian reconciliation Layer 5 = MOAT (Caz A/B/C cross-pillar)
+
+Q-0696 [Domain 7.7 — Layer 5 reconciliation Caz A concordanță]
+DECIZIE: Caz A: input concordant cu reality. High confidence; engine accepts.
+RAȚIONAL: Multi-signal agreement.
+IMPACT dacă greșită: MODERATE — mis-classified = unjust discount.
+SURSA: HANDOVER §2 Layer 5 line 81.
+PUSH-BACK: Concordanță definition needs spec.
+STATUS: pending review Daniel cross-ref Q-0468
+
+Q-0697 [Domain 7.7 — Layer 5 Caz B input vs reality discord]
+DECIZIE: Caz B: input claim vs reality (claim 2500 kcal vs weight gain suggesting 3000). Engine adjusts internal up; user confidence reduced.
+RAȚIONAL: Real outcome trumps stated.
+IMPACT dacă greșită: SEVERE — accept stated = perpetuate misperception.
+SURSA: HANDOVER §2 Layer 5 line 81.
+PUSH-BACK: User feels "called out"; may dismiss app.
+STATUS: pending review Daniel cross-ref Q-0469
+
+Q-0698 [Domain 7.7 — Layer 5 Caz C reverse discordanță]
+DECIZIE: Caz C: reverse discord (input low kcal but weight stable suggests maintenance) — under-reporting.
+RAȚIONAL: Capture under-report; equally important.
+IMPACT dacă greșită: SEVERE — miss under-report = engine deficit imagine.
+SURSA: HANDOVER §2 Layer 5 line 81.
+PUSH-BACK: Under-report common; differentiate from real maintenance.
+STATUS: pending review Daniel cross-ref Q-0470
+
+Q-0699 [Domain 7.7 — Banner "Verificăm contextul..." reconciliation]
+DECIZIE: Banner reconciliation wording neutral "Verificăm contextul..."
+RAȚIONAL: Honest UI when discrepancy; non-judgmental.
+IMPACT dacă greșită: SEVERE — silent reconciliation = user confused; aggressive = friction.
+SURSA: HANDOVER §2 Layer 5 line 81.
+PUSH-BACK: Vague; user doesn't know what context.
+STATUS: pending review Daniel cross-ref Q-0410
+
+Q-0700 [Domain 7.7 — Layer 5 = MOAT cross-pillar]
+DECIZIE: Layer 5 reconciliation cross-pillar = MOAT real. Multi-signal reasoning.
+RAȚIONAL: Cross-pillar logic = differentiator; competitor single-signal apps can't.
+IMPACT dacă greșită: CATASTROFIC — exposing logic = MOAT lost.
+SURSA: HANDOVER §6 line 107.
+PUSH-BACK: Bayesian framework public knowledge; specific cases reproducible.
+STATUS: pending review Daniel cross-ref Q-0682
+
+### DOMAIN 8: COGNITIVE ARCHITECTURE V1
+
+#### 8.1 5-Engine separation (read-only HISTORICAL/REALTIME/PROJECTION + ARBITRATOR pure + ACTION mutator)
+
+Q-0701 [Domain 8.1 — 5-engine architecture core decision]
+DECIZIE: 5-engine cognitive architecture: HISTORICAL, REALTIME, PROJECTION, ARBITRATOR, ACTION.
+RAȚIONAL: Match cognitive science; God Object prevention; Bugatti standard.
+IMPACT dacă greșită: SEVERE — entire MOAT story depends.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §"DECISIONS LOCKED" line 442.
+PUSH-BACK: 5 engines for N=1 user overkill.
+STATUS: pending review Daniel cross-ref Q-0001
+
+Q-0702 [Domain 8.1 — Voices read-only]
+DECIZIE: HISTORICAL, REALTIME, PROJECTION = read-only voices.
+RAȚIONAL: Pure functions; testable; deterministic.
+IMPACT dacă greșită: SEVERE — mutation in voice = state leak.
+SURSA: Cognitive Arch §Q8 line 351-356.
+PUSH-BACK: Pure rigid blocks legitimate caching.
+STATUS: pending review Daniel cross-ref Q-0003
+
+Q-0703 [Domain 8.1 — ARBITRATOR pure function]
+DECIZIE: ARBITRATOR pure function on VoiceVerdict[].
+RAȚIONAL: Voice-agnostic; testable.
+IMPACT dacă greșită: SEVERE — pure violation = decisions non-reproductible.
+SURSA: Cognitive Arch §Q8 line 354.
+PUSH-BACK: Caching legitimate; externalize.
+STATUS: pending review Daniel cross-ref Q-0003
+
+Q-0704 [Domain 8.1 — ACTION engine mutation rights]
+DECIZIE: ACTION engine = singurul mutator. CDL writes, Event Sourcing, event emission.
+RAȚIONAL: Redux-style flow.
+IMPACT dacă greșită: SEVERE — multiple mutators = race conditions.
+SURSA: Cognitive Arch §Q8 line 352.
+PUSH-BACK: Single mutator = bottleneck.
+STATUS: pending review Daniel cross-ref Q-0004
+
+Q-0705 [Domain 8.1 — Sequential execution voices ~150ms]
+DECIZIE: Sequential HISTORICAL → REALTIME → PROJECTION ~150ms.
+RAȚIONAL: Simpler debuggable; PROJECTION consumes upstream.
+IMPACT dacă greșită: MODERATE — sequential bottleneck PROJECTION; parallel race conditions.
+SURSA: Cognitive Arch §R27 line 162.
+PUSH-BACK: Concurrent users at scale = cumulative latency.
+STATUS: pending review Daniel cross-ref Q-0002
+
+Q-0706 [Domain 8.1 — Engine boundary TS + DI]
+DECIZIE: TypeScript Interfaces + DI. No engine direct import or DB. Args structured only.
+RAȚIONAL: Clean boundaries; testable.
+IMPACT dacă greșită: SEVERE — direct imports = circular deps.
+SURSA: Cognitive Arch §Q7 line 348-350.
+PUSH-BACK: DI hand-rolled bug surface; framework dependency.
+STATUS: pending review Daniel cross-ref Q-0038
+
+Q-0707 [Domain 8.1 — Pure functions strict NO internal cache]
+DECIZIE: Engines pure functions. NO internal cache. State în CDL exclusively.
+RAȚIONAL: Testability; debuggability.
+IMPACT dacă greșită: SEVERE — internal state = non-reproducible.
+SURSA: Cognitive Arch §Q7 line 350.
+PUSH-BACK: Cache external; compose-able.
+STATUS: pending review Daniel cross-ref Q-0703
+
+Q-0708 [Domain 8.1 — Event Sourcing CDL = unique source truth]
+DECIZIE: CDL = unique source of truth via Event Sourcing.
+RAȚIONAL: Append-only; reconstruct state from events.
+IMPACT dacă greșită: SEVERE — multiple sources = drift; single = clean.
+SURSA: Cognitive Arch §Q8 line 354.
+PUSH-BACK: Event Sourcing complex; storage growth.
+STATUS: pending review Daniel cross-ref Q-0101
+
+Q-0709 [Domain 8.1 — Optimistic Concurrency Event-Driven Invalidation]
+DECIZIE: Optimistic Concurrency + Event-Driven Invalidation.
+RAȚIONAL: Performance; eventual consistency.
+IMPACT dacă greșită: SEVERE — pessimistic locking = bottleneck; optimistic = race rare.
+SURSA: Cognitive Arch §Q8 line 354-356.
+PUSH-BACK: Event-driven complex; sequencing critical.
+STATUS: pending review Daniel cross-ref Q-0021
+
+Q-0710 [Domain 8.1 — REALTIME timeout 1.5s graceful degradation]
+DECIZIE: REALTIME timeout 1.5s → empty verdict confidence 0 + graceful degradation.
+RAȚIONAL: Avoid UI freeze; arbitrage continue with HIST+PROJ.
+IMPACT dacă greșită: MODERATE — short timeout = false; long = lag.
+SURSA: Cognitive Arch §Q9 line 360.
+PUSH-BACK: REALTIME I/O = design flaw; should be local.
+STATUS: pending review Daniel cross-ref Q-0014
+
+Q-0711 [Domain 8.1 — DB Split-Brain Tombstone & Branching]
+DECIZIE: DB Split-Brain → Event Sourcing Append-Only Log + Tombstone & Branching (NU LWW). Conflict ireconciliable → UI prompt.
+RAȚIONAL: Zero data loss; user resolves.
+IMPACT dacă greșită: CATASTROFIC — LWW = silent data loss.
+SURSA: Cognitive Arch §Q9 CORRECTED v2 line 358-362.
+PUSH-BACK: T&B not implemented v1; HANDOVER memory paradox bug.
+STATUS: pending review Daniel cross-ref Q-0172
+
+Q-0712 [Domain 8.1 — Recovery from corruption Halt + STATIC_MAINTAIN]
+DECIZIE: Recovery corruption → Halt + STATIC_MAINTAIN fallback + Critical Alert backend.
+RAȚIONAL: Safe state; fail-loud.
+IMPACT dacă greșită: SEVERE — silent corruption persists.
+SURSA: Cognitive Arch §Q9 line 361.
+PUSH-BACK: STATIC_MAINTAIN fallback content spec.
+STATUS: pending review Daniel cross-ref Q-0269
+
+#### 8.2 Tombstone & Branching pattern (vs LWW Firebase actual)
+
+Q-0713 [Domain 8.2 — T&B locked Cognitive Arch v1]
+DECIZIE: Tombstone & Branching pattern locked Cognitive Arch v1.
+RAȚIONAL: Append-only invariant; preserve all writes.
+IMPACT dacă greșită: CATASTROFIC — without T&B, sync conflicts silent data loss.
+SURSA: Cognitive Arch §Q9 line 358-360.
+PUSH-BACK: T&B implementation 1-2 sprints; deferred v1.
+STATUS: pending review Daniel cross-ref Q-0172
+
+Q-0714 [Domain 8.2 — T&B vs LWW comparison]
+DECIZIE: T&B preserves both branches; LWW arbitrary winner = data loss.
+RAȚIONAL: User resolves irreconcilable; engineering preserves all.
+IMPACT dacă greșită: CATASTROFIC — LWW data loss.
+SURSA: Cognitive Arch §Q9 line 360.
+PUSH-BACK: T&B complexity; UI prompt friction.
+STATUS: pending review Daniel cross-ref Q-0126
+
+Q-0715 [Domain 8.2 — T&B implementation pre-launch obligatory]
+DECIZIE: T&B implementation pre-launch obligatoriu (HANDOVER §Firebase Sync Re-Pull CRITICAL).
+RAȚIONAL: Memory paradox bug; production data integrity.
+IMPACT dacă greșită: CATASTROFIC — production bug at launch.
+SURSA: HANDOVER §Firebase Sync Re-Pull line 158-162.
+PUSH-BACK: T&B = 1-2 sprints; resource allocation.
+STATUS: pending review Daniel cross-ref Q-0171
+
+Q-0716 [Domain 8.2 — Tombstones retention policy open]
+DECIZIE: Tombstones retention policy open issue — păstrăm forever (data lake) sau 30 zile? GDPR consideration.
+RAȚIONAL: Open question; balance audit vs GDPR.
+IMPACT dacă greșită: SEVERE — forever = GDPR violation; 30 zile = audit gap.
+SURSA: Cognitive Arch §"Open Issues" #1 line 432-433.
+PUSH-BACK: GDPR mandates user rights deletion; tombstone retention conflict.
+STATUS: pending review Daniel cross-ref Q-0568
+
+Q-0717 [Domain 8.2 — UI prompt "varianta A sau B?" T&B]
+DECIZIE: Conflict ireconciliable → UI prompt "varianta A sau B?". User decides.
+RAȚIONAL: User agency final; zero data loss.
+IMPACT dacă greșită: SEVERE — auto-merge wrong = data loss; always prompt = friction.
+SURSA: Cognitive Arch §Q9 line 360; PRODUCT_STRATEGY §7.6.
+PUSH-BACK: User confused mid-flow; UX challenging.
+STATUS: pending review Daniel cross-ref Q-0358
+
+Q-0718 [Domain 8.2 — T&B vs CRDTs alternative considered]
+DECIZIE: CRDTs alternative considered + rejected (complexity vs scenario rare).
+RAȚIONAL: T&B simpler; CRDTs over-engineered for scenario.
+IMPACT dacă greșită: MODERATE — CRDTs auto-resolve more conflicts; complexity tradeoff.
+SURSA: implicit Cognitive Arch §Q9.
+PUSH-BACK: CRDTs proven distributed systems; T&B less standard.
+STATUS: pending review Daniel cross-ref Q-0713
+
+Q-0719 [Domain 8.2 — Append-only invariant LWW conflict ADR 011]
+DECIZIE: ADR 011 says LWW acceptable due append-only + immutable outcome + monotonic superseded. Cognitive Arch says T&B.
+RAȚIONAL contradiction: ADR 011 LWW; Cognitive Arch T&B. Need amendment.
+IMPACT dacă greșită: SEVERE — contradiction = bug surface.
+SURSA: ADR 011 §Firebase sync line 246; Cognitive Arch §Q9.
+PUSH-BACK: Documentation drift; amendment needed.
+STATUS: pending review Daniel — DOCUMENTATION CONFLICT cross-ref Q-0126
+
+Q-0720 [Domain 8.2 — Multi-device aggregation race conditions]
+DECIZIE: Cloud Function elimină race între Phone A/B aggregations. Verify cu testing.
+RAȚIONAL: Single source pre-aggregation eliminates race.
+IMPACT dacă greșită: SEVERE — race conditions = inconsistent learning.
+SURSA: Cognitive Arch §"Open Issues" #3 line 437-438.
+PUSH-BACK: Cloud Function dependency.
+STATUS: pending review Daniel cross-ref Q-0366
+
+#### 8.3 Dimension plugins extensibility (ADR 018 contract guarantees)
+
+Q-0721 [Domain 8.3 — ADR 018 = Engine Extensibility foundation]
+DECIZIE: ADR 018 5 componente: Dimension Registry, Standardized Contract, Decision Cluster, Schema Versioning, Feature Flags.
+RAȚIONAL: Foundation pre-features; future-proof.
+IMPACT dacă greșită: SEVERE — without foundation = each feature mini-refactor.
+SURSA: ADR 018 §Decision line 36-44.
+PUSH-BACK: Upfront 1-2 sprints fără feature visible.
+STATUS: pending review Daniel cross-ref Q-0061
+
+Q-0722 [Domain 8.3 — Dimension Registry static array DP-1]
+DECIZIE: DP-1 APPROVED — Static array. No dynamic registration v1.
+RAȚIONAL: Simple; YAGNI.
+IMPACT dacă greșită: MINOR — reversible decision.
+SURSA: ADR 018 DP-1 + Sign-Off line 540.
+PUSH-BACK: Static blocks plugin marketplace.
+STATUS: pending review Daniel cross-ref Q-0061
+
+Q-0723 [Domain 8.3 — Async-capable contract DP-2]
+DECIZIE: DP-2 APPROVED — Async-capable cu sync default.
+RAȚIONAL: Future-proof I/O; zero overhead sync.
+IMPACT dacă greșită: MODERATE — async-only = unnecessary complexity sync; sync-only = future I/O blocked.
+SURSA: ADR 018 DP-2 + Sign-Off line 541.
+PUSH-BACK: Promise.all fail-fast; allSettled() better.
+STATUS: pending review Daniel cross-ref Q-0066
+
+Q-0724 [Domain 8.3 — Numeric priority + semantic stage hybrid DP-3]
+DECIZIE: DP-3 APPROVED — Numeric priority + semantic stage hybrid.
+RAȚIONAL: Conflict resolution clarity; ADR 004 continuity.
+IMPACT dacă greșită: MODERATE — pure numeric = stage assignment ambiguity; pure semantic = priority unresolved.
+SURSA: ADR 018 DP-3 + Sign-Off line 542.
+PUSH-BACK: Hybrid more complex.
+STATUS: pending review Daniel cross-ref Q-0067
+
+Q-0725 [Domain 8.3 — Stacked stages GATE→ADJUSTMENT→ENHANCEMENT DP-4]
+DECIZIE: DP-4 APPROVED — Stacked stages GATE→ADJUSTMENT→ENHANCEMENT.
+RAȚIONAL: Match arhitectura existing; formalize pattern.
+IMPACT dacă greșită: SEVERE — wrong staging = recommendations applied wrong.
+SURSA: ADR 018 DP-4 + Sign-Off line 543.
+PUSH-BACK: Single-pass winner-takes-all simpler.
+STATUS: pending review Daniel cross-ref Q-0071
+
+Q-0726 [Domain 8.3 — Migration runner eager DP-5]
+DECIZIE: DP-5 APPROVED — Eager migration on app load.
+RAȚIONAL: Simpler downstream; fail-loud.
+IMPACT dacă greșită: SEVERE — lazy = readers complex; eager = startup latency.
+SURSA: ADR 018 DP-5 + Sign-Off line 544.
+PUSH-BACK: Startup latency at scale.
+STATUS: pending review Daniel cross-ref Q-0324
+
+Q-0727 [Domain 8.3 — Per-user rollout hash bucketing DP-6]
+DECIZIE: DP-6 APPROVED — Per-user rollout cu hash bucketing.
+RAȚIONAL: Gradual rollout safety; deterministic per-user.
+IMPACT dacă greșită: SEVERE — global on/off = no rollout safety.
+SURSA: ADR 018 DP-6 + Sign-Off line 545.
+PUSH-BACK: Hash bucketing infrastructure overkill N=1.
+STATUS: pending review Daniel cross-ref Q-0331
+
+Q-0728 [Domain 8.3 — Migration tempo gradual strangler DP-7]
+DECIZIE: DP-7 APPROVED — Gradual strangler. Port one dimension at a time.
+RAȚIONAL: Match ADR 011 decommissioning pattern; rollback per dimension.
+IMPACT dacă greșită: SEVERE — aggressive = high blast radius.
+SURSA: ADR 018 DP-7 + Sign-Off line 546.
+PUSH-BACK: Parallel paths 3-5 sprints.
+STATUS: pending review Daniel cross-ref Q-0044
+
+Q-0729 [Domain 8.3 — Reconsideration trigger #1 plateau < 8 dimensions]
+DECIZIE: Reconsideration if dimension count plateau < 8 după 12 luni.
+RAȚIONAL: Infrastructure over-built check.
+IMPACT dacă greșită: MINOR — infrastructure preserved; YAGNI question.
+SURSA: ADR 018 Trigger #1 line 384.
+PUSH-BACK: 8 arbitrary; collapse abstraction risky.
+STATUS: pending review Daniel cross-ref Q-0721
+
+Q-0730 [Domain 8.3 — Reconsideration trigger #2 cluster perf >100ms]
+DECIZIE: Trigger if cluster performance >100ms (parallelization, caching).
+RAȚIONAL: Empirical perf threshold.
+IMPACT dacă greșită: SEVERE — perf creep ignored = UX degradation.
+SURSA: ADR 018 Trigger #2 line 385.
+PUSH-BACK: 100ms = optimistic; cluster + voices total.
+STATUS: pending review Daniel cross-ref Q-0033
+
+Q-0731 [Domain 8.3 — Reconsideration trigger #3 migration >5%]
+DECIZIE: Trigger if schema migration runner failing > 5% entries.
+RAȚIONAL: Infrastructure design flaw; consider event-sourcing.
+IMPACT dacă greșită: SEVERE — failures persist = data corruption.
+SURSA: ADR 018 Trigger #3 line 386.
+PUSH-BACK: 5% high tolerance; should be lower.
+STATUS: pending review Daniel cross-ref Q-0325
+
+Q-0732 [Domain 8.3 — Trigger #4 feature flag unused 6 luni]
+DECIZIE: Trigger if feature flag rollout NU folosit 6 luni → simplifică global.
+RAȚIONAL: Infrastructure mort cleanup.
+IMPACT dacă greșită: MINOR — cleanup deferred OK.
+SURSA: ADR 018 Trigger #4 line 387.
+PUSH-BACK: 6 luni window slow.
+STATUS: pending review Daniel cross-ref Q-0331
+
+Q-0733 [Domain 8.3 — Trigger #5 cross-dim deps emerge]
+DECIZIE: Trigger if cross-dimension dependencies emerge (Vitality → AA thresholds).
+RAȚIONAL: Contract extension for declared deps + topological order.
+IMPACT dacă greșită: SEVERE — implicit deps = nondeterministic order.
+SURSA: ADR 018 Trigger #5 line 388-389.
+PUSH-BACK: V1 already documents Vitality → AA dep; should architect from V1.
+STATUS: pending review Daniel cross-ref Q-0084
+
+Q-0734 [Domain 8.3 — Trigger #6 multi-tenant auth deployed]
+DECIZIE: Trigger when multi-tenant auth deployed (per ADR 011 #6) → flag bucketing migrate.
+RAȚIONAL: UID change requires re-bucket.
+IMPACT dacă greșită: SEVERE — botched re-bucket = inconsistent flags.
+SURSA: ADR 018 Trigger #6 line 390-391.
+PUSH-BACK: Migration script complex; pre-launch test.
+STATUS: pending review Daniel cross-ref Q-0131
+
+Q-0735 [Domain 8.3 — ADR 018 contract guarantees pure deterministic total]
+DECIZIE: Contract guarantees pure (no side effects), deterministic (no Date.now/Math.random), total (always returns).
+RAȚIONAL: Testability; reproducibility; cluster reliability.
+IMPACT dacă greșită: SEVERE — violations = pipeline brittleness.
+SURSA: ADR 018 §2 line 141-145.
+PUSH-BACK: Pure rigid blocks I/O legitimate; async-capable mitigation.
+STATUS: pending review Daniel cross-ref Q-0065
+
+#### 8.4 Feature flags lifecycle (decay 1.0 → 0.0 demographic prior post-T1)
+
+Q-0736 [Domain 8.4 — Feature flags lifecycle decay]
+DECIZIE: Demographic prior decay 1.0 → 0.0 post-T1.
+RAȚIONAL: Real signal trumps synthetic at scale.
+IMPACT dacă greșită: SEVERE — stuck demographic = ignore real; instant transition = noise.
+SURSA: HANDOVER §6.3 line 131; ADR 017.
+PUSH-BACK: Decay function (linear, exp?) spec needed.
+STATUS: pending review Daniel cross-ref Q-0597
+
+Q-0737 [Domain 8.4 — Feature flags rollout 0.10 → 0.50 → 1.00]
+DECIZIE: Rollout progresion 10% → 50% → 100% per Daniel articulation.
+RAȚIONAL: Gradual safety; metrics watch.
+IMPACT dacă greșită: SEVERE — global = no safety; gradual = controlled.
+SURSA: ADR 018 §5 line 270-272; INSIGHTS_BACKLOG ADR 018.
+PUSH-BACK: 10/50/100 arbitrary intervals; should be metrics-driven.
+STATUS: pending review Daniel cross-ref Q-0727
+
+Q-0738 [Domain 8.4 — Feature flag enabled per dimension in registry]
+DECIZIE: Dimension cu enabledFlag câmp în registry. Skipped if flag false.
+RAȚIONAL: Zero overhead when off; clean registry.
+IMPACT dacă greșită: MINOR — reversible.
+SURSA: ADR 018 §1 line 70-87; §5 line 300-302.
+PUSH-BACK: Flag indirection adds debugging cost.
+STATUS: pending review Daniel cross-ref Q-0061
+
+Q-0739 [Domain 8.4 — _devFlags localStorage override force enable]
+DECIZIE: localStorage._devFlags JSON override pentru testing dev. Strip-uit production OR warning UI.
+RAȚIONAL: Dev needs force enable; prod safety.
+IMPACT dacă greșită: SEVERE — leak prod = unrestricted enable.
+SURSA: ADR 018 §5 line 296-298.
+PUSH-BACK: localStorage tampering = users enable; sign/encrypt.
+STATUS: pending review Daniel cross-ref Q-0331
+
+Q-0740 [Domain 8.4 — Hash bucketing per (user, flag) deterministic]
+DECIZIE: hash(userId + flagId) % 100 < rollout * 100. Independent buckets per flag.
+RAȚIONAL: Per-flag independent; no correlated rollout.
+IMPACT dacă greșită: SEVERE — same bucket all flags = correlated rollout.
+SURSA: ADR 018 §5 line 280-294.
+PUSH-BACK: hashStringDjb2 simple; quality.
+STATUS: pending review Daniel cross-ref Q-0727
+
+#### 8.5 Schema migration runner pattern
+
+Q-0741 [Domain 8.5 — Migration runner eager pre-engine reads]
+DECIZIE: Eager pre any engine read. Single batch pass.
+RAȚIONAL: Simpler downstream; fail-loud.
+IMPACT dacă greșită: SEVERE — partial mid-app = inconsistent.
+SURSA: ADR 018 §4 line 250-253.
+PUSH-BACK: Startup latency.
+STATUS: pending review Daniel cross-ref Q-0324
+
+Q-0742 [Domain 8.5 — Sentry warning >100 entries migrate]
+DECIZIE: Sentry warning if >100 entries migrate.
+RAȚIONAL: Anomaly indicator; tracking.
+IMPACT dacă greșită: MINOR — false alarm; threshold tunable.
+SURSA: ADR 018 §4 line 251-253.
+PUSH-BACK: 100 absolute = wrong at scale; relative %.
+STATUS: pending review Daniel cross-ref Q-0292
+
+Q-0743 [Domain 8.5 — Migration sequential chain v1→v2→v3]
+DECIZIE: Migrations chain sequential. v1→v2, v2→v3 in order.
+RAȚIONAL: Deterministic path; self-contained.
+IMPACT dacă greșită: SEVERE — skip = corrupt; out-of-order = invalid.
+SURSA: ADR 018 §4 implicit.
+PUSH-BACK: Chain length grows; squash periodic.
+STATUS: pending review Daniel cross-ref Q-0329
+
+Q-0744 [Domain 8.5 — Migration storageKeys[] explicit per migration]
+DECIZIE: Each migration declares storageKeys[] field.
+RAȚIONAL: Scoped; avoid cross-key effects.
+IMPACT dacă greșită: SEVERE — wide = unrelated mutations; narrow = miss.
+SURSA: ADR 018 §4 line 235-249.
+PUSH-BACK: Forget key = silent skip.
+STATUS: pending review Daniel cross-ref Q-0096
+
+Q-0745 [Domain 8.5 — Failsafe persist deja migrate raise critical]
+DECIZIE: Failsafe: persist deja migrate, leave rest, Sentry critical, app continues graceful.
+RAȚIONAL: Fail-open; aggregation null-safe handle.
+IMPACT dacă greșită: SEVERE — fail-closed = unusable; mixed state confusing.
+SURSA: ADR 018 §4 line 252-253.
+PUSH-BACK: Mixed schema state debugging hard.
+STATUS: pending review Daniel cross-ref Q-0325
+
+#### 8.6 ARBITRATOR cross-feed dimensions (priority numeric 0-100)
+
+Q-0746 [Domain 8.6 — ARBITRATOR voice-agnostic priority numeric]
+DECIZIE: ARBITRATOR voice-agnostic. Procesare uniformă pe confidence/action_type/safety_flag. Recommendation priority numeric 0-100 (ADR 004 scale).
+RAȚIONAL: Generic arbitration; numeric priority precedence.
+IMPACT dacă greșită: SEVERE — voice-coupled ARBITRATOR = each voice change = arbitrage edit.
+SURSA: Cognitive Arch §Q4 + ADR 018 priority line 130-138.
+PUSH-BACK: Numeric priority cross-dimension coordination needed.
+STATUS: pending review Daniel cross-ref Q-0067
+
+Q-0747 [Domain 8.6 — Cross-dimension priority coordination]
+DECIZIE: Priority numbers cross-dimension trebuie coordonate (REST_DAY, AA HIGH, CUT_CONSERVATIVE).
+RAȚIONAL: Risk de coliziuni; central coordination.
+IMPACT dacă greșită: SEVERE — collision = nondeterministic winner.
+SURSA: ADR 018 DP-3 line 458-459.
+PUSH-BACK: Coordination = central registry; bottleneck for new dims.
+STATUS: pending review Daniel cross-ref Q-0746
+
+Q-0748 [Domain 8.6 — ARBITRATOR Precedence 5 nivele]
+DECIZIE: 5 nivele precedence: Safety_Flag, User_Override, Action Type, Consensus, Math Fallback.
+RAȚIONAL: Decision tree explicit; debugging clear.
+IMPACT dacă greșită: SEVERE — neclar precedence = inconsistent decisions.
+SURSA: Cognitive Arch §"PARTEA 3" line 192-213.
+PUSH-BACK: User_Override Level 2 conflict cu Action Type Level 3 routing.
+STATUS: pending review Daniel cross-ref Q-0027
+
+Q-0749 [Domain 8.6 — Recommendation priority ADR 004 scale 0-100]
+DECIZIE: priority 0-100 (ADR 004 scale reused).
+RAȚIONAL: Continuity ADR 004; deterministic conflict.
+IMPACT dacă greșită: MODERATE — different scale = reinventing.
+SURSA: ADR 018 §2 line 137-138; ADR 004.
+PUSH-BACK: 0-100 fine-grained; 0-10 simpler enough.
+STATUS: pending review Daniel cross-ref Q-0067
+
+Q-0750 [Domain 8.6 — Topological ordering future cross-dim deps]
+DECIZIE: Trigger #5 — cross-dim deps emerge → topological ordering în cluster.
+RAȚIONAL: Vitality → AA dep needs ordering.
+IMPACT dacă greșită: SEVERE — implicit order = bug.
+SURSA: ADR 018 Trigger #5 line 388-389.
+PUSH-BACK: V1 doesn't articulate dep yet.
+STATUS: pending review Daniel cross-ref Q-0084
+
+Q-0751 [Domain 8.6 — DimensionResult tier+confidence ignored cluster]
+DECIZIE: tier+confidence ignored cluster (informational); recommendations[] consumed.
+RAȚIONAL: By design; consumers external.
+IMPACT dacă greșită: MINOR — informational fields wrong fără cluster impact.
+SURSA: ADR 018 LOW-9 line 48; INSIGHTS_BACKLOG.
+PUSH-BACK: Wasted signal; could inform cluster decisions.
+STATUS: pending review Daniel cross-ref Q-0091
+
+Q-0752 [Domain 8.6 — Decision Cluster trace structured log]
+DECIZIE: cluster.execute returnează { session, trace }. Trace = structured log recommendations + applied + overridden.
+RAȚIONAL: Audit trail; CDL rationale source.
+IMPACT dacă greșită: SEVERE — trace lipsă = decisions opaque.
+SURSA: ADR 018 §3 line 207.
+PUSH-BACK: Detailed trace = storage cost.
+STATUS: pending review Daniel cross-ref Q-0078
+
+Q-0753 [Domain 8.6 — Stage 1 GATE short-circuit highest priority wins]
+DECIZIE: Stage 1 GATE: any 'gate_session' = short-circuit. Multiple gates highest priority wins (ADR 004).
+RAȚIONAL: Early exit blockers; numeric priority resolves multi-gate.
+IMPACT dacă greșită: SEVERE — multi-gate same priority = nondeterministic.
+SURSA: ADR 018 §3 line 184-188.
+PUSH-BACK: Tie-breaking unclear (registration order? alfabetic?).
+STATUS: pending review Daniel cross-ref Q-0072
+
+Q-0754 [Domain 8.6 — Stage 2 ADJUSTMENT cumulative multiplicativ]
+DECIZIE: Stage 2 ADJUSTMENT: sequential apply. Volume multipliers compose multiplicativ. Caps acumulate.
+RAȚIONAL: Coherent stacking.
+IMPACT dacă greșită: SEVERE — additive instead = volume reduction 200% = negative; cap absent = volume 0.
+SURSA: ADR 018 §3 line 190-193.
+PUSH-BACK: Multiplicative ignores semantic intent.
+STATUS: pending review Daniel cross-ref Q-0073
+
+Q-0755 [Domain 8.6 — Stage 3 ENHANCEMENT presentation/UX layer]
+DECIZIE: Stage 3 ENHANCEMENT: sequential apply pre-return. Modify session.exercises, attach UI metadata.
+RAȚIONAL: Presentation separate from logic.
+IMPACT dacă greșită: MODERATE — UX in ADJUSTMENT = mixing.
+SURSA: ADR 018 §3 line 195-198.
+PUSH-BACK: UI metadata downstream consumer must tolerate.
+STATUS: pending review Daniel cross-ref Q-0075
+
+#### 8.7 Open Issues Cognitive Architecture
+
+Q-0756 [Domain 8.7 — Open issue #2 Cloud Functions ADR separate]
+DECIZIE: Cloud Functions ADR separate decision document. Cost ~$cents/lună.
+RAȚIONAL: Architectural impact; separate decision warranted.
+IMPACT dacă greșită: SEVERE — Cloud Function dependency unaddressed.
+SURSA: Cognitive Arch §"Open Issues" #2 line 434-436.
+PUSH-BACK: Open issue not closed pre-launch; risk.
+STATUS: pending review Daniel cross-ref Q-0043
+
+Q-0757 [Domain 8.7 — Initial weights V1 calibration GUESSWORK]
+DECIZIE: Initial weights V1 (R8/R9/R21 + escalation multipliers) marcate INITIAL_V1_GUESSWORK. Recalibrate la 1000+ sessions.
+RAȚIONAL: Honest disclaimer; empirical recalibration.
+IMPACT dacă greșită: SEVERE — frozen wrong = systematic bias.
+SURSA: Cognitive Arch §"Open Issues" #4 line 438-439.
+PUSH-BACK: 1000+ far horizon; interim wrong propagates.
+STATUS: pending review Daniel cross-ref Q-0099
+
+Q-0758 [Domain 8.7 — Founding Members mechanics open]
+DECIZIE: Founding Members rollout mechanics open — primii 100 vs 500 cutoff date-based vs quality-based.
+RAȚIONAL: Open question.
+IMPACT dacă greșită: MODERATE — wrong cutoff = community shape.
+SURSA: PRODUCT_STRATEGY §"Open Items" #3 line 488.
+PUSH-BACK: Specific TBD; needs decision.
+STATUS: pending review Daniel cross-ref Q-0504
+
+Q-0759 [Domain 8.7 — Balene targeting list compile]
+DECIZIE: Balene targeting list 10-20 antrenori RO+EN. Compile pre-launch.
+RAȚIONAL: Specific outreach list.
+IMPACT dacă greșită: SEVERE — wrong balene = no resonance.
+SURSA: PRODUCT_STRATEGY §"Open Items" #4 line 489.
+PUSH-BACK: Hand-pick risk; founder-bias.
+STATUS: pending review Daniel cross-ref Q-0505
+
+Q-0760 [Domain 8.7 — App Store presence v1.x evaluation]
+DECIZIE: PWA-only iOS strategic risk; future evaluation.
+RAȚIONAL: iOS EN audience may demand App Store.
+IMPACT dacă greșită: SEVERE — no App Store = lose iOS power users.
+SURSA: PRODUCT_STRATEGY §"Open Items" #5 line 490.
+PUSH-BACK: Capacitor wrapper performance.
+STATUS: pending review Daniel cross-ref Q-0544
+
+Q-0761 [Domain 8.7 — muscle_memory_index detail open]
+DECIZIE: Re-onboarding muscle_memory_index detail — exact algorithm + UI explanation needed.
+RAȚIONAL: Open spec.
+IMPACT dacă greșită: SEVERE — vague spec = implementation drift.
+SURSA: PRODUCT_STRATEGY §"Open Items" #6 line 491-492.
+PUSH-BACK: Spec needed; placeholder.
+STATUS: pending review Daniel cross-ref Q-0185
+
+Q-0762 [Domain 8.7 — Pro pause data freezing detail open]
+DECIZIE: Pro pause "data freezing" detail — ce înseamnă tehnic "înghețat dar nu șters"?
+RAȚIONAL: Open spec.
+IMPACT dacă greșită: SEVERE — vague = implementation arbitrar.
+SURSA: PRODUCT_STRATEGY §"Open Items" #7 line 493.
+PUSH-BACK: Spec needed.
+STATUS: pending review Daniel cross-ref Q-0515
+
+Q-0763 [Domain 8.7 — ML Training Threshold detail]
+DECIZIE: 50,000 sessions = decision point pentru ML v2 features. Spec needed.
+RAȚIONAL: ML readiness threshold.
+IMPACT dacă greșită: SEVERE — wrong threshold = premature ML.
+SURSA: PRODUCT_STRATEGY §"Open Items" #2 line 487.
+PUSH-BACK: 50K arbitrary; depend on classifier complexity.
+STATUS: pending review Daniel cross-ref Q-0530
+
+#### 8.8 Identity & Auth Cognitive Arch §Q14
+
+Q-0764 [Domain 8.8 — Firebase Auth UUID Canonical ID]
+DECIZIE: Firebase Auth UUID = Canonical ID cross-device.
+RAȚIONAL: Standard pattern; persistent identity.
+IMPACT dacă greșită: SEVERE — wrong identity = wrong user data.
+SURSA: Cognitive Arch §Q14 line 388-389.
+PUSH-BACK: Anonymous = no recovery; multi-device gap.
+STATUS: pending review Daniel cross-ref Q-0353
+
+Q-0765 [Domain 8.8 — 1 User N devices supported]
+DECIZIE: 1 user N devices via UUID.
+RAȚIONAL: Cross-device sync.
+IMPACT dacă greșită: SEVERE — without = lock device.
+SURSA: Cognitive Arch §Q14 line 389.
+PUSH-BACK: Account merge OUT_OF_SCOPE; user installs multi-device anonymous = no merge.
+STATUS: pending review Daniel cross-ref Q-0354
+
+Q-0766 [Domain 8.8 — Account merge OUT_OF_SCOPE_v1.0]
+DECIZIE: Account merge OUT_OF_SCOPE_v1.0.
+RAȚIONAL: Complex; deferred.
+IMPACT dacă greșită: SEVERE — user 2 anon accounts = no path consolidate.
+SURSA: Cognitive Arch §Q14 line 391.
+PUSH-BACK: Real-world frequency; merge needed.
+STATUS: pending review Daniel cross-ref Q-0355
+
+#### 8.9 Cold Start UX Cognitive Arch §Q15
+
+Q-0767 [Domain 8.9 — Onboarding minimalist 5 fields]
+DECIZIE: Onboarding minimalist mandatory: Age, Gender, Weight, Goal (Cut/Bulk/Maintain), Experience (0/1-3y/3+y).
+RAȚIONAL: Statistical baseline temporary; safety caps.
+IMPACT dacă greșită: SEVERE — incomplete = unsafe.
+SURSA: Cognitive Arch §Q15 line 396-398.
+PUSH-BACK: 5 fields meets minimum; height/BF expansion useful.
+STATUS: pending review Daniel cross-ref Q-0199
+
+Q-0768 [Domain 8.9 — Tier transitions data-driven]
+DECIZIE: T0 (0-4 sesiuni), T1 (5-20), T2 (21+). 6-tier ADR 009 alternative.
+RAȚIONAL: Threshold count-based simple.
+IMPACT dacă greșită: MODERATE — count alone ignores quality.
+SURSA: Cognitive Arch §Q15 line 401-404; ADR 009.
+PUSH-BACK: Tier mismatch cross-ADR (3 vs 6 tiers).
+STATUS: pending review Daniel cross-ref Q-0182
+
+Q-0769 [Domain 8.9 — REALTIME slider Cold Start UX]
+DECIZIE: REALTIME zero data: UI Slider "Câtă energie ai azi? 1-10". Singura voce activă T0.
+RAȚIONAL: Manual proxy; user-controlled.
+IMPACT dacă greșită: MODERATE — slider missing = no signal; spam = unreliable.
+SURSA: Cognitive Arch §Q15 line 399-400.
+PUSH-BACK: 1-10 abstract; many default 5.
+STATUS: pending review Daniel cross-ref Q-0200
+
+#### 8.10 Recovery & Rollback User-Side §Q16
+
+Q-0770 [Domain 8.10 — User edit history allowed typo]
+DECIZIE: User edit history allowed (typo correction). ARBITRATOR past = IMUABIL. Edit triggers Cloud Function diff Historical_Profile.
+RAȚIONAL: Fix typos; anti-gaming preserved.
+IMPACT dacă greșită: SEVERE — full edit = retro-game; immutable = blocked.
+SURSA: Cognitive Arch §Q16 line 405-407.
+PUSH-BACK: ADR 011 outcome immutability conflict; amendment needed.
+STATUS: pending review Daniel cross-ref Q-0164
+
+Q-0771 [Domain 8.10 — Re-onboarding Archive & Start Fresh 6 luni]
+DECIZIE: 6 luni pause re-onboarding. Archive & Start Fresh. Raw data preserved background. Historical_Profile reset. muscle_memory_index for PROJECTION aggressive.
+RAȚIONAL: Clean slate; muscle memory accelerated.
+IMPACT dacă greșită: SEVERE — full archive = no recovery; no archive = pollution.
+SURSA: Cognitive Arch §Q17 line 411-412.
+PUSH-BACK: muscle_memory_index spec missing.
+STATUS: pending review Daniel cross-ref Q-0185
+
+#### 8.11 Edge Users & Liability Shield §Q18
+
+Q-0772 [Domain 8.11 — SAFETY_TRIPWIRE_GLOBAL Passive Mode]
+DECIZIE: Onboarding checkbox medical/sarcină → SAFETY_TRIPWIRE_GLOBAL. ARBITRATOR forțat Passive Mode. Recomandări PUSH/PROGRESSIVE OVERLOAD/PROJECTION TĂIATE. Mesaj: "Menține-te activ, respectă sfatul medicului."
+RAȚIONAL: Liability shield; defensive architecture.
+IMPACT dacă greșită: CATASTROFIC — push despite condition = harm + liability; over-restrictive = lose user.
+SURSA: Cognitive Arch §Q18 line 413-418.
+PUSH-BACK: Honor system checkbox lies; passive mode reduces value.
+STATUS: pending review Daniel cross-ref Q-0445
+
+Q-0773 [Domain 8.11 — SalaFull v1.0 NU dispozitiv medical]
+DECIZIE: SalaFull v1.0 = NU dispozitiv medical. Defensive Architecture.
+RAȚIONAL: Liability shield; legal positioning.
+IMPACT dacă greșită: CATASTROFIC — claim medical = regulated.
+SURSA: Cognitive Arch §Q18 line 415.
+PUSH-BACK: "Software, nu sfat medical" disclaimer + actions = legal grey.
+STATUS: pending review Daniel cross-ref Q-0772
+
+#### 8.12 Pricing Tier Impact §Q19
+
+Q-0774 [Domain 8.12 — Core architecture SAME for free/paid]
+DECIZIE: Core arhitectură SAME pentru toți (Voices + Arbitrator). Useri free NU sabotați.
+RAȚIONAL: Ethical paywall; engine quality not gated.
+IMPACT dacă greșită: SEVERE — gating engine = sabotage.
+SURSA: Cognitive Arch §Q19 line 419-422.
+PUSH-BACK: All-engine-free = no Pro value; differentiate elsewhere.
+STATUS: pending review Daniel cross-ref Q-0510
+
+Q-0775 [Domain 8.12 — Paywall data sources Apple Health Wearables]
+DECIZIE: Free = manual sliders. Paid = Apple Health/Wearables.
+RAȚIONAL: Premium data integration; ethical.
+IMPACT dacă greșită: MODERATE — data gating = mobile-first contradiction.
+SURSA: Cognitive Arch §Q19 line 421.
+PUSH-BACK: Apple Health iOS-only; Android Google Fit gap.
+STATUS: pending review Daniel cross-ref Q-0510
+
+Q-0776 [Domain 8.12 — Paywall UI insights 4-week projection]
+DECIZIE: Free = today projection. Paid = 4-week projection (blur free).
+RAȚIONAL: Premium depth; clear differentiator.
+IMPACT dacă greșită: MODERATE — too restrictive = no upgrade incentive; too generous = revenue weak.
+SURSA: Cognitive Arch §Q19 line 422.
+PUSH-BACK: 4-week visible blur = teaser; some find frustrating.
+STATUS: pending review Daniel cross-ref Q-0775
+
+#### 8.13 Localization Beyond i18n §Q20
+
+Q-0777 [Domain 8.13 — Metric/Imperial CDL+Arbitrator strict SI]
+DECIZIE: CDL + Arbitrator strict SI (kg, cm). Conversion EXCLUSIVELY Presentation Layer.
+RAȚIONAL: Single source truth math.
+IMPACT dacă greșită: CATASTROFIC — mixed units storage = math errors propagate.
+SURSA: Cognitive Arch §Q20 line 423-424.
+PUSH-BACK: Conversion at presentation = N conversions.
+STATUS: pending review Daniel cross-ref Q-0368
+
+Q-0778 [Domain 8.13 — Timezones UTC + local_offset]
+DECIZIE: Timestamps UTC + local_offset salvat. Orchestrator now(UTC) - offset.
+RAȚIONAL: Timezone-safe; deterministic boundaries.
+IMPACT dacă greșită: SEVERE — local only = day boundary bugs cross-timezone.
+SURSA: Cognitive Arch §Q20 line 425.
+PUSH-BACK: 2 fields per timestamp; DST complications.
+STATUS: pending review Daniel cross-ref Q-0367
+
+Q-0779 [Domain 8.13 — Fasting Mode setting temporary]
+DECIZIE: "Fasting Mode" temporary toggle. Voice specială SAU REALTIME modifier. RPE max cap (e.g., 8) durata.
+RAȚIONAL: Religious accommodation; safety cap.
+IMPACT dacă greșită: SEVERE — without = ramadan users push max = injury.
+SURSA: Cognitive Arch §Q20 line 427-429.
+PUSH-BACK: Auto-detect calendar Ramadan vs manual? Decision.
+STATUS: pending review Daniel cross-ref Q-0369
+
+Q-0780 [Domain 8.13 — Telemetry retention Hot 30-60 zile Cold permanent]
+DECIZIE: Hot Storage 30-60 zile (debug, support, dashboards). Cold permanent (Data Lake — viitor ML v2.x).
+RAȚIONAL: Tiered cost; future ML.
+IMPACT dacă greșită: MODERATE — short Hot = old debug blind; long = cost.
+SURSA: Cognitive Arch §Q6 line 332-339.
+PUSH-BACK: 30-60 ambiguous range; specify.
+STATUS: pending review Daniel cross-ref Q-0048
+
+Q-0781 [Domain 8.13 — Sampling 100% Phase 1 + 3 luni live]
+DECIZIE: 100% Phase 1 + 3 luni live → 100% SAFETY/Override + 10% OPTIMIZATION boring.
+RAȚIONAL: Catch bugs early; reduce later.
+IMPACT dacă greșită: MODERATE — too early reduce = miss; late = cost.
+SURSA: Cognitive Arch §Q6 line 337.
+PUSH-BACK: "Boring" subjective.
+STATUS: pending review Daniel cross-ref Q-0050
+
+Q-0782 [Domain 8.13 — Real-time dashboard 3 graphics MANDATORY]
+DECIZIE: Real-time dashboard MANDATORY 3 graphics: Divergence Rate, Low Confidence Fallbacks, User Override Rate.
+RAȚIONAL: Live monitoring; early warning.
+IMPACT dacă greșită: SEVERE — absent = bugs via complaint.
+SURSA: Cognitive Arch §Q6 line 339.
+PUSH-BACK: 3 minimal; latency, error, success by tier missing.
+STATUS: pending review Daniel cross-ref Q-0051
+
+Q-0783 [Domain 8.13 — GDPR Anonymize NU delete preserve ML training]
+DECIZIE: GDPR Anonymize NU delete (păstrăm math/confidence research). UUID → DELETED_USER, păstrăm age/decision/math.
+RAȚIONAL: Future ML training value.
+IMPACT dacă greșită: CATASTROFIC dacă anonymization incomplete = re-identify; CATASTROFIC delete = lose training.
+SURSA: Cognitive Arch §Q6 line 335; §Q14 line 392.
+PUSH-BACK: Combined age+decision+timestamp re-identify în small-N.
+STATUS: pending review Daniel cross-ref Q-0049
+
+#### 8.14 Versioning & Schema Evolution §Q12
+
+Q-0784 [Domain 8.14 — Schema Matrix Rule ADD silent backward-compat]
+DECIZIE: ADD (optional fields) silent backward-compatible.
+RAȚIONAL: Evolution organic.
+IMPACT dacă greșită: SEVERE — breaking ADD = consumer crashed.
+SURSA: Cognitive Arch §Q12 line 374-375.
+PUSH-BACK: All optional ADDs = nullable proliferates.
+STATUS: pending review Daniel cross-ref Q-0394
+
+Q-0785 [Domain 8.14 — CHANGE/REMOVE Migration Runner mandatory]
+DECIZIE: CHANGE/REMOVE (renames, structural) Mandatory Migration Runner.
+RAȚIONAL: Backward incompat needs migration.
+IMPACT dacă greșită: SEVERE — no migration = entries broken.
+SURSA: Cognitive Arch §Q12 line 376-377.
+PUSH-BACK: Migration script bug = corruption.
+STATUS: pending review Daniel cross-ref Q-0395
+
+Q-0786 [Domain 8.14 — INTRODUCE Cold Start Explicit not Backfill]
+DECIZIE: INTRODUCE (voice nouă) Cold Start Explicit, listening 7-14 zile, weight 0% → calibrate.
+RAȚIONAL: NO Backfill = anti-data-invention.
+IMPACT dacă greșită: SEVERE — backfill = invented history pollutes.
+SURSA: Cognitive Arch §Q12 line 378-379.
+PUSH-BACK: 7-14 zile UX without new voice.
+STATUS: pending review Daniel cross-ref Q-0036
+
+#### 8.15 Action Type Classification Matrix §Q24-Q27
+
+Q-0787 [Domain 8.15 — TAG SAFETY bypass HISTORICAL]
+DECIZIE: SAFETY → bypass HISTORICAL/Rule Engine safe.
+RAȚIONAL: Safety override; conservative path.
+IMPACT dacă greșită: SEVERE — SAFETY routed math = average dilute = unsafe.
+SURSA: Cognitive Arch PARTEA 4 line 215-220.
+PUSH-BACK: 3 SAFETY categories (Physical/Psychological/Medical) maybe needed.
+STATUS: pending review Daniel cross-ref Q-0030
+
+Q-0788 [Domain 8.15 — TAG PREFERENCE Ask User]
+DECIZIE: PREFERENCE → "Ask User" la conflict.
+RAȚIONAL: User agency PREFERENCE; no auto.
+IMPACT dacă greșită: SEVERE — auto = paternalism; over-prompt = friction.
+SURSA: Cognitive Arch PARTEA 4 line 222-227.
+PUSH-BACK: Ask User mid-session friction.
+STATUS: pending review Daniel cross-ref Q-0030
+
+Q-0789 [Domain 8.15 — TAG OPTIMIZATION Math Fallback]
+DECIZIE: OPTIMIZATION → continue Math Fallback.
+RAȚIONAL: Subtle fine-tuning math.
+IMPACT dacă greșită: MODERATE — fall through correctly; subtle.
+SURSA: Cognitive Arch PARTEA 4 line 229-234.
+PUSH-BACK: Math fallback only OPTIMIZATION; mixed PREFERENCE+OPT case unclear.
+STATUS: pending review Daniel cross-ref Q-0029
+
+Q-0790 [Domain 8.15 — Hardcoded enum schema-level NU runtime classification]
+DECIZIE: Hardcoded la schema level, NU runtime classification. Enum imuabil.
+RAȚIONAL: Predictability; no surprise.
+IMPACT dacă greșită: MODERATE — runtime = surprise category drift.
+SURSA: Cognitive Arch PARTEA 4 line 217.
+PUSH-BACK: Categorie nouă blocked rigidity.
+STATUS: pending review Daniel cross-ref Q-0024
+
+Q-0791 [Domain 8.15 — Voice priority hierarchy R8 Tier-based]
+DECIZIE: R8: T0 REALTIME 100%; T1 70/25/5; T2 60/30/10. INITIAL_V1_GUESSWORK.
+RAȚIONAL: Tier-based weights; recalibrate empirical.
+IMPACT dacă greșită: MODERATE — wrong = decisions diluted.
+SURSA: Cognitive Arch §R8 line 92-96.
+PUSH-BACK: 21 sesiuni quality varies; count alone simplistic.
+STATUS: pending review Daniel cross-ref Q-0005
+
+Q-0792 [Domain 8.15 — R5 PROJECTION volume warning + HIST tolerated + REAL push]
+DECIZIE: R5: PROJECTION volume warning + HIST tolerated + REAL push = Override PROJECTION în favor istoric/realtime.
+RAȚIONAL: Empirical capacity > matematica; PROJECTION = limită teoretică.
+IMPACT dacă greșită: SEVERE — over-warning = no push; under = harm.
+SURSA: Cognitive Arch §R5 line 86.
+PUSH-BACK: PROJECTION recalibrate up triggers; spec needed.
+STATUS: pending review Daniel cross-ref Q-0257
+
+Q-0793 [Domain 8.15 — R7 PROJECTION always advisor never decider]
+DECIZIE: R7: PROJECTION always advisor, never decider. Nu forțează contra Red Flag istoric sau incapacitate realtime.
+RAȚIONAL: Advisor role; HIST/REAL prevail.
+IMPACT dacă greșită: SEVERE — PROJECTION decider = future-data dictates today = unsafe.
+SURSA: Cognitive Arch §R7 line 90.
+PUSH-BACK: PROJECTION valuable; over-restrict?
+STATUS: pending review Daniel cross-ref Q-0010
+
+Q-0794 [Domain 8.15 — R12 Tie-breaking action type tag]
+DECIZIE: R12: Tie-breaking pe action type tag (Action Type Matrix).
+RAȚIONAL: Categorical resolution.
+IMPACT dacă greșită: SEVERE — tie unresolved = decision random.
+SURSA: Cognitive Arch §R12 line 113.
+PUSH-BACK: Action Type granularity 3 categories may not resolve all ties.
+STATUS: pending review Daniel cross-ref Q-0030
+
+#### 8.16 Performance & Latency §Q11
+
+Q-0795 [Domain 8.16 — Sub 300ms total user-perceived budget]
+DECIZIE: Total <300ms (50ms DB + 150ms Voices+Arbitrator + 100ms UI).
+RAȚIONAL: Perceived instant; 300ms threshold.
+IMPACT dacă greșită: MODERATE — peste = lag; sub = instant.
+SURSA: Cognitive Arch §Q11 line 367-369.
+PUSH-BACK: Cold start CF latency = realistic 500-800ms.
+STATUS: pending review Daniel cross-ref Q-0033
+
+Q-0796 [Domain 8.16 — HISTORICAL pre-computed sliding windows Cloud Function]
+DECIZIE: HISTORICAL Pre-computed Sliding Windows via Cloud Function (NOT client). Incremental O(diff).
+RAȚIONAL: Client full scan O(N) slow at 250+ entries.
+IMPACT dacă greșită: SEVERE — client-side = battery drain device.
+SURSA: Cognitive Arch §Q11 CORRECTED v2 line 369-371.
+PUSH-BACK: Cloud Function vendor lock; cost.
+STATUS: pending review Daniel cross-ref Q-0034
+
+Q-0797 [Domain 8.16 — Cold start sub 500ms]
+DECIZIE: Cold start <500ms.
+RAȚIONAL: First impression critical.
+IMPACT dacă greșită: SEVERE — slow = uninstall.
+SURSA: Cognitive Arch §Q11 line 371.
+PUSH-BACK: 500ms ambitious; SW + IndexedDB + demographic prior.
+STATUS: pending review Daniel cross-ref Q-0035
+
+Q-0798 [Domain 8.16 — Last 14 zile raw + aggregate profile]
+DECIZIE: Last 14 zile raw + aggregate profile.
+RAȚIONAL: Recent detail + trend; balance storage.
+IMPACT dacă greșită: MODERATE — too short raw = miss trend; long = storage.
+SURSA: Cognitive Arch §Q11 line 370.
+PUSH-BACK: 14 zile fixed; user activity variance.
+STATUS: pending review Daniel cross-ref Q-0796
+
+Q-0799 [Domain 8.16 — Performance trigger #2 cluster >100ms]
+DECIZIE: Trigger if cluster >100ms.
+RAȚIONAL: Empirical perf threshold.
+IMPACT dacă greșită: SEVERE — perf creep ignored.
+SURSA: ADR 018 Trigger #2 line 385.
+PUSH-BACK: Should measure pre/post implementation.
+STATUS: pending review Daniel cross-ref Q-0033
+
+Q-0800 [Domain 8.16 — Indirection layer debugging cost]
+DECIZIE: Negative consequence — debugging session decision = trace through registry → cluster → dimension. Extension la rationale.
+RAȚIONAL: Acceptable trade-off for extensibility.
+IMPACT dacă greșită: SEVERE — debug too hard = bugs persist.
+SURSA: ADR 018 Negative line 369-372.
+PUSH-BACK: Trace tool quality critical; gap = debugging coșmar.
+STATUS: pending review Daniel cross-ref Q-0078
+
+---
+
+**BATCH 3 PARTIAL — Q0661-Q0800 COMPLETE** (target Q2001-Q3000; quality > quantity per directive)
+
+Domain 7 MOAT Q661-Q700, Domain 8 Cognitive Architecture Q701-Q800.
