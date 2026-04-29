@@ -1,4 +1,20 @@
 ﻿# DECISION LOG â€” SalaFull
+## 2026-04-30 — ADR 009 AMENDMENT — Tier System SSOT ACCEPTED
+
+**Status:** Amendment formalized post chat strategic 2026-04-29 (Daniel + Claude Opus 4.7). Closes AUDIT_5000Q Q-0182.
+
+**Decizie SSOT:** Două axe ortogonale, NU contradictorii:
+- `engine_tier` (T0/T1/T2) = data volume axis → controlează voice weighting (R8/Q15)
+- `calibration_confidence` (COLD_START → INITIAL → DEVELOPING → PERSONALIZING → PERSONALIZED → OPTIMIZED) = signal quality axis → controlează pattern learning gates (ADR 009)
+
+**Forward-compatible:** N axes future (nutrition/sleep/fiber calibration) follow same pattern.
+
+**Migration:** Sprint 1 docs only. Sprint 2 decision needed: (a) DEVELOPING tier add or remove (handover SSOT 6 nivele vs ADR 009 active 5 nivele), (b) code refactor renaming + schema versioning bump.
+
+**Cross-refs:** [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]] | [[009-calibration-tiers]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[PRODUCT_STRATEGY_SPEC_v1]]
+
+**Next:** Sprint 2 — code refactor decision + DEVELOPING tier add/remove decision.
+
 ## 2026-04-27 — ADR 017 Demographic Prior Database ACCEPTED
 
 **Status:** 7/7 decision points approved post-Opus draft review.

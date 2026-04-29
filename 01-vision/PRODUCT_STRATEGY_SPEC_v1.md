@@ -6,7 +6,7 @@
 **Companion document:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]]
 **Total puncte articulate:** 80 product decisions + 5 push-back resolved + 3 follow-up flags resolved
 
-**See also:** [[PROJECT_VISION]] | [[MOAT_STRATEGY]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[018-engine-extensibility-architecture]]
+**See also:** [[PROJECT_VISION]] | [[MOAT_STRATEGY]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[018-engine-extensibility-architecture]] | [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]]
 
 ---
 

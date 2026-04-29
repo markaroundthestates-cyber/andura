@@ -1,9 +1,9 @@
 # 009. Calibration Tiers for User Maturity
 
-**See also:** [[DECISION_LOG]] | [[CTX_ALLLOGS_AUDIT_1_5]] | [[ENGINE_ARCHITECTURE]] | [[003-double-progression-engine]]
+**See also:** [[DECISION_LOG]] | [[CTX_ALLLOGS_AUDIT_1_5]] | [[ENGINE_ARCHITECTURE]] | [[003-double-progression-engine]] | [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]]
 
 ## Status
-Accepted
+Accepted (amended 2026-04-30 — see [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]] for SSOT clarification: this ADR's 5-level system is the **`calibration_confidence`** axis. The orthogonal **`engine_tier`** axis (T0/T1/T2 — voice weighting, Cognitive Arch R8/Q15) is a separate dimension)
 
 ## Context
 The coaching engine must work correctly for a brand-new user (0 sessions) as well as
