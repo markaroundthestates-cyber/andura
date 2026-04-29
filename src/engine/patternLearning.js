@@ -124,7 +124,10 @@ export function analyzeFromCDL({ windowDays = 30 } = {}) {
   // CDL-derived patterns — gated by MIN_CDL_WEIGHT to prevent false positives on sparse data
   const cutoff = Date.now() - windowDays * MS_PER_DAY;
   const allEntries = readAllActive();
-  const relevant = allEntries.filter(e => e.ts >= cutoff && e.outcome != null);
+  const relevant = allEntries.filter(e => {
+    const ts = e.ts ?? (e.date ? new Date(e.date + 'T12:00:00').getTime() : 0);
+    return ts >= cutoff && e.outcome != null;
+  });
 
   let totalWeight = 0;
   let adheredWeight = 0;

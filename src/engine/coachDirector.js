@@ -28,7 +28,12 @@ export class CoachDirector {
     const ctx = buildCoachContext();
 
     if (!ctx.readiness.isSet) {
-      return { requiresReadinessInput: true, message: 'Cum te simți azi?', exercises: [] };
+      return {
+        requiresReadinessInput: true,
+        message: 'Cum te simți azi?',
+        exercises: [],
+        context: { patterns: ctx.patterns ?? [], patternsSuppressed: ctx.patternsSuppressed ?? true },
+      };
     }
 
     // ── Calibration level detection ────────────────────────────────────────
@@ -37,8 +42,10 @@ export class CoachDirector {
     ctx.calibrationLevel = calibration;
     console.log('[CoachDirector] Calibration:', calibration.name);
 
-    // Gate ctx.patterns — wipe before any engine sees them for under-threshold tiers
-    if (!calibration.patternsEnabled) {
+    // Gate ctx.patterns — wipe before any engine sees them for under-threshold tiers.
+    // CDL suppression (ctx.patternsSuppressed) is authoritative for CDL-derived patterns:
+    // if CDL already cleared them (realCDLCount >= threshold), don't wipe on calibration alone.
+    if (!calibration.patternsEnabled && ctx.patternsSuppressed !== false) {
       ctx.patterns = [];
     } else if (calibration.patternMinConfidence != null) {
       ctx.patterns = (ctx.patterns || []).filter(
