@@ -1,0 +1,15 @@
+[
+  { "session": 1700000001000, "ex": "Bench Press", "w": 80, "reps": 8, "rpe": 7, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Bench Press", "w": 80, "reps": 7, "rpe": 8, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Bench Press", "w": 80, "reps": 6, "rpe": 9, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Incline DB Press", "w": 30, "reps": 10, "rpe": 7, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Incline DB Press", "w": 30, "reps": 9, "rpe": 8, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Incline DB Press", "w": 30, "reps": 8, "rpe": 9, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Triceps Pushdown", "w": 25, "reps": 12, "rpe": 7, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Triceps Pushdown", "w": 25, "reps": 11, "rpe": 8, "date": "2023-11-14" },
+  { "session": 1700000001000, "ex": "Triceps Pushdown", "w": 25, "reps": 10, "rpe": 9, "date": "2023-11-14" },
+  { "session": 1700000002000, "ex": "Bench Press", "w": 80, "reps": 8, "rpe": 8, "date": "2023-11-15" },
+  { "session": 1700000002000, "ex": "Bench Press", "w": 80, "reps": 7, "rpe": 9, "date": "2023-11-15" },
+  { "session": 1700000002000, "ex": "Incline DB Press", "w": 30, "reps": 10, "rpe": 7, "date": "2023-11-15" },
+  { "session": 1700000002000, "ex": "Incline DB Press", "w": 30, "reps": 9, "rpe": 8, "date": "2023-11-15" }
+]

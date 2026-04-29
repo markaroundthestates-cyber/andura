@@ -1,0 +1,52 @@
+[
+  {
+    "id": "cdl_synth_1700000001000_a1b2",
+    "ts": 1700000001000,
+    "date": "2023-11-14",
+    "synthetic": true,
+    "superseded": false,
+    "supersedes": null,
+    "context": { "calibrationLevel": "COLD_START", "partial": true },
+    "proposed": {
+      "sessionType": "PUSH",
+      "rationale": { "winnerId": "SYNTHETIC_BACKFILL", "winnerPriority": null, "overridden": [] },
+      "exercises": ["Bench Press", "Incline DB Press", "Triceps Pushdown"],
+      "proposedSets": 9,
+      "volumeMultiplier": 1.0,
+      "notes": ""
+    },
+    "outcome": {
+      "executed": true,
+      "deviation": false,
+      "actualSessionType": "PUSH",
+      "matchScore": 1.0,
+      "actualExercises": ["Bench Press", "Incline DB Press", "Triceps Pushdown"],
+      "actualSets": 9
+    }
+  },
+  {
+    "id": "cdl_synth_1700000002000_c3d4",
+    "ts": 1700000002000,
+    "date": "2023-11-15",
+    "synthetic": true,
+    "superseded": false,
+    "supersedes": null,
+    "context": { "calibrationLevel": "INITIAL", "partial": true },
+    "proposed": {
+      "sessionType": "PULL",
+      "rationale": { "winnerId": "SYNTHETIC_BACKFILL", "winnerPriority": null, "overridden": [] },
+      "exercises": ["Bench Press", "Incline DB Press"],
+      "proposedSets": 12,
+      "volumeMultiplier": 1.0,
+      "notes": ""
+    },
+    "outcome": {
+      "executed": true,
+      "deviation": false,
+      "actualSessionType": "PULL",
+      "matchScore": 1.0,
+      "actualExercises": ["Bench Press", "Incline DB Press"],
+      "actualSets": 6
+    }
+  }
+]
