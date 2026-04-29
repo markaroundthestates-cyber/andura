@@ -119,8 +119,34 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 ### 3.4 Progress photos
 **Decizie:** OUT_OF_SCOPE_v1.0. Storage masiv (S3 costs) + complică GDPR la lansare.
 
-### 3.5 Nutrition logging
-**Decizie:** OUT_OF_SCOPE_v1.0. **"SalaFull face antrenament Bugatti. NU facem nutriție Dacia."**
+### 3.5 Nutrition (logging vs inference) — AMENDED 2026-04-30
+
+**Distincție SSOT (lock chat strategic 2026-04-29 + handover §2):**
+
+- **Nutrition logging (user input direct kcal/protein/macro tracking) = OUT_OF_SCOPE v1.** Original rationale preserved: **"SalaFull face antrenament Bugatti. NU facem nutriție Dacia."** Voice logging meals, food database, kcal counter UI, MyFitnessPal-style tracking — toate excluse v1.
+- **Nutrition inference (Bayesian motor pasiv din signals existente) = IN_SCOPE v1.**
+
+**Bayesian Nutrition Inference — 5-layer pattern (spec engine implementation = Sprint 4):**
+
+- **Layer 1 — Prior:** `kg × multiplier` per phase
+  - CUT: 2.2 g protein/kg LBM
+  - BULK: 1.8 g protein/kg LBM
+  - MAINT: 2.0 g protein/kg LBM
+  - STRENGTH: 1.8 g protein/kg LBM
+- **Layer 2 — Profile-typing modulator:** Sprinter/Marathon/Yo-yo/Strategic adjusts variance acceptance (per ADR 013)
+- **Layer 3 — Vitality inputs:** opțional din ADR 016 (energy, mood, hunger)
+- **Layer 4 — Indirect signals (CDL-derived):**
+  - kg trend (rolling 4-week delta)
+  - force progression (1RM evolution per compound lift)
+  - mood signal (post-session rating + readiness emoji)
+  - adherence rate (CDL `outcome.executed && !deviation`)
+- **Layer 5 — Posterior update:** Bayesian inference combining priors + signals → estimated effective protein/kcal intake range
+
+**ZERO input nou cerut user.** Engine deduces nutritional sufficiency din signals deja colectate. Output: silent flag în CDL `coachContext.nutrition_inference_confidence` consumat de Arbitrator pentru intervention prompts (ex: "Progresia stagnează + mood scăzut + kg-uri stagnante 4 săpt → posibil deficit caloric. Verificați aportul.").
+
+**Rationale anti-paternalism:** sistemul NU dictează kcal/macro plan. Doar observă pattern + sugerează verificare contextual. User decide.
+
+**Cross-refs:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q14 + HANDOVER 2026-04-29 §2 Bayesian Nutrition + Sprint 4 implementation task. ADR formal Bayesian engine = Sprint 4 spec.
 
 ### 3.6 Cardio
 **Decizie:** Engine separat (basic logging). Ignorat din Arbitrator hipertrofie v1.0.
@@ -128,8 +154,20 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 ### 3.7 Mobility/stretching
 **Decizie:** Ignorat v1.0.
 
-### 3.8 Sleep data
-**Decizie:** Manual input la check-in start ("Cum ai dormit? 1-5"). Apple Health = v1.x (cost dev mare acum).
+### 3.8 Sleep (logging vs inference) — AMENDED 2026-04-30
+
+**Distincție SSOT (lock chat strategic 2026-04-29 + handover §1):**
+
+- **Sleep manual input (chestionar dedicat "Cum ai dormit? 1-5", sleep diary, manual hours logging) = OUT_OF_SCOPE v1.** Decizia anterioară (manual input la check-in start) **rescinded** — fricțiune onboarding suplimentară contradictorie cu "ZERO input nou cerut user" principle.
+- **Sleep inference (din signals existente REALTIME) = IN_SCOPE v1.**
+  - **Source 1:** REALTIME readiness emoji selection (deja prezent în onboarding session). Mapping: 😩 / 😐 / 🙂 / 💪 → sleep_quality_proxy {LOW / MODERATE / GOOD / EXCELLENT}.
+  - **Source 2:** Post-session RPE proxy (rating ≤2 + reps achieved <60% pe primul exercițiu = sleep deprivation pattern likely).
+  - Output: silent `coachContext.sleep_inference_proxy` consumat de Arbitrator pentru fatigue weighting.
+- **Apple Health Sleep integration = DEFERRED v1.x.** Cost dev mare + iOS-only + Android divergent. Reluat post-launch dacă demand vizibil.
+
+**Rationale:** REALTIME readiness emoji deja captează informația. Re-prompting "Cum ai dormit?" e redundant cu emoji selection care îndeplinește același rol cu friction zero.
+
+**Cross-refs:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]] R8 (REALTIME 100% T0) + HANDOVER 2026-04-29 §1 Sleep inference + Sprint 4 engine spec.
 
 ### 3.9 Heart rate
 **Decizie:** Ignorat v1.0. Nu ajută antrenament forță decât la fatigue recovery, prea complex pentru MVP.
