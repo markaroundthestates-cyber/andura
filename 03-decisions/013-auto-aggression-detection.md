@@ -138,14 +138,26 @@ Exemplu:
 - NU "ești sigur că vrei?" (passive-aggressive)
 - DA "metric X arată Y. Pattern observat: Z. Decizia ta?"
 
-**C — Hard intervention (HIGH tier):**
+**C — Hard intervention (HIGH tier) — AMENDED 2026-04-30:**
 
-Coach refuză plan agresiv inițial. User poate override **doar prin friction modal**:
-- Read warning complet (no scroll-skip)
-- Type "continui pe propria răspundere" (sau echivalent)
-- Confirm explicit
+Coach surfacă warning explicit pentru HIGH tier. User poate override **fără friction-typing**:
 
-Asta filtrează decizii impulsive de decizii informate, fără paternalism. User adult, decizia lui finală — dar cu friction proporțional cu severity.
+- Modal apare cu warning complet (no scroll-skip — read full)
+- Wording neutral, non-judgmental, evidence-based (vezi §Reguli wording mai sus)
+- Dismiss persistence: dacă user dismiss, sistemul reține (CDL + dismiss memory anti-alarm-fatigue)
+- Override accepted: tap "Înțeleg, continui" buton SAU dismiss = override → session continuă cu plan agresiv user-defined
+- **Liability Flag silent backend:** salvat în CDL `outcome.autoAggression.escalating: true` + `outcome.autoAggression.override_acknowledged: timestamp`. NU afișat user. Folosit pentru: (a) escalation detection viitoare (3+ HIGH overrides consecutiv → tier MAX), (b) audit trail liability (legal coverage if user develops injury), (c) calibrare empirică AA detection thresholds post 50+ users.
+
+**Decizie originală (depreciată):** "Type 'continui pe propria răspundere' (sau echivalent) + Confirm explicit" — **eliminată permanent 2026-04-30.**
+
+**Rationale eliminare force-typing:**
+
+1. **Anti-paternalism ABSOLUTE.** Force-typing string e fricțiune teatrală — implică sistemul "știe mai bine" decât user adult. Bugatti standard ≠ "fricțiune ridicată = quality" (commit Wave 1 `b24aaae` a marcat această decizie inițial; amendment formalizează rationale).
+2. **Anti-RE (Reverse Engineering protection).** Force-typing string expune logic counting către tech-lifters target audience. Wording-ul "continui pe propria răspundere" + count signals afișate = signature recognizable care permite RE engine internals (signal thresholds, escalation pattern). Anti-RE strategy categorical universal (vezi PRODUCT_STRATEGY anti-RE lock decision) require să NU expune nimic din internals.
+3. **UX hostility.** Force-typing pe 4-6 cuvinte mobile = friction churn + resentment. User adult cu push planificat (Sprinter profile push-back legitim) primește feel "AI patron care mă forțează să bat la tastatură". Brand damage > intervention benefit.
+4. **HIGH tier intervention strength preserved** prin: modal blocking (nu poți skip scroll), wording neutral evidence-based (non-passive-aggressive), dismiss memory (alarm fatigue prevention), Liability Flag silent backend (legal + empirical calibration).
+
+**Cross-refs:** [[PRODUCT_STRATEGY_SPEC_v1]] §5.11 Safety Asymmetric Principle (paternalism ≠ safety) + commit Wave 1 `b24aaae` + HANDOVER 2026-04-29 §1.95 force-typing elimination + memory rule "anti-paternalism ABSOLUTE" active.
 
 ### 7. Dismiss memory (anti alarm fatigue)
 
@@ -312,13 +324,18 @@ Acestea NU intră în ADR (principle), intră în spec implementabil + UX iterat
 
 **Rationale:** Reconsideration Trigger #7 acoperă deja inversare amplificator dacă hyperfocus correlates negativ cu auto-aggression. Tabelul empirical face thresholds-urile vizibile + tracked uniform cu restul parametrelor.
 
-### 3. Override flow wording exact
+### 3. Override flow wording exact — AMENDED 2026-04-30
 
-**Decision:** Wording final NU se pinneză în ADR. Spec EXEC_QUEUE va folosi wording natural, NU legal-defensiv.
+**Decision (revised):** Force-typing override eliminat permanent (vezi §6 Intervention model amendment). Override = simple tap "Înțeleg, continui" sau dismiss modal.
 
-**Direcție wording:** "continui în ciuda recomandării" sau "decid să push prin pattern" — variante naturale candidate. Decizie finală în spec UI după iteration design.
+**Wording final modal HIGH tier:** spec EXEC_QUEUE folosește wording natural evidence-based. NU legal-defensiv, NU paternalist.
 
-**Rationale:** "continui pe propria răspundere" e legal-flavored, hostile. Wording e UX-critical dar e implementation detail, NU principle.
+**Direcție wording template (Daniel decide live final UI iteration):**
+- Header: "Pattern observat" (sau "Coach-ul observă...")
+- Body: 2-3 bullet points cu evidence neutral (NU signal names exposed — categorical: "✓ Bun / OK / ⚠ Slab")
+- Footer buttons: "Înțeleg, continui" / "Ajustăm planul"
+
+**Rationale eliminare force-typing:** anti-paternalism ABSOLUTE + anti-RE (signal exposure prin wording) + UX hostility. Vezi §6 amendment 2026-04-30.
 
 ### 4. Soft warning frequency cap
 
