@@ -310,6 +310,38 @@ export async function renderCoachIdle(){
           ${isExpanded?'▴ Restrânge':`▾ +${hiddenCount} exerciții`}
         </div>`:''}
       </div>`;
+
+    // AA friction modal — fires after DOM is flushed, non-blocking (ADR 013 §6 §7).
+    // MUST live inside this `else` block — _dirSession is scoped to the WORKOUT branch.
+    // DOM is already rendered with the reduced plan; modal appears on top ~100ms later.
+    // If user overrides, session is updated and re-rendered. If user dismisses 3×
+    // consecutively (backdrop/swipe), modalManager.isSuppressed() silences it.
+    if (_dirSession?.aaBlocked?.requiresFrictionConfirmation && !modalManager.isSuppressed('aa-friction')) {
+      setTimeout(() => {
+        modalManager.show({
+          id: 'aa-friction',
+          category: 'coaching',
+          present: () => showAAFrictionModal(_dirSession, _dirSession.context),
+          onComplete: (result) => {
+            // Mark handled so subsequent renders don't re-trigger.
+            if (_dirSession?.aaBlocked) _dirSession.aaBlocked.requiresFrictionConfirmation = false;
+            if (result?.action === 'override') {
+              _dirSession.exercises = _dirSession.exercises.map(e => ({
+                ...e,
+                sets: e.aaOriginalSets ?? e.sets,
+                aaReduced: false,
+                aaOverridden: true,
+              }));
+              _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
+              sessionCache.set(_dirSession);
+              renderCoachIdle();
+            } else {
+              sessionCache.set(_dirSession);
+            }
+          },
+        });
+      }, 100);
+    }
   }
 
   // Stats row
@@ -332,37 +364,6 @@ export async function renderCoachIdle(){
   renderTodayAlerts();
   renderFatigueScore('fatigue-score-coach');
   renderPRWall();
-
-  // AA friction modal — fires after DOM is flushed, non-blocking (ADR 013 §6 §7)
-  // DOM is already rendered with the reduced plan; modal appears on top ~100ms later.
-  // If user overrides, session is updated and re-rendered. If user dismisses 3×
-  // consecutively (backdrop/swipe), modalManager.isSuppressed() silences it.
-  if (_dirSession?.aaBlocked?.requiresFrictionConfirmation && !modalManager.isSuppressed('aa-friction')) {
-    setTimeout(() => {
-      modalManager.show({
-        id: 'aa-friction',
-        category: 'coaching',
-        present: () => showAAFrictionModal(_dirSession, _dirSession.context),
-        onComplete: (result) => {
-          // Mark handled so subsequent renders don't re-trigger.
-          if (_dirSession?.aaBlocked) _dirSession.aaBlocked.requiresFrictionConfirmation = false;
-          if (result?.action === 'override') {
-            _dirSession.exercises = _dirSession.exercises.map(e => ({
-              ...e,
-              sets: e.aaOriginalSets ?? e.sets,
-              aaReduced: false,
-              aaOverridden: true,
-            }));
-            _dirSession.aaOverride = { rationale: result.overrideRationale, timestamp: Date.now() };
-            sessionCache.set(_dirSession);
-            renderCoachIdle();
-          } else {
-            sessionCache.set(_dirSession);
-          }
-        },
-      });
-    }, 100);
-  }
 
 }
 
