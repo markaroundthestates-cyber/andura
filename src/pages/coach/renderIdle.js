@@ -69,9 +69,14 @@ function renderLastSessionMemory(dayLabel) {
     .sort((a, b) => b.ts - a.ts);
   const last = sameDaySessions[0];
   if (!last || !last.sets.length) return '';
+  // Log entries persist weight under `w`; some legacy paths used `kg`. Coalesce.
+  const setKg = (s) => s?.w ?? s?.kg ?? null;
   const exMap = {};
-  last.sets.forEach(s => { if (!exMap[s.ex] || s.kg > exMap[s.ex].kg) exMap[s.ex] = s; });
-  const top3 = Object.values(exMap).sort((a, b) => b.kg - a.kg).slice(0, 3);
+  last.sets.forEach(s => {
+    const cur = exMap[s.ex];
+    if (!cur || (setKg(s) ?? -Infinity) > (setKg(cur) ?? -Infinity)) exMap[s.ex] = s;
+  });
+  const top3 = Object.values(exMap).sort((a, b) => (setKg(b) ?? -Infinity) - (setKg(a) ?? -Infinity)).slice(0, 3);
   const validRPE = last.sets.filter(s => s.rpe);
   const avgRPE = validRPE.length ? validRPE.reduce((a, s) => a + s.rpe, 0) / validRPE.length : 0;
   const ratingLbl = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
@@ -83,7 +88,7 @@ function renderLastSessionMemory(dayLabel) {
       style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;line-height:1;padding:2px 6px">✕</button>
     <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">ULTIMA SESIUNE · ${dayLabel.toUpperCase()}</div>
     <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${dateStr}</div>
-    ${top3.map(s => `<div style="font-size:12px;color:var(--text);margin-bottom:3px">· ${s.ex} <span style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${s.kg}kg×${s.reps||'?'}</span></div>`).join('')}
+    ${top3.map(s => `<div style="font-size:12px;color:var(--text);margin-bottom:3px">· ${s.ex} <span style="font-family:'JetBrains Mono',monospace;color:var(--accent)">${setKg(s) ?? '?'}kg×${s.reps||'?'}</span></div>`).join('')}
     <div style="margin-top:8px;display:flex;align-items:center;gap:12px">
       ${avgRPE > 0 ? `<span style="font-size:11px;color:var(--text3)">RPE: <span style="color:var(--text2)">${avgRPE.toFixed(1)}</span></span>` : ''}
       <span style="font-size:11px;font-weight:600;color:var(--accent2)">${verdict}</span>
