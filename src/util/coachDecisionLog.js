@@ -35,14 +35,20 @@ function isActive(entry) {
 }
 
 function isKeyContextChanged(oldCtx, newCtx) {
-  if (Math.abs((oldCtx.readinessScore ?? 0) - (newCtx.readinessScore ?? 0)) > 20) return true;
-  const oldWeak = JSON.stringify((oldCtx.weakGroups ?? []).slice().sort());
-  const newWeak = JSON.stringify((newCtx.weakGroups ?? []).slice().sort());
+  // Legacy/migrated entries (e.g., Tier-2 aggregates re-promoted, or older
+  // schema versions) may have a missing context object. Treat as "changed"
+  // semantics by defaulting to {} so all `?.` reads are safe and any non-null
+  // field in newCtx wins.
+  const o = oldCtx ?? {};
+  const n = newCtx ?? {};
+  if (Math.abs((o.readinessScore ?? 0) - (n.readinessScore ?? 0)) > 20) return true;
+  const oldWeak = JSON.stringify((o.weakGroups ?? []).slice().sort());
+  const newWeak = JSON.stringify((n.weakGroups ?? []).slice().sort());
   if (oldWeak !== newWeak) return true;
-  if (oldCtx.calibrationLevel !== newCtx.calibrationLevel) return true;
-  if (oldCtx.isInCut !== newCtx.isInCut) return true;
-  const oldHighRisk = (oldCtx.predictionToday?.isHighRisk ?? false);
-  const newHighRisk = (newCtx.predictionToday?.isHighRisk ?? false);
+  if (o.calibrationLevel !== n.calibrationLevel) return true;
+  if (o.isInCut !== n.isInCut) return true;
+  const oldHighRisk = (o.predictionToday?.isHighRisk ?? false);
+  const newHighRisk = (n.predictionToday?.isHighRisk ?? false);
   if (oldHighRisk !== newHighRisk) return true;
   return false;
 }
