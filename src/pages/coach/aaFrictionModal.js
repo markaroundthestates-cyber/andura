@@ -196,12 +196,17 @@ export function showAAFrictionModal(session, ctx) {
     });
 
     cancelBtn.addEventListener('click', () => {
-      cleanup(() => resolve({ action: 'cancel' }));
+      cleanup(() => resolve({ action: 'cancel', source: 'accept' }));
     });
 
     overrideBtn.addEventListener('click', () => {
       if (overrideBtn.disabled) return;
-      cleanup(() => resolve({ action: 'override', overrideRationale: activePhrase }));
+      cleanup(() => resolve({ action: 'override', overrideRationale: activePhrase, source: 'override' }));
+    });
+
+    // Backdrop tap — user-dismiss (learning signal for ModalManager)
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) cleanup(() => resolve({ action: 'cancel', source: 'backdrop' }));
     });
 
     // Swipe-down on handle
@@ -218,7 +223,7 @@ export function showAAFrictionModal(session, ctx) {
       const delta = e.touches[0].clientY - touchStartY;
       if (delta > 100) {
         swipeCancelled = true;
-        cleanup(() => resolve({ action: 'cancel' }));
+        cleanup(() => resolve({ action: 'cancel', source: 'swipe' }));
       }
     }, { passive: true });
   });
