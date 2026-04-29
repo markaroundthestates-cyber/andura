@@ -323,6 +323,15 @@ ADR 013 (AA detection) și ADR 014 (Profile Typing) sunt deja **specificate** ș
 - Build Schema Versioning + Migration Runner (componenta 4) cu o migration v1→v2 trivial (add `schemaVersion` field) — exercise infrastructure.
 - Build Feature Flags (componenta 5).
 
+> **AMENDMENT 2026-04-30 — clusterTrace adapter status (Q-0080):**
+> AUDIT_5000Q Q-0080 a flagged clusterTrace → ADR 011 `proposed.rationale.overridden` adapter ca HIGH-1 deferred status open. Clarification SSOT:
+>
+> **Status:** **pending Sprint 3 strangler integration.** Adapter NU este in scope Faza 0/Foundation. Integration cu CDL `proposed.rationale.overridden` field happens când strangler swap LWW → T&B (Sprint 3) + AA detection migration la dimension contract (per Faza 1 below) — both depind de schema versioning runner stable.
+>
+> **Sprint 1 livrează:** doar amendment SSOT (acest paragraf). Sprint 2 = Foundation infrastructure scaffold. Sprint 3 = clusterTrace adapter live integration.
+>
+> Cross-ref AUDIT_5000Q Q-0080 + [[011-coach-decision-log-architecture]] amendment §Firebase sync (T&B mandatory pre-launch).
+
 **Faza 1 — Strangler pe AA detection (Sprint 2):**
 - Re-implement AA detection ca dimension `src/engine/dimensions/autoAggression.js` ce expune `analyze(input)`.
 - Register în `dimensionRegistry.js` cu `stage: 'GATE'` (HIGH tier blocker) + `stage: 'ADJUSTMENT'` (MED tier volume reduction). Split în 2 entries dacă necesar sau single cu multiple recommendations.

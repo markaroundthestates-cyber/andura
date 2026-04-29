@@ -528,7 +528,17 @@ User agency cu safety net. **(Cross-ref Safety Asymmetric Principle)**
 4. **Balene targeting list** — 10-20 antrenori respectați RO + EN. Compile list pre-launch (next session).
 5. **App Store presence decision (v1.x)** — PWA-only strategic risk pentru iOS EN audience. Future evaluation needed.
 6. **Re-onboarding "muscle_memory_index" detail** — exact algorithm + UI explanation needed.
-7. **Pro pause "data freezing" detail** — ce înseamnă tehnic "înghețat dar nu șters"? Spec needed.
+7. **Pro pause "data freezing" detail — RESOLVED 2026-04-30 (cross-ref ADR 011 amendment 90 zile retention).**
+
+   **Storage tier preserved** (tier 1/2/3 per ADR 011 §Storage). NU re-tier rapid downgrade pe pause.
+
+   **Retention 90 zile** post-pause (aliniat cu Tombstone retention pattern stabilit în ADR 011 amendment Acțiunea 4.1). Cleanup auto post-90-zile dacă user nu reactivează → demote la tier archive permanent (monthly metrics only) + drop modules avansate cache.
+
+   **Re-activation:** user re-pay → tier-uri restaurate seamless (no re-onboarding needed). Engine re-ramp gradual (3-5 sesiuni calibration la new state — readiness drop legitim post pauză).
+
+   **Spec final implementation v1.x** (NU pre-launch CRITICAL). Sprint 4 sau v1.x post-launch.
+
+   Cross-ref ADR 011 amendment §Firebase sync 90 zile retention + ADR 009 calibration tier decay rules + §9.6 graceful downgrade.
 
 ---
 
