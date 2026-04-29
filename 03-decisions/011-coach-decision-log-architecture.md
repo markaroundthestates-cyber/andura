@@ -242,7 +242,32 @@ Demotion runs on `initAutoBackup` daily tick (existing infrastructure). Demotion
 
 CDL syncs to Firebase RTDB at `users/{uid}/coach-decisions`, `coach-decisions-aggregate`, `coach-decisions-archive` — same pattern as `logs` (ADR 001, ADR 002). Local-first, eventual consistent. Same `_suppressFirebaseSync` flag honored.
 
-CDL keys added to `SYNC_KEYS` in `firebase.js`. Append-only semantics + immutable outcome + monotonic superseded transition make last-write-wins acceptable for sync conflicts.
+CDL keys added to `SYNC_KEYS` in `firebase.js`.
+
+> **⚠️ AMENDMENT 2026-04-30 — LWW deprecated, T&B mandatory pre-launch:**
+>
+> **Original decision (deprecated):** "Append-only semantics + immutable outcome + monotonic superseded transition make last-write-wins acceptable for sync conflicts."
+>
+> **Revised SSOT (per chat strategic 2026-04-29 lock decision #1 + [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q9):** **LWW (Last-Write-Wins) deprecated v1.x — Tombstone & Branching pattern mandatory pre-launch.**
+>
+> **Rationale push-back:**
+> - LWW pe sync conflict produce silent data loss (memory paradox bug observed în testing 2026-04-28)
+> - Even cu "append-only + immutable outcome", clock skew între devices (phone offline 7 zile + desktop online concurrent) poate produce supersede chains incoerente sau outcome overwrite ireversibile
+> - Cognitive Arch §Q9 R22 + Q9 lock-uite explicit: "DB Split-Brain: Event Sourcing Append-Only Log + Tombstone & Branching (NU LWW). Conflict ireconciliable → UI prompt 'varianta A sau B?' (zero data loss)"
+>
+> **T&B implementation requirements:**
+> - Append-only event log (no in-place mutation)
+> - Branch detection algorithm: 2 entries cu același `parentId` arrive simultan → create branches preserving both
+> - Tombstone schema: `{ tombstone: true, deleted_at: timestamp, retention_until: timestamp + 90 zile }`
+> - **Tombstone retention = 90 zile** (NU forever, NU 30 zile). Rationale: GDPR-compliant disclosure în privacy policy + acoperă 95% multi-device sync edge cases (phone offline 7 zile + recover) + auto-cleanup Cloud Function lunar elimină storage bloat
+> - UI prompt component "varianta A sau B?" pentru irreconcilable conflicts (zero data loss principle)
+> - Tombstone GC Cloud Function: lunar cron, șterge tombstones cu `now() > retention_until`
+>
+> **Migration path:** T&B implementation = **Sprint 3 task** (50-80h). Sprint 1 = doar amendment SSOT (acest paragraf). Sprint 2 = scaffold. Sprint 3 = full implementation + parallel run + LWW decommission.
+>
+> **Cross-refs:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q9 R22 + HANDOVER 2026-04-29 §1 + [[018-engine-extensibility-architecture]] §4 Schema Versioning (T&B necesită schema bump v_X→v_Y).
+>
+> **Migration trigger** added to Reconsideration Triggers (#9, see below).
 
 ### Backfill from existing logs
 
@@ -366,6 +391,8 @@ Revisit this ADR when any of the following occur:
 7. **Idempotency conflict observed.** If duplicate entries appear for the same date despite the 4h + context-change rules, idempotency policy needs revision (e.g., shorter than 4h window, additional context fields tracked).
 
 8. **Schema drift detected post-implementation.** If audit reveals fields written by code but not specified in ADR (or vice versa), trigger ADR review: accept drift (update ADR), revert (remove from code), or refactor. Drift is normal as concrete implementation surfaces needs ADR couldn't anticipate; the requirement is that ADR remains in sync with deployed code, not that code matches ADR exactly.
+
+9. **LWW deprecated, T&B implementation needed (added 2026-04-30 amendment).** When Sprint 3 starts: implement Tombstone & Branching pattern per §Firebase sync amendment + retention 90 zile + UI prompt component + Cloud Function GC. Strangler swap LWW → T&B per write path + parallel run validation. Decommission LWW after zero-divergence verification. See [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q9.
 
 ---
 
