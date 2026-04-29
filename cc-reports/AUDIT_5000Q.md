@@ -4079,3 +4079,1349 @@ STATUS: pending review Daniel cross-ref Q-0265
 **BATCH 1 PARTIAL — Q0001-Q0500 COMPLETE** (target was Q1000; quality > quantity per prompt directive)
 
 Note pacing: Domain 1 (Engine) Q1-Q320 detailed; Domain 2 (Storage) Q321-Q400; Domain 3 (User Input) Q401-Q500. Per directive "4200 quality > 5000 junk", Batch 1 yields ~500 high-quality Q.
+
+---
+
+## BATCH 2 — Strategy + GDPR + UX (Q0501-Q1000)
+
+### DOMAIN 4: PRODUCT STRATEGY & MONETIZATION
+
+#### 4.1 Target audience (beginner până la avansat 10 ani — single product)
+
+Q-0501 [Domain 4.1 — Single product spans beginner-advanced]
+DECIZIE: Single product covers beginner to advanced (10+ ani exp). NOT separate apps per tier.
+RAȚIONAL: Calibration tiers + dimensions adapt; reduce SKU complexity.
+IMPACT dacă greșită: SEVERE — fragmentation = 3 products to maintain; single = "jack of all" risk.
+SURSA: HANDOVER §6 UI Tabs implicit; ADR 009 calibration tiers.
+PUSH-BACK: Beginner needs different UX than advanced; single risks alienating both.
+STATUS: pending review Daniel cross-ref Q-0502
+
+Q-0502 [Domain 4.1 — RO+EN simultaneous launch]
+DECIZIE: RO + EN simultaneously. i18n decoupled from Arbitrator.
+RAȚIONAL: RO feedback loop rapid; EN piața globală.
+IMPACT dacă greșită: SEVERE — RO only = limited; EN only = lose home market.
+SURSA: PRODUCT_STRATEGY §1.1 line 25-26; §10.10 RO+EN exclusive v1.0.
+PUSH-BACK: Dual launch = double translation maintenance; RO market < 5M; EN market 1B+.
+STATUS: pending review Daniel cross-ref Q-0503
+
+Q-0503 [Domain 4.1 — Tech-lifter primii adopters natural]
+DECIZIE: First 100 users: Daniel + rețea + forumuri lifters unde explici arhitectura aplicației, NU UI-ul.
+RAȚIONAL: Tech-lifters appreciate engine depth; differentiation message resonates.
+IMPACT dacă greșită: SEVERE — wrong audience = no traction; right audience = evangelists.
+SURSA: PRODUCT_STRATEGY §1.10 line 66-68.
+PUSH-BACK: Niche audience small; generalize later harder.
+STATUS: pending review Daniel cross-ref Q-0504
+
+Q-0504 [Domain 4.1 — Founding Members lifetime Pro 100-500]
+DECIZIE: Lifetime Pro pentru primii 100-500 useri. Mișcare șah-mat.
+RAȚIONAL: Loyalty engineering; armată evangheliști loiali; iartă bug-uri v1.0.
+IMPACT dacă greșită: SEVERE — too few = no community; too many = revenue cannibalize.
+SURSA: PRODUCT_STRATEGY §11.2 line 421-424.
+PUSH-BACK: 100-500 range wide; cutoff criterion needed (date-based? quality-based?).
+STATUS: pending review Daniel cross-ref Q-0505
+
+Q-0505 [Domain 4.1 — Vânăm balene 10-20 antrenori]
+DECIZIE: 10-20 antrenori respectați / powerlifteri geeks. Conturi Pro lifetime gratuite. NU promo cerută. "Just use the Arbitrator."
+RAȚIONAL: Tech-lifter influencer = inflection point; engineer-to-engineer language.
+IMPACT dacă greșită: SEVERE — wrong balene = no resonance; right = cult following.
+SURSA: PRODUCT_STRATEGY §11.1 line 411-417; §11.3 line 425-431.
+PUSH-BACK: 10-20 specific list lipsă; "respectați" subjective; hand-pick risk.
+STATUS: pending review Daniel cross-ref Q-0504
+
+#### 4.2 Pricing tier strategy
+
+Q-0506 [Domain 4.2 — Free + 1 Pro tier NOT 3 tiere]
+DECIZIE: Free + Pro (1 paid). NU 3 tiere (paralizează decizia user).
+RAȚIONAL: Decision simplicity > tier complexity.
+IMPACT dacă greșită: SEVERE — 3 tiere = decision paralysis; single = mid-market trap.
+SURSA: PRODUCT_STRATEGY §1.2 line 28-30.
+PUSH-BACK: 3-tier (Basic/Pro/Premium) industry standard; Pro mid-pricing tap.
+STATUS: pending review Daniel cross-ref Q-0507
+
+Q-0507 [Domain 4.2 — Pricing 10-12€/lună sau 100€/an]
+DECIZIE: ~10-12€/lună sau 100€/an. Sub 10€ = "pare ieftin"; peste 15€ = competiție directă antrenori.
+RAȚIONAL: Mid-market positioning; sweet spot.
+IMPACT dacă greșită: SEVERE — too low = brand cheap; too high = churn.
+SURSA: PRODUCT_STRATEGY §1.3 line 32-35.
+PUSH-BACK: 10-12€ vs 100€/an = 17% annual discount; standard 20%.
+STATUS: pending review Daniel cross-ref Q-0508
+
+Q-0508 [Domain 4.2 — Annual prepay discount 20% off]
+DECIZIE: 20% off annual. Cash flow upfront.
+RAȚIONAL: Lock-in retention; cash flow.
+IMPACT dacă greșită: MODERATE — too aggressive = monthly users feel cheated; too small = no incentive.
+SURSA: PRODUCT_STRATEGY §8.5 line 320-321.
+PUSH-BACK: 100€/an = ~17% off 12€×12=144€; spec inconsistent.
+STATUS: pending review Daniel cross-ref Q-0507
+
+Q-0509 [Domain 4.2 — Freemium permanent NU trial]
+DECIZIE: Freemium permanent cu caps (paywall pe modulele avansate VITALITY/PROJECTION advanced). NU time-gated trial.
+RAȚIONAL: Lower barrier; paywall on value depth.
+IMPACT dacă greșită: SEVERE — trial = users churn at expiry; freemium = no urgency convert.
+SURSA: PRODUCT_STRATEGY §1.4 line 36-37.
+PUSH-BACK: Freemium = many free riders; trial converts faster.
+STATUS: pending review Daniel cross-ref Q-0510
+
+Q-0510 [Domain 4.2 — Paywall pe data sources NU pe quality decision]
+DECIZIE: Core arhitectură SAME pentru toți. Paywall pe data sources (Apple Health, Wearables) și UI insights (4-week projection). Useri free NU sabotați.
+RAȚIONAL: Ethical paywall; engine quality not gated.
+IMPACT dacă greșită: SEVERE — gating engine = users feel sabotaged; gating only luxury = no incentive.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q19 line 419-422.
+PUSH-BACK: Paywall on data sources = Apple Health users gated; mobile-first contradiction.
+STATUS: pending review Daniel cross-ref Q-0509
+
+Q-0511 [Domain 4.2 — Refund 14 zile no questions]
+DECIZIE: 14 zile, no questions asked. Elimină frica plată anuală.
+RAȚIONAL: Trust signal; reduces purchase friction.
+IMPACT dacă greșită: SEVERE — no refund = legal issues + brand damage; too generous = abuse.
+SURSA: PRODUCT_STRATEGY §8.3 line 314-315.
+PUSH-BACK: 14 zile insufficient pe annual (full plan unfolding); 30 days standard.
+STATUS: pending review Daniel cross-ref Q-0512
+
+Q-0512 [Domain 4.2 — Cancellation 1-click in app]
+DECIZIE: 1-click în aplicație (Stripe portal). Fricțiunea cancelare = Dacie ruginită.
+RAȚIONAL: Brand trust; user agency.
+IMPACT dacă greșită: SEVERE — friction = legal issues (EU consumer protection); 1-click = high churn risk.
+SURSA: PRODUCT_STRATEGY §8.4 line 317-318.
+PUSH-BACK: Stripe portal external = brand inconsistency.
+STATUS: pending review Daniel cross-ref Q-0511
+
+Q-0513 [Domain 4.2 — No student/military discount]
+DECIZIE: Fără discount student/military. "Softul ori merită banii, ori e free tier."
+RAȚIONAL: Pricing simplicity; freemium covers.
+IMPACT dacă greșită: MINOR — small audience exclusion; brand position.
+SURSA: PRODUCT_STRATEGY §8.6 line 322-323.
+PUSH-BACK: Student/military discounts goodwill; competitor advantage.
+STATUS: pending review Daniel cross-ref Q-0514
+
+Q-0514 [Domain 4.2 — Affiliate program none v1.0]
+DECIZIE: Fără v1.0. Influencer outreach = "ia și folosește, dacă-ți place arată-l", NU 30% comision.
+RAȚIONAL: Avoid pay-to-play; organic word-of-mouth.
+IMPACT dacă greșită: MODERATE — no affiliate = slower growth; affiliate = scale viral.
+SURSA: PRODUCT_STRATEGY §8.7 line 325-326.
+PUSH-BACK: Affiliate scale common; absence growth gap.
+STATUS: pending review Daniel cross-ref Q-0513
+
+Q-0515 [Domain 4.2 — Pro pause graceful downgrade]
+DECIZIE: Pro pause downgrade Free graceful. Date avansate înghețate, NU șterse. Arbitrator folosește doar module Free.
+RAȚIONAL: User option preserved; data retention.
+IMPACT dacă greșită: SEVERE — data lost = user fury; preserved = re-upgrade easier.
+SURSA: PRODUCT_STRATEGY §9.6 line 357-359.
+PUSH-BACK: "Înghețat dar nu șters" spec needed (timeline? GDPR delete trigger?).
+STATUS: pending review Daniel cross-ref Q-0511
+
+#### 4.3 RO vs EN audience priority
+
+Q-0516 [Domain 4.3 — RO feedback loop rapid prim]
+DECIZIE: RO = feedback loop rapid (Daniel rețea); EN = piața globală.
+RAȚIONAL: RO testers accessible; EN scale.
+IMPACT dacă greșită: SEVERE — RO only = limited; EN only = no immediate testers.
+SURSA: PRODUCT_STRATEGY §1.1 line 25-26.
+PUSH-BACK: Both languages launch = double effort minimal users.
+STATUS: pending review Daniel cross-ref Q-0502
+
+Q-0517 [Domain 4.3 — i18n architecture decoupled]
+DECIZIE: i18n bundle decoupled from Arbitrator. JSON resources Frontend.
+RAȚIONAL: Engine pure; UI translates.
+IMPACT dacă greșită: SEVERE — coupling = engine deploy for translation fix; clutter logic.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 PARTEA 8 §Q5 line 327-330.
+PUSH-BACK: Hardcoded enums + JSON = 2 sources truth; sync risk.
+STATUS: pending review Daniel cross-ref Q-0026
+
+Q-0518 [Domain 4.3 — Locale auto-detect + override dropdown]
+DECIZIE: Auto-detect locale (navigator.language) + user override dropdown.
+RAȚIONAL: Default sensible; user agency.
+IMPACT dacă greșită: MINOR — wrong default = quick fix override.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q5 line 329; HANDOVER §4 Kg/Lbs default detection.
+PUSH-BACK: navigator.language unreliable on some browsers.
+STATUS: pending review Daniel cross-ref Q-0413
+
+Q-0519 [Domain 4.3 — RO base language no slang]
+DECIZIE: RO = neutru, mathematic/sportiv. NU slang.
+RAȚIONAL: i18n consistency cross-locale; brand professional.
+IMPACT dacă greșită: MINOR — too formal = stiff; slang = exclusion.
+SURSA: PRODUCT_STRATEGY §4.10 line 172-173.
+PUSH-BACK: Slang relatable; trade-off.
+STATUS: pending review Daniel cross-ref Q-0492
+
+Q-0520 [Domain 4.3 — EN = international English NU US slang]
+DECIZIE: EN = international English; avoid US-specific terms.
+RAȚIONAL: Global audience; cultural neutral.
+IMPACT dacă greșită: MINOR — US-specific = exclusion globally; international = bland.
+SURSA: implicit PRODUCT_STRATEGY §4.10.
+PUSH-BACK: International EN bland; differentiation hard.
+STATUS: pending review Daniel cross-ref Q-0519
+
+#### 4.4 Bootstrap fără VC — sustainability
+
+Q-0521 [Domain 4.4 — Bootstrap NU VC]
+DECIZIE: Bootstrap fără VC. Sustainability over speed.
+RAȚIONAL: Quality > velocity; Bugatti standard preserved; ownership.
+IMPACT dacă greșită: SEVERE — VC pressure = compromise quality; bootstrap = slow growth.
+SURSA: PRODUCT_STRATEGY implicit §1.1; HANDOVER product strategy.
+PUSH-BACK: VC funding accelerates 5×; bootstrap = limit infrastructure / hires.
+STATUS: pending review Daniel cross-ref Q-0522
+
+Q-0522 [Domain 4.4 — Plan B 18-24 luni 1000 MAU acceptabil]
+DECIZIE: Plan B 18-24 luni la 1,000 MAU acceptabil (NU compromite Bugatti pentru velocity).
+RAȚIONAL: Quality > speed permanent rule.
+IMPACT dacă greșită: SEVERE — pressure compromise = lose differentiation; tolerance = sustainable.
+SURSA: PRODUCT_STRATEGY §10.1 line 376-378.
+PUSH-BACK: 18-24 luni runway = personal financial; varies per founder.
+STATUS: pending review Daniel cross-ref Q-0521
+
+Q-0523 [Domain 4.4 — NO paid ads corrupt ML training]
+DECIZIE: NU paid ads (high-churn users → corrupt ML training data).
+RAȚIONAL: Long-term ML training value > short-term acquisition.
+IMPACT dacă greșită: SEVERE — paid ads = quick scale BUT corrupt baseline; organic = slow but clean.
+SURSA: PRODUCT_STRATEGY §1.9 line 60-65.
+PUSH-BACK: Targeted ads to quality audience minimize churn; blanket avoidance overgeneralized.
+STATUS: pending review Daniel cross-ref Q-0524
+
+Q-0524 [Domain 4.4 — Organic word-of-mouth principal]
+DECIZIE: Organic word-of-mouth (din rezultate reale). Content fitness foarte nișat.
+RAȚIONAL: Real users = real testimonials; niche resonates strong.
+IMPACT dacă greșită: MODERATE — organic slow; differentiation strong.
+SURSA: PRODUCT_STRATEGY §1.9 line 60-64.
+PUSH-BACK: Word-of-mouth slow; needs critical mass first.
+STATUS: pending review Daniel cross-ref Q-0523
+
+Q-0525 [Domain 4.4 — Content niche tech-lifters]
+DECIZIE: Content fitness foarte nișat pe mecanica antrenamentului inteligent.
+RAȚIONAL: Tech-lifters audience matches; niche depth.
+IMPACT dacă greșită: SEVERE — too generic = no resonance; niche = right adopters.
+SURSA: PRODUCT_STRATEGY §1.9 line 62-63.
+PUSH-BACK: Niche limits mass appeal; later expansion challenge.
+STATUS: pending review Daniel cross-ref Q-0524
+
+#### 4.5 Orizont 2-3 ani milestone product-market fit
+
+Q-0526 [Domain 4.5 — Timeline 2-3 ani]
+DECIZIE: Timeline 2-3 ani. Bugatti permanent rule.
+RAȚIONAL: Quality > velocity; sustainable bootstrap.
+IMPACT dacă greșită: SEVERE — accelerate = compromise; over-conservative = miss market window.
+SURSA: PRODUCT_STRATEGY §1.1 implicit + §10.1 line 378.
+PUSH-BACK: Fitness app market crowded; 2-3 ani = competitor catches up.
+STATUS: pending review Daniel cross-ref Q-0521
+
+Q-0527 [Domain 4.5 — Soft launch RO friends 30-50]
+DECIZIE: Soft launch RO friends/beta testers (30-50 oameni).
+RAȚIONAL: Phase 1 testing; manageable feedback.
+IMPACT dacă greșită: SEVERE — too few = limited signal; too many = noise.
+SURSA: PRODUCT_STRATEGY §1.8 line 55-58.
+PUSH-BACK: 30-50 small dataset; pattern detection limited.
+STATUS: pending review Daniel cross-ref Q-0528
+
+Q-0528 [Domain 4.5 — Shadow Run cognitive parallel vechi]
+DECIZIE: Shadow Run (cognitive architecture parallel cu vechi). Phase 2.
+RAȚIONAL: Verify NEW engine without risking users on vechi engine.
+IMPACT dacă greșită: SEVERE — without shadow = NEW ship blind; with = compute 2× temporarily.
+SURSA: PRODUCT_STRATEGY §1.8 line 56-57; Cognitive Arch §Q4.
+PUSH-BACK: 2× compute during transition; cost.
+STATUS: pending review Daniel cross-ref Q-0045
+
+Q-0529 [Domain 4.5 — Bug fix polish Product Hunt global]
+DECIZIE: Bug fix + polish → Product Hunt global. Phase 3.
+RAȚIONAL: Big public launch when polished; global reach via Product Hunt.
+IMPACT dacă greșită: SEVERE — premature launch = bad reviews; perfectionism = miss window.
+SURSA: PRODUCT_STRATEGY §1.8 line 56-58.
+PUSH-BACK: Product Hunt single day visibility; sustainable growth needs more.
+STATUS: pending review Daniel cross-ref Q-0527
+
+Q-0530 [Domain 4.5 — ML training threshold 50000 sessions]
+DECIZIE: 50,000 sessions logate complete (end-to-end). Până atunci = Rule-Based strict.
+RAȚIONAL: ML needs scale; rule-based interpretable now.
+IMPACT dacă greșită: SEVERE — premature ML = bad classifier; deferred too far = stagnation.
+SURSA: PRODUCT_STRATEGY §10.4 line 386-388.
+PUSH-BACK: 50K sessions = ~250 active users × 200 sesiuni/an; far horizon.
+STATUS: pending review Daniel cross-ref Q-0242
+
+#### 4.6 Daniel CEO + Product, Claude Co-CTO division of labor
+
+Q-0531 [Domain 4.6 — Daniel CEO + Product role]
+DECIZIE: Daniel = CEO + Product. Claude = Co-CTO via stress test session.
+RAȚIONAL: Daniel architecture mature thinker; Claude technical depth.
+IMPACT dacă greșită: SEVERE — role confusion = decision drift; clear = aligned execution.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 metadata line 7; PRODUCT_STRATEGY metadata line 5.
+PUSH-BACK: Co-CTO partnership informal; ownership ambiguity legal.
+STATUS: pending review Daniel cross-ref Q-0532
+
+Q-0532 [Domain 4.6 — Daniel cognitive state IQ 139 ADHD 2e]
+DECIZIE: Daniel cognitive output documented: IQ 139 + ADHD 2e Disruptive Innovator profile. Hyperfocus 2× normal arhitect senior productivity.
+RAȚIONAL: Self-awareness; productivity ratio realistic; hyperfocus respected.
+IMPACT dacă greșită: MINOR — internal documentation; affects time estimation.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 metadata line 472-477.
+PUSH-BACK: Self-disclosed profile; verification not relevant.
+STATUS: pending review Daniel cross-ref Q-0533
+
+Q-0533 [Domain 4.6 — Customer support Discord gated paid]
+DECIZIE: Discord GATED (Premium Perk) + Email pentru billing. Phase 0-500 users open; Phase 500+ paid + voluntary mods.
+RAȚIONAL: Daniel time = code, NU customer support; gated filter zgomot.
+IMPACT dacă greșită: SEVERE — open Discord = Daniel time sink; gated = paid value.
+SURSA: PRODUCT_STRATEGY §8.1 line 304-309.
+PUSH-BACK: Discord Premium Perk = entry-level user no support; refunds question.
+STATUS: pending review Daniel cross-ref Q-0534
+
+Q-0534 [Domain 4.6 — Daniel role "The Architect" Discord]
+DECIZIE: Daniel role = "The Architect". Răspunde #announcements + Q&A lunar.
+RAȚIONAL: Brand voice; founder presence; not customer support.
+IMPACT dacă greșită: MINOR — Daniel availability variable.
+SURSA: PRODUCT_STRATEGY §8.1 line 308-309.
+PUSH-BACK: "Lunar Q&A" sets expectations; missed = brand damage.
+STATUS: pending review Daniel cross-ref Q-0533
+
+Q-0535 [Domain 4.6 — Response SLA <48h business days]
+DECIZIE: <48h business days. "Ești om, nu corporație call center India."
+RAȚIONAL: Realistic; founder bandwidth; quality response.
+IMPACT dacă greșită: MODERATE — slower = brand damage; faster = founder burnout.
+SURSA: PRODUCT_STRATEGY §8.2 line 311-312.
+PUSH-BACK: 48h on weekend / vacation = unpredictable; auto-acknowledgment needed.
+STATUS: pending review Daniel cross-ref Q-0533
+
+Q-0536 [Domain 4.6 — Press kit Drive folder HD assets]
+DECIZIE: Folder Drive / micro-site cu assets HD pentru media.
+RAȚIONAL: Media-ready when needed; minimal effort upfront.
+IMPACT dacă greșită: MINOR — no kit = miss press opportunity.
+SURSA: PRODUCT_STRATEGY §8.8 line 328-329.
+PUSH-BACK: Press kit assets need updating; maintenance.
+STATUS: pending review Daniel cross-ref Q-0537
+
+Q-0537 [Domain 4.6 — Analytics Plausible no cookies]
+DECIZIE: Plausible. Lightweight, no cookies, no personal data, ethic Bugatti.
+RAȚIONAL: Privacy-respecting; aligns brand; GDPR friendly.
+IMPACT dacă greșită: MINOR — Plausible vs Google Analytics = depth tradeoff.
+SURSA: PRODUCT_STRATEGY §8.9 line 331-333.
+PUSH-BACK: Plausible less feature-rich than Google; data-driven decisions weaker.
+STATUS: pending review Daniel cross-ref Q-0538
+
+Q-0538 [Domain 4.6 — Sentry crash reporting must-have]
+DECIZIE: Sentry (already setup). Must-have ca să vezi de ce a murit Arbitratorul.
+RAȚIONAL: Production observability; debugging.
+IMPACT dacă greșită: SEVERE — no crash reporting = blind to production bugs.
+SURSA: PRODUCT_STRATEGY §8.10 line 335-336.
+PUSH-BACK: Sentry costs at scale; budget.
+STATUS: pending review Daniel cross-ref Q-0292
+
+Q-0539 [Domain 4.6 — Exit strategy "Build forever, sell if life-changing"]
+DECIZIE: "Build it like you'll own it forever, sell it if Whoop or Strava offers life-changing money for your ML Arbitrator engine."
+RAȚIONAL: Long-term mindset; sale opportunity if offered.
+IMPACT dacă greșită: MINOR — philosophy; affects culture.
+SURSA: PRODUCT_STRATEGY §10.10 line 404-406.
+PUSH-BACK: ML Arbitrator value depends on training data; sale price uncertain.
+STATUS: pending review Daniel cross-ref Q-0540
+
+Q-0540 [Domain 4.6 — Open source EXCLUS proprietary MOAT]
+DECIZIE: Open source EXCLUS. Arhitectura Cognitivă / Arbitrator = proprietary (MOAT-ul tău).
+RAȚIONAL: Competitive moat preservation.
+IMPACT dacă greșită: SEVERE — open source = competitor copies; closed = lose community goodwill.
+SURSA: PRODUCT_STRATEGY §10.5 line 388-390.
+PUSH-BACK: Open source community trust; closed = corporate signal.
+STATUS: pending review Daniel cross-ref Q-0539
+
+Q-0541 [Domain 4.6 — API public v2.0 sau niciodată]
+DECIZIE: API public v2.0 sau niciodată. Nu vrei alții să polueze baza cu sync-uri dubioase.
+RAȚIONAL: Data integrity; ML training value preserved.
+IMPACT dacă greșită: SEVERE — open API = pollution; closed = no ecosystem.
+SURSA: PRODUCT_STRATEGY §10.6 line 392-394.
+PUSH-BACK: Closed API blocks integrations (smart scale, MFP); user value gap.
+STATUS: pending review Daniel cross-ref Q-0540
+
+Q-0542 [Domain 4.6 — Wearables roadmap Apple Health v1.x]
+DECIZIE: Apple Health read-only (Sleep, Weight) v1.x.
+RAȚIONAL: Premium feature; cost dev acceptable post-launch.
+IMPACT dacă greșită: SEVERE — Apple Health absent = mobile-first contradiction.
+SURSA: PRODUCT_STRATEGY §10.7 line 395-396; §3.8 line 132.
+PUSH-BACK: Apple Health iOS-only; Android users gap; Google Fit needed.
+STATUS: pending review Daniel cross-ref Q-0541
+
+Q-0543 [Domain 4.6 — Mobile native PWA exclusiv v1.0]
+DECIZIE: PWA exclusiv v1.0. Ocolești 30% Apple Tax + publici update-uri instant.
+RAȚIONAL: Apple Tax bypass; instant updates; cross-platform.
+IMPACT dacă greșită: SEVERE — native = 30% revenue + delays; PWA = some iOS UX gaps.
+SURSA: PRODUCT_STRATEGY §7.3 line 274-276.
+PUSH-BACK: PWA on iOS limitations (notifications, install prompts); native better UX.
+STATUS: pending review Daniel cross-ref Q-0544
+
+Q-0544 [Domain 4.6 — App Store presence v1.x evaluation]
+DECIZIE: Future flag — v1.x might add Capacitor/React Native wrapper pentru App Store presence (EN audience iOS users).
+RAȚIONAL: PWA-only iOS = strategic risk; App Store required for some users.
+IMPACT dacă greșită: SEVERE — App Store gap = lose iOS power users; wrapper = complexity.
+SURSA: PRODUCT_STRATEGY §7.3 line 275-276; §"Open Items" #5.
+PUSH-BACK: Capacitor wrapper poor performance vs native; UX compromise.
+STATUS: pending review Daniel cross-ref Q-0543
+
+Q-0545 [Domain 4.6 — Offline-first Event Sourcing]
+DECIZIE: Event Sourcing local (IndexedDB) → Sync rețea. Sala WiFi mort = Arbitrator funcționează perfect local.
+RAȚIONAL: Real-world reliability; gym connectivity.
+IMPACT dacă greșită: CATASTROFIC — online-only = no signal at gym.
+SURSA: PRODUCT_STRATEGY §7.4 line 278-279.
+PUSH-BACK: IndexedDB API verbose; localStorage simpler v1.
+STATUS: pending review Daniel cross-ref Q-0339
+
+Q-0546 [Domain 4.6 — Search exercises only v1.0]
+DECIZIE: Doar exercises v1.0. Full-text history = indexare complexă = OUT_OF_SCOPE.
+RAȚIONAL: Scope discipline; minimal search.
+IMPACT dacă greșită: MODERATE — limited search = user friction; full = complex.
+SURSA: PRODUCT_STRATEGY §7.7 line 287-288.
+PUSH-BACK: Search history common feature; absence gap.
+STATUS: pending review Daniel cross-ref Q-0547
+
+Q-0547 [Domain 4.6 — Dark mode default + EXCLUSIV]
+DECIZIE: Default + EXCLUSIV. Bugatti = ecrane negre/OLED, text curat.
+RAȚIONAL: Brand aesthetic; OLED battery; gym lighting.
+IMPACT dacă greșită: SEVERE — light mode preference users excluded; over-aesthetic = friction.
+SURSA: PRODUCT_STRATEGY §7.8 line 290-291.
+PUSH-BACK: Light mode some users prefer; accessibility gap; should support both.
+STATUS: pending review Daniel cross-ref Q-0548
+
+Q-0548 [Domain 4.6 — Accessibility native browser standards]
+DECIZIE: Native browser standards (fonturi lizibile, contrast bun pe dark mode).
+RAȚIONAL: Free accessibility win; standard compliance.
+IMPACT dacă greșită: SEVERE — accessibility violations = legal + brand damage.
+SURSA: PRODUCT_STRATEGY §7.9 line 293-294.
+PUSH-BACK: "Native" minimum; explicit WCAG AA testing needed.
+STATUS: pending review Daniel cross-ref Q-0547
+
+Q-0549 [Domain 4.6 — i18n priority RO+EN exclusiv v1.0]
+DECIZIE: RO + EN exclusiv v1.0.
+RAȚIONAL: Scope discipline; expansion later.
+IMPACT dacă greșită: MODERATE — limit market; multi-lang = effort.
+SURSA: PRODUCT_STRATEGY §7.10 line 296-297.
+PUSH-BACK: Spanish/German large markets; absence opportunity cost.
+STATUS: pending review Daniel cross-ref Q-0502
+
+Q-0550 [Domain 4.6 — DMCA respond + remove]
+DECIZIE: Răspunzi prompt + scoți GIF dacă drepturi. Zero stres.
+RAȚIONAL: DMCA standard; comply.
+IMPACT dacă greșită: SEVERE — ignore DMCA = legal action.
+SURSA: PRODUCT_STRATEGY §9.10 line 369-370.
+PUSH-BACK: DMCA process; response time tracking.
+STATUS: pending review Daniel cross-ref Q-0357
+
+### DOMAIN 5: GDPR & COMPLIANCE
+
+#### 5.1 Granular consent (3 checkboxes onboarding)
+
+Q-0551 [Domain 5.1 — 3 checkboxes granular consent]
+DECIZIE: Granular consent 3 checkboxes onboarding.
+RAȚIONAL: GDPR granular consent; respect autonomy.
+IMPACT dacă greșită: CATASTROFIC — non-granular = GDPR fine.
+SURSA: HANDOVER §5 GDPR section.
+PUSH-BACK: 3 checkboxes = friction; unclear what each covers.
+STATUS: pending review Daniel cross-ref Q-0552
+
+Q-0552 [Domain 5.1 — Consent categories ToS / Analytics / Personalization]
+DECIZIE: 3 consent categories: Terms of Service (mandatory), Analytics (optional), Personalization (optional).
+RAȚIONAL: Standard categories; legal compliance.
+IMPACT dacă greșită: SEVERE — wrong categories = invalid consent.
+SURSA: implicit GDPR best practice.
+PUSH-BACK: Personalization opt-in = engine signal degraded; legal but business cost.
+STATUS: pending review Daniel cross-ref Q-0551
+
+Q-0553 [Domain 5.1 — Medical disclaimer mandatory]
+DECIZIE: Medical disclaimer obligatoriu checkbox la creare cont.
+RAȚIONAL: Liability shield; standard SaaS.
+IMPACT dacă greșită: CATASTROFIC — no disclaimer = full liability.
+SURSA: PRODUCT_STRATEGY §5.1 line 179-181.
+PUSH-BACK: Tick-without-read pattern; legally weak.
+STATUS: pending review Daniel cross-ref Q-0450
+
+Q-0554 [Domain 5.1 — Consent revocation in settings]
+DECIZIE: User can revoke any consent in settings post-onboarding.
+RAȚIONAL: GDPR right; no lock-in.
+IMPACT dacă greșită: CATASTROFIC GDPR — no revocation = fine.
+SURSA: implicit GDPR Article 7.
+PUSH-BACK: Revoke Analytics = lose signal; engine adapts gracefully.
+STATUS: pending review Daniel cross-ref Q-0555
+
+Q-0555 [Domain 5.1 — Consent timestamps logged]
+DECIZIE: Consent timestamps logged per consent category. Audit trail.
+RAȚIONAL: Compliance evidence; GDPR audit.
+IMPACT dacă greșită: CATASTROFIC — no log = compliance gap; audit fail.
+SURSA: implicit GDPR Article 7.
+PUSH-BACK: Log = storage; minimal cost.
+STATUS: pending review Daniel cross-ref Q-0554
+
+#### 5.2 Sensitive category handling
+
+Q-0556 [Domain 5.2 — Location GPS REJECTED]
+DECIZIE: Location GPS REJECTED. Privacy + Gigel test fail (tracking concerns).
+RAȚIONAL: Sensitive category; reverse engineering ("which gym is user at"); friction.
+IMPACT dacă greșită: SEVERE — GPS = privacy fine + brand damage; absence = manual gym selection.
+SURSA: HANDOVER §7 Multi-Gym Q4 line 116; PRODUCT_STRATEGY implicit.
+PUSH-BACK: GPS auto-detect gym would be UX win; manual switch friction.
+STATUS: pending review Daniel cross-ref Q-0557
+
+Q-0557 [Domain 5.2 — Bloodwork REJECTED forever]
+DECIZIE: Bloodwork REJECTED forever (Gigel test fail).
+RAȚIONAL: Sensitive medical data; legal nightmare; friction enormous.
+IMPACT dacă greșită: SEVERE — bloodwork = HIPAA-equivalent compliance; absence = signal gap.
+SURSA: ADR 013 §Severity tiers HIGH defer line 120-122; INSIGHTS_BACKLOG Vitality Layer alternate.
+PUSH-BACK: Bloodwork = comprehensive health signal; alternative behavioral proxy weaker.
+STATUS: pending review Daniel cross-ref Q-0556
+
+Q-0558 [Domain 5.2 — Vitality Layer as bloodwork replacement]
+DECIZIE: Vitality Layer behavioral proxy replaces bloodwork. ADR 016 backlog.
+RAȚIONAL: Friction zero behavioral questions; signal puternic + privacy preserved.
+IMPACT dacă greșită: SEVERE — too weak proxy = miss signal; rejected bloodwork irreplaceable.
+SURSA: INSIGHTS_BACKLOG ADR 016 line 131-156.
+PUSH-BACK: Behavioral proxy weaker than bloodwork; calibration uncertain.
+STATUS: pending review Daniel cross-ref Q-0559
+
+Q-0559 [Domain 5.2 — Photo BF estimation sensitive consent]
+DECIZIE: BF estimation Path (a) = photo. Storage + upload = sensitive PII; explicit consent needed.
+RAȚIONAL: Body photo = sensitive; user awareness.
+IMPACT dacă greșită: CATASTROFIC GDPR — photo without consent = fine; compliance.
+SURSA: HANDOVER §3 BF estimation line 84-87.
+PUSH-BACK: Photo on-device only (no upload) reduces concern; if uploaded, encryption.
+STATUS: pending review Daniel cross-ref Q-0411
+
+Q-0560 [Domain 5.2 — Pregnancy field sensitive]
+DECIZIE: Pregnancy field în Setări manual; sensitive category; explicit consent.
+RAȚIONAL: Health data; passive mode trigger.
+IMPACT dacă greșită: CATASTROFIC — pregnancy data leak = compliance + brand.
+SURSA: PRODUCT_STRATEGY §5.4 line 188-190.
+PUSH-BACK: User toggles forget; auto-detection invasive.
+STATUS: pending review Daniel cross-ref Q-0444
+
+Q-0561 [Domain 5.2 — Heart condition flag sensitive]
+DECIZIE: Heart condition checkbox sensitive; Red disclaimer; Passive Mode.
+RAȚIONAL: Medical data; safety override.
+IMPACT dacă greșită: CATASTROFIC — heart condition handled wrong = injury or compliance.
+SURSA: PRODUCT_STRATEGY §5.8 line 200-206.
+PUSH-BACK: Self-report unverifiable; legal review.
+STATUS: pending review Daniel cross-ref Q-0445
+
+Q-0562 [Domain 5.2 — Eating disorder pattern detection sensitive]
+DECIZIE: Eating disorder algorithm: weight drop + max volum → FLAG + Passive Mode + "Pauză recomandată". Refuzăm să fim complici.
+RAȚIONAL: Safety asymmetric; refuse to enable harm.
+IMPACT dacă greșită: CATASTROFIC — silent enable = harm + compliance; over-flag = false positive distress.
+SURSA: PRODUCT_STRATEGY §5.5 line 191-194.
+PUSH-BACK: Algorithm threshold detection; subjective.
+STATUS: pending review Daniel cross-ref Q-0446
+
+#### 5.3 Data export (user can download)
+
+Q-0563 [Domain 5.3 — Export JSON cont opțiune]
+DECIZIE: "Export my data (JSON)" în cont. Transparență totală.
+RAȚIONAL: GDPR right; user trust; portability.
+IMPACT dacă greșită: CATASTROFIC GDPR — export missing = compliance fail.
+SURSA: PRODUCT_STRATEGY §7.5 line 282.
+PUSH-BACK: JSON usable by competitor; brand risk; obligatoriu legal.
+STATUS: pending review Daniel cross-ref Q-0564
+
+Q-0564 [Domain 5.3 — Export comprehensive all stores]
+DECIZIE: Export includes: CDL + logs + profile + settings + multi-gym + biometric measurements.
+RAȚIONAL: Complete data; user takes everything.
+IMPACT dacă greșită: CATASTROFIC GDPR — incomplete = compliance fail.
+SURSA: PRODUCT_STRATEGY §7.5 + GDPR Article 20.
+PUSH-BACK: Large export; compress (gzip).
+STATUS: pending review Daniel cross-ref Q-0376
+
+Q-0565 [Domain 5.3 — Export format machine-readable]
+DECIZIE: JSON format, machine-readable, structured.
+RAȚIONAL: Standard format; portable.
+IMPACT dacă greșită: SEVERE — proprietary format = locked-in; user can't migrate.
+SURSA: implicit PRODUCT_STRATEGY §7.5.
+PUSH-BACK: JSON not user-readable; CSV alternate for greutate logs.
+STATUS: pending review Daniel cross-ref Q-0563
+
+Q-0566 [Domain 5.3 — Export user-initiated NOT auto]
+DECIZIE: Export user-initiated via button "Export my data". NOT auto-emailed.
+RAȚIONAL: User control timing; manual download.
+IMPACT dacă greșită: MODERATE — auto-email = compliance overstep; manual = friction.
+SURSA: implicit PRODUCT_STRATEGY §7.5.
+PUSH-BACK: Some users want auto-backup email; option toggle.
+STATUS: pending review Daniel cross-ref Q-0567
+
+Q-0567 [Domain 5.3 — Export response time SLA]
+DECIZIE: Export response time <30 zile per GDPR Article 12. Aim instant download in-app.
+RAȚIONAL: GDPR compliance; user expectation.
+IMPACT dacă greșită: CATASTROFIC GDPR — > 30 zile = fine.
+SURSA: GDPR Article 12 + PRODUCT_STRATEGY §7.5.
+PUSH-BACK: Instant possible cu local-first storage; export = read + zip.
+STATUS: pending review Daniel cross-ref Q-0563
+
+#### 5.4 Right to be forgotten (account deletion → data purge)
+
+Q-0568 [Domain 5.4 — Account deletion soft delete 30 zile]
+DECIZIE: Soft delete 30 zile (Tombstone). Apoi nuke total (GDPR).
+RAȚIONAL: User mistake recovery + compliance.
+IMPACT dacă greșită: SEVERE — instant delete = no recovery; never delete = GDPR violation.
+SURSA: PRODUCT_STRATEGY §9.9 line 366-367.
+PUSH-BACK: 30 zile arbitrary; GDPR requires "without undue delay"; could be aggressive.
+STATUS: pending review Daniel cross-ref Q-0569
+
+Q-0569 [Domain 5.4 — deleteAccount Cloud Function]
+DECIZIE: Cloud Function deleteAccount: user_profile/mesocycles/sessions wiped + arbitration_log anonymized.
+RAȚIONAL: Atomic cloud-side delete; partial fail prevention.
+IMPACT dacă greșită: CATASTROFIC — incomplete delete = GDPR fine; partial = state inconsistent.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q14 line 391-392.
+PUSH-BACK: Cloud Function single-point-of-failure; verification needed.
+STATUS: pending review Daniel cross-ref Q-0357
+
+Q-0570 [Domain 5.4 — Anonymize arbitration_log preserve ML]
+DECIZIE: arbitration_log anonymized (UUID → DELETED_USER, păstrăm age/decision/math).
+RAȚIONAL: Anonymize NU delete preserves training data; user-rights respected.
+IMPACT dacă greșită: CATASTROFIC dacă incomplete anonymization = re-identification possible.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q6 GDPR line 335-336; §Q14 line 392.
+PUSH-BACK: Combined age + decision pattern + timestamps may re-identify în small-N.
+STATUS: pending review Daniel cross-ref Q-0049
+
+Q-0571 [Domain 5.4 — Local data clear on delete]
+DECIZIE: Account delete = local localStorage clear + Firebase wipe.
+RAȚIONAL: Complete delete; both local + cloud.
+IMPACT dacă greșită: CATASTROFIC GDPR — local data persists post-delete = fine.
+SURSA: implicit ADR 001 + GDPR.
+PUSH-BACK: Local clear may leave service worker cache; need full wipe.
+STATUS: pending review Daniel cross-ref Q-0568
+
+Q-0572 [Domain 5.4 — Delete confirmation explicit prompt]
+DECIZIE: Delete account = explicit confirmation prompt; type "DELETE" or similar.
+RAȚIONAL: Avoid accidental delete; deliberate action.
+IMPACT dacă greșită: SEVERE — easy delete = user mistake = data loss.
+SURSA: implicit best practice.
+PUSH-BACK: Friction may anger legitimate deletes; balance.
+STATUS: pending review Daniel cross-ref Q-0568
+
+Q-0573 [Domain 5.4 — Delete propagation cross-services]
+DECIZIE: Delete propagates: Firebase, Sentry user logs, Plausible (no user link), Stripe (subscription).
+RAȚIONAL: All third-party services purged.
+IMPACT dacă greșită: CATASTROFIC GDPR — propagation incomplete = data persist external.
+SURSA: implicit GDPR Article 17 + service integration.
+PUSH-BACK: Stripe retains records for tax compliance; mandatory legal exception.
+STATUS: pending review Daniel cross-ref Q-0571
+
+#### 5.5 Sentry tracking
+
+Q-0574 [Domain 5.5 — Sentry tracks crashes NOT PII]
+DECIZIE: Sentry tracks crashes, errors. NU PII (no email, no name, no specific session content).
+RAȚIONAL: Privacy minimal; crash visibility sufficient.
+IMPACT dacă greșită: CATASTROFIC GDPR — PII în Sentry = fine.
+SURSA: PRODUCT_STRATEGY §8.10 line 335-336; implicit Sentry config.
+PUSH-BACK: Anonymous user-id needed for crash dedup; not full PII but identifier.
+STATUS: pending review Daniel cross-ref Q-0575
+
+Q-0575 [Domain 5.5 — Sentry user_id anonymous UUID]
+DECIZIE: Sentry user_id = anon UUID localStorage. Match cu account UUID.
+RAȚIONAL: Crash dedup; no PII; aligned cu local-first.
+IMPACT dacă greșită: SEVERE — incorrect = duplicates; PII leak = compliance.
+SURSA: implicit Sentry config.
+PUSH-BACK: UUID stable but on device reset = new UUID; multi-device crashes hard correlate.
+STATUS: pending review Daniel cross-ref Q-0574
+
+Q-0576 [Domain 5.5 — Sentry breadcrumbs filter sensitive]
+DECIZIE: Sentry breadcrumbs filter: weight/measurement values redacted; only flow/state preserved.
+RAȚIONAL: PII protection; debug context preserved.
+IMPACT dacă greșită: SEVERE — sensitive data în breadcrumbs = leak.
+SURSA: implicit Sentry config + GDPR.
+PUSH-BACK: Filter rules complex; gaps possible.
+STATUS: pending review Daniel cross-ref Q-0574
+
+Q-0577 [Domain 5.5 — Sentry retention 30-90 zile]
+DECIZIE: Sentry retention 30-90 zile per Sentry plan default. Extended via paid tier.
+RAȚIONAL: Recent debug; older crashes mostly resolved.
+IMPACT dacă greșită: MODERATE — short retention = old bugs invisible; long = cost.
+SURSA: implicit Sentry plan; PRODUCT_STRATEGY §8.10.
+PUSH-BACK: 30 zile may miss low-frequency bugs; 90 zile better.
+STATUS: pending review Daniel cross-ref Q-0048
+
+Q-0578 [Domain 5.5 — Sentry Cookies / DNT respect]
+DECIZIE: Sentry respects Do-Not-Track header. Optional disable per user.
+RAȚIONAL: User agency; privacy.
+IMPACT dacă greșită: MINOR — DNT non-compliant brand image; minor compliance.
+SURSA: implicit Sentry + privacy norms.
+PUSH-BACK: DNT disabled = lose crash data; user choice.
+STATUS: pending review Daniel cross-ref Q-0537
+
+#### 5.6 Firebase data residency (servers EU?)
+
+Q-0579 [Domain 5.6 — Firebase EU region selected]
+DECIZIE: Firebase EU server region (europe-west1 sau eu-central1).
+RAȚIONAL: GDPR EU data residency; latency RO acceptable.
+IMPACT dacă greșită: CATASTROFIC GDPR — non-EU data = fine.
+SURSA: implicit Cognitive Arch §Q14 + PRODUCT_STRATEGY §5.10.
+PUSH-BACK: EU region selection at project create; not changeable; lock-in.
+STATUS: pending review Daniel cross-ref Q-0580
+
+Q-0580 [Domain 5.6 — Firebase non-EU adjacent services]
+DECIZIE: Cloud Functions EU region; Sentry EU region; Plausible self-hosted EU optional.
+RAȚIONAL: Comprehensive EU residency.
+IMPACT dacă greșită: CATASTROFIC GDPR — third-party non-EU = fine.
+SURSA: implicit GDPR + service config.
+PUSH-BACK: Plausible self-hosted infrastructure cost; managed EU host alternative.
+STATUS: pending review Daniel cross-ref Q-0579
+
+#### 5.7 Cookie consent / tracking pixels
+
+Q-0581 [Domain 5.7 — Plausible cookieless analytics]
+DECIZIE: Plausible no cookies; lightweight anonymous.
+RAȚIONAL: GDPR cookie consent banner not needed; ethic.
+IMPACT dacă greșită: MINOR — cookie banner = friction; cookieless = brand alignment.
+SURSA: PRODUCT_STRATEGY §8.9 line 331-333.
+PUSH-BACK: Cookieless analytics weaker data quality; tradeoff.
+STATUS: pending review Daniel cross-ref Q-0537
+
+Q-0582 [Domain 5.7 — No tracking pixels third-party]
+DECIZIE: No tracking pixels third-party (Facebook, Google Ads). Brand alignment.
+RAȚIONAL: Privacy-first brand; no surveillance.
+IMPACT dacă greșită: MINOR — marketing analytics weaker; brand alignment strong.
+SURSA: implicit PRODUCT_STRATEGY §1.9 NO paid ads + §8.9.
+PUSH-BACK: Marketing measurement harder without pixels.
+STATUS: pending review Daniel cross-ref Q-0581
+
+Q-0583 [Domain 5.7 — Necessary cookies session-only]
+DECIZIE: Necessary cookies session-only (auth token). No persistent tracking cookies.
+RAȚIONAL: Minimum necessary; GDPR essential exception.
+IMPACT dacă greșită: SEVERE — persistent cookies = consent banner needed.
+SURSA: implicit GDPR ePrivacy.
+PUSH-BACK: Session cookies user re-login each session; UX friction.
+STATUS: pending review Daniel cross-ref Q-0582
+
+Q-0584 [Domain 5.7 — localStorage exempt from cookie banner]
+DECIZIE: localStorage technically exempt from cookie banner if used for app function (not tracking).
+RAȚIONAL: GDPR ePrivacy distinguishes tracking from functional storage.
+IMPACT dacă greșită: SEVERE — incorrect classification = banner needed; correct = no banner.
+SURSA: implicit GDPR ePrivacy.
+PUSH-BACK: Legal interpretation varies country; legal review.
+STATUS: pending review Daniel cross-ref Q-0583
+
+Q-0585 [Domain 5.7 — Anonymized analytics aggregate]
+DECIZIE: Plausible analytics anonymized aggregate metrics (page views, referrers); no individual user tracking.
+RAȚIONAL: Insights without privacy invasion.
+IMPACT dacă greșită: MODERATE — limited insights; privacy-aligned.
+SURSA: PRODUCT_STRATEGY §8.9 line 331-333.
+PUSH-BACK: Aggregate misses funnel analysis; conversion tracking weak.
+STATUS: pending review Daniel cross-ref Q-0581
+
+### DOMAIN 6: UX & ONBOARDING
+
+#### 6.1 Onboarding flow steps (target <120s)
+
+Q-0586 [Domain 6.1 — Onboarding 7-step max]
+DECIZIE: Onboarding 7 steps max (5-7 fields + multi-gym opt-in + BF estimation + GDPR + skip option).
+RAȚIONAL: Target <120s; minimum friction.
+IMPACT dacă greșită: SEVERE — too long = drop-off; too short = engine blind.
+SURSA: HANDOVER §6.1 line 127; PRODUCT_STRATEGY §2.1.
+PUSH-BACK: 7 steps tight; realistic 9-10 with all considerations.
+STATUS: pending review Daniel cross-ref Q-0587
+
+Q-0587 [Domain 6.1 — Onboarding skip allowed Tracker Mode]
+DECIZIE: Skip allowed permanent → Tracker Mode T0. Banner non-intruziv.
+RAȚIONAL: User control; AI features locked.
+IMPACT dacă greșită: MODERATE — skip permanent = user never unlocks; aggressive prompts = annoying.
+SURSA: PRODUCT_STRATEGY §2.2 line 78; Cognitive Arch §Q17.
+PUSH-BACK: 5 antrenamente threshold low; alternative explicit needed.
+STATUS: pending review Daniel cross-ref Q-0461
+
+Q-0588 [Domain 6.1 — Onboarding minimum: Age, Gender, Weight, Goal, Experience]
+DECIZIE: Minimum mandatory: Age, Gender, Weight, Goal, Experience.
+RAȚIONAL: PROJECTION needs for safety caps; minimal.
+IMPACT dacă greșită: SEVERE — incomplete = unsafe propositions cold start.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q15 line 396-398.
+PUSH-BACK: 5 fields meets minimum; height, BF estimate added valuable.
+STATUS: pending review Daniel cross-ref Q-0199
+
+Q-0589 [Domain 6.1 — Coach gives direct program with Override]
+DECIZIE: First session: Coach îi dă direct un program sugerat, DAR cu buton mare "Override/Edit". Paternalism zero.
+RAȚIONAL: User agency preserved; coach as advisor.
+IMPACT dacă greșită: SEVERE — no override = paternalism; auto-override = no signal.
+SURSA: PRODUCT_STRATEGY §2.3 line 80-81.
+PUSH-BACK: "Mare" button = real estate; design decision.
+STATUS: pending review Daniel cross-ref Q-0590
+
+Q-0590 [Domain 6.1 — Onboarding skip flow Tracker Mode banner]
+DECIZIE: Banner: "Pentru recomandări AI, completează profilul sau loghează 5 antrenamente."
+RAȚIONAL: Honest gating; clear path forward.
+IMPACT dacă greșită: MODERATE — skip permanent = no value; aggressive prompts = hostile.
+SURSA: PRODUCT_STRATEGY §2.2 line 78.
+PUSH-BACK: 5 antrenamente threshold low; user logs trash data fast.
+STATUS: pending review Daniel cross-ref Q-0586
+
+#### 6.2 Profile Typing Q1-Q5 + spot-check Q6
+
+Q-0591 [Domain 6.2 — Profile Typing Q1-Q5 + Q6]
+DECIZIE: Q1-Q5 onboarding (3-4 self-report core) + Q6 spot-check post-sesiunea 3 behavioral.
+RAȚIONAL: Self-report + behavioral hybrid; inference 4-6 săpt.
+IMPACT dacă greșită: SEVERE — too many = friction; too few = thin signal.
+SURSA: HANDOVER §6.2 line 130; ADR 013 §Profile typing.
+PUSH-BACK: 3-4 vs 5 ambiguity; spec.
+STATUS: pending review Daniel cross-ref Q-0309
+
+Q-0592 [Domain 6.2 — Q1 example "Cum reacționezi la frustrare?"]
+DECIZIE: Q1 candidate: "Cum reacționezi când nu progresezi?" — Yes push harder / Maintain / Drop / Adjust based on data.
+RAȚIONAL: Direct profile-mapping question; 4 options mapped 4 profiles.
+IMPACT dacă greșită: SEVERE — leading question = self-perception bias confirmation.
+SURSA: ADR 013 §Profile typing 4 profiles line 88-92.
+PUSH-BACK: Q1 specific spec lipsă în ADR; needs design iteration.
+STATUS: pending review Daniel cross-ref Q-0593
+
+Q-0593 [Domain 6.2 — Behavioral inference 4-6 săpt fereastra fixă]
+DECIZIE: Behavioral inference 4-6 săpt fereastra fixă v1. Adaptive considered post 1000+ users.
+RAȚIONAL: Operationalizable; predictable; debug-friendly.
+IMPACT dacă greșită: MODERATE — fixed = suboptimal per-user; adaptive complex.
+SURSA: ADR 013 §Resolved Open Questions #1 line 303-307.
+PUSH-BACK: 4-6 range = 50% variance; should pin (4 or 5 or 6).
+STATUS: pending review Daniel cross-ref Q-0299
+
+Q-0594 [Domain 6.2 — Reconciliation prompt 1-click]
+DECIZIE: Reconciliation prompt: 1-click accept/decline + drill-down opțional.
+RAȚIONAL: Recommendation cu evidență; decizie rapidă.
+IMPACT dacă greșită: SEVERE — too friction = dismissed; too automatic = labelled.
+SURSA: ADR 013 §Wording reconciliation prompt line 104-110.
+PUSH-BACK: User invested by 4-6 săpt; reluctant to "change identity".
+STATUS: pending review Daniel cross-ref Q-0233
+
+Q-0595 [Domain 6.2 — Profile change history preserved]
+DECIZIE: Profile change history preserved (CDL extension or ProfileLog).
+RAȚIONAL: Debug + audit + reconciliation context.
+IMPACT dacă greșită: MODERATE — history lost = debugging blind.
+SURSA: ADR 013 §Resolved Open Questions #5 line 327-330.
+PUSH-BACK: Privacy concern minimal local-first; cloud sync = inferable.
+STATUS: pending review Daniel cross-ref Q-0241
+
+#### 6.3 Tier-based personalization (T0 → demographic prior, T1+ → real signal)
+
+Q-0596 [Domain 6.3 — T0 demographic prior cold start]
+DECIZIE: T0 cold start uses Demographic Prior Database (ADR 017) for synthetic personalization.
+RAȚIONAL: First session personalized aproximativ; real sessions corectează prior.
+IMPACT dacă greșită: SEVERE — T0 demographic absent = profile blind = generic; calibration wrong.
+SURSA: HANDOVER §6.3 line 131; INSIGHTS_BACKLOG ADR 017 line 158-173.
+PUSH-BACK: Demographic prior 500 profiles fixture; calibration empirical only at scale.
+STATUS: pending review Daniel cross-ref Q-0597
+
+Q-0597 [Domain 6.3 — T1+ real signal accumulating]
+DECIZIE: T1+ shifts to real signal as data accumulates. Demographic prior decays 1.0 → 0.0 post-T1.
+RAȚIONAL: Real > synthetic when sufficient.
+IMPACT dacă greșită: SEVERE — stuck demographic = ignore real signal; instant transition = noisy early.
+SURSA: ADR 018 §5 feature flags lifecycle decay; ADR 017.
+PUSH-BACK: Decay function (linear, exponential?) spec needed.
+STATUS: pending review Daniel cross-ref Q-0596
+
+Q-0598 [Domain 6.3 — Demographic Prior 500 profiles total]
+DECIZIE: Demographic Prior Database 500 profile total: ~50 manually crafted edge cases + ~450 algorithmic generated.
+RAȚIONAL: Sweet spot dev workflow speed vs coverage density.
+IMPACT dacă greșită: SEVERE — too few = blind spots; too many = generation cost.
+SURSA: INSIGHTS_BACKLOG ADR 017 line 165-167.
+PUSH-BACK: 50/450 split; manual quality > generated; ratio reflects.
+STATUS: pending review Daniel cross-ref Q-0599
+
+Q-0599 [Domain 6.3 — Demographic Prior storage local fixtures]
+DECIZIE: Storage local fixtures tests/fixtures/syntheticProfiles.js. Generated runtime memory pentru test runs. NU persist permanent.
+RAȚIONAL: Zero impact pe Firebase production cost.
+IMPACT dacă greșită: SEVERE — Firebase synthetic = cost; local = no cost.
+SURSA: INSIGHTS_BACKLOG ADR 017 line 168-170.
+PUSH-BACK: Runtime generation = compute on every cold start; cache needed.
+STATUS: pending review Daniel cross-ref Q-0598
+
+Q-0600 [Domain 6.3 — Demographic Prior generator parametrizat]
+DECIZIE: Algorithmic generator parametrizat; scale-able prin generator.
+RAȚIONAL: Easy to extend; control variation.
+IMPACT dacă greșită: SEVERE — unparameterized = manual generation; parameterized = quality control.
+SURSA: INSIGHTS_BACKLOG ADR 017 line 169-170.
+PUSH-BACK: Parametrization complexity; bug surface in generator.
+STATUS: pending review Daniel cross-ref Q-0598
+
+#### 6.4 Coach idle screen layout (info-only curat)
+
+Q-0601 [Domain 6.4 — Coach idle plan baseline FĂRĂ readiness gate]
+DECIZIE: Coach idle: plan baseline FĂRĂ readiness gate. Readiness card SUBTLE pentru mood history.
+RAȚIONAL: Reverse engineering blocked; mood signal collected silent.
+IMPACT dacă greșită: SEVERE — visible plan change = RE leak; no signal = pattern blind.
+SURSA: HANDOVER §1 Coach idle line 62.
+PUSH-BACK: Subtle = miss user; transparency tradeoff.
+STATUS: pending review Daniel cross-ref Q-0423
+
+Q-0602 [Domain 6.4 — Coach idle info-only curat NU clutter]
+DECIZIE: Coach idle info-only curat, NU clutter.
+RAȚIONAL: Bugatti aesthetic; quality over feature density.
+IMPACT dacă greșită: MODERATE — too sparse = "where's the value"; too dense = overwhelm.
+SURSA: HANDOVER §6.4 implicit; PRODUCT_STRATEGY §2.11 lux discret.
+PUSH-BACK: "Curat" subjective; component count needed.
+STATUS: pending review Daniel cross-ref Q-0603
+
+Q-0603 [Domain 6.4 — Coach idle today + START + săptămâna]
+DECIZIE: Coach tab structure: today + START sesiune + săptămâna informativă scroll-down.
+RAȚIONAL: Action-first hierarchy; predictive view scroll.
+IMPACT dacă greșită: SEVERE — wrong hierarchy = user confusion; right = clear flow.
+SURSA: HANDOVER §8 UI Tabs line 124-130.
+PUSH-BACK: "Săptămâna" overlap cu Statistici; redundancy.
+STATUS: pending review Daniel cross-ref Q-0604
+
+Q-0604 [Domain 6.4 — UI Tabs 3-tab structure final]
+DECIZIE: 3 tabs final: Coach (action) / Statistici (display) / Profil (settings).
+RAȚIONAL: Coach = action layer; Statistici = display layer; Profil = control.
+IMPACT dacă greșită: SEVERE — wrong split = user confusion; right = clear philosophy.
+SURSA: HANDOVER §8 line 124-132.
+PUSH-BACK: 3 tabs may not scale; future features tab fragmentation.
+STATUS: pending review Daniel cross-ref Q-0603
+
+Q-0605 [Domain 6.4 — Eliminate Dashboard/Program/Plan tabs]
+DECIZIE: Eliminate Dashboard tab (duplicate), Program tab (anti-RE risk), Plan tab (nume nasol + content fragmentat).
+RAȚIONAL: Consolidation; brand alignment.
+IMPACT dacă greșită: SEVERE — removed tabs = features lost path; consolidated = cleaner.
+SURSA: HANDOVER §8 line 130-132.
+PUSH-BACK: Existing users habituated; migration UX.
+STATUS: pending review Daniel cross-ref Q-0604
+
+Q-0606 [Domain 6.4 — Visual language Q1 Coach default]
+DECIZIE: Coach default + smart prompts non-invasive.
+RAȚIONAL: Action-first; smart prompts contextual.
+IMPACT dacă greșită: MODERATE — default tab choice; intuitive.
+SURSA: HANDOVER §9 Visual language Q1 line 136-137.
+PUSH-BACK: New users default Coach without context = confusion; should onboard.
+STATUS: pending review Daniel cross-ref Q-0607
+
+Q-0607 [Domain 6.4 — Single scrollable + prompts contextuale]
+DECIZIE: Single scrollable + prompts contextuale.
+RAȚIONAL: Linear flow; natural scroll behavior; prompts inline.
+IMPACT dacă greșită: MODERATE — fragmentation = cluttered; single = scroll length issue.
+SURSA: HANDOVER §9 Q2 line 137-138.
+PUSH-BACK: Scroll length on long history may overwhelm; pagination alternative.
+STATUS: pending review Daniel cross-ref Q-0606
+
+Q-0608 [Domain 6.4 — Engine-driven curation 3-5 cards always]
+DECIZIE: Engine-driven curation, 3-5 cards always (echilibru cognitiv).
+RAȚIONAL: Cognitive load balance; engine prioritizes; predictable count.
+IMPACT dacă greșită: SEVERE — too many = overwhelm; too few = sparse; 3-5 sweet.
+SURSA: HANDOVER §9 Q3 line 138.
+PUSH-BACK: Engine curation logic critical; fallback if engine fails = empty Coach.
+STATUS: pending review Daniel cross-ref Q-0607
+
+Q-0609 [Domain 6.4 — Color palette + typography deferred Claude Design]
+DECIZIE: Q4-Q5 final color palette + typography decision DEFERRED post-mockup Claude Design.
+RAȚIONAL: Visual design iteration via dedicated Design bucket separat.
+IMPACT dacă greșită: MODERATE — deferral = launch with placeholder; iterate later.
+SURSA: HANDOVER §9 Q4-Q5 line 139.
+PUSH-BACK: Visual design = brand; deferral may delay polish.
+STATUS: pending review Daniel cross-ref Q-0610
+
+Q-0610 [Domain 6.4 — Coach idle banner contextual neutral]
+DECIZIE: Coach idle banner contextual neutru ("Coach-ul observă..." NU "5 signals detected").
+RAȚIONAL: Anti-RE; user-friendly; non-judgmental.
+IMPACT dacă greșită: SEVERE — exposing engine = anti-RE leak; vague = no transparency.
+SURSA: HANDOVER §6 categorical display line 105-106.
+PUSH-BACK: Vague reduces transparency; balance.
+STATUS: pending review Daniel cross-ref Q-0214
+
+#### 6.5 START antrenament flow (readiness modal la START)
+
+Q-0611 [Domain 6.5 — START click triggers readiness modal]
+DECIZIE: Click START → modal readiness obligatoriu cu Skip (default neutru 3).
+RAȚIONAL: Capture readiness pre-session; engine recalibrate; user flow natural.
+IMPACT dacă greșită: SEVERE — pre-START = user disrupted; post = too late; at START = correct timing.
+SURSA: HANDOVER §1 Readiness MOVE line 64.
+PUSH-BACK: Modal at pump-up moment = friction.
+STATUS: pending review Daniel cross-ref Q-0421
+
+Q-0612 [Domain 6.5 — readiness-session[date] storage]
+DECIZIE: Readiness stored as readiness-session[date]. Distinct from readiness-mood[date].
+RAȚIONAL: Two different signals; separate storage.
+IMPACT dacă greșită: SEVERE — collapsed = signal mixed; separate = clean separation.
+SURSA: HANDOVER §1 line 63-64.
+PUSH-BACK: 2 keys per day = signal redundancy if user logs both.
+STATUS: pending review Daniel cross-ref Q-0379
+
+Q-0613 [Domain 6.5 — Readiness 1-10 scale]
+DECIZIE: Readiness 1-10 scale.
+RAȚIONAL: Granular; user can express nuance.
+IMPACT dacă greșită: MODERATE — too granular = friction; coarse = noise.
+SURSA: COGNITIVE_ARCHITECTURE_SPEC_v1 §Q15 line 399.
+PUSH-BACK: 1-10 abstract; many users default 5; 3-point easier.
+STATUS: pending review Daniel cross-ref Q-0200
+
+Q-0614 [Domain 6.5 — Engine recalculează instant on readiness]
+DECIZIE: Engine recalculează instant on readiness submit. Plan adapts.
+RAȚIONAL: Real-time response; user sees plan adjust.
+IMPACT dacă greșită: SEVERE — slow recalc = friction; not visible = no signal trust.
+SURSA: HANDOVER §1 line 64.
+PUSH-BACK: Instant = compute pe device; perceptible delay possible cu Cloud Function.
+STATUS: pending review Daniel cross-ref Q-0033
+
+Q-0615 [Domain 6.5 — Skip default neutral 3 of 10]
+DECIZIE: Skip default neutru 3 (mid-low scale).
+RAȚIONAL: Skip = no signal; default low-mid.
+IMPACT dacă greșită: MODERATE — default 5 = engine thinks fresh; default 3 = engine over-conservative.
+SURSA: HANDOVER §1 line 64.
+PUSH-BACK: Asymmetric default (3 not 5) introduces bias; should be central (5).
+STATUS: pending review Daniel cross-ref Q-0613
+
+#### 6.6 In-session UI
+
+Q-0616 [Domain 6.6 — In-set logging mandatory pacing]
+DECIZIE: In-set logging mandatory pentru pacing. REALTIME engine pierde "durată per set" + fatigue intra-workout altfel.
+RAȚIONAL: Per-set timestamp captured; pacing signal.
+IMPACT dacă greșită: SEVERE — pacing lost = REALTIME signal degraded.
+SURSA: PRODUCT_STRATEGY §2.4 line 81-83.
+PUSH-BACK: Friction high; user prefers post-set logging.
+STATUS: pending review Daniel cross-ref Q-0430
+
+Q-0617 [Domain 6.6 — Pauze auto-start după log]
+DECIZIE: Rest timer auto-start după logarea setului.
+RAȚIONAL: Reduce tap; auto-track.
+IMPACT dacă greșită: MINOR — manual = extra tap; auto = always running.
+SURSA: PRODUCT_STRATEGY §2.6 line 89-90.
+PUSH-BACK: Auto-start during phone-down = timer running while user actively resting.
+STATUS: pending review Daniel cross-ref Q-0431
+
+Q-0618 [Domain 6.6 — RPE inference smart + selective prompt]
+DECIZIE: RPE = (d) combo: smart inference reps actual + selective prompt 4-tap doar la outlier sets.
+RAȚIONAL: 75% friction reduction.
+IMPACT dacă greșită: SEVERE — full prompt every set = friction; pure inference = noise.
+SURSA: HANDOVER §11 P1 line 145.
+PUSH-BACK: "Outlier" definition empirical.
+STATUS: pending review Daniel cross-ref Q-0416
+
+Q-0619 [Domain 6.6 — Alternative engine click "Aparat ocupat"]
+DECIZIE: Click "Aparat ocupat" → alternative exercise; ephemeral, not persisted.
+RAȚIONAL: Real-world friction; preserve session continuity.
+IMPACT dacă greșită: SEVERE — no alternative = abandon; persistent = wrong learning.
+SURSA: HANDOVER §11 P3 line 148; src/engine/alternativeEngine.js.
+PUSH-BACK: Alternative selection algorithm spec ambiguous.
+STATUS: pending review Daniel cross-ref Q-0273
+
+Q-0620 [Domain 6.6 — Click "Lipsă aparat" persistent per-gym]
+DECIZIE: "Lipsă aparat" persistent per-gym (Multi-Gym). NU global.
+RAȚIONAL: Structural property; learn equipment.
+IMPACT dacă greșită: SEVERE — global = wrong cross-gym; per-gym = correct.
+SURSA: HANDOVER §7 Multi-Gym line 113-121.
+PUSH-BACK: User says "Lipsă" once = blocked forever; expiry/recheck needed.
+STATUS: pending review Daniel cross-ref Q-0274
+
+#### 6.7 End-of-session summary
+
+Q-0621 [Domain 6.7 — Summary auto-dismiss 5 sec]
+DECIZIE: Summary modal auto-dismiss 5 sec.
+RAȚIONAL: Reduce taps; user already saw outcome.
+IMPACT dacă greșită: MODERATE — too fast = miss info; too slow = wait.
+SURSA: HANDOVER §11 P2 line 147.
+PUSH-BACK: Same for all users; should be configurable.
+STATUS: pending review Daniel cross-ref Q-0415
+
+Q-0622 [Domain 6.7 — Summary content sets / volume / PR]
+DECIZIE: Summary: completed sets, total volume, PRs hit, time elapsed.
+RAȚIONAL: Key metrics; minimal cognitive load.
+IMPACT dacă greșită: MINOR — content choice; can iterate.
+SURSA: implicit; PRODUCT_STRATEGY §2.11 PR celebration.
+PUSH-BACK: Time elapsed less interesting; muscle group volume more.
+STATUS: pending review Daniel cross-ref Q-0623
+
+Q-0623 [Domain 6.7 — End rating prompt 5-point]
+DECIZIE: End rating prompt 5-point Likert.
+RAȚIONAL: User self-report; CDL outcome.rating.
+IMPACT dacă greșită: SEVERE — coarse = noise; fine = friction.
+SURSA: ADR 011 schema outcome.rating line 92.
+PUSH-BACK: 5-point arbitrary; alternatives (3-point, slider).
+STATUS: pending review Daniel cross-ref Q-0425
+
+Q-0624 [Domain 6.7 — PR celebration subtle confetti]
+DECIZIE: Subtle confetti + haptic. Bugatti = lux discret.
+RAȚIONAL: Aesthetic alignment.
+IMPACT dacă greșită: MINOR — over = cringe; under = no recognition.
+SURSA: PRODUCT_STRATEGY §2.11 line 103-105.
+PUSH-BACK: "Subtle" subjective; spec needed.
+STATUS: pending review Daniel cross-ref Q-0487
+
+#### 6.8 Reality validation post-session (auto-delete <2min, prompt <5/15min)
+
+Q-0625 [Domain 6.8 — <2min+0sets auto-delete silent]
+DECIZIE: <2min + 0sets = auto-delete silent.
+RAȚIONAL: Test/accidental; no friction.
+IMPACT dacă greșită: SEVERE — legitimate short check-in deleted; UX hostile.
+SURSA: HANDOVER §1 line 67.
+PUSH-BACK: 2min edge case fast session legit.
+STATUS: pending review Daniel cross-ref Q-0265
+
+Q-0626 [Domain 6.8 — <5min OR <30% volum default delete prompt]
+DECIZIE: <5min sau <30% volum → modal "Test sau real?" default delete.
+RAȚIONAL: Likely test; user explicit confirm.
+IMPACT dacă greșită: SEVERE — default delete = real session lost on miss-tap.
+SURSA: HANDOVER §1 line 68.
+PUSH-BACK: Default delete biased data loss; default keep + opt-in delete safer.
+STATUS: pending review Daniel cross-ref Q-0266
+
+Q-0627 [Domain 6.8 — 5-15min + 30-70% short keep prompt]
+DECIZIE: 5-15min + 30-70% volum → "Sesiune scurtă, păstrăm?" default Yes.
+RAȚIONAL: Likely real but cut short; default keep.
+IMPACT dacă greșită: SEVERE — default Yes saves likely-junk; default No loses real.
+SURSA: HANDOVER §1 line 69.
+PUSH-BACK: Asymmetric defaults inconsistent UX.
+STATUS: pending review Daniel cross-ref Q-0267
+
+Q-0628 [Domain 6.8 — >15min + >70% normal log no prompt]
+DECIZIE: >15min + >70% volum → log normal. No prompt.
+RAȚIONAL: Likely complete; trust.
+IMPACT dacă greșită: MINOR — false log of "real" session = pollution.
+SURSA: HANDOVER §1 line 70.
+PUSH-BACK: 15min HIIT/EMOM cut at 12min legitimately = wrong category.
+STATUS: pending review Daniel cross-ref Q-0268
+
+#### 6.9 UI tabs structure (3 tabs)
+
+Q-0629 [Domain 6.9 — Coach tab action layer]
+DECIZIE: Coach tab = action layer (today + START + săptămâna).
+RAȚIONAL: Primary action; daily focus.
+IMPACT dacă greșită: SEVERE — wrong tab content = user lost.
+SURSA: HANDOVER §8 line 126-128.
+PUSH-BACK: Action + Schedule mix; could split.
+STATUS: pending review Daniel cross-ref Q-0604
+
+Q-0630 [Domain 6.9 — Statistici tab display layer]
+DECIZIE: Statistici tab = display layer (charts, projection, goal weight + ETA, fatigue, adherence, calendar, BF%, TDEE, LBM, PR Wall mutat aici).
+RAȚIONAL: Read-only data; deep dive.
+IMPACT dacă greșită: SEVERE — display + action mix = user confusion.
+SURSA: HANDOVER §8 line 128-129.
+PUSH-BACK: Many features in one tab = scroll-overload; may need sub-tabs.
+STATUS: pending review Daniel cross-ref Q-0631
+
+Q-0631 [Domain 6.9 — Profil tab onboarding edit + biometrie + GDPR]
+DECIZIE: Profil tab = onboarding edit, biometrie, phase override, settings, GDPR export, payment, account deletion.
+RAȚIONAL: Control + admin; less frequent access.
+IMPACT dacă greșită: SEVERE — settings hidden = user can't manage; over-prominent = clutter.
+SURSA: HANDOVER §8 line 130.
+PUSH-BACK: Many functions in Profil = sub-tabs needed.
+STATUS: pending review Daniel cross-ref Q-0630
+
+Q-0632 [Domain 6.9 — Statistici read-only data]
+DECIZIE: Statistici purely read-only data layer. No editing.
+RAȚIONAL: Display only; clear separation Coach (action) vs Statistici (view).
+IMPACT dacă greșită: MODERATE — edit in display = confusion; pure separation = clean.
+SURSA: HANDOVER §8 line 129.
+PUSH-BACK: Some edit (typo correct) needed; restricted.
+STATUS: pending review Daniel cross-ref Q-0630
+
+Q-0633 [Domain 6.9 — Statistici input rapid greutate/kcal/protein]
+DECIZIE: Statistici input rapid greutate/kcal/protein.
+RAȚIONAL: Daily input frequent location; quick action.
+IMPACT dacă greșită: MODERATE — input în Coach = action layer mix; în Statistici = aligned with display nutrition data.
+SURSA: HANDOVER §8 line 128.
+PUSH-BACK: Input = action; should be Coach? UX debate.
+STATUS: pending review Daniel cross-ref Q-0630
+
+#### 6.10 Exercise visual demo (illustrations 3D anatomical)
+
+Q-0634 [Domain 6.10 — Illustrations 3D anatomical START/END side-by-side]
+DECIZIE: Illustration anatomical 3D side-by-side START/END (gen aparate sală).
+RAȚIONAL: Visual clarity exercise execution; brand neutral.
+IMPACT dacă greșită: SEVERE — wrong style = brand fragmentation; right = clear.
+SURSA: HANDOVER §10 line 142-143.
+PUSH-BACK: 3D rendering quality at scale; AI-generated may have uncanny valley.
+STATUS: pending review Daniel cross-ref Q-0635
+
+Q-0635 [Domain 6.10 — Daniel NU în poză anti-RE]
+DECIZIE: Daniel NU în poză. Brand neutral; anti-personality cult.
+RAȚIONAL: Persoana absentă pattern; brand > founder.
+IMPACT dacă greșită: MODERATE — Daniel persona = personal brand; absent = neutral.
+SURSA: HANDOVER §10 line 142-143.
+PUSH-BACK: Founder-led brand opportunity; absent = generic.
+STATUS: pending review Daniel cross-ref Q-0634
+
+Q-0636 [Domain 6.10 — 200 exerciții × 2 illustrations = 400 total]
+DECIZIE: ~200 exerciții × 2 illustrations (START + END) = 400 illustrations total.
+RAȚIONAL: Library scope; manageable.
+IMPACT dacă greșită: SEVERE — too few = visual gap; too many = generation cost.
+SURSA: HANDOVER §10 line 143; PRODUCT_STRATEGY §3.1 200 exerciții.
+PUSH-BACK: Some exercises need video, not just static; gap.
+STATUS: pending review Daniel cross-ref Q-0637
+
+Q-0637 [Domain 6.10 — Pilot 1 exercițiu 3-5 style variante înainte scale]
+DECIZIE: Pilot 1 exercițiu cu 3-5 style variante înainte scale.
+RAȚIONAL: Quality control; iterate before commit 400.
+IMPACT dacă greșită: SEVERE — scale before pilot = 400 wasted; pilot = quality controlled.
+SURSA: HANDOVER §10 line 143.
+PUSH-BACK: Pilot 1 thin sample; needs 5+ exercises diverse for representative.
+STATUS: pending review Daniel cross-ref Q-0636
+
+Q-0638 [Domain 6.10 — Claude Design bucket separat zero cost main]
+DECIZIE: Generate prin Claude Design (bucket separat 0% used, zero cost main bucket).
+RAȚIONAL: Compute budget separate; main bucket preserved.
+IMPACT dacă greșită: MODERATE — main bucket consumed = work blocked; separate = isolated.
+SURSA: HANDOVER §10 line 142.
+PUSH-BACK: Bucket separation Claude Code feature; quota.
+STATUS: pending review Daniel cross-ref Q-0637
+
+#### 6.11 Multi-gym UI
+
+Q-0639 [Domain 6.11 — Gym indicator header always visible]
+DECIZIE: Gym indicator header always visible. Switch dropdown.
+RAȚIONAL: Constant context; user knows which gym active.
+IMPACT dacă greșită: SEVERE — invisible = user confused which gym; visible = clarity.
+SURSA: HANDOVER §7 Multi-Gym Q4 manual switch line 116.
+PUSH-BACK: Header real estate; balance.
+STATUS: pending review Daniel cross-ref Q-0640
+
+Q-0640 [Domain 6.11 — Settings management săli per-user]
+DECIZIE: Settings management săli per-user (Profil tab); add/rename/delete gym.
+RAȚIONAL: User control over gyms; multi-gym configuration.
+IMPACT dacă greșită: SEVERE — can't add = limit; uncontrolled = spam gyms.
+SURSA: HANDOVER §7 Multi-Gym Q10 free-text naming line 119.
+PUSH-BACK: Free-text naming = inconsistent ("Gym 1" vs "World Class"); standardize?
+STATUS: pending review Daniel cross-ref Q-0641
+
+Q-0641 [Domain 6.11 — Max 5 săli limit]
+DECIZIE: Max 5 săli per user.
+RAȚIONAL: Reasonable cap; 7-card user (5 săli) covers.
+IMPACT dacă greșită: MODERATE — too few = limit; too many = configuration sprawl.
+SURSA: HANDOVER §7 Multi-Gym Q7 line 117.
+PUSH-BACK: Power user 7+ săli edge case; rigid limit.
+STATUS: pending review Daniel cross-ref Q-0640
+
+Q-0642 [Domain 6.11 — Last active gym default]
+DECIZIE: Last active gym default on app open.
+RAȚIONAL: Most likely current; reduce friction.
+IMPACT dacă greșită: SEVERE — wrong gym default = wrong equipment filter; user adjust manual.
+SURSA: HANDOVER §7 Multi-Gym Q6 line 117.
+PUSH-BACK: User changing gyms recent past = wrong default.
+STATUS: pending review Daniel cross-ref Q-0639
+
+Q-0643 [Domain 6.11 — Manual switch only NU GPS]
+DECIZIE: Manual switch only, learn frequency pattern (NU GPS — privacy + Gigel test fail).
+RAȚIONAL: Privacy first; manual reliable.
+IMPACT dacă greșită: SEVERE — GPS = privacy leak; manual = friction.
+SURSA: HANDOVER §7 Multi-Gym Q4 line 116.
+PUSH-BACK: GPS auto-detect = UX win; manual switch = friction.
+STATUS: pending review Daniel cross-ref Q-0556
+
+Q-0644 [Domain 6.11 — Subtle banner add multi-gym onboarding]
+DECIZIE: Default 1 sală onboarding, banner subtle adăugare multi-gym.
+RAȚIONAL: Reduce onboarding friction; advanced users discover.
+IMPACT dacă greșită: SEVERE — mandatory multi-gym = friction; never opt-in = power gap.
+SURSA: HANDOVER §7 Multi-Gym Q1 line 113.
+PUSH-BACK: Subtle = miss user; balance.
+STATUS: pending review Daniel cross-ref Q-0457
+
+Q-0645 [Domain 6.11 — Schema gyms[] + active_gym_id]
+DECIZIE: Schema: gyms: [{id, name, equipment_unavailable[]}], active_gym_id.
+RAȚIONAL: Standard array of objects + pointer; flexible.
+IMPACT dacă greșită: SEVERE — wrong schema = engine confusion; right = clean.
+SURSA: HANDOVER §7 line 121-122.
+PUSH-BACK: equipment_unavailable[] grows; cleanup needed.
+STATUS: pending review Daniel cross-ref Q-0646
+
+Q-0646 [Domain 6.11 — Engine query filtru pe equipment_unavailable]
+DECIZIE: Engine query filtrează exerciții pe equipment_unavailable per gym activ.
+RAȚIONAL: Per-gym equipment filter; learns incrementally.
+IMPACT dacă greșită: SEVERE — wrong filter = impossible exercise; right = feasible plan.
+SURSA: HANDOVER §7 line 121-122.
+PUSH-BACK: Filter overhead per query; cache.
+STATUS: pending review Daniel cross-ref Q-0263
+
+Q-0647 [Domain 6.11 — Switch gym = NU re-prompt config]
+DECIZIE: Switch gym = NU re-prompt; configurația persistă independent per gym.
+RAȚIONAL: Per-gym persistence; smooth switch.
+IMPACT dacă greșită: SEVERE — re-prompt every switch = friction.
+SURSA: HANDOVER §7 line 122.
+PUSH-BACK: Persisting per gym = configuration sprawl over time.
+STATUS: pending review Daniel cross-ref Q-0645
+
+Q-0648 [Domain 6.11 — 60 zile re-validation prompt]
+DECIZIE: Q3 = (a) prompt 60 zile re-validation. "Mai folosești sala X?"
+RAȚIONAL: Periodic verification; clean stale gyms.
+IMPACT dacă greșită: SEVERE — too frequent = friction; too rare = stale gyms accumulate.
+SURSA: HANDOVER §7 Multi-Gym Q3 line 115.
+PUSH-BACK: 60 zile arbitrary; should be tied to last-use.
+STATUS: pending review Daniel cross-ref Q-0639
+
+Q-0649 [Domain 6.11 — Sală nouă asume FULL echipament]
+DECIZIE: Q2 = (a) sală nouă asume FULL echipament, learn on-the-go via "Lipsă aparat" mid-session. NU prompt cross-gym.
+RAȚIONAL: Optimistic default; learn incrementally.
+IMPACT dacă greșită: SEVERE — pessimistic = exhaustive checklist friction; optimistic = wrong filter.
+SURSA: HANDOVER §7 Multi-Gym Q2 line 113-114.
+PUSH-BACK: First sessions in new gym = many "Lipsă aparat" clicks.
+STATUS: pending review Daniel cross-ref Q-0650
+
+Q-0650 [Domain 6.11 — Global merged + opt-in calibrare per echipament]
+DECIZIE: Q5 = (b) global merged progresie + opt-in calibrare per echipament.
+RAȚIONAL: Default global progression; advanced users calibrate per equipment.
+IMPACT dacă greșită: SEVERE — full per-equipment = data sparsity; full global = ignore equipment variance.
+SURSA: HANDOVER §7 Multi-Gym Q5 line 116-117.
+PUSH-BACK: Opt-in calibrare = advanced feature; user friction.
+STATUS: pending review Daniel cross-ref Q-0649
+
+Q-0651 [Domain 6.11 — Silent automated migration users existing]
+DECIZIE: Q8 = (a) silent automated migration users existing → multi-gym schema.
+RAȚIONAL: No user friction; automatic backfill.
+IMPACT dacă greșită: SEVERE — manual migration = friction; broken auto = data loss.
+SURSA: HANDOVER §7 Multi-Gym Q8 line 118.
+PUSH-BACK: Silent migration = user surprised; should notify.
+STATUS: pending review Daniel cross-ref Q-0652
+
+Q-0652 [Domain 6.11 — Auto-substitute alternativă pe lipsă]
+DECIZIE: Q9 = (c) auto-substitute alternativă pe lipsă echipament.
+RAȚIONAL: Smooth flow; alternative engine handles.
+IMPACT dacă greșită: SEVERE — no auto = user picks; auto wrong = mismatch.
+SURSA: HANDOVER §7 Multi-Gym Q9 line 118.
+PUSH-BACK: Alternative engine spec ambiguous; bug surface.
+STATUS: pending review Daniel cross-ref Q-0273
+
+Q-0653 [Domain 6.11 — Free-text naming săli]
+DECIZIE: Q10 = free-text naming săli.
+RAȚIONAL: User flexibility; user knows their gyms.
+IMPACT dacă greșită: MINOR — inconsistent naming; user concern not engine.
+SURSA: HANDOVER §7 Multi-Gym Q10 line 119.
+PUSH-BACK: Free-text uniqueness not enforced; "Gym 1" vs "Gym 1 " = different.
+STATUS: pending review Daniel cross-ref Q-0640
+
+Q-0654 [Domain 6.11 — Rename rules backward compat]
+DECIZIE: Renaming = explicit migration step; rationale.winnerId rewrite for affected entries.
+RAȚIONAL: Rename without migration = orphan IDs.
+IMPACT dacă greșită: SEVERE — orphan = pattern learning blind on past entries.
+SURSA: ADR 011 §Stable Rule IDs line 105-107.
+PUSH-BACK: Migration cost; should be rare.
+STATUS: pending review Daniel cross-ref Q-0111
+
+Q-0655 [Domain 6.11 — Deletion = sentinel DEPRECATED preserved]
+DECIZIE: Removing rules = sentinel DEPRECATED_<original_id> preserved for historical entries.
+RAȚIONAL: Forward compat readers; audit trail.
+IMPACT dacă greșită: SEVERE — full delete = past entries orphan.
+SURSA: ADR 011 §Stable Rule IDs line 105-108.
+PUSH-BACK: Sentinel proliferates; cleanup later.
+STATUS: pending review Daniel cross-ref Q-0350
+
+#### 6.12 Visual language fundațional
+
+Q-0656 [Domain 6.12 — Bugatti aesthetic permanent rule]
+DECIZIE: Bugatti aesthetic ABSOLUTE. Lux discret, antrenor olimpic.
+RAȚIONAL: Brand differentiation; quality signal.
+IMPACT dacă greșită: SEVERE — drift = brand dilution.
+SURSA: PRODUCT_STRATEGY §1 implicit; multiple references.
+PUSH-BACK: "Bugatti" subjective; spec needed.
+STATUS: pending review Daniel cross-ref Q-0657
+
+Q-0657 [Domain 6.12 — Anti-pattern social network]
+DECIZIE: NU rețea socială. Fără feed, like-uri, peer-pressure. "Doar tu cu fierul și antrenorul."
+RAȚIONAL: Brand identity; user wellbeing > engagement metrics.
+IMPACT dacă greșită: SEVERE — adding social = brand damage; absence = retention gap.
+SURSA: PRODUCT_STRATEGY §1.7 line 47-52.
+PUSH-BACK: Social retention strong; absence cost.
+STATUS: pending review Daniel cross-ref Q-0656
+
+Q-0658 [Domain 6.12 — Anti-gimmick gamification ieftină]
+DECIZIE: Fără gimmick gamification (NU streaks, NU challenges, NU IG share, NU badges engagement).
+RAȚIONAL: Quality > gimmicks; brand alignment.
+IMPACT dacă greșită: SEVERE — gimmicks = brand damage; absence = engagement gap.
+SURSA: PRODUCT_STRATEGY §6 multiple sections.
+PUSH-BACK: Gamification proven retention; absence cost.
+STATUS: pending review Daniel cross-ref Q-0659
+
+Q-0659 [Domain 6.12 — Marketing spam vs Actionable Utility distinction]
+DECIZIE: Notification = output PROJECTION engine, NU output marketing team. Marketing Spam vs Actionable Utility.
+RAȚIONAL: Brand alignment; notifications are useful not spam.
+IMPACT dacă greșită: SEVERE — marketing = trust erosion; utility = value.
+SURSA: PRODUCT_STRATEGY §11.4 line 432-436.
+PUSH-BACK: Distinction subjective; "We miss you" can be useful for some.
+STATUS: pending review Daniel cross-ref Q-0488
+
+Q-0660 [Domain 6.12 — Personalitate "Antrenor olimpic"]
+DECIZIE: Personalitate Antrenor olimpic, NU cheerleader.
+RAȚIONAL: Quality alignment.
+IMPACT dacă greșită: SEVERE — cheerleader = unprofessional; olympic = serious.
+SURSA: PRODUCT_STRATEGY §4.1 line 144-145.
+PUSH-BACK: "Olimpic" vs "friendly" tone debate.
+STATUS: pending review Daniel cross-ref Q-0493
+
+---
+
+**BATCH 2 PARTIAL — Q0501-Q0660 COMPLETE** (target was Q1000-Q2000; quality > quantity per directive)
+
+Domain 4 Strategy Q501-Q550, Domain 5 GDPR Q551-Q585, Domain 6 UX Q586-Q660.
