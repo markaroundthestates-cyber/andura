@@ -3,7 +3,10 @@
 // Contract: docs/decisions/011-coach-decision-log-architecture.md
 // Status: Accepted 2026-04-25
 //
-// Schema: { id, ts, date, synthetic, superseded, supersedes, context, proposed, outcome }
+// Schema: { id, ts, date, synthetic, superseded, supersedes, context, proposed, outcome, ext? }
+// ext is an optional open-ended extension bag for compatible writes (no schema break).
+//   ext.modalDismisses?: Array<{modalId, ts, dismissed:true}> — written by ModalManager
+//     when user dismisses a coaching modal via backdrop or swipe.
 // Storage: 3 tiers — see STORAGE_KEYS export.
 // Idempotency: 4h window + significant context change rules.
 
