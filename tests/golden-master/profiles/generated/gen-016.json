@@ -1,0 +1,56 @@
+{
+  "profileId": "gen-016",
+  "label": "Intermediate F 52y T1 DEVELOPING",
+  "tags": [
+    "generated",
+    "T1",
+    "DEVELOPING",
+    "intermediate",
+    "LEGS",
+    "in_cut"
+  ],
+  "demographic": {
+    "age": 52,
+    "sex": "F",
+    "experience": "intermediate"
+  },
+  "biometrics": {
+    "weight_kg": 75,
+    "height_cm": 167,
+    "bmi": 26.9,
+    "bf_pct_estimated": 21,
+    "lbm_kg": 59.3
+  },
+  "history": {
+    "sessions_count": 23,
+    "engine_tier": "T1",
+    "calibration_confidence": "DEVELOPING",
+    "days_since_first_session": 70,
+    "last_session_type": "PULL",
+    "weak_groups": [],
+    "stagnation_weeks": 1,
+    "in_cut": true
+  },
+  "context": {
+    "readiness_score": 83,
+    "fatigue_index": 0.1,
+    "is_high_risk_today": false,
+    "patterns": [],
+    "patternsSuppressed": false
+  },
+  "expected_arbitrator_output": {
+    "session_type": "LEGS",
+    "volume_multiplier": 0.9,
+    "rest_day": false,
+    "rationale_codes": [
+      "CUT_CONSERVATIVE"
+    ],
+    "calibration_banner_shown": true
+  },
+  "_metadata": {
+    "generated_by": "tests/golden-master/profiles/generate.js",
+    "generated_at": "2026-04-30",
+    "intentional_edge_case": false,
+    "intentional_edge_case_doc": null
+  }
+}

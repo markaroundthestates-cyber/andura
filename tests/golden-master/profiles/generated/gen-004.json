@@ -1,0 +1,55 @@
+{
+  "profileId": "gen-004",
+  "label": "Beginner M 58y T0",
+  "tags": [
+    "generated",
+    "T0",
+    "COLD_START",
+    "beginner",
+    "PULL"
+  ],
+  "demographic": {
+    "age": 58,
+    "sex": "M",
+    "experience": "beginner"
+  },
+  "biometrics": {
+    "weight_kg": 77,
+    "height_cm": 186,
+    "bmi": 22.3,
+    "bf_pct_estimated": 19,
+    "lbm_kg": 62.4
+  },
+  "history": {
+    "sessions_count": 0,
+    "engine_tier": "T0",
+    "calibration_confidence": "COLD_START",
+    "days_since_first_session": 0,
+    "last_session_type": null,
+    "weak_groups": [],
+    "stagnation_weeks": 0,
+    "in_cut": false
+  },
+  "context": {
+    "readiness_score": 77,
+    "fatigue_index": 0.18,
+    "is_high_risk_today": false,
+    "patterns": [],
+    "patternsSuppressed": false
+  },
+  "expected_arbitrator_output": {
+    "session_type": "PULL",
+    "volume_multiplier": 1,
+    "rest_day": false,
+    "rationale_codes": [
+      "COLD_START_INITIAL"
+    ],
+    "calibration_banner_shown": true
+  },
+  "_metadata": {
+    "generated_by": "tests/golden-master/profiles/generate.js",
+    "generated_at": "2026-04-30",
+    "intentional_edge_case": false,
+    "intentional_edge_case_doc": null
+  }
+}

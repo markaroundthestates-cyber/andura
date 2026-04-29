@@ -1,0 +1,61 @@
+{
+  "_schema": "GoldenMasterProfile v1 — 2026-04-30 Sprint 2 scaffold",
+  "_doc": "Schema template pentru profile Golden Master Suite. Toate câmpurile required dacă nu marcat opțional.",
+
+  "profileId": "gen-XXX",
+  "label": "Optional human-readable label (e.g., 'Beginner male 28y standard')",
+  "tags": ["generated", "T0", "COLD_START", "beginner"],
+
+  "demographic": {
+    "age": 28,
+    "sex": "M",
+    "experience": "beginner",
+    "_experience_enum": ["beginner", "intermediate", "advanced"]
+  },
+
+  "biometrics": {
+    "weight_kg": 75,
+    "height_cm": 178,
+    "bmi": 23.7,
+    "bf_pct_estimated": 18,
+    "lbm_kg": 61.5
+  },
+
+  "history": {
+    "sessions_count": 0,
+    "engine_tier": "T0",
+    "_engine_tier_enum": ["T0", "T1", "T2"],
+    "calibration_confidence": "COLD_START",
+    "_calibration_confidence_enum": ["COLD_START", "INITIAL", "DEVELOPING", "PERSONALIZING", "PERSONALIZED", "OPTIMIZED"],
+    "days_since_first_session": 0,
+    "last_session_type": null,
+    "weak_groups": [],
+    "stagnation_weeks": 0,
+    "in_cut": false
+  },
+
+  "context": {
+    "readiness_score": 75,
+    "fatigue_index": 0.2,
+    "is_high_risk_today": false,
+    "patterns": [],
+    "patternsSuppressed": false
+  },
+
+  "expected_arbitrator_output": {
+    "session_type": "PUSH",
+    "_session_type_enum": ["PUSH", "PULL", "LEGS", "REST"],
+    "volume_multiplier": 1.0,
+    "rest_day": false,
+    "rationale_codes": ["COLD_START_INITIAL"],
+    "calibration_banner_shown": true,
+    "_doc": "Pre-launch ground truth output, asserted by runner.js. Update if engine math evolves + amend ADR ref."
+  },
+
+  "_metadata": {
+    "generated_by": "scripts/generate-golden-master-profiles.js",
+    "generated_at": "2026-04-30",
+    "intentional_edge_case": false,
+    "intentional_edge_case_doc": null
+  }
+}

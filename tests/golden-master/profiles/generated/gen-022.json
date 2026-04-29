@@ -1,0 +1,66 @@
+{
+  "profileId": "gen-022",
+  "label": "Advanced M 45y T2 PERSONALIZED",
+  "tags": [
+    "generated",
+    "T2",
+    "PERSONALIZED",
+    "advanced",
+    "LEGS",
+    "maintenance",
+    "stagnant"
+  ],
+  "demographic": {
+    "age": 45,
+    "sex": "M",
+    "experience": "advanced"
+  },
+  "biometrics": {
+    "weight_kg": 74,
+    "height_cm": 179,
+    "bmi": 23.1,
+    "bf_pct_estimated": 10,
+    "lbm_kg": 66.6
+  },
+  "history": {
+    "sessions_count": 148,
+    "engine_tier": "T2",
+    "calibration_confidence": "PERSONALIZED",
+    "days_since_first_session": 438,
+    "last_session_type": "LEGS",
+    "weak_groups": [
+      "calves"
+    ],
+    "stagnation_weeks": 4,
+    "in_cut": false
+  },
+  "context": {
+    "readiness_score": 69,
+    "fatigue_index": 0.11,
+    "is_high_risk_today": false,
+    "patterns": [
+      {
+        "type": "STAGNATION",
+        "exercises": [
+          "Bench Press"
+        ]
+      }
+    ],
+    "patternsSuppressed": false
+  },
+  "expected_arbitrator_output": {
+    "session_type": "LEGS",
+    "volume_multiplier": 0.7,
+    "rest_day": false,
+    "rationale_codes": [
+      "STAGNATION_DELOAD"
+    ],
+    "calibration_banner_shown": false
+  },
+  "_metadata": {
+    "generated_by": "tests/golden-master/profiles/generate.js",
+    "generated_at": "2026-04-30",
+    "intentional_edge_case": false,
+    "intentional_edge_case_doc": null
+  }
+}

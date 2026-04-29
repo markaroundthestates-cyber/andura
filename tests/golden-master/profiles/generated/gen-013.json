@@ -1,0 +1,56 @@
+{
+  "profileId": "gen-013",
+  "label": "Intermediate M 45y T1 DEVELOPING",
+  "tags": [
+    "generated",
+    "T1",
+    "DEVELOPING",
+    "intermediate",
+    "PULL",
+    "maintenance"
+  ],
+  "demographic": {
+    "age": 45,
+    "sex": "M",
+    "experience": "intermediate"
+  },
+  "biometrics": {
+    "weight_kg": 90,
+    "height_cm": 175,
+    "bmi": 29.4,
+    "bf_pct_estimated": 15,
+    "lbm_kg": 76.5
+  },
+  "history": {
+    "sessions_count": 15,
+    "engine_tier": "T1",
+    "calibration_confidence": "DEVELOPING",
+    "days_since_first_session": 75,
+    "last_session_type": "PULL",
+    "weak_groups": [
+      "shoulders"
+    ],
+    "stagnation_weeks": 0,
+    "in_cut": false
+  },
+  "context": {
+    "readiness_score": 72,
+    "fatigue_index": 0.15,
+    "is_high_risk_today": false,
+    "patterns": [],
+    "patternsSuppressed": false
+  },
+  "expected_arbitrator_output": {
+    "session_type": "PULL",
+    "volume_multiplier": 1,
+    "rest_day": false,
+    "rationale_codes": [],
+    "calibration_banner_shown": true
+  },
+  "_metadata": {
+    "generated_by": "tests/golden-master/profiles/generate.js",
+    "generated_at": "2026-04-30",
+    "intentional_edge_case": false,
+    "intentional_edge_case_doc": null
+  }
+}
