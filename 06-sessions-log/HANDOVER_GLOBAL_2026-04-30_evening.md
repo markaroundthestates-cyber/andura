@@ -145,33 +145,33 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **HEAD post-Sprint:** `89199db`
 - **HEAD post-evening cleanup:** `5cb5660` (vault cleanup + folder renumber + path refs sweep + inbox/outbox installed)
 - **Tests:** 752/752 stable (D6 flake adherence Thursday OFF rezolvat de la sine)
-- **Reports:** `cc-reports/SPRINT1/2/3_PARTIAL_EXECUTION_REPORT.md`
+- **Reports:** `📤_outbox/_archive/2026-04/08_SPRINT1_EXECUTION_REPORT.md` + `09_SPRINT2_EXECUTION_REPORT.md` + `10_SPRINT3_PARTIAL_EXECUTION_REPORT.md` (legacy `cc-reports/` deprecated 30 apr, migrated to outbox archive).
 
 ---
 
-## 5. DECIZII PENDING DANIEL REVIEW (D1-D15)
+## 5. D1-D15 ROUTING DECISIONS — TOATE LOCKED
 
-**Citire context complet:** `cc-reports/SPRINT*_EXECUTION_REPORT.md`
+**Status:** **15/15 RESOLVED 2026-04-30 evening** (post chat strategic Sprint 1+2+3 partial review + Gemini cross-check + ADR 020-021 + amendments).
 
-### Sprint 1 — 6 decizii
+**Citire context complet:** `📤_outbox/_archive/2026-04/08_SPRINT1_EXECUTION_REPORT.md` + `09_SPRINT2_EXECUTION_REPORT.md` + `10_SPRINT3_PARTIAL_EXECUTION_REPORT.md` (legacy `cc-reports/` migrated 30 apr).
 
-- **D1:** DEVELOPING tier clarificare în calibration_confidence axis (între INITIAL și PERSONALIZING, threshold sessions_count specific)
-- **D2:** Anti-RE wording rewrite leak #1
-- **D3:** Anti-RE wording rewrite leak #2
-- **D4:** Anti-RE wording rewrite leak #3
-- **D5:** Anti-RE wording rewrite leak #4
-- **D6:** `adherence.test.js` Thursday OFF day flake — REZOLVAT de la sine post date rollover (752/752 stable)
+| # | Decizie | Status final + rationale scurt |
+|---|---------|-------------------------------|
+| **D1** | DEVELOPING tier add or drop? | ✅ **ADD DEVELOPING** — 6 nivele canonical (COLD_START → INITIAL → DEVELOPING → PERSONALIZING → PERSONALIZED → OPTIMIZED). Sprint 4 implementation ~8-12h cod + tests + schema migration. Rationale Daniel: *"dezvoltam dupa ce terminam cu restul, de ce sa ne dam in cap dupa cu testari?"* — post-Sprint 3 full, zero-disruption sequencing. |
+| **D2-D4** | Anti-RE wording rewrite leak #1/#2/#3 | ✅ **DEFER Sprint 1.5** — wording rewrite tracked în Sprint 1.5 backlog (post-v1 launch, când beta useri 5+ produc real-world signal). |
+| **D5** | Anti-RE wording rewrite leak #4 | ✅ **Categorical only verdict** (NU numerical leak în any wording) — Sprint 1.5. |
+| **D6** | `adherence.test.js` Thursday OFF flake | ✅ **REZOLVAT** post date rollover (752/752 stable). |
+| **D7** | Stryker mutation testing `npm install` timing | ✅ **Stryker autonomous overnight Sonnet baseline + Daniel review** — NU blocks Sprint 4. Reviewer: Sonnet generates baseline, Daniel manual review escalates to Claude chat technical pe ambiguity. |
+| **D8** | Manual profiles 100 craft pace | ✅ **Sonnet generates JSON 5/sprint** — 5 manually-crafted anchor personas per sprint, algorithmic 450 fill-up restul (per ADR 017). |
+| **D9** | GDPR k-anonymity validation timing | ✅ **Post-100-real-users** (NU pre-launch mock — needs real distribution data per ADR 019). |
+| **D10** | `cc-reports/` în `.gitignore` line 16 | ✅ **REZOLVAT prin outbox migration schema** — folder DEPRECATED 30 apr, replaced de `📤_outbox/LATEST.md` + `_archive/<YYYY-MM>/NN_*.md` (per VAULT_RULES.md §3.3). |
+| **D11** | Auth provider strategy (Multi-tenant ADR) | ✅ **Magic Link primary + Google OAuth secondary** — Magic Link UX zero-friction (one-tap email link), Google for users care preferă SSO. |
+| **D12** | Anonymous accounts pre-launch (Daniel testing) | ✅ **2 anonymous accounts pre-launch (phone + PC)** + flag pre-Faza-1 manual merge timing — Daniel testează scenario reconciliation real (per ADR 021 §EC-5). |
+| **D13** | T&B Faza 2 strangler order (logs vs weights first) | ✅ **Logs first** — high-frequency write, blast radius low (data path frequent dar non-critical UX). Per ADR 021 §Implementation phasing Faza 2. |
+| **D14** | Branch conflict UI (BranchConflictModal) | ✅ **3 options + auto-resolve cronologic** — User vede 3 variante (A, B, MERGE) + auto-resolve cu last-modified timestamp dacă user nu alege în 30s (anti-friction). |
+| **D15** | Token refresh strategy (Multi-tenant Auth) | ✅ **Pre-expiry refresh 10min** + retry 401 cu single backoff — anti-spike server load + transparent UX (NU forced re-login mid-session). |
 
-### Sprint 2 — 3 decizii
-
-- **D7:** Stryker mutation testing `npm install` timing — Sprint 4 cu Golden Master full sau acum?
-- **D8:** Manual profiles 100 craft pace — incremental sau dedicated session?
-- **D9:** GDPR k-anonymity validation timing — pre-launch real data sau acum mock?
-
-### Sprint 3 partial — 6 decizii
-
-- **D10:** `cc-reports/` în `.gitignore` line 16 — păstrăm gitignore + force-add SAU scoate line 16?
-- **D11-D15:** Sprint 3 partial choices (T&B sync + Multi-tenant migration paths + Cloud Function GC + branch UI prompt UX + tombstone race conditions) — vezi raport detailed
+**Cross-ref canonical:** [[DECISION_LOG]] §2026-04-30 evening (full context Gemini Q10 BLIND SPOTS + F1 AA composite formula + amendments cascade).
 
 ---
 
@@ -265,7 +265,7 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 ### 7.2 Sistem inbox/outbox LIVE
 
 **`📥_inbox/`** — Daniel uploadează aici fișiere noi. Opus consumă + delete.
-**`📤_outbox/`** — Opus pune rapoarte numerotate cronologic 01, 02, ... Păstrează ultimele 5 (FIFO).
+**`📤_outbox/`** — schema activă (per VAULT_RULES.md §3.3): `LATEST.md` = 1 file activ vizibil top-level (Daniel paste-uiește în chat); existing LATEST.md → MOVE în `_archive/<YYYY-MM>/NN_<TASK>.md` la next CC run. Numerotare `NN` cronologic continuu (NU reset lunar, NU FIFO). `_archive/` = istoric infinit, intact, zero info loss.
 
 **Files la root:**
 - `VAULT_RULES.md` — reguli permanente (SSOT list, structura, protocol inbox/outbox)
@@ -419,7 +419,7 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 4. Daniel → paste comandă CC ready-made
 5. Opus → citește VAULT_RULES + 📥_inbox/, integrează în SSOT
 6. Opus → ȘTERGE 📥_inbox/* (consumat)
-7. Opus → scrie 📤_outbox/NN_TASK.md + cleanup FIFO (păstrează ultimele 5)
+7. Opus → MOVE existing 📤_outbox/LATEST.md → 📤_outbox/_archive/<YYYY-MM>/NN_<TASK>.md (cronologic continuu) + scrie raport nou ca 📤_outbox/LATEST.md
 8. Opus → commit + push
 9. Daniel → review raport, decide next
 ```
@@ -458,8 +458,8 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 
 - **Tests:** 752/752 passing
 - **HEAD origin/main:** post evening cleanup (multiple commits sesiune 30 apr evening)
-- **Vault docs:** 49 active + 6 cc-reports + README + VAULT_RULES + PROMPT_CC_HYGIENE
-- **Folder count:** 11 numerotate continuu (00-08) + cc-reports + 📥_inbox + 📤_outbox
+- **Vault docs:** 51 active (49 baseline post-cleanup + ADR 020 + ADR 021) + README + VAULT_RULES + PROMPT_CC_HYGIENE. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-14` (post-evening v3 audit). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
 
 ---
 
