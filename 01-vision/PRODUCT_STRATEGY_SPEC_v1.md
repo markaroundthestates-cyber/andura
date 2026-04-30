@@ -41,11 +41,11 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 **Schimbare vs pricing inițial:** -35% reduction (€100/an → €65/an).
 
 **Rationale schimbare:**
-- "SensAI for Android" positioning lock-uit ([[HANDOVER_GLOBAL_2026-04-30]] §2.1) — Android market gap evident, parity SensAI = no-brainer choice
-- AI = comoditate 2026, MOAT real = HOW we build pe 5 axe ([[HANDOVER_GLOBAL_2026-04-30]] §12)
+- "SensAI for Android" positioning lock-uit ([[HANDOVER_GLOBAL_2026-04-30_evening]] §2.1) — Android market gap evident, parity SensAI = no-brainer choice
+- AI = comoditate 2026, MOAT real = HOW we build pe 5 axe ([[HANDOVER_GLOBAL_2026-04-30_evening]] §10 + [[MOAT_STRATEGY]] §Competitor Comparison Matrix)
 - Math revenue: 15.4K users × €65/an = €1M/an target. Path realist Year 2-3.
 
-**Cross-ref:** [[HANDOVER_GLOBAL_2026-04-30]] §3 Pricing locked.
+**Cross-ref:** [[HANDOVER_GLOBAL_2026-04-30_evening]] §3 Pricing locked.
 
 ### 1.4 Free vs trial (AMENDED 2026-04-30)
 
@@ -66,7 +66,7 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 - **Android market: SensAI NU există**. Competitori = Fitbod ($95.99/an), JuggernautAI niche, Hevy logging, Arvo niche bodybuilding
 - **Zero Android competitor cu cognitive architecture full + wearable HRV decision-making + cross-pillar reasoning**
 
-**Differentiator real (5 axe execution per [[HANDOVER_GLOBAL_2026-04-30]] §12):**
+**Differentiator real (5 axe execution per [[HANDOVER_GLOBAL_2026-04-30_evening]] §10 + [[MOAT_STRATEGY]] §Competitor Comparison Matrix):**
 - **Viziune:** "Oricine poate, orice categorie, min friction"
 - **Aspect:** Bugatti craft visual, illustrations 3D anatomical, brand voice intelligence-respecting
 - **Funcționalitate:** 7 features distinctive integrate cognitive cross-pillar (NU bolted-on)
@@ -95,13 +95,13 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 2. Shadow Run (cognitive architecture parallel cu vechi)
 3. Bug fix + polish → Product Hunt global
 
-**Launch sequence post-velocity recalibration ([[HANDOVER_GLOBAL_2026-04-30]] §4.1, §6.7):**
+**Launch sequence post-velocity recalibration ([[HANDOVER_GLOBAL_2026-04-30_evening]] §4.1, §6.7):**
 - Pre-launch beta timeline: **2-4 luni realist** (vs 5-9 luni anterior estimat)
 - Beachhead v1: tech-lifter ICP first 100-500 users → Founding Members €60 lifetime evangheliști
 - v1.5+ expand: mainstream cu cash flow generated
 - v2+ global: marketing budget pentru ads + SEO + App Store optimization
 
-Cross-ref [[HANDOVER_GLOBAL_2026-04-30]] §1.2 Distribution + §6 Sprint 4 / Wave 6 backlog.
+Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint 4 / Wave 6 backlog.
 
 ### 1.9 Acquisition principal
 **Decizie:**

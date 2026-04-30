@@ -1,7 +1,7 @@
 # SALAFULL VAULT — INDEX MASTER
 
 **Last updated:** 2026-04-30 (post vault cleanup)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30]] — citește primul pentru context curent
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent
 **Stats:** 49 fișiere active vault (din 125 baseline pre-cleanup, -61%)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
@@ -17,7 +17,7 @@ salafull/
 ├── 03-decisions/    20 ADR-uri active (001-019 + ADR_MULTI_TENANT_AUTH) + DECISION_LOG (21 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
 ├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
-├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30 SSOT activ (1 file)
+├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file)
 ├── 07-meta/         CLAUDE_CODE_RULES (1 file)
 ├── 08-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
 ├── cc-reports/      Sprint reports + AUDIT_5000Q (5 files)
@@ -32,14 +32,14 @@ salafull/
 
 | Cauți | Citește |
 |-------|---------|
-| **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30]] |
-| **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30]] §6 |
-| **Pricing locked €60 lifetime / €65/an** | [[HANDOVER_GLOBAL_2026-04-30]] §3 + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 |
-| **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30]] §2.1 |
-| **5 axe differentiation (vs AI = comoditate)** | [[HANDOVER_GLOBAL_2026-04-30]] §12 |
-| **7 features distinctive (MOAT real)** | [[HANDOVER_GLOBAL_2026-04-30]] §2.2 |
-| **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §13 |
-| **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §14 |
+| **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] |
+| **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6 |
+| **Pricing locked €60 lifetime / €65/an** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §3 + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 |
+| **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.1 |
+| **5 axe differentiation (vs AI = comoditate)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §10 + [[MOAT_STRATEGY]] §Competitor Comparison Matrix |
+| **7 features distinctive (MOAT real)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.2 |
+| **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §11 |
+| **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §12 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
 | **ADR-uri active 001-019 + ADR_MULTI_TENANT_AUTH** | `03-decisions/` |
 | **Cognitive architecture engine** | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
@@ -96,7 +96,7 @@ salafull/
 ## SSOT PRINCIPLE LOCKS
 
 1. **Un document activ per topic.** Update-in-place > create-new-with-corrections.
-2. **HANDOVER_GLOBAL_2026-04-30** = SSOT activ pentru context curent. Înlocuiește toate handover-urile anterioare (mutate în git history).
+2. **HANDOVER_GLOBAL_2026-04-30_evening** = SSOT activ pentru context curent. Înlocuiește toate handover-urile anterioare (mutate în git history).
 3. **DECISION_LOG** = master cronologic. Toate deciziile arhitecturale + amendments aici.
 4. **FINDINGS_MASTER + INSIGHTS_BACKLOG** = single source pentru bugs tracking + deferred design.
 5. **`src/`, `tests/`, `scripts/`, `.claude/`, `.github/`, `.husky/`, `.obsidian/` = NU vault**, nu se atinge la cleanup vault.

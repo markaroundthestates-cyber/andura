@@ -1,6 +1,6 @@
 # FINDINGS MASTER TRACKER
 
-**See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[HANDOVER_GLOBAL_2026-04-30]]
+**See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[HANDOVER_GLOBAL_2026-04-30_evening]]
 
 **Ultima actualizare:** 27 apr 2026 (post TASK #7 friction modal HIGH + E2E fix + 2 fail-uri pre-existing flagged)
 **Total findings:** 130 unice (+2 din E2E pre-existing scan)
