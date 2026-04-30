@@ -8,7 +8,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Regression — Core app integrity', () => {
   test.beforeEach(async ({ page }) => {
     // Suppress AA friction modal — backdrop would intercept nav/theme clicks.
-    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+    // Suppress onboarding overlay — first-run overlay also intercepts clicks.
+    await page.addInitScript(() => {
+      window._suppressAAFrictionModal = true;
+      window._suppressOnboardingOverlay = true;
+    });
     await page.goto('/salafull/');
     await page.waitForLoadState('networkidle');
   });
@@ -38,7 +42,10 @@ test.describe('Regression — Core app integrity', () => {
 
 test.describe('Regression — Navigație', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+    await page.addInitScript(() => {
+      window._suppressAAFrictionModal = true;
+      window._suppressOnboardingOverlay = true;
+    });
     await page.goto('/salafull/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.nb', { timeout: 10000 });
@@ -92,7 +99,10 @@ test.describe('Regression — Navigație', () => {
 
 test.describe('Regression — Theme system', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+    await page.addInitScript(() => {
+      window._suppressAAFrictionModal = true;
+      window._suppressOnboardingOverlay = true;
+    });
     await page.goto('/salafull/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#theme-btn', { timeout: 10000 });
@@ -225,7 +235,10 @@ test.describe('Regression — Fonturi și rețea', () => {
 
 test.describe('Regression — Coach page elemente esențiale', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+    await page.addInitScript(() => {
+      window._suppressAAFrictionModal = true;
+      window._suppressOnboardingOverlay = true;
+    });
     await page.goto('/salafull/');
     await page.waitForLoadState('networkidle');
   });

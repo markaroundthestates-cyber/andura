@@ -15,11 +15,18 @@ export async function setupUser(page, userData) {
     // Default-suppress AA friction modal — tests targeting AA flow can opt in
     // via userData._suppressAAFrictionModal === false
     window._suppressAAFrictionModal = true;
+    // Default-suppress onboarding overlay — tests targeting onboarding can opt in
+    // via userData._suppressOnboardingOverlay === false
+    window._suppressOnboardingOverlay = true;
 
     Object.entries(data).forEach(([key, value]) => {
       if (key === '_suppressFirebaseSync') return; // handled above
       if (key === '_suppressAAFrictionModal') {
         window._suppressAAFrictionModal = !!value;
+        return;
+      }
+      if (key === '_suppressOnboardingOverlay') {
+        window._suppressOnboardingOverlay = !!value;
         return;
       }
       if (typeof value === 'object' && value !== null) {
@@ -40,5 +47,6 @@ export async function resetBetweenTests(page) {
     localStorage.clear();
     window._suppressFirebaseSync = true;
     window._suppressAAFrictionModal = true;
+    window._suppressOnboardingOverlay = true;
   });
 }

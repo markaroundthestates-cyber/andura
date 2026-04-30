@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Smoke tests', () => {
   test.beforeEach(async ({ page }) => {
-    // AA friction modal is suppressed for smoke tests so its backdrop never
-    // intercepts UI clicks (smoke isn't validating coach engine behaviour).
-    await page.addInitScript(() => { window._suppressAAFrictionModal = true; });
+    // AA friction modal + onboarding overlay are suppressed for smoke tests so
+    // their backdrops never intercept UI clicks (smoke isn't validating those flows).
+    await page.addInitScript(() => {
+      window._suppressAAFrictionModal = true;
+      window._suppressOnboardingOverlay = true;
+    });
   });
 
   test('app loads in under 5 seconds', async ({ page }) => {
