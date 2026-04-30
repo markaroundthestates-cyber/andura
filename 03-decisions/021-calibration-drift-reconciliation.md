@@ -195,11 +195,16 @@ on sync(branch_A, branch_B):
 
 ## Implementation phasing
 
-### Pre-Faza-2 T&B (Sprint 3 full bagaj — spec must be done)
+### Pre-Faza-2 T&B — Faza 1 algorithm core ✅ LIVE 2026-05-01
 
 - ADR 021 spec accepted (acest fișier).
-- Schema versioning bump (engine_tier + calibration_confidence + version_vector + observations).
-- Migration runner pre-fill `version_vector` pentru existing users (init = `{ <device_uuid>: 1 }`).
+- **Algorithm core:** `src/engine/calibrationReconciliation.js` — pure functions (`reconcile`, `bumpVersion`, `createInitialCalibrationState`, helpers). Zero side effects, idempotent, deterministic.
+- **Schema constants:** `CONFIDENCE_ORDER` (6 nivele canonical post D1) + `ENGINE_TIER_ORDER` (T0/T1/T2) + `ENGINE_TIER_THRESHOLDS` (per ADR 009 §AMENDMENT §Mapare boundaries).
+- **Tests:** 37 Golden Master tests covering EC-1..EC-6 + happy path + helpers + monotonic properties.
+- **Schema versioning bump:** **deferred Faza 2** — no existing CDL entries require migration (Faza 1 = new state object, not embedded in CDL). Migration runner pre-fill `version_vector` aplicat când persistence layer integrat în Faza 2.
+- **Persistence integration:** **deferred Faza 2** (D13 logs-first separate sprint). Faza 1 algorithm available pentru consumers care construct state ad-hoc.
+
+### Faza 2 T&B logs first (D13 routing — high-frequency write, blast radius low)
 
 ### Faza 2 T&B logs first (D13 routing — high-frequency write, blast radius low)
 
