@@ -6,6 +6,7 @@ import { updateExCard } from './logging.js';
 import { getCachedDirector, sessionCache } from './state.js';
 import { state } from '../../state.js';
 import { renderCoachIdle } from './renderIdle.js';
+import { t } from '../../i18n/index.js';
 
 export function showReadinessModal() {
   if (document.getElementById('readiness-modal')) return;
@@ -154,32 +155,58 @@ export function markOccupied(exerciseName) {
 }
 
 export function showWhyForExercise(exerciseName) {
-  import('../../engine/whyEngine.js').then(({ explainRecommendation }) => {
+  // Render modal in-app (NU `alert()` native — anti-RE: ZERO category leak +
+  // ZERO numerice exposure per i18n bundle why.categorical.* lock-uite).
+  import('../../engine/whyEngine.js').then(({ whySummary }) => {
     const session = getCachedDirector();
     const exercise = session?.exercises?.find(e => (e.name || '').toLowerCase() === exerciseName.toLowerCase());
+    const lastWeight = (() => {
+      try {
+        const logs = DB.get('logs') || [];
+        const exLogs = logs
+          .filter(l => (l.ex || '').toLowerCase() === exerciseName.toLowerCase() && !l.baseline)
+          .map(l => Number(l.w))
+          .filter(Number.isFinite);
+        return exLogs.length > 0 ? exLogs[exLogs.length - 1] : null;
+      } catch { return null; }
+    })();
     const ctx = {
-      readiness: { score: DB.get('readiness') ? (() => {
+      readiness: { score: (() => {
         try {
           const today = tod();
           const r = DB.get('readiness');
           return typeof r === 'object' ? (r[today]?.score ?? r[today] ?? null) : null;
         } catch { return null; }
-      })() : null },
+      })() },
       isInCut: (() => {
         const phase = DB.get('phase-override') || 'AUTO';
         return phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
       })(),
-      patterns: (() => {
-        const lvl = (getCachedDirector() || sessionCache?.get())?.calibrationLevel;
-        const _session = getCachedDirector() || sessionCache?.get();
-        return (lvl?.patternsEnabled !== false) ? (_session?.context?.patterns || []) : [];
-      })(),
       user: { phase: DB.get('phase-override') || 'AUTO' },
     };
-    const { summary, reasons } = explainRecommendation(exercise || { name: exerciseName }, ctx);
-    const lines = reasons.map(r => `[${r.category}] ${r.text}`).join('\n\n');
-    alert(`❓ De ce ${exerciseName}?\n\n${summary}\n\n${lines || '(Fără date suficiente pentru explicație detaliată)'}`);
+    const exerciseInput = exercise
+      ? { ...exercise, recommendation: { ...(exercise.recommendation || {}), lastWeight } }
+      : { name: exerciseName, recommendation: { lastWeight } };
+    const summary = whySummary(exerciseInput, ctx);
+    _renderWhyModal(exerciseName, summary);
   }).catch(() => {
-    alert(`❓ De ce ${exerciseName}?\n\n(WhyEngine indisponibil momentan)`);
+    _renderWhyModal(exerciseName, t('why.unavailable'));
   });
+}
+
+function _renderWhyModal(exerciseName, summary) {
+  const existing = document.getElementById('why-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'why-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:8000;display:flex;align-items:flex-end;justify-content:center';
+  const safeName = String(exerciseName).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
+  const safeSummary = String(summary).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
+  modal.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:24px 20px 32px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px">${t('why.title', { exercise: safeName })}</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:20px">${safeSummary}</div>
+    <button onclick="document.getElementById('why-modal').remove()" style="display:block;width:100%;background:var(--accent);border:none;border-radius:var(--rs);padding:12px;cursor:pointer;font-size:13px;color:var(--bg);font-weight:600;font-family:'DM Sans',sans-serif">${t('why.dismiss')}</button>
+  </div>`;
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
 }
