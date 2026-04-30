@@ -101,15 +101,17 @@ Zero code modificat în `src/` sau `tests/`. Per constraint Daniel run = docs-on
 | `db5c249` | fix(adr): ADR 020 §Tier 1 cross-ref phrasing precision |
 | `07a4232` | fix(vault): cc-reports paths sweep — ADR 019 + CLAUDE_CHAT_INFRASTRUCTURE + scripts/README |
 
-**Outbox commit (post-rotation):** pending — chore(outbox): rotate LATEST → archive 15 + audit fix apply report.
+**Outbox commit:** `4faee6d` — chore(outbox): rotate LATEST → archive 15 + audit fix apply report.
 
-**Pre-commit hook:** ✅ all 6 commits passed test suite (NU `--no-verify` necesar). +1 outbox commit pending.
+**Pre-commit hook:** ✅ all 7 commits passed test suite (NU `--no-verify` necesar).
 
 ---
 
-## Pushed: pending — final batch push origin/main
+## Pushed: ✅ origin/main (`518f0a5..4faee6d`)
 
-Will push all 6 fix commits + outbox rotation commit împreună la final.
+7 commits propagated remote:
+- 6 fix commits: `d147a7a` → `07a4232`
+- 1 outbox rotation: `4faee6d`
 
 Backup tag pushed pre-flight: ✅ `pre-audit-fix-2026-04-30` → `origin/pre-audit-fix-2026-04-30`
 
