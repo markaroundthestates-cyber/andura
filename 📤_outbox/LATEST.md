@@ -155,11 +155,11 @@ Zero regression. Zero code touched în engine/storage outside whyEngine.js (per 
 
 ### OUTBOX
 
-- `<sha-pending>` chore(outbox): rotate LATEST → archive 24 + i18n audit + extraction report
+- `fc922df` chore(outbox): rotate LATEST → archive 24 + i18n audit + extraction report
 
-## Pushed: ✅ origin/main (`abf93ff..6bbf14d`)
+## Pushed: ✅ origin/main (`abf93ff..fc922df`)
 
-6 commits propagated remote successfully. Outbox commit pending push.
+7 commits propagated remote successfully.
 
 Backup tag: `pre-i18n-audit-2026-05-01` (rollback safe).
 
