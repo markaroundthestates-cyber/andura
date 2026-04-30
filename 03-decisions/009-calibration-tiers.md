@@ -3,7 +3,7 @@
 **See also:** [[DECISION_LOG]] | [[CTX_ALLLOGS_AUDIT_1_5]] | [[ENGINE_ARCHITECTURE]] | [[003-double-progression-engine]]
 
 ## Status
-Accepted (amended 2026-04-30 — see §AMENDMENT 2026-04-30 below for SSOT clarification: this ADR's 5-level system is the **`calibration_confidence`** axis. The orthogonal **`engine_tier`** axis (T0/T1/T2 — voice weighting, Cognitive Arch R8/Q15) is a separate dimension)
+Accepted (amended 2026-04-30 — see §AMENDMENT 2026-04-30 below for SSOT clarification: this ADR's 5-level system is the **`calibration_confidence`** axis. The orthogonal **`engine_tier`** axis (T0/T1/T2 — voice weighting, Cognitive Arch R8/Q15) is a separate dimension. **D1 routing 2026-04-30 evening RESOLVED: ADD DEVELOPING tier → canonical 6-tier (COLD_START → INITIAL → DEVELOPING → PERSONALIZING → PERSONALIZED → OPTIMIZED). Sprint 4 implementation ~8-12h.** §Decision table below = active code 5-tier pre-D1; canonical post-D1 6-tier in §AMENDMENT §Migration Plan §Sprint 2 #1 RESOLVED block.)
 
 ## Context
 The coaching engine must work correctly for a brand-new user (0 sessions) as well as
@@ -162,15 +162,28 @@ SSOT-ul stabilește pattern-ul "axe ortogonale" ca extensibil. Future axes plaus
 
 Două decizii Sprint 2 needed:
 
-1. **DEVELOPING tier — add or remove?**
+1. **DEVELOPING tier — add or remove?** → ✅ **RESOLVED 2026-04-30 evening (D1 routing locked):**
 
-   **Discrepanță detectată:** handover SSOT (chat strategic 2026-04-29) listează 6 nivele cu DEVELOPING între INITIAL și PERSONALIZING. ADR 009 active code implementează 5 nivele fără DEVELOPING. Vezi §"Push-back / Issues found" în SPRINT1_EXECUTION_REPORT pentru detalii.
+   **Decision:** Option A — **ADD DEVELOPING tier** (între INITIAL și PERSONALIZING). Canonical 6-tier system post-D1.
 
-   Decizii viable:
-   - **Option A:** Add DEVELOPING tier (între INITIAL și PERSONALIZING). Boundaries propose: 14–60 zile / 6–24 sesiuni. Effort: ~8-12h cod + tests update. Justificare: more granularity on transition phase critical pentru AA detection calibration.
-   - **Option B:** Revise SSOT la 5 nivele (drop DEVELOPING from amendment). Effort: 0h. Justificare: existing system funcționează, DEVELOPING mai mult conceptual decât practic util.
+   **Rationale Daniel:** "dezvoltam dupa ce terminam cu restul, de ce sa ne dam in cap dupa cu testari?" — Sprint 4 implementation post-Sprint 3 full (T&B + Multi-tenant + Calibration Drift), zero-disruption to ongoing pre-launch work.
 
-   **Recommendation Co-CTO:** Option A justifiable doar dacă tier-ul DEVELOPING are utility distinct de INITIAL/PERSONALIZING (ex: AA detection thresholds diferite). Altfel YAGNI — Option B preferred pentru launch v1.
+   **Sprint timing:** **Sprint 4 implementation ~8-12h** cod + tests update + schema migration runner (ADR 018 §4 v_X→v_Y bump). Boundaries: 14–60 zile / 6–24 sesiuni (between INITIAL 7–28 / 3–12 and PERSONALIZING 28–90 / 12–40).
+
+   **Canonical 6-tier table (post-D1, target Sprint 4 implementation):**
+
+   | Level | ID | Days | Sessions | Patterns | Stagnation | Profile |
+   |-------|----|------|----------|----------|------------|---------|
+   | COLD_START | 0 | < 7 | < 3 | off | off | off |
+   | INITIAL | 1 | 7–28 | 3–12 | high (≥70%) | off | off |
+   | **DEVELOPING** | **2** | **14–60** | **6–24** | **high (≥65%)** | **off** | **off** |
+   | PERSONALIZING | 3 | 28–90 | 12–40 | med (≥60%) | on | off |
+   | PERSONALIZED | 4 | 90–180 | 40–80 | std (≥50%) | on | on |
+   | OPTIMIZED | 5 | 180+ | 80+ | low (≥45%) | on | on |
+
+   **Cross-refs canonical:** [[DECISION_LOG]] §2026-04-30 evening D1 + [[HANDOVER_GLOBAL_2026-04-30_evening]] §5 D1 + [[021-calibration-drift-reconciliation]] §Decision SSOT (referențiază 6 nivele ordering enum max-merge).
+
+   **Status active code:** §Decision tabel (lines 24-30 of original §Decision section) reflects 5-tier ID 0-4 active code pre-D1. **Sprint 4 task** = code refactor ID renumber (DEVELOPING=2, PERSONALIZING=3, PERSONALIZED=4, OPTIMIZED=5) + schema migration runner pentru existing users (auto-bucket per session_count + days threshold).
 
 2. **Code refactor renaming — when?**
 
@@ -200,7 +213,7 @@ Per HANDOVER 2026-04-29 §2 (Bayesian Nutrition) + §1 (Sleep inference): adăug
 
 - **Documentation surface area** crește (orice nouă axă = update cross-references multiple).
 - **Code refactor cost deferred.** Sprint 2 va necesita migration runner + tests update — Sprint 1 nu rezolvă cost-ul, doar documentează.
-- **Discrepanță DEVELOPING** rămâne open Sprint 2 decision.
+- ~~**Discrepanță DEVELOPING** rămâne open Sprint 2 decision.~~ → **RESOLVED 2026-04-30 evening (D1 routing):** ADD DEVELOPING (Option A) = 6 nivele canonical. Sprint 4 implementation ~8-12h. Vezi §Migration Plan §Sprint 2 #1 RESOLVED block above + [[DECISION_LOG]] §2026-04-30 evening D1.
 
 #### Risks
 
