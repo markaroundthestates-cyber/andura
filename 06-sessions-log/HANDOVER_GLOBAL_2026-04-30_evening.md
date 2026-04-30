@@ -1,8 +1,8 @@
-# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-04-30 evening v2
+# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-01 morning
 
 **Owner:** Daniel (CEO + Product). Claude = Co-CTO + Reviewer.
 **Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`.
-**Data:** 2026-04-30 evening v2 (post Sprint 4 ADR 020 Phase 1 + governance hardening + memory consolidation).
+**Data:** 2026-05-01 morning (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + 4 wording categorii lock + 4 findings noi flag-uite).
 
 ---
 
@@ -14,6 +14,9 @@
 - Sprint 1+2+3 partial deliverables
 - D1-D15 decizii LOCKED (15/15 RESOLVED)
 - Sprint 4 / Wave 6 backlog complet
+- Sprint 4 A+B LIVE prod (boot wire + ADR 021 Faza 1 algorithm)
+- i18n infrastructure LIVE post-audit (whyEngine rewrite cu 4 categorical lock + alert→modal anti-RE compliance)
+- 4 findings noi 2026-05-01 (F-NEW-1..F-NEW-4) flag-uite separate priorities
 - Memory persistent state (consolidat 30→17 reguli evening v2)
 - Vault cleanup state final (sesiune 30 apr evening)
 - Sistem inbox/outbox live
@@ -21,6 +24,10 @@
 - §16 ADR 020 Storage Tiering Phase 1 implementation notes
 - §17 Governance hardening (§HANDOVER_PROTOCOL + §7 DIFF + §8 Destructive Ops)
 - §18 Inbox strict Daniel — bug fix evening v2
+- §19 Sprint 4 A+B Implementation Notes
+- §20 i18n Decision B Locked + Audit Completed
+- §21 Wording Categorical "De ce?" Locked + Anti-RE Absolute Reaffirmed
+- §22 Findings Noi 2026-05-01 (F-NEW-1..F-NEW-4)
 
 **Pentru chat nou:** citește acest fișier + `VAULT_RULES.md` (root) + `PROMPT_CC_HYGIENE.md` (root). Restul context = Project Knowledge GitHub.
 
@@ -259,6 +266,16 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **Wire `initAutoBackup()` în app boot** = ~30 min Sprint 4.x **mandatory pre-launch** (altfel rotation NU rulează — Tier 0 acumulează indefinit, PWA crash silent risk reapare).
 - **ADR 021 Calibration Drift** = next priority Sprint 3 full (~8-12h trad / ~3-5h velocity Opus). Pre-Faza-2 T&B prerequisite.
 
+### Status update 2026-05-01 morning (post Sprint 4 A+B + i18n audit)
+
+- **Sprint 4 A wire LIVE prod** — `runMigrations()` + `initAutoBackup()` wired în `src/main.js` `init()` cu graceful degradation. `src/bootstrap.js` testable wrappers extracted. `window.__forceRotation()` dev helper. Smoke test prod **PASS funcțional** (IndexedDB lazy-create OK, persistence OK, init logs ordered, rotation `{rotated: 0, perKey: [3 stores], errors: []}`).
+- **Sprint 4 B ADR 021 Faza 1 LIVE** — algorithm core pure (`src/engine/calibrationReconciliation.js` ~280 LOC) + 37 tests EC-1..EC-6 mandatory. Faza 2 persistence + integration deferred (post coachContext.buildContext async refactor + LWW decommission timeline).
+- **D6 adherence flake permanent fixed** (UTC vs local date misalignment — `toLocaleDateString('sv')` switch).
+- **i18n infrastructure LIVE post-audit** — `src/i18n/index.js` `t(key, vars?)` helper + RO/EN bundles + 23 tests. `whyEngine.js` rewritten cu 4 verdict-based categorical wording-uri lock-uite (anti-RE absolute, ZERO leak `[category]` codes, ZERO numerice). `modals.js` `alert()` browser native → modal in-app DOM cu i18n.
+- **Smoke test prod descoperă 4 findings noi user-facing breach** — vezi §22 (F-NEW-1..F-NEW-4): exercise names EN, progression scaling tier-aware, hyperreactive coach cooldown, plan ajustat banner percentage leak.
+- **Tests:** 854 → **888 PASS** (+34: 23 i18n + 22 whyEngine - 11 legacy whyEngine).
+- **Phase 5 i18n bulk replace DEFERRED** — 238 strings remaining = audit raport input pentru Daniel chat strategic wording rewrite session. NU bulk replace în run autonomous.
+
 ---
 
 ## 7. VAULT STATE FINAL (post sesiune 30 apr evening)
@@ -453,6 +470,10 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 
 **Cross-refs:** `PROMPT_CC_HYGIENE.md` §7 + §8, `VAULT_RULES.md` §HANDOVER_PROTOCOL.
 
+### Velocity reinforced 2026-05-01 morning
+
+Sprint 4 A+B realizat ~25 min Opus comprehensive (estimate trad ~10-15h, velocity **24-36×**). i18n audit + infrastructure + whyEngine rewrite + 23+22 tests + alert→modal replacement = ~30 min Opus comprehensive (estimate trad ~6-8h, velocity ~12-16×). Bandwidth budgeting Daniel-time = real × 3 confirmed pe foundation work bine speciat. Memory rule reinforced: estimate-uri developer ÷ 10-15 pentru Opus comprehensive runs cu spec clear.
+
 ---
 
 ## 14. NEXT STEPS — POST HANDOVER
@@ -460,37 +481,54 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 ### Imediat (chat nou după validare aliniere)
 
 1. **Verify alignment questions** ≥12/15 (chat nou citește `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
-2. **ADR 021 Calibration Drift implementation** (Sprint 3 full, ~8-12h trad / ~3-5h velocity Opus). Pre-Faza-2 T&B prerequisite.
-3. **Wire `initAutoBackup()` în app boot** — Sprint 4.x **mandatory pre-launch** (~30 min Opus). Fără asta, ADR 020 rotation NU rulează → PWA crash silent risk reapare la launch.
+2. **Daniel atașează raport CC i18n audit** (din `📤_outbox/_archive/2026-04/` LATEST.md previous post audit run — `24_SPRINT_4_A_B_BOOT_WIRE_ADR021_RECONCILIATION_RAPORT.md` + i18n raport în current LATEST anterior)
+3. **Wording rewrite session** chat strategic — Daniel review listă completă strings extracted din audit Opus (~238 strings remaining post Phase 1-4), decide:
+   - Wording-uri auto-puse în `ro.json` (4 lock + restul) — accept sau rescrie
+   - EN translations strategy (Daniel scrie sau Sonnet asistă?)
+   - Exercise names mapping F-NEW-1 (auto vs review fiecare?)
+   - Phased approach: Phase A toasts/confirms (~36 strings, quick wins) / Phase B engine messaging (~70 strings, domain expertise) / Phase C page labels (~80 strings, bulk batch)
 
-### Medium term (Sprint 4)
+### Medium term (Sprint 4.x)
 
-4. Phase 2 logs rotation (engine async refactor `coachContext.buildContext` + `getTieredLogs()` integration)
-5. Storage Full UX alert design — Sprint 4.1 Daniel review wording (anti-paternalist per ADR 013 patterns)
-6. D1 DEVELOPING tier code refactor (~8-12h Sprint 4 implementation, schema migration runner ID renumber 0-4 → 0-5)
-7. Sprint 4 / Wave 6 execution (12-22h Opus realist) — 4 SensAI + 4 JuggernautAI + Chalkboard + Feedback
-8. Beta tester recruitment plan (Reddit/Discord/balene)
-9. iPhone test device acquisition (€100-200 second-hand) — pentru v1.x
+4. **F-NEW-3 hyperreactive coach** cooldown trigger logic (Daniel decide threshold: A=1 mod/24h triggers + 3+ silent, B=cooldown per trigger type, C=combined global+per-type cap)
+5. **F-NEW-2 progression scaling tier-aware** verify `progressionEngine.js` respectă `ctx.engine_tier`/`calibration_confidence` pentru advanced users (+0.5kg micro-loading vs +2.5kg uniform)
+6. **F-NEW-4 Plan ajustat banner** wording rewrite (parte din i18n audit Phase B + sesiune wording — categorical, anti-paternalism, zero numerice)
+7. **Faza 2 ADR 021 integration** (post coachContext.buildContext async refactor + persistence layer design + LWW decommission timeline)
+8. **Phase 2 logs rotation** (Sprint 4.x — async refactor + add logs la ROTATABLE_KEYS + getTieredLogs integration în engines)
+9. **D1 DEVELOPING tier code refactor** (~8-12h Sprint 4 — schema migration runner ID renumber + add DEVELOPING level la `CALIBRATION_LEVELS` 0-4 → 0-5)
+10. **Storage Full UX alert design** — Sprint 4.1 Daniel review wording (anti-paternalist per ADR 013 patterns)
 
 ### Long term (v1.5+)
 
-10. Equipment ID via photo
-11. Apple HealthKit integration full
-12. Mainstream expand cu cash flow Founding Members
+11. **Sprint 4 / Wave 6 execution** (12-22h Opus realist) — 4 SensAI + 4 JuggernautAI + Chalkboard + Feedback
+12. **Beta tester recruitment plan** (Reddit/Discord/balene)
+13. **iPhone test device acquisition** (€100-200 second-hand) — pentru v1.x
+14. **Equipment ID via photo** (Multi-Gym integration v1.5)
+15. **Apple HealthKit integration full** (v1.x cu test device)
+16. **Mainstream expand cu cash flow** Founding Members + early Pro
 
 ### Pre-launch v1 readiness state
 
-ADR 020 Phase 1 ✅ LIVE → PWA crash silent prevented pentru CDL + applied-patterns. Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni user history.
+ADR 020 Phase 1 ✅ LIVE prod (smoke test pass). ADR 021 Faza 1 ✅ LIVE algorithm core. i18n infrastructure LIVE + whyEngine rewritten cu wording lock + alert→modal compliance.
+
+**Anti-RE breach descoperit prin smoke test = i18n audit + wording rewrite priority maxim ÎNAINTE D1 DEVELOPING + Phase 2 logs.** Sense check: ce sens are tier refactor când user vede `[pattern] STAGNATION` în chat banner.
+
+Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni user history.
 
 ---
 
 ## 15. TESTS & GIT STATE FINAL
 
-- **Tests:** **804/804 PASS** (752 baseline + 52 storage tests ADR 020 Phase 1 în `src/storage/__tests__/`)
-- **HEAD origin/main:** post hardening run (commit `ecfa01f` + post-ingest evening v2 commits — see report `LATEST.md`)
-- **Vault docs:** **52 active** (51 baseline post-evening v1 + PROMPT_CC_HYGIENE.md hardened cu §7 + §8) + README + VAULT_RULES. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-20` (post-evening v2 + ADR 020 impl + governance hardening). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat)
+- **HEAD origin/main:** post i18n audit run + handover ingest pending (see report `LATEST.md`)
+- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-26` (post evening v2 + Sprint 4 A+B + i18n audit + handover ingest morning). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
 - **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
-- **Backup tags origin:** `pre-adr-020-impl` (ADR 020 rollback), `pre-handover-ingest-2026-04-30-evening-v2` (handover ingest rollback).
+- **Backup tags origin:**
+  - `pre-adr-020-impl` (ADR 020 rollback)
+  - `pre-handover-ingest-2026-04-30-evening-v2` (evening v2 ingest rollback)
+  - `pre-sprint4-a-b-2026-04-30` (Sprint 4 A+B rollback)
+  - `pre-i18n-audit-2026-05-01` (i18n audit rollback)
+  - `pre-handover-ingest-2026-05-01-morning` (morning ingest rollback)
 
 ---
 
@@ -572,9 +610,150 @@ ADR 020 Phase 1 ✅ LIVE → PWA crash silent prevented pentru CDL + applied-pat
 
 ---
 
+## 19. SPRINT 4 A+B IMPLEMENTATION NOTES
+
+**Status:** LIVE 2026-05-01 morning.
+
+### TASK A — Boot wire
+
+- `src/bootstrap.js` (62 LOC NEW): wrappers testable `runBootMigrations`, `startTierRotation`, `exposeForceRotationHelper`. Graceful degradation per ADR 018 §4 — never throws.
+- `src/main.js` `init()` ordering updated: migrations BEFORE Firebase sync, rotation AFTER (per spec). `window.__forceRotation` dev helper exposed pentru post-deploy smoke test.
+- `src/engine/__tests__/adherence.test.js` D6 fix permanent (UTC → local date `toLocaleDateString('sv')`).
+- 13 tests new (`src/__tests__/bootstrap.test.js`).
+
+### TASK B — ADR 021 Faza 1
+
+- `src/engine/calibrationReconciliation.js` (~280 LOC NEW): pure algorithm — Schema constants (`CONFIDENCE_ORDER` 6 nivele post D1 + `ENGINE_TIER_ORDER` T0/T1/T2 + thresholds), `createInitialCalibrationState`, `computeEngineTier` (Max Wins Monotonic), `maxConfidence` (Monotonic Clock), `mergeVersionVector` (element-wise MAX), `mergeObservations` (union, monotonic — yo_yo OR, AA dedupe, counters MAX), `reconcile(branchA, branchB, opts)`, `bumpVersion`.
+- 37 tests EC-1..EC-6 mandatory + Schema validation + helpers + reconcile happy path + idempotency.
+- ADR 021 §Pre-Faza-2 marked **✅ LIVE 2026-05-01**. Faza 2 persistence + integration deferred.
+
+### Faza 1 vs Faza 2 boundary clarification
+
+Algorithm pure + tests în Faza 1. NU integrate VV tracking în `calibration.js` activ — premature pre-D1 DEVELOPING refactor (5→6 tier mapping incomplete). Documentation inline JSDoc + ADR 021 §Implementation phasing updated.
+
+### Smoke test prod ADR 020 Phase 1 (2026-05-01 morning)
+
+- ✅ `window.__forceRotation()` works, `{rotated: 0, perKey: [3 stores], errors: []}`
+- ✅ IndexedDB lazy-create OK, persistence OK, init logs ordered
+- ❌ `alert()` browser native cu rationale codes raw descoperit la "❓ De ce?" — i18n audit + whyEngine rewrite priority (✅ FIXED post audit run, vezi §20-21)
+- ❌ Plan ajustat banner percentage leak — F-NEW-4 flagged separate (vezi §22)
+- ❌ Hyperreactive coach observat — F-NEW-3 flagged separate (vezi §22)
+
+**Cross-refs:** [[021-calibration-drift-reconciliation]] §Pre-Faza-2 LIVE marker + ADR 020 §Wire integration + §15 Tests state.
+
+---
+
+## 20. I18N DECISION B LOCKED + AUDIT COMPLETED
+
+**Status:** Decision locked + audit COMPLETED 2026-05-01 morning. Infrastructure LIVE + critical anti-RE fix LIVE. Phase 5 bulk replace DEFERRED pentru Daniel chat strategic wording rewrite session.
+
+### Decizie arhitecturală
+
+ÎNAINTE wording rewrite, extract TOATE user-facing strings în i18n bundle JSON decoupled. Spec lock-uit ([[PRODUCT_STRATEGY_SPEC_v1]] §i18n + [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q5: "Hardcoded enums în Arbitrator + JSON i18n bundle în Frontend") finally honored la nivel implementation.
+
+### Implementation LIVE (Phase 1-4)
+
+- **`src/i18n/index.js`** (135 LOC): `t(key, vars?)` helper + `getCurrentLocale()` + `setLocale()` + lazy JSON imports + var interpolation `{name}` + fallback chain (locale → EN → key)
+- **`src/i18n/ro.json`**: bundles initial cu `why.categorical.*` (4 wording-uri lock-uite) + `modals.*` + `common.*`
+- **`src/i18n/en.json`**: identical structure cu `TODO_EN: <RO content>` markers (Daniel completează manual)
+- **`src/i18n/__tests__/i18n.test.js`** (23 tests): t() + locale + bundle integrity (RO/EN identical keys verified)
+- **`src/engine/whyEngine.js`** rewritten: `selectVerdict(rec, ctx)` priority ladder + `t('why.categorical.<verdict>')`. Legacy `[category]` raw codes ELIMINATED, numeric leaks ELIMINATED.
+- **`src/pages/coach/modals.js`** `showWhyForExercise`: `alert()` browser native → `_renderWhyModal()` in-app DOM modal cu i18n title + dismiss + summary single string + XSS-safe HTML escape.
+- **22 whyEngine tests** rewritten covering verdict logic + zero leak verification.
+
+### Audit findings statistics
+
+- **251 user-facing string candidates** detected (Romanian chars în quotes, excl comments)
+- **Post-Phase-1-4 remaining:** 238 strings across ~25 files
+- **Threshold STOP @ 300:** ✅ NU triggered
+- **Top files:** dashboard.js (45), weight.js (23), dp.js (13), modals.js (12 remaining), sys.js (12), readiness.js (11), plan.js (10), onboarding.js (9), proactiveEngine.js (9), renderIdle.js (8), plateauInterventions.js (8), fatigue.js (8), reality.js (7), calibration.js (7)
+- **Categories:** ~25 toasts + 8 confirms + 3 alerts + ~30 modal titles + ~20 banners + ~80 page labels + ~70 engine messaging + 9 onboarding + 6 verdicts + 4 skip reasons + 7 day names + 12 exercise alternatives reasons
+
+### Phase 5 bulk replace — DEFERRED pentru wording rewrite session
+
+Strategic decision: 238 strings = high replacement effort cu mixed wording quality + risk în 25 fragile UI files. Documented full inventory în raport audit pentru Daniel chat strategic decision (Phase A toasts/confirms ~36 quick wins, Phase B engine messaging ~70 cu domain expertise, Phase C page labels ~80 bulk batch).
+
+**Cross-refs:** [[PRODUCT_STRATEGY_SPEC_v1]] §i18n + [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q5 + raport audit `📤_outbox/_archive/2026-04/<NN>_*_RAPORT.md` (post-rotation NN).
+
+---
+
+## 21. WORDING CATEGORICAL "DE CE?" LOCKED + ANTI-RE ABSOLUTE REAFFIRMED
+
+**Status:** Wording 4 categorii LOCKED 2026-05-01 morning + LIVE în `ro.json` (i18n audit run completat).
+
+### Context
+
+Smoke test prod a expus `alert()` browser native cu format `[phase] Ești în faza CUT...`, `[readiness] Readiness scăzut (3)...`, `[pattern] Pattern detectat: STAGNATION` — catastrofic UX + anti-RE breach. `whyEngine.js` rewrite priority maxim **DONE** post-audit.
+
+### 4 categorii verdict-based
+
+| Verdict | Trigger logic | Wording lock |
+|---------|---------------|--------------|
+| Up | `rec.kg > lastWeight` | "Creștem greutatea la {exercise} pentru că ai progresat constant în ultimele săptămâni. Noua țintă e adaptată astfel încât să menținem ritmul, fără să sacrificăm forma." |
+| Down | `rec.kg < lastWeight` | "Reducem puțin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas în spate e necesar pentru a debloca următorul salt în forță. Rămânem pe poziții!" |
+| Hold | default fallback | "Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă înainte de următoarea creștere." |
+| Recovery | `ctx.readiness.score < READINESS_MED` (override toate celelalte) | "Reducem volumul la {exercise} pentru că semnele de oboseală sunt prezente. E mai inteligent să te refaci azi, ca să revii cu forțe proaspete la antrenamentul următor." |
+
+### Constraints
+
+- ZERO leak: niciun `[phase]/[readiness]/[pattern]/[category]`
+- ZERO numerice: `score`, `kg`, `RPE`, percentages NU apar user-facing
+- Single message per verdict (NU array de reasons cu categorii multiple)
+- Reframing pozitiv (NU "nu ai progresat" — "deblocare" + "consolidare" + "antrenamentul următor")
+- Variație finală (anti-repetiție wallpaper)
+- Exercise name interpolation prin `{exercise}` placeholder (i18n vars)
+
+### Anti-RE strategy reaffirmed ABSOLUTE
+
+Categorical verdict only user-facing. Engine internals (signal codes, phase enum, readiness numerical, pattern types) ASCUNSE indiferent de tier. Cross-tier consistency = single source of truth: `ro.json` `why.categorical.*` lock-uit.
+
+**Cross-refs:** ADR 013 §Anti-RE strategy + [[PRODUCT_STRATEGY_SPEC_v1]] §wording + §6 Open Items D2-D5 Sprint 1.5 wording rewrite (categorical only) + i18n audit raport.
+
+---
+
+## 22. FINDINGS NOI 2026-05-01 (F-NEW-1 până la F-NEW-4)
+
+**Status:** Flag-uite 2026-05-01 morning, NU fix imediat (separate priorities post i18n audit). Daniel review post-handover pentru sequencing.
+
+### F-NEW-1 — i18n exerciții RO
+
+- **Issue:** exercise names hardcoded EN (Lateral Raises, Lat Pulldown, etc.). Gigel non-tech RO nu citește engleza.
+- **Fix:** mapping EN→RO în `src/i18n/ro.json` `exercises.*` namespace + `t('exercises.<id>')` în UI display layer.
+- **Owner:** chat strategic wording rewrite session post-audit.
+- **Priority:** HIGH (user-facing, RO target market). Acceptable EN technical names în industry-standard cazuri (Lat Pulldown, Cable Row, Romanian Deadlift) — Daniel decide caz-by-caz.
+
+### F-NEW-2 — Progression scaling pe `experience_tier`
+
+- **Issue:** incremente weight uniform în `progressionEngine` (suspected). Advanced 30 ani sală ≠ +2.5kg pe izolări vs Beginner. ADR 009 calibration tiers spec deja PERSONALIZED/OPTIMIZED scaling, DAR implementation posibil hardcoded uniform.
+- **Fix:** verify `progressionEngine.js` (sau echivalent) respectă `ctx.engine_tier` / `ctx.calibration_confidence` pentru increment scaling. Audit + tests pentru tier-aware scaling.
+- **Owner:** Sprint 4.x backlog post i18n.
+- **Priority:** HIGH (advanced users core MOAT — Bugatti-grade progression accuracy).
+
+### F-NEW-3 — Hyperreactive coach (zero cooldown)
+
+- **Issue:** schimbare phase auto→cut + lipsă aparat = "plan ajustat" la fiecare modificare. User normal modifică plan rutinier → primește alarme la fiecare click → trust erosion + alarm fatigue în 3 secunde.
+- **Fix:** cooldown trigger logic configurable. Acceptable threshold TBD Daniel decision:
+  - **Option A:** 1 modificare în 24h triggerează banner, 3+ silent (anti-spam)
+  - **Option B:** cooldown pe trigger type (phase change OK once/24h, equipment unavailable rate-limited)
+  - **Option C:** combined — global cap + per-trigger-type cap
+- **Owner:** Sprint 4.x backlog post i18n + Daniel decision threshold.
+- **Priority:** HIGH (Gigel test fail — trust erosion immediate).
+
+### F-NEW-4 — Plan ajustat banner wording rewrite
+
+- **Issue:** percentage leak ("Plan redus 30% astăzi pentru recovery") + paternalist override ("Override (înțeleg riscurile)") + numerice raw ("Adherence scăzută: 0%", "Deviation crescut: 100%").
+- **Fix:** wording rewrite categorical, anti-paternalism wording (NU "înțeleg riscurile" force-typing), zero numerice user-facing.
+- **Owner:** i18n audit Phase B + sesiune wording rewrite Daniel review.
+- **Priority:** HIGH (visible în prod, anti-RE breach).
+- **Cross-ref:** D2-D5 Sprint 1.5 backlog (deja flag-uit, acum confirm prod-visible).
+
+**Cross-refs:** §6 Open Items + ADR 013 §Anti-RE + i18n audit raport `📤_outbox/_archive/2026-04/<NN>_*_RAPORT.md` + §20 i18n decision B locked.
+
+---
+
 🦫 **SSOT activ. Update-in-place. VS Code only. Single tool, single doc per topic.**
 
-**Velocity beast confirmed: 17× faster (foundation work bine speciat ~30-50× pe ADR 020 Phase 1).**
+**Velocity beast confirmed: foundation work bine speciat ~24-36× (Sprint 4 A+B = 25 min Opus comprehensive pe estimate 10-15h).**
 
 **"SensAI for Android" + €65/an parity + 7 features unique = positioning final.**
 
@@ -584,4 +763,4 @@ ADR 020 Phase 1 ✅ LIVE → PWA crash silent prevented pentru CDL + applied-pat
 
 **Sistem 📥_inbox/📤_outbox live. VAULT_RULES authoritative. Daniel zero memory load.**
 
-**Sesiune evening v2 LOCK. ADR 020 Phase 1 LIVE. Governance hardening anti-slip codificat. Memory consolidat 17 reguli MANDATORY. 804/804 stable.**
+**Sesiune 2026-05-01 morning LOCK. Sprint 4 A+B LIVE prod (smoke test pass). i18n infrastructure + whyEngine rewrite + alert→modal LIVE. Anti-RE breach FIXED critical paths. 4 wording categorii lock + 4 findings noi (F-NEW-1..4) flag-uite. 888/888 stable. Bandwidth Daniel ~30% — chat strategic wording rewrite next priority.**
