@@ -352,3 +352,50 @@ Acestea NU intră în ADR (principle), intră în spec implementabil + UX iterat
 ---
 
 *ADR 013 — Accepted 2026-04-26 după review Daniel. Open questions rezolvate ca log decizie. Status: ready pentru spec EXEC_QUEUE.*
+
+---
+
+## AMENDMENT 2026-04-30 evening — Composite formula no-double-penalize
+
+**Trigger:** Gemini 3 Pro cross-check 2026-04-30 evening §F1 push-back consolidare AA signals 4+5 ("Recovery Non-Compliance") rejected, dar **counter-point implementation accepted**.
+
+**Observație Gemini valid:**
+
+Signals 4 (Ignore recovery in-session — composite fatigue ≥ 2 markers/săpt + zero early-stops + continue volume) + 5 (Recovery debt cronic — <2 rest days/săpt for 3+ săpt consecutive) au **suprapunere reală** la nivel root cause: same comportament "user skip recovery day" poate activa ambele simultan.
+
+**Risk identificat:**
+
+Composite score AA tier computation (LOW/MED/HIGH thresholds) poate **dublu-penaliza** user pentru same underlying behavior. Exemplu concret:
+
+- Săpt N: user skip rest day (Sun) → activ 7/7 zile.
+- Signal 4 trigger: Composite fatigue 2/3 markers + zero early-stops + continue volume = active.
+- Signal 5 trigger: <2 rest days/săpt streak counter increment.
+- Composite count: 2 signals active pentru aceeași root cause = MED tier (2-3 signals în 2 săpt) la o singură săptămână problematică.
+- **Anti-target:** user adultă cu push planificat pe 1 săpt primește MED tier banner = false positive teatrală.
+
+**Decision Daniel + Claude (NOT a re-design, implementation detail):**
+
+La Sprint 4 implementation engine (`src/engine/autoAggressionDetection.js` per Implementation Notes original), composite formula MUST include **explicit cross-signal de-duplication** când signals 4 + 5 share same trigger event:
+
+- **Trigger event** = "skip recovery day" detectat în săpt N.
+- Dacă signals 4 + 5 ambele se activează în săpt N **din cauza same trigger** → count ca **1 signal** în composite tier computation (NU 2).
+- **Implementation flag:** detection layer expune `signal_4.trigger_signature` + `signal_5.trigger_signature` (e.g., `{ type: "skipped_recovery_day", week: "2026-W18" }`); composite tier function compară signatures, dedupe.
+
+**NU consolidare signals 4+5 în "Recovery Non-Compliance"** (Gemini sugestie respinsă):
+
+- **Rationale respingere:** granularitatea AA messaging anti-RE = critică pentru user clarity.
+- **Banner LOW/MED tier separat per signal:** "Ignori oboseală" (signal 4) ≠ "Skip rest days" (signal 5) — mesaje diferite, fix-uri diferite.
+- **Consolidare = verdict generic** ("Recovery Non-Compliance") = anti-MOAT (user nu știe ce să facă concret).
+- ADR 013 §1 Detection signals lock-uit: 5 signals separate preserved.
+
+**Implementation flag Sprint 4:**
+
+- ADR 013 detail review + tests cross-signal scenarios.
+- Test cases mandatory:
+  - User skip 1 rest day într-o săpt → signals 4 + 5 ambele active → composite count 1 → LOW tier (NU MED).
+  - User skip rest day 3 săpt consecutive + add volume after rating ≤2 (signal 1) → composite 2 distincte (signal 5 + signal 1) → MED tier legitimă.
+  - User compositie multi-trigger (skip rest + volume creep + frustration) → signals dedupe per trigger, NU per signal index.
+
+**Reconsideration trigger:** dacă post-50 users empiric data arată că de-duplication produce false negatives (miss real auto-aggression), revisit dedupe heuristic granularity.
+
+**Cross-refs:** Gemini 3 Pro cross-check 2026-04-30 evening §F1 + HANDOVER_GLOBAL_2026-04-30_evening §6.7 (effort estimate ~2-3h Sprint 4) + DECISION_LOG 2026-04-30 evening entry.
