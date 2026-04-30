@@ -11,7 +11,9 @@ vi.mock('../../util/coachDecisionLog.js', () => ({
   readAllActive: mockReadAllActive,
 }));
 
-const today = new Date().toISOString().slice(0, 10);
+// Local date (YYYY-MM-DD) — matches `tod()` in src/db.js. Avoids UTC/local
+// rollover flake (D6 — would fail when local crosses midnight before UTC).
+const today = new Date().toLocaleDateString('sv');
 
 function setLogs(logs) {
   localStorage.setItem('logs', JSON.stringify(logs));
