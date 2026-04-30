@@ -40,7 +40,7 @@ GITHUB REPO (private)
   - src/, tests/
   - 00-index, 01-vision, 02-audit, 03-decisions, 04-architecture
   - 05-findings-tracker, 06-sessions-log, 07-meta
-  - 08-workflows (this file lives here), cc-reports
+  - 08-workflows (this file lives here), 📥_inbox, 📤_outbox
 
          |
          | GitHub Integration connector

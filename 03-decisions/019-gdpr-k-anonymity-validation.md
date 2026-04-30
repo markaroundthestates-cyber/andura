@@ -72,7 +72,7 @@ k=5 = **EU GDPR Working Party recommendation** pentru pseudonymized health data 
    node scripts/gdpr_k_anonymity_check.js \
      --dataset path/to/arbitration_log.json \
      --k 5 \
-     --output cc-reports/gdpr_k_anonymity_report.json
+     --output 📤_outbox/gdpr_k_anonymity_report.json
 3. Inspect output:
    - Recommendation = PROCEED → publish/store dataset OK
    - Recommendation = BLOCK → apply mitigation:

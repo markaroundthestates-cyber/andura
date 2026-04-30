@@ -22,7 +22,7 @@ Toate scripturile folosesc ESM (project `"type": "module"`). Run cu `node script
 node scripts/backfill_diff.js \
   --synthetic path/to/synthetic.json \
   --raw path/to/raw.json \
-  --output cc-reports/backfill_diff_report.json \
+  --output 📤_outbox/backfill_diff_report.json \
   --samples 20
 ```
 
@@ -82,7 +82,7 @@ JSON report cu:
 node scripts/gdpr_k_anonymity_check.js \
   --dataset path/to/arbitration_log.json \
   --k 5 \
-  --output cc-reports/gdpr_k_anonymity_report.json
+  --output 📤_outbox/gdpr_k_anonymity_report.json
 ```
 
 **Output:**
