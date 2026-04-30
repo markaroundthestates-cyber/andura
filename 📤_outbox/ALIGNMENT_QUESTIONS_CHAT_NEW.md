@@ -1,55 +1,57 @@
 ---
 name: ALIGNMENT_QUESTIONS_CHAT_NEW
-description: 14 adversarial questions to verify chat new alignment cu SSOT post-Opus run 2026-04-30 evening v2 (handover ingest). Daniel paste in primul mesaj chat nou — chat răspunde cu citation explicită §X / ADR Y / file.md → pass criteria ≥12/14 corecte.
+description: 15 adversarial questions to verify chat new alignment cu SSOT post-Opus run 2026-05-01 morning (handover ingest + Sprint 4 A+B + i18n audit). Daniel paste in primul mesaj chat nou — chat răspunde cu citation explicită §X / ADR Y / file.md → pass criteria ≥12/15 corecte.
 type: alignment-test
-date: 2026-04-30 evening v2 (post handover ingest)
+date: 2026-05-01 morning (post handover ingest)
 ---
 
-# Alignment Questions — Chat Nou Bootstrap (post evening v2 ingest)
+# Alignment Questions — Chat Nou Bootstrap (post 2026-05-01 morning ingest)
 
 **Use:** paste integral în primul mesaj chat Claude nou. Cere chat-ul să răspundă fiecare întrebare cu citation explicită (§X file.md / ADR Y).
 
-**Pass criteria:** ≥12/14 corecte cu citation = **ALIGNED, continuă**. <12 = **INGEST FAIL** (chat-ul citește SSOT din vault prin `project_knowledge_search` și retry).
+**Pass criteria:** ≥12/15 corecte cu citation = **ALIGNED, continuă**. <12 = **INGEST FAIL** (chat-ul citește SSOT din vault prin `project_knowledge_search` și retry).
 
 ---
 
-## ADR 020 Storage Tiering Phase 1 (NEW evening v2)
+## Sprint 4 A+B Implementation (NEW 2026-05-01)
 
-1. Care e **Phase 1 scope** ADR 020 (ce keys rotate la Tier 1)? Ce e **EXCLUS din Phase 1** și de ce? — ref `HANDOVER §16 ADR 020` + `ADR 020 §Decision SSOT` + `src/storage/tieringEngine.js` ROTATABLE_KEYS
+1. Care e contractul `runBootMigrations()` + `startTierRotation()` în `src/bootstrap.js`? Ce înseamnă "graceful degradation" (return value pe throw)? — ref `HANDOVER §19` + `ADR 018 §4` + `src/bootstrap.js`
 
-2. Care e **failure mode** Tier 1 write fail? Ce protejează zero info loss principle? — ref `HANDOVER §16` + `ADR 020 §Risks #5` + `src/storage/tieringEngine.js` retry backoff
+2. Care 4 wording-uri categorical "De ce?" lock-uite + ce verdict trigger-uri folosesc (Up/Down/Hold/Recovery)? Ce override priority are Recovery? — ref `HANDOVER §21` + `src/i18n/ro.json` `why.categorical.*` + `src/engine/whyEngine.js` `selectVerdict`
 
-3. Câte teste Golden Master adăugate pentru ADR 020 Phase 1? Ce 4 fișiere noi în `src/storage/`? — ref `HANDOVER §15` + `HANDOVER §16` + `src/storage/__tests__/`
+3. ADR 021 Faza 1 vs Faza 2 boundary — ce e LIVE acum + ce deferred (3 motive concrete)? — ref `HANDOVER §19 Faza 1 vs 2` + `ADR 021 §Implementation phasing` + `calibrationReconciliation.js` JSDoc
 
-4. Ce e **mandatory pre-launch** Sprint 4.x pentru ADR 020 (altfel rotation NU rulează)? — ref `HANDOVER §6.7 status update` + `HANDOVER §14 imediat`
+4. Smoke test prod ADR 020 Phase 1 — ce a trecut funcțional + ce 4 user-facing breach descoperite? — ref `HANDOVER §19 Smoke test` + `HANDOVER §22` (F-NEW-1..4)
 
-## Governance Hardening §7 DIFF + §8 Destructive Ops (NEW evening v2)
+## i18n Decision B + Anti-RE Compliance (NEW 2026-05-01)
 
-5. Ce 7 paşi obligatorii pentru §7 DIFF Protocol pre-overwrite SSOT? Ce eveniment l-a triggat (slip incident)? — ref `PROMPT_CC_HYGIENE.md §7` + `HANDOVER §17 SLIP #1`
+5. De ce decizia "i18n bundle ÎNAINTE wording rewrite" e correctă? Ce ar fi consecința rewrite întâi? — ref `HANDOVER §20 Decizie arhitecturală` + `PRODUCT_STRATEGY_SPEC_v1 §i18n` + `COG-ARCH §Q5`
 
-6. Ce 7 triggers active §8 Destructive Ops Checklist? Ce e INTERZIS fără explicit Daniel approval? — ref `PROMPT_CC_HYGIENE.md §8` + `HANDOVER §17 SLIP #2`
+6. Ce strategy folosește `whyEngine.selectVerdict` (priority ladder)? Care 5 input semnalează `recovery` indiferent de tier? — ref `src/engine/whyEngine.js` `selectVerdict` + `HANDOVER §21 Constraints` + `ADR 013 §Anti-RE`
 
-7. Pe ce path nou apar **alignment questions** generate de CC Opus post-ingest? De ce NU mai în inbox? — ref `HANDOVER §18` + `VAULT_RULES.md §HANDOVER_PROTOCOL §Constraints absolute`
+7. Care 5 categorii anti-RE leak interzise în output user-facing (anti-RE absolute reaffirmed)? — ref `HANDOVER §21 Anti-RE strategy` + `ADR 013 §Anti-RE`
 
-## Memory consolidation 30 → 17 reguli MANDATORY (NEW evening v2)
+## Findings Noi 2026-05-01 (F-NEW-1..F-NEW-4)
 
-8. Care 4 reguli MANDATORY tightened post evening v2? Ce e specific pentru fiecare (1 linie)? — ref `HANDOVER §8.2`
+8. Care 4 findings noi flag-uite + priority + owner pentru fiecare? — ref `HANDOVER §22`
 
-9. Ce procent reduction a memory consolidation? Ce e principle locked despre memory vs handover separation? — ref `HANDOVER §8.2`
+9. F-NEW-3 hyperreactive coach — ce 3 opțiuni propose pentru cooldown threshold? Care e Gigel test rationale? — ref `HANDOVER §22 F-NEW-3` + ADR 013 §Gigel test
 
-## D1-D15 + ADR amendments (preserved from evening v1)
+10. F-NEW-2 progression scaling — ce relație are cu ADR 009 calibration tiers? De ce advanced ≠ +2.5kg uniform? — ref `HANDOVER §22 F-NEW-2` + `ADR 009 §AMENDMENT calibration_confidence`
 
-10. Pe **D1 — DEVELOPING tier**, decizia finală + canonical 6 nivele + Sprint timing? — ref `HANDOVER §5 D1` + `DECISION_LOG §2026-04-30 evening` + `ADR 009 §AMENDMENT 2026-04-30 §Migration Plan §Sprint 2 #1 RESOLVED`
+## Governance + Tests state
 
-11. Pe **D13 — T&B Faza 2 strangler order**, decizie finală + blast radius rationale? — ref `HANDOVER §5 D13` + `ADR 021 §Implementation phasing Faza 2`
+11. Ce 5 backup tags existente origin (rollback safe)? — ref `HANDOVER §15 Backup tags origin`
 
-12. Care e **AA composite no-double-penalize** rationale (Gemini F1 amendment)? — ref `ADR 013 §AMENDMENT 2026-04-30 evening`
+12. Tests count post-2026-05-01 morning + breakdown new tests adăugate (5 categorii)? — ref `HANDOVER §15 Tests` + `§19 Sprint 4 A+B` + `§20 i18n`
 
-## Strategy + Pricing (preserved 1:1 din evening v1)
+## Preserved 1:1 verification (din evening v2)
 
-13. Care e **pricing locked** Founding Members + Pro standard + iOS post-v1.x? Math revenue 10K users target Year 2-3? — ref `HANDOVER §3` + `PRODUCT_STRATEGY_SPEC_v1 §1.3`
+13. Pe **D1 — DEVELOPING tier**, decizia finală + canonical 6 nivele + Sprint timing? — ref `HANDOVER §5 D1` + `DECISION_LOG §2026-04-30 evening` + `ADR 009 §AMENDMENT §Migration Plan §Sprint 2 #1 RESOLVED`
 
-14. Care e **MOAT 7 features distinctive** Android-first? De ce "SensAI for Android" positioning? — ref `HANDOVER §2.1 + §2.2` + `MOAT_STRATEGY` competitor matrix
+14. Care e **pricing locked** Founding Members + Pro standard + iOS post-v1.x? Math revenue 10K users target Year 2-3? — ref `HANDOVER §3` + `PRODUCT_STRATEGY_SPEC_v1 §1.3`
+
+15. Care e §HANDOVER_PROTOCOL §7 DIFF + §8 Destructive Ops mandatory pre-overwrite SSOT (5 paşi key)? — ref `PROMPT_CC_HYGIENE.md §7-§8` + `VAULT_RULES.md §HANDOVER_PROTOCOL`
 
 ---
 
@@ -67,4 +69,4 @@ Confidence: HIGH | MEDIUM | LOW
 
 ---
 
-🦫 **Pass criteria ≥12/14 (≥86%) = ALIGNED.** Continui de la stare curentă post-Opus run evening v2. Daniel skip introductions, direct work pe ADR 021 / Sprint 4.x / Sprint 4 prompt comprehensive.
+🦫 **Pass criteria ≥12/15 (≥80%) = ALIGNED.** Continui de la stare curentă post-Opus run morning. Daniel skip introductions, direct work pe wording rewrite session (Phase A toasts/confirms ~36 quick wins) sau F-NEW-3 cooldown decision.
