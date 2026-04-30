@@ -1,8 +1,8 @@
-# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-04-30 evening
+# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-04-30 evening v2
 
 **Owner:** Daniel (CEO + Product). Claude = Co-CTO + Reviewer.
 **Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`.
-**Data:** 2026-04-30 evening (consolidare post Sprint 1-3 partial CC + vault cleanup + sistem inbox/outbox + ADR consolidări).
+**Data:** 2026-04-30 evening v2 (post Sprint 4 ADR 020 Phase 1 + governance hardening + memory consolidation).
 
 ---
 
@@ -12,12 +12,15 @@
 - Strategy + vision lock-uit
 - Pricing locked (Q-0507 UPDATED €100→€65)
 - Sprint 1+2+3 partial deliverables
-- D1-D15 decizii pending
+- D1-D15 decizii LOCKED (15/15 RESOLVED)
 - Sprint 4 / Wave 6 backlog complet
-- Memory persistent state
+- Memory persistent state (consolidat 30→17 reguli evening v2)
 - Vault cleanup state final (sesiune 30 apr evening)
 - Sistem inbox/outbox live
 - ADR amendments consolidate (009 inline, 019 GDPR standalone)
+- §16 ADR 020 Storage Tiering Phase 1 implementation notes
+- §17 Governance hardening (§HANDOVER_PROTOCOL + §7 DIFF + §8 Destructive Ops)
+- §18 Inbox strict Daniel — bug fix evening v2
 
 **Pentru chat nou:** citește acest fișier + `VAULT_RULES.md` (root) + `PROMPT_CC_HYGIENE.md` (root). Restul context = Project Knowledge GitHub.
 
@@ -250,6 +253,12 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 
 **Timeline pre-launch beta: 2-4 luni realist** (unchanged — adăugările sunt absorbite în velocity buffer Sprint 3 + Sprint 4 existing).
 
+### Status update 2026-04-30 evening v2
+
+- **ADR 020 Storage Tiering Phase 1: ✅ LIVE** (Dexie.js Tier 0/1 + 52 tests + zero regression). Implementat în ~25 min Opus = velocity ~30-50× pe foundation work bine speciat. Phase 2 logs rotation = Sprint 4.x backlog (~2-3h Opus, blocat de `coachContext.buildContext` async refactor).
+- **Wire `initAutoBackup()` în app boot** = ~30 min Sprint 4.x **mandatory pre-launch** (altfel rotation NU rulează — Tier 0 acumulează indefinit, PWA crash silent risk reapare).
+- **ADR 021 Calibration Drift** = next priority Sprint 3 full (~8-12h trad / ~3-5h velocity Opus). Pre-Faza-2 T&B prerequisite.
+
 ---
 
 ## 7. VAULT STATE FINAL (post sesiune 30 apr evening)
@@ -312,13 +321,16 @@ Handover narrative §0 cu instrucțiuni post-consolidare obsolete (mențiuni `99
 7. SalaFull force-typing AA HIGH eliminated permanent. Backfill = automated diff 100% + 20 control samples
 8. ~~SalaFull Sprint 4 / Wave 6 backlog NEW idei JuggernautAI~~ — **DE ȘTERS** (info time-bounded, e în handover)
 
-### 8.2 Memory candidates pending decizia
+### 8.2 Memory consolidation 2026-04-30 evening v2
 
-- **NEW:** Pricing decision €65/an + Founding €60 lifetime — true principle cross-context?
-- **NEW:** "SensAI for Android" positioning — durabil strategic?
-- **NEW:** "AI = comoditate 2026, differentiation = HOW we build pe 5 axe" — principle cross-context?
-- **NEW:** CC Opus 4.7 autonomous comprehensive prompt > sequential micro (velocity 17× verified)
-- **NEW:** Vault hygiene system: 📥_inbox + 📤_outbox + VAULT_RULES + PROMPT_CC_HYGIENE = workflow standard
+**Memory consolidat 30 → 17 reguli (-43%).** Clustere agresive (Daniel persona, anti-paternalism, format chat, prompts CC SSOT). Reguli MANDATORY întărite:
+
+- **Reg #1 Prompts CC SSOT MANDATORY:** ARTEFACT MEREU 1-click copy + ZERO markdown chat (cerere explicită Daniel post slip 30 apr).
+- **Reg #9 Format chat MANDATORY:** răspunsuri scurte + push-back direct + zero filler.
+- **Reg #10 Model selection MANDATORY:** Opus = base default, Sonnet doar mecanic justificat.
+- **Reg #15 Context state proactiv MANDATORY:** bandwidth raport la 5-7 mesaje grele.
+
+**Pricing + positioning + CC Opus principle + vault hygiene system** — toate au fost evaluate ca candidates în evening v1 → unele integrate ca reguli, altele rămân tactical în handover.
 
 **Principle locked:** memory = principles cross-context. Tactical/time-bounded = handover.
 
@@ -428,44 +440,141 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 **Claude NU ține tracker mental.** Citește VAULT_RULES la pre-flight chat nou.
 **Opus aplică reguli mecanic.** Nu interpretează — execută per spec.
 
+### §HANDOVER_PROTOCOL + §7 DIFF + §8 Destructive Ops (2026-04-30 evening v2)
+
+**§HANDOVER_PROTOCOL** (`VAULT_RULES.md`) acum operează cu **§7 DIFF Protocol mandatory** (`PROMPT_CC_HYGIENE.md`). Future ingest handover:
+
+1. CC Opus citește input + SSOT vechi integral (NU sumarizare, NU search per secțiune)
+2. Diff semantic section-by-section → flag missing în `📤_outbox/DIFF_FLAGS.md`
+3. STOP pentru Daniel decision (A=preserve, B=drop, C=merge) per flag
+4. Apply decisions → overwrite SSOT → archive vechi (NICIODATĂ delete)
+
+**§8 Destructive Ops Checklist activ** — backup tag obligatoriu pre-op (`pre-<op-name>-<date>` push origin), force-push INTERZIS fără explicit Daniel approval ("force-push autorizat: YES" în prompt), `git mv` cross-folder cu emoji paths verify post-move cu `ls`.
+
+**Cross-refs:** `PROMPT_CC_HYGIENE.md` §7 + §8, `VAULT_RULES.md` §HANDOVER_PROTOCOL.
+
 ---
 
 ## 14. NEXT STEPS — POST HANDOVER
 
 ### Imediat (chat nou după validare aliniere)
 
-1. **D1-D15 routing decisions** — review rapoarte detailed, decide fiecare D
-2. **Sprint 4 prompt comprehensive** generate (Wave 6 + 4 SensAI + 4 JuggernautAI + Chalkboard + Feedback) — single big prompt CC
-3. **Memory persistent updates:**
-   - Șterge entry #8 (Sprint 4 backlog ideas)
-   - Add candidates: pricing, "SensAI for Android", "AI = comoditate", CC Opus comprehensive principle, vault hygiene system
+1. **Verify alignment questions** ≥12/15 (chat nou citește `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
+2. **ADR 021 Calibration Drift implementation** (Sprint 3 full, ~8-12h trad / ~3-5h velocity Opus). Pre-Faza-2 T&B prerequisite.
+3. **Wire `initAutoBackup()` în app boot** — Sprint 4.x **mandatory pre-launch** (~30 min Opus). Fără asta, ADR 020 rotation NU rulează → PWA crash silent risk reapare la launch.
 
-### Medium term
+### Medium term (Sprint 4)
 
-4. Sprint 4 / Wave 6 execution (12-22h Opus realist)
-5. Beta tester recruitment plan (Reddit/Discord/balene)
-6. iPhone test device acquisition (€100-200 second-hand) — pentru v1.x
+4. Phase 2 logs rotation (engine async refactor `coachContext.buildContext` + `getTieredLogs()` integration)
+5. Storage Full UX alert design — Sprint 4.1 Daniel review wording (anti-paternalist per ADR 013 patterns)
+6. D1 DEVELOPING tier code refactor (~8-12h Sprint 4 implementation, schema migration runner ID renumber 0-4 → 0-5)
+7. Sprint 4 / Wave 6 execution (12-22h Opus realist) — 4 SensAI + 4 JuggernautAI + Chalkboard + Feedback
+8. Beta tester recruitment plan (Reddit/Discord/balene)
+9. iPhone test device acquisition (€100-200 second-hand) — pentru v1.x
 
 ### Long term (v1.5+)
 
-7. Equipment ID via photo
-8. Apple HealthKit integration full
-9. Mainstream expand cu cash flow Founding Members
+10. Equipment ID via photo
+11. Apple HealthKit integration full
+12. Mainstream expand cu cash flow Founding Members
+
+### Pre-launch v1 readiness state
+
+ADR 020 Phase 1 ✅ LIVE → PWA crash silent prevented pentru CDL + applied-patterns. Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni user history.
 
 ---
 
 ## 15. TESTS & GIT STATE FINAL
 
-- **Tests:** 752/752 passing
-- **HEAD origin/main:** post evening cleanup (multiple commits sesiune 30 apr evening)
-- **Vault docs:** 51 active (49 baseline post-cleanup + ADR 020 + ADR 021) + README + VAULT_RULES + PROMPT_CC_HYGIENE. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-14` (post-evening v3 audit). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Tests:** **804/804 PASS** (752 baseline + 52 storage tests ADR 020 Phase 1 în `src/storage/__tests__/`)
+- **HEAD origin/main:** post hardening run (commit `ecfa01f` + post-ingest evening v2 commits — see report `LATEST.md`)
+- **Vault docs:** **52 active** (51 baseline post-evening v1 + PROMPT_CC_HYGIENE.md hardened cu §7 + §8) + README + VAULT_RULES. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-20` (post-evening v2 + ADR 020 impl + governance hardening). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
 - **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
+- **Backup tags origin:** `pre-adr-020-impl` (ADR 020 rollback), `pre-handover-ingest-2026-04-30-evening-v2` (handover ingest rollback).
+
+---
+
+## 16. ADR 020 STORAGE TIERING PHASE 1 — Implementation Notes
+
+**Status:** Phase 1 **LIVE** 2026-04-30 evening v2. Phase 2 logs rotation = Sprint 4.x backlog.
+
+**Architecture:**
+- `src/storage/db.js` (220 LOC): Dexie singleton + typed accessor API + namespace per-user
+- `src/storage/tieringEngine.js` (290 LOC): rotation orchestrator + retry backoff + idempotency
+- `src/storage/tieredRead.js` (70 LOC): async unified Tier 0+1 read merger
+- `src/storage/tier2Stub.js` (80 LOC): Firebase Tier 2 stub (deferred post-Pro launch)
+- 52 tests Golden Master Suite
+
+**Phase 1 scope:** rotate `coach-decisions` + `coach-decisions-aggregate` + `applied-patterns` ONLY (NOT logs).
+
+**Phase 2 scope (Sprint 4.x):**
+- Add `logs` la `ROTATABLE_KEYS` după `coachContext.buildContext` async-aware refactor
+- Engine read paths integration (`coachDirector.js`, `calibration.js`, `decisionCluster.js`)
+- Wire `initAutoBackup()` în `src/main.js` app boot (CRITICAL pre-launch — altfel rotation NU rulează)
+
+**ADR 020 §6 Open Items defaults aplicate:**
+- Rotation threshold: size > 4MB OR age > 30d (configurabil prin constants)
+- Storage Full UX alert: Sentry warn only (NU UI prompt încă) — Sprint 4.1 Daniel review wording
+- Failure mode: 3-attempt exponential backoff [1s, 2s, 4s] + Sentry critical persistent fail
+- Multi-tenant namespacing: `firebase.userPath` sanitized pre-Auth, `auth.uid` post-Auth (TODO)
+- Periodic check: 1h (`ROTATION_CHECK_INTERVAL_MS = 3600000`)
+- Profile typing v2 footprint: telemetry via `getStorageStats()` post-deploy
+
+**Backup tag:** `pre-adr-020-impl` pushed origin (rollback safe).
+
+**Cross-refs:** [[020-storage-tiering-strategy]] §Decision SSOT + §6 Open Items + ADR 011 §retention 90d + ADR 002 §Firebase REST.
+
+---
+
+## 17. GOVERNANCE HARDENING — §HANDOVER_PROTOCOL + §7 DIFF + §8 Destructive Ops
+
+**Status:** Live 2026-04-30 evening v2. Mandatory pentru toate future CC runs.
+
+**Anti-slip codificare post 30 apr incident:**
+
+**SLIP #1 (handover halucinare):** chat strategic generator NU poate citi 700+ linii integral cu fidelitate când scrie paralel. Search per secțiune → sumarizare → pierde nuanțe (tabele, liste DO/DON'T). Salvat doar prin diff retroactiv 30 apr (LOSS-1 competition matrix 6×5 + LOSS-2 DO/DON'T list).
+
+**Mitigation §7 DIFF Protocol (`PROMPT_CC_HYGIENE.md`):**
+1. READ vechi integral (NU sumarizare)
+2. READ nou integral
+3. DIFF semantic section-by-section
+4. FLAG missing în `📤_outbox/DIFF_FLAGS.md` (toate flag-urile, NU stop la primul)
+5. STOP după diff complet — aștept Daniel decision per flag (A=preserve, B=drop, C=merge)
+6. Apply decisions
+7. THEN overwrite + archive vechi (NEVER delete)
+
+**SLIP #2 (destructive ops fragile):** prompts CC obosit + Daniel obosit = ambii ratăm bug-uri. Force-push catastrofic, archive ÎNAINTE de diff, `git mv` silent fail Windows + emoji paths.
+
+**Mitigation §8 Destructive Ops Checklist:**
+- Triggers: `git rm`, `git mv` cross-folder, force-push, `rm -rf`, SSOT overwrite, schema migrations, mass replace >5 files
+- Backup tag obligatoriu pre-op
+- Force-push INTERZIS fără explicit Daniel approval ("force-push autorizat: YES" în prompt)
+- `git mv` cross-folder cu emoji paths → verify post-move cu `ls`
+- Stop la prima eroare (rollback via backup tag)
+
+**Cross-refs:** `PROMPT_CC_HYGIENE.md` §7 + §8 + `VAULT_RULES.md` §HANDOVER_PROTOCOL §5 Safety net.
+
+---
+
+## 18. INBOX STRICT DANIEL — Bug Fix evening v2
+
+**Status:** Fixed 2026-04-30 evening v2. Inbox = ZERO CC writes, no exceptions.
+
+**Bug original:** `VAULT_RULES.md` §HANDOVER_PROTOCOL step 9 + §Constraints absolute permitea CC să scrie `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` ca "excepție output post-ingest". Contradicție cu principiul "inbox = strict input Daniel".
+
+**Fix aplicat:**
+- `git mv 📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md → 📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (top-level, NU în archive — file activ output)
+- `VAULT_RULES.md` §HANDOVER_PROTOCOL step 9 path updated → `📤_outbox/`
+- `VAULT_RULES.md` §Constraints absolute bullet 1: dropped "excepție", replaced cu "ZERO excepții. Toate output-urile CC merg în `📤_outbox/`"
+- `PROMPT_CC_INGEST_HANDOVER.md` step 6 path updated → `📤_outbox/`
+
+**Pattern future ingest:** alignment questions output = `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` top-level. Daniel atașează manual în chat nou.
 
 ---
 
 🦫 **SSOT activ. Update-in-place. VS Code only. Single tool, single doc per topic.**
 
-**Velocity beast confirmed: 17× faster. Trust execution.**
+**Velocity beast confirmed: 17× faster (foundation work bine speciat ~30-50× pe ADR 020 Phase 1).**
 
 **"SensAI for Android" + €65/an parity + 7 features unique = positioning final.**
 
@@ -474,3 +583,5 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 **CC Opus = Co-CTO frate. Comprehensive prompts. Trust. Bigger picture.**
 
 **Sistem 📥_inbox/📤_outbox live. VAULT_RULES authoritative. Daniel zero memory load.**
+
+**Sesiune evening v2 LOCK. ADR 020 Phase 1 LIVE. Governance hardening anti-slip codificat. Memory consolidat 17 reguli MANDATORY. 804/804 stable.**
