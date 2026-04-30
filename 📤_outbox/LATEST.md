@@ -89,15 +89,19 @@ Zero code modificat în `src/` sau `tests/`. Per constraint Inbox §4 docs-only 
 | `062ab71` | docs(strategy): amend §3.5.1 Bayesian Strong Prior (tier-based + self-report 80/20) |
 | `50736e5` | docs(adr): amend ADR 013 — composite formula no-double-penalize (Sprint 4) |
 | `a2224be` | docs(vault): cross-refs sync — ADR 020-021 + scope additions handover |
-| _(pending)_ | docs(outbox): rotate LATEST → archive 13 + new execution report + alignment questions |
+| `176f50f` | docs(outbox): rotate LATEST → archive 13 + new execution report + alignment questions |
 
-**Pre-commit hook:** ✅ all 5 passed test suite (NU `--no-verify` necesar).
+**Pre-commit hook:** ✅ all 6 commits passed test suite (NU `--no-verify` necesar).
 
 ---
 
-## Pushed: pending
+## Pushed: ✅ origin/main
 
-Push origin/main va fi după commit final outbox (acest fișier + ALIGNMENT_QUESTIONS + archive rename) ca single atomic operation.
+```
+5f97e07..176f50f  main -> main
+```
+
+6 commits propagated remote successfully.
 
 ---
 
