@@ -246,7 +246,7 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 6. **CC Opus** overwrite SSOT same name cu merged version
 7. **CC Opus** archive input la `📤_outbox/_archive/<YYYY-MM>/NN_HANDOVER_INPUT_CONSUMED.md` (NICIODATĂ DELETE)
 8. **CC Opus** scrie raport execution în `📤_outbox/LATEST.md`
-9. **CC Opus** generează alignment questions pentru chat nou (în `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
+9. **CC Opus** generează alignment questions pentru chat nou (în `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
 10. **CC Opus** commit + push origin/main
 11. **Daniel** sync Project Knowledge GitHub
 12. **Daniel** open chat Claude nou
@@ -255,7 +255,7 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 
 ### Constraints absolute
 
-- **Inbox = strict input Daniel only.** CC Opus NICIODATĂ NU scrie în inbox (excepție: alignment questions output post-ingest, conform step 9).
+- **Inbox = strict input Daniel only.** CC Opus NICIODATĂ NU scrie în inbox. ZERO excepții. Toate output-urile CC merg în `📤_outbox/` (raport în `LATEST.md`, alignment questions ca file separat top-level, archive cronologic în `_archive/<YYYY-MM>/`).
 - **Zero info loss.** Toate input-urile inbox archive-uite în outbox post-consume, NICIODATĂ delete fizic.
 - **Backup tag git** pre-cleanup major obligatoriu (`pre-handover-merge-<date>` sau similar).
 - **NU** scrie handover dintr-o bucată la final sesiune saturată. Aggregate progresiv.
