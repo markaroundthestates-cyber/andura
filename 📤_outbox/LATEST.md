@@ -23,9 +23,9 @@
 - `1ed054d` feat(rules): §HANDOVER_PROTOCOL — cross-session continuity + saturation prevention
 - `bd00f72` feat(vault): PROMPT_CC_INGEST_HANDOVER reusable prompt for Opus auto-ingest
 - `cea6cb2` chore(outbox): archive HANDOVER_PROTOCOL input post-apply
-- `<sha-pending>` chore(outbox): rotate LATEST + apply raport HANDOVER_PROTOCOL
+- `10d5255` chore(outbox): rotate LATEST → archive 17 + apply raport HANDOVER_PROTOCOL
 
-## Pushed: ✅ origin/main (3 commits + raport pending)
+## Pushed: ✅ origin/main (`c7375ea..10d5255`)
 
 ## Constraints respected
 
