@@ -1,83 +1,157 @@
-# Outbox Schema Migration — Raport
+# ADR 020 + 021 + Amendments — Raport Execution
 
-**Status:** Complete
-**Date:** 2026-04-30 13:20
-**Run wall-clock:** ~10 min
-**Model:** Sonnet autonomous
+**Status:** ✅ Complete
+**Date:** 2026-04-30 evening v2
+**Run wall-clock:** ~6 min (autonomous, single-pass — vault state mostly pre-prepared, audit + commit + outputs)
+**Model:** Claude Opus 4.7 autonomous
+**Trigger:** `📥_inbox/HANDOVER_INPUT_INBOX.md` (Claude chat strategic 2026-04-30 evening v2)
+
+---
 
 ## Pre-flight
 
-- Branch `main`, working tree clean, up to date cu origin/main
-- Baseline tests: **752/752 PASS** (48 test files)
-- `cc-reports/` inventory: 7 files (6 tracked în git + 1 gitignored E2E_ONBOARDING_FIX.md)
-- `📤_outbox/` inventory: 5 reports (`01_*` → `05_*`) + `.gitkeep`
-- `.gitignore` line 16: `cc-reports/`
+- **Branch:** `main` (origin/main up-to-date post `git pull`)
+- **Working tree (start):** 6 modified files + 2 untracked ADRs + 1 staged rename (LATEST.md → archive). Vault state arrived pre-prepared from prior session continuity.
+- **Baseline tests:** ✅ **vitest 752/752 PASS** (48 test files, 7.49s)
+- **Outbox archive:** ✅ previous LATEST.md (outbox schema migration report) moved to `📤_outbox/_archive/2026-04/13_OUTBOX_SCHEMA_MIGRATION.md` (per VAULT_RULES.md §3.3 + PROMPT_CC_HYGIENE.md §3.1)
 
-## Migration executed
+---
 
-### Folders changed
-- `📤_outbox/_archive/2026-04/` — **CREATED** (mkdir)
-- `cc-reports/` — **REMOVED** (rmdir post-migration)
+## Modificări vault
 
-### Files moved to archive (`📤_outbox/_archive/2026-04/`)
+### ADR-uri NEW
 
-Numerotare cronologică continuă, păstrată din ordinea git creation date:
+| File | Status | Lines | Spec source |
+|------|--------|-------|-------------|
+| `03-decisions/020-storage-tiering-strategy.md` | CREATED | 182 | Inbox §2.1 — full Tier 0/1/2 + Dexie.js + rotation + risks + reconsideration triggers |
+| `03-decisions/021-calibration-drift-reconciliation.md` | CREATED | 290 | Inbox §2.2 — full Version Vector + Max Wins + Monotonic Clock + EC-1..EC-6 + algorithm pseudocode |
 
-| NN | Source | Destination |
-|----|--------|-------------|
-| 01 | `📤_outbox/01_VAULT_HYGIENE_INBOX_PROCESSING.md` | `_archive/2026-04/01_*.md` |
-| 02 | `📤_outbox/02_ADR_AMENDMENTS_CONSOLIDATED.md` | `_archive/2026-04/02_*.md` |
-| 03 | `📤_outbox/03_HANDOVER_ALIGNMENT_QUESTIONS.md` | `_archive/2026-04/03_*.md` |
-| 04 | `📤_outbox/04_HANDOVER_INGESTION_DIFF_FLAGS.md` | `_archive/2026-04/04_*.md` |
-| 05 | `📤_outbox/05_HANDOVER_INGESTED.md` | `_archive/2026-04/05_*.md` |
-| 06 | `cc-reports/AUDIT_5000Q.md` (Apr 29 20:54) | `_archive/2026-04/06_AUDIT_5000Q.md` |
-| 07 | `cc-reports/AUDIT_5000Q_REPORT.md` (Apr 29 21:29) | `_archive/2026-04/07_AUDIT_5000Q_REPORT.md` |
-| 08 | `cc-reports/SPRINT1_EXECUTION_REPORT.md` (Apr 29 23:58) | `_archive/2026-04/08_SPRINT1_EXECUTION_REPORT.md` |
-| 09 | `cc-reports/SPRINT2_EXECUTION_REPORT.md` (Apr 30 00:11) | `_archive/2026-04/09_SPRINT2_EXECUTION_REPORT.md` |
-| 10 | `cc-reports/SPRINT3_PARTIAL_EXECUTION_REPORT.md` (Apr 30 00:18) | `_archive/2026-04/10_SPRINT3_PARTIAL_EXECUTION_REPORT.md` |
-| 11 | `cc-reports/VAULT_CLEANUP_2026-04-30_REPORT.md` (Apr 30 09:30) | `_archive/2026-04/11_VAULT_CLEANUP_REPORT.md` |
-| 12 | `cc-reports/E2E_ONBOARDING_FIX.md` (gitignored, Apr 30 13:10) | `_archive/2026-04/12_E2E_ONBOARDING_FIX.md` |
+### Amendments
 
-**12 files in archive total.** Zero info loss — toate move-only via `git mv` (sau plain `mv` pentru fișierul gitignored), fiecare raport intact 1:1.
+| File | Section | Spec source |
+|------|---------|-------------|
+| `01-vision/PRODUCT_STRATEGY_SPEC_v1.md` | §3.5.1 Strong Prior Strategy (Tier-Based) | Inbox §2.3 — T0 + Self-report 80/20, calibration time -50%, signals primary/secondary |
+| `03-decisions/013-auto-aggression-detection.md` | `## AMENDMENT 2026-04-30 evening — Composite formula no-double-penalize` | Inbox §2.4 — Gemini F1 push-back partial accept (cross-signal dedupe), full reject consolidare 4+5 |
 
-### LATEST.md
-- ANTERIOR (transient, pe parcursul migration): E2E_ONBOARDING_FIX content
-- POST-migration: acest raport (eat-your-own-dogfood — primul raport în noua schemă)
-- E2E archivat ca `12_E2E_ONBOARDING_FIX.md`
+### Cross-refs synced
 
-### Files updated
-- `VAULT_RULES.md` — §1 structure (outbox tree updated, cc-reports row removed), §2 SSOT (Reports section rewritten), §3.3 (full rewrite — output CC → outbox), §3.5 (📤_outbox section rewritten), §4 workflow (steps 6-10 updated for LATEST + archive flow), §6 anti-patterns (3 new entries)
-- `PROMPT_CC_HYGIENE.md` — §0 pre-flight (extended `ls` to include `_archive/`), §1.2 (§3.3 reference fixed), §2.2 (handover archive ref updated), §3 entire RAPORT section rewritten (LATEST + archive logic + dynamic NN computation), §3.3 FIFO cleanup section **DELETED** (replaced by move-to-archive — NU șterge nimic), §4 commits (outbox commit message updated), §6 verify (expected state updated)
-- `.gitignore` — `cc-reports/` entry removed (line 16)
+| File | Update | Spec source |
+|------|--------|-------------|
+| `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §6.7 | Scope adăugări post-Gemini + total cumulat 137-214h tradițional → 15-29h velocity Opus | Inbox §2.5 |
+| `00-index/INDEX_MASTER.md` | ADR list 001-019 → 001-021 + 2 rows table (020, 021) + file count 49→51 | Inbox §2.6 |
+| `03-decisions/DECISION_LOG.md` | Entry 2026-04-30 evening — Gemini cross-check + 4 action items + 1 reject (consolidate AA 4+5) | Inbox §2.7 |
+| `VAULT_RULES.md` §2 | ADR list range `001-*.md → 019-*.md` → `001-*.md → 021-*.md` | Inbox §2.8 |
+
+---
+
+## PROJECTION engine verify (per Inbox §2.9)
+
+**Commands run:**
+```bash
+grep -n "requiresCalibration" src/engine/dimensionRegistry.js
+grep -rn "PROJECTION" src/engine/
+```
+
+**Findings:**
+
+1. **`requiresCalibration` infrastructure:** ✅ PRESENT in `src/engine/dimensionRegistry.js`. Field validated as nullable string matching `CALIBRATION_TIER_ORDER` enum. Gating function `isCalibrationGateOpen(dim.requiresCalibration, ctxLevel)` already wired in dimension filter (line 110).
+
+2. **PROJECTION as engine dimension:** ❌ **NOT registered.** Zero matches for `PROJECTION` în `src/engine/`. Currently registered dimensions (per JSDoc + active code): `AUTO_AGGRESSION` (priority 95, requiresCalibration: null) + Phase 2/3 planned: `PROFILE_TYPING` (`'INITIAL'`), `CORE_RULES` (null), `VITALITY` (`'PERSONALIZING'`), `DEMOGRAPHIC_PRIOR` (`'COLD_START'`).
+
+3. **PROJECTION location actual:** UI utility only — `src/pages/dashboard.js` `calcProjection()` + `renderProjection4w()` for 4-week weight chart projection. NOT engine dimension, NU pe orchestrator path, NU sub gating Arbitrator.
+
+**Sprint 4 follow-up needed?** **PARTIAL — depends on Sprint 4 scope.** Dacă Sprint 4 migrează `calcProjection` la engine dimension (per ADR 018 extensibility pattern), atunci adăugare `requiresCalibration: 'INITIAL'` (sau similar threshold) e trivial — infrastructure exists, doar register dimension. Dacă rămâne UI utility decoupled de engine → Gemini Q1 nu mai aplică (gating only matters dacă e pe orchestrator path).
+
+**Recommendation pragmatic:** flag în Sprint 4 backlog ca decision point, NU urgent. Current state nu e bug, e architectural choice (PROJECTION = visualization, NU coaching decision dimension).
+
+**NU schimbare cod în acest run** — verify only, per constraint Inbox §4.
+
+---
 
 ## Build + Tests
 
-- vitest baseline pre-migration: **752/752 PASS**
-- vitest post-migration (no code touched): expected unchanged (verificat la commit prin pre-commit hook)
-- File moves: zero content modification — pure renames via `git mv`
+| Stage | Result |
+|-------|--------|
+| **vitest baseline (start)** | ✅ 752/752 PASS (48 files, 7.49s) |
+| **vitest pe pre-commit hook (×5 commits)** | ✅ 752/752 PASS each (zero code touched, sanity check) |
+| **vitest post-changes final** | ✅ 752/752 PASS unchanged |
 
-## Commits
+Zero code modificat în `src/` sau `tests/`. Per constraint Inbox §4 docs-only run.
 
-- `<sha>` feat(vault): migrate outbox to LATEST.md + monthly archive schema
-- `<sha>` chore(vault): drop cc-reports/ from gitignore (folder deprecated)
-- `<sha>` docs(vault): update VAULT_RULES + PROMPT_CC_HYGIENE for new outbox schema
+---
 
-## Pushed: ✅ origin/main
+## Commits (5 semantic + 1 outbox)
+
+| SHA | Message |
+|-----|---------|
+| `f65056d` | feat(adr): ADR 020 Storage Tiering Strategy (Tier 0/1/2 + Dexie.js + rotation) |
+| `3aa1d3a` | feat(adr): ADR 021 Calibration Drift Reconciliation (Version Vector + max-merge) |
+| `062ab71` | docs(strategy): amend §3.5.1 Bayesian Strong Prior (tier-based + self-report 80/20) |
+| `50736e5` | docs(adr): amend ADR 013 — composite formula no-double-penalize (Sprint 4) |
+| `a2224be` | docs(vault): cross-refs sync — ADR 020-021 + scope additions handover |
+| _(pending)_ | docs(outbox): rotate LATEST → archive 13 + new execution report + alignment questions |
+
+**Pre-commit hook:** ✅ all 5 passed test suite (NU `--no-verify` necesar).
+
+---
+
+## Pushed: pending
+
+Push origin/main va fi după commit final outbox (acest fișier + ALIGNMENT_QUESTIONS + archive rename) ca single atomic operation.
+
+---
+
+## Inbox + Outbox state (post-run)
+
+### `📥_inbox/`
+
+- `HANDOVER_INPUT_INBOX.md` — **CONSUMED** (input pentru acest run, păstrat NU șters per constraint Inbox §"NU șterge inbox-ul automat"). Daniel poate decide manual: arhivare istoric vault (`07-meta/` / similar) sau delete post-verify.
+- `ALIGNMENT_QUESTIONS_CHAT_NEW.md` — **NEW** 16 întrebări (15 core + 1 bonus PROJECTION verify). Format: question + citation expected + confidence enum. Pass criteria ≥12/15.
+
+### `📤_outbox/`
+
+- `LATEST.md` — **NEW** acest raport.
+- `_archive/2026-04/13_OUTBOX_SCHEMA_MIGRATION.md` — previous LATEST.md (outbox schema migration report 2026-04-30 evening) rotated. NN sequence continuu: 01-13 (12 baseline + 1 new).
+
+---
 
 ## Issues / Ambiguities
 
-**Niciuna.** Migration straight-forward, zero conflicte, principiu zero-info-loss respectat absolut.
+**None blocking.**
 
-Note operaționale:
-- `E2E_ONBOARDING_FIX.md` era gitignored (în `cc-reports/`), deci `git mv` nu funcționa pe el → folosit `mv` simplu, apoi `git add` indirect prin add-pe-LATEST. Post-migration, archive-ul îl conține ca tracked file (cc-reports/ nu mai e gitignored).
-- `.gitkeep` în `📤_outbox/` păstrat intact (folder reborn cu 1 file activ + folder hidden).
-- Numerotare 06-12: am folosit `git log --diff-filter=A` pentru ordinea de creație originală (NU mtime, care ar fi dat ordine arbitrară post-clone). Pentru 12 (E2E), folosit mtime fizic (era untracked).
+Minor notes:
+1. **Inbox `HANDOVER_INPUT_INBOX.md` retention** — constraint spec said "NU șterge automat", Daniel decide. Recomandare: după verify chat nou aligned, archive în `07-meta/handovers-archive/2026-04/` sau delete (git history preserves). NU păstra în inbox indefinit (zgomot pentru future runs).
+2. **Pre-commit hook ran tests pe fiecare din 5 commits** — adds ~7s × 5 = ~35s overhead, dar guarantees zero regression mid-commit-sequence. Acceptable cost, NU bypass needed.
+3. **Vault state pre-prepared** — toate 8 modificări (2 NEW ADRs + 4 amendments + 4 cross-refs + outbox rename) erau pe disk la start (presumably scrise de Sonnet earlier sau prior Opus session). Acest run = audit + verify + commit + push + outputs. **NU rewrite content** (zero info loss principle, content matched spec exact).
+4. **PROJECTION engine** = NOT registered as dimension; flag pentru Sprint 4 decision point (NOT urgent).
 
-## Next action Daniel
+---
 
-- ✅ Schema activă: `📤_outbox/LATEST.md` = 1 file vizibil top-level
-- ✅ Cross-platform consistent: funcționează identic Codespaces birou + VS Code Desktop acasă (zero device-specific paths)
-- La next Opus/Sonnet run, schema noua aplicată automat (PROMPT_CC_HYGIENE.md §3 conține logica)
-- Verifică `📤_outbox/LATEST.md` (acest raport) accesibil via `cat` sau editor
+## Next action Daniel + chat nou
 
-🦫 **Schema activă. 1 file LATEST vizibil. Archive infinit. Zero info loss.**
+1. **Sync Project Knowledge** GitHub connector (icoană settings claude.ai)
+2. **Verify accesibilitate:**
+   - `📤_outbox/LATEST.md` (acest raport)
+   - `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (16 întrebări)
+   - `03-decisions/020-storage-tiering-strategy.md` + `021-calibration-drift-reconciliation.md`
+3. **Open chat Claude nou**
+4. **Paste integral** `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` în primul mesaj chat nou
+5. **Verify pass criteria** ≥12/15 răspunsuri corecte cu citation. Dacă <12 → flag INGEST FAIL, retry `project_knowledge_search` în chat.
+6. **Chat nou citește LATEST.md + ADR 020 + 021 + ADR 013 amendment** prin `project_knowledge_search` pentru context detail Sprint 4 implementation start.
+7. **Decision point Sprint 4 prioritate:** ADR 020 (CRITICAL pre-launch, ~10-15h) ar trebui first vs ADR 021 (pre-Faza-2, ~8-12h Sprint 3 full).
+
+---
+
+## Verification commands (Daniel local sanity check)
+
+```bash
+git log --oneline -7   # expect 5 new commits + outbox commit
+ls -la 📤_outbox/_archive/2026-04/   # expect NN 01-13
+cat 📤_outbox/LATEST.md   # expect acest raport
+ls -la 📥_inbox/   # expect ALIGNMENT_QUESTIONS_CHAT_NEW.md present
+npm run test:run   # expect 752/752 PASS
+```
+
+---
+
+🦫 **Schema activă. Vault sync. Sprint 4 backlog cu 4 action items new prioritized. Chat nou ready bootstrap.**
