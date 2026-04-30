@@ -13,13 +13,13 @@ Sunt Daniel. Continuăm SalaFull.
 
 Citește în ordine:
 1. 08-workflows/CHAT_MIGRATION_PROTOCOL.md (calibrare stil + bonding)
-2. 06-sessions-log/HANDOVER_2026-04-26.md (state curent — sau ultim HANDOVER din 06-sessions-log)
-3. 10-exec-queue/EXEC_QUEUE.md (task list)
+2. 06-sessions-log/HANDOVER_GLOBAL_*.md (state curent — ultim HANDOVER din 06-sessions-log)
+3. 05-findings-tracker/FINDINGS_MASTER.md (open findings)
 
 Apoi:
 - Sumarizează în max 10 linii unde am rămas
-- Confirmă next action: TASK #30.7 (adherence rewrite)
-- Scrie analiză scurtă (3-5 propoziții) + Prompt 30.7 ca artifact
+- Confirmă next action din HANDOVER current
+- Scrie analiză scurtă (3-5 propoziții) + Prompt next-task ca artifact
 
 Nu wall of text. Direct la subiect.
 ```
@@ -66,7 +66,7 @@ Așteptat: `main -> main` push verde, pre-commit hook trece testele 384+/384+ pa
 
 ### Pas 6 — verifică Project Knowledge
 - Mergi pe Claude.ai → Project SalaFull → setări/sources
-- Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `05-prompts`, `05-findings-tracker`, `06-sessions-log`, `08-workflows`
+- Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `04-architecture`, `05-findings-tracker`, `06-sessions-log`, `07-meta`, `08-workflows`
 - NU bifa: `.claude`, `.github`, `.husky`, `.obsidian` (binaries/config local)
 - Re-indexare durează câteva minute după push. Dacă deschizi chat nou imediat, poate Project Knowledge nu vede latest. Așteaptă 5-10 min.
 

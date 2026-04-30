@@ -37,10 +37,10 @@ Laptop OFFICE (Allyis, browser-only fallback)
 
 GITHUB REPO (private)
   markaroundthestates-cyber/salafull
-  - src/, tests/, docs/
-  - 00-index, 01-vision, 02-audit, 03-decisions
-  - 05-prompts, 05-findings-tracker, 06-sessions-log
-  - 08-workflows (this file lives here), 10-exec-queue
+  - src/, tests/
+  - 00-index, 01-vision, 02-audit, 03-decisions, 04-architecture
+  - 05-findings-tracker, 06-sessions-log, 07-meta
+  - 08-workflows (this file lives here), cc-reports
 
          |
          | GitHub Integration connector
@@ -134,7 +134,7 @@ CLAUDE CHAT (Anthropic Project: SalaFull)
 ## WHAT CLAUDE CHAT CAN READ
 
 **Real-time-ish (minutes after push):**
-- All `.md` files in vault folders (00-index, 01-vision, 02-audit, 03-decisions, 05-prompts, 05-findings-tracker, 06-sessions-log, 08-workflows, 10-exec-queue, docs)
+- All `.md` files in vault folders (00-index, 01-vision, 02-audit, 03-decisions, 04-architecture, 05-findings-tracker, 06-sessions-log, 07-meta, 08-workflows)
 - All source code in `src/`
 - All tests in `tests/`
 - ENGINE_ARCHITECTURE.md

@@ -229,7 +229,7 @@ Verificat 25 apr 2026 prin web search direct pe documentele legal Anthropic.
 **Implementare 25 apr 2026:**
 - PROJECT_VISION.md: rewrite secÈ›iune CONCEPT BRAND
 - INDEX_MASTER.md: rewrite secÈ›iune CONCEPT PRODUS + adÄƒugat link [[010-no-anthropic-trademark-public]]
-- ADR nou: docs/decisions/010-no-anthropic-trademark-public.md
+- ADR nou: 03-decisions/010-no-anthropic-trademark-public.md
 - DECISION_LOG: aceastÄƒ intrare
 
 **Reconsiderare trigger:**

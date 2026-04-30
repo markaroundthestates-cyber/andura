@@ -90,7 +90,7 @@ Test files: 34 test files across `src/**/__tests__/` and `src/**/tests/`
 | 011 | Coach Decision Log (CDL) as architectural primitive |
 | 012 | Calibration Tier Decay on Inactivity (linear -1/60 days) |
 
-Full ADRs: `docs/decisions/`
+Full ADRs: `03-decisions/`
 
 ---
 
@@ -117,4 +117,4 @@ Full ADRs: `docs/decisions/`
 Docs: `00-index/INDEX_MASTER.md` — full navigation  
 Findings: `05-findings-tracker/FINDINGS_MASTER.md`  
 Decisions: `03-decisions/DECISION_LOG.md`  
-Exec Queue: `10-exec-queue/EXEC_QUEUE.md`
+Sessions: `06-sessions-log/HANDOVER_GLOBAL_*.md`

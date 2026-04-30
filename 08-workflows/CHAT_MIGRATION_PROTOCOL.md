@@ -293,11 +293,9 @@ Confirmi?
 
 În ordine prioritate:
 1. **Acest doc (CHAT_MIGRATION_PROTOCOL)** — re-calibrare bonding/style
-2. `06-sessions-log/HANDOVER_*.md` (cel mai recent) — state curent + decizii recente
-3. `10-exec-queue/EXEC_QUEUE.md` — task list cu PENDING/DONE
-4. `10-exec-queue/EXEC_RESULTS.md` — ultimele 3-5 entries pentru context recent
-5. `05-findings-tracker/FINDINGS_MASTER.md` — open findings
-6. `05-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
+2. `06-sessions-log/HANDOVER_GLOBAL_*.md` (cel mai recent) — state curent + decizii recente
+3. `05-findings-tracker/FINDINGS_MASTER.md` — open findings
+4. `05-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
 
 ### 8.4 Ce NU să faci la primul mesaj
 
