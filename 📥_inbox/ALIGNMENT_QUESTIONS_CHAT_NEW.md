@@ -15,19 +15,19 @@ date: 2026-04-30 evening v2
 
 ## Sesiune curentă D1-D15
 
-1. Ce a decis Daniel pe **D1 — DEVELOPING tier**? Add (6 nivele) sau drop (5)? Cu rationale scurt + Sprint timing. — ref `HANDOVER_GLOBAL_2026-04-30_evening §1.1` D1 + `ADR 009 §AMENDMENT 2026-04-30`
+1. Ce a decis Daniel pe **D1 — DEVELOPING tier**? Add (6 nivele) sau drop (5)? Cu rationale scurt + Sprint timing. — ref `DECISION_LOG §2026-04-30 evening` D1 + `ADR 009 §AMENDMENT 2026-04-30 §Migration Plan §Sprint 2 #1 RESOLVED` + `HANDOVER §5` D1
 
-2. **D7 Stryker mutation testing** — varianta finală decisă? Cine reviewer (Daniel manual / Claude chat technical / both)? Care e scope-ul review-ului tehnic post-baseline? — ref `HANDOVER §1.1` D7 + `HANDOVER_INPUT_INBOX §1.1`
+2. **D7 Stryker mutation testing** — varianta finală decisă? Cine reviewer (Daniel manual / Claude chat technical / both)? Care e scope-ul review-ului tehnic post-baseline? — ref `DECISION_LOG §2026-04-30 evening` D7 + `HANDOVER §5` D7
 
-3. **D12 — câte anonymous accounts** folosește Daniel pre-launch + pe ce devices? Ce flag pentru pre-Faza-1 manual merge timing? — ref `HANDOVER §1.1` D12
+3. **D12 — câte anonymous accounts** folosește Daniel pre-launch + pe ce devices? Ce flag pentru pre-Faza-1 manual merge timing? — ref `DECISION_LOG §2026-04-30 evening` D12 + `HANDOVER §5` D12 + `ADR 021 §EC-5 Anonymous → Auth migration`
 
-4. **D13 — T&B Faza 2 strangler order:** spec original (weights first) vs decizia finală? Cu blast radius rationale. — ref `HANDOVER §1.1` D13
+4. **D13 — T&B Faza 2 strangler order:** spec original (weights first) vs decizia finală? Cu blast radius rationale. — ref `DECISION_LOG §2026-04-30 evening` D13 + `HANDOVER §5` D13 + `ADR 021 §Implementation phasing Faza 2`
 
 ## Gemini cross-check
 
-5. Care **3 BLIND SPOTS** a flagat Gemini Q10? Care e considerat BLOCKER pre-launch vs deferable? — ref `HANDOVER §1.2` Q10 + `ADR 020 §Context` + `ADR 021 §Context`
+5. Care **3 BLIND SPOTS** a flagat Gemini Q10? Care e considerat BLOCKER pre-launch vs deferable? — ref `DECISION_LOG §2026-04-30 evening` Gemini Q10 + `ADR 020 §Context` (BS#1 Storage) + `ADR 021 §Context` (BS#2 Calibration Drift) + `ADR 021 line 57` cross-link (BS#3 Liability Gap)
 
-6. Ce sugestie Gemini a fost **RESPINSĂ explicit** de Daniel + Claude pe AA Detection signals 4+5? Care e mic counter-point ACCEPTAT din push-back? — ref `HANDOVER §1.3` F1 + `ADR 013 §AMENDMENT 2026-04-30 evening`
+6. Ce sugestie Gemini a fost **RESPINSĂ explicit** de Daniel + Claude pe AA Detection signals 4+5? Care e mic counter-point ACCEPTAT din push-back? — ref `DECISION_LOG §2026-04-30 evening` F1 + `ADR 013 §AMENDMENT 2026-04-30 evening` (composite no-double-penalize)
 
 ## ADR 020 Storage Tiering
 
