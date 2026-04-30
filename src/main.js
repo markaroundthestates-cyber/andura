@@ -18,6 +18,7 @@ import { checkOnboarding, setObRPE, saveOnboarding, skipOnboarding } from './onb
 import { DB, cleanEx } from './db.js';
 import './util/cdlBackfill.js';
 import { migrateLogsUtcToLocal } from './util/logsMigration.js';
+import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from './bootstrap.js';
 
 // Expune funcții globale pentru onclick="" în HTML
 import { toast } from './ui/ui.js';
@@ -148,9 +149,23 @@ async function init() {
     console.error('[Migration] Failed:', err);
     // Continue boot — migration failure non-blocking
   }
+  // ── ADR 018 §4 Schema migrations — eager, before any engine read ──────────
+  // Registry currently empty; first real migration arrives when CDL bumps v1→v2.
+  // Wired now so future migrations don't silent-fail.
+  await runBootMigrations();
   window.__constants = { PROG, KCAL_TARGET, PROT_TARGET };
   await initFirebaseSync();
   await clearStalePatternsIfColdStart(); // after sync: Firebase can't restore cleared keys
+  // ── ADR 020 Tier 0 → Tier 1 rotation ─────────────────────────────────────
+  // Smoke test post-deploy (Daniel manual):
+  //   1. DevTools → Application → Local Storage → verify size < 4MB
+  //   2. DevTools → Application → IndexedDB → verify SalafullDB stores exist
+  //   3. Console: log lines `[Storage] Rotated N entries Tier 0 → Tier 1`
+  //   4. After 1h tick: rotation runs again automat (check console)
+  //   5. To force rotation now: open Console → call `window.__forceRotation()`
+  //      (dev helper exposed via `exposeForceRotationHelper`).
+  await startTierRotation();
+  exposeForceRotationHelper();
   injectBaseline();
   injectMFPWeights();
   const injected = injectRealSessions();
