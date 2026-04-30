@@ -67,7 +67,7 @@ Așteptat: `main -> main` push verde, pre-commit hook trece testele 384+/384+ pa
 ### Pas 6 — verifică Project Knowledge
 - Mergi pe Claude.ai → Project SalaFull → setări/sources
 - Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `04-architecture`, `05-findings-tracker`, `06-sessions-log`, `07-meta`, `08-workflows`
-- NU bifa: `.claude`, `.github`, `.husky`, `.obsidian` (binaries/config local)
+- NU bifa: `.claude`, `.github`, `.husky` (binaries/config local)
 - Re-indexare durează câteva minute după push. Dacă deschizi chat nou imediat, poate Project Knowledge nu vede latest. Așteaptă 5-10 min.
 
 ### Pas 7 — deschide chat nou + paste prompt din PARTEA 1

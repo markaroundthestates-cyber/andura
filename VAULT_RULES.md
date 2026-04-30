@@ -76,7 +76,7 @@ salafull/
 
 ### Cod (NU atinge, NU șterge)
 - `src/`, `tests/`, `scripts/`
-- `.claude/`, `.github/`, `.husky/`, `.obsidian/`
+- `.claude/`, `.github/`, `.husky/`
 - `package.json`, `tsconfig*.json`, `vite.config.js`, `vitest.config.js`, `playwright.config.js`
 - `index.html`, `gate-*.bat`, `gate-*.js`
 

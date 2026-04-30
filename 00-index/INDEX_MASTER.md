@@ -99,7 +99,7 @@ salafull/
 2. **HANDOVER_GLOBAL_2026-04-30_evening** = SSOT activ pentru context curent. Înlocuiește toate handover-urile anterioare (mutate în git history).
 3. **DECISION_LOG** = master cronologic. Toate deciziile arhitecturale + amendments aici.
 4. **FINDINGS_MASTER + INSIGHTS_BACKLOG** = single source pentru bugs tracking + deferred design.
-5. **`src/`, `tests/`, `scripts/`, `.claude/`, `.github/`, `.husky/`, `.obsidian/` = NU vault**, nu se atinge la cleanup vault.
+5. **`src/`, `tests/`, `scripts/`, `.claude/`, `.github/`, `.husky/` = NU vault**, nu se atinge la cleanup vault.
 6. **Git history = backup absolut.** Recuperare oricând cu `git log --all --full-history -- "path/to/deleted/file"`.
 
 ---
