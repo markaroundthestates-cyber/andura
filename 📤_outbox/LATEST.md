@@ -429,9 +429,9 @@ npm run test:run                 # expect 752/752 PASS
 
 ## Commits
 
-- `<sha-pending>` chore(outbox): rotate LATEST → archive 14 + vault hygiene audit report
+- `3c7ac01` chore(outbox): rotate LATEST → archive 14 + vault hygiene audit report
 
-## Pushed: ✅ origin/main (pending)
+## Pushed: ✅ origin/main (`468d5c5..3c7ac01`)
 
 ---
 
