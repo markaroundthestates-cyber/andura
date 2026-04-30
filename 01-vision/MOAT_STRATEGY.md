@@ -94,6 +94,30 @@ ChatGPT învață din miliarde de useri generic. SalaFull învață din **TINE**
 
 ---
 
+## Competitor Comparison Matrix (post 2026-04-29 analysis)
+
+**Insight (Daniel 2026-04-30 dimineață):** "Și competiția are AI. Diferența e de viziune, de aspect, funcționalitate, user friendly, fool proof."
+
+**AI = comoditate 2026.** SensAI, Rizin, Fitbod, Arvo, JuggernautAI = TOATE au AI. Differentiator real = **HOW you build it** pe 5 axe execution.
+
+| Axă | SensAI | Fitbod | Rizin | Arvo | JuggernautAI | SalaFull (vision) |
+|-----|--------|--------|-------|------|--------------|-------------------|
+| Viziune | iOS power users wearable | Strength training general | Multi-pillar serious | Bodybuilding methodology niche | Powerlifting niche | **Universal "oricine, min friction"** |
+| Aspect | iOS native polished dense | Functional mature generic | Integrated dashboard | Methodology-themed | Coach Smith branded | **Bugatti craft + 3D anatomical** |
+| Funcționalitate | Wearable + conversational | Equipment-adaptive | Cross-pillar GPT-4o | Set-by-set 500ms | Periodization blocks | **7 features cognitive integrate** |
+| User friendly | Power user oriented | Mid-friendly | Complex multi-pillar | Methodology-savvy required | Powerlifter-savvy required | **Categorical universal + sub 120s onboarding** |
+| Fool proof | Wearable trust | Algorithm trust | LLM trust (hallucinate risk) | Methodology compliance | RPE accuracy required | **Reality Engine + AA Detection + anti-RE** |
+
+**Verdict:** Niciun competitor = top pe toate 5 axe. SalaFull poate câștiga TOATE 5 cu execution disciplinat.
+
+**Implicație pricing decision:** User pe Android NU poate alege SensAI (nu există). Alege între Fitbod (€90/an, mature brand, strength general) / Rizin (~€100-150/an, complex multi-pillar) / **SalaFull (€65/an, 5-axes execution superior)**.
+
+**MOAT real = combinația tuturor 5 axe execute superior.** Architecture serves these axes, NU substitutes them. Cele 5 PILONI MOAT (§MOAT REAL) = enabler pentru aceste axe, NU MOAT-ul direct.
+
+*Source: HANDOVER_GLOBAL_2026-04-29 chat strategic seară + 2026-04-30 dimineață differentiation reality articulation. Migrated from sessions-log handover §12.3 pe 2026-04-30 evening per outbox 04 LOSS-1 decizie A1.*
+
+---
+
 ## MOAT NE-COPIABIL
 
 ### Ce POT copia competitorii (în 6 luni)
