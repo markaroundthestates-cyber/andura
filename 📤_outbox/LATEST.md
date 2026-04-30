@@ -28,9 +28,9 @@
 - `222e311` fix(vault): move ALIGNMENT_QUESTIONS inbox → outbox (inbox = strict Daniel input)
 - `af763f8` fix(rules): §HANDOVER_PROTOCOL — remove inbox exception, ZERO CC writes to inbox
 - `bb6b32b` fix(prompt): INGEST_HANDOVER step 6 path inbox → outbox
-- `<sha-pending>` chore(outbox): rotate LATEST → archive 18 + handover protocol fix report
+- `df49498` chore(outbox): rotate LATEST → archive 18 + handover protocol fix report
 
-## Pushed: ✅ origin/main (3 commits + rotation pending)
+## Pushed: ✅ origin/main (`efbda5d..df49498`)
 
 ## Verify post-fix
 
