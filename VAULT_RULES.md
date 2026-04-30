@@ -10,7 +10,9 @@
 ```
 salafull/
 ├── 📥_inbox/             ← Daniel uploadează aici (artefacte chat, prompts CC, drafturi)
-├── 📤_outbox/            ← Opus pune rapoarte numerotate 01, 02, 03... (ultimele 5 keep)
+├── 📤_outbox/            ← Output CC (Opus/Sonnet runs)
+│   ├── LATEST.md         ← 1 file activ — Daniel paste-uiește în chat Claude
+│   └── _archive/         ← Istoric complet pe luni (YYYY-MM/NN_TASK.md)
 ├── 00-index/             ← INDEX_MASTER.md (navigare master)
 ├── 01-vision/            ← Product vision + strategy + Daniel profile
 ├── 02-audit/             ← Research reference (NU sprint reports)
@@ -20,7 +22,6 @@ salafull/
 ├── 06-sessions-log/      ← HANDOVER_GLOBAL.md (1 SSOT activ, NU multiple)
 ├── 07-meta/              ← CLAUDE_CODE_RULES + meta workflow docs
 ├── 08-workflows/         ← CHAT_MIGRATION_PROTOCOL + infrastructură + templates
-├── cc-reports/           ← Sprint execution reports + AUDIT_5000Q
 ├── src/                  ← Cod (NU se atinge la cleanup)
 ├── tests/                ← Tests (NU se atinge)
 ├── scripts/              ← Build scripts (NU se atinge)
@@ -69,10 +70,9 @@ salafull/
 ### Meta
 - `07-meta/CLAUDE_CODE_RULES.md`
 
-### Reports
-- `cc-reports/SPRINT*_EXECUTION_REPORT.md`
-- `cc-reports/AUDIT_5000Q*.md`
-- `cc-reports/VAULT_CLEANUP_*.md`
+### Reports (CC output)
+- `📤_outbox/LATEST.md` ← raportul curent (1 file vizibil)
+- `📤_outbox/_archive/<YYYY-MM>/NN_*.md` ← istoric complet, numerotare cronologică continuă
 
 ### Cod (NU atinge, NU șterge)
 - `src/`, `tests/`, `scripts/`
@@ -95,10 +95,15 @@ salafull/
 - NU creezi `HANDOVER_2026-MM-DD_TOPIC.md` la fiecare sesiune
 - Git history păstrează versiunile vechi
 
-### 3.3 Sprint/audit reports → cc-reports/
-- Orice raport CC autonomous, audit, execution log → `cc-reports/`
+### 3.3 Output CC → 📤_outbox/
+
+- Toate output-urile CC (Sprint reports, fix reports, audit reports, hygiene reports)
+  merg în `📤_outbox/LATEST.md`
+- ANTERIOR existent → MOVE în `📤_outbox/_archive/<YYYY-MM>/NN_<TASK>.md`
+  (numerotare cronologică continuă, NU reset lunar)
+- NICIODATĂ merge la rapoarte. Move-only. Fiecare raport intact 1:1.
+- `cc-reports/` folder DEPRECATED 2026-04-30 — nu mai există.
 - NU în `02-audit/` sau `06-sessions-log/`
-- `cc-reports/` = "ephemeral, valoros săptămâni"
 
 ### 3.4 1 topic = 1 fișier activ
 - ZERO duplicate
@@ -114,9 +119,11 @@ salafull/
 - `.gitkeep` păstrează folder-ul în git
 
 **📤_outbox:**
-- Opus pune rapoarte numerotate cronologic: `01_TASK_NAME.md`, `02_NEXT_TASK.md`, etc.
-- Păstrează **ultimele 5** rapoarte
-- Când adaugă `06_*`, ȘTERGE `01_*` (FIFO)
+- 1 file activ vizibil: `📤_outbox/LATEST.md` (raport curent CC)
+- Daniel paste-uiește `LATEST.md` în chat Claude la handover
+- La next CC run: vechiul `LATEST.md` → MOVE în `_archive/<YYYY-MM>/NN_<TASK>.md`
+- Numerotare `NN` cronologică continuă (NU reset lunar) — preserve audit trail
+- `_archive/` = istoric infinit, intact, zero info loss
 - `.gitkeep` păstrează folder-ul în git
 
 ---
@@ -129,10 +136,11 @@ salafull/
 3. Daniel → /model opus în CC, paste content PROMPT_CC_HYGIENE.md
 4. Opus → citește VAULT_RULES.md + 📥_inbox/, integrează în vault SSOT
 5. Opus → ȘTERGE 📥_inbox/* (consumat)
-6. Opus → scrie 📤_outbox/NN_TASK_NAME.md (raport numerotat)
-7. Opus → cleanup 📤_outbox/ (păstrează ultimele 5)
+6. Opus → MOVE existing 📤_outbox/LATEST.md → 📤_outbox/_archive/<YYYY-MM>/NN_<TASK>.md
+7. Opus → scrie raport nou ca 📤_outbox/LATEST.md
 8. Opus → commit + push, raport în chat
-9. Daniel → review, decide next action
+9. Daniel → deschide 📤_outbox/LATEST.md, paste în chat Claude
+10. Daniel → review, decide next action
 ```
 
 **Daniel NU memorează reguli.** Toate sunt aici.
@@ -166,6 +174,9 @@ git log --all --full-history -- "path/to/deleted/file"
 - ❌ Path references hardcoded (folosește wikilinks `[[FILE_NAME]]`)
 - ❌ DELETE fără safety net §5
 - ❌ Atingerea `src/`, `tests/`, `scripts/`, configs
+- ❌ Multiple rapoarte la top-level outbox (dilute LATEST.md visibility)
+- ❌ Merge la rapoarte vechi în archive (info loss)
+- ❌ Output CC în alt folder decât `📤_outbox/` (`cc-reports/` deprecated)
 
 ---
 
