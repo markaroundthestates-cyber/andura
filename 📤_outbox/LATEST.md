@@ -82,14 +82,14 @@ Pass criteria: ≥12/14 (≥86%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (planned)
+## Commits granular (4 total)
 
-1. `feat(handover): merge evening v2 ingest — ADR 020 Phase 1 + governance hardening + memory consolidation` (HANDOVER_GLOBAL update)
-2. `chore(outbox): archive HANDOVER_INPUT consumed + DIFF_FLAGS audit trail`
-3. `docs(outbox): regenerate ALIGNMENT_QUESTIONS_CHAT_NEW evening v2 (14 questions, top-level per VAULT_RULES)`
-4. `chore(outbox): rotate LATEST → archive 22 + handover ingest evening v2 raport`
+- `6c9c453` feat(handover): merge evening v2 ingest — ADR 020 Phase 1 + governance hardening + memory consolidation
+- `09f3c45` chore(outbox): archive HANDOVER_INPUT consumed (NN=21) + DIFF_FLAGS.md audit trail
+- `ca06043` docs(outbox): regenerate ALIGNMENT_QUESTIONS evening v2 (14 questions, top-level per VAULT_RULES)
+- `1483d3e` chore(outbox): rotate LATEST → archive 22 + handover ingest evening v2 raport
 
-## Pushed: pending — final batch push origin/main
+## Pushed: ✅ origin/main (`bebc801..1483d3e`)
 
 Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-04-30-evening-v2` → origin (rollback safe).
 
