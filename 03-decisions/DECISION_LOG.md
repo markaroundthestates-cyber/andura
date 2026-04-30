@@ -11,7 +11,7 @@
 
 **Migration:** Sprint 1 docs only. Sprint 2 decision needed: (a) DEVELOPING tier add or remove (handover SSOT 6 nivele vs ADR 009 active 5 nivele), (b) code refactor renaming + schema versioning bump.
 
-**Cross-refs:** [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]] | [[009-calibration-tiers]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[PRODUCT_STRATEGY_SPEC_v1]]
+**Cross-refs:** [[009-calibration-tiers]] §AMENDMENT 2026-04-30 (consolidated inline) | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[PRODUCT_STRATEGY_SPEC_v1]]
 
 **Next:** Sprint 2 — code refactor decision + DEVELOPING tier add/remove decision.
 

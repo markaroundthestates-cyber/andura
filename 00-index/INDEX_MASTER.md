@@ -14,7 +14,7 @@ salafull/
 ├── 00-index/        INDEX_MASTER (acest fișier)
 ├── 01-vision/       Vision + Strategy + Daniel profile + parametric programs (5 files)
 ├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)
-├── 03-decisions/    19 ADR-uri active (001-018 + 3 amendment-uri) + DECISION_LOG (20 files)
+├── 03-decisions/    20 ADR-uri active (001-019 + ADR_MULTI_TENANT_AUTH) + DECISION_LOG (21 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
 ├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
 ├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30 SSOT activ (1 file)
@@ -41,7 +41,7 @@ salafull/
 | **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §13 |
 | **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §14 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
-| **ADR-uri active 001-018 + amendments** | `03-decisions/` |
+| **ADR-uri active 001-019 + ADR_MULTI_TENANT_AUTH** | `03-decisions/` |
 | **Cognitive architecture engine** | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
 | **Multi-tenant auth migration plan** | [[MULTI_TENANT_AUTH_MIGRATION_SPEC]] |
 | **T&B implementation (LWW deprecated)** | [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] |
@@ -78,7 +78,7 @@ salafull/
 | 006 | [[006-tier-storage-for-logs]] | Accepted |
 | 007 | [[007-firebase-open-rules]] | Accepted (deferred posture per memory) |
 | 008 | [[008-vitest-playwright-testing]] | Accepted |
-| 009 | [[009-calibration-tiers]] | Accepted (amended 2026-04-30 — see [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]]) |
+| 009 | [[009-calibration-tiers]] | Accepted (amended 2026-04-30 inline — see §AMENDMENT 2026-04-30 in ADR) |
 | 010 | [[010-no-anthropic-trademark-public]] | Accepted |
 | 011 | [[011-coach-decision-log-architecture]] | Accepted (schema extended 2026-04-26 + LWW→T&B amendment 2026-04-30) |
 | 012 | [[012-tier-decay-on-inactivity]] | Accepted |
@@ -88,8 +88,7 @@ salafull/
 | 016 | [[016-vitality-layer]] | Accepted (depends ADR 018) |
 | 017 | [[017-demographic-prior-database]] | Accepted (depends ADR 018) |
 | 018 | [[018-engine-extensibility-architecture]] | Accepted (foundation NEXT) |
-| Amend | [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]] | Accepted (2 axe ortogonale) |
-| Amend | [[ADR_GDPR_AMENDMENT_K_ANONYMITY_v1]] | Accepted (k=5 quasi-identifiers) |
+| 019 | [[019-gdpr-k-anonymity-validation]] | Accepted (k=5 quasi-identifiers — promoted from amendment 2026-04-30) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ---

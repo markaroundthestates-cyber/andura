@@ -47,9 +47,7 @@ salafull/
 - `04-architecture/DATA_REGISTRY_SPEC.md`
 
 ### ADR-uri (toate active)
-- `03-decisions/001-*.md` → `018-*.md`
-- `03-decisions/ADR_009_AMENDMENT_TIER_SYSTEM_SSOT.md`
-- `03-decisions/ADR_GDPR_AMENDMENT_K_ANONYMITY_v1.md`
+- `03-decisions/001-*.md` → `019-*.md`
 - `03-decisions/ADR_MULTI_TENANT_AUTH_v1.md`
 - `03-decisions/DECISION_LOG.md`
 
