@@ -194,6 +194,26 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 
 **Cross-refs:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q14 + HANDOVER 2026-04-29 §2 Bayesian Nutrition + Sprint 4 implementation task. ADR formal Bayesian engine = Sprint 4 spec.
 
+#### 3.5.1 Strong Prior Strategy (Tier-Based) — AMENDED 2026-04-30 evening
+
+**Tier-based prior calibration** (per Gemini follow-up F4 + ADR 022 Bayesian Nutrition Sprint 4 implementation):
+
+- **T0 + Skip onboarding (zero input):** Demographic Prior din Synthetic 50+ profile database (memorie #22 + ADR 017). Variance mare, calibration slow (necesită 80+ sesiuni real pentru convergență).
+- **T0 + Self-report fill (experience + goals):** **Strong Prior 80% input + 20% baseline demographic.** Calibration time reduced ~50% (estimate ~40 sesiuni convergență vs 80).
+- **T1+ (post-3 sessions):** Behavioral inference erodează prior-ul inițial. Signals observate (kg trend + force progression + readiness emoji + RPE) gradual înlocuiesc prior până când engine = empirical-driven la T2.
+
+**Signals input la T0/T1:**
+
+- **Primary:** Trend kg (media mobilă 7 zile) vs kcal logate (când disponibile via inference Layer 4).
+- **Secondary:** Readiness emoji post-session (proxy energie/deficit) + RPE per-set.
+- **Credible T0 calibration:** Beginner prior hipertrofie > Advanced prior, stabilizează force progression calculation (anti-spike artifact pe primele sesiuni).
+
+**Skip = feature, NOT bug.** Self-selection respectată per Decision Log 2026-04-27 §Decision 4 Tier-based personalization. Engine acceptable performance with demographic prior fallback (vezi ADR 017 §Tier gating T0-only).
+
+**Anti-paternalism preserved:** sistemul NU dictează kcal/macro plan. Prior strong = baseline credible mai stabil, NU prescription user-facing. User decide.
+
+**Cross-ref:** ADR 022 Bayesian Nutrition implementation Sprint 4 + Gemini Q9 push-back (signal-noise ratio risc <80 sesiuni → strong prior stabilizează) + ADR 009 amendment 2026-04-30 (tier system 6 nivele post D1).
+
 ### 3.6 Cardio
 **Decizie:** Engine separat (basic logging). Ignorat din Arbitrator hipertrofie v1.0.
 
