@@ -31,6 +31,11 @@ export function checkOnboarding() {
 }
 
 function showOnboarding() {
+  // Test isolation: tests opting out of the onboarding overlay can set
+  // window._suppressOnboardingOverlay = true via addInitScript. This avoids
+  // the overlay intercepting clicks on UI under test (parity with
+  // _suppressAAFrictionModal in modalManager.js).
+  if (typeof window !== 'undefined' && window._suppressOnboardingOverlay === true) return;
   const overlay = document.createElement('div');
   overlay.id = 'onboarding-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;padding:0 0 40px';
