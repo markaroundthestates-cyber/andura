@@ -121,15 +121,15 @@ Test isolation: each test resets fake-indexeddb via `await Dexie.delete(DEFAULT_
 | `ebfad08` | chore(storage): Tier 2 stub + TODO post-Pro launch |
 | `7455e89` | test(storage): 52 tests Golden Master (Dexie + rotation + tieredRead + Tier 2 stub) |
 
-**Outbox commit:** pending — chore(outbox): rotate LATEST → archive 19 + ADR 020 implementation report.
+**Outbox commit:** `a8f8e9e` chore(outbox): rotate LATEST → archive 19 + ADR 020 implementation report.
 
-**Pre-commit hook:** ✅ all 6 commits passed test suite (804/804 each).
+**Pre-commit hook:** ✅ all 7 commits passed test suite (804/804 each).
 
 ---
 
-## Pushed: ✅ origin/main (3453f03..7455e89)
+## Pushed: ✅ origin/main (`3453f03..a8f8e9e`)
 
-6 commits propagated remote successfully.
+7 commits propagated remote successfully.
 
 Backup tag: `pre-adr-020-impl` (rollback safe — `git reset --hard pre-adr-020-impl` if regression discovered post-deploy).
 
