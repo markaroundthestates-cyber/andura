@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { explainRecommendation, whySummary } from '../whyEngine.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { explainRecommendation, whySummary, selectVerdict } from '../whyEngine.js';
+import { setLocale, _resetI18nCache } from '../../i18n/index.js';
 
 const makeCtx = (overrides = {}) => ({
   readiness: { score: 75 },
@@ -9,86 +10,156 @@ const makeCtx = (overrides = {}) => ({
   ...overrides,
 });
 
+beforeEach(() => {
+  _resetI18nCache();
+  setLocale('ro');
+});
+
+// ── selectVerdict logic ────────────────────────────────────────────────────
+
+describe('selectVerdict — priority ladder', () => {
+  it('recovery overrides everything when readiness < MED (55)', () => {
+    expect(selectVerdict({ kg: 100, lastWeight: 80 }, makeCtx({ readiness: { score: 50 } })))
+      .toBe('recovery');
+  });
+
+  it('recovery overrides INCREASE status', () => {
+    expect(selectVerdict({ status: 'INCREASE', kg: 90 }, makeCtx({ readiness: { score: 30 } })))
+      .toBe('recovery');
+  });
+
+  it('progression_up când rec.kg > lastWeight', () => {
+    expect(selectVerdict({ kg: 85, lastWeight: 80 }, makeCtx())).toBe('progression_up');
+  });
+
+  it('progression_down când rec.kg < lastWeight', () => {
+    expect(selectVerdict({ kg: 75, lastWeight: 80 }, makeCtx())).toBe('progression_down');
+  });
+
+  it('hold când rec.kg === lastWeight', () => {
+    expect(selectVerdict({ kg: 80, lastWeight: 80 }, makeCtx())).toBe('hold');
+  });
+
+  it('progression_up via status INCREASE când no lastWeight', () => {
+    expect(selectVerdict({ status: 'INCREASE' }, makeCtx())).toBe('progression_up');
+  });
+
+  it('progression_down via status SCALE_BACK când no lastWeight', () => {
+    expect(selectVerdict({ status: 'SCALE_BACK' }, makeCtx())).toBe('progression_down');
+  });
+
+  it('hold pentru initial recommendation (isInitial)', () => {
+    expect(selectVerdict({ isInitial: true }, makeCtx())).toBe('hold');
+  });
+
+  it('hold default fallback când nimic nu match', () => {
+    expect(selectVerdict({}, makeCtx())).toBe('hold');
+  });
+});
+
+// ── explainRecommendation contract ─────────────────────────────────────────
+
 describe('explainRecommendation', () => {
-  it('returns summary and reasons', () => {
-    const exercise = { name: 'Bench Press', recommendation: { kg: 80, status: 'CONSOLIDATE' } };
-    const result = explainRecommendation(exercise, makeCtx());
-    expect(result.summary).toBeTruthy();
+  it('returns { summary, verdict, reasons } shape', () => {
+    const ex = { name: 'Bench Press', recommendation: { kg: 80, status: 'CONSOLIDATE' } };
+    const result = explainRecommendation(ex, makeCtx());
+    expect(typeof result.summary).toBe('string');
+    expect(typeof result.verdict).toBe('string');
     expect(Array.isArray(result.reasons)).toBe(true);
   });
 
-  it('includes performance reason for CONSOLIDATE', () => {
-    const ex = { name: 'Bench', recommendation: { kg: 80, status: 'CONSOLIDATE' } };
+  it('summary contains exercise name interpolated', () => {
+    const ex = { name: 'Squat', recommendation: { kg: 100, lastWeight: 95 } };
     const result = explainRecommendation(ex, makeCtx());
-    const perf = result.reasons.find(r => r.category === 'performance');
-    expect(perf).toBeDefined();
-    expect(perf.text).toContain('80');
+    expect(result.summary).toContain('Squat');
   });
 
-  it('includes performance reason for INCREASE', () => {
-    const ex = { name: 'Cable Row', recommendation: { kg: 65, status: 'INCREASE' } };
+  it('progression_up summary uses lock-uit wording (creștem greutatea)', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 85, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
-    const perf = result.reasons.find(r => r.category === 'performance');
-    expect(perf.text).toContain('progres');
+    expect(result.verdict).toBe('progression_up');
+    expect(result.summary).toContain('Creștem greutatea');
   });
 
-  it('includes phase reason for CUT', () => {
-    const ex = { name: 'Bench', recommendation: { kg: 80 } };
-    const result = explainRecommendation(ex, makeCtx({ isInCut: true }));
-    const phase = result.reasons.find(r => r.category === 'phase');
-    expect(phase).toBeDefined();
-    expect(phase.text).toContain('CUT');
-  });
-
-  it('includes readiness reason with correct score', () => {
-    const ex = { name: 'Bench', recommendation: { kg: 80 } };
-    const result = explainRecommendation(ex, makeCtx({ readiness: { score: 92 } }));
-    const readinessReason = result.reasons.find(r => r.category === 'readiness');
-    expect(readinessReason).toBeDefined();
-    expect(readinessReason.text).toContain('92');
-  });
-
-  it('includes equipment reason for alternatives', () => {
-    const ex = { name: 'DB Row', recommendation: { kg: 40 }, isAlternative: true, original: 'Cable Row' };
+  it('progression_down summary uses lock-uit wording (Reducem puțin greutatea)', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 75, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
-    const equip = result.reasons.find(r => r.category === 'equipment');
-    expect(equip).toBeDefined();
-    expect(equip.text).toContain('Cable Row');
+    expect(result.verdict).toBe('progression_down');
+    expect(result.summary).toContain('Reducem puțin');
   });
 
-  it('includes pattern reason when patterns present', () => {
-    const ex = { name: 'Bench', recommendation: { kg: 80 } };
-    const ctx = makeCtx({ patterns: [{ type: 'early_end', message: 'Sărești des ultimele 2 seturi' }] });
-    const result = explainRecommendation(ex, ctx);
-    const pattern = result.reasons.find(r => r.category === 'pattern');
-    expect(pattern).toBeDefined();
+  it('hold summary uses lock-uit wording (Păstrăm greutatea)', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 80, lastWeight: 80 } };
+    const result = explainRecommendation(ex, makeCtx());
+    expect(result.verdict).toBe('hold');
+    expect(result.summary).toContain('Păstrăm greutatea');
+  });
+
+  it('recovery summary uses lock-uit wording (Reducem volumul)', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 80, lastWeight: 80 } };
+    const result = explainRecommendation(ex, makeCtx({ readiness: { score: 30 } }));
+    expect(result.verdict).toBe('recovery');
+    expect(result.summary).toContain('Reducem volumul');
   });
 
   it('handles missing exercise gracefully', () => {
     const result = explainRecommendation(null, makeCtx());
     expect(result.summary).toBeTruthy();
+    expect(result.verdict).toBeTruthy();
   });
 
-  it('includes RIR annotation', () => {
-    const ex = { name: 'Bench', recommendation: { kg: 80, rir: 2 } };
+  it('reasons array contains single-element with summary text only (NO category leak)', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 85, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
-    const rirReason = result.reasons.find(r => r.text?.includes('RIR'));
-    expect(rirReason).toBeDefined();
-  });
-
-  it('deduplicates identical reasons from multiple sources', () => {
-    const duplicatePattern = { type: 'SKIP_DAY', message: 'Joi are 88% skip rate' };
-    const ctx = makeCtx({ patterns: [duplicatePattern, duplicatePattern, duplicatePattern] });
-    const ex = { name: 'Bench', recommendation: { kg: 80 } };
-    const result = explainRecommendation(ex, ctx);
-    const patternReasons = result.reasons.filter(r => r.category === 'pattern');
-    expect(patternReasons.length, 'Duplicate pattern reasons must be collapsed to 1').toBe(1);
+    expect(result.reasons).toHaveLength(1);
+    expect(result.reasons[0].text).toBe(result.summary);
+    // CRITICAL: no category field exposed (anti-RE)
+    expect(result.reasons[0].category).toBeUndefined();
   });
 });
+
+// ── ZERO LEAK verification (anti-RE compliance per ADR 013 + COG-ARCH §Q5) ──
+
+describe('zero leak — anti-RE compliance', () => {
+  it('NO category brackets [phase]/[readiness]/[pattern] in any output', () => {
+    const verdicts = [
+      { ex: { name: 'Squat', recommendation: { kg: 100, lastWeight: 95 } }, ctx: makeCtx() },
+      { ex: { name: 'Squat', recommendation: { kg: 90, lastWeight: 95 } }, ctx: makeCtx() },
+      { ex: { name: 'Squat', recommendation: { kg: 95, lastWeight: 95 } }, ctx: makeCtx() },
+      { ex: { name: 'Squat', recommendation: { kg: 95, lastWeight: 95 } }, ctx: makeCtx({ readiness: { score: 30 } }) },
+    ];
+    for (const { ex, ctx } of verdicts) {
+      const result = explainRecommendation(ex, ctx);
+      expect(result.summary).not.toMatch(/\[phase\]|\[readiness\]|\[pattern\]|\[performance\]|\[equipment\]/);
+    }
+  });
+
+  it('NO numeric leaks (score, kg, RPE) in summary text', () => {
+    const ex = { name: 'Bench', recommendation: { kg: 85, lastWeight: 80 } };
+    const result = explainRecommendation(ex, makeCtx({ readiness: { score: 92 } }));
+    // No "92" (score) or "85" or "80" (kg) in summary
+    expect(result.summary).not.toMatch(/\b92\b|\b85\b|\b80\b/);
+  });
+
+  it('exercise name interpolation correct (ZERO {exercise} placeholder leak)', () => {
+    const ex = { name: 'Lat Pulldown', recommendation: { kg: 60, lastWeight: 55 } };
+    const result = explainRecommendation(ex, makeCtx());
+    expect(result.summary).not.toContain('{exercise}');
+    expect(result.summary).toContain('Lat Pulldown');
+  });
+});
+
+// ── whySummary shorthand ───────────────────────────────────────────────────
 
 describe('whySummary', () => {
   it('returns string', () => {
     const ex = { name: 'Bench', recommendation: { kg: 80, status: 'CONSOLIDATE' } };
     expect(typeof whySummary(ex, makeCtx())).toBe('string');
+  });
+
+  it('matches explainRecommendation.summary exactly', () => {
+    const ex = { name: 'Squat', recommendation: { kg: 100, lastWeight: 95 } };
+    const ctx = makeCtx();
+    expect(whySummary(ex, ctx)).toBe(explainRecommendation(ex, ctx).summary);
   });
 });
