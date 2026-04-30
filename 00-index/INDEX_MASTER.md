@@ -20,11 +20,12 @@ salafull/
 ├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file)
 ├── 07-meta/         CLAUDE_CODE_RULES (1 file)
 ├── 08-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
-├── cc-reports/      Sprint reports + AUDIT_5000Q (5 files)
+├── 📥_inbox/        Daniel uploadează aici (artefacte chat, prompts CC, drafturi)
+├── 📤_outbox/       Output CC (LATEST.md activ + _archive/<YYYY-MM>/NN_*.md istoric continuu)
 └── README.md        Repo intro
 ```
 
-**Folders REMOVED post-cleanup:** `05-prompts/` (executed), `10-exec-queue/` (DONE), `docs/` (orphan, migrated).
+**Folders REMOVED post-cleanup:** `05-prompts/` (executed), `10-exec-queue/` (DONE), `docs/` (orphan, migrated), **`cc-reports/` (DEPRECATED 30 apr, content migrated to `📤_outbox/_archive/2026-04/`)**.
 
 ---
 
@@ -62,8 +63,8 @@ salafull/
 | **Handover template (next session)** | [[HANDOVER_TEMPLATE]] |
 | **Model upgrade audit protocol** | [[MODEL_UPGRADE_AUDIT_PROTOCOL]] |
 | **CC autonomous run rules** | [[CLAUDE_CODE_RULES]] |
-| **Sprint 1+2+3 partial reports** | `cc-reports/SPRINT*_EXECUTION_REPORT.md` |
-| **AUDIT 5000Q corpus + report** | [[AUDIT_5000Q]] / [[AUDIT_5000Q_REPORT]] |
+| **Sprint 1+2+3 partial reports** | `📤_outbox/_archive/2026-04/08_SPRINT1_EXECUTION_REPORT.md` + `09_SPRINT2_EXECUTION_REPORT.md` + `10_SPRINT3_PARTIAL_EXECUTION_REPORT.md` |
+| **AUDIT 5000Q corpus + report** | `📤_outbox/_archive/2026-04/06_AUDIT_5000Q.md` + `07_AUDIT_5000Q_REPORT.md` |
 | **AUDIT 30.9 blocked state (Daniel sign-off needed)** | [[AUDIT_30_9_BLOCKED_STATE]] |
 
 ---
@@ -112,7 +113,7 @@ salafull/
 
 73 fișiere șterse (sprint-uri închise + handover-uri consolidate + audits absorbite + prompts executate + ADR patches merged inline). Reducere -61% (125 → 49 vault docs).
 
-Detalii complete: `cc-reports/VAULT_CLEANUP_2026-04-30_REPORT.md`.
+Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 
 ---
 
