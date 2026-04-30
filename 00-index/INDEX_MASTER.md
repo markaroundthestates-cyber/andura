@@ -1,194 +1,116 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Ultima actualizare:** 28 apr 2026 — vault cleanup Batch 1-5 complete
-**Status:** FAZA 2 ✅ COMPLETE — 35 bugs + refactors, 271 teste, zero regresii. Task #25-#27 DONE (Nuclear audit + cache coalesce + data registry).
+**Last updated:** 2026-04-30 (post vault cleanup)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30]] — citește primul pentru context curent
+**Stats:** 49 fișiere active vault (din 125 baseline pre-cleanup, -61%)
+**Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
 
-## STRUCTURA VAULT
+## STRUCTURĂ POST-CLEANUP
 
 ```
 salafull/
-├── 00-index/                  ← Master index
-├── 01-vision/                 ← Product vision
-├── 02-audit/                  ← All audit reports (22 files)
-├── 03-decisions/              ← All ADRs (20 files: DECISION_LOG + 19 ADRs)
-├── 04-architecture/           ← Architecture: FAZA/ROADMAP/PLAN/SPEC + ENGINE_ARCHITECTURE
-├── 05-prompts/                ← Claude prompts (CC + chat)
-├── 06-findings-tracker/       ← Findings + bugs tracker
-├── 07-sessions-log/           ← HANDOVER + AUTONOMOUS_RUN files
-├── 08-meta/                   ← Meta docs (Obsidian, Claude Code rules, vault sync)
-├── 09-workflows/              ← Workflows + protocols
-├── 10-exec-queue/             ← EXEC_QUEUE
-├── src/                       ← Code source
-├── tests/                     ← Tests
-└── README.md                  ← Repo intro
+├── 00-index/        INDEX_MASTER (acest fișier)
+├── 01-vision/       Vision + Strategy + Daniel profile + parametric programs (5 files)
+├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)
+├── 03-decisions/    19 ADR-uri active (001-018 + 3 amendment-uri) + DECISION_LOG (20 files)
+├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
+├── 06-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
+├── 07-sessions-log/      HANDOVER_GLOBAL_2026-04-30 SSOT activ (1 file)
+├── 08-meta/         CLAUDE_CODE_RULES (1 file)
+├── 09-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
+├── cc-reports/      Sprint reports + AUDIT_5000Q (5 files)
+└── README.md        Repo intro
 ```
+
+**Folders REMOVED post-cleanup:** `05-prompts/` (executed), `10-exec-queue/` (DONE), `docs/` (orphan, migrated).
 
 ---
 
 ## NAVIGARE RAPIDĂ
 
-### 🎯 Vision & Strategy
-- [[PROJECT_VISION]] — Viziunea SalaFull
-- [[USER_PROFILE_DANIEL]] — Profil owner
-- [[MOAT_STRATEGY]] — De ce SalaFull vs ChatGPT
-
-### 🗺️ Roadmaps
-- [[FAZA_3_ROADMAP]] — MCP Integrations + Observability + CI/CD hardening
-- [[FAZA_2_ROADMAP]] — Bug Fixes + Reliability (✅ COMPLETE)
-- [[FAZA_2_FINAL_REPORT]] — Raport final FAZA 2 (10 bugs, +35 teste)
-
-### 🔍 Audits
-- [[AUDIT_SUMMARY_EXECUTIVE]] — Rezumat executiv (AICI pentru overview)
-- [[OPUS_NUCLEAR_AUDIT_25APR]] — 🔴 Nuclear Opus Audit v3, adversarial (13 secțiuni, 24 tasks queued, 7 probleme NOI)
-- [[AUDIT_GENERAL_23APR]] — Audit general 1774 linii (gitignored, vezi Codespaces)
-- [[AUDIT_COACH_JS_24APR]] — Audit coach.js 2120 linii (gitignored, vezi Codespaces)
-
-### 🧠 Decisions
-- [[DECISION_LOG]] — Cronologic — de ce X nu Y
-- [[001-local-first-storage]] — ADR: localStorage + Firebase sync
-- [[002-firebase-rest-not-sdk]] — ADR: Firebase REST not SDK
-- [[003-double-progression-engine]] — ADR: Double Progression engine
-- [[004-rule-engine-numeric-priorities]] — ADR: Rule Engine priorities
-- [[005-vanilla-js-no-framework]] — ADR: Vanilla JS + Vite
-- [[006-tier-storage-for-logs]] — ADR: Three-Tier Log Storage
-- [[007-firebase-open-rules]] — ADR: Firebase open rules
-- [[008-vitest-playwright-testing]] — ADR: Vitest + Playwright
-- [[009-calibration-tiers]] — ADR: Calibration Tiers
-- [[010-no-anthropic-trademark-public]] — ADR: No Anthropic Trademark in Public Material
-
-### 🏗️ Architecture
-- [[ENGINE_ARCHITECTURE]] — Coach Brain v3
-
-### 📝 Prompts
-- [[PROMPT_FAZA_1_1_SPLIT_EXECUTION]] — Split execution (DONE 24 apr 2026)
-
-### 📊 Findings Tracker
-- [[FINDINGS_MASTER]] — 125 findings triate, status progress (1 OPEN: H30c)
-
-### 📓 Sessions Log
-- [[QA_MANUAL_24APR_2230]] — QA live 24 apr 22:30 — 3 bug-uri noi + observații
-- [[QA_MANUAL_25APR_POSTFIX]] — QA post C10c fix + bug-uri noi descoperite (BUG A reset cascade)
-
-### 🔗 References
-- [[RESOURCES]] — Resurse externe, tools, inspirație
-
-### ⚙️ Workflows
-- [[CHAT_MIGRATION_PROTOCOL]] — Handoff între chat-uri
-- [[ASYNC_EXECUTION_PROTOCOL]] — Queue-based async workflow (LIVE 24 apr 2026)
-- [[CLAUDE_CHAT_INFRASTRUCTURE]] — Setup complet Claude chat ↔ vault ↔ repo (v2)
-
-### 🗂️ Vault Setup
-- [[OBSIDIAN_SETUP_GUIDE]] — Graph View settings, plugins, shortcuts
-- [[VAULT_SYNC_DIAGNOSTIC]] — Lista completă 33 fișiere + instrucțiuni pull
-- [[VAULT_CONSOLIDATION_GUIDE]] — Clone fresh salafull ca vault Obsidian (Windows)
-
-### 📋 Execution Queue
-- [[EXEC_QUEUE]] — Task-uri pending pentru Claude Code
-- [[EXEC_RESULTS]] — Log rezultate task-uri
+| Cauți | Citește |
+|-------|---------|
+| **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30]] |
+| **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30]] §6 |
+| **Pricing locked €60 lifetime / €65/an** | [[HANDOVER_GLOBAL_2026-04-30]] §3 + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 |
+| **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30]] §2.1 |
+| **5 axe differentiation (vs AI = comoditate)** | [[HANDOVER_GLOBAL_2026-04-30]] §12 |
+| **7 features distinctive (MOAT real)** | [[HANDOVER_GLOBAL_2026-04-30]] §2.2 |
+| **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §13 |
+| **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30]] §14 |
+| **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
+| **ADR-uri active 001-018 + amendments** | `03-decisions/` |
+| **Cognitive architecture engine** | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
+| **Multi-tenant auth migration plan** | [[MULTI_TENANT_AUTH_MIGRATION_SPEC]] |
+| **T&B implementation (LWW deprecated)** | [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] |
+| **Data registry SSOT** | [[DATA_REGISTRY_SPEC]] |
+| **Product strategy 80 decizii + 8 push-backs** | [[PRODUCT_STRATEGY_SPEC_v1]] |
+| **Project vision + brand** | [[PROJECT_VISION]] |
+| **MOAT strategy** | [[MOAT_STRATEGY]] |
+| **Daniel profile + cognitive mode** | [[DANIEL_COMPLETE_PROFILE]] |
+| **Parametric programs (FAZA 4+ design)** | [[PARAMETRIC_PROGRAMS_DESIGN]] |
+| **Findings tracker (130+ unique)** | [[FINDINGS_MASTER]] |
+| **Insights backlog (deferred + future)** | [[INSIGHTS_BACKLOG]] |
+| **Coaching textbook synthesis (research)** | [[COACHING_TEXTBOOK_SYNTHESIS]] |
+| **Chat migration protocol** | [[CHAT_MIGRATION_PROTOCOL]] |
+| **Claude chat infrastructure** | [[CLAUDE_CHAT_INFRASTRUCTURE]] |
+| **Forward-compat principles** | [[FORWARD_COMPAT_PRINCIPLES]] |
+| **Handover template (next session)** | [[HANDOVER_TEMPLATE]] |
+| **Model upgrade audit protocol** | [[MODEL_UPGRADE_AUDIT_PROTOCOL]] |
+| **CC autonomous run rules** | [[CLAUDE_CODE_RULES]] |
+| **Sprint 1+2+3 partial reports** | `cc-reports/SPRINT*_EXECUTION_REPORT.md` |
+| **AUDIT 5000Q corpus + report** | [[AUDIT_5000Q]] / [[AUDIT_5000Q_REPORT]] |
+| **AUDIT 30.9 blocked state (Daniel sign-off needed)** | [[AUDIT_30_9_BLOCKED_STATE]] |
 
 ---
 
-## FAZE CURENTE
+## ADR-URI ACTIVE (cronologic, în ordinea acceptării)
 
-### ✅ FAZA 0 — Audit (COMPLETE — 24 apr 2026)
-- Audit general (23 apr): 9 CRITICAL, 31 HIGH, 27 MEDIUM, 16 LOW
-- Audit coach.js (24 apr): 5 CRITICAL, 11 HIGH, 15 MEDIUM, 11 LOW
-- Total: 125 findings unique (~15 overlap eliminate)
-
-### ✅ FAZA 0.5 — Vault Setup (COMPLETE)
-- Obsidian + Git sync PC work → GitHub privat
-- ✅ PC home setup DONE (25 apr 2026) — desktop-first workflow
-- Phone deferred (decidem Obsidian Sync $8/mo vs Git după launch)
-
-### ✅ FAZA 1 — ENGINE BULLETPROOF (COMPLETE — 24 apr 2026)
-Raport: [[FAZA_1_FINAL_REPORT]]
-Sub-faze:
-- ✅ 1.0 Split coach.js planning (Opus) — DONE, [[COACH_SPLIT_PLAN]] 714 linii, confidence 82%
-- ✅ 1.1 Split coach.js execuție (Sonnet) — DONE, 9 module + orchestrator live, zero regresii, commit 9875755
-- ✅ 1.2 Multi-tenancy decouple — DONE, config/user.js + 14 fișiere decoupled → [[HARDCODED_AUDIT_1_2]]
-- ✅ 1.3 Log schema cleanup — DONE, 7 mismatches rezolvate + logNormalize.js → [[LOG_SCHEMA_AUDIT_1_3]]
-- ✅ 1.4 cleanDuplicateLogs fix — DONE, dedupe strict pe ts
-- ✅ 1.5 ctx.allLogs real — DONE, calibration funcționează pentru 80+ sesiuni → [[CTX_ALLLOGS_AUDIT_1_5]]
-- ✅ 1.6 sessionBuilder cleanup OPT B — DONE (OPT A = FAZA 2 Priority 1) → [[SESSIONBUILDER_AUDIT_1_6]]
-- ✅ 1.7 AA engine activate notes-only — DONE, RPE logic eliminat, safety net defensiv
-- ✅ 1.8 Firebase: audit + data loss fix 500→5000 + rules v1 plan — DONE → [[FIREBASE_AUDIT_1_8]]
-
-### ✅ FAZA 2 — BUG FIXES + RELIABILITY (COMPLETE — 24 apr 2026)
-Details: [[FAZA_2_ROADMAP]] | Raport: [[FAZA_2_FINAL_REPORT]] | Plan execuție: [[FAZA_2_EXECUTION_PLAN]] | Review Opus: [[FAZA_2_OPUS_REVIEW]]
-- ✅ Tier 0: C4c log schema + C5c endSession auto-delete (commit 489480e)
-- ✅ P2 batch: H11c cache keys + C3c idempotency + H6c inflight guard (commit 2da734d)
-- ✅ Session: C2c cancelWorkout + H4c resume completedExercises (commit 03c5d8f)
-- ✅ Engines: isoWeek ISO 8601 + H14g checkRecoveryGroups (commit b7e662f)
-- ✅ sessionBuilder OPT C pure function (commit d8f17f0)
-- ✅ sessionBuilder OPT A weakness ordering + contextSelectionEnabled (commit 7c86288)
-- Metrici: 236 → 271 teste, 25 test files, zero regresii
-
-### ✅ POST-FAZA 2 PATCHES (25 apr 2026)
-- ✅ Task #25 — Nuclear Opus Audit (1532 linii, VERDICT FAIL, 24 tasks queued, 7 probleme noi)
-- ✅ Task #26 — C10c Cache Invalidation Coalesce (suppressInvalidations + debounce 250ms)
-- ✅ Task #27 — Data Registry + Full Reset Rewrite (C11c, H31c, H32c FIXED)
-- Tests: 271 → 301 (+30)
-
-### ⏳ FAZA 3 — INFRASTRUCTURE + OBSERVABILITY
-Details: [[FAZA_3_ROADMAP]] | [[OBSIDIAN_SETUP_GUIDE]]
-
-### ⏳ FAZA 4 — FEATURES NOI (144 programe, injury, health export)
+| # | ADR | Status |
+|---|-----|--------|
+| 001 | [[001-local-first-storage]] | Accepted |
+| 002 | [[002-firebase-rest-not-sdk]] | Accepted |
+| 003 | [[003-double-progression-engine]] | Accepted |
+| 004 | [[004-rule-engine-numeric-priorities]] | Accepted |
+| 005 | [[005-vanilla-js-no-framework]] | Accepted |
+| 006 | [[006-tier-storage-for-logs]] | Accepted |
+| 007 | [[007-firebase-open-rules]] | Accepted (deferred posture per memory) |
+| 008 | [[008-vitest-playwright-testing]] | Accepted |
+| 009 | [[009-calibration-tiers]] | Accepted (amended 2026-04-30 — see [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]]) |
+| 010 | [[010-no-anthropic-trademark-public]] | Accepted |
+| 011 | [[011-coach-decision-log-architecture]] | Accepted (schema extended 2026-04-26 + LWW→T&B amendment 2026-04-30) |
+| 012 | [[012-tier-decay-on-inactivity]] | Accepted |
+| 013 | [[013-auto-aggression-detection]] | Accepted (impl COMPLETĂ post TASK #7) |
+| 014 | [[014-onboarding-profile-typing]] | Accepted (wording update 2026-04-27 data-injected) |
+| 015 | [[015-getbf-calibration-only]] | Accepted (closes getBF dead code) |
+| 016 | [[016-vitality-layer]] | Accepted (depends ADR 018) |
+| 017 | [[017-demographic-prior-database]] | Accepted (depends ADR 018) |
+| 018 | [[018-engine-extensibility-architecture]] | Accepted (foundation NEXT) |
+| Amend | [[ADR_009_AMENDMENT_TIER_SYSTEM_SSOT]] | Accepted (2 axe ortogonale) |
+| Amend | [[ADR_GDPR_AMENDMENT_K_ANONYMITY_v1]] | Accepted (k=5 quasi-identifiers) |
+| New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ---
 
-## CONCEPT PRODUS
+## SSOT PRINCIPLE LOCKS
 
-**SalaFull** — Coach personal AI cu reasoning contextual real, memorie persistentă pe ani și decizii adaptive la user.
-
-Bionic human brain pentru fitness și sănătate, cu capacitatea de a depăși orice sistem existent pe domeniul lui specific.
-
-**Caracteristici core:**
-- Context persistent stratificat (90 zile detaliu + 1 an aggregate + arhivă forever)
-- Reasoning semantic, nu calculator if/else
-- Personalitate coherentă cu memorie continuă
-- Decizii contextuale (nu generice)
-- Învață din TINE, nu generic
-
-**Public positioning:** vezi [[PROJECT_VISION]] pentru detalii brand și diferențiatori.  
-**Brand compliance:** vezi [[010-no-anthropic-trademark-public]] pentru reguli de comunicare publică.
+1. **Un document activ per topic.** Update-in-place > create-new-with-corrections.
+2. **HANDOVER_GLOBAL_2026-04-30** = SSOT activ pentru context curent. Înlocuiește toate handover-urile anterioare (mutate în git history).
+3. **DECISION_LOG** = master cronologic. Toate deciziile arhitecturale + amendments aici.
+4. **FINDINGS_MASTER + INSIGHTS_BACKLOG** = single source pentru bugs tracking + deferred design.
+5. **`src/`, `tests/`, `scripts/`, `.claude/`, `.github/`, `.husky/`, `.obsidian/` = NU vault**, nu se atinge la cleanup vault.
+6. **Git history = backup absolut.** Recuperare oricând cu `git log --all --full-history -- "path/to/deleted/file"`.
 
 ---
 
-## INFRASTRUCTURĂ LIVE (25 apr 2026)
+## VAULT CLEANUP 2026-04-30
 
-- **Repo:** `markaroundthestates-cyber/salafull` (vault + cod în același repo)
-- **Deploy:** GitHub Pages → https://markaroundthestates-cyber.github.io/salafull/
-- **Sync Vault ↔ Obsidian:** Git auto-commit 15 min (Obsidian Git plugin)
-- **Claude Code auto-push:** hook Stop în `.claude/settings.json`
-- **Async execution:** queue-based, trigger "check queue"
-- **Claude Project:** GitHub connector sync → eu citesc direct din repo (162 files indexed)
+73 fișiere șterse (sprint-uri închise + handover-uri consolidate + audits absorbite + prompts executate + ADR patches merged inline). Reducere -61% (125 → 49 vault docs).
+
+Detalii complete: `cc-reports/VAULT_CLEANUP_2026-04-30_REPORT.md`.
 
 ---
 
-## CUM FOLOSESC VAULT-UL
-
-- **Începutul zilei:** deschid INDEX MASTER → văd where I left off
-- **Conversație cu Claude:** linkuiesc fișierele relevante (ex: "Citește [[PROJECT_VISION]] și [[FINDINGS_MASTER]]")
-- **Task nou pentru Claude Code:** adaug în [[EXEC_QUEUE]], zic "check queue"
-- **Sesiune sală:** update GYM_SESSIONS cu observații
-- **Decizie nouă:** add în [[DECISION_LOG]] cu data + motivație
-- **Bug fix:** update [[FINDINGS_MASTER]] cu status
-
----
-
-## CONTACT AI
-
-- **Co-CTO (strategy + planning + review)** → claude.ai chat (Opus, sau next-gen model când disponibil)
-- **Sonnet (execuție cod)** → Claude Code CLI local desktop sau Codespaces
-- **Workflow async** → queue-based prin [[EXEC_QUEUE]]
-
----
-
-## GIT SYNC STATUS
-
-- **Vault + cod:** GitHub `markaroundthestates-cyber/salafull` (privat)
-- **Auto commit-and-sync Obsidian:** 15 min
-- **Auto pull on startup:** ON
-- **Claude Code auto-push:** activ (hook Stop)
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic.**

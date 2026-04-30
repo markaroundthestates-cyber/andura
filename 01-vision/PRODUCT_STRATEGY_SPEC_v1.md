@@ -28,18 +28,55 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 ### 1.2 Pricing tier
 **Decizie:** Free + Pro (1 paid tier). **NU 3 tiere** (paralizează decizia user).
 
-### 1.3 Pricing point
-**Decizie:** ~10-12€/lună sau 100€/an.
-**Rationale:** Sub 10€ = "pare ieftin / algoritm prost". Peste 15€ = competiție directă cu antrenori reali din săli low-cost.
+### 1.3 Pricing point (AMENDED 2026-04-30)
 
-### 1.4 Free vs trial
-**Decizie:** Freemium permanent cu caps (paywall pe modulele avansate Arbitrator — VITALITY/PROJECTION advanced). **NU time-gated trial.**
+**Decizie finală (Q-0507 amended post chat strategic 2026-04-29):**
 
-### 1.5 Competitive positioning
-**Decizie:**
+| Tier | Pricing | Justification |
+|------|---------|---------------|
+| **Founding Members 100-500** | **€60 lifetime once** | Loyalty engineering, evangheliști permanenți, primii adopters tech-lifter ICP |
+| **Pro standard v1+** | **€6/lună sau €65/an** | Direct parity SensAI ($69.99/an = ~€65). Competitive pe price, MOAT pe features unique |
+| **iOS users post-v1.x** | Same €65/an | Cross-platform consistency când Apple HealthKit ready |
+
+**Schimbare vs pricing inițial:** -35% reduction (€100/an → €65/an).
+
+**Rationale schimbare:**
+- "SensAI for Android" positioning lock-uit ([[HANDOVER_GLOBAL_2026-04-30]] §2.1) — Android market gap evident, parity SensAI = no-brainer choice
+- AI = comoditate 2026, MOAT real = HOW we build pe 5 axe ([[HANDOVER_GLOBAL_2026-04-30]] §12)
+- Math revenue: 15.4K users × €65/an = €1M/an target. Path realist Year 2-3.
+
+**Cross-ref:** [[HANDOVER_GLOBAL_2026-04-30]] §3 Pricing locked.
+
+### 1.4 Free vs trial (AMENDED 2026-04-30)
+
+**Decizie:** Freemium permanent cu caps. **NU time-gated trial.**
+
+**Paywall structure post-pricing amendment:**
+- **Free permanent:** core engine 5 voices (HISTORICAL + REALTIME + PROJECTION + ARBITRATOR + ACTION) + manual sliders REALTIME + plate calculator + email digest săptămânal
+- **Pro €65/an:** + Apple Health/Wearables integration + 4-week PROJECTION view + Chalkboard educational layer 20 q/zi + advanced UI insights
+- **Founding Members €60 lifetime:** Pro features perpetuu + Discord access (Phase 0-500 users only) + "The Architect" Q&A acces lunar Daniel
+
+**NU paywall pe quality decision** (core architecture same Free/Paid per ADR Q19). Paywall ethical = data sources + UI insights extras.
+
+### 1.5 Competitive positioning (AMENDED 2026-04-30)
+
+**Positioning final:** **"SensAI for Android"** — short, clear, market gap evident.
+
+- iOS market: SensAI mature win (wearable Apple Health perfect + Lock Screen + Dynamic Island + brand)
+- **Android market: SensAI NU există**. Competitori = Fitbod ($95.99/an), JuggernautAI niche, Hevy logging, Arvo niche bodybuilding
+- **Zero Android competitor cu cognitive architecture full + wearable HRV decision-making + cross-pillar reasoning**
+
+**Differentiator real (5 axe execution per [[HANDOVER_GLOBAL_2026-04-30]] §12):**
+- **Viziune:** "Oricine poate, orice categorie, min friction"
+- **Aspect:** Bugatti craft visual, illustrations 3D anatomical, brand voice intelligence-respecting
+- **Funcționalitate:** 7 features distinctive integrate cognitive cross-pillar (NU bolted-on)
+- **User friendly:** Onboarding sub 120s, categorical universal display, anti-paternalism ABSOLUTE, smart inference
+- **Fool proof:** Reality Engine 3 layere + AA Detection 5 signals + anti-RE protection multi-layer
+
+**Vs alte agende digitale:**
 - Strong/Hevy = "agende digitale" (dumb logging)
 - Fitbod = "algoritm rigid" (monolit)
-- **SalaFull = singurul Cognitive AI Coach care arbitrează istoric vs prezent**
+- **SalaFull = singurul Cognitive AI Coach care arbitrează istoric vs prezent + 5 axe execution superior**
 
 ### 1.6 USP (1 sentence)
 > **"Singurul antrenor AI care gândește ca un om: îți știe istoricul, îți citește oboseala de azi și arbitrează antrenamentul perfect în timp real."**
@@ -51,11 +88,20 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 - Zero peer-pressure
 - "Doar tu cu fierul și antrenorul"
 
-### 1.8 Launch strategy
+### 1.8 Launch strategy (AMENDED 2026-04-30)
+
 **Decizie:** 3 stages:
 1. Soft launch RO friends/beta testers (30-50 oameni)
 2. Shadow Run (cognitive architecture parallel cu vechi)
 3. Bug fix + polish → Product Hunt global
+
+**Launch sequence post-velocity recalibration ([[HANDOVER_GLOBAL_2026-04-30]] §4.1, §6.7):**
+- Pre-launch beta timeline: **2-4 luni realist** (vs 5-9 luni anterior estimat)
+- Beachhead v1: tech-lifter ICP first 100-500 users → Founding Members €60 lifetime evangheliști
+- v1.5+ expand: mainstream cu cash flow generated
+- v2+ global: marketing budget pentru ads + SEO + App Store optimization
+
+Cross-ref [[HANDOVER_GLOBAL_2026-04-30]] §1.2 Distribution + §6 Sprint 4 / Wave 6 backlog.
 
 ### 1.9 Acquisition principal
 **Decizie:**
@@ -528,17 +574,10 @@ User agency cu safety net. **(Cross-ref Safety Asymmetric Principle)**
 4. **Balene targeting list** — 10-20 antrenori respectați RO + EN. Compile list pre-launch (next session).
 5. **App Store presence decision (v1.x)** — PWA-only strategic risk pentru iOS EN audience. Future evaluation needed.
 6. **Re-onboarding "muscle_memory_index" detail** — exact algorithm + UI explanation needed.
-7. **Pro pause "data freezing" detail — RESOLVED 2026-04-30 (cross-ref ADR 011 amendment 90 zile retention).**
 
-   **Storage tier preserved** (tier 1/2/3 per ADR 011 §Storage). NU re-tier rapid downgrade pe pause.
-
-   **Retention 90 zile** post-pause (aliniat cu Tombstone retention pattern stabilit în ADR 011 amendment Acțiunea 4.1). Cleanup auto post-90-zile dacă user nu reactivează → demote la tier archive permanent (monthly metrics only) + drop modules avansate cache.
-
-   **Re-activation:** user re-pay → tier-uri restaurate seamless (no re-onboarding needed). Engine re-ramp gradual (3-5 sesiuni calibration la new state — readiness drop legitim post pauză).
-
-   **Spec final implementation v1.x** (NU pre-launch CRITICAL). Sprint 4 sau v1.x post-launch.
-
-   Cross-ref ADR 011 amendment §Firebase sync 90 zile retention + ADR 009 calibration tier decay rules + §9.6 graceful downgrade.
+**RESOLVED items (2026-04-30):**
+- ~~Pro pause "data freezing" detail~~ — Resolved per [[011-coach-decision-log-architecture]] §Firebase sync amendment (T&B 90 zile retention) + [[009-calibration-tiers]] tier decay rules. Storage tier preserved tier 1/2/3, NU re-tier rapid downgrade. Retention 90 zile post-pause, cleanup auto demote tier archive (monthly metrics) + drop modules avansate cache. Re-activation = tier-uri restaurate seamless. Implementation v1.x post-launch (Sprint 4 candidate).
+- ~~Pricing point Q-0507~~ — Resolved §1.3 amendment €60 lifetime + €65/an + iOS roadmap v1.x.
 
 ---
 
