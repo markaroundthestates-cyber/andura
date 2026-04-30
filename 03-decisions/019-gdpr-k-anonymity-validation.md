@@ -1,9 +1,10 @@
-# ADR — GDPR AMENDMENT — K-Anonymity Validation v1
+# 019. GDPR K-Anonymity Validation for Anonymized arbitration_log
 
 **Status:** Accepted (formalized 2026-04-30 Sprint 2 autonomous post chat strategic 2026-04-29 lock decision)
 **Date:** 2026-04-30
-**See also:** [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q14 + §Q6 | [[011-coach-decision-log-architecture]] | [[DECISION_LOG]]
+**See also:** [[DECISION_LOG]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q14 + §Q6 | [[011-coach-decision-log-architecture]]
 **Cross-ref audit:** AUDIT_5000Q Q-0049 + Q-0570 + Q-1100 (re-identification risk în arbitration_log anonymized)
+**Note:** Promoted 2026-04-30 from standalone `ADR_GDPR_AMENDMENT_K_ANONYMITY_v1.md` → full ADR 019 per VAULT_RULES §3.1 (no pre-existing GDPR ADR to merge into).
 
 ---
 
@@ -135,4 +136,4 @@ k=5 = **EU GDPR Working Party recommendation** pentru pseudonymized health data 
 
 ---
 
-*Amendment authored 2026-04-30 Sprint 2 autonomous run Opus 4.7. Sign-off implicit via handover lock 2026-04-29 chat strategic Daniel + Claude Opus.*
+*Authored 2026-04-30 Sprint 2 autonomous run Opus 4.7. Sign-off implicit via handover lock 2026-04-29 chat strategic Daniel + Claude Opus. Promoted from standalone amendment to full ADR 019 on 2026-04-30 per VAULT_RULES §3.1.*
