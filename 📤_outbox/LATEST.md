@@ -88,15 +88,17 @@ Pass criteria: ≥12/15 (≥80%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (planned)
+## Commits granular (5 total)
 
-1. `chore(outbox): pre-cleanup retains 25 + DIFF_FLAGS evening v2 historical 26`
-2. `feat(handover): merge 2026-05-01 morning ingest — Sprint 4 A+B LIVE + i18n + 4 findings noi`
-3. `chore(outbox): archive HANDOVER_INPUT consumed (NN=27) + DIFF_FLAGS.md audit trail`
-4. `docs(outbox): regenerate ALIGNMENT_QUESTIONS morning (15 questions, top-level per VAULT_RULES)`
-5. `chore(outbox): rotate LATEST → archive 28 + handover ingest morning raport`
+- `82f63bc` chore(outbox): pre-cleanup retains 25 + DIFF_FLAGS evening v2 historical 26 (NN convention)
+- `6355961` feat(handover): merge 2026-05-01 morning ingest — Sprint 4 A+B + i18n + 4 findings noi
+- `7748ec3` chore(outbox): archive HANDOVER_INPUT consumed (NN=27) + DIFF_FLAGS.md audit trail
+- `93ffdff` docs(outbox): regenerate ALIGNMENT_QUESTIONS morning (15 questions, top-level per VAULT_RULES)
+- `b83d800` chore(outbox): rotate LATEST → archive 28 + handover ingest morning raport
 
-## Pushed: pending — final batch push origin/main
+## Pushed: ✅ origin/main (`0b2e4ba..b83d800`)
+
+5 commits propagated remote successfully.
 
 Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-01-morning` → origin (rollback safe).
 
