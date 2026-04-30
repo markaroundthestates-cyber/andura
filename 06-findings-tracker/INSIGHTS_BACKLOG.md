@@ -7,7 +7,7 @@ Entries care NU intră în v1 dar trebuie documentate pentru future design.
 ## Strangler Integration Pre-work (defer-uri Batch 1 Audit — rezolvate la strangler sprint)
 
 **Status:** Deferred. Toate findings de mai jos sunt non-blocante pentru Batch 2. Re-audit la strangler integration (prima dimensiune portată = AA detection).
-**Source:** Adversarial audit Batch 1 — 2026-04-27. Audit full: `docs/audit/BATCH_1_AUDIT_2026-04-27.md`.
+**Source:** Adversarial audit Batch 1 — 2026-04-27. Audit source file removed in vault cleanup 2026-04-30 (recuperare prin `git log --all --full-history -- "02-audit/BATCH_1_AUDIT_2026-04-27.md"`).
 
 ### HIGH-1 — CDL adapter: clusterTrace → ADR 011 rationale shape
 **Where:** `src/engine/decisionCluster.js` — export `clusterTraceToADR011Rationale(trace)`
@@ -52,7 +52,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 ## Strangler Integration Pre-work (Batch 2 Audit Defer-uri 2026-04-27)
 
 **Status:** Deferred. Findings de mai jos sunt non-blocante pentru Batch 2 mini-fix. Re-audit la strangler integration (prima dimensiune portată = AA detection).
-**Source:** Adversarial audit Batch 2 — 2026-04-27. Audit full: `docs/audit/BATCH_2_AUDIT_2026-04-27.md`.
+**Source:** Adversarial audit Batch 2 — 2026-04-27. Audit source file removed in vault cleanup 2026-04-30 (recuperare prin `git log --all --full-history -- "02-audit/BATCH_2_AUDIT_2026-04-27.md"`).
 
 ### MED-2 — `assertValidMigration` validator lipsește
 **Where:** `src/migrations/migrationRunner.js` — nu există validare pe shape-ul unui migration object la registration
@@ -299,5 +299,34 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 - **Sentiment analysis live** — LLM runtime cost prohibitiv pentru freemium model
 - **Emotional voice detection** — voice input NU în roadmap, ML model dedicated
 - **Hard refuse pe sănătate** — liability legal medical decision
+
+---
+
+## AA Friction Modal — follow-ups post Decision A/B/C/D rewrite (2026-04-29)
+
+**Source:** Opus task report AA_FRICTION_DISMISS_REWRITE (commits `bdb0be6` + `b24aaae`), migrat aici pre cleanup vault.
+
+**Context:** Per-day dismiss persistence + single-click override + neutral copy ("Plan ajustat — recovery") + test isolation flag `_suppressAAFrictionModal`. 24 → 14 tests rescrise. Engine learning rămâne silent (3× dismiss → suppress).
+
+### Backlog items deferred
+
+- **Signal exposure audit cross-codebase.** Sweep raw signal-type strings (`volume_creep`, `frustration`, `recovery_debt`, `ignore_recovery`, `calorie_acceleration`) în `src/engine/coachContext.js`, `src/engine/proactiveEngine.js`, dashboard auto-rec card. Same RE-leak pattern eliminat din modal poate exista altundeva.
+- **Copy A/B test post-launch.** "Plan ajustat — recovery" e ghicire calmă. Alternative candidate ("Coach-ul îți reduce volumul azi pentru recovery") merită test când telemetry există.
+- **Admin/debug "ce vede coach-ul" pane.** Restore RE-safe transparency opt-in fără să surface în normal flow. Recovery surface dacă engine silences modal user-ul ar fi vrut să vadă.
+- **Playwright config env-driven baseURL.** `playwright.config.js` hardcoded la `https://markaroundthestates-cyber.github.io`. Fix one-liner: `baseURL: process.env.BASE_URL || 'https://…'`. Elimină temp-config dance pentru local verify.
+- **`aa-friction-pending` lifecycle key cleanup.** Per-day dismiss persistence face pending key redundant. Singura valoare: survive accidental refresh în-progres modal același zi. Remove writers/readers follow-up.
+- **ModalManager unit tests.** Pending de la task anterior — ar fi prins test-isolation gap înainte de prod. (11 e2e fail-uri din modal backdrop intercept au necesitat `_suppressAAFrictionModal` flag.)
+
+---
+
+## Engine extensibility decommission — `applied-patterns` storage key (Task #30.9 — BLOCKED on Daniel sign-off)
+
+**Source:** [[AUDIT_30_9_BLOCKED_STATE]] preserved separately. Tracker entry pentru continuitate.
+
+**Status:** Caller cleanup (5 files: `renderIdle.js`, `util.js`, `modals.js`, `dashboard.js`, `main.js`) + 4 sign-off triggers (≥30 real CDL entries + zero mismatch + Daniel manual validation + 7-day diff audit).
+
+**Sequence:** Step 1 caller cleanup (Sonnet 30-45 min) → Step 2 Daniel manual validation (~1h) → Step 3 storage decommission (Sonnet 15-20 min). Total ~2h split.
+
+**Cross-ref:** [[011-coach-decision-log-architecture]] §Decommissioning.
 
 ---

@@ -1,10 +1,10 @@
 # FINDINGS MASTER TRACKER
 
-**See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[QA_MANUAL_24APR_2230]] | [[FAZA_2_FINAL_REPORT]] | [[FAZA_1_FINAL_REPORT]]
+**See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[HANDOVER_GLOBAL_2026-04-30]]
 
 **Ultima actualizare:** 27 apr 2026 (post TASK #7 friction modal HIGH + E2E fix + 2 fail-uri pre-existing flagged)
 **Total findings:** 130 unice (+2 din E2E pre-existing scan)
-**Surse:** [[AUDIT_GENERAL_23APR]] (83) + [[AUDIT_COACH_JS_24APR]] (42) + QA live 24 apr seară (3 noi) + [[QA_MANUAL_25APR_POSTFIX]] (2 noi) + [[OPUS_NUCLEAR_AUDIT_25APR]] (7 arhitecturale) + E2E pre-existing scan 27 apr (2 noi)
+**Surse istorice (consolidate, accesibile prin git history):** AUDIT_GENERAL_23APR (83) + AUDIT_COACH_JS_24APR (42) + QA live 24 apr seară (3 noi) + QA_MANUAL_25APR_POSTFIX (2 noi) + OPUS_NUCLEAR_AUDIT_25APR (7 arhitecturale) + E2E pre-existing scan 27 apr (2 noi). Source files removed in vault cleanup 2026-04-30 (info catalogată aici + DECISION_LOG; recuperare prin `git log --all --full-history -- "02-audit/<file>"`).
 
 ---
 
