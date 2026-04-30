@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "locale": "en",
+    "version": 1,
+    "description": "EN bundle — placeholder cu TODO_EN markers + RO content fallback inline pentru context. Daniel completează manual via wording rewrite session. Acest fișier NU se editează de CC fără explicit Daniel approval (fitness terms culturale)."
+  },
+
+  "why": {
+    "title": "TODO_EN: ❓ De ce {exercise}?",
+    "dismiss": "TODO_EN: Am înțeles",
+    "unavailable": "TODO_EN: Explicația temporar indisponibilă. Recomandarea rămâne validă.",
+    "categorical": {
+      "progression_up": "TODO_EN: Creștem greutatea la {exercise} pentru că ai progresat constant în ultimele săptămâni. Noua țintă e adaptată astfel încât să menținem ritmul, fără să sacrificăm forma.",
+      "progression_down": "TODO_EN: Reducem puțin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas în spate e necesar pentru a debloca următorul salt în forță. Rămânem pe poziții!",
+      "hold": "TODO_EN: Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă înainte de următoarea creștere.",
+      "recovery": "TODO_EN: Reducem volumul la {exercise} pentru că semnele de oboseală sunt prezente. E mai inteligent să te refaci azi, ca să revii cu forțe proaspete la antrenamentul următor."
+    }
+  },
+
+  "modals": {
+    "alternative": {
+      "title": "TODO_EN: Înlocuiește exercițiul"
+    },
+    "readiness": {
+      "title": "TODO_EN: Cum te simți azi?",
+      "subtitle": "TODO_EN: Răspunsul afectează recomandările de azi"
+    },
+    "skip": {
+      "title": "TODO_EN: De ce sari azi?"
+    }
+  },
+
+  "common": {
+    "ok": "TODO_EN: OK",
+    "cancel": "TODO_EN: Anulează",
+    "close": "TODO_EN: Închide",
+    "confirm": "TODO_EN: Confirmă",
+    "loading": "TODO_EN: Se încarcă..."
+  }
+}

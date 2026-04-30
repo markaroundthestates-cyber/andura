@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "locale": "ro",
+    "version": 1,
+    "description": "RO bundle — primary locale v1. Toate strings user-facing extracted progresiv din src/. Add new keys cu dotted-path nested structure (vezi `why.categorical.*` ca pattern)."
+  },
+
+  "why": {
+    "title": "❓ De ce {exercise}?",
+    "dismiss": "Am înțeles",
+    "unavailable": "Explicația temporar indisponibilă. Recomandarea rămâne validă.",
+    "categorical": {
+      "progression_up": "Creștem greutatea la {exercise} pentru că ai progresat constant în ultimele săptămâni. Noua țintă e adaptată astfel încât să menținem ritmul, fără să sacrificăm forma.",
+      "progression_down": "Reducem puțin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas în spate e necesar pentru a debloca următorul salt în forță. Rămânem pe poziții!",
+      "hold": "Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă înainte de următoarea creștere.",
+      "recovery": "Reducem volumul la {exercise} pentru că semnele de oboseală sunt prezente. E mai inteligent să te refaci azi, ca să revii cu forțe proaspete la antrenamentul următor."
+    }
+  },
+
+  "modals": {
+    "alternative": {
+      "title": "Înlocuiește exercițiul"
+    },
+    "readiness": {
+      "title": "Cum te simți azi?",
+      "subtitle": "Răspunsul afectează recomandările de azi"
+    },
+    "skip": {
+      "title": "De ce sari azi?"
+    }
+  },
+
+  "common": {
+    "ok": "OK",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "confirm": "Confirmă",
+    "loading": "Se încarcă..."
+  }
+}
