@@ -25,9 +25,9 @@
 ## Commits (2)
 
 - `af368f7` feat(rules): PROMPT_CC_HYGIENE §7 DIFF + §8 Destructive Ops mandatory protocols
-- `<sha-pending>` chore(outbox): rotate LATEST → archive 20 + hardening report
+- `ecfa01f` chore(outbox): rotate LATEST → archive 20 + PROMPT_CC_HYGIENE hardening report
 
-## Pushed: ✅ origin/main (`7c6cde5..af368f7` + rotation pending)
+## Pushed: ✅ origin/main (`7c6cde5..ecfa01f`)
 
 ## Verify post-fix
 
