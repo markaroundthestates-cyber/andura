@@ -48,7 +48,7 @@ salafull/
 - `04-architecture/DATA_REGISTRY_SPEC.md`
 
 ### ADR-uri (toate active)
-- `03-decisions/001-*.md` → `019-*.md`
+- `03-decisions/001-*.md` → `021-*.md`
 - `03-decisions/ADR_MULTI_TENANT_AUTH_v1.md`
 - `03-decisions/DECISION_LOG.md`
 

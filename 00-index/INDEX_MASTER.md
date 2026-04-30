@@ -1,8 +1,8 @@
 # SALAFULL VAULT — INDEX MASTER
 
-**Last updated:** 2026-04-30 (post vault cleanup)
+**Last updated:** 2026-04-30 evening (post Gemini cross-check + ADR 020-021)
 **SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent
-**Stats:** 49 fișiere active vault (din 125 baseline pre-cleanup, -61%)
+**Stats:** 51 fișiere active vault (49 baseline post-cleanup + 2 ADR new: 020-021)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
@@ -14,7 +14,7 @@ salafull/
 ├── 00-index/        INDEX_MASTER (acest fișier)
 ├── 01-vision/       Vision + Strategy + Daniel profile + parametric programs (5 files)
 ├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)
-├── 03-decisions/    20 ADR-uri active (001-019 + ADR_MULTI_TENANT_AUTH) + DECISION_LOG (21 files)
+├── 03-decisions/    22 ADR-uri active (001-021 + ADR_MULTI_TENANT_AUTH) + DECISION_LOG (23 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
 ├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
 ├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file)
@@ -41,7 +41,9 @@ salafull/
 | **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §11 |
 | **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §12 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
-| **ADR-uri active 001-019 + ADR_MULTI_TENANT_AUTH** | `03-decisions/` |
+| **ADR-uri active 001-021 + ADR_MULTI_TENANT_AUTH** | `03-decisions/` |
+| **Storage Tiering Strategy (Tier 0/1/2 + Dexie)** | [[020-storage-tiering-strategy]] |
+| **Calibration Drift Reconciliation (Version Vector)** | [[021-calibration-drift-reconciliation]] |
 | **Cognitive architecture engine** | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
 | **Multi-tenant auth migration plan** | [[MULTI_TENANT_AUTH_MIGRATION_SPEC]] |
 | **T&B implementation (LWW deprecated)** | [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] |
@@ -89,6 +91,8 @@ salafull/
 | 017 | [[017-demographic-prior-database]] | Accepted (depends ADR 018) |
 | 018 | [[018-engine-extensibility-architecture]] | Accepted (foundation NEXT) |
 | 019 | [[019-gdpr-k-anonymity-validation]] | Accepted (k=5 quasi-identifiers — promoted from amendment 2026-04-30) |
+| 020 | [[020-storage-tiering-strategy]] | Accepted (Tier 0/1/2 + Dexie.js + rotation — Gemini Q10 BLIND SPOT #1, pre-launch CRITICAL) |
+| 021 | [[021-calibration-drift-reconciliation]] | Accepted (Version Vector + max-merge — Gemini Q10 BLIND SPOT #2, pre-Faza-2 T&B) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ---

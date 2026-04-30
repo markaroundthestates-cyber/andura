@@ -1,4 +1,32 @@
 ﻿# DECISION LOG â€” SalaFull
+
+## 2026-04-30 evening — Gemini cross-check + ADR 020-021 + amendments
+
+**Status:** Cross-check Gemini 3 Pro on 8 vault docs (VAULT_RULES, PROJECT_VISION, COGNITIVE_ARCHITECTURE_SPEC_v1, ADR 009, 011, 013, 018, 019) → 4 action items new + 1 sugestie respinsă. D1-D15 routing 15/15 locked.
+
+**Action items new (acceptate Daniel + Claude):**
+
+1. **ADR 020 Storage Tiering Strategy** — Tier 0 hot (`localStorage` 30d, ~1-2MB), Tier 1 warm (`IndexedDB` via Dexie.js, 30-180d, 50-500MB), Tier 2 cold (Firebase >180d). Rotation trigger `initAutoBackup` + threshold size>4MB sau age>30d. **CRITICAL pre-launch v1** (Gemini Q10 BLIND SPOT #1 — PWA limit ~5MB).
+2. **ADR 021 Calibration Drift Reconciliation** — `engine_tier` Max Wins Monotonic, `calibration_confidence` Monotonic Clock (negative observations preserved), Version Vector pe object calibration cu max-merge sync. Pre-Faza-2 T&B (Gemini Q10 BLIND SPOT #2).
+3. **PRODUCT_STRATEGY §3.5.1 Strong Prior Strategy (Tier-Based)** — T0 Skip = Demographic Prior baseline; T0 + Self-report = Strong Prior 80% input + 20% baseline (calibration time -50%); T1+ behavioral inference erodează. Cross-ref ADR 022 Bayesian Sprint 4 (Gemini Q9).
+4. **ADR 013 amendment composite no-double-penalize** — signals 4 + 5 share trigger event ("skip recovery day") → composite tier function dedupe per `trigger_signature` (NU per signal index). Sprint 4 implementation detail (Gemini F1 counter-point accepted).
+
+**Sugestie Gemini respinsă:**
+
+- **Consolidare AA signals 4+5 în "Recovery Non-Compliance"** — granularitatea AA messaging anti-RE = critică pentru user clarity ("ignori oboseală" ≠ "skip rest day" mesaje diferite). ADR 013 §1 lock-uit (5 signals separate preserved).
+
+**D1-D15 routing 15/15 locked:**
+
+D1 ADD DEVELOPING (6 nivele Sprint 4 ~8-12h) | D2-D4 DEFER Sprint 1.5 anti-RE wording | D5 categorical only verdict | D6 REZOLVAT post-rollover | D7 Stryker autonomous overnight Sonnet baseline + Daniel review | D8 Sonnet generates JSON 5/sprint | D9 GDPR validation post-100-real-users | D10 REZOLVAT outbox migration | D11 Magic Link primary + Google secondary | D12 2 anonymous accounts pre-launch + flag pre-Faza-1 merge | D13 T&B Faza 2 logs first | D14 BranchConflictModal 3 options + auto-resolve cronologic | D15 pre-expiry refresh 10min + retry 401.
+
+**Schema outbox LATEST.md activă** — `📤_outbox/LATEST.md` = 1 file vizibil + `_archive/2026-04/` 13 files cronologic.
+
+**Cross-refs:** [[020-storage-tiering-strategy]] | [[021-calibration-drift-reconciliation]] | [[013-auto-aggression-detection]] §AMENDMENT 2026-04-30 evening | [[PRODUCT_STRATEGY_SPEC_v1]] §3.5.1 | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6.7 (effort updated 137-214h tradițional → 15-29h velocity Opus)
+
+**Next:** Sprint 4 implementation start (ADR 020 prioritate maxim — pre-launch critical).
+
+---
+
 ## 2026-04-30 — ADR 009 AMENDMENT — Tier System SSOT ACCEPTED
 
 **Status:** Amendment formalized post chat strategic 2026-04-29 (Daniel + Claude Opus 4.7). Closes AUDIT_5000Q Q-0182.
