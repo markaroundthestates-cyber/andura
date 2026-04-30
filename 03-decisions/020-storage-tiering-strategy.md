@@ -40,7 +40,7 @@ Per Gemini 3 Pro cross-check 2026-04-30 evening **Q10 BLIND SPOT #1 — BLOCKER 
 
 ### Tier 1 — Warm (`IndexedDB` via Dexie.js)
 
-- **Purpose:** retention 30-180 zile (pre-launch) / 30-365 zile (post-Pro) per ADR 011 schedule.
+- **Purpose:** retention 30-180 zile (pre-launch) / 30-365 zile (post-Pro) — generalizing ADR 011 fixed Tier 1 = 180 zile (responseProfile rolling window OPTIMIZED). ADR 020 thresholds extend ADR 011 cu age + size dual triggers (rotation pe whichever first).
 - **Library:** **Dexie.js** (~30KB minified, MIT license, stable, used widely PWA — Notion, Obsidian web, Linear).
 - **Budget:** 50-500MB realist (browser-dependent — Chrome ~80% disk free, Firefox 10GB hard).
 - **Schema:** versioned per Dexie convention (`db.version(N).stores({...})`). Migration runner aliniat cu ADR 018 §4 schema versioning pattern.
