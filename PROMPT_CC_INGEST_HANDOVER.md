@@ -24,7 +24,7 @@
 3. Read input + active SSOT `06-sessions-log/HANDOVER_GLOBAL_<latest>.md`.
 4. Merge ambele în 1 versiune unique zero info loss → overwrite SSOT same name.
 5. Archive input la `📤_outbox/_archive/<YYYY-MM>/NN_HANDOVER_INPUT_CONSUMED.md` (next NN).
-6. Generate alignment questions (10-15 adversarial cu citation §X expected) → `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`.
+6. Generate alignment questions (10-15 adversarial cu citation §X expected) → `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`.
 7. Rotate previous LATEST.md → archive cu next NN.
 8. Write raport execution în `📤_outbox/LATEST.md` per PROMPT_CC_HYGIENE §3.2.
 9. Commits granulare (merge SSOT + archive input + alignment + raport) + push origin/main.
