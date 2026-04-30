@@ -25,6 +25,24 @@
 // when ADR 016 Vitality Layer ports as dimension, or add `proposed.dimensionTrace`
 // from Decision Cluster post-strangler).
 //
+// ── ADR 020 cross-ref (NOT a schema migration) ─────────────────────────────
+//
+// ADR 020 Tier 0 → Tier 1 rotation lives în `src/storage/tieringEngine.js`,
+// NU here. Reasons:
+//   - Schema migration = transform entry shape în-place (this runner's contract:
+//     read array → migrate(entry) → write array same key).
+//   - Tier rotation = MOVE entries between storage media (localStorage →
+//     IndexedDB), pattern incompatible cu migrate(entry) signature.
+//
+// Rotation runs lazily on app init via `initAutoBackup()` + periodically
+// (hourly default) per `ROTATION_CHECK_INTERVAL_MS`. Idempotent re-runs are
+// no-ops once entries în Tier 0 are all <30d age. NU schema bump versioning.
+//
+// Future: dacă schema-level CDL changes also need cross-tier propagation
+// (e.g., re-shape Tier 1 archived entries), build a separate `tier1Migrations`
+// runner OR extend this runner cu `targetTier: 'tier0' | 'tier1'`. Out of
+// scope for ADR 020 §1.
+//
 // Future first migration template:
 //
 //   export const MIGRATIONS = [
