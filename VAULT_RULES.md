@@ -192,3 +192,85 @@ Update direct (NU creez `VAULT_RULES_v2.md`).
 ---
 
 🦫 **Vault clean permanent. SSOT only. Zero duplicate. Zero memory load pe Daniel.**
+
+---
+
+## §HANDOVER_PROTOCOL — Cross-session continuity & saturation prevention
+
+**Status:** Locked (introdus 2026-04-30, post-saturation incident chat strategic).
+**Authority:** SSOT pentru handover flow Daniel ↔ Claude chat ↔ CC Opus.
+
+### Why this protocol exists
+
+Sesiuni Claude chat strategic se saturează după 3-5h conversație complexă. Saturarea = bandwidth degradat → halucinații flow procedural (NU conținut). Pe 30 apr 2026, saturarea a produs 3 iterații consecutive halucinate în scrierea handover-ului → vault contaminat → recovery audit + fix run + 7 commits.
+
+**Anti-recurrence:** acest protocol formalizează când + cum se scrie handover, ca să **NU** mai fie scris cu bandwidth scăzut.
+
+### Principle: Continuous over end-of-session
+
+Handover **NU** e document scris la finalul sesiunii dintr-o singură bucată. Handover = **aggregate al deciziilor marcate progresiv** pe parcursul sesiunii, când Claude e fresh. La handover-time, Claude doar structurează aggregate-ul deja existent în memoria conversațională, NU re-creează tot din memoria saturată.
+
+### Self-monitoring transparent (Claude responsibility)
+
+La fiecare 5-7 mesaje grele SAU când Claude detectează degradare, raportează în răspunsul curent 1 linie scurtă:
+
+```
+Bandwidth: ~X% remaining, OK încă Y mesaje grele.
+```
+
+SAU când e timpul:
+
+```
+Bandwidth: ~25% — recomand handover ACUM, încă-s fresh.
+```
+
+NU întrerupe flow. NU întreabă. Doar raportare. Daniel decide acționează sau ignoră.
+
+### Decision logging silent (Claude responsibility)
+
+Când Daniel zice ceva care e **decizie LOCKED cu impact vault** (D-N routing, ADR new, scope changes, pricing, positioning), Claude **mental marchează** și păstrează running log intern progresiv în sesiune. NU generează artefact mic la fiecare decizie (overhead Daniel = anti-pattern).
+
+La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
+
+### Handover flow (când e timpul)
+
+**Trigger:** Bandwidth ~25-30% remaining SAU Daniel decide explicit "scriem handover".
+
+**Steps:**
+
+1. **Claude chat strategic** scrie handover comprehensive ca artefact descărcabil (`HANDOVER_INPUT_<topic>.md`)
+2. **Daniel** drag în `📥_inbox/`
+3. **Daniel** rulează prompt CC scurt pentru ingest (vezi §INGEST_PROMPT)
+4. **CC Opus** citește input + active SSOT din `06-sessions-log/HANDOVER_GLOBAL_<date>_<period>.md`
+5. **CC Opus** merge ambele în 1 versiune unique (zero info loss)
+6. **CC Opus** overwrite SSOT same name cu merged version
+7. **CC Opus** archive input la `📤_outbox/_archive/<YYYY-MM>/NN_HANDOVER_INPUT_CONSUMED.md` (NICIODATĂ DELETE)
+8. **CC Opus** scrie raport execution în `📤_outbox/LATEST.md`
+9. **CC Opus** generează alignment questions pentru chat nou (în `📥_inbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
+10. **CC Opus** commit + push origin/main
+11. **Daniel** sync Project Knowledge GitHub
+12. **Daniel** open chat Claude nou
+13. **Daniel** paste alignment questions primul mesaj
+14. **Chat nou** răspunde cu citation `§X file.md / ADR Y` → pass criteria ≥12/15
+
+### Constraints absolute
+
+- **Inbox = strict input Daniel only.** CC Opus NICIODATĂ NU scrie în inbox (excepție: alignment questions output post-ingest, conform step 9).
+- **Zero info loss.** Toate input-urile inbox archive-uite în outbox post-consume, NICIODATĂ delete fizic.
+- **Backup tag git** pre-cleanup major obligatoriu (`pre-handover-merge-<date>` sau similar).
+- **NU** scrie handover dintr-o bucată la final sesiune saturată. Aggregate progresiv.
+- **NU** sări peste alignment questions verify în chat nou — fără verificare = risc continuare cu drift.
+
+### Stop conditions
+
+- Dacă Claude chat e saturat <30% bandwidth dar Daniel cere handover comprehensive → Claude flag explicit "saturat, recomand chat nou pentru scriere handover, NU aici".
+- Dacă alignment questions <12/15 în chat nou → INGEST FAIL, retry `project_knowledge_search` în chat sau regenerare questions.
+- Dacă merge conflict pre-existent în vault → STOP, Daniel manual resolve, NU CC override automat.
+
+### Cross-references
+
+- §3.3 outbox schema (LATEST.md + _archive/<YYYY-MM>/NN_*.md cronologic continuu)
+- §INBOX_FLOW (Daniel input only)
+- `PROMPT_CC_HYGIENE.md` §3.2 raport format expected
+
+🦫 **Handover protocol locked. Anti-saturation enforced. Vault hygiene preserved.**
