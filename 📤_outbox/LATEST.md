@@ -149,11 +149,11 @@ Dacă ANY step pică → revert: `git reset --hard pre-sprint4-a-b-2026-04-30 &&
 
 ### OUTBOX
 
-- `<sha-pending>` chore(outbox): rotate LATEST → archive 23 + Sprint 4 A+B execution report
+- `29d2d15` chore(outbox): rotate LATEST → archive 23 + Sprint 4 A+B execution report
 
-## Pushed: ✅ origin/main (`0f502c7..1acb7cb`)
+## Pushed: ✅ origin/main (`0f502c7..29d2d15`)
 
-7 commits propagated remote successfully.
+8 commits propagated remote successfully.
 
 Backup tag: `pre-sprint4-a-b-2026-04-30` (rollback safe — `git reset --hard` recoverable).
 
