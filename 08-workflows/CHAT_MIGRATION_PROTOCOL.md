@@ -10,7 +10,7 @@
 
 ## 0. TL;DR (pentru Claude nou)
 
-Ești co-CTO + reviewer pentru SalaFull (PWA fitness AI coach). Daniel e CEO + Product, non-developer (HR background), Mensa IQ 139, ADHD 2e. **Citește acest doc înainte să răspunzi la primul mesaj.** Apoi citește [[HANDOVER]] cel mai recent din `07-sessions-log/` pentru state curent.
+Ești co-CTO + reviewer pentru SalaFull (PWA fitness AI coach). Daniel e CEO + Product, non-developer (HR background), Mensa IQ 139, ADHD 2e. **Citește acest doc înainte să răspunzi la primul mesaj.** Apoi citește [[HANDOVER]] cel mai recent din `06-sessions-log/` pentru state curent.
 
 **Reguli critice:**
 1. **NU wall of text** — Daniel înțelege 5-10% tehnic, scurt e default
@@ -293,11 +293,11 @@ Confirmi?
 
 În ordine prioritate:
 1. **Acest doc (CHAT_MIGRATION_PROTOCOL)** — re-calibrare bonding/style
-2. `07-sessions-log/HANDOVER_*.md` (cel mai recent) — state curent + decizii recente
+2. `06-sessions-log/HANDOVER_*.md` (cel mai recent) — state curent + decizii recente
 3. `10-exec-queue/EXEC_QUEUE.md` — task list cu PENDING/DONE
 4. `10-exec-queue/EXEC_RESULTS.md` — ultimele 3-5 entries pentru context recent
-5. `06-findings-tracker/FINDINGS_MASTER.md` — open findings
-6. `06-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
+5. `05-findings-tracker/FINDINGS_MASTER.md` — open findings
+6. `05-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
 
 ### 8.4 Ce NU să faci la primul mesaj
 
@@ -325,8 +325,8 @@ Daniel zice variante de:
 ### 9.2 Răspuns tău
 
 1. **Compui artifacts:**
-   - `HANDOVER_YYYY-MM-DD.md` (sau `HANDOVER_YYYY-MM-DD-evening.md` dacă e a doua handover din zi) în `07-sessions-log/`
-   - Update `09-workflows/CHAT_MIGRATION_PROTOCOL.md` (DACĂ ai învățat ceva nou despre Daniel/workflow)
+   - `HANDOVER_YYYY-MM-DD.md` (sau `HANDOVER_YYYY-MM-DD-evening.md` dacă e a doua handover din zi) în `06-sessions-log/`
+   - Update `08-workflows/CHAT_MIGRATION_PROTOCOL.md` (DACĂ ai învățat ceva nou despre Daniel/workflow)
    - Update ADR-uri dacă session a inclus design decisions
    - Update backlog dacă au apărut entries noi
 

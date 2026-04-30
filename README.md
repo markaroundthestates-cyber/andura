@@ -115,6 +115,6 @@ Full ADRs: `docs/decisions/`
 ## Vault
 
 Docs: `00-index/INDEX_MASTER.md` — full navigation  
-Findings: `06-findings-tracker/FINDINGS_MASTER.md`  
+Findings: `05-findings-tracker/FINDINGS_MASTER.md`  
 Decisions: `03-decisions/DECISION_LOG.md`  
 Exec Queue: `10-exec-queue/EXEC_QUEUE.md`

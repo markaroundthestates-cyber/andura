@@ -16,10 +16,10 @@ salafull/
 ├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)
 ├── 03-decisions/    19 ADR-uri active (001-018 + 3 amendment-uri) + DECISION_LOG (20 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
-├── 06-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
-├── 07-sessions-log/      HANDOVER_GLOBAL_2026-04-30 SSOT activ (1 file)
-├── 08-meta/         CLAUDE_CODE_RULES (1 file)
-├── 09-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
+├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
+├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30 SSOT activ (1 file)
+├── 07-meta/         CLAUDE_CODE_RULES (1 file)
+├── 08-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
 ├── cc-reports/      Sprint reports + AUDIT_5000Q (5 files)
 └── README.md        Repo intro
 ```

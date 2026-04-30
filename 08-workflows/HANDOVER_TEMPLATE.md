@@ -12,8 +12,8 @@ Copy-paste asta integral în chat-ul nou:
 Sunt Daniel. Continuăm SalaFull.
 
 Citește în ordine:
-1. 09-workflows/CHAT_MIGRATION_PROTOCOL.md (calibrare stil + bonding)
-2. 07-sessions-log/HANDOVER_2026-04-26.md (state curent — sau ultim HANDOVER din 07-sessions-log)
+1. 08-workflows/CHAT_MIGRATION_PROTOCOL.md (calibrare stil + bonding)
+2. 06-sessions-log/HANDOVER_2026-04-26.md (state curent — sau ultim HANDOVER din 06-sessions-log)
 3. 10-exec-queue/EXEC_QUEUE.md (task list)
 
 Apoi:
@@ -42,22 +42,22 @@ Așteptat: `nothing to commit, working tree clean` sau changes nestaged minore.
 
 ### Pas 2 — copiază HANDOVER (înlocuiește data)
 ```powershell
-Copy-Item C:\Users\Daniel\Downloads\HANDOVER_2026-04-26.md 07-sessions-log\HANDOVER_2026-04-26.md -Force
+Copy-Item C:\Users\Daniel\Downloads\HANDOVER_2026-04-26.md 06-sessions-log\HANDOVER_2026-04-26.md -Force
 ```
 
 ### Pas 3 — copiază protocol DOAR dacă a fost update-at
 ```powershell
-Copy-Item C:\Users\Daniel\Downloads\CHAT_MIGRATION_PROTOCOL.md 09-workflows\CHAT_MIGRATION_PROTOCOL.md -Force
+Copy-Item C:\Users\Daniel\Downloads\CHAT_MIGRATION_PROTOCOL.md 08-workflows\CHAT_MIGRATION_PROTOCOL.md -Force
 ```
 
 ### Pas 4 — verifică ambele
 ```powershell
-Get-ChildItem 07-sessions-log\HANDOVER_*.md, 09-workflows\CHAT_MIGRATION_PROTOCOL.md | Select-Object Name, LastWriteTime
+Get-ChildItem 06-sessions-log\HANDOVER_*.md, 08-workflows\CHAT_MIGRATION_PROTOCOL.md | Select-Object Name, LastWriteTime
 ```
 
 ### Pas 5 — stage + commit + push
 ```powershell
-git add 07-sessions-log/HANDOVER_*.md 09-workflows/CHAT_MIGRATION_PROTOCOL.md
+git add 06-sessions-log/HANDOVER_*.md 08-workflows/CHAT_MIGRATION_PROTOCOL.md
 git commit -m "docs(session): HANDOVER YYYY-MM-DD + CHAT_MIGRATION_PROTOCOL update"
 git push
 ```
@@ -66,7 +66,7 @@ Așteptat: `main -> main` push verde, pre-commit hook trece testele 384+/384+ pa
 
 ### Pas 6 — verifică Project Knowledge
 - Mergi pe Claude.ai → Project SalaFull → setări/sources
-- Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `05-prompts`, `06-findings-tracker`, `07-sessions-log`, `09-workflows`
+- Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `05-prompts`, `05-findings-tracker`, `06-sessions-log`, `08-workflows`
 - NU bifa: `.claude`, `.github`, `.husky`, `.obsidian` (binaries/config local)
 - Re-indexare durează câteva minute după push. Dacă deschizi chat nou imediat, poate Project Knowledge nu vede latest. Așteaptă 5-10 min.
 
@@ -76,7 +76,7 @@ Așteptat: `main -> main` push verde, pre-commit hook trece testele 384+/384+ pa
 
 ## REGULI IMPORTANTE
 
-**NU șterge HANDOVER-uri vechi.** Sunt arhivă session log. Toate stau în `07-sessions-log/`.
+**NU șterge HANDOVER-uri vechi.** Sunt arhivă session log. Toate stau în `06-sessions-log/`.
 
 **NU rescrie CHAT_MIGRATION_PROTOCOL la fiecare sesiune.** Update-uiești DOAR când ai învățat ceva nou despre stil/workflow/bonding.
 

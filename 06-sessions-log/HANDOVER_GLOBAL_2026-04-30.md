@@ -263,7 +263,7 @@
 
 ## 7. CURĂȚENIE VAULT + GIT PLAN (mâine seară)
 
-### 7.1 Vault `07-sessions-log/` consolidare
+### 7.1 Vault `06-sessions-log/` consolidare
 
 **TODO mâine seară:**
 1. Audit toate handover-urile din folder

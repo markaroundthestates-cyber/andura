@@ -258,7 +258,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 
 ## Calibration recalibrare protocol (workflow doc, NU ADR)
 
-**Status:** Daniel mention path `09-workflows/AA_RECALIBRATION_PROTOCOL.md`, NU built încă.
+**Status:** Daniel mention path `08-workflows/AA_RECALIBRATION_PROTOCOL.md`, NU built încă.
 **Concept:** proces lunar review CDL vs experience reală, prima review luna 3.
 
 **De ce workflow doc, NU ADR:** procedural process, NU architectural decision.
