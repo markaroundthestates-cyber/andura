@@ -1,8 +1,8 @@
-# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-01 evening
+# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-02
 
 **Owner:** Daniel (CEO + Product). Claude = Co-CTO + Reviewer.
 **Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`.
-**Data:** 2026-05-01 evening (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + chat strategic morning v2 wording session [Engine 12 variations + Decizia #6 + Phase A aprobate tacit] + chat strategic evening session [goal-ca-setting + 8 templates programe v1 LOCKED + 53 strings Phase B partial + 5 amendamente backlog Sprint 4.x + timeline v1 ajustat 8-10 luni]).
+**Data:** 2026-05-02 (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + chat strategic morning v2 wording session [Engine 12 variations + Decizia #6 + Phase A aprobate tacit] + chat strategic evening 2026-05-01 session [goal-ca-setting + 8 templates programe v1 LOCKED + 53 strings Phase B partial + 5 amendamente backlog + timeline v1 ajustat 8-10 luni] + chat strategic 2026-05-02 session [safety nutrition pattern complet + 4 templates v1 full spec + 5 amendamente noi + 3 decizii arhitecturale colaterale]).
 
 ---
 
@@ -33,7 +33,8 @@
 - §25 Wording REMAINING Next Sesiune (~103 strings post-evening, updated)
 - §26 Goal-ca-Setting + 8 Templates Programe v1 LOCKED (evening — major scope shift v1)
 - §27 Wording Rewrite Phase B Evening — 4 Batch-uri 53 Strings Finalizate (evening)
-- §28 Amendamente Backlog Sprint 4.x (evening — 5 amendments)
+- §28 Amendamente Backlog Sprint 4.x (evening 5 + 2026-05-02 5 noi = 10 total)
+- §29 Safety Nutrition Pattern + 4 Templates V1 Full Spec (2026-05-02 — kcal floor + protein floor + 4 templates Slăbire majoră/moderată/Tonifiere baseline+3 sub-variants/Sănătate Generală)
 
 **Pentru chat nou:** citește acest fișier + `VAULT_RULES.md` (root) + `PROMPT_CC_HYGIENE.md` (root). Restul context = Project Knowledge GitHub.
 
@@ -304,6 +305,17 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **Tests:** 888/888 PASS unchanged (sesiune chat strategic, zero code touched).
 - **Bandwidth Daniel:** ~30% chat strategic evening ended, handover triggered preventiv anti-saturation. Wall-clock ~3-4h Daniel-time real (5 decizii product MAJORE + 5 decizii arhitecturale + 53 strings + 5 amendamente).
 
+### Status update 2026-05-02 (chat strategic safety nutrition + 4 templates v1)
+
+- **Safety nutrition pattern LOCKED complet** (vezi §29.1): kcal floor 1200F/1500M static gendered (NIH+EFSA) + protein floor 1.6 g/kg dynamic (ISSN) + surplus rate threshold engine internal >0.5%/săpt (NU exposed) + hidratare DROP safety pattern (rămâne observational §27.3). Pattern reusable: 2 nivele soft warning, ZERO Hard Wall, agency 100%, threshold L2 = 3 zile consecutive (pattern detection NU fiziologie speculative). Authority asymmetry NIH+EFSA kcal vs ISSN protein INTENȚIONAT documentat.
+- **4 Templates programe v1 LOCKED full spec** (vezi §29.2): Slăbire majoră (>15kg, 3×/săpt, low-impact, recumbent bike LISS, BMI implicit 30+) + Slăbire moderată (<15kg, 4×/săpt Push/Pull split A/B, RDL hinge protection lombară) + Tonifiere baseline + 3 sub-variants (4×/săpt, 50/50 Echilibrat / 70/30 Lower-dominant Gigica / 70/30 Upper-dominant Marius, BBS+BBP+Olympic+1RM eliminate, Russian Twists eliminate) + Sănătate Generală (3×/săpt Full Body NU split, 18-49 maintenance default, consistency check pool exerciții cu Tonifiere).
+- **5 templates lockate / 8 v1 (62.5%).** Rămase: Forță & Dezvoltare + Longevitate + potențial Sănătate Generală sub-variants. Tonifiere counted ca 1 baseline cu 3 sub-variants split (5 design units cu Tonifiere expanded).
+- **5 amendamente backlog Sprint 4.x noi** (vezi §28.6-§28.10): Secondary Check >25% deficit maintenance refinement (floor static fragility) + Seated Core Override Slăbire majoră (Bird-Dog→Seated Knee Raises feedback-driven) + LISS ramp-down Slăbire majoră (15→8-10min săpt 3+) + Exercise Substitution System ADR separat (Tonifiere dynamic slotting) + Tonifiere Advanced Track 5-day (a 5-a sesiune optional weak points).
+- **3 decizii arhitecturale colaterale LOCKED** (vezi §29.3): ZERO întrebări medical screening onboarding (Gigel test catastrofal — bloodwork rejected analog) + engine routing Slăbire majoră BMI 30+18kg target = template low-impact aplicat conservative-by-default + Anti-RE strict pragul 0.5%/săpt + protein 1.6 g/kg + 25% deficit = engine internal NU exposed user-facing.
+- **Decizii non-vault dinainte de sesiune:** launch strategy reconsider (full launch vs hand-pick balene — sesiune dedicată distribution strategy needed) + legal coverage realitate ~80-90% via MFP pattern + ADR 013 SAFETY_TRIPWIRE + ToS + Privacy Policy (consultanță legală tech RO/EU specializată ~€500-2000 NU optional pre-launch) + realist rămas ~5-6 sesiuni chat strategic pre-launch v1 + Anthropic dependency risk ~0.1% acceptat.
+- **Tests:** 888/888 PASS unchanged (chat strategic, zero code touched).
+- **Bandwidth Daniel:** ~15-20% remaining final, handover triggered preventiv. Wall-clock ~3h Daniel-time real (19 decizii LOCKED + 12+ push-back-uri productive + 3 web searches NIH/Harvard/EFSA/INSP).
+
 ---
 
 ## 7. VAULT STATE FINAL (post sesiune 30 apr evening)
@@ -510,6 +522,10 @@ Chat strategic wording session ~6 runde iterative pushback = ~45 min Daniel-time
 
 Chat strategic evening ~3-4h Daniel-time real cu 5 decizii product MAJORE (goal-ca-setting pivot + 8 templates programe v1 + onboarding flow + timeline impact + re-prompt periodic) + 5 decizii arhitecturale (tier policy RO + voice persoana plural/singular + numerics policy + Weight Trend split + two-layer messaging) + 53 strings wording (4 batch-uri) + 5 amendamente backlog. **Pattern Claude failure mode noted:** overconfident initial recommendations require Daniel forced clarification ("ești sigur?", "dar dacă...?") pentru pivot la simpler architecture. **Lesson locked:** când proposing complex architecture (e.g. voice nou peer cu 5 voices), ask "există variant simpler?" ÎNAINTE de a accepta. Push-back Daniel iterativ a forțat 3 pivots majore Claude (dimension → voice → setting; Slăbire 1 template → 2; "Forță maximă" → "Sarcină crescută").
 
+### Velocity reinforced 2026-05-02 (chat strategic safety nutrition + templates v1)
+
+Chat strategic ~3h Daniel-time real cu 19 decizii LOCKED (7 safety patterns + 4 templates v1 designate / 5 design units + 5 backlog v2/Sprint 4.x + 3 arhitecturale colaterale) + 12+ push-back-uri productive Claude (eliminat surplus-side safety scope creep / drop ACSM citation pe kcal / drop EFSA pe protein / eliminat Hard Wall + buton disabled / eliminat fiziologie speculative threshold 3-day / eliminat Russian Twists / fix Hip Thrust setup Slăbire majoră / fix mers bandă → recumbent bike Slăbire majoră / fix BBS + BBP elimination consistency / fix screening medical onboarding catastrofal / fix BMI-routing inconsistency vs §26.3 / fix reps protocol beginners obezi). **Velocity rule reinforced:** chat strategic dense cu domain expertise (safety + biomechanics + sport science) = ~6-7 decizii/oră Daniel-time real cu Claude push-back productive. Bandwidth budget: chat strategic ~3h = 19 decizii LOCKED → cap maxim înainte saturation halucinație. **Realist rămas pre-launch v1: ~5-6 sesiuni chat strategic** (per decizia LOCKED non-vault).
+
 ---
 
 ## 14. NEXT STEPS — POST HANDOVER
@@ -574,13 +590,34 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
 14. **Beta tester recruitment plan** segmentat per goal (Reddit/Discord/balene tech-lifter beachhead Forță + r/xxfitness aesthetic-glutes Tonifiere + r/longevity Longevitate + Mompreneur communities Slăbire).
 15. F-NEW-1 exercise names mapping RO — strategy hibrid locked (compound mari EN industry + izolări RO).
 
+### Updated 2026-05-02 — Next Steps post-2026-05-02
+
+**Imediat (priority order post safety nutrition + 4 templates v1):**
+1. **ADR 022 nou Goal-Driven Program Templates** (deja flag-uit evening 2026-05-01) — extins acum cu safety nutrition pattern §29.1 + 4 templates V1 spec §29.2. Daniel + Claude review draft, cross-refs PARAMETRIC_PROGRAMS_DESIGN + PRODUCT_STRATEGY_SPEC_v1 + ADR 013 §SAFETY_TRIPWIRE.
+2. **Sesiune chat strategic dedicată: Forță & Dezvoltare template** (cel mai complex — periodization, PR tracking, deload weeks). Fresh bandwidth obligatoriu. Template 6/8 v1.
+3. **Sesiune chat strategic Longevitate template** (50+ specific — joint protection, cardio focus, mobility priority). Template 7/8 v1.
+
+**Medium term:**
+4. **Sesiune chat strategic distribution strategy reconsider** (full launch vs hand-pick balene per decizia LOCKED non-vault sesiune 2026-05-02 #1).
+5. **Sesiune chat strategic F-NEW thresholds + muscle_memory_index + storage full UX** (decizia non-vault realist intro pre-launch obligatoriu).
+6. **Wording Phase B remaining** (~37 strings dp.js / sys.js / fatigue.js / reality.js / calibration.js) — bulk batch CC Sonnet după plan complet templates.
+7. **Wording Phase C UI labels** (~78 strings dashboard / weight / plan) — bulk batch CC Sonnet.
+8. **PARAMETRIC_PROGRAMS_DESIGN.md refactor** — focusModifier (CUT/BULK/MAINTAIN) → goal field nou + sub-routing (carry-over evening 2026-05-01).
+9. **Exercise library extension** — ~50-100 exerciții mobility + cardio low-impact pentru Longevitate + Slăbire majoră + Tonifiere variants pool.
+10. **F-NEW-3 + F-NEW-4 implementation** Sprint 4.x cu threshold logic + cooldown + escalation User Pierdut + Weight Trend split + safety nutrition pattern integration (vezi §28).
+
+**Long term pre-launch:**
+11. **Consultanță legală tech specializată RO/EU** ToS final + Privacy Policy specific (~€500-2000, NU optional per decizia LOCKED non-vault).
+12. **Pre-launch checklist obligatoriu** integrare ADR 020 Phase 2 logs rotation + D1 DEVELOPING refactor + smoke test scope.
+13. **Status timeline v1:** 5/8 templates lockate (62.5%) + ~5-6 sesiuni chat strategic rămase pre-launch + timeline 8-10 luni v1 (per amendment §1.2).
+
 ---
 
 ## 15. TESTS & GIT STATE FINAL
 
-- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat) — unchanged evening (chat strategic, zero code touched)
-- **HEAD origin/main:** `acc6d00` pre-ingest evening (post handover morning v2 push final) — post-ingest evening SHAs see `📤_outbox/LATEST.md`
-- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER (unchanged evening). Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-28` + `2026-05/29-34..` (post handover ingest evening). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat) — unchanged 2026-05-02 (chat strategic, zero code touched)
+- **HEAD origin/main:** `8065ce8` pre-ingest 2026-05-02 (post handover evening 2026-05-01 push final) — post-ingest 2026-05-02 SHAs see `📤_outbox/LATEST.md`
+- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER (unchanged 2026-05-02). Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-28` + `2026-05/29-37..` (post handover ingest 2026-05-02). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
 - **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
 - **Backup tags origin:**
   - `pre-adr-020-impl` (ADR 020 rollback)
@@ -590,6 +627,7 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
   - `pre-handover-ingest-2026-05-01-morning` (morning v1 ingest rollback)
   - `pre-handover-ingest-2026-05-01-morning-v2` (morning v2 ingest rollback — chat strategic wording session)
   - `pre-handover-ingest-2026-05-01-evening` (evening ingest rollback — chat strategic goal-ca-setting + 53 strings Phase B partial + 5 amendamente)
+  - `pre-handover-ingest-2026-05-02` (2026-05-02 ingest rollback — chat strategic safety nutrition pattern + 4 templates v1 full spec + 5 amendamente noi + 3 decizii arhitecturale)
 
 ---
 
@@ -1258,6 +1296,449 @@ ACTION engine wording trees primesc goal ca parametru. Conditional în ACTION la
 
 **Cross-refs:** §22 F-NEW-3 + F-NEW-4 + ADR 009 §calibration_confidence aderență tier-aware + ADR 013 §Anti-RE intervention model + §27 Batch 3 proactiveEngine wording.
 
+### 28.6 Secondary Check >25% deficit maintenance (2026-05-02)
+
+**Problema:** floor static 1200F/1500M ignoră variabilitate masivă greutate/BMR. Femeie 95kg BMR ~1700, maintenance 2000, floor 1200 = deficit 40% periculos. Femeie 50kg BMR ~1300, floor 1200 = deficit 8% suboptim dar safe.
+
+**Soluție:** engine flag suplimentar când deficit setat >25% maintenance, chiar dacă valoarea peste floor static. Soft warning diferit, mai blând.
+
+**Owner:** Sprint 4.x post v1 launch + data reală analytics.
+
+### 28.7 Seated Core Override Slăbire majoră (2026-05-02)
+
+**Problema:** user BMI 36+ — așezare/ridicare pe saltea (Bird-Dog quadrupedie, Modified Plank prone) extrem laborioasă, obositoare, descurajantă.
+
+**Soluție V2:** păstrăm exercițiile sol în V1 (biomecanic excelente). Dacă feedback final-sesiune bifează "tranziții dificile" → engine override automat:
+- Bird-Dog → Seated Knee Raises (ridicări genunchi din șezut)
+- Modified Plank → Seated Cable Wood Chops (tăieri lemne cablu din șezut)
+
+User pe bancă/picioare, eliminăm coborâre saltea.
+
+**Owner:** Sprint 4.x backlog feedback-driven personalization.
+
+### 28.8 LISS Ramp-down Slăbire majoră (2026-05-02)
+
+**Problema:** 15min recumbent bike din total 45min = 33% timp cardio joasă intensitate. Util săpt 1-2 ca buffer refacere. Săpt 3+ ineficient.
+
+**Soluție V2:**
+- Săpt 1-2: păstrăm 12-15min (adaptare cardiovasculară)
+- Săpt 3-4+: reducem 8-10min, 5min economisite mutate în Main Work (execuție lentă/controlată sau adăugare al 3-lea set)
+
+**Owner:** Sprint 4.x backlog progresie refinement.
+
+### 28.9 Exercise Substitution System ADR (2026-05-02)
+
+**Problema:** Tonifiere user vrea opțiune să aleagă variantă din "Squat Pattern slot" (Hack Squat / Goblet / Bulgarian / Leg Press). Implementation V1 = engine alege direct exercițiul pe nivel experiență, NU user picks. Reason — engine progresie nu poate compara loading cross-exercise (Goblet 20kg vs Hack Squat 60kg).
+
+**Soluție backlog:** ADR separat post-v1 — exercise substitution system cu progresie comparable (relative load index, RPE-based equivalence, sau switch confirmation cu engine reset progresie tracker per exercise).
+
+**Owner:** Sprint 4.x ADR + design effort dedicat (8-12h).
+
+### 28.10 Tonifiere Advanced Track 5-day (2026-05-02)
+
+**Problema:** Tonifiere user advanced (background activ 12+ luni, capacity efort excelentă) merită opțiune frecvență ridicată. V1 baseline 4×/săpt = consistency cu Slăbire moderată (DRY). Risk = under-stimulus pentru advanced.
+
+**Soluție backlog:** flag onboarding "Advanced Track" — a 5-a sesiune opțională săptămânală weak points (umeri/brațe sau izolare fesieri) pentru user motivat. Consistency arhitecturală păstrată cu baseline 4-day default.
+
+**Owner:** Sprint 4.x post v1 launch + analytics user advanced segment size.
+
+**Cross-refs §28.6-§28.10:** §29 Safety Nutrition Pattern + 4 Templates V1 Full Spec + ADR 022 propus (Goal-Driven Program Templates) + ADR 013 §SAFETY_TRIPWIRE foundation pattern.
+
+---
+
+## 29. SAFETY NUTRITION PATTERN + 4 TEMPLATES V1 FULL SPEC (2026-05-02)
+
+**Status:** LOCKED 2026-05-02 (chat strategic safety nutrition + templates v1 full spec). Cea mai densă sesiune chat strategic safety + biomechanics + sport science (19 decizii LOCKED + 12+ push-back-uri productive Claude).
+
+### 29.1 Safety Nutrition Pattern complet
+
+**Authority Allocation Summary:**
+
+| Domeniu | Autorități citate | Threshold |
+|---------|-------------------|-----------|
+| Kcal floor (deficit) | NIH + EFSA | 1200F / 1500M static |
+| Protein floor (deficit) | ISSN | 1.6 g/kg dynamic |
+| Surplus rate | (engine internal) | >0.5%/săpt bodyweight |
+| Hidratare | (NU safety pattern) | Observational only |
+
+**Asymmetry NIH+EFSA pe kcal vs ISSN pe protein = INTENȚIONAT.** Fiecare autoritate aplicată unde acoperă concret contextul. Forțarea aceleiași autorități cross-domain = semantic noise + legal coverage slab.
+
+#### 29.1.1 Surplus-side (Optimization NU Safety)
+
+**Decizie:** drop surplus-side din safety pattern. Mutat în engine optimization layer.
+
+**Rationale:**
+- NU există threshold "kcal max peste care periculos" omologat medical. Citarea autoritate "3500 kcal periculoase" = minciună grosolană.
+- Risk real surplus = calitate macro + rate of weight gain, NU absolute kcal.
+- Forță bulk Gigel test: "user adult vrea masă musculară, mănâncă 3500 kcal, ce-mi spune app cu autoritate medicală că e periculos?". NU. Forțezi narrative safety unde nu există → trust hit + paternalism.
+
+**Implementation engine:**
+- Threshold internal: rate of bodyweight gain >0.5%/săpt (sport science consensus Lyle McDonald, Helms et al. — 0.25-0.5% beginners, 0.1-0.25% intermediate)
+- NU exposed user-facing — anti-RE strict
+- Wording observativ unic (NU presupune logging nutriție):
+
+> "Ritmul de creștere a greutății este mai alert decât cel planificat. Ne asigurăm că progresul rămâne pe dezvoltarea de masă musculară, nu pe acumularea de grăsime."
+
+#### 29.1.2 Deficit-side kcal floor (Safety)
+
+**Threshold:** 1200 kcal/zi femei / 1500 kcal/zi bărbați (static, gendered).
+
+**Sources:**
+- NIH (Institute of Medicine) — sursa originară 1200/1500, confirmată Harvard Health, Hackensack Meridian, Healthline
+- EFSA — referință juridică UE pentru maintenance + DRV (NU acoperă floor concret, dar relevant juridic)
+
+**Pattern: 2 nivele soft warning, ZERO Hard Wall.**
+
+**Nivelul 1: Soft Warning la Setări / Onboarding**
+
+Declanșator: user încearcă să configureze țintă sub `{threshold}` kcal.
+
+Wording:
+> "O țintă sub {threshold} kcal este sub recomandările EFSA și NIH pentru un adult. Îți susținem decizia, dar te încurajăm să monitorizezi energia și refacerea."
+
+Buton confirmare:
+> "Înțeleg, merg mai departe"
+
+**Nivelul 2: Soft Warning în Timpul Utilizării (3 Zile Trend)**
+
+Declanșator: aport caloric înregistrat sub `{threshold}` kcal timp de 3 zile consecutive.
+
+**Threshold rationale = pattern detection (1 zi noise / 2 volatile / 3 trend confirmat), NU fiziologie speculative** (drop "glicogen depletion serios" rationale).
+
+Wording dual variant conditional pe training detected în window:
+
+**Varianta A (cu training detectat — planned sau logged):**
+> "Aportul caloric înregistrat în ultimele 3 zile este sub {threshold} kcal. Cu antrenament în program, corpul are nevoie de combustibil pentru refacere."
+
+**Varianta B (fără training în window):**
+> "Aportul caloric înregistrat în ultimele 3 zile este sub {threshold} kcal. Verifică dacă ai resurse suficiente pentru ziua de azi."
+
+**Reguli implementare:**
+- `{threshold}` = 1200 sau 1500, dynamic pe sex biologic onboarding
+- Buton "Salvare" rămâne ACTIV în setări (agency 100%, ZERO disabled state)
+- Anti-RE: NU expunem percentages deficit, NU formulele matematice, doar valoarea fixă kcal + argumentul medical
+
+**Backlog Sprint 4.x §28.6:** Secondary Check >25% deficit maintenance (refinement floor static fragility).
+
+#### 29.1.3 Deficit-side protein floor (Safety)
+
+**Threshold:** 1.6 g/kg bodyweight, dynamic (`user_weight × 1.6`, rotunjit întreg).
+
+**Source:** ISSN (International Society of Sports Nutrition) Position Stand on Protein. Match perfect contextul sport + deficit (range 1.4-2.0 g/kg). NU EFSA (RDA 0.83 g/kg = sedentar maintenance, nu se aplică deficit context). NU ACSM (limita inferioară 1.2 prea mică).
+
+**Pattern: identic 2 nivele soft warning kcal.**
+
+**Onboarding nudge (simplificat, fără food examples):**
+
+Apare o singură dată în onboarding la configurare obiective Slăbire/Tonifiere:
+> "Pentru a-ți păstra masa musculară în timpul procesului, recomandăm minimum {protein_threshold}g de proteine pe zi."
+
+NU listăm surse alimentare (carne/ouă/lactate) — scope creep nutrition coaching + cultural friction RO (vegetarian/vegan signal app NU pentru ei). User deduce singur sursele.
+
+**Nivelul 1 — Soft Warning la Setări / Schimbare Obiectiv:**
+
+Declanșator: user vrea să configureze țintă proteine sub 1.6 g/kg.
+
+Wording:
+> "O țintă sub {protein_threshold}g de proteine pe zi este sub recomandările ISSN (International Society of Sports Nutrition) pentru sportivi în deficit caloric. Îți susținem decizia, dar te încurajăm să monitorizezi energia și refacerea."
+
+Buton: "Înțeleg, merg mai departe"
+
+**Nivelul 2 — Alertă Trend 3 Zile:**
+
+Declanșator: aport proteine sub `{protein_threshold}`g timp de 3 zile consecutive.
+
+Wording:
+> "Aportul de proteine a fost sub {protein_threshold}g în ultimele 3 zile. Corpul are nevoie de aminoacizi pentru a repara și a menține masa musculară după efort."
+
+**Reguli implementare:**
+- `{protein_threshold} = user_weight * 1.6` (rotunjit întreg)
+- Buton "Salvare" ACTIV (agency totală)
+- Anti-RE: NU expunem formula 1.6 g/kg în UI, doar valoarea calculată în grame
+
+#### 29.1.4 Hidratare — Drop Safety Pattern
+
+**Decizie:** hidratarea NU primește safety pattern dedicat. Rămâne observational simplu în `proactiveEngine.js` per Batch 3 §27.3:
+
+> "Nivelul de hidratare de azi e sub țintă. Un pahar de apă înainte de antrenament ajută."
+
+**Rationale:** zero threshold dehydration cu literature solid pentru fitness app context (variabilitate masivă greutate/clima/efort/dietă). Nu există autoritate citabilă pentru "minimum apă/zi safety". Forțezi pattern unde nu există → noise + trust hit.
+
+### 29.2 4 Templates Programe V1 Full Spec
+
+**Status:** 5/8 templates lockate (62.5% post-2026-05-02). Rămase pre-launch v1: Forță & Dezvoltare + Longevitate + potențial Sănătate Generală sub-variants. Tonifiere counted ca 1 baseline cu 3 sub-variants split (5 design units cu Tonifiere expanded).
+
+#### 29.2.1 Template: Slăbire Majoră (>15kg target)
+
+**User profile target:**
+- Routing per §26.3 = >15kg target slăbire (NU BMI-based — BMI variabil 28-45+)
+- Vârstă: 25-65 ani (plajă largă, adaptări volum implicit)
+- Background: sedentar 3-5+ ani (capacity efort scăzută, țesuturi conjunctive necondiționate)
+- Comorbidități typical (NU întrebate user-facing): dureri articulare, toleranță scăzută căldură, tensiune oscilantă
+- Template construit conservative-by-default presupunând aceste limitări
+
+**Parametri high-level:**
+- Frecvență: 3 sesiuni/săpt cu min 24h pauză (flexibil zile: L-Mie-V, Ma-Jo-Sâ, M-V-D)
+- Durată: 40-45 min
+- RPE: 5-6 (săpt 1-2) → 6-7 (săpt 3+)
+- Obiectiv: stimularea cheltuielilor calorice + protecția articulațiilor + adaptare anatomică treptată
+
+**Structura sesiune (40-45 min):**
+```
+[00-08 min] Warm-up: Mobilitate articulară ușoară din șezut / Quadrupedie
+[08-30 min] Main Work: 4 Exerciții forță low-impact
+[30-45 min] Cool-down & LISS: Bicicletă orizontală (Recumbent bike) cu rezistență mică
+```
+
+**Pool exerciții:**
+
+🚫 Interzise (eliminate complet):
+- Impact articular: Sărituri (Box jumps, Burpees, Jumping jacks), alergare sau mers prelungit pe bandă
+- Setup-uri dificile / risc dezechilibru: Hip thrust cu spatele pe bancă, Genuflexiuni bulgărești
+- Compuse grele libere: Genuflexiuni sau îndreptări convenționale cu haltera
+
+✅ Permise & Recomandate:
+
+*Partea inferioară (Picioare/Fesieri):*
+- Presă picioare la aparat (Seated Leg Press) — stabilitate lombară maximă
+- Glute Bridge pe sol (saltea) — opțional cu bandă elastică deasupra genunchilor
+- Flexii și extensii la aparate (Seated Leg Extensions / Seated Leg Curls)
+
+*Partea superioară (Spate/Piept/Umeri):*
+- Tracțiuni la helcometru (Lat Pulldown) — din șezut
+- Împins la aparat pentru piept (Seated Chest Press)
+- Ridicări laterale din șezut (Seated Lateral Raises) cu gantere mici
+
+*Zona Core (Stabilitate):*
+- Bird-Dog (genunchi și palme)
+- Modified Plank (sprijin antebrațe + genunchi)
+
+**Progresie 4 săptămâni:**
+
+| Săptămâni | Structură | RPE | Obiectiv |
+|-----------|-----------|-----|----------|
+| 1-2 | 2 seturi × 10 reps | 5-6 | Învățare mișcare, adaptare tendoane, zero febră invalidantă |
+| 3-4 | 3 seturi × 10-12 reps | 6-7 | Creștere ușoară volum. Tehnică excelentă → +1 treaptă rezistență aparat |
+
+**Backlog v2 refinements:** Seated core override (§28.7) + LISS ramp-down (§28.8).
+
+#### 29.2.2 Template: Slăbire Moderată (<15kg target)
+
+**User profile target:**
+- Routing: <15kg target slăbire
+- BMI: 25-32 typical (overweight / obezitate gradul 1)
+- Background: variabil (sedentar 1-3 ani sau ex-activ recent)
+- Capacity efort: moderată, articulații tolerabile
+- Comorbidități typical: minime sau absente
+
+**Parametri high-level:**
+- Frecvență: 4 sesiuni/săpt cu min 24h pauză
+- Durată: 45-55 min
+- RPE: 6-7 (săpt 1-2) → 7-8 (săpt 3+)
+- Obiectiv: deficit caloric controlat + masă musculară preservation + îmbunătățire condiție cardiovasculară
+
+**Structura sesiune (50 min):**
+```
+[00-05 min] Warm-up dinamic: Cercuri brațe, fandări loc, mobilitate șold
+[05-40 min] Main Work: 5 Exerciții (1 Compus bază + 4 Accesorii)
+[40-50 min] Cool-down & MISS/LISS: 10 min mers alert pe bandă înclinată / Eliptică
+```
+
+**Split sesiuni Push/Pull alternation (Ziua A / Ziua B):**
+
+**Rationale split:** Goblet Squat + RDL în aceeași sesiune = erectorii spinali tensiune continuă → oboseală sistemică în deficit. Split alternation protejează spatele.
+
+*Sesiunea 1 & 3 (Ziua A — Focus Genuflexiuni / Împins):*
+- Compus principal: Goblet Squat cu gantera sau KB
+- Accesorii upper: DB Shoulder Press (șezut), Flotări (normale sau pe genunchi)
+- Accesorii picioare: Leg Extensions
+- Core: Plank standard / Plank Shoulder Taps
+
+*Sesiunea 2 & 4 (Ziua B — Focus Îndreptări / Tracțiuni):*
+- Compus principal: Romanian Deadlift (RDL) cu gantere
+- Accesorii upper: Dumbbell Row pe bancă, Flexii biceps
+- Accesorii picioare: Seated Leg Curls
+- Core: Bird-Dog (tempo lent) sau Pallof Press
+
+**Pool exerciții:**
+
+🚫 Interzise:
+- Impact articular extrem: Box jumps, Burpees explozive
+- Tehnică complexă: Snatch, Clean & Jerk, Genuflexiuni deasupra capului
+- **Russian Twists EXCLUS:** flexie lombară + rotație sub sarcină = risc disc intervertebral, evitat de medicina sportivă modernă. Înlocuit cu Pallof Press / Plank Shoulder Taps (aceeași activare oblici/core, zero rotație lombară).
+
+✅ Permise: per split-ul Ziua A / Ziua B mai sus.
+
+**Progresie 4 săptămâni:**
+
+| Săptămâni | Structură | RPE | Obiectiv |
+|-----------|-----------|-----|----------|
+| 1-2 | 3 seturi × 10-12 reps | 6-7 | Învățare compound, adaptare neuromusculară |
+| 3-4 | 3-4 seturi × 8-12 reps | 7-8 | Progressive overload: +1-2kg gantere SAU +1 set compound |
+
+#### 29.2.3 Template: Tonifiere & Definire — Baseline + 3 Sub-variants
+
+**User profile target:**
+- BMI: 22-28 (greutate normală sau ușor supraponderal)
+- Background: activ recent, frecventare intermitentă sală 6-12 luni, cunoaște mișcări bază
+- Capacity efort: bună, articulații stabile, toleranță oboseală ridicată
+- Context nutrițional: Body Recomposition. Maintenance default (±5-10%). NU forțăm deficit. Aport proteic 1.6 g/kg (ISSN) pentru susținere masă musculară.
+
+**Approach 3 sub-variants:** 1 template baseline + 3 volume splits/modifiers (DRY, simplifică engine routing). Splits agresive 70/30 pentru self-selected specialization (NU 60/40 soft).
+
+**Parametri high-level (toate 3 sub-variants):**
+- Frecvență: 4 sesiuni/săpt cu min 24h pauză
+- Durată: 50-60 min
+- RPE: 7-8 (săpt 1-2) → 7-9 (săpt 3+)
+- Obiectiv: hipertrofie estetică + recompoziție corporală
+
+**Structură sesiune (55 min baseline):**
+```
+[00-05 min] Warm-up dinamic: Activare specifică grupă musculară zilei
+[05-50 min] Main Work: 5 Exerciții (split volum per sub-variantă)
+[50-55 min] Cool-down: Stretching static + respirație controlată (NU LISS/MISS — focus hipertrofie)
+```
+
+**Split sesiuni per sub-variantă:**
+
+*A. Echilibrat (50/50 Lower/Upper):*
+- Ziua A: Lower Body 1 (Quad dominant — Squat focus)
+- Ziua B: Upper Body 1 (Push — Piept/Umeri/Triceps)
+- Ziua C: Lower Body 2 (Glute/Hamstring dominant — Hinge focus)
+- Ziua D: Upper Body 2 (Pull — Spate/Biceps)
+
+*B. Focus Picioare & Fesieri (70/30 Lower-dominant — Gigica):*
+- Ziua A: Lower Body (Focus Fesieri & Hinge — Hip Thrust / RDL)
+- Ziua B: Mixed Session (1 ex Upper + 4 ex Lower — Focus Quads)
+- Ziua C: Upper Body Full (sesiune completă spate/piept/umeri — recovery picioare)
+- Ziua D: Lower Body (Focus Fesieri & Izolare — Kickbacks / Abductions)
+
+*C. Focus Partea Superioară (70/30 Upper-dominant — Marius):*
+- Ziua A: Upper Body (Push emphasis)
+- Ziua B: Upper Body (Pull emphasis)
+- Ziua C: Lower Body (sesiune picioare completă — Squat & Hinge combo)
+- Ziua D: Upper Body (Weak points focus — Umeri/Brațe)
+
+**Pool exerciții (Full Freedom moderat, BBS + BBP eliminate):**
+
+🚫 Interzise V1:
+- Barbell Back Squat (siguranță lombară fără spotter, fără supervision)
+- Barbell Bench Press (siguranță fail-safe — pin sub piept fără ajutor)
+- Olympic lifts (Snatch, Clean & Jerk)
+- 1RM testing
+- Russian Twists (consistency check Slăbire moderată)
+
+✅ Permise:
+
+*Lower (Squat pattern):* Hack Squat (aparat), Leg Press, Goblet Squat, Bulgarian Split Squat
+*Lower (Hinge pattern):* Hip Thrust (halteră sau aparat), Romanian Deadlift cu gantere/halteră, Cable Pull-throughs
+*Lower Accessory:* Leg Extensions, Seated Leg Curls, Glute Kickbacks (cablu sau aparat), Hip Abductions
+*Upper Push:* Flat Dumbbell Bench Press, Incline Dumbbell Press, Overhead Press cu gantere, Dips, Triceps Pushdowns
+*Upper Pull:* Lat Pulldown, Assisted Pull-ups, Dumbbell Row, Face Pulls, Bicep Curls
+*Core:* Cable Crunches, Pallof Press, Hanging Leg Raises, Side Plank
+
+**Progresie 4 săptămâni:**
+
+| Săptămâni | Structură | RPE | Obiectiv |
+|-----------|-----------|-----|----------|
+| 1-2 | 3 seturi × 10-12 reps | 7-8 | Consolidare execuție + mind-muscle connection |
+| 3-4 | 3-4 seturi × 8-12 reps (compound) / 12-15 reps (isolation) | 7-9 | Progressive overload: +1.25-2.5kg sau +1 rep RPE ridicat |
+
+**Backlog Sprint 4.x:** Exercise Substitution System ADR (§28.9) + Tonifiere Advanced Track 5-day (§28.10).
+
+#### 29.2.4 Template: Sănătate Generală
+
+**User profile target:**
+- Vârstă 18-49 (definit explicit §26.3, NU 50+ care intră Longevitate)
+- BMI: 18.5-27 typical (normal sau ușor overweight)
+- Background: variabil (sedentar 0-3 ani sau ex-activ inconstant)
+- Capacity efort: moderată-bună
+- Comorbidități typical: minime
+- Motivation: "să fiu activ și în formă" — NU aesthetic-driven, NU performance-driven, NU weight loss aggressive
+- Context nutrițional: maintenance default, NU deficit, NU surplus
+
+**Parametri high-level:**
+- Frecvență: 3 sesiuni/săpt cu min 24h pauză (vs 4 Tonifiere/Slăbire moderată — user SG NU caută hipertrofie/deficit performance, baseline activity)
+- Durată: 40-45 min (max 50 min)
+- RPE: 6-7 (săpt 1-2) → 7-8 (săpt 3+)
+- Obiectiv: longevitate + mobilitate + menținere forță bază + capacitate cardiovasculară
+
+**Structură sesiune (45 min):**
+```
+[00-08 min] Warm-up: 5 min cardio ușor + 3 min mobilitate dinamică
+[08-33 min] Main Work: 4 Exerciții (Full Body pattern: Push / Pull / Legs / Core)
+[33-45 min] Cool-down & LISS/MISS: 12 min mers alert pe bandă sau bicicletă orizontală
+```
+
+**Split sesiuni (3 zile Full Body NU Split):**
+
+**Rationale:** 3×/săpt frecvență, split body parts = fiecare grupă hit 1×/săpt → suboptim. Full body 3× = fiecare muscle group hit 3×/săpt = baseline strength + functional fitness optimal.
+
+*Ziua A (Focus Genuflexiuni):*
+- Picioare: Goblet Squat sau Leg Press
+- Upper Push: Flat Dumbbell Bench Press
+- Upper Pull: Lat Pulldown
+- Core: Plank standard
+
+*Ziua B (Focus Îndreptări/Hinge):*
+- Picioare: RDL cu gantere sau Cable Pull-throughs
+- Upper Push: Incline Dumbbell Press
+- Upper Pull: Dumbbell Row sau Seated Cable Rows
+- Core: Bird-Dog
+
+*Ziua C (Focus Unilateral & Stabilitate):*
+- Picioare: Fandări pe loc sau Bulgarian Split Squat (dacă echilibru permite)
+- Upper Push: Overhead Press cu gantere (șezut)
+- Upper Pull: Assisted Pull-ups sau Face Pulls
+- Core: Pallof Press
+
+**Pool exerciții (Balanced Freedom, consistency check Tonifiere):**
+
+🚫 Interzise: BBS + BBP + Olympic lifts + 1RM testing.
+
+✅ Permise:
+- *Picioare:* Goblet Squat, Leg Press, Hack Squat, RDL cu gantere, Hip Thrust (aparat), Cable Pull-throughs, Bulgarian Split Squat, Walking Lunges
+- *Upper Push:* Flat DB Bench Press, Incline DB Press, Seated DB Overhead Press, Push-ups (normale/genunchi)
+- *Upper Pull:* Lat Pulldown, Assisted Pull-ups, DB Row, Seated Cable Rows, Face Pulls
+- *Core:* Plank standard, Side Plank, Bird-Dog, Pallof Press, Cable Crunches
+
+**Progresie 4 săptămâni:**
+
+| Săptămâni | Structură | RPE | Obiectiv |
+|-----------|-----------|-----|----------|
+| 1-2 | 3 seturi × 10-12 reps | 6-7 | Învățare mișcări, activare fără febră majoră |
+| 3-4 | 3 seturi × 8-12 reps | 7-8 | Overload modest: +1-2kg dacă execuție perfectă |
+
+### 29.3 Decizii arhitecturale colaterale (3 LOCKED)
+
+#### 29.3.1 Onboarding ZERO întrebări medical screening
+
+**Decizie:** ZERO întrebări comorbidities/medical screening în onboarding. Templates presupun limitări implicit (Slăbire majoră conservative-by-default, Longevitate joint protection, etc.).
+
+**Rationale:** Gigel test catastrofal — bloodwork rejected analog. User non-tech vine pentru fitness, primește chestionar medical = friction + drop-off + paternalism. Liability concern absorbed prin: Pattern MFP + ADR 013 §SAFETY_TRIPWIRE + ToS + Privacy Policy + onboarding goal-based templates (NU medical conditions).
+
+#### 29.3.2 Engine routing Slăbire majoră conservative-by-default
+
+**Decizie:** user BMI 30 cu 18kg target = template Slăbire majoră low-impact aplicat conservative-by-default. R8 voice weights ramp up via standard flow dacă prea ușor (engine adapts via REALTIME signal RPE/feedback, NU upfront aggressive defaulting).
+
+**Rationale:** Conservative-by-default = safety + retention beat aggressive defaults pentru segment beginner+heavy. Cost: posibil under-stimulus advanced obese segment, mitigat prin standard engine progression flow.
+
+#### 29.3.3 Anti-RE strict thresholds engine internal
+
+**Decizie:** pragul 0.5%/săpt + protein 1.6 g/kg + 25% deficit = engine internal, NU exposed user-facing. User vede grame absolute calculate, NU formulele.
+
+**Rationale:** Anti-RE absolut preserved. Authority citată user-facing (NIH/EFSA/ISSN) suficientă pentru trust + legal coverage. Formulele matematice (`user_weight × 1.6`) = scope creep coaching nutriție + complexity zero benefit user.
+
+### 29.4 Decizii non-vault dinainte de sesiune (5 contextual)
+
+1. **Launch strategy:** full launch peste tot market-ul, NU hand-pick balene. Bugatti unitar matchează vision "oricine, orice categorie". Reconsider abordare — posibil înlocuit cu launch full + content marketing organic (TikTok aesthetic-glutes Gigica + r/longevity Gigel + FB Mompreneur Slăbire). Decizie finală în sesiune dedicată distribution strategy.
+2. **Slăbire majoră safety pattern LOCKED (MFP-style):** source autoritate medicală EXTERNĂ citată (NU "SalaFull recomandă") + threshold gendered conditional pe sex + engine consequence concret + user agency păstrat (soft warning + continue, NU block) + pattern reusable orice safety boundary nutrition.
+3. **Legal coverage realitate:** Pattern MFP + ADR 013 SAFETY_TRIPWIRE + ToS + Privacy Policy + onboarding medical conditions = ~80-90%. Restul 10-20% = consultanță legală tech specializată RO/EU pentru ToS final + Privacy Policy specific. Cost real €500-2000 NU optional. Flag pre-launch checklist obligatoriu.
+4. **Realist rămas până la launch v1:** ~5-6 sesiuni chat strategic + plan complet ÎNAINTE execuție = unlock velocity beast Opus 24-36×.
+5. **Anthropic dependency risk ~0.1% acceptat.**
+
+**Cross-refs §29:** ADR 022 propus standalone (Goal-Driven Program Templates extins cu §29) + ADR 013 §SAFETY_TRIPWIRE (foundation pattern) + §26 Goal-ca-Setting + 8 Templates v1 (extins acum cu spec full §29.2) + §27 wording rewrite (pattern reusable safety) + §28 amendamente backlog (extins §28.6-§28.10).
+
 ---
 
 🦫 **SSOT activ. Update-in-place. VS Code only. Single tool, single doc per topic.**
@@ -1277,3 +1758,5 @@ ACTION engine wording trees primesc goal ca parametru. Conditional în ACTION la
 **Sesiune 2026-05-01 morning v2 LOCK (chat strategic wording session). Phase A toasts/confirms ~36 aprobate tacit (§24) + Engine 12 variații LOCKED 4×3 cu Recovery refactor banner global + per-exercise (§23) + Decizia #6 Recovery score numeric exposure ELIMINATED globally + implementation pattern hash deterministic LOCKED. ~187 strings REMAINING (Phase B ~58 + Phase C ~78 + Phase A restul ~20 + decisions pending #1/#3/#5) (§25). Variant selector + bulk batch i18n implementation pending Sprint 4.x post locks complete. 888/888 unchanged (chat strategic only, zero code touched). Bandwidth Daniel ~30% — handover triggered preventiv anti-saturation halucinație.**
 
 **Sesiune 2026-05-01 evening LOCK (chat strategic goal-ca-setting + 53 strings Phase B partial). MAJOR SCOPE SHIFT V1: goal-ca-setting + 8 templates programe (1 Forță + 3 Tonifiere + 2 Slăbire + 1 Longevitate + 1 Sănătate Generală) LOCKED (§26). 5 voices RĂMÂN neschimbate (HISTORICAL/REALTIME/PROJECTION/ARBITRATOR/ACTION) + goal injectat ca SETTING profil + ACTION layer wording parametric. 53 strings wording finalizate Phase B partial (§27 Batch 1-4: readiness + skip reasons + F-NEW-4 + calibration tier names + sys.js phase/BMI + proactiveEngine 12 + plateauInterventions two-layer 6×2). 5 amendamente backlog Sprint 4.x (§28: durere cronică split + threshold trigger + revenire pauză + cooldown re-locked + Weight Trend split direction-aware). Decizii arhitecturale evening: Tier policy RO universal + voice persoana plural/singular + numerics policy proactive + Weight Trend split + two-layer messaging. Wording REMAINING reduced ~187 → ~103 strings (§25 updated). Timeline v1 ajustat 8-10 luni (§1.2 amendment). 888/888 unchanged (chat strategic, zero code touched). Bandwidth Daniel ~30% — handover triggered preventiv anti-saturation. Next: ADR 022 nou Goal-Driven Program Templates + PARAMETRIC_PROGRAMS_DESIGN refactor + exercise library extension Sprint 4.x.**
+
+**Sesiune 2026-05-02 LOCK (chat strategic safety nutrition + templates v1 full spec). 19 decizii LOCKED (7 safety nutrition + 4 templates V1 designate / 5 design units cu Tonifiere expanded + 5 backlog v2/Sprint 4.x + 3 arhitecturale colaterale) + 12+ push-back-uri productive Claude. SAFETY NUTRITION PATTERN COMPLET (§29.1): kcal floor 1200F/1500M static gendered (NIH+EFSA) + protein floor 1.6 g/kg dynamic (ISSN) + surplus optimization >0.5%/săpt engine internal + hidratare DROP safety. Pattern reusable: 2 nivele soft warning ZERO Hard Wall, agency 100%, threshold L2 = 3 zile consecutive (pattern detection NU fiziologie speculative), authority asymmetry NIH+EFSA kcal vs ISSN protein INTENȚIONAT documentat. 4 TEMPLATES V1 FULL SPEC (§29.2): Slăbire majoră (>15kg, 3×/săpt low-impact, recumbent bike LISS) + Slăbire moderată (<15kg, 4×/săpt Push/Pull split A/B, RDL hinge protection) + Tonifiere baseline + 3 sub-variants (4×/săpt, Echilibrat 50/50 / Lower 70/30 Gigica / Upper 70/30 Marius, BBS+BBP+Olympic+1RM+Russian Twists eliminate) + Sănătate Generală (3×/săpt Full Body NU split, 18-49 maintenance default). 5 amendamente backlog Sprint 4.x noi (§28.6-§28.10): Secondary Check >25% deficit + Seated Core Override Slăbire majoră + LISS ramp-down + Exercise Substitution System ADR + Tonifiere Advanced Track 5-day. 3 decizii arhitecturale colaterale (§29.3): ZERO întrebări medical screening onboarding (Gigel test catastrofal) + engine routing Slăbire majoră conservative-by-default + Anti-RE strict thresholds engine internal. Status v1: 5/8 templates lockate (62.5%) — rămase Forță & Dezvoltare + Longevitate. ~5-6 sesiuni chat strategic rămase pre-launch v1. 888/888 unchanged. Bandwidth Daniel ~15-20% — handover triggered preventiv. Next: ADR 022 extins cu §29 + sesiune Forță & Dezvoltare template (fresh bandwidth obligatoriu) + sesiune Longevitate template + sesiune distribution strategy reconsider.**
