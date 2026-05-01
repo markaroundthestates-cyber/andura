@@ -39,10 +39,11 @@ describe('dimensionRegistry — DIMENSIONS array', () => {
 });
 
 describe('dimensionRegistry — CALIBRATION_TIER_ORDER', () => {
-  it('exports ordered ADR 009 tier sequence', () => {
+  it('exports ordered ADR 009 §AMENDMENT D1 tier sequence (6-tier canonical)', () => {
     expect(CALIBRATION_TIER_ORDER).toEqual([
       'COLD_START',
       'INITIAL',
+      'DEVELOPING',
       'PERSONALIZING',
       'PERSONALIZED',
       'OPTIMIZED',

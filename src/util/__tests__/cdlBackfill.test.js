@@ -85,8 +85,9 @@ describe('inferSessionType', () => {
 // ── 2. reconstructContext ────────────────────────────────────────────────────
 
 describe('reconstructContext', () => {
-  it('sets calibrationLevel to PERSONALIZING with 5 prior sessions', () => {
+  it('sets calibrationLevel to INITIAL with 5 prior sessions (post ADR 009 §AMENDMENT D1)', () => {
     // 5 distinct session timestamps before sessionTs → sessionsCount = 5
+    // Per 6-tier canonical: <6 sessions = INITIAL (was PERSONALIZING in 5-tier heuristic).
     const priorSessions = [1000, 2000, 3000, 4000, 5000];
     const allLogs = [];
     priorSessions.forEach(ts => {
@@ -95,7 +96,20 @@ describe('reconstructContext', () => {
     const sessionTs = 6000;
 
     const ctx = reconstructContext(sessionTs, allLogs);
-    expect(ctx.calibrationLevel).toBe('PERSONALIZING');
+    expect(ctx.calibrationLevel).toBe('INITIAL');
+  });
+
+  it('sets calibrationLevel to DEVELOPING with 8 prior sessions', () => {
+    // 6-11 sessions = DEVELOPING per 6-tier canonical (bridge tier).
+    const allLogs = Array.from({ length: 8 }, (_, i) => ({
+      session: (i + 1) * 1000,
+      ex: 'Incline DB Press',
+      w: 80,
+      reps: 10,
+      ts: (i + 1) * 1000 + 1,
+    }));
+    const ctx = reconstructContext(9000, allLogs);
+    expect(ctx.calibrationLevel).toBe('DEVELOPING');
   });
 
   it('always sets context.partial = true', () => {
@@ -117,16 +131,30 @@ describe('reconstructContext', () => {
     expect(ctx.calibrationLevel).toBe('INITIAL');
   });
 
-  it('sets calibrationLevel PERSONALIZED with 10+ prior sessions', () => {
-    const allLogs = Array.from({ length: 10 }, (_, i) => ({
+  it('sets calibrationLevel PERSONALIZED with 40+ prior sessions (post ADR 009 §AMENDMENT D1)', () => {
+    // Per 6-tier canonical: 12-39=PERSONALIZING, 40+=PERSONALIZED
+    // (was 10+=PERSONALIZED in legacy 5-tier heuristic).
+    const allLogs = Array.from({ length: 40 }, (_, i) => ({
       session: (i + 1) * 1000,
       ex: 'Incline DB Press',
       w: 80,
       reps: 10,
       ts: (i + 1) * 1000 + 1,
     }));
-    const ctx = reconstructContext(11000, allLogs);
+    const ctx = reconstructContext(41000, allLogs);
     expect(ctx.calibrationLevel).toBe('PERSONALIZED');
+  });
+
+  it('sets calibrationLevel PERSONALIZING with 12-39 prior sessions', () => {
+    const allLogs = Array.from({ length: 15 }, (_, i) => ({
+      session: (i + 1) * 1000,
+      ex: 'Incline DB Press',
+      w: 80,
+      reps: 10,
+      ts: (i + 1) * 1000 + 1,
+    }));
+    const ctx = reconstructContext(16000, allLogs);
+    expect(ctx.calibrationLevel).toBe('PERSONALIZING');
   });
 
   it('sets non-reconstructible fields to null/empty', () => {

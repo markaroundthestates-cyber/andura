@@ -36,9 +36,12 @@ describe('migrationRunner — getEntryVersion', () => {
 });
 
 describe('migrationRunner — empty / no-op cases', () => {
-  it('default MIGRATIONS array is empty in Sprint Foundation Batch 2', () => {
+  it('default MIGRATIONS array carries the 5→6 tier renumber (Sprint 4.x Blocker 3)', () => {
     expect(Array.isArray(MIGRATIONS)).toBe(true);
-    expect(MIGRATIONS).toHaveLength(0);
+    expect(MIGRATIONS.length).toBeGreaterThanOrEqual(1);
+    expect(MIGRATIONS[0].fromVersion).toBe(1);
+    expect(MIGRATIONS[0].toVersion).toBe(2);
+    expect(MIGRATIONS[0].description).toMatch(/5.*6|tier/i);
   });
 
   it('returns zero-state result when migrations array is empty', () => {
@@ -49,7 +52,9 @@ describe('migrationRunner — empty / no-op cases', () => {
   });
 
   it('returns zero-state result when migrations is non-array', () => {
-    const result = runMigrations({ migrations: null, db: makeDb(), sentry: makeSentry(), logger: makeLogger() });
+    // Non-array (string) — distinct from null/undefined which `??` would fall
+    // back to the real MIGRATIONS registry.
+    const result = runMigrations({ migrations: 'not-an-array', db: makeDb(), sentry: makeSentry(), logger: makeLogger() });
     expect(result.migrationsRun).toBe(0);
   });
 

@@ -1,9 +1,14 @@
 import { MS_PER_DAY } from '../constants.js';
 // ══ CALIBRATION TIERS — User maturity levels for engine feature gating ═══════
-// 5 tiers from cold start (day 0) to optimized (180+ days).
+// 6 tiers from cold start (day 0) to optimized (180+ days).
 // Engines only run when enabled for the current tier — prevents false positives
 // and unnecessary computation for new users.
 //
+// ADR 009 §AMENDMENT 2026-04-30 (D1 RESOLVED): canonical 6-tier post-DEVELOPING
+// insertion. DEVELOPING (id 2) bridges INITIAL (early data) → PERSONALIZING
+// (heavy user weight). Renumber: PERSONALIZING 2→3, PERSONALIZED 3→4,
+// OPTIMIZED 4→5. Boundaries DEVELOPING: 14–28 days / 6–11 sessions
+// (entry threshold = 14d AND 6 sess; exit at 28d AND 12 sess into PERSONALIZING).
 // ADR 012: tier decays -1 per 60 days inactivity, floor at INITIAL.
 
 export const CALIBRATION_LEVELS = {
@@ -29,9 +34,9 @@ export const CALIBRATION_LEVELS = {
     id: 1,
     name: 'initial',
     displayName: 'Calibrare inițială',
-    durationDays: 28,
+    durationDays: 14,
     minSessions: 3,
-    maxSessions: 12,
+    maxSessions: 5,
     userWeight: 0.5,
     generalWeight: 0.5,
     recalibrationFrequency: 'daily',
@@ -44,8 +49,27 @@ export const CALIBRATION_LEVELS = {
     description: '50% user data + 50% population guideline. Pattern detection activ (high confidence only).',
   },
 
-  PERSONALIZING: {
+  DEVELOPING: {
     id: 2,
+    name: 'developing',
+    displayName: 'Dezvoltare activă',
+    durationDays: 28,
+    minSessions: 6,
+    maxSessions: 11,
+    userWeight: 0.65,
+    generalWeight: 0.35,
+    recalibrationFrequency: 'daily',
+    patternsEnabled: true,
+    patternMinConfidence: 0.65,
+    weakGroupEnabled: false,
+    stagnationEnabled: false,
+    predictionEnabled: false,
+    bannerText: 'Pattern-urile prind contur. Recomandările folosesc datele tale.',
+    description: '65% user data + 35% general. Pattern detection activ (high confidence ≥65%). Bridge tier between INITIAL and PERSONALIZING per ADR 009 §AMENDMENT D1.',
+  },
+
+  PERSONALIZING: {
+    id: 3,
     name: 'personalizing',
     displayName: 'Personalizare activă',
     durationDays: 90,
@@ -64,7 +88,7 @@ export const CALIBRATION_LEVELS = {
   },
 
   PERSONALIZED: {
-    id: 3,
+    id: 4,
     name: 'personalized',
     displayName: 'Personalizat',
     durationDays: 180,
@@ -84,7 +108,7 @@ export const CALIBRATION_LEVELS = {
   },
 
   OPTIMIZED: {
-    id: 4,
+    id: 5,
     name: 'optimized',
     displayName: 'Optimizat',
     durationDays: Infinity,
@@ -105,7 +129,7 @@ export const CALIBRATION_LEVELS = {
   },
 };
 
-const TIER_ORDER = ['COLD_START', 'INITIAL', 'PERSONALIZING', 'PERSONALIZED', 'OPTIMIZED'];
+const TIER_ORDER = ['COLD_START', 'INITIAL', 'DEVELOPING', 'PERSONALIZING', 'PERSONALIZED', 'OPTIMIZED'];
 
 /**
  * Apply inactivity decay: -1 tier per 60 inactive days, floor at INITIAL.
@@ -153,10 +177,13 @@ export function detectCalibrationLevel(ctx) {
     : new Date();
   const daysSinceFirst = (Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
 
-  if (daysSinceFirst < 7 || sessionsCount < 3)  return CALIBRATION_LEVELS.COLD_START;
+  if (daysSinceFirst < 7 || sessionsCount < 3)         return CALIBRATION_LEVELS.COLD_START;
 
+  // Conservative routing per ADR 009 §AMENDMENT: stay in lower tier if EITHER
+  // dimension below threshold (||). Transition out only when BOTH satisfied.
   let levelName;
-  if (daysSinceFirst < 28 || sessionsCount < 12)  levelName = 'INITIAL';
+  if (daysSinceFirst < 14 || sessionsCount < 6)        levelName = 'INITIAL';
+  else if (daysSinceFirst < 28 || sessionsCount < 12)  levelName = 'DEVELOPING';
   else if (daysSinceFirst < 90 || sessionsCount < 40)  levelName = 'PERSONALIZING';
   else if (daysSinceFirst < 180 || sessionsCount < 80) levelName = 'PERSONALIZED';
   else                                                  levelName = 'OPTIMIZED';

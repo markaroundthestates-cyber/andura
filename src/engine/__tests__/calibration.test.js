@@ -52,9 +52,21 @@ describe('detectCalibrationLevel', () => {
     expect(result.name).toBe('cold_start');
   });
 
-  it('returns INITIAL for 8 sessions in 14 days', () => {
-    const result = detectCalibrationLevel(makeCtxWithSessions(8, 14));
+  it('returns INITIAL for 4 sessions in 10 days', () => {
+    // <14 days OR <6 sessions → INITIAL per ADR 009 §AMENDMENT D1
+    const result = detectCalibrationLevel(makeCtxWithSessions(4, 10));
     expect(result.name).toBe('initial');
+  });
+
+  it('returns DEVELOPING for 8 sessions in 14 days', () => {
+    // ≥14 days AND ≥6 sessions, but <28 days OR <12 sessions → DEVELOPING (bridge tier)
+    const result = detectCalibrationLevel(makeCtxWithSessions(8, 14));
+    expect(result.name).toBe('developing');
+  });
+
+  it('returns DEVELOPING for 10 sessions in 20 days', () => {
+    const result = detectCalibrationLevel(makeCtxWithSessions(10, 20));
+    expect(result.name).toBe('developing');
   });
 
   it('returns PERSONALIZING for 25 sessions in 60 days', () => {

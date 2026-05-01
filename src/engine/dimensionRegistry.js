@@ -72,13 +72,15 @@ export const DIMENSIONS = [
 ];
 
 /**
- * Calibration tier ordering (ADR 009). Index = severity (higher = more demanding).
+ * Calibration tier ordering (ADR 009 §AMENDMENT D1 — 6-tier canonical).
+ * Index = severity (higher = more demanding).
  * Names normalized to UPPERCASE for case-insensitive comparison
  * (calibration.js exposes lowercase 'cold_start' etc; ADR docs reference UPPERCASE).
  */
 export const CALIBRATION_TIER_ORDER = [
   'COLD_START',
   'INITIAL',
+  'DEVELOPING',
   'PERSONALIZING',
   'PERSONALIZED',
   'OPTIMIZED',

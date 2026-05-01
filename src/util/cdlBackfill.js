@@ -84,11 +84,15 @@ export function reconstructContext(sessionTs, allLogs) {
   );
   const sessionsCount = priorSessionTs.size;
 
-  // Simplified session-count-only calibration thresholds (backfill heuristic)
+  // Simplified session-count-only calibration thresholds (backfill heuristic).
+  // Aligned post ADR 009 §AMENDMENT D1 (6-tier canonical) with detectCalibrationLevel
+  // session bands: <3=INITIAL→COLD_START boundary, 3-5=INITIAL, 6-11=DEVELOPING,
+  // 12-39=PERSONALIZING, 40+=PERSONALIZED.
   let calibrationLevel;
   if (sessionsCount === 0) calibrationLevel = 'COLD_START';
-  else if (sessionsCount < 3) calibrationLevel = 'INITIAL';
-  else if (sessionsCount < 10) calibrationLevel = 'PERSONALIZING';
+  else if (sessionsCount < 6) calibrationLevel = 'INITIAL';
+  else if (sessionsCount < 12) calibrationLevel = 'DEVELOPING';
+  else if (sessionsCount < 40) calibrationLevel = 'PERSONALIZING';
   else calibrationLevel = 'PERSONALIZED';
 
   const sortedPriorTs = [...priorSessionTs].sort((a, b) => a - b);
