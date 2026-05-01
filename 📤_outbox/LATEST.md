@@ -146,13 +146,13 @@ Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
 - `452664d` feat(handover): merge 2026-05-02 PRE-LAUNCH FINAL — F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU (§22 update in-place) + Muscle Memory Index hibrid LOCKED V1 (§32 NEW) + Storage Full UX 80%/95% LOCKED V1 (§33 NEW) + 3 Optimizări UX Friction LOCKED (§29.5.5/.14/.17/.18) + 3 Blockers Sprint 4.x identificate (§34 NEW) + GC Tombstones defer 6 luni evaluare 1 iul 2027 (§35 NEW) + Investiții confirmate ZERO buget nou (§31 amendment)
 - `6fb112b` chore(outbox): rotate previous LATEST + DIFF_FLAGS → 2026-05 archive (NN=44,45) + archive HANDOVER_INPUT 2026-05-02 PRE-LAUNCH FINAL consumed (NN=46, F-NEW LOCKED + MMI + Storage Full + UX Friction + 3 Blockers + GC defer preserved 1:1)
-- `<TBD>` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 PRE-LAUNCH FINAL (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail zero critical findings
-- `<TBD>` chore(outbox): rotate LATEST → handover ingest 2026-05-02 PRE-LAUNCH FINAL raport (this file)
+- `943710a` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 PRE-LAUNCH FINAL (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail zero critical findings
+- `cd58201` chore(outbox): rotate LATEST → handover ingest 2026-05-02 PRE-LAUNCH FINAL raport (this file initial)
 - `<final>` docs(outbox): update LATEST raport with final SHAs + push confirm 2026-05-02 PRE-LAUNCH FINAL
 
-**Final SHAs + push confirm vor fi update-uite în commit final** (commit acesta = penultim, finalul update LATEST.md cu SHAs).
+## Pushed: ✅ origin/main (`c9929a8..cd58201`)
 
-## Pushed: pending final commits + push origin/main
+4 commits propagated remote successfully (HEAD now `cd58201`, pending final SHA update commit). Final commit cu acest update + push.
 
 Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-02-pre-launch-final` → origin (rollback safe, HEAD pre-ingest `c9929a8`).
 
