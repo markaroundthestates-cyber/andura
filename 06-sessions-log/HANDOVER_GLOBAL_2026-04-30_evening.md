@@ -1,8 +1,8 @@
-# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-01 evening (resubmit)
+# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-02 PRE-LAUNCH FINAL
 
 **Owner:** Daniel (CEO + Product). Claude = Co-CTO + Reviewer.
-**Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`.
-**Data:** 2026-05-01 evening resubmit (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + chat strategic morning v2 wording session [Engine 12 variations + Decizia #6 + Phase A aprobate tacit] + chat strategic evening 2026-05-01 session [goal-ca-setting + 8 templates programe v1 LOCKED + 53 strings Phase B partial + 5 amendamente backlog + timeline v1 ajustat 8-10 luni] + chat strategic 2026-05-02 morning session [safety nutrition pattern complet + 4 templates v1 full spec + 5 amendamente noi + 3 decizii arhitecturale colaterale] + chat strategic 2026-05-02 evening session [Forță & Dezvoltare V1 LOCKED 12 decizii + Longevitate V1 LOCKED 17 decizii **(input INPUT TRUNCATED la nivel body §29.2.6 — REZOLVAT acum prin resubmit Option A)** + Sănătate Generală sub-variants v3+ confirmation + 5 UX colateral flags backlog] + chat strategic 2026-05-01 evening RESUBMIT [Longevitate §29.2.6 body complet 13 LOCKED + 3 backlog + UX colateral V1 LOCKED 15 puncte + Swap Engine + Reset Cycles + Wording Reset + Distribution Strategy V1 LOCKED Hibrid Soft Launch + DoD criteria + Beta 50 segmentat + Free Early Access + Pre-Launch Checklist V1 LOCKED Legal DIY + audit €300-500 + ADR 020 Phase 2 + D1 refactor + Gate Global Production + REBRAND SalaFull → ANDURA LOCKED + andura.app domeniu LOCKED + Investiții ~€500-700 primul an]).
+**Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`. **PRE-LAUNCH V1 SCOPE CLOSED — 0 sesiuni chat strategic rămase.**
+**Data:** 2026-05-02 PRE-LAUNCH FINAL (post sesiune chat strategic 2026-05-02 [F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU + Muscle Memory Index hibrid LOCKED V1 + Storage Full UX 80%/95% LOCKED V1 + 3 Optimizări UX Friction LOCKED Onboarding 5→4 ecrane disclaimer integrat + Autofocus iOS workaround + The Next-Up Gaze + Friction Map V1 final + 3 BLOCKERS Sprint 4.x identificate (T&B Faza 2 persistence + Firebase Rules RTDB lock + D1 DEVELOPING refactor 5→6 tiers) + decizia GC Tombstones defer 6 luni evaluare 1 iul 2027 + Investiții confirmate ZERO buget nou; ~35 decizii LOCKED + ~6 push-back-uri productive Claude] + sesiunile anterioare preserved [Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit + morning v2 wording session + evening 2026-05-01 goal-ca-setting + 8 templates LOCKED + 2026-05-02 morning safety nutrition + 2026-05-02 evening Forță & Longevitate full spec + 2026-05-01 evening RESUBMIT Longevitate body complet + UX V1 LOCKED 16 sub-secțiuni + Distribution V1 + Pre-Launch V1 + REBRAND ANDURA LOCKED + andura.app + Investiții ~€500-700]).
 
 ---
 
@@ -42,7 +42,16 @@
 - §29.6 Distribution Strategy V1 LOCKED (2026-05-01 evening RESUBMIT — Hibrid Soft Launch andura.app + zero marketing 4 săpt + DoD criteria target 1 ian 2027 + Beta 50 testeri segmentat invite-only 4 săpt + Free Early Access NU grandfathering permanent + Targeting RO storytelling-first r/Romania/FB grupuri + EN technical r/StrongerByScience/r/xxfitness/r/loseit + KPI primari Retention D7/D30 + Hard Stop signals + Feedback in-app email + Code Freeze 4 săpt post-launch + Hotfix max 12h)
 - §29.7 Pre-Launch Checklist V1 LOCKED (2026-05-01 evening RESUBMIT — Legal DIY + Audit Plătit €300-500 1 lună înainte + Disclaimer medical onboarding checkbox + GDPR Privacy Policy + ADR 020 Phase 2 logs rotation €0 + D1 DEVELOPING refactor curățenie totală + Smoke Test gate-launch-prod.bat unificat + ADR 022 V2 Workflow Review hibrid Co-CTO + DoD Final Bugatti Grade 6 criterii)
 - §30 Rebrand SalaFull → Andura LOCKED (2026-05-01 evening RESUBMIT — Andura 6 litere RO+EN + andura.app domeniu €10-15/an + Task CC Opus dedicat sweep paralel altă muncă: vault docs + cod + commits config + repo rename + GitHub Pages URL + email feedback signature)
-- §31 Investiții LOCKED (2026-05-01 evening RESUBMIT — Total ~€500-700 primul an: consultanță legală €300-500 one-time + andura.app €10-15/an + Firebase Blaze €0-25/lună post-launch >1000 useri)
+- §31 Investiții LOCKED (2026-05-01 evening RESUBMIT — Total ~€500-700 primul an: consultanță legală €300-500 one-time + andura.app €10-15/an + Firebase Blaze €0-25/lună post-launch >1000 useri) **+ AMENDMENT 2026-05-02:** breakdown 6 luni primele ~€310-515 (Firebase free tier suficient cf §35 GC defer), zero buget nou sesiune 2026-05-02
+- §22 F-NEW-1/2/3/4 **UPDATE 2026-05-02 — toate LOCKED V1 OBLIGATORIU** (NU mai flagged HIGH priority post i18n): F-NEW-1 i18n exerciții RO inversare regulă (UI Default RO + Toggle EN OFF) + F-NEW-2 Tier-aware progression 3 tiers + Sprinter Cap modifier + edge case Deload skip soft warning + F-NEW-3 Hyperreactive cooldown rate-limiting equipment 7-day rolling + phase change <24h silent absorb + edge case "User Pierdut" 25% aderență + 7 zile zero login + F-NEW-4 Plan ajustat banner "Plan ajustat astăzi pentru recovery" + buton "Folosesc varianta mea" replacement force-typing
+- §29.5.5 Cronometru **AMENDMENT 2026-05-02:** extension §29.5.5 cu **The Next-Up Gaze** (preview vizual cartonaș set următor în timpul rest timer auto-start, soft highlight + border glow, ~1-2h Sonnet)
+- §29.5.14 Onboarding Flow **AMENDMENT 2026-05-02:** **5 → 4 ecrane** (disclaimer medical mutat din ecran dedicat în ecran 4 Obiectiv cu checkbox obligatoriu disabled-until-checked, total <45 sec vs <60 sec anterior)
+- §29.5 Autofocus iOS workaround NEW (§29.5.17 — `<input type="number" inputmode="numeric">` + `setTimeout 50ms` focus programatic la mount, zero tap suplimentar ecrane numerice)
+- §29.5 Friction Map V1 final NEW (§29.5.18 — touchpoint matrix Onboarding 🟢 + Pauze 🟢 + Editare istoric 🟡 + Storage Full 🔴 + Disclaimer 🟡 + MMI prompt 🟡)
+- §32 Muscle Memory Index (MMI) LOCKED V1 **NEW 2026-05-02** (algoritm hibrid Lookup + Boost: Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup, 6-12 luni 0.80×/1.25× boost / 12-24 luni 0.70×/1.10× / 24+ luni 0.60×/1.00× start proaspăt; Threshold trigger user-controlled 6+ luni pauză prompt "Vrei să reîncepem treptat sau de la zero?" + UI Bugatti tone "Pauza face parte din drum")
+- §33 Storage Full UX Alert LOCKED V1 **NEW 2026-05-02** (Threshold 80% banner săptămânal discret NU blocant 3 buttons + Threshold 95% modal blocant 3 alegeri Export JSON / Activează Cloud Pro / Șterge automat 180 zile; ZERO data loss silent industry standard Apple/Google/Dropbox; Cap Pro upgrade prompt 1×/săpt + auto-rotate 180 zile DOAR cu consimțământ explicit)
+- §34 Blockers Sprint 4.x Identified Pre-Launch **NEW 2026-05-02** (Blocker 1 T&B Faza 2 persistence Memory Paradox bug ~50-80h trad / ~3-5h Opus + Blocker 2 Firebase Rules RTDB lock production-blocker `database.rules.json` syntax sub 1h + Blocker 3 D1 DEVELOPING refactor 5→6 tiers ID renumber + schema migration runner + Golden Master ~8-12h trad / ~2-3h Opus)
+- §35 Tombstones GC Defer 6 luni Post-Launch **NEW 2026-05-02** (Cloud Functions GC AMÂNAT primele 6 luni post-launch + borna evaluare oficială 1 iul 2027; rationale buget zero Firebase Spark plan + RTDB free tier 1GB ~3% în 6 luni; alegere A automation Blaze / B manual Daniel / C amână în continuare)
 
 **Pentru chat nou:** citește acest fișier + `VAULT_RULES.md` (root) + `PROMPT_CC_HYGIENE.md` (root). Restul context = Project Knowledge GitHub.
 
@@ -313,6 +322,28 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **Tests:** 888/888 PASS unchanged (sesiune chat strategic, zero code touched).
 - **Bandwidth Daniel:** ~30% chat strategic evening ended, handover triggered preventiv anti-saturation. Wall-clock ~3-4h Daniel-time real (5 decizii product MAJORE + 5 decizii arhitecturale + 53 strings + 5 amendamente).
 
+### Status update 2026-05-02 PRE-LAUNCH FINAL (chat strategic F-NEW LOCKED + MMI + Storage Full UX + UX Friction + 3 Blockers + GC defer)
+
+- **F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU** (vezi §22 — UPDATE in-place din "flagged HIGH" → "LOCKED V1 OBLIGATORIU"): F-NEW-1 i18n exerciții RO inversare regulă (UI Default RO + Toggle EN OFF, lista finală 6 traduceri locked Romanian Deadlift → Îndreptări cu picioarele aproape drepte (RDL) etc., pattern reusable 3 categorii) + F-NEW-2 Tier-aware progression matrice 3 tiers Beginner 0-10 / Intermediate 11-50 / Advanced 51+ + Sprinter Cap modifier (compound 1.0 kg / isolation +1 rep) + Edge case Deload skip soft warning Bugatti tone + F-NEW-3 Cooldown rate-limiting (3+ înlocuiri 7-day rolling silent + phase change <24h absorb a 2-a) + Edge case "User Pierdut" dual condition aderență <25% AND 7 zile zero login + F-NEW-4 Banner "Plan ajustat astăzi pentru recovery" + buton "Folosesc varianta mea" replacement force-typing.
+
+- **Muscle Memory Index (MMI) hibrid LOCKED V1** (vezi §32 NEW): algoritm Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup + boost progresie 3 săpt: 6-12 luni 0.80×/1.25× / 12-24 luni 0.70×/1.10× / 24+ luni 0.60×/1.00× start proaspăt. Threshold trigger user-controlled 6+ luni pauză prompt "Vrei să reîncepem treptat sau de la zero?" anti-paternalism agency 100%. UI wording "Pauza face parte din drum. Începem treptat — corpul tău își amintește." Justified V1 (Maria post-operație șold 8 luni revine ~iulie 2027). Effort ~3-4h Sonnet.
+
+- **Storage Full UX Alert LOCKED V1** (vezi §33 NEW): Threshold 80% banner săptămânal discret NU blocant (Exportă datele JSON / Află despre Cloud Pro / Închide) + Threshold 95% modal blocant 3 alegeri obligatorii (Descarcă istoricul / Activează Cloud Pro / Șterge automat 180 zile alegere definitivă). ZERO data loss silent industry standard. Cap Pro upgrade 1×/săpt + auto-rotate 180 zile DOAR cu consimțământ explicit. Effort ~4-6h Sonnet. Justified V1 (primii power users 80MB ~6-12 luni, gap v1.5 risk crash silent prod).
+
+- **3 Optimizări UX Friction LOCKED V1** (vezi §29.5.14 + §29.5.17 + §29.5.5 amendment + §29.5.18): Onboarding 5 → 4 ecrane (disclaimer medical mutat ecran 4 Obiectiv cu checkbox disabled-until-checked, total <45 sec vs <60 sec) + Autofocus iOS workaround (`<input type="number" inputmode="numeric">` + `setTimeout 50ms` focus programatic, zero tap suplimentar) + The Next-Up Gaze (preview vizual cartonaș set următor în timpul rest timer auto-start, soft highlight + border glow ~1-2h Sonnet extension §29.5.5) + Friction Map V1 final touchpoint matrix.
+
+- **3 Blockers Sprint 4.x identificate pre-launch** (vezi §34 NEW): Blocker 1 T&B Faza 2 persistence Memory Paradox bug (~50-80h trad / ~3-5h Opus, user delete entry → reload → entry RE-APARE prin Firebase pull) + Blocker 2 Firebase Rules RTDB lock (rules currently OPEN dev mode = data theft risk prod, sintaxa corectă `database.rules.json` LOCKED, sub 1h Daniel + emulator + manual publish console) + Blocker 3 D1 DEVELOPING refactor 5→6 tiers (CALIBRATION_LEVELS 0-4 → 0-5 + ID renumber + schema migration runner + Golden Master ~30+ test cases, ~8-12h trad / ~2-3h Opus).
+
+- **GC Tombstones defer 6 luni post-launch** (vezi §35 NEW): Cloud Functions GC AMÂNAT, borna evaluare oficială 1 iulie 2027. Rationale buget zero (Firebase Spark plan free, Tombstone ~30MB / 6 luni = ~3% din 1GB), focus retention. La 1 iul 2027 Daniel decide A automation Blaze / B manual / C mai amână.
+
+- **Investiții confirmate ZERO buget nou sesiune 2026-05-02** (vezi §31 AMENDMENT): preserved §31.1 LOCKED €500-700 worst-case primul an. Breakdown 6 luni primele ~€310-515 (Firebase free tier suficient cf §35). Toate optimizările sesiunii = CC Opus task time (zero $) + Daniel review free.
+
+- **Status v1 templates + scope:** 8/8 LOCKED design-wise (100%) preserved. UX Colateral 16 sub-secțiuni V1 LOCKED + 3 amendamente (§29.5.5 Next-Up Gaze + §29.5.14 4 ecrane + §29.5.17/.18 NEW). F-NEW 1/2/3/4 LOCKED V1 OBLIGATORIU (NU defer). MMI + Storage Full UX OBLIGATORIU V1 (~8-10h Sonnet total). Distribution V1 + Pre-Launch V1 + Rebrand + Investiții preserved §29.6/§29.7/§30/§31. **Sesiuni chat strategic rămase pre-launch v1: 0 (ZERO).** Toate decizii LOCKED. Pre-launch V1 scope CLOSED.
+
+- **Tests:** 888/888 PASS unchanged (chat strategic, zero code touched).
+
+- **Bandwidth Daniel:** ~3h Daniel-time real (~35 decizii LOCKED + ~6 push-back-uri productive Claude pe sesiune). Saturation triggered preventiv anti-halucinație. Sesiune chat strategic finală pre-launch — toate scope-urile închise.
+
 ### Status update 2026-05-01 evening RESUBMIT (chat strategic Longevitate body complet + UX colateral V1 LOCKED + Distribution + Pre-Launch + Rebrand + Investiții)
 
 - **Longevitate §29.2.6 body COMPLET RESUBMIT Option A** (vezi §29.2.6 — completat 1:1 din input nou): 13 decizii LOCKED + 3 backlog (V2 + V3+). Truncation 2026-05-02 evening REZOLVATĂ. Persona Maria 60-70 / vârstă mediană 65 (range 50-59 mobilitate ridicată + 70-75 conservatoare). Frecvență 3 sesiuni/săpt L-Mi-V min 24h pauză + Durată 35-40 min max 45 + RPE 5-7 max (Săpt 1-2 RPE 5-6 / Săpt 3-4 RPE 6-7 zile bune) zero serii eșec muscular. Periodizare Continuous + Double Progression NU toggle Lifestyle Deload (eliminat V1 — RPE-driven natural). 3 zile Full Body cu accente reale: Ziua A Stabilitate Genunchi/Șold (Sit-to-Stand + Lat Pulldown + Bird-Dog) + Ziua B Mobilitate Coloană/Umeri (Cable Pull-throughs + Wall Push-ups + Pallof Press) + Ziua C Autonomie/Plan Lateral (Lateral Step-ups + Suitcase Carry + Modified Plank). Pool exerciții V1: PERMISE Sit-to-Stand + Leg Press + RDL gantere ușoare + Cable Pull-throughs + Step-ups + Lateral Step-ups + Lat Pulldown + Wall Push-ups + Bird-Dog + Modified Plank + Pallof Press. INTERZISE BBS + Conventional Deadlift + OHP + sărituri + Floor Push-ups + Hip Thrust pe bancă + Sit-ups + Russian Twists. Progresie Reps-first Double Progression 2×8→2×10→3×12 abia după 3×12 confortabil RPE 6-7 +1 kg + reset reps 8. Mobilitate integrată Warm-up+Cool-down NU sesiuni separate. Cardio extern banner DISCRET WEEKEND 1×/săpt vineri/sâmbătă "plimbare 20 min aer liber". Soft Redirect BMI>32 + slăbire → Slăbire Majoră wording locked. Sărbătorire 2 Trepte Mastery Milestone System: A Toast micro post-set "Ai adăugat o repetare la {Nume Exercițiu}. Progres consistent!" + B Ecran elegant Alabaster post-3×12 ciclu finalizat "Ai stăpânit mișcarea {Nume Exercițiu} cu o execuție excelentă". Anti-RE strict: NU "PR" sau "Record Nou" Longevitate (Sărbătorim Măiestria Mișcării + Consecvența).
@@ -560,6 +591,10 @@ Chat strategic wording session ~6 runde iterative pushback = ~45 min Daniel-time
 
 Chat strategic evening ~3-4h Daniel-time real cu 5 decizii product MAJORE (goal-ca-setting pivot + 8 templates programe v1 + onboarding flow + timeline impact + re-prompt periodic) + 5 decizii arhitecturale (tier policy RO + voice persoana plural/singular + numerics policy + Weight Trend split + two-layer messaging) + 53 strings wording (4 batch-uri) + 5 amendamente backlog. **Pattern Claude failure mode noted:** overconfident initial recommendations require Daniel forced clarification ("ești sigur?", "dar dacă...?") pentru pivot la simpler architecture. **Lesson locked:** când proposing complex architecture (e.g. voice nou peer cu 5 voices), ask "există variant simpler?" ÎNAINTE de a accepta. Push-back Daniel iterativ a forțat 3 pivots majore Claude (dimension → voice → setting; Slăbire 1 template → 2; "Forță maximă" → "Sarcină crescută").
 
+### Velocity reinforced 2026-05-02 PRE-LAUNCH FINAL (chat strategic F-NEW LOCKED + MMI + Storage Full UX + UX Friction + 3 Blockers + GC defer)
+
+Chat strategic ~3h Daniel-time real cu **~35 decizii LOCKED** (4 F-NEW LOCKED V1 OBLIGATORIU + 3 MMI + 3 Storage Full UX + 3 UX Friction Optimizations + 1 Friction Map V1 + 3 Blockers Sprint 4.x identificate + 1 GC defer + Investiții confirmate ZERO buget nou + 8/8 templates preserved + 16 UX sub-secțiuni preserved cu 3 amendamente) + **~6 push-back-uri productive Claude**. **Velocity rule reinforced:** chat strategic dense pre-launch closing (F-NEW LOCKED + safety mechanisms + UX optimizations + Sprint 4.x blockers identification) = ~10-12 decizii/oră Daniel-time real cu Claude push-back productive. **Pattern resolved:** F-NEW priorities din "flagged separate post-i18n" la "LOCKED V1 OBLIGATORIU" reflect maturation post-multiple chat strategic sessions. **Realist rămas pre-launch v1: ZERO sesiuni chat strategic.** Toate scope-urile design + product strategy CLOSED. Restul = pure execution: rebrand sweep + ADR 022 V2 + Sprint 4.x cluster + Beta + audit + Soft Launch.
+
 ### Velocity reinforced 2026-05-01 evening RESUBMIT (chat strategic Longevitate body complet + UX colateral V1 LOCKED + Distribution + Pre-Launch + Rebrand + Investiții)
 
 Chat strategic ~3-4h Daniel-time real cu **~50 decizii LOCKED** (13 Longevitate body resubmit + 16 UX colateral V1 + 11 Distribution Strategy + 6 Pre-Launch Checklist + 1 Rebrand + 3 Investiții) + **~15 push-back-uri productive Claude**. **Velocity rule reinforced:** chat strategic broad-scope cross-domain (Longevitate biomechanics + UX colateral system + Distribution + Legal + Rebrand) = ~12-15 decizii/oră Daniel-time real. **Pattern resolved:** truncation 2026-05-02 evening fragility rezolvată prin resubmit Option A — zero info loss principle preserved + lesson learned: chat strategic export → handover paste flow vulnerability mitigated prin user-driven resubmit pattern (NU dependență automation pre-flight integrity check). **Realist rămas pre-launch v1: 1 sesiune chat strategic** (F-NEW thresholds + muscle_memory_index + storage full UX) — restul = ADR 022 V2 draft + rebrand sweep + Sprint 4.x implementation + wording Phase B/C + beta + audit + Soft Launch.
@@ -637,6 +672,64 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
 13. **Timeline v1 ajustat: 8-10 luni** (vs 2-4 inițial post-velocity, vezi §1.2 amendment).
 14. **Beta tester recruitment plan** segmentat per goal (Reddit/Discord/balene tech-lifter beachhead Forță + r/xxfitness aesthetic-glutes Tonifiere + r/longevity Longevitate + Mompreneur communities Slăbire).
 15. F-NEW-1 exercise names mapping RO — strategy hibrid locked (compound mari EN industry + izolări RO).
+
+### Updated 2026-05-02 PRE-LAUNCH FINAL — Next Steps post-F-NEW LOCKED + MMI + Storage Full + UX Friction + 3 Blockers + GC defer
+
+**ZERO sesiuni chat strategic rămase pre-launch v1.** Toate decizii LOCKED. Pre-launch V1 scope CLOSED. Restul = pure execution.
+
+**Imediat (priority order post pre-launch final):**
+
+1. **Rebrand sweep CC Opus dedicat** (paralel altă muncă) — SalaFull → Andura (~5h Opus). Vault docs + cod + commits config + repo rename + GitHub Pages URL + email signature `[Andura V1 Feedback]`.
+
+2. **CC Opus ADR 022 V2 draft consolidare totul** — §29.2.5 Forță + §29.2.6 Longevitate complet + §29.2.7 + §29.5 (toate 16 sub-secțiuni + Next-Up Gaze + Onboarding 4 ecrane + Autofocus iOS + Friction Map V1) + §29.6 Distribution + §29.7 Pre-Launch + §22 F-NEW LOCKED V1 + §30 Rebrand + §31 Investiții + §32 MMI + §33 Storage Full UX + §34 Blockers Sprint 4.x + §35 GC defer. Workflow Co-CTO 4 pași (Drafting Daniel+Claude → Claude Review scan → Daniel Approval → Final Manual Pass per §29.7.5).
+
+**Sprint 4.x implementation cluster (priority order — Blockers FIRST):**
+
+3. **Blocker 2 Firebase Rules RTDB lock** (~30 min Daniel + CC Opus prompt) — `database.rules.json` syntax + emulator test + manual publish console (vezi §34.2).
+
+4. **Blocker 3 D1 DEVELOPING refactor 5→6 tiers** (~2-3h Opus + Daniel review Golden Master) — CALIBRATION_LEVELS 0-4 → 0-5 + ID renumber + schema migration runner + Golden Master ~30+ test cases (vezi §34.3 + §29.7.3).
+
+5. **Blocker 1 T&B Faza 2 persistence** (~3-5h Opus comprehensive) — Tombstones + Branching integration + UI prompt branch resolve (vezi §34.1).
+
+6. **PR Engine Forță** (`src/engine/prTracker.js` ~4-6h) + **Linear Block 4+1 state machine** (~3-5h) + **Safety Banner contextual săpt 3-4** (~2-3h) + **Hip Thrust UI educațional onboarding card unic** (~1-2h) + **Age guardrail 75+** (~1-2h) + **Mastery Milestone Longevitate** Toast micro + Ecran elegant (~2-3h).
+
+7. **The Sticky Swap Engine** max 3 alternatives + Sticky Last Swap + 4-Swaps Rule auto-învățare (~6-10h) + **Clean Slate Reset Engine** + **Wording Reset Swap Toast** (~3-5h).
+
+8. **Onboarding 4 ecrane** + **Autofocus iOS workaround** + **Editare Istoric 3 niveluri** + **Notificări locale opt-in + Streak Saver push** (~3-5h fiecare modul).
+
+9. **F-NEW-1 i18n exerciții RO bulk batch** + Toggle EN Settings (mapping 6 + pattern reusable, vezi §22).
+
+10. **F-NEW-2 Tier-aware progression** + Sprinter Cap modifier + Edge case Deload skip soft warning (vezi §22).
+
+11. **F-NEW-3 Cooldown logic** 14-day rolling + 7-day zero login dual condition + Equipment 7-day rolling silent + Phase change <24h absorb (vezi §22).
+
+12. **F-NEW-4 Banner wording** + "Folosesc varianta mea" replacement (vezi §22).
+
+13. **MMI hibrid** lookup + boost progresie + user-controlled prompt (~3-4h Sonnet, vezi §32).
+
+14. **Storage Full UX** 80% banner + 95% modal blocant (~4-6h Sonnet, vezi §33).
+
+15. **The Next-Up Gaze visual highlight** (~1-2h Sonnet extension §29.5.5).
+
+**Wording + refactor + library (post Sprint 4.x cluster):**
+
+16. **Wording Phase B remaining (~37 strings) + Phase C (~78 strings)** — bulk batch CC Sonnet.
+
+17. **PARAMETRIC_PROGRAMS_DESIGN.md refactor** — focusModifier (CUT/BULK/MAINTAIN) → goal field nou (forta_dezvoltare / tonifiere_definire / slabire_majora / slabire_moderata / longevitate / sanatate_generala) + sub-routing.
+
+18. **Exercise library extension** — adăugare ~50-150 exerciții (mobility + cardio low-impact + Forță accessory + Longevitate pool: Hack Squat, Trap Bar Deadlift, Romanian Deadlift, Barbell Hip Thrust, Sit-to-Stand, Cable Pull-throughs, Lateral Step-ups, Suitcase Carry, Wall Push-ups, Bird-Dog, Pallof Press, Modified Plank, etc.).
+
+**Long term pre-launch (timeline 8-10 luni v1, target Soft Launch 1 ian 2027):**
+
+19. **Beta Recruitment 50 testeri segmentat** (start sept 2026, beta period oct-dec 2026) per §29.6.2.
+
+20. **Audit legal €300-500** (1 lună înainte 1 ian 2027 = dec 2026) per §29.7.1 + §31.
+
+21. **Soft Launch 1 ianuarie 2027** condiționat DoD per §29.7.6. 🚀
+
+22. **1 iulie 2027 — Borna GC Tombstones** evaluare volume real Firebase + decide automation/manual/defer per §35.
+
+**Status timeline v1:** 8/8 templates LOCKED design-wise (100%) + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers identificate + GC defer 6 luni + 0 sesiuni chat strategic rămase pre-launch + timeline 8-10 luni v1 (per amendment §1.2).
 
 ### Updated 2026-05-01 evening RESUBMIT — Next Steps post-Longevitate body + UX V1 + Distribution + Pre-Launch + Rebrand
 
@@ -742,9 +835,9 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
 
 ## 15. TESTS & GIT STATE FINAL
 
-- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat) — unchanged 2026-05-01 evening RESUBMIT (chat strategic, zero code touched)
-- **HEAD origin/main:** `ac95184` pre-ingest 2026-05-01 evening RESUBMIT (post handover ingest 2026-05-02 evening push final SHA `f110f77`+`ac95184` LATEST raport update) — post-ingest 2026-05-01 evening RESUBMIT SHAs see `📤_outbox/LATEST.md`
-- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER (unchanged 2026-05-01 evening RESUBMIT). Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-28` + `2026-05/29-43+` (post handover ingest 2026-05-01 evening RESUBMIT). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat) — unchanged 2026-05-02 PRE-LAUNCH FINAL (chat strategic, zero code touched)
+- **HEAD origin/main:** `c9929a8` pre-ingest 2026-05-02 PRE-LAUNCH FINAL (post handover ingest 2026-05-01 evening RESUBMIT push final SHA `c9929a8`) — post-ingest 2026-05-02 PRE-LAUNCH FINAL SHAs see `📤_outbox/LATEST.md`
+- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER (unchanged 2026-05-02 PRE-LAUNCH FINAL). Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-28` + `2026-05/29-46+` (post handover ingest 2026-05-02 PRE-LAUNCH FINAL). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
 - **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
 - **Backup tags origin:**
   - `pre-adr-020-impl` (ADR 020 rollback)
@@ -757,6 +850,7 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
   - `pre-handover-ingest-2026-05-02` (2026-05-02 morning ingest rollback — chat strategic safety nutrition pattern + 4 templates v1 full spec + 5 amendamente noi + 3 decizii arhitecturale)
   - `pre-handover-ingest-2026-05-02-evening` (2026-05-02 evening ingest rollback — chat strategic Forță & Dezvoltare V1 LOCKED 12 decizii + Longevitate V1 LOCKED 17 decizii input partial **TRUNCATED** + Sănătate Generală sub-variants v3+ + 5 UX colateral flags backlog)
   - `pre-handover-ingest-2026-05-01-evening-resubmit` (2026-05-01 evening RESUBMIT ingest rollback — Longevitate body complet 13 LOCKED + 3 backlog Option A + UX colateral V1 LOCKED 15 puncte + Swap Engine + Reset Cycles + Wording Reset + Distribution Strategy V1 LOCKED + Pre-Launch Checklist V1 LOCKED + REBRAND SalaFull → ANDURA LOCKED + andura.app + Investiții €500-700)
+  - `pre-handover-ingest-2026-05-02-pre-launch-final` (2026-05-02 PRE-LAUNCH FINAL ingest rollback — F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU + MMI hibrid LOCKED V1 + Storage Full UX 80%/95% LOCKED V1 + 3 Optimizări UX Friction LOCKED + Friction Map V1 final + 3 Blockers Sprint 4.x identificate T&B Faza 2 + Firebase Rules + 5→6 tiers + GC Tombstones defer 6 luni evaluare 1 iul 2027 + Investiții confirmate ZERO buget nou; pre-launch V1 scope CLOSED 0 sesiuni chat strategic rămase)
 
 ---
 
@@ -939,43 +1033,122 @@ Categorical verdict only user-facing. Engine internals (signal codes, phase enum
 
 ---
 
-## 22. FINDINGS NOI 2026-05-01 (F-NEW-1 până la F-NEW-4)
+## 22. FINDINGS NOI 2026-05-01 (F-NEW-1 până la F-NEW-4) — LOCKED V1 OBLIGATORIU 2026-05-02
 
-**Status:** Flag-uite 2026-05-01 morning, NU fix imediat (separate priorities post i18n audit). Daniel review post-handover pentru sequencing.
+**Status:** Flagged inițial 2026-05-01 morning post smoke test prod. **LOCKED V1 OBLIGATORIU 2026-05-02** sesiune chat strategic pre-launch final. Toate 4 = OBLIGATORIU V1 (NU defer Sprint 1.5, NU optional). Implementation = Sprint 4.x cluster.
 
-### F-NEW-1 — i18n exerciții RO
+### F-NEW-1 — i18n EXERCIȚII RO LOCKED V1 OBLIGATORIU
 
-- **Issue:** exercise names hardcoded EN (Lateral Raises, Lat Pulldown, etc.). Gigel non-tech RO nu citește engleza.
-- **Fix:** mapping EN→RO în `src/i18n/ro.json` `exercises.*` namespace + `t('exercises.<id>')` în UI display layer.
-- **Owner:** chat strategic wording rewrite session post-audit.
-- **Priority:** HIGH (user-facing, RO target market). Acceptable EN technical names în industry-standard cazuri (Lat Pulldown, Cable Row, Romanian Deadlift) — Daniel decide caz-by-caz.
+**Decizie inversare regulă (Gigel Test Validated):** UI Default = RO primary universal. Toggle Settings "Afișează denumiri internaționale (EN)" implicit OFF.
 
-### F-NEW-2 — Progression scaling pe `experience_tier`
+**Rationale:** Beachhead RO = r/Romania storytelling-first + FB grupuri 40/50+ + mămici active. Maria 65 ani + Gigica 35 ani non-tech = zero vocabular EN fitness. Prioritate clarity utilizator non-tehnic > recognition lifter advanced.
 
-- **Issue:** incremente weight uniform în `progressionEngine` (suspected). Advanced 30 ani sală ≠ +2.5kg pe izolări vs Beginner. ADR 009 calibration tiers spec deja PERSONALIZED/OPTIMIZED scaling, DAR implementation posibil hardcoded uniform.
-- **Fix:** verify `progressionEngine.js` (sau echivalent) respectă `ctx.engine_tier` / `ctx.calibration_confidence` pentru increment scaling. Audit + tests pentru tier-aware scaling.
-- **Owner:** Sprint 4.x backlog post i18n.
-- **Priority:** HIGH (advanced users core MOAT — Bugatti-grade progression accuracy).
+**Lista finală traduceri UI Default (Toggle OFF) — LOCKED:**
 
-### F-NEW-3 — Hyperreactive coach (zero cooldown)
+| Original EN | Wording UI RO Default |
+|-------------|----------------------|
+| Romanian Deadlift | Îndreptări cu picioarele aproape drepte (RDL) |
+| Lat Pulldown | Tracțiuni la helcometru |
+| Bulgarian Split Squat | Genuflexiuni pe un picior, cu sprijin pe bancă (Bulgarian Split Squat) |
+| Cable Row | Ramat la cablu |
+| Hip Thrust | Ridicări de bazin (Hip Thrust) |
+| Face Pull | Tracțiuni spre față (Face Pull) |
 
-- **Issue:** schimbare phase auto→cut + lipsă aparat = "plan ajustat" la fiecare modificare. User normal modifică plan rutinier → primește alarme la fiecare click → trust erosion + alarm fatigue în 3 secunde.
-- **Fix:** cooldown trigger logic configurable. Acceptable threshold TBD Daniel decision:
-  - **Option A:** 1 modificare în 24h triggerează banner, 3+ silent (anti-spam)
-  - **Option B:** cooldown pe trigger type (phase change OK once/24h, equipment unavailable rate-limited)
-  - **Option C:** combined — global cap + per-trigger-type cap
-- **Owner:** Sprint 4.x backlog post i18n + Daniel decision threshold.
-- **Priority:** HIGH (Gigel test fail — trust erosion immediate).
+**Pattern reusable pentru exerciții viitoare:**
+- Tipare mari mișcare tradiționale → RO complet (Genuflexiuni, Îndreptări, Împins, Ramat, Tracțiuni)
+- Variații moderne/specifice cu termen industrie consacrat → RO descriptiv mecanism + EN paranteză (Hip Thrust, Bulgarian Split Squat, Face Pull, RDL)
+- Termenii sală RO consacrați → RO pur fără EN paranteză (helcometru, ramat la cablu)
 
-### F-NEW-4 — Plan ajustat banner wording rewrite
+**Toggle Settings EN (advanced users):** User activează → UI switch la denumiri internaționale (Lat Pulldown, Bulgarian Split Squat, Hip Thrust, etc.). DB internal indexează ambele variante pentru search cross-language.
 
-- **Issue:** percentage leak ("Plan redus 30% astăzi pentru recovery") + paternalist override ("Override (înțeleg riscurile)") + numerice raw ("Adherence scăzută: 0%", "Deviation crescut: 100%").
-- **Fix:** wording rewrite categorical, anti-paternalism wording (NU "înțeleg riscurile" force-typing), zero numerice user-facing.
-- **Owner:** i18n audit Phase B + sesiune wording rewrite Daniel review.
-- **Priority:** HIGH (visible în prod, anti-RE breach).
-- **Cross-ref:** D2-D5 Sprint 1.5 backlog (deja flag-uit, acum confirm prod-visible).
+**Status:** OBLIGATORIU V1 (Beachhead RO trust + brand consistency). Implementation: bulk batch CC Sonnet `src/i18n/ro.json` `exercises.*` namespace + `t('exercises.<id>')` UI layer + Toggle Settings logic.
 
-**Cross-refs:** §6 Open Items + ADR 013 §Anti-RE + i18n audit raport `📤_outbox/_archive/2026-04/<NN>_*_RAPORT.md` + §20 i18n decision B locked.
+### F-NEW-2 — PROGRESSION SCALING TIER-AWARE LOCKED V1 OBLIGATORIU
+
+**Matrice 3 Tiers + Sprinter Cap Modifier — Frecvență progresie per Tier (sesiuni finalizate):**
+
+| Tier | Status | Frecvență Progresie |
+|------|--------|---------------------|
+| Beginner | 0-10 sesiuni | La fiecare sesiune (RPE corect toate seturile) |
+| Intermediate | 11-50 sesiuni | O dată la 2-3 sesiuni (acumulare volum) |
+| Advanced | 51+ sesiuni | O dată la 4-6 sesiuni (micro-periodizare) |
+
+**Incremente greutate (Micro-loading universal default):**
+- Compound (BBS, BBP, RDL, Trap Bar): +1 kg până la +2.5 kg
+- Izolare (Curls, Lateral Raises): +0.5 kg sau +1 rep înainte de urcare greutate
+
+**Sprinter Cap Modifier (Profile Type Safety Override):**
+
+**Trigger:** `Profile Type == Sprinter` (volume creep risk + hyperfocus correlation).
+
+**Plafonare:**
+- Max Compound Increment: **1.0 kg** (în loc de 2.5 kg)
+- Max Isolation Increment: **+1 rep** (în loc de +0.5 kg)
+
+**Rationale:** Sprinter Advanced (51+ sesiuni) cu pattern volume creep + hyperfocus 8h/zi care primește +2.5kg compound = alimentezi auto-aggression. Marathon/Strategic Advanced same tier beneficiază de progresie agresivă pentru că NU are pattern risc.
+
+**Cross-ref:** ADR Q-0231 Profile Typing influences thresholds.
+
+**Edge Case: User Advanced sare Deload Săpt 5 — Banner Soft Warning (Bugatti tone, autonomy preserved):**
+
+> "Săptămâna de deload a trecut neutilizată. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recuperează în mișcare, nu doar în repaus."
+
+**Behavior:** banner soft warning, user păstrează agency 100%, NU force-deload retroactiv.
+
+**Status:** OBLIGATORIU V1 (motorul de bază al aplicației). Implementation: `progressionEngine.js` (sau echivalent) respectă `ctx.engine_tier` / `ctx.calibration_confidence` + Sprinter cap override + Deload-skip soft banner.
+
+### F-NEW-3 — HYPERREACTIVE COACH COOLDOWN LOCKED V1 OBLIGATORIU
+
+**Equipment Unavailable Rate-Limiting:** Threshold 3+ înlocuiri echipament în fereastră rolling 7 zile → engine învață silent.
+
+**Behavior:**
+- Sticky Last Swap activ (engine afișează direct alternativa pe sesiunea următoare)
+- 4-Swaps Rule kicks in background (validate permanentizare)
+- ZERO banner / notificare afișată user
+- Decision background, NU blocking
+
+**Cross-ref:** §29.5.10 Sticky Swap Engine + §29.5.11 Clean Slate Reset Engine.
+
+**Phase Change Rate-Limiting:** Threshold 2 schimbări manuale fază (Cut → Maintain → Cut) în <24h → a 2-a absorbită silent.
+
+**Behavior:**
+- Backend update setări transparent
+- Confirmare discretă: "Obiectiv actualizat."
+- ZERO modal full-screen sau ecran confirmare extensiv
+
+**Edge Case "User Pierdut" Cooldown Override — Trigger condition compus (eliminare false positives):**
+
+1. Aderență scade <25% pe fereastră 14 zile rolling **AND**
+2. 7 zile consecutive zero login app
+
+Doar AMBELE condiții = override cooldown 21 zile + activare ecran User Pierdut.
+
+**Wording User Pierdut LOCKED (preserved §28.2):**
+> "N-ai mai trecut de ceva timp pe aici. Nu-ți face griji pentru pauză: programul de azi e configurat să te repună în mișcare fără grabă."
+
+**Rationale:** elimină alarme false din boală/concediu temporar (user 60% aderență + boală 7 zile = 22% artificial NU = pierdut real).
+
+**Status:** OBLIGATORIU V1 (previne erori spam vizual UI).
+
+### F-NEW-4 — PLAN AJUSTAT BANNER WORDING LOCKED V1 OBLIGATORIU
+
+**Wording Banner — Eliminăm complet procentaje user-facing. Anti-RE strict.**
+
+**Banner LOCKED:**
+> "Plan ajustat astăzi pentru recovery."
+
+NU "Plan redus 30%", NU "Adherence scăzută: 0%", NU "Deviation crescut: 100%".
+
+**Buton Override — Replacement "Override (înțeleg riscurile)" force-typing eliminat:**
+
+**Buton LOCKED:**
+> "Folosesc varianta mea"
+
+Agency explicit user, sound mature, Bugatti tone. Zero force-typing, zero medical disclaimer style.
+
+**Status:** OBLIGATORIU V1 (anti-RE breach prod fix + protecție legală implicită).
+
+**Cross-refs §22 (post-LOCK 2026-05-02):** ADR 013 §Anti-RE + §20 i18n decision B + §29.5.10 Sticky Swap Engine + §29.5.11 Clean Slate Reset + ADR Q-0231 Profile Typing + §28.2 User Pierdut wording + §34 Sprint 4.x Blockers + §29.6 Distribution Beachhead RO.
 
 ---
 
@@ -2254,6 +2427,19 @@ V3+:
 
 **Haptic discret final:** vibrație scurtă + sunet premium clopoțel stins. NU întrerupe muzica de fundal user (audio ducking).
 
+**AMENDMENT 2026-05-02 — The Next-Up Gaze (preview vizual în timpul pauzei):**
+
+Behavior: la pornire rest timer (auto-start §29.5.5 deja LIVE), ecran scoate în evidență discret cartonașul setului următor.
+
+Visual treatment:
+- Soft highlight / puls vizual pe cartonaș next set
+- Folosește deja `ps-rec-kg` / `ps-rec-reps` existent în `restTimer.js`
+- CSS animation + border glow subtle (NU flashy)
+
+Rationale: user își trage sufletul → știe exact ce încarcă pe bară la secunda 0 a setului următor. Zero scroll, zero scanare vizuală.
+
+Effort: ~1-2h Sonnet (extension §29.5.5 existing).
+
 #### 29.5.6 Video & GIF Exerciții (LOCKED V1)
 
 **Format:** MP4/WebM looping comprimat. Clipuri ultra-scurte 3-5 sec, fără sunet, unghi clar (diagonală/lateral).
@@ -2325,16 +2511,46 @@ User accept → program de bază update permanent. Refuz → rămâne mod swap t
 
 **Mute toggle global:** 1 toggle Settings oprește toate sunetele app, lasă feedback haptic activ.
 
-#### 29.5.14 Onboarding Flow (LOCKED V1)
+#### 29.5.14 Onboarding Flow (LOCKED V1 — AMENDMENT 2026-05-02: 5 → 4 ecrane disclaimer integrat)
 
-**Max 5 ecrane colectare date (<60 sec):**
+**Max 4 ecrane colectare date (<45 sec — economie 1 ecran întreg):**
 1. Nume
 2. Vârstă (no skip — Age guardrail 75+ critical safety)
 3. Greutate & Înălțime (**SKIP PERMIS** — engine folosește median demographic prior din synthetic database dacă skip)
-4. Experiență ultimii 5 ani (no skip — calibrare program safety)
-5. Obiectivul principal (no skip — routing template critical)
+4. Experiență ultimii 5 ani (no skip — calibrare program safety) **+ Obiectivul principal cu disclaimer integrat**
+
+**Arhitectură ecran 4 final (disclaimer medical mutat din ecran dedicat):**
+- Heading: "Care e obiectivul tău principal?"
+- 3 opțiuni mari obiective (Forță / Slăbire / Longevitate / etc.)
+- Sub opțiuni: checkbox cu wording §29.7.1 LOCKED:
+  > "Înțeleg că Andura este o aplicație de wellness și nu înlocuiește sfatul medicului. Mă antrenez pe propria răspundere."
+- Buton "Generează programul" disabled până checkbox bifat
 
 **Fără Skip pe critical (vârstă + experiență + obiectiv):** generează risk major accidentare dacă lipsesc.
+
+**Impact:** Onboarding total <45 sec (vs <60 sec anterior). Economie 1 ecran întreg.
+
+#### 29.5.17 Autofocus Tastatură Numerică — iOS Workaround (LOCKED V1 — NEW 2026-05-02)
+
+**Implementation:**
+- `<input type="number" inputmode="numeric">` pe câmpuri Vârstă/Greutate/Înălțime
+- Workaround iOS Safari: focus programatic via `setTimeout 50ms` la mount component (`useEffect` / `onMount`)
+
+**Rationale:** iOS Safari blochează `autofocus` standard post-page-load anti-spam. setTimeout 50ms = pattern industry tested.
+
+**Impact:** zero tap suplimentar pe ecrane numerice.
+
+#### 29.5.18 Friction Map V1 Final (LOCKED 2026-05-02)
+
+| Touchpoint | Nivel V1 |
+|------------|----------|
+| Onboarding | 🟢 Ultra-Low (4 ecrane <45s + disclaimer integrat) |
+| Input măsurători | 🟢 Ultra-Low (autofocus + iOS workaround) |
+| Pauze între seturi | 🟢 Zero (auto-start §29.5.5 LIVE + Next-Up Gaze) |
+| Editare istoric | 🟡 Medium justified (3 niveluri, integritate progresie) |
+| Storage Full 95% | 🔴 High justified (zero data loss silent) |
+| Disclaimer medical | 🟡 Medium justified (legal coverage) |
+| MMI prompt 6+ luni | 🟡 Medium justified (1× per viața app, agency) |
 
 #### 29.5.15 Editare Istoric (LOCKED V1)
 
@@ -2590,7 +2806,185 @@ Bootstrap-friendly. Bugatti perception cere domeniu propriu (share cards brandin
 
 **Note vs estimate anterior 2026-05-02 morning §29.4:** Anterior consultanță legală €500-2000. **§31.1 OVERRIDE 2026-05-01 evening RESUBMIT:** €300-500 prin platforme legaltech RO/EU specializate (Lawyrup.ro / Iuris.ro / Avocatoo.ro). Cost real refined post-research piață legaltech.
 
-**Cross-refs §31:** §29.7.1 Audit Plătit + §30 Rebrand andura.app + §29.6 Distribution Strategy + §3 Pricing (V2 paid post-Free Early Access cf §29.6.3).
+**AMENDMENT 2026-05-02 — Breakdown 6 luni primele post-launch:**
+
+| Item | Cost | Status |
+|------|------|--------|
+| Consultanță legală tech RO/EU | €300-500 one-time | Decembrie 2026 (1 lună înainte launch) |
+| Domeniu andura.app | €10-15/an | ACUM (paralel rebrand sweep) |
+| Firebase Blaze plan | €0-25/lună | Post-launch DOAR dacă >1000 useri activi |
+| **Total realist primele 6 luni** | **~€310-515** | Firebase free tier suficient cf §35 GC defer |
+| **Total worst-case primul an (1000 useri)** | **~€500-700** | Per §31.1 LOCKED |
+
+**Cheltuieli ZERO Sesiunea 2026-05-02:** Toate optimizările sesiunii (F-NEW + MMI + Storage Full + UX Friction + 3 Blockers + GC defer) = CC Opus task time (zero $) + Daniel review free.
+
+**Cross-refs §31:** §29.7.1 Audit Plătit + §30 Rebrand andura.app + §29.6 Distribution Strategy + §3 Pricing (V2 paid post-Free Early Access cf §29.6.3) + §35 GC defer 6 luni evaluare 1 iul 2027 condition Firebase Blaze upgrade.
+
+---
+
+## 32. Muscle Memory Index (MMI) LOCKED V1 (NEW 2026-05-02)
+
+### 32.1 Algorithm Hibrid (Lookup + Boost)
+
+**Formula:**
+```
+Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup
+```
+
+**Tabel multiplicatori + boost progresie:**
+
+| Durată Pauză | Multiplicator Pornire | Boost Progresie (primele 3 săpt) |
+|--------------|----------------------|-----------------------------------|
+| 6-12 luni | 0.80× | 1.25× |
+| 12-24 luni | 0.70× | 1.10× |
+| 24+ luni | 0.60× | 1.00× (start proaspăt) |
+
+**Rationale:** păstrăm peak_pre_pause ca anchor (engine știe unde a ajuns user) + lookup table pentru durată reală pauză. Boost progresie primele 3 săpt accelerează re-calibrarea (corpul își amintește pattern-uri neuromusculare).
+
+### 32.2 Threshold Trigger — User-Controlled
+
+**6+ luni pauză → prompt user prima deschidere app:**
+
+> "Vrei să reîncepem treptat, de unde ai rămas, sau preferi să o luăm de la zero?"
+
+**Rationale:** anti-paternalism + agency 100%. NU hardcoded 6 luni rule, NU pre-pause-aware automatic. User decide.
+
+### 32.3 UI Wording Re-engagement
+
+**Wording LOCKED (Bugatti Tone):**
+> "Pauza face parte din drum. Începem treptat — corpul tău își amintește."
+
+**Comportament:**
+- Opțional refusable
+- User refuză → engine încarcă greutățile maxime istorice
+- Banner discret avertizare risc accidentare la refuse (NU modal blocant)
+
+**Status:** OBLIGATORIU V1 (~3-4h Sonnet implementare). Justified V1 inclusion: Maria post-operație șold revine după 8 luni = primii useri ajung iulie 2027, gap v1.5 risk reputational.
+
+**Cross-refs §32:** ADR 009 calibration tiers + ADR Q-0231 Profile Typing + §29.5.16 Notificări (re-engagement push) + §28.2 User Pierdut wording (cooldown override) + §22 F-NEW-3 cooldown logic.
+
+---
+
+## 33. Storage Full UX Alert LOCKED V1 (NEW 2026-05-02)
+
+### 33.1 Threshold 80% Capacitate (~80MB)
+
+**Banner discret săptămânal (NU blocant):**
+> "Spațiul aplicației se umple. Vrei să păstrezi istoricul vechi în cloud sau să-l exporți pe dispozitiv?"
+
+**Buttons disponibile:**
+- Exportă datele (JSON local download)
+- Află mai multe despre Cloud (Pro upgrade info)
+- Închide
+
+**Frecvență afișare:** 1× pe săptămână până user acționează sau atinge 95%.
+
+### 33.2 Threshold 95% Capacitate (~95MB) — Modal Blocant
+
+**Modal blocant (NU se închide fără acțiune directă):**
+
+User trebuie să aleagă explicit una din 3:
+- [ ] Descarcă istoricul (Export JSON local)
+- [ ] Activează modul Cloud (Upgrade Pro)
+- [ ] Șterge automat datele mai vechi de 180 zile (Alegere definitivă)
+
+**Rationale:** ZERO data loss silent. User informat explicit ce se întâmplă, alegerea = consimțământ documentat. Industry standard (Apple/Google Photos, Dropbox) — niciodată data loss fără confirm.
+
+### 33.3 Edge Case Free User 95% Refuză Toate
+
+**Soluție:** Cap Pro upgrade prompt 1×/săpt + auto-rotate >180 zile DOAR DACĂ user a ales explicit "Șterge automat" în modal blocant 95%.
+
+**Status:** OBLIGATORIU V1 (~4-6h Sonnet). Justified V1 inclusion: primii power users ating 80MB ~6-12 luni post-launch, gap v1.5 risk crash silent prod.
+
+**Cross-refs §33:** ADR 020 Storage Tiering Phase 1 LIVE + §29.7.2 ADR 020 Phase 2 Logs Rotation custom JS €0 + §29.6.3 Pricing V1 Free Early Access vs V2 Premium Cloud + §29.5.8 Local-First Architecture SQLite/IndexedDB.
+
+---
+
+## 34. Blockers Sprint 4.x Identified Pre-Launch (NEW 2026-05-02)
+
+### 34.1 Blocker 1: T&B Pattern Faza 2 — Memory Paradox Bug
+
+**Status:** HARD BLOCKER pentru V1.
+
+**Context:** ADR 011 amendment + ADR 021 Faza 1 LIVE doar algorithm core. Faza 2 persistence integration NEIMPLEMENTAT. Memory paradox observat 2× testing: user delete entry → reload → entry RE-APARE prin Firebase pull.
+
+**Cum se rezolvă:** task CC Opus dedicat Sprint 4.x — implementare integrare persistență Tombstone & Branching (T&B). Tombstones marcaj logic ștergeri preserved (NU delete fizic). Branching = când 2 devices scriu simultan același parentId → preservare ambele branch-uri + UI prompt "varianta A sau B?" pentru user resolve.
+
+**Effort estimate:** 50-80h trad / ~3-5h Opus comprehensive.
+
+**Cross-refs:** ADR 011 amendment §Firebase sync + ADR 021 §Implementation phasing Faza 2 + COGNITIVE_ARCHITECTURE_SPEC §Q9 + 04-architecture/TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC.md.
+
+### 34.2 Blocker 2: Firebase Rules RTDB Lock
+
+**Status:** HARD BLOCKER pentru V1.
+
+**Context:** Firebase rules currently OPEN (`allow read, write: if true`) per ADR 007 dev. Production launch cu rules open = oricine scrie `users/{anyUid}/coach-decisions` = data theft + mass corruption.
+
+**Cum se rezolvă:** Daniel rulează prompt CC Opus dedicat pentru generare `database.rules.json` (RTDB syntax, NU Firestore — stack actual NU folosește Firestore + NU folosește Firebase Storage).
+
+**Sintaxa corectă LOCKED:**
+
+```json
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth !== null && auth.uid === $uid",
+        ".write": "auth !== null && auth.uid === $uid"
+      }
+    }
+  }
+}
+```
+
+**Workflow:** Daniel testează local cu Firebase emulator → publică manual în consolă Firebase. Sub 1h total.
+
+**Cross-refs:** ADR 007 + Q-0352 + Q-0362 (RTDB NU Firestore).
+
+### 34.3 Blocker 3: D1 DEVELOPING Refactor 5→6 Tiers
+
+**Status:** HARD BLOCKER pentru V1.
+
+**Context:** ADR 009 amendment 2026-04-30 evening = SSOT 6 nivele (DEVELOPING ID 2 inserted). Cod actual `src/engine/calibration.js` rulează încă 5 nivele (CALIBRATION_LEVELS 0-4). ADR 021 Faza 1 reconciliation pre-declares 6 nivele forward-compat, DAR consumer integration blocked până refactor cod.
+
+**Cum se rezolvă:** task CC Opus dedicat Sprint 4.x — generare completă cod + teste + script migrare schema (existing users tier numeric → mapping nou cu DEVELOPING ID 2 inserted). Daniel intervine doar la final pentru review + rulare suite Golden Master.
+
+**Effort estimate:** ~8-12h trad / ~2-3h Opus comprehensive.
+
+**Scope refactor:**
+- `CALIBRATION_LEVELS` enum 0-4 → 0-5 cu ID renumber
+- Schema migration runner pentru users existenți pre-migration
+- Update toate testele care reference levels (~30+ test cases)
+- Engine consumers care folosesc tier comparisons (`>=`, `<` operators)
+- Anti-regression Golden Master Suite
+
+**Cross-refs:** §29.7.3 D1 DEVELOPING Refactor LOCKED V1 + ADR 009 amendment + §5 D1 RESOLVED ADD DEVELOPING tier.
+
+---
+
+## 35. Tombstones GC Defer 6 luni Post-Launch (NEW 2026-05-02)
+
+### 35.1 Decizie LOCKED
+
+**Cloud Functions Tombstone GC = AMÂNAT primele 6 luni post-launch.**
+
+**Borna evaluare officială:** **1 iulie 2027** (exact 6 luni post Soft Launch 1 ian 2027).
+
+### 35.2 Rationale (Bugatti Grade Buget Zero)
+
+- **Zero efort dezvoltare:** Daniel NU pierde timp scriind/testând script GC (risc ștergere date valide accidental)
+- **Fără costuri suplimentare:** Cloud Functions necesită upgrade Firebase Blaze plan. Rămânem pe planul gratuit Spark = risc financiar zero
+- **Spațiu suficient cu margin:** RTDB free tier Spark = 1GB storage + 10GB/lună download. Tombstone ~50-100 bytes JSON × 50 deletes/user/lună × 1000 useri × 6 luni = ~30MB total = ~3% din 1GB
+- **Focus retention:** Daniel conservă energie pentru retention metrics + stabilitate + UX, NU manual ops lunare
+
+### 35.3 La 1 Iulie 2027
+
+Daniel verifică volume real Firebase consolă + decide între:
+- **A:** Implementare automată Cloud Functions GC (upgrade Blaze plan, ~€0-25/lună post-launch)
+- **B:** Continuare manual cleanup script Daniel 1×/lună (cost zero)
+- **C:** Mai amână GC dacă volume rămâne sub 5% capacitate
+
+**Cross-refs §35:** ADR 011 amendment §Firebase sync (90 zile retention) + §31 Investiții (Firebase Blaze condition) + §34.1 T&B Faza 2 persistence (Tombstones generated by Sprint 4.x implementation).
 
 ---
 
@@ -2617,3 +3011,5 @@ Bootstrap-friendly. Bugatti perception cere domeniu propriu (share cards brandin
 **Sesiune 2026-05-02 LOCK (chat strategic safety nutrition + templates v1 full spec). 19 decizii LOCKED (7 safety nutrition + 4 templates V1 designate / 5 design units cu Tonifiere expanded + 5 backlog v2/Sprint 4.x + 3 arhitecturale colaterale) + 12+ push-back-uri productive Claude. SAFETY NUTRITION PATTERN COMPLET (§29.1): kcal floor 1200F/1500M static gendered (NIH+EFSA) + protein floor 1.6 g/kg dynamic (ISSN) + surplus optimization >0.5%/săpt engine internal + hidratare DROP safety. Pattern reusable: 2 nivele soft warning ZERO Hard Wall, agency 100%, threshold L2 = 3 zile consecutive (pattern detection NU fiziologie speculative), authority asymmetry NIH+EFSA kcal vs ISSN protein INTENȚIONAT documentat. 4 TEMPLATES V1 FULL SPEC (§29.2): Slăbire majoră (>15kg, 3×/săpt low-impact, recumbent bike LISS) + Slăbire moderată (<15kg, 4×/săpt Push/Pull split A/B, RDL hinge protection) + Tonifiere baseline + 3 sub-variants (4×/săpt, Echilibrat 50/50 / Lower 70/30 Gigica / Upper 70/30 Marius, BBS+BBP+Olympic+1RM+Russian Twists eliminate) + Sănătate Generală (3×/săpt Full Body NU split, 18-49 maintenance default). 5 amendamente backlog Sprint 4.x noi (§28.6-§28.10): Secondary Check >25% deficit + Seated Core Override Slăbire majoră + LISS ramp-down + Exercise Substitution System ADR + Tonifiere Advanced Track 5-day. 3 decizii arhitecturale colaterale (§29.3): ZERO întrebări medical screening onboarding (Gigel test catastrofal) + engine routing Slăbire majoră conservative-by-default + Anti-RE strict thresholds engine internal. Status v1: 5/8 templates lockate (62.5%) — rămase Forță & Dezvoltare + Longevitate. ~5-6 sesiuni chat strategic rămase pre-launch v1. 888/888 unchanged. Bandwidth Daniel ~15-20% — handover triggered preventiv. Next: ADR 022 extins cu §29 + sesiune Forță & Dezvoltare template (fresh bandwidth obligatoriu) + sesiune Longevitate template + sesiune distribution strategy reconsider.**
 
 **Sesiune 2026-05-01 evening RESUBMIT LOCK (chat strategic Longevitate body complet Option A + UX colateral V1 LOCKED 15 puncte + Distribution Strategy V1 LOCKED + Pre-Launch Checklist V1 LOCKED + REBRAND SalaFull → ANDURA LOCKED + andura.app + Investiții ~€500-700). ~50 decizii LOCKED + ~15 push-back-uri productive Claude. **TRUNCATION 2026-05-02 EVENING REZOLVATĂ** prin resubmit Option A — body §29.2.6 acum COMPLETE (zero info loss restored). LONGEVITATE V1 LOCKED COMPLETE (§29.2.6 — 13 decizii LOCKED + 3 backlog V2/V3+): Persona Maria 60-70 vârstă mediană 65 (range 50-59 mobilitate ridicată + 70-75 conservatoare) + 3 sesiuni/săpt L-Mi-V 35-40 min RPE 5-7 max + Continuous + Double Progression NU Lifestyle Deload toggle + 3 zile Full Body cu accente reale (A Stabilitate Genunchi/Șold + B Mobilitate Coloană/Umeri + C Autonomie/Plan Lateral) + Sit-to-Stand + Cable Pull-throughs + Lateral Step-ups main lifts + Reps-first Double Progression 2×8→2×10→3×12 + Mobilitate integrată Warm-up+Cool-down + Cardio extern banner DISCRET WEEKEND 1×/săpt + Soft Redirect BMI>32+slăbire → Slăbire Majoră + Sărbătorire 2 Trepte Mastery Milestone (Toast micro + Ecran elegant) Anti-RE strict NU "PR" Longevitate. UX COLATERAL V1 LOCKED COMPLETE (§29.5 — 15 puncte + 3 sub-sisteme: theme trio Obsidian/Alabaster/Carbon system-detect default + dynamic share cards branding andura.app + RO pur lock zero EN audit pre-launch + Hero minimalist + haptic 2 nivele + confetti EXCLUSIV evenimente mari + Design Tokens system + cronometru auto-start + video MP4/WebM cachare local-first + tab bar trio Azi/Istoric/Profil + sesiune persistentă mini-player + Local-First SQLite/IndexedDB + istoric listă cronologică + **The Sticky Swap Engine 4-Swaps Rule auto-învățare** + **Clean Slate Reset Engine matrice cycle reset** + Wording Reset Swap toast + sunete audio ducking + onboarding 5 ecrane <60 sec + editare istoric 3 niveluri + notificări locale opt-in + Streak Saver max 2 push/săpt). DISTRIBUTION STRATEGY V1 LOCKED (§29.6): Hibrid Soft Launch andura.app + zero marketing 4 săpt + DoD criteria target 1 ian 2027 + Beta 50 testeri segmentat invite-only 4 săpt + **Free Early Access NU grandfathering V1 (override §3 pricing)** + Targeting RO storytelling-first + EN technical r/StrongerByScience+r/xxfitness+r/loseit + KPI Retention D7/D30 + Hard Stop signals + Feedback in-app email `[Andura V1 Feedback]` + Code Freeze 4 săpt post-launch + Hotfix max 12h. PRE-LAUNCH CHECKLIST V1 LOCKED (§29.7): Legal DIY + Audit Plătit €300-500 + Disclaimer medical onboarding + GDPR Privacy Policy + ADR 020 Phase 2 + D1 DEVELOPING refactor + gate-launch-prod.bat unificat + ADR 022 V2 Workflow Co-CTO + DoD 6 criterii. REBRAND SALAFULL → ANDURA LOCKED (§30): nume oficial ANDURA (anduranță) + andura.app €10-15/an LOCKED + 6 litere RO+EN + zero pretenție medicală + cross-template universal + sweep ACUM ~5h CC Opus paralel altă muncă (vault docs + cod + commits + repo rename + GitHub Pages URL + email signature) — sweep = SEPARATE task post-ingest. INVESTIȚII (§31): Total ~€500-700 primul an (consultanță legală €300-500 + andura.app €10-15/an + Firebase Blaze €0-25/lună post-launch >1000 useri). 888/888 unchanged. Bandwidth Daniel ~3-4h Daniel-time real saturation triggered preventiv anti-halucinație. Status V1: 8/8 templates 100% LOCKED design-wise. **Realist rămas pre-launch v1: 1 sesiune chat strategic** (F-NEW thresholds + muscle_memory_index + storage full UX). Next: rebrand sweep CC Opus dedicat ACUM + ADR 022 V2 draft cu §29.2.5+§29.2.6 COMPLETE+§29.2.7+§29.5+§29.6+§29.7+§30+§31 + sesiune F-NEW thresholds + Sprint 4.x implementation cluster (PR Engine + Linear Block + Safety Banner + Hip Thrust + Age guardrail + Mastery Milestone + Sticky Swap Engine + Clean Slate Reset + Onboarding 5 ecrane + Editare Istoric + Notificări) + wording Phase B/C bulk Sonnet + Beta sept-dec 2026 + audit legal dec 2026 + Soft Launch 1 ian 2027.**
+
+**Sesiune 2026-05-02 PRE-LAUNCH FINAL LOCK (chat strategic F-NEW LOCKED V1 OBLIGATORIU + MMI + Storage Full UX + UX Friction + 3 Blockers Sprint 4.x + GC defer + Investiții confirmate). ~35 decizii LOCKED + ~6 push-back-uri productive Claude. **PRE-LAUNCH V1 SCOPE CLOSED — 0 sesiuni chat strategic rămase.** F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU (§22 UPDATE in-place din "flagged HIGH" → "LOCKED V1 OBLIGATORIU"): F-NEW-1 i18n exerciții RO inversare regulă UI Default RO + Toggle EN OFF (lista finală 6 traduceri locked Romanian Deadlift → Îndreptări (RDL) / Lat Pulldown → Tracțiuni la helcometru / Bulgarian Split Squat / Cable Row / Hip Thrust / Face Pull, pattern reusable 3 categorii) + F-NEW-2 Tier-aware progression matrice 3 tiers Beginner 0-10 / Intermediate 11-50 / Advanced 51+ + Sprinter Cap modifier (compound 1.0 kg / isolation +1 rep) + Edge case Deload skip soft warning Bugatti tone "corpul recuperează în mișcare, nu doar în repaus" + F-NEW-3 Cooldown rate-limiting (3+ înlocuiri 7-day rolling silent + phase change <24h absorb a 2-a "Obiectiv actualizat") + Edge case "User Pierdut" dual condition aderență <25% AND 7 zile zero login (elimină false positives boală/concediu) + F-NEW-4 Banner "Plan ajustat astăzi pentru recovery" + buton "Folosesc varianta mea" replacement force-typing. MUSCLE MEMORY INDEX (MMI) HIBRID LOCKED V1 (§32 NEW): algoritm Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup + boost progresie 3 săpt (6-12 luni 0.80×/1.25× / 12-24 luni 0.70×/1.10× / 24+ luni 0.60×/1.00× start proaspăt) + threshold trigger user-controlled 6+ luni pauză prompt agency 100% + UI Bugatti tone "Pauza face parte din drum. Începem treptat — corpul tău își amintește." Justified V1 (Maria post-operație șold 8 luni revine ~iulie 2027). Effort ~3-4h Sonnet. STORAGE FULL UX ALERT LOCKED V1 (§33 NEW): Threshold 80% banner săptămânal NU blocant (3 buttons Exportă/Cloud Pro/Închide) + Threshold 95% modal blocant 3 alegeri obligatorii (Descarcă JSON / Activează Cloud / Șterge automat 180 zile alegere definitivă) ZERO data loss silent industry standard Apple/Google/Dropbox + Cap Pro upgrade 1×/săpt + auto-rotate 180 zile DOAR consimțământ explicit. Effort ~4-6h Sonnet. 3 OPTIMIZĂRI UX FRICTION LOCKED (§29.5.5 amendment + §29.5.14 + §29.5.17 + §29.5.18 NEW): Onboarding 5 → 4 ecrane disclaimer integrat ecran 4 Obiectiv (checkbox disabled-until-checked, total <45 sec vs <60 sec) + Autofocus iOS workaround `<input type="number" inputmode="numeric">` + setTimeout 50ms focus programatic (zero tap suplimentar) + The Next-Up Gaze preview vizual cartonaș set următor în timpul rest timer auto-start (soft highlight + border glow ~1-2h Sonnet extension §29.5.5) + Friction Map V1 final touchpoint matrix (Onboarding 🟢 / Pauze 🟢 / Editare istoric 🟡 / Storage Full 🔴 / Disclaimer 🟡 / MMI prompt 🟡). 3 BLOCKERS SPRINT 4.x IDENTIFICATE PRE-LAUNCH (§34 NEW): Blocker 1 T&B Faza 2 persistence Memory Paradox bug (~50-80h trad / ~3-5h Opus, user delete entry → reload → entry RE-APARE Firebase pull) + Blocker 2 Firebase Rules RTDB lock (production-blocker `database.rules.json` syntax LOCKED, sub 1h Daniel + emulator + manual publish) + Blocker 3 D1 DEVELOPING refactor 5→6 tiers (CALIBRATION_LEVELS 0-4 → 0-5 + ID renumber + schema migration + Golden Master ~30+ test cases, ~8-12h trad / ~2-3h Opus). GC TOMBSTONES DEFER 6 LUNI POST-LAUNCH (§35 NEW): Cloud Functions GC AMÂNAT, borna evaluare oficială 1 iulie 2027, rationale buget zero Firebase Spark plan + ~3% din 1GB / 6 luni; alegere A automation Blaze / B manual Daniel / C mai amână. INVESTIȚII CONFIRMATE ZERO BUGET NOU (§31 AMENDMENT): preserved €500-700 worst-case primul an + breakdown 6 luni primele ~€310-515 (Firebase free tier suficient cf §35 GC defer). 888/888 unchanged. Bandwidth Daniel ~3h Daniel-time real saturation triggered preventiv anti-halucinație. Status V1: 8/8 templates 100% LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers identificate + GC defer 6 luni + 0 sesiuni chat strategic rămase pre-launch. Next: rebrand sweep CC Opus dedicat ACUM + ADR 022 V2 draft consolidare totul + Sprint 4.x cluster (Blockers 2/3/1 FIRST → PR Engine + Linear Block + Safety Banner + Hip Thrust + Age guardrail + Mastery Milestone + Sticky Swap + Clean Slate Reset + Onboarding 4 ecrane + Autofocus iOS + Editare Istoric + Notificări + F-NEW 1/2/3/4 + MMI + Storage Full + Next-Up Gaze) + wording Phase B/C bulk Sonnet + PARAMETRIC refactor + exercise library + Beta sept-dec 2026 + audit legal dec 2026 + Soft Launch 1 ian 2027 🚀 + Borna GC 1 iul 2027.**
