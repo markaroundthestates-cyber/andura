@@ -93,17 +93,19 @@ Pass criteria: ≥12/15 (≥80%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (planned)
+## Commits granular (5 total)
 
-To be executed post-write:
+- `bc21b11` chore(outbox): rotate morning v2 LATEST + DIFF_FLAGS → 2026-05 archive (NN=32, 33) pre-ingest evening
+- `7a3f3bd` feat(handover): merge 2026-05-01 evening ingest — Goal-ca-Setting + 8 Templates Programe v1 + 53 strings Phase B + 5 amendamente (§26/§27/§28 SSOT + §1.2 timeline amendment)
+- `d35289e` chore(outbox): archive HANDOVER_INPUT evening consumed (NN=34) + DIFF_FLAGS audit trail evening
+- `a395a24` docs(outbox): regenerate ALIGNMENT_QUESTIONS evening (15 questions, top-level per VAULT_RULES)
+- `a690ad6` chore(outbox): rotate LATEST → handover ingest evening raport
 
-1. `chore(outbox): rotate morning v2 LATEST + DIFF_FLAGS → 2026-05 archive (NN=32, 33) pre-ingest evening`
-2. `feat(handover): merge 2026-05-01 evening ingest — Goal-ca-Setting + 8 Templates Programe v1 + 53 strings Phase B + 5 amendamente (§26/§27/§28 SSOT + §1.2 timeline amendment)`
-3. `chore(outbox): archive HANDOVER_INPUT evening consumed (NN=34) + DIFF_FLAGS audit trail evening`
-4. `docs(outbox): regenerate ALIGNMENT_QUESTIONS evening (15 questions, top-level per VAULT_RULES)`
-5. `chore(outbox): rotate LATEST → handover ingest evening raport`
+## Pushed: ✅ origin/main (`acc6d00..a690ad6`)
 
-Push: `origin/main` (5 commits).
+5 commits propagated remote successfully.
+
+Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-01-evening` → origin (rollback safe).
 
 ## Issues / Ambiguities
 
