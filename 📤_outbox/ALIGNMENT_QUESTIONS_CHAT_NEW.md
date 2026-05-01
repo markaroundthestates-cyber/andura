@@ -1,11 +1,11 @@
 ---
 name: ALIGNMENT_QUESTIONS_CHAT_NEW
-description: 15 adversarial questions to verify chat new alignment cu SSOT post-Opus run 2026-05-01 morning v2 (handover ingest — chat strategic wording session: Engine 12 variations LOCKED + Phase A aprobate tacit + Decizia #6 + Wording REMAINING). Daniel paste in primul mesaj chat nou — chat răspunde cu citation explicită §X / ADR Y / file.md → pass criteria ≥12/15 corecte.
+description: 15 adversarial questions to verify chat new alignment cu SSOT post-Opus run 2026-05-01 evening (handover ingest — chat strategic goal-ca-setting + 8 templates programe v1 + 53 strings Phase B partial + 5 amendamente backlog + timeline 8-10 luni). Daniel paste in primul mesaj chat nou — chat răspunde cu citation explicită §X / ADR Y / file.md → pass criteria ≥12/15 corecte.
 type: alignment-test
-date: 2026-05-01 morning v2 (post handover ingest morning v2)
+date: 2026-05-01 evening (post handover ingest evening)
 ---
 
-# Alignment Questions — Chat Nou Bootstrap (post 2026-05-01 morning v2 ingest)
+# Alignment Questions — Chat Nou Bootstrap (post 2026-05-01 evening ingest)
 
 **Use:** paste integral în primul mesaj chat Claude nou. Cere chat-ul să răspundă fiecare întrebare cu citation explicită (§X file.md / ADR Y).
 
@@ -13,45 +13,43 @@ date: 2026-05-01 morning v2 (post handover ingest morning v2)
 
 ---
 
-## Engine Wording 12 Variații + Decizia #6 (NEW morning v2)
+## Goal-ca-Setting + 8 Templates Programe v1 (NEW evening)
 
-1. Care 4 verdicte au fiecare câte 3 variații LOCKED (Engine wording)? De ce 3 variants/verdict (rationale anti-wallpaper)? — ref `HANDOVER §23 12 variații complete` + chat morning v2 filozofie
+1. De ce **goal = setting NU voice nou**? Care 5 motive principale (98% NU schimbă goal, sparge math R8, etc.)? — ref `HANDOVER §26.2 Decizie LOCKED` + `COG-ARCH §R8 voice weights`
 
-2. Care e refactor-ul arhitectural Recovery (§23) vs §21 baseline? Ce face banner global vs per-exercise? — ref `HANDOVER §23 RECOVERY` + `HANDOVER §21` baseline
+2. Care 8 templates programe v1 + cui se adresează fiecare? Care 2 dropped din v1 (rationale)? — ref `HANDOVER §26.3 Goal taxonomy v1`
 
-3. Decizia #6 Recovery score numeric exposure — care e wording-ul locked (3 statuses) + ce primește Pro tier (decizie globală)? — ref `HANDOVER §23 Decizia #6`
+3. Onboarding flow concrete — care e Q1 + Q1.5 conditional (cele 2 cazuri) + target sub 90s? — ref `HANDOVER §26.4 Onboarding flow`
 
-4. Care e implementation pattern variant selector (`hash(today_sv + exercise_id) % 3`)? Ce garanție oferă (consistență per zi/exercițiu)? Ce relație cu D6 fix? — ref `HANDOVER §23 Implementation pattern locked` + `adherence.test.js` D6 fix
+4. Wording per goal = ACTION layer parametric — care pattern i18n key + 3 exemple verdicte per goal (Gigel longevity / Gigica aesthetic / Performance)? — ref `HANDOVER §26.6 Wording per goal` + `HANDOVER §23 Engine 12 variations baseline`
 
-## Filter Bugatti + Phase A aprobate tacit (NEW morning v2)
+## Wording Rewrite Phase B Evening — 4 Batch-uri 53 Strings (NEW evening)
 
-5. Care 6 elemente eliminate prin filter Bugatti în chat morning v2 (cu motivul fiecăruia)? — ref `HANDOVER §23 Filter Bugatti` + `HANDOVER §6.7 Status update morning v2`
+5. Batch 1 (17 strings) — care 6 readiness verdicte LOCKED (filozofie descriptive NU predictive)? Ce înseamnă SKIP_PAIN_MILD vs SKIP_INJURY split? — ref `HANDOVER §27.1 Readiness verdicte` + `HANDOVER §27.1 Skip Reasons`
 
-6. Phase A toasts/confirms aprobate tacit — care 8 toasts + 3 confirms locked au wording final? Câte toasts + confirms remaining? — ref `HANDOVER §24 Toasts` + `HANDOVER §24 Confirm dialogs`
+6. F-NEW-4 plan banner — care 3 wording-uri locked (înlocuiesc percentage leak + paternalist override + numerice raw)? — ref `HANDOVER §27.1 F-NEW-4 Plan Adjusted Banner`
 
-## Wording REMAINING priorities (NEW morning v2)
+7. Batch 2 — care 6 calibration tier names LOCKED (filozofie descriptive ZERO relational)? De ce "Faza de dezvoltare" preferred peste "Faza de creștere"? — ref `HANDOVER §27.2 Calibration tier names + sys.js`
 
-7. Care prioritate #1-3 din Phase B engine messaging REMAINING? Câte strings fiecare prioritate? — ref `HANDOVER §25 Phase B engine messaging`
+8. Batch 3 proactiveEngine — care e numerics policy (factual user-confirmable vs algorithmic diagnostics)? Care 3 alerts Weight Trend split direction-aware? — ref `HANDOVER §27.3 Decizii arhitecturale` + `HANDOVER §28.5 Weight Trend Engine Refactor`
 
-8. `calibration.js` tier names — ce 6 nivele canonical post-D1 + care PUSHBACK Claude pending pentru Tier 4 + Tier 5? — ref `HANDOVER §25 priority #2` + `ADR 009 §AMENDMENT calibration_confidence`
+9. Batch 4 plateauInterventions — care e two-layer messaging (badge UI vs mesaj proactive coach)? De ce internal engine tags ("+10% Volum") rămân exclusiv în logica engine? — ref `HANDOVER §27.4 Two-layer messaging` + `ADR 013 §Anti-RE`
 
-9. F-NEW-4 plan ajustat banner — ce wording locked din chat morning v2 înlocuiește percentage leak? Voce cărei persoane pentru skip reasons? — ref `HANDOVER §25 priority #3` + `HANDOVER §22 F-NEW-4`
+## Amendamente Backlog Sprint 4.x (NEW evening)
 
-10. Care 6 decisions pending pentru next sesiune wording (Daniel gândește între timp)? Care sunt LOCKED morning v2 (#4, #6)? — ref `HANDOVER §25 Decisions pending`
+10. F-NEW-3 hyperreactive cooldown re-locked Option C — care 3 reguli (global cap + per-trigger-type cap + cooldown 21 zile)? — ref `HANDOVER §28.4 F-NEW-3 Cooldown` + `HANDOVER §28.2 Threshold Trigger Logic`
 
-## Governance + Tests state morning v2
+11. Edge case durere cronică SKIP_INJURY mini-prompt secundar — care 2 routing options (nouă vs recurentă) + impact engine? — ref `HANDOVER §28.1 Durere Cronică vs Accidentare Acută`
 
-11. Care 6 backup tags origin (rollback safe) după ingest morning v2? — ref `HANDOVER §15 Backup tags origin`
+12. Trigger principal F-NEW-4 banner — de ce "3 sesiuni planificate ratate în 14 zile" cross-frequency vs "consecutive" ambiguu? Care e wording User Pierdut <25% aderență? — ref `HANDOVER §28.2 Threshold Trigger Logic`
 
-12. Tests count post-2026-05-01 morning v2 — câte tests + de ce unchanged vs morning v1? — ref `HANDOVER §15 Tests` + `HANDOVER §6.7 Status update morning v2`
+## Decizii Arhitecturale Evening + Timeline + Governance
 
-## Preserved 1:1 verification (carry-over morning v1 + earlier)
+13. Care 5 decizii arhitecturale evening LOCKED (tier policy RO universal / voice persoana plural+singular / numerics policy / Weight Trend split / two-layer messaging)? — ref `HANDOVER §0 Decizii arhitecturale` + `HANDOVER §27 batch-uri`
 
-13. §21 baseline 4 verdict-based wording-uri (LIVE post i18n audit) vs §23 extension 12 variations — care e relația + ce Anti-RE constraints absolute (5 categorii leak interzise)? — ref `HANDOVER §21` + `HANDOVER §23 Relație cu §21` + `ADR 013 §Anti-RE`
+14. Timeline v1 ajustat 8-10 luni (vs 2-4 inițial) — care e trade-off rationale (90%+ market via goal taxonomy) + scope V1 adăugat (5 items)? — ref `HANDOVER §1.2 AMENDMENT 2026-05-01 evening` + `HANDOVER §26.8 Timeline impact`
 
-14. Care e **pricing locked** Founding Members + Pro standard + iOS post-v1.x? Math revenue 10K users target Year 2-3? — ref `HANDOVER §3` + `PRODUCT_STRATEGY_SPEC_v1 §1.3`
-
-15. Velocity rule reinforced morning v2 — de ce chat strategic ≠ CC velocity? Ce ratio Daniel-time real × bandwidth budgeting? — ref `HANDOVER §13 Velocity rule reinforced morning v2`
+15. Care 7 backup tags origin post-ingest evening + HEAD pre-ingest evening + tests count + outbox archive range 2026-05? — ref `HANDOVER §15 Tests & Git State`
 
 ---
 
@@ -69,4 +67,4 @@ Confidence: HIGH | MEDIUM | LOW
 
 ---
 
-🦫 **Pass criteria ≥12/15 (≥80%) = ALIGNED.** Continui de la stare curentă post-Opus run morning v2. Daniel skip introductions, direct work pe wording rewrite session next priorities (Phase B #1 readiness verdicts → #2 calibration tier names → #3 plan ajustat banner) sau implementation Sprint 4.x (variant selector + bulk batch i18n cu wording-urile locked din §23 + §24).
+🦫 **Pass criteria ≥12/15 (≥80%) = ALIGNED.** Continui de la stare curentă post-Opus run evening. Daniel skip introductions, direct work pe priorități post-evening: ADR 022 nou Goal-Driven Program Templates + PARAMETRIC_PROGRAMS_DESIGN refactor + 8 templates programe design (2-4 sesiuni dedicate) + bulk batch i18n implementation 53 strings locked + Sprint 4.x amendamente.
