@@ -94,17 +94,19 @@ Pass criteria: ≥12/15 (≥80%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (planned)
+## Commits granular (5 total)
 
-To be executed post-write:
+- `d0afb30` chore(outbox): rotate morning v1 LATEST + DIFF_FLAGS → 2026-05 archive (NN=29, 30) pre-ingest morning v2
+- `556a6b2` feat(handover): merge 2026-05-01 morning v2 ingest — Engine 12 variations + Decizia #6 + Phase A aprobate tacit + Wording REMAINING (§23/§24/§25 SSOT)
+- `01faaf5` chore(outbox): archive HANDOVER_INPUT v2 consumed (NN=31) + DIFF_FLAGS audit trail morning v2
+- `4ae944a` docs(outbox): regenerate ALIGNMENT_QUESTIONS morning v2 (15 questions, top-level per VAULT_RULES)
+- `8192c78` chore(outbox): rotate LATEST → handover ingest morning v2 raport
 
-1. `chore(outbox): rotate morning v1 LATEST + DIFF_FLAGS → 2026-05 archive (NN=29, 30) pre-ingest morning v2`
-2. `feat(handover): merge 2026-05-01 morning v2 ingest — Engine 12 variations + Decizia #6 + Phase A aprobate tacit + Wording REMAINING (§23/§24/§25 SSOT)`
-3. `chore(outbox): archive HANDOVER_INPUT v2 consumed (NN=31) + DIFF_FLAGS.md audit trail morning v2`
-4. `docs(outbox): regenerate ALIGNMENT_QUESTIONS morning v2 (15 questions, top-level per VAULT_RULES)`
-5. `chore(outbox): rotate LATEST → handover ingest morning v2 raport`
+## Pushed: ✅ origin/main (`70b22ff..8192c78`)
 
-Push: `origin/main` (5 commits).
+5 commits propagated remote successfully.
+
+Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-01-morning-v2` → origin (rollback safe).
 
 ## Issues / Ambiguities
 
