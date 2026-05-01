@@ -99,17 +99,19 @@ Pass criteria: ≥12/15 (≥80%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (planned)
+## Commits granular (5 total)
 
-To be executed post-write:
+- `34ee831` chore(outbox): rotate evening LATEST + DIFF_FLAGS → 2026-05 archive (NN=35, 36) pre-ingest 2026-05-02
+- `56b4679` feat(handover): merge 2026-05-02 ingest — Safety Nutrition Pattern + 4 Templates V1 Full Spec + 5 amendamente noi + 3 arhitecturale (§29 NEW + §28 extended §28.6-§28.10)
+- `5cef79e` chore(outbox): archive HANDOVER_INPUT 2026-05-02 consumed (NN=37) + DIFF_FLAGS audit trail
+- `872c4dd` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 (15 questions, top-level per VAULT_RULES)
+- `9698b76` chore(outbox): rotate LATEST → handover ingest 2026-05-02 raport
 
-1. `chore(outbox): rotate evening LATEST + DIFF_FLAGS → 2026-05 archive (NN=35, 36) pre-ingest 2026-05-02`
-2. `feat(handover): merge 2026-05-02 ingest — Safety Nutrition Pattern + 4 Templates V1 Full Spec + 5 amendamente noi + 3 arhitecturale (§29 NEW + §28 extended §28.6-§28.10)`
-3. `chore(outbox): archive HANDOVER_INPUT 2026-05-02 consumed (NN=37) + DIFF_FLAGS audit trail`
-4. `docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 (15 questions, top-level per VAULT_RULES)`
-5. `chore(outbox): rotate LATEST → handover ingest 2026-05-02 raport`
+## Pushed: ✅ origin/main (`8065ce8..9698b76`)
 
-Push: `origin/main` (5 commits).
+5 commits propagated remote successfully.
+
+Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-02` → origin (rollback safe).
 
 ## Issues / Ambiguities
 
