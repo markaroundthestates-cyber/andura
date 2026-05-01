@@ -151,12 +151,13 @@ Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 - `9b18e7a` feat(handover): merge 2026-05-01 evening RESUBMIT — Longevitate §29.2.6 body COMPLETE Option A + UX Colateral V1 LOCKED 15 puncte (§29.5) + Distribution Strategy V1 LOCKED (§29.6) + Pre-Launch Checklist V1 LOCKED (§29.7) + Rebrand SalaFull → Andura LOCKED (§30) + Investiții LOCKED (§31)
 - `7e43027` chore(outbox): rotate previous LATEST + DIFF_FLAGS → 2026-05 archive (NN=41,42) pre-ingest 2026-05-01 evening RESUBMIT
 - `b68f38b` chore(outbox): archive HANDOVER_INPUT 2026-05-01 evening RESUBMIT consumed (NN=43, Longevitate body complet Option A + UX V1 + Distribution + Pre-Launch + Rebrand + Investiții preserved 1:1)
-- `<TBD>` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-01 evening RESUBMIT (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail zero critical findings
-- `<TBD>` chore(outbox): rotate LATEST → handover ingest 2026-05-01 evening RESUBMIT raport (this file)
+- `5b2d835` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-01 evening RESUBMIT (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail zero critical findings
+- `fc1f1df` chore(outbox): rotate LATEST → handover ingest 2026-05-01 evening RESUBMIT raport (this file initial)
+- `<final>` docs(outbox): update LATEST raport with final SHAs + push confirm 2026-05-01 evening RESUBMIT
 
-**Final SHAs + push confirm vor fi update-uite în commit final** (commit acesta = penultim, finalul update LATEST.md cu SHAs).
+## Pushed: ✅ origin/main (`ac95184..fc1f1df`)
 
-## Pushed: pending final commits + push origin/main
+5 commits propagated remote successfully (HEAD now `fc1f1df`, pending final SHA update commit). Final commit cu acest update + push.
 
 Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-01-evening-resubmit` → origin (rollback safe, HEAD pre-ingest `ac95184`).
 
