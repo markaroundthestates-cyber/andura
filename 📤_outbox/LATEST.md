@@ -146,17 +146,17 @@ Pass criteria: ≥12/15 (≥80%) cu citation §X / ADR Y / file.md.
 
 Zero code touched (`src/` + `tests/` untouched per constraint). Docs-only run.
 
-## Commits granular (pending push)
+## Commits granular (5 total)
 
-- `<sha1>` chore(outbox): rotate morning LATEST + DIFF_FLAGS → 2026-05 archive (NN=38, 39) pre-ingest 2026-05-02 evening
-- `<sha2>` feat(handover): merge 2026-05-02 evening ingest — Forță & Dezvoltare V1 LOCKED full spec (§29.2.5) + Longevitate V1 partial truncated (§29.2.6 inline FLAG) + Sănătate Generală v3+ (§29.2.7) + 5 UX colateral flags (§29.5)
-- `<sha3>` chore(outbox): archive HANDOVER_INPUT 2026-05-02 evening consumed (NN=40, truncation evidence preserved 1:1)
-- `<sha4>` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 evening (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail truncation flag
-- `<sha5>` chore(outbox): rotate LATEST → handover ingest 2026-05-02 evening raport (this file)
+- `03bb764` chore(outbox): rotate morning LATEST + DIFF_FLAGS → 2026-05 archive (NN=38, 39) pre-ingest 2026-05-02 evening
+- `a249112` feat(handover): merge 2026-05-02 evening ingest — Forță & Dezvoltare V1 LOCKED full spec (§29.2.5) + Longevitate V1 partial TRUNCATED (§29.2.6 inline FLAG) + Sănătate Generală v3+ (§29.2.7) + 5 UX colateral flags (§29.5)
+- `8090591` chore(outbox): archive HANDOVER_INPUT 2026-05-02 evening consumed (NN=40, truncation evidence preserved 1:1) + track stray morning leftover
+- `3dba4d3` docs(outbox): regenerate ALIGNMENT_QUESTIONS 2026-05-02 evening (15 questions, top-level per VAULT_RULES) + DIFF_FLAGS audit trail truncation flag
+- `f110f77` chore(outbox): rotate LATEST → handover ingest 2026-05-02 evening raport (this file)
 
-(SHA-uri actualizate post-push — vezi `git log --oneline -5`.)
+## Pushed: ✅ origin/main (`bccf027..f110f77`)
 
-## Pushed: pending origin/main
+5 commits propagated remote successfully.
 
 Backup tag pushed pre-flight: ✅ `pre-handover-ingest-2026-05-02-evening` → origin (rollback safe).
 
