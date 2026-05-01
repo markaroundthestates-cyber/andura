@@ -1,8 +1,8 @@
-# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-01 morning
+# HANDOVER GLOBAL — Sesiune 2026-04-29 seară → 2026-05-01 morning v2
 
 **Owner:** Daniel (CEO + Product). Claude = Co-CTO + Reviewer.
 **Status:** SSOT activ. Înlocuiește versiunea dimineață a `HANDOVER_GLOBAL_2026-04-30.md`.
-**Data:** 2026-05-01 morning (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + 4 wording categorii lock + 4 findings noi flag-uite).
+**Data:** 2026-05-01 morning v2 (post Sprint 4 A+B LIVE prod + smoke test ADR 020 Phase 1 + i18n audit completed + 4 wording categorii lock + 4 findings noi + chat strategic wording session — Engine 12 variations LOCKED + Phase A toasts/confirms aprobate tacit + Decizia #6 Recovery score).
 
 ---
 
@@ -28,6 +28,9 @@
 - §20 i18n Decision B Locked + Audit Completed
 - §21 Wording Categorical "De ce?" Locked + Anti-RE Absolute Reaffirmed
 - §22 Findings Noi 2026-05-01 (F-NEW-1..F-NEW-4)
+- §23 Engine Wording 12 Variații LOCKED + Decizia #6 Recovery Score (morning v2)
+- §24 Phase A Toasts/Confirms Aprobate Tacit ~36 strings (morning v2)
+- §25 Wording REMAINING Next Sesiune ~187 strings (Phase B ~58 + Phase C ~78 + Phase A restul ~20 + decisions pending)
 
 **Pentru chat nou:** citește acest fișier + `VAULT_RULES.md` (root) + `PROMPT_CC_HYGIENE.md` (root). Restul context = Project Knowledge GitHub.
 
@@ -276,6 +279,15 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **Tests:** 854 → **888 PASS** (+34: 23 i18n + 22 whyEngine - 11 legacy whyEngine).
 - **Phase 5 i18n bulk replace DEFERRED** — 238 strings remaining = audit raport input pentru Daniel chat strategic wording rewrite session. NU bulk replace în run autonomous.
 
+### Status update 2026-05-01 morning v2 (chat strategic wording session)
+
+- **Wording rewrite session STARTED** chat strategic morning v2. **Phase A toasts/confirms ~36 strings COMPLET** în tabel Bugatti aprobat tacit (vezi §24). **Phase B Engine messaging — Engine variations 12 strings LOCKED** (vezi §23 — 4 verdicte × 3 variants UP/DOWN/HOLD + RECOVERY refactorat banner global + per-exercise). **Phase B restul ~58 strings (readiness verdicts, dp/sys/proactiveEngine/plateau/fatigue/calibration tier names, skip reasons) + Phase C page labels ~78 + Phase A restul ~20 = REMAINING next sesiune** (vezi §25).
+- **Decizia #6 Recovery score numeric exposure RESOLVED** (vezi §23): eliminăm complet numărul. Doar verdicte text "Recuperat / În refacere / Epuizat". Anti score-chasing + anti overthinking. Pro tier NU primește expunere numerică — decizie globală.
+- **Implementation pattern hash deterministic LOCKED** pentru variant selector — `hash(today_sv + exercise_id) % 3` cu `toLocaleDateString('sv')` (anti-midnight-flicker, same pattern ca D6 fix din `adherence.test.js`). Variant selector = pending implementation Sprint 4.x parte din wording rewrite implementation.
+- **Filter Bugatti aplicat strict** prin 6 runde pushback iterative — eliminat: "ridicăm miza" (poker), "resetăm calitatea mișcării" (mecanic), "calitatea mișcării" abstract, "sistem suprasolicitat" (server alert jargon), "vârf de formă mâine" (promise temporal nesigur), "coach-ul observă" (voice inconsistent persoana 3 vs plural inclusiv).
+- **Tests:** 888/888 PASS unchanged (sesiune chat strategic only, zero code touched).
+- **Bandwidth Daniel:** ~30% chat strategic ended, handover triggered preventiv ÎNAINTE saturation halucinație.
+
 ---
 
 ## 7. VAULT STATE FINAL (post sesiune 30 apr evening)
@@ -474,6 +486,10 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 
 Sprint 4 A+B realizat ~25 min Opus comprehensive (estimate trad ~10-15h, velocity **24-36×**). i18n audit + infrastructure + whyEngine rewrite + 23+22 tests + alert→modal replacement = ~30 min Opus comprehensive (estimate trad ~6-8h, velocity ~12-16×). Bandwidth budgeting Daniel-time = real × 3 confirmed pe foundation work bine speciat. Memory rule reinforced: estimate-uri developer ÷ 10-15 pentru Opus comprehensive runs cu spec clear.
 
+### Velocity rule reinforced 2026-05-01 morning v2 (chat strategic ≠ CC velocity)
+
+Chat strategic wording session ~6 runde iterative pushback = ~45 min Daniel-time real (NU CC velocity — chat strategic = Daniel + Claude human collaboration cu filter Bugatti aplicat per string, NU Opus autonomous run). Bandwidth budgeting Daniel-time = real × 3 confirmed. **§7 DIFF + §8 Destructive Ops mandatory pentru ingest** — reinforced post chat morning v2.
+
 ---
 
 ## 14. NEXT STEPS — POST HANDOVER
@@ -519,16 +535,17 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
 
 ## 15. TESTS & GIT STATE FINAL
 
-- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat)
-- **HEAD origin/main:** post i18n audit run + handover ingest pending (see report `LATEST.md`)
-- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER. Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-26` (post evening v2 + Sprint 4 A+B + i18n audit + handover ingest morning). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
+- **Tests:** **888/888 PASS** (752 baseline + 52 storage ADR 020 + 13 bootstrap + 37 reconciliation + 23 i18n + 22 whyEngine - 11 legacy whyEngine = +136 cumulat) — unchanged morning v2 (chat strategic, zero code touched)
+- **HEAD origin/main:** `70b22ff` pre-ingest morning v2 (post handover morning v1 push final) — post-ingest morning v2 SHAs see `📤_outbox/LATEST.md`
+- **Vault docs:** **52 active** + README + VAULT_RULES + PROMPT_CC_HYGIENE + PROMPT_CC_INGEST_HANDOVER (unchanged morning v2). Outbox archive (audit trail, NU vault docs): `📤_outbox/_archive/2026-04/01-28` + `2026-05/29..` (post handover ingest morning v2). `cc-reports/` DEPRECATED 30 apr (folder removed, content migrated).
 - **Folder count:** 9 numerotate continuu (00-08) + 📥_inbox + 📤_outbox.
 - **Backup tags origin:**
   - `pre-adr-020-impl` (ADR 020 rollback)
   - `pre-handover-ingest-2026-04-30-evening-v2` (evening v2 ingest rollback)
   - `pre-sprint4-a-b-2026-04-30` (Sprint 4 A+B rollback)
   - `pre-i18n-audit-2026-05-01` (i18n audit rollback)
-  - `pre-handover-ingest-2026-05-01-morning` (morning ingest rollback)
+  - `pre-handover-ingest-2026-05-01-morning` (morning v1 ingest rollback)
+  - `pre-handover-ingest-2026-05-01-morning-v2` (morning v2 ingest rollback — chat strategic wording session)
 
 ---
 
@@ -751,6 +768,201 @@ Categorical verdict only user-facing. Engine internals (signal codes, phase enum
 
 ---
 
+## 23. ENGINE WORDING 12 VARIAȚII LOCKED + DECIZIA #6 RECOVERY SCORE (morning v2)
+
+**Status:** LOCKED 2026-05-01 morning v2 (chat strategic wording session). Implementation = i18n bundle update + `whyEngine.js` variant selector cu hash deterministic = pending Sprint 4.x.
+
+### 12 variații complete (4 verdicte × 3 variants)
+
+**🟢 UP (Progresie):**
+
+```
+V1: "Te-ai adaptat excelent. Azi creștem greutatea la {exercise}, fără să sacrificăm tehnica."
+V2: "Progresul tău e vizibil. Urcăm greutatea la {exercise} pentru a continua evoluția, cu aceeași execuție curată."
+V3: "Ești gata pentru următorul nivel la {exercise}. Ridicăm sarcina astăzi, păstrând forma perfectă."
+```
+
+**🔴 DOWN (Reglaj tehnic):**
+
+```
+V1: "Prioritizăm tehnica azi la {exercise}. Un pas în spate e scurtătura către progresul viitor."
+V2: "Refinăm execuția la {exercise}. Un reglaj fin acum deblochează următorul nivel de forță."
+V3: "Facem un reglaj tehnic la {exercise}. Ajustăm greutatea pentru a consolida execuția și a reporni creșterea."
+```
+
+**🟡 HOLD (Consolidare):**
+
+```
+V1: "Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă."
+V2: "Consolidăm progresul la {exercise}. Încă o sesiune-două la acest nivel și suntem gata să urcăm."
+V3: "Rămânem pe poziții la {exercise}. Stăpânește total acest prag înainte de a adăuga rezistență suplimentară."
+```
+
+**🔵 RECOVERY (Refacere) — REFACTOR arhitectural (banner global + per-exercise):**
+
+```
+GLOBAL BANNER (top of page): "Zi de refacere: Programul de azi e mai blând pentru a permite corpului să se reconstruiască."
+
+V1 (per-exercise): "Reducem ritmul la {exercise} azi. Recuperarea acum înseamnă forță proaspătă la antrenamentul următor."
+V2 (per-exercise): "Ajustăm volumul la {exercise} azi. Corpul are nevoie de refacere ca să revii puternic în sesiune."
+V3 (per-exercise): "Prioritizăm refacerea la {exercise}. O sesiune mai ușoară acum pregătește terenul pentru un vârf de formă la următorul antrenament."
+```
+
+**Rationale Recovery refactor:** anterior un singur mesaj per-exercise = repetiție logică detectabilă pe 5 exerciții/sesiune Recovery. Now factored corect (banner global = context Recovery o singură dată; per-exercise = variation Bugatti).
+
+### Decizia #6 Recovery score numeric exposure — RESOLVED
+
+| Status | Wording locked |
+|---|---|
+| High | "Recuperat" |
+| Medium | "În refacere" |
+| Low | "Epuizat" |
+
+**Decizie:** ELIMINĂ numărul complet pentru toate categoriile de useri. Antrenor olimpic NU spune "ești recuperat 72%" — dă verdict clar. Anti score-chasing + anti overthinking. **Pro tier NU primește expunere numerică** (decizie globală, NU tier-gated).
+
+### Implementation pattern locked (variant selector hash deterministic)
+
+```javascript
+// Pattern hash deterministic — anti-flicker + zero Math.random
+const todayStr = new Date().toLocaleDateString('sv'); // 'YYYY-MM-DD' local stable
+const variantIndex = hash(todayStr + exercise_id) % 3;
+return variants[variantIndex];
+```
+
+**Garanție:** user vede același mesaj pe tot parcursul zilei pentru același exercițiu (refresh / re-deschidere app = consistent). Pe 5 exerciții într-o zi → probabil vede toate 3 variații = app pare că "scrie" în timp real, NU câmp dintr-un tabel. Same pattern ca D6 fix `adherence.test.js` (anti-midnight-flicker prin local date stable).
+
+### Filter Bugatti aplicat strict (6 runde pushback iterative)
+
+Eliminat în chat strategic morning v2:
+- "ridicăm miza" (jargon poker)
+- "resetăm calitatea mișcării" (jargon mecanic)
+- "calitatea mișcării" abstract
+- "sistem suprasolicitat" (jargon server alert)
+- "vârf de formă mâine" (promise temporal nesigur)
+- "coach-ul observă" (voice inconsistent persoana 3 vs plural inclusiv)
+
+### Relație cu §21 (4 categorii baseline pre-variations)
+
+§21 = wording 4 categorii baseline LIVE post i18n audit (whyEngine rewrite ELIMINATED `[category]` raw codes). §23 = extension morning v2 cu 12 variations + Recovery refactor + Decizia #6. Implementation Sprint 4.x va înlocui 4 baseline cu 12 variations + variant selector. Anti-RE absolute preserved (zero leak, zero numerice, zero category exposure indiferent tier).
+
+**Cross-refs:** `src/engine/whyEngine.js` `selectVerdict()` priority ladder + `src/i18n/ro.json` `why.categorical.*` namespace (post-Sprint-4.x va include 12 variations + recovery banner) + ADR 013 §Anti-RE absolute + §21 4 verdict-based wording baseline.
+
+---
+
+## 24. PHASE A TOASTS/CONFIRMS — APROBATE TACIT (~36 strings, morning v2)
+
+**Status:** Aprobate tacit prin progres iterativ wording session morning v2 (Daniel a confirmat batch progresând la engine logic). Implementation = bulk batch CC Sonnet în `ro.json`.
+
+### Toasts (~25)
+
+| Curent | Locked |
+|---|---|
+| "✓ Notificări active" | "Notificări activate." |
+| "❌ Antrenament anulat" | "Antrenament încheiat." |
+| "⚠ Selectează exercițiu" | "Alege un exercițiu." |
+| "Set salvat" | "Set înregistrat." |
+| "Greutate actualizată" | "Greutate înregistrată." |
+| "Antrenament finalizat" | "Antrenament încheiat. Bună treabă!" |
+| "Eroare la salvare" | "N-am putut salva. Mai încercăm o dată?" |
+| "Conexiune pierdută" | "Lucrăm offline acum." |
+
+**Restul ~17 toasts (modificare aplicată, date sincronizate, conexiune restabilită, plus 14 alte):** REMAINING next sesiune review individual cu context (vezi §25).
+
+### Confirm dialogs (~5 din 8)
+
+| Curent | Locked |
+|---|---|
+| "Anulezi antrenamentul? Nicio dată nu va fi salvată." | "Închizi sesiunea? Datele de azi se pierd." |
+| "Ești sigur?" generic | EVITĂ — fă specific contextului fiecare caz |
+| Full reset confirm | "Resetare completă: ștergem tot permanent. Continui?" |
+
+**Restul ~3 confirms (Ai N seturi nefinalizate, Ștergi acest antrenament, +1):** REMAINING next sesiune review individual.
+
+### Alert dialogs `dataCleanup.js` (3 strings)
+
+REMAINING — review next sesiune. Recomandare convertire la in-app modal/toast (anti-`alert()` browser native = parte din anti-Bugatti UX cleanup global, same pattern ca §20 audit `alert()`→modal whyEngine fix).
+
+**Cross-refs:** §20 i18n audit Phase 1-4 LIVE + §25 wording REMAINING priority list.
+
+---
+
+## 25. WORDING REMAINING NEXT SESIUNE (~187 strings, morning v2)
+
+**Status:** Lista clară pentru next chat strategic wording session. Daniel review cu Claude pe filtru Bugatti.
+
+### Phase B engine messaging — REMAINING (~58 strings)
+
+Prioritate ordonată (importance × visibility):
+
+1. **`readiness.js` — Verdicte readiness (6 strings)** ⭐ HIGH PRIORITY (vizibile constant header coach):
+   - "Zi de PR" / "Sesiune solidă" / "Sesiune normală" / "Sesiune moderată" / "Sesiune ușoară" + 1
+   - Recomandări audit: "Zi de vârf" / PĂSTREAZĂ / "Zi obișnuită" / "Mergi mai blând azi" / "Zi de recuperare"
+   - **Status:** RECOMANDĂRI audit Opus, NEAPROBATE individual de Daniel — review next sesiune.
+
+2. **`calibration.js` tier names (6 strings)** ⭐ HIGH VISIBILITY:
+   - 6 nivele canonical post-D1: COLD_START / INITIAL / DEVELOPING / PERSONALIZING / PERSONALIZED / OPTIMIZED
+   - Filozofie recomandată audit: progresie relațională ("învăț → cunosc → te înțeleg → adaptez → sincronizat → te citesc")
+   - Recomandări audit: "Învăț cum lucrezi" PĂSTREAZĂ / "Cunosc ritmul tău" / "Te înțeleg din ce în ce mai bine" / "Adaptez programul la tine" / "Lucrăm sincronizat acum" / "Te citesc ca pe o carte deschisă"
+   - **PUSHBACK Claude pending (din chat morning v2):** Tier 4 PERSONALIZED "Te cunosc bine acum" risc trust hit dublu dacă engine greșește post-promisiune. Tier 5 OPTIMIZED "Pe aceeași lungime de undă" (variație Daniel proposed) — nu e clar mapping per tier. Decizie next sesiune.
+
+3. **F-NEW-4 Plan ajustat banner + skip reasons** ⭐ ANTI-RE BREACH PROD-VISIBLE:
+   - Plan banner percentage leak ("Plan redus 30%") + paternalist override ("Override (înțeleg riscurile)") + numerice raw ("Adherence scăzută: 0%", "Deviation crescut: 100%")
+   - Recomandări locked din chat morning v2: "Plan ajustat azi pentru recuperare. Volumul e mai blând." + "Vreau planul inițial." (anti-paternalism real)
+   - **NEAPROBATE final** — review next sesiune cu specific context.
+   - Skip reasons (4): "Sunt prea obosit azi" / "N-am timp astăzi" / "Mă doare ceva / sunt accidentat" / "Alt motiv" — voce user persoana 1.
+
+4. **Onboarding (9 strings)** ⭐ FIRST IMPRESSION RETENTION:
+   - Step text + button labels + baseline weight prompt
+   - Pattern recomandat: warm conversational, NU tutorial robotic. Action-oriented buttons ("Mergem mai departe" vs "Next"). Anti-paternalism (NU "te rog completează").
+   - REMAINING — fiecare string review individual next sesiune.
+
+5. **`sys.js` — BMI/BF bands + phase logic (12 strings)** ⭐ ANTI-PATERNALISM CRITIC:
+   - **PUSHBACK locked Daniel:** ELIMINĂ etichete medicale stigmatizante ("Obez", "Supraponderal").
+   - Decizie locked: BMI/BF bands → "Sub țintă / În țintă / Peste țintă pentru obiectivul tău" (relativizat la goal user, NU absolut medical).
+   - Phase logic: "Faza CUT" → "Faza de definire" / "Faza BULK" → "Faza de creștere" / "Faza MAINTAIN" → "Faza de menținere" — RECOMANDĂRI, neaprobate final.
+   - Decizie pending: EN technical labels (CUT/BULK) păstrate Pro tier? Sau RO universal default?
+
+6. **`dp.js` — Rest day, taper, deload (13 strings):**
+   - Pattern recomandat: rationale, NU command. User înțelege DE CE pauza/deload.
+   - REMAINING — review next sesiune.
+
+7. **`proactiveEngine.js` — Lagging muscle alerts (9 strings):**
+   - Pattern recomandat: observație + acțiune luată, NU verdict gol.
+   - REMAINING — review next sesiune.
+
+8. **`plateauInterventions.js` (8 strings):**
+   - Folosește reframing "deblocare" din wording-ul Engine Down lock (vezi §23 DOWN V2).
+   - REMAINING — review next sesiune.
+
+9. **`fatigue.js` (8 strings):** Anti-RE absolut. Zero numerice + zero category exposure. REMAINING.
+
+10. **`reality.js` (7 strings):** Reality Engine backend mostly. User-facing minimal — review next sesiune ce-i exact.
+
+### Phase C page labels — REMAINING (~78 strings)
+
+| File | Count | Status |
+|---|---|---|
+| `dashboard.js` | 45 | ⭐ MOST VISIBLE — review next sesiune (tabs, buttons, notifications, recovery widget) |
+| `weight.js` | 23 | Empty states + modal labels + chart labels — review next sesiune |
+| `plan.js` | 10 | Phase override (vezi `sys.js`) + counts — review next sesiune |
+
+### Decisions pending (gândește între timp Daniel)
+
+1. **Exercise alternatives strategy:** A (EN tech names + RO reasons) / B (RO complete) / **C hibrid** (compound mari EN + izolări RO) — Daniel decide listă specifică next sesiune.
+2. **Day names:** Intl API (`Intl.DateTimeFormat('ro', { weekday: 'long' })`) sau hardcoded array? **Recomandare Claude: Intl** (no-brainer multilingv automat).
+3. **EN translations strategy:** A manual / B Sonnet-assisted / **C Hybrid A+B** (brand-critical ~30 manual + restul ~210 Sonnet-assisted batch review). Recomandare Claude: Hybrid.
+4. **BMI/BF bands wording:** LOCKED — "Sub/În/Peste țintă pentru obiectivul tău" (decisie Daniel chat morning v2).
+5. **Phase names CUT/BULK EN-only Pro tier sau RO universal default?** REMAINING.
+6. **Recovery score numeric exposure:** LOCKED — eliminat complet, decizia #6 (vezi §23).
+
+### Pattern recomandat next sesiune
+
+Daniel + Claude review per priority ordonat (#1-9 above), filter Bugatti aplicat, lock wording final → handover-uri batch după fiecare priority majoră (anti-saturation, anti-halucinație).
+
+**Cross-refs:** `📤_outbox/_archive/2026-04/28_I18N_AUDIT_INFRASTRUCTURE_RAPORT.md` (full audit Opus, ~238 strings inventoried) + ADR 013 §Anti-RE + §23 Engine variations LOCKED + §24 Phase A aprobate tacit + filozofie chat morning v2 (anti-paternalism + Bugatti voice + reframing pozitiv + voice unitar persoana I plural + promise temporal safe).
+
+---
+
 🦫 **SSOT activ. Update-in-place. VS Code only. Single tool, single doc per topic.**
 
 **Velocity beast confirmed: foundation work bine speciat ~24-36× (Sprint 4 A+B = 25 min Opus comprehensive pe estimate 10-15h).**
@@ -764,3 +976,5 @@ Categorical verdict only user-facing. Engine internals (signal codes, phase enum
 **Sistem 📥_inbox/📤_outbox live. VAULT_RULES authoritative. Daniel zero memory load.**
 
 **Sesiune 2026-05-01 morning LOCK. Sprint 4 A+B LIVE prod (smoke test pass). i18n infrastructure + whyEngine rewrite + alert→modal LIVE. Anti-RE breach FIXED critical paths. 4 wording categorii lock + 4 findings noi (F-NEW-1..4) flag-uite. 888/888 stable. Bandwidth Daniel ~30% — chat strategic wording rewrite next priority.**
+
+**Sesiune 2026-05-01 morning v2 LOCK (chat strategic wording session). Phase A toasts/confirms ~36 aprobate tacit (§24) + Engine 12 variații LOCKED 4×3 cu Recovery refactor banner global + per-exercise (§23) + Decizia #6 Recovery score numeric exposure ELIMINATED globally + implementation pattern hash deterministic LOCKED. ~187 strings REMAINING (Phase B ~58 + Phase C ~78 + Phase A restul ~20 + decisions pending #1/#3/#5) (§25). Variant selector + bulk batch i18n implementation pending Sprint 4.x post locks complete. 888/888 unchanged (chat strategic only, zero code touched). Bandwidth Daniel ~30% — handover triggered preventiv anti-saturation halucinație.**
