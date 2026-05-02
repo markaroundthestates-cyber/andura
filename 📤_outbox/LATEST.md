@@ -1,128 +1,197 @@
 ---
 name: LATEST
-description: Batch A Sprint 4.x autonomous run 2026-05-02 — Blocker 2 partial + Blocker 3 full + F-NEW-2 module + Foundation 3 (Safety Banner). Blocker 1 (T&B Faza 2) and Foundations 1/2/4 deferred with documented findings.
+description: Batch B Sprint 4.x — Auth Migration Faza 1 + Memory Paradox hotfix + Foundation 1/2/4 + Safety Banner wiring + Tier 2 (findings sync + SSOT §34.1 amendment + Vite warnings cleared) autonomous run 2026-05-02
 type: cc-report
 date: 2026-05-02
 model: claude-opus-4-7
-status: PartialComplete
+status: Complete
 ---
 
-# Sprint 4.x Batch A — Blockers + Foundation cluster
+# Sprint 4.x Batch B — Auth + Memory Paradox + Foundation 1/2/4 + Safety wiring
 
-**Status:** PartialComplete — 2 of 3 Blockers landed; 1 of 4 Foundations landed. Remaining items deferred with explicit findings (NOT silently skipped).
+**Status:** **Complete.** All 9 Tier 1 tasks landed. 3 of 4 Tier 2 backup tasks landed (Wording Phase A bulk explicitly deferred — see §7).
 **Date:** 2026-05-02
 **Model:** Claude Opus 4.7 autonomous (`--dangerously-skip-permissions`)
 **Working dir:** `C:\Users\Daniel\Documents\salafull`
-**Backup tag:** `pre-batch-A-blockers-foundation-2026-05-02` ✅ pushed origin
+**Backup tag:** `pre-batch-B-auth-foundation-2026-05-02` ✅ pushed origin pre-batch
+**Net delivered:** 8 commits, +155 net new tests (955 → 1110), zero baseline regressions, build clean (0 warnings, 0 errors), 1 ADR amended, 1 SSOT §34.1 amended, findings tracker synced.
 
 ---
 
 ## §1 Task status overview
 
-| Task | Status | Notes |
-|------|--------|-------|
-| Pre-flight (git clean, hook, baseline 888/888, backup tag) | ✅ | All gates passed |
-| **Blocker 2** Firebase Rules RTDB Lock | ⚠️ Partial | `database.rules.json` schema landed at repo root + ADR 007 amendment with prerequisites. Activation **gated** on Auth migration (see §7 Findings). |
-| **Blocker 3** D1 DEVELOPING refactor 5→6 tiers + F-NEW-2 matrix | ✅ Complete | Calibration enum + ID renumber + idempotent migration runner + F-NEW-2 progression matrix + Sprinter Cap helper. 41 new tests. |
-| **Blocker 1** T&B Faza 2 persistence (Memory Paradox) | ⏸️ Deferred | Faza 1 prerequisite NOT in code (zero `appendEvent`/`reduceEvents`/`tombstone` references in `src/`). Implementing Faza 2 without Faza 1 = inverted dependency. See §7 Findings + §8 Next action. |
-| **Foundation 1** PR Engine Forță | ⏸️ Deferred | Out of scope for remaining session budget. Specced §29.2.5 — needs dedicated batch with §29.2.5 spec read + dp.js consumer integration. |
-| **Foundation 2** Linear Block 4+1 progression | ⏸️ Deferred | Same. Logic already partially encoded in F-NEW-2 deload-skip warning helper (`progressionMatrix.getDeloadSkipWarning`). State machine + UI pending. |
-| **Foundation 3** Safety Banner reusable component | ✅ Complete | Vanilla-JS module, 3 severities, per-session dismiss, 22 tests. Anti-RE leak check on integration sample. |
-| **Foundation 4** Hip Thrust UI + Mastery Milestone | ⏸️ Skipped | Explicit "if time permits" — not reached. |
-| Final report + push | ✅ | This document. |
-
-**Net delivered:** 4 commits, +402 lines source / +599 lines tests, 888 → 955 tests (+67 net), zero baseline regressions, build clean.
+| Tier | Task | Status | Time | Notes |
+|------|------|--------|------|-------|
+| 1 | Auth Migration ADR_MULTI_TENANT_AUTH_v1 | ✅ Complete | ~50min | Faza 1 client-side: REST helpers (Magic Link + Google IdP), `getUserPath()` dynamic, token threading, idempotent path migration, auth UI screen, ADR §AMENDMENT 2026-05-02 |
+| 1 | Memory Paradox Hotfix Minimal | ✅ Complete | ~15min | localStorage tombstone soft-delete, applyTombstoneFilter wired post-Firebase pull, regression test for delete→reload→stays-deleted scenario |
+| 1 | Foundation 1 PR Engine Forță | ✅ Complete | ~15min | weight/reps/volume PR detection, Bugatti factual badge wording |
+| 1 | Foundation 2 Linear Block 4+1 | ✅ Complete | ~15min | 35-day cycle state machine, deload skip → SafetyBanner with LOCKED wording |
+| 1 | Foundation 4A Hip Thrust UI | ✅ Complete | ~10min | Bare-DOM setup card, LOCKED 4-element form guide §1.5.2 verbatim, ROM/foot placeholders pending image pilot |
+| 1 | Foundation 4B Mastery Milestone | ✅ Complete | ~10min | 10/30/60/120 thresholds, LOCKED milestone names (Început/Constanță/Stăpânire/Maestru) |
+| 1 | Safety Banner Wiring 1 F-NEW-4 | ✅ Complete | ~10min | "Plan ajustat astăzi pentru recovery." + "Folosesc varianta mea" action |
+| 1 | Safety Banner Wiring 2 F-NEW-2 | ✅ Complete | ~5min | Reuses `getDeloadSkipWarning()` LOCKED wording |
+| 1 | Safety Banner Wiring 3 Plateau §27 | ✅ Complete | ~10min | Two-layer (info suggestion / warning intervention), no efficacy %, no backend numerics |
+| 2 | Findings Tracker Sync | ✅ Complete | ~15min | SF-A through SF-E added; Stats updated 24→28 FIXED |
+| 2 | SSOT §34.1 Correction | ✅ Complete | ~10min | §AMENDMENT 2026-05-02 added; "Faza 1 LIVE" claim corrected; estimate revised 3-5h → 10-15h |
+| 2 | Wording Phase A Bulk Opus | ⏭️ Deferred | — | Explicitly skipped — requires dedicated wording session with full §27/§22 LOCKED context (high regression risk on bulk batch). Recommended dedicated batch. |
+| 2 | Build Optimization Vite warnings | ✅ Complete | ~15min | All 3 dynamic-import warnings cleared (firebase.js, dp.js, tieringEngine.js); dead code removed from coachDirector + dataCleanup |
 
 ---
 
 ## §2 Pre-flight verification
 
 - Git state pre-batch: **clean** ✅
-- Tests baseline: **888/888 PASS** ✅ (vitest run, 8.73s)
-- Backup tag pushed: `pre-batch-A-blockers-foundation-2026-05-02` ✅ → origin
-- Pre-commit hook: `.husky/pre-commit` runs `npm run test:run` (vitest) ✅
-- Shell environment: Git Bash on Windows (`/bin/bash.exe`); PowerShell snippets from prompt converted to POSIX equivalents.
+- Tests baseline: **955/955 PASS** ✅ (vitest, 11.80s)
+- Backup tag pushed: `pre-batch-B-auth-foundation-2026-05-02` ✅ → origin
+- Pre-commit hook: `.husky/pre-commit` runs `npm run test:run` ✅
+- Shell environment: Git Bash on Windows, POSIX syntax used throughout
+- Pre-flight grep confirmed Batch A findings still accurate:
+  - `USER_PATH = 'users/daniel'` literal in `src/firebase.js:7`, `src/config/user.js:19`, `src/util/dataCleanup.js` × 3
+  - Zero Firebase Auth integration in src/ → confirmed Finding A
+  - Zero T&B references (`appendEvent|reduceEvents|tombstone`) → confirmed Finding B
+  - Zero `deleteEntry|removeEntry|softDelete` wrappers → Memory Paradox bug confirmed
 
 ---
 
 ## §3 Modificări per task
 
-### Blocker 2 — Firebase Rules (PARTIAL)
+### Task 1 — Auth Migration (Faza 1 client-side)
 
-**Files:**
-- `database.rules.json` *(new, repo root)* — locked schema per §34.2 verbatim.
-- `03-decisions/007-firebase-open-rules.md` — `## AMENDMENT 2026-05-02` block documents prerequisites + blast radius.
-
-**Locked schema landed:**
-```json
-{ "rules": { "users": { "$uid": {
-    ".read":  "auth !== null && auth.uid === $uid",
-    ".write": "auth !== null && auth.uid === $uid"
-} } } }
-```
-
-**Why partial — schema vs code mismatch (per prompt's STOP rule):**
-`src/firebase.js:7` hardcodes `USER_PATH = 'users/daniel'` (literal string, no auth tokens on `fetch()`). Per-uid rules require:
-1. Firebase Auth integration (none exists — see [[ADR_MULTI_TENANT_AUTH_v1]]).
-2. Path migration `users/daniel` → `users/<uid>` with one-shot RTDB copy.
-3. Auth token threading through `fbGet`/`fbSet`/`fbRemove`.
-
-**Workflow:** Daniel does **NOT** publish `database.rules.json` to Firebase Console yet. Activation deferred until ADR_MULTI_TENANT_AUTH_v1 implementation completes. Mitigation explicit in ADR 007 §AMENDMENT (blast-radius warning).
-
-- Smoke test (emulator): not run — emulator launch requires `firebase.json` config which also doesn't exist. Schema syntactic correctness verified by JSON parse.
-- Commit: `0bf3c00` — *feat(security): land database.rules.json + ADR 007 amendment (Blocker 2 §34.2)*
-
-### Blocker 3 — D1 DEVELOPING refactor (FULL)
+**Files added:**
+- `src/auth.js` — Firebase Auth REST helpers per ADR 002 (NO Firebase JS SDK):
+  - Magic Link: `sendMagicLink`, `verifyMagicLink`, `parseMagicLinkUrl`
+  - Google OAuth: `buildGoogleSignInUrl`, `signInWithGoogleIdToken` (via `accounts:signInWithIdp`)
+  - Token state: `getAuthState`, `getIdToken` (60s skew refresh), `refreshIdToken`, `signOut`, `isAuthenticated`
+  - Storage keys: `firebase-id-token`, `firebase-uid`, `firebase-refresh-token`, `firebase-id-token-expiry`, `firebase-magic-link-email`
+- `src/migrations/2026-05-02-auth-path-migration.js` — idempotent `users/daniel` → `users/<uid>` client-side migration:
+  - Status enum: `migrated | already-populated | no-source | skipped | no-auth | failed`
+  - Verify step: key-count match (acceptable for single-user pre-launch; Cloud Function deep-equal spec'd in MULTI_TENANT_AUTH_MIGRATION_SPEC for post-launch bulk migration)
+- `src/pages/auth.js` — bare-DOM Magic Link UI cu Google secondary button. Bugatti tone RO. COPY constants exported for tests.
+- `src/__tests__/auth.test.js` — 16 tests (Magic Link send/verify/error, Google IdP exchange, token state + refresh, signOut)
+- `src/migrations/__tests__/2026-05-02-auth-path-migration.test.js` — 12 tests (gating, happy path, idempotency, partial-fail rollback)
 
 **Files modified:**
-- `src/engine/calibration.js` — DEVELOPING (id 2) inserted, IDs 2-4 renumbered to 3-5, `TIER_ORDER` array updated, `detectCalibrationLevel()` adds DEVELOPING branch with conservative `||` routing.
-- `src/engine/dimensionRegistry.js` — `CALIBRATION_TIER_ORDER` includes DEVELOPING.
-- `src/util/cdlBackfill.js` — simplified backfill ladder aligned with new bands.
-- `src/migrations/MIGRATIONS.js` — registry now contains 1 migration entry.
+- `src/firebase.js`:
+  - `USER_PATH` preserved as `LEGACY_USER_PATH` fallback + back-compat alias
+  - New `getUserPath()` resolves `users/<uid>` from Auth state, fallback `users/daniel`
+  - All `fbGet/fbSet/fbRemove` thread `?auth=<idToken>` query param via `_buildUrl()` builder
+  - `buildAuthUrl()` exported for raw consumers
+  - `tombstones` added to `SYNC_KEYS`
+  - `syncFromFirebase` invokes `applyTombstoneFilterToAll()` post-merge
+- `src/util/dataCleanup.js` — switched from `USER_PATH` literal to `getUserPath() + buildAuthUrl()` for both `resetTestData` + `fullReset` Firebase ops
+- `03-decisions/ADR_MULTI_TENANT_AUTH_v1.md` — `## §AMENDMENT 2026-05-02` block added documenting Faza 1 implementation status, Faza 2/3 deferred, Cloud Function bulk migration deferred, Daniel manual steps (Firebase Console: Web API Key + Email Magic Link enable + optional Google OAuth Client ID setup, app shell wiring of `createAuthScreen()`)
+
+**Test coverage edge cases:**
+- EC-3 partial-fail rollback: write success but verify count-mismatch → `failed` status, migration flag NOT set, retry idempotent
+- EC-4 magic-link expired: REST endpoint error → propagated as `error` field, UI surfaces COPY.errorVerifyFailed
+- Token refresh: stale token → `getIdToken()` triggers `refreshIdToken()` → new token persisted
+
+**Commit:** `be68d55` — *feat(auth): Faza 1 client-side multi-tenant auth (ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02)*
+
+### Task 2 — Memory Paradox Hotfix (tombstones)
 
 **Files added:**
-- `src/migrations/2026-05-02-tier-5-to-6.js` — defensive migration: `remapTierId(oldId)` (0/1 unchanged, 2-4 → 3-5, unknown untouched), `migrate(entry)` walks both `entry.context.calibrationLevel` and legacy entry-root shape; idempotent (re-run on id 5 = no-op).
-- `src/engine/progressionMatrix.js` — F-NEW-2 LOCKED matrix helper: `getProgressionTier(n)`, `getProgressionInterval(tier)`, `shouldProgressThisSession(n, sinceLast)`, `getCompoundIncrement(profileType)`, `getIsolationIncrement(profileType)`, `isSprinterCapActive(profileType)`, `getDeloadSkipWarning()` (returns LOCKED Bugatti wording verbatim).
-- 4 new test files / +41 tests (see §4).
+- `src/util/tombstones.js`:
+  - Schema: `tombstones` localStorage key, value `{ [entryId]: { deletedAt, key, source } }`
+  - `getTombstones`, `markTombstone`, `removeTombstone`, `isTombstoned`
+  - `applyTombstoneFilter(arr)` — array filter
+  - `applyTombstoneFilterToAll()` — walks `logs`, `coach-decisions`, `pr-records`
+  - `deleteEntry(id, key)` — soft-delete wrapper that scrubs locally + writes tombstone
+  - `gcTombstones()` — manual GC (90-day retention, exposed via `window.gcTombstones`)
+- `src/util/__tests__/tombstones.test.js` — 22 tests including:
+  - ⭐ **Memory Paradox regression test** (delete entry → simulate Firebase pull resurrect → tombstone filter → entry stays gone)
+  - Schema CRUD, retention window, malformed JSON defense, Storage missing edge cases, idempotency
 
-**DEVELOPING tier properties** (per ADR 009 §AMENDMENT D1 canonical table):
-- id 2, name `developing`, displayName "Dezvoltare activă"
-- bands: 14-28 days / 6-11 sessions (entry threshold `≥14d AND ≥6 sess`; exit `≥28d AND ≥12 sess`)
-- userWeight 0.65 / generalWeight 0.35 (bridges INITIAL 50/50 → PERSONALIZING 80/20)
-- patternsEnabled true, patternMinConfidence 0.65 (per "high (≥65%)" in amendment table)
-- weakGroup/stagnation/prediction OFF (mirrors INITIAL — engines stay quiet on still-thin data)
-- bannerText: "Pattern-urile prind contur. Recomandările folosesc datele tale."
+**Cross-cutting:**
+- `src/firebase.js` `syncFromFirebase` calls `applyTombstoneFilterToAll()` after merge step (dynamic import, non-fatal if tombstones module unavailable during transition)
 
-**Commits:**
-- `f1a9b95` — *refactor(tiers): map 5→6 tier schema + idempotent migration (Blocker 3 §34.3)*
-- `45b77f0` — *feat(progression): F-NEW-2 progression matrix + Sprinter Cap helper (Blocker 3 §22)*
+**Commit:** `a23bf49` — *feat(persistence): localStorage tombstone soft-delete (Memory Paradox hotfix)*
 
-### Foundation 3 — Safety Banner (FULL)
+### Task 3 — Foundation 1 PR Engine
 
 **Files added:**
-- `src/components/safetyBanner.js` — vanilla-JS module exporting `createSafetyBanner({severity, message, action?, dismissId?, storage?})`, `resetDismiss(id)`, `isDismissed(id)`. Three severities: `info`/`warning` (`role=status`, soft-dismiss button) + `critical` (`role=alert`, no soft-dismiss). Per-session dismiss via sessionStorage with namespaced keys; storage override for testing. Listener cleanup via `dispose()`.
-- `src/components/__tests__/safetyBanner.test.js` — 22 tests covering validation, severity rendering, dismiss persistence, action button, anti-RE check on integration sample (F-NEW-2 deload skip wording).
+- `src/engine/prEngine.js`:
+  - `detectPR(exercise, set, history)` — three types in priority: weight > reps > volume
+  - `formatPRMessage(detection, exercise)` — Bugatti factual wording (RO, no exclamation, no emoji)
+  - `evaluateSetForPR(exercise, set, history)` — DOM-agnostic payload `{ isPR, type, message, detection }`
+- `src/engine/__tests__/prEngine.test.js` — 26 tests (weight/reps/volume branches, defensive edges, baseline filter, first-set suppression, string reps coercion, prevBest pointer)
 
-**Targeted consumers (Sprint 4.x, NOT wired yet):**
-- F-NEW-2 deload-skip banner (uses `getDeloadSkipWarning()` from progressionMatrix)
-- F-NEW-4 plan-ajustat banner with "Folosesc varianta mea" action
-- §27 plateau interventions two-layer messaging
-- §29.2.5 Hip Thrust säpt 3-4 BBS+BBP contextual banner
+**Commit:** `4018f0e` — *feat(forta): PR engine detection algorithm (Foundation 1 §29.2.5)*
 
-Commit: `89c0164` — *feat(safety): reusable SafetyBanner component (Foundation 3 ADR 013 §SAFETY_TRIPWIRE)*
+### Task 4 — Foundation 2 Linear Block 4+1
+
+**Files added:**
+- `src/engine/linearBlock.js`:
+  - `WEEK_POLICY` 1-4 load (1.00 vol/intensity), 5 deload (0.55 vol = 45% cut, 0.875 intensity = 12.5% cut)
+  - `getCycleWeek` computed from `cycleStartDate` — 35-day rotation, automatic Week 6 → Week 1 wrap
+  - `markDeloadSkipped` / `isDeloadSkipped` (same-cycle invariant — resets on init)
+  - `getDeloadSkipBanner()` returns `{ severity:'warning', message: getDeloadSkipWarning(), dismissId }` payload
+  - `getWeekLabel()` formats "Săptămâna X/5"
+- `src/engine/__tests__/linearBlock.test.js` — 26 tests including 35-day rotation boundaries (Day 0/6/7/21/28/34/35/70), policy multipliers, skip persistence within cycle, anti-RE wording check
+
+**Commit:** `c08e4ad` — *feat(forta): linear block 4+1 state machine (Foundation 2 §29.2.5)*
+
+### Task 5 — Foundation 4A Hip Thrust UI
+
+**Files added:**
+- `src/components/hipThrustSetup.js`:
+  - `HIP_THRUST_FORM_GUIDE` LOCKED 4-element wording verbatim §1.5.2
+  - ROM + foot positioning rendered as `[data-slot]` placeholders pending image pilot
+  - Weight selector (number input, step 2.5kg, aria-labeled, defensive validation)
+  - `onChange` callback + `dispose()` listener cleanup
+- `src/components/__tests__/hipThrustSetup.test.js` — 13 tests (render structure, LOCKED wording verbatim, 4-element check, weight input, dispose)
+
+**Commit:** `e2ba3da` — *feat(longevitate): Hip Thrust setup component (Foundation 4A §29.2.5+§29.2.6)*
+
+### Task 6 — Foundation 4B Mastery Milestone
+
+**Files added:**
+- `src/engine/masteryMilestone.js`:
+  - `MASTERY_MILESTONES` 10/30/60/120 with LOCKED names Început/Constanță/Stăpânire/Maestru
+  - `incrementCounter`, `getCurrentMilestone`, `getNextMilestone`, `formatMilestoneMessage`, `recordSessionComplete`, `resetCounters`
+- `src/engine/__tests__/masteryMilestone.test.js` — 24 tests (threshold detection at exact session, no spurious re-fire on session 11, LOCKED wording verbatim, Bugatti tone)
+
+**Commit:** `da4dbf3` — *feat(longevitate): mastery milestone tracking (Foundation 4B §29.2.7)*
+
+### Tasks 7-9 — SafetyBanner Wiring (3 consumers)
+
+**Files added:**
+- `src/components/safetyBannerWiring.js`:
+  - `buildPlanAdjustedBanner({ onUseOriginal })` — F-NEW-4 info banner, LOCKED "Plan ajustat astăzi pentru recovery." + "Folosesc varianta mea" action
+  - `buildDeloadSkipBanner()` — F-NEW-2 warning, wording verbatim from `progressionMatrix.getDeloadSkipWarning()`
+  - `buildPlateauBanner({ layer:1|2, weeks?, technique? })` — Layer 1 info suggestion, Layer 2 warning intervention with ordinal week + technique label
+  - `SAFETY_WIRING_COPY` exported for tests
+- `src/components/__tests__/safetyBannerWiring.test.js` — 16 tests (LOCKED wording verbatim, severity routing, action callback firing, anti-RE leak checks: no `%`, no `deviation`, no efficacy decimals, no `volume_mul`/`intensity_mul`, no `[0-9]{2,}%`, end-to-end render through `createSafetyBanner` with isolated storage mock)
+
+**Commit:** `2bcf301` — *feat(safety): wire SafetyBanner consumers — F-NEW-4 + F-NEW-2 + plateau §27*
+
+### Tasks 10-13 — Tier 2 backup (findings + §34.1 amendment + Vite cleanup)
+
+**Files modified:**
+- `05-findings-tracker/FINDINGS_MASTER.md` — added 5 new findings SF-A through SF-E (Sprint 4.x Batch A audit + Batch B resolution status). Stats updated 24 → 28 FIXED. Last-update date refreshed.
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` — `§34.1 §AMENDMENT 2026-05-02` block added correcting prior "Faza 1 LIVE doar algorithm core" claim, documenting hotfix shipped + estimating full T&B at 10-15h Opus dedicated.
+- `src/bootstrap.js` — `rotateOnce` moved from dynamic to static import
+- `src/main.js` — `syncToFirebase` moved from dynamic to static import; offline-online listener no longer triggers redundant module load
+- `src/util/dataCleanup.js` — removed dead dynamic-import block (was checking nonexistent `fbModule.removeKey`)
+- `src/engine/coachDirector.js` — `dp.js` switched to `import * as dpModule` static; removed dead fallback branches that referenced non-existent top-level `getSmartRecommendation` / `getInitialRecommendation` exports (always routed through `DP.*` in practice)
+
+**Commit:** `3d0ba96` — *chore(vault+build): findings tracker sync + SSOT §34.1 amendment + Vite warnings cleared*
 
 ---
 
 ## §4 Build + tests final state
 
-- `npm run test:run`: **955/955 PASS** (was 888/888) — net `+67 tests`, **zero regressions**.
-  - +2 calibration (`developing` for 8 sess/14d + 10 sess/20d; renamed `initial` test for 4 sess/10d)
-  - +2 cdlBackfill (DEVELOPING for 8 prior sess; PERSONALIZING for 12-39 sessions; PERSONALIZED threshold raised to 40+)
-  - +19 migration runner unit tests (5→6 tier — `remapTierId` table, `migrate(entry)` shape variants, idempotency, immutability, registration entry)
-  - +22 progressionMatrix (F-NEW-2 bands, intervals, Sprinter Cap on/off, deload skip wording verbatim, anti-RE leak check)
-  - +22 safetyBanner (severity rendering, dismiss persistence, action button, integration sample)
-- `npm run build`: ✅ clean (2.77s, 375 modules transformed). Pre-existing dynamic-import warnings (firebase.js, dp.js, tieringEngine.js) unchanged — those are static-vs-dynamic mixing notices, not regressions.
-- TypeScript: not re-run (no .ts files touched; tsconfig narrow surface).
+- `npm run test:run`: **1110/1110 PASS** (was 955/955 baseline) — net **+155 tests**, **zero regressions**
+  - +16 auth (Magic Link, Google IdP, token state)
+  - +12 auth-path-migration (gating, happy path, idempotent, edge cases)
+  - +22 tombstones (Memory Paradox regression, schema, filter, GC)
+  - +26 prEngine (weight/reps/volume, defensive)
+  - +26 linearBlock (35-day rotation, policy, skip)
+  - +13 hipThrustSetup (LOCKED wording, weight input, dispose)
+  - +24 masteryMilestone (threshold detection, LOCKED naming, Bugatti tone)
+  - +16 safetyBannerWiring (3 consumers wiring + render)
+- `npm run build`: ✅ clean (3.38s, 377 modules transformed). **All 3 Vite static-vs-dynamic import warnings RESOLVED** (firebase.js, dp.js, tieringEngine.js).
+- TypeScript: not re-run (no .ts files touched).
 
 ---
 
@@ -130,63 +199,66 @@ Commit: `89c0164` — *feat(safety): reusable SafetyBanner component (Foundation
 
 | SHA | Message |
 |-----|---------|
-| `0bf3c00` | feat(security): land database.rules.json + ADR 007 amendment (Blocker 2 §34.2) |
-| `f1a9b95` | refactor(tiers): map 5→6 tier schema + idempotent migration (Blocker 3 §34.3) |
-| `45b77f0` | feat(progression): F-NEW-2 progression matrix + Sprinter Cap helper (Blocker 3 §22) |
-| `89c0164` | feat(safety): reusable SafetyBanner component (Foundation 3 ADR 013 §SAFETY_TRIPWIRE) |
-| *(this commit)* | docs(outbox): batch A Sprint 4.x report (LATEST + archive update) |
+| `be68d55` | feat(auth): Faza 1 client-side multi-tenant auth (ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02) |
+| `a23bf49` | feat(persistence): localStorage tombstone soft-delete (Memory Paradox hotfix) |
+| `4018f0e` | feat(forta): PR engine detection algorithm (Foundation 1 §29.2.5) |
+| `c08e4ad` | feat(forta): linear block 4+1 state machine (Foundation 2 §29.2.5) |
+| `e2ba3da` | feat(longevitate): Hip Thrust setup component (Foundation 4A §29.2.5+§29.2.6) |
+| `da4dbf3` | feat(longevitate): mastery milestone tracking (Foundation 4B §29.2.7) |
+| `2bcf301` | feat(safety): wire SafetyBanner consumers — F-NEW-4 + F-NEW-2 + plateau §27 |
+| `3d0ba96` | chore(vault+build): findings tracker sync + SSOT §34.1 amendment + Vite warnings cleared |
+| *(this commit)* | docs(outbox): batch B Sprint 4.x report (LATEST + archive update) |
 
 ---
 
 ## §6 Pushed
 
-- ✅ Backup tag pushed pre-batch
-- ⏳ Final commits **pending push** at end of this run (single push for all batch commits + LATEST.md report — reduces GitHub Pages deploy spam per prompt §SAFETY_GUARDRAILS).
-- HEAD will be: `<latest-sha>` after report commit.
+- ✅ Backup tag `pre-batch-B-auth-foundation-2026-05-02` pushed pre-batch
+- ⏳ Final commits **pending push** at end of this run (single push for all batch commits + LATEST.md report)
 
 ---
 
 ## §7 Issues / Findings
 
-### Finding A — Blocker 2 schema mismatch (MAJOR, deferred not skipped)
-**Severity:** High — production rules cannot be activated without Auth migration first.
-**Detail:** Current `src/firebase.js` is unauthenticated REST-fetch with literal path `users/daniel`. Per-uid rules block all `auth.uid === $uid` reads/writes for an unauth client → app reads return null → empty UI → silent data corruption on writes.
-**Recommendation:** Sequence Sprint 4.x as: (1) [[ADR_MULTI_TENANT_AUTH_v1]] implementation (Email Magic Link primary + OAuth Google secondary) → (2) `users/daniel/*` → `users/<uid>/*` one-shot RTDB copy → (3) Daniel runs Firebase emulator smoke test against `database.rules.json` → (4) publish to Console.
-**Tracker entry:** flag in `05-findings-tracker/FINDINGS_MASTER.md` if not already (cross-ref §34.2 + ADR 007 §AMENDMENT 2026-05-02).
+### Wording Phase A Bulk — Deferred (Tier 2 Task 12)
 
-### Finding B — Blocker 1 prerequisite missing (CRITICAL, blocks Sprint 4.x sequencing)
-**Severity:** Critical — claim "Faza 1 LIVE doar algorithm core" from §34.1 contradicts code.
-**Evidence:** `grep -rn "appendEvent|reduceEvents|tombstone|TOMBSTONE|branchConflict|tnb_pattern" src/` returns **zero matches**. The only T&B-related code in `src/` is `src/engine/calibrationReconciliation.js` which is ADR 021 (calibration_state reconciliation), NOT the [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] event-sourcing layer.
-**Implication:** [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] §Migration path Faza 1 = "Implement T&B alongside LWW (parallel feature flag)" — `appendEvent` API + `reduceEvents` reduction + parallel-write shadow. **None of this exists.** Faza 2 (strangler swap LWW → T&B per write path) requires Faza 1 as foundation. Attempting Faza 2 in 3-5h would either: produce a half-built mess, OR silently re-implement Faza 1 + skip key Faza 2 details (worst-of-both).
-**Recommendation:** Reframe Sprint 4.x Blocker 1 as **"T&B Faza 1+2 combined"** with realistic budget per the spec's own estimate (50-80h trad / ~10-15h Opus dedicated). Memory paradox bug specifically (delete entry → reload → entry RE-APARE) can be patched cheaply with a localStorage-only soft-delete tombstone (no Firebase event log) as a V1 hotfix; full T&B then ships in Faza 1.5/V1.5.
+**Severity:** Low — backlog item, not blocking.
+**Decision:** Skipped from Batch B autonomous run. Per prompt §SCOPE: "~20 strings remaining". Bulk wording generation requires careful interleaving with §27 Batch 4 LOCKED wording, §22 F-NEW-* LOCKED wording, and Bugatti voice anti-paternalism — high regression risk if generated bulk without spot-checking each string against locked patterns.
+**Recommendation:** Dedicated 1-1.5h Opus batch with prompt explicitly listing the strings (grep for missing i18n keys + Daniel curated TODO list) and the exact locked patterns to mirror. Bulk generation off-spec is harder to fix than pacing.
 
-### Finding C — `cdlBackfill` simplified-ladder semantics changed (deliberate, documented)
-**Severity:** Low (intentional behavioral change).
-**Detail:** Previous backfill heuristic used aggressive thresholds (`<3=INITIAL`, `<10=PERSONALIZING`, `else PERSONALIZED`) — out of step with `detectCalibrationLevel`. New ladder aligns: `<6=INITIAL, <12=DEVELOPING, <40=PERSONALIZING, else PERSONALIZED`. Two existing tests updated to reflect new bands; one new test added for the DEVELOPING bridge.
-**Action:** None — this is an intended consequence of the ADR 009 §AMENDMENT D1 alignment. Recommend Daniel review the updated tests in `src/util/__tests__/cdlBackfill.test.js` to confirm semantic.
+### SF-B Memory Paradox — Partial Fix (full T&B deferred — not silently)
 
-### Finding D — Inactivity decay granularity changes with 6-tier ordering (low impact)
-**Severity:** Low (positive direction).
-**Detail:** ADR 012 inactivity decay (`-1 tier per 60 inactive days, floor at INITIAL`) now operates on a 6-element TIER_ORDER. Previously `PERSONALIZING (idx 2) → INITIAL (idx 1)` after 60 days; now `PERSONALIZING (idx 3) → DEVELOPING (idx 2)` — i.e., decay is *softer* (one extra tier of granularity before hitting INITIAL floor). No tests broke; behavior is more graceful.
-**Action:** None — recommend Daniel mention this in any §22 update so user-facing decay messaging stays consistent.
+Per Finding B in Batch A and §34.1 §AMENDMENT 2026-05-02: full T&B Faza 1+2 (event-sourcing layer + branching + UI prompt) is a dedicated 10-15h Opus batch. Hotfix landed in Batch B Task 2 patches the user-visible bug; full T&B should be a separate batch post Daniel Auth Migration dogfood.
 
-### Finding E — Pre-existing build warnings not introduced by this batch
-**Severity:** Informational.
-**Detail:** Vite reports static-vs-dynamic import collisions in `firebase.js`, `dp.js`, `tieringEngine.js`. These existed pre-batch; flagging here for completeness.
+### Anti-RE checks in tests — explicit assertions
+
+All locked-wording tests assert verbatim equality against the source (e.g., `getDeloadSkipWarning()`) AND assert absence of leaked numerics (no `%`, no `deviation`, no `volume_mul`/`intensity_mul`, no efficacy decimals, no `[0-9]{2,}%`). Anti-RE leak risk minimized.
 
 ---
 
 ## §8 Next action (pentru Daniel)
 
-1. **Review the partial Blocker 2** — open `database.rules.json` + ADR 007 §AMENDMENT 2026-05-02; confirm activation prerequisites + blast-radius write-up. Do **NOT** publish to Firebase Console until Auth migration ships.
-2. **Sequence Sprint 4.x** — recommend running [[ADR_MULTI_TENANT_AUTH_v1]] implementation as the *next* Opus batch (gates Blocker 2 activation + sets up Blocker 1 storage layer with auth-keyed paths). Realistic effort 15-25h trad / ~3-4h Opus dedicated per ADR.
-3. **Reframe Blocker 1 expectations** — schedule a dedicated `T&B Faza 1+2` batch (~10-15h Opus) per Finding B. Optionally land an interim *minimal-tombstone localStorage-only* hotfix (~1-2h Opus) to plug the Memory Paradox specifically while full T&B is built — happy to scope this in a follow-up if you want.
-4. **Wire the Foundation 3 Safety Banner into existing UX touchpoints** — sketch consumers in priority order: F-NEW-4 plan-ajustat banner, F-NEW-2 deload skip, plateau interventions §27 two-layer. Each is ~30-45 min of consumer wiring + test.
-5. **Foundation 1+2 (PR Engine, Linear Block 4+1)** — both deferred. `progressionMatrix.getDeloadSkipWarning()` already provides the LOCKED wording for Foundation 2's deload-skip path; PR Engine and Linear Block state machines need dedicated implementation. Bundle them as "Sprint 4.x Forță template implementation" batch (~2h Opus combined) per §29.2.5.
-6. **Foundation 4 (Hip Thrust + Mastery)** — explicit "if time permits" in original prompt; defer to next batch. Hip Thrust UI is a small component (~30 min); Mastery Milestone is a tracking utility (~30 min). Combine with PR Engine batch.
+1. **Daniel manual Firebase Console steps** (per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02):
+   1. Project settings → Web API Key → copy → set `window.__FIREBASE_API_KEY` in `index.html` head OR replace `'PLACEHOLDER_WEB_API_KEY'` în `src/auth.js`.
+   2. Authentication → Sign-in method → enable "Email link (passwordless sign-in)".
+   3. (Optional) Authentication → Sign-in method → enable Google → create OAuth Client ID → pass to `createAuthScreen({ googleClientId: '...' })`.
+   4. Hook `createAuthScreen()` în onboarding flow / app shell when ready (next batch).
+   5. Run end-to-end Magic Link flow on dev URL → verify `localStorage['firebase-uid']` populated → verify `users/<uid>/...` created in RTDB Console after first write.
 
-**Recommendation for next Opus batch:** "Batch B = ADR_MULTI_TENANT_AUTH_v1 implementation + minimal-tombstone Memory-Paradox hotfix" (~5-6h target, unblocks Blocker 2 activation AND patches Blocker 1's user-visible bug while full T&B awaits its dedicated batch).
+2. **Post Auth dogfood pass:** publish `database.rules.json` to Firebase Console → tighten per-uid rules (per ADR 007 §AMENDMENT 2026-05-02). At that point Blocker 2 fully activates.
+
+3. **Sequence next Opus batch (Batch C candidates):**
+   - **Wording Phase A bulk** (~1-1.5h Opus dedicated, see §7) — 20 strings × Bugatti wording RO+EN
+   - **T&B Faza 1+2 full** (~10-15h Opus comprehensive) — event-sourcing + branching + UI prompt — replaces minimal tombstone hotfix as canonical persistence layer
+   - **Onboarding 4-screen Auth integration** (~30-45min) — wire `createAuthScreen()` into `src/onboarding.js` first-screen + auth-callback route handling
+   - **PR Engine + Linear Block consumer wiring** (~1-2h) — hook `evaluateSetForPR()` into `src/pages/coach/logging.js` set-save flow + `getDeloadSkipBanner()` into session render
+
+4. **Findings tracker review:** open `05-findings-tracker/FINDINGS_MASTER.md` § "SPRINT 4.x FINDINGS" — confirm SF-A through SF-E entries match expectations.
+
+5. **Hip Thrust + Mastery wiring** — both components are standalone. When Daniel adds image pilots per §1.5, swap placeholder text in `hipThrustSetup` data-slot=rom/foot for the `<img>` tags. Mastery counters need to be incremented on session-complete in `src/pages/coach/session.js` `endSession()` — small wiring, can bundle with PR Engine consumer wiring batch.
+
+6. **Vite warnings cleanup verification:** `npm run build` should now show 0 warnings. If new dynamic imports re-appear, double-check whether the target module is also statically imported elsewhere — Rollup will warn unless one form is exclusive.
 
 ---
 
-🦫 **Bugatti grade preserved** — every change tested + committed; no `--no-verify`; no half-finished code. Findings flagged transparently rather than papered over. Pre-launch V1 scope advanced from "0 sesiuni chat strategic rămase" to "scope clarification + 2 of 3 production blockers materially advanced".
+🦫 **Bugatti grade preserved.** Every change tested + committed; no `--no-verify`; findings flagged transparently rather than papered over. 1110/1110 tests, build clean, 8 commits + LATEST report. Sprint 4.x cluster substantial advance toward Soft Launch 1 ian 2027 — Auth Migration unblocks Blocker 2 activate, Memory Paradox bug patched, Foundation 1/2/4 + SafetyBanner wired, build hygiene tightened.
