@@ -4315,9 +4315,9 @@ Pre-grupul invite, Daniel trimite pe WhatsApp/Email un screenshot tutorial cu 4 
 **Sprint 4.x Cluster UNBLOCKED:** Toate 5 ADR LOCKED → Sprint 4.x cluster scope complet.
 
 **3 NEW ADR drafts STILL deferred Sprint 4.x cluster batch creation:**
-- `ADR_COMPOSITE_SIGNAL_LAYER_v1.md` (NEW DRAFT) — §36.41 + §36.48 + §36.49
-- `ADR_PAIN_DISCOMFORT_BUTTON_v1.md` (NEW DRAFT) — §36.38
-- `ADR_SMART_ROUTING_EQUIPMENT_v1.md` (NEW DRAFT) — §36.36 + §36.37
+- `ADR_COMPOSITE_SIGNAL_LAYER_v1.md` (LOCKED V1 post BATCH_01 2026-05-02) — §36.41 + §36.48 + §36.49
+- `ADR_PAIN_DISCOMFORT_BUTTON_v1.md` (LOCKED V1 post BATCH_01 + EXT-1 DOMS hide 2026-05-02) — §36.38
+- `ADR_SMART_ROUTING_EQUIPMENT_v1.md` (LOCKED V1 post BATCH_01 2026-05-02) — §36.36 + §36.37
 
 **Cross-refs:** §36.42 ADR Review Process + 5 ADR drafts în `03-decisions/` + §34.4 Sprint 4.x cluster scope + §36.57 amendments aplicate.
 
@@ -4683,6 +4683,19 @@ Post ALIGNMENT_QUESTIONS Daniel responses — agenda revised:
 Sprint UI Integration consumă metadata audited din start (NO post-Beta blocking refactor needed). Detailed report `BATCH_05_AUDIT_DETAILS.md`.
 
 **Cumulative LOCKED count:** 60 → 60 (data audit, NU decizie nouă)
+
+### §36.67 CROSS-REFS AUDIT VAULT-WIDE 2026-05-02
+
+Vault-wide audit `.md` cross-references (ADR + §X.Y + file links + path refs):
+- **Total scanned:** ~50+ ADR refs + ~50+ §X.Y section refs + ~30+ path refs across **164 .md files**
+- **Auto-fixed:** 3 (HANDOVER_GLOBAL §36.36 active list — `(NEW DRAFT)` → `(LOCKED V1 post BATCH_01 2026-05-02)`)
+- **Preserved historical:** 2 locations (HANDOVER_GLOBAL line 4703 Sprint 4.x cluster execution session-lock entry + SPRINT_4X_FINAL_REPORT.md lines 355-357 BATCH_05 modificări) — audit trail per Bugatti paradigm
+- **Broken:** 0
+- **Manual review needed:** 0
+
+Anti-drift Bugatti paradigm. Prevent rediscovery effort future. Detailed report `BATCH_06_CROSS_REFS_AUDIT.md`.
+
+**Cumulative LOCKED count:** 60 → 60 (audit hygiene, NU decizie nouă)
 
 ---
 
