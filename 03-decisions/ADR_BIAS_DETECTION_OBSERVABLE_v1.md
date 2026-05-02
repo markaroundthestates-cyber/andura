@@ -1,7 +1,7 @@
 # ADR — Bias Detection Observable v1 (Volume Creep + Auto-pedeapsă)
 
-**Status:** **DRAFT — pending Daniel review**
-**Date:** 2026-05-02 (SUFLET ANDURA ingest)
+**Status:** ✅ **LOCKED V1** (2026-05-02 Chat D ADR Review Process EXECUTED per §36.56 — 0 amendments, clean LOCK)
+**Date:** 2026-05-02 (SUFLET ANDURA ingest → LOCKED V1 Chat D)
 **See also:** [[SUFLET_ANDURA]] §3 + HANDOVER_GLOBAL §36.18 + §36.19 + §36.20 + ADR Pattern 14 No-Inference + ADR 011 CDL + §22 F-NEW-4 Anti-RE banner
 
 ---

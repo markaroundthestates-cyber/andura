@@ -1,7 +1,7 @@
 # ADR — Mode Detection UI v1 (4 Moduri Pure Event Listeners)
 
-**Status:** **DRAFT — pending Daniel review**
-**Date:** 2026-05-02 (SUFLET ANDURA ingest)
+**Status:** ✅ **LOCKED V1** (2026-05-02 Chat D ADR Review Process EXECUTED per §36.56 + 3 amendments aplicate per §36.57)
+**Date:** 2026-05-02 (SUFLET ANDURA ingest → LOCKED V1 Chat D)
 **See also:** [[SUFLET_ANDURA]] §3 + HANDOVER_GLOBAL §36.17 + §22 F-NEW-4 Anti-RE banner + §29.5 UX Colateral + Sticky Swap Engine
 
 ---
@@ -120,6 +120,10 @@ DECLANȘARE = (rate_de_ce < 5%)
 
 **Rationale:** Marius IQ 139 NU tap "De ce?" + rapid pe sumar = ambiguous (2/3) → NU prompt. Filter strict protejează users inteligenți rapizi de mode shift greșit.
 
+**§AMENDMENT 2026-05-02 Chat D — Rolling Window Specification (per §36.57 Amendment 1):**
+
+Pragul de calcul pentru rata de apăsare pe butonul „De ce?" (`rate_de_ce < 5%`) NU se calculează pe tot istoricul utilizatorului, ci pe **un rolling window de exact ultimele 8 sesiuni consecutive finalizate**. Asigură consistența cu pattern-ul Composite Signal (§36.41 last 4 sessions cached). Elimină influența primelor săptămâni de utilizare.
+
 ### EXT-4: PROMPT_PROFILE_VALIDATION_PLACEHOLDER + Production Shipping Gate
 
 Placeholder logic LOCKED V1 în cod (Phase B mini-sesiune Daniel-validated pentru text final):
@@ -145,6 +149,10 @@ const PROMPT_PROFILE_VALIDATION_PLACEHOLDER = {
 - User confirmă [Da, schimbă] → engine re-config UI (ascunde explicații auto, simplifică ecrane progresie)
 - User refuză [Nu, păstrez] → counter reset, NU mai întreabă timp de **alte 24 sesiuni** (anti-friction nag)
 
+**§AMENDMENT 2026-05-02 Chat D — Cooldown Rationale 3 Cicluri Audit Explicit (per §36.57 Amendment 2):**
+
+Perioada de cooldown de 24 de sesiuni după refuzul utilizatorului de a schimba profilul este definită în mod explicit ca **3 cicluri complete de audit** (`3 × 8 sesiuni audit interval`). Motorul lasă să treacă exact 3 cicluri detecție înainte re-evaluare prompt drift. Eliminat senzație hărțuire user. NU magic number — derivat formal din §36.34 audit interval.
+
 ### EXT-6: User-Triggered Reset Fallback (§36.34)
 
 Buton manual "Resetează profil & recalibrează" în Setări → Profil & Date.
@@ -154,6 +162,12 @@ Buton manual "Resetează profil & recalibrează" în Setări → Profil & Date.
 **Se păstrează intacte (CRITICAL):** istoric forță + PR records + **streak counter §36.26 (PRESERVE)** + CDL session logs.
 
 **Re-init:** chestionarul T1+ simplificat (§36.22) + engine BASELINE state pentru următoarele 4 sesiuni (re-calibration phase).
+
+**§AMENDMENT 2026-05-02 Chat D — Cross-Ref vs Goal Shift Distinction (per §36.57 Amendment 3):**
+
+> *"Notă de contrast: În timp ce Resetarea Manuală a Profilului din Setări (EXT-6) păstrează streak counter-ul de 3 sesiuni intact (fiind o schimbare strict de UI/UX), Schimbarea Obiectivului de antrenament (Goal Shift - ADR_OUTLIER EXT-2) RESETEAZĂ obligatoriu streak counter-ul la 0, deoarece contextul fizic și intensitatea de lucru se modifică complet."*
+
+Cross-ref `03-decisions/ADR_OUTLIER_FILTER_v1.md` §EXTENSIONS EXT-2 + EXT-3 Profile Reset vs Goal Shift distinction.
 
 ---
 

@@ -1,7 +1,7 @@
 # ADR — Outlier Filter v1 (Profile-Aware + ASK Don't IGNORE)
 
-**Status:** **DRAFT — pending Daniel review**
-**Date:** 2026-05-02 (SUFLET ANDURA ingest)
+**Status:** ✅ **LOCKED V1** (2026-05-02 Chat D ADR Review Process EXECUTED per §36.56 + 1 amendment aplicat per §36.57)
+**Date:** 2026-05-02 (SUFLET ANDURA ingest → LOCKED V1 Chat D)
 **See also:** [[SUFLET_ANDURA]] §3 + HANDOVER_GLOBAL §36.24 + §36.26 + ADR Pattern 14 No-Inference + §29.2.5 Engine Forță
 
 ---
@@ -118,6 +118,22 @@ Schimbarea obiectivului (Estetică/Hipertrofie ↔ Forță/Performanță) = Even
 - Engine generează **interval larg** de adaptare (e.g. 52.5-57.5kg × 5 reps)
 - Mesaj UI Modul Curios: *"Estimat: 52.5 - 57.5 kg × 5 reps. Primele 2 sesiuni după schimbarea obiectivului reprezintă o fază de calibrare."* (Phase B wording placeholder pending)
 - Streak counter rules apply normal post-shift (3 consecutive same direction validates real baseline)
+
+**§AMENDMENT 2026-05-02 Chat D — PHASE_B_LOCK_REQUIRED Production Gate (per §36.57 Amendment 4):**
+
+Placeholder logic LOCKED V1 în cod (Phase B mini-sesiune Daniel-validated pentru text final):
+
+```javascript
+const GOAL_SHIFT_CALIBRATION_PLACEHOLDER = {
+  id: "goal_shift_calibration_notice",
+  text: "[PHASE_B_WORDING_PENDING — fallback: Estimat: X-Y kg x Z reps. Primele 2 sesiuni sunt de calibrare.]",
+  status: "PHASE_B_LOCK_REQUIRED — DO NOT SHIP TO PRODUCTION"
+};
+```
+
+**Production Shipping Gate (CI/CD pre-deploy):**
+
+> Strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match. Consistency cu pattern existent ADR_MODE_DETECTION EXT-4.
 
 ### EXT-3: User-Triggered Profile Reset — Streak Counter PRESERVE (§36.34)
 

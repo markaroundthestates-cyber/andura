@@ -1,7 +1,7 @@
 # ADR — RIR Matrix Adaptiv v1 (Profile + Exercise Category Aware)
 
-**Status:** **DRAFT — pending Daniel review**
-**Date:** 2026-05-02 (SUFLET ANDURA ingest)
+**Status:** ✅ **LOCKED V1** (2026-05-02 Chat D ADR Review Process EXECUTED per §36.56 — 0 amendments, clean LOCK; spec gap hybrid exercises = Sprint 4.x mecanic action item)
+**Date:** 2026-05-02 (SUFLET ANDURA ingest → LOCKED V1 Chat D)
 **See also:** [[SUFLET_ANDURA]] §3 + HANDOVER_GLOBAL §36.16 + ADR Pattern 14 No-Inference + §29.2.5 Engine Forță + §29.2.6 Longevitate
 
 ---

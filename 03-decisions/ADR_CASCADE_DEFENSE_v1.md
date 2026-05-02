@@ -1,7 +1,7 @@
 # ADR — Cascade Defense v1 (4 Layers Runtime Defense)
 
-**Status:** **DRAFT — pending Daniel review**
-**Date:** 2026-05-02 (SUFLET ANDURA ingest)
+**Status:** ✅ **LOCKED V1** (2026-05-02 Chat D ADR Review Process EXECUTED per §36.56 — 0 amendments, clean LOCK)
+**Date:** 2026-05-02 (SUFLET ANDURA ingest → LOCKED V1 Chat D)
 **See also:** [[SUFLET_ANDURA]] §3 + HANDOVER_GLOBAL §36.25 + ADR 020 Storage Tiering + ADR 011 CDL + §29.2.5 Engine Forță
 
 ---
