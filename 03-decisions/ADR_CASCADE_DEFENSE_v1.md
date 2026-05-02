@@ -100,3 +100,17 @@ Schema invalid (exercițiu ID inexistent / shape malformed) → throw + log + sa
 ---
 
 *Authored 2026-05-02 SUFLET ANDURA ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+
+---
+
+## §EXTENSION 2026-05-02 SELF-CORRECTION (post Self-Correction handover ingest)
+
+**Cross-ref:** Realtime Per-Set Silent Recalibration (§36.28) — Layer D Runtime Invariant Checks rulează pe fiecare "Set terminat" tap pentru recalibrare next set kg/reps.
+
+**Performance budget LOCKED V1:** Layer D checks ≤ **50ms** acceptable per tap. Peste threshold = revedere optimizare runtime invariant logic OR consider lazy invariant check (post-set, asincron) cu safe-default fallback între.
+
+**Realtime application scope:** check engine state delta între set N (just-finalized) + set N+1 (recalibrated kg/reps) — NU full session re-validation.
+
+---
+
+*EXTENSION added 2026-05-02 SELF-CORRECTION ingest.*

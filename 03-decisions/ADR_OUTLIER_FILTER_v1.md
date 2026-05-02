@@ -75,4 +75,56 @@ Outlier detected → prompt confirmation:
 
 ---
 
-*Authored 2026-05-02 SUFLET ANDURA ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+## §EXTENSIONS 2026-05-02 SELF-CORRECTION (post Self-Correction handover ingest)
+
+### EXT-1: Streak Counter Same Direction + Reset Clarification (§36.30)
+
+Baseline shift trigger = 3 sesiuni consecutive **în aceeași direcție** (only upward sau only downward), NU 3 oricum. Streak counter resetează la prima revenire la baseline normal.
+
+**Mecanică:**
+- Sesiunea 1: outlier upward (e.g. 55kg × 11 vs plan 50×10) → counter = 1/3 same direction
+- Sesiunea 2: revenire la baseline normal (50×10) → **counter RESET la 0**
+- Sesiunea 3: outlier upward din nou → counter = 1/3 (NOT 2/3)
+
+**Marius Bench Press validation shift baseline 50→52.5kg:**
+- Trebuie: Sesiunea 1 (55×11) + Sesiunea 2 (55×11) + Sesiunea 3 (55×11) la rând
+- Orice intermediate normal session = reset counter
+
+**Outlier prompt timing (§36.24 §AMENDMENT):** confirmation prompt apare **post-session-end ONLY** (la tap "Termină sesiunea"), NU mid-set. Mid-set prompt = friction major Executor mode.
+
+### EXT-2: Goal Shift Event Handler — Streak Reset + Conversion Interval (§36.35)
+
+Schimbarea obiectivului (Estetică/Hipertrofie ↔ Forță/Performanță) = Eveniment de Schimbare Explicită declanșat de user din Setări → Profil & Date. NU auto-detect silent.
+
+**Modificatori de Template:**
+
+| Parametru | Profil Estetică (Hipertrofie) | Profil Forță (Performanță) |
+|-----------|-------------------------------|----------------------------|
+| Rep Ranges (Tier 1) | 8-12 repetiții | 4-6 repetiții |
+| Intensitate (Load) | RIR 2 | RIR 1-0 |
+| Timp odihnă | 90-120 secunde | 180-300 secunde |
+
+**Conservare date fizice:**
+- Istoric forță = INTACT
+- PR records = INTACT
+- CDL session logs = INTACT
+- **Streak counter (per §36.26 + EXT-1) = RESET la 0** (context fizic schimbat = signal nou independent)
+
+**Conversia baseline — Starting Interval, NU single point:**
+
+**Anti-pattern (RESPINS):** single formula 1RM (Epley/Brzycki) → cifră fixă (e.g. 57.5kg × 5 reps).
+
+**Aliniat SUFLET F1 Triangulation:**
+- Engine generează **interval larg** de adaptare (e.g. 52.5-57.5kg × 5 reps)
+- Mesaj UI Modul Curios: *"Estimat: 52.5 - 57.5 kg × 5 reps. Primele 2 sesiuni după schimbarea obiectivului reprezintă o fază de calibrare."* (Phase B wording placeholder pending)
+- Streak counter rules apply normal post-shift (3 consecutive same direction validates real baseline)
+
+### EXT-3: User-Triggered Profile Reset — Streak Counter PRESERVE (§36.34)
+
+Distincție critical vs Goal Shift:
+- **Profile Reset** (§36.34): UI/UX shift only, fizicul intact → streak counter **PRESERVE** (Marius cu 2/3 spre baseline shift NU pierde progres real)
+- **Goal Shift** (§36.35): context fizic schimbat → streak counter **RESET la 0**
+
+---
+
+*Authored 2026-05-02 SUFLET ANDURA ingest. EXT-1 to EXT-3 added 2026-05-02 SELF-CORRECTION ingest. Status DRAFT — pending Daniel review pre-LOCK.*

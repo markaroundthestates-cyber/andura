@@ -71,3 +71,15 @@ V2 reconsider: matrix dedicat Profile Intermediate dacă user-base demands granu
 ---
 
 *Authored 2026-05-02 SUFLET ANDURA ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+
+---
+
+## §EXTENSION 2026-05-02 SELF-CORRECTION (post Self-Correction handover ingest)
+
+**Cross-ref:** Realtime Per-Set Silent Recalibration (§36.28 + ADR_MODE_DETECTION_UI_v1 §EXT-1) — RIR Matrix verbal feedback (Ușor/Potrivit/Foarte greu) → RIR numeric mapping triggers silent UI update on `kg`/`reps` next set card. Engine NU așteaptă end-of-session pentru re-mapping; per-set feedback drives realtime recalibrare.
+
+**Performance budget:** Layer D invariants ≤ 50ms per "Set terminat" tap.
+
+---
+
+*EXTENSION added 2026-05-02 SELF-CORRECTION ingest.*

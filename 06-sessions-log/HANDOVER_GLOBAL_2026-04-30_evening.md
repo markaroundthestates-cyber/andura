@@ -3330,6 +3330,8 @@ Lessons Batch A: raport conține findings dar findings tracker dedicat NU update
 
 **Wording locked:** Frustrat Tehnic + Validation-Seeking (mai sus). Frustrat Viață = §22 F-NEW-4 morning ingest.
 
+**§AMENDMENT 2026-05-02 SELF-CORRECTION:** Mid-session recalibrare valori next set = 100% silent UI update pe card, ZERO prompt/modal/animație. Engine adaptează tactic session curent fără a întrerupe flow Executor. Recalibrarea se aplică doar dimensiunilor active session curent (kg/reps next set). Outlier prompt §36.24 = post-session-end ONLY, NU mid-set. Detail spec: §36.28 Realtime Per-Set Silent Recalibration + §36.29 mid-session silent UI clarification.
+
 **Cross-refs:** §22 F-NEW-4 Anti-RE banner + §29.5 UX Colateral + Sticky Swap Engine §29.5 + `03-decisions/ADR_MODE_DETECTION_UI_v1.md` (DRAFT) + `01-vision/SUFLET_ANDURA.md` §3.
 
 ### 36.18 Bias Detection Observabilă V1 — Volume Creep LOCKED
@@ -3444,6 +3446,8 @@ Lessons Batch A: raport conține findings dar findings tracker dedicat NU update
 
 **Cross-refs:** ADR Pattern 14 No-Inference + §29.2.5 Engine Forță + Bayesian calibration logic + `03-decisions/ADR_OUTLIER_FILTER_v1.md` (DRAFT) + `01-vision/SUFLET_ANDURA.md` §3.
 
+**§AMENDMENT 2026-05-02 SELF-CORRECTION:** Outlier prompt confirmation se afișează **post-session-end ONLY** (la tap "Termină sesiunea"), NU mid-set. Mid-set prompt = friction major Executor mode. Engine înregistrează silent valorile în CDL pe parcursul sesiunii; prompt §36.24 wording standard ("Sesiunea de astăzi pare diferită...") apare doar la închidere session. Vezi §36.28 + §36.29 pentru mid-session silent UI update spec.
+
 ### 36.25 Cascade Defense 4 Layers LOCKED V1
 
 **Decizie:** Golden Master testing necesar dar NU suficient. Layered runtime defense.
@@ -3497,6 +3501,8 @@ Hard caps absolute exercise-specific:
 
 **Cross-refs:** §36.24 Outlier Filter + ADR Pattern 14 No-Inference + Bayesian update logic + `03-decisions/ADR_OUTLIER_FILTER_v1.md` (DRAFT).
 
+**§AMENDMENT 2026-05-02 SELF-CORRECTION:** Streak counter logic clarificat: 3 sesiuni consecutive same exercise = "neîntreruptă în aceeași direcție". Outlier upward la sesiunea 1 + normal la sesiunea 2 = streak reset la 0. Outlier upward la sesiunea 3 = counter restart la 1/3. Baseline shift requires 3 consecutive outlier sessions same exercise same direction. **Marius Bench Press validation shift baseline 50→52.5kg:** trebuie Sesiunea 1 (55×11) + Sesiunea 2 (55×11) + Sesiunea 3 (55×11) la rând; orice intermediate normal session = reset counter. Detail spec: §36.30 streak counter same direction + reset clarification + Marius example codified.
+
 ### 36.27 SUFLET_ANDURA SSOT new file (NEW 2026-05-02 SUFLET ANDURA ingest)
 
 **Decizie:** Crează SSOT new file `01-vision/SUFLET_ANDURA.md` ca filozofie permanentă referită la fiecare engine module nou.
@@ -3507,7 +3513,252 @@ Hard caps absolute exercise-specific:
 
 **Cross-ref obligatoriu:** TOATE engine modules ADR-uri V1+ trebuie să referențieze `01-vision/SUFLET_ANDURA.md` pentru filozofie de fundament.
 
-**Pending action Daniel:** upload `Procesul_de_gandire_complet.md` 12k cuvinte la `📥_inbox/` → next ingest CC Opus appendă integral conținut la SUFLET_ANDURA §4 "Filozofia Completă". Vezi `📤_outbox/DIFF_FLAGS.md` (P1 BLOCKER).
+**Pending action Daniel:** ~~upload `Procesul_de_gandire_complet.md` 12k cuvinte la `📥_inbox/`~~ — **RESOLVED 2026-05-02 ingest commit `82dfbe6`.** Source ingested integral cu heading-shift +1 nivel; SUFLET_ANDURA §4 "Filozofia Completă" COMPLETE; DIFF_FLAGS archived ca `_archive/2026-05/56_*_RESOLVED.md`.
+
+### 36.28 Realtime Per-Set Silent Recalibration LOCKED V1
+
+**Decizie:** Engine recalibrează plan post fiecare set finalizat în timp real. Update UI pe cardul next set 100% silent — ZERO prompt, modal sau animație care să întrerupă flow Executor mode.
+
+**Mecanică tehnică:**
+- User tap "Set terminat" cu reps/kg actual
+- Engine evaluează signal: matches plan / drop-off / spike
+- Engine updateaza valorile pe cartonașul next set INSTANT (`kg` și/sau `reps` schimbă pe ecran)
+- ZERO interruption — user vede direct noua recomandare pe ecran
+- Recalibrare scope = doar dimensiuni active session curent (next set kg/reps), NU re-rank ipoteze F7 (alea se rank la session start sau outlier major)
+
+**Exemplu Bench Press:**
+- Plan inițial: 4 seturi × 50kg × 10 reps
+- Set 1 + 2: 50×10 (normal) → engine confidence HIGH, baseline neschimbat
+- Set 3: drop la 8 reps → engine ajustează silent set 4 la 50kg×8 sau 47.5kg×10
+- User vede direct nouă recomandare pe card → execută
+
+**Performance budget:** Layer D invariants checks pe fiecare "Set terminat" tap **≤ 50ms acceptable**.
+
+**Cross-refs:** §36.17 mod Executor + §36.24 outlier filter + §36.25 Cascade Defense Layer D + `03-decisions/ADR_MODE_DETECTION_UI_v1.md` (DRAFT) + `03-decisions/ADR_RIR_MATRIX_ADAPTIVE_v1.md` (DRAFT — cross-ref realtime per-set).
+
+### 36.29 §36.17 Mid-Session Silent UI Update Clarification LOCKED V1
+
+**Decizie:** Formal codification că §36.17 mod Executor implică recalibrare silent. Adăugare ca §AMENDMENT inline în §36.17 (DEJA APLICATĂ post-acest ingest).
+
+**Wording amendment §36.17:**
+> Mid-session recalibrare valori next set = 100% silent UI update pe card, ZERO prompt/modal/animație. Engine adaptează tactic session curent fără a întrerupe flow Executor. Recalibrarea se aplică doar dimensiunilor active session curent (kg/reps next set). Outlier prompt §36.24 = post-session-end ONLY, NU mid-set.
+
+**Cross-refs:** §36.17 + §36.24 + `03-decisions/ADR_MODE_DETECTION_UI_v1.md` (DRAFT) + `03-decisions/ADR_OUTLIER_FILTER_v1.md` (DRAFT).
+
+### 36.30 §36.26 Streak Counter Same Direction + Reset Clarification LOCKED V1
+
+**Decizie:** Formal codification că §36.26 baseline shift trigger = 3 sesiuni consecutive **în aceeași direcție** (only upward sau only downward), NU 3 oricum. Streak counter resetează la prima revenire la baseline normal.
+
+**Mecanică:**
+- Sesiunea 1: outlier upward (e.g. 55kg × 11 vs plan 50×10) → counter = 1/3 same direction
+- Sesiunea 2: revenire la baseline normal (50×10) → **counter RESET la 0**
+- Sesiunea 3: outlier upward din nou → counter = 1/3 (NOT 2/3)
+- Pentru baseline shift: 3 sesiuni consecutive same direction NEÎNTRERUPTE
+
+**Exemplu Marius Bench Press shift baseline 50→52.5kg:**
+- Trebuie: Sesiunea 1 (55×11) + Sesiunea 2 (55×11) + Sesiunea 3 (55×11) la rând
+- Orice intermediate normal session = reset counter
+
+**Cross-refs:** §36.26 §AMENDMENT 2026-05-02 SELF-CORRECTION (DEJA APLICATĂ post-acest ingest) + §36.24 + `03-decisions/ADR_OUTLIER_FILTER_v1.md` (DRAFT — adăugare streak counter spec + Marius example codified).
+
+### 36.31 God Mode / Advanced Overrides RESPINS V1 LOCKED
+
+**Decizie:** Eliminate complet din scope V1 — feature "God Mode" cu user manual override pentru Volume Tolerance / Muscle Fiber Profile / Baseline Learning Speed.
+
+**Rationale:**
+- Încalcă SUFLET F6 No-Inference + ADR Pattern 14 (engine NU presupune cauze user-declared fără verificare empirică)
+- Self-assessment user notoriu wrong (Daniel zice "fast-twitch dominant" bazat pe ce? Test 1RM real sau perception?)
+- Maria 65 NU bifează "fast-twitch profile" — feature pentru power users only = scope creep beachhead
+- Gigel test fail — "Volume Tolerance" + "Muscle Fiber Profile" = jargon medical
+- Engine adaptă natural prin recalibrare per-set (§36.28) + 3-consecutive baseline shift (§36.26 + §36.30) — feedback loop already exists
+
+**Alternative path V1:** Daniel/Marius pot oricum schimba greutatea manual la execuție → engine adaptează natural via §36.28 silent recalibrare + §36.30 streak counter.
+
+**V2 Reconsider:** post-beta data dacă Power User tier cohort confirmă demand real.
+
+**Cross-refs:** `01-vision/SUFLET_ANDURA.md` §1.1 F6 No-Inference + ADR Pattern 14 + §36.21 T1+ Completion-Based + §36.22 T1+ Câmpuri Minim Gigel-Validated.
+
+### 36.32 Explainability Module — Lazy Generation On-Demand LOCKED V1
+
+**Decizie:** Adăugare modul Explainability "De ce?" pentru transparență decizională engine. Generare diagnostic string LAZY (on-demand la tap), NU în fundal pentru fiecare recomandare.
+
+**Mecanică:**
+- Card exercițiu cu buton secundar `[De ce?]`
+- User tap → engine rulează funcția de generare diagnostic ÎN MOMENTUL APĂSĂRII (`onClick`)
+- Engine citește: state curent + CDL recent + istoric baseline + applied rules
+- Output: text scurt explicativ ce arată matematica din spate
+
+**Exemplu output:**
+> **De ce facem 52.5 kg × 8-10 reps astăzi?**
+> - Ritmul tău de progresie: faza Intermediate
+> - Ultimul tău set sesiunea anterioară: 50 kg × 11 reps (validated success)
+> - 3/3 sesiuni consecutive progres upward → declanșat baseline shift
+> - Sanity bound +5% săpt aplicat (Intermediate phase)
+
+**Performance budget:**
+- ZERO latency la deschidere ecran antrenament (lazy = NU pre-generate)
+- Generare on-demand acceptable ≤ 100ms (citire CDL + state + format string)
+- Memory minim, battery Android conservator
+
+**Wording strings sensibile:** Phase B mini-sesiune Daniel-validated (NU bulk Sonnet auto-generate).
+
+**Cross-refs:** §36.17 mod Curios+Strategic + `03-decisions/ADR_MODE_DETECTION_UI_v1.md` (DRAFT — extends cu Explainability spec) + ADR Pattern 14 (engine reasoning transparent observable, NU inferred causes).
+
+### 36.33 Time-Constrained Routine Adaptive Per Profile LOCKED V1
+
+**Decizie:** Single time modifier feature, dar UI options adaptive per profile session length. ZERO biological state inference (NU "obosit", "dormit prost", "febră musculară" — pure time constraint factual).
+
+**Mecanică UI:**
+
+**A. Profil Marius / Strategic (Template-uri 60min):**
+- Buton `[25 min]` Extreme Crunch
+- Buton `[45 min]` Express Session
+
+**B. Profil Maria / Longevitate (Template-uri 30-40min):**
+- NU vede butoane 25/45 min (Gigel test fail — confuz pentru Maria 65)
+- Folosește fluxul nativ `[Skip exercițiu]` per card mișcare dacă criză timp
+
+**Algoritm Modul 25min Extreme Crunch (Marius):**
+1. Filtrare: elimină complet exercițiile marcate `Tier 2` (izolare/accesorii: flexii biceps, extensii triceps, ridicări laterale)
+2. Limitare volum Tier 1 compounds: dacă în program 4 seturi → reduce automat la max 2-3 seturi efort real
+3. Rezultat: 2-3 mișcări mari executate rapid, conservând stimulul neuromuscular principal în 25 min
+
+**Algoritm Modul 45min Express Session (Marius):**
+1. Conservare Tier 1 compounds: rămân intacte volume + intensitate
+2. Comprimare Tier 2: convertite automat în Supersets (A/B pairing) sau redus la 1 set efort maxim (RIR 0)
+3. Rezultat: tot volume programat bifat, salvare timp prin elimination timpilor morți între accesorii
+
+**Filozofie:**
+- ZERO presupuneri despre DE CE user se grăbește (aliniat ADR Pattern 14)
+- Pure utility tool — permite să nu sară peste antrenament total
+- Exercise library trebuie să aibă parametru `tier` per exercițiu (Tier 1 = compound bază, Tier 2 = accesoriu/izolare)
+
+**Schema impact exercise library:**
+- Add field `tier: number` (1 | 2) la fiecare exercițiu
+- Migration runner pentru exerciții existente (Daniel review categorization)
+
+**Cross-refs:** §36.20 Catastrofizare SCRAP V1 + ADR Pattern 14 No-Inference + §36.12 Library Extension HARD BLOCKER (necesită field `tier` adăugat la schema).
+
+### 36.34 Profile Validation Layer (Self-Correction Architectural) + User-Triggered Reset LOCKED V1
+
+**Decizie:** Engine detectează drift comportamental față de profile declarat după 8 sesiuni completion-based + propune mode shift cu user consent. Mecanism deterministic, ZERO LLM runtime. Plus User-Triggered Reset manual fallback.
+
+#### Trigger
+- Audit comportamental rulează automat la **8 sesiuni complete finalizate** post T1+ onboarding (aliniat §36.21 spirit completion-based, NU calendar)
+- Pentru frequency reală: Maria 3×/săpt → ~3 săpt; Marius 4-5×/săpt → ~2 săpt
+
+#### Calcul de Drift (Math-Only, NU LLM)
+
+Engine compară 3 metrici cheie de interacțiune cu așteptările profilului declarat:
+
+| Metrică observată | Așteptare Profil Strategic | Realitate user (exemplu drift) |
+|-------------------|----------------------------|--------------------------------|
+| Rata apăsare buton "De ce?" | ≥ 30% din exerciții | < 5% (a ignorat explicațiile) |
+| Timp pe ecran sumar | ≥ 45 secunde | < 15s consecutiv toate 8 sesiuni |
+| Selecție rep ranges | Testează mid/upper bounds | Mereu lower bound |
+
+#### Threshold Strict Anti-False-Positive (3/3 Simultaneous)
+
+Promptul de mode shift se declanșează **DOAR DACĂ toate 3 metrici sunt divergente simultan**, NU 1 sau 2 din 3.
+
+```
+DECLANȘARE = (rate_de_ce < 5%)
+            AND (timp_sumar < 15s în toate 8 sesiuni)
+            AND (selecție_lower_bound mereu)
+```
+
+**Rationale:** Marius IQ 139 NU tap "De ce?" = înțelege deja, NU înseamnă Executor. Marius rapid pe sumar = grabă, NU înseamnă Executor. 2 din 3 = ambiguous → NU prompt → trust preserved.
+
+#### Prompt UI (Phase B Wording Pending)
+
+Placeholder logic LOCKED V1 în cod (Phase B mini-sesiune Daniel-validated pentru text final):
+
+```javascript
+const PROMPT_PROFILE_VALIDATION_PLACEHOLDER = {
+  id: "prompt_profile_validation_mismatch",
+  text: "[PHASE_B_WORDING_PENDING — fallback: Tiparele tale arată un stil mai direct. Schimbi la Executor?]",
+  buttons: {
+    confirm: "Da, schimbă",
+    cancel: "Nu, păstrez [current_profile]"
+  },
+  status: "PHASE_B_LOCK_REQUIRED — DO NOT SHIP TO PRODUCTION"
+};
+```
+
+#### Production Shipping Gate
+
+**Pre-launch check OBLIGATORIU:**
+
+> Este strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match.
+
+#### Cooldown
+
+- User confirmă [Da, schimbă] → engine re-config UI (ascunde explicații auto, simplifică ecrane progresie)
+- User refuză [Nu, păstrez] → counter reset, NU mai întreabă timp de **alte 24 sesiuni** (anti-friction nag)
+
+#### User-Triggered Reset (Fallback Self-Correction)
+
+Buton manual "Resetează profil & recalibrează" în Setări → Profil & Date pentru users care simt că engine NU i-a citit corect din prima săpt.
+
+**Se șterg:**
+- Date interacțiune (rata "De ce?" tap, timp pe sumar, selecții rep ranges)
+- Istoric drift comportamental
+- Profile declarat anterior
+
+**Se păstrează intacte (CRITICAL):**
+- Istoric forță (greutăți, repetiții, PR records)
+- Streak counter §36.26 (3 consecutive same direction) — **PRESERVE** (UI/UX schimbare, fizicul intact)
+- CDL session logs
+
+**Re-init:**
+- Deschide chestionarul simplificat T1+ (3 câmpuri minim per §36.22)
+- Engine BASELINE state pentru următoarele 4 sesiuni (re-calibration phase)
+
+**Rationale:** Reset profile = strict UI/UX & personalization shift. NU afectează starea fizică reală. Marius cu streak 2/3 spre baseline shift NU pierde progres fizic real.
+
+**Cross-refs:** §36.17 mod detection (extends cu validation layer post-onboarding) + §36.21 T1+ Completion-Based + §36.22 T1+ Câmpuri Minim + §36.26 Streak Counter Preserve + §27 Phase B Wording Strategy + `03-decisions/ADR_MODE_DETECTION_UI_v1.md` (DRAFT — adăugare Profile Validation Layer spec).
+
+### 36.35 Goal Shift Event Handler LOCKED V1
+
+**Decizie:** Schimbarea obiectivului (Estetică/Hipertrofie ↔ Forță/Performanță) = Eveniment de Schimbare Explicită declanșat de user din Setări. NU auto-detect silent. Engine aplică Modificatori de Template + interval calibration phase.
+
+**Trigger:** User tap "Schimbă obiectiv" în Setări → Profil & Date
+
+**Modificatori de Template:**
+
+| Parametru | Profil Estetică (Hipertrofie) | Profil Forță (Performanță) |
+|-----------|-------------------------------|----------------------------|
+| Rep Ranges (Tier 1) | 8-12 repetiții | 4-6 repetiții |
+| Intensitate (Load) | RIR 2 | RIR 1-0 |
+| Timp odihnă | 90-120 secunde | 180-300 secunde |
+
+#### Mecanica de calcul
+
+**Conservare date fizice:**
+- Istoric forță = INTACT
+- PR records = INTACT
+- CDL session logs = INTACT
+- **Streak counter §36.26 = RESET la 0** (context fizic schimbat = signal nou independent)
+
+**Conversia baseline (Starting Interval, NU single point):**
+
+**Anti-pattern (RESPINS):** single formula 1RM (Epley/Brzycki) → cifră fixă (e.g. 57.5kg × 5 reps).
+
+**Aliniat SUFLET F1 Triangulation:**
+- Engine generează **interval larg** de adaptare (e.g. 52.5-57.5kg × 5 reps)
+- Mesaj UI Modul Curios: *"Estimat: 52.5 - 57.5 kg × 5 reps. Primele 2 sesiuni după schimbarea obiectivului reprezintă o fază de calibrare."*
+- §36.26 + §36.30 streak counter rules apply normal post-shift (3 consecutive same direction validates real baseline)
+
+**Re-generarea blocului curent:**
+La return ecran antrenament → user vede direct noile numere aplicate adaptate noului obiectiv.
+
+**Filozofie aliniată:**
+- Goal Shift = user explicit decision (autonomy 100%)
+- Conversion = STARTING POINT cu uncertainty interval, NU baseline LOCKED
+- Phase de calibrare 2 sesiuni = engine collects empirical data on actual user execution
+- Bayesian update post-calibration = baseline real
+
+**Cross-refs:** `01-vision/SUFLET_ANDURA.md` §1.1 F1 Triangulation + §36.26 Streak Counter (RESET on Goal Shift) + `03-decisions/ADR_OUTLIER_FILTER_v1.md` (DRAFT — extends cu Goal Shift event handler) + Phase B wording pentru mesaj Modul Curios.
 
 ---
 
@@ -3516,3 +3767,5 @@ Hard caps absolute exercise-specific:
 **Sesiune 2026-05-02 late evening LOCK (chat strategic Gemini cross-check 12 decizii LOCKED + Beta-launch ASAP strategy + Recovery halucinație handover chat anterior "Acasă"). 12 decizii LOCKED Gemini cross-check (TWA Google Play V1 / Android-only confirmed / Buget Legal Stage 1+2 + barter avocat / NPS Feedback UX / Indicator monocromatic theme-aware / Wording 4 elemente fix exerciții / §33.2 Storage Full 95% suprimare in-session / Pricing V2 amânat post-beta / Founding Members + Discord ELIMINATE V1 / Chalkboard V1.1 defer / Wording Phase A/B/C strategy / Exercise Library Extension HARD BLOCKER V1) + Beta-launch ASAP strategy LOCKED (NU 1 ian 2027 fix, beta prieteni/rude/network ~7-10 zile calendar ready, audit legal post-beta cu avocat prieten barter Pro lifetime, batches C-F + Legal + Rebrand + ADR 022 + Wording mixed). Lessons learned anti-halucinație: bandwidth self-reporting unreliable (~50% real vs raportat near saturation), shell detection pre-prompt obligatoriu, hard floor time run Opus instructed, SSOT claims verify pre-implementation, findings tracker mandatory în prompt CC. **Batch A + Batch B Sprint 4.x autonomous COMPLETE post chat:** Batch A 4 commits 888→955 tests + Batch B 9 commits 955→1110 tests +155 net (Auth Faza 1 + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring + Tier 2 findings sync + §34.1 amendment + Vite warnings cleared). Wall-clock total Batch A+B ~30-40 min Opus runtime. 1110/1110 unchanged. Bandwidth Daniel ~3-4h Daniel-time real saturation triggered preventiv anti-halucinație (chat anterior crash recovery). Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + 12 decizii LOCKED late evening + Beta-launch ASAP strategy + 0 sesiuni chat strategic rămase pre-launch. Next: Batch C scope decision (T&B Faza 1+2 full RECOMANDAT ~10-15h Opus / Library Extension + Imagini Pilot bottleneck Daniel review / Features V1 cluster) + chat nou strategic Beta-launch ASAP review + Daniel manual Firebase Console setup Auth dogfood + Founding Members + Discord references sweep §29.6.3 + §1.4 PRODUCT_STRATEGY_SPEC + ADR Q-0533 mark DEPRECATED.**
 
 **Sesiune 2026-05-02 SUFLET ANDURA LOCK (chat strategic ingest "Procesul de gândire complet" 12k cuvinte alt chat Claude cu Daniel — material filozofic permanent codificat în SalaFull/Andura engine — adaptat V1 PWA cu Maria/Gigica/Marius beachhead). 11 decizii LOCKED noi (RIR Matrix Adaptiv profile + exercise category aware / 4 Moduri UI Detection pure event listeners / Bias Detection Observabilă Volume Creep + Auto-pedeapsă / Catastrofizare SCRAP V1 defer V2 / T1+ Onboarding Completion-Based 4 sesiuni / T1+ Câmpuri Minim 3 Gigel-Validated / Android Eviction Sync Validation pre-close / Outlier Filter Profile-Aware ASK Don't IGNORE / Cascade Defense 4 Layers / Outlier Confirmed ≠ New Baseline) + ~12 push-back-uri productive Claude (Marius single RIR 0, Maria reps NU sets, Validation-seeking trigger fragil, Frustrat split tehnic vs viață, Catastrofizare scrap, Auto-pedeapsă wording paternalist, T1+ Gigel test, Risc 3 wrong context, Outlier ASK don't IGNORE, Confidence INTERNAL not user-facing, Sanity bounds dinamice, Outlier ≠ baseline). Decizii cumulative pre-launch V1 = 23 (12 Acasă chat anterior + 11 Suflet Andura). SUFLET_ANDURA SSOT new file `01-vision/SUFLET_ANDURA.md` create ca SKELETON cu translation map V1 (~75% replicabil + ~15% mai bine + ~10% irreplicable + ~30% V2+) + 11 LOCKED summary cross-ref + STUB pentru filozofie 12k cuvinte sursă pending Daniel upload `Procesul_de_gandire_complet.md` la inbox. P1 BLOCKER flag în DIFF_FLAGS.md: source document NU în inbox, partial ingest procedat — fabricarea 12k content INTERZISĂ per zero-info-loss principle. 5 ADR drafts generate `03-decisions/` status DRAFT pending Daniel review (RIR_MATRIX_ADAPTIVE / MODE_DETECTION_UI / BIAS_DETECTION_OBSERVABLE / OUTLIER_FILTER / CASCADE_DEFENSE). 8 amendments inline aplicate §22 F-NEW-4 + §29.2.5 Engine Forță + §29.2.6 Longevitate + §29.5 UX Colateral + §29.5.14 Onboarding + §33.2 Storage Full + §34.4 Sprint 4.x scope extended + §36.16-§36.27 NEW. ZERO sesiuni chat strategic rămase pre-launch V1 (re-confirmed). 1110/1110 unchanged (zero code touched, vault docs only). Bandwidth Daniel ~2-3h chat strategic Suflet Andura saturation ~20% triggered preventiv. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + 23 decizii LOCKED cumulative + Beta-launch ASAP strategy + Suflet Andura translation map V1 LOCKED + 5 ADR drafts pending Daniel review. Next: Batch C scope decision (Suflet Andura implementation cluster RECOMANDAT ~14-18h Opus comprehensive self-contained / T&B Faza 1+2 full alternativ / Library Extension alternativ) + Daniel upload `Procesul_de_gandire_complet.md` la inbox pentru completare SUFLET_ANDURA §4 Filozofia Completă + Daniel review 5 ADR drafts → LOCK or amend + Phase B mini-sesiune ad-hoc 30-45 min (33 strings remaining + 4 wording-uri Suflet Andura preview deja LOCKED) + Founding Members + Discord references sweep + Daniel manual Firebase Console setup Auth dogfood.**
+
+**Sesiune 2026-05-02 SELF-CORRECTION LOCK** (chat strategic post audit vault SSOT clean — verificare halucinație suspicion proces de gândire 12k cuvinte = NU halucinat, document factually coherent + structura 15 patterns + 10 funcții F1-F10 + 8 linguistic L1-L8 verbatim + math fizic corect + Daniel-isms verified). 8 decizii LOCKED noi (Realtime Per-Set Silent Recalibration §36.28 + §36.17 mid-session silent UI clarification §36.29 + §36.26 streak counter same direction + reset clarification §36.30 + God Mode RESPINS V1 §36.31 + Explainability Module Lazy Generation §36.32 + Time-Constrained Adaptive Per Profile §36.33 + Profile Validation Layer 8 sesiuni 3/3 simultaneous threshold + User-Triggered Reset §36.34 + Goal Shift Event Handler interval calibration phase §36.35) + 8 push-back-uri productive Claude integrate (mid-set vs post-session prompt timing, streak same direction reset, God Mode SUFLET breach detection, Lazy on-demand generation, Time-Constrained adaptive Maria vs Marius, 8 NU 12 sesiuni audit, 3/3 simultaneous NU 40% threshold, Goal Shift interval NU single 1RM formula). Decizii cumulative pre-launch V1 = **31** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION). 3 §AMENDMENT inline aplicate (§36.17 + §36.24 + §36.26). 5 ADR drafts updated (MODE_DETECTION extends Profile Validation + Explainability + silent UI; OUTLIER_FILTER extends streak counter + Goal Shift; RIR_MATRIX cross-ref realtime per-set; CASCADE_DEFENSE cross-ref Layer D budget ≤50ms; BIAS_DETECTION untouched). Schema impact future Sprint 4.x: exercise library `tier` field + Setări 2 butoane noi (Schimbă obiectiv / Resetează profil) + build script production gate `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING`. ZERO sesiuni chat strategic rămase pre-launch V1 (re-confirmed 3rd time). 1110/1110 unchanged (vault docs only). Bandwidth Daniel ~30% triggered handover preventiv. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + **31 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map V1 LOCKED + filozofia 12k cuvinte INGESTED + Self-Correction Architecture LOCKED + 5 ADR drafts pending Daniel review pre-LOCK. Next: Batch C scope decision (Suflet Andura + Self-Correction Implementation Cluster RECOMANDAT ~16-22h Opus comprehensive — extinde anterior 14-18h cu §36.28-§36.35 Self-Correction architecture / T&B Faza 1+2 alternativ / Library Extension alternativ) + Daniel review 5 ADR drafts → LOCK or amend (BLOCKER pe implementation cluster) + Phase B mini-sesiune ad-hoc (~33 strings remaining + 4 wording-uri Suflet preview + 1 wording NEW PROMPT_PROFILE_VALIDATION_PLACEHOLDER §36.34 + 1 wording NEW Goal Shift mesaj Modul Curios §36.35) + Founding Members + Discord references sweep + Daniel manual Firebase Console setup Auth dogfood.**
