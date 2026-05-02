@@ -1,22 +1,17 @@
-# ALIGNMENT VERIFICATION QUESTIONS — Force-Read Vault + Score Output
+# ALIGNMENT VERIFICATION QUESTIONS — Pre Rebrand Sweep + Re-spec Sprint UI
 
-**Generat:** 2026-05-03 — replacement file per Daniel directive ("undeva s-a pierdut informația")
-**Scope:** 10 Q-uri verification-driven (NU design) — chat-ul NEW Claude TREBUIE să citească real vault files și să raporteze evidence cu citate, NU să creadă pe încredere acest document
+**Generat:** 2026-05-03 post handover ingest §36.76 + §36.77
+**Scope:** 10 Q-uri verification-driven pentru chat strategic NEW (Project Andura) — TREBUIE să citească vault real + raporteze evidence cu citate verbatim
+**Cumulative LOCKED state target:** **70** (post §36.76 6 UX LOCKED V1 + §36.77 slip log)
 **Output mandatory:** ALIGNMENT_SCORE final 0-10 cu discrepancies list
 
 ---
 
 ## ⚠️ MANDATORY READ FIRST — REGULI EXECUȚIE ⚠️
 
-**1. NU citi DOAR acest document.** Acest doc = lista de verificat, NU sursa adevărului. Sursa adevărului = `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` + `VAULT_RULES.md` + `03-decisions/ADR_*.md` + `📤_outbox/LATEST.md`.
+**1. NU citi DOAR acest document.** Sursa adevărului = `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` + `VAULT_RULES.md` + `03-decisions/ADR_*.md` + `📤_outbox/LATEST.md` + `📤_outbox/_archive/2026-05/BATCH_UI_01_REPORT.md`.
 
-**2. Pentru FIECARE Q de mai jos, EXECUTĂ:**
-   - Caută real fișierele indicate (Read / grep / list)
-   - Citează **1-2 propoziții verbatim** ca dovadă (NU paraphrase, NU memory)
-   - Score per Q: `PASS` / `PARTIAL` / `FAIL`
-   - Dacă NU găsești evidence: `FAIL` cu rationale "fișier inexistent" sau "section missing"
-
-**3. Format răspuns OBLIGATORIU per Q:**
+**2. Format răspuns OBLIGATORIU per Q:**
 ```
 [Q[N]/10] [PASS|PARTIAL|FAIL]
 Files searched: [path1, path2]
@@ -24,46 +19,94 @@ Evidence: "<citat verbatim 1-2 propoziții>"
 Match: [confirmed / discrepancy: <detail>]
 ```
 
-**4. La final RAPORT AGGREGATE OBLIGATORIU:**
+**3. La final RAPORT AGGREGATE OBLIGATORIU:**
 ```
 ALIGNMENT_SCORE: X/10
-Verdict: [PROCEED Sprint UI design / RE-SYNC needed first]
+Verdict: [PROCEED rebrand sweep / RE-SYNC needed first]
 Discrepancies (if any):
 - [Q[N]: <detail>]
 Recommended action: [<one-line>]
 ```
 
-**5. NU aproxima scor. NU "depinde". Dacă <8/10 → RE-SYNC mandatory înainte continuare.**
+**4. NU aproxima scor. NU "depinde". Dacă <8/10 → RE-SYNC mandatory înainte continuare.**
+
+**5. Chat strategic NEW deschis în Project Claude = "Andura"** (rebrand cross-platform consolidation). Path actual repo = `salafull/` până post-sweep §30.
 
 ---
 
-## §1 — CUMULATIVE STATE VERIFICATION (Q1-Q4)
+## §1 — STATE CUMULATIV (Q1-Q3)
 
-### [Q1/10] Cumulative LOCKED count = 64?
+### [Q1/10] Cumulative LOCKED count = 70?
 
 **Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md`
 **Verifică:**
-- Numără secțiunile `### §36.\d+` care există în file
-- Cea mai recentă session-lock entry (EOF) menționează "64 decizii LOCKED cumulative"
-- Confirm count breakdown: 12 + 11 + 8 + 14 + 8 + 1 + 2 + 4 cluster + §36.71 + §36.72 + §36.73 + §36.74 + §36.75 = 64
+- Cea mai recentă session-lock entry (EOF) menționează "70 decizii LOCKED cumulative"
+- Breakdown: 12 + 11 + 8 + 14 + 8 + 1 + 2 + 4 cluster + §36.71 + §36.72 + §36.73 + §36.74 + §36.75 + §36.76 = 70
 
-**Citează:** linia exactă cu "64 decizii LOCKED cumulative" sau echivalent.
-
----
-
-### [Q2/10] Ultimele 3 decizii LOCKED V1 = §36.73 + §36.74 + §36.75?
-
-**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md`
-**Verifică existența și conținutul:**
-- §36.73 = ALIGNMENT_QUESTIONS Q-Set NEW Resolution (Q3 + Q11 + Q14 + Q15 closed)
-- §36.74 = BATCH_PROTOCOL Extension — Default Batches + Single Output Report
-- §36.75 = Daniel Solo Gate Technical Execution Live (Firebase done)
-
-**Citează:** prima propoziție din fiecare §36.73, §36.74, §36.75.
+**Citează:** linia exactă "70 decizii LOCKED cumulative" + breakdown specific (cu §36.76 included).
 
 ---
 
-### [Q3/10] 8 ADR drafts ALL LOCKED V1, 0 DRAFT pending?
+### [Q2/10] §36.76 conține 6 decizii UX LOCKED V1 cu opțiunile A/B/C/etc. corecte?
+
+**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.76
+**Verifică table cu 6 Q-uri:**
+- Q4 DOMS expand pattern = **A** (Link "Mai multe opțiuni ▼" inline expand, state NU persistă)
+- Q5 Founding cap counter = **C** (HIDDEN TOTAL UI, atomic counter Firebase backend)
+- Q6 3 Card buttons grouping = **B** (Split 2+1 Equipment row + Body row)
+- Q7 Goal Shift card position = **C** (Settings menu only, scos din Dashboard)
+- Q8 Telegram CTA placement = **B revizuit** (Onboarding 1× + Settings → Comunitate)
+- Q-PROMPT Profile Validation = **C** (card persistent Dashboard)
+
+**Citează:** wording LOCKED Q8 onboarding text exact (cu "Vrei să testezi alături de noi?").
+
+---
+
+### [Q3/10] §36.77 Slip Log + anti-recurrence rule prezent?
+
+**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.77
+**Verifică:**
+- Status: Cluster Sprint UI 7-batch ABORTED pre-flight BATCH_UI_01
+- Slip identification: Claude chat strategic React/JSX assumption peste vanilla JS ADR 005
+- Anti-recurrence rule: pre-flight `project_knowledge_search` ADR framework ÎNAINTE primul artefact tehnic
+- Cumulative impact: 0 (lessons learned, NU decision)
+
+**Citează:** propoziția cu "anti-recurrence rule" sau "OBLIGATORIU pre-flight".
+
+---
+
+## §2 — REBRAND PRIORITY 1 (Q4-Q5)
+
+### [Q4/10] §30 Rebrand SalaFull → Andura status = PENDING (Priority 1 ABSOLUT)?
+
+**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §30 + EOF session-lock entry 2026-05-03
+**Verifică:**
+- §30 LOCKED 2026-05-01 RESUBMIT existent
+- Sweep PENDING ÎNCĂ neexecutat
+- Daniel decizie acest chat: PRIORITAR ÎNAINTE re-spec Sprint UI
+- Project Claude = "Andura" cross-platform consolidation confirmed
+
+**Citează:** propoziția cu "Priority 1 ABSOLUT" sau "Rebrand sweep §30 PENDING".
+
+---
+
+### [Q5/10] Sprint UI cluster status = ABORTED pre-flight cu Recovery Path A vanilla JS?
+
+**Caută:** `📤_outbox/_archive/2026-05/BATCH_UI_01_REPORT.md` SAU `📤_outbox/_archive/2026-05/94_LATEST_PREVIOUS_SPRINT_UI_CLUSTER_ABORTED.md`
+**Verifică:**
+- Status: 🛑 STOP — Cluster ABORTED at pre-flight
+- Reason: React/JSX assumed, vanilla JS reality (ADR 005)
+- Foundation engines confirmed compatible (suflet-andura, smart-routing, pain-button etc.)
+- Recovery Path A recommended: vanilla JS pattern matching `safetyBanner.js` factory function
+- 7 prompts STILL în `📥_inbox/` (NOT archived) pentru re-spec
+
+**Citează:** propoziția cu "Recovery Path A" SAU "factory function" din BATCH_UI_01_REPORT.
+
+---
+
+## §3 — VAULT FOUNDATION + ADRs (Q6-Q7)
+
+### [Q6/10] 8 ADR drafts ALL LOCKED V1, 0 DRAFT pending?
 
 **Caută:** `03-decisions/ADR_*.md` (8 fișiere expected)
 **Verifică status header din fiecare:**
@@ -73,118 +116,78 @@ Recommended action: [<one-line>]
 4. ADR_OUTLIER_FILTER_v1
 5. ADR_CASCADE_DEFENSE_v1
 6. ADR_COMPOSITE_SIGNAL_LAYER_v1
-7. ADR_PAIN_DISCOMFORT_BUTTON_v1 (cu EXT-1)
+7. ADR_PAIN_DISCOMFORT_BUTTON_v1 (cu EXT-1 DOMS hide)
 8. ADR_SMART_ROUTING_EQUIPMENT_v1
 
-**Toate header `**Status:** LOCKED V1`?** Citează status-ul din 2-3 ADRs (random sample) verbatim.
+**Toate header `**Status:** LOCKED V1`?** Citează status verbatim din 2-3 ADRs (random sample).
 
 ---
 
-### [Q4/10] §BATCH_PROTOCOL.X codificat în VAULT_RULES.md?
+### [Q7/10] §BATCH_PROTOCOL.X codificat în VAULT_RULES.md cu rule "1 LATEST.md final"?
 
-**Caută:** `VAULT_RULES.md` (root, NU în `00-meta/`)
-**Verifică existența secțiunii:**
-- `### §BATCH_PROTOCOL.X — Default Batches + Single Centralized Report (LOCKED V1 §36.74)`
-- Conține regulile: N artefacte distincte + Daniel drag-drop + comandă unică CC Opus + 1 LATEST.md final centralizat
+**Caută:** `VAULT_RULES.md` (root, NOT în `00-meta/`)
+**Verifică:**
+- Section `### §BATCH_PROTOCOL.X — Default Batches + Single Centralized Report (LOCKED V1 §36.74)` existent
+- Conține regulile: N artefacte distincte + Daniel drag-drop + comandă unică + 1 LATEST.md final centralizat
+- Cross-ref §36.74 prezent
 
 **Citează:** prima propoziție a regulii MANDATORY default + cross-ref §36.74.
 
 ---
 
-## §2 — DANIEL SOLO GATE + FIREBASE LIVE (Q5-Q6)
+## §4 — TESTS + BUILD BASELINES (Q8-Q9)
 
-### [Q5/10] §36.75 listează 9 items completate Firebase Daniel solo?
+### [Q8/10] Tests baseline = 1203 PASS / 75 files (unchanged post acest ingest)?
+
+**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` EOF session-lock entry 2026-05-03 + §36.71
+**Verifică:**
+- Tests count = 1203 PASS
+- Test files = 75
+- Coverage = 60.33% lines / 78.38% branches
+- Build = 4.026s / 921 KB / 283 KB gzipped
+
+**Citează:** linia cu "1203 PASS" sau "1203/1203 unchanged".
+
+---
+
+### [Q9/10] Daniel solo gate technical Firebase 100% COMPLETE per §36.75?
 
 **Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.75
 **Verifică table cu items DONE:**
-- Firebase Auth Email/Password + Magic Link
+- Firebase Auth Email/Password + Magic Link enabled
 - Firebase Auth Google OAuth (project "Andura")
-- Region europe-west1
 - User Auth UID Daniel `2GsDvxqXc4bvQGSm8B1Zft5S05i2`
-- Backup RTDB local 49KB
-- Data import `users/{UID}`
 - DB rules per-UID strict published
-- Smoke test prod 401 Unauthorized
-- (post manual cleanup) `users/daniel` legacy delete
+- Smoke test prod 401 Unauthorized confirmed
 
 **Citează:** UID Daniel exact + status smoke test prod.
 
 ---
 
-### [Q6/10] Sprint UI gate technical = CLEAR confirmed?
+## §5 — NEXT STEPS (Q10)
 
-**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.75 final paragraphs SAU EOF session-lock entry "evening late HANDOVER INGEST"
-**Verifică:**
-- Phrase exact "Sprint UI gate status: CLEAR" sau echivalent
-- §36.72 Sprint UI Sequencing LOCKED V1 cross-ref intact
-- Items deferred to launch oficial NU pre-Beta (GDPR tutorial + Avocat outreach)
+### [Q10/10] Next chat priority order = Rebrand → Re-spec → Cluster execution → Smoke → Beta?
 
-**Citează:** propoziția cu "Sprint UI gate" + "CLEAR".
+**Caută:** `📤_outbox/LATEST.md` (root outbox curent post acest ingest) §6 SAU EOF session-lock entry 2026-05-03 "Next:"
+**Verifică ordine prioritară:**
+1. Rebrand sweep §30 (~5h CC Opus dedicat)
+2. Re-spec 7 BATCH_UI_NN vanilla JS pattern (~30-45 min strategic + ~2-3h CC actual)
+3. Smoke tests prod gates B/C/D
+4. Beta cohorts 3-tier 50 users §36.47 + §36.53 Telegram
+5. Beta sept-dec 2026 → audit legal dec 2026 → Soft Launch 1 ian 2027
 
----
-
-## §3 — TEST + BUILD BASELINES (Q7-Q8)
-
-### [Q7/10] Tests baseline = 1203 PASS / 75 files?
-
-**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.71 sau §36.68
-**Verifică:**
-- Tests count = 1203 PASS
-- Test files = 75
-- Coverage = 60.33% lines / 78.38% branches
-
-**Citează:** linia cu "1203 PASS" + linia cu coverage %.
+**Citează:** "Priority 1 ABSOLUT Rebrand sweep" + "Priority 2 Re-spec 7 BATCH_UI_NN".
 
 ---
 
-### [Q8/10] Build baseline = 4.026s / 921 KB / 283 KB gzipped?
-
-**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.70
-**Verifică:**
-- Build time: 4.026s wall-clock
-- Total dist/: 921 KB raw
-- Cold-start gzipped: ~283 KB
-- 3G estimate: ~3.0s
-
-**Citează:** linia cu "4.026s" + linia cu "921 KB".
-
----
-
-## §4 — PROCESS + PLAN (Q9-Q10)
-
-### [Q9/10] §BATCH_PROTOCOL pattern validated 3x empirical?
-
-**Caută:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` EOF session-lock entries (cele mai recente 2)
-**Verifică confirmare empirical 3x factor 5-7x optimism Opus:**
-- Sprint 4.x cluster pilot: ~70min actual vs 6-8h estimate
-- Cluster 10-batch: ~70min actual vs 6-8h estimate
-- Single batch §36.73-75: ~10min actual vs 30-45min estimate
-
-**Citează:** propoziția cu "factor 5-7x" sau "3x" CONFIRMED.
-
----
-
-### [Q10/10] LATEST.md raport curent = Firebase done + Sprint UI ready?
-
-**Caută:** `📤_outbox/LATEST.md` (root outbox, NOT archive)
-**Verifică:**
-- Title menționează Firebase Daniel solo gate complete + Sprint UI ready
-- Status snapshot ZERO decizii noi LOCKED, cumulative 64 unchanged
-- Plan §4 listează 5-7 BATCH_UI_NN expected
-- §6 next steps prioritized cu strategic chat NEW Sprint UI design
-
-**Citează:** title-ul + cumulative count + numărul de BATCH_UI expected.
-
----
-
-## §5 — RAPORT FINAL OBLIGATORIU
+## §6 — RAPORT FINAL OBLIGATORIU
 
 **După ce ai răspuns la toate 10 Q-uri, generează:**
 
 ```markdown
 ## ALIGNMENT VERIFICATION REPORT
 
-**Date:** 2026-05-03 (sau data execuție)
+**Date:** 2026-05-03
 **Files searched (cumulative across Q1-Q10):**
 - [list paths]
 
@@ -193,7 +196,6 @@ Recommended action: [<one-line>]
 | Q | Status | Discrepancy |
 |---|--------|-------------|
 | Q1 | PASS/PARTIAL/FAIL | <if any> |
-| Q2 | ... | ... |
 | ... | ... | ... |
 | Q10 | ... | ... |
 
@@ -205,28 +207,29 @@ Recommended action: [<one-line>]
 - [list]
 
 **Verdict:**
-- 10/10 → ✅ PROCEED Sprint UI design directly
-- 8-9/10 → ⚠️ Note discrepancies + ask Daniel pentru clarification înainte Sprint UI batches
-- <8/10 → 🔴 RE-SYNC mandatory: stop Sprint UI work, request Daniel re-handover sau vault audit
+- 10/10 → ✅ PROCEED Rebrand sweep §30 (generate prompt CC REBRAND_SWEEP)
+- 8-9/10 → ⚠️ Note discrepancies + ask Daniel pentru clarification înainte rebrand
+- <8/10 → 🔴 RE-SYNC mandatory: stop work, request Daniel re-handover sau vault audit
 
 **Recommended next action:** <one-line>
 ```
 
 ---
 
-## §6 — DE CE ACEST FORMAT (rationale anti-halucinație)
+## §7 — Q-URI ADRESATE (Sprint UI 6 UX deja LOCKED — NU mai apar)
 
-Daniel feedback "rateuri la aliniere" + "undeva s-a pierdut informația":
-- Chat-uri anterioare au răspuns 9/10, 12/15 — **skipping fără verificare reală**
-- Chat-uri au TREATED handover doc-uri ca sursa adevărului — **NU au cross-checked vault files**
-- Chat-uri au halucinat status-uri (e.g., "ADR LOCKED" când era încă DRAFT)
+Pentru claritate — **NU re-deschide aceste Q-uri (deja LOCKED V1 §36.76):**
 
-Acest format forțează:
-1. **Real reads** (citate verbatim, NU memory)
-2. **Discrete pass/fail** per Q (NU "depinde")
-3. **Score quantificat** (NU vag "aligned")
-4. **Mandatory action threshold** (<8/10 → STOP, NU continue presupunând alignment)
+| Q | Decizie LOCKED |
+|---|---|
+| Q4 DOMS expand | A inline NU persist |
+| Q5 Founding cap | C HIDDEN UI |
+| Q6 3 Card buttons | B split 2+1 |
+| Q7 Goal Shift | C Settings only |
+| Q8 Telegram CTA | B revizuit |
+| Q-PROMPT Profile Validation | C card persistent Dashboard |
+| Q1, Q3, Q9, Q10, Q11, Q14, Q15 | Resolved §36.73 anterior |
 
 ---
 
-*Generat 2026-05-03 replacement per Daniel directive. Anti-information-loss design: chat-ul NEW TREBUIE să citească real vault, NU să creadă pe încredere acest doc. Output mandatory ALIGNMENT_SCORE 0-10 cu verdict threshold.*
+*Generat 2026-05-03 post §36.76 + §36.77 ingest. Anti-hallucination guards: format verification PASS/PARTIAL/FAIL + evidence verbatim + ALIGNMENT_SCORE 0-10 + verdict threshold. Cumulative target 70 LOCKED V1.*
