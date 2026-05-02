@@ -31,7 +31,7 @@ Fără validation formală, "anonymized" e nume incorect — dataset rămâne re
 Pre-launch + permanent post-launch: **k-anonymity validation cu k=5 minim** obligatorie pentru orice export `arbitration_log` anonymized destinat:
 1. Data Lake research storage (per §Q6 cold storage)
 2. ML training data viitor (post 50,000 sessions threshold per PRODUCT_STRATEGY §10.4)
-3. Aggregate stats partajate (Plausible analytics, Discord exposure, blog posts publice)
+3. Aggregate stats partajate (Plausible analytics, community channel exposure, blog posts publice)
 4. Third-party audits / legal compliance check
 
 **Validation tool:** `scripts/gdpr_k_anonymity_check.js` standalone Node.js script (livrat Sprint 2 Acțiunea 8).
@@ -88,8 +88,10 @@ k=5 = **EU GDPR Working Party recommendation** pentru pseudonymized health data 
 ### Workflow post-launch (recurring)
 
 - **Monthly:** automated validation pe latest dataset publication batch (Cloud Function cron)
-- **Pre-share (research / blog post / Discord):** manual run → Daniel sign-off în EXEC_RESULTS.md
+- **Pre-share (research / blog post / public community channel):** manual run → Daniel sign-off în EXEC_RESULTS.md
 - **ML training data prep:** mandatory pe full export pre-feed la training pipeline
+
+**§AMENDMENT 2026-05-02 (§36.59 LOCKED V1):** Toate referințele "Discord" înlocuite cu formulare channel-agnostic ("community channel exposure" / "public community channel" / "community engagement platform"). Rationale: ADR long-lived resilient, NU committezi la canal specific când marketing channel mix DEFERRED post-launch V1 (cross-ref §36.60). GDPR data exposure logic identică indiferent platformă (user data shared în public community = same risk profile).
 
 ---
 
