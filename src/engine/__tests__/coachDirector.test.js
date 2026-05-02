@@ -95,7 +95,7 @@ describe('CoachDirector — CUT phase logic', () => {
   it('should suppress trend messages in AUTO + before July 20', async () => {
     const session = await coachDirector.buildSession('PUSH');
     expect(session.suppressTrendMessages).toBe(true);
-    expect(session.realityMessage).toBe('Menții 1800 kcal ✓');
+    expect(session.realityMessage).toBe('Menținem 1800 kcal');
   });
 
   it('should cap reps at 10 in CUT phase', async () => {

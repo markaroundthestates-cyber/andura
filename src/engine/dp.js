@@ -161,8 +161,8 @@ export const DP = {
       return {
         kg: defaultKg, repsTarget: rMin, rir: 3,
         status: 'INIT', statusColor: 'var(--text2)',
-        statusLabel: 'PRIMA DATĂ – START CONSERVATIV',
-        progressionNote: 'Greutate estimată. Ajustezi după primul set.',
+        statusLabel: '🟡 Pornim conservator',
+        progressionNote: 'Greutate de pornire. O recalibrăm după primul set.',
         progressionStage: 0
       };
     }
@@ -175,8 +175,8 @@ export const DP = {
       return {
         kg: prevKg, repsTarget: rMin, rir: 3,
         status: 'SCALE BACK', statusColor: 'var(--accent2)',
-        statusLabel: '⬇️ SCADE GREUTATEA',
-        progressionNote: `${lastW}kg → ${prevKg}kg · Reps insuficiente (${lastReps}/${rMin})`,
+        statusLabel: '🟡 Scădem un pas',
+        progressionNote: `${lastW} kg → ${prevKg} kg · Nu am ajuns la intervalul de reps minim.`,
         progressionStage: 1
       };
     }
@@ -191,8 +191,8 @@ export const DP = {
           kg: lastW, repsTarget: rMax, rir: 2,
           status: 'PEAK',
           statusColor: 'var(--purple)',
-          statusLabel: '🔝 LA MAXIM',
-          progressionNote: `${lastW}kg e limita pentru acest exercițiu. Focus pe execuție perfectă.`,
+          statusLabel: '🟢 La vârf',
+          progressionNote: `${lastW} kg este plafonul pe acest exercițiu. Focus pe o execuție impecabilă.`,
           progressionStage: 1
         };
       }
@@ -200,8 +200,8 @@ export const DP = {
         kg: lastW, repsTarget: targetReps, rir: 2,
         status: 'CAP REPS',
         statusColor: 'var(--accent)',
-        statusLabel: '↑ CREȘTI REPS',
-        progressionNote: `La limita de greutate (${maxKg}kg). Acum crești reps: ${lastReps} → ${targetReps}`,
+        statusLabel: '🟢 Creștem reps',
+        progressionNote: `Suntem la plafonul de greutate (${maxKg} kg). Astăzi urcăm la ${targetReps} reps.`,
         progressionStage: 1
       };
     }
@@ -213,8 +213,8 @@ export const DP = {
         kg: lastW, repsTarget: targetReps, rir: lastRPE >= 9 ? 1 : 2,
         status: lastRPE >= 9 ? 'TOO HEAVY' : 'CONSOLIDATE',
         statusColor: lastRPE >= 9 ? 'var(--red)' : 'var(--accent)',
-        statusLabel: lastRPE >= 9 ? '🔴 PREA GREU' : '🟡 CONSOLIDARE REPS',
-        progressionNote: `Last: ${lastW}kg × ${lastReps} reps · Fă ${targetReps} azi`,
+        statusLabel: lastRPE >= 9 ? '🔴 E prea greu' : '🟡 Consolidăm reps',
+        progressionNote: `Ultima dată: ${lastW} kg × ${lastReps} reps. Țintim ${targetReps} astăzi.`,
         progressionStage: 1
       };
     }
@@ -226,8 +226,8 @@ export const DP = {
         kg: newKg, repsTarget: rMin, rir: 3,
         status: 'INCREASE',
         statusColor: 'var(--green)',
-        statusLabel: '🟢 CREȘTI GREUTATEA',
-        progressionNote: `${lastW}kg → ${newKg}kg · Revii la ${rMin} reps`,
+        statusLabel: '🟢 Creștem greutatea',
+        progressionNote: `${lastW} kg → ${newKg} kg · Revenim la ${rMin} reps`,
         progressionStage: 2
       };
     }
@@ -239,8 +239,8 @@ export const DP = {
         kg: lastW, repsTarget: rMax, rir: 2,
         status: 'STAGNANT +SET',
         statusColor: 'var(--accent2)',
-        statusLabel: '⚠️ STAGNARE → +1 SET',
-        progressionNote: `3 sesiuni la ${lastW}kg · Adaugă 1 set azi`,
+        statusLabel: '🟡 Plus un set azi',
+        progressionNote: `Greutate constantă 3 sesiuni · Astăzi adăugăm 1 set`,
         progressionStage: 3
       };
     }
@@ -256,8 +256,8 @@ export const DP = {
           kg: lastW, repsTarget: rMax, rir: 2,
           status: 'MAINTAIN',
           statusColor: 'var(--accent)',
-          statusLabel: '🟡 MENȚII',
-          progressionNote: `Stagnare detectată · În CUT menții ${lastW}kg — execuție perfectă`,
+          statusLabel: '🟡 Consolidare în definire',
+          progressionNote: `Stagnare 3 sesiuni la ${lastW} kg · În definire prioritizăm calitatea, nu greutatea`,
           progressionStage: 3
         };
       }
@@ -265,8 +265,8 @@ export const DP = {
         kg: lastW, repsTarget: rMax, rir: 1,
         status: 'TECHNIQUE',
         statusColor: 'var(--purple)',
-        statusLabel: '⚡ TEHNICĂ: DROP SET',
-        progressionNote: `Stagnare lungă · Drop set ultimul set: −30% greutate`,
+        statusLabel: '🟡 Drop set la final',
+        progressionNote: `Stagnare lungă · Drop set pe ultimul: −30% greutate pentru a sparge platoul`,
         progressionStage: 4,
         technique: 'DROP SET'
       };
@@ -277,8 +277,8 @@ export const DP = {
       kg: lastW, repsTarget: Math.min(rMax, lastReps + 1), rir: 2,
       status: 'ON TARGET',
       statusColor: 'var(--green)',
-      statusLabel: '🟢 ON TARGET',
-      progressionNote: `Last: ${lastW}kg × ${lastReps} reps`,
+      statusLabel: '🟢 În țintă',
+      progressionNote: `Ultima: ${lastW} kg × ${lastReps} reps`,
       progressionStage: 0
     };
   }, // end _recommendRaw
@@ -298,14 +298,14 @@ export const DP = {
     // Prea greu: 2× RPE 10 → scade imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
       const newKg = getPrevWeight(dpState.lastW, ex);
-      return { adjust: true, dir: 'down', newKg, msg: `2× RPE 10 → scade la ${newKg}kg ACUM` };
+      return { adjust: true, dir: 'down', newKg, msg: `Greutatea este prea mare · Trecem la ${newKg} kg pentru următorul set` };
     }
     // Prea ușor: 2× Easy (RPE ≤6.5) și reps > rMax → crește imediat
     if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6.5)) {
       const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
       if (lastReps >= rMax) {
         const newKg = this.roundToStep(dpState.lastW + inc, ex);
-        return { adjust: true, dir: 'up', newKg, msg: `2× Easy + reps maxime → crește la ${newKg}kg ACUM` };
+        return { adjust: true, dir: 'up', newKg, msg: `Două seturi prea ușoare · Urcăm la ${newKg} kg pentru următorul set` };
       }
     }
     return { adjust: false };
@@ -334,9 +334,9 @@ export const DP = {
     if (readinessScore != null && readinessScore < 60 && result.status === 'INCREASE') {
       result.kg = this.getState(ex).lastW;
       result.status = 'CONSOLIDATE';
-      result.statusLabel = '🟡 CONSOLIDARE REPS';
+      result.statusLabel = '🟡 Consolidăm reps';
       result.statusColor = 'var(--accent)';
-      result.progressionNote = `Readiness redus (${readinessScore}) — menții ${result.kg}kg`;
+      result.progressionNote = `Recuperare incompletă · Menținem ${result.kg} kg azi`;
     }
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
@@ -365,8 +365,8 @@ export function getInitialRecommendation(exerciseName, ctx) {
     const rounded = roundToEquipmentWeight(exactLog.weight, exerciseName);
     return {
       kg: rounded, weight: rounded, repsTarget: 8, reps: 8, sets: 3, rir: 2,
-      status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 CONSOLIDARE',
-      isInitial: false, rationale: `Bazat pe ultimul log: ${exactLog.weight}kg`, confidence: 0.9
+      status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 Continuăm',
+      isInitial: false, rationale: `Pornim de la ultima sesiune: ${exactLog.weight} kg`, confidence: 0.9
     };
   }
 
@@ -387,9 +387,9 @@ export function getInitialRecommendation(exerciseName, ctx) {
         rir: 3,
         status: 'INIT',
         statusColor: 'var(--text3)',
-        statusLabel: '⚡ START ESTIMAT',
+        statusLabel: '🟡 Pornire estimată',
         isInitial: true,
-        rationale: `Estimat din ${similarName} (${lastLog.weight}kg × ${multiplier})`,
+        rationale: `Pornim de la ${similarName} · ${lastLog.weight} kg cu ajustare ×${multiplier}`,
         confidence: 0.7
       };
     }
@@ -406,9 +406,9 @@ export function getInitialRecommendation(exerciseName, ctx) {
     rir: 3,
     status: 'INIT',
     statusColor: 'var(--text3)',
-    statusLabel: '⚡ START',
+    statusLabel: '🟡 Pornim conservator',
     isInitial: true,
-    rationale: 'Start conservativ — ajustăm după primul set',
+    rationale: 'Greutate de pornire · Recalibrăm după primul set',
     confidence: 0.4
   };
 }

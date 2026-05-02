@@ -51,7 +51,7 @@ export const realityEngine = {
     }
     // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează regula 1800 kcal
     if (ctx.user.phase === 'AUTO' && ctx.isBeforeJuly20_2026) {
-      session.realityMessage = `Menții ${KCAL_TARGET} kcal ✓`;
+      session.realityMessage = `Menținem ${KCAL_TARGET} kcal`;
       session.suppressTrendMessages = true;
     }
     return session;
@@ -75,7 +75,7 @@ export function getRealityCheck() {
       type: 'fixed',
       icon: '✅',
       color: 'var(--green)',
-      message: `Menții ${KCAL_TARGET} kcal fix până 20 iulie ✓`
+      message: `Menținem ${KCAL_TARGET} kcal fix până la 20 iulie`
     };
   }
 
@@ -109,7 +109,7 @@ export function getRealityCheck() {
           type: 'plateau',
           icon: '🔴',
           color: 'var(--red)',
-          message: 'Nicio scădere în 7+ zile. Timp să ajustezi ceva.'
+          message: 'Greutatea nu a scăzut în ultimele 7 zile. Hai să vedem ce putem ajusta în strategie.'
         };
       }
     }
@@ -122,7 +122,7 @@ export function getRealityCheck() {
       type: 'warning',
       icon: '⚡',
       color: 'var(--accent2)',
-      message: `Slăbești prea rapid — risc masă musculară. Mărește la ${suggestedKcal} kcal temporar.`
+      message: `Slăbim un pic prea repede și riscăm să pierdem din masa musculară. Hai să creștem temporar aportul la ${suggestedKcal} kcal pentru a ne proteja progresul.`
     };
   }
 
@@ -132,7 +132,7 @@ export function getRealityCheck() {
       type: 'slow',
       icon: '🐢',
       color: 'var(--accent)',
-      message: 'Progres lent. Verifică kcal sau activitate.'
+      message: 'Progres mai lent decât țintit · Verificăm aportul sau activitatea'
     };
   }
 
@@ -142,7 +142,7 @@ export function getRealityCheck() {
       type: 'ok',
       icon: '✅',
       color: 'var(--green)',
-      message: 'Progres perfect. Menține ritmul.'
+      message: 'Suntem în ritmul țintit · Menținem direcția'
     };
   }
 

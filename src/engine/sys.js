@@ -190,8 +190,8 @@ export const SYS = {
         const weeks = Math.ceil(kgToGain / 0.25); // 0.25 kg/week bulk
         checkpoints.push({
           type: 'bulk',
-          label: `Oprire bulk la ${bulkEndBF}% BF`,
-          sub: `~${targetKg} kg — începe cut`,
+          label: `Oprire creștere la ${bulkEndBF}% BF`,
+          sub: `~${targetKg} kg — începe definirea`,
           weeks, date: this.addWeeks(now, weeks),
           color: 'var(--accent3)'
         });
@@ -220,11 +220,11 @@ export const SYS = {
     const now = new Date();
     const year = now.getFullYear();
     return [
-      { label: 'CUT până la vară', date: new Date(year,0,1), endDate: new Date(year,5,1), type: 'cut' },
-      { label: 'VARĂ PEAK (mentenanță)', date: new Date(year,5,1), endDate: new Date(year,7,31), type: 'summer' },
-      { label: 'BULK (toamnă-iarnă)', date: new Date(year,8,1), endDate: new Date(year+1,1,28), type: 'bulk' },
-      { label: 'CUT pre-vară', date: new Date(year+1,2,1), endDate: new Date(year+1,5,1), type: 'cut' },
-      { label: 'VARĂ PEAK 2027', date: new Date(year+1,5,1), endDate: new Date(year+1,7,31), type: 'summer' },
+      { label: 'Definire până la vară', date: new Date(year,0,1), endDate: new Date(year,5,1), type: 'cut' },
+      { label: 'Vară peak (menținere)', date: new Date(year,5,1), endDate: new Date(year,7,31), type: 'summer' },
+      { label: 'Creștere (toamnă-iarnă)', date: new Date(year,8,1), endDate: new Date(year+1,1,28), type: 'bulk' },
+      { label: 'Definire pre-vară', date: new Date(year+1,2,1), endDate: new Date(year+1,5,1), type: 'cut' },
+      { label: 'Vară peak 2027', date: new Date(year+1,5,1), endDate: new Date(year+1,7,31), type: 'summer' },
     ].map(item => ({
       ...item,
       status: now < item.date ? 'future' : now >= item.date && now < item.endDate ? 'current' : 'past'
@@ -237,13 +237,13 @@ export const SYS = {
     const isCompound = ['DB Shoulder Press','Incline DB Press','Flat DB Press','Lat Pulldown','Cable Row','Chest-Supported Row','Romanian Deadlift','Leg Press'].includes(exName);
 
     if (phase === 'STRENGTH') {
-      return isCompound ? {tempo:'2-0-X-0', rir:2, note:'Exploziv concentric'} : {tempo:'2-1-2-0', rir:2, note:'Control strict'};
+      return isCompound ? {tempo:'2-0-X-0', rir:2, note:'Ridicăm exploziv, coborâm controlat'} : {tempo:'2-1-2-0', rir:2, note:'Mișcare controlată, fără elan'};
     }
     if (phase === 'BULK') {
-      return isCompound ? {tempo:'3-1-2-0', rir:2, note:'Timp sub tensiune crescut'} : {tempo:'3-1-2-1', rir:2, note:'Squeeze la capăt'};
+      return isCompound ? {tempo:'3-1-2-0', rir:2, note:'Coborâre lentă, tensiune prelungită'} : {tempo:'3-1-2-1', rir:2, note:'Strângere maximă în vârf'};
     }
     // CUT / MAINTENANCE — more metabolic
-    return isCompound ? {tempo:'3-1-2-0', rir:3, note:'Nu forța în deficit'} : {tempo:'2-1-2-1', rir:3, note:'Pump > greutate'};
+    return isCompound ? {tempo:'3-1-2-0', rir:3, note:'În definire menținem, nu împingem'} : {tempo:'2-1-2-1', rir:3, note:'Calitatea execuției peste greutate'};
   },
 
   // Special techniques recommendation
@@ -255,11 +255,11 @@ export const SYS = {
     // Drop sets — NOT în CUT (deficit); recomandat în BULK/STRENGTH
     const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
     if (isIsolation && setNumber === totalSets && !isEffectivelyCut) {
-      techniques.push({icon:'🔻', label:'DROP SET', desc:'Scade 30% greutatea, continuă până la eșec'});
+      techniques.push({icon:'🔻', label:'DROP SET', desc:'−30% greutate pe ultimul set · Mergem până nu mai putem'});
     }
     // Partial reps — on last set of isolation
     if (isIsolation && setNumber === totalSets && ['Lateral Raises','Calf Raises'].includes(exName)) {
-      techniques.push({icon:'⚡', label:'PARȚIALE', desc:'10 rep parțiale după ultimul set complet'});
+      techniques.push({icon:'⚡', label:'PARȚIALE', desc:'10 reps parțiale după ultimul set complet'});
     }
     // Pause reps — compounds in strength phase
     if (!isIsolation && phase === 'STRENGTH' && setNumber <= 2) {

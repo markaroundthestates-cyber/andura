@@ -307,7 +307,7 @@ export async function renderCoachIdle(){
             </div>
             <div style="text-align:right;flex-shrink:0">
               <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${hasHistory?rec.statusColor:'var(--text3)'}">${rec.kg}kg</div>
-              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${hasHistory?rec.statusColor+'22':'rgba(255,255,255,0.07)'};color:${hasHistory?rec.statusColor:'var(--text3)'};margin-top:2px">${hasHistory?(rec.status==='INCREASE'?'🟢 CREȘTI':rec.status==='TOO HEAVY'?'🔴 PREA GREU':rec.status==='STAGNANT +SET'?'🟡 STAGNARE':rec.status==='SCALE BACK'?'⬇️ SCADE':rec.status==='CONSOLIDATE'?'🟡 REPS':'🟢 OK'):'⚡ START'}</div>
+              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${hasHistory?rec.statusColor+'22':'rgba(255,255,255,0.07)'};color:${hasHistory?rec.statusColor:'var(--text3)'};margin-top:2px">${hasHistory?(rec.status==='INCREASE'?'🟢 Creștem':rec.status==='TOO HEAVY'?'🔴 E prea greu':rec.status==='STAGNANT +SET'?'🟡 Plus un set':rec.status==='SCALE BACK'?'🟡 Scădem un pas':rec.status==='CONSOLIDATE'?'🟡 Consolidăm':'🟢 În țintă'):'🟡 Pornim'}</div>
             </div>
           </div>`;
         }).join('')}

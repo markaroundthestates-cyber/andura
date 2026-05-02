@@ -26,7 +26,7 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Sistemul învață din tine. Recomandările se personalizează rapid.',
+    bannerText: 'Învățăm cum lucrezi · Recomandările se personalizează după primele sesiuni',
     description: 'Guidelines bazate pe onboarding (beginner/intermediate/advanced, cut/bulk).',
   },
 
@@ -45,7 +45,7 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Calibrare în curs. Mai am nevoie de câteva sesiuni pentru predicții precise.',
+    bannerText: 'Învățăm cum lucrezi · Datele se adună cu fiecare sesiune',
     description: '50% user data + 50% population guideline. Pattern detection activ (high confidence only).',
   },
 
@@ -64,7 +64,7 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Pattern-urile prind contur. Recomandările folosesc datele tale.',
+    bannerText: 'Tiparele prind contur · Recomandările folosesc datele tale',
     description: '65% user data + 35% general. Pattern detection activ (high confidence ≥65%). Bridge tier between INITIAL and PERSONALIZING per ADR 009 §AMENDMENT D1.',
   },
 
@@ -83,7 +83,7 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: true,
     stagnationEnabled: true,
     predictionEnabled: true,
-    bannerText: 'Recomandările sunt acum majoritar bazate pe tine.',
+    bannerText: 'Recomandările sunt acum în mare parte personalizate · Continuăm să învățăm',
     description: '80% user data + 20% general. Toate engines active cu threshold relaxat.',
   },
 

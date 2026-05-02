@@ -35,7 +35,7 @@ export function updateExCard() {
   const lastPerfEl = $('last-perf');
   if (lastPerfEl) {
     lastPerfEl.style.display = 'block';
-    lastPerfEl.textContent = lastLog ? `Last: ${lastLog.w}kg × ${lastLog.reps || '?'} reps` : 'Prima sesiune la acest exercițiu';
+    lastPerfEl.textContent = lastLog ? `Ultima: ${lastLog.w} kg × ${lastLog.reps || '?'} reps` : 'Prima sesiune la acest exercițiu';
   }
 
   let tempoTxt = `Tempo: ${tempo.tempo} · ${tempo.note}`;
@@ -48,7 +48,7 @@ export function updateExCard() {
   if (msg) {
     if (rec.autoAdjusted) {
       msg.style.display = 'block';
-      msg.textContent = rec.autoAdjustMsg.includes('scad') ? `⚙️ AUTO: TOO HEAVY → −${DP.getIncrement(state.currentEx)}kg` : `⚙️ AUTO: TOO EASY → +${DP.getIncrement(state.currentEx)}kg`;
+      msg.textContent = rec.autoAdjustMsg.includes('Trecem') ? `Greutatea ajustată automat · −${DP.getIncrement(state.currentEx)} kg` : `Greutatea ajustată automat · +${DP.getIncrement(state.currentEx)} kg`;
       msg.style.background = rec.autoAdjustColor + '15';
       msg.style.color = rec.autoAdjustColor;
       msg.style.border = `2px solid ${rec.autoAdjustColor}44`;

@@ -54,34 +54,38 @@ export function calculateFatigueScore() {
   score += (avgSleep <= 2.5) ? 18 : (avgSleep <= 3.5) ? 7 : 0;
   score = Math.max(0, Math.min(100, Math.round(score)));
 
-  // ── Verdict ──────────────────────────────────────────────────────────────
-  let label, color, recommend, detail, icon;
+  // ── Verdict (wording LOCKED V1 §36.58 — sentence case + voice plural + zero numerice raw) ──
+  let label, color, recommend, detail, icon, key;
 
   if (score >= 65 || fatigue >= 4 || sleepBad >= 3) {
-    label = 'DELOAD RECOMANDAT';
+    key = 'HIGH_FATIGUE';
+    label = 'Azi mergem mai blând';
     icon = '🔴';
     color = 'var(--red)';
     recommend = 'deload';
-    detail = `Scor ${score}/100 · ${fatigue}× oboseală + ${sleepBad}× somn prost · Redu volumul 30–40% săptămâna asta`;
+    detail = 'Au fost câteva sesiuni grele recent. Volumul este calibrat mai conservator pentru o recuperare completă.';
   } else if (score >= 40 || (avgRPE >= 8.7 && rpeRising)) {
-    label = 'RECUPERARE ACTIVĂ';
-    icon = '🟠';
+    key = 'MODERATE_FATIGUE';
+    label = 'Pas mai conservator';
+    icon = '🟡';
     color = 'var(--accent2)';
     recommend = 'reduce';
-    detail = `Scor ${score}/100 · RPE ${avgRPE.toFixed(1)} ${rpeRising?'↑ în creștere':''} · Nu crești greutățile, focus tehnică`;
+    detail = 'Astăzi menținem greutățile, cu accent pe tehnică și control.';
   } else if (score <= 15 && strong >= 2) {
-    label = 'FORMĂ EXCELENTĂ';
+    key = 'PEAK_FORM';
+    label = 'Suntem în formă bună';
     icon = '🟢';
     color = 'var(--green)';
     recommend = 'push';
-    detail = `Scor ${score}/100 · Recuperare excelentă · Poți împinge mai mult azi`;
+    detail = 'Recuperarea este completă. Avem energie să plusăm pe bară astăzi.';
   } else {
-    label = 'PROGRESEAZĂ NORMAL';
+    key = 'NORMAL';
+    label = 'Pe drum bun';
     icon = '🟢';
     color = 'var(--green)';
     recommend = 'normal';
-    detail = `Scor ${score}/100 · Totul în limite normale`;
+    detail = 'Ritmul este sănătos. Mergem cu planul de astăzi.';
   }
 
-  return { score, label, icon, color, recommend, detail, avgRPE, sleepBad, fatigue, strong };
+  return { score, key, label, icon, color, recommend, detail, avgRPE, sleepBad, fatigue, strong };
 }
