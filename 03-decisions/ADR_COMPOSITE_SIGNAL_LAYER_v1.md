@@ -1,6 +1,7 @@
 # ADR_COMPOSITE_SIGNAL_LAYER_v1
 
-**Status:** DRAFT V1 — pending Daniel review pre-LOCK
+**Status:** LOCKED V1
+**Locked:** 2026-05-02 per ALIGNMENT_QUESTIONS Q1 Daniel response
 **Data:** 2026-05-02 (creat în BATCH_05 final Sprint 4.x cluster)
 **Origine:** §36.41 Chat C SELF-CORRECTION EXTENSION
 

@@ -1,6 +1,7 @@
 # ADR_PAIN_DISCOMFORT_BUTTON_v1
 
-**Status:** DRAFT V1 — pending Daniel review pre-LOCK
+**Status:** LOCKED V1 (with EXT-1)
+**Locked:** 2026-05-02 per ALIGNMENT_QUESTIONS Q2 Daniel response
 **Data:** 2026-05-02 (creat în BATCH_05 final Sprint 4.x cluster)
 **Origine:** §36.38 Chat C SELF-CORRECTION EXTENSION
 
@@ -82,3 +83,19 @@ Audit log NU blocking — engine respectă alegerea user-ului. Future analysis (
 2. **Override pattern misuse** — dacă >20% users overrides red flags consistently → add soft 2-second wait + confirmation re-prompt
 3. **Legal Stage 2 audit findings** — dacă avocat barter recomandă wording change (e.g., "consult medic" disclaimer minim), apply post-launch
 4. **Injury return cohort growth** post-V1.1 → adaugă `pain_chronic_recovery` flag cu engine adjustment dedicated
+
+---
+
+## EXT-1 — DOMS Visibility Tier-Aware (LOCKED 2026-05-02)
+
+**Rationale:** Gigel test failed pentru `doms_severe` option visibility default. User cohort cold_start (e.g., Maria 65, non-tech RO) NU înțelege termen tehnic "DOMS" (Delayed Onset Muscle Soreness). Trust breach + cultural friction RO + scope creep medical perceput.
+
+**Decision:**
+- 2 options PRIMARY visible default: "Mișcarea mă deranjează" + "Simt o tensiune ciudată"
+- 1 option SECONDARY behind expand "Mai multe opțiuni": "DOMS sever" (renamed în UI: "Durere musculară severă post-antrenament (DOMS)")
+- Expand pattern: chevron down icon, default collapsed, state preserved per session
+- Telemetry: track expand_rate per cohort tier (T0/T1/T2+) pentru future analysis
+
+**Implementation guidance pentru Sprint UI Integration:**
+- Component `<PainDiscomfortCard>` exposes prop `showAdvancedOptions: boolean` default `false`
+- Daniel UX final review pre-Beta launch
