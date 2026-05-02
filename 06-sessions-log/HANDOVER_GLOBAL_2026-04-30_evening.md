@@ -4953,6 +4953,57 @@ Detailed cluster report: `📤_outbox/LATEST.md`. Per-batch reports: `📤_outbo
 
 **Cross-refs:** §30 Rebrand SalaFull → Andura LOCKED 2026-05-01 RESUBMIT + §31 Investiții (andura.app €13.18 actual achitat 2026-05-03 vs estimate €10-15) + §36.77 anti-recurrence rule (pre-flight respected acest task — vanilla JS pattern matching, NU presupun framework) + §36.75 Daniel solo gate Firebase (proiect Firebase deja rename "Andura" §36.75) + Sprint UI cluster aborted carry-over §36.76-77.
 
+### §36.79 Custom Domain Base Path Hotfix (2026-05-03 evening)
+
+**Status:** Hotfix EXECUTED post §36.78 Rebrand Sweep Phase 1-4. Daniel smoke test prod `andura.app` raportat 404 pe toate assets immediate post repo rename + DNS activation.
+
+**Symptom:** Browser console post DNS propagation:
+- `https://andura.app/andura/assets/main-*.js` → 404
+- `https://andura.app/andura/manifest.json` → 404
+- `Uncaught ReferenceError: startSession is not defined` (consequence — main.js never loaded)
+
+**Root cause:** Phase 2 rebrand sweep schimbat `vite.config.js` base de la `'/salafull/'` → `'/andura/'`. Asta corect pentru subpath `markaroundthestates-cyber.github.io/andura/` DAR greșit pentru custom domain `andura.app/` unde root site = `/`, NU `/andura/`. Path resolution dublu prefix (`andura.app/andura/...`) → 404 toate assets.
+
+**Decision LOCKED:** Custom domain `andura.app` = sursa adevărului unic post-launch. URL `github.io/andura/` deprecated (NU mai folosit nicăieri public). Toate paths config root-relative (`/`).
+
+**Fix scope (5 categorii fișiere):**
+- `vite.config.js` — base `/andura/` → `/`
+- `public/sw.js` — BASE `/andura` → `''`, ASSETS array root-relative, **CACHE_VERSION bump `andura-v1` → `andura-v2`** (invalidate stale SW cache pe browsers existing)
+- `public/manifest.json` — start_url+scope `/`, icons `/icon-*.png` (root)
+- `src/main.js` — sw register `/sw.js` (root)
+- `index.html` — manifest link + apple-touch-icon root paths
+- `playwright.config.js` — baseURL `https://andura.app` + comment update
+- 16 playwright tests — `BASE_URL = '/'` + `page.goto('/')` root-relative
+
+**Rationale CACHE_VERSION bump:** users care au accesat `andura.app` imediat post-launch (înainte fix) au sw cu cache `andura-v1` care încearcă fetch `/andura/...` paths. Bump v2 = sw nou se activează, drop cache vechi, reîncarcă fresh paths root-relative.
+
+**Verify:**
+- Tests: 1203 PASS unchanged ✅
+- Build: 3.22s success ✅
+- `dist/CNAME = andura.app` preserved ✅
+- `dist/manifest.json` start_url+scope `/` ✅
+- `dist/sw.js` CACHE_VERSION `andura-v2`, BASE `''` ✅
+- `grep '/andura/' dist/` = 0 hits ✅
+- `git grep '/andura/' -- src/ public/ tests/ vite.config.js playwright.config.js index.html` = 0 hits ✅
+
+**Deploy:** `npm run deploy` Published la `gh-pages` branch (commit `5d955ae` origin/main). GitHub Pages auto-rebuild → andura.app live cu paths root-relative (~1-2 min CDN propagation).
+
+**Empirical Opus runtime:** ~10 min actual vs estimate ~25 min (factor 2.5x — hotfix simplu, pattern de sweep cunoscut din Phase 2).
+
+**Pending Daniel manual:**
+- Hard refresh browser (Ctrl+Shift+R) pentru forțare reload sw `andura-v1` → `andura-v2`
+- Smoke confirm dashboard render normal post-fix
+- DevTools Network tab: toate assets 200 OK
+
+**Lessons learned (anti-recurrence ext):**
+- Custom domain deployment ≠ subpath deployment. Pre-rebrand checklist viitor trebuie include "destination URL type: subpath sau custom domain root?" ca primul item.
+- CACHE_VERSION bump = MANDATORY pe orice schema change la base paths sw.js (anti zombie cache pe users existing).
+- Phase 4 spec original lipsea sw fetch intercept paths consideration — flag pentru custom-domain projects future.
+
+**Cumulative LOCKED count impact:** +1 (71 → **72**)
+
+**Cross-refs:** §30 Rebrand SalaFull → Andura LOCKED + §36.78 Rebrand Sweep Phase 1-4 (introduced base path mismatch) + §36.77 anti-recurrence rule (pre-flight respected — root cause identified clean, fix surgical no-fabricate) + §31 Investiții (andura.app €13.18 deja achitat).
+
 ---
 
 **Sesiune 2026-05-02 PRE-LAUNCH FINAL LOCK (chat strategic F-NEW LOCKED V1 OBLIGATORIU + MMI + Storage Full UX + UX Friction + 3 Blockers Sprint 4.x + GC defer + Investiții confirmate). ~35 decizii LOCKED + ~6 push-back-uri productive Claude. **PRE-LAUNCH V1 SCOPE CLOSED — 0 sesiuni chat strategic rămase.** F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU (§22 UPDATE in-place din "flagged HIGH" → "LOCKED V1 OBLIGATORIU"): F-NEW-1 i18n exerciții RO inversare regulă UI Default RO + Toggle EN OFF (lista finală 6 traduceri locked Romanian Deadlift → Îndreptări (RDL) / Lat Pulldown → Tracțiuni la helcometru / Bulgarian Split Squat / Cable Row / Hip Thrust / Face Pull, pattern reusable 3 categorii) + F-NEW-2 Tier-aware progression matrice 3 tiers Beginner 0-10 / Intermediate 11-50 / Advanced 51+ + Sprinter Cap modifier (compound 1.0 kg / isolation +1 rep) + Edge case Deload skip soft warning Bugatti tone "corpul recuperează în mișcare, nu doar în repaus" + F-NEW-3 Cooldown rate-limiting (3+ înlocuiri 7-day rolling silent + phase change <24h absorb a 2-a "Obiectiv actualizat") + Edge case "User Pierdut" dual condition aderență <25% AND 7 zile zero login (elimină false positives boală/concediu) + F-NEW-4 Banner "Plan ajustat astăzi pentru recovery" + buton "Folosesc varianta mea" replacement force-typing. MUSCLE MEMORY INDEX (MMI) HIBRID LOCKED V1 (§32 NEW): algoritm Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup + boost progresie 3 săpt (6-12 luni 0.80×/1.25× / 12-24 luni 0.70×/1.10× / 24+ luni 0.60×/1.00× start proaspăt) + threshold trigger user-controlled 6+ luni pauză prompt agency 100% + UI Bugatti tone "Pauza face parte din drum. Începem treptat — corpul tău își amintește." Justified V1 (Maria post-operație șold 8 luni revine ~iulie 2027). Effort ~3-4h Sonnet. STORAGE FULL UX ALERT LOCKED V1 (§33 NEW): Threshold 80% banner săptămânal NU blocant (3 buttons Exportă/Cloud Pro/Închide) + Threshold 95% modal blocant 3 alegeri obligatorii (Descarcă JSON / Activează Cloud / Șterge automat 180 zile alegere definitivă) ZERO data loss silent industry standard Apple/Google/Dropbox + Cap Pro upgrade 1×/săpt + auto-rotate 180 zile DOAR consimțământ explicit. Effort ~4-6h Sonnet. 3 OPTIMIZĂRI UX FRICTION LOCKED (§29.5.5 amendment + §29.5.14 + §29.5.17 + §29.5.18 NEW): Onboarding 5 → 4 ecrane disclaimer integrat ecran 4 Obiectiv (checkbox disabled-until-checked, total <45 sec vs <60 sec) + Autofocus iOS workaround `<input type="number" inputmode="numeric">` + setTimeout 50ms focus programatic (zero tap suplimentar) + The Next-Up Gaze preview vizual cartonaș set următor în timpul rest timer auto-start (soft highlight + border glow ~1-2h Sonnet extension §29.5.5) + Friction Map V1 final touchpoint matrix (Onboarding 🟢 / Pauze 🟢 / Editare istoric 🟡 / Storage Full 🔴 / Disclaimer 🟡 / MMI prompt 🟡). 3 BLOCKERS SPRINT 4.x IDENTIFICATE PRE-LAUNCH (§34 NEW): Blocker 1 T&B Faza 2 persistence Memory Paradox bug (~50-80h trad / ~3-5h Opus, user delete entry → reload → entry RE-APARE Firebase pull) + Blocker 2 Firebase Rules RTDB lock (production-blocker `database.rules.json` syntax LOCKED, sub 1h Daniel + emulator + manual publish) + Blocker 3 D1 DEVELOPING refactor 5→6 tiers (CALIBRATION_LEVELS 0-4 → 0-5 + ID renumber + schema migration + Golden Master ~30+ test cases, ~8-12h trad / ~2-3h Opus). GC TOMBSTONES DEFER 6 LUNI POST-LAUNCH (§35 NEW): Cloud Functions GC AMÂNAT, borna evaluare oficială 1 iulie 2027, rationale buget zero Firebase Spark plan + ~3% din 1GB / 6 luni; alegere A automation Blaze / B manual Daniel / C mai amână. INVESTIȚII CONFIRMATE ZERO BUGET NOU (§31 AMENDMENT): preserved €500-700 worst-case primul an + breakdown 6 luni primele ~€310-515 (Firebase free tier suficient cf §35 GC defer). 888/888 unchanged. Bandwidth Daniel ~3h Daniel-time real saturation triggered preventiv anti-halucinație. Status V1: 8/8 templates 100% LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers identificate + GC defer 6 luni + 0 sesiuni chat strategic rămase pre-launch. Next: rebrand sweep CC Opus dedicat ACUM + ADR 022 V2 draft consolidare totul + Sprint 4.x cluster (Blockers 2/3/1 FIRST → PR Engine + Linear Block + Safety Banner + Hip Thrust + Age guardrail + Mastery Milestone + Sticky Swap + Clean Slate Reset + Onboarding 4 ecrane + Autofocus iOS + Editare Istoric + Notificări + F-NEW 1/2/3/4 + MMI + Storage Full + Next-Up Gaze) + wording Phase B/C bulk Sonnet + PARAMETRIC refactor + exercise library + Beta sept-dec 2026 + audit legal dec 2026 + Soft Launch 1 ian 2027 🚀 + Borna GC 1 iul 2027.**
