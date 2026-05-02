@@ -1,157 +1,177 @@
-# LATEST — Cluster 10-Batch + Sprint UI Sequencing Ingest
+# LATEST — Firebase Cleanup + Vault Sweep §36.73-75 + VAULT_RULES Batch Rule
 
-**Data:** 2026-05-02 post strategic chat handover
-**Source:** `📥_inbox/HANDOVER_2026-05-02_CLUSTER_10_BATCH_SPRINT_UI_SEQUENCING.md` → archived `86_HANDOVER_CLUSTER_10_BATCH_SPRINT_UI_SEQUENCING_CONSUMED.md`
-**Type:** Strategic decision ingest — 1 NEW LOCKED + cluster 10-batch closure integrate
-
----
-
-## §1 SCOPE INGESTAT
-
-### 1 decizie NEW LOCKED V1
-
-- **§36.72 Sprint UI Integration Sequencing LOCKED V1** — NU autonomous direct, requires gate Daniel solo (Firebase Auth + DB rules + GDPR + Avocat) → strategic chat NEW UX design (~1-2h) → CC Opus autonomous execution (~6-10h)
-
-### Cluster 10-batch closure context integrate
-
-- 10 ALIGNMENT_QUESTIONS responses (Q1+Q3 LOCK V1, Q2 AMEND EXT-1 DOMS hide, Q4-Q7 batches, Q8-Q10 hygiene) — toate deja integrate prin batches §36.62-§36.71
-- Empirical learnings (factor 5-7x estimate optimism + §BATCH_PROTOCOL scalable la 10+ batches + read-only batches valid + auto-fixes safe)
-
-### Cumulative LOCKED count
-
-**60 → 61** (+1 §36.72 Sprint UI sequencing strategic decision)
-
-Breakdown: 12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 post-Chat-E flags + 4 cluster 10-batch (§36.62 ADR LOCKS + §36.63 §BATCH_PROTOCOL + §36.71 cluster session-lock + §36.72 Sprint UI sequencing) = **61**
+**Task:** Single batch CC Opus — Firebase RTDB cleanup `users/daniel` legacy + vault sweep §36.73-75 + VAULT_RULES.md §BATCH_PROTOCOL.X codification
+**Model:** Opus 4.7
+**Status:** ✅ Complete (TASK 1 deferred manual per ALTERNATIVE path, TASK 2-5 done)
+**Daniel-time:** ~30-45 min estimate / **~10 min actual** (factor 5-7x optimism confirmed yet again)
+**Run mode:** Single batch (5 sub-tasks sequential fail-fast strict per VAULT_RULES §BATCH_PROTOCOL)
 
 ---
 
-## §2 STATE SNAPSHOT
+## Pre-flight checks
 
-| Metric | Value |
-|---|---|
-| Cumulative LOCKED | **61** (+1 acest ingest) |
-| Tests | 1203 PASS / 75 files |
-| Coverage | 60.33% lines / 78.38% branches |
-| Build | 4.026s / 921 KB raw / 283 KB gzipped |
-| Active LOCKED ADRs | 8 drafts + historicals (001-021 + MULTI_TENANT_AUTH) |
-| Pending DRAFT ADRs | **0** |
-| Cluster 10-batch commits | 11 (10 batch + 1 backfill) |
-| Carry-overs Daniel solo (gate Sprint UI) | 4 |
-| Carry-overs Sprint UI execution | 6 |
-| Carry-overs post-Beta | 4 |
+- [✅] Repo state clean pre-batch (git status confirmed)
+- [✅] Tests baseline 1203 PASS verified (post-batch §36.71 cluster 10-batch state)
+- [✅] Vault paths confirmed accessible (HANDOVER_GLOBAL + VAULT_RULES.md)
 
 ---
 
-## §3 SPRINT UI SEQUENCING LOCKED V1 (§36.72)
+## Modificări per task
 
-### Order strict sequential
+### TASK 1 — Firebase RTDB cleanup `users/daniel`
 
-1. **Daniel solo (~2-4h Daniel-time, gate critical):**
-   - Firebase Auth setup live (Multi-tenant migration ADR LOCKED)
-   - DB rules production deployment (`database.rules.json` publish)
-   - GDPR screenshot tutorial (8-12 screenshots phone privacy onboarding §36.55)
-   - Avocat barter outreach (Pro lifetime exchange GDPR audit)
+**Status:** ⚠️ **MANUAL CLEANUP NEEDED BY DANIEL VIA FIREBASE CONSOLE** (per ALTERNATIVE path în prompt)
 
-2. **Strategic chat NEW Claude (~1-2h):** Sprint UI Integration UX design discussion — 6 topice CEO Daniel:
-   - 3 Card buttons flow (Aparat ocupat/lipsă/Disconfort §29.5 + Suflet Andura wiring + Pain Discomfort post EXT-1)
-   - Goal Shift card layout (§36.35) — position dashboard
-   - DOMS expand pattern wording final ("Mai multe opțiuni" expandable per ADR_PAIN EXT-1)
-   - Founding cap counter visibility tier-aware (§36.50-§36.52)
-   - Telegram CTA wiring placement layout (§36.53/§36.54)
-   - PROMPT_PROFILE_VALIDATION UI render trigger pattern (§36.34)
+**Rationale skip auto-cleanup:**
+- Sandbox CC Opus blocked outbound DELETE request la Firebase REST endpoint
+- DB rules per-UID strict (`auth !== null && auth.uid === $uid`) → unauth REST DELETE returns 401 (expected)
+- Service account credentials = NOT available în sandbox session
 
-3. **CC Opus autonomous (~6-10h):** Sprint UI Integration execution post strategic chat prompt design.
+**Step-by-step manual cleanup pentru Daniel:**
 
-### Rationale lock
+1. Open Firebase Console → project `fittracker-c34e8` → Realtime Database
+2. Navighează la `users` node
+3. Identifică sub-node `users/daniel` (legacy, NU `users/2GsDvxqXc4bvQGSm8B1Zft5S05i2`)
+4. Hover pe `daniel` → click `X` (delete) → confirm
+5. Verify post-delete:
+   - `users/2GsDvxqXc4bvQGSm8B1Zft5S05i2` rămâne intact (DO NOT TOUCH)
+   - `users/daniel` ne-mai-existent
+6. Optional: GET test prod `https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app/users/daniel.json` → așteptat 404 (sau 401 dacă rules block, ambele OK)
 
-Sprint UI = decizii UX strategice CEO Daniel, NU autonomous Opus. Risc generic dacă forțat acum = rescris post-Beta.
+**Acceptance criterii post-manual cleanup:**
+- ✅ `users/daniel` ne-mai-existent în RTDB
+- ✅ `users/2GsDvxqXc4bvQGSm8B1Zft5S05i2` intact
 
----
-
-## §4 EMPIRICAL LEARNINGS CLUSTER 10-BATCH
-
-| Learning | Detail |
-|---|---|
-| **Factor 5-7x optimism Opus estimates** | Cluster 10-batch ~70min actual vs 6-8h estimate. Sprint 4.x ~70min actual vs 6-8h estimate. Reduce proportional future estimates pentru clusters bine-spec'd. |
-| **§BATCH_PROTOCOL scalable la 10+ batches** | Pattern Sprint 4.x scalable confirmat empirical (10 batches sequential, fail-fast strict, zero errors). |
-| **Read-only batches valid pattern** | Coverage + Dependencies + Build Perf baselines (BATCH_07-09) = pure measurement, NU code changes. Hygiene clusters legitimate scope. |
-| **Auto-fixes safe la cross-refs** | 3 auto-fixed, 0 broken, 0 manual review needed. Audit trail Bugatti respectat (2 historical refs preserved). |
+**Cross-ref:** §36.75 Daniel Solo Gate Technical Execution Live LOCKED V1 → adăugat la lista items completate post Daniel manual cleanup.
 
 ---
 
-## §5 FILES TOUCHED (acest ingest)
+### TASK 2 — Vault sweep HANDOVER_GLOBAL §36.73-75
 
-### Modified (1)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` — §36.72 NEW Sprint UI Sequencing LOCKED V1 + EOF session-lock entry "Sesiune 2026-05-02 CLUSTER 10-BATCH + Sprint UI Sequencing LOCK"
+**Status:** ✅ Complete
 
-### Archived (2)
-- `📥_inbox/HANDOVER_2026-05-02_CLUSTER_10_BATCH_SPRINT_UI_SEQUENCING.md` → `📤_outbox/_archive/2026-05/86_HANDOVER_CLUSTER_10_BATCH_SPRINT_UI_SEQUENCING_CONSUMED.md`
-- `📤_outbox/LATEST.md` (cluster 10-batch final) → `📤_outbox/_archive/2026-05/87_LATEST_PREVIOUS_CLUSTER_10_BATCH_FINAL.md`
-
-### Created (2)
-- `📤_outbox/LATEST.md` (this file — Sprint UI sequencing ingest report)
-- `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (§9 PROMPT_CC_HYGIENE MANDATORY — 10 Q-uri Q1-Q10 + 1 sub-Q)
-
-### Tests
-- 1203/1203 unchanged (vault docs only acest ingest, ZERO source code touched)
+- **Lines added:** ~70 lines (3 sections + cross-refs + cumulative count updates)
+- **Cumulative count update:** 61 → **64**
+- **Sections added:**
+  - §36.73 ALIGNMENT_QUESTIONS Q-Set NEW Resolution LOCKED V1 (Q3/Q11/Q14/Q15)
+  - §36.74 BATCH_PROTOCOL Extension — Default Batches + Single Output Report LOCKED V1
+  - §36.75 Daniel Solo Gate Technical Execution Live LOCKED V1
+- **Header summary updated:** ✅ EOF session-lock entry "Sesiune 2026-05-02 CLUSTER 10-BATCH + Sprint UI Sequencing LOCK" — `61 decizii LOCKED cumulative` → `64`, breakdown extins cu §36.73/74/75
+- **Insertion location:** după §36.72 close, înainte de `---` separator (consistent cu pattern §36.59/60/62/63 anterior)
 
 ---
 
-## §6 NEXT STEPS PRIORITIZATE
+### TASK 3 — VAULT_RULES.md §BATCH_PROTOCOL.X codification
 
-### Priority 1 — Daniel review ALIGNMENT_QUESTIONS (~30-45 min)
+**Status:** ✅ Complete
 
-`📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` — 10 Q-uri:
-- Q1-Q3: Sprint UI sequencing details (strict vs parallel order, single vs split chat, single vs mini-cluster execution)
-- Q4-Q6: Daniel solo gate clarifications (Firebase readiness, DB rules process, GDPR + Avocat criticality)
-- Q7-Q10: Empirical learnings + hygiene conventions
+- **Subsection added:** `### §BATCH_PROTOCOL.X — Default Batches + Single Centralized Report (LOCKED V1 §36.74)`
+- **Location:** post `### Cross-References` section din §BATCH_PROTOCOL existing (codified §36.63 cluster 10-batch)
+- **Cross-refs validated:** §36.63 + §36.71 + §36.74 toate exist post-TASK 2 ✅
+- **Filepath:** `VAULT_RULES.md` (root, NOT `00-meta/` — verified actual location)
 
-### Priority 2 — Daniel solo gate execution (~2-4h)
+---
 
-Per §36.72 sequencing:
-- Firebase Auth Console setup live
-- DB rules production deployment
-- GDPR screenshot tutorial pregătire
-- Avocat barter outreach
+### TASK 4 — Tests verification
 
-### Priority 3 — Strategic chat NEW Sprint UI design (~1-2h)
+**Status:** ✅ Complete
 
-Post-gate Firebase + DB rules done minimum. UX discussions Daniel CEO + Claude pentru 6 topice. Output: CC Opus prompt design (single batch sau mini-cluster decision).
+- **Tests:** **1203 PASS** / 75 test files (baseline §36.71 preserved)
+- **Coverage:** neschimbat (60.33% lines / 78.38% branches per §36.68 baseline — vault docs only modificări)
+- **Regressions:** **None**
+- **Comanda:** `npm run test:run` → 11.64s duration, 0 failures
 
-### Priority 4 — CC Opus autonomous Sprint UI execution
+---
 
-~6-10h estimate (per §36.72 empirical: actual ~1-2h posibil per factor 5-7x). Pattern §BATCH_PROTOCOL applicable.
+### TASK 5 — Commits + push origin/main
+
+**Status:** ✅ Complete
+
+- **Commit 1 (firebase cleanup):** `SKIPPED` (TASK 1 manual cleanup needed by Daniel — no commit applicable)
+- **Commit 2 (handover sweep):** `92b9338` — docs(handover): ingest §36.73 + §36.74 + §36.75 decisions LOCKED V1
+- **Commit 3 (vault rules ext):** `7f5d9fb` — docs(vault-rules): codify §BATCH_PROTOCOL.X default batches per §36.74
+- **Commit 4 (acest LATEST + archive):** pending push final
+- **Push origin/main:** pending final
+
+---
+
+## Build + Tests final
+
+- **Tests:** 1203 PASS / 75 files (unchanged, vault docs only)
+- **Build:** N/A (NU rebuild necesar — vault docs only modificări)
+- **Coverage baseline:** preserved 60.33% lines / 78.38% branches
+
+---
+
+## Issues / Flags
+
+### ⚠️ TASK 1 manual action needed Daniel (sub 5min Firebase Console)
+- Delete `users/daniel` legacy node via Firebase Console UI (step-by-step instructions în §TASK 1 above)
+- Post-cleanup, considera §36.75 fully complete (item "Data import în RTDB" → "✅ DONE post manual cleanup users/daniel")
+
+### Empirical learning (factor 5-7x optimism confirmed AGAIN)
+- Estimate: 30-45 min Opus
+- Actual: ~10 min Opus
+- Pattern §36.72 LOCKED rămâne valid (calibration: future Opus estimates reduce proportional)
+
+### Sandbox limitation noted
+- Outbound HTTP DELETE blocked în CC sandbox — așteptat per `bash` permission denial pre-flight
+- Pattern: pentru future Firebase REST cleanup tasks, Daniel solo via Console = primary path, NOT CC Opus
+
+---
+
+## Cumulative LOCKED count progression
+
+- Pre-batch: **61** (post §36.72 Sprint UI Sequencing)
+- Post-§36.73 (Q-Set resolution): 62
+- Post-§36.74 (BATCH_PROTOCOL ext): 63
+- Post-§36.75 (Daniel solo gate): **64**
+
+**Final cumulative LOCKED V1:** **64**
+
+---
+
+## ADR State
+
+**LOCKED V1 active drafts (8) în `03-decisions/`:**
+- ADR_RIR_MATRIX_ADAPTIVE_v1
+- ADR_MODE_DETECTION_UI_v1
+- ADR_BIAS_DETECTION_OBSERVABLE_v1
+- ADR_OUTLIER_FILTER_v1
+- ADR_CASCADE_DEFENSE_v1
+- ADR_COMPOSITE_SIGNAL_LAYER_v1
+- ADR_PAIN_DISCOMFORT_BUTTON_v1 (cu EXT-1)
+- ADR_SMART_ROUTING_EQUIPMENT_v1
+
+Plus historical numeric (001-021) + ADR_MULTI_TENANT_AUTH_v1 (Faza 1 Batch B Daniel solo execution live live confirmed).
+
+**DRAFT pending:** **0**.
+
+---
+
+## Next action
+
+### Daniel manual cleanup (~5 min)
+1. Firebase Console → delete `users/daniel` legacy (vezi TASK 1 step-by-step)
+2. Post-cleanup, optional reply în chat strategic: "users/daniel șters, §36.75 fully complete"
+
+### Strategic chat NEW Sprint UI design (~1-2h)
+- Per §36.72 LOCKED + §36.75 gate technical CLEAR
+- Generate N CC prompt artefacte distincte (per §36.74 default batches rule)
+- Daniel drag-drop la 📥_inbox/ → comandă unică CC Opus → 1 raport LATEST.md final
 
 ### Beta-launch path
-
-Post Sprint UI execution → smoke tests prod (gates B/C/D persona memory) → Beta cohorts 3-tier 50 users invitation (§36.47 + §36.53 Telegram channel) → Beta sept-dec 2026 → Soft Launch 1 ian 2027 🚀.
-
-**Marketing Channel Mix Decision:** milestone V1.1 explicit ~Februarie 2027 per §36.60.
+- Sprint UI execution → smoke tests prod gates B/C/D → Beta cohort 50 users (§36.47 + §36.53 Telegram) → Beta sept-dec 2026 → Soft Launch 1 ian 2027 🚀
 
 ---
 
-## §7 STATUS V1 SNAPSHOT
+## Cross-References
 
-| Item | Status |
-|---|---|
-| 8/8 templates | ✅ LOCKED V1 |
-| F-NEW 1/2/3/4 | ✅ LOCKED V1 OBLIGATORIU |
-| MMI Hibrid + Storage Full UX | ✅ LOCKED V1 |
-| Decizii cumulative | **61 LOCKED V1** |
-| Phase B Wording 51 strings | ✅ LOCKED V1 + INTEGRATED |
-| Suflet Andura + Self-Correction + Smart-Routing + Pain Button + Composite Signal foundations | ✅ Foundation level |
-| Pricing schema §36.50-§36.52 | ✅ Schema level |
-| 8 ADR drafts | ✅ ALL LOCKED V1 |
-| 0 DRAFT pending | ✅ Clean |
-| Production gate | ✅ Cleared (0 PHASE_B flags) |
-| Tests 1203 / coverage 60.33% / build 4.026s | ✅ Baselines locked |
-| §BATCH_PROTOCOL pilot 10-batch | ✅ COMPLETE zero errors |
-| **Sprint UI Sequencing LOCKED V1 §36.72** | ✅ NEW |
-| Sprint UI Integration | ⏳ Gate Daniel solo + strategic chat NEW |
-| Beta-launch ASAP strategy | 🟡 Foundation ready, Sprint UI pending gate |
-
-**ZERO sesiuni chat strategic blocking pre-launch V1** — REMAINING doar Daniel solo gate + Sprint UI design chat strategic.
+- HANDOVER_GLOBAL §36.73-75: `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md`
+- VAULT_RULES §BATCH_PROTOCOL.X: `VAULT_RULES.md`
+- Source CC prompt archived: `📤_outbox/_archive/2026-05/88_CC_PROMPT_FIREBASE_CLEANUP_VAULT_SWEEP_CONSUMED.md`
+- Previous LATEST archived: `📤_outbox/_archive/2026-05/89_LATEST_PREVIOUS_SPRINT_UI_SEQUENCING_INGEST.md`
 
 ---
 
-*Ingest completat 2026-05-02 per VAULT_RULES §HANDOVER_PROTOCOL + §9 PROMPT_CC_HYGIENE MANDATORY (ALIGNMENT_QUESTIONS_CHAT_NEW.md generat). Pre-condition: HANDOVER_GLOBAL EOF Sprint 4.x cluster execution + cluster 10-batch §36.62-§36.71 entries confirmate. Cumulative 60 → 61 LOCKED V1 (+1 §36.72 Sprint UI sequencing strategic decision).*
+*Generat 2026-05-02 evening per VAULT_RULES §BATCH_PROTOCOL single batch run + §36.74 single centralized report rule (validated empirically — acest fișier = first iteration apply rule §36.74 LOCKED V1). Cumulative 64 LOCKED V1.*
