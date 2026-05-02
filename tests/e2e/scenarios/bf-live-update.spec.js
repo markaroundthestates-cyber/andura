@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { setupUser } from '../helpers/setup.js';
 import { WITH_HISTORY } from '../fixtures/users.js';
 
-const BASE_URL = '/salafull/';
+const BASE_URL = '/andura/';
 
 test('BF override updates UI without page reload', async ({ page }) => {
   await setupUser(page, WITH_HISTORY);

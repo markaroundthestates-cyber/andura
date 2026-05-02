@@ -45,7 +45,7 @@ export function createAutoBackup() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `salafull-backup-${new Date().toISOString().slice(0,19).replace(/[T:]/g,'-')}.json`;
+    a.download = `andura-backup-${new Date().toISOString().slice(0,19).replace(/[T:]/g,'-')}.json`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);

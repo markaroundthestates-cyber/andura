@@ -23,7 +23,7 @@ export async function initSentry() {
     _Sentry.init({
       dsn: SENTRY_DSN,
       environment: 'production',
-      release: `salafull@${import.meta.env?.VITE_APP_VERSION ?? '2.0.0'}`,
+      release: `andura@${import.meta.env?.VITE_APP_VERSION ?? '2.0.0'}`,
       tracesSampleRate: 0.1,
       beforeSend(event) {
         const msg = event.exception?.values?.[0]?.value ?? '';
@@ -44,7 +44,7 @@ export async function initSentry() {
     // window.testSentry('mesaj') → sends test event
     // window.Sentry.captureException(new Error('test'))
     window.Sentry = _Sentry;
-    window.testSentry = (msg = 'Manual test from SalaFull console') => {
+    window.testSentry = (msg = 'Manual test from Andura console') => {
       if (!_initialized) { console.warn('[Sentry] Not initialized'); return; }
       _Sentry.captureMessage(msg, 'info');
       console.log('[Sentry] testSentry() sent:', msg);

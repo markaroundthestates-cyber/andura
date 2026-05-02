@@ -241,7 +241,7 @@ export async function refreshIdToken() {
 }
 
 /**
- * Sign out — clears all stored auth tokens. Triggers a `salafull:signedout`
+ * Sign out — clears all stored auth tokens. Triggers an `andura:signedout`
  * window event so the UI can re-route.
  */
 export function signOut() {
@@ -251,7 +251,7 @@ export function signOut() {
   _removeItem(AUTH_STORAGE_KEYS.expiry);
   _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
-    try { window.dispatchEvent(new Event('salafull:signedout')); } catch {}
+    try { window.dispatchEvent(new Event('andura:signedout')); } catch {}
   }
 }
 
@@ -288,7 +288,7 @@ function _origin() {
   if (typeof window !== 'undefined' && window.location && window.location.origin) {
     return window.location.origin;
   }
-  return 'https://salafull.local';
+  return 'https://andura.local';
 }
 
 function _getItem(k) {

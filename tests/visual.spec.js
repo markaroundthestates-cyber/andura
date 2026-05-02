@@ -9,7 +9,7 @@ test.describe('Visual / structural tests', () => {
       window._suppressAAFrictionModal = true;
       window._suppressOnboardingOverlay = true;
     });
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     // Wait for the SPA to fully bootstrap (networkidle = no pending requests)
     await page.waitForLoadState('networkidle');
     // Also wait for the nav to be present before any test body runs
@@ -59,7 +59,7 @@ test.describe('Visual / structural tests', () => {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const wPage = await context.newPage();
 
-    await wPage.goto('/salafull/');
+    await wPage.goto('/andura/');
     await wPage.waitForLoadState('networkidle');
     // Wait for SPA nav to appear so styles are applied
     await wPage.waitForSelector('.nb', { timeout: 10000 });

@@ -8,7 +8,7 @@ export default defineConfig({
     timeout: 10000,
   },
   use: {
-    // baseURL is the GitHub Pages origin; tests navigate to /salafull/
+    // baseURL is the GitHub Pages origin; tests navigate to /andura/
     baseURL: 'https://markaroundthestates-cyber.github.io',
     headless: true,
     // Wait for the SPA JS to finish before each action

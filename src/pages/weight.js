@@ -286,7 +286,7 @@ export function exportCSV() {
   logs.forEach(l => { csv += `${l.date},"${l.ex}",${l.w||''},${l.reps||''},${l.rpe||''}\n`; });
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `salafull-${tod()}.csv`;
+  const a = document.createElement('a'); a.href = url; a.download = `andura-${tod()}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   toast('✓ CSV exportat');
 }
@@ -296,7 +296,7 @@ export function exportJSON() {
     'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',
     'photos','onboarding-done','muted','bf-override','phase-override',
     'current-kcal','aa-cooldown','phase-log'];
-  const data = {version: 'salafull-v11', exported: new Date().toISOString()};
+  const data = {version: 'andura-v1', exported: new Date().toISOString()};
   const allKeys = [];
   for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
   allKeys.forEach(k => {
@@ -305,7 +305,7 @@ export function exportJSON() {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `salafull-backup-${tod()}.json`;
+  a.href = url; a.download = `andura-backup-${tod()}.json`;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
   toast('✓ Backup exportat — trimite fișierul pe telefon', 'var(--green)');
@@ -320,7 +320,7 @@ export function importJSON() {
     reader.onload = ev => {
       try {
         const data = JSON.parse(ev.target.result);
-        if(!data.version || !data.version.includes('salafull')) {
+        if(!data.version || (!data.version.includes('andura') && !data.version.includes('salafull'))) {
           toast('⚠ Fișier invalid', 'var(--red)'); return;
         }
         const skip = ['version','exported'];

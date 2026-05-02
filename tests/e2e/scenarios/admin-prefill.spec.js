@@ -1,7 +1,7 @@
 // ══ Admin Prefill — E2E smoke tests ═══════════════════════════════════════
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/salafull/';
+const BASE_URL = '/andura/';
 
 test('adminPrefillAll populates all data', async ({ page }) => {
   await page.addInitScript(() => {

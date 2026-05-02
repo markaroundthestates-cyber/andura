@@ -190,7 +190,7 @@ async function init() {
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/salafull/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/andura/sw.js').catch(() => {});
   }
 
   checkWeightReminder();

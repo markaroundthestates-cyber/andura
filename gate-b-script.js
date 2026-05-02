@@ -1,6 +1,6 @@
 // GATE B — CDL Backfill Validation Script
 // Generat de Co-CTO Opus, 26 Apr 2026
-// Rulează în DevTools Console pe http://localhost:5173/salafull/
+// Rulează în DevTools Console pe http://localhost:5173/andura/
 
 console.log('=== GATE B START ===');
 

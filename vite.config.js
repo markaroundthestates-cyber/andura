@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/salafull/',
+  base: '/andura/',
   build: {
     outDir: 'dist',
     rollupOptions: {

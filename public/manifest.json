@@ -1,15 +1,15 @@
 {
-  "name": "SalaFull",
-  "short_name": "SalaFull",
+  "name": "Andura",
+  "short_name": "Andura",
   "description": "Coach personal antrenament",
-  "start_url": "/salafull/",
-  "scope": "/salafull/",
+  "start_url": "/andura/",
+  "scope": "/andura/",
   "display": "standalone",
   "background_color": "#080808",
   "theme_color": "#080808",
   "orientation": "portrait",
   "icons": [
-    { "src": "/salafull/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/salafull/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/andura/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/andura/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }

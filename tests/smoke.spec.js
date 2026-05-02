@@ -13,7 +13,7 @@ test.describe('Smoke tests', () => {
   test('app loads in under 5 seconds', async ({ page }) => {
     const start = Date.now();
 
-    await page.goto('/salafull/', { waitUntil: 'domcontentloaded', timeout: 5000 });
+    await page.goto('/andura/', { waitUntil: 'domcontentloaded', timeout: 5000 });
 
     const elapsed = Date.now() - start;
     expect(elapsed).toBeLessThan(5000);
@@ -26,7 +26,7 @@ test.describe('Smoke tests', () => {
       pageErrors.push(err.message);
     });
 
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
 
     const criticalErrors = pageErrors.filter(
@@ -40,7 +40,7 @@ test.describe('Smoke tests', () => {
   });
 
   test('page title exists and body is not empty', async ({ page }) => {
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
 
     // Title should be non-empty

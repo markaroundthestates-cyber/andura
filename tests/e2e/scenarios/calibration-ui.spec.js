@@ -3,7 +3,7 @@
 // (neither the Why modal nor the "Program scurtat" banner).
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/salafull/';
+const BASE_URL = '/andura/';
 
 test('Cold start user does not see SKIP_DAY in Why modal', async ({ page }) => {
   await page.addInitScript(() => {

@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 import { setupUser } from '../helpers/setup.js';
 import { expectTextNotInPage, expectTextInPage } from '../helpers/assertions.js';
 
-const BASE_URL = '/salafull/';
+const BASE_URL = '/andura/';
 const TODAY = new Date().toISOString().slice(0, 10);
 
 test.describe('Readiness Verdict — Phase-aware labels', () => {

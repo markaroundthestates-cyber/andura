@@ -55,7 +55,7 @@ function seedStorage(extraOverrides = {}) {
 test.describe('Integration — PR Wall', () => {
   test('PR Wall afișează recorduri (nu empty state)', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#pr-wall-list', { timeout: 10000 });
 
@@ -69,7 +69,7 @@ test.describe('Integration — PR Wall', () => {
 
   test('PR Wall afișează cel puțin o greutate numerică', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#pr-wall-list', { timeout: 10000 });
 
@@ -85,7 +85,7 @@ test.describe('Integration — Readiness Card', () => {
   test('cardul de readiness apare când nu e setat azi', async ({ page }) => {
     // Inject data WITHOUT readiness for today → card should show emoji selector
     await seedStorage({ readiness: {} })(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-preview-list', { timeout: 10000 });
 
@@ -100,7 +100,7 @@ test.describe('Integration — Readiness Card', () => {
 
   test('selectând readiness îl salvează și ascunde selectorul', async ({ page }) => {
     await seedStorage({ readiness: {} })(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-preview-list', { timeout: 10000 });
 
@@ -126,7 +126,7 @@ test.describe('Integration — Readiness Card', () => {
 test.describe('Integration — Dashboard Calendar', () => {
   test('calendarul săptămânal are 7 zile vizibile', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
 
     // Navigate to dashboard
@@ -147,7 +147,7 @@ test.describe('Integration — Dashboard Calendar', () => {
 
   test('secțiunea de sesiune din dashboard are conținut', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
 
     const navDash = page.locator('.nb').nth(1);
@@ -165,7 +165,7 @@ test.describe('Integration — Dashboard Calendar', () => {
 test.describe('Integration — Skip Workout Modal', () => {
   test('butonul "Sari ziua" deschide modalul de skip', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-screen', { timeout: 10000 });
 
@@ -195,7 +195,7 @@ test.describe('Integration — Skip Workout Modal', () => {
 test.describe('Integration — Greutăți per echipament', () => {
   test('recomandarea pentru Lat Pulldown e din seria Bailib (multiplu de 5)', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-preview-list', { timeout: 10000 });
 
@@ -218,7 +218,7 @@ test.describe('Integration — Greutăți per echipament', () => {
 
   test('recomandarea pentru Incline DB Press e din seria ganterelor (multiplu de 2.5)', async ({ page }) => {
     await seedStorage()(page);
-    await page.goto('/salafull/');
+    await page.goto('/andura/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#today-preview-list', { timeout: 10000 });
 

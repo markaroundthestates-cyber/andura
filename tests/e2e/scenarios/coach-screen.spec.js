@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 import { setupUser } from '../helpers/setup.js';
 import { EMPTY, CUT_ACTIVE, CONTAMINATED } from '../fixtures/users.js';
 
-const BASE_URL = '/salafull/';
+const BASE_URL = '/andura/';
 
 test.describe('Coach Screen — Profile-driven behavior', () => {
   test('Empty user: coach page renders without JS errors', async ({ page }) => {
