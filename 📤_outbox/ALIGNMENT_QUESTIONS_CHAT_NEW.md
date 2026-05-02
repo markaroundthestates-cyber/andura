@@ -1,193 +1,189 @@
-# ALIGNMENT QUESTIONS — Sprint UI + Daniel Solo Gate + Beta Path
+# ALIGNMENT QUESTIONS — Sprint UI Strategic Chat NEW (8 Active)
 
-**Generat:** 2026-05-02 — replacement file per Daniel directive ("rateuri la aliniere")
-**Scope sursă:** ultimele 3 ingests (Cluster 10-Batch + Sprint UI Sequencing §36.72 + ALIGNMENT_QUESTIONS responses Q1-Q10)
-**Status final după acest chat:** 61 LOCKED V1 cumulative, 8 ADR drafts ALL LOCKED, 0 DRAFT pending, Sprint UI gate Daniel solo în progres
-**Format:** 15 Q-uri sharp, actionable, fiecare cu cele 2-3 căi (NU long sub-Q-uri)
-
----
-
-## §1 SPRINT UI EXECUTION — sequencing + scope (Q1-Q8)
-
-### Q1 — Sprint UI gate Daniel solo: strict sequential sau parallel?
-
-**§36.72 LOCKED:** order strict (Daniel solo → strategic chat → CC Opus). Dar gate items Daniel = 4 (Firebase Auth + DB rules + GDPR + Avocat). Firebase + DB rules sunt **technical critical** pentru Sprint UI integration (auth wiring + database schema). GDPR + Avocat sunt **launch-blocking pentru Beta**, NU technical pentru Sprint UI cod.
-
-→ **A) Strict toate 4** — Sprint UI start după ~2-4h (toate 4 done)
-→ **B) Critical-only gate** — Sprint UI start după Firebase + DB rules (~1-2h), GDPR + Avocat parallel post-Sprint
-→ **C) Parallel Avocat** — outreach (asincron, response delayed) starts now, Sprint UI gate = Firebase + DB rules + GDPR
+**Generat:** 2026-05-02 evening late post Firebase Daniel solo gate 100% complete
+**Scope:** 8 Q-uri ACTIVE pentru strategic chat NEW Sprint UI design (7 anterior RESOLVED via §36.73)
+**Cumulative LOCKED state:** 64 (unchanged — handover ingest pure status snapshot)
+**Format:** anti-hallucination guards (split tranșe + checklist final + per-Q numbering explicit)
 
 ---
 
-### Q2 — Strategic chat UX scope: single sau split?
+## ⚠️ MANDATORY PENTRU CHAT-UL CARE PRIMEȘTE ACEST DOCUMENT ⚠️
 
-**6 topice:** 3 Card buttons + Goal Shift + DOMS expand + Founding counter + Telegram CTA + PROMPT_PROFILE_VALIDATION trigger.
+**Răspunde A/B/C pentru FIECARE Q listată — NU sări, NU re-clusteriza, NU "depinde, vedem".**
 
-→ **A) Single chat ~1-2h** — toate 6 într-o sesiune (bandwidth Daniel risc dacă lung)
-→ **B) Split 2 chats** — chat 1 engine UI (Card buttons + Goal Shift + DOMS) / chat 2 commerce-admin (Founding + Telegram + PROMPT_VALIDATION)
-→ **C) Split 3 chats** — Daniel CEO bandwidth optim, chat scurt focus 2 topice fiecare
+**Format obligatoriu per Q:**
+```
+Q[N]: [A|B|C] — [rationale 1-2 propoziții]
+```
 
----
-
-### Q3 — CC Opus execution: single batch sau mini-cluster?
-
-Empirical: §BATCH_PROTOCOL scalable la 10+ batches confirmed cluster 10-batch zero errors. Sprint UI ~6-10h estimate (sau ~1-2h actual factor 5-7x).
-
-→ **A) Single Opus batch** — simpler orchestration, dar long-running risc context loss
-→ **B) Mini-cluster 5 batches** — BATCH_UI_01 Card buttons / 02 Goal Shift / 03 Founding counter / 04 Telegram CTA / 05 PROMPT_VALIDATION (per §BATCH_PROTOCOL pattern)
-→ **C) Mini-cluster 7 batches** — split mai granular cu disjuncte clean (e.g., DOMS expand separat, telemetry separate)
-
-**Recommendation:** **B) 5 batches** — pattern empirical validated, intermediate gating per batch report.
+**Ai 8 Q-uri active. La final verifică checklist-ul §4 — 8/8 obligatoriu.**
 
 ---
 
-### Q4 — DOMS expand wording final (ADR_PAIN EXT-1)
+## §1 — TRANȘA 1 (Q2-Q5): scope + wording + commerce — 4 Q-uri
 
-ADR_PAIN EXT-1 LOCKED V1: 2 options PRIMARY visible default ("Mișcarea mă deranjează" + "Simt o tensiune ciudată") + 1 SECONDARY behind expand "Mai multe opțiuni" ("DOMS sever" → "Durere musculară severă post-antrenament (DOMS)" în UI).
+### [Q2/8] Strategic chat scope — single sau split?
 
-→ **A) Wording final ca-i** — copy/paste din ADR EXT-1, NU re-design
-→ **B) Re-validate Maria 65** — testați wording cu user real / Gigel persona before lock UI
-→ **C) Alt wording propus** — Daniel are alternativă specifică (indică)?
+6 topice UX needed pentru Sprint UI: 3 Card buttons + Goal Shift + DOMS expand + Founding counter + Telegram CTA + PROMPT_VALIDATION trigger.
 
----
-
-### Q5 — Founding cap counter visibility
-
-§36.50-§36.52: Founding €39 capped 50 users. Atomic counter implemented (BATCH_05 Sprint 4.x). UI integration pending.
-
-→ **A) Public counter "47/50 founding spots remaining"** — FOMO/urgency marketing classical
-→ **B) Hidden counter** — avoid scarcity manipulation perception, Bugatti integrity over conversion
-→ **C) Tier-aware** — public DOAR pe pricing page, hidden post-conversion (avoid post-purchase regret signal)
+- **A)** Single chat ~1-2h — toate 6 într-o sesiune (bandwidth Daniel risc dacă lung)
+- **B)** Split 2 chats — chat 1 engine UI (Card buttons + Goal Shift + DOMS) / chat 2 commerce-admin (Founding + Telegram + PROMPT_VALIDATION)
+- **C)** Split 3 chats — focus 2 topice/chat, slower path la CC Opus
 
 ---
 
-### Q6 — 3 Card buttons grouping logic
+### [Q4/8] DOMS expand wording final (ADR_PAIN EXT-1)
+
+ADR_PAIN_DISCOMFORT_BUTTON_v1 EXT-1 LOCKED V1 deja: 2 PRIMARY visible default ("Mișcarea mă deranjează" + "Simt o tensiune ciudată") + 1 SECONDARY behind expand "Mai multe opțiuni" ("Durere musculară severă post-antrenament (DOMS)").
+
+- **A)** Wording final ca-i — copy/paste din ADR EXT-1, NU re-design
+- **B)** Re-validate Maria 65 — testați wording cu Gigel persona pre-lock UI
+- **C)** Alt wording propus — Daniel are alternativă specifică (indică textul)
+
+---
+
+### [Q5/8] Founding cap counter visibility
+
+§36.50-§36.52 LOCKED: Founding €39 cap 50 users. Atomic counter implementat (BATCH_05 Sprint 4.x). UI integration pending.
+
+- **A)** Public counter "47/50 founding spots remaining" — FOMO/urgency marketing classical
+- **B)** Hidden counter — avoid scarcity manipulation perception, Bugatti integrity over conversion
+- **C)** Tier-aware — public DOAR pe pricing page, hidden post-conversion (avoid post-purchase regret signal)
+
+---
+
+## §1.bis — checklist tranșă 1
+
+```
+[ ] Q2 răspuns
+[ ] Q4 răspuns
+[ ] Q5 răspuns
+```
+**3/3 înainte trecere la tranșa 2.**
+
+---
+
+## §2 — TRANȘA 2 (Q6-Q8): UI placement — 3 Q-uri
+
+### [Q6/8] 3 Card buttons grouping logic
 
 3 features: Aparat ocupat/lipsă (smart-routing §36.37) + Pain Discomfort (§36.38) + ?Disconfort (alt third button per §29.5).
 
-→ **A) Single Card 3 separate buttons** — visual grouping "Probleme acum?" cu 3 sub-actions (compact, low real estate)
-→ **B) 3 distinct Cards independent** — fiecare problem type = separate visual entity (mai clar dar takes space)
-→ **C) Contextual single Card** — appears DOAR mid-session pre-set, hidden la idle / dashboard
+- **A)** Single Card 3 separate buttons — visual grouping "Probleme acum?" cu 3 sub-actions (compact, low real estate)
+- **B)** 3 distinct Cards independent — fiecare problem type = separate visual entity (mai clar dar takes space)
+- **C)** Contextual single Card — appears DOAR mid-session pre-set, hidden la idle / dashboard
 
 ---
 
-### Q7 — Goal Shift card position
+### [Q7/8] Goal Shift card position
 
 §36.35 + §36.58 GOAL_SHIFT_CALIBRATION_PLACEHOLDER LOCKED V1 wording. Card afișează "Recalibrăm pe noul obiectiv" + counter "Sesiunea ${current}/2".
 
-→ **A) Top dashboard** — high visibility primele 2 sesiuni post-shift, dispare după
-→ **B) In-flow per session** — appears DOAR la session start, dismissable
-→ **C) Setări only** — confirmation discrete în Setări → Profil & Date, NU intrusive
+- **A)** Top dashboard — high visibility primele 2 sesiuni post-shift, dispare după
+- **B)** In-flow per session — appears DOAR la session start, dismissable
+- **C)** Setări only — confirmation discrete în Setări → Profil & Date, NU intrusive
 
 ---
 
-### Q8 — Telegram CTA placement
+### [Q8/8] Telegram CTA placement
 
 §36.53 + §36.54 LOCKED: Telegram = sole pre-launch community channel.
 
-→ **A) Onboarding screen 4** — early hook înainte first session (high install moment)
-→ **B) Setări → Comunitate** — discoverable, NU push (respect attention)
-→ **C) Post-session prompt 1×/săpt** — earned moment after success, soft suggestion
+- **A)** Onboarding screen 4 — early hook înainte first session (high install moment)
+- **B)** Setări → Comunitate — discoverable, NU push (respect attention)
+- **C)** Post-session prompt 1×/săpt — earned moment after success, soft suggestion
 
 ---
 
-## §2 DANIEL SOLO GATE — readiness check (Q9-Q11)
+## §2.bis — checklist tranșă 2
 
-### Q9 — Firebase Auth Console readiness
-
-Multi-tenant migration ADR LOCKED. Daniel has docs/access?
-
-→ **A) Self-serve clean** — Daniel are Firebase Console + docs internal, gate <1h
-→ **B) Need walk-through** — solicită Claude/CC ghid step-by-step pre-execution
-→ **C) Blocking dependency** — paid plan upgrade needed sau team admin necessary (indică)
-
----
-
-### Q10 — DB rules deployment process
-
-§34.2 Blocker 2: `database.rules.json` syntax LOCKED. Publish-only sau re-validate post cluster modifications (e.g., founding_cap_counter atomic transaction)?
-
-→ **A) Publish-only** — sub-1h Daniel via Firebase Console manual paste
-→ **B) Re-validate emulator** — pricing schema BATCH_05 Sprint 4.x adds founding_cap_counter, may need rules update + emulator test
-→ **C) Need CC verification** — Claude verifică rules cover noile schema fields pre-publish
+```
+[ ] Q6 răspuns
+[ ] Q7 răspuns
+[ ] Q8 răspuns
+```
+**3/3 înainte trecere la tranșa 3.**
 
 ---
 
-### Q11 — GDPR + Avocat criticality pentru Sprint UI
+## §3 — TRANȘA 3 (Q12-Q13): calibration — 2 Q-uri (1-line per Q OK)
 
-GDPR tutorial (§36.55) + Avocat barter outreach.
+### [Q12/8] Future Opus estimates: reduce sau preserve buffer?
 
-→ **A) Both blocking** — toate 4 gate items strict (per §36.72 LOCKED)
-→ **B) GDPR blocking, Avocat parallel** — GDPR tutorial needed pentru screenshot integration UI, Avocat outreach asincron
-→ **C) Both NOT blocking Sprint UI** — DOAR pre-Beta launch blocking (Sprint UI codes generic GDPR placeholder)
+Empirical confirmat 3x factor 5-7x: cluster 10-batch ~70min vs 6-8h estimate, single batch §36.73-75 ~10min vs 30-45min estimate, Sprint 4.x cluster ~70min vs 6-8h estimate.
 
----
-
-## §3 EMPIRICAL CALIBRATION + FUTURE (Q12-Q13)
-
-### Q12 — Future Opus estimates: reduce sau preserve buffer?
-
-Cluster 10-batch ~70min actual vs 6-8h estimate = factor 5-7x. Sprint 4.x cluster identical pattern.
-
-→ **A) Reduce proportional** — Sprint UI estimate ~6-10h → reality ~1-2h actual; planning realistic
-→ **B) Preserve estimate** — buffer pentru edge cases / debugging time, predictable plan
-→ **C) Hybrid** — communicate ambele (estimate "headline" 6-10h cu "reality factor 5-7x = 1-2h actual likely")
+- **A)** Reduce proportional — Sprint UI estimate ~6-10h → reality ~1-2h actual; planning realistic
+- **B)** Preserve estimate — buffer pentru edge cases / debugging time, predictable plan
+- **C)** Hybrid — communicate ambele (estimate "headline" 6-10h cu "reality factor 5-7x = 1-2h actual likely")
 
 ---
 
-### Q13 — Daniel-time estimate calibration
+### [Q13/8] Daniel-time estimate calibration
 
-§36.72 spune "~2-4h Daniel solo". Realistic per past Daniel solo tasks (Firebase, DB)?
+§36.72 spune "~2-4h Daniel solo". Daniel solo Firebase actual: ~30-45 min real (per §36.75 evening late HANDOVER ingest).
 
-→ **A) Realistic** — Daniel a făcut similar setup pre, ~2-4h reasonable
-→ **B) Optimistic** — Daniel solo de obicei ~5-8h (realistic include context-switching, dependencies, reading docs)
-→ **C) Pessimistic actual** — Daniel mai eficient, ~1-2h actual
-
----
-
-## §4 BETA PATH + V1.1 (Q14-Q15)
-
-### Q14 — Beta cohorts 3-tier 50 users ratio
-
-§36.47: 50 users beta. Pricing tiers Founding €39 / Standard €59 / Elite €79.
-
-→ **A) Founding-heavy** — 40 Founding + 8 Standard + 2 Elite (cap 50 founding atinge; revenue €1860)
-→ **B) Mixed proportional** — 25 Founding + 20 Standard + 5 Elite (€2540, more diverse signal)
-→ **C) Founding-only** — 50 Founding (€1950, pure founding cohort signal — but cap reached pre-launch public)
+- **A)** Realistic ~2-4h preserved — preserve original estimate
+- **B)** Optimistic ~5-8h — reality include context-switching / deps / docs
+- **C)** Pessimistic actual — Daniel mai eficient, ~30-45 min CONFIRMED EMPIRICAL ✅ (recommended LOCK opțiunea C)
 
 ---
 
-### Q15 — Marketing Channel Mix V1.1 timing
+## §3.bis — checklist tranșă 3
 
-§36.60 LOCKED: marketing channel mix DEFERRED V1.1 ~Februarie 2027.
-
-→ **A) Strict V1.1** — NU discuții pre-Beta, focus 100% Sprint UI + launch
-→ **B) Pre-Beta soft prep** — decide channel platforms (TikTok? IG? FB? Discord?) NOT execution timing — content prep paralel
-→ **C) Pre-Beta V1.0 hint** — Telegram channel deja LOCKED, can extend la 1 secondary channel pre-Beta dacă bandwidth Daniel permits
-
----
-
-## §5 RESUMĂ — STATUS POST CHAT
-
-**Decizii cumulative:** 61 LOCKED V1 (post §36.72)
-**Tests:** 1203 PASS / 75 files
-**Coverage baseline:** 60.33% lines / 78.38% branches
-**Build baseline:** 4.026s / 921 KB raw / 283 KB gzipped / ~3.0s on 3G
-**ADR drafts:** 8 ALL LOCKED V1, 0 DRAFT pending
-**Sprint UI gate:** 4 Daniel solo items
-**Strategic chat NEW Sprint UI:** ~1-2h, 6 UX topice
-**CC Opus Sprint UI execution:** ~6-10h estimate (~1-2h actual posibil)
+```
+[ ] Q12 răspuns
+[ ] Q13 răspuns
+```
+**2/2 înainte verificare finală §4.**
 
 ---
 
-**Total întrebări aliniere:** **15** sharp, actionable, 2-3 căi per Q.
+## §4 — VERIFICARE FINALĂ MANDATORY (8/8)
 
-**Path forward post Daniel review:**
-- **Q1-Q8** Sprint UI scope + sequencing → strategic chat NEW unblocked
-- **Q9-Q11** Daniel solo gate clarifications → Sprint UI start timing locked
-- **Q12-Q13** empirical calibration → estimate convention pentru future clusters
-- **Q14-Q15** Beta path + V1.1 → roadmap clarity post Sprint UI
+**Înainte de a încheia chat-ul / a genera CC prompts, verifică:**
+
+```
+[ ] Q2 — Strategic chat scope (single/split 2/split 3)
+[ ] Q4 — DOMS wording final (LOCKED V1 ca-i / re-validate / alt)
+[ ] Q5 — Founding counter visibility (public / hidden / tier-aware)
+[ ] Q6 — 3 Card buttons grouping (single Card / 3 distinct / contextual)
+[ ] Q7 — Goal Shift position (top / in-flow / Setări)
+[ ] Q8 — Telegram CTA placement (onboarding / Setări / post-session)
+[ ] Q12 — Future estimates (reduce / preserve / hybrid)
+[ ] Q13 — Daniel-time (A realistic / B optimistic / C empirical confirmed)
+```
+
+**Total: 8/8 OBLIGATORIU.** Dacă ai răspuns <8, repornește din tranșa unde ai sărit.
 
 ---
 
-*Generat 2026-05-02 replacement file per Daniel directive. Scope: ultimele 3 ingests (Cluster 10-Batch + Sprint UI Sequencing §36.72 + ALIGNMENT_QUESTIONS Q1-Q10 cluster batches integrate). 15 Q-uri sharp în loc de 10 verbose. Cumulative 61 LOCKED V1.*
+## §5 — Q-URI CARE NU APAR (RESOLVED §36.73)
+
+Pentru claritate — **NU re-deschide aceste Q-uri:**
+
+| Q anterior | Status | Resolution |
+|---|---|---|
+| Q1 (gate strict vs parallel) | RESOLVED | §36.75 Daniel solo gate technical 100% COMPLETE — moot |
+| Q3 (CC batch sizing 5/7) | RESOLVED | §36.74 BATCH_PROTOCOL extension default batches — Claude generează N artefacte natural per disjuncte |
+| Q9 (Firebase Auth readiness) | RESOLVED | §36.75 DONE live |
+| Q10 (DB rules deployment) | RESOLVED | §36.75 published live |
+| Q11 (GDPR + Avocat blocking) | Opțiunea C | §36.73 — defer launch oficial, NU pre-Beta închis |
+| Q14 (Beta cohorts ratio €) | DEFER | §36.73 — post-Beta cu date piață reale |
+| Q15 (Marketing V1.1 reopen) | REJECTED | §36.73 — §36.60 LOCKED defer Februarie 2027 |
+
+---
+
+## §6 — POST-RESPONSES NEXT ACTION
+
+Per §36.74 default batches MANDATORY:
+
+1. ✅ Daniel răspuns 8/8 → Claude generează **N CC prompt artefacte distincte** copy-ready (per disjuncte clean Sprint UI, expected 5-7 batches)
+2. ✅ Daniel drag toate N artefacte la `📥_inbox/`
+3. ✅ Daniel comandă unică CC Opus: "Rulează toate batch-urile din inbox sequential per §BATCH_PROTOCOL"
+4. ✅ CC Opus output: 1 SINGUR raport `📤_outbox/LATEST.md` centralizat final
+
+**NU per-batch reports în chat. NU single mega prompt.** Per §36.74 LOCKED V1.
+
+---
+
+*Generat 2026-05-02 evening late post Firebase Daniel solo gate complete + handover ingest. Anti-hallucination guards: split 3 tranșe + checklist per tranșă + verificare finală 8/8 mandatory + RESOLVED list explicit. Cumulative 64 LOCKED V1 (unchanged — pure status snapshot ingest).*
