@@ -274,3 +274,88 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 - `PROMPT_CC_HYGIENE.md` §3.2 raport format expected
 
 🦫 **Handover protocol locked. Anti-saturation enforced. Vault hygiene preserved.**
+
+---
+
+## §BATCH_PROTOCOL — Cluster Execution Standard
+
+**Status:** LOCKED V1 (codified 2026-05-02 post Sprint 4.x pilot validation)
+**Origin:** Sprint 4.x cluster (5 batches sequential, zero errors, 1110→1174 tests, 5 commits clean) — pattern validated empirically.
+
+### Purpose
+
+Standardize multi-batch sequential execution prin Claude Code Opus pentru clusters mari (>3 batches sau >2h Opus runtime). Prevent shared touch-point conflicts, gate dependencies, manual orchestration overhead.
+
+### Core Rules (8 elements MANDATORY)
+
+#### 1. Naming Convention
+Pattern: `PROMPT_CC_BATCH_<NN>_<SCOPE>.md` unde:
+- `<NN>` = 2-digit zero-padded sequential number (01, 02, ..., 10, 11)
+- `<SCOPE>` = UPPERCASE_SNAKE_CASE descriptive (e.g., `ADR_LOCKS`, `GOLDEN_MASTER_TESTS`)
+
+Alfabetic ordering = natural execution order.
+
+#### 2. Header Obligatoriu
+Each batch file MUST contain header:
+```
+**Model:** Opus | Sonnet
+**Order:** N/Total
+**Dependencies:** none | BATCH_XX complete
+**Scope:** <one-line description>
+**Estimate:** ~Xh
+```
+
+#### 3. Strict Disjuncte (zero shared touch-points)
+Two batches în același cluster CANNOT modify same file or same logical unit. Verification pre-cluster: list all files modified per batch, ensure intersection = ∅.
+
+Exception: HANDOVER_GLOBAL.md per-batch entries OK (append-only, separate sections).
+
+#### 4. Fail-Fast Strict
+Pe primul error în orice batch → STOP cluster execution. NU continue cu degraded scope. Daniel review report → manual restart sau amendment.
+
+NU: skip failing batch, continue cu batches subsequent.
+
+#### 5. Zero Gate Principle
+Each batch self-contained — NU dependent runtime gate from another batch beyond declared `Dependencies` în header. If batch B needs runtime artifact from batch A → declare explicit în Dependencies.
+
+NU: implicit dependencies (e.g., "BATCH_03 assumes Firebase Auth live without declaring").
+
+#### 6. Sequential Auto-Trigger
+Master command: "Execute BATCH_01 → BATCH_NN sequential per VAULT_RULES §BATCH_PROTOCOL. Fail-fast strict."
+
+CC Opus reads each PROMPT_CC_BATCH_*.md în order, executes, generates report în `📤_outbox/_archive/<YYYY-MM>/BATCH_NN_REPORT.md`, triggers next.
+
+#### 7. Final Batch Convention
+Last batch în cluster (BATCH_NN) MUST:
+- Aggregate all batch reports into single `📤_outbox/LATEST.md` consolidated
+- Include: total commits + tests delta + ADR changes + carry-overs + next action recommended
+- Append cumulative session-lock entry în HANDOVER_GLOBAL §36
+
+#### 8. Commit Message Format
+Each batch commits cu format:
+```
+feat(batch-NN): <one-line scope>
+
+- bullet 1 detailed change
+- bullet 2 detailed change
+- bullet 3 cross-refs / verification
+```
+
+Example: `feat(batch-01): LOCK V1 cele 3 ADR drafts + EXT-1 DOMS hide`
+
+### Trigger Threshold
+
+§BATCH_PROTOCOL MANDATORY pentru:
+- ≥3 batches în cluster
+- ≥2h estimated Opus runtime cumulative
+- Strategic execution session (NU exploratory)
+
+OPTIONAL pentru:
+- 1-2 batches isolated (use single PROMPT_CC standard)
+- Exploratory work cu uncertainty pe scope
+
+### Cross-References
+
+- Sprint 4.x cluster pilot: `📤_outbox/SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
+- ALIGNMENT_QUESTIONS Q5 + Q10 codification scope: `06-sessions-log/HANDOVER_GLOBAL.md` §36.63
+- Master orchestration command pattern: see PROMPT_CC_BATCH_*.md naming convention în `📥_inbox/` per cluster.
