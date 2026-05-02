@@ -1,164 +1,161 @@
-# LATEST — Firebase Daniel Solo Gate Complete + Sprint UI Strategic Chat Ready
+# LATEST — Sprint UI Cluster ABORTED at BATCH_UI_01 Pre-Flight 🛑
 
-**Data:** 2026-05-02 evening late
-**Source:** `📥_inbox/HANDOVER_INGEST_2026-05-02_FIREBASE_DONE_SPRINT_UI_NEXT.md` → archived `90_HANDOVER_INGEST_FIREBASE_DONE_SPRINT_UI_NEXT_CONSUMED.md`
-**Type:** Status snapshot ingest — ZERO decizii noi LOCKED, cumulative unchanged 64
-
----
-
-## §1 SCOPE INGESTAT
-
-### 0 decizii NEW LOCKED (pure status snapshot)
-
-Toate 3 decizii §36.73 + §36.74 + §36.75 deja integrate prior CC Opus single batch (commits `92b9338` + `7f5d9fb` + `5564b9a`). Acest handover = status confirmation post Daniel manual cleanup `users/daniel`.
-
-### Confirmation Daniel solo gate technical 100% COMPLETE
-
-- Firebase Auth Email/Password + Magic Link enabled ✅
-- Firebase Auth Google OAuth enabled (project "Andura") ✅
-- Region europe-west1 verified ✅
-- User Auth Daniel UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2` ✅
-- Backup RTDB local 49KB ✅
-- Data import `users/{UID}` via Console ✅
-- **`users/daniel` legacy cleanup DONE manual Daniel** post sandbox CC blocked (TASK 1 ALTERNATIVE path) ✅
-- DB rules per-UID strict published live ✅
-- Smoke test prod confirmed (401 Unauthorized pe `users/daniel.json`) ✅
-
-### Q-uri ALIGNMENT_QUESTIONS status update
-
-- **7 RESOLVED** prin §36.73-75: Q1, Q3, Q9, Q10, Q11, Q14, Q15
-- **8 ACTIVE** pentru strategic chat NEW Sprint UI: Q2, Q4, Q5, Q6, Q7, Q8 (UX) + Q12, Q13 (calibration)
-
-### Empirical learnings cumulative (3x confirmed factor 5-7x)
-
-- Sprint 4.x cluster pilot: ~70min actual vs 6-8h estimate
-- Cluster 10-batch acest sesiune: ~70min actual vs 6-8h estimate
-- Single batch §36.73-75: ~10min actual vs 30-45min estimate
-- **Q13 Daniel-time CONFIRMED empirical:** ~30-45 min real Firebase setup (NU ~2-4h estimate inițial §36.72)
-
-### Cumulative LOCKED count
-
-**64 (UNCHANGED)** — handover = pure status snapshot, NU adaugă decizii noi.
+**Data:** 2026-05-03
+**Source:** PROMPT_CC_BATCH_UI_01..07 in `📥_inbox/` (NU consumed/archived — cluster aborted, prompts need re-spec)
+**Type:** Pre-flight STOP report — fail-fast strict per master command + §BATCH_PROTOCOL #4
 
 ---
 
-## §2 STATE SNAPSHOT
+## §1 EXECUTIVE SUMMARY
 
-| Metric | Value |
-|---|---|
-| Cumulative LOCKED | **64** (unchanged acest ingest) |
-| Tests | 1203 PASS / 75 files |
-| Coverage | 60.33% lines / 78.38% branches |
-| Build | 4.026s / 921 KB raw / 283 KB gzipped |
-| Active LOCKED ADRs | 8 drafts + ADR_MULTI_TENANT_AUTH live + historicals |
-| Pending DRAFT ADRs | **0** |
-| Daniel solo gate technical | **100% COMPLETE** ✅ |
-| Sprint UI gate | **CLEAR** ✅ |
-| Strategic chat NEW Sprint UI | UNBLOCKED |
+Cluster Sprint UI 7-batch a fost STOPPED imediat la BATCH_UI_01 pre-flight gate. **Reason:** spec-uri assume React/JSX framework, project actual = vanilla JavaScript (per ADR 005). Incompatibility BLOCKING.
 
----
+**Per fail-fast strict + Bugatti paradigm + "NU mock data inventată":**
+- 0 commits fabricat
+- 0 JSX files creat (would create dead code în vanilla bundle)
+- 0 push origin/main
+- All 7 prompts STILL în `📥_inbox/` (NOT archived) pentru re-spec
 
-## §3 ALIGNMENT_QUESTIONS REGENERAT cu anti-hallucination guards
-
-Per Daniel feedback anterior ("rateuri la aliniere") — `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` regenerat cu structurale:
-
-1. **Header MANDATORY explicit** — răspunde A/B/C pentru FIECARE Q, NU sări, NU re-clusteriza
-2. **Split în 3 tranșe scurte** — §1 Q2-Q5 (4Q) + §2 Q6-Q8 (3Q) + §3 Q12-Q13 (2Q calibration)
-3. **Checklist per tranșă** — `[ ] Q[N] răspuns` cu mandatory N/N înainte trecere
-4. **Verificare finală §4** — 8/8 obligatoriu cu re-pornire dacă <8
-5. **Numbering ROW explicit** — `[Q4/8]` în plus de `### Q4` (atenție-grabber)
-6. **Lista RESOLVED explicit §5** — 7 Q-uri NU re-deschis cu rationale per Q
+**Cumulative LOCKED count: 64 (unchanged)** — no new decisions, pre-flight gate aborted.
+**Tests: 1203 PASS (unchanged)** — no code changes.
 
 ---
 
-## §4 SPRINT UI BATCHES PLAN (per §36.74 default)
+## §2 PRE-FLIGHT FINDINGS
 
-Expected ~5-7 batches Sprint UI (post strategic chat NEW responses 8/8):
+### Project framework reality
+- **Vanilla JavaScript** per ADR 005 — `package.json` deps confirmate: NO `react`, `vue`, `svelte`, `preact`, `solid`. Build tool = vite (bundler only).
+- `src/components/` = `.js` factory functions cu direct DOM manipulation imperative. Citez `safetyBanner.js`: *"Direct DOM imperative, no framework (per ADR 005 vanilla JS)"*.
+- NO `.jsx`/`.tsx` files exist. NO `useState`, `propTypes`, JSX compiler.
 
-| Batch | Scope | Source LOCKED |
+### Spec assumptions BLOCKING
+| Spec assumption | Project reality | Severity |
 |---|---|---|
-| BATCH_UI_01 | 3 Card buttons (Aparat ocupat/lipsă/Disconfort §29.5 + Smart-Routing §36.37 + Pain Discomfort §36.38 cu EXT-1 DOMS) | Q4, Q6 |
-| BATCH_UI_02 | Goal Shift card (§36.35 + §36.58 GOAL_SHIFT_CALIBRATION_PLACEHOLDER) | Q7 |
-| BATCH_UI_03 | Founding cap counter visibility + Firebase transaction wiring real (§36.50-§36.52) | Q5 |
-| BATCH_UI_04 | Telegram CTA placement (§36.53 + §36.54) | Q8 |
-| BATCH_UI_05 | PROMPT_PROFILE_VALIDATION UI render trigger (§36.34) | (LOCKED V1 deja) |
-| BATCH_UI_06 (potential) | Suflet Andura wiring în RuleEngine + Bias Detection signals plumbing CDL extension | (foundation) |
-| BATCH_UI_07 (potential) | Integration tests + Golden Master snapshot updates | (anti-regression) |
+| `.jsx` files cu JSX syntax | `.js` vanilla, no JSX compiler | BLOCKING |
+| `useState(false)` React hook | No React, ReferenceError | BLOCKING |
+| `propTypes = { ... }` | No PropTypes lib | BLOCKING |
+| `import PropTypes from 'prop-types'` | Module nu există | BLOCKING |
+| Tests `.test.jsx` cu React render | vitest jsdom direct, no React | BLOCKING |
+| `<ExerciseActionCard>` declarative composition | Factory functions imperative pattern existent | BLOCKING |
 
-Estimate: ~6-10h Opus (per §36.72) → ~1-2h actual likely (per Q13 + factor 5-7x empirical).
+**Toate 7 BATCH_UI_NN spec-uri au identic JSX/React assumption.**
+
+### Foundation engines status (compatible)
+✅ `src/engine/pain-button/`, `src/engine/smart-routing/`, `src/engine/composite-signal/`, `src/engine/suflet-andura/`, `src/engine/self-correction/` — TOATE foundation modules LOCKED V1 din BATCH_03/04 cluster Sprint 4.x.
+✅ ADR_PAIN_DISCOMFORT_BUTTON_v1 EXT-1 LOCKED V1 confirmat.
 
 ---
 
-## §5 FILES TOUCHED (acest ingest)
+## §3 PER-BATCH STATUS
 
-### Modified (1)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` — EOF session-lock entry "Sesiune 2026-05-02 evening late HANDOVER INGEST FIREBASE DONE + Sprint UI gate CLEAR" (zero noi §36.X, pure status audit)
+| Batch | Status | Reason |
+|---|---|---|
+| BATCH_UI_01 Card buttons + Pain DOMS | 🛑 STOPPED pre-flight | JSX/React assumed, vanilla JS reality |
+| BATCH_UI_02 Goal Shift → Settings | ⏸️ NOT executed | Same incompatibility expected |
+| BATCH_UI_03 Founding cap hidden | ⏸️ NOT executed | Same |
+| BATCH_UI_04 Telegram CTA | ⏸️ NOT executed | Same |
+| BATCH_UI_05 Profile Validation card | ⏸️ NOT executed | Same |
+| BATCH_UI_06 Suflet Andura wiring | ⏸️ NOT executed | Engine-side parțial OK, dar gate "BATCH_UI_01..05 complete" |
+| BATCH_UI_07 Integration tests + LATEST | ⏸️ NOT executed | Aggregate, depinde de prior |
 
-### Archived (2)
-- `📥_inbox/HANDOVER_INGEST_2026-05-02_FIREBASE_DONE_SPRINT_UI_NEXT.md` → `📤_outbox/_archive/2026-05/90_HANDOVER_INGEST_FIREBASE_DONE_SPRINT_UI_NEXT_CONSUMED.md`
-- `📤_outbox/LATEST.md` (single batch §36.73-75 final) → `📤_outbox/_archive/2026-05/91_LATEST_PREVIOUS_SINGLE_BATCH_FIREBASE_VAULT_SWEEP.md`
+---
 
-### Created/Replaced (2)
-- `📤_outbox/LATEST.md` (this file — Firebase done + Sprint UI ready snapshot)
-- `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (regenerated — 8 ACTIVE Q's cu anti-hallucination guards split 3 tranșe + checklist + verificare finală)
+## §4 STATE DELTA
+
+| Metric | Before | After |
+|---|---|---|
+| Tests | 1203 PASS / 75 files | **1203 PASS / 75 files (unchanged)** |
+| Coverage | 60.33% lines / 78.38% branches | **unchanged** |
+| Build | 4.026s / 921 KB / 283 KB gzipped | **unchanged** |
+| Cumulative LOCKED | 64 | **64 (unchanged)** |
+| Files created | — | **0** |
+| Files modified | — | **0** |
+| Commits | — | **0 (no fake commits)** |
+| Push origin/main | — | **NU pushed** |
+
+---
+
+## §5 RECOVERY PATHS
+
+### Path A — Rewrite spec-uri cu vanilla JS pattern (RECOMMENDED)
+
+Strategic chat NEW Claude regenerate all 7 BATCH_UI_NN cu:
+- `.js` extensions (NOT `.jsx`)
+- Factory function pattern matching `safetyBanner.js` / `hipThrustSetup.js` existente
+- Direct DOM `document.createElement` + `element.addEventListener`
+- State management via closures + dataset attributes (NOT React hooks)
+- Tests `.test.js` cu vitest jsdom DOM nodes direct
+- HTML rendered via template literals în `renderIdle.js` parent files
+
+**Effort:** ~30-45min strategic chat + spec re-generation. Subsequent cluster execution ~2-3h Opus actual (factor 5-7x).
+
+### Path B — Migrate project la React/JSX first
+
+Adăugare React + react-dom + adapter setup. Migrate `src/components/*.js` la `.jsx`. Major refactor ~10-20h Opus + risc regression masiv 1203 tests.
+
+**Recommendation:** REJECTED pre-Beta. ADR 005 vanilla JS = Bugatti paradigm respect simplitate stack pentru pre-launch.
+
+### Path C — Engine-only Sprint UI (skip UI surfaces V1)
+
+Execute DOAR BATCH_UI_06 (Suflet Andura wiring) adaptat engine-side. UI surfaces defer post-Beta.
+
+**Trade-off:** Beta lansează FĂRĂ Pain Card / Goal Shift Settings / Founding hidden / Telegram CTA / Profile Validation card visible UI.
+
+---
+
+## §6 RECOMMENDATION
+
+**Path A (rewrite spec vanilla JS pattern).**
+
+Justification:
+1. ADR 005 vanilla JS LOCKED — NU rewrite stack pre-Beta
+2. Existing `src/components/*.js` pattern proven (safetyBanner, hipThrustSetup, modalManager, safetyBannerWiring deja shipped Sprint 4.x cluster)
+3. Engine modules LOCKED V1 — UI surface adapted la pattern existent works direct
+4. Bugatti paradigm: 0 cod fake acum > 7 commits hashing dead code
+5. Re-spec ~30-45min strategic chat = trivial cost vs migration React 10-20h
+
+---
+
+## §7 NEXT ACTION
+
+**Daniel:**
+1. Read acest LATEST.md
+2. Decide Path A / B / C (recommended A)
+3. Paste BATCH_UI_01_REPORT.md în chat strategic NEW Claude pentru spec re-generation matching vanilla JS reality
+4. Re-cluster execution post re-spec corect
+
+**Prompts încă în `📥_inbox/`:** all 7 BATCH_UI_NN intacte, NOT consumed. Pot fi rescris in-place sau înlocuite.
+
+---
+
+## §8 FILES TOUCHED
+
+### Created (1)
+- `📤_outbox/_archive/2026-05/BATCH_UI_01_REPORT.md` — STOP report cu pre-flight findings + recovery paths
+
+### Modified (0)
+N/A
+
+### Archived (1)
+- `📤_outbox/LATEST.md` (Firebase done + Sprint UI ready) → `📤_outbox/_archive/2026-05/92_LATEST_PREVIOUS_FIREBASE_DONE_SPRINT_UI_READY.md`
 
 ### Tests
-- 1203/1203 unchanged (vault docs only acest ingest)
+- 1203/1203 PASS (unchanged, no code changes)
 
 ---
 
-## §6 NEXT STEPS PRIORITIZATE
+## §9 BUGATTI PARADIGM RESPECTED
 
-### Priority 1 — Strategic chat NEW Sprint UI design (~1-2h)
+> "Bugatti paradigm: bug 02:00 > 5 commits grabă. Calitate peste viteză."
 
-Daniel paste `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` la chat strategic NEW Claude. **8 Q-uri OBLIGATORIU 8/8** cu format mandatory `Q[N]: [A|B|C] — rationale`.
+- 0 commits fabricat ✅
+- 0 dead code în production bundle ✅
+- 0 JSX files care n-ar transpile fără React ✅
+- 0 push tests-failing ✅
+- Recovery path clear documentat ✅
 
-Prima Q: Q2 split chat (single 1-2h vs 2 chats vs 3 chats) — răspunsul setează modul executare al restului.
-
-### Priority 2 — Claude generează N CC prompt artefacte (per §36.74)
-
-Post 8/8 responses → Claude scrie 5-7 batches distincte (BATCH_UI_01 → BATCH_UI_07) ca artefacte copy-ready în chat. Daniel drag toate la `📥_inbox/`.
-
-### Priority 3 — Daniel comandă unică CC Opus
-
-```
-Execute BATCH_UI_01 → BATCH_UI_NN sequential per VAULT_RULES §BATCH_PROTOCOL.
-Fail-fast strict. Single LATEST.md centralizat la final per §36.74.
-```
-
-### Priority 4 — CC Opus autonomous Sprint UI execution
-
-~6-10h estimate / ~1-2h actual likely (factor 5-7x empirical).
-
-### Beta-launch path
-
-Sprint UI execution → smoke tests prod (gates B/C/D persona memory) → Beta cohort 50 users (§36.47 Inner Circle 20 + Gigel 15 + Power-User 15) + §36.53 Telegram → Beta sept-dec 2026 → audit legal €300-500 dec 2026 → Soft Launch 1 ianuarie 2027 🚀.
-
-**Marketing Channel Mix Decision:** milestone V1.1 explicit ~Februarie 2027 per §36.60.
+**Cluster aborted prevents introducerea unei datorii tehnice masive (~7 fișiere JSX dead) care ar fi necesitat clean-up post-discovery.**
 
 ---
 
-## §7 STATUS V1 SNAPSHOT
-
-| Item | Status |
-|---|---|
-| 8/8 templates | ✅ LOCKED V1 |
-| F-NEW + MMI + Storage Full UX | ✅ LOCKED V1 |
-| Decizii cumulative | **64 LOCKED V1** |
-| Phase B 51 strings | ✅ INTEGRATED |
-| Foundation modules (Suflet Andura + Self-Correction + Smart-Routing + Pain Button + Composite Signal) | ✅ Foundation level |
-| Pricing schema | ✅ Schema level |
-| 8 ADR drafts | ✅ ALL LOCKED V1 |
-| 0 DRAFT pending | ✅ Clean |
-| ADR_MULTI_TENANT_AUTH Faza 1 Batch B | ✅ LIVE confirmed (Daniel solo) |
-| Production gate | ✅ Cleared |
-| Tests / coverage / build baselines | ✅ Locked §36.68/69/70 |
-| §BATCH_PROTOCOL pilot 10-batch + single batch §36.73-75 | ✅ Validated zero errors 3x |
-| Sprint UI Sequencing §36.72 | ✅ LOCKED V1 |
-| **Daniel solo gate technical 100% COMPLETE** | ✅ NEW |
-| **Sprint UI gate CLEAR** | ✅ NEW |
-| Strategic chat NEW Sprint UI design | ⏳ Pending Daniel response 8/8 ALIGNMENT_QUESTIONS |
-
----
-
-*Ingest completat 2026-05-02 evening late per VAULT_RULES §HANDOVER_PROTOCOL + §9 PROMPT_CC_HYGIENE MANDATORY (ALIGNMENT_QUESTIONS_CHAT_NEW.md regenerat cu anti-hallucination guards). Pure status snapshot — cumulative 64 LOCKED V1 unchanged. Daniel solo gate technical 100% COMPLETE. Sprint UI gate CLEAR. Empirical factor 5-7x optimism + Q13 Daniel-time ~30-45min CONFIRMED 3x.*
+*Generat 2026-05-03 post BATCH_UI_01 pre-flight gate fail. Master command "fail-fast strict" + Bugatti paradigm respect. Cumulative 64 LOCKED V1 unchanged. Cluster recovery via Path A re-spec recommended.*
