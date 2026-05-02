@@ -301,3 +301,49 @@ npm run test:run               # Expected: 752/752 (sau current baseline)
 
 - §5 Safety net VAULT_RULES.md
 - §7 DIFF Protocol (handover-specific case)
+
+---
+
+## 9. ALIGNMENT QUESTIONS POST-INGEST — MANDATORY
+
+**Trigger:** orice ingest de tip handover (input file = `HANDOVER_INPUT_*.md` în `📥_inbox/`).
+
+**De ce există:** Per VAULT_RULES `§HANDOVER_PROTOCOL` step 9 (Daniel ↔ Claude chat ↔ CC Opus flow): chat strategic nou trebuie să verifice alignment cu vault SSOT post-ingest **prin alignment questions cu citation §X file.md / ADR Y verificabilă**. Pass criteria ≥12/15 (≥80%) pentru a procede. Refuz vag sau citation lipsă = FAIL = STOP retry sau regenerare handover. Fără alignment questions → chat nou pornește orb pe vault state, riscă drift sau halucinație flow procedural.
+
+Slip 2026-05-02 SELF-CORRECTION ingest: Daniel a observat absența `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` post-ingest. Handover input avea Q-uri integrate în `§4` dar NU extracted într-un file dedicat consumabil de chat-ul nou. Codificare obligatorie pentru a preveni recurența.
+
+### Protocol post-ingest (NU SKIPABIL)
+
+Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` ca artefact dedicat cu următoarea structură:
+
+1. **Frontmatter** explicit cu `name`, `description`, `type: alignment-questions`, `date`, `pass criteria`.
+2. **Întrebări structurate pe secțiuni** (acoperă fiecare LOCKED nou + SSOT new files + ADR drafts + amendments inline).
+3. **Per fiecare Q:** citation așteptat **explicit** (`§X file.md` SAU `ADR_Y_v1.md §EXTENSIONS EXT-Z`) + răspuns așteptat pre-specificat verbatim pentru spot-check rapid Daniel.
+4. **Pass / Fail Criteria table** la final cu acțiuni per scor (EXCELLENT / PASS / PASS minimum / FAIL).
+5. **Cross-ref source ingest** (archived consumed file `_archive/<YYYY-MM>/NN_*` + secțiunile SSOT modificate).
+
+### Surse Q-uri (priority order)
+
+1. **Handover input self-contained** (e.g. `HANDOVER_INPUT_*_self_correction.md §4` avea 14 Q-uri integrate) → **extract verbatim** în file dedicat, cu refresh referințe (path archived + sections finale post-ingest).
+2. **Dacă handover NU conține Q-uri** → CC Opus **generează** Q-uri new pe baza modificărilor aplicate (LOCKED noi + amendments + ADR drafts + SSOT new files). Minimum 12 Q-uri. Fiecare LOCKED nou = ≥1 Q. Fiecare ADR draft updated = ≥1 Q. Fiecare amendment inline = ≥1 Q.
+
+### Numerologie Q-uri minim per ingest
+
+- **Ingest pure additive** (8 LOCKED + 3 amendments + 4 ADR drafts) = ~14-18 Q-uri
+- **Ingest cu SSOT new file** = +2-3 Q-uri pe SSOT (provenance, structure, cross-refs obligatorii)
+- **Ingest cu P1 BLOCKER pending** = +1 Q-uri pe blocker context + action required Daniel
+- **Pass criteria standard:** ≥10/14 pentru ingest mediu, ≥12/15 pentru ingest mare cu SSOT new files
+
+### Stop conditions
+
+- Dacă CC Opus omite generarea `ALIGNMENT_QUESTIONS_CHAT_NEW.md` post-ingest = **VIOLATION protocol §9**. Daniel intervine cu prompt explicit "Generate ALIGNMENT_QUESTIONS_CHAT_NEW.md..." → CC Opus regenerează retroactiv.
+- Dacă există deja `ALIGNMENT_QUESTIONS_CHAT_NEW.md` la top-level outbox la START următor ingest (residue from prior session) → **archive** ca `_archive/<YYYY-MM>/NN_ALIGNMENT_QUESTIONS_CHAT_NEW_<context>_HISTORICAL.md` ÎNAINTE de a genera fresh post-ingest curent.
+- Dacă Q-urile referențiază sections inexistente în vault SSOT post-ingest → fix retroactiv (citation accurate obligatoriu, NU vagăm "probabil în §X").
+
+### Cross-references
+
+- VAULT_RULES `§HANDOVER_PROTOCOL` step 9 (CC Opus generează alignment questions pentru chat nou)
+- VAULT_RULES `§HANDOVER_PROTOCOL` step 13-14 (chat nou răspunde cu citation `§X file.md / ADR Y` → pass criteria)
+- §3.2 raport format expected
+- §7 DIFF Protocol (separate case — handover overwrite SSOT)
+- Slip incident 2026-05-02 SELF-CORRECTION ingest (codificare ulterior din observație Daniel)
