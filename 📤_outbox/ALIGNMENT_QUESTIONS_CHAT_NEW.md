@@ -1,194 +1,179 @@
-# ALIGNMENT QUESTIONS — Sprint 4.x Cluster Execution Ingest
+# ALIGNMENT QUESTIONS — Cluster 10-Batch + Sprint UI Sequencing Ingest
 
-**Generat:** 2026-05-02 post Sprint 4.x cluster autonomous execution ingest  
-**Sursă:** `📤_outbox/_archive/2026-05/83_HANDOVER_UPDATE_POST_SPRINT_4X_CONSUMED.md`  
-**Per:** PROMPT_CC_HYGIENE.md §9 ALIGNMENT_QUESTIONS_POST_INGEST_MANDATORY  
-**Scop:** verificare zero-info-loss + alignment Daniel pre next strategic chat (3 ADR drafts review + §BATCH_PROTOCOL codification)
+**Generat:** 2026-05-02 post Cluster 10-Batch + Sprint UI Sequencing handover ingest
+**Sursă:** `📤_outbox/_archive/2026-05/86_HANDOVER_CLUSTER_10_BATCH_SPRINT_UI_SEQUENCING_CONSUMED.md`
+**Per:** PROMPT_CC_HYGIENE.md §9 ALIGNMENT_QUESTIONS_POST_INGEST_MANDATORY
+**Scop:** verificare zero-info-loss + alignment Daniel pre Daniel solo gate (Firebase + DB rules + GDPR + Avocat) + pre Sprint UI strategic chat NEW
 
 ---
 
 ## §1 INGEST SCOPE — RECAP
 
-**Ingestat (status report — pure execution, ZERO decizii noi):**
+**Ingestat (1 decizie NEW LOCKED + integrate cluster 10-batch closure):**
 
-- Sprint 4.x cluster execution stats (5 batches sequential fail-fast strict)
-- 5 commits hash: BATCH_01 `7302950` + BATCH_02 `e23c9cb` + BATCH_03 `6d24462` + BATCH_04 `ecb04f7` + BATCH_05 `8a91e34`
-- Tests delta: 1110→1174 PASS (+64), test files 65→73
-- Production gate cleared (0 PHASE_B flags)
-- 3 NEW ADR drafts pending Daniel review pre-LOCK
-- 5 carry-overs flagged HONEST
-- §BATCH_PROTOCOL pilot validation result
+- §36.72 NEW Sprint UI Integration Sequencing LOCKED V1 (NU autonomous direct, gate Daniel solo + strategic chat UX → CC Opus)
+- Empirical learnings cluster 10-batch (factor 5-7x estimate optimism + §BATCH_PROTOCOL scalable + read-only batches pattern + auto-fixes safe)
+- 10 ALIGNMENT_QUESTIONS responses confirmation (deja integrate prin batches §36.62-§36.71)
+- EOF session-lock entry "Sesiune 2026-05-02 CLUSTER 10-BATCH + Sprint UI Sequencing LOCK"
 
-**Cumulative LOCKED count:** **56** (UNCHANGED — Sprint 4.x = pure execution, NU adaugă decizii)
-
-EOF session-lock entry "Sesiune 2026-05-02 Sprint 4.x CLUSTER EXECUTION" appended la HANDOVER_GLOBAL.
+**Cumulative LOCKED count:** **61** (60 post-cluster + 1 §36.72 Sprint UI sequencing)
 
 ---
 
-## §2 ÎNTREBĂRI ALINIERE — ADR DRAFTS NEW (3) review
+## §2 ÎNTREBĂRI ALINIERE — SPRINT UI SEQUENCING
 
-### Q1 — ADR_COMPOSITE_SIGNAL_LAYER_v1 LOCK V1
+### Q1 — Sprint UI Sequencing strict order vs parallel
 
-**Citation §36.41 + ADR draft `03-decisions/ADR_COMPOSITE_SIGNAL_LAYER_v1.md`:**
-- 3/3 simultaneous threshold (Performance Drop >15% + Rest Time >1.5x + RIR Mismatch ≥2)
-- Lifecycle: idle → flagged → cooldown 3 sesiuni → resolving → idle after 2 clean
-- Layer D budget ≤50ms (Cascade Defense integration)
+**Citation §36.72 LOCKED V1:**
+> 1. Daniel solo (~2-4h) Firebase Auth + DB rules + GDPR tutorial + Avocat
+> 2. Strategic chat NEW Claude (~1-2h) UX design discussion
+> 3. CC Opus autonomous (~6-10h) execution
 
-**Q1:** Confirmi că **3/3 threshold + lifecycle 3 cooldown / 2 resolving** sunt LOCKED V1 acceptabile, sau există ambiguity rămasă din Chat C original §36.41 push-back-uri (e.g., 50% scor cumulative arbitrary RESPINS NU 3/3)?
+**Q1:** Confirmi order **strict sequential** (1 → 2 → 3, fără overlap), sau **parallel acceptable** (e.g., Daniel solo Avocat outreach can run în background timp ce strategic chat UX se desfășoară simultan)?
 
-→ Dacă DA: ADR LOCK V1, Sprint UI Integration consume thresholds din `COMPOSITE_SIGNAL_THRESHOLDS` constant exposed.  
-→ Dacă NU: indică amendment necesar (e.g., 4-th metric pentru false positive rate <5%, sau threshold tuning).
-
----
-
-### Q2 — ADR_PAIN_DISCOMFORT_BUTTON_v1 LOCK V1
-
-**Citation §36.38 + ADR draft `03-decisions/ADR_PAIN_DISCOMFORT_BUTTON_v1.md`:**
-- 3 PAIN_OPTIONS: discomfort_general / discomfort_specific / doms_severe
-- Wording LOCKED V1: "Mișcarea mă deranjează" / "Simt o tensiune ciudată" / "DOMS sever"
-- ZERO medical claim per F2 SUFLET + Gigel test
-- Override CDL flag `user_override_pain_redflag` pentru audit, NU blocking
-
-**Q2:** Confirmi wording 3 options LOCKED V1 + override pattern? Sub-question: **`doms_severe` technical term** — păstrăm DOMS în UI sau hide behind "Mai multe opțiuni" expandable pentru cohorts cold_start (Maria 65 NU înțelege DOMS)?
-
-→ Dacă LOCK V1: ADR LOCKED, Sprint UI Integration creates 3-button card.  
-→ Dacă DOMS hide: amendment EXT-1 — visibility tier-aware (DOMS visible DOAR T2+ users sau "Mai multe opțiuni" expand).
+→ Dacă strict sequential: Sprint UI start ~earliest 4-6h Daniel-time post-acest-handover.
+→ Dacă parallel acceptable: strategic chat UX se poate launcha cu Firebase Auth + DB rules done (gates critical) while Avocat + GDPR tutorial continue background.
 
 ---
 
-### Q3 — ADR_SMART_ROUTING_EQUIPMENT_v1 LOCK V1
+### Q2 — Strategic chat UX scope decomposition
 
-**Citation §36.37 + ADR draft `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1.md`:**
-- Tier 1 forță: alternatives DOAR cu `force_demand: 'high'` (strict)
-- Tier 2/3: muscle_target_primary match (flexibility ridicată)
-- Anti-paternalism skip dacă zero valid alternatives
-- Similarity ranking: muscle_target +3, force_demand +2, equipment_type +1
+**Citation §36.72 — Strategic chat scope:**
+> - 3 Card buttons flow + Goal Shift card layout + DOMS expand pattern wording final + Founding cap counter visibility tier-aware + Telegram CTA placement + PROMPT_PROFILE_VALIDATION trigger pattern
 
-**Q3:** Confirmi tier-aware filtering rules LOCKED V1 + similarity ranking weights (3/2/1)?
+**Q2:** Confirmi că **toate 6 topice = single strategic chat** (~1-2h), sau **split în 2 chats** (e.g., chat 1: 3 Card buttons + Goal Shift + DOMS = engine UI; chat 2: Founding counter + Telegram CTA + PROMPT_PROFILE_VALIDATION = commerce/admin)?
 
-→ Dacă LOCK V1: ADR LOCKED, Sprint UI Integration consume `findAlternatives()` direct.  
-→ Dacă NU: amendment — alternative ranking algorithm (e.g., add `equipment_alternatives` direct over similarity scoring), sau tier 2/3 stricter rules.
+→ Dacă single chat: Daniel decizie multiple în 1 sesiune. Bandwidth risc dacă lungă.
+→ Dacă split 2 chats: better focus per chat dar slower path la CC Opus prompt generation.
 
 ---
 
-## §3 ÎNTREBĂRI ALINIERE — CARRY-OVERS PRIORITY
+### Q3 — Sprint UI batch split strategy (CC Opus execution)
 
-### Q4 — UI Integration Sprint scope confirmation
+**Citation §36.72 — execution scope:**
+> CC Opus autonomous (~6-10h) Sprint UI Integration
 
-**Citation handover §1 carry-over:**
-> "Sprint UI Integration deferred (~6-10h Opus estimate)" — Suflet Andura wiring + Bias Detection signals plumbing + 3 Card buttons + Goal Shift card + PROMPT_PROFILE_VALIDATION UI render + Founding cap counter UI + Telegram CTA
+**Q3:** Confirmi că Sprint UI execution = **single Opus batch ~6-10h** (similar cluster 10-batch pattern), sau **split în mini-cluster Sprint UI batches** (e.g., 5 batches paralelizable: BATCH_UI_01 Card buttons + BATCH_UI_02 Goal Shift + BATCH_UI_03 Founding counter + BATCH_UI_04 Telegram CTA + BATCH_UI_05 PROMPT_PROFILE_VALIDATION)?
 
-**Q4:** Confirmi că **Sprint UI Integration = next batch dedicated** (NOT inline cu next strategic chat sau alte batches), launched DOAR post-3-ADR-LOCK + Daniel solo carry-overs (Firebase Auth + DB rules) finalized?
+→ Dacă single batch: simpler orchestration, dar long-running risc context loss.
+→ Dacă mini-cluster: §BATCH_PROTOCOL scalability validated cluster 10-batch, valid pattern; gives Daniel gating intermediate per batch report.
 
-→ Dacă DA: Sprint UI Integration prompt va aștepta gate-uri ADR LOCK + Firebase Auth setup live.  
-→ Dacă NU: parallel execution OK — generare prompt acum + Daniel decide când launch.
-
----
-
-### Q5 — §BATCH_PROTOCOL codification timing
-
-**Citation handover §BATCH_PROTOCOL pilot — VALIDAT:**
-> "Pattern locked verbal Chat E (fail-fast strict + strict disjuncte + naming alfabetic + zero gate + model în header) = probat real cu Sprint 4.x cluster, zero errors. Codificare formală în VAULT_RULES.md §BATCH_PROTOCOL = next chat strategic"
-
-**Q5:** Confirmi că **§BATCH_PROTOCOL codification în VAULT_RULES.md** trebuie **next strategic chat** (înainte de orice alt batch nou), NU defer la post-Sprint UI? Rationale: pattern este validat dar zero documentation = re-discovery effort în viitor.
-
-→ Dacă DA: next chat agenda = ADR drafts review (~30min) + §BATCH_PROTOCOL codification (~15min). Total ~45min strategic.  
-→ Dacă defer: §BATCH_PROTOCOL rămâne tacit knowledge până la next batch trigger.
+**Recommendation:** mini-cluster (5-7 batches) per §BATCH_PROTOCOL pattern empirical validated.
 
 ---
 
-### Q6 — Manual exercise metadata audit priority
+## §3 ÎNTREBĂRI ALINIERE — DANIEL SOLO GATE
 
-**Citation handover §3 carry-over:**
-> "Manual exercise metadata audit (~2-3h backlog) — EXERCISE_METADATA conservative defaults pentru 26 exerciții"
+### Q4 — Firebase Auth setup readiness
 
-**Q6:** Confirmi că **audit = backlog Sprint UI Integration sau ulterior** (NOT immediate — defaults sunt conservatoare safe pentru pilot Beta)? Sau există exerciții specifice cu metadata greșită care blochează Sprint UI?
+**Citation §36.72 + ADR_MULTI_TENANT_AUTH_v1 LOCKED:**
+> Firebase Auth setup live (Multi-tenant migration ADR LOCKED) — gate critical pentru Sprint UI
 
-→ Dacă backlog: defer Beta cohort feedback → tighten metadata post-data.  
-→ Dacă immediate: indică exerciții problematice + audit întâi.
+**Q4:** Confirmi că Daniel are documentație + access pentru Firebase Console setup, sau există **dependency externă** (e.g., team member Firebase admin necessary, or paid plan upgrade required pentru Auth tier)?
 
----
-
-### Q7 — Golden Master tests scope
-
-**Citation handover §4 carry-over:**
-> "Golden Master tests (~1h follow-up batch) — spec'd în BATCH_02 dar deferred. Existing test suite covers regression boundaries."
-
-**Q7:** Confirmi că **Golden Master tests batch dedicated ~1h post Sprint UI** (mai eficient să ai întâi UI integrations apoi snapshot Golden Master complete) sau înainte (înghețare wording 51 strings + foundation modules pentru protection silent drift)?
-
-→ Dacă post-UI: Golden Master = final QA gate pre-Beta.  
-→ Dacă pre-UI: Golden Master = guard-rail pentru UI integration changes (recomandat pattern industry).
+→ Dacă self-serve: gate clear, Daniel solo sufficient.
+→ Dacă blocking dependency: indică unblocker.
 
 ---
 
-## §4 ÎNTREBĂRI ALINIERE — HYGIENE
+### Q5 — DB rules production deployment process
 
-### Q8 — Q4 dp.js cosmetic count discrepancy fix
+**Citation §36.72:**
+> DB rules production deployment (`database.rules.json` publish) — gate critical
 
-**Citation handover §Next chat strategic — primary tasks:**
-> "Eventual: Q4 dp.js cosmetic count discrepancy fix (10 verdicte vs 11 ON_TARGET)"
+**Q5:** Confirmi că `database.rules.json` syntax LOCKED (per §34.2 Blocker 2 Sprint 4.x), DOAR publish operation needed via Firebase Console manual? Sau există **emulator validation step** care trebuie repetată post acum (post cluster modifications, e.g., cu founding_cap_counter atomic transaction needs new rules)?
 
-**Refresh:** §36.58 inventory listează 10 verdicte categorical + ON_TARGET ca 11-th state neutră — confirmat în Chat E ALIGNMENT_QUESTIONS Q4 ca **11 verdicte categorical totale (10 tranziție + 1 ON_TARGET state)**, dp.js summary count rămâne **20 strings** (acceptat).
-
-**Q8:** Confirmi că **fix-ul cosmetic = NOT necessary** (Chat E Q4 deja resolved categoric: 11 verdicte = 10 tranziție + 1 stare neutră, count summary 20 dp.js strings rămâne consistent)? Sau există documentation refresh ne-aplicat?
-
-→ Dacă NOT necessary: scoate din next chat agenda.  
-→ Dacă refresh: indică unde (e.g., session-lock entry §36.58 inline amendment).
+→ Dacă publish-only: gate sub-1h Daniel.
+→ Dacă re-validation: indică emulator scenarios additional needed.
 
 ---
 
-### Q9 — SPRINT_4X_FINAL_REPORT.md status
+### Q6 — GDPR tutorial + Avocat outreach criticality
+
+**Citation §36.72 + §36.55 + §36.53:**
+> GDPR screenshot tutorial (8-12 screenshots phone privacy onboarding §36.55) + Avocat barter outreach (Pro lifetime exchange GDPR audit)
+
+**Q6:** Confirmi că GDPR tutorial + Avocat **NU sunt blocking pentru Sprint UI execution start** (gate critical = Firebase Auth + DB rules), DOAR pre-Beta launch blocking? Adică Sprint UI poate start după Firebase Auth + DB rules done, GDPR tutorial + Avocat pot continua în paralel?
+
+→ Dacă DA: Sprint UI gate redus la 2 items (~1-2h Daniel) NU 4 items (~2-4h).
+→ Dacă NU (toate 4 blocking): preserve §36.72 sequencing strict.
+
+---
+
+## §4 ÎNTREBĂRI ALINIERE — EMPIRICAL LEARNINGS
+
+### Q7 — Estimate calibration future Opus prompts
+
+**Citation §36.72 empirical learnings:**
+> Factor 5-7x optimism Opus estimates pentru clusters bine-spec'd cu disjuncte clean
+
+**Q7:** Confirmi că **future Opus estimates trebuie reduce proportional** (e.g., spec ~6-8h estimate → CC Opus actual ~70-80min = factor 5-7x), sau preferi **preserve original estimates** ca buffer pentru edge cases / debugging time?
+
+→ Dacă reduce: Sprint UI ~6-10h estimate → reality ~1-2h actual? Mini-cluster mai puțin batches.
+→ Dacă preserve: estimate buffer overhead acceptable, predictable plan.
+
+**Sub-Q7.bis:** Daniel-time estimate (~2-4h gate solo) = realistic sau optimistic similar?
+
+---
+
+### Q8 — Read-only batches as pattern legitimat post-cluster
+
+**Citation §36.72:**
+> Read-only batches (Coverage + Dependencies + Build Perf) valid pattern hygiene clusters
+
+**Q8:** Confirmi că **read-only batches = legitim pattern** pentru future clusters (e.g., post Sprint UI cluster va include similar Coverage + Dependencies + Build Perf re-baselines for regression check)? Sau **read-only DOAR pentru hygiene clusters dedicated**, NU ca closing batches în feature clusters?
+
+→ Dacă legit: pattern reusable post Sprint UI.
+→ Dacă DOAR hygiene: separate hygiene cluster post Sprint UI launched ulterior.
+
+---
+
+### Q9 — §BATCH_PROTOCOL scalability ceiling
+
+**Citation §36.72:**
+> Pattern §BATCH_PROTOCOL scalable la 10+ batches confirmat empirical
+
+**Q9:** Confirmi că **15-20 batches sequential** ar fi feasible (e.g., dacă Sprint UI cluster + post-Sprint hygiene cluster combine)? Sau **ceiling pragmatic 10 batches** per cluster, mai mult split în 2 clusters separate?
+
+→ Dacă 15-20 OK: orchestration single command "Execute BATCH_01 → BATCH_NN".
+→ Dacă ceiling 10: 2 separate clusters (Sprint UI + Sprint UI hygiene).
+
+---
+
+## §5 ÎNTREBĂRI ALINIERE — HYGIENE
+
+### Q10 — Cumulative count tracking convention
 
 **Citation acest ingest:**
-> Final consolidated report: `📤_outbox/SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
+> Cumulative LOCKED count: 60 → **61** (+1 §36.72 Sprint UI sequencing decision)
 
-**Q9:** Confirmi că **`SPRINT_4X_FINAL_REPORT.md` = read-only consolidated reference** (păstrat în `📤_outbox/` dar NU rotated la archive precum LATEST), pentru future-reference cluster snapshot? Or should it move la `06-sessions-log/` ca formal session record?
+**Q10:** Confirmi că **strategic decisions** (e.g., §36.72 sequencing, NOT just measurement) **count în cumulative LOCKED**, NU just architectural ADRs sau code-level decisions? Sau preferi **separate counter** pentru strategic decisions vs architectural?
 
-→ Dacă păstrat în outbox: rămâne accessible pentru spot-check + cross-ref din alte ingests.  
-→ Dacă mutat la sessions-log: formal record alături de HANDOVER_GLOBAL.
-
----
-
-### Q10 — VAULT_RULES.md §BATCH_PROTOCOL draft scope
-
-**Anticipating Q5 = DA:** §BATCH_PROTOCOL codification next strategic chat va include:
-- Naming convention: `PROMPT_CC_<CONTEXT>_BATCH_<NN>_<SCOPE>.md` (alfabetic ordered)
-- Header obligatoriu: Model + Order + Dependencies + Scope
-- Strict disjuncte (zero shared touch-points între batches)
-- Fail-fast strict (stop on first error — NU continue with degraded scope)
-- Zero gate principle (each batch self-contained, NU dependent runtime gate from another)
-- Sequential auto-trigger via VAULT_RULES §BATCH_PROTOCOL flow
-- Final batch convention: append cumulative cluster summary în LATEST
-
-**Q10:** Confirmi scope draft codification = aceste 7 elemente, sau există elemente adiționale (e.g., archive numbering pattern, commit message format, test gate per batch)?
-
-→ Dacă scope = 7 elements: draft ready.  
-→ Dacă +adițional: indică elementele.
+→ Dacă unified: §36.72 = LOCKED V1 strategic, count în 61 cumulative. Convention preserved.
+→ Dacă separate: keep ADRs only în main count, strategic în secondary tracking.
 
 ---
 
-## §5 RESUMĂ — STATUS POST INGEST
+## §6 RESUMĂ — STATUS POST INGEST
 
-**Decizii cumulative:** 56 LOCKED V1 (UNCHANGED — pure execution session)  
-**ADR drafts:** 5 LOCKED V1 + 3 DRAFT V1 NEW pending review  
-**Sprint 4.x cluster:** ✅ Complete (5/5 sequential, zero errors)  
-**Tests:** 1174/1174 PASS (+64 net post-cluster)  
-**Production gate:** ✅ Cleared (0 PHASE_B flags)  
-**Foundation modules:** 13 NEW (5 schema/types + 8 engine clusters)  
-**Carry-overs deferred:** 5 honest (UI Integration ~6-10h + 4 minor)  
-**§BATCH_PROTOCOL:** Pilot validated, codification pending next strategic chat  
-**Next:** 3 ADR drafts review + §BATCH_PROTOCOL codification (~45min next chat) → Sprint UI Integration ~6-10h Opus → Beta-launch ASAP path
+**Decizii cumulative:** **61 LOCKED V1** (+1 §36.72 Sprint UI sequencing)
+**ADR drafts:** 8 active LOCKED V1, 0 DRAFT pending
+**Cluster 10-batch:** ✅ COMPLETE (10/10 commits + 1 backfill = 11 total)
+**Tests:** 1203 PASS / 75 test files
+**Coverage baseline:** 60.33% lines / 78.38% branches
+**Build baseline:** 4.026s / 921 KB raw / 283 KB gzipped
+**Sprint UI gate:** 4 Daniel solo items (Firebase Auth + DB rules critical, GDPR + Avocat parallel)
+**Next:** Daniel solo gate (~2-4h) → strategic chat NEW UX design (~1-2h) → CC Opus Sprint UI execution (~6-10h, mini-cluster recommended)
 
 ---
 
-**Total întrebări aliniere:** 10 (Q1-Q10)
+**Total întrebări aliniere:** 10 (Q1-Q10) + 1 sub-Q (Q7.bis)
 
 **Path forward post Daniel review:**
-- **Răspuns la Q1-Q3** (3 ADR drafts LOCK V1 sau amend) → Sprint UI Integration UNBLOCKED.
-- **Răspuns la Q5** (§BATCH_PROTOCOL timing) → next strategic chat agenda set.
-- **Răspuns la Q4 + Q6 + Q7** (Sprint UI scope + carry-overs priority + Golden Master timing) → execution roadmap final.
-- **Q8 + Q9 + Q10** = clarifications hygiene, NOT blocking.
+- **Răspuns la Q1-Q3** Sprint UI sequencing details → strategic chat UX scope final.
+- **Răspuns la Q4-Q6** Daniel solo gate clarifications → unblock Sprint UI start timing.
+- **Răspuns la Q7-Q10** = empirical learnings + hygiene conventions, NOT blocking.
 
 ---
 
-*Generat 2026-05-02 post Sprint 4.x cluster autonomous execution ingest. Scope §9 PROMPT_CC_HYGIENE MANDATORY. Cross-ref: HANDOVER_GLOBAL EOF Sprint 4.x entry + SPRINT_4X_FINAL_REPORT.md (commit c283a81). Pure execution session — ZERO decizii noi LOCKED, cumulative 56 unchanged.*
+*Generat 2026-05-02 post Cluster 10-Batch + Sprint UI Sequencing handover ingest. Scope §9 PROMPT_CC_HYGIENE MANDATORY. Cross-ref: HANDOVER_GLOBAL §36.72 + EOF session-lock entry "CLUSTER 10-BATCH + Sprint UI Sequencing LOCK". Cumulative 61 LOCKED V1 (+1 §36.72).*
