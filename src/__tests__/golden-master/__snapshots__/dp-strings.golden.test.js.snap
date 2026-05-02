@@ -1,0 +1,278 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > RIR_MATRIX 4-tier labels 1`] = `
+{
+  "label": "rir_matrix_LIMIT",
+  "output": "🔴 La limită",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > RIR_MATRIX 4-tier labels 2`] = `
+{
+  "label": "rir_matrix_HEAVY",
+  "output": "🟠 Greu",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > RIR_MATRIX 4-tier labels 3`] = `
+{
+  "label": "rir_matrix_CHALLENGING",
+  "output": "🟡 Provocator",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > RIR_MATRIX 4-tier labels 4`] = `
+{
+  "label": "rir_matrix_COMFORTABLE",
+  "output": "🟢 Confortabil",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToIntensity mapper — 5 boundary values 1`] = `
+{
+  "label": "rir_to_intensity_0",
+  "output": "LIMIT",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToIntensity mapper — 5 boundary values 2`] = `
+{
+  "label": "rir_to_intensity_1.5",
+  "output": "HEAVY",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToIntensity mapper — 5 boundary values 3`] = `
+{
+  "label": "rir_to_intensity_2.5",
+  "output": "CHALLENGING",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToIntensity mapper — 5 boundary values 4`] = `
+{
+  "label": "rir_to_intensity_3.5",
+  "output": "COMFORTABLE",
+}
+`;
+
+exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToIntensity mapper — 5 boundary values 5`] = `
+{
+  "label": "rir_to_intensity_5",
+  "output": "COMFORTABLE",
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 1`] = `
+{
+  "label": "calib_banner_COLD_START",
+  "output": "Învățăm cum lucrezi · Recomandările se personalizează după primele sesiuni",
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 2`] = `
+{
+  "label": "calib_banner_INITIAL",
+  "output": "Învățăm cum lucrezi · Datele se adună cu fiecare sesiune",
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 3`] = `
+{
+  "label": "calib_banner_DEVELOPING",
+  "output": "Tiparele prind contur · Recomandările folosesc datele tale",
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 4`] = `
+{
+  "label": "calib_banner_PERSONALIZING",
+  "output": "Recomandările sunt acum în mare parte personalizate · Continuăm să învățăm",
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > PERSONALIZED + OPTIMIZED bannerText null (transparent UI) 1`] = `
+{
+  "label": "calib_banner_PERSONALIZED",
+  "output": null,
+}
+`;
+
+exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > PERSONALIZED + OPTIMIZED bannerText null (transparent UI) 2`] = `
+{
+  "label": "calib_banner_OPTIMIZED",
+  "output": null,
+}
+`;
+
+exports[`Golden Master — dp.js getInitialRecommendation verdicte > EXACT_MATCH → "🟡 Continuăm" 1`] = `
+{
+  "label": "dp_initial_exact_match",
+  "output": {
+    "rationale": "Pornim de la ultima sesiune: 60 kg",
+    "statusLabel": "🟡 Continuăm",
+  },
+}
+`;
+
+exports[`Golden Master — dp.js getInitialRecommendation verdicte > FALLBACK (no recentLogs) → "🟡 Pornim conservator" 1`] = `
+{
+  "label": "dp_initial_fallback",
+  "output": {
+    "rationale": "Greutate de pornire · Recalibrăm după primul set",
+    "statusLabel": "🟡 Pornim conservator",
+  },
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 1`] = `
+{
+  "label": "dp_intensityLabel_rir_0",
+  "output": "🔴 La limită",
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 2`] = `
+{
+  "label": "dp_intensityLabel_rir_1",
+  "output": "🔴 La limită",
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 3`] = `
+{
+  "label": "dp_intensityLabel_rir_2",
+  "output": "🟠 Greu",
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 4`] = `
+{
+  "label": "dp_intensityLabel_rir_3",
+  "output": "🟡 Provocator",
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 5`] = `
+{
+  "label": "dp_intensityLabel_rir_4",
+  "output": "🟢 Confortabil",
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > rep ranges per exercise (catalog snapshot) 1`] = `
+{
+  "label": "dp_repRange_DB Shoulder Press",
+  "output": [
+    6,
+    10,
+  ],
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > rep ranges per exercise (catalog snapshot) 2`] = `
+{
+  "label": "dp_repRange_Incline DB Press",
+  "output": [
+    6,
+    10,
+  ],
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > rep ranges per exercise (catalog snapshot) 3`] = `
+{
+  "label": "dp_repRange_Flat DB Press",
+  "output": [
+    8,
+    12,
+  ],
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > rep ranges per exercise (catalog snapshot) 4`] = `
+{
+  "label": "dp_repRange_Lat Pulldown",
+  "output": [
+    8,
+    12,
+  ],
+}
+`;
+
+exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > rep ranges per exercise (catalog snapshot) 5`] = `
+{
+  "label": "dp_repRange_Cable Row",
+  "output": [
+    8,
+    12,
+  ],
+}
+`;
+
+exports[`Golden Master — fatigue.js verdicte (§36.58 LOCKED V1) > insufficient sessions → DATE INSUFICIENTE 1`] = `
+{
+  "label": "fatigue_insufficient",
+  "output": {
+    "detail": "Completează 2+ sesiuni pentru fatigue score",
+    "label": "DATE INSUFICIENTE",
+  },
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 1`] = `
+{
+  "label": "sys_timeline_cut",
+  "output": "Definire până la vară",
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 2`] = `
+{
+  "label": "sys_timeline_summer",
+  "output": "Vară peak (menținere)",
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 3`] = `
+{
+  "label": "sys_timeline_bulk",
+  "output": "Creștere (toamnă-iarnă)",
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 4`] = `
+{
+  "label": "sys_timeline_cut",
+  "output": "Definire pre-vară",
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 5`] = `
+{
+  "label": "sys_timeline_summer",
+  "output": "Vară peak 2027",
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > tempo notes per phase + isCompound 1`] = `
+{
+  "label": "sys_tempo_DB Shoulder Press",
+  "output": {
+    "note": "În definire menținem, nu împingem",
+    "rir": 3,
+    "tempo": "3-1-2-0",
+  },
+}
+`;
+
+exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > tempo notes per phase + isCompound 2`] = `
+{
+  "label": "sys_tempo_Lateral Raises",
+  "output": {
+    "note": "Calitatea execuției peste greutate",
+    "rir": 3,
+    "tempo": "2-1-2-1",
+  },
+}
+`;
