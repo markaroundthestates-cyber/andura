@@ -4,7 +4,7 @@
 // mismatch in Set.has() previously wiped all non-baseline logs.
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 const SESSION_TS = 1745366400000; // numeric — Apr 23 2026
 
 test('cleanFakeLogs preserves real multi-set session with numeric session key', async ({ page }) => {

@@ -9,7 +9,7 @@ import { expectTextNotInPage, expectTextInPage } from '../helpers/assertions.js'
 import { expectNoKey, getStorageState } from '../helpers/storage.js';
 import { EMPTY, CUT_ACTIVE, WITH_HISTORY, CONTAMINATED } from '../fixtures/users.js';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 // ── Test 1: App loads without errors for empty user ──────────────────────────
 test('App loads without errors for empty user', async ({ page }) => {

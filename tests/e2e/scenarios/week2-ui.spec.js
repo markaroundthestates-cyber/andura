@@ -1,7 +1,7 @@
 // ══ Week 2 UI — Smoke tests for new features ══════════════════════════════
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 // ── Test 1: restoreRealLogs is globally accessible ────────────────────────
 test('restoreRealLogs is available as window function', async ({ page }) => {

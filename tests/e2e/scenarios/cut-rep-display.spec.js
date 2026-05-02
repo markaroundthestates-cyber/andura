@@ -2,7 +2,7 @@
 // Verifies that isolation exercises show "3×10" (not "3×10–12") when phase=CUT.
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 // Joi = index 3 in PROG (Lateral Raises, Rear Delt Fly, Cable Curl, Preacher Curl,
 // Overhead Triceps, Pushdown) — all isolation exercises.

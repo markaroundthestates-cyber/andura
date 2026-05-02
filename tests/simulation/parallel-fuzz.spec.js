@@ -4,7 +4,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 // Suppress Firebase in all tests
 test.use({

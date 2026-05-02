@@ -13,7 +13,7 @@ test.describe('Regression — Core app integrity', () => {
       window._suppressAAFrictionModal = true;
       window._suppressOnboardingOverlay = true;
     });
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
   });
 
@@ -46,7 +46,7 @@ test.describe('Regression — Navigație', () => {
       window._suppressAAFrictionModal = true;
       window._suppressOnboardingOverlay = true;
     });
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.nb', { timeout: 10000 });
   });
@@ -103,7 +103,7 @@ test.describe('Regression — Theme system', () => {
       window._suppressAAFrictionModal = true;
       window._suppressOnboardingOverlay = true;
     });
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('#theme-btn', { timeout: 10000 });
   });
@@ -179,7 +179,7 @@ test.describe('Regression — Layout și CSS', () => {
   test('container max-width <= 430px pe viewport de 1280px', async ({ browser }) => {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const pg = await ctx.newPage();
-    await pg.goto('/andura/');
+    await pg.goto('/');
     await pg.waitForLoadState('networkidle');
     await pg.waitForSelector('.nb', { timeout: 10000 });
 
@@ -189,7 +189,7 @@ test.describe('Regression — Layout și CSS', () => {
   });
 
   test('nav bar este fixat în jos (position sticky/fixed)', async ({ page }) => {
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('.nb', { timeout: 10000 });
     const nb = page.locator('.nb').first();
@@ -197,7 +197,7 @@ test.describe('Regression — Layout și CSS', () => {
   });
 
   test('variabilele CSS principale sunt definite (--bg, --accent, --text)', async ({ page }) => {
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     const vars = await page.evaluate(() => {
       const s = getComputedStyle(document.documentElement);
@@ -228,7 +228,7 @@ test.describe('Regression — Fonturi și rețea', () => {
 
   test('aplicația se încarcă în sub 5 secunde', async ({ page }) => {
     const t0 = Date.now();
-    await page.goto('/andura/', { waitUntil: 'domcontentloaded', timeout: 5000 });
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 5000 });
     expect(Date.now() - t0).toBeLessThan(5000);
   });
 });
@@ -239,7 +239,7 @@ test.describe('Regression — Coach page elemente esențiale', () => {
       window._suppressAAFrictionModal = true;
       window._suppressOnboardingOverlay = true;
     });
-    await page.goto('/andura/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
   });
 

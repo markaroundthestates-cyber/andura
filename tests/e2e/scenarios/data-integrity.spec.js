@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { setupUser } from '../helpers/setup.js';
 import { EMPTY, CONTAMINATED, WITH_HISTORY } from '../fixtures/users.js';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 test.describe('Data integrity after reset', () => {
 
@@ -126,7 +126,7 @@ test.describe('Data integrity after reset', () => {
 
   test('Full Reset clears onboarding-done', async ({ page }) => {
     await page.addInitScript(() => { window._suppressFirebaseSync = true; });
-    await page.goto('/andura/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => {
       localStorage.setItem('onboarding-done', 'true');
       localStorage.setItem('logs', '[{"ex":"test","w":20}]');
@@ -143,7 +143,7 @@ test.describe('Data integrity after reset', () => {
 
   test('Soft Reset preserves onboarding-done', async ({ page }) => {
     await page.addInitScript(() => { window._suppressFirebaseSync = true; });
-    await page.goto('/andura/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => {
       localStorage.setItem('onboarding-done', 'true');
       localStorage.setItem('auto-recommendations', '[{"type":"test"}]');
@@ -158,7 +158,7 @@ test.describe('Data integrity after reset', () => {
 
   test('createAutoBackup returns valid backup object', async ({ page }) => {
     await page.addInitScript(() => { window._suppressFirebaseSync = true; });
-    await page.goto('/andura/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => {
       localStorage.setItem('logs', '[{"ex":"Lat Pulldown","w":64}]');
       localStorage.setItem('weights', '{"2026-04-21": 110.4}');
@@ -180,7 +180,7 @@ test.describe('Data integrity after reset', () => {
 
   test('restoreFromBackup restores keys', async ({ page }) => {
     await page.addInitScript(() => { window._suppressFirebaseSync = true; });
-    await page.goto('/andura/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     const backup = JSON.stringify({
       timestamp: '2026-04-23T10:00:00.000Z',
       version: 'auto-full-reset',
@@ -207,7 +207,7 @@ test.describe('Data integrity after reset', () => {
 
   test('Director cache invalidates on readiness change', async ({ page }) => {
     await page.addInitScript(() => { window._suppressFirebaseSync = true; });
-    await page.goto('/andura/', { waitUntil: 'networkidle' });
+    await page.goto('/', { waitUntil: 'networkidle' });
     // Wait for coach module to register _directorCache (module-level side effect)
     await page.waitForFunction(() => typeof window._directorCache !== 'undefined', { timeout: 5000 })
       .catch(() => null); // graceful: if not present, test still passes via the if-guard below

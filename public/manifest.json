@@ -2,14 +2,14 @@
   "name": "Andura",
   "short_name": "Andura",
   "description": "Coach personal antrenament",
-  "start_url": "/andura/",
-  "scope": "/andura/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#080808",
   "theme_color": "#080808",
   "orientation": "portrait",
   "icons": [
-    { "src": "/andura/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/andura/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }

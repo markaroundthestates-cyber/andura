@@ -8,8 +8,8 @@ export default defineConfig({
     timeout: 10000,
   },
   use: {
-    // baseURL is the GitHub Pages origin; tests navigate to /andura/
-    baseURL: 'https://markaroundthestates-cyber.github.io',
+    // baseURL is the custom domain origin; tests navigate to / (root)
+    baseURL: 'https://andura.app',
     headless: true,
     // Wait for the SPA JS to finish before each action
     actionTimeout: 15000,

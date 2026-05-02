@@ -3,7 +3,7 @@
 // timer naturally expires.
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = '/andura/';
+const BASE_URL = '/';
 
 test('shouldAutoPause returns false within 5 min of last rest ending', async ({ page }) => {
   await page.addInitScript(() => {
