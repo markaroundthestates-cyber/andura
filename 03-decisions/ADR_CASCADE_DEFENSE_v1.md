@@ -114,3 +114,33 @@ Schema invalid (exercițiu ID inexistent / shape malformed) → throw + log + sa
 ---
 
 *EXTENSION added 2026-05-02 SELF-CORRECTION ingest.*
+
+---
+
+## §EXTENSION 2026-05-02 CHAT C SELF-CORRECTION EXTENSION (post Chat C ingest)
+
+### EXT-2: Composite Signal Layer Layer D Budget Reaffirmation (§36.41)
+
+**Decizie:** Composite Signal Layer (§36.41) — multi-signal trigger detection (Performance Drop AND Rest Time Delta AND RIR Mismatch) cade sub Layer D Runtime Invariant Checks budget ≤ 50ms per "Set terminat" tap.
+
+**Mecanică Layer D:**
+- Composite Signal evaluation = aggregation 3 metrics per exercițiu, last 4 sessions cached
+- Per-set evaluation: <10ms typical (cached aggregations + delta computation)
+- Trigger evaluation 3/3 simultaneous: O(1) AND short-circuit
+- **Total budget Layer D ≤ 50ms** include Composite Signal + invariant checks tradiționale
+
+**Performance Risk Mitigation:**
+- Cache last 4 sessions aggregation per (exercițiu × user) — invalidate on session save
+- Composite Signal NU rulează mid-set, doar la "Set terminat" tap (deterministic timing)
+- Lifecycle state (Kick-in / Active / Auto-resume / Extension) cached separat în engine state, NU recomputat per evaluation
+
+**Anti-Cascade Silent:**
+- Composite Signal trigger TRUE → log CDL `[composite_signal_recovery_active]` + apply -20% volume reduction (per §36.49)
+- Composite Signal trigger FALSE → no-op silent
+- Layer A schema validation precedes Composite (skip dacă invalid recommendation)
+
+**Cross-ref:** §36.41 Composite Signal Layer + §36.48 Per-Set Normalization + §36.49 Dual-Threshold + §36.34 Profile Validation 3/3 simultaneous (same anti-false-positive pattern).
+
+---
+
+*EXT-2 added 2026-05-02 CHAT C SELF-CORRECTION EXTENSION ingest.*

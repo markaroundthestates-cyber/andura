@@ -1,107 +1,111 @@
 ---
 name: LATEST
-description: Handover ingest 2026-05-02 SELF-CORRECTION — 8 LOCKED noi (§36.28-§36.35) + 3 §AMENDMENT inline (§36.17/§36.24/§36.26) + 5 ADR drafts updates (4 of 5 extended; BIAS_DETECTION untouched per spec) + EOF session-lock entry. Cumulative pre-launch V1 = 31 LOCKED. ZERO sesiuni chat strategic rămase pre-launch (re-confirmed 3rd time).
+description: Handover ingest 2026-05-02 Chat C SELF-CORRECTION EXTENSION — 14 LOCKED noi (§36.36-§36.49) + 3 ADR drafts updated (MODE_DETECTION EXT-7 + BIAS_DETECTION EXT-1 + CASCADE_DEFENSE EXT-2) + EOF session-lock entry. ALIGNMENT_QUESTIONS_CHAT_NEW.md generated per §9 mandatory. Cumulative pre-launch V1 = 45 LOCKED.
 type: cc-report
-date: 2026-05-02 SELF-CORRECTION
+date: 2026-05-02 Chat C
 model: claude-opus-4-7
 status: Complete
 ---
 
-# Handover Ingest — 2026-05-02 SELF-CORRECTION
+# Handover Ingest — 2026-05-02 Chat C SELF-CORRECTION EXTENSION
 
-**Status:** **Complete.** Pre-condition verified (P1 BLOCKER din ingest precedent SUFLET ANDURA = closed; SUFLET_ANDURA §4 STUB resolved în commit `82dfbe6`). Acest ingest = additive: 8 LOCKED §36.28-§36.35 + 3 inline amendments + 4 of 5 ADR drafts extended.
-**Date:** 2026-05-02 SELF-CORRECTION
+**Status:** **Complete.** Pre-condition verified (§36.35 found in HANDOVER_GLOBAL → Self-Correction ingest precedent applied). Acest ingest = **additive only**: 14 LOCKED §36.36-§36.49 + 3 ADR drafts updated + ALIGNMENT_QUESTIONS regenerate per §9.
+**Date:** 2026-05-02 Chat C
 **Model:** Claude Opus 4.7
 **Working dir:** `C:\Users\Daniel\Documents\salafull`
-**Source:** `📥_inbox/HANDOVER_INPUT_2026-05-02_self_correction.md` (492 lines, 31 KB, INTACT — zero truncation)
+**Source:** `📥_inbox/HANDOVER_INPUT_2026-05-02_chat_C_self_correction_extension.md` (568 lines, 30 KB, INTACT — zero truncation)
 
 ---
 
 ## §1 Pre-flight + pre-condition
 
-- Git state: clean entering ingest (post SUFLET ANDURA P1 RESOLVED commit `82dfbe6`)
-- Tests baseline: **1110/1110 PASS** ✅ (unchanged — vault docs only ingest)
-- **Pre-condition check (per handover §1):** ✅ PASSED
-  - `test -f 01-vision/SUFLET_ANDURA.md` → file exists
-  - `grep -q "PENDING.*Daniel uploads" 01-vision/SUFLET_ANDURA.md` → NO match → STUB §4 closed
-  - SUFLET_ANDURA.md = COMPLETE (translation map V1 LOCKED + filozofia 12k INGESTED 2026-05-02)
-  - Procedând normal cu ingest fără STOP
+- Git state: clean entering ingest (post §9 codification commit `8fbf89f`)
+- Tests baseline: **1110/1110 PASS** ✅ (vault docs only ingest)
+- **Pre-condition check (per handover §1):** ✅ PASSED — `grep -c "§36.35" 06-sessions-log/HANDOVER_GLOBAL` = 1, Self-Correction ingest precedent applied, procedând normal.
 
 ---
 
 ## §2 DIFF Protocol assessment
 
-Handover content = **additive only** (8 noi LOCKED + 3 inline amendments + 4 ADR drafts extensions). Zero SSOT overwrite, zero content removal. DIFF Protocol stop-conditions did NOT trigger. No new DIFF_FLAGS.md.
+Handover content = **additive only** (14 noi LOCKED + 3 ADR drafts §EXTENSIONS). Zero SSOT overwrite, zero content removal. DIFF Protocol stop-conditions did NOT trigger. No new DIFF_FLAGS.md.
 
 ---
 
 ## §3 Modificări — additive ingest applied
 
-### §3.1 HANDOVER_GLOBAL §36.28-§36.35 NEW (8 LOCKED noi)
+### §3.1 HANDOVER_GLOBAL §36.36-§36.49 NEW (14 LOCKED noi)
 
 | § | Title |
 |---|-------|
-| §36.28 | Realtime Per-Set Silent Recalibration LOCKED V1 |
-| §36.29 | §36.17 Mid-Session Silent UI Update Clarification LOCKED V1 |
-| §36.30 | §36.26 Streak Counter Same Direction + Reset Clarification LOCKED V1 |
-| §36.31 | God Mode / Advanced Overrides RESPINS V1 LOCKED |
-| §36.32 | Explainability Module — Lazy Generation On-Demand LOCKED V1 |
-| §36.33 | Time-Constrained Routine Adaptive Per Profile LOCKED V1 |
-| §36.34 | Profile Validation Layer + User-Triggered Reset LOCKED V1 |
-| §36.35 | Goal Shift Event Handler LOCKED V1 |
+| §36.36 | Schema Extension Exercise Library LOCKED V1 |
+| §36.37 | Smart-Routing Aparat Ocupat / Aparat Lipsă LOCKED V1 |
+| §36.38 | Pain/Discomfort Button — 3 Funcțional + Override CDL LOCKED V1 |
+| §36.39 | Yellow Flag -20% Test Load Consistency LOCKED V1 |
+| §36.40 | Hormonal Estimation RESPINS V1 + Performance State Inference LOCKED V1 |
+| §36.41 | Composite Signal Layer (Recovery State Adjustment) LOCKED V1 |
+| §36.42 | ADR Review Process LOCKED V1 |
+| §36.43 | Cycle Tracking Femei RESPINS V1 LOCKED |
+| §36.44 | Onboarding T0 Hard Minimum LOCKED V1 |
+| §36.45 | T2 Wording Funcțional Mode Detection LOCKED V1 |
+| §36.46 | Pricing Strategy Deferred Pre-Launch LOCKED V1 |
+| §36.47 | Beta Recruitment 50 Users 3 Cohorts LOCKED V1 |
+| §36.48 | Per-Set Normalization Performance Drop LOCKED V1 |
+| §36.49 | Composite Signal Dual-Threshold + Recovery Volume -20% Fixed LOCKED V1 |
 
-### §3.2 Amendments inline — 3 sections
-
-Per handover §3.2 routing (additive `§AMENDMENT 2026-05-02 SELF-CORRECTION` blocks):
-
-| Section | Amendment Content |
-|---------|-------------------|
-| `§36.17 4 Moduri UI Detection` | Mid-session recalibrare valori next set = 100% silent UI update; outlier prompt §36.24 = post-session-end ONLY (NU mid-set). Detail spec: §36.28 + §36.29 |
-| `§36.24 Outlier Filter` | Outlier prompt confirmation post-session-end ONLY; engine înregistrează silent valorile în CDL pe parcursul sesiunii. Mid-set prompt = friction major Executor |
-| `§36.26 Outlier Confirmed ≠ Baseline` | Streak counter logic: 3 sesiuni consecutive same exercise = "neîntreruptă în aceeași direcție". Marius Bench Press shift baseline 50→52.5kg example codified |
-
-### §3.3 §36.27 SUFLET_ANDURA pending action note — RESOLVED
-
-`§36.27 Pending action Daniel: upload Procesul_de_gandire_complet.md` line updated cu strikethrough + RESOLVED note + cross-ref la commit `82dfbe6` care a appendat sursă integral.
-
-### §3.4 ADR drafts updates — 4 of 5
+### §3.2 ADR drafts updates — 3 of 5
 
 Per handover §3.3 routing:
 
 | ADR file | Update |
 |----------|--------|
-| `03-decisions/ADR_MODE_DETECTION_UI_v1.md` | **§EXTENSIONS** added: EXT-1 Realtime Per-Set Silent UI + EXT-2 Explainability Lazy + EXT-3 Profile Validation Layer 3/3 simultaneous + EXT-4 PROMPT_PROFILE_VALIDATION_PLACEHOLDER + production gate + EXT-5 cooldown 24 sesiuni + EXT-6 User-Triggered Reset Fallback (streak PRESERVE) |
-| `03-decisions/ADR_OUTLIER_FILTER_v1.md` | **§EXTENSIONS** added: EXT-1 Streak Counter same direction + reset + Marius example + EXT-2 Goal Shift Event Handler conversion interval (NU single 1RM formula, SUFLET F1 Triangulation) + streak RESET + EXT-3 Profile Reset vs Goal Shift distinction (PRESERVE vs RESET) |
-| `03-decisions/ADR_RIR_MATRIX_ADAPTIVE_v1.md` | **§EXTENSION** added: cross-ref Realtime Per-Set Silent Recalibration (§36.28) — verbal feedback drives silent UI update + Layer D budget ≤50ms |
-| `03-decisions/ADR_CASCADE_DEFENSE_v1.md` | **§EXTENSION** added: Layer D Runtime Invariant Checks ≤50ms acceptable per "Set terminat" tap + realtime application scope (set N delta vs set N+1, NU full session re-validation) |
-| `03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1.md` | **NO update** (out of scope acest handover per §3.3) |
+| `03-decisions/ADR_MODE_DETECTION_UI_v1.md` | **§EXT-7** added: T2 wording funcțional cold-start mode detection (§36.45 origin) — "Vreau doar să văd greutatea..." vs "Vreau să înțeleg de ce..." NU jargon "Strategic" |
+| `03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1.md` | **§EXT-1** added: Pain Button override CDL log `[user_override_pain_redflag]` (§36.38 origin) + V2 escalation deferred + ToS Coverage |
+| `03-decisions/ADR_CASCADE_DEFENSE_v1.md` | **§EXT-2** added: Composite Signal Layer Layer D budget reaffirmation ≤50ms (§36.41 origin) + cache strategy + anti-cascade silent |
+| `03-decisions/ADR_OUTLIER_FILTER_v1.md` | **NO update** (out of scope per spec) |
+| `03-decisions/ADR_RIR_MATRIX_ADAPTIVE_v1.md` | **NO update** (out of scope per spec) |
 
-### §3.5 EOF Session-Lock entry
+### §3.3 EOF Session-Lock entry
 
-"Sesiune 2026-05-02 SELF-CORRECTION LOCK" cronological entry appended la HANDOVER_GLOBAL EOF — sumarizing 8 LOCKED + 3 amendments + 4 ADR drafts extended + cumulative 31 LOCKED + status pre-launch V1.
+"Sesiune 2026-05-02 Chat C SELF-CORRECTION EXTENSION LOCK" cronological entry appended la HANDOVER_GLOBAL EOF — sumarizing 14 LOCKED + 3 ADR drafts updated + 3 NEW ADR drafts deferred + cumulative 45 LOCKED + status pre-launch V1.
 
-### §3.6 Schema impact noted (Sprint 4.x future)
+### §3.4 ALIGNMENT_QUESTIONS_CHAT_NEW.md generated per §9 MANDATORY
 
-Per handover §3.4:
-- **Exercise library schema:** add field `tier: number` (1 | 2) la fiecare exercițiu — Migration runner pentru exerciții existente (Daniel review categorization)
-- **Setări UI:** 2 butoane noi — "Schimbă obiectiv" (§36.35) + "Resetează profil & recalibrează" (§36.34)
-- **Build script (CI/CD pre-deploy):** pre-production gate — verifică `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING` strings absent în code base, fail dacă match (§36.34 + §3.5 production shipping gate)
+Per `PROMPT_CC_HYGIENE.md §9` (codified commit `8fbf89f`): **OBLIGATORIU** generation post-ingest.
+
+- **16 alignment questions** cu citation §X file.md / ADR Y verificabilă
+- **Pass criteria:** ≥12/16 (≥75%)
+- **Acoperă:** §36.36 Schema + §36.37 Smart-Routing + §36.38 Pain Button (3 Q-uri pe spec critic) + §36.39 -20% lock + §36.40 Hormonal RESPINS + §36.41+§36.48+§36.49 Composite Signal (4 Q-uri pe spec central) + §36.42 ADR review + §36.43 Cycle RESPINS + §36.44+§36.45 Onboarding T0/T2 + §11 bonus context cumulative 45 LOCKED + 3 NEW ADR drafts deferred
+
+### §3.5 Schema impact noted (Sprint 4.x future)
+
+Per handover §3.5:
+- **Exercise library schema:** add fields `equipment_type` + `equipment_alternatives[]` + `force_demand` + `muscle_target_primary` + `muscle_target_secondary` (§36.36). Migration runner pentru exerciții existente — Daniel review categorization
+- **Card exercițiu UI:** add 3 butoane noi — `[Aparat ocupat]` + `[Aparat lipsă]` + `[Am o durere / disconfort]` (§36.37 + §36.38)
+- **Onboarding flow:** T0 fallback synthetic logic (§36.44) + T2 wording funcțional (§36.45)
+- **Composite Signal Layer:** new module `src/engine/compositeSignal.js` (§36.41 + §36.48 + §36.49)
+
+### §3.6 ADR drafts NEW deferred (Sprint 4.x cluster batch)
+
+Per handover §3.4 Decision: **AMÂNĂ creation NEW ADR drafts** — integration în Sprint 4.x cluster batch:
+- `ADR_COMPOSITE_SIGNAL_LAYER_v1.md` (§36.41 + §36.48 + §36.49 standalone ADR)
+- `ADR_PAIN_DISCOMFORT_BUTTON_v1.md` (§36.38 standalone ADR)
+- `ADR_SMART_ROUTING_EQUIPMENT_v1.md` (§36.36 + §36.37 standalone ADR)
 
 ### §3.7 Archive trail (zero-info-loss)
 
 | File | Archived to |
 |------|-------------|
-| `📥_inbox/HANDOVER_INPUT_2026-05-02_self_correction.md` (consumed) | `📤_outbox/_archive/2026-05/59_HANDOVER_INPUT_CONSUMED_2026-05-02_self_correction.md` |
-| `📤_outbox/LATEST.md` (prior SUFLET ANDURA P1 RESOLVED ingest report) | `📤_outbox/_archive/2026-05/60_LATEST_PREVIOUS_INGEST_SUFLET_ANDURA_P1_RESOLVED.md` |
+| `📥_inbox/HANDOVER_INPUT_2026-05-02_chat_C_self_correction_extension.md` (consumed) | `📤_outbox/_archive/2026-05/61_HANDOVER_INPUT_CONSUMED_2026-05-02_chat_C_self_correction_extension.md` |
+| `📤_outbox/LATEST.md` (prior SELF-CORRECTION ingest report) | `📤_outbox/_archive/2026-05/62_LATEST_PREVIOUS_INGEST_SELF_CORRECTION.md` |
+| `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (SELF-CORRECTION historical, per §9 stop conditions: archive ÎNAINTE generate fresh) | `📤_outbox/_archive/2026-05/63_ALIGNMENT_QUESTIONS_CHAT_NEW_SELF_CORRECTION_HISTORICAL.md` |
 
 ---
 
 ## §4 Sections preserved 1:1 — no content removed
 
-- HANDOVER_GLOBAL §0-§36.27 — preserved verbatim except 3 inline amendment additions (§36.17/§36.24/§36.26) which are ADDITIVE, NU overwrite
-- §36.27 SUFLET_ANDURA pending action note — strikethrough + RESOLVED annotation (additive — original line preserved cu ~~~ markup)
-- 5 ADR drafts în `03-decisions/` — original content preserved verbatim cu `§EXTENSIONS` blocks appended (4 of 5)
-- All other vault SSOT files — preserved verbatim (zero touch)
+- HANDOVER_GLOBAL §0-§36.35 + §36 EOF session-lock entries — preserved verbatim (zero touch)
+- 5 ADR drafts în `03-decisions/` — original content preserved verbatim cu `§EXTENSION` blocks appended (3 of 5 updated)
+- All other vault SSOT files — preserved verbatim
 
 ---
 
@@ -115,7 +119,7 @@ Per handover §3.4:
 
 ## §6 Commits
 
-- `<this commit>` — *docs(handover): ingest 2026-05-02 SELF-CORRECTION — 8 LOCKED §36.28-§36.35 + 3 amendments + 4 ADR drafts extended*
+- `<this commit>` — *docs(handover): ingest 2026-05-02 Chat C SELF-CORRECTION EXTENSION — 14 LOCKED §36.36-§36.49 + 3 ADR drafts EXT + ALIGNMENT_QUESTIONS regenerate per §9*
 
 ---
 
@@ -127,34 +131,27 @@ Per handover §3.4:
 
 ## §8 Issues / Findings
 
-### Cumulative pre-launch V1 = 31 LOCKED (re-confirmed)
+### §9 PROMPT_CC_HYGIENE.md applied automaticly
 
-- 12 Acasă chat strategic (§36.1-§36.15, dintre care 12 LOCKED noi în §36.1-§36.12 + §36.13 strategy + §36.14 lessons + §36.15 status)
+Per regula codificată anterior commit `8fbf89f`: ALIGNMENT_QUESTIONS_CHAT_NEW.md regenerated **mecanic** la acest ingest. Stop condition "residue prior ingest = archive ÎNAINTE generate fresh" honored — prior file archived ca `63_*_HISTORICAL` ÎNAINTE de a genera fresh.
+
+### Cumulative pre-launch V1 = 45 LOCKED (re-confirmed)
+
+- 12 Acasă chat strategic (§36.1-§36.15)
 - 11 SUFLET ANDURA (§36.16-§36.26)
 - 8 SELF-CORRECTION (§36.28-§36.35)
-- §36.27 = SSOT pointer SUFLET_ANDURA (NU LOCKED decizie nouă)
+- 14 Chat C SELF-CORRECTION EXTENSION (§36.36-§36.49)
+- §36.27 = SSOT pointer SUFLET_ANDURA (NU LOCKED nouă)
 
-**ZERO sesiuni chat strategic rămase pre-launch V1** (re-confirmed 3rd time across handovers).
+**ZERO sesiuni chat strategic STRATEGIC rămase pre-launch V1.** REMAINING doar tactical (~3h cumulative): ADR review 1.5h + Phase B wording 45min + Discord/Founding 25min.
 
-### Phase B wording strings count update
+### 3 NEW ADR drafts deferred — Sprint 4.x batch creation
 
-Phase B pending strings cumulative:
-- 33 strings remaining (per §36.11 strategy)
-- 4 wording-uri SUFLET ANDURA preview deja LOCKED (Frustrat Tehnic + Validation-Seeking + Volume Creep + Auto-pedeapsă)
-- 1 NEW wording PROMPT_PROFILE_VALIDATION_PLACEHOLDER (§36.34) — needs Phase B replace
-- 1 NEW wording Goal Shift mesaj Modul Curios (§36.35) — needs Phase B replace
+Per handover §3.4 + §3.6 deferral logic: integration în cluster batch când Daniel decide timing optimum post-LOCK 5 ADR drafts existing. Avoid scope splitting acum.
 
-Total Phase B mini-sesiune scope = 35 strings to LOCK (33 existing + 2 new).
+### Phase B wording strings impact — ZERO new from Chat C
 
-### Production shipping gate (§36.34) — pre-launch requirement
-
-Sprint 4.x cluster implementation MUST include build-script pre-production gate:
-
-```bash
-grep -rn "PHASE_B_LOCK_REQUIRED\|PHASE_B_WORDING_PENDING" src/ && exit 1 || exit 0
-```
-
-Fail build dacă match. Forță Phase B mini-sesiune Daniel-validated pentru toate placeholderii înainte launch. Implementation TBD în Batch C scope.
+Per handover §3.6: 10 wordings noi LOCKED V1 din chat C (Pain Button 3 cazuri + Composite Signal Modul Curios + etc.) au fost direct Daniel-validated în chat — NU need Phase B replace. Phase B remaining scope unchanged: 33 existing + 2 NEW (PROMPT_PROFILE_VALIDATION_PLACEHOLDER §36.34 + Goal Shift mesaj §36.35) = **35 strings total**.
 
 ### No DIFF_FLAGS new
 
@@ -165,9 +162,10 @@ Pure additive ingest. No SSOT overwrite. No new locked content fabricated.
 ## §9 Verify post-run
 
 - Inbox: empty (only `.gitkeep`) ✅
-- Outbox top-level: `LATEST.md` (this report) + `_archive/` (59+60 added) + `.gitkeep` ✅
-- HANDOVER_GLOBAL: §36.28-§36.35 added + 3 inline amendments + EOF session-lock entry ✅
-- ADR drafts: 4 of 5 extended cu `§EXTENSIONS` blocks; BIAS_DETECTION untouched per spec ✅
+- Outbox top-level: `LATEST.md` (this report) + `ALIGNMENT_QUESTIONS_CHAT_NEW.md` (regenerate per §9) + `_archive/` (61+62+63 added) + `.gitkeep` ✅
+- HANDOVER_GLOBAL: §36.36-§36.49 added + EOF session-lock entry ✅
+- ADR drafts: 3 of 5 extended cu `§EXTENSION 2026-05-02 CHAT C SELF-CORRECTION EXTENSION` blocks; OUTLIER_FILTER + RIR_MATRIX untouched per spec ✅
+- ALIGNMENT_QUESTIONS_CHAT_NEW: 16 Q-uri cu citation explicit + pass criteria ≥12/16 ✅
 - Tests: not re-run (vault docs only) ✅
 - Git state: will verify post-commit
 
@@ -175,45 +173,48 @@ Pure additive ingest. No SSOT overwrite. No new locked content fabricated.
 
 ## §10 Next action (pentru Daniel)
 
-### Priority 1: Review 5 ADR drafts (BLOCKER pe Sprint 4.x cluster)
+### Priority 1: ADR review 5 drafts file-by-file (BLOCKER Sprint 4.x cluster)
 
-5 ADR drafts în `03-decisions/`:
-- `ADR_RIR_MATRIX_ADAPTIVE_v1.md` (extended cu §EXTENSION realtime per-set cross-ref)
-- `ADR_MODE_DETECTION_UI_v1.md` (extended cu EXT-1 to EXT-6 — silent UI + Explainability + Profile Validation + placeholder + cooldown + Reset)
-- `ADR_BIAS_DETECTION_OBSERVABLE_v1.md` (NO update acest ingest)
-- `ADR_OUTLIER_FILTER_v1.md` (extended cu EXT-1 to EXT-3 — streak same direction + Goal Shift + Profile Reset distinction)
-- `ADR_CASCADE_DEFENSE_v1.md` (extended cu §EXTENSION Layer D ≤50ms budget)
+Per `§36.42 ADR Review Process LOCKED`: chat strategic dedicat ~1-1.5h. Claude pre-citește integral 5 ADR drafts, livrează raport per ADR (consistency cu §36.16-§36.49 + cross-refs validate + edge cases + spec gaps). Daniel decizii flagged amend/reject ~30-45min.
 
-Daniel review individual → LOCK / amend / reject. **Sprint 4.x cluster implementation BLOCKED pe LOCK status.** Acum cu §4 SUFLET filozofie completă disponibilă + §36.28-§36.35 spec, ADR-urile cross-reference momente sursă (e.g. EXT-3 Profile Validation 3/3 simultaneous vs SUFLET §4 MOMENTUL X — Daniel poate cita pattern direct).
+5 ADR drafts:
+- `ADR_RIR_MATRIX_ADAPTIVE_v1.md`
+- `ADR_MODE_DETECTION_UI_v1.md` (extended cu EXT-1 to EXT-7 — silent UI + Explainability + Profile Validation + placeholder + cooldown + Reset + T2 wording funcțional)
+- `ADR_BIAS_DETECTION_OBSERVABLE_v1.md` (extended cu EXT-1 — Pain override CDL)
+- `ADR_OUTLIER_FILTER_v1.md` (extended cu EXT-1 to EXT-3)
+- `ADR_CASCADE_DEFENSE_v1.md` (extended cu §EXTENSION SELF-CORRECTION + EXT-2 Composite Signal Layer D)
 
-### Priority 2: Phase B mini-sesiune ad-hoc — 35 strings + 2 NEW
+**Output:** 5 ADR-uri Draft → LOCKED V1. Sprint 4.x cluster UNBLOCKED.
 
-Per §36.11 strategy: dedicated chat strategic Daniel-validated 30-45 min.
+### Priority 2: Phase B wording mini-sesiune (BLOCKER pre-launch hard)
 
-**Scope:**
-- 33 strings remaining (existing per §25 wording remaining)
-- 1 NEW PROMPT_PROFILE_VALIDATION_PLACEHOLDER text (§36.34) — fallback "Tiparele tale arată un stil mai direct. Schimbi la Executor?" needs LOCK
-- 1 NEW Goal Shift mesaj Modul Curios (§36.35) — *"Estimat: X-Y kg × Z reps. Primele 2 sesiuni după schimbarea obiectivului reprezintă o fază de calibrare."* needs LOCK
+Per `§36.11 strategy`: 35 strings cumulative (33 existing + 2 NEW PROMPT_PROFILE_VALIDATION_PLACEHOLDER §36.34 + Goal Shift mesaj §36.35). Chat strategic dedicat ~30-45min Daniel-validated.
 
-**Pre-condition production:** build-script gate verificând `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING` strings absent. Implementation TBD Batch C/E.
+Production gate `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING` strings absent în code base obligatoriu pre-launch (per `§36.34` + ADR_MODE_DETECTION_UI EXT-4).
 
-### Priority 3: Batch C scope decision
+### Priority 3: Decizii strategice rapide (chat dedicat ~25min)
 
-Per handover §5.3 + §36.15 + §34.4:
+- Discord vs WhatsApp channel beta (5 min) — per §36.47
+- Founding Members positioning (15-20 min) — per §36.46
 
-- **RECOMANDAT:** Suflet Andura + Self-Correction Implementation Cluster — RIR Matrix + 4 Moduri UI + Bias Detection + T1+ + Cascade Defense + Outlier Filter + **Realtime Per-Set §36.28 + Profile Validation Layer §36.34 + Goal Shift handler §36.35** — self-contained, codificabil direct, **~16-22h Opus comprehensive** (~3-4h wall-clock). Single batch acoperă 5 ADR-uri post-LOCK + 8 LOCKED noi.
-- Alternative: T&B Faza 1+2 (~10-15h Opus), Library Extension §36.12, Features V1 cluster.
+### Priority 4: Daniel solo action items
 
-### Priority 4: Optional — regenerate ALIGNMENT_QUESTIONS_CHAT_NEW.md
+- Avocat barter outreach (open-ended) — per §36.3
+- Firebase Console Auth setup (30-45 min hands-on) — per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02
+- Database rules publish post-Auth dogfood (15 min hands-on)
 
-Existing alignment questions (commit `bf29565`, archived ca `_archive/2026-05/57_*_HISTORICAL`) acoperă §36.16-§36.26 + SUFLET §1-§3. Daniel poate cere regenerare cu Q-uri pe noile §36.28-§36.35 dacă chat strategic nou e planificat post-Batch C ADR LOCK + implementation review.
+### Priority 5: CC Opus vault cleanup (~30min)
 
-### Priority 5: Carry-overs from prior ingests (still pending)
+Founding Members + Discord references sweep (`01-vision/PRODUCT_STRATEGY_SPEC_v1.md §1.4` + `06-sessions-log/HANDOVER_GLOBAL §29.6.3` + ADR Q-0533 mark DEPRECATED) — per §36.9.
 
-- **Founding Members + Discord references sweep** — `01-vision/PRODUCT_STRATEGY_SPEC_v1.md §1.4` + `06-sessions-log/HANDOVER_GLOBAL §29.6.3` + ADR Q-0533 mark DEPRECATED
-- **Daniel manual Firebase Console steps** (Auth dogfood) — per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02
-- **Beta-launch ASAP timeline** — ~7-10 zile calendar ready (per §36.13)
+### Priority 6: Sprint 4.x cluster implementation (post 5 ADR LOCKED + Phase B LOCKED)
+
+**~18-25h Opus comprehensive (~3-4h wall-clock).** Single batch acoperă:
+- Suflet Andura: RIR Matrix + 4 Moduri UI + Bias Detection + T1+ + Cascade Defense + Outlier Filter
+- Self-Correction: Realtime Per-Set §36.28 + Profile Validation §36.34 + Goal Shift §36.35
+- **Chat C: Smart-Routing §36.37 + Pain Button §36.38 + Composite Signal Layer §36.41**
+- Schema Extension §36.36 (exercise library equipment metadata)
 
 ---
 
-🦫 **Ingest clean. 8 LOCKED §36.28-§36.35 + 3 amendments inline + 4 ADR drafts extended + EOF session-lock. Cumulative pre-launch V1 = 31 LOCKED. ZERO sesiuni chat strategic rămase pre-launch (re-confirmed 3rd time). Sprint 4.x scope refined to ~16-22h Opus comprehensive. Next strategic: Daniel review 5 ADR drafts → LOCK → Batch C implementation.**
+🦫 **Ingest clean. 14 LOCKED §36.36-§36.49 + 3 ADR drafts extended + ALIGNMENT_QUESTIONS regenerate per §9 MANDATORY (codified commit `8fbf89f`). Cumulative pre-launch V1 = 45 LOCKED. ZERO sesiuni chat strategic STRATEGIC rămase. Sprint 4.x scope refined ~18-25h Opus comprehensive. Next strategic: Daniel ADR review 5 drafts file-by-file → Sprint 4.x cluster UNBLOCKED.**

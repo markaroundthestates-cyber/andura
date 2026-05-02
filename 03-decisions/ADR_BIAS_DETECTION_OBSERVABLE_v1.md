@@ -85,3 +85,34 @@ Nutrition-based bias (binge/restrict patterns) = V2+ (NO nutrition tracking V1).
 ---
 
 *Authored 2026-05-02 SUFLET ANDURA ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+
+---
+
+## §EXTENSION 2026-05-02 CHAT C SELF-CORRECTION EXTENSION (post Chat C ingest)
+
+### EXT-1: Pain/Discomfort Button — Override CDL Log (§36.38)
+
+**Decizie:** Pain Button Cazul 🔴 Red Flag → 3-button anti-paternalism flow include override "Continui pe răspunderea mea" → engine logs immediate în CDL: `[user_override_pain_redflag]`.
+
+**Mecanică log:**
+- CDL entry type: `pain_button_override`
+- Payload: `{ exerciseId, timestamp, severity: 'red_flag', userAcknowledgedRisk: true }`
+- ToS Coverage: "User-acknowledged risk override"
+- **V1:** doar logging silent (NU intervention engine)
+- **V2 (deferred post-beta):** escalation prompt dacă apăsat 3+ ori în 30 zile
+
+**Filozofie aliniată:**
+- SUFLET F2 "AI-ul informează, nu impune" — Cazul 🔴 NU forced skip
+- ADR Pattern 14 — engine logs observable behavior, NU forțează acțiune
+- Bias Detection v2 deferred — scaling decision post-beta data
+
+**Distincție vs Volume Creep / Auto-pedeapsă (§36.18 + §36.19):**
+- Volume Creep + Auto-pedeapsă = friction prompt in-moment (preventive)
+- Pain Override = silent CDL log (forensic, NU preventive)
+- Both feed engine learning, dar UX different (informare vs friction)
+
+**Cross-ref:** §36.38 Pain/Discomfort Button + §36.18 Volume Creep + §36.19 Auto-pedeapsă + ADR 011 CDL architecture + SUFLET F2 + ADR Pattern 14.
+
+---
+
+*EXT-1 added 2026-05-02 CHAT C SELF-CORRECTION EXTENSION ingest.*

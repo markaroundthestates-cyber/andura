@@ -158,3 +158,31 @@ Buton manual "Resetează profil & recalibrează" în Setări → Profil & Date.
 ---
 
 *Authored 2026-05-02 SUFLET ANDURA ingest. EXT-1 to EXT-6 added 2026-05-02 SELF-CORRECTION ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+
+---
+
+## §EXTENSION 2026-05-02 CHAT C SELF-CORRECTION EXTENSION (post Chat C ingest)
+
+### EXT-7: T2 Wording Funcțional Cold-Start Mode Detection (§36.45)
+
+**Decizie:** Întrebarea T2 (cold-start mode detection) reformulată funcțional — NU jargon profile names ("Executor" / "Strategic" exposed la user = Gigel test fail Maria 65).
+
+**Wording UI Final T2 LOCKED:**
+
+> **"Cum preferi să îți afișăm instrucțiunile?"**
+>
+> [ ] Vreau doar să văd greutatea și repetările → Mode Map: **Executor** (internal)
+> [ ] Vreau să înțeleg și de ce s-au schimbat numerele → Mode Map: **Strategic** (internal)
+
+**Plasă de Siguranță:**
+- Cold-start binar Executor vs Strategic acoperă orice user (Maria/Marius/Gigica)
+- Behavioral triggers §36.17 (Frustrat Tehnic / Frustrat Viață / Validation-Seeking) detectate independent de declared T2
+- Auto-correction §36.34 la 8 sesiuni dacă cold-start greșit (drift behavioral 3/3 simultaneous → prompt mode shift)
+
+**Gigel Test Pass:** Maria 65 înțelege "vreau doar să văd greutatea și repetările" (acțiune concretă). Marius IQ 139 înțelege "vreau să înțeleg de ce" (signal Strategic clear). Gigica 50 → fie/fie, mode-ul real validate behavior post-T2.
+
+**Cross-ref:** §36.45 + §36.17 4 Moduri UI Detection + §36.34 Profile Validation Layer (auto-correction safety net).
+
+---
+
+*EXT-7 added 2026-05-02 CHAT C SELF-CORRECTION EXTENSION ingest.*
