@@ -26,6 +26,9 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 **Decizie:** RO + EN simultan din launch. Arhitectură i18n deja pusă (i18n bundle decoupled from Arbitrator). RO = feedback loop rapid. EN = piața globală.
 
 ### 1.2 Pricing tier
+
+> **§AMENDMENT 2026-05-02 Chat D — DEPRECATED (Override LOCKED V1):** §1.2-§1.4 pricing structure DEPRECATED de [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50-§36.52 LOCKED V1 (Chat D PRICING + TELEGRAM + ADR LOCK). V1 LOCKED: **3 tiers** Founding €39/an (cap 50) + Standard €59/an + Elite €79/an V1.1 (Martie 2027). NU "Free + Pro 1 paid tier" anterior. NU "Founding Members €60 lifetime" (DEPRECATED §36.9). NU "Pro €65/an" (DEPRECATED §36.50 — Standard sub-SensAI €59). Discord access (§1.4) DEPRECATED §36.9 → Telegram Group + Topics §36.53. Conținut original §1.2-§1.4 preserved ca audit trail istoric. Cross-ref: §36.50 + §36.51 (3 ani LOCKED + 34% perpetual) + §36.52 (cap 50 + auto-close) + §36.53 (Telegram WIN) + §36.9 (Founding lifetime + Discord ELIMINATE V1).
+
 **Decizie:** Free + Pro (1 paid tier). **NU 3 tiere** (paralizează decizia user).
 
 ### 1.3 Pricing point (AMENDED 2026-04-30)
@@ -54,7 +57,7 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 **Paywall structure post-pricing amendment:**
 - **Free permanent:** core engine 5 voices (HISTORICAL + REALTIME + PROJECTION + ARBITRATOR + ACTION) + manual sliders REALTIME + plate calculator + email digest săptămânal
 - **Pro €65/an:** + Apple Health/Wearables integration + 4-week PROJECTION view + Chalkboard educational layer 20 q/zi + advanced UI insights
-- **Founding Members €60 lifetime:** Pro features perpetuu + Discord access (Phase 0-500 users only) + "The Architect" Q&A acces lunar Daniel
+- ~~**Founding Members €60 lifetime:** Pro features perpetuu + Discord access (Phase 0-500 users only) + "The Architect" Q&A acces lunar Daniel~~ **[DEPRECATED 2026-05-02 Chat D — §36.50/§36.52 (Founding €39/an cap 50 + 34% perpetual) + §36.53 (Telegram NU Discord) + §36.9 (Founding lifetime ELIMINATE)]**
 
 **NU paywall pe quality decision** (core architecture same Free/Paid per ADR Q19). Paywall ethical = data sources + UI insights extras.
 
@@ -97,7 +100,7 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 
 **Launch sequence post-velocity recalibration ([[HANDOVER_GLOBAL_2026-04-30_evening]] §4.1, §6.7):**
 - Pre-launch beta timeline: **2-4 luni realist** (vs 5-9 luni anterior estimat)
-- Beachhead v1: tech-lifter ICP first 100-500 users → Founding Members €60 lifetime evangheliști
+- ~~Beachhead v1: tech-lifter ICP first 100-500 users → Founding Members €60 lifetime evangheliști~~ **[DEPRECATED 2026-05-02 Chat D — §36.47 Beta cohorts 50 (Inner Circle 20 + Gigel 15 + Power-User 15) + §36.50 Founding €39/an cap 50, NU lifetime]**
 - v1.5+ expand: mainstream cu cash flow generated
 - v2+ global: marketing budget pentru ads + SEO + App Store optimization
 
@@ -405,10 +408,13 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 ## PARTEA 8 — BUSINESS OPERATIONS
 
 ### 8.1 Customer support channel
-**Decizie POST FOLLOW-UP FLAG:** Discord **GATED** (Premium Perk) + Email pentru billing.
-- **Phase 0-500 users:** Discord open pentru Founding Members
-- **Phase 500+ users:** Discord exclusiv Paid + 2-3 voluntary mods (Pro lifetime perk)
-- **Daniel role:** "The Architect". Răspunde #announcements + Q&A lunar
+
+> **§AMENDMENT 2026-05-02 Chat D — DEPRECATED (Override LOCKED V1):** Customer support channel original "Discord GATED Premium Perk" DEPRECATED de [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.53 (Telegram WIN) + §36.54 (Topics structure 4 channels: 📌 #Anunțuri read-only / 💬 #General / 🐛 #Bug-Reports / 💡 #Sugestii-V1.1) + §36.55 (GDPR Phone Privacy tutorial vizual 4-step) + §36.9 (Founding Members + Discord ELIMINATE V1). NU Discord (Maria 65 friction) NICI WhatsApp (haos un singur fir). **Telegram Group + Topics LOCKED V1** = canal primary 50 Founding Members + suport. Q-0533 Discord Premium Perk = DEPRECATED. Conținut original preserved ca audit trail.
+
+**Decizie POST FOLLOW-UP FLAG (DEPRECATED 2026-05-02 Chat D):** ~~Discord **GATED** (Premium Perk) + Email pentru billing.~~ → **Telegram Group + Topics §36.53/§36.54 + Email pentru billing.**
+- ~~**Phase 0-500 users:** Discord open pentru Founding Members~~ → **All 50 Founding Members:** Telegram Group + Topics access (cf §36.47 + §36.53)
+- ~~**Phase 500+ users:** Discord exclusiv Paid + 2-3 voluntary mods (Pro lifetime perk)~~ → **Phase 500+ users:** Telegram Topics permission scaling TBD post-beta (§36.46 pricing strategy V2 deferred)
+- **Daniel role:** "The Architect". Răspunde 📌 #Anunțuri (read-only postări updates) + Q&A lunar prin 💬 #General + 💡 #Sugestii-V1.1 (vs original "#announcements")
 - **Exit:** Daniel time = code, NU customer support
 
 ### 8.2 Response SLA
@@ -539,8 +545,11 @@ User agency cu safety net. **(Cross-ref Safety Asymmetric Principle)**
 **Source:** Notification = output PROJECTION engine, NU output marketing team.
 **Ignored?** Engine HISTORICAL recalculează decay silent. **Zero guilt-tripping.**
 
-### 11.5 Discord Scaling
-**Decizie:** Gated paid + voluntary mods + Daniel = "The Architect" (recap above în 8.1).
+### 11.5 ~~Discord Scaling~~ → **Telegram Topics Scaling** (DEPRECATED → §36.53/§36.54)
+
+> **§AMENDMENT 2026-05-02 Chat D — DEPRECATED:** §11.5 Discord Scaling DEPRECATED de [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.53 Telegram WIN + §36.54 Topics Structure (4 channels: 📌 #Anunțuri / 💬 #General / 🐛 #Bug-Reports / 💡 #Sugestii-V1.1) + §36.9 Discord ELIMINATE V1. Topics permission scaling TBD post-beta.
+
+~~**Decizie:** Gated paid + voluntary mods + Daniel = "The Architect" (recap above în 8.1).~~
 
 ---
 
@@ -553,9 +562,9 @@ User agency cu safety net. **(Cross-ref Safety Asymmetric Principle)**
 | 3 | Tech stack longevity (TS vs Vanilla) | **Engine = TS, UI = Vanilla.** Validates Sweep 1.1 ca foundation. |
 | 4 | Coach personality vs IG sharing | **Scoatem IG Workout Card.** "Dark horse fitness app" identity preserved. Email digest = singur retention tool. |
 | 5 | Rationale codes scaling (30-50 vs 100-150) | **100-150+ codes cu naming convention** [DOMAIN]_[INTENT]_[REASON]. Tiered: SAFETY/PREFERENCE always-on, OPTIMIZATION fallback aggregate. |
-| 6 | Growth math articulation | Plan B 18-24 luni accepted. Vânăm balene tactic. Founding Members lifetime Pro. |
+| 6 | Growth math articulation | Plan B 18-24 luni accepted. Vânăm balene tactic. ~~Founding Members lifetime Pro~~ → **Founding €39/an cap 50 + 34% perpetual permanent** (DEPRECATED 2026-05-02 Chat D §36.50/§36.51/§36.52). |
 | 7 | Email-only retention fragility | Push notification CONFIRMED (contextual). Marketing vs Utility distinction. |
-| 8 | Discord scaling bottleneck | Gated paid + voluntary mods + Daniel = "The Architect". 3-phase scaling plan. |
+| 8 | ~~Discord scaling bottleneck~~ → **Telegram Topics scaling** (DEPRECATED 2026-05-02 Chat D §36.53/§36.54) | ~~Gated paid + voluntary mods + Daniel = "The Architect". 3-phase scaling plan.~~ → Telegram Group + 4 Topics structurate, GDPR phone privacy tutorial vizual (§36.55), Daniel = "The Architect" în 📌 #Anunțuri |
 
 ---
 
@@ -565,14 +574,14 @@ User agency cu safety net. **(Cross-ref Safety Asymmetric Principle)**
 |----------|-----------|
 | Bugatti standard ABSOLUTE | "Lux discret. Antrenor olimpic. NU cheerleader, NU gimmick, NU social network." |
 | RO + EN simultaneous launch | i18n architecture deja decoupled |
-| Free + 1 Paid tier (Pro) | Decision simplicity > tier complexity |
-| Freemium permanent (NU trial) | Paywall pe modules avansate (VITALITY/PROJECTION advanced) |
-| ~10-12€/lună / 100€/an | Mid-market positioning |
+| ~~Free + 1 Paid tier (Pro)~~ → **3 tiers Founding/Standard/Elite** (DEPRECATED 2026-05-02 Chat D §36.50) | LOCKED V1: Founding €39/an cap 50 + Standard €59/an + Elite €79/an V1.1 |
+| Freemium permanent (NU trial) | Paywall pe modules avansate (VITALITY/PROJECTION advanced) — **Note:** §36.46 Pricing V2 deferred post-beta |
+| ~~~10-12€/lună / 100€/an~~ → **€59/an Standard sub-SensAI** (DEPRECATED 2026-05-02 Chat D §36.50) | Anchored sub SensAI €65/an, bootstrap solo trust deficit |
 | Engine TS / UI Vanilla split | Cognitive architecture necessitates type safety, UI doesn't |
 | PWA exclusiv v1.0 | Apple Tax bypass + instant updates |
 | Offline-first cu Event Sourcing | Sala WiFi mort = local function |
 | Dark mode default + exclusiv | Bugatti aesthetic |
-| Discord gated paid | Scale + filter zgomot |
+| ~~Discord gated paid~~ → **Telegram Group + Topics §36.53/§36.54** | Scale + filter zgomot (DEPRECATED 2026-05-02 Chat D §36.9 Discord ELIMINATE V1) |
 | Plan B 18-24 luni acceptable | Quality > velocity (rule permanentă) |
 | NO paid ads (corrupt ML data) | Long-term ML training value > short-term acquisition |
 | NO IG sharing (anti-pattern brand) | Dark horse positioning |
