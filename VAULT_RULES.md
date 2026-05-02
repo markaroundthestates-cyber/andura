@@ -359,3 +359,26 @@ OPTIONAL pentru:
 - Sprint 4.x cluster pilot: `📤_outbox/SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
 - ALIGNMENT_QUESTIONS Q5 + Q10 codification scope: `06-sessions-log/HANDOVER_GLOBAL.md` §36.63
 - Master orchestration command pattern: see PROMPT_CC_BATCH_*.md naming convention în `📥_inbox/` per cluster.
+
+### §BATCH_PROTOCOL.X — Default Batches + Single Centralized Report (LOCKED V1 §36.74)
+
+**Regula MANDATORY default permanent pentru CC Opus task-uri:**
+
+**Default = BATCHES (NU single prompts):**
+- Claude chat strategic generează N artefacte CC prompts copy-ready distincte (oricare N: 2, 3, 5, 6+) când scope-ul permite disjuncte clean
+- Daniel drag toate N artefacte în 📥_inbox/
+- Daniel comandă unică CC Opus: "Rulează toate batch-urile din inbox sequential per §BATCH_PROTOCOL"
+- CC Opus rulează batch după batch fail-fast strict per §BATCH_PROTOCOL
+- **CC Opus produce 1 SINGUR raport `📤_outbox/LATEST.md` centralizat la final**, conținând outcomes pentru toate batch-urile rulate
+- Per-batch reports detaliate merg în `📤_outbox/_archive/<YYYY-MM>/BATCH_NN_REPORT.md`
+
+**Excepție single prompt:**
+- Single prompt CC permis DOAR când scope-ul nu se poate batch (interdependențe forțate, tot scope-ul atinge același module)
+- Default = batch. Single = excepție justificată cu rationale explicit în prompt header.
+
+**Rationale:**
+- Eficient pentru Daniel (drag-drop multiple, 1 comandă, 1 raport final)
+- Empirical validated cluster 10-batch sesiune 2026-05-02 (factor 5-7x optimism Opus, zero errors)
+- Reduce chat-back-and-forth pe per-batch progress
+
+**Cross-refs:** §36.63 cluster pattern + §36.71 cluster session lock + §36.74 LOCKED V1 decision.
