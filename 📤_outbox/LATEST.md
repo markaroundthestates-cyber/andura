@@ -1,66 +1,75 @@
-# LATEST — BATCH_03 Schema Extension + Suflet Andura Foundation
+# LATEST — BATCH_04 Self-Correction + Chat C Features
 
 **Data:** 2026-05-02  
-**Sequential batch position:** 03/05
+**Sequential batch position:** 04/05
 
 ---
 
-- **Task:** Schema Extension §36.36 + Suflet Andura full foundation (RIR Matrix + 4 Moduri UI + Bias Detection + Tier Progression + Cascade Defense + Outlier Filter)
+- **Task:** Self-Correction §36.28-§36.35 + Chat C features (Smart-Routing §36.37 + Pain Button §36.38 + Composite Signal §36.41) foundation
 - **Model:** Opus
-- **Status:** ✅ Complete (foundation/skeleton level — full integration deferred per scope realism)
+- **Status:** ✅ Complete (foundation/skeleton level — UI integration deferred)
 
 ## Pre-flight
 
-- `src/schema/`, `src/types/`, `src/engine/suflet-andura/`: NU existau pre-batch (created)
-- Existing exercise constants: `src/constants.js` (EX_SETS / EX_REPS / COMPOUND_EX), `src/engine/exerciseMapping.js`, `src/config/weights.js` — no centralized schema (per ADR 005 vanilla JS)
+- 4 NEW dirs: `src/engine/self-correction/`, `src/engine/smart-routing/`, `src/engine/pain-button/`, `src/engine/composite-signal/` (created)
+- BATCH_03 dependencies: `suflet-andura/bias-detection.js` + `suflet-andura/outlier-filter.js` ✅
+- Schema dependency: `src/schema/exerciseMetadata.js` ✅
 
 ## Modificări
 
-### `src/schema/exerciseMetadata.js` NEW (~70 lines)
-- §36.36 schema fields: `equipment_type` / `equipment_alternatives` / `force_demand` / `tier` / `muscle_target_primary` / `muscle_target_secondary`
-- 26 exercises populated cu metadata conservatoare (Tier 1 compound force_demand: high, Tier 2 isolation medium, Tier 3 accesorii low)
-- `getExerciseMetadata()` cu fallback default safe
-- `getValidAlternatives()` cu tier-aware filtering (Tier 1 strict force_demand match, Tier 2/3 flexibility muscle_target match) — foundation pentru §36.37 Smart-Routing
+### `src/engine/self-correction/` NEW (3 modules + index)
 
-### `src/engine/suflet-andura/` NEW (6 modules + index)
+**`realtime-per-set.js`** — §36.28 silent recalibration
+- `detectRealtimeAdjust(sessionState)` — 2× RPE 10 → DOWN, 2× Easy + reps maxime → UP
+- Per-set normalization integration (§36.48)
 
-**`rir-matrix.js`** — 4-tier intensity scoring per ADR_RIR_MATRIX_ADAPTIVE
-- `RIR_MATRIX` constant cu LIMIT/HEAVY/CHALLENGING/COMFORTABLE
-- `rirToIntensity(rir)` mapper
-- `getTargetRirRange(ctx)` profile-aware + exercise-category-aware
+**`profile-validation.js`** — §36.34 + ADR_MODE_DETECTION_UI EXT-4
+- `shouldShowProfileValidation(ctx)` — 8-session rolling window + 24-session cooldown + Bias Detection 3/3 trigger
+- `PROFILE_VALIDATION_CONFIG` exposes constants
+- Imports `detectBiasDrift` din suflet-andura BATCH_03
 
-**`modes-ui.js`** — 4 Moduri (Strategic/Executor/Hybrid/Auto)
-- `MODES`, `isValidMode`, `getDefaultMode` (default AUTO)
+**`goal-shift-calibration.js`** — §36.35 + ADR_OUTLIER_FILTER EXT-2
+- `initiateGoalShift()` resets streak + sets 2-session calibration window
+- `advancePostShiftSession()` lifecycle progression
+- `buildCalibrationPlaceholderData()` produces GOAL_SHIFT_CALIBRATION_PLACEHOLDER data per §36.58 LOCKED V1
 
-**`bias-detection.js`** — Mode drift observable
-- `detectBiasDrift(signals)` — 3/3 simultaneous threshold per §36.34 (NU cumulative score)
-- Pure event listener pattern — observable signals only
+### `src/engine/smart-routing/` NEW (2 modules + index)
 
-**`tier-progression.js`** — T0/T1/T2/T3 lifecycle
-- `TIER_LEVELS` cu requirements
-- `detectTier(state)` din onboarding/vitality/sessionCount
-- `isFeatureEnabledForTier()` gating per feature (patternLearning T1+, biasDetection T2+, etc.)
+**`equipment-detection.js`** — §36.37 "Aparat Ocupat" handler
+**`alternative-finder.js`** — Tier-aware filtering (Tier 1 strict force_demand match, Tier 2/3 muscle_target match) + similarity ranking
+- Anti-paternalism: skip dacă zero valid alternatives (NU forțezi substituție inferior)
 
-**`cascade-defense.js`** — Multi-engine arbitration per ADR_CASCADE_DEFENSE
-- `arbitrate(recommendations)` cu priority order Safety > Recovery > Progression > Optimization
-- Returns winner + runner-ups (audit trail)
+### `src/engine/pain-button/` NEW (2 modules + index)
 
-**`outlier-filter.js`** — Profile-aware ASK Don't IGNORE per ADR_OUTLIER_FILTER
-- `detectOutlier()` rolling window 8 sessions + MAD-based threshold
-- `onGoalShift()` resets streak + sets calibration window 2 sessions (§36.35 EXT-2)
-- `OUTLIER_FILTER_CONFIG` exposes constants (ROLLING_WINDOW=8, COOLDOWN=24, GOAL_SHIFT_CALIBRATION=2)
+**`pain-input.js`** — §36.38 anti-paternalism
+- 3 PAIN_OPTIONS: general / specific / technical (Mișcarea mă deranjează / Simt o tensiune ciudată / DOMS sever)
+- ZERO medical claim per F2 SUFLET + Gigel test
+- `processPainInput()` returns engine action (skip / reduce_volume / suggest_alternative)
 
-**`index.js`** — public API barrel pentru consumers viitoare
+**`override-cdl.js`** — F2 SUFLET respected ("AI-ul informează, nu impune")
+- `buildOverrideAuditEntry()` — `user_override_pain_redflag` flag pentru audit, NU blocking
 
-### Tests added (27 new tests în 2 files)
-- `src/schema/__tests__/exerciseMetadata.test.js` (5 tests)
-- `src/engine/suflet-andura/__tests__/sufletAndura.test.js` (22 tests covering all 6 modules)
+### `src/engine/composite-signal/` NEW (2 modules + index)
+
+**`trigger-3-metrici.js`** — §36.41 3/3 simultaneous threshold
+- `detectCompositeSignal(input)` — Performance Drop (>15%) + Rest Time (>1.5x) + RIR Mismatch (≥2)
+- `COMPOSITE_SIGNAL_THRESHOLDS` exposes thresholds
+- False positive prevention: TOATE 3 trebuie abnormal simultan
+
+**`lifecycle.js`** — detection → cooldown → resolution
+- `advanceLifecycle()` state machine (idle → flagged → cooldown 3 sessions → resolving → idle after 2 clean)
+
+### Tests added (28 new tests în 4 files)
+- `selfCorrection.test.js` (10 tests)
+- `smartRouting.test.js` (4 tests)
+- `painButton.test.js` (5 tests)
+- `compositeSignal.test.js` (9 tests)
 
 ## Build + Tests
 
-- **Tests pre:** 1110/1110 PASS
-- **Tests post:** 1137/1137 PASS (+27 new)
-- **Test files:** 66 → 68
+- **Tests pre:** 1137/1137 PASS
+- **Tests post:** 1165/1165 PASS (+28 new)
+- **Test files:** 68 → 72
 
 ## Commits
 
@@ -70,22 +79,19 @@
 
 Yes — `git push origin main` post commit.
 
-## ADR cross-refs
+## Cross-refs
 
-- **ADR_RIR_MATRIX_ADAPTIVE_v1** — implementation: `rir-matrix.js` ✅
-- **ADR_MODE_DETECTION_UI_v1** — implementation: `modes-ui.js` + `bias-detection.js` (3/3 threshold per EXT) ✅
-- **ADR_BIAS_DETECTION_OBSERVABLE_v1** — implementation: `bias-detection.js` (pure event listener pattern) ✅
-- **ADR_OUTLIER_FILTER_v1** — implementation: `outlier-filter.js` cu EXT-2 Goal Shift calibration window ✅
-- **ADR_CASCADE_DEFENSE_v1** — implementation: `cascade-defense.js` Layer priority + arbitration ✅
+- `PROMPT_PROFILE_VALIDATION_PLACEHOLDER` (§36.58 LOCKED V1) → consumed via shouldShowProfileValidation trigger ✅
+- `GOAL_SHIFT_CALIBRATION_PLACEHOLDER` (§36.58 LOCKED V1) → built din buildCalibrationPlaceholderData ✅
+- Schema fields (equipment_alternatives + force_demand) → consumed în smart-routing alternative-finder ✅
+- ADR_CASCADE_DEFENSE → consumed via trigger flag (CompositeSignal output feeds cascade arbitrate)
 
 ## Issues
 
-- **Foundation scope, NOT full integration:** modules created cu public API + smoke tests, dar **integration cu existing engines (DP, ProactiveEngine, StagnationDetector, RuleEngine, etc.) NU este în acest batch.** Integration call-site updates require dedicated batch (~3-5h Opus).
-- **Schema migration scope:** EXERCISE_METADATA acoperă 26 exercises principal repertoire — exercise library extension §36.12 (HARD BLOCKER V1) needs separate audit per exercise.
-- **Bias Detection signals plumbing:** `whyTapRate`, `avgSummaryDwellMs`, `repRangeOverrideRate` — events trebuie capturate în UI layer (CDL extension), pending integration sprint.
-- **Cascade Defense Layer D budget ≤50ms:** implementation simple sort, performance OK pentru rec arrays small. Stress testing deferred.
-- **Outlier Filter MAD logic:** simplified MAD estimate (median - min). Robust statistical implementation deferred Sprint ulterior dacă false positives observed.
+- **UI integration deferred:** componentele backend sunt gata, dar event capture în UI layer (CDL extension pentru bias signals + 3 buttons Aparat ocupat/lipsă/Disconfort + counter "Sesiunea ${current}/2") pending Sprint UI dedicated.
+- **3 ADR drafts NEW (COMPOSITE_SIGNAL_LAYER + PAIN_DISCOMFORT_BUTTON + SMART_ROUTING_EQUIPMENT) NU created în acest batch** — moved la BATCH_05 final per VAULT spec.
+- **Cascade Defense integration cu Composite Signal** — interface defined (CompositeSignal output → CASCADE_DEFENSE input via Layer D), dar wiring efectiv în RuleEngine pending Sprint integration ulterior.
 
 ## Next action
 
-**BATCH_04 sequential auto-trigger** — Self-Correction §36.28-§36.35 + Chat C features (Smart-Routing §36.37 + Pain Button §36.38 + Composite Signal §36.41) per VAULT_RULES §BATCH_PROTOCOL.
+**BATCH_05 sequential auto-trigger (FINAL)** — Pricing Schema §36.50-§36.52 + 3 NEW ADR drafts (COMPOSITE_SIGNAL_LAYER + PAIN_DISCOMFORT_BUTTON + SMART_ROUTING_EQUIPMENT). Final batch va include Sprint 4.x cluster summary în LATEST.
