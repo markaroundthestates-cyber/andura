@@ -2,8 +2,8 @@
 
 **See also:** [[INDEX_MASTER]] | [[DECISION_LOG]] | [[HANDOVER_GLOBAL_2026-04-30_evening]]
 
-**Ultima actualizare:** 27 apr 2026 (post TASK #7 friction modal HIGH + E2E fix + 2 fail-uri pre-existing flagged)
-**Total findings:** 130 unice (+2 din E2E pre-existing scan)
+**Ultima actualizare:** 2 mai 2026 (post Sprint 4.x Batch B Auth Migration + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring)
+**Total findings:** 135 unice (+5 din Sprint 4.x Batch A audit 2026-05-02)
 **Surse istorice (consolidate, accesibile prin git history):** AUDIT_GENERAL_23APR (83) + AUDIT_COACH_JS_24APR (42) + QA live 24 apr seară (3 noi) + QA_MANUAL_25APR_POSTFIX (2 noi) + OPUS_NUCLEAR_AUDIT_25APR (7 arhitecturale) + E2E pre-existing scan 27 apr (2 noi). Source files removed in vault cleanup 2026-04-30 (info catalogată aici + DECISION_LOG; recuperare prin `git log --all --full-history -- "02-audit/<file>"`).
 
 ---
@@ -187,7 +187,17 @@ npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integra
 
 ---
 
-## FEATURE REQUESTS (din QA 25 apr, queue FAZA 4)
+## SPRINT 4.x FINDINGS (Batch A audit 2026-05-02 + Batch B resolution)
+
+| ID | Descriere | Status | Fix în |
+|----|-----------|--------|--------|
+| **SF-A** | **Firebase Auth missing — `src/firebase.js:7` hardcoded `USER_PATH = 'users/daniel'`, zero Auth integration. Per-uid Firebase Rules cannot activate; Blocker 2 gating prerequisite.** | 🟢 **FIXED** | Batch B Task 1 (commit `be68d55`) — `src/auth.js` REST helpers (Magic Link + Google IdP + token refresh) per ADR 002, `getUserPath()` dynamic resolver, `?auth=<idToken>` threading, idempotent `users/daniel → users/<uid>` migration. ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02 documents Daniel manual Firebase Console steps. |
+| **SF-B** | **T&B Faza 1 NU în cod — `grep -rn "appendEvent\|reduceEvents\|tombstone" src/` returns ZERO. SSOT §34.1 claim "Faza 1 LIVE doar algorithm core" contradicts code. Implementing Faza 2 atop missing Faza 1 = inverted dependency.** | 🟡 PARTIAL FIX | Batch B Task 2 (commit `a23bf49`) — minimal localStorage tombstone soft-delete patches user-visible Memory Paradox bug (delete → reload → entry RE-APARE through Firebase pull). Full T&B Faza 1+2 (event-sourcing layer per TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC) remains a dedicated 10-15h Opus batch (deferred). |
+| **SF-C** | **`cdlBackfill` simplified-ladder semantics changed (deliberate, intentional)** — old `<3=INITIAL/<10=PERSONALIZING/else PERSONALIZED` aggressive thresholds replaced with `<6=INITIAL/<12=DEVELOPING/<40=PERSONALIZING/else PERSONALIZED` aligned with `detectCalibrationLevel`. | 🟢 RESOLVED | Batch A `f1a9b95` — intended consequence of ADR 009 §AMENDMENT D1 alignment. Tests updated. |
+| **SF-D** | **Inactivity decay granularity softened with 6-tier ordering (positive direction)** — `PERSONALIZING (idx 3) → DEVELOPING (idx 2)` after 60 days vs old `PERSONALIZING (idx 2) → INITIAL (idx 1)`. One extra tier of granularity before INITIAL floor. | 🟢 RESOLVED | Batch A — emergent from `f1a9b95` 6-tier refactor. No code action needed. Recommend §22 messaging consistency check. |
+| **SF-E** | **Vite static-vs-dynamic import warnings — `firebase.js`, `dp.js`, `tieringEngine.js` flagged at build time. Pre-existing, NOT introduced by Sprint 4.x.** | 🟡 DEFERRED | Pending dedicated build-optimization batch. Warnings do not block deploy or affect runtime; cleanup is hygiene, not correctness. |
+
+
 
 | ID | Descriere | Effort | Tier |
 |----|-----------|--------|------|
@@ -202,11 +212,12 @@ npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integra
 
 | Status | Count |
 |--------|-------|
-| 🟢 FIXED | 24 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1** · Task #30.8/8.1: **H30c** · TASK #7: **T7-1, T7-2**) |
+| 🟢 FIXED | 28 (FAZA 1: C1g, C2g, C3g, C7g, H27g · FAZA 2: C9g, C1c, C2c, C3c, C4c, C5c, H4c, H6c, H11c, H13g, H14g, H16c, M3g · Task #26: C10c · Task #27: **C11c, H31c, H32c** · Task #31: **MP9** · Task #31.5: **S1** · Task #30.8/8.1: **H30c** · TASK #7: **T7-1, T7-2** · Sprint 4.x Batch B: **SF-A** (Auth Migration), **SF-C** (cdlBackfill ladder), **SF-D** (decay granularity)) |
 | 🔴 OPEN | 0 |
-| 🟡 DEFERRED | ~102 (majority — planificate FAZA 3/4 + 2 noi E2E pre-existing) |
+| 🟡 DEFERRED | ~104 (majority — planificate FAZA 3/4 + 2 noi E2E pre-existing + SF-B (T&B Faza 1+2 dedicated batch) + SF-E (Vite warnings)) |
+| 🟡 PARTIAL FIX | 1 (SF-B Memory Paradox hotfix shipped, full T&B deferred) |
 | ⚪ WONTFIX | 0 |
 
 **Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]
-**Ultima sesiune dev:** 27 apr 2026 — TASK #7 friction modal LIVE + E2E fix + 2 fail-uri pre-existing flagged
-**Next sprint:** Cleanup backlog (dead code 3 files + magic numbers) sau bloodwork integration spec
+**Ultima sesiune dev:** 2 mai 2026 — Sprint 4.x Batch B (Auth Migration Faza 1 + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring) — 1110/1110 tests, +155 net
+**Next sprint:** Daniel publish Firebase rules post-Auth dogfood + dedicated T&B Faza 1+2 batch (SF-B) + Vite build optimization (SF-E)

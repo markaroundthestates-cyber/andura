@@ -286,15 +286,6 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
 
   Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
 
-  try {
-    const fbModule = await import('../firebase.js').catch(() => null);
-    if (fbModule && fbModule.removeKey) {
-      await Promise.all(TEST_RESIDUE_KEYS.map(k => fbModule.removeKey(k).catch(() => {})));
-    }
-  } catch (err) {
-    console.warn('[DataCleanup] Firebase residue clear:', err.message);
-  }
-
   scheduleInvalidation();
 
   if (options.reload) {

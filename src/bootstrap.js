@@ -10,7 +10,7 @@
 // the underlying modules + console diagnostics for dev visibility.
 
 import { runMigrations } from './migrations/index.js';
-import { initAutoBackup } from './storage/tieringEngine.js';
+import { initAutoBackup, rotateOnce } from './storage/tieringEngine.js';
 
 /**
  * Run pending schema migrations (ADR 018 §4 eager, before any engine read).
@@ -66,7 +66,6 @@ export async function startTierRotation(opts) {
 export function exposeForceRotationHelper() {
   if (typeof window === 'undefined') return;
   window.__forceRotation = async () => {
-    const { rotateOnce } = await import('./storage/tieringEngine.js');
     const result = await rotateOnce();
     console.log('[Storage] Forced rotation result:', result);
     return result;

@@ -2904,15 +2904,27 @@ User trebuie să aleagă explicit una din 3:
 
 ### 34.1 Blocker 1: T&B Pattern Faza 2 — Memory Paradox Bug
 
-**Status:** HARD BLOCKER pentru V1.
+**Status:** PARTIAL FIX 2026-05-02 (Memory Paradox hotfix shipped) — full T&B Faza 1+2 remains a dedicated batch.
 
-**Context:** ADR 011 amendment + ADR 021 Faza 1 LIVE doar algorithm core. Faza 2 persistence integration NEIMPLEMENTAT. Memory paradox observat 2× testing: user delete entry → reload → entry RE-APARE prin Firebase pull.
+**§AMENDMENT 2026-05-02 (Sprint 4.x Batch B):**
 
-**Cum se rezolvă:** task CC Opus dedicat Sprint 4.x — implementare integrare persistență Tombstone & Branching (T&B). Tombstones marcaj logic ștergeri preserved (NU delete fizic). Branching = când 2 devices scriu simultan același parentId → preservare ambele branch-uri + UI prompt "varianta A sau B?" pentru user resolve.
+Correction to prior wording: SSOT anterior afirma "ADR 021 Faza 1 LIVE doar algorithm core" implicând că o scaffolding T&B persistence layer există în cod. Verificat via `grep -rn "appendEvent\|reduceEvents\|tombstone\|TOMBSTONE\|branchConflict\|tnb_pattern" src/` (Batch A audit 2026-05-02): **ZERO matches**. Singura componentă T&B-related în `src/` era `src/engine/calibrationReconciliation.js` care implementează ADR 021 (calibration_state reconciliation), NOT [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] event-sourcing.
 
-**Effort estimate:** 50-80h trad / ~3-5h Opus comprehensive.
+Faza 1 (event-sourcing layer cu `appendEvent` + `reduceEvents` + parallel-write shadow) **nu fusese implementată** anterior Batch B. Implementarea Faza 2 atop missing Faza 1 era inverted-dependency.
 
-**Cross-refs:** ADR 011 amendment §Firebase sync + ADR 021 §Implementation phasing Faza 2 + COGNITIVE_ARCHITECTURE_SPEC §Q9 + 04-architecture/TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC.md.
+**Hotfix scope shipped Batch B Task 2 (commit `a23bf49`):**
+- `src/util/tombstones.js` — minimal localStorage soft-delete tombstone schema, `deleteEntry()` wrapper, `applyTombstoneFilter()` + `applyTombstoneFilterToAll()` invoked from `syncFromFirebase` post-merge.
+- 22 tests including the canonical Memory Paradox regression scenario (delete → simulate Firebase pull → tombstone filter → entry stays gone).
+- 90-day retention (manual GC via `window.gcTombstones()`; auto-GC deferred per §35).
+- Patches the user-visible bug: delete entry → reload → entry RE-APARE through Firebase pull.
+
+**Full T&B Faza 1+2 status — STILL DEFERRED:**
+- Event-sourcing API (`appendEvent` + `reduceEvents`) NOT shipped.
+- Branching = când 2 devices scriu simultan același parentId → preservare ambele branch-uri + UI prompt "varianta A sau B?" — NOT shipped.
+- Estimat dedicated Opus batch: 50-80h trad / **10-15h Opus comprehensive** (revised up from prior 3-5h estimate which under-scoped the parallel-write shadow + reduction layer + UI prompt).
+- Recommended sequence: dedicated batch post current Sprint 4.x cluster, post Daniel Auth Migration dogfood verification.
+
+**Cross-refs:** ADR 011 amendment §Firebase sync + ADR 021 §Implementation phasing Faza 2 + COGNITIVE_ARCHITECTURE_SPEC §Q9 + 04-architecture/TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC.md + Batch B raport `📤_outbox/LATEST.md` + 05-findings-tracker/FINDINGS_MASTER.md (SF-B).
 
 ### 34.2 Blocker 2: Firebase Rules RTDB Lock
 

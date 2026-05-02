@@ -5,7 +5,7 @@ initSentry(); // fire-and-forget, production only
 window.__dataRegistryEnabled = true;
 
 import { applyTheme, getActiveTheme } from './themes/themeManager.js';
-import { initFirebaseSync, clearFirebaseKeys } from './firebase.js';
+import { initFirebaseSync, clearFirebaseKeys, syncToFirebase } from './firebase.js';
 import { DP } from './engine/dp.js';
 import { AA } from './engine/aa.js';
 import { injectBaseline, injectMFPWeights, injectRealSessions } from './inject.js';
@@ -122,7 +122,7 @@ function setupOfflineIndicator() {
       el.style.display = 'none';
       if (window._wasOffline) {
         window._wasOffline = false;
-        import('./firebase.js').then(m => m.syncToFirebase && m.syncToFirebase());
+        if (typeof syncToFirebase === 'function') syncToFirebase();
       }
     } else {
       el.style.display = 'flex';

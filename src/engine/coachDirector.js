@@ -22,6 +22,7 @@ import { DecisionCluster, clusterTraceToRationale } from './decisionCluster.js';
 import { getActiveDimensions } from './dimensionRegistry.js';
 import { aaClusterOutputToLegacyShape } from './dimensions/autoAggressionAdapter.js';
 import { DIMENSION_ID as AA_DIMENSION_ID } from './dimensions/autoAggressionDimension.js';
+import * as dpModule from './dp.js';
 
 export class CoachDirector {
   async buildSession(sessionType) {
@@ -126,19 +127,14 @@ export class CoachDirector {
     }
 
     try {
-      const dpModule = await import('./dp.js');
       for (const exercise of session.exercises) {
         if (dpModule.DP && dpModule.DP.getSmartRecommendation) {
           const dpRec = dpModule.DP.getSmartRecommendation(exercise.name, ctx.readiness.score, null);
-          if (dpRec.status === 'INIT' && dpModule.getInitialRecommendation) {
+          if (dpRec.status === 'INIT') {
             exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
           } else {
             exercise.recommendation = dpRec;
           }
-        } else if (dpModule.getSmartRecommendation) {
-          exercise.recommendation = dpModule.getSmartRecommendation(exercise, ctx);
-        } else if (dpModule.getInitialRecommendation) {
-          exercise.recommendation = dpModule.getInitialRecommendation(exercise.name, ctx);
         } else {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
           const baseWeight = lastLog ? (lastLog.w ?? 20) : 20;
