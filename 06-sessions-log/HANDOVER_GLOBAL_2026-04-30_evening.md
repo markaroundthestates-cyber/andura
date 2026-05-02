@@ -352,7 +352,7 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 
 - **UX Colateral V1 LOCKED COMPLETE 15 puncte + 3 sub-sisteme** (vezi §29.5 — restructurat din 5 directional flags la 16 sub-secțiuni LOCKED): Theme Trio Obsidian/Alabaster/Carbon system-detect default (Obsidian Dark only / Alabaster Light only / Carbon Dark industrial stins, drop Neon Dojo + Iron Vault). Dynamic Share Cards layout DRY identic cross-template + branding logo Andura + andura.app discret bottom card. RO Pur Lock zero EN code-switching audit pre-launch obligatoriu (excepții RPE/BMI/kcal cu explicații). Hero Minimalist + Haptic 2 nivele (puternic majore / discret rapide) + Confetti EXCLUSIV evenimente mari (Mastery Milestone + PR + Finalizare sesiune, exclus streak markers anti-oboseală) + Design Tokens Figma → Tailwind/CSS. Cronometru auto-start inteligent + ±30s on-the-fly + audio ducking. Video MP4/WebM 3-5 sec cachare agresivă local-first + max 3 linii pași expliciți. Tab Bar Trio (Azi/Istoric/Profil) + sesiune persistentă mini-player. Local-First SQLite/IndexedDB salvare instant + sync silențios fundal. Istoric listă cronologică minimalistă (Data | Greutate | Repetări | RPE) + stea aurie/platină PR. **The Sticky Swap Engine** max 3 alternative + Sticky Last Swap memorie + 4-Swaps Rule auto-învățare program de bază update permanent. **Clean Slate Reset Engine** swap = sticky doar până final ciclu curent + Reset Săpt 1 ciclu nou + matrice Cycle Reset cross-template (4 săpt toate / 5 săpt Forță). Wording Reset Swap Toast top screen 4 sec "Început de ciclu nou. Exercițiile revin la cele inițiale". Sunete audio ducking Spotify/Apple Music + mute toggle global (haptic activ). Onboarding 5 ecrane <60 sec (Nume + Vârstă no skip + Greutate&Înălțime SKIP PERMIS median demographic prior + Experiență no skip + Obiectivul no skip). Editare Istoric 3 niveluri (24h liberă / Zile 2-7 confirmare modal / >7 zile Hard Lock). Notificări locale opt-in default OFF + Streak Saver push server max 2/săpt 4 zile fără sesiune (wording per goal Forță "aperi progresul" / Longevitate "energie").
 
-- **Distribution Strategy V1 LOCKED** (vezi §29.6 — NEW): Hibrid Soft Launch (app live URL public andura.app + zero marketing 4 săpt + word-of-mouth + grupuri restrânse). Data lansării condiționată DoD target 1 ianuarie 2027. DoD criteria 6: 8/8 templates cap-la-cap (zero mock data) + zero bug-uri critice (Onboarding + Swap Engine + Progresie) + ToS+Privacy validated + Beta închis 4 săpt 0 crash 7 zile + app load <2 sec local + zero TODO/DEVELOPING tags. Beta Recruitment 50 testeri segmentat invite-only 4 săpt: 15 Forță r/StrongerByScience + 15 Tonifiere r/xxfitness + 10 Slăbire FB/Reddit + 5 Sănătate Generală general + 5 Longevitate Maria 60-70 FB RO grupuri 50+ (signal trecere public completion >80% + zero crash 7 zile). **Pricing OVERRIDE §3:** V1 = 100% Free Early Access NU grandfathering permanent + tranziție V2 paid (Free 8 templates + tracking simplu / Premium Swap Engine memorie persistentă + Cardio Zone 2 + Analytics + Profile Typing). Sondaj pricing săpt 4 single-shot. Targeting eliminat r/programare + r/RoFails + r/longevity (mismatch). RO storytelling-first r/Romania mama 65 + FB grupuri 40/50+ + EN technical r/StrongerByScience + r/xxfitness + r/loseit. Copywriting Bugatti Grade RO storytelling + EN technical (locked wordings). KPI primari Retention D7+D30 + Session Completion + Onboarding Dropout. Scale signals D30 >40% + Completion >75% + zero Gigel. Hard Stop D30 <20% + Completion <50% + Crash >2%. Feedback in-app email subject `[Andura V1 Feedback]` + diagnostic body + săpt 2 pop-up single-shot + Discord/Slack 24h critical. Code Freeze 4 săpt post-launch zero feature noi + hotfix max 12h + Semantic Versioning v1.0.x.
+- **Distribution Strategy V1 LOCKED** (vezi §29.6 — NEW): Hibrid Soft Launch (app live URL public andura.app + zero marketing 4 săpt + word-of-mouth + grupuri restrânse). Data lansării condiționată DoD target 1 ianuarie 2027. DoD criteria 6: 8/8 templates cap-la-cap (zero mock data) + zero bug-uri critice (Onboarding + Swap Engine + Progresie) + ToS+Privacy validated + Beta închis 4 săpt 0 crash 7 zile + app load <2 sec local + zero TODO/DEVELOPING tags. Beta Recruitment 50 testeri segmentat invite-only 4 săpt: 15 Forță r/StrongerByScience + 15 Tonifiere r/xxfitness + 10 Slăbire FB/Reddit + 5 Sănătate Generală general + 5 Longevitate Maria 60-70 FB RO grupuri 50+ (signal trecere public completion >80% + zero crash 7 zile). **Pricing OVERRIDE §3:** V1 = 100% Free Early Access NU grandfathering permanent + tranziție V2 paid (Free 8 templates + tracking simplu / Premium Swap Engine memorie persistentă + Cardio Zone 2 + Analytics + Profile Typing). Sondaj pricing săpt 4 single-shot. Targeting eliminat r/programare + r/RoFails + r/longevity (mismatch). RO storytelling-first r/Romania mama 65 + FB grupuri 40/50+ + EN technical r/StrongerByScience + r/xxfitness + r/loseit. Copywriting Bugatti Grade RO storytelling + EN technical (locked wordings). KPI primari Retention D7+D30 + Session Completion + Onboarding Dropout. Scale signals D30 >40% + Completion >75% + zero Gigel. Hard Stop D30 <20% + Completion <50% + Crash >2%. Feedback in-app email subject `[Andura V1 Feedback]` + diagnostic body + săpt 2 pop-up single-shot + ~~Discord/Slack 24h critical~~ → **Telegram Group + Topics 🐛 #Bug-Reports 24h critical** (DEPRECATED 2026-05-02 Chat D §36.53/§36.54). Code Freeze 4 săpt post-launch zero feature noi + hotfix max 12h + Semantic Versioning v1.0.x.
 
 - **Pre-Launch Checklist V1 LOCKED** (vezi §29.7 — NEW): Legal Guardrails Draft DIY Daniel + Audit Plătit €300-500 1 lună înainte (Lawyrup.ro / Iuris.ro / Avocatoo.ro RO/EU specializate). Disclaimer medical onboarding LOCKED checkbox obligatoriu pre-generare program "Andura este aplicație de wellness și nu înlocuiește sfatul medicului". GDPR Privacy Policy locked + button Settings "Șterge contul și datele mele definitiv" hard delete real-time. ADR 020 Phase 2 Logs Rotation custom JS €0 (rulează deschidere app + măsoară DB local + >30 zile sau >10MB șterge automat). D1 DEVELOPING Refactor curățenie totală pre-launch €0 (sistem D-N izolat + curățat + testat + zero TODO/DEVELOPING tags + zero comentarii experimentale). Smoke Test 1 script `gate-launch-prod.bat` unificat (NU 8 separate): Onboarding logic Maria 65 + Marius 25 + 1 sesiune completă/template cap-la-cap toate 8 + Data Persistence + Offline + PWA Service Worker <2 sec cache offline. ADR 022 V2 Workflow Review hibrid Co-CTO 4 pași: Drafting Daniel+Claude + Claude Review scan + Daniel Approval + Final Manual Pass. DoD Final Bugatti Grade 6 criterii (8/8 + zero TODO + smoke gate + ToS+GDPR audit + Beta 0 crash + load <2 sec).
 
@@ -4239,7 +4239,7 @@ Schimb comercial onest reciproc avantajos. ZERO disguise marketing.
 - **Power-User Cohort (15):** Marius typology — Telegram features Discord-like (topics, bots, search)
 
 **Carry-over §29.6.3 Discord references sweep — OBLIGATORIU acum:**
-- `01-vision/PRODUCT_STRATEGY_SPEC_v1.md §1.4` — replace "Discord" → "Telegram Group + Topics"
+- ~~`01-vision/PRODUCT_STRATEGY_SPEC_v1.md §1.4` — replace "Discord" → "Telegram Group + Topics"~~ **[COMPLETED 2026-05-02 vault sweep CC Opus — commit `eaa599f`]**
 - `06-sessions-log/HANDOVER_GLOBAL §29.6.3` — replace + cross-ref §36.53
 - ADR `Q-0533` — mark DEPRECATED + new ADR sau amendment
 
@@ -4380,7 +4380,209 @@ Build script grep blocks shipping pe **AMBELE** placeholders:
 
 Phase B mini-sesiune scope updated: **35 strings cumulative confirmate** (33 existing + 2 NEW = §36.34 PROMPT_PROFILE_VALIDATION + §36.35 GOAL_SHIFT_CALIBRATION).
 
-**Cross-refs:** §36.56 ADR Review Process EXECUTED + ADR_MODE_DETECTION_UI_v1 EXT-3/EXT-5/EXT-6 + ADR_OUTLIER_FILTER_v1 EXT-2.
+**§AMENDMENT 2026-05-02 Chat E — Inventory count correction (per §36.58):**
+
+Phase B scope actual count = **51 strings cumulative** (NU 35), discovered în review chat strategic Chat E. Diferența 16 strings: §25 outdated inventory NU acoperă intensity labels (4) + technique descs (2) + start rationales (4) + phase timeline labels (4) + checkpoint sub-labels (1) + tempo notes (1 inflated estimate). Detail spec breakdown per §36.58: fatigue.js 8 + dp.js 20 + reality.js 6 + sys.js 13 + calibration.js 4 + 2 NEW placeholders = 51 cumulative.
+
+**Cross-refs:** §36.56 ADR Review Process EXECUTED + ADR_MODE_DETECTION_UI_v1 EXT-3/EXT-5/EXT-6 + ADR_OUTLIER_FILTER_v1 EXT-2 + §36.58 Phase B Wording 51 Strings LOCKED V1.
+
+### 36.58 Phase B Engine Wording — 51 Strings LOCKED V1
+
+**Decizie:** Toate string-urile user-facing din 5 module engine-level sunt LOCKED V1 cu wording final, post-review chat strategic Daniel + Claude (~2h, 50 Q-uri Chat E). Amendment §36.57 inventory: count actual = **51 strings** (NU 35), diferența discovered în review (intensity labels + technique descs + start rationales + phase timeline labels + checkpoint sub-labels NU acoperite în §25 outdated inventory).
+
+#### Filter Bugatti aplicat strict (10 reguli)
+
+1. **Sentence case pur** (NU CAPS, NU Title Case) per Q4 lock
+2. **Voice persoana I plural** ("noi/menținem/recalibrăm") per §19 evening lock + Q3 lock
+3. **ZERO numerice algoritmice raw** (scor X/100, RPE, readinessScore, userWeight) per §6 evening lock + Q6 lock
+4. **ZERO category exposure** (`fatigue`/`sleepBad`/`formBad`/`strong` raw) per Q6 lock
+5. **ZERO comenzi paternaliste** ("redu volumul!", "fă X reps") per §22 F-NEW-4 + Q7 lock
+6. **Reframing pozitiv** (recuperare = goal, NU deficit) per §27 evening lock
+7. **Temporal-safe** (păstrăm "azi", eliminăm "săptămâna asta"/"perioadă") per §6 evening + Q8 lock
+8. **Emoji constraint** (păstrăm doar 🔴🟡🟢 semantic + 🟠 excepție RIR gauge) per Q2 + Q26.bis lock
+9. **Phase RO native** (CUT→definire, BULK→creștere, MAINTENANCE→menținere) per §27 evening lock
+10. **"reps" peste tot** (NU "repetiții" academic) per Q-pushback lock — vocabular gym RO universal
+
+#### fatigue.js — 8 strings (4 verdicte + 4 detail)
+
+| Cheie tehnică | Label user | Detail user |
+|---|---|---|
+| `HIGH_FATIGUE` | Azi mergem mai blând | Au fost câteva sesiuni grele recent. Volumul este calibrat mai conservator pentru o recuperare completă. |
+| `MODERATE_FATIGUE` | Pas mai conservator | Astăzi menținem greutățile, cu accent pe tehnică și control. |
+| `PEAK_FORM` | Suntem în formă bună | Recuperarea este completă. Avem energie să plusăm pe bară astăzi. |
+| `NORMAL` | Pe drum bun | Ritmul este sănătos. Mergem cu planul de astăzi. |
+
+#### dp.js — 20 strings (10 verdicte + 4 intensity + 2 adjust + 4 start)
+
+**Verdicte progresie (10 strings):**
+
+| Cheie tehnică | Label | Note |
+|---|---|---|
+| `INITIAL_START` | 🟡 Pornim conservator | Greutate de pornire. O recalibrăm după primul set. |
+| `SCALE_BACK` | 🟡 Scădem un pas | ${lastW} kg → ${prevKg} kg · Nu am ajuns la intervalul de reps minim. |
+| `PEAK_LIMIT` | 🟢 La vârf | ${lastW} kg este plafonul pe acest exercițiu. Focus pe o execuție impecabilă. |
+| `CAP_REPS` | 🟢 Creștem reps | Suntem la plafonul de greutate (${maxKg} kg). Astăzi urcăm la ${targetReps} reps. |
+| `TOO_HEAVY` | 🔴 E prea greu | Ultima dată: ${lastW} kg × ${lastReps} reps. Țintim ${targetReps} astăzi. |
+| `CONSOLIDATE` | 🟡 Consolidăm reps | Ultima dată: ${lastW} kg × ${lastReps} reps. Țintim ${targetReps} astăzi. |
+| `INCREASE` | 🟢 Creștem greutatea | ${lastW} kg → ${newKg} kg · Revenim la ${rMin} reps |
+| `STAGNANT_PLUS_SET` | 🟡 Plus un set azi | Greutate constantă 3 sesiuni · Astăzi adăugăm 1 set |
+| `MAINTAIN_CUT` | 🟡 Consolidare în definire | Stagnare 3 sesiuni la ${lastW} kg · În definire prioritizăm calitatea, nu greutatea |
+| `TECHNIQUE_DROP_SET` | 🟡 Drop set la final | Stagnare lungă · Drop set pe ultimul: −30% greutate pentru a sparge platoul |
+| `ON_TARGET` | 🟢 În țintă | Ultima: ${lastW} kg × ${lastReps} reps |
+
+**Intensity labels — RIR gauge (4 strings, excepție 🟠 per Q26.bis):**
+
+| Cheie tehnică | RIR range | Label |
+|---|---|---|
+| `INTENSITY_LIMIT` | 0-1 reps în rezervă | 🔴 La limită |
+| `INTENSITY_HEAVY` | 1-2 reps în rezervă | 🟠 Greu |
+| `INTENSITY_CHALLENGING` | 2-3 reps în rezervă | 🟡 Provocator |
+| `INTENSITY_COMFORTABLE` | 3+ reps în rezervă | 🟢 Confortabil |
+
+**In-session adjust pop-up (2 strings):**
+
+| Cheie tehnică | Tip | Mesaj |
+|---|---|---|
+| `IN_SESSION_DOWN` | Pop-up Alert | Greutatea este prea mare · Trecem la ${newKg} kg pentru următorul set |
+| `IN_SESSION_UP` | Pop-up Alert | Două seturi prea ușoare · Urcăm la ${newKg} kg pentru următorul set |
+
+**Start verdicte (4 strings — `getInitialRecommendation`):**
+
+| Cheie tehnică | Label | Note |
+|---|---|---|
+| `START_EXACT_MATCH` | 🟡 Continuăm | Pornim de la ultima sesiune: ${weight} kg |
+| `START_SIMILAR` | 🟡 Pornire estimată | Pornim de la ${similarName} · ${weight} kg cu ajustare ×${multiplier} |
+| `START_FALLBACK` | 🟡 Pornim conservator | Greutate de pornire · Recalibrăm după primul set |
+| `READINESS_OVERRIDE` | (note only) | Recuperare incompletă · Menținem ${result.kg} kg azi |
+
+#### reality.js — 6 strings
+
+| Cheie tehnică | Tip | Text |
+|---|---|---|
+| `FIXED_PHASE_NOTICE` | Dashboard Card | Menținem ${KCAL_TARGET} kcal fix până la 20 iulie |
+| `AUTO_PHASE_NOTICE` | Dashboard Card | Menținem ${KCAL_TARGET} kcal |
+| `PROGRESS_TOO_SLOW` | Status Note | Progres mai lent decât țintit · Verificăm aportul sau activitatea |
+| `PROGRESS_ON_TRACK` | Status Note | Suntem în ritmul țintit · Menținem direcția |
+| `PROGRESS_PLATEAU` | Status Note | Greutatea nu a scăzut în ultimele 7 zile. Hai să vedem ce putem ajusta în strategie. |
+| `PROGRESS_TOO_FAST` | Status Note | Slăbim un pic prea repede și riscăm să pierdem din masa musculară. Hai să creștem temporar aportul la ${suggestedKcal} kcal pentru a ne proteja progresul. |
+
+#### sys.js — 13 strings (4 tempo + 2 technique + 3 contextual + 4 phase/checkpoint)
+
+**Tempo notes (4 strings):**
+
+| Cheie tehnică | Context | Text |
+|---|---|---|
+| `TEMPO_STRENGTH_COMPOUND` | Strength Compound | Ridicăm exploziv, coborâm controlat |
+| `TEMPO_STRENGTH_ISO` | Strength Isolation | Mișcare controlată, fără elan |
+| `TEMPO_BULK_COMPOUND` | Bulk Compound | Coborâre lentă, tensiune prelungită |
+| `TEMPO_BULK_ISO` | Bulk Isolation | Strângere maximă în vârf |
+
+**Technique descriptions (2 strings):**
+
+| Cheie tehnică | Text |
+|---|---|
+| `TECHNIQUE_DROP_SET_SYS` | −30% greutate pe ultimul set · Mergem până nu mai putem |
+| `TECHNIQUE_PARTIALS` | 10 reps parțiale după ultimul set complet |
+
+**Contextual notes (3 strings):**
+
+| Cheie tehnică | Text |
+|---|---|
+| `NOTE_SQUEEZE` | Strângere maximă în vârf |
+| `NOTE_PUMP_QUALITY` | Calitatea execuției peste greutate |
+| `NOTE_CUT_DEFENSE` | În definire menținem, nu împingem |
+
+**Phase timeline labels (4 strings — `getTimeline()`):**
+
+| Cheie tehnică | Text |
+|---|---|
+| `PHASE_CUT_TO_SUMMER` | Definire până la vară |
+| `PHASE_SUMMER_PEAK` | Vară peak (menținere) |
+| `PHASE_BULK_AUTUMN` | Creștere (toamnă-iarnă) |
+| `PHASE_CUT_PRE_SUMMER` | Definire pre-vară |
+
+**Checkpoint label (1 string — `getCheckpoints()`):**
+
+| Cheie tehnică | Label | Sub-label |
+|---|---|---|
+| `CHECKPOINT_BULK_END` | Oprire creștere la ${bulkEndBF}% BF | ~${targetKg} kg — începe definirea |
+
+#### calibration.js — 4 banner texts
+
+| Tier | Cheie tehnică | Banner text |
+|---|---|---|
+| COLD_START (sesiuni 0-2) | `CALIB_COLD_START` | Învățăm cum lucrezi · Recomandările se personalizează după primele sesiuni |
+| INITIAL (sesiuni 3-5) | `CALIB_INITIAL` | Învățăm cum lucrezi · Datele se adună cu fiecare sesiune |
+| DEVELOPING (sesiuni 6-11) | `CALIB_DEVELOPING` | Tiparele prind contur · Recomandările folosesc datele tale |
+| PERSONALIZING (sesiuni 12-40) | `CALIB_PERSONALIZING` | Recomandările sunt acum în mare parte personalizate · Continuăm să învățăm |
+
+**Note:** PERSONALIZED + OPTIMIZED tiers păstrează `bannerText: null` (transparent UI), corect per maturity assumption.
+
+#### 2 NEW placeholders Phase B critical (LOCKED V1)
+
+**`PROMPT_PROFILE_VALIDATION_PLACEHOLDER` (§36.34 → ADR_MODE_DETECTION EXT-4):**
+
+```javascript
+const PROMPT_PROFILE_VALIDATION_PLACEHOLDER = {
+  id: "profile_validation_drift_prompt",
+  title: "Ajustăm modul de afișare a instrucțiunilor?",
+  body: "Observăm că deschizi des explicațiile complete · Putem afișa contextul direct, fără să mai trebuiască să apeși pe 'De ce?'",
+  buttons: {
+    confirm: "Da, schimbă",
+    cancel: "Nu, lasă așa"
+  },
+  status: "LOCKED V1 — production ready"
+};
+```
+
+**`GOAL_SHIFT_CALIBRATION_PLACEHOLDER` (§36.35 → ADR_OUTLIER_FILTER EXT-2):**
+
+```javascript
+const GOAL_SHIFT_CALIBRATION_PLACEHOLDER = {
+  id: "goal_shift_calibration_notice",
+  title: "Recalibrăm pe noul obiectiv",
+  body: "Primele 2 sesiuni sunt de calibrare · Estimăm ${minKg}-${maxKg} kg × ${reps} reps, ajustăm după ce avem date",
+  subText: "Sesiunea ${current}/2",
+  status: "LOCKED V1 — production ready"
+};
+```
+
+#### Push-back-uri productive Claude integrate (10 majore)
+
+1. **Q4 Title Case RESPINS** — sentence case pur RO native (Title Case = pattern EN forced translation)
+2. **"reps" vs "repetiții" RESPINS** — păstrăm "reps" (vocabular gym RO universal naturalizat, equivalent kg)
+3. **Q23 inconsistency "stagnare detectată" RESPINS** — păstrăm "stagnare" peste tot (RO gym natural NU engine-leak)
+4. **Q24 "−30% greutate" notation FORCED** — simetric cu format `${lastW} kg → ${newKg} kg` din alte note
+5. **Q26.bis 🟠 excepție justificată** — RIR gauge 4 niveluri logic distincte (NU tutorial-style noise)
+6. **Q33 anti-paternalism "verifică" → "verificăm"** — voice plural collaborative, NU comandă
+7. **Q35 "concentric" jargon ELIMINAT** — Maria 65 NU înțelege, traducere fizică ("ridicăm exploziv, coborâm controlat")
+8. **Q39 "eșec" izolat psychological RESPINS** — "mergem până nu mai putem" voice plural conversațional
+9. **Q42 "tipar" reductiv RESPINS** — continuitate narativă "învățăm cum lucrezi" Q41→Q42
+10. **Q47 "Consolidăm" orfan ambiguu RESPINS** — "Continuăm" specific contextului EXACT_MATCH start
+
+#### Production Gate Lift Status
+
+**Pre-Phase B lock:** Build script CI/CD blochează shipping pe AMBELE placeholders pending wording validation.
+
+**Post-Phase B lock (acum):** Wording final LOCKED V1 în ADR drafts. Build script CI/CD continuă să verifice flag-uri în code source (Sprint 4.x cluster va remove flag-urile la implementation), DAR strings-urile sunt clear pentru replacement.
+
+**Lift production gate REQUIRES:**
+- Sprint 4.x cluster: replace placeholder strings cu wording locked V1 + remove `PHASE_B_LOCK_REQUIRED` flags
+- Test verification: `grep -rn "PHASE_B_LOCK_REQUIRED\|PHASE_B_WORDING_PENDING" src/` returnează ZERO matches
+- CI/CD build pass
+
+**Action item Sprint 4.x:** integration acestor 51 strings în code source ca parte din cluster batch implementation post-§36.56 ADR review process.
+
+#### Source code updates pending Sprint 4.x
+
+- `src/engine/fatigue.js` — 8 strings replace
+- `src/engine/dp.js` — 20 strings replace
+- `src/engine/reality.js` — 6 strings replace
+- `src/engine/sys.js` — 13 strings replace
+- `src/engine/calibration.js` — 4 banner texts replace
+- 2 NEW placeholders integration în Sprint 4.x cluster modules respective
+
+**Cross-refs:** §36.57 (production gate baseline + count amendment) + §36.34 (PROFILE_VALIDATION origin) + §36.35 (GOAL_SHIFT origin) + §22 F-NEW-4 (anti-paternalism lock) + §27 evening (phase RO + voice plural lock) + §19 evening (12 variations + voice unitar lock) + §6 evening (anti-RE numerice + temporal-safe lock) + §25 wording remaining + ADR_MODE_DETECTION_UI_v1 EXT-4 + ADR_OUTLIER_FILTER_v1 EXT-2.
 
 ---
 
@@ -4395,3 +4597,5 @@ Phase B mini-sesiune scope updated: **35 strings cumulative confirmate** (33 exi
 **Sesiune 2026-05-02 Chat C SELF-CORRECTION EXTENSION LOCK** (chat strategic post Self-Correction ingest precedent — 6 features cluster: Aparat Ocupat/Lipsă smart-routing dependent force_demand + Pain/Discomfort Button 3 funcțional anti-paternalism cu CDL override + Hormonal Estimation RESPINS V1 reframed Performance State Inference observable + Composite Signal Layer Recovery State Adjustment 3/3 simultaneous + Cycle Tracking RESPINS V1 + Onboarding T0/T2 wording functional + Pricing deferred pre-launch + Beta cohorts 3-tier 50 users). 14 decizii LOCKED noi (Schema Extension §36.36 + Smart-Routing §36.37 + Pain Button §36.38 + Yellow Flag -20% lock §36.39 + Hormonal Estimation RESPINS §36.40 + Composite Signal Layer §36.41 + ADR review process §36.42 + Cycle Tracking RESPINS §36.43 + T0 hard minimum §36.44 + T2 wording funcțional §36.45 + Pricing deferred §36.46 + Beta cohorts §36.47 + Per-set normalization §36.48 + Dual-threshold + Recovery -20% §36.49) + ~12 push-back-uri productive Claude integrate (Schema gap force_demand vs tier, Forced Skip paternalism mascat 3-button override, Diagnostic-flavored wording → funcțional, Hormonal estimation F6 violation + validity zero, 50% scor cumulative arbitrary → 3/3 thresholds, Recovery duration vague → 1/2/4/+1 lifecycle, Buton inconfort signal subjectiv → exclude Composite, Volume total false positive → per-set normalization, 10% threshold solo Maria false positive → dual-threshold absolute, ADR LOCK chat sumar teatru → file-by-file review, T2 jargon "Strategic" Gigel fail → wording funcțional, Cycle tracking F6 violation → Composite coverage). Decizii cumulative pre-launch V1 = **45** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C). 3 ADR drafts updated (MODE_DETECTION extends T2 wording funcțional EXT-7; BIAS_DETECTION extends Pain override CDL EXT-1; CASCADE_DEFENSE extends Composite Signal Layer D budget EXT-2; OUTLIER_FILTER + RIR_MATRIX untouched). 3 ADR NEW DRAFT defer creation Sprint 4.x cluster batch (COMPOSITE_SIGNAL_LAYER + PAIN_DISCOMFORT_BUTTON + SMART_ROUTING_EQUIPMENT). Schema impact future Sprint 4.x: exercise library equipment metadata + onboarding T0 fallback synthetic + Card 3 butoane noi (Aparat ocupat/lipsă/Disconfort) + Composite Signal module new src/engine/compositeSignal.js. ZERO sesiuni chat strategic STRATEGIC rămase pre-launch V1 — REMAINING doar tactical (ADR review 1.5h + Phase B wording 45min + Discord/Founding 25min cumulative ~3h). 1110/1110 unchanged (vault docs only). Bandwidth Daniel ~18% triggered handover preventiv. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + **45 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map V1 LOCKED + Self-Correction Architecture LOCKED + Chat C Smart-Routing/Pain/Composite LOCKED + 5 ADR drafts pending Daniel review pre-LOCK + 3 NEW ADR drafts pending Sprint 4.x batch creation. Next: Priority 1 ADR review 5 drafts ~1.5h chat strategic dedicat → Sprint 4.x cluster UNBLOCKED → Priority 2 Phase B wording 35 strings 45min → Priority 3 Discord+Founding 25min → Priority 5 Founding+Discord vault sweep CC Opus 30min → Sprint 4.x cluster ~18-25h Opus comprehensive (Suflet Andura + Self-Correction + Chat C combined).**
 
 **Sesiune 2026-05-02 Chat D PRICING + TELEGRAM + ADR LOCK** (chat strategic post Chat C SELF-CORRECTION EXTENSION ingest — 4 features cluster: Pricing/Founding final lock €39/€59/€79 + 34% perpetual + cap 50 + Telegram Beta Channel + Telegram Topics structure + GDPR phone privacy onboarding rule + 5 ADR drafts → LOCKED V1 cu 4 amendments aplicate). 8 decizii LOCKED noi (Pricing tiers §36.50 + Founding Locked-In Guarantee §36.51 + Cap 50 + Auto-close §36.52 + Telegram Channel §36.53 + Topics Structure §36.54 + GDPR Tutorial Vizual §36.55 + ADR Review Process EXECUTED §36.56 + 4 Amendments Aplicate §36.57) + ~3 push-back-uri productive Claude integrate (Pricing inițial €99/€149 RESPINS sub-SensAI, Lifetime €50 RESPINS, "20% discount din anul 4" wording trap RESPINS → 34% permanent perpetual). Decizii cumulative pre-launch V1 = **53** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D). 5 ADR drafts toate LOCKED V1 (RIR_MATRIX clean + MODE_DETECTION cu 3 amendments inline + BIAS_DETECTION clean + OUTLIER_FILTER cu 1 amendment inline + CASCADE_DEFENSE clean). 3 NEW ADR drafts STILL deferred Sprint 4.x cluster batch. Sprint 4.x cluster scope ADD: Pricing schema implementation (subscription_tier enum + founding_cap_counter atomic Firebase RTDB + auto-close mechanic). Production gate updated: build script grep ambele PHASE_B placeholders (PROFILE_VALIDATION + GOAL_SHIFT_CALIBRATION). Phase B scope confirmat 35 strings cumulative. ZERO sesiuni chat strategic STRATEGIC rămase pre-launch V1 — REMAINING doar: Phase B wording 45min strategic + 30min CC Opus vault sweep (Founding+Discord+Pricing references → Telegram replacement) + Daniel solo (Firebase Auth + DB rules + Avocat outreach + GDPR screenshot tutorial). 1110/1110 unchanged (vault docs only). Bandwidth Daniel ~45% triggered handover preventiv anti-saturation. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + **53 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map V1 LOCKED + filozofia 12k INGESTED + Self-Correction Architecture LOCKED + Chat C Smart-Routing/Pain/Composite LOCKED + **Pricing tiers LOCKED + Telegram channel LOCKED + 5 ADR drafts ALL LOCKED V1**. Next: Priority 1 Phase B wording 35 strings ~45min strategic dedicat → production gate cleared → Priority 2 CC Opus vault sweep ~30min (Founding + Discord + Pricing references → Telegram) → Sprint 4.x cluster implementation ~18-25h Opus comprehensive ADD pricing schema (subscription_tier + founding_cap_counter + auto-close).**
+
+**Sesiune 2026-05-02 Chat E PHASE B WORDING LOCK** (chat strategic post Chat D PRICING+TELEGRAM+ADR LOCK ingest — Phase B mini-sesiune ad-hoc 51 strings LOCKED V1 across 5 engine modules + 2 NEW placeholder finalizate + production gate cleared post-implementation). 1 decizie LOCKED nouă (Phase B Wording 51 Strings LOCKED V1 §36.58) + 10 push-back-uri productive Claude integrate (Title Case RESPINS sentence case pur, "repetiții" RESPINS "reps" naturalizat, Q23 "stagnare" inconsistency RESPINS, Q24 −30% notation simetric, Q26.bis 🟠 RIR excepție justificată, Q33 anti-paternalism "verificăm", Q35 jargon "concentric" eliminat, Q39 "eșec" izolat psihologic RESPINS, Q42 "tipar" reductiv RESPINS, Q47 "Consolidăm" orfan RESPINS). Decizii cumulative pre-launch V1 = **54** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E). Detail breakdown 51 strings: fatigue.js 8 + dp.js 20 + reality.js 6 + sys.js 13 + calibration.js 4 + 2 NEW placeholders LOCKED. §36.57 inventory amendment inline (35 → 51 actual count, diferența 16 strings discovered în review Chat E NU acoperite în §25 outdated inventory). 2 ADR drafts updated cu §AMENDMENT 2026-05-02 Chat E inline (MODE_DETECTION_UI EXT-4 PROMPT_PROFILE_VALIDATION_PLACEHOLDER wording final + OUTLIER_FILTER EXT-2 GOAL_SHIFT_CALIBRATION_PLACEHOLDER wording final). Filter Bugatti aplicat strict 10 reguli (sentence case + voice plural + zero numerice algoritmice + zero category exposure + zero comenzi paternaliste + reframing pozitiv + temporal-safe + emoji constraint 🔴🟡🟢 + 🟠 RIR excepție + phase RO native + "reps" universal). Production gate path post-Chat E: wording LOCKED V1, integration Sprint 4.x cluster va remove `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING` flags la implementation source. ZERO sesiuni chat strategic rămase pre-launch V1 (re-confirmed 4th time). 1110/1110 unchanged (vault docs only, source code updates pending Sprint 4.x). Bandwidth Daniel ~2h chat Chat E saturation triggered handover preventiv. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial fix shipped + 1 partial schema + 1 full) + **54 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map V1 LOCKED + filozofia 12k INGESTED + Self-Correction Architecture LOCKED + Chat C Smart-Routing/Pain/Composite LOCKED + Pricing tiers LOCKED + Telegram channel LOCKED + 5 ADR drafts ALL LOCKED V1 + **Phase B Wording 51 Strings LOCKED V1**. Next: Priority 1 Sprint 4.x cluster implementation ~18-25h Opus comprehensive (54 decizii LOCKED + 51 wording strings + ADR_MODE_DETECTION + ADR_OUTLIER_FILTER + ADR_RIR_MATRIX + ADR_BIAS_DETECTION + ADR_CASCADE_DEFENSE + 3 NEW deferred ADR drafts + pricing schema + founding cap atomic + Telegram channel link surface) → production gate cleared (replace 51 strings sources + remove 2 PHASE_B flags) → tests 1110/1110 + new tests for placeholders → commit batch C → Beta-launch ASAP ready. Daniel solo carry-overs: Avocat barter outreach + Firebase Auth Console + DB rules publish + GDPR screenshot tutorial.**

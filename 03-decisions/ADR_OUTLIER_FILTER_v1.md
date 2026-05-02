@@ -119,21 +119,25 @@ Schimbarea obiectivului (Estetică/Hipertrofie ↔ Forță/Performanță) = Even
 - Mesaj UI Modul Curios: *"Estimat: 52.5 - 57.5 kg × 5 reps. Primele 2 sesiuni după schimbarea obiectivului reprezintă o fază de calibrare."* (Phase B wording placeholder pending)
 - Streak counter rules apply normal post-shift (3 consecutive same direction validates real baseline)
 
-**§AMENDMENT 2026-05-02 Chat D — PHASE_B_LOCK_REQUIRED Production Gate (per §36.57 Amendment 4):**
+**§AMENDMENT 2026-05-02 Chat E — Wording LOCKED V1 (per §36.58 Phase B 51 strings):**
 
-Placeholder logic LOCKED V1 în cod (Phase B mini-sesiune Daniel-validated pentru text final):
+Placeholder wording final LOCKED V1, post-Chat E review strategic Daniel + Claude (sentence case + voice plural + zero numerice algoritmice + Bugatti tone). Note: minKg/maxKg/reps sunt parametri legitimi user-data (NU scoruri algoritmice raw), permise per §6 evening anti-RE rule.
 
 ```javascript
 const GOAL_SHIFT_CALIBRATION_PLACEHOLDER = {
   id: "goal_shift_calibration_notice",
-  text: "[PHASE_B_WORDING_PENDING — fallback: Estimat: X-Y kg x Z reps. Primele 2 sesiuni sunt de calibrare.]",
-  status: "PHASE_B_LOCK_REQUIRED — DO NOT SHIP TO PRODUCTION"
+  title: "Recalibrăm pe noul obiectiv",
+  body: "Primele 2 sesiuni sunt de calibrare · Estimăm ${minKg}-${maxKg} kg × ${reps} reps, ajustăm după ce avem date",
+  subText: "Sesiunea ${current}/2",
+  status: "LOCKED V1 — production ready"
 };
 ```
 
 **Production Shipping Gate (CI/CD pre-deploy):**
 
-> Strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match. Consistency cu pattern existent ADR_MODE_DETECTION EXT-4.
+> Strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match. Consistency cu pattern existent ADR_MODE_DETECTION EXT-4. Post-Chat E §36.58: wording LOCKED, integration Sprint 4.x cluster va remove flagurile la implementation.
+
+**Cross-ref:** [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.58 Phase B Wording 51 Strings LOCKED V1.
 
 ### EXT-3: User-Triggered Profile Reset — Streak Counter PRESERVE (§36.34)
 

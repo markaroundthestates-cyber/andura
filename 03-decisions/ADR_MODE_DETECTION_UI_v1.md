@@ -126,23 +126,28 @@ Pragul de calcul pentru rata de apăsare pe butonul „De ce?" (`rate_de_ce < 5%
 
 ### EXT-4: PROMPT_PROFILE_VALIDATION_PLACEHOLDER + Production Shipping Gate
 
-Placeholder logic LOCKED V1 în cod (Phase B mini-sesiune Daniel-validated pentru text final):
+**§AMENDMENT 2026-05-02 Chat E — Wording LOCKED V1 (per §36.58 Phase B 51 strings):**
+
+Placeholder wording final LOCKED V1, post-Chat E review strategic Daniel + Claude (sentence case + voice plural + zero numerice + Bugatti tone):
 
 ```javascript
 const PROMPT_PROFILE_VALIDATION_PLACEHOLDER = {
-  id: "prompt_profile_validation_mismatch",
-  text: "[PHASE_B_WORDING_PENDING — fallback: Tiparele tale arată un stil mai direct. Schimbi la Executor?]",
+  id: "profile_validation_drift_prompt",
+  title: "Ajustăm modul de afișare a instrucțiunilor?",
+  body: "Observăm că deschizi des explicațiile complete · Putem afișa contextul direct, fără să mai trebuiască să apeși pe 'De ce?'",
   buttons: {
     confirm: "Da, schimbă",
-    cancel: "Nu, păstrez [current_profile]"
+    cancel: "Nu, lasă așa"
   },
-  status: "PHASE_B_LOCK_REQUIRED — DO NOT SHIP TO PRODUCTION"
+  status: "LOCKED V1 — production ready"
 };
 ```
 
 **Production Shipping Gate (CI/CD pre-deploy):**
 
-> Strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match.
+> Strict interzisă compilarea build-ului de producție dacă în baza de cod există flagul `PHASE_B_LOCK_REQUIRED` sau string-ul `PHASE_B_WORDING_PENDING`. Build script verifică grep, fail dacă match. Post-Chat E §36.58: wording LOCKED, integration Sprint 4.x cluster va remove flagurile la implementation.
+
+**Cross-ref:** [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.58 Phase B Wording 51 Strings LOCKED V1.
 
 ### EXT-5: Cooldown post Profile Validation prompt (§36.34)
 
