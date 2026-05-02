@@ -1,0 +1,99 @@
+// ══ EXERCISE METADATA SCHEMA — §36.36 Schema Extension ════════════════════════
+// LOCKED V1 per Chat C SELF-CORRECTION EXTENSION (HANDOVER_GLOBAL §36.36).
+// Foundation pentru Smart-Routing (§36.37) + Cascade Defense + Outlier Filter.
+//
+// Schema fields (per §36.36):
+//   - equipment_type: 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'band'
+//   - equipment_alternatives: string[] (exercise names cu același muscle target, equipment diferit)
+//   - force_demand: 'low' | 'medium' | 'high' (Tier 1 forță detection)
+//   - tier: 1 | 2 | 3 (forță / hipertrofie / accesoriu)
+//   - muscle_target_primary: string
+//   - muscle_target_secondary: string[]
+//
+// Source of truth: EXERCISE_METADATA map below. Defaults conservatoare per spec
+// (manual audit per exercise = backlog separat, NU acest batch).
+// Cross-ref: ADR_SMART_ROUTING_EQUIPMENT_v1 (BATCH_05 deferred draft).
+
+/**
+ * @typedef {Object} ExerciseMetadata
+ * @property {'barbell'|'dumbbell'|'machine'|'cable'|'bodyweight'|'band'} equipment_type
+ * @property {string[]} equipment_alternatives
+ * @property {'low'|'medium'|'high'} force_demand
+ * @property {1|2|3} tier
+ * @property {string} muscle_target_primary
+ * @property {string[]} muscle_target_secondary
+ */
+
+/** @type {Record<string, ExerciseMetadata>} */
+export const EXERCISE_METADATA = {
+  // ── Tier 1 — Compound forță (force_demand: high) ────────────────────────────
+  'DB Shoulder Press':       { equipment_type: 'dumbbell', equipment_alternatives: ['Incline DB Press'],          force_demand: 'high',   tier: 1, muscle_target_primary: 'umeri',     muscle_target_secondary: ['triceps'] },
+  'Incline DB Press':        { equipment_type: 'dumbbell', equipment_alternatives: ['Flat DB Press', 'Pec Deck / Cable Fly'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'] },
+  'Flat DB Press':           { equipment_type: 'dumbbell', equipment_alternatives: ['Incline DB Press', 'Pec Deck / Cable Fly'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['triceps'] },
+  'Flat Barbell Bench':      { equipment_type: 'barbell',  equipment_alternatives: ['Flat DB Press'],             force_demand: 'high',   tier: 1, muscle_target_primary: 'piept',     muscle_target_secondary: ['umeri', 'triceps'] },
+  'Lat Pulldown':            { equipment_type: 'cable',    equipment_alternatives: ['Cable Row'],                  force_demand: 'high',   tier: 1, muscle_target_primary: 'spate',     muscle_target_secondary: ['biceps'] },
+  'Cable Row':               { equipment_type: 'cable',    equipment_alternatives: ['Lat Pulldown', 'Chest-Supported Row'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'] },
+  'Chest-Supported Row':     { equipment_type: 'machine',  equipment_alternatives: ['Cable Row', 'Lat Pulldown'],  force_demand: 'high',   tier: 1, muscle_target_primary: 'spate',     muscle_target_secondary: ['biceps'] },
+  'Romanian Deadlift':       { equipment_type: 'barbell',  equipment_alternatives: ['Leg Curl'],                   force_demand: 'high',   tier: 1, muscle_target_primary: 'picioare',  muscle_target_secondary: ['spate'] },
+  'Leg Press':               { equipment_type: 'machine',  equipment_alternatives: ['Leg Extension'],              force_demand: 'high',   tier: 1, muscle_target_primary: 'picioare',  muscle_target_secondary: [] },
+
+  // ── Tier 2 — Isolation hipertrofie (force_demand: medium) ───────────────────
+  'Lateral Raises':          { equipment_type: 'dumbbell', equipment_alternatives: ['Lateral Raises (cable)'],     force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri',     muscle_target_secondary: [] },
+  'Lateral Raises (cable)':  { equipment_type: 'cable',    equipment_alternatives: ['Lateral Raises'],             force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri',     muscle_target_secondary: [] },
+  'Rear Delt Fly':           { equipment_type: 'machine',  equipment_alternatives: ['Face Pulls'],                 force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri',     muscle_target_secondary: [] },
+  'Rear Delt Cable':         { equipment_type: 'cable',    equipment_alternatives: ['Rear Delt Fly'],              force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri',     muscle_target_secondary: [] },
+  'Pec Deck / Cable Fly':    { equipment_type: 'machine',  equipment_alternatives: ['Cable Fly', 'Incline DB Press'], force_demand: 'medium', tier: 2, muscle_target_primary: 'piept', muscle_target_secondary: [] },
+  'Cable Fly':               { equipment_type: 'cable',    equipment_alternatives: ['Pec Deck / Cable Fly'],       force_demand: 'medium', tier: 2, muscle_target_primary: 'piept',     muscle_target_secondary: [] },
+  'Incline DB Curl':         { equipment_type: 'dumbbell', equipment_alternatives: ['Bayesian Curl', 'Cable Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'brate',    muscle_target_secondary: [] },
+  'Bayesian Curl':           { equipment_type: 'cable',    equipment_alternatives: ['Cable Curl', 'Incline DB Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'brate',  muscle_target_secondary: [] },
+  'Cable Curl':              { equipment_type: 'cable',    equipment_alternatives: ['Bayesian Curl', 'Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'brate', muscle_target_secondary: [] },
+  'Preacher Curl':           { equipment_type: 'machine',  equipment_alternatives: ['Cable Curl', 'Incline DB Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'brate',  muscle_target_secondary: [] },
+  'Hammer Curl':             { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Curl'],                 force_demand: 'medium', tier: 2, muscle_target_primary: 'brate',     muscle_target_secondary: [] },
+  'Overhead Triceps':        { equipment_type: 'cable',    equipment_alternatives: ['Pushdown'],                   force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps',   muscle_target_secondary: [] },
+  'Pushdown':                { equipment_type: 'cable',    equipment_alternatives: ['Overhead Triceps'],           force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps',   muscle_target_secondary: [] },
+  'Leg Curl':                { equipment_type: 'machine',  equipment_alternatives: ['Romanian Deadlift'],          force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare',  muscle_target_secondary: [] },
+  'Leg Extension':           { equipment_type: 'machine',  equipment_alternatives: ['Leg Press'],                  force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare',  muscle_target_secondary: [] },
+
+  // ── Tier 3 — Accesorii (force_demand: low) ──────────────────────────────────
+  'Face Pulls':              { equipment_type: 'cable',    equipment_alternatives: ['Rear Delt Cable'],            force_demand: 'low',    tier: 3, muscle_target_primary: 'umeri',     muscle_target_secondary: [] },
+  'Calf Raises':             { equipment_type: 'machine',  equipment_alternatives: [],                              force_demand: 'low',    tier: 3, muscle_target_primary: 'picioare',  muscle_target_secondary: [] },
+};
+
+/**
+ * Get metadata for an exercise. Returns conservative default if exercise unknown.
+ * @param {string} exerciseName
+ * @returns {ExerciseMetadata}
+ */
+export function getExerciseMetadata(exerciseName) {
+  return EXERCISE_METADATA[exerciseName] || {
+    equipment_type: 'machine',
+    equipment_alternatives: [],
+    force_demand: 'medium',
+    tier: 2,
+    muscle_target_primary: 'unknown',
+    muscle_target_secondary: [],
+  };
+}
+
+/**
+ * Filter alternatives by tier-aware constraints (per §36.37 Smart-Routing).
+ * Tier 1 forță: alternatives DOAR cu force_demand: 'high' (strict).
+ * Tier 2/3: flexibility ridicată (toate alternatives cu același muscle_target_primary).
+ * @param {string} exerciseName
+ * @returns {string[]} filtered alternative exercise names
+ */
+export function getValidAlternatives(exerciseName) {
+  const meta = getExerciseMetadata(exerciseName);
+  if (!meta.equipment_alternatives.length) return [];
+
+  if (meta.tier === 1) {
+    return meta.equipment_alternatives.filter(altName => {
+      const altMeta = EXERCISE_METADATA[altName];
+      return altMeta && altMeta.force_demand === 'high';
+    });
+  }
+  return meta.equipment_alternatives.filter(altName => {
+    const altMeta = EXERCISE_METADATA[altName];
+    return altMeta && altMeta.muscle_target_primary === meta.muscle_target_primary;
+  });
+}
