@@ -10,7 +10,7 @@
 
 **Acest document = SSOT activ.** Conține:
 - Strategy + vision lock-uit
-- Pricing locked (Q-0507 UPDATED €100→€65)
+- Pricing locked (Q-0507 UPDATED €100→€65) — **DEPRECATED 2026-05-02 Chat D §36.50** (Founding €39/an + Standard €59/an + Elite €79/an V1.1)
 - Sprint 1+2+3 partial deliverables
 - D1-D15 decizii LOCKED (15/15 RESOLVED)
 - Sprint 4 / Wave 6 backlog complet
@@ -77,7 +77,7 @@
 ### 1.2 Distribution strategy
 
 **NU vision = distribution.** Distribuție incremental:
-- **v1 beachhead:** Tech-lifter ICP (100-500 users) prin Reddit/Discord/balene 10-20 antrenori powerlifteri geeks/word-of-mouth
+- ~~**v1 beachhead:** Tech-lifter ICP (100-500 users) prin Reddit/Discord/balene 10-20 antrenori powerlifteri geeks/word-of-mouth~~ **[DEPRECATED 2026-05-02 Chat D — §36.47 Beta cohorts 50 manual recruit (Inner Circle 20 + Gigel 15 + Power-User 15) + §36.53 Telegram NU Discord]**
 - **v1.5+ expand:** Mainstream cu cash flow Founding Members + early Pro
 - **v2+ global:** Marketing budget ads/SEO/ASO
 
@@ -101,7 +101,7 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 **SalaFull positioning:** **"SensAI for Android"**.
 - Android global ~70% market, ~75% Europe, ~85% Romania
 - iOS users await v1.x Apple HealthKit + Capacitor wrapper
-- Pricing parity €65/an = no-brainer choice pe Android
+- ~~Pricing parity €65/an = no-brainer choice pe Android~~ → **Pricing sub-SensAI €59/an Standard** (DEPRECATED 2026-05-02 Chat D §36.50)
 
 ### 2.2 Cele 7 features distinctive (MOAT)
 
@@ -117,21 +117,23 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 
 ---
 
-## 3. PRICING LOCKED (Q-0507 UPDATED in PRODUCT_STRATEGY_SPEC_v1)
+## 3. PRICING LOCKED (Q-0507 UPDATED in PRODUCT_STRATEGY_SPEC_v1) — **DEPRECATED 2026-05-02 Chat D §36.50**
+
+> **§AMENDMENT 2026-05-02 Chat D — Pricing Final LOCKED V1 (Override §3):** §3 Pricing structure (Founding €60 lifetime + Pro €65/an + iOS €65/an + revenue math 10K-15.4K × €65) DEPRECATED de §36.50-§36.52 LOCKED V1 (Chat D). New tiers: **Founding €39/an cap 50** (3 ani LOCKED + 34% perpetual permanent) + **Standard €59/an** (sub-SensAI €65) + **Elite €79/an** V1.1 Martie 2027 (Core + Snapshot Gated Consultation Claude API). Auto-close mechanic la 50 Founding (§36.52). Conținut original §3 preserved ca audit trail istoric. Cross-ref: §36.50 Pricing Tiers + §36.51 Locked-In Guarantee + §36.52 Cap 50 + §1.3 PRODUCT_STRATEGY §AMENDMENT 2026-05-02 Chat D.
 
 | Tier | Pricing | Justification |
 |------|---------|---------------|
-| **Founding Members 100-500** | **€60 lifetime once** | Loyalty engineering, evangheliști permanenți, primii adopters tech-lifter ICP |
-| **Pro standard v1+** | **€6/lună sau €65/an** | Parity SensAI ($69.99/an = ~€65). Competitive price, MOAT pe features unique |
-| **iOS post-v1.x** | Same €65/an | Cross-platform consistency când Apple HealthKit ready |
+| ~~**Founding Members 100-500**~~ → **§36.52 cap 50 LOCKED V1** | ~~**€60 lifetime once**~~ → **€39/an LOCKED 3 ani + 34% perpetual** | DEPRECATED — §36.9 Founding lifetime ELIMINATE V1 + §36.50/§36.51/§36.52 |
+| ~~**Pro standard v1+**~~ → **Standard V1 Core** | ~~**€6/lună sau €65/an**~~ → **€59/an** | DEPRECATED — §36.50 anchored sub-SensAI €65 (bootstrap solo trust deficit) |
+| ~~**iOS post-v1.x** Same €65/an~~ | DEPRECATED V1 (Android-only confirmed §36.2) — Elite V1.1 Martie 2027 €79/an replaces upgrade tier |
 
-**Schimbare vs Q-0507 inițial:** -35% (€100 → €65)
+**Schimbare vs Q-0507 inițial:** ~~-35% (€100 → €65)~~ → -41% Standard (€100 → €59) + -35% Founding (€60 lifetime → €39/an cu 3 ani LOCKED + 34% perpetual)
 
-**Math revenue:**
-- 10K users × €65/an = €650K/an
-- 15.4K users × €65/an = €1M/an target Year 2-3
+**Math revenue (DEPRECATED):**
+- ~~10K users × €65/an = €650K/an~~ → revised post-Chat D §36.50 + cap 50 Founding cap loss €1.000/an reframing onest §36.52
+- ~~15.4K users × €65/an = €1M/an target Year 2-3~~ → recalibrate cu mix 50 Founding €39 + N Standard €59 + N Elite €79
 
-**Update aplicat în PRODUCT_STRATEGY_SPEC_v1.md** (sesiune 30 apr evening).
+**Update aplicat în PRODUCT_STRATEGY_SPEC_v1.md** (sesiune 30 apr evening). **Chat D 2026-05-02 amendment aplicat în §1.2-§1.4 PRODUCT_STRATEGY DEPRECATED block + §29.6.3 amendment.**
 
 ---
 
@@ -266,7 +268,7 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - Methodology presets user-facing (Mentzer/FST-7/Y3T) — anti-RE violation
 - Exercise library 4000+ — quality > quantity, ~200 illustration 3D anatomical preserved
 - Human coach hybrid — bootstrap solo zero resurse
-- Community features social v1 — Discord Premium Perk gated post-500 users (Q-0533)
+- ~~Community features social v1 — Discord Premium Perk gated post-500 users (Q-0533)~~ **[DEPRECATED 2026-05-02 Chat D — §36.9 Discord ELIMINATE V1 + §36.53 Telegram Group + Topics replacement. ADR Q-0533 = DEPRECATED, NU exists ca file separat în 03-decisions/, doar referință în acest handover.]**
 
 ### 6.7 Total scope effort
 
@@ -498,7 +500,7 @@ Handover narrative §0 cu instrucțiuni post-consolidare obsolete (mențiuni `99
 
 ## 11. CHALKBOARD educational layer in-app — LOCKED V1.1 (~feb-mar 2027 expansion play)
 
-**§AMENDMENT 2026-05-02 late evening:** Status timing-shift "LOCKED Sprint 4" → "LOCKED V1.1 (~feb-mar 2027 expansion play)". V1 user vrea execuție rapidă, NU chatbot education. V1.1 = expansion play, justifică Pro €65/an upgrade reason. Spec preserved 1:1 (NU rescriere), doar timing shift. Cross-ref §36.10.
+**§AMENDMENT 2026-05-02 late evening:** Status timing-shift "LOCKED Sprint 4" → "LOCKED V1.1 (~feb-mar 2027 expansion play)". V1 user vrea execuție rapidă, NU chatbot education. V1.1 = expansion play, justifică ~~Pro €65/an~~ → **Elite €79/an V1.1** upgrade reason (per §36.50 Chat D LOCKED). Spec preserved 1:1 (NU rescriere), doar timing shift. Cross-ref §36.10 + §36.50.
 
 
 
@@ -513,7 +515,7 @@ Chatbot educational pentru fundamentals fitness + brand education + beginner ena
 
 **Free tier limits:**
 - Free: 5 q/zi, 30 q/lună, $0.50/lună spend cap
-- Pro €65/an: 20 q/zi, 200 q/lună, $5/lună spend cap
+- ~~Pro €65/an~~ → **Standard V1 Core €59/an** (DEPRECATED 2026-05-02 Chat D §36.50): 20 q/zi, 200 q/lună, $5/lună spend cap
 
 ### 11.3 Abuse prevention multi-layer (must-have v1)
 
@@ -642,7 +644,7 @@ Chat strategic ~3h Daniel-time real cu 19 decizii LOCKED (7 safety patterns + 4 
 ### Long term (v1.5+)
 
 11. **Sprint 4 / Wave 6 execution** (12-22h Opus realist) — 4 SensAI + 4 JuggernautAI + Chalkboard + Feedback
-12. **Beta tester recruitment plan** (Reddit/Discord/balene)
+12. ~~**Beta tester recruitment plan** (Reddit/Discord/balene)~~ **[RESOLVED 2026-05-02 Chat D §36.47 Beta cohorts 50 manual recruit + §36.53 Telegram channel]**
 13. **iPhone test device acquisition** (€100-200 second-hand) — pentru v1.x
 14. **Equipment ID via photo** (Multi-Gym integration v1.5)
 15. **Apple HealthKit integration full** (v1.x cu test device)
@@ -676,7 +678,7 @@ Logs growth bounded de existing slice 5000. Pre-launch budget viable 6-12 luni u
 
 **Long term (v1 launch readiness):**
 13. **Timeline v1 ajustat: 8-10 luni** (vs 2-4 inițial post-velocity, vezi §1.2 amendment).
-14. **Beta tester recruitment plan** segmentat per goal (Reddit/Discord/balene tech-lifter beachhead Forță + r/xxfitness aesthetic-glutes Tonifiere + r/longevity Longevitate + Mompreneur communities Slăbire).
+14. ~~**Beta tester recruitment plan** segmentat per goal (Reddit/Discord/balene tech-lifter beachhead Forță + r/xxfitness aesthetic-glutes Tonifiere + r/longevity Longevitate + Mompreneur communities Slăbire).~~ **[RESOLVED 2026-05-02 Chat D §36.47 Beta cohorts 50 manual recruit (3 cohorts: Inner Circle 20 + Gigel 15 + Power-User 15) + §36.53 Telegram channel]**
 15. F-NEW-1 exercise names mapping RO — strategy hibrid locked (compound mari EN industry + izolări RO).
 
 ### Updated 2026-05-02 PRE-LAUNCH FINAL — Next Steps post-F-NEW LOCKED + MMI + Storage Full + UX Friction + 3 Blockers + GC defer
@@ -2660,6 +2662,19 @@ User accept → program de bază update permanent. Refuz → rămâne mod swap t
 
 **Note vs §3 pricing existent:** §3 Founding Members €60 lifetime + Pro €65/an = positioning "SensAI for Android" pre-rebrand. **§29.6.3 OVERRIDE 2026-05-01 evening RESUBMIT:** V1 = 100% Free Early Access NU pricing tier-based la launch. Pricing tier-based DEFERRED V2 cu grandfathering Founding Members discount post-Free. Decision Daniel: bootstrap-friendly + community-first + zero friction launch + signal "merge" pre-revenue commitment.
 
+**§AMENDMENT 2026-05-02 Chat D — Pricing Strategy FINAL LOCKED V1 (Override §29.6.3 RESUBMIT + §3 + §1.3 PRODUCT_STRATEGY):**
+
+V1 launch NU mai e "100% Free Early Access" — pricing tier-based **direct la launch** per Chat D LOCKED. Reframing:
+- **Founding V1 (cap 50):** €39/an LOCKED 3 ani + 34% perpetual permanent post-Anul 4 (per §36.50 + §36.51 + §36.52). Beta cohort §36.47.
+- **Standard V1 Core:** €59/an (sub SensAI €65). Motorul deterministic local-first complet (per §36.50).
+- **Elite V1.1 (Lansare Martie 2027):** €79/an. Core V1 + Snapshot Gated Consultation Claude API (per §36.50).
+
+Auto-close mechanic la 50 Founding (per §36.52). NU "Free Early Access" anterior — Founding €39/an = signal commercial commitment + dogfooding + social proof primii 50.
+
+Wording UI Plată Beta LOCKED Gigel test (per §36.51): *"Devino Membru Fondator pentru doar €39/an. Prețul tău rămâne blocat în primii 3 ani, iar ulterior păstrezi o reducere permanentă de 34% pe viață, indiferent cât de mult va crește prețul Andura."*
+
+**Cross-refs:** §36.50 Pricing tiers + §36.51 Locked-In Guarantee + §36.52 Cap 50 Auto-Close + §36.46 Pricing Strategy Deferred Pre-Launch (now resolved Chat D) + §36.47 Beta cohorts + §1.3 PRODUCT_STRATEGY_SPEC §AMENDMENT 2026-05-02 Chat D DEPRECATED block.
+
 ### 29.6.4 Targeting Beachhead
 
 **Eliminat:** r/programare + r/RoFails + r/longevity (mismatch audience).
@@ -2705,7 +2720,7 @@ User accept → program de bază update permanent. Refuz → rămâne mod swap t
 **Feedback active săpt 2:** users finalizează 2 săpt antrenament → pop-up discret single-shot:
 > "Cum a fost prima ta lună cu Andura? Spune-ne părerea ta printr-un mesaj scurt."
 
-**Centralizare:** Discord/Slack channel echipă, response 24h pe critical.
+**Centralizare:** ~~Discord/Slack channel echipă~~ → **Telegram Group + Topics 🐛 #Bug-Reports** (DEPRECATED 2026-05-02 Chat D §36.53/§36.54) — response 24h pe critical.
 
 ### 29.6.7 Code Freeze + Hotfixes
 
@@ -4050,12 +4065,12 @@ Action item Avocat barter review pre-launch.
 | The "Gigel" Test Cohort | 15 | 50-60 ani (Maria/Gigica typology) | Simplitate UI + Gigel test live |
 | Power-User Cohort | 15 | Marius typology (25 ani trag tare) | Limite engine progresie + edge cases |
 
-**Channel Decision (BLOCKER pre-launch):** Discord vs WhatsApp vs Telegram → action item separat decizie. Carry-over §29.6.3 Discord references sweep pending.
+**Channel Decision (BLOCKER pre-launch):** ~~Discord vs WhatsApp vs Telegram → action item separat decizie. Carry-over §29.6.3 Discord references sweep pending.~~ **[RESOLVED 2026-05-02 Chat D §36.53 Telegram WIN + §36.54 Topics + §36.55 GDPR Phone Privacy. Vault sweep applied 2026-05-02 — Discord references DEPRECATED.]**
 
 **Realistic Check Open Items:**
 - 20 inner circle realistic count? (Daniel solo verify)
 - 15 Gigel cohort recruitment plan concret? (părinți, vecini, prieteni părinți)
-- Channel decide single (NU "Discord/WhatsApp" ambiguous)
+- ~~Channel decide single (NU "Discord/WhatsApp" ambiguous)~~ **[RESOLVED 2026-05-02 Chat D §36.53 Telegram Group + Topics LOCKED V1.]**
 
 **Cross-refs:** §36.13 Beta-launch ASAP + Carry-over Founding Members + Carry-over Discord references sweep §29.6.3.
 
