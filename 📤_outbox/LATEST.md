@@ -1,191 +1,200 @@
-# LATEST — Sprint UI 6 UX LOCKED + Cluster ABORTED + Rebrand Priority 1
+# REBRAND SWEEP COMPLETE — Phase 1-4 Autonomous
 
-**Data:** 2026-05-03
-**Source:** `📥_inbox/HANDOVER_2026-05-03_REBRAND_PRIORITY_1_SPRINT_UI_RESPEC.md` → archived `93_HANDOVER_REBRAND_PRIORITY_1_SPRINT_UI_RESPEC_CONSUMED.md`
-**Type:** Strategic decision ingest — 6 UX LOCKED V1 + 1 lessons learned + Rebrand Priority 1 ABSOLUT
+**Task:** Rebrand `salafull` → `andura` per §30 LOCKED 2026-05-01 RESUBMIT
+**Model:** Opus
+**Status:** ✅ Complete 4/4 Phases (Phase 5 = acest raport + commit final)
+**Date:** 2026-05-03
 
 ---
 
-## §1 SCOPE INGESTAT
+## Pre-flight
 
-### 6 decizii UX LOCKED V1 noi (§36.76)
+- ✅ git clean post pre-flight cleanup commit `2b2aa00`, branch main
+- ✅ Tests baseline: 1203 PASS / 75 files
+- ✅ Build baseline: 4.715s / 921 KB / 283 KB gzipped
 
-Strategic chat NEW Sprint UI design 2026-05-03 a produs:
+---
 
-| Q | Decizie LOCKED V1 |
+## Modificări per Phase
+
+### Phase 1 — Vault docs sweep (~25 active .md files)
+
+**Commit:** `ef3ef83` — `chore(rebrand): vault docs SalaFull → Andura sweep (Phase 1)`
+
+**Sweep scope:**
+- 00-index/INDEX_MASTER.md (folder tree)
+- 01-vision/ (5 files): DANIEL_COMPLETE_PROFILE, MOAT_STRATEGY, PARAMETRIC_PROGRAMS_DESIGN, PRODUCT_STRATEGY_SPEC_v1, PROJECT_VISION, SUFLET_ANDURA
+- 02-audit/COACHING_TEXTBOOK_SYNTHESIS.md (title + 17 refs)
+- 03-decisions/ (10 files): 001, 010, 011, 013, 014, 016, 017, 018, 019, ADR_MULTI_TENANT_AUTH_v1, DECISION_LOG
+- 04-architecture/ (2): COGNITIVE_ARCHITECTURE_SPEC_v1, DATA_REGISTRY_SPEC
+- 05-findings-tracker/INSIGHTS_BACKLOG.md
+- 06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md (selective surgical)
+- 08-workflows/ (5): CHAT_MIGRATION_PROTOCOL, CLAUDE_CHAT_INFRASTRUCTURE, FORWARD_COMPAT_PRINCIPLES, HANDOVER_TEMPLATE, MODEL_UPGRADE_AUDIT_PROTOCOL
+- Root: README.md, VAULT_RULES.md, PROMPT_CC_HYGIENE.md
+- scripts/README.md, tests/golden-master/mutation/README.md
+
+**Refs preserved (28 historical, well below 50 STOP threshold):**
+- HANDOVER_GLOBAL §30 title + 11 historical session-lock entries documenting rebrand decision evolution
+- CLAUDE_CHAT_INFRASTRUCTURE GitHub repo URL `markaroundthestates-cyber/salafull` + migration history `salafull-vault → salafull` consolidation note
+- LATEST.md rebrand task description (this very task narrative)
+- Local Windows paths `C:\Users\Daniel\Documents\salafull` (Daniel rename manual disk post-sweep)
+- MOAT_STRATEGY.md strikethrough pricing audit trail
+- DANIEL_COMPLETE_PROFILE voice-to-text mapping anecdote ("Salafur" = SalaFull)
+
+### Phase 2 — Source code + PWA manifest + sw.js (28 files)
+
+**Commit:** `ef8626b` — `chore(rebrand): source code + PWA manifest + sw.js sweep (Phase 2)`
+
+**Files swept:**
+
+| File | Change |
 |---|---|
-| **Q4 DOMS expand pattern** | **A** — Link "Mai multe opțiuni ▼" inline, state NU persistă per sesiune |
-| **Q5 Founding cap counter** | **C** — HIDDEN TOTAL UI, atomic counter Firebase backend silent |
-| **Q6 3 Card buttons grouping** | **B** — Split 2+1 (Equipment row + Body row separat) |
-| **Q7 Goal Shift card position** | **C** — Settings menu only, complet scos din Dashboard |
-| **Q8 Telegram CTA placement** | **B revizuit** — Onboarding final 1× exposure + Settings → Comunitate permanent |
-| **Q-PROMPT Profile Validation** | **C** — Card persistent Dashboard până dismiss, NU mid-session |
+| `public/manifest.json` | name+short_name "Andura", start_url+scope+icons paths `/andura/` |
+| `public/sw.js` | CACHE_VERSION reset `'andura-v1'`, BASE `'/andura'` |
+| `index.html` | title "Andura", manifest+apple-touch-icon paths `/andura/` |
+| `vite.config.js` | base `'/andura/'` |
+| `playwright.config.js` | comment update |
+| `src/auth.js` | event `andura:signedout`, fallback origin `andura.local` |
+| `src/main.js` | sw register `'/andura/sw.js'` |
+| `src/pages/weight.js` | CSV/JSON download names `andura-`, version `andura-v1`, **importJSON backwards compat** (accepts both `andura` and `salafull` markers) |
+| `src/util/dataCleanup.js` | backup filename `andura-backup-` |
+| `src/util/sentry.js` | release tag `andura@`, test message |
+| `gate-b-script.js` | URL comment |
+| `.claude/settings.json` | auto-commit hook workspace path `/workspaces/andura` |
+| 16 playwright tests | `BASE_URL = '/andura/'` + `await page.goto('/andura/')` |
 
-**Wording LOCKED Q8 onboarding:**
-> "Vrei să testezi alături de noi? Avem un grup restrâns pe Telegram unde Daniel răspunde la întrebări și ascultă idei. [Intră în grup] [Mai târziu]"
+**Refs preserved (data continuity):**
+- `src/storage/db.js DB_NAME_PREFIX = 'salafull'` — IndexedDB user data namespace. Rename = Daniel local data wipe (current users/daniel + users/2GsDvxqXc4bvQGSm8B1Zft5S05i2 IDB keys depend on this prefix). Migration optional post-Beta dacă Daniel decide cleanup namespace consistency.
+- `src/storage/__tests__/db.test.js DEFAULT_DB_NAME = 'salafull_users_daniel'` (matches preserved prefix)
+- `src/storage/__tests__/tieredRead.test.js` (same)
 
-### 1 lessons learned anti-recurrence (§36.77)
+### Phase 3 — Config + package + CI workflows
 
-Sprint UI cluster 7-batch ABORTED pre-flight BATCH_UI_01:
-- **Reason:** Spec-uri assume React/JSX, project actual = vanilla JS per ADR 005
-- **CC Opus action:** STOP cluster, raport detailed, 0 commits fabricat (Bugatti paradigm validated)
-- **Slip:** Claude chat strategic React/JSX assumption fără pre-flight verify
-- **Anti-recurrence rule LOCKED:** OBLIGATORIU `project_knowledge_search` ADR framework ÎNAINTE primul artefact tehnic în chat strategic
+**Commit:** `1640ffd` — `chore(rebrand): config + package + CI workflows sweep (Phase 3)`
 
-### Cumulative LOCKED count
+- `package.json` name `"andura"`
+- `package-lock.json` regenerated clean (`rm + npm install`)
+- `.github/workflows/*.yml` verified clean (no salafull refs detected)
+- README + VAULT_RULES + PROMPT_CC_HYGIENE deja sweep Phase 1
 
-**64 → 70** (+6 §36.76 UX). §36.77 = lessons learned, NU decizie counted.
+### Phase 4 — public/CNAME prep andura.app
 
-Breakdown: 12 + 11 + 8 + 14 + 8 + 1 + 2 + 4 cluster + §36.71 + §36.72 + §36.73 + §36.74 + §36.75 + **§36.76 (6 UX)** = **70**
+**Commit:** `3701df7` — `chore(rebrand): add public/CNAME for andura.app (Phase 4)`
 
----
-
-## §2 STATE SNAPSHOT
-
-| Metric | Value |
-|---|---|
-| Cumulative LOCKED | **70** (+6 acest ingest) |
-| Tests | 1203 PASS / 75 files (unchanged) |
-| Coverage | 60.33% lines / 78.38% branches (unchanged) |
-| Build | 4.026s / 921 KB / 283 KB gzipped (unchanged) |
-| Active LOCKED ADRs | 8 drafts + ADR_MULTI_TENANT_AUTH live + historicals |
-| Pending DRAFT ADRs | **0** |
-| Daniel solo gate technical | **100% COMPLETE** ✅ |
-| Sprint UI gate technical | **CLEAR** ✅ |
-| Strategic chat NEW Sprint UI design | ✅ EXECUTED 2026-05-03 |
-| Sprint UI cluster execution | 🛑 ABORTED pre-flight |
-| **Rebrand sweep §30** | ⏳ **PENDING — PRIORITY 1 ABSOLUT** |
-| Project Claude rename | ✅ "Andura" cross-platform consolidation |
+- `public/CNAME` = `andura.app`
+- Vite copies automat la build → `dist/CNAME` verified present
+- **NU activated** GitHub Pages custom domain — Daniel manual step post repo rename + DNS Namecheap config
 
 ---
 
-## §3 SPRINT UI CLUSTER ABORTED RECAP
+## Build + Tests post-sweep
 
-### Status: 🛑 ABORTED at BATCH_UI_01 pre-flight
-
-**Reason:** All 7 PROMPT_CC_BATCH_UI_NN spec-uri assume React/JSX framework. Project reality = vanilla JS per ADR 005.
-
-**CC Opus action validated (Bugatti paradigm):**
-- 0 commits fabricat ✅
-- 0 JSX files dead în vanilla bundle ✅
-- 0 push tests-failing ✅
-- Detailed STOP report: `📤_outbox/_archive/2026-05/BATCH_UI_01_REPORT.md` (commit `4e03ed8`)
-- 7 prompts STILL în `📥_inbox/` (NOT archived) pentru re-spec
-
-**Recovery Path A recommended:** Re-spec 7 BATCH_UI_NN cu vanilla JS pattern matching `safetyBanner.js` factory function (`createXxx(opts) → { element, dispose }`). ~30-45min strategic + ~2-3h CC actual factor 5-7x.
+| Metric | Pre-sweep | Post-sweep | Delta |
+|---|---|---|---|
+| Tests | 1203 PASS / 75 files | 1203 PASS / 75 files | 0 (zero regression) ✅ |
+| Coverage | 60.33% lines / 78.38% branches | unchanged (no source removed) | 0 |
+| Build wall-clock | 4.715s | 3.24s | -1.5s (warmer cache) |
+| dist/ total | 921 KB | ~921 KB | ±0.01 KB (hash chunks rotated) |
+| Cold-start gzipped | 283 KB | 283 KB | 0 |
 
 ---
 
-## §4 REBRAND PRIORITY 1 ABSOLUT (§30 LOCKED 2026-05-01 RESUBMIT)
+## Commits (4 + Phase 5 final)
 
-### Daniel decision acest chat:
-
-**Rebrand sweep PRIORITAR ÎNAINTE re-spec Sprint UI vanilla JS.** Refactor double risc crește exponențial post-Sprint UI implementation.
-
-### Scope sweep (per §30.3 vault)
-
-- **Vault docs:** replace toate "salafull" → "andura" în `.md` files (păstrează `📤_outbox/_archive/` istoric ca SNAPSHOT immutable)
-- **Cod:** `src/` + `tests/` + `scripts/` replace "salafull" → "andura" branding strings (verify pre-flight, NU rupe imports)
-- **Config:** `package.json` name field, README.md, CHANGELOG.md
-- **Repo:** GitHub `salafull` → `andura` (Daniel manual UI sau via `gh repo rename`)
-- **GitHub Pages URL:** `markaroundthestates-cyber.github.io/salafull/` → `andura/` SAU custom domain `andura.app`
-- **Email signature:** `[Andura V1 Feedback]` (deja LOCKED §29.6)
-- **Firebase project name:** DEJA = "Andura" (per §36.75)
-
-### Daniel action items pre-sweep
-
-1. **Decide custom domain `andura.app`** (€10-15/an) sau folosim DOAR GitHub Pages URL `andura/` post-rename
-2. **Decide repo rename TIMING** — înainte sweep cod sau după (afectează imports paths)
-
-### Tests post-sweep MUST pass
-
-1203/1203 unchanged. Smoke test prod gate post-deploy.
+| Phase | Hash | Summary |
+|---|---|---|
+| Pre-flight cleanup | `2b2aa00` | chore: cleanup stale inbox ALIGNMENT_QUESTIONS post-regenerate |
+| Phase 1 | `ef3ef83` | chore(rebrand): vault docs SalaFull → Andura sweep (Phase 1) |
+| Phase 2 | `ef8626b` | chore(rebrand): source code + PWA manifest + sw.js sweep (Phase 2) |
+| Phase 3 | `1640ffd` | chore(rebrand): config + package + CI workflows sweep (Phase 3) |
+| Phase 4 | `3701df7` | chore(rebrand): add public/CNAME for andura.app (Phase 4) |
+| Phase 5 | (this commit) | chore(rebrand): vault SSOT update §36.78 + LATEST raport (Phase 5) |
 
 ---
 
-## §5 FILES TOUCHED (acest ingest)
+## Pushed
 
-### Modified (1)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` — §36.76 NEW (6 UX LOCKED V1) + §36.77 NEW (slip log + anti-recurrence rule) + EOF session-lock entry "Sesiune 2026-05-03 SPRINT UI 6 UX DECIZII LOCKED + CLUSTER ABORTED + REBRAND PRIORITY 1"
-
-### Archived (2)
-- `📥_inbox/HANDOVER_2026-05-03_REBRAND_PRIORITY_1_SPRINT_UI_RESPEC.md` → `📤_outbox/_archive/2026-05/93_HANDOVER_REBRAND_PRIORITY_1_SPRINT_UI_RESPEC_CONSUMED.md`
-- `📤_outbox/LATEST.md` (Sprint UI cluster aborted) → `📤_outbox/_archive/2026-05/94_LATEST_PREVIOUS_SPRINT_UI_CLUSTER_ABORTED.md`
-
-### Replaced (1)
-- `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (regenerat — 10 Q-uri verification format pentru chat strategic NEW post-rebrand-sweep)
-
-### Created (1)
-- `📤_outbox/LATEST.md` (this file)
-
-### NU touched
-- 7 PROMPT_CC_BATCH_UI_NN.md still în `📥_inbox/` (pending re-spec Path A vanilla JS)
-- Tests 1203/1203 unchanged
+✅ origin/main (acest commit final)
 
 ---
 
-## §6 NEXT STEPS PRIORITIZATE
+## Issues
 
-### Priority 1 ABSOLUT — Rebrand sweep §30 SalaFull → Andura (~5h CC Opus dedicat)
+**None blocking.** Phase 1-4 toate PASS pre-flight gates (tests 1203 unchanged, build success, dist verified).
 
-Strategic chat NEW Claude (Project Andura) generate **prompt CC REBRAND_SWEEP** copy-ready. Daniel rulează CC Opus autonomous post pre-sweep decisions (custom domain + repo rename timing).
-
-### Priority 2 — Re-spec 7 BATCH_UI_NN vanilla JS pattern + cluster execution
-
-Post rebrand complete:
-- Strategic chat NEW (~30-45 min) regenerate 7 BATCH_UI_NN cu factory function pattern matching `safetyBanner.js`
-- CC Opus autonomous cluster execution (~2-3h actual factor 5-7x)
-- 1 LATEST.md final centralizat per §36.74
-
-### Priority 3 — Smoke + Beta
-
-- Smoke tests prod gates B/C/D persona memory
-- Beta cohort 3-tier 50 users §36.47 + §36.53 Telegram
-- Beta sept-dec 2026 → audit legal €300-500 dec 2026 → Soft Launch 1 ianuarie 2027 🚀
-
-**Marketing Channel Mix Decision:** milestone V1.1 explicit ~Februarie 2027 per §36.60.
+**Flag pentru Daniel awareness (NU blocking):**
+- 28 historical refs preserved în vault — under 50 STOP threshold per spec, audit trail Bugatti respected
+- Storage `DB_NAME_PREFIX = 'salafull'` PRESERVED pentru data continuity. Daniel local IndexedDB users/{UID} keys still scoped la `salafull_users_<id>`. Post-Beta dacă Daniel decide rename = adăugare migration logic + data copy prefix→prefix.
+- weight.js importJSON backwards compat acceptă atât `andura` cât și `salafull` version markers (defensive — nicio Beta historical backups, dar safety pentru orice export Daniel local).
 
 ---
 
-## §7 STATUS V1 SNAPSHOT
+## Next action Daniel manual (post-sweep, fără CC Opus)
 
-| Item | Status |
-|---|---|
-| 8/8 templates LOCKED V1 | ✅ |
-| F-NEW + MMI + Storage Full UX | ✅ LOCKED V1 |
-| Decizii cumulative | **70 LOCKED V1** |
-| Phase B 51 strings | ✅ INTEGRATED |
-| Foundation modules | ✅ Foundation level (compatible vanilla JS, NO refactor needed) |
-| Pricing schema | ✅ Schema level |
-| 8 ADR drafts | ✅ ALL LOCKED V1 |
-| 0 DRAFT pending | ✅ Clean |
-| ADR_MULTI_TENANT_AUTH Faza 1 Batch B | ✅ LIVE confirmed |
-| Production gate | ✅ Cleared |
-| Tests / coverage / build baselines | ✅ Locked §36.68/69/70 |
-| Daniel solo gate technical | ✅ 100% COMPLETE |
-| Sprint UI gate technical | ✅ CLEAR |
-| **Sprint UI 6 UX LOCKED V1 §36.76** | ✅ NEW |
-| **Slip log + anti-recurrence rule §36.77** | ✅ NEW |
-| Sprint UI cluster execution | 🛑 ABORTED pre-flight (Recovery Path A pending) |
-| **Rebrand sweep §30** | ⏳ **PRIORITY 1 ABSOLUT next** |
-| Re-spec 7 BATCH_UI_NN | ⏳ Priority 2 post-rebrand |
-| Beta cohort §36.47 | ⏳ Priority 3 post Sprint UI complete |
-| Soft Launch | ⏳ Target 1 ian 2027 🚀 |
+### Critical path (~30 min Daniel-time real)
 
----
+1. **GitHub repo rename:** open `https://github.com/markaroundthestates-cyber/salafull/settings` → General → Repository name → change `salafull` → `andura` → Rename
+2. **Local remote update:**
+   ```powershell
+   cd C:\Users\Daniel\Documents\salafull
+   git remote set-url origin https://github.com/markaroundthestates-cyber/andura.git
+   git remote -v   # verify
+   ```
+3. **Namecheap DNS config** (Daniel control panel `andura.app`):
+   - Add A records pointing to GitHub Pages IPs:
+     - `185.199.108.153`
+     - `185.199.109.153`
+     - `185.199.110.153`
+     - `185.199.111.153`
+   - Add CNAME `www` → `markaroundthestates-cyber.github.io`
+   - DNS propagation ~1-24h (monitor https://dnschecker.org/#A/andura.app)
+4. **GitHub Pages settings:** open `https://github.com/markaroundthestates-cyber/andura/settings/pages` → Custom domain → `andura.app` → Save → wait DNS check verification → toggle "Enforce HTTPS" ON
+5. **Smoke test prod:** `https://andura.app/` should serve app post-DNS-propagation (sw.js cache reset andura-v1 = fresh service worker pe primul user load)
 
-## §8 EMPIRICAL LEARNINGS UPDATED
+### Optional (low priority)
 
-**Factor 5-7x optimism Opus estimates CONFIRMED 4x:**
-- Sprint 4.x cluster pilot: ~70min actual vs 6-8h estimate
-- Cluster 10-batch: ~70min actual vs 6-8h estimate
-- Single batch §36.73-75: ~10min actual vs 30-45min estimate
-- BATCH_UI_01 pre-flight STOP: ~10min actual (raport curat)
-
-**Bugatti paradigm validated empirical:** Pre-flight gate fail-fast strict salvează ore fake commits + datorie tehnică. ZERO debt introdus prin halucinație React/JSX.
-
-**Anti-recurrence rule §36.77:** Pre-flight `project_knowledge_search` ADR framework ÎNAINTE primul artefact tehnic în chat strategic.
+6. **Local folder rename:**
+   ```powershell
+   cd C:\Users\Daniel\Documents
+   ren salafull andura
+   cd andura
+   git status   # verify path works
+   ```
+7. **Email signature update** în client mail (Outlook/Gmail) → `[Andura V1 Feedback]` (deja LOCKED §29.6)
 
 ---
 
-*Ingest completat 2026-05-03 per VAULT_RULES §HANDOVER_PROTOCOL + §9 PROMPT_CC_HYGIENE MANDATORY (ALIGNMENT_QUESTIONS_CHAT_NEW.md regenerat verification format). Cumulative 64 → 70 LOCKED V1 (+6 §36.76 UX). Project Claude = "Andura" cross-platform brand consolidation. Rebrand Priority 1 ABSOLUT next chat strategic.*
+## Cumulative LOCKED count progression
+
+- Pre-batch: 70 (post §36.76 + §36.77)
+- Post-§36.78 Rebrand Sweep: **71**
+
+---
+
+## Empirical learnings (factor 7-9x optimism CONFIRMED 5x consecutive)
+
+| Cluster | Estimate | Actual | Factor |
+|---|---|---|---|
+| Sprint 4.x cluster pilot | 6-8h | ~70min | ~6x |
+| Cluster 10-batch | 6-8h | ~70min | ~6x |
+| Single batch §36.73-75 | 30-45min | ~10min | ~4x |
+| BATCH_UI_01 pre-flight STOP | N/A | ~10min | (correct STOP) |
+| **Rebrand sweep Phase 1-4** | **3.5-4.5h** | **~25-30min** | **~7-9x** |
+
+**Calibration update:** factor 5-7x → factor 7-9x for spec-clean batches. Daniel solo time `~30-45min` confirmed empirical from Firebase setup.
+
+---
+
+## Cross-References
+
+- §30 Rebrand SalaFull → Andura LOCKED 2026-05-01 RESUBMIT
+- §31 Investiții (andura.app €13.18 actual achitat 2026-05-03 Namecheap order #201394291)
+- §36.75 Daniel solo gate Firebase live (project name "Andura" deja)
+- §36.76 Sprint UI 6 UX LOCKED (post-rebrand re-spec needed)
+- §36.77 Slip log + anti-recurrence rule (Bugatti paradigm validated)
+- §36.78 Rebrand Sweep Phase 1-4 Complete (acest raport)
+- VAULT_RULES §BATCH_PROTOCOL.X (single LATEST.md final centralizat — pattern aplicat)
+
+---
+
+*Generat 2026-05-03 evening per §30 + §36.74 single centralized report rule. Phase 1-4 autonomous CC Opus complete. Phase 5 = vault SSOT update + LATEST + commit final + push origin/main. Daniel manual steps documented (~30 min) → GitHub repo rename + DNS Namecheap + Pages activation. Next strategic chat: re-spec 7 BATCH_UI_NN vanilla JS pattern (Path A per §36.77) post repo rename complete.*
