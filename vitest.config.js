@@ -14,5 +14,22 @@ export default defineConfig({
       threads: { execArgv },
       forks: { execArgv },
     },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'html'],
+      reportsDirectory: './coverage',
+      exclude: [
+        'node_modules/**',
+        'src/__tests__/**',
+        'src/**/*.test.js',
+        'src/**/*.spec.js',
+        'src/**/__tests__/**',
+        'src/**/__snapshots__/**',
+        'dist/**',
+        'tests/**',
+        'coverage/**',
+        '**/*.config.js',
+      ],
+    },
   }
 });

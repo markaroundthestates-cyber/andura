@@ -12,3 +12,6 @@ docs/AUDIT_BULLETPROOF_*.md
 
 # Playwright test artifacts (auto-generated, not source)
 test-results/
+
+# Vitest coverage reports (auto-generated, not source)
+coverage/
