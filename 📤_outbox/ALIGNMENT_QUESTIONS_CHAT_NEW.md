@@ -1,327 +1,194 @@
-# ALIGNMENT QUESTIONS — Chat E PHASE B WORDING LOCK Ingest
+# ALIGNMENT QUESTIONS — Sprint 4.x Cluster Execution Ingest
 
-**Generat:** 2026-05-02 post Chat E PHASE B WORDING LOCK ingest  
-**Sursă:** `📤_outbox/_archive/2026-05/69_HANDOVER_INPUT_CONSUMED_2026-05-02_chat_E_phase_b_wording_lock.md`  
+**Generat:** 2026-05-02 post Sprint 4.x cluster autonomous execution ingest  
+**Sursă:** `📤_outbox/_archive/2026-05/83_HANDOVER_UPDATE_POST_SPRINT_4X_CONSUMED.md`  
 **Per:** PROMPT_CC_HYGIENE.md §9 ALIGNMENT_QUESTIONS_POST_INGEST_MANDATORY  
-**Scop:** verificare zero-info-loss + alignment Daniel pre Sprint 4.x cluster integration
+**Scop:** verificare zero-info-loss + alignment Daniel pre next strategic chat (3 ADR drafts review + §BATCH_PROTOCOL codification)
 
 ---
 
 ## §1 INGEST SCOPE — RECAP
 
-**Ingestat (1 decizie NEW + 1 amendment inline + 2 ADR amendments):**
+**Ingestat (status report — pure execution, ZERO decizii noi):**
 
-- §36.58 NEW Phase B Wording 51 Strings LOCKED V1 (5 module engine + 2 placeholders)
-- §36.57 §AMENDMENT inline (count 35 → 51 actual)
-- ADR_MODE_DETECTION_UI_v1 EXT-4 §AMENDMENT 2026-05-02 Chat E (PROFILE_VALIDATION wording final)
-- ADR_OUTLIER_FILTER_v1 EXT-2 §AMENDMENT 2026-05-02 Chat E (GOAL_SHIFT wording final)
-- EOF session-lock entry "Sesiune 2026-05-02 Chat E PHASE B WORDING LOCK"
+- Sprint 4.x cluster execution stats (5 batches sequential fail-fast strict)
+- 5 commits hash: BATCH_01 `7302950` + BATCH_02 `e23c9cb` + BATCH_03 `6d24462` + BATCH_04 `ecb04f7` + BATCH_05 `8a91e34`
+- Tests delta: 1110→1174 PASS (+64), test files 65→73
+- Production gate cleared (0 PHASE_B flags)
+- 3 NEW ADR drafts pending Daniel review pre-LOCK
+- 5 carry-overs flagged HONEST
+- §BATCH_PROTOCOL pilot validation result
 
-**Cumulative LOCKED count post Chat E:** **54** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E)
+**Cumulative LOCKED count:** **56** (UNCHANGED — Sprint 4.x = pure execution, NU adaugă decizii)
 
----
-
-## §2 ÎNTREBĂRI ALINIERE — VERIFICARE WORDING LOCK V1
-
-### Q1 — fatigue.js HIGH_FATIGUE label
-
-**Citation §36.58 — fatigue.js verdicte LOCKED V1:**  
-> `HIGH_FATIGUE` → label "**Azi mergem mai blând**" + detail "Au fost câteva sesiuni grele recent. Volumul este calibrat mai conservator pentru o recuperare completă."
-
-**Q1:** Confirmi că wording label HIGH_FATIGUE este FINAL `"Azi mergem mai blând"` (sentence case + voice plural + reframing pozitiv recovery), NU variante anterioare considerate "Reducem volumul azi" / "Recuperare necesară" / "Volumul scăzut"?
-
-→ Dacă DA: Sprint 4.x cluster va replace `src/engine/fatigue.js` HIGH_FATIGUE label literal cu acest string.  
-→ Dacă NU: indică wording corect + cross-ref §36.58 amendment necesar.
+EOF session-lock entry "Sesiune 2026-05-02 Sprint 4.x CLUSTER EXECUTION" appended la HANDOVER_GLOBAL.
 
 ---
 
-### Q2 — dp.js Intensity 🟠 RIR exception (Q26.bis)
+## §2 ÎNTREBĂRI ALINIERE — ADR DRAFTS NEW (3) review
 
-**Citation §36.58 — dp.js Intensity labels RIR gauge LOCKED V1:**
-> `INTENSITY_LIMIT` 🔴 La limită (0-1 reps în rezervă)  
-> `INTENSITY_HEAVY` 🟠 Greu (1-2 reps în rezervă)  
-> `INTENSITY_CHALLENGING` 🟡 Provocator (2-3 reps în rezervă)  
-> `INTENSITY_COMFORTABLE` 🟢 Confortabil (3+ reps în rezervă)
+### Q1 — ADR_COMPOSITE_SIGNAL_LAYER_v1 LOCK V1
 
-**Push-back Claude integrat #5:** "🟠 RIR excepție justificată — RIR gauge 4 niveluri logic distincte (NU tutorial-style noise)"
+**Citation §36.41 + ADR draft `03-decisions/ADR_COMPOSITE_SIGNAL_LAYER_v1.md`:**
+- 3/3 simultaneous threshold (Performance Drop >15% + Rest Time >1.5x + RIR Mismatch ≥2)
+- Lifecycle: idle → flagged → cooldown 3 sesiuni → resolving → idle after 2 clean
+- Layer D budget ≤50ms (Cascade Defense integration)
 
-**Q2:** Confirmi că **excepția 🟠 (orange)** este permisă **DOAR** pentru RIR gauge 4-tier intensity (4 niveluri logic distincte gym universal) — restul aplicației menține constraint emoji 🔴🟡🟢 strict per Q2 + Q26.bis lock?
+**Q1:** Confirmi că **3/3 threshold + lifecycle 3 cooldown / 2 resolving** sunt LOCKED V1 acceptabile, sau există ambiguity rămasă din Chat C original §36.41 push-back-uri (e.g., 50% scor cumulative arbitrary RESPINS NU 3/3)?
 
-→ Dacă DA: Filter Bugatti regula 8 modificată să accepte 🟠 doar la RIR gauge.  
-→ Dacă NU: indică alt context legitimat (sau RESPINS exception → revert la 🟡 Greu).
-
----
-
-### Q3 — dp.js TECHNIQUE_DROP_SET notation simetric
-
-**Citation §36.58 — dp.js TECHNIQUE_DROP_SET LOCKED V1:**
-> `TECHNIQUE_DROP_SET` → label "🟡 Drop set la final" + note "Stagnare lungă · Drop set pe ultimul: −30% greutate pentru a sparge platoul"
-
-**Push-back Claude integrat #4:** "Q24 −30% greutate notation FORCED — simetric cu format `${lastW} kg → ${newKg} kg` din alte note"
-
-**Q3:** Confirmi că notation `−30% greutate` (procent direct, NU `${lastW} × 0.7`) este intenționat — simetric cu format notation procent în restul appului (e.g. progress notes), aliniat cu vocabular gym RO ("drop set −30%" = limbaj coach uman natural)?
-
-→ Dacă DA: Sprint 4.x replace literal "−30% greutate" în source.  
-→ Dacă NU: indică notation preferat (`${dropKg} kg` calcul explicit pop-up?).
+→ Dacă DA: ADR LOCK V1, Sprint UI Integration consume thresholds din `COMPOSITE_SIGNAL_THRESHOLDS` constant exposed.  
+→ Dacă NU: indică amendment necesar (e.g., 4-th metric pentru false positive rate <5%, sau threshold tuning).
 
 ---
 
-### Q4 — dp.js verdicte progresie 11 strings (NU 10)
+### Q2 — ADR_PAIN_DISCOMFORT_BUTTON_v1 LOCK V1
 
-**Citation §36.58 — dp.js verdicte progresie tabel:**  
-Tabel listează **11 verdicte** (INITIAL_START / SCALE_BACK / PEAK_LIMIT / CAP_REPS / TOO_HEAVY / CONSOLIDATE / INCREASE / STAGNANT_PLUS_SET / MAINTAIN_CUT / TECHNIQUE_DROP_SET / **ON_TARGET**)
+**Citation §36.38 + ADR draft `03-decisions/ADR_PAIN_DISCOMFORT_BUTTON_v1.md`:**
+- 3 PAIN_OPTIONS: discomfort_general / discomfort_specific / doms_severe
+- Wording LOCKED V1: "Mișcarea mă deranjează" / "Simt o tensiune ciudată" / "DOMS sever"
+- ZERO medical claim per F2 SUFLET + Gigel test
+- Override CDL flag `user_override_pain_redflag` pentru audit, NU blocking
 
-**Total dp.js summary §36.58:** "20 strings (10 verdicte progresie + 4 intensity RIR + 2 in-session adjust + 4 start verdicte)"
+**Q2:** Confirmi wording 3 options LOCKED V1 + override pattern? Sub-question: **`doms_severe` technical term** — păstrăm DOMS în UI sau hide behind "Mai multe opțiuni" expandable pentru cohorts cold_start (Maria 65 NU înțelege DOMS)?
 
-**Q4:** Există discrepanță count: 10 (header summary) vs 11 (tabel)? `ON_TARGET` se numără sau NU în categoria "verdicte progresie"?
-
-**Hypothesis:** ON_TARGET = state neutru (continuare normal), NU tranziție progresivă → 10 + ON_TARGET separat = 11 total dp.js verdicte. Dar în counting summary 10 + 4 + 2 + 4 = **20** se confirmă (deci 11 verdicte categorical → 10 verdicte tranziție + 1 stare neutră).
-
-→ Confirmi count actual dp.js = **20 strings totale** (cu ON_TARGET inclus în "10 verdicte" categorical NU expandabil), sau dp.js = 21 (ON_TARGET extra, total cumulative ar deveni **52** NU 51)?
-
----
-
-### Q5 — reality.js PROGRESS_PLATEAU + PROGRESS_TOO_FAST tone
-
-**Citation §36.58 — reality.js LOCKED V1:**
-> `PROGRESS_PLATEAU` → "Greutatea nu a scăzut în ultimele 7 zile. Hai să vedem ce putem ajusta în strategie."  
-> `PROGRESS_TOO_FAST` → "Slăbim un pic prea repede și riscăm să pierdem din masa musculară. Hai să creștem temporar aportul la ${suggestedKcal} kcal pentru a ne proteja progresul."
-
-**Note divergence:** PROGRESS_PLATEAU + PROGRESS_TOO_FAST folosesc construcție **"Hai să..."** (invitație colaborativă, ton cald) vs alte note reality.js (`PROGRESS_TOO_SLOW` = "Verificăm aportul..." voice plural + verb dat / `PROGRESS_ON_TRACK` = "Suntem în ritmul... Menținem...").
-
-**Q5:** Confirmi că divergența "Hai să..." (PLATEAU + TOO_FAST) vs "Verificăm/Menținem..." (TOO_SLOW + ON_TRACK) este **intenționată** — moments emotional sensibile (platou + slăbire prea rapidă) primesc invitație colaborativă warm, vs status routine voice plural neutră?
-
-→ Dacă DA: pattern emotional-sensitive vs routine context.  
-→ Dacă NU: armonizare → toate "Verificăm/Menținem/..." pluraliste neutru?
+→ Dacă LOCK V1: ADR LOCKED, Sprint UI Integration creates 3-button card.  
+→ Dacă DOMS hide: amendment EXT-1 — visibility tier-aware (DOMS visible DOAR T2+ users sau "Mai multe opțiuni" expand).
 
 ---
 
-### Q6 — sys.js phase RO native vs ENG (CUT/BULK)
+### Q3 — ADR_SMART_ROUTING_EQUIPMENT_v1 LOCK V1
 
-**Citation §36.58 — sys.js phase timeline LOCKED V1:**
-> `PHASE_CUT_TO_SUMMER` → "Definire până la vară"  
-> `PHASE_SUMMER_PEAK` → "Vară peak (menținere)"  
-> `PHASE_BULK_AUTUMN` → "Creștere (toamnă-iarnă)"  
-> `PHASE_CUT_PRE_SUMMER` → "Definire pre-vară"
+**Citation §36.37 + ADR draft `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1.md`:**
+- Tier 1 forță: alternatives DOAR cu `force_demand: 'high'` (strict)
+- Tier 2/3: muscle_target_primary match (flexibility ridicată)
+- Anti-paternalism skip dacă zero valid alternatives
+- Similarity ranking: muscle_target +3, force_demand +2, equipment_type +1
 
-**Note:** key tehnică păstrează ENG (CUT/BULK) PER §27 evening lock + §36.58 regula 9 phase RO native (CUT→definire / BULK→creștere / MAINTENANCE→menținere).
+**Q3:** Confirmi tier-aware filtering rules LOCKED V1 + similarity ranking weights (3/2/1)?
 
-**Q6:** Confirmi că **separarea key-tehnică-ENG vs label-display-RO** este corect arhitectural — code internal păstrează `PHASE_CUT_TO_SUMMER` / `PHASE_BULK_AUTUMN` (universal jargon dev), DAR display-ul user vede DOAR RO ("Definire" / "Creștere")?
-
-→ Dacă DA: Sprint 4.x păstrează PHASE_* keys ENG + replace DOAR display labels cu RO.  
-→ Dacă NU: rename complet PHASE_DEFINIRE_VARA / PHASE_CRESTERE_TOAMNA?
-
-**Sub-Q6.bis:** PHASE_SUMMER_PEAK păstrează cuvântul "**peak**" inline (ENG hibrid în RO display) — confirmi peak = naturalizat în context fitness RO (similar "reps")? Sau înlocuit cu "vârf" / "menținere maxim"?
+→ Dacă LOCK V1: ADR LOCKED, Sprint UI Integration consume `findAlternatives()` direct.  
+→ Dacă NU: amendment — alternative ranking algorithm (e.g., add `equipment_alternatives` direct over similarity scoring), sau tier 2/3 stricter rules.
 
 ---
 
-### Q7 — calibration.js maturity tier coverage incomplet
+## §3 ÎNTREBĂRI ALINIERE — CARRY-OVERS PRIORITY
 
-**Citation §36.58 — calibration.js banner texts LOCKED V1:**
-> COLD_START (sesiuni 0-2) / INITIAL (3-5) / DEVELOPING (6-11) / PERSONALIZING (12-40)
+### Q4 — UI Integration Sprint scope confirmation
 
-**Note §36.58:** "PERSONALIZED + OPTIMIZED tiers păstrează `bannerText: null` (transparent UI), corect per maturity assumption."
+**Citation handover §1 carry-over:**
+> "Sprint UI Integration deferred (~6-10h Opus estimate)" — Suflet Andura wiring + Bias Detection signals plumbing + 3 Card buttons + Goal Shift card + PROMPT_PROFILE_VALIDATION UI render + Founding cap counter UI + Telegram CTA
 
-**Q7:** Confirmi că **5/6 tiers** (post Blocker 3 §34.3 refactor 5→6 tiers din migrare deja shipped) NU primesc banner — DOAR primele 4 tiers active (COLD_START + INITIAL + DEVELOPING + PERSONALIZING) au banner, restul (PERSONALIZED + OPTIMIZED) au `bannerText: null` transparent?
+**Q4:** Confirmi că **Sprint UI Integration = next batch dedicated** (NOT inline cu next strategic chat sau alte batches), launched DOAR post-3-ADR-LOCK + Daniel solo carry-overs (Firebase Auth + DB rules) finalized?
 
-→ Dacă DA: Sprint 4.x va implementa logic `tier.bannerText !== null` check pre-render banner.  
-→ Dacă NU: indică banner text necesar pentru PERSONALIZED + OPTIMIZED.
-
----
-
-### Q8 — PROMPT_PROFILE_VALIDATION_PLACEHOLDER schema change
-
-**Citation §36.58 + ADR_MODE_DETECTION_UI_v1 §AMENDMENT 2026-05-02 Chat E:**
-```javascript
-{
-  id: "profile_validation_drift_prompt",
-  title: "Ajustăm modul de afișare a instrucțiunilor?",
-  body: "...",
-  buttons: { confirm: "Da, schimbă", cancel: "Nu, lasă așa" },
-  status: "LOCKED V1 — production ready"
-}
-```
-
-**Schema evolution detected:**
-- **Pre-Chat E** (Chat D EXT-4 placeholder): `{ id, text, buttons, status }`
-- **Post-Chat E** (LOCKED V1): `{ id, title, body, buttons, status }` — NEW separate fields **title + body** (NU monolithic `text`)
-
-**Q8:** Confirmi că schema split `text` → `title + body` este **intenționat** — UI render va folosi title ca header bold + body ca paragraf detail (similar pattern modal alert standard mobile)?
-
-→ Dacă DA: Sprint 4.x cluster crează component dedicated `<ProfileValidationPrompt title body buttons />` cu render distinct title/body.  
-→ Dacă NU: revert la monolithic text + structurat intern \n separator.
+→ Dacă DA: Sprint UI Integration prompt va aștepta gate-uri ADR LOCK + Firebase Auth setup live.  
+→ Dacă NU: parallel execution OK — generare prompt acum + Daniel decide când launch.
 
 ---
 
-### Q9 — GOAL_SHIFT_CALIBRATION_PLACEHOLDER subText
+### Q5 — §BATCH_PROTOCOL codification timing
 
-**Citation §36.58 + ADR_OUTLIER_FILTER_v1 §AMENDMENT 2026-05-02 Chat E:**
-```javascript
-{
-  id: "goal_shift_calibration_notice",
-  title: "Recalibrăm pe noul obiectiv",
-  body: "Primele 2 sesiuni sunt de calibrare · Estimăm ${minKg}-${maxKg} kg × ${reps} reps, ajustăm după ce avem date",
-  subText: "Sesiunea ${current}/2",
-  status: "LOCKED V1 — production ready"
-}
-```
+**Citation handover §BATCH_PROTOCOL pilot — VALIDAT:**
+> "Pattern locked verbal Chat E (fail-fast strict + strict disjuncte + naming alfabetic + zero gate + model în header) = probat real cu Sprint 4.x cluster, zero errors. Codificare formală în VAULT_RULES.md §BATCH_PROTOCOL = next chat strategic"
 
-**NEW field `subText`:**
-- subText = "Sesiunea ${current}/2" (counter live progression 1/2 sau 2/2 după sesiune curentă)
+**Q5:** Confirmi că **§BATCH_PROTOCOL codification în VAULT_RULES.md** trebuie **next strategic chat** (înainte de orice alt batch nou), NU defer la post-Sprint UI? Rationale: pattern este validat dar zero documentation = re-discovery effort în viitor.
 
-**Q9:** Confirmi că subText = counter live "Sesiunea ${current}/2" e display **secondary** (font mai mic / culoare mai pală) sub body principal — visual hierarchy: title (bold) > body (paragraf) > subText (caption)?
-
-→ Dacă DA: Sprint 4.x cluster implementează 3-tier visual hierarchy.  
-→ Dacă NU: subText = inline parte din body (no visual distinction)?
+→ Dacă DA: next chat agenda = ADR drafts review (~30min) + §BATCH_PROTOCOL codification (~15min). Total ~45min strategic.  
+→ Dacă defer: §BATCH_PROTOCOL rămâne tacit knowledge până la next batch trigger.
 
 ---
 
-### Q10 — Per-set normalization vs in-session adjust pop-up consistency
+### Q6 — Manual exercise metadata audit priority
 
-**Citation §36.58 — dp.js IN_SESSION_DOWN/UP:**
-> `IN_SESSION_DOWN` → "Greutatea este prea mare · Trecem la ${newKg} kg pentru următorul set"  
-> `IN_SESSION_UP` → "Două seturi prea ușoare · Urcăm la ${newKg} kg pentru următorul set"
+**Citation handover §3 carry-over:**
+> "Manual exercise metadata audit (~2-3h backlog) — EXERCISE_METADATA conservative defaults pentru 26 exerciții"
 
-**Note divergence:** IN_SESSION_UP folosește "**Două seturi**" (numeric explicit count), vs IN_SESSION_DOWN fără count.
+**Q6:** Confirmi că **audit = backlog Sprint UI Integration sau ulterior** (NOT immediate — defaults sunt conservatoare safe pentru pilot Beta)? Sau există exerciții specifice cu metadata greșită care blochează Sprint UI?
 
-**Q10:** Asymmetria UP-2-seturi vs DOWN-zero-count este intenționată per logic engine: DP coboară kg după **1 set fail** (single-set trigger), DAR urcă DOAR după **2 seturi consecutive ușoare** (anti-aggressive bump 2-set confirmation), per §36.48 per-set normalization Chat C?
-
-→ Dacă DA: wording reflectă logic engine corect.  
-→ Dacă NU: armonizare wording (ambele cu count, sau ambele fără)?
+→ Dacă backlog: defer Beta cohort feedback → tighten metadata post-data.  
+→ Dacă immediate: indică exerciții problematice + audit întâi.
 
 ---
 
-## §3 ÎNTREBĂRI ALINIERE — INVENTORY + COVERAGE
+### Q7 — Golden Master tests scope
 
-### Q11 — §36.57 inventory amendment confirmation
+**Citation handover §4 carry-over:**
+> "Golden Master tests (~1h follow-up batch) — spec'd în BATCH_02 dar deferred. Existing test suite covers regression boundaries."
 
-**Citation §36.57 §AMENDMENT 2026-05-02 Chat E:**
-> "Phase B scope actual count = **51 strings cumulative** (NU 35), discovered în review chat strategic Chat E. Diferența 16 strings: §25 outdated inventory NU acoperă intensity labels (4) + technique descs (2) + start rationales (4) + phase timeline labels (4) + checkpoint sub-labels (1) + tempo notes (1 inflated estimate)."
+**Q7:** Confirmi că **Golden Master tests batch dedicated ~1h post Sprint UI** (mai eficient să ai întâi UI integrations apoi snapshot Golden Master complete) sau înainte (înghețare wording 51 strings + foundation modules pentru protection silent drift)?
 
-**Q11:** Confirmi că **§25 wording remaining inventory** (referință în session-lock entries anterioare) trebuie marcat **DEPRECATED** sau **§AMENDMENT-ed** explicit cu cross-ref la §36.58 51-string LOCKED master?
-
-→ Dacă DA: vault sweep CC adaugă §AMENDMENT inline §25 marker.  
-→ Dacă NU: §25 rămâne istoric record + §36.58 = current SSOT (audit trail preserved).
+→ Dacă post-UI: Golden Master = final QA gate pre-Beta.  
+→ Dacă pre-UI: Golden Master = guard-rail pentru UI integration changes (recomandat pattern industry).
 
 ---
 
-### Q12 — Wording NU acoperit în §36.58 (gap detection)
+## §4 ÎNTREBĂRI ALINIERE — HYGIENE
 
-**Possibly missing din §36.58:**
+### Q8 — Q4 dp.js cosmetic count discrepancy fix
 
-- Onboarding T0/T1+ welcome screens (§36.22 + §36.44 + §36.45)
-- Setări → Profil & Date buton labels ("Schimbă obiectiv" / "Resetează profil" §36.34 + §36.35)
-- Storage Full UX 3 buttons (§33 NEW Exportă / Cloud Pro / Închide)
-- F-NEW-1 6 traduceri exerciții (Romanian Deadlift → Îndreptări (RDL) etc.)
-- Pricing tier card labels (€39 Founding / €59 Standard / €79 Elite §36.50)
-- Telegram channel CTA (§36.53 + §36.54)
-- GDPR consent screen (§36.55 vizual tutorial)
+**Citation handover §Next chat strategic — primary tasks:**
+> "Eventual: Q4 dp.js cosmetic count discrepancy fix (10 verdicte vs 11 ON_TARGET)"
 
-**Q12:** Confirmi că wording-uri PESTE Phase B engine-level (T0/T1+ onboarding + Setări + Storage Full + Pricing + Telegram + GDPR + F-NEW-1 traduceri) sunt **OUT OF SCOPE Chat E** — covered de **Phase A** (UI navigation labels) sau **Phase C** (commercial + onboarding + admin flows) — și vor primi separat decizii LOCK V1 ulterior?
+**Refresh:** §36.58 inventory listează 10 verdicte categorical + ON_TARGET ca 11-th state neutră — confirmat în Chat E ALIGNMENT_QUESTIONS Q4 ca **11 verdicte categorical totale (10 tranziție + 1 ON_TARGET state)**, dp.js summary count rămâne **20 strings** (acceptat).
 
-→ Dacă DA: Phase B = strict ENGINE module-level wording (5 module: fatigue/dp/reality/sys/calibration + 2 placeholders).  
-→ Dacă NU: indică wording-uri care DEVE fi în Phase B + fac parte din 51 strings actual count vs missing.
+**Q8:** Confirmi că **fix-ul cosmetic = NOT necessary** (Chat E Q4 deja resolved categoric: 11 verdicte = 10 tranziție + 1 stare neutră, count summary 20 dp.js strings rămâne consistent)? Sau există documentation refresh ne-aplicat?
+
+→ Dacă NOT necessary: scoate din next chat agenda.  
+→ Dacă refresh: indică unde (e.g., session-lock entry §36.58 inline amendment).
 
 ---
 
-### Q13 — push-back-uri Claude — Q47 "Consolidăm" orfan
+### Q9 — SPRINT_4X_FINAL_REPORT.md status
 
-**Citation §36.58 push-back #10:**
-> "Q47 'Consolidăm' orfan ambiguu RESPINS — 'Continuăm' specific contextului EXACT_MATCH start"
+**Citation acest ingest:**
+> Final consolidated report: `📤_outbox/SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
 
-**Wording final §36.58:**
-> `START_EXACT_MATCH` → "🟡 **Continuăm** | Pornim de la ultima sesiune: ${weight} kg"
+**Q9:** Confirmi că **`SPRINT_4X_FINAL_REPORT.md` = read-only consolidated reference** (păstrat în `📤_outbox/` dar NU rotated la archive precum LATEST), pentru future-reference cluster snapshot? Or should it move la `06-sessions-log/` ca formal session record?
 
-**Discrepancy:** dp.js verdicte progresie include `CONSOLIDATE` → "🟡 **Consolidăm reps** | Ultima dată: ${lastW} kg × ${lastReps} reps. Țintim ${targetReps} astăzi."
-
-**Q13:** Confirmi că **"Consolidăm" rămâne valid** în context CONSOLIDATE verdict (specific = consolidare reps stagnante 3 sesiuni at maintenance kg) — DAR a fost RESPINS doar pentru START_EXACT_MATCH (unde "Continuăm" = continuare straight-line, NU consolidation)?
-
-→ Dacă DA: "Consolidăm" + "Continuăm" coexist semantic distinct.  
-→ Dacă NU: revert "Consolidăm reps" → alt verb (ex. "Menținem reps")?
+→ Dacă păstrat în outbox: rămâne accessible pentru spot-check + cross-ref din alte ingests.  
+→ Dacă mutat la sessions-log: formal record alături de HANDOVER_GLOBAL.
 
 ---
 
-## §4 ÎNTREBĂRI ALINIERE — SPRINT 4.x INTEGRATION READINESS
+### Q10 — VAULT_RULES.md §BATCH_PROTOCOL draft scope
 
-### Q14 — Production gate path post-Chat E
+**Anticipating Q5 = DA:** §BATCH_PROTOCOL codification next strategic chat va include:
+- Naming convention: `PROMPT_CC_<CONTEXT>_BATCH_<NN>_<SCOPE>.md` (alfabetic ordered)
+- Header obligatoriu: Model + Order + Dependencies + Scope
+- Strict disjuncte (zero shared touch-points între batches)
+- Fail-fast strict (stop on first error — NU continue with degraded scope)
+- Zero gate principle (each batch self-contained, NU dependent runtime gate from another)
+- Sequential auto-trigger via VAULT_RULES §BATCH_PROTOCOL flow
+- Final batch convention: append cumulative cluster summary în LATEST
 
-**Citation §36.58 Production Gate Lift Status:**
-> "Sprint 4.x cluster: replace placeholder strings cu wording locked V1 + remove `PHASE_B_LOCK_REQUIRED` flags  
-> Test verification: `grep -rn 'PHASE_B_LOCK_REQUIRED\|PHASE_B_WORDING_PENDING' src/` returnează ZERO matches"
+**Q10:** Confirmi scope draft codification = aceste 7 elemente, sau există elemente adiționale (e.g., archive numbering pattern, commit message format, test gate per batch)?
 
-**Source code current state:** `src/engine/fatigue.js` + `src/engine/dp.js` + `src/engine/reality.js` + `src/engine/sys.js` + `src/engine/calibration.js` au flags `PHASE_B_LOCK_REQUIRED` la string literals existing **DAR NU sunt încă create** ca module separate (existential check: doar `src/engine/prEngine.js` + `src/engine/linearBlock.js` + `src/engine/masteryMilestone.js` shipped Batch B).
-
-**Q14:** Confirmi că Sprint 4.x cluster va include **CREATE engines noi** (fatigue.js / dp.js / reality.js / sys.js / calibration.js) **+ INTEGRATE 51 strings LOCKED** ca prima ITERATIE post-ADR-LOCK — NU strict "replace strings" în engines deja existing?
-
-→ Dacă DA: Sprint 4.x batch C scope ADD 5 new engine modules creation + 51 strings integration + tests Golden Master.  
-→ Dacă NU: indică engines existing care primesc DOAR string updates (poate vechi engines în DP_OUTLIER_BATCH legacy?).
-
----
-
-### Q15 — Integration estimate impact
-
-**Citation §36.58 + Chat D session-lock entry:**
-> "Sprint 4.x cluster implementation ~18-25h Opus comprehensive ADD pricing schema (subscription_tier + founding_cap_counter + auto-close)"
-
-**Post Chat E ADD scope:**
-- 5 new engine modules creation (fatigue/dp/reality/sys/calibration)
-- 51 strings LOCKED V1 integration
-- 2 NEW placeholders (PROFILE_VALIDATION + GOAL_SHIFT_CALIBRATION)
-- production gate cleanup (remove `PHASE_B_LOCK_REQUIRED` + `PHASE_B_WORDING_PENDING`)
-- tests verification 1110/1110 + new tests
-
-**Q15:** Estimate `~18-25h Opus` rămâne valid (Phase B integration absorbed în existing scope) sau **+3-5h** pentru noile engines + tests Golden Master = total `~21-30h Opus` revised?
-
-→ Indică estimate revised pentru planning Daniel + bandwidth saturation prevention.
+→ Dacă scope = 7 elements: draft ready.  
+→ Dacă +adițional: indică elementele.
 
 ---
 
-## §5 ÎNTREBĂRI ALINIERE — PROCESS HYGIENE
+## §5 RESUMĂ — STATUS POST INGEST
 
-### Q16 — §9 ALIGNMENT_QUESTIONS_POST_INGEST_MANDATORY consistency
-
-**Citation PROMPT_CC_HYGIENE.md §9 (codified post Daniel directive 2026-05-02 SELF-CORRECTION):**
-> "MANDATORY: după FIECARE ingest handover (chat strategic LOCKED decizii) — generate `ALIGNMENT_QUESTIONS_CHAT_NEW.md` în 📤_outbox/ înainte de a marca ingest COMPLET."
-
-**Acest document = compliance §9** post Chat E ingest.
-
-**Q16:** Format întrebări (citation §X / ADR Y verifiable + 3-tier path Da/Nu/Indică) este aliniat expected — sau alt format preferat (e.g. simple yes/no list, or table format)?
-
-→ Dacă DA: pattern current = canonical pentru future ingests.  
-→ Dacă NU: indică format preferat → update §9 PROMPT_CC_HYGIENE specification.
+**Decizii cumulative:** 56 LOCKED V1 (UNCHANGED — pure execution session)  
+**ADR drafts:** 5 LOCKED V1 + 3 DRAFT V1 NEW pending review  
+**Sprint 4.x cluster:** ✅ Complete (5/5 sequential, zero errors)  
+**Tests:** 1174/1174 PASS (+64 net post-cluster)  
+**Production gate:** ✅ Cleared (0 PHASE_B flags)  
+**Foundation modules:** 13 NEW (5 schema/types + 8 engine clusters)  
+**Carry-overs deferred:** 5 honest (UI Integration ~6-10h + 4 minor)  
+**§BATCH_PROTOCOL:** Pilot validated, codification pending next strategic chat  
+**Next:** 3 ADR drafts review + §BATCH_PROTOCOL codification (~45min next chat) → Sprint UI Integration ~6-10h Opus → Beta-launch ASAP path
 
 ---
 
-### Q17 — Push-back-uri Claude integrate format
-
-**§36.58 listează 10 push-back-uri productive Claude integrate.**
-
-**Q17:** Confirmi că **push-back-uri integrate** (cu rationale "X RESPINS — Y motiv") sunt **valuable to track** în session-lock entries — NU "noise" verbose, ci audit trail pentru viitoare decizii (replicabilitate gândire) ?
-
-→ Dacă DA: pattern push-back tracking = canonical pentru future ingests.  
-→ Dacă NU: trim push-back-uri din session-lock (păstrează doar în ingest input archive).
-
----
-
-## §6 RESUMĂ — STATUS POST INGEST
-
-**Decizii cumulative:** 54 LOCKED V1 (12+11+8+14+8+1)  
-**ADR drafts:** 5 LOCKED V1 (toate review-ed Chat D §36.56 EXECUTED + Chat E inline amendments aplicate la 2)  
-**Phase B wording:** 51 strings LOCKED V1 (5 engine modules + 2 placeholders)  
-**Production gate:** **CLEARED conceptually** (wording LOCKED) — physical CI/CD lift pending Sprint 4.x source updates  
-**Tests:** 1110/1110 unchanged (vault docs only, NO source code touched Chat E ingest)  
-**Sprint 4.x cluster:** ~21-30h Opus revised (Q15 confirmation needed)  
-**Next:** Sprint 4.x cluster implementation cuprinzător → Beta-launch ASAP ready
-
----
-
-**Total întrebări aliniere:** 17 (Q1-Q17)
+**Total întrebări aliniere:** 10 (Q1-Q10)
 
 **Path forward post Daniel review:**
-- **Răspuns la toate Q-urile** (sau spot-check 5-7 majore) → align Sprint 4.x cluster scope final.
-- **Daniel solo carry-overs paralel:** Avocat barter outreach + Firebase Auth Console + DB rules publish + GDPR screenshot tutorial.
-- **CC Opus next session:** Sprint 4.x cluster implementation autonomous run ~21-30h.
+- **Răspuns la Q1-Q3** (3 ADR drafts LOCK V1 sau amend) → Sprint UI Integration UNBLOCKED.
+- **Răspuns la Q5** (§BATCH_PROTOCOL timing) → next strategic chat agenda set.
+- **Răspuns la Q4 + Q6 + Q7** (Sprint UI scope + carry-overs priority + Golden Master timing) → execution roadmap final.
+- **Q8 + Q9 + Q10** = clarifications hygiene, NOT blocking.
 
 ---
 
-*Generat 2026-05-02 post Chat E PHASE B WORDING LOCK ingest. Scope §9 PROMPT_CC_HYGIENE MANDATORY. Cross-ref: HANDOVER_GLOBAL §36.58 + ADR_MODE_DETECTION_UI_v1 EXT-4 + ADR_OUTLIER_FILTER_v1 EXT-2.*
+*Generat 2026-05-02 post Sprint 4.x cluster autonomous execution ingest. Scope §9 PROMPT_CC_HYGIENE MANDATORY. Cross-ref: HANDOVER_GLOBAL EOF Sprint 4.x entry + SPRINT_4X_FINAL_REPORT.md (commit c283a81). Pure execution session — ZERO decizii noi LOCKED, cumulative 56 unchanged.*
