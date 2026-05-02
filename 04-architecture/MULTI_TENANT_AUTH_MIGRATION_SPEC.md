@@ -365,7 +365,7 @@ Per `tests/golden-master/profiles/manual/README.md` — adăugare Sprint 3:
 - Banner UI in coach page: "Link account pentru recovery"
 - Skip button + remind later persistence
 - 14-day grace period
-- Beta cohort feedback collected via Discord
+- Beta cohort feedback collected via Telegram Group + Topics (DEPRECATED Discord 2026-05-02 Chat D — see [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.53 + §36.54 Topics structure 4 channels: #Anunțuri / #General / #Bug-Reports / #Sugestii-V1.1 + §36.55 GDPR Phone Privacy)
 
 ### Faza 3 — Sunset Anonymous post 30-day parallel (Sprint 3 task ~2h)
 
