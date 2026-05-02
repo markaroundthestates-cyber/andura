@@ -8,7 +8,7 @@
 
 ## Context
 
-SalaFull's coach calibrează decizii pe ce poate observa: logs (volum, frecvență, RPE), context derivat (readiness, fatigue), profile typing (ADR 014), AA detection (ADR 013). Toate aceste semnale sunt **comportamentale post-acțiune** — ce face user-ul, NU cum se simte user-ul în repaus.
+Andura's coach calibrează decizii pe ce poate observa: logs (volum, frecvență, RPE), context derivat (readiness, fatigue), profile typing (ADR 014), AA detection (ADR 013). Toate aceste semnale sunt **comportamentale post-acțiune** — ce face user-ul, NU cum se simte user-ul în repaus.
 
 Lipsa unei dimensiuni `state-of-being` produce concrete failures:
 

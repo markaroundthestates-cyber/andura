@@ -9,7 +9,7 @@
 
 ## Context
 
-During brand strategy discussion on 24 Apr 2026, the project documented a brand concept named "Claude AI Opus 4.7 Coach" — positioning SalaFull as a coach built on Anthropic's Opus 4.7 model. This terminology appeared in PROJECT_VISION.md, INDEX_MASTER.md, DECISION_LOG.md, and discussions.
+During brand strategy discussion on 24 Apr 2026, the project documented a brand concept named "Claude AI Opus 4.7 Coach" — positioning Andura as a coach built on Anthropic's Opus 4.7 model. This terminology appeared in PROJECT_VISION.md, INDEX_MASTER.md, DECISION_LOG.md, and discussions.
 
 On 25 Apr 2026, after legal verification of Anthropic's Consumer Terms of Service and Trademark Policy, it became clear that this naming pattern violates Anthropic's trademark policy:
 
@@ -22,7 +22,7 @@ Public use of "Claude" in product naming or marketing requires explicit written 
 
 ## Decision
 
-**SalaFull will not reference Anthropic, Claude, or any Anthropic trademark in public-facing material.**
+**Andura will not reference Anthropic, Claude, or any Anthropic trademark in public-facing material.**
 
 This includes but is not limited to:
 - Product name and tagline
@@ -33,7 +33,7 @@ This includes but is not limited to:
 - Social media presence
 - Any user-visible UI text
 
-**Public brand name:** SalaFull (or successor name TBD pre-launch).
+**Public brand name:** Andura (or successor name TBD pre-launch).
 
 **Public technology positioning:** Generic AI terminology ("AI coaching engine", "advanced AI personalization") without vendor attribution.
 
@@ -45,9 +45,9 @@ The following technical references remain acceptable in their respective context
 
 1. **Internal documentation** (vault, ADRs, technical specs): Anthropic and Claude can be referenced factually for technical accuracy. Examples: "uses Claude API for X feature", "Opus 4.7 is the model behind reasoning step Y". Internal docs are not public-facing.
 
-2. **Privacy Policy and Terms of Service** (legal disclosure): Factual disclosure of vendors used, in compliance with GDPR and CCPA transparency requirements. Example: "SalaFull uses Anthropic's Claude API to generate personalized coaching recommendations." This is factual disclosure, not promotional language, and is legally required for transparency.
+2. **Privacy Policy and Terms of Service** (legal disclosure): Factual disclosure of vendors used, in compliance with GDPR and CCPA transparency requirements. Example: "Andura uses Anthropic's Claude API to generate personalized coaching recommendations." This is factual disclosure, not promotional language, and is legally required for transparency.
 
-3. **Editorial/journalistic context**: If a journalist or technical blogger writes about SalaFull's tech stack, they can reference Anthropic. We do not control third-party editorial content.
+3. **Editorial/journalistic context**: If a journalist or technical blogger writes about Andura's tech stack, they can reference Anthropic. We do not control third-party editorial content.
 
 4. **Code comments and source code**: Internal references to library names, model identifiers (e.g., `model: "claude-opus-4-7"`) are technical implementation details, not public branding.
 
@@ -68,7 +68,7 @@ The following technical references remain acceptable in their respective context
 
 This decision is not just defensive. It carries forward-compatibility benefits:
 
-1. **Vendor independence**: If we change AI backend in future (e.g., Mythos-class model when generally available, or a competing provider for cost reasons), the brand does not break. Users know "SalaFull AI Coach", not "Claude Coach".
+1. **Vendor independence**: If we change AI backend in future (e.g., Mythos-class model when generally available, or a competing provider for cost reasons), the brand does not break. Users know "Andura AI Coach", not "Claude Coach".
 
 2. **Differentiation**: We sell outcomes (transformation, contextual coaching, persistent memory), not implementation details. This is healthier positioning than vendor-tied marketing.
 
@@ -100,7 +100,7 @@ Future enforcement:
 This decision should be revisited if any of the following occur:
 
 1. Anthropic explicitly grants written permission to use their trademark in our context
-2. SalaFull joins an official Anthropic partner program with brand usage rights
+2. Andura joins an official Anthropic partner program with brand usage rights
 3. Anthropic releases a brand attribution program for builders (e.g., a "Built on Claude" official badge program with terms)
 4. Legal counsel advises that our specific use case falls under nominative fair use (unlikely for a product brand)
 

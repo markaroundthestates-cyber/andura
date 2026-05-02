@@ -1,4 +1,4 @@
-# PRODUCT STRATEGY SPEC v1 — SalaFull
+# PRODUCT STRATEGY SPEC v1 — Andura
 
 **Status:** DRAFT spec ready pentru ADR formal write
 **Date:** 2026-04-28 NIGHT
@@ -12,7 +12,7 @@
 
 ## CONTEXT
 
-Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separate document). Acest spec acoperă **product strategy + UX + business operations + edge cases + future scale** pentru SalaFull v1.0 launch.
+Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separate document). Acest spec acoperă **product strategy + UX + business operations + edge cases + future scale** pentru Andura v1.0 launch.
 
 **Filosofie permanentă:** Bugatti paradigm. "Lux discret. Singurul antrenor AI care gândește ca un om." NU rețea socială. NU gamification ieftină. NU marketing spam. Quality > velocity. Timeline 2-3 ani.
 
@@ -79,12 +79,12 @@ Sesiune NIGHT 2026-04-28 a articulat cognitive architecture core (Spec v1, separ
 **Vs alte agende digitale:**
 - Strong/Hevy = "agende digitale" (dumb logging)
 - Fitbod = "algoritm rigid" (monolit)
-- **SalaFull = singurul Cognitive AI Coach care arbitrează istoric vs prezent + 5 axe execution superior**
+- **Andura = singurul Cognitive AI Coach care arbitrează istoric vs prezent + 5 axe execution superior**
 
 ### 1.6 USP (1 sentence)
 > **"Singurul antrenor AI care gândește ca un om: îți știe istoricul, îți citește oboseala de azi și arbitrează antrenamentul perfect în timp real."**
 
-### 1.7 Anti-vendetă (ce NU e SalaFull)
+### 1.7 Anti-vendetă (ce NU e Andura)
 - NU rețea socială
 - Fără feed
 - Fără like-uri
@@ -172,7 +172,7 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 
 **Distincție SSOT (lock chat strategic 2026-04-29 + handover §2):**
 
-- **Nutrition logging (user input direct kcal/protein/macro tracking) = OUT_OF_SCOPE v1.** Original rationale preserved: **"SalaFull face antrenament Bugatti. NU facem nutriție Dacia."** Voice logging meals, food database, kcal counter UI, MyFitnessPal-style tracking — toate excluse v1.
+- **Nutrition logging (user input direct kcal/protein/macro tracking) = OUT_OF_SCOPE v1.** Original rationale preserved: **"Andura face antrenament Bugatti. NU facem nutriție Dacia."** Voice logging meals, food database, kcal counter UI, MyFitnessPal-style tracking — toate excluse v1.
 - **Nutrition inference (Bayesian motor pasiv din signals existente) = IN_SCOPE v1.**
 
 **Bayesian Nutrition Inference — 5-layer pattern (spec engine implementation = Sprint 4):**
@@ -284,7 +284,7 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 ## PARTEA 5 — SAFETY & LIABILITY
 
 ### 5.1 Medical disclaimer
-**Decizie:** Obligatoriu checkbox la creare cont. **"SalaFull este software, nu sfat medical. Te antrenezi pe propriul risc."**
+**Decizie:** Obligatoriu checkbox la creare cont. **"Andura este software, nu sfat medical. Te antrenezi pe propriul risc."**
 
 ### 5.2 Age minimum
 **Decizie:** **16+.** Sub 16 = creștere osoasă, necesită antrenor fizic verificare tehnică.

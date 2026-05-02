@@ -1,4 +1,4 @@
-# Scripts — SalaFull standalone tools
+# Scripts — Andura standalone tools
 
 Standalone Node.js scripts pentru validation + ops. **NU integrate cu engine.** Run-once / on-demand utilities.
 

@@ -8,7 +8,7 @@
 
 ## Context
 
-SalaFull engineul actual e construit prin **acumulare hard-coded în `coachDirector.buildSession()`**. Fiecare nouă dimensiune (calibration tier, weakGroups, stagnation, prediction, recompile, AA detection, profile typing) a fost adăugată ca:
+Andura engineul actual e construit prin **acumulare hard-coded în `coachDirector.buildSession()`**. Fiecare nouă dimensiune (calibration tier, weakGroups, stagnation, prediction, recompile, AA detection, profile typing) a fost adăugată ca:
 
 1. Un câmp nou pe `ctx` populat în `buildCoachContext()` sau direct în director.
 2. Un apel hard-coded în `coachDirector.buildSession()` (ex: `applyAAAdjustments`, `applyPatterns`, `realityEngine.validate`).
@@ -307,7 +307,7 @@ Vezi secțiunea finală.
 
 ### Implementation notes
 
-- userId în SalaFull e currently anonymized local-first (no real auth — vezi ADR 001 + ADR 011 reconsideration trigger #6). Bucket hash poate folosi `localStorage.user-id` (generated UUID at first run) sau `firebase.uid` când multi-tenant deploys.
+- userId în Andura e currently anonymized local-first (no real auth — vezi ADR 001 + ADR 011 reconsideration trigger #6). Bucket hash poate folosi `localStorage.user-id` (generated UUID at first run) sau `firebase.uid` când multi-tenant deploys.
 - Flag changes (rollout %) = cod change (export const). NU runtime-mutable. Pentru runtime A/B: read flags from Firebase config node `users/_global/featureFlags` (alt scope, viitor extension — nu v1).
 
 ---
@@ -382,7 +382,7 @@ Vezi secțiunea finală.
 
 ### Risks
 
-- **Over-engineering pentru scale curent.** SalaFull are 1 user real (Daniel) + ~80 sesiuni. Infrastructure pentru rollout 10% e overkill la N=1. Mitigation: build minimal viable infrastructure now (registry + contract + cluster mandatory; feature flags + migration runner light implementation; expand când scale demands).
+- **Over-engineering pentru scale curent.** Andura are 1 user real (Daniel) + ~80 sesiuni. Infrastructure pentru rollout 10% e overkill la N=1. Mitigation: build minimal viable infrastructure now (registry + contract + cluster mandatory; feature flags + migration runner light implementation; expand când scale demands).
 - **Dimension Contract evolution.** DimensionResult shape may itself need evolution (ex: cross-dimension dependency declaration). Mitigation: versionează contract ca aircraft engineering (ADR 018 v1, v2 ulterior dacă nevoie).
 - **Performance.** Iterating registry + chaining stages adaugă ~ms latency vs hard-coded calls. Mitigation: măsoară pre/post Faza 1 implementation. Threshold concern: > 50ms degradation pe `buildSession()`.
 
@@ -437,7 +437,7 @@ Vezi secțiunea finală.
   - Pros: enables config-driven activation (ex: feature flag toggle entire dimension via remote config), plugin marketplace future.
   - Cons: complexity overhead (registry mutation order matters), harder to audit which dimensions active la runtime, premature optimization la scale curent.
 
-**Recommendation:** A — Static array. SalaFull are 1 user și no plugin marketplace requirement. Static array e zero-cost auditable și migration la dynamic e cheap dacă/când nevoie. YAGNI clearly.
+**Recommendation:** A — Static array. Andura are 1 user și no plugin marketplace requirement. Static array e zero-cost auditable și migration la dynamic e cheap dacă/când nevoie. YAGNI clearly.
 
 **Need Daniel sign-off:** YES
 

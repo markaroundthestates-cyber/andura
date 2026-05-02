@@ -60,7 +60,7 @@ Pre-launch + permanent post-launch: **k-anonymity validation cu k=5 minim** obli
 | k=2 | Industry minim — too lax for sensitive health data |
 | k=3 | Some industries (medical research) — borderline |
 | **k=5** | **Lock SSOT** — accepted threshold pentru health data + permite ML utility while protecting users |
-| k=10 | Strict — used in adversarial environments (criminal records). Overkill SalaFull. |
+| k=10 | Strict — used in adversarial environments (criminal records). Overkill Andura. |
 
 k=5 = **EU GDPR Working Party recommendation** pentru pseudonymized health data + practice common în research consortia (UK Biobank, etc.).
 
@@ -123,7 +123,7 @@ k=5 = **EU GDPR Working Party recommendation** pentru pseudonymized health data 
 
 1. **Quasi-identifier discovery** — if user research surfaces additional re-identification vectors (e.g., specific exercise combinations rare = identifying), add la quasi-id list.
 2. **k threshold pressure** — if research consortium / regulator requires k=10+, raise threshold + add stricter mitigation.
-3. **Geographic dimension** — if SalaFull adds geo-targeting (gym recommendation, regional language), geo becomes quasi-id.
+3. **Geographic dimension** — if Andura adds geo-targeting (gym recommendation, regional language), geo becomes quasi-id.
 4. **Re-identification proven by 3rd party** — orice incident demonstrates re-id with current quasi-id list = immediate review + likely add new quasi-ids.
 
 ---

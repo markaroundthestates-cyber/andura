@@ -6,7 +6,7 @@
 
 ## Context
 
-SalaFull needs to work offline (gym environments often have poor connectivity) while also supporting data backup and potential future multi-device use.
+Andura needs to work offline (gym environments often have poor connectivity) while also supporting data backup and potential future multi-device use.
 
 ## Decision
 

@@ -1,4 +1,4 @@
-# VAULT RULES — SalaFull
+# VAULT RULES — Andura
 
 **Owner:** Daniel (CEO + Product). Claude chat = generator. Opus = igienizator.
 **Scop:** vault clean permanent. ZERO duplicate. ZERO info veche. Un singur fișier activ per topic.
@@ -8,7 +8,7 @@
 ## 1. STRUCTURĂ VAULT
 
 ```
-salafull/
+andura/
 ├── 📥_inbox/             ← Daniel uploadează aici (artefacte chat, prompts CC, drafturi)
 ├── 📤_outbox/            ← Output CC (Opus/Sonnet runs)
 │   ├── LATEST.md         ← 1 file activ — Daniel paste-uiește în chat Claude

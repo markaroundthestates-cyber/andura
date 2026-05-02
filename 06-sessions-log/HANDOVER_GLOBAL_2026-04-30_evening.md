@@ -98,7 +98,7 @@ Bootstrap solo $0 marketing. Timeline **2-4 luni pre-launch beta** (post-velocit
 - **Android: SensAI NU există**. Competitori = Fitbod ($95.99/an), JuggernautAI niche, Hevy logging, Arvo niche
 - **Zero Android competitor cu cognitive architecture full + wearable HRV + cross-pillar reasoning**
 
-**SalaFull positioning:** **"SensAI for Android"**.
+**Andura positioning:** **"SensAI for Android"**.
 - Android global ~70% market, ~75% Europe, ~85% Romania
 - iOS users await v1.x Apple HealthKit + Capacitor wrapper
 - ~~Pricing parity €65/an = no-brainer choice pe Android~~ → **Pricing sub-SensAI €59/an Standard** (DEPRECATED 2026-05-02 Chat D §36.50)
@@ -440,14 +440,14 @@ Handover narrative §0 cu instrucțiuni post-consolidare obsolete (mențiuni `99
 
 ### 8.1 Entries currently active (8 total)
 
-1. SalaFull timeline calibration: CC velocity 2-4 luni pre-launch beta (post-recalibration 5-10× faster)
-2. SalaFull pre-launch sequencing locked: Sprint 1 → 2 → 3 → 4
-3. SalaFull T&B retention 90 zile (NU forever, NU 30 zile)
-4. SalaFull anti-RE strategy = categorical universal user-facing + engine internals ASCUNSE
-5. SalaFull tier system SSOT: 2 axe ortogonale (engine_tier + calibration_confidence) + N axes future
-6. SalaFull Bayesian Nutrition + Sleep = MOTOR PASIV (zero input). Apple Health Sleep deferred v1.x
-7. SalaFull force-typing AA HIGH eliminated permanent. Backfill = automated diff 100% + 20 control samples
-8. ~~SalaFull Sprint 4 / Wave 6 backlog NEW idei JuggernautAI~~ — **DE ȘTERS** (info time-bounded, e în handover)
+1. Andura timeline calibration: CC velocity 2-4 luni pre-launch beta (post-recalibration 5-10× faster)
+2. Andura pre-launch sequencing locked: Sprint 1 → 2 → 3 → 4
+3. Andura T&B retention 90 zile (NU forever, NU 30 zile)
+4. Andura anti-RE strategy = categorical universal user-facing + engine internals ASCUNSE
+5. Andura tier system SSOT: 2 axe ortogonale (engine_tier + calibration_confidence) + N axes future
+6. Andura Bayesian Nutrition + Sleep = MOTOR PASIV (zero input). Apple Health Sleep deferred v1.x
+7. Andura force-typing AA HIGH eliminated permanent. Backfill = automated diff 100% + 20 control samples
+8. ~~Andura Sprint 4 / Wave 6 backlog NEW idei JuggernautAI~~ — **DE ȘTERS** (info time-bounded, e în handover)
 
 ### 8.2 Memory consolidation 2026-04-30 evening v2
 
@@ -487,7 +487,7 @@ Handover narrative §0 cu instrucțiuni post-consolidare obsolete (mențiuni `99
 
 **"AI = comoditate. Diferența = viziune + aspect + funcționalitate + user friendly + fool proof."** — Daniel
 
-**5 axe execution unde SalaFull poate câștiga (combinație):**
+**5 axe execution unde Andura poate câștiga (combinație):**
 1. Viziune ("oricine poate")
 2. Aspect (Bugatti craft + 3D anatomical Claude Design)
 3. Funcționalitate (7 features cognitive integrate)
@@ -2376,7 +2376,7 @@ V3+:
 ### 29.4 Decizii non-vault dinainte de sesiune (5 contextual)
 
 1. **Launch strategy:** full launch peste tot market-ul, NU hand-pick balene. Bugatti unitar matchează vision "oricine, orice categorie". Reconsider abordare — posibil înlocuit cu launch full + content marketing organic (TikTok aesthetic-glutes Gigica + r/longevity Gigel + FB Mompreneur Slăbire). Decizie finală în sesiune dedicată distribution strategy.
-2. **Slăbire majoră safety pattern LOCKED (MFP-style):** source autoritate medicală EXTERNĂ citată (NU "SalaFull recomandă") + threshold gendered conditional pe sex + engine consequence concret + user agency păstrat (soft warning + continue, NU block) + pattern reusable orice safety boundary nutrition.
+2. **Slăbire majoră safety pattern LOCKED (MFP-style):** source autoritate medicală EXTERNĂ citată (NU "Andura recomandă") + threshold gendered conditional pe sex + engine consequence concret + user agency păstrat (soft warning + continue, NU block) + pattern reusable orice safety boundary nutrition.
 3. **Legal coverage realitate:** Pattern MFP + ADR 013 SAFETY_TRIPWIRE + ToS + Privacy Policy + onboarding medical conditions = ~80-90%. Restul 10-20% = consultanță legală tech specializată RO/EU pentru ToS final + Privacy Policy specific. Cost real €500-2000 NU optional. Flag pre-launch checklist obligatoriu.
 4. **Realist rămas până la launch v1:** ~5-6 sesiuni chat strategic + plan complet ÎNAINTE execuție = unlock velocity beast Opus 24-36×.
 5. **Anthropic dependency risk ~0.1% acceptat.**
@@ -3879,7 +3879,7 @@ Engine NU modifică plan. Tag CDL `[Soreness Day Tag]` → dacă perf scade în 
 - Încalcă SUFLET F6 No-Inference (engine inventează biologie internă fără verificare empirică)
 - Validity științifică zero — cortizol salivar variază 200-400% în 24h, NU estimabil din patterns app fitness fără HRV/temp/sleep
 - Black box engine pentru user → trust breach când user observă pattern fără explicație factuală în Modul Curios (§36.32)
-- Liability risk reputațional masiv (jurnalist: "SalaFull pretinde estimează cortizol fără bloodwork")
+- Liability risk reputațional masiv (jurnalist: "Andura pretinde estimează cortizol fără bloodwork")
 
 **Soluție Înlocuire — Performance State Inference (LOCKED V1):**
 

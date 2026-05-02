@@ -1,4 +1,4 @@
-# COGNITIVE ARCHITECTURE SPEC v1 — SalaFull
+# COGNITIVE ARCHITECTURE SPEC v1 — Andura
 
 **Status:** DRAFT spec ready pentru ADR formal write
 **Date:** 2026-04-28 NIGHT
@@ -18,7 +18,7 @@
 
 ## CONTEXT
 
-SalaFull engine actual (`coachDirector.js` + 11 sub-engines) atinge limitele monolitice. Opus Nuclear Audit 25 apr a flagged God Object pattern în 4 fișiere (~1300 LOC concentrat). ADR 018 (Engine Extensibility) accepted prevede plugin dimensions DAR NU rezolvă cognitive segmentation.
+Andura engine actual (`coachDirector.js` + 11 sub-engines) atinge limitele monolitice. Opus Nuclear Audit 25 apr a flagged God Object pattern în 4 fișiere (~1300 LOC concentrat). ADR 018 (Engine Extensibility) accepted prevede plugin dimensions DAR NU rezolvă cognitive segmentation.
 
 **Daniel's vision (2026-04-28 NIGHT):**
 
@@ -418,7 +418,7 @@ Modificarea weights NU prin "adjusted weights" PR. Necesită micro-document (10 
 - Re-onboarding (6 luni pause): **Archive & Start Fresh**. Raw data păstrat background. Historical_Profile hard reset. Old istoric contribuie doar la `muscle_memory_index` (PROJECTION mai aggressive).
 
 ### Q18 — Edge Users & Liability Shield
-**Critical:** SalaFull v1.0 = NU dispozitiv medical.
+**Critical:** Andura v1.0 = NU dispozitiv medical.
 **Defensive Architecture:** Onboarding checkbox condiții medicale/sarcină → **SAFETY_TRIPWIRE_GLOBAL**.
 **Tripwire Effect:** ARBITRATOR forțat în "Passive Mode". App devine Dumb Tracker excellent. Recomandări PUSH/PROGRESSIVE OVERLOAD/PROJECTION = TĂIATE. Mesaj: "Menține-te activ, respectă sfatul medicului."
 **Zero Liability.**

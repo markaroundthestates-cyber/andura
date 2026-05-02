@@ -14,7 +14,7 @@
 ## MOAT REAL — 5 PILONI
 
 ### 1. CONTEXT PERSISTENT STRATIFICAT
-**ChatGPT uită fiecare sesiune.** SalaFull are:
+**ChatGPT uită fiecare sesiune.** Andura are:
 - **Short-term:** ultimele 4 săpt sesiuni (detaliu complet)
 - **Medium-term:** 90 zile aggregate
 - **Long-term:** arhivă forever (PR records, injuries, phase history)
@@ -49,7 +49,7 @@ ChatGPT: "ar trebui să faci X" → tu interpretezi și implementezi manual.
 - **Pattern Learning** — skip days, peak hours, early stops detected
 - **Rolling window** — 6 luni la user optimized
 
-ChatGPT învață din miliarde de useri generic. SalaFull învață din **TINE**.
+ChatGPT învață din miliarde de useri generic. Andura învață din **TINE**.
 
 ---
 
@@ -90,7 +90,7 @@ ChatGPT învață din miliarde de useri generic. SalaFull învață din **TINE**
 - Ei: 50-100€/sesiune, 2-3 sesiuni/săpt
 - Noi: 24/7, <10€/lună, memory forever
 
-**SalaFull = 1% din costul trainer uman cu 80% din valoare.**
+**Andura = 1% din costul trainer uman cu 80% din valoare.**
 
 ---
 
@@ -100,7 +100,7 @@ ChatGPT învață din miliarde de useri generic. SalaFull învață din **TINE**
 
 **AI = comoditate 2026.** SensAI, Rizin, Fitbod, Arvo, JuggernautAI = TOATE au AI. Differentiator real = **HOW you build it** pe 5 axe execution.
 
-| Axă | SensAI | Fitbod | Rizin | Arvo | JuggernautAI | SalaFull (vision) |
+| Axă | SensAI | Fitbod | Rizin | Arvo | JuggernautAI | Andura (vision) |
 |-----|--------|--------|-------|------|--------------|-------------------|
 | Viziune | iOS power users wearable | Strength training general | Multi-pillar serious | Bodybuilding methodology niche | Powerlifting niche | **Universal "oricine, min friction"** |
 | Aspect | iOS native polished dense | Functional mature generic | Integrated dashboard | Methodology-themed | Coach Smith branded | **Bugatti craft + 3D anatomical** |
@@ -108,7 +108,7 @@ ChatGPT învață din miliarde de useri generic. SalaFull învață din **TINE**
 | User friendly | Power user oriented | Mid-friendly | Complex multi-pillar | Methodology-savvy required | Powerlifter-savvy required | **Categorical universal + sub 120s onboarding** |
 | Fool proof | Wearable trust | Algorithm trust | LLM trust (hallucinate risk) | Methodology compliance | RPE accuracy required | **Reality Engine + AA Detection + anti-RE** |
 
-**Verdict:** Niciun competitor = top pe toate 5 axe. SalaFull poate câștiga TOATE 5 cu execution disciplinat.
+**Verdict:** Niciun competitor = top pe toate 5 axe. Andura poate câștiga TOATE 5 cu execution disciplinat.
 
 **Implicație pricing decision:** User pe Android NU poate alege SensAI (nu există). Alege între Fitbod (€90/an, mature brand, strength general) / Rizin (~€100-150/an, complex multi-pillar) / ~~**SalaFull (€65/an, 5-axes execution superior)**~~ → **Andura Standard €59/an, sub-SensAI €65, 5-axes execution superior** (DEPRECATED 2026-05-02 Chat D — see [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 Pricing tiers Founding €39/an cap 50 + Standard €59/an + Elite €79/an V1.1).
 
@@ -159,11 +159,11 @@ Fiecare user care rămâne = 1 an+ de date noi → moat mai adânc.
 4. Acționa automat
 5. Învăța din TINE (nu generic)
 
-**SalaFull face toate 5.**
+**Andura face toate 5.**
 
 ---
 
 ## REZUMAT
 
-**SalaFull = coach AI cu memorie + reasoning + acțiune + personalizare + trust.**  
+**Andura = coach AI cu memorie + reasoning + acțiune + personalizare + trust.**  
 **Nu e alternative la ChatGPT. E altceva complet.**

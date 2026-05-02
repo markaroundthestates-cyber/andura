@@ -9,9 +9,9 @@
 
 ## PURPOSE
 
-Each time a superior AI model becomes generally available, the entire SalaFull codebase, architecture, and decision log must be re-audited adversarially. This is non-negotiable.
+Each time a superior AI model becomes generally available, the entire Andura codebase, architecture, and decision log must be re-audited adversarially. This is non-negotiable.
 
-The goal is to prevent SalaFull from becoming a fossil — code written by an older LLM under pressure, frozen in time. New models bring better reasoning, better pattern detection, better security analysis. Without periodic audit, advantages of model improvements are lost.
+The goal is to prevent Andura from becoming a fossil — code written by an older LLM under pressure, frozen in time. New models bring better reasoning, better pattern detection, better security analysis. Without periodic audit, advantages of model improvements are lost.
 
 ---
 
@@ -84,7 +84,7 @@ Minimum 5 passes, each with distinct lens:
 - Forward compatibility (vezi FORWARD_COMPAT_PRINCIPLES)
 
 **Pass 5 — Adversarial Final**
-- Claude Code competitor analysis: "If a hostile fork attempted to copy SalaFull, what's their fastest path?"
+- Claude Code competitor analysis: "If a hostile fork attempted to copy Andura, what's their fastest path?"
 - Trust signals: "Does this code look like it would impress a senior staff engineer at Anthropic?"
 - Hidden assumptions documented in DECISION_LOG vs reality on disk
 

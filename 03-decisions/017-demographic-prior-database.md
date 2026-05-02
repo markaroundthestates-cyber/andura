@@ -8,7 +8,7 @@
 
 ## Context
 
-SalaFull's engine la cold-start (T0 COLD_START per ADR 009) operează cu signal minim: doar ce a putut user-ul oferi la onboarding (age, sex, kg, height, BMI, equipment availability) plus eventual Profile Typing self-report dacă completed (ADR 014). Engine-ul nu cunoaște user-ul personal — încă nu există behavioral data, încă nu există vitality (T2+ gated per ADR 016), încă nu există adherence patterns.
+Andura's engine la cold-start (T0 COLD_START per ADR 009) operează cu signal minim: doar ce a putut user-ul oferi la onboarding (age, sex, kg, height, BMI, equipment availability) plus eventual Profile Typing self-report dacă completed (ADR 014). Engine-ul nu cunoaște user-ul personal — încă nu există behavioral data, încă nu există vitality (T2+ gated per ADR 016), încă nu există adherence patterns.
 
 Memory rule #25 + DECISION_LOG sesiune END 27 apr articulează:
 - **T0 skip onboarding = engine generic + demographic prior din synthetic.** User care NU completează onboarding la day 1 = engine acceptabil, NU degraded mode.
@@ -17,7 +17,7 @@ Memory rule #25 + DECISION_LOG sesiune END 27 apr articulează:
 
 Trei opțiuni explorate pre-ADR 017:
 
-1. **Hardcoded defaults pe age bucket.** Pattern existing în SalaFull (cold-start session per ADR 009 cu reps mid-range, weights conservative). Limitare: 1 dimensiune (age), nu captează intersecții reale (job sedentar × stres ridicat × goal aesthetic = baseline radically different vs munca fizică × low stres × goal strength).
+1. **Hardcoded defaults pe age bucket.** Pattern existing în Andura (cold-start session per ADR 009 cu reps mid-range, weights conservative). Limitare: 1 dimensiune (age), nu captează intersecții reale (job sedentar × stres ridicat × goal aesthetic = baseline radically different vs munca fizică × low stres × goal strength).
 
 2. **Bloodwork integration.** Daniel respins explicit (DECISION_LOG 2026-04-26 + ADR 016 §context): privacy panic Gigel filter, scope creep medical, liability legal. Bloodwork DEFINITIV OUT.
 
@@ -154,7 +154,7 @@ Pur algorithmic = uniform coverage pe spațiul demographic, dar miss edge cases 
 - Combination filter: drop profile imposibile (ex: 18 ani + advanced training_history + low_active lifestyle = incoerent)
 - Seed deterministic per profile (`seed = hash(idx)`) — reproducibility test runs
 
-**Generator parametrizat:** `generateProfiles({ count: 500, manualSeed: 'salafull_v1', distribution: 'ro_population' })`. Scale-able dacă needed (count 1000, 2000) fără rewrite.
+**Generator parametrizat:** `generateProfiles({ count: 500, manualSeed: 'andura_v1', distribution: 'ro_population' })`. Scale-able dacă needed (count 1000, 2000) fără rewrite.
 
 ### DP-2: Profile mix ratio — 50/450 vs 100/400 vs full algorithmic
 
@@ -910,7 +910,7 @@ Demographic Prior = greenfield dimension build pe ADR 018 foundation:
   - Pros: empirical foundation
   - Cons: zero training data pre-launch, external datasets domain-mismatched (RO users ≠ US gym users), black-box
 
-**Recommendation:** A — rule-based + stochastic noise. Match SalaFull principle (explainable engine, NU black-box). Heuristic shape rules + noise = balanced realism + calibratability. Recalibration trigger #2 covers empirical correction post real data. ML deferred until 1000+ real user data.
+**Recommendation:** A — rule-based + stochastic noise. Match Andura principle (explainable engine, NU black-box). Heuristic shape rules + noise = balanced realism + calibratability. Recalibration trigger #2 covers empirical correction post real data. ML deferred until 1000+ real user data.
 
 **Need Daniel sign-off:** YES
 

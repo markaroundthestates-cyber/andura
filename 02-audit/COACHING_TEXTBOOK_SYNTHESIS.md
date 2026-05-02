@@ -1,4 +1,4 @@
-# COACHING TEXTBOOK vs SALAFULL — ALIGNMENT SYNTHESIS
+# COACHING TEXTBOOK vs ANDURA — ALIGNMENT SYNTHESIS
 
 **Created:** 25 Apr 2026
 **Source:** Textbook coaching personalizat (Opus, 131KB) + ENGINE_ARCHITECTURE + MOAT_STRATEGY + PROJECT_VISION
@@ -10,11 +10,11 @@
 
 ## TL;DR — Verdictul
 
-Textbook-ul descrie un coach AI ideal. SalaFull are **arhitectura corectă** pentru acest coach — director pattern, calibration tiers, semantic reasoning peste algoritmi. **Gap-urile principale nu sunt arhitectură, sunt activare și depth.**
+Textbook-ul descrie un coach AI ideal. Andura are **arhitectura corectă** pentru acest coach — director pattern, calibration tiers, semantic reasoning peste algoritmi. **Gap-urile principale nu sunt arhitectură, sunt activare și depth.**
 
 **3 mari concluzii:**
 
-1. **80% din filosofia textbook există în vision-ul SalaFull.** Termenii diferă, dar fundamentul e același — context > algoritm, semantic > syntactic, adaptive > rigid.
+1. **80% din filosofia textbook există în vision-ul Andura.** Termenii diferă, dar fundamentul e același — context > algoritm, semantic > syntactic, adaptive > rigid.
 
 2. **20% sunt pattern-uri concrete pe care textbook le articulează mai bine decât avem documentat noi** — și astea merită extrase ca features specifice.
 
@@ -26,7 +26,7 @@ Textbook-ul descrie un coach AI ideal. SalaFull are **arhitectura corectă** pen
 
 ### Filosofie de bază
 
-| Principiu | Textbook | SalaFull |
+| Principiu | Textbook | Andura |
 |---|---|---|
 | Coach urmează corpul, nu programul | Explicit articulat | "Coach-ul nu urmează program. Coach-ul urmează corpul." (PROJECT_VISION) |
 | Reasoning semantic, nu algoritm | "Coach-ul gândește, nu execută" | "Engine reasoning semantic, nu calculator if/else" (DECISION_LOG) |
@@ -40,7 +40,7 @@ Textbook-ul descrie un coach AI ideal. SalaFull are **arhitectura corectă** pen
 
 ### Capabilități arhitecturale existente
 
-Aceste pattern-uri din textbook **există ca arhitectură** în SalaFull:
+Aceste pattern-uri din textbook **există ca arhitectură** în Andura:
 
 - **Stagnation detection** → StagnationDetector (gate PERSONALIZING+)
 - **Pattern learning** → Pattern Learning engine (threshold 4 sesiuni)
@@ -65,7 +65,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 
 **Idee textbook:** dacă un exercițiu subperformează 2 sesiuni consecutive (RPE > expected sau reps < target), engine-ul îl pune automat pe pauză 1-2 săpt și propune alternativă, **fără să întrebe user-ul**.
 
-**Stare actuală SalaFull:** AA cooldown există ca infrastructură, dar e legat de RPE hardcoded 8 (DEAD per audit). Logic-ul de "subperforms 2 consecutive" nu e implementat explicit.
+**Stare actuală Andura:** AA cooldown există ca infrastructură, dar e legat de RPE hardcoded 8 (DEAD per audit). Logic-ul de "subperforms 2 consecutive" nu e implementat explicit.
 
 **Fezabilitate:** ✅ HIGH. Pure rule-based, no LLM needed. Adăugare în AA engine după ce e activat în FAZA 1.7.
 
@@ -75,11 +75,11 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 
 **Idee textbook:** când engine-ul detectează nevoia de deload, NU anunță explicit "săptămâna asta deload". În schimb, reduce volum 20-30%, păstrează greutățile la 80%, și dacă user întreabă explică. Diferența: user nu se simte "în pauză", continuă să se antreneze cu intenție, dar corpul recuperează.
 
-**Stare actuală SalaFull:** Deload există ca prioritate (95 în RuleEngine) dar e probabil flagged explicit.
+**Stare actuală Andura:** Deload există ca prioritate (95 în RuleEngine) dar e probabil flagged explicit.
 
 **Fezabilitate:** ✅ HIGH. Schimbare de prezentare, nu de logică. Update în WhyEngine: când user întreabă "de ce mai puțin volum?", explică. Altfel tace.
 
-**Trade-off conceptual:** asta intră în zona "transparency vs UX". Argument PRO: user real nu vrea jargon "deload week", vrea să se antreneze. Argument CONTRA: în SalaFull suntem trust-builders, nu manipulatori. **Decizie de UX care necesită discuție explicit.**
+**Trade-off conceptual:** asta intră în zona "transparency vs UX". Argument PRO: user real nu vrea jargon "deload week", vrea să se antreneze. Argument CONTRA: în Andura suntem trust-builders, nu manipulatori. **Decizie de UX care necesită discuție explicit.**
 
 ### C. Calorii dinamic pe context
 
@@ -88,7 +88,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 - Stres ridicat (logs sărite, readiness scăzut) → suspendă cut, propune maintenance
 - Greutate scade > 1.5 kg/săpt → flag "prea agresiv", recomandă +150 kcal
 
-**Stare actuală SalaFull:** kcal targets sunt setări semi-statice pe phase (CUT/BULK/MAINTENANCE).
+**Stare actuală Andura:** kcal targets sunt setări semi-statice pe phase (CUT/BULK/MAINTENANCE).
 
 **Fezabilitate:** ⚠️ MEDIUM. Necesită:
 - Sleep tracking (există în readiness?) — verifică
@@ -101,7 +101,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 
 **Idee textbook:** dacă user raportează RPE 9 la set 2 din 4 (expected 7-8), engine-ul **întrerupe seria recomandată** și propune scădere greutate sau încheiere exercițiu. Nu așteaptă să termine "programul" cu degradare formă.
 
-**Stare actuală SalaFull:** AA engine e DEAD per audit. Mid-session intervention nu există.
+**Stare actuală Andura:** AA engine e DEAD per audit. Mid-session intervention nu există.
 
 **Fezabilitate:** ⚠️ MEDIUM-LOW. Necesită:
 - AA engine activat real (FAZA 1.7)
@@ -117,7 +117,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 - User crește greutatea consistent 4 săpt la incline DB → flag "approaching plateau, expect stagnation in 2-3 weeks, prepare alternative"
 - Ciclu menstrual (la useri femei) → ajustează volum în săptămânile potrivite
 
-**Stare actuală SalaFull:** PredictionEngine există dar e gate-uit la pattern threshold (4 sesiuni). Nu e clar cât de profund prezice.
+**Stare actuală Andura:** PredictionEngine există dar e gate-uit la pattern threshold (4 sesiuni). Nu e clar cât de profund prezice.
 
 **Fezabilitate:** ✅ MEDIUM-HIGH. Arhitectura există, depth-ul logic poate fi extins.
 
@@ -127,7 +127,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 
 **Idee textbook:** engine-ul face self-check săptămânal: "Recomandările mele de săpt trecută au funcționat? User a confirmat? RPE actual vs predicted? Ce greșeam?"
 
-**Stare actuală SalaFull:** există ResponseProfile (învață cum răspunde user) dar nu am văzut self-audit explicit.
+**Stare actuală Andura:** există ResponseProfile (învață cum răspunde user) dar nu am văzut self-audit explicit.
 
 **Fezabilitate:** ✅ MEDIUM. E pattern de meta-learning. Necesită:
 - Storage pe predicții vechi vs realitate
@@ -140,7 +140,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 
 **Idee textbook:** dacă user nou (cold start) cere "ce să fac la sală azi?", engine-ul nu inventează. Răspunde "Nu am date suficiente. Spune-mi obiectivul tău și 2-3 sesiuni anterioare ca să încep."
 
-**Stare actuală SalaFull:** ColdStartGuidelines există ca template, dar e static. Nu e clar dacă "refuză să halucineze."
+**Stare actuală Andura:** ColdStartGuidelines există ca template, dar e static. Nu e clar dacă "refuză să halucineze."
 
 **Fezabilitate:** ✅ HIGH. E mai mult prevention pattern. Documentare clară în WhyEngine: "Calibration LOW → recomandări sunt conservative + flag explicit 'sunt în învățare'".
 
@@ -153,7 +153,7 @@ Acestea sunt pattern-uri pe care **textbook le articulează clar** și care ar �
 - Sesiunea 2 (după ce user a zis "umărul m-a deranjat"): "Cum e umărul azi?"
 - Sesiunea 3 (umăr ok 2 sesiuni la rând): nu mai întreabă, monitorizează silent
 
-**Stare actuală SalaFull:** ratingSession există dar întrebările sunt probabil statice.
+**Stare actuală Andura:** ratingSession există dar întrebările sunt probabil statice.
 
 **Fezabilitate:** ✅ MEDIUM. Necesită:
 - Storage pe topics deschise (umăr, oboseală, formă)
@@ -200,7 +200,7 @@ Onest, ce nu merge cu arhitectura noastră.
 
 ## PARTEA 4 — RECOMANDĂRI CONCRETE (prioritizate)
 
-În ordine de impact × fezabilitate, ce merită injectat în roadmap-ul SalaFull:
+În ordine de impact × fezabilitate, ce merită injectat în roadmap-ul Andura:
 
 ### Tier 1 — ADD ÎN FAZA 1-2 (Sprint 1-3)
 
@@ -246,14 +246,14 @@ Ca rezultat al acestei sinteze, propun update-uri (nu execut, propun):
 
 **Cea mai importantă observație din audit-ul ăsta:**
 
-Textbook-ul descrie un coach gândit. SalaFull are **arhitectura corectă pentru a-l deveni**, dar e momentan în starea "schelet structural ridicat, multe spații goale".
+Textbook-ul descrie un coach gândit. Andura are **arhitectura corectă pentru a-l deveni**, dar e momentan în starea "schelet structural ridicat, multe spații goale".
 
 Nu ai nevoie să "implementezi textbook-ul." Ai nevoie să:
 1. Termini ce ai început arhitectural (engines DEAD/PARTIAL → WORKS)
 2. Adâncești pattern-urile existente (de la 30% sofisticate la 80%)
 3. Adăugezi 2-3 idei specifice care lipsesc (memory-aware, self-audit, predictive depth)
 
-Dacă faci asta, SalaFull **livrează 90% din ce promite textbook-ul**, fără să restructurezi nimic.
+Dacă faci asta, Andura **livrează 90% din ce promite textbook-ul**, fără să restructurezi nimic.
 
 ---
 
@@ -261,7 +261,7 @@ Dacă faci asta, SalaFull **livrează 90% din ce promite textbook-ul**, fără s
 
 **Aliniere directă viziune:**
 
-> Tu ai zis ieri: "SalaFull e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
+> Tu ai zis ieri: "Andura e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
 
 Textbook-ul descrie exact acest "bionic brain" pentru fitness. **Nu trebuie să schimbi viziunea.** Trebuie să termini infrastructure-ul (FAZA 1-2 din plan curent) și să adâncești 8 pattern-uri specifice (Tier 1-2 din recomandări).
 

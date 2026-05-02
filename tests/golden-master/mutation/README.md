@@ -1,4 +1,4 @@
-# Stryker mutation testing — SalaFull
+# Stryker mutation testing — Andura
 
 Per chat strategic 2026-04-29 lock decision #7 — Golden Master Suite hybrid + mutation testing pe ARBITRATOR (target mutation score **>75%**).
 

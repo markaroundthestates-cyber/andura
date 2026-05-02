@@ -14,7 +14,7 @@ Problems:
 1. Dimensions are NOT independent — a 55yo woman bulk/5x/week intermediate is NOT just a sum of 5 individual settings
 2. Any shared-logic bug requires 144 fixes (or 144 tests to confirm the fix)
 3. Adding a new dimension multiplies files by N (e.g., add "recovery_style": 144 → 432)
-4. Maintenance hell at scale — SalaFull's moat is intelligence, not template volume
+4. Maintenance hell at scale — Andura's moat is intelligence, not template volume
 
 ---
 

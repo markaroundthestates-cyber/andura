@@ -8,7 +8,7 @@
 
 ## Context
 
-ADR 013 a stabilit că SalaFull folosește profile typing (Sprinter / Marathon / Yo-yo / Strategic) ca calibrator pentru thresholds detection auto-aggression + intervention style. ADR 013 §Profile typing a definit conceptual cele 4 profile + nevoia de hybrid (self-report + behavioral inference) + reconciliation, DAR a lăsat deschis:
+ADR 013 a stabilit că Andura folosește profile typing (Sprinter / Marathon / Yo-yo / Strategic) ca calibrator pentru thresholds detection auto-aggression + intervention style. ADR 013 §Profile typing a definit conceptual cele 4 profile + nevoia de hybrid (self-report + behavioral inference) + reconciliation, DAR a lăsat deschis:
 
 - Wording exact al chestionarului onboarding (4 core + 1 post-sesiunea 3)
 - Scoring rules pentru self-report (cum traduci răspunsuri → profile)
@@ -17,7 +17,7 @@ ADR 013 a stabilit că SalaFull folosește profile typing (Sprinter / Marathon /
 - Friction modal HIGH tier wording + flow
 - Storage decision pentru profile-history (CDL extension vs separate key)
 
-Fără un model formal pentru aceste decizii, SalaFull riscă:
+Fără un model formal pentru aceste decizii, Andura riscă:
 
 1. **Self-perception bias collapse** — toți users zic "Strategic" la onboarding (problema cunoscută de psihometrie). Profile typing devine theatre, NU calibrator funcțional.
 
@@ -41,7 +41,7 @@ Adoptăm un sistem hybrid de profile typing cu **5 framework decisions principal
 
 - **Direct profile self-pick** ("Care profil te descrie cel mai bine?") — collapse pe Strategic bias
 - **Mixed C** (Q1-Q3 indirect + Q4 direct profile pick) — Q4 direct introduces bias as anchor
-- **Long questionnaire** (10+ întrebări) — drop-off în onboarding fără data SalaFull-specific (handwave fără calibrare empirică)
+- **Long questionnaire** (10+ întrebări) — drop-off în onboarding fără data Andura-specific (handwave fără calibrare empirică)
 
 **Adopted: A pură + Q4 forced-choice trade-off**
 
@@ -313,7 +313,7 @@ Dezavantaj: known broken — toți users zic "Strategic" (self-perception bias).
 ### B. Long psychometric questionnaire (10-15 întrebări)
 
 Avantaj: discrimination power maxim, validated în psychology research.
-Dezavantaj: drop-off în onboarding (handwave fără data SalaFull-specific, dar standard fitness apps onboarding ≤5 întrebări). Plus: NU avem psychology PhD pentru validation.
+Dezavantaj: drop-off în onboarding (handwave fără data Andura-specific, dar standard fitness apps onboarding ≤5 întrebări). Plus: NU avem psychology PhD pentru validation.
 
 **Respins pentru v1.** Reconsiderare la 1000+ users dacă A pură + Q4 forced-choice produce <60% discrimination accuracy.
 

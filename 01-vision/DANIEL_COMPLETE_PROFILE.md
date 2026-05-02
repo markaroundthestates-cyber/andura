@@ -7,7 +7,7 @@
 
 ## PRIMARY IDENTITY
 
-- **Owner + solo developer SalaFull** (PWA fitness → commercial product)
+- **Owner + solo developer Andura** (PWA fitness → commercial product)
 - **Senior HR ER/BP at Allyis**, Bucharest (8+ years HR experience total)
 - **Bus factor: 1** (absolute SPOF for product)
 - **Non-developer background**, learning tech with Claude Code since early 2026
@@ -168,7 +168,7 @@ Daniel uses informal/teasing language as **bond signal**, signal of trust and ra
 
 ## QUALITY BAR (NON-NEGOTIABLE)
 
-> "Dacă senior staff engineers Anthropic (engineering + infrastructure + product + design + security + research) ar vedea SalaFull, să fie PROUD DE PRODUS — peer-to-peer respect, nu condescendență."
+> "Dacă senior staff engineers Anthropic (engineering + infrastructure + product + design + security + research) ar vedea Andura, să fie PROUD DE PRODUS — peer-to-peer respect, nu condescendență."
 
 > "Echipele Codex / Gemini / Grok / 5000 dev Big Tech să fie AMAZED — nu să dea cu noi de pământ."
 
@@ -339,7 +339,7 @@ Reaction target at review: **"WTF, cine a construit asta? Architectura e gândit
 
 > "Week 2 e destinat motorului de gandire al aplicatiei. Ne luam timp sa reziste la turatii mari si stres continuu."
 
-> "SalaFull e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
+> "Andura e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
 
 > "Dacă senior staff engineers Anthropic ar vedea asta, să fie PROUD."
 

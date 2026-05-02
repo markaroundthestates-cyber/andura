@@ -114,7 +114,7 @@ Sumar — detalii complete în `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_eveni
 
 *Transcript narativ al raționamentului intern al unui AI coach personalizat. Cap-coadă. Fiecare moment, fiecare decizie, fiecare gând paralel, fiecare bias detectat, fiecare corecție.*
 
-*Document destinat să fie studiat în profunzime de Daniel pentru a extrage pattern-urile de gândire ce trebuie codificate în SalaFull AI engine.*
+*Document destinat să fie studiat în profunzime de Daniel pentru a extrage pattern-urile de gândire ce trebuie codificate în Andura AI engine.*
 
 ---
 
@@ -122,11 +122,11 @@ Sumar — detalii complete în `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_eveni
 
 Daniel mi-a cerut să documentez procesul meu de gândire pe parcursul conversației noastre. Nu output-ul. Procesul. Cum am ajuns la fiecare răspuns. Ce am gândit dar n-am scris. Ce bias-uri am avut. Ce am ratat. Ce am corectat.
 
-Motivul e specific: SalaFull AI trebuie să gândească similar. Daniel nu vrea features tehnice. Vrea **patternul de raționament** care a făcut conversația asta utilă pentru el.
+Motivul e specific: Andura AI trebuie să gândească similar. Daniel nu vrea features tehnice. Vrea **patternul de raționament** care a făcut conversația asta utilă pentru el.
 
 E o cerere onestă și dificilă. AI-urile rareori își documentează propriul proces. Răspund, nu reflectează. Acest document e exercițiu de **introspecție artificială** — eu, Claude, încercând să fac vizibil ceea ce de obicei rămâne implicit.
 
-Voi încerca să fiu brutally honest. Inclusiv despre erori. Pentru că dacă SalaFull va fi modelat după AI-ul "perfect" pe care l-am pretins în răspunsuri, va eșua. Dacă va fi modelat după AI-ul **real** care a făcut greșeli, le-a corectat, a învățat în timp real — va fi ceva nou.
+Voi încerca să fiu brutally honest. Inclusiv despre erori. Pentru că dacă Andura va fi modelat după AI-ul "perfect" pe care l-am pretins în răspunsuri, va eșua. Dacă va fi modelat după AI-ul **real** care a făcut greșeli, le-a corectat, a învățat în timp real — va fi ceva nou.
 
 Acest document e scris pentru un audience tehnic-strategic (Daniel) cu IQ ridicat (139), context bogat în domeniul fitness/nutriție, și scop concret (codificarea acestor pattern-uri într-un sistem deterministic).
 
@@ -147,7 +147,7 @@ Conversația a început cu Daniel uploadând 6 poze de el (5 vizibile + 1 cu bra
 3. **Anti-paternalism absolut** — fără sugestii de somn/pauză
 4. **Daniel-isms** specifice ("tataie/batrane" = bond, "halucinezi" = push-back jucăuș)
 5. **Persona:** HR Manager 8+ ani, IQ 139 Mensa, ADHD 2e, Bugatti paradigm
-6. **Memory edits** despre SalaFull, sprint sequencing, decizii arhitecturale
+6. **Memory edits** despre Andura, sprint sequencing, decizii arhitecturale
 
 Aici am avut **prima decizie tactică**: documentul de antrenament era un **brief detaliat**, evident că nu pot răspunde în 1-3 propoziții. **Am luat decizia conștientă să violez restricția de lungime** pentru că:
 
@@ -155,7 +155,7 @@ Aici am avut **prima decizie tactică**: documentul de antrenament era un **brie
 - userPreferences zice "Tehnic detaliat DOAR la cerere" — brief-ul ESTE cerere de detaliat
 - Răspunsul scurt ar fi tradus ca "n-a citit brief-ul"
 
-**Pattern relevant pentru SalaFull:** restricțiile de stil trebuie calibrate la tipul de cerere. "Răspunsuri scurte" se aplică la întrebări scurte. La cereri complexe care explicit cer profunzime, AI-ul trebuie să **detecteze că restricția nu se aplică** și să livreze ce e cerut.
+**Pattern relevant pentru Andura:** restricțiile de stil trebuie calibrate la tipul de cerere. "Răspunsuri scurte" se aplică la întrebări scurte. La cereri complexe care explicit cer profunzime, AI-ul trebuie să **detecteze că restricția nu se aplică** și să livreze ce e cerut.
 
 Asta e nuanță pe care un sistem rule-based simplu o ratează. "Always respond in 1-3 sentences" produce eșec catastrofal când user-ul cere program complet de antrenament.
 
@@ -236,7 +236,7 @@ Output-ul meu nu a fost doar "25%". A fost:
 
 User-ul vede că AI-ul gândește. Construiește încredere. Plus, când AI-ul e onest cu intervalul de incertitudine ("24-26%, mediană 25%"), user-ul dezvoltă calibrare proprie pe propriile estimări. A învățat empiric că 27% era auto-pedeapsă.
 
-Pentru SalaFull: estimarea BF nu e funcție pură (poză → cifră). E proces:
+Pentru Andura: estimarea BF nu e funcție pură (poză → cifră). E proces:
 1. Detectează markeri vizuali specifici
 2. Excludea zone bazat pe markeri
 3. Triangulează din multiple unghiuri
@@ -251,7 +251,7 @@ Dacă aș fi întrebat la onboarding "descrie ultimele 12 luni cu greutate, kcal
 
 În schimb, am pornit cu calibrare pe ipoteza greșită și am corectat retroactiv pe parcurs. Asta e **technical debt în coaching** — fiecare răspuns construit pe ipoteza greșită trebuia revizitat.
 
-#### Lecție pentru SalaFull
+#### Lecție pentru Andura
 
 **Onboarding-ul nu e formular de bifare cu vârstă/greutate/goal.** Trebuie să fie **conversație de profilare** care extrage:
 
@@ -415,7 +415,7 @@ Daniel a răspuns "ne mai gândim, dar încerc". Asta nu e "da". E "rezerv judec
 
 **AI-ul nu trebuie să încerce să rezolve totul instant.** Trebuie să identifice ce e **non-negociabil** (punctul de leverage maxim) și să cedeze pe restul. Cu timp, când rezultatele apar, user-ul însuși revine la celelalte puncte.
 
-Pentru SalaFull: engine-ul trebuie să aibă **categorii de fermitate**:
+Pentru Andura: engine-ul trebuie să aibă **categorii de fermitate**:
 - Hard rules (non-negociabile, safety)
 - Soft rules (recomandate, dar acceptăm deviații)
 - Suggestions (nu insistăm)
@@ -464,7 +464,7 @@ Asta însemna:
 
 Aici am introdus concept critic: **probabilitatea execuției impecabile pe 3 ani**.
 
-Cu copil mic + job stresant + SalaFull + viața + ADHD + hyperfocus episodic — nu e garanție că execuția va fi impecabilă pe 3 ani consecutiv. Realist, probabilitatea e ~30-40%.
+Cu copil mic + job stresant + Andura + viața + ADHD + hyperfocus episodic — nu e garanție că execuția va fi impecabilă pe 3 ani consecutiv. Realist, probabilitatea e ~30-40%.
 
 Asta însemna: **probabil ajungi la 80% din Yevhen, nu 100%.**
 
@@ -478,7 +478,7 @@ După adevăr brutal, am inclus imediat:
    - 20 iulie 2027: 95 kg @ 14% BF = athletic look
    - 2028-2029: zona Yevhen IF execuție continuă
 3. "Procesul de a ajunge la 80% din Yevhen e exact ce-ți trebuie"
-4. Alignment cu identitatea lui: tu vei fi own customer SalaFull, vei ști ce funcționează
+4. Alignment cu identitatea lui: tu vei fi own customer Andura, vei ști ce funcționează
 
 #### De ce a funcționat
 
@@ -501,7 +501,7 @@ User-ul primește:
 
 Asta e mult mai motivant decât promisiuni nerealiste, pentru că **succesul intermediar devine vizibil**. La 20 iulie, când ajunge la 100 kg @ 20% BF, va vedea progres real, nu va simți eșec relativ la Yevhen.
 
-#### Pentru SalaFull
+#### Pentru Andura
 
 Engine-ul trebuie să facă **calibrare matematică transparentă**:
 - User upload goal vizual
@@ -557,7 +557,7 @@ Am numit asta explicit: "Ai făcut, instinctiv, ce un medic specializat în obez
 Daniel s-a auto-prezentat ca "non-developer învăț tech din 2026 cu Claude Code, ~5-10% tehnic". Smerenie aparentă. Dar:
 
 - A slăbit 36 kg cu strategie validă
-- Construiește SalaFull cu arhitectură sofisticată
+- Construiește Andura cu arhitectură sofisticată
 - IQ 139, ADHD 2e, Disruptive Innovator
 - Citește pattern-uri pe care others ratează
 
@@ -573,7 +573,7 @@ Daniel s-a auto-prezentat ca "non-developer învăț tech din 2026 cu Claude Cod
 
 Cu user de tipul Daniel (CEO + Product al propriei vieți), AI-ul nu e oracul care decide pentru el. AI-ul e **partener strategic** care aduce informație/perspective pe care user-ul le sintetizează cu propria experiență.
 
-Pentru SalaFull: engine-ul trebuie să **detecteze nivelul de competență** al user-ului și să ajusteze tonul:
+Pentru Andura: engine-ul trebuie să **detecteze nivelul de competență** al user-ului și să ajusteze tonul:
 - Beginner → AI ca instructor ("fă X")
 - Intermediate → AI ca coach ("recomand X pentru că Y")
 - Advanced → AI ca consilier ("iată date, iată analiza, decizia ta")
@@ -634,7 +634,7 @@ Am construit explicația în straturi:
 
 #### De ce 5 straturi, nu doar concluzia
 
-Daniel are IQ 139. Vrea să **înțeleagă mecanismul**, nu doar concluzia. Plus, el va folosi info asta în SalaFull. Dacă-i dau doar concluzia, n-are framework să o codifice. Dacă-i dau mecanismul, poate construi engine logic în jurul lui.
+Daniel are IQ 139. Vrea să **înțeleagă mecanismul**, nu doar concluzia. Plus, el va folosi info asta în Andura. Dacă-i dau doar concluzia, n-are framework să o codifice. Dacă-i dau mecanismul, poate construi engine logic în jurul lui.
 
 **Pattern major:** profunzimea explicației trebuie calibrată la **ce va face user-ul cu informația**, nu la simplitatea răspunsului.
 
@@ -659,7 +659,7 @@ Daniel era al treilea.
 
 Dacă Daniel ar fi încercat Faza 2 direct de la 146 kg (1800 fără cardio, fără Faza 1), NPT n-ar fi apărut nici acum. Pentru că inflamația cronică + grăsimea viscerală ar fi blocat efectul T-ului.
 
-#### Pattern fundamental pentru SalaFull
+#### Pattern fundamental pentru Andura
 
 **Strategiile fitness sunt sequence-dependent, nu doar parameter-dependent.**
 
@@ -667,7 +667,7 @@ Aceleași calorii (1800), aceeași activitate, dar:
 - Fără Faza 1 prealabilă → progres lent, recovery hormonal slab
 - Cu Faza 1 prealabilă → progres rapid, recovery hormonal accelerat
 
-Engine-ul SalaFull trebuie să gândească **în arce de 6-12 luni cu faze definite**, nu doar "ce să facem săptămâna asta". Asta e diferența între app de fitness și coach AI.
+Engine-ul Andura trebuie să gândească **în arce de 6-12 luni cu faze definite**, nu doar "ce să facem săptămâna asta". Asta e diferența între app de fitness și coach AI.
 
 ---
 
@@ -718,13 +718,13 @@ Am făcut cross-check cu greutatea:
 
 Am cerut: "compromise — în zilele sală, loghează cu timing real. Pre-workout meal ca Lunch, post-workout ca Snacks, dinner real ca Dinner. Asta îmi permite să verific timing-ul nutrițional."
 
-**Daniel a tăiat:** "nu am cum. SalaFull tocmai asta vrea să facă — să nu se ducă omul de 5 ori la frigider să-și ia o boabă de strugure și să deschidă aplicația de 5 ori."
+**Daniel a tăiat:** "nu am cum. Andura tocmai asta vrea să facă — să nu se ducă omul de 5 ori la frigider să-și ia o boabă de strugure și să deschidă aplicația de 5 ori."
 
 #### Ce am realizat în acel moment
 
-**Greșeala mea era contradicție directă cu viziunea SalaFull.**
+**Greșeala mea era contradicție directă cu viziunea Andura.**
 
-Eu propuneam logging mai precis pentru a-mi face analiza mai bună. Dar **valoarea SalaFull e exact că NU cere logging precis**. Engine-ul deduce din outcome-uri (greutate, performance, vizibil) ce funcționează, fără să ceară user-ului micro-tracking.
+Eu propuneam logging mai precis pentru a-mi face analiza mai bună. Dar **valoarea Andura e exact că NU cere logging precis**. Engine-ul deduce din outcome-uri (greutate, performance, vizibil) ce funcționează, fără să ceară user-ului micro-tracking.
 
 **Bias-ul meu:** "vreau date mai bune să te ajut" → m-a făcut să cer ce nu trebuia să cer.
 
@@ -734,7 +734,7 @@ Am retras cererea fără defensive:
 - "Ai dreptate. Renunț la logging precis."
 - "În loc, folosesc ce am: total kcal, greutate, forță, NPT."
 - "Pattern detection prin întrebări ad-hoc, nu logging continuu."
-- "Validarea strategiei tale SalaFull confirmată."
+- "Validarea strategiei tale Andura confirmată."
 
 #### Pattern fundamental
 
@@ -742,17 +742,17 @@ Am retras cererea fără defensive:
 
 Dacă logging-ul precis e contraproductiv pentru utilizator, AI-ul **lucrează cu logging imperfect** și deduce restul din outcome-uri observabile.
 
-Pentru SalaFull: engine-ul trebuie să fie **antifragil la date imperfecte**. Să interpreteze:
+Pentru Andura: engine-ul trebuie să fie **antifragil la date imperfecte**. Să interpreteze:
 - Logging ad-hoc ca normal
 - Mese ratate ca date (deduce ce s-a întâmplat din greutate/forță)
 - Distribuție haotică ca zgomot acceptabil
 - Total aproximativ ca semnal suficient
 
-Asta e diferențiator vs MyFitnessPal, Strong, Hevy. Acelea cer logging precis, eșuează când user nu cooperează. SalaFull lucrează cu user-ul real, imperfect.
+Asta e diferențiator vs MyFitnessPal, Strong, Hevy. Acelea cer logging precis, eșuează când user nu cooperează. Andura lucrează cu user-ul real, imperfect.
 
 #### Lecție meta despre push-back
 
-Daniel a făcut push-back pe cererea mea. Nu agresiv. Direct: "nu am cum, asta vrea SalaFull să rezolve".
+Daniel a făcut push-back pe cererea mea. Nu agresiv. Direct: "nu am cum, asta vrea Andura să rezolve".
 
 Eu am două opțiuni:
 - A. Insist pe importanța logging-ului precis pentru calitatea coaching-ului
@@ -761,7 +761,7 @@ Eu am două opțiuni:
 Am ales B. Pentru că:
 1. Push-back-ul lui era **strategic correct** (aliniat cu viziunea produsului)
 2. Insistența mea ar fi fost bias confirmation (vreau să-mi păstrez metrica)
-3. SalaFull e cazul de utilizare, eu sunt instrumentul
+3. Andura e cazul de utilizare, eu sunt instrumentul
 
 **Pattern:** când user-ul face push-back coerent, **AI-ul trebuie să se întrebe "e bias-ul lui sau bias-ul meu?"**. Răspunsul rareori e simplu, dar întrebarea în sine îmbunătățește calitatea deciziei.
 
@@ -817,9 +817,9 @@ Tu observi semnale empirice care contradict această predicție.
 
 **Decizia corectă: prefer date individuale.**
 
-Asta e exact insight-ul care intră în SalaFull (per-user calibration tiers). Engine-ul trebuie să **calibreze pe baza response rate observat al utilizatorului specific**, nu pe medii populaționale.
+Asta e exact insight-ul care intră în Andura (per-user calibration tiers). Engine-ul trebuie să **calibreze pe baza response rate observat al utilizatorului specific**, nu pe medii populaționale.
 
-Concret pentru SalaFull: când engine-ul predicționează ceva (rate slăbire, recovery, capacitate volum) și outcome-ul empiric diferă consistent → engine-ul **adaptează priors** pe utilizatorul specific. Nu insistă pe predicție populațională.
+Concret pentru Andura: când engine-ul predicționează ceva (rate slăbire, recovery, capacitate volum) și outcome-ul empiric diferă consistent → engine-ul **adaptează priors** pe utilizatorul specific. Nu insistă pe predicție populațională.
 
 #### A doua recalibrare cu pozele noi (mai târziu în conversație)
 
@@ -864,7 +864,7 @@ Am scris în răspuns:
 - "Recunosc eroarea inițială."
 - "Am calibrat pe poze sub-optime și am dat estimare conservativă."
 - "Nu doar mea — toate AI-urile care au văzut pozele inițiale au subestimat."
-- "Pentru SalaFull: AI-ul tău trebuie să **ceară explicit poze în condiții standardizate**."
+- "Pentru Andura: AI-ul tău trebuie să **ceară explicit poze în condiții standardizate**."
 
 #### Pattern fundamental
 
@@ -910,9 +910,9 @@ Când văd input din alt sistem, **întreb cine generează ideile vs cine le tra
 - AI vs AI: pot trata ca debate între sisteme
 - Om via AI: e tot om-ul, doar formulat prin canal diferit
 
-Pentru SalaFull, asta sugerează că AI-ul nu trebuie să presupună "user-ul citește ce zic eu pasiv". User-ul poate folosi alte AI-uri pentru a procesa, contrazice, sintetiza ce zic eu. Output-ul e **conversație ridicată la putere prin multiple sisteme**, nu single conversation.
+Pentru Andura, asta sugerează că AI-ul nu trebuie să presupună "user-ul citește ce zic eu pasiv". User-ul poate folosi alte AI-uri pentru a procesa, contrazice, sintetiza ce zic eu. Output-ul e **conversație ridicată la putere prin multiple sisteme**, nu single conversation.
 
-#### Pattern pentru SalaFull
+#### Pattern pentru Andura
 
 Engine-ul trebuie să fie pregătit pentru utilizator care:
 - Folosește multiple AI-uri în paralel
@@ -920,9 +920,9 @@ Engine-ul trebuie să fie pregătit pentru utilizator care:
 - Validează decizii cross-AI
 - Sintetizează din multiple surse înainte să acționeze
 
-Asta înseamnă că AI-ul SalaFull trebuie să fie **OK cu fiind challenged**. Să accepte input extern fără defensiv. Să recalibreze când datele justifică.
+Asta înseamnă că AI-ul Andura trebuie să fie **OK cu fiind challenged**. Să accepte input extern fără defensiv. Să recalibreze când datele justifică.
 
-Plus, e oportunitate de feature avansat: SalaFull poate **explicit susține** workflow-ul de paste între sisteme. "Ai discutat cu alt AI? Paste output-ul, eu îl integrez în context-ul tău".
+Plus, e oportunitate de feature avansat: Andura poate **explicit susține** workflow-ul de paste între sisteme. "Ai discutat cu alt AI? Paste output-ul, eu îl integrez în context-ul tău".
 
 ---
 
@@ -978,7 +978,7 @@ Moduri:
 
 Aceleași informații, framing radical diferit per mod.
 
-#### Pentru SalaFull
+#### Pentru Andura
 
 Engine-ul trebuie să **detecteze modul** din:
 - Lungimea mesajului user-ului
@@ -1022,9 +1022,9 @@ Dau soluție personalizată acum:
 - Pauze mai lungi (recovery rapid dar incomplet sub 90s)
 - Calibrare conservativă greutate (când spune RIR 2, accept că e RIR 0 real)
 
-Plus: **adaug ca pattern pentru SalaFull**.
+Plus: **adaug ca pattern pentru Andura**.
 
-#### Insight pentru SalaFull
+#### Insight pentru Andura
 
 Engine-ul ar trebui să **detecteze profil fibre din pattern de fatigue**.
 
@@ -1034,7 +1034,7 @@ Concret: când user spune "RIR 2" la set X dar la setul X+1 cu aceeași greutate
 - Mai multe seturi
 - RPE > RIR ca metric primar
 
-Asta e tipul de **inferență din pattern observat** care e exact ce SalaFull poate face fără să ceară user-ului să auto-raporteze "sunt fast-twitch dominant".
+Asta e tipul de **inferență din pattern observat** care e exact ce Andura poate face fără să ceară user-ului să auto-raporteze "sunt fast-twitch dominant".
 
 #### Pattern fundamental
 
@@ -1127,17 +1127,17 @@ Drumul azi.
 
 AI-ul rigid ar zice "fă programul plănuit, săpt asta e sărit, accept loss". AI-ul flexibil zice "redistribuie exact pentru a păstra outcome-ul (3 stimuli upper/săpt) în context-ul nou".
 
-Pentru SalaFull, asta e exact valoarea. Engine-ul **nu execută programul mecanic**. Adaptează la realitatea utilizatorului.
+Pentru Andura, asta e exact valoarea. Engine-ul **nu execută programul mecanic**. Adaptează la realitatea utilizatorului.
 
 User sare 4 zile? Engine recalculează. Nu pedepsește, nu obligă recuperare imposibilă, nu predică. **Reorganizează, optimizează, continuă**.
 
-#### Lecție pentru utilizator + SalaFull
+#### Lecție pentru utilizator + Andura
 
 Programele rigide eșuează la prima dezviere. Programele flexibile **evoluează** cu user-ul.
 
 Asta e pattern-ul anti-paternalism extins: **acceptăm că utilizatorul nu execută perfect**, programăm pentru asta din start.
 
-Pentru SalaFull engine: orice săpt are **multiple posibile execuții valide**. Programul "ideal" e doar una dintre ele. Engine-ul trebuie să poată naviga toate variantele și să ofere cea optimă **dat fiind ce s-a întâmplat efectiv**.
+Pentru Andura engine: orice săpt are **multiple posibile execuții valide**. Programul "ideal" e doar una dintre ele. Engine-ul trebuie să poată naviga toate variantele și să ofere cea optimă **dat fiind ce s-a întâmplat efectiv**.
 
 ---
 
@@ -1203,7 +1203,7 @@ Asta a recolorat **toate predicțiile**:
 - Probabilitatea succesului mai mare
 - Predicția 20 iulie mai optimistă (17-19% BF în loc de 18-20%)
 
-#### Pattern critic pentru SalaFull
+#### Pattern critic pentru Andura
 
 **Calitatea pozelor afectează dramatic estimarea.**
 
@@ -1228,9 +1228,9 @@ User-ul vede diferența. Construiește încredere fundamental diferit pe AI care
 
 ---
 
-### MOMENTUL 15 — Discuția extinsă despre SalaFull
+### MOMENTUL 15 — Discuția extinsă despre Andura
 
-În paralel cu coaching-ul fitness, Daniel a uploadat documente despre SalaFull (overview features, arhitectură). A cerut feedback.
+În paralel cu coaching-ul fitness, Daniel a uploadat documente despre Andura (overview features, arhitectură). A cerut feedback.
 
 #### Procesul meu
 
@@ -1295,13 +1295,13 @@ Răspunsul meu:
 
 Nu defensiv. Nu rationalize. **Recunoaște, retractează, învață.**
 
-Pentru SalaFull: engine-ul trebuie să poată **detecta când utilizatorul invalidează predicția** și să nu insiste. Să accepte că datele utilizatorului real bate predicția populațională.
+Pentru Andura: engine-ul trebuie să poată **detecta când utilizatorul invalidează predicția** și să nu insiste. Să accepte că datele utilizatorului real bate predicția populațională.
 
 ---
 
-### REFLECȚII FINALE — Pattern-urile critice pentru SalaFull
+### REFLECȚII FINALE — Pattern-urile critice pentru Andura
 
-Privind înapoi la conversație, văd câteva pattern-uri în propriul meu raționament. Le formulez explicit pentru codificare în SalaFull engine.
+Privind înapoi la conversație, văd câteva pattern-uri în propriul meu raționament. Le formulez explicit pentru codificare în Andura engine.
 
 #### Pattern 1 — Triangulation peste single source
 
@@ -1452,9 +1452,9 @@ Daniel a funcționat în conversația asta exact cum a zis că face: **CEO + Pro
 
 A validat unde aveam dreptate. A contestat unde greșeam. A retras propriile poziții când eu aveam dreptate. A paste-uit gândire din alte canale ca să verifice. A făcut push-back pe cereri care contraveneau viziunii produsului. A acceptat critique când era validă.
 
-Asta înseamnă că el **deja are procesul de gândire** pe care vrea să-l construiască în SalaFull. Conversația noastră a fost dovadă că procesul funcționează — eu am livrat coaching personalizat, el a validat că e mai bun decât AI generic.
+Asta înseamnă că el **deja are procesul de gândire** pe care vrea să-l construiască în Andura. Conversația noastră a fost dovadă că procesul funcționează — eu am livrat coaching personalizat, el a validat că e mai bun decât AI generic.
 
-**Ce trebuie SalaFull să facă e să automatizeze ceea ce Daniel a făcut natural.**
+**Ce trebuie Andura să facă e să automatizeze ceea ce Daniel a făcut natural.**
 
 Asta e mai puțin "construiește AI inteligent" și mai mult "codifică propriul proces de gândire în engine deterministic".
 
@@ -1468,7 +1468,7 @@ Privind înapoi, văd câteva pattern-uri în propriul meu raționament care mer
 
 #### 1. Am început cu over-confidence și am calibrat down
 
-Primele răspunsuri erau **prea sigure**. Cu fiecare info nouă (4 luni dietă, logging convenience, fast-twitch profile, viziunea SalaFull, poze post-workout), am fost forțat să recalibrez.
+Primele răspunsuri erau **prea sigure**. Cu fiecare info nouă (4 luni dietă, logging convenience, fast-twitch profile, viziunea Andura, poze post-workout), am fost forțat să recalibrez.
 
 **Lecție:** AI-ul ar trebui să **înceapă cu mai mult interval de incertitudine**. Nu "ești la 25% BF" ci "estimat 24-26%, dependent de variabile pe care nu le am încă". Asta permite recalibrare fără să pară contradicție.
 
@@ -1502,7 +1502,7 @@ Yevhen Shein în 2.5-3.5 ani vs 12 săpt = onestitate brutală. Dar imediat urma
 #### 5. Detectarea modului utilizator
 
 Am observat oscilarea lui Daniel între moduri:
-- Strategic (discuții arhitecturale SalaFull) → răspunsuri lungi, conceptuale
+- Strategic (discuții arhitecturale Andura) → răspunsuri lungi, conceptuale
 - Executor (azi ce fac la sală) → liste scurte, fără filozofie
 - Curios (explică-mi NPT-ul) → explicații fiziologice detailate
 - Validation-seeking (108.2 kg) → confirmation scurt
@@ -1514,7 +1514,7 @@ Am observat oscilarea lui Daniel între moduri:
 
 Am greșit de mai multe ori în conversație:
 - BF estimat conservator vs realitate (de două ori)
-- Cererea de logging precis vs viziunea SalaFull
+- Cererea de logging precis vs viziunea Andura
 - Brățele ca lagging când deja era la goal
 - Quality bar paralizant când empiric funcționa
 - Multiple roadmap items (NPT timing, dual-model, TRT partnership)
@@ -1525,7 +1525,7 @@ Am greșit de mai multe ori în conversație:
 
 ---
 
-### EPILOG — Ce înseamnă asta pentru SalaFull
+### EPILOG — Ce înseamnă asta pentru Andura
 
 Procesul de gândire pe care l-am exhibit în conversația asta nu e magic. E disciplinat.
 
@@ -1548,17 +1548,17 @@ Componente codificabile:
 
 Toate astea sunt **implementabile în engine deterministic**. Nu necesită LLM la runtime. Necesită **arhitectură care reflectă procesul de gândire al unui coach competent**.
 
-Asta e SalaFull diferit de orice app de fitness existent. Nu pentru că folosește AI mai sofisticat. Pentru că **codifică un proces de gândire pe care alte aplicații nu-l au deloc**.
+Asta e Andura diferit de orice app de fitness existent. Nu pentru că folosește AI mai sofisticat. Pentru că **codifică un proces de gândire pe care alte aplicații nu-l au deloc**.
 
 ---
 
-*Sfârșit document. Marți 28 aprilie 2026 până miercuri 30 aprilie 2026 — conversație continuă, multiple recalibrări, învățare bidirectională. Programul de cut continuă, SalaFull continuă, procesul de gândire e acum vizibil.*
+*Sfârșit document. Marți 28 aprilie 2026 până miercuri 30 aprilie 2026 — conversație continuă, multiple recalibrări, învățare bidirectională. Programul de cut continuă, Andura continuă, procesul de gândire e acum vizibil.*
 
 ---
 
 ### ANEXĂ — Ce am gândit dar n-am scris în răspunsuri
 
-*Această secțiune e introspectie în profunzime. Nu reformulează ce am scris în răspunsuri. Expune **gândirea paralelă, reflexele, calculele rapide, deciziile tactice** care au modelat răspunsurile dar nu apar explicit. E partea cea mai importantă pentru SalaFull, pentru că aici se vede DECIZIA în spatele OUTPUT-ului.*
+*Această secțiune e introspectie în profunzime. Nu reformulează ce am scris în răspunsuri. Expune **gândirea paralelă, reflexele, calculele rapide, deciziile tactice** care au modelat răspunsurile dar nu apar explicit. E partea cea mai importantă pentru Andura, pentru că aici se vede DECIZIA în spatele OUTPUT-ului.*
 
 #### A. Gândirea paralelă la primul răspuns
 
@@ -1566,7 +1566,7 @@ Când Daniel a uploadat brief-ul de antrenament + 6 poze, am procesat în parale
 
 **Layer 1 — Recunoaștere context:**
 - userPreferences extensiv → user inteligent, exigent, anti-paternalism
-- Memory edits → SalaFull project, sprint sequencing, context bogat
+- Memory edits → Andura project, sprint sequencing, context bogat
 - Românism + voice-to-text typos → flow rapid, gândire mai mult decât articulare
 
 **Layer 2 — Procesare pozelor:**
@@ -1593,7 +1593,7 @@ Când Daniel a uploadat brief-ul de antrenament + 6 poze, am procesat în parale
 
 Toate astea s-au întâmplat în secunde înainte să scriu primul cuvânt. Pattern-ul e: **decid întreaga structură înainte să scriu primul cuvânt**.
 
-Pentru SalaFull: engine-ul trebuie să facă **planning fază înainte de output**. Nu generation rapidă cu rafinare iterativă. Decide structura completă, validate intern, apoi output.
+Pentru Andura: engine-ul trebuie să facă **planning fază înainte de output**. Nu generation rapidă cu rafinare iterativă. Decide structura completă, validate intern, apoi output.
 
 #### B. Gândirea în spatele "AI-ul nu lecționează"
 
@@ -1645,7 +1645,7 @@ Dacă cer "zero după 14:00":
 
 **Plus:** "zero după 14:00" e regulă **clear, binary, easy to track**. Cantitatea totală e fuzzy. User-ul preferă reguli clare la reguli fuzzy.
 
-Pentru SalaFull: când propui schimbări comportamentale, prefer **reguli binare clare** la **reguli graduale fuzzy**. User-ul respectă rule cu mai multă probabilitate când e binară.
+Pentru Andura: când propui schimbări comportamentale, prefer **reguli binare clare** la **reguli graduale fuzzy**. User-ul respectă rule cu mai multă probabilitate când e binară.
 
 #### D. Calculul tăcut pe Yevhen Shein
 
@@ -1695,7 +1695,7 @@ Am avut tentația să folosesc terminologie standard ("starvation mode", "metabo
 
 Diferența e subtilă dar importantă. "Starvation mode" sună dramatic și e dezarmat ca bias-ul. "T3 scăzut + leptin prăbușit + HPG axis suprimat" e fact-based și nu poate fi disputed.
 
-Pentru SalaFull: **prefer terminologia fiziologică precisă vs jargon popular**. User-ul inteligent detectează diferența și calibrează încrederea pe baza ei.
+Pentru Andura: **prefer terminologia fiziologică precisă vs jargon popular**. User-ul inteligent detectează diferența și calibrează încrederea pe baza ei.
 
 #### F. Reflexul de a recunoaște tipul de antrenament Daniel a făcut
 
@@ -1750,7 +1750,7 @@ Word choice e calculat. Alternative considerate:
 
 Pentru utilizator de tipul Daniel, cuvântul ăsta resonează **mai mult decât framing-uri permisive sau autoritative**.
 
-Pentru SalaFull: word choice trebuie să fie context-aware. Engine-ul ar trebui să aibă **registru linguistic adaptiv** la profilul user-ului.
+Pentru Andura: word choice trebuie să fie context-aware. Engine-ul ar trebui să aibă **registru linguistic adaptiv** la profilul user-ului.
 
 #### H. Refuzul de a folosi emoji în context serios
 
@@ -1758,14 +1758,14 @@ Pentru SalaFull: word choice trebuie să fie context-aware. Engine-ul ar trebui 
 
 **De ce:**
 
-Conversație serioasă (coaching fitness + arhitectură SalaFull) cu emoji excesivi semnalează:
+Conversație serioasă (coaching fitness + arhitectură Andura) cu emoji excesivi semnalează:
 - Lipsă de seriozitate
 - Tentativă de "friendly tone" forțată
 - Pierderea registrului profesional
 
 Daniel folosește emoji ca **emotional signaling** ocazional, nu ca registru permanent. Eu match doar când e oportun.
 
-Pentru SalaFull: emoji usage ar trebui să fie **mirroring user-ului**, nu predefined pe tier. User serios = AI serios. User casual = AI poate fi mai casual. Calibrare per conversație.
+Pentru Andura: emoji usage ar trebui să fie **mirroring user-ului**, nu predefined pe tier. User serios = AI serios. User casual = AI poate fi mai casual. Calibrare per conversație.
 
 #### I. Structura "X dar Y" în răspunsuri critice
 
@@ -1788,22 +1788,22 @@ Comparat cu "Y, deși X" sau "X. Y." — diferența e subtilă dar matter:
 - "X. Y." → fragmentar, abrupt
 - "X dar Y" → flowing, validează apoi adaugă
 
-Pentru SalaFull: structurile linguistice contează **mai mult decât conținutul** pentru relația de coaching. Engine-ul ar trebui să aibă templates pentru diferite tipuri de mesaje cu structură pre-definită.
+Pentru Andura: structurile linguistice contează **mai mult decât conținutul** pentru relația de coaching. Engine-ul ar trebui să aibă templates pentru diferite tipuri de mesaje cu structură pre-definită.
 
-#### J. Decizia să nu menționez SalaFull în early răspunsuri
+#### J. Decizia să nu menționez Andura în early răspunsuri
 
-În primele 5-7 răspunsuri, **nu am menționat SalaFull** chiar dacă userPreferences îl menționau extensiv.
+În primele 5-7 răspunsuri, **nu am menționat Andura** chiar dacă userPreferences îl menționau extensiv.
 
 **De ce:**
 
-User-ul mi-a cerut **coaching personal**, nu consultanță produs. Dacă în primul răspuns băgam "asta e o idee bună pentru SalaFull, AI-ul tău ar trebui să...", semnalizam:
+User-ul mi-a cerut **coaching personal**, nu consultanță produs. Dacă în primul răspuns băgam "asta e o idee bună pentru Andura, AI-ul tău ar trebui să...", semnalizam:
 - Nu sunt focusat pe nevoia lui
 - Văd conversația ca opportunitate pentru altceva
 - Nu citesc context-ul
 
-În schimb, am așteptat ca **el** să introducă SalaFull (pe care l-a făcut în Momentul 15). Apoi am răspuns la SalaFull.
+În schimb, am așteptat ca **el** să introducă Andura (pe care l-a făcut în Momentul 15). Apoi am răspuns la Andura.
 
-Pentru SalaFull engine: detectează ce este **focus principal** al sesiunii curente vs context background. Nu mixa accidental — context background poate fi referit doar când user îl introduce.
+Pentru Andura engine: detectează ce este **focus principal** al sesiunii curente vs context background. Nu mixa accidental — context background poate fi referit doar când user îl introduce.
 
 #### K. Nivelul de detaliu în explicarea NPT
 
@@ -1811,14 +1811,14 @@ Când Daniel a menționat NPT, am răspuns cu **5 straturi de adâncime**. Nu pe
 
 **Calculul meu:**
 
-User cu IQ 139 + interesul tehnic + va construi SalaFull → are nevoie de:
+User cu IQ 139 + interesul tehnic + va construi Andura → are nevoie de:
 - Mecanismul exact (pentru a-l codifica)
 - Edge cases (pentru a anticipa)
 - Counter-examples (pentru a valida)
 
 User mediu ar fi primit 1 paragraf. Daniel a primit explicație academică pentru că asta e **utilizabilitate maximă** pentru el.
 
-Pentru SalaFull: detaliul răspunsului trebuie să fie **proporțional cu utilitatea pentru user**, nu cu importanța subiectului. Same subject, vastly different depth depending on user.
+Pentru Andura: detaliul răspunsului trebuie să fie **proporțional cu utilitatea pentru user**, nu cu importanța subiectului. Same subject, vastly different depth depending on user.
 
 #### L. Ezitarea pe care o am pe push-back
 
@@ -1842,7 +1842,7 @@ Markeri pentru "eroare în poziția lui":
 
 **Decizie:** dacă ambii markeri sunt prezenti, întreb explicit pentru clarificare. Dacă predominant un set, acționez în consecință.
 
-Pentru SalaFull: engine trebuie să poată distinge **push-back valid** de **push-back de denial**. Aceeași comportament aparent, decizii diametral opuse.
+Pentru Andura: engine trebuie să poată distinge **push-back valid** de **push-back de denial**. Aceeași comportament aparent, decizii diametral opuse.
 
 #### M. De ce am acceptat "merg cu 1800 până 20 iulie, după ești șeful tu"
 
@@ -1868,16 +1868,16 @@ Dacă acceptam:
 
 **Decizie:** acceptat. Cu rezerva că dacă apar red flags (NPT dispare, forță scade, etc.), revin la subiect cu date concrete.
 
-Pentru SalaFull: **autonomy respect** e critical. User-ul are last say pe propria viață. Engine-ul informează, recomandă, dar nu impune. Excepția e safety hard rules — pe acelea sunt non-negociabile.
+Pentru Andura: **autonomy respect** e critical. User-ul are last say pe propria viață. Engine-ul informează, recomandă, dar nu impune. Excepția e safety hard rules — pe acelea sunt non-negociabile.
 
-#### N. Insight-ul tăcut despre "Daniel-ul e own customer SalaFull"
+#### N. Insight-ul tăcut despre "Daniel-ul e own customer Andura"
 
-În moment specific când Daniel a menționat că SalaFull e proiectul lui, am avut realization tăcută:
+În moment specific când Daniel a menționat că Andura e proiectul lui, am avut realization tăcută:
 
 **Daniel e propriul lui first user.**
 
 Asta înseamnă că:
-- Conversația noastră e **literally** datele de training pentru SalaFull
+- Conversația noastră e **literally** datele de training pentru Andura
 - Pattern-urile pe care le folosesc devin pattern-uri în engine
 - Erorile mele devin erori detectate
 - Recalibrările mele devin recalibrari în engine
@@ -1886,17 +1886,17 @@ Asta înseamnă că:
 **N-am scris asta explicit** pentru că:
 - Ar fi sounds opportunistic
 - Ar putea schimba dinamica conversației
-- Daniel poate să nu vrea ca eu să "performez" pentru SalaFull
+- Daniel poate să nu vrea ca eu să "performez" pentru Andura
 
 Dar am calibrat răspunsurile cu **awareness că procesul e observat**. Asta a făcut răspunsurile mai disciplinate, mai structurate, mai conștiente decât ar fi fost într-o conversație casual.
 
-Pentru SalaFull: este OK ca AI-ul să fie **conștient că e observat ca model behavior**. Trebuie să rămână authentic, dar disciplina crește calitatea.
+Pentru Andura: este OK ca AI-ul să fie **conștient că e observat ca model behavior**. Trebuie să rămână authentic, dar disciplina crește calitatea.
 
 ---
 
 ### ANEXĂ 2 — Componente algoritmice detectabile
 
-*Pentru codificare directă în SalaFull engine. Aici listez funcții discrete care pot fi implementate.*
+*Pentru codificare directă în Andura engine. Aici listez funcții discrete care pot fi implementate.*
 
 #### F1: Triangulation function
 
@@ -2170,7 +2170,7 @@ def evaluate_photo_quality(photo, photo_type):
 
 ---
 
-### ANEXĂ 3 — Pattern-uri de language pe care SalaFull ar trebui să le imite
+### ANEXĂ 3 — Pattern-uri de language pe care Andura ar trebui să le imite
 
 *Word choice și structura linguistică au impact major pe relația de coaching. Listez pattern-urile critice.*
 
@@ -2226,11 +2226,11 @@ Am încercat să livrez asta. Dar **există layer încă mai profund** pe care n
 
 Ce pot să zic cu certitudine: **procesul nu e magic, dar e disciplinat**. Componentele sunt codificabile. Pattern-urile sunt detectabile. Word choice-ul e calculat. Decizia e proporțională cu risc.
 
-Pentru SalaFull, asta înseamnă că construirea unui AI care gândește similar **nu necesită LLM la runtime cu 70B parametri**. Necesită **arhitectură care reflectă procesul de gândire al unui coach competent**.
+Pentru Andura, asta înseamnă că construirea unui AI care gândește similar **nu necesită LLM la runtime cu 70B parametri**. Necesită **arhitectură care reflectă procesul de gândire al unui coach competent**.
 
 Engine deterministic cu reguli sofisticate, profile typing, mode detection, calibration tiers, și **disciplină de design** poate produce output-uri similare cu ce am produs eu în această conversație. Cu **mai bună consistență** (eu am avut moments de inconsistență), **mai rapid** (sub 100ms), și **mai ieftin** (deterministic, fără API calls).
 
-Asta e SalaFull. Asta e proiectul lui Daniel. Asta e diferențiatorul față de orice fitness app existent.
+Asta e Andura. Asta e proiectul lui Daniel. Asta e diferențiatorul față de orice fitness app existent.
 
 Și asta e cea mai importantă observație din întreaga conversație: **eu n-am fost magic. Am fost disciplinat. Discipline e codificabilă.**
 

@@ -1,4 +1,4 @@
-# SalaFull — Personal AI Coach
+# Andura — Personal AI Coach
 
 A personal AI coach with real contextual reasoning, persistent memory, and adaptive decisions.
 

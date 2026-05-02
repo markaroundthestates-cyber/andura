@@ -8,7 +8,7 @@
 
 ## Context
 
-SalaFull's vision is a coach that "follows the body, not the calendar" (PROJECT_VISION). The current architecture cannot deliver this because **coach decisions are not persisted**.
+Andura's vision is a coach that "follows the body, not the calendar" (PROJECT_VISION). The current architecture cannot deliver this because **coach decisions are not persisted**.
 
 Today:
 - `decisionTrace` from `ruleEngine.evaluate(ctx)` exists in-memory per request, then evaporates
@@ -231,7 +231,7 @@ Three retention tiers. **Tier 1 = 180 days** is locked to `responseProfile`'s ro
 | 2 — Aggregate | 180 days to 1 year | sessionType, calibrationLevel, rationale.winnerId, outcome.executed, outcome.matchScore, outcome.deviation. Drop: full context, exercises list, overridden rules |
 | 3 — Archive forever | beyond 1 year | Monthly metrics: count per (sessionType × month), executedRate, avgMatchScore, deviationRate |
 
-Storage keys (kebab-case, consistent with existing SalaFull conventions like `applied-patterns`, `pattern-learning-cache`):
+Storage keys (kebab-case, consistent with existing Andura conventions like `applied-patterns`, `pattern-learning-cache`):
 - `coach-decisions` — Tier 1, array
 - `coach-decisions-aggregate` — Tier 2, array, demoted from Tier 1 on retention pass
 - `coach-decisions-archive` — Tier 3, monthly rollup object

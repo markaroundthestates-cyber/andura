@@ -9,9 +9,9 @@
 
 ## CORE INTENT
 
-SalaFull is being built over a 2-3 year horizon. During that time, AI models will improve dramatically. Code, architecture, and documentation must be written today such that future models (Opus 5+, Mythos-class, or successors) can audit, refactor, and extend without rewriting from zero.
+Andura is being built over a 2-3 year horizon. During that time, AI models will improve dramatically. Code, architecture, and documentation must be written today such that future models (Opus 5+, Mythos-class, or successors) can audit, refactor, and extend without rewriting from zero.
 
-This is not optional. Forward compatibility is the difference between SalaFull being a leveraged asset versus a frozen artifact.
+This is not optional. Forward compatibility is the difference between Andura being a leveraged asset versus a frozen artifact.
 
 ---
 
@@ -35,7 +35,7 @@ A future model reading the ADR can re-evaluate with new context. Without alterna
 
 Engines, components, and modules expose well-defined interfaces. Internal implementation can change without breaking consumers.
 
-In SalaFull terms:
+In Andura terms:
 - `coachDirector` orchestrates, doesn't know engine internals
 - Engines (DP, AA, RuleEngine, etc.) expose `evaluate(ctx)` style methods
 - `CoachContext` is the single shared payload — versioned if shape changes
@@ -127,7 +127,7 @@ When data schemas need new fields:
 - Migration scripts are explicit, not implicit
 - `logNormalize` style adapters for legacy formats
 
-The "SalaFull pattern" already does this partially. Make it explicit principle.
+The "Andura pattern" already does this partially. Make it explicit principle.
 
 **Anti-pattern:** field added in writer, not added in reader. Silent data loss until someone reads old logs.
 

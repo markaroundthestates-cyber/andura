@@ -14,13 +14,13 @@
 # OPUS AUTONOMOUS — Vault Hygiene + Inbox Processing
 
 **Owner:** Daniel (CEO + Product). Tu = Co-CTO frate, autonomous.
-**Working dir:** `/workspaces/salafull`
+**Working dir:** `/workspaces/andura`
 **Goal:** Procesează `📥_inbox/`, integrează în vault SSOT, igienizează, raport în `📤_outbox/`.
 
 ## 0. PRE-FLIGHT MANDATORY
 
 ```bash
-cd /workspaces/salafull
+cd /workspaces/andura
 git pull origin main
 cat VAULT_RULES.md             # Citește integral — reguli authoritative
 ls 📥_inbox/                   # Vezi ce-a uploadat Daniel

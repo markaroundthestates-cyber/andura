@@ -1,4 +1,4 @@
-# PROJECT VISION — SALAFULL
+# PROJECT VISION — ANDURA
 
 **Ultima actualizare:** 25 apr 2026 (rebrand cleanup — vezi [[010-no-anthropic-trademark-public]])
 
@@ -6,8 +6,8 @@
 
 ## ÎN 3 RÂNDURI
 
-SalaFull NU este o aplicație de tracking.  
-SalaFull este un **coach personal AI de 15.000€/lună disponibil 24/7**.  
+Andura NU este o aplicație de tracking.  
+Andura este un **coach personal AI de 15.000€/lună disponibil 24/7**.  
 Un guru în postura utilizatorului, care adaptează fiecare decizie la corpul + mintea + context user.
 
 ---
@@ -22,7 +22,7 @@ Toate deciziile motor pleacă de aici. Dacă se propune un feature care contrazi
 
 ## CONCEPT BRAND
 
-**SalaFull** — coach personal AI cu reasoning contextual real.
+**Andura** — coach personal AI cu reasoning contextual real.
 
 **Public positioning:** un creier bionic specializat în fitness și sănătate, care depășește orice sistem existent — apps competitoare și AI-uri generice — pe domeniul lui specific.
 
@@ -63,13 +63,13 @@ Engine-ul explică logic fiecare decizie (nu "black box").
 
 > "De ce ar folosi cineva app-ul meu în loc de ChatGPT? Asta e important. Și nu mă interesează să îmi zici de simplitate, ci de eficiență decizională."
 
-> "SalaFull e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
+> "Andura e un bionic human brain capabil să bată orice sistem din lume pe ce face și scopul lui."
 
 ---
 
 ## QUALITY BAR (NON-NEGOTIABLE)
 
-> "Dacă senior staff engineers Anthropic (engineering + infrastructure + product + design + security + research) ar vedea SalaFull, să fie PROUD DE PRODUS — peer-to-peer respect, nu condescendență."
+> "Dacă senior staff engineers Anthropic (engineering + infrastructure + product + design + security + research) ar vedea Andura, să fie PROUD DE PRODUS — peer-to-peer respect, nu condescendență."
 
 > "Echipele Codex / Gemini / Grok / 5000 dev Big Tech să fie AMAZED — nu să dea cu noi de pământ."
 
@@ -170,7 +170,7 @@ Post-launch — feedback-driven pricing.
 ## LEGAL & BRAND COMPLIANCE
 
 Vezi [[010-no-anthropic-trademark-public]] pentru reguli explicite de comunicare publică:
-- Brand public: SalaFull (sau successor TBD pre-launch)
+- Brand public: Andura (sau successor TBD pre-launch)
 - Zero referințe Anthropic/Claude în material public
 - Tehnologia rămâne implementation detail, nu marketing point
 - Detalii tehnice OK în Privacy Policy / ToS pentru transparență GDPR

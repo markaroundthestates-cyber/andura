@@ -9,7 +9,7 @@
 
 ## Context
 
-SalaFull v1 actual rulează pe **Anonymous UUID local-first** identification:
+Andura v1 actual rulează pe **Anonymous UUID local-first** identification:
 
 - `firebase.js:15` — `getDeviceId()` generează UUID stocată în `localStorage['device-id']`
 - Firebase RTDB structure: `users/daniel/{coach-decisions, logs, weights, ...}` — hardcoded path single-user
@@ -136,7 +136,7 @@ async function migrateUserData(anonymousUUID, firebaseUid) {
 
 #### EC-1: User cu 2 anonymous accounts (phone + desktop standalone, NU sync)
 
-**Scenario:** Daniel folosește SalaFull pe phone (UUID-A) + desktop separate (UUID-B), each cu data divergent. La onboarding auth, account merge needed.
+**Scenario:** Daniel folosește Andura pe phone (UUID-A) + desktop separate (UUID-B), each cu data divergent. La onboarding auth, account merge needed.
 
 **Decision:** **Account merge = OUT_OF_SCOPE v1.0** (per Cognitive Arch §Q14).
 - User alege un device "primary" (cel cu cel mai mult data) la auth onboarding
@@ -171,9 +171,9 @@ async function migrateUserData(anonymousUUID, firebaseUid) {
 
 #### EC-5: Firebase Auth quota exceeded
 
-**Scenario:** SalaFull viral traction, 10000+ signups/day, Firebase free tier exhausted.
+**Scenario:** Andura viral traction, 10000+ signups/day, Firebase free tier exhausted.
 
-**Decision:** **Pre-monetization risk acceptable** — Firebase Auth free tier = 50k MAU. SalaFull realistic 1000 MAU year 1 (PRODUCT_STRATEGY §10.1). Quota cap distant.
+**Decision:** **Pre-monetization risk acceptable** — Firebase Auth free tier = 50k MAU. Andura realistic 1000 MAU year 1 (PRODUCT_STRATEGY §10.1). Quota cap distant.
 
 **Plan B post-10k:** upgrade Firebase Blaze plan (~$0.01/auth post 50k MAU).
 
@@ -212,7 +212,7 @@ Dacă migration produces silent data loss / incorrectness:
 - **UUID fragility eliminated** — user păstrează data la device reset, OS switch, app reinstall.
 - **Multi-device sync seamless** — same firebase.uid across all devices = transparent data continuity.
 - **Account recovery** — email magic link = standard recovery vector.
-- **Multi-tenant deploy** — `users/{firebase.uid}` schema preps SalaFull pentru N users post-launch.
+- **Multi-tenant deploy** — `users/{firebase.uid}` schema preps Andura pentru N users post-launch.
 - **GDPR Article 20 compliant** — data portability prin Export feature already exists, auth real adds account binding.
 - **EU AI Act preparedness** — high-risk AI systems require user identification + consent tracking.
 

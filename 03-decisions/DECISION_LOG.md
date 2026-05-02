@@ -1,4 +1,4 @@
-﻿# DECISION LOG â€” SalaFull
+﻿# DECISION LOG â€” Andura
 
 ## 2026-04-30 evening — Gemini cross-check + ADR 020-021 + amendments
 
@@ -232,9 +232,9 @@ D1 ADD DEVELOPING (6 nivele Sprint 4 ~8-12h) | D2-D4 DEFER Sprint 1.5 anti-RE wo
 
 Verificat 25 apr 2026 prin web search direct pe documentele legal Anthropic.
 
-**Decizie:** SalaFull NU referenÈ›iazÄƒ Anthropic, Claude, sau orice trademark Anthropic Ã®n material public-facing.
+**Decizie:** Andura NU referenÈ›iazÄƒ Anthropic, Claude, sau orice trademark Anthropic Ã®n material public-facing.
 
-**Brand public:** SalaFull (sau successor TBD pre-launch).
+**Brand public:** Andura (sau successor TBD pre-launch).
 
 **Acceptabil intern (factual technical):**
 - ADRs, vault docs, technical specs
@@ -303,7 +303,7 @@ Verificat 25 apr 2026 prin web search direct pe documentele legal Anthropic.
 - Tier 4 (Next Quarter): 3 tasks â€” schema & architecture refactor
 - Tier 5 (Next Quarter): 3 tasks â€” FAZA 4 features (programe, injury, recovery)
 
-**VERDICT FINAL: FAIL.** SalaFull are fundamente corecte dar NU e launch-ready Ã®n nicio dimensiune criticÄƒ. 4-6 luni concentrate pÃ¢nÄƒ la commercial launch realist.
+**VERDICT FINAL: FAIL.** Andura are fundamente corecte dar NU e launch-ready Ã®n nicio dimensiune criticÄƒ. 4-6 luni concentrate pÃ¢nÄƒ la commercial launch realist.
 
 **Next action:** Daniel review audit, valid/reject task list, queue TASK #26-32 pentru execuÈ›ie imediatÄƒ (Tier 0 quick wins).
 
@@ -438,15 +438,15 @@ Raport complet: [[FAZA_1_FINAL_REPORT]]
 
 **Scope:** 6 strategic decisions luate post cleanup A+B, definind architectural direction pe urmÄƒtoarele 3-4 luni.
 
-### Decision 1 â€” Bloodwork DEFINITIV OUT din SalaFull
+### Decision 1 â€” Bloodwork DEFINITIV OUT din Andura
 
 **Verdict:** Nici commercial, nici personal/dev-flag. Closed forever.
 
 **Rationale commercial:** Gigel test FAIL. Daniel a articulat scenariul user mediu non-tech RO: "de ce imi cere bloodwork? e medic? la cine ajung datele? ma duc la Dorel medicul de 90 ani NU app". Trust breach + privacy panic + cultural friction RO + scope creep perceput = churn imediat. Pierdere brutalÄƒ de useri.
 
-**Rationale personal Daniel:** Insight crucial â€” chat Claude direct = alternativÄƒ superioarÄƒ zero-build. Workflow personal: paste analize Ã®n chat dedicated, Claude interpret + coreleazÄƒ cu antrenament, Daniel aplicÄƒ manual Ã®n SalaFull. Cost build = 3-4h Sonnet pentru feature folosit 4x/an = waste.
+**Rationale personal Daniel:** Insight crucial â€” chat Claude direct = alternativÄƒ superioarÄƒ zero-build. Workflow personal: paste analize Ã®n chat dedicated, Claude interpret + coreleazÄƒ cu antrenament, Daniel aplicÄƒ manual Ã®n Andura. Cost build = 3-4h Sonnet pentru feature folosit 4x/an = waste.
 
-**Verdict:** SalaFull stays clean = coach AI fitness, NU medical scope creep. NU readuce Ã®n viitoare discuÈ›ii fÄƒrÄƒ trigger explicit Daniel.
+**Verdict:** Andura stays clean = coach AI fitness, NU medical scope creep. NU readuce Ã®n viitoare discuÈ›ii fÄƒrÄƒ trigger explicit Daniel.
 
 ### Decision 2 â€” Filter "Gigel test" devine regulÄƒ permanentÄƒ
 
@@ -477,7 +477,7 @@ Cluster decisions filter: trust breach + privacy panic + cultural friction RO + 
 
 ### Decision 4 â€” Tier-based personalization architectural pattern
 
-**Filosofie SalaFull (Daniel insight):** self-selection bias = FEATURE NOT bug.
+**Filosofie Andura (Daniel insight):** self-selection bias = FEATURE NOT bug.
 
 | Tier | CerinÈ›Äƒ user | Engine response |
 |------|-------------|----------------|
@@ -525,7 +525,7 @@ Claude operate ca decision filter Ã®n timp real, NU yes-man. CÃ¢nd Daniel pr
 
 ### Roadmap recalibrate
 
-**Velocity confirmat:** Daniel productive 10-11h/zi pe SalaFull (HR job nivel decizional permite, NU 2-3h cum greÈ™eam estimating). Recalibrare timeline:
+**Velocity confirmat:** Daniel productive 10-11h/zi pe Andura (HR job nivel decizional permite, NU 2-3h cum greÈ™eam estimating). Recalibrare timeline:
 
 **Order strict (NU schimbi fÄƒrÄƒ discuÈ›ie):**
 1. ADR 018 â€” Engine Extensibility Architecture (foundation, Opus task)

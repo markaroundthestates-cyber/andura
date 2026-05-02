@@ -10,7 +10,7 @@
 ## STRUCTURĂ POST-CLEANUP
 
 ```
-salafull/
+andura/
 ├── 00-index/        INDEX_MASTER (acest fișier)
 ├── 01-vision/       Vision + Strategy + Daniel profile + parametric programs (5 files)
 ├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)

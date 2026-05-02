@@ -2,13 +2,13 @@
 
 **Last updated:** 25 Apr 2026 (v2 — corrected after live testing)
 **Owner:** Daniel
-**Purpose:** Single source of truth for how Claude chat connects to SalaFull repo + vault. Read this when migrating chats or onboarding new context.
+**Purpose:** Single source of truth for how Claude chat connects to Andura repo + vault. Read this when migrating chats or onboarding new context.
 
 ---
 
 ## TL;DR
 
-Claude chat reads SalaFull repo + Obsidian vault through Anthropic Project Knowledge (GitHub Integration connector). Vault syncs to GitHub every 15 min via Obsidian Git plugin. Indexing happens within minutes after files are added/synced — much faster than initial assumptions. Daniel works mostly local on home desktop PC, with office laptop on browser only as fallback.
+Claude chat reads Andura repo + Obsidian vault through Anthropic Project Knowledge (GitHub Integration connector). Vault syncs to GitHub every 15 min via Obsidian Git plugin. Indexing happens within minutes after files are added/synced — much faster than initial assumptions. Daniel works mostly local on home desktop PC, with office laptop on browser only as fallback.
 
 ---
 
@@ -47,7 +47,7 @@ GITHUB REPO (private)
          | (indexes repo into Project Knowledge)
          v
 
-CLAUDE CHAT (Anthropic Project: SalaFull)
+CLAUDE CHAT (Anthropic Project: Andura)
   Connector: salafull repo (NOT salafull-vault, deprecated)
   Selected: 13 folders + ENGINE_ARCHITECTURE.md
   Excluded: .obsidian, .github, .husky, .claude, configs
@@ -157,7 +157,7 @@ CLAUDE CHAT (Anthropic Project: SalaFull)
 
 When a chat hits context limit:
 
-1. **Daniel:** start new chat in SalaFull project (NOT in random project)
+1. **Daniel:** start new chat in Andura project (NOT in random project)
 2. **Daniel:** include 1 short status message with current focus + last 1-2 decisions
 3. **Claude:** automatically has access to Project Knowledge → reads vault + repo
 4. **No zip uploads needed for content already in repo.** Direct context from Project Knowledge.

@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Single source of truth for all localStorage keys used by SalaFull. Eliminates the registry gap
+Single source of truth for all localStorage keys used by Andura. Eliminates the registry gap
 that caused H31c (dynamic keys surviving Full Reset) and provides the foundation for the
 whitelist-based `fullReset` rewrite.
 

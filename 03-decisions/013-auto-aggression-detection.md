@@ -8,7 +8,7 @@
 
 ## Context
 
-SalaFull engineul de coaching observă pattern-uri de progres în date logate (CDL — Coach Decision Log, ADR 011). Pe lângă pattern-urile pozitive (adherence, deviation, recovery), există o categorie distinctă de pattern-uri auto-destructive pe care un coach uman experimentat le-ar identifica și ar interveni: **auto-aggression** — user-ul se auto-sabotează.
+Andura engineul de coaching observă pattern-uri de progres în date logate (CDL — Coach Decision Log, ADR 011). Pe lângă pattern-urile pozitive (adherence, deviation, recovery), există o categorie distinctă de pattern-uri auto-destructive pe care un coach uman experimentat le-ar identifica și ar interveni: **auto-aggression** — user-ul se auto-sabotează.
 
 **Pattern tipic observat:**
 
@@ -24,15 +24,15 @@ Progres mai prost (overtraining, deficit metabolic, fatigue cumulativ)
 Spirală: răspunsul greșit la semnal greșit
 ```
 
-**De ce e relevant pentru SalaFull:**
+**De ce e relevant pentru Andura:**
 
-1. **Diferențiator core de produs.** Un coach AI care detectează și intervine pe spirale auto-distructive face ce 95% din apps fitness nu fac. Apps tipice rewardează volum/intensitate orbește; SalaFull pretinde "reasoning contextual real" (vezi PROJECT_VISION).
+1. **Diferențiator core de produs.** Un coach AI care detectează și intervine pe spirale auto-distructive face ce 95% din apps fitness nu fac. Apps tipice rewardează volum/intensitate orbește; Andura pretinde "reasoning contextual real" (vezi PROJECT_VISION).
 
 2. **Risc de doom loop tăcut.** Fără detection, engine-ul învață pe date corupte de auto-aggression: tier-ul progresează pe sesiuni "performante" care sunt de fapt overreaching, response profile învață că user-ul "tolerează volum mare", patterns detectate pe semnale fake. Same problem ca AA broken (RPE=8 fix) documentat în triaj.
 
 3. **Auto-aggression ≠ deviation legitimă.** User adult care decide conștient să push într-o săptămână nu e auto-aggression. Pattern-ul e ce diferă: spirala "mai mult e mai bine" în răspuns la frustrare/progres slab, nu push planificat.
 
-**Problema:** fără un model formal de detection + intervention, SalaFull nu poate distinge între:
+**Problema:** fără un model formal de detection + intervention, Andura nu poate distinge între:
 - Self-regulation sănătoasă (user adultă conștient ajustează)
 - Auto-aggression (spirala distructivă)
 - Noise (deviation izolată fără pattern)
@@ -175,7 +175,7 @@ Alarm fatigue e killer-ul real al sistemelor de tip ăsta. Dacă banner-ul devin
 ### A. Passive observe only (log în CDL, no intervention)
 
 Avantaj: zero risk de over-intervention. Engine învață profile fără paternalism.
-Dezavantaj: produs non-diferențiat. Apps fitness existente fac deja log + zero intervention. Dacă SalaFull pretinde "coach AI cu reasoning real", absența intervention pe pattern auto-distructiv e gap de produs critic.
+Dezavantaj: produs non-diferențiat. Apps fitness existente fac deja log + zero intervention. Dacă Andura pretinde "coach AI cu reasoning real", absența intervention pe pattern auto-distructiv e gap de produs critic.
 
 **Respins:** comunicare e datorată când vezi pattern.
 
@@ -215,7 +215,7 @@ Dezavantaj: hard de operationalizat în UI + reguli; thresholds devin hand-wavy;
 User Sprinter cu push planificat poate trigger MED tier ocazional. Soft warning dismissible + dismiss memory limitează damage. Better than missing real auto-aggression.
 
 ### 2. Calorie threshold 300 kcal/săpt e starting guess
-Fără data empirică pentru calibrare la scop SalaFull. Reconsiderare după 50+ users.
+Fără data empirică pentru calibrare la scop Andura. Reconsiderare după 50+ users.
 
 ### 3. Profile reconciliation poate friction-ate users
 1-click accept/decline reduce friction, dar momentul reconciliation (4-6 săpt) e UX-critical. Risc: user dismiss prompt fără să citească rationale.
@@ -233,7 +233,7 @@ Detection 8h+/zi în app NU e bad în sine. Mapare la "thresholds mai stricte" e
 
 ## Empirical Calibration Parameters
 
-Toate parametrele numerice din ADR sunt **starting guesses** fără data empirică SalaFull-specific. Listă explicită pentru tracking + reconsideration:
+Toate parametrele numerice din ADR sunt **starting guesses** fără data empirică Andura-specific. Listă explicită pentru tracking + reconsideration:
 
 | Parameter | Starting value | Source | Reconsider trigger |
 |-----------|----------------|--------|---------------------|
@@ -347,7 +347,7 @@ Acestea NU intră în ADR (principle), intră în spec implementabil + UX iterat
 
 **Decision:** DA păstrăm. Stocare în CDL extension sau ProfileLog separat (decizie spec, nu ADR).
 
-**Rationale:** Util pentru debugging (de ce a fost user-ul mutat Sprinter → Strategic → Marathon?), reconciliation context (data points la moment update), audit trail. Privacy concern minimal: SalaFull e local-first storage (Firebase user-private, no cloud share), no aggregate exposure.
+**Rationale:** Util pentru debugging (de ce a fost user-ul mutat Sprinter → Strategic → Marathon?), reconciliation context (data points la moment update), audit trail. Privacy concern minimal: Andura e local-first storage (Firebase user-private, no cloud share), no aggregate exposure.
 
 ---
 

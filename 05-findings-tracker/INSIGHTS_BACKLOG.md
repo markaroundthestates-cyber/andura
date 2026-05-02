@@ -275,7 +275,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 
 **Source:** Coaching textbook synthesis.
 
-**Trade-off conceptual:** transparency vs UX. Argument PRO: user real nu vrea jargon "deload week". Argument CONTRA: SalaFull = trust-builders, NU manipulatori.
+**Trade-off conceptual:** transparency vs UX. Argument PRO: user real nu vrea jargon "deload week". Argument CONTRA: Andura = trust-builders, NU manipulatori.
 
 **Reconsider trigger:** A/B test cu useri reali post-launch.
 

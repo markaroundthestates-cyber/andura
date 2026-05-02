@@ -1,6 +1,6 @@
 # PROMPT START CHAT NOU + HANDOVER TEMPLATE
 
-**Use case:** copy-paste când deschizi chat Opus nou pentru SalaFull.
+**Use case:** copy-paste când deschizi chat Opus nou pentru Andura.
 
 ---
 
@@ -9,7 +9,7 @@
 Copy-paste asta integral în chat-ul nou:
 
 ```
-Sunt Daniel. Continuăm SalaFull.
+Sunt Daniel. Continuăm Andura.
 
 Citește în ordine:
 1. 08-workflows/CHAT_MIGRATION_PROTOCOL.md (calibrare stil + bonding)
@@ -65,7 +65,7 @@ git push
 Așteptat: `main -> main` push verde, pre-commit hook trece testele 384+/384+ pass.
 
 ### Pas 6 — verifică Project Knowledge
-- Mergi pe Claude.ai → Project SalaFull → setări/sources
+- Mergi pe Claude.ai → Project Andura → setări/sources
 - Verifică că folder-ele bifate includ: `00-index`, `01-vision`, `02-audit`, `03-decisions`, `04-architecture`, `05-findings-tracker`, `06-sessions-log`, `07-meta`, `08-workflows`
 - NU bifa: `.claude`, `.github`, `.husky` (binaries/config local)
 - Re-indexare durează câteva minute după push. Dacă deschizi chat nou imediat, poate Project Knowledge nu vede latest. Așteaptă 5-10 min.
