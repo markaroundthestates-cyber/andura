@@ -1,6 +1,6 @@
-const CACHE_VERSION = 'salafull-v3';
+const CACHE_VERSION = 'andura-v1';
 const CACHE = CACHE_VERSION;
-const BASE = '/salafull';
+const BASE = '/andura';
 const ASSETS = [
   BASE + '/',
   BASE + '/index.html',
