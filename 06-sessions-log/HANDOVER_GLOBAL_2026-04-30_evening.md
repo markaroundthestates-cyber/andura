@@ -4384,6 +4384,8 @@ Phase B mini-sesiune scope updated: **35 strings cumulative confirmate** (33 exi
 
 Phase B scope actual count = **51 strings cumulative** (NU 35), discovered în review chat strategic Chat E. Diferența 16 strings: §25 outdated inventory NU acoperă intensity labels (4) + technique descs (2) + start rationales (4) + phase timeline labels (4) + checkpoint sub-labels (1) + tempo notes (1 inflated estimate). Detail spec breakdown per §36.58: fatigue.js 8 + dp.js 20 + reality.js 6 + sys.js 13 + calibration.js 4 + 2 NEW placeholders = 51 cumulative.
 
+**Amendment 2026-05-02 (per ALIGNMENT_QUESTIONS Q8):** verdicte total = **11 categorical** (10 tranziție + 1 ON_TARGET stare neutră). Summary dp.js count rămâne **20 strings** (verdict + supporting + transitions + UI labels). NU discrepancy real — clarification doar.
+
 **Cross-refs:** §36.56 ADR Review Process EXECUTED + ADR_MODE_DETECTION_UI_v1 EXT-3/EXT-5/EXT-6 + ADR_OUTLIER_FILTER_v1 EXT-2 + §36.58 Phase B Wording 51 Strings LOCKED V1.
 
 ### 36.58 Phase B Engine Wording — 51 Strings LOCKED V1
@@ -4653,6 +4655,22 @@ Per ALIGNMENT_QUESTIONS Q7 PRE-UI guard-rail. Industry pattern snapshot tests pe
 
 **Cumulative LOCKED count:** 60 → 60 (testing infra, NU decizie nouă)
 **Tests delta:** 1174 → 1203 (+29)
+
+### §36.65 NEXT CHAT AGENDA UPDATE 2026-05-02
+
+Post ALIGNMENT_QUESTIONS Daniel responses — agenda revised:
+
+**Removed (resolved/not necessary):**
+- ❌ Q8 dp.js cosmetic count discrepancy fix (resolved Chat E Q4, 11 verdicte = 10+1 ON_TARGET, summary 20 OK)
+
+**Confirmed deferred carry-overs:**
+- Sprint UI Integration ~6-10h (post-3-ADR-LOCK ✅ + Firebase Auth solo Daniel)
+- Manual exercise metadata audit ~2-3h (BATCH_05 acest cluster)
+- Test coverage report (BATCH_07 acest cluster)
+- Dependencies audit (BATCH_09 acest cluster — corectat: BATCH_08)
+- Build perf baseline (BATCH_10 acest cluster — corectat: BATCH_09)
+
+**Cumulative LOCKED count:** 60 → 60 (hygiene clarification, NU decizie nouă)
 
 ---
 
