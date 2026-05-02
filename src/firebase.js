@@ -2,14 +2,40 @@
 import { DB, tod } from './db.js';
 import { toast } from './ui/ui.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
+import { getAuthState, getIdToken } from './auth.js';
 
 export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
-export const USER_PATH = 'users/daniel';
+
+// Legacy literal — preserved as fallback for unauthenticated clients during
+// Faza 1-2 of ADR_MULTI_TENANT_AUTH_v1 transition. Once Auth migration is
+// complete + Firebase Rules tightened (per ADR 007 §AMENDMENT 2026-05-02),
+// the fallback path returns null and ops short-circuit.
+export const LEGACY_USER_PATH = 'users/daniel';
+
+// Back-compat alias so older imports keep working during migration.
+// Will be removed once all consumers go through getUserPath().
+export const USER_PATH = LEGACY_USER_PATH;
+
+/**
+ * Resolve the per-user RTDB path. Priority:
+ *   1. Firebase Auth uid → `users/<uid>`
+ *   2. Legacy anonymous path `users/daniel` (Faza 1-2 fallback only)
+ *   3. null when neither available (post-Faza-3 with no auth = read-only)
+ *
+ * @returns {string|null}
+ */
+export function getUserPath() {
+  const auth = getAuthState();
+  if (auth?.uid) return `users/${auth.uid}`;
+  return LEGACY_USER_PATH;
+}
+
 // NOTE: 'photos' is intentionally excluded — base64 images are too large for Firebase RTDB free tier.
 // Photos are stored locally only. Users should be aware they are NOT backed up to the cloud.
 export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','bf-override','phase-override','current-kcal','phase-change-date','readiness','unavailable-equipment','sf.userConfig', // sf.userConfig — bio + targetKg + equipment prefs (per audit night 2026-04-26 + ADR sync drift finding)
   'peak-hours','session-start-hours','auto-recommendations','applied-recommendations','applied-patterns','session-draft','workout-skips','coach-decisions','coach-decisions-aggregate','coach-decisions-archive','cdl-patterns',
   'profile-history', // profile-history — onboarding Q1-Q5 + reconciliation events (per ADR 014 §6)
+  'tombstones',      // tombstones — Memory Paradox hotfix (Batch B Task 2): localStorage soft-delete tracking (per ADR_MULTI_TENANT_AUTH_v1 + future T&B Faza 1+2)
 ];
 
 function getDeviceId() {
@@ -18,9 +44,20 @@ function getDeviceId() {
   return id;
 }
 
+// ── Auth-aware URL builder ───────────────────────────────────────────────
+// Appends `?auth=<idToken>` when an idToken is provided. Per Firebase docs,
+// REST endpoints accept the idToken as query param for per-uid rule
+// enforcement. Token is fetched proactively (auto-refresh inside getIdToken).
+async function _buildUrl(fullPath) {
+  const token = await getIdToken().catch(() => null);
+  const auth = token ? `?auth=${encodeURIComponent(token)}` : '';
+  return `${FIREBASE_URL}/${fullPath}.json${auth}`;
+}
+
 async function fbGet(path) {
   try {
-    const r = await fetch(`${FIREBASE_URL}/${path}.json`, { cache: 'no-store' });
+    const url = await _buildUrl(path);
+    const r = await fetch(url, { cache: 'no-store' });
     if (!r.ok) return null;
     return await r.json();
   } catch { return null; }
@@ -28,7 +65,8 @@ async function fbGet(path) {
 
 async function fbSet(path, data) {
   try {
-    const r = await fetch(`${FIREBASE_URL}/${path}.json`, {
+    const url = await _buildUrl(path);
+    const r = await fetch(url, {
       method: 'PUT',
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' }
@@ -39,16 +77,25 @@ async function fbSet(path, data) {
 
 async function fbRemove(path) {
   try {
-    const r = await fetch(`${FIREBASE_URL}/${path}.json`, { method: 'DELETE' });
+    const url = await _buildUrl(path);
+    const r = await fetch(url, { method: 'DELETE' });
     return r.ok;
   } catch { return false; }
 }
 
+// Exposed so dataCleanup.js + auth migration runner can issue auth-aware
+// raw requests without re-implementing the URL builder.
+export async function buildAuthUrl(fullPath) {
+  return _buildUrl(fullPath);
+}
+
 export async function clearFirebaseKeys(keys) {
   if (!keys || keys.length === 0) return;
+  const userPath = getUserPath();
+  if (!userPath) return;
   const results = await Promise.allSettled(
     keys.map(async key => {
-      const ok = await fbRemove(`${USER_PATH}/${key}`);
+      const ok = await fbRemove(`${userPath}/${key}`);
       if (ok) console.log(`[Firebase] Removed key: ${key}`);
       else console.warn(`[Firebase] Failed to remove key: ${key}`);
       return ok;
@@ -60,6 +107,11 @@ export async function clearFirebaseKeys(keys) {
 
 export async function syncToFirebase() {
   try {
+    const userPath = getUserPath();
+    if (!userPath) {
+      console.log('[Firebase] syncToFirebase: no auth + no fallback, skipping');
+      return false;
+    }
     const payload = {};
     SYNC_KEYS.forEach(k => {
       const v = DB.get(k);
@@ -68,7 +120,7 @@ export async function syncToFirebase() {
     });
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
-    const ok = await fbSet(USER_PATH, payload);
+    const ok = await fbSet(userPath, payload);
     return ok;
   } catch (e) { console.warn('Firebase sync failed:', e); return false; }
 }
@@ -84,7 +136,12 @@ export async function syncFromFirebase() {
     return false;
   }
   try {
-    const remote = await fbGet(USER_PATH);
+    const userPath = getUserPath();
+    if (!userPath) {
+      console.log('[Firebase] syncFromFirebase: no auth + no fallback, skipping');
+      return false;
+    }
+    const remote = await fbGet(userPath);
     if (!remote) return false;
 
     const today = tod();
@@ -115,6 +172,16 @@ export async function syncFromFirebase() {
         }
       });
     });
+
+    // Apply tombstone filter (Memory Paradox hotfix — Batch B Task 2).
+    // Done AFTER merge so any deleted entries can't reappear from remote.
+    try {
+      const { applyTombstoneFilterToAll } = await import('./util/tombstones.js');
+      applyTombstoneFilterToAll();
+    } catch (e) {
+      // Tombstones module is optional during transition — non-fatal.
+      console.warn('[Firebase] tombstone filter skipped:', e?.message);
+    }
 
     // Warn about unknown remote keys so schema drift is visible
     const remoteKeys = Object.keys(remote).filter(k => !k.startsWith('_'));

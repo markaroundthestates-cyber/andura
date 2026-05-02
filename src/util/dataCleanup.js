@@ -1,5 +1,5 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test și debugging ═══════
-import { FIREBASE_URL, USER_PATH, scheduleInvalidation } from '../firebase.js';
+import { FIREBASE_URL, getUserPath, buildAuthUrl, scheduleInvalidation } from '../firebase.js';
 import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, getAllDynamicKeys } from './dataRegistry.js';
 
 // Re-export for backward compat (tests and other importers)
@@ -109,20 +109,27 @@ export async function resetTestData(options = {}) {
 
   if (clearFirebase) {
     try {
-      const r = await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, { cache: 'no-store' });
-      if (r.ok) {
-        const remote = await r.json();
-        if (remote && typeof remote === 'object') {
-          TEST_RESIDUE_KEYS.forEach(k => { delete remote[k]; });
-          await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, {
-            method: 'PUT',
-            body: JSON.stringify(remote),
-            headers: { 'Content-Type': 'application/json' }
-          });
-          console.log('[DataCleanup] Firebase keys removed');
-        }
+      const userPath = getUserPath();
+      if (!userPath) {
+        console.log('[DataCleanup] No user path resolvable, skipping Firebase cleanup');
       } else {
-        console.log('[DataCleanup] Firebase not reachable, local-only cleanup');
+        const getUrl = await buildAuthUrl(userPath);
+        const r = await fetch(getUrl, { cache: 'no-store' });
+        if (r.ok) {
+          const remote = await r.json();
+          if (remote && typeof remote === 'object') {
+            TEST_RESIDUE_KEYS.forEach(k => { delete remote[k]; });
+            const putUrl = await buildAuthUrl(userPath);
+            await fetch(putUrl, {
+              method: 'PUT',
+              body: JSON.stringify(remote),
+              headers: { 'Content-Type': 'application/json' }
+            });
+            console.log('[DataCleanup] Firebase keys removed');
+          }
+        } else {
+          console.log('[DataCleanup] Firebase not reachable, local-only cleanup');
+        }
       }
     } catch (err) {
       console.warn('[DataCleanup] Firebase cleanup failed:', err.message);
@@ -188,12 +195,18 @@ export async function fullReset(options = {}) {
 
   if (clearFirebase) {
     try {
-      await fetch(`${FIREBASE_URL}/${USER_PATH}.json`, {
-        method: 'PUT',
-        body: JSON.stringify(null),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log('[DataCleanup] Firebase data cleared');
+      const userPath = getUserPath();
+      if (userPath) {
+        const url = await buildAuthUrl(userPath);
+        await fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(null),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('[DataCleanup] Firebase data cleared');
+      } else {
+        console.log('[DataCleanup] No user path, skipping Firebase reset');
+      }
     } catch (err) {
       console.warn('[DataCleanup] Firebase full reset failed:', err.message);
     }

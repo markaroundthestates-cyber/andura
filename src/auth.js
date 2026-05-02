@@ -1,0 +1,307 @@
+// ══ FIREBASE AUTH — REST endpoints (per ADR 002 + ADR_MULTI_TENANT_AUTH_v1) ═
+// Goal: replace anonymous `users/daniel` literal with auth-resolved
+// `users/{uid}` paths. Email Magic Link primary; Google OAuth via
+// `accounts:signInWithIdp` REST endpoint (id_token from Google → Firebase).
+//
+// Storage layout (localStorage):
+//   firebase-id-token           ID token (1h TTL, refresh via refresh token)
+//   firebase-uid                Firebase user uid (stable)
+//   firebase-refresh-token      Refresh token (long-lived)
+//   firebase-id-token-expiry    Unix ms expiry (for proactive refresh)
+//   firebase-magic-link-email   Pending email awaiting magic link verification
+//
+// Per-uid path migration runs ONCE post first auth (see migrations/
+// 2026-05-02-auth-path-migration.js).
+
+const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
+const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
+
+// Web API key (public, embeddable per Firebase docs — not a secret).
+// NOTE: pulled from Firebase Console → Project settings → Web API Key.
+// Daniel: replace 'PLACEHOLDER_WEB_API_KEY' with the real key pre-launch
+// publish (per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02).
+export const FIREBASE_API_KEY = (typeof window !== 'undefined' && window.__FIREBASE_API_KEY)
+  || 'PLACEHOLDER_WEB_API_KEY';
+
+// Storage keys (single source of truth, used in tests + signOut).
+export const AUTH_STORAGE_KEYS = Object.freeze({
+  idToken:      'firebase-id-token',
+  uid:          'firebase-uid',
+  refreshToken: 'firebase-refresh-token',
+  expiry:       'firebase-id-token-expiry',
+  pendingEmail: 'firebase-magic-link-email',
+});
+
+// ── Magic Link flow ─────────────────────────────────────────────────────
+
+/**
+ * Send a sign-in email to `email`. The email contains a magic link that
+ * lands the user back on `continueUrl` with `?oobCode=...&email=...`.
+ *
+ * @param {string} email
+ * @param {string} [continueUrl] - default: `${window.location.origin}/auth-callback`
+ * @returns {Promise<{ ok: boolean, email?: string, error?: string }>}
+ */
+export async function sendMagicLink(email, continueUrl) {
+  if (!_isValidEmail(email)) return { ok: false, error: 'invalid_email' };
+  const url = `${AUTH_BASE}/accounts:sendOobCode?key=${FIREBASE_API_KEY}`;
+  const body = {
+    requestType: 'EMAIL_SIGNIN',
+    email,
+    continueUrl: continueUrl || `${_origin()}/auth-callback`,
+    canHandleCodeInApp: true,
+  };
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      return { ok: false, error: data?.error?.message || `http_${r.status}` };
+    }
+    _setItem(AUTH_STORAGE_KEYS.pendingEmail, email);
+    return { ok: true, email };
+  } catch (err) {
+    return { ok: false, error: err?.message || 'network_error' };
+  }
+}
+
+/**
+ * Complete the magic-link sign-in. Call on `auth-callback` route with the
+ * `oobCode` from the URL and the `email` either from the URL or the
+ * pending-email cache (set by `sendMagicLink`).
+ *
+ * @param {string} email
+ * @param {string} oobCode
+ * @returns {Promise<{ ok: boolean, uid?: string, error?: string }>}
+ */
+export async function verifyMagicLink(email, oobCode) {
+  if (!email || !oobCode) return { ok: false, error: 'missing_input' };
+  const url = `${AUTH_BASE}/accounts:signInWithEmailLink?key=${FIREBASE_API_KEY}`;
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, oobCode }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.idToken) {
+      return { ok: false, error: data?.error?.message || `http_${r.status}` };
+    }
+    _persistAuth(data);
+    _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+    return { ok: true, uid: data.localId };
+  } catch (err) {
+    return { ok: false, error: err?.message || 'network_error' };
+  }
+}
+
+/**
+ * Helper for clients that already received the magic-link URL — extracts
+ * `oobCode` and `email` (if encoded) from the query string.
+ *
+ * @param {string} [search] - default: window.location.search
+ * @returns {{ oobCode: string|null, email: string|null }}
+ */
+export function parseMagicLinkUrl(search) {
+  const q = typeof search === 'string' ? search : (typeof window !== 'undefined' ? window.location.search : '');
+  if (!q) return { oobCode: null, email: null };
+  try {
+    const params = new URLSearchParams(q.startsWith('?') ? q.slice(1) : q);
+    return { oobCode: params.get('oobCode'), email: params.get('email') };
+  } catch {
+    return { oobCode: null, email: null };
+  }
+}
+
+// ── Google OAuth (signInWithIdp) ────────────────────────────────────────
+
+/**
+ * Build the Google OAuth URL. Caller redirects the browser to it; Google
+ * round-trips back to `continueUrl` with `id_token` in the URL fragment.
+ *
+ * NOTE: requires a Google OAuth Client ID configured in Firebase Console →
+ * Authentication → Sign-in providers → Google. Daniel sets this once
+ * pre-launch (see ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02).
+ *
+ * @param {string} googleClientId
+ * @param {string} [continueUrl] - default: `${window.location.origin}/auth-callback`
+ * @returns {string} URL to redirect to
+ */
+export function buildGoogleSignInUrl(googleClientId, continueUrl) {
+  if (!googleClientId) throw new Error('googleClientId required');
+  const redirect = continueUrl || `${_origin()}/auth-callback`;
+  const params = new URLSearchParams({
+    client_id: googleClientId,
+    redirect_uri: redirect,
+    response_type: 'id_token',
+    scope: 'openid email profile',
+    nonce: Math.random().toString(36).slice(2),
+  });
+  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
+
+/**
+ * Exchange a Google `id_token` (from the redirect fragment) for Firebase
+ * Auth credentials via the `accounts:signInWithIdp` REST endpoint.
+ *
+ * @param {string} googleIdToken
+ * @returns {Promise<{ ok: boolean, uid?: string, error?: string }>}
+ */
+export async function signInWithGoogleIdToken(googleIdToken) {
+  if (!googleIdToken) return { ok: false, error: 'missing_id_token' };
+  const url = `${AUTH_BASE}/accounts:signInWithIdp?key=${FIREBASE_API_KEY}`;
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        postBody: `id_token=${encodeURIComponent(googleIdToken)}&providerId=google.com`,
+        requestUri: _origin(),
+        returnIdpCredential: true,
+        returnSecureToken: true,
+      }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.idToken) {
+      return { ok: false, error: data?.error?.message || `http_${r.status}` };
+    }
+    _persistAuth(data);
+    return { ok: true, uid: data.localId };
+  } catch (err) {
+    return { ok: false, error: err?.message || 'network_error' };
+  }
+}
+
+// ── Token state / refresh ───────────────────────────────────────────────
+
+/**
+ * Read current auth state. Returns null if no auth or token expired and
+ * no refresh token available.
+ *
+ * @returns {{ uid: string, idToken: string, expiry: number }|null}
+ */
+export function getAuthState() {
+  const uid = _getItem(AUTH_STORAGE_KEYS.uid);
+  const idToken = _getItem(AUTH_STORAGE_KEYS.idToken);
+  if (!uid || !idToken) return null;
+  const expiry = Number(_getItem(AUTH_STORAGE_KEYS.expiry)) || 0;
+  return { uid, idToken, expiry };
+}
+
+/**
+ * Return current ID token, refreshing proactively if within `skewMs` of
+ * expiry. `skewMs` defaults to 60s.
+ *
+ * @param {number} [skewMs=60000]
+ * @returns {Promise<string|null>}
+ */
+export async function getIdToken(skewMs = 60_000) {
+  const auth = getAuthState();
+  if (!auth) return null;
+  const now = Date.now();
+  if (auth.expiry && (auth.expiry - now) > skewMs) return auth.idToken;
+  // Stale or near-stale → refresh.
+  const refreshed = await refreshIdToken();
+  return refreshed.ok ? refreshed.idToken : null;
+}
+
+/**
+ * Force-refresh the ID token using the stored refresh token.
+ *
+ * @returns {Promise<{ ok: boolean, idToken?: string, error?: string }>}
+ */
+export async function refreshIdToken() {
+  const refreshToken = _getItem(AUTH_STORAGE_KEYS.refreshToken);
+  if (!refreshToken) return { ok: false, error: 'no_refresh_token' };
+  const url = `${TOKEN_BASE}/token?key=${FIREBASE_API_KEY}`;
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}`,
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.id_token) {
+      return { ok: false, error: data?.error?.message || `http_${r.status}` };
+    }
+    // Token endpoint returns snake_case fields.
+    _persistAuth({
+      idToken: data.id_token,
+      refreshToken: data.refresh_token,
+      localId: data.user_id || _getItem(AUTH_STORAGE_KEYS.uid),
+      expiresIn: data.expires_in,
+    });
+    return { ok: true, idToken: data.id_token };
+  } catch (err) {
+    return { ok: false, error: err?.message || 'network_error' };
+  }
+}
+
+/**
+ * Sign out — clears all stored auth tokens. Triggers a `salafull:signedout`
+ * window event so the UI can re-route.
+ */
+export function signOut() {
+  _removeItem(AUTH_STORAGE_KEYS.idToken);
+  _removeItem(AUTH_STORAGE_KEYS.uid);
+  _removeItem(AUTH_STORAGE_KEYS.refreshToken);
+  _removeItem(AUTH_STORAGE_KEYS.expiry);
+  _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+    try { window.dispatchEvent(new Event('salafull:signedout')); } catch {}
+  }
+}
+
+/**
+ * Returns true if there's an authenticated user (auth state present, even
+ * if token is stale but refreshable).
+ *
+ * @returns {boolean}
+ */
+export function isAuthenticated() {
+  return getAuthState() !== null;
+}
+
+// ── internals ───────────────────────────────────────────────────────────
+
+function _persistAuth(data) {
+  // Firebase identitytoolkit returns: { idToken, refreshToken, localId, expiresIn }
+  // expiresIn is seconds (string in REST response).
+  if (data.idToken) _setItem(AUTH_STORAGE_KEYS.idToken, data.idToken);
+  if (data.refreshToken) _setItem(AUTH_STORAGE_KEYS.refreshToken, data.refreshToken);
+  if (data.localId) _setItem(AUTH_STORAGE_KEYS.uid, data.localId);
+  const expiresInSec = Number(data.expiresIn);
+  if (Number.isFinite(expiresInSec) && expiresInSec > 0) {
+    _setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() + expiresInSec * 1000));
+  }
+}
+
+function _isValidEmail(s) {
+  if (typeof s !== 'string') return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}
+
+function _origin() {
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return window.location.origin;
+  }
+  return 'https://salafull.local';
+}
+
+function _getItem(k) {
+  try { return typeof localStorage !== 'undefined' ? localStorage.getItem(k) : null; }
+  catch { return null; }
+}
+
+function _setItem(k, v) {
+  try { if (typeof localStorage !== 'undefined') localStorage.setItem(k, v); }
+  catch {}
+}
+
+function _removeItem(k) {
+  try { if (typeof localStorage !== 'undefined') localStorage.removeItem(k); }
+  catch {}
+}

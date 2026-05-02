@@ -1,7 +1,7 @@
 # ADR — Multi-Tenant Auth Migration v1
 
-**Status:** Accepted (formalized 2026-04-30 Sprint 3 partial autonomous post chat strategic 2026-04-29 lock decision #8)
-**Date:** 2026-04-30
+**Status:** Accepted — Faza 1 client-side **LANDED 2026-05-02 Batch B** (REST helpers + UI + path migration). Faza 2 banner UX + Faza 3 sunset gate + Cloud Function bulk migration **deferred** to dedicated batch.
+**Date:** 2026-04-30 (initial); **2026-05-02 (§AMENDMENT — Sprint 4.x Batch B implementation)**
 **See also:** [[002-firebase-rest-not-sdk]] | [[007-firebase-open-rules]] | [[001-local-first-storage]] | [[011-coach-decision-log-architecture]] (Reconsideration Trigger #6) | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] §Q14
 **Cross-ref audit:** AUDIT_5000Q Q-0353 / Q-1053 / Q-1055 (Anonymous UUID fragility cluster)
 
@@ -255,3 +255,53 @@ Dacă migration produces silent data loss / incorrectness:
 ---
 
 *Authored 2026-04-30 Sprint 3 partial autonomous run Opus 4.7. Sign-off implicit via handover lock 2026-04-29 chat strategic Daniel + Claude Opus.*
+
+---
+
+## §AMENDMENT 2026-05-02 — Sprint 4.x Batch B implementation status
+
+**Scope landed (Faza 1 client-side):**
+
+- `src/auth.js` — Firebase Auth REST helpers per ADR 002 (NO Firebase JS SDK). Endpoints used: `accounts:sendOobCode` (Magic Link), `accounts:signInWithEmailLink`, `accounts:signInWithIdp` (Google), `securetoken/v1/token` (refresh). Token persistence via localStorage cu `firebase-id-token` / `firebase-uid` / `firebase-refresh-token` / `firebase-id-token-expiry`. Proactive refresh (60 s skew) inside `getIdToken()`.
+- `src/firebase.js` refactor — `USER_PATH` literal preserved as `LEGACY_USER_PATH` fallback; new `getUserPath()` resolves uid-first cu fallback. All `fbGet/fbSet/fbRemove` thread `?auth=<idToken>` query param via `_buildUrl()` builder. `buildAuthUrl()` exported pentru raw consumers (dataCleanup, migration runner).
+- `src/util/dataCleanup.js` — uses `getUserPath() + buildAuthUrl()` instead of literal.
+- `src/migrations/2026-05-02-auth-path-migration.js` — idempotent client-side path migration `users/daniel` → `users/<uid>`. Verifies via key-count match. Marks done in localStorage so subsequent boots skip. Returns one of: `migrated | already-populated | no-source | skipped | no-auth | failed`.
+- `src/pages/auth.js` — bare-DOM Magic Link UI cu pending state + resend + Google OAuth secondary button (rendered only when `googleClientId` provided to `createAuthScreen`). Wording RO Bugatti factual (NU paternalist, NU emoji).
+- Tests: +50 new (auth: 16, tombstones: 22, migration: 12). Baseline 955 → 1005.
+
+**NOT landed (deferred):**
+
+- Firebase Console: Google OAuth Client ID config — Daniel sets manually pre-launch.
+- `index.html` route hookup pentru `/auth-callback` — Daniel wires when integrating UI shell (next batch).
+- Faza 2 banner UX "Salvează contul" prompt for existing Anonymous users → dedicated 30-min wiring batch.
+- Faza 3 sunset gate (post 30-day parallel) → post Daniel dogfood Faza 1.
+- Cloud Function `migrateUserData` / `migrateAllPending` / `tombstoneCleanup` (multi-tenant bulk migration) — single-user Daniel pre-launch path migrates client-side via `runAuthPathMigration`; Cloud Function needed only post-launch when N users start linking accounts. Spec preserved verbatim în `MULTI_TENANT_AUTH_MIGRATION_SPEC.md`.
+- ADR 007 §AMENDMENT 2026-05-02 production publish — Daniel runs Firebase emulator smoke test against `database.rules.json` post-Magic-Link end-to-end verify, then publishes to Console. Activation gated on Faza 1 dogfood pass.
+
+**Daniel manual steps post-batch:**
+
+1. Firebase Console → Project settings → Web API Key → copy → set `window.__FIREBASE_API_KEY` in `index.html` head OR replace `'PLACEHOLDER_WEB_API_KEY'` în `src/auth.js` constant.
+2. Firebase Console → Authentication → Sign-in method → enable "Email link (passwordless sign-in)".
+3. (Optional Faza 1+) Firebase Console → Authentication → Sign-in method → enable Google → create OAuth Client ID → pass to `createAuthScreen({ googleClientId: '...' })`.
+4. Hook `createAuthScreen()` în onboarding flow / app shell when ready.
+5. Run end-to-end Magic Link flow on dev URL → verify `localStorage['firebase-uid']` populated → verify `users/<uid>/...` in RTDB Console after first write.
+6. After dogfood pass → publish `database.rules.json` to Firebase Console (per ADR 007 §AMENDMENT 2026-05-02).
+
+**Test coverage of edge cases:**
+
+- EC-3 partial-fail rollback covered: write success but verify count-mismatch → returns `failed`, migration flag NOT set, retry idempotent.
+- EC-4 magic-link expired — REST endpoint returns error string, `verifyMagicLink` propagates as `error`. UI surfaces COPY.errorVerifyFailed.
+- Token refresh path tested: stale token → `getIdToken()` triggers `refreshIdToken()` → new token persisted.
+
+**Known gaps (intentional, deferred):**
+
+- No request retry/backoff in `_buildUrl` — Firebase REST is reliable, retries can land in dedicated resilience batch.
+- Verify step uses key-count match instead of deep-equal (single-user pre-launch acceptable; deep-equal would 2× bandwidth + complexity for marginal correctness gain).
+- `users/daniel/_migrated` retention marker NOT written client-side — kept simple. Cloud Function bulk migration (post-V1) writes the retention marker per spec.
+
+**Cross-refs:**
+
+- §34.2 Firebase Rules RTDB Lock (ADR 007 §AMENDMENT)
+- Batch B Task 1 implementation (Sprint 4.x)
+- Batch A Finding A (Auth Migration prerequisite for Blocker 2 activate)
+- `04-architecture/MULTI_TENANT_AUTH_MIGRATION_SPEC.md` (full Cloud Function spec — referenced for post-V1 multi-tenant)
