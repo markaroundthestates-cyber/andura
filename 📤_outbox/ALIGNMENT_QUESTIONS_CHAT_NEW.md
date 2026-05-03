@@ -1,140 +1,112 @@
-# ALIGNMENT QUESTIONS — Chat Strategic NEW (post Ingest 2026-05-03 night late PREBETA SCOPE EXPANSION)
+# ALIGNMENT QUESTIONS — Chat Strategic NEW (post Audit Total Consolidat 2026-05-03 ingest)
 
 **Owner:** CC Opus (generate per VAULT_RULES §HANDOVER_PROTOCOL step 9 + memory rule #22).
-**Pass criteria:** ≥12/15 PASS (≥80%) → PROCEED chat strategic NEW (Auth Flow Integration sau Coach Intelligence Continuare per Daniel decision).
-**Source:** Vault SSOT post-merge `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` + ADR amendments + meta updates.
-**Format:** Q + citation `§X file.md` + răspuns verbatim din vault.
+**Pass criteria:** ≥10/12 PASS (≥83%) → PROCEED chat strategic NEW (D1-D6 decision points sau Auth Flow per Daniel decision).
+**Source:** Vault SSOT post-merge `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.86-§36.92 + ADR 023 partial spec + DIFF_FLAGS.md + FINDINGS_MASTER audit consolidat.
+**⚠️ Note:** ADR 023 status `LOCKED V1 — partial spec`; full sub-sections A-M PENDING upload `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` (DIFF_FLAGS P1-FLAG-1).
 
 ---
 
-## §1 — Coach Intelligence Cluster (§36.81)
+## Q1: Top 4 CRITICAL pre-Beta blockers (post audit total)?
 
-### Q1 — Câte variante distincte sunt cap-ul soft per pattern muscular și ce mecanism guvernează depășirea acestuia?
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.92 + `05-findings-tracker/FINDINGS_MASTER.md` Bucket 1 + HANDOVER_AUDIT_TOTAL §1.
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.81.1 Catalog Ceiling Soft Cap LOCKED V1.
-
-**Răspuns verbatim:** Soft cap target 3-4 variante distincte per movement pattern (ex: lateral_raise_db, lateral_raise_cable, lateral_raise_machine). Codul **permite** introducerea unei a 5-a variante DAR impune justificare obligatorie în PR. Anti-arbitrary cap, anti-bloat, anti-onboarding kilometric. Squats permite legitim 6+ variante (back, front, goblet, hack, bulgarian, box) — cap rigid 4 amputează realitate sală RO.
+**Răspuns verbatim:** **4 CRITICAL** (NU 5 — T1 demoted HIGH parțial mitigated, B1 demoted MEDIUM doc hygiene): **B4 RPE Verbal UI** (1-2h, înlocuire numeric → 3 verbal Ușor/Potrivit/Foarte greu) + **B2 T&B Faza 1+2** (2-3h, event-sourcing + branching + UI prompt UNBLOCKS DEAD-1) + **B3 Founding Cap atomic Firebase** (30-45min, race condition revenue loss) + **N1+N5-NEW AUDIT_30_9 caller cleanup + dataRegistry** (~30-45min, applied-patterns legacy key).
 
 ---
 
-### Q2 — Ce ierarhie strictă guvernează algoritmul de substituții și ce status au ponderile numerice?
+## Q2: ADR 023 LOCKED V1 scope = 2 trigger points?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.81.2 Substitutions Hierarchy Algorithmic LOCKED V1.
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.86 + `03-decisions/023-llm-intent-interpretation.md` Decision §Scope.
 
-**Răspuns verbatim:** Algoritmul sortează alternative pe baza ierarhie strictă de priorități (ordering only LOCKED, weights TBD post-Beta): 1. `primary_muscle` (cel mai important), 2. `movement_pattern`, 3. `force_curve_profile`, 4. `equipment_class` (cel mai puțin important). **Ponderi numerice (40/30/20/10) RESPINSE V1** — pre-mature optimization fără data Beta reală. `manual_override_ids` permis doar pentru cazuri excepționale unde algo greșește. Eliminat vector hardcoded `substitutions: [...]` per exercițiu (maintenance hell la 30+ exerciții × 5 substituții = 150+ relații manual).
-
----
-
-### Q3 — Cum funcționează Mid-Set Switch Fallback Hybrid Rule și ce infrastructură existentă reutilizează?
-
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.81.3 Mid-Set Switch Fallback Hybrid Rule LOCKED V1.
-
-**Răspuns verbatim:** Engine handle prin "Hybrid Rule" cu UI Bridge (3 pași): 1) Save seturi lucrate (ex: 2 seturi la `bench_press_flat_barbell`), 2) Calcul greutate sugerată noul exercițiu folosind `SIMILARITY_RATIO` map existent în `src/engine/exerciseMapping.js` (validat pre-flight grep — există! Range 0.75-1.25 + fallback `default: 0.9`) + funcția `getSimilarityMultiplier()`, 3) UI Bridge afișează `"Sugestie: ${calcKg} kg · Ajustează după cum simți primul set"` — user editează direct înainte de a bifa setul. Engine sugerează, NU impune (ADR Pattern 14 + SUFLET F2).
+**Răspuns verbatim:** **DA** — scope strict 2 trigger points pre-Beta MANDATORY: §36.38 Pain text input (Tier 1) + §36.55.2/§36.81.2 Equipment text input (Tier 2). **ZERO LLM** pe volume / intensity / progression / abandonment / RPE / outlier detection / streak counter / mode detection / arbitration / calibration / readiness scoring. Determinism preserved pe core engine paths.
 
 ---
 
-### Q4 — Cum tratează engine sesiunile abandonate față de streak counter §36.30?
+## Q3: Cognitive Q4 DELOCK confirmat?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.81.4 Abandonment Engine + §36.30 Override LOCKED V1 + ADR_OUTLIER_FILTER_v1.md EXT-4.
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.87 + `03-decisions/023-llm-intent-interpretation.md` Context.
 
-**Răspuns verbatim:** Sesiunile abandonate (`session_status: 'abandoned'`) NU contează ca "sesiune normală intermediară", ci sunt tratate ca un **gap neutru (skip)**. Streak counter-ul §36.30 de validare a baseline-ului pe aceeași direcție NU se resetează la o sesiune abandonată, ci doar la o sesiune validă normală. Trigger detection rest_timer based (NU timpi statici): rest timer activ NU întreabă nimic, rest timer expirat ȘI 10 min idle = countdown abandonment, >4h inactivitate totală = auto-close, drop "midnight rule".
-
----
-
-### Q5 — Cum se diferențiază matrix-ul de streak counter între Profile Reset / Goal Shift / Abandoned?
-
-**Citation:** `03-decisions/ADR_OUTLIER_FILTER_v1.md` §EXTENSIONS EXT-1 + EXT-2 + EXT-3 + EXT-4.
-
-**Răspuns verbatim:** Profile Reset §36.34 (EXT-3) = PRESERVE (UI/UX shift only, fizicul intact). Goal Shift §36.35 (EXT-2) = RESET la 0 (context fizic schimbat = signal nou independent). Abandoned §36.81.4 (EXT-4) = PRESERVE (gap neutru, skip). Sesiune normală same direction (EXT-1) = INCREMENT 1/3, 2/3, 3/3. Sesiune normală opposite direction (EXT-1) = RESET 0.
+**Răspuns verbatim:** **DA** — §36.87 Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK condiționat. "ZERO LLM runtime" superseded de §36.86 ADR 023 scope strict. LLM permis EXCLUSIV pe 2 trigger points (Pain text + Equipment text), restul engine paths preserved deterministic. Bugatti sandbox preserved (temperature 0.0 + Structured Outputs JSON schema + Regex Fallback).
 
 ---
 
-## §2 — Pre-Session Energy Signal Cluster (§36.82)
+## Q4: T2 The Filter status?
 
-### Q6 — Unde este integrat selectorul de energie și care este friction-ul exact?
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.91 + `AUDIT_VERIFICATION_REPORT.md` §11 archived `📤_outbox/_archive/2026-05/105_*.md`.
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.82.1 Pre-Session Energy Input LOCKED V1.
-
-**Răspuns verbatim:** Selector semantic 3 opțiuni energie integrat **direct în Dashboard Greeting Card existent**, NU ecran separat / modal. UI: `Cum ne simțim astăzi? [🟢 Excelent] [🟡 Normal / Ok] [🔴 Obosit / Slab]`. **Friction:** Exact 1 tap, ZERO ecrane suplimentare, ZERO timp pierdut. Anti-pattern (RESPINS): Modal pre-flight check + greeting + start button = 3 friction points pre-set, Maria 65 abandonează la al 2-lea.
+**Răspuns verbatim:** **RESOLVED via §36.86 ADR 023 LLM Intent Interpretation**. Originally HIGH acceptable trade-off (NU codificabil prin regex/NLP determinist) → CLOSED. Anti-RE preserved (engine deterministic, LLM scope strict). MOAT pillar 3 (Decizii verificabile) preserved (CDL `llm_metadata`).
 
 ---
 
-### Q7 — Ce face engine la selectarea 🔴 Obosit/Slab, fără mesaj UI?
+## Q5: Bus factor 1 status?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.82.2 Silent Adaptive Adjustment LOCKED V1.
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.88.
 
-**Răspuns verbatim:** Engine activează mecanismul adaptiv §36.16 — ajustare **reps sau intensity** (NU set count, NU procente arbitrare hardcodate). Min 2 sets preserve prag stimulare neuromuscular (§36.16 wording). Silent execution: User a apăsat 🔴 = a transmis starea, NU mai e nevoie de feedback paternalist "Azi mergem mai blând". Engine aplică ajustările direct în cifrele afișate pe ecranele exercițiilor. ZERO text, ZERO explicații redundante. Procente exacte de ajustare: TBD post-Beta calibration (anti pre-mature optimization).
-
----
-
-### Q8 — Care este trigger-ul pentru sugestia deload și ce status are wording-ul?
-
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.82.3 Deload Suggestion Trigger LOCKED V1 (Wording Phase B Pending).
-
-**Răspuns verbatim:** Trigger: 3 sesiuni consecutive cu user selection 🔴 Obosit / Slab → engine flag intern → sugestie **opțională** deload week la final sesiunea a 3-a, NU auto-trigger. Anti-pattern (RESPINS): Auto-trigger deload week pe 3 self-reports = false positive risk huge (user obosit la job ≠ sub-recuperat fizic). UI Trigger la finalul sesiunii a 3-a, ecran sumar. Status logic: **LOCKED V1**. Status wording: **Placeholder V1 (Pending Bugatti tone review)**. Text provizoriu: `"Vrei să luăm o săptămână mai ușoară? Putem planifica o perioadă de descărcare (deload) pentru refacere."`. Control user 100%: engine sugerează, NU impune.
+**Răspuns verbatim:** **ACCEPTABLE TRADE-OFF pre-revenue LOCKED V1**. Hire / co-founder reconsider post-revenue (post-Founding cap 50 + Standard pricing month 6+ runway sustainability). Mitigation transparency: SLA disclosure ToS pre-launch (NEW-IDEATION-3) — wording "Andura este dezvoltat de o echipă de 1 dezvoltator. Răspuns critical bugs în 48h working days, NU 24/7 support." N3 + BACKLOG-1 + R3 risk findings = NU mai e finding actionable.
 
 ---
 
-## §3 — META-RULE Prebeta Scope (§36.83)
+## Q6: Calibration target pre-Beta?
 
-### Q9 — Ce categorii de decizii sunt MANDATORY prebeta per §36.83 și ce push-back-uri sunt interzise?
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.89 + §36.90.
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.83 META-RULE Prebeta Scope Expansion LOCKED V1 + 07-meta/CLAUDE_CODE_RULES.md Self-discipline rules.
-
-**Răspuns verbatim:** Toate deciziile luate de la acest moment înainte care țin de **SUFLET ANDURA / coach intelligence / UX core / engine adaptation** sunt **mandatory prebeta**. Non-negotiable. Default = **prebeta** dacă atinge core experience. Timing/realism = treaba lui Claude + Daniel + CC Opus să decidă cum prioritizăm execution-ul, NU rationale să respingem scope-ul. NU mai sări la "ar dura X luni" ca push-back — Daniel n-a întrebat de timing când extinde scope. Memory rule #24 codification.
+**Răspuns verbatim:** **85-90%, NU 95%**. Plan A+B+E: **A.** Synthetic Demographic Prior scaled (ADR 017) — pre-calibrare AA + MMI + Voice weights pe 500-1000 profiles synthetic (~8-12h Opus dacă DEMO-1 incomplete). **B.** Observation mode prima 2 săpt Beta — engine logează signals + computes recommendations DAR NU intervine activ user-facing; recalibrate săpt 3-4 pe data reală cohort (~2-3h CC). **E.** Expert validator coach paid €500-1000 one-time + Daniel sourcing 2-4h. **95% post-launch luna 3-6 obligatoriu** (NU pre-Beta milestone).
 
 ---
 
-### Q10 — Cum se modifică timeline-ul Beta-launch ASAP + Soft Launch 1 ianuarie 2027 sub §36.83?
+## Q7: Goal Taxonomy 5 SSOT recomandare?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.83 Implicații.
+**Citation:** `HANDOVER_AUDIT_TOTAL_2026-05-03.md` §4 D4 + AUDIT_VERIFICATION_REPORT §1 TRIPLE-1+QUADRUPLE-1 + AUDIT_IDEATION_REPORT IMP-8.
 
-**Răspuns verbatim:** Beta-launch ASAP strategy LOCKED rămâne valid, dar timing **flexible** (NU forced). Soft Launch 1 ianuarie 2027 = **target aspirational**, NU hard deadline dacă scope esențial extends. Quality > speed strict (Bugatti paradigm). Cumulative count post acest chat: **79 LOCKED** (72 → 79, +7 features cluster §36.81+§36.82; §36.83 meta-rule = +0; §36.84 backlog = +0; §36.85 pending = +0).
-
----
-
-## §4 — Jeff Nippard Backlog + Body Region Map (§36.84 + §36.85)
-
-### Q11 — Care este status-ul gap #3 (Recovery/readiness) și gap #7 (Comunicare contextuală) în Andura V1?
-
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.84 Jeff Nippard Gaps Backlog Catalog.
-
-**Răspuns verbatim:** **#3 Recovery / readiness signals** — PARȚIAL acoperit prin §36.82.1 (energy selector) + §36.38 Pain Button (DOMS). Daniel confirmat că NU vrea întrebări user explicite suplimentare (somn / stres) — derivăm din statistici sesiune via §36.82.1. Decision: **GAP ÎNCHIS pentru V1 prebeta cu §36.82** — suficient. **#7 Comunicare contextuală pre-session derivată din statistici sesiune** — PARȚIAL acoperit prin §36.82.1 + §36.82.2 silent adjust. Daniel quote: "in afara de 5, tot trebuie... iar 7 ne luam datele din statistici din sesiune...". Decision: **GAP ÎNCHIS pentru V1 prebeta** — derivat din §36.82 + statistici sesiune existing.
+**Răspuns verbatim:** **C — Hybrid B onboarding + A engine internal mapping**. Foundation: 5 SSOT inconsistente actuale (Cognitive Q15 5 câmpuri EN + §29.5.14 4 ecrane RO + §36.44 4 câmpuri RO + ADR 017 6 valori EN goal + §26.3 5 RO categorii — audit a missed §26.3). Recomandare CLAUDE: create `01-vision/ONBOARDING_SSOT_V1.md` consolidate exhaustiv (câmpuri ordine ecrane + wording RO LOCKED + Goal taxonomy LOCKED final 5 RO cu sub-routing 3 Tonifiere + 2 Slăbire = 8 templates V1 + cross-ref existing fragmente toate `[CONSOLIDATED into ONBOARDING_SSOT_V1]`). Effort ~3h Daniel chat strategic + ~1h CC consolidate doc.
 
 ---
 
-### Q12 — Care gap-uri Jeff Nippard rămân backlog prebeta și care e singurul DROP definitiv?
+## Q8: Top 6 ideation integrate pre-Beta?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.84 Jeff Nippard Gaps Backlog Catalog.
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.92 + `AUDIT_IDEATION_REPORT.md` §5 Top 10 ranked.
 
-**Răspuns verbatim:** Prebeta MANDATORY (per §36.83) pending: #1 Wiring weakness → session builder (~1-2 săpt CC, DISCUTAT START), #2 Plateau breaker auto (~2-3 săpt + research științific, NEDISCUTAT), #4 Periodizare conștientă (deload weeks, accumulation phases — ~2-3 luni, NEDISCUTAT), #6 Cross-exercițiu reasoning (~2-4 luni, NEDISCUTAT). V2+ DROP definitiv: **#5 Form / execuție feedback (video analysis)** — risc legal + scope insane + camera permissions Maria 65 = OUT. V2+ teritoriu, NU prebeta, NU V1.5.
-
----
-
-### Q13 — Ce 3 opțiuni există pentru Injury Body Region Map și care este recomandarea?
-
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.85 Injury Body Region Map + 03-decisions/ADR_PAIN_DISCOMFORT_BUTTON_v1.md EXT-2 PENDING.
-
-**Răspuns verbatim:** **Opțiune A propusă (~1-2 săpt CC) — extensie naturală §36.38 + §36.36:** body map zonă afectată + engine skip exerciții care stresează zona via `muscle_target_primary` + propune alternative ZERO load. NU recomandă rehab specific → zero medical device classification risc. **Opțiune B (~3-4 săpt CC):** Extension A + tracking durată recovery + re-introduction graduală cu test sets. **Opțiune C (~2-3 luni, RISC LEGAL):** Library protocoale rehab specific per zonă — TRECE LIMITA medical device → EU AI Act risc + audit legal Stage 2 fail probabil — REJECTED prebeta indiferent §36.83. **Recomandare Claude:** Opțiunea A prebeta (per §36.83 LOCKED), B post-Beta cu data reală, C NEVER.
+**Răspuns verbatim:** **6 items pre-Beta** post addendum integration: **IMP-1 Volume Floor Guarantee META-RULE-QUINQUE** (~1h, anti-amputation Maria 65) + **IMP-3 Synthetic Demographic Prior pre-Calibration** plan A (~8-12h dacă DEMO-1 incomplete) + **NEW-IDEATION-1 Expert Validator Coach Paid** plan E (€500-1000 + 2-4h sourcing) + **FM-2 Mobility/Warm-up Auto-Insertion** (~5h, longevity 50+ Maria critical) + **FM-8 Pre-Injury Recovery Debt PROACTIVE** (~2-3h, anti-injury proactive vs reactive AA) + **IMP-4 Spec→Cod Tracking Matrix** (~1.5h, anti-recurrence drift institutionalizat).
 
 ---
 
-## §5 — Status & Priority
+## Q9: §36.86b DELOCK Mechanism META-RULE accept?
 
-### Q14 — Care este Priority 1 ABSOLUT preserved post acest handover ingest, și ce este Priority 2?
+**Citation:** `HANDOVER_AUDIT_TOTAL_2026-05-03.md` §4 D2 + DIFF_FLAGS.md P2-FLAG-1.
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.80 BUG 2 Firebase Auth Flow Not Wired + session-lock 2026-05-03 night late.
-
-**Răspuns verbatim:** **Priority 1 ABSOLUT chat strategic NEW dedicat Auth Flow Integration** (§36.80 preserved, blocking Beta) — design ~1-2h Daniel-time + prompt CC Opus dedicat ~30-45min autonomous factor 7-9x: wire `/auth-callback` route + `createAuthScreen` integration main shell + `LEGACY_USER_PATH` fallback strategy update block-render-until-auth NU fallback users/daniel + Tests Playwright e2e + smoke prod verification. **Priority 2 chat strategic continuare coach intelligence roadmap** (post acest handover ingest, scope: Jeff Nippard gap #1 wiring weaknessDetector.js→sessionBuilder.js proactive accessory + Injury Body Region Map §36.85 decizie A vs drop + dacă bandwidth gap #2 plateau breaker + #4 periodizare + #6 cross-exercițiu).
+**Răspuns verbatim:** **PENDING Daniel decision chat strategic NEW (D2)**. Propunere: META-RULE-SECONDARY "Orice prebeta LOCKED V1 are date target; dacă 2 săpt înainte de Beta lock NU e implementabil → V1.1 cu Daniel sign-off explicit. NU rationale = scope creep refuz." Anti-§36.83 inflation institutionalizat fără DELOCK formal. Recomandare CLAUDE: ACCEPT cu wording verbatim sau alternativ.
 
 ---
 
-### Q15 — Care este cumulative LOCKED count cumulativ post acest ingest, și ce update-uri ADR au fost aplicate?
+## Q10: D3 Cloud Functions Blaze upgrade decizie pending?
 
-**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` session-lock 2026-05-03 night late + 03-decisions/ADR_OUTLIER_FILTER_v1.md EXT-4 + ADR_PAIN_DISCOMFORT_BUTTON_v1.md EXT-2 PENDING.
+**Citation:** `HANDOVER_AUDIT_TOTAL_2026-05-03.md` §4 D3 + DIFF_FLAGS.md P2-FLAG-1 + AUDIT_VERIFICATION_REPORT §2 Q11-INFRA escalated.
 
-**Răspuns verbatim:** Decizii cumulative pre-launch V1 = **79** (72 → 79, +7 features: §36.81.1 + §36.81.2 + §36.81.3 + §36.81.4 + §36.82.1 + §36.82.2 + §36.82.3). §36.83 META-RULE +0 + §36.84 backlog +0 + §36.85 pending +0. ADR amendments aplicate: **ADR_OUTLIER_FILTER_v1.md EXT-4** §36.81.4 Abandonment Override §36.30 (streak counter PRESERVE pe abandoned) + **ADR_PAIN_DISCOMFORT_BUTTON_v1.md EXT-2 PENDING** §36.85 Injury Body Region Map Opțiune A propusă (AȘTEAPTĂ Daniel decision next chat A vs drop). Memory rule NEW Claude #24 LOCKED 2026-05-03 night late: §36.83 Prebeta Scope Rule. CLAUDE_CODE_RULES.md actualizat cu Self-discipline rules section (§36.77 + §36.83 + §HANDOVER_PROTOCOL).
+**Răspuns verbatim:** **PENDING Daniel decision chat strategic NEW (D3)**. **A.** Upgrade Blaze + €5-10/lună budget pre-Beta (Q11 latency post-100 useri + ADR 023 §2.H cost monitoring backend + NEW-IDEATION-5 hard cap enforcement). **B.** Accept V1 launch cu Q11 violation explicit + ADR 023 frontend-only soft cap (user can bypass cap manual). **Recomandare CLAUDE:** A — unblocks NEW-IDEATION-5 cost monitoring + Q11 latency post-100 useri. €60-120/an cost vs revenue scaling. D6 (ADR 023 cost monitoring infrastructure) depends D3 outcome.
 
 ---
 
-🦫 **Vault SSOT clean. 79 LOCKED cumulative. §36.81 Coach Intelligence + §36.82 Pre-Session Energy + §36.83 META-RULE Prebeta + §36.84 Jeff Nippard Backlog + §36.85 Body Region Map PENDING. Andura V1 prod LIVE `andura.app`. Auth flow integration = Priority 1 ABSOLUT preserved.**
+## Q11: TIME-1 Bayesian convergence status revizuit?
+
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.90 + AUDIT_VERIFICATION_REPORT §2 reframing.
+
+**Răspuns verbatim:** **MEDIUM acceptable cu DEMO-1 verify done**. Math correct (40 sesiuni × 50 users / 4 săpt Beta = impossible 95% calibration validation pre-launch) DAR Beta = data collection phase, NU calibration validation phase. Synthetic Demographic Prior pre-calibrate prior. Calibration validation = post-Beta luna 3+ public launch. DEMO-1 verify needed: confirm scaffold sufficient pentru 500 profiles synthetic generation.
+
+---
+
+## Q12: Auth Flow §36.80 Priority 1 ABSOLUT preserved?
+
+**Citation:** `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.80 + session-lock 2026-05-03 night late + 2026-05-03 audit total.
+
+**Răspuns verbatim:** **DA, separat de blockers list**. Per HANDOVER_AUDIT_TOTAL §1 footnote: "Auth Flow §36.80 = Priority 1 ABSOLUT separat." Preserved blocking Beta (BUG 2 Firebase 401 — `LEGACY_USER_PATH = 'users/daniel'` fallback când `getAuthState() = null`, DB rules per-UID strict §36.75 BLOCHEAZĂ literal "daniel"). Estimate: chat strategic ~1-2h Daniel + prompt CC Opus dedicat ~30-45min autonomous factor 7-9x. **Daniel decizie sequencing:** Auth Flow înainte sau după D1-D6 + ADR 023 implementation.
+
+---
+
+## ⚠️ P1 BLOCKER REMINDER (DIFF_FLAGS P1-FLAG-1)
+
+**Sursă addendum `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` PENDING upload** pentru ADR 023 sub-secțiuni A-M complete. Acest ingest = partial. Daniel action: upload `📥_inbox/` + comandă CC Opus ingest viitor.
+
+---
+
+🦫 **Pass criteria ≥10/12 PASS (≥83%) → PROCEED chat strategic NEW. <10/12 = RE-SYNC mandatory. Cumulative 85 LOCKED. ADR 023 partial spec + ⚠️ PENDING addendum upload. 4 CRITICAL pre-Beta + 12 HIGH cleanup + Top 6 ideation + Auth Flow §36.80 separat.**
