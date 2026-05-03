@@ -1,92 +1,159 @@
-# VAULT HYGIENE PHASE 1 — AUDIT STRUCTURAL
+# INGEST HANDOVER VAULT HYGIENE FAZA 1 + DECIZII STRATEGICE — RAPORT EXECUTION
 
-**Task:** VAULT_HYGIENE_PHASE_1_AUDIT_STRUCTURAL
+**Task:** Ingest handover from inbox per VAULT_RULES §HANDOVER_PROTOCOL
 **Model:** Opus
-**Status:** ✅ Complete — READ-ONLY audit (zero modificări vault outside `📤_outbox/`)
-**Date:** 2026-05-03
+**Status:** ✅ Complete
+**Date:** 2026-05-04
+**Source input:** `📥_inbox/HANDOVER_2026-05-03_VAULT_HYGIENE_FAZA_1.md` (consumed)
 
 ---
 
 ## Pre-flight
 
-- **Files citite cap-coadă:** VAULT_RULES + INDEX_MASTER + HANDOVER_GLOBAL (5443 LOC) + DECISION_LOG + INSIGHTS_BACKLOG (sample) + AUDIT_30_9_BLOCKED + ADR 001 + 003 + 007 + 008 + 011 + sample 014/017 (already cached) + DIFF_FLAGS + FINDINGS_MASTER (already cached) + ADR 023 stub (already cached) + outbox structure scan
-- **Files identificate:** **200 .md** total vault (incl. archive); **62 active** (excl. archive); **138 archive** (28 in 2026-04 + 107 in 2026-05 + 3 anomalies)
-- **LOC parsed:** 60,815 total (~21,500 active + ~38,500 archive ~63%)
-- **Grep passes:** 4 (SUPERSEDED/DEPRECATED references + ADR 022 references + EXEC_QUEUE references + PHASE_B flags + wikilink targets unique)
-- **Backup tag:** N/A (read-only audit, no destructive operations)
+- ✅ `git pull origin main` → Already up to date (HEAD `a5b1542`)
+- ✅ `git status` clean (untracked HANDOVER_2026-05-03_VAULT_HYGIENE_FAZA_1.md în inbox = expected input)
+- ✅ Baseline tests **1203 PASS / 75 files** (last verified previous session, no source code changes acest ingest)
+- ✅ Backup tag `pre-handover-vault-hygiene-faza1-merge` creat la HEAD `a5b1542`
 
 ---
 
-## Modificări
+## Modificări vault SSOT (zero info loss)
 
-- **ZERO vault modificat outside `📤_outbox/`** (read-only mode confirmed). 00-index/ + 01-vision/ + 02-audit/ + 03-decisions/ + 04-architecture/ + 05-findings-tracker/ + 06-sessions-log/ + 07-meta/ + 08-workflows/ + root → all preserved.
-- **Output exclusiv în `📤_outbox/`:**
-  - Move previous LATEST.md → `📤_outbox/_archive/2026-05/109_LATEST_PREVIOUS_AUDIT_TOTAL_INGEST.md`
-  - NEW `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` (~600 LOC, §1-§9 detaliat)
-  - NEW `📤_outbox/LATEST.md` (acest fișier, format raport standard)
+### 1. `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` (SSOT update in-place, +6 sections + session-lock)
 
----
+**Sections noi appended după §36.92 Cross-refs:**
 
-## Build + Tests
+- **§36.93 D3 LOCKED B — Cloud Functions Blaze RESPINS, Spark Plan Retain** — calculul real volum LLM (50 useri × 4 sesiuni × 2 LLM calls = 57 calls/zi = 0.4% Groq free tier 14400/zi) + bootstrap-aware Bugatti scale când e problemă reală + reconsider triggers (revenue/Groq deprecation/demand spike >5%) + D6=B frontend-only soft cap depinde D3=B + Q11 violation accept pre-Beta + NEW-IDEATION-5 deferred post-revenue
+- **§36.94 ADR 025 CANDIDATE** "Andura Gândește pentru User" / Graceful Degradation Universal — articulare retroactivă principiu fondator (origin Excel "câte kg la leg press" 13 zile) + filtru pre-feature LOCK forward-looking + cross-ref retroactiv 6 deciziile bune existente (B4 RPE skip + B2 T&B skip + ADR 023 Pain/Equipment skip + T0/T1+ Onboarding/Profile Typing skip)
+- **§36.95 ADR Numbering Additive LOCKED** — ZERO renumber existing + ADR 022 ORPHAN-1 split fizic (022 Bayesian Nutrition + 024 Goal-Driven Templates + 025 Andura Gândește Graceful Degradation, all PENDING file creation Faza 3) + ADR 023 LLM Intent existent NU renumber
+- **§36.96 Vault Hygiene Sprint = Priority 0 + 8 Recomandări APROBATE Co-CTO** — promote înaintea pre-Beta blockers + Auth Flow §36.80, per Daniel directive "decide tu, e pentru tine" → 100% delegation Co-CTO; A HANDOVER split Option C + B Onboarding SSOT V1 + C INDEX_MASTER refresh + D archive preserve + E folder zero change + F orphans cleanup + G ADR 022/024/025 stubs + H DECISION_LOG UTF-8 fix
+- **§36.97 Faza 4 VAULT_HYGIENE_PASS = LOCK ca Rule** (codification PENDING Faza 3-4) — extension comenzii standard "Ingest handover from inbox" cu STEP 10-15 vault hygiene mandatory automat + VAULT_RULES.md §VAULT_HYGIENE_PASS NEW + PROMPT_CC_INGEST_HANDOVER.md update
+- **§36.98 System Prompt Claude Chat Andura LOCKED V1** generat artefact pentru chat NEW + cross-ref archive opportunity 08-workflows/CLAUDE_CHAT_INFRASTRUCTURE.md
 
-- **N/A** — read-only audit, ZERO cod touched. Tests baseline 1203 PASS unchanged (last verified previous session).
+**Append session-lock paragraph la final:**
+- **Sesiune 2026-05-03 VAULT HYGIENE SPRINT FAZA 1 + DECIZII STRATEGICE POST-AUDIT** — comprehensive summary cu 2 decizii LOCKED V1 noi (§36.93 + §36.94) + 4 META operations (§36.95-§36.98) + status faze Vault Hygiene Sprint (1 ✅ + 2 ✅ + 3 ⏳ + 4 ⏳) + DIFF_FLAGS update (P1 PARTIALLY MITIGATED + P2 D3/D4/D5/D6 RESOLVED, D1 only remaining) + cumulative count update 85 → 87 (+2)
 
----
+**Cumulative LOCKED count update:** 85 → **87** (+2: §36.93 D3 LOCKED B + §36.94 ADR 025 candidate; §36.95-§36.98 META operations = +0 each).
 
-## Commits
+### 2. `03-decisions/023-llm-intent-interpretation.md` (§Reconsideration Trigger #2 update)
 
-- 1 commit planificat: `chore(vault): VAULT_HYGIENE_PHASE_1_AUDIT_STRUCTURAL read-only audit + 110_VAULT_AUDIT_INVENTORY + LATEST report` (urmează post-validation acest output)
+Updated trigger #2 cu §36.93 D3 LOCKED B Spark retain rationale + reconsider triggers (revenue/Groq deprecation/demand spike >5%) + volum realist calcul + cost cap €10/lună paranoia disclaimer + NEW-IDEATION-5 backend deferred + frontend telemetry D6=B acceptable.
 
----
+### 3. `DIFF_FLAGS.md` (P1+P2 status updates)
 
-## Pushed
+- **P1-FLAG-1:** 🔴 OPEN → 🟡 PARTIALLY MITIGATED (Faza 3 va integra direct sub-secțiuni A-M ADR 023 din addendum context window)
+- **P2-FLAG-1:** Decision points D1-D6 status updates: D2/D3/D4/D5/D6 RESOLVED Co-CTO, D1 only remaining strategic. Verbatim wording per §36.93-§36.96 + handover §1+§8.
 
-- `origin/main` push planificat post-commit.
+### Files NOT touched (intentional preservation pre-Faza 3)
 
----
-
-## Issues
-
-- **⚠️ ADR 022 ORPHAN — HIGH severity:** referenced 9+ places (PRODUCT_STRATEGY §3.5.1 + DECISION_LOG + HANDOVER §29.7 / §28.6 / §29 multiple + ADR_MULTI_TENANT_AUTH fixture name + MULTI_TENANT_AUTH_MIGRATION_SPEC §334), NU file fizic în `03-decisions/`. Naming collision propus split (Bayesian Nutrition + Goal-Driven Templates). Cross-ref ORPHAN-1 finding §36.92.
-- **⚠️ DECISION_LOG.md UTF-8 encoding broken:** chars `â€™`, `Ã¢`, `Â§` proliferate prin file. Re-save UTF-8 needed (~30min CC).
-- **⚠️ INDEX_MASTER.md stale 2026-04-30 evening (3 zile):** stats says "51 fișiere active vault" (actual 62+); pricing reference "€60 lifetime / €65/an" (actual €39/€59/€79 V1.1 per §36.50); ADR 023 missing; 8 ADR drafts missing.
-- **3 anomalies outbox:** `SPRINT_4X_FINAL_REPORT.md` la top-level (should be archived); `HANDOVER_INPUT_2026-05-02.md` archive entry unnumbered (lacks NN prefix); `DIFF_FLAGS.md` la root (prompt referenced `05-findings-tracker/` location).
-
----
-
-## Top findings (executive summary)
-
-1. **§3 Fragmentări SSOT:** **6 topics cu drift** (Goal Taxonomy 5 surse + Onboarding 5 surse + Pricing 4 surse + Mode Detection 3 surse + RPE/RIR 3 surse + Tier 5/6 verify pending). ~25 cross-references inconsistente.
-2. **§5 HANDOVER_GLOBAL:** **5,443 LOC mega-fișier** — recomandare split **Option C** (Active 30 zile + Archive cronologic per lună). Effort ~3-4h CC.
-3. **§4 ADR drift:** **4 ADRs cu status drift** identificate (ADR 001 LWW NO §AMENDMENT + ADR 003 RIR contradiction §36.16 + ADR 008 GitHub Pages stale post-andura.app + ADR 023 missing din INDEX). Plus **8 ADR drafts NU în INDEX_MASTER**. Plus **ADR 022 ORPHAN HIGH** (referenced 9+ places).
-4. **§2 Orphans:** **22 wikilinks MISSING + 3 UNREFERENCED = 25 orphan items**. 19 LOW (closed FAZA/AUDIT files), 4 MEDIUM (EXEC_QUEUE refs ADR 011/013/014, [[HANDOVER]] generic, [[ENGINE_ARCHITECTURE]]), 1 HIGH (ADR 022 missing fizic).
-5. **§8 Maintenance protocol VAULT_HYGIENE_PASS spec ready** — extension comenzii standard "Ingest handover from inbox" cu STEP 10-15 auto-fix mecanic + flag DIFF_FLAGS dacă consolidare manuală needed. Effort run ~10-15min CC autonomous per ingest.
+- `00-index/INDEX_MASTER.md` — Recomandare C refresh PENDING Faza 3
+- `01-vision/PRODUCT_STRATEGY_SPEC_v1.md` + `01-vision/SUFLET_ANDURA.md` + others — Recomandare B Onboarding SSOT V1 PENDING Faza 3
+- `03-decisions/DECISION_LOG.md` — Recomandare H UTF-8 fix PENDING Faza 3
+- `03-decisions/022-*.md` + `024-*.md` + `025-*.md` — Recomandare G stub create PENDING Faza 3
+- `04-architecture/COGNITIVE_ARCHITECTURE_SPEC_v1.md` Q4 — §36.87 §AMENDMENT inline edit PENDING Sprint Vault Hygiene Faza 3 sau ad-hoc
+- `VAULT_RULES.md` — §VAULT_HYGIENE_PASS NEW PENDING Faza 4
+- `PROMPT_CC_INGEST_HANDOVER.md` — STEP 10-15 update PENDING Faza 4
+- Source code `src/` — ZERO changes (vault docs only)
 
 ---
 
-## Next action
+## Archive
 
-**Faza 2 — Daniel validare scurtă pe 5 recomandări (A-E) + 3 adiționale (Orphans cleanup + ADR 022 fix + DECISION_LOG UTF-8) în `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` §7.**
+| Action | From | To |
+|--------|------|-----|
+| Input consumed | `📥_inbox/HANDOVER_2026-05-03_VAULT_HYGIENE_FAZA_1.md` | `📤_outbox/_archive/2026-05/111_HANDOVER_VAULT_HYGIENE_FAZA_1_CONSUMED.md` |
+| Previous LATEST | `📤_outbox/LATEST.md` (Vault Audit Phase 1 raport) | `📤_outbox/_archive/2026-05/112_LATEST_PREVIOUS_VAULT_AUDIT_PHASE_1.md` |
+| Previous alignment | `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (12 Q audit total) | `📤_outbox/_archive/2026-05/113_ALIGNMENT_QUESTIONS_CHAT_NEW_AUDIT_TOTAL_HISTORICAL.md` |
 
-Format Daniel valid: da / nu / altfel pe instinct, NU citește detalii. Estimat ~5-10 min Daniel-time.
-
-**Faza 3 — CC autonomous execution post-validation:**
-- Effort realist: **~2-3h CC autonomous** (factor 7-9x optimism ADR pattern empirical)
-- Plus ~3-4h Daniel chat strategic pentru Recomandare B1 (Onboarding/Goal Taxonomy SSOT consolidation manual decision-making)
-
-**Faza 4 — Maintenance protocol LOCKED:**
-- Codification §8 VAULT_HYGIENE_PASS în VAULT_RULES.md ca extension comenzii standard "Ingest handover from inbox"
-- Auto-trigger post-ingest mandatory, NU optional
-- Memory rule self-discipline NEW Claude pentru consistency cross-session
+Numerotare cronologică continuă (108 → 109 → 110 → 111 → 112 → 113). Inbox post-consume = empty (`.gitkeep` only).
 
 ---
 
-## Status post-audit
+## Alignment questions generate
 
-- ✅ READ-ONLY audit complete — ZERO vault modificări outside `📤_outbox/`
-- ✅ `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` generat (~600 LOC, §1-§9 detaliat)
-- ✅ `📤_outbox/_archive/2026-05/109_LATEST_PREVIOUS_AUDIT_TOTAL_INGEST.md` (previous LATEST archived)
-- ✅ `📤_outbox/LATEST.md` raport standard scris (acest fișier)
-- ⏳ Commit + push origin/main (urmează)
+`📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` — **12 Q-uri** cu citation `§X file.md` + răspuns verbatim:
+- Q1: D3 Cloud Functions LOCKED B Spark plan
+- Q2: ADR 025 candidate decision wording + aplicabilitate ALL features
+- Q3: ADR Numbering Additive + ORPHAN-1 split (022/024/025)
+- Q4: Vault Hygiene Sprint = Priority 0 promote
+- Q5: 8 recomandări APROBATE detalii (A-H)
+- Q6: Faza 4 VAULT_HYGIENE_PASS rule spec STEP 10-15
+- Q7: Cumulative 85 → 87 (+2)
+- Q8: D1-D6 status update (D2/D3/D4/D5/D6 RESOLVED, D1 only remaining)
+- Q9: P1-FLAG-1 ADDENDUM source partially mitigated
+- Q10: Faza 3 + Faza 4 next chat NEW execution scope
+- Q11: Auth Flow §36.80 Priority 1 ABSOLUT preserved
+- Q12: Status V1 + tests 1203/1203 PASS unchanged
 
-🦫 **Faza 1 vault audit complete. 25 orphans + 6 fragmentări SSOT + 4 ADR drift + 5443 LOC HANDOVER mega-fișier candidate split + INDEX_MASTER stale 3 zile + ADR 022 HIGH orphan + DECISION_LOG UTF-8 broken. Faza 2 Daniel validare 5-10 min → Faza 3 ~2-3h CC autonomous realist execution + ~3-4h Daniel chat strategic pentru Onboarding/Goal Taxonomy SSOT.**
+**Pass criteria:** ≥10/12 (≥83%) → PROCEED chat strategic NEW (Faza 3+4 sau Auth Flow per Daniel decision).
+
+---
+
+## Tests
+
+`npx vitest run` baseline **1203 PASS / 75 files** unchanged (vault docs + ADR 023 §AMENDMENT + DIFF_FLAGS update only acest ingest, ZERO source code touched). Pre-commit hook re-runs each commit.
+
+---
+
+## Commits planificate (granulare per VAULT_RULES §HANDOVER_PROTOCOL step 11)
+
+1. **chore(vault):** §36.93-§36.98 Vault Hygiene Sprint Faza 1 + decizii strategice ingest 2026-05-03 (HANDOVER_GLOBAL update in-place +6 sections + session-lock)
+2. **chore(vault):** ADR 023 §Reconsideration Trigger #2 update D3=B Spark retain + DIFF_FLAGS P1+P2 status updates
+3. **chore(vault):** archive HANDOVER_2026-05-03_VAULT_HYGIENE_FAZA_1 input + previous LATEST + previous alignment (111-113 cronologic continuu)
+4. **chore(vault):** ALIGNMENT_QUESTIONS_CHAT_NEW (12 Q-uri citation §X verbatim) + LATEST raport ingest 2026-05-03 Vault Hygiene Faza 1
+
+Push origin/main post-commits.
+
+---
+
+## Next action Daniel
+
+### Priority 0 ABSOLUT — Faza 3 + Faza 4 Vault Hygiene Sprint execution (chat NEW dedicat)
+
+1. **Sync Project Knowledge GitHub** (post push origin/main)
+2. **Open chat Claude nou strategic** dedicat Faza 3+4 Vault Hygiene execution
+3. **Paste primul mesaj:** content `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` (12 Q-uri)
+4. **Verify alignment** ≥10/12 PASS → PROCEED
+5. **Generate prompt CC Opus Faza 3** (~2-3h CC autonomous mecanic):
+   - Recomandare A: HANDOVER_GLOBAL split Option C
+   - Recomandare B: `01-vision/ONBOARDING_SSOT_V1.md` create + 5 surse marcate `[CONSOLIDATED into ONBOARDING_SSOT_V1]`
+   - Recomandare C: INDEX_MASTER.md refresh complete
+   - Recomandare F: 22 orphan wikilinks cleanup
+   - Recomandare G: ADR 022 + ADR 024 + ADR 025 stubs create
+   - Recomandare H: DECISION_LOG.md UTF-8 re-save
+   - 3 anomalies outbox cleanup
+6. **Generate prompt CC Opus Faza 4** (~30min CC):
+   - VAULT_RULES.md §VAULT_HYGIENE_PASS NEW codification
+   - PROMPT_CC_INGEST_HANDOVER.md STEP 10-15 update
+
+### Priority 1 — Auth Flow Integration §36.80 (post-Vault Hygiene clean)
+
+- Strategic chat NEW design (~1-2h Daniel-time)
+- Prompt CC Opus dedicat (~30-45min autonomous factor 7-9x)
+
+### Priority 2-N
+
+- 4 CRITICAL pre-Beta blockers (B4 + B2 + B3 + N1+N5-NEW)
+- 12 HIGH cleanup batch + Top 6 ideation integrate pre-Beta
+- Smoke tests prod gates B/C/D + Beta cohort recruitment §36.47 + §36.53 Telegram
+
+### D1 strategic dedicat (independent decision-only ~30min Daniel-time, NU blocks Vault Hygiene)
+
+- Save the week silent A passive intelligence / C in-app banner pasiv
+
+---
+
+## Status post-ingest
+
+- ✅ HANDOVER_GLOBAL SSOT updated (§36.93-§36.98 + session-lock 2026-05-03 Vault Hygiene Faza 1 appended +6 sections)
+- ✅ ADR 023 §Reconsideration Trigger #2 update D3=B Spark retain rationale
+- ✅ DIFF_FLAGS P1+P2 status updates (D2/D3/D4/D5/D6 RESOLVED, D1 only remaining)
+- ✅ Input archived (zero info loss, NEVER deleted physically)
+- ✅ Previous LATEST + alignment archived (cronologic continuu 111-113)
+- ✅ ALIGNMENT_QUESTIONS_CHAT_NEW.md generat (12 Q-uri citation §X verbatim)
+- ✅ LATEST.md raport scris (acest fișier)
+- ✅ Tests 1203 PASS unchanged
+- ✅ Backup tag `pre-handover-vault-hygiene-faza1-merge` în git history
+- ⏳ Commits granulare + push origin/main (urmează)
+
+🦫 **Vault SSOT clean. Cumulative 87 LOCKED (+2 §36.93 D3=B + §36.94 ADR 025 candidate Andura Gândește). 4 META §36.95-§36.98. Vault Hygiene Sprint Faza 1 ✅ + Faza 2 ✅ Co-CTO delegated + Faza 3 ⏳ ~2-3h CC + Faza 4 ⏳ ~30min CC LOCK rule. ADR Numbering Additive 022/024/025 stubs PENDING Faza 3. Auth Flow §36.80 Priority 1 ABSOLUT preserved separat post-Vault Hygiene. D1-D6 status: D2/D3/D4/D5/D6 RESOLVED Co-CTO, D1 only remaining strategic ~30min.**
