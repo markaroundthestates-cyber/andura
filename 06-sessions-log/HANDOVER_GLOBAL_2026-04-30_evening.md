@@ -5062,6 +5062,210 @@ Detailed cluster report: `📤_outbox/LATEST.md`. Per-batch reports: `📤_outbo
 
 **Cross-refs:** §30 Rebrand + §31 Investiții (andura.app €13.18 LIVE) + §34.2 Blocker 2 Firebase Rules RTDB Lock RESOLVED + §36.75 Daniel Solo Gate Firebase Live (DB rules per-UID published) + §36.78 Rebrand Sweep Phase 1-4 + §36.79 Custom Domain Base Path Hotfix (CACHE_VERSION v2 = sursa BUG 1 self-heal) + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02 Faza 1 Batch B (relevant root cause BUG 2 — auth flow code landed dar NOT wired în app shell) + ADR 005 Vanilla JS Stack Decision + ADR 007 Firebase Open Rules + §AMENDMENT 2026-05-02 + VAULT_RULES.md §HANDOVER_PROTOCOL step 9 (memory rule #22 codification) + PROMPT_CC_HYGIENE.md §9 (memory rule #23 codification).
 
+### §36.81 Coach Intelligence Cluster — Variante + Substituții + Mid-Set + Abandonment LOCKED V1 (2026-05-03 night late)
+
+**Status:** Cluster 4 decizii LOCKED V1 post chat strategic 2026-05-03 night late. Origine: Daniel a venit cu 3 idei coach intelligence (variante exerciții diferențiate + substituții cascade anatomice + session abandonment) → expanded la 4 sub-decizii LOCKED V1 + cluster prebeta per §36.83 meta-rule.
+
+**Renumbering note (vault hygiene):** Handover input chat strategic a folosit §36.55.1-4 (collision cu §36.55 GDPR Phone Privacy existent în vault). Re-numerotat cronologic post §36.80 ca §36.81.1-4 fără pierdere intent (cluster organization preserved).
+
+#### §36.81.1 Catalog Ceiling Soft Cap LOCKED V1
+
+**Decizie:** Plafon variante biomecanice per pattern muscular = soft cap target 3-4 variante distincte per movement pattern (ex: lateral_raise_db, lateral_raise_cable, lateral_raise_machine). Codul **permite** introducerea unei a 5-a variante DAR impune justificare obligatorie în PR.
+
+**Rationale:** Anti-arbitrary cap, anti-bloat, anti-onboarding kilometric. Squats permite legitim 6+ variante (back, front, goblet, hack, bulgarian, box) — cap rigid 4 amputează realitate sală RO. Soft cap + PR justification = disciplină catalog fără pierdere flexibilitate. Aliniat anti-friction Maria 65.
+
+**Cross-refs:** §36.36 Schema Extension Exercise Library (câmpuri obligatorii equipment_type + equipment_alternatives + force_demand + muscle_target_primary/secondary + tier) + §36.37 Smart-Routing Aparat Ocupat / Aparat Lipsă.
+
+#### §36.81.2 Substitutions Hierarchy Algorithmic LOCKED V1
+
+**Decizie:** Substituțiile pentru "Aparat ocupat" / "Aparat lipsă" sunt generate **algoritmic** din metadata existentă, NU listă manuală curatat per exercițiu. Eliminat vector hardcoded `substitutions: [...]` per exercițiu (maintenance hell la 30+ exerciții × 5 substituții = 150+ relații manual).
+
+**Algoritm sortează alternative pe baza ierarhie strictă de priorități (ordering only LOCKED, weights TBD post-Beta):**
+1. `primary_muscle` (cel mai important)
+2. `movement_pattern`
+3. `force_curve_profile`
+4. `equipment_class` (cel mai puțin important)
+
+**Ponderi numerice (40/30/20/10) RESPINSE V1** — pre-mature optimization fără data Beta reală. `manual_override_ids` permis doar pentru cazuri excepționale unde algo greșește.
+
+**Filter cascadă:** Exercițiu original → calc scor similaritate → filtrează după echipament disponibil user (din profile) → top 3 recomandări (best match primă, restul "Alte alternative").
+
+**Cross-refs:** §36.36 Schema cu metadata necesară (toate 4 câmpuri prioritizare deja în schema) + §36.37 Smart-Routing buton [Aparat ocupat] / [Aparat lipsă].
+
+#### §36.81.3 Mid-Set Switch Fallback Hybrid Rule LOCKED V1
+
+**Decizie:** Când utilizatorul switch-uiește exercițiul **mid-execution** (apucă să facă 1-2 seturi, apoi aparat ocupat la pauză), engine handle prin "Hybrid Rule" cu UI Bridge (3 pași):
+
+1. **Save seturi lucrate:** Engine păstrează seturile deja completate la exercițiul original (ex: 2 seturi la `bench_press_flat_barbell`)
+2. **Calcul greutate sugerată noul exercițiu:** Folosește `SIMILARITY_RATIO` map existent în `src/engine/exerciseMapping.js` (validat pre-flight grep — există! Range 0.75-1.25 + fallback `default: 0.9`) + funcția `getSimilarityMultiplier()` pentru greutate inițială conservatoare bazată pe performanța din seturile deja lucrate
+3. **UI Bridge — sugestie + edit user:** App afișează valoarea calculată ca **sugestie**, NU impune: `"Sugestie: ${calcKg} kg · Ajustează după cum simți primul set"`. User editează direct înainte de a bifa setul.
+
+**Edge case "no history" pe noul exercițiu:** SIMILARITY_RATIO multiplier folosit ca conversion factor cross-exercițiu + UI prompts user explicit că-i sugestie, NU baseline locked.
+
+**Cross-refs:** `src/engine/exerciseMapping.js` SIMILARITY_RATIO + getSimilarityMultiplier validat existent + §36.81.1 Catalog ceiling (variante distincte = 1RM separat per variant) + ADR Pattern 14 No-Inference (engine sugerează, NU impune) + SUFLET F2 ("AI-ul informează, nu impune").
+
+#### §36.81.4 Abandonment Engine + §36.30 Override LOCKED V1
+
+**Decizie:** Sesiuni abandonate (telefonul închis mid-training, pauză prelungită, urgențe) tratate ca **gap neutru**, NU resetează streak counters din ADR_OUTLIER_FILTER.
+
+**Trigger detection (rest_timer based, NU timpi statici arbitrari):**
+- **Rest timer activ:** Aplicația NU întreabă nimic, oricât de lungă pauza (Marius poate face 6-8 min pauză legitimă la squat heavy)
+- **Rest timer expirat ȘI 10 min idle fără interacțiune:** Engine începe countdown abandonment
+- **La redeschidere app:** Modal interstitial "Continuăm sesiunea sau încheiem aici?"
+- **>4h inactivitate totală:** Auto-close sesiune, marchează `session_status: "abandoned"`, ecran curat next open
+- **Drop "midnight rule":** Sesiune unică indiferent schimbare zi calendaristică, doar duration-based criterion
+
+**Override §36.30 explicit clauză LOCKED:**
+> Sesiunile abandonate (`session_status: 'abandoned'`) NU contează ca "sesiune normală intermediară", ci sunt tratate ca un **gap neutru (skip)**. Streak counter-ul §36.30 de validare a baseline-ului pe aceeași direcție NU se resetează la o sesiune abandonată, ci doar la o sesiune validă normală.
+
+**Mecanică Marius example:**
+```
+[Sesiunea 1: Outlier ✅] → counter 1/3
+[Sesiunea 2: Outlier ✅] → counter 2/3
+[Sesiunea 3: Abandoned ⚪ (Neutral)] → counter PRESERVED 2/3
+[Sesiunea 4: Outlier ✅] → counter 3/3 → baseline shift triggered
+```
+
+**Tratarea datelor incomplete (Outlier Protection):**
+- Frecvența de antrenament: counted (engine știe că user a mers la sală)
+- Progresoare 1RM și Deload triggers: complet excluse
+- Pattern learning: ignored
+- Anti-pollution istoricul cu date incomplete
+
+**Cross-refs:** ADR_OUTLIER_FILTER §EXTENSIONS EXT-4 §36.81.4 (acest override extends spec-ul existent) + §36.30 Streak Counter Same Direction + §36.34 Profile Reset (streak PRESERVE — UI/UX shift only) — distincție clară + §36.35 Goal Shift (streak RESET 0 — context fizic schimbat) — distincție clară + ADR 012 Calibration Tier Decay (60-day inactivity) — separate concern, NU overlap.
+
+### §36.82 Pre-Session Energy Signal Cluster — Energy Input + Silent Adjust + Deload Trigger LOCKED V1 (2026-05-03 night late)
+
+**Status:** Cluster 3 decizii LOCKED V1 post chat strategic 2026-05-03 night late. Cluster prebeta per §36.83 meta-rule. Renumbering note: input handover §36.56.1-3 (collision cu §36.56 ADR Review Process) → re-numerotat §36.82.1-3 cronologic.
+
+#### §36.82.1 Pre-Session Energy Input LOCKED V1
+
+**Decizie:** Selector semantic 3 opțiuni energie integrat **direct în Dashboard Greeting Card existent**, NU ecran separat / modal.
+
+**UI:**
+```
+Cum ne simțim astăzi?
+[🟢 Excelent]  [🟡 Normal / Ok]  [🔴 Obosit / Slab]
+```
+
+**Friction:** Exact 1 tap, ZERO ecrane suplimentare, ZERO timp pierdut.
+
+**Anti-pattern (RESPINS):** Modal pre-flight check + greeting + start button = 3 friction points pre-set, Maria 65 abandonează la al 2-lea.
+
+**Cross-refs:** §36.45 T2 cold-start mode detection (existing greeting card patterns) + Anti-friction onboarding philosophy.
+
+#### §36.82.2 Silent Adaptive Adjustment LOCKED V1
+
+**Decizie:** Selectarea 🔴 Obosit / Slab → engine ajustare **silent**, ZERO mesaj paternalist UI.
+
+**Mecanism (fidel §36.16 RIR Matrix existent):**
+- **🟢 Excelent:** Baseline normal, plan progresie standard
+- **🟡 Normal:** Sensibilitate crescută la algoritmul de ajustare în jos (`in-session adjust` Q27) — acțiune imediată după primul set dacă efort peste limită (NU așteaptă 2 seturi proaste)
+- **🔴 Obosit:** Engine activează mecanismul adaptiv §36.16 — ajustare **reps sau intensity** (NU set count, NU procente arbitrare hardcodate). Min 2 sets preserve prag stimulare neuromuscular (§36.16 wording).
+
+**Silent execution:**
+- User a apăsat 🔴 = a transmis starea, NU mai e nevoie de feedback paternalist "Azi mergem mai blând"
+- Engine aplică ajustările direct în cifrele afișate pe ecranele exercițiilor
+- ZERO text, ZERO explicații redundante (§36.17 silent UI update extension)
+
+**Procente exacte de ajustare:** TBD post-Beta calibration (anti pre-mature optimization).
+
+**Cross-refs:** §36.16 RIR Matrix Adaptiv (mecanism existent: reps reduction sau intensity, NU sets) + §36.17 + §36.29 Mid-Session Silent UI Update LOCKED + ADR Pattern 14 No-Inference.
+
+#### §36.82.3 Deload Suggestion Trigger LOCKED V1 (Wording Phase B Pending)
+
+**Decizie:** 3 apăsări consecutive 🔴 → engine flag intern → sugestie **opțională** deload week la final sesiunea a 3-a, NU auto-trigger.
+
+**Mecanism:**
+- Trigger: 3 sesiuni consecutive cu user selection 🔴 Obosit / Slab
+- Anti-pattern (RESPINS): Auto-trigger deload week pe 3 self-reports = false positive risk huge (user obosit la job ≠ sub-recuperat fizic)
+- Aliniat ADR Pattern 14 + SUFLET F2 + filozofia F1 Triangulation (interval, NU single point automat)
+
+**UI Trigger (la finalul sesiunii a 3-a, ecran sumar):**
+- Status logic: **LOCKED V1**
+- Status wording: **Placeholder V1 (Pending Bugatti tone review)**
+- Text provizoriu: `"Vrei să luăm o săptămână mai ușoară? Putem planifica o perioadă de descărcare (deload) pentru refacere."`
+- Acțiune viitoare: Revizuire + aliniere la standardul Sentence Case + voce persoana I plural în următoarea sesiune dedicată Phase B wording (sau direct cu Daniel chat strategic).
+
+**Control user 100%:** Decizie aparține integral utilizatorului — engine sugerează, NU impune.
+
+**Cross-refs:** §27 Phase B Wording Strategy + §36.58 Phase B 51 strings LOCKED V1 (pattern existent) + ADR Pattern 14 + SUFLET F2.
+
+### §36.83 META-RULE Prebeta Scope Expansion LOCKED V1 (2026-05-03 night late)
+
+**Decizie meta-rule:** Toate deciziile luate de la acest moment înainte care țin de **SUFLET ANDURA / coach intelligence / UX core / engine adaptation** sunt **mandatory prebeta**. Non-negotiable.
+
+**Renumbering note:** Input handover §36.57 (collision cu §36.57 Phase B Wording 51 Strings amendments) → re-numerotat §36.83 cronologic.
+
+**Mecanism:**
+- NU se mai întreabă "prebeta sau post-Beta?" pentru fiecare feature
+- Default = **prebeta** dacă atinge core experience (suflet Andura, coach intelligence, UX flow critic)
+- Timing/realism = treaba lui Claude + Daniel + CC Opus să decidă cum prioritizăm execution-ul, NU rationale să respingem scope-ul
+- NU mai sări la "ar dura X luni" ca push-back — Daniel n-a întrebat de timing când extinde scope
+
+**Origine decizie:** Acest chat 2026-05-03 night late: post discussion §36.81 + §36.82, Daniel a clarificat că "tot ce discutăm care face parte din sufletul Andura va fi prebeta". Claude a răspuns inițial cu push-back pe timing (12 luni delay) — Daniel a corectat: "am zis eu ceva de cât timp durează?". Lecție: scope expansion ≠ rationale respingere pe baza estimate-uri Claude.
+
+**Implicații:**
+- Beta-launch ASAP strategy LOCKED rămâne valid, dar timing **flexible** (NU forced)
+- Soft Launch 1 ianuarie 2027 = **target aspirational**, NU hard deadline dacă scope esențial extends
+- Quality > speed strict (Bugatti paradigm)
+
+**Memory rule:** Codificat în memory persistent #24 Claude pentru chat-uri viitoare.
+
+**Cross-refs:** SUFLET_ANDURA full vision + §36.13 Beta-launch ASAP strategy + Bugatti paradigm philosophy + 07-meta/CLAUDE_CODE_RULES.md (referință §36.83).
+
+### §36.84 Jeff Nippard Gaps Backlog Catalog (2026-05-03 night late)
+
+**Status:** Backlog catalog post chat strategic 2026-05-03 night late. NU LOCKED V1 (catalog only, +0 cumulative count). Toate gap-urile prebeta per §36.83 meta-rule, prioritizare next chats strategic.
+
+**Context:** Daniel a întrebat dacă Andura V1 ajunge "Jeff Nippard 24/7 replacer" după §36.81 + §36.82 implementate. Claude răspuns sincer: ~30% Jeff Nippard, gap-uri reziduale.
+
+**Gap-uri identificate (7 total):**
+
+#### Prebeta MANDATORY (per §36.83):
+
+1. **#1 Wiring weakness → session builder** (~1-2 săpt CC dezvoltare) — **DISCUTAT START**, NU LOCKED încă. Gap real: `weaknessDetector.js` orfan — calculează 1RM per muscle group, dar NU acționează (nu adaugă proactiv accessory targeted în session builder). Exemplu: Engine VEDE deltoid posterior slab vs anterior → NU adaugă proactiv face pulls în programul Marius. **Action next chat:** design wiring + session builder integration.
+
+2. **#2 Plateau breaker auto** (variant change când stagnează — ~2-3 săpt + research științific) — **NEDISCUTAT**, marcat backlog. Gap real: Stagnation detector flag-uiește 3 săpt fără progres, dar NU recomandă variant change. Concept Bugatti: Marius bench plateau 3 săpt → engine spune "săptămâna asta înlocuim flat barbell cu incline DB pause-rep, schimbăm stimulus, revenim peste 2 săpt". **Action future chat:** design threshold + algorithm + research scientific basis.
+
+3. **#3 Recovery / readiness signals** (somn, stres, DOMS subiectiv) — **PARȚIAL acoperit** prin §36.82.1 (energy selector) + §36.38 Pain Button (DOMS). Daniel confirmat că NU vrea întrebări user explicite suplimentare (somn / stres) — derivăm din statistici sesiune via §36.82.1. **Decision: GAP ÎNCHIS pentru V1 prebeta cu §36.82** — suficient.
+
+4. **#4 Periodizare conștientă** (deload weeks, accumulation phases — ~2-3 luni dezvoltare) — **NEDISCUTAT**, marcat backlog. Gap real: Zero concept "deload week", "intensificare 4 săpt", "accumulation phase". Doar progresie liniară per exercițiu cu deload trigger pe 3× RIR 0. **Action future chat:** design mesocycle planning + deload algorithms.
+
+5. **#6 Cross-exercițiu reasoning** (~2-4 luni dezvoltare) — **NEDISCUTAT**, marcat backlog. Gap real: "Squat-ul tău stagnează pentru că hamstrings sunt slabi, hai să adăugăm RDL și pause-squats" — gap total. **Action future chat:** design graph relations exerciții + weak chain detection algorithm.
+
+6. **#7 Comunicare contextuală pre-session derivată din statistici sesiune (NU întrebări user explicite)** — **PARȚIAL acoperit** prin §36.82.1 + §36.82.2 silent adjust. Daniel quote: "in afara de 5, tot trebuie... iar 7 ne luam datele din statistici din sesiune...". **Decision: GAP ÎNCHIS pentru V1 prebeta** — derivat din §36.82 + statistici sesiune existing.
+
+#### V2+ (RESPINS prebeta):
+
+7. **#5 Form / execuție feedback (video analysis)** — **DROP definitiv**. Daniel quote: "in afara de 5, tot trebuie...". Risc legal + scope insane + camera permissions Maria 65 = OUT. V2+ teritoriu, NU prebeta, NU V1.5.
+
+**Cross-refs:** §36.81 Coach Intelligence Cluster (gap #1 wiring weakness target) + §36.82 Pre-Session Energy Signal (gap #3 + #7 closed) + §36.83 META-RULE Prebeta Scope (toate prebeta default) + `src/engine/weaknessDetector.js` (orfan, target wiring next chat).
+
+### §36.85 Injury Body Region Map — Opțiune A Propusă PENDING Daniel Decision Next Chat (2026-05-03 night late)
+
+**Status:** PROPUS în chat strategic 2026-05-03 night late, AȘTEAPTĂ Daniel decision next chat (A vs drop). NU LOCKED V1 (+0 cumulative count). Cross-ref §36.84 Jeff Nippard backlog gap #8 NEW propus.
+
+**Context:** §36.38 Pain Button existent este generic skip/reduce. NU este injury-specific protocol per zonă anatomică.
+
+**Opțiune A propusă (~1-2 săpt CC) — extensie naturală §36.38 + §36.36:**
+- User apasă "Mă doare" → "Unde?" → body map (umăr stâng / genunchi drept / lombară / etc)
+- Engine vede ce exerciții stresează zona (`muscle_target_primary` în schema §36.36) → automat skip toate în sesiunea curentă + propune alternative ZERO load pe zona afectată
+- Exemplu: user zice "umăr stâng" → engine skip OHP + bench + lateral raises + face pulls automat. Propune: leg day exclusiv + core
+- **NU recomandă rehab specific** ("fă band external rotations") — doar evită stres → zero medical device classification risc
+
+**Opțiune B (~3-4 săpt CC):** Extension A + tracking durată recovery + re-introduction graduală cu test sets.
+
+**Opțiune C (~2-3 luni, RISC LEGAL):** Library protocoale rehab specific per zonă (knee valgus → terminal knee ext + glute med activation). **TRECE LIMITA medical device** → EU AI Act risc + audit legal Stage 2 fail probabil. **REJECTED prebeta** indiferent §36.83.
+
+**Recomandare Claude:** Opțiunea A prebeta (per §36.83 LOCKED), B post-Beta cu data reală, C NEVER.
+
+**Action next chat:** Daniel decizie A vs drop complet (Opțiunea A discuție design completă + LOCK V1 sau backlog post-Beta).
+
+**Schema validation:** §36.36 — `muscle_target_primary` + `muscle_target_secondary` deja câmpuri obligatorii, deci wiring posibil zero refactor schema.
+
+**Cross-refs:** §36.38 Pain/Discomfort Button (extension natural target) + §36.36 Schema Extension Exercise Library (`muscle_target_primary` deja existent) + §36.84 Jeff Nippard backlog gap #8 NEW + ADR_PAIN_DISCOMFORT_BUTTON_v1 §pending §36.85 (post Daniel decision A vs drop) + EU AI Act compliance (zero rehab claims).
+
 ---
 
 **Sesiune 2026-05-02 PRE-LAUNCH FINAL LOCK (chat strategic F-NEW LOCKED V1 OBLIGATORIU + MMI + Storage Full UX + UX Friction + 3 Blockers Sprint 4.x + GC defer + Investiții confirmate). ~35 decizii LOCKED + ~6 push-back-uri productive Claude. **PRE-LAUNCH V1 SCOPE CLOSED — 0 sesiuni chat strategic rămase.** F-NEW-1/2/3/4 LOCKED V1 OBLIGATORIU (§22 UPDATE in-place din "flagged HIGH" → "LOCKED V1 OBLIGATORIU"): F-NEW-1 i18n exerciții RO inversare regulă UI Default RO + Toggle EN OFF (lista finală 6 traduceri locked Romanian Deadlift → Îndreptări (RDL) / Lat Pulldown → Tracțiuni la helcometru / Bulgarian Split Squat / Cable Row / Hip Thrust / Face Pull, pattern reusable 3 categorii) + F-NEW-2 Tier-aware progression matrice 3 tiers Beginner 0-10 / Intermediate 11-50 / Advanced 51+ + Sprinter Cap modifier (compound 1.0 kg / isolation +1 rep) + Edge case Deload skip soft warning Bugatti tone "corpul recuperează în mișcare, nu doar în repaus" + F-NEW-3 Cooldown rate-limiting (3+ înlocuiri 7-day rolling silent + phase change <24h absorb a 2-a "Obiectiv actualizat") + Edge case "User Pierdut" dual condition aderență <25% AND 7 zile zero login (elimină false positives boală/concediu) + F-NEW-4 Banner "Plan ajustat astăzi pentru recovery" + buton "Folosesc varianta mea" replacement force-typing. MUSCLE MEMORY INDEX (MMI) HIBRID LOCKED V1 (§32 NEW): algoritm Greutate Pornire = Peak Pre-Pauză × Multiplicator Lookup + boost progresie 3 săpt (6-12 luni 0.80×/1.25× / 12-24 luni 0.70×/1.10× / 24+ luni 0.60×/1.00× start proaspăt) + threshold trigger user-controlled 6+ luni pauză prompt agency 100% + UI Bugatti tone "Pauza face parte din drum. Începem treptat — corpul tău își amintește." Justified V1 (Maria post-operație șold 8 luni revine ~iulie 2027). Effort ~3-4h Sonnet. STORAGE FULL UX ALERT LOCKED V1 (§33 NEW): Threshold 80% banner săptămânal NU blocant (3 buttons Exportă/Cloud Pro/Închide) + Threshold 95% modal blocant 3 alegeri obligatorii (Descarcă JSON / Activează Cloud / Șterge automat 180 zile alegere definitivă) ZERO data loss silent industry standard Apple/Google/Dropbox + Cap Pro upgrade 1×/săpt + auto-rotate 180 zile DOAR consimțământ explicit. Effort ~4-6h Sonnet. 3 OPTIMIZĂRI UX FRICTION LOCKED (§29.5.5 amendment + §29.5.14 + §29.5.17 + §29.5.18 NEW): Onboarding 5 → 4 ecrane disclaimer integrat ecran 4 Obiectiv (checkbox disabled-until-checked, total <45 sec vs <60 sec) + Autofocus iOS workaround `<input type="number" inputmode="numeric">` + setTimeout 50ms focus programatic (zero tap suplimentar) + The Next-Up Gaze preview vizual cartonaș set următor în timpul rest timer auto-start (soft highlight + border glow ~1-2h Sonnet extension §29.5.5) + Friction Map V1 final touchpoint matrix (Onboarding 🟢 / Pauze 🟢 / Editare istoric 🟡 / Storage Full 🔴 / Disclaimer 🟡 / MMI prompt 🟡). 3 BLOCKERS SPRINT 4.x IDENTIFICATE PRE-LAUNCH (§34 NEW): Blocker 1 T&B Faza 2 persistence Memory Paradox bug (~50-80h trad / ~3-5h Opus, user delete entry → reload → entry RE-APARE Firebase pull) + Blocker 2 Firebase Rules RTDB lock (production-blocker `database.rules.json` syntax LOCKED, sub 1h Daniel + emulator + manual publish) + Blocker 3 D1 DEVELOPING refactor 5→6 tiers (CALIBRATION_LEVELS 0-4 → 0-5 + ID renumber + schema migration + Golden Master ~30+ test cases, ~8-12h trad / ~2-3h Opus). GC TOMBSTONES DEFER 6 LUNI POST-LAUNCH (§35 NEW): Cloud Functions GC AMÂNAT, borna evaluare oficială 1 iulie 2027, rationale buget zero Firebase Spark plan + ~3% din 1GB / 6 luni; alegere A automation Blaze / B manual Daniel / C mai amână. INVESTIȚII CONFIRMATE ZERO BUGET NOU (§31 AMENDMENT): preserved €500-700 worst-case primul an + breakdown 6 luni primele ~€310-515 (Firebase free tier suficient cf §35 GC defer). 888/888 unchanged. Bandwidth Daniel ~3h Daniel-time real saturation triggered preventiv anti-halucinație. Status V1: 8/8 templates 100% LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers identificate + GC defer 6 luni + 0 sesiuni chat strategic rămase pre-launch. Next: rebrand sweep CC Opus dedicat ACUM + ADR 022 V2 draft consolidare totul + Sprint 4.x cluster (Blockers 2/3/1 FIRST → PR Engine + Linear Block + Safety Banner + Hip Thrust + Age guardrail + Mastery Milestone + Sticky Swap + Clean Slate Reset + Onboarding 4 ecrane + Autofocus iOS + Editare Istoric + Notificări + F-NEW 1/2/3/4 + MMI + Storage Full + Next-Up Gaze) + wording Phase B/C bulk Sonnet + PARAMETRIC refactor + exercise library + Beta sept-dec 2026 + audit legal dec 2026 + Soft Launch 1 ian 2027 🚀 + Borna GC 1 iul 2027.**
@@ -5087,3 +5291,5 @@ Detailed cluster report: `📤_outbox/LATEST.md`. Per-batch reports: `📤_outbo
 **Sesiune 2026-05-03 SPRINT UI 6 UX DECIZII LOCKED + CLUSTER ABORTED + REBRAND PRIORITY 1** (chat strategic NEW Sprint UI design 2026-05-03 + 7-batch cluster aborted pre-flight CC Opus + handover post-saturation ~20% bandwidth fresh). 6 decizii UX LOCKED V1 noi (§36.76: Q4 DOMS expand A inline NU persist + Q5 Founding cap C HIDDEN total UI + Q6 3 Card buttons B split 2+1 Equipment+Body + Q7 Goal Shift C Settings only + Q8 Telegram CTA B revizuit Onboarding 1× + Settings + Q-PROMPT Profile Validation C card persistent Dashboard) + 1 lessons learned anti-recurrence rule LOCKED (§36.77: Sprint UI cluster aborted pre-flight CC Opus + slip log Claude chat strategic React/JSX assumption peste vanilla JS ADR 005). Decizii cumulative pre-launch V1 = **70** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 post-Chat-E flags §36.59-60 + 4 cluster 10-batch §36.62 ADR LOCKS + §36.63 §BATCH_PROTOCOL codified + §36.71 cluster session-lock + §36.72 Sprint UI sequencing + §36.73 Q-Set resolution + §36.74 BATCH_PROTOCOL ext + §36.75 Daniel solo gate execution + **§36.76 Sprint UI 6 UX LOCKED V1**). Sprint UI cluster STATUS: 🛑 ABORTED pre-flight BATCH_UI_01 — 7 prompts assume React/JSX framework, project actual = vanilla JS per ADR 005, incompatibility BLOCKING. CC Opus action: STOP cluster, raport STOP detailed (`📤_outbox/_archive/2026-05/BATCH_UI_01_REPORT.md`), 0 commits fabricat, 0 JSX dead code, 7 prompts STILL în `📥_inbox/` pentru re-spec Path A vanilla JS. Bugatti paradigm validated empirical (fail-fast strict pre-flight = corect, 0 debt tehnic introdus). REBRAND PRIORITY 1 ABSOLUT: §30 LOCKED 2026-05-01 RESUBMIT încă neexecutat — Daniel a redenumit Project Claude = "Andura" cross-platform brand consolidation, sweep `salafull` → `andura` (vault docs + cod + package.json + README + GitHub repo + Pages URL + email signature deja LOCKED §29.6) PENDING ÎNCĂ. Daniel decizie acest chat: rebrand sweep PRIORITAR ÎNAINTE re-spec Sprint UI (refactor double risc crește exponențial post-Sprint UI implementation). Custom domain `andura.app` decision pre-sweep (€10-15/an) sau folosim DOAR GitHub Pages URL `andura/` post-rename. Anti-recurrence rule §36.77 LOCKED: ÎNAINTE primul artefact tehnic care referă cod/path/framework în chat strategic, OBLIGATORIU `project_knowledge_search` pentru ADR de framework + pattern existent component vecin; dacă vault NU are spec clar: cere Daniel mostră fișier existent să copiezi pattern; NICIODATĂ "industry default React/Vue/X assumption" — vault SSOT primary, NU bias training. Bandwidth chat ~20% remaining la handover-time, fresh anti-saturation triggered preventiv. 1203/1203 unchanged (vault docs only acest ingest, ZERO source code touched). Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial + 1 RESOLVED + 1 full) + **70 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + ADR_MULTI_TENANT_AUTH Faza 1 Batch B confirmed live + Phase B 51 strings INTEGRATED + Cluster 10-batch foundation tests 1203 PASS + Coverage/Build baselines locked + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + **Sprint UI 6 UX LOCKED V1 §36.76 + Sprint UI cluster ABORTED pre-flight + Slip Log §36.77 anti-recurrence + Rebrand Priority 1 ABSOLUT**. Next: Priority 1 ABSOLUT Rebrand sweep §30 SalaFull → Andura ~5h CC Opus dedicat (vault docs + cod + package.json + repo rename GitHub) → Priority 2 Re-spec 7 BATCH_UI_NN vanilla JS pattern matching `safetyBanner.js` factory function strategic chat NEW (~30-45 min) + cluster execution autonomous CC Opus (~2-3h actual factor 5-7x) → Priority 3 Smoke tests prod gates B/C/D → Beta cohorts 3-tier 50 users invitation §36.47 + §36.53 Telegram → Beta sept-dec 2026 → audit legal €300-500 dec 2026 → Soft Launch 1 ianuarie 2027 🚀. Marketing Channel Mix Decision = milestone V1.1 explicit ~Februarie 2027 per §36.60.**
 
 **Sesiune 2026-05-03 NIGHT REBRAND DEPLOY LIVE + HOTFIX + SMOKE PROD BUG 2 AUTH FLOW NOT WIRED** (sesiune ~5h Daniel-time real — milestone-uri majore deploy `andura.app` LIVE + 2 buguri raportate end-of-session). 2 decizii LOCKED V1 noi (§36.78 Rebrand Sweep Phase 1-4 Complete autonomous CC Opus ~25-30 min real factor 7-9x optimism CONFIRMED 5x consecutive + §36.79 Custom Domain Base Path Hotfix vite/sw/manifest/main/html/playwright + CACHE_VERSION bump v1→v2 anti zombie cache, ~10 min real factor 2.5x hotfix scope-clean). 1 finding-section LOCKED §36.80 (DNS Activation andura.app LIVE + Smoke Prod 2 buguri: BUG 1 SW zombie cache 404 SELF-HEALING CLOSED + BUG 2 Firebase 401 auth flow NOT WIRED REAL BUG → NEXT CHAT PRIORITY 1 ABSOLUT). Decizii cumulative pre-launch V1 = **72** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 post-Chat-E flags §36.59-60 + 4 cluster 10-batch §36.62 ADR LOCKS + §36.63 §BATCH_PROTOCOL codified + §36.71 cluster session-lock + §36.72 Sprint UI sequencing + §36.73 Q-Set resolution + §36.74 BATCH_PROTOCOL ext + §36.75 Daniel solo gate execution + §36.76 Sprint UI 6 UX LOCKED V1 + §36.77 Slip Log anti-recurrence + **§36.78 Rebrand Sweep Phase 1-4 + §36.79 Custom Domain Base Path Hotfix** + §36.80 finding-only count unchanged). Memory updates Claude 2 reguli noi LOCKED 2026-05-03 evening (mem #22 alignment questions strict CC din vault SSOT NU Claude chat handover + mem #23 pre-flight grep ABSOLUT ÎNAINTE primul artefact tehnic anti-halucinație React/JSX 2026-05-03 slip; codificate VAULT_RULES §HANDOVER_PROTOCOL step 9 + PROMPT_CC_HYGIENE §9). Domain `andura.app` cumpărat Namecheap order #201394291 ($13.18 = €13.18 actual achitat vs estimate §31 €10-15, auto-renew ON, Domain Privacy free, NO PremiumDNS, NO Stellar Hosting). DNS Namecheap config + GitHub repo rename salafull→andura + Pages activation cu Enforce HTTPS ON + Site LIVE `https://andura.app/` ✅. SW activ post hotfix `andura-v2`. Firebase RTDB `fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app` (UID Daniel `2GsDvxqXc4bvQGSm8B1Zft5S05i2` provisioned manual §36.75) + DB Rules per-UID strict published §36.75 + Firebase Auth Magic Link + Google OAuth enabled console proiect "Andura". BUG 2 root cause: `src/firebase.js LEGACY_USER_PATH = 'users/daniel'` fallback când `getAuthState() = null` → DB rules per-UID strict §36.75 BLOCHEAZĂ `users/daniel` literal (no auth.uid match) → 401 toate operațiile cycle (get → clearFirebaseKeys DELETE → set PUT). Implication critic: ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02 Faza 2 (banner UX "Salvează contul" + index.html route hookup `/auth-callback`) NOT landed, doar Faza 1 Batch B (`src/auth.js` REST helpers + `src/pages/auth.js` UI bare-DOM Magic Link) cod landed dar NOT wired în app shell main. User deschide `andura.app/` → vede dashboard direct (NU forced auth screen) → Firebase calls fail 401. Decision LOCKED: Beta-launch pre-condiție = auth flow integrat complet. Empirical calibration nuanță: factor 7-9x = clusters mari noi (Phase 1-4 sweep), factor 2-3x = hotfix-uri scope-clean (custom domain hotfix). 1203 → 1203 PASS unchanged (vault docs + cod refactor only, ZERO test changes). Build 4.715s → 3.24s (warmer cache). 28 historical refs preserved corect (audit trail Bugatti — DB_NAME_PREFIX salafull IndexedDB user data continuity, rename = local data wipe risc pre-Beta + 28 historical session-log entries). Bandwidth Daniel ~15-20% remaining triggered handover preventiv anti-halucinație. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial + 1 RESOLVED + 1 full) + **72 decizii LOCKED cumulative** + Beta-launch ASAP strategy + Suflet Andura translation map + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + ADR_MULTI_TENANT_AUTH Faza 1 Batch B code landed (NU wired = BUG 2 cause) + Phase B 51 strings INTEGRATED + Cluster 10-batch foundation tests 1203 PASS + Coverage/Build baselines locked + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + Sprint UI 6 UX LOCKED V1 + Slip Log §36.77 anti-recurrence + **Andura V1 prod LIVE `andura.app` ✅ + §36.78 Rebrand Sweep Phase 1-4 + §36.79 Custom Domain Base Path Hotfix + §36.80 BUG 2 Firebase Auth Flow Not Wired NEXT CHAT PRIORITY 1 ABSOLUT**. Daniel manual items pending (LOW priority): local folder rename `C:\Users\Daniel\Documents\salafull` → `andura` optional + email signature `[Andura V1 Feedback]` apply Outlook/Gmail + `users/daniel` legacy delete from Firebase RTDB Console post auth flow live + verify migration `users/{uid}` complete. Next: **Priority 1 ABSOLUT Auth flow integration `andura.app` production** — strategic chat NEW design (~1-2h Daniel-time, scope: auth-first vs auth-banner-soft vs auth-modal pattern, route auth-callback wire decision, migration path local IndexedDB → post-auth Firebase users/{uid}, wording RO Magic Link primary + Google OAuth secondary, error states UX) + prompt CC Opus dedicat (~30-45 min autonomous factor 7-9x: wire `/auth-callback` route + `createAuthScreen` integration main shell + `LEGACY_USER_PATH` fallback strategy update block-render-until-auth NU fallback users/daniel + Tests Playwright e2e Magic Link + Google OAuth mock + smoke prod verification user nou vede auth screen NU dashboard direct) → Priority 2 (post auth flow live) Re-spec 7 BATCH_UI_NN vanilla JS pattern matching `safetyBanner.js` factory function `(opts) → { element, dispose }` Path A per §36.77 anti-recurrence rule strategic chat NEW ~30-45 min + cluster execution autonomous CC Opus ~2-3h actual factor 5-7x → Priority 3-N Smoke tests prod gates B/C/D pe `andura.app` post Sprint UI live + Beta cohorts 3-tier 50 users invitation §36.47 + §36.53 Telegram + Beta sept-dec 2026 + audit legal €300-500 dec 2026 + Soft Launch 1 ianuarie 2027 🚀. Marketing Channel Mix Decision = milestone V1.1 explicit ~Februarie 2027 per §36.60.**
+
+**Sesiune 2026-05-03 NIGHT LATE PREBETA SCOPE EXPANSION + COACH INTELLIGENCE ROADMAP** (chat strategic ~2h Daniel-time real post deploy LIVE `andura.app` + alignment 13/13 PASS pe §36.78+§36.79+§36.80; pivot original Auth Flow Priority 1 → coach intelligence cluster + meta-rule prebeta scope). 7 decizii LOCKED V1 noi (§36.81 Coach Intelligence Cluster cu 4 sub: §36.81.1 Catalog Ceiling Soft Cap 3-4 variante + PR justification a 5-a / §36.81.2 Substitutions Hierarchy Algorithmic ordering primary_muscle→movement_pattern→force_curve_profile→equipment_class, ponderi 40/30/20/10 RESPINSE V1 / §36.81.3 Mid-Set Switch Fallback Hybrid Rule SIMILARITY_RATIO + UI Bridge sugestie+edit / §36.81.4 Abandonment Engine + §36.30 Override rest_timer based 10min idle + 4h auto-close + drop midnight rule, abandoned = gap neutru NU resetează streak counter; §36.82 Pre-Session Energy Signal Cluster cu 3 sub: §36.82.1 Pre-Session Energy Input 🟢🟡🔴 dashboard greeting card 1-tap / §36.82.2 Silent Adaptive Adjustment 🔴 = §36.16 RIR Matrix reps/intensity ZERO mesaj paternalist / §36.82.3 Deload Suggestion Trigger 3× consecutive 🔴 → optional NU auto-trigger, wording placeholder Phase B pending) + 1 META-RULE LOCKED V1 (§36.83 Prebeta Scope Expansion: toate deciziile SUFLET ANDURA / coach intelligence / UX core / engine adaptation = MANDATORY prebeta non-negotiable, default prebeta dacă atinge core, timing/realism = treaba Claude+Daniel+CC NU rationale respingere scope, NU "ar dura X luni" push-back). 1 backlog catalog (§36.84 Jeff Nippard Gaps Backlog 7 total: #1 Wiring weakness→session builder DISCUTAT START + #2 Plateau breaker auto NEDISCUTAT + #3 Recovery/readiness GAP ÎNCHIS via §36.82 + #4 Periodizare conștientă NEDISCUTAT + #5 Form/video DROP definitiv + #6 Cross-exercițiu reasoning NEDISCUTAT + #7 Comunicare contextuală GAP ÎNCHIS via §36.82+statistici sesiune). 1 propunere PENDING (§36.85 Injury Body Region Map Opțiune A propusă ~1-2 săpt extension §36.38 Pain Button + §36.36 schema, AȘTEAPTĂ Daniel decision next chat A vs drop). Renumbering vault hygiene applied: handover input chat strategic a folosit §36.55.1-4 + §36.56.1-3 + §36.57 (collision cu §36.55 GDPR Phone Privacy + §36.56 ADR Review + §36.57 Phase B Wording 51 Strings deja existente) → re-numerotat cronologic post §36.80 ca §36.81-§36.85 fără pierdere intent (cluster organization preserved). Decizii cumulative pre-launch V1 = **79** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 post-Chat-E flags §36.59-60 + 4 cluster 10-batch §36.62 + §36.63 §BATCH_PROTOCOL + §36.71 + §36.72 + §36.73 + §36.74 + §36.75 + §36.76 + §36.77 + §36.78 + §36.79 + §36.80 finding-only + **§36.81.1 + §36.81.2 + §36.81.3 + §36.81.4 + §36.82.1 + §36.82.2 + §36.82.3 = 7 features locked**) + §36.83 META-RULE +0 + §36.84 backlog +0 + §36.85 pending +0 = 72 → **79** (+7). Memory rule NEW Claude #24 LOCKED 2026-05-03 night late: §36.83 Prebeta Scope Rule — TOATE deciziile SUFLET ANDURA / coach intelligence / UX core / engine adaptation = MANDATORY prebeta. Non-negotiable. Default prebeta dacă atinge core. Timing/realism = treaba Claude+Daniel+CC să prioritizăm execution, NU rationale respingere scope. NU mai sări la "ar dura X luni" ca push-back. Pre-flight validations chat: §36.81.3 Mid-Set Switch validat `src/engine/exerciseMapping.js` SIMILARITY_RATIO + getSimilarityMultiplier existent (NU inventezi feature, extinzi infrastructure) + §36.81.4 Abandonment validat §36.26+§36.30 outlier streak + §36.34 Profile Reset PRESERVE + §36.35 Goal Shift RESET 0 + ADR 012 inactivity decay separate concern + §36.85 Injury Body Region Map validat §36.36 schema muscle_target_primary + secondary deja existente (zero refactor). Auth flow integration design = AMÂNAT acest chat pentru chat strategic NEW separat (Priority 1 ABSOLUT §36.80 preserved post acest handover ingest, dar pivot real chat curent continuă coach intelligence). 1203/1203 PASS unchanged (vault docs only acest ingest, ZERO source code touched). Bandwidth Daniel ~22% remaining triggered handover preventiv anti-saturation per memory rule #15. Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 3 Blockers (1 partial + 1 RESOLVED + 1 full) + **79 decizii LOCKED cumulative** + Beta-launch ASAP strategy (timing flexible per §36.83) + Suflet Andura translation map + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + ADR_MULTI_TENANT_AUTH Faza 1 Batch B code landed (NU wired = BUG 2 cause, blocking Beta) + Phase B 51 strings INTEGRATED + Cluster 10-batch foundation tests 1203 PASS + Coverage/Build baselines locked + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + Sprint UI 6 UX LOCKED V1 + Slip Log §36.77 anti-recurrence + Andura V1 prod LIVE `andura.app` ✅ + §36.78 Rebrand Sweep + §36.79 Custom Domain Hotfix + §36.80 BUG 2 Firebase Auth Flow NEXT CHAT PRIORITY 1 ABSOLUT (preserved) + **§36.81 Coach Intelligence Cluster + §36.82 Pre-Session Energy Signal Cluster + §36.83 META-RULE Prebeta Scope + §36.84 Jeff Nippard Gaps Backlog + §36.85 Injury Body Region Map PENDING + Memory #24 LOCKED**. Next: **Priority 1 ABSOLUT chat strategic NEW dedicat Auth Flow Integration** (§36.80 preserved, blocking Beta) — design ~1-2h Daniel-time + prompt CC Opus dedicat ~30-45min autonomous factor 7-9x → **Priority 2 chat strategic continuare coach intelligence roadmap** (post acest handover ingest, scope: Jeff Nippard gap #1 wiring weaknessDetector.js→sessionBuilder.js proactive accessory + Injury Body Region Map §36.85 decizie A vs drop + dacă bandwidth gap #2 plateau breaker + #4 periodizare + #6 cross-exercițiu) → **Priority 3 (post auth flow live)** Re-spec 7 BATCH_UI_NN vanilla JS Path A per §36.77 anti-recurrence + cluster execution autonomous CC Opus → Priority 4-N Smoke tests prod gates B/C/D + Beta cohorts 3-tier 50 users §36.47 + §36.53 Telegram + Beta sept-dec 2026 + audit legal €300-500 dec 2026 + Soft Launch 1 ianuarie 2027 🚀 (target aspirațional flexibil per §36.83). Marketing Channel Mix Decision = milestone V1.1 explicit ~Februarie 2027 per §36.60.**
