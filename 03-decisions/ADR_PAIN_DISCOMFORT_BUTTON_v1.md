@@ -99,3 +99,31 @@ Audit log NU blocking — engine respectă alegerea user-ului. Future analysis (
 **Implementation guidance pentru Sprint UI Integration:**
 - Component `<PainDiscomfortCard>` exposes prop `showAdvancedOptions: boolean` default `false`
 - Daniel UX final review pre-Beta launch
+
+---
+
+## EXT-2 PENDING — Injury Body Region Map Opțiune A Propusă (§36.85)
+
+**Status:** PENDING Daniel decision next chat strategic (A vs drop). NU LOCKED. NU implementat. Doc-only flag.
+
+**Origine:** Chat strategic 2026-05-03 night late (handover §36.85). NEW gap proposed în §36.84 Jeff Nippard Backlog #8.
+
+**Context:** §36.38 Pain Button core (3 PAIN_OPTIONS + override CDL + EXT-1 DOMS visibility) este generic skip/reduce per session current. NU este injury-specific protocol per zonă anatomică concretă.
+
+**Opțiune A propusă (~1-2 săpt CC) — extensie naturală §36.38 + §36.36:**
+- User apasă "Mă doare" → "Unde?" → body map (umăr stâng / genunchi drept / lombară / etc)
+- Engine vede ce exerciții stresează zona (`muscle_target_primary` + `muscle_target_secondary` în schema §36.36) → automat skip toate în sesiunea curentă + propune alternative ZERO load pe zona afectată
+- Exemplu: user zice "umăr stâng" → engine skip OHP + bench + lateral raises + face pulls automat. Propune: leg day exclusiv + core
+- **NU recomandă rehab specific** ("fă band external rotations") — doar evită stres → zero medical device classification risc
+
+**Schema validation:** §36.36 — `muscle_target_primary` + `muscle_target_secondary` deja câmpuri obligatorii, deci wiring posibil zero refactor schema (validat pre-flight).
+
+**Opțiune B (~3-4 săpt CC, post-Beta cu data reală):** Extension A + tracking durată recovery + re-introduction graduală cu test sets.
+
+**Opțiune C (~2-3 luni, RISC LEGAL, REJECTED prebeta indiferent §36.83):** Library protocoale rehab specific per zonă (knee valgus → terminal knee ext + glute med activation). **TRECE LIMITA medical device** → EU AI Act risc + audit legal Stage 2 fail probabil.
+
+**Recomandare Claude (chat strategic):** Opțiunea A prebeta (per §36.83 LOCKED), B post-Beta cu data reală, C NEVER.
+
+**Action next chat:** Daniel decizie A vs drop complet. Dacă A LOCKED → create dedicated `ADR_INJURY_BODY_REGION_MAP_v1.md` SAU consolidate în EXT-2 detail aici.
+
+**Cross-refs:** [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.85 Injury Body Region Map PENDING + §36.84 Jeff Nippard Backlog gap #8 + §36.38 Pain Button core (extension target) + §36.36 Schema Extension (`muscle_target_primary` + `muscle_target_secondary` existent) + §36.83 META-RULE Prebeta Scope Expansion (Opt A prebeta default per meta-rule) + EU AI Act compliance (Opt C REJECTED zero rehab claims).

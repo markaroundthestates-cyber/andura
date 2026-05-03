@@ -145,6 +145,42 @@ Distincție critical vs Goal Shift:
 - **Profile Reset** (§36.34): UI/UX shift only, fizicul intact → streak counter **PRESERVE** (Marius cu 2/3 spre baseline shift NU pierde progres real)
 - **Goal Shift** (§36.35): context fizic schimbat → streak counter **RESET la 0**
 
+### EXT-4: Abandonment Engine + §36.30 Override — Streak Counter PRESERVE pe Abandoned (§36.81.4)
+
+**Decizie:** Sesiunile abandonate (`session_status: 'abandoned'`) NU contează ca "sesiune normală intermediară", ci sunt tratate ca un **gap neutru (skip)**. Streak counter-ul §36.30 de validare a baseline-ului pe aceeași direcție NU se resetează la o sesiune abandonată, ci doar la o sesiune validă normală.
+
+**Trigger detection (rest_timer based, NU timpi statici arbitrari):**
+- Rest timer activ: NU întreabă nimic (Marius poate face 6-8 min pauză legitimă la squat heavy)
+- Rest timer expirat ȘI 10 min idle fără interacțiune: countdown abandonment
+- La redeschidere app: modal interstitial "Continuăm sesiunea sau încheiem aici?"
+- >4h inactivitate totală: auto-close `session_status: 'abandoned'`, ecran curat next open
+- Drop "midnight rule": sesiune unică indiferent schimbare zi calendaristică
+
+**Mecanică Marius example:**
+```
+[Sesiunea 1: Outlier ✅] → counter 1/3
+[Sesiunea 2: Outlier ✅] → counter 2/3
+[Sesiunea 3: Abandoned ⚪ (Neutral)] → counter PRESERVED 2/3
+[Sesiunea 4: Outlier ✅] → counter 3/3 → baseline shift triggered
+```
+
+**Tratarea datelor incomplete (Outlier Protection):**
+- Frecvența de antrenament: counted (engine știe că user a mers la sală)
+- Progresoare 1RM și Deload triggers: complet excluse
+- Pattern learning: ignored (anti-pollution istoric)
+
+**Distincție matrix vs EXT-1/EXT-2/EXT-3:**
+
+| Eveniment | Streak Counter |
+|-----------|----------------|
+| Sesiune normală same direction (EXT-1) | INCREMENT 1/3, 2/3, 3/3 |
+| Sesiune normală opposite direction (EXT-1) | RESET 0 |
+| Profile Reset §36.34 (EXT-3) | PRESERVE |
+| Goal Shift §36.35 (EXT-2) | RESET 0 |
+| **Abandoned §36.81.4 (EXT-4)** | **PRESERVE (gap neutru, skip)** |
+
+**Cross-refs:** [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.81.4 + §36.30 Streak Counter Same Direction (extended) + §36.34 Profile Reset PRESERVE (similar mechanic) + §36.35 Goal Shift RESET 0 (opposite mechanic) + ADR 012 Calibration Tier Decay (60-day inactivity, separate concern, NU overlap).
+
 ---
 
-*Authored 2026-05-02 SUFLET ANDURA ingest. EXT-1 to EXT-3 added 2026-05-02 SELF-CORRECTION ingest. Status DRAFT — pending Daniel review pre-LOCK.*
+*Authored 2026-05-02 SUFLET ANDURA ingest. EXT-1 to EXT-3 added 2026-05-02 SELF-CORRECTION ingest. EXT-4 added 2026-05-03 night late PREBETA SCOPE EXPANSION ingest. Status DRAFT — pending Daniel review pre-LOCK.*
