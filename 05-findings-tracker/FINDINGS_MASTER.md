@@ -221,3 +221,109 @@ npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integra
 **Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]
 **Ultima sesiune dev:** 2 mai 2026 — Sprint 4.x Batch B (Auth Migration Faza 1 + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring) — 1110/1110 tests, +155 net
 **Next sprint:** Daniel publish Firebase rules post-Auth dogfood + dedicated T&B Faza 1+2 batch (SF-B) + Vite build optimization (SF-E)
+
+---
+
+## AUDIT CONSOLIDAT 2026-05-03 — Reclassification Summary
+
+**Sources:**
+- `HANDOVER_AUDIT_TOTAL_2026-05-03.md` (synthesis cumulativ)
+- `AUDIT_VERIFICATION_REPORT.md` (Faza 1 cap-coadă + §11 reclasificare addendum)
+- `AUDIT_IDEATION_REPORT.md` (Faza 2 ~50 idei NEW + §7 integrare addendum)
+- `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` ⚠️ **PENDING upload** (vezi DIFF_FLAGS P1-FLAG-1)
+
+**Audit acuratețe verdict:** **7.5/10** (Faza 1 verification — ~6-8 findings severity inflated, ~3-4 false positives, ~5 redundant rebranded).
+
+**Real findings count post-deduplication + reclassification:** **~40 actionable** (NU 53 verification, NU 63 raw audit).
+
+### Distribuție 4 buckets (per §36.92)
+
+#### Bucket 1: REZOLVABIL pre-Beta (~16 actionable)
+
+**4 CRITICAL pre-Beta blockers** (NU 5 — T1 demoted HIGH parțial mitigated, B1 demoted MEDIUM doc hygiene):
+| ID | Finding | Effort | Verificare |
+|----|---------|--------|-----------|
+| **B4** | RPE Verbal UI înlocuire numeric → 3 verbal Ușor/Potrivit/Foarte greu | 1-2h | ✅ CONFIRMED `src/pages/coach/logging.js` `selectRPE` + labelMap vs §36.16 RIR Matrix |
+| **B2** | T&B Faza 1+2 event-sourcing + branching + UI prompt | 2-3h | ✅ CONFIRMED §34.1 ZERO matches grep |
+| **B3** | Founding Cap Firebase atomic transaction wiring | 30-45min | ✅ CONFIRMED `src/schema/pricing.js` comment "Real implementation uses Firebase transaction" |
+| **N1+N5-NEW** | AUDIT_30_9 caller cleanup + dataRegistry `applied-patterns` legacy | ~30-45min | ✅ CONFIRMED 5 callers + `src/util/dataRegistry.js` |
+
+**12 HIGH cleanup batch:**
+- T1 "Save the week silent" decizie strategică A/C (D1 pending)
+- ADR 023 LLM Intent Implementation Tier 1+2 ⚡ NEW (~6-10h Opus, MANDATORY pre-Beta)
+- OBSERVABILITY-1 Sentry filter narrow (~15-30min ⚡)
+- CONTRADICTION-1 ADR 003 vs §36.16 RIR threshold reconcile (~30-45min)
+- TRIPLE-1 + QUADRUPLE-1 Onboarding+Goal SSOT consolidare (5 → 1, ~3h Daniel + 1h CC)
+- ORPHAN-1 ADR 022 split (Bayesian Nutrition + Goal-Driven Templates, ~1-2h)
+- R1-NEW Reconciliation Coordinator §36.86b META-RULE-TERTIARY (~30min Daniel)
+- N2 Privacy Clause correction + ADR 023 §2.B sanitizer wording (~30min, pre-launch legal)
+- DEAD-1 ADR 021 Faza 2 integration (~3-5h, DEPENDS B2)
+- Q11-INFRA Cloud Functions Daniel decision (D3 pending)
+- DRIFT-1 + DH2 + NEW-2 quick fixes (~20min total)
+- NEW-IDEATION-2 Observation Mode prima 2 săpt Beta (~2-3h CC)
+
+**Auth Flow §36.80 = Priority 1 ABSOLUT separat** (chat strategic ~1-2h Daniel + ~30-45min CC autonomous).
+
+#### Bucket 2: Post-launch V1.1 (deferred ~10 items)
+
+- FM-16 Engine Self-Audit Weekly (MOAT diferentiator, ~1-2 săpt design + 4-6h CC)
+- FM-17 Memory-Aware Questions (~1 săpt build)
+- IMP-15 Sprint Vault Hygiene Q2 2026 (D5 pending, ~6-10h)
+- NEW-IDEATION-3 SLA disclosure ToS (~30min Daniel + legal Stage 2)
+- NEW-IDEATION-4 Whitelist exercise names + termeni fitness RO maintenance (~1-2h initial + 30min/lună)
+- NEW-IDEATION-5 Cost monitoring backend Cloud Functions (~3-5h, D6 dependent)
+- SG-1 + SG-2 + SG-3 CAC + Retention + Churn metrics (business modeling)
+- SG-4 NPS measurement methodology
+- SG-5 ASO strategy post-PWA wrap
+- FM-7 Multi-gym + FM-6 HR optional + FM-12 Travel mode (V1.x)
+
+#### Bucket 3: Acceptabil trade-off permanent (~5 items)
+
+- Bus factor 1 ACCEPTED pre-revenue (§36.88)
+- N3 velocity Daniel solo (acceptable risk)
+- BACKLOG-1 + R3 (acceptable, NU actionable)
+- Custom exercises REJECTED V1 (PRODUCT_STRATEGY §3.2 explicit)
+- Climate awareness FM-14 DROP (paternalism risk)
+- Audio recording form check FM-15 DROP V1 (V2+ candidate)
+- Group challenges PERMANENT REJECT (§1.7 anti-vendetă)
+
+#### Bucket 4: Reconsiderate (~6 items)
+
+- **Cognitive Q4 DELOCK** (§36.87 §AMENDMENT 2026-05-03 — LLM permis exclusiv 2 trigger points ADR 023)
+- **T2 The Filter RESOLVED** (§36.91 via ADR 023)
+- **TIME-1 Bayesian convergence** MEDIUM acceptable cu DEMO-1 verify (§36.90)
+- **Calibration target pre-Beta 85-90%** (§36.89, NU 95% — plan A+B+E)
+- **B1 Mode Detection** demoted CRITICAL → MEDIUM (audit confused declared vs behavioral overlay)
+- **I1 Volume Multiplier** reframed -42% → -19% real (Composite Signal NU multiplier standalone, Demographic Prior T0-only)
+
+### Top 6 ideation integrate pre-Beta (§36.92 cross-ref)
+
+1. **IMP-1 Volume Floor Guarantee** META-RULE-QUINQUE — anti-amputation Maria 65 (~1h)
+2. **IMP-3 Synthetic Demographic Prior pre-Calibration** plan A (~8-12h dacă DEMO-1 incomplete)
+3. **NEW-IDEATION-1 Expert Validator Coach Paid** plan E (€500-1000 + 2-4h sourcing)
+4. **FM-2 Mobility/Warm-up Auto-Insertion** (~5h, longevity 50+ Maria critical)
+5. **FM-8 Pre-Injury Recovery Debt PROACTIVE** (~2-3h, anti-injury proactive)
+6. **IMP-4 Spec→Cod Tracking Matrix** (~1.5h, anti-recurrence drift)
+
+### False Positives identified (REMOVED from finding list)
+
+- **I6 ADR 020 Dexie "NEVERIFICAT"** — false positive (Phase 1 ACTIVE `src/storage/db.js` + `tieringEngine.js`)
+- **P4-11 ADR 020 dependency NEVERIFICAT** — duplicate I6
+- **Jeff #2 Plateau Breaker absent** — false positive (12+ algorithmic interventions în `src/engine/plateauInterventions.js`, gap real = UI wiring NEW-1)
+- **M3-NEW ADR 005 XSS user.name** — partial false positive (mitigation pattern existent, risk teoretic NU verified în cod)
+
+### Total effort cumulativ pre-Beta cleared (post-addendum)
+
+- **Effort Opus realist:** ~30-45h actual (UP de la ~25-35h pre-addendum due ADR 023 + Observation Mode NEW)
+- **Daniel chat strategic:** ~12-18h (down post T2 RESOLVED)
+- **Plus expert validator coach paid €500-1000 one-time + 2-4h sourcing**
+- **Sequencing realist:** 4-6 săpt calendaristic (factor sustainability Daniel solo + family + job)
+
+### Decision points pending Daniel chat strategic NEW (D1-D6)
+
+Vezi DIFF_FLAGS.md P2-FLAG-1.
+
+---
+
+**Ultima audit consolidat ingest:** 2026-05-03 (3/4 fișiere ingestate, 1 PENDING upload — vezi DIFF_FLAGS P1-FLAG-1)
+**Cumulative LOCKED count post audit total:** 79 → **85** (+6 §36.86-§36.91)
