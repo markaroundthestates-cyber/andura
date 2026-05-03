@@ -10,8 +10,8 @@
 
 ### P1-FLAG-1 — ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md SOURCE PENDING UPLOAD
 
-**Status:** 🔴 OPEN (raised 2026-05-03 audit total ingest)
-**Severity:** P1 BLOCKER (impedes ADR 023 implementation)
+**Status:** 🟡 PARTIALLY MITIGATED 2026-05-03 (chat strategic post-audit) — Faza 3 va integra direct sub-secțiuni A-M ADR 023 din addendum context window în chat strategic original (NU file upload separate). Original raised 2026-05-03 audit total ingest.
+**Severity:** P1 BLOCKER (impedes ADR 023 implementation full sub-sections A-M, but Faza 3 cleanup integrates from chat context)
 
 **Issue:**
 Audit total ingest 2026-05-03 (3 fișiere ingestate: HANDOVER_AUDIT_TOTAL + AUDIT_VERIFICATION_REPORT + AUDIT_IDEATION_REPORT) referă al 4-lea fișier `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` ca sursă pentru ADR 023 LLM Intent Interpretation §2 sub-secțiuni A-M complete. **Acest fișier NU e în inbox la momentul ingest.**
@@ -40,29 +40,28 @@ Audit total ingest 2026-05-03 (3 fișiere ingestate: HANDOVER_AUDIT_TOTAL + AUDI
 
 ## P2 PENDING (decision points pending Daniel chat strategic NEW)
 
-### P2-FLAG-1 — Decision Points D1-D6 Pending (Audit Total)
+### P2-FLAG-1 — Decision Points D1-D6 Status Update (post Vault Hygiene chat strategic 2026-05-03)
 
-**Status:** 🟡 PENDING Daniel chat strategic NEW
+**Status:** 🟡 PARTIALLY RESOLVED 2026-05-03 — D2/D3/D4/D5/D6 RESOLVED Co-CTO; D1 only remaining strategic
 **Severity:** P2 (decision-only, no fabricate)
 
-**Issue:**
-6 decision points pending Daniel chat strategic NEW per HANDOVER_AUDIT_TOTAL §4:
+**Updated status per HANDOVER §36.93-§36.96 + handover §1+§8:**
 
-- **D1:** T1 "Save the week silent" — A passive intelligence / C in-app banner pasiv (NU B opt-in). Recommend A sau C.
-- **D2:** §36.86b DELOCK Mechanism META-RULE — "orice prebeta LOCKED V1 are date target; 2 săpt înainte de Beta lock NU e implementabil → V1.1 cu Daniel sign-off explicit"
-- **D3:** Cloud Functions Blaze plan upgrade — A €5-10/lună budget pre-Beta / B Spark plan retain accept Q11 violation explicit. Recommend A.
-- **D4:** Goal Taxonomy LOCKED Final — A ADR 017 6 EN / B §26.3 5 RO sub-routing / C hybrid B onboarding + A engine internal map. Recommend C.
-- **D5:** Sprint Vault Hygiene Q2 2026 — A dedicate ~6-10h Daniel + CC pre-Beta / B inline / C defer. Recommend A foundation post-launch.
-- **D6:** ADR 023 cost monitoring infrastructure — A backend Cloud Functions enforcement (depends D3=A) / B frontend-only soft cap (D3=B). Recommend per D3 outcome.
+- **D1:** T1 "Save the week silent" — **🟡 PENDING** strategic dedicat post-Vault Hygiene Faza 3+4 + Auth Flow §36.80. A passive intelligence / C in-app banner pasiv (NU B opt-in). Recommend A sau C.
+- **D2:** §36.86b DELOCK Mechanism META-RULE — **✅ RESOLVED** "ACCEPT propunere wording verbatim" (Co-CTO decide aliniat T3). Codification PENDING execution Faza 3 sau ad-hoc.
+- **D3:** Cloud Functions Blaze plan upgrade — **✅ RESOLVED B Spark plan retain** per §36.93 (rationale calcul real 50 useri × 4 sesiuni × 2 LLM calls = 57 calls/zi = 0.4% Groq free tier 14400/zi limit).
+- **D4:** Goal Taxonomy LOCKED Final — **✅ RESOLVED hybrid C** deja LOCKED §36.92 D4 (B onboarding + A engine internal mapping). Execute Faza 3 cleanup (Recomandare B audit Faza 1 = `01-vision/ONBOARDING_SSOT_V1.md` create).
+- **D5:** Sprint Vault Hygiene Q2 2026 — **✅ SUPERSEDED** per §36.96 Vault Hygiene Sprint = Priority 0 acum (NU Q2 2026 deferred).
+- **D6:** ADR 023 cost monitoring infrastructure — **✅ RESOLVED B frontend-only soft cap** (depends D3=B per §36.93). NEW-IDEATION-5 backend cost monitoring DEFERRED post-revenue.
 
-**Action Daniel:**
-- Open chat strategic NEW dedicat decision points D1-D6 (~5-7h Daniel chat strategic)
-- Lock decisions per recommend Claude sau alternative justified
-- Comandă CC Opus integration același chat strategic sau next ingest
+**Action Daniel (only D1 remaining):**
+- Strategic chat NEW dedicat D1 Save the week silent (~30min Daniel-time) — post Faza 3+4 Vault Hygiene + Auth Flow
+- Sequencing: D1 strategic NU blocks Vault Hygiene execution (independent decision-only)
 
 **Cross-refs:**
-- HANDOVER_GLOBAL §36.92 Audit reclasificare 4 buckets + decision points pending
-- HANDOVER_AUDIT_TOTAL_2026-05-03.md §4 (archived `📤_outbox/_archive/2026-05/104+_*.md` post-ingest)
+- HANDOVER_GLOBAL §36.93 (D3=B) + §36.94 (ADR 025 candidate) + §36.95 (ADR Numbering Additive) + §36.96 (Vault Hygiene Sprint Priority 0 + 8 recomandări APROBATE) + §36.97 (Faza 4 VAULT_HYGIENE_PASS LOCK PENDING) + §36.98 (System Prompt artefact)
+- ADR 023 §Reconsideration Trigger #2 update (D3=B Spark retain rationale)
+- HANDOVER_AUDIT_TOTAL_2026-05-03.md §4 (archived `📤_outbox/_archive/2026-05/104_*.md` post-ingest)
 
 ---
 

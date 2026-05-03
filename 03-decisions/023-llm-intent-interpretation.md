@@ -154,7 +154,7 @@ Pattern emergent vault Andura post audit consolidat 9 passes: engine arhitectura
 ## Reconsideration Triggers
 
 1. **Provider lifecycle:** Groq llama-3-8b-it deprecated → switch to alternative cheap fast LLM
-2. **Cost exceeds €10/lună:** evaluate Blaze upgrade cost-benefit (D3 reconsider)
+2. **Cost cap reconsider — UPDATED §36.93 (2026-05-03):** D3 LOCKED B Spark plan retain. Blaze upgrade RESPINS pre-Beta. Reconsider TRIGGERS: (a) revenue confirmed (Founding cap 50 + Standard month 6+ runway); (b) Groq deprecation forced; (c) demand spike >5% Groq free tier (~720 calls/zi → ~250 useri activi). Volum realist 50 useri × 4 sesiuni × 2 LLM calls = 57 calls/zi = 0.4% Groq free tier 14400/zi limit. Cost cap €10/lună din §2.H = paranoia, NU nevoie reală. Bootstrap-aware Bugatti: scale când e problemă reală, NU ipotetică. NEW-IDEATION-5 backend cost monitoring DEFERRED post-revenue. Frontend telemetry acceptable D6=B (depends D3=B).
 3. **Beta cohort feedback:** dacă LLM intent classification accuracy <85% → tune prompts / structured outputs schema / fallback regex thresholds
 4. **Privacy regulator scrutiny:** dacă RO ANSPDCP raises Article 6/9 GDPR concerns despite sanitizer → review consent flow + transparency disclosure
 5. **Maria 65 / Gigica 35 use text input:** dacă ZERO text input assumption invalidated post-Beta data → expand UI 3-buttons to cover edge cases (NU expand LLM scope core demographic)
