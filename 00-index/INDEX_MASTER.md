@@ -1,7 +1,7 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-04 evening (post handover ingest §41-§44 — Vault Hygiene Sprint COMPLETE + ADR 026 spec decisions 1-10 LOCKED V1 + cumulative 90 → 100)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (100 LOCKED V1 + §36.99-§36.107 offline coaching tree + 7 engines + D2/D3 NEW + §41-§44 Vault Hygiene COMPLETE + ADR 026 spec)
+**Last updated:** 2026-05-04 night (post handover ingest §45-§49 — ADR 026 SPEC SESSION COMPLETE 75 decisions LOCKED V1 + Engine #8 Warm-up & Mobility NEW + §47 Alignment Questions Rule LOCKED V1 + cumulative 100 → 175)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (175 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines (META 7→8 amendment) + D2/D3 NEW + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1)
 **Stats:** 66 fișiere active vault (post-stubs G + UNREFERENCED moves F)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
@@ -52,9 +52,12 @@ andura/
 | **D2 NEW Injury/Contraindication Mapping (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.106 |
 | **D3 NEW Don't Like + Home + Calistenice + Sport-Oriented (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.107 |
 | **Vault Hygiene Sprint Faza 3+4 ✅ COMPLETE (8 recomandări A-H + Faza 4 codified)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §41 |
-| **ADR 026 Spec Decisions 1-10 LOCKED V1 (chat strategic 2026-05-04)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §42 (§42.1-§42.10) + [[DECISION_LOG]] (2026-05-04 evening entry) |
-| **Next actions priority order post 2026-05-04 evening ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §43 |
-| **Cumulative LOCKED count 100 + vault state post §41-§44 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §44 |
+| **ADR 026 Spec Decisions 1-10 LOCKED V1 (chat strategic 2026-05-04 morning)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §42 (§42.1-§42.10) + [[DECISION_LOG]] (2026-05-04 evening entry) |
+| **ADR 026 SPEC SESSION COMPLETE 75 decisions LOCKED V1 (chat strategic 2026-05-04 night) — Q1-Q40 + 17 refinements + Engine #8 + cooldown defer + light flags** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §45 (§45.1-§45.8) + [[DECISION_LOG]] (2026-05-04 night entry) |
+| **Engine #8 Warm-up & Mobility LOCKED V1 NEW (META §36.100 amendment 7→8 prescriptive engines, pre-Beta MANDATORY)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §45.6 |
+| **§47 Alignment Questions Generation Rule LOCKED V1 — search-driven format mandatory + DEPRECATED pre-fed verbatim** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §47 + `VAULT_RULES.md` §HANDOVER_PROTOCOL step 9 amendment + `PROMPT_CC_HYGIENE.md` §9 amendment |
+| **Next actions priority order post 2026-05-04 night ingest (Priority 0/1/2/3/4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §46 |
+| **Cumulative LOCKED count 175 + vault state post §45-§49 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §45.8 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
 | **ADR-uri active 001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named** | `03-decisions/` |
 | **Storage Tiering Strategy (Tier 0/1/2 + Dexie)** | [[020-storage-tiering-strategy]] |
@@ -177,6 +180,15 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 - **DECISION_LOG +10 entries** ADR 026 §42.1-§42.10 LOCKED V1 (top of file, cronologic descending)
 - **HANDOVER_GLOBAL split FLAG check:** post-merge ~6200-6300 LOC (pre-merge 6058 + ~150-200 added §41-§44). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered
 
+### 2026-05-04 night (handover ingest §45-§49 — ADR 026 SPEC SESSION COMPLETE)
+- **New handover:** `HANDOVER_2026-05-04_NIGHT_ADR_026_SPEC_COMPLETE.md` archived `📤_outbox/_archive/2026-05/122_HANDOVER_2026-05-04_NIGHT_ADR_026_SPEC_COMPLETE_CONSUMED.md`
+- **§45 ADR 026 SPEC SESSION COMPLETE — 75 decisions LOCKED V1** Q1-Q40 (4 batches × 10) + 17 refinements + Engine #8 NEW + cooldown defer post-Beta v1.5 + light flags Maria deload + Q16 JSON output spec
+- **§45.6 Engine #8 Warm-up & Mobility LOCKED V1 NEW** — META §36.100 amendment 7→8 prescriptive engines (22 total = 14 reactive + 8 prescriptive), pre-Beta MANDATORY, Instant Skip principle ADR 025 reuse
+- **§47 Alignment Questions Generation Rule LOCKED V1 NEW** — search-driven format mandatory STRICT (deprecate pre-fed verbatim post 2026-05-04 night). Cross-refs: VAULT_RULES.md §HANDOVER_PROTOCOL step 9 amendment + PROMPT_CC_HYGIENE.md §9 amendment + memory rule #22 Daniel chat side
+- **Cumulative LOCKED count:** 100 → **175** (+75 substantive ADR 026 spec decisions)
+- **DECISION_LOG +1 condensed entry** referencing HANDOVER_GLOBAL §45.2-§45.7 verbatim (top of file, cronologic descending)
+- **HANDOVER_GLOBAL split FLAG approaching threshold:** post-merge §45-§49 ~6700-6900 LOC (pre-merge 6243 + §45-§49 added). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered yet but recommend monitor next handover
+
 ---
 
-🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 100 LOCKED post §41-§44 ingest. Andura needs to be the best. ✊**
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 175 LOCKED post §45-§49 ingest. Andura needs to be the best. ✊**

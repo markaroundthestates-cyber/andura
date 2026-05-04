@@ -1,5 +1,47 @@
 # DECISION LOG — Andura
 
+## 2026-05-04 night — ADR 026 SPEC SESSION COMPLETE 75 Decisions LOCKED V1 + Engine #8 NEW + §47 Alignment Questions Rule LOCKED V1
+
+**Status:** Chat strategic dedicat ADR 026 spec generation (4 batches × 10 Q-uri + Engine #8 NEW + 17 refinements). Total **75 substantive decisions LOCKED V1** ready compile ADR 026 draft full + Periodization Engine spec generation start. Cumulative LOCKED 100 → **175**.
+
+**Context arhitectural confirmat post-batch:**
+- 22 engines total (14 reactive existing + **8 prescriptive NEW** ← META §36.100 amendment 7→8, Engine #8 Warm-up & Mobility NEW pre-Beta MANDATORY)
+- ADR 026 = META-arhitectură global concerns SSOT (format ramură + cross-engine merge + testing + storage + fallback + versioning)
+- Periodization Engine = §42.4 LOCKED prima spec generation (post ADR 026 compile)
+- Persona priority bottom-up Maria 65 → Gigica 35 → Marius 25 (Q8 LOCKED)
+- Spec generation chat split = per dimension cross-persona (Q30 LOCKED)
+- Estimated effort: 3-4 chat-uri strategic Periodization spec full
+
+**Decizii LOCKED Batch 1-4 (Q1-Q40 + 17 refinements) — see HANDOVER_GLOBAL §45.2-§45.5 verbatim:**
+
+- **Batch 1 (Q1-Q10) §45.2:** Schema TypeScript Strict typed (Q1) + WhyEngine Hybrid (Q2) + Cross-engine Safety>pipeline (Q3 + Safety tier composition refinement) + Versioning Hybrid program-level + per-engine override (Q4) + Testing Bugatti standard 4 invariants + 100 persona + 1000 property-based (Q5) + Documentation Hybrid JSDoc + markdown narrative (Q6) + Periodization Block + Linear pre-Beta (Q7 + Linear allocation rule refinement) + Persona order Bottom-up Maria → Gigica → Marius (Q8) + Volume Landmarks Israetel constants V1 (Q9 + Marius mitigation UI v1.5) + Mesocycle 4 weeks default + adaptive override (Q10)
+
+- **Batch 2 (Q11-Q20) §45.3:** Telemetry CDL 90 zile rolling (Q11) + Engine activation conditional Specialization only (Q12 + AND condition explicit) + Per-domain folder structure (Q13) + BranchId Semantic hierarchical (Q14 + Template Literal Type + CI uniqueness) + Deprecation T-30 SUFLET F1 (Q15) + Periodization abstract priority + alternativeEngine concrete (Q16 + JSON output spec) + Frequency Adaptive (Q17) + Double progression (Q18) + Israetel 11-12 muscle groups (Q19 + Maria 65 Dual-Layer mapping 6 functional movement patterns) + Resume + intensity hold (Q20 + 3/4 threshold rule + week 1 strict 4/4 cold-start)
+
+- **Batch 3 (Q21-Q30) §45.4:** Mesocycle Adaptive (Q21 + Marius 5:1 dual-signal extension) + Beginner→Intermediate Performance-based 3-consecutive (Q22 + Linear progression failure definition rep stagnation OR RIR 0 hit 3 sessions same weight) + Equipment Graceful via alternativeEngine (Q23) + Special populations Defer D2 (Q24 + Safe Baseline pre-Beta concrete RIR ≥ 1 universal + Marius 25 Advanced 85% 1RM cap) + Plateau Per-persona (Q25 + Plateau vs Regression Maria 65 distinction >15% drop 2+ sesiuni) + Off-cycle Detraining-aware per duration (Q26: 2-3w 80%v/90%i + 4-6w 60%v/80%i + 6+w fresh + Mujika/Bosquet literature) + Goal change Force complete current (Q27 + 50% threshold rule cancel<50% / finish≥50%) + Coaching tone Inline rationale brief Q2 reuse (Q28) + Performance budget <100ms/engine + <500ms total pipeline RAIL (Q29 + CI test enforce) + Spec generation Per dimension cross-persona (Q30)
+
+- **Batch 4 (Q31-Q40) §45.5:** Warm-up Separate Engine (Q31 → enables Engine #8 NEW) + Rest periods Per persona × intensity × goal (Q32: Maria 60-90s + Gigica 1-3min + Marius 3-5min) + Tempo Persona-aware (Q33: Maria verbal + Gigica hybrid + Marius numeric 3-0-X) + Variation Per-persona adaptive (Q34 + Gigica hybrid rule 1-2 swap × every 2 mesocycles) + Session duration adapts (Q35: 15/30/45/60/90 min input T2+ profile typing) + Multi-goal Single primary V1 pre-Beta (Q36 + UI v1.5 roadmap) + Asymmetry Defer post-Beta v1.5 (Q37) + Periodization-Cut Phase-agnostic + Goal Adaptation redistribuie (Q38) + Exercise order Per persona × goal (Q39: Maria functional first / Gigica/Marius compound first) + RIR Tier-based universal verbal + actual silent UI + bar speed opt-in Marius (Q40)
+
+**Engine #8 Warm-up & Mobility LOCKED V1 NEW (§45.6) — META §36.100 amendment 7→8 prescriptive engines (22 total = 14 reactive + 8 prescriptive):**
+
+1. Scope strict pre-Beta — activare neuromusculară universal + mobility general ONLY (NU corrective therapy NU biomechanical limitations medical-adjacent → D2 v1.5 defer Q24 pattern)
+2. Pipeline placement §42.10 sequential extension: `Periodization → Goal Adaptation → Energy → Exercise Selection → Warm-up & Mobility → Execution`
+3. Persona thresholds pre-Beta: Maria 65 mobility flow 5-10min + Gigica 35 dynamic 5min + 1 ramp set + Marius 25 ramp 50%/70%/90% × 3-5 sets heavy compounds
+4. Pre-Beta MANDATORY (Bugatti injury safety > scope discipline; ~50-80 ramuri V1; +1-2 chat-uri strategic spec post-Periodization)
+5. Instant Skip principle (§36.94 ADR 025 reuse): default T0 skip → engine auto-calculates ramp-up sets integrated în first exercise; T1+ Profile Typing opt-in expanded; in-session toggle skip = collapse to ramp-up only
+
+**Cooldown C Defer post-Beta v1.5 (§45.6 final).**
+
+**Light Flags LOCKED V1 (§45.7):** Maria 65 deload 50% volume reduction intensity preserved (Galvão 2010 + Fragala 2019 elderly literature) + Q16 JSON output format `{ primary_movement_pattern, accessory_priority, compound_first, intensity_zone_target, tempo_cues, rest_period_seconds }`.
+
+**§47 Alignment Questions Generation Rule LOCKED V1 NEW:** CC Opus MUST genera `ALIGNMENT_QUESTIONS_CHAT_NEW.md` exclusiv în format SEARCH-DRIVEN. Pre-fed verbatim DEPRECATED post 2026-05-04 night. Cross-refs amendments: VAULT_RULES §HANDOVER_PROTOCOL step 9 + PROMPT_CC_HYGIENE §9 + memory rule #22 (Daniel chat side).
+
+**Cross-refs:** [[026-offline-coaching-decision-tree-exhaustive]] (candidate stub → ready compile draft full chat NEW Priority 2) | [[018-engine-extensibility-architecture]] (Dimension Registry foundation §42.3) | [[023-llm-intent-interpretation]] (LLM scope strict + Safety tier composition Q3) | [[022-bayesian-nutrition-inference]] | [[024-goal-driven-program-templates]] | [[025-andura-gandeste-pentru-user]] (Instant Skip principle §45.6 reuse) | [[HANDOVER_GLOBAL_2026-04-30_evening]] §45-§49 + §36.82 (Energy 🟢/🟡/🔴 cross-ref Q21) + §36.100 (META amendment 7→8) + §36.94 (ADR 025 pattern reuse) + §36.35 (calibration window §42.8 + Q15)
+
+**Next:** Compile ADR 026 draft full din §42 base + §45 spec session = 85 decisions LOCKED V1 (10 base §42 + 75 spec §45) + Periodization Engine spec generation per dimension cross-persona (Q30 LOCKED): chat 1 Volume Landmarks all 3 persona + chat 2 Frequency Distribution + chat 3 Progressive Overload + chat 4 Mesocycle Structure (~3-4 chat-uri estimative). Chat strategic NEW dedicat post Auth Flow §36.80 BUG 2.
+
+---
+
 ## 2026-05-04 evening — ADR 026 Spec Decisions 1-10 LOCKED V1 (chat strategic 2026-05-04)
 
 **Status:** 10 decizii fundamentale ADR 026 "Andura Offline Coaching Decision Tree Exhaustive" LOCKED V1 ready compile draft full chat NEW. Cumulative LOCKED 90 → 100.
