@@ -1,318 +1,225 @@
-# Faza 2 Auth Flow Wiring — §AMENDMENT 2026-05-04 + §56.1-§56.19 Phase 1 Implementation Report
+# Post-Phase-1 Cleanup Report — A0 + A + B + C Sequential Implementation
 
-**Status:** ✅ Phase 1 Complete (Phase 2 deferred separate batch)
-**Date:** 2026-05-04 evening late
-**Run wall-clock:** ~28 min CC autonomous
+**Status:** ✅ Complete
+**Date:** 2026-05-04 night
+**Run wall-clock:** ~12 min CC autonomous (A0 separate prior commit + A+B+C atomic)
 **Model:** Opus (claude-opus-4-7)
-**Task:** Implement Faza 2 Auth Flow §36.80 wiring spec LOCKED V1 per CC Opus prompt + Daniel directive path (a). Core BUG 2 fix + auth screen LOCKED V1 wording + auth-callback route + auth-banner-soft + tests. Daniel manual prereqs DONE (Firebase Console + suport@ MX). Spec deviations §AMENDMENT .1 + .2 documented findings tracker.
+**Task:** Post-Phase-1 Auth Wiring cleanup per CC POST-PHASE-1 CLEANUP prompt — A0 Firebase API Key (already done commit `242f065`) + A Privacy V2 replace + B ToS V2 replace + C §CC.5 fast handover ingest narrativ.
 
 ---
 
 ## Pre-flight
 
-- ✅ `git status` clean tree pre-execution
-- ✅ Backup tag created + pushed: `pre-faza-2-auth-wiring`
-- ✅ Spec sources read verbatim:
-  - `03-decisions/ADR_MULTI_TENANT_AUTH_v1.md` §AMENDMENT 2026-05-04 evening (Faza 2 Wiring Spec) + BATCH 1-6 .1-.10 (~525 LOC ADR)
-  - `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §56.1-§56.19 (35 sub-decisions)
-- ✅ Existing source files read pattern reference: `src/auth.js` (REST endpoints implemented), `src/pages/auth.js` (createAuthScreen + magic-link callback partial), `src/firebase.js` (getUserPath BUG 2), `index.html` (app shell), `database.rules.json` (per-UID rules)
-- ✅ Confirm 0 hallucinații framework — vanilla JS bare DOM per ADR 005, NU React/JSX
-- ✅ Baseline tests pre-implementation: 1203/1203 PASS
+- ✅ `git fetch origin main` — local in sync (no remote drift)
+- ✅ `git status` clean tree pre-execution (only 3 expected inbox files untracked)
+- ✅ Backup tag created + pushed: `pre-cleanup-2026-05-04-night`
+- ✅ A0 status verified — Firebase API Key already real în `index.html` slot (commit `242f065` prior)
+- ✅ Inbox: 3 files Daniel-uploaded (Privacy V2 + ToS V2 + narrativ HANDOVER)
 
 ---
 
-## Daniel Directive Path (a) Deviations Documented
+## A0 — Firebase API Key real în `index.html` slot ✅ ALREADY LANDED
 
-Per Daniel response 2026-05-04 evening late:
-
-| Spec § | Originally LOCKED | Reality post-prereq verification | Action 2026-05-04 evening late |
-|--------|-------------------|----------------------------------|-------------------------------|
-| §AMENDMENT .1 + §63.5 | Magic Link expiration 24h custom config Firebase Console | Firebase Console NU expune override capability (backend default ~1h aplicabil) | **SKIPPED implementation.** Flagged INSIGHTS_BACKLOG AUTH-DEFER-1 (proposed v1.5 SMTP custom backend) |
-| §AMENDMENT .2 + §64.5 | Magic Link email body wording educativ verbatim Firebase template | Firebase Console NU expune Email Link sign-in template customization | **SKIPPED implementation.** Wording educativ aplicat UI-side per §AMENDMENT .3 (soft-hint sub email field). Flagged INSIGHTS_BACKLOG AUTH-DEFER-2 |
-| §AMENDMENT .18 #3 + §56.8.2/3 | Privacy Policy + ToS V1 Beta validate sprint pre-CC | Drafts în vault `01-vision/`, validation deferred paralel Daniel task post-CC | **DEFERRED post-CC** (NU blochează cod implementation per §AMENDMENT .18 NOTE) |
-
-Restul scope per spec verbatim.
-
----
-
-## Modificări (8 files atomic single commit)
-
-### A — `src/firebase.js` (§56.1.3 BUG 2 root cause RESOLUTION)
-
-**Before:**
-```js
-export function getUserPath() {
-  const auth = getAuthState();
-  if (auth?.uid) return `users/${auth.uid}`;
-  return LEGACY_USER_PATH;  // 'users/daniel' literal — BUG 2 root cause
-}
-```
-
-**After:**
-```js
-export function getUserPath() {
-  const auth = getAuthState();
-  if (auth?.uid) return `users/${auth.uid}`;
-  return null;  // Anonymous mode → app exclusiv local IndexedDB
-}
-```
-
-- ✅ §56.1.3 LOCKED V1 satisfied: Anonymous → null → bucla 401 eliminată mecanic
-- ✅ JSDoc comment updated cu §AMENDMENT 2026-05-04.1 + §56.1.3 cross-refs + §56.1.2 Faza 1-2 fallback local-first preserved + §36.80 BUG 2 RESOLUTION reference
-- ✅ `LEGACY_USER_PATH` export preserved as migration source constant pentru one-time Daniel `users/daniel` → `users/{uid}` (per §56.4.1 LOCKED + existing `2026-05-02-auth-path-migration.js` runner)
-- ✅ `USER_PATH` back-compat alias preserved
-- ✅ Edge case test: empty string uid → null (NU resolve la `users/`)
-
-### B — `src/auth.js` (§56.13.1 network resilience auto-retry 3x)
-
-- ✅ `sendMagicLink` wrapped cu retry loop: max 3 attempts (1 initial + 2 retries)
-- ✅ Exponential backoff 250/500ms între attempts
-- ✅ Retry conditions: caught exception (network error) sau HTTP 5xx (transient)
-- ✅ NU retry pe HTTP 4xx (deterministic failure: invalid email, quota, etc.)
-- ✅ Surfaces lastError la caller pentru "Reîncearcă" manual fallback UI
-
-### C — `src/pages/auth.js` (§56.2.2 wording LOCKED V1 + §AMENDMENT .3 soft-hint)
-
-**COPY object replaced verbatim per §56.2.2 LOCKED V1:**
-- `title` → `'Salvează-ți progresul'`
-- `description` → `'Săptămânile tale de antrenament rămân în siguranță și le poți accesa de pe orice telefon sau tabletă.'`
-- `sendBtn` → `'Trimite-mi link de acces pe e-mail'`
-- `sendBtnLoading` NEW → `'Se trimite link-ul de acces...'`
-- `googleBtn` → `'Continuă cu Google'`
-- `successWelcome` NEW → `'Bine ai venit înapoi!'`
-- `errorSendFailed` updated → `'Nu am putut trimite codul. Verifică conexiunea la internet.'` (per §56.13.1 wording)
-- `errorRetryBtn` NEW → `'Reîncearcă'`
-
-**§AMENDMENT 2026-05-04 BATCH 1-6 .3 — Soft-hint sub email field added:**
-- `emailHint` NEW → `'Verifică cu atenție adresa de e-mail introdusă pentru a te asigura că primești link-ul de acces.'`
-- Rendered ca `<p class="auth-screen__email-hint">` între email input și send button în `_renderForm`
-
-**Loading state during 3x retry window:** sendBtn disables + shows `sendBtnLoading` text on submit, restores on resolve.
-
-### D — `src/pages/authShell.js` NEW (B + D scope wiring)
-
-Module nou (~280 LOC) wires modal overlay + /auth-callback handler + auth-banner-soft per §56.1-§56.19 spec.
-
-**Exports:**
-
-1. **`showAuthScreen({ googleClientId, onAuthSuccess, dismissable })`** — opens modal overlay cu `createAuthScreen` rendered inside Bugatti-styled card (background blur, max 420px width, close X button, ESC dismiss). On auth success: toasts `successWelcome`, hides overlay, fires `andura:authsuccess` window CustomEvent.
-2. **`hideAuthScreen()`** — tears down modal, removes ESC handler, calls dispose on inner screen.
-3. **`handleAuthCallbackRoute()`** — detects `/auth-callback` URL on boot (no-op for other paths). Magic Link path: parses oobCode + email (URL query OR pendingEmail localStorage), invokes `verifyMagicLink`. Google OAuth path: parses `id_token` din URL hash fragment, invokes `signInWithGoogleIdToken`. Cleans URL via `history.replaceState` post-success (single-use oobCode protection). Returns `{ ok, uid, provider, error }`.
-4. **`mountAuthBanner({ googleClientId, onAuthSuccess })`** — §56.1.1 auth-banner-soft non-blocking strip top of viewport. Click → `showAuthScreen`. Auto-unmounts on `andura:authsuccess` event. Self-skips dacă `isAuthenticated()` true sau dacă banner deja mounted (anti-duplicate).
-
-**Per ADR 005:** vanilla JS, bare DOM, zero framework. Per §56.17.1: SW NU intercepteză `/auth-callback` (handled aici client-side).
-
-### E — `src/main.js` (boot wiring + post-auth migration trigger)
-
-**Imports added:**
-```js
-import { handleAuthCallbackRoute, mountAuthBanner, showAuthScreen } from './pages/authShell.js';
-import { isAuthenticated } from './auth.js';
-import { runAuthPathMigration } from './migrations/2026-05-02-auth-path-migration.js';
-```
-
-**`processAuthCallbackOnBoot()`** new helper:
-- Pre-Firebase-sync step
-- Calls `handleAuthCallbackRoute()`
-- On success: invokes `runAuthPathMigration()` (idempotent — no-op for non-Daniel users sau already-migrated per `_migration` flag localStorage marker)
-- Logs warnings on failure (NU throw — boot continues)
-
-**`init()` updated:**
-- `await processAuthCallbackOnBoot()` BEFORE `initFirebaseSync()` ensures post-Magic-Link verify, subsequent Firebase sync runs cu uid resolved (NU Anonymous null short-circuit)
-- Post-onboarding-done check: `mountAuthBanner` pentru Anonymous users (§56.3.1 DUPĂ T0 position) cu callback wiring `runAuthPathMigration` post-banner-auth
-
-**Globals exposed:**
-- `window.showAuthScreen` — pentru future Settings UI Phase 2 (logout flow + account deletion + reactivation)
-- `window.isAuthenticated` — pentru future Settings UI conditional rendering
-
-### F — `index.html` (Daniel manual config slots)
-
-Added before `<script type="module" src="/src/main.js">`:
+**Commit:** `242f065` (separate, pre-this-cleanup)
 
 ```html
 <script>
-  // window.__FIREBASE_API_KEY = 'YOUR_REAL_FIREBASE_WEB_API_KEY';
+  window.__FIREBASE_API_KEY = 'AIzaSyBWR2oUpRufoonolADRhvax8XEolMywc-s';
   // window.__GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com';
 </script>
 ```
 
-Comments document §56.18.1 Daniel manual setup checklist + §AMENDMENT .16 Firebase Rules security rationale (both keys PUBLIC per Firebase docs — security via per-UID strict Rules NU client-side secrecy).
+- ✅ Slot `// window.__FIREBASE_API_KEY = 'YOUR_REAL_FIREBASE_WEB_API_KEY';` replaced cu key real prod cont 2 mai
+- ✅ Google Client ID rămâne commented (Daniel NU setează Faza 1+, optional v1.5)
+- ✅ Slot comments §AMENDMENT 2026-05-04 + §56.18.1 cross-refs preserved intact
+- ✅ Public per Firebase docs — security via Rules per-UID strict §AMENDMENT .16
 
-### G — Tests added (15 new)
+---
 
-**`src/__tests__/firebase-userpath.test.js`** (5 tests) — §56.1.3 BUG 2 fix coverage:
-- ✅ Returns null in Anonymous mode (no auth state)
-- ✅ Returns null when only partial auth state present (idToken without uid)
-- ✅ Returns `users/<uid>` when authenticated
-- ✅ Preserves `LEGACY_USER_PATH` + `USER_PATH` exports as migration source constants
-- ✅ Edge case: empty string uid → null (NU resolve la `users/`)
+## A — `01-vision/PRIVACY_POLICY_V1_BETA.md` V2 (replace integral) ✅ LANDED
 
-**`src/__tests__/auth-wiring.test.js`** (10 tests):
-- ✅ `sendMagicLink` succeeds first attempt without retry
-- ✅ `sendMagicLink` retries 3x on network error then surfaces failure
-- ✅ `sendMagicLink` retries on HTTP 5xx then surfaces last error
-- ✅ `sendMagicLink` does NOT retry on HTTP 4xx (deterministic failure)
-- ✅ `sendMagicLink` eventually succeeds on retry attempt 3 after transient failures
-- ✅ `handleAuthCallbackRoute` returns null when path NOT `/auth-callback`
-- ✅ `handleAuthCallbackRoute` returns null for other routes (e.g. `/coach`)
-- ✅ `handleAuthCallbackRoute` returns missing_email error when oobCode without email
-- ✅ `handleAuthCallbackRoute` processes Magic Link callback cu email + oobCode în URL query
-- ✅ `handleAuthCallbackRoute` processes Google id_token from URL fragment
+- ✅ Source `📥_inbox/PRIVACY_POLICY_V1_BETA.md` consumed → destination overwritten
+- ✅ Inbox source removed post-process per §3.3 dropzone protocol
+- ✅ Frontmatter preserved (Status updated draft v2 + Daniel action required + Cross-refs)
+- ✅ 11 secțiuni LANDED:
 
-### H — `05-findings-tracker/INSIGHTS_BACKLOG.md` (Daniel directive flagging)
+| § | Content |
+|---|---------|
+| 1 | Cine suntem — Constantin Daniel Mazilu, persoană fizică, România, contact `suport@andura.app` |
+| 2 | Vârsta minimă — 18+ ani împliniți |
+| 3 | Ce date colectăm — email + UID + profil onboarding + antrenament + comportamentale derivate + telemetrie agregată anonimă + Sentry erori. Photos LOCAL only |
+| 4 | Unde — Local + Firebase Google Ireland → Google LLC SUA Schrems II SCC + EU-US DPF + Sentry SCC + ePrivacy storage disclosure (IndexedDB/LocalStorage offline NU tracking) — **per Gemini cross-review feedback** |
+| 5 | Temei legal — consimțământ + contract + interes legitim cu detail "optimizarea algoritmilor de antrenament și securitatea serviciului" — **per Gemini cross-review feedback** |
+| 6 | Retenție — 30 zile grace + post permanent ireversibil cloud |
+| 7 | Drepturi GDPR — acces/rectificare/ștergere/portabilitate manual v1.0 → automated v1.5/opoziție/restricție/retragere consimțământ + ANSPDCP plângere |
+| 8 | Securitate — HTTPS/TLS + encryption at rest + breșă notif Article 33-34 |
+| 9 | Partajare terți — NU vindem/închiriem/marketing |
+| 10 | Modificări — notif 14 zile email |
+| 11 | Contact — `suport@andura.app` |
 
-- ✅ AUTH-DEFER-1 entry — Magic Link 24h expiration NOT configurable Firebase Console
-- ✅ AUTH-DEFER-2 entry — Email body wording educativ NOT configurable Firebase template
-- Both flag root cause (chat strategic spec assumed capability inexistent), impact, mitigation aplicat 2026-05-04 evening late, proposed v1.5 fix (SMTP custom backend combined migration path)
+---
+
+## B — `01-vision/TERMS_OF_SERVICE_V1_BETA.md` V2 (replace integral) ✅ LANDED
+
+- ✅ Source `📥_inbox/TERMS_OF_SERVICE_V1_BETA.md` consumed → destination overwritten
+- ✅ Inbox source removed post-process per §3.3
+- ✅ Frontmatter preserved (Status + Liability waivers absolute REJECTED note + Cross-refs)
+- ✅ 15 secțiuni LANDED:
+
+| § | Content |
+|---|---------|
+| 1 | Cine suntem — Constantin Daniel Mazilu PF + suport@ |
+| 2 | Vârsta minimă 18+ |
+| 3 | Acceptarea termenilor + Privacy linked |
+| 4 | Cont/securitate — user responsabil credențiale email Magic Link, contact suport@ pentru acces neautorizat |
+| 5 | Risc utilizare — exclusiv pe riscul tău |
+| 6 | Fără sfat medical — asistent AI, NU medic/fizioterapeut/antrenor certificat |
+| 7 | Conținut user ownership — datele user `îți aparțin în întregime`, Andura licență neexclusivă strict funcționare |
+| 8 | IP Andura — cod + brand + logo + algoritmi proprietate operator |
+| 9 | Beta gratuit + modificări/disponibilitate + bug-uri așteptate |
+| 10 | Reziliere cont — 30 zile grace + suspendare abuz/încălcare termeni/cerere legală |
+| 11 | Limitarea răspunderii — "în măsura permisă de lege" + retain neglijență gravă/dol |
+| 12 | Forța majoră — Firebase outages + dezastre + atacuri cibernetice + modificări legislative |
+| 13 | Lege română + ANPC mediere + SOL EU + jurisdicție București |
+| 14 | Modificări — notif 14 zile email |
+| 15 | Contact — `suport@andura.app` |
+
+**Liability waivers absolute REJECTED preserved** (RO consumer law OUG 21/1992 + Codul Civil + EU Consumer Rights Directive 2011/83 — NU enforceable absolute, retain răspundere neglijență gravă/dol).
+
+---
+
+## C — §CC.5 Fast Handover Ingest Narrativ ✅ LANDED
+
+Per `PROMPT_CC_HYGIENE.md` §10 + `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.5.
+
+### §10.1 Pre-flight ✅ Done above
+
+### §10.2 Read inbox handover artefact ✅
+`HANDOVER_2026-05-04_NIGHT_PRIVACY_TOS_V2_AUTH_PHASE_1_CONSOLIDATION.md` (~103 LOC narrativ) read complete.
+
+### §10.3 Update `00-index/CURRENT_STATE.md` per §HANDOVER_PROTOCOL STEP 16
+
+- ✅ **Header `Updated:`** timestamp 2026-05-04 night refresh
+- ✅ **`Last LOCKED count`:** ~356 → **~363** cumulative (+~5-7 substantive net)
+- ✅ **`## NOW` move-then-replace:** precedent thread (Periodization + Goal Adaptation engines spec + ADR 026 Open Q1-Q10, commit `300cd84`) → top `## RECENT` compressed ~5 LOC. Populate new thread post-CC Phase 1 + Privacy/ToS V2 + Firebase prereps + tone bonding warm + AUTH-DEFER spec bug + push-back-uri (API Key chat exposure mitigation).
+- ✅ **`## JUST_DECIDED`** new entry top descending: Privacy V2 11 secțiuni + ToS V2 15 secțiuni LOCKED V1 + Phase 1 Auth Wiring LANDED commit `0880641` recap + Firebase prereps verification (Console DONE pre-existing 2 mai + MX DONE Namecheap) + spec §63.5/§AMENDMENT .18 #1 DEFINITIVELY DEFERRED v1.5 + 2 findings tracker pending (medical UI modal pre Q2 + script GDPR portability manual)
+- ✅ **`## NEXT` P1 ABSOLUT updated:** Phase 1 LANDED + Phase 2 ~16-22h estimate over 3-4 batches deferred (§56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision UI + §56.12 Logout + §56.14 cleanup script + §56.15 Telemetry Firestore + §56.16 Firestore Rules)
+- ✅ **`## ACTIVE_FLAGS`:** P1-FLAG-AUTH-DANIEL-PREP 🟢 **RESOLVED 2026-05-04 night** (Console Faza 1 dogfood DONE pre-existing 2 mai + MX `suport@andura.app` DONE Namecheap + Privacy/ToS V2 drafts LANDED V1 Beta validate sprint Daniel paralel)
+- ✅ **`## ACTIVE_REFS / ACTIVE_ADRS`** preserved (no new sections referenced beyond existing §56 + §AMENDMENT 2026-05-04 + §63.5 + §64.5 + §62.X META)
+- ✅ **`## RECENT`:** precedent engines thread compressed top + §CHAT_CONTINUITY thread shifted older. Section size 26 LOC, sub §CC.6 50-LOC truncate threshold
+
+**File LOC:** 235 → **270** (slightly over ~200 target, sub §CC.6 truncate trigger; future ingests vor declanșa truncate când RECENT >50 LOC)
+
+### §10.4 Update `03-decisions/DECISION_LOG.md` ✅
+APPEND entry top descending cronologic — full breakdown sub-decisions (operator identity + 18+ + Privacy V2 11 secțiuni + ToS V2 15 secțiuni + liability waivers REJECTED preserved + META Review Division of Labor Claude+Gemini cross-review VALIDATED EMPIRICAL + spec §63.5/§AMENDMENT .18 #1 DEFINITIVELY DEFERRED + Firebase prereps drift corrected) + Phase 1 Auth Wiring recap + 2 findings tracker pending + Files modified list + Cross-refs.
+
+### §10.5 Archive narrativ artefact ✅
+- Source: `📥_inbox/HANDOVER_2026-05-04_NIGHT_PRIVACY_TOS_V2_AUTH_PHASE_1_CONSOLIDATION.md`
+- Destination: `📤_outbox/_archive/2026-05/145_HANDOVER_2026-05-04_NIGHT_PRIVACY_TOS_V2_AUTH_PHASE_1_CONSOLIDATION_CONSUMED.md`
+- NN cronologic continuu post 144 (LATEST_PREVIOUS_HANDOVER_INGEST_PERIODIZATION_GOAL_ADAPTATION) per §3.3
+- Inbox empty post-archive
+
+### §10.6 Cross-validation timestamp consistency ✅
+CURRENT_STATE.md `Updated:` 2026-05-04 night ≥ DECISION_LOG.md last entry timestamp 2026-05-04 night ✅ MATCH.
+
+### §10.7 Single commit + push origin main ✅
+Hooks normal `npm run test:run` pre-commit passed. NU `--no-verify`.
+
+---
+
+## Modificări (5 files atomic single commit acest cleanup)
+
+| File | Action | Notes |
+|------|--------|-------|
+| `01-vision/PRIVACY_POLICY_V1_BETA.md` | UPDATE (V1 → V2 replace integral) | 11 secțiuni Gemini cross-review META validated |
+| `01-vision/TERMS_OF_SERVICE_V1_BETA.md` | UPDATE (V1 → V2 replace integral) | 15 secțiuni RO consumer law preserved |
+| `00-index/CURRENT_STATE.md` | UPDATE (§CC.5 §10.3 STEP 16) | header + NOW move-then-replace + JUST_DECIDED top + NEXT P1 + ACTIVE_FLAGS RESOLVED + RECENT compressed |
+| `03-decisions/DECISION_LOG.md` | UPDATE (§10.4 APPEND top) | entry "2026-05-04 night — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED + AUTH-DEFER consolidation + Firebase prereps verification" |
+| `📤_outbox/_archive/2026-05/145_HANDOVER_..._CONSUMED.md` | NEW (archive narrativ) | per §10.5 cronologic continuu |
+
+**A0 + A+B+C scope total:** 1 prior commit (`242f065` API Key) + this commit (5 files atomic).
 
 ---
 
 ## Build + Tests
 
-✅ Pre-commit hook `npm run test:run` passed: **77 test files, 1218/1218 tests passing**, ~13.7s duration. Baseline 1203 → 1218 (+15 new tests, zero regressions).
-
-✅ Vite production build green: 380 modules transformed, dist generated successfully (61.5 KB index.html + 28.3 KB CSS + 387/443 KB JS chunks gzipped 122/147 KB).
+✅ Pre-commit hook `npm run test:run` passed: **77 test files, 1218/1218 tests passing**, ~12.1s duration. Phase 1 baseline preserved zero regression. Hooks normal (NU `--no-verify`).
 
 ---
 
 ## Commits
 
-- `0880641` feat(auth): Faza 2 wiring §AMENDMENT 2026-05-04 + §56.1-§56.19 LOCKED V1 (Phase 1)
-
-**Stats:** 8 files changed, 6 files modified + 2 new test files + 1 new module (authShell.js)
+- `242f065` config(auth): set Firebase Web API Key real în index.html slot (cont real prod) — A0 prior
+- `0ede3be` feat(vault): cleanup post-Phase-1 — Privacy/ToS V2 + §CC.5 fast handover ingest (cumulative ~363) — A+B+C atomic
 
 ## Pushed: ✅ origin/main
 
-Backup tag pushed: `pre-faza-2-auth-wiring`
+Backup tag pushed: `pre-cleanup-2026-05-04-night`
 
 ---
 
-## §AMENDMENT 2026-05-04 BATCH 1-6 .1-.10 sub-amendments status
+## §CC.5 fast workflow compliance check
 
-| # | Sub-amendment | Implementation Status |
-|---|---------------|----------------------|
-| .1 | Magic Link expiration 24h | ⏸️ DEFERRED v1.5 — Firebase Console limitation. Flagged AUTH-DEFER-1 |
-| .2 | Email body wording educativ | ⏸️ DEFERRED v1.5 — Firebase template limitation. Mitigated UI-side per §AMENDMENT .3. Flagged AUTH-DEFER-2 |
-| .3 | Auth screen soft-hint UI sub email field | ✅ LANDED `src/pages/auth.js` COPY.emailHint + `_renderForm` paragraph render |
-| .4 | Session timeout NEVER always-logged-in | ✅ Already implemented via existing `src/auth.js` localStorage refresh token forever default + 1h auto-refresh background |
-| .5 | Telemetry ZERO toggle aggregate-only | ⏸️ Phase 2 deferred — telemetry counter implementation (FieldValue.increment Firestore `_telemetry/global`) needs Firestore SDK integration. NU în Phase 1 RTDB-only scope |
-| .6 | SW update prompt non-disruptive | ⏸️ Phase 2 deferred — SW update detection + prompt UI. Currently NU SW update flow exists |
-| .7 | iOS REJECTED LOCKED PERMANENT | ✅ Rule lock (NO code) — Memory persistent rule scope per §AMENDMENT 2026-05-04.10 + DIFF_FLAGS P1-FLAG-IOS-PERMANENT 🟢 LOCKED V1 |
-| .8 | Email change Magic Link new address only | ⏸️ Phase 2 deferred — email change Settings UI flow. Backend `updateEmail` already în `src/auth.js` |
-| .9 | Account deletion 2-step type "ȘTERGE" + click | ⏸️ Phase 2 deferred — Settings UI account deletion flow + soft delete 30 zile grace + reactivation per §56.5 |
-| .10 | GDPR Article 20 portability defer v1.5 manual | ✅ NU implementation needed (manual via `suport@andura.app`). Existing JSON export feature `exportJSON` `src/pages/weight.js` partial coverage |
+| §10 step | Required action | Status |
+|----------|-----------------|--------|
+| §10.1 Pre-flight | git status + branch + backup tag | ✅ All passed |
+| §10.2 Read inbox | Read newest *HANDOVER*.md (103 LOC) | ✅ Done |
+| §10.3 Update CURRENT_STATE | header + NOW move-then-replace + JUST_DECIDED top + NEXT/FLAGS update | ✅ Done per §CC.6 canonical |
+| §10.4 Update DECISION_LOG | APPEND entry top descending | ✅ Done |
+| §10.5 Archive artefact | Move inbox → outbox _archive/NN_*_CONSUMED.md | ✅ Done as 145 |
+| §10.6 Timestamp consistency | CURRENT_STATE Updated ≥ DECISION_LOG last | ✅ Match |
+| §10.7 Commit + push | Single atomic commit, hooks normal | ✅ `0ede3be` pushed |
+| §10.8 Generate LATEST.md | Per §3 raport schema | ✅ This file |
+| §9 ALIGNMENT_QUESTIONS EXCLUSION | NU generate (fast scope per fix Option 2 commit `0e9373b`) | ✅ Not generated |
 
-**Phase 1 cumulative: 4/10 LANDED (.3, .4, .7, .10) + 2/10 DEFERRED Firebase limitation (.1, .2) + 4/10 Phase 2 deferred (.5, .6, .8, .9).**
-
----
-
-## §56.1-§56.19 sub-section coverage matrix
-
-| § | Title | Phase 1 Status |
-|---|-------|----------------|
-| §56.1.1 | auth-banner-soft | ✅ `mountAuthBanner` LANDED |
-| §56.1.2 | Anonymous mode preserve | ✅ Local IndexedDB preserved (existing) |
-| §56.1.3 | `getUserPath()` BUG 2 fix | ✅ LANDED `src/firebase.js` |
-| §56.1.4 | IndexedDB namespace per UID Dexie multi-DB | ⏸️ Phase 2 — DB layer arch change |
-| §56.2.1 | Google OAuth primary + Email Link fallback | ✅ Existing `src/auth.js` + `createAuthScreen` |
-| §56.2.2 | Auth screen wording LOCKED V1 | ✅ LANDED `src/pages/auth.js` COPY |
-| §56.3.1 | Auth screen position DUPĂ T0 | ✅ `mountAuthBanner` shown post `onboardingDone` în `init()` |
-| §56.3.2 | T0 scope 3-5 min | ✅ Existing onboarding (preserved) |
-| §56.4.1 | Migration scope Daniel only | ✅ `runAuthPathMigration` triggered post-auth |
-| §56.4.2 | `_migration` flag persistent | ✅ Existing `2026-05-02-auth-path-migration.js` localStorage marker |
-| §56.4.3 | Migration rollback strategy | ✅ Existing migration runner idempotent |
-| §56.5.x | Account lifecycle (delete/recovery/email change) | ⏸️ Phase 2 — Settings UI scope |
-| §56.6.1 | Multi-device same-account silent sync | ✅ Existing `syncToFirebase`/`syncFromFirebase` (preserved) |
-| §56.6.2 | Record-level LWW | ✅ Existing merge logic preserved (LWW dimensional) |
-| §56.7.x | Anonymous→Auth Merge Fork Decision UI | ⏸️ Phase 2 — substantial UI flow |
-| §56.8.x | GDPR + Legal | ⏸️ Daniel paralel task — Privacy Policy + ToS validate sprint |
-| §56.9.x | Sunset Anonymous v1.5 + Beta gate target | ⏸️ Long-term — NU code |
-| §56.10.1 | Magic Link Universal Links Android only | ⏸️ Phase 2 — `assetlinks.json` în `.well-known/` (config file) |
-| §56.10.2 | iOS scope cut | ✅ Rule lock NO code |
-| §56.10.3 | TWA wrap Android v1.5 contingent | ⏸️ Long-term — NU code |
-| §56.11.1 | Always Logged In `indexedDBLocalPersistence` | ✅ Existing `src/auth.js` localStorage refresh token forever |
-| §56.11.2 | Offline auth UX banner | ✅ Existing offline-indicator în `index.html` + `setupOfflineIndicator` |
-| §56.12.x | Logout Settings + double-confirm + opt-in IndexedDB wipe | ⏸️ Phase 2 — Settings UI scope |
-| §56.13.1 | Network resilience auto-retry 3x | ✅ LANDED `src/auth.js` `sendMagicLink` retry loop |
-| §56.14.x | Cleanup A/B/C | ⏸️ Phase 2 — `admin-cleanup.js` script (Daniel weekly) + client-side fallback |
-| §56.15.x | Telemetry counters | ⏸️ Phase 2 — Firestore integration scope |
-| §56.16.1 | Firestore Security Rules | ⏸️ Phase 2 — Firestore integration scope (currently RTDB only) |
-| §56.17.1 | SW + Firebase Auth coexistence | ✅ `handleAuthCallbackRoute` documents NU SW intercept `/auth-callback` |
-| §56.18.x | Daniel manual setup | ✅ Slots added `index.html` + INSIGHTS_BACKLOG flagged 2 deviations |
-| §56.19.x | Scope OUT v1.5+ | ✅ Rule lock NO code |
-
-**Phase 1 LANDED: 12/30 spec sub-sections (40%) — covers all CRITICAL production blockers + auth flow basic UX.**
-
----
-
-## Phase 2 Scope Deferred (Separate Batch)
-
-Per Bugatti principle "ship Phase 1 robust, NU half-implement everything". Phase 2 explicit defer reasoning per spec:
-
-1. **§56.1.4 IndexedDB namespace per UID (Dexie multi-DB)** — DB layer architectural change. Currently `src/storage/db.js` uses single Dexie instance. Need refactor to UID-aware DB factory + dormant DB cleanup (§56.12.2 dormant DBs `andura_*` not-touched 90+ zile). Estimate ~3-5h dev + tests.
-2. **§56.5 Account lifecycle Settings UI** — soft delete 2-step type "ȘTERGE" + reactivation flow + email change Magic Link new address + conflict detection + typo guard. Estimate ~4-6h Settings UI scope.
-3. **§56.7 Anonymous→Auth Merge Fork Decision UI** — substantial UI flow: detect existing data Firestore → modal "Datele din Cloud / Telefon" → archive 7 zile + export local JSON + recovery button. Estimate ~3-4h.
-4. **§56.12 Logout Settings UX** — double-confirmation modal + opt-in toggle "Șterge datele de pe acest dispozitiv la deconectare" + unsynced data warning calm wording. Estimate ~2h.
-5. **§56.14.A `admin-cleanup.js`** — Daniel weekly script `_deleted/` >30 zile + `_archived/` >7 zile cleanup. Standalone Node script estimate ~1h.
-6. **§56.15 Telemetry counters Firestore** — FieldValue.increment client-side `_telemetry/global` document. Need Firestore REST integration (currently RTDB only). Estimate ~2-3h.
-7. **§56.16 Firestore Security Rules publish** — `users/` + `_deleted/` + `_archived/` rules per `§AMENDMENT .16`. Currently `database.rules.json` covers RTDB only. Estimate ~1h Daniel manual publish.
-
-**Phase 2 total estimate: ~16-22h CC autonomous over 3-4 dedicated batches.**
+**All 9 steps compliant. §HANDOVER_PROTOCOL deep flow untouched.**
 
 ---
 
 ## Issues / Ambiguities
 
-**None blocking Phase 1 deployment.** Tests pass 1218/1218, build green, BUG 2 root cause RESOLVED, auth screen LOCKED V1 wording shipped, /auth-callback handler wired, banner UX active for Anonymous users post-onboarding.
+**None blocking.** Cleanup workflow worked as designed:
+- A0 + A + B + C all LANDED
+- Tests 1218/1218 baseline preserved
+- Inbox cleaned post-process per §3.3
+- Archive trail intact (artefact 145_*_CONSUMED.md)
+- §CC.5 §10 workflow 9/9 steps compliant
 
-**Daniel manual config required pre-deploy** (uncomment slots în `index.html`):
-1. `window.__FIREBASE_API_KEY = '...'` — paste Firebase Console Web API Key
-2. `window.__GOOGLE_CLIENT_ID = '...'` — paste Google OAuth Client ID
-
-Tests pass dacă config NU set (auth helpers fall back la `'PLACEHOLDER_WEB_API_KEY'` placeholder + Google button hidden când `googleClientId` undefined). Production deploy requires real keys.
+**Minor observation:** CURRENT_STATE.md grew from 235 → 270 LOC (over ~200 target). RECENT section 26 LOC, sub §CC.6 50-LOC truncate threshold. Future ingests vor declanșa truncate when RECENT >50 LOC (oldest entries archive to HANDOVER_GLOBAL deep). NU blocking.
 
 ---
 
 ## Next action Daniel
 
-### Immediate (pre-deploy validation)
+### Immediate
 
-1. **Set Firebase API Key + Google Client ID** în `index.html` slots (uncomment lines)
-2. **Test end-to-end Magic Link flow** dev/staging URL:
-   - Visit / (anonymous) → see auth-banner-soft top
-   - Click banner → auth screen modal opens cu LOCKED V1 wording
-   - Enter email → click "Trimite-mi link de acces pe e-mail" → loading state ~2s → success "Verifică emailul"
-   - Open email link on same device → /auth-callback URL → verifyMagicLink → success toast → URL cleaned to `/`
-   - Verify `localStorage['firebase-uid']` populated + `users/<uid>/...` în RTDB Console
-3. **Test Google OAuth flow** (after Client ID set):
-   - Click "Continuă cu Google" → redirect Google → consent → redirect back /auth-callback#id_token=... → success
-4. **Publish Firestore Security Rules** per `§AMENDMENT .16` (Phase 2 prerequisite — Firestore NU yet integrated dar rules file ready). Skip dacă RTDB only V1.
+1. **Test end-to-end Auth flow on dev/staging URL** post API Key set + Privacy/ToS V2 LANDED:
+   - Visit `andura.app` Anonymous → vezi banner top "Salvează-ți progresul"
+   - Click banner → modal cu wording LOCKED V1 ("Salvează-ți progresul" / "Săptămânile tale...")
+   - Enter email → loading ~2s → pending state "Verifică emailul"
+   - Open email link on same device → /auth-callback → verifyMagicLink → success toast → URL clean
+   - Verify `localStorage['firebase-uid']` populat + `users/<uid>/...` în RTDB Console
+2. **Privacy/ToS V2 lock final** — Daniel paralel review final V2 documents (Daniel action required per frontmatter Status). Lock V1 Beta = paste ULTIMA actualizare data + remove "Daniel action required" note.
+3. **Findings tracker entries follow-up** — 2 NEW pending:
+   - Medical disclaimer UI modal pre Q2 onboarding (next chat strategic)
+   - Script export JSON GDPR portability manual `suport@` (when first user requests)
 
 ### Phase 2 trigger (separate CC batch)
 
 Daniel command (când e timpul):
 ```
 ═══ START PROMPT CC OPUS FAZA 2 AUTH FLOW WIRING — PHASE 2 ═══
-Implement Phase 2 deferred scope per `📤_outbox/_archive/2026-05/NN_LATEST_FAZA_2_PHASE_1.md`
+Implement Phase 2 deferred scope per LATEST commit 030c901 Phase 1 report
 Phase 2 sub-section status matrix.
 Priority: §56.5 + §56.12 Settings UI flows first (account lifecycle + logout
 double-confirm) — most production-relevant Phase 2 items.
 ═══ END PROMPT ═══
 ```
 
-### Update CURRENT_STATE post-implementation (separate vault task)
+### Other strategic options (per CURRENT_STATE ## NEXT)
 
-Per prompt directive "ZERO touch CURRENT_STATE.md (separate vault update task post-implementation)" — Daniel trigger separat:
-```
-Update CURRENT_STATE per Faza 2 Auth Flow wiring Phase 1 commit 0880641.
-```
+- Continue engines roadmap #3 Bayesian Nutrition (ADR 022 stub populate) — next attack vector
+- Branch enumeration cluster A (~5-15 chat-uri biggest blocker P2 SCENARIOS-COVERAGE)
+- ADR 026 compile draft full ~125 decisions (architectural foundation COMPLETE post Open Q1-Q10)
 
-### Priority 2 Scenarios Coverage (paralel)
-
-Per CURRENT_STATE ## NEXT P2 — gap reduce ~1170-1670 decisions remaining post engines spec sessions. Branch enumeration cluster A = biggest blocker pre-Beta.
-
-### Priority 4 Engines Roadmap (paralel)
-
-Per CURRENT_STATE ## NEXT P4 — Engine #3 Bayesian Nutrition (ADR 022 stub) NEXT attack vector candidate per JUST_DECIDED 2026-05-04 evening late.
-
-🦫 **Faza 2 Auth Flow wiring Phase 1 LANDED. BUG 2 RESOLVED mecanic. Auth screen LOCKED V1 wording. Banner UX live for Anonymous. /auth-callback handler operational. Tests 1218/1218 baseline preserved. Bugatti craft on bug-fix surface.** ✊
+🦫 **Post-Phase-1 cleanup LANDED. Privacy/ToS V2 Gemini cross-review META validated empirical. Firebase prereps consolidated drift corrected. P1-FLAG-AUTH-DANIEL-PREP 🟢 RESOLVED. Beta launch path mai aproape per §62.7 Quality > Speed default.** ✊
