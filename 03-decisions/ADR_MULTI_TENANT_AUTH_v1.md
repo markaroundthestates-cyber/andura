@@ -445,3 +445,80 @@ SW + Firebase Auth coexistence — Firebase SDK gestionează nativ persistența 
 - §36.99 offline-first preservation §56.11.2
 - §50.4 D1 Q20 §45.3 pattern reuse (record-level LWW NU duplicate logic)
 - §46 P4 audit legal post-Beta v1.5 prerequisite (Privacy Policy GDPR profundă)
+
+---
+
+## §AMENDMENT 2026-05-04 evening BATCH 1-6 — Refinements + Edge Cases LOCKED V1 (chat strategic post-§56-§61 ingest)
+
+**Status:** LOCKED V1 spec ready CC Opus implementation Priority 1 ABSOLUT phased per §62.3. Chat strategic 2026-05-04 evening Daniel + Claude post §56-§61 ingest + alignment 12/12 EXCELLENT — 63 substantive sub-decisions LOCKED V1 acoperind Batch 1-6 + Closure (HANDOVER_GLOBAL §62-§68). Cumulative LOCKED 243 → 306 (+63 net post-overlap).
+
+**Authority:** §AMENDMENT 2026-05-04 evening BATCH 1-6 extends §AMENDMENT 2026-05-04 (Faza 2 wiring spec LOCKED V1) cu refinements + overrides + new sub-decisions edge cases. Sub-amendments .1-.10 below mapează direct la HANDOVER §63-§67 sub-sections relevante auth flow.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .1 Magic Link expiration 24h (override 1h)
+
+Per HANDOVER §63.5 OVERRIDE Q5 reconsider. Magic Link expiration **24h** (NU 1h initial choice). Maria 65 cross-context PWA Android tolerance: telefon slow + email întârzie 20-30 min. 1h = link expirat surpriză + Maria frustrare retry. 24h = balance security/UX Beta 50 testeri familie. Daniel manual config Firebase Auth Console pre-CC.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .2 Email body wording educativ verbatim (Magic Link)
+
+Per HANDOVER §64.5. Magic Link inexistent email behavior — silent send Firebase native + wording educativ email-side. **Email body wording verbatim:**
+
+> "Dacă ai deja un cont Andura, acest link te va conecta direct la profilul tău existent. Dacă ești la prima accesare, am creat acum un cont nou pentru tine, iar progresul tău va fi salvat automat."
+
+Anti-account-enumeration security preserved (Firebase native) + anti-confusion typo Maria 65 educativ.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .3 Auth screen soft-hint UI sub email field
+
+Per HANDOVER §64.5. **Auth screen soft-hint UI sub email field wording verbatim:**
+
+> "Verifică cu atenție adresa de e-mail introdusă pentru a te asigura că primești link-ul de acces."
+
+Anti-confusion typo Maria 65 + zero account-enumeration security risk.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .4 Session timeout NEVER always-logged-in confirm
+
+Per HANDOVER §64.7. Session timeout inactivity = **NEVER**. Confirmă §AMENDMENT 2026-05-04.11 Always Logged In `indexedDBLocalPersistence` + refresh token forever default. NU 30 zile/90 zile re-auth (rejected). Token ID 1h auto-refresh background. Maria 65 NU re-auth surpriză.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .5 Telemetry ZERO toggle aggregate-only
+
+Per HANDOVER §64.8. Telemetry opt-out toggle = **ZERO toggle Settings**. Aggregate anonymous events (`onboarding_started` + `onboarding_completed` + `auth_prompt_shown` + `auth_completed`) = GDPR-safe by design (FieldValue.increment counter only, ZERO PII). NU încarce interfață Settings. Confirmă §AMENDMENT 2026-05-04.15 telemetry storage `_telemetry/global` Spark plan compatible.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .6 SW update prompt non-disruptive
+
+Per HANDOVER §64.9. Service Worker update flow — prompt subtil non-disruptive workout-aware:
+
+> "Actualizare disponibilă. Reîncarcă"
+
+NU silent background update (user surprise post-reload). NU force reload immediate (workout interruption disaster). User termină sesiune curentă apoi reload manual.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .7 iOS REJECTED LOCKED PERMANENT
+
+Per HANDOVER §67.10. **iOS REJECTED LOCKED PERMANENT:**
+- Pre-Beta: PWA only iOS users (browser default, ~20-30% rate fail tolerated)
+- Post-Beta v1.0: NU iOS distribution
+- Post-Beta v1.5: NU iOS distribution
+- v2/v3: demand-driven only (real iOS user demand + revenue justify $99/an Apple Developer)
+
+Distribution V1 Beta + post-Beta v1.0/v1.5 = PWA installable browser + TWA wrap Android Play Store (per §AMENDMENT 2026-05-04.10 contingent rate fail >30% activation). Memory persistent rule scope. Cross-ref §AMENDMENT 2026-05-04.10 iOS scope cut PERMANENT extension.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .8 Email change Magic Link new address only
+
+Per HANDOVER §64.1. Email change verification = Magic Link new address ONLY (NU double confirm Magic Link old + new — over-engineering. NU password-less ZERO friction — security hole). Magic Link new address only validate + auto-update Firebase `updateEmail`. Typo guard preserved §AMENDMENT 2026-05-04.5 (current address typo).
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .9 Account deletion 2-step type "ȘTERGE" + click
+
+Per HANDOVER §64.2. Account deletion confirmation flow = **2-step type "ȘTERGE" manual + click confirm**. NU 1-click + modal final (anti-tap-accidental insufficient). NU 3-step email + 24h delay + click (over-friction). Type "ȘTERGE" manual + click confirm = balance anti-Maria-65-mistake + reasonable friction. Cross-ref §AMENDMENT 2026-05-04.5 soft delete 30 zile grace flow.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 .10 GDPR Article 20 portability defer v1.5 manual
+
+Per HANDOVER §64.3. GDPR data portability Article 20 = **defer v1.5 manual cerere `suport@andura.app`**. Pre-Beta 50 testeri = cerere manuală suport@, Daniel proceseze. NU JSON download imediat Settings (scope creep pre-Beta). NU email cu link 24h expirare (infrastructure). Automated button defer v1.5.
+
+### §AMENDMENT 2026-05-04 evening BATCH 1-6 Cross-refs
+
+- HANDOVER_GLOBAL §63.5 + §64.1-§64.10 + §67.10 (verbatim sub-sections)
+- §70 Cumulative LOCKED 243 → 306 (+63 net Batch 1-6 + Closure)
+- §71 Priority 1 ABSOLUT CC Opus implementation phased per §62.3 (firebase.js → auth.js → pages/auth.js → rest)
+- §73 Cross-references comprehensive (ADR amendments + ADR 014 + ADR 017 + ADR 025 preserved + PRODUCT_STRATEGY + ONBOARDING_SSOT_V1 amendments inline)
+- DECISION_LOG 2026-05-04 evening Batch 1-6 entry condensed
+- §AMENDMENT 2026-05-04 (predecessor) preserved unchanged
+- §62.3 phased implementation order LOCKED
+- §62.X META review division of labor (Claude + Gemini text-heavy review cross + Daniel final approve spot-check minim)
