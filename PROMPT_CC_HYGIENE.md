@@ -319,7 +319,9 @@ npm run test:run               # Expected: 752/752 (sau current baseline)
 
 **AMENDMENT 2026-05-04 night (per HANDOVER_GLOBAL §47 LOCKED V1):** format SEARCH-DRIVEN STRICT mandatory. Forma pre-fed verbatim "Răspuns verbatim:" pre-specificat pentru spot-check Daniel = DEPRECATED post 2026-05-04 night. CC Opus MUST NOT produce pre-fed format under any circumstances.
 
-**Trigger:** orice ingest de tip handover (input file = `HANDOVER_INPUT_*.md` în `📥_inbox/`).
+**Trigger:** **deep** handover ingest only (input file = `HANDOVER_INPUT_*.md` în `📥_inbox/` per `VAULT_RULES.md` §HANDOVER_PROTOCOL existing 14-step flow).
+
+**SCOPE EXCLUSION — fast handover §CC.5 (AMENDMENT 2026-05-04 evening late):** §9 NU se aplică la `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover (chat-to-chat, ~5-10 min CC). Fast scope produces `📤_outbox/LATEST.md` raport only per §10.8 — NU `ALIGNMENT_QUESTIONS_CHAT_NEW.md`. Verification chat NEW startup happens via §CC.2 layered read (CURRENT_STATE + HANDOVER active sections + top 3 ADRs + DIFF_FLAGS P1) + §CC.7 Layer 3 drift detection (timestamp consistency CURRENT_STATE vs DECISION_LOG). Heavyweight ≥12/15 search-driven verification e disproportionate pentru ~5-10 min iteration chat-to-chat.
 
 **De ce există:** Per VAULT_RULES `§HANDOVER_PROTOCOL` step 9 (Daniel ↔ Claude chat ↔ CC Opus flow): chat strategic nou trebuie să verifice alignment cu vault SSOT post-ingest **prin alignment questions cu citation §X file.md / ADR Y verificabilă**. Pass criteria ≥12/15 (≥80%) pentru a procede. Refuz vag sau citation lipsă = FAIL = STOP retry sau regenerare handover. Fără alignment questions → chat nou pornește orb pe vault state, riscă drift sau halucinație flow procedural.
 
@@ -354,9 +356,10 @@ Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outb
 
 ### Stop conditions
 
-- Dacă CC Opus omite generarea `ALIGNMENT_QUESTIONS_CHAT_NEW.md` post-ingest = **VIOLATION protocol §9**. Daniel intervine cu prompt explicit "Generate ALIGNMENT_QUESTIONS_CHAT_NEW.md..." → CC Opus regenerează retroactiv.
+- Dacă CC Opus omite generarea `ALIGNMENT_QUESTIONS_CHAT_NEW.md` **post DEEP ingest** (NU fast §CC.5) = **VIOLATION protocol §9**. Daniel intervine cu prompt explicit "Generate ALIGNMENT_QUESTIONS_CHAT_NEW.md..." → CC Opus regenerează retroactiv.
 - Dacă există deja `ALIGNMENT_QUESTIONS_CHAT_NEW.md` la top-level outbox la START următor ingest (residue from prior session) → **archive** ca `_archive/<YYYY-MM>/NN_ALIGNMENT_QUESTIONS_CHAT_NEW_<context>_HISTORICAL.md` ÎNAINTE de a genera fresh post-ingest curent.
 - Dacă Q-urile referențiază sections inexistente în vault SSOT post-ingest → fix retroactiv (citation accurate obligatoriu, NU vagăm "probabil în §X").
+- **Fast handover §CC.5 STOP:** §9 NU triggers — CC Opus produces `LATEST.md` raport only per §10.8. ALIGNMENT_QUESTIONS = explicit anti-pattern în fast scope (overhead disproportionate vs ~5-10 min iteration).
 
 ### Cross-references
 
@@ -377,6 +380,8 @@ Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outb
 - §10 = fast chat-to-chat (APPEND-only la CURRENT_STATE + DECISION_LOG, NU touch HANDOVER_GLOBAL deep, ~5-10 min)
 
 **Authority:** VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL + §HANDOVER_PROTOCOL STEP 16 amendment.
+
+**EXCLUSION explicit §9 ALIGNMENT_QUESTIONS:** Fast handover §CC.5 produces `📤_outbox/LATEST.md` raport only per §10.8 — **NU generate `ALIGNMENT_QUESTIONS_CHAT_NEW.md`**. §9 search-driven ≥12/15 PASS criteria = deep ingest only. Verification chat NEW startup pentru fast happens via §CC.2 layered read (mai light) + §CC.7 Layer 3 timestamp drift detection. Cross-ref `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §47 (Alignment Questions Generation Rule LOCKED V1 — deep scope).
 
 ### §10.1 Pre-flight
 

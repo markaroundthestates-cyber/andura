@@ -1,10 +1,15 @@
-# CHAT MIGRATION PROTOCOL — v4
+# CHAT MIGRATION PROTOCOL — v5
 
-**See also:** [[INDEX_MASTER]] | [[DANIEL_COMPLETE_PROFILE]] | [[CLAUDE_CHAT_INFRASTRUCTURE]] | ASYNC_EXECUTION_PROTOCOL (workflow obsolete post-cleanup 2026-04-30)
+**See also:** [[INDEX_MASTER]] | [[DANIEL_COMPLETE_PROFILE]] | [[CLAUDE_CHAT_INFRASTRUCTURE]] | [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8 (chat-state SSOT layered read) | ASYNC_EXECUTION_PROTOCOL (workflow obsolete post-cleanup 2026-04-30)
 
-**Last updated:** 2026-04-26 (v4 — anti-paternalism absolute + triangulation continuă)
+**Last updated:** 2026-05-04 evening late (v5 — §CHAT_CONTINUITY_PROTOCOL integration: §8.3 layered read updated CURRENT_STATE first, §8.2 startup format updated §CC.3 structure, §9 fast vs deep distinction added).
 **Owner:** Daniel
 **Purpose:** Calibrare seamless pentru orice instanță Claude nouă. Citește acest doc înainte să răspunzi la primul mesaj. **Target: 95% calibrat în 2-3 schimburi vs 10-15 fără.**
+
+**Authority split:**
+- **Acest doc** = bonding/style/Daniel-isms/anti-paternalism (Cum răspunzi)
+- **`VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.2** = layered read order canonical (Ce citești) — READ FIRST per `00-index/INDEX_MASTER.md` "READ FIRST" entry top
+- Acest doc NU duplică authority §CC.2; pointer-only la §8.3.
 
 ---
 
@@ -274,7 +279,27 @@ SAU:
 "Continuăm de la HANDOVER ultim. Ce facem?"
 ```
 
-### 8.2 Răspunsul tău (template)
+### 8.2 Răspunsul tău (template — v5 §CHAT_CONTINUITY_PROTOCOL §CC.3 integrated)
+
+**Format primary (post §CHAT_CONTINUITY_PROTOCOL LOCKED 2026-05-04 evening):**
+
+```
+Aligned X/Y verified (X = layered read complete, Y = 4 total per §CC.2).
+Last LOCKED: <decision> (path:§)
+Mid-flight: <active topic + status> (path:§)
+Next P1: <actionable + blocking deps>
+Drift: <silent flag if timestamp mismatch CURRENT_STATE vs DECISION_LOG, "none" otherwise>
+Continuăm?
+```
+
+**Citation enforcement post-startup (§CC.4):**
+- Every factual claim = citation `path:§` obligatoriu
+- Memory recall fără citation verifiabilă = re-verify cu read/grep
+- Uncertain = explicit "verific cu search" NU pretinde
+
+**Max 10 linii.** Daniel e calibrat în 1 schimb. Bonding/style §3-§7 din acest doc preserved separat (orthogonal — anti-paternalism §3.5 + Daniel-isms §4 + push-back reflexes §6.5 toate active concurent cu §CC.3 structural format).
+
+**Legacy format pre-2026-05-04 (DEPRECATED):**
 
 ```
 Citit vault. Status:
@@ -287,15 +312,26 @@ Next action recomandat: [specific].
 Confirmi?
 ```
 
-**Max 10 linii.** Daniel e calibrat în 1 schimb.
+NU mai folosi legacy format — drift vs §CC.3 (lipsește `Aligned X/Y` verification + citation enforcement + drift detection signal).
 
-### 8.3 Ce să citești la primul mesaj
+### 8.3 Ce să citești la primul mesaj — v5 (§CHAT_CONTINUITY_PROTOCOL §CC.2 LAYERED READ canonical)
 
-În ordine prioritate:
-1. **Acest doc (CHAT_MIGRATION_PROTOCOL)** — re-calibrare bonding/style
-2. `06-sessions-log/HANDOVER_GLOBAL_*.md` (cel mai recent) — state curent + decizii recente
-3. `05-findings-tracker/FINDINGS_MASTER.md` — open findings
-4. `05-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
+**Authority:** Layered read order canonical = `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.2 (post 2026-05-04 evening). Acest doc pointer-only — NU duplica authority.
+
+**Order MANDATORY (4 layers per §CC.2):**
+
+1. **`00-index/CURRENT_STATE.md` (full ~200 LOC)** — live SSOT chat-state thread + recent context + pointers. **READ FIRST per `00-index/INDEX_MASTER.md` "READ FIRST" entry top navigation.**
+2. **HANDOVER_GLOBAL sections referenced în CURRENT_STATE `## ACTIVE_REFS`** — drill-down deep doar pentru topice active. **NU read integral HANDOVER_GLOBAL** (~7000+ LOC) — anti-pattern §CC.1 explicit.
+3. **Top 3 ADRs din CURRENT_STATE `## ACTIVE_ADRS`** — domain decisions deep relevante.
+4. **`DIFF_FLAGS.md` P1 active (din CURRENT_STATE `## ACTIVE_FLAGS`)** — outstanding issues blocante.
+
+**Acest doc (CHAT_MIGRATION_PROTOCOL) = bonding/style** preserved separat — read încă "before primul mesaj" pentru calibrare ton + Daniel-isms + reflexe push-back, dar NU înainte §CC.2 layered read pentru context curent.
+
+**Optional secondary (când context indicates):**
+- `05-findings-tracker/FINDINGS_MASTER.md` — open findings (dacă chat curent vizează findings/bugs specific)
+- `05-findings-tracker/AUDIT_30_9_BLOCKED_STATE.md` (DACĂ EPIC #30 încă open)
+
+**Skip oricare layer 1-4 fără cause justificată = drift risk.** Recomandare per §CC.2: explicit "READ-ONLY mode până layered read complet" dacă bandwidth insuficient.
 
 ### 8.4 Ce NU să faci la primul mesaj
 
@@ -307,30 +343,48 @@ Confirmi?
 
 ---
 
-## 9. END SESSION PROTOCOL
+## 9. END SESSION PROTOCOL — v5 (Fast vs Deep distinction post §CHAT_CONTINUITY_PROTOCOL)
 
-### 9.1 Trigger handover
+### 9.1 Trigger handover — DOUĂ PATHS DISTINCTE (post 2026-05-04 evening)
 
 Daniel zice variante de:
-- "stop"
-- "facem handover"
-- "ne oprim azi"
-- "obosit, mâine"
-- "vreau handover complet seamless"
+- "stop" / "ne oprim azi" / "obosit, mâine" / "facem handover" / "fă handover" / "vreau handover complet seamless"
 
 **NU TU** sugerezi handover bazat pe oră / "probabil obosit" / etc. Daniel decide (vezi §3.5).
 
-### 9.2 Răspuns tău
+**Disambiguate path post 2026-05-04 evening:**
+
+| Trigger phrasing + context | Path |
+|----------------------------|------|
+| "fă handover" + bandwidth healthy + chat-to-chat checkpoint voluntary | **§CHAT_CONTINUITY_PROTOCOL §CC.5 fast** (~5-10 min CC, single-file CURRENT_STATE update) |
+| "vreau handover complet seamless" / "facem handover" + bandwidth ~25-30% remaining + scope ingest substantial | **`VAULT_RULES.md` §HANDOVER_PROTOCOL deep** (~1h CC, full HANDOVER_GLOBAL rewrite, DIFF Protocol §7 + ALIGNMENT_QUESTIONS §9 ≥12/15) |
+| Ambiguous / unclear | Default fast §CC.5 (lower blast radius), upgrade to deep dacă Daniel clarifies |
+
+**Daniel decision-driven, NU automated.** Dacă unclear, Claude asks 1-line: *"Fast §CC.5 (~10 min, CURRENT_STATE only) sau deep §HANDOVER_PROTOCOL (~1h, full archive update)?"*
+
+### 9.2 Răspuns tău — Path-dependent (v5)
+
+**Path A — Fast §CC.5 (default voluntary):**
+
+1. **Generate artefact narrativ ~50-100 LOC** format conversațional (NU tabel verbatim) — *"Discutam X. Daniel B. Push-back Y. Pivot Z. Mid-decision pe W, opțiuni..."*. Reproduce flow conversațional.
+2. **Tell Daniel:** drag artefact în `📥_inbox/` + comandă: `Update CURRENT_STATE per inbox handover`
+3. **CC ~5-10 min** per `PROMPT_CC_HYGIENE.md` §10 — APPEND CURRENT_STATE + DECISION_LOG + archive + push.
+
+**Path B — Deep §HANDOVER_PROTOCOL (saturation-driven):**
 
 1. **Compui artifacts:**
-   - `HANDOVER_YYYY-MM-DD.md` (sau `HANDOVER_YYYY-MM-DD-evening.md` dacă e a doua handover din zi) în `06-sessions-log/`
+   - `HANDOVER_INPUT_<topic>.md` în **`📥_inbox/`** (NU `06-sessions-log/`) — input artefact pentru CC ingest. Fișierul `HANDOVER_GLOBAL_<DATE>.md` din `06-sessions-log/` e SSOT activ updated by CC, NU created here. Per `VAULT_RULES.md` §3.2 "Un HANDOVER_GLOBAL activ, mereu — NU creezi `HANDOVER_2026-MM-DD_TOPIC.md` la fiecare sesiune".
    - Update `08-workflows/CHAT_MIGRATION_PROTOCOL.md` (DACĂ ai învățat ceva nou despre Daniel/workflow)
    - Update ADR-uri dacă session a inclus design decisions
    - Update backlog dacă au apărut entries noi
 
-2. **Dai comenzi PowerShell** copy-paste cu paths exact (NU `[file.md](http://file.md)` — markdown link bug)
+2. **Tell Daniel:** drag `HANDOVER_INPUT_*.md` în `📥_inbox/` + comandă: `Ingest handover from inbox per VAULT_RULES §HANDOVER_PROTOCOL`
 
-3. **Dai prompt-ul de start** pentru chat nou (template scurt din §8.2)
+3. **Dai comenzi PowerShell** copy-paste cu paths exact (NU `[file.md](http://file.md)` — markdown link bug)
+
+4. **Dai prompt-ul de start** pentru chat nou (template din §8.2 §CC.3 format)
+
+**§9.2 ↔ §3.2 VAULT_RULES clarification (resolves pre-existing ambiguity):** §9.2 Path B step 1 referă la INPUT artefact în `📥_inbox/` (consumed by CC, archived post-ingest), NU la SSOT vault file `06-sessions-log/HANDOVER_GLOBAL_*.md` (singular, edited update-in-place per §3.2). Cele 2 reguli NU se contrazic — distinct concerns (input pipeline vs SSOT lock).
 
 ### 9.3 Test seamless
 
@@ -347,7 +401,16 @@ Daniel deschide chat nou cu prompt-ul dat. Dacă în primul răspuns Claude nou:
 
 ## 10. CHANGELOG
 
-- **26 Apr 2026 — v4 (current):**
+- **04 May 2026 — v5 (current):**
+  - §CHAT_CONTINUITY_PROTOCOL integration post LOCK 2026-05-04 evening (commits `ef07e6d` + `615e526`)
+  - §8.3 read order updated — `00-index/CURRENT_STATE.md` first per §CC.2 (NU integral HANDOVER read anti-pattern)
+  - §8.2 startup format updated — §CC.3 structural (`Aligned X/Y` + `Last LOCKED` + `Mid-flight` + `Next P1` + `Drift` + `Continuăm?`) + citation enforcement §CC.4
+  - §9 fast vs deep handover distinction (table mapping trigger phrasing → §CC.5 fast SAU §HANDOVER_PROTOCOL deep)
+  - §9.2 vs §3.2 VAULT_RULES contradiction clarified (input artefact `📥_inbox/HANDOVER_INPUT_*.md` ≠ SSOT vault file `06-sessions-log/HANDOVER_GLOBAL_*.md`)
+  - Header §authority split — bonding/style aici + layered read canonical în §CC.2 (NU duplicate authority)
+  - Cross-ref §CC.1-§CC.8 added în See also
+
+- **26 Apr 2026 — v4:**
   - Anti-paternalism EXPLICIT (§3.5) — NU sugera somn/pauză NICIODATĂ, NU verifica ora
   - Triangulation continuă (§5.1.1) — pattern persistă între sesiuni, NU doar prima
   - Velocity ratio nou (§7) — Sonnet refactor MECANIC clear-scoped = 0.25-0.35

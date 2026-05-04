@@ -234,7 +234,17 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 
 ### Handover flow (când e timpul)
 
-**Trigger:** Bandwidth ~25-30% remaining SAU Daniel decide explicit "scriem handover".
+**Trigger:** Bandwidth ~25-30% remaining SAU Daniel decide explicit "vreau handover complet seamless" / "facem handover" cu scope ingest substantial.
+
+**DISAMBIGUATION trigger (AMENDMENT 2026-05-04 evening late post §CHAT_CONTINUITY_PROTOCOL LOCK):**
+
+| Condition | Path |
+|-----------|------|
+| Bandwidth ~25-30% remaining + scope ingest substantial (LOCKED noi multiple, ADR drafts, SSOT amendments) | **§HANDOVER_PROTOCOL deep** (this section, ~1h CC, full HANDOVER_GLOBAL rewrite, DIFF Protocol §7 + ALIGNMENT_QUESTIONS §9 ≥12/15) |
+| Bandwidth healthy + Daniel zice "fă handover" voluntary chat-to-chat checkpoint | **§CHAT_CONTINUITY_PROTOCOL §CC.5 fast** (~5-10 min CC, single-file CURRENT_STATE update, NU touch HANDOVER_GLOBAL) |
+| Ambiguous | Default §CC.5 fast (lower blast radius); upgrade deep dacă Daniel clarifies "complet seamless" |
+
+Daniel decision-driven, NU automated. Cross-ref `08-workflows/CHAT_MIGRATION_PROTOCOL.md` §9.1 trigger disambiguation table.
 
 **Steps:**
 
@@ -272,6 +282,8 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 - §3.3 outbox schema (LATEST.md + _archive/<YYYY-MM>/NN_*.md cronologic continuu)
 - §INBOX_FLOW (Daniel input only)
 - `PROMPT_CC_HYGIENE.md` §3.2 raport format expected
+- **§CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8** (post LOCK 2026-05-04 evening) — fast chat-to-chat alternative when bandwidth healthy + voluntary checkpoint + CURRENT_STATE update sufficient (NU full HANDOVER_GLOBAL rewrite). Trigger disambiguation table above.
+- **§HANDOVER_PROTOCOL STEP 16 amendment** (post §CHAT_CONTINUITY_PROTOCOL section below) — CURRENT_STATE.md update post-ingest atomic per append-only canonical.
 
 🦫 **Handover protocol locked. Anti-saturation enforced. Vault hygiene preserved.**
 

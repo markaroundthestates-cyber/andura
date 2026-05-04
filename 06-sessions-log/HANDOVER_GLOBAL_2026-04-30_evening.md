@@ -6366,9 +6366,16 @@ ADR 022 + ADR 024 + ADR 025 full spec generation post Periodization spec. Engine
 
 ## §47 Alignment Questions Generation Rule LOCKED V1 (NEW)
 
-**Status:** LOCKED V1 (codified 2026-05-04 night per Daniel directive — anti-recurrence pre-fed verbatim format).
+**Status:** LOCKED V1 (codified 2026-05-04 night per Daniel directive — anti-recurrence pre-fed verbatim format). **AMENDMENT 2026-05-04 evening late: scope clarification deep-only, NU fast §CC.5.**
 
-**Authority:** SSOT pentru generation alignment questions post oricărui handover ingest. Trigger: mandatory step §HANDOVER_PROTOCOL step 9.
+**Authority:** SSOT pentru generation alignment questions post **deep** handover ingest only. Trigger: mandatory step §HANDOVER_PROTOCOL existing step 9 (14-step deep flow per `VAULT_RULES.md`).
+
+**SCOPE EXCLUSION — fast handover §CC.5 (AMENDMENT 2026-05-04 evening late):** §47 NU se aplică la `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover (chat-to-chat, ~5-10 min CC). Fast scope are propriul mecanism verification:
+- §CC.2 layered read mandatory at chat NEW startup (CURRENT_STATE + HANDOVER active sections + top 3 ADRs + DIFF_FLAGS P1) — lighter alternative la search-driven Q-uri
+- §CC.7 Layer 3 drift detection silent (timestamp consistency CURRENT_STATE `Updated:` vs DECISION_LOG last entry)
+- §CC.4 citation enforcement post-startup (every claim path:§ obligatoriu)
+
+Heavyweight ≥12/15 search-driven verification e disproportionate pentru ~5-10 min iteration chat-to-chat. CC Opus la fast handover (`PROMPT_CC_HYGIENE.md` §10) produces `📤_outbox/LATEST.md` raport only — NU `ALIGNMENT_QUESTIONS_CHAT_NEW.md`.
 
 ### §47.1 Why this rule exists
 
@@ -6412,6 +6419,8 @@ Pre-fed verbatim cu sub-section `**Răspuns verbatim:** "..."` care recită pre-
 ### §47.5 Cross-refs amendments
 
 `VAULT_RULES.md` §HANDOVER_PROTOCOL step 9 amendment + `PROMPT_CC_HYGIENE.md` §9 amendment + memory rule #22 amendment (Daniel chat side). CC Opus la fiecare ingest comandă "Ingest handover from inbox per VAULT_RULES §HANDOVER_PROTOCOL" trebuie să respecte format search-driven STRICT.
+
+**Negative cross-ref (AMENDMENT 2026-05-04 evening late):** `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover scope **EXCLUDES** §47 enforcement. CC Opus la comandă "Update CURRENT_STATE per inbox handover" (`PROMPT_CC_HYGIENE.md` §10 fast workflow) NU generates `ALIGNMENT_QUESTIONS_CHAT_NEW.md`. Verification fast = §CC.2 layered read + §CC.7 Layer 3 drift detection. Cross-ref `PROMPT_CC_HYGIENE.md` §9 SCOPE EXCLUSION + §10 EXCLUSION explicit.
 
 ---
 
