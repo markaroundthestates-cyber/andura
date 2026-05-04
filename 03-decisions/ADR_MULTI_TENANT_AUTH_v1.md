@@ -305,3 +305,143 @@ Dacă migration produces silent data loss / incorrectness:
 - Batch B Task 1 implementation (Sprint 4.x)
 - Batch A Finding A (Auth Migration prerequisite for Blocker 2 activate)
 - `04-architecture/MULTI_TENANT_AUTH_MIGRATION_SPEC.md` (full Cloud Function spec — referenced for post-V1 multi-tenant)
+
+---
+
+## §AMENDMENT 2026-05-04 evening — Faza 2 Wiring Spec LOCKED V1 (Auth Flow §36.80 chat strategic resolution)
+
+**Status:** LOCKED V1 spec ready CC Opus implementation Priority 1 ABSOLUT. Chat strategic 2026-05-04 evening Daniel + Claude — 35 substantive sub-decisions (push-back validated multiple iterations). Full verbatim sub-sections în `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §56.1-§56.19.
+
+**Authority:** §AMENDMENT 2026-05-04 supersedes §AMENDMENT 2026-05-02 Faza 2 PLANNED scope (banner UX + auth-callback route). Faza 2 NU mai e "planned" — e LOCKED V1 spec full ready CC Opus implementation Priority 1 ABSOLUT.
+
+### §AMENDMENT 2026-05-04.1 Auth Pattern UX & Anonymous Mode (HANDOVER §56.1)
+
+- **auth-banner-soft pattern** — Anonymous + prompt "Salvează contul" non-blocking. Bugatti F4 Maria 65 frictionless.
+- **Anonymous mode preserve** — fallback local-first per Faza 1-2 design preserved.
+- **Code-level fix `getUserPath()` BUG 2 root cause:** Mode Anonymous (`getAuthState() === null`) → `getUserPath()` returnează **obligatoriu `null`** (NU fallback hardcodat `LEGACY_USER_PATH = 'users/daniel'`). Toate apelurile Firebase API blocate când path null → app rulează exclusiv local IndexedDB. Bucla 401 eliminată mecanic.
+- **IndexedDB namespace per UID — Dexie multi-DB:** `andura_${uid}` dinamic; `andura_anonymous` users neautentificați; logout User A + login User B same device → `andura_UserA` dormant intact + `andura_UserB` separat (familie share tablet privacy + Daniel multi-account safe).
+
+### §AMENDMENT 2026-05-04.2 Auth Methods (HANDOVER §56.2)
+
+- **Google OAuth primary** (1-tap login PWA cross-context ZERO issues, popup nativ în PWA)
+- **Firebase Email Link nativ fallback:** `sendSignInLinkToEmail` + `handleCodeInApp: true` + `continueUrl: https://andura.app/auth-callback` + Universal/App Links interceptor
+- **PIN custom 6-digit REJECTED** (scope creep masiv: SMTP backend + Cloud Function = Blaze plan obligatoriu contradicts §36.93 D3 Spark retain LOCKED)
+- **Auth screen wording LOCKED V1:** Titlu "Salvează-ți progresul" / Subtitlu "Săptămânile tale de antrenament rămân în siguranță..." / CTA primar "Continuă cu Google" / CTA secundar "Trimite-mi link de acces pe e-mail" / Loading "Se trimite link-ul de acces..." / Success "Bine ai venit înapoi!"
+
+### §AMENDMENT 2026-05-04.3 Onboarding Position (HANDOVER §56.3)
+
+- **Auth screen DUPĂ T0 onboarding** (post Investment Phase commitment psihologic maxim — anti-dropoff Bugatti)
+- **T0 scope:** 3-5 min max, 5-7 întrebări cheie (vârstă, sex, istoric medical simplu, obiectiv, frecvență)
+
+### §AMENDMENT 2026-05-04.4 Migration Strategy (HANDOVER §56.4)
+
+- **Migration scope:** Daniel `users/daniel` legacy ONLY pre-Beta (NU Cloud Function generic Spark plan retain)
+- **`_migration` flag persistent Firestore:** schema `users/{uid}/_migration: { status: 'pending' | 'complete' | 'failed', attemptedAt, sourceLegacy: 'users/daniel' }`. Retry silent până success. ZERO notificări eroare user.
+- **Rollback strategy:** mid-way fail → rollback complet (legacy intacte, status `failed`) + retry next session. Idempotent + zero risc data corruption.
+
+### §AMENDMENT 2026-05-04.5 Account Lifecycle (HANDOVER §56.5)
+
+- **Recovery email lost:** refusal pattern explicit + wording UI exact LOCKED V1 ("Contul tău în cloud nu mai poate fi accesat. Totuși, datele tale de antrenament de pe acest dispozitiv sunt în siguranță și rămân aici. Pierzi doar sincronizarea automată cu alte telefoane sau tablete.")
+- **Account deletion GDPR Article 17:** Soft delete 30 zile grace (hard delete imediat REJECTED). Mecanism: `users/{uid}/_deleted` flag + Firebase Auth disabled (NU delete) + 30 zile recovery + post-30 hard cascade
+- **Reactivation flow:** catch `auth/user-disabled` + email contact `suport@andura.app` (Daniel manual forward pre-Beta)
+- **Email change `updateEmail` nativ:** retain `uid`, NU migrare. Conflict detection preventiv + current address typo guard.
+
+### §AMENDMENT 2026-05-04.6 Multi-device & Concurrent Sessions (HANDOVER §56.6)
+
+- **Multi-device same-account:** silent sync transparent (NU ecrane confirmare device nou pre-Beta)
+- **Concurrent session conflict — Record-level Last-Write-Wins** (field-level CRDT-light REJECTED pre-Beta scope creep ~5-10h, defer v1.5 când avem real conflict telemetry)
+
+### §AMENDMENT 2026-05-04.7 Anonymous→Auth Merge (HANDOVER §56.7)
+
+- **Fork Decision UI explicit:** ecran "Am găsit un istoric în cloud. Ce vrei să păstrezi?"
+- **Sursa respinsă archive 7 zile + export local JSON:** suprascriere definitivă REJECTED Maria 65 click greșit. Backup local IndexedDB + Firestore `_archived/{uid}/{timestamp}` 7 zile + restore Settings 7 zile + post-7 cascade real
+- **Wording LOCKED V1:** "Datele din [Telefon/Cloud] au fost arhivate. Le poți recupera timp de 7 zile din zona de Setări."
+
+### §AMENDMENT 2026-05-04.8 GDPR & Legal (HANDOVER §56.8)
+
+- **GDPR consent double bifa Privacy + ToS** (termen "biometrice" REJECTED legal risc + Andura NU colectează biometric data)
+- **Privacy Policy + ToS V1 Beta initial drafts** create în vault `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` din templates LOCKED V1 verbatim. Daniel validate sprint 30-60 min pre-Beta. Audit legal complet + GDPR profundă defer v1.5 (§46 P4 prerequisite).
+- **Liability waivers absolute REJECTED** (RO consumer law OUG 21/1992 + Codul Civil + EU Consumer Rights Directive 2011/83 — retain răspundere neglijență gravă/dol cu wording "în măsura permisă de lege")
+
+### §AMENDMENT 2026-05-04.9 Sunset & Beta Gate (HANDOVER §56.9)
+
+- **Sunset Anonymous mode post-Beta v1.5 + 30 zile grace** (NU pre-Beta)
+- **Beta launch gate target 1 ianuarie 2027 optimistic** (Quality > Speed strict — decalare septembrie 2026 fără ezitare dacă șlefuire necesară). MUST-HAVE listă în §56.9.2.
+
+### §AMENDMENT 2026-05-04.10 PWA Cross-Context (HANDOVER §56.10)
+
+- **Magic Link Universal Links Android only pre-Beta** (`assetlinks.json` în `.well-known/`)
+- **iOS scope cut:** defer v2/v3 demand-driven (Apple Developer $99/an + bundle ID + `apple-app-site-association` = scope creep nejustificat solo dev pre-Beta)
+- **TWA wrap Android v1.5 contingent rate fail >30%** (pre-Beta puro: ~70-80% deschide PWA nativ + ~20-30% browser default — accept partial 50 testeri tolerant)
+
+### §AMENDMENT 2026-05-04.11 Session & Offline (HANDOVER §56.11)
+
+- **Always Logged In:** Firebase SDK `indexedDBLocalPersistence` + refresh token forever default + Token ID 1h auto-refresh background
+- **Offline auth UX:** local data + non-blocking banner top "Mod offline. Conectează-te la internet pentru a-ți sincroniza datele în cloud."
+
+### §AMENDMENT 2026-05-04.12 Logout Behavior (HANDOVER §56.12)
+
+- **Sign-out UX:** primary Settings bottom + double-confirmation modal (anti-tap-accidental Maria 65)
+- **Logout local IndexedDB preserve + opt-in toggle Settings:** wipe IndexedDB la logout REJECTED (bandwidth + battery + quota Spark + offline blocked + trust break Maria 65). Opt-in advanced default OFF "Șterge datele de pe acest dispozitiv la deconectare". Cleanup dormant DBs `andura_*` not-touched 90+ zile (Daniel weekly script optional).
+- **Unsynced data warning calm wording LOCKED V1** (NU panic "le poți pierde definitiv" REJECTED inaccurate — IndexedDB local rămâne)
+
+### §AMENDMENT 2026-05-04.13 Network Resilience (HANDOVER §56.13)
+
+- Magic Link request: auto-retry 3x background + manual fallback "Reîncearcă"
+
+### §AMENDMENT 2026-05-04.14 Cleanup Mechanism (HANDOVER §56.14)
+
+- **Cleanup A:** `admin-cleanup.js` Daniel weekly ~5min duminică (`_deleted/` >30 zile + `_archived/` >7 zile)
+- **Cleanup B:** Client-side fallback la deschidere app (defense in depth users inactive 60+ zile)
+- **Cleanup C (Cloud Function scheduled):** defer post-Beta v1.5 (Spark plan retain §36.93 D3)
+
+### §AMENDMENT 2026-05-04.15 Telemetry (HANDOVER §56.15)
+
+- T0→Auth conversion aggregate counters anonymous GDPR-safe (`onboarding_started`/`onboarding_completed`/`auth_prompt_shown`/`auth_completed`)
+- Storage: `_telemetry/global` Firestore document client-side `FieldValue.increment(1)` (Spark plan compatible)
+
+### §AMENDMENT 2026-05-04.16 DB Rules Firestore (HANDOVER §56.16)
+
+```javascript
+match /users/{uid} {
+  allow read, write: if request.auth != null && request.auth.uid == uid;
+}
+match /_deleted/{uid} {
+  allow read, write: if request.auth != null && request.auth.uid == uid;
+}
+match /_archived/{uid}/{docId} {
+  allow read, write: if request.auth != null && request.auth.uid == uid;
+}
+```
+
+`_migration` flag în `users/{uid}` document — beneficiază automat aceleași rules. Per-UID strict §36.75 preserved + extended `_deleted` + `_archived`.
+
+### §AMENDMENT 2026-05-04.17 Service Worker (HANDOVER §56.17)
+
+SW + Firebase Auth coexistence — Firebase SDK gestionează nativ persistența `indexedDBLocalPersistence`. SW NU intercepteză `/auth-callback` route. Decizie operațională CC Opus implementation.
+
+### §AMENDMENT 2026-05-04.18 Daniel Manual Setup Pre-CC (HANDOVER §56.18)
+
+1. Firebase Auth Console: authorized domains add `andura.app` + Email Template Magic Link RO + Google OAuth Client ID + Action URL `https://andura.app/auth-callback` (~15 min)
+2. `suport@andura.app` MX records Namecheap forward Daniel personal sau Google Workspace alt sau temp gmail (~15 min)
+3. Privacy Policy + ToS V1 Beta validate sprint 30-60 min (initial drafts created vault `01-vision/`)
+
+### §AMENDMENT 2026-05-04.19 Scope OUT v1.5+ (HANDOVER §56.19)
+
+- Marketing email opt-in (NU pre-Beta newsletter)
+- Deep linking (defer v1.5)
+- Logout all devices revoke refresh tokens (defer v1.5)
+
+### §AMENDMENT 2026-05-04 Cross-refs
+
+- HANDOVER_GLOBAL §56.1-§56.19 verbatim sub-sections (35 sub-decisions)
+- §57 Cumulative LOCKED 216 → 243 (+27 net)
+- §58 Priority 1 ABSOLUT CC Opus implementation pending
+- §60 Cross-refs Updates Required (INDEX_MASTER + DECISION_LOG)
+- DECISION_LOG 2026-05-04 evening entry condensed
+- §36.80 BUG 2 Firebase 401 RESOLVED chat strategic + CC implementation pending
+- §36.93 D3 Spark retain (Cloud Function defer post-Beta v1.5)
+- §36.94 ADR 025 Instant Skip principle reused (`getUserPath()=null` graceful degradation)
+- §36.99 offline-first preservation §56.11.2
+- §50.4 D1 Q20 §45.3 pattern reuse (record-level LWW NU duplicate logic)
+- §46 P4 audit legal post-Beta v1.5 prerequisite (Privacy Policy GDPR profundă)
