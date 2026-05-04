@@ -19,6 +19,9 @@ import { DB, cleanEx } from './db.js';
 import './util/cdlBackfill.js';
 import { migrateLogsUtcToLocal } from './util/logsMigration.js';
 import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from './bootstrap.js';
+import { handleAuthCallbackRoute, mountAuthBanner, showAuthScreen } from './pages/authShell.js';
+import { isAuthenticated } from './auth.js';
+import { runAuthPathMigration } from './migrations/2026-05-02-auth-path-migration.js';
 
 // Expune funcții globale pentru onclick="" în HTML
 import { toast } from './ui/ui.js';
@@ -134,11 +137,42 @@ function setupOfflineIndicator() {
   update();
 }
 
+// ── Auth wiring per §AMENDMENT 2026-05-04 + §56.1-§56.19 LOCKED V1 ──────────
+// Pre-init step: handle /auth-callback route ÎNAINTE de Firebase sync init.
+// Magic Link verify + Google OAuth id_token exchange fire în handleAuthCallbackRoute.
+// Returns null când URL nu e /auth-callback (no-op majority case).
+//
+// Post-auth-success per §56.4.1 + §AMENDMENT 2026-05-04.4: trigger Daniel
+// legacy `users/daniel` → `users/{uid}` migration runner (idempotent — does
+// nothing dacă deja migrated sau dacă uid != Daniel's uid).
+async function processAuthCallbackOnBoot() {
+  try {
+    const result = await handleAuthCallbackRoute();
+    if (!result) return null;
+    if (result.ok) {
+      // Per §56.4 LOCKED V1: idempotent migration runner. Already-migrated
+      // sau no-source = no-op silent. Sets `_migration` flag în localStorage.
+      try { await runAuthPathMigration(); }
+      catch (err) { console.warn('[Auth] post-auth migration runner threw:', err); }
+    } else {
+      console.warn('[Auth] callback failed:', result.provider, result.error);
+    }
+    return result;
+  } catch (err) {
+    console.warn('[Auth] handleAuthCallbackRoute threw:', err);
+    return null;
+  }
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 async function init() {
   applyTheme(getActiveTheme());
   setupOfflineIndicator();
   cleanDuplicateLogs();
+  // Auth callback processing happens BEFORE Firebase sync init: ensures
+  // post-Magic-Link verify, the subsequent initFirebaseSync runs cu uid
+  // resolved (so `users/<uid>` path used immediately, NU Anonymous null).
+  await processAuthCallbackOnBoot();
   // Migration UTC → Local (idempotent, runs once)
   try {
     const migrationResult = migrateLogsUtcToLocal();
@@ -194,6 +228,28 @@ async function init() {
   }
 
   checkWeightReminder();
+
+  // §56.1.1 auth-banner-soft — non-blocking "Salvează-ți progresul" prompt
+  // for Anonymous users post-onboarding. Auto-hides on auth success.
+  // Per §56.3.1: shown DUPĂ T0 onboarding (Investment Phase commitment).
+  // Banner self-skips dacă isAuthenticated() already true.
+  if (onboardingDone && !isAuthenticated()) {
+    mountAuthBanner({
+      googleClientId: window.__GOOGLE_CLIENT_ID,
+      onAuthSuccess: ({ uid }) => {
+        // Post-auth success — trigger Daniel legacy path migration.
+        // Idempotent: no-op for non-Daniel users sau already-migrated.
+        runAuthPathMigration().catch(err => {
+          console.warn('[Auth] post-banner-auth migration threw:', err);
+        });
+      },
+    });
+  }
 }
+
+// Expose auth helpers globally pentru future onclick="" wiring în Settings UI
+// (Phase 2 — Account Lifecycle: logout double-confirm, account deletion 2-step).
+window.showAuthScreen = showAuthScreen;
+window.isAuthenticated = isAuthenticated;
 
 init();

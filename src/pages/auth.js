@@ -1,7 +1,7 @@
-// ══ AUTH SCREEN — Email Magic Link primary + Google OAuth secondary ═════
+// ══ AUTH SCREEN — Google OAuth primary + Firebase Email Magic Link fallback ══
 // Wired with bare DOM, no framework (per ADR 005). Bugatti tone — factual,
-// no paternalism, no emoji-spam. Per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT
-// 2026-05-02.
+// no paternalism, no emoji-spam. Wording LOCKED V1 per §56.2.2 +
+// §AMENDMENT 2026-05-04 evening BATCH 1-6 .3 soft-hint UI.
 
 import {
   sendMagicLink,
@@ -14,19 +14,26 @@ import {
   AUTH_STORAGE_KEYS,
 } from '../auth.js';
 
-// Wording verbatim — no derivation, no "magic" hype, no procedural noise.
+// Wording verbatim per §56.2.2 LOCKED V1 — Bugatti F4 Maria 65 frictionless,
+// anti-paternalism, anti-emoji-spam. Soft-hint sub email field per
+// §AMENDMENT 2026-05-04 evening BATCH 1-6 .3 (anti-typo Maria 65).
+// Network resilience wording per §56.13.1.
 const COPY = Object.freeze({
-  title: 'Conectare',
-  description: 'Folosim emailul ca să-ți salvăm datele și să le recuperezi pe alt dispozitiv.',
+  title: 'Salvează-ți progresul',
+  description: 'Săptămânile tale de antrenament rămân în siguranță și le poți accesa de pe orice telefon sau tabletă.',
   emailLabel: 'Adresa de email',
-  sendBtn: 'Trimite link pe email',
-  googleBtn: 'Conectare cu Google',
+  emailHint: 'Verifică cu atenție adresa de e-mail introdusă pentru a te asigura că primești link-ul de acces.',
+  sendBtn: 'Trimite-mi link de acces pe e-mail',
+  sendBtnLoading: 'Se trimite link-ul de acces...',
+  googleBtn: 'Continuă cu Google',
   pendingTitle: 'Verifică emailul',
   pendingBody: (email) => `Ți-am trimis un link la ${email}. Deschide-l pe acest dispozitiv ca să te conectezi.`,
   resendBtn: 'Trimite din nou',
   changeEmailBtn: 'Schimbă emailul',
+  successWelcome: 'Bine ai venit înapoi!',
   errorInvalidEmail: 'Adresa de email nu pare validă.',
-  errorSendFailed: 'Nu am putut trimite emailul. Încearcă din nou.',
+  errorSendFailed: 'Nu am putut trimite codul. Verifică conexiunea la internet.',
+  errorRetryBtn: 'Reîncearcă',
   errorVerifyFailed: 'Linkul a expirat sau e invalid. Cere unul nou.',
   signedOut: 'Te-ai delogat.',
   signOutBtn: 'Delogare',
@@ -61,6 +68,8 @@ export function createAuthScreen(opts = {}) {
       });
     } else {
       _renderForm(root, {
+        // Per §56.13.1: sendMagicLink internal 3x retry. Caller handles
+        // post-retry-fail via "Reîncearcă" button (toast + caller can resubmit).
         onSendMagicLink: async (email) => {
           const res = await sendMagicLink(email);
           if (res.ok) { pendingEmail = email; render(); }
@@ -158,6 +167,13 @@ function _renderForm(root, { onSendMagicLink, onGoogle }) {
   input.className = 'auth-screen__email';
   label.appendChild(input);
 
+  // §AMENDMENT 2026-05-04 evening BATCH 1-6 .3 — soft-hint sub email field
+  // anti-confusion typo Maria 65 + zero account-enumeration security risk.
+  const hint = document.createElement('p');
+  hint.className = 'auth-screen__email-hint';
+  hint.textContent = COPY.emailHint;
+  form.appendChild(hint);
+
   const sendBtn = document.createElement('button');
   sendBtn.type = 'submit';
   sendBtn.className = 'auth-screen__send';
@@ -167,7 +183,14 @@ function _renderForm(root, { onSendMagicLink, onGoogle }) {
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const email = (input.value || '').trim();
-    onSendMagicLink(email);
+    // Per §56.13: loading state during 3x retry window (~2s worst case).
+    const originalLabel = sendBtn.textContent;
+    sendBtn.textContent = COPY.sendBtnLoading;
+    sendBtn.disabled = true;
+    Promise.resolve(onSendMagicLink(email)).finally(() => {
+      sendBtn.textContent = originalLabel;
+      sendBtn.disabled = false;
+    });
   });
   root.appendChild(form);
 
@@ -177,6 +200,10 @@ function _renderForm(root, { onSendMagicLink, onGoogle }) {
     sep.textContent = '—';
     root.appendChild(sep);
 
+    // §56.2.1 — Google OAuth primary (1-tap), so render BEFORE email form
+    // would invert ordering. Spec §56.2.2 places Google CTA primar above
+    // email CTA secundar. Current DOM ordering keeps email form first
+    // pentru users care vor email-only — Daniel decide UX ordering Beta.
     const googleBtn = document.createElement('button');
     googleBtn.type = 'button';
     googleBtn.className = 'auth-screen__google';

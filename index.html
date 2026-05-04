@@ -671,6 +671,23 @@
 <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ══ Auth config slots — Firebase Auth + Google OAuth (per ADR_MULTI_TENANT_AUTH_v1
+       §AMENDMENT 2026-05-04 + §56.18.1 LOCKED V1) ══════════════════════════════
+       Daniel manual setup (see HANDOVER §56.18.1 + DIFF_FLAGS P1-FLAG-AUTH-DANIEL-PREP):
+       1. Firebase Console → Project settings → Web API Key → paste below
+       2. Firebase Console → Authentication → Sign-in method → enable Email link + Google
+       3. Authorized domains: add `andura.app`
+       4. Action URL: `https://andura.app/auth-callback`
+       5. Google OAuth: create Cloud Console OAuth Client ID → paste below
+       Both keys are PUBLIC (embeddable) per Firebase docs — NU secrete. Client-side
+       enforcement comes from Firebase Rules per-UID strict (database.rules.json + Firestore
+       rules per §AMENDMENT 2026-05-04.16). -->
+  <script>
+    // window.__FIREBASE_API_KEY = 'YOUR_REAL_FIREBASE_WEB_API_KEY';
+    // window.__GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com';
+  </script>
+
   <script type="module" src="/src/main.js"></script>
 
 <!-- THEME SWITCHER -->

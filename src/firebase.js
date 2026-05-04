@@ -6,28 +6,40 @@ import { getAuthState, getIdToken } from './auth.js';
 
 export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
 
-// Legacy literal — preserved as fallback for unauthenticated clients during
-// Faza 1-2 of ADR_MULTI_TENANT_AUTH_v1 transition. Once Auth migration is
-// complete + Firebase Rules tightened (per ADR 007 §AMENDMENT 2026-05-02),
-// the fallback path returns null and ops short-circuit.
+// Legacy literal — preserved as migration source for Daniel's pre-Beta
+// account ONLY. Per §AMENDMENT 2026-05-04.4 + §56.4.1, post-auth Daniel,
+// `users/daniel` data migrates one-time → `users/{uid}` via existing
+// 2026-05-02-auth-path-migration runner. NEVER returned by getUserPath()
+// in Anonymous mode (was BUG 2 root cause — see §56.1.3 below).
 export const LEGACY_USER_PATH = 'users/daniel';
 
-// Back-compat alias so older imports keep working during migration.
-// Will be removed once all consumers go through getUserPath().
+// Back-compat alias preserved pentru consumers care încă referă explicit
+// the legacy literal pentru migration source. Will be removed când
+// Faza 3 Anonymous sunset complete (post-Beta v1.5 per §56.9.1).
 export const USER_PATH = LEGACY_USER_PATH;
 
 /**
- * Resolve the per-user RTDB path. Priority:
- *   1. Firebase Auth uid → `users/<uid>`
- *   2. Legacy anonymous path `users/daniel` (Faza 1-2 fallback only)
- *   3. null when neither available (post-Faza-3 with no auth = read-only)
+ * Resolve the per-user RTDB path. Per §AMENDMENT 2026-05-04.1 + §56.1.3
+ * (BUG 2 root cause resolution LOCKED V1):
+ *
+ *   - Firebase Auth uid present → `users/<uid>`
+ *   - Anonymous mode (`getAuthState() === null`) → **null**
+ *
+ * Anonymous mode = app rulează exclusiv local IndexedDB (per §56.1.2
+ * Faza 1-2 fallback local-first preserved). Toate apelurile Firebase
+ * API blocate când path null → bucla 401 eliminată mecanic per
+ * §36.80 BUG 2 RESOLUTION.
+ *
+ * Consumers (`fbGet`/`fbSet`/`fbRemove`/`syncToFirebase`/`syncFromFirebase`/
+ * `clearFirebaseKeys`) deja short-circuit clean când userPath null —
+ * no-op silent, NU error toast (per §AMENDMENT 2026-05-04.1 graceful).
  *
  * @returns {string|null}
  */
 export function getUserPath() {
   const auth = getAuthState();
   if (auth?.uid) return `users/${auth.uid}`;
-  return LEGACY_USER_PATH;
+  return null;
 }
 
 // NOTE: 'photos' is intentionally excluded — base64 images are too large for Firebase RTDB free tier.

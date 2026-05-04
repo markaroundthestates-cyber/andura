@@ -38,6 +38,10 @@ export const AUTH_STORAGE_KEYS = Object.freeze({
  * Send a sign-in email to `email`. The email contains a magic link that
  * lands the user back on `continueUrl` with `?oobCode=...&email=...`.
  *
+ * Per §56.13.1 LOCKED V1: network failure mid-request → auto-retry **3x**
+ * background cu exponential backoff (250/500/1000 ms). Persistent fail
+ * surfaces clean error la caller pentru "Reîncearcă" manual fallback UI.
+ *
  * @param {string} email
  * @param {string} [continueUrl] - default: `${window.location.origin}/auth-callback`
  * @returns {Promise<{ ok: boolean, email?: string, error?: string }>}
@@ -51,21 +55,38 @@ export async function sendMagicLink(email, continueUrl) {
     continueUrl: continueUrl || `${_origin()}/auth-callback`,
     canHandleCodeInApp: true,
   };
-  try {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!r.ok) {
+
+  // Per §56.13: max 3 attempts (1 initial + 2 retries) cu backoff 250/500ms.
+  // Retry only on network errors (caught exception) sau HTTP 5xx. NU retry
+  // pe 4xx (invalid email, quota, etc — failures deterministic).
+  const MAX_ATTEMPTS = 3;
+  const BACKOFF_MS = [250, 500];
+  let lastError = 'network_error';
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (r.ok) {
+        _setItem(AUTH_STORAGE_KEYS.pendingEmail, email);
+        return { ok: true, email };
+      }
+      // 4xx = deterministic failure, NU retry (per §56.13 retry semantic).
+      // 5xx = transient, retry.
       const data = await r.json().catch(() => ({}));
-      return { ok: false, error: data?.error?.message || `http_${r.status}` };
+      lastError = data?.error?.message || `http_${r.status}`;
+      if (r.status < 500) return { ok: false, error: lastError };
+    } catch (err) {
+      lastError = err?.message || 'network_error';
     }
-    _setItem(AUTH_STORAGE_KEYS.pendingEmail, email);
-    return { ok: true, email };
-  } catch (err) {
-    return { ok: false, error: err?.message || 'network_error' };
+    if (attempt < MAX_ATTEMPTS - 1) {
+      await new Promise(resolve => setTimeout(resolve, BACKOFF_MS[attempt]));
+    }
   }
+  return { ok: false, error: lastError };
 }
 
 /**
