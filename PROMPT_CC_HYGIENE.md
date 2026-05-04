@@ -68,9 +68,20 @@ rm "📥_inbox/<filename>"
 
 Excepție: dacă fișierul e VAULT_RULES.md sau PROMPT_CC_HYGIENE.md → `git mv` la root, NU rm.
 
-## 2. VAULT HYGIENE PASS
+## 2. VAULT HYGIENE PASS (per VAULT_RULES.md §VAULT_HYGIENE_PASS — codified 2026-05-04)
 
-După ce 📥_inbox/ e procesat, fă sweep hygiene:
+După ce 📥_inbox/ e procesat (STEP 1-9 §HANDOVER_PROTOCOL), execută STEP 10-15 vault hygiene mandatory automat per `VAULT_RULES.md §VAULT_HYGIENE_PASS`:
+
+- **STEP 10:** Detect new SSOT fragmentation (>1 file pe same topic introdus în această sesiune)
+- **STEP 11:** Detect new orphans (wikilinks `[[X]]` → file MISSING, sau files UNREFERENCED)
+- **STEP 12:** Detect ADR drift (new files în `03-decisions/` NU în `INDEX_MASTER.md` ADR table)
+- **STEP 13:** Detect HANDOVER size threshold (`wc -l 06-sessions-log/HANDOVER_GLOBAL_*.md` > 7000 → FLAG split candidate)
+- **STEP 14:** Auto-fix mecanic safe (cross-refs reciproce + archive un-numbered + UTF-8 normalize per §VAULT_HYGIENE_PASS.UTF8 + stale path refs sweep)
+- **STEP 15:** Flag DIFF_FLAGS.md dacă consolidare manuală necesară (severity P1/P2)
+
+Effort: ~10-15min CC autonomous, ZERO Daniel-time.
+
+Sub-section 2.1-2.3 below = legacy version preserved as backwards-compatible scan checklist (use when STEP 10-15 detection insufficient).
 
 ### 2.1 Scan duplicate
 

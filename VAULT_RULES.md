@@ -356,7 +356,7 @@ OPTIONAL pentru:
 
 ### Cross-References
 
-- Sprint 4.x cluster pilot: `📤_outbox/SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
+- Sprint 4.x cluster pilot: `📤_outbox/_archive/2026-05/116_SPRINT_4X_FINAL_REPORT.md` (commit `c283a81`)
 - ALIGNMENT_QUESTIONS Q5 + Q10 codification scope: `06-sessions-log/HANDOVER_GLOBAL.md` §36.63
 - Master orchestration command pattern: see PROMPT_CC_BATCH_*.md naming convention în `📥_inbox/` per cluster.
 
@@ -382,3 +382,103 @@ OPTIONAL pentru:
 - Reduce chat-back-and-forth pe per-batch progress
 
 **Cross-refs:** §36.63 cluster pattern + §36.71 cluster session lock + §36.74 LOCKED V1 decision.
+
+---
+
+## §VAULT_HYGIENE_PASS — Auto-Hygiene Post-Ingest Standard
+
+**Status:** LOCKED V1 (codified 2026-05-04 Vault Hygiene Sprint Faza 4 per §36.97)
+**Authority:** SSOT pentru auto-hygiene execution post oricărui handover ingest. Trigger: mandatory post-ingest, NU optional.
+
+### Why this rule exists
+
+Audit Vault Hygiene Faza 1 (2026-05-03) a detectat drift cumulativ silent peste sesiuni: 22 orphan wikilinks + 4 ADR drift + DECISION_LOG UTF-8 corruption + INDEX_MASTER stale + HANDOVER_GLOBAL bloat + SSOT fragmentation 5 topics. Cauza: ingest handover NU avea hygiene step → drift acumulat.
+
+**Anti-recurrence:** STEP 10-15 mandatory append la "Ingest handover from inbox" command — auto-execute hygiene pass post-ingest, zero manual oversight needed.
+
+### Trigger conditions
+
+**MANDATORY trigger:** orice execuție comandă `Ingest handover from inbox per VAULT_RULES §HANDOVER_PROTOCOL`. STEP 10-15 sunt steps adiționali parte integrantă din ingest flow.
+
+**OPTIONAL trigger** (manual invocation): Daniel comanda `Run Vault Hygiene Pass per VAULT_RULES §VAULT_HYGIENE_PASS` standalone — execute STEP 10-15 fără ingest precedent.
+
+### STEP 10-15 spec (auto-execute post STEP 1-9 §HANDOVER_PROTOCOL)
+
+**STEP 10 — Detect new SSOT fragmentation**
+- Scan toate fișiere modificate în această sesiune: dacă >1 file pe same topic introdus → FLAG fragmentation
+- Heuristic: căutare keywords semantically related în fișiere distincte (Goal Taxonomy / Onboarding / Pricing / Mode Detection / RPE/RIR / Calibration / etc.)
+- Output: lista candidat consolidate în `📤_outbox/LATEST.md` § Issues / Ambiguities
+
+**STEP 11 — Detect new orphans**
+- Scan wikilinks `[[X]]` în toate fișiere modificate: verifică file `X.md` sau `X[*].md` exists fizic
+- MISSING wikilinks → FLAG list în raport
+- UNREFERENCED files (existing dar zero wikilinks pointing to them) → FLAG candidate move/delete (preserve audit trail)
+- Severity: HIGH dacă missing ADR file (ex: ORPHAN-1 ADR 022 finding) / MEDIUM dacă concept obsolete cross-ref (ex: EXEC_QUEUE) / LOW dacă historical doc closed
+
+**STEP 12 — Detect ADR drift**
+- Scan `03-decisions/`: verifică INDEX_MASTER reflectă ADR count + status accurate
+- Check `ADR-URI ACTIVE` table coverage vs file count fizic
+- §AMENDMENT inline detection (NU separate AMENDMENT files per §6 anti-pattern)
+- Output: list ADR drift în raport
+
+**STEP 13 — Detect HANDOVER size threshold**
+- `wc -l 06-sessions-log/HANDOVER_GLOBAL_*.md`
+- Threshold: >7000 LOC → FLAG split candidate (NU auto-split, daniel decision required + careful cross-ref preservation)
+- Threshold: >10000 LOC → ESCALATE BLOCKER, manual split mandatory next chat strategic
+- Output: line count + threshold status în raport
+
+**STEP 14 — Auto-fix mecanic safe**
+- **Cross-refs reciproce:** dacă ADR new în `03-decisions/`, append entry în `00-index/INDEX_MASTER.md` `ADR-URI ACTIVE` table
+- **Archive un-numbered:** orice file în `📤_outbox/_archive/<YYYY-MM>/` fără NN prefix → rename cu next NN cronologic continuu
+- **UTF-8 normalize** dacă mojibake detectat (â€" / Äƒ / È› / Ã® / Â§ patterns) — apply targeted Python substitution per §VAULT_HYGIENE_PASS.UTF8 sub-section below
+- **Stale path references** post-rename — sweep wikilinks + plain text refs
+
+**STEP 15 — Flag DIFF_FLAGS dacă consolidare manuală necesară**
+- Dacă STEP 10-13 detectează probleme NU rezolvabile mecanic STEP 14 → append entry în `DIFF_FLAGS.md` ca P1 sau P2 (severity-based)
+- Format: `### P1-FLAG-<sequential> — <Title>` cu Status / Severity / Issue / Action Daniel / Cross-refs
+- Output: link la DIFF_FLAGS.md în raport `📤_outbox/LATEST.md` § Next action Daniel
+
+### Effort estimate
+
+- ~10-15min CC autonomous per ingest
+- ZERO Daniel-time (hygiene = mecanic, NU strategic)
+
+### §VAULT_HYGIENE_PASS.UTF8 — Mojibake fix patterns
+
+Standard cp1252 → UTF-8 double-encoding fix. Apply **exact codepoint sequences** (NOT regex globs — risk false positives):
+
+```python
+substitutions = [
+    # 3-char sequences (most specific first)
+    ('â€"', '—'),  # em dash (codepoints 0xE2 0x20AC 0x201D)
+    ('â€"', '–'),  # en dash (codepoints 0xE2 0x20AC 0x201C)
+    ('â†’', '→'),  # right arrow (0xE2 0x2020 0x2019)
+    ('â‰¤', '≤'), ('â‰¥', '≥'), ('â‰', '≈'),
+    # 2-char sequences — Romanian diacritics
+    ('Äƒ', 'ă'), ('Ä‚', 'Ă'),  # ă/Ă (a-breve)
+    ('Ã®', 'î'), ('ÃŽ', 'Î'),  # î/Î (i-circumflex)
+    ('Ã¢', 'â'),  # â (a-circumflex)
+    ('È™', 'ș'), ('È›', 'ț'),  # ș/ț (s-comma, t-comma)
+    # Other common
+    ('Â§', '§'), ('Â°', '°'), ('Ã—', '×'),
+]
+```
+
+Save with **UTF-8 no BOM, LF line endings** (`newline='\n'` în Python). Validate: `file -i path` should show `charset=utf-8`.
+
+### Stop conditions
+
+- STEP 10-15 NU rulează dacă §HANDOVER_PROTOCOL STEP 1-9 a eșuat (ingest fail-fast preserved)
+- STEP 14 auto-fix RESPECTĂ §5 SAFETY NET — zero unilateral DELETE pe info ambiguă
+- STEP 13 split candidate detect = FLAG only, NU auto-execute (cross-ref preservation requires manual planning)
+
+### Cross-references
+
+- §HANDOVER_PROTOCOL (parent flow) + §3.5 Dropzone protocol (inbox/outbox state)
+- §6 Anti-pattern interzise (NU recreate problems STEP 10-15 detect)
+- §5 SAFETY NET zero info loss (STEP 14 must respect)
+- `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` §8 (origin spec from Faza 1 audit)
+- HANDOVER_GLOBAL §36.97 (Faza 4 LOCK ca Rule decision wording)
+- DIFF_FLAGS.md (STEP 15 output target)
+
+🦫 **Vault Hygiene Pass codified 2026-05-04. Zero drift acumulat. Auto-execute mandatory post-ingest. ~10-15min CC per ingest. Daniel-time: zero.**
