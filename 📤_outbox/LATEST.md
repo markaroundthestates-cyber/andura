@@ -1,120 +1,263 @@
-# §CHAT_CONTINUITY_PROTOCOL — Pas 1 + Pas 2 Atomic Implementation Report
+# §CHAT_CONTINUITY_PROTOCOL — Cross-Reference Audit Report
 
-**Status:** ✅ Complete
-**Date:** 2026-05-04 evening (post Auth Flow §62-§73 ingest)
-**Run wall-clock:** ~25 min CC autonomous
+**Status:** ✅ Audit complete — NU s-a modificat niciun fișier auditat (audit-only per Daniel directive).
+**Date:** 2026-05-04 evening late
+**Run wall-clock:** ~8 min CC autonomous
 **Model:** Opus (claude-opus-4-7)
-**Task:** §CHAT_CONTINUITY_PROTOCOL LOCKED V1 — chat-to-chat continuity layer codified atop existing §HANDOVER_PROTOCOL. Origin: Daniel proposed pattern via inbox prompt `CC_PROMPT_SHADOW_PROTOCOL_V2.md`; Claude critique identified 6 fixes; Daniel approved + requested 2-step execution (Pas 1 protocol changes → validate → Pas 2 CURRENT_STATE from real state).
+**Task:** Cross-reference §CHAT_CONTINUITY_PROTOCOL (just LOCKED V1, commits `ef07e6d` + `615e526`) vs existing handover stack (6 files audited).
 
 ---
 
-## Pre-flight
+## Files audited
 
-- ✅ Git clean tree verified (only `📥_inbox/CC_PROMPT_SHADOW_PROTOCOL_V2.md` untracked, left untouched per scope)
-- ✅ Branch main verified
-- ✅ Backup tag created + pushed: `pre-chat-continuity-protocol-2026-05-04`
-- ⚠️ **Discovery mid-execution:** local repo era cu 30+ commits în urmă față de origin/main. Claude critique despre "LOC discrepancy 7664 vs 3742" era bazată pe stale local snapshot — actual remote conține §62-§73 Auth Flow Batch 1-6, ADR 026 spec, cumulative 306, etc. (toate reale). Pull rebase done, conflicts resolved manually preserving both sides (remote = state actualizat real, my Pas 1 changes = §CHAT_CONTINUITY layer additions).
-
----
-
-## 6 fixes applied to original CC_PROMPT_SHADOW_PROTOCOL_V2.md proposal (per Daniel directive)
-
-1. **Naming:** §CHAT_CONTINUITY_PROTOCOL (descriptive technical), NU "Shadow Protocol V2" (marketing-style)
-2. **Append vs replace contradiction reconciled:** content history sections (`## JUST DECIDED`, `## RECENT`, `## POINTERS`) strict append-only; active state pointers (`## NOW`, `## NEXT`, `## ACTIVE_*`) overwrite OK; `## NOW` = move-then-replace (precedent → `## RECENT`, NU lost). STEP 16 amendment explicit.
-3. **Scope creep removed:** SKIP `01-vision/PROJECT_VISION.md` (process ≠ product vision per §3.4 "1 topic = 1 fișier") + SKIP `README.md` (public repo entry, not vault internals).
-4. **Memory rules #21-25 references removed:** filesystem-side memory not enforceable from chat NEW; replaced with explicit "enforced pe convention" disclaimer în §CC.2 + §11.
-5. **Cumulative LOCKED count inflation removed:** §CHAT_CONTINUITY_PROTOCOL = vault meta-tooling, NU contabilizat în product/architecture cumulative count (separate concern în DECISION_LOG entry note explicit).
-6. **`--no-verify` justification:** removed from prompt, replaced with "hooks normal — `npm run test:run` pre-commit, NU bypass decât justificat per-commit". Both Pas 1 + Pas 2 commits passed pre-commit hook (1203/1203 tests both runs).
+| # | File | LOC | Last touch | Verdict |
+|---|------|-----|------------|---------|
+| 1 | `VAULT_RULES.md` §HANDOVER_PROTOCOL | 415 total | 2026-05-04 evening (Pas 1) | ✅ Consistent + 1 P2 missing back-ref |
+| 2 | `PROMPT_CC_HYGIENE.md` §9 | 600+ total | 2026-05-04 evening (Pas 1) | ⚠️ P1 boundary ambiguity (§9 vs §10) |
+| 3 | `08-workflows/CHAT_MIGRATION_PROTOCOL.md` | 384 total | **2026-04-26 (8 days stale)** | 🚨 P1 MULTIPLE drift items |
+| 4 | `HANDOVER_GLOBAL §47` Alignment Questions Rule | ~50 LOC sub | 2026-05-04 night | ⚠️ P1 trigger scope ambiguity |
+| 5 | `03-decisions/DECISION_LOG.md` | 790 total | 2026-05-04 evening (Pas 1) | ⚠️ P3 entry placement (cronologic) |
+| 6 | `00-index/INDEX_MASTER.md` | 220+ total | 2026-05-04 evening (Pas 1) | ✅ Consistent + P3 polish (stats count + direct §CC nav) |
 
 ---
 
-## Pas 1 — Protocol additions (commit `ef07e6d`)
+## File 1: VAULT_RULES.md §HANDOVER_PROTOCOL (deep, 14 pași — user said 13)
 
-**4 files modified atomic single commit:**
-- ✅ UPDATED `VAULT_RULES.md` — §CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8 + §HANDOVER_PROTOCOL STEP 16 amendment (append/replace reconciled per section)
-- ✅ UPDATED `PROMPT_CC_HYGIENE.md` — §10 fast handover workflow + §11 chat NEW startup verify format (distinct de §7 DIFF + §9 ALIGNMENT_QUESTIONS deep flow)
-- ✅ UPDATED `00-index/INDEX_MASTER.md` — CURRENT_STATE "READ FIRST" entry top navigation table + header refresh (preserved §62-§73 rich state info post merge conflict resolution)
-- ✅ UPDATED `03-decisions/DECISION_LOG.md` — entry §CHAT_CONTINUITY_PROTOCOL LOCKED V1 (vault meta-tooling, NO cumulative count inflation note explicit)
+**Verdict:** ✅ Consistent boundary
 
-**Conflict resolution:**
-- `VAULT_RULES.md` rebase conflict: kept both §VAULT_HYGIENE_PASS (remote, codified post Faza 4) + §CHAT_CONTINUITY_PROTOCOL (mine) sequential
-- `INDEX_MASTER.md` rebase conflict: merged both — preserved remote rich state header §62-§73 + 306 LOCKED + added my CURRENT_STATE references
+### Findings
 
-**Stats:** 4 files changed, 283 insertions(+), 3 deletions(-)
+- **Contradiction vs §CC.1-§CC.8:** ❌ NONE. §CC.1 explicit relation: *"§HANDOVER_PROTOCOL existing rămâne authoritative pentru deep merge"*. Boundary clear: deep = saturation-driven + 1h + DIFF + ALIGNMENT≥12/15; fast = voluntary + 5-10min + APPEND-only.
+- **Duplicate logic:** ❌ NONE. Steps separate. STEP 16 amendment explicit links them.
+- **Cross-refs:** ⚠️ ASYMMETRIC. §CC.8 references §HANDOVER_PROTOCOL ("deep flow preserved unchanged"). §HANDOVER_PROTOCOL existing does NOT reference §CC. **Missing back-ref.**
+- **Trigger overlap risk:** §HANDOVER_PROTOCOL "Trigger: Bandwidth ~25-30% remaining SAU Daniel decide explicit 'scriem handover'". §CC.5 "Trigger: Daniel 'fă handover'". **Verbal phrasing similar — Daniel could say 'fă handover' when bandwidth ~25%, ambiguous which path.**
 
-## Pas 2 — CURRENT_STATE.md generation from real state (commit `615e526`)
+### Recommended fixes (NOT executed)
 
-**1 file created:**
-- ✅ CREATED `00-index/CURRENT_STATE.md` (157 LOC, target ~200) — append-only architecture per §CC.6: `NOW + JUST_DECIDED + NEXT + ACTIVE_REFS + ACTIVE_ADRS + ACTIVE_FLAGS + RECENT + POINTERS`
-
-**Synthesized from REAL state (NOT pre-fed prompt content):**
-- HANDOVER_GLOBAL: 7664 LOC actual (split FLAG TRIGGERED >7000 §VAULT_HYGIENE_PASS STEP 13)
-- DECISION_LOG: 790 LOC, recent entries §CHAT_CONTINUITY (mine) + §62-§73 cumulative 306 + Auth Flow §36.80 243 + D-cluster 41 net 175→216 + ADR 026 spec 75
-- DIFF_FLAGS: 245 LOC, 6 P1 active (P1-FLAG-1 ADDENDUM partial + P1-FLAG-NEW Codespace npm + P1-FLAG-AUTH-DANIEL-PREP + P1-FLAG-HANDOVER-SPLIT + P1-FLAG-SCENARIOS-COVERAGE + P1-FLAG-IOS-PERMANENT 🟢 LOCKED) + P2-FLAG-1 D1 only remaining
-- ADRs: 35 total (26 numbered 001-021/022/023/024/025/026 + 9 named ADR_*)
-
-**All referenced sections + ADR files verified to exist before commit.**
-
-**Stats:** 1 file added, 157 insertions(+).
+- **P2 — Add back-ref în §HANDOVER_PROTOCOL "Cross-references" section:** *"§CHAT_CONTINUITY_PROTOCOL — fast chat-to-chat alternative when bandwidth healthy and CURRENT_STATE update sufficient (NU full HANDOVER_GLOBAL rewrite needed)."*
+- **P2 — Add disambiguation note în §HANDOVER_PROTOCOL "Trigger" section:** *"Dacă bandwidth ~25-30% remaining + scope ingest substantial → §HANDOVER_PROTOCOL deep. Dacă bandwidth healthy + voluntary checkpoint chat-to-chat → §CHAT_CONTINUITY_PROTOCOL §CC.5 fast. Daniel decision-driven, NU automated."*
 
 ---
 
-## Build + Tests
+## File 2: PROMPT_CC_HYGIENE.md §9 ALIGNMENT_QUESTIONS
 
-✅ Pre-commit hook `npm run test:run` passed both Pas 1 + Pas 2 commits: **75 test files, 1203/1203 tests passing**, ~12.5s duration (no regression).
+**Verdict:** ⚠️ P1 boundary ambiguity
+
+### Findings
+
+- **§9 Trigger:** *"orice ingest de tip handover (input file = `HANDOVER_INPUT_*.md` în `📥_inbox/`)"*.
+- **§10.5 Archive trigger fast handover:** *"Move `📥_inbox/<HANDOVER>.md` → `📤_outbox/_archive/...`"*.
+- **AMBIGUITY:** Fast handover artefact path `📥_inbox/<HANDOVER>.md` matches §9 strict pattern → triggers §9 ALIGNMENT_QUESTIONS generation? But §10.7 says "Generate report `📤_outbox/LATEST.md`" — implicit only LATEST, NU alignment questions. **§9 vs §10 trigger overlap unstated.**
+
+### Specific user question: Does §47 / §9 ALIGNMENT_QUESTIONS apply la fast handover sau doar deep?
+
+**Answer (per §CC architecture intent):** ALIGNMENT_QUESTIONS ≥12/15 search-driven = heavyweight (~2-5 min Daniel spot-check + chat NEW navigate vault). Fast handover ~5-10 min CC iteration cu single-file CURRENT_STATE update = anti-thetical to heavyweight verification. **Intent: §9 ALIGNMENT_QUESTIONS only for deep §HANDOVER_PROTOCOL ingest, NOT fast §CC.5.**
+
+But this is implicit in current docs, not explicit. CC Opus reading §9 strictly could erroneously generate ALIGNMENT_QUESTIONS for every fast handover.
+
+### Recommended fixes (NOT executed)
+
+- **P1 — Add explicit exclusion în §9 trigger:** *"Trigger: handover ingest **deep** (input file = `HANDOVER_INPUT_*.md` per §HANDOVER_PROTOCOL deep flow). NU se aplică la §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover (chat-to-chat) — §10.8 produces `LATEST.md` report only, NU alignment questions."*
+- **P1 — Add explicit exclusion în §10:** *"NU generate `ALIGNMENT_QUESTIONS_CHAT_NEW.md` per §9 — fast handover scope EXCLUDES §9. Verification at chat NEW startup happens via §CC.2 layered read (lighter alternative)."*
 
 ---
 
-## Commits
+## File 3: 08-workflows/CHAT_MIGRATION_PROTOCOL.md (v4 dated 2026-04-26)
 
-- `ef07e6d` feat(vault): §CHAT_CONTINUITY_PROTOCOL LOCKED V1 — live SSOT layer over §HANDOVER_PROTOCOL
-- `615e526` feat(vault): create 00-index/CURRENT_STATE.md from real state synthesis
+**Verdict:** 🚨 P1 MULTIPLE DRIFT ITEMS — file pre-dates §CHAT_CONTINUITY_PROTOCOL by 8 days, never updated.
 
-## Pushed: ✅ origin/main
+### Findings
 
-Backup tag pushed: `pre-chat-continuity-protocol-2026-05-04`
+#### Specific user question: §8.3 "Ce să citești la primul mesaj" needs CURRENT_STATE.md?
+
+**YES — direct contradiction with §CC.2 layered read order.**
+
+Current §8.3 prescribed read order:
+```
+1. CHAT_MIGRATION_PROTOCOL (acest doc) — re-calibrare bonding/style
+2. HANDOVER_GLOBAL_*.md (cel mai recent) — state curent + decizii recente
+3. FINDINGS_MASTER.md — open findings
+4. AUDIT_30_9_BLOCKED_STATE.md (DACĂ EPIC #30 încă open)
+```
+
+§CC.2 prescribed read order:
+```
+1. CURRENT_STATE.md (full ~200 LOC)
+2. HANDOVER_GLOBAL sections referenced în CURRENT_STATE ## ACTIVE_REFS
+3. Top 3 ADRs din CURRENT_STATE ## ACTIVE_ADRS
+4. DIFF_FLAGS.md P1 active
+```
+
+**TWO DIFFERENT SSOT-uri prescribed. Real drift.** §8.3 also reads HANDOVER_GLOBAL **integral** (~7664 LOC) — exact pain point §CC.1 was designed to eliminate.
+
+#### §8.2 Răspuns template vs §CC.3 startup output format
+
+§8.2 template: `Citit vault. Status: [TASK X] DONE / [TASK Z] NEXT / [open thread]. Next action recomandat: [specific]. Confirmi?`
+
+§CC.3 format: `Aligned X/Y verified. Last LOCKED: ... Mid-flight: ... Next P1: ... Drift: ... Continuăm?`
+
+Diferite formate. §CC.3 more structural cu citation enforcement. §8.2 task-focused. **Drift — Daniel may get either format depending on which doc Claude reads first.**
+
+#### §9 End Session Protocol — handover trigger overlap
+
+§9.1 Triggers: `"stop"`, `"facem handover"`, `"vreau handover complet seamless"`. Match exact §CC.5 trigger `"fă handover"` (different verb, same intent).
+
+§9.2 Actions: create `HANDOVER_YYYY-MM-DD.md` în `06-sessions-log/` + update CHAT_MIGRATION_PROTOCOL + ADR-uri. **Direct contradicts §3.2 VAULT_RULES "Un HANDOVER_GLOBAL activ, mereu — NU creezi `HANDOVER_2026-MM-DD_TOPIC.md` la fiecare sesiune".** Internal vault contradiction PRE-EXISTING (NU caused de §CC).
+
+§9 nu menționează §CC.5 fast handover path ca alternative.
+
+### Recommended fixes (NOT executed)
+
+- **P1 — UPDATE §8.3 read order** to reference §CC.2 canonical layered read (CURRENT_STATE first, NOT HANDOVER_GLOBAL integral). Recommend: *"Per VAULT_RULES §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read (authoritative): 1. `00-index/CURRENT_STATE.md` 2. HANDOVER active sections 3. Top 3 ADRs 4. DIFF_FLAGS P1. CHAT_MIGRATION_PROTOCOL (acest doc) bonding/style preserved separately."*
+- **P1 — UPDATE §8.2 response template** să folosească §CC.3 format (Aligned X/Y + Last LOCKED + Mid-flight + Next P1 + Drift + Continuăm). NU drop bonding-specific elements (Daniel-isms, anti-paternalism §3.5) — those are orthogonal style guidance preserved.
+- **P1 — UPDATE §9 End Session Protocol** to add fast vs deep distinction:
+  - Trigger "fă handover" voluntary chat-to-chat → §CHAT_CONTINUITY_PROTOCOL §CC.5 fast (~5-10 min)
+  - Trigger "vreau handover complet seamless" + bandwidth ~25-30% → §HANDOVER_PROTOCOL deep (~1h)
+- **P2 — RESOLVE pre-existing §9.2 contradiction** with §3.2 VAULT_RULES (handover file naming): document why §9.2 says `HANDOVER_YYYY-MM-DD.md` create when §3.2 says single SSOT. Likely §9.2 is referring to inbox INPUT artefact, not vault SSOT — clarify.
+- **P3 — UPDATE changelog** to add v5 entry: "2026-05-04 — §CHAT_CONTINUITY_PROTOCOL integration: §8.3 layered read updated, §8.2 startup format updated, §9 fast vs deep distinction added".
+- **P3 — UPDATE header** "Last updated 2026-04-26" + version bump v4 → v5.
+
+---
+
+## File 4: HANDOVER_GLOBAL §47 Alignment Questions Generation Rule LOCKED V1
+
+**Verdict:** ⚠️ P1 trigger scope ambiguity (mirrors File 2 finding)
+
+### Findings
+
+- **§47.1 Trigger:** *"post oricărui handover ingest"* — same ambiguity as PROMPT_CC_HYGIENE §9. "Any handover" includes fast §CC.5?
+- **§47.4 PASS criteria:** ≥10-12/15 mandatory. Heavyweight for ~5-10 min fast iteration.
+- **§47.5 Cross-refs:** lists `VAULT_RULES.md §HANDOVER_PROTOCOL step 9 amendment + PROMPT_CC_HYGIENE.md §9 amendment + memory rule #22`. **Does NOT reference §CHAT_CONTINUITY_PROTOCOL.**
+
+### Recommended fixes (NOT executed)
+
+- **P1 — Add scope clarification §47.1:** *"Trigger: deep handover ingest only (per VAULT_RULES §HANDOVER_PROTOCOL existing 14-step flow). NU se aplică la §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover — fast scope are propriul mecanism verification: §CC.2 layered read at chat NEW startup + §CC.7 Layer 3 drift detection (timestamp consistency CURRENT_STATE vs DECISION_LOG)."*
+- **P1 — Update §47.5 cross-refs** to include `VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL §CC.5` (negative reference: scope EXCLUDES fast).
+- **NOTE:** §47 lives în `HANDOVER_GLOBAL` deep archive. Daniel decide dacă fix se aplică acolo (HANDOVER editing) sau migrate §47 la VAULT_RULES.md (more durable + cleaner).
+
+---
+
+## File 5: DECISION_LOG.md
+
+**Verdict:** ⚠️ P3 — entry placement nu strict cronologic
+
+### Findings
+
+- **My §CHAT_CONTINUITY_PROTOCOL entry at line 184** (auto-merged during rebase Pas 1).
+- DECISION_LOG appears descending by **cumulative count** (newest LOCKED at top), with most recent ingest = §62-§73 cumulative 306 at line 3.
+- §CHAT_CONTINUITY entry chronologically AFTER §62-§73 ingest (designed în chat post-ingest), but placed BELOW it în file. Cronologic descending intent suggests §CHAT_CONTINUITY should be at line 3 (above §62-§73).
+- **However:** §CHAT_CONTINUITY = vault meta-tooling, NU adds to cumulative LOCKED count (per Daniel directive). Less natural fit for cumulative-descending order.
+
+### Recommended fixes (NOT executed)
+
+- **P3 — Move §CHAT_CONTINUITY entry to TOP of file** (above §62-§73) preserving cronologic-descending convention. Note explicit "vault meta-tooling, NOT cumulative count" remains intact.
+- **OR P3 alternative — accept current placement** as "meta-tooling sub-stream" preserved separately. Document convention în VAULT_RULES §3.X if making this rule.
+
+---
+
+## File 6: INDEX_MASTER.md
+
+**Verdict:** ✅ Consistent + P3 polish
+
+### Findings
+
+- ✅ "READ FIRST chat NEW startup" CURRENT_STATE entry top navigation (line 45).
+- ✅ Header references both SSOT chat-state ([[CURRENT_STATE]]) + SSOT deep archive ([[HANDOVER_GLOBAL_2026-04-30_evening]]).
+- ⚠️ **Stats line:** "68 fișiere active vault" — should be 69 (CURRENT_STATE.md added). Minor stale.
+- ⚠️ **Missing direct nav row** to §CHAT_CONTINUITY_PROTOCOL section în VAULT_RULES (analog la existing §HANDOVER_PROTOCOL nav). Would help Daniel discover protocol authority.
+
+### Recommended fixes (NOT executed)
+
+- **P3 — Update stats** "68 → 69 fișiere active vault (post CURRENT_STATE.md add)".
+- **P3 — Add direct nav row** după "READ FIRST" entry: *"| **Authoritative protocol chat continuity** | [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8 + §HANDOVER_PROTOCOL STEP 16 amendment |"*
+
+---
+
+## Summary by severity
+
+### 🚨 P1 — Blocking for clean adoption (5 items)
+
+1. **PROMPT_CC_HYGIENE.md §9** — explicit exclusion fast §CC.5 from ALIGNMENT_QUESTIONS scope (§9 trigger "any handover" too broad)
+2. **PROMPT_CC_HYGIENE.md §10** — explicit "NU generate alignment questions" în fast handover steps
+3. **CHAT_MIGRATION_PROTOCOL §8.3 read order** — direct contradiction §CC.2; CURRENT_STATE missing entirely
+4. **CHAT_MIGRATION_PROTOCOL §8.2 startup format** — drift vs §CC.3
+5. **CHAT_MIGRATION_PROTOCOL §9 + HANDOVER_GLOBAL §47** — trigger overlap "fă handover"; §47.1 scope ambiguity (deep vs fast)
+
+### 🟡 P2 — Polish, won't break workflow (3 items)
+
+6. **VAULT_RULES §HANDOVER_PROTOCOL** — add back-ref to §CC + trigger disambiguation note
+7. **CHAT_MIGRATION_PROTOCOL §9.2 ↔ §3.2 VAULT_RULES** — pre-existing handover naming contradiction (NU caused de §CC) — clarify wording
+8. **§47 update §47.5 cross-refs** — add §CHAT_CONTINUITY_PROTOCOL negative reference (scope EXCLUDES)
+
+### 🟢 P3 — Optional polish (4 items)
+
+9. **CHAT_MIGRATION_PROTOCOL header + changelog** — version v4→v5 + 2026-05-04 entry
+10. **DECISION_LOG.md entry placement** — move §CHAT_CONTINUITY to TOP for cronologic descending OR document meta-tooling convention
+11. **INDEX_MASTER.md stats** — 68→69 fișiere active
+12. **INDEX_MASTER.md direct nav row** — direct §CHAT_CONTINUITY_PROTOCOL pointer
+
+---
+
+## Additional findings beyond scope (worth flagging)
+
+### §47 placement question
+
+§47 Alignment Questions Generation Rule LOCKED V1 lives în `HANDOVER_GLOBAL_2026-04-30_evening.md` (deep archive). Per §3.1 VAULT_RULES "Update-in-place > create-new" și authority placement: meta-rules belong în VAULT_RULES.md (durable rules) NOT în HANDOVER (sessions log). **§47 might benefit migration to VAULT_RULES.md as §ALIGNMENT_QUESTIONS_FORMAT** for cleaner authority. Daniel decide.
+
+### §VAULT_HYGIENE_PASS STEP 16 amendment
+
+Acum că am adăugat §HANDOVER_PROTOCOL STEP 16 amendment (CURRENT_STATE update post-ingest), STEP 16 should be added to §VAULT_HYGIENE_PASS STEP 10-15 list — STEP 16 logically extends auto-hygiene flow. Currently STEP 16 lives standalone after §HANDOVER_PROTOCOL section. Consider re-numbering or cross-ref. P3.
+
+### Backup tag naming
+
+Pas 1 used `pre-chat-continuity-protocol-2026-05-04` (no time). §CC.5 + §10.1 + §10.7 prescribe `pre-handover-<YYYY-MM-DD-HHMM>` (with time). Convention drift — minor inconsistency. P3.
+
+---
+
+## Specific user questions answered
+
+| Question | Answer |
+|----------|--------|
+| §8.3 needs CURRENT_STATE.md? | ✅ YES — P1 update needed (current §8.3 prescribes integral HANDOVER read = anti-§CC.1 pain point) |
+| §47 applies fast handover sau deep? | ❌ Should apply DEEP only — currently AMBIGUOUS în §47.1 wording. P1 fix recommended. |
+| Contradicții §CHAT_CONTINUITY §CC.1-§CC.8? | ❌ Niciuna fundamentală. Cele 5 P1 items sunt drift în alte files care NU s-au actualizat post §CC introduction. §CC itself e internal coherent. |
+| Duplicate logic §CC.5 vs §HANDOVER_PROTOCOL? | ❌ NONE. Boundary clear stated în §CC.1: deep = saturation+full+1h, fast = voluntary+single-file+5-10min. |
+| Cross-refs missing? | ⚠️ §CC ref-uiește other docs OK; reverse direction asymmetric. 5 docs need back-refs to §CC (HANDOVER_PROTOCOL, §9, §47, CHAT_MIGRATION, INDEX_MASTER nav). |
+
+---
+
+## Recommended action prioritization
+
+**If Daniel approves all P1 fixes (recommended):**
+- Single batch ~15-20 min CC autonomous
+- 3 files modified (PROMPT_CC_HYGIENE.md, CHAT_MIGRATION_PROTOCOL.md, HANDOVER_GLOBAL §47)
+- Backup tag mandatory: `pre-chat-continuity-cross-ref-fixes-2026-05-04`
+- Single commit cu fail-fast strict per §VAULT_RULES §3.4
+
+**If Daniel approves P1 + P2 fixes:**
+- ~25-30 min CC autonomous
+- 4 files modified (above + VAULT_RULES.md back-ref + disambiguation)
+
+**P3 polish — defer or batch with next vault hygiene sweep.**
 
 ---
 
 ## Issues / Ambiguities
 
-**Minor LOC inaccuracies în Pas 1 commit (NOT blocking, NOT corrected):**
-- `VAULT_RULES.md` §CC.1 says "~5000+ LOC" pentru HANDOVER_GLOBAL; actual e 7664 LOC (FLAG TRIGGERED). Wording "growing rapid, split candidate" still factually correct, just understated. Could amend in next §CC update.
-- `DECISION_LOG.md` §CHAT_CONTINUITY entry says "~5000+ LOC" same issue. Same caveat.
+**None blocking.** Audit-only scope respected — zero file modifications to audited files.
 
-These weren't critical enough to amend — main protocol semantics unchanged. CURRENT_STATE.md (Pas 2) reflects accurate 7664 LOC.
-
-**No drift detected post-commit:** CURRENT_STATE `Updated:` 2026-05-04 evening = DECISION_LOG last entry timestamp = consistent.
-
-**Pre-existing P1-FLAG-NEW preserved:** Codespace `npm install` drift (3 test FILE imports broken — fake-indexeddb + dexie). Not addressed in this scope per VAULT_RULES §2 (NU atinge `src/`, `tests/`, `scripts/`, configs). Tests still pass 1203/1203 because the missing-import files fail-fast as 0 tests, NOT as failures. Daniel: dedicated chat post Auth Flow §36.80 implementation.
+LATEST.md previous archived as `135_LATEST_PREVIOUS_CHAT_CONTINUITY_PROTOCOL_IMPL.md` per §3.3 zero info loss principle.
 
 ---
 
 ## Next action Daniel
 
-### Immediate (low effort)
+**Decide which severity tiers to apply:**
+1. **Approve P1 only** (5 items, ~15-20 min CC) → most important — eliminates real drift (CHAT_MIGRATION_PROTOCOL §8.3 contradiction is real footgun for chat NEW startup)
+2. **Approve P1 + P2** (8 items, ~25-30 min CC) → adds polish + bidirectional cross-refs
+3. **Approve all P1+P2+P3** (12 items, ~35-45 min CC) → comprehensive cleanup
+4. **Defer all** — accept §CC standalone, drift în CHAT_MIGRATION + §9/§47 lives until next major vault hygiene sweep
 
-1. **Verify chat NEW workflow:** open new Claude chat, paste `00-index/CURRENT_STATE.md` content (sau Project Knowledge sync). Verify Claude outputs alignment per `Aligned X/Y verified. Last LOCKED. Mid-flight. Next P1. Drift. Continuăm?` format per §CC.3.
+**Recommend Option 2 (P1+P2):** P1 fixes the real contradictions; P2 adds back-refs that prevent next chat strategic from hitting similar drift. P3 polish can wait for organic next ingest.
 
-2. **Sync Project Knowledge GitHub** dacă folosești integrare — CURRENT_STATE.md acum e SSOT live primary entry point.
-
-3. **Inbox cleanup:** `📥_inbox/CC_PROMPT_SHADOW_PROTOCOL_V2.md` rămâne untracked. Decide: archive în `📤_outbox/_archive/2026-05/` ca historical reference (proposal+critique+execution audit trail) sau delete (consumed). Recommend archive ca `135_CC_PROMPT_SHADOW_PROTOCOL_V2_PROPOSAL_CRITIQUED_REVISED_CONSUMED.md` per §3.3 zero info loss principle.
-
-### Priority 1 ABSOLUT preserved unchanged (per CURRENT_STATE `## NEXT`)
-
-CC Opus Auth Flow §36.80 phased implementation post Daniel manual prep prerequisites:
-- Firebase Auth Console (~15 min) — authorized domains + Email Template + Google OAuth + Magic Link 24h
-- `suport@andura.app` MX forward Daniel Gmail (~15 min)
-- Privacy Policy + ToS V1 Beta validate sprint cu Claude+Gemini review (~30-60 min)
-
-### Priority 2 NEW
-
-Scenarios Coverage 1500-2000 decisions (~5-15 chat-uri strategice dedicate) — PRE-BETA BLOCKER per §69.
-
----
-
-## Test fast handover workflow (când ești pregătit)
-
-Daniel zice "fă handover" în chat curent → Claude generează artefact narrativ ~50-100 LOC → drag în `📥_inbox/` + comandă: `Update CURRENT_STATE per inbox handover` → CC ~5-10 min APPEND CURRENT_STATE + DECISION_LOG + archive + push. STOP. NU touch HANDOVER_GLOBAL deep.
-
-🦫 **Andura — chat-to-chat seamless. Zero data loss. Bugatti continuity. Quality > Speed default.** ✊
+🦫 **Audit-only complete. Zero modifications to audited files. Daniel decide post-report.**
