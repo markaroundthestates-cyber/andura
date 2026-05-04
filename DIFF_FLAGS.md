@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-04 evening (post handover ingest §56-§61 Auth Flow §36.80 RESOLUTION — HANDOVER_GLOBAL split FLAG **TRIGGERED** post-merge: **7214 LOC > 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold**, FLAG candidate active (NU ESCALATE care e >10000 LOC). Daniel decision required: plan split strategy concrete chat strategic NEW dedicat. §36.80 BUG 2 Firebase 401 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending. New Daniel pre-CC blockers raised: Firebase Console + suport@andura.app MX + Privacy/ToS validate)
+**Updated:** 2026-05-04 evening late (post handover ingest §62-§73 Auth Flow Batch 1-6 + Closure 63 sub-decisions LOCKED V1 — HANDOVER_GLOBAL split FLAG **TRIGGERED preserved** post-merge: **7664 LOC > 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold** (NU mandatory ESCALATE care e >10000 LOC). Plan thematic split per §62.2 LOCKED chat strategic NEW dedicat post-CC. NEW PRE-BETA BLOCKER: §69 Scenarios Coverage 1500-2000 decisions ~5-15 chat-uri Priority 2 NEW (acoperire actuală ~15-25%). NEW iOS REJECTED LOCKED PERMANENT (§67.10). NEW Beta launch decalare oficial Quality > Speed default (§62.7). NEW Review Division of Labor META Claude+Gemini text-heavy/legal review cross + Daniel final spot-check minim (§62.X))
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -145,31 +145,78 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split FLAG TRIGGERED (7214 LOC > 7000 threshold)
+### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split FLAG TRIGGERED (7664 LOC > 7000 threshold, post §62-§73 update)
 
-**Status:** 🟡 OPEN 2026-05-04 evening (FLAG candidate triggered, NU mandatory ESCALATE care e >10000 LOC)
+**Status:** 🟡 OPEN 2026-05-04 evening late (FLAG candidate triggered preserved, NU mandatory ESCALATE care e >10000 LOC). **Strategy LOCKED V1 per §62.2: thematic split.**
 **Severity:** P1 (vault hygiene, strict monitoring required)
 
-**Issue:** HANDOVER_GLOBAL_2026-04-30_evening.md post-merge §56-§61 ingest = **7214 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13. Threshold breached on this ingest. Daniel decision required per VAULT_RULES §VAULT_HYGIENE_PASS STEP 13 (NU auto-split, daniel decision required + careful cross-ref preservation).
+**Issue:** HANDOVER_GLOBAL_2026-04-30_evening.md post-merge §62-§73 ingest = **7664 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13. FLAG candidate triggered preserved. Cumulative growth pe pace ~250-450 LOC/ingest = ~5-9 ingest-uri future before second threshold (>10000 ESCALATE BLOCKER mandatory).
 
-**Pace tracking:** Last 3 ingest-uri added ~250-450 LOC each. Current pace = 1-2 ingest-uri future before second threshold (>10000 ESCALATE BLOCKER mandatory).
+**Strategy LOCKED V1 (per HANDOVER §62.2 chat strategic 2026-05-04 evening):**
+- **B) Thematic split** — auth/engine/onboarding fișiere separate
+- NU chronological cut, NU `__resolved__` folder dedicated
+- ~50+ wikilinks reference HANDOVER_GLOBAL §X — sweep + rewire required
+- Backup tag pre-split mandatory: `git tag pre-handover-split-2026-05-04-evening`
+- Execution chat strategic NEW dedicat post-CC Auth Flow §36.80 implementation complete (Priority 5 §71)
 
-**Action Daniel (chat strategic NEW dedicat split planning):**
-
-1. Decide split strategy options:
-   - **A) Per §-uri majore în multi-file:** keep §1-§35 base + split §36 into thematic sub-files + §37-§61 remain main file
-   - **B) Migrate older sections la archive cu cross-refs preserved:** §1-§35 → archive, keep §36+ active
-   - **C) Topic-based split:** auth → `HANDOVER_AUTH_*.md` / engines → `HANDOVER_ENGINES_*.md` / decisions → `HANDOVER_DECISIONS_*.md`
-   - **D) Defer to next ingest if Auth Flow CC implementation lands clean prior** (split post-CC)
-
-2. Cross-refs migration plan: ~50+ wikilinks reference HANDOVER_GLOBAL §X — sweep + rewire required.
-
-3. Backup tag pre-split: `git tag pre-handover-split-<date>` mandatory.
+**Action Daniel (chat strategic NEW dedicat post-CC):**
+1. Backup tag git pre-execution
+2. Identify thematic clusters (auth flow / engine #8 + periodization / onboarding / decision-cluster D1-D4 / etc)
+3. Split per cluster → separate files cu cross-refs preserved
+4. Sweep wikilinks across vault → rewire toate references
+5. INDEX_MASTER navigation refresh + DECISION_LOG cross-refs update
 
 **Cross-refs:**
 - VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13
-- HANDOVER_GLOBAL §59 DIFF_FLAGS Update (split FLAG approaching threshold)
-- §53 prior approaching warning (estimated 6900-7100, actual 7214)
+- HANDOVER_GLOBAL §59 + §62.2 (strategy LOCKED) + §72 DIFF_FLAGS Update
+- §53 prior approaching warning + §59 7214 LOC + §72 7664 LOC current
+- §71 Priority 5 HANDOVER_GLOBAL split execution post-CC Auth Flow
+
+---
+
+### P1-FLAG-SCENARIOS-COVERAGE — Scenarios 1500-2000 PRE-BETA BLOCKER (NEW per §69)
+
+**Status:** 🔴 OPEN 2026-05-04 evening late (NEW raised post §62-§73 ingest §69 PRE-BETA BLOCKER FLAG)
+**Severity:** P1 (BETA LAUNCH IMPOSIBIL fără)
+
+**Issue:** Per §42.9 LOCKED V1 testing strategy mandatory: Hibrid Property-based + Persona Suite Maria/Gigica/Marius + 4-Invariant Safety Stack. Persona simulation suite ~50-100 tests representative + edge cases curated. Coverage actuală post chat-uri Auth + ADR 026 spec + Auth Flow §36.80 + Batch 1-6 = **306 LOCKED V1** total. **Gap pre-Beta: ~1200-1700 scenarios decisions remaining.** Acoperire actuală ~15-25% scope total scenarios.
+
+**Action Daniel (Priority 2 NEW per §71, post Priority 1 ABSOLUT CC Auth Flow implementation):**
+
+1. Chat strategic dedicat enumeration scenarios (~5-15 chat-uri estimative bandwidth optimal)
+2. Per chat: ~100-150 scenarios coverage decisions LOCKED + Persona Suite curated edge cases
+3. Cross-ref §42.9 testing strategy validation real (4-Invariant Safety Stack + Persona representative)
+4. Pre-Beta blocker absolute: Beta launch IMPOSIBIL fără toate edge cases LOCKED + Persona Suite tests + invariants validated
+
+**Cross-refs:**
+- HANDOVER_GLOBAL §69 PRE-BETA BLOCKER FLAG status verbatim
+- §42.9 LOCKED V1 testing strategy
+- §70 Cumulative 306 LOCKED V1 + breakdown
+- §71 Priority 2 NEW chat-uri strategice dedicate
+- AUDIT_5000Q corpus + ONBOARDING_SSOT_V1 §10 Open Questions (existing scenarios sources)
+- Beta launch decalare Quality > Speed default §62.7 justifies timeline flexibility
+
+---
+
+### P1-FLAG-IOS-PERMANENT — iOS REJECTED LOCKED PERMANENT (NEW per §67.10)
+
+**Status:** 🟢 LOCKED V1 PERMANENT 2026-05-04 evening (memory persistent rule, NU OPEN issue — locked rule going forward)
+**Severity:** N/A (rule lock, NU pending)
+
+**Rule LOCKED V1 PERMANENT:**
+- Pre-Beta: PWA only iOS users (browser default, ~20-30% rate fail tolerated)
+- Post-Beta v1.0: NU iOS distribution
+- Post-Beta v1.5: NU iOS distribution
+- v2/v3: demand-driven only (real iOS user demand + revenue justify $99/an Apple Developer)
+
+**Distribution V1 Beta + post-Beta v1.0/v1.5:**
+- PWA installable browser
+- TWA wrap Android Play Store (per §56.10.3 contingent rate fail >30% activation)
+
+**Cross-refs:**
+- HANDOVER_GLOBAL §67.10 + §56.10 PWA strategy preserved
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 .7 verbatim
+- Memory persistent rule scope
 
 ---
 
@@ -195,4 +242,4 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift (pre-existing infra, NOT regression). P2-FLAG-1 D1-D6 superseded (D1 LOCKED V1 §50.4). HANDOVER_GLOBAL split FLAG **TRIGGERED post §56-§61 ingest 7214 LOC > 7000 threshold** — Daniel decision plan split strategie. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending (P1-FLAG-AUTH-DANIEL-PREP prerequisite). Cumulative 243 LOCKED V1 post §56-§61. ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 Faza 2 wiring spec LOCKED V1. Privacy Policy + ToS V1 Beta initial drafts created vault. Daniel action required pentru proceed cu Firebase Console + suport@andura.app MX + Privacy/ToS validate sprint pre-CC + npm install fix + ADR 026 compile 126 decisions Priority 2 post-CC + HANDOVER split strategy.**
+🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift (pre-existing infra). P2-FLAG-1 D1-D6 superseded. HANDOVER_GLOBAL split FLAG **TRIGGERED preserved post §62-§73 ingest 7664 LOC > 7000 threshold** — strategy LOCKED V1 thematic split per §62.2 chat strategic NEW dedicat post-CC Auth Flow. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending (P1-FLAG-AUTH-DANIEL-PREP prerequisite + Magic Link 24h custom config + Forward Daniel Gmail). **NEW P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER ~1200-1700 decisions remaining ~5-15 chat-uri Priority 2 strategice dedicate.** **NEW P1-FLAG-IOS-PERMANENT LOCKED V1 (PWA + TWA Android only).** Cumulative 306 LOCKED V1 post §62-§73 (+63 net Batch 1-6 + Closure). ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 + ONBOARDING §1/§8 amendments inline. Beta launch decalare oficial Quality > Speed default (Override §56.9.2 1 ian 2027). Review Division of Labor LOCKED V1 (Claude+Gemini text-heavy/legal review cross + Daniel final spot-check minim).**

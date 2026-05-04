@@ -1,8 +1,8 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-04 evening (post handover ingest §56-§61 — Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 + Privacy Policy + ToS V1 Beta initial drafts + cumulative 216 → 243)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (243 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster sub-decisions 41 net + §56 Auth Flow Resolution 35 sub-decisions Priority 1 ABSOLUT CC implementation pending)
-**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add)
+**Last updated:** 2026-05-04 evening (post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 amendments inline + ONBOARDING_SSOT_V1 §1/§8 amendments inline + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster sub-decisions 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG)
+**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add — unchanged this ingest)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
@@ -65,9 +65,18 @@ andura/
 | **ADR_MULTI_TENANT_AUTH_v1 Faza 2 LOCKED V1 spec ready CC Opus implementation Priority 1 ABSOLUT** | [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 (verbatim Faza 2 wiring spec) + [[HANDOVER_GLOBAL_2026-04-30_evening]] §56 |
 | **Privacy Policy V1 Beta initial draft (Daniel validate sprint 30-60 min pre-Beta)** | `01-vision/PRIVACY_POLICY_V1_BETA.md` (verbatim §56.8.2 LOCKED V1 template) |
 | **Terms of Service V1 Beta initial draft (Daniel validate sprint 30-60 min pre-Beta)** | `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (verbatim §56.8.3 LOCKED V1 template) |
-| **Pre-Beta launch checklist Daniel manual prep pre-CC implementation** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §56.18 (Firebase Auth Console + suport@andura.app MX) + §56.8.2 + §56.8.3 (Privacy Policy + ToS validate) |
-| **Next actions priority order post 2026-05-04 Auth Flow resolution (Priority 0/1/2/3/4/5)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §58 |
-| **Cumulative LOCKED count 243 + vault state post §56-§61 ingest + ADR 026 compile 126 decisions ready Priority 2 post-CC** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §57 |
+| **Pre-Beta launch checklist Daniel manual prep pre-CC implementation** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §56.18 (Firebase Auth Console + suport@andura.app MX) + §56.8.2 + §56.8.3 (Privacy Policy + ToS validate) + §62.1 (Forward Daniel personal Gmail) + §63.5 (Magic Link 24h custom config) + §62.X META (review division of labor Claude+Gemini) |
+| **Auth Flow Batch 1-6 + Closure 63 sub-decisions LOCKED V1 (chat strategic 2026-05-04 evening) — refinements + edge cases** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §62-§68 + [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 + [[DECISION_LOG]] (2026-05-04 evening Batch 1-6 entry) |
+| **Scenarios Coverage 1500-2000 PRE-BETA BLOCKER (NEW Priority 2 ~5-15 chat-uri strategice dedicate)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §69 + §42.9 testing strategy validation real |
+| **iOS REJECTED LOCKED PERMANENT (NEW)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §67.10 + §56.10 PWA + TWA Android only + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 .7 |
+| **Beta launch decalare oficial Quality > Speed default (NEW Override §56.9.2 1 ian 2027)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §62.7 + §36.83 META-RULE Prebeta Scope Expansion preserved |
+| **Review Division of Labor LOCKED V1 (NEW META workflow general)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §62.X (Claude + Gemini text-heavy/legal review cross + Daniel final approve spot-check minim — anti-bottleneck Daniel-time) |
+| **PRODUCT_STRATEGY_SPEC_v1 amendments inline (§5.4 Pregnancy Settings ONLY + §5.5 Eating disorder defer v1.5+ + §5.8 Heart Settings + red disclaimer + §6.1 Push V1 ZERO override + §6.5 Achievement badges scope cut V1)** | [[PRODUCT_STRATEGY_SPEC_v1]] §5.4/§5.5/§5.8/§6.1/§6.5 AMENDMENT 2026-05-04 evening |
+| **ONBOARDING_SSOT_V1 amendments inline (§1 T0 question order obiectiv-first reorder ecrane 5 + §8 Disclaimer Ecran Obiectiv UX placement post §1 reorder)** | [[ONBOARDING_SSOT_V1]] §1/§8 §AMENDMENT 2026-05-04 evening |
+| **Next actions priority order post 2026-05-04 Auth Flow Batch 1-6 (Priority 0/1/2 NEW Scenarios Coverage/3/4/5/6)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §71 |
+| **Cumulative LOCKED count 306 + vault state post §62-§73 ingest + ADR 026 compile 126 decisions ready Priority 3 post-CC** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §70 |
+| **Next actions priority order post 2026-05-04 Auth Flow resolution (Priority 0/1/2/3/4/5 — superseded by §71 Batch 1-6)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §58 |
+| **Cumulative LOCKED count 243 + vault state post §56-§61 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §57 |
 | **Next actions priority order post 2026-05-05 morning ingest (Priority 0/1/2/3/4/5 — superseded by 2026-05-04 evening Auth)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §52 |
 | **Cumulative LOCKED count 216 + vault state post §50-§55 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §51 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
@@ -192,6 +201,20 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 - **DECISION_LOG +10 entries** ADR 026 §42.1-§42.10 LOCKED V1 (top of file, cronologic descending)
 - **HANDOVER_GLOBAL split FLAG check:** post-merge ~6200-6300 LOC (pre-merge 6058 + ~150-200 added §41-§44). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered
 
+### 2026-05-04 evening late (handover ingest §62-§73 — Auth Flow Batch 1-6 + Closure 63 sub-decisions LOCKED V1)
+- **New handover:** `HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED.md` archived `📤_outbox/_archive/2026-05/131_HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED_CONSUMED.md`
+- **§62-§68 Batch 1-6 + Closure 63 sub-decisions LOCKED V1** acoperind Architecture/Process + Onboarding/Conversion + Auth Edge Cases/Privacy + Engine #8 + Periodization + RPE/RIR + Beta Mechanics + Safety/Compliance/Distribution + UX Refinements
+- **§69 Scenarios Coverage 1500-2000 PRE-BETA BLOCKER NEW** — Priority 2 chat-uri strategice ~5-15 dedicate. Beta launch IMPOSIBIL fără.
+- **§70 Cumulative LOCKED 243 → 306** (+63 substantive net post-overlap)
+- **§71 Priority order updated** — P0/P1 ABSOLUT/P2 NEW Scenarios Coverage/P3 ADR 026 compile/P4 Periodization spec/P5 HANDOVER split execution/P6 long-term
+- **§72 DIFF_FLAGS** — iOS REJECTED PERMANENT NEW + Scenarios Coverage PRE-BETA BLOCKER NEW + Beta launch decalare Quality>Speed default + Review Division of Labor META
+- **§73 Cross-refs comprehensive** — ADR_MULTI_TENANT_AUTH_v1 +10 amendments inline + ADR 014/017/025 preserved + PRODUCT_STRATEGY +5 amendments inline + ONBOARDING +2 amendments inline
+- **ADR_MULTI_TENANT_AUTH_v1.md §AMENDMENT 2026-05-04 evening BATCH 1-6** appended (10 sub-amendments .1-.10: Magic Link 24h + email educativ + soft-hint UI + session NEVER + telemetry ZERO toggle + SW update prompt + iOS PERMANENT + email change new only + deletion 2-step ȘTERGE + GDPR Article 20 defer)
+- **PRODUCT_STRATEGY_SPEC_v1 amendments inline:** §5.4 Pregnancy Settings ONLY + §5.5 Eating disorder defer v1.5+ + §5.8 Heart condition Settings + red disclaimer B-clarified + §6.1 Push V1 ZERO override + §6.5 Achievement badges scope cut V1 NU revoke pillar
+- **ONBOARDING_SSOT_V1 amendments inline:** §1 T0 question order obiectiv-first reorder 5 ecrane (Obiectiv → Vârstă → Sex → Istoric medical → Frecvență) + §8 Disclaimer Ecran Obiectiv UX placement post §1 reorder
+- **DECISION_LOG +1 condensed entry** referencing HANDOVER §62-§68 verbatim (top of file, cronologic descending)
+- **HANDOVER_GLOBAL split FLAG check:** post-merge **7664 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13 — FLAG TRIGGERED preserved (NU mandatory ESCALATE care e >10000). Plan thematic split chat strategic NEW dedicat post-CC Auth Flow (per §62.2)
+
 ### 2026-05-04 evening (handover ingest §56-§61 — Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1)
 - **New handover:** `HANDOVER_2026-05-04_AUTH_FLOW_36_80_RESOLUTION_LOCKED.md` archived `📤_outbox/_archive/2026-05/128_HANDOVER_2026-05-04_AUTH_FLOW_36_80_RESOLUTION_LOCKED_CONSUMED.md`
 - **§56 Auth Flow §36.80 BUG 2 Resolution 35 sub-decisions LOCKED V1** (chat strategic 2026-05-04 evening Daniel + Claude push-back validated multiple iterations)
@@ -227,4 +250,4 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 
 ---
 
-🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 243 LOCKED post §56-§61 Auth Flow ingest. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC Opus implementation pending. ADR 026 compile 126 decisions ready chat NEW Priority 2 post-CC. HANDOVER_GLOBAL split FLAG TRIGGERED 7214>7000 LOC — plan split strategie. Andura needs to be the best. ✊**
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 306 LOCKED post §62-§73 Auth Flow Batch 1-6 + Closure ingest. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC Opus implementation pending phased per §62.3. ADR 026 compile 126 decisions ready chat NEW Priority 3 post-CC + Scenarios Coverage. Scenarios Coverage 1500-2000 NEW Priority 2 PRE-BETA BLOCKER ~5-15 chat-uri strategice. iOS REJECTED LOCKED PERMANENT. Beta launch decalare oficial Quality > Speed default. HANDOVER_GLOBAL split FLAG TRIGGERED 7664>7000 LOC — plan thematic split per §62.2. Andura needs to be the best. ✊**
