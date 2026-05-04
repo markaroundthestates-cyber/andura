@@ -2,7 +2,7 @@
 
 **Status:** Accepted (schema extended 2026-04-26)
 **Date:** 2026-04-25 (extended 2026-04-26)
-**See also:** [[DECISION_LOG]] | [[009-calibration-tiers]] | [[006-tier-storage-for-logs]] | [[004-rule-engine-numeric-priorities]] | [[OPUS_NUCLEAR_AUDIT_25APR]] | [[FINDINGS_MASTER]] (H30c) | [[013-auto-aggression-detection]] | [[014-onboarding-profile-typing]]
+**See also:** [[DECISION_LOG]] | [[009-calibration-tiers]] | [[006-tier-storage-for-logs]] | [[004-rule-engine-numeric-priorities]] | OPUS_NUCLEAR_AUDIT_25APR (audit closed, content absorbed) | [[FINDINGS_MASTER]] (H30c) | [[013-auto-aggression-detection]] | [[014-onboarding-profile-typing]]
 
 ---
 

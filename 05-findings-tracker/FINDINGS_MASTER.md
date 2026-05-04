@@ -164,7 +164,7 @@ npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integra
 **Fix:** Banner acum sourced din `ctx.patterns` (CDL via `analyzeFromCDL`). Suppression când `realCDLCount < 3`. False "Marți 88% skip rate" no longer reproducible.  
 **ADR:** 011 — Coach Decision Log as architectural primitive  
 **Note:** `applied-patterns` storage key încă există în patternLearning.js pending caller cleanup + Daniel sign-off (TASK #30.9 deferred). Nu afectează H30c closure — bannerul este CDL-sourced.  
-**QA context:** [[QA_MANUAL_24APR_2230]], [[QA_MANUAL_25APR_POSTFIX]] (confirmat reproducibil pre-fix)  
+**QA context:** QA_MANUAL_24APR_2230 (closed), QA_MANUAL_25APR_POSTFIX (closed) (confirmat reproducibil pre-fix)  
 **Commits:** TASK #30.8 (renderIdle CDL banner) + #30.8.1 (ctx.patterns CDL unification)
 
 ### 🟢 H31c — Full Reset incomplet (FIXED Task #27)
@@ -218,7 +218,7 @@ npx playwright test tests/e2e/scenarios/calibration-ui.spec.js:193 tests/integra
 | 🟡 PARTIAL FIX | 1 (SF-B Memory Paradox hotfix shipped, full T&B deferred) |
 | ⚪ WONTFIX | 0 |
 
-**Ultima sesiune QA:** 25 apr 2026 — [[QA_MANUAL_25APR_POSTFIX]]
+**Ultima sesiune QA:** 25 apr 2026 — QA_MANUAL_25APR_POSTFIX (closed)
 **Ultima sesiune dev:** 2 mai 2026 — Sprint 4.x Batch B (Auth Migration Faza 1 + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring) — 1110/1110 tests, +155 net
 **Next sprint:** Daniel publish Firebase rules post-Auth dogfood + dedicated T&B Faza 1+2 batch (SF-B) + Vite build optimization (SF-E)
 

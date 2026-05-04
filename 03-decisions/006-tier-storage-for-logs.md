@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
-**See also:** [[DECISION_LOG]] | [[LOG_SCHEMA_AUDIT_1_3]] | [[001-local-first-storage]] | [[FIREBASE_AUDIT_1_8]]
+**See also:** [[DECISION_LOG]] | LOG_SCHEMA_AUDIT_1_3 (closed) | [[001-local-first-storage]] | FIREBASE_AUDIT_1_8 (audit closed, content absorbed în ADRs)
 
 ## Context
 

@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
-**See also:** [[DECISION_LOG]] | [[ENGINE_ARCHITECTURE]] | [[004-rule-engine-numeric-priorities]]
+**See also:** [[DECISION_LOG]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[004-rule-engine-numeric-priorities]]
 
 ## Context
 

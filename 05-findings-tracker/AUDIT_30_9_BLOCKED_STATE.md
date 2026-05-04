@@ -98,6 +98,6 @@ Per EXEC_QUEUE TASK #30.9 spec:
 
 ## Referințe
 
-- [[EXEC_QUEUE]] TASK #30.9 — spec complet
+- 📤_outbox/ workflow (per VAULT_RULES §3.5 dropzone protocol) TASK #30.9 — spec complet
 - [[011-coach-decision-log-architecture]] — ADR 011, CDL contract
-- [[AUTONOMOUS_RUN_2026-04-26]] — pre-flight gate failure details
+- AUTONOMOUS_RUN_2026-04-26 (sesiune raport, content în git history) — pre-flight gate failure details

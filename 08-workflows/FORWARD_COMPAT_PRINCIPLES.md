@@ -3,7 +3,7 @@
 **Created:** 25 Apr 2026
 **Owner:** Daniel
 **Status:** ACTIVE — applies to all code, all decisions, all documentation
-**Related:** [[MODEL_UPGRADE_AUDIT_PROTOCOL]] | [[ENGINE_ARCHITECTURE]] | [[010-no-anthropic-trademark-public]]
+**Related:** [[MODEL_UPGRADE_AUDIT_PROTOCOL]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[010-no-anthropic-trademark-public]]
 
 ---
 
@@ -206,7 +206,7 @@ Each exception goes in DECISION_LOG with rationale. Future audit decides if exce
 ## RELATIONSHIP WITH OTHER DOCS
 
 - [[MODEL_UPGRADE_AUDIT_PROTOCOL]] — this principles doc says HOW to write code that survives audit. The protocol doc says WHAT to do when audit triggers.
-- [[ENGINE_ARCHITECTURE]] — concrete implementation following these principles
+- [[COGNITIVE_ARCHITECTURE_SPEC_v1]] — concrete implementation following these principles
 - [[010-no-anthropic-trademark-public]] — vendor independence in branding (extends Principle 9)
 - [[DECISION_LOG]] — each ADR follows Principle 1
 

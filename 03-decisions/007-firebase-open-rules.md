@@ -2,7 +2,7 @@
 
 **Status:** Accepted (amended 2026-05-02 — see §AMENDMENT 2026-05-02 — `database.rules.json` LOCKED schema landed pre-launch + Auth migration prerequisite documented).
 **Date:** 2026-04-23
-**See also:** [[DECISION_LOG]] | [[FIREBASE_AUDIT_1_8]] | [[001-local-first-storage]] | [[002-firebase-rest-not-sdk]] | [[ADR_MULTI_TENANT_AUTH_v1]] | [[HANDOVER_GLOBAL_2026-04-30_evening]] §34.2
+**See also:** [[DECISION_LOG]] | FIREBASE_AUDIT_1_8 (audit closed, content absorbed în ADRs) | [[001-local-first-storage]] | [[002-firebase-rest-not-sdk]] | [[ADR_MULTI_TENANT_AUTH_v1]] | [[HANDOVER_GLOBAL_2026-04-30_evening]] §34.2
 
 ## Context
 

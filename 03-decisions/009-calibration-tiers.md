@@ -1,6 +1,6 @@
 # 009. Calibration Tiers for User Maturity
 
-**See also:** [[DECISION_LOG]] | [[CTX_ALLLOGS_AUDIT_1_5]] | [[ENGINE_ARCHITECTURE]] | [[003-double-progression-engine]]
+**See also:** [[DECISION_LOG]] | CTX_ALLLOGS_AUDIT_1_5 (audit closed) | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[003-double-progression-engine]]
 
 ## Status
 Accepted (amended 2026-04-30 — see §AMENDMENT 2026-04-30 below for SSOT clarification: this ADR's 5-level system is the **`calibration_confidence`** axis. The orthogonal **`engine_tier`** axis (T0/T1/T2 — voice weighting, Cognitive Arch R8/Q15) is a separate dimension. **D1 routing 2026-04-30 evening RESOLVED: ADD DEVELOPING tier → canonical 6-tier (COLD_START → INITIAL → DEVELOPING → PERSONALIZING → PERSONALIZED → OPTIMIZED). Sprint 4 implementation ~8-12h.** §Decision table below = active code 5-tier pre-D1; canonical post-D1 6-tier in §AMENDMENT §Migration Plan §Sprint 2 #1 RESOLVED block.)

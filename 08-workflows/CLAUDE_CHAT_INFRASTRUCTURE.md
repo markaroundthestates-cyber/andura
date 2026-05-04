@@ -263,10 +263,10 @@ These were considered and rejected during 25 Apr 2026 setup session:
 
 ## RELATED DOCS
 
-- [[OBSIDIAN_SETUP_GUIDE]] — how vault is structured + graph view colors
-- [[VAULT_SYNC_DIAGNOSTIC]] — earlier diagnostic from initial setup
-- [[VAULT_CONSOLIDATION_GUIDE]] — how vault was consolidated with code repo
-- [[ASYNC_EXECUTION_PROTOCOL]] — queue-based workflow between Daniel + Claude Code
+- OBSIDIAN_SETUP_GUIDE (Obsidian dropped per HANDOVER §7.6) — how vault is structured + graph view colors
+- VAULT_SYNC_DIAGNOSTIC (closed) — earlier diagnostic from initial setup
+- VAULT_CONSOLIDATION_GUIDE (consolidated into VAULT_RULES.md) — how vault was consolidated with code repo
+- ASYNC_EXECUTION_PROTOCOL (workflow obsolete post-cleanup 2026-04-30) — queue-based workflow between Daniel + Claude Code
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2026-04-23
-**See also:** [[DECISION_LOG]] | [[FIREBASE_AUDIT_1_8]] | [[007-firebase-open-rules]]
+**See also:** [[DECISION_LOG]] | FIREBASE_AUDIT_1_8 (audit closed, content absorbed în ADRs) | [[007-firebase-open-rules]]
 
 ## Context
 

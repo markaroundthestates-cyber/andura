@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-04-27
-**See also:** [[DECISION_LOG]] | [[GETBF_DEAD_CODE_FINDING_2026-04-27]]
+**See also:** [[DECISION_LOG]] | GETBF_DEAD_CODE_FINDING_2026-04-27 (closed)
 
 ---
 

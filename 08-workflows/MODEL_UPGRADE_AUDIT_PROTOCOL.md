@@ -3,7 +3,7 @@
 **Created:** 25 Apr 2026
 **Owner:** Daniel
 **Status:** ACTIVE — mandatory at every triggering event
-**Related:** [[FORWARD_COMPAT_PRINCIPLES]] | [[OPUS_NUCLEAR_AUDIT_25APR]] (template reference)
+**Related:** [[FORWARD_COMPAT_PRINCIPLES]] | OPUS_NUCLEAR_AUDIT_25APR (audit closed, content absorbed) (template reference)
 
 ---
 
@@ -184,7 +184,7 @@ Cannot defer indefinitely. After 30 days, audit becomes mandatory regardless of 
 
 | Date | Trigger | Auditor | Verdict | Reference |
 |------|---------|---------|---------|-----------|
-| 25 Apr 2026 | Manual (pre-launch hardening) | Opus 4.7 | FAIL | [[OPUS_NUCLEAR_AUDIT_25APR]] |
+| 25 Apr 2026 | Manual (pre-launch hardening) | Opus 4.7 | FAIL | OPUS_NUCLEAR_AUDIT_25APR (audit closed, content absorbed) |
 | (future) | Opus 5 release (TBD) | Opus 5 | (TBD) | (TBD) |
 
 ---

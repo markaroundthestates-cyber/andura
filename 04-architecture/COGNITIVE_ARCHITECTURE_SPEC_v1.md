@@ -6,7 +6,7 @@
 **Session duration:** ~2 ore intensive articulation
 **Total puncte arhitecturale:** 75 (27 reguli ARBITRATION + 8 sub-decisions + 3 ADR sub-sections + 21 architecture questions + 16 systemic boundary questions)
 
-**See also:** [[018-engine-extensibility-architecture]] | [[ENGINE_ARCHITECTURE]] | [[INSIGHTS_BACKLOG]] | [[DECISION_LOG]] | [[009-calibration-tiers]] §AMENDMENT 2026-04-30
+**See also:** [[018-engine-extensibility-architecture]] | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] | [[INSIGHTS_BACKLOG]] | [[DECISION_LOG]] | [[009-calibration-tiers]] §AMENDMENT 2026-04-30
 
 > **Tier nomenclature SSOT (per [[009-calibration-tiers]] §AMENDMENT 2026-04-30):** Acest spec folosește două axe ortogonale.
 > - **`engine_tier`** (T0 / T1 / T2) = data volume axis. Controlează voice weighting (R8, Q15).
