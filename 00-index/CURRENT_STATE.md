@@ -117,12 +117,14 @@ Per §69.1 PRE-BETA BLOCKER. Estimate ~5-15 chat-uri dedicate. Beta launch IMPOS
 
 ## ACTIVE_REFS — HANDOVER_GLOBAL sections to deep-read
 
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §62-§73 (Batch 1-6 + Closure most recent, lines 7216-7700)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §56-§61 (Auth Flow §36.80 35 sub-decisions resolution, lines 6776-7215)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §50 (D3.1+D4+D2+D1 D-cluster sub-decisions 41 net, lines 6447-6750)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §47 (Alignment Questions Generation Rule LOCKED V1 — search-driven STRICT, DEPRECATED pre-fed verbatim)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §41-§45 (Vault Hygiene Sprint COMPLETE + ADR 026 spec session 75 decisions)
-- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.99-§36.107 (offline coaching tree + 7→8 prescriptive engines + D2/D3 OPENED FOR DISCUSSION)
+Section pointers only (NU line numbers — go stale at every HANDOVER edit, navigate via heading `## §X`):
+
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §62-§73 — Batch 1-6 + Closure most recent (cumulative 306)
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §56-§61 — Auth Flow §36.80 35 sub-decisions resolution (cumulative 243)
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §50 — D3.1+D4+D2+D1 D-cluster sub-decisions 41 net (cumulative 216)
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §47 — Alignment Questions Generation Rule LOCKED V1 (search-driven STRICT, DEPRECATED pre-fed verbatim)
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §41-§45 — Vault Hygiene Sprint COMPLETE + ADR 026 spec session 75 decisions
+- `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.99-§36.107 — offline coaching tree + 7→8 prescriptive engines + D2/D3 OPENED FOR DISCUSSION
 
 ---
 

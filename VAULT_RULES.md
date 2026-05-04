@@ -569,8 +569,13 @@ Continuăm?
 - `## ACTIVE_REFS` — HANDOVER_GLOBAL sections to deep-read for current topics
 - `## ACTIVE_ADRS` — top ADRs to deep-read
 - `## ACTIVE_FLAGS` — DIFF_FLAGS.md P1 status (mirror, NU duplicate canonical state)
-- `## RECENT` — older `NOW` content moved here (truncate to HANDOVER_GLOBAL deep când >50 LOC)
+- `## RECENT` — **active conversation context (typically last 3-7 days cronologic)**, older `NOW` content moved here. Truncate to HANDOVER_GLOBAL deep când section >50 LOC.
 - `## POINTERS` — deep history drill-down pointers
+
+**Scope discipline (AMENDMENT 2026-05-04 evening late post verification audit):**
+- ## RECENT = **active context only**, NU full DECISION_LOG mirror. Older entries (foundational decisions, stable historical state pre last ~7 days) pointed via ## POINTERS → `03-decisions/DECISION_LOG.md` full + `06-sessions-log/HANDOVER_GLOBAL_*.md` deep archive.
+- Truncate threshold 50 LOC enforces this discipline mechanic — when ## RECENT exceeds 50 LOC, oldest entries migrate to HANDOVER_GLOBAL deep (already archived natural via ingest), NU ## RECENT expansion.
+- Cumulative LOCKED count tracking is the boundary signal: entries cu cumulative count active = ## JUST_DECIDED (newest) + ## RECENT (last 3-7 days); entries pre-tracking-system = ## POINTERS only.
 
 **Edit semantics (canonical):**
 - New conversation thread → APPEND la `## JUST DECIDED` top + UPDATE `## NOW` în-place cu thread curent + MOVE precedent `## NOW` content la TOP `## RECENT` (NU overwrite, NU delete)
