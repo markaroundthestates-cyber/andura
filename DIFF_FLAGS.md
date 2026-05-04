@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-05 morning (post handover ingest §50-§55 — HANDOVER_GLOBAL split FLAG threshold check post-merge: **6774 LOC** < 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold, NU triggered yet but ~226 LOC headroom = **1-2 ingest-uri future before threshold breach**. Recommend monitor strictly + plan split strategy concrete in chat strategic NEW dedicat. D3.1.6 + D4 NEW + D2.3 + Engine #8 NEW flagged in INDEX_MASTER)
+**Updated:** 2026-05-04 evening (post handover ingest §56-§61 Auth Flow §36.80 RESOLUTION — HANDOVER_GLOBAL split FLAG **TRIGGERED** post-merge: **7214 LOC > 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold**, FLAG candidate active (NU ESCALATE care e >10000 LOC). Daniel decision required: plan split strategy concrete chat strategic NEW dedicat. §36.80 BUG 2 Firebase 401 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending. New Daniel pre-CC blockers raised: Firebase Console + suport@andura.app MX + Privacy/ToS validate)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -113,10 +113,86 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-## RESOLVED (audit trail)
+## P1 NEW (Pre-CC Implementation Daniel Manual Prep — Auth Flow §36.80)
 
-(none yet — DIFF_FLAGS.md created 2026-05-03 audit total ingest)
+### P1-FLAG-AUTH-DANIEL-PREP — Daniel manual prep prerequisites pre-CC Auth Flow §36.80 implementation
+
+**Status:** 🟡 OPEN 2026-05-04 evening (raised post Auth Flow §36.80 chat strategic resolution §56)
+**Severity:** P1 (blocks CC Opus Auth Flow §36.80 implementation Priority 1 ABSOLUT)
+
+**Issue:** Auth Flow §36.80 CC Opus implementation Priority 1 ABSOLUT requires Daniel manual prerequisites prep before CC autonomous run can start. 3 manual tasks identified locked in §56.18 + §56.8.2 + §56.8.3.
+
+**Action Daniel (sequential pre-CC):**
+
+1. **Firebase Auth Console setup** §56.18.1 (~15 min):
+   - Authorized domains: add `andura.app` în lista
+   - Email Template Magic Link RO: subject "Link-ul tău de acces în Andura" + body brand Andura
+   - Google OAuth Client ID: generate Google Cloud Console + paste Firebase Auth Google Provider
+   - Action URL: `https://andura.app/auth-callback`
+
+2. **Email infrastructure `suport@andura.app`** §56.18.2 (~15 min):
+   - MX records Namecheap → forward Daniel personal email (gmail/yahoo)
+   - Alternative: Google Workspace ($6/lună/user) sau temp `andura.suport@gmail.com` pre-Beta
+
+3. **Privacy Policy + ToS V1 Beta validate sprint** §56.8.2 + §56.8.3 (~30-60 min):
+   - Initial drafts created vault: `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (verbatim from LOCKED V1 templates)
+   - Daniel review + minor adjustments + lock final V1 Beta
+
+**Cross-refs:**
+- HANDOVER_GLOBAL §56.18 Daniel Manual Setup + §56.8.2/3 templates LOCKED V1
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04.18 + 2026-05-04.8
+- §58 Priority 1 ABSOLUT CC Opus Auth Flow implementation (~30-45 min CC autonomous post-Daniel-prep)
 
 ---
 
-🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift raised 2026-05-04 (pre-existing infra, NOT regression). P2-FLAG-1 D1-D6 decision points pending. HANDOVER_GLOBAL split FLAG threshold check post §50-§55 ingest (**6774 LOC < 7000 LOC threshold, NU triggered yet, ~226 LOC headroom = 1-2 ingest-uri future before breach** — recommend monitor strictly + plan split concrete chat strategic NEW dedicat). D1/D2/D3.1/D4 OPENED → LOCKED V1 (§50 D-cluster sub-decisions 41 net). D3.2-D3.4 + Engine #8 sub-decisions deferred Priority 4. Daniel action required pentru proceed cu ADR 023 implementation + audit total cleanup batches + npm install fix + ADR 026 compile draft full 126 decisions Priority 2 chat NEW + Periodization Engine spec generation start per dimension cross-persona Q30.**
+### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split FLAG TRIGGERED (7214 LOC > 7000 threshold)
+
+**Status:** 🟡 OPEN 2026-05-04 evening (FLAG candidate triggered, NU mandatory ESCALATE care e >10000 LOC)
+**Severity:** P1 (vault hygiene, strict monitoring required)
+
+**Issue:** HANDOVER_GLOBAL_2026-04-30_evening.md post-merge §56-§61 ingest = **7214 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13. Threshold breached on this ingest. Daniel decision required per VAULT_RULES §VAULT_HYGIENE_PASS STEP 13 (NU auto-split, daniel decision required + careful cross-ref preservation).
+
+**Pace tracking:** Last 3 ingest-uri added ~250-450 LOC each. Current pace = 1-2 ingest-uri future before second threshold (>10000 ESCALATE BLOCKER mandatory).
+
+**Action Daniel (chat strategic NEW dedicat split planning):**
+
+1. Decide split strategy options:
+   - **A) Per §-uri majore în multi-file:** keep §1-§35 base + split §36 into thematic sub-files + §37-§61 remain main file
+   - **B) Migrate older sections la archive cu cross-refs preserved:** §1-§35 → archive, keep §36+ active
+   - **C) Topic-based split:** auth → `HANDOVER_AUTH_*.md` / engines → `HANDOVER_ENGINES_*.md` / decisions → `HANDOVER_DECISIONS_*.md`
+   - **D) Defer to next ingest if Auth Flow CC implementation lands clean prior** (split post-CC)
+
+2. Cross-refs migration plan: ~50+ wikilinks reference HANDOVER_GLOBAL §X — sweep + rewire required.
+
+3. Backup tag pre-split: `git tag pre-handover-split-<date>` mandatory.
+
+**Cross-refs:**
+- VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13
+- HANDOVER_GLOBAL §59 DIFF_FLAGS Update (split FLAG approaching threshold)
+- §53 prior approaching warning (estimated 6900-7100, actual 7214)
+
+---
+
+## RESOLVED (audit trail)
+
+### §36.80 BUG 2 Firebase 401 — RESOLVED chat strategic 2026-05-04 evening (CC implementation pending Priority 1 ABSOLUT)
+
+**Status:** ✅ RESOLVED chat strategic (CC Opus implementation pending P1-FLAG-AUTH-DANIEL-PREP prerequisite)
+**Resolution:** Chat strategic 2026-05-04 evening Daniel + Claude — 35 substantive sub-decisions LOCKED V1 acoperind code-level fix `getUserPath()=null` mode Anonymous + 18 alte concerns auth flow integration. Cumulative 216 → 243 LOCKED V1.
+
+**Root cause:** `getUserPath()` returnează `'users/daniel'` literal când `getAuthState()=null` → DB Rules per-UID strict §36.75 BLOCHEAZĂ → 401 cycle infinit.
+
+**Fix LOCKED V1 (§56.1.3):** Mode Anonymous (`getAuthState() === null`) → `getUserPath()` returnează **obligatoriu `null`** (NU fallback hardcodat `LEGACY_USER_PATH = 'users/daniel'`). Toate apelurile Firebase API blocate când path null → app rulează exclusiv local IndexedDB. Bucla 401 eliminată mecanic.
+
+**CC Implementation pending:** ~30-45 min CC autonomous factor 7-9x clusters mari (~10 fișiere `firebase.js` + `auth.js` + `pages/auth.js` + `index.html` + `main.js` + `_migration` flow + `_deleted` lifecycle + `_archived/` archive flow + IndexedDB namespace per UID + Firestore rules update + wording RO LOCKED + Playwright e2e + `admin-cleanup.js` script + setup Daniel runbook documentation).
+
+**Cross-refs:**
+- HANDOVER_GLOBAL §36.80 BUG 2 (origin) + §56.1-§56.19 (resolution full spec) + §57-§61
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 (Faza 2 wiring spec LOCKED V1 inline 19 sub-sections)
+- DECISION_LOG 2026-05-04 evening entry
+- P1-FLAG-AUTH-DANIEL-PREP (above) — prerequisite Daniel manual prep pre-CC
+- 01-vision/PRIVACY_POLICY_V1_BETA.md + 01-vision/TERMS_OF_SERVICE_V1_BETA.md (initial drafts created)
+
+---
+
+🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift (pre-existing infra, NOT regression). P2-FLAG-1 D1-D6 superseded (D1 LOCKED V1 §50.4). HANDOVER_GLOBAL split FLAG **TRIGGERED post §56-§61 ingest 7214 LOC > 7000 threshold** — Daniel decision plan split strategie. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending (P1-FLAG-AUTH-DANIEL-PREP prerequisite). Cumulative 243 LOCKED V1 post §56-§61. ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 Faza 2 wiring spec LOCKED V1. Privacy Policy + ToS V1 Beta initial drafts created vault. Daniel action required pentru proceed cu Firebase Console + suport@andura.app MX + Privacy/ToS validate sprint pre-CC + npm install fix + ADR 026 compile 126 decisions Priority 2 post-CC + HANDOVER split strategy.**

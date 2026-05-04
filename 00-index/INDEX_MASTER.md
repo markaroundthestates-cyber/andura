@@ -1,8 +1,8 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-05 morning (post handover ingest §50-§55 — D3.1 + D4 NEW + D2 + D1 SUB-DECISIONS LOCKED V1 41 net + cumulative 175 → 216 + ADR 026 compile 126 decisions ready)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (216 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster sub-decisions 41 net + §51-§55)
-**Stats:** 66 fișiere active vault (post-stubs G + UNREFERENCED moves F)
+**Last updated:** 2026-05-04 evening (post handover ingest §56-§61 — Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 + Privacy Policy + ToS V1 Beta initial drafts + cumulative 216 → 243)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (243 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster sub-decisions 41 net + §56 Auth Flow Resolution 35 sub-decisions Priority 1 ABSOLUT CC implementation pending)
+**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
@@ -60,8 +60,16 @@ andura/
 | **D4 NEW Mid-Session Resume Protocol LOCKED V1 (10 Q + D4.2.1 NEW threshold 6h Recuperabilă/Abandonată)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §50.2 (§50.2.1-§50.2.11) |
 | **D2 Injury/Contraindication Mapping SUB-DECISIONS LOCKED V1 (10 Q + D2.3 Medical Database NSCA+ACSM + 5th invariant Medical Safety + "Mă doare" button distinct)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §50.3 (§50.3.1-§50.3.13) |
 | **D1 Save the Week Silent SUB-DECISIONS LOCKED V1 (7 Q + naming distinction Circuit Breaker 5% vs User adaptation 50%)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §50.4 (§50.4.1-§50.4.7) |
-| **Next actions priority order post 2026-05-05 morning ingest (Priority 0/1/2/3/4/5)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §52 |
-| **Cumulative LOCKED count 216 + vault state post §50-§55 ingest + ADR 026 compile 126 decisions ready** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §51 |
+| **Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1 (chat strategic 2026-05-04 evening) — Priority 1 ABSOLUT CC implementation pending** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §56 (§56.1-§56.19) + [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 + [[DECISION_LOG]] (2026-05-04 evening entry) |
+| **§36.80 BUG 2 Firebase 401 status: ✅ RESOLVED chat strategic (CC implementation pending Priority 1 ABSOLUT)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.80 + §56 + [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 |
+| **ADR_MULTI_TENANT_AUTH_v1 Faza 2 LOCKED V1 spec ready CC Opus implementation Priority 1 ABSOLUT** | [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 (verbatim Faza 2 wiring spec) + [[HANDOVER_GLOBAL_2026-04-30_evening]] §56 |
+| **Privacy Policy V1 Beta initial draft (Daniel validate sprint 30-60 min pre-Beta)** | `01-vision/PRIVACY_POLICY_V1_BETA.md` (verbatim §56.8.2 LOCKED V1 template) |
+| **Terms of Service V1 Beta initial draft (Daniel validate sprint 30-60 min pre-Beta)** | `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (verbatim §56.8.3 LOCKED V1 template) |
+| **Pre-Beta launch checklist Daniel manual prep pre-CC implementation** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §56.18 (Firebase Auth Console + suport@andura.app MX) + §56.8.2 + §56.8.3 (Privacy Policy + ToS validate) |
+| **Next actions priority order post 2026-05-04 Auth Flow resolution (Priority 0/1/2/3/4/5)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §58 |
+| **Cumulative LOCKED count 243 + vault state post §56-§61 ingest + ADR 026 compile 126 decisions ready Priority 2 post-CC** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §57 |
+| **Next actions priority order post 2026-05-05 morning ingest (Priority 0/1/2/3/4/5 — superseded by 2026-05-04 evening Auth)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §52 |
+| **Cumulative LOCKED count 216 + vault state post §50-§55 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §51 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
 | **ADR-uri active 001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named** | `03-decisions/` |
 | **Storage Tiering Strategy (Tier 0/1/2 + Dexie)** | [[020-storage-tiering-strategy]] |
@@ -184,6 +192,18 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 - **DECISION_LOG +10 entries** ADR 026 §42.1-§42.10 LOCKED V1 (top of file, cronologic descending)
 - **HANDOVER_GLOBAL split FLAG check:** post-merge ~6200-6300 LOC (pre-merge 6058 + ~150-200 added §41-§44). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered
 
+### 2026-05-04 evening (handover ingest §56-§61 — Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1)
+- **New handover:** `HANDOVER_2026-05-04_AUTH_FLOW_36_80_RESOLUTION_LOCKED.md` archived `📤_outbox/_archive/2026-05/128_HANDOVER_2026-05-04_AUTH_FLOW_36_80_RESOLUTION_LOCKED_CONSUMED.md`
+- **§56 Auth Flow §36.80 BUG 2 Resolution 35 sub-decisions LOCKED V1** (chat strategic 2026-05-04 evening Daniel + Claude push-back validated multiple iterations)
+- **Root cause confirmed:** `getUserPath()` returnează `'users/daniel'` literal când `getAuthState()=null` → DB Rules per-UID strict §36.75 BLOCHEAZĂ → 401 cycle infinit. Fix LOCKED §56.1.3: `getUserPath()` returnează **obligatoriu `null`** mode Anonymous → app rulează exclusiv local IndexedDB → bucla 401 eliminată mecanic
+- **Cumulative LOCKED count:** 216 → **243** (+27 substantive net post-overlap, 35 raw sub-decisions across §56.1-§56.19)
+- **§38 Decision Points table updates:** §36.80 BUG 2 OPEN → ✅ **RESOLVED chat strategic** (CC implementation pending Priority 1 ABSOLUT)
+- **ADR_MULTI_TENANT_AUTH_v1.md §AMENDMENT 2026-05-04 inline** appended (Faza 2 wiring spec LOCKED V1 verbatim 19 sub-sections cross-ref §56.1-§56.19)
+- **Privacy Policy + ToS V1 Beta initial drafts created vault:** `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (verbatim §56.8.2/3 LOCKED V1 templates, Daniel validate sprint 30-60 min pre-Beta)
+- **DECISION_LOG +1 condensed entry** referencing HANDOVER_GLOBAL §56.1-§56.19 verbatim (top of file, cronologic descending)
+- **HANDOVER_GLOBAL split FLAG TRIGGERED:** post-merge **7214 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13 — FLAG candidate triggered (NU mandatory ESCALATE care e >10000). Daniel decision required: plan split strategy concrete chat strategic NEW dedicat
+- **Daniel manual prep prerequisites pre-CC implementation:** Firebase Auth Console (~15 min) + `suport@andura.app` MX forward (~15 min) + Privacy Policy + ToS validate sprint (~30-60 min)
+
 ### 2026-05-05 morning (handover ingest §50-§55 — D3.1 + D4 NEW + D2 + D1 SUB-DECISIONS LOCKED V1)
 - **New handover:** `HANDOVER_2026-05-05_morning_D3_D4_D2_D1_SUB_DECISIONS_LOCKED.md` archived `📤_outbox/_archive/2026-05/125_HANDOVER_2026-05-05_morning_D3_D4_D2_D1_SUB_DECISIONS_LOCKED_CONSUMED.md`
 - **§50.1 D3.1 Buton "Nu vreau" SUB-DECISIONS LOCKED V1** 13 sub-decisions (10 Q + 3 refinements) — Firestore sync blacklist + Hard Cap re-roll 7 încercări + Lock substitute intra-mesociclu cu Unlock muscle-group-level + Settings list unblock + D3.1.6 NEW Pattern Detection Passive 3-5 refuze soft prompt Bugatti F4
@@ -207,4 +227,4 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 
 ---
 
-🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 216 LOCKED post §50-§55 ingest. ADR 026 compile 126 decisions ready chat NEW Priority 2. Andura needs to be the best. ✊**
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 243 LOCKED post §56-§61 Auth Flow ingest. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC Opus implementation pending. ADR 026 compile 126 decisions ready chat NEW Priority 2 post-CC. HANDOVER_GLOBAL split FLAG TRIGGERED 7214>7000 LOC — plan split strategie. Andura needs to be the best. ✊**

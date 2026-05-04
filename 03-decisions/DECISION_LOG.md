@@ -1,5 +1,49 @@
 # DECISION LOG — Andura
 
+## 2026-05-04 evening — Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1 (Priority 1 ABSOLUT CC implementation pending)
+
+**Status:** Chat strategic dedicat Auth Flow §36.80 BUG 2 Firebase 401 production blocker. **35 substantive sub-decisions LOCKED V1** ready CC Opus implementation Priority 1 ABSOLUT. Cumulative LOCKED 216 → **243** (+27 substantive net post-overlap).
+
+**Root cause confirmed §36.80 BUG 2:** `getUserPath()` returnează `'users/daniel'` literal când `getAuthState()=null` → DB Rules per-UID strict §36.75 BLOCHEAZĂ → 401 cycle infinit. Code-level fix LOCKED §56.1.3: `getUserPath()` returnează **obligatoriu `null`** mode Anonymous → toate apelurile Firebase API blocate → app rulează exclusiv local IndexedDB → bucla 401 eliminată mecanic.
+
+**Chat resolution iterations (push-back validated):**
+- PIN custom 6-digit REJECTED → Magic Link nativ Firebase reused (Spark plan retain §36.93)
+- Hard delete imediat REJECTED → Soft delete 30 zile grace (GDPR Article 17 "without undue delay")
+- LWW field-level CRDT REJECTED pre-Beta → Record-level LWW (defer v1.5 când avem real conflict telemetry)
+- Fork Decision suprascrie definitiv REJECTED → Archive 7 zile + export local JSON backup
+- iOS Universal Links REJECTED pre-Beta → Android-only + iOS v2/v3 demand-driven
+- Logout wipe IndexedDB REJECTED → Preserve local + opt-in toggle Settings advanced default OFF
+- ToS liability absolute REJECTED → "în măsura permisă de lege" + retain neglijență gravă/dol (RO consumer law OUG 21/1992 + Codul Civil + EU Consumer Rights Directive 2011/83)
+- Termen "biometrice" REJECTED → Andura NU colectează biometric data în sens GDPR
+
+**Decizii LOCKED V1 — see HANDOVER_GLOBAL §56.1-§56.19 verbatim sub-sections:**
+
+- **§56.1 Auth Pattern UX & Anonymous Mode (4 sub):** auth-banner-soft + Anonymous preserve fallback local-first + `getUserPath()=null` BUG 2 fix + IndexedDB namespace per UID `andura_${uid}` Dexie multi-DB
+- **§56.2 Auth Methods & UI Wording (2 sub):** Google OAuth primary + Firebase Email Link nativ fallback + auth screen wording LOCKED V1 (titlu/subtitlu/CTA/loading/success)
+- **§56.3 Onboarding Position & Email Timing (2 sub):** auth screen DUPĂ T0 + T0 scope 3-5 min max 5-7 întrebări cheie
+- **§56.4 Migration Strategy (3 sub):** Daniel-only `users/daniel` legacy + `_migration` flag persistent Firestore + rollback strategy idempotent
+- **§56.5 Account Lifecycle (6 sub):** recovery email lost refusal pattern wording + soft delete 30 zile grace `users/{uid}/_deleted` + reactivation flow `auth/user-disabled` + email change `updateEmail` nativ retain uid + conflict detection preventiv + current address typo guard
+- **§56.6 Multi-device & Concurrent Sessions (2 sub):** silent sync transparent + Record-level LWW pre-Beta
+- **§56.7 Anonymous→Auth Merge (2 sub):** Fork Decision UI explicit + archive 7 zile `_archived/{uid}/{timestamp}` + export local JSON
+- **§56.8 GDPR & Legal (3 sub):** double bifa Privacy + ToS + Privacy Policy V1 Beta template + ToS V1 Beta template "în măsura permisă de lege"
+- **§56.9 Sunset Timeline & Beta Gate (2 sub):** sunset Anonymous post-Beta v1.5 + 30 zile grace + Beta launch gate target 1 ianuarie 2027 optimistic Quality>Speed
+- **§56.10 PWA Cross-Context (3 sub):** Magic Link Universal Links Android only pre-Beta + iOS scope cut v2/v3 + TWA wrap Android v1.5 contingent rate fail >30%
+- **§56.11 Session Persistence & Offline UX (2 sub):** Always Logged In `indexedDBLocalPersistence` + offline non-blocking banner local data
+- **§56.12 Logout Behavior (3 sub):** Settings bottom + double-confirmation modal + logout preserve IndexedDB + opt-in toggle + unsynced data warning calm wording
+- **§56.13 Network Resilience (1 sub):** Magic Link auto-retry 3x + manual fallback
+- **§56.14 Cleanup Mechanism (3 sub):** A weekly script `admin-cleanup.js` Daniel + B client-side fallback + C Cloud Function defer post-Beta v1.5
+- **§56.15 Telemetry & Observability (2 sub):** T0→Auth conversion aggregate counters anonymous + `_telemetry/global` Firestore `FieldValue.increment(1)` Spark compatible
+- **§56.16 DB Rules Firestore Update (1 sub):** Security Rules v1 pre-Beta extended `users/{uid}` + `_deleted/{uid}` + `_archived/{uid}/{docId}` per-UID strict §36.75
+- **§56.17 Service Worker Auth State Caching (1 sub):** SW + Firebase Auth coexistence standard SDK pattern
+- **§56.18 Daniel Manual Setup Pre-CC (2 sub):** Firebase Auth Console + `suport@andura.app` MX
+- **§56.19 Scope OUT v1.5+ (3 sub):** marketing email opt-in OUT + deep linking OUT + logout all devices revoke OUT
+
+**Cross-refs:** [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 (Faza 2 wiring spec LOCKED V1 inline) | [[026-offline-coaching-decision-tree-exhaustive]] (Priority 2 compile 126 decisions ready, post-CC Auth) | [[023-llm-intent-interpretation]] (Safety tier preserved) | `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (initial drafts created from §56.8.2/3 templates LOCKED V1, Daniel validate sprint pre-Beta) | [[HANDOVER_GLOBAL_2026-04-30_evening]] §56.1-§56.19 verbatim + §57 cumulative + §58 priorities + §59 DIFF_FLAGS + §60 cross-refs + §61 topics + §36.75 (DB Rules per-UID strict extended) + §36.78/§36.79/§36.80 (Rebrand + Hotfix + BUG 2 RESOLVED chat strategic) + §36.93 (D3 Spark retain) + §36.94 ADR 025 (Instant Skip pattern reused `getUserPath()=null` graceful degradation) + §36.99 (offline-first preservation §56.11.2) + §50.4 Q20 §45.3 (Q20 pattern reuse — record-level LWW NU duplicate logic) + §46 P4 (audit legal post-Beta v1.5 prerequisite preserved Privacy Policy GDPR profundă)
+
+**Next:** CC Opus Auth Flow §36.80 implementation Priority 1 ABSOLUT (~30-45 min CC autonomous factor 7-9x clusters mari) — scope cross-file integrare ~10 fișiere `firebase.js` + `auth.js` + `pages/auth.js` + `index.html` + `main.js` + `_migration` flow + `_deleted` lifecycle + `_archived/` archive flow + IndexedDB namespace per UID + Firestore rules update + wording RO LOCKED + Playwright e2e + `admin-cleanup.js` script + setup Daniel runbook documentation. **Daniel manual prep prerequisites pre-CC:** Firebase Auth Console (~15 min) + `suport@andura.app` MX forward (~15 min) + Privacy Policy + ToS validate sprint (~30-60 min, initial drafts created vault).
+
+---
+
 ## 2026-05-05 morning — D3.1 + D4 + D2 + D1 SUB-DECISIONS LOCKED V1 (41 substantive net)
 
 **Status:** Chat strategic dedicat sub-decisions D3.1 (Buton "Nu vreau") + D4 NEW (Mid-Session Resume Protocol) + D2 (Injury/Contraindication Mapping) + D1 (Save the Week Silent). Total **41 substantive sub-decisions LOCKED V1** ready compile ADR 026 draft full chat strategic NEW dedicat. Cumulative LOCKED 175 → **216**.
