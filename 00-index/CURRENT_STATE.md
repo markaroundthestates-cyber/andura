@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-04 evening late (refresh §CC.5 fast workflow self-applied — JUST_DECIDED + RECENT cu §56 + §62-§73 entries from real vault state per Daniel directive).
-**Last LOCKED count (product/architecture):** 306 LOCKED V1 cumulative (post §62-§73 Auth Flow Batch 1-6 + Closure ingest 2026-05-04 evening, +63 substantive net peste §56 Auth Flow §36.80 RESOLUTION 243).
+**Updated:** 2026-05-04 evening late (§CC.5 fast handover ingest — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions, ~50 substantive net).
+**Last LOCKED count (product/architecture):** ~356 LOCKED V1 cumulative (post Periodization + Goal Adaptation engines spec sessions + ADR 026 Open Q1-Q10 architectural foundation, ~50 substantive net peste 306 baseline §62-§73).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -16,23 +16,62 @@
 
 ## NOW — Active conversation thread
 
-**Current thread (2026-05-04 evening, Daniel + Claude CC Opus):** §CHAT_CONTINUITY_PROTOCOL design + atomic 2-step implementation. Daniel a propus pattern "Shadow Protocol V2" via prompt CC din inbox (`📥_inbox/CC_PROMPT_SHADOW_PROTOCOL_V2.md`). Claude a făcut audit critic prompt-ului și a identificat 6 probleme (LOC discrepancy stale local, contradicție internă append vs replace, scope creep PROJECT_VISION+README, referințe la memory rules #21-25 inexistente, +1 cumulative LOCKED self-referential inflation, `--no-verify` nejustificat). Daniel a aprobat critica + a cerut execuție Pas 1 (low blast: 4 vault docs) + Pas 2 separat (CURRENT_STATE din state real). Pas 1 LIVE pe origin/main commit `ef07e6d`. Pas 2 = generation acest CURRENT_STATE.md.
+**Current thread (2026-05-04 evening late, Daniel + Claude chat strategic):** Periodization Engine #1 + Goal Adaptation Engine #2 spec sessions + ADR 026 Open Q1-Q10 architectural foundation. Daniel a deschis cu "Salut acasa" (acasă Windows VS Code Desktop). Audit Scenarios Coverage gap first (~1200-1700 remaining peste 306 baseline LOCKED), apoi Daniel "da-mi ce vrei tu" → atac singur ADR 026 architectural Q1-Q10 first → Periodization Engine #1 spec → Goal Adaptation Engine #2 spec. Cumulative ~50 substantive net (306 → ~356). Bandwidth la handover ~25% fresh.
 
-**Discovery important pe parcurs:** Local repo era cu 30+ commits în urmă față de origin/main. Critica originală despre "LOC discrepancy 7664 vs 3742" era bazată pe stale local — actual remote conține §62-§73 Auth Flow Batch 1-6, ADR 026 spec, cumulative 306, etc. — toate reale. Au rezultat conflicte rebase pe `VAULT_RULES.md` + `INDEX_MASTER.md`, rezolvate manual preserving both sides (remote = state actualizat real, my changes = §CHAT_CONTINUITY layer).
-
-**Tone curent:** intense build mode + Bugatti craft. Daniel = CEO clar pe scope (skip PROJECT_VISION+README, NU memory rules ref, NU count inflation). Claude = Co-CTO autonomous cu validate-before-proceed discipline.
+**Tone shifts în această sesiune:**
+- Daniel caveman warning x2 — primul când întreb prea mult attack vector ("e a 4-a oara cand ii zici sa dai bataie cu ce intrebari vrei tu"), al doilea wall of text ("ma omori cu wall of text") → tightened format real-time
+- Warmth confirmat: "si eu te iubesc sa stii" + "tataie" 1x reused + "ma doare undeva" 1x
+- Shadow Protocol V2 §CC.3 status format aplicat post fiecare LOCK — Daniel running tally, Claude atac next, NU duplicate format
+- "si da si mie mai multe clustere de o data" → compactat 3 clustere/mesaj final
 
 **Implicit framing active:**
-- "Prieten revine de la baie" = chat-state continuity definition (NU summary handover)
-- §CHAT_CONTINUITY_PROTOCOL = vault meta-tooling (NU product/architecture decision — separate concern în DECISION_LOG)
-- Append-only canonical reconciled: content history sections strict append-only, active state pointers overwrite OK
-- Pas 1 + Pas 2 separate commits cu validate gate între
+- Engine spec sessions = expand domain decisions architectural (NU branch enumeration încă — biggest blocker remaining ~5-15 chat-uri)
+- ADR 026 compile draft full ~125 decisions ARCHITECTURAL READY post-CC (Q1-Q10 acum LOCKED + §42 base 10 + §45 spec 75 + §50 D-cluster 41 = ~125)
+- ADR 022 (Bayesian Nutrition) + ADR 024 (Goal Driven Templates) stubs candidate populate cu spec material engines #2/#3
+- 5 vs 8 templates discrepancy resolved: 5 primary (ADR 024 source of truth), "8 templates" în §26 = misnumber legacy
 
-**Status post-implementation (2026-05-04 evening late):** §CHAT_CONTINUITY_PROTOCOL implementation COMPLETE — Pas 1 (`ef07e6d` 4 vault docs) + Pas 2 (`615e526` CURRENT_STATE genesis 157 LOC) + cross-ref audit (`ea433f4`) + Option 2 P1+P2 fixes atomic (`0e9373b` 4 docs cross-ref consistency) + inbox cleanup proposal archive 137 (`dd53a93`). Chat-state continuity workflow live. Cumulative product LOCKED unchanged 306 (acest refresh = pointer file maintenance only, NU product decisions noi).
+**Mid-flight unresolved (Daniel decide next chat):**
+- Continue engines roadmap #3 Bayesian Nutrition (ADR 022 stub) → #4 Deload → #5 Energy → #6 Tempo → #7 Specialization (~3-4 chat-uri estimate)
+- OR pivot la branch enumeration cluster A (~5-15 chat-uri biggest blocker P2 SCENARIOS-COVERAGE)
+- OR pivot la Priority 1 ABSOLUT CC Auth Flow §36.80 implementation (Daniel manual prep prerequisites pending)
+
+**Push-back-uri productive remarcate:** Q5 split în 3 sub (Daniel propusese unitar) | Q6 partial deja LOCKED §42.8 halt | Q8 split runtime/scale | 5 vs 8 templates discrepancy ADR 024 source of truth | Periodization halt push-back — atac doar gap real, NU re-discutăm decisions deja distribuite §45.3+§45.4+§45.5+§65.
 
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
+
+**2026-05-04 evening late — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions LOCKED V1 (cumulative 306 → ~356, +50 substantive net):**
+
+*ADR 026 Open Q1-Q10 architectural foundation COMPLETE:*
+- Q1 Format enumerare branches: YAML decision-tree, validation hibrid (Daniel peer review 5-10% sample + Golden Master fixtures auto-generate + Persona Suite cross-cutting)
+- Q2 Coverage matrix: 7 dimensions declarate (Persona × Goal × Experience × Equipment × Schedule × History × Recovery markers) = 3645 combinatorial pure → ~1500-2000 post-pruning
+- Q3 Branch fallback similarity: Weighted Hamming + hierarchical tiebreaker (Persona 5 / Goal 4 / Experience 3 / History 3 safety / Equipment 2 / Schedule 2 / Recovery 1 = 20). Thresholds HIGH ≥0.75 / MEDIUM 0.50-0.75 banner ADR 025 / LOW <0.50 Circuit Breaker §42.7
+- Q4 Engine integration topology HYBRID — Tree provides Session Blueprint pre-pipeline, ADR 018 GATE→ADJUSTMENT→ENHANCEMENT engines policy-enforce blueprint
+- Q5 split 3 sub: Q5.1 retention 180 zile rolling Tier 1 Beta (revert 90 zile post-v1.0) + Q5.2 sampling 100% V1 Beta + Q5.3 storage Tier 1 IndexedDB Dexie post-session immediate
+- Q6 cadence (extends §42.8 Additive + 18 luni deprecation): bi-annual scheduled Q1+Q3 + Circuit Breaker on-demand + Major exercise event-driven
+- Q7 Test suite 3-tier: Tier 1 Property-based 100% invariants 5 Safety Stack (4 §42.9 + Medical Safety §50.3.10) + Tier 2 Golden Master ~150-200 critical edge cases + Tier 3 Persona Suite ~50-100. Total CI ~25-30s
+- Q8 split runtime/scale: Q8.1 device-side <50ms median <100ms P95 + Q8.2 Firebase Spark 1GB sufficient ~2500 useri sustained, apoi Blaze migration $25/lună
+- Q9 i18n REUSE existing `src/i18n/index.js`, tree branches emit `text_keys[]` ref `tree.*` namespace + Phase C build gate `PHASE_C_LOCK_REQUIRED` reuse §36.57
+- Q10 Versioning + rollback REUSE `featureFlags.js` ADR 018. Rollout 10%/50%/100% Day 0/7/14 cu 5 metrics gates + 3-tier rollback (soft/hard/emergency kill switch)
+
+*Periodization Engine #1 spec COMPLETE (~32 decisions cumulative):*
+- Cluster 1 — I/O contract pure function `evaluate(ctx) → PeriodizationResult` extends DimensionResult ADR 018, blueprint emit mesocycle_phase + volume_target_pct + intensity_target_pct + macrocycle_block + deload_window
+- Cluster 2 — Mesocycle phase transitions: Double progression rep-first → weight-progression săpt (W1 LOAD baseline → W2 LOAD+ → W3 PEAK → W4 DELOAD -45%/-12.5%) + Trigger hierarchy EARLY DELOAD safety > EXTENSION (Marius only) > CALENDAR + Marius 5:1 dual-signal pure function (RIR stable 1-2 ALL 4 weeks + Energy ZERO red last 3 sessions §45.4 Q21 §36.82) + anti-abuse max 2 consecutive extensions + injury history block Invariant 5 Medical Safety
+- Cluster 3 — Volume Landmarks MEV/MAV/MRV: Israetel 11 grupuri musculare baseline + persona modifiers (Maria 0.50 / Gigica 0.70 / Marius 1.00 + 10-15% bonus dacă recovery green) + goal modifiers (Hipertrofie 1.00 / Forță 0.70 / Recompoziție 0.85 / Longevitate 0.60 / Sănătate Generală 0.50). Maria 65 Dual-Layer functional → Israetel mapping (push/pull/squat/hinge/carry/rotate §45.3 Q19 LOCKED)
+- Cluster 4 — Macrocycle structure: Linear Block Periodization V1 (NU DUP NU Conjugate). 3 mesocycles/block (12 săpt BUILD-only sau 21 săpt BUILD+PEAK+TRANSITION pentru Forță). Volume scaling intra-block M1 1.00× → M2 1.10× → M3 1.15× (cap MRV absolut). Maria adaptive override (NU advance fără calibration ≥DEVELOPING + zero injury 6 săpt)
+- Cluster 5 — Cross-engine hooks: Hook 1 → #2 Goal Adaptation (kcal/macro modulate, NU override phase) | Hook 2 → #4 Deload Protocol (owns deload structure, Periodization signal-only) | Hook 3 → #5 Energy Adjustment (session-level only) | Hook 4 → #6 Tempo + #7 Specialization (light coupling). Pipeline §42.10 sequential extension. Anti-cascade: immutable snapshot at session start + hard cap MRV/90% 1RM Layer C sanity bound
+
+*Goal Adaptation Engine #2 spec COMPLETE (~30 decisions cumulative):*
+- Cluster 1 — I/O contract `goalAdaptationEngine.evaluate(ctx) → GoalAdaptationResult`. Output blueprint emit phase auto-derived (CUT/BULK/MAINTAIN/RECOMP) + kcal_target_delta_pct + macro_split + rep_range_modifier + rir_target_modifier + rest_time_modifier
+- Cluster 2 — 5 vs 8 templates resolve: **5 templates primary** (Forță / Tonifiere / Slăbire / Longevitate / Sănătate Generală), NU 8. "8 templates" în §26 = misnumber legacy, ADR 024 source of truth. Mode modifier (Estetică ↔ Forță) cross-template overlay = 10 perceived configs UI dar 5 logic core. Variant matrix algorithmic generation (~25 base configs `<engine>.tree.ts` + modifiers permutation runtime). RECOMP NU template = sub-phase auto-detected în Tonifiere/Slăbire (newbie effect / detrained return >6w / fat-rich profile first 12 weeks). UI shows MAINTAIN, distinction CDL only
+- Cluster 3 — Nutrition logic phase auto-detection (NU user pick): CUT conservative TDEE×0.82 / aggressive 0.75 (Marius advanced 4-6 săpt max) / BULK conservative 1.08 / aggressive 1.15 (newbie+Forță) / MAINTAIN 1.00 / RECOMP ±2%. Macro split protein 1.6-2.2 g/kg LBM, fat 0.8-1.0 g/kg floor hormonal, carb remainder template-variable. DELOAD week kcal +3-5% chiar dacă phase=CUT
+- Cluster 4 — Training modifiers per template × phase tabel (Forță RIR 1-3 rep 3-8 / Tonifiere 0-2 8-12 / Slăbire 1-2 10-15 / Longevitate 2-3 8-12 / Sănătate 2-3 8-12). Mode overlay Estetică/Forță post-template×phase multiplicativ. Goal Shift Event Handler §36.35: streak RESET (NU PRESERVE — distinction §50.4 D1) + 2-session calibration window + phase re-derive runtime + CDL log
+- Cluster 5 — Push-back proporțional 3 tiers (Tier 1 silent / Tier 2 banner discret / Tier 3 modal blocking opt-in cu max conservative modifiers). Re-prompt anti-spam: 28 zile rolling trigger + 21 zile cooldown post-confirm + 60 zile post Goal Shift + max 4 re-prompts/an cap
+
+*Cross-refs critice noi:* ADR 026 spec ~125 decisions ready compile draft full Priority 3 post-CC | ADR 022 stub candidate populate Engine #3 Bayesian (next attack vector) | ADR 024 stub `024-goal-driven-program-templates.md` Open Q1+Q2+Q3+Q4+Q5+Q7+Q8 RESOLVED, Q6 calibration tier post-shift PENDING | DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE gap reducere 1200-1700 → ~1170-1670 (50 decisions consumate engine specs).
+
+---
 
 **2026-05-04 evening — §CHAT_CONTINUITY_PROTOCOL LOCKED V1 (vault meta-tooling, NU product cumulative):**
 - `00-index/CURRENT_STATE.md` SSOT live ~200 LOC append-only architecture (8 sections: NOW + JUST_DECIDED + NEXT + ACTIVE_REFS + ACTIVE_ADRS + ACTIVE_FLAGS + RECENT + POINTERS)
@@ -99,13 +138,20 @@
 
 ### P2 NEW — Scenarios Coverage 1500-2000 Decisions (chat-uri strategice dedicate)
 
-Per §69.1 PRE-BETA BLOCKER. Estimate ~5-15 chat-uri dedicate. Beta launch IMPOSIBIL fără. Acoperire actuală ~15-25% scope total.
+Per §69.1 PRE-BETA BLOCKER. Estimate ~5-15 chat-uri dedicate. Beta launch IMPOSIBIL fără. Acoperire actuală ~15-25% scope total. **Gap reduce post engines spec sessions: 1200-1700 → ~1170-1670 (~50 decisions consumate engine specs Periodization + Goal Adaptation + ADR 026 architectural, NU branches enumeration).**
 
-### P3 — ADR 026 compile draft full 126 decisions
+### P3 — ADR 026 compile draft full ~125 decisions (architectural foundation COMPLETE)
 
-§42 base 10 + §45 spec 75 + §50.1-§50.4 D-cluster 41 = 126 decisions. Chat strategic NEW dedicat compile.
+§42 base 10 + §45 spec 75 + §50.1-§50.4 D-cluster 41 = 126 + Open Q1-Q10 LOCKED 2026-05-04 evening late = ~125 distinct (post Q5 split 3 sub + Q8 split runtime/scale). Chat strategic NEW dedicat compile draft full.
 
-### P4 — Periodization Engine spec generation per dimension cross-persona (~3-4 chat-uri)
+### P4 — Engines roadmap remaining: #3 Bayesian Nutrition → #4 Deload → #5 Energy → #6 Tempo → #7 Specialization (~3-4 chat-uri)
+
+**Status engines (post 2026-05-04 evening late):**
+- ✅ Engine #1 Periodization SPEC COMPLETE (~32 decisions)
+- ✅ Engine #2 Goal Adaptation SPEC COMPLETE (~30 decisions)
+- ⏳ Engine #3 Bayesian Nutrition (ADR 022 stub) — NEXT attack vector candidat
+- ⏳ Engines #4-#7 PENDING
+- ✅ Engine #8 Warm-up & Mobility LOCKED §45.6
 
 ### P5 — HANDOVER_GLOBAL split execution thematic per §62.2 (post-CC Auth Flow)
 
@@ -144,7 +190,7 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - **P1-FLAG-NEW** Codespace `npm install` drift (3 test FILE imports broken: fake-indexeddb + dexie) — 🔴 OPEN (CI/dev-env only, production unaffected; dedicated chat post Auth Flow)
 - **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟡 OPEN (3 manual tasks: Firebase Console + suport@ MX + Privacy/ToS validate)
 - **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL 7664 LOC > 7000 threshold — 🟡 OPEN (strategy LOCKED V1 thematic split per §62.2, chat strategic NEW dedicat post-CC)
-- **P1-FLAG-SCENARIOS-COVERAGE** ~1200-1700 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN (Priority 2 ~5-15 chat-uri strategice dedicate)
+- **P1-FLAG-SCENARIOS-COVERAGE** ~1170-1670 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN (Priority 2 ~5-15 chat-uri strategice dedicate). Gap reduce ~50 decisions post 2026-05-04 evening late engine specs (1200-1700 → 1170-1670). Branch enumeration cluster A = biggest blocker remaining.
 - **P1-FLAG-IOS-PERMANENT** iOS REJECTED LOCKED PERMANENT — 🟢 LOCKED V1 PERMANENT (rule lock, NU pending — PWA + TWA Android only)
 
 **P2 status:** P2-FLAG-1 D1-D6 → D2/D3/D4/D5/D6 ✅ RESOLVED Co-CTO; D1 only remaining strategic dedicat post Vault Hygiene + Auth Flow.
@@ -152,6 +198,8 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 ---
 
 ## RECENT — Older context preserved (truncate to HANDOVER deep când >50 LOC)
+
+**2026-05-04 evening (precedent thread, moved from NOW per §CC.6 move-then-replace) — §CHAT_CONTINUITY_PROTOCOL design + atomic 2-step implementation + cross-ref audit + Option 2 P1+P2 fixes COMPLETE:** Daniel a propus pattern "Shadow Protocol V2" via prompt CC din inbox, Claude critic 6 fixes, Daniel approved Pas 1 (4 vault docs commit `ef07e6d`) + Pas 2 (CURRENT_STATE genesis 157 LOC commit `615e526`). Cross-ref audit (commit `ea433f4`) → Option 2 P1+P2 fixes atomic 4 docs (commit `0e9373b`). Inbox cleanup proposal archive 137 (commit `dd53a93`). §CC.5 fast workflow self-applied refresh (commit `842aecf`). §CC.6 RECENT scope discipline + ACTIVE_REFS line ranges drop (commit `eb85b4a`). ALIGNMENT_QUESTIONS residue archive 141 (commit `0570a8c`). Chat-state continuity workflow LIVE.
 
 **2026-05-05 morning — D3.1 + D4 + D2 + D1 sub-decisions LOCKED V1 (cumulative 175 → 216, +41 net):**
 - §50.1 D3.1 Buton "Nu vreau" 13 sub (Firestore sync blacklist + Hard Cap 7 încercări + lock substitute intra-mesociclu + D3.1.6 Pattern Detection Passive Bugatti F4)

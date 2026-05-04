@@ -1,5 +1,43 @@
 # DECISION LOG — Andura
 
+## 2026-05-04 evening late — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions LOCKED V1 (cumulative ~356, +50 substantive net)
+
+**Status:** Chat strategic 2026-05-04 evening late Daniel + Claude — engines architectural spec sessions Periodization (Engine #1) + Goal Adaptation (Engine #2) + ADR 026 architectural Open Questions Q1-Q10 foundation. Cumulative LOCKED 306 → **~356** (+50 substantive net post-overlap). Bandwidth la handover ~25% fresh.
+
+**Authority:** Chat strategic Daniel deschis cu "Salut acasa" → audit Scenarios Coverage gap first → Daniel "da-mi ce vrei tu" delegation → Claude attack vector autonomous (ADR 026 architectural Q1-Q10 first → Periodization Engine #1 spec → Goal Adaptation Engine #2 spec). Tone shifts: Daniel caveman warning x2 (attack vector + wall of text) → tightened format real-time. Warmth: "si eu te iubesc sa stii" + "tataie" 1x.
+
+**Sub-decisions breakdown (per HANDOVER artefact archived):**
+
+- **ADR 026 Open Q1-Q10 architectural foundation COMPLETE (~13 decisions cu split):** Q1 YAML decision-tree + validation hibrid | Q2 7 dimensions matrix 3645→1500-2000 | Q3 Weighted Hamming + hierarchical tiebreaker thresholds HIGH/MEDIUM/LOW | Q4 HYBRID topology Tree pre-pipeline + ADR 018 GATE→ADJUSTMENT→ENHANCEMENT engines policy-enforce | Q5 split 3 sub (retention 180 zile Beta + sampling 100% V1 + storage Tier 1 IndexedDB) | Q6 cadence bi-annual Q1+Q3 + Circuit Breaker on-demand + Major event-driven (extends §42.8) | Q7 3-tier test suite Property-based + Golden Master + Persona Suite ~25-30s CI | Q8 split runtime (<50ms median <100ms P95) + scale (Spark 2500 useri sustained) | Q9 i18n REUSE existing infra | Q10 Versioning REUSE featureFlags rollout 10/50/100% + 5 metrics gates + 3-tier rollback
+- **Periodization Engine #1 SPEC COMPLETE (~32 decisions cumulative cu §45.3+§45.4+§45.5+§65 deja LOCKED):** Cluster 1 I/O contract pure function | Cluster 2 mesocycle phase transitions Marius 5:1 dual-signal + anti-abuse max 2 consecutive extensions | Cluster 3 Volume Landmarks MEV/MAV/MRV Israetel 11 grupuri + persona/goal modifiers | Cluster 4 Linear Block Periodization V1 (NU DUP NU Conjugate) 3 mesocycles/block scaling 1.00×→1.10×→1.15× cap MRV | Cluster 5 Cross-engine hooks (Engine #2/#4/#5/#6/#7) + immutable snapshot + hard cap MRV/90% 1RM Layer C
+- **Goal Adaptation Engine #2 SPEC COMPLETE (~30 decisions cumulative):** Cluster 1 I/O contract phase auto-derived (CUT/BULK/MAINTAIN/RECOMP) | Cluster 2 5 templates primary RESOLVE (Forță / Tonifiere / Slăbire / Longevitate / Sănătate Generală — "8 templates" în §26 misnumber legacy, ADR 024 source of truth) + RECOMP sub-phase auto-detected | Cluster 3 Nutrition phase auto-detection TDEE×0.82-1.15 + macro split protein 1.6-2.2 g/kg LBM | Cluster 4 Training modifiers per template×phase + Goal Shift Event Handler streak RESET + 2-session calibration | Cluster 5 Push-back proporțional 3 tiers + re-prompt anti-spam 28/21/60 zile + max 4/an
+
+**Push-back-uri productive remarcate:**
+- Q5 split în 3 sub (Daniel propusese unitar)
+- Q6 partial deja LOCKED §42.8 — halt push-back NU re-discutăm versioning settled
+- Q8 split runtime/scale — separare clean device-side vs Firebase storage
+- 5 vs 8 templates ADR 024 source of truth resolve
+- Periodization halt push-back ~30 decisions deja distribuite §45.3+§45.4+§45.5+§65
+
+**Cross-refs noi:**
+- [[ADR_MULTI_TENANT_AUTH_v1]] preserved P1 ABSOLUT pending
+- [[026-offline-coaching-decision-tree-exhaustive]] ~125 decisions ready compile draft full Priority 3 post-CC (Open Q1-Q10 acum LOCKED)
+- [[022-bayesian-nutrition-inference]] stub candidate populate Engine #3 next attack vector
+- [[024-goal-driven-program-templates]] stub Open Q1+Q2+Q3+Q4+Q5+Q7+Q8 RESOLVED, Q6 calibration tier post-shift PENDING
+- [[HANDOVER_GLOBAL_2026-04-30_evening]] §62-§73 + §56-§61 + §50 + §45 + §42 base + §36.82 + §36.35 + §36.57 + §50.3.10 cross-cutting refs (engine specs reference acestea, materialele detaliat în CURRENT_STATE.md JUST_DECIDED summary; full spec inline va fi în next deep ingest §HANDOVER_PROTOCOL)
+- DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE gap reducere 1200-1700 → ~1170-1670 (~50 decisions consumate engine specs, NU branches)
+
+**Files modified §CC.5 fast handover ingest (this commit):**
+- UPDATED: `00-index/CURRENT_STATE.md` (NOW move-then-replace + JUST_DECIDED top entry append + NEXT engines roadmap status update + ACTIVE_FLAGS gap reduction + RECENT precedent §CHAT_CONTINUITY thread moved + header timestamp + cumulative count)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry top descending chronologic)
+- ARCHIVED: `📥_inbox/HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation.md` → `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md`
+
+**Backup tag:** `pre-handover-2026-05-04-2125`.
+
+**Next:** Daniel decide direction următor chat — (a) Continue engines roadmap #3 Bayesian Nutrition (ADR 022 stub) → #4 Deload → #5 Energy → #6 Tempo → #7 Specialization (~3-4 chat-uri); (b) Pivot la branch enumeration cluster A (~5-15 chat-uri biggest blocker); (c) Pivot la Priority 1 ABSOLUT CC Auth Flow §36.80 (Daniel manual prep prerequisites pending). Priority 1 ABSOLUT preserved unchanged.
+
+---
+
 ## 2026-05-04 evening — Auth Flow Batch 1-6 + Closure 63 sub-decisions LOCKED V1 (cumulative 306)
 
 **Status:** Chat strategic 2026-05-04 evening Daniel + Claude post §56-§61 ingest + alignment 12/12 EXCELLENT — 63 substantive sub-decisions LOCKED V1 acoperind Auth Flow refinements + Engine #8 Warm-up/Cool-down + Periodization defaults + RPE/RIR UX + Beta mechanics + Safety/Compliance + Notifications/Distribution. Cumulative LOCKED 243 → **306** (+63 substantive net post-overlap).
