@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-04 evening (§CHAT_CONTINUITY_PROTOCOL LOCKED V1 + initial CURRENT_STATE generation from real state).
-**Last LOCKED count (product/architecture):** 306 LOCKED V1 cumulative (post §62-§73 Auth Flow Batch 1-6 + Closure ingest).
+**Updated:** 2026-05-04 evening late (refresh §CC.5 fast workflow self-applied — JUST_DECIDED + RECENT cu §56 + §62-§73 entries from real vault state per Daniel directive).
+**Last LOCKED count (product/architecture):** 306 LOCKED V1 cumulative (post §62-§73 Auth Flow Batch 1-6 + Closure ingest 2026-05-04 evening, +63 substantive net peste §56 Auth Flow §36.80 RESOLUTION 243).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -28,6 +28,8 @@
 - Append-only canonical reconciled: content history sections strict append-only, active state pointers overwrite OK
 - Pas 1 + Pas 2 separate commits cu validate gate între
 
+**Status post-implementation (2026-05-04 evening late):** §CHAT_CONTINUITY_PROTOCOL implementation COMPLETE — Pas 1 (`ef07e6d` 4 vault docs) + Pas 2 (`615e526` CURRENT_STATE genesis 157 LOC) + cross-ref audit (`ea433f4`) + Option 2 P1+P2 fixes atomic (`0e9373b` 4 docs cross-ref consistency) + inbox cleanup proposal archive 137 (`dd53a93`). Chat-state continuity workflow live. Cumulative product LOCKED unchanged 306 (acest refresh = pointer file maintenance only, NU product decisions noi).
+
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
@@ -50,6 +52,32 @@
 - Batch 5 (§66) RPE/RIR + Beta Mechanics — 10 sub (RPE hibrid segmented + slider + RIR last set only + retention KPI 45/35/30 hibrid override + beta feedback hibrid email+Form Sunday digest)
 - Batch 6 (§67) Safety/Compliance/Distribution — 10 sub (Pregnancy Settings + Heart Settings + red disclaimer B-clarified + ZERO push V1 + ZERO badges scope cut V1 + iOS REJECTED LOCKED PERMANENT)
 - Closure (§68) UX Refinements — 3 sub (skip transparency + 3 sesiuni clarification + email digest first mesocycle prompt)
+
+**2026-05-04 evening (mid) — §56 Auth Flow §36.80 BUG 2 RESOLUTION 35 sub-decisions LOCKED V1 (cumulative 216 → 243, +27 substantive net):**
+- Root cause confirmed §36.80 BUG 2: `getUserPath()` returnează `'users/daniel'` literal când `getAuthState()=null` → DB Rules per-UID strict §36.75 BLOCHEAZĂ → 401 cycle infinit.
+- Code-level fix LOCKED §56.1.3: `getUserPath()` returnează **obligatoriu `null`** mode Anonymous → toate apelurile Firebase API blocate → app rulează exclusiv local IndexedDB → bucla 401 eliminată mecanic.
+- §56.1 Auth Pattern UX & Anonymous Mode (4 sub): auth-banner-soft + Anonymous preserve fallback local-first + `getUserPath()=null` BUG 2 fix + IndexedDB namespace per UID `andura_${uid}` Dexie multi-DB
+- §56.2 Auth Methods & UI Wording (2 sub): Google OAuth primary + Firebase Email Link nativ fallback + auth screen wording LOCKED V1
+- §56.3 Onboarding Position & Email Timing (2 sub): auth screen DUPĂ T0 + T0 scope 3-5 min max 5-7 întrebări cheie
+- §56.4 Migration Strategy (3 sub): Daniel-only `users/daniel` legacy + `_migration` flag persistent Firestore + rollback strategy idempotent
+- §56.5 Account Lifecycle (6 sub): recovery email lost refusal pattern + soft delete 30 zile grace `users/{uid}/_deleted` + reactivation `auth/user-disabled` + email change `updateEmail` retain uid + conflict detection preventiv + current address typo guard
+- §56.6 Multi-device & Concurrent Sessions (2 sub): silent sync transparent + Record-level LWW pre-Beta
+- §56.7 Anonymous→Auth Merge (2 sub): Fork Decision UI explicit + archive 7 zile + export local JSON
+- §56.8 GDPR & Legal (3 sub): double bifa Privacy + ToS + Privacy Policy V1 Beta template + ToS V1 Beta "în măsura permisă de lege"
+- §56.9 Sunset Timeline & Beta Gate (2 sub): sunset Anonymous post-Beta v1.5 + 30 zile grace + Beta launch gate target 1 ian 2027 Quality>Speed
+- §56.10 PWA Cross-Context (3 sub): Magic Link Universal Links Android only pre-Beta + iOS scope cut v2/v3 + TWA wrap Android v1.5 contingent
+- §56.11 Session Persistence & Offline UX (2 sub): Always Logged In `indexedDBLocalPersistence` + offline non-blocking banner local data
+- §56.12 Logout Behavior (3 sub): Settings bottom + double-confirmation + preserve IndexedDB opt-in toggle + unsynced warning calm
+- §56.13 Network Resilience (1 sub): Magic Link auto-retry 3x + manual fallback
+- §56.14 Cleanup Mechanism (3 sub): A weekly script Daniel + B client-side fallback + C Cloud Function defer post-Beta v1.5
+- §56.15 Telemetry & Observability (2 sub): T0→Auth conversion aggregate counters anonymous + `_telemetry/global` Firestore Spark compatible
+- §56.16 DB Rules Firestore Update (1 sub): Security Rules v1 pre-Beta extended per-UID strict
+- §56.17 Service Worker Auth State Caching (1 sub): SW + Firebase Auth standard SDK pattern
+- §56.18 Daniel Manual Setup Pre-CC (2 sub): Firebase Auth Console + `suport@andura.app` MX
+- §56.19 Scope OUT v1.5+ (3 sub): marketing email opt-in OUT + deep linking OUT + logout all devices revoke OUT
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 (Faza 2 wiring spec LOCKED V1 inline 19 sub-sections)
+- Privacy Policy + ToS V1 Beta initial drafts created `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (verbatim from §56.8.2/3 templates)
+- Push-back validated iterations: PIN custom REJECTED → Magic Link nativ + Hard delete REJECTED → Soft delete 30 zile + LWW field-level CRDT REJECTED → Record-level + Fork Decision suprascrie REJECTED → Archive 7 zile + iOS Universal Links REJECTED → Android-only + Logout wipe REJECTED → Preserve local + ToS liability absolute REJECTED → "în măsura permisă lege"
 
 **Major rule changes locked în această sesiune:**
 - iOS REJECTED LOCKED PERMANENT (memory persistent rule, PWA + TWA Android only) per §67.10
