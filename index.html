@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="/icon-192.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <script type="module" crossorigin src="/assets/main-DpDxmZcE.js"></script>
+  <script type="module" crossorigin src="/assets/main-DYmrem3p.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/main-BorYfxhx.css">
 </head>
 <body>
@@ -672,6 +672,23 @@
 <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ══ Auth config slots — Firebase Auth + Google OAuth (per ADR_MULTI_TENANT_AUTH_v1
+       §AMENDMENT 2026-05-04 + §56.18.1 LOCKED V1) ══════════════════════════════
+       Daniel manual setup (see HANDOVER §56.18.1 + DIFF_FLAGS P1-FLAG-AUTH-DANIEL-PREP):
+       1. Firebase Console → Project settings → Web API Key → paste below
+       2. Firebase Console → Authentication → Sign-in method → enable Email link + Google
+       3. Authorized domains: add `andura.app`
+       4. Action URL: `https://andura.app/auth-callback`
+       5. Google OAuth: create Cloud Console OAuth Client ID → paste below
+       Both keys are PUBLIC (embeddable) per Firebase docs — NU secrete. Client-side
+       enforcement comes from Firebase Rules per-UID strict (database.rules.json + Firestore
+       rules per §AMENDMENT 2026-05-04.16). -->
+  <script>
+    // window.__FIREBASE_API_KEY = 'YOUR_REAL_FIREBASE_WEB_API_KEY';
+    // window.__GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com';
+  </script>
+
 
 <!-- THEME SWITCHER -->
 <div id="theme-switcher" style="position:fixed;top:12px;right:12px;z-index:500">
