@@ -4,6 +4,32 @@ Entries care NU intră în v1 dar trebuie documentate pentru future design.
 
 ---
 
+## Auth Flow §AMENDMENT 2026-05-04 BATCH 1-6 spec deviations (CC implementation 2026-05-04 evening late)
+
+**Status:** Deferred post-Beta v1.5. Daniel directive path (a) confirm 2026-05-04 evening late + commit `0880641` Faza 2 wiring Phase 1 LANDED. Spec §AMENDMENT 2026-05-04 BATCH 1-6 .1 + .2 SKIPPED implementation due to Firebase Console capability limitations identified post-spec-LOCK. Investigate REST/SMTP custom v1.5.
+
+### AUTH-DEFER-1 — Magic Link expiration 24h NOT configurable Firebase Console (spec §AMENDMENT .1 + §63.5)
+
+**Where:** Firebase Auth Console — Email Link sign-in expiration setting
+**Spec LOCKED V1:** §AMENDMENT 2026-05-04 evening BATCH 1-6 .1 + HANDOVER §63.5 OVERRIDE Q5 — Magic Link expiration **24h** (vs default ~1h). Maria 65 cross-context PWA Android tolerance: telefon slow + email întârzie 20-30 min.
+**Reality post Daniel manual prep verification:** Firebase Console NU expune capability override Magic Link expiration (backend default ~1h aplicabil, NO UI toggle, NO REST API field documented for OOB code TTL override).
+**Root cause:** Chat strategic 2026-05-04 evening assumed Firebase Console capability that doesn't exist. Spec presupose-eronat.
+**Impact:** Maria 65 use case partial unmitigated — link expirat la 1h, telefon slow + email întârzie poate produce frustrare retry. Beta 50 testeri tolerance acceptable pentru V1.0.
+**Proposed v1.5 fix:** Migrate la SMTP custom backend (NU Firebase Magic Link) cu OOB code TTL configurable la 24h. Cost: SMTP provider $0-10/lună (SendGrid/Mailgun free tier sufficient pre-Beta scale) + ~5-10h dev custom flow (token generation + verify endpoint Cloud Function — contradicts §36.93 D3 Spark retain DAR Cloud Function single endpoint încadrabil free tier 2M invocations/month).
+**Workaround V1 Beta:** Document expectation 1h în onboarding/settings UI ("Verifică emailul în următoarea oră"). Auto-retry button persistent pe Magic Link form pentru re-trigger flow ușor.
+
+### AUTH-DEFER-2 — Email body wording educativ NOT configurable Firebase template (spec §AMENDMENT .2 + §64.5)
+
+**Where:** Firebase Auth Console — Email Link sign-in template
+**Spec LOCKED V1:** §AMENDMENT 2026-05-04 evening BATCH 1-6 .2 + HANDOVER §64.5 — Magic Link inexistent email behavior silent send Firebase native + wording educativ email-side verbatim: *"Dacă ai deja un cont Andura, acest link te va conecta direct la profilul tău existent. Dacă ești la prima accesare, am creat acum un cont nou pentru tine, iar progresul tău va fi salvat automat."*
+**Reality post Daniel manual prep verification:** Firebase Console NU expune Magic Link email template customization UI pentru Email Link sign-in flow specific (Authentication → Templates customization disponibilă pentru Verification email + Password reset, dar NU pentru Email Link sign-in body wording educativ specific).
+**Root cause:** Chat strategic 2026-05-04 evening assumed Firebase template capability that doesn't exist for Email Link sign-in flow specifically.
+**Impact:** Default Firebase generic email body sent. Maria 65 anti-typo guard via email body wording educativ unmitigated. Anti-account-enumeration security preserved (Firebase native silent send) — only educational copy missing.
+**Mitigation aplicat 2026-05-04 evening late commit `0880641`:** Per Daniel directive — wording educativ aplicabil DOAR pe auth screen UI per §AMENDMENT .3 (soft-hint sub email field LANDED `src/pages/auth.js` COPY.emailHint verbatim: *"Verifică cu atenție adresa de e-mail introdusă pentru a te asigura că primești link-ul de acces."*). Anti-typo Maria 65 partial mitigated UI-side instead of email-side.
+**Proposed v1.5 fix:** SMTP custom backend (paralel cu AUTH-DEFER-1) — full template control + i18n RO + wording educativ verbatim per §AMENDMENT .2. Combined fix cu AUTH-DEFER-1 = single migration path.
+
+---
+
 ## Strangler Integration Pre-work (defer-uri Batch 1 Audit — rezolvate la strangler sprint)
 
 **Status:** Deferred. Toate findings de mai jos sunt non-blocante pentru Batch 2. Re-audit la strangler integration (prima dimensiune portată = AA detection).
