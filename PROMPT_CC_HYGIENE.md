@@ -315,7 +315,9 @@ npm run test:run               # Expected: 752/752 (sau current baseline)
 
 ---
 
-## 9. ALIGNMENT QUESTIONS POST-INGEST — MANDATORY
+## 9. ALIGNMENT QUESTIONS POST-INGEST — MANDATORY (SEARCH-DRIVEN FORMAT STRICT)
+
+**AMENDMENT 2026-05-04 night (per HANDOVER_GLOBAL §47 LOCKED V1):** format SEARCH-DRIVEN STRICT mandatory. Forma pre-fed verbatim "Răspuns verbatim:" pre-specificat pentru spot-check Daniel = DEPRECATED post 2026-05-04 night. CC Opus MUST NOT produce pre-fed format under any circumstances.
 
 **Trigger:** orice ingest de tip handover (input file = `HANDOVER_INPUT_*.md` în `📥_inbox/`).
 
@@ -323,15 +325,20 @@ npm run test:run               # Expected: 752/752 (sau current baseline)
 
 Slip 2026-05-02 SELF-CORRECTION ingest: Daniel a observat absența `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` post-ingest. Handover input avea Q-uri integrate în `§4` dar NU extracted într-un file dedicat consumabil de chat-ul nou. Codificare obligatorie pentru a preveni recurența.
 
-### Protocol post-ingest (NU SKIPABIL)
+### Protocol post-ingest (NU SKIPABIL) — FORMAT SEARCH-DRIVEN STRICT (AMENDMENT 2026-05-04 night)
 
-Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` ca artefact dedicat cu următoarea structură:
+Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md` ca artefact dedicat cu structura SEARCH-DRIVEN:
 
-1. **Frontmatter** explicit cu `name`, `description`, `type: alignment-questions`, `date`, `pass criteria`.
-2. **Întrebări structurate pe secțiuni** (acoperă fiecare LOCKED nou + SSOT new files + ADR drafts + amendments inline).
-3. **Per fiecare Q:** citation așteptat **explicit** (`§X file.md` SAU `ADR_Y_v1.md §EXTENSIONS EXT-Z`) + răspuns așteptat pre-specificat verbatim pentru spot-check rapid Daniel.
-4. **Pass / Fail Criteria table** la final cu acțiuni per scor (EXCELLENT / PASS / PASS minimum / FAIL).
-5. **Cross-ref source ingest** (archived consumed file `_archive/<YYYY-MM>/NN_*` + secțiunile SSOT modificate).
+1. **Frontmatter** explicit cu `name`, `description`, `type: alignment-questions`, `date`, `pass criteria`, `format: search-driven LOCKED V1`.
+2. **Instrucțiuni globale chat strategic NEW** (citește înainte de Q1) — minim 5 reguli: NU răspunde din memorie / cită verbatim 2-4 propoziții din search rezultate / confirm citation match path+§X / flag SEARCH MISS dacă path nu există / cross-refs verifiable prin a doua căutare.
+3. **Întrebări structurate pe secțiuni** (acoperă fiecare LOCKED nou + SSOT new files + ADR drafts + amendments inline).
+4. **Per fiecare Q (FORMAT MANDATORY):**
+   - **Search keywords:** keywords pentru `project_knowledge_search` (chat OBLIGAT căutare reală, NU recital)
+   - **Citation expected:** path/to/file.md §X + cross-confirm secondary file dacă aplicabil
+   - **PASS criteria:** listă verificări concrete (literal cuvânt/cifră from vault + structuri expected ex 8 recomandări A-H + verbatim phrases extract from search rezultate)
+5. **DEPRECATED format (NU genera):** sub-section `**Răspuns verbatim:** "..."` care recită pre-scris answer = INTERZIS post 2026-05-04 night.
+6. **Pass / Fail Criteria table** la final cu acțiuni per scor (EXCELLENT / PASS / PASS minimum / FAIL) + Daniel spot-check post-paste mandatory (grep vault realitate vs răspuns chat).
+7. **Cross-ref source ingest** (archived consumed file `_archive/<YYYY-MM>/NN_*` + secțiunile SSOT modificate).
 
 ### Surse Q-uri (priority order)
 

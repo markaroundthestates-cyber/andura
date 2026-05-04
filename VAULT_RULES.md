@@ -246,7 +246,7 @@ La handover-time: handover = aggregate al deciziilor marcate mental când fresh.
 6. **CC Opus** overwrite SSOT same name cu merged version
 7. **CC Opus** archive input la `📤_outbox/_archive/<YYYY-MM>/NN_HANDOVER_INPUT_CONSUMED.md` (NICIODATĂ DELETE)
 8. **CC Opus** scrie raport execution în `📤_outbox/LATEST.md`
-9. **CC Opus** generează alignment questions pentru chat nou (în `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`)
+9. **CC Opus** generează alignment questions pentru chat nou (în `📤_outbox/ALIGNMENT_QUESTIONS_CHAT_NEW.md`) — **AMENDMENT 2026-05-04 night (per HANDOVER_GLOBAL §47 LOCKED V1):** format SEARCH-DRIVEN mandatory STRICT (Q + search keywords + citation expected + PASS criteria, NU pre-fed verbatim răspuns). Forma pre-fed verbatim DEPRECATED. Vezi `PROMPT_CC_HYGIENE.md` §9 + HANDOVER_GLOBAL §47.
 10. **CC Opus** commit + push origin/main
 11. **Daniel** sync Project Knowledge GitHub
 12. **Daniel** open chat Claude nou
