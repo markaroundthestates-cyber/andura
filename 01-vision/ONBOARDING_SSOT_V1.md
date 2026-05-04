@@ -59,6 +59,29 @@ Acest document este SSOT activ pentru onboarding flow Andura V1. Înlocuiește *
 - Equipment — categorical universal display T0 default ("Sală standard cu barbell + dumbbells + machines"), Profile post-onboarding refinement
 - Restul (BF%, PRs, schedule, history, recovery markers) — DEFERRED post-onboarding via natural session flow + Profile Typing T1+
 
+### §AMENDMENT 2026-05-04 evening (Batch 2 §63.1) — T0 question order obiectiv-first hook motivațional
+
+**OVERRIDE order ecrane V1:** Conform HANDOVER §63.1 LOCKED V1 — Order: **obiectiv → vârstă → sex → istoric medical simplu → frecvență**. NU vârstă-first administrative plictisitor. Maria 65 captivată hook motivațional din prima atingere.
+
+**New ecrane structure post-amendment:**
+- **Ecran 1 — Obiectiv** (5 templates V1: Forță & Dezvoltare / Tonifiere & Definire / Slăbire / Longevitate / Sănătate Generală) + checkbox medical disclaimer mandatory disabled-until-checked (paritate §8 + §67.5)
+- **Ecran 2 — Vârstă** (existing rules preserved: 16-99 boundary checks)
+- **Ecran 3 — Sex** (radio M/F/Altul, NEW required pentru Volume Landmarks Israetel calibration §45.3 Q19)
+- **Ecran 4 — Istoric medical simplu** (preset list ~15-20 condiții comune per §50.3 D2 — checkbox multi-select; default "Niciuna")
+- **Ecran 5 — Frecvență** (auto-derived smart default + manual override slider 2-6x/săpt)
+
+**Skip path preserved per ADR 025 graceful degradation:**
+- Ecran 1 (obiectiv) — mandatory (zero skip)
+- Ecran 2-3 (vârstă + sex) — mandatory pentru engine baseline
+- Ecran 4 (istoric medical) — skippable default "Niciuna" (post §50.3 D2)
+- Ecran 5 (frecvență) — skippable cu auto-default
+
+**Greutate & Înălțime move post-onboarding (Profile section):** Reduce friction T0 + skip path Demographic Prior K-NN K=10 fallback ADR 017 preserved (§63.9 onboarding skip vizibil + synthetic Demographic Prior consume).
+
+**Total timp target preserved:** <45 sec post-amendment.
+
+**Cross-ref:** HANDOVER §63.1 + §63.9 + §67.5 + §68.1 + ADR 014 + ADR 017 + ADR 025 + §50.3 D2 preset list condiții.
+
 ---
 
 ## §2 GOAL TAXONOMY V1 (per §36.92 D4 hybrid C LOCKED)
@@ -207,6 +230,12 @@ Acest §7 e EXCEPȚIA mandatată la principiul "skippable everything" per [[../0
 
 - Checkbox obligatoriu disabled-until-checked
 - Link expandabil ToS+Privacy Policy (§29.7 Pre-Launch Checklist V1 — Legal DIY + Audit Plătit €300-500 1 lună înainte)
+
+### §AMENDMENT 2026-05-04 evening (Batch 6 §67.5) — UX placement update post §1 reorder
+
+Per HANDOVER §63.1 + §67.5: Ecran ordering reordered (Obiectiv first hook motivațional). UX placement disclaimer medical = **Ecran 1 Obiectiv** post-amendment §1 (was Ecran 4 pre-amendment). Checkbox obligatoriu disabled-until-checked + link expandabil ToS+Privacy preserved unchanged. NU Settings only (visibility insufficient pentru legal accept conștient). NU splash screen first launch (annoying).
+
+Wording disclaimer V1 LOCKED preserved unchanged. Cross-ref HANDOVER §67.5 + §1 amendment + Privacy Policy + ToS V1 Beta initial drafts created `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md`.
 
 ### Cross-ref EU AI Act (§36.85)
 

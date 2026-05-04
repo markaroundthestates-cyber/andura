@@ -295,9 +295,13 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 ### 5.4 Pregnancy
 **Decizie:** Câmp manual în Setări. ON → Arbitrator taie intensitate / Passive Mode.
 
+**AMENDMENT 2026-05-04 evening (Batch 6 §67.1):** Pregnancy declaration = Settings ONLY post-onboarding. NU Q4 medical checkbox onboarding (friction primă atingere). NU hibrid quick + detailed. Settings exclusive post-onboarding = preserve T0 5-7 întrebări Bugatti F4 frictionless. Cross-ref HANDOVER §67.1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6.
+
 ### 5.5 Eating disorder pattern detection
 **Decizie:** Algoritm: weight drop brutal N săpt + volum maxim → **FLAG + Passive Mode + "Pauză recomandată"**.
 **Principle:** **Refuzăm să fim complici.**
+
+**AMENDMENT 2026-05-04 evening (Batch 6 §67.4):** Eating disorder pattern detection = **defer v1.5+** insufficient telemetry pre-Beta. NU algoritm weight drop brutal V1 (insufficient data 50 testeri 6-12 luni minim). NU flag DOAR (incomplete intervention). Defer v1.5+ când telemetry advanced + sample size justify. Principle "Refuzăm să fim complici" preserved future implementation. Cross-ref HANDOVER §67.4.
 
 ### 5.6 Injury recovery
 **Decizie:** Injury declared → Arbitrator blochează acel grup muscular în PROJECTION până user scoate manual.
@@ -311,6 +315,8 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 - **Red disclaimer screen, scroll until bottom, tap "Confirm că am clearance medical"**
 - Liability covered + zero churn legitim
 - "Le antrenăm fără safety nets dacă mint la onboarding e mai rău"
+
+**AMENDMENT 2026-05-04 evening (Batch 6 §67.3 B-clarified):** Heart condition declaration UX = **Settings ONLY post-onboarding** (paritate pregnancy §5.4 amendment). NU Q onboarding (friction). User activează checkbox heart condition Settings → red disclaimer screen scroll-to-bottom + "Confirm că am clearance medical" buton final preserved unchanged. Liability protected + zero churn legitim onboarding. Cross-ref HANDOVER §67.3.
 
 ### 5.9 Emergency contact
 **Decizie:** OUT_OF_SCOPE. NU sunăm noi ambulanța.
@@ -336,6 +342,8 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 **Decizie:** **ANTI-PATTERN spam.** Singura notificare permisă: **"Azi ai programat X. Mergem?"**
 **Cross-ref:** Push notification confirmed (push-back #2 resolved). Marketing Spam vs Actionable Utility distinction.
 
+**AMENDMENT 2026-05-04 evening (Batch 6 §67.6 + §67.7) — OVERRIDE V1:** Push notifications scope V1 = **ZERO push V1 absolute** (override "Azi ai programat X. Mergem?" V1 inițial). NU notification permission request V1 (anti-spam Bugatti dignity + scope creep pre-Beta zero). Defer v1.5+ când Daniel decide push strategy mature. Pillar viziune produs preserved future. Cross-ref HANDOVER §67.6 + §67.7.
+
 ### 6.2 Frequency cap
 **Decizie:** Strictly legat de program. **NU spamăm "We miss you".**
 
@@ -348,6 +356,8 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 
 ### 6.5 Achievement badges
 **Decizie:** **Doar praguri fizice reale** (1× Bodyweight Bench, 2× Bodyweight Deadlift). **Fără badges "ai deschis app 3 zile la rând".**
+
+**AMENDMENT 2026-05-04 evening (Batch 6 §67.9) — SCOPE CUT V1 (NU revoke pillar):** Achievement badges scope V1 = **ZERO badges V1 SCOPE CUT** deliberate. NU "praguri fizice reale" V1 (1×BW Bench / 2×BW Deadlift defer v1.5+). NU streak badges 7/30 zile. **Praguri fizice reale rămân piloni viziune produs Andura defer v1.5+** (NU revoke pillar). Bugatti dignity preserved + scope creep zero pre-Beta. Cross-ref HANDOVER §67.9.
 
 ### 6.6 Social sharing
 **Decizie POST PUSH-BACK #4:** **SCOATEM IG Workout Card.**
