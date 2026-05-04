@@ -1,183 +1,113 @@
-# CURRENT_STATE.md Verification Audit — Post-Refresh Cross-Check Report
+# §CC.6 RECENT Scope Discipline + ACTIVE_REFS Polish — Implementation Report
 
-**Status:** ⚠️ Complete cu 1 P1 ambiguity finding + 1 P3 polish (audit-only, NU s-a modificat niciun fișier)
+**Status:** ✅ Complete
 **Date:** 2026-05-04 evening late
 **Run wall-clock:** ~6 min CC autonomous
 **Model:** Opus (claude-opus-4-7)
-**Task:** Verify CURRENT_STATE.md post-refresh consistency cu (1) DECISION_LOG ultim 14 zile (2) HANDOVER_GLOBAL §X pointers (3) DIFF_FLAGS P1 entries.
+**Task:** Apply Option A interpretation (§CC.6 RECENT scope explicit) + P3 polish (ACTIVE_REFS drop line ranges) per Daniel directive post verification audit (commit `e291244`).
 
 ---
 
-## Summary verdict
+## Pre-flight
 
-| Check | Result |
-|-------|--------|
-| 1. JUST_DECIDED + RECENT vs DECISION_LOG ultim 14 zile | ⚠️ **AMBIGUITY P1** — 16/24 entries missing dacă interpretare strict "14 zile mirror"; 0/8 missing dacă interpretare §CC.6 "active context only" |
-| 2. ACTIVE_REFS HANDOVER §X exists | ✅ ALL EXIST (6/6 sections verified) — minor P3 line range polish |
-| 3. ACTIVE_FLAGS vs DIFF_FLAGS P1 | ✅ EXACT MATCH (6/6 P1 entries, all statuses identical) |
+- ✅ `git fetch origin main` — local in sync (no remote drift)
+- ✅ Working tree clean
+- ✅ Backup tag created + pushed: `pre-cc6-recent-scope-clarification-2026-05-04`
 
 ---
 
-## Check 1: JUST_DECIDED + RECENT vs DECISION_LOG ultim 14 zile
+## Modificări (2 files atomic single commit)
 
-### Today date reference
+### File 1 — `VAULT_RULES.md` §CC.6 (Option A interpretation)
 
-Per system context: today = **2026-05-04**. Ultim 14 zile = **2026-04-21 → 2026-05-04**.
+- ✅ **Updated ## RECENT description** — explicit "active conversation context (typically last 3-7 days cronologic)" replacing prior generic "older NOW content"
+- ✅ **ADDED Scope discipline block** (AMENDMENT 2026-05-04 evening late post verification audit):
+  - "## RECENT = active context only, NU full DECISION_LOG mirror"
+  - Older entries (foundational decisions, stable historical state pre last ~7 days) → ## POINTERS only
+  - 50-LOC truncate threshold enforces discipline mechanic
+  - Cumulative LOCKED count tracking = boundary signal: entries cu cumulative active = JUST_DECIDED + RECENT; entries pre-tracking-system = POINTERS only
 
-### DECISION_LOG entries în range 2026-04-21 → 2026-05-04 (24 total)
+### File 2 — `00-index/CURRENT_STATE.md` ACTIVE_REFS (P3 polish)
 
-**Cronologic descending (cumulative count în paranteze):**
+- ✅ **DROPPED "lines X-Y" claims** from all 6 HANDOVER §X pointers — went stale post §47 amendment edit, NU functional value (Claude navigates via heading lookup)
+- ✅ **ADDED inline note** la începutul section: "Section pointers only (NU line numbers — go stale at every HANDOVER edit, navigate via heading `## §X`)"
+- ✅ **REPLACED line ranges cu cumulative count context** unde aplicabil:
+  - §62-§73 — "Batch 1-6 + Closure most recent (cumulative 306)"
+  - §56-§61 — "Auth Flow §36.80 35 sub-decisions resolution (cumulative 243)"
+  - §50 — "D3.1+D4+D2+D1 D-cluster sub-decisions 41 net (cumulative 216)"
+  - §47, §41-§45, §36.99-§36.107 — context descriptions preserved unchanged
 
-| # | Date | Entry | Cumulative | În CURRENT_STATE? |
-|---|------|-------|------------|---|
-| 1 | 2026-05-04 evening late | §CHAT_CONTINUITY_PROTOCOL LOCKED V1 (vault meta-tooling) | n/a | ✅ JUST_DECIDED |
-| 2 | 2026-05-04 evening | Auth Flow Batch 1-6 + Closure 63 sub | 306 | ✅ JUST_DECIDED |
-| 3 | 2026-05-04 evening | Auth Flow §36.80 BUG 2 RESOLUTION 35 sub | 243 | ✅ JUST_DECIDED |
-| 4 | 2026-05-05 morning | D3.1+D4+D2+D1 41 net | 216 | ✅ RECENT |
-| 5 | 2026-05-04 night | ADR 026 SPEC SESSION COMPLETE 75 + Engine #8 + §47 Rule | 175 | ✅ RECENT |
-| 6 | 2026-05-04 evening | ADR 026 Spec Decisions 1-10 | 100 | ✅ RECENT |
-| 7 | 2026-05-04 (Vault Hygiene Sprint Faza 3+4 — implicit) | n/a | ✅ RECENT (date implicit) |
-| 8 | 2026-05-04 (chat strategic earlier — §36.99-§36.107 — implicit) | n/a | ✅ RECENT (date implicit) |
-| 9 | 2026-04-30 evening | Gemini cross-check + ADR 020-021 + amendments | n/a | ❌ MISSING |
-| 10 | 2026-04-30 | ADR 009 AMENDMENT — Tier System SSOT | n/a | ❌ MISSING |
-| 11 | 2026-04-27 | ADR 017 Demographic Prior Database ACCEPTED | n/a | ❌ MISSING |
-| 12 | 2026-04-27 | ADR 014 Update Profile Typing Tier-Aware | n/a | ❌ MISSING |
-| 13 | 2026-04-27 | ADR 016 Vitality Layer ACCEPTED | n/a | ❌ MISSING |
-| 14 | 2026-04-27 | ADR 018 Engine Extensibility Architecture | n/a | ❌ MISSING |
-| 15 | 2026-04-27 | TASK #7 Friction Modal HIGH Tier LIVE + E2E Fix | n/a | ❌ MISSING |
-| 16 | 2026-04-27 | Sprint A AA Pipeline LIVE + Cleanup Batch + getBF Closed | n/a | ❌ MISSING |
-| 17 | 2026-04-27 | Sesiune END Strategic Decisions (post TASK #7) | n/a | ❌ MISSING |
-| 18 | 2026-04-26 | TASK #30 PARTIAL — Coach Decision Log Adopted (9/10) | n/a | ❌ MISSING |
-| 19 | 2026-04-25 | REBRAND: ELIMINARE TRADEMARK ANTHROPIC DIN PUBLIC | n/a | ❌ MISSING |
-| 20 | 2026-04-25 | Nuclear Opus Audit v3 completed | n/a | ❌ MISSING |
-| 21 | 2026-04-24 | FAZA 2 COMPLETE (Bug Fixes + Reliability) | n/a | ❌ MISSING |
-| 22 | 2026-04-24 | FAZA 1 COMPLETE (Engine Bulletproof) | n/a | ❌ MISSING |
-| 23 | 2026-04-24 | FAZA 1.1 / 1.2 / 1.3 / 1.6 series (4 entries collapsed) | n/a | ❌ MISSING |
-| 24 | 2026-04-24 | FAZA 1.x cleanup variants | n/a | ❌ MISSING |
-
-**Coverage stats:**
-- CURRENT_STATE (JUST_DECIDED + RECENT): **8/24 entries** (last ~5 days only, post 2026-04-30 evening)
-- Missing: **16/24 entries** (2026-04-24 → 2026-04-30 range, foundational decisions ADR 014/016/017/018, FAZA 1+2 complete, REBRAND, Nuclear Audit, TASK #7/#30, Sprint A)
-
-### 🚨 Finding 1 — AMBIGUITY interpretation "ultim 14 zile"
-
-**Two valid interpretations:**
-
-**Interpretation A (strict mirror — what user literal asked):**
-- "## JUST_DECIDED + ## RECENT acoperă TOATE entries DECISION_LOG ultim 14 zile cronologic"
-- Per this: **16/24 entries MISSING — P1 mismatch**
-- Action: expand RECENT cu 16 entries (would breach §CC.6 50-LOC threshold significantly — likely 80-120 LOC)
-
-**Interpretation B (per §CC.6 architecture intent — what protocol prescribed):**
-- ## RECENT scope = "active context preserved (truncate to HANDOVER deep când >50 LOC)"
-- "Active context" = topics referenced în current chats / NEXT priorities (last ~3-7 days typical)
-- Older history = ## POINTERS section pointers (DECISION_LOG full + HANDOVER_GLOBAL deep)
-- Per this: **0/8 missing — design intentional, foundational decisions stable, NU re-iterated**
-
-**Why ambiguity exists:** §CC.6 rule states truncate threshold (50 LOC) but NU defines "active context" precisely. Edge case: where e cut-off între "recent active" (RECENT) și "stable historical" (POINTERS only)? Cumulative count tracking started ~2026-05-04 evening (90 LOCKED ADR 026 base) — entries pre-2026-05-04 nu au cumulative tracking, deci "stable historical" în această conceptualizare.
-
-### 🟢 Recommended fix (NOT executed — Daniel decide)
-
-**Option A — accept current state (recommend):** Document explicit în §CC.6 wording:
-> "## RECENT = active conversation context (typically last 3-7 days cronologic). Older entries pointed via ## POINTERS → DECISION_LOG full. Truncate threshold 50 LOC enforces this scope discipline."
-
-Update §CC.6 + Update CURRENT_STATE.md ## RECENT current trimming descriptive wording. NU expand RECENT (preserves §CC.6 50-LOC threshold + NU re-summarize stable historical decisions).
-
-**Option B — strict mirror:** Expand ## RECENT to cover 16 missing entries (~80-120 LOC). Will breach §CC.6 50-LOC threshold. Need either:
-- (B1) Update §CC.6 threshold to 150 LOC
-- (B2) Truncate descriptions aggressively (1-2 lines per entry)
-- (B3) Accept threshold breach as exception when chronologic backlog prevents truncation to HANDOVER
-
-**Recommend Option A** — preserves §CC.6 architecture integrity + clear authority boundary.
+**Stats:** 2 files changed, 14 insertions(+), 7 deletions(-)
 
 ---
 
-## Check 2: ACTIVE_REFS pointers cross-check vs HANDOVER_GLOBAL §X
+## Build + Tests
 
-### Per CURRENT_STATE.md ACTIVE_REFS (lines 120-125)
-
-| CURRENT_STATE pointer | Section line in HANDOVER | Range claimed | Range actual | Verdict |
-|----------------------|--------------------------|---------------|--------------|---------|
-| §62-§73 (Batch 1-6 + Closure) | §62 = line 7225, §73 = line 7631 | "lines 7216-7700" | actual ~7225-7700 | ✅ Section exists, range claim off by ~9 lines |
-| §56-§61 (Auth Flow §36.80 35 sub-decisions) | §56 = line 6785, §61 = line 7200 | "lines 6776-7215" | actual ~6785-7215 | ✅ Section exists, range claim off by ~9 lines |
-| §50 (D-cluster sub-decisions 41 net) | §50 = line 6456 | "lines 6447-6750" | actual ~6456-6750 | ✅ Section exists, range claim off by ~9 lines |
-| §47 (Alignment Questions Generation Rule) | §47 = line 6367 | (no range) | exists | ✅ |
-| §41-§45 (Vault Hygiene + ADR 026 spec) | §41 = line 6057, §45 = line 6242 | (no range) | exists | ✅ |
-| §36.99-§36.107 (offline coaching tree + engines + D2/D3) | §36.99 = line 5581, §36.107 = line 5836 | (no range) | exists | ✅ |
-
-### 🟢 Finding 2 — All sections exist (no missing pointers)
-
-**P3 polish (NOT P1):** Line range claims în CURRENT_STATE pointers off by ~9 lines (e.g., "lines 7216-7700" vs actual §62 starts line 7225). Caused by my §47 amendment edit (commit `0e9373b`) which added ~10 lines to HANDOVER_GLOBAL. Pointers still functional — Claude reading CURRENT_STATE will navigate via section heading `## §X`, NU line number, deci impact zero pe utilizare reală.
-
-### Recommended fix (NOT executed)
-
-- **P3 — Update line ranges în ACTIVE_REFS** to reflect post-amendment HANDOVER_GLOBAL state (7664 LOC current). Mecanic refresh — could be batched cu next vault hygiene sweep.
-- **OR drop line ranges entirely** (section pointers `§62-§73` sunt sufficient pentru navigation; line numbers add maintenance burden + go stale at every HANDOVER edit).
+✅ Pre-commit hook `npm run test:run` passed: **75 test files, 1203/1203 tests passing**, ~11.8s duration. Zero regression.
 
 ---
 
-## Check 3: ACTIVE_FLAGS vs DIFF_FLAGS.md P1 entries
+## Commits
 
-### DIFF_FLAGS.md P1 entries (6 total)
+- `eb85b4a` fix(vault): §CC.6 RECENT scope discipline + ACTIVE_REFS drop line ranges (Option A + P3)
 
-| # | Flag | Status în DIFF_FLAGS | Status în CURRENT_STATE | Match |
-|---|------|----------------------|-------------------------|-------|
-| 1 | P1-FLAG-1 ADDENDUM_CHAT_STRATEGIC source upload | 🟡 PARTIALLY MITIGATED | 🟡 PARTIALLY MITIGATED | ✅ |
-| 2 | P1-FLAG-NEW Codespace npm install drift | 🔴 OPEN | 🔴 OPEN | ✅ |
-| 3 | P1-FLAG-AUTH-DANIEL-PREP Daniel manual prep | 🟡 OPEN | 🟡 OPEN | ✅ |
-| 4 | P1-FLAG-HANDOVER-SPLIT 7664 LOC > 7000 | 🟡 OPEN | 🟡 OPEN | ✅ |
-| 5 | P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER | 🔴 OPEN | 🔴 OPEN | ✅ |
-| 6 | P1-FLAG-IOS-PERMANENT iOS REJECTED LOCKED | 🟢 LOCKED V1 PERMANENT | 🟢 LOCKED V1 PERMANENT | ✅ |
+## Pushed: ✅ origin/main
 
-### ✅ Finding 3 — EXACT MATCH (6/6 P1 entries identical)
-
-Status indicators (🟡/🔴/🟢), descriptions, and severity assessments all consistent între DIFF_FLAGS canonical și CURRENT_STATE ACTIVE_FLAGS mirror.
-
-**Minor interpretation note:** User asked "TOATE P1 OPEN". Strict reading "OPEN only" would EXCLUDE P1-FLAG-IOS-PERMANENT (which is 🟢 LOCKED V1 PERMANENT, explicit "rule lock, NU pending"). Current ACTIVE_FLAGS includes it. Două interpretări:
-- Strict OPEN: 5 entries should match (CURRENT_STATE has 6 — extra IOS-PERMANENT)
-- All P1 (any status): 6 entries match (CURRENT_STATE = canonical mirror)
-
-**Recommend interpretation = "all P1 status tracked"** (current behavior). IOS-PERMANENT labeled explicit ca rule lock, useful pentru chat NEW context (NU re-discuta iOS distribution unilateral). Excluding-l din ACTIVE_FLAGS would lose this signal.
+Backup tag pushed: `pre-cc6-recent-scope-clarification-2026-05-04`
 
 ---
 
-## Recommended action prioritization
+## Audit findings closure
 
-### 🚨 Decide interpretation "RECENT scope" — affects P1 status
+### ⚠️ AMBIGUITY P1 (RECENT scope) — ✅ RESOLVED via Option A
 
-**Daniel decide:**
-1. **Accept Option A (recommend)** — §CC.6 architecture intent preserved, ## RECENT = active context (~3-7 days), older history pointed via ## POINTERS → DECISION_LOG. Update §CC.6 wording to make this explicit. **Effort: ~5 min CC, 1 file (VAULT_RULES §CC.6).**
-2. **Approve Option B** — expand ## RECENT to cover 16 missing entries cu descriere brief 1-2 lines per entry. Update §CC.6 threshold 50→150 LOC. **Effort: ~15-20 min CC, 2 files (VAULT_RULES §CC.6 + CURRENT_STATE.md).**
-3. **Defer entirely** — accept ambiguity, document în LATEST audit, no fix.
+§CC.6 wording now explicit:
+- ## RECENT = "active conversation context (typically last 3-7 days cronologic)"
+- Boundary signal = cumulative LOCKED count tracking (entries cu count active vs entries pre-tracking-system)
+- Older history → ## POINTERS only (DECISION_LOG full + HANDOVER_GLOBAL deep)
 
-### 🟢 P3 polish (defer cu next vault hygiene sweep)
+Future verification audits comparing CURRENT_STATE vs DECISION_LOG full will use this clarified standard — **NU "strict 14-day mirror"** (which would breach §CC.6 50-LOC threshold + duplicate stable historical decisions). 16 missing entries from prior audit = expected behavior per §CC.6 architecture intent.
 
-- Update ACTIVE_REFS line ranges OR drop them entirely (section heading pointers sufficient)
-- (Optional) Document ACTIVE_FLAGS scope intent ("all P1 status tracked, NU only OPEN") în §CC.6 sau ACTIVE_FLAGS section header
+### 🟢 P3 Polish (line ranges) — ✅ FIXED
+
+ACTIVE_REFS section pointers now use heading-only navigation (`## §X`) — robust against HANDOVER edits, no maintenance burden. Line numbers were going stale every commit (e.g., post §47 amendment edit shifted all line numbers by ~10).
+
+---
+
+## Outstanding P3 items (defer separate trigger)
+
+Per prior audit reports (commits `ea433f4` + `e291244`):
+- DECISION_LOG entry placement reorder (§CHAT_CONTINUITY to TOP)
+- INDEX_MASTER stats 68→69 fișiere active (post CURRENT_STATE.md add)
+- INDEX_MASTER direct nav row §CHAT_CONTINUITY_PROTOCOL pointer
+- §47 migration to VAULT_RULES.md durable section (currently în HANDOVER_GLOBAL deep archive — meta-rules belong în VAULT_RULES per architecture intent)
+
+Daniel command (când e timpul): `Apply remaining P3 polish: DECISION_LOG entry reorder + INDEX_MASTER stats + nav row + §47 migration`.
 
 ---
 
 ## Issues / Ambiguities
 
-**1 ambiguity flagged:** RECENT scope interpretation pending Daniel decision.
-
-**No conflict markers, no missing files, no broken pointers.** All sections referenced exist. All P1 flags consistent. CURRENT_STATE.md timestamp ≥ DECISION_LOG last entry timestamp ✅.
+**None.** Both fixes surgical + targeted. Tests pass 1203/1203 baseline preserved. §CC.6 architecture intent preserved + made explicit. ACTIVE_REFS robustness improved (heading-only pointers won't go stale).
 
 ---
 
 ## Next action Daniel
 
-### Decide RECENT scope interpretation
+### Test workflow
 
-Pick option A/B/C from "Recommended action prioritization" above. If A or C → no immediate fix. If B → ~15-20 min CC autonomous expansion task.
-
-### P3 polish — defer trigger separat
-
-Comandă viitoare când e timpul:
-`Apply P3 polish: ACTIVE_REFS line ranges refresh (sau drop entirely) + DECISION_LOG entry placement reorder + INDEX_MASTER stats 68→69 + direct §CC nav row + §47 migration to VAULT_RULES.md durable section`
+1. **Test chat NEW startup** post §CC.6 wording update — verify Claude reads ## RECENT as "active context" (NU full mirror) și navighează correctly via ## POINTERS pentru historical questions.
+2. **Test "fă handover" voluntary** — verify §CC.5 fast workflow still functional cu §CC.6 new scope discipline.
 
 ### Priority 1 ABSOLUT preserved unchanged
 
-CC Opus Auth Flow §36.80 phased implementation post Daniel manual prep prerequisites (Firebase Console + suport@ MX + Privacy/ToS validate sprint Claude+Gemini review).
+CC Opus Auth Flow §36.80 phased implementation post Daniel manual prep prerequisites:
+- Firebase Auth Console (~15 min) — authorized domains + Email Template Magic Link RO + Google OAuth + Magic Link 24h
+- `suport@andura.app` MX forward Daniel personal Gmail (~15 min)
+- Privacy Policy + ToS V1 Beta validate sprint Claude+Gemini review (~30-60 min)
 
-🦫 **Verification audit complete. CURRENT_STATE consistent cu ACTIVE_REFS + ACTIVE_FLAGS. Ambiguity flagged on RECENT scope (architectural intent vs strict mirror). Daniel decide interpretation.** ✊
+### Priority 2 NEW — Scenarios Coverage
+
+Per §69.1 PRE-BETA BLOCKER (~5-15 chat-uri strategice dedicate). Beta launch IMPOSIBIL fără.
+
+🦫 **§CC.6 scope discipline LOCKED + ACTIVE_REFS pointers robust. Vault meta-tooling self-consistent. Chat NEW workflow ready cu architecture intent explicit.** ✊
