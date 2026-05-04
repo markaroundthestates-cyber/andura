@@ -181,6 +181,40 @@
 
 ---
 
+## 2026-05-04 evening — §CHAT_CONTINUITY_PROTOCOL LOCKED V1 (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Codifică layer SSOT live deasupra `§HANDOVER_PROTOCOL` existing pentru chat-to-chat fast iteration între deep merges. Zero impact pe product scope/architecture decisions cumulative count.
+
+**Authority:** Daniel directive 2026-05-04 evening — chat NEW startup ~5000+ LOC `HANDOVER_GLOBAL` (split candidate per §VAULT_HYGIENE_PASS STEP 13) integral citire = friction nesustenabil, plus ~1h CC deep handover overhead per saturation cycle = 50% productivity loss real.
+
+**Decision:** Add layer light deasupra `§HANDOVER_PROTOCOL` existent (NU înlocuiește):
+- `00-index/CURRENT_STATE.md` SSOT live ~200 LOC append-only architecture (`NOW + JUST_DECIDED + NEXT + ACTIVE_REFS + ACTIVE_ADRS + ACTIVE_FLAGS + RECENT + POINTERS`)
+- Chat NEW startup layered read mandatory 4-step (CURRENT_STATE → HANDOVER active sections → top 3 ADRs → DIFF_FLAGS P1)
+- Fast handover workflow ~5-10 min CC: APPEND-only `## JUST DECIDED` + move-then-replace `## NOW` (precedent → `## RECENT`) + APPEND DECISION_LOG + archive artefact + commit/push
+- Deep merge `§HANDOVER_PROTOCOL` existing preserved unchanged (saturation-driven, weekly/major milestone, DIFF Protocol §7 + ALIGNMENT_QUESTIONS §9 ≥12/15)
+
+**Append vs replace reconciliation per section CURRENT_STATE:**
+- Content history sections (`## JUST DECIDED`, `## RECENT`, `## POINTERS`) = strict append-only
+- Active state pointers (`## NOW`, `## NEXT`, `## ACTIVE_*`) = overwrite OK (precedent `## NOW` move-uit la `## RECENT`, NU lost)
+
+**Files modified atomic single batch (Pas 1):**
+- UPDATED: `VAULT_RULES.md` (§CHAT_CONTINUITY_PROTOCOL NEW §CC.1-§CC.8 + §HANDOVER_PROTOCOL STEP 16 amendment)
+- UPDATED: `PROMPT_CC_HYGIENE.md` (§10 fast-handover workflow + §11 chat NEW startup verify format)
+- UPDATED: `00-index/INDEX_MASTER.md` (CURRENT_STATE "READ FIRST" entry top navigation + header refresh)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry)
+
+**Pas 2 (separate commit):** CREATE `00-index/CURRENT_STATE.md` din state real (read HANDOVER_GLOBAL actual + DECISION_LOG actual + DIFF_FLAGS actual, sintetizează din ele — NU pre-fed content).
+
+**Backup tag:** `pre-chat-continuity-protocol-2026-05-04` (rollback safety).
+
+**Cross-refs:** [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8 + §HANDOVER_PROTOCOL STEP 16 amendment | [[PROMPT_CC_HYGIENE]] §10-§11 | [[INDEX_MASTER]] navigation top entry "READ FIRST".
+
+**Next:** Pas 2 — generate CURRENT_STATE.md from real state synthesis.
+
+**Note explicit:** §CHAT_CONTINUITY_PROTOCOL = vault meta-tooling. NU contabilizat în cumulative LOCKED count product/architecture decisions (separate concern — meta-tooling decisions live aici în DECISION_LOG dar NU inflate domain decision count care tracking-uiește product scope).
+
+---
+
 ## 2026-04-30 evening — Gemini cross-check + ADR 020-021 + amendments
 
 **Status:** Cross-check Gemini 3 Pro on 8 vault docs (VAULT_RULES, PROJECT_VISION, COGNITIVE_ARCHITECTURE_SPEC_v1, ADR 009, 011, 013, 018, 019) → 4 action items new + 1 sugestie respinsă. D1-D15 routing 15/15 locked.

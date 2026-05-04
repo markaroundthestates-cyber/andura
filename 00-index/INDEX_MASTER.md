@@ -1,8 +1,9 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-04 evening (post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 amendments inline + ONBOARDING_SSOT_V1 §1/§8 amendments inline + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster sub-decisions 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG)
-**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add — unchanged this ingest)
+**Last updated:** 2026-05-04 evening (§CHAT_CONTINUITY_PROTOCOL LOCKED V1 — CURRENT_STATE.md live SSOT layer added per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL; preserved post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT).
+**SSOT activ chat-state:** [[CURRENT_STATE]] — **READ FIRST chat NEW startup** (live layered ~200 LOC, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2).
+**SSOT deep archive:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — drill-down doar pentru sections referenced în CURRENT_STATE `## ACTIVE_REFS` (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG).
+**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add — unchanged this ingest).
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
@@ -36,6 +37,7 @@ andura/
 
 | Cauți | Citește |
 |-------|---------|
+| 🔴 **READ FIRST chat NEW startup** | [[CURRENT_STATE]] (live SSOT chat-state, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2) |
 | **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] |
 | **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6 |
 | **Pricing locked Founding €39 + Standard €59 + Elite €79 (V1.1)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 (post Chat D 2026-05-02) + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 (DEPRECATED, see §AMENDMENT) |

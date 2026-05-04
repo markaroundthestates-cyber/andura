@@ -482,3 +482,132 @@ Save with **UTF-8 no BOM, LF line endings** (`newline='\n'` în Python). Validat
 - DIFF_FLAGS.md (STEP 15 output target)
 
 🦫 **Vault Hygiene Pass codified 2026-05-04. Zero drift acumulat. Auto-execute mandatory post-ingest. ~10-15min CC per ingest. Daniel-time: zero.**
+
+---
+
+## §CHAT_CONTINUITY_PROTOCOL — Live SSOT Layer Over §HANDOVER_PROTOCOL
+
+**Status:** LOCKED V1 (codified 2026-05-04 evening — extends §HANDOVER_PROTOCOL existing, NU înlocuiește).
+**Authority:** SSOT pentru chat NEW startup fast layered read + chat-to-chat fast handover (~5-10 min CC) între deep merges.
+**Relation to §HANDOVER_PROTOCOL:** §HANDOVER_PROTOCOL existing rămâne authoritative pentru deep merge (1h CC, weekly/major milestone, DIFF Protocol §7 mandatory, ALIGNMENT_QUESTIONS §9 ≥12/15). §CHAT_CONTINUITY_PROTOCOL adaugă layer light deasupra: live SSOT `00-index/CURRENT_STATE.md` updated chat-to-chat fără full HANDOVER_GLOBAL rewrite.
+
+### §CC.1 Why this layer exists
+
+`HANDOVER_GLOBAL_*.md` deep archive ~5000+ LOC (growing rapid, split candidate per §VAULT_HYGIENE_PASS STEP 13 threshold >7000). Chat NEW startup citind integral = overhead minute + token cost + risc skim/shortcut. Daniel sesiuni multiple/zi → 1h deep handover per saturation cycle = friction nesustenabil. §HANDOVER_PROTOCOL existing rezolvă saturation incident (anti-recurrence halucinare scriere handover bandwidth scăzut) dar NU rezolvă chat-to-chat fast iteration între deep merges.
+
+**Soluția:** layer SSOT live ~200 LOC `CURRENT_STATE.md` actualizat fast (~5-10 min CC) între deep merges săptămânal/major milestone. Chat NEW citește CURRENT_STATE primul; deep HANDOVER doar drill-down când CURRENT_STATE referențiază secțiuni active.
+
+### §CC.2 Chat NEW Startup Layered Read (mandatory)
+
+Sequential read order — NU parallel skip, NU shortcut:
+
+1. **`00-index/CURRENT_STATE.md` (full ~200 LOC)** — live SSOT thread + recent context + pointers
+2. **Sections HANDOVER_GLOBAL referenced în CURRENT_STATE `## ACTIVE_REFS`** — drill-down deep doar pentru topice active
+3. **Top 3 ADRs din CURRENT_STATE `## ACTIVE_ADRS`** — domain decisions deep relevante
+4. **`DIFF_FLAGS.md` P1 active (din CURRENT_STATE `## ACTIVE_FLAGS`)** — outstanding issues blocante
+
+**Skip oricare layer fără cause justificată = drift risk.** Chat NEW recomandare: explicit "READ-ONLY mode până layered read complet" dacă bandwidth insuficient.
+
+**NOTE enforcement:** Acest protocol e enforced pe convention (Daniel paste-uiește prompt context pentru chat NEW + project knowledge include CURRENT_STATE). NU există mecanism filesystem-side care forțează chat NEW să citească. CURRENT_STATE = `## INDEX_MASTER` top entry "READ FIRST" + README pointer servesc ca semnale vizibile.
+
+### §CC.3 Startup Output Format Recommended
+
+```
+Aligned X/Y verified (X = layered read complete, Y = total layers).
+Last LOCKED: [decision] (path:§)
+Mid-flight: [active topic + status] (path:§)
+Next P1: [actionable + blocking deps]
+Drift: [silent flags if timestamps mismatch în CURRENT_STATE vs DECISION_LOG]
+Continuăm?
+```
+
+### §CC.4 Citation Enforcement Post-Startup (Anti-Hallucination)
+
+- Every factual claim post-startup = citation `path:§` obligatoriu
+- Format: `Per CURRENT_STATE §NOW: ...` sau `Per HANDOVER_GLOBAL §X: ...`
+- Memory recall fără citation verifiabilă = re-verify cu read/grep
+- Uncertain pe topic = explicit "verific cu search" NU pretinde
+- Daniel "halucinezi" → instant pause + "ai dreptate" + verify search NU defend
+
+### §CC.5 Fast Handover Workflow (chat-to-chat)
+
+**Trigger:** Daniel "fă handover" în chat curent (NU saturation forced — voluntary continuity checkpoint).
+
+**Distinct de §HANDOVER_PROTOCOL deep:**
+- §HANDOVER_PROTOCOL deep = saturation-driven, full HANDOVER_GLOBAL rewrite, DIFF Protocol §7 + ALIGNMENT_QUESTIONS §9 ≥12/15, ~1h CC, weekly/major milestone
+- §CHAT_CONTINUITY_PROTOCOL fast = voluntary, CURRENT_STATE single file update, ~5-10 min CC, chat-to-chat between deep merges
+
+**Steps:**
+1. **Claude chat:** generate artefact narrativ ~50-100 LOC format conversațional (NU tabel verbatim) — "Discutam X. Daniel B. Push-back Y. Pivot Z. Mid-decision pe W, opțiuni..."
+2. **Daniel:** drag artefact în `📥_inbox/` + 1 comandă: `Update CURRENT_STATE per inbox handover`
+3. **CC ~5-10 min** per §CHAT_CONTINUITY_PROTOCOL STEP 16 amendment (vezi mai jos):
+   - APPEND new content în CURRENT_STATE secțiunile relevante (NU rewrite distructiv)
+   - APPEND entry în DECISION_LOG.md
+   - Move artefact din `📥_inbox/` la `📤_outbox/_archive/<YYYY-MM>/NN_<TASK>_CONSUMED.md`
+   - Backup tag: `pre-handover-<YYYY-MM-DD-HHMM>`
+   - Commit + push origin main (hooks normal, NU `--no-verify` decât justificat)
+4. **STOP.** NU touch `HANDOVER_GLOBAL.md` deep, NU sync alte SSOT-uri. §HANDOVER_PROTOCOL existing preserved unchanged.
+
+### §CC.6 CURRENT_STATE.md Append-Only Architecture (canonical)
+
+**Sections fixed order:**
+- `## NOW` — active conversation thread (1 section visible at top)
+- `## JUST DECIDED` — recent LOCKED entries last 24-72h (append-only, descending chronologic)
+- `## NEXT` — priority order actionable
+- `## ACTIVE_REFS` — HANDOVER_GLOBAL sections to deep-read for current topics
+- `## ACTIVE_ADRS` — top ADRs to deep-read
+- `## ACTIVE_FLAGS` — DIFF_FLAGS.md P1 status (mirror, NU duplicate canonical state)
+- `## RECENT` — older `NOW` content moved here (truncate to HANDOVER_GLOBAL deep când >50 LOC)
+- `## POINTERS` — deep history drill-down pointers
+
+**Edit semantics (canonical):**
+- New conversation thread → APPEND la `## JUST DECIDED` top + UPDATE `## NOW` în-place cu thread curent + MOVE precedent `## NOW` content la TOP `## RECENT` (NU overwrite, NU delete)
+- Truncate `## RECENT` oldest la HANDOVER_GLOBAL deep doar când section >50 LOC (preserve append-only zero-info-loss)
+- ZERO destructive rewrite. `## NOW` "în-place update" = move-then-replace (precedent preserved în `## RECENT`).
+
+### §CC.7 Safety Nets
+
+**Layer 1 — Layered read mandatory** (§CC.2)
+
+**Layer 2 — Citation enforcement** (§CC.4)
+
+**Layer 3 — Drift detection silent (timestamps):**
+Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.md` last entry timestamp. Mismatch >24h sau gap suspect → flag în output startup: `Drift: CURRENT_STATE older than DECISION_LOG by Xh. Re-sync recommended.` NU întrerupe chat — Daniel decide acționează/ignoră.
+
+**Layer 4 — Append-only architecture** (§CC.6)
+
+**Layer 5 — Backup tag git pre-handover MANDATORY:**
+`git tag pre-handover-<YYYY-MM-DD-HHMM>` + `git push origin <tag>`. Worst case = full state recovery. Cross-ref `PROMPT_CC_HYGIENE.md` §8 Destructive Ops Checklist (existing rule, reinforced here).
+
+### §CC.8 Cross-refs
+
+- `00-index/CURRENT_STATE.md` (live SSOT, generated post §CHAT_CONTINUITY_PROTOCOL LOCKED)
+- `PROMPT_CC_HYGIENE.md` §10 fast-handover workflow + §11 startup verify format
+- `00-index/INDEX_MASTER.md` "READ FIRST" entry top navigation
+- §HANDOVER_PROTOCOL existing (deep flow preserved unchanged)
+- §HANDOVER_PROTOCOL STEP 16 amendment (below)
+
+---
+
+## §HANDOVER_PROTOCOL STEP 16 — Amendment (CURRENT_STATE update post-ingest)
+
+**Trigger:** post §HANDOVER_PROTOCOL existing STEP 1-15 complete (deep `Ingest handover from inbox` workflow) SAU §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover workflow.
+
+**Action — append-only canonical (NU rewrite destructive):**
+
+1. APPEND new entry/entries la `00-index/CURRENT_STATE.md` `## JUST DECIDED` (top, descending chronologic)
+2. UPDATE `00-index/CURRENT_STATE.md` `## NOW` în-place cu thread curent — **mecanism:** move precedent `## NOW` content la TOP `## RECENT`, apoi populate `## NOW` cu thread nou. Precedent preserved. ZERO content lost.
+3. UPDATE `## NEXT` priority order (overwrite OK — priority list inherent volatile, snapshot curent)
+4. UPDATE `## ACTIVE_REFS` + `## ACTIVE_ADRS` + `## ACTIVE_FLAGS` cu sections noi referenced (overwrite OK — references, NU content)
+5. Truncate `## RECENT` oldest content la HANDOVER_GLOBAL deep doar când section >50 LOC
+6. Update header `Updated:` timestamp
+7. Verify timestamp consistency: CURRENT_STATE `Updated:` >= DECISION_LOG last entry timestamp. Mismatch detected → flag în `📤_outbox/LATEST.md` § Issues.
+
+**Rationale append vs replace clarification:**
+- `## JUST DECIDED` + `## RECENT` + `## POINTERS` = strict append-only (content history preserved)
+- `## NOW` = move-then-replace (precedent preserved în `## RECENT`, NOT lost)
+- `## NEXT` + `## ACTIVE_REFS/ADRS/FLAGS` = overwrite OK (these are pointers/snapshots, not content history)
+
+**Failure mode:** STEP 16 fail → ROLLBACK ingest entire (revert backup tag pre-execution). NU partial state.
+
+---

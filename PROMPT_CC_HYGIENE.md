@@ -365,3 +365,118 @@ Pentru FIECARE ingest de handover, CC Opus generează **OBLIGATORIU** `📤_outb
 - §3.2 raport format expected
 - §7 DIFF Protocol (separate case — handover overwrite SSOT)
 - Slip incident 2026-05-02 SELF-CORRECTION ingest (codificare ulterior din observație Daniel)
+
+---
+
+## 10. FAST HANDOVER WORKFLOW — Chat-to-Chat (§CHAT_CONTINUITY_PROTOCOL)
+
+**Trigger:** Daniel drag artefact narrativ handover în `📥_inbox/` + comandă: `Update CURRENT_STATE per inbox handover`.
+
+**Distinct de §7 DIFF Protocol + §9 ALIGNMENT_QUESTIONS:**
+- §7 + §9 = deep handover ingest (overwrite HANDOVER_GLOBAL SSOT, ALIGNMENT_QUESTIONS ≥12/15, ~1h)
+- §10 = fast chat-to-chat (APPEND-only la CURRENT_STATE + DECISION_LOG, NU touch HANDOVER_GLOBAL deep, ~5-10 min)
+
+**Authority:** VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL + §HANDOVER_PROTOCOL STEP 16 amendment.
+
+### §10.1 Pre-flight
+
+```bash
+git status                                          # verify clean tree (sau acceptable untracked outside scope)
+git branch --show-current                           # verify main
+git tag pre-handover-$(date +%Y-%m-%d-%H%M)         # MANDATORY backup tag
+git push origin pre-handover-$(date +%Y-%m-%d-%H%M)
+```
+
+### §10.2 Read inbox handover artefact
+
+- Read `📥_inbox/` newest `*HANDOVER*.md` file
+- Extract sections: NOW thread + JUST_DECIDED entries + NEXT priorities + (optional FLAGS updates)
+- **NU recreate content din memorie** — use verbatim/paraphrase fidel din artefact (artefactul ESTE source-of-truth chat-state — Claude chat scribe a generat dintre mental marking)
+
+### §10.3 Update `00-index/CURRENT_STATE.md` per §HANDOVER_PROTOCOL STEP 16 amendment
+
+**Append-only canonical (NU rewrite destructive):**
+
+1. **`## JUST DECIDED`** — APPEND new LOCKED entries la TOP (descending chronologic). Preserve toate entries existing.
+2. **`## NOW`** — move-then-replace mechanism:
+   - MOVE precedent `## NOW` content la TOP `## RECENT` section (precedent preserved, NU lost)
+   - POPULATE `## NOW` cu thread curent din artefact
+3. **`## NEXT`** — overwrite OK cu priority order curent (snapshot pointer, NU content history)
+4. **`## ACTIVE_REFS`** + **`## ACTIVE_ADRS`** + **`## ACTIVE_FLAGS`** — overwrite OK (pointers/references, NU content)
+5. **`## RECENT`** — truncate oldest entries la HANDOVER_GLOBAL deep doar când section >50 LOC (preserve append-only zero-info-loss principle — info migrat NU lost, archived în HANDOVER deep)
+6. **Header** — update `Updated:` timestamp + (opțional) cumulative LOCKED count dacă substantive product/architecture decisions ingested (NU pentru protocol meta-tooling)
+
+**Rationale append-only vs overwrite per section:**
+- Content history sections (`## JUST DECIDED`, `## RECENT`, `## POINTERS`) = strict append-only
+- Active state pointers (`## NOW`, `## NEXT`, `## ACTIVE_*`) = overwrite OK (snapshot curent, precedent move-uit la `## RECENT` pentru `## NOW`)
+
+### §10.4 Update `03-decisions/DECISION_LOG.md`
+
+- APPEND 1 entry top (cronologic descending) referencing handover content
+- Format: `## YYYY-MM-DD <descriptor> — <topic>`
+- Cross-ref CURRENT_STATE.md update + handover artefact path archived
+
+### §10.5 Archive handover artefact
+
+- Move `📥_inbox/<HANDOVER>.md` → `📤_outbox/_archive/<YYYY-MM>/NN_<HANDOVER>_CONSUMED.md`
+- Increment NN cronologic continuu (NU FIFO, NU reset lunar) per §3.3 outbox schema
+- NICIODATĂ DELETE artefact (preserve audit trail)
+
+### §10.6 Cross-validation timestamp consistency
+
+- Verify `CURRENT_STATE.md` header `Updated:` >= `DECISION_LOG.md` last entry timestamp
+- Mismatch → flag în `📤_outbox/LATEST.md` § Issues + STOP push (investigate manual)
+
+### §10.7 Commit + push
+
+```bash
+git add 00-index/CURRENT_STATE.md 03-decisions/DECISION_LOG.md "📤_outbox/_archive/<YYYY-MM>/"
+git commit -m "feat(chat-continuity): handover ingest <topic> — CURRENT_STATE updated"
+git push origin main
+```
+
+**Hooks normal (`npm run test:run` pre-commit) — NU `--no-verify` decât justificat explicit per-commit (e.g., test runner unrelated broken upstream + Daniel approval).**
+
+### §10.8 Generate report `📤_outbox/LATEST.md`
+
+Per §3 raport schema:
+- Task + model + status
+- Pre-flight checks (clean tree + backup tag)
+- Modificări (CURRENT_STATE diff section-by-section + DECISION_LOG entry + archive)
+- Commits + pushed
+- Issues (drift detected? consistency check pass/fail?)
+- Next action
+
+**STOP.** NU touch `HANDOVER_GLOBAL.md` deep. NU sync alte SSOT-uri. Fast iteration only. Deep merge = separate trigger §HANDOVER_PROTOCOL existing.
+
+---
+
+## 11. CHAT NEW STARTUP VERIFY FORMAT (§CHAT_CONTINUITY_PROTOCOL §CC.2-§CC.3)
+
+**Authority:** VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.3.
+
+**Mandatory layered read order chat NEW:**
+1. `00-index/CURRENT_STATE.md` (full)
+2. `06-sessions-log/HANDOVER_GLOBAL_*.md` sections referenced în CURRENT_STATE `## ACTIVE_REFS`
+3. Top 3 ADRs din CURRENT_STATE `## ACTIVE_ADRS`
+4. `DIFF_FLAGS.md` P1 active (din CURRENT_STATE `## ACTIVE_FLAGS`)
+
+**Output format recommended:**
+
+```
+Aligned X/Y verified (X = layers complete, Y = 4 total).
+Last LOCKED: <decision> (path:§)
+Mid-flight: <active topic + status> (path:§)
+Next P1: <actionable + blocking deps>
+Drift: <silent flag if timestamps mismatch CURRENT_STATE vs DECISION_LOG, "none" otherwise>
+Continuăm?
+```
+
+**Anti-hallucination enforcement (§CC.4):**
+- Every factual claim post-startup = citation `path:§`
+- Memory recall fără citation verifiabilă = re-verify cu read/grep
+- Uncertain = explicit "verific cu search"
+
+**Enforcement mechanism reality-check:** Acest protocol e enforced pe convention (Daniel manual paste la chat NEW + Project Knowledge include CURRENT_STATE). NU există filesystem-side mechanism care forțează chat NEW să respecte. Semnalele vizibile = INDEX_MASTER "READ FIRST" entry top + README pointer.
+
+---
