@@ -1,7 +1,7 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-04 (post Vault Hygiene Sprint Faza 3+4 — ADR 022/024/025/026 stubs + DECISION_LOG UTF-8 + orphans cleanup + VAULT_HYGIENE_PASS rule codified)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (90 LOCKED V1 + §36.99-§36.107 offline coaching tree + 7 engines + D2/D3 NEW)
+**Last updated:** 2026-05-04 evening (post handover ingest §41-§44 — Vault Hygiene Sprint COMPLETE + ADR 026 spec decisions 1-10 LOCKED V1 + cumulative 90 → 100)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (100 LOCKED V1 + §36.99-§36.107 offline coaching tree + 7 engines + D2/D3 NEW + §41-§44 Vault Hygiene COMPLETE + ADR 026 spec)
 **Stats:** 66 fișiere active vault (post-stubs G + UNREFERENCED moves F)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
@@ -51,6 +51,10 @@ andura/
 | **Knowledge layer cadence quarterly/bi-annual/annual** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.103 |
 | **D2 NEW Injury/Contraindication Mapping (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.106 |
 | **D3 NEW Don't Like + Home + Calistenice + Sport-Oriented (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.107 |
+| **Vault Hygiene Sprint Faza 3+4 ✅ COMPLETE (8 recomandări A-H + Faza 4 codified)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §41 |
+| **ADR 026 Spec Decisions 1-10 LOCKED V1 (chat strategic 2026-05-04)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §42 (§42.1-§42.10) + [[DECISION_LOG]] (2026-05-04 evening entry) |
+| **Next actions priority order post 2026-05-04 evening ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §43 |
+| **Cumulative LOCKED count 100 + vault state post §41-§44 ingest** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §44 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
 | **ADR-uri active 001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named** | `03-decisions/` |
 | **Storage Tiering Strategy (Tier 0/1/2 + Dexie)** | [[020-storage-tiering-strategy]] |
@@ -167,6 +171,12 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 - **E:** Folder restructuring zero change (root-level VAULT_RULES + DIFF_FLAGS + PROMPT_CC_HYGIENE preserved per audit)
 - **Faza 4:** §VAULT_HYGIENE_PASS rule codified in VAULT_RULES.md (steps 10-15 + auto-trigger spec post-ingest)
 
+### 2026-05-04 evening (handover ingest §41-§44)
+- **Stale handover archive** (zero info loss): `📥_inbox/HANDOVER_CHAT_OFFLINE_COACHING_TREE_2026-05-04.md` already ingested earlier today (§36.99 + §36.106 verified present in HANDOVER_GLOBAL via grep) → archived `📤_outbox/_archive/2026-05/118_HANDOVER_CHAT_OFFLINE_COACHING_TREE_CONSUMED_2026-05-04.md`
+- **New handover ingest:** §41 Vault Hygiene Sprint Faza 3+4 COMPLETE (meta self-reference) + §42 ADR 026 spec decisions 1-10 LOCKED V1 + §43 next actions priority + §44 cumulative 90 → 100. Source archived `📤_outbox/_archive/2026-05/119_HANDOVER_2026-05-04_evening_CONSUMED.md`
+- **DECISION_LOG +10 entries** ADR 026 §42.1-§42.10 LOCKED V1 (top of file, cronologic descending)
+- **HANDOVER_GLOBAL split FLAG check:** post-merge ~6200-6300 LOC (pre-merge 6058 + ~150-200 added §41-§44). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered
+
 ---
 
-🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4. Andura needs to be the best. ✊**
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4 + 100 LOCKED post §41-§44 ingest. Andura needs to be the best. ✊**

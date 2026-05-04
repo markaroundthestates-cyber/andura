@@ -1,5 +1,39 @@
 # DECISION LOG — Andura
 
+## 2026-05-04 evening — ADR 026 Spec Decisions 1-10 LOCKED V1 (chat strategic 2026-05-04)
+
+**Status:** 10 decizii fundamentale ADR 026 "Andura Offline Coaching Decision Tree Exhaustive" LOCKED V1 ready compile draft full chat NEW. Cumulative LOCKED 90 → 100.
+
+**Context:** 21 engines total (14 reactive existing + 7 prescriptive NEW §36.100). 1500-2000 ramuri SUM agregată distribuită ACROSS engines. ADR 026 = META-arhitectură global concerns SSOT (format ramură + cross-engine merge + testing + storage), NU monolith. ADR-uri engine individuale (022/024/etc) = domain-specific.
+
+**Decizii LOCKED V1:**
+
+1. **§42.1 Format ramură INTERN engine — B Standard** ✅ LOCKED — INPUT/CONDITION/OUTPUT/RATIONALE/CROSS_REF schema standardizată (persona signals → boolean tree → periodization block + volume landmarks + intensity zone + tempo cues, literature ref + ADR cross-refs). Type-safe TS extensibil. Trasabilitate audit-trail + alimentează WhyEngine + cod auto-documentat verificabil producție.
+
+2. **§42.2 Granularitate condiții — Hybrid B Medium baseline + C Fine selectiv** ✅ LOCKED — B baseline age groups <30/30-45/45-60/60-70/70+ × sex × experience. C Fine selectiv 3 interacțiuni critice: vârstă × obiectiv (deload volume 65 ani slăbire vs 20 hipertrofie) + experiență × intensitate (RIR 0 begin vs advanced) + sex × volume landmarks (femei upper body MEV/MAV/MRV). Push-back chat: C Fine brute force 30000-50000 ramuri × 21 engines = ship NEVER + halucination risk femeie 75+ Forță advanced ZERO literature. Total 1500-2000/engine sustained sănătos.
+
+3. **§42.3 Cross-engine merge META — B Extends Arbitrator existing via Dimension Registry ADR 018** ✅ LOCKED — Engines prescriptive contribuie verdicte via Dimension Registry către voices temporale existing (Periodization → HISTORICAL + REALTIME + PROJECTION). Verdicte agregate intră Arbitrator 5-level Precedence + 27 reguli unchanged. ZERO change Arbitrator. ZERO voce nouă (5 voices LOCKED, voice 6-th GOAL rejected §26.2 preserved). Slip clarificare: termenul "voce virtuală" REJECTED (drift conceptual periculos vs 5-voice lock). Wording corect SSOT: "engines contribuie verdicte prin Dimension Registry, NU devin voci".
+
+4. **§42.4 Engine spec generation order — A Periodization prima** ✅ LOCKED — Periodization trasează limitele maxime volum + intensitate organism susține (MEV/MAV/MRV per muscle group + block periodization phase). Toate celelalte engines = filtre reglaj fin în interiorul cadrului fundamental. Order roadmap proposed: Periodization → Goal Adaptation → Bayesian Nutrition → Deload → Energy → Tempo → Specialization.
+
+5. **§42.5 ADR 026 scope — B Standardizator** ✅ LOCKED — ADR 026 conține Global Concerns SSOT (format ramură global + cross-engine merge protocol + testing strategy + storage mechanisms + fallback telemetry circuit breaker + versioning deprecation window). ADR-uri engine individuale conțin Domain Concerns (formule specifice kcal Bayesian / logic Cut/Bulk/Maintain Goal Adaptation / specificități biomecanice domain). Push-back chat: C Comprehensive monolith 200+ pagini → nimeni citește → drift IRONIC mai mare decât B. Pattern industry standard separation of concerns.
+
+6. **§42.6 Storage format ramuri — B Separate `engine-name.tree.ts` data file** ✅ LOCKED — Logic engine în `<engine-name>.engine.ts` + data ramuri în `<engine-name>.tree.ts` separat (split logic vs data, same repo, same monorepo). Tests izolat ramuri direct + tree-shaking Vite corect + grep metadata <5ms + type-safe TS const exhaustiv + updatable repo deploy. Data NOT decoupled în JSON/Firestore (over-engineering pre-Beta, runtime swappable feature aşteaptă post-Beta dacă demand real).
+
+7. **§42.7 Fallback ZERO match — Safe-baseline + CDL telemetry + 5% Circuit Breaker per segment** ✅ LOCKED — (1) ZERO match input → engine returns safe-baseline coarse generic per goal/age (NU refuză NU LLM escalate runtime — păstrăm offline ZERO LLM core paths preserved §36.99). (2) CDL log injectează `fallback_triggered: true` + persona signals snapshot (telemetry passive monitoring). (3) Circuit Breaker 5% threshold per segment Maria/Gigica/Marius — dacă rate fallback > 5% segment → trigger Hotfix Knowledge Sprint imediat NU așteaptă cycle quarterly. Push-back chat: catch-all silențios = data sit there ramuri lipsă luni. Telemetry passive = insufficient single. Circuit Breaker activ = visible alarm + actionable cadence acceleration peak readiness.
+
+8. **§42.8 Versioning quarterly updates — Additive + 18 luni deprecation window V_N-2** ✅ LOCKED — Update Q2 2026 → V2 ramuri additive (V1 useri existing rămân unchanged mid-program). 18 luni deprecation window V_N-2 → după 18 luni V1 sunset, useri migrate automat la V_latest în calibration window §36.35 (NU instant rupt). Maintenance ceiling: max 3 versions concurrent (V_latest + V_N-1 + V_N-2 deprecated → migration). Push-back chat: Pure Additive forever = 12 versiuni active 2030 = maintenance hell. Pure Full replace = trust breach mid-mesociclu user (Bugatti F5 push-back proporțional violation). Hybrid Additive + Deprecation 18 luni = balance respect user effort + maintenance cost.
+
+9. **§42.9 Testing strategy — Hibrid Property-based + Persona Suite + 4-Invariant Safety Stack** ✅ LOCKED — Property-based (random persona × verify output sane via invariants — breadth coverage). Persona simulation suite (Maria/Gigica/Marius scenarios fixe + edge cases curated, ~50-100 tests representative — depth coverage). 4 invariante imutabile mandatory pass: (1) Volum V ≤ MRV per muscle group; (2) Intensitate RIR ≥ 0 (never below failure); (3) Frecvență ≤ 6 sessions/week per muscle group; (4) Deload mandatory după 4-6 weeks mesocycle. Push-back chat: V ≤ MRV singur = miss user gaming MRV cu RIR -2 + frequency 7x = pasted check dar overall unsafe combo. Stack 4 invariants = bulletproof safety net cumulative.
+
+10. **§42.10 Engine activation order runtime — Sequential + Constraint Object Floor/Ceiling Range ±15%** ✅ LOCKED — Pipeline runtime per session build: (1) Periodization generează coridor (Floor + Ceiling) baseline (ex: 12-16 seturi pectorali săpt). NU ceiling-only. (2) Goal Adaptation redistribuie volume în interiorul coridorului (slăbire scade chest 12 + crește picioare 16; hipertrofie reverse). NU trece peste Ceiling NU sub Floor. (3) Energy Adjustment fluctuează ±15% baseline coridorului. Bidirectional NU only-decrease (zile peak readiness sleep 9h + stress low + RIR bank → UP boost +15% accelerator overload progressive real). Zile fatigue → DOWN -15%. Constraint Object immutable propagat engine la engine (TypeScript readonly type-safe). Push-back chat: Energy only-decrease = miss opportunity peak readiness zile bune. System adevărat Bugatti harvests good days NU just survives bad ones.
+
+**Cross-refs:** [[026-offline-coaching-decision-tree-exhaustive]] (candidate stub, compile draft full PENDING chat NEW Priority 2) | [[018-engine-extensibility-architecture]] (Dimension Registry foundation §42.3) | [[023-llm-intent-interpretation]] (LLM scope strict preserved unchanged §42.7) | [[022-bayesian-nutrition-inference]] (engine #3 §42.4 order, stub PENDING) | [[024-goal-driven-program-templates]] (engine #2 §42.4 order, stub PENDING) | [[HANDOVER_GLOBAL_2026-04-30_evening]] §42.1-§42.10 + §43 next actions + §44 cumulative 100
+
+**Next:** Compile ADR 026 draft full din §42 deciziile 1-10 LOCKED + start Periodization Engine spec generation (~150-300 ramuri × ~2-3 chat-uri spec complete bottom-up persona-driven Maria→Gigica→Marius). Chat strategic NEW dedicat post Auth Flow §36.80 BUG 2.
+
+---
+
 ## 2026-04-30 evening — Gemini cross-check + ADR 020-021 + amendments
 
 **Status:** Cross-check Gemini 3 Pro on 8 vault docs (VAULT_RULES, PROJECT_VISION, COGNITIVE_ARCHITECTURE_SPEC_v1, ADR 009, 011, 013, 018, 019) → 4 action items new + 1 sugestie respinsă. D1-D15 routing 15/15 locked.
