@@ -5576,3 +5576,483 @@ Audit consolidat 9 passes (~63 raw findings) + Faza 1 verification + Faza 2 idea
 **Sesiune 2026-05-03 AUDIT TOTAL CONSOLIDAT + ADR 023 LLM INTENT INTERPRETATION LOCKED V1 PARTIAL** (chat strategic post audit consolidat 9 passes ~63 raw findings + Faza 1 verification cap-coadă + Faza 2 ideation ~50 idei NEW + addendum reconsiderări — synthesis cumulativ în 4 fișiere total, dar 1 missing). 6 decizii LOCKED V1 noi (§36.86 ADR 023 LLM Intent Interpretation & Fallback Architecture provider chain Groq llama-3-8b-it primary → Gemini 1.5 Flash fallback → Local Regex last resort + scope strict 2 trigger points Pain text §36.38 + Equipment text §36.81.2 + Bugatti sandbox temperature 0.0 + Structured Outputs JSON + Regex Fallback + sanitizer client-side PII whitelist exercise names + termeni fitness RO + async non-blocking + cache IndexedDB ~55-60% hit rate + cost cap €10/lună hard + CDL `llm_metadata` extension + Gigel test PASS Maria/Gigica ZERO text input + Marius optional "Altceva" — **⚠️ partial spec ingest, full sub-sections A-M PENDING addendum source upload**; §36.87 Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK condiționat ZERO LLM runtime → permis exclusiv 2 trigger points ADR 023 scope strict; §36.88 Bus factor 1 = ACCEPTABLE TRADE-OFF pre-revenue LOCKED + SLA disclosure ToS; §36.89 Calibration target pre-Beta 85-90% NU 95% + plan A+B+E Synthetic Demographic Prior + Observation mode 2 săpt Beta + Expert validator coach €500-1000 + 95% post-launch luna 3-6 obligatoriu; §36.90 TIME-1 Bayesian convergence reclassification MEDIUM acceptable cu DEMO-1 verify done; §36.91 T2 The Filter RESOLVED via ADR 023 originally HIGH acceptable trade-off → CLOSED). 1 META operation (§36.92 Audit consolidat reclasificare 4 buckets findings: REZOLVABIL pre-Beta ~16 + Post-launch V1.1 ~10 + Acceptabil trade-off permanent ~5 + Reconsiderate ~6 = ~40 actionable post-deduplication NU 53 verification NU 63 raw + 4 CRITICAL pre-Beta blockers B4 + B2 + B3 + N1+N5-NEW + 12 HIGH cleanup batch + Top 6 ideation integrate pre-Beta IMP-1 + IMP-3 + NEW-IDEATION-1 + FM-2 + FM-8 + IMP-4 + 6 D1-D6 decision points pending Daniel + 6 D-DONE 1-6 LOCKED acest addendum). **⚠️ P1 BLOCKER:** sursa addendum `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` (referenced ca sursă spec ADR 023 §2 sub-secțiuni A-M complete) **NU în inbox acest ingest** — partial ingest procedat per memory rule SUFLET ANDURA precedent (2026-05-02): fabricare conținut INTERZISĂ per zero-info-loss principle. ADR 023 status LOCKED V1 — partial spec; full sub-sections A-M PENDING upload addendum source viitor. Flag documentat în `DIFF_FLAGS.md` (newly created) + `05-findings-tracker/FINDINGS_MASTER.md` audit consolidat appended section. ADR file stub creat `03-decisions/023-llm-intent-interpretation.md` cu summary verifiable din HANDOVER §0 + §7 + AUDIT_VERIFICATION §11 + AUDIT_IDEATION §7. Decizii cumulative pre-launch V1 = **85** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 post-Chat-E flags §36.59-60 + 4 cluster 10-batch §36.62 + §36.63 §BATCH_PROTOCOL + §36.71 + §36.72 + §36.73 + §36.74 + §36.75 + §36.76 + §36.77 + §36.78 + §36.79 + §36.80 finding-only + 7 features §36.81+§36.82 cluster + §36.83 META-RULE +0 + §36.84 backlog +0 + §36.85 pending +0 + **§36.86 ADR 023 LLM Intent + §36.87 Cognitive Q4 DELOCK + §36.88 Bus factor TRADE-OFF + §36.89 Calibration 85-90% + §36.90 TIME-1 MEDIUM + §36.91 T2 RESOLVED = 6 LOCKED V1 noi**) + §36.92 META reclasificare 4 buckets +0 = 79 → **85** (+6). Real findings count post-deduplication + reclassification: ~40 actionable (audit acuratețe 7.5/10 per Faza 1 verdict). Effort estimate cumulativ pre-Beta (post-addendum): ~30-45h Opus realist + ~12-18h Daniel chat strategic + €500-1000 expert validator one-time + 4-6 săpt calendaristic factor sustainability Daniel solo. Decision points D1-D6 pending Daniel chat strategic NEW (T1 A/C save week silent + §36.86b DELOCK Mechanism META-RULE + Cloud Functions Blaze decizie + Goal Taxonomy hybrid recommend C + Sprint Vault Hygiene Q2 2026 + ADR 023 cost monitoring backend). **ZERO cod până nu e tot solved** — sequencing strict per HANDOVER §10 (decision points D1-D6 chat strategic → ADR amendments + spec consolidations vault docs only → pre-Beta blockers CC Opus autonomous batches → HIGH cleanup batch → top 6 ideation integrate → Auth Flow §36.80 separately sequenced → Smoke tests prod gates B/C/D → Beta cohort recruitment §36.47 + §36.53 Telegram). Auth Flow §36.80 = Priority 1 ABSOLUT preserved separat de blockers list (per HANDOVER §1 footnote). 1203/1203 PASS unchanged (vault docs + ADR file + findings tracker + DIFF_FLAGS only acest ingest, ZERO source code touched). Bandwidth Daniel: NU activ (audit synthesis post chat strategic). Status V1: 8/8 templates LOCKED + F-NEW LOCKED V1 + MMI LOCKED V1 + Storage Full UX LOCKED V1 + 4 CRITICAL pre-Beta blockers (NU 5 — T1 demoted, B1 demoted) + 12 HIGH cleanup + Top 6 ideation integrate pre-Beta + **85 decizii LOCKED cumulative** + Beta-launch ASAP strategy (timing flexible per §36.83) + Suflet Andura translation map + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + **ADR 023 LOCKED V1 partial spec + ⚠️ PENDING addendum upload** + Phase B 51 strings INTEGRATED + Cluster 10-batch foundation tests 1203 PASS + Coverage/Build baselines locked + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + Sprint UI 6 UX LOCKED V1 + Slip Log §36.77 anti-recurrence + Andura V1 prod LIVE `andura.app` ✅ + §36.78 Rebrand Sweep + §36.79 Custom Domain Hotfix + §36.80 BUG 2 Firebase Auth Flow Priority 1 ABSOLUT preserved + §36.81 Coach Intelligence Cluster + §36.82 Pre-Session Energy Signal Cluster + §36.83 META-RULE Prebeta Scope + §36.84 Jeff Nippard Backlog + §36.85 Body Region Map PENDING + Memory #24 LOCKED + **§36.86 ADR 023 + §36.87 Cognitive Q4 DELOCK + §36.88 Bus factor TRADE-OFF + §36.89 Calibration 85-90% + §36.90 TIME-1 MEDIUM + §36.91 T2 RESOLVED + §36.92 Audit reclasificare 4 buckets + DIFF_FLAGS P1 BLOCKER addendum source pending**. Next: **Priority 0 Daniel — upload `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` la inbox** pentru ADR 023 full sub-sections A-M ingest (current stub partial). **Priority 1 chat strategic NEW dedicat decision points D1-D6** (~5-7h Daniel chat strategic) — rezolvare T1 A/C + DELOCK Mechanism META-RULE + Cloud Functions Blaze decision + Goal Taxonomy hybrid C + Sprint Vault Hygiene Q2 2026 + ADR 023 cost monitoring infrastructure. **Priority 2 ABSOLUT chat strategic NEW Auth Flow Integration** (§36.80 preserved blocking Beta) — design ~1-2h Daniel-time + prompt CC Opus dedicat ~30-45min autonomous. **Priority 3 ADR amendments + spec consolidations** (vault docs only — TRIPLE-1+QUADRUPLE-1 Onboarding SSOT + R1-NEW Reconciliation §36.86b + ORPHAN-1 ADR 022 split). **Priority 4 Pre-Beta blockers CC Opus autonomous batches** per §BATCH_PROTOCOL §36.74 (B2 + B3 + B4 + N1 + ADR 023 implementation). **Priority 5 HIGH cleanup batch** + **Priority 6 Top 6 ideation integrate** + **Priority 7-N** Smoke tests + Beta cohort recruitment + audit legal + Soft Launch 1 ianuarie 2027 🚀 (target aspirațional flexibil per §36.83). Marketing Channel Mix Decision = milestone V1.1 ~Februarie 2027 per §36.60.**
 
 **Sesiune 2026-05-03 VAULT HYGIENE SPRINT FAZA 1 + DECIZII STRATEGICE POST-AUDIT** (chat strategic post audit total consolidat 12/12 PASS alignment + Faza 1 audit structural CC Opus complete + Daniel revelație core principle "Andura gândește pentru user" + Co-CTO 100% delegation pe Faza 2 validare). 2 decizii LOCKED V1 noi count cumulative (§36.93 D3 LOCKED B Spark retain Cloud Functions Blaze RESPINS rationale calcul real 50 useri × 4 sesiuni × 2 LLM calls = 57 calls/zi = 0.4% Groq free tier 14400/zi limit bootstrap-aware Bugatti scale când e problemă reală NU ipotetică + reconsider triggers revenue/Groq deprecation/demand spike >5% + D6 frontend-only soft cap depinde D3=B + Q11 violation accept pre-Beta + NEW-IDEATION-5 backend cost monitoring DEFERRED post-revenue; §36.94 ADR 025 candidate "Andura Gândește pentru User" / Graceful Degradation Universal articulare retroactivă principiu fondator implicit aplicabilitate ALL features V1+V1.5+V2+ permanent + mecanism graceful degradation mandatory + skippable everything + engine-pre-fills-default + user-override-optional + filtru pre-feature LOCK "dacă user ignoră feature app-ul tot funcționează rezonabil" DA→eligible NU→REJECTED + cross-ref retroactiv B4 RPE skip + B2 T&B skip + ADR 023 Pain/Equipment skip + T0 Onboarding skip + T1+ Profile Typing skip) + 4 META operations (§36.95 ADR Numbering Additive LOCKED ZERO renumber existing + ADR 022 ORPHAN-1 split fizic per audit recomandare G → 022 Bayesian Nutrition + 024 Goal-Driven Templates + 025 Andura Gândește PENDING file creation Faza 3 + ADR 023 LLM Intent existent NU renumber additive curat zero collision; §36.96 Vault Hygiene Sprint = Priority 0 promote înaintea pre-Beta blockers + Auth Flow §36.80 + 8 recomandări APROBATE Co-CTO 100% delegation per Daniel directive "decide tu, e pentru tine" — A HANDOVER split Option C + B Onboarding SSOT V1 hybrid C + C INDEX_MASTER refresh + D archive preserve + E folder zero change + F orphans cleanup 22 wikilinks + G ADR 022/024/025 stubs + H DECISION_LOG UTF-8 fix; §36.97 Faza 4 VAULT_HYGIENE_PASS = LOCK rule codification PENDING Faza 3-4 — STEP 10-15 mandatory post-ingest auto-execute ~10-15min CC per ingest + VAULT_RULES.md §VAULT_HYGIENE_PASS NEW + PROMPT_CC_INGEST_HANDOVER.md update; §36.98 System Prompt Claude Chat Andura LOCKED V1 generat artefact pentru chat NEW context state snapshot 87 LOCKED V1). **Status faze Vault Hygiene Sprint:** Faza 1 ✅ COMPLETE (commit a5b1542 — 110_VAULT_AUDIT_INVENTORY.md ~600 LOC §1-§9 + LATEST.md raport) + Faza 2 ✅ COMPLETE (Co-CTO delegated 100% per Daniel directive, 8 recomandări APROBATE) + Faza 3 ⏳ PENDING chat NEW (~2-3h CC autonomous Opus factor 7-9x realist) + Faza 4 ⏳ PENDING chat NEW (~30min CC LOCK rule codification). **DIFF_FLAGS update:** P1-FLAG-1 ADDENDUM source upload status updated (Faza 3 va integra direct sub-secțiuni A-M ADR 023 din addendum context window NU file upload separate); P2-FLAG-1 D3 RESOLVED B + D2 ACCEPT propunere wording verbatim Co-CTO aliniat T3 + D4 LOCKED hybrid C deja per §36.92 + D5 SUPERSEDED Vault Hygiene Sprint = Priority 0 acum NU Q2 2026 + D6 frontend-only soft cap depends D3=B; D1 only remaining strategic (Save the week silent A/C). Decizii cumulative pre-launch V1 = **87** (12 Acasă + 11 SUFLET ANDURA + 8 SELF-CORRECTION + 14 Chat C + 8 Chat D + 1 Chat E + 2 §36.59-60 + 4 cluster 10-batch + §36.63 + §36.71-§36.77 + §36.78-§36.79 + §36.80 finding-only + 7 features §36.81+§36.82 + §36.83 META +0 + §36.84 backlog +0 + §36.85 pending +0 + 6 §36.86-§36.91 audit total + §36.92 META +0 + **§36.93 D3 LOCKED B + §36.94 ADR 025 candidate = 2 LOCKED V1 noi**) + §36.95 META Numbering Additive +0 + §36.96 Vault Hygiene Sprint Priority 0 +0 + §36.97 META rule LOCK PENDING +0 + §36.98 System Prompt artefact +0 = 85 → **87** (+2). 1203/1203 PASS unchanged (vault docs + ADR 023 §AMENDMENT D3=B + DIFF_FLAGS update only acest ingest, ZERO source code touched). Bandwidth Daniel chat strategic ~18% remaining triggered handover preventiv anti-saturation per memory rule #15. Status V1: 8/8 templates LOCKED + F-NEW + MMI + Storage Full UX + 4 CRITICAL pre-Beta blockers + 12 HIGH cleanup + Top 6 ideation + **87 decizii LOCKED cumulative** + Beta-launch ASAP timing flexible §36.83 + Suflet Andura + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + ADR 023 LOCKED V1 partial spec + ⚠️ PENDING addendum integration Faza 3 + Phase B 51 strings INTEGRATED + Cluster 10-batch tests 1203 PASS + Coverage/Build baselines + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + Sprint UI 6 UX LOCKED V1 + Slip Log §36.77 + Andura V1 prod LIVE `andura.app` ✅ + §36.78-§36.79 Rebrand+Hotfix + §36.80 BUG 2 Auth Flow Priority 1 ABSOLUT preserved + §36.81-§36.85 Coach/Energy/META/Backlog/Body Region + Memory #24 + §36.86-§36.91 audit total + §36.92 reclasificare 4 buckets + DIFF_FLAGS P1+P2 + **§36.93 D3=B Spark + §36.94 ADR 025 Andura Gândește candidate + §36.95 ADR Numbering Additive 022 Bayesian Nutrition + 024 Goal-Driven Templates + 025 Graceful Degradation + §36.96 Vault Hygiene Sprint Priority 0 + 8 recomandări APROBATE + §36.97 Faza 4 VAULT_HYGIENE_PASS LOCK PENDING + §36.98 System Prompt artefact**. Next: **Priority 0 ABSOLUT Faza 3 + Faza 4 Vault Hygiene Sprint execution** chat NEW dedicat — generate prompt CC Opus Faza 3 (~2-3h CC autonomous: 8 recomandări A-H execute mecanic) + prompt CC Opus Faza 4 (~30min CC: VAULT_RULES §VAULT_HYGIENE_PASS NEW + PROMPT_CC_INGEST_HANDOVER STEP 10-15 codification). **Priority 1 ABSOLUT Auth Flow Integration §36.80** post-Vault Hygiene clean (preserved blocking Beta — chat strategic ~1-2h Daniel + prompt CC Opus dedicat ~30-45min autonomous). **Priority 2 4 CRITICAL pre-Beta blockers** CC Opus autonomous batches per §BATCH_PROTOCOL §36.74 (B4 RPE Verbal + B2 T&B Faza 1+2 + B3 Founding Cap + N1+N5-NEW). **Priority 3 12 HIGH cleanup batch** + **Priority 4 Top 6 ideation integrate pre-Beta** + **Priority 5-N** Smoke tests + Beta cohort recruitment + audit legal + Soft Launch 1 ianuarie 2027 🚀 (target aspirațional flexibil per §36.83). Marketing Channel Mix Decision = milestone V1.1 ~Februarie 2027 per §36.60.**
+---
+
+## §36.99 ADR 026 candidate "Andura Offline Coaching Decision Tree Exhaustive" — PRE-BETA BLOCKER LOCKED V1
+
+**Status:** Candidate LOCKED V1, ADR file creation `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` PENDING Faza 3 cleanup (post Vault Hygiene Sprint complete) sau chat strategic dedicat NEW post Vault Hygiene + Auth.
+
+**Decision wording verbatim:**
+
+> "Andura V1 Beta = offline pure coaching pe input structurat. Decision tree exhaustiv 1500-2000 ramuri pre-mapped de Claude (chat strategic) implementate de CC Opus în engine modules. Paritate target ~90-95% cu Claude pe input structurat tipic Maria/Gigica/Marius. ZERO LLM runtime pentru core coaching paths. ADR 023 LLM scope strict (Pain text + Equipment text) PRESERVED unchanged. Aplicabilitate: pre-Beta blocker per §36.57 Prebeta Scope Rule (coach intelligence core = mandatory prebeta non-negotiable)."
+
+**Rationale:**
+
+- **Suflet Andura aliniat:** SUFLET §1.1 ~75% replicabil V1 engine deterministic — F1 Triangulation + F2 Bias + F3+F4 Mode UI + F5 Push-back proporțional + F6 Adaptive output no inference = enumerable principles
+- **Bugatti paradigm:** peak craft, ZERO compromise, refactor later NEVER happens
+- **Cost zero scale:** 50 useri × 4 sesiuni × ZERO LLM call core = €0/lună core coaching (vs ADR 023 scope strict ~0.4% Groq free tier pentru Pain/Equipment text)
+- **Determinism preserved:** Cognitive Q4 ZERO LLM runtime original intent honor pentru core engine paths
+- **Knowledge breadth NU coaching live capability:** LLM-urile pierd pe persistent memory + latency + cost — gap arhitectural NEFIXAT de model upgrades. Knowledge breadth novel = content layer updatable, NU capability blocker (vezi §36.103)
+- **Jeff demolish clear:** Andura full-built bate Jeff exhaustiv pe orice goal × experience × equipment (personalizare empirică + memory persistent + latency live + auto-detect bias/overtraining)
+
+**Paritate target detail:**
+
+| Input type | Paritate vs Claude | Note |
+|------------|---------------------|------|
+| Input pur structurat (vârstă/kg/BF%/PRs/equipment/schedule/history/recovery markers) | ~90-95% | Maria/Gigica/Marius tipic |
+| Combinații rare multidimensionale (67 ani + post-COVID + ankle limitat + diabet) | ~60-70% | Edge cases Jeff oricum NU gestionează |
+| Language ambiguous text input | ~40-60% | NU în scope offline — fallback ADR 023 LLM scope strict (Pain + Equipment text) |
+
+**5-10% degradare grațioasă** pe combinații rare cu twist multidimensional unde Claude face inference probabilistic cross-domain. Decision tree degradează la "best fit branch" cu output decent dar sub-optimal vs Claude. **Acceptabil** pentru că restul 5-10% reprezintă scenarii pe care Jeff NU le gestionează deloc.
+
+**Aliniat ADR 023 (NU contradicție):**
+
+- ADR 023 LLM intent acoperă **interpretation language ambiguous** (Pain text + Equipment text)
+- ADR 026 offline tree acoperă **reasoning structurat coaching** (volume, intensity, periodization, deload, substitution, nutrition)
+- Hybrid clean: input STRUCTURAT (forms, buttons, sliders) → decision tree offline + input AMBIGUOUS (free-text Pain/Equipment) → LLM intent classification scope strict + coaching reasoning = offline pure deterministic
+
+**Cross-refs:** [[03-decisions/023-llm-intent-interpretation|ADR 023]] preserved + [[03-decisions/018-engine-extensibility-architecture|ADR 018]] Dimension Registry foundation + [[01-vision/SUFLET_ANDURA|SUFLET ANDURA]] §1.1 ~75% replicabil V1 + Cognitive Q4 ZERO LLM runtime original intent honored core paths + §36.57 Prebeta Scope Rule mandatory + §36.94 ADR 025 candidate "Andura Gândește pentru User" graceful degradation aliniat (engine pre-fills default).
+
+---
+
+## §36.100 7 Engines Prescriptive NEW LOCKED V1 — Roadmap Pre-Beta
+
+**Decision:** 7 engines prescriptive NEW adăugate la 14 reactive engines existing = **21 engines total coverage exhaustivă** pentru "bate Jeff offline pe input structurat". CC time = irrelevant per Daniel directive. Cu ADR 018 Dimension Registry foundation ready, adăugarea = plug-in curat zero refactor existing 14.
+
+**Status:** LOCKED V1 roadmap, file creation per engine + spec generation = chat strategic dedicat NEW post Vault Hygiene + Auth.
+
+### 7 Engines NEW (priority order pending Daniel decision chat NEW):
+
+| # | Engine | Scope | Cross-ref ADR |
+|---|--------|-------|---------------|
+| 1 | **Periodization Engine** | Block / undulating / linear selection per goal × experience × frequency × age | NEW ADR pending |
+| 2 | **Goal Adaptation Engine** | Cut / bulk / maintenance / recomp differential logic (volume / intensity / recovery / kcal) | [[03-decisions/024-goal-driven-program-templates\|ADR 024]] PENDING file create |
+| 3 | **Bayesian Nutrition Engine** | Kcal / macro inference + adjustment per phase × goal × age × BF% × activity | [[03-decisions/022-bayesian-nutrition-inference\|ADR 022]] PENDING file create |
+| 4 | **Deload Protocol Engine** | When (composite fatigue triggers) / how (volume cut / intensity hold / full rest) dedicat | NEW ADR pending |
+| 5 | **Energy Adjustment Engine** | Sleep × stress × pre-session readiness → volume / intensity adjustment (extends §36.82 partial calibration) | NEW ADR pending |
+| 6 | **Tempo/Form Cues Engine** | Text coaching cues (3-1-1, paused reps, ROM, mind-muscle connection) per exercise category | NEW ADR pending |
+| 7 | **Specialization Engine** | Temporary lagging body part focus (Jeff signature) — auto-detect weakness + propose specialization block | NEW ADR pending |
+
+### 14 Reactive Engines Existing (preserved unchanged):
+
+dp / aa / ruleEngine / alternativeEngine / patternLearning / adherence / calibration / weaknessDetector / stagnationDetector / predictionEngine / plateauInterventions / proactiveEngine / whyEngine / sessionBuilder.
+
+### Effort estimate realist:
+
+- ~150-250h CC Opus per engine NEW × 7 = **~1050-1750h CC autonomous** spread peste 6-12 luni roadmap
+- ~50-100h Daniel chat strategic spec generation + product UX integration decisions
+- CC time irrelevant per Daniel directive ("nu îmi pasă cât rulează CC")
+- Singura constraint reală = chat strategic Daniel-time pentru spec generation + decizii UX
+
+**Cross-refs:** §36.99 ADR 026 candidate (engines vorbesc PRIN voices via Dimension Registry) + ADR 018 plug-in curat + §36.83 Beta-launch ASAP timing flexible (impact 6-9 luni adjust acceptable Daniel approved).
+
+---
+
+## §36.101 5 Voices Cognitive Architecture CONFIRMED (slip clarification)
+
+**Status:** CONFIRMED arhitectura existing LOCKED, NU decizie nouă. Slip Claude-side imprecizie clarificat.
+
+**5 voices arhitectura cognitive v1 (LOCKED):**
+
+1. **HISTORICAL** — voice temporal past (data via Event Anchor R22)
+2. **REALTIME** — voice temporal present (since last sleep cycle)
+3. **PROJECTION** — voice temporal future (2 instanțe: tactical + strategic)
+4. **ARBITRATOR** — meta-voice consensus (consume 3 temporal verdicts → final decision via 5-level Precedence Hierarchy + 27 reguli arbitration)
+5. **ACTION** — execution voice (singurul cu mutation rights, build session + persist via Event Sourcing)
+
+**Slip Claude:** răspuns inițial "3 voices" — confuzie între voices temporale (3 produc VoiceVerdict structured) și voices arhitecturale (5 total în 5-engine cognitive segmentation per Daniel vision 2026-04-28 NIGHT).
+
+**Voice 6-th GOAL discutat → REJECTED §26.2:** goal = SETTING parametric pe ACTION layer, NU voice nou. Rationale validă pentru "voice nou rejected" (overengineering detection mismatch real-time silent), DAR statistica "98% NU schimbă goal" era mis-cited ca rationale general — vezi §36.102 clarification.
+
+**Pentru offline coaching tree exhaustive (§36.99):**
+
+- ✅ **5 voices = suficient.** NU lipsesc voices. Architectura cognitive layer ready
+- ✅ **Engines noi vorbesc PRIN voices** via Dimension Registry ADR 018 — Periodization Engine contribuie verdict la HISTORICAL (ce periodization ai făcut) + REALTIME (ce e activ săpt asta) + PROJECTION (ce vine next mesocycle)
+
+**Cross-refs:** [[04-architecture/COGNITIVE_ARCHITECTURE_SPEC_v1|COGNITIVE_ARCHITECTURE]] PARTEA 1-3 (27 reguli + VoiceVerdict schema + 5-level Precedence) + §26.2 Goal-ca-setting LOCKED + ADR 018 Dimension Registry plug-in pattern.
+
+---
+
+## §36.102 Goal Lifecycle Change Reconfirmed First-Class Supported (slip clarification)
+
+**Status:** CONFIRMED arhitectura existing LOCKED, NU decizie nouă. Statistica mis-cited de Claude clarificată.
+
+**Slip Claude:** citarea "98% NU schimbă goal post-onboarding" ca rationale general în răspunsul anterior. Statistica corect interpretat **strict** pentru "voice 6-th GOAL nou cu detection mismatch silent real-time" (overengineering rejected §26.2) — NU pentru "useri NU schimbă goal lifecycle".
+
+**Realitatea lifecycle Gigel:**
+
+```
+Onboarding: SLĂBIRE (gras, vrea slim)
+  ↓ 6-12 luni
+MAINTAIN (a slăbit, vrea să țină)
+  ↓ 12-24 luni
+TONIFIERE/DEFINIRE (vrea aestetic)
+sau
+FORȚĂ (nivel avansat)
+```
+
+**Goal change lifecycle = pattern majoritar la useri serioși long-term, NU edge case 2%.**
+
+**Arhitectura SUPORTĂ deja goal change first-class:**
+
+1. **§36.35 Goal Shift Event Handler LOCKED V1** — user tap "Schimbă obiectiv" în Setări → Engine aplică Modificatori Template (rep ranges, RIR, rest time) + Streak Reset + 2-session calibration window (interval estimat NU single point per SUFLET F1 Triangulation)
+2. **§26.5 Re-prompt periodic 4-6 săpt** — modal in-app "Obiectivul tău e încă X? Confirmă sau schimbă" (anti-rigid, anti-spam cooldown 21 zile post-confirm)
+3. **Conservare date fizice:** PR records + CDL logs + istoric forță = INTACT post-shift
+4. **5 templates V1 ready:** Forță & Dezvoltare / Tonifiere & Definire / Slăbire / Longevitate / Sănătate Generală
+
+**Distincție tehnică critică:**
+
+- **GOAL** = setting strategic user (5 template choice) — schimbat manual via Setări
+- **PHASE** = automated CUT/BULK/MAINTAIN (sys.js calculează BF% + sezon) — sub-state per goal
+- **MODE** = Estetică ↔ Forță (sub-modificator rep ranges/intensity)
+
+Slăbire → Mentinere = goal switch explicit (template change). CUT → MAINTAIN automated = phase change (sub-state intern, NU template change).
+
+**Cross-refs:** §36.35 Goal Shift Event Handler + §26.2 Goal-ca-setting LOCKED + §26.5 Re-prompt periodic + sys.js phase detection automated + ADR_OUTLIER_FILTER EXT-2 Goal Shift extension.
+
+---
+
+## §36.103 Knowledge Layer Update Cadence LOCKED V1 — Content Store NU Capability Blocker
+
+**Decision wording verbatim:**
+
+> "Knowledge layer Andura = content store updatable periodic, NU capability blocker arhitectural. Pattern: engines = logic stable (rare changes), knowledge = data periodic refresh. Update cadence LOCKED V1: quarterly (meta-analyses noi + tweaks volume/frequency landmarks) / bi-annual (exercise library extension) / annual (periodization template revisions per literature consensus shift). Mecanism delivery: Claude chat urmărește field research + generează patch specs cu rationale + cross-refs literature → CC Opus implementează patches incremental (~5-15h/quarter) → Feature Flags rollout gradual (10%/50%/100%) safe deployment → CDL audit trail post-deployment metrics check."
+
+**Rationale:**
+
+- **Engines = logic stable** (Schoenfeld volume landmarks nu se schimbă brusc, periodization templates Helms/Israetel evoluează lent)
+- **Knowledge = data refresh** (exercise library, threshold values, MEV/MAV/MRV calibration, RPE matrix) tunabil via Remote Config + data files
+- **ADR 018 Schema Versioning + Feature Flags ready infrastructure** pentru rollout safe
+- **Avantaj competitiv vs Jeff:** Jeff vinde program 2024 încă în 2027 static. Andura updates quarterly automat — user primește latest research findings fără să cumpere program nou
+- **Avantaj vs LLM frontier:** LLM-urile au knowledge cutoff fix (training date) — Andura quarterly fresh + structurat verificabil (NU "GPT a citit ceva")
+
+**Knowledge layers extensibile:**
+
+- Exercise library (`src/exercises/`) — ADR 022 V2 prevede ~50-150 exerciții add post-launch
+- Decision tree rules — versionate per ADR 018 Schema Versioning
+- Periodization templates — Helms/Israetel/Schoenfeld block schemes ca data files NOT cod
+- Volume landmarks (MEV/MAV/MRV per muscle) — config tunabil
+- Substitution rules — alternativeEngine extensibil (data NU logic refactor)
+- RPE/RIR thresholds — Remote Config tunable per profile
+
+**Update cadence detail:**
+
+- **Quarterly** — meta-analyses noi (Schoenfeld lab output ~3-4/an), tweaks volume/frequency landmarks, RPE thresholds calibration
+- **Bi-annual** — exercise library extension (variante noi populare community), substitution rules update
+- **Annual** — periodization template revisions per literature consensus shift, MEV/MAV/MRV recalibrare
+
+**Cross-refs:** ADR 018 Schema Versioning + Feature Flags + §36.99 ADR 026 offline tree (knowledge ≠ capability) + Exercise library schema §36.36 extension + alternativeEngine.js extensibilitate.
+
+---
+
+## §36.104 Effort Estimate Roadmap (informational, NU LOCKED)
+
+**Realistic effort spread peste 6-12 luni roadmap pre-Beta:**
+
+- **CC Opus autonomous:** ~1050-1750h (7 engines × 150-250h each)
+- **Daniel chat strategic:** ~50-100h spec generation + UX integration decisions
+- **Daniel-time real cu factor 7-9x slippage** — handover + ingestion + decision delays + life context cu copil mic + job + familie
+- **Timing impact §36.83 Beta:** flexible adjust 6-9 luni acceptable per Daniel approval ("nu îmi pasă cât rulează CC")
+
+**NU LOCKED** — estimare informational pending breakdown per engine în chat strategic dedicat NEW post Vault Hygiene + Auth.
+
+---
+
+## §36.105 Pivot Arhitectural Reconfirmed: "More Engine, Less LLM Runtime"
+
+**Status:** CONFIRMED direcție arhitecturală existing LOCKED, NU decizie nouă. Reconfirmation post-discuție offline pure feasibility.
+
+**Pivot direction:**
+
+- **Engine layer expansion:** 14 → 21 engines (7 prescriptive NEW per §36.100)
+- **LLM runtime reduction:** ZERO LLM core coaching paths (offline tree per §36.99)
+- **LLM scope strict preserved:** Pain text + Equipment text per ADR 023 unchanged
+- **Knowledge layer extensibil:** content store updatable quarterly per §36.103
+
+**Aliniat:**
+
+- Bugatti paradigm (peak craft, zero compromise)
+- ADR 018 Engine Extensibility foundation
+- ADR 023 LLM scope strict (NU contradicție, NU expansion)
+- Cognitive Q4 ZERO LLM runtime original intent honor pentru core paths
+- §36.94 ADR 025 candidate "Andura Gândește pentru User" graceful degradation
+- SUFLET §1.1 ~75% replicabil V1 engine deterministic
+
+**Cross-refs:** §36.99 ADR 026 + §36.100 7 engines + §36.101 voices confirmed + ADR 023 preserved + ADR 018 foundation + Cognitive Q4 honored.
+
+---
+
+## §36.106 Decision Point D2 NEW OPENED FOR DISCUSSION — Injury / Contraindication Mapping Onboarding + In-Session
+
+**Status:** 🟡 OPENED FOR DISCUSSION — chat strategic dedicat NEW (post Vault Hygiene + Auth). NU LOCKED.
+
+**Daniel articulation verbatim:**
+
+> "Sa existe in onboarding o chestie de accidentari — gen daca omul are hernie sa nu il pui la deadlifts. Sau in exercitii langa butoanele de 'nu am aparat'. Sau undeva. Ne decidem in chat nou fresh."
+
+**Scope candidate:**
+
+- **Onboarding screen NEW** — checkbox/multi-select condiții medicale care exclud anumite mișcări specific (hernie disc lombară → exclude deadlift conventional + bent-over row, hernie abdominală → exclude squat heavy compresie + Valsalva maneuver, etc.)
+- **Inline buton in-session** — adjacent "Nu am aparat" în UI exerciții, scope similar pentru flag contraindicație acută ("Mă doare X la mișcarea asta, exclude permanent / temporary / pentru azi")
+- **Granular contraindication mapping** (NU SAFETY_TRIPWIRE_GLOBAL all-or-nothing per Cognitive Q18)
+- **Auto-substitution via alternativeEngine** — exercise excluded → propose biomechanically similar safe alternative (deadlift conventional → trap bar deadlift / Romanian deadlift moderate / hip thrust / cable pull-through)
+
+**Cross-refs existing arhitectura:**
+
+- **Cognitive Q18 SAFETY_TRIPWIRE_GLOBAL** — checkbox condiții medicale onboarding → "Passive Mode" tripwire (Dumb Tracker excellent). Daniel proposal extends granular per condiție specific NU all-or-nothing
+- **§36.38 Pain/Discomfort Button (ADR 023 Tier 1)** — text input free-form "Mă doare X în zona Y" → LLM intent classification → routing engine action. Daniel proposal complementary (predefined condiții vs free-text post-hoc)
+- **§36.85 Pain Button + EU AI Act compliance** — zero rehab claims, NU dispozitiv medical. Daniel proposal trebuie atent legal phrasing (NU "diagnostic", DA "informativ contraindication user-declared")
+- **alternativeEngine.js** — extension pentru contraindication mapping per condiție → safe alternative pool
+- **§36.36 Schema Extension Exercise Library** — `muscle_target_primary` + `muscle_target_secondary` deja existing. NEW candidate: `contraindications: string[]` field per exercise (ex: deadlift_conventional → ["hernia_disc_lombara", "hernia_abdominala_acuta", "stenoza_spinala_severa"])
+
+**Decision points pending strategic chat NEW:**
+
+- **D2.1** Onboarding screen separat sau integrat în profil typing T1+? (impact friction Maria 65 vs comprehensive injury history)
+- **D2.2** Granularity condiții — taxonomie predefinită (15-30 condiții common) vs free-text + LLM classify (ADR 023 extension Tier 3) vs hybrid
+- **D2.3** UX placement in-session — buton inline lângă "Nu am aparat" sau separate "Discomfort/Risk" entry vs continue Pain Button §36.38 unified flow
+- **D2.4** Liability boundary EU AI Act — wording "informativ user-declared" vs medical disclaimer requirements ToS
+- **D2.5** User override "Vreau totuși să fac deadlift" → Liability Flag silent backend (R17 User Agency consistent) vs hard block
+- **D2.6** Re-prompt periodic 6-12 luni "Condițiile tale medicale s-au schimbat?" similar §26.5 Goal Re-prompt
+- **D2.7** Pregnancy specific handling (Q18 existing tripwire pregnancy pathway) — granular trimester-specific exclusions vs Passive Mode total
+
+**Gigel test pending strategic chat:**
+
+- Maria 65 — comfort completion checkbox condiții vs friction/medical-anxiety? Mediu cultural RO sensibilitate "diagnostic" vs "user-declared"?
+- Gigica 35 — postpartum specific pathway vs generic? Diastasis recti contraindication common dar tabu cultural?
+- Marius 25 — likely zero condiții, friction onboarding cost-benefit?
+
+**Reasoning Claude pre-chat strategic:**
+
+- **Probabil PRO** granular contraindication mapping pentru "bate Jeff" claim (Jeff zero personalizare injury) + SUFLET F2 ("AI-ul informează nu impune") + ADR 025 candidate graceful degradation (skip → engine assume zero contraindications default)
+- **Probabil CONTRA** scope creep onboarding screen lung Maria 65 friction + EU AI Act medical device boundary risk + taxonomy maintenance burden
+- **Probabil RECOMMEND hybrid:** taxonomie predefinită minimal (top 10-15 condiții common) onboarding + free-text Pain Button §36.38 post-hoc detection + alternativeEngine auto-substitution + user override liability flag
+
+**Action chat strategic NEW:** Daniel + Claude review draft scope + decizie D2.1-D2.7 + ADR draft "Injury/Contraindication Mapping V1".
+
+**Cross-refs:** Q18 SAFETY_TRIPWIRE_GLOBAL + §36.38 Pain Button + §36.85 EU AI Act compliance + alternativeEngine.js + §36.36 Schema Extension + SUFLET F2 + ADR 025 graceful degradation candidate + ADR 013 §SAFETY_TRIPWIRE.
+
+---
+
+## §36.107 Decision Point D3 NEW OPENED FOR DISCUSSION — Don't Like Button + Home Workouts + Calisthenics + Sport-Oriented Training
+
+**Status:** 🟡 OPENED FOR DISCUSSION — chat strategic dedicat NEW (post Vault Hygiene + Auth + D2). NU LOCKED. 4 sub-buckets distinct scope vs §36.106 D2 medical.
+
+**Daniel articulation verbatim:**
+
+> "Optiune buton nu vresu/nu imi place, antrenamente de acasa, calestenice, sport orientated trainings?"
+
+**Scope decomposition în 4 sub-buckets distinct:**
+
+---
+
+### D3.1 — Buton "Nu vreau / Nu îmi place" exercise (User Preference Pure)
+
+**Distinct semantic vs existing:**
+
+- "Nu am aparat" = logistic (echipament temporar absent)
+- "Mă doare" = medical (§36.106 D2 contraindication)
+- "Nu vreau / Nu îmi place" = preferință stylistic pură user (NU medical, NU logistic, NU temporary)
+
+**Recomandare Claude pre-chat strategic:** ✅ **PRE-BETA mandatory**.
+
+**Rationale:**
+- Aliniat SUFLET F5 push-back proporțional cu risc — preferință stylistic = accept user, NU push (User Agency > Paternalism per R17)
+- Low-effort UX extension existing alternative buttons (~1-2h CC)
+- High-value retention (user nu primește repeat exercises pe care le urăște)
+- Aliniat ADR 025 graceful degradation candidate (skip → engine substitute alternative default)
+
+**Decision points pending:**
+
+- **D3.1.1** Hard skip (exercise NEVER reappears în session future) vs Soft skip default (substitute in-session curent + reapare future cu re-evaluare context — user gust se schimbă cu progres) vs Hybrid user-controlled (Soft default + opt-in Hard skip advanced settings)
+- **D3.1.2** Engine push-back 1× per exercise dislike — SUFLET F5: "engine argues once if exercise high-value pentru user goal (squat heavy hipertrofie quads optimal Marius), apoi accept"? Sau zero push-back accept silent (preferință = sacred)?
+- **D3.1.3** Substitution priority — alternativeEngine biomechanical similarity hierarchy (squat → leg press → hack squat → split squat → goblet squat) vs user-driven choice (showcase 3 alternatives + user picks)?
+- **D3.1.4** UX placement buton — adjacent "Nu am aparat" inline same row UI consistency, sau dropdown "Schimbă exercițiu" cu opțiuni multiple (logistic / medical / preferință) unified flow?
+
+**Cross-refs:** SUFLET F5 push-back proporțional + R17 User Agency + alternativeEngine.js + §36.106 D2 Pain Button parallel + ADR 025 graceful degradation candidate.
+
+---
+
+### D3.2 — Antrenamente Acasă (Home Workouts)
+
+**Scope candidate:** Template variant cu equipment minim subset pentru users care antrenează acasă (Maria 65 mobility issues + privacy / Gigica 35 postpartum + copil mic + time / Marius 25 backup secondary use case gym primary).
+
+**Recomandare Claude pre-chat strategic:** ✅ **PRE-BETA mandatory**.
+
+**Rationale:**
+- **Maria 65 use case MASSIVE:** mobility issues + intimidating gym environment + transportation barriers + age cultural RO friction "bătrâni la sală" → home = unblock 30-40% Maria market segment
+- **Gigica 35 use case MASSIVE:** postpartum + copil mic acasă + time constraint + privacy postpartum body insecurity → home = unblock 25-35% Gigica market segment
+- **Marius 25 backup:** vacation / business travel / weather extreme / gym closed → home backup retention preserve
+- **Existing arhitectura partial ready:** §36.36 Schema Extension Exercise Library + alternativeEngine.js extensibilitate
+
+**Decision points pending:**
+
+- **D3.2.1** Equipment hierarchy detail — bodyweight only / + dumbbells (1 pair / 2 pairs) / + bands / + pull-up bar / + adjustable bench / + cables home (TRX / rings) — granularity Q1 onboarding equipment filter
+- **D3.2.2** Template variants per goal — fiecare din 5 templates V1 (Forță / Tonifiere / Slăbire / Longevitate / Sănătate) primește variant home equipment subset, sau template "HOME" separat distinct?
+- **D3.2.3** Substitution algorithmic existing alternativeEngine acoperă 100% cazuri home, sau need exercise pool expansion ~30-50 exerciții bodyweight-friendly NEW (single-leg variations + tempo manipulations + pause reps + isometric holds + plyo regressions)?
+- **D3.2.4** Hybrid switching gym/home — user trainer 3× gym + 2× home/săpt — engine handle dual schema sau template lock single environment?
+- **D3.2.5** Progress tracking home challenges — bodyweight progresia mai dificil vs barbell load (rep + tempo + leverage manipulations) — engine logic adjusted vs gym standard?
+
+**Cross-refs:** §36.36 Schema Extension Exercise Library + alternativeEngine.js + 5 templates V1 (potential variants) + Q1 onboarding equipment filter + Maria/Gigica/Marius beachhead market analysis.
+
+---
+
+### D3.3 — Calistenice (Bodyweight Discipline Distinct)
+
+**Scope candidate:** Discipline distinct calistenice (pull-ups / dips / muscle-ups / planche / front lever / back lever / handstand / iron cross / human flag) cu skill progressions specifice (band-assisted → unweighted → weighted → skill progressions isometric holds + tempo manipulations).
+
+**Recomandare Claude pre-chat strategic:** ⚠️ **POST-BETA v1.5** (NU pre-Beta).
+
+**Rationale RESPINGERE pre-Beta:**
+- **Niche audience pre-Beta:** Marius 25 advanced minoritate (~15-20% Marius segment) + ZERO Maria 65 + ZERO Gigica 35 → impact retention pre-Beta minim
+- **Scope creep massive:** discipline distinct = whole programming science separate (skill progression trees + isometric holds + tempo work + leverage progressions + injury prevention shoulder/elbow specific calistenice common)
+- **Effort estimate:** ~150-300h CC Opus full spec (calistenice library 80-120 exerciții + progression trees 15-20 skills + periodization specifice + injury prevention specific) — Bugatti standard NU rushed
+- **Conflict scope V1 Beta-launch ASAP §36.83:** timing flexible adjust 6-9 luni acceptable, dar +6-9 luni adițional pentru calistenice = NEVER ship
+
+**Pre-Beta alternative recommended:**
+- **Include moves calistenice STANDARD în exercise library V1:** pull-ups + chin-ups + dips + push-ups variations + BW squats + lunges + pistol squat progression + handstand basics + L-sit
+- **NU discipline distinct separat** — moves integrate ca exerciții normal în 5 templates V1 cu equipment "Pull-up bar" filter
+- **Post-Beta v1.5 expansion:** discipline calistenice distinct cu skill progression trees + dedicated periodization + injury prevention specific
+
+**Decision points pending (chat strategic NEW):**
+
+- **D3.3.1** Pre-Beta: include moves calistenice standard în library (~10-15 moves) cu filter "Pull-up bar / Dip station" YES/NO?
+- **D3.3.2** Post-Beta v1.5 scope: full discipline calistenice template + skill progression trees + 80-120 exerciții library expansion?
+- **D3.3.3** Goal mapping calistenice — Forță & Dezvoltare ↔ calistenice strength (muscle-up / front lever / planche) + Tonifiere ↔ calistenice hypertrophy volume (push-ups variations + dips volume) + Longevitate ↔ calistenice mobility-friendly (handstand basics + L-sit)?
+- **D3.3.4** Audience marketing post-Beta v1.5 — Marius 25 advanced niche dedicated marketing channel (Instagram/TikTok calistenice community RO) sau cross-sell internal users base?
+
+**Cross-refs:** §36.83 Beta-launch ASAP timing flexible + §36.99 ADR 026 offline tree (calistenice = expansion knowledge layer §36.103) + Marius beachhead market analysis + post-Beta v1.5 roadmap.
+
+---
+
+### D3.4 — Sport-Oriented Training (Sport-Specific Programming)
+
+**Scope candidate:** Programming specific per sport (football / soccer / tennis / climbing / running / cycling / MMA / boxing / volleyball / basketball / etc.) cu accessory work targeted + periodization off-season / pre-season / in-season + sport-specific injury prevention.
+
+**Recomandare Claude pre-chat strategic:** ❌ **POST-BETA v2.0+** (definite NU pre-Beta).
+
+**Rationale RESPINGERE pre-Beta:**
+- **Niche-of-niche audience pre-Beta:** ~5-10% Marius 25 segment intersect cu sport amator competitiv + ZERO Maria 65 + ZERO Gigica 35 (yoga/pilates adjacent NU same scope) → impact retention pre-Beta neglijabil
+- **Scope multiplication 10x:** 10+ sports × periodization (off/pre/in-season) × accessory specific × injury prevention sport-specific = drastic different programming per sport (football leg power vs tennis rotational vs climbing grip vs MMA neck = ZERO overlap)
+- **Effort estimate:** ~500-1000h CC Opus full spec (sport library + periodization per sport + accessory pools + injury prevention specifice + season tracking)
+- **Liability concern regulatory:** "sport coach" claim might trigger different regulatory framework (sport federation registrations RO/EU + insurance liability higher coach professional sport vs general fitness coach)
+- **Conflict EU AI Act medical device boundary risk + sport injury liability shield** — different framework scrutiny
+
+**Pre-Beta alternative recommended:**
+- **Întrebare onboarding "Practici un sport competitiv?"** YES/NO + sport name (free-text) — ZERO programming impact pre-Beta, doar future v2 user base preparation
+- **Post-Beta v2.0+ scope:** sport-oriented programming dedicated module cu top 3-5 sports populare RO (football + tennis + climbing + running + MMA) + periodization spec + accessory pools
+
+**Decision points pending (chat strategic NEW):**
+
+- **D3.4.1** Pre-Beta: întrebare onboarding sport YES/NO + free-text name (preparation v2) sau ZERO mention sport pre-Beta?
+- **D3.4.2** Post-Beta v2.0+ scope: top 3-5 sports populare RO sau exhaustive 10+ sports?
+- **D3.4.3** Liability framework — Andura sport-oriented = consultanță fitness sportiv (general) vs antrenor sportiv (regulated) — wording legal ToS adjustment?
+- **D3.4.4** Periodization sport calendar tracking (off/pre/in/post-season) — manual user input vs auto-detect via competition dates input?
+- **D3.4.5** Cross-sell internal V1 users base post-Beta v2 launch sau dedicated marketing channel sport community RO?
+
+**Cross-refs:** §36.83 Beta-launch ASAP timing + §36.85 EU AI Act compliance + §31 Investment timeline + post-Beta v2.0+ roadmap + Marius advanced segment market expansion.
+
+---
+
+### Verdict Cumulativ Recomandare Claude D3.1-D3.4 (pre-chat strategic):
+
+| Sub-bucket | Verdict | Effort | Audience Impact |
+|------------|---------|--------|-----------------|
+| **D3.1 Buton "Nu vreau"** | ✅ **PRE-BETA mandatory** | ~1-2h CC | High (toate Maria + Gigica + Marius) |
+| **D3.2 Home Workouts** | ✅ **PRE-BETA mandatory** | ~30-80h CC (equipment filter + template variants + ~30-50 exerciții bodyweight library extension) | Massive (Maria 30-40% + Gigica 25-35% + Marius backup) |
+| **D3.3 Calistenice discipline distinct** | ⚠️ **POST-BETA v1.5** (pre-Beta = standard moves în library) | ~150-300h CC v1.5 | Niche (Marius 25 advanced ~15-20%) |
+| **D3.4 Sport-oriented programming** | ❌ **POST-BETA v2.0+** (pre-Beta = onboarding question doar) | ~500-1000h CC v2.0+ | Niche-of-niche (~5-10% Marius cross-sport) |
+
+**Filter Bugatti pre-Beta strict:** D3.1 + D3.2 mandatory → "best" pe core market beachhead Maria/Gigica/Marius. D3.3 + D3.4 = scope creep care sacrifică core experience pentru tail features. **Bugatti NU înseamnă "everything", înseamnă "everything that matters peak craft".**
+
+**Caveat Daniel directive "Andura needs to be the best":** dacă "best" = exhaustive niche coverage including calistenice + sport, atunci D3.3 fezabil prelungit timeline +6-9 luni. D3.4 NEVER pre-Beta — scope multiplication regulatory risk irreversible.
+
+**Action chat strategic NEW:** Daniel + Claude review verdict + decizie D3.1-D3.4 sub-decisions + ADR drafts (D3.1 + D3.2 pre-Beta → integration existing ADR 026 + D3.3 + D3.4 post-Beta → ADR drafts deferred).
+
+**Cross-refs:** §36.99 ADR 026 offline coaching tree + §36.100 7 engines prescriptive (Goal Adaptation + Specialization Engine relevant home/calistenice/sport) + §36.103 Knowledge cadence (post-Beta expansions) + §36.106 D2 medical contraindication parallel scope D NEW + Bugatti paradigm + §36.83 Beta-launch ASAP timing flexible.
+
+---
+
+## §37 Status Cumulative V1 Update
+
+**Cumulative LOCKED count:** 87 → **90** (+3 substantive: §36.99 ADR 026 candidate + §36.100 7 engines roadmap + §36.103 Knowledge cadence). §36.101 + §36.102 + §36.105 = clarification slip-uri Claude (NU decizii noi). §36.104 = informational. §36.106 = D2 NEW opened for discussion (NU LOCKED). §36.107 = D3 NEW opened for discussion (NU LOCKED).
+
+**Status V1 cumulative:**
+
+8/8 templates LOCKED + F-NEW + MMI + Storage Full UX + 4 CRITICAL pre-Beta blockers + 12 HIGH cleanup + Top 6 ideation + **90 decizii LOCKED cumulative** + Beta-launch ASAP timing flexible §36.83 + Suflet Andura + filozofia 12k + Self-Correction + Chat C + Pricing tiers + Telegram channel + 8 ADR drafts ALL LOCKED V1 + ADR 023 LOCKED V1 partial spec + ⚠️ PENDING addendum integration Faza 3 + Phase B 51 strings INTEGRATED + Cluster 10-batch foundation tests **1203/1203 PASS** unchanged + Coverage/Build baselines + Sprint UI Sequencing LOCKED V1 + Daniel solo gate Firebase live + Sprint UI 6 UX LOCKED V1 + Slip Log §36.77 + Andura V1 prod LIVE `andura.app` ✅ + §36.78-§36.79 Rebrand+Hotfix + §36.80 BUG 2 Auth Flow Priority 1 ABSOLUT preserved + §36.81-§36.85 Coach/Energy/META/Backlog/Body Region + Memory #24 + §36.86-§36.91 audit total + §36.92 reclasificare 4 buckets + DIFF_FLAGS P1+P2 + §36.93-§36.98 Vault Hygiene Sprint Faza 1 + decizii strategice + **§36.99-§36.107 Andura Offline Coaching Decision Tree Exhaustive Roadmap + 7 Engines Prescriptive NEW + Knowledge Cadence + D2 Injury/Contraindication NEW opened + D3 Don't Like + Home + Calistenice + Sport-Oriented NEW opened**.
+
+---
+
+## §38 Decision Points Status Update
+
+| ID | Topic | Status | Note |
+|----|-------|--------|------|
+| **D1** | Save the week silent | 🟡 PENDING | Strategic dedicat post-Vault Hygiene + Auth (A passive intelligence / C in-app banner pasiv, NU B opt-in) |
+| D2 §36.86b DELOCK Mechanism | ✅ RESOLVED | ACCEPT propunere wording verbatim Co-CTO |
+| D3 Cloud Functions Blaze | ✅ RESOLVED | B Spark plan retain (§36.93) |
+| D4 Goal Taxonomy | ✅ RESOLVED | hybrid C deja LOCKED §36.92 |
+| D5 Sprint Vault Hygiene Q2 2026 | ✅ SUPERSEDED | Vault Hygiene Sprint = Priority 0 acum |
+| D6 ADR 023 cost monitoring | ✅ RESOLVED | B frontend-only soft cap (depends D3=B) |
+| **D2 NEW** | **Injury/Contraindication Mapping** | 🟡 **OPENED FOR DISCUSSION** | **§36.106 — chat strategic dedicat NEW post Vault Hygiene + Auth. D2.1-D2.7 sub-decisions pending.** |
+| **D3 NEW** | **Don't Like Button + Home + Calisthenics + Sport-Oriented** | 🟡 **OPENED FOR DISCUSSION** | **§36.107 — chat strategic dedicat NEW post Vault Hygiene + Auth + D2. D3.1-D3.4 sub-decisions pending. Claude pre-recommend: D3.1 + D3.2 PRE-BETA mandatory / D3.3 POST-BETA v1.5 / D3.4 POST-BETA v2.0+.** |
+
+---
+
+## §39 Next Actions Priority Order
+
+**Priority 0 ABSOLUT (existing per HANDOVER_GLOBAL session-lock):**
+
+1. **Faza 3 + Faza 4 Vault Hygiene Sprint** chat NEW dedicat — 8 recomandări A-H + ADR 022/024/025 stubs + DECISION_LOG UTF-8 + INDEX_MASTER refresh + HANDOVER_GLOBAL split + VAULT_HYGIENE_PASS rule codification (~2.5-3.5h CC autonomous total)
+
+**Priority 1 ABSOLUT (existing preserved):**
+
+2. **Auth Flow §36.80 BUG 2 Firebase 401** chat strategic + prompt CC Opus dedicat (~1-2h Daniel + ~30-45min CC autonomous factor 7-9x)
+
+**Priority 2 NEW (post Priority 0 + Priority 1):**
+
+3. **ADR 026 + 7 Engines Prescriptive spec generation** chat strategic dedicat NEW — Daniel + Claude prioritize 7 engines order impact (Periodization first? Bayesian Nutrition first? Deload Protocol first?) + spec generation per engine + ADR drafts
+
+4. **D2 NEW Injury/Contraindication Mapping** chat strategic dedicat NEW — D2.1-D2.7 decisions + ADR draft "Injury/Contraindication Mapping V1"
+
+5. **D3 NEW Don't Like + Home + Calisthenics + Sport-Oriented Mapping** chat strategic dedicat NEW — D3.1-D3.4 decisions + ADR drafts pre-Beta integration (D3.1 + D3.2) sau post-Beta deferral (D3.3 + D3.4)
+
+6. **D1 Save the week silent** chat strategic dedicat NEW (existing pending)
+
+**Priority 3 (long-term):**
+
+7. **ADR 022 + ADR 024 file creation** Faza 3 stubs + post-Beta full spec
+8. **Knowledge cadence first quarterly patch** post-Beta data (Schoenfeld 2027 meta-analyses + tweaks)
+9. **Beta Recruitment 50 testeri segmentat** (timing flexible §36.83)
+10. **Audit legal €300-500** pre-public-launch
+11. **Soft Launch** condiționat DoD complete
+
+---
+
+## §40 Verification Questions Generation Per VAULT_RULES §HANDOVER_PROTOCOL Step 9
+
+CC Opus va genera ALIGNMENT_QUESTIONS_CHAT_NEW.md fresh post-merge cu citation §X file.md + răspuns verbatim per memory rule #22 + PROMPT_CC_HYGIENE §9. Format: ≥10/12 PASS = PROCEED chat strategic NEW, <10/12 = RE-SYNC mandatory.
+
+**Topics expected verification:**
+
+- Q: §36.99 ADR 026 candidate scope + paritate target + aliniat ADR 023?
+- Q: §36.100 7 engines roadmap pre-Beta + lista exhaustivă + cross-refs ADR pending?
+- Q: §36.101 5 voices CONFIRMED (slip clarification) + voice 6-th GOAL REJECTED rationale?
+- Q: §36.102 Goal lifecycle change first-class supported (slip clarification 98% mis-cite)?
+- Q: §36.103 Knowledge cadence quarterly/bi-annual/annual + mecanism Feature Flags?
+- Q: §36.105 Pivot "More Engine Less LLM Runtime" reconfirmed aliniere ADR 023 unchanged?
+- Q: §36.106 D2 NEW Injury/Contraindication Mapping OPENED FOR DISCUSSION + D2.1-D2.7 sub-decisions pending?
+- Q: §36.107 D3 NEW Don't Like Button + Home Workouts + Calisthenics + Sport-Oriented OPENED FOR DISCUSSION + 4 sub-buckets distinct scope vs D2 medical?
+- Q: D3.1 Buton "Nu vreau" Claude recommend PRE-BETA mandatory + rationale SUFLET F5?
+- Q: D3.2 Home Workouts Claude recommend PRE-BETA mandatory + Maria 30-40% + Gigica 25-35% market unblock?
+- Q: D3.3 Calistenice Claude recommend POST-BETA v1.5 + pre-Beta alternative moves standard în library?
+- Q: D3.4 Sport-Oriented Claude recommend POST-BETA v2.0+ + pre-Beta alternative onboarding question doar?
+- Q: Cumulative LOCKED count post acest ingest (87 → 90)?
+- Q: Decision Points status post-update (D1 pending + D2 NEW pending + D3 NEW pending)?
+- Q: Next Actions priority order Priority 0/1/2/3?
+- Q: Faza 3 + Faza 4 Vault Hygiene Sprint preserved?
+- Q: Auth Flow §36.80 Priority 1 ABSOLUT preserved?
+
+---
+
+🦫 **Pass criteria ≥10/12 PASS (≥83%) → PROCEED chat strategic NEW. Cumulative 90 LOCKED. Vault Hygiene Sprint Priority 0 Faza 3+4 PENDING. Auth Flow §36.80 Priority 1 ABSOLUT preserved separat. ADR 026 candidate offline coaching tree pre-Beta blocker. 7 engines prescriptive NEW LOCKED roadmap. Knowledge cadence LOCKED V1. D2 NEW Injury/Contraindication Mapping OPENED FOR DISCUSSION chat strategic dedicat NEW. D3 NEW Don't Like + Home + Calistenice + Sport-Oriented OPENED FOR DISCUSSION chat strategic dedicat NEW.**
+
+**Andura needs to be the best. ✊**
