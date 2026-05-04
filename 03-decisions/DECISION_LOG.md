@@ -1,5 +1,33 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 morning — D3.1 + D4 + D2 + D1 SUB-DECISIONS LOCKED V1 (41 substantive net)
+
+**Status:** Chat strategic dedicat sub-decisions D3.1 (Buton "Nu vreau") + D4 NEW (Mid-Session Resume Protocol) + D2 (Injury/Contraindication Mapping) + D1 (Save the Week Silent). Total **41 substantive sub-decisions LOCKED V1** ready compile ADR 026 draft full chat strategic NEW dedicat. Cumulative LOCKED 175 → **216**.
+
+**Context arhitectural confirmat:**
+- D3.1 + D4 + D2 + D1 = sub-decisions ortogonale față de spec engine Periodization (§42.4 prima spec generation post ADR 026 compile)
+- Toate 4 clusters integrate ADR 026 când chat strategic NEW dedicat compile draft full
+- Naming distinction LOCKED: "Circuit Breaker population fallback 5%" (§42.7) vs "User adaptation signal 50%" (D1 Q7 individual user pattern T1+ Profile Typing v1.5 trigger)
+- Pattern reuse extensiv: Q20 LOCKED 3/4 threshold (§45.3) reused în D4 Q7+Q8 + D1 Q2+Q3; §42.7 Circuit Breaker reused în D3.1 Q10 + D1 Q7; §42.9 Safety tier extended cu invariant 5 "Medical Safety" în D2 Q7
+
+**Decizii LOCKED — see HANDOVER_GLOBAL §50.1-§50.4 verbatim sub-sections:**
+
+- **§50.1 D3.1 Buton "Nu vreau" (13 sub-decisions):** Q1 Firestore sync blacklist + Q2 Object schema `{exerciseId: {timestamp, intent}}` + Q3 Eventual consistency on session start + Q4 Same muscle + movement pattern substitute + Q5 3 fresh batch + Hard Cap max 7 încercări + Q6 Lock primary substitute intra-mesociclu + Sub-decision Unlock muscle-group-level tracking + Q7 Skip exercise + Circuit Breaker §42.7 reuse + Q8 Imediat next session zero memory + Q9 Settings list unblock per item + Q10 Aggregate count silent CDL + **D3.1.6 NEW Pattern Detection Passive 3-5 refuze soft prompt (Bugatti F4)**
+
+- **§50.2 D4 NEW Mid-Session Resume Protocol (11 sub-decisions):** Q1 Per set logged silent IndexedDB + Q2 IndexedDB storage + Q3 Firestore sync on session complete + Q4 Dialog blocking imediat la app open + Q5 3 opțiuni (Reia/Începe nouă/Marchează completă) + **D4.2.1 NEW Filtrarea Dialog Blocant Threshold 6h** (Sesiune Recuperabilă Δt≤6h dialog blocking / Sesiune Abandonată Δt>6h Silent Cleanup zero prompt) + Q6 6h timeout abandon + Q7 Credit parțial proporțional Q20 §45.3 reuse + Q8 Count cu intensity hold next + Q9 Unified state machine 3 entry points (Background/IndexedDB/localStorage) + Q10 Last completed set saved current incomplete discarded
+
+- **§50.3 D2 Injury/Contraindication (13 sub-decisions):** Q1 Preset list ~15-20 condiții comune onboarding + Q2 3-tier severity (sever blacklist / moderat plafonare RIR≥2 75% 1RM / ușor monitorizare pasivă) + Q3 Curated subset + literature ref per condition + **D2.3.1 NSCA+ACSM Daniel curate** + **D2.3.2 Quarterly Knowledge Sprint unified** + **D2.3.3 Disclaimer mandatory consent + per-condition** + Q4 NEW D2 button "Mă doare" semantic distinct de D3.1 "Nu pot" + Q5 3-tier severity auto-action (ușor RIR+1 / moderat skip+alt / sever STOP+flag medical) + Q6 Permanent blacklist după 2-3 incidente "Mă doare" + Q7 5th invariant "Medical Safety" Floor Absolut §42.9 extension + Q8 Pregnancy Defer post-Beta v1.5 + Q9 Hybrid manual unblock + soft prompt 4-6 săpt re-introduce + Q10 NU track injuries telemetry pre-Beta GDPR strict
+
+- **§50.4 D1 Save the Week Silent (7 sub-decisions):** Q1 C Silent default (zero fricțiune) + Q2 3/4 sesiuni planificate Q20 §45.3 reuse + Q3 Counts cu progression skip Q20 reuse + Q4 Subtle micro-copy istoric + Q5 Maximum 2 saved weeks consecutive cap (3rd repeat integral, anti-drift volume calibration) + Q6 Save week prima + goal change next mesocycle (Q27 50% threshold reuse) + Q7 Track + Circuit Breaker reuse §42.7 + **naming distinction LOCKED V1: Circuit Breaker population fallback 5% (§42.7) vs User adaptation signal 50% (D1 Q7 individual T1+ Profile Typing v1.5 trigger)**
+
+**§38 Decision Points table updates:** D1 OPENED → LOCKED V1 (§50.4) + D2 NEW OPENED → LOCKED V1 (§50.3) + D3 NEW OPENED → D3.1 LOCKED V1 (§50.1) D3.2-D3.4 chat NEW separate Priority 4 + D4 NEW LOCKED V1 (§50.2) added.
+
+**Cross-refs:** [[026-offline-coaching-decision-tree-exhaustive]] (ready compile 126 decisions chat NEW Priority 2) | [[023-llm-intent-interpretation]] (Safety tier extended cu invariant 5 Medical Safety §50.3.10) | [[018-engine-extensibility-architecture]] (Dimension Registry foundation) | [[025-andura-gandeste-pentru-user]] (Instant Skip principle reused D3.1 + D4) | [[HANDOVER_GLOBAL_2026-04-30_evening]] §50.1-§50.4 verbatim + §51 cumulative + §52 priorities + §53 DIFF_FLAGS + §54 cross-refs + §55 topics + §36.107 (D1/D2/D3.1 OPENED → LOCKED V1) + §36.99 (offline-first §50.1 Q3 + §50.2 Q2) + §36.55.4 (abandoned session neutral streak §50.2 D4.2.1 + §50.4 trigger) + §42.7 (Circuit Breaker pattern reused §50.1 Q10 + §50.4 Q7) + §42.9 (Safety tier extended invariant 5 §50.3.10) + §42.10 (Periodization muscle-group-level tracking §50.1 Q6 unlock + §50.2 Q7+Q8) + §45.3 Q20 (3/4 threshold rule reused §50.2 Q7+Q8 + §50.4 Q2+Q3)
+
+**Next:** Compile ADR 026 draft full din §42 base (10) + §45 spec (75) + §50.1 D3.1 (13) + §50.2 D4 (11) + §50.3 D2 (13) + §50.4 D1 (7) + naming distinction = **126 decisions LOCKED V1** ready compile in `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` (replace candidate stub) + Periodization Engine spec generation start per dimension cross-persona Q30 LOCKED. Chat strategic NEW dedicat post Auth Flow §36.80 BUG 2.
+
+---
+
 ## 2026-05-04 night — ADR 026 SPEC SESSION COMPLETE 75 Decisions LOCKED V1 + Engine #8 NEW + §47 Alignment Questions Rule LOCKED V1
 
 **Status:** Chat strategic dedicat ADR 026 spec generation (4 batches × 10 Q-uri + Engine #8 NEW + 17 refinements). Total **75 substantive decisions LOCKED V1** ready compile ADR 026 draft full + Periodization Engine spec generation start. Cumulative LOCKED 100 → **175**.

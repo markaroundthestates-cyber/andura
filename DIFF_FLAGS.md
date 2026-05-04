@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-04 night (post handover ingest §45-§49 — HANDOVER_GLOBAL split FLAG threshold check post-merge: **6448 LOC** < 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold, NU triggered. Recommend monitor next handover (~552 LOC headroom = ~3-4 ingest-uri future before threshold); Engine #8 Warm-up & Mobility NEW pre-Beta MANDATORY flagged in INDEX_MASTER)
+**Updated:** 2026-05-05 morning (post handover ingest §50-§55 — HANDOVER_GLOBAL split FLAG threshold check post-merge: **6774 LOC** < 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold, NU triggered yet but ~226 LOC headroom = **1-2 ingest-uri future before threshold breach**. Recommend monitor strictly + plan split strategy concrete in chat strategic NEW dedicat. D3.1.6 + D4 NEW + D2.3 + Engine #8 NEW flagged in INDEX_MASTER)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -119,4 +119,4 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift raised 2026-05-04 (pre-existing infra, NOT regression). P2-FLAG-1 D1-D6 decision points pending. HANDOVER_GLOBAL split FLAG threshold check post §45-§49 ingest (**6448 LOC < 7000 LOC threshold, NU triggered**, ~552 LOC headroom monitor next handover). Engine #8 Warm-up & Mobility LOCKED V1 NEW pre-Beta MANDATORY (META §36.100 amendment 7→8 prescriptive engines). Daniel action required pentru proceed cu ADR 023 implementation + audit total cleanup batches + npm install fix + ADR 026 compile draft full 85 decisions Priority 2 chat NEW + Periodization Engine spec generation start per dimension cross-persona Q30.**
+🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift raised 2026-05-04 (pre-existing infra, NOT regression). P2-FLAG-1 D1-D6 decision points pending. HANDOVER_GLOBAL split FLAG threshold check post §50-§55 ingest (**6774 LOC < 7000 LOC threshold, NU triggered yet, ~226 LOC headroom = 1-2 ingest-uri future before breach** — recommend monitor strictly + plan split concrete chat strategic NEW dedicat). D1/D2/D3.1/D4 OPENED → LOCKED V1 (§50 D-cluster sub-decisions 41 net). D3.2-D3.4 + Engine #8 sub-decisions deferred Priority 4. Daniel action required pentru proceed cu ADR 023 implementation + audit total cleanup batches + npm install fix + ADR 026 compile draft full 126 decisions Priority 2 chat NEW + Periodization Engine spec generation start per dimension cross-persona Q30.**
