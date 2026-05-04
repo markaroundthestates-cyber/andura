@@ -1,31 +1,34 @@
-# SALAFULL VAULT — INDEX MASTER
+# ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-04-30 evening (post Gemini cross-check + ADR 020-021)
-**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent
-**Stats:** 51 fișiere active vault (49 baseline post-cleanup + 2 ADR new: 020-021)
+**Last updated:** 2026-05-04 (post Vault Hygiene Sprint Faza 3+4 — ADR 022/024/025/026 stubs + DECISION_LOG UTF-8 + orphans cleanup + VAULT_HYGIENE_PASS rule codified)
+**SSOT activ:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — citește primul pentru context curent (90 LOCKED V1 + §36.99-§36.107 offline coaching tree + 7 engines + D2/D3 NEW)
+**Stats:** 66 fișiere active vault (post-stubs G + UNREFERENCED moves F)
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
 
-## STRUCTURĂ POST-CLEANUP
+## STRUCTURĂ POST-CLEANUP (Vault Hygiene Sprint Faza 3 — 2026-05-04)
 
 ```
 andura/
 ├── 00-index/        INDEX_MASTER (acest fișier)
 ├── 01-vision/       Vision + Strategy + Daniel profile + parametric programs (5 files)
 ├── 02-audit/        COACHING_TEXTBOOK_SYNTHESIS (research reference, 1 file)
-├── 03-decisions/    22 ADR-uri active (001-021 + ADR_MULTI_TENANT_AUTH) + DECISION_LOG (23 files)
+├── 03-decisions/    26 ADR-uri active (001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named) + DECISION_LOG (28 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
 ├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
-├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file)
+├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file, 6058 LOC — split candidate Faza 5 dacă > 7000)
 ├── 07-meta/         CLAUDE_CODE_RULES (1 file)
 ├── 08-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
 ├── 📥_inbox/        Daniel uploadează aici (artefacte chat, prompts CC, drafturi)
-├── 📤_outbox/       Output CC (LATEST.md activ + _archive/<YYYY-MM>/NN_*.md istoric continuu)
+├── 📤_outbox/       Output CC (LATEST.md activ + ALIGNMENT_QUESTIONS_CHAT_NEW.md + _archive/<YYYY-MM>/NN_*.md istoric continuu)
+├── DIFF_FLAGS.md    P1/P2 outstanding issues requiring Daniel action (root level)
+├── VAULT_RULES.md   Authoritative rules + §HANDOVER_PROTOCOL + §VAULT_HYGIENE_PASS + §BATCH_PROTOCOL (root level)
+├── PROMPT_CC_HYGIENE.md  Reusable Opus prompt (root level)
 └── README.md        Repo intro
 ```
 
-**Folders REMOVED post-cleanup:** `05-prompts/` (executed), `10-exec-queue/` (DONE), `docs/` (orphan, migrated), **`cc-reports/` (DEPRECATED 30 apr, content migrated to `📤_outbox/_archive/2026-04/`)**.
+**Folders REMOVED post-cleanup 30 apr:** `05-prompts/` (executed), `10-exec-queue/` (DONE), `docs/` (orphan, migrated), **`cc-reports/` (DEPRECATED 30 apr, content migrated to `📤_outbox/_archive/2026-04/`)**.
 
 ---
 
@@ -35,16 +38,28 @@ andura/
 |-------|---------|
 | **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] |
 | **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6 |
-| **Pricing locked €60 lifetime / €65/an** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §3 + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 |
+| **Pricing locked Founding €39 + Standard €59 + Elite €79 (V1.1)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 (post Chat D 2026-05-02) + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 (DEPRECATED, see §AMENDMENT) |
 | **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.1 |
 | **5 axe differentiation (vs AI = comoditate)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §10 + [[MOAT_STRATEGY]] §Competitor Comparison Matrix |
 | **7 features distinctive (MOAT real)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.2 |
-| **Chalkboard educational layer (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §11 |
+| **Chalkboard educational layer V1.1** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §11 |
 | **Feedback system in-app (Sprint 4)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §12 |
+| **Andura Offline Coaching Decision Tree (PRE-BETA blocker)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.99 + [[026-offline-coaching-decision-tree-exhaustive]] (stub) |
+| **7 Engines Prescriptive NEW roadmap** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.100 (Periodization / Goal Adaptation / Bayesian Nutrition / Deload / Energy / Tempo+Form / Specialization) |
+| **5 voices Cognitive Architecture CONFIRMED** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.101 + [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
+| **Goal lifecycle change first-class** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.102 + §26 (8 templates V1) + §36.35 (Shift Event Handler) |
+| **Knowledge layer cadence quarterly/bi-annual/annual** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.103 |
+| **D2 NEW Injury/Contraindication Mapping (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.106 |
+| **D3 NEW Don't Like + Home + Calistenice + Sport-Oriented (OPENED FOR DISCUSSION)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.107 |
 | **Decizii arhitecturale cronologic** | [[DECISION_LOG]] |
-| **ADR-uri active 001-021 + ADR_MULTI_TENANT_AUTH** | `03-decisions/` |
+| **ADR-uri active 001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named** | `03-decisions/` |
 | **Storage Tiering Strategy (Tier 0/1/2 + Dexie)** | [[020-storage-tiering-strategy]] |
 | **Calibration Drift Reconciliation (Version Vector)** | [[021-calibration-drift-reconciliation]] |
+| **LLM Intent Interpretation (Pain + Equipment scope strict)** | [[023-llm-intent-interpretation]] (LOCKED V1 partial) |
+| **Bayesian Nutrition Inference (stub PENDING spec)** | [[022-bayesian-nutrition-inference]] |
+| **Goal-Driven Program Templates (stub PENDING spec)** | [[024-goal-driven-program-templates]] |
+| **Andura Gândește pentru User / Graceful Degradation Universal (candidate)** | [[025-andura-gandeste-pentru-user]] |
+| **Offline Coaching Decision Tree Exhaustive (candidate, PRE-BETA blocker)** | [[026-offline-coaching-decision-tree-exhaustive]] |
 | **Cognitive architecture engine** | [[COGNITIVE_ARCHITECTURE_SPEC_v1]] |
 | **Multi-tenant auth migration plan** | [[MULTI_TENANT_AUTH_MIGRATION_SPEC]] |
 | **T&B implementation (LWW deprecated)** | [[TOMBSTONE_BRANCHING_IMPLEMENTATION_SPEC]] |
@@ -54,7 +69,7 @@ andura/
 | **MOAT strategy** | [[MOAT_STRATEGY]] |
 | **Daniel profile + cognitive mode** | [[DANIEL_COMPLETE_PROFILE]] |
 | **Parametric programs (FAZA 4+ design)** | [[PARAMETRIC_PROGRAMS_DESIGN]] |
-| **Findings tracker (130+ unique)** | [[FINDINGS_MASTER]] |
+| **Findings tracker (135+ unique post Sprint 4.x)** | [[FINDINGS_MASTER]] |
 | **Insights backlog (deferred + future)** | [[INSIGHTS_BACKLOG]] |
 | **Coaching textbook synthesis (research)** | [[COACHING_TEXTBOOK_SYNTHESIS]] |
 | **Chat migration protocol** | [[CHAT_MIGRATION_PROTOCOL]] |
@@ -63,8 +78,13 @@ andura/
 | **Handover template (next session)** | [[HANDOVER_TEMPLATE]] |
 | **Model upgrade audit protocol** | [[MODEL_UPGRADE_AUDIT_PROTOCOL]] |
 | **CC autonomous run rules** | [[CLAUDE_CODE_RULES]] |
+| **Outstanding issues (P1/P2 flags)** | `DIFF_FLAGS.md` (root) |
+| **Vault rules + §HANDOVER_PROTOCOL + §VAULT_HYGIENE_PASS + §BATCH_PROTOCOL** | `VAULT_RULES.md` (root) |
+| **Reusable Opus prompt for handover ingest** | `PROMPT_CC_HYGIENE.md` (root) |
 | **Sprint 1+2+3 partial reports** | `📤_outbox/_archive/2026-04/08_SPRINT1_EXECUTION_REPORT.md` + `09_SPRINT2_EXECUTION_REPORT.md` + `10_SPRINT3_PARTIAL_EXECUTION_REPORT.md` |
+| **Sprint 4.x Final Report (centralized cluster)** | `📤_outbox/_archive/2026-05/116_SPRINT_4X_FINAL_REPORT.md` |
 | **AUDIT 5000Q corpus + report** | `📤_outbox/_archive/2026-04/06_AUDIT_5000Q.md` + `07_AUDIT_5000Q_REPORT.md` |
+| **VAULT_HYGIENE_PHASE_1_AUDIT (read-only inventory)** | `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` |
 | **AUDIT 30.9 blocked state (Daniel sign-off needed)** | [[AUDIT_30_9_BLOCKED_STATE]] |
 
 ---
@@ -94,7 +114,25 @@ andura/
 | 019 | [[019-gdpr-k-anonymity-validation]] | Accepted (k=5 quasi-identifiers — promoted from amendment 2026-04-30) |
 | 020 | [[020-storage-tiering-strategy]] | Accepted (Tier 0/1/2 + Dexie.js + rotation — Gemini Q10 BLIND SPOT #1, pre-launch CRITICAL) |
 | 021 | [[021-calibration-drift-reconciliation]] | Accepted (Version Vector + max-merge — Gemini Q10 BLIND SPOT #2, pre-Faza-2 T&B) |
+| 022 | [[022-bayesian-nutrition-inference]] | 🟡 **STUB / PENDING SPEC** (created Faza 3 2026-05-04 — split per §36.95 ADR Numbering Additive) |
+| 023 | [[023-llm-intent-interpretation]] | LOCKED V1 partial spec (full sub-sections A-M PENDING addendum upload — see DIFF_FLAGS P1-FLAG-1) |
+| 024 | [[024-goal-driven-program-templates]] | 🟡 **STUB / PENDING SPEC** (created Faza 3 2026-05-04 — Engine #2 §36.100) |
+| 025 | [[025-andura-gandeste-pentru-user]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — Graceful Degradation Universal §36.94) |
+| 026 | [[026-offline-coaching-decision-tree-exhaustive]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — PRE-BETA blocker §36.99) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
+
+### Named ADRs (8 — non-numbered, locked V1)
+
+| Name | Status |
+|------|--------|
+| [[ADR_BIAS_DETECTION_OBSERVABLE_v1]] | LOCKED V1 |
+| [[ADR_CASCADE_DEFENSE_v1]] | LOCKED V1 |
+| [[ADR_COMPOSITE_SIGNAL_LAYER_v1]] | LOCKED V1 |
+| [[ADR_MODE_DETECTION_UI_v1]] | LOCKED V1 |
+| [[ADR_OUTLIER_FILTER_v1]] | LOCKED V1 |
+| [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] | LOCKED V1 |
+| [[ADR_RIR_MATRIX_ADAPTIVE_v1]] | LOCKED V1 |
+| [[ADR_SMART_ROUTING_EQUIPMENT_v1]] | LOCKED V1 |
 
 ---
 
@@ -109,12 +147,26 @@ andura/
 
 ---
 
-## VAULT CLEANUP 2026-04-30
+## VAULT CLEANUP HISTORY
 
+### 2026-04-30 (initial cleanup)
 73 fișiere șterse (sprint-uri închise + handover-uri consolidate + audits absorbite + prompts executate + ADR patches merged inline). Reducere -61% (125 → 49 vault docs).
-
 Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
+
+### 2026-05-03 (Vault Hygiene Sprint Faza 1 — read-only audit)
+110_VAULT_AUDIT_INVENTORY.md ~600 LOC §1-§9: 200 .md files (62 active + 138 archive), 60815 LOC total, 22 MISSING + 3 UNREFERENCED orphans, 4 ADR drift findings, ORPHAN-1 ADR 022 finding HIGH (split decision §36.95).
+
+### 2026-05-04 (Vault Hygiene Sprint Faza 3 + Faza 4 — execution)
+- **G:** ADR 022/024/025/026 stubs created (split ORPHAN-1 + candidates 025+026)
+- **H:** DECISION_LOG.md UTF-8 normalize (422 mojibake substitutions: â€" → —, Äƒ → ă, È› → ț, È™ → ș, Ã® → î, Â§ → §, etc.)
+- **F:** 21 orphan wikilinks resolved (ADR 022 created, 18 LOW stripped to plain text, 4 MEDIUM rewired EXEC_QUEUE/EXEC_RESULTS/HANDOVER/ENGINE_ARCHITECTURE) + 3 UNREFERENCED resolved (SPRINT_4X moved 116, HANDOVER_INPUT_2026-05-02 deleted as duplicate of 37)
+- **C:** INDEX_MASTER refreshed (this update — stats 51 → 66, ADRs 22 → 26)
+- **B:** Onboarding SSOT V1 consolidation (`01-vision/ONBOARDING_SSOT_V1.md` placeholder per §36.96 + §36.92 D4 hybrid C)
+- **A:** HANDOVER_GLOBAL split candidate flagged (file 6058 LOC < 7000 threshold default; defer split till threshold breach)
+- **D:** Archive policy zero change (preserve audit trail per recomandare)
+- **E:** Folder restructuring zero change (root-level VAULT_RULES + DIFF_FLAGS + PROMPT_CC_HYGIENE preserved per audit)
+- **Faza 4:** §VAULT_HYGIENE_PASS rule codified in VAULT_RULES.md (steps 10-15 + auto-trigger spec post-ingest)
 
 ---
 
-🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic.**
+🦫 **Building it like we'll own it forever. SSOT only. Single tool, single doc per topic. Vault clean post Faza 3+4. Andura needs to be the best. ✊**
