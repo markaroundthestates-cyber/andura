@@ -1,5 +1,54 @@
 # DECISION LOG — Andura
 
+## 2026-05-04 night — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED commit `0880641` + AUTH-DEFER consolidation + Firebase prereps verification (cumulative ~363, +~5-7 substantive net)
+
+**Status:** §CC.5 fast handover ingest 2026-05-04 night Daniel + Claude post-CC Faza 2 Phase 1 Auth Wiring + cleanup paralel. Privacy/ToS V2 review Gemini cross-review META workflow validated empirical (per §62.X). Cumulative LOCKED ~356 → **~363** (+~5-7 substantive net post-overlap).
+
+**Authority:** Chat strategic 2026-05-04 night Daniel + Claude. Phase 1 Auth Wiring CC Opus 28 min autonomous LANDED commit `0880641` separat. Cleanup commit acest scope: A0 (`242f065` Firebase API Key) + A (Privacy V2 replace) + B (ToS V2 replace) + C (§CC.5 fast handover ingest).
+
+**Sub-decisions LOCKED V1:**
+
+- **Operator identity LOCKED V1:** Constantin Daniel Mazilu, persoană fizică, România, contact `suport@andura.app` (adresa fizică NU disclosed în document, la cerere prin email — standard PWA solo founder pre-revenue)
+- **Vârsta minimă LOCKED V1:** 18+ ani împliniți (play safe Beta, exclude minorii mecanic + evită GDPR Article 8 părinte permission overhead)
+- **Privacy V2 11 secțiuni LOCKED V1:** operator identity + 18+ + ce date (email/UID/profil/antrenament/comportamentale/telemetrie/Sentry + photos LOCAL only) + unde (Local + Firebase Google Ireland → Google LLC SUA Schrems II SCC + EU-US DPF + Sentry SCC + ePrivacy storage disclosure punct 4 IndexedDB/LocalStorage NU tracking) + temei legal (consimțământ + contract + interes legitim cu detail "optimizarea algoritmilor de antrenament și securitatea serviciului") + retenție 30 zile grace + drepturi GDPR full + ANSPDCP plângere + securitate HTTPS/TLS + Article 33-34 + partajare terți (NU vindem/închiriem/marketing) + modificări notif 14 zile + contact
+- **ToS V2 15 secțiuni LOCKED V1:** operator identity + 18+ + acceptare + cont/securitate user responsabil credențiale + risc utilizare + fără sfat medical + conținut user ownership (licență neexclusivă Andura strict funcționare) + IP Andura preserved + Beta gratuit + reziliere + limitarea răspunderii ("în măsura permisă de lege" + retain neglijență gravă/dol per RO consumer law OUG 21/1992 + Codul Civil + EU Consumer Rights Directive 2011/83) + forța majoră + lege română + ANPC mediere + SOL EU + jurisdicție București + modificări notif 14 zile + contact
+- **Liability waivers absolute REJECTED preserved**
+- **META Review Division of Labor Claude+Gemini cross-review workflow VALIDATED EMPIRICAL** (per §62.X) — Gemini feedback aplicat ePrivacy storage disclosure + interes legitim detail. Workflow producuive: Claude generează draft + Gemini cross-reviews legal/text-heavy + Daniel final spot-check minim
+- **Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 (Magic Link 24h + email template RO Console) DEFINITIVELY DEFERRED v1.5** — Firebase architectural limitation (NU "investigate", arhitecturală: Firebase NU expune Magic Link template separat + NU expune expiration UI, GitHub feature request OPEN din 2019 NU adjustable). SMTP custom backend migration v1.5 = single combined fix path. Accept Firebase 6h default Beta — Maria 65 tolerable
+- **Firebase prereps verification (drift vault SSOT corrected):** Console Faza 1 dogfood DONE pre-existing 2 mai (cont auth real UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`, Magic Link enabled, Rules per-UID strict published, authorized domain `andura.app` adăugat). MX `suport@andura.app` DONE this session (Namecheap Email Forwarding alias suport → maziludanielconstantin90@gmail.com, test confirmed Gmail inbox)
+
+**Phase 1 Auth Wiring LANDED commit `0880641` (separate commit, 28 min autonomous, recap):**
+- BUG 2 fix `src/firebase.js` `getUserPath()` return null Anonymous mode (§56.1.3 mecanic 401 cycle eliminated)
+- §56.13.1 retry 3x exponential backoff `src/auth.js` `sendMagicLink`
+- §56.2.2 wording LOCKED V1 + §AMENDMENT .3 soft-hint UI `src/pages/auth.js`
+- `src/pages/authShell.js` NEW ~280 LOC + main.js boot wiring + index.html slots
+- 15 tests noi: 1203 → 1218 PASS, zero regression. Vite build green
+- Coverage 12/30 sub-sections (40%) — toate CRITICAL production blockers LANDED
+- Phase 2 ~16-22h estimate over 3-4 batches deferred
+
+**2 findings tracker entries pending NEW (next chat strategic):**
+- Medical disclaimer UI modal obligatoriu pre Q2 onboarding (NU doar checkbox final ToS) — onboarding flow refinement
+- Script export JSON GDPR portability manual `suport@andura.app` cerere — Daniel/CC pregătit pentru cerere user
+
+**Files modified §CC.5 fast handover ingest (this commit):**
+- UPDATED: `01-vision/PRIVACY_POLICY_V1_BETA.md` (V2 replace integral preserve frontmatter)
+- UPDATED: `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (V2 replace integral preserve frontmatter)
+- UPDATED: `00-index/CURRENT_STATE.md` (header + NOW move-then-replace + JUST_DECIDED top entry + NEXT P1 ABSOLUT update + ACTIVE_FLAGS P1-FLAG-AUTH-DANIEL-PREP 🟢 RESOLVED + RECENT precedent engines thread compressed)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry top descending cronologic)
+- ARCHIVED: `📥_inbox/HANDOVER_2026-05-04_NIGHT_PRIVACY_TOS_V2_AUTH_PHASE_1_CONSOLIDATION.md` → `📤_outbox/_archive/2026-05/145_HANDOVER_2026-05-04_NIGHT_PRIVACY_TOS_V2_AUTH_PHASE_1_CONSOLIDATION_CONSUMED.md`
+
+**Cross-refs:**
+- [[PRIVACY_POLICY_V1_BETA]] V2 + [[TERMS_OF_SERVICE_V1_BETA]] V2 (LANDED this commit)
+- [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 + Phase 1 commit `0880641`
+- [[HANDOVER_GLOBAL_2026-04-30_evening]] §56.8.2/3 templates V1 → V2 evolved review META + §63.5/§AMENDMENT .18 #1 architectural limitation flagged
+- [[INSIGHTS_BACKLOG]] AUTH-DEFER-1 + AUTH-DEFER-2 entries (commit `030c901` deja flagged)
+- [[CURRENT_STATE]] post-update (this commit)
+- Backup tag: `pre-cleanup-2026-05-04-night`
+
+**Next:** Daniel decide direction următor chat — (a) Continue engines roadmap #3 Bayesian Nutrition (ADR 022 stub populate); (b) Phase 2 Auth Wiring trigger separate batch; (c) Branch enumeration cluster A; (d) ADR 026 compile draft full ~125 decisions; (e) Other pivot. Phase 1 Auth Wiring + Privacy/ToS V2 prereps complete — Beta launch path mai aproape per §62.7 Quality > Speed default.
+
+---
+
 ## 2026-05-04 evening late — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions LOCKED V1 (cumulative ~356, +50 substantive net)
 
 **Status:** Chat strategic 2026-05-04 evening late Daniel + Claude — engines architectural spec sessions Periodization (Engine #1) + Goal Adaptation (Engine #2) + ADR 026 architectural Open Questions Q1-Q10 foundation. Cumulative LOCKED 306 → **~356** (+50 substantive net post-overlap). Bandwidth la handover ~25% fresh.

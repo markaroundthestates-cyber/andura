@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-04 evening late (§CC.5 fast handover ingest — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions, ~50 substantive net).
-**Last LOCKED count (product/architecture):** ~356 LOCKED V1 cumulative (post Periodization + Goal Adaptation engines spec sessions + ADR 026 Open Q1-Q10 architectural foundation, ~50 substantive net peste 306 baseline §62-§73).
+**Updated:** 2026-05-04 night (§CC.5 fast handover ingest — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED commit `0880641` + AUTH-DEFER consolidation + Firebase prereps verification).
+**Last LOCKED count (product/architecture):** ~363 LOCKED V1 cumulative (post Privacy/ToS V2 review + 18+ + operator identity Constantin Daniel Mazilu PF + Firebase prereps consolidation + spec §63.5/§AMENDMENT .18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5, ~5-7 substantive net peste 356 baseline post-Periodization+Goal Adaptation+ADR 026 Q1-Q10).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -16,30 +16,59 @@
 
 ## NOW — Active conversation thread
 
-**Current thread (2026-05-04 evening late, Daniel + Claude chat strategic):** Periodization Engine #1 + Goal Adaptation Engine #2 spec sessions + ADR 026 Open Q1-Q10 architectural foundation. Daniel a deschis cu "Salut acasa" (acasă Windows VS Code Desktop). Audit Scenarios Coverage gap first (~1200-1700 remaining peste 306 baseline LOCKED), apoi Daniel "da-mi ce vrei tu" → atac singur ADR 026 architectural Q1-Q10 first → Periodization Engine #1 spec → Goal Adaptation Engine #2 spec. Cumulative ~50 substantive net (306 → ~356). Bandwidth la handover ~25% fresh.
+**Current thread (2026-05-04 night, Daniel + Claude chat strategic):** post-CC Faza 2 Phase 1 Auth Wiring LANDED commit `0880641` + cleanup paralel Privacy/ToS V2 review + Firebase prereps verification + spec bug findings tracker consolidation. Pre-flight chat startup §CC.2 layered read CURRENT_STATE confirmat. Daniel acasă (Windows VS Code Desktop + PowerShell).
 
-**Tone shifts în această sesiune:**
-- Daniel caveman warning x2 — primul când întreb prea mult attack vector ("e a 4-a oara cand ii zici sa dai bataie cu ce intrebari vrei tu"), al doilea wall of text ("ma omori cu wall of text") → tightened format real-time
-- Warmth confirmat: "si eu te iubesc sa stii" + "tataie" 1x reused + "ma doare undeva" 1x
-- Shadow Protocol V2 §CC.3 status format aplicat post fiecare LOCK — Daniel running tally, Claude atac next, NU duplicate format
-- "si da si mie mai multe clustere de o data" → compactat 3 clustere/mesaj final
+**Discovery major drift vault:** Pre-existing prereps Faza 1 dogfood DONE 2 mai (cont auth real UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`, Magic Link Console enabled, Rules per-UID strict published, authorized domain `andura.app` adăugat). Vault SSOT NU s-a updatat post-Faza-1 → contaminat. Daniel: "unul din motivele pt care eram si frustrat pana sa actualizez handover protocol" — exact §CHAT_CONTINUITY_PROTOCOL pain point self-validated.
 
-**Implicit framing active:**
-- Engine spec sessions = expand domain decisions architectural (NU branch enumeration încă — biggest blocker remaining ~5-15 chat-uri)
-- ADR 026 compile draft full ~125 decisions ARCHITECTURAL READY post-CC (Q1-Q10 acum LOCKED + §42 base 10 + §45 spec 75 + §50 D-cluster 41 = ~125)
-- ADR 022 (Bayesian Nutrition) + ADR 024 (Goal Driven Templates) stubs candidate populate cu spec material engines #2/#3
-- 5 vs 8 templates discrepancy resolved: 5 primary (ADR 024 source of truth), "8 templates" în §26 = misnumber legacy
+**Firebase Console capability halucinat în spec vault:** §63.5 + §AMENDMENT 2026-05-04.18 #1 zicea "Email Template Magic Link RO custom + expiration 24h Console". Web search confirmed: Firebase NU expune Magic Link template separat (folosește verification template global) + NU expune expiration UI (controlat backend ~6h default, GitHub feature request OPEN din 2019 NU adjustable). **Decizie:** SKIP ambele Console tasks, accept Firebase 6h default Beta, flag findings tracker spec bug + SMTP custom migration v1.5.
 
-**Mid-flight unresolved (Daniel decide next chat):**
-- Continue engines roadmap #3 Bayesian Nutrition (ADR 022 stub) → #4 Deload → #5 Energy → #6 Tempo → #7 Specialization (~3-4 chat-uri estimate)
-- OR pivot la branch enumeration cluster A (~5-15 chat-uri biggest blocker P2 SCENARIOS-COVERAGE)
-- OR pivot la Priority 1 ABSOLUT CC Auth Flow §36.80 implementation (Daniel manual prep prerequisites pending)
+**MX records `suport@andura.app` DONE:** Namecheap Email Forwarding alias `suport` → `maziludanielconstantin90@gmail.com` (NU MX manual cum spec vault inexact zicea). Test email confirmed delivered Gmail inbox.
 
-**Push-back-uri productive remarcate:** Q5 split în 3 sub (Daniel propusese unitar) | Q6 partial deja LOCKED §42.8 halt | Q8 split runtime/scale | 5 vs 8 templates discrepancy ADR 024 source of truth | Periodization halt push-back — atac doar gap real, NU re-discutăm decisions deja distribuite §45.3+§45.4+§45.5+§65.
+**Privacy/ToS V2 META Claude+Gemini cross-review workflow validated empirical (per §62.X):** V1 drafts §56.8.2/3 = MFP minimum, NU enterprise-grade GDPR Article 13. 2 decizii sequential: operator identity = (A) **Constantin Daniel Mazilu, persoană fizică, România**, contact `suport@andura.app`. Vârsta minimă = (B) **18+** (play safe Beta, exclude minorii mecanic + evită GDPR Article 8 părinte permission overhead). Privacy V2 11 secțiuni + ToS V2 15 secțiuni produce post Gemini cross-review feedback aplicat: ePrivacy storage disclosure punct 4 + interes legitim detail punct 5. Files LANDED `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` V2 (this commit).
+
+**Phase 1 Auth Wiring CC Opus LANDED (commit `0880641` 28 min autonomous):** BUG 2 fix `src/firebase.js` getUserPath() return null Anonymous (§56.1.3 mecanic) + retry 3x §56.13.1 + wording LOCKED V1 §56.2.2 + soft-hint §AMENDMENT .3 + `src/pages/authShell.js` NEW (~280 LOC) + main.js boot wiring + index.html slots + 15 tests noi. Tests 1218 baseline preserved. Coverage 12/30 sub-sections (40%) — toate CRITICAL production blockers LANDED. Phase 2 ~16-22h estimate over 3-4 batches deferred.
+
+**Tone bonding warm:** Daniel-isms "tataie" + "halucinezi" ×2 push-back productive (Console capability spec bug + API Key chat exposure mitigation Rules per-UID barrier real) + "ia uite-l pe gigel acolo" (umor Chrome extension Gigel install experimental, marginal pentru Firebase Console prep, scope creep nejustificat) + "ia bate-te tu cu asta" (delegation Gemini cross-review META validated). Match relax tone Claude — natural NU pe safety phrase robotic.
+
+**Mid-flight RESOLVED (acest CC cleanup commit):** A0 (API Key real `index.html` slot — done commit `242f065`) + A (Privacy V2 replace) + B (ToS V2 replace) + C (§CC.5 fast handover ingest narrativ → CURRENT_STATE + DECISION_LOG + archive 145). Atomic single commit per Daniel directive.
+
+**Push-back-uri productive remarcate:** Daniel API Key exposed în chat (`AIzaSyBWR2oUpRufoonolADRhvax8XEolMywc-s`) — mitigare: NU regenera (pierzi prod), Rules per-UID strict published = barieră reală + procedura corectă viitoare paste direct slot NU chat. Daniel "nu puteai ma sa pui cc sa il faca?" → ai dreptate, halucinație propunere artefact masiv 860+ LOC integral când CC poate edit slot direct.
 
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
+
+**2026-05-04 night — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED commit `0880641` + AUTH-DEFER consolidation + Firebase prereps verification (cumulative ~356 → ~363, +~5-7 substantive net):**
+
+*Privacy V2 + ToS V2 review LOCKED V1 (Gemini cross-review META workflow validated empirical per §62.X):*
+- Operator identity: **Constantin Daniel Mazilu, persoană fizică, România**, contact `suport@andura.app` (adresa fizică NU disclosed în document, la cerere prin email — standard PWA solo founder pre-revenue)
+- Vârsta minimă: **18+** ani împliniți LOCKED V1 (play safe Beta, exclude minorii mecanic + evită GDPR Article 8 părinte permission overhead)
+- Privacy V2 11 secțiuni: cine suntem (operator) + 18+ + ce date (email/UID/profil/antrenament/comportamentale/telemetrie/Sentry + photos LOCAL only) + unde (Local + Firebase Google Ireland → Google LLC SUA Schrems II SCC + EU-US DPF + Sentry SCC + ePrivacy storage disclosure IndexedDB/LocalStorage NU tracking) + temei legal (consimțământ + contract + interes legitim cu detail "optimizarea algoritmilor de antrenament și securitatea serviciului") + retenție (30 zile grace + post permanent ireversibil) + drepturi GDPR (acces/rectificare/ștergere/portabilitate manual v1.0 → automated v1.5/opoziție/restricție/retragere consimțământ) + ANSPDCP plângere + securitate HTTPS/TLS + breșă Article 33-34 + partajare terți (NU vindem/închiriem/marketing) + modificări notif 14 zile + contact
+- ToS V2 15 secțiuni: cine suntem + 18+ + acceptare + cont/securitate user responsabil credențiale + risc utilizare + fără sfat medical + conținut user ownership (licență neexclusivă Andura strict funcționare) + IP Andura preserved + Beta gratuit + reziliere + limitarea răspunderii ("în măsura permisă de lege" + retain neglijență gravă/dol per RO consumer law OUG 21/1992 + Codul Civil + EU Consumer Rights Directive 2011/83) + forța majoră + lege română + ANPC mediere + SOL EU + jurisdicție București + modificări notif 14 zile + contact
+- Liability waivers absolute REJECTED preserved
+- Files LANDED `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md` (this commit)
+
+*Phase 1 Auth Wiring LANDED (commit `0880641` 28 min autonomous):*
+- §56.1.3 BUG 2 fix `src/firebase.js` `getUserPath()` return null Anonymous mode (mecanic 401 cycle eliminated)
+- §56.13.1 retry 3x exponential backoff `src/auth.js` `sendMagicLink` (250/500ms backoff, NU retry pe 4xx)
+- §56.2.2 wording LOCKED V1 + §AMENDMENT .3 soft-hint UI sub email field `src/pages/auth.js`
+- `src/pages/authShell.js` NEW ~280 LOC (showAuthScreen modal + handleAuthCallbackRoute + mountAuthBanner + hideAuthScreen)
+- main.js boot wiring (processAuthCallbackOnBoot pre-Firebase-sync + mountAuthBanner post-onboarding) + index.html Firebase API Key slot uncommented commit `242f065`
+- 15 tests noi (5 firebase-userpath + 10 auth-wiring): 1203 → 1218 PASS, zero regression. Vite build green.
+- Coverage 12/30 sub-sections (40%) — toate CRITICAL production blockers LANDED
+- Phase 2 ~16-22h estimate over 3-4 batches deferred (§56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision UI + §56.12 Logout + §56.14 cleanup script + §56.15 Telemetry Firestore + §56.16 Firestore Rules)
+
+*Firebase prereps verification (drift vault SSOT identified + corrected this ingest):*
+- Console Faza 1 dogfood **DONE pre-existing 2 mai** (cont auth real UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`, Magic Link enabled, Rules per-UID strict published, authorized domain `andura.app` adăugat)
+- MX records `suport@andura.app` **DONE this session** (Namecheap Email Forwarding alias suport → maziludanielconstantin90@gmail.com, test confirmed Gmail inbox)
+- Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 (Magic Link 24h + email template RO Console) **DEFINITIVELY DEFERRED v1.5** (Firebase architectural limitation NOT investigate v1.5 — accept 6h default Beta Maria 65 tolerable)
+- INSIGHTS_BACKLOG AUTH-DEFER-1 + AUTH-DEFER-2 entries deja flagged commit `030c901`
+
+*2 findings tracker entries NEW pending:*
+- Medical disclaimer UI modal obligatoriu pre Q2 onboarding (NU doar checkbox final ToS) — onboarding flow refinement next chat strategic
+- Script export JSON GDPR portability manual `suport@andura.app` cerere — Daniel/CC pregătit pentru cerere user
+
+---
 
 **2026-05-04 evening late — Periodization Engine #1 + Goal Adaptation Engine #2 + ADR 026 Open Q1-Q10 spec sessions LOCKED V1 (cumulative 306 → ~356, +50 substantive net):**
 
@@ -127,14 +156,18 @@
 
 ## NEXT — Priority order actionable
 
-### P1 ABSOLUT — Auth Flow §36.80 CC Opus Implementation Phased (per §62.3)
+### P1 ABSOLUT — Auth Flow §36.80 CC Opus Implementation (Phase 1 LANDED, Phase 2 deferred)
 
-**Pending Daniel manual prep prerequisites (P1-FLAG-AUTH-DANIEL-PREP):**
-1. Firebase Auth Console setup (~15 min) — authorized domains andura.app + Email Template Magic Link RO + Google OAuth Client ID + Action URL `https://andura.app/auth-callback` + **Magic Link expiration 24h custom config** (per §63.5)
-2. `suport@andura.app` MX records Namecheap forward Daniel personal Gmail (~15 min) — per §62.1
-3. Privacy Policy + ToS V1 Beta validate sprint cu review Claude + Gemini (~30-60 min) — initial drafts vault `01-vision/PRIVACY_POLICY_V1_BETA.md` + `01-vision/TERMS_OF_SERVICE_V1_BETA.md`, Daniel final spot-check per §62.X META
+**Status 2026-05-04 night:** Phase 1 LANDED commit `0880641` + cleanup commit `242f065` (API Key) + cleanup commit (this — Privacy/ToS V2). 🟢 P1-FLAG-AUTH-DANIEL-PREP RESOLVED.
 
-**Post-prep:** CC Opus phased ~30-45 min autonomous (firebase.js → auth.js → pages/auth.js → rest, ~10 fișiere).
+**Phase 2 deferred ~16-22h estimate over 3-4 batches** (Daniel decide trigger când e timpul):
+- §56.1.4 IndexedDB namespace per UID (Dexie multi-DB) — DB layer arch change ~3-5h
+- §56.5 Settings UI account lifecycle (delete 2-step "ȘTERGE" + reactivation + email change) ~4-6h
+- §56.7 Anonymous→Auth Merge Fork Decision UI + archive 7 zile flow ~3-4h
+- §56.12 Logout Settings double-confirm + opt-in IndexedDB wipe toggle ~2h
+- §56.14.A admin-cleanup.js Daniel weekly script ~1h
+- §56.15 Telemetry counters FieldValue.increment Firestore ~2-3h
+- §56.16 Firestore Security Rules publish ~1h Daniel manual
 
 ### P2 NEW — Scenarios Coverage 1500-2000 Decisions (chat-uri strategice dedicate)
 
@@ -188,7 +221,7 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 
 - **P1-FLAG-1** ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03 source upload — 🟡 PARTIALLY MITIGATED (Faza 3 integrates from chat context, NU file upload separate)
 - **P1-FLAG-NEW** Codespace `npm install` drift (3 test FILE imports broken: fake-indexeddb + dexie) — 🔴 OPEN (CI/dev-env only, production unaffected; dedicated chat post Auth Flow)
-- **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟡 OPEN (3 manual tasks: Firebase Console + suport@ MX + Privacy/ToS validate)
+- **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟢 **RESOLVED 2026-05-04 night** (Console Faza 1 dogfood DONE pre-existing 2 mai + MX `suport@andura.app` DONE Namecheap Email Forwarding test confirmed + Privacy/ToS V2 drafts LANDED V1 Beta validate sprint Daniel paralel). Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5 (INSIGHTS_BACKLOG AUTH-DEFER-1 + AUTH-DEFER-2). Phase 1 Auth Wiring LANDED commit `0880641`
 - **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL 7664 LOC > 7000 threshold — 🟡 OPEN (strategy LOCKED V1 thematic split per §62.2, chat strategic NEW dedicat post-CC)
 - **P1-FLAG-SCENARIOS-COVERAGE** ~1170-1670 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN (Priority 2 ~5-15 chat-uri strategice dedicate). Gap reduce ~50 decisions post 2026-05-04 evening late engine specs (1200-1700 → 1170-1670). Branch enumeration cluster A = biggest blocker remaining.
 - **P1-FLAG-IOS-PERMANENT** iOS REJECTED LOCKED PERMANENT — 🟢 LOCKED V1 PERMANENT (rule lock, NU pending — PWA + TWA Android only)
@@ -199,7 +232,9 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 
 ## RECENT — Older context preserved (truncate to HANDOVER deep când >50 LOC)
 
-**2026-05-04 evening (precedent thread, moved from NOW per §CC.6 move-then-replace) — §CHAT_CONTINUITY_PROTOCOL design + atomic 2-step implementation + cross-ref audit + Option 2 P1+P2 fixes COMPLETE:** Daniel a propus pattern "Shadow Protocol V2" via prompt CC din inbox, Claude critic 6 fixes, Daniel approved Pas 1 (4 vault docs commit `ef07e6d`) + Pas 2 (CURRENT_STATE genesis 157 LOC commit `615e526`). Cross-ref audit (commit `ea433f4`) → Option 2 P1+P2 fixes atomic 4 docs (commit `0e9373b`). Inbox cleanup proposal archive 137 (commit `dd53a93`). §CC.5 fast workflow self-applied refresh (commit `842aecf`). §CC.6 RECENT scope discipline + ACTIVE_REFS line ranges drop (commit `eb85b4a`). ALIGNMENT_QUESTIONS residue archive 141 (commit `0570a8c`). Chat-state continuity workflow LIVE.
+**2026-05-04 evening late (precedent thread, moved from NOW per §CC.6 move-then-replace) — Periodization + Goal Adaptation engines spec sessions + ADR 026 Open Q1-Q10 architectural foundation:** ~50 substantive net cumulative 306 → ~356. Q1-Q10 LOCKED (YAML decision-tree + 7 dimensions matrix + Weighted Hamming similarity + HYBRID engine topology + Q5/Q8 split sub + cadence bi-annual + 3-tier test suite + i18n REUSE + featureFlags REUSE rollout). Engine #1 Periodization SPEC COMPLETE 5 clusters ~32 decisions (I/O contract + mesocycle phase transitions Marius 5:1 + Israetel volume landmarks + Linear Block V1 + cross-engine hooks). Engine #2 Goal Adaptation SPEC COMPLETE 5 clusters ~30 decisions (5 templates primary RESOLVE + nutrition phase auto-detection + training modifiers per template×phase + push-back proporțional 3 tiers). Tone Daniel-isms caveman ×2 + "tataie" + "si eu te iubesc". Commit `300cd84`.
+
+**2026-05-04 evening (older precedent) — §CHAT_CONTINUITY_PROTOCOL design + atomic 2-step implementation + cross-ref audit + Option 2 P1+P2 fixes COMPLETE:** Daniel a propus pattern "Shadow Protocol V2" via prompt CC din inbox, Claude critic 6 fixes, Daniel approved Pas 1 (4 vault docs commit `ef07e6d`) + Pas 2 (CURRENT_STATE genesis 157 LOC commit `615e526`). Cross-ref audit (commit `ea433f4`) → Option 2 P1+P2 fixes atomic 4 docs (commit `0e9373b`). Inbox cleanup proposal archive 137 (commit `dd53a93`). §CC.5 fast workflow self-applied refresh (commit `842aecf`). §CC.6 RECENT scope discipline + ACTIVE_REFS line ranges drop (commit `eb85b4a`). ALIGNMENT_QUESTIONS residue archive 141 (commit `0570a8c`). Chat-state continuity workflow LIVE.
 
 **2026-05-05 morning — D3.1 + D4 + D2 + D1 sub-decisions LOCKED V1 (cumulative 175 → 216, +41 net):**
 - §50.1 D3.1 Buton "Nu vreau" 13 sub (Firestore sync blacklist + Hard Cap 7 încercări + lock substitute intra-mesociclu + D3.1.6 Pattern Detection Passive Bugatti F4)
