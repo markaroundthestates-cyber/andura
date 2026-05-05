@@ -149,6 +149,9 @@ andura/
 | 024 | [[024-goal-driven-program-templates]] | 🟡 **STUB / PENDING SPEC** (created Faza 3 2026-05-04 — Engine #2 §36.100) |
 | 025 | [[025-andura-gandeste-pentru-user]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — Graceful Degradation Universal §36.94) |
 | 026 | [[026-offline-coaching-decision-tree-exhaustive]] | ✅ **LOCKED V1 — COMPILE DRAFT FULL** (compiled 2026-05-05 overnight, 129 decisions aggregate from §42 base + §45 spec + §50 D-cluster) |
+| 027 | [[027-engine-energy-adjustment]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #5 Energy Adjustment ~26-28 decisions LOCKED V1 dispersed în HANDOVER §45.x + CURRENT_STATE) |
+| 028 | [[028-engine-tempo-form-cues]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #6 Tempo/Form Cues ~28-30 decisions LOCKED V1) |
+| 029 | [[029-engine-specialization]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #7 Specialization ~28-30 decisions LOCKED V1, ULTIMUL prescriptive engine, 8/8 milestone) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ### Named ADRs (8 — non-numbered, locked V1)

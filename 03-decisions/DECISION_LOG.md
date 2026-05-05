@@ -1,5 +1,26 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 overnight — ADR 027/028/029 Stubs Engines #5/#6/#7 (Vault Hygiene Sprint, stub-only ZERO net decisions)
+
+**Status:** 3 stub files created pentru Engine #5 Energy Adjustment (ADR 027) + Engine #6 Tempo/Form Cues (ADR 028) + Engine #7 Specialization (ADR 029). Format pattern reuse ADR 024 stub template. Spec full PENDING consolidation chat strategic NEW dedicat — current spec source HANDOVER §45.x dispersed + CURRENT_STATE 2026-05-05 birou late JUST_DECIDED entry (CC reads raw direct). ZERO net new decisions — vault hygiene only.
+
+**Engine number correction:** Master prompt referenced "Engine #5 Deload" but vault SSOT confirms Engine #5 = Energy Adjustment (Engine #4 = Deload Protocol). ADR 027 created as Engine #5 Energy Adjustment per vault SSOT integrity (anti-fabrication per VAULT_RULES).
+
+**Decisions count discovery (per CURRENT_STATE 2026-05-05 birou late JUST_DECIDED):**
+- Engine #5 Energy Adjustment: ~26-28 decisions LOCKED V1 (formal full Gemini pas 1+2+3 lock confirm)
+- Engine #6 Tempo/Form Cues: ~28-30 decisions LOCKED V1 (pas 1.5 incomplete Cluster D+E + push-back GIF)
+- Engine #7 Specialization: ~28-30 decisions LOCKED V1 (cleanest pas 1 → fix Q19 → final, ULTIMUL prescriptive)
+
+**Cross-refs:** [[027-engine-energy-adjustment]] | [[028-engine-tempo-form-cues]] | [[029-engine-specialization]] | [[HANDOVER_GLOBAL_2026-04-30_evening]] §45.x | [[026-offline-coaching-decision-tree-exhaustive]] §5 pipeline overlay placement + §36.84 Gap #1 (weaknessDetector.js orfan reuse for Engine #7).
+
+**Files created:** 3 ADR stubs + UPDATED `00-index/INDEX_MASTER.md` (3 rows numbered 027/028/029 added la § ADRs Numbered table).
+
+**Backup tag:** part of `pre-batch-overnight-2026-05-05-evening`.
+
+**🎯 Roadmap §36.100 = 100% COMPLETE milestone preserved 8/8 prescriptive engines SPEC COMPLETE post Engine #7 stub creation.**
+
+---
+
 ## 2026-05-05 overnight — ADR 026 Compile Draft Full V1 (aggregation 129 decisions, ZERO net new)
 
 **Status:** ADR 026 file status STUB → LOCKED V1 compile draft full. 129 decisions aggregate din 4 sources (§42 base 10 + §45 spec 75 + §50 D-cluster 44). ZERO net new substantive — aggregation only. Cumulative LOCKED preserved ~653.
