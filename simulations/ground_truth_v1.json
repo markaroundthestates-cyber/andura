@@ -1,0 +1,22 @@
+{
+  "version": "v1",
+  "locked_v1_at": "2026-05-05",
+  "schema_doc": "04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md §3 (Claude reasoning baseline)",
+  "ground_truth_by_query_id": {},
+  "_notes": [
+    "Empty ground truth skeleton. Population per ANDURA_VALIDATION_FRAMEWORK_V1.md §3.2:",
+    "  Daniel run benchmark corpus prin Claude chat strategic dedicated → batch 50-100 queries/chat → output JSON aggregated.",
+    "  ~5 chats × 100 queries pentru full 500 corpus.",
+    "Per-query schema:",
+    "{",
+    "  query_id: '...',",
+    "  claude_reasoning: {",
+    "    session_blueprint: { exercises[], sets_reps_rir[], rest_periods[], duration_min },",
+    "    key_principles_invoked: ['joint protection arthrosis', 'T1 conservative volume', ...],",
+    "    safety_considerations: ['knee arthrosis avoid jumps', 'pre-session readiness yellow', ...],",
+    "    rationale_3_sentences: '...'",
+    "  },",
+    "  produced_at: '2026-05-05T...'",
+    "}"
+  ]
+}
