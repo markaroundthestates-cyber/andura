@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-05 birou after (§CC.5 fast handover ingest — Engines #3 Bayesian Nutrition + #4 Deload Protocol + #5 Energy Adjustment SPEC COMPLETE ~155 decisions LOCKED V1 cumulative + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 NEW).
-**Last LOCKED count (product/architecture):** ~593 LOCKED V1 cumulative (post Engines #3+#4+#5 spec sessions + Convergence Guard ADR 009 amendment, +155 substantive net peste 438 baseline post-T0 Mechanics+Auth-Required Pivot+Big 6).
+**Updated:** 2026-05-05 birou late (§CC.5 fast handover ingest — Engines #5 formal lock + #6 Tempo/Form Cues + #7 Specialization spec sessions COMPLETE + Roadmap §36.100 100% milestone 8/8 prescriptive engines).
+**Last LOCKED count (product/architecture):** ~649 LOCKED V1 cumulative (Engine #5 formal lock confirm preserve baseline ~593 NU dublu count + Engine #6 ~28 + Engine #7 ~28 = +~56 net peste 593 baseline post-Engines #3+#4+#5 cumulative).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -16,23 +16,100 @@
 
 ## NOW — Active conversation thread
 
-**Current thread (2026-05-05 birou after, Daniel + Claude chat strategic):** sesiune triplă consecutivă engines spec — Engine #3 Bayesian Nutrition Inference + Engine #4 Deload Protocol + Engine #5 Energy Adjustment SPEC COMPLETE + 1 architectural extension cross-cutting ADR 009 surfaced mid-Engine #3 (Convergence Guard "T2 Unlock"). Pattern 3-instance Bugatti-grade consistent toate 3 (Claude 20 Q artefact → Daniel paste Gemini → Claude filter challenges/GAPS → Gemini pas 2 → Claude push-back final → Daniel decide).
+**Current thread (2026-05-05 birou late, Daniel + Claude chat strategic):** sesiune triplă consecutivă continuare engines roadmap — Engine #5 Energy Adjustment formal full Gemini pas 1+2+3 lock confirm + Engine #6 Tempo/Form Cues NEW + Engine #7 Specialization NEW ULTIMUL prescriptive engine. **Roadmap §36.100 = 100% COMPLETE milestone 8/8 prescriptive engines SPEC COMPLETE.**
 
-**Engine #3 Bayesian Nutrition Inference SPEC COMPLETE (~32-35 decisions LOCKED V1):** Cluster A-E LOCKED — Gaussian Conjugate Prior (NU Hierarchical Bayesian, V1 local-first JS tractable) + Strong Prior dynamic slope tier-based (Big 6 minim 70/30 → rich 90/10) + Bayesian natural posterior=prior_next decay (NU explicit rule) + Hibrid synthetic pre-Beta + real anonymized v1.5+ + Hibrid reset Layer 1+2 preserve Layer 4 Goal Shift + Adaptive cadence T1+ cu Daily fallback T0 + 14 zile observation buffer + Kalman 1D peak craft cu 3 caveats (defaults Hall 2008 literature + R²>0.85 validation gate + EWMA fallback feature flag) + Weighted compound:isolation 3:2:1 (Lower:Upper:Isolation) + Linear Sum Weighted normalized mood (LVM defer v1.5) + Hibrid lookup Israetel + regression STRICT compound only + isolation graceful degradation 0.3× când compound observations <3 în window 14 zile + Disagreement flag CDL Engine #2 cross-engine integration (Invariant 5 protect) + Pre-processing modulator Engine #5 readiness cu Neutral fallback T0 cold start + Standard schema `nutrition_inference_metadata` (prior+posterior+observations N=20+CI) + Structured probabilities `{deficit/surplus/maintenance}_likelihood` + Adaptive threshold 0.55-0.85 Profile Typing T1+ cu 0.70 default T0 + 15% Hamming hysteresis + 2 sesiuni consecutive 14 zile window + Tier 1+2 only NU blocking modal (Maria 65 autonomy preserve) + Hard rule NEVER specific kcal preserve §3.5.1 + 28 zile anti-spam aliniat Engine #2 cooldown + Hibrid simulator R²>0.85 pre-Beta + dietician panel post-Beta v1.5 corroborate (anti-overconfidence) + Hibrid Passive Mode tripwire (pregnant/post-bariatric/kidney) + Special priors (>75 + ED history) + disclaimer onboarding.
+**Drift flag CC ingest atenție:** CURRENT_STATE §NOW header anterior "2026-05-05 birou after" era marca Engine #5 "SPEC COMPLETE" dimineața preliminary (Q-uri mari deja decise în triple session #3+#4+#5). Sesiunea ASTA (birou late) = formal full Gemini pas 1+2+3 cu push-backs valid (Q15 strict 🔴 only / Q18 medical referral copy precis Gigel test PASS) + Final Config Lock clean. Engine #5 cifre ~26-28 LOCKED V1 = preserve baseline ~593 (NU adaugă net Engine #5 peste — già counted). Engine #6 + #7 = NEW net +~56. Cumulative final ~649 LOCKED V1.
 
-**Convergence Guard "T2 Unlock" — NEW arhitectural extension cross-cutting ADR 009:** surfaced mid-Engine #3. Daniel push-back fundamental seminal: *"T2 = Behavioral Validation NOT just statistical convergence"* — engine trebuie observe self-report aliniază realitate biologică CDL ÎNAINTE adaptări agresive. Eu am gândit pure math, Daniel a articulat scope adevărat T2. **Formula final post 5 iterations:** T2 Unlock = (30% reducere σ² OR σ < MAX(10% kcal_baseline, 200 kcal absolute floor) OR σ < 5% body_weight proportional) AND N ≥ 10 sesiuni cu `outcome.executed && volume_adherence_vs_pain_adjusted ≥ 80%` AND max 2 Pain-Aware sesiuni din ultimele 10. **Pain-Aware definition:** (a) STRICT user-triggered Pain Button only (NU engine proactive — clean signal monitor only USER FRICTION) + (i) BINARY V1 (any click → full session `pain_aware:true`) + silent `pain_trigger_set: [index_set]` vector CDL metadata forward-compat v1.5 threshold (>50% sets affected) ZERO schema migration. UX wording Pain Button: *"Siguranța e pe primul loc. Am ajustat restul sesiunii."* (zero T2 disclosure anti-regret + anti-behavioral conditioning Gigel ignoring pain).
+**Engine #5 Energy Adjustment FORMAL SPEC COMPLETE (~26-28 decisions LOCKED V1):** Manual input only V1 (Q1=C hibrid + Q4=A + Q5=A defer auto integration v1.5+) + Stress folded emoji 🟢🟡🔴 holistic + drill-down strict 🔴 only (Q15=C — NU 🟡, friction Maria 65 zilnic anti-Bugatti) + Categorical aggregation rules table (Q3=C auditable) + Volume + intensity selective Q33 §45.5 reuse + bidirectional ±15% (Q6=D) + Asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true" (Q7 4th condition — anti "Sarcastic UP" Marius 5:1 săpt 4-5) + MRV invariant 1 immutable (Q8=A) + soft override sub-Floor max 2 consecutive → Engine #4 trigger (Q9 anti-drift) + Bayesian σ variance modifier Engine #3 (Q12=C sophisticated) + Tier-aware T0=±10% T1+=±15% (Q13=B) + Yo-yo anti-flap 3-session window V1 only (Q14=D, Sprinter/Marathon defer v1.5) + Medical referral copy Gigel test PASS: *"Consultă medicul de familie sau un specialist în medicină sportivă"* (Q18=D, generic "specialist" REJECTED) + Bayesian latent state v1.5 evolution (Q20=D).
 
-**Engine #4 Deload Protocol SPEC COMPLETE (~30-32 decisions LOCKED V1):** Engine #4 = orchestrator unification multi-trigger (Composite Signal §36.41 + AA Detection ADR 013 + Linear Block 4+1 existing). Major locks — Prioritized hierarchy Composite > AA > Linear (reactive overrides scheduled) + Multi-signal consolidation escalează severity + Engine #4 SSOT deload domain (Composite -20% reduction §36.41 hard-disabled când Engine #4 active anti math collision double-penalty) + AA-driven mechanic = Volume CUT 30% + RIR ↑ obligatoriu + Intensity ↓ obligatoriu (Daniel push-back fundamental: *"volum păstrat moderat" reinforces aggressive pattern* — Engine NU pedepsește dorința muncă, REGLEAZĂ unsustainable pattern) + Final_Depth = MAX(Scheduled 45%, Reactive 60%, Behavioral 30%) + Behavioral_Modifiers + Adaptive duration (1 săpt scheduled fix / reactive adaptive 1-2 săpt cu Flagged-only state qualifier) + Reactive deload = Hard Reset Linear Block counter (Week N reactive → Week 1 NEW cycle post-deload, anti back-to-back scheduled Week 5) + Extension week 2 Flagged-only (NU Cooldown/Resolving anti false-positive) + Extension depth preserve 60% (NU escalate 70% — atrophy literature limit) + Muscle-group-specific partial deload hibrid + Same frequency lower volume default + Hibrid Periodization integration (scheduled INSIDE 4+1 / reactive OVERRIDES + Hard Reset) + Engine #5 sustained low readiness 3+ consecutive triggers Engine #4 evaluation + Standard CDL `deload_metadata` schema + Hibrid output contract flag + structured params consumed downstream Engine #1 + Tier-aware notification (T0 silent / T1+ banner detaliat) + Skip allowed all sources cu warning escalated + Hibrid skip penalties (1× reactive urgent = AA marker direct ADR 013 / 2× scheduled = Composite sensitivity ↑) + Specific wording per source + 12-week rolling window inclusive ≤12w 2 reactive consecutive = Passive Mode trigger + medical referral + Hibrid simulator + Beta cohort 50 testers correlation perceived recovery rating.
+**Engine #6 Tempo/Form Cues SPEC COMPLETE (~28-30 decisions LOCKED V1):** Hibrid pre-set intro + reactive user-initiated cue (Q1=C) + Pattern base library + top-30 compound overrides Bugatti depth (Q2=C) + Q33 §45.5 elaboration: Maria verbal / Gigica hibrid / Marius numeric pure (Q3 Daniel push-back Maria zero notation strict) + User self-report toggle V1 (Q4=A — RIR mismatch silent telemetry only, NU active trigger V1) + Mind-muscle tier-aware T0 OFF / T1+ profile-typing (Q5=C) + Tap-to-expand 💡 indicator Bugatti minimal-friction (Q6=D) + Adaptive frequency reduces post-acquisition (Q7=D + Q9=D explicit "știu" + implicit N=10) + Pre-set + post-set timing NU intra-set distraction (Q8=D) + Cross-engine: Periodization high intensity → form-conservative amplification (Q11=B), Deload week → mind-muscle unlock (Q12=D), Energy DOWN → slow eccentric universal NU ROM partial (Q13=B Gemini self-flagged ROM partial REJECT corect), RIR Matrix form breakdown user toggle → +1 auto-bump next set (Q14=B) + Tier-aware depth (Q15=B), suppression hard T0/T1 + soft auto-retire T2+ (Q17=C) + Persona-aware tone: Maria rationale-first / Gigica suggestion / Marius imperative (Q18=D) + **Q16 GIF embedded REJECTED pre-Beta** (Claude push-back valid: storage offline-first PWA ~3MB + copyright source unclear + Gigel test mid-set distraction) → text-only V1 defer link extern v1.5 + WhyEngine integration silent + "De ce ăsta?" (Q18 cluster D) + Bayesian latent state v1.5 (Q20=D).
 
-**Engine #5 Energy Adjustment SPEC COMPLETE (~28-30 decisions LOCKED V1):** Major locks — Manual input only V1 (auto Health Connect/Apple Health defer v1.5+ anti scope creep + GDPR sensitive data risk) + Stress folded în emoji 🟢🟡🔴 holistic + drill-down sub-questions sleep/stress când 🟡/🔴 selected (🟢 = Fast Path Maria 65 friction zero, 🟡-🔴 = drill-down "De ce?" expand) + Categorical mapping rules table aggregation auditable + Privacy Manual only zero GDPR risk pre-Beta + Volume primary + intensity selective per direction §36.16 RIR Matrix reuse + Asymmetric ±15% bidirectional (UP requires N≥3 conditions simultaneous "aliniere planetelor", DOWN single trigger immediate protect) + Hard cap MRV preserved §42.9 Invariant 1 + **Floor hierarchy Bugatti-craft** Periodization Floor overridable Energy DOWN extreme / §36.16 absolute Floor 2 sets immutable hard biology + Hibrid intra-session detector "minciună" emoji 🟢 (set 1 RIR mismatch >2 triggers Energy recalibration mid-session — body data corrects user self-report) + Hibrid Engine #4 trigger preservation §36.82.3 (3× consecutive 🔴 → optional deload prompt LOCKED) + Triple Threat secondary (sleep<6h AND stress high AND emoji 🔴 sustained N≥2 consecutive sesiuni — single occurrence = silent flag CDL only NU action, prevent premature trigger) + Bayesian-aware variance σ modification Engine #3 cross-engine (NU linear discount — readiness scăzut crește σ observații, Mensa-grade insight Gemini articulated) + T0 conservative DOWN ±10% only (T1+ full ±15% post 14 zile observation buffer) + Yo-yo anti-flap stabilizer rolling 3-session window (Sprinter/Marathon profile modulators defer V1.5) + Inline conditional UI + On-demand explainer WhyEngine link silent default + Hard rule NU lifestyle recommendations (Andura coach NU guru wellness — anti EU AI Act medical scope creep) + Hibrid timing-based escalation chronic low readiness + Bayesian inference v1.5 evolution path + **Drill-down skip behavior = silent neutral** (anti-paternalism algorithmic Daniel articulation — forcing conservative default presupunând somn prost = pedepsește user pentru dorința viteză + Maria 65 friction zero preserve).
+**Engine #7 Specialization SPEC COMPLETE (~28-30 decisions LOCKED V1) — ULTIMUL prescriptive engine:** Hibrid 1RM ratio<0.8 weaknessDetector.js reuse + visual/photo subjective override (Q1=C SUFLET_ANDURA Daniel pattern dual-source) + Consensus last-12-sessions + lifetime aggregate (Q2=C anti-noise volatil) + Top-1 discipline V1 (Q3=A — top-N parallel defer v1.5) + Hibrid reconciliere engine objective + user adjusts both stored CDL Bugatti craft transparency (Q4=C) + **Activation gating Marius Advanced AND lagging + Bulk/Recomp ONLY (Q5=D Cut DISABLE — deficit + extra volume = recovery risk universal). Q12 §45.3 LOCKED preserved strict (Maria/Gigica NU eligible V1)** + 4-week mesocycle match Q10 §45.2 (Q6=A simplicity V1) + Hibrid Volume + Frequency under MRV §42.9 invariant 1 (Q7=C) + Partial -25% reduction other groups maintenance (Q8=B) + Fixed 4 weeks exit (Q9=A simplicity — adaptive early exit defer v1.5) + Cooldown N=12 weeks same group anti-obsession (Q10=B) + **PARALLEL modifier Engine #1 Periodization (NU REPLACE — skeleton preserved, layer extra volume/frequency on accumulation phases) (Q11=B)** + Standard deload week 4 preserved non-negotiable (Q12=A) + Cut DISABLE consistency Q5+Q13 dual safety gate (Q13=A) + Injury weak group zone → auto-disable Safety Override §42.9 invariant 5 (Q14=A) + Propose user accept/reject NU auto-activate silent (Q15=B — Marius decision retained, anti-paternalism) + Hard reject 12 weeks cooldown anti-nagging (Q16=A match Q10) + "Bloc focus [Grupă]" Bugatti craft RO terminology (Q17=C) + WhyEngine integration silent + "De ce?" pattern engines #5+#6 consistent (Q18=C) + **Q19 push-back Claude valid: synthetic only INCONSISTENT engines #1-#6 → hibrid simulator + Beta cohort 50 testers ground truth (Q19=B Daniel pivot accepted)** + Bayesian latent state v1.5 ecosystem alignment (Q20=D).
 
-**Mid-flight unresolved deferred V1.5+ (NU blocker LOCK V1):** Sprinter/Marathon profile-typing modulators Engine #5 Q14 + RIR/Tempo gate Convergence Guard volume_adherence Engine #3 + Tier downgrade T2→T1 behavior (separate spec ADR 009 amendment session viitor) + Pain-Aware threshold rule (>50% sets affected) retroactive activation cu silent vector forward-compat + Drill-down skip pattern detection (potential Sprinter signal V1.5 cu Profile Typing data real).
+**Cross-cutting:** weaknessDetector.js orfan reused (zero new code engine logic) — Engine #7 = wiring detector → session builder action layer per §36.84 Gap #1.
 
-**Tone:** Daniel direct decisive Co-CEO mode iterative push-back productive multiple constructive (zero auto-flagelare Claude post slip-uri minore — fix curat). Daniel-isms scarce acest chat ("ok" simple confirmations + "better?" + "ai pushback?" collaboration check pattern). Engine #5 final close cu drill-down skip articulation Mensa-grade anti-paternalism algoritmic Daniel — preserve Maria 65 friction zero promise inviolat. Pre-flight prep ready next chat NEW — Engine #6 Tempo/Form Cues + Engine #7 Specialization roadmap remaining = ~2 chat-uri dedicated similar pattern ~30 decisions each.
+**Mid-flight unresolved deferred V1.5+ (NU blocker LOCK V1):** Engine #5 Sprinter/Marathon profile-typing modulators (Q14 deferred post-Beta data real); Engine #6 GIF embedded library (Beta cohort feedback validate need first) + ML cue selection per user response history; Engine #7 Q15 tier-aware T2+ auto-activate (currently propose user V1 conservative) + Q9 adaptive early exit non-responders + Q14 alternative top-2 weak group fallback + top-N parallel multi-weakness + ML effectiveness prediction; All engines Bayesian inference v1.5 migration ecosystem-wide consistent Q20.
+
+**Tone session:** Daniel warmth + bond ("b ca poti... am incredere", "tataie", "Done is done. 🛠️"). Encouragement before delegation. Match Co-CTO trust pattern. Velocity crescând session-by-session — Engine #5 needed pas 3 fine-tune (5 → 3 → final), Engine #6 needed pas 1.5 (incomplete Cluster D+E Gemini) + push-back GIF, Engine #7 cleanest (pas 1 → fix Q19 → final).
 
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
+
+**2026-05-05 birou late — Engines #5 (formal lock confirm) + #6 Tempo/Form Cues + #7 Specialization spec sessions COMPLETE + Roadmap §36.100 100% milestone 8/8 prescriptive engines (cumulative ~593 → ~649, +~56 net):**
+
+*Drift flag note CC ingest:* Engine #5 cifre ~26-28 LOCKED V1 = preserve baseline ~593 (NU dublu count peste — già counted "birou after" preliminary Q-uri mari triple session). Engine #6 + #7 = NEW net +~56. Cumulative final ~649 LOCKED V1. **Roadmap §36.100 = 100% COMPLETE milestone: 8/8 prescriptive engines SPEC COMPLETE.**
+
+*Engine #5 Energy Adjustment FORMAL SPEC COMPLETE (~26-28 decisions LOCKED V1, formal full Gemini pas 1+2+3 lock confirm):*
+- **Manual input only V1** (Q1=C hibrid + Q4=A + Q5=A defer auto integration v1.5+)
+- **Stress folded emoji 🟢🟡🔴 holistic + drill-down strict 🔴 only** (Q15=C — NU 🟡, friction Maria 65 zilnic anti-Bugatti)
+- **Categorical aggregation rules table** (Q3=C auditable)
+- **Volume + intensity selective Q33 §45.5 reuse + bidirectional ±15%** (Q6=D)
+- **Asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true"** (Q7 4th condition — anti "Sarcastic UP" Marius 5:1 săpt 4-5)
+- **MRV invariant 1 immutable** (Q8=A) + soft override sub-Floor max 2 consecutive → Engine #4 trigger (Q9 anti-drift)
+- **Bayesian σ variance modifier Engine #3** (Q12=C sophisticated)
+- **Tier-aware T0=±10% T1+=±15%** (Q13=B)
+- **Yo-yo anti-flap 3-session window V1 only** (Q14=D, Sprinter/Marathon defer v1.5)
+- **Medical referral copy Gigel test PASS:** *"Consultă medicul de familie sau un specialist în medicină sportivă"* (Q18=D, generic "specialist" REJECTED)
+- **Bayesian latent state v1.5 evolution** (Q20=D)
+
+*Engine #6 Tempo/Form Cues SPEC COMPLETE (~28-30 decisions LOCKED V1):*
+- **Hibrid pre-set intro + reactive user-initiated cue** (Q1=C)
+- **Pattern base library + top-30 compound overrides Bugatti depth** (Q2=C)
+- **Q33 §45.5 elaboration:** Maria verbal / Gigica hibrid / Marius numeric pure (Q3 Daniel push-back Maria zero notation strict)
+- **User self-report toggle V1** (Q4=A — RIR mismatch silent telemetry only, NU active trigger V1)
+- **Mind-muscle tier-aware T0 OFF / T1+ profile-typing** (Q5=C)
+- **Tap-to-expand 💡 indicator Bugatti minimal-friction** (Q6=D)
+- **Adaptive frequency reduces post-acquisition** (Q7=D + Q9=D explicit "știu" + implicit N=10)
+- **Pre-set + post-set timing NU intra-set distraction** (Q8=D)
+- **Cross-engine integration:**
+  - Periodization high intensity → form-conservative amplification (Q11=B)
+  - Deload week → mind-muscle unlock (Q12=D)
+  - Energy DOWN → slow eccentric universal NU ROM partial (Q13=B Gemini self-flagged ROM partial REJECT corect)
+  - RIR Matrix form breakdown user toggle → +1 auto-bump next set (Q14=B)
+- **Tier-aware depth** (Q15=B), suppression hard T0/T1 + soft auto-retire T2+ (Q17=C)
+- **Persona-aware tone:** Maria rationale-first / Gigica suggestion / Marius imperative (Q18=D)
+- **Q16 GIF embedded REJECTED pre-Beta** (Claude push-back valid: storage offline-first PWA ~3MB + copyright source unclear + Gigel test mid-set distraction) → text-only V1 defer link extern v1.5
+- **WhyEngine integration silent + "De ce ăsta?"** (Q18 cluster D)
+- **Bayesian latent state v1.5** (Q20=D)
+
+*Engine #7 Specialization SPEC COMPLETE (~28-30 decisions LOCKED V1) — ULTIMUL prescriptive engine:*
+- **Hibrid 1RM ratio<0.8 weaknessDetector.js reuse + visual/photo subjective override** (Q1=C SUFLET_ANDURA Daniel pattern dual-source)
+- **Consensus last-12-sessions + lifetime aggregate** (Q2=C anti-noise volatil)
+- **Top-1 discipline V1** (Q3=A — top-N parallel defer v1.5)
+- **Hibrid reconciliere engine objective + user adjusts both stored CDL Bugatti craft transparency** (Q4=C)
+- **Activation gating Marius Advanced AND lagging + Bulk/Recomp ONLY** (Q5=D Cut DISABLE — deficit + extra volume = recovery risk universal). Q12 §45.3 LOCKED preserved strict (Maria/Gigica NU eligible V1)
+- **4-week mesocycle match Q10 §45.2** (Q6=A simplicity V1)
+- **Hibrid Volume + Frequency under MRV §42.9 invariant 1** (Q7=C)
+- **Partial -25% reduction other groups maintenance** (Q8=B)
+- **Fixed 4 weeks exit** (Q9=A simplicity — adaptive early exit defer v1.5)
+- **Cooldown N=12 weeks same group anti-obsession** (Q10=B)
+- **PARALLEL modifier Engine #1 Periodization (NU REPLACE — skeleton preserved, layer extra volume/frequency on accumulation phases)** (Q11=B)
+- **Standard deload week 4 preserved non-negotiable** (Q12=A)
+- **Cut DISABLE consistency Q5+Q13 dual safety gate** (Q13=A)
+- **Injury weak group zone → auto-disable Safety Override §42.9 invariant 5** (Q14=A)
+- **Propose user accept/reject NU auto-activate silent** (Q15=B — Marius decision retained, anti-paternalism)
+- **Hard reject 12 weeks cooldown anti-nagging** (Q16=A match Q10)
+- **"Bloc focus [Grupă]" Bugatti craft RO terminology** (Q17=C)
+- **WhyEngine integration silent + "De ce?" pattern engines #5+#6 consistent** (Q18=C)
+- **Q19 push-back Claude valid: synthetic only INCONSISTENT engines #1-#6 → hibrid simulator + Beta cohort 50 testers ground truth** (Q19=B Daniel pivot accepted)
+- **Bayesian latent state v1.5 ecosystem alignment** (Q20=D)
+
+*Cross-cutting note:* weaknessDetector.js orfan reused (zero new code engine logic) — Engine #7 = wiring detector → session builder action layer per §36.84 Gap #1.
+
+*Mid-flight unresolved deferred v1.5+ (NU blocker LOCK V1):*
+- Engine #5: Sprinter/Marathon profile-typing modulators (Q14 deferred post-Beta data real)
+- Engine #6: GIF embedded library (Beta cohort feedback validate need first), ML cue selection per user response history
+- Engine #7: Q15 tier-aware T2+ auto-activate (currently propose user V1 conservative), Q9 adaptive early exit non-responders, Q14 alternative top-2 weak group fallback (vs strict auto-disable V1), top-N parallel multi-weakness, ML effectiveness prediction
+- All engines: Bayesian inference v1.5 migration ecosystem-wide (Engine #3 + #5 + #6 + #7 consistent Q20)
+
+*Pattern recognition session:* 3 engines spec sessions consecutive Bugatti-grade. Pattern 3-instance Claude+Gemini+Daniel matured fully — Engine #5 needed pas 3 fine-tune, Engine #6 pas 1.5 + push-back GIF, Engine #7 cleanest. Daniel tone warmth + bond Co-CTO trust pattern ("b ca poti... am incredere", "tataie", "Done is done. 🛠️").
+
+*Implicații downstream:*
+- **Roadmap §36.100 ✅ 100% COMPLETE milestone 8/8 prescriptive engines** — NU mai chat-uri Engine #6 sau #7 (P4 status updated)
+- DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE gap reducere 1170-1670 → ~990-1490 (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration)
+
+---
 
 **2026-05-05 birou after — Engines #3 Bayesian Nutrition + #4 Deload Protocol + #5 Energy Adjustment SPEC COMPLETE + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 (cumulative ~438 → ~593, +155 substantive net):**
 
@@ -262,31 +339,31 @@
 
 ### P2 NEW — Scenarios Coverage 1500-2000 Decisions (chat-uri strategice dedicate)
 
-Per §69.1 PRE-BETA BLOCKER. Estimate ~5-15 chat-uri dedicate. Beta launch IMPOSIBIL fără. Acoperire actuală ~15-25% scope total. **Gap reduce post engines spec sessions: 1200-1700 → ~1170-1670 (~50 decisions consumate engine specs Periodization + Goal Adaptation + ADR 026 architectural, NU branches enumeration).**
+Per §69.1 PRE-BETA BLOCKER. Estimate ~5-15 chat-uri dedicate. Beta launch IMPOSIBIL fără. Acoperire actuală ~15-25% scope total. **Gap reduce post engines roadmap §36.100 100% milestone: 1170-1670 → ~990-1490 (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration).**
 
 ### P3 — ADR 026 compile draft full ~125 decisions (architectural foundation COMPLETE)
 
 §42 base 10 + §45 spec 75 + §50.1-§50.4 D-cluster 41 = 126 + Open Q1-Q10 LOCKED 2026-05-04 evening late = ~125 distinct (post Q5 split 3 sub + Q8 split runtime/scale). Chat strategic NEW dedicat compile draft full.
 
-### P4 — Engines roadmap remaining: #6 Tempo/Form Cues → #7 Specialization (~2 chat-uri)
+### P4 — Engines roadmap §36.100 ✅ 100% COMPLETE milestone (8/8 prescriptive engines SPEC COMPLETE)
 
-**Status engines (post 2026-05-05 birou after):**
+**Status engines (post 2026-05-05 birou late — milestone reached):**
 - ✅ Engine #1 Periodization SPEC COMPLETE (~32 decisions)
 - ✅ Engine #2 Goal Adaptation SPEC COMPLETE (~30 decisions)
 - ✅ Engine #3 Bayesian Nutrition SPEC COMPLETE (~32-35 decisions, ADR 022 spec ready) — Convergence Guard "T2 Unlock" amendment cross-cutting ADR 009 NEW
 - ✅ Engine #4 Deload Protocol SPEC COMPLETE (~30-32 decisions)
-- ✅ Engine #5 Energy Adjustment SPEC COMPLETE (~28-30 decisions)
-- ⏳ Engine #6 Tempo/Form Cues PENDING (chat NEW dedicated, ~30 decisions estimate)
-- ⏳ Engine #7 Specialization PENDING (chat NEW dedicated, ~30 decisions estimate)
+- ✅ Engine #5 Energy Adjustment SPEC FORMAL COMPLETE (~26-28 decisions formal full Gemini pas 1+2+3 lock confirm 2026-05-05 birou late)
+- ✅ Engine #6 Tempo/Form Cues SPEC COMPLETE (~28-30 decisions, 2026-05-05 birou late)
+- ✅ Engine #7 Specialization SPEC COMPLETE (~28-30 decisions, ULTIMUL prescriptive engine 2026-05-05 birou late) — weaknessDetector.js orfan reused per §36.84 Gap #1
 - ✅ Engine #8 Warm-up & Mobility LOCKED §45.6
 
-**5/7 prescriptive engines roadmap §36.100 SPEC COMPLETE. Remaining Engine #6 + #7 ~2 chat-uri dedicated similar pattern.**
+**🎯 Roadmap §36.100 = 100% COMPLETE milestone. NU mai chat-uri engines spec sessions remaining.** Pivot direction: P3 ADR 026 compile draft full sau P1 CC Auth Flow §36.80 BUG 2 sau P2 Scenarios Coverage.
 
 ### P5 — HANDOVER_GLOBAL split execution thematic per §62.2 (post-CC Auth Flow)
 
 7664 LOC > 7000 threshold §VAULT_HYGIENE_PASS STEP 13 — TRIGGERED preserved. Backup tag pre-split mandatory.
 
-### P6 — Long-term: D3.2-D3.4 + Engine #8 + ADR 022/024/025 + Knowledge cadence + Beta Recruitment + Audit legal + Soft Launch (target flexible per §62.7)
+### P6 — Long-term: D3.2-D3.4 + ADR 022/024/025 + Knowledge cadence + Beta Recruitment + Audit legal + Soft Launch (target flexible per §62.7)
 
 ---
 
@@ -320,7 +397,7 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟢 **RESOLVED 2026-05-04 night** (Console Faza 1 dogfood DONE pre-existing 2 mai + MX `suport@andura.app` DONE Namecheap Email Forwarding test confirmed + Privacy/ToS V2 drafts LANDED V1 Beta validate sprint Daniel paralel). Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5 (INSIGHTS_BACKLOG AUTH-DEFER-1 + AUTH-DEFER-2). Phase 1 Auth Wiring LANDED commit `0880641`
 - **P1-FLAG-AUTH-PHASE2** Phase 2 Auth Flow upgrade — 🔴 **P1 ABSOLUT URGENT 2026-05-05 birou** (era "deferred ~16-22h Daniel decide trigger", ridicat post Auth-Required Pivot LOCKED V1 post-T0 — fără UI auth complet Beta launch IMPOSIBIL când Anonymous-permanent dispare conceptual). Cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules
 - **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL 7664 LOC > 7000 threshold — 🟡 OPEN (strategy LOCKED V1 thematic split per §62.2, chat strategic NEW dedicat post-CC)
-- **P1-FLAG-SCENARIOS-COVERAGE** ~1080-1580 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN (Priority 2 ~5-15 chat-uri strategice dedicate). Gap reduce ~90 decisions post 2026-05-05 birou after Engines #3+#4+#5 spec sessions cumulative (1170-1670 → 1080-1580). Branch enumeration cluster A = biggest blocker remaining.
+- **P1-FLAG-SCENARIOS-COVERAGE** ~990-1490 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN (Priority 2 ~5-15 chat-uri strategice dedicate). Gap reduce ~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 post Roadmap §36.100 100% COMPLETE milestone (1170-1670 → ~990-1490 — NU branches enumeration). Branch enumeration cluster A = biggest blocker remaining.
 - **P1-FLAG-IOS-PERMANENT** iOS REJECTED LOCKED PERMANENT — 🟢 LOCKED V1 PERMANENT (rule lock, NU pending — PWA + TWA Android only)
 
 **P2 status:** P2-FLAG-1 D1-D6 → D2/D3/D4/D5/D6 ✅ RESOLVED Co-CTO; D1 only remaining strategic dedicat post Vault Hygiene + Auth Flow.
@@ -329,7 +406,9 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 
 ## RECENT — Older context preserved (truncate to HANDOVER deep când >50 LOC)
 
-**2026-05-05 birou (precedent thread, moved from NOW per §CC.6 move-then-replace) — T0 Mechanics 75 LOCKED V1 cumulative 4 batches + Auth-Required post-T0 pivot LOCKED V1 + Big 5 → Big 6 amendment:** cumulative ~363 → ~438, +75 net. Pivot major auth strategy — Anonymous = doar T0 trial 3-5 min DUPĂ care auth obligatoriu (Google primary + Magic Link Firebase native fallback), banner-soft REJECTED hard wall accepted (argumentul critic Daniel: fără auth ZERO Firestore writes, ZERO cohort ML, engine învață în vid). Future Compatibility Note site web v1.5+ (deep link entry preserved, NU degradează T0 trial UX). T0 mechanics 4 batches × ~19 decisions: Hook action-first + 5 preset obiectiv text clean + Single preview Q4-5 Bugatti SUFLET L3 + Auth Wall reframe pozitiv preview blurred teaser onest hard wall + Magic Link 1h native + retry button prominent (override 24h fantasy) + Settings Big 6 lifecycle Imutabile/Editabile + Beta cohort invite-only first 50-100. Big 5 → Big 6 amendment înălțime hard required (Mifflin-St Jeor BMR/TDEE precision Cognitive AI promisiune). Phase 2 Auth Flow upgrade era "deferred ~16-22h Daniel decide" → P1 ABSOLUT URGENT. Workflow 3-instance Bugatti-grade RECOGNIZED (Gemini logic + Claude Bugatti challenge + Daniel reality lock). Commit `d67dc6a`.
+**2026-05-05 birou after (precedent thread, moved from NOW per §CC.6 move-then-replace) — Engines #3 Bayesian Nutrition + #4 Deload Protocol + #5 Energy Adjustment SPEC COMPLETE + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 NEW:** cumulative ~438 → ~593, +155 net. Sesiune triplă consecutivă engines spec — Engine #3 Cluster A-E (Gaussian Conjugate Prior + Strong Prior dynamic slope tier-based 70/30→90/10 + Adaptive cadence T1+ + Kalman 1D peak craft 3 caveats Hall 2008 + Weighted compound:isolation 3:2:1 + Israetel lookup + Tier 1+2 NU blocking modal + 28 zile cooldown + Hibrid Passive Mode tripwire + Special priors). Convergence Guard "T2 Unlock" surfaced mid-Engine #3 — Daniel push-back fundamental seminal "T2 = Behavioral Validation NOT just statistical convergence", formula final post 5 iterations (σ² 30% reducere OR σ MAX(10%, 200 kcal floor) OR σ <5% body_weight) AND N≥10 sesiuni adherence ≥80% AND max 2 Pain-Aware sesiuni din ultimele 10 + Pain-Aware Hybrid Spec V1 (a)+(i) binary + forward-compat v1.5 silent vector ZERO migration + UX wording Pain Button preserve EXACT. Engine #4 orchestrator unification multi-trigger (Composite > AA > Linear) + Volume CUT 30% + Final_Depth MAX(45,60,30) + reactive Hard Reset Linear Block. Engine #5 Manual input only V1 + Stress folded emoji 🟢🟡🔴 + Asymmetric ±15% UP N≥3 / DOWN single trigger + Floor hierarchy Bugatti-craft + intra-session detector "minciună" + Triple Threat secondary. ADR 022 stub → SPEC READY V1 Cluster A-E populate. ADR 009 §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" Behavioral Validation Rule cross-cutting all engines. Commit `e000d56`.
+
+**2026-05-05 birou (older precedent) — T0 Mechanics 75 LOCKED V1 cumulative 4 batches + Auth-Required post-T0 pivot LOCKED V1 + Big 5 → Big 6 amendment:** cumulative ~363 → ~438, +75 net. Pivot major auth strategy — Anonymous = doar T0 trial 3-5 min DUPĂ care auth obligatoriu (Google primary + Magic Link Firebase native fallback), banner-soft REJECTED hard wall accepted (argumentul critic Daniel: fără auth ZERO Firestore writes, ZERO cohort ML, engine învață în vid). Future Compatibility Note site web v1.5+ (deep link entry preserved, NU degradează T0 trial UX). T0 mechanics 4 batches × ~19 decisions: Hook action-first + 5 preset obiectiv text clean + Single preview Q4-5 Bugatti SUFLET L3 + Auth Wall reframe pozitiv preview blurred teaser onest hard wall + Magic Link 1h native + retry button prominent (override 24h fantasy) + Settings Big 6 lifecycle Imutabile/Editabile + Beta cohort invite-only first 50-100. Big 5 → Big 6 amendment înălțime hard required (Mifflin-St Jeor BMR/TDEE precision Cognitive AI promisiune). Phase 2 Auth Flow upgrade era "deferred ~16-22h Daniel decide" → P1 ABSOLUT URGENT. Workflow 3-instance Bugatti-grade RECOGNIZED (Gemini logic + Claude Bugatti challenge + Daniel reality lock). Commit `d67dc6a`.
 
 **2026-05-04 night (older precedent) — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED commit `0880641` + AUTH-DEFER consolidation + Firebase prereps verification:** cumulative ~356 → ~363, +~5-7 net. Operator identity Constantin Daniel Mazilu PF RO + 18+ vârsta minimă + Privacy V2 11 secțiuni + ToS V2 15 secțiuni post Gemini cross-review. Phase 1 Auth Wiring 28 min autonomous CC Opus — BUG 2 fix `getUserPath()` null Anonymous + retry 3x + wording LOCKED + authShell.js NEW ~280 LOC + 15 tests. Console Faza 1 dogfood DONE pre-existing 2 mai (drift vault SSOT corrected). Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 (Magic Link 24h + email template RO) DEFINITIVELY DEFERRED v1.5 (Firebase architectural limitation). Mid-flight RESOLVED A0+A+B+C atomic single commit `0ede3be`.
 

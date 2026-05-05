@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-05 birou after (post handover ingest Engines #3 Bayesian Nutrition + #4 Deload Protocol + #5 Energy Adjustment SPEC COMPLETE + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 — P1-FLAG-SCENARIOS-COVERAGE gap reducere ~90 decisions consumate engine specs cumulative: 1170-1670 → ~1080-1580. Cumulative LOCKED ~438 → ~593 (+155 substantive net). 5/7 prescriptive engines roadmap §36.100 SPEC COMPLETE — remaining Engine #6 Tempo/Form Cues + Engine #7 Specialization ~2 chat-uri dedicated.)
+**Updated:** 2026-05-05 birou late (post handover ingest Engines #5 formal lock confirm + #6 Tempo/Form Cues + #7 Specialization spec sessions COMPLETE + Roadmap §36.100 100% milestone 8/8 prescriptive engines — P1-FLAG-SCENARIOS-COVERAGE gap reducere ~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6: 1170-1670 → ~990-1490. Cumulative LOCKED ~593 → ~649 (+~56 substantive net). 🎯 Roadmap §36.100 ✅ 100% COMPLETE milestone — NU mai chat-uri engines spec sessions remaining. Pivot direction: P1 CC Auth Flow §36.80 / P2 Scenarios Coverage / P3 ADR 026 compile draft full.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -210,17 +210,18 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ### P1-FLAG-SCENARIOS-COVERAGE — Scenarios 1500-2000 PRE-BETA BLOCKER (NEW per §69)
 
-**Status:** 🔴 OPEN 2026-05-05 birou after (gap reducere progressive post engine specs cumulative)
+**Status:** 🔴 OPEN 2026-05-05 birou late (gap reducere progressive post engine specs cumulative — Roadmap §36.100 100% COMPLETE milestone)
 **Severity:** P1 (BETA LAUNCH IMPOSIBIL fără)
 
-**Issue:** Per §42.9 LOCKED V1 testing strategy mandatory: Hibrid Property-based + Persona Suite Maria/Gigica/Marius + 4-Invariant Safety Stack. Persona simulation suite ~50-100 tests representative + edge cases curated. Coverage actuală post chat-uri Auth + ADR 026 spec + Auth Flow §36.80 + Batch 1-6 + T0 Mechanics 75 + Engines #1-#5 spec sessions = **~593 LOCKED V1** total. **Gap pre-Beta: ~1080-1580 scenarios decisions remaining.**
+**Issue:** Per §42.9 LOCKED V1 testing strategy mandatory: Hibrid Property-based + Persona Suite Maria/Gigica/Marius + 4-Invariant Safety Stack. Persona simulation suite ~50-100 tests representative + edge cases curated. Coverage actuală post chat-uri Auth + ADR 026 spec + Auth Flow §36.80 + Batch 1-6 + T0 Mechanics 75 + Engines #1-#7 spec sessions + #8 §45.6 = **~649 LOCKED V1** total. **Gap pre-Beta: ~990-1490 scenarios decisions remaining.**
 
 **Gap reduction progress:**
 - Initial gap (post §62-§73 ingest 2026-05-04 evening): 1200-1700 scenarios
 - Post engine specs Periodization + Goal Adaptation + ADR 026 Q1-Q10 (2026-05-04 evening late): 1170-1670 (~50 decisions consumate engine specs, NU branches)
-- Post Engines #3+#4+#5 spec sessions cumulative + Convergence Guard "T2 Unlock" (2026-05-05 birou after): **~1080-1580** (~90 decisions consumate engine specs cumulative, NU branches enumeration)
+- Post Engines #3+#4+#5 spec sessions cumulative + Convergence Guard "T2 Unlock" (2026-05-05 birou after): 1080-1580 (~90 decisions consumate engine specs cumulative, NU branches enumeration)
+- Post Engines #5 formal lock + #6 Tempo/Form Cues + #7 Specialization spec sessions + Roadmap §36.100 100% milestone (2026-05-05 birou late): **~990-1490** (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration). 🎯 Roadmap §36.100 100% COMPLETE — NU mai chat-uri engines spec sessions remaining.
 
-**Action Daniel (Priority 2 NEW per §71, post Priority 1 ABSOLUT CC Auth Flow implementation + engines roadmap remaining #6+#7):**
+**Action Daniel (Priority 2 NEW per §71, post Priority 1 ABSOLUT CC Auth Flow implementation):**
 
 1. Chat strategic dedicat enumeration scenarios (~5-15 chat-uri estimative bandwidth optimal)
 2. Per chat: ~100-150 scenarios coverage decisions LOCKED + Persona Suite curated edge cases
@@ -230,11 +231,11 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 **Cross-refs:**
 - HANDOVER_GLOBAL §69 PRE-BETA BLOCKER FLAG status verbatim
 - §42.9 LOCKED V1 testing strategy
-- Cumulative ~593 LOCKED V1 post 2026-05-05 birou after
+- Cumulative ~649 LOCKED V1 post 2026-05-05 birou late
 - §71 Priority 2 NEW chat-uri strategice dedicate
 - AUDIT_5000Q corpus + ONBOARDING_SSOT_V1 §10 Open Questions (existing scenarios sources)
 - Beta launch decalare Quality > Speed default §62.7 justifies timeline flexibility
-- Engines #1-#5 SPEC COMPLETE 2026-05-05 birou after (5/7 prescriptive engines roadmap §36.100) — Engine #6 + #7 remaining ~2 chat-uri NEW dedicated
+- 🎯 Roadmap §36.100 ✅ 100% COMPLETE milestone 2026-05-05 birou late (8/8 prescriptive engines SPEC COMPLETE) — NU mai chat-uri engines spec sessions remaining
 
 ---
 
@@ -282,4 +283,4 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift RESOLVED 2026-05-05 birou (npm install resolved deps). P2-FLAG-1 D1-D6 superseded. HANDOVER_GLOBAL split FLAG **TRIGGERED preserved post §62-§73 ingest 7664 LOC > 7000 threshold** — strategy LOCKED V1 thematic split per §62.2 chat strategic NEW dedicat post-Auth Phase 2. §36.80 BUG 2 RESOLVED chat strategic — Phase 1 LANDED commit `0880641`. P1-FLAG-AUTH-DANIEL-PREP 🟢 RESOLVED 2026-05-04 night. **P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT 2026-05-05 birou** — Phase 2 Auth Flow upgrade ridicat post Auth-Required Pivot LOCKED V1. Cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules. **P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER gap reducere ~1080-1580 decisions remaining (din 1170-1670 post Engines #3+#4+#5 spec sessions cumulative + Convergence Guard "T2 Unlock") ~5-15 chat-uri Priority 2 strategice dedicate.** **P1-FLAG-IOS-PERMANENT LOCKED V1 (PWA + TWA Android only).** Cumulative ~593 LOCKED V1 post 2026-05-05 birou after Engines #3 Bayesian Nutrition (~32-35) + #4 Deload Protocol (~30-32) + #5 Energy Adjustment (~28-30) + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 (+155 net). 5/7 prescriptive engines roadmap §36.100 SPEC COMPLETE — remaining Engine #6 Tempo/Form Cues + Engine #7 Specialization ~2 chat-uri NEW dedicated. ADR 022 stub → SPEC READY V1. ADR 009 §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" Behavioral Validation Rule cross-cutting (formula final post 5 iterations: Statistical Convergence layer per-engine + Behavioral Validation layer shared N≥10 sesiuni adherence ≥80% max 2 Pain-Aware sesiuni din ultimele 10 + Pain-Aware Hybrid Spec V1 binary + forward-compat v1.5 silent vector ZERO migration). ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-05 .1-.7 + §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 + ONBOARDING §1/§8 amendments inline. Beta launch decalare oficial Quality > Speed default (Override §56.9.2 1 ian 2027). Review Division of Labor LOCKED V1. Workflow 3-instance Bugatti-grade RECOGNIZED (Gemini logic + Claude Bugatti challenge + Daniel reality lock).**
+🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift RESOLVED 2026-05-05 birou (npm install resolved deps). P2-FLAG-1 D1-D6 superseded. HANDOVER_GLOBAL split FLAG **TRIGGERED preserved post §62-§73 ingest 7664 LOC > 7000 threshold** — strategy LOCKED V1 thematic split per §62.2 chat strategic NEW dedicat post-Auth Phase 2. §36.80 BUG 2 RESOLVED chat strategic — Phase 1 LANDED commit `0880641`. P1-FLAG-AUTH-DANIEL-PREP 🟢 RESOLVED 2026-05-04 night. **P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT 2026-05-05 birou** — Phase 2 Auth Flow upgrade ridicat post Auth-Required Pivot LOCKED V1. Cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules. **P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER gap reducere ~990-1490 decisions remaining (din 1170-1670 post 🎯 Roadmap §36.100 100% COMPLETE milestone Engines #5 formal + #6 + #7 + #1+#2+#3+#4+#8 cumulative ~180 decisions consumate engine specs) ~5-15 chat-uri Priority 2 strategice dedicate.** **P1-FLAG-IOS-PERMANENT LOCKED V1 (PWA + TWA Android only).** Cumulative ~649 LOCKED V1 post 2026-05-05 birou late Engines #5 formal lock confirm preserve baseline ~593 + Engine #6 Tempo/Form Cues (~28) + Engine #7 Specialization (~28 ULTIMUL prescriptive) + 🎯 Roadmap §36.100 ✅ 100% COMPLETE milestone 8/8 prescriptive engines SPEC COMPLETE (+~56 net). NU mai chat-uri engines spec sessions remaining — pivot direction P1 CC Auth Flow §36.80 / P2 Scenarios Coverage / P3 ADR 026 compile draft full. ADR 022 stub → SPEC READY V1. ADR 009 §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" Behavioral Validation Rule cross-cutting (formula final post 5 iterations: Statistical Convergence layer per-engine + Behavioral Validation layer shared N≥10 sesiuni adherence ≥80% max 2 Pain-Aware sesiuni din ultimele 10 + Pain-Aware Hybrid Spec V1 binary + forward-compat v1.5 silent vector ZERO migration). ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-05 .1-.7 + §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 + ONBOARDING §1/§8 amendments inline. Beta launch decalare oficial Quality > Speed default (Override §56.9.2 1 ian 2027). Review Division of Labor LOCKED V1. Workflow 3-instance Bugatti-grade RECOGNIZED matured (Gemini logic + Claude Bugatti challenge + Daniel reality lock — velocity crescând session-by-session).**
