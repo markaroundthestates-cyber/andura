@@ -326,3 +326,68 @@ function _removeItem(k) {
   try { if (typeof localStorage !== 'undefined') localStorage.removeItem(k); }
   catch {}
 }
+
+// ── §56.5.3 Reactivation flow — USER_DISABLED catching ─────────────────────
+
+/**
+ * Wording UI LOCKED V1 verbatim — DO NOT modify (anti-drift §56.5.3).
+ * Display when Firebase Auth REST returns USER_DISABLED error code post
+ * Magic Link verify SAU Google OAuth signin.
+ */
+export const USER_DISABLED_COPY
+  = 'Acest cont este dezactivat și programat pentru ștergere definitivă. Dacă te-ai răzgândit și vrei să îl reactivezi, trimite un e-mail la suport@andura.app în termenul de 30 de zile de la solicitare.';
+
+/**
+ * Returns true if the auth REST error string indicates USER_DISABLED.
+ * Firebase REST error codes can be `USER_DISABLED` exact sau cu suffix.
+ *
+ * @param {string|null|undefined} errorCode
+ * @returns {boolean}
+ */
+export function isUserDisabledError(errorCode) {
+  if (typeof errorCode !== 'string') return false;
+  return errorCode === 'USER_DISABLED' || errorCode.startsWith('USER_DISABLED');
+}
+
+// ── §56.5.2 Account soft-delete — flag schema ──────────────────────────────
+
+/**
+ * Build soft-delete flag payload (Firestore document field).
+ * 30 zile grace per §56.5.2 LOCKED V1.
+ *
+ * @param {number} [now=Date.now()]
+ * @returns {{ requestedAt: number, scheduledHardDelete: number }}
+ */
+export function buildSoftDeleteFlag(now = Date.now()) {
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  return {
+    requestedAt: now,
+    scheduledHardDelete: now + THIRTY_DAYS_MS,
+  };
+}
+
+// ── §56.7 Anonymous→Auth Merge — detection helpers (pure) ─────────────────
+
+/**
+ * Detect whether anonymous local IndexedDB has user data.
+ * Pure helper — caller injects probe (real impl: tier1All non-empty count).
+ *
+ * @param {() => Promise<boolean>} probe   async non-empty checker
+ * @returns {Promise<boolean>}
+ */
+export async function detectAnonymousLocalData(probe) {
+  if (typeof probe !== 'function') return false;
+  try { return Boolean(await probe()); } catch { return false; }
+}
+
+/**
+ * Detect whether cloud user data exists at users/{authUid}.
+ * Pure helper — caller injects probe (real impl: Firestore document exists).
+ *
+ * @param {() => Promise<boolean>} probe   async non-empty checker
+ * @returns {Promise<boolean>}
+ */
+export async function detectCloudUserData(probe) {
+  if (typeof probe !== 'function') return false;
+  try { return Boolean(await probe()); } catch { return false; }
+}
