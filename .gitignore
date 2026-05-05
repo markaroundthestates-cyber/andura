@@ -20,6 +20,8 @@ coverage/
 firebase-service-account.json
 scripts/firebase-service-account.json
 
-# Stryker mutation testing reports (auto-generated, large HTML output)
+# Stryker mutation testing reports (auto-generated)
 reports/mutation/.stryker-tmp/
 .stryker-tmp/
+# HTML viewer regenerable din mutation.json — keep repo lean (~7 MB saved)
+reports/mutation/mutation.html
