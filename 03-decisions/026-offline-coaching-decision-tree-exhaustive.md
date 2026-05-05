@@ -47,14 +47,16 @@
 
 **14 reactive engines existing (preserved unchanged):** dp / aa / ruleEngine / alternativeEngine / patternLearning / adherence / calibration / weaknessDetector / stagnationDetector / predictionEngine / plateauInterventions / proactiveEngine / whyEngine / sessionBuilder.
 
-**7 prescriptive engines NEW (roadmap pre-Beta per §36.100):**
-1. Periodization Engine
-2. Goal Adaptation Engine ([[024-goal-driven-program-templates]])
-3. Bayesian Nutrition Engine ([[022-bayesian-nutrition-inference]])
-4. Deload Protocol Engine
-5. Energy Adjustment Engine
-6. Tempo/Form Cues Engine
-7. Specialization Engine
+**7 prescriptive engines NEW (roadmap pre-Beta per §36.100) — status post 2026-05-05 birou after:**
+1. ✅ Periodization Engine SPEC COMPLETE (~32 decisions, 2026-05-04 evening late)
+2. ✅ Goal Adaptation Engine SPEC COMPLETE (~30 decisions, 2026-05-04 evening late) ([[024-goal-driven-program-templates]])
+3. ✅ Bayesian Nutrition Engine SPEC COMPLETE (~32-35 decisions Cluster A-E, 2026-05-05 birou after) ([[022-bayesian-nutrition-inference]] SPEC READY V1) — Convergence Guard "T2 Unlock" architectural extension cross-cutting [[009-calibration-tiers]] §AMENDMENT 2026-05-05 birou after
+4. ✅ Deload Protocol Engine SPEC COMPLETE (~30-32 decisions, 2026-05-05 birou after)
+5. ✅ Energy Adjustment Engine SPEC COMPLETE (~28-30 decisions, 2026-05-05 birou after)
+6. ⏳ Tempo/Form Cues Engine PENDING (chat NEW dedicated, ~30 decisions estimate)
+7. ⏳ Specialization Engine PENDING (chat NEW dedicated, ~30 decisions estimate)
+
+**Cumulative engines spec decisions consumate ~155 (post 5/7 SPEC COMPLETE):** Periodization ~32 + Goal Adaptation ~30 + Bayesian Nutrition ~32-35 + Deload ~30-32 + Energy ~28-30 ≈ ~152-159 cumulative cross-engine integrations + Convergence Guard "T2 Unlock" cross-cutting ADR 009 amendment. Aceste decisions sunt **engine spec-uri**, NU branches enumeration ADR 026 (1500-2000 ramuri pre-mapped tree separate scope).
 
 **Total = 21 engines** post 7-engine roadmap implementation. Decision tree branches consume engine outputs prin Dimension Registry ADR 018.
 

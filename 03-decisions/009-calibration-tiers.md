@@ -237,3 +237,142 @@ Alte ADR-uri care folosesc `calibrationLevel` semantic (NU update Sprint 1, doar
 ---
 
 *Amendment authored 2026-04-30 Sprint 1 autonomous run Opus 4.7. Sign-off implicit via handover lock 2026-04-29 chat strategic Daniel + Claude Opus. Consolidated inline 2026-04-30 per VAULT_RULES §3.1 (update-in-place > create-new).*
+
+---
+
+## §AMENDMENT 2026-05-05 birou after — Convergence Guard "T2 Unlock" Behavioral Validation Rule (NEW arhitectural extension cross-cutting)
+
+**Status:** LOCKED V1 chat strategic 2026-05-05 birou after Daniel + Claude (surfaced mid-Engine #3 Bayesian Nutrition Inference spec session). Cross-cutting architectural extension — applies to ALL tier transitions T1→T2, NU Engine #3 specific.
+
+**Authority:** Daniel push-back fundamental seminal: *"T2 = Behavioral Validation NOT just statistical convergence"* — engine trebuie observe self-report aliniază realitate biologică CDL ÎNAINTE adaptări agresive. Eu (Claude) am gândit pure math (variance σ reducere thresholds), Daniel a articulat scope adevărat T2 = behavioral validation. Formula final post 5 iterations refinement.
+
+### Context (Amendment)
+
+**Original ADR 009 + Amendment 2026-04-30 SSOT:**
+- T0 = COLD_START state (no behavioral data, demographic prior baseline)
+- T1 = adapting state (initial observations, conservative adjustments)
+- T2 = OPTIMIZED state (high confidence, aggressive adaptations enabled)
+
+**Gap identified mid-Engine #3 spec session:** T2 unlock criteria așa cum era articulat = pure statistical (variance σ² reducere threshold). Daniel push-back: insufficient — engine poate ajunge la "convergence statistic" pe self-report data care NU aliniază realitate biologică (Gigel ignoring pain pentru T2 progress = "Bugatti hits guardrail real" anti-pattern).
+
+**Decision:** T2 unlock criteria extend cu **Behavioral Validation conditions** — engine trebuie observe (a) self-report executions actually occur cu high adherence (volume_adherence_vs_pain_adjusted ≥ 80%) și (b) low Pain-Aware session frequency (max 2 din ultimele 10) ÎNAINTE unlock T2.
+
+### Decision SSOT (Amendment)
+
+**T2 Unlock Formula final post 5 iterations refinement:**
+
+```
+T2 Unlock = (
+  Statistical Convergence: (
+    30% reducere σ²(prior_t-1, posterior_t)
+    OR
+    σ < MAX(10% kcal_baseline, 200 kcal absolute floor)
+    OR
+    σ < 5% body_weight proportional
+  )
+)
+AND (
+  Behavioral Validation: (
+    N ≥ 10 sesiuni cu (outcome.executed && volume_adherence_vs_pain_adjusted ≥ 80%)
+    AND max 2 Pain-Aware sesiuni din ultimele 10
+  )
+)
+```
+
+**Rationale per condition:**
+
+**Statistical Convergence layer (Engine-specific, exemplificat cu Engine #3 nutrition):**
+- σ² 30% reducere = primary statistical convergence signal
+- σ < MAX(10% kcal_baseline, 200 kcal absolute floor) = pragmatic noise floor (food tracking realitate ±200 kcal natural — Daniel push-back pragmatic protejare Maria 65)
+- σ < 5% body_weight proportional = scale for very-low-kcal-baseline edge cases (small frame Maria 65)
+
+**Behavioral Validation layer (Cross-cutting, applies all engines):**
+- N ≥ 10 sesiuni minimum statistical power (avoid premature unlock single-batch flukes)
+- volume_adherence_vs_pain_adjusted ≥ 80% — Daniel push-back rejection brittle deviation: swap bar→gantere = signal metabolic VALID, NU penalize substitution. Adherence metric protects against gaming engine via partial-skip patterns.
+- max 2 Pain-Aware sesiuni din ultimele 10 = anti-T2-progress-via-pain-ignoring guardrail
+
+### Pain-Aware Definition (Hybrid Spec V1)
+
+**(a) STRICT user-triggered Pain Button only** — NU engine proactive:
+- DELOAD modifiers (Engine #4) NU mark `pain_aware: true`
+- Energy DOWN modifiers (Engine #5) NU mark `pain_aware: true`
+- Goal phase modifiers (Engine #2) NU mark `pain_aware: true`
+
+Rationale: clean signal monitor only USER FRICTION. Decoupling safety/reward via Clean Signal rule (Invariant 5 Medical Safety protect). Engine proactive adjustments = safety mechanism, NU friction signal — would conflate guardrail activation cu user pain experience.
+
+**(i) BINARY V1** — any Pain Button click during session → entire session marked `pain_aware: true`. Granularity = session-level, NU set-level.
+
+**Forward-compat v1.5 silent vector preserved:**
+```
+CDL session entry extension (additive ZERO schema migration):
+  pain_aware: boolean,                    // V1 binary session-level
+  pain_trigger_set: [int],                // V1 collect silent (NOT acted upon)
+                                          // V1.5 threshold rule (>50% sets affected
+                                          //   = stricter T2 gate / dedicated handling)
+```
+
+V1 = collect `pain_trigger_set` silent în CDL metadata, NOT acted upon. V1.5 retroactive aware via vector availability — threshold rule activation date-bounded forward (legacy V1 sessions = binary only, acceptable trade-off per Daniel reality lock).
+
+**UX wording Pain Button preserve EXACT:**
+> "Siguranța e pe primul loc. Am ajustat restul sesiunii."
+
+ZERO T2 disclosure (anti-regret psychology + anti-behavioral conditioning Gigel ignoring pain pentru T2 progress = "Bugatti hits guardrail real" Daniel articulation).
+
+### Cross-cutting Applicability (NU Engine #3 specific)
+
+This Behavioral Validation layer applies to **ALL T1→T2 tier transitions across ALL engines**:
+
+| Engine | Statistical Convergence layer | Behavioral Validation layer |
+|--------|-------------------------------|----------------------------|
+| Engine #1 Periodization | σ²(volume_landmarks_inferred) reducere | Same Behavioral Validation rule |
+| Engine #2 Goal Adaptation | σ²(phase_likelihoods) reducere | Same Behavioral Validation rule |
+| Engine #3 Bayesian Nutrition | σ²(kcal_baseline_posterior) reducere | Same Behavioral Validation rule |
+| Engine #4 Deload Protocol | σ²(recovery_signal_aggregate) reducere | Same Behavioral Validation rule |
+| Engine #5 Energy Adjustment | σ²(readiness_emoji_inferred) reducere | Same Behavioral Validation rule |
+| Future Engines #6 #7 | TBD spec session | Same Behavioral Validation rule |
+
+**Pattern:** Each engine defines its own Statistical Convergence layer (σ² reducere on engine-specific posterior). Behavioral Validation layer = SHARED CROSS-CUTTING (same N≥10 + adherence ≥80% + max 2 Pain-Aware rule applies all engines uniformly).
+
+### Mid-flight Deferred V1.5+ (Amendment)
+
+- **Tier downgrade T2→T1 behavior:** separate spec ADR 009 amendment session viitor. Question scope: dacă T2 unlock atins apoi behavioral validation rate scade (e.g., adherence drops <80% cu 3+ Pain-Aware sesiuni consecutive), engine downgrade T2→T1? Sau preserve T2 cu silent flag CDL? Open Q TBD.
+- **RIR/Tempo gate Convergence Guard:** defer v1.5 cu RIR_actual_vs_planned ±1 tolerance. V1 = volume_adherence_vs_pain_adjusted only.
+- **Pain-Aware threshold rule (>50% sets affected) retroactive activation:** silent vector forward-compat ZERO schema migration, V1.5 acted upon.
+
+### Consequences (Amendment)
+
+#### Positive
+
+- **Anti-Bugatti-fakery T2 unlock** — engine NU unlock T2 când self-report misaligns biology (Gigel guardrail "Bugatti hits guardrail real" Daniel articulation)
+- **Cross-cutting clean** — same Behavioral Validation rule applies all engines uniformly, NU 7× variants per engine
+- **Forward-compat v1.5 ZERO migration** — `pain_trigger_set` vector additive, legacy V1 binary acceptable
+- **Decoupling safety/reward Invariant 5 protect** — Pain Button = clean signal user friction, NU engine proactive conflated
+
+#### Negative
+
+- **Implementation effort cross-engine** — every engine emit must implement T2 unlock check cu Behavioral Validation layer. Could duplicate logic if NOT factored into shared utility (`tierUnlock.evaluate(engineConvergenceSignal, behavioralValidation)` recommended pattern).
+- **Test surface area substantial** — multi-condition formula (3 OR + 2 AND = 6 path combinations) × per-engine variations × Pain-Aware binary V1 + vector forward-compat v1.5 = Property-based + Golden Master mandatory (ADR 026 Q7 3-tier test suite)
+- **CDL schema extension required** — `pain_aware` + `pain_trigger_set` fields additive (ZERO migration but mandatory population)
+
+#### Risks
+
+- **Pain-Aware false-positive rate** — user clicks Pain Button without genuine pain (exploration / curiosity / accidental tap Maria 65) → false `pain_aware: true` → false T2 unlock blocking. Mitigation: telemetry monitor click rate post-Beta, threshold rule v1.5 (>50% sets) tightens gate.
+- **Adherence ≥80% gaming** — user partial-skips să mențină count fără să facă actually full session. Mitigation: outcome.executed + volume_adherence_vs_pain_adjusted = composite metric, NOT just count. CDL audit trail per session.
+- **N≥10 sesiuni gate too slow Maria 65** — Maria frequent low-volume might take 4-6 weeks to reach N=10. Mitigation: T2 unlock = optimization gate, NOT functional gate. T1 fully functional, T2 = aggressive adaptations enabled (acceptable wait period for behavioral evidence accumulation).
+
+### Cross-references update needed (Amendment)
+
+Files care vor primi cross-ref la această amendment:
+
+- `03-decisions/022-bayesian-nutrition-inference.md` — Cluster Convergence Guard "T2 Unlock" cross-cutting (LANDED chat strategic 2026-05-05 birou after, this commit)
+- `03-decisions/011-coach-decision-log-architecture.md` — CDL schema extension `pain_aware` + `pain_trigger_set` fields (forward-compat v1.5 vector documented)
+- `03-decisions/ADR_PAIN_DISCOMFORT_BUTTON_v1.md` — Pain-Aware Hybrid Spec V1 (a)+(i) binary + forward-compat v1.5 vector cross-ref
+- `03-decisions/DECISION_LOG.md` — entry 2026-05-05 birou after (this commit)
+- `00-index/CURRENT_STATE.md` — ACTIVE_ADRS update ADR 009 §AMENDMENT 2026-05-05 birou after (this commit)
+- `01-vision/PRODUCT_STRATEGY_SPEC_v1.md` §3.5.1 — Strong Prior tier-based references T2 unlock criteria (potential cross-ref update next sweep)
+
+Future engines #6 + #7 spec sessions vor reference Cross-cutting Applicability matrix (above) as authoritative T2 unlock pattern.
+
+---
+
+*Amendment authored 2026-05-05 birou after chat strategic Daniel + Claude (Engine #3 Bayesian Nutrition spec session, mid-flight Convergence Guard surfaced). Daniel push-back fundamental seminal "T2 = Behavioral Validation NOT just statistical convergence" — formula final post 5 iterations refinement. Sign-off implicit via §CC.5 fast handover ingest.*

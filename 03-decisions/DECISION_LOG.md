@@ -1,5 +1,130 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 birou after — Engines #3 Bayesian Nutrition + #4 Deload Protocol + #5 Energy Adjustment SPEC COMPLETE + Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 (cumulative ~593, +155 substantive net)
+
+**Status:** §CC.5 fast handover ingest 2026-05-05 birou after Daniel + Claude chat strategic — sesiune triplă consecutivă engines spec + 1 architectural extension surfaced mid-Engine #3. Pattern 3-instance Bugatti-grade consistent toate 3 (Claude 20 Q artefact → Daniel paste Gemini → Claude filter challenges/GAPS → Gemini pas 2 → Claude push-back final → Daniel decide). Cumulative LOCKED ~438 → **~593** (+155 substantive net post-overlap).
+
+**Authority:** Chat strategic 2026-05-05 birou after Daniel + Claude. 3 engines specs cumulative consecutive (~32-35 + ~30-32 + ~28-30 ≈ ~90-97 decizii) + Convergence Guard "T2 Unlock" arhitectural extension cross-cutting ADR 009 (formula final post 5 iterations refinement) + 5/7 prescriptive engines roadmap §36.100 SPEC COMPLETE.
+
+**Sub-decisions LOCKED V1:**
+
+*Engine #3 Bayesian Nutrition Inference SPEC COMPLETE (~32-35 decisions Cluster A-E LOCKED V1):*
+- **Prior form:** Gaussian Conjugate Prior (NU Hierarchical Bayesian — V1 local-first JS tractable)
+- **Strong Prior dynamic slope tier-based:** Big 6 minim 70/30 → rich 90/10 (data quantity drives confidence per §3.5.1)
+- **Bayesian decay natural:** posterior=prior_next (NU explicit rule — math-native)
+- **Validation strategy:** Hibrid synthetic pre-Beta + real anonymized v1.5+
+- **Phase reset Hibrid:** Layer 1+2 reset / preserve Layer 4 Goal Shift
+- **Cadence:** Adaptive T1+ cu Daily fallback T0 + 14 zile observation buffer
+- **Kalman 1D peak craft cu 3 caveats:** defaults Hall 2008 literature + R²>0.85 validation gate + EWMA fallback feature flag
+- **Volume metric:** Weighted compound:isolation 3:2:1 (Lower:Upper:Isolation)
+- **Mood scoring:** Linear Sum Weighted normalized (LVM defer v1.5)
+- **Volume landmarks:** Hibrid lookup Israetel + regression STRICT compound only + isolation graceful degradation 0.3× când compound observations <3 în window 14 zile
+- **Cross-engine #2 integration:** Disagreement flag CDL (Invariant 5 protect)
+- **Cross-engine #5 integration:** Pre-processing modulator readiness cu Neutral fallback T0 cold start
+- **Schema:** Standard `nutrition_inference_metadata` (prior+posterior+observations N=20+CI)
+- **Output structure:** `{deficit/surplus/maintenance}_likelihood` probabilities
+- **Profile Typing threshold:** Adaptive 0.55-0.85 T1+ cu 0.70 default T0 + 15% Hamming hysteresis + 2 sesiuni consecutive 14 zile window
+- **UI tier:** Tier 1+2 only NU blocking modal (Maria 65 autonomy preserve)
+- **Hard rule preserved §3.5.1:** NEVER specific kcal
+- **Anti-spam aliniat Engine #2:** 28 zile cooldown
+- **Validation panel:** Hibrid simulator R²>0.85 pre-Beta + dietician panel post-Beta v1.5 corroborate
+- **Edge cases:** Hibrid Passive Mode tripwire (pregnant/post-bariatric/kidney) + Special priors (>75 + ED history) + disclaimer onboarding
+
+*Convergence Guard "T2 Unlock" — NEW arhitectural extension cross-cutting ADR 009 (surfaced mid-Engine #3):*
+- **Daniel push-back fundamental seminal:** *"T2 = Behavioral Validation NOT just statistical convergence"* — engine trebuie observe self-report aliniază realitate biologică CDL ÎNAINTE adaptări agresive
+- **Formula final post 5 iterations:** T2 Unlock = (30% reducere σ² OR σ < MAX(10% kcal_baseline, 200 kcal absolute floor) OR σ < 5% body_weight proportional) AND N ≥ 10 sesiuni cu `outcome.executed && volume_adherence_vs_pain_adjusted ≥ 80%` AND max 2 Pain-Aware sesiuni din ultimele 10
+- **Pain-Aware definition:** (a) STRICT user-triggered Pain Button only (NU engine proactive DELOAD/Energy/Goal phase modifiers — clean signal monitor only USER FRICTION) + (i) BINARY V1 (any click → full session `pain_aware:true`) + silent `pain_trigger_set: [index_set]` vector CDL metadata forward-compat v1.5 threshold rule (>50% sets affected) ZERO schema migration
+- **UX wording Pain Button preserve EXACT:** "Siguranța e pe primul loc. Am ajustat restul sesiunii." (zero T2 disclosure anti-regret + anti-behavioral conditioning Gigel ignoring pain pentru T2 progress = "Bugatti hits guardrail real")
+- **Push-back-uri Engine #3 notabile:** "Bayesian σ MAX(10%, 200 kcal) noise floor pragmatic protejare Maria 65" + "volume_adherence !deviation prea brittle" (swap bar→gantere = signal metabolic VALID, NU penalize) + "Pain Button rate limit încalcă Invarianta 5 Medical Safety" (decoupling safety/reward via Clean Signal rule)
+
+*Engine #4 Deload Protocol SPEC COMPLETE (~30-32 decisions LOCKED V1):*
+- **Engine #4 = orchestrator unification multi-trigger:** Composite Signal §36.41 + AA Detection ADR 013 + Linear Block 4+1 existing
+- **Prioritized hierarchy:** Composite > AA > Linear (reactive overrides scheduled)
+- **Multi-signal consolidation escalează severity** (NU dilutes — additive)
+- **Engine #4 SSOT deload domain:** Composite -20% reduction §36.41 hard-disabled când Engine #4 active (anti math collision double-penalty)
+- **AA-driven mechanic:** Volume CUT 30% + RIR ↑ obligatoriu + Intensity ↓ obligatoriu (Daniel push-back fundamental: "volum păstrat moderat" reinforces aggressive pattern — Engine NU pedepsește dorința muncă, REGLEAZĂ unsustainable pattern)
+- **Final_Depth formula:** MAX(Scheduled 45%, Reactive 60%, Behavioral 30%) + Behavioral_Modifiers
+- **Adaptive duration:** 1 săpt scheduled fix / reactive adaptive 1-2 săpt cu Flagged-only state qualifier
+- **Reactive deload Hard Reset Linear Block counter:** Week N reactive → Week 1 NEW cycle post-deload (anti back-to-back scheduled Week 5)
+- **Extension week 2 Flagged-only:** NU Cooldown/Resolving anti false-positive
+- **Extension depth preserve 60%:** NU escalate 70% — atrophy literature limit
+- **Muscle-group-specific partial deload Hibrid:** full-body sistemic / per-muscle MRV alone
+- **Frequency:** Same frequency lower volume default (frequency reduce only Energy-driven)
+- **Periodization integration Hibrid:** scheduled INSIDE 4+1 / reactive OVERRIDES + Hard Reset
+- **Engine #5 trigger:** sustained low readiness 3+ consecutive triggers Engine #4 evaluation
+- **Schema:** Standard CDL `deload_metadata`
+- **Output contract Hibrid:** flag + structured params consumed downstream Engine #1
+- **Notification tier-aware:** T0 silent / T1+ banner detaliat
+- **Skip allowed all sources cu warning escalated severity wording per trigger**
+- **Skip penalties Hibrid:** 1× reactive urgent = AA marker direct ADR 013 / 2× scheduled = Composite sensitivity ↑
+- **Wording specific per source:** Linear "săpt 5 recuperare programată" / Composite "corpul tău cere recovery" / AA "reglăm intensitatea volumul a urcat agresiv" / Energy "săpt asta lăsăm motorul să se odihnească"
+- **Passive Mode trigger:** 12-week rolling window inclusive ≤12w 2 reactive consecutive + medical referral
+- **Validation:** Hibrid simulator + Beta cohort 50 testers correlation perceived recovery rating
+
+*Engine #5 Energy Adjustment SPEC COMPLETE (~28-30 decisions LOCKED V1):*
+- **Input strategy:** Manual input only V1 (auto Health Connect/Apple Health defer v1.5+ anti scope creep + GDPR sensitive data risk)
+- **Stress folded în emoji 🟢🟡🔴 holistic** + drill-down sub-questions sleep/stress când 🟡/🔴 selected (🟢 = Fast Path Maria 65 friction zero)
+- **Categorical mapping rules table aggregation auditable**
+- **Adjustment dimensions:** Volume primary + intensity selective per direction §36.16 RIR Matrix reuse
+- **Asymmetric ±15% bidirectional:** UP requires N≥3 conditions simultaneous "aliniere planetelor" / DOWN single trigger immediate protect
+- **Hard cap MRV preserved §42.9 Invariant 1**
+- **Floor hierarchy Bugatti-craft:** Periodization Floor overridable Energy DOWN extreme / §36.16 absolute Floor 2 sets immutable hard biology
+- **Intra-session detector "minciună" emoji 🟢:** Hibrid set 1 RIR mismatch >2 triggers Energy recalibration mid-session
+- **Engine #4 trigger preservation §36.82.3:** 3× consecutive 🔴 → optional deload prompt LOCKED + Triple Threat secondary (sleep<6h AND stress high AND emoji 🔴 sustained N≥2 consecutive sesiuni — single occurrence = silent flag CDL only NU action, prevent premature trigger)
+- **Bayesian-aware variance σ modification Engine #3 cross-engine:** NU linear discount — readiness scăzut crește σ observații (Mensa-grade insight Gemini articulated)
+- **T0 conservative DOWN ±10% only:** T1+ full ±15% post 14 zile observation buffer
+- **Yo-yo anti-flap stabilizer:** rolling 3-session window (Sprinter/Marathon profile modulators defer V1.5)
+- **UI:** Inline conditional (🟢 fast path 1-tap / 🟡-🔴 drill-down expand)
+- **Explainer:** On-demand WhyEngine link silent default
+- **Hard rule NU lifestyle recommendations:** Andura coach NU guru wellness — anti EU AI Act medical scope creep
+- **Escalation chronic low readiness Hibrid timing-based:** modulation short 1-4w / deload mid 4-12w / Passive Mode long 12+w aliniat Engine #4 Q19
+- **Validation:** Hibrid simulator + Beta cohort aliniat Engine #3+#4 pattern
+- **Bayesian inference v1.5 evolution path:** readiness latent state observed via emoji + RIR mismatch + sleep proxies (natural extension Engine #3 framework reuse)
+- **Drill-down skip behavior = silent neutral:** anti-paternalism algorithmic Daniel articulation — forcing conservative default presupunând somn prost = pedepsește user pentru dorința viteză + Maria 65 friction zero preserve
+
+*Pattern critical pentru CC ingest (5 explicit clarifications din artefact):*
+1. Convergence Guard = NEW architectural extension cross-cutting ADR 009 (NU Engine #3 specific) — must amendment ADR 009 inline
+2. AA-driven deload mechanic = Volume CUT obligatoriu (NU "păstrat moderat" reinforces aggressive pattern) — clarify ADR 013 cross-ref
+3. Pain-Aware Hybrid Spec = (a)+(i) binary V1 + silent vector forward-compat v1.5 — preserve UX wording exact
+4. Floor hierarchy Engine #5 = Periodization Floor overridable / §36.16 absolute Floor 2 sets immutable — distinct articulation needed
+5. Triple Threat Engine #5 = sustained N≥2 consecutive (single occurrence = silent flag CDL only) — qualifier explicit anti-premature
+
+*Mid-flight unresolved deferred V1.5+ (NU blocker LOCK V1):*
+- Sprinter/Marathon profile-typing modulators Engine #5 Q14 (defer post-Beta data real, anti presupunere pre-data)
+- RIR/Tempo gate Convergence Guard volume_adherence Engine #3 (defer v1.5 cu RIR_actual_vs_planned ±1 tolerance)
+- Tier downgrade T2→T1 behavior (separate spec ADR 009 amendment session viitor)
+- Pain-Aware threshold rule (>50% sets affected) retroactive activation cu silent `pain_trigger_set` vector forward-compat ZERO schema migration
+- Drill-down skip pattern detection (potential Sprinter-like signal V1.5 cu Profile Typing data real)
+
+**Implicații downstream:**
+- Engines #1-#5 SPEC COMPLETE = 5/7 prescriptive engines roadmap §36.100. Remaining Engine #6 Tempo/Form Cues + Engine #7 Specialization = ~2 chat-uri dedicated similar pattern ~30 decisions each
+- DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE gap reducere 1170-1670 → ~1080-1580 (~90 decisions consumate engine specs cumulative — NU branches enumeration)
+
+**Files modified §CC.5 fast handover ingest (this commit):**
+- UPDATED: `00-index/CURRENT_STATE.md` (header timestamp + cumulative count + NOW move-then-replace + JUST_DECIDED top entry append + NEXT P4 engines roadmap status update + ACTIVE_FLAGS gap reduction + ACTIVE_ADRS update ADR 022 spec ready + ADR 009 amendment T2 Unlock + RECENT precedent T0 mechanics thread compressed)
+- UPDATED: `03-decisions/022-bayesian-nutrition-inference.md` (stub → SPEC READY ~32-35 decisions Cluster A-E populate)
+- UPDATED: `03-decisions/009-calibration-tiers.md` (§AMENDMENT 2026-05-05 birou after — Convergence Guard "T2 Unlock" Behavioral Validation rule NEW append)
+- UPDATED: `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` (cross-ref engines specs ~90 decisions consumate cumulative)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry top descending cronologic)
+- UPDATED: `DIFF_FLAGS.md` (P1-FLAG-SCENARIOS-COVERAGE gap reducere 1170-1670 → ~1080-1580 + footer summary update)
+- ARCHIVED: `📥_inbox/HANDOVER_2026-05-05_birou_after_engines3-4-5_spec_sessions.md` → `📤_outbox/_archive/2026-05/148_HANDOVER_2026-05-05_birou_after_engines3-4-5_spec_sessions_CONSUMED.md`
+
+**Cross-refs:**
+- [[CURRENT_STATE]] §JUST_DECIDED 2026-05-05 birou after (full spec 5/7 engines + Convergence Guard verbatim narrativ)
+- [[022-bayesian-nutrition-inference]] SPEC READY (Engine #3 ~32-35 decisions Cluster A-E)
+- [[009-calibration-tiers]] §AMENDMENT 2026-05-05 birou after — Convergence Guard "T2 Unlock"
+- [[026-offline-coaching-decision-tree-exhaustive]] cross-ref engines specs cumulative (~90 decisions consumate)
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware definition (a)+(i) binary V1 + forward-compat v1.5 vector
+- [[ADR_COMPOSITE_SIGNAL_LAYER_v1]] §36.41 hard-disabled când Engine #4 active
+- [[013-ADR-aa-detection]] AA-driven deload mechanic Volume CUT obligatoriu cross-ref
+- [[ADR_RIR_MATRIX_ADAPTIVE_v1]] §36.16 absolute Floor 2 sets immutable cross-ref
+- [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.41 + §36.82.3 + §42.9 + §3.5.1 + §36.100 cross-cutting refs (engine specs reference acestea, materialele detaliat în CURRENT_STATE.md JUST_DECIDED summary; full spec inline va fi în next deep ingest §HANDOVER_PROTOCOL)
+- Backup tag: `pre-handover-2026-05-05-birou-after-engines3-4-5`
+
+**Next:** Daniel decide direction următor chat — (a) Engine #6 Tempo/Form Cues spec session (~30 decisions estimate dedicated); (b) Engine #7 Specialization spec session (~30 decisions estimate dedicated); (c) Phase 2 Auth Wiring P1 ABSOLUT URGENT trigger separate batch; (d) Branch enumeration cluster A; (e) ADR 026 compile draft full ~125 decisions; (f) Other pivot. 5/7 engines SPEC COMPLETE — Beta launch path mai aproape per §62.7 Quality > Speed default.
+
+---
+
 ## 2026-05-05 birou — T0 Mechanics 75 LOCKED V1 cumulative 4 batches + Auth-Required Pivot + Big 5 → Big 6 (cumulative ~438, +75 substantive net)
 
 **Status:** §CC.5 fast handover ingest 2026-05-05 birou Daniel + Claude chat strategic biroul Daniel (Codespaces). Pivot major auth strategy + spec complete T0 mechanics 75 decizii LOCKED V1 cumulative 4 batches + amendment Big 5 → Big 6 hard required. Cumulative LOCKED ~363 → **~438** (+75 substantive net post-overlap).
