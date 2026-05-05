@@ -14,10 +14,19 @@ describe('Settings page render — Auth Phase 2 Batch 2', () => {
     expect(root.querySelector('h1').textContent).toBe('Setări');
   });
 
-  it('renders 3 sections (email change + recovery + delete)', () => {
+  it('renders 4 sections (email change + recovery + delete + logout)', () => {
     renderSettingsPage({ root, doc: document });
     const sections = root.querySelectorAll('section');
-    expect(sections.length).toBe(3);
+    expect(sections.length).toBe(4);
+  });
+
+  it('logout section has button cu wording "Deconectare"', () => {
+    renderSettingsPage({ root, doc: document });
+    const section = root.querySelector('.andura-settings-logout');
+    expect(section).not.toBeNull();
+    const btn = section.querySelector('.andura-button-logout');
+    expect(btn).not.toBeNull();
+    expect(btn.textContent).toBe('Deconectare');
   });
 
   it('email change section has button', () => {

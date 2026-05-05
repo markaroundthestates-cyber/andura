@@ -261,6 +261,28 @@ export async function logMigrationEvent(event) {
 }
 
 /**
+ * Wipe entire user IndexedDB cu Dexie `delete()`. Per §56.12 LOCKED V1
+ * opt-in IndexedDB wipe toggle (Logout flow batch 3).
+ *
+ * @param {string} uid    Firebase Auth uid
+ * @returns {Promise<{ deleted: boolean, dbName: string }>}
+ */
+export async function wipeUserDB(uid) {
+  if (!uid || typeof uid !== 'string') {
+    return { deleted: false, dbName: '' };
+  }
+  const sanitizedUid = String(uid).replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') || uid;
+  const dbName = `${DB_NAME_PREFIX}_${sanitizedUid}`;
+  try {
+    await closeDb();
+    await Dexie.delete(dbName);
+    return { deleted: true, dbName };
+  } catch {
+    return { deleted: false, dbName };
+  }
+}
+
+/**
  * Telemetry snapshot — entry counts per store + estimated total size.
  *
  * NU include localStorage Tier 0 (caller pe lângă combine cu `localStorage`

@@ -15,3 +15,11 @@ test-results/
 
 # Vitest coverage reports (auto-generated, not source)
 coverage/
+
+# Firebase Admin SDK service account credentials — secret, NEVER commit (§56.14.A)
+firebase-service-account.json
+scripts/firebase-service-account.json
+
+# Stryker mutation testing reports (auto-generated, large HTML output)
+reports/mutation/.stryker-tmp/
+.stryker-tmp/

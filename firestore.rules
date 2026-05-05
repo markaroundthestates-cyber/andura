@@ -1,28 +1,44 @@
-// Firestore Security Rules — per-UID strict V1
+// Firestore Security Rules — per-UID strict V1 + Phase 2 batch 3 extensions
 //
-// Source: ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 §56.16 LOCKED V1.
-// Generated: 2026-05-05 overnight (CC TASK 2 batch overnight).
+// Source:
+//   - ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 §56.16 LOCKED V1
+//   - §56.5.2 soft delete subcollection /users/{uid}/_deleted
+//   - §56.7 anonymous merge archive /users/{uid}/_archived + /_archived/anonymous
+//   - §56.15 telemetry counters /_telemetry/global increment-only
+//
+// Generated: 2026-05-05 overnight (batch 1) + 2026-05-06 (batch 3 extend).
 //
 // CRITICAL: Daniel must publish manually via Firebase Console (Project Settings
 // → Firestore Database → Rules → paste content + Publish) per §56.16 +
-// §56.18 Daniel manual prep step (~1h Daniel-time post-CC code generation).
-// File în repo = SSOT spec; Console publish = production effect.
+// §56.18. File în repo = SSOT spec; Console publish = production effect.
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Per-user strict isolation: only the auth'd user can read/write their docs.
+    // ─── Per-user strict isolation ───
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
 
-      // Subcollections inherit per-UID strict (explicit nesting required).
+      // §56.5.2 — Soft delete sub-document owner-only
+      match /_deleted/{anyDeleted=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // §56.7 — Archive sub-collection owner-only (Anonymous→Auth Merge)
+      match /_archived/{archiveId}/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      // Other subcollections inherit per-UID strict (explicit nesting required).
       match /{document=**} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
     }
 
-    // Soft-delete path (§56.5 Account Lifecycle 2-step ȘTERGE 30 zile grace).
+    // ─── Top-level soft-delete index (admin-cleanup query target) ───
+    // Owner-only client access (Daniel admin SDK script bypasses rules via
+    // service account credential).
     match /_deleted/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
 
@@ -31,17 +47,32 @@ service cloud.firestore {
       }
     }
 
-    // Archive path (§56.7 Anonymous→Auth Merge Fork Decision archive 7 zile).
+    // ─── Anonymous archive root (server-only via admin SDK script) ───
+    match /_archived/anonymous/{timestamp}/{document=**} {
+      allow read, write: if false;  // server-only via firebase-admin
+    }
+
+    // ─── Per-UID archive top-level (legacy preserved batch 1) ───
     match /_archived/{uid}/{docId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
-    // Telemetry global aggregate counters (§56.15 FieldValue.increment Spark
-    // compatible). Increment-only writes by any authenticated user; reads
-    // forbidden client-side (Daniel queries via Firebase Console only).
+    // ─── §56.15 Telemetry global aggregate counters ───
+    // FieldValue.increment(1) only. Read forbidden client-side.
+    // Allowed keys validated server-side (rules limited Inspect FieldValue ops);
+    // Pre-Beta 50 testeri = trust auth + minimal abuse vector. Production v1.5
+    // recommend Cloud Function intermediary.
     match /_telemetry/global {
       allow read: if false;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null
+        && request.resource.data.keys().hasOnly([
+          'onboarding_started', 'onboarding_completed',
+          'auth_required_hit', 'auth_signin_success', 'auth_signin_fail',
+          'account_deleted', 'account_reactivated',
+          'merge_fork_telefon', 'merge_fork_cloud',
+          'email_change_initiated', 'email_change_completed',
+          'logout_no_wipe', 'logout_with_wipe'
+        ]);
     }
   }
 }

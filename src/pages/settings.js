@@ -8,7 +8,10 @@ import { openRecoveryEmailLostModal } from '../components/recoveryEmailLostModal
 import { openDeleteAccountModal, renderDeletePostSplash, DELETE_COPY } from '../components/deleteAccountModal.js';
 import { openEmailChangeForm, EMAIL_CHANGE_COPY } from '../components/emailChangeForm.js';
 import { openForkDecisionModal, detectMergeBranch, forkDecisionToastWording, FORK_DECISION_COPY } from '../components/forkDecisionModal.js';
-import { signOut, buildSoftDeleteFlag, USER_DISABLED_COPY } from '../auth.js';
+import { openLogoutStep1, openLogoutStep2, renderLogoutSplash, LOGOUT_COPY } from '../components/logoutModal.js';
+import { signOut, buildSoftDeleteFlag, getAuthState, USER_DISABLED_COPY } from '../auth.js';
+import { wipeUserDB } from '../storage/db.js';
+import { trackEvent, EVENTS } from '../util/telemetry.js';
 
 /**
  * Render the Settings page into the given root element.
@@ -96,6 +99,36 @@ export function renderSettingsPage({
   });
   sectionDelete.appendChild(btnDelete);
   root.appendChild(sectionDelete);
+
+  // §56.12 Logout section (batch 3)
+  const sectionLogout = doc.createElement('section');
+  sectionLogout.className = 'andura-settings-section andura-settings-logout';
+  const logoutHeader = doc.createElement('h2');
+  logoutHeader.textContent = 'Deconectare';
+  sectionLogout.appendChild(logoutHeader);
+  const btnLogout = doc.createElement('button');
+  btnLogout.textContent = 'Deconectare';
+  btnLogout.className = 'andura-button-logout';
+  btnLogout.addEventListener('click', async () => {
+    const step1 = await openLogoutStep1({ doc });
+    if (!step1.continue) return;
+    const step2 = await openLogoutStep2({ doc });
+    if (!step2.confirmed) return;
+    const auth = getAuthState();
+    const uid = auth?.uid;
+    try { signOut(); } catch {}
+    if (step1.wipeLocal && uid) {
+      try { await wipeUserDB(uid); } catch {}
+      try { await trackEvent(EVENTS.LOGOUT_WITH_WIPE); } catch {}
+    } else {
+      try { await trackEvent(EVENTS.LOGOUT_NO_WIPE); } catch {}
+    }
+    const splash = renderLogoutSplash({ doc });
+    root.innerHTML = '';
+    if (splash) root.appendChild(splash);
+  });
+  sectionLogout.appendChild(btnLogout);
+  root.appendChild(sectionLogout);
 }
 
 // Re-export public API for callers wiring routes.
@@ -103,9 +136,12 @@ export {
   openRecoveryEmailLostModal,
   openDeleteAccountModal,
   openForkDecisionModal,
+  openLogoutStep1,
+  openLogoutStep2,
   detectMergeBranch,
   forkDecisionToastWording,
   USER_DISABLED_COPY,
   DELETE_COPY,
   FORK_DECISION_COPY,
+  LOGOUT_COPY,
 };
