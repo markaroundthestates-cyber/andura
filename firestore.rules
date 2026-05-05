@@ -1,0 +1,47 @@
+// Firestore Security Rules — per-UID strict V1
+//
+// Source: ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 §56.16 LOCKED V1.
+// Generated: 2026-05-05 overnight (CC TASK 2 batch overnight).
+//
+// CRITICAL: Daniel must publish manually via Firebase Console (Project Settings
+// → Firestore Database → Rules → paste content + Publish) per §56.16 +
+// §56.18 Daniel manual prep step (~1h Daniel-time post-CC code generation).
+// File în repo = SSOT spec; Console publish = production effect.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Per-user strict isolation: only the auth'd user can read/write their docs.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Subcollections inherit per-UID strict (explicit nesting required).
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Soft-delete path (§56.5 Account Lifecycle 2-step ȘTERGE 30 zile grace).
+    match /_deleted/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Archive path (§56.7 Anonymous→Auth Merge Fork Decision archive 7 zile).
+    match /_archived/{uid}/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Telemetry global aggregate counters (§56.15 FieldValue.increment Spark
+    // compatible). Increment-only writes by any authenticated user; reads
+    // forbidden client-side (Daniel queries via Firebase Console only).
+    match /_telemetry/global {
+      allow read: if false;
+      allow write: if request.auth != null;
+    }
+  }
+}

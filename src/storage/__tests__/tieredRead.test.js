@@ -7,7 +7,7 @@ import Dexie from 'dexie';
 import { getTieredArrayAsync, getTier0Array } from '../tieredRead.js';
 import { _resetNamespaceCache, closeDb, STORES, tier1Bulk } from '../db.js';
 
-const DEFAULT_DB_NAME = 'salafull_users_daniel';
+const DEFAULT_DB_NAME = 'andura_users_daniel';
 
 beforeEach(async () => {
   await closeDb();

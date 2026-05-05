@@ -6,12 +6,25 @@
 //
 // ── Per-user namespacing ────────────────────────────────────────────────────
 //
-// Pre-Auth (current): namespace via `firebase.userPath` from `getUserConfig()`
-//   sanitized to URL-safe form. e.g., `users/daniel` → `salafull_users_daniel`.
+// Per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 §56.1.4 LOCKED V1:
+//   "IndexedDB namespace per UID `andura_${uid}` Dexie multi-DB"
 //
-// Post-Auth (future, ADR_MULTI_TENANT_AUTH_v1): replace with `auth.uid`.
-//   Migration on Auth signup: copy `salafull_anonymous_<uuid>` → `salafull_<uid>`,
-//   then delete anonymous DB. Out of scope for ADR 020 (cross-ref only).
+// Resolution order:
+//   1. Firebase Auth uid present (`getAuthState()?.uid`) → `andura_<uid>`
+//   2. Anonymous mode → `andura_anonymous_<deviceId>` (deviceId from
+//      localStorage 'device-id', generated lazy în firebase.js)
+//   3. Legacy fallback (test fixtures + Daniel pre-Beta migration) → derives
+//      from `getUserConfig()?.firebase?.userPath` sanitized.
+//
+// Migration on Auth signup (anonymous → auth):
+//   `andura_anonymous_<deviceId>` → `andura_<uid>` via
+//   `src/storage/migrateAnonymousToAuth.js` (atomic copy + verify + delete).
+//
+// Brand rename note (2026-05-05 overnight): DB_NAME_PREFIX flipped
+//   'salafull' → 'andura' per brand official + ADR_MULTI_TENANT_AUTH_v1
+//   §56.1.4 spec verbatim. Daniel pre-Beta personal IndexedDB
+//   `salafull_users_daniel` becomes orphan post-rename — harmless given
+//   data also exists în localStorage Tier 0 + Firebase RTDB.
 //
 // ── Schema (v1, initial) ────────────────────────────────────────────────────
 //
@@ -37,14 +50,15 @@
 
 import Dexie from 'dexie';
 import { getUserConfig } from '../config/user.js';
+import { getAuthState } from '../auth.js';
 
 // ── Constants ───────────────────────────────────────────────────────────────
 
 /** Schema version — bump on store/index changes, register `upgrade()` hook. */
 export const SCHEMA_VERSION = 1;
 
-/** DB name prefix — final form: `<PREFIX>_<namespace>` */
-const DB_NAME_PREFIX = 'salafull';
+/** DB name prefix — final form: `<PREFIX>_<namespace>` (per §56.1.4 LOCKED V1). */
+export const DB_NAME_PREFIX = 'andura';
 
 /** Stores defined în v1. Keys in this object map directly to Dexie store names. */
 export const STORES = Object.freeze({
@@ -76,15 +90,39 @@ function _sanitizeNamespace(raw) {
 }
 
 /**
- * Resolve current user namespace.
+ * Resolve current user namespace per §56.1.4 LOCKED V1.
  *
- * Pre-Auth (current): derived from `firebase.userPath` în user config.
- * Post-Auth (ADR_MULTI_TENANT_AUTH_v1): TODO replace cu auth.uid lookup.
+ * Resolution order:
+ *   1. Firebase Auth uid present → `<uid>` (sanitized)
+ *   2. Anonymous mode (deviceId în localStorage 'device-id') → `anonymous_<deviceId>`
+ *   3. Legacy fallback (`getUserConfig()?.firebase?.userPath`) → sanitized.
+ *
+ * Final DB name = `${DB_NAME_PREFIX}_${getNamespace()}` = `andura_<uid>` post-Auth
+ * sau `andura_anonymous_<deviceId>` pre-Auth.
  *
  * @returns {string}
  */
 export function getNamespace() {
   if (_namespace !== null) return _namespace;
+  // 1. Firebase Auth uid present
+  try {
+    const auth = getAuthState();
+    if (auth?.uid) {
+      _namespace = _sanitizeNamespace(auth.uid);
+      return _namespace;
+    }
+  } catch { /* fall through */ }
+  // 2. Anonymous mode — deviceId from localStorage
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const deviceId = localStorage.getItem('device-id');
+      if (deviceId) {
+        _namespace = _sanitizeNamespace(`anonymous_${deviceId}`);
+        return _namespace;
+      }
+    }
+  } catch { /* fall through */ }
+  // 3. Legacy fallback (test fixtures + Daniel pre-Beta migration source)
   let raw;
   try {
     raw = getUserConfig()?.firebase?.userPath ?? 'anonymous';

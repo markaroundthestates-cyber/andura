@@ -21,7 +21,7 @@ import {
   getStorageStats,
 } from '../db.js';
 
-const DEFAULT_DB_NAME = 'salafull_users_daniel';
+const DEFAULT_DB_NAME = 'andura_users_daniel';
 
 // Reset Dexie state between tests so each starts clean.
 // Strategy: close singleton, then delete the IndexedDB database explicitly.
