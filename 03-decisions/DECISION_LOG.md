@@ -1,5 +1,65 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 birou — T0 Mechanics 75 LOCKED V1 cumulative 4 batches + Auth-Required Pivot + Big 5 → Big 6 (cumulative ~438, +75 substantive net)
+
+**Status:** §CC.5 fast handover ingest 2026-05-05 birou Daniel + Claude chat strategic biroul Daniel (Codespaces). Pivot major auth strategy + spec complete T0 mechanics 75 decizii LOCKED V1 cumulative 4 batches + amendment Big 5 → Big 6 hard required. Cumulative LOCKED ~363 → **~438** (+75 substantive net post-overlap).
+
+**Authority:** Chat strategic 2026-05-05 birou Daniel + Claude. Workflow 3-instance Bugatti-grade RECOGNIZED (Gemini logic first pass → Claude Bugatti tone + edge cases challenge → Daniel reality lock infra/business). 75 decizii LOCKED V1 cumulative 4 batches × ~19 sub-decisions each + 1 amendment Big 5→6.
+
+**Sub-decisions LOCKED V1:**
+
+*Auth-Required Pivot LOCKED V1 (replaces auth-banner-soft §AMENDMENT 2026-05-04.1):*
+- **Auth-required post-T0 LOCKED V1:** Anonymous = DOAR T0 trial 3-5 min demonstrare valoare, DUPĂ T0 auth obligatoriu (Google primary 1-tap + Magic Link Firebase native fallback). Banner-soft REJECTED, hard wall accepted. Argumentul critic Daniel: fără auth ZERO Firestore writes, ZERO cohort ML, engine învață în vid → contradictoriu Bugatti improvement loop Beta+post-Beta
+- **Sunset clause §AMENDMENT 2026-05-04.9 MOOT** (Anonymous = doar T0 trial, NU mai e fallback indefinit cu sunset post-Beta v1.5)
+- **Future Compatibility Note site web v1.5+:** auth flow trebuie să suporte deep link entry din landing site marketing v1.5+ (funnel SaaS clasic Notion/Figma/Linear: site → "Încearcă" → app deep link → T0 → auth → install PWA). NU degradează T0 trial UX. Domain architecture (subdomain split vs path split) defer la momentul site lansare. Phase 2 implementation guidance: NU hardcodează `window.location.origin` în redirect URLs, config-driven via env
+
+*T0 Mechanics 75 decizii LOCKED V1 cumulative 4 batches:*
+- **Batch 1 (19) Hook + Întrebări + Demo + Skip + Auth Wall + Edge + Post-Auth/Telemetry:** Hook action-first "Care e obiectivul tău?" (NU anthropomorphic "Salut Andura" Replika REJECTED) + 5 preset obiectiv text clean (NU emoji 🔥 TikTok influencer REJECTED, NU free text "Altceva" REJECTED — Daniel "câmp de free text în T0 este o invitație la zgomot") + Big 5 LOCKED Obiectiv + Frecvență + Sex + Vârstă + Greutate (extended Big 6 batch 2 Q7) + Single preview Q4-5 personalizare verbatim Bugatti SUFLET L3 (NU animații per-întrebare REJECTED cognitive overload) + Skip vizibil DOAR pe optionale + Auth Wall reframe pozitiv preview blurred teaser onest hard wall refuz (NU loss aversion negativ "ai investit 3 min" REJECTED) + Magic Link Firebase native 1h + retry button prominent (24h "fantasy" Daniel — presupune SMTP custom 1-2 săpt build pentru valoare marginală)
+- **Batch 2 (19) Wording exact + Validation + Profile Type + Engine Seed + Anonymous Lifecycle + Error Flows + Day 25:** Big 6 amendment înălțime hard required + Engine seed mid-T0 silent backend + Profile Type post-3-sesiuni soft notify Bugatti L5 + Anonymous→Auth merge auto-write + summary 3 sec + Day 25 reminder 3 trigger context-aware + dynamic preview embedded
+- **Batch 3 (19) Privacy/GDPR + Onboarding telemetry + First Session + Settings Big 6 + T0 Retake:** Privacy hibrid (footer permanent + checkbox auth explicit) + Privacy wording Bugatti polish "Nu vindem datele terțelor părți" (NU "nu vindem nimic" absolut REJECTED) + 3 milestones telemetry separate (T0_questions / T0_preview / T0_auth done) + KPI primar T0→Auth conversion (auth wall = chokepoint principal) + First Session tier-aware adjustment (Beginner -20%, Intermediate -10%, Advanced 0%) + RPE/RIR education A + inline tooltips ("RPE 1 ușor, 10 max effort", first-time confused = garbage data) + Settings Big 6 lifecycle Imutabile (Sex/Vârstă auto-increment/Înălțime) + Editabile (Greutate/Obiectiv cu modal Goal Shift Event Handler §36.35/Frecvență) + T0 retake hibrid (free 7 zile calibration era apoi support-only)
+- **Batch 4 (18) PWA Install + Push Notif + Email Transactional + Tutorial + Beta Launch:** PWA install post-first-session (value demonstrated) + Push notif two-step modal Bugatti + native, max 3/săpt cap + Welcome email + valoare + structure echo + Beta cohort invite-only first 50-100 (Bugatti control quality) + Beta success criteria multi-metric dashboard 45/35/30 hibrid per §66 + Beta rollback hibrid (in-place minor / hard rollback major >30% miss criteria) + T0 abandon recovery email = imposibil mecanic (NO email collected pre-auth, Gemini brilliant catch — invalidează abandon recovery email options) + Abandon recovery threshold <3 zile silent / >3 zile prompt soft
+
+*Big 5 → Big 6 Amendment CRITICAL:*
+- **Big 6 LOCKED V1 hard required T0:** extends batch 1 Q10 Big 5 + ÎNĂLȚIME (Obiectiv + Frecvență + Sex + Vârstă + Greutate + Înălțime). Daniel decisive: *"Extindem oficial Big 5 → Big 6. Înălțimea devine Hard Required în T0. Pentru a onora promisiunea de Cognitive AI, nu putem lucra cu aproximări masive. Formula Mifflin-St Jeor (pentru BMR/TDEE) necesită înălțimea pentru a genera un plan nutrițional valid"*
+- **Skip vizibil DOAR pe întrebări optionale T0** (toate Big 6 hard required NU skip)
+
+*Workflow 3-instance Bugatti-grade RECOGNIZED:*
+- **Pattern:** Gemini logic first pass → Claude Bugatti tone + edge cases challenge → Daniel reality lock infra/business
+- **Bandwidth optimization:** Daniel folosit Gemini pre-filter pentru batch volume → manual review DOAR delta-uri unde AI consensus diverge → ADHD-friendly pattern elegant
+- **Push-back-uri productive selection:** Claude pe Gemini Q1/Q7/Q17/Q11/Q1B2/Q13B3/Q14B3/Q17B3 + Daniel pe consensus AI Q18 (Magic Link 24h fantasy → 1h native) + Q2 (free text → 5 preset) + Gemini brilliant catch B4 Q10 (auth post-T0 → NO email pre-auth → invalidează abandon recovery email mecanic)
+
+**Implicații downstream:**
+- **Phase 2 Auth Flow upgrade prioritate** de la "deferred ~16-22h Daniel decide trigger" → **P1 ABSOLUT URGENT** (auth-required LOCKED blocks Beta launch fără UI complet, Anonymous-permanent dispare)
+- **§56.9.1 Sunset Anonymous mode revisit:** Anonymous = doar T0 trial, sunset clause moot
+- **2 abilități noi v1.5+:** site web landing + SMTP custom backend (Magic Link expiration + email template RO custom combined fix path)
+
+**Files modified §CC.5 fast handover ingest (this commit):**
+- UPDATED: `00-index/CURRENT_STATE.md` (header timestamp + cumulative count + NOW move-then-replace + JUST_DECIDED top entry append + NEXT P1 ABSOLUT update Phase 2 priority + ACTIVE_FLAGS P1-FLAG-AUTH-PHASE2 🔴 NEW + RECENT precedent §CC.5 ingest 2026-05-04 night thread compressed)
+- UPDATED: `03-decisions/ADR_MULTI_TENANT_AUTH_v1.md` (§AMENDMENT 2026-05-05 append .1-.7 sub-amendments — Auth-Required Post-T0 LOCKED V1 + Future Compat site web v1.5+ + Sunset clause moot + Magic Link 1h override + Phase 2 P1 ABSOLUT + T0 Mechanics 75 cross-ref + Big 5→6)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry top descending cronologic)
+- UPDATED: `DIFF_FLAGS.md` (P1-FLAG-AUTH-PHASE2 NEW 🔴 P1 ABSOLUT URGENT)
+- ARCHIVED: `📥_inbox/HANDOVER_2026-05-05_BIROU_T0_MECHANICS.md` → `📤_outbox/_archive/2026-05/147_HANDOVER_2026-05-05_BIROU_T0_MECHANICS_CONSUMED.md`
+
+**NU touch (out-of-scope §CC.5 fast handover):**
+- HANDOVER_GLOBAL deep merge sections (rar, weekly/major milestone — fast handover NU touch). NO "Big 5" inline references found în HANDOVER_GLOBAL search → no inline edit needed
+- ALIGNMENT_QUESTIONS §47 (deep-only)
+- 9 files sync sweep (deep-only)
+- Privacy Policy / ToS V1 Beta files (NO direct relevant change)
+
+**Cross-refs:**
+- [[CURRENT_STATE]] §JUST_DECIDED 2026-05-05 birou (full spec T0 Mechanics 75 verbatim narrativ)
+- [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-05 .1-.7 sub-amendments
+- [[DIFF_FLAGS]] P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT
+- [[HANDOVER_GLOBAL_2026-04-30_evening]] §56-§63 (Auth Flow + onboarding sections — context preserved)
+- §AMENDMENT 2026-05-04.1 (auth-banner-soft) **SUPERSEDED** preserved historical
+- §AMENDMENT 2026-05-04.9 (Sunset Anonymous post-Beta v1.5) **MOOT** preserved historical
+- §AMENDMENT 2026-05-04 BATCH 1-6 .1 (Magic Link 24h) **OVERRIDDEN** → 1h native + retry preserved historical
+- Backup tag: `pre-handover-2026-05-05-birou`
+
+**Next:** Chat NEW dedicat Auth UI Phase 2 acceleration P1 ABSOLUT URGENT (cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules). Fără Phase 2 wiring complet → Beta launch IMPOSIBIL când Anonymous-permanent dispare conceptual.
+
+---
+
 ## 2026-05-04 night — Privacy/ToS V2 review Gemini cross-review META validated + Phase 1 Auth Wiring LANDED commit `0880641` + AUTH-DEFER consolidation + Firebase prereps verification (cumulative ~363, +~5-7 substantive net)
 
 **Status:** §CC.5 fast handover ingest 2026-05-04 night Daniel + Claude post-CC Faza 2 Phase 1 Auth Wiring + cleanup paralel. Privacy/ToS V2 review Gemini cross-review META workflow validated empirical (per §62.X). Cumulative LOCKED ~356 → **~363** (+~5-7 substantive net post-overlap).

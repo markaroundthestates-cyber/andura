@@ -522,3 +522,100 @@ Per HANDOVER §64.3. GDPR data portability Article 20 = **defer v1.5 manual cere
 - §AMENDMENT 2026-05-04 (predecessor) preserved unchanged
 - §62.3 phased implementation order LOCKED
 - §62.X META review division of labor (Claude + Gemini text-heavy review cross + Daniel final approve spot-check minim)
+
+---
+
+## §AMENDMENT 2026-05-05 — Auth-Required Post-T0 LOCKED V1 + Future Compatibility Note Site Web v1.5+
+
+**Status:** LOCKED V1 chat strategic 2026-05-05 birou Daniel + Claude. Pivot major auth strategy — replaces auth-banner-soft pattern §AMENDMENT 2026-05-04.1. Preserves Phase 1 LANDED commit `0880641` mecanic intact (BUG 2 fix `getUserPath()=null` Anonymous + retry 3x + wording LOCKED). Ridică Phase 2 Auth Flow upgrade prioritate de la "deferred ~16-22h Daniel decide" → **P1 ABSOLUT URGENT** (auth wall hard blocks Beta launch fără UI complet).
+
+**Authority:** §AMENDMENT 2026-05-05 supersedes §AMENDMENT 2026-05-04.1 auth-banner-soft pattern + supersedes §AMENDMENT 2026-05-04.9 Sunset Anonymous post-Beta v1.5 + 30 zile grace clause (moot — Anonymous = doar T0 trial 3-5 min, NU mai e fallback indefinit). Cumulative LOCKED ~363 → ~438 (+75 net post T0 Mechanics 4 batches + amendment Big 5→6).
+
+### §AMENDMENT 2026-05-05.1 Auth Pattern UX Pivot — Auth-Required Post-T0 LOCKED V1
+
+**Override §AMENDMENT 2026-05-04.1 auth-banner-soft + §AMENDMENT 2026-05-04.9 Sunset clause:**
+
+- **Anonymous mode = DOAR T0 trial 3-5 min** (demonstrare valoare hook + 5-7 întrebări cheie + single preview Q4-5 Bugatti SUFLET L3 personalizare verbatim)
+- **Auth obligatoriu post-T0** — Google primary (1-tap PWA cross-context preserved §AMENDMENT 2026-05-04.2) + Magic Link Firebase native fallback
+- **Auth wall hard accepted** — banner-soft REJECTED. Reframe pozitiv preview blurred teaser onest "programul tău e gata, salvează ca să-l ai pe toate device-urile" (NU loss aversion negativ)
+- **Skip auth wall NU permis** post-T0 (skip vizibil DOAR pe întrebări optionale T0)
+
+**Argument decisiv chat strategic Daniel:** *"in beta cat si dupa, noi ca sa imbunatatim tot, avem nevoie de datele alea nu?"* — fără auth ZERO Firestore writes, ZERO cohort ML, engine învață în vid. Pattern actual auth-banner-soft sacrifică tocmai feedback loop-ul Bugatti improvement Beta+post-Beta. Cognitive AI improvement loop hard-requires user identification.
+
+**Anonymous→Auth merge preserved §AMENDMENT 2026-05-04.7:** Fork Decision UI + archive 7 zile + export local JSON. Mecanic identical, doar momentul declanșării = post-T0 forced (NU optional).
+
+### §AMENDMENT 2026-05-05.2 Future Compatibility Note Site Web v1.5+
+
+**Constraint design Phase 2:** Auth flow trebuie să suporte deep link entry din landing site marketing v1.5+, NU degradează T0 trial UX.
+
+**Funnel SaaS clasic referință:** Notion / Figma / Linear pattern — site web → click "Încearcă" → app deep link → T0 trial → auth post-T0 → install PWA.
+
+**Decizii deferred la momentul lansare site:**
+- **Domain architecture** — subdomain split (`app.andura.app` vs `andura.app`) vs path split (`andura.app/app`) = decizie strategic separată, NU pre-Beta
+- **Marketing copy + branding cross-domain** — out of scope ADR
+- **Analytics cross-domain** — out of scope ADR
+
+**Phase 2 implementation guidance:** auth flow init NU asume entry point = direct app load. Suportă entry points multiple:
+1. Direct app load (current default)
+2. Deep link landing site (v1.5+) — `?utm_source=landing&utm_medium=cta-incearca` URL params preserve telemetry
+3. Magic Link redirect (current `auth-callback` route preserved)
+
+NU hardcodează `window.location.origin` în redirect URLs Phase 2 — config-driven via `andura.config.js` sau `import.meta.env`.
+
+### §AMENDMENT 2026-05-05.3 Sunset Clause Moot
+
+**§AMENDMENT 2026-05-04.9 Sunset Anonymous post-Beta v1.5 + 30 zile grace = MOOT** (Anonymous = doar T0 trial 3-5 min, NU mai e fallback indefinit cu sunset post-Beta v1.5). Anonymous lifecycle = scoped la T0 session, post-T0 forced auth → Anonymous→Auth merge auto-write + summary 3 sec.
+
+### §AMENDMENT 2026-05-05.4 Magic Link Expiration Override 1h Native (replaces §AMENDMENT 2026-05-04 BATCH 1-6 .1)
+
+**Override §AMENDMENT 2026-05-04 BATCH 1-6 .1 24h:** Magic Link expiration = **1h Firebase native** + retry button prominent UI. Daniel push-back chat strategic 2026-05-05 birou: 24h "fantasy" — Firebase native = 1h, 6h sau 24h presupun SMTP custom backend 1-2 săpt build pentru valoare marginală. Pattern corect: 1h native + retry button prominent. SMTP custom migration combined fix path defer v1.5 (consolidare cu §63.5/§AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5).
+
+### §AMENDMENT 2026-05-05.5 Phase 2 Priority Ridicare P1 ABSOLUT URGENT
+
+**Override §AMENDMENT 2026-05-04 Phase 2 deferred ~16-22h Daniel decide trigger:** Phase 2 Auth Flow upgrade = **P1 ABSOLUT URGENT NEXT chat dedicat**.
+
+**Rationale:** auth-required post-T0 LOCKED V1 + Future Compat site web v1.5+ → Phase 2 wiring complet = Beta launch prerequisite. Fără Settings UI account lifecycle (delete 2-step "ȘTERGE" + reactivation + email change) + Anonymous→Auth Merge Fork Decision UI + Logout double-confirm + IndexedDB per-UID Dexie multi-DB + Telemetry counters Firestore + Firestore Rules publish → Beta launch IMPOSIBIL când Anonymous-permanent dispare conceptual.
+
+**Cluster ~16-22h over 3-4 batches preserved §AMENDMENT 2026-05-04 §56.1.4-§56.16 verbatim** — DIFF_FLAGS P1-FLAG-AUTH-PHASE2 status update 🔴 P1 ABSOLUT URGENT.
+
+### §AMENDMENT 2026-05-05.6 T0 Mechanics 75 Decizii LOCKED V1 Cumulative 4 Batches (cross-ref summary, full spec viitor HANDOVER deep)
+
+**T0 Mechanics 75 sub-decizii LOCKED V1** chat strategic 2026-05-05 birou (workflow 3-instance Bugatti-grade Gemini + Claude + Daniel). Cumulative ~363 → ~438 (+75 net). Spec verbatim full în [[CURRENT_STATE]] §JUST_DECIDED 2026-05-05 birou (până la HANDOVER_GLOBAL deep merge weekly/major milestone).
+
+**Categorii cumulative high-impact relevant ADR Auth:**
+- Hook action-first NU anthropomorphic Replika
+- 5 preset obiectiv text clean (NU emoji, NU free text V1)
+- Single preview Q4-5 personalizare verbatim Bugatti SUFLET L3
+- Reframe pozitiv auth wording, preview blurred teaser onest, hard wall refuz
+- Magic Link 1h native + retry button prominent
+- Engine seed mid-T0 silent backend, Profile Type post-3-sesiuni soft notify Bugatti L5
+- Anonymous→Auth merge auto-write + summary 3 sec (preserve §AMENDMENT 2026-05-04.7)
+- T0 abandon recovery email = imposibil mecanic (NO email collected pre-auth)
+- Privacy hibrid (footer permanent + checkbox auth explicit)
+- 3 milestones telemetry separate (T0_questions / T0_preview / T0_auth done)
+- KPI primar T0→Auth conversion (auth wall = chokepoint principal)
+- Settings Big 6 lifecycle (Imutabile Sex/Vârstă/Înălțime + Editabile Greutate/Obiectiv cu modal/Frecvență)
+
+### §AMENDMENT 2026-05-05.7 Big 5 → Big 6 Amendment (extends batch 1 Q10)
+
+**Big 5 LOCKED batch 1 Q10** (Obiectiv + Frecvență + Sex + Vârstă + Greutate) → **Big 6 LOCKED batch 2 Q7** (+ ÎNĂLȚIME hard required T0).
+
+**Rationale:** Mifflin-St Jeor BMR/TDEE necesită înălțime pentru plan nutrițional valid. Cognitive AI promisiune NU permite aproximări masive. Daniel decisive: *"Extindem oficial Big 5 → Big 6. Înălțimea devine Hard Required în T0"*.
+
+**Settings Big 6 lifecycle:** Imutabile post-onboarding (Sex / Vârstă auto-increment / **Înălțime**) | Editabile (Greutate / Obiectiv cu modal Goal Shift Event Handler §36.35 / Frecvență).
+
+**Skip vizibil:** DOAR pe întrebări optionale T0 (NU pe Big 6 hard required).
+
+### §AMENDMENT 2026-05-05 Cross-refs
+
+- [[CURRENT_STATE]] §JUST_DECIDED 2026-05-05 birou (full spec T0 Mechanics 75 verbatim)
+- [[DECISION_LOG]] 2026-05-05 birou entry condensed
+- [[DIFF_FLAGS]] P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT
+- §AMENDMENT 2026-05-04.1 (auth-banner-soft) **SUPERSEDED** preserved historical
+- §AMENDMENT 2026-05-04.7 (Anonymous→Auth merge Fork Decision) preserved unchanged
+- §AMENDMENT 2026-05-04.9 (Sunset Anonymous post-Beta v1.5) **MOOT** preserved historical
+- §AMENDMENT 2026-05-04 BATCH 1-6 .1 (Magic Link 24h) **OVERRIDDEN** → 1h native + retry preserved historical
+- §AMENDMENT 2026-05-04 BATCH 1-6 .9 (Account deletion 2-step "ȘTERGE") preserved Phase 2 spec
+- §63.5 / §AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5 (combined SMTP custom migration path)
+- ADR 025 Graceful Degradation Universal foundation principle preserved (`getUserPath()=null` Anonymous mode mecanic intact §AMENDMENT 2026-05-04.1.3)
+- Future Compat Note: NU ADR separate v1.5+ pre-emptive — defer site lansare moment

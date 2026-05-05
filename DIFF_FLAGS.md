@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-04 evening late (post handover ingest §62-§73 Auth Flow Batch 1-6 + Closure 63 sub-decisions LOCKED V1 — HANDOVER_GLOBAL split FLAG **TRIGGERED preserved** post-merge: **7664 LOC > 7000 LOC §VAULT_HYGIENE_PASS STEP 13 threshold** (NU mandatory ESCALATE care e >10000 LOC). Plan thematic split per §62.2 LOCKED chat strategic NEW dedicat post-CC. NEW PRE-BETA BLOCKER: §69 Scenarios Coverage 1500-2000 decisions ~5-15 chat-uri Priority 2 NEW (acoperire actuală ~15-25%). NEW iOS REJECTED LOCKED PERMANENT (§67.10). NEW Beta launch decalare oficial Quality > Speed default (§62.7). NEW Review Division of Labor META Claude+Gemini text-heavy/legal review cross + Daniel final spot-check minim (§62.X))
+**Updated:** 2026-05-05 birou (post handover ingest T0 Mechanics 75 LOCKED V1 cumulative 4 batches + Auth-Required Pivot LOCKED V1 + Big 5 → Big 6 amendment — NEW P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT raised post Auth-Required Pivot replaces auth-banner-soft pattern → Phase 2 Auth Flow upgrade era "deferred ~16-22h Daniel decide trigger" ridicat la P1 ABSOLUT URGENT NEXT chat dedicat. Cumulative LOCKED ~363 → ~438 (+75 substantive net))
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -145,6 +145,40 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
+### P1-FLAG-AUTH-PHASE2 — Phase 2 Auth Flow upgrade P1 ABSOLUT URGENT (NEW per Auth-Required Pivot 2026-05-05 birou)
+
+**Status:** 🔴 **P1 ABSOLUT URGENT 2026-05-05 birou** (era "deferred ~16-22h Daniel decide trigger când e timpul" — ridicat post Auth-Required Pivot LOCKED V1 supersedes auth-banner-soft §AMENDMENT 2026-05-04.1)
+**Severity:** P1 ABSOLUT URGENT (auth-required LOCKED V1 blocks Beta launch fără UI complet — Anonymous-permanent dispare conceptual, fallback indefinit moot)
+
+**Issue:** Auth-Required Pivot LOCKED V1 chat strategic 2026-05-05 birou (§AMENDMENT 2026-05-05 .1 ADR_MULTI_TENANT_AUTH_v1) face Phase 2 Auth Flow upgrade prerequisite Beta launch. Pattern Anonymous = doar T0 trial 3-5 min DUPĂ care auth obligatoriu hard wall — Anonymous-permanent dispare conceptual. Fără Phase 2 wiring complet (Settings UI account lifecycle + Anonymous→Auth Merge Fork Decision UI + Logout double-confirm + IndexedDB per-UID Dexie multi-DB + Telemetry counters Firestore + Firestore Rules publish) Beta launch IMPOSIBIL.
+
+**Argumentul critic (chat strategic Daniel):** *"in beta cat si dupa, noi ca sa imbunatatim tot, avem nevoie de datele alea nu?"* — fără auth ZERO Firestore writes, ZERO cohort ML, engine învață în vid → contradictoriu Bugatti improvement loop Beta+post-Beta.
+
+**Cluster ~16-22h over 3-4 batches preserved §AMENDMENT 2026-05-04 §56.1.4-§56.16 verbatim:**
+1. §56.1.4 IndexedDB namespace per UID (Dexie multi-DB) — DB layer arch change ~3-5h
+2. §56.5 Settings UI account lifecycle (delete 2-step "ȘTERGE" + reactivation + email change) ~4-6h
+3. §56.7 Anonymous→Auth Merge Fork Decision UI + archive 7 zile flow ~3-4h
+4. §56.12 Logout Settings double-confirm + opt-in IndexedDB wipe toggle ~2h
+5. §56.14.A admin-cleanup.js Daniel weekly script ~1h
+6. §56.15 Telemetry counters FieldValue.increment Firestore ~2-3h
+7. §56.16 Firestore Security Rules publish ~1h Daniel manual
+
+**Action Daniel (NEXT chat dedicat post-this-handover):**
+1. Open chat strategic NEW dedicat Phase 2 Auth Flow acceleration
+2. Trigger CC Opus implementation cluster ~16-22h over 3-4 batches
+3. Daniel manual: §56.16 Firestore Security Rules publish post-CC code generation
+
+**Cross-refs:**
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-05 .5 (Phase 2 Priority Ridicare P1 ABSOLUT URGENT)
+- §AMENDMENT 2026-05-04 §56.1-§56.19 spec preserved (Phase 2 spec body)
+- §AMENDMENT 2026-05-04.1 (auth-banner-soft) **SUPERSEDED** by §AMENDMENT 2026-05-05.1
+- §AMENDMENT 2026-05-04.9 (Sunset Anonymous post-Beta v1.5) **MOOT** by §AMENDMENT 2026-05-05.3
+- CURRENT_STATE §NEXT P1 ABSOLUT URGENT Auth Flow Phase 2
+- DECISION_LOG 2026-05-05 birou entry (Implicații downstream)
+- Phase 1 LANDED commit `0880641` preserved (BUG 2 fix + retry + wording + authShell)
+
+---
+
 ### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split FLAG TRIGGERED (7664 LOC > 7000 threshold, post §62-§73 update)
 
 **Status:** 🟡 OPEN 2026-05-04 evening late (FLAG candidate triggered preserved, NU mandatory ESCALATE care e >10000 LOC). **Strategy LOCKED V1 per §62.2: thematic split.**
@@ -242,4 +276,4 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift (pre-existing infra). P2-FLAG-1 D1-D6 superseded. HANDOVER_GLOBAL split FLAG **TRIGGERED preserved post §62-§73 ingest 7664 LOC > 7000 threshold** — strategy LOCKED V1 thematic split per §62.2 chat strategic NEW dedicat post-CC Auth Flow. §36.80 BUG 2 RESOLVED chat strategic — Priority 1 ABSOLUT CC implementation pending (P1-FLAG-AUTH-DANIEL-PREP prerequisite + Magic Link 24h custom config + Forward Daniel Gmail). **NEW P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER ~1200-1700 decisions remaining ~5-15 chat-uri Priority 2 strategice dedicate.** **NEW P1-FLAG-IOS-PERMANENT LOCKED V1 (PWA + TWA Android only).** Cumulative 306 LOCKED V1 post §62-§73 (+63 net Batch 1-6 + Closure). ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 + ONBOARDING §1/§8 amendments inline. Beta launch decalare oficial Quality > Speed default (Override §56.9.2 1 ian 2027). Review Division of Labor LOCKED V1 (Claude+Gemini text-heavy/legal review cross + Daniel final spot-check minim).**
+🦫 **DIFF_FLAGS.md created 2026-05-03. P1-FLAG-1 ADDENDUM source upload pending. P1-FLAG-NEW Codespace `npm install` drift (pre-existing infra). P2-FLAG-1 D1-D6 superseded. HANDOVER_GLOBAL split FLAG **TRIGGERED preserved post §62-§73 ingest 7664 LOC > 7000 threshold** — strategy LOCKED V1 thematic split per §62.2 chat strategic NEW dedicat post-Auth Phase 2. §36.80 BUG 2 RESOLVED chat strategic — Phase 1 LANDED commit `0880641`. P1-FLAG-AUTH-DANIEL-PREP 🟢 RESOLVED 2026-05-04 night. **NEW P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT 2026-05-05 birou** — Phase 2 Auth Flow upgrade ridicat post Auth-Required Pivot LOCKED V1 supersedes auth-banner-soft §AMENDMENT 2026-05-04.1. Cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules. **NEW P1-FLAG-SCENARIOS-COVERAGE PRE-BETA BLOCKER ~1200-1700 decisions remaining ~5-15 chat-uri Priority 2 strategice dedicate.** **NEW P1-FLAG-IOS-PERMANENT LOCKED V1 (PWA + TWA Android only).** Cumulative ~438 LOCKED V1 post 2026-05-05 birou T0 Mechanics 75 + Auth-Required Pivot + Big 6 (+75 net). ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-05 .1-.7 (Auth-Required Post-T0 + Future Compat site web v1.5+ + Sunset moot + Magic Link 1h override + Phase 2 P1 ABSOLUT + T0 Mechanics 75 + Big 5→6) + §AMENDMENT 2026-05-04 evening BATCH 1-6 .1-.10 (BATCH 1-6 .1 Magic Link 24h **OVERRIDDEN** by 2026-05-05.4 → 1h native + retry) + PRODUCT_STRATEGY §5.4/§5.5/§5.8/§6.1/§6.5 + ONBOARDING §1/§8 amendments inline. Beta launch decalare oficial Quality > Speed default (Override §56.9.2 1 ian 2027). Review Division of Labor LOCKED V1 (Claude+Gemini text-heavy/legal review cross + Daniel final spot-check minim). Workflow 3-instance Bugatti-grade RECOGNIZED 2026-05-05 birou (Gemini logic + Claude Bugatti challenge + Daniel reality lock).**
