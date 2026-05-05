@@ -1,6 +1,33 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 overnight — HANDOVER_GLOBAL Thematic Split Execution (§62.2 LOCKED V1)
+
+**Status:** Split executed atomic per §62.2 thematic split strategy LOCKED V1. Original `HANDOVER_GLOBAL_2026-04-30_evening.md` (~7673 LOC) → 7 theme files + master converted to INDEX. ZERO data loss (verbatim section preservation via awk extracts). Sum split LOC 7729 (delta +0.7% header overhead, within ±10% tolerance).
+
+**Theme files created (7):**
+- `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` (715 LOC) — §56-§64 + §66-§68 Auth Flow + Privacy/ToS + BATCH 1-3 + 5-6 + Closure
+- `06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` (426 LOC) — §36.99 + §36.100 + §36.105 + §42-§46 + §65 Engines #1-#8 + ADR 026 spec sessions
+- `06-sessions-log/HANDOVER_ONBOARDING_T0_2026-04-30_evening.md` (72 LOC) — §36.101 5 voices + §36.102 Goal Lifecycle clarifications
+- `06-sessions-log/HANDOVER_DECISION_CLUSTER_D1_D4_2026-04-30_evening.md` (527 LOC) — §36.106 + §36.107 + §50-§55 D-cluster
+- `06-sessions-log/HANDOVER_VAULT_HYGIENE_2026-04-30_evening.md` (127 LOC) — §41 + §47-§49 Vault Hygiene + Alignment Rule
+- `06-sessions-log/HANDOVER_SCENARIOS_COVERAGE_2026-04-30_evening.md` (146 LOC) — §69-§73 PRE-BETA BLOCKER + cumulative
+- `06-sessions-log/HANDOVER_MISC_2026-04-30_evening.md` (5716 LOC) — §1-§35 historical + §36.1-§36.98 majority + §36.103-§36.104 + §37-§40
+
+**Master file:** `HANDOVER_GLOBAL_2026-04-30_evening.md` content replaced cu INDEX (~115 LOC) + section→file mapping table full + theme file links + wikilinks strategy explained.
+
+**Wikilinks rewire:** ZERO rewire executed across vault. Existing `[[HANDOVER_GLOBAL_2026-04-30_evening|...]]` references resolve to master (now INDEX), drill-down via 1-hop indirection per § Section→File Mapping table. Trade-off chosen vs ~30+ active vault file rewires per `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md` §3 risks (atomicity + form variability + performance). Documented explicit în INDEX file Wikilinks Strategy section.
+
+**Backup tag:** `pre-handover-split-2026-05-05-overnight` (rollback safety, push pre-split — preserved untouched post-execution).
+
+**Cross-refs:** [[VAULT_RULES]] §VAULT_HYGIENE_PASS STEP 13 + §62.2 thematic split strategy LOCKED V1 + DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT (status flip 🟡 OPEN → 🟢 RESOLVED).
+
+**Files modified:** 7 theme files CREATED + master HANDOVER_GLOBAL_2026-04-30_evening.md content REPLACED (INDEX) + INDEX_MASTER.md navigation refresh + DECISION_LOG entry top + DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT status flip.
+
+---
+
 ## 2026-05-05 overnight — HANDOVER_GLOBAL Thematic Split Plan READY (execution DEFERRED, Status=Partial per master prompt §STEP 5)
+
+**Note:** This entry preserved as audit trail for split plan READY pre-execution. Plan executed 2026-05-05 overnight per entry above ("HANDOVER_GLOBAL Thematic Split Execution (§62.2 LOCKED V1)"). Plan deliverable `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md` preserved as historical artefact (8-step checklist + risks documented).
 
 **Status:** Split plan ready as `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md`. Atomic execution DEFERRED dedicated chat strategic NEW. Source `HANDOVER_GLOBAL_2026-04-30_evening.md` (~7673 LOC) preserved untouched. Wikilinks across ~30+ active vault files preserved untouched. ZERO data loss.
 

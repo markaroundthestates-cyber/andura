@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-05 evening late (post handover ingest Validation Framework LOCK V1 — `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` status SPEC DRAFT V1 → LOCKED V1: §1 north star ≥95% strict + §5 weights Safety 0.35 universal + §7 Gate 1 95% + Gate 2 DROPPED + Gate 3 selective + §2 corpus 500 + §9 framing reformulat. Cumulative LOCKED ~649 → ~653 (+4 net product/architecture substantive). Batch overnight plan PENDING chat NEW artefacte 1-button copy: master prompt 5 task-uri sequential CC autonomous + CC #6 Consolidator. P1-FLAG-SCENARIOS-COVERAGE path concrete LOCKED V1.)
+**Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -179,32 +179,31 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split FLAG TRIGGERED (7664 LOC > 7000 threshold, post §62-§73 update)
+### P1-FLAG-HANDOVER-SPLIT — HANDOVER_GLOBAL split EXECUTED ✅ RESOLVED 2026-05-05 overnight
 
-**Status:** 🟡 OPEN 2026-05-04 evening late (FLAG candidate triggered preserved, NU mandatory ESCALATE care e >10000 LOC). **Strategy LOCKED V1 per §62.2: thematic split.**
-**Severity:** P1 (vault hygiene, strict monitoring required)
+**Status:** 🟢 **RESOLVED 2026-05-05 overnight** (split executed atomic per §62.2 thematic strategy LOCKED V1, CC TASK 5 finalize prompt). Original 7673 LOC split into 7 theme files + master converted to INDEX. ZERO data loss.
+**Severity:** N/A (resolved)
 
-**Issue:** HANDOVER_GLOBAL_2026-04-30_evening.md post-merge §62-§73 ingest = **7664 LOC > 7000 LOC threshold** §VAULT_HYGIENE_PASS STEP 13. FLAG candidate triggered preserved. Cumulative growth pe pace ~250-450 LOC/ingest = ~5-9 ingest-uri future before second threshold (>10000 ESCALATE BLOCKER mandatory).
+**Resolution:** Source `HANDOVER_GLOBAL_2026-04-30_evening.md` (~7673 LOC) split via awk extracts into 7 theme files preserving verbatim section content. Sum split LOC 7729 (delta +0.7% header overhead, within ±10% tolerance). Master file content replaced cu INDEX (~115 LOC) + section→file mapping table.
 
-**Strategy LOCKED V1 (per HANDOVER §62.2 chat strategic 2026-05-04 evening):**
-- **B) Thematic split** — auth/engine/onboarding fișiere separate
-- NU chronological cut, NU `__resolved__` folder dedicated
-- ~50+ wikilinks reference HANDOVER_GLOBAL §X — sweep + rewire required
-- Backup tag pre-split mandatory: `git tag pre-handover-split-2026-05-04-evening`
-- Execution chat strategic NEW dedicat post-CC Auth Flow §36.80 implementation complete (Priority 5 §71)
+**Theme files created:**
+- HANDOVER_AUTH_FLOW_2026-04-30_evening.md (715 LOC)
+- HANDOVER_ENGINES_SPEC_2026-04-30_evening.md (426 LOC)
+- HANDOVER_ONBOARDING_T0_2026-04-30_evening.md (72 LOC)
+- HANDOVER_DECISION_CLUSTER_D1_D4_2026-04-30_evening.md (527 LOC)
+- HANDOVER_VAULT_HYGIENE_2026-04-30_evening.md (127 LOC)
+- HANDOVER_SCENARIOS_COVERAGE_2026-04-30_evening.md (146 LOC)
+- HANDOVER_MISC_2026-04-30_evening.md (5716 LOC)
 
-**Action Daniel (chat strategic NEW dedicat post-CC):**
-1. Backup tag git pre-execution
-2. Identify thematic clusters (auth flow / engine #8 + periodization / onboarding / decision-cluster D1-D4 / etc)
-3. Split per cluster → separate files cu cross-refs preserved
-4. Sweep wikilinks across vault → rewire toate references
-5. INDEX_MASTER navigation refresh + DECISION_LOG cross-refs update
+**Wikilinks strategy:** Master file preserved as INDEX navigation hub. Existing `[[HANDOVER_GLOBAL_2026-04-30_evening|...]]` references resolve to INDEX, drill-down via 1-hop indirection per § Section→File Mapping. ZERO active vault wikilinks rewired (trade-off chosen vs ~30+ active file rewires per split plan §3 risks atomicity + form variability).
+
+**Backup tag:** `pre-handover-split-2026-05-05-overnight` (rollback safety, push pre-split, preserved untouched post-execution).
 
 **Cross-refs:**
 - VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13
-- HANDOVER_GLOBAL §59 + §62.2 (strategy LOCKED) + §72 DIFF_FLAGS Update
-- §53 prior approaching warning + §59 7214 LOC + §72 7664 LOC current
-- §71 Priority 5 HANDOVER_GLOBAL split execution post-CC Auth Flow
+- 06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md (split plan source — historical artefact)
+- 06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md (now INDEX post-split)
+- DECISION_LOG.md entry top "2026-05-05 overnight — HANDOVER_GLOBAL Thematic Split Execution (§62.2 LOCKED V1)"
 
 ---
 

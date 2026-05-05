@@ -18,7 +18,7 @@ andura/
 ├── 03-decisions/    26 ADR-uri active (001-021 + 022/024/025/026 stubs + 023 + ADR_MULTI_TENANT_AUTH + 8 named) + DECISION_LOG (28 files)
 ├── 04-architecture/ Cognitive + Multi-tenant + Tombstone + Data registry specs (4 files)
 ├── 05-findings-tracker/  FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED (3 files)
-├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening SSOT activ (1 file, 6058 LOC — split candidate Faza 5 dacă > 7000)
+├── 06-sessions-log/      HANDOVER_GLOBAL_2026-04-30_evening INDEX (post thematic split 2026-05-05 overnight) + 7 theme files (AUTH_FLOW + ENGINES_SPEC + ONBOARDING_T0 + DECISION_CLUSTER_D1_D4 + VAULT_HYGIENE + SCENARIOS_COVERAGE + MISC) + SPLIT_PLAN_2026-05-05 (9 files total)
 ├── 07-meta/         CLAUDE_CODE_RULES (1 file)
 ├── 08-workflows/    Chat migration + Forward compat + Handover template + Model upgrade audit + Claude chat infra (5 files)
 ├── 📥_inbox/        Daniel uploadează aici (artefacte chat, prompts CC, drafturi)
@@ -38,7 +38,7 @@ andura/
 | Cauți | Citește |
 |-------|---------|
 | 🔴 **READ FIRST chat NEW startup** | [[CURRENT_STATE]] (live SSOT chat-state, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2) |
-| **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] |
+| **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] (INDEX post-split 2026-05-05 overnight — drill-down per theme: [[HANDOVER_AUTH_FLOW_2026-04-30_evening]] / [[HANDOVER_ENGINES_SPEC_2026-04-30_evening]] / [[HANDOVER_ONBOARDING_T0_2026-04-30_evening]] / [[HANDOVER_DECISION_CLUSTER_D1_D4_2026-04-30_evening]] / [[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] / [[HANDOVER_SCENARIOS_COVERAGE_2026-04-30_evening]] / [[HANDOVER_MISC_2026-04-30_evening]]) |
 | **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6 |
 | **Pricing locked Founding €39 + Standard €59 + Elite €79 (V1.1)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 (post Chat D 2026-05-02) + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 (DEPRECATED, see §AMENDMENT) |
 | **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.1 |
