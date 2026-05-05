@@ -1,6 +1,6 @@
 ## Task: Overnight Batch 2026-05-06 — Auth Phase 2 Batch 2 + Batch 3 + Stryker Baseline
 **Model:** Opus
-**Status:** ✅ Complete (TASK 1+2 PASS clean; TASK 3 RUN IN PROGRESS background ~6-12h CPU-bound)
+**Status:** ✅ Complete — TASK 1+2+3 ALL PASS (TASK 3 finished 39:29 vs 6-12h estimate)
 
 ### PRE-FLIGHT ✅ COMPLETE
 
@@ -73,9 +73,53 @@
 
 ---
 
-### TASK 3 — Stryker Baseline: ⚠ RUN IN PROGRESS (config + start LANDED)
+### TASK 3 — Stryker Baseline: ✅ COMPLETE (run finished 39:29 — much faster decât estimate)
 
-**Status:** Background process running ~6-12h CPU-bound (per orchestrator estimate). Per orchestrator edge case "Stryker timeout: capture partial results, NU mark FAILED critic" — config + initial state captured + committed. Daniel poll dimineața + generate aggregated final raport când `reports/mutation/mutation.json` populated.
+**Status:** Stryker 9.6.1 finished în **39 minutes 29 seconds** (vs 6-12h orchestrator estimate — NoCoverage 38.5% short-circuit + StringLiteral exclusion ~23% mutants accelerated). Aggregate raport written + committed.
+
+**Final mutation results (23,079 mutants):**
+- Killed: 5,387 (23.3%) — 5,400 cu Timeout
+- Survived: 3,392 (14.7%)
+- NoCoverage: 8,889 (38.5%) — UI pages neîncoacate cu unit tests, expected pre-Beta
+- Timeout: 13 (0.06%)
+- Ignored (StringLiteral excluded per config): 5,398 (23.4%)
+- **Stryker-reported score: 30.54%** (own formula, includes NoCoverage as miss)
+- **Effective score (excl NoCoverage + Ignored): 61.42%** = (Killed + Timeout) / (Total - NoCoverage - Ignored) = 5,400 / 8,792
+
+**Per-cluster best→worst:**
+- ✅ `src/components/**` 81.5% (best — modals NEW post auth batch 2+3)
+- 🟡 `src/validation/**` 79.7% (matchMetric LOCK V1, near ✅)
+- 🟡 `src/storage/**` 69.3%
+- 🟡 `src/util/**` 67.2%
+- 🟡 `src/auth.js + src/firebase.js` 64.2%
+- 🟡 `src/engine/**` 60.5% (large surface 8,943 mutants)
+- 🔴 `src/main.js + entry` 55.8%
+- 🔴 `src/simulator/**` 52.6% (engine wiring DEFERRED per TASK 1 push-back, expected gap)
+- 🔴 `src/pages/**` 46.3% (4,555 NoCoverage UI pages, expected pattern)
+
+**Top survived prioritized (Daniel review):**
+1. **Safety paths** 68 survived (safetyBanner conditionals + invariants I1-I5 boundaries)
+2. **Auth + Firebase** 179 survived (token persist error paths + Magic Link branches)
+3. **Validation matchMetric** 28 survived (sets/reps/RIR boundary edges, near 80%)
+4. **Settings.js NEW** 9.09% Stryker score — recommend unit tests render branches
+
+**Files committed:**
+- `tests/golden-master/mutation/baseline_2026-05-06.md` — aggregated raport (extended skeleton)
+- `reports/mutation/mutation.json` — 7.3 MB machine-readable
+- `.gitignore` — `reports/mutation/mutation.html` excluded (regenerable din JSON, ~7 MB saved)
+
+**ZERO modificări la src/**:** verified (Stryker read-only).
+
+**Commits:**
+- `6540f35` feat(mutation): Stryker baseline audit pre-Beta — config + start
+- `5fa10c6` feat(mutation): Stryker baseline COMPLETE — aggregated raport + JSON
+
+**Pushed:** origin/main
+
+**Recommendations post-baseline:**
+- **Threshold settings:** recommend `break: 70` for CI integration future (intermediate towards Bugatti 80% aspiration)
+- **Re-run cadence:** post Engine #2 ADR 024 spec + monthly pre-Beta
+- **HTML drill-down:** Daniel local `reports/mutation/mutation.html` (gitignored) pentru per-file mutation viewer interactive
 
 **Pre-run setup complete:**
 - `@stryker-mutator/core@9.6.1` + `@stryker-mutator/vitest-runner` installed (--save-dev)
@@ -128,10 +172,12 @@ Test-Path reports/mutation/mutation.json
 
 1. **HIGH IMMEDIATE:** Publish `firestore.rules` via Firebase Console (~1h Daniel-time). Required for Phase 2 batch 3 production effect (§56.5.2 soft delete + §56.7 archive + §56.15 telemetry — none functional on Firestore until publish).
 
-2. **HIGH:** Poll Stryker run completion dimineața (~6-12h ETA from 01:10):
-   - `Get-Content tests/golden-master/mutation/stryker-run.log -Tail 50`
-   - Check `reports/mutation/mutation.json` exists
-   - Generate aggregated raport extending `tests/golden-master/mutation/baseline_2026-05-06.md` per format documented (per-cluster breakdown + Top 20 survived mutants prioritized + Bugatti benchmark vs actual)
+2. ✅ **DONE:** Stryker baseline COMPLETE 39:29. Aggregated raport committed `tests/golden-master/mutation/baseline_2026-05-06.md` cu:
+   - Overall mutation score 61.42% effective
+   - Per-cluster breakdown (9 clusters)
+   - Top survived prioritized (safety/auth/engines/validation)
+   - Action items + recommendations
+   - Daniel manual: open `reports/mutation/mutation.html` local (gitignored) pentru drill-down interactive per-file viewer
 
 3. **MEDIUM:** Manual smoke verify în browser:
    - Settings UI render — verify all 4 sections (email change + recovery + delete account + logout)
