@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-05 birou late (post handover ingest Engines #5 formal lock confirm + #6 Tempo/Form Cues + #7 Specialization spec sessions COMPLETE + Roadmap §36.100 100% milestone 8/8 prescriptive engines — P1-FLAG-SCENARIOS-COVERAGE gap reducere ~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6: 1170-1670 → ~990-1490. Cumulative LOCKED ~593 → ~649 (+~56 substantive net). 🎯 Roadmap §36.100 ✅ 100% COMPLETE milestone — NU mai chat-uri engines spec sessions remaining. Pivot direction: P1 CC Auth Flow §36.80 / P2 Scenarios Coverage / P3 ADR 026 compile draft full.)
+**Updated:** 2026-05-05 evening late (post handover ingest Validation Framework LOCK V1 — `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` status SPEC DRAFT V1 → LOCKED V1: §1 north star ≥95% strict + §5 weights Safety 0.35 universal + §7 Gate 1 95% + Gate 2 DROPPED + Gate 3 selective + §2 corpus 500 + §9 framing reformulat. Cumulative LOCKED ~649 → ~653 (+4 net product/architecture substantive). Batch overnight plan PENDING chat NEW artefacte 1-button copy: master prompt 5 task-uri sequential CC autonomous + CC #6 Consolidator. P1-FLAG-SCENARIOS-COVERAGE path concrete LOCKED V1.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -208,25 +208,37 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-### P1-FLAG-SCENARIOS-COVERAGE — Scenarios 1500-2000 PRE-BETA BLOCKER (NEW per §69)
+### P1-FLAG-SCENARIOS-COVERAGE — Scenarios 1500-2000 PRE-BETA BLOCKER (NEW per §69, Validation Framework path concrete LOCKED V1 2026-05-05 evening late)
 
-**Status:** 🔴 OPEN 2026-05-05 birou late (gap reducere progressive post engine specs cumulative — Roadmap §36.100 100% COMPLETE milestone)
+**Status:** 🔴 OPEN 2026-05-05 evening late (Validation Framework LOCKED V1 architectural foundation; batch overnight plan PENDING chat NEW artefacte technical 1-button copy)
 **Severity:** P1 (BETA LAUNCH IMPOSIBIL fără)
 
-**Issue:** Per §42.9 LOCKED V1 testing strategy mandatory: Hibrid Property-based + Persona Suite Maria/Gigica/Marius + 4-Invariant Safety Stack. Persona simulation suite ~50-100 tests representative + edge cases curated. Coverage actuală post chat-uri Auth + ADR 026 spec + Auth Flow §36.80 + Batch 1-6 + T0 Mechanics 75 + Engines #1-#7 spec sessions + #8 §45.6 = **~649 LOCKED V1** total. **Gap pre-Beta: ~990-1490 scenarios decisions remaining.**
+**Issue:** Per §42.9 LOCKED V1 testing strategy mandatory: Hibrid Property-based + Persona Suite Maria/Gigica/Marius + 4-Invariant Safety Stack. Persona simulation suite ~50-100 tests representative + edge cases curated. Coverage actuală post chat-uri Auth + ADR 026 spec + Auth Flow §36.80 + Batch 1-6 + T0 Mechanics 75 + Engines #1-#7 spec sessions + #8 §45.6 + Validation Framework LOCK V1 = **~653 LOCKED V1** total. **Gap pre-Beta: ~990-1490 scenarios decisions remaining.**
 
 **Gap reduction progress:**
 - Initial gap (post §62-§73 ingest 2026-05-04 evening): 1200-1700 scenarios
 - Post engine specs Periodization + Goal Adaptation + ADR 026 Q1-Q10 (2026-05-04 evening late): 1170-1670 (~50 decisions consumate engine specs, NU branches)
 - Post Engines #3+#4+#5 spec sessions cumulative + Convergence Guard "T2 Unlock" (2026-05-05 birou after): 1080-1580 (~90 decisions consumate engine specs cumulative, NU branches enumeration)
-- Post Engines #5 formal lock + #6 Tempo/Form Cues + #7 Specialization spec sessions + Roadmap §36.100 100% milestone (2026-05-05 birou late): **~990-1490** (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration). 🎯 Roadmap §36.100 100% COMPLETE — NU mai chat-uri engines spec sessions remaining.
+- Post Engines #5 formal lock + #6 Tempo/Form Cues + #7 Specialization spec sessions + Roadmap §36.100 100% milestone (2026-05-05 birou late): **~990-1490** (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration). 🎯 Roadmap §36.100 100% COMPLETE — NU mai chat-uri engines spec sessions remaining
+- Post Validation Framework LOCK V1 (2026-05-05 evening late): gap unchanged ~990-1490 scenarios decisions remaining (Validation Framework = architectural foundation, NU enumerate branches direct), dar **path concrete LOCKED V1**: 95% gate / weights 0.35/0.25/0.20/0.20 / Gate 2 DROPPED / Gate 3 selective / 500 queries
 
-**Action Daniel (Priority 2 NEW per §71, post Priority 1 ABSOLUT CC Auth Flow implementation):**
+**Validation Framework LOCKED V1 cross-ref (2026-05-05 evening late):**
+- `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` status SPEC DRAFT V1 → LOCKED V1
+- §1 north star ≥95% Claude parity strict (NU 90% range, NU aspirațional)
+- §5 match metric weights universal Safety 0.35 + Exercise 0.25 + Sets/reps/RIR 0.20 + Key principles 0.20 (NU ghilotină conditional)
+- §7 Gates: Gate 1 ≥95% MATCH | Gate 2 DROPPED | Gate 3 selective Daniel review pe Claude-judge flagged uncertain ~5-15%
+- §2 corpus scope = 500 queries (Bugatti coverage breadth)
+- §9 framing reformulat: Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min cumulative
 
-1. Chat strategic dedicat enumeration scenarios (~5-15 chat-uri estimative bandwidth optimal)
-2. Per chat: ~100-150 scenarios coverage decisions LOCKED + Persona Suite curated edge cases
-3. Cross-ref §42.9 testing strategy validation real (4-Invariant Safety Stack + Persona representative)
-4. Pre-Beta blocker absolute: Beta launch IMPOSIBIL fără toate edge cases LOCKED + Persona Suite tests + invariants validated
+**Action Daniel (Priority 2 NEW per §71, batch overnight plan post-LOCK):**
+
+1. ✅ Daniel LOCK Validation Framework §1+§5+§7+§2 COMPLETE 2026-05-05 evening late
+2. Chat NEW genera 2 artefacte technical 1-button copy (master prompt batch ordered 5 task-uri + CC #6 Consolidator) — pre-flight grep §56.1.4/§56.16 + ADR template format pentru rigour pragmatic NU gold-plated
+3. Daniel paste master prompt tonight în 1 terminal CC `claude --dangerously-skip-permissions` → sequential 5 tasks ~3-5h overnight (TASK 1 Simulator Implementation cu LOCK overrides explicit + TASK 2 Auth Phase 2 batch 1 §56.1.4 + §56.16 + TASK 3 ADR 026 compile draft full + TASK 4 ADR stubs Engine #5/#6/#7 + TASK 5 HANDOVER_GLOBAL split)
+4. Daniel paste consolidator dimineața după 5 LATEST_N done → ~10-15min generate `📤_outbox/LATEST_CONSOLIDATED.md` aggregate
+5. Daniel review LATEST_CONSOLIDATED + audit nuclear post-batch
+6. Post simulator delivery: ground truth production Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min → run validation → Faza 2 filter ~225-300 flagged branches workflow Bugatti 3-instance ~3 chats × 75-100 issues/chat
+7. Pre-Beta blocker absolute: Beta launch IMPOSIBIL fără Both Gates PASS (Gate 1 ≥95% + Gate 3 zero blocker flag)
 
 **Cross-refs:**
 - HANDOVER_GLOBAL §69 PRE-BETA BLOCKER FLAG status verbatim

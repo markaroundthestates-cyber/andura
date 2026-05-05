@@ -1,5 +1,41 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 evening late — Validation Framework LOCK V1 (cumulative ~649 → ~653, +4 net Validation Framework substantive product/architecture)
+
+**Status:** §CC.5 fast handover ingest 2026-05-05 evening late Daniel acasă chat strategic + Claude — flip status `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` SPEC DRAFT V1 → **LOCKED V1**.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-05 evening (Daniel acasă post startup §CC.2 layered read 4/4 verified) — voluntary checkpoint pre batch overnight planning.
+
+**Sub-decisions LOCKED V1:**
+
+1. **Validation Framework §1 north star ≥95% Claude parity strict** (NU 90% range ambiguu, NU aspirațional). Eu pivotat 90% pe argument "Beta slip săptămâni/luni" → retras post Daniel push-back: *"ce înseamnă Beta slip? Am dat eu vreodată un deadline?"*. Bootstrap solo zero deadline extern, target 1 ian 2027 aspirațional flexibil per §29.6.1 + §56.9. Pivotat ≥95% pe Bugatti philosophy NU pe deadline — Faza 2 workflow 3-instance Claude→Gemini→Claude→Daniel închide 5-10% legitimate disagreement gap exact (per `04-architecture/FAZA_2_FILTER_STRATEGY_V1.md`)
+2. **Validation Framework §5 match metric weights universal Safety 0.35 dominant** + Exercise 0.25 + Sets/reps/RIR 0.20 + Key principles 0.20 (NU ghilotină conditional pe profile flags vârstă/medical/pregnancy/pain). Eu propus filtru binar 0/1 conditional → Daniel push-back final: *"Maria safety minim, 100-500 organici în 50k auto-select Longevitate template built-in safety, ~25 edge cases optimization absurd, nu te c*c pe tot app-ul pentru Maria"*. Calculul concret 1% × Maria selectând altceva = 25 useri în 50k sparge philosophy filtru conditional → Safety 0.35 universal weight LOCKED (absorbs critical safety semantics). Restul rebalansate Exercise 0.25 + Sets/reps 0.20 + Key principles 0.20
+3. **Validation Framework §7 Pre-Beta gates:** Gate 1 ≥95% MATCH on full 500-query corpus (Claude-judge weighted scoring §5.1) | **Gate 2 DROPPED entirely** (Safety 0.35 universal absorbs critical safety semantics) | Gate 3 reformulat selective Daniel review pe Claude-judge flagged uncertain (~5-15% corpus = ~25-75 queries din 500). NU random n=50, NU threshold quantitativ — qualitative blocker check (catastrophic safety / philosophy violation = pre-Beta blocker). Restul nuance disagreement absorbed în Gate 1 weighted scoring. Daniel push-back filozofic: *"ANDURA să gândească ca Claude sau ca Daniel? Eu fac review unde ai dubii, restul tu analiză mai bună"*. Both gates PASS (Gate 1 ≥95% + Gate 3 zero blocker flag) = Beta launch unblock pe scenarios coverage layer
+4. **Validation Framework §2 corpus scope = 500 queries LOCKED** (Bugatti coverage breadth peak craft, NU 250 minimum)
+5. **Validation Framework §9 framing reformulat:** Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min cumulative (NU misleading "Daniel-time 5-10h"). NU substantive product/architecture decision — clarification de communication framing (de unde Daniel-time și nu CC+Claude chat time? slip framing fundamental corectat)
+
+**Memory rules added în chat (NU vault, tracked în chat doar):**
+- **#26:** time/effort/durată NICIODATĂ argumente quality decisions (recidivă rapid pe §2 corpus 500 = slip framing 5h vs 10h fără source vault)
+- **#27:** handover end-of-chat ONLY NU mid-chat (slip detected post LOCK fresh)
+- **#28:** dev iteration > perfectionism upfront — math 1-2h recovery worst case vs 10h CC idle overnight = aggressive launch favorable. Audit nuclear final pattern Daniel inevitabil oricum (gates manual + smoke tests prod)
+
+**Cross-refs:**
+- `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` LOCKED V1 (status header + §1 + §2.1 + §5.1 + §5.2 + §6.2 + §6.3 + §7 + §9 updated cu LOCK V1 valori)
+- DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE Updated 2026-05-05 evening late (Validation Framework path concrete LOCKED V1)
+- CURRENT_STATE.md NOW (move-then-replace) + JUST_DECIDED top entry append + cumulative count ~649 → ~653
+- Cross-cutting batch overnight plan pending chat NEW genera 2 artefacte technical 1-button copy (master prompt 5 task-uri sequential + CC #6 Consolidator)
+
+**Files modified:**
+- UPDATED: `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` (§1 north star ≥95% strict + §2.1 corpus 500 + §5.1 weights table Safety 0.35 universal + §5.2 aggregate + §6.2 Daniel selective review + §6.3 storage + §7 Gates Gate 1/2/3 + §9 framing reformulat — status SPEC DRAFT V1 → LOCKED V1)
+- UPDATED: `00-index/CURRENT_STATE.md` (header + cumulative count ~649 → ~653 + NOW move-then-replace + JUST_DECIDED top entry append + NEXT P2 actionable post-LOCK + ACTIVE_FLAGS P1-FLAG-SCENARIOS-COVERAGE)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry top descending cronologic)
+- UPDATED: `DIFF_FLAGS.md` (Updated line + P1-FLAG-SCENARIOS-COVERAGE Validation Framework path concrete)
+- ARCHIVED: `📥_inbox/HANDOVER_2026-05-05_evening_validation_framework_lock_pre_batch_overnight.md` → `📤_outbox/_archive/2026-05/154_HANDOVER_2026-05-05_evening_VALIDATION_FRAMEWORK_LOCK_CONSUMED.md`
+
+**Backup tag:** `pre-handover-2026-05-05-evening-validation-framework-lock`
+
+---
+
 ## 2026-05-05 birou late — Engines #5 formal + #6 Tempo/Form Cues + #7 Specialization spec sessions COMPLETE + Roadmap §36.100 100% milestone (cumulative ~649, +~56 substantive net)
 
 **Status:** §CC.5 fast handover ingest 2026-05-05 birou late Daniel + Claude chat strategic — sesiune triplă consecutivă (Engine #5 formal Gemini pas 1+2+3 lock confirm + Engine #6 Tempo/Form Cues NEW + Engine #7 Specialization NEW ULTIMUL prescriptive). Pattern 3-instance Bugatti-grade matured (Claude 20Q artefact → Gemini logic → Claude filter → Gemini pas 2-3 → Daniel lock). Cumulative LOCKED ~593 → **~649** (+~56 substantive net post-overlap). **🎯 Roadmap §36.100 = 100% COMPLETE milestone: 8/8 prescriptive engines SPEC COMPLETE.**
