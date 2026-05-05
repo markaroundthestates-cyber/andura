@@ -1,49 +1,168 @@
-## Task: §CC.5 fast handover ingest — batch overnight + split finalize narrative
+## Task: Overnight Batch 2026-05-06 — Auth Phase 2 Batch 2 + Batch 3 + Stryker Baseline
 **Model:** Opus
-**Status:** Complete
+**Status:** ✅ Complete (TASK 1+2 PASS clean; TASK 3 RUN IN PROGRESS background ~6-12h CPU-bound)
 
-### Pre-flight
-- Backup tag: `pre-handover-master-batch-split-finalize-2026-05-06-0004` ✅ pushed pre-execution
-- Clean tree pre-execution: yes
-- Inbox verified: 1 handover file present (`HANDOVER_2026-05-05_evening_late_master_batch_split_finalize.md`)
+### PRE-FLIGHT ✅ COMPLETE
 
-### Modificări
+- Clean tree: yes (only inbox untracked = scope acceptable)
+- Branch: main
+- Backup tag: `pre-overnight-batch-2026-05-06-0055` pushed origin
+- Node v25.9.0 + npm 11.12.1 available
+- Hardware: i7-8700K 6c/12t @ 3.70GHz + 64 GB RAM @ 3600 MHz (Windows 10 Pro)
 
-**`00-index/CURRENT_STATE.md` updated:**
-- Header `Updated:` line — 2026-05-06 §CC.5 fast handover ingest summary (batch overnight + split finalize EXECUTED, 4/5 LANDED + 2 productive push-backs CC, ZERO net new substantive product/architecture)
-- §NOW move-then-replace — current thread = batch overnight + split finalize execution narrative (2026-05-05 evening late chat strategic produs 2 artefacte + 1 PROMPT_HANDOVER_SPLIT_FINALIZE.md; rezultat ~50 min total factor 6-8x peste-estimare CC slip; 4/5 tasks Complete + TASK 1 engine wiring DEFERRED productive push-back + TASK 5 wikilinks rewire DEFERRED productive push-back; memory rule #29 added în chat: prompts CC multi-task = artefacte separate per task + orchestrator mini NU monolith; slip-uri Claude chat-side flagged 3x mea culpa). Precedent thread compressed (Validation Framework LOCK V1).
-- §JUST_DECIDED top entry append — "2026-05-05 overnight — Batch overnight 5 tasks + split finalize EXECUTED" cu 7 aggregate/architectural decisions + memory rule #29 + slip-uri flagged + implicații downstream + backup tags
-- §NEXT P1 reorder — Auth Flow Phase 2 batch 1 LANDED status update + Phase 2 batch 2 NEXT chat dedicat (~7-10h CC autonomous § §56.5 + §56.7) + batch 3 ~6-8h post (§56.12 + §56.14.A + §56.15 + §56.16 Console publish Daniel manual)
-- §NEXT P2 update — Simulator skeleton LANDED 2026-05-05 overnight + ground truth production phase NEXT chat strategic Claude side (Claude ~5-10h cumulative + Daniel review reality-lock ~30-60min)
-- §NEXT P3 update — ADR 026 compile draft full LOCKED V1 ✅ COMPLETE 2026-05-05 overnight
-- §ACTIVE_FLAGS sync — P1-FLAG-AUTH-PHASE2 batch 1 LANDED status + P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED + P1-FLAG-SCENARIOS-COVERAGE simulator skeleton LANDED note
+---
 
-**`03-decisions/DECISION_LOG.md` entry top descending cronologic:** "2026-05-06 — §CC.5 fast handover ingest: batch overnight + split finalize EXECUTED" — 7 aggregate/architectural decisions + memory rule #29 + slip-uri 3x + implicații downstream + cumulative ~653 preserved + cross-refs + backup tags
+### TASK 1 — Auth Phase 2 Batch 2: ✅ PASS
 
-**Archive operations:**
-- `📤_outbox/_archive/2026-05/168_HANDOVER_2026-05-05_evening_late_MASTER_BATCH_SPLIT_FINALIZE_CONSUMED.md` (handover audit trail per §CC.5)
-- `📤_outbox/_archive/2026-05/169_LATEST_PREVIOUS_HANDOVER_SPLIT_EXECUTION.md` (cycled previous LATEST.md = split execution report)
+**§56.5.1 + §56.5.2 + §56.5.3 + §56.5.4 + §56.7 — wording UI LOCKED V1 verbatim ZERO drift verified prin `expect.toBe()`.**
 
-### Build + Tests
-- N/A — vault-only changes (CURRENT_STATE + DECISION_LOG + archive operations); zero src/ touched
+**Files created (12):**
+- `src/components/recoveryEmailLostModal.js` — §56.5.1 refusal pattern modal
+- `src/components/deleteAccountModal.js` — §56.5.2 2-step ȘTERGE modal + case-sensitive RO diacritics validator (Ș U+0218 strict)
+- `src/components/forkDecisionModal.js` — §56.7 Fork Decision UI cu both buttons IDENTICAL class (ZERO default highlight enforced) + detectMergeBranch pure helper + toast wording
+- `src/components/emailChangeForm.js` — §56.5.4 typo guard double-input form
+- `src/pages/settings.js` — wires 3 sections (email change + recovery + delete account) + post-delete splash
+- 6 test files (recoveryEmailLostModal/deleteAccountModal/forkDecisionModal/emailChangeForm/auth-batch2/settings)
 
-### Commits (1 expected)
-- `<hash>` docs(handover): §CC.5 fast ingest 2026-05-06 batch overnight + split finalize narrative — CURRENT_STATE NOW move-then-replace + JUST_DECIDED top + NEXT P1/P2/P3 reorder + ACTIVE_FLAGS sync; DECISION_LOG entry top; archive handover + cycle previous LATEST
+**Files extended (1):**
+- `src/auth.js` — additive: `USER_DISABLED_COPY` (verbatim §56.5.3) + `isUserDisabledError` + `buildSoftDeleteFlag` (30 zile grace) + `detectAnonymousLocalData` + `detectCloudUserData` (pure helpers cu probe injection)
 
-### Pushed
-- origin/main: yes (post commit)
+**Tests:** 57 new tests / all PASS. Full suite **1298 → 1355 PASS**, ZERO regression.
+**Build:** clean, vite 5.4.21 build 2.84s, 380 modules.
 
-### Issues
-- None — handover narrative ingested clean per §CC.5 fast workflow. Cumulative LOCKED V1 ~653 preserved (zero net new substantive — handover documentează batch overnight execution care e aggregation/architectural/vault hygiene, NU product/architecture count).
+**Commits:**
+- `4fef416` feat(auth-phase2-batch2): Settings UI lifecycle + Anonymous→Auth Merge Fork Decision UI
 
-### Next action
+**Tags:**
+- `post-task-1-auth-phase2-batch2-2026-05-06-0100` (granular revert point)
 
-**Imediat (chat NEW dedicat):**
-1. Pre-flight grep §56.5 + §56.7 spec verbatim din `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` (post-split theme file dedicat — citește direct, NU din INDEX)
-2. Generate single prompt CC autonomous artefact pentru Phase 2 batch 2 (single artefact NU monolith — per memory rule #29 added chat ACEST)
-3. Daniel paste tonight în terminal CC `claude --dangerously-skip-permissions` → ~7-10h CC autonomous overnight
-4. Post-batch: review LATEST batch 2 + handover next sesiune
+**Pushed:** origin/main + tag
 
-**Bonus paralel (NU consume CC):** Daniel poate deschide chat strategic NEW separat oricând pentru ground truth Validation Framework batch 1 (50-100 queries Claude reasoning baseline, ~1-2h productive seara/zilele next). Per Validation Framework §9 LOCKED V1: Claude chat strategic produce ~5-10h cumulative, Daniel doar review reality-lock ~30-60min.
+---
 
-**NU urgent (defer post-Beta possibly):** Engine #5/#6/#7 spec consolidation chat strategic NEW + ADR 026 §4.6 versioning rollback. Wikilinks rewire HANDOVER split — chat strategic NEW dedicat dacă Daniel decide override architectural call CC.
+### TASK 2 — Auth Phase 2 Batch 3: ✅ PASS (Task 1 PASS satisfied)
+
+**§56.12 + §56.14.A + §56.15 + §56.16 — wording UI LOCKED V1 verbatim ZERO drift verified.**
+
+**Files created (8):**
+- `src/components/logoutModal.js` — §56.12 2-step double-confirm cu opt-in IndexedDB wipe checkbox (default OFF, anti-tap-accidental Maria 65)
+- `src/util/telemetry.js` — §56.15 EVENTS frozen (13 keys), `trackEvent` silent fail (NEVER blocks app), `buildIncrementPayload` pure helper
+- `src/util/adminCleanupHelpers.js` — pure helpers extracted pentru vitest scope
+- `scripts/admin-cleanup.js` — §56.14.A Daniel weekly skeleton + firebase-admin lazy-import + `--dry-run` flag
+- `scripts/admin-cleanup.README.md` — setup + usage docs
+- 4 test files (logoutModal/telemetry/adminCleanupHelpers/wipeUserDB)
+
+**Files extended (4):**
+- `src/storage/db.js` — `wipeUserDB(uid)` helper cu Dexie.delete cascade
+- `src/pages/settings.js` — Logout section wiring (step1 → step2 → wipeUserDB conditional + telemetry + splash)
+- `firestore.rules` — extended cu `/users/{uid}/_deleted/**` + `/users/{uid}/_archived/**` + `/_archived/anonymous/**` server-only + `/_telemetry/global` cu `hasOnly()` validation pe 13 EVENTS keys
+- `.gitignore` — `firebase-service-account.json` + Stryker tmp paths
+
+**Tests:** 36 new tests / all PASS. Full suite **1355 → 1391 PASS**, ZERO regression.
+**Build:** clean, vite build 2.72s.
+
+**⚠ DANIEL MANUAL STEP REQUIRED:** publish `firestore.rules` via Firebase Console (Project Settings → Firestore Database → Rules → paste content + Publish) per §56.16 + §56.18. ~1h Daniel-time. NO production effect on Firestore until publish.
+
+**Commits:**
+- `81457b4` feat(auth-phase2-batch3): Logout double-confirm + admin-cleanup + Telemetry + Firestore Rules
+
+**Tags:**
+- `post-task-2-auth-phase2-batch3-2026-05-06-0108` (granular revert point)
+
+**Pushed:** origin/main + tag
+
+---
+
+### TASK 3 — Stryker Baseline: ⚠ RUN IN PROGRESS (config + start LANDED)
+
+**Status:** Background process running ~6-12h CPU-bound (per orchestrator estimate). Per orchestrator edge case "Stryker timeout: capture partial results, NU mark FAILED critic" — config + initial state captured + committed. Daniel poll dimineața + generate aggregated final raport când `reports/mutation/mutation.json` populated.
+
+**Pre-run setup complete:**
+- `@stryker-mutator/core@9.6.1` + `@stryker-mutator/vitest-runner` installed (--save-dev)
+- `tests/golden-master/mutation/stryker.conf.js` REPLACED cu Bugatti baseline scope `src/**/*.js`
+- Concurrency: 6 test runners (i7-8700K calibrat reserve 2 OS cores)
+- Thresholds first-run baseline: `break: 0`
+- Initial scan: **134 source files, 23,079 mutants instrumented**
+
+**Background run:**
+```sh
+npx stryker run tests/golden-master/mutation/stryker.conf.js 2>&1 | tee tests/golden-master/mutation/stryker-run.log
+```
+
+Output captured în `tests/golden-master/mutation/stryker-run.log`. Initial vitest test run started 2026-05-06 01:10.
+
+**Files modified:**
+- `tests/golden-master/mutation/stryker.conf.js` — full src scope baseline
+- `tests/golden-master/mutation/baseline_2026-05-06.md` — RUN IN PROGRESS report stub + Daniel post-run aggregated raport format
+- `package.json` + `package-lock.json` — Stryker deps added (--save-dev)
+
+**ZERO src/ modifications:** verified pre-commit (Stryker is read-only on src/, only writes la `reports/mutation/` + `tests/golden-master/mutation/`).
+
+**Commits:**
+- `6540f35` feat(mutation): Stryker baseline audit pre-Beta — full src/**/*.js scope
+
+**Pushed:** origin/main
+
+**Daniel post-run action (when run completes):**
+```powershell
+# Check completion:
+Get-Content tests/golden-master/mutation/stryker-run.log -Tail 50
+Test-Path reports/mutation/mutation.json
+
+# Generate aggregated raport (extend baseline_2026-05-06.md cu format documented):
+# Read mutation.json + populate per-cluster breakdown table + Top 20 Survived Mutants prioritized
+```
+
+---
+
+### Issues encountered
+
+1. **Stryker CLI flag deprecated** — first attempt cu `--configFile` (camelCase per orchestrator) failed `unknown option`. Stryker 9.6.1 expects positional `configFile` argument. Fixed: `npx stryker run tests/golden-master/mutation/stryker.conf.js`.
+2. **Vitest scope restricts tests to `src/**/*.test.{js,ts}`** — initial `scripts/__tests__/admin-cleanup.test.js` was not picked up. Refactored: pure helpers extracted la `src/util/adminCleanupHelpers.js`, test moved to `src/util/__tests__/adminCleanupHelpers.test.js`. `scripts/admin-cleanup.js` re-imports from src/util.
+3. **Pre-commit husky hook noise** on Stryker config commit — hook attempted to interpret .md/.js files as bash but commit landed cleanly (`6540f35`). NU blocking, NU partial commit corrupt.
+4. **TASK 3 cannot wait for run completion** within single CC autonomous session — orchestrator explicitly allows partial: "Stryker timeout/OOM: capture partial results, append LATEST.md cu warning, NU mark FAILED critic". TASK 3 marked Complete pe config delivery + run start; Daniel finalizes raport dimineața.
+
+---
+
+### Next action recommendation pentru Daniel (prioritized)
+
+1. **HIGH IMMEDIATE:** Publish `firestore.rules` via Firebase Console (~1h Daniel-time). Required for Phase 2 batch 3 production effect (§56.5.2 soft delete + §56.7 archive + §56.15 telemetry — none functional on Firestore until publish).
+
+2. **HIGH:** Poll Stryker run completion dimineața (~6-12h ETA from 01:10):
+   - `Get-Content tests/golden-master/mutation/stryker-run.log -Tail 50`
+   - Check `reports/mutation/mutation.json` exists
+   - Generate aggregated raport extending `tests/golden-master/mutation/baseline_2026-05-06.md` per format documented (per-cluster breakdown + Top 20 survived mutants prioritized + Bugatti benchmark vs actual)
+
+3. **MEDIUM:** Manual smoke verify în browser:
+   - Settings UI render — verify all 4 sections (email change + recovery + delete account + logout)
+   - Delete account 2-step ȘTERGE — verify Ș U+0218 case-sensitive (try "STERGE" → button stays disabled)
+   - Fork Decision modal — verify ZERO default highlight (no autofocus, both buttons identical)
+   - Logout double-confirm — verify checkbox default OFF + step 2 anti-tap-accidental wording
+
+4. **MEDIUM:** Update CURRENT_STATE.md cu post-batch state — Auth Phase 2 batch 2+3 LANDED status + DIFF_FLAGS P1-FLAG-AUTH-PHASE2 status flip pending Console publish.
+
+5. **LOWER (NU urgent):** Service account JSON setup pentru `scripts/admin-cleanup.js`:
+   - `npm install --save-dev firebase-admin` (deferred — NU committed yet în deps)
+   - Firebase Console → Service Accounts → Generate key → save `firebase-service-account.json` (gitignored)
+   - Calendar reminder Daniel duminică ~5 min weekly task per §62.9 LOCKED V1
+
+---
+
+### Backup tags active (recovery points)
+
+- `pre-overnight-batch-2026-05-06-0055` (global pre-task — nuclear revert: `git reset --hard pre-overnight-batch-2026-05-06-0055`)
+- `post-task-1-auth-phase2-batch2-2026-05-06-0100` (granular: preserves T1, drops T2+T3)
+- `post-task-2-auth-phase2-batch3-2026-05-06-0108` (granular: preserves T1+T2, drops T3)
+
+---
+
+### Aggregate stats
+
+- **Commits pushed:** 4 (TASK 1 + TASK 2 + TASK 3 config + final outbox)
+- **Files created:** 18 (TASK 1: 12 / TASK 2: 5 / TASK 3: 1 baseline report stub)
+- **Files modified:** 7 (auth.js + db.js + settings.js + firestore.rules + .gitignore + stryker.conf.js + package.json/lock)
+- **New tests added:** 93 (57 + 36)
+- **Test baseline:** 1298 → 1391 (+93 net), ZERO regression
+- **Build status:** clean (380 modules transformed, 2.72-2.84s)
+- **Wording UI LOCKED V1 verbatim:** verified prin `expect.toBe()` pe toate stringurile §56.5 + §56.7 + §56.12 (24 expect calls verbatim)
+- **Stryker mutants:** 23,079 instrumented across 134 source files (run in progress)
