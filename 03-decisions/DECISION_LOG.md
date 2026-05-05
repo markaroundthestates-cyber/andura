@@ -1,5 +1,29 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 overnight — HANDOVER_GLOBAL Thematic Split Plan READY (execution DEFERRED, Status=Partial per master prompt §STEP 5)
+
+**Status:** Split plan ready as `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md`. Atomic execution DEFERRED dedicated chat strategic NEW. Source `HANDOVER_GLOBAL_2026-04-30_evening.md` (~7673 LOC) preserved untouched. Wikilinks across ~30+ active vault files preserved untouched. ZERO data loss.
+
+**Why deferred (per master prompt §STEP 5 push-back productive):**
+- 7-file split + ~30+ wikilinks rewire = single atomic transaction or corruption risk
+- Master prompt explicit: "atomic per task — all or nothing per task scope"
+- Pre-Beta NU blocks (P1-FLAG-HANDOVER-SPLIT preserved 🟡 OPEN per existing DIFF_FLAGS, NOT 10000 LOC ESCALATE BLOCKER)
+
+**Plan deliverable:**
+- 7 theme file mapping (Auth Flow / Engines Spec / Onboarding T0 / Decision Cluster D1-D4 / Vault Hygiene / Scenarios Coverage / Misc)
+- Section→File assignment table per dominant domain
+- 8-step execution checklist
+- 5 risks documented (atomicity, cross-section ambiguity, older §1-§35 context, wikilinks form variability, performance)
+- Backup tag `pre-handover-split-2026-05-05-overnight` pushed pre-execution
+
+**Cross-refs:** [[../06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05]] | VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13 | DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT (status preserved 🟡 OPEN).
+
+**Files created:** 1 plan file `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md`. ZERO source files modified.
+
+**Backup tag:** `pre-handover-split-2026-05-05-overnight`.
+
+---
+
 ## 2026-05-05 overnight — ADR 027/028/029 Stubs Engines #5/#6/#7 (Vault Hygiene Sprint, stub-only ZERO net decisions)
 
 **Status:** 3 stub files created pentru Engine #5 Energy Adjustment (ADR 027) + Engine #6 Tempo/Form Cues (ADR 028) + Engine #7 Specialization (ADR 029). Format pattern reuse ADR 024 stub template. Spec full PENDING consolidation chat strategic NEW dedicat — current spec source HANDOVER §45.x dispersed + CURRENT_STATE 2026-05-05 birou late JUST_DECIDED entry (CC reads raw direct). ZERO net new decisions — vault hygiene only.
