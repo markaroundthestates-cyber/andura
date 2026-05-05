@@ -1,66 +1,58 @@
-// Stryker mutation testing config — ARBITRATOR + voices + dimensions
-// Per chat strategic 2026-04-29 lock decision #7 — target mutation score >75%.
-//
-// Sprint 2 status: config livrat, Stryker deps NOT installed (deferred Sprint 3
-// dependency add — risk overnight autonomous run).
-//
-// Install pre-run:
-//   npm install --save-dev @stryker-mutator/core @stryker-mutator/vitest-runner
+// Stryker mutation testing config — Bugatti baseline audit
+// Per Daniel directive 2026-05-05 evening late: full src/**/*.js scope.
+// Hardware: i7-8700K 6c/12t @ 3.70GHz + 64 GB RAM @ 3600 MHz.
 //
 // Run:
 //   npx stryker run --configFile tests/golden-master/mutation/stryker.conf.js
+//
+// Expected runtime: ~6-12h CPU-bound (mutants × full test suite re-run pe 19K LOC src/).
 
 export default {
   packageManager: 'npm',
-  reporters: ['progress', 'clear-text', 'html'],
+  reporters: ['progress', 'clear-text', 'html', 'json'],
   testRunner: 'vitest',
 
-  // Mutation scope — ARBITRATOR core + voice engines + dimensions
-  // (per ADR 018 §architecture overview Cognitive Layers)
+  // Bugatti baseline — FULL src/**/*.js scope per Daniel directive
   mutate: [
-    'src/engine/coachDirector.js',
-    'src/engine/arbitrator.js',          // (post-ADR 018 strangler implementation)
-    'src/engine/voices/**/*.js',         // (post-ADR 018 strangler implementation)
-    'src/engine/dimensions/**/*.js',
-    'src/engine/ruleEngine.js',
-    'src/engine/decisionCluster.js',     // (post-ADR 018 Faza 0)
+    'src/**/*.js',
+    '!src/**/*.test.js',
+    '!src/**/__tests__/**',
   ],
 
-  // Thresholds per chat strategic lock decision
-  // break: under acest scor → exit code 1 (CI fail)
-  // low/high: gradient pentru reporting (yellow/green)
+  // Thresholds first-run baseline = NO break (capture state, NU CI fail)
   thresholds: {
     high: 80,
     low: 60,
-    break: 75,
+    break: 0,  // first-run baseline — NU break, audit only
   },
 
-  // Vitest specific config
   vitest: {
     configFile: 'vitest.config.js',
   },
 
-  // Performance
-  concurrency: 4,
+  // Concurrency calibrat pentru i7-8700K 6c/12t
+  // Reserve 2 logical cores pentru OS + Daniel ne-blocked concurrent work
+  concurrency: 6,
   timeoutMS: 10000,
-  maxConcurrentTestRunners: 4,
+  maxConcurrentTestRunners: 6,
 
-  // Disable mutators that produce known-noisy mutations
   disableTypeChecks: false,
 
-  // Mutation log per ADR 018 documentation discipline
   mutator: {
     excludedMutations: [
-      'StringLiteral',  // Avoid trivial string mutations on user-facing text
+      'StringLiteral',  // avoid trivial wording mutations noise
     ],
   },
 
-  // Ignore patterns
   ignorePatterns: [
     'node_modules/**',
     'dist/**',
     'tests/**',
     'cc-reports/**',
+    '📤_outbox/**',
+    '📥_inbox/**',
     'scripts/**',
+    'simulations/**',
+    'reports/**',
   ],
 };
