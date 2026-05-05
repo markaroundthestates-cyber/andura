@@ -1,5 +1,43 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 — §CC.5 fast handover ingest: batch overnight + split finalize EXECUTED (cumulative ~653 PRESERVED, ZERO net new substantive)
+
+**Status:** §CC.5 fast handover ingest 2026-05-06 — handover narrative `📥_inbox/HANDOVER_2026-05-05_evening_late_master_batch_split_finalize.md` (chat strategic acasă 2026-05-05 evening late post Validation Framework LOCK V1) ingested. Documentează batch overnight execution 5 tasks + split finalize execution post-batch.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-05 evening late — produs 2 artefacte technical 1-button copy (master prompt batch + Consolidator) + 1 PROMPT_HANDOVER_SPLIT_FINALIZE.md. Batch overnight CC autonomous executed ~50 min total (factor 6-8x peste-estimare CC slip vs 3-5h estimate).
+
+**Decisions aggregate / architectural / vault hygiene (ZERO net new substantive product/architecture):**
+
+1. **HANDOVER_GLOBAL split atomic LANDED V1** (commit `1b539eb`) — master = INDEX navigation hub, ZERO wikilinks rewire architectural decision CC productive push-back. 7 theme files preserve verbatim source 7673 LOC (sum 7729 delta +0.7% header overhead). Section→file mapping table full în INDEX. Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety.
+2. **ADR 026 compile draft full V1 LOCKED** (commit `205abaa`) — 129 decisions aggregate exact match (10 base §42 + 75 spec §45 + 44 D-cluster §50). Status STUB → LOCKED V1. §4.6 Versioning rollback flagged PENDING explicit. Aggregation only.
+3. **ADR 027 Engine #5 Energy Adjustment / 028 Tempo Form Cues / 029 Specialization stubs LANDED** (commit `7a86343`) — numbering corrected vault SSOT post master prompt slip "Engine #5 = Deload" (Engine #5 = Energy Adjustment / Engine #4 = Deload Protocol).
+4. **IndexedDB rename salafull → andura + per-UID namespace LANDED** (commit `f9ee75d` part) — `src/storage/db.js` DB_NAME_PREFIX flip + `getNamespace()` resolution upgrade + `src/storage/migrateAnonymousToAuth.js` helper + 5 migration tests pass.
+5. **firestore.rules V1 extended LANDED în repo** (commit `f9ee75d` part) — `users/{uid}` + `_deleted/{uid}` + `_archived/{uid}/{docId}` + `_telemetry/global` + subcollections inherit. Console publish DEPENDENCY Phase 2 batch 2-3 LANDED — NU urgent acum.
+6. **Validation Framework simulator skeleton + match metric LOCK V1 LANDED** (commit `db52743`) — Safety 0.35 universal + 95% gate + Gate 2 DROPPED + Gate 3 selective + 500 queries. Engine wiring real DEFERRED productive push-back post Engine #2 ADR 024. 75 tests new pass.
+7. **DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED** post split atomic execution.
+
+**Memory rule #29 added în chat (NU vault, tracked în chat doar):** prompts CC multi-task batch = artefacte SEPARATE per task + orchestrator mini, NU monolith. Daniel: *"deja ruleaza... dar pe viitor sa aplici gandirea mea daca e mai safe"*. Recovery granular per task + audit archive separat + edit individual.
+
+**Slip-uri Claude chat-side flagged (mea culpa):**
+1. Privacy/ToS V2 DONE 2026-05-04 night — pus în TODO Daniel side când nu trebuia. Daniel: *"cel putin tos si privacy stiu ca le-a si ingerat cc"*. Corectat.
+2. Firestore Rules base ✅ publish 2 mai (cont real UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`) — V1 extended Console publish DEPENDENCY batch 2-3 LANDED, NU urgent independent.
+3. Recidivă framing memory rule #26 second time same conversation: scrisesem "ground truth Daniel-side ~5-10h" — Validation Framework §9 LOCKED V1 = Claude chat ~5-10h + Daniel review ~30-60min. Discipline needs reinforcement.
+
+**Implicații downstream:**
+- Cumulative LOCKED V1 product/architecture: **~653 preserved** (zero net new substantive — toate decisii arhitecturale/aggregation/vault hygiene)
+- Outbox cleanup 7 LATEST*.md archived `_archive/2026-05/161-167` cronologic continuu
+- 11 commits batch overnight + 2 commits split-finalize + 2 commits outbox-cleanup pushed origin/main
+- 80 new tests added (75 simulator/validation + 5 IndexedDB migration), zero regression: 1218 baseline → 1298 cumulative
+- ~38,100 LOC cod scris clar (19,207 prod + ~17,978 tests + configs/HTML/JSON/rules) — tests-to-prod ratio ~0.94:1
+
+**Mid-flight unresolved chat NEW pickup:** **Phase 2 Auth Flow batch 2 CC autonomous prompt** (§56.5 Settings UI + §56.7 Fork Decision UI, ~7-10h CC autonomous overnight) = P1 ABSOLUT URGENT NEXT.
+
+**Cross-refs:** [[026-offline-coaching-decision-tree-exhaustive]] LOCKED V1 + [[027-engine-energy-adjustment]] [[028-engine-tempo-form-cues]] [[029-engine-specialization]] + [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] (now INDEX post-split) + 7 theme files + DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT 🟢 RESOLVED + P1-FLAG-AUTH-PHASE2 batch 1 LANDED.
+
+**Backup tags chat ACEST decisii:** `pre-batch-overnight-2026-05-05-evening` + `pre-handover-split-2026-05-05-overnight` + `pre-handover-master-batch-split-finalize-2026-05-06-0004` (this handover ingest).
+
+---
+
 ## 2026-05-05 overnight — HANDOVER_GLOBAL Thematic Split Execution (§62.2 LOCKED V1)
 
 **Status:** Split executed atomic per §62.2 thematic split strategy LOCKED V1. Original `HANDOVER_GLOBAL_2026-04-30_evening.md` (~7673 LOC) → 7 theme files + master converted to INDEX. ZERO data loss (verbatim section preservation via awk extracts). Sum split LOC 7729 (delta +0.7% header overhead, within ±10% tolerance).

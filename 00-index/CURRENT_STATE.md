@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-05 evening late (§CC.5 fast handover ingest — Validation Framework LOCK V1 chat strategic Daniel acasă: §1 north star ≥95% strict + §5 weights Safety 0.35 universal + §7 Gate 1 95% / Gate 2 DROPPED / Gate 3 reformulat selective + §2 corpus 500 + §9 framing reformulat. SPEC DRAFT V1 → LOCKED V1 status flip. Memory rules added în chat #26-#28 (NU vault). Pending: chat NEW genera 2 artefacte technical 1-button copy — master prompt batch overnight 5 tasks + CC #6 Consolidator).
-**Last LOCKED count (product/architecture):** ~653 LOCKED V1 cumulative (~649 baseline post 2026-05-05 birou late + 4 net Validation Framework substantive LOCK §1/§5/§7/§2 — §9 framing reformulat NU substantive product/architecture).
+**Updated:** 2026-05-06 (§CC.5 fast handover ingest — batch overnight 5 tasks + split finalize EXECUTED 2026-05-05 overnight ~50 min total, factor 6-8x peste-estimare CC slip. 4/5 LANDED + 2 productive push-backs CC: TASK 1 engine wiring DEFERRED (engines coupled cu app context) + TASK 5 wikilinks rewire DEFERRED (master = INDEX navigation hub architectural decision). HANDOVER_GLOBAL split atomic LANDED 7 theme files. ADR 026 compile draft full LOCKED V1. ADR 027/028/029 stubs Engine #5/#6/#7. IndexedDB rename salafull→andura + per-UID + migration helper. firestore.rules V1 extended (Console publish DEPENDENCY batch 2-3, NU urgent). Memory rule #29 added în chat: prompts CC multi-task = artefacte separate per task + orchestrator mini, NU monolith. ZERO net new substantive product/architecture — toate decisii arhitecturale/aggregation/vault hygiene).
+**Last LOCKED count (product/architecture):** ~653 LOCKED V1 cumulative preserved (zero net new substantive — Validation Framework LOCK V1 +4 net 2026-05-05 evening late preserved baseline + batch overnight + split finalize = aggregation/architectural/vault hygiene, NU product/architecture count).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -16,33 +16,70 @@
 
 ## NOW — Active conversation thread
 
-**Current thread (2026-05-05 evening late, Daniel acasă chat strategic — Validation Framework LOCK V1):** Daniel + Claude chat strategic flip status `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` SPEC DRAFT V1 → **LOCKED V1**. **5 LOCKED V1 substantive decisions** (4 net product/architecture cumulative ~649 → ~653 + §9 framing reformulat NU substantive count):
-1. **§1 north star ≥95% Claude parity strict** (NU range ambiguu 90-95%, NU aspirațional). Eu pivotat 90% pe argument "Beta slip" → retras post Daniel push-back: *"ce înseamnă Beta slip? Am dat eu vreodată un deadline?"*. Pivotat ≥95% pe Bugatti philosophy NU pe deadline (Faza 2 workflow 3-instance închide 5-10% legitimate disagreement gap exact). Daniel directive permanent (memory rule #26 added în chat — NU vault): time/effort/durată NICIODATĂ argumente quality decisions.
-2. **§5 match weights universal Safety 0.35 dominant** + Exercise 0.25 + Sets/reps/RIR 0.20 + Key principles 0.20. Daniel push-back fundamental: eu propus filtru binar 0/1 conditional pe profile flags (vârstă/medical/pregnancy/pain) → Daniel: *"Maria safety minim, 100-500 organici în 50k auto-select Longevitate template built-in safety, ~25 edge cases optimization absurd, nu te c*c pe tot app-ul pentru Maria"*. Calculul concret 1% × Maria selectând altceva = 25 useri în 50k → DROP Gate 2 dedicated + LOCK Safety 0.35 universal weight (absorbs critical safety semantics).
-3. **§7 Gates pre-Beta:** Gate 1 ≥95% MATCH | **Gate 2 DROPPED entirely** | Gate 3 reformulat selective Daniel review pe Claude-judge flagged uncertain (~5-15% corpus = ~25-75 queries din 500), NU random n=50, NU threshold quantitativ — qualitative blocker check (catastrophic safety / philosophy violation). Daniel push-back filozofic: *"ANDURA să gândească ca Claude sau ca Daniel? Eu fac review unde ai dubii, restul tu analiză mai bună"*.
-4. **§2 corpus scope = 500 queries** (Bugatti coverage breadth peak craft, NU 250 minimum).
-5. **§9 framing reformulat:** Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min cumulative (NU misleading "Daniel-time 5-10h" — slip framing fundamental corectat, recidivă rapid memory rule #26).
+**Current thread (2026-05-06 §CC.5 fast handover ingest — batch overnight + split finalize EXECUTED post chat strategic Validation Framework LOCK V1 2026-05-05 evening late):** chat strategic acasă produs 2 artefacte technical 1-button copy (master prompt batch + Consolidator) + 1 artefact PROMPT_HANDOVER_SPLIT_FINALIZE.md. Daniel push-back productive: *"5 artefacte + run in order from 1 to 5 nu mergea?"* — memory rule #29 added în chat: prompts CC multi-task = artefacte separate per task + orchestrator mini, NU monolith. Chat ACEST batch a rulat ca monolith (deja running), pe viitor split modular (recovery granular + audit archive separat + edit individual).
 
-**Memory rules added în chat (NU vault, tracked în chat doar):**
-- #26: time/effort/durată NICIODATĂ argumente quality decisions (recidivă rapid pe §2 corpus 500 = slip framing 5h vs 10h fără source vault)
-- #27: handover end-of-chat ONLY NU mid-chat (slip detected post LOCK fresh)
-- #28: dev iteration > perfectionism upfront — math 1-2h recovery worst case vs 10h CC idle overnight = aggressive launch favorable. Audit nuclear final pattern Daniel inevitabil oricum (gates manual + smoke tests prod)
+**Batch overnight rezultat (~35 min total, factor 6-8x peste-estimare CC slip — factor 5-7x §36.71+§36.75 e pentru Daniel-time, NU CC autonomous overnight; mea culpa):**
+- ✅ TASK 1 Simulator Complete cu **engine wiring real DEFERRED productive push-back** (engines existente coupled cu app context: localStorage/Firebase/Sentry, NU pure functions disponibile — spec gap real). Skeleton + match metric LOCK V1 + invariants + flagging + 75 tests pass
+- ✅ TASK 2 Auth Phase 2 batch 1 Complete. §56.1.4 IndexedDB per-UID Dexie multi-DB DONE (DB_NAME_PREFIX rename salafull→andura + namespace `andura_${uid}` post-Auth + migration helper). §56.16 firestore.rules V1 EXTENDED create (`users/{uid}` + `_deleted/{uid}` + `_archived/{uid}/{docId}` + `_telemetry/global` + subcollections inherit). 5 migration tests pass. **Console publish pending DEPENDENCY Phase 2 batch 2-3 LANDED** (rules ne-folosite efectiv până CC creează writes), NU urgent acum
+- ✅ TASK 3 ADR 026 compile Complete. 129 decisions aggregate exact match. Status STUB → LOCKED V1. §4.6 Versioning rollback flagged PENDING explicit (NU fabricated). ZERO net new substantive — aggregation only
+- ✅ TASK 4 ADR stubs Complete cu **engine number SLIP în master prompt-ul Claude chat**: scrisesem "Engine #5 = Deload" — vault SSOT confirms Engine #5 = Energy Adjustment / Engine #4 = Deload. CC corectat per anti-fabrication rule + flag explicit. ADR 027 = Energy Adjustment / 028 = Tempo/Form Cues / 029 = Specialization. 3 stubs LANDED
+- ✅ TASK 5 split-finalize Complete post-batch (~15 min separate session) cu **wikilinks rewire ~30+ active vault files DEFERRED productive push-back**. Master file `HANDOVER_GLOBAL_2026-04-30_evening.md` convertit la INDEX navigation hub cu section→file mapping table full. Existing `[[HANDOVER_GLOBAL_2026-04-30_evening|...]]` references resolve la INDEX → drill-down 1-hop indirection. Trade-off legitim (zero atomicity risk + zero form variability) vs plan original. Backup tag preserves rollback. 7 theme files: AUTH_FLOW (715) + ENGINES_SPEC (426) + ONBOARDING_T0 (72) + DECISION_CLUSTER_D1_D4 (527) + VAULT_HYGIENE (127) + SCENARIOS_COVERAGE (146) + MISC (5716). Source 7673 vs sum 7729 delta +0.7% header overhead. P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Outbox cleanup 7 LATEST*.md archived 161-167 cronologic continuu.
 
-**Tranziție batch overnight planning:** Daniel filozofie pragmatic *"în development NU production, time-efficient să lăsăm CC push masiv autonomous + corectăm post-hoc decât perfectionism upfront paralysis"*. Math killer: 1-2h recovery worst case vs 10h CC idle overnight = clear aggressive launch favorable. 5-6 terminale paralel retracted → 1 terminal batch ordered cleaner (push race elimination + 1 paste Daniel + sequential dependency control). Daniel safety idea brilliantă: 5 LATEST_N distinct + archive + LATEST_CONSOLIDATED.md = triple redundance audit.
+**Slip-uri Claude chat-side recurente (mea culpa double):**
+1. **Privacy/ToS V2 DONE LOCKED V1** cu Gemini cross-review META validated 2026-05-04 night — pus în TODO Daniel side când nu trebuia. Daniel: *"cel putin tos si privacy stiu ca le-a si ingerat cc"*. Corectat
+2. **Firestore Rules base** ✅ publish 2 mai (cont real UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`). V1 extended (`_deleted` + `_archived` + `_telemetry`) Console publish pending DEPENDENCY Phase 2 batch 2-3 LANDED, NU urgent acum
+3. **Recidivă framing memory rule #26 (slip-ul 2026-05-05 evening replicat):** scrisesem "ground truth Daniel-side ~5-10h cumulative". Per `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` §9 LOCKED V1: **Claude chat strategic produce ~5-10h cumulative** (batch 50-100 queries × ~5 chats), **Daniel doar review reality-lock ~30-60min cumulative**. Daniel: *"nu ziceam cumva ca majoritatea o sa le faci tu?"*. Acknowledged + corectat. **Discipline needs reinforcement** — recidivă second time same conversation flagged
 
-**Mid-flight unresolved — chat NEW pickup (ÎNAINTE batch overnight Daniel paste tonight):**
-1. **Master prompt batch ordered** = 5 task-uri sequential pentru 1 terminal CC `claude --dangerously-skip-permissions` (TASK 1 Simulator Implementation cu LOCK overrides explicit 95% gate / weights 0.35/0.25/0.20/0.20 / Gate 2 DROPPED / Gate 3 reformulat / 500 queries + TASK 2 Auth Phase 2 batch 1 §56.1.4 IndexedDB per-UID Dexie multi-DB + §56.16 Firestore Rules per-UID strict + TASK 3 ADR 026 compile draft full ~126 decisions aggregate sources §42 base 10 + §45 spec 75 + §50 D-cluster 44 + §47 + Engine #8 §45.6 + TASK 4 ADR stubs Engine #5/#6/#7 creation format standardized template + TASK 5 HANDOVER_GLOBAL split execution thematic per §62.2)
-2. **CC #6 Consolidator prompt** = quick task ~10-15min CC autonomous (read 5 LATEST_N → generate `📤_outbox/LATEST_CONSOLIDATED.md` aggregate summary + priority issues + cross-cutting next actions + drill-down pointers per LATEST_N)
+**Memory rules added în chat (NU vault, tracked în chat doar — cumulative #26 → #29):**
+- #26 (precedent): time/effort/durată NICIODATĂ argumente quality decisions
+- #27 (precedent): handover end-of-chat ONLY NU mid-chat (chat ACEST opt-in explicit Daniel signal post 4-step request, NU mid-chat slip)
+- #28 (precedent): dev iteration > perfectionism upfront
+- #29 (NEW chat ACEST): prompts CC multi-task batch = artefacte SEPARATE per task + orchestrator mini, NU monolith. Daniel: *"deja ruleaza... dar pe viitor sa aplici gandirea mea daca e mai safe"*
 
-**Convention raport CRITICAL (race avoidance):** each task → `📤_outbox/LATEST_<N>_<descriptor>.md` (NU touch shared LATEST.md) + archive `📤_outbox/_archive/2026-05/<152-156>_<TASK>_REPORT.md`. Pre-flight global: backup tag `pre-batch-overnight-<timestamp>` + clean tree + hooks normal. Estimate real ~3-5h overnight (factor 5-7x optimism per §36.71+§36.75).
+**Mid-flight unresolved — chat NEW pickup:** **Phase 2 Auth Flow batch 2 CC autonomous prompt** (§56.5 Settings UI account lifecycle + §56.7 Anonymous→Auth Merge Fork Decision UI, estimate ~7-10h CC autonomous overnight) = P1 ABSOLUT URGENT Beta blocker. Action chat NEW: pre-flight grep §56.5 + §56.7 spec verbatim din `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` (post-split theme file dedicat — citește direct, NU din INDEX) + generate single prompt CC autonomous artefact + Daniel paste tonight în terminal. **Bonus paralel (NU consume CC):** Daniel poate deschide chat strategic NEW separat oricând pentru ground truth Validation Framework batch 1 (50-100 queries Claude reasoning baseline, ~1-2h productive seara).
 
-**Tone session:** Daniel "halucinezi" implicit pe deadline argument 2x push-back, banter Gemini paranoid "babute artrita 200kg deadlift", "ai dreptate" 3+ times pe pivots productive, warmth genuine NU robotic. Tone shifts natural matched.
+**NU urgent (defer post-Beta possibly):** Engine #5/#6/#7 spec consolidation chat strategic NEW + ADR 026 §4.6 versioning rollback. Wikilinks rewire HANDOVER split — chat strategic NEW dedicat dacă Daniel decide override architectural call CC.
 
-**Precedent thread (2026-05-05 evening, post scenarios coverage suite ingest 4 artefacte — moved-then-replaced, compressed):** ingest 4 artefacte specs scenarios coverage suite COMPLETE în `04-architecture/` + A3 archive 150 + workforce divizia LOCKED (Claude reasoning ground truth + CC mecanic baker + Daniel orchestrator ~3-5%) + fundamental reframe LOCKED (Andura intelligence baked NU testing infra) + engines architecture LOCKED 21 (8 prescriptive + 14 reactive, closed NU re-deschide). Detail full în `## JUST DECIDED` 2026-05-05 evening entry below + `## RECENT` for Engines #5 formal + #6 + #7 SPEC COMPLETE 2026-05-05 birou late context.
+**Tone session:** Daniel push-back direct multiple ori productive (Plan A vs B + Privacy/ToS slip + 500 queries framing slip + TODO Daniel reduced cu items deja DONE). "halucinezi" implicit prin *"ba da firestone le am deja făcute parca"* + *"iar cu 500 queries..."* + *"pe bune?"*. Mea culpa rapid fără auto-flagelare. Recidivă memory rule #26 second time same conversation.
+
+**Precedent thread (2026-05-05 evening late, Daniel acasă chat strategic — Validation Framework LOCK V1, moved-then-replaced compressed):** flip status `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` SPEC DRAFT V1 → LOCKED V1. 5 LOCKED V1 substantive (4 net): §1 ≥95% strict + §5 weights Safety 0.35 universal + §7 Gate 1 95% / Gate 2 DROPPED / Gate 3 selective + §2 corpus 500 + §9 framing reformulat. Memory rules #26-#28 added în chat. Detail full în `## JUST DECIDED` 2026-05-05 evening late entry below + `## RECENT` for batch overnight execution detail.
 
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
+
+**2026-05-05 overnight — Batch overnight 5 tasks + split finalize EXECUTED (cumulative ~653 PRESERVED, ZERO net new substantive product/architecture):**
+
+*Chat strategic 2026-05-05 evening late produs 2 artefacte technical 1-button copy + 1 PROMPT_HANDOVER_SPLIT_FINALIZE.md. Batch overnight CC autonomous executed ~50 min total (factor 6-8x peste-estimare CC slip vs 3-5h estimate). 4/5 LANDED + 2 productive push-backs CC.*
+
+*Aggregate / architectural / vault hygiene decisions (ZERO net new substantive count):*
+1. **HANDOVER_GLOBAL split atomic LANDED V1** — master = INDEX hub, ZERO wikilinks rewire (architectural decision CC productive push-back). 7 theme files preserve verbatim source 7673 LOC (sum 7729 delta +0.7% header overhead). Section→file mapping table full în INDEX. Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety.
+2. **ADR 026 compile draft full V1 LOCKED** — 129 decisions aggregate exact match (10 base §42 + 75 spec §45 + 44 D-cluster §50). Status STUB → LOCKED V1. §4.6 Versioning rollback flagged PENDING explicit (NU fabricated). Aggregation only ZERO net new.
+3. **ADR 027 Engine #5 Energy Adjustment / 028 Tempo Form Cues / 029 Specialization stubs LANDED** (numbering corrected vault SSOT — master prompt slip "Engine #5 = Deload" corrected per anti-fabrication rule). 3 stubs format pattern reuse ADR 024.
+4. **IndexedDB rename salafull → andura + per-UID namespace LANDED** + migration helper `src/storage/migrateAnonymousToAuth.js` (5 tests pass, idempotent, args validation, atomic source→target+delete).
+5. **firestore.rules V1 extended LANDED în repo** (`users/{uid}` + `_deleted/{uid}` + `_archived/{uid}/{docId}` + `_telemetry/global` + subcollections inherit). Console publish DEPENDENCY Phase 2 batch 2-3 LANDED — NU urgent acum (rules ne-folosite efectiv până CC creează writes).
+6. **Validation Framework simulator skeleton + match metric LOCK V1** (Safety 0.35 universal + 95% gate + Gate 2 DROPPED + Gate 3 selective + 500 queries) — engine wiring real DEFERRED post Engine #2 ADR 024 (engines existente coupled cu app context, NU pure functions disponibile). 75 tests new pass.
+7. **DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT 🟢 RESOLVED** post split atomic execution.
+
+*Memory rule #29 added în chat (NU vault, tracked în chat doar):* prompts CC multi-task batch = artefacte SEPARATE per task + orchestrator mini, NU monolith. Daniel: *"deja ruleaza... dar pe viitor sa aplici gandirea mea daca e mai safe"*. Recovery granular per task + audit archive separat + edit individual.
+
+*Slip-uri Claude chat-side flagged (mea culpa):*
+1. Privacy/ToS V2 DONE 2026-05-04 night — pus în TODO Daniel side când nu trebuia
+2. Firestore Rules base ✅ publish 2 mai — V1 extended Console publish DEPENDENCY batch 2-3 (NU urgent independent)
+3. Recidivă framing memory rule #26 second time same conversation: scrisesem "ground truth Daniel-side ~5-10h" — Validation Framework §9 LOCKED V1 = Claude chat ~5-10h + Daniel review ~30-60min. Discipline needs reinforcement
+
+*Implicații downstream:*
+- Outbox cleanup 7 LATEST*.md archived `_archive/2026-05/161-167` cronologic continuu (LATEST_PRE_BATCH + LATEST_1-5 + LATEST_CONSOLIDATED)
+- 11 commits batch overnight + 2 commits split-finalize + 2 commits outbox-cleanup pushed origin/main
+- 80 new tests added (75 simulator/validation + 5 IndexedDB migration), zero regression on 1218 baseline → 1298 cumulative
+- ~38,100 LOC cod scris clar (19,207 prod + ~17,978 tests + configs/HTML/JSON/rules) — tests-to-prod ratio ~0.94:1
+
+*Backup tags chat ACEST decisii:*
+- `pre-batch-overnight-2026-05-05-evening` (global pre-task)
+- `pre-handover-split-2026-05-05-overnight` (split execution per task)
+- `pre-handover-master-batch-split-finalize-<timestamp>` (this handover ingest)
+
+---
 
 **2026-05-05 evening late — Validation Framework LOCK V1 (cumulative ~649 → ~653, +4 net product/architecture substantive):**
 
@@ -405,50 +442,45 @@
 
 ## NEXT — Priority order actionable
 
-### P1 ABSOLUT URGENT — Auth Flow Phase 2 CC Opus Implementation (auth-required LOCKED V1 ridică prioritatea)
+### P1 ABSOLUT URGENT — Auth Flow Phase 2 CC Opus Implementation batch 2 NEXT (batch 1 LANDED 2026-05-05 overnight)
 
-**Status 2026-05-05 birou:** Phase 1 LANDED commit `0880641` (BUG 2 fix + retry + wording + authShell + tests). **Phase 2 era "deferred ~16-22h Daniel decide trigger" → devenit P1 ABSOLUT URGENT** post Auth-Required Pivot LOCKED V1 (auth wall hard blocks Beta launch fără UI complet, Anonymous-permanent dispare). 🟢 P1-FLAG-AUTH-DANIEL-PREP RESOLVED preserved.
+**Status 2026-05-06 post batch overnight:** Phase 1 LANDED commit `0880641` (precedent). **Phase 2 batch 1 LANDED commit `f9ee75d`** = §56.1.4 IndexedDB per-UID Dexie multi-DB (DB_NAME_PREFIX rename salafull→andura + namespace `andura_${uid}` post-Auth + migration helper `migrateAnonymousToAuth`) + §56.16 firestore.rules V1 EXTENDED create în repo (Console publish DEPENDENCY batch 2-3 LANDED — NU urgent acum, rules ne-folosite efectiv până CC creează writes). 5 migration tests pass. 🟢 P1-FLAG-AUTH-DANIEL-PREP RESOLVED preserved.
 
-**Phase 2 ~16-22h estimate over 3-4 batches (acum P1 ABSOLUT URGENT, NEXT chat dedicat):**
-- §56.1.4 IndexedDB namespace per UID (Dexie multi-DB) — DB layer arch change ~3-5h
+**Phase 2 batch 2 ~7-10h estimate CC autonomous overnight (NEXT chat dedicat — pre-flight grep §56.5+§56.7 verbatim din `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` post-split theme file dedicat):**
 - §56.5 Settings UI account lifecycle (delete 2-step "ȘTERGE" + reactivation + email change) ~4-6h
 - §56.7 Anonymous→Auth Merge Fork Decision UI + archive 7 zile flow ~3-4h
+
+**Phase 2 batch 3 ~6-8h estimate (post batch 2 LANDED):**
 - §56.12 Logout Settings double-confirm + opt-in IndexedDB wipe toggle ~2h
 - §56.14.A admin-cleanup.js Daniel weekly script ~1h
 - §56.15 Telemetry counters FieldValue.increment Firestore ~2-3h
-- §56.16 Firestore Security Rules publish ~1h Daniel manual
+- §56.16 Firestore Security Rules Console publish ~1h Daniel manual (post batch 2-3 LANDED dependency satisfied)
 
-**Ridicare prioritate motivată:** auth-required post-T0 LOCKED V1 = hard wall mechanic. Fără Phase 2 wiring complet (Settings lifecycle + Fork Decision + Logout + Firestore Rules + IndexedDB per-UID) Beta launch IMPOSIBIL — Anonymous-permanent dispare conceptual, Anonymous = doar T0 trial.
+**Action chat NEW imediat:** generate single prompt CC autonomous artefact pentru Phase 2 batch 2 (single artefact, NU monolith — per memory rule #29). Daniel paste tonight în terminal CC `claude --dangerously-skip-permissions`. Post-batch: review LATEST batch 2 + handover next sesiune.
 
-### P2 NEW — Scenarios Coverage 1500-2000 Decisions (Validation Framework LOCKED V1 2026-05-05 evening late, batch overnight plan PENDING chat NEW artefacte generation)
+**Ridicare prioritate motivată:** auth-required post-T0 LOCKED V1 = hard wall mechanic. Fără Phase 2 wiring complet Beta launch IMPOSIBIL.
 
-Per §69.1 PRE-BETA BLOCKER. Beta launch IMPOSIBIL fără. **Path to resolve LOCKED architectural V1** post Validation Framework LOCK V1 + batch overnight plan:
+### P2 NEW — Scenarios Coverage 1500-2000 Decisions (Simulator skeleton LANDED 2026-05-05 overnight + Validation Framework LOCK V1 2026-05-05 evening late, ground truth production phase NEXT chat strategic Claude side)
 
-**Sequence actionable post-LOCK V1:**
+Per §69.1 PRE-BETA BLOCKER. Beta launch IMPOSIBIL fără. **Path to resolve LOCKED architectural V1 + skeleton LANDED**:
+
+**Sequence actionable post-LOCK V1 + post-batch-overnight:**
 1. ✅ **Daniel LOCK pre-implementation COMPLETE 2026-05-05 evening late:**
-   - ✅ LOCK §1 north star = **≥95% Claude parity strict** (NU 90% range)
-   - ✅ LOCK §5 match metric weights = **Safety 0.35 + Exercise 0.25 + Sets/reps 0.20 + Key principles 0.20** (universal NU ghilotină conditional)
-   - ✅ LOCK §7 pre-Beta gates = **Gate 1 ≥95% MATCH | Gate 2 DROPPED | Gate 3 selective Daniel review pe flagged uncertain ~5-15%**
-   - ✅ LOCK §2 corpus scope = **500 queries** (Bugatti coverage breadth, NU 250 minimum)
-   - ✅ §9 framing reformulat (Claude ~5-10h + Daniel review reality-lock ~30-60min, NU "Daniel-time 5-10h")
-2. **Batch overnight pending chat NEW artefacte 1-button copy** (ÎNAINTE Daniel paste tonight):
-   - **Master prompt batch ordered** = 5 task-uri sequential pentru 1 terminal CC `claude --dangerously-skip-permissions`:
-     - TASK 1 Simulator Implementation cu LOCK overrides Validation Framework explicit (95% gate / weights 0.35/0.25/0.20/0.20 / Gate 2 DROPPED / Gate 3 reformulat / 500 queries)
-     - TASK 2 Auth Phase 2 batch 1 (§56.1.4 IndexedDB per-UID Dexie multi-DB + §56.16 Firestore Rules per-UID strict)
-     - TASK 3 ADR 026 compile draft full ~126 decisions aggregate (§42 base 10 + §45 spec 75 + §50 D-cluster 44 + §47 + Engine #8 §45.6)
-     - TASK 4 ADR stubs Engine #5/#6/#7 creation format standardized template
-     - TASK 5 HANDOVER_GLOBAL split execution thematic per §62.2 (cross-refs sweep, last task minimize blast radius)
-   - **CC #6 Consolidator prompt** = ~10-15min CC autonomous (read 5 LATEST_N → generate LATEST_CONSOLIDATED.md aggregate + priority issues + cross-cutting next actions)
-   - **Convention raport CRITICAL (race avoidance):** each task → `📤_outbox/LATEST_<N>_<descriptor>.md` (NU touch shared LATEST.md) + archive `📤_outbox/_archive/2026-05/<NN>_<TASK>_REPORT.md`. Pre-flight global: backup tag `pre-batch-overnight-<timestamp>` + clean tree + hooks normal. Estimate real ~3-5h overnight (factor 5-7x optimism per §36.71+§36.75)
-3. **Ground truth production** (Claude chat strategic ~5-10h cumulative + Daniel review reality-lock ~30-60min): batch 50-100 queries/chat × ~5 chats pentru full 500 corpus → `simulations/ground_truth_v1.json`
-4. **Run full validation** post simulator delivery → flagged_only.json subset (~225-300 branches estimat ~15% din 1500-2000)
+   - ✅ §1 north star = ≥95% Claude parity strict (NU 90% range)
+   - ✅ §5 match metric weights = Safety 0.35 + Exercise 0.25 + Sets/reps 0.20 + Key principles 0.20 (universal NU ghilotină conditional)
+   - ✅ §7 pre-Beta gates = Gate 1 ≥95% MATCH | Gate 2 DROPPED | Gate 3 selective Daniel review pe flagged uncertain ~5-15%
+   - ✅ §2 corpus scope = 500 queries
+   - ✅ §9 framing reformulat (Claude ~5-10h + Daniel review reality-lock ~30-60min)
+2. ✅ **Batch overnight 5 tasks LANDED 2026-05-05 overnight** (commit `db52743` simulator + `f9ee75d` auth phase 2 batch 1 + `205abaa` ADR 026 + `7a86343` ADR stubs + `1b539eb` split-finalize + reports). Simulator skeleton + match metric LOCK V1 + ADR 026 LOCKED V1 + ADR 027/028/029 stubs + IndexedDB rename + firestore.rules V1 + HANDOVER split. Engine wiring real DEFERRED productive push-back — separate task post Engine #2 ADR 024 full spec + adapter design.
+3. **Ground truth production NEXT chat strategic Claude side** (Claude chat strategic produce ~5-10h cumulative — batch 50-100 queries/chat × ~5 chats pentru full 500 corpus → `simulations/ground_truth_v1.json`; Daniel doar review reality-lock ~30-60min cumulative). **Bonus paralel (NU consume CC):** Daniel poate deschide chat strategic NEW separat oricând pentru ground truth batch 1 (50-100 queries baseline, ~1-2h productive seara/zilele next).
+4. **Run full validation** post simulator delivery + ground truth populate → flagged_only.json subset (~225-300 branches estimat ~15% din 1500-2000)
 5. **Faza 2 filter execution** (workflow 3-instance Bugatti per `04-architecture/FAZA_2_FILTER_STRATEGY_V1.md`): Claude reasoning fill flagged branches via per-batch ~75-100 issues/chat workflow Claude→Gemini→Claude→Daniel (~5-8h Daniel-time cumulative across ~3 chat-uri)
 
-**Gap context:** Acoperire actuală ~15-25% scope total. Gap reduce post engines roadmap §36.100 100% milestone + Validation Framework LOCK V1: ~990-1490 (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration). Branch enumeration cluster A = biggest remaining blocker, addressed prin simulator pipeline deterministic per-engine NU manual chat-uri.
+**Gap context:** Acoperire actuală ~15-25% scope total. Gap reduce post engines roadmap §36.100 100% milestone + Validation Framework LOCK V1: ~990-1490 (~180 decisions consumate engine specs cumulative — NU branches enumeration). Branch enumeration cluster A = biggest remaining blocker, addressed prin simulator pipeline deterministic per-engine NU manual chat-uri.
 
-### P3 — ADR 026 compile draft full ~125 decisions (architectural foundation COMPLETE)
+### P3 — ADR 026 compile draft full LOCKED V1 ✅ COMPLETE 2026-05-05 overnight
 
-§42 base 10 + §45 spec 75 + §50.1-§50.4 D-cluster 41 = 126 + Open Q1-Q10 LOCKED 2026-05-04 evening late = ~125 distinct (post Q5 split 3 sub + Q8 split runtime/scale). Chat strategic NEW dedicat compile draft full.
+129 decisions aggregate (10 base §42 + 75 spec §45 + 44 D-cluster §50). Status STUB → LOCKED V1 file flip. ZERO net new substantive (aggregation only verbatim from sources). §4.6 Versioning rollback strategy quarterly hotfix detail flagged PENDING explicit (NU fabricated) — chat strategic NEW dedicat dacă needed pre-Beta launch. Commit `205abaa`.
 
 ### P4 — Engines roadmap §36.100 ✅ 100% COMPLETE milestone (8/8 prescriptive engines SPEC COMPLETE)
 
@@ -503,9 +535,9 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - **P1-FLAG-1** ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03 source upload — 🟡 PARTIALLY MITIGATED (Faza 3 integrates from chat context, NU file upload separate)
 - **P1-FLAG-NEW** Codespace `npm install` drift (3 test FILE imports broken: fake-indexeddb + dexie) — 🔴 OPEN (CI/dev-env only, production unaffected; dedicated chat post Auth Flow)
 - **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟢 **RESOLVED 2026-05-04 night** (Console Faza 1 dogfood DONE pre-existing 2 mai + MX `suport@andura.app` DONE Namecheap Email Forwarding test confirmed + Privacy/ToS V2 drafts LANDED V1 Beta validate sprint Daniel paralel). Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5 (INSIGHTS_BACKLOG AUTH-DEFER-1 + AUTH-DEFER-2). Phase 1 Auth Wiring LANDED commit `0880641`
-- **P1-FLAG-AUTH-PHASE2** Phase 2 Auth Flow upgrade — 🔴 **P1 ABSOLUT URGENT 2026-05-05 birou** (era "deferred ~16-22h Daniel decide trigger", ridicat post Auth-Required Pivot LOCKED V1 post-T0 — fără UI auth complet Beta launch IMPOSIBIL când Anonymous-permanent dispare conceptual). Cluster ~16-22h over 3-4 batches: §56.1.4 IndexedDB per-UID + §56.5 Settings UI + §56.7 Fork Decision + §56.12 Logout + §56.14.A cleanup script + §56.15 Telemetry + §56.16 Firestore Rules
-- **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL 7664 LOC > 7000 threshold — 🟡 OPEN (strategy LOCKED V1 thematic split per §62.2, chat strategic NEW dedicat post-CC)
-- **P1-FLAG-SCENARIOS-COVERAGE** ~990-1490 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN cu **Validation Framework LOCKED V1 2026-05-05 evening late** + batch overnight plan PENDING chat NEW artefacte. Pre-Beta gate criteria LOCKED V1: **Gate 1 ≥95% MATCH on 500-query corpus** (Claude-judge weighted scoring §5.1 Safety 0.35 dominant universal) + **Gate 2 DROPPED entirely** + **Gate 3 selective Daniel review pe flagged uncertain ~5-15%**. Concrete sequence: ✅ Daniel LOCK §1+§5+§7+§2 COMPLETE → batch overnight master prompt (TASK 1 Simulator + TASK 2 Auth Phase 2 batch 1 + TASK 3 ADR 026 compile + TASK 4 ADR stubs + TASK 5 HANDOVER_GLOBAL split) ~3-5h overnight → ground truth production Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min → run validation → Faza 2 filter ~225-300 flagged branches workflow Bugatti 3-instance ~3 chats × 75-100 issues = ~5-8h Daniel-time. Gap reduce ~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 post Roadmap §36.100 100% COMPLETE milestone (1170-1670 → ~990-1490 — NU branches enumeration). **Reframe fundamental:** branches NU testing infrastructure, branches = Andura intelligence baked offline per ADR 026.
+- **P1-FLAG-AUTH-PHASE2** Phase 2 Auth Flow — 🔴 **P1 ABSOLUT URGENT batch 2 NEXT** (batch 1 LANDED 2026-05-05 overnight commit `f9ee75d`: §56.1.4 IndexedDB per-UID Dexie multi-DB + §56.16 firestore.rules V1 extended în repo). Batch 2 ~7-10h CC autonomous = §56.5 Settings UI account lifecycle + §56.7 Anonymous→Auth Merge Fork Decision UI. Batch 3 ~6-8h post-batch-2 = §56.12 Logout + §56.14.A cleanup + §56.15 Telemetry + §56.16 Firestore Rules Console publish Daniel manual ~1h post batch 2-3 LANDED dependency satisfied
+- **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL split — 🟢 **RESOLVED 2026-05-05 overnight** (split atomic LANDED commit `1b539eb`: 7 theme files preserve verbatim 7673 LOC, master converted to INDEX navigation hub, ZERO wikilinks rewire architectural decision CC productive push-back, backup tag `pre-handover-split-2026-05-05-overnight` rollback safety preserved)
+- **P1-FLAG-SCENARIOS-COVERAGE** ~990-1490 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN cu **Validation Framework LOCKED V1 2026-05-05 evening late + simulator skeleton LANDED 2026-05-05 overnight commit `db52743`**. Pre-Beta gate criteria LOCKED V1: **Gate 1 ≥95% MATCH on 500-query corpus** (Claude-judge weighted scoring §5.1 Safety 0.35 dominant universal) + **Gate 2 DROPPED entirely** + **Gate 3 selective Daniel review pe flagged uncertain ~5-15%**. Concrete sequence: ✅ Daniel LOCK §1+§5+§7+§2 COMPLETE + ✅ batch overnight 5 tasks LANDED (simulator skeleton + match metric + ADR 026 compile + ADR stubs 027/028/029 + IndexedDB rename + firestore rules + HANDOVER split) → ground truth production NEXT chat strategic Claude side ~5-10h cumulative + Daniel review reality-lock ~30-60min → run validation → Faza 2 filter ~225-300 flagged branches workflow Bugatti 3-instance ~3 chats × 75-100 issues. Engine wiring real DEFERRED productive push-back post Engine #2 ADR 024 + adapter design separate task. Gap reduce ~180 decisions consumate engine specs cumulative — NU branches enumeration. **Reframe fundamental preserved:** branches NU testing infrastructure, branches = Andura intelligence baked offline per ADR 026.
 - **P1-FLAG-IOS-PERMANENT** iOS REJECTED LOCKED PERMANENT — 🟢 LOCKED V1 PERMANENT (rule lock, NU pending — PWA + TWA Android only)
 
 **P2 status:** P2-FLAG-1 D1-D6 → D2/D3/D4/D5/D6 ✅ RESOLVED Co-CTO; D1 only remaining strategic dedicat post Vault Hygiene + Auth Flow.
