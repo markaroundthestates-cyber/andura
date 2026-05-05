@@ -1,5 +1,27 @@
 # DECISION LOG — Andura
 
+## 2026-05-05 overnight — ADR 026 Compile Draft Full V1 (aggregation 129 decisions, ZERO net new)
+
+**Status:** ADR 026 file status STUB → LOCKED V1 compile draft full. 129 decisions aggregate din 4 sources (§42 base 10 + §45 spec 75 + §50 D-cluster 44). ZERO net new substantive — aggregation only. Cumulative LOCKED preserved ~653.
+
+**Authority:** CC TASK 3 batch overnight 2026-05-05 per master prompt sequential discipline. Generated post-Validation Framework LOCK V1 same day.
+
+**Sub-decisions sources (verbatim aggregation):**
+- §42 base 10 — format ramură + granularitate + cross-engine merge + spec order + ADR scope + storage + fallback + versioning + testing + pipeline order
+- §45 spec 75 — Q1-Q40 (4 batches × 10) + 17 refinements inline + Engine #8 Warm-up & Mobility NEW + Cooldown Q-final defer + Light flags
+- §50 D-cluster 44 — D3.1 13 (10 Q + Hard Cap + Sub-decision Unlock + D3.1.6 Pattern Detection Passive) + D2 13 (10 Q + D2.3.1/2/3 Medical Database) + D4 11 (10 Q + D4.2.1 Filtrarea Dialogului Blocant) + D1 7 (7 Q)
+
+**Cross-refs:** [[026-offline-coaching-decision-tree-exhaustive]] (status flip + 129 decisions verbatim) | [[HANDOVER_GLOBAL_2026-04-30_evening]] §42 + §45 + §47 + §50 | [[../04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1]] (north star ≥95% reflected în decision wording).
+
+**Files modified:**
+- UPDATED `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` (stub → 129 decisions full compile)
+- UPDATED `00-index/INDEX_MASTER.md` (ADR 026 status STUB → LOCKED V1)
+- UPDATED `DIFF_FLAGS.md` (P1-FLAG-SCENARIOS-COVERAGE — note ADR 026 LOCKED V1 compile draft, branches enumeration separate concern preserved)
+
+**Backup tag:** part of `pre-batch-overnight-2026-05-05-evening`.
+
+---
+
 ## 2026-05-05 evening late — Validation Framework LOCK V1 (cumulative ~649 → ~653, +4 net Validation Framework substantive product/architecture)
 
 **Status:** §CC.5 fast handover ingest 2026-05-05 evening late Daniel acasă chat strategic + Claude — flip status `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` SPEC DRAFT V1 → **LOCKED V1**.

@@ -148,7 +148,7 @@ andura/
 | 023 | [[023-llm-intent-interpretation]] | LOCKED V1 partial spec (full sub-sections A-M PENDING addendum upload — see DIFF_FLAGS P1-FLAG-1) |
 | 024 | [[024-goal-driven-program-templates]] | 🟡 **STUB / PENDING SPEC** (created Faza 3 2026-05-04 — Engine #2 §36.100) |
 | 025 | [[025-andura-gandeste-pentru-user]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — Graceful Degradation Universal §36.94) |
-| 026 | [[026-offline-coaching-decision-tree-exhaustive]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — PRE-BETA blocker §36.99) |
+| 026 | [[026-offline-coaching-decision-tree-exhaustive]] | ✅ **LOCKED V1 — COMPILE DRAFT FULL** (compiled 2026-05-05 overnight, 129 decisions aggregate from §42 base + §45 spec + §50 D-cluster) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ### Named ADRs (8 — non-numbered, locked V1)

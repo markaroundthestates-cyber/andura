@@ -230,6 +230,11 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 - §2 corpus scope = 500 queries (Bugatti coverage breadth)
 - §9 framing reformulat: Claude chat strategic ~5-10h + Daniel review reality-lock ~30-60min cumulative
 
+**ADR 026 LOCKED V1 compile draft full cross-ref (2026-05-05 overnight):**
+- `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` status STUB → LOCKED V1 compile draft full
+- 129 decisions aggregate (10 base §42 + 75 spec §45 + 44 D-cluster §50). ZERO net new substantive — aggregation only. Cumulative LOCKED preserved ~653.
+- Branches enumeration separate concern (1500-2000 ramuri V1 distribution per engine, NU în ADR 026 monolith — ADR 026 = META-architecture global concerns SSOT)
+
 **Action Daniel (Priority 2 NEW per §71, batch overnight plan post-LOCK):**
 
 1. ✅ Daniel LOCK Validation Framework §1+§5+§7+§2 COMPLETE 2026-05-05 evening late
