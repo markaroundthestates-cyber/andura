@@ -9,6 +9,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    silent: 'passed-only',
     include: ['src/**/*.test.{js,ts}'],
     poolOptions: {
       threads: { execArgv },
