@@ -547,3 +547,154 @@ Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.1 Engine #1 Periodization Module-Level Spec V1 compiled 2026-05-06 morning chat-3 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-04 evening late sources (`142_HANDOVER` lines 33-39 + CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 579-584). 32 decisions Cluster 1-5 cumulative. Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2. Reusable când Faza 3 wiring real Strangler post engines V1 exist (ADR 030 D1-D5 foundation + Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550`).
+
+---
+
+### §9.2 Engine #2 Goal Adaptation Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 morning chat-3 acasă din chat strategic 2026-05-04 evening late sources). ~30 decisions cumulative (Cluster 1-5). Pre Faza 2.5 batch 2 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine #1 Periodization V1 LANDED commit `1303b62` (acest task).
+
+**Provenance chain:**
+- Source 1 (verbatim Cluster 1-5): `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` lines 41-47
+- Source 2 (cristalizate identical, verbatim parity check ✅): `00-index/CURRENT_STATE.md` §JUST_DECIDED entry "2026-05-04 evening late" lines 586-591. ZERO substantive divergence vs Source 1; minor stylistic only (colon punctuation + word order)
+- Source 3 (Q1-Q8 RESOLVED LOCKED foundation): [[024-goal-driven-program-templates|ADR 024]] §2.1 Q1 (5 vs 8 templates resolve) + §2.2 Q2 (Template variant matrix algorithmic generation) + §2.3 Q3 (Cross-engine integration topology HYBRID) + §2.4 Q4 (Cut-Bulk-Maintain phase transitions auto vs manual) + §2.5 Q5 (RECOMP scope) + §2.6 Q6 (Goal Shift conservare date / tier calibration post-shift LOCKED V1 D Hybrid morning 2026-05-06 chat-1) + §2.7 Q7 (5-template aspect mapping vs SUFLET F2 push-back proporțional) + §2.8 Q8 (Re-prompt periodic anti-spam logic). Compile draft full commit `8674782` 2026-05-06 morning chat-2.
+- Source 4 (architectural foundation cross-ref doar, NU duplicate): [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract `analyze(input) → DimensionResult` + §1.10 Pipeline Order Constraint Object Floor/Ceiling Range ±15% above
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal (Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 2) | [[024-goal-driven-program-templates|ADR 024]] Q1-Q8 LOCKED foundation (compile draft full commit `8674782`) | §9.1 Engine #1 Periodization (Hook 1 source — Goal Adaptation consumes Periodization output volume_target_pct + intensity_target_pct + mesocycle_phase) | [[022-bayesian-nutrition-inference|ADR 022]] Engine #3 Bayesian Nutrition (downstream cross-engine integration) | [[027-engine-energy-adjustment|ADR 027]] Engine #5 Energy Adjustment (downstream session-level fluctuation Periodization corridor + Goal Adaptation phase context) | [[028-engine-tempo-form-cues|ADR 028]] Engine #6 Tempo (downstream light coupling) | [[029-engine-specialization|ADR 029]] Engine #7 Specialization (downstream light coupling) | §1.10 Pipeline Order LOCKED V1 above (Goal Adaptation second în pipeline §42.10 post Periodization)
+
+---
+
+### §9.2.1 Cluster 1 — I/O Contract (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+goalAdaptationEngine.evaluate(ctx) → GoalAdaptationResult extends DimensionResult
+```
+
+**Output blueprint emit 6 fields** (per Cluster 1 verbatim Source 1 line 43):
+
+1. `phase` — auto-derived `'CUT' | 'BULK' | 'MAINTAIN' | 'RECOMP'` per Cluster 3 nutrition logic phase auto-detection (NU user pick per ADR 024 §2.4 Q4 LOCKED)
+2. `kcal_target_delta_pct` — TDEE multiplier per phase × goal × persona (Cluster 3 thresholds verbatim CUT 0.82/0.75 / BULK 1.08/1.15 / MAINTAIN 1.00 / RECOMP ±2%)
+3. `macro_split` — `{ protein_g_per_kg_lbm, fat_g_per_kg, carb_g }` cu protein 1.6-2.2 + fat 0.8-1.0 floor hormonal + carb remainder template-variable
+4. `rep_range_modifier` — `[min, max]` integer pair per (template, phase) tuple Cluster 4 tabel
+5. `rir_target_modifier` — RIR floor/ceiling integer pair per (template, phase) tuple Cluster 4 tabel
+6. `rest_time_modifier` — secunde inter-set per template × phase combo Cluster 4 tabel
+
+**Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1.
+
+**Engine purity preserved:** Goal Adaptation reads Periodization output Constraint Object (Floor/Ceiling) read-only, **NU override** Periodization phase per ADR 024 §2.3 Q3 Hook 1 verbatim.
+
+---
+
+### §9.2.2 Cluster 2 — 5 Templates Primary + Mode Overlay + RECOMP Sub-Phase (~6 decisions)
+
+**5 templates primary** (per Source 1 line 44 verbatim, NU 8):
+
+1. **Forță & Dezvoltare** — compound focus, RIR 1-3, rep 3-8, rest 2-4 min
+2. **Tonifiere & Definire** — hibrid hipertrofie + cut emphasis, RIR 0-2, rep 8-12
+3. **Slăbire** — cut-focused, RIR 1-2, rep 10-15, conditioning add-on
+4. **Longevitate** — mobility + sustainable load, RIR 2-3, rep 8-12, recovery emphasis
+5. **Sănătate Generală** — balanced cu intensity controlled, RIR 2-3, rep 8-12, lifestyle integration
+
+**RESOLVE legacy 8 misnumber** (per ADR 024 §2.1 Q1 LOCKED + Source 1 line 44): "8 templates" referenced în HANDOVER §26 = misnumber legacy. **ADR 024 source of truth canonical = 5 templates primary.** SSOT consolidation discrepanță rezolvată în favor enumerare verbatim.
+
+**Mode modifier (Estetică ↔ Forță) cross-template overlay** (per Source 1 line 44): 10 perceived configs UI (5 templates × 2 modes) **dar 5 logic core** — Mode overlay multiplicativ post-template×phase, NU duplicate template list.
+
+**Variant matrix algorithmic generation runtime** (per ADR 024 §2.2 Q2 LOCKED + Source 1 line 44): **NU 180 hardcoded combinations.** ~25 base config entries în `<engine>.tree.ts` data file (per ADR 026 §1.6 storage format) + modifiers permutation runtime per persona signals (Maria 0.50 / Gigica 0.70 / Marius 1.00 + recovery green bonus + goal modifiers).
+
+**RECOMP NU template separate, sub-phase auto-detected** (per ADR 024 §2.5 Q5 LOCKED + Source 1 line 44): RECOMP detectat în Tonifiere/Slăbire pentru:
+- Newbie effect (first 12 weeks training)
+- Detrained return >6 weeks gap
+- Fat-rich profile (BF% high baseline)
+
+**UI shows MAINTAIN, distinction CDL only** — engine logs `phase: 'RECOMP'` în CDL audit trail (ADR 011) dar UI render = MAINTAIN pentru consistency narrative user simplification.
+
+---
+
+### §9.2.3 Cluster 3 — Phase Auto-Detection Nutrition (~7 decisions)
+
+**Phase auto-detection (NU user pick)** per ADR 024 §2.4 Q4 LOCKED + Source 1 line 45 verbatim. Engine derives `phase` runtime din persona signals + goal + sezon. UI shows phase ca read-only status (consistency Big 6 lifecycle Imutabile category per ADR 024 §1.3).
+
+**Phase auto-detection thresholds tabel verbatim** (Source 1 line 45):
+
+- **CUT conservative:** TDEE × **0.82** baseline
+- **CUT aggressive:** TDEE × **0.75** (Marius advanced 4-6 săpt max — anti-burnout cap)
+- **BULK conservative:** TDEE × **1.08**
+- **BULK aggressive:** TDEE × **1.15** (newbie + Forță template combo)
+- **MAINTAIN:** TDEE × **1.00**
+- **RECOMP:** TDEE ± **2%** (newbie effect / detrained return >6w / fat-rich first 12 weeks)
+
+**Macro split** (verbatim Source 1 line 45):
+- **Protein:** 1.6-2.2 g/kg LBM (lean body mass, NU body weight gross)
+- **Fat:** 0.8-1.0 g/kg floor hormonal (preserve testosterone production hormonal floor)
+- **Carb:** remainder template-variable (calculate post protein + fat + kcal_target_delta_pct)
+
+**DELOAD week kcal +3-5% override** (verbatim Source 1 line 45): chiar dacă `phase=CUT`, DELOAD week (per Engine #1 §9.3 Cluster 2.1 W4 phase) → kcal +3-5% recovery imperative. Cross-engine constraint Hook downstream Engine #4 Deload Protocol.
+
+**Rationale (per ADR 024 §2.4 Q4 LOCKED):** Phase auto-detection prevents user gaming (e.g., aggressive CUT permanent) + preserves SUFLET F2 push-back proporțional (per Cluster 5 below). Lifecycle change per §36.102 first-class supported via Goal Shift Event Handler §36.35 + ADR 024 Q6 D Hybrid LOCKED V1 morning 2026-05-06 chat-1.
+
+---
+
+### §9.2.4 Cluster 4 — Training Modifiers per Template × Phase (~6 decisions)
+
+**Tabel base training modifiers per template × phase tuple** (Source 1 line 46 verbatim):
+
+| Template            | RIR        | Rep Range  |
+|---------------------|------------|------------|
+| Forță & Dezvoltare  | RIR 1-3    | rep 3-8    |
+| Tonifiere & Definire| RIR 0-2    | rep 8-12   |
+| Slăbire             | RIR 1-2    | rep 10-15  |
+| Longevitate         | RIR 2-3    | rep 8-12   |
+| Sănătate Generală   | RIR 2-3    | rep 8-12   |
+
+**Mode overlay Estetică / Forță post-template × phase multiplicativ** (per Source 1 line 46 verbatim): user toggle Mode = sub-modificator multiplicativ aplicat după base table — NU duplicate templates.
+
+**Goal Shift Event Handler §36.35 cross-engine integration** (verbatim Source 1 line 46):
+- **Streak RESET** (NU PRESERVE — distinction §50.4 D1 Save the Week)
+- **2-session calibration window** §EXT-2 LOCKED (consistent ADR_OUTLIER_FILTER_v1 §EXT-2)
+- **Phase re-derive runtime** §36.35 LOCKED (auto-detection Cluster 3 logic re-evaluated post-shift cu signals fresh)
+- **CDL log** entry created cu Goal Shift Event Handler payload (ADR 011 audit trail)
+
+**Cross-ref Q6 D Hybrid LOCKED V1 morning 2026-05-06 chat-1** (ADR 024 §2.6 Q6 cross-ref): tier global preserve + template-specific signals soft-reset + 2-session calibration window + streak RESET + phase re-derive runtime — biological signals preserved cross-template, rep/RIR/rest specific reset.
+
+---
+
+### §9.2.5 Cluster 5 — Push-Back Proporțional 3 Tiers (~6 decisions)
+
+**3 tiers push-back proporțional** (per ADR 024 §2.7 Q7 LOCKED + Source 1 line 47):
+
+- **Tier 1 silent** — no UI signal, engine internal modifier conservative aplicat, user NU notificat
+- **Tier 2 banner discret** — in-app banner 1-2 lines explanation modificator aplicat, user info NU consimțământ explicit
+- **Tier 3 modal blocking opt-in** — modal full screen warning concrete + opt-in confirmare explicit cu max conservative modifiers aplicat, user agrees informed consent path
+
+**Re-prompt anti-spam logic** (per ADR 024 §2.8 Q8 LOCKED + Source 1 line 47):
+
+- **Trigger 28 zile rolling** (rolling window din ultima interacțiune Re-prompt sau Goal Shift, NU calendar fix)
+- **Cooldown 21 zile post-confirm** (user răspuns "Da, încă X" → 21 zile NU re-prompt indiferent de signal)
+- **Cooldown 60 zile post Goal Shift** (user făcut shift activ → 60 zile NU re-prompt — preserve calibration window §36.35 + 2-session window evening late + reduce noise post-shift)
+- **Cap absolut max 4 re-prompts/an** (anti-spam hardcap chiar dacă rolling triggers exceed)
+
+**Rationale SUFLET F2 alignment** ("AI-ul informează, nu impune"): Tier 3 = max conservative modifiers, **NU absolute refuse**. User keeps autonomy. Risk-tier mapping example Forță + BF% high + age 60+ + recent injury → Tier 3 modal cu volume cap MEV-50% + intensity cap 75% 1RM Layer C sanity bound (cross-ref Engine #1 §9.6 Cluster 5 hard cap) + warning "te-am observat pattern X, recomand path Y, dar tu decizi". Cross-ref [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default.
+
+**Anti-cascade preserved Cluster 5 Engine #1 §9.6:** Goal Adaptation consumes Periodization output Constraint Object frozen (Hook 1 read-only), redistribuie volume în interiorul coridorului Floor/Ceiling per §1.10 Pipeline Order LOCKED V1 — NU trece peste Ceiling NU sub Floor.
+
+---
+
+### §9.2.6 Reconsideration Triggers — Engine #2 Goal Adaptation V1 → V1.5 candidate
+
+Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster 1 I/O Contract** — output blueprint 6 fields proves insufficient pentru downstream engines (e.g., engine #N+1 nou requires Goal Adaptation signal NOT în current 6 fields). Trigger threshold: ≥1 downstream engine adăugat post-Beta cu unmet input dependency. Candidate: extend blueprint cu 7th field (e.g., `lifecycle_phase_pct_progress` for Goal Shift Event Handler §36.35 timing predict).
+2. **Cluster 2 Algorithmic Generation Scope** — ~25 base config entries proves insufficient post-Beta useri reali (e.g., 6th template requested cu prevalence ≥5%). Per ADR 024 §5 Reconsideration Trigger 2: useri reali post-Beta cer template nou. Candidate: extend Mode overlay (preserve 5 logic core) sau introduce 6th template specific (e.g., "Performance Atletic" / "Reabilitare specifică").
+3. **Cluster 3 Phase Auto-Detection Thresholds Drift** — TDEE × 0.82 / 0.75 / 1.08 / 1.15 / 1.00 / ±2% baseline shows systematic bias post-Beta useri reali (e.g., Maria 65 conservative CUT 0.82 = under-eating signal vitality drop). Per ADR 024 §5 Reconsideration Trigger 3. Trigger threshold: ≥20% sub-persona-tier deviation from outcome target sustained ≥4 săpt. Candidate: tier-aware threshold matrix (e.g., Maria-Beginner CUT 0.85 conservative vs Marius-Advanced CUT 0.75 default).
+4. **Cluster 4 Mode Overlay Multiplicative Tension** — Mode overlay Estetică / Forță post-template × phase multiplicative shows degenerate cases (e.g., Mode=Forță × Template=Sănătate × Phase=CUT cumulative reduction violates progressive overload invariant). Trigger threshold: ≥3 sessions per persona tracked exhibiting compound multi-modifier reduction violating Invariant 1 (V ≤ MRV). Candidate: Mode overlay ceiling rule (e.g., Mode + Phase combined max -20% NOT -30% per Engine #1 §9.7 Cluster 5 sub-trigger 7 cross-hook tension precedent).
+5. **Cluster 5 Push-Back Tier 3 Opt-In Rate** — opt-in rate <50% useri Tier 3 trigger → SUFLET F2 alignment compromise (forced refusal effectively). Per ADR 024 §5 Reconsideration Trigger 4. Trigger threshold: opt-in rate <50% sustained ≥1 lună post-Beta. Candidate: Tier 2 banner upgrade vs Tier 3 modal threshold tightening (more cases routed Tier 2 silent banner vs modal blocking).
+6. **Cluster 5 Re-Prompt Anti-Spam Cap 4/an** — useri raportează re-prompt fatigue chiar sub cap 4/an. Per ADR 024 §5 Reconsideration Trigger 5. Trigger threshold: ≥30% useri Settings UI reduce re-prompt frequency manual. Candidate: reduce 4/an → 3/an OR extend cooldown 28d → 35d rolling trigger.
+7. **Q6 D Hybrid Signal Contradictoriu Post-Beta** (cross-ref ADR 024 §5 Reconsideration Trigger 1) — 2-session calibration window prea scurt pentru convergence (rate fallback >5% Circuit Breaker per ADR 026 §1.7 §42.7) sau prea lung pentru UX (user feedback abandonare post-shift). Per ADR 024 Q6 Reversibility note §2.6.
+
+**Re-evaluation cadence:** post Faza 2.5 batch 2 implementation Engine #2 V1 + post-Beta useri reali signal aggregate (similar §1.8 Versioning Additive 18 luni deprecation window cadence). Bugatti craft transparency = ship V1 cu Cluster 1-5 LOCKED + monitor post-Beta signal.
+
+---
+
+🦫 **§9.2 Engine #2 Goal Adaptation Module-Level Spec V1 compiled 2026-05-06 morning chat-3 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-04 evening late sources (`142_HANDOVER` lines 41-47 + CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 586-591). 30 decisions Cluster 1-5 cumulative. Pre Faza 2.5 batch 2 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + V1 implement (commit `1303b62`).
