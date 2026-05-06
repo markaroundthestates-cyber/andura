@@ -1083,3 +1083,200 @@ Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1 compiled 2026-05-06 afternoon chat-5 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou after sources (`148_HANDOVER_..._engines3-4-5_spec_sessions_CONSUMED.md` Engine #3 Bayesian section line 5 + CURRENT_STATE §RECENT 2026-05-05 birou after lines 607-627 + ADR 022 SPEC READY V1 file Cluster A-E lines 25-111 — **3-way parity check ✅ ZERO substantive divergence flagged**). ~32-35 decisions Cluster A-E cumulative (Source 3 grouped count ~25-28; Sources 1+2 granular count ~32-35 per individual sub-decisions; acceptable delta — content verbatim identical). Pre Faza 2.5 batch 4 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + §9.2 Engine #2 Goal Adaptation compile draft (commit `6be84f8`) + §9.3 Engine Energy Adjustment compile draft (commit `2f9aa79`). Pipeline §42.10 position 4th canonical. Convergence Guard "T2 Unlock" cross-cutting reference §9.4.6 ONLY (ADR 009 §AMENDMENT 2026-05-05 birou after owns canonical SSOT, NU §9.4 duplicate).
+
+---
+
+### §9.5 Engine Tempo Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 afternoon chat-6 acasă din chat strategic 2026-05-05 birou late sources). ~28-30 decisions cumulative (Cluster A-E). Pre Faza 2.5 batch 5 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Bayesian Nutrition Inference V1 LANDED commit `8615ec1` (batch 4).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Tempo runs sequentially **5th** position canonical. Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian Nutrition (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`. **Engine numbering clarification:** [[028-engine-tempo-form-cues|ADR 028]] file naming "Engine #6 Tempo/Form Cues" = legacy chat strategic spec session ordering 2026-05-05 birou late (3-engine cluster #5+#6+#7 spec session), NU pipeline §42.10 canonical position 5th. Source 1 + Source 2 reference "Engine #6" = pipeline 5th — clarified anti-recurrence numbering ambiguity batches 6-8 references.
+
+**Provenance chain (2-way parity check ✅):**
+- Source 1 (verbatim Cluster A-E): `📤_outbox/_archive/2026-05/149_HANDOVER_2026-05-05_birou_late_engines5-6-7_spec_sessions_CONSUMED.md` Engine #6 Tempo section (lines 34-48, 14 substantive bullet decisions)
+- Source 2 (cristalizate parity check): `00-index/CURRENT_STATE.md` §RECENT entry "2026-05-05 birou late" Engine #6 Tempo partition (lines 547-565, 14 bullets identical content vs Source 1). **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged**.
+- Source 3 NU disponibil: [[028-engine-tempo-form-cues|ADR 028]] = STUB legacy (precedent §9.3 Energy [[027-engine-energy-adjustment|ADR 027]] stub pattern, NU §9.4 Bayesian [[022-bayesian-nutrition-inference|ADR 022]] SPEC READY V1 case). Post §9.5 LOCKED → ADR 028 stub flip recommend → SPEC REFERENCE redirect §9.5 SSOT canonical (separate task post-CC).
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 (Tempo 5th în pipeline §42.10) | [[028-engine-tempo-form-cues|ADR 028]] STUB → SPEC REFERENCE candidate post §9.5 LOCKED (file flip pattern ADR 027 precedent §9.3 Energy) | [[024-goal-driven-program-templates|ADR 024]] light coupling modifiers post-template×phase | [[022-bayesian-nutrition-inference|ADR 022]] cross-engine Hook recovery state | [[009-calibration-tiers|ADR 009]] tier-aware T0 OFF / T1+ profile-typing mind-muscle Q5=C | §9.1 Periodization Constraint Object frozen Hook 1 read-only | §9.2 Goal Adaptation phase context cross-ref | §9.3 Energy Adjustment readiness state Hook (Energy DOWN → slow eccentric universal Q13=B) | §9.4 Bayesian Nutrition Inference cross-engine recovery state Hook
+
+---
+
+#### §9.5.1 Cluster A — I/O Contract & Pipeline Placement (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+tempoEngine.evaluate(ctx) → TempoResult extends DimensionResult
+```
+
+**Pipeline placement LOCKED V1 (per §42.10):** Tempo runs **sequentially 5th** post Bayesian Nutrition (§9.4). Legacy "Engine #6" naming în [[028-engine-tempo-form-cues|ADR 028]] = chat strategic spec session ordering NU pipeline canonical position. Pipeline §42.10 canonical: `Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload`.
+
+**Input contract (consumed Hook 1 read-only):** Constraint Object frozen propagated upstream Periodization §9.1 Cluster 5 + Goal Adaptation §9.2 + Energy §9.3 + Bayesian §9.4 cross-engine hooks. NU mutate input — anti-cascade safeguard preserved.
+
+**Output blueprint emit:**
+1. `tempo_prescription` — pre-set intro + reactive user-initiated cue per Cluster B Q1=C
+2. `form_cue` — text cue per movement category (compound/isolation) cu RO native + persona-aware tone Cluster D Q18=D
+3. `mind_muscle_active` — boolean tier-aware (T0 OFF / T1+ profile-typing) Cluster C Q5=C
+4. `cue_delivery_timing` — pre-set sau post-set ONLY (NU intra-set distraction) Cluster B Q8=D
+5. `signals` — human-readable signal IDs (e.g. `'tempo_form_conservative_amplification_high_intensity'`, `'mind_muscle_unlock_deload'`, `'energy_down_slow_eccentric_universal'`)
+
+**Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1.
+
+**Engine purity preserved:** Tempo reads upstream Constraint Objects Hook 1 read-only, **NU override** Periodization phase NU Goal Adaptation phase NU Energy adjustment NU Bayesian inference per §1.10 Pipeline Order LOCKED V1 — anti-cascade safeguard. Light coupling modifiers post-template×phase per [[028-engine-tempo-form-cues|ADR 028]] cross-ref.
+
+---
+
+#### §9.5.2 Cluster B — Tempo Prescription Logic + Cue Delivery Strategy (~6 decisions)
+
+**B1 Hibrid pre-set intro + reactive user-initiated cue** (Source 1 line 35 verbatim, Q1=C):
+- **Pre-set intro** = engine surfaces tempo notation + form cue ÎNAINTE of set (e.g., "Tempo 2-1-2-0, focus on slow eccentric")
+- **Reactive user-initiated cue** = user taps 💡 indicator mid-rest pentru elaboration (NU intra-set distraction Q8=D)
+- **Hibrid Q1=C:** combine both modes — engine emite pre-set; user opt-in reactive expansion
+
+**B2 Pattern base library + top-30 compound overrides Bugatti depth** (Source 1 line 35 verbatim, Q2=C):
+- **Pattern base library** = generic cues per movement category (compound/isolation taxonomy)
+- **Top-30 compound overrides** = movement-specific cues craft Bugatti depth (squat / deadlift / bench / OHP / row / hip thrust / etc.)
+- **Q2=C Hibrid:** base library covers majority; top-30 compound overrides craft signature
+
+**B3 Q33 §45.5 elaboration persona-aware notation** (Source 1 line 36 verbatim, Q3 Daniel push-back Maria zero notation strict):
+- **Maria verbal:** "coboară lent, două secunde" (NU "2-X-2-X" notation — zero numeric strict)
+- **Gigica hibrid:** "tempo 2-X-2-X (coboară 2s)" (verbal + notation)
+- **Marius numeric pure:** "Tempo 2-1-2-0" (notation strict)
+- **Daniel push-back fundamental:** Maria zero notation = anti-friction Maria 65 cognitive load (consistent SUFLET F2 alignment)
+
+**B4 User self-report toggle V1 RIR mismatch silent telemetry** (Source 1 line 36 verbatim, Q4=A):
+- **User self-report toggle** = "form breakdown" report option mid-set sau post-set
+- **Q4=A V1:** RIR mismatch (user report form breakdown vs RIR Matrix expected) = silent telemetry only CDL audit trail
+- **NU active trigger V1** — engine NU adjusts session current. V1.5+ candidate: trigger Energy DOWN sau Tempo conservative escalation
+
+**B6 Tap-to-expand 💡 indicator Bugatti minimal-friction** (Source 1 line 37 verbatim, Q6=D):
+- **💡 indicator** = engine surfaces minimal pre-set; tap expand for full cue elaboration
+- **Q6=D Bugatti minimal-friction:** anti-cognitive-overload pattern (consistent ADR 025 graceful degradation)
+
+**B8 Pre-set + post-set timing NU intra-set distraction** (Source 1 line 37 verbatim, Q8=D):
+- **Cue delivery timing** = pre-set (intro) + post-set (RIR feedback / form check)
+- **NU intra-set distraction** Q8=D — preserve user concentration during execution
+- **Mid-rest tap-to-expand** = user-initiated reactive elaboration (B1 Hibrid Q1=C consistent)
+
+---
+
+#### §9.5.3 Cluster C — Mind-Muscle Connection + Adaptive Frequency (~4 decisions)
+
+**C5 Mind-muscle tier-aware T0 OFF / T1+ profile-typing** (Source 1 line 37 verbatim, Q5=C):
+- **T0 cold start:** mind-muscle cues OFF (calibration window noise high, anti-overfit early signals)
+- **T1+ established:** profile-typing-aware activation (Profile Typing data sufficient to personalize mind-muscle cue style per user response history)
+- **Cross-ref:** [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard T0 → T1 progression gate
+
+**C7 Adaptive frequency reduces post-acquisition** (Source 1 line 37 verbatim, Q7=D + Q9=D):
+- **Q7=D adaptive frequency:** cue surface frequency reduces post-acquisition
+- **Q9=D dual signal:** explicit "știu" user toggle (acquired) + implicit N=10 sessions consecutive cu form breakdown < threshold
+- **Acquired = engine reduces cue surface** (anti-paternalism preserve user cognitive bandwidth)
+
+**C15 Tier-aware depth** (Source 1 line 38 verbatim, Q15=B):
+- **T0 minimal depth** (cue text-only basic)
+- **T1+ richer depth** (cue + rationale + suggested fix)
+- **T2+ adaptive depth** (cue + persona-aware tone + ML cue selection v1.5+ deferred)
+
+**C17 Suppression hard T0/T1 + soft auto-retire T2+** (Source 1 line 38 verbatim, Q17=C):
+- **T0/T1 hard suppression** = user toggle "știu" (Q9 explicit) → cue NU surface for movement
+- **T2+ soft auto-retire** = N=10 sessions implicit (Q9) → cue auto-retire pentru movement (user can re-activate manual)
+
+---
+
+#### §9.5.4 Cluster D — Cross-Engine Integration (~5 decisions)
+
+**D11 Periodization high intensity → form-conservative amplification** (Source 1 line 38 verbatim, Q11=B):
+- **Periodization phase = PEAK or LOAD+ (high_intensity == true)** → Tempo emite form-conservative amplification (slower eccentric, controlled concentric, safety emphasis)
+- **Anti-cascade preserve §1.10 Pipeline Order:** Tempo NU override Periodization phase, only modulates form cue style intensity-aware
+
+**D12 Deload week → mind-muscle unlock** (Source 1 line 38 verbatim, Q12=D):
+- **Periodization phase = DELOAD (W4)** → Tempo unlock mind-muscle cues (recovery week, lower load = bandwidth for technique focus)
+- **Q12=D:** mind-muscle activation override tier-aware default during DELOAD week
+
+**D13 Energy DOWN → slow eccentric universal NU ROM partial** (Source 1 line 38 verbatim, Q13=B Gemini self-flagged ROM partial REJECT corect):
+- **Energy DOWN signal** (per §9.3 Engine Energy Adjustment) → Tempo emite slow eccentric universal cue
+- **NU ROM partial cue** (Q13=B Daniel push-back Gemini self-flagged: ROM partial = injury risk amplification, REJECT corect)
+- **Slow eccentric universal** = compatible cu MRV invariant 1 immutable Q8=A §9.3 (NU sub-Floor sub-MEV)
+
+**D14 RIR Matrix form breakdown user toggle → +1 auto-bump next set** (Source 1 line 38 verbatim, Q14=B):
+- **User toggles "form breakdown"** mid-set → Tempo signals downstream (orchestrator-level) auto-bump RIR target +1 next set
+- **Anti-cascade:** Tempo emite signal, orchestrator layer applies (NU Tempo direct mutation per ADR 030 D2 thin scope)
+
+**D18 Persona-aware tone** (Source 1 line 38 verbatim, Q18=D):
+- **Maria rationale-first** ("De ce coboară lent? Pentru a controla încărcarea articulară.")
+- **Gigica suggestion** ("Sugerez tempo 2-1-2-0 pentru hipertrofie.")
+- **Marius imperative** ("Tempo 2-1-2-0. Execute.")
+- **Tone selection** = persona resolved per ADR 017 demographic prior + Profile Typing tier post-T1+
+
+---
+
+#### §9.5.5 Cluster E — Validation + GIF Library Deferred + Bayesian Future (~4 decisions)
+
+**E16 GIF embedded REJECTED pre-Beta** (Source 1 line 38 verbatim + line 47 push-back valid Daniel + Claude):
+- **Q16 GIF embedded REJECTED** (Claude push-back valid mid-flight chat strategic):
+  - **Storage offline-first PWA risk:** ~3MB per GIF × 30+ compound movements = ~100MB+ storage offline (anti-PWA budget)
+  - **Copyright source unclear:** unsourced GIF library = legal risk pre-Beta
+  - **Gigel test fail:** mid-set distraction (cue intra-set NU pre-set) — anti Q8=D
+- **V1 = text-only cue** (NU GIF) + **defer link extern v1.5+** (post-Beta cohort feedback validate need first)
+
+**E18 WhyEngine integration silent + "De ce ăsta?"** (Source 1 line 38 verbatim, Q18 cluster D):
+- **WhyEngine silent integration** = engine logs cue rationale CDL audit trail (NU UI surface default)
+- **"De ce ăsta?"** = user-initiated reactive transparency (tap rationale link) — consistent SUFLET F4 user agency
+
+**E20 Bayesian latent state v1.5 evolution** (Source 1 line 38 verbatim, Q20=D ecosystem-wide):
+- **V1.5 Bayesian inference migration** ecosystem-wide (Engine #3 Bayesian + Engine Energy + Engine Tempo + Engine Specialization consistent Q20=D)
+- **V1 stays categorical** (cluster table mapping) — Bayesian latent state evolution post-Beta data validates tractable inference scope (anti-premature-optimization)
+
+**E-Validation Hibrid simulator + Beta cohort 50 testers** (consistent §9.4 + §9.6 Q19=B precedent):
+- **Synthetic only INCONSISTENT engines #1-#6 acceptable** Q19=B Daniel pivot accepted (chat strategic Engine #7 Specialization push-back) — apply consistent Tempo
+- **Hibrid simulator + Beta cohort 50 testers ground truth** post-Beta corroboration (anti-overconfidence Mensa-grade)
+
+---
+
+#### §9.5.6 Reconsideration Triggers — Engine Tempo V1 → V1.5 candidate
+
+Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster B Tempo persona-aware notation friction signal** — Maria verbal-only zero notation strict insufficient post-Beta useri reali (e.g., Maria persona prefers numeric clarity contrary to anti-friction expectation). Trigger threshold: ≥20% Maria-tier useri raportează "verbal cue ambiguous" sau toggle UI to numeric. Candidate: Maria adaptive tier-aware (Maria-Beginner verbal / Maria-Intermediate hibrid) per Profile Typing data.
+
+2. **Cluster B RIR mismatch silent telemetry insufficient** — V1 silent telemetry only NU active trigger; post-Beta data shows form breakdown signal correlates strongly cu Energy DOWN (anti-cascade missed signal). Trigger threshold: ≥15% sessions form breakdown reports cu Energy NEUTRAL/UP within 48h cascade injury risk. Candidate: V1.5 active trigger (form breakdown → Energy DOWN escalation Hook §9.3).
+
+3. **Cluster C Mind-muscle T0 OFF too conservative** — T0 useri raportează engagement low cu basic cues only (mind-muscle activation post-Beta useri reali signal earlier maturity). Trigger threshold: ≥30% T0 useri stuck T0 >8 săpt cu engagement signal low. Candidate: T0 hibrid mind-muscle minimal cues (NU OFF) cu profile-typing escalation.
+
+4. **Cluster C Adaptive frequency N=10 implicit acquisition threshold drift** — N=10 too aggressive (advanced useri) sau too conservative (newbie). Per Q9=D dual signal explicit + implicit. Trigger threshold: ≥20% useri Settings UI override implicit N=10 manually. Candidate: tier-aware N (Beginner N=15 / Intermediate N=10 / Advanced N=5).
+
+5. **Cluster D Hook coupling tension cu Bayesian disagreement signal** — Tempo form-conservative amplification cu Bayesian disagreement flag CDL §9.4.3 C2 = double-conservatism cumulative friction. Trigger threshold: ≥10% sessions Tempo amplified PLUS Bayesian disagreement Tier 1 flag concurrent. Candidate: cross-engine ceiling rule §9.2.6 Cluster 4 Trigger 4 candidate adoption Tempo (anti-degenerate cumulative reduction).
+
+6. **Cluster E GIF library demand surfaced Beta cohort feedback** — V1 text-only sufficient sau Beta cohort feedback validates GIF need. Per Q16 push-back chat strategic + Source 1 line 47 deferred V1.5 candidate. Trigger threshold: ≥30% Beta cohort raportează "text cue NU sufficient pentru tehnică complexă". Candidate: V1.5 GIF library opt-in (storage budget evaluat + copyright sourced library standalone).
+
+7. **Cluster E ML cue selection per user response history** — V1 static cue table Cluster B2; post-Beta sufficient signal pentru ML personalization. Trigger threshold: ≥1000 sesiuni Beta cohort cu form breakdown + cue acceptance/rejection telemetry CDL. Candidate: V1.5 ML cue ranker per Profile Typing tier T2+.
+
+8. **Cluster E Bayesian latent state v1.5 ecosystem timing** — Q20=D coordinated multi-engine release timing per Engine #3 Bayesian Nutrition R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data (cross-ref §9.4.7 Trigger 7 timing). Candidate: V1.5 migration coordinated cu Bayesian Nutrition + Energy + Specialization consistent.
+
+**Re-evaluation cadence:** post Faza 2.5 batch 5 implementation Engine Tempo V1 + post-Beta useri reali signal aggregate (similar §9.1.7 + §9.2.6 + §9.3.6 + §9.4.7 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster A-E LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.5.7 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → TempoResult` extending DimensionResult (purity preserved engine = pure function NU side effects, async-capable per DP-2)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Tempo 5th în pipeline §42.10 (NU "Engine #6" naming legacy)
+- [[028-engine-tempo-form-cues|ADR 028]] **STUB → SPEC REFERENCE candidate post §9.5 LOCKED** — file flip recommend pattern ADR 027 precedent §9.3 Energy. ADR 028 stub redirects la §9.5 SSOT canonical post-CC separate task.
+- [[024-goal-driven-program-templates|ADR 024]] light coupling modifiers post-template×phase (Q5=C cross-ref Cluster D)
+- [[022-bayesian-nutrition-inference|ADR 022]] cross-engine Hook recovery state (Q20=D Bayesian latent state v1.5 ecosystem-wide alignment)
+- [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware T0 OFF / T1+ profile-typing mind-muscle Q5=C foundation
+- [[017-demographic-prior-database|ADR 017]] persona resolution Maria/Gigica/Marius cross-ref Cluster D Q18=D persona-aware tone selection
+- [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default — referenced Q6=D Bugatti minimal-friction tap-to-expand 💡 indicator
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 5
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved §9.4.6 reference (light coupling — Tempo NU proactive Pain-Aware trigger Clean Signal rule)
+- §9.1 Engine #1 Periodization Constraint Object frozen Hook 1 read-only (consume input frozen)
+- §9.2 Engine #2 Goal Adaptation phase context cross-ref Cluster D modifiers post-template×phase
+- §9.3 Engine Energy Adjustment readiness state Hook D13 (Energy DOWN → slow eccentric universal Q13=B)
+- §9.4 Engine Bayesian Nutrition Inference cross-engine recovery state Hook Cluster D (light coupling forward)
+- §9.6 Engine Specialization (forward TBD spec compile §9.6 batch 6) — light coupling cross-engine modifiers post-template×phase
+- §9.7 Engine Warm-up (forward TBD spec compile §9.7 batch 7) — light coupling cross-engine
+- §9.8 Engine Deload Protocol (forward TBD spec compile §9.8 batch 8) — Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved
+
+---
+
+🦫 **§9.5 Engine Tempo Module-Level Spec V1 compiled 2026-05-06 afternoon chat-6 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` Engine #6 Tempo section lines 34-48 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 547-565 — **2-way parity check ✅ ZERO substantive divergence flagged**). ~28-30 decisions Cluster A-E cumulative. Pre Faza 2.5 batch 5 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`). Pipeline §42.10 position 5th canonical (NU "Engine #6" naming legacy ADR 028 chat strategic spec session ordering). Source 3 ADR 028 = STUB legacy NU disponibil precedent §9.3 Energy ADR 027 stub pattern; post §9.5 LOCKED → ADR 028 stub flip recommend → SPEC REFERENCE redirect §9.5 SSOT canonical (separate task post-CC).
