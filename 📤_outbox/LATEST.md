@@ -1,62 +1,67 @@
-## Task: ADR 026 §9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1 compile (pre-Faza 2.5 batch 4)
+## Task: Faza 2.5 batch 4 Engine Bayesian Nutrition Inference V1 implement per ADR 026 §9.4 + ADR 018 §2
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Backup tag: `pre-adr026-section9.4-bayesian-compile-2026-05-06-1534` ✅ pushed origin
+- Backup tag: `pre-faza2.5-bayesian-nutrition-v1-implement-2026-05-06-1550` ✅ pushed origin
 - Clean tree pre-execution: yes
 - Baseline tests: **1898 PASS / 0 FAIL** ✅
-- Grep SOURCES (3-way) verified: ADR 026 + ADR 022 SPEC READY V1 + `148_HANDOVER_..._engines3-4-5_spec_sessions_CONSUMED.md` + CURRENT_STATE.md toate exist
-- §9.3 LANDED line 704 confirmed (anti-collision verify §9.4 NEW append safe)
+- Grep PATHS verified: ADR 026 §9.4 LANDED line 881 + ADR 018 §2 + ADR 022 SPEC READY V1 + ADR 009 (Convergence Guard amendment) + ADR 017 + Pain-Aware ADR + `src/engine/periodization/` + `src/engine/goalAdaptation/` + `src/engine/energyAdjustment/` + `src/coach/orchestrator/result.js` toate exist
+- §9.4 spec source confirmed canonical (commit `685fdd4`)
 - Tooling availability: `test:run` (vitest 3.2.4) + `typecheck` (tsc) ✅; **NO `lint`** (anti-Slip 4 transparent skip)
-- **3-WAY verbatim parity check Source 1 ↔ Source 2 ↔ Source 3: ✅ ZERO substantive divergence flagged**
 
 ### Modificări
 
-**`03-decisions/026-offline-coaching-decision-tree-exhaustive.md`** — append §9.4 NEW (+208 LOC, 877 → 1085):
-- **§9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1 header** — Status SPEC READY V1 + provenance chain (Source 1 verbatim narrative + Source 2 cristalizate + Source 3 ADR 022 SPEC READY V1 file structured Cluster A-E + parity check ✅) + cross-refs bidirectional 13 ADR-uri
-- **§9.4.1 Cluster A — Prior Form + Slope Tier-Based + Decay + Validation + Phase Reset** (~5 decisions): A1 Gaussian Conjugate Prior local-first JS tractable + A2 Strong Prior dynamic slope tier-based 70/30→80/20→90/10 + A3 Bayesian decay natural posterior=prior_next math-native + A4 Validation Hibrid synthetic R²>0.85 simulator + dietician panel post-Beta v1.5 + A5 Phase reset Hibrid Layer 1+2 reset / preserve Layer 4 Goal Shift §36.35
-- **§9.4.2 Cluster B — Cadence + Kalman + Volume Metric + Mood Scoring** (~4 decisions): B1 Adaptive cadence T1+ weekly + T0 Daily fallback 14 zile observation buffer + B2 Kalman 1D peak craft 3 caveats Hall 2008 + R²>0.85 gate + EWMA fallback feature flag + B3 Volume metric weighted compound:isolation 3:2:1 (Lower:Upper:Isolation) + B4 Mood Linear Sum Weighted normalized (LVM defer v1.5)
-- **§9.4.3 Cluster C — Volume Landmarks + Cross-Engine Integration** (~3 decisions): C1 Hibrid lookup Israetel + regression STRICT compound only + isolation graceful degradation 0.3× când compound observations <3 + C2 Cross-engine #2 Goal Adaptation Disagreement flag CDL Invariant 5 protect + C3 Cross-engine #5 Energy Adjustment σ variance modifier (NU linear discount, readiness scăzut crește σ)
-- **§9.4.4 Cluster D — Schema + Output + Profile Typing + UI + Hard Rules** (~6 decisions): D1 Schema nutrition_inference_metadata (prior+posterior+observations N=20+CI 0.95) + D2 Output likelihood probabilities {deficit/surplus/maintenance} + D3 Profile Typing 0.55-0.85 T1+ cu 0.70 default T0 + 15% Hamming hysteresis + 2 sesiuni 14 zile + D4 UI Tier 1+2 only NU blocking modal Maria 65 autonomy + D5 Hard rule NEVER specific kcal §3.5.1 + D6 Anti-spam 28d cooldown + cap 4/an
-- **§9.4.5 Cluster E — Validation Panel + Edge Cases** (~2-3 decisions): E1 Validation panel Hibrid simulator R²>0.85 pre-Beta + dietician panel post-Beta v1.5 + E2 Edge cases Hibrid Passive Mode tripwire (pregnant/post-bariatric/kidney) + Special priors (>75 + ED history) + disclaimer onboarding + E3 Convergence Guard cross-ref ONLY
-- **§9.4.6 Cross-cutting Convergence Guard "T2 Unlock"** — REFERENCE ONLY (ADR 009 §AMENDMENT 2026-05-05 birou after owns canonical SSOT, NU §9.4 duplicate). Formula 5 conditions + Pain-Aware definition Hybrid Spec V1 (a) STRICT user-triggered + (i) BINARY V1 + forward-compat v1.5 silent vector + UX wording verbatim "Siguranța e pe primul loc..."
-- **§9.4.7 Reconsideration Triggers** — 8 triggers documented (Cluster A Gaussian/Hierarchical + Strong Prior 70/30 drift + Cluster B Cadence + Kalman R² gate + Cluster C disagreement noise + Cluster D Profile Typing flap + Cluster E Anti-spam fatigue + Validation gate failure pre-Beta); re-evaluation cadence post-Beta
-- **§9.4.8 Cross-refs Bidirectional ADR** — ADR 018/026/022/017/009/011/PRODUCT_STRATEGY_SPEC_v1/COGNITIVE_ARCHITECTURE_SPEC_v1/ADR_PAIN_DISCOMFORT_BUTTON_v1/030 + §9.1 Periodization Volume Landmarks Israetel + §9.2 Goal Adaptation phase output disagreement flag + §9.3 Energy Adjustment σ variance modifier Q12=C cross-engine + §9.5-§9.8 forward downstream
-- **Footer 🦫 marker** — compile timestamp 2026-05-06 afternoon chat-5 acasă + ZERO net new substantive + 32-35 decisions cumulative + Pattern §9.1+§9.2+§9.3 honored + 3-way parity check stronger anti-recurrence proof
+**`src/engine/bayesianNutrition/`** NEW directory (8 source modules + 6 test files = 14 files, 3020 LOC):
+
+Source modules:
+- `constants.js` (251 LOC) — CALIBRATION_TIERS T0/T1/T2 + STRONG_PRIOR_SLOPE T0=70/30→T1=80/20→T2=90/10 + KALMAN_DEFAULTS Hall 2008 + R²>0.85 gate + EWMA fallback feature flag `bayesian_kalman_v1` + VOLUME_METRIC_WEIGHTS 3:2:1 (Lower:Upper:Isolation) + PROFILE_TYPING 0.55-0.85 + 0.70 default T0 + 15% Hamming + 2 sesiuni 14d + SCHEMA_CONSTANTS observations N=20 + CI 0.95 + ANTI_SPAM 28d + cap 4/year + VOLUME_LANDMARKS compound min 3 + isolation graceful 0.3× + PHASE_RESET_LAYERS 1+2 reset / 4 preserve + EDGE_CASES pregnant/post-bariatric/kidney + age 75+ + ED history + disclaimer + UI_TIER Tier 1+2 only NU blocking + ENERGY_VARIANCE_MODIFIER 1.30 amplify + neutral T0 1.0 + PERFORMANCE_BUDGET <50ms median
+- `types.js` (172 LOC) — JSDoc `BayesianNutritionResult` extends DimensionResult + 5-field `BayesianNutritionBlueprint` (nutrition_inference_metadata + likelihood_probabilities + profile_typing + ui_tier + passive_mode_active) + signals + `Prior`/`Posterior`/`Observation`/`KalmanState`/`ProfileTypingState`/`LikelihoodProbabilities`/`DisagreementFlagSignal`/`EnergyVarianceSignal`/`PassiveModeSignal` typedefs
+- `priorPosterior.js` (228 LOC) — `resolveTier` + `strongPriorSlope` + `initPriorFromDemographic` + `conjugateUpdate` Normal-Normal closed-form (NU MCMC) + `decayPosteriorToPrior` natural posterior=prior_next A3 + `evaluatePhaseReset` Hibrid Layer 1+2 reset / preserve Layer 4 A5 + `detectSpecialPriors` Passive Mode tripwire + age 75+ + ED history E2
+- `kalmanFilter.js` (196 LOC) — `computeR2` coefficient determination + `kalmanUpdate1D` closed-form + `ewmaUpdate` fallback + `evaluateR2Gate` >0.85 strict + `isKalmanFeatureFlagEnabled` + `runKalmanWithFallback` full chain B2 (Hall 2008 + R²>0.85 + EWMA feature flag)
+- `volumeLandmarks.js` (180 LOC) — `lookupIsraetelLandmarks` + `resolveMovementCategory` (squat/deadlift→lower / bench/OHP→upper / curl/lateral→isolation) + `volumeMetricWeight` 3:2:1 + `computeWeightedVolume` + `countCompoundObservations` 14d window + `computeIsolationDegradation` 0.3× când compound <3 + `computePersonalizedLandmarks` Hibrid lookup + regression
+- `profileTyping.js` (213 LOC) — `computeMoodScore` Linear Sum Weighted (LVM defer v1.5) B4 + `resolveProfileTypingThreshold` 0.55-0.85 D3 + `exceedsHammingHysteresis` 15% strict > + `meetsConsecutiveQualifier` 2 sesiuni 14d window + `evaluateProfileTypingFlip` cumulative gating + `evaluateAntiSpam` 28d + cap 4/year D6
+- `crossEngineHooks.js` (183 LOC) — `emitGoalAdaptationDisagreement` flag CDL Tier 1 silent C2 + `applyEnergyVarianceModifier` neutral T0 / DOWN T1+ × 1.30 amplify C3 + `applySigmaModifier` post-conjugate update + `emitPassiveModeSignal` E2 + `getConvergenceGuardReference` §9.4.6 NU duplicate (ADR 009 amendment owns) + `forwardConstraintObject` Hook pass-through immutable
+- `index.js` (441 LOC) — entry `evaluate(ctx) → BayesianNutritionResult` async pure total + ENGINE_ID 'bayesianNutrition' + computeConfidence + normalCdf approximation Abramowitz & Stegun 26.2.17 + computeLikelihoodProbabilities {deficit/surplus/maintenance} sum=1.0 D2 + computeConfidenceInterval 95% CI + resolveUiTier Tier 1+2 only NU blocking modal D4 + pipeline 4th position canonical clarified header
+
+Tests (~6 files, 1156 LOC, 142 tests):
+- `tests/priorPosterior.test.js` (24 tests) — tier resolve + Strong Prior slope sums + initPriorFromDemographic + conjugateUpdate Normal-Normal closed-form + decay natural + phase reset CUT↔BULK + Passive Mode pregnant/post-bariatric/kidney + age 75+ + ED history disclaimer
+- `tests/kalmanFilter.test.js` (22 tests) — R² computation + Kalman 1D update + EWMA fallback + R²>0.85 gate strict edge + feature flag check + full chain integration
+- `tests/volumeLandmarks.test.js` (24 tests) — Israetel lookup + movement category classification + weighted volume 3:2:1 + compound observations 14d window + isolation graceful 0.3× boundary
+- `tests/profileTyping.test.js` (22 tests) — mood Linear Sum Weighted + threshold T0/T1+ + Hamming 15% strict edge + consecutive qualifier 2 sesiuni 14d + flip evaluation cumulative + anti-spam 28d + cap 4/year
+- `tests/crossEngineHooks.test.js` (24 tests) — disagreement flag CDL + σ variance modifier neutral T0 / amplify T1+ DOWN + sigma multiplicative + Passive Mode signal + Convergence Guard reference frozen + forward constraint pass-through
+- `tests/index.test.js` (26 tests) — entry contract DimensionResult + 5-field blueprint + total function + deterministic 10-invocation + Pregnant→Passive Mode→Tier 2 banner + age 80+ Special Priors + Disagreement → Tier 1 silent + Energy DOWN T1+ → σ amplify + T0 → neutral + Phase reset CUT→BULK + Kalman flag enabled vs disabled + isolation graceful degradation + likelihood sum=1.0 + UI Tier 1+2 only + Hard rule NEVER specific kcal + nutrition schema D1 + 95% CI + anti-spam 28d cooldown + forward Hook 4
 
 ### Build + Tests
-- N/A spec compile only — zero src/ touched, ZERO regression possible
-- Pre-commit hook ran `npm run test:run` → **1898 PASS / 0 FAIL** preserved exact
+- **Tests:** 1898 → **2040 PASS / 0 FAIL** (+142 new tests Bayesian Nutrition batch 4)
+- **Typecheck:** ✅ clean (`tsc --noEmit`)
+- **Surgical bug fix pre-commit:** 1 test expectation incorrect — `priorPosterior.test.js` "defensive null prior" test expected returning prior defaults (mu=0, sigma=1.0) but function correctly defensive: uses default prior {mu:0,sigma:1.0} then runs full conjugate update toward sampleMean=5 + sample variance + N=5 → posterior mu=4.166. Fixed test cu corrected expectation (Number.isFinite + posterior shifts toward sample) + added separate boundary case for zero-observations preserving defaults. ZERO src/ engine bugs uncovered post-fix.
 
 ### Commits (1)
-- `685fdd4` docs(adr-026): §9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1 compile — append §9.4 NEW preserve §1-§8 + §9.1 + §9.2 + §9.3 cross-refs intact; ~32-35 decisions Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou after sources; 3-WAY parity check ✅ ZERO divergence (148_HANDOVER + CURRENT_STATE §RECENT + ADR 022 SPEC READY V1); pipeline §42.10 position 4th canonical; §9.4.1-§9.4.8 sub-sections complete; Convergence Guard cross-cutting reference §9.4.6 ONLY (ADR 009 amendment owns); pattern §9.1+§9.2+§9.3 commits cd6d9a4+6be84f8+2f9aa79 honored Bugatti SSOT consistent; cumulative LOCKED V1 ~659 PRESERVED; +208 LOC
+- `8615ec1` feat(engine): batch 4 Bayesian Nutrition Inference V1 implement per ADR 026 §9.4 + ADR 018 §2 — Pure-function module 8 source + 6 test files; pipeline §42.10 position 4th canonical clarified header; 32-35 decisions Cluster A-E verbatim §9.4 SSOT (commit 685fdd4) + ADR 022 complementary; Gaussian Conjugate Prior + Strong Prior tier slope 70/30→80/20→90/10 + closed-form Normal-Normal posterior update + Kalman 1D Hall 2008 + R²>0.85 gate + EWMA fallback + Volume metric 3:2:1 + Mood LSW + Israetel lookup + isolation graceful 0.3× + Profile Typing 0.55-0.85 + Hamming 15% + 2 sesiuni 14d + UI Tier 1+2 NU blocking + Hard rule NEVER specific kcal + Anti-spam 28d + cap 4/year + Hook #2 disagreement flag CDL + Hook #5 σ variance modifier + Passive Mode tripwire + Convergence Guard reference §9.4.6 NU duplicate; 1898 → 2040 PASS / 0 FAIL (+142); typecheck clean; surgical priorPosterior test expectation fix transparency; pattern structural batch 1+2+3 commits 1303b62+bf9814e+69ec9ce honored; cumulative LOCKED V1 ~659 PRESERVED
 
 ### Pushed
-- origin/main: yes (`b1bc28c..685fdd4 main -> main`)
+- origin/main: yes (`7b8deba..8615ec1 main -> main`)
 
 ### Issues
-- **3-WAY verbatim parity check Source 1 ↔ Source 2 ↔ Source 3: ✅ ZERO substantive divergence flagged** (anti-recurrence proof stronger vs §9.1-§9.3 2-way precedent)
-  - Source 1 (`148_HANDOVER` line 5) = single dense paragraph aggregate ~21 substantive bullet decisions
-  - Source 2 (`CURRENT_STATE` lines 607-627) = 21 bullets identical content vs Source 1
-  - Source 3 (`ADR 022` lines 25-111) = structured Cluster A-E (A1-A5 + B1-B4 + C1-C3 + D1-D6 + E1-E2) + separate Convergence Guard cluster (5 conditions + Pain-Aware Hybrid Spec V1 + UX wording verbatim)
-- **Decision count delta documented (acceptable):** Source 3 grouped count ~25-28 sub-decisions; Sources 1+2 granular count ~32-35 per individual sub-decisions (e.g., Kalman = 3 sub-decisions for 3 caveats, Strong Prior = 3 sub-decisions per tier T0/T1/T2). Content verbatim identical — delta = aggregation granularity NU substantive.
-- **ADR 022 status preserved (NU file flip recommend)** — consistent ADR 026 §9.4 SSOT Cluster A-E narrative + ADR 022 SPEC READY V1 cluster-grouped detail = complementary references (NU duplicate). Different from ADR 027 stub flip recommend post §9.3 (ADR 027 was STUB legacy, ADR 022 was already SPEC READY V1 distilled).
-- **Pipeline canonical position 4th clarified header** — §9.4 main header + §9.4.1 explicit cite §42.10 position 4th canonical (post §9.3 Energy 3rd LANDED commit `69ec9ce` precedent) anti-recurrence numbering ambiguity downstream batches 5-7 references.
-- **Convergence Guard "T2 Unlock" cross-cutting §9.4.6 reference ONLY** — ADR 009 §AMENDMENT 2026-05-05 birou after owns canonical SSOT (rule = behavioral validation cross-cutting all tier transitions T0→T1→T2, NU Engine #3 specific). §9.4.6 cites Source 3 lines 84-93 + Source 1 line 10 + UX wording verbatim "Siguranța e pe primul loc..." dar NU SSOT duplication.
-- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (compile aggregation only verbatim §9.4 spec, ZERO net new substantive decisions).
-- **Pre-flight grep SOURCES 3-way + tooling availability ✅** anti-Slip 2 + Slip 4 + Slip 5 reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored — `148_HANDOVER` correct source NU `127_HANDOVER` candidate uncertain mentioned în prompt batch 3 raport).
+- **Surgical bug fix transparency:** 1 test expectation incorrect în `priorPosterior.test.js` "defensive null prior" — function defensive uses default prior then runs full update; test expected returning prior defaults wrongly. Fixed cu corrected expectations: posterior shifts toward sample + sigma reduced. Added separate boundary case (null prior + zero observations) preserving defaults. NU silent skip — explicit transparency per surgical discipline batches 1+2+3 precedent.
+- **Tooling skipped (transparency):** `npm run lint` does NOT exist in package.json (anti-Slip 4 reinforced — verified pre-flight, NU fabricated execute).
+- **Pipeline canonical position 4th clarified header** — `index.js` + `constants.js` documentation explicitly cite §42.10 position 4th canonical (post §9.3 Energy 3rd LANDED commit `69ec9ce` precedent) anti-recurrence numbering ambiguity downstream batches 5-7 references.
+- **Convergence Guard reference pattern documented** — `crossEngineHooks.getConvergenceGuardReference()` returns frozen metadata pointing la ADR 009 §AMENDMENT 2026-05-05 birou after canonical SSOT + note explicit "rule = behavioral validation cross-cutting all tier transitions T0→T1→T2, NU Engine #3 specific" + redirect actual T2 Unlock evaluation la `src/coach/orchestrator/utilities/convergenceGuard.js` (Phase 1-2 foundation commit `5a16550` reusable). NU duplicate logic in Bayesian module.
+- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (implementation aggregation only verbatim §9.4 spec, ZERO net new substantive decisions).
+- **Pre-flight grep PATHS + tooling availability ✅** anti-Slip 2 + Slip 4 + Slip 5 reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored — §9.4 SSOT cited NU §45.x stale NU `127_HANDOVER` candidate uncertain).
 
 ### Next action — chat NEW pickup priority pivot
 
-**P1.2.5 batch 4 Faza 2.5 Engine Bayesian Nutrition Inference V1 implement** (NEXT chat strategic):
-- Pre-compile §9.4 LANDED single source of truth canonical 32-35 decisions Cluster A-E verbatim (commit `685fdd4`) + Source 3 ADR 022 SPEC READY V1 complementary detail
-- Pure-function module în `src/engine/bayesianNutrition/` per ADR 018 §2 Standardized Contract
-- Pattern Periodization V1 + Goal Adaptation V1 + Energy Adjustment V1 implement (commits `1303b62` + `bf9814e` + `69ec9ce`): ~7-8 source modules + ~5-6 test files
-- Estimate ~50-83 min real velocity X×3 rule (per §36.100 Engine #3 precedent + Energy V1 batch 3 commit `69ec9ce` actual reference)
+**P1.2.5 batch 5 Faza 2.5 §9.5 Engine Tempo Module-Level Spec V1 compile** (NEXT chat strategic per pipeline §42.10 sequential):
+- Pre-compile §9.5 ADR 026 Engine Tempo Module-Level Spec V1 pattern Bugatti SSOT consistent §9.1+§9.2+§9.3+§9.4 (compile drafts LANDED commits `cd6d9a4`+`6be84f8`+`2f9aa79`+`685fdd4`)
+- Source: ADR 028 Tempo Form Cues + chat strategic Tempo spec materials (consumed archives — `149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` Engine #6 Tempo section ~28-30 decisions Cluster A-E)
+- Pattern §9.1+§9.2+§9.3+§9.4 honored: Cluster A-E verbatim + Reconsideration Triggers + Cross-refs ADR 018 §2 + ADR 026 §1.10 Pipeline Order + position 5th canonical
+- Estimate ~50-83 min real velocity X×3 rule (precedent §9.1+§9.2+§9.3+§9.4 compile drafts)
 
-**Faza 2.5 batches 5-8 sequential per pipeline §42.10** (post Bayesian V1 LANDED):
-- Pre-implement compile §9.5-§9.8 ADR 026 pattern Bugatti SSOT consistent §9.1+§9.2+§9.3+§9.4
-- Engine Tempo (5th) → Specialization (6th) → Warm-up (7th) → Deload (8th) — note pipeline §42.10 sequential canonical: Periodization → Goal Adaptation → **Energy** (3rd LANDED) → **Bayesian** (4th NEXT) → **Tempo** (5th) → **Specialization** (6th) → **Warm-up** (7th) → **Deload** (8th)
+**Faza 2.5 batches 5-8 sequential per pipeline §42.10** (post Bayesian V1 LANDED batch 4):
+- Pre-implement compile §9.5-§9.8 ADR 026 pattern Bugatti SSOT consistent
+- Engine Tempo (5th) → Specialization (6th) → Warm-up (7th) → Deload (8th)
+- Pipeline §42.10 sequential canonical: Periodization → Goal Adaptation → **Energy** (3rd LANDED) → **Bayesian** (4th LANDED batch 4) → **Tempo** (5th NEXT) → **Specialization** (6th) → **Warm-up** (7th) → **Deload** (8th)
 
-**ADR 022 status preserved** (NU file flip recommend — distilled detail complementary la §9.4 SSOT canonical, both references reusable for V1 implementation).
+**ADR 022 status preserved** (NU file flip recommend — distilled detail complementary la §9.4 SSOT canonical, both references reusable post Bayesian V1 LANDED).
