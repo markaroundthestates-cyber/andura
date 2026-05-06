@@ -698,3 +698,180 @@ Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.2 Engine #2 Goal Adaptation Module-Level Spec V1 compiled 2026-05-06 morning chat-3 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-04 evening late sources (`142_HANDOVER` lines 41-47 + CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 586-591). 30 decisions Cluster 1-5 cumulative. Pre Faza 2.5 batch 2 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + V1 implement (commit `1303b62`).
+
+---
+
+### §9.3 Engine Energy Adjustment Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 afternoon chat-4 acasă din chat strategic 2026-05-05 birou late sources). ~26-28 decisions cumulative (Cluster 1-5). Pre Faza 2.5 batch 3 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine #2 Goal Adaptation V1 LANDED commit `bf9814e` (batch 2).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Energy Adjustment runs sequentially **3rd** (NU position 5 — "Engine #5" naming în [[027-engine-energy-adjustment|ADR 027]] = legacy spec session ordering, pipeline §42.10 canonical position 3rd). Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`.
+
+**Provenance chain:**
+- Source 1 (verbatim Cluster 1-5): `📤_outbox/_archive/2026-05/149_HANDOVER_2026-05-05_birou_late_engines5-6-7_spec_sessions_CONSUMED.md` Engine #5 Energy section (lines 21-32, 11 substantive bullet decisions)
+- Source 2 (cristalizate parity check ✅): `00-index/CURRENT_STATE.md` §RECENT entry "2026-05-05 birou late" Engine #5 partition (lines 534-545). **Verbatim parity check Source 1 ↔ Source 2: ZERO substantive divergence flagged** (anti-recurrence proof § 9.2 compile precedent honored).
+- Source 3 (cross-ref decision specifice): §45.5 Q33 (Energy Adjustment selective volume + intensity reuse base), §45.4 Q21 §36.82 (Marius 5:1 dual-signal cross-ref Periodization phase gate), §50.4 D1 (Streak counter cross-ref Yo-yo anti-flap), [[ADR_OUTLIER_FILTER_v1]] §EXT-1 + §EXT-2 (anti-flap discipline foundation)
+- Source 4 (architectural foundation cross-ref doar, NU duplicate): [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract `analyze(input) → DimensionResult` + §1.10 Pipeline Order Constraint Object Floor/Ceiling Range ±15% above
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 above (Energy Adjustment 3rd în pipeline §42.10) | [[027-engine-energy-adjustment|ADR 027]] STUB → SPEC REFERENCE (file flip recommend post §9.3 LOCKED) | [[022-bayesian-nutrition-inference|ADR 022]] σ variance modifier Q12=C cross-engine integration | [[009-calibration-tiers|ADR 009]] tier-aware T0/T1+ thresholds Q13=B | [[ADR_OUTLIER_FILTER_v1]] §EXT-1 streak counter cross-ref Yo-yo anti-flap Q14=D | §9.1 Engine #1 Periodization Floor/Ceiling coridor immutable Hook 1 read-only | §9.2 Engine #2 Goal Adaptation phase gate "high_intensity != true" Q7 4th condition
+
+---
+
+#### §9.3.1 Cluster 1 — I/O Contract & Pipeline Placement (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+energyAdjustmentEngine.evaluate(ctx) → EnergyAdjustmentResult extends DimensionResult
+```
+
+**Pipeline placement LOCKED V1 (per §42.10):** Energy Adjustment runs **sequentially 3rd** post Periodization (§9.1) + Goal Adaptation (§9.2). Legacy "Engine #5" naming în [[027-engine-energy-adjustment|ADR 027]] = chat strategic spec session ordering NU pipeline canonical position. Pipeline §42.10 canonical: `Periodization → Goal Adaptation → Energy Adjustment → Bayesian → Tempo → Specialization → Warm-up → Deload`.
+
+**Input contract (consumed Hook 1 read-only):** Constraint Object frozen propagated upstream Periodization §9.1 Cluster 5 + Goal Adaptation §9.2.5 cross-engine hooks (volume_per_muscle Floor/Ceiling + intensity_pct_1rm corridor + phase + deload_window). NU mutate input — anti-cascade safeguard preserved.
+
+**Output blueprint emit (cumulated cluster 2-4 decisions):**
+1. `energy_state` — emoji 🟢🟡🔴 holistic aggregate (Cluster 2 input strategy)
+2. `adjustment_direction` — `'UP' | 'DOWN' | 'NONE'` (Cluster 3 bidirectional asymmetric)
+3. `adjustment_magnitude_pct` — Float în [-0.15, +0.15] tier-aware corridor (Cluster 4 tier-aware Q13=B)
+4. `volume_intensity_scope` — `{volume: bool, intensity: bool}` selective per Q33 §45.5 reuse (Cluster 3)
+5. `forward_constraint_object` — Periodization corridor pass-through immutable downstream Bayesian/Tempo/Specialization (Hook 1 forwarding, NU mutate)
+6. `signals` — human-readable signal IDs (e.g. `'energy_red_drill_down'`, `'asymmetric_up_phase_gate_blocked'`, `'yoyo_3_session_anti_flap_active'`)
+
+**Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1.
+
+**Engine purity preserved:** Energy Adjustment reads Periodization Constraint Object Hook 1 read-only, **NU override** Periodization phase NU sub Floor NU peste Ceiling per §1.10 Pipeline Order LOCKED V1 — anti-cascade safeguard.
+
+---
+
+#### §9.3.2 Cluster 2 — Input Strategy & Aggregation (~6 decisions)
+
+**Manual input only V1** (Source 1 line 22 verbatim, Q1=C hibrid + Q4=A + Q5=A defer auto integration v1.5+):
+- **Q1=C hibrid:** prompt user pre-session emoji 🟢🟡🔴 (manual self-report) — NU auto-detection biometric V1
+- **Q4=A defer:** auto-detection v1.5+ post-Beta useri reali signal validation
+- **Q5=A defer:** biometrics integration (HRV / sleep tracker / wearable) v1.5+ post-Beta
+
+**Stress folded emoji holistic 🟢🟡🔴 + drill-down strict 🔴 only** (Source 1 line 23 verbatim, Q15=C anti-Maria-65-friction):
+- **Holistic emoji single dimension:** 🟢 = green ready / 🟡 = yellow caution / 🔴 = red distressed (NU separate axes stress + recovery + sleep — single composite signal user simplification)
+- **Drill-down strict 🔴 only:** când user pickează 🔴 → engine prompt drill-down (cause: stres / somn / durere / altul) — **NU 🟡** (Daniel push-back Q15=C: zilnic friction Maria 65 anti-Bugatti, prompt drill-down doar la 🔴 distressed = signal puternic warrant analysis)
+
+**Categorical aggregation rules table** (Source 1 line 24 verbatim, Q3=C auditable):
+- **Discrete categorical inputs** (NU continuous Likert) — emoji 3-state + drill-down 4-cauze fixed labels
+- **Aggregation rules tabel auditable** persistent CDL trace transparency: input → adjustment direction + magnitude tier-aware mapping
+- **Auditable rule set:** Bugatti craft `<engine>.tree.ts` data file reusable testing + Beta cohort validation V1
+
+**Anti-spam invariant aliniat Engine #2 (cross-ref §9.2 + ADR 024 §2.8):** drill-down 🔴 prompt cooldown rolling per session (NU spam multi-prompt în sesiune), persisted CDL `last_drill_down_ts` cross-session anti-fatigue.
+
+---
+
+#### §9.3.3 Cluster 3 — Adjustment Dimensions & Bidirectional ±15% (~5 decisions)
+
+**Volume + intensity selective scope** (Source 1 line 25 verbatim, Q33 §45.5 reuse + Q6=D):
+- **Selective scope per emoji aggregate:** volume + intensity ambele targeting în coridor Periodization `volume_per_muscle Floor/Ceiling` + `intensity_pct_1rm Floor/Ceiling`
+- **Q33 §45.5 reuse:** decision base infrastructure precedent (Energy Adjustment selective volume + intensity, NU rep range NU rest time — those = Goal Adaptation §9.2.4 Cluster 4 scope)
+
+**Bidirectional ±15% conservative range** (Source 1 line 25 verbatim, Q6=D):
+- **Range ±15%** corridor magnitude maxim adjustment session-level (NU peste, NU sub) — conservative pick V1 anti-degenerate cumulative adjustment
+- **Bidirectional symmetric range** (UP +15% / DOWN -15% maxim) — direction asymmetric trigger logic per Q7 below, magnitude ceiling identical
+
+**Asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true"** (Source 1 line 26 verbatim, Q7 4th condition):
+- **Q7=B Asymmetric trigger logic:**
+  - **DOWN -15%:** single trigger immediate (e.g., user picks 🔴 → engine triggers DOWN -15% next session) — anti-burnout protect prima
+  - **UP +15%:** strict requires **N≥3 conditions cumulative** (3 sessions consecutive cu 🟢 stable AND no recovery red flags AND no stagnation markers AND **Periodization phase gate "high_intensity != true"**) — anti-aggressive UP cumulative drift
+- **Q7 4th condition Periodization phase gate:** UP +15% NU triggers când Periodization §9.1 mesocycle phase = PEAK or LOAD+ (high_intensity == true) — anti **"Sarcastic UP" Marius 5:1 săpt 4-5** scenario unde 5:1 dual-signal green PLUS Energy Adjustment UP +15% PLUS PEAK phase = compound aggressive cascade violating Invariant 1 (V ≤ MRV) + Invariant 5 Medical Safety
+- **Anti-cascade preserved:** UP +15% strict gating preserves Periodization phase priority + Goal Adaptation phase gate concurrency
+
+---
+
+#### §9.3.4 Cluster 4 — Invariants & Cross-Engine Hooks (~6 decisions)
+
+**MRV invariant 1 immutable** (Source 1 line 27 verbatim, Q8=A):
+- **Hard cap MRV absolute** preserved Layer C sanity bound Periodization §9.1 Cluster 5 — Energy Adjustment NU peste MRV ceiling regardless adjustment magnitude. Anti-drift safeguard Bugatti craft.
+
+**Soft override sub-Floor max 2 consecutive → Engine Deload trigger** (Source 1 line 27 verbatim, Q9 anti-drift):
+- **Soft override sub-Floor allowed max 2 sessions consecutive** (când DOWN -15% adjustment + Periodization Floor combined drops below MEV) → NU hard reject, NU silent ignore
+- **3rd session sub-Floor → trigger Engine Deload Protocol** (cross-ref Engine #4 / §9.8 Deload spec) — composite signal escalation per ADR 026 §1.10 Pipeline Order
+- **Anti-drift mechanism:** sub-Floor sustained = clear signal user systemic recovery deficit, escalate Deload domain proper (NU paper over cu DOWN -15% indefinitely)
+
+**Bayesian σ variance modifier Engine Bayesian** (Source 1 line 28 verbatim, Q12=C sophisticated):
+- **σ variance signal cross-engine integration cu Engine #3 Bayesian Nutrition** — Energy Adjustment magnitude amplified/dampened per Bayesian posterior σ (high σ = volatile signal, dampening adjustment magnitude pentru anti-noise; low σ = stable signal, magnitude preserved)
+- **Sophisticated formula** post-Beta calibration target (V1 conservative pick: σ > σ_threshold → adjustment × 0.7 dampening factor)
+- **Cross-ref:** ADR 022 Bayesian Nutrition §3.X cross-engine #5 integration "Pre-processing modulator readiness cu Neutral fallback T0 cold start"
+
+**Tier-aware T0=±10% T1+=±15%** (Source 1 line 29 verbatim, Q13=B):
+- **T0 cold start tier:** ±10% conservative range maxim adjustment (calibration window sigma high, anti-overfit early signals)
+- **T1+ established tier:** ±15% full range (calibration validated, signal-to-noise ratio sustainable)
+- **Cross-ref:** [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after T2 Unlock Convergence Guard formula (T0 → T1 progression gate)
+
+**Yo-yo anti-flap 3-session window V1 only** (Source 1 line 30 verbatim, Q14=D):
+- **Anti-flap mechanism 3-session rolling window:** dacă adjustment direction flipped UP→DOWN→UP în 3 sesiuni consecutive → engine **suppresses 3rd flip**, holds current direction, logs `signal: 'yoyo_anti_flap_suppressed'`
+- **V1 only Sprinter/Marathon profile-typing modulators DEFERRED** post-Beta data real (Q14 deferred): future variant include profile-typing-aware anti-flap thresholds (Sprinter persona = aggressive flips OK / Marathon = strict 3-session lock)
+- **Cross-ref:** [[ADR_OUTLIER_FILTER_v1]] §EXT-1 Streak Counter Same Direction §50.4 D1 + §EXT-2 — discipline foundation Yo-yo anti-flap consistent ecosystem
+
+**Cross-engine hooks summary:**
+- **Hook 1 (consume) ← Engine #1 Periodization** Constraint Object frozen `volume_per_muscle Floor/Ceiling + intensity_pct_1rm + phase + deload_window` — read-only redistribuie INTERIOR coridorului
+- **Hook 2 → Engine #4 Deload Protocol** sub-Floor sustained 3-session escalation trigger (per Q9 anti-drift)
+- **Hook 3 ↔ Engine #3 Bayesian Nutrition** σ variance modifier bidirectional cross-engine integration (per Q12=C)
+- **Hook 4 (forward) → downstream engines (Bayesian/Tempo/Specialization/Deload)** Constraint Object pass-through immutable preserved per §1.10 Pipeline Order LOCKED V1
+
+---
+
+#### §9.3.5 Cluster 5 — Safety/Compliance & Deferred V1.5 (~4 decisions)
+
+**Medical referral copy Gigel test PASS** (Source 1 line 31 verbatim, Q18=D):
+- **Copy verbatim LOCKED V1:** *"Consultă medicul de familie sau un specialist în medicină sportivă"*
+- **Generic "specialist" REJECTED** (Daniel push-back Gigel test mid-flight): "specialist" generic = ambiguous user could interpret as "antrenor specializat" sau "nutritionist" → diluează Invariant 5 Medical Safety message. Specific "medicul de familie sau specialist în medicină sportivă" = unambiguous medical professional pathway.
+- **Trigger condition:** Energy Adjustment 3-session sub-Floor cascade (post Engine Deload escalation) + composite low signals → engine surfaces medical referral banner (Bugatti craft "AI-ul informează, NU impune" SUFLET F2 alignment) — NU absolute block, user keeps autonomy.
+
+**Bayesian latent state v1.5 evolution** (Source 1 line 32 verbatim, Q20=D):
+- **V1.5 ecosystem-wide Bayesian inference migration** (Engine #3 Bayesian + Engine Energy + Engine #6 Tempo + Engine #7 Specialization consistent Q20=D)
+- **V1 stays categorical aggregation rules table** (Cluster 2 Q3=C) — Bayesian latent state evolution post-Beta when data real validates tractable inference scope (anti-premature-optimization)
+
+**Sprinter/Marathon profile-typing modulators DEFERRED V1** (Source 1 line 30 verbatim, Q14 deferred):
+- **Q14=D anti-flap 3-session window** = V1 only LOCKED — Sprinter/Marathon profile-typing modulators **DEFERRED post-Beta data real** signal validation
+- **Future v1.5+ candidate:** profile-typing-aware anti-flap thresholds + adjustment magnitude per profile (Sprinter aggressive ±15% acceptable / Marathon conservative ±10% rolling lock)
+
+**Pain-Aware integration cross-ref Engine #4 Deload Convergence Guard "T2 Unlock":**
+- **Engine Energy NOT proactive trigger Pain-Aware** (clean signal monitor only USER FRICTION via Pain Button per CURRENT_STATE 2026-05-05 birou after Convergence Guard "T2 Unlock"): Engine Energy adjustments NU contribuie `pain_aware:true` flag CDL — flag se setează STRICT user-triggered Pain Button only
+- **Cross-ref:** Decoupling safety/reward via Clean Signal rule preserved Invariant 5 Medical Safety
+
+---
+
+#### §9.3.6 Reconsideration Triggers — Engine Energy Adjustment V1 → V1.5 candidate
+
+Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster 2 Manual input only insufficient post-Beta useri reali** — auto-detection biometric demand prevalence ≥30% useri opt-in HRV / sleep tracker integration. Per Source 1 Q4=A defer + Q5=A defer reversibility note. Trigger threshold: ≥30% Beta cohort useri raportează "manual emoji friction" sau wearable adoption rate ≥40%. Candidate: Hibrid manual + auto-detection biometric per Q1 evolution toggle UI.
+
+2. **Cluster 3 ±15% range too aggressive sau too conservative** — post-Beta outcome data shows systematic adjustment under-shoot (target outcome NU atins în 3 sesiuni consecutive UP/DOWN signals) sau over-shoot (cascade adjustment compound violating Invariant 1). Trigger threshold: ≥20% sub-persona-tier deviation outcome target sustained ≥4 săpt. Candidate: tier-aware corridor matrix (e.g., Maria-Beginner ±10% conservative vs Marius-Advanced ±20% aggressive default).
+
+3. **Cluster 4 Yo-yo 3-session window false positives** — engine suppresses legitimate direction flip post-Goal-Shift sau post-injury (signal contradictoriu 3-session lock = brittle anti-flap). Per Source 1 Q14 reversibility note. Trigger threshold: ≥5% Beta cohort useri raportează "engine stuck wrong direction" post-shift event. Candidate: profile-typing modulators activate (Q14 deferred Sprinter/Marathon path) sau context-aware suppression bypass (Goal Shift Event Handler §36.35 hook).
+
+4. **Cluster 4 Tier-aware ±10%/±15% threshold drift** — T0 ±10% conservative limita tier-aware progression (T0 useri stuck în low-magnitude adjustment cycle, NU advance la T1 calibration window). Trigger threshold: ≥30% T0 useri stuck T0 >8 săpt cu adjustment magnitude consistently capped ±10%. Candidate: T0 ±12% tier-aware threshold tightening sau T0→T1 progression gate relax.
+
+5. **Cluster 5 Medical referral copy clarity post-Beta useri reali signal** — Gigel test PASS V1 LOCKED dar useri reali raportează misinterpretation copy ("medicul de familie" ambiguous în context urban younger demographic, "specialist medicină sportivă" inaccessible în România rural). Trigger threshold: ≥10% Beta cohort raportează "NU știam unde să merg post-banner". Candidate: copy A/B test variant cu UX research panel + cross-ref ADR 025 graceful degradation engine pre-fills default.
+
+6. **Cluster 4 Bayesian σ variance modifier sophisticated formula calibration drift** — post-Beta σ_threshold (V1 conservative pick) shows systematic over-dampening (high σ legitimate volatile signal user state genuine ne-amortized). Per Source 1 Q12=C reversibility note. Trigger threshold: ≥15% sessions adjustment magnitude reduced >50% via σ dampening cu user post-session feedback "engine prea conservator". Candidate: σ_threshold tier-aware (T0 strict / T1+ relaxed) sau weighted compound:isolation Engine #3 cross-engine signal aggregation.
+
+7. **Cluster 5 Bayesian latent state v1.5 evolution timing** — Q20=D ecosystem-wide migration timing dependent Engine #3 Bayesian Nutrition tractable inference proven post-Beta. Trigger threshold: Engine #3 R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data. Candidate: V1.5 migration coordinated multi-engine release (NU per-engine trickle).
+
+**Re-evaluation cadence:** post Faza 2.5 batch 3 implementation Engine Energy Adjustment V1 + post-Beta useri reali signal aggregate (similar §9.1.7 + §9.2.6 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster 1-5 LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.3.7 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → EnergyAdjustmentResult` extending DimensionResult (purity preserved engine = pure function NU side effects)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Energy Adjustment 3rd în pipeline §42.10 (NU position 5 legacy)
+- [[027-engine-energy-adjustment|ADR 027]] STUB → SPEC REFERENCE (file flip recommend post §9.3 LOCKED — separate task post-CC, ADR 027 stub redirects la §9.3 single source of truth canonical)
+- [[022-bayesian-nutrition-inference|ADR 022]] σ variance modifier Q12=C cross-engine integration (Hook 3 bidirectional Engine #3 Bayesian Nutrition)
+- [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard T2 Unlock — tier-aware T0=±10% / T1+=±15% Q13=B foundation
+- [[ADR_OUTLIER_FILTER_v1]] §EXT-1 Streak Counter Same Direction §50.4 D1 + §EXT-2 Goal Shift Event Handler — Yo-yo anti-flap Q14=D discipline foundation
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 3
+- §9.1 Engine #1 Periodization Floor/Ceiling coridor immutable Hook 1 read-only (consume input frozen)
+- §9.2 Engine #2 Goal Adaptation phase gate "high_intensity != true" Q7 4th condition (cross-engine concurrency + anti-Sarcastic UP Marius 5:1 săpt 4-5 anti-cascade)
+- §9.4 Engine #3 Bayesian Nutrition Q12=C cross-engine integration σ variance modifier (forward TBD spec compile §9.4 batch 4)
+- §9.8 Engine Deload Protocol Q9 anti-drift escalation sub-Floor sustained 3-session trigger (forward TBD spec compile §9.8 batch 7)
+
+---
+
+🦫 **§9.3 Engine Energy Adjustment Module-Level Spec V1 compiled 2026-05-06 afternoon chat-4 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER` Engine #5 Energy section lines 21-32 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 534-545 parity check ✅ ZERO substantive divergence). ~26-28 decisions Cluster 1-5 cumulative. Pre Faza 2.5 batch 3 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + §9.2 Engine #2 Goal Adaptation compile draft (commit `6be84f8`). Pipeline §42.10 position 3rd canonical (NU position 5 legacy ADR 027 "Engine #5" naming).
