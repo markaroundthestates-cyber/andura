@@ -1,57 +1,66 @@
-## Task: ADR 026 §9.3 Engine Energy Adjustment Module-Level Spec V1 compile (pre-Faza 2.5 batch 3)
+## Task: Faza 2.5 batch 3 Engine Energy Adjustment V1 implement per ADR 026 §9.3 + ADR 018 §2
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Backup tag: `pre-adr026-section9.3-energy-compile-2026-05-06-1506` ✅ pushed origin
+- Backup tag: `pre-faza2.5-energy-adjustment-v1-implement-2026-05-06-1516` ✅ pushed origin
 - Clean tree pre-execution: yes
 - Baseline tests: **1786 PASS / 0 FAIL** ✅
-- Grep SOURCES verified: ADR 026 + ADR 027 stub + `149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` + CURRENT_STATE.md toate exist
-- §9.1 + §9.2 prezent ADR 026 confirmed (anti-collision verify §9.3 NEW append safe)
+- Grep PATHS verified: ADR 026 §9.3 LANDED line 704 + ADR 018 §2 + `src/engine/periodization/` + `src/engine/goalAdaptation/` + `src/coach/orchestrator/result.js` toate exist
+- §9.3 spec source confirmed canonical (commit `2f9aa79`)
 - Tooling availability: `test:run` (vitest 3.2.4) + `typecheck` (tsc) ✅; **NO `lint`** (anti-Slip 4 transparent skip)
-- **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged** (`149_HANDOVER` lines 21-32 ≡ `CURRENT_STATE` §RECENT 2026-05-05 birou late lines 534-545 — 11 bullet decisions identical)
 
 ### Modificări
 
-**`03-decisions/026-offline-coaching-decision-tree-exhaustive.md`** — append §9.3 NEW (+177 LOC, 700 → 877):
-- **§9.3 Engine Energy Adjustment Module-Level Spec V1 header** — Status SPEC READY V1 + provenance chain (Source 1 + Source 2 + Source 3 cross-refs §45.5 Q33 + §45.4 Q21 + §50.4 D1 + Source 4 ADR 018 §2 contract) + cross-refs bidirectional 9 ADR-uri
-- **§9.3.1 Cluster 1 — I/O Contract & Pipeline Placement** (~5 decisions): pure function evaluate(ctx) → EnergyAdjustmentResult + pipeline §42.10 position 3rd canonical (NU 5th legacy ADR 027 naming clarified) + Hook 1 input frozen Periodization read-only + 6-field output blueprint emit + engine purity preserved
-- **§9.3.2 Cluster 2 — Input Strategy & Aggregation** (~6 decisions): manual emoji 🟢🟡🔴 input only V1 (Q1=C + Q4=A + Q5=A defer auto v1.5+) + stress folded holistic + drill-down strict 🔴 only (Q15=C anti-Maria-65-friction) + categorical aggregation rules table auditable (Q3=C) + anti-spam aliniat Engine #2 cross-ref §9.2
-- **§9.3.3 Cluster 3 — Adjustment Dimensions & Bidirectional ±15%** (~5 decisions): selective volume + intensity (Q33 §45.5 reuse) + bidirectional ±15% conservative range (Q6=D) + asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true" 4th condition (anti "Sarcastic UP" Marius 5:1 săpt 4-5) + DOWN single trigger immediate
-- **§9.3.4 Cluster 4 — Invariants & Cross-Engine Hooks** (~6 decisions): MRV invariant 1 immutable (Q8=A) + soft override sub-Floor max 2 consecutive → Engine Deload trigger (Q9 anti-drift) + Bayesian σ variance modifier Engine #3 (Q12=C sophisticated) + tier-aware T0=±10% T1+=±15% (Q13=B) + Yo-yo anti-flap 3-session window V1 only (Q14=D Sprinter/Marathon deferred) + 4 cross-engine hooks summary
-- **§9.3.5 Cluster 5 — Safety/Compliance & Deferred V1.5** (~4 decisions): medical referral copy Gigel test PASS *"Consultă medicul de familie sau un specialist în medicină sportivă"* (Q18=D, generic "specialist" REJECTED) + Bayesian latent state v1.5 evolution (Q20=D ecosystem-wide) + Sprinter/Marathon profile-typing modulators deferred V1 (Q14 path) + Pain-Aware integration cross-ref Convergence Guard "T2 Unlock" Clean Signal rule
-- **§9.3.6 Reconsideration Triggers** — 7 triggers documented (Cluster 2 manual insufficient + Cluster 3 ±15% range drift + Cluster 4 yo-yo false positives + Cluster 4 tier-aware drift + Cluster 5 medical copy clarity + Cluster 4 Bayesian σ formula calibration + Cluster 5 Bayesian v1.5 timing); re-evaluation cadence post-Beta
-- **§9.3.7 Cross-refs Bidirectional ADR** — ADR 018/026/027/022/009/ADR_OUTLIER_FILTER_v1/030 + §9.1 Periodization Hook 1 + §9.2 Goal Adaptation phase gate Q7 + §9.4 Bayesian forward + §9.8 Deload forward
-- **Footer 🦫 marker** — compile timestamp 2026-05-06 afternoon chat-4 acasă + ZERO net new substantive + 26-28 decisions cumulative + Pattern Bugatti SSOT consistent §9.1+§9.2
+**`src/engine/energyAdjustment/`** NEW directory (8 source modules + 5 test files = 13 files, 2327 LOC):
+
+Source modules:
+- `constants.js` (223 LOC) — EMOJI_STATE 🟢🟡🔴 + DRILL_DOWN_CAUSES 4 fixed labels + ADJUSTMENT_DIRECTION UP/DOWN/NONE + ADJUSTMENT_MAGNITUDE T0=±10% T1+=±15% Q13=B + UP_GATING_CONDITIONS N≥3 + recovery + Periodization phase forbidden PEAK/LOAD+ + YOYO_ANTI_FLAP windowSize=3 V1 + SUB_FLOOR_MAX_CONSECUTIVE=2 Q9 + BAYESIAN_VARIANCE_MODIFIER σ_threshold=0.20 dampening=0.7 Q12=C + MRV_INVARIANT_IMMUTABLE Q8=A + HARD_CAP_INTENSITY_PCT_1RM=0.90 + MEDICAL_REFERRAL_COPY verbatim Gigel test PASS Q18=D + AGGREGATION_RULES_TABLE Q3=C auditable + ANTI_SPAM cooldown
+- `types.js` (117 LOC) — JSDoc `EnergyAdjustmentResult` extends DimensionResult + 6-field `EnergyAdjustmentBlueprint` (energy_state / adjustment_direction / adjustment_magnitude_pct / volume_intensity_scope / forward_constraint_object / signals) + `EnergyAggregationSignal` + `BidirectionalAdjustmentDecision` + `YoyoFlapState` + `BayesianVarianceSignal` + `DeloadTriggerSignal`
+- `emojiAggregation.js` (93 LOC) — `resolveEmojiState` + `resolveDrillDownCause` + `requiresDrillDown` strict 🔴 only Q15=C + `applyAggregationRule` Q3=C categorical table + `aggregateEmojiInputs` discard drill-down când emoji NOT 🔴
+- `bidirectionalAdjustment.js` (218 LOC) — `resolveCalibrationTier` T0/T1/T2 + `magnitudeCeilingForTier` Q13=B + `countConsecutiveGreenSessions` UP gate condition 1 + `hasNoRecoveryRedFlags` UP gate condition 2 + `isHighIntensityPhase` Q7 4th condition Periodization phase gate + `evaluateUpGating` 4 cumulative AND conditions + `computeAdjustmentDirection` Q7=B asymmetric (DOWN immediate / UP strict gating)
+- `yoyoAntiFlap.js` (130 LOC) — `detectFlapPattern` 3-session window Q14=D + `applyYoyoSuppression` 3rd flip suppress hold preceding direction + `getProfileTypingModulator` V1 stub null (Sprinter/Marathon DEFERRED v1.5+)
+- `crossEngineHooks.js` (228 LOC) — `readPeriodizationCorridor` Hook 1 frozen read-only + `applyIntensityAdjustmentInterior` clamp anti-cascade + hard cap 90% 1RM Layer C + `applyVolumeAdjustmentInterior` MRV invariant Q8=A immutable + `countConsecutiveSubFloorSessions` Q9 anti-drift + `emitDeloadTrigger` Hook 2 max 2 consecutive escalation + `emitBayesianVarianceModifier` Hook 3 σ>threshold ×0.7 dampening + `forwardConstraintObject` Hook 4 pass-through immutable
+- `medicalReferral.js` (82 LOC) — `getMedicalReferralCopy` verbatim Q18=D + `evaluateMedicalReferralBanner` (deload escalation + composite low signals trigger) + `isPainAwareProactiveTrigger` returns false V1 (Clean Signal rule preserved Invariant 5)
+- `index.js` (230 LOC) — entry `evaluate(ctx) → EnergyAdjustmentResult` async pure total + ENGINE_ID 'energyAdjustment' + computeConfidence + pipeline 3rd position canonical clarified header
+
+Tests (~5 files, 1006 LOC, 112 tests):
+- `tests/emojiAggregation.test.js` (22 tests) — emoji 3-state + drill-down strict 🔴 only + categorical rules table + drill-down DISCARDED când NOT 🔴
+- `tests/bidirectionalAdjustment.test.js` (28 tests) — tier resolution + magnitude ceiling Q13=B + consecutive green count + recovery red flag + Periodization phase gate + UP gating 4 conditions cumulative + asymmetric DOWN immediate / UP strict
+- `tests/yoyoAntiFlap.test.js` (13 tests) — flap pattern detection + 3rd flip suppression chronological alternation + monotone NU suppression + Sprinter/Marathon stub null
+- `tests/crossEngineHooks.test.js` (24 tests) — Hook 1 read corridor + applyIntensityAdjustment clamp + hard cap Layer C + MRV invariant Q8=A + Q9 anti-drift escalation + Q12=C dampening threshold edge + Hook 4 pass-through frozen
+- `tests/index.test.js` (25 tests) — entry contract DimensionResult + 6-field blueprint + total function + deterministic 10-invocation + RED→DOWN tier-aware + GREEN+gates→UP+15% + PEAK blocks UP anti-Sarcastic + YELLOW→NONE + yo-yo suppress + Bayesian dampening + sub-Floor escalation + medical banner conditional + forward Hook 4 + UP gating recovery red + pipeline 3rd
 
 ### Build + Tests
-- N/A spec compile only — zero src/ touched, ZERO regression possible
-- Pre-commit hook ran `npm run test:run` → **1786 PASS / 0 FAIL** preserved exact
+- **Tests:** 1786 → **1898 PASS / 0 FAIL** (+112 new tests Energy Adjustment batch 3)
+- **Typecheck:** ✅ clean (`tsc --noEmit`)
+- **Surgical bug fix pre-commit:** 1 logic bug uncovered while writing tests — `applyYoyoSuppression` pattern alternation inverted (label `UP_DOWN` chronologically = DOWN→UP, but code checked `pattern === 'UP_DOWN' && incoming === UP` which would NOT extend alternation). Fixed pre-commit cu corrected logic + verbose comments documenting chronological vs most-recent-first convention. ZERO src/ engine bugs uncovered post-fix.
 
 ### Commits (1)
-- `2f9aa79` docs(adr-026): §9.3 Engine Energy Adjustment Module-Level Spec V1 compile — append §9.3 NEW preserve §1-§8 + §9.1 + §9.2 cross-refs intact; ~26-28 decisions Cluster 1-5 verbatim aggregation from chat strategic 2026-05-05 birou late sources; Source 1 149_HANDOVER + Source 2 CURRENT_STATE parity check ✅ ZERO divergence; pipeline §42.10 position 3rd (NU 5th legacy); §9.3.1-§9.3.7 sub-sections complete; pattern §9.1+§9.2 commits cd6d9a4+6be84f8 honored Bugatti SSOT consistent; cumulative LOCKED V1 ~659 PRESERVED; +177 LOC
+- `69ec9ce` feat(engine): batch 3 Energy Adjustment V1 implement per ADR 026 §9.3 + ADR 018 §2 — Pure-function module 8 source + 5 test files; pipeline §42.10 position 3rd canonical clarified header; 26-28 decisions Cluster 1-5 verbatim §9.3 SSOT (commit 2f9aa79); 6-field blueprint emoji + bidirectional asymmetric ±15% Q6=D + UP N≥3 + Periodization phase gate anti-Sarcastic + Tier-aware T0/T1+ Q13=B + Yo-yo 3-session V1 only Q14=D + MRV invariant Q8=A + Engine Deload Q9 anti-drift + Bayesian σ Q12=C dampening + Medical referral verbatim Q18=D + Hook 1 frozen + Hook 4 pass-through; 1786 → 1898 PASS / 0 FAIL (+112); typecheck clean; surgical yoyo bug fix pre-commit transparency; pattern structural Periodization V1 + Goal Adaptation V1 commits 1303b62+bf9814e honored; cumulative LOCKED V1 ~659 PRESERVED
 
 ### Pushed
-- origin/main: yes (`d55465a..2f9aa79 main -> main`)
+- origin/main: yes (`d57ac82..69ec9ce main -> main`)
 
 ### Issues
-- **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged** — 11 bullet decisions identical entre `149_HANDOVER` lines 21-32 și `CURRENT_STATE` §RECENT 2026-05-05 birou late lines 534-545 (anti-recurrence proof § 9.2 compile precedent honored)
-- **ADR 027 stub flip recommendation** — `03-decisions/027-engine-energy-adjustment.md` 5562 LOC stub legacy now eclipsed by §9.3 SSOT canonical. Recommend separate task post-CC: redirect ADR 027 → §9.3 single source of truth (file flip 🟡 STUB → 🟢 SPEC REFERENCE pattern ADR 024 precedent post §9.2 LOCKED)
-- **Pipeline canonical position 3rd clarified** — legacy "Engine #5" naming în ADR 027 stub = chat strategic spec session ordering, NU pipeline position canonical. §9.3 header + §9.3.1 Cluster 1 explicitly clarify position 3rd per §42.10 LOCKED V1 (anti-batches 4-7 numbering ambiguity downstream CC reports)
-- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (compile aggregation only verbatim §9.2 spec, ZERO net new substantive decisions)
-- **Pre-flight grep SOURCES + tooling availability ✅** anti-Slip 2 §45.x stale RECIDIVĂ + Slip 4 + Slip 5 reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored — §45.x Engine #8 Warm-up architecture only, NU Energy spec source)
+- **Surgical bug fix transparency:** 1 logic bug în `applyYoyoSuppression` pattern label-vs-chronological inversion uncovered while writing tests — fixed pre-commit cu explicit comments documenting convention (window most-recent-first; pattern UP_DOWN ⟺ chronologically DOWN→UP; suppress when incoming continues alternation). NU silent skip — explicit transparency. Test layer caught bug pre-prod (Bugatti craft validation discipline).
+- **Tooling skipped (transparency):** `npm run lint` does NOT exist in package.json (anti-Slip 4 reinforced — verified pre-flight, NU fabricated execute).
+- **Pipeline canonical position 3rd clarified header** — `index.js` + `constants.js` documentation explicitly cite §42.10 position 3rd canonical (NU 5th legacy ADR 027 "Engine #5" naming eclipsed by §9.3 SSOT) anti-recurrence numbering ambiguity downstream batches 4-7 references.
+- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (implementation aggregation only verbatim §9.3 spec, ZERO net new substantive decisions).
+- **Pre-flight grep PATHS + tooling availability ✅** anti-Slip 2 + Slip 4 + Slip 5 reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored — §9.3 SSOT cited NU §45.x stale NU ADR 027 stub legacy).
 
 ### Next action — chat NEW pickup priority pivot
 
-**P1.2.5 batch 3 Faza 2.5 Engine Energy Adjustment V1 implement** (NEXT chat strategic):
-- Pre-compile §9.3 LANDED single source of truth canonical 26-28 decisions Cluster 1-5 verbatim (commit `2f9aa79`)
-- Pure-function module în `src/engine/energyAdjustment/` per ADR 018 §2 Standardized Contract
-- Pattern Periodization V1 + Goal Adaptation V1 implement (commits `1303b62` + `bf9814e`): ~7 source modules + ~5 test files
-- Estimate ~50-83 min real velocity X×3 rule (per §36.100 Engine Energy precedent + Goal Adaptation V1 batch 2 commit `bf9814e` actual reference)
+**P1.2.5 batch 4 Faza 2.5 Engine #3 Bayesian Nutrition V1 pre-implement compile** (NEXT chat strategic per pipeline §42.10 sequential):
+- Pre-compile §9.4 ADR 026 Engine #3 Bayesian Nutrition Module-Level Spec V1 pattern Bugatti SSOT consistent §9.1+§9.2+§9.3 (compile drafts LANDED commits `cd6d9a4` + `6be84f8` + `2f9aa79`)
+- Source: ADR 022 Bayesian Nutrition Inference + chat strategic Bayesian spec materials (consumed archives — `127_HANDOVER_2026-05-05_birou_after_engine3_bayesian_nutrition_*` candidate)
+- Pattern §9.1+§9.2+§9.3 honored: Cluster 1-5 verbatim + Reconsideration Triggers + Cross-refs ADR 018 §2 + ADR 026 §1.10 Pipeline Order + position 4th canonical
+- Estimate ~50-83 min real velocity X×3 rule (precedent §9.1+§9.2+§9.3 compile drafts)
 
-**Faza 2.5 batches 4-7 sequential per pipeline §42.10** (post Energy Adjustment V1 LANDED):
-- Pre-implement compile §9.4-§9.8 ADR 026 pattern Bugatti SSOT consistent §9.1+§9.2+§9.3
-- Engines #4 Bayesian → #5 Deload → #6 Tempo → #7 Specialization → #8 Warm-up
+**Faza 2.5 batches 5-7 sequential per pipeline §42.10** (post Bayesian V1 LANDED):
+- Pre-implement compile §9.5-§9.8 ADR 026 pattern Bugatti SSOT consistent
+- Engine #5 Tempo (NU Energy — already LANDED batch 3) → §9.5 Tempo (pipeline 5th) → §9.6 Specialization → §9.7 Warm-up → §9.8 Deload
+- Note: Pipeline §42.10 sequential ordering = Periodization → Goal Adaptation → **Energy** (3rd LANDED) → **Bayesian** (4th NEXT) → **Tempo** (5th) → **Specialization** (6th) → **Warm-up** (7th) → **Deload** (8th)
 
-**ADR 027 stub flip task** (post §9.3 LOCKED, low priority post-CC):
+**ADR 027 stub flip task** (post §9.3 LOCKED + V1 LANDED, low priority post-CC):
 - Redirect `03-decisions/027-engine-energy-adjustment.md` STUB → SPEC REFERENCE → §9.3 single source of truth canonical (pattern ADR 024 precedent)
