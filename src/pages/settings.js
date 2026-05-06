@@ -13,24 +13,67 @@ import { signOut, buildSoftDeleteFlag, getAuthState, USER_DISABLED_COPY } from '
 import { wipeUserDB } from '../storage/db.js';
 import { trackEvent, EVENTS } from '../util/telemetry.js';
 
+// Splash visibility window before redirect home (UX-2). Long enough Maria 65
+// reads "Te-ai deconectat. Revino oricând." sau delete confirm message.
+const SPLASH_VISIBLE_MS = 1500;
+
+/**
+ * UX-1 mutual exclusivity helper: close any open Settings modal overlay
+ * before opening a new one. Prevents confusing 2-modals-stacked state.
+ *
+ * Strategy: remove all `.andura-modal-overlay` elements from doc.body. Each
+ * overlay manages its own pending Promise resolution via internal click
+ * handlers — DOM removal NU rejects the pending Promise (caller must accept
+ * stale resolution sau cancel pattern). Acceptable trade-off pentru UX
+ * sanity vs Promise leak (Garbage-collected post-microtask).
+ *
+ * @param {Document} doc
+ */
+export function _closeAllSettingsModals(doc) {
+  if (!doc || !doc.querySelectorAll) return;
+  const overlays = doc.querySelectorAll('.andura-modal-overlay');
+  overlays.forEach((el) => { try { el.remove(); } catch { /* swallow */ } });
+}
+
 /**
  * Render the Settings page into the given root element.
- * Wires sections: Email change + Recovery email lost + Delete account + Auth merge restore stub.
+ * Wires sections: Email change + Recovery email lost + Delete account + Logout.
+ *
+ * UX-1: clicking any section button closes any other open Settings modal first
+ * (mutual exclusivity — only 1 modal active at a time).
+ * UX-2: post-logout / post-account-delete signOut → invokes `onSignedOut`
+ * callback (default redirects to home page) after splash visibility window.
  *
  * @param {object} opts
  * @param {HTMLElement} opts.root           container element
  * @param {Document} [opts.doc]             test injection
  * @param {() => Promise<void>} [opts.onAccountDeleted]  callback post soft-delete confirm
  * @param {(email: string) => Promise<{ ok: boolean, error?: string }>} [opts.onEmailChangeSubmit]
+ * @param {() => void} [opts.onSignedOut]   callback invoked post signOut + splash (UX-2 redirect home)
+ * @param {(fn: () => void, ms: number) => unknown} [opts.scheduler]  setTimeout injection (test)
  */
 export function renderSettingsPage({
   root,
   doc = (typeof document !== 'undefined' ? document : null),
   onAccountDeleted,
   onEmailChangeSubmit,
+  onSignedOut,
+  scheduler = (typeof setTimeout !== 'undefined' ? setTimeout : null),
 }) {
   if (!root || !doc) return;
   root.innerHTML = '';
+
+  /**
+   * Lazy-resolve default redirect — imports nav.js dynamic so that test
+   * environments cu `onSignedOut` injection nu burden import graph.
+   * Production: invokes `goTo('coach')` to land user on home tab.
+   */
+  const _defaultSignedOutRedirect = () => {
+    import('../ui/nav.js')
+      .then((m) => { try { m.goTo('coach'); } catch { /* swallow */ } })
+      .catch(() => { /* swallow non-DOM env */ });
+  };
+  const _onSignedOut = typeof onSignedOut === 'function' ? onSignedOut : _defaultSignedOutRedirect;
 
   const heading = doc.createElement('h1');
   heading.textContent = 'Setări';
@@ -45,6 +88,7 @@ export function renderSettingsPage({
   const btnEmailChange = doc.createElement('button');
   btnEmailChange.textContent = 'Schimbă adresa';
   btnEmailChange.addEventListener('click', async () => {
+    _closeAllSettingsModals(doc);
     const result = await openEmailChangeForm({ doc });
     if (result.submitted && typeof onEmailChangeSubmit === 'function') {
       const out = await onEmailChangeSubmit(result.email).catch(() => ({ ok: false, error: 'unknown' }));
@@ -71,7 +115,10 @@ export function renderSettingsPage({
   sectionRecovery.appendChild(recoveryHeader);
   const btnRecoveryLost = doc.createElement('button');
   btnRecoveryLost.textContent = 'Mi-am pierdut accesul la email';
-  btnRecoveryLost.addEventListener('click', () => { openRecoveryEmailLostModal({ doc }); });
+  btnRecoveryLost.addEventListener('click', () => {
+    _closeAllSettingsModals(doc);
+    openRecoveryEmailLostModal({ doc });
+  });
   sectionRecovery.appendChild(btnRecoveryLost);
   root.appendChild(sectionRecovery);
 
@@ -85,6 +132,7 @@ export function renderSettingsPage({
   btnDelete.textContent = 'Șterge cont definitiv';
   btnDelete.className = 'andura-button-danger';
   btnDelete.addEventListener('click', async () => {
+    _closeAllSettingsModals(doc);
     const verdict = await openDeleteAccountModal({ doc });
     if (verdict.confirmed) {
       const flag = buildSoftDeleteFlag();
@@ -95,6 +143,10 @@ export function renderSettingsPage({
       const splash = renderDeletePostSplash({ doc });
       root.innerHTML = '';
       if (splash) root.appendChild(splash);
+      // UX-2: post-signOut redirect home after splash visibility window.
+      if (typeof scheduler === 'function') {
+        scheduler(_onSignedOut, SPLASH_VISIBLE_MS);
+      }
     }
   });
   sectionDelete.appendChild(btnDelete);
@@ -110,6 +162,7 @@ export function renderSettingsPage({
   btnLogout.textContent = 'Deconectare';
   btnLogout.className = 'andura-button-logout';
   btnLogout.addEventListener('click', async () => {
+    _closeAllSettingsModals(doc);
     const step1 = await openLogoutStep1({ doc });
     if (!step1.continue) return;
     const step2 = await openLogoutStep2({ doc });
@@ -126,6 +179,10 @@ export function renderSettingsPage({
     const splash = renderLogoutSplash({ doc });
     root.innerHTML = '';
     if (splash) root.appendChild(splash);
+    // UX-2: post-signOut redirect home after splash visibility window.
+    if (typeof scheduler === 'function') {
+      scheduler(_onSignedOut, SPLASH_VISIBLE_MS);
+    }
   });
   sectionLogout.appendChild(btnLogout);
   root.appendChild(sectionLogout);
