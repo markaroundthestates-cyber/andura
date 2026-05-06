@@ -1,5 +1,18 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 evening chat-9 acasă — DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE update post-pipeline §42.10 V1 closure milestone (vault hygiene)
+
+- DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE entry appended cu V1 implement evidence (8/8 engines + 2648 PASS + ADR cleanup batch landed `dccda1f`)
+- **Status PRESERVED 🔴 OPEN** — V1 implement ≠ scenarios coverage decisions closure (separate axis: code-level coverage vs product/UX edge case decisions Persona Suite Maria/Gigica/Marius + Property-based + 4-Invariant Safety Stack still pending)
+- Pipeline §42.10 8/8 commits verbatim documented permanent: Periodization `1303b62` + Goal Adaptation `bf9814e` + Energy `69ec9ce` + Bayesian `8615ec1` + Tempo `d82d118` + Specialization `4cf50ab` + Warm-up `20999fb` + Deload `a6a0c87`
+- Cumulative ~659 LOCKED V1 PRESERVED unchanged
+- §NEXT P3+P4+P5 consumed (ADR cleanup `dccda1f` + DIFF_FLAGS update acest commit)
+- Cross-ref CURRENT_STATE §ACTIVE_FLAGS update reflectă DIFF_FLAGS append + §JUST_DECIDED top entry append + §NOW thread continuation
+- Backup tag `pre-diff-flags-update-pipeline-v1-closure-2026-05-06-2345`
+- **Recommended next:** §CC.5 fast handover ingest chat-9 closure clean state pre-Faza 3 STRANGLER fresh bandwidth chat NEW dedicat
+
+---
+
 ## 2026-05-06 evening chat-9 acasă — ADR cleanup batch post-pipeline §42.10 V1 closure (vault hygiene)
 
 - **ADR 031 (Warm-up) + 032 (Deload) created direct** SPEC REFERENCE redirect §9.7 + §9.8 ADR 026 (precedent reverse vs ADR 027/028/029 stub flip — fresh ADR populated direct cu SPEC REFERENCE redirect, NU intermediate STUB stage)

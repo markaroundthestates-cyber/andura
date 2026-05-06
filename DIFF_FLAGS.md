@@ -220,6 +220,14 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 - Post Engines #3+#4+#5 spec sessions cumulative + Convergence Guard "T2 Unlock" (2026-05-05 birou after): 1080-1580 (~90 decisions consumate engine specs cumulative, NU branches enumeration)
 - Post Engines #5 formal lock + #6 Tempo/Form Cues + #7 Specialization spec sessions + Roadmap §36.100 100% milestone (2026-05-05 birou late): **~990-1490** (~180 decisions consumate engine specs cumulative #1+#2+#3+#4+#5+#6+#7 + #8 §45.6 — NU branches enumeration). 🎯 Roadmap §36.100 100% COMPLETE — NU mai chat-uri engines spec sessions remaining
 - Post Validation Framework LOCK V1 (2026-05-05 evening late): gap unchanged ~990-1490 scenarios decisions remaining (Validation Framework = architectural foundation, NU enumerate branches direct), dar **path concrete LOCKED V1**: 95% gate / weights 0.35/0.25/0.20/0.20 / Gate 2 DROPPED / Gate 3 selective / 500 queries
+- Post pipeline §42.10 V1 IMPLEMENT closure 8/8 prescriptive engines (2026-05-06 evening chat-8 + chat-9 acasă): **gap status PRESERVED ~990-1490** scenarios decisions remaining. **V1 IMPLEMENT closure ≠ scenarios coverage decisions closure** — V1 implement = code-level coverage (8 engines functional + 2648 tests PASS cumulative); scenarios coverage decisions = product/UX edge case decisions (Persona Suite Maria/Gigica/Marius + Property-based + 4-Invariant Safety Stack still pending). Cumulative ~659 LOCKED V1 PRESERVED unchanged.
+
+**🦫 V1 implement evidence (code-level coverage milestone, 2026-05-06 evening chat-8 + chat-9 acasă):**
+- Pipeline §42.10 8/8 prescriptive engines V1 LANDED commits verbatim:
+  - Periodization `1303b62` + Goal Adaptation `bf9814e` + Energy `69ec9ce` + Bayesian `8615ec1` + Tempo `d82d118` + Specialization `4cf50ab` + Warm-up `20999fb` + Deload `a6a0c87`
+- Tests cumulative: **2648 PASS / 0 FAIL** (compile + V1 implement progression strict zero regression)
+- ADR cleanup batch landed `dccda1f` — 031+032 NEW + 027/028/029 stub flip → SPEC REFERENCE §9.3-§9.8 ADR 026
+- **Status PRESERVED 🔴 OPEN** — Validation Framework SPEC DRAFT V1 + Scenarios Simulator Design V1 + Faza 2 Filter Strategy V1 implementation pending; Persona Suite + 4-Invariant Safety Stack execution pending
 
 **Validation Framework LOCKED V1 cross-ref (2026-05-05 evening late):**
 - `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` status SPEC DRAFT V1 → LOCKED V1
