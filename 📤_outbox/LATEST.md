@@ -1,6 +1,6 @@
 ## Task: Overnight Batch 2026-05-06 — Auth Phase 2 Batch 2 + Batch 3 + Stryker Baseline
 **Model:** Opus
-**Status:** ✅ Complete — TASK 1+2+3 ALL PASS (TASK 3 finished 39:29 vs 6-12h estimate)
+**Status:** ✅ Complete — TASK 1+2+3 ALL PASS + WIREUP FIX 2026-05-06 (Settings page nav + routing slip fix)
 
 ### PRE-FLIGHT ✅ COMPLETE
 
@@ -199,6 +199,36 @@ Test-Path reports/mutation/mutation.json
 - `pre-overnight-batch-2026-05-06-0055` (global pre-task — nuclear revert: `git reset --hard pre-overnight-batch-2026-05-06-0055`)
 - `post-task-1-auth-phase2-batch2-2026-05-06-0100` (granular: preserves T1, drops T2+T3)
 - `post-task-2-auth-phase2-batch3-2026-05-06-0108` (granular: preserves T1+T2, drops T3)
+
+---
+
+---
+
+### WIREUP FIX 2026-05-06 — Settings page nav + routing (slip fix post batch 2)
+
+**Status:** ✅ PASS
+
+**Slip context:** Settings page LANDED batch 2 commit `4fef416` ca code-only (renderSettingsPage export + 4 modal components + tests). NU accessible via UI navigation/URL — smoke testing §56.5 flows blocked.
+
+**Files modified (3):**
+- `src/pages/settings.js` — NEW `renderSettings()` wrapper export (finds `#page-settings` element + invokes `renderSettingsPage()` cu defaults; no-op silent pentru SSR compat)
+- `src/ui/nav.js` — import `renderSettings` + add la `idx` map (`settings: 5`) + `renders` map (`settings: renderSettings`)
+- `index.html` — NEW `<div id="page-settings" class="page page-content"></div>` slot + 6th nav button cu SVG gear icon + label "Setări" + onclick `sp('settings', this)`
+
+**Test count after:** 1391 PASS (zero regression — same baseline preserved, slip was UI plumbing only NU logic).
+
+**Build:** clean, vite 5.4.21 build 3.56s, 398.62 kB main bundle (+11.31 kB delta vs pre-wireup pentru settings tree).
+
+**Commit:** `a29108e` feat(auth-phase2-batch2): wire Settings page into nav + routing (slip fix)
+
+**Pushed:** origin/main
+
+**Daniel manual smoke (post-deploy verify):**
+1. Open prod URL → click "Setări" footer tab (6th nav, ⚙️ icon)
+2. Verify Settings page renders 4 sections: email change + recovery + delete account + logout
+3. Verify nav highlight transitions corect între Coach/Dashboard/Greutate/Program/Plan/Setări
+
+**Inbox prompt archived:** `📤_outbox/_archive/2026-05/174_PROMPT_CC_WIREUP_SETTINGS_CONSUMED.md` per VAULT_RULES §3.3 cronologic continuu.
 
 ---
 
