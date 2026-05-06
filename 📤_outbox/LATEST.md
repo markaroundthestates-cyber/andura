@@ -57,12 +57,12 @@ Cross-refs bidirectional: 12 wikilinks ADRs. ZERO fabrication — D1-D5 verbatim
 - 93 test files passed
 - Duration 16.33s
 
-## Commits (1 expected)
+## Commits
 
-- `<sha>`: feat(adr): create ADR 030 Adapter Design Pattern SPEC READY V1 partial; D1-D5 LOCKED foundation Hexagonal (per-engine topology + thin scope + context object input + Result type output + shared utils orchestrator) + Q-OPEN-1→7 PENDING
+- `d6a6ca0` feat(adr): create ADR 030 Adapter Design Pattern SPEC READY V1 partial; D1-D5 LOCKED foundation Hexagonal (per-engine topology + thin scope + context object input + Result type output + shared utils orchestrator) + Q-OPEN-1→7 PENDING
 
 ## Pushed
-- origin/main: pending post-commit
+- origin/main: ✅ `edaf79a..d6a6ca0 main -> main`
 - Backup tag: ✅ `pre-adr030-create-2026-05-06-1205` pushed pre-execution
 
 ## Issues
