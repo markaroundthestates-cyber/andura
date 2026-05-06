@@ -1,74 +1,53 @@
-## Task: Fix terminal output noise complete (3 surgical fixes, ZERO impact funcțional)
+## Task: §CC.5 fast handover ingest — 2026-05-06 morning chat-3 acasă PS (fix terminal noise LANDED + Slip 5 grep recidivă, meta-tooling ~659 PRESERVED)
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Clean tree: ✅ (only `tests/golden-master/mutation/stryker-run.log` untracked, scope acceptable)
-- Branch main: ✅
-- Backup tag: `pre-fix-terminal-noise-2026-05-06-1411` ✅ pushed origin
-- 4 sources verified:
-  - ✅ `vitest.config.js` exists, version `^3.2.4` (≥3.0 → `silent: 'passed-only'` supported)
-  - ✅ `.claude/settings.json` exists cu `/workspaces/andura` literal hook command (Stop hook)
-  - ❌ **`CLAUDE.md` does NOT exist** at root sau elsewhere — flag în Issues. Decision: created NEW (conventional location project-level Claude rules; content verbatim per prompt §2 Fix 3, NU fabrication beyond spec)
-  - ⚠️ 5 test files cu console mocks identified (`src/i18n/__tests__/i18n.test.js` + `src/__tests__/bootstrap.test.js` + `src/util/__tests__/featureFlags.test.js` + `src/pages/coach/__tests__/renderIdle.test.js` + `src/pages/coach/__tests__/sessionCdl.test.js`) — flag în Issues (mocks safe, intercept before silent kicks in)
+- Backup tag: `pre-handover-2026-05-06-chat3-PS-fix-terminal-noise-2026-05-06-1433` ✅ pushed origin
+- Clean tree pre-execution: yes (only `tests/golden-master/mutation/stryker-run.log` untracked, scope acceptable)
+- Inbox empty (handover narrative provided in-chat directly, NOT inbox file)
 
 ### Modificări
 
-**1. `vitest.config.js`** (35 LOC → 36 LOC):
-- Added `silent: 'passed-only'` în `test:` config block (vitest 3.2.4 feature)
-- Position: between `globals: true` și `include:` (alphabetical-ish + above include array, single-line addition)
-- Effect: stdout/stderr suppressed pentru passed tests, full debug output preserved pentru failed (zero impact debugging real)
+**`00-index/CURRENT_STATE.md` updated:**
+- `Updated:` line — 2026-05-06 morning chat-3 acasă PS §CC.5 ingest meta-tooling fix terminal noise summary cu 3 surgical fixes LANDED (vitest silent passed-only + Stop hook git rev-parse + CLAUDE.md NEW OUTPUT STYLE) + Slip 5 Claude grep recidivă + 1658 PASS preserved math align exact + cumulative ~659 PRESERVED unchanged + NEXT P1 unchanged Faza 2.5 batch 2 Goal Adaptation V1 implement
+- §NOW move-then-replace — chat-3 PS thread fix terminal noise narrativ cu 3 fixes detail + Slip 5 grep recidivă verbatim + tests math align + CLAUDE.md effect aplică next CC turn + vault meta-tooling fix only (NU product/architecture cumulative). Precedent §CC.5 ingest cumulative chat-3 (Periodization V1 implement + §9.1+§9.2 compile + 4 slip-uri) compressed
+- §JUST_DECIDED top entry append — "2026-05-06 morning chat-3 acasă PS — Fix terminal noise LANDED commit `bcddaa1` (3 surgical fixes ZERO impact funcțional) + Slip 5 Claude mea culpa grep recidivă + ~659 PRESERVED meta-tooling only" cu full detail 3 fixes verbatim + Slip 5 verbatim + math align tests + implicații downstream + cross-refs + 2 backup tags
+- §NEXT P1 unchanged (per prompt §CC.5 instructions explicit — no priority shift, Faza 2.5 batch 2 Goal Adaptation V1 implement preserved)
+- §ACTIVE_FLAGS unchanged (per prompt §CC.5 instructions explicit — Auth Phase 2 🟢 RESOLVED + Codespace npm drift 🔴 OPEN + Scenarios Coverage gap PRE-BETA BLOCKER)
 
-**2. `.claude/settings.json`** (15 LOC unchanged structure):
-- Replaced hardcoded `cd /workspaces/andura` cu `cd "$(git rev-parse --show-toplevel)" || exit 1`
-- POSIX bash syntax (works în Stop hook environment Codespaces + acasă WSL/Git Bash both)
-- Preserved JSON escaping pentru `\\n` în `tr` command
-- Effect: hook runs from git root regardless setup (acasă Windows VS Code Desktop + birou Codespaces), eliminates `/workspaces/andura: No such file or directory` error acasă
+**`03-decisions/DECISION_LOG.md` entry top:** "2026-05-06 morning chat-3 acasă PS — Fix terminal noise LANDED commit `bcddaa1` (3 surgical fixes ZERO impact funcțional) + Slip 5 Claude mea culpa grep recidivă (~659 PRESERVED meta-tooling only)" — full detail 3 fixes verbatim + Slip 5 verbatim + cross-refs VAULT_RULES + vitest config + Stop hook + CLAUDE.md NEW + memory rule `feedback_grep_before_prompt_cc.md` recidivă slip 5 documented + 2 backup tags. Cumulative ~659 PRESERVED unchanged.
 
-**3. `CLAUDE.md` NEW project-level** (12 LOC):
-- Created NEW file at project root (NU existed prior)
-- Header + OUTPUT STYLE section verbatim per prompt §2 Fix 3:
-  - Authority: Daniel preference + VAULT_RULES.md §10.8 raport schema canonical
-  - Post-task CC terminal output max 2 linii ("Task complete. Report: 📤_outbox/LATEST.md")
-  - ZERO duplicate raport în terminal — LATEST.md SSOT canonical
-  - NU "Summary:" walk-through / enumerate fișiere / recap commit hash
-  - Mid-task tool calls + reasoning + thinking = OK normal
-  - Exception: Status=Failed → terminal extended OK debug aid
+**Archive operations:**
+- `📤_outbox/_archive/2026-05/190_HANDOVER_2026-05-06_morning_chat3_PS_fix_terminal_noise_CONSUMED.md` (handover narrative archived from in-chat per §CC.5 protocol audit trail consistency)
+- `📤_outbox/_archive/2026-05/191_LATEST_FIX_TERMINAL_NOISE_CONSUMED.md` (cycled previous LATEST.md = fix terminal noise task report)
 
 ### Build + Tests
-
-- `npm run test:run`: **1658 PASS / 0 FAIL** baseline preserved (zero regression)
-- 103 test files passed
-- Duration 17.24s
-- **Terminal output reduction observed:** post-fix total stdout = **119 lines** (entire vitest run incluzind 103 file PASS lines + final summary). Drastic reducere vs baseline pre-fix (per-test `[CoachDirector] Calibration` + `[Migration UTC→Local]` + `[FeatureFlags]` + various console.log floods removed). Failed tests would still show full debug per `silent: 'passed-only'` semantics
-- Console mocks 5 test files NU broken — `vi.spyOn(console, ...)` intercepts BEFORE vitest silent kicks in (mocks operate Node-level, silent operates output reporter level)
+- N/A — vault-only changes (CURRENT_STATE + DECISION_LOG + archive operations); zero src/ touched
 
 ### Commits (1 expected)
-
-- `<hash>` fix(dx): terminal output noise reduce — vitest silent passed-only + hook path git rev-parse + CLAUDE.md output style brevity (3 surgical fixes ZERO impact funcțional, 1658 PASS preserved)
+- `<hash>` docs(handover): §CC.5 fast ingest 2026-05-06 morning chat-3 acasă PS — fix terminal noise LANDED commit `bcddaa1` (3 surgical fixes vitest silent passed-only + Stop hook git rev-parse + CLAUDE.md NEW OUTPUT STYLE) + Slip 5 Claude mea culpa grep recidivă + cumulative ~659 PRESERVED meta-tooling only; CURRENT_STATE Updated line + §NOW move-then-replace + §JUST_DECIDED top entry + §NEXT P1 unchanged + §ACTIVE_FLAGS unchanged; DECISION_LOG entry top descending cronologic; archive handover (190) + cycle previous LATEST (191)
 
 ### Pushed
-- origin/main: pending post-commit
-- Backup tag: ✅ `pre-fix-terminal-noise-2026-05-06-1411` pushed pre-execution
+- origin/main: yes (post commit)
 
 ### Issues
+- None — handover narrative ingested clean per §CC.5 fast workflow.
+- Cumulative LOCKED V1 ~659 PRESERVED unchanged (vault meta-tooling + dev-env fix only, NU product/architecture cumulative).
+- Slip 5 Claude grep recidivă documented permanent în memory rule `feedback_grep_before_prompt_cc.md` (codificat post §36.107 episode 7 artefacte React/JSX hallucination + chat-2/chat-3 morning recidivă HANDOVER_GLOBAL stale + §45.x stale + npm run lint presupus). Pattern continuă reinforced.
+- CLAUDE.md effect aplică next CC turn (rule defined post-execution acest commit, brevity self-test surfaces din chat NEW onwards).
 
-- **CLAUDE.md NOT existed prior** (low impact, recovered clean): prompt §1 inventory step expected `CLAUDE.md` at project root cu existing `## OUTPUT STYLE` section sau location pentru append. Reality: file does NOT exist anywhere in project (confirmed via `find . -maxdepth 3 -iname CLAUDE.md`). CC engineering judgment: create NEW file at conventional location (project root) cu content verbatim per prompt §2 Fix 3 spec. Daniel intent clear (apply OUTPUT STYLE rule pentru future CC turns), NU fabrication of content — verbatim from prompt.
-- **5 test files cu console mocks identified** (low impact, no action needed): `src/i18n/__tests__/i18n.test.js` + `src/__tests__/bootstrap.test.js` + `src/util/__tests__/featureFlags.test.js` + `src/pages/coach/__tests__/renderIdle.test.js` + `src/pages/coach/__tests__/sessionCdl.test.js`. Mocks safe — `vi.spyOn(console, ...)` intercepts at Node level BEFORE vitest silent kicks in at reporter level. Test verification not impacted, all 5 files PASS în 1658 PASS run. Documented per prompt §1 anti-recurrence guard.
-- **Vitest version ≥3.0 confirmed** (no fallback needed): package.json `vitest: ^3.2.4` supports `silent: 'passed-only'` per vitest 3.x release notes. NU `silent: true` fallback applied (would suppress failed test output too — anti-debugging trade-off avoided).
-- **Hook syntax bash** (consistent existing): `.claude/settings.json` Stop hook command uses POSIX bash (cd && git ... pipeline). Replacement preserved bash syntax cu `$(git rev-parse --show-toplevel)` standard subshell. NU PowerShell adaptation needed (hook environment runs bash regardless host OS Windows/Linux).
-- **CLAUDE.md effect aplică next CC turn:** OUTPUT STYLE rule will affect future CC autonomous task terminal output, NOT acest commit (rule defined post-execution). Self-test brevity will surface from chat NEW onwards.
-- Out of scope per prompt §6 instructions explicit (NU touch HANDOVER_GLOBAL / CURRENT_STATE / DECISION_LOG / INDEX_MASTER / NU sync alte ADRs / NU implement Goal Adaptation V1) — separate ingest §CC.5 ulterior.
+### Next action — chat NEW pickup priority pivot
 
-### Next action
-
-**Daniel review fixes** — verify terminal output drastic reduced + zero test regression + CLAUDE.md OUTPUT STYLE rule covers future CC brevity intent.
-
-**Faza 2.5 batch 2 Engine #2 Goal Adaptation V1 implement** chat NEW (per Option A LOCKED chat-2 + sequence reframe 5-faze §42.10 sequential post Periodization V1 LANDED commit `1303b62`):
+**P1.2.5 batch 2 Faza 2.5 Engine #2 Goal Adaptation V1 implement** (NEXT chat strategic — preserved unchanged per §CC.5 instructions explicit):
 - Pre-compile §9.2 LANDED single source of truth canonical 30 decisions Cluster 1-5 verbatim (commit `6be84f8`)
 - Pure-function module în `src/engine/goalAdaptation/` per ADR 018 §2 Standardized Contract
 - Pattern Periodization V1 implement (commit `1303b62`): ~7 source modules + ~5 test files
-- Estimate ~150-250h CC autonomous LLM gen ≈ ~50-83 min real velocity X×3 rule
+- Estimate ~150-250h CC autonomous LLM gen ≈ ~50-83 min real velocity X×3 rule (per §36.100 Engine #2 precedent)
+- Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED safe commit `5a16550` reusable
 - **Apply CLAUDE.md OUTPUT STYLE rule** post-task brevity (anti-pattern reference: artefact direct sine excepție în prompt CC per Slip 1 memory rule #2 reinforced)
+- **Pre-flight grep mandatory** ÎNAINTE referențiez paths/funcții/files ne-văzute (memory rule `feedback_grep_before_prompt_cc.md` Slip 5 reinforced)
 
-**OR §CC.5 fast handover ingest cumulative** — consume archive 189 narrative + acest fix terminal noise narrative pentru CURRENT_STATE + DECISION_LOG sync.
+**Faza 2.5 batches 3-7 sequential per pipeline §42.10** (post Goal Adaptation V1 LANDED):
+- Pre-implement compile §9.3-§9.8 ADR 026 pattern Bugatti SSOT consistent §9.1+§9.2
+- Engines #3 Bayesian → #4 Deload → #5 Energy → #6 Tempo → #7 Specialization → #8 Warm-up

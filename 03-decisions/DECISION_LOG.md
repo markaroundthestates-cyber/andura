@@ -1,5 +1,54 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 morning chat-3 acasă PS — Fix terminal noise LANDED commit `bcddaa1` (3 surgical fixes ZERO impact funcțional) + Slip 5 Claude mea culpa grep recidivă (~659 PRESERVED meta-tooling only)
+
+**Status:** §CC.5 fast handover ingest meta-tooling fix terminal noise post §CC.5 ingest cumulative precedent chat-3 (Periodization V1 implement + ADR 026 §9.1+§9.2 compile). CC sesiune autonomous fix LANDED clean.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-06 morning chat-3 PS — fix terminal noise dev-env CC autonomous task tactical, vault meta-tooling improvement post-handover ingest precedent.
+
+**3 surgical fixes LANDED commit `bcddaa1` ZERO impact funcțional:**
+
+1. **`vitest.config.js` silent: 'passed-only'** (vitest 3.2.4 feature, 35 LOC → 36 LOC):
+   - Position: între `globals: true` și `include:` array
+   - Effect: stdout/stderr suppressed pentru passed tests, full debug output preserved pentru failed (zero impact debugging real)
+   - Reduce noise CC sessions long ~80%
+2. **`.claude/settings.json` Stop hook git rev-parse path detect** (15 LOC unchanged structure):
+   - Replaced hardcoded `cd /workspaces/andura` cu `cd "$(git rev-parse --show-toplevel)" || exit 1`
+   - POSIX bash syntax (works acasă Windows + birou Codespaces both)
+   - Preserved JSON escaping `\\n` în `tr` command
+   - Effect: hook runs from git root regardless setup, eliminates `/workspaces/andura: No such file or directory` error acasă
+3. **`CLAUDE.md` NEW project root** (12 LOC, did NOT exist prior):
+   - Created NEW conventional location pentru project-level Claude rules
+   - OUTPUT STYLE section verbatim per prompt §2 Fix 3 spec
+   - Authority: Daniel preference + VAULT_RULES.md §10.8 raport schema canonical
+   - Post-task CC terminal output max 2 linii ("Task complete. Report: 📤_outbox/LATEST.md")
+   - ZERO duplicate raport în terminal stdout — LATEST.md SSOT canonical
+   - NU "Summary:" walk-through / enumerate fișiere / recap commit hash — toate în LATEST.md
+   - Mid-task tool calls + reasoning + thinking blocks = OK normal (visibility execution); restricție DOAR final post task complete
+   - Exception: Status=Failed → terminal output OK extended cu ce a eșuat (debug aid imediat fără open LATEST.md)
+
+**Slip 5 Claude mea culpa grep recidivă (în-flight CC sesiune autonomous):**
+
+CLAUDE.md project-level presupus exist înainte create — recidivă pattern documentat memory rule `feedback_grep_before_prompt_cc.md` (post §36.107 episode 7 artefacte React/JSX hallucination + chat-2 morning HANDOVER_GLOBAL stale assumption + chat-3 morning §45.x stale + npm run lint presupus). Detectat singur CC în-flight verify mandatory (`find . -maxdepth 3 -iname CLAUDE.md` + `ls -la CLAUDE.md`), corectat clean (engineering judgment: create NEW conventional location project root cu content verbatim per prompt §2 Fix 3 spec, NU fabrication beyond spec). NU impact production.
+
+**Pre-flight grep filesystem ÎNAINTE referențiez paths/funcții/files ne-văzute = invariant nenegociabil.** Pattern continuă — memory rule reinforced permanent.
+
+**Tests:** 1658 PASS / 0 FAIL baseline preserved (math align exact: 1448 prev baseline post Phase 1-2 orchestrator foundation + 210 NEW Periodization V1 batch 1 = 1658 ✓). Terminal output reduced 119 lines total entire run vs prev per-test console.log floods. 5 test files cu console mocks safe (`src/i18n/__tests__/i18n.test.js` + `src/__tests__/bootstrap.test.js` + `src/util/__tests__/featureFlags.test.js` + `src/pages/coach/__tests__/renderIdle.test.js` + `src/pages/coach/__tests__/sessionCdl.test.js`) — `vi.spyOn(console, ...)` intercepts BEFORE vitest silent kicks in (mocks Node-level, silent reporter-level).
+
+**Vault meta-tooling fix only — NU contează cumulative LOCKED V1 product/architecture.** Cumulative ~659 PRESERVED unchanged.
+
+**CLAUDE.md effect aplică next CC turn** — OUTPUT STYLE rule defined post-execution acest commit, brevity self-test surfaces din chat NEW onwards (NU acest commit).
+
+**NEXT P1 unchanged:** Faza 2.5 batch 2 Engine #2 Goal Adaptation V1 implement chat NEW (pre-compile §9.2 LANDED commit `6be84f8` source-of-truth, pattern Periodization V1 commit `1303b62` ~7 source modules + ~5 test files, ~50-83 min real velocity X×3 rule). Apply CLAUDE.md OUTPUT STYLE rule post-task brevity.
+
+**Backup tags chat-3 PS ACEST decisii (2 pushed pre-execution):**
+- `pre-fix-terminal-noise-2026-05-06-1411` (fix LANDED rollback safety)
+- `pre-handover-2026-05-06-chat3-PS-fix-terminal-noise-2026-05-06-1433` (this §CC.5 ingest)
+
+**Cross-refs:** [[VAULT_RULES]] §10.8 raport schema canonical | `vitest.config.js` v3.2.4 silent: 'passed-only' feature | `.claude/settings.json` Stop hook bash POSIX | `CLAUDE.md` NEW root project-level Claude rules | `feedback_grep_before_prompt_cc.md` memory rule anti-hallucination grep mandatory recidivă slip 5 documented
+
+---
+
 ## 2026-05-06 morning chat-3 acasă — Faza 2.5 batch 1 Engine #1 Periodization V1 LANDED + ADR 026 §9.1+§9.2 compile (Bugatti SSOT consistent) + 4 slip-uri scribe Claude consolidat permanent + anti-recurrence proof §9.2 ZERO slip-uri (cumulative ~659 PRESERVED, aggregation only verbatim NOT additive product/architecture)
 
 **Status:** §CC.5 fast handover ingest cumulative 2026-05-06 morning chat-3 acasă (post chat-2 morning sequence reframe 5-faze "vizor fără ușă" reframe LOCKED). Bandwidth start ~75% → end ~25-30%.
