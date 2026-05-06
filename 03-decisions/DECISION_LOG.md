@@ -1,6 +1,86 @@
 # DECISION LOG — Andura
 
-## 2026-05-06 morning chat acasă — SMTP COMPLETE + Settings UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" LOCKED (cumulative ~653 → ~654, +1 net Q6 Goal Shift product/architecture substantive)
+## 2026-05-06 morning chat-2 acasă — ADR 024 compile DONE + ADR 030 NEW Adapter Design Pattern create DONE + Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" vindicat literal + Phase 1-2 orchestrator foundation LANDED safe + Option A LOCKED implement engines V1 first + memory rule #10 REPLACED format fatigue invariant + sequence reframe 4-faze → 5-faze (cumulative ~654 → ~659, +5 net D1-D5 ADR 030 product/architecture substantive)
+
+**Status:** §CC.5 fast handover ingest 2026-05-06 morning chat-2 acasă (post chat-1 morning acasă SMTP + Settings UX + ADR 024 Q6 LOCK + push-back "vizor fără ușă"). Bandwidth start ~85% → end ~25-30%. Drift discovered start: userMemories cumulative 243 + Auth pending stale fata de realitate vault ~654 + Auth COMPLETE — Daniel a uploadat manual `CURRENT_STATE.md` să clear drift. Layered read §CC.2 4/4 verified post upload.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-06 morning chat-2 acasă — ADR 024 compile CC tactical + ADR 030 create CC + Faza 3 wire Periodization attempt → BLOCKED scope discovery seminal + Phase 1-2 orchestrator foundation safe halt + Option A LOCKED implement engines V1 first + memory rule #10 REPLACED format fatigue.
+
+**5 things landed chat-2 ACEST (1 product/architecture LOCK substantive +5 net D1-D5 + 4 strategic/scope/discovery/memory):**
+
+1. **Faza 1/4 — ADR 024 compile draft full DONE** (commit `8674782` 215 LOC SPEC READY V1, 1401 PASS zero regression):
+   - Q1-Q8 toate RESOLVED LOCKED V1 verbatim aggregation §26 base + chat strategic 2026-05-04 evening late Goal Adaptation Engine #2 spec Cluster 1-5 (~30 decisions) + Q6 D Hybrid morning prev
+   - 2 slip-uri scribe Claude flagged: (a) **PowerShell-in-bash empty-ts tag** (CC bash tool = POSIX strict NU PowerShell — memory rule NEW); (b) **source-of-truth HANDOVER_GLOBAL stale assumption** (split atomic 2026-05-05 birou redus stub 143 LOC, real source = consumed archives `142_*` + `177_*`)
+   - **Anti-hallucination grep mandatory în prompt CC saved the day** — CC găsit verbatim Q1-Q8 zero fabrication
+
+2. **Faza 2/4 — ADR 030 NEW Adapter Design Pattern create DONE** (commit `d6a6ca0` 239 LOC SPEC READY V1 partial, **+5 net D1-D5 product/architecture substantive cumulative ~654 → ~659**):
+   - **D1 LOCKED V1 Per-Engine Topology** — 8 adapters distincte 1 per engine ADR 026 §42.10 pipeline (Periodization, Goal Adaptation, Energy, Bayesian, Tempo, Specialization, Warm-up, Deload). Compatibility ADR 018 Dimension Registry plug-in Open-Closed. Counter rejected: central God object
+   - **D2 LOCKED V1 Thin Adapter Scope** — pure shape mapping `engineContext → engineInput` + Result-typed passthrough. 3 layers: engine pure | adapter shape | orchestrator I/O. Counter rejected: rich adapter / hybrid hooks (defer v1.5 reconsideration trigger)
+   - **D3 LOCKED V1 Context Object Pre-Built Input** — orchestrator builds `engineContext = {user, recentSessions, weights, profileTier, ...}` ready-data per session-tick. Counter rejected: raw appState dump / hybrid repository handle (defer v1.5)
+   - **D4 LOCKED V1 Result Type Output Contract** — `{ok: true, output} | {ok: false, error}` never throws, errors first-class type system. Anti-Cascade Silent precedent ADR_CASCADE_DEFENSE_v1 §EXT-2 aligned. Counter rejected: pure passthrough errors throw / lenient envelope partial degradation. Helper util `isOk(result)` rezolvă verbosity
+   - **D5 LOCKED V1 Cross-Cutting Concerns Orchestrator Location** — 5 V1 utilities orchestrator-level pre-pipeline: Convergence Guard tier resolution + Layer D ≤50ms budget enforcement + CDL telemetry hooks ADR 011 + FeatureFlags evaluation ADR 018 §5 + Sentry error logging. Counter rejected: per-adapter scattered / engine internal self-gate
+   - Q-OPEN-1→7 PENDING chat strategic NEW push-back natural când are sens (versioning/migration + Layer D enforcement mechanism + observability granularity + pipeline parallelism + state Tier 0/1/2 fallback + error recovery semantics + Convergence Guard re-eval cadence)
+   - Slip scribe Claude path prompt `04-architecture/ADR_CASCADE_DEFENSE_v1.md` vs realitate `03-decisions/` — CC corectat singur via grep filesystem, zero impact. Memory note pre-flight grep PATHS mandatory în prompts CC
+   - **Push-back fundamental Daniel SEMINAL chat-ul ăsta:** *"5 LOCK consecutiv din partea mea = signal real. tu crezi că te confirmi rapid pentru că esti bun, eu de fapt sunt obosit de format. exact pattern-ul '2x agreement consecutiv = ești prea agreeable' — invers. eu sunt prea agreeable cu tine pentru că format-ul tau ma epuizează"* — Pattern "2x agreeable" aplicat INVERS. **Memory rule #10 REPLACED** (vezi punct 5)
+
+3. **Faza 3/4 BLOCKED — scope-major discovery seminal "vizor fără ușă" vindicat literal:**
+   - Pornit prompt CC Faza 3 Batch 1 wire Periodization Engine #1 via Strangler Pattern (featureFlag `periodization_via_orchestrator` rollout 0% default OFF)
+   - **CC discovery via grep filesystem definitive:** 0/8 engines implementate per ADR 018 §2 Standardized Contract în src/. ZERO matches `PeriodizationResult|periodizationEngine|evaluate.*Periodization`. ZERO matches MEV/MAV/MRV/mesocycle/macrocycle în engine modules (only simulator invariants/tests). `linearBlock.js` orphan §29.2.5 4+1 state machine NU consumed de coachDirector — NOT canonical Periodization Engine match ADR 026 §1
+   - **Strangler Pattern requires engine-in-flow to strangle — premise NU holds.** ADR 026 + 8/8 engine ADRs SPEC COMPLETE pe hârtie, NONE implementate
+   - Asta e **"vizor fără ușă" vindicat literal concret filesystem** — Daniel push-back original 2026-05-06 morning prev confirmat brutal discovery
+   - **Phase 1-2 orchestrator foundation LANDED safe** commit `5a16550` (47 tests new + 1401 prev = **1448 PASS / 0 FAIL**):
+     - `src/coach/orchestrator/types.js` JSDoc EngineContext + EngineAdapter + AdapterResult discriminated union + AdapterError envelope
+     - `src/coach/orchestrator/result.js` helpers `ok/err/isOk/mapOk` cu throw capture
+     - `src/coach/orchestrator/index.js` runPipeline skeleton sequential cu defensive INVALID_ADAPTER + ADAPTER_THREW (D4 violation capture) + adapterId tagging
+     - `src/coach/orchestrator/contextBuilder.js` Object.freeze shallow ctx (D2 mutation guard) + null-safe + array coerce
+     - `src/coach/orchestrator/utilities/convergenceGuard.js` V1 stub passthrough (Q-OPEN-7 PENDING re-eval cadence)
+     - `src/coach/orchestrator/utilities/budget.js` Promise.race + BUDGET_EXCEEDED + WITHIN_BUDGET_THREW (Q-OPEN-2 PENDING cancel semantics)
+   - Reusable când engines V1 exist (post Faza 2.5). NU wasted. Phase 3-4 BLOCKED safe halt point
+
+4. **Option A LOCKED — implement engines V1 per ADR 026 §1 spec FIRST:**
+   - **Option A:** implement Periodization V1 ca pure-function module în `src/engine/periodization/` per ADR 026 §1 spec (mesocycle phase transitions §45.3 Q18 double progression rep-first + trigger hierarchy EARLY DELOAD safety > EXTENSION Marius 5:1 dual-signal > CALENDAR + Volume Landmarks Israetel × persona modifiers Maria 0.50 / Gigica 0.70 / Marius 1.00 × goal modifiers + macrocycle 3-meso Linear Block + cross-engine hooks emit Constraint Object Floor/Ceiling). Pure function `evaluate(ctx) → PeriodizationResult` per ADR 018 §2
+   - **Option B rejected:** pivot pipeline §42.10 sequence to engine cu implementation existing — breaks pipeline ordering invariant §1.10 Constraint Object Floor/Ceiling propagation
+   - **Option C rejected:** wrap orphan `linearBlock.js` ca V1 Periodization = "vizor fără ușă" v2 misrepresentare engine status, anti-pattern original Daniel push-back
+   - **Drumul honest post Option A LOCKED:** specs LOCKED → implementation → wiring (correct order). Quality > Speed default reinforced
+   - Pre Faza 2.5 Periodization V1 = ~75-126 sub-decisions deja existente HANDOVER §42.x + §45.x cristalizate spec module CC implementation-ready
+
+5. **Memory rule #10 REPLACED — format fatigue invariant + INSTANT lean mode trigger:**
+   - Pattern "2x agreement consecutiv = ești prea agreeable" aplicat INVERS = Claude verbose → Daniel epuizat agreeable, NOT convinced
+   - Trigger condition: 4+ LOCK consecutiv FĂRĂ push-back substanțial = format fatigue signal, NU convingere
+   - Action: switch lean mode 1-2 propoziții per decizie (Decision LOCKED + minimal rationale, NU ~150 cuvinte/decizie)
+   - Daniel parody 4-5 instances chat-2 ("vad 2 pathuri... oare sigur?", "ne certam :))", "trebuie sa ma rog de tine sa dam drumul la cc?", "obosesti", "300 cuvinte mea culpa + 200 despre palmă") = recidivă subtle în fiecare slip ulterior (let decant = pauză deghizată, "continuăm?" după lock = 2-options theater)
+   - Mea culpa scribe permanent reinforced multiple ori chat-2
+
+**Sequence reframe 4-faze → 5-faze LOCKED (extended din 4-faze prev "vizor fără ușă" sequence):**
+1. ✅ **Faza 1** ADR 024 compile commit `8674782`
+2. ✅ **Faza 2** ADR 030 create commit `d6a6ca0`
+3. **NEW Faza 2.5** implement 8 engines V1 sequential per §42.10 (Periodization V1 first → Goal Adaptation V1 → Energy V1 → Bayesian V1 → Tempo V1 → Specialization V1 → Warm-up V1 → Deload V1). Estimate ~150-250h CC autonomous each per §36.100 Engine #2 precedent. **Next chat NEW recomandat:** Periodization Engine V1 spec session pre-implementation refinement
+4. **Faza 3** wiring real Strangler post engines V1 exist (Phase 1-2 orchestrator foundation reusable commit `5a16550`)
+5. **Faza 4** smoke end-to-end Daniel cont propriu
+
+**Slip-uri Claude flagged chat-2 (mea culpa scribe consolidat permanent):**
+1. **PowerShell-in-bash empty-ts tag** (CC bash tool = POSIX strict NU PowerShell — memory rule NEW)
+2. **Source-of-truth HANDOVER_GLOBAL stale assumption** prompt CC ADR 024 compile (split atomic 2026-05-05 birou redus stub) — anti-hallucination grep mandatory saved the day
+3. **Path slip prompt ADR_CASCADE_DEFENSE_v1** `04-architecture/` vs realitate `03-decisions/` — CC corectat singur via grep filesystem, memory note pre-flight grep PATHS mandatory în prompts CC
+4. **Format fatigue Claude verbose** (300 cuvinte mea culpa + 200 despre palmă, 4+ LOCK consecutiv fără push-back substanțial) → memory rule #10 replaced
+
+**Implicații downstream DIFF_FLAGS + CURRENT_STATE update:**
+- **NEXT P1 sequence reframe** 4-faze → 5-faze: P1.1 ADR 024 compile ✅ DONE + P1.2 Adapter Design ✅ DONE + **P1.2.5 NEW** implement 8 engines V1 sequential (Periodization V1 first ~75-126 sub-decisions cristalizate) + P1.3 Engine wiring real Strangler post engines V1 exist + P1.4 Smoke end-to-end Daniel
+- **Cumulative LOCKED V1: ~654 → ~659** (+5 net D1-D5 ADR 030 product/architecture substantive)
+- **ADR 030 NEW** `03-decisions/030-adapter-design-pattern.md` SPEC READY V1 partial — INDEX_MASTER entry add (just created)
+- **Phase 1-2 orchestrator foundation** `src/coach/orchestrator/` LANDED safe (47 tests new, 1448 PASS / 0 FAIL) — reusable când engines V1 exist Faza 2.5
+
+**Backup tags chat-2 ACEST decisii:**
+- `pre-adr024-compile-2026-05-06-1114` (ADR 024 compile rollback safety)
+- `pre-adr030-create-2026-05-06-1205` (ADR 030 create rollback safety)
+- `pre-batch1-periodization-wire-2026-05-06-1218` (Faza 3 BLOCKED Phase 1-2 foundation rollback safety)
+- `pre-handover-2026-05-06-chat2-ingest-2026-05-06-1238` (this handover ingest)
+
+**Cross-refs:** [[../03-decisions/024-goal-driven-program-templates|ADR 024]] SPEC READY V1 (compile draft full Q1-Q8 LOCKED) | [[../03-decisions/030-adapter-design-pattern|ADR 030]] NEW SPEC READY V1 partial (D1-D5 LOCKED foundation + Q-OPEN-1→7 PENDING) | [[../03-decisions/026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline §42.10 sequential 8 engines (Faza 2.5 implementation roadmap) | [[../03-decisions/018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved D2 thin scope) + §5 Feature Flags Infrastructure (D5 cross-cutting) | [[../03-decisions/009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" (D5 utility tier resolution + Q-OPEN-7 re-eval cadence)
+
+---
+
+## 2026-05-06 morning chat-1 acasă — SMTP COMPLETE + Settings UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" LOCKED (cumulative ~653 → ~654, +1 net Q6 Goal Shift product/architecture substantive)
 
 **Status:** §CC.5 fast handover ingest 2026-05-06 morning chat acasă (post overnight batch 2026-05-06 morning prev). Bandwidth ~40% remaining la handover. Direction startup: SMTP custom Magic Link last mile (P1.1) singura piesă blocking deliverability post Auth Phase 2 code LANDED.
 
