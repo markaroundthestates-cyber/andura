@@ -25,11 +25,13 @@
 ### Build + Tests
 - N/A — vault-only changes (CURRENT_STATE + DECISION_LOG + archive operations); zero src/ touched
 
-### Commits (1 expected)
-- `<hash>` docs(handover): §CC.5 fast ingest cumulative 2026-05-06 morning chat-3 acasă — Faza 2.5 batch 1 Periodization V1 LANDED commit `1303b62` + ADR 026 §9.1 compile commit `cd6d9a4` + §9.2 compile commit `6be84f8` + 4 slip-uri scribe Claude consolidat permanent + anti-recurrence proof §9.2 ZERO slip-uri + mid-flight transparency flag silent acceptance Israetel/Helms canonical bands + sequence 5-faze updated; CURRENT_STATE NOW move-then-replace + JUST_DECIDED top + NEXT P1.2.5 batch 1 ✅ DONE flip + ACTIVE_ADRS sync ADR 026 §9 extension; DECISION_LOG entry top; archive handover + cycle previous LATEST; cumulative ~659 PRESERVED (aggregation only verbatim NOT additive product/architecture)
+### Commits
+- `397f5e8` docs(handover): §CC.5 fast ingest cumulative 2026-05-06 morning chat-3 acasă — Faza 2.5 batch 1 Periodization V1 LANDED commit `1303b62` + ADR 026 §9.1 compile commit `cd6d9a4` + §9.2 compile commit `6be84f8` + 4 slip-uri scribe Claude consolidat permanent + anti-recurrence proof §9.2 ZERO slip-uri + mid-flight transparency flag silent acceptance Israetel/Helms canonical bands + sequence 5-faze updated
 
 ### Pushed
-- origin/main: yes (post commit)
+- origin/main: ✅ `6feb563..397f5e8 main -> main`
+- Backup tag: ✅ `pre-handover-2026-05-06-chat3-ingest-2026-05-06-1400` pushed pre-execution
+- Inbox empty post-archive ✅
 
 ### Issues
 - None — handover narrative ingested clean per §CC.5 fast workflow.
