@@ -47,11 +47,11 @@ Anti-hallucination check ✅ sum decisions cluster-level: Cluster 1 (5) + Cluste
 - 98 test files passed
 - Duration 16.21s
 
-### Commits (1 expected)
-- `<hash>` docs(adr-026): compile §9.1 Engine #1 Periodization Module-Level Spec V1 NEW append (32 decisions Cluster 1-5 verbatim from chat strategic 2026-05-04 evening late sources). §3 numbering collision rezolvat via §9 NEW preserve §1-§8 cross-refs. Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2
+### Commits
+- `cd6d9a4` docs(adr-026): compile §9.1 Engine #1 Periodization Module-Level Spec V1 NEW append (32 decisions Cluster 1-5 verbatim from chat strategic 2026-05-04 evening late sources). §3 numbering collision rezolvat via §9 NEW preserve §1-§8 cross-refs. Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2
 
 ### Pushed
-- origin/main: pending post-commit
+- origin/main: ✅ `35ef5cb..cd6d9a4 main -> main`
 - Backup tag: ✅ `pre-adr026-section3-periodization-compile-2026-05-06-1301` pushed pre-execution
 
 ### Issues
