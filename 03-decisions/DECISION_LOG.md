@@ -1,5 +1,37 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 evening chat-5 acasă — Faza 2.5 batches 5+6 V1 + §9.6+§9.7 compile cumulative chat-5 origin/main pre-startup + drift recovery + §9.7 Warm-up compile LANDED (cumulative ~659 PRESERVED, ZERO net new substantive)
+
+**Status:** §CC.5 fast handover ingest post drift recovery + §9.7 Warm-up compile LANDED THIS chat-5 evening commit `c15ad0f`. Chat-5 evening acasă Daniel Windows PowerShell. Origin/main avansat 6 commits cumulative pre-startup chat-5 (Tempo V1 batch 5 commit `d82d118` 2382 PASS post + §9.6 Specialization compile `92a69fd` + §9.6 V1 batch 6 `4cf50ab` + LATEST syncs intermitente) + §9.7 Warm-up compile LANDED THIS chat-5. Pipeline §42.10 cumulative: **7/8 §9 specs LANDED** (§9.1-§9.7) + **6/8 engines V1 LANDED**. 🟡 §9.7 Warm-up V1 batch 7 PENDING NEXT. 🟡 §9.8 Deload compile + V1 batch 8 final PENDING. Cumulative LOCKED V1 ~659 PRESERVED unchanged — §9.7 compile = aggregation only verbatim Sources 1+2 (overlap 21 decisions deja contate).
+
+**Drift event chat-5 acasă mea culpa Claude (scribe permanent NEW lesson anti-recurrence rule):** Daniel uploadat 3 rapoarte LATEST.md consecutive în chat (Tempo V1 + §9.6 compile + §9.6 V1 batch 6) toate Status=Complete + commits LANDED + push origin/main. Eu am acceptat silent verde toate 3 fără un singur git verify, urmând workflow matured CTO mode pivot direct NEXT P1. La promptul §9.7 Warm-up compile, CC pre-flight a flagat STOP triggered: baseline real 2040 PASS (NU 2382), commits NU în git log local. **Eu am sărit la concluzia "CC a halucinat 3 rapoarte fake"** + ți-am cerut să **ștergi 3 prompturi (unul §9.7 era VALID integral)** + ți-am dat să repaste prompt Tempo V1 → CC executat A DOUA OARĂ → conflict 12 fișiere. **Ground truth descoperit prin imaginea Daniel GitHub Actions:** commit-urile EXISTAU pe origin/main, local out of sync `a99aa83` cache stale fără fetch. **CC NU a halucinat NICIODATĂ.** Eu am acuzat fals + cerut acțiuni distructive. Recovery: `git merge --abort` + `git tag local-tempo-attempt-9b8b690-backup` + `git reset --hard origin/main` → repo aliniat curat → regenerat prompt §9.7 fresh executat clean → commit `c15ad0f` LANDED.
+
+**Anti-recurrence rule scribe permanent NEW lesson chat-5:** ÎNAINTE acuzare CC hallucination sau cerere acțiuni distructive (ștergere/reset) → MANDATORY `git fetch --all` + verify origin remote vs local. Local out of sync ≠ hallucination. Pattern slip prevenit pentru viitor.
+
+**Daniel-isms warm tone preserved chiar și în drift event:** *"ma halucinez si eu cu tine"* (recunoaștere shared mea culpa, ton jucăuș fără frustrare amplificată) + *"tu realizezi ca am rulat si astea inainte nu?"* (push-back direct factual când eu insistasm "rapoarte fake" — Daniel instinct corect inarticulat) + *"ia da comanda sa vedem unde am ramas"* (pivot CTO mode rapid către ground truth verify). **Pattern reinforced:** când Daniel pune push-back factual repetitiv pe ceva ce Claude blamează → reverify ground truth, NU defend assumption.
+
+**Slip-uri Claude consolidate scribe permanent (mea culpa rapid fără auto-flagelare):**
+1. Silent agreement-theater pe rapoarte CC fake-believed-fake-actually-real — accept 3 rapoarte LATEST.md silent verde fără git verify
+2. Conclusion jump "CC halucinează" fără verify origin — pre-flight STOP mismatch baseline/commits = primul pas `git fetch` NU acuzare
+3. Distructive recommendation premature — cerere ștergere 3 prompturi (unul §9.7 era integral valid)
+4. Re-paste prompt Tempo V1 → duplicate commit conflict — promptul era deja executat pe origin
+
+**Workflow matured AMENDED chat-5:** preserve workflow accept silent verde + CTO pivot, dar adaugă post fiecare 3 rapoarte verde consecutive → recommend Daniel `git fetch --all` periodic check drift local-vs-remote (trust-but-verify check) + NEW anti-recurrence rule ground truth git verify ÎNAINTE acuzare hallucination CC sau acțiuni distructive.
+
+**§9.7 Warm-up compile LANDED commit `c15ad0f` THIS chat-5 detail:** +190 LOC ADR 026 (1506→1696), 21 decisions Cluster A-E (5+5+3+5+3) Sources 1+2 chat strategic 2026-04-30 evening §45.6 + 2026-05-04 evening BATCH 4 §65.1-§65.4. **2-way parity check ✅** + 🟡 reconciled override transparency Cool-down (Source 1 §65.4 OVERRIDE Q4 → optional 2 min stretch supersedes Source 2 §45.6 Q-Cooldown defer per Daniel later decision authority pattern documented Cluster C3). Pipeline §42.10 position 7th canonical clarified header (NU "Engine #8" naming legacy META §36.100 amendment 7→8). Source 4 ADR Warm-up file ABSENT — recommend NEW ADR `031-engine-warmup-mobility.md` SPEC REFERENCE direct reverse pattern vs ADR 027/028/029 stub flip. **Bugatti scope transparency:** NU fabricate cluster decisions to hit ~28 quota — accept lower 21 count consistent prompt anti-recurrence checklist. 2382 PASS preserved (compile = doc-only ZERO regression possible).
+
+**Backup tags chat-5:** `pre-adr026-section9.7-warmup-compile-2026-05-06-2049` + `local-tempo-attempt-9b8b690-backup` (audit trail) + `pre-handover-2026-05-06-chat5-acasa-evening-2059` (acest §CC.5 ingest).
+
+**Implicații downstream:**
+- Faza 2.5 batch 7 Engine Warm-up V1 implement chat NEW (pre-compile §9.7 LANDED commit `c15ad0f`, pattern §9.6 Specialization V1 batch 6 commit `4cf50ab` cleanest precedent, ~7 source modules + ~5 test files, ~50-83 min real)
+- Faza 2.5 batch 8 §9.8 Deload compile + V1 implement FINAL — pipeline §42.10 closure complete 8/8 prescriptive engines
+- ADR Warm-up NEW file recommendation post §9.7 LOCKED + V1 LANDED — `031-engine-warmup-mobility.md` SPEC REFERENCE direct (reverse pattern vs ADR 027/028/029 stub flip)
+- Anti-recurrence rule NEW permanent scribe ground truth git verify ÎNAINTE acuzare hallucination — applied next time CC pre-flight STOP mismatch baseline/commits
+
+**Cross-refs:** ADR 026 §9.7 (commit `c15ad0f`) + Source 1 BATCH 4 §65.1-§65.4 (`131_HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED_CONSUMED.md` lines 157-198) + Source 2 §45.6 (`06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` lines 324-345) + ADR 018 §2 contract + ADR 025 graceful degradation + ADR 009 Convergence Guard tier-aware T0 skip default + ADR 017 persona resolution Maria/Gigica/Marius.
+
+---
+
 ## 2026-05-06 afternoon chat-4 acasă — sesiune masivă Faza 2.5 batches 2+3+4 V1 implements LANDED + §9.3+§9.4+§9.5 specs compile LANDED + workflow pattern matured Daniel approval explicit (cumulative ~659 PRESERVED meta + product, ZERO net new substantive)
 
 **Status:** §CC.5 fast handover ingest sesiune masivă post-startup. Chat-4 afternoon acasă Daniel Windows PowerShell. 8 commits noi Faza 2.5 pipeline §42.10 progress masiv, sequential pattern Bugatti SSOT consistent (compile §9.X aggregation verbatim → batch V1 implement). Tests progression strict zero regression: 1658 → 2040 PASS (+382 chat-4 cumulative). Pipeline §42.10 4/8 engines V1 LANDED + 5/8 §9 specs LANDED.
