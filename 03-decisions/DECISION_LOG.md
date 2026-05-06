@@ -1,5 +1,19 @@
 # DECISION LOG — Andura
 
+## 2026-05-07 chat-9 acasă closure — Vault hygiene minor batch §POINTERS + INDEX_MASTER Stats + §NEXT anti-recurrence carry-forward
+
+- §POINTERS CURRENT_STATE append post-pipeline §42.10 V1 closure milestone pointers (8/8 commits verbatim Periodization `1303b62` → Deload `a6a0c87` + ADR cleanup `dccda1f` + DIFF_FLAGS `6276afd` + cross-refs `6e30bfc`)
+- §POINTERS ADR-uri active count refresh 35 → 42 total (+7 net post chat-9 ADR cleanup batch — 027/028/029 SPEC REFERENCE flip + 030 D1-D5 LOCKED V1 + 031 Warm-up NEW + 032 Deload NEW)
+- INDEX_MASTER §Stats refresh 68 → 92 fișiere active vault (post pipeline closure milestone + ADR cleanup batch — line clarified ADR-uri 42 active total breakdown 33 numbered 001-032 + 9 named ADR_*)
+- §NEXT carry-forward ADD task chat NEW: anti-recurrence rules consolidation VAULT_RULES NEW section §ANTI_RECURRENCE_RULES (slip-uri Claude scribe chat-uri 1-9 consolidate — 11 slip-uri enumerate + anti-recurrence rules extracted draft pre-flight checklist invariant)
+- Cumulative ~659 LOCKED V1 PRESERVED unchanged (vault hygiene meta-tooling NU product/architecture)
+- Tests baseline 2648 PASS preserved (doc-only ZERO src ZERO regression possible)
+- Backup tag `pre-pointers-index-stats-refresh-2026-05-07-0010`
+- Cross-ref predecessors chat-9: `dccda1f` ADR cleanup + `6276afd` DIFF_FLAGS update + `6e30bfc` cross-refs cleanup
+- **Toate mecanice scope chat-9 EXHAUSTED** (ADR cleanup + DIFF_FLAGS + cross-refs + §POINTERS + INDEX_MASTER Stats + §NEXT carry-forward). Recommended next: §CC.5 fast handover ingest chat-9 closure clean state pre-Faza 3 STRANGLER fresh bandwidth chat NEW dedicat strategic mâine
+
+---
+
 ## 2026-05-06 evening chat-9 acasă — Vault hygiene batch cross-refs cleanup ADR 026 §9.X post-pipeline §42.10 V1 closure
 
 - ADR 026 §9.3+§9.5+§9.6 cross-refs updated post stub flip `dccda1f` — 027/028/029 STUB → SPEC REFERENCE redirect (inline `**Cross-refs:**` lines + §9.X.7 Cross-refs Bidirectional ADR sections + footer compile narrative summaries — full bidirectional consistency)

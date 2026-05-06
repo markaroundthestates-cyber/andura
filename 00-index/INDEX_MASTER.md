@@ -3,7 +3,7 @@
 **Last updated:** 2026-05-04 evening (§CHAT_CONTINUITY_PROTOCOL LOCKED V1 — CURRENT_STATE.md live SSOT layer added per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL; preserved post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT).
 **SSOT activ chat-state:** [[CURRENT_STATE]] — **READ FIRST chat NEW startup** (live layered ~200 LOC, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2).
 **SSOT deep archive:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — drill-down doar pentru sections referenced în CURRENT_STATE `## ACTIVE_REFS` (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG).
-**Stats:** 68 fișiere active vault (post Privacy Policy + ToS V1 Beta initial drafts add — unchanged this ingest).
+**Stats:** 92 fișiere active vault (post 🦫 pipeline §42.10 V1 closure 8/8 prescriptive engines milestone 2026-05-06 evening chat-8 + ADR cleanup batch chat-9 `dccda1f` — 031 Warm-up + 032 Deload NEW direct SPEC REFERENCE + 027/028/029 STUB→SPEC REFERENCE flip; 42 ADR-uri active total — 33 numbered 001-032 + 9 named ADR_*).
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
