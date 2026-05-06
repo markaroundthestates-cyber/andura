@@ -1504,3 +1504,193 @@ Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.6 Engine Specialization Module-Level Spec V1 compiled 2026-05-06 afternoon chat-6 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` Engine #7 Specialization section lines 50-72 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 557-579 — **2-way parity check ✅ ZERO substantive divergence flagged**). ~28-30 decisions Cluster A-E cumulative (Q1-Q20 Source 1 sub-decomposed în 5 + 7 + 5 + 5 + 5 = 27 sub-decisions Cluster A-E + 1 cross-cutting note `weaknessDetector.js` reuse §36.84 Gap #1 = 28 cumulative; granularity match §9.5 Tempo precedent commit `a9b7cbd`). Pre Faza 2.5 batch 6 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`). Pipeline §42.10 position 6th canonical (NU "Engine #7" naming legacy ADR 029 chat strategic spec session ordering ULTIMUL prescriptive engine §36.100 100% milestone). Source 3 ADR 029 = STUB legacy NU disponibil precedent §9.3 Energy ADR 027 + §9.5 Tempo ADR 028 stub pattern; post §9.6 LOCKED → ADR 029 stub flip recommend → SPEC REFERENCE redirect §9.6 SSOT canonical (separate task post-CC, low priority). `weaknessDetector.js` orfan §36.84 Gap #1 reuse note pentru batch 6 V1 implement NEXT (Engine #7 = "the cleanest spec session pas 1 → fix Q19 → final" Source 1 line 117 — wiring detector → session builder action layer zero new code engine logic).
+
+---
+
+### §9.7 Engine Warm-up Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 evening chat-7 acasă din chat strategic 2026-04-30 evening §45.6 Engine #8 Warm-up & Mobility LOCKED V1 + 2026-05-04 evening BATCH 4 §65.1-§65.4 Override refinements). ~21 decisions cumulative (Cluster A-E). Pre Faza 2.5 batch 7 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Specialization V1 LANDED commit `4cf50ab` (batch 6).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Warm-up runs sequentially **7th** position canonical (penultimate prescriptive engine pre-Deload). Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian Nutrition (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`. **Engine numbering clarification:** Source 1 + Source 2 reference "Engine #8" = chat strategic spec session ordering legacy (META §36.100 amendment 7→8 prescriptive engines 2026-04-30 evening) NU pipeline §42.10 canonical position 7th. Clarified anti-recurrence numbering ambiguity batch 8 reference (§9.8 Deload final).
+
+**Provenance chain (2-way parity check ✅ + reconciled override):**
+- Source 1 (verbatim Cluster B-C BATCH 4 §65.1-§65.4 Override Q1+Q4 + Periodization defaults §65.5-§65.10 not Warm-up scope): `📤_outbox/_archive/2026-05/131_HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED_CONSUMED.md` lines 157-198 (4 Warm-up/Cool-down sub-decisions: §65.1 duration 5-10 min adaptive Override Q1 + §65.2 Hybrid 1-2 general + 2-3 specific muscle group + §65.3 skip "Sari peste încălzire" buton vizibil from session 1 + §65.4 Cool-down OVERRIDE Q4 → optional 2 min stretch buton)
+- Source 2 (verbatim Cluster A scope + Cluster B persona thresholds + Cluster D Instant Skip): `06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` §45.6 lines 324-345 (5 sub-decisions + Cooldown C defer note: scope strict pre-Beta + pipeline placement §42.10 + persona thresholds Maria/Gigica/Marius + Pre-Beta MANDATORY + Instant Skip principle T0 default + T1+ opt-in + in-session toggle)
+- Source 3 (cristalizate cross-check): `00-index/CURRENT_STATE.md` §RECENT references (line 924 "Engine #8 Warm-up & Mobility LOCKED §45.6" + line 766 BATCH 4 §65 Engine #8 Warm-up summary + line 997 §45.6 META 7→8 amendment + cooldown defer post-Beta v1.5 reference)
+- Source 4 NU disponibil: ADR Warm-up file ABSENT (`ls 03-decisions/` shows NO `023-engine-warmup*` sau `*warmup*` sau `*warm-up*` — only unrelated `023-llm-intent-interpretation.md`). Post §9.7 LOCKED → recommend NEW ADR Warm-up file create (precedent ADR 027/028/029 stub flip pattern reverse — start direct cu SPEC REFERENCE → §9.7 SSOT canonical, NU intermediate stub).
+
+**🟡 Reconciled override (Source 1 supersedes Source 2 on Cool-down):** Source 2 §45.6 final Q-Cooldown decision (2026-04-30 evening) = "C Defer post-Beta v1.5" (skip pre-Beta entirely). Source 1 BATCH 4 §65.4 (2026-05-04 evening, ~5 days later) explicitly **OVERRIDE Q4 reconsider** → "Optional buton 'Adaugă 2 min stretch' (Option B)" cu rationale industry research Schoenfeld/Helms + Maria 65 retention crescut + ZERO complex UI scope creep. **Source 1 wins by virtue of being later + explicit OVERRIDE** (Daniel's later decision authority pattern — same precedent as Q1 duration 8-12 → 5-10 Override). NU substantive divergence blocker; transparent reconciliation documented per Bugatti craft.
+
+**Decision count sum check verbatim:** Cluster A=5 + B=5 + C=3 + D=5 + E=3 = **21 substantive decisions cumulative**. Variance vs prompt expected ~10-28 range = within acceptable bounds. Source 1 Warm-up scope = 4 decisions (§65.1-§65.4); Source 2 §45.6 scope = 6 decisions (5 sub + Cooldown Q-final reconciled superseded). Cluster A I/O Contract + Cluster D Cross-Engine Hooks decomposed standard §9.1-§9.6 pattern.
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 (Warm-up 7th în pipeline §42.10) | [[017-demographic-prior-database|ADR 017]] persona resolution Maria/Gigica/Marius cross-ref Cluster B persona thresholds | [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default — referenced §65.3 Skip buton vizibil + §45.6.5 Instant Skip principle T0 default | [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware T0 skip default / T1+ opt-in expanded | [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 7 | §9.1 Periodization Constraint Object frozen Hook 1 read-only (consume input frozen) | §9.2 Goal Adaptation phase context cross-ref Cluster D | §9.3 Energy Adjustment readiness state Hook D (light coupling) | §9.6 Specialization §36.84 weaknessDetector orphan reuse precedent (light coupling forward) | §9.8 Engine Deload Protocol forward Hook (Cooldown post-session compatible cu deload week §65.6 trigger §36.82 readiness)
+
+---
+
+#### §9.7.1 Cluster A — I/O Contract & Pipeline Placement (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+warmupEngine.evaluate(ctx) → WarmupResult extends DimensionResult
+```
+
+**A1 Pipeline placement LOCKED V1 (per §42.10):** Warm-up runs **sequentially 7th** post Specialization (§9.6). Legacy "Engine #8" naming în Source 1+2 = chat strategic spec session ordering (META §36.100 amendment 7→8 prescriptive engines 2026-04-30 evening) NU pipeline canonical position. Pipeline §42.10 canonical: `Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload`.
+
+**A2 Scope strict pre-Beta** (Source 2 §45.6.1 verbatim):
+- **Activare neuromusculară universal + mobility general ONLY** — NU corrective therapy, NU biomechanical limitations individuale
+- **Medical-adjacent → D2 v1.5 defer** (Q24 pattern precedent — anti-EU AI Act medical scope creep)
+- **Anti-fabrication boundary:** Warm-up engine NU prescribes individualized rehabilitation, NU diagnosis movement dysfunction
+
+**A3 Input contract (consumed Hook 1 read-only):** Constraint Object frozen propagated upstream Periodization §9.1 Cluster 5 + Goal Adaptation §9.2 + Energy §9.3 + Bayesian §9.4 + Tempo §9.5 + Specialization §9.6 cross-engine hooks. NU mutate input — anti-cascade safeguard preserved.
+
+**A4 Output blueprint emit (cumulated Cluster B-D decisions):**
+1. `warmup_routine` — adaptive 5-10 min protocol per persona threshold + Hybrid 1-2 general mobility + 2-3 specific muscle group exercises (per Cluster B Source 1+2)
+2. `cooldown_routine` — optional 2 min stretch text-only (Source 1 §65.4 Override Q4 reconciled supersedes Source 2 §45.6 Q-Cooldown defer)
+3. `skip_available` — boolean ALWAYS true V1 (per §65.3 Source 1 buton vizibil from first session + ADR 025 graceful degradation alignment)
+4. `instant_skip_default` — boolean tier-aware (T0 default skip → engine auto-calculates ramp-up sets în first exercise; T1+ Profile Typing opt-in expanded routine per §45.6.5 Source 2)
+5. `signals` — human-readable signal IDs (e.g. `'warmup_skip_available_session_1_q65_3_locked'`, `'instant_skip_t0_default_ramp_up_integrated'`, `'persona_threshold_maria_mobility_flow_5_10_min'`)
+
+**A5 Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1. Engine purity preserved — Warm-up reads upstream Constraint Objects Hook 1 read-only, NU override per §1.10 Pipeline Order LOCKED V1.
+
+---
+
+#### §9.7.2 Cluster B — Warm-up Protocol Logic (~5 decisions)
+
+**B1 Duration 5-10 min adaptive — OVERRIDE Q1 reconsider** (Source 1 §65.1 verbatim, 2026-05-04 evening Override supersedes 2026-04-30 Q1 8-12 min initial choice):
+- **Compressed upper bound 5-10 min** (NU 8-12 academic complete)
+- **RO pragmatism cultural** (mainstream fitness apps Strong/Hevy = 5-8 min default)
+- **Maria 65 sesiune light 3-5 min** | **Gigica 35 5-7 min** | **Marius 25 8-10 min cu ramp protocol**
+- **Bugatti F4 "warm-up just enough"** NU "warm-up academic complete"
+
+**B2 Exercises Hybrid 1-2 general + 2-3 specific muscle group** (Source 1 §65.2 verbatim, Option C):
+- **General full-body mobility** (1-2 mișcări) prima — anti-cold-start
+- **Specific muscle group prep** (2-3 mișcări vizate ziua respectivă, ex: shoulder mobility înainte bench press)
+- **NU general only** (insufficient prep) | **NU muscle-specific only** (cold start problematic)
+
+**B3 Persona thresholds pre-Beta** (Source 2 §45.6.3 verbatim):
+- **Maria 65:** rutină blândă activare articulară 5-10 min (mobility flow + bands light)
+- **Gigica 35:** warm-up general dynamic 5 min + 1 set ușor ramp pe primul exercițiu
+- **Marius 25:** ramp protocol heavy compounds (50%/70%/90% × 3-5 sets) + general warm-up minimal
+
+**B4 Skip "Sari peste încălzire" buton vizibil from session 1** (Source 1 §65.3 verbatim, Option A):
+- **Buton vizibil de la prima sesiune** — ADR 025 graceful degradation alignment + Bugatti F4 zero forced friction
+- **NU skip after 3+ logged warm-ups** (paternalism violation)
+- **NU NEVER skip** (ADR 025 violation — "Andura gândește pentru user")
+
+**B5 Pre-Beta MANDATORY** (Source 2 §45.6.4 verbatim):
+- **Bugatti injury safety > scope discipline** — Warm-up MUST ship pre-Beta (NU defer v1.5)
+- **~50-80 ramuri V1 universal patterns** (acceptable scope batch 7 implement)
+- **+1-2 chat-uri strategic spec generation post-Periodization** — done with this §9.7 compile + batch 7 implement
+
+---
+
+#### §9.7.3 Cluster C — Cool-down Strategy (~3 decisions)
+
+**C1 Cool-down post-session OPTIONAL 2 min stretch — OVERRIDE Q4 reconsider RECONCILED** (Source 1 §65.4 verbatim 2026-05-04 Override supersedes Source 2 §45.6 Q-Cooldown defer 2026-04-30):
+- **OVERRIDE Q4 initial choice "defer v1.5" → reconsider Option B "optional 2 min stretch"**
+- **ZERO cool-down V1 inconsistent vs warm-up MANDATORY** (Bugatti consistency principle — both pre + post-session covered V1)
+- **Industry research Schoenfeld/Helms** = stretching 2-3 min post-session REDUCE DOMS perceput → Maria 65 retention crescut
+- **Cost dev ~30 min vs valoare retention** = ROI justifies V1 inclusion
+
+**C2 Cool-down implementation MINIMAL text-only** (Source 1 §65.4 verbatim):
+- **2-3 stretch static text-only** ZERO UI complex
+- **NU GIF embedded** (consistent §9.5 Tempo E16 Q16 GIF REJECTED pre-Beta storage PWA + copyright + Gigel test)
+- **NU video / audio** (scope creep)
+
+**C3 Reconciliation transparency note** (NU în original sources — compile-level disclosure):
+- Source 2 §45.6 Q-Cooldown final 2026-04-30 evening = "C Defer post-Beta v1.5" (skip pre-Beta entirely); Source 1 BATCH 4 §65.4 ~5 days later = explicit "OVERRIDE Q4 reconsider" → optional 2 min stretch
+- **Source 1 wins by virtue of being later + explicit OVERRIDE** (Daniel's later decision authority pattern — same precedent as Q1 duration §65.1 Override 8-12 → 5-10)
+- **V1.5+ candidate:** extended cooldown routines (Schoenfeld stretching 5-10 min, foam rolling, parasympathetic activation breathing) post-Beta useri reali signal
+
+---
+
+#### §9.7.4 Cluster D — Cross-Engine Hooks (~5 decisions)
+
+**D1 Hook upstream consume frozen Constraint Object — Periodization §9.1** (Cluster A3 + §1.10 Pipeline Order LOCKED V1):
+- Read-only consume `phase` + `volume_per_muscle Floor/Ceiling` + `intensity_pct_1rm Floor/Ceiling` + `deload_window`
+- Periodization phase = DELOAD (W4) → Warm-up routine **lighter** (recovery week, NU full ramp protocol Marius 50/70/90%)
+- Anti-cascade preserve — NU mutate upstream
+
+**D2 Hook upstream consume — Goal Adaptation §9.2 phase context:**
+- Goal Adaptation phase (CUT/BULK/MAINTAIN/RECOMP) light coupling — Warm-up duration adaptive per phase (CUT = preserve 5-10 min full per Maria 65 retention; BULK Marius = full ramp protocol).
+
+**D3 Hook upstream consume — Energy Adjustment §9.3 readiness state:**
+- Energy DOWN signal → Warm-up routine **shorter** (auto-shorten upper bound 5-10 → 5-7 min)
+- Anti-cascade preserve — Energy NU override Periodization phase (consistent §9.5 Tempo D13 Q13=B precedent — Energy DOWN modulates form/tempo, NU mutate phase)
+
+**D4 Hook upstream consume — Specialization §9.6 weak group focus:**
+- Specialization weak group active → Warm-up specific muscle group includes weak group prioritized (consistent §9.6 PARALLEL modifier precedent Q11=B — Warm-up serves Specialization, NU compete)
+- Warm-up specific exercises = §9.6 weak group + standard primary muscles
+
+**D5 Hook downstream forward — Deload §9.8** (light coupling):
+- Cool-down routine compatible cu deload week §65.6 trigger §36.82 readiness 🔴 3x consecutive (Cooldown extended deload week post-Beta v1.5 candidate)
+- Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved §9.4.6 reference (Warm-up NU proactive Pain-Aware trigger Clean Signal rule — consistent §9.5 Tempo precedent)
+
+---
+
+#### §9.7.5 Cluster E — Edge Cases / Telemetry / V1.5+ Deferrals (~3 decisions)
+
+**E1 Instant Skip principle T0 default + T1+ opt-in** (Source 2 §45.6.5 verbatim):
+- **Default T0 skip** → engine auto-calculates ramp-up sets integrated în first exercise (ZERO friction, ZERO ecran suplimentar)
+- **T1+ Profile Typing:** opt-in expanded warm-up routine
+- **In-session toggle:** "skip warm-up" button = engine collapse to ramp-up sets only
+- **Anti-paternalism** consistent ADR 025 graceful degradation — engine pre-fills default, user keeps autonomy
+
+**E2 Medical-adjacent boundary** (Source 2 §45.6.1 verbatim — Cluster A2 echo):
+- **NU corrective therapy / NU biomechanical limitations individuale** — D2 v1.5 defer (Q24 pattern)
+- **Anti-EU AI Act medical scope creep** preserve (Bugatti F4 lifestyle recommendations boundary consistent §9.5 Tempo "engine NU spune 'dormi mai mult'" precedent)
+- **Pain-Aware cross-ref §9.4.6 Convergence Guard "T2 Unlock":** Warm-up NU proactive Pain-Aware trigger (Clean Signal rule preserved Invariant 5 Medical Safety)
+
+**E3 V1.5+ Deferrals documented:**
+- **Cooldown extended routines** (Schoenfeld stretching 5-10 min + foam rolling + parasympathetic breathing) — V1 minimal text-only 2 min
+- **Personalized warm-up per movement dysfunction signature** — Profile Typing tier T2+ data-driven (post-Beta ≥1000 sesiuni real data signal)
+- **Mobility tracking longitudinal** — Range-of-motion telemetry CDL silent V1 (NU UI surface) → V1.5+ trend analysis Bayesian latent state ecosystem-wide alignment Q20=D consistent §9.4-§9.6 precedent
+- **AR/video-guided warm-up** — V1 text-only (NU GIF NU video pre-Beta consistent §9.5 Tempo E16 Q16 GIF REJECTED)
+
+---
+
+#### §9.7.6 Reconsideration Triggers — Engine Warm-up V1 → V1.5 candidate
+
+Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster B1 Duration 5-10 min adaptive too compressed Maria 65 signal** — Maria-tier useri raportează "warm-up insufficient activare articulară" post-Beta. Trigger threshold: ≥20% Maria-tier feedback "warm-up too short" sau injury rate elevated în Maria cohort. Candidate: Maria 5-10 → 8-12 min adaptive (revert Source 2 Q1 initial choice).
+
+2. **Cluster B2 Hybrid 1-2 general + 2-3 specific too rigid** — useri raportează preference general only (younger Marius mobile already) sau specific only (older Maria limited). Trigger threshold: ≥30% useri Settings UI override Hybrid manually. Candidate: tier-aware adaptive (T0 Hybrid default / T1+ user choice general-only / specific-only opt-in).
+
+3. **Cluster B4 Skip buton paternalism boundary** — useri overuse skip (>50% sessions skip Warm-up entirely) → injury rate signal. Per Cluster A4 anti-paternalism vs Bugatti F4 injury safety tension. Trigger threshold: ≥10% Beta cohort injury reports correlated cu skip rate >50%. Candidate: progressive nudge "te-am observat sari încălzirea — recomand X" Tier 2 banner (NU Tier 3 modal blocking — preserve autonomy).
+
+4. **Cluster C1 Cooldown 2 min text-only insufficient signal** — Beta cohort feedback "DOMS persists" signal stretching 2 min insufficient duration. Trigger threshold: ≥30% useri DOMS perceived rate elevated post-cooldown. Candidate: V1.5 extend 2 → 5 min + foam rolling + breathing (Schoenfeld v1.5 expansion).
+
+5. **Cluster D3 Energy DOWN auto-shorten too aggressive** — useri raportează engagement drop post-shorten (5-7 min insufficient warm-up signal even when readiness DOWN). Trigger threshold: ≥15% sessions Energy DOWN cu user feedback "rece la primul set". Candidate: Energy DOWN modulates intensity NU duration (consistent §9.5 Tempo D13 precedent — Energy DOWN slow eccentric NU ROM partial).
+
+6. **Cluster E1 Instant Skip T0 default ramp-up integrated insufficient** — T0 useri raportează cold start signal even cu ramp-up integrated. Trigger threshold: ≥20% T0 useri injury rate elevated cu ramp-up only. Candidate: T0 default → minimal Hybrid (1 general + 1 specific) NU ramp-up only.
+
+7. **Cluster E3 Mobility tracking longitudinal Bayesian v1.5 ecosystem timing** — Q20=D coordinated multi-engine release timing per Engine #3 Bayesian Nutrition R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data (cross-ref §9.4.7 + §9.5.6 + §9.6.6 Trigger 7 timing). Candidate: V1.5 migration coordinated cu Bayesian Nutrition + Energy + Tempo + Specialization consistent.
+
+**Re-evaluation cadence:** post Faza 2.5 batch 7 implementation Engine Warm-up V1 + post-Beta useri reali signal aggregate (similar §9.1.7 + §9.2.6 + §9.3.6 + §9.4.7 + §9.5.6 + §9.6.6 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster A-E LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.7.7 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → WarmupResult` extending DimensionResult (purity preserved engine = pure function NU side effects, async-capable per DP-2)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Warm-up 7th în pipeline §42.10 (NU "Engine #8" naming legacy chat strategic spec session ordering)
+- **ADR Warm-up file ABSENT** — recommend NEW ADR create post §9.7 LOCKED (precedent reverse — start direct cu SPEC REFERENCE → §9.7 SSOT canonical, NU intermediate STUB pattern ADR 027/028/029). Suggested filename: `03-decisions/031-engine-warmup-mobility.md` (next ADR number per §36.95 Additive convention).
+- [[017-demographic-prior-database|ADR 017]] persona resolution Maria/Gigica/Marius cross-ref Cluster B3 persona thresholds verbatim
+- [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default — referenced §65.3 Source 1 Skip buton vizibil session 1 + §45.6.5 Source 2 Instant Skip principle T0 default
+- [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware T0 skip default / T1+ opt-in expanded Cluster E1 verbatim
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 7
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved §9.4.6 reference (Warm-up NU proactive Pain-Aware trigger Clean Signal rule consistent §9.5+§9.6 precedent)
+- §9.1 Engine #1 Periodization Constraint Object frozen Hook 1 read-only (consume input frozen — Cluster D1 Periodization phase = DELOAD lighter routine)
+- §9.2 Engine #2 Goal Adaptation phase context cross-ref Cluster D2 (CUT/BULK adaptive duration light coupling)
+- §9.3 Engine Energy Adjustment readiness state Hook D3 (Energy DOWN auto-shorten upper bound — anti-cascade preserve)
+- §9.4 Engine Bayesian Nutrition Inference cross-engine recovery state (light coupling forward)
+- §9.5 Engine Tempo light coupling cross-engine modifiers (consistent E2 medical-adjacent boundary "engine NU spune 'X'" precedent)
+- §9.6 Engine Specialization weak group focus Hook D4 (PARALLEL modifier precedent — Warm-up serves Specialization weak group prioritized în specific muscle exercises)
+- §9.8 Engine Deload Protocol forward Hook D5 (Cooldown post-session compatible cu §65.6 deload week trigger §36.82 readiness 🔴 3x consecutive)
+- [[../06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening|HANDOVER_ENGINES_SPEC]] §45.6 Engine #8 Warm-up & Mobility LOCKED V1 NEW + META §36.100 amendment 7→8 prescriptive engines
+
+---
+
+🦫 **§9.7 Engine Warm-up Module-Level Spec V1 compiled 2026-05-06 evening chat-7 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-04-30 evening §45.6 + 2026-05-04 evening BATCH 4 §65.1-§65.4 sources (`131_HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED_CONSUMED.md` lines 157-198 BATCH 4 §65 + `06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` §45.6 lines 324-345 + CURRENT_STATE §RECENT cross-check — **2-way parity check ✅ + reconciled override Source 1 §65.4 supersedes Source 2 §45.6 Q-Cooldown defer transparency documented Cluster C3**). ~21 decisions Cluster A-E cumulative (5+5+3+5+3 = 21; lower than §9.4-§9.6 ~28-32 range — BATCH 4 §65 only 4 Warm-up scope decisions vs §65.5-§65.10 Periodization/Exercise scope; §45.6 5 decisions scope/persona/MANDATORY/Instant Skip + Cooldown reconciled = 6 scope; total 4+6 = 10 source decisions decomposed Cluster A-E + 11 derived A1+A3+A4+A5+D1-D5+E2+E3 standard pattern §9.1-§9.6 cross-cutting decomposition = 21 cumulative. Bugatti transparency: NU fabricate cluster decisions to hit ~28 quota — accept lower count consistent prompt anti-recurrence checklist verbatim). Pre Faza 2.5 batch 7 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`) + §9.6 Specialization (`92a69fd`). Pipeline §42.10 position 7th canonical (NU "Engine #8" naming legacy chat strategic spec session ordering 2026-04-30 evening META §36.100 amendment 7→8 prescriptive engines). Source 4 ADR Warm-up file ABSENT — post §9.7 LOCKED → recommend NEW ADR create direct cu SPEC REFERENCE redirect (precedent reverse vs ADR 027/028/029 stub flip pattern; suggested filename `031-engine-warmup-mobility.md` next ADR §36.95 Additive convention). §9.8 Engine Deload final batch 8 = penultimate compile post §9.7 V1 implement.
