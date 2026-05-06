@@ -50,12 +50,12 @@ Cross-refs bidirectional: 12 wikilinks ADRs + 3 archive paths verbatim sources. 
 - 93 test files passed
 - Duration 16.37s
 
-## Commits (1 expected)
+## Commits
 
-- `<sha>`: feat(adr): compile ADR 024 Goal-Driven Program Templates draft full Q1-Q8 LOCKED V1; stub 60 LOC → SPEC READY V1 215 LOC; Q1-Q5+Q7-Q8 LOCKED 2026-05-04 evening late (Goal Adaptation Engine #2 spec Cluster 1-5) + Q6 D Hybrid LOCKED 2026-05-06 morning acasă (tier global preserve + template signals soft-reset + 2-session calibration §EXT-2 + streak RESET §36.26 + phase re-derive §36.35); cross-refs bidirectional 12 wikilinks; ZERO fabrication verbatim line numbers archives 142+177
+- `8674782` feat(adr): compile ADR 024 Goal-Driven Program Templates draft full Q1-Q8 LOCKED V1; stub 60 LOC → SPEC READY V1 215 LOC; Q1-Q5+Q7-Q8 LOCKED 2026-05-04 evening late (Goal Adaptation Engine #2 spec Cluster 1-5) + Q6 D Hybrid LOCKED 2026-05-06 morning acasă; cross-refs bidirectional 12 wikilinks; ZERO fabrication verbatim line numbers archives 142+177
 
 ## Pushed
-- origin/main: pending post-commit
+- origin/main: ✅ `2982cdf..8674782 main -> main`
 - Backup tag: ✅ `pre-adr024-compile-2026-05-06-1114` pushed pre-execution
 
 ## Issues
