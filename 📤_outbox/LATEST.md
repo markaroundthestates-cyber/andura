@@ -1,74 +1,83 @@
-# LATEST — ADR 024 Compile Draft Full
+# LATEST — ADR 030 Adapter Design Pattern Create NEW SPEC READY V1 partial
 
-**Task:** ADR 024 Goal-Driven Program Templates compile draft full Q1-Q8 LOCKED V1
+**Task:** ADR 030 NEW Adapter Design Pattern create file SPEC READY V1 partial; D1-D5 LOCKED foundation Hexagonal + Q-OPEN-1→7 PENDING
 **Model:** Opus
 **Status:** Complete
 
 ## Pre-flight
+
 - Clean tree: ✅ (only `tests/golden-master/mutation/stryker-run.log` untracked, scope acceptable)
 - Branch main: ✅
-- Backup tag: `pre-adr024-compile-2026-05-06-1114` ✅ pushed origin
-- Slip pre-flight: initial PowerShell-style timestamp routed through `/usr/bin/bash` → empty-ts tag created (`pre-adr024-compile-`) → cleaned up local + remote → re-created via POSIX `$(date +%Y-%m-%d-%H%M)`. Net: 1 valid backup tag pushed + 1 garbage tag deleted clean
+- Backup tag: `pre-adr030-create-2026-05-06-1205` ✅ pushed origin pre-execution
+- ADR 030 NOT exists pre-create: ✅ verified `ls 03-decisions/ | grep "^030-"` returned empty
+- Cross-refs ADRs verified exist:
+  - ✅ `03-decisions/018-engine-extensibility-architecture.md`
+  - ✅ `03-decisions/026-offline-coaching-decision-tree-exhaustive.md`
+  - ✅ `03-decisions/009-calibration-tiers.md`
+  - ✅ `03-decisions/011-coach-decision-log-architecture.md`
+  - ⚠️ `04-architecture/ADR_CASCADE_DEFENSE_v1.md` **MISSING at path stated în prompt** — actual location = `03-decisions/ADR_CASCADE_DEFENSE_v1.md`. Used correct path în ADR 030 cross-refs. Slip flag prompt source-of-truth (low impact, recovered clean).
 
 ## Discovery anti-hallucination grep
-- **Original task assumption STALE:** Q1-Q8 source-of-truth declared în `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md`. Reality post-split atomic 2026-05-05 birou: HANDOVER_GLOBAL = 143 LOC stub only. ZERO Q1-Q8 / ZERO ADR 024 references / ZERO Goal Shift / ZERO EXT-1/EXT-2 matches în current HANDOVER_GLOBAL
-- **True source-of-truth located** în consumed handover archives:
-  - `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` — Q1-Q5 + Q7-Q8 LOCKED V1 (Goal Adaptation Engine #2 spec Cluster 1-5 ~30 decisions cumulative) + explicit "Q6 calibration tier post-shift PENDING"
-  - `📤_outbox/_archive/2026-05/177_HANDOVER_2026-05-06_morning_SMTP_COMPLETE_SETTINGS_UX_Q6_LOCK_CONSUMED.md` — Q6 LOCKED V1 D Hybrid full content
-  - `00-index/CURRENT_STATE.md` line 86 — Q6 D Hybrid cross-verification
-- HANDOVER_ENGINES_SPEC theme file references ADR 024 metadata only (line 57 placeholder PENDING, line 234/379 generation roadmap mention) — NOT verbatim Q1-Q8 source
-- HANDOVER_MISC §29.2.5/§29.2.6/§29.2.7 + §29.5/§29.6/§29.7 = legacy ADR 022 naming-collision pre-split discussion, NU Q1-Q8 spec verbatim
 
-**Decision:** proceed compile cu archive sources (consumed handovers = canonical Q1-Q8 verbatim post-split atomic). ZERO fabrication — all 8 Q-content traceable to specific archive line numbers cited inline ADR.
+- Verified `§EXT-2 Composite Signal Layer Layer D Budget Reaffirmation (§36.41)` exists inside `03-decisions/ADR_CASCADE_DEFENSE_v1.md` line 122 + `Anti-Cascade Silent:` heading line 137 = anti-pattern definition consistent prompt verbatim D4 rationale text
+- Verified `Standardized Dimension Contract` = ADR 018 §2 line 105 (not §1 as could be misread from "section 2" mention)
+- Verified `featureFlags.js` = ADR 018 §5 Feature Flags Infrastructure line 277 (introduces `src/util/featureFlags.js`)
+- ZERO fabrication — all D1-D5 verbatim acest prompt source-of-truth, all Open Q-uri verbatim same prompt, all cross-ref paths verified actual filesystem
 
 ## Modificări
 
-**`03-decisions/024-goal-driven-program-templates.md`:** stub 60 LOC → draft full 215 LOC
+**`03-decisions/030-adapter-design-pattern.md`:** NEW file 239 LOC SPEC READY V1 partial
 
 Sections delivered:
-- **Header + Status flip 🟡 STUB → 🟢 SPEC READY V1** + Date 2026-05-04 → 2026-05-06 morning compile + Cumulative Q1-Q8 LOCKED V1 + See also full cross-refs (ADR 026 / 018 / 022 / 025 / 027 / 028 / 029 / 009 §AMENDMENT 2026-05-05 birou after / ADR_OUTLIER_FILTER §EXT-1 + §EXT-2 / 017 personas / PRODUCT_STRATEGY / COGNITIVE_ARCHITECTURE)
-- **Status Summary** — provenance chain Q1-Q8 LOCKED V1 (§26 base + 2026-05-04 evening late + 2026-05-06 morning Q6) + architectural integration ADR 026 §42.10 sequential pipeline 2nd engine
-- **§1 Context** — §1.1 SUFLET F2 push-back proporțional / §1.2 5 templates V1 LOCKED enumerare + Mode overlay 10 perceived UI dar 5 logic core / §1.3 Big 6 lifecycle Imutabile/Editabile (Goal/Phase/Mode classification) / §1.4 Integration ADR 018 Dimension Registry plug-in
-- **§2 Decision Q1-Q8 verbatim LOCKED V1** — fiecare Q cu Question text verbatim din stub Open Questions + LOCKED choice + Rationale Bugatti craft + Source archive line numbers:
-  - §2.1 Q1 — 5 vs 8 templates resolve (5 primary canonical) [142 line 44]
-  - §2.2 Q2 — Algorithmic generation ~25 base + modifiers, NU 180 hardcoded [142 line 44]
-  - §2.3 Q3 — HYBRID pipeline §42.10 cross-engine hooks [142 line 39 + 43]
-  - §2.4 Q4 — Phase auto-detection (NU user pick) + thresholds CUT/BULK/MAINTAIN/RECOMP/DELOAD [142 line 45]
-  - §2.5 Q5 — RECOMP NU template, sub-phase Tonifiere/Slăbire [142 line 44]
-  - §2.6 Q6 — D Hybrid (tier global preserve + template signals soft-reset + 2-session calibration §EXT-2 + streak RESET §36.26 + EXT-1 + phase re-derive §36.35) [177 lines 38-46 + CURRENT_STATE line 86]
-  - §2.7 Q7 — 3 tiers push-back proporțional (Tier 1 silent / Tier 2 banner / Tier 3 modal blocking opt-in) [142 line 47]
-  - §2.8 Q8 — Re-prompt anti-spam (28d rolling + 21d cooldown post-confirm + 60d post Goal Shift + cap 4/an) [142 line 47]
-- **§3 Cross-references** — bidirectional ADR cross-refs (12 wikilinks) + Source archives Q1-Q8 verbatim (3 archive paths)
-- **§4 Open Questions PENDING** — NONE (all Q1-Q8 RESOLVED). Implementation gap flagged separately (engine wiring real ≠ Open Question SPEC)
-- **§5 Reconsideration triggers** — 7 trigger conditions enumerate (Q6 D Hybrid signal contradictoriu post-Beta / 5 templates expansion / phase thresholds drift / push-back Tier 3 opt-in rate / re-prompt fatigue / pipeline ordering cascade / ADR 022 Bayesian cross-engine) + cadence quarterly Q1+Q3 sau on-demand Circuit Breaker §42.7
+- **Header** — `# ADR 030 — Adapter Design Pattern` + Status `🟢 SPEC READY V1 (partial — D1-D5 LOCKED foundation Hexagonal + Open Q-uri Q-OPEN-1→7 PENDING)` + Date `2026-05-06 morning acasă` + Cumulative D1-D5 = 5 substantive LOCKED V1 + See also full cross-refs (12 wikilinks ADRs)
+- **Status Summary** — provenance chain faza 1/4 done (ADR 024 commit `8674782`) → faza 2/4 (THIS ADR D1-D5 LOCKED + push-back recidivă cadență mecanică Claude rezolvat) → faza 3/4 PENDING multi-batch CC wiring → faza 4/4 PENDING smoke end-to-end + decision count 5 LOCKED + 7 Open Q-uri PENDING explicit + cross-cutting concerns covered V1 enumerated + architectural integration narrative
+- **§1 Context** — §1.1 Faza 2/4 sequence pragmatic post Daniel "vizor fără ușă" reframe + push-back recidivă cadență mecanică / §1.2 Need adapter boundary (engines pure ADR 018 §2 vs app state mutable multi-source ADR 020 + 011 + 016 + 018 §4) / §1.3 Pre-wiring blocker absolut pentru faza 3 §42.10 multi-batch wiring (anti-Bugatti drift fără SSOT)
+- **§2 Decisions D1-D5 LOCKED V1 verbatim** — fiecare cu Decision text + Rationale + Counter rejected + Cross-refs surface bidirectional:
+  - §2.1 D1 Per-Engine Topology — 8 adapters distincte 1 per engine ADR 026 §42.10 (Periodization, Goal Adaptation, Energy, Bayesian Nutrition, Tempo, Specialization, Warm-up, Deload). Counter rejected: central God object
+  - §2.2 D2 Thin Adapter Responsibility Scope — pure shape mapping `engineContext → engineInput` + Result-typed output. 3 layers: engine pure | adapter shape | orchestrator I/O. Counter rejected: rich adapter / hybrid hooks
+  - §2.3 D3 Context Object Pre-Built Input — orchestrator builds `engineContext` ready-data per session-tick. Counter rejected: raw appState dump / hybrid repository handle
+  - §2.4 D4 Result Type Output Contract — `{ ok: true, output } | { ok: false, error }` never throws. Errors first-class type system. Counter rejected: pure passthrough errors throw / lenient envelope partial degradation
+  - §2.5 D5 Cross-Cutting Concerns Orchestrator Location — shared utilities orchestrator-level pre-pipeline + 5 V1 utilities enumerate (Convergence Guard tier resolution + Layer D ≤50ms budget + CDL telemetry + FeatureFlags + Sentry). Counter rejected: per-adapter scattered / engine internal self-gate
+- **§3 Open Questions PENDING Q-OPEN-1 → Q-OPEN-7** — fiecare cu Question text verbatim + "Why deferred" rationale concrete trigger condition:
+  - Q-OPEN-1 Versioning/migration → defer chat strategic NEW când prima schema migration apare faza 3
+  - Q-OPEN-2 Layer D ≤50ms enforcement → defer post faza 3 batch 1 Periodization wiring + measure budget
+  - Q-OPEN-3 Observability granularity → defer until faza 3 complete + needs surface concrete
+  - Q-OPEN-4 Pipeline parallelism → defer post-Beta când profiling indică hot path
+  - Q-OPEN-5 State source resolution Tier 0/1/2 → defer chat strategic NEW când prima Tier fallback edge case
+  - Q-OPEN-6 Error recovery semantics graceful vs strict → defer chat strategic NEW (tension ADR 025 vs ADR_CASCADE_DEFENSE)
+  - Q-OPEN-7 Convergence Guard re-eval cadence → defer post-Beta când Q-OPEN-2 LOCKED + budget measured
+- **§4 Cross-references** — bidirectional 12 wikilinks ADRs (026/018/022/024/025/027/028/029/009/011 + ADR_CASCADE_DEFENSE_v1) cu surface specific per ADR + Source: chat strategic 2026-05-06 morning acasă (NU ingestat în vault încă, separate ingest §CC.5 ulterior) + Backup tag pre-create cited
+- **§5 Reconsideration triggers** — 7 trigger conditions enumerate (D1-D5 each + Q-OPEN-4 unblock + Q-OPEN-1→7 resolution generic) + concrete threshold per trigger + cadence post faza 3 wiring + post-Beta signal aggregate
 
-Cross-refs bidirectional: 12 wikilinks ADRs + 3 archive paths verbatim sources. ZERO fabrication — all source content traceable line numbers.
+Cross-refs bidirectional: 12 wikilinks ADRs. ZERO fabrication — D1-D5 verbatim acest prompt + Open Q-uri verbatim same prompt + cross-ref paths verified filesystem.
 
 ## Build + Tests
 
-- `npm run test:run`: **1401 PASS / 0 FAIL** (zero regression vault-docs-only — only `03-decisions/024-goal-driven-program-templates.md` modified, no `src/` changes)
+- `npm run test:run`: **1401 PASS / 0 FAIL** (zero regression vault-docs-only — only `03-decisions/030-adapter-design-pattern.md` NEW + `📤_outbox/LATEST.md` cycle, no `src/` changes)
 - 93 test files passed
-- Duration 16.37s
+- Duration 16.33s
 
-## Commits
+## Commits (1 expected)
 
-- `8674782` feat(adr): compile ADR 024 Goal-Driven Program Templates draft full Q1-Q8 LOCKED V1; stub 60 LOC → SPEC READY V1 215 LOC; Q1-Q5+Q7-Q8 LOCKED 2026-05-04 evening late (Goal Adaptation Engine #2 spec Cluster 1-5) + Q6 D Hybrid LOCKED 2026-05-06 morning acasă; cross-refs bidirectional 12 wikilinks; ZERO fabrication verbatim line numbers archives 142+177
+- `<sha>`: feat(adr): create ADR 030 Adapter Design Pattern SPEC READY V1 partial; D1-D5 LOCKED foundation Hexagonal (per-engine topology + thin scope + context object input + Result type output + shared utils orchestrator) + Q-OPEN-1→7 PENDING
 
 ## Pushed
-- origin/main: ✅ `2982cdf..8674782 main -> main`
-- Backup tag: ✅ `pre-adr024-compile-2026-05-06-1114` pushed pre-execution
+- origin/main: pending post-commit
+- Backup tag: ✅ `pre-adr030-create-2026-05-06-1205` pushed pre-execution
 
 ## Issues
 
-- **Pre-flight slip** (low impact, recovered clean): PowerShell-style `$ts = ...` routed through `/usr/bin/bash` → empty-ts tag created. Net: 1 garbage tag deleted local+remote + 1 valid backup tag pushed. Memory rule reinforce: PowerShell syntax NU în Bash tool, use POSIX `$(date +...)` sau `TS=$(date ...)` form
-- **Source-of-truth assumption STALE** (medium impact, surfaced explicitly): task prompt assumed `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` Q1-Q8 verbatim — reality post atomic split 2026-05-05 birou = stub 143 LOC only. Real source = consumed handover archives `142_*` + `177_*` + CURRENT_STATE §JUST_DECIDED. Compile proceeded cu correct sources cited line numbers. ADR 024 narrative provenance Status Summary explicit referência archive paths pentru audit trail future reviewers
-- **Cumulative LOCKED V1 NU incrementat** acest commit: ADR 024 compile = consolidate aggregation existing decisions Q1-Q8 (deja contate prev: Q1-Q5+Q7-Q8 incrementat 2026-05-04 evening late ~50 net + Q6 incrementat 2026-05-06 morning +1 net = ~654). Compile draft full = file flip status STUB → SPEC READY V1 fără decisions noi product/architecture
-- Out of scope per prompt instructions explicit (NU touch HANDOVER_GLOBAL deep / NU touch CURRENT_STATE / NU touch INDEX_MASTER / NU touch DECISION_LOG / NU sync alte ADRs) — separate ingest §CC.5 ulterior va consuma acest LATEST.md narrative pentru CURRENT_STATE §NOW + §JUST_DECIDED + DECISION_LOG entry top sync
+- **Cross-ref path slip prompt source-of-truth** (low impact, recovered clean): prompt declared `04-architecture/ADR_CASCADE_DEFENSE_v1.md` în PRE-FLIGHT + D4 rationale + D5 Cross-cutting concerns covered. Reality actual filesystem = `03-decisions/ADR_CASCADE_DEFENSE_v1.md`. Used correct path în ADR 030 cross-refs (`[[ADR_CASCADE_DEFENSE_v1]]` Obsidian wikilink resolves filename without path prefix — works correctly în vault). NU blocked execution. Flag pentru transparency audit trail.
+- **Cumulative LOCKED V1 increment scope:** acest commit livrează file flip 030 NEW (file structure layer) — D1-D5 substantive product/architecture decisions deja LOCKED V1 chat strategic 2026-05-06 morning acasă (NU ingestat în vault încă, narrative pending §CC.5 fast handover ulterior). Cumulative ~654 → ~659 expected post separate §CC.5 ingest (NU acest commit per scope vault-docs-only file-create-only). Daniel command "Update CURRENT_STATE per inbox handover" trigger ulterior post handover narrative file landing în `📥_inbox/`.
+- Out of scope per prompt instructions explicit (NU touch HANDOVER_GLOBAL deep / NU touch CURRENT_STATE / NU touch INDEX_MASTER / NU touch DECISION_LOG) — separate ingest §CC.5 ulterior va consuma acest LATEST.md narrative pentru CURRENT_STATE §JUST_DECIDED entry top + DECISION_LOG +1 entry top + INDEX_MASTER ADR 030 entry sync.
 
 ## Next action
 
-**P1.2 Adapter Design Pattern** chat strategic NEW (faza 2 sequence pragmatic 4-faze post Daniel "vizor fără ușă" reframe LOCKED 2026-05-06 morning):
-- Pure-function engines ADR 026 → app state mapper architecture decision
-- Probabil ADR NEW 030 (numbering additive per §36.95)
-- Pre-wiring blocker absolute pentru P1.3 Engine wiring multi-batch CC pipeline §42.10 sequential 4-6 batches
-- **Eu decid singur sequencing batches, NU propun multi-options** (memory rule "decizii tactice decizi singur, NU 2-options confirmation theater" reinforced)
+**Faza 3/4 sequence pragmatic post Daniel "vizor fără ușă" reframe LOCKED:**
+- Multi-batch CC wiring engine pipeline §42.10 sequential 4-6 batches (Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload)
+- Pre-wiring blocker absolut acest ADR 030 D1-D5 foundation Hexagonal LOCKED — ✅ unblocked
+
+**Pre-faza 3 prerequisite:**
+- §CC.5 fast handover ingest ulterior consume D1-D5 narrative: increment cumulative ~654 → ~659 LOCKED V1 (D1-D5 substantive product/architecture) + CURRENT_STATE §JUST_DECIDED entry top append + DECISION_LOG +1 entry top descending cronologic + INDEX_MASTER ADR 030 entry add. Daniel command "Update CURRENT_STATE per inbox handover" trigger ulterior post handover narrative file landing în `📥_inbox/`.
+
+**Push-back meta reinforced (mea culpa scribe permanent):** "decizii tactice decizi singur, NU 2-options confirmation theater". Acest ADR D1-D5 livrate verbatim direct execute fără pre-execution multi-options. Pe faza 3 wiring batches sequencing = same rule (eu decid sequencing, NU propun pre-execution).
