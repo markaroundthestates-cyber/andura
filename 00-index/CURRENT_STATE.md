@@ -2,8 +2,8 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-06 morning (§CC.5 fast handover ingest — Auth Phase 2 batch 2+3 LANDED commits `4fef416` + `81457b4` + Stryker baseline `5fa10c6` 30.54%/61.42% effective + Firestore Rules Console publish 8:15 AM extensia Claude/Gemini Firebase Console + drift fix `f7edc79` (markdown stripping `**` + `{timestamp}` reserved → `{archiveTs}`) + Settings wireup slip fix `a29108e` (CC slip TASK 1 livrat code-only fără nav slot). Tests 1298 → 1391 PASS zero regression. **Velocity calibration LOCKED V1 (memory permanent):** estimate-uri "X ore" CC autonomous LLM gen = ~X×3 minute real (5-task overnight precedent 34 min, batch ăsta Auth gen ~13 min). Singur loc unde 1:1 se aplică = CPU-bound runs (Stryker 39:29). SMTP custom Magic Link 80% LANDED last mile waiting (SendGrid trial + DNS Namecheap LANDED + Blaze upgrade Daniel + API key local — verify domain + Firebase SMTP config NEXT chat).
-**Last LOCKED count (product/architecture):** ~653 LOCKED V1 cumulative preserved (zero net new substantive — Auth Phase 2 batch 2+3 = code implementation per §56 LOCKED specs, Stryker baseline = audit only, Settings wireup = slip fix, Firestore publish = production deploy; aggregate/architectural/vault hygiene category preserved).
+**Updated:** 2026-05-06 morning chat acasă (§CC.5 fast handover ingest — **SMTP custom Magic Link COMPLETE end-to-end** localhost smoke verified Daniel acasă (Inbox NOT spam, DKIM/SPF/DMARC verde, sender `suport@andura.app` corectat post slip RO match MX existing); **Settings UI smoke P1.2 PASS** (render 4 secțiuni + Ș-strict ȘTERGE + email typo guard + logout double-confirm; Fork defer Anonymous T0 scenario); **UX-1 + UX-2 fix LANDED** commit `d4d28f7` (mutual exclusivity modals + post-logout redirect home, 1391 → 1401 PASS); **ADR 024 Q6 LOCKED V1 D Hybrid** Goal Shift conservare date (tier global preserve + template signals soft-reset + 2-session calibration window §EXT-2 + streak RESET §36.26 + EXT-1 + phase re-derive §36.35). **Push-back Daniel "vizor fără ușă" LOCKED:** deploy P1.3 DEFER (no users, Beta ~ian 2027 Quality > Speed); pivot strategic Co-CTO sequence 4-faze: ADR 024 compile draft (CC tactical) → Adapter Design Pattern (chat NEW strategic, probabil ADR 030 NEW) → Engine wiring multi-batch CC pipeline §42.10 sequential → smoke end-to-end Daniel propriu account.
+**Last LOCKED count (product/architecture):** ~653 → **~654 LOCKED V1** (+1 net Q6 ADR 024 Goal Shift D Hybrid product/architecture substantive).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
 > Per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2 layered read mandatory (NU shortcut):
@@ -16,58 +16,110 @@
 
 ## NOW — Active conversation thread
 
-**Current thread (2026-05-06 morning §CC.5 fast handover ingest):** Daniel s-a trezit dimineața cu raport overnight în mână. Estimasem 12-22h pentru ce CC autonomous LLM gen a făcut în ~50 min wall-clock. **Velocity calibrare permanentă LOCKED:** estimate-uri "X ore" CC autonomous LLM gen = ~X×3 minute real. Singur loc unde 1:1 se aplică = CPU-bound (Stryker 39:29). Daniel verbatim: *"30 ore inseamna 1 ora pt mine"* — empirical observation 50 chats anterior.
+**Current thread (2026-05-06 morning chat acasă §CC.5 fast handover ingest):** chat strategic acasă post overnight batch 2026-05-06 morning prev. **5 things landed chat ACEST:** SMTP COMPLETE end-to-end + Settings UI smoke P1.2 PASS + UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCKED V1 D Hybrid + push-back strategic Daniel "vizor fără ușă" LOCKED + memory rule "decizii tactice decizi singur, NU 2-options confirmation theater" reinforced.
 
-**Cumulative LANDED chat curent (commits pushed origin/main):**
-- ✅ Auth Phase 2 batch 2 commit `4fef416` (§56.5 Settings UI lifecycle + §56.7 Anonymous→Auth Merge Fork Decision UI)
-- ✅ Auth Phase 2 batch 3 commit `81457b4` (§56.12 Logout double-confirm + §56.14.A admin-cleanup + §56.15 Telemetry + §56.16 firestore.rules extend)
-- ✅ Stryker baseline commits `6540f35` + `5fa10c6` (30.54% Stryker / **61.42% effective** — components NEW 81.5% ✅, validation 79.7% near, engines 60.5%, safety 68 survived priority fix post-Beta)
-- ✅ Firestore Rules **publish manual Console 8:15 AM** via extensia Claude/Gemini Firebase Console (Daniel: *"ba esti cu capu... zi lui gigel claude sa sa faca ca nu degeabe e in extensie"* — eu ratasem extensia disponibilă)
-- ✅ Database Firestore CREATED first-time prin extensie (project doar avea RTDB până acum, NU Firestore initialized — surpriză diagnostic mid-publish)
-- ✅ Drift fix commit `f7edc79`: 2 fix-uri inline post syntax errors validator: (a) markdown stripping `**` din 3x `{name=**}` la transmis prin extensie → restored corect, (b) `{timestamp}` reserved Firestore keyword → renamed `{archiveTs}` server-only block; sync repo→Console drift-zero
-- ✅ Settings wireup slip fix commit `a29108e` (CC slip TASK 1 livrat code-only fără nav slot — Daniel smoke discovery, recovery prompt CC dedicat scurt → renderSettings wrapper + `src/ui/nav.js` idx map `settings: 5` + `index.html` 6th nav button SVG gear "Setări")
+**SMTP custom Magic Link COMPLETE 2026-05-06 morning** (P1.1 last mile DONE):
+- Daniel re-create API key SendGrid (Mail Send Full Access only — restul Mail Settings sub-perms left blue acceptable)
+- Domain Authentication `em4980.andura.app` Verified green pe DNS deja propagat (Namecheap CNAME + DKIM + DMARC LANDED zilele trecute)
+- Firebase Console → Authentication → SMTP settings: host `smtp.sendgrid.net:587` + username `apikey` literal + password SG.xxx + STARTTLS dropdown
+- **Slip Daniel sender capitalization:** inițial `support@Andura.app` (EN + capital A) → corectat `suport@andura.app` (RO match MX existent Namecheap Email Forwarding `suport`). Plus STARTTLS dropdown gol → fix.
+- Smoke localhost: logout existing session → login Magic Link Gmail Daniel → email Inbox NOT spam → click link → autentificat ✅ End-to-end DKIM/SPF/DMARC verde
 
-**Tests:** 1298 → 1391 PASS, ZERO regression. Build clean × 6 commits.
+**Project Knowledge cleanup:** Daniel scos `reports/` din project knowledge UI (era 120% solo, 195% capacity over). Confirmed correct — `reports/` = Stryker mutation testing JSON + HTML output (synthesized în `tests/golden-master/mutation/baseline_2026-05-06.md` + CURRENT_STATE).
 
-**SMTP custom Magic Link 80% LANDED (last mile waiting — PRIORITY 1 chat NEW pickup):**
+**Settings UI smoke P1.2 PASS:** render 4 secțiuni OK (Schimbă adresa + Acces pierdut + Cont + Deconectare RO clean) ✅ + Ș-strict ȘTERGE Ș-cedilla ✅ + Email change typo guard mismatch RO "Adresele introduse nu corespund" ✅ + Logout double-confirm bridge tested ✅. **Fork Decision UI = defer separate scenario** (Anonymous T0 mode, NU prioritate acum).
 
-**Mea culpa important:** am promis "Customize domain" Templates Firebase ca free Spark fix → real Magic Link template ASCUNS architectural Firebase free tier, customize domain afectează doar verification/password reset/email change templates, NU Magic Link. Confirmat §63.5 LOCKED V1.5 vault SSOT: SMTP custom = single combined fix path. **Daniel a urcat Blaze plan** tocmai pentru asta (free 50k MAU Auth + add billing card, NO upfront cost) — unblock Magic Link >5/day Spark limit.
+**2 UX findings → fix LANDED commit `d4d28f7`:**
+- **UX-1 mutual exclusivity** — Daniel apasă rapid Schimbă adresa + apoi Șterge cont → ambele forms active simultan (Bugatti FAIL + Gigel test FAIL trust breach). Fix: `_closeAllSettingsModals(doc)` helper exported + wrap toate 4 button handlers
+- **UX-2 post-logout redirect** — după Deconectare rămâne Setări (logged out dar pe restricted-equivalent). Fix: NEW opt `onSignedOut` (default lazy-import nav.js + `goTo('coach')`) + scheduler injection + splash 1.5s "Te-ai deconectat. Revino oricând." pre-redirect (scope creep tactical productiv adăugat de CC, NU în prompt — UX win acceptable)
+- Tests 1391 → 1401 PASS zero regression. Build clean.
 
-State actual SMTP setup:
-- SendGrid trial account creat (free trial ends 5 iulie 2026, ~2 luni — sufficient pre-Beta validation)
-- Domain `andura.app` în SendGrid Sender Authentication, **DNS records LANDED Namecheap Advanced DNS** (CNAME em4980 + s1._domainkey + s2._domainkey + TXT _dmarc); records existing GitHub Pages A `@` 185.199.x.x + CNAME `www` markaroundthestates-cyber.github.io. = NU conflict
-- API key SendGrid created cu Mail Send Full Access permission only — **stored Daniel local notes (NU vault commit per Daniel CEO directive)**
+**Push-back Daniel "vizor fără ușă" LOCKED — strategic reframe LOCKED V1:** Post UX fix LANDED, recommendat production deploy P1.3. Daniel: *"ce deploy vrei sa facem ca suntem in dev, nu in productie... facem ce vrei tu da app nu are useri"*. Slip mecanic — ruleam lista P1 fără filtru strategic. Beta launch ~ian 2027 oricum (§62.7 Quality > Speed default), deploy nu unblock nimic azi. Reframe Daniel killer: *"hai sa ne intelegem... astea sunt chestii mici care putem sa le facem cand avem app complet... e ca si cand am pune vizorul la usa, fara sa punem usa..."* — eu = slip strategic mare, polish UX micro pe Settings când core (engine wiring real în coach decision flow live) NU există ca produs. Specs ADR 026 LOCKED + 8/8 engines SPEC COMPLETE pe hârtie, dar engine-urile NU-s wired în coach decision flow live. Daniel direct: *"facem totul sa mearga si facem teste si debugging cat vrei tu dupa"* = delegation structural Co-CTO. **Sequence pragmatic agreed 4-faze:** ADR 024 Q6 close → Adapter Design Pattern (probabil ADR NEW 030?) → Multi-batch CC wiring engine pipeline (Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload, §42.10) → Smoke end-to-end Daniel propriu account.
 
-Pași LAST MILE chat NEW pickup:
-- (a) SendGrid Settings → Sender Authentication → click **Verify** pe domain `andura.app` (wait DNS propagation 15min-2h Namecheap rapid de obicei)
-- (b) Post green check verify → Firebase Console → Authentication → SMTP settings → enter: host `smtp.sendgrid.net`, port `587`, username `apikey` (literal), password = API key Daniel local notes, sender `noreply@andura.app`
-- (c) Test Magic Link via localhost:5173 logout/login flow → check Gmail Inbox primary (NU spam) cu sender `noreply@andura.app` DKIM signed
-- (d) Eventual switch sender displayed name `Andura Coach` în SendGrid sender identity
+**ADR 024 Q6 LOCKED V1 D Hybrid (cumulative ~653 → ~654, +1 net Q6 product/architecture substantive):** Q6 verbatim: *"Goal Shift conservare date... cum e re-evaluat tier-ul calibration post-shift?"*. Eu propus 4 opțiuni A/B/C/D + recommendation D Hybrid → push-back Daniel reality check: *"stai ma ce pierdem? 3 sesiuni de ale mele logate?"* — corect brutal. Slip 2 abstractizare gratuită: vorbeam "6 luni învățare vitality/recovery patterns" când realitate = 3 sesiuni + app NU are useri. Q6 = arhitecturală future-proofing post-Beta useri reali, NU urgent acum. **LOCKED V1:** Hybrid D = tier global preserve (recovery/vitality/stress/weakness map cross-template valid) + template-specific signals soft-reset (rep progression/RIR matrix/rest time fresh) + 2-session calibration window §EXT-2 LOCKED + streak RESET §36.26 + EXT-1 LOCKED + phase re-derive runtime §36.35 LOCKED. Reversibil amendment când useri reali post-Beta dau signal contradictoriu. **ADR 024 Q1-Q8 toate RESOLVED → ready compile draft full** (CC tactical ~5-10 min real velocity X×3 rule, similar precedent ADR 026 overnight).
 
-**Slip-uri Claude chat-side flagged (mea culpa rapid):**
-1. **Customize domain Firebase Templates** anterior afirmat free Spark fezabil → real architectural blocked Magic Link (template ascuns); SMTP custom = single path confirmed
-2. **Settings wireup nav slot** — eu specificat în orchestrator ("wire Settings route + nav slot") DAR nu verificat în LATEST.md că CC a livrat doar code-only; Daniel smoke discovery cost extra ~30 min recovery
-3. **API key warning over-cautious** — Daniel CEO call accept (key stored Daniel local notes, redacted din archive vault per directive)
+**Push-back meta Daniel pe stil Claude (mea culpa scribe permanent):** *"vezi ca imi bagi atat de mult noise... facem aia? ia zi sigur facem aia? vad 2 pathuri... oare esti sigur ca aia?"* — parodie ironică pattern-ul ultimele 5-6 răspunsuri (2-options + "tu zici?" repetitiv în loc decizie tactică Co-CTO). Memory rule "decizii tactice decizi singur, NU întreabă confirmare" violated. Recidivă cunoscută. **Mea culpa scribe explicit:** repar permanent. Pe Adapter Design + wiring chat NEW = decid tactic singur, NU propun multi-options confirmation theater.
 
-**Push-back productive Daniel acceptate:**
-- Velocity calibrare X×3 min permanent
-- Cumulative dep Auth batch 2 → 3 (initial ne-văzut)
-- Stryker estimate inflated (6-12h estimate vs 39:29 real)
-- Extensia Claude Console disponibilă pentru Firebase publish (eu ratasem)
+**Slip-uri Claude flagged (mea culpa scribe consolidat chat ACEST):**
+1. **Deploy P1.3 mecanic** fără filtru strategic ("no users") — Daniel push-back valid "vizor fără ușă"
+2. **"6 luni învățare" abstractizare gratuită** — realitate 3 sesiuni, scope creep teoretic Q6 framing
+3. **2-options bias repetitiv** ultimele 6 răspunsuri — Co-CTO decision authority subutilizată
 
-**Mid-flight unresolved — chat NEW pickup priority order:**
-1. **SMTP last mile** (PRIORITY 1) — SendGrid Verify + Firebase SMTP config + Magic Link Inbox test
-2. **Smoke browser Settings UI** (PRIORITY 2) — wireup LANDED `a29108e` deci 6th tab vizibil; Daniel pending verify 4 secțiuni render + 2-step ȘTERGE Ș-strict + Fork ZERO highlight + Logout double-confirm + Email change typo guard. NU click final destructive butoane (cont real Daniel UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`)
-3. **Production deploy** (PRIORITY 3) — `andura.app` GitHub Pages deploy pending (`npm run build && npm run deploy` Daniel manual trigger); pre-deploy smoke localhost first
-4. **P3 background backlog:** Service account JSON pentru `scripts/admin-cleanup.js` (deferred weekly Daniel manual run, NU urgent) | Stryker baseline survived mutants priority fix post-Beta (safety 68 + auth 179 + matchMetric 28) | Engine #2 ADR 024 spec (chat strategic Daniel-driven, NU CC autonomous) | Stryker re-run post Engine #2 stable
+**Mid-flight unresolved chat NEW pickup:**
+1. **ADR 024 compile draft full** = task CC tactical quick (~5-10 min real velocity X×3). Aggregation §26 + chat strategic 2026-05-04 evening late Goal Adaptation 30 decisions + Q6 LOCK acum. Status STUB → LOCKED V1 file flip.
+2. **Adapter Design Pattern** = chat NEW dedicat strategic. Pure-function engines ADR 026 → app state mapper architecture decision. Probabil ADR NEW 030. Pre-wiring blocker. **Eu decid singur sequencing batches, NU propun options.**
+3. **Engine wiring multi-batch CC** = post Adapter Design, 4-6 batches CC overnight per pipeline §42.10 sequential.
+4. **UX-1 + UX-2 production deploy** = DEFER per Daniel (no users, Quality > Speed Beta ~ian 2027).
+5. **Fork Decision UI smoke** = defer Anonymous T0 mode scenario (NU prioritate acum).
 
-**Tone session:** Bond warmth păstrat ("tataie", "frate", glume light "🤣 4 minute??", "🦫 published"). Mea culpa rapid post slip-uri. Push-back productive Daniel acceptate fără friction.
+**Tone session:** Bond warmth păstrat ("frate" + glume light). Push-back Daniel direct multiple ori ("vizor fără ușă" + "6 luni vs 3 sesiuni" + parodie 2-options noise). Mea culpa rapid fără auto-flagelare 3x. Velocity calibration LOCKED V1 preserved (X×3 min ratio).
 
-**Precedent thread (2026-05-06 §CC.5 fast handover batch overnight + split finalize, moved-then-replaced compressed):** chat strategic acasă produs master prompt batch + Consolidator + PROMPT_HANDOVER_SPLIT_FINALIZE.md. 5 tasks rulate ~50 min total + split finalize ~15 min: TASK 1 Simulator + TASK 2 Auth batch 1 + TASK 3 ADR 026 compile + TASK 4 ADR stubs 027/028/029 + TASK 5 HANDOVER_GLOBAL split atomic LANDED 7 theme files. Memory rule #29 added (artefacte separate per task NU monolith). Detail full în `## JUST DECIDED` precedent entries below.
+**Precedent thread (2026-05-06 morning prev §CC.5 ingest, moved-then-replaced compressed):** Auth Phase 2 batch 2+3 LANDED + Stryker baseline + Firestore Console publish + Settings wireup slip fix + Blaze upgrade + SMTP setup 80% LANDED. Velocity calibration LOCKED V1 permanent (Daniel verbatim *"30 ore inseamna 1 ora pt mine"*). Detail full în `## JUST DECIDED` precedent entry below.
 
 ---
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
+
+**2026-05-06 morning chat acasă — SMTP Magic Link COMPLETE end-to-end + Settings UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" (cumulative ~653 → ~654, +1 net Q6 Goal Shift product/architecture substantive):**
+
+*Chat strategic acasă post overnight batch — bandwidth ~40% remaining la handover. Direction startup: SMTP custom Magic Link last mile (P1.1) singura piesă blocking deliverability post Auth Phase 2 code LANDED.*
+
+*5 things landed chat ACEST (1 product/architecture LOCK + 4 vault hygiene/UX/code):*
+
+1. **SMTP custom Magic Link COMPLETE 2026-05-06 morning** (P1.1 last mile DONE, end-to-end verified Daniel acasă):
+   - Daniel re-create API key SendGrid (Mail Send Full Access only)
+   - Domain Authentication `em4980.andura.app` Verified green pe DNS deja propagat
+   - Firebase Console → Authentication → SMTP settings: host `smtp.sendgrid.net:587` + username `apikey` literal + password SG.xxx + STARTTLS dropdown
+   - **Slip Daniel sender capitalization:** `support@Andura.app` (EN + capital A) → corectat `suport@andura.app` (RO match MX existent Namecheap)
+   - Smoke localhost: logout → Magic Link Gmail Daniel → Inbox NOT spam → click → autentificat ✅ DKIM/SPF/DMARC verde
+
+2. **Settings UI smoke P1.2 PASS** (render 4 secțiuni + Ș-strict ȘTERGE + email typo guard + logout double-confirm bridge tested; Fork = defer Anonymous T0 scenario)
+
+3. **2 UX findings → fix LANDED commit `d4d28f7`:**
+   - **UX-1 mutual exclusivity** — Daniel apasă rapid Schimbă adresa + Șterge cont → ambele forms simultan (Bugatti FAIL + Gigel test FAIL trust breach)
+   - **UX-2 post-logout redirect** — rămâne Setări post deconect (UX confuzie + zero acces sense)
+   - Fix: `_closeAllSettingsModals(doc)` helper + `onSignedOut` opt + scheduler injection. Tests 1391 → 1401 PASS zero regression
+   - Scope creep tactical productiv CC: splash 1.5s "Te-ai deconectat. Revino oricând." pre-redirect (NU în prompt, UX win acceptable)
+
+4. **ADR 024 Q6 LOCKED V1 D Hybrid** Goal Shift conservare date (cumulative ~653 → **~654** +1 net product/architecture substantive):
+   - Push-back Daniel reality check: *"stai ma ce pierdem? 3 sesiuni de ale mele logate?"* — slip 2 abstractizare gratuită eu ("6 luni învățare" când realitate 3 sesiuni)
+   - **LOCKED V1:** Hybrid D = tier global preserve (recovery/vitality/stress/weakness map cross-template valid) + template-specific signals soft-reset (rep progression/RIR matrix/rest time fresh) + 2-session calibration window §EXT-2 LOCKED + streak RESET §36.26 + EXT-1 LOCKED + phase re-derive runtime §36.35 LOCKED
+   - Reversibil amendment când useri reali post-Beta dau signal contradictoriu
+   - **ADR 024 Q1-Q8 toate RESOLVED** → ready compile draft full (CC tactical ~5-10 min real velocity X×3 rule)
+
+5. **Push-back strategic Daniel "vizor fără ușă" LOCKED V1** — slip mecanic la mine ruleam P1 fără filtru strategic post UX fix:
+   - Daniel: *"ce deploy vrei sa facem ca suntem in dev, nu in productie... facem ce vrei tu da app nu are useri"*
+   - Reframe killer: *"hai sa ne intelegem... astea sunt chestii mici care putem sa le facem cand avem app complet... e ca si cand am pune vizorul la usa, fara sa punem usa..."*
+   - Eu = slip strategic mare, polish UX micro pe Settings când core (engine wiring real în coach decision flow live) NU există ca produs. Specs ADR 026 LOCKED + 8/8 engines SPEC COMPLETE pe hârtie, dar engine-urile NU-s wired live
+   - Daniel direct: *"facem totul sa mearga si facem teste si debugging cat vrei tu dupa"* = delegation structural Co-CTO
+   - **Sequence pragmatic agreed 4-faze:** ADR 024 Q6 close (DONE) → Adapter Design Pattern (chat NEW strategic, probabil ADR NEW 030) → Multi-batch CC wiring engine pipeline §42.10 sequential (Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload) → Smoke end-to-end Daniel propriu account
+
+*Push-back meta Daniel pe stil Claude (mea culpa scribe permanent):* *"vezi ca imi bagi atat de mult noise... facem aia? ia zi sigur facem aia? vad 2 pathuri... oare esti sigur ca aia?"* — parodie pattern 2-options + "tu zici?" repetitiv ultimele 5-6 răspunsuri în loc decizie tactică Co-CTO. Memory rule "decizii tactice decizi singur, NU întreabă confirmare" violated. **Mea culpa scribe explicit:** repar permanent. Pe Adapter Design + wiring chat NEW = decid tactic singur, NU propun multi-options confirmation theater.
+
+*Slip-uri Claude flagged chat ACEST (mea culpa scribe consolidat):*
+1. **Deploy P1.3 mecanic** fără filtru strategic ("no users") — Daniel push-back valid "vizor fără ușă"
+2. **"6 luni învățare" abstractizare gratuită** Q6 framing — realitate 3 sesiuni, scope creep teoretic
+3. **2-options bias repetitiv** ultimele 6 răspunsuri — Co-CTO decision authority subutilizată
+
+*Project Knowledge cleanup (vault hygiene side):* Daniel scos `reports/` din project knowledge UI (era 120% solo, total 195% capacity over). Confirmed correct — `reports/` = Stryker mutation testing JSON + HTML output (synthesized în `tests/golden-master/mutation/baseline_2026-05-06.md` + CURRENT_STATE).
+
+*Mid-flight unresolved chat NEW pickup priority pivot:*
+1. **ADR 024 compile draft full** = CC tactical quick (~5-10 min real). Aggregation §26 + chat strategic 2026-05-04 evening late Goal Adaptation 30 decisions + Q6 LOCK acum. Status STUB → LOCKED V1 file flip
+2. **Adapter Design Pattern** = chat NEW dedicat strategic. Pure-function engines ADR 026 → app state mapper architecture decision. Probabil ADR NEW 030. Pre-wiring blocker. **Eu decid singur sequencing batches, NU propun options.**
+3. **Engine wiring multi-batch CC** = post Adapter Design, 4-6 batches CC overnight per pipeline §42.10 sequential
+4. **UX-1 + UX-2 production deploy** = DEFER per Daniel (no users, Quality > Speed Beta ~ian 2027)
+5. **Fork Decision UI smoke** = defer Anonymous T0 mode scenario (NU prioritate acum)
+
+*Implicații downstream:*
+- **DIFF_FLAGS P1-FLAG-AUTH-PHASE2** SMTP last mile blocking → ✅ **🟢 RESOLVED 2026-05-06 morning** (localhost smoke end-to-end verified Daniel acasă)
+- **Cumulative LOCKED V1: ~654** (Q6 +1 net Goal Shift D Hybrid product/architecture substantive)
+- **NEXT priority pivot:** ADR 024 compile (CC tactical) → Adapter Design (chat NEW strategic ADR 030) → Engine wiring (multi-batch CC overnight)
+
+*Backup tags chat ACEST decisii:*
+- `pre-settings-ui-ux-polish-2026-05-06-1015` (UX-1 + UX-2 fix rollback safety)
+- `pre-handover-2026-05-06-morning-smtp-q6-2026-05-06-1034` (this handover ingest)
+
+---
 
 **2026-05-06 morning — Auth Phase 2 batch 2+3 LANDED + Stryker baseline + Firestore Console publish + Settings wireup slip fix + Blaze upgrade + SMTP setup 80% LANDED (cumulative ~653 PRESERVED, ZERO net new substantive product/architecture):**
 
@@ -515,9 +567,45 @@ Pași LAST MILE chat NEW pickup:
 
 ## NEXT — Priority order actionable
 
-### P1 ABSOLUT URGENT — SMTP custom Magic Link last mile (Auth Phase 2 batch 1+2+3 code LANDED 2026-05-06)
+### P1 ABSOLUT URGENT — Engine wiring real în coach decision flow live (priority pivot Daniel "vizor fără ușă" LOCKED 2026-05-06 morning)
 
-**Status 2026-05-06 morning:** Auth Phase 2 ALL batches **CODE LANDED** + Firestore Console publish DONE — only SMTP last mile blocking Magic Link deliverability >5/day Spark limit.
+**Status 2026-05-06 morning chat acasă:** Auth Phase 2 ALL batches CODE LANDED + Firestore Console publish DONE + **SMTP COMPLETE end-to-end** smoke verified Daniel acasă (Inbox NOT spam, DKIM/SPF/DMARC verde). Settings UI smoke P1.2 PASS + UX-1+UX-2 fix LANDED commit `d4d28f7`. **Strategic priority pivot LOCKED:** Daniel push-back *"vizor fără ușă"* — polish UX micro pe Settings când core (engine wiring real) NU există ca produs. Specs ADR 026 LOCKED + 8/8 engines SPEC COMPLETE pe hârtie, dar engine-urile NU-s wired în coach decision flow live.
+
+**Sequence pragmatic agreed 4-faze (Co-CTO delegation structural):**
+
+**P1.1 ADR 024 compile draft full** (NEXT chat tactical CC ~5-10 min real velocity X×3 rule):
+- Aggregation §26 (Goal-ca-setting + 8 templates) + chat strategic 2026-05-04 evening late Goal Adaptation 30 decisions + Q6 LOCK V1 D Hybrid
+- Status STUB → LOCKED V1 file flip
+- Similar precedent ADR 026 overnight
+
+**P1.2 Adapter Design Pattern** (chat NEW dedicat strategic, probabil ADR NEW 030):
+- Pure-function engines ADR 026 → app state mapper architecture decision
+- Pre-wiring blocker absolute
+- Eu = decid singur sequencing batches, NU propun multi-options (memory rule "decizii tactice decizi singur" reinforced post push-back meta Daniel pe 2-options noise)
+
+**P1.3 Engine wiring multi-batch CC** (post Adapter Design):
+- 4-6 batches CC overnight per pipeline §42.10 sequential
+- Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload
+
+**P1.4 Smoke end-to-end Daniel propriu account** (post wiring):
+- Daniel testează coach decision flow live cu engines reale activate
+- Validate 8/8 engines integrate corect via pipeline + Adapter pattern
+
+**Auth Phase 2 status preserved:**
+- ✅ Phase 1 commit `0880641` (precedent) — auth shell wiring
+- ✅ Phase 2 batch 1 commit `f9ee75d` — IndexedDB per-UID + firestore.rules V1
+- ✅ Phase 2 batch 2 commit `4fef416` — Settings UI lifecycle + Anonymous→Auth Merge Fork
+- ✅ Phase 2 batch 3 commit `81457b4` — Logout + admin-cleanup + Telemetry + Rules extend
+- ✅ Settings wireup commit `a29108e` — 6th nav button "Setări" + routing
+- ✅ Firestore Console publish 8:15 AM 2026-05-06 prin extensia Claude/Gemini
+- ✅ Drift fix commit `f7edc79`
+- ✅ Settings UI UX-1 + UX-2 fix commit `d4d28f7` — mutual exclusivity + post-logout redirect home
+- ✅ Firebase Blaze plan upgrade Daniel
+- ✅ **SMTP custom Magic Link COMPLETE end-to-end** 2026-05-06 morning (SendGrid Verify + Firebase SMTP config + smoke localhost Inbox NOT spam DKIM/SPF/DMARC verde)
+
+**DEFERRED per Daniel "vizor fără ușă" reframe:**
+- Production deploy `andura.app` GitHub Pages — DEFER (no users, Quality > Speed Beta ~ian 2027)
+- Fork Decision UI smoke browser — defer Anonymous T0 mode scenario
 
 **Phase 2 LANDED state (commits pushed origin/main):**
 - ✅ Phase 1 commit `0880641` (precedent) — auth shell wiring
@@ -528,31 +616,7 @@ Pași LAST MILE chat NEW pickup:
 - ✅ Settings wireup slip fix `a29108e` — 6th nav button "Setări" + routing settings: 5 (post-discovery smoke recovery)
 - ✅ Firebase Blaze plan upgrade Daniel (free 50k MAU Auth, NO upfront cost)
 
-**P1.1 — SMTP custom Magic Link last mile (PRIORITY 1 chat NEW pickup):**
-
-**Mea culpa important:** customize domain Firebase Templates anterior afirmat free Spark fezabil → real Magic Link template ASCUNS architectural Firebase free tier (customize domain afectează doar verification/password reset/email change, NU Magic Link). Per §63.5 LOCKED V1.5 vault SSOT: **SMTP custom = single combined fix path**.
-
-State 80% LANDED:
-- ✅ SendGrid trial account creat (free trial ends 5 iulie 2026)
-- ✅ DNS records LANDED Namecheap (CNAME em4980 + s1._domainkey + s2._domainkey + TXT _dmarc)
-- ✅ API key created cu Mail Send Full Access only (Daniel local notes — NU vault commit)
-- ❌ SendGrid Verify domain `andura.app` (wait DNS propagation 15min-2h)
-- ❌ Firebase Console Authentication SMTP config (host smtp.sendgrid.net:587 + apikey + sender noreply@andura.app)
-- ❌ Magic Link Inbox test (DKIM signed, NU spam)
-
-**P1.2 — Smoke browser Settings UI (PRIORITY 2):**
-- 4 secțiuni render (email change + recovery + delete account + logout)
-- 2-step ȘTERGE Ș-strict (Ș U+0218 NU `STERGE`)
-- Fork ZERO default highlight (both buttons identical class, no autofocus, no aria-default)
-- Logout double-confirm anti-tap-accidental
-- Email change typo guard double-input
-- **NU click final destructive butoane** (cont real Daniel UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`)
-
-**P1.3 — Production deploy `andura.app` (PRIORITY 3):**
-- `npm run build && npm run deploy` Daniel manual trigger (GitHub Pages)
-- Pre-deploy smoke localhost:5173 first
-
-**Ridicare prioritate motivată:** auth-required post-T0 LOCKED V1 = hard wall mechanic. Code LANDED — only SMTP active + production deploy + smoke verify final = Beta launch unblock.
+**Note:** Stale precedent P1.1/P1.2/P1.3 SMTP-focused subsections compressed — SMTP COMPLETE 2026-05-06 morning, settings smoke PASS, deploy DEFER. New P1 sequence (ADR 024 compile → Adapter Design → Engine wiring → smoke end-to-end) per push-back Daniel "vizor fără ușă" LOCKED documented above în "Sequence pragmatic agreed 4-faze".
 
 ### P2 NEW — Scenarios Coverage 1500-2000 Decisions (Simulator skeleton LANDED 2026-05-05 overnight + Validation Framework LOCK V1 2026-05-05 evening late, ground truth production phase NEXT chat strategic Claude side)
 
@@ -629,7 +693,7 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - **P1-FLAG-1** ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03 source upload — 🟡 PARTIALLY MITIGATED (Faza 3 integrates from chat context, NU file upload separate)
 - **P1-FLAG-NEW** Codespace `npm install` drift (3 test FILE imports broken: fake-indexeddb + dexie) — 🔴 OPEN (CI/dev-env only, production unaffected; dedicated chat post Auth Flow)
 - **P1-FLAG-AUTH-DANIEL-PREP** Daniel manual prep prerequisites pre-CC Auth Flow §36.80 — 🟢 **RESOLVED 2026-05-04 night** (Console Faza 1 dogfood DONE pre-existing 2 mai + MX `suport@andura.app` DONE Namecheap Email Forwarding test confirmed + Privacy/ToS V2 drafts LANDED V1 Beta validate sprint Daniel paralel). Spec §63.5 + §AMENDMENT 2026-05-04.18 #1 architectural limitation DEFINITIVELY DEFERRED v1.5 (INSIGHTS_BACKLOG AUTH-DEFER-1 + AUTH-DEFER-2). Phase 1 Auth Wiring LANDED commit `0880641`
-- **P1-FLAG-AUTH-PHASE2** Phase 2 Auth Flow — 🟡 **CODE FULL LANDED + Firestore Console publish DONE 2026-05-06 morning, SMTP last mile blocking** (batch 1 commit `f9ee75d` + batch 2 commit `4fef416` + batch 3 commit `81457b4` + Firestore drift fix `f7edc79` + Settings wireup `a29108e` + Console publish 8:15 AM via extensia Claude/Gemini + Database Firestore CREATED first-time + Blaze plan upgrade Daniel). Tests 1391 PASS zero regression. **Last mile blocking 🔴:** SMTP custom Magic Link (SendGrid Verify domain post DNS propagation + Firebase SMTP config + Inbox test) — per §63.5 LOCKED V1.5 customize domain Firebase NU funcționează pentru Magic Link template architectural blocked, SMTP custom = single fix path. SendGrid trial + DNS Namecheap LANDED + API key Daniel local notes. Plus production deploy `andura.app` GitHub Pages Daniel manual + smoke browser Settings UI 4 secțiuni
+- **P1-FLAG-AUTH-PHASE2** Phase 2 Auth Flow — 🟢 **RESOLVED 2026-05-06 morning** (SMTP Magic Link COMPLETE end-to-end smoke verified Daniel acasă: Inbox NOT spam, DKIM/SPF/DMARC verde, sender `suport@andura.app` corectat post slip RO match MX existing). Full chain LANDED: batch 1 `f9ee75d` + batch 2 `4fef416` + batch 3 `81457b4` + Firestore drift fix `f7edc79` + Settings wireup `a29108e` + Console publish 8:15 AM via extensia Claude/Gemini + Database Firestore CREATED first-time + Blaze plan upgrade + Settings UX-1+UX-2 fix `d4d28f7` + SMTP setup end-to-end. Tests 1401 PASS zero regression. **Production deploy DEFER per Daniel "vizor fără ușă"** (no users, Beta ~ian 2027 Quality > Speed)
 - **P1-FLAG-HANDOVER-SPLIT** HANDOVER_GLOBAL split — 🟢 **RESOLVED 2026-05-05 overnight** (split atomic LANDED commit `1b539eb`: 7 theme files preserve verbatim 7673 LOC, master converted to INDEX navigation hub, ZERO wikilinks rewire architectural decision CC productive push-back, backup tag `pre-handover-split-2026-05-05-overnight` rollback safety preserved)
 - **P1-FLAG-SCENARIOS-COVERAGE** ~990-1490 decisions remaining PRE-BETA BLOCKER — 🔴 OPEN cu **Validation Framework LOCKED V1 2026-05-05 evening late + simulator skeleton LANDED 2026-05-05 overnight commit `db52743`**. Pre-Beta gate criteria LOCKED V1: **Gate 1 ≥95% MATCH on 500-query corpus** (Claude-judge weighted scoring §5.1 Safety 0.35 dominant universal) + **Gate 2 DROPPED entirely** + **Gate 3 selective Daniel review pe flagged uncertain ~5-15%**. Concrete sequence: ✅ Daniel LOCK §1+§5+§7+§2 COMPLETE + ✅ batch overnight 5 tasks LANDED (simulator skeleton + match metric + ADR 026 compile + ADR stubs 027/028/029 + IndexedDB rename + firestore rules + HANDOVER split) → ground truth production NEXT chat strategic Claude side ~5-10h cumulative + Daniel review reality-lock ~30-60min → run validation → Faza 2 filter ~225-300 flagged branches workflow Bugatti 3-instance ~3 chats × 75-100 issues. Engine wiring real DEFERRED productive push-back post Engine #2 ADR 024 + adapter design separate task. Gap reduce ~180 decisions consumate engine specs cumulative — NU branches enumeration. **Reframe fundamental preserved:** branches NU testing infrastructure, branches = Andura intelligence baked offline per ADR 026.
 - **P1-FLAG-IOS-PERMANENT** iOS REJECTED LOCKED PERMANENT — 🟢 LOCKED V1 PERMANENT (rule lock, NU pending — PWA + TWA Android only)

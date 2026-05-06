@@ -1,5 +1,71 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 morning chat acasă — SMTP COMPLETE + Settings UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" LOCKED (cumulative ~653 → ~654, +1 net Q6 Goal Shift product/architecture substantive)
+
+**Status:** §CC.5 fast handover ingest 2026-05-06 morning chat acasă (post overnight batch 2026-05-06 morning prev). Bandwidth ~40% remaining la handover. Direction startup: SMTP custom Magic Link last mile (P1.1) singura piesă blocking deliverability post Auth Phase 2 code LANDED.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-06 morning acasă — SMTP setup end-to-end + Settings UI smoke + UX fix CC tactical + Q6 Goal Shift LOCK V1 + push-back strategic "vizor fără ușă" sequence pivot.
+
+**5 things landed chat ACEST (1 product/architecture LOCK + 4 vault hygiene/UX/code):**
+
+1. **SMTP custom Magic Link COMPLETE 2026-05-06 morning** — P1.1 last mile DONE end-to-end:
+   - Daniel re-create API key SendGrid (Mail Send Full Access only)
+   - Domain Authentication `em4980.andura.app` Verified green pe DNS propagat
+   - Firebase Console → Authentication → SMTP settings: host `smtp.sendgrid.net:587` + username `apikey` literal + password SG.xxx + STARTTLS dropdown
+   - **Slip Daniel sender capitalization:** `support@Andura.app` → corectat `suport@andura.app` (RO match MX Namecheap)
+   - Smoke localhost: logout existing → Magic Link Gmail Daniel → Inbox NOT spam → click → autentificat ✅ DKIM/SPF/DMARC verde
+
+2. **Settings UI smoke P1.2 PASS** — render 4 secțiuni + Ș-strict ȘTERGE + email typo guard + logout double-confirm bridge tested ✅. **Fork Decision UI = defer Anonymous T0 mode scenario** (NU prioritate acum)
+
+3. **2 UX findings → fix LANDED commit `d4d28f7`** — UX-1 mutual exclusivity (`_closeAllSettingsModals(doc)` helper + wrap toate 4 button handlers) + UX-2 post-logout redirect home (`onSignedOut` opt + scheduler injection + splash 1.5s "Te-ai deconectat. Revino oricând." pre-redirect, scope creep tactical productiv CC). Tests 1391 → 1401 PASS zero regression. Build clean.
+
+4. **ADR 024 Q6 LOCKED V1 D Hybrid** Goal Shift conservare date — **NEW substantive product/architecture decision (~653 → ~654, +1 net):**
+   - Q6 verbatim: *"Goal Shift conservare date... cum e re-evaluat tier-ul calibration post-shift?"*
+   - Push-back Daniel reality check: *"stai ma ce pierdem? 3 sesiuni de ale mele logate?"* — slip 2 abstractizare gratuită eu ("6 luni învățare" când realitate 3 sesiuni)
+   - **LOCKED V1:** Hybrid D = tier global preserve (recovery/vitality/stress/weakness map cross-template valid) + template-specific signals soft-reset (rep progression/RIR matrix/rest time fresh) + 2-session calibration window §EXT-2 LOCKED + streak RESET §36.26 + EXT-1 LOCKED + phase re-derive runtime §36.35 LOCKED
+   - Reversibil amendment când useri reali post-Beta dau signal contradictoriu
+   - **ADR 024 Q1-Q8 toate RESOLVED → ready compile draft full** (CC tactical ~5-10 min real velocity X×3 rule)
+   - Cross-refs: [[ADR_OUTLIER_FILTER_v1]] §EXT-2 Goal Shift Calibration Interval + [[009-calibration-tiers]] Convergence Guard T2 Unlock + [[026-offline-coaching-decision-tree-exhaustive]] Pipeline §42.10
+
+5. **Push-back strategic Daniel "vizor fără ușă" LOCKED V1** — slip mecanic eu ruleam P1 fără filtru strategic post UX fix:
+   - Daniel: *"ce deploy vrei sa facem ca suntem in dev, nu in productie... facem ce vrei tu da app nu are useri"*
+   - Reframe killer: *"hai sa ne intelegem... astea sunt chestii mici care putem sa le facem cand avem app complet... e ca si cand am pune vizorul la usa, fara sa punem usa..."*
+   - Eu = slip strategic mare, polish UX micro pe Settings când core (engine wiring real în coach decision flow live) NU există ca produs. Specs ADR 026 LOCKED + 8/8 engines SPEC COMPLETE pe hârtie, dar engine-urile NU-s wired live
+   - Daniel direct: *"facem totul sa mearga si facem teste si debugging cat vrei tu dupa"* = delegation structural Co-CTO
+   - **Sequence pragmatic agreed 4-faze:** ADR 024 Q6 close (DONE) → Adapter Design Pattern (chat NEW strategic, probabil ADR NEW 030) → Multi-batch CC wiring engine pipeline §42.10 sequential (Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload) → Smoke end-to-end Daniel propriu account
+
+**Push-back meta Daniel pe stil Claude (mea culpa scribe permanent):** *"vezi ca imi bagi atat de mult noise... facem aia? ia zi sigur facem aia? vad 2 pathuri... oare esti sigur ca aia?"* — parodie pattern 2-options + "tu zici?" repetitiv ultimele 5-6 răspunsuri în loc decizie tactică Co-CTO. Memory rule "decizii tactice decizi singur, NU întreabă confirmare" violated. **Mea culpa scribe explicit:** repar permanent. Pe Adapter Design + wiring chat NEW = decid tactic singur, NU propun multi-options confirmation theater.
+
+**Slip-uri Claude flagged chat ACEST (mea culpa scribe consolidat):**
+1. **Deploy P1.3 mecanic** fără filtru strategic ("no users") — Daniel push-back valid "vizor fără ușă"
+2. **"6 luni învățare" abstractizare gratuită** Q6 framing — realitate 3 sesiuni, scope creep teoretic
+3. **2-options bias repetitiv** ultimele 6 răspunsuri — Co-CTO decision authority subutilizată
+
+**Project Knowledge cleanup (vault hygiene side):** Daniel scos `reports/` din project knowledge UI (era 120% solo, 195% capacity over). Confirmed correct — `reports/` = Stryker JSON + HTML output (synthesized în `tests/golden-master/mutation/baseline_2026-05-06.md` + CURRENT_STATE).
+
+**Mid-flight unresolved chat NEW pickup priority pivot:**
+1. **ADR 024 compile draft full** = CC tactical quick (~5-10 min real). Aggregation §26 + chat strategic 2026-05-04 evening late Goal Adaptation 30 decisions + Q6 LOCK acum. Status STUB → LOCKED V1 file flip
+2. **Adapter Design Pattern** = chat NEW dedicat strategic. Pure-function engines ADR 026 → app state mapper architecture decision. Probabil ADR NEW 030. Pre-wiring blocker. **Eu decid singur sequencing batches, NU propun options.**
+3. **Engine wiring multi-batch CC** = post Adapter Design, 4-6 batches CC overnight per pipeline §42.10 sequential
+4. **UX-1 + UX-2 production deploy** = DEFER per Daniel (no users, Quality > Speed Beta ~ian 2027)
+5. **Fork Decision UI smoke** = defer Anonymous T0 mode scenario
+
+**Implicații downstream:**
+- DIFF_FLAGS P1-FLAG-AUTH-PHASE2 SMTP last mile blocking → ✅ **🟢 RESOLVED 2026-05-06 morning** (localhost smoke end-to-end verified Daniel acasă)
+- Cumulative LOCKED V1 product/architecture: **~653 → ~654** (+1 net Q6 Goal Shift D Hybrid)
+- NEXT priority pivot: ADR 024 compile (CC tactical) → Adapter Design (chat NEW strategic ADR 030) → Engine wiring (multi-batch CC overnight)
+
+**Files modified chat ACEST:**
+- `src/pages/settings.js` extended +57 LOC (helper + opts + handlers wrap)
+- `src/pages/__tests__/settings.test.js` extended +169 LOC (10 NEW tests UX-1 + UX-2)
+- ZERO direct vault edits chat strategic — UX fix CC tactical only
+
+**Cross-refs:** [[024-goal-driven-program-templates]] Q6 LOCK V1 + status STUB → ready compile | [[ADR_OUTLIER_FILTER_v1]] §EXT-2 Goal Shift Calibration Interval | [[009-calibration-tiers]] Convergence Guard T2 Unlock | [[026-offline-coaching-decision-tree-exhaustive]] Pipeline §42.10 | DIFF_FLAGS.md P1-FLAG-AUTH-PHASE2 🟢 RESOLVED.
+
+**Backup tags:** `pre-settings-ui-ux-polish-2026-05-06-1015` (UX-1 + UX-2 fix rollback) + `pre-handover-2026-05-06-morning-smtp-q6-2026-05-06-1034` (this handover ingest).
+
+---
+
 ## 2026-05-06 morning — Auth Phase 2 batch 2+3 LANDED + Stryker baseline + Firestore Console publish + Settings wireup slip fix + Blaze upgrade + SMTP setup 80% LANDED (cumulative ~653 PRESERVED, ZERO net new substantive)
 
 **Status:** §CC.5 fast handover ingest 2026-05-06 morning — handover narrative `📥_inbox/HANDOVER_2026-05-06_morning.md` (chat ingestat 2026-05-06 dimineață post overnight batch + Firestore Console publish + Settings wireup + SMTP custom in-flight). 6 commits pushed origin/main + production deployments executed.

@@ -1,63 +1,60 @@
-## Task: Settings UI UX Polish — Findings UX-1 + UX-2
+## Task: §CC.5 fast handover ingest — 2026-05-06 morning chat acasă (SMTP COMPLETE + Settings UX fix + Q6 LOCK + push-back strategic)
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Backup tag: `pre-settings-ui-ux-polish-2026-05-06-1015` ✅ pushed pre-execution
-- Clean tree pre-execution: yes
-- Hooks: normal — full `npm run test:run` PASS
-
-**Pre-flight grep results:**
-- Settings render în `src/pages/settings.js` cu 4 sections (email change + recovery + delete + logout)
-- 4 button click handlers each open modal overlay appended la `doc.body` cu class `.andura-modal-overlay`
-- Modals NU stack-block (overlays just append, no backdrop click trap) → mutual exclusivity nu enforcement implicit
-- `signOut()` import din `../auth.js`; `goTo()` import din `../ui/nav.js` (lazy-import în settings.js per UX-2)
-- Test pattern: vitest jsdom existing în `src/pages/__tests__/settings.test.js`
-
-**Files touched plan:**
-- `src/pages/settings.js` — add helper + wrap handlers + scheduler/onSignedOut opts
-- `src/pages/__tests__/settings.test.js` — extend cu 10 NEW tests (UX-1 mutual exclusivity + UX-2 redirect)
+- Backup tag: `pre-handover-2026-05-06-morning-smtp-q6-2026-05-06-1034` ✅ pushed
+- Clean tree pre-execution: yes (only inbox + stryker-run.log untracked, scope acceptable)
+- Inbox verified: 1 handover file present (`HANDOVER_2026-05-06_morning_smtp_complete_settings_ux_q6_lock.md`)
 
 ### Modificări
 
-**`src/pages/settings.js` (extended +57 LOC, no removals):**
-- NEW exported helper `_closeAllSettingsModals(doc)` — removes all `.andura-modal-overlay` din doc.body. Defensive null/undefined doc handling.
-- NEW const `SPLASH_VISIBLE_MS = 1500` — splash visibility window pre redirect home.
-- NEW `renderSettingsPage` opts: `onSignedOut?: () => void` (default: lazy-import nav.js + `goTo('coach')`), `scheduler?: (fn, ms) => unknown` (default `setTimeout`, test injection).
-- All 4 button handlers (email/recovery/delete/logout) call `_closeAllSettingsModals(doc)` la click start (UX-1).
-- Logout + Delete account flows post-splash render: `scheduler(_onSignedOut, SPLASH_VISIBLE_MS)` (UX-2 redirect home).
-- ZERO removals din existing logic — strict additive (low-risk regression).
+**`00-index/CURRENT_STATE.md` updated:**
+- `Updated:` line — 2026-05-06 morning chat acasă §CC.5 ingest summary cu SMTP COMPLETE end-to-end + Settings smoke P1.2 PASS + UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" sequence pivot 4-faze. Cumulative ~653 → **~654** (+1 net Q6)
+- §NOW move-then-replace — current thread = handover ingest narrative cu 5 things landed (SMTP COMPLETE + Settings smoke + UX-1+UX-2 fix + Q6 LOCK + push-back "vizor fără ușă") + push-back meta Daniel pe stil Claude (2-options noise) + slip-uri 3x + project knowledge cleanup + mid-flight unresolved priority pivot 5-step + tone session. Precedent compressed (overnight batch + SMTP setup 80% prev)
+- §JUST_DECIDED top entry append — "2026-05-06 morning chat acasă — SMTP COMPLETE + Settings UX-1+UX-2 fix + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic 'vizor fără ușă'" cu full detail 5 things + push-back meta Claude + slip-uri + project knowledge + mid-flight unresolved + implicații downstream (DIFF_FLAGS P1-FLAG-AUTH-PHASE2 🟢 RESOLVED + cumulative ~654 + priority pivot ADR 024 compile → Adapter Design → Engine wiring)
+- §NEXT P1 reorder — **MAJOR PIVOT**: din "SMTP last mile P1.1" către **"Engine wiring real în coach decision flow live"** (Daniel "vizor fără ușă" reframe). Sequence pragmatic 4-faze: P1.1 ADR 024 compile draft full (CC tactical ~5-10 min) → P1.2 Adapter Design Pattern (chat NEW strategic, probabil ADR NEW 030) → P1.3 Engine wiring multi-batch CC pipeline §42.10 sequential 4-6 batches → P1.4 Smoke end-to-end Daniel propriu account. Auth Phase 2 LANDED full status preserved + DEFERRED items (production deploy + Fork Decision smoke) per Daniel push-back
+- §ACTIVE_FLAGS sync — P1-FLAG-AUTH-PHASE2 status flip 🟡 → **🟢 RESOLVED 2026-05-06 morning** (SMTP Magic Link COMPLETE end-to-end smoke verified Daniel acasă: Inbox NOT spam, DKIM/SPF/DMARC verde). Production deploy DEFER documented inline.
 
-**`src/pages/__tests__/settings.test.js` (extended +169 LOC, 10 NEW tests):**
-- `describe('UX-1 mutual exclusivity — _closeAllSettingsModals helper')` × 4 tests: removes single overlay, removes all multiple overlays, no-op when none, null doc no-throw
-- `describe('UX-1 mutual exclusivity — Settings buttons close prev modal first')` × 3 tests: email→recovery, email→delete, recovery→logout sequence chains assert single active overlay
-- `describe('UX-2 post-logout redirect home — onSignedOut callback')` × 3 tests: full logout flow scheduler invoke + onSignedOut fire on cb call, delete account flow scheduler invoke + onSignedOut fire, logout cancelled NU invokes scheduler
+**`03-decisions/DECISION_LOG.md` entry top:** "2026-05-06 morning chat acasă — SMTP COMPLETE + Settings UX-1+UX-2 fix LANDED + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic 'vizor fără ușă' LOCKED" — 5 things detail + push-back meta + slip-uri + project knowledge cleanup + mid-flight unresolved + cross-refs + backup tags. Cumulative ~653 → ~654 (+1 net Q6 product/architecture substantive).
+
+**Archive operations:**
+- `📤_outbox/_archive/2026-05/177_HANDOVER_2026-05-06_morning_SMTP_COMPLETE_SETTINGS_UX_Q6_LOCK_CONSUMED.md` (handover audit trail per §CC.5)
+- `📤_outbox/_archive/2026-05/178_LATEST_PREVIOUS_SETTINGS_UX_FIX.md` (cycled previous LATEST.md = UX-1 + UX-2 fix report)
 
 ### Build + Tests
-- `npx vitest run src/pages/__tests__/settings.test.js` → 17 tests / 1 file PASS (~101ms)
-- Full suite: **1391 → 1401 PASS** (+10 NEW), ZERO regression
-- Build clean: vite 5.4.21 build 3.09s, 380 modules, 399.17 kB main bundle (+0.55 kB delta vs pre-fix pentru helper + opts)
+- N/A — vault-only changes (CURRENT_STATE + DECISION_LOG + archive operations); zero src/ touched
 
-### Commits
-- `d4d28f7` feat(settings-ux): UX-1 mutual exclusivity modals + UX-2 post-logout redirect home
+### Commits (1 expected)
+- `<hash>` docs(handover): §CC.5 fast ingest 2026-05-06 morning chat acasă — SMTP COMPLETE end-to-end + Settings UX-1+UX-2 fix + ADR 024 Q6 LOCK V1 D Hybrid + push-back strategic "vizor fără ușă" sequence pivot 4-faze; CURRENT_STATE NOW move-then-replace + JUST_DECIDED top + NEXT P1 reorder MAJOR PIVOT (engine wiring real) + ACTIVE_FLAGS sync (P1-FLAG-AUTH-PHASE2 🟢 RESOLVED); DECISION_LOG entry top; archive handover + cycle previous LATEST; cumulative ~653 → ~654 (+1 net Q6 Goal Shift D Hybrid)
 
 ### Pushed
-- origin/main: yes ✅
+- origin/main: yes (post commit)
 
 ### Issues
-- None blocking. Helper exported underscore-prefixed (`_closeAllSettingsModals`) per JS convention pentru "internal but tested" pattern. Could be made fully internal post-test stabilization (currently exported pentru direct unit test access).
-- Promise leak acknowledgment: when `_closeAllSettingsModals` removes an overlay mid-flight, the Promise from `openModal()` remains unresolved (open-modal pattern relies on internal click → resolve). Acceptable trade-off pentru UX sanity vs Promise leak (microtask GC). Documented în JSDoc helper.
+- None — handover narrative ingested clean per §CC.5 fast workflow.
+- Cumulative LOCKED V1 ~653 → ~654 (+1 net Q6 Goal Shift D Hybrid product/architecture substantive). Q6 = arhitecturală future-proofing post-Beta useri reali, NU urgent acum (Daniel reality check "3 sesiuni" anti-abstractizare gratuită).
+- Memory rule reinforced (mea culpa scribe permanent): "decizii tactice decizi singur, NU 2-options confirmation theater". Repar permanent pe Adapter Design + wiring chat NEW.
 
-### Next action
+### Next action — chat NEW pickup priority pivot
 
-**Daniel manual smoke localhost (post-fix verify):**
-1. Open Settings (6th nav tab "Setări" ⚙️)
-2. Click "Schimbă adresa" → email change form modal apare
-3. Click "Șterge cont definitiv" → **email change modal dispare**, delete confirm modal apare singur (UX-1 verify)
-4. Click "Mi-am pierdut accesul la email" → **delete modal dispare**, recovery modal apare singur
-5. Close recovery modal (Înțeleg) → click "Deconectare" → step 1 (checkbox OFF default), Continuă → step 2, Da deconectează-mă → splash "Te-ai deconectat. Revino oricând." vizibil ~1.5s → **redirect automat Coach home** (UX-2 verify)
-6. NU click final destructive butoane (cont real Daniel UID `2GsDvxqXc4bvQGSm8B1Zft5S05i2`)
+**P1.1 ADR 024 compile draft full (NEXT chat tactical CC ~5-10 min real velocity X×3 rule):**
+- Aggregation §26 (Goal-ca-setting + 8 templates) + chat strategic 2026-05-04 evening late Goal Adaptation 30 decisions + Q6 LOCK V1 D Hybrid acum
+- Status STUB → LOCKED V1 file flip
+- Similar precedent ADR 026 overnight (129 decisions aggregate, ~10 min real)
 
-**Handover entry recommendation (Daniel decide când):** post-smoke verify, append handover entry "Settings UI UX-1 + UX-2 fix LANDED" cu commit hash + Daniel verify confirmation.
+**P1.2 Adapter Design Pattern (chat NEW dedicat strategic, probabil ADR NEW 030):**
+- Pure-function engines ADR 026 → app state mapper architecture decision
+- Pre-wiring blocker absolute
+- **Eu decid singur sequencing batches, NU propun multi-options** (memory rule "decizii tactice decizi singur" reinforced)
 
-**Pre-Beta P1 priority preserved:** SMTP custom Magic Link last mile (SendGrid Verify + Firebase SMTP config + Inbox test) — independent fix UX-1 + UX-2 NU dependent.
+**P1.3 Engine wiring multi-batch CC (post Adapter Design):**
+- 4-6 batches CC overnight per pipeline §42.10 sequential
+- Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload
+
+**P1.4 Smoke end-to-end Daniel propriu account (post wiring):**
+- Daniel testează coach decision flow live cu engines reale activate
+
+**DEFERRED per Daniel "vizor fără ușă":**
+- Production deploy `andura.app` GitHub Pages — DEFER (no users, Quality > Speed Beta ~ian 2027)
+- Fork Decision UI smoke browser — defer Anonymous T0 mode scenario
