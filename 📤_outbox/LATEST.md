@@ -1,65 +1,57 @@
-## Task: Faza 2.5 batch 2 Engine #2 Goal Adaptation V1 implement per ADR 026 §9.2 + ADR 018 §2
+## Task: ADR 026 §9.3 Engine Energy Adjustment Module-Level Spec V1 compile (pre-Faza 2.5 batch 3)
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Backup tag: `pre-faza2.5-goal-adaptation-v1-implement-2026-05-06-1446` ✅ pushed origin
+- Backup tag: `pre-adr026-section9.3-energy-compile-2026-05-06-1506` ✅ pushed origin
 - Clean tree pre-execution: yes
-- Baseline tests: **1658 PASS / 0 FAIL** ✅
-- Grep PATHS verified: ADR 026 §9.2 + ADR 018 §2 + ADR 024 + `src/engine/periodization/` + `src/coach/orchestrator/result.js` toate exist
+- Baseline tests: **1786 PASS / 0 FAIL** ✅
+- Grep SOURCES verified: ADR 026 + ADR 027 stub + `149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` + CURRENT_STATE.md toate exist
+- §9.1 + §9.2 prezent ADR 026 confirmed (anti-collision verify §9.3 NEW append safe)
 - Tooling availability: `test:run` (vitest 3.2.4) + `typecheck` (tsc) ✅; **NO `lint`** (anti-Slip 4 transparent skip)
+- **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged** (`149_HANDOVER` lines 21-32 ≡ `CURRENT_STATE` §RECENT 2026-05-05 birou late lines 534-545 — 11 bullet decisions identical)
 
 ### Modificări
 
-**`src/engine/goalAdaptation/`** NEW directory (8 source modules + 5 test files = 13 files, 2520 LOC):
-
-Source modules:
-- `constants.js` (313 LOC) — 5 templates ID + GOAL_TO_TEMPLATE + 4 PHASES + TDEE_MULTIPLIERS verbatim 0.82/0.75/1.00/1.08/1.15/±2% + DELOAD_KCAL_BONUS 1.03/1.05 + MACRO_BANDS protein 1.6-2.2 g/kg LBM + fat 0.8-1.0 g/kg + RECOMP_THRESHOLDS newbie 12w/detrained 6w/BF% high 25%/32% + TEMPLATE_BASE_MODIFIERS RIR + rep × 5 templates verbatim §9.2.4 + TEMPLATE_REST_SECONDS + MODE_OVERLAY estetica/forta/none multiplicative + PHASE_TRAINING_MODIFIERS + MODE_PHASE_CEILING ±20% Trigger 4 + PUSHBACK_TIERS 3 tiers + PUSHBACK_RISK_THRESHOLDS Tier 3 cap MEV-50% + 75% 1RM + REPROMPT_LIMITS 28d rolling/21d post-confirm/60d post-shift/cap 4/an + SEX enum
-- `types.js` (92 LOC) — JSDoc `GoalAdaptationResult` extends DimensionResult + 6-field `GoalAdaptationBlueprint` (phase / kcal_target_delta_pct / macro_split / rep_range_modifier / rir_target_modifier / rest_time_modifier) + `MacroSplit` + `PushBackSignal` + `RepromptDecision`
-- `templates.js` (103 LOC) — `resolveTemplateId` goal→template + `isNewbieEffect` + `isDetrainedReturn` + `isFatRichProfile` + `detectRecompSubPhase` (eligibil Tonifiere/Slăbire only)
-- `phaseAutoDetection.js` (220 LOC) — `basePhaseForGoal` + `basePhaseForTemplate` + `tdeeMultiplierForPhase` cu CUT/BULK aggressive variants Marius opt-in + newbie+Forță combo + `applyDeloadKcalOverride` + `detectPhase` runtime + `computeLbm` + `computeMacroSplit` cu carb remainder
-- `trainingModifiers.js` (161 LOC) — `resolveModeOverlay` case+diacritic insensitive + `computeRepRangeModifier` + `computeRirTargetModifier` + `computeRestTimeModifier` + `computeModePhaseMultipliers` cu ceiling rule clamp ±20%
-- `pushBackTiers.js` (228 LOC) — `computeRiskScore` 4-factor additive (BF% + age 60+ + injury + forta×age cumulative) + `tierForScore` + `tier3ConservativeModifiers` + `computePushBackSignal` + `evaluateReprompt` 4-cooldown anti-spam logic
-- `crossEngineHooks.js` (119 LOC) — `readIntensityCorridor` + `readVolumeCorridor` Hook 1 read-only + `applyTier3Conservative` cap intensity 75% + volume MEV-50% (anti-cascade preserve frozen Periodization) + `redistributeIntensity` interior corridor
-- `index.js` (200 LOC) — entry `evaluate(ctx) → GoalAdaptationResult` async pure total + ENGINE_ID 'goalAdaptation' + computeConfidence
-
-Tests (~5 files, 1084 LOC, 128 tests):
-- `tests/templates.test.js` (24 tests) — resolveTemplateId 5 templates + isNewbieEffect + isDetrainedReturn + isFatRichProfile sex-specific + detectRecompSubPhase eligibility + multi-trigger
-- `tests/phaseAutoDetection.test.js` (32 tests) — basePhaseForGoal/Template + tdeeMultiplierForPhase verbatim 0.82/0.75/1.08/1.15/1.00 + applyDeloadKcalOverride +3% bonus + detectPhase RECOMP override + computeLbm explicit/fallback + computeMacroSplit bands verbatim
-- `tests/trainingModifiers.test.js` (26 tests) — resolveModeOverlay diacritic + computeRepRangeModifier 5 templates + Mode shifts ±1 + computeRirTargetModifier + computeRestTimeModifier 30s floor + computeModePhaseMultipliers ceiling clamp ±20%
-- `tests/pushBackTiers.test.js` (27 tests) — computeRiskScore 4-factor + Tier mapping 0/1/≥2 + tier3ConservativeModifiers verbatim 0.50/0.75 + computePushBackSignal full + evaluateReprompt 4 cooldowns
-- `tests/index.test.js` (19 tests) — entry contract DimensionResult + 6-field blueprint + total function + deterministic 10-invocation + RECOMP newbie + Tier 3 push-back + DELOAD kcal override + Mode forta rep shift -1 + confidence high
+**`03-decisions/026-offline-coaching-decision-tree-exhaustive.md`** — append §9.3 NEW (+177 LOC, 700 → 877):
+- **§9.3 Engine Energy Adjustment Module-Level Spec V1 header** — Status SPEC READY V1 + provenance chain (Source 1 + Source 2 + Source 3 cross-refs §45.5 Q33 + §45.4 Q21 + §50.4 D1 + Source 4 ADR 018 §2 contract) + cross-refs bidirectional 9 ADR-uri
+- **§9.3.1 Cluster 1 — I/O Contract & Pipeline Placement** (~5 decisions): pure function evaluate(ctx) → EnergyAdjustmentResult + pipeline §42.10 position 3rd canonical (NU 5th legacy ADR 027 naming clarified) + Hook 1 input frozen Periodization read-only + 6-field output blueprint emit + engine purity preserved
+- **§9.3.2 Cluster 2 — Input Strategy & Aggregation** (~6 decisions): manual emoji 🟢🟡🔴 input only V1 (Q1=C + Q4=A + Q5=A defer auto v1.5+) + stress folded holistic + drill-down strict 🔴 only (Q15=C anti-Maria-65-friction) + categorical aggregation rules table auditable (Q3=C) + anti-spam aliniat Engine #2 cross-ref §9.2
+- **§9.3.3 Cluster 3 — Adjustment Dimensions & Bidirectional ±15%** (~5 decisions): selective volume + intensity (Q33 §45.5 reuse) + bidirectional ±15% conservative range (Q6=D) + asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true" 4th condition (anti "Sarcastic UP" Marius 5:1 săpt 4-5) + DOWN single trigger immediate
+- **§9.3.4 Cluster 4 — Invariants & Cross-Engine Hooks** (~6 decisions): MRV invariant 1 immutable (Q8=A) + soft override sub-Floor max 2 consecutive → Engine Deload trigger (Q9 anti-drift) + Bayesian σ variance modifier Engine #3 (Q12=C sophisticated) + tier-aware T0=±10% T1+=±15% (Q13=B) + Yo-yo anti-flap 3-session window V1 only (Q14=D Sprinter/Marathon deferred) + 4 cross-engine hooks summary
+- **§9.3.5 Cluster 5 — Safety/Compliance & Deferred V1.5** (~4 decisions): medical referral copy Gigel test PASS *"Consultă medicul de familie sau un specialist în medicină sportivă"* (Q18=D, generic "specialist" REJECTED) + Bayesian latent state v1.5 evolution (Q20=D ecosystem-wide) + Sprinter/Marathon profile-typing modulators deferred V1 (Q14 path) + Pain-Aware integration cross-ref Convergence Guard "T2 Unlock" Clean Signal rule
+- **§9.3.6 Reconsideration Triggers** — 7 triggers documented (Cluster 2 manual insufficient + Cluster 3 ±15% range drift + Cluster 4 yo-yo false positives + Cluster 4 tier-aware drift + Cluster 5 medical copy clarity + Cluster 4 Bayesian σ formula calibration + Cluster 5 Bayesian v1.5 timing); re-evaluation cadence post-Beta
+- **§9.3.7 Cross-refs Bidirectional ADR** — ADR 018/026/027/022/009/ADR_OUTLIER_FILTER_v1/030 + §9.1 Periodization Hook 1 + §9.2 Goal Adaptation phase gate Q7 + §9.4 Bayesian forward + §9.8 Deload forward
+- **Footer 🦫 marker** — compile timestamp 2026-05-06 afternoon chat-4 acasă + ZERO net new substantive + 26-28 decisions cumulative + Pattern Bugatti SSOT consistent §9.1+§9.2
 
 ### Build + Tests
-- **Tests:** 1658 → **1786 PASS / 0 FAIL** (+128 new tests Goal Adaptation batch 2)
-- **Typecheck:** ✅ clean (`tsc --noEmit`)
-- **Surgical bug fix pre-commit:** 1 test ctx mismatch (test "CUT phase + DELOAD" used `goal: 'hipertrofie'` + empty `recentSessions` → triggered RECOMP sub-phase auto-detection unexpected); fixed by changing test scope to "BULK phase + DELOAD" cu `goal: 'forta'` + recent sessions populated. ZERO src/ engine bugs uncovered.
+- N/A spec compile only — zero src/ touched, ZERO regression possible
+- Pre-commit hook ran `npm run test:run` → **1786 PASS / 0 FAIL** preserved exact
 
 ### Commits (1)
-- `bf9814e` feat(engine): batch 2 Goal Adaptation V1 implement per ADR 026 §9.2 + ADR 018 §2 — Pure-function module 8 source + 5 test files; evaluate(ctx) → GoalAdaptationResult Standardized Contract; 30 decisions Cluster 1-5 verbatim; 6-field blueprint; 5 templates + Mode overlay multiplicative + RECOMP sub-phase auto; TDEE thresholds verbatim; DELOAD kcal +3% override; 3-tier push-back proporțional + Tier 3 caps MEV-50%/75% 1RM; Re-prompt anti-spam (28d/21d/60d/cap 4/an); Cross-engine Hook 1 frozen read-only; 1658 → 1786 PASS / 0 FAIL (+128); typecheck clean; pattern Periodization V1 batch 1 commit `1303b62` honored; cumulative LOCKED V1 ~659 PRESERVED
+- `2f9aa79` docs(adr-026): §9.3 Engine Energy Adjustment Module-Level Spec V1 compile — append §9.3 NEW preserve §1-§8 + §9.1 + §9.2 cross-refs intact; ~26-28 decisions Cluster 1-5 verbatim aggregation from chat strategic 2026-05-05 birou late sources; Source 1 149_HANDOVER + Source 2 CURRENT_STATE parity check ✅ ZERO divergence; pipeline §42.10 position 3rd (NU 5th legacy); §9.3.1-§9.3.7 sub-sections complete; pattern §9.1+§9.2 commits cd6d9a4+6be84f8 honored Bugatti SSOT consistent; cumulative LOCKED V1 ~659 PRESERVED; +177 LOC
 
 ### Pushed
-- origin/main: yes (`a78a6d9..bf9814e main -> main`)
+- origin/main: yes (`d55465a..2f9aa79 main -> main`)
 
 ### Issues
-- **Surgical bug fix transparency:** 1 test ctx mismatch fix pre-commit (test scope adjusted "CUT" → "BULK" + `recentSessions` populated să eviți RECOMP auto-detection trigger pe `tonifiere_definire` template detrained-return path). NU silent skip — explicit transparency. ZERO src/ engine bugs uncovered (engine logic correct: RECOMP sub-phase eligibility funcționează exact per spec §9.2.2 Cluster 2 + §2.5 Q5 LOCKED V1).
-- **Tooling skipped (transparency):** `npm run lint` does NOT exist in package.json (anti-Slip 4 reinforced — verified pre-flight, NU fabricated execute).
-- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (implementation aggregation only verbatim §9.2 spec, ZERO net new substantive decisions).
-- Ceiling rule (Mode + Phase max −20%/+20%) cross-hook precedent §9.2.6 Reconsideration Trigger 4 candidate adoptat V1 conservative pre-emptive (anti-degenerate cumulative reduction Invariant 1 V≤MRV violation).
-- **Pre-flight grep PATHS + tooling availability ✅** anti-Slip 4 + Slip 5 grep recidivă reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored).
+- **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged** — 11 bullet decisions identical entre `149_HANDOVER` lines 21-32 și `CURRENT_STATE` §RECENT 2026-05-05 birou late lines 534-545 (anti-recurrence proof § 9.2 compile precedent honored)
+- **ADR 027 stub flip recommendation** — `03-decisions/027-engine-energy-adjustment.md` 5562 LOC stub legacy now eclipsed by §9.3 SSOT canonical. Recommend separate task post-CC: redirect ADR 027 → §9.3 single source of truth (file flip 🟡 STUB → 🟢 SPEC REFERENCE pattern ADR 024 precedent post §9.2 LOCKED)
+- **Pipeline canonical position 3rd clarified** — legacy "Engine #5" naming în ADR 027 stub = chat strategic spec session ordering, NU pipeline position canonical. §9.3 header + §9.3.1 Cluster 1 explicitly clarify position 3rd per §42.10 LOCKED V1 (anti-batches 4-7 numbering ambiguity downstream CC reports)
+- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (compile aggregation only verbatim §9.2 spec, ZERO net new substantive decisions)
+- **Pre-flight grep SOURCES + tooling availability ✅** anti-Slip 2 §45.x stale RECIDIVĂ + Slip 4 + Slip 5 reinforced (memory rule `feedback_grep_before_prompt_cc.md` honored — §45.x Engine #8 Warm-up architecture only, NU Energy spec source)
 
 ### Next action — chat NEW pickup priority pivot
 
-**P1.2.5 batch 3 Faza 2.5 Engine #3 Energy Adjustment V1 pre-implement compile** (NEXT chat strategic per pipeline §42.10 sequential):
-- Pre-compile §9.3 ADR 026 Engine #3 Energy Module-Level Spec V1 pattern Bugatti SSOT consistent §9.1+§9.2 (compile drafts LANDED commits `cd6d9a4` + `6be84f8`)
-- Source: ADR 027 Engine #5 Energy Adjustment + chat strategic Energy spec materials (consumed archives)
-- Pattern §9.1+§9.2 honored: Cluster 1-5 verbatim + Reconsideration Triggers + Cross-refs ADR 018 §2 + ADR 026 §1.10 Pipeline Order
-- Estimate ~50-83 min real velocity X×3 rule (precedent §9.1+§9.2 compile drafts)
+**P1.2.5 batch 3 Faza 2.5 Engine Energy Adjustment V1 implement** (NEXT chat strategic):
+- Pre-compile §9.3 LANDED single source of truth canonical 26-28 decisions Cluster 1-5 verbatim (commit `2f9aa79`)
+- Pure-function module în `src/engine/energyAdjustment/` per ADR 018 §2 Standardized Contract
+- Pattern Periodization V1 + Goal Adaptation V1 implement (commits `1303b62` + `bf9814e`): ~7 source modules + ~5 test files
+- Estimate ~50-83 min real velocity X×3 rule (per §36.100 Engine Energy precedent + Goal Adaptation V1 batch 2 commit `bf9814e` actual reference)
 
-**Faza 2.5 batches 4-7 sequential per pipeline §42.10** (post §9.3 Energy compile + V1 implement):
+**Faza 2.5 batches 4-7 sequential per pipeline §42.10** (post Energy Adjustment V1 LANDED):
+- Pre-implement compile §9.4-§9.8 ADR 026 pattern Bugatti SSOT consistent §9.1+§9.2+§9.3
 - Engines #4 Bayesian → #5 Deload → #6 Tempo → #7 Specialization → #8 Warm-up
-- Pre-implement compile §9.4-§9.8 ADR 026 pattern Bugatti SSOT consistent
 
-**Faza 3 wiring real Strangler** (post all engines V1 LANDED):
-- featureFlag `<engine>_via_orchestrator` rollout 0% + golden-master parity tests
-- Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED safe commit `5a16550` reusable
+**ADR 027 stub flip task** (post §9.3 LOCKED, low priority post-CC):
+- Redirect `03-decisions/027-engine-energy-adjustment.md` STUB → SPEC REFERENCE → §9.3 single source of truth canonical (pattern ADR 024 precedent)
