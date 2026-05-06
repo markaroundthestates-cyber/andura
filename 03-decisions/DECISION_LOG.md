@@ -1,5 +1,61 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 morning — Auth Phase 2 batch 2+3 LANDED + Stryker baseline + Firestore Console publish + Settings wireup slip fix + Blaze upgrade + SMTP setup 80% LANDED (cumulative ~653 PRESERVED, ZERO net new substantive)
+
+**Status:** §CC.5 fast handover ingest 2026-05-06 morning — handover narrative `📥_inbox/HANDOVER_2026-05-06_morning.md` (chat ingestat 2026-05-06 dimineață post overnight batch + Firestore Console publish + Settings wireup + SMTP custom in-flight). 6 commits pushed origin/main + production deployments executed.
+
+**Authority:** Daniel + CC autonomous chat 2026-05-06 (post overnight batch 2026-05-05 LANDED). Velocity calibration LOCKED V1 permanent — *"30 ore inseamna 1 ora pt mine"* empirical observation 50 chats anterior.
+
+**Velocity calibration LOCKED V1 (memory rule permanent în chat, NU vault):** estimate-uri "X ore" CC autonomous LLM gen = ~X×3 minute real (5-task overnight precedent 34 min, batch ăsta Auth gen ~13 min). Singur loc unde 1:1 se aplică = CPU-bound runs (Stryker 39:29).
+
+**Commits LANDED chat ACEST (6 total):**
+1. `4fef416` feat(auth-phase2-batch2) — §56.5 Settings UI + §56.7 Anonymous→Auth Merge Fork Decision UI (12 files NEW + 4 modal components + 57 tests)
+2. `81457b4` feat(auth-phase2-batch3) — §56.12 Logout double-confirm + §56.14.A admin-cleanup script + §56.15 Telemetry + §56.16 firestore.rules extend (8 files NEW + 36 tests)
+3. `6540f35` feat(mutation): Stryker baseline config + start
+4. `5fa10c6` feat(mutation): Stryker baseline COMPLETE 30.54%/61.42% effective + per-cluster + top survived prioritized
+5. `f7edc79` fix(rules): Firestore drift fix — `**` markdown stripping restored + `{timestamp}` reserved → `{archiveTs}`
+6. `a29108e` feat(auth-phase2-batch2): wire Settings page into nav + routing (slip fix Settings wireup post-discovery smoke)
+
+**Production deployments executed:**
+- **Firestore Rules publish manual Console 8:15 AM 2026-05-06** via extensia Claude/Gemini Firebase Console (Daniel push-back valid: extensia disponibilă pentru publish, eu ratasem)
+- **Database Firestore CREATED first-time** prin extensie (project doar avea RTDB până acum, NU Firestore initialized)
+- **Firebase Blaze plan upgrade Daniel** — unblock Magic Link >5/day Spark limit (free 50k MAU Auth, NO upfront cost)
+- **DNS Namecheap LANDED** SendGrid Sender Authentication: CNAME em4980 + s1._domainkey + s2._domainkey + TXT _dmarc
+
+**Tests + Build:**
+- 1298 baseline → **1391 PASS**, ZERO regression × 6 commits
+- Build clean × 6 commits (vite 5.4.21, ~3-4s, 380→381 modules)
+- Stryker: 23,079 mutants instrumented across 134 source files; 30.54% Stryker / 61.42% effective; per-cluster best `src/components/**` 81.5% ✅ / worst `src/pages/**` 46.3% (UI NoCoverage expected)
+
+**Slip-uri Claude chat-side flagged:**
+1. **Customize domain Firebase Templates** anterior afirmat free Spark fezabil → real Magic Link template ASCUNS architectural Firebase free tier; SMTP custom = single fix path confirmed §63.5 LOCKED V1.5
+2. **Settings wireup nav slot slip** — orchestrator specificat dar nu verificat post-batch că CC livrat doar code-only; Daniel smoke discovery cost extra ~30 min recovery prompt CC dedicat
+3. **API key over-cautious warning** — Daniel CEO call accept (key stored Daniel local notes, redacted din vault archive per directive)
+
+**SMTP custom Magic Link state actual (80% LANDED, last mile chat NEW pickup PRIORITY 1):**
+- ✅ SendGrid trial account creat (ends 5 iulie 2026)
+- ✅ Domain `andura.app` în SendGrid Sender Authentication, DNS LANDED Namecheap
+- ✅ API key created cu Mail Send Full Access only (stored Daniel local notes, NU vault commit per Daniel CEO directive)
+- ❌ SendGrid Verify domain (post DNS propagation 15min-2h)
+- ❌ Firebase Console Authentication SMTP config (host smtp.sendgrid.net:587 + apikey + sender noreply@andura.app)
+- ❌ Magic Link Inbox test DKIM signed
+
+**Push-back productive Daniel acceptate:**
+- Velocity calibrare X×3 min permanent (memory rule LOCKED)
+- Cumulative dep Auth batch 2 → 3 (initial ne-văzut)
+- Stryker estimate inflated (6-12h vs 39:29 real)
+- Extensia Claude Console disponibilă pentru Firebase publish
+
+**Cross-refs:** [[ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-04 + 2026-05-05 + Phase 2 LANDED full | [[../06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening|HANDOVER_AUTH_FLOW]] §56.5 + §56.7 + §56.12 + §56.14.A + §56.15 + §56.16 | DIFF_FLAGS P1-FLAG-AUTH-PHASE2 status flip CODE LANDED + Console publish DONE, SMTP last mile blocking.
+
+**Files modified:** Auth Phase 2 batch 2 (12 NEW + 1 ext) + batch 3 (8 NEW + 4 ext) + Stryker (config + report + JSON + .gitignore) + Firestore drift fix + Settings wireup (3 files: settings.js + nav.js + index.html). Total ~30 files touched across 6 commits.
+
+**Backup tags:** `pre-overnight-batch-2026-05-06-0055` + `post-task-1-auth-phase2-batch2-2026-05-06-0100` + `post-task-2-auth-phase2-batch3-2026-05-06-0108` + `pre-handover-2026-05-06-morning-2026-05-06-0913` (this handover ingest).
+
+**Cumulative LOCKED V1 product/architecture: ~653 preserved** (zero net new substantive — Auth Phase 2 batch 2+3 = code implementation per §56 LOCKED specs, Stryker baseline = audit only, Settings wireup = slip fix, Firestore publish = production deploy; aggregate/architectural/vault hygiene category).
+
+---
+
 ## 2026-05-06 — §CC.5 fast handover ingest: batch overnight + split finalize EXECUTED (cumulative ~653 PRESERVED, ZERO net new substantive)
 
 **Status:** §CC.5 fast handover ingest 2026-05-06 — handover narrative `📥_inbox/HANDOVER_2026-05-05_evening_late_master_batch_split_finalize.md` (chat strategic acasă 2026-05-05 evening late post Validation Framework LOCK V1) ingested. Documentează batch overnight execution 5 tasks + split finalize execution post-batch.
