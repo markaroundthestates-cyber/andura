@@ -1,5 +1,18 @@
 # DECISION LOG — Andura
 
+## 2026-05-07 chat NEW startup — §CC.5 fast handover ingest chat-9 acasă closure mecanic complete
+
+- §CC.5 ingest sursa: `📥_inbox/HANDOVER_2026-05-07_chat9_acasa_closure_mecanic_complete.md` → archive `📤_outbox/_archive/2026-05/211_HANDOVER_..._CONSUMED.md`
+- CURRENT_STATE: Updated header refresh + §NOW move-then-replace (chat-9 ADR cleanup batch → precedent compressed) + new §NOW chat-NEW startup post §CC.5 ingest summary 4 commits chat-9 + NEW info surfaced from handover (Playwright tests + Capacity DEFERRED + autonomy lock + slip + bandwidth productive push-back) + §JUST_DECIDED top entry append
+- §NEXT NEW P-CARRY-FORWARD slots: Playwright tests fix mecanic (3 stale assertions: regression.spec.js:32 SalaFull→Andura + regression.spec.js:54 nav 6 vs 5 + visual.spec.js:20 nav 6 vs 5) + Capacity Opțiunea A DEFERRED scribe mode (deploy ~95%+ saturation OR pre-Faza 3, amendments §ACTIVE_REFS REMOVE/REDIRECT mandatory + pre-flight grep wikilinks orphane preserved în spec)
+- Chat-9 cumulative 4 commits (`dccda1f` ADR cleanup + `6276afd` DIFF_FLAGS + `6e30bfc` cross-refs cleanup + `724636a` §POINTERS+INDEX_MASTER+§NEXT) + LATEST cycle `4a8aa9f`
+- Cumulative ~659 LOCKED V1 PRESERVED unchanged (vault hygiene meta-tooling NU product/architecture additive)
+- Tests baseline 2648 PASS preserved (doc-only ZERO src ZERO regression possible). Playwright 3 failed orthogonal vs vitest src baseline preserved
+- Pattern reinforced **Bugatti = peak craft NU lăsa loose ends când AM bandwidth** + autonomy mode lock chat-9 sustainable lean format
+- **Recommended next:** Daniel decide priority order — Faza 3 STRANGLER strategic dedicated chat OR Playwright tests fix mecanic short scope OR Anti-recurrence consolidation strategic dedicated
+
+---
+
 ## 2026-05-07 chat-9 acasă closure — Vault hygiene minor batch §POINTERS + INDEX_MASTER Stats + §NEXT anti-recurrence carry-forward
 
 - §POINTERS CURRENT_STATE append post-pipeline §42.10 V1 closure milestone pointers (8/8 commits verbatim Periodization `1303b62` → Deload `a6a0c87` + ADR cleanup `dccda1f` + DIFF_FLAGS `6276afd` + cross-refs `6e30bfc`)
