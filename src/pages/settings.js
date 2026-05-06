@@ -131,6 +131,19 @@ export function renderSettingsPage({
   root.appendChild(sectionLogout);
 }
 
+/**
+ * Convenience wrapper used by the SPA router (`src/ui/nav.js`).
+ * Finds `#page-settings` în DOM și render-ează cu defaults.
+ *
+ * No-op silent dacă DOM/element absent (server-side render compatibility).
+ */
+export function renderSettings() {
+  if (typeof document === 'undefined') return;
+  const root = document.getElementById('page-settings');
+  if (!root) return;
+  renderSettingsPage({ root, doc: document });
+}
+
 // Re-export public API for callers wiring routes.
 export {
   openRecoveryEmailLostModal,
