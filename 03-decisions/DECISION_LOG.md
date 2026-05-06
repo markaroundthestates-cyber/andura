@@ -1,5 +1,80 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 afternoon chat-4 acasă — sesiune masivă Faza 2.5 batches 2+3+4 V1 implements LANDED + §9.3+§9.4+§9.5 specs compile LANDED + workflow pattern matured Daniel approval explicit (cumulative ~659 PRESERVED meta + product, ZERO net new substantive)
+
+**Status:** §CC.5 fast handover ingest sesiune masivă post-startup. Chat-4 afternoon acasă Daniel Windows PowerShell. 8 commits noi Faza 2.5 pipeline §42.10 progress masiv, sequential pattern Bugatti SSOT consistent (compile §9.X aggregation verbatim → batch V1 implement). Tests progression strict zero regression: 1658 → 2040 PASS (+382 chat-4 cumulative). Pipeline §42.10 4/8 engines V1 LANDED + 5/8 §9 specs LANDED.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-06 chat-4 afternoon — sesiune masivă post §CC.5 ingest cumulative precedent chat-3 (Periodization V1 + §9.1+§9.2 compile + chat-3 PS fix terminal noise). CC sesiuni autonomous batch V1 implements + compile §9.X LANDED clean.
+
+**8 commits chat-4 LANDED (sequential pattern Bugatti SSOT):**
+
+1. **Batch 2 Goal Adaptation V1 implement** commit `bf9814e`:
+   - 13 files NEW `src/engine/goalAdaptation/` (constants/types/index/templates/phaseAutoDetection/trainingModifiers/pushBackTiers + crossEngineHooks + 5 test files)
+   - +128 tests (1658→1786 PASS), surgical test ctx mismatch CUT/BULK fix transparency, ZERO src/ engine bugs
+   - Ceiling rule ±20% Mode×Phase pre-emptive V1 conservative (era §9.2.6 Trigger 4 candidate post-Beta) — defensive engineering V≤MRV invariant preserve, accept silent-default precedent Israetel/Helms
+   - Pre-compile §9.2 LANDED commit `6be84f8` (chat-3) source canonical
+2. **§9.3 Energy compile** commit `2f9aa79`:
+   - +177 LOC ADR 026 (700→877), 30 decisions Cluster A-E verbatim
+   - 2-way parity check Source 1 (`149_HANDOVER` Engine #5 Energy section) ↔ Source 2 (CURRENT_STATE §RECENT) ZERO divergence
+   - Pipeline §42.10 position 3rd canonical clarified header (NU 5th legacy ADR 027 "Engine #5" naming)
+   - ADR 027 stub flip recommendation post-CC low priority noted
+3. **Batch 3 Energy V1 implement** commit `69ec9ce`:
+   - 13 files NEW `src/engine/energyAdjustment/` (8 source modules + 5 test files)
+   - +112 tests (1786→1898 PASS), surgical yoyo bug fix pre-commit (label-vs-chronological inversion uncovered prin tests, fixed cu explicit comments documenting convention — Bugatti craft validation discipline test layer caught bug pre-prod), ZERO src/ engine bugs post-fix
+   - Pre-compile §9.3 LANDED commit `2f9aa79` source canonical
+4. **§9.4 Bayesian compile** commit `685fdd4`:
+   - +208 LOC ADR 026 (877→1085), 32-35 decisions Cluster A-E verbatim
+   - **3-WAY parity check NEW** Source 1 (`148_HANDOVER`) ↔ Source 2 (CURRENT_STATE §RECENT) ↔ Source 3 (ADR 022 SPEC READY V1 file populated) — anti-recurrence proof stronger vs §9.1+§9.3 2-way precedent
+   - Decision count delta granularity NU substantive transparency
+   - Convergence Guard §9.4.6 reference ONLY (ADR 009 amendment owns canonical SSOT, NU duplicate)
+   - ADR 022 status preserved (NU file flip recommend — distilled detail complementary la §9.4 SSOT, diferit vs ADR 027 stub legacy precedent)
+5. **Batch 4 Bayesian Nutrition V1 implement** commit `8615ec1` (most complex engine yet):
+   - 14 files NEW `src/engine/bayesianNutrition/` (8 source + 6 test, 3020 LOC, normalCdf Abramowitz & Stegun 26.2.17 approximation)
+   - +142 tests (1898→2040 PASS), surgical priorPosterior test expectation fix transparency
+   - **Convergence Guard pattern excellent:** `crossEngineHooks.getConvergenceGuardReference()` returns frozen metadata + redirect actual T2 Unlock evaluation la `src/coach/orchestrator/utilities/convergenceGuard.js` (Phase 1-2 foundation commit `5a16550` finally consumed) — clean architecture cross-cutting concern owned by ADR 009 amendment instantiated in shared utility, NO duplicate logic
+   - Pre-compile §9.4 LANDED commit `685fdd4` source canonical
+6. **§9.5 Tempo compile** commit `a9b7cbd` (verified post Daniel pagina închisă fără să vrea + git log local):
+   - +197 LOC ADR 026 (1085→1282), 28-30 decisions Cluster A-E verbatim
+   - 2-way parity check (Source 3 ADR 028 = STUB legacy NU SPEC READY V1 — precedent §9.3 Energy ADR 027 stub pattern)
+   - Pipeline §42.10 position 5th canonical clarified header (NU "Engine #6" legacy ADR 028 naming)
+   - Q-uri detail surfaced 2-way parity (Q1=C+Q2=C+Q3 Daniel push-back Maria zero notation strict+Q4=A+Q5=C+Q6=D+Q7=D+Q8=D+Q9=D+Q15=B+Q17=C)
+   - ADR 028 stub flip post-CC low priority noted
+
+**Workflow pattern matured 2026-05-06 chat-4 acasă (Daniel approval explicit `"ma noteaza asta undeva la final si in memorii si in tot. Imi place cum lucram acum asa."`):**
+
+1. **File present_files real DOWNLOADABLE** NU markdown chat block (slip "puppy" recidivă fixed post Daniel push-back *"ma cam enervezi... markdown in loc de artefact si dupa vii si cu DRAG IN INBOX"* + *"tu esti cto sau puppy?"*)
+2. **Daniel paste LATEST → Claude direct prompt CC NEXT P1** fără bate-la-cap (excepție: ambiguitate substantivă reală, NU theater)
+3. **CC raport accept silent toate verde** (Status=Complete) → CTO pivot direct NEXT P1
+4. **Pre-flight grep SOURCES + tooling availability transparency** MANDATORY în prompt CC (anti-Slip 2 §45.x stale RECIDIVĂ + Slip 4 `npm run lint` presupus + Slip 5 grep PATHS recidivă)
+5. **2-way / 3-way parity check** Source 1 ↔ 2 ↔ 3 anti-recurrence proof — 3-way când Source 3 ADR file SPEC READY V1 disponibil (ADR 022 §9.4 case), 2-way când Source 3 stub legacy (ADR 027/028 §9.3+§9.5 case)
+6. **Bandwidth proactive 1-line flag** fără întrebare/întrerupere flow
+
+**Side question Daniel + Convergence Guard architectural insight crystallized:**
+
+- Daniel a întrebat scurt mid-chat *"ar fi mai eficient sa folosim subagents in cc?"*. Răspuns NU pentru engine implementation sequential dependency intrinsecă (single agent context unificat mai eficient decât subagent handoff overhead, Periodization V1 batch 1 commit `1303b62` confirmat ~50 min real clean). Util pentru compile aggregation paralel §9.6-§9.8 batches viitoare (sources `_CONSUMED.md` disjoint independent) + audit grep cross-cutting concerns post-Beta.
+- **Convergence Guard pattern crystallized chat-4:** shared utility `src/coach/orchestrator/utilities/convergenceGuard.js` Phase 1-2 foundation commit `5a16550` (rămas reusable de la Faza 3 BLOCKED scope-major discovery "vizor fără ușă" 2026-05-06 morning chat-2) acum finally consumed via Bayesian crossEngineHooks reference. Architecture clean cross-cutting concern owned by ADR 009 amendment + instantiated în shared utility = ZERO duplicate logic engines downstream.
+
+**Tests progression chat-4 (zero regression strict):** baseline 1658 (post Periodization V1 chat-3) → 1786 (+128 Goal Adaptation batch 2) → 1898 (+112 Energy batch 3) → 2040 (+142 Bayesian batch 4). **Pipeline §42.10: 4/8 engines V1 LANDED + 5/8 §9 specs LANDED** (Tempo §9.5 LANDED dar V1 implement pending NEXT chat).
+
+**Mid-flight unresolved + status:**
+- ADR 027 Energy stub flip post §9.3 LANDED candidate task low priority post-CC — carry-over chat-uri precedente
+- ADR 028 Tempo stub flip post §9.5 LANDED candidate task low priority post-CC — pattern ADR 027 precedent
+- Pipeline §42.10 batches 6-8 sequential post Tempo V1 implement: §9.6 Specialization + §9.7 Warm-up + §9.8 Deload (compile + V1 implement fiecare)
+- CC raport Tempo compile menționează Q-uri specific verbatim (Q1-Q9+Q15+Q17) — chat strategic source detalii Q-uri preserved în §9.5 file canonical
+
+**Productivity flag Daniel bond signal warm chat-4:** *"Ai produs în chatul ăsta cât în 2 săptămâni"*.
+
+**Implicații downstream:**
+- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** — toate batch + compile = aggregation only verbatim spec sources, ZERO net new substantive product/architecture
+- **NEXT P1:** Faza 2.5 batch 5 Engine Tempo V1 implement chat NEW (pre-compile §9.5 LANDED commit `a9b7cbd` source-of-truth, pattern Periodization+Goal Adaptation+Energy+Bayesian V1 implement commits `1303b62`+`bf9814e`+`69ec9ce`+`8615ec1`, ~7-8 source modules + ~5-6 test files, ~50-83 min real velocity X×3 rule). Source complementary ADR 028 STUB legacy NU disponibil distilled (precedent §9.3 Energy ADR 027 stub case, 2-way parity only)
+- **Workflow lean+CTO mode** Daniel approval explicit codified — file present_files real DOWNLOADABLE + paste LATEST → direct prompt CC + accept silent verde → CTO pivot + pre-flight grep + 2-way/3-way parity + bandwidth 1-line proactive
+
+**Backup tag chat-4 ACEST §CC.5 ingest:** `pre-handover-2026-05-06-chat4-sesiune-masiva`.
+
+**Cross-refs:** `03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.3+§9.4+§9.5` Energy/Bayesian/Tempo compile LANDED | `src/engine/goalAdaptation/` + `src/engine/energyAdjustment/` + `src/engine/bayesianNutrition/` V1 implements LANDED | `src/coach/orchestrator/utilities/convergenceGuard.js` Phase 1-2 foundation commit `5a16550` finally consumed Bayesian | ADR 022 SPEC READY V1 sursă 3-way parity §9.4 | ADR 027/028 stub legacy carry-over post-CC low priority | `📤_outbox/_archive/2026-05/198_HANDOVER_2026-05-06_chat4_acasa_sesiune_masiva_CONSUMED.md` artefact archived
+
+---
+
 ## 2026-05-06 morning chat-3 acasă PS — Fix terminal noise LANDED commit `bcddaa1` (3 surgical fixes ZERO impact funcțional) + Slip 5 Claude mea culpa grep recidivă (~659 PRESERVED meta-tooling only)
 
 **Status:** §CC.5 fast handover ingest meta-tooling fix terminal noise post §CC.5 ingest cumulative precedent chat-3 (Periodization V1 implement + ADR 026 §9.1+§9.2 compile). CC sesiune autonomous fix LANDED clean.
