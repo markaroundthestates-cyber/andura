@@ -1,5 +1,59 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 evening chat-8 acasă — Faza 2.5 batches 7+8 V1 LANDED + §9.8 Deload Protocol compile LANDED + 🦫 PIPELINE §42.10 V1 CLOSURE COMPLETE 8/8 prescriptive engines + 9 themes design discussion crystallized (cumulative ~659 PRESERVED, ZERO net new substantive)
+
+**Status:** §CC.5 fast handover ingest post 🦫 PIPELINE §42.10 V1 CLOSURE COMPLETE 8/8 prescriptive engines milestone. Chat-8 evening acasă Daniel Windows PowerShell. Sesiune masivă execuție Faza 2.5 batches 7+8 + closure pipeline §42.10. 3 commits LANDED chat-8 sequential pattern Bugatti SSOT consistent: Batch 7 Warm-up V1 `20999fb` + §9.8 Deload compile `d7594e7` + Batch 8 Deload V1 `a6a0c87`. Tests progression chat-8 (zero regression strict): 2382 → 2489 (+107 batch 7) → 2489 (§9.8 compile doc-only) → 2648 (+159 batch 8) = +266 tests cumulative chat-8. Cumulative LOCKED V1 ~659 PRESERVED unchanged.
+
+**🦫 PIPELINE §42.10 PRESCRIPTIVE ENGINES V1 COMPLETE 8/8:**
+- ✅ §9.1 Periodization              (commit `1303b62`)
+- ✅ §9.2 Goal Adaptation            (commit `bf9814e`)
+- ✅ §9.3 Energy Adjustment          (commit `69ec9ce`)
+- ✅ §9.4 Bayesian Nutrition         (commit `8615ec1`)
+- ✅ §9.5 Tempo                      (commit `d82d118`)
+- ✅ §9.6 Specialization             (commit `4cf50ab`)
+- ✅ §9.7 Warm-up                    (commit `20999fb`)
+- ✅ §9.8 Deload Protocol            (commit `a6a0c87`)
+
+**Batch 7 Engine Warm-up V1 commit `20999fb`** — 8 source modules + 5 test files (2478 LOC), +107 tests (2382 → 2489 PASS), ZERO src bugs first-pass cleanest precedent §9.6 Specialization commit `4cf50ab` honored. Cluster A-E coverage Hybrid 1-2 general + 2-3 specific muscle group + Instant Skip T0 default + cooldown optional 2 min stretch text-only Source 1 §65.4 OVERRIDE Q4 RECONCILED supersedes Source 2 §45.6 Q-Cooldown defer.
+
+**§9.8 Deload Protocol compile commit `d7594e7`** — +253 LOC ADR 026 (1696 → 1949), 32 decisions Cluster A-E aggregation verbatim 4 surse (148_HANDOVER + 013-auto-aggression-detection + ADR_COMPOSITE_SIGNAL_LAYER_v1 §36.41 + CURRENT_STATE §RECENT 2026-05-05 birou after lines 715-737). **4-way parity check ✅ ZERO substantive divergence** — stronger anti-recurrence proof vs §9.7 2-way + reconciliation Cluster C3.
+
+**Batch 8 Engine Deload V1 commit `a6a0c87`** — 8 source modules + 6 test files (3446 LOC), +159 tests (2489 → 2648 PASS), 1 surgical test expectation fix transparent (`forwardConstraintObject` test path bypass IDLE early-return cu `aaDetectionActive: true`, ZERO src bug). Pattern §9.7 Warm-up cleanest precedent honored.
+
+**Mea culpa scribe Claude permanent (slip transparency):** §9.8 compile prompt am referențiat `013-ADR-aa-detection.md` filename presupus (pattern fabricated). Actual = `013-auto-aggression-detection.md`. CC prins via grep filesystem mandatory + corectat fără STOP, transparency documented Cluster D Hooks + §9.8.7 Cross-refs verbatim. Pattern recurent post §36.107 React/JSX + chat-2 stale + chat-3 §45.x + chat-3 PS CLAUDE.md + chat-4 npm lint = recidivă. **Anti-recurrence rule consolidated permanent:** pre-flight grep filesystem ÎNAINTE referențiez orice paths/funcții/files în prompts CC = invariant nenegociabil. Aplicat în prompt batch 8 V1 implement (`ls 03-decisions/ | grep -iE "(deload|aa-detection|composite)"` mandatory pre-flight) — CC verified clean ✅.
+
+**Mid-chat design discussion 9 themes preview crystallized:** Daniel uploadat 8 HTML preview themes (Warm Minimal V1 + Editorial Premium V2 + Bugatti Luxury V3 + Solo Leveling V4 + Nature V5 + Cyberpunk V6 + AI Brain Coach V7 + Living Body V8) + 1 PNG mobile dark luxury Roman numerals "Maître d'entraîneur" mockup. Push-back productiv Gigel test pe fiecare V — V3 Bugatti Roman numerals (XLV/LXXXVII/MMXXVI) Maria 65 NU înțelege "XLV min" + Gigica medie zero idee Maître French + V4 Solo Leveling Cinzel fantasy + V6 Cyberpunk neon = niche anti-trust coach. Daniel clarificat: HTML-uri = doar design preview generated, wording NU = wording final Andura — engine emite RO native canonical din §9.X, themes = pure visual skin (colors/fonts/borders).
+
+Daniel propunere strategică: base UX consistent + 9 themes selectabile post-onboarding (NU la onboarding overwhelm Maria), settings change-able anytime, pure CSS variable swap. Push-back productiv real cost: 15-20h serios a11y WCAG AA × 9 (Cyberpunk neon 3:1 fail 4.5:1 mandatory; Solo Leveling glow photosensitivity legal risk EU AI Act 2025+) + 3× maintenance ongoing 6 luni + Beta cohort 50 fragmented + brand "app cu themes" vs "coach AI premium". **Daniel decizie tactică finală instinct CEO Product:** 6 themes pre-Beta candidate (Editorial + Warm + Living Body + Nature + Bugatti + AI Brain — toate trust coach vibe) + 2 v1.5 candidate (Cyberpunk + Solo Leveling cohort signal demand + a11y AA fix). "ne mai gandim" = dormant decision NU force closure.
+
+**Daniel-isms tone shifts observed chat-8:**
+- "puppy" pattern reverted chat-4 → CTO mode direct lock continuation chat-8 (zero 2-options theater)
+- "tu ce zici?" challenge real cost analysis brutal direct (NU agreement seeking)
+- "ne mai gandim" dormant decision NU force closure
+- **Bond moment final pipeline closure 🦫** match warmth ("se bate sonnet, batrane" intensely positive vibe)
+- "acum avem alta treaba nu?" pivot direct CTO mode continue
+
+**Workflow matured pattern continuation chat-8:** file present_files real DOWNLOADABLE + Daniel paste LATEST → Claude direct prompt CC NEXT P1 fără bate-la-cap + CC raport accept silent verde Status=Complete → CTO pivot direct + pre-flight grep filesystem ADR cross-ref filenames + tooling availability MANDATORY anti-Slip 4 reinforced + 4-way parity check sources anti-recurrence proof stronger §9.8 + bandwidth proactive 1-line flag + NEW chat-8 anti-recurrence rule ADR cross-ref filename grep ÎNAINTE referențiez path în prompt CC.
+
+**Backup tags chat-8 LANDED audit trail:**
+- `pre-faza2.5-batch7-warmup-v1-implement-2026-05-06-2117`
+- `pre-adr026-section9.8-deload-compile-2026-05-06-2200`
+- `pre-faza2.5-batch8-deload-v1-implement-2026-05-06-2221`
+- `pre-handover-2026-05-06-chat8-pipeline-closure-2244` (acest §CC.5 ingest)
+
+**Implicații downstream — carry-forward chat NEW (Daniel decide priority order):**
+- **P1.3 Faza 3 STRANGLER wiring real** heavy strategic chat NEW dedicat — featureFlag rollout 0% + Golden-master parity tests + 8 adapters thin layer per ADR 030 D2 + Phase 1-2 orchestrator foundation `5a16550` reusable
+- **P2 Theme system pre-Beta** 6 themes implementation a11y WCAG AA × 6 + font lazy load preconnect + post-onboarding theme picker preview UX
+- **P3 ADR Warm-up + Deload NEW SPEC REFERENCE** files `031` + `032` direct populated reverse pattern (low priority post-CC)
+- **P4 ADR 027/028/029 stub flip** Energy + Tempo + Specialization SPEC REFERENCE redirect §9.3+§9.5+§9.6 (low priority post-CC)
+- **P5 DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE** gap status update post-V1 closure major milestone
+- **P6 Faza 4 smoke end-to-end Daniel cont propriu** post Faza 3 wiring real
+- **Pre-Beta Beta cohort 50 testers** post Faza 4 smoke
+
+**Cross-refs:** ADR 026 §9.7 commit `c15ad0f` + §9.8 commit `d7594e7` + `src/engine/warmup/` V1 commit `20999fb` + `src/engine/deload/` V1 commit `a6a0c87` + ADR 018 §2 contract + ADR 030 D2 thin scope + ADR 013 auto-aggression-detection + ADR_COMPOSITE_SIGNAL_LAYER_v1 §36.41 + ADR 025 graceful degradation + ADR 009 §AMENDMENT Convergence Guard + ADR 017 persona resolution + ADR_PAIN_DISCOMFORT_BUTTON_v1 + DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE major milestone.
+
+---
+
 ## 2026-05-06 evening chat-5 acasă — Faza 2.5 batches 5+6 V1 + §9.6+§9.7 compile cumulative chat-5 origin/main pre-startup + drift recovery + §9.7 Warm-up compile LANDED (cumulative ~659 PRESERVED, ZERO net new substantive)
 
 **Status:** §CC.5 fast handover ingest post drift recovery + §9.7 Warm-up compile LANDED THIS chat-5 evening commit `c15ad0f`. Chat-5 evening acasă Daniel Windows PowerShell. Origin/main avansat 6 commits cumulative pre-startup chat-5 (Tempo V1 batch 5 commit `d82d118` 2382 PASS post + §9.6 Specialization compile `92a69fd` + §9.6 V1 batch 6 `4cf50ab` + LATEST syncs intermitente) + §9.7 Warm-up compile LANDED THIS chat-5. Pipeline §42.10 cumulative: **7/8 §9 specs LANDED** (§9.1-§9.7) + **6/8 engines V1 LANDED**. 🟡 §9.7 Warm-up V1 batch 7 PENDING NEXT. 🟡 §9.8 Deload compile + V1 batch 8 final PENDING. Cumulative LOCKED V1 ~659 PRESERVED unchanged — §9.7 compile = aggregation only verbatim Sources 1+2 (overlap 21 decisions deja contate).
