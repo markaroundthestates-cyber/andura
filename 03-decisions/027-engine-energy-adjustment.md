@@ -1,63 +1,47 @@
-# ADR 027 — Engine #5 Energy Adjustment
+# ADR 027 — Engine Energy Adjustment
 
-**Status:** 🟡 **STUB / PENDING SPEC** (file create per Vault Hygiene 2026-05-05 overnight CC TASK 4 — full spec exists dispersed în HANDOVER §45.x + CURRENT_STATE 2026-05-05 birou late JUST_DECIDED entry, consolidation TBD chat strategic NEW dedicat)
-**Date:** 2026-05-05 (stub creation per §36.95 ADR Numbering Additive + §36.100 Engine #5 roadmap + 100% milestone 8/8 prescriptive engines SPEC COMPLETE)
-**See also:** [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §45.x (spec session source — Engine #5 formal full Gemini pas 1+2+3 lock confirm 2026-05-05 birou late) + §36.100 Engine #5 + [[026-offline-coaching-decision-tree-exhaustive]] (cross-engine merge META + pipeline order LOCKED §42.10 placement) + [[018-engine-extensibility-architecture]] (Dimension Registry foundation) + [[022-bayesian-nutrition-inference]] (Engine #3 cross-engine integration σ variance modifier Q12=C) + [[../00-index/CURRENT_STATE|CURRENT_STATE]] §RECENT 2026-05-05 birou late entry (~26-28 decisions LOCKED V1)
-
----
-
-## ⚠️ STATUS — STUB
-
-**Provenance:** Per §36.100 Engine #5 roadmap. Spec session FORMAL COMPLETE chat strategic 2026-05-05 birou late (~26-28 decisions LOCKED V1, formal full Gemini pas 1+2+3 lock confirm). Acest stub = placeholder pentru consolidation spec full din HANDOVER §45.x dispersed → ADR canonical SSOT.
-
-**Acest stub = placeholder pentru spec full PENDING consolidation chat strategic NEW dedicat.**
+**Status:** 🔵 **SPEC REFERENCE** (canonical SSOT în [[026-offline-coaching-decision-tree-exhaustive]] §9.3 — flipped 2026-05-06 evening chat-8 din 🟡 STUB legacy, redirect-only)
+**Date:** 2026-05-05 (initial stub creation Vault Hygiene CC TASK 4) → **2026-05-06 evening chat-8 acasă FLIP STUB → SPEC REFERENCE** (post pipeline §42.10 V1 closure 8/8 cleanup batch)
+**Pipeline §42.10 position:** **3rd** (NU "Engine #5" naming legacy chat strategic spec session ordering 2026-05-05 birou late — pipeline §42.10 canonical position 3rd)
+**Implementation:** `src/engine/energyAdjustment/` V1 LANDED commit `69ec9ce` (Faza 2.5 batch 3)
+**See also:** [[026-offline-coaching-decision-tree-exhaustive#§9.3 Engine Energy Adjustment Module-Level Spec V1|ADR 026 §9.3]] (canonical 26-28 decisions Cluster 1-5 verbatim 2-way parity ✅) + `149_HANDOVER_2026-05-05_birou_late_engines5-6-7_spec_sessions_CONSUMED.md` (Source 1) + [[../00-index/CURRENT_STATE|CURRENT_STATE]] §RECENT 2026-05-05 birou late entry (Source 2)
 
 ---
 
-## Scope summary (stub level)
+## ⚪ STATUS — SPEC REFERENCE (redirect-only, post stub flip)
 
-**Decision domain:** Engine #5 Energy Adjustment — adjusts session volume + intensity within Periodization Floor/Ceiling coridor based on user pre-session readiness signals (Vitality + Stress + Pain + Pre-session 🟢🟡🔴 emoji).
-
-**Spec session decisions ~26-28 LOCKED V1 (per CURRENT_STATE 2026-05-05 birou late JUST_DECIDED — verbatim aggregation from HANDOVER §45.x):**
-- Manual input only V1 (Q1=C hibrid + Q4=A + Q5=A defer auto integration v1.5+)
-- Stress folded emoji 🟢🟡🔴 holistic + drill-down strict 🔴 only (Q15=C — NU 🟡, friction Maria 65 zilnic anti-Bugatti)
-- Categorical aggregation rules table (Q3=C auditable)
-- Volume + intensity selective Q33 §45.5 reuse + bidirectional ±15% (Q6=D)
-- Asymmetric Q7 — UP +15% requires N≥3 conditions + Periodization phase gate "high_intensity != true" (Q7 4th condition — anti "Sarcastic UP" Marius 5:1 săpt 4-5)
-- MRV invariant 1 immutable (Q8=A) + soft override sub-Floor max 2 consecutive → Engine #4 trigger (Q9 anti-drift)
-- Bayesian σ variance modifier Engine #3 (Q12=C sophisticated)
-- Tier-aware T0=±10% T1+=±15% (Q13=B)
-- Yo-yo anti-flap 3-session window V1 only (Q14=D, Sprinter/Marathon defer v1.5)
-- Medical referral copy Gigel test PASS: *"Consultă medicul de familie sau un specialist în medicină sportivă"* (Q18=D, generic "specialist" REJECTED)
-- Bayesian latent state v1.5 evolution (Q20=D)
-
-**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Energy Adjustment runs sequentially 3rd: `Periodization → Goal Adaptation → Energy Adjustment → Exercise Selection → Warm-up & Mobility → Execution → Deload last gate`. Bidirectional ±15% baseline coridorului per §42.10 — bidirectional NU only-decrease (zile peak readiness UP boost +15% accelerator overload progressive real; zile fatigue DOWN -15%).
-
-**Cross-engine hooks (per Dimension Registry ADR 018):**
-- → Engine #1 Periodization: respects Floor/Ceiling coridor, never exceeds MRV invariant 1
-- → Engine #3 Bayesian Nutrition: σ variance modifier Q12=C — energy adjustments influence nutritional uncertainty bands
-- → Engine #4 Deload: soft override sub-Floor max 2 consecutive → Engine #4 trigger (Q9 anti-drift mechanism)
+This ADR was **flipped from 🟡 STUB → 🔵 SPEC REFERENCE** în vault hygiene cleanup batch post-pipeline §42.10 V1 closure 8/8 (2026-05-06 evening chat-8 acasă). The canonical specification lives în [[026-offline-coaching-decision-tree-exhaustive]] §9.3 (commit `2f9aa79` 2026-05-06 afternoon chat-4 acasă, +177 LOC, 26-28 decisions Cluster 1-5 verbatim, 2-way parity ✅ Source 1 `149_HANDOVER` Engine #5 Energy section + Source 2 CURRENT_STATE §RECENT 2026-05-05 birou late).
 
 ---
 
-## Open Questions (PENDING chat strategic NEW)
+## Redirect
 
-1. **Consolidation scope:** verifica decisions cumulative din HANDOVER §45.x referencing Engine #5 — câte decisions exact (currently ~26-28 estimate per CURRENT_STATE)?
-2. **Sprinter/Marathon profile-typing modulators:** Q14 deferred post-Beta data real (mid-flight unresolved per CURRENT_STATE 2026-05-05 birou late)
-3. **Auto integration v1.5+:** Q1=C hibrid manual input only V1 — auto-detection HRV/sleep/wearables defer post-Beta
-4. **Bayesian latent state v1.5 evolution:** Q20=D ecosystem-wide migration consistency cu Engine #3 + Engine #6 + Engine #7
-5. **Test coverage:** persona suite Maria/Gigica/Marius edge cases per §42.9 4-Invariant Safety Stack — edge case "Sarcastic UP" Marius 5:1 săpt 4-5 covered prin Q7 4th condition; full coverage matrix PENDING
+> **For canonical decisions, Cluster 1-5 breakdown, sources, parity check evidence, and Reconsideration Triggers, see [[026-offline-coaching-decision-tree-exhaustive#§9.3 Engine Energy Adjustment Module-Level Spec V1|ADR 026 §9.3]].**
+
+---
+
+## Scope summary (1-line)
+
+Engine Energy Adjustment — adjusts session volume + intensity within Periodization Floor/Ceiling coridor based on user pre-session readiness signals (manual emoji 🟢🟡🔴 holistic input + drill-down strict 🔴 only Q15=C anti-Maria-65-friction). Bidirectional ±15% Q6=D conservative range tier-aware T0=±10% T1+=±15% Q13=B, asymmetric trigger logic Q7=B (UP +15% requires N≥3 conditions cumulative + Periodization phase gate "high_intensity != true" anti "Sarcastic UP" Marius 5:1 săpt 4-5; DOWN -15% single trigger immediate). MRV invariant 1 immutable Q8=A + soft override sub-Floor max 2 consecutive → Engine Deload trigger Q9 anti-drift, Bayesian σ variance modifier Engine #3 Q12=C, Yo-yo anti-flap 3-session window V1 only Q14=D, medical referral copy Gigel test PASS Q18=D verbatim "Consultă medicul de familie sau un specialist în medicină sportivă". Pipeline §42.10 3rd canonical (NU "Engine #5" legacy naming).
+
+---
+
+## Naming clarification
+
+Source 1+2 reference "Engine #5 Energy Adjustment" = chat strategic spec session ordering legacy (2026-05-05 birou late 3-engine cluster #5+#6+#7 spec session) NU pipeline §42.10 canonical position. Pipeline §42.10 canonical: Periodization (1st) → Goal Adaptation (2nd) → **Energy Adjustment (3rd)** → Bayesian Nutrition (4th) → Tempo (5th) → Specialization (6th) → Warm-up (7th) → Deload (8th).
 
 ---
 
 ## Cross-refs
 
-- [[026-offline-coaching-decision-tree-exhaustive]] §1.10 (pipeline order §42.10 sequential extension) + §4.3 (5 invariants Safety Stack inclusion MRV invariant 1 + medical safety floor)
-- [[018-engine-extensibility-architecture]] (Dimension Registry foundation)
-- [[022-bayesian-nutrition-inference]] (Engine #3 σ variance modifier cross-cutting)
-- [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §45.x (spec source dispersed)
-- [[../04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1]] (Engine #5 placeholder runs in pipeline.js orchestrator skeleton — real engine wiring deferred per A3 push-back)
+- [[026-offline-coaching-decision-tree-exhaustive#§9.3 Engine Energy Adjustment Module-Level Spec V1|ADR 026 §9.3]] — canonical SSOT (26-28 decisions Cluster 1-5)
+- [[018-engine-extensibility-architecture]] §2 Standardized Dimension Contract (`evaluate(ctx) → EnergyAdjustmentResult`)
+- [[022-bayesian-nutrition-inference]] σ variance modifier Q12=C cross-engine integration
+- [[009-calibration-tiers]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware T0/T1+ thresholds Q13=B
+- [[ADR_OUTLIER_FILTER_v1]] §EXT-1 streak counter cross-ref Yo-yo anti-flap Q14=D
+- [[030-adapter-design-pattern]] D1-D5 LOCKED V1 foundation Hexagonal
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware Clean Signal rule preserved §9.4.6 (Engine Energy NU proactive trigger Cluster 5)
 
 ---
 
-**Status track:** STUB pre Beta. Full spec consolidation post Auth Phase 2 LANDED + Validation Framework infrastructure delivery. Engine #5 spec dispersed în HANDOVER §45.x + CURRENT_STATE JUST_DECIDED entry — CC implementation reads source raw direct ca implementation guide pre-consolidation.
+**Implementation reference:** `src/engine/energyAdjustment/` V1 LANDED commit `69ec9ce` (Faza 2.5 batch 3, 8 source modules + 5 test files, +112 tests 1786→1898 PASS, surgical yoyo bug fix pre-commit transparency Bugatti craft test layer caught bug pre-prod ZERO src bug post-fix).

@@ -149,9 +149,12 @@ andura/
 | 024 | [[024-goal-driven-program-templates]] | 🟡 **STUB / PENDING SPEC** (created Faza 3 2026-05-04 — Engine #2 §36.100) |
 | 025 | [[025-andura-gandeste-pentru-user]] | 🟡 **CANDIDATE / STUB** (created Faza 3 2026-05-04 — Graceful Degradation Universal §36.94) |
 | 026 | [[026-offline-coaching-decision-tree-exhaustive]] | ✅ **LOCKED V1 — COMPILE DRAFT FULL** (compiled 2026-05-05 overnight, 129 decisions aggregate from §42 base + §45 spec + §50 D-cluster) |
-| 027 | [[027-engine-energy-adjustment]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #5 Energy Adjustment ~26-28 decisions LOCKED V1 dispersed în HANDOVER §45.x + CURRENT_STATE) |
-| 028 | [[028-engine-tempo-form-cues]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #6 Tempo/Form Cues ~28-30 decisions LOCKED V1) |
-| 029 | [[029-engine-specialization]] | 🟡 **STUB / PENDING SPEC** (created 2026-05-05 overnight — Engine #7 Specialization ~28-30 decisions LOCKED V1, ULTIMUL prescriptive engine, 8/8 milestone) |
+| 027 | [[027-engine-energy-adjustment]] | 🔵 **SPEC REFERENCE** (flipped 2026-05-06 evening chat-8 STUB → SPEC REFERENCE redirect [[026-offline-coaching-decision-tree-exhaustive]] §9.3 canonical SSOT — implementation `src/engine/energyAdjustment/` V1 LANDED commit `69ec9ce` Faza 2.5 batch 3 — pipeline §42.10 3rd canonical NU "Engine #5" legacy) |
+| 028 | [[028-engine-tempo-form-cues]] | 🔵 **SPEC REFERENCE** (flipped 2026-05-06 evening chat-8 STUB → SPEC REFERENCE redirect [[026-offline-coaching-decision-tree-exhaustive]] §9.5 canonical SSOT — implementation `src/engine/tempo/` V1 LANDED commit `d82d118` Faza 2.5 batch 5 — pipeline §42.10 5th canonical NU "Engine #6" legacy) |
+| 029 | [[029-engine-specialization]] | 🔵 **SPEC REFERENCE** (flipped 2026-05-06 evening chat-8 STUB → SPEC REFERENCE redirect [[026-offline-coaching-decision-tree-exhaustive]] §9.6 canonical SSOT — implementation `src/engine/specialization/` V1 LANDED commit `4cf50ab` Faza 2.5 batch 6 — `weaknessDetector.js` orfan reuse §36.84 Gap #1 — pipeline §42.10 6th canonical NU "Engine #7 ULTIMUL" legacy) |
+| 030 | [[030-adapter-design-pattern]] | LOCKED V1 D1-D5 (Hexagonal foundation Phase 1-2 orchestrator commit `5a16550`) |
+| 031 | [[031-engine-warmup-mobility]] | 🔵 **SPEC REFERENCE** (created direct 2026-05-06 evening chat-8 cleanup batch — redirect [[026-offline-coaching-decision-tree-exhaustive]] §9.7 canonical SSOT — implementation `src/engine/warmup/` V1 LANDED commit `20999fb` Faza 2.5 batch 7 — pipeline §42.10 7th canonical penultimate prescriptive engine NU "Engine #8" legacy) |
+| 032 | [[032-engine-deload-protocol]] | 🔵 **SPEC REFERENCE** (created direct 2026-05-06 evening chat-8 cleanup batch — redirect [[026-offline-coaching-decision-tree-exhaustive]] §9.8 canonical SSOT — implementation `src/engine/deload/` V1 LANDED commit `a6a0c87` Faza 2.5 batch 8 FINAL — pipeline §42.10 8th canonical FINAL CLOSURE 8/8 prescriptive engines milestone 🦫 NU "Engine #4" legacy) |
 | New | [[ADR_MULTI_TENANT_AUTH_v1]] | Accepted (UUID Anonymous → Firebase Auth real) |
 
 ### Named ADRs (8 — non-numbered, locked V1)

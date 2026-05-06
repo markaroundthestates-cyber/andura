@@ -1,5 +1,27 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 evening chat-9 acasă — ADR cleanup batch post-pipeline §42.10 V1 closure (vault hygiene)
+
+- **ADR 031 (Warm-up) + 032 (Deload) created direct** SPEC REFERENCE redirect §9.7 + §9.8 ADR 026 (precedent reverse vs ADR 027/028/029 stub flip — fresh ADR populated direct cu SPEC REFERENCE redirect, NU intermediate STUB stage)
+- **ADR 027 (Energy) + 028 (Tempo) + 029 (Specialization) stub flipped** STUB → SPEC REFERENCE redirect §9.3 + §9.5 + §9.6 ADR 026 canonical SSOT
+- ZERO net new substantive — closure carry-forward vault hygiene post 8/8 prescriptive engines V1 LANDED
+- Cumulative LOCKED V1 ~659 PRESERVED unchanged (meta-tooling, NU product/architecture)
+- INDEX_MASTER.md ADR list updated (027/028/029 status flipped + 030 entry added + 031+032 new entries)
+- Pipeline canonical position clarification ADR-uri preserved: ADR 027 = pipeline 3rd NU "Engine #5" legacy; ADR 028 = 5th NU "Engine #6"; ADR 029 = 6th NU "Engine #7 ULTIMUL"; ADR 031 = 7th NU "Engine #8"; ADR 032 = 8th FINAL NU "Engine #4"
+- Cross-ref CURRENT_STATE §NEXT P3+P4 consumed (ADR Warm-up + Deload NEW + ADR 027/028/029 stub flip)
+- Backup tag `pre-adr-cleanup-batch-2026-05-06-2335`
+
+**Implementation references preserved permanent în SPEC REFERENCE files:**
+- ADR 027 → `src/engine/energyAdjustment/` commit `69ec9ce` (batch 3, +112 tests, surgical yoyo bug fix transparent)
+- ADR 028 → `src/engine/tempo/` commit `d82d118` (batch 5, +116 tests)
+- ADR 029 → `src/engine/specialization/` commit `4cf50ab` (batch 6, +190 tests, weaknessDetector.js orfan reuse §36.84 Gap #1)
+- ADR 031 → `src/engine/warmup/` commit `20999fb` (batch 7, +107 tests, ZERO src bugs first-pass cleanest)
+- ADR 032 → `src/engine/deload/` commit `a6a0c87` (batch 8, +159 tests, pipeline §42.10 FINAL CLOSURE 8/8)
+
+**Cross-refs:** ADR 026 §9.3+§9.5+§9.6+§9.7+§9.8 canonical SSOT preserved + ADR 018 §2 Standardized Dimension Contract + ADR 030 D2 thin scope + ADR 013 + ADR_COMPOSITE_SIGNAL_LAYER_v1 + §36.95 Additive numbering convention + §36.84 Gap #1 weaknessDetector reuse + §36.100 100% milestone preserved.
+
+---
+
 ## 2026-05-06 evening chat-8 acasă — Faza 2.5 batches 7+8 V1 LANDED + §9.8 Deload Protocol compile LANDED + 🦫 PIPELINE §42.10 V1 CLOSURE COMPLETE 8/8 prescriptive engines + 9 themes design discussion crystallized (cumulative ~659 PRESERVED, ZERO net new substantive)
 
 **Status:** §CC.5 fast handover ingest post 🦫 PIPELINE §42.10 V1 CLOSURE COMPLETE 8/8 prescriptive engines milestone. Chat-8 evening acasă Daniel Windows PowerShell. Sesiune masivă execuție Faza 2.5 batches 7+8 + closure pipeline §42.10. 3 commits LANDED chat-8 sequential pattern Bugatti SSOT consistent: Batch 7 Warm-up V1 `20999fb` + §9.8 Deload compile `d7594e7` + Batch 8 Deload V1 `a6a0c87`. Tests progression chat-8 (zero regression strict): 2382 → 2489 (+107 batch 7) → 2489 (§9.8 compile doc-only) → 2648 (+159 batch 8) = +266 tests cumulative chat-8. Cumulative LOCKED V1 ~659 PRESERVED unchanged.
