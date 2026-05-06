@@ -1280,3 +1280,227 @@ Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.5 Engine Tempo Module-Level Spec V1 compiled 2026-05-06 afternoon chat-6 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` Engine #6 Tempo section lines 34-48 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 547-565 — **2-way parity check ✅ ZERO substantive divergence flagged**). ~28-30 decisions Cluster A-E cumulative. Pre Faza 2.5 batch 5 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`). Pipeline §42.10 position 5th canonical (NU "Engine #6" naming legacy ADR 028 chat strategic spec session ordering). Source 3 ADR 028 = STUB legacy NU disponibil precedent §9.3 Energy ADR 027 stub pattern; post §9.5 LOCKED → ADR 028 stub flip recommend → SPEC REFERENCE redirect §9.5 SSOT canonical (separate task post-CC).
+
+---
+
+### §9.6 Engine Specialization Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 afternoon chat-6 acasă din chat strategic 2026-05-05 birou late sources). ~28-30 decisions cumulative (Cluster A-E). Pre Faza 2.5 batch 6 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Tempo V1 LANDED commit `d82d118` (batch 5).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Specialization runs sequentially **6th** position canonical. Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian Nutrition (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`. **Engine numbering clarification:** [[029-engine-specialization|ADR 029]] file naming "Engine #7 Specialization" = legacy chat strategic spec session ordering 2026-05-05 birou late (3-engine cluster #5+#6+#7 spec session, ULTIMUL prescriptive engine §36.100 100% milestone), NU pipeline §42.10 canonical position 6th. Source 1 + Source 2 reference "Engine #7" = pipeline 6th — clarified anti-recurrence numbering ambiguity batches 7-8 references.
+
+**Provenance chain (2-way parity check ✅):**
+- Source 1 (verbatim Cluster A-E): `📤_outbox/_archive/2026-05/149_HANDOVER_2026-05-05_birou_late_engines5-6-7_spec_sessions_CONSUMED.md` Engine #7 Specialization section (lines 50-72, 22 substantive bullet decisions Q1-Q20 + cross-cutting note).
+- Source 2 (cristalizate parity check): `00-index/CURRENT_STATE.md` §RECENT entry "2026-05-05 birou late" Engine #7 Specialization partition (lines 557-579, 22 bullets identical content vs Source 1). **Verbatim parity check Source 1 ↔ Source 2: ✅ ZERO substantive divergence flagged**.
+- Source 3 NU disponibil: [[029-engine-specialization|ADR 029]] = STUB legacy (precedent §9.3 Energy [[027-engine-energy-adjustment|ADR 027]] + §9.5 Tempo [[028-engine-tempo-form-cues|ADR 028]] stub pattern, NU §9.4 Bayesian [[022-bayesian-nutrition-inference|ADR 022]] SPEC READY V1 case). ADR 029 stub does include scope summary aggregating Q1-Q20 mirror Source 1 — but flagged STATUS = STUB / PENDING SPEC, NU SPEC READY V1 file flip. Post §9.6 LOCKED → ADR 029 stub flip recommend → SPEC REFERENCE redirect §9.6 SSOT canonical (separate task post-CC, low priority).
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 (Specialization 6th în pipeline §42.10) | [[029-engine-specialization|ADR 029]] STUB → SPEC REFERENCE candidate post §9.6 LOCKED (file flip pattern ADR 027 + ADR 028 precedent §9.3 + §9.5) | [[009-calibration-tiers|ADR 009]] tier-aware Marius Advanced gating Q5=D (T2+ Convergence Guard cross-cutting referenced ONLY) | §9.1 Periodization Engine #1 PARALLEL modifier NU REPLACE Q11=B (skeleton preserved, layer extra volume/frequency on accumulation phases) | §9.2 Goal Adaptation phase context Cut DISABLE Q5=D dual safety gate Q13=A | §9.3 Energy Adjustment readiness state cross-engine context (Engine #5 consistent pattern) | §9.4 Bayesian Nutrition Inference Q20=D Bayesian latent state v1.5 ecosystem-wide alignment | §9.5 Tempo light coupling cross-engine modifiers (PARALLEL overlay sibling) | §9.7 Warm-up forward TBD spec compile §9.7 batch 7 | §9.8 Deload Protocol standard week 4 preserved non-negotiable Q12=A (Engine #4 Hook) | [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.84 Gap #1 (`weaknessDetector.js` orfan reuse pattern) + §45.3 Q12 LOCKED (Marius Advanced AND lagging gating strict) | [[../04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1|SCENARIOS_SIMULATOR_DESIGN_V1]] (pipeline.js orchestrator skeleton — eligible gate logic Q5=D Bulk/Recomp ONLY wired)
+
+---
+
+#### §9.6.1 Cluster A — I/O Contract & Pipeline Placement (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+specializationEngine.evaluate(ctx) → SpecializationResult extends DimensionResult
+```
+
+**Pipeline placement LOCKED V1 (per §42.10):** Specialization runs **sequentially 6th** post Tempo (§9.5). Legacy "Engine #7" naming în [[029-engine-specialization|ADR 029]] = chat strategic spec session ordering NU pipeline canonical position. Pipeline §42.10 canonical: `Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload`.
+
+**Activation gating LOCKED V1 strict (Q5=D + Q12 §45.3 LOCKED + Q13=A dual safety gate):**
+- **Marius Advanced AND lagging detected** via `weaknessDetector.js` (cross-cutting Profile Typing tier T1+ established + 1RM ratio<0.8 detection signal Cluster B Q1=C)
+- **Phase = Bulk OR Recomp ONLY** — Cut DISABLE per Q5=D (deficit + extra volume = recovery risk universal). Q13=A consistency dual safety gate Q5+Q13.
+- **Q12 §45.3 LOCKED preserved strict:** Maria 65 + Gigica 35 personas = NU eligible V1 (engine GATE_BLOCKED for non-Marius personas). Anti-paternalism Maria/Gigica tier — specialization advanced concept anti-friction cognitive load early personas.
+- **Mesocycle window:** 4-week mesocycle match Q10 §45.2 (Q6=A simplicity V1 — adaptive duration defer v1.5).
+
+**Input contract (consumed Hook 1 read-only):** Constraint Object frozen propagated upstream Periodization §9.1 Cluster 5 + Goal Adaptation §9.2 + Energy §9.3 + Bayesian §9.4 + Tempo §9.5 cross-engine hooks. NU mutate input — anti-cascade safeguard preserved §1.10.
+
+**Output blueprint emit:**
+1. `specialization_active` — boolean PARALLEL modifier engaged (engine eligible AND user accepted proposal Q15=B)
+2. `weakness_target` — top-1 discipline weak group identified (movement category + magnitude signal Cluster B)
+3. `volume_frequency_modifier` — extra volume/frequency on accumulation phases targeting weakness (Cluster C application strategy)
+4. `proposal_state` — propose user accept/reject pending (Q15=B Marius decision retained, anti-paternalism — NU auto-activate silent)
+5. `cooldown_state` — N=12 weeks same group anti-obsession + 12 weeks hard reject anti-nagging (Cluster B Q10=B + Q16=A)
+6. `signals` — human-readable signal IDs (e.g. `'specialization_eligible_marius_advanced_lagging'`, `'specialization_gate_blocked_cut_phase_q5_d'`, `'specialization_proposal_pending_user_accept_q15_b'`)
+
+**Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1.
+
+**Engine purity preserved:** Specialization reads upstream Constraint Objects Hook 1 read-only, **NU override** Periodization phase NU Goal Adaptation phase NU Energy adjustment NU Bayesian inference NU Tempo prescription per §1.10 Pipeline Order LOCKED V1 — anti-cascade safeguard. PARALLEL modifier Q11=B = layer extra volume/frequency on accumulation phases Engine #1 Periodization NU REPLACE skeleton.
+
+---
+
+#### §9.6.2 Cluster B — Detection Logic + Reconciliation + Cooldown (~7 decisions)
+
+**B1 Hibrid 1RM ratio<0.8 weaknessDetector reuse + visual/photo subjective override** (Source 1 line 51 verbatim, Q1=C SUFLET_ANDURA Daniel pattern dual-source):
+- **`weaknessDetector.js` reuse** (zero new code engine logic per §36.84 Gap #1) — primary signal 1RM ratio<0.8 vs reference distribution per movement category (chest/back/legs/shoulders/arms). Cross-cutting Profile Typing tier T1+ established gate (anti-noise T0 calibration window).
+- **Visual/photo subjective override** = user-initiated reactive secondary signal Bugatti craft transparency. SUFLET_ANDURA F4 user agency — user can flag weak group via UI even if detector NU surfaced (e.g., aesthetic concern, sport-specific deficit).
+- **Q1=C dual-source:** combine quantitative (1RM ratio) + qualitative (user override) — engine resolves consensus prefer user override când conflict (anti-paternalism F4).
+
+**B2 Consensus last-12-sessions + lifetime aggregate** (Source 1 line 52 verbatim, Q2=C anti-noise volatil):
+- **Last-12-sessions window** = recent signal anti-noise weekly volatility (single bad session NU triggers specialization)
+- **Lifetime aggregate** = long-term signal robust trend (multi-mesocycle pattern recognition)
+- **Q2=C consensus:** both signals required convergent (recent + lifetime aligned) — anti-flap protection. Single-window divergence = signal flagged unstable, defer detection N+1 mesocycle.
+
+**B3 Top-1 discipline V1** (Source 1 line 53 verbatim, Q3=A simplicity V1):
+- **Top-1 weak group** = engine selects single highest-magnitude lagging muscle category. Top-N parallel multi-weakness defer v1.5 (§9.6.6 Reconsideration Trigger 4 candidate post-Beta).
+- **Rationale:** anti-cognitive-overload Marius Advanced cohort (focus discipline matters more than coverage breadth V1) + simplicity SCENARIOS_SIMULATOR pruning cap (Q3=A)
+
+**B4 Hibrid reconciliere engine objective + user adjusts both stored CDL** (Source 1 line 54 verbatim, Q4=C Bugatti craft transparency):
+- **Engine objective signal** = quantitative 1RM ratio<0.8 + last-12-sessions consensus aggregate
+- **User adjusts** = user can override engine target (different weak group preference)
+- **Both stored CDL audit trail** = transparency Bugatti craft (engine recommendation + user override BOTH logged, NU silent override engine)
+- **Q4=C reconciliere:** user agency F4 wins on conflict, engine signal preserved CDL pentru future analytics (post-Beta data validate engine accuracy vs user preference)
+
+**B5 Cooldown N=12 weeks same group anti-obsession** (Source 1 line 60 verbatim, Q10=B):
+- **N=12 weeks cooldown** post-specialization-block exit (4 weeks ON + 12 weeks cooldown = ~16 weeks cycle minimum same group)
+- **Anti-obsession protection** = preserve programming variety, prevent overfocus single muscle group long-term injury risk
+- **Cross-cutting Engine #4 Deload** standard week 4 preserved non-negotiable (Q12=A) — specialization layered ON top deload schedule, NU replace
+
+**B6 Hard reject 12 weeks cooldown anti-nagging** (Source 1 line 63 verbatim, Q16=A match Q10):
+- **User rejects proposal** → engine NU re-prompts same group for 12 weeks (match Q10 cooldown)
+- **Anti-nagging UX** = respect user decision F4 autonomy, NU repeat-propose anti-friction
+- **Q16=A consistency** with Q10=B cooldown duration — uniform 12-week protection regardless of acceptance/rejection path
+
+**B7 Proposal mechanism (Q15=B propose user accept/reject)**:
+- **Engine proposes** specialization activation cu rationale (weak group + magnitude + expected modifier scope) — Marius decision retained
+- **User accept/reject** binary action — NU auto-activate silent (anti-paternalism F4)
+- **Q15=B Marius decision retained:** engine surfaces; user owns activation. V1 conservative — Q15 tier-aware T2+ auto-activate defer v1.5 (§9.6.6 Reconsideration Trigger 1 candidate post-Beta confidence threshold validate)
+
+---
+
+#### §9.6.3 Cluster C — Application Strategy + Volume/Frequency + Exit (~5 decisions)
+
+**C1 Hibrid Volume + Frequency under MRV §42.9 invariant 1** (Source 1 line 56 verbatim, Q7=C):
+- **Volume modifier** = extra sets per week target weak group (e.g., +30% volume on accumulation phases)
+- **Frequency modifier** = additional weekly session(s) targeting weak group (e.g., 3x → 4x frequency)
+- **Hibrid V+F** = both layered concurrent (NU exclusive choice) — combinatorial recovery stimulus signal
+- **MRV §42.9 invariant 1 cap immutable** = total weekly volume per muscle ≤ Maximum Recoverable Volume Israetel canonical literature. Specialization NU exceeds MRV — anti-injury risk universal. Q7=C invariant respect strict.
+
+**C2 Partial -25% reduction other groups maintenance** (Source 1 line 57 verbatim, Q8=B):
+- **Other groups (non-target)** = reduce volume -25% (maintenance dose only, NU full programming)
+- **Rationale:** redirect recovery bandwidth toward weakness target (zero-sum recovery budget biological constraint)
+- **Maintenance dose** = preserve baseline strength/hypertrophy (anti-detraining), NU growth stimulus
+- **Q8=B partial reduction** vs full elimination — preserve programming continuity (anti-shock skeleton Engine #1 Periodization preserved Q11=B PARALLEL modifier)
+
+**C3 Fixed 4 weeks exit** (Source 1 line 58 verbatim, Q9=A simplicity V1):
+- **Fixed 4-week mesocycle window** = match Q6=A 4-week mesocycle match Q10 §45.2
+- **Adaptive early exit non-responders** defer v1.5 (§9.6.6 Reconsideration Trigger 3 candidate post-Beta data validate non-response signal threshold)
+- **Q9=A simplicity V1:** deterministic exit anti-complexity early-stage product. Fixed window predictable user expectation.
+
+**C4 "Bloc focus [Grupă]" Bugatti craft RO terminology** (Source 1 line 66 verbatim, Q17=C):
+- **UI label terminology** = "Bloc focus [Grupă musculară]" (e.g., "Bloc focus Spate", "Bloc focus Picioare")
+- **Bugatti craft signature** = Romanian native terminology, NU "Specialization Block" calque Englez
+- **Q17=C RO native:** anti-friction Maria/Gigica accessibility (deși engine GATE_BLOCKED non-Marius — UI consistency nonetheless), Marius Advanced cohort RO native preferred
+
+**C5 Volume/Frequency modifier targeting accumulation phases ONLY** (per Q11=B PARALLEL modifier Engine #1 Periodization):
+- **Accumulation phases only** = Periodization phase = ACCUMULATION OR LOAD (NU PEAK NU DELOAD)
+- **PEAK phase** = high intensity emphasis, specialization extra volume incompatible cu peaking goal (anti-cascade preserve §1.10)
+- **DELOAD phase** = recovery week, specialization layered OFF (Engine #4 standard deload week 4 preserved non-negotiable Q12=A)
+- **Anti-cascade preserve §1.10:** Specialization NU overrides Periodization phase, only modulates volume/frequency layered on eligible phases
+
+---
+
+#### §9.6.4 Cluster D — Cross-Engine Integration (~5 decisions)
+
+**D1 PARALLEL modifier Engine #1 Periodization NU REPLACE** (Source 1 line 60 verbatim, Q11=B):
+- **PARALLEL modifier semantics** = layer extra volume/frequency on accumulation phases preserving Periodization skeleton Engine #1 (§9.1 Cluster 1-5 mesocycle phases + Volume Landmarks MEV/MAV/MRV + Linear Block macrocycle 3-meso + cross-engine hooks)
+- **NU REPLACE** = Periodization NU overridden — Engine #1 phase + intensity corridor + volume target preserved canonical
+- **Anti-cascade preserve §1.10 Pipeline Order:** Specialization (6th) NU overrides Periodization (1st). Light coupling additive only.
+
+**D2 Engine #4 Deload standard week 4 preserved non-negotiable** (Source 1 line 61 verbatim, Q12=A):
+- **Standard deload week 4** preserved despite specialization activation — Engine #4 Deload Protocol (§9.8 forward) owns deload structure Hook 2 §9.1 cross-ref
+- **Specialization layered OFF during deload** = volume/frequency modifier suspended week 4 (recovery integrity protected)
+- **Q12=A non-negotiable** = deload safety invariant cross-cutting anti-overtraining; specialization NU bypasses
+
+**D3 Cut DISABLE Q5+Q13 dual safety gate** (Source 1 lines 54+62 verbatim, Q5=D + Q13=A):
+- **Engine #2 Goal Adaptation phase = CUT** → specialization GATE_BLOCKED entire engine output (proposal_state = ineligible_cut_phase signal)
+- **Q5=D dual safety:** deficit nutritional + extra volume specialization = recovery risk universal anti-pattern
+- **Q13=A consistency:** Q5+Q13 redundant safety gate (defense-in-depth Layer 5 Medical Safety §42.9 invariant 5 cross-cut)
+
+**D4 Injury weak group zone → auto-disable Safety Override** (Source 1 line 63 verbatim, Q14=A):
+- **`PainButton` signal injury detected** weak group muscle/joint → specialization auto-disabled engine (proposal_state = injury_safety_override)
+- **Q14=A auto-disable** vs Q14 alternative top-2 fallback rejected V1 — strict safety first (Maria/Gigica Layer 5 Medical Safety §42.9 invariant 5)
+- **V1.5 candidate** alternative top-2 weak group fallback (§9.6.6 Reconsideration Trigger 4) — post-Beta data validate fallback acceptability vs strict disable
+
+**D5 Light coupling Engine #5 Energy + Engine #6 Tempo cross-engine context** (verbatim engines #5+#6 consistent Q18=C):
+- **Engine #5 Energy DOWN** signal cross-cutting context — specialization volume modifier conservative scaling când Energy DOWN signal recurrent (anti-cascade compounding)
+- **Engine #6 Tempo prescription** preserved Engine #5 high intensity → form-conservative amplification Q11=B (§9.5.4) — specialization extra volume NU modifies tempo prescription Engine #6 owns
+- **Light coupling pattern:** specialization reads signals upstream, modulates own output (volume/frequency), NU mutates upstream engines (anti-cascade preserve §1.10)
+
+---
+
+#### §9.6.5 Cluster E — Edge Cases + Telemetry + V1.5+ Deferrals (~5 decisions)
+
+**E1 WhyEngine integration silent + "De ce ăsta?"** (Source 1 line 67 verbatim, Q18=C engines #5+#6 consistent):
+- **WhyEngine silent integration** = engine logs specialization rationale CDL audit trail (NU UI surface default)
+- **"De ce ăsta?"** = user-initiated reactive transparency (tap rationale link "De ce Bloc focus Spate?") — consistent SUFLET F4 user agency
+- **Q18=C engines #5+#6 consistent** pattern (Energy + Tempo silent + reactive transparency identical interaction model)
+
+**E2 Q19 push-back Claude valid: hibrid simulator + Beta cohort 50 testers ground truth** (Source 1 line 69 verbatim, Q19=B Daniel pivot accepted):
+- **Q19 synthetic only INCONSISTENT engines #1-#6** — Claude push-back valid mid-flight chat strategic Daniel pivot accepted
+- **Hibrid validation:** synthetic test pipeline `pipeline.js` orchestrator skeleton + Beta cohort 50 testers ground truth post-Beta corroboration
+- **Anti-overconfidence Mensa-grade:** synthetic-only Engine #7 INCONSISTENT cu engines #1-#6 hybrid validation methodology (§9.4 + §9.5 Q19=B precedent honored Bugatti SSOT consistent)
+
+**E3 Bayesian latent state v1.5 ecosystem alignment** (Source 1 line 70 verbatim, Q20=D ecosystem-wide):
+- **V1.5 Bayesian inference migration** ecosystem-wide (Engine #3 Bayesian + Engine #5 Energy + Engine #6 Tempo + Engine #7 Specialization consistent Q20=D)
+- **V1 stays categorical** (cluster table mapping) — Bayesian latent state evolution post-Beta data validates tractable inference scope (anti-premature-optimization)
+- **Cross-cutting timing** coordinated multi-engine release per §9.4.7 Trigger 7 + §9.5.6 Trigger 8 timing — R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data
+
+**E4 weaknessDetector.js orfan reuse §36.84 Gap #1 (zero new code engine logic):**
+- **Existing module reused:** `src/engine/weaknessDetector.js` (§36.84 Gap #1 orfan candidate identified pre-Faza 2.5) — Engine #7 Specialization V1 implement = wiring detector → session builder action layer (NU rewriting detection logic)
+- **Pattern §36.84:** orfan modules reuse minimizes scope batch implementation — V1 cleanest precedent (Engine #7 = "the cleanest spec session pas 1 → fix Q19 → final" per Source 1 line 117 + 587)
+- **Wire-up Faza 2.5 batch 6:** import `weaknessDetector.js` într `src/engine/specialization/` modul nou; engine = thin wrapper consume detector signal + apply Cluster B-C logic + emit blueprint per ADR 018 §2
+
+**E5 Cut DISABLE recovery risk universal rationale** (Source 1 line 54 verbatim Q5=D, repeated invariant compliance):
+- **Deficit nutritional (CUT phase) + extra volume specialization** = recovery bandwidth insufficient signal universal across Marius cohort empirical literature Israetel/Helms canonical
+- **Q5=D Cut DISABLE** preserved strict V1 — NU exceptions edge cases (anti-friction simplicity decision boundary clear)
+- **Cross-engine dual safety:** Q5 (Goal Adaptation phase gate) + Q13 (Cut DISABLE consistency) + Q14 (Injury auto-disable) = 3-layer defense-in-depth Layer 5 Medical Safety §42.9 invariant 5 cross-cutting
+
+---
+
+#### §9.6.6 Reconsideration Triggers — Engine Specialization V1 → V1.5 candidate
+
+Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster B Q15 tier-aware T2+ auto-activate threshold validate** — V1 propose user accept/reject conservative; post-Beta data validates auto-activate confidence threshold (e.g., Marius T2+ profile signal stable + weakness detection R²>0.90). Trigger threshold: ≥30% Marius T2+ useri accept proposal consistently 3+ specialization blocks → auto-activate candidate. Candidate: V1.5 tier-aware auto-activate T2+ confidence-gated (anti-friction reduce proposal cognitive overhead established users).
+
+2. **Cluster B Q19 hibrid simulator + Beta cohort validation post-Beta corroboration** — synthetic only INCONSISTENT engines #1-#6 V1 — Beta cohort 50 testers ground truth validates Engine #7 prediction accuracy vs other engines hybrid methodology. Trigger threshold: post-Beta ≥50 useri specialization blocks completed + outcome data correlate engine prediction. Candidate: V1.5 ML effectiveness prediction layer consume Beta data validate.
+
+3. **Cluster C Q9 adaptive early exit non-responders** — V1 fixed 4 weeks; post-Beta data shows specialization non-response signal threshold (e.g., weak group strength NU progresses ≥10% post 2 weeks specialization block). Trigger threshold: ≥20% specialization blocks non-response signal week 2 + week 4 unchanged. Candidate: V1.5 adaptive shorter exit pentru non-responders (early termination 2 weeks if signal absent + cooldown window adjusted).
+
+4. **Cluster D Q14 alternative top-2 weak group fallback vs strict auto-disable** — V1 Injury auto-disable strict (Q14=A); post-Beta data validates fallback top-2 weak group acceptability. Trigger threshold: ≥15% specialization blocks injury auto-disabled + user signal "alternative target preferred" via Settings UI. Candidate: V1.5 top-2 fallback opt-in (engine offers alternate weak group when primary blocked, user accept/reject Q15-style).
+
+5. **Cluster B Q3 Top-N parallel multi-weakness expansion** — V1 Top-1 discipline simplicity; post-Beta Marius advanced cohort signal multi-weakness handling capacity. Trigger threshold: ≥10% Marius T2+ useri sequential specialization 2+ different groups within 24 weeks (signaling parallel viability). Candidate: V1.5 Top-2 parallel modifier (concurrent specialization blocks sub MRV §42.9 invariant 1 cap absolute respect).
+
+6. **Cluster E Bayesian latent state v1.5 ecosystem timing** — Q20=D coordinated multi-engine release timing per Engine #3 Bayesian Nutrition R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data (cross-ref §9.4.7 Trigger 7 + §9.5.6 Trigger 8). Candidate: V1.5 migration coordinated cu Bayesian Nutrition + Energy + Tempo consistent.
+
+7. **Cluster A activation gating expansion (Maria/Gigica eligibility post-Beta)** — V1 Q12 §45.3 LOCKED strict Marius ONLY; post-Beta data validates Maria/Gigica advanced sub-cohort exists (long-term users T2+ tier reached eligibility threshold). Trigger threshold: ≥10% Maria/Gigica T2+ useri post-12-luni training + Profile Typing signal Advanced classification. Candidate: V1.5 Maria/Gigica T2+ Advanced sub-classification eligibility (anti-paternalism reduce gating Marius-exclusivity post sufficient signal).
+
+**Re-evaluation cadence:** post Faza 2.5 batch 6 implementation Engine Specialization V1 + post-Beta useri reali signal aggregate (similar §9.1.7 + §9.2.6 + §9.3.6 + §9.4.7 + §9.5.6 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster A-E LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.6.7 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → SpecializationResult` extending DimensionResult (purity preserved engine = pure function NU side effects, async-capable per DP-2)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Specialization 6th în pipeline §42.10 (NU "Engine #7" naming legacy)
+- [[029-engine-specialization|ADR 029]] **STUB → SPEC REFERENCE candidate post §9.6 LOCKED** — file flip recommend pattern ADR 027 + ADR 028 precedent §9.3 Energy + §9.5 Tempo. ADR 029 stub redirects la §9.6 SSOT canonical post-CC separate task (low priority).
+- [[009-calibration-tiers|ADR 009]] tier-aware Marius Advanced gating Q5=D foundation (Profile Typing tier T1+ established gate detection signal noise filter) + §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier transitions cross-cutting NU Specialization specific. Reference shared utility `src/coach/orchestrator/utilities/convergenceGuard.js` (Phase 1-2 foundation commit `5a16550`) via crossEngineHooks NU duplicate logic (pattern §9.4 Bayesian commit `8615ec1` + §9.5 Tempo commit `d82d118` precedent).
+- [[022-bayesian-nutrition-inference|ADR 022]] Q20=D Bayesian latent state v1.5 ecosystem-wide alignment (cross-engine timing coordinated multi-engine release post-Beta validation gate)
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1|ADR Pain Button]] Q14=A Injury weak group zone → auto-disable Safety Override §42.9 invariant 5 cross-cutting (Layer 5 Medical Safety defense-in-depth)
+- [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation — Q15=B Propose user accept/reject NU auto-activate silent (engine pre-fills proposal cu opt-in user activation, anti-paternalism F4)
+- [[017-demographic-prior-database|ADR 017]] persona resolution Marius Advanced gating cross-ref Cluster A activation strict (Q12 §45.3 LOCKED Maria/Gigica NU eligible V1)
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 6
+- [[../06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] §36.84 Gap #1 (`weaknessDetector.js` orfan reuse pattern — Engine #7 = wiring detector → session builder action layer zero new code engine logic) + §45.3 Q12 LOCKED (Marius Advanced AND lagging gating strict) + §45.2 Q10 (4-week mesocycle match Q6=A simplicity V1)
+- §9.1 Engine #1 Periodization Constraint Object frozen Hook 1 read-only — PARALLEL modifier Q11=B layer extra volume/frequency on accumulation phases NU REPLACE skeleton
+- §9.2 Engine #2 Goal Adaptation phase context — CUT phase Q5=D dual safety gate Q13=A specialization GATE_BLOCKED
+- §9.3 Engine Energy Adjustment readiness state cross-engine context (Engine #5 light coupling Energy DOWN conservative scaling)
+- §9.4 Engine Bayesian Nutrition Inference cross-engine recovery state Hook (Q20=D Bayesian latent state v1.5 ecosystem alignment)
+- §9.5 Engine Tempo light coupling cross-engine modifiers (PARALLEL overlay sibling — Tempo prescription preserved Engine #6 owns NU mutated by Specialization extra volume)
+- §9.7 Engine Warm-up (forward TBD spec compile §9.7 batch 7) — light coupling cross-engine modifiers post-template×phase
+- §9.8 Engine Deload Protocol (forward TBD spec compile §9.8 batch 8) — Q12=A standard deload week 4 preserved non-negotiable Engine #4 Hook owns
+
+---
+
+🦫 **§9.6 Engine Specialization Module-Level Spec V1 compiled 2026-05-06 afternoon chat-6 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER_..._engines5-6-7_spec_sessions_CONSUMED.md` Engine #7 Specialization section lines 50-72 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 557-579 — **2-way parity check ✅ ZERO substantive divergence flagged**). ~28-30 decisions Cluster A-E cumulative (Q1-Q20 Source 1 sub-decomposed în 5 + 7 + 5 + 5 + 5 = 27 sub-decisions Cluster A-E + 1 cross-cutting note `weaknessDetector.js` reuse §36.84 Gap #1 = 28 cumulative; granularity match §9.5 Tempo precedent commit `a9b7cbd`). Pre Faza 2.5 batch 6 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`). Pipeline §42.10 position 6th canonical (NU "Engine #7" naming legacy ADR 029 chat strategic spec session ordering ULTIMUL prescriptive engine §36.100 100% milestone). Source 3 ADR 029 = STUB legacy NU disponibil precedent §9.3 Energy ADR 027 + §9.5 Tempo ADR 028 stub pattern; post §9.6 LOCKED → ADR 029 stub flip recommend → SPEC REFERENCE redirect §9.6 SSOT canonical (separate task post-CC, low priority). `weaknessDetector.js` orfan §36.84 Gap #1 reuse note pentru batch 6 V1 implement NEXT (Engine #7 = "the cleanest spec session pas 1 → fix Q19 → final" Source 1 line 117 — wiring detector → session builder action layer zero new code engine logic).
