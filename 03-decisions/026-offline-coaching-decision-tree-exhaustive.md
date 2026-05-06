@@ -875,3 +875,211 @@ Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.3 Engine Energy Adjustment Module-Level Spec V1 compiled 2026-05-06 afternoon chat-4 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou late sources (`149_HANDOVER` Engine #5 Energy section lines 21-32 + CURRENT_STATE §RECENT 2026-05-05 birou late lines 534-545 parity check ✅ ZERO substantive divergence). ~26-28 decisions Cluster 1-5 cumulative. Pre Faza 2.5 batch 3 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + §9.2 Engine #2 Goal Adaptation compile draft (commit `6be84f8`). Pipeline §42.10 position 3rd canonical (NU position 5 legacy ADR 027 "Engine #5" naming).
+
+---
+
+### §9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 afternoon chat-5 acasă din chat strategic 2026-05-05 birou after sources). ~32-35 decisions cumulative (Cluster A-E). Pre Faza 2.5 batch 4 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Energy Adjustment V1 LANDED commit `69ec9ce` (batch 3).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Bayesian Nutrition Inference runs sequentially **4th** position canonical. Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian Nutrition (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`.
+
+**Provenance chain (3-way parity check ✅):**
+- Source 1 (verbatim Cluster A-E narrative): `📤_outbox/_archive/2026-05/148_HANDOVER_2026-05-05_birou_after_engines3-4-5_spec_sessions_CONSUMED.md` Engine #3 Bayesian Nutrition section (line 5 dense paragraph aggregate ~21 substantive decisions)
+- Source 2 (cristalizate parity check): `00-index/CURRENT_STATE.md` §RECENT entry "2026-05-05 birou after" Engine #3 Bayesian partition (lines 607-627, 21 bullets identical content vs Source 1)
+- Source 3 (cristalizate distilled SPEC READY V1): `03-decisions/022-bayesian-nutrition-inference.md` Cluster A-E + Convergence Guard cluster (lines 25-111). **Source 3 more structured** cu sub-numbering A1-A5/B1-B4/C1-C3/D1-D6/E1-E2 + separate Convergence Guard cluster (5 conditions explicit). Decision count Source 3 = ~20-21 grouped + Convergence Guard ~5-7 = total ~25-28; Sources 1+2 count 32-35 prin granular sub-decisions per caveat (e.g., Kalman = 3 sub-decisions for 3 caveats). **Acceptable delta — content verbatim identical**.
+- **3-way verbatim parity check ✅: ZERO substantive divergence flagged** (anti-recurrence proof stronger vs §9.1-§9.3 2-way precedent).
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 above (Bayesian Nutrition 4th în pipeline §42.10) | [[022-bayesian-nutrition-inference|ADR 022]] SPEC READY V1 cross-ref Source 3 distilled (parity check ✅) | [[017-demographic-prior-database|ADR 017]] T0 demographic prior baseline foundation | [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" cross-cutting (NU Engine #3 specific) | [[../01-vision/PRODUCT_STRATEGY_SPEC_v1|PRODUCT_STRATEGY_SPEC]] §3.5.1 Strong Prior 80% input + 20% baseline calibration time -50% | §9.1 Engine #1 Periodization Volume Landmarks Israetel cross-ref Cluster C4 | §9.2 Engine #2 Goal Adaptation Disagreement flag cross-ref Cluster C2 | §9.3 Engine Energy Adjustment σ variance modifier Q12=C cross-engine integration cross-ref Cluster C3
+
+---
+
+#### §9.4.1 Cluster A — Prior Form + Slope Tier-Based + Decay + Validation + Phase Reset (~5 decisions)
+
+**A1 Prior distribution form** (verbatim Source 3 line 29, Source 1 line 5 verbatim parity ✅):
+- **Gaussian Conjugate Prior** local-first JS tractable. **NU Hierarchical Bayesian** — V1 scope.
+- Conjugate pair (Normal-Normal) closed-form posterior update — no MCMC, no JAX, runs device-side <50ms median per ADR 026 Q8.1 budget compliant.
+
+**A2 Strong Prior dynamic slope tier-based** (verbatim Source 3 lines 30-33, Source 1 line 5 + Source 2 line 609):
+- **Big 6 minim T0 = 70% prior / 30% input** (low confidence — protect against single-data-point overshoot)
+- **Big 6 + 14 zile observations T1 = 80/20** (per §3.5.1 baseline calibration time -50%)
+- **Big 6 + Convergence Guard satisfied T2 = 90/10** (high confidence — inference erodează prior)
+
+**A3 Bayesian decay natural** (verbatim Source 3 line 34, Source 1 line 5 + Source 2 line 610):
+- `posterior(week N) = prior(week N+1)`. **NU explicit decay rule** — math-native, no exponential decay parameter to tune. Self-balancing per Conjugate update math.
+
+**A4 Validation strategy Hibrid** (verbatim Source 3 line 35, Source 1 line 5):
+- **Synthetic personas pre-Beta** (R²>0.85 simulator gate, Hall 2008 metabolic adaptation literature defaults — ~22 kcal/kg LBM lost per Forbes equation)
+- **Real anonymized Beta cohort post v1.5+** (dietician panel corroborate, anti-overconfidence Mensa-grade validation Daniel push-back)
+
+**A5 Phase reset Hibrid** (verbatim Source 3 line 36, Source 1 line 5 "Hibrid reset Layer 1+2 preserve Layer 4 Goal Shift"):
+- **CUT → BULK transition = Layer 1 (kcal_baseline) + Layer 2 (macro_split) RESET**
+- **Preserve Layer 4 (Goal Shift Event Handler §36.35 streak preservation)** — biological signals trans-template (recovery/vitality NU dependente de goal choice)
+
+---
+
+#### §9.4.2 Cluster B — Cadence + Kalman + Volume Metric + Mood Scoring (~4 decisions)
+
+**B1 Adaptive cadence** (verbatim Source 3 line 40, Source 1 line 5):
+- **T1+ = weekly weigh-in + adherence rate** (CDL-sourced)
+- **T0 fallback = sparse weigh-ins acceptable, 14 zile observation buffer** pre Profile Typing threshold
+
+**B2 Kalman 1D peak craft cu 3 caveats** (verbatim Source 3 lines 41-44, Source 1 line 5 "Kalman 1D peak craft cu 3 caveats"):
+- **Caveat 1:** defaults Hall 2008 literature (NIH metabolic adaptation rate ~22 kcal/kg LBM lost per Forbes equation)
+- **Caveat 2:** R²>0.85 validation gate pre-Beta simulator — fail = revert EWMA fallback
+- **Caveat 3:** EWMA fallback feature flag (`bayesian_kalman_v1` rollout per ADR 018 featureFlags pattern)
+
+**B3 Volume metric weighted compound:isolation 3:2:1** (verbatim Source 3 line 45, Source 1 line 5 + Source 2 line 615):
+- **Lower body compound** (squat, deadlift, hip thrust) × **3**
+- **Upper body compound** (bench, OHP, row) × **2**
+- **Isolation** (curl, lateral raise, leg ext) × **1**
+- Reflects metabolic disruption magnitude per movement category.
+
+**B4 Mood scoring Linear Sum Weighted normalized** (verbatim Source 3 line 46, Source 1 line 5 + Source 2 line 616):
+- **Linear Sum Weighted normalized** energy-readiness + emoji + sleep-self-report aggregate
+- **LVM (latent variable model) defer v1.5** — V1 = simple weighted normalize (sum ÷ count, scale 0-1)
+
+---
+
+#### §9.4.3 Cluster C — Volume Landmarks + Cross-Engine Integration (~3 decisions)
+
+**C1 Volume landmarks Hibrid lookup + regression** (verbatim Source 3 line 50, Source 1 line 5 + Source 2 line 617):
+- **Israetel 11 grupuri musculare lookup baseline** + **regression personalized STRICT compound only** (data quality high)
+- **Isolation graceful degradation 0.3× când compound observations <3 în window 14 zile** (anti-overfit small-N isolation noise)
+
+**C2 Cross-engine #2 (Goal Adaptation) integration** (verbatim Source 3 line 51, Source 1 line 5 + Source 2 line 618):
+- **Engine #2 phase output** (CUT/BULK/MAINTAIN/RECOMP) = **Engine #3 prior conditioning input**
+- **Disagreement flag CDL** când Engine #2 phase ≠ Engine #3 inferred phase (**Invariant 5 Medical Safety protect** — disagreement = Tier 1 silent flag, **NU autonomous override**)
+
+**C3 Cross-engine #5 (Energy Adjustment) integration** (verbatim Source 3 line 52, Source 1 line 5 + Source 2 line 619):
+- **Engine #5 readiness output = pre-processing modulator Engine #3 variance σ**
+- **NU linear discount** — readiness scăzut crește σ observații recent semnalând zgomot inflamație/stres/cortisol (Mensa-grade insight Gemini articulated)
+- **Neutral fallback T0 cold start** (`sigma_modifier = 1.0` default until 14 zile observations)
+- **Cross-ref §9.3 Engine Energy Adjustment Cluster 4 §9.3.4 Q12=C** σ variance modifier bidirectional integration.
+
+---
+
+#### §9.4.4 Cluster D — Schema + Output + Profile Typing + UI Tier + Hard Rules (~6 decisions)
+
+**D1 Schema standard `nutrition_inference_metadata`** (verbatim Source 3 lines 56-64, Source 1 line 5 + Source 2 line 620):
+
+```
+nutrition_inference_metadata: {
+  prior:               { mu, sigma, source: 'demographic_prior' | 'posterior_n_minus_1' },
+  posterior:           { mu, sigma, observations_count: N, ci_lower, ci_upper },
+  observations:        [ /* N=20 rolling window */ ],
+  confidence_interval: { lower, upper, level: 0.95 }
+}
+```
+
+**D2 Output structure** (verbatim Source 3 line 65, Source 1 line 5 + Source 2 line 621):
+- `{deficit_likelihood, surplus_likelihood, maintenance_likelihood}` probabilities (sum = 1.0)
+- **NU absolute kcal output — hard rule preserved §3.5.1 NEVER specific kcal recommendation**
+
+**D3 Profile Typing threshold Adaptive** (verbatim Source 3 line 66, Source 1 line 5 + Source 2 line 622):
+- **0.55-0.85 T1+ cu 0.70 default T0**
+- **Hamming hysteresis 15%** — anti-flap profile change (don't flip-flop între phases on noise)
+- **2 sesiuni consecutive 14 zile window** = qualifier explicit
+
+**D4 UI tier** (verbatim Source 3 line 67, Source 1 line 5 + Source 2 line 623):
+- **Tier 1 silent** (CDL log only) + **Tier 2 banner discret** (informational, NU action-required)
+- **NU blocking modal** — Maria 65 autonomy preserve
+- **Tier 3 (modal blocking opt-in) reserved for explicit Engine #2 Goal Shift trigger**, NU Engine #3 inference
+
+**D5 Hard rule preserved §3.5.1** (verbatim Source 3 line 68, Source 1 line 5 + Source 2 line 624):
+- **NEVER specific kcal output în UI**
+- Bugatti differential vs MFP/Lose-It (specific kcal pseudo-precision Maria 65 confusion)
+
+**D6 Anti-spam aliniat Engine #2** (verbatim Source 3 line 69, Source 1 line 5 + Source 2 line 625):
+- **28 zile rolling cooldown** re-prompt when phase transition detected
+- **Max 4 prompts/year cap** (cross-ref ADR 024 §2.8 Q8 LOCKED + §9.2.5 Cluster 5 anti-spam logic precedent)
+
+---
+
+#### §9.4.5 Cluster E — Validation Panel + Edge Cases (~2-3 decisions)
+
+**E1 Validation panel Hibrid** (verbatim Source 3 line 73, Source 1 line 5 + Source 2 line 626):
+- **Simulator R²>0.85 pre-Beta** (synthetic personas Hall 2008 metabolic adaptation literature — Marius advanced 4-6 săpt CUT, Maria 65 maintenance, Gigica intermediate BULK)
+- **Dietician panel post-Beta v1.5 corroborate** (N validators × M users sample, anti-overconfidence Mensa-grade gate)
+
+**E2 Edge cases Hibrid** (verbatim Source 3 line 74, Source 1 line 5 "Hibrid Passive Mode tripwire (pregnant/post-bariatric/kidney) + Special priors (>75 + ED history) + disclaimer onboarding"):
+- **Passive Mode tripwire** — pregnant + post-bariatric + kidney disease = engine NU output adjustment, deferral medical care
+- **Special priors set** — >75 ani + ED history (eating disorder)
+- **Disclaimer onboarding** — *"Andura NU înlocuiește sfat medical"*
+
+**E3 Convergence Guard "T2 Unlock" cross-cutting ADR 009** (verbatim Source 3 line 75, **referință ONLY** — see §9.4.6 below):
+- See [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after — formula final post 5 iterations refinement.
+
+---
+
+#### §9.4.6 Cross-cutting — Convergence Guard "T2 Unlock" (Reference ONLY, ADR 009 amendment owns)
+
+**Reference ONLY — NU compile own în §9.4.** [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after = single source of truth canonical pentru Convergence Guard "T2 Unlock" rule. Surfaced mid-Engine #3 spec session prin Daniel push-back fundamental seminal: *"T2 = Behavioral Validation NOT just statistical convergence"* — engine trebuie observe self-report aliniază realitate biologică CDL ÎNAINTE adaptări agresive. Rule = behavioral validation cross-cutting **all tier transitions T0→T1→T2**, NU Engine #3 Bayesian Nutrition specific.
+
+**Formula final post 5 iterations refinement** (verbatim Source 3 lines 84-93 + Source 1 line 10, **NU repeated here NU SSOT duplication** — vezi ADR 009 §AMENDMENT 2026-05-05 birou after):
+- σ² 30% reducere primary statistical convergence signal
+- σ MAX(10% kcal_baseline, 200 kcal absolute floor) pragmatic noise floor
+- σ < 5% body_weight proportional scale for very-low-kcal-baseline edge cases
+- N ≥ 10 sesiuni minimum statistical power
+- volume_adherence_vs_pain_adjusted ≥ 80% (Daniel push-back swap bar→gantere = signal metabolic VALID NU penalize)
+- max 2 Pain-Aware sesiuni din ultimele 10 (anti-T2-progress-via-pain-ignoring Gigel guardrail)
+
+**Pain-Aware definition Hybrid Spec V1** (verbatim Source 3 lines 103-106 + Source 1 line 12):
+- **(a) STRICT user-triggered Pain Button only** — NU engine proactive DELOAD/Energy/Goal phase modifiers (Clean Signal rule preserve Invariant 5 Medical Safety)
+- **(i) BINARY V1** — any click during session → full session `pain_aware: true`
+- **Forward-compat v1.5 silent vector** `pain_trigger_set: [index_set]` ZERO schema migration
+
+**UX wording Pain Button preserve EXACT** (verbatim Source 3 lines 108-109 + Source 1 line 12):
+> "Siguranța e pe primul loc. Am ajustat restul sesiunii."
+
+**Cross-engine integration** preserved Engine Energy Adjustment §9.3.5 Pain-Aware integration cross-ref (Engine Energy NU proactive trigger Pain-Aware — Clean Signal rule preserved).
+
+---
+
+#### §9.4.7 Reconsideration Triggers — Engine Bayesian Nutrition Inference V1 → V1.5 candidate
+
+Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster A Gaussian Conjugate Prior insufficient post-Beta** — Hierarchical Bayesian demand prevalence ≥30% useri reali cu signal hierarchical structure observed (e.g., persona-level vs user-level slope variability mismatch unresolved by single-level Conjugate). Per Source 3 ADR 022 §Reconsideration Triggers reversibility note. Trigger threshold: ≥30% Beta cohort dietician panel post-Beta corroboration <80%. Candidate: V1.5 migration Hierarchical Bayesian (multi-level slope tier-based hierarchical structure).
+
+2. **Cluster A Strong Prior slope tier 70/30 too aggressive sau too conservative** — T0 useri reali signal mismatch sustained (T0 70/30 prior dominance prevents convergence T0→T1 within 14 zile observation buffer). Trigger threshold: ≥20% T0 useri stuck T0 >8 săpt + Profile Typing threshold NU progress 0.55-0.70. Candidate: T0 60/40 prior relax sau extend observation buffer 14 → 21 zile.
+
+3. **Cluster B Cadence Adaptive T1+ too slow / fast post-Beta** — weekly weigh-in cadence mismatch user reality (T1+ daily weigh-ins prevalence mass adoption sau weekly fatigue dropout). Trigger threshold: ≥30% T1+ useri raportează cadence mismatch. Candidate: tier-aware cadence matrix (T1 weekly default / T2 user-toggle daily option).
+
+4. **Cluster B Kalman R²>0.85 gate too strict** — EWMA fallback feature flag activation rate >30% V1 (Kalman 1D divergence frequency high în edge cases). Per Source 3 ADR 022 §Reconsideration Trigger 1 reversibility note. Trigger threshold: EWMA fallback rate >30% sustained ≥4 săpt post-Beta. Candidate: relax R²>0.80 gate sau add Kalman 2D extension v1.5.
+
+5. **Cluster C Cross-engine #2 disagreement flag noise high** — false positives sustained (Engine #2 phase transitions legitimate triggering disagreement cascade unwarranted). Per Source 3 ADR 022 §Reconsideration Trigger 2. Trigger threshold: ≥15% sessions disagreement flag fired cu Engine #2 phase change <14 zile (transient transition window expected divergence). Candidate: disagreement flag suppress within transition window + escalate Tier 2 banner threshold tightening.
+
+6. **Cluster D Profile Typing threshold drift** — 0.55-0.85 range needs tier-specific calibration post-Beta data (T0 useri stuck low threshold sau T1+ useri flap rate >5% week-over-week). Per Source 3 ADR 022 §Reconsideration Trigger 3 reversibility note. Trigger threshold: ≥5% Profile Typing flap rate sustained ≥2 săpt post-Beta. Candidate: tier-aware threshold matrix (T0 strict 0.70 default / T1+ adaptive 0.55-0.85 calibrated) sau Hamming hysteresis 15% → 20% tighten + qualifier 2 sesiuni → 3 sesiuni.
+
+7. **Cluster E Anti-spam 28 zile cooldown user fatigue signal** — useri raportează re-prompt fatigue chiar sub cap 4/an (consistent ADR 024 §2.8 Q8 reconsideration). Per Source 3 ADR 022 §Reconsideration Trigger 4 cross-ref. Trigger threshold: ≥30% useri Settings UI reduce re-prompt frequency manual. Candidate: extend cooldown 28d → 35d rolling sau reduce cap 4 → 3/an.
+
+8. **Cluster A4 + E1 Validation gate failure pre-Beta** — simulator R²<0.85 fails pre-Beta blocking gate. Per Source 3 ADR 022 §Reconsideration Trigger 1 verbatim. Candidate: revert EWMA fallback feature flag, defer Bayesian Kalman 1D rollout v1.5+ entire (anti-Bayesian-fakery — ship deterministic V1 only).
+
+**Re-evaluation cadence:** post Faza 2.5 batch 4 implementation Engine Bayesian Nutrition V1 + post-Beta useri reali signal aggregate (similar §9.1.7 + §9.2.6 + §9.3.6 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster A-E LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.4.8 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → BayesianNutritionResult` extending DimensionResult (purity preserved engine = pure function NU side effects, async-capable per DP-2)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Bayesian Nutrition 4th în pipeline §42.10
+- [[022-bayesian-nutrition-inference|ADR 022]] **SPEC READY V1** cross-ref Source 3 distilled (parity check ✅) — file preserved as canonical SSOT distilled (NU file flip recommend, consistent ADR 026 §9.4 SSOT Cluster A-E narrative + ADR 022 cluster-grouped detail = complementary references)
+- [[017-demographic-prior-database|ADR 017]] T0 demographic prior baseline — K-NN K=10, 6 anchor personas + 44 edge cases + 450 algorithmic = 500 profiles
+- [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — cross-cutting architectural extension surfaced mid-Engine #3 (NU Engine #3 specific, owns this rule canonical)
+- [[011-coach-decision-log-architecture|ADR 011]] CDL schema extension target for `nutrition_inference_metadata` + `pain_aware` + `pain_trigger_set` forward-compat v1.5
+- [[../01-vision/PRODUCT_STRATEGY_SPEC_v1|PRODUCT_STRATEGY_SPEC]] §3.5.1 Strong Prior 80% input + 20% baseline calibration time -50%
+- [[../04-architecture/COGNITIVE_ARCHITECTURE_SPEC_v1|COGNITIVE_ARCHITECTURE_SPEC]] 5 voices + 27 reguli arbitration — Bayesian verdict feeds REALTIME + PROJECTION voices + Triangulation F1 SUFLET
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware definition (a) STRICT user-triggered + (i) BINARY V1 cross-ref
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 4
+- §9.1 Engine #1 Periodization Volume Landmarks Israetel cross-ref Cluster C1 (regression compound only Israetel baseline lookup)
+- §9.2 Engine #2 Goal Adaptation phase output Cluster C2 disagreement flag CDL Invariant 5 Medical Safety protect
+- §9.3 Engine Energy Adjustment σ variance modifier Cluster C3 cross-engine integration (Hook 3 bidirectional Engine #5 readiness)
+- §9.5 Engine Tempo (forward TBD spec compile §9.5 batch 5) — downstream consumer nutrition signals
+- §9.6 Engine Specialization (forward TBD spec compile §9.6 batch 6) — light coupling cross-engine
+- §9.7 Engine Warm-up (forward TBD spec compile §9.7 batch 7) — light coupling cross-engine
+- §9.8 Engine Deload Protocol (forward TBD spec compile §9.8 batch 8) — Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved
+
+---
+
+🦫 **§9.4 Engine Bayesian Nutrition Inference Module-Level Spec V1 compiled 2026-05-06 afternoon chat-5 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou after sources (`148_HANDOVER_..._engines3-4-5_spec_sessions_CONSUMED.md` Engine #3 Bayesian section line 5 + CURRENT_STATE §RECENT 2026-05-05 birou after lines 607-627 + ADR 022 SPEC READY V1 file Cluster A-E lines 25-111 — **3-way parity check ✅ ZERO substantive divergence flagged**). ~32-35 decisions Cluster A-E cumulative (Source 3 grouped count ~25-28; Sources 1+2 granular count ~32-35 per individual sub-decisions; acceptable delta — content verbatim identical). Pre Faza 2.5 batch 4 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization compile draft (commit `cd6d9a4`) + §9.2 Engine #2 Goal Adaptation compile draft (commit `6be84f8`) + §9.3 Engine Energy Adjustment compile draft (commit `2f9aa79`). Pipeline §42.10 position 4th canonical. Convergence Guard "T2 Unlock" cross-cutting reference §9.4.6 ONLY (ADR 009 §AMENDMENT 2026-05-05 birou after owns canonical SSOT, NU §9.4 duplicate).
