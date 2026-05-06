@@ -1,5 +1,71 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 morning chat-3 acasă — Faza 2.5 batch 1 Engine #1 Periodization V1 LANDED + ADR 026 §9.1+§9.2 compile (Bugatti SSOT consistent) + 4 slip-uri scribe Claude consolidat permanent + anti-recurrence proof §9.2 ZERO slip-uri (cumulative ~659 PRESERVED, aggregation only verbatim NOT additive product/architecture)
+
+**Status:** §CC.5 fast handover ingest cumulative 2026-05-06 morning chat-3 acasă (post chat-2 morning sequence reframe 5-faze "vizor fără ușă" reframe LOCKED). Bandwidth start ~75% → end ~25-30%.
+
+**Authority:** Daniel + Claude chat strategic 2026-05-06 morning chat-3 acasă — ADR 026 §9.1 compile CC tactical + Periodization V1 implement CC autonomous + ADR 026 §9.2 compile CC tactical + slip-uri scribe consolidat + anti-recurrence proof learning applied.
+
+**3 things LANDED cumulative chat-3 ACEST (NOT cumulative product/architecture increment, aggregation only):**
+
+1. **ADR 026 §9.1 Engine #1 Periodization Module-Level Spec V1 compile DONE** commit `cd6d9a4` (549 LOC, +157 LOC append, 32 decisions Cluster 1-5 verbatim sum check ✅, 1448 PASS preserve baseline):
+   - Sources: `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` lines 33-39 + cristalizate identical CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 579-584
+   - Push-back productive Claude → Daniel imediat: *"Decizia reală nu e ADR 024 vs presupus — e compile draft NEW Periodization (extensie ADR 026 pattern Bugatti SSOT consistent ADR 024) vs direct CC implement multi-source dispersed cu drift risk silent."*
+   - Daniel verify mandatory (*"nu imi plac presupunerile"*) → eu search verbatim sources → Daniel **lock A** rapid: compile §9.1 first
+   - Section §3 numbering collision rezolvat CC engineering judgment append §9 NEW preserve §1-§8 cross-refs intact
+   - Pattern Bugatti SSOT pre-implement
+
+2. **Faza 2.5 batch 1 Engine #1 Periodization V1 implement DONE** commit `1303b62`:
+   - 12 files NEW `src/engine/periodization/` — 7 source modules (constants/types/index/mesocycle/volumeLandmarks/macrocycle/crossEngineHooks) + 5 test files
+   - **2271 LOC total** (1068 src + 1203 test)
+   - **210 new tests**, **1448 → 1658 PASS / 0 FAIL zero regression**
+   - 4 initial test failures uncovered 2 real bugs `mesocycle.js` (`Number(null)=0` falls through validity check + per-week filter mixed session types `Number(undefined)=NaN`) → surgical fixes pre-commit, NO silent skip
+   - Pure function `evaluate(ctx) → PeriodizationResult` per ADR 018 §2 Standardized Dimension Contract + ADR 026 §9.1 spec verbatim Cluster 1-5
+   - CC quality work onest
+
+3. **ADR 026 §9.2 Engine #2 Goal Adaptation Module-Level Spec V1 compile DONE** commit `6be84f8`:
+   - 700 LOC (+151 LOC append), 30 decisions Cluster 1-5 verbatim sum check ✅, 1658 PASS preserve baseline
+   - ZERO substantive divergence Source 1 ↔ Source 2 parity check (sources `142_HANDOVER` lines 41-47 ↔ CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 586-591)
+   - Pattern §9.1 honored mirror structure
+   - **Anti-recurrence proof** chat-2 morning HANDOVER_GLOBAL stale assumption successfully avoided — eu prompt explicit cited `142_HANDOVER_CONSUMED.md` source canonical NU §45.x stale
+   - CC raport ZERO slip-uri = **learning applied chat strategic**
+
+**4 slip-uri Claude scribe consolidat permanent (mea culpa rapid fără auto-flagelare):**
+
+1. **Slip 1 — markdown chat vs artefact:** prompt CC §9.1 compile = code block markdown în chat în loc de artefact 1-click. Daniel push-back: *"de ce ai dat markfown in loc de artefact... i-am dat eu manual paste"*. **Memory rule #2 (Artefacte mereu pentru prompts CC) recidivă slip — anti-pattern.** Future prompts CC = artefact direct sine excepție.
+2. **Slip 2 — source-of-truth §45.x stale assumption RECIDIVĂ:** prompt §9.1 compile declared §45.2-§45.5 = Cluster 1-5 spec. Realitate: §45.x = ADR 026 Q1-Q40 architectural batch (NU Cluster 1-5). Real source = `142_HANDOVER_CONSUMED.md`. **Same pattern slip chat-2 morning HANDOVER_GLOBAL stale assumption.** Anti-hallucination grep mandatory în prompt CC saved the day.
+3. **Slip 3 — section §3 numbering collision:** prompt §9.1 declared "append §3" dar ADR 026 deja cu §3 D-CLUSTER. CC engineering judgment append §9 NEW preserve §1-§8 cross-refs intact.
+4. **Slip 4 — `npm run lint` tooling presupus:** prompt Periodization V1 implement cer `npm run lint` zero new warnings — script does NOT exist în `package.json`. CC corect skip transparency NU fabricated. **Memory note extension anti-hallucination rule:** tooling availability grep MANDATORY înainte reference în prompts CC.
+
+**Anti-recurrence proof §9.2 compile** — ZERO slip-uri acest task. Eu prompt explicit `142_HANDOVER_CONSUMED.md` source canonical + verbatim parity check sources #3 ↔ #4 mandatory. **Learning successfully applied chat strategic.**
+
+**Mid-flight transparency flag (Daniel silent acceptance):** CC raport Periodization V1 implement flag `intensityCorridorForGoal` bands derived Israetel/Helms canonical literature standard NU verbatim §9.1 source. Daniel n-a răspuns explicit, a procedat direct paste prompt §9.2 compile → **silent acceptance default canonical** Israetel/Helms standard. Future review optional dacă post-Beta useri reali signal need different bands (reconsideration trigger Cluster 5 §9.7 covered).
+
+**Sequence 5-faze updated:**
+1. ✅ Faza 1 ADR 024 compile commit `8674782` (chat-2 morning prev)
+2. ✅ Faza 2 ADR 030 create commit `d6a6ca0` (chat-2 morning prev)
+3. ✅ **Faza 2.5 batch 1 Periodization V1 implement** commit `1303b62` (acest chat-3) + ADR 026 §9.1 compile commit `cd6d9a4` + §9.2 compile commit `6be84f8`
+4. **NEXT chat NEW: Faza 2.5 batch 2 Goal Adaptation V1 implement** — pure-function module `src/engine/goalAdaptation/` per ADR 018 §2 contract + ADR 026 §9.2 spec just LANDED single source of truth
+5. Faza 2.5 batches 3-7 sequential per pipeline §42.10 (Energy V1 → Bayesian V1 → Tempo V1 → Specialization V1 → Warm-up V1 → Deload V1) — pre-implement compile §9.3-§9.8 ADR 026 pattern Bugatti SSOT consistent
+6. Faza 3 wiring real Strangler featureFlag `<engine>_via_orchestrator` rollout 0% default OFF + golden-master parity legacy↔orchestrated tests, post toate engines V1 LANDED
+7. Faza 4 smoke end-to-end Daniel cont propriu
+
+**Implicații downstream:**
+- **Cumulative LOCKED V1 ~659 PRESERVED** — compile §9.1+§9.2 + Periodization V1 implement = aggregation only verbatim 32+30 decisions deja contate cumulative ~356 prev session 2026-05-04 evening late, NU ré-contate. File flips spec extension + source module flip STUB → V1 implementation fără decisions noi
+- **NEXT P1 sequence reframe 5-faze updated:** P1.1+P1.2 ✅ DONE + **P1.2.5 batch 1 ✅ DONE** (Periodization V1) + P1.2.5 batch 2 NEXT (Goal Adaptation V1) + batches 3-7 sequential pipeline §42.10
+- **ADR 026 §9 ENGINE-LEVEL SPECS** extension cu §9.1 + §9.2 — pattern §9.3-§9.8 reusable Engines #3-#8 ulterior
+- **Phase 1-2 orchestrator foundation** `src/coach/orchestrator/` reusable post toate engines V1 LANDED — Faza 3 wiring real Strangler unblocked
+
+**Backup tags chat-3 ACEST decisii (4 pushed pre-execution):**
+- `pre-adr026-section3-periodization-compile-2026-05-06-1301` (compile §9.1 rollback safety)
+- `pre-faza2.5-periodization-v1-implement-2026-05-06-1312` (Periodization V1 implement rollback safety)
+- `pre-adr026-section9.2-goal-adaptation-compile-2026-05-06-1337` (compile §9.2 rollback safety)
+- `pre-handover-2026-05-06-chat3-ingest-2026-05-06-1400` (this handover ingest)
+
+**Cross-refs:** [[../03-decisions/026-offline-coaching-decision-tree-exhaustive|ADR 026]] §9 ENGINE-LEVEL SPECS extension cu §9.1+§9.2 (commits `cd6d9a4` + `6be84f8`) | [[../03-decisions/030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED foundation Hexagonal preserved | [[../03-decisions/024-goal-driven-program-templates|ADR 024]] Q1-Q8 LOCKED foundation §9.2 source | [[../03-decisions/018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract Periodization V1 implement contract | `src/engine/periodization/` Faza 2.5 batch 1 LANDED commit `1303b62` (12 files, 2271 LOC, 210 new tests, 1658 PASS / 0 FAIL) | `src/coach/orchestrator/` Phase 1-2 foundation reusable commit `5a16550`
+
+---
+
 ## 2026-05-06 morning chat-2 acasă — ADR 024 compile DONE + ADR 030 NEW Adapter Design Pattern create DONE + Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" vindicat literal + Phase 1-2 orchestrator foundation LANDED safe + Option A LOCKED implement engines V1 first + memory rule #10 REPLACED format fatigue invariant + sequence reframe 4-faze → 5-faze (cumulative ~654 → ~659, +5 net D1-D5 ADR 030 product/architecture substantive)
 
 **Status:** §CC.5 fast handover ingest 2026-05-06 morning chat-2 acasă (post chat-1 morning acasă SMTP + Settings UX + ADR 024 Q6 LOCK + push-back "vizor fără ușă"). Bandwidth start ~85% → end ~25-30%. Drift discovered start: userMemories cumulative 243 + Auth pending stale fata de realitate vault ~654 + Auth COMPLETE — Daniel a uploadat manual `CURRENT_STATE.md` să clear drift. Layered read §CC.2 4/4 verified post upload.
