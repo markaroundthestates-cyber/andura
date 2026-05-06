@@ -48,7 +48,7 @@ service cloud.firestore {
     }
 
     // ─── Anonymous archive root (server-only via admin SDK script) ───
-    match /_archived/anonymous/{timestamp}/{document=**} {
+    match /_archived/anonymous/{archiveTs}/{document=**} {
       allow read, write: if false;  // server-only via firebase-admin
     }
 
@@ -76,3 +76,4 @@ service cloud.firestore {
     }
   }
 }
+
