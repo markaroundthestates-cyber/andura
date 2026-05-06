@@ -1694,3 +1694,256 @@ Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă:
 ---
 
 🦫 **§9.7 Engine Warm-up Module-Level Spec V1 compiled 2026-05-06 evening chat-7 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-04-30 evening §45.6 + 2026-05-04 evening BATCH 4 §65.1-§65.4 sources (`131_HANDOVER_INPUT_2026-05-04_AUTH_FLOW_BATCH_1_6_63_LOCKED_CONSUMED.md` lines 157-198 BATCH 4 §65 + `06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` §45.6 lines 324-345 + CURRENT_STATE §RECENT cross-check — **2-way parity check ✅ + reconciled override Source 1 §65.4 supersedes Source 2 §45.6 Q-Cooldown defer transparency documented Cluster C3**). ~21 decisions Cluster A-E cumulative (5+5+3+5+3 = 21; lower than §9.4-§9.6 ~28-32 range — BATCH 4 §65 only 4 Warm-up scope decisions vs §65.5-§65.10 Periodization/Exercise scope; §45.6 5 decisions scope/persona/MANDATORY/Instant Skip + Cooldown reconciled = 6 scope; total 4+6 = 10 source decisions decomposed Cluster A-E + 11 derived A1+A3+A4+A5+D1-D5+E2+E3 standard pattern §9.1-§9.6 cross-cutting decomposition = 21 cumulative. Bugatti transparency: NU fabricate cluster decisions to hit ~28 quota — accept lower count consistent prompt anti-recurrence checklist verbatim). Pre Faza 2.5 batch 7 implementation per Option A LOCKED 2026-05-06 morning chat-2. Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`) + §9.6 Specialization (`92a69fd`). Pipeline §42.10 position 7th canonical (NU "Engine #8" naming legacy chat strategic spec session ordering 2026-04-30 evening META §36.100 amendment 7→8 prescriptive engines). Source 4 ADR Warm-up file ABSENT — post §9.7 LOCKED → recommend NEW ADR create direct cu SPEC REFERENCE redirect (precedent reverse vs ADR 027/028/029 stub flip pattern; suggested filename `031-engine-warmup-mobility.md` next ADR §36.95 Additive convention). §9.8 Engine Deload final batch 8 = penultimate compile post §9.7 V1 implement.
+
+---
+
+### §9.8 Engine Deload Protocol Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 evening chat-8 acasă din chat strategic 2026-05-05 birou after Engine #4 Deload Protocol spec session sources). ~32 decisions cumulative (Cluster A-E). **Pipeline §42.10 SPEC closure FINAL 8/8 prescriptive engines** (NU 8/8 V1 implement încă — batch 8 second half pending). Pre Faza 2.5 batch 8 V1 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Warm-up V1 LANDED commit `20999fb` (batch 7).
+
+**Pipeline placement (per §42.10 LOCKED V1 §1.10 ADR 026):** Deload runs sequentially **8th** position canonical (FINAL prescriptive engine pipeline closure). Order: `Periodization (§9.1) → Goal Adaptation (§9.2) → Energy Adjustment (§9.3) → Bayesian Nutrition (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7) → Deload (§9.8)`. **Engine numbering clarification:** Source 1 references "Engine #4 Deload Protocol" = chat strategic spec session ordering legacy 2026-05-05 birou after (3-engine cluster #3+#4+#5 spec session — Bayesian Nutrition + Deload + Energy Adjustment grouped) NU pipeline §42.10 canonical position 8th. Pipeline order canonical = sequential gate flow Periodization/Goal Adaptation upstream → Bayesian/Tempo/Specialization/Warm-up midstream → **Deload terminal final downstream consume**.
+
+**Provenance chain (4-way parity check ✅):**
+- Source 1 (verbatim primary spec ~22 substantive decisions): `📤_outbox/_archive/2026-05/148_HANDOVER_2026-05-05_birou_after_engines3-4-5_spec_sessions_CONSUMED.md` line 16 Engine #4 Deload Protocol section (single dense paragraph aggregate ~22 substantive bullet decisions explicit + 8-10 derived standard pattern decomposition Cluster A+D+E)
+- Source 2 (cross-ref ADR canonical AA Detection): `03-decisions/013-auto-aggression-detection.md` (path corrected from prompt slip `013-ADR-aa-detection.md` via grep filesystem — anti-Slip 4 verified). AA-driven deload mechanic Volume CUT 30% obligatoriu + RIR ↑ obligatoriu + Intensity ↓ obligatoriu (Daniel push-back fundamental: "volum păstrat moderat" reinforces aggressive pattern, Engine REGLEAZĂ unsustainable NU pedepsește dorința muncă).
+- Source 3 (cross-ref ADR canonical Composite Signal): `03-decisions/ADR_COMPOSITE_SIGNAL_LAYER_v1.md`. §36.41 Composite Signal Layer 3/3 simultaneous threshold (Performance Drop >15% + Rest Time Multiplier >1.5× + RIR Mismatch ≥2) + lifecycle Idle→Flagged→Cooldown→Resolving + **hard-disabled când Engine #4 active anti math collision double-penalty** (B3 verbatim Source 1).
+- Source 4 (cristalizate cross-check parity): `00-index/CURRENT_STATE.md` §RECENT entry "2026-05-05 birou after" Engine #4 Deload Protocol partition lines 715-737 (22 bullets identical content vs Source 1 verbatim — cristalizate summary alignment match ZERO substantive divergence).
+- Source 5 (referenced cross-cutting, NU primary): `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.41 Composite Signal Layer + §36.82 Marius 5:1 dual-signal recovery — foundational cross-cutting refs preserved unchanged (citat ca cross-ref ADR existent).
+
+**4-way verbatim parity check Source 1 ↔ Source 2 ↔ Source 3 ↔ Source 4: ✅ ZERO substantive divergence flagged** — Source 1 verbatim primary spec, Source 2+3 cross-ref domain canonical preserved, Source 4 cristalizate summary 22 bullets identical content vs Source 1 paragraph. Stronger anti-recurrence proof vs §9.7 2-way parity (Cooldown reconciliation Cluster C3) — Source 1 explicit detailed + Source 4 explicit cristalizate redundancy alignment confirms scope.
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 (Deload 8th FINAL în pipeline §42.10) | [[013-auto-aggression-detection|ADR 013]] AA-driven deload mechanic Volume CUT 30% obligatoriu cross-ref Source 2 | [[ADR_COMPOSITE_SIGNAL_LAYER_v1]] §36.41 hard-disabled când Engine #4 active anti math collision Source 3 | [[017-demographic-prior-database|ADR 017]] persona resolution Maria/Gigica/Marius cross-ref Cluster D2 | [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default — Cluster C2 anti-paternalism wording RO native | [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware notification T0 silent / T1+ banner detaliat rationale cross-ref | [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 8 V1 implement | [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware integration §9.4.6 Convergence Guard Clean Signal rule preserved §9.5+§9.6+§9.7 precedent | §9.1 Periodization Constraint Object frozen Hook 1 read-only (`deload_window` emit field 5 consume primary D1) | §9.2 Goal Adaptation phase context Hook D2 | §9.3 Energy Adjustment readiness state Hook D3 (AA Detection candidate signal sustained pattern) | §9.4 Bayesian Nutrition σ variance + Pain-Aware §9.4.6 Hook D4 | §9.6 Specialization §36.84 weaknessDetector + DeloadPreservedSignal Q12=A Hook D5 cross-ref | §9.7 Warm-up DELOAD_LIGHTER state Hook D6 forward (light coupling downstream consume Engine #4 emit)
+
+---
+
+#### §9.8.1 Cluster A — I/O Contract & Pipeline Placement (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+deloadEngine.evaluate(ctx) → DeloadResult extends DimensionResult
+```
+
+**A1 Pipeline placement LOCKED V1 (per §42.10):** Deload runs **sequentially 8th** position canonical FINAL prescriptive engine. Legacy "Engine #4" naming în Source 1 = chat strategic spec session ordering 2026-05-05 birou after (3-engine cluster Bayesian+Deload+Energy spec session) NU pipeline canonical position. Pipeline §42.10 canonical: `Periodization → Goal Adaptation → Energy → Bayesian → Tempo → Specialization → Warm-up → Deload`. Anti-recurrence numbering ambiguity Engine #4 (Source 1 spec session) vs §9.8 batch 8 (pipeline 8th canonical) reinforced. Engine Deload = pipeline terminal — NU forward Constraint Object downstream V1 (D7 explicit).
+
+**A2 Scope orchestrator unification multi-trigger** (Source 1 verbatim B1 below):
+- Engine Deload = orchestrator unification 3 trigger sources (Composite Signal §36.41 + AA Detection ADR 013 + Linear Block 4+1 existing per §9.1 Periodization deload_window emit)
+- Engine Deload SSOT deload domain — owns final action decision (Composite cedes deload action când Engine #4 active per Source 3 cross-ref B3)
+
+**A3 Input contract (consumed Hook 1 read-only):** Constraint Object frozen propagated upstream Periodization §9.1 Cluster 5 + Goal Adaptation §9.2 + Energy §9.3 + Bayesian §9.4 + Tempo §9.5 + Specialization §9.6 + Warm-up §9.7 cross-engine hooks. NU mutate input — anti-cascade safeguard preserved.
+
+**A4 Output blueprint emit (cumulated cluster B-E decisions):**
+1. `deload_state` — IDLE / SCHEDULED_LINEAR / REACTIVE_COMPOSITE / REACTIVE_AA / EXTENSION_FLAGGED / RESOLVING per Cluster B
+2. `depth_pct` — Final_Depth formula MAX(Scheduled 45%, Reactive 60%, Behavioral 30%) + Behavioral_Modifiers per B5
+3. `duration_weeks` — 1 scheduled fix / 1-2 reactive adaptive cu Flagged-only state qualifier per B6
+4. `intensity_modifier` — Volume CUT 30% + RIR ↑ + Intensity ↓ obligatoriu per B4 AA-driven mechanic
+5. `partial_scope` — null full-body sistemic / muscle group list per-muscle MRV alone per B10
+6. `notification_tier` — T0 silent / T1+ banner detaliat rationale per Cluster C output contract Source 1 line 16 verbatim
+7. `wording` — RO native specific per source (Linear/Composite/AA/Energy) per Cluster C2
+8. `signals` — human-readable IDs + trigger source attribution (composite/aa/linear)
+
+**A5 Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011 `deload_metadata` schema, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1. Engine purity preserved — Deload reads upstream Constraint Objects Hook 1 read-only, owns SSOT deload action decision per §1.10 Pipeline Order LOCKED V1 anti-cascade safeguard.
+
+---
+
+#### §9.8.2 Cluster B — Deload Protocol Mechanic & Trigger Hierarchy (~14 decisions Source 1 verbatim)
+
+**B1 Multi-trigger orchestrator unification** (Source 1 line 16 verbatim, Source 4 line 716):
+- Engine Deload = orchestrator unification 3 trigger sources:
+  - **Composite Signal §36.41** (3/3 simultaneous threshold Performance Drop >15% + Rest Time Multiplier >1.5× + RIR Mismatch ≥2)
+  - **AA Detection ADR 013** (autonomic arousal sustained pattern detection)
+  - **Linear Block 4+1 existing** (calendar scheduled Week 4 deload mesocycle classic per §9.1 Periodization Cluster 2.1)
+
+**B2 Prioritized hierarchy** (Source 1 line 16 verbatim, Source 4 line 717):
+1. **Composite > AA > Linear** (priority order — reactive overrides scheduled)
+2. **Multi-signal consolidation escalează severity** (NU dilutes — additive Source 4 line 718)
+
+**B3 Engine Deload SSOT deload domain** (Source 1 line 16 + Source 3 ADR_COMPOSITE_SIGNAL_LAYER_v1 §36.41 reconciliation):
+- **Composite -20% reduction §36.41 hard-disabled când Engine Deload active** (anti math collision double-penalty)
+- Source 3 `composite_signal_active: true` flag → Engine Deload owns final action (Composite cedes deload action when Engine Deload triggered)
+
+**B4 AA-driven mechanic obligatoriu** (Source 1 line 16 + Source 2 ADR 013 verbatim):
+- **Volume CUT 30% obligatoriu**
+- **RIR ↑ obligatoriu** (intensity reduction perceived effort)
+- **Intensity ↓ obligatoriu** (-12.5% per §9.1 Cluster 2.1 deload classic Linear)
+- **Daniel push-back fundamental:** *"volum păstrat moderat"* reinforces aggressive pattern → Engine NU pedepsește dorința muncă, **REGLEAZĂ unsustainable pattern** (Source 1 + Source 4 line 720 verbatim attribution)
+
+**B5 Final_Depth formula** (Source 1 line 16 verbatim):
+- `Final_Depth = MAX(Scheduled 45%, Reactive 60%, Behavioral 30%) + Behavioral_Modifiers`
+- Reactive overrides scheduled (60% > 45%) — confirm priority B2 hierarchy
+- **Behavioral_Modifiers additive** (NU multiplicative — anti-cascade preserve consistent §1.10 Pipeline Order)
+- Multi-signal NU dilutes severity, ADAUGĂ controls peste physiological depth (Source 4 line 721 verbatim)
+
+**B6 Adaptive duration** (Source 1 line 16 verbatim):
+- **Scheduled fix: 1 săpt** (calendar Linear Block Week 4)
+- **Reactive adaptive: 1-2 săpt** cu **Flagged-only state qualifier** (Composite/AA trigger)
+
+**B7 Reactive deload Hard Reset Linear Block counter** (Source 1 line 16 verbatim):
+- Week N reactive deload triggered → **Week 1 NEW cycle post-deload**
+- **Anti back-to-back scheduled Week 5** (Reactive Week 4 → Calendar Week 5 = double deload exploitation prevention)
+
+**B8 Extension week 2 Flagged-only** (Source 1 line 16 verbatim):
+- Reactive deload extended la 2 săpt **DOAR dacă Flagged state still active end-of-Week-1**
+- **NU Cooldown / NU Resolving** state extension (anti false-positive deload prelungit per Source 4 line 724)
+
+**B9 Extension depth preserve 60%** (Source 1 line 16 verbatim):
+- Week 2 reactive deload **preserve 60% depth** (NU escalate 70%)
+- **Atrophy literature limit** — extended depth >60% risc atrofie musculară (Schoenfeld/Helms canonical per Source 4 line 725)
+
+**B10 Muscle-group-specific partial deload Hibrid** (Source 1 line 16 verbatim):
+- **Full-body sistemic** trigger (Composite/AA cross-muscular signal) → deload uniform all muscle groups
+- **Per-muscle MRV alone** trigger (single muscle volume landmarks exceeded per §9.1 Cluster 3 Volume Landmarks Israetel) → partial deload doar muscle group implicated
+
+**B11 Frequency Same frequency lower volume default** (Source 1 line 16 + Source 4 line 727 verbatim):
+- **Frequency reduce only Energy-driven** (NU default frequency cut)
+- Volume primary mechanism deload (consistent B4 AA-driven volume CUT 30% precedent)
+
+**B12 Periodization integration Hibrid** (Source 1 line 16 + Source 4 line 728 verbatim):
+- **Scheduled INSIDE 4+1** (Linear Block calendar Week 4 per §9.1 Periodization Cluster 4)
+- **Reactive OVERRIDES + Hard Reset** (B7 reactive trigger → Week 1 NEW cycle post-deload)
+
+**B13 Engine Energy Adjustment trigger preservation §36.82.3** (Source 1 line 16 + Source 4 line 729 verbatim):
+- Engine Energy sustained low readiness 3+ consecutive triggers Engine Deload evaluation
+- §9.3 Engine Energy Adjustment readiness DOWN signal cross-engine Hook D3 (AA Detection candidate signal sustained pattern)
+
+**B14 Marius 5:1 dual-signal extension cross-ref §9.1 Periodization** (Source 1 + Source 5 §36.82):
+- Cross-ref §9.1 Cluster 2.3 — Marius EXTENSION (extends mesocycle past Week 4 fără DELOAD) requires **dual-signal green** (RIR stable 1-2 ALL 4 weeks AND Energy ZERO red last 3 sessions)
+- §9.8 Engine Deload owns reactive deload SSOT — Periodization Constraint Object frozen consume signals, Deload emits final action
+
+---
+
+#### §9.8.3 Cluster C — Output Blueprint & UI Wording (~5 decisions Source 1 verbatim)
+
+**C1 Schema Standard CDL `deload_metadata`** (Source 1 line 16 + Source 4 line 730 verbatim):
+- CDL session entry schema: `deload_metadata: { state, depth_pct, duration_weeks, trigger_source, intensity_modifier, partial_scope, notification_tier, wording_variant }`
+- **Output contract Hibrid:** flag + structured params consumed downstream Engine #1 multipliers (Source 4 line 731)
+
+**C2 Notification tier-aware** (Source 1 line 16 + Source 4 line 732 verbatim):
+- **T0 cold start:** silent (CDL log only, NU UI banner — anti-friction calibration window)
+- **T1+ established:** banner detaliat rationale (UX explainer per trigger source)
+
+**C3 Skip allowed all sources cu warning escalated severity** (Source 1 line 16 + Source 4 line 733 verbatim):
+- Anti-paternalism graceful degradation ADR 025 — **skip allowed pe toate sursele de trigger** (Linear/Composite/AA/Energy)
+- Wording warning escalated severity per trigger source (consistent Bugatti F4 zero forced friction + ADR 025 "Andura informează NU impune")
+
+**C4 Skip penalties Hibrid** (Source 1 line 16 + Source 4 line 734 verbatim):
+- **1× reactive urgent skip = AA marker direct ADR 013** (skip reactive deload = AA detection signal escalation)
+- **2× scheduled skip = Composite sensitivity ↑ thresholds lower** (recurring scheduled skip = engine recalibrates Composite Signal §36.41 thresholds tighter)
+
+**C5 Wording specific per source RO native** (Source 1 line 16 + Source 4 line 735 verbatim):
+- **Linear:** *"săpt 5 recuperare programată"* (calendar scheduled Week 4 → Week 5 recovery announcement)
+- **Composite:** *"corpul tău cere recovery"* (Composite Signal multi-metric trigger)
+- **AA:** *"reglăm intensitatea — volumul a urcat agresiv"* (AA Detection autonomic arousal pattern)
+- **Energy:** *"săpt asta lăsăm motorul să se odihnească"* (Energy Adjustment readiness sustained low 3+ consecutive)
+- Anti-paternalism graceful degradation ADR 025 — wording explicit factual NU "trebuie să te odihnești" (Bugatti F4 zero forced friction)
+
+**C6 Pre-Beta MANDATORY** (consistent §9.7 B5 precedent):
+- Engine Deload MUST ship pre-Beta — **Bugatti injury safety > scope discipline** (consistency cu §9.7 Warm-up MANDATORY pre-Beta + Invariant 5 Medical Safety overarching)
+
+---
+
+#### §9.8.4 Cluster D — Cross-Engine Hooks (~7 decisions standard pattern)
+
+**D1 Hook upstream consume frozen Constraint Object — Periodization §9.1** (Cluster A3 + §1.10 Pipeline Order):
+- Read-only consume `phase` + `volume_per_muscle Floor/Ceiling` + `intensity_pct_1rm Floor/Ceiling` + **`deload_window`** (§9.1 emit field 5: `null | { trigger: 'EARLY_SAFETY' | 'EXTENSION_MARIUS' | 'CALENDAR', days: int }`)
+- Periodization phase = DELOAD (W4) + `deload_window.trigger='CALENDAR'` → Engine Deload SCHEDULED_LINEAR state baseline -45% volume / -12.5% intensity §9.1 Cluster 2.1
+- Periodization `deload_window.trigger='EARLY_SAFETY'` → Engine Deload REACTIVE_AA state escalate (Invariant 5 Medical Safety)
+- Anti-cascade preserve — NU mutate upstream
+
+**D2 Hook upstream consume — Goal Adaptation §9.2 phase context:**
+- Goal Adaptation phase (CUT/BULK/MAINTAIN/RECOMP) light coupling — Deload depth modulation:
+  - CUT preserve depth 60% (Marius retention pattern — anti-aggressive deload during deficit)
+  - BULK Marius full classical 45% scheduled (recovery week classical per §9.1 Cluster 2.1)
+  - MAINTAIN/RECOMP baseline preserved
+
+**D3 Hook upstream consume — Energy Adjustment §9.3 readiness state:**
+- Energy DOWN signal sustained 3+ consecutive → AA Detection trigger candidate (Source 2 ADR 013 cross-ref + B13 verbatim Source 1)
+- AA Detection sustained pattern recurrent → REACTIVE_AA state Engine Deload escalate (consistent §9.3 Cluster D Energy Adjustment escalation chronic low readiness Hibrid timing-based per §9.3 internal precedent)
+
+**D4 Hook upstream consume — Bayesian Nutrition §9.4 σ variance state + Pain-Aware §9.4.6:**
+- σ high variance + Pain-Aware sessions ≥2 last 10 → safety override trigger candidate (Convergence Guard "T2 Unlock" reference §9.4.6)
+- **NU duplicate Convergence Guard logic** — reference-only metadata pattern §9.4+§9.5+§9.6+§9.7 precedent (orchestrator layer evaluates actual T2 unlock per ADR 030 D5 + ADR 009 §AMENDMENT 2026-05-05 birou after canonical SSOT)
+
+**D5 Hook upstream consume — Specialization §9.6 active state:**
+- Specialization ACTIVE state + Engine Deload REACTIVE triggered → Specialization **suspended** (Cluster D2 DeloadPreservedSignal §9.6 verbatim Q12=A non-negotiable per §9.6 Cluster D2 emitDeloadPreserved precedent)
+- Source preserved: Specialization mesocycle progress freeze, resume post-deload completion (consistent §9.6 Cluster B5 cooldown evaluation pattern)
+
+**D6 Hook downstream signal — Warm-up §9.7 light coupling:**
+- Engine Deload active → Warm-up routine **lighter** (DELOAD_LIGHTER state §9.7 D1 Hook precedent — recovery week, NU full ramp protocol Marius 50/70/90%)
+- Anti-cascade preserve — Warm-up downstream consume Engine Deload emit, Engine Deload NU mutate Warm-up
+- Note: Warm-up §9.7 sequentially upstream (7th vs 8th); D6 = retrospective light coupling — Engine Deload signal consumed by Warm-up next-session lookahead (orchestrator layer manages cross-cycle propagation)
+
+**D7 forwardConstraintObject pass-through immutable:**
+- Engine Deload = FINAL prescriptive engine pipeline §42.10 — **NU forward Constraint Object downstream V1** (Deload terminal, no engine 9th consumes)
+- V1.5+ post-Beta candidate forward post-deload signal recovery telemetry (consistent §9.4 Bayesian forward pattern future ecosystem-wide alignment)
+
+---
+
+#### §9.8.5 Cluster E — Edge Cases / Telemetry / V1.5+ Deferrals (~5 decisions)
+
+**E1 Pain-Aware §9.4.6 reference — Clean Signal rule preserved:**
+- Engine Deload NU proactive Pain-Aware trigger (consistent §9.5+§9.6+§9.7 precedent — user-triggered Pain Button only Invariant 5 Medical Safety per ADR_PAIN_DISCOMFORT_BUTTON_v1)
+- Pain Button user-triggered rapid 3+ sessions last 10 → AA Detection Source 2 candidate signal (orchestrator consume — Engine Deload reads metadata, NU acts proactively)
+
+**E2 Medical-adjacent boundary** (consistent §9.7 E2 precedent):
+- **NU corrective therapy / NU rehabilitation prescriptions individuale** — D2 v1.5 defer
+- Anti-EU AI Act medical scope creep preserve (Bugatti F4 lifestyle recommendations boundary consistent §9.5+§9.6+§9.7 precedent)
+- Passive Mode trigger (Source 1 line 16 verbatim + Source 4 line 736): **12-week rolling window inclusive ≤12w 2 reactive consecutive + medical referral** (mix scheduled+reactive ≠ trigger normal adaptation — separate medical-adjacent gate)
+
+**E3 Telemetry CDL silent V1:**
+- `deload_trigger_source` (composite/aa/linear/extension) + `deload_actual_depth_pct` + `deload_duration_actual_weeks` + `partial_scope_muscle_groups` (silent CDL metadata, NU UI surface)
+- V1.5+ trend analysis Bayesian latent state ecosystem-wide alignment Q20=D consistent §9.4-§9.7 precedent
+
+**E4 Validation Hibrid simulator + Beta cohort 50 testers** (Source 1 line 16 + Source 4 line 737 verbatim, consistent §9.4 + §9.5 + §9.6 + §9.7 Q19=B precedent):
+- Simulator R²>0.85 pre-Beta (synthetic personas Hall 2008 metabolic adaptation literature)
+- **Beta cohort 50 testers correlation perceived recovery rating** (post-Beta corroboration anti-overconfidence Mensa-grade)
+
+**E5 V1.5+ Deferrals documented:**
+- **Personalized deload depth per recovery profile** — Profile Typing tier T2+ data-driven (post-Beta ≥1000 sesiuni real data signal)
+- **AA Detection ML model upgrade** — Source 2 ADR 013 V1 rule-based, V2+ ML latent state inference
+- **Composite Signal threshold tuning** — Source 3 §36.41 initial estimates (Performance Drop 15% / Rest Time 1.5× / RIR Mismatch 2), A/B post-Beta Beta cohort 50 useri
+- **Cooldown extended deload week post-Beta v1.5** — §9.7 Cluster C C3 cooldown extended candidate cross-ref (Schoenfeld stretching 5-10 min + foam rolling + parasympathetic activation)
+- **Bayesian latent state v1.5 ecosystem-wide alignment Q20=D** consistent §9.4+§9.5+§9.6+§9.7 precedent timing post Engine #3 Bayesian R²>0.85 validation gate hold ≥6 luni post-Beta + ≥1000 sesiuni real data
+
+---
+
+#### §9.8.6 Reconsideration Triggers — Engine Deload V1 → V1.5 candidate
+
+Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă (consistent §9.1.7 + §9.2.6 + §9.3.6 + §9.4.7 + §9.5.6 + §9.6.6 + §9.7.6 cadence pattern):
+
+1. **Cluster B1+B2 False positive Reactive deload rate >5% post-Beta** — Composite Signal §36.41 thresholds tighten (Performance Drop 15% → 18% / Rest Time 1.5× → 1.7× / RIR Mismatch ≥2 → ≥3) per Source 3 reconsideration trigger 1
+2. **Cluster B1 False negative platou nu detectat** — relax thresholds OR adaugă alternative trigger paths (sleep quality 4th metric Source 3 reconsideration trigger 1 — CDL `sleep_hours_per_night` field requirement)
+3. **Cluster B14 Marius 5:1 dual-signal extension exploitation pattern detected** — tighten extension limit (currently max 2 consecutive §9.1 Cluster 2.3 anti-abuse — V1.5 candidate max 1 consecutive)
+4. **Cluster B9 Atrophy literature limit revision** — Schoenfeld/Helms post-Beta meta-analysis update → adjust Extension depth preserve 60% (V1.5 candidate 55% sau 65% per data review)
+5. **Cluster C3+C4 Skip penalty asymmetry post-Beta data** — 1× reactive urgent skip rate >20% Beta cohort cu injury rate elevated → tighten penalty (V1.5 candidate 1× skip = direct 12-week Composite cooldown)
+6. **Cluster E2 Passive Mode 12-week window false trigger** — useri reali post-Beta raportează "Passive Mode prematur" semnal cu mix scheduled+reactive legitimate adaptation → adjust 12-week → 16-week rolling window
+7. **EU AI Act 2025+ classification high-risk** — add explainability layer (WhyEngine integration each deload trigger Source 3 reconsideration trigger 4)
+8. **CDL `rest_seconds_per_set` field absent** post-Beta data signal → fallback 2-metric Composite Source 3 reconsideration trigger 3
+9. **Cluster D5 Specialization suspended cumulative duration excesivă** — Specialization frozen >4 săpt cumulative din cause Reactive Deload escalation chain → Specialization auto-exit COMPLETED_EXIT consistent §9.6 Q9=A 4-week mesocycle match
+
+**Re-evaluation cadence:** post Faza 2.5 batch 8 implementation Engine Deload V1 + post-Beta useri reali signal aggregate (similar §9.1.7-§9.7.6 cadence pattern §1.8 Versioning Additive 18 luni deprecation window). Bugatti craft transparency = ship V1 cu Cluster A-E LOCKED + monitor post-Beta signal.
+
+---
+
+#### §9.8.7 Cross-refs Bidirectional ADR
+
+- [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract — `evaluate(ctx) → DeloadResult` extending DimensionResult (purity preserved engine = pure function NU side effects, async-capable per DP-2)
+- [[026-offline-coaching-decision-tree-exhaustive|ADR 026]] §1.10 Pipeline Order LOCKED V1 — Deload **8th FINAL** în pipeline §42.10 (NU "Engine #4" naming legacy chat strategic spec session ordering 2026-05-05 birou after)
+- [[013-auto-aggression-detection|ADR 013]] AA-driven deload mechanic Volume CUT 30% obligatoriu cross-ref Source 2 (path corrected anti-Slip 4 verified — `013-auto-aggression-detection.md` actual filename, NU `013-ADR-aa-detection.md` prompt slip)
+- [[ADR_COMPOSITE_SIGNAL_LAYER_v1]] §36.41 hard-disabled când Engine Deload active anti math collision Source 3 cross-ref B3
+- [[017-demographic-prior-database|ADR 017]] persona resolution Maria/Gigica/Marius cross-ref Cluster D2 phase modulation
+- [[025-andura-gandeste-pentru-user|ADR 025]] graceful degradation engine pre-fills default — referenced Cluster C3+C5 anti-paternalism wording RO native specific per source
+- [[009-calibration-tiers|ADR 009]] §AMENDMENT 2026-05-05 birou after Convergence Guard "T2 Unlock" — tier-aware notification T0 silent / T1+ banner detaliat rationale Cluster C2 + Cluster D4 reference-only metadata
+- [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal — Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5 batch 8 V1 implement
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware integration cross-cutting Convergence Guard "T2 Unlock" preserved §9.4.6 reference (Engine Deload NU proactive Pain-Aware trigger Clean Signal rule consistent §9.5+§9.6+§9.7 precedent — Cluster E1)
+- §9.1 Engine #1 Periodization Constraint Object frozen Hook 1 read-only (`deload_window` emit field 5 consume primary D1 — `EARLY_SAFETY` / `EXTENSION_MARIUS` / `CALENDAR` trigger source dispatch)
+- §9.2 Engine #2 Goal Adaptation phase context cross-ref Cluster D2 (CUT preserve depth 60% / BULK classical 45%)
+- §9.3 Engine Energy Adjustment readiness state Hook D3 (sustained low readiness 3+ consecutive → AA Detection trigger candidate B13)
+- §9.4 Engine Bayesian Nutrition Inference σ variance + Pain-Aware §9.4.6 Hook D4 (Convergence Guard reference-only metadata)
+- §9.6 Engine Specialization §36.84 weaknessDetector + DeloadPreservedSignal Q12=A Hook D5 cross-ref (Specialization suspended când Engine Deload REACTIVE)
+- §9.7 Engine Warm-up DELOAD_LIGHTER state Hook D6 light coupling (Warm-up downstream consume Engine Deload signal next-session lookahead)
+- **ADR Deload file ABSENT — recommend NEW ADR create post §9.8 LOCKED** (precedent reverse vs ADR 027/028/029 stub flip pattern — start direct cu SPEC REFERENCE → §9.8 SSOT canonical, NU intermediate STUB stage). Suggested filename: `03-decisions/032-engine-deload-protocol.md` (next ADR number per §36.95 Additive convention post `031-engine-warmup-mobility.md` recommendation §9.7).
+
+---
+
+🦫 **§9.8 Engine Deload Protocol Module-Level Spec V1 compiled 2026-05-06 evening chat-8 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou after sources (`148_HANDOVER_..._engines3-4-5_spec_sessions_CONSUMED.md` line 16 Engine #4 Deload Protocol section + `00-index/CURRENT_STATE.md` §RECENT 2026-05-05 birou after lines 715-737 + `03-decisions/013-auto-aggression-detection.md` cross-ref AA-driven mechanic + `03-decisions/ADR_COMPOSITE_SIGNAL_LAYER_v1.md` cross-ref §36.41 hard-disabled — **4-way parity check ✅ ZERO substantive divergence flagged**). ~32 decisions Cluster A-E cumulative (5+14+5+7+5 = 36 decisions structural decomposition, but Source 1 Engine #4 spec ~22 substantive bullet decisions verbatim + cross-ref Sources 2+3 derived Cluster D Hook integration + standard pattern Cluster A+E decomposition = ~32 effective consistent prompt expected ~26-32 range). **Pipeline §42.10 SPEC closure FINAL 8/8 prescriptive engines** — §9.8 spec compile = penultimate milestone. Pre Faza 2.5 batch 8 V1 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Warm-up V1 LANDED commit `20999fb` (batch 7). Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`) + §9.6 Specialization (`92a69fd`) + §9.7 Warm-up (`c15ad0f`). Pipeline §42.10 position 8th canonical FINAL (NU "Engine #4" naming legacy chat strategic spec session ordering 2026-05-05 birou after 3-engine cluster). Source 4 ADR Deload file ABSENT — post §9.8 LOCKED → recommend NEW ADR create direct cu SPEC REFERENCE redirect (precedent reverse vs ADR 027/028/029 stub flip pattern; suggested filename `032-engine-deload-protocol.md` next ADR §36.95 Additive convention post `031-engine-warmup-mobility.md` §9.7 recommendation). **Source 2 path slip resolved transparency:** prompt referenced `013-ADR-aa-detection.md` but actual filename `013-auto-aggression-detection.md` — anti-Slip 4 grep filesystem corrected. Faza 2.5 batch 8 second half = Engine Deload V1 implement `src/engine/deload/` pure-function module — pipeline §42.10 8/8 V1 implement closure complete post batch 8 LANDED.
