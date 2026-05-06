@@ -53,12 +53,12 @@ ZERO divergence from §9.1 verbatim ✅. ZERO fabrication beyond spec ✅.
   1. `rirTargetForPhase('LOAD', null)` returned 0 instead of defensive default 2 — fixed cu explicit `null`/`undefined` check before `Number()` coercion (`Number(null) = 0` falls through validity check)
   2-4. `isMariusDualSignalGreen` per-week RIR filter included energy-only sessions sharing weekIdx (energy entries don't carry rir field, `Number(undefined) = NaN` failed range check) — fixed cu pre-filter pentru rir-bearing sessions only + energy window filter pentru energy-bearing sessions only
 
-### Commits (1 expected)
+### Commits
 
-- `<hash>` feat(engine-periodization): Faza 2.5 Engine #1 Periodization V1 pure-function module per ADR 026 §9.1 Cluster 1-5 spec (32 decisions verbatim) + ADR 018 §2 contract; 12 files NEW src/engine/periodization/ (7 source modules + 5 tests + tests/ subdir); 1068 src LOC + 1203 test LOC = 2271 total LOC; 210 new tests; 1658 PASS / 0 FAIL zero regression
+- `1303b62` feat(engine-periodization): Faza 2.5 Engine #1 Periodization V1 pure-function module per ADR 026 §9.1 Cluster 1-5 spec (32 decisions verbatim) + ADR 018 §2 contract; 12 files NEW src/engine/periodization/ (7 source modules + 5 tests); 1068 src LOC + 1203 test LOC = 2271 total LOC; 210 new tests; 1658 PASS / 0 FAIL zero regression
 
 ### Pushed
-- origin/main: pending post-commit
+- origin/main: ✅ `34089f5..1303b62 main -> main`
 - Backup tag: ✅ `pre-faza2.5-periodization-v1-implement-2026-05-06-1312` pushed pre-execution
 
 ### Issues
