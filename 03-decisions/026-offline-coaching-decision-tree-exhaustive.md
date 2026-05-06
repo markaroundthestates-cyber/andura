@@ -390,3 +390,160 @@ Each engine consumes ConstraintObject + previous engines outputs (read-only). NU
 ---
 
 🦫 **Compile draft full V1 generated 2026-05-05 overnight per CC TASK 3 batch overnight. ZERO net new substantive decisions — aggregation only from §42 base + §45 spec + §50 D-cluster sources verbatim. 129 decisions LOCKED V1 ready production. PRE-BETA BLOCKER per §36.57. Cumulative ~653 LOCKED V1 preserved (compile = file status flip STUB → LOCKED V1, NU adds count).**
+
+---
+
+## §9 ENGINE-LEVEL SPECS — Module-Level Compile (post §1-§8 META-architecture)
+
+**Section provenance:** §1-§8 above = META-architecture global concerns SSOT (format ramură + cross-engine merge + testing strategy + storage + fallback + versioning + pipeline order + alignment rule). §9 NEW = engine-level module specs compiled din chat strategic 2026-05-04 evening late sources. ZERO net new decisions per engine spec — compile aggregation verbatim. Numbering note: §3 above already used (D-Cluster Decisions); §9 NEW preserves existing §1-§8 cross-refs intact.
+
+---
+
+### §9.1 Engine #1 Periodization Module-Level Spec V1
+
+**Status:** 🟢 **SPEC READY V1** (compiled 2026-05-06 morning chat-3 acasă din chat strategic 2026-05-04 evening late sources). ~32 decisions cumulative (Cluster 1-5). Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2 ("vizor fără ușă" vindicat literal — 0/8 engines implementate în src/, sequence reframe specs LOCKED → implementation → wiring).
+
+**Provenance chain:**
+- Source 1 (verbatim Cluster 1-5): `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` lines 33-39
+- Source 2 (cristalizate identical): `00-index/CURRENT_STATE.md` §JUST_DECIDED entry "2026-05-04 evening late" lines 579-584
+- Source 3 (cross-ref decisions specifice): `06-sessions-log/HANDOVER_ENGINES_SPEC_2026-04-30_evening.md` §45.2 Q7 (Periodization scope B Block + Linear pre-Beta) + §45.3 Q19 (Maria 65 Dual-Layer functional → Israetel mapping) + §45.4 Q21 (Marius 5:1 dual-signal §36.82) + §45.4 Q28 (Coaching tone Periodization output B Inline rationale brief) + §45.5 Q31 (Warm-up scope separate Engine #8) + §45.5 Q38 (Periodization-Cut overlap B Phase-agnostic + Goal Adaptation redistribuie within Floor/Ceiling §42.10) + §65.5 Periodization mesocycle length 4 săpt clasic
+- Source 4 (architectural foundation cross-ref doar, NU duplicate): §1.10 Pipeline Order Constraint Object Floor/Ceiling Range ±15% + §2 Q1-Q40 META decisions verbatim per §1-§2 above + [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract `analyze(input) → DimensionResult`
+
+**Cross-refs:** [[018-engine-extensibility-architecture|ADR 018]] §2 Standardized Dimension Contract (purity preserved engine = pure function NU side effects) | [[030-adapter-design-pattern|ADR 030]] D1-D5 LOCKED V1 foundation Hexagonal (Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550` reusable post Faza 2.5) | [[024-goal-driven-program-templates|ADR 024]] Engine #2 Goal Adaptation cross-engine Hook 1 destination | [[027-engine-energy-adjustment|ADR 027]] Engine #5 Energy Adjustment Hook 3 destination | [[028-engine-tempo-form-cues|ADR 028]] Engine #6 Tempo Hook 4 destination | [[029-engine-specialization|ADR 029]] Engine #7 Specialization Hook 4 destination | §1.10 Pipeline Order LOCKED V1 above (Periodization first în pipeline §42.10) | §2.1 Q7 + §2.3 Q19 + §2.4 Q21 + §2.4 Q28 + §2.5 Q31 + §2.5 Q38
+
+---
+
+### §9.2 Cluster 1 — I/O Contract (~5 decisions)
+
+**Pure function signature** per ADR 018 §2 Standardized Dimension Contract:
+
+```
+periodizationEngine.evaluate(ctx) → PeriodizationResult extends DimensionResult
+```
+
+**Output blueprint emit 5 fields:**
+1. `mesocycle_phase` — current phase {LOAD | LOAD+ | PEAK | DELOAD} per Cluster 2 transitions
+2. `volume_target_pct` — % MEV/MAV/MRV per muscle group (computed Cluster 3 Volume Landmarks)
+3. `intensity_target_pct` — % 1RM range per goal modifier (Cluster 3 goal modifiers)
+4. `macrocycle_block` — current block position (M1/M2/M3 within 3-mesocycle Linear Block per Cluster 4)
+5. `deload_window` — `null | { trigger: 'EARLY_SAFETY' | 'EXTENSION_MARIUS' | 'CALENDAR', days: int }` per Cluster 2 trigger hierarchy
+
+**Constraint:** ZERO side effects (engine pure per ADR 018 §2). Side effects (CDL writes ADR 011, telemetry, Firestore Tier 2 sync) = orchestrator layer separate per ADR 030 D2 thin adapter scope LOCKED V1.
+
+---
+
+### §9.3 Cluster 2 — Mesocycle Phase Transitions (~8 decisions)
+
+**2.1 Double progression rep-first → weight-progression aplicat săptămânal** (per §45.3 Q18 LOCKED):
+- Week 1: LOAD baseline (volume 1.00× / intensity 1.00× / RIR target normal)
+- Week 2: LOAD+ accumulate (volume 1.00× / intensity 1.00× / RIR target ↓ 1 step)
+- Week 3: PEAK push (volume 1.00× / intensity 1.00× / RIR target ↓ 2 steps)
+- Week 4: DELOAD reset — volume **−45%** / intensity **−12.5%** (per §65.5 4 săpt clasic Option A LOCKED)
+
+**2.2 Trigger hierarchy** (3-level priority order, EARLY DELOAD overrides EXTENSION overrides CALENDAR):
+1. **EARLY DELOAD safety override** — Invariant 5 Medical Safety + composite trigger downstream Engine #4 Deload Protocol signal
+2. **EXTENSION (Marius only)** — extends mesocycle past Week 4 fără DELOAD dacă dual-signal recovery green (Marius 5:1 ratio per §45.4 Q21 §36.82)
+3. **CALENDAR default** — 4-week mesocycle clasic Option A (Maria + Gigica always; Marius dacă dual-signal NU green)
+
+**2.3 Marius 5:1 dual-signal codificare pure function** (per §45.4 Q21 §36.82):
+- Signal 1: **RIR stable 1-2 ALL 4 weeks** (zero RIR drift week-over-week across full mesocycle)
+- Signal 2: **Energy ZERO red last 3 sessions** (no recovery red flag în trailing 3-session window)
+- Both signals required — boolean AND, NU OR
+
+**Anti-abuse safeguards:**
+- **Max 2 consecutive extensions** — prevent indefinite extension exploitation
+- **Injury history block** per Invariant 5 Medical Safety — extensions blocked dacă recent injury în CDL trail (cross-ref Cluster 5 anti-cascade safeguards)
+
+---
+
+### §9.4 Cluster 3 — Volume Landmarks Israetel × Persona × Goal Modifiers (~7 decisions)
+
+**Israetel 11 grupuri musculare baseline MEV/MAV/MRV** (chest, back, quads, hamstrings, glutes, shoulders, biceps, triceps, calves, abs, forearms — ref Israetel 2017 Renaissance Periodization).
+
+**Persona modifiers** (volume scalar applied to Israetel baseline):
+- **Maria (65)** — 0.50× baseline (recovery capacity reduced post-menopausal physiology)
+- **Gigica (35)** — 0.70× baseline (intermediate recovery capacity working professional)
+- **Marius (25)** — 1.00× baseline (full Israetel target advanced trainee young recovery)
+- **Bonus +10-15%** dacă recovery green (Vitality Layer signal aggregate ADR 016) — applied multiplicatively post-persona modifier
+
+**Goal modifiers** (volume scalar applied to persona-adjusted baseline, multiplicative):
+- **Hipertrofie** — 1.00× (Israetel canonical hypertrophy MEV-MAV target)
+- **Forță** — 0.70× (lower volume / higher intensity per Forță template ADR 024 §1.2)
+- **Recompoziție** — 0.85× (intermediate volume CUT-aware)
+- **Longevitate** — 0.60× (sustainable load mobility emphasis ADR 024 §1.2)
+- **Sănătate Generală** — 0.50× (lifestyle integration controlled intensity ADR 024 §1.2)
+
+**Maria 65 Dual-Layer functional → Israetel mapping** (per §45.3 Q19 LOCKED): functional movement patterns mapped to Israetel muscle groups via 6 movement patterns: push / pull / squat / hinge / carry / rotate. Engine resolves Maria template request "functional dual-layer" → Israetel underlying volume landmarks via mapping table.
+
+---
+
+### §9.5 Cluster 4 — Macrocycle Structure Linear Block V1 (~6 decisions)
+
+**Macrocycle decision:** **Linear Block Periodization V1** — NU DUP (Daily Undulating Periodization), NU Conjugate Method. Bugatti craft simplification pre-Beta (Q7 LOCKED §45.2 Block + Linear pre-Beta scope discipline).
+
+**Block structure:** **3 mesocycles/block** (per §65.5 4 săpt mesocycle × 3 = 12 săpt block default).
+
+**Block length variants per goal:**
+- **12 săpt BUILD-only** (default majoritar templates: Hipertrofie / Tonifiere / Slăbire / Longevitate / Sănătate)
+- **21 săpt BUILD + PEAK + TRANSITION** pentru Forță (peaking macrocycle structure 7+7+7 săpt subdivision per Forță template advanced trainee Marius profile)
+
+**Volume scaling intra-block** (mesocycle-level multiplicative within block):
+- M1 (mesocycle 1) — 1.00× baseline
+- M2 (mesocycle 2) — 1.10× (+10% volume accumulate)
+- M3 (mesocycle 3) — 1.15× (+15% volume peak)
+- **Cap MRV absolut** — scaling NU trece peste MRV ceiling per Cluster 3 (hard limit invariant safety preservation)
+
+**Maria adaptive override** (anti-progression-too-fast safeguard): NU advance la M2/M3 fără:
+- Calibration tier ≥ DEVELOPING (per ADR 009 calibration tiers)
+- Zero injury în trailing 6 săpt window (Invariant 5 Medical Safety)
+- Both conditions required AND, NU OR
+
+---
+
+### §9.6 Cluster 5 — Cross-Engine Hooks (~6 decisions)
+
+**Hook 1 → Engine #2 Goal Adaptation (ADR 024):**
+- Periodization output `volume_target_pct` + `intensity_target_pct` + `mesocycle_phase` consumed by Goal Adaptation
+- Goal Adaptation **kcal/macro modulate** based on phase (CUT/BULK/MAINTAIN/RECOMP per ADR 024 Q4)
+- **Goal Adaptation NU override Periodization phase** — phase auto-derived per ADR 024 Q4 §2.4 (NU user pick), Goal Adaptation reads-only
+
+**Hook 2 → Engine #4 Deload Protocol:**
+- Periodization emits `deload_window` signal-only (Cluster 1 output blueprint field)
+- **Engine #4 Deload Protocol owns deload session structure** — volume CUT 30%, Final_Depth MAX(45,60,30), reactive Hard Reset Linear Block (per Engine #4 SPEC COMPLETE 2026-05-05 birou after Cluster A-E)
+- Periodization **signal-only**, NU compute deload session structure
+
+**Hook 3 → Engine #5 Energy Adjustment (ADR 027):**
+- Energy fluctuation **±15% session-level only** (per §1.10 §42.10 Constraint Object Floor/Ceiling Range bidirectional preserved)
+- Energy **NU touch mesocycle phase** — session-level fluctuation within Periodization corridor Floor/Ceiling, NU phase override
+- Asymmetric ±15% UP N≥3 / DOWN single trigger per Engine #5 SPEC COMPLETE 2026-05-05 birou after
+
+**Hook 4 → Engine #6 Tempo (ADR 028) + Engine #7 Specialization (ADR 029):**
+- Light coupling — Tempo + Specialization read Periodization output, NU bidirectional dependency
+- Tempo overlay execution-time per Pipeline Order §5 (post-Execution sets/reps/RIR matrix)
+- Specialization layer light coupling per Pipeline Order §5 (post-Execution parallel cu Tempo)
+
+**Pipeline §42.10 sequential extension** (per §1.10 + §5 Pipeline Order LOCKED V1): Periodization (Engine #1) FIRST, generates coridor (Floor + Ceiling) baseline. Constraint Object immutable propagated engine-la-engine downstream (TypeScript readonly type-safe per ADR 030 D3 Context Object Pre-Built Input).
+
+**Anti-cascade safeguards:**
+- **Immutable snapshot at session start** — Periodization output frozen post-evaluate, downstream engines read-only consumers
+- **Hard cap MRV / 90% 1RM Layer C sanity bound** — global ceiling regardless engine adjustments downstream (cross-ref Cluster 3 MRV cap absolut + ADR_CASCADE_DEFENSE_v1 Anti-Cascade Silent precedent)
+
+---
+
+### §9.7 Reconsideration Triggers — Engine #1 Periodization V1 → V1.5 candidate
+
+Revisit Cluster 1-5 LOCKED V1 → V1.5 candidate dacă:
+
+1. **Cluster 1 I/O Contract** — output blueprint 5 fields proves insufficient pentru downstream engines (e.g., engine #N+1 nou requires periodization signal NOT în current 5 fields). Trigger threshold: ≥1 downstream engine adăugat post-Beta cu unmet input dependency on Periodization output. Candidate: extend blueprint cu 6th field (e.g., `recovery_capacity_signal` for Vitality Layer integration ADR 016).
+2. **Cluster 2 Mesocycle 4-week Default** — Maria persona shows persistent under-recovery pattern în 4-week cycles post-Beta useri reali (e.g., mesocycle DELOAD insufficient, fatigue accumulates cross-block). Candidate: 3-week clasic option per §65.5 alternate Option B reconsideration. Trigger threshold: ≥30% Maria-tier useri cu Energy red ≥3 sessions trailing post-DELOAD.
+3. **Cluster 2 Marius 5:1 dual-signal threshold** — Marius extension granted too aggressive (RIR stable 1-2 + Energy ZERO red last 3 = false positive predictor injury risk). Trigger threshold: ≥1 Marius injury post-extension în Beta cohort (Invariant 5 Medical Safety violation post-extension grant). Candidate: tighten dual-signal (e.g., add 3rd signal sleep quality ≥7h avg).
+4. **Cluster 3 Persona Modifiers Calibration** — Maria 0.50 / Gigica 0.70 / Marius 1.00 baseline shows systematic over- or under-shoot post-Beta useri reali (e.g., Maria 0.50 under-trains advanced Maria-tier specific subset). Trigger threshold: ≥20% sub-persona-tier deviation from MAV target sustained ≥4 săpt. Candidate: tier-aware persona modifier matrix (e.g., Maria-Beginner 0.40 / Maria-Intermediate 0.50 / Maria-Advanced 0.60).
+5. **Cluster 4 Linear Block V1 Discipline** — DUP / Conjugate method cu evidence-base proven superior pentru Forță template advanced post-Beta. Trigger threshold: Forță template Marius cohort showing strength plateaus ≥6 săpt post-M3 PEAK consistently. Candidate: introduce DUP variant Forță template only (preserve Linear Block default other templates). Per Q7 §45.2 LOCKED scope discipline: DUP/Conjugate REJECTED pre-Beta — V1.5 reconsideration only.
+6. **Cluster 4 Volume Scaling 1.00→1.10→1.15** — scaling proves too aggressive post-Beta (e.g., M3 1.15× drives MRV cap routinely, volume inflation NOT justified outcome data). Trigger threshold: ≥40% sessions M3 hitting MRV cap. Candidate: dampen scaling 1.00→1.05→1.10 conservative variant.
+7. **Cluster 5 Hook Topology** — Hook 1 Goal Adaptation tension cu Hook 3 Energy ±15% (e.g., Goal Adaptation phase=CUT + Energy DOWN -15% concurrent → cumulative session intensity drop > Cluster 4 progressive overload requirement). Trigger threshold: ≥3 sessions per persona tracked exhibiting compound multi-hook reduction violating progressive overload invariant. Candidate: cross-hook ceiling rule (e.g., Goal Adaptation + Energy combined max -20% session not -30%).
+
+**Re-evaluation cadence:** post Faza 2.5 implementation Engine #1 V1 + post-Beta useri reali signal aggregate (similar §1.8 Versioning Additive 18 luni deprecation window cadence). Bugatti craft transparency = ship V1 cu Cluster 1-5 LOCKED + monitor post-Beta signal.
+
+---
+
+🦫 **§9.1 Engine #1 Periodization Module-Level Spec V1 compiled 2026-05-06 morning chat-3 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-04 evening late sources (`142_HANDOVER` lines 33-39 + CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late lines 579-584). 32 decisions Cluster 1-5 cumulative. Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2. Reusable când Faza 3 wiring real Strangler post engines V1 exist (ADR 030 D1-D5 foundation + Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED commit `5a16550`).

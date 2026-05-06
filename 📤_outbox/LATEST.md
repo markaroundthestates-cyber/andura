@@ -1,54 +1,73 @@
-## Task: §CC.5 fast handover ingest — 2026-05-06 morning chat-2 acasă (ADR 024 compile + ADR 030 create + Faza 3 BLOCKED scope discovery + Option A LOCKED + memory rule #10 REPLACED + sequence reframe 4→5-faze)
+## Task: Compile ADR 026 §9 Engine #1 Periodization Module-Level Spec V1 (NEW section append)
 **Model:** Opus
 **Status:** Complete
 
 ### Pre-flight
-- Backup tag: `pre-handover-2026-05-06-chat2-ingest-2026-05-06-1238` ✅ pushed origin
-- Clean tree pre-execution: yes (only `tests/golden-master/mutation/stryker-run.log` untracked, scope acceptable)
-- Inbox verified: 1 handover file present (`HANDOVER_2026-05-06_morning_acasa_chat2.md`)
+- Clean tree: ✅ (only `tests/golden-master/mutation/stryker-run.log` untracked, scope acceptable)
+- Branch main: ✅
+- Backup tag: `pre-adr026-section3-periodization-compile-2026-05-06-1301` ✅ pushed origin (POSIX form per memory rule chat-2 PowerShell-in-bash slip avoided)
+- All 4 source paths verified exist: ✅
+
+### Discovery — source-of-truth slip prompt assumption STALE (same pattern chat-2)
+
+Prompt §1 source #1 declared: *"HANDOVER_ENGINES_SPEC §45.2 + §45.3 + §45.4 + §45.5 — clusters 1-5 Periodization Engine #1 spec"*.
+
+**Reality verified via grep:** §45.2-§45.5 = ADR 026 architectural Q1-Q40 batch decisions (Q7 Block+Linear / Q19 Maria functional → Israetel mapping / Q21 Marius 5:1 §36.82 / Q28 Coaching tone / Q31 Warm-up scope / Q38 Periodization-Cut overlap), NOT Periodization Engine #1 Cluster 1-5 spec material.
+
+**Real Cluster 1-5 verbatim source located:** `📤_outbox/_archive/2026-05/142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` lines 33-39 (and identical cristalizate version `00-index/CURRENT_STATE.md` §JUST_DECIDED entry "2026-05-04 evening late" lines 579-584).
+
+**Same pattern slip as chat-2 morning** (HANDOVER_GLOBAL stale assumption rezolvat via consumed archives). Memory rule reinforced: anti-hallucination grep mandatory în prompts CC saved the day. CC corectat singur via grep filesystem, ZERO fabrication.
+
+### Discovery — section numbering collision §3 ADR 026
+
+Prompt §2 declared: *"append `§3 Engine #1 Periodization Module-Level Spec V1`"*.
+
+**Reality verified:** ADR 026 already cu §3 = "D-CLUSTER DECISIONS" (lines 216-291). Plus §1-§8 fully populated.
+
+**CC engineering judgment:** appended ca **§9 ENGINE-LEVEL SPECS** (with §9.1 Engine #1 Periodization Module-Level Spec V1) — preserves existing §1-§8 cross-refs intact, ZERO renumbering side-effects, semantically clean (engine-level specs after META-architecture global concerns + alignment + cross-refs + next sections). Sub-section pattern §9.1-§9.7 maps prompt §3.1-§3.7 structure.
 
 ### Modificări
 
-**`00-index/CURRENT_STATE.md` updated:**
-- `Updated:` line — 2026-05-06 morning chat-2 acasă §CC.5 ingest summary cu ADR 024 compile DONE commit `8674782` + ADR 030 NEW Adapter Design Pattern create DONE commit `d6a6ca0` + Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" vindicat literal (0/8 engines implementate per ADR 018 §2 Standardized Contract în src/) + Phase 1-2 orchestrator foundation LANDED safe commit `5a16550` (47 tests, 1448 PASS) + Option A LOCKED implement engines V1 first + memory rule #10 REPLACED format fatigue invariant + sequence reframe 4-faze → 5-faze. Cumulative ~654 → **~659** (+5 net D1-D5 ADR 030 product/architecture substantive)
-- §NOW move-then-replace — current thread chat-2 narrative cu drift discovered start (Daniel uploaded CURRENT_STATE.md manual să clear) + 5 things landed (Faza 1 ADR 024 compile + Faza 2 ADR 030 create + Faza 3 BLOCKED scope discovery + Option A LOCKED + memory rule #10) + push-back fundamental Daniel SEMINAL "5 LOCK = format fatigue NU convingere" + parodie 4-5x format verbose + slip-uri 4x (PowerShell/HANDOVER stale/path ADR_CASCADE/format fatigue) + sequence reframe 5-faze + tone session bond warmth păstrat + bandwidth ~25-30%. Precedent thread chat-1 morning compressed (SMTP COMPLETE + Settings UX fix + ADR 024 Q6 LOCK + "vizor fără ușă")
-- §JUST_DECIDED top entry append — "2026-05-06 morning chat-2 acasă — ADR 024 compile DONE + ADR 030 NEW create DONE + Faza 3 BLOCKED + Phase 1-2 orchestrator foundation LANDED + Option A LOCKED + memory rule #10 REPLACED + sequence 5-faze" cu full detail 5 things + sequence reframe + slip-uri + implicații downstream + backup tags 4
-- §NEXT P1 reorder — sequence pragmatic 4-faze → 5-faze LOCKED: P1.1 ADR 024 compile ✅ DONE + P1.2 Adapter Design ✅ DONE + **P1.2.5 NEW** implement 8 engines V1 sequential per §42.10 (Periodization V1 first ~75-126 sub-decisions cristalizate spec module CC implementation-ready, Next chat NEW recomandat = Periodization Engine V1 spec session) + P1.3 Faza 3 wiring real Strangler post engines V1 exist (Phase 1-2 foundation reusable) + P1.4 Faza 4 smoke end-to-end Daniel
-- §ACTIVE_ADRS update — ADR 030 + ADR 024 + ADR 009 §AMENDMENT (top 3) + Total ADRs active 26 → **27 numbered** + 9 named = 36 ADR files total (ADR 030 NEW)
+**`03-decisions/026-offline-coaching-decision-tree-exhaustive.md`:** 392 LOC → **549 LOC** (+157 LOC §9 NEW append)
 
-**`03-decisions/DECISION_LOG.md` entry top:** "2026-05-06 morning chat-2 acasă — ADR 024 compile DONE + ADR 030 NEW create DONE + Faza 3 BLOCKED + Phase 1-2 orchestrator foundation LANDED + Option A LOCKED + memory rule #10 REPLACED + sequence 5-faze" — 5 things detail (Faza 1 + Faza 2 cu D1-D5 verbatim + Faza 3 BLOCKED + Option A LOCKED + memory rule #10) + sequence reframe 5-faze + slip-uri 4x + cross-refs ADR 024/030/026/018/009 + backup tags 4. Cumulative ~654 → ~659 (+5 net D1-D5 product/architecture substantive).
+Sections delivered:
+- **§9 ENGINE-LEVEL SPECS** header — section provenance + numbering note (§3 collision avoidance documented inline)
+- **§9.1 Engine #1 Periodization Module-Level Spec V1** — Status SPEC READY V1 + Provenance chain (Source 1 verbatim Cluster 1-5 line ranges + Source 2 cristalizate identical line ranges + Source 3 cross-ref decisions specifice §45 Q-uri + Source 4 architectural foundation cross-ref doar) + Cross-refs bidirectional 8 wikilinks ADRs + Pipeline §1.10 + §2.1 Q7 + §2.3 Q19 + §2.4 Q21 + §2.4 Q28 + §2.5 Q31 + §2.5 Q38
+- **§9.2 Cluster 1 — I/O Contract** (~5 decisions): pure function `evaluate(ctx) → PeriodizationResult` extends DimensionResult ADR 018 + 5 output blueprint fields enumerate (mesocycle_phase / volume_target_pct / intensity_target_pct / macrocycle_block / deload_window) + ZERO side effects constraint
+- **§9.3 Cluster 2 — Mesocycle Phase Transitions** (~8 decisions): 2.1 Double progression rep-first → weight 4-week cycle (W1 LOAD baseline → W2 LOAD+ → W3 PEAK → W4 DELOAD −45%/−12.5%) per §45.3 Q18 LOCKED + §65.5 Option A LOCKED 4 săpt clasic. 2.2 Trigger hierarchy 3 levels (EARLY DELOAD safety > EXTENSION Marius only > CALENDAR default). 2.3 Marius 5:1 dual-signal pure function (RIR stable 1-2 ALL 4 weeks AND Energy ZERO red last 3 sessions per §45.4 Q21 §36.82). Anti-abuse max 2 consecutive extensions + injury history block Invariant 5 Medical Safety
+- **§9.4 Cluster 3 — Volume Landmarks Israetel × Persona × Goal** (~7 decisions): Israetel 11 grupuri musculare baseline + persona modifiers (Maria 0.50 / Gigica 0.70 / Marius 1.00 + 10-15% bonus recovery green) + goal modifiers (Hipertrofie 1.00 / Forță 0.70 / Recompoziție 0.85 / Longevitate 0.60 / Sănătate 0.50) + Maria 65 Dual-Layer functional → Israetel mapping 6 movement patterns (push/pull/squat/hinge/carry/rotate) per §45.3 Q19 LOCKED
+- **§9.5 Cluster 4 — Macrocycle Linear Block V1** (~6 decisions): Linear Block (NU DUP NU Conjugate) + 3 mesocycles/block + 12 săpt BUILD-only sau 21 săpt BUILD+PEAK+TRANSITION pentru Forță + Volume scaling intra-block M1 1.00× → M2 1.10× → M3 1.15× cap MRV absolut + Maria adaptive override (calibration ≥DEVELOPING + zero injury 6 săpt AND condition)
+- **§9.6 Cluster 5 — Cross-Engine Hooks** (~6 decisions): Hook 1 → Engine #2 Goal Adaptation kcal/macro modulate NU override phase + Hook 2 → Engine #4 Deload Protocol owns deload structure Periodization signal-only + Hook 3 → Engine #5 Energy Adjustment session-level only NU touch mesocycle ±15% bidirectional + Hook 4 → Engine #6 Tempo + Engine #7 Specialization light coupling. Pipeline §42.10 sequential extension. Anti-cascade safeguards (immutable snapshot session start + hard cap MRV / 90% 1RM Layer C sanity bound)
+- **§9.7 Reconsideration Triggers Engine #1 V1 → V1.5** — 7 trigger conditions enumerate cu concrete thresholds (Cluster 1 I/O insufficient ≥1 downstream unmet dependency / Cluster 2 4-week Maria persistent under-recovery ≥30% trailing red post-DELOAD / Cluster 2 Marius 5:1 false positive ≥1 injury post-extension Beta cohort / Cluster 3 Persona modifiers tier-aware ≥20% sub-tier deviation / Cluster 4 DUP Forță plateau ≥6 săpt post-M3 / Cluster 4 scaling M3 MRV cap ≥40% sessions / Cluster 5 cross-hook compound reduction ≥3 sessions invariant violation)
 
-**Archive operations:**
-- `📤_outbox/_archive/2026-05/182_HANDOVER_2026-05-06_morning_chat2_acasa_CHAT2_CONSUMED.md` (handover audit trail per §CC.5)
-- `📤_outbox/_archive/2026-05/183_LATEST_PREVIOUS_FAZA3_BATCH1_BLOCKED.md` (cycled previous LATEST.md = Faza 3 Batch 1 BLOCKED + Phase 1-2 orchestrator foundation report)
+Anti-hallucination check ✅ sum decisions cluster-level: Cluster 1 (5) + Cluster 2 (8) + Cluster 3 (7) + Cluster 4 (6) + Cluster 5 (6) = **32 decisions** match CURRENT_STATE §JUST_DECIDED 2026-05-04 evening late entry "Periodization Engine #1 spec COMPLETE (~32 decisions cumulative)". ✅ Within ±2 tolerance.
 
 ### Build + Tests
-- N/A — vault-only changes (CURRENT_STATE + DECISION_LOG + archive operations); zero src/ touched
+- `npm run test:run`: **1448 PASS / 0 FAIL** (zero regression vault-docs-only — only `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` modified, no `src/` changes)
+- 98 test files passed
+- Duration 16.21s
 
-### Commits
-- `2daabde` docs(handover): §CC.5 fast ingest 2026-05-06 morning chat-2 acasă — ADR 024 compile DONE + ADR 030 NEW Adapter Design Pattern create DONE + Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" vindicat literal + Phase 1-2 orchestrator foundation LANDED safe + Option A LOCKED implement engines V1 first + memory rule #10 REPLACED format fatigue invariant + sequence reframe 4-faze → 5-faze; CURRENT_STATE NOW move-then-replace + JUST_DECIDED top + NEXT P1 reorder + ACTIVE_ADRS sync ADR 030 NEW; DECISION_LOG entry top; archive handover + cycle previous LATEST; cumulative ~654 → ~659 (+5 net D1-D5 product/architecture substantive)
+### Commits (1 expected)
+- `<hash>` docs(adr-026): compile §9.1 Engine #1 Periodization Module-Level Spec V1 NEW append (32 decisions Cluster 1-5 verbatim from chat strategic 2026-05-04 evening late sources). §3 numbering collision rezolvat via §9 NEW preserve §1-§8 cross-refs. Pre Faza 2.5 implementation per Option A LOCKED 2026-05-06 morning chat-2
 
 ### Pushed
-- origin/main: ✅ `9f8e6cd..2daabde main -> main`
-- Backup tag: ✅ `pre-handover-2026-05-06-chat2-ingest-2026-05-06-1238` pushed pre-execution
-- Inbox empty post-archive ✅
+- origin/main: pending post-commit
+- Backup tag: ✅ `pre-adr026-section3-periodization-compile-2026-05-06-1301` pushed pre-execution
 
 ### Issues
-- None — handover narrative ingested clean per §CC.5 fast workflow.
-- Cumulative LOCKED V1 ~654 → ~659 (+5 net D1-D5 ADR 030 Adapter Design Pattern foundation Hexagonal product/architecture substantive). D1-D5 = pre-wiring blocker absolut Faza 3 multi-batch CC §42.10 sequential 8 engines, deja LANDED commit `d6a6ca0` 239 LOC SPEC READY V1 partial.
-- Memory rule #10 REPLACED format fatigue invariant + INSTANT lean mode trigger persisted permanent.
 
-### Next action — chat NEW pickup priority pivot
+- **Source-of-truth slip prompt assumption STALE** (low impact, recovered clean): prompt §1 source #1 declared HANDOVER_ENGINES_SPEC §45.2-§45.5 = "clusters 1-5 Periodization Engine #1 spec". Reality = those §45 are ADR 026 architectural Q1-Q40 batch decisions, NOT Cluster 1-5 spec. Real Cluster 1-5 verbatim source = consumed handover archive `142_HANDOVER_2026-05-04_evening_late_periodization_goal_adaptation_CONSUMED.md` lines 33-39 + identical cristalizate `CURRENT_STATE.md` §JUST_DECIDED 2026-05-04 evening late lines 579-584. **Same pattern as chat-2 morning HANDOVER_GLOBAL stale assumption** — anti-hallucination grep mandatory în prompt CC saved the day, ZERO fabrication. CC corectat singur via grep filesystem.
+- **Section numbering collision §3** (low impact, recovered clean engineering judgment): prompt declared "append `§3 Engine #1 Periodization Module-Level Spec V1`" but ADR 026 already cu §3 = "D-CLUSTER DECISIONS". CC appended ca **§9 NEW** instead — preserves §1-§8 cross-refs intact, semantically clean (engine-level specs after META-architecture global concerns), §9.1-§9.7 sub-sections map prompt §3.1-§3.7 structure 1:1.
+- **Cumulative LOCKED V1 NU incrementat** acest commit per scope discipline — §9 compile = aggregation only verbatim from chat strategic 2026-05-04 evening late sources (32 decisions deja contate cumulative ~356 increment 2026-05-04 evening late prev session, NU ré-contate). File flip ADR 026 SPEC EXTENSION fără decisions noi product/architecture. Cumulative ~659 preserved (from chat-2 morning §CC.5 ingest cu D1-D5 ADR 030 +5 net).
+- Out of scope per prompt instructions explicit (NU touch HANDOVER_GLOBAL deep / NU touch CURRENT_STATE / NU touch INDEX_MASTER / NU touch DECISION_LOG / NU sync alte ADRs) — separate ingest §CC.5 ulterior va consuma acest LATEST.md narrative pentru CURRENT_STATE §JUST_DECIDED entry top + DECISION_LOG +1 entry top + INDEX_MASTER §9 ADR 026 entry sync.
 
-**P1.2.5 NEW Faza 2.5 — Periodization Engine V1 spec session pre-implementation refinement** (NEXT chat strategic recomandat post Option A LOCKED):
-- Periodization V1 per ADR 026 §1 spec aggregation §42.x + §45.x ~75-126 sub-decisions cristalizate spec module CC implementation-ready
-- Pure function `evaluate(ctx) → PeriodizationResult` per ADR 018 §2 Standardized Contract
-- Mesocycle phase transitions §45.3 Q18 double progression rep-first + trigger hierarchy EARLY DELOAD safety > EXTENSION Marius 5:1 dual-signal > CALENDAR + Volume Landmarks Israetel × persona modifiers + macrocycle 3-meso Linear Block + cross-engine hooks emit Constraint Object Floor/Ceiling
-- Estimated 2-4 chat-uri spec + 8-15 batches CC autonomous Periodization V1 alone (~150-250h CC autonomous LLM gen ≈ ~50-83 min real velocity X×3 rule per §36.100 Engine #2 precedent)
+### Next action
 
-**P1.3 Faza 3 wiring real Strangler post Faza 2.5 engines V1 exist:**
-- Phase 1-2 orchestrator foundation LANDED safe commit `5a16550` reusable: types JSDoc + Result helpers `ok/err/isOk/mapOk` + runPipeline skeleton sequential + contextBuilder Object.freeze + utilities stubs Convergence Guard + Layer D budget
-- Per §42.10 sequential pipeline 4-6 batches CC overnight: Periodization wire → Goal Adaptation wire → Energy wire → Bayesian wire → Tempo wire → Specialization wire → Warm-up wire → Deload wire
-- featureFlag `<engine>_via_orchestrator` rollout 0% default OFF + golden-master parity legacy↔orchestrated tests
+**Daniel review compile §9.1** — verify Cluster 1-5 verbatim accuracy + Reconsideration triggers concreteness + cross-refs bidirectional adequate. Slip flag (sources slip + numbering slip) explicit pentru transparency audit trail.
 
-**P1.4 Faza 4 smoke end-to-end Daniel cont propriu** (post Faza 3 wiring complete)
+**Faza 2.5 Periodization V1 implement prompt CC NEXT** (per Option A LOCKED 2026-05-06 morning chat-2 sequence reframe 5-faze):
+- Pre Faza 2.5 Periodization V1 spec module CC implementation-ready acum compiled în §9.1 (32 decisions Cluster 1-5 verbatim)
+- Implementation scope: pure-function module în `src/engine/periodization/` per ADR 018 §2 Standardized Dimension Contract
+- Estimate ~150-250h CC autonomous LLM gen ≈ ~50-83 min real velocity X×3 rule (per §36.100 Engine #2 precedent)
+- Phase 1-2 orchestrator foundation `src/coach/orchestrator/` LANDED safe commit `5a16550` reusable post Faza 2.5 (47 tests new + 1401 prev = 1448 PASS)
+- Post Faza 2.5 Periodization V1 LANDED → Faza 3 wiring real Strangler featureFlag `periodization_via_orchestrator` rollout 0% default OFF + golden-master parity legacy↔orchestrated tests (P1.3)
