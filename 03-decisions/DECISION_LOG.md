@@ -1,5 +1,19 @@
 # DECISION LOG — Andura
 
+## 2026-05-06 evening chat-9 acasă — Vault hygiene batch cross-refs cleanup ADR 026 §9.X post-pipeline §42.10 V1 closure
+
+- ADR 026 §9.3+§9.5+§9.6 cross-refs updated post stub flip `dccda1f` — 027/028/029 STUB → SPEC REFERENCE redirect (inline `**Cross-refs:**` lines + §9.X.7 Cross-refs Bidirectional ADR sections + footer compile narrative summaries — full bidirectional consistency)
+- ADR 026 §9.7+§9.8 cross-refs ADD pointers ADR 031+032 NEW SPEC REFERENCE direct (replace "ADR file ABSENT recommend NEW" notes cu actual ADR file references post-create `dccda1f`)
+- Forward TBD references obsolete replaced LANDED status + 8/8 V1 implement + spec compile commits verbatim source-of-truth CURRENT_STATE §JUST_DECIDED chat-8 narrative + git log verify (anti-fabrication mandatory pre-flight verified 16 SHAs all 8 engines spec compile + V1 implement)
+- §RECENT 34 LOC ≤ 50 → Step 7 truncate SKIPPED (no action needed)
+- Cumulative ~659 LOCKED V1 PRESERVED unchanged (consistent precedent vault hygiene meta-tooling NU product/architecture)
+- Tests baseline 2648 PASS preserved (doc-only ZERO src ZERO regression possible)
+- Backup tag `pre-vault-hygiene-cross-refs-cleanup-2026-05-06-2358`
+- Cross-ref `dccda1f` ADR cleanup batch + `6276afd` DIFF_FLAGS update predecessor consistent
+- **Recommended next:** §CC.5 fast handover ingest chat-9 closure clean state pre-Faza 3 STRANGLER fresh bandwidth chat NEW dedicat strategic mâine
+
+---
+
 ## 2026-05-06 evening chat-9 acasă — DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE update post-pipeline §42.10 V1 closure milestone (vault hygiene)
 
 - DIFF_FLAGS P1-FLAG-SCENARIOS-COVERAGE entry appended cu V1 implement evidence (8/8 engines + 2648 PASS + ADR cleanup batch landed `dccda1f`)
