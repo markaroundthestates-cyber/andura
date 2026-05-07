@@ -1,4 +1,4 @@
-# TASK 1 — Pre-archive split HANDOVER_MISC sub-sections (4 files create)
+# TASK 1 — Pre-archive split HANDOVER_MISC sub-sections (4 files create) [FIXED 2026-05-07]
 
 **Model:** 🔴 OPUS
 **Order:** 1/8
@@ -7,8 +7,10 @@
 **Estimate:** ~10-15 min CC
 **Risk:** Line range drift față de audit → fail-stop section header mismatch verify
 
+**FIX 2026-05-07 v2:** Pre-flight regex relaxat `§?` (optional § prefix) + `\b` word boundary pentru drift detection retained. Source HANDOVER_MISC has naming convention drift: legacy sections `## 29.7 / ## 31 / ## 32` (NO § prefix) vs newer `## §36.103` (WITH § prefix). Audit Phase B+ used `§` ca shorthand notation; spec v1 inherited literally — over-specified. Option A relaxation NU touch source content (audit trail preserved).
+
 ═══════════════════════════════════════════════════════════════════
-                  PRE-FLIGHT MANDATORY
+                  PRE-FLIGHT MANDATORY [FIXED v2]
 ═══════════════════════════════════════════════════════════════════
 
 ```bash
@@ -21,19 +23,19 @@ echo "Source LOC: $LOC (audit expected: 5716)"
 [ "$LOC" -ge 5700 ] && [ "$LOC" -le 5750 ] || { echo "FAIL: LOC drift >50 vs audit"; exit 1; }
 
 # 2. Verify section headers at expected line ranges (audit Phase B+ verbatim)
-echo "=== Header verification ==="
-sed -n '2743p' "$SOURCE"   # Expected: "## §29.7 Pre-Launch Checklist..."
-sed -n '2847p' "$SOURCE"   # Expected: "## §31 Investiții..."
-sed -n '2890p' "$SOURCE"   # Expected: "## §32 Muscle Memory..."
+echo "=== Header verification (regex relaxed §? optional + \b boundary) ==="
+sed -n '2743p' "$SOURCE"   # Expected: "## 29.7 Pre-Launch..." OR "## §29.7..."
+sed -n '2847p' "$SOURCE"   # Expected: "## 31. Investiții..." OR "## §31..."
+sed -n '2890p' "$SOURCE"   # Expected: "## 32. Muscle Memory..." OR "## §32..."
 sed -n '5589p' "$SOURCE"   # Expected: "## §36.103 Knowledge Layer..."
 
-# 3. STOP dacă vreun header NU matches expected pattern
-sed -n '2743p' "$SOURCE" | grep -qE '^## §29\.7' || { echo "FAIL: §29.7 line drift"; exit 1; }
-sed -n '2847p' "$SOURCE" | grep -qE '^## §31' || { echo "FAIL: §31 line drift"; exit 1; }
-sed -n '2890p' "$SOURCE" | grep -qE '^## §32' || { echo "FAIL: §32 line drift"; exit 1; }
-sed -n '5589p' "$SOURCE" | grep -qE '^## §36\.103' || { echo "FAIL: §36.103 line drift"; exit 1; }
+# 3. STOP dacă vreun header NU matches expected pattern (regex relaxed §? optional + \b boundary)
+sed -n '2743p' "$SOURCE" | grep -qE '^## §?29\.7\b' || { echo "FAIL: §29.7 line drift"; exit 1; }
+sed -n '2847p' "$SOURCE" | grep -qE '^## §?31\b' || { echo "FAIL: §31 line drift"; exit 1; }
+sed -n '2890p' "$SOURCE" | grep -qE '^## §?32\b' || { echo "FAIL: §32 line drift"; exit 1; }
+sed -n '5589p' "$SOURCE" | grep -qE '^## §?36\.103\b' || { echo "FAIL: §36.103 line drift"; exit 1; }
 
-echo "✅ All 4 section headers verified at audit line ranges"
+echo "✅ All 4 section headers verified at audit line ranges (regex relaxed)"
 
 # 4. Verify destination paths NU exist (anti-overwrite)
 for path in "01-vision/INVESTITII_PRIVATE.md" \
@@ -56,7 +58,7 @@ cat > 08-workflows/PRE_LAUNCH_CHECKLIST_V1.md <<'HEADER'
 # PRE-LAUNCH CHECKLIST V1 LOCKED
 
 **Status:** ACTIVE_SSOT (operational checklist canonical, pre-Beta active)
-**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §29.7 (lines 2743-2818, archived 2026-05-07 Capacity A)
+**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §29.7 (lines 2743-2818, archived 2026-05-07 Capacity A) — note: source heading style `## 29.7` legacy convention, content reference §29.7 shorthand
 **Date split:** 2026-05-07 (Run 2 vault cleanup Task 1)
 **Authority:** AUTHORITATIVE_LOCK (operational pre-Beta launch gate)
 
@@ -88,7 +90,7 @@ cat > 01-vision/INVESTITII_PRIVATE.md <<'HEADER'
 # INVESTIȚII PRIVATE — Andura
 
 **Status:** ACTIVE_SSOT (private business data canonical, precedent DANIEL_COMPLETE_PROFILE)
-**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §31 Investiții LOCKED (lines 2847-2889, archived 2026-05-07 Capacity A)
+**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §31 Investiții LOCKED (lines 2847-2889, archived 2026-05-07 Capacity A) — note: source heading `## 31.` legacy convention
 **Date split:** 2026-05-07 (Run 2 vault cleanup Task 1)
 **Authority:** AUTHORITATIVE_LOCK (private business reference)
 
@@ -113,7 +115,7 @@ cat > 03-decisions/033-muscle-memory-index.md <<'HEADER'
 # ADR 033 — Engine Muscle Memory Index (MMI)
 
 **Status:** 🟡 STUB / SPEC PLACEHOLDER (engine spec future, post-Beta v1.5 candidate)
-**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §32 Muscle Memory Index LOCKED V1 NEW (lines 2890-2932, archived 2026-05-07 Capacity A)
+**First-source:** `HANDOVER_MISC_2026-04-30_evening.md` §32 Muscle Memory Index LOCKED V1 NEW (lines 2890-2932, archived 2026-05-07 Capacity A) — note: source heading `## 32.` legacy convention
 **Date created:** 2026-05-07 (Run 2 vault cleanup Task 1, ADR Numbering Additive convention §36.95 — 033 next slot post 032 Deload)
 **Numbering convention:** Additive per [[VAULT_RULES]] §3 (NU re-arrange existing 001-032).
 
@@ -214,6 +216,9 @@ git commit -m "feat(vault-cleanup): split HANDOVER_MISC sub-sections to standalo
 
 Pre-archive Capacity A preservation — 4 unique active value sections preserved standalone canonical
 before HANDOVER_MISC archive Task 3. Source HANDOVER_MISC untouched (read-only extraction).
+
+Note: source heading style drift (legacy ## 29.7 / ## 31 / ## 32 NO § prefix vs newer ## §36.103 WITH §)
+documented în split file First-source headers. Pre-flight regex relaxed §? + \b boundary v2 fix.
 
 Cross-refs: audit-vault-2026-05-07.md Phase B+ §HANDOVER_MISC table line ranges verbatim."
 ```
