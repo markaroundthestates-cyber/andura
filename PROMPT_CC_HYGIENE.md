@@ -454,6 +454,26 @@ Per §3 raport schema:
 
 **STOP.** NU touch `HANDOVER_GLOBAL.md` deep. NU sync alte SSOT-uri. Fast iteration only. Deep merge = separate trigger §HANDOVER_PROTOCOL existing.
 
+### §10.9 Mandatory File Updates Per Handover (cross-ref VAULT_RULES §CC.9 LOCKED V1 2026-05-07)
+
+Steps §10.3-§10.7 above cover CURRENT_STATE + DECISION_LOG + archive + commit/push. **NEW per §CC.9 amendment:**
+
+3. (existing §10.3) Update CURRENT_STATE.md §JUST_DECIDED + §NOW move-then-replace
+4. (existing §10.4) Update DECISION_LOG.md entry append top
+5. **NEW §10.9.1** — Update INDEX_MASTER.md stats line (active vault count + ADR breakdown numbered/named/total) + NAVIGARE per-row sync if files archived/created/renamed
+6. **NEW §10.9.2** — Sync CURRENT_STATE §ACTIVE_REFS / §ACTIVE_ADRS / §ACTIVE_FLAGS (REMOVE archived + ADD new SSOT + REDIRECT canonical)
+7. **NEW §10.9.3** — Pre-flight grep wikilinks orphane mandatory before commit (per §CC.9.5):
+   ```bash
+   grep -rEn '\[\[<archived_file_basename_pattern>' \
+     --include="*.md" --exclude-dir=_archive --exclude-dir=node_modules \
+     --exclude-dir=.git . | wc -l
+   # Expect: 0 (all REDIRECT applied pre-archive)
+   ```
+
+**Failure mode:** §10.9.1-§10.9.3 incomplete = handover INCOMPLETE per §CC.9. Re-merge mandatory.
+
+Cross-ref: VAULT_RULES.md §CC.9 (canonical authority).
+
 ---
 
 ## 11. CHAT NEW STARTUP VERIFY FORMAT (§CHAT_CONTINUITY_PROTOCOL §CC.2-§CC.3)

@@ -560,6 +560,8 @@ Continuăm?
    - Commit + push origin main (hooks normal, NU `--no-verify` decât justificat)
 4. **STOP.** NU touch `HANDOVER_GLOBAL.md` deep, NU sync alte SSOT-uri. §HANDOVER_PROTOCOL existing preserved unchanged.
 
+**§CC.9 extension (LOCKED V1 2026-05-07 Run 2 Task 7):** Fast handover workflow §CC.5 minimum steps 1-2 (CURRENT_STATE + DECISION_LOG). §CC.9 Mandatory File Updates Per Handover extends pentru full vault hygiene completeness — see §CC.9 below for 5-step mandatory checklist (3 INDEX_MASTER stats refresh + 4 §ACTIVE_REFS sync + 5 Pre-flight grep wikilinks orphane). Daniel's command "Update CURRENT_STATE per inbox handover" implicitly invokes §CC.9 (NU optional).
+
 ### §CC.6 CURRENT_STATE.md Append-Only Architecture (canonical)
 
 **Sections fixed order:**
@@ -603,6 +605,48 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 - `00-index/INDEX_MASTER.md` "READ FIRST" entry top navigation
 - §HANDOVER_PROTOCOL existing (deep flow preserved unchanged)
 - §HANDOVER_PROTOCOL STEP 16 amendment (below)
+- §CC.9 Mandatory File Updates Per Handover (LOCKED V1 2026-05-07 Run 2 Task 7)
+
+### §CC.9 Mandatory File Updates Per Handover (LOCKED V1 2026-05-07)
+
+**Authority:** Run 2 Vault Cleanup Task 7 — codify post-handover required file updates anti-recurrence missed updates discovered audit-vault-2026-05-07.md (CURRENT_STATE §ACTIVE_REFS stale post-Capacity-A + INDEX_MASTER stats drift "92 vs 93 actual" + missed §POINTERS sync).
+
+**Scope:** Applies BOTH §CC.5 fast handover AND §HANDOVER_PROTOCOL deep ingest. Mandatory checklist post-merge SSOT.
+
+**Mandatory updates (5 steps — ALL required, NU partial):**
+
+1. **CURRENT_STATE.md** §JUST_DECIDED top entry append + §NOW move-then-replace (precedent → §RECENT) — existing §CC.5/§CC.6 mecanic.
+
+2. **DECISION_LOG.md** entry append top descending cronologic — existing §CC.5/§HANDOVER_PROTOCOL §10.4.
+
+3. **INDEX_MASTER.md** stats line refresh — NEW §CC.9.3:
+   - Active vault files count actual (`find . -name "*.md" -not -path "*/_archive/*"` mecanic recount)
+   - ADR breakdown (numbered count + named count + total)
+   - NAVIGARE table cross-refs sync if files archived/created/renamed în handover scope
+
+4. **CURRENT_STATE §ACTIVE_REFS / §ACTIVE_ADRS / §ACTIVE_FLAGS** sync — NEW §CC.9.4:
+   - REMOVE references la archived files (post-archive merge)
+   - ADD references la new SSOT files (post-create merge)
+   - REDIRECT references la deprecated sections → canonical SSOT pointers
+
+5. **Pre-flight grep wikilinks orphane** mandatory before commit — existing §CC.5 reinforced §CC.9.5:
+   ```bash
+   grep -rEn '\[\[<archived_file_basename_pattern>' \
+     --include="*.md" --exclude-dir=_archive --exclude-dir=node_modules \
+     --exclude-dir=.git . | wc -l
+   # Expect: 0 (all REDIRECT applied pre-archive)
+   ```
+
+**Failure mode:** any of 5 steps incomplete = handover INCOMPLETE. Next chat startup §CC.2 layered read va detecta drift via §CC.7 Layer 3 timestamp consistency check sau via stale references hit. Re-merge required.
+
+**Goal §CC.9:** next chat startup §CC.2 layered read = TOT accurate; vault navigation fără garbage; PK indexing clarity preserved (NU contaminate top SSOT cu stale refs).
+
+**Cross-refs:**
+- §CC.5 Fast Handover Workflow (steps 1-2 mandatory minimum, §CC.9 extends adding 3-5)
+- §HANDOVER_PROTOCOL STEP 16 Amendment (CURRENT_STATE update post-ingest, AMENDMENT below adds §CC.9 reference)
+- `PROMPT_CC_HYGIENE.md` §10.9 Fast Handover Workflow (operational steps cross-ref §CC.9)
+
+**Anti-recurrence rationale:** audit-vault-2026-05-07.md identified Drift 2 — INDEX_MASTER stats line 6 "92 fișiere active" stale vs actual 93 (off-by-one drift mecanic, undetected pre-audit). §CC.9 codifies stat refresh mandatory step pentru no-future-drift. Plus Drift 1 cumulative LOCKED count + Drift 3 stale chat-N references — toate prevenite via §CC.9 enforcement.
 
 ---
 
@@ -626,5 +670,7 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 - `## NEXT` + `## ACTIVE_REFS/ADRS/FLAGS` = overwrite OK (these are pointers/snapshots, not content history)
 
 **Failure mode:** STEP 16 fail → ROLLBACK ingest entire (revert backup tag pre-execution). NU partial state.
+
+**§CC.9 Cross-ref (LOCKED V1 2026-05-07 Run 2 Task 7):** STEP 16 ingest action items extended per §CC.9 Mandatory File Updates Per Handover (5 steps total: CURRENT_STATE + DECISION_LOG + INDEX_MASTER stats + ACTIVE_REFS sync + Pre-flight grep). All 5 mandatory NU partial.
 
 ---

@@ -1,5 +1,38 @@
 # DECISION LOG — Andura
 
+## 2026-05-07 — VAULT_RULES §CC.9 amendment LOCK V1 Mandatory File Updates Per Handover (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
+
+**Authority:** Run 2 Vault Cleanup Task 7 (audit-vault-2026-05-07.md) — codify anti-recurrence missed file updates discovered audit (Drift 1+2+3 INDEX_MASTER stats stale + cumulative count drift + chat-N references stale).
+
+**Decision:** §CC.9 NEW section în VAULT_RULES.md (additive numbering after §CC.8, NU sub-section §CC.5.X).
+
+**Rationale numbering convention §CC.9 vs §CC.5.X (Bugatti decision Q1 2026-05-07 chat-NEW4):**
+- §CC.9 = standalone authoritative section applying BOTH §CC.5 fast + §HANDOVER_PROTOCOL deep
+- §CC.5.X sub-section ar implica "fast handover only" semantic incorrect
+- Additive convention §CC.1→§CC.9 zero risk altering existing references (precedent ADR §9.1→§9.8 additive)
+
+**5 mandatory steps codified §CC.9:**
+1. CURRENT_STATE update (existing §CC.5/§CC.6)
+2. DECISION_LOG entry (existing §10.4)
+3. INDEX_MASTER stats refresh (NEW §CC.9.3)
+4. CURRENT_STATE §ACTIVE_REFS sync (NEW §CC.9.4)
+5. Pre-flight grep wikilinks orphane (existing §CC.5 reinforced §CC.9.5)
+
+**Files modified atomic single batch:**
+- UPDATED: `VAULT_RULES.md` (§CC.9 NEW after §CC.8 + §CC.5 cross-ref + §HANDOVER_PROTOCOL STEP 16 amendment cross-ref)
+- UPDATED: `PROMPT_CC_HYGIENE.md` (§10.9 NEW Mandatory File Updates Per Handover cross-ref)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry)
+
+**Backup tag:** `pre-vault-cleanup-batch-2026-05-07-2257` (Run 2 master backup, rollback safety).
+
+**Cross-refs:** [[../VAULT_RULES]] §CC.9 + §CC.5 + §HANDOVER_PROTOCOL STEP 16 amendment | [[../PROMPT_CC_HYGIENE]] §10.9 | audit-vault-2026-05-07.md (1454 LOC singular self-sufficient) Drift 1+2+3 + Phase D Batch 6.
+
+**Note explicit:** §CC.9 = vault meta-tooling. NU contabilizat în cumulative LOCKED count product/architecture (separate concern — meta-tooling decisions live aici în DECISION_LOG dar NU inflate domain decision count care tracking-uiește product scope).
+
+---
+
 ## 2026-05-07 chat NEW startup — §CC.5 fast handover ingest chat-9 acasă closure mecanic complete
 
 - §CC.5 ingest sursa: `📥_inbox/HANDOVER_2026-05-07_chat9_acasa_closure_mecanic_complete.md` → archive `📤_outbox/_archive/2026-05/211_HANDOVER_..._CONSUMED.md`
