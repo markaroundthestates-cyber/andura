@@ -42,13 +42,13 @@
 
 ## Commits (1)
 
-- `<pending>` chore(vault): archive chat-NEW2 birou handover post §CC.5 fast ingest + cycle LATEST mockup V2 — see push step output
+- `34bd52a` chore(vault): archive chat-NEW2 birou handover post §CC.5 fast ingest + cycle LATEST mockup V2 — 3 files changed, 101 insertions(+), 27 deletions(-)
 
 ---
 
 ## Pushed
 
-- ✅ to `origin/main` — see push step output
+- ✅ `9b2412b..34bd52a main -> main` to `origin` (remote redirect notice salafull → andura.git info-only, push completed normal)
 
 ---
 
