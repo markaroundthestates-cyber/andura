@@ -1,5 +1,32 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — CURRENT_STATE update post §CC.5 fast handover ingest "Vault Hygiene Sweep complete (Runs 1-5 + audit archive) → Run 6 vault CONTENT scribe FINAL pending" (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged (toate 5 Runs vault hygiene cumulative — Run 2 + Run 3-5 amendments + audit archive + acest CURRENT_STATE update §CC.6 append-only).
+
+**Authority:** Daniel command "Update CURRENT_STATE per inbox handover" 2026-05-08 post §CC.5 fast handover livrare în `📥_inbox/HANDOVER_2026-05-07_evening_vault_hygiene_complete_run6_pending.md`. Per VAULT_RULES §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover (5-step) + §AR.13 PK Growth Control mandatory PK Delta line LATEST.
+
+**Decision:** §CC.6 append-only ingest:
+1. Compress current NOW thread (chat-NEW3 birou React/CD V2/Capacity A) → "precedent compressed below this line"
+2. Prepend new NOW thread descriere chat-current Runs 1-5 + audit archive + Run 6 pending
+3. Add NEW §JUST_DECIDED top entry (descending chronologic) "Vault Hygiene Sweep COMPLETE Runs 1-5 + audit archive consumed → Run 6 vault CONTENT scribe FINAL pending"
+4. Update "Updated:" frontmatter line minimal noting handover ingest
+5. DECISION_LOG entry (acest)
+6. Archive handover consumed → `📤_outbox/_archive/2026-05/237_HANDOVER_2026-05-07_evening_vault_hygiene_complete_run6_pending_CONSUMED.md`
+
+**Strategic axis BLOCKED preserved în CURRENT_STATE NOW thread + §JUST_DECIDED top entry:** Toate (a)/(b)/(c)/(d) opțiuni explicit BLOCKED până Run 6 vault CONTENT scribe FINAL ✅ LANDED.
+
+**Files modified atomic batch:**
+- UPDATED: 00-index/CURRENT_STATE.md (NOW thread compress + new top NOW + §JUST_DECIDED top entry)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+- MOVED: 📥_inbox/HANDOVER_2026-05-07_evening_vault_hygiene_complete_run6_pending.md → 📤_outbox/_archive/2026-05/237_HANDOVER_..._CONSUMED.md
+
+**Backup tag:** pre-current-state-update-handover-2026-05-08-0007
+
+**Cross-refs:** Run 2 (`28598a9` Capacity A) + Run 3 (`0b35681` §ANTI_RECURRENCE_RULES) + Run 4 (`6af3f20` Playwright fix) + Run 5 (`865b6b2` §AR.13 PK Growth Control) + audit archive (`dc5e24e` 1454 LOC consumed). Plus §CC.6 Append-Only + §CC.9 Mandatory File Updates + §AR.13 PK Delta verification mechanism + §3.3 archive schema NN chronologic continuous (237 NEXT post 236 audit).
+
+---
+
 ## 2026-05-07 — VAULT_RULES §AR.13 PK Growth Control Per Sesiune amendment LOCK V1 (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
