@@ -1747,6 +1747,10 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §47 — Alignment Questions Generation Rule LOCKED V1 (search-driven STRICT, DEPRECATED pre-fed verbatim)
 - `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §41-§45 — Vault Hygiene Sprint COMPLETE + ADR 026 spec session 75 decisions
 - `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §36.99-§36.107 — offline coaching tree + 7→8 prescriptive engines + D2/D3 OPENED FOR DISCUSSION
+- [[PRE_LAUNCH_CHECKLIST_V1]] (08-workflows/) — pre-launch ops checklist NEW Run 2 (split din HANDOVER_MISC §29.7 2026-05-07)
+- [[INVESTITII_PRIVATE]] (01-vision/) — investiții personal Daniel NEW Run 2 (split din HANDOVER_MISC §31 2026-05-07)
+- [[033-muscle-memory-index]] (03-decisions/, STUB SPEC) — ADR 033 placeholder NEW Run 2 (split din HANDOVER_MISC §32 2026-05-07)
+- [[KNOWLEDGE_LAYER_CADENCE_V1]] (08-workflows/) — knowledge sprint cadence NEW Run 2 (split din HANDOVER_MISC §36.103 2026-05-07)
 
 ---
 

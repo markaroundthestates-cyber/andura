@@ -14,9 +14,9 @@
 - [[HANDOVER_ENGINES_SPEC_2026-04-30_evening]] — ADR 026 spec sessions + Engines #1-#8 + pivot "More Engine Less LLM" (~426 LOC)
 - [[HANDOVER_ONBOARDING_T0_2026-04-30_evening]] — 5 voices + Goal Lifecycle clarifications (~72 LOC)
 - [[HANDOVER_DECISION_CLUSTER_D1_D4_2026-04-30_evening]] — D1/D2/D3.1/D4 sub-decisions LOCKED V1 (~527 LOC)
-- [[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] — Vault Hygiene Sprint + §47 Alignment Rule (~127 LOC)
+- **Vault Hygiene rules:** see [[VAULT_RULES]] §VAULT_HYGIENE_PASS (merged 2026-05-07 Run 2 — historical content `📤_outbox/_archive/2026-05/<NN>_HANDOVER_VAULT_HYGIENE_*_DEPRECATED.md`)
 - [[HANDOVER_SCENARIOS_COVERAGE_2026-04-30_evening]] — §69 PRE-BETA BLOCKER + cumulative + DIFF_FLAGS (~146 LOC)
-- [[HANDOVER_MISC_2026-04-30_evening]] — Historical residual §1-§35 + §36.1-§36.98 majority + §36.103-§36.104 + §37-§40 (~5716 LOC)
+- **MISC sub-sections:** split 2026-05-07 Run 2 Task 1 → [[PRE_LAUNCH_CHECKLIST_V1]] (§29.7) + [[INVESTITII_PRIVATE]] (§31) + [[033-muscle-memory-index]] (§32 STUB) + [[KNOWLEDGE_LAYER_CADENCE_V1]] (§36.103). Residual decisions → [[026-offline-coaching-decision-tree-exhaustive]] §9.X canonical + [[DECISION_LOG]]. Historical content `📤_outbox/_archive/2026-05/<NN>_HANDOVER_MISC_*_DEPRECATED.md`.
 
 **Total split LOC:** 7729 LOC (source 7673 + 7×8 header overhead = 7729, delta +0.7% within ±10% tolerance).
 
