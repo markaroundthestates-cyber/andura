@@ -1,110 +1,103 @@
-# Run 3 Anti-Recurrence Rules Consolidation — LATEST Report (2026-05-07)
+# Run 4 Playwright Stale Assertions Fix — LATEST Report (2026-05-07)
 
-**Task:** VAULT_RULES §ANTI_RECURRENCE_RULES NEW section consolidate slip-uri chat-uri 1-9 + Run 2 NEW slips
+**Task:** Playwright 3 stale assertions fix mecanic post features (rebrand SalaFull→Andura + nav 5→6) — clean baseline pre-Faza 3 STRANGLER
 **Model:** 🔴 OPUS autonomous (`claude --dangerously-skip-permissions`)
 **Status:** ✅ COMPLETE
-**Parallelism:** Terminal 1 (this) — disjoint scope vs Terminal 2 Playwright fix (ZERO file overlap: vault doc vs src/tests)
+**Parallelism:** Terminal 2 (this) — disjoint scope vs Terminal 1 anti-recurrence consolidation Run 3 (executed sequentially în acest thread; ZERO file overlap între scope-uri)
 
 ---
 
 ## Pre-flight
 
-- Backup tag: `pre-anti-recurrence-consolidation-2026-05-07-2337` pushed origin (rollback safety)
-- Slip pattern grep multi-source: 91 matches în 06-sessions-log/HANDOVER_*.md + 03-decisions/DECISION_LOG.md (keywords: slip / mea culpa / hallucina / drift / lesson learned / anti-recurrence / repeated mistake / halucinez)
-- §ANTI_RECURRENCE_RULES collision check: ✓ slot available
-- §CHAT_CONTINUITY_PROTOCOL location: line 500 (insertion point reference, actual append after STEP 16 amendment line 676)
+- Backup tag: `pre-playwright-stale-fix-2026-05-07-2345` pushed origin (rollback safety)
+- **Path drift detected pre-flight (anti-recurrence §AR.1 applied):** spec referenced `tests/e2e/regression.spec.js` + `tests/e2e/visual.spec.js`. Real filesystem location: `tests/regression.spec.js` + `tests/visual.spec.js` (NOT under `tests/e2e/` subfolder). Verified via Bash `ls tests/` + `find . -name "<file>"`. NU presumed from spec — pattern Bugatti CC pre-flight grep ÎNAINTE edit.
+- Production source verified pre-edit (anti-recurrence §AR.7 verify target state):
+  - Title source: `index.html:10 <title>Andura</title>` ✓
+  - Nav count source: 6 instances `class="nb` în `index.html` lines 655/659/663/667/671/675 (coach + dash + weight + prog + plan + settings)
 
 ## Modificări summary
 
-### §ANTI_RECURRENCE_RULES NEW section (VAULT_RULES.md ~250 LOC append after STEP 16 amendment)
+### Fix 1 — `tests/regression.spec.js:32` (title rebrand)
+```diff
+-  test('titlul paginii este SalaFull', async ({ page }) => {
++  test('titlul paginii este Andura', async ({ page }) => {
+     const title = await page.title();
+-    expect(title).toContain('SalaFull');
++    expect(title).toContain('Andura');
+   });
+```
 
-**12 rules consolidated (categorized):**
+### Fix 2 — `tests/regression.spec.js:54` (nav count stale)
+```diff
+-  test('există exact 5 butoane de navigație vizibile', async ({ page }) => {
++  test('există exact 6 butoane de navigație vizibile', async ({ page }) => {
+     const navBtns = page.locator('.nb');
+-    await expect(navBtns).toHaveCount(5);
+-    for (let i = 0; i < 5; i++) {
++    await expect(navBtns).toHaveCount(6);
++    for (let i = 0; i < 6; i++) {
+       await expect(navBtns.nth(i)).toBeVisible();
+     }
+   });
+```
 
-**Pre-flight discipline (anti-fabrication):**
-- §AR.1 Pre-flight grep filesystem ÎNAINTE reference paths/files/tooling (recidivă chat-2/3/4/5/8: HANDOVER_GLOBAL stale + ADR_CASCADE_DEFENSE_v1 path + §45.x stale + CLAUDE.md presupus + npm run lint + 013-ADR-aa-detection.md fabricated)
-- §AR.2 Source-of-truth HANDOVER_GLOBAL stale assumption (split atomic vs consumed archives `142_*` + `177_*`)
-- §AR.11 4-way parity check sources anti-recurrence proof (≥3-4 sources verbatim per compile/aggregation)
+### Fix 3 — `tests/visual.spec.js:20` (same nav count consistency)
+```diff
+-  test('nav has exactly 5 visible .nb elements', async ({ page }) => {
++  test('nav has exactly 6 visible .nb elements', async ({ page }) => {
+     const navButtons = page.locator('.nb');
+-    await expect(navButtons).toHaveCount(5);
++    await expect(navButtons).toHaveCount(6);
 
-**Ground truth verify (anti-distructive):**
-- §AR.3 Ground truth git verify ÎNAINTE acuzare CC hallucination sau acțiuni distructive (chat-5 drift event 3 reports valid acuzat fals "fake" + cerut ștergere — recovery via origin/main reset)
-- §AR.4 Anti-distructive recommendation default (delete/reset --hard/force-push = LAST RESORT post backup tag + Daniel approval)
+-    for (let i = 0; i < 5; i++) {
++    for (let i = 0; i < 6; i++) {
+       await expect(navButtons.nth(i)).toBeVisible();
+     }
+```
 
-**Spec methodology Run 2 NEW (3 rules):**
-- §AR.5 Audit count methodology drift (Run 2 Task 2 STOP `12e0506` — audit "12 expected" permissive vs strict 4 wikilinks)
-- §AR.6 §-prefix regex strict over-specification (Run 2 Task 1 STOP `34f21ba` — `^## §X` vs source legacy `## N.M`)
-- §AR.7 §ACTIVE_REFS REPLACE/ADD pre-verify target state (Run 2 Task 2 CC craft — surface MOOT vs execute mock-replace)
-
-**Format + tooling discipline:**
-- §AR.8 Markdown chat block vs artefact (memory rule #2 RECIDIVĂ chat-3 §9.1 compile prompt)
-- §AR.9 Format fatigue + 2-options theater anti-pattern (300 cuvinte mea culpa + parodie Daniel "tu zici?" 5-6 răspunsuri)
-- §AR.10 PowerShell-in-bash tool slip (CC bash = POSIX strict, NU `$null` / backtick)
-
-**Workflow consolidat:**
-- §AR.12 Workflow matured pattern (file artefact → Daniel paste LATEST → silent verde → CTO pivot direct + post 3 verde reports `git fetch --all` periodic check per §AR.3)
-
-### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT (12-step mandatory)
-
-Consolidat din §AR.1-§AR.12:
-1. ☐ Backup tag pre-execution + push origin
-2. ☐ Pre-flight grep filesystem verbatim (paths/files/tooling per §AR.1)
-3. ☐ Source-of-truth verify HANDOVER_GLOBAL split (per §AR.2)
-4. ☐ Verify regex relaxation pe source convention drift (`§?` + `\b` per §AR.6)
-5. ☐ Verify target state actual pre-REPLACE/ADD edit (per §AR.7)
-6. ☐ Citation enforcement post-startup §CC.4 (every claim path:line)
-7. ☐ Variance check audit count (≥3 → escalate per §AR.5)
-8. ☐ Methodology mismatch check (strict vs permissive per §AR.5)
-9. ☐ Tests baseline preserved verify pre-commit (doc-only)
-10. ☐ Distructive operations — backup tag + Daniel approval (per §AR.4)
-11. ☐ Ground truth git verify ÎNAINTE acuzare hallucination (per §AR.3)
-12. ☐ Format lean — mea culpa rapid 1-2 sentences (per §AR.9)
-
-**Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec.
-
-### DECISION_LOG entry append top descending cronologic
-- 2026-05-07 §ANTI_RECURRENCE_RULES amendment LOCK V1 (vault meta-tooling, NU product/architecture)
-- Source extraction: 91 pattern matches grep multi-source
-- Cross-refs Run 2 LATEST.md (28598a9) + STOP raports 12e0506 + 34f21ba + memory rules feedback_grep_before_prompt_cc.md + feedback_verify_remote_state.md + feedback_format_fatigue.md
+**Diff stat:** 8 insertions / 8 deletions (4 line modifications + symmetric counts în loop limits + test names). Surgical precision.
 
 ## Build + Tests
 
-- **vitest baseline preserved:** pre-commit hook ran during commit `0b35681` → **2648 PASS / 0 FAIL** (141 test files)
-- ZERO src changes Run 3 (doc-only operations: VAULT_RULES.md + DECISION_LOG.md atomic batch)
+- **vitest baseline preserved:** `npm run test:run` → **2648 PASS / 0 FAIL** (141 test files) ✓
+- **Playwright e2e re-run (regression.spec.js + visual.spec.js):** **28 passed / 0 failed** (41.5s)
+  - Fixed assertions verified PASS: `titlul paginii este Andura` ✓ + `există exact 6 butoane de navigație vizibile` ✓ + `nav has exactly 6 visible .nb elements` ✓
+  - Plus 25 alte tests verde unchanged (theme system + layout + fonts + coach page + nav click)
 
 ## Verifications all-pass
 
-- ✅ §ANTI_RECURRENCE_RULES section count: 1 (single canonical authoritative)
-- ✅ §AR.X numbered rules: 12 (target 8-15 consolidation range)
-- ✅ §AR.PRE_FLIGHT_CHECKLIST_INVARIANT present cu 12 steps
-- ✅ Cross-refs §CC.4 + §HANDOVER_PROTOCOL §7 DIFF: 8 occurrences across rules
-- ✅ DECISION_LOG entry top descending cronologic
-- ✅ VAULT_RULES.md final LOC: 898 (+222 from Run 3 additions)
+- ✅ Diff verify: 3 surgical fixes only (8 line modifications symmetric)
+- ✅ Vitest 2648 PASS preserved (regression check)
+- ✅ Playwright 28 PASS / 0 FAIL post-fix (3 stale → 0 fail)
+- ✅ NU regression introduced — only assertion fixes pe 3 stale lines
+- ✅ Production source verified ÎNAINTE edit (title=Andura + 6 nav buttons in index.html)
 
 ## Commits
 
-- `0b35681` feat(vault-meta): VAULT_RULES §ANTI_RECURRENCE_RULES amendment LOCK V1 consolidate slip-uri chat-uri 1-9 + Run 2 NEW (272 insertions, 2 files modified)
+- `6af3f20` fix(tests): Playwright 3 stale assertions post features (rebrand SalaFull→Andura + nav 5→6)
 
 ## Pushed
 
-- Safety tag `pre-anti-recurrence-consolidation-2026-05-07-2337` → origin (pre-execution)
-- Commit `0b35681` → origin/main (`863a1f2..0b35681`) ✅ PUSH SUCCESS
+- Safety tag `pre-playwright-stale-fix-2026-05-07-2345` → origin (pre-execution)
+- Commit `6af3f20` → origin/main (`9e667dc..6af3f20`) ✅ PUSH SUCCESS
 
 ## Issues / Ambiguities
 
-- None blocking. Audit-trail clean.
-- §ANTI_RECURRENCE_RULES section deliberately positioned after §HANDOVER_PROTOCOL STEP 16 amendment (NOT after §CHAT_CONTINUITY_PROTOCOL line 500) — STEP 16 amendment is the natural conceptual flow extension (handover protocol → continuity protocol → STEP 16 amendment + §CC.9 → anti-recurrence rules consolidat). Insertion point validated mecanic by `^---` separator at end of file.
+- **Path drift spec→actual:** spec referenced `tests/e2e/<file>` but real `tests/<file>`. Pattern §AR.1 applied — pre-flight grep filesystem caught + corrected. NU impact action (still modified the right files). Spec note: future Playwright spec drafts use `tests/<file>` actual path.
+- **Tests baseline interpretation:** vitest e2e runs separate (28 specific tests) vs full vitest (2648 src/__tests__). Both preserved post-fix.
+
+## Cumulative state
+
+- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (vault hygiene meta-tooling NU product/architecture additive)
+- Audit-trail Run 1 (vault audit `b105385`) → Run 2 (Capacity A LANDED `28598a9`) → Run 3 (anti-recurrence consolidation `0b35681`) → Run 4 (Playwright stale fix `6af3f20`) chronologic preserved
+- Backup tag `pre-playwright-stale-fix-2026-05-07-2345` rollback safety preserved
 
 ## Next action
 
-**Daniel decide axis next:**
-1. **(a) React tactical kickoff** — P1.3 Faza 3 STRANGLER cu React migration architecture decision pending (ADR 005 §AMENDMENT inline OR new ADR 034 — Daniel chat-NEW3 LOCKED 1-2 săpt CC continuous direction, tactical execution pending)
-2. **(b) Faza 3 STRANGLER wiring real (no React detour)** — featureFlag `<engine>_via_orchestrator` rollout 0% default OFF + Golden-master parity tests legacy↔orchestrated + 8 adapters thin layer per ADR 030 D2 (one per engine)
-3. **(c) Playwright tests fix mecanic** — 3 stale assertions short scope (regression.spec.js + visual.spec.js — Terminal 2 parallel currently în flight if invoked separately)
-4. **(d) Strategic planning chat** — Faza 3+React+Theme system+Pre-Beta cohort multi-axis priority-ordering decision
+**Daniel decide axis next chat:**
+1. **(a) React tactical kickoff** — P1.3 Faza 3 STRANGLER cu React migration architecture decision pending (ADR 005 §AMENDMENT inline OR new ADR 034 — chat-NEW3 LOCKED 1-2 săpt CC continuous direction)
+2. **(b) Faza 3 STRANGLER wiring real (no React detour)** — featureFlag `<engine>_via_orchestrator` rollout 0% default OFF + Golden-master parity tests legacy↔orchestrated + 8 adapters thin layer per ADR 030 D2
+3. **(c) Strategic planning chat dedicat** — Faza 3+React+Theme system+Pre-Beta cohort multi-axis priority-ordering decision (Daniel CEO Product instinct chat NEW separate)
+4. **(d) Theme system pre-Beta 6 themes implementation** — a11y WCAG AA × 6 + font lazy load Google Fonts preconnect + post-onboarding theme picker preview UX cards
 
-## Cumulative state preservation
-
-- **Cumulative LOCKED V1 ~659 PRESERVED unchanged** (vault hygiene meta-tooling NU product/architecture additive)
-- Backup tag `pre-anti-recurrence-consolidation-2026-05-07-2337` rollback safety preserved
-- Audit-trail Run 1 (vault audit `b105385`) → Run 2 (Capacity A LANDED `28598a9`) → Run 3 (anti-recurrence consolidation `0b35681`) chronologic preserved
-
-🦫 **Bugatti craft. Quality > Speed. Anti-recurrence invariant codified. Vault PERFECT. ✊**
+🦫 **Bugatti craft. Quality > Speed. Test baseline clean. Vault PERFECT. ✊**
