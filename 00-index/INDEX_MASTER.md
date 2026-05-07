@@ -40,7 +40,7 @@ andura/
 | 🔴 **READ FIRST chat NEW startup** | [[CURRENT_STATE]] (live SSOT chat-state, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2) |
 | **Context curent + decizii pending Daniel review** | [[HANDOVER_GLOBAL_2026-04-30_evening]] (INDEX post-split 2026-05-05 overnight — drill-down per theme: [[HANDOVER_AUTH_FLOW_2026-04-30_evening]] / [[HANDOVER_ENGINES_SPEC_2026-04-30_evening]] / [[HANDOVER_ONBOARDING_T0_2026-04-30_evening]] / [[HANDOVER_DECISION_CLUSTER_D1_D4_2026-04-30_evening]] / [[VAULT_RULES]] §VAULT_HYGIENE_PASS / [[HANDOVER_SCENARIOS_COVERAGE_2026-04-30_evening]] / [[026-offline-coaching-decision-tree-exhaustive]] §9.X canonical + [[DECISION_LOG]]) (merged 2026-05-07 Run 2 Capacity A — historical preserved 📤_outbox/_archive/2026-05/) |
 | **Sprint 4 / Wave 6 backlog complet** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §6 |
-| **Pricing locked Founding €39 + Standard €59 + Elite €79 (V1.1)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 (post Chat D 2026-05-02) + [[PRODUCT_STRATEGY_SPEC_v1]] §1.3 (DEPRECATED, see §AMENDMENT) |
+| **Pricing locked Founding €39 + Standard €59 + Elite €79 (V1.1)** | [[PRODUCT_STRATEGY_SPEC_v1]] §AMENDMENT 2026-05-02 (canonical post Capacity A archive 2026-05-07) |
 | **"SensAI for Android" positioning** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.1 |
 | **5 axe differentiation (vs AI = comoditate)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §10 + [[MOAT_STRATEGY]] §Competitor Comparison Matrix |
 | **7 features distinctive (MOAT real)** | [[HANDOVER_GLOBAL_2026-04-30_evening]] §2.2 |

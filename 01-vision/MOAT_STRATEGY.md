@@ -110,7 +110,7 @@ ChatGPT învață din miliarde de useri generic. Andura învață din **TINE**.
 
 **Verdict:** Niciun competitor = top pe toate 5 axe. Andura poate câștiga TOATE 5 cu execution disciplinat.
 
-**Implicație pricing decision:** User pe Android NU poate alege SensAI (nu există). Alege între Fitbod (€90/an, mature brand, strength general) / Rizin (~€100-150/an, complex multi-pillar) / ~~**SalaFull (€65/an, 5-axes execution superior)**~~ → **Andura Standard €59/an, sub-SensAI €65, 5-axes execution superior** (DEPRECATED 2026-05-02 Chat D — see [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.50 Pricing tiers Founding €39/an cap 50 + Standard €59/an + Elite €79/an V1.1).
+**Implicație pricing decision:** User pe Android NU poate alege SensAI (nu există). Alege între Fitbod (€90/an, mature brand, strength general) / Rizin (~€100-150/an, complex multi-pillar) / ~~**SalaFull (€65/an, 5-axes execution superior)**~~ → **Andura Standard €59/an, sub-SensAI €65, 5-axes execution superior** (canonical: [[PRODUCT_STRATEGY_SPEC_v1]] §AMENDMENT 2026-05-02 — Founding €39/an cap 50 + Standard €59/an + Elite €79/an V1.1).
 
 **MOAT real = combinația tuturor 5 axe execute superior.** Architecture serves these axes, NU substitutes them. Cele 5 PILONI MOAT (§MOAT REAL) = enabler pentru aceste axe, NU MOAT-ul direct.
 
