@@ -100,13 +100,13 @@ e58563c feat(vault-cleanup): REDIRECT 4 active wikilinks Capacity A targets (Tas
 c9dac4e docs(prompt-cc): apply Option A regex relaxation Task 1 v2 (§? + \b boundary)
 ```
 
-(Plus pending Task 8 final commit + push.)
+**Task 8 final commit:** `28598a9` chore(vault-cleanup): Run 2 LATEST report + 8 task files archived consumed (Task 8 final)
 
 ## Pushed
 
 - Safety tag `pre-vault-cleanup-batch-2026-05-07-2257` → origin (pre-execution)
 - All 7 task commits + spec patch + STOP raport → origin/main (incremental)
-- Task 8 final commit + push pending acest report
+- Task 8 final commit `28598a9` → origin/main (`4d787b4..28598a9`) ✅ PUSH SUCCESS
 
 ## Issues / Ambiguities
 
