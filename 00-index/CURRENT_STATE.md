@@ -1837,7 +1837,8 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 - **Authoritative rules:** `VAULT_RULES.md` §CHAT_CONTINUITY_PROTOCOL + §HANDOVER_PROTOCOL + §VAULT_HYGIENE_PASS + §BATCH_PROTOCOL
 - **CC autonomous prompt:** `PROMPT_CC_HYGIENE.md` §10 fast-handover + §11 startup verify
 - **Outstanding issues:** `DIFF_FLAGS.md` (245 LOC, P1 + P2 active)
-- **ADR-uri active 42 total:** `03-decisions/` (33 numbered 001-032 + 9 named ADR_*) — post chat-9 ADR cleanup batch `dccda1f` (031 Warm-up + 032 Deload NEW direct SPEC REFERENCE; 027/028/029 STUB→SPEC REFERENCE flip)
+- **ADR-uri active 42 total:** `03-decisions/` (33 numbered 001-033 + 9 named ADR_*) — post chat-9 ADR cleanup batch `dccda1f` (031 Warm-up + 032 Deload NEW direct SPEC REFERENCE; 027/028/029 STUB→SPEC REFERENCE flip) + Run 2 Task 1 split 033 Muscle Memory Index STUB SPEC PLACEHOLDER NEW
+- **§JUST_DECIDED rolling archive (>7 days):** `06-sessions-log/RECENT_DECIDED_ARCHIVE.md` (Task 6 compaction 2026-05-07 NEW pattern, single-purpose dedicated file; scaffold only — populated on first entries age out >7 days)
 
 **Post-pipeline §42.10 V1 closure pointers (2026-05-06 evening chat-9 acasă):**
 - 8/8 prescriptive engines V1 LANDED commits (Periodization `1303b62` + Goal Adaptation `bf9814e` + Energy `69ec9ce` + Bayesian `8615ec1` + Tempo `d82d118` + Specialization `4cf50ab` + Warm-up `20999fb` + Deload `a6a0c87`) → §JUST_DECIDED chat-8 evening narrative source-of-truth
