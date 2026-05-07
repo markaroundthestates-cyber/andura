@@ -84,7 +84,7 @@ Spec line 86-87 instructs REPLACE for `[[HANDOVER_VAULT_HYGIENE_2026-04-30_eveni
 
 - `c9dac4e` docs(prompt-cc): apply Option A regex relaxation Task 1 v2 (§? + \b boundary) — pushed origin
 - `131a390` feat(vault-cleanup): split HANDOVER_MISC sub-sections to standalone canonical files (Task 1) — pushed origin
-- (pending Task 2 commit — STOP triggered)
+- `12e0506` chore(vault): STOP raport — Task 1 ✓ / Task 2 stop pre-flight (this report) — pushed origin
 
 ## Pushed
 
