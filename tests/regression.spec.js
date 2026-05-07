@@ -29,9 +29,9 @@ test.describe('Regression — Core app integrity', () => {
     expect(critical, `Erori JS: ${critical.join('; ')}`).toHaveLength(0);
   });
 
-  test('titlul paginii este SalaFull', async ({ page }) => {
+  test('titlul paginii este Andura', async ({ page }) => {
     const title = await page.title();
-    expect(title).toContain('SalaFull');
+    expect(title).toContain('Andura');
   });
 
   test('body nu e gol după load', async ({ page }) => {
@@ -51,10 +51,10 @@ test.describe('Regression — Navigație', () => {
     await page.waitForSelector('.nb', { timeout: 10000 });
   });
 
-  test('există exact 5 butoane de navigație vizibile', async ({ page }) => {
+  test('există exact 6 butoane de navigație vizibile', async ({ page }) => {
     const navBtns = page.locator('.nb');
-    await expect(navBtns).toHaveCount(5);
-    for (let i = 0; i < 5; i++) {
+    await expect(navBtns).toHaveCount(6);
+    for (let i = 0; i < 6; i++) {
       await expect(navBtns.nth(i)).toBeVisible();
     }
   });

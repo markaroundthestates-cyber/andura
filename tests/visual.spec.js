@@ -17,11 +17,11 @@ test.describe('Visual / structural tests', () => {
   });
 
   // ── Nav ────────────────────────────────────────────────────────────────────
-  test('nav has exactly 5 visible .nb elements', async ({ page }) => {
+  test('nav has exactly 6 visible .nb elements', async ({ page }) => {
     const navButtons = page.locator('.nb');
-    await expect(navButtons).toHaveCount(5);
+    await expect(navButtons).toHaveCount(6);
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       await expect(navButtons.nth(i)).toBeVisible();
     }
   });
