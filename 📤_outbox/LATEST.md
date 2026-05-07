@@ -1,71 +1,118 @@
-# LATEST — Vault audit TOTAL exhaustiv Bugatti standard (raport singular self-sufficient)
+# LATEST — Run 2 Vault Cleanup Master Orchestrator (STOP at Task 1 pre-flight)
 
-**Task:** Audit deep multi-dimensional vault. Output `📤_outbox/audit-vault-2026-05-07.md` SINGULAR EXHAUSTIV care permite next-Claude (sau eu post-BW) să comand cleanup batch complet ZERO lookup ulterior.
-**Model:** Opus
-**Status:** Complete
+**Task:** Run 2 Vault Cleanup — execute 8 task files sequential cu fail-stop verify post each
+**Model:** Opus 4.7
+**Status:** ⛔ STOPPED at Task 1 pre-flight verify (audit drift detected — section header regex mismatch)
 
 ---
 
-## Pre-flight
+## Pre-flight (master orchestrator)
 
 - `pwd`: `/c/Users/Daniel/Documents/salafull` ✓
-- `git status`: clean working tree ✓
+- `git status`: clean except 8 untracked task files in `📥_inbox/` (acceptable per spec) ✓
 - `git branch --show-current`: `main` ✓
-- Safety tag: `pre-vault-audit-2026-05-07-2108` (created + pushed origin) ✓
-- `mkdir -p /tmp/vault-audit`: ✓ baseline data cached (files.txt, files-sized.txt, wikilinks-all.txt, inbound-count-sorted.txt, inbound-detail-active.txt, outbound-active.txt, deprecated-markers.txt, code-refs.txt, active-scan.txt, active-commits.txt, large-file-sections.txt, adr-headers.txt)
+- Backup tag: `pre-vault-cleanup-batch-2026-05-07-2247` created + pushed origin ✓
+- Baseline grep wikilinks orphane: 23 lines (3 external file targets — INDEX_MASTER.md:41 + HANDOVER_GLOBAL_2026-04-30_evening.md:17,19, plus 20 internal references inside task-2.md / task-5.md spec). Work exists. ✓
+- All 8 task files present in inbox ✓
 
----
+## Task 1 attempted: HANDOVER_MISC sub-section split
 
-## Files audited count
+### Pre-flight checks executed:
 
-- **Total `.md` files in vault:** 336
-- **Active vault files (excl `_archive/`):** 93 (full schema audit)
-- **Archive files (`📤_outbox/_archive/`):** 243 (bulk audit + top-30 LOC ranking)
-- **Total LOC vault:** 85,986
-- **Files >500 LOC (Phase B+ drill-down):** 14 active files (CURRENT_STATE / SUFLET_ANDURA / PRODUCT_STRATEGY_SPEC_v1 / ADR 014/016/017/018/026 / ADR_MULTI_TENANT_AUTH / DECISION_LOG / HANDOVER_AUTH_FLOW / HANDOVER_DECISION_CLUSTER_D1_D4 / HANDOVER_MISC / VAULT_RULES)
+1. **Source LOC verify:** `06-sessions-log/HANDOVER_MISC_2026-04-30_evening.md` = 5716 LOC ✓ (exact match audit expected)
+2. **Destination paths verify:** All 4 destinations clean (no overwrite risk) ✓
+3. **Section header verify (LINE RANGE START):** ⛔ **3 of 4 FAIL strict regex `^## §X`**
+
+### Audit drift findings (header content vs spec regex):
+
+| Line | Actual header (verbatim) | Spec regex | Match |
+|------|--------------------------|------------|-------|
+| 2743 | `## 29.7 Pre-Launch Checklist V1 LOCKED (2026-05-01 evening RESUBMIT)` | `^## §29\.7` | ❌ FAIL (no `§` prefix) |
+| 2847 | `## 31. Investiții LOCKED (2026-05-01 evening RESUBMIT)` | `^## §31` | ❌ FAIL (no `§` prefix) |
+| 2890 | `## 32. Muscle Memory Index (MMI) LOCKED V1 (NEW 2026-05-02)` | `^## §32` | ❌ FAIL (no `§` prefix) |
+| 5589 | `## §36.103 Knowledge Layer Update Cadence LOCKED V1 — Content Store NU Capability Blocker` | `^## §36\.103` | ✅ PASS |
+
+### Diagnosis
+
+**This is naming convention drift in source HANDOVER_MISC, NOT content drift.**
+
+- Older sections (numbered 1-35 era pre-2026-05-02): use `## N.M` heading style WITHOUT `§` prefix
+- Newer sections (post-2026-05-02 §36.x cluster onwards): use `## §N.M` style WITH `§` prefix
+- Audit Phase B+ raport recorded all 4 sections with `§` prefix as shorthand "section reference notation"
+- Task 1 spec inherited audit notation literally + built strict regex around it
+- **Content IS at expected line ranges** (verified by reading actual headers — Pre-Launch Checklist, Investiții, MMI, Knowledge Layer — all present, all at correct lines, all matching audit description). Just headers lack literal `§` glyph for older entries.
+
+### Why STOP triggered (per master orchestrator spec)
+
+Spec stop condition #6 verbatim:
+> **Section header mismatch Task 1:** if line range start NU contains expected `## §X` header → STOP, audit drift, ESCALATE
+
+Strict literal interpretation: 3 of 4 line range starts fail expected regex. STOP triggered. Task 1 NU executed.
+
+ZERO files split. ZERO files modified. ZERO commits. ZERO pushes.
 
 ## Modificări
 
-- **Created:** `📤_outbox/audit-vault-2026-05-07.md` (1454 LOC singular exhaustive raport — Phase A baseline + Phase B per-file 93 active files grouped by folder + Phase B+ per-section drill-down 14 large files + Phase C cross-file analysis 5 sub-sections + Phase D 7 batches topological + Phase E aggregate KPI + Appendices A-E)
-- **Archived (LATEST cycle per VAULT_RULES §3.3):** `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/218_LATEST_PREVIOUS_STOP_RAPORT_CC5X_AMENDMENT.md`
-- **Created (this report):** `📤_outbox/LATEST.md` (current)
-- **Touched:** ZERO source code (vault audit doc-only, ZERO src/tests/scripts touched per scope)
-
-## Audit findings TL;DR (full detail în raport)
-
-- **Capacity A LOCKED candidates verified (chat-NEW3 §JUST_DECIDED #3):** `HANDOVER_VAULT_HYGIENE_2026-04-30_evening.md` (127 LOC, 6 inbound, 0 src refs) + `HANDOVER_MISC_2026-04-30_evening.md` (5716 LOC, 6 inbound, 0 src refs). ZERO src impact. REDIRECT 12 inbound mandatory pre-archive.
-- **De-facto SSOT top-5 (high inbound preserve hard):** HANDOVER_GLOBAL INDEX (91) / ADR 026 (78) / ADR 018 (62) / ADR 009 (54) / DECISION_LOG (34)
-- **BLOCKING_ARCHIVE active vault (preserve absolute):** 26 files cu code refs din `src/`
-- **Active→Archive wikilinks:** ZERO (clean discipline)
-- **Authority conflicts:** ZERO (ADR 022/024 vs §9.4/§9.2 = complementary by-design)
-- **Drift mecanic:** INDEX_MASTER line 6 stats "92 fișiere" (actual 93) + "33 numbered 001-032" (actual 32) — trivial Edit refresh task
-- **CURRENT_STATE §JUST_DECIDED 1128 LOC** vs §CC.6 implied "last 24-72h" — drift signal ESCALATE_DANIEL periodic compaction strategy
-- **Action plan ready:** Phase D 7 batches topological — Batches 1-3+5+6 = ~75-115 min CC autonomous (Capacity A scope) post Daniel-sync Batch 7 ESCALATE
-- **Total potential LOC reduction (active):** ~6,000-7,000 LOC (~7-8% of vault) post Capacity A + optional Batch 1
+- ZERO source code touched (working tree unchanged from pre-flight start)
+- LATEST.md cycle archived: `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/219_LATEST_PREVIOUS_VAULT_AUDIT_BUGATTI.md` (per VAULT_RULES §3.3)
+- LATEST.md (this file) replaces previous
 
 ## Build + Tests
 
-- Tests baseline preserved: 2648 PASS / 0 FAIL (doc-only operations ZERO src changes — ZERO regression possible)
-- ZERO src/tests/scripts touched per VAULT_RULES §SSOT PRINCIPLE LOCK #5
+- Tests NU run (no src changes attempted)
+- Baseline preserved unchanged: 2648 PASS / 0 FAIL (last known state from prior commit `b105385`)
 
 ## Commits
 
-(pending commit + push origin main)
+(none — STOP triggered pre-execution)
 
 ## Pushed
 
-(pending)
+(only safety tag `pre-vault-cleanup-batch-2026-05-07-2247`)
 
-## Issues / Ambiguities
+## Issues / Ambiguities — ESCALATE Daniel
 
-- **ESCALATE_DANIEL list (Phase D Batch 7):** ADR 005 React migration §AMENDMENT vs new ADR 033 + HANDOVER_MISC §32 MMI / §31 Investiții / §29.7 Pre-Launch Checklist / §36.103 Knowledge Layer Update Cadence preserve-as-standalone candidates + CURRENT_STATE §JUST_DECIDED 1128 LOC compaction strategy + DECISION_LOG distant entries optional compactation post-Faza 3 + HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md Batch 1 candidate (171 LOC, 0 inbound) preserve vault hygiene precedent OR archive + Tests NOT index în PK Project Knowledge config Daniel side
-- **Scope NU touched per task spec:** NU touch alte fișiere, NU archive, NU REDIRECT — DOAR raport. Phase 2 (propose batch) = chat strategic Daniel + Claude post-raport. Phase 3 (archive/REDIRECT execute) = Run 2 prompt CC NEW post-Daniel-approve batch.
+### ⚠️ Decision required: how to resolve Task 1 spec vs source naming drift
+
+**Option A — RELAX regex (recommended, lowest risk):**
+Update Task 1 pre-flight spec lines 31-34 from:
+```bash
+sed -n '2743p' "$SOURCE" | grep -qE '^## §29\.7' || ...
+sed -n '2847p' "$SOURCE" | grep -qE '^## §31' || ...
+sed -n '2890p' "$SOURCE" | grep -qE '^## §32' || ...
+```
+to:
+```bash
+sed -n '2743p' "$SOURCE" | grep -qE '^## §?29\.7' || ...
+sed -n '2847p' "$SOURCE" | grep -qE '^## §?31\b' || ...
+sed -n '2890p' "$SOURCE" | grep -qE '^## §?32\b' || ...
+```
+(`§?` = optional § character, `\b` = word boundary to prevent §31 matching §319 etc.)
+
+Then re-launch master orchestrator from Task 1.
+
+**Option B — STANDARDIZE source headers (higher risk, modifies content):**
+Edit HANDOVER_MISC source to add `§` prefix to all older section headings (29.7 / 31 / 32 / etc.) before extraction. Risks: changes file mid-archive-prep cycle, breaks any wikilink anchors that referenced literal "29.7" without §, complicates audit trail.
+
+**Option C — ACCEPT drift + execute manual:**
+Skip strict regex verify, manually invoke File 1-4 sed extractions trusting line ranges + content. Slightly less safe (no automated header validation) but pragmatic if Daniel confirms audit Phase B+ line ranges are trustworthy.
+
+**My recommendation:** Option A (3-line regex relaxation). Audit Phase B+ confirmed correct line ranges (verified just now: all 4 actual headers at correct lines contain expected section names). The § prefix is purely stylistic naming convention drift in source. Spec's strict regex was over-specified — relaxing to optional `§?` retains drift detection (line shift would still fail `\b` boundary) while accommodating known stylistic inconsistency.
+
+### Other items deferred (Tasks 2-8 not attempted)
+
+- Tasks 2-8 specs NU read (read-on-demand per master orchestrator loop only after Task N-1 success)
+- Wikilink redirect target counts NU verified beyond baseline (Task 2 PRE-condition not reached)
+- INDEX_MASTER stats refresh NU executed (Task 5 dependency)
+- ESCALATE list per audit Phase D Batch 7 still pending sync (independent)
 
 ## Next action
 
-**Daniel review** `📤_outbox/audit-vault-2026-05-07.md` Phase D batches + Phase E KPI summary. Decide:
-1. Approve Capacity A LOCKED Batches 1+2+3+5+6 execution (~75-115 min CC)
-2. Sync ESCALATE list (7 items per Batch 7)
-3. Defer Batch 4 (long-term post-Faza 3)
+**Daniel decide:**
+1. Approve Option A (regex relaxation) → I edit `📥_inbox/run-2-cleanup-task-1.md` lines 31-34 + re-launch master orchestrator from Task 1 (same prompt re-run)
+2. Approve Option C (accept drift, skip regex verify) → I execute Task 1 manually skipping the failing regex checks, then resume sequential 2-8
+3. Pause Run 2 entirely → archive 8 task files unconsumed, address strict drift later post chat strategic review
 
-🦫 **Bugatti audit complete. Vault hygiene state-aware. Self-sufficient raport delivered.**
+Backup tag `pre-vault-cleanup-batch-2026-05-07-2247` preserves pre-Run-2 state — rollback path available if needed.
+
+🦫 **Bugatti discipline preserved. Stop condition honored. Audit drift surfaced clean — escalation NU forced past spec.**
