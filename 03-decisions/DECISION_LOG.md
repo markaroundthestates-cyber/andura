@@ -1,5 +1,35 @@
 # DECISION LOG — Andura
 
+## 2026-05-07 — VAULT_RULES §AR.13 PK Growth Control Per Sesiune amendment LOCK V1 (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
+
+**Authority:** Daniel Co-CTO directive 2026-05-07 — hybrid threshold PK growth control mandatory enforce post Run 3 §ANTI_RECURRENCE_RULES LANDED.
+
+**Decision:** §AR.13 NEW after §AR.12 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT step 13 NEW.
+
+**Rationale hybrid threshold:**
+- Soft monitor ≤10% — transparent observability, NU enforce destructive
+- Hard escalation ≥20% — force handover §CC.5 + chat NEW (anti-saturation 4-5 cycle observed pre-rule)
+- Range 10-20% = warning band, scribe mode (raport flagged, NU automatic action)
+
+**Mechanism mandatory per-handover:**
+1. Baseline LOC capture pre-execution (active vault .md excl _archive)
+2. Post-execution delta calculation
+3. Threshold gate enforce (soft transparent / hard stop+escalate)
+4. Auto-truncate §JUST_DECIDED >7 days (§CC.6 reinforced)
+5. Auto-archive _CONSUMED files (§3.3 reinforced)
+
+**Files modified atomic batch:**
+- UPDATED: VAULT_RULES.md (§AR.13 NEW + §AR.PRE_FLIGHT step 13 NEW)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+
+**Backup tag:** pre-pk-growth-control-2026-05-07-2354
+
+**Cross-refs:** Run 3 §ANTI_RECURRENCE_RULES LANDED 0b35681 + Run 2 LATEST 28598a9 + §CC.6 Append-Only + §CC.9 Mandatory File Updates + §3.3 archive schema.
+
+---
+
 ## 2026-05-07 — VAULT_RULES §ANTI_RECURRENCE_RULES amendment LOCK V1 (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.

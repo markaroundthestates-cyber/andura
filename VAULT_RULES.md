@@ -876,9 +876,43 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 
 ---
 
+### §AR.13 PK Growth Control Per Sesiune (Project Knowledge Capacity Hygiene)
+
+**Status:** LOCKED V1 2026-05-07 (vault meta-tooling, anti-recurrence extension Run 5)
+**Authority:** Daniel Co-CTO directive 2026-05-07 — hybrid threshold mandatory enforce. Cross-ref §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover + VAULT_RULES §3.3 archive schema.
+
+**Trigger pattern:** Project Knowledge capacity spike >25% per sesiune observed chats 2026-04-25→2026-05-06 — bandwidth saturation pre-Beta + handover overhead growth + §JUST_DECIDED accumulation pre-truncate + active vault file proliferation pre-archive.
+
+**Source examples:**
+- Chat 2eff4a33 (2026-05-06) — capacity 81% reach + Capacity A archive proposal originat
+- Chat-uri 2026-04-30→2026-05-04 — HANDOVER_GLOBAL split necessity + LOC growth ~5000 LOC singular file
+- Pattern repeated: ~25% PK delta per sesiune unchecked = saturation 4-5 sesiuni cycle
+
+**Anti-recurrence rule (hybrid threshold mandatory):**
+
+**Soft monitor target ≤10%:** PK delta proxy (active vault .md LOC, excluding _archive subtrees) per sesiune ≤ 10% baseline. Reported în LATEST.md "Issues / Ambiguities" sau dedicated §PK Growth Delta section. Transparent monitoring, NU forțează acțiune.
+
+**Hard escalation trigger ≥20%:** PK delta ≥20% → MANDATORY force handover §CC.5 LANDED + chat NEW dedicat continuation. Stop trigger before commit dacă pre-emptive measurement disponibil. NU opțional — escalation gate.
+
+**Mandatory mechanism per handover (cross-ref §CC.9):**
+1. **Pre-execution baseline capture:** `find . -name "*.md" -not -path "*/_archive/*" -not -path "*/node_modules/*" -exec wc -l {} + | tail -1` → store `/tmp/pk-baseline.txt`
+2. **Post-execution delta calculation:** same command, compute `delta_pct = (post - baseline) / baseline * 100`
+3. **Soft check ≤10%:** report în LATEST.md (transparent, no action)
+4. **Hard check ≥20%:** STOP commit, escalate Daniel raport partial cu rationale + recommend handover §CC.5 NOW + chat NEW continuation
+5. **Auto-truncate §JUST_DECIDED >7 days la RECENT_DECIDED_ARCHIVE periodic** (existing §CC.6 reinforced — tracking discipline)
+6. **Auto-archive _CONSUMED.md files post-handover** (existing §3.3 reinforced — schema enforce)
+
+**Verification mechanism:** post-Run / post-handover LATEST.md MUST contain "PK Delta" line cu `pre/post/delta_pct/threshold_band` evidence verbatim. Absent line = §AR.13 violation, escalate.
+
+**Cross-ref existing:** §CC.6 (Append-Only Architecture truncate threshold) + §CC.9 (5-step Mandatory File Updates Per Handover) + VAULT_RULES §3.3 (outbox archive schema) + PROMPT_CC_HYGIENE.md §10 (fast handover workflow).
+
+**Failure mode:** delta_pct >20% + commit forced past trigger = §AR.13 violation. Daniel approval explicit override required (post-mortem rationale documented DECISION_LOG).
+
+---
+
 ### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
 
-**Authority:** Consolidat din §AR.1-§AR.12. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
+**Authority:** Consolidat din §AR.1-§AR.13. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
 
 1. ☐ Backup tag pre-execution + push origin (rollback safety)
 2. ☐ Pre-flight grep filesystem verbatim — paths/files/tooling cited în spec (per §AR.1) NU presume
@@ -892,6 +926,7 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 10. ☐ Distructive operations — backup tag mandatory + Daniel approval explicit per-execution (per §AR.4)
 11. ☐ Ground truth git verify ÎNAINTE acuzare hallucination — `git fetch --all && git status` (per §AR.3)
 12. ☐ Format lean — mea culpa rapid 1-2 sentences + immediate action (per §AR.9)
+13. ☐ PK delta check post-execution: ≤10% soft (report LATEST.md) / ≥20% hard escalate force handover §CC.5 (per §AR.13)
 
 **Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
 
