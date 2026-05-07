@@ -674,3 +674,225 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 **§CC.9 Cross-ref (LOCKED V1 2026-05-07 Run 2 Task 7):** STEP 16 ingest action items extended per §CC.9 Mandatory File Updates Per Handover (5 steps total: CURRENT_STATE + DECISION_LOG + INDEX_MASTER stats + ACTIVE_REFS sync + Pre-flight grep). All 5 mandatory NU partial.
 
 ---
+
+## §ANTI_RECURRENCE_RULES — Slip Patterns Consolidated (Claude scribe + CC autonomous)
+
+**Status:** LOCKED V1 2026-05-07 (vault meta-tooling, NU product/architecture)
+**Authority:** Run 3 consolidation post Run 2 LANDED 2026-05-07 (§NEXT P-CARRY-FORWARD entry chat-9 acasă closure mecanic) — slip patterns extracted din chat-uri 1-9 + Run 2 NEW slips
+**Cross-refs:** §CHAT_CONTINUITY_PROTOCOL §CC.4 citation enforcement + §HANDOVER_PROTOCOL DIFF protocol §7 + PROMPT_CC_HYGIENE.md §3 pre-flight grep mandatory + memory rule `feedback_grep_before_prompt_cc.md` + `feedback_verify_remote_state.md`
+**Source extraction:** /tmp/anti-recurrence-raw.txt (91 pattern matches grep multi-source 06-sessions-log/HANDOVER_*.md + 03-decisions/DECISION_LOG.md keywords: slip / mea culpa / hallucina / drift / lesson learned / anti-recurrence / repeated mistake / halucinez)
+
+**Goal:** prevent Claude scribe slip-uri + CC autonomous slip-uri prin codified rules invariant. Each §AR.X rule = directive present-tense prescriptive cu verification mechanism + source examples cross-ref.
+
+---
+
+### §AR.1 Pre-Flight Grep Filesystem ÎNAINTE Reference Paths/Files/Tooling
+
+**Trigger pattern:** Claude scribe presupune existence path/filename/script în prompt CC bazat pe pattern presupus (NU verbatim). Recidivă cross-chat: chat-2 (HANDOVER_GLOBAL stale + ADR_CASCADE_DEFENSE_v1 path 04-architecture/ vs 03-decisions/), chat-3 (§45.x stale + CLAUDE.md presupus exist), chat-4 (`npm run lint` script does NOT exist), chat-5 (grep PATHS recidivă), chat-8 (`013-ADR-aa-detection.md` filename fabricated, actual `013-auto-aggression-detection.md`).
+
+**Source examples:**
+- DECISION_LOG.md:132 §9.8 compile prompt — `013-ADR-aa-detection.md` fabricated → CC prins via grep filesystem mandatory
+- DECISION_LOG.md:300 chat-3 PS — CLAUDE.md project-level presupus exist înainte create
+- DECISION_LOG.md:357 Slip 4 — `npm run lint` tooling presupus
+- DECISION_LOG.md:408 chat-2 — `04-architecture/ADR_CASCADE_DEFENSE_v1.md` vs realitate `03-decisions/`
+
+**Anti-recurrence rule:** ÎNAINTE referențiez orice paths / function names / files / scripts / npm tooling în prompt CC = MANDATORY pre-flight grep filesystem (`ls <dir> | grep -iE "<pattern>"` SAU `Glob` SAU `Grep`). NU presupun din memorie. Pattern Bugatti CC anti-fabrication = invariant nenegociabil.
+
+**Verification mechanism:** prompt CC pre-flight section MUST contain explicit grep / ls / Glob commands înainte action steps. CC pre-flight STOP if file/path NU found.
+
+**Cross-ref existing:** §CC.4 citation enforcement | PROMPT_CC_HYGIENE §3 | memory rule `feedback_grep_before_prompt_cc.md`
+
+---
+
+### §AR.2 Source-of-Truth HANDOVER_GLOBAL Stale Assumption (split atomic vs consumed archives)
+
+**Trigger pattern:** prompt CC declara source-of-truth = `HANDOVER_GLOBAL_<date>.md §X` dar split atomic 2026-05-05 birou redus stub-ul la INDEX file (~50 LOC navigation purpose). Real source = consumed archives `📤_outbox/_archive/<YYYY-MM>/NN_*_CONSUMED.md` (e.g., `142_*` + `177_*`).
+
+**Source examples:**
+- DECISION_LOG.md:355 Slip 2 — §9.1 compile declared §45.2-§45.5 = Cluster 1-5; realitate §45.x = ADR 026 Q1-Q40 architectural batch. Real source `142_HANDOVER_CONSUMED.md`
+- DECISION_LOG.md:448 chat-2 morning — HANDOVER_GLOBAL stale assumption ADR 024 compile
+
+**Anti-recurrence rule:** când prompt CC referencește `HANDOVER_GLOBAL §X` post-split → grep mandatory în split archives `📤_outbox/_archive/2026-05/` to confirm verbatim source content. Split file = INDEX navigation only, NU full content. Anti-hallucination grep saved the day each occurrence.
+
+**Verification mechanism:** prompt CC source citations format `<consumed-archive-NN>_*.md §X` (NU `HANDOVER_GLOBAL §X` ambiguous post-split).
+
+**Cross-ref existing:** §HANDOVER_PROTOCOL §7 DIFF protocol | §AR.1 above | PROMPT_CC_HYGIENE §3
+
+---
+
+### §AR.3 Ground Truth Git Verify ÎNAINTE Acuzare CC Hallucination sau Acțiuni Distructive
+
+**Trigger pattern:** Daniel paste 3+ rapoarte LATEST verde consecutive Status=Complete + commits LANDED. Claude accept silent (CTO pivot). La pre-flight CC următor STOP triggered: baseline real ≠ raportat, commits NU în git log local. Claude sare la concluzie "CC halucinat 3 rapoarte fake" + cere acțiuni distructive (ștergere prompts/repaste/reset). Ground truth = local out of sync `<old-SHA>` cache stale fără `git fetch --all`.
+
+**Source examples:**
+- DECISION_LOG.md:170-174 chat-5 acasă drift event — Daniel uploadat 3 rapoarte (Tempo V1 + §9.6 compile + §9.6 V1 batch 6) toate valide. Eu acuzat fals "fake". Cerut ștergere 3 prompts (unul §9.7 era VALID integral). Ground truth: GitHub Actions imagine = commits EXISTAU pe origin/main, local out of sync `a99aa83`. Recovery: `git merge --abort` + tag backup + `git reset --hard origin/main`. **CC NU a halucinat NICIODATĂ.**
+
+**Anti-recurrence rule:** ÎNAINTE acuzare CC hallucination sau cerere acțiuni distructive (ștergere/reset/--force-with-lease) → MANDATORY `git fetch --all && git status` + verify origin remote vs local. Local out of sync ≠ hallucination. Pattern: când Daniel pune push-back factual repetitiv pe ceva ce Claude blamează → reverify ground truth, NU defend assumption.
+
+**Verification mechanism:** decision tree: STOP detected → step 1 `git fetch --all` → step 2 compare `git log origin/main..main` vs `git log main..origin/main` → step 3 verify remote SHA matches reports → step 4 ONLY THEN consider hallucination hypothesis.
+
+**Cross-ref existing:** §CC.4 citation enforcement | memory rule `feedback_verify_remote_state.md` (recurring 2x: 2026-05-04 + 2026-05-06 chat-5) | §AR.4 below
+
+---
+
+### §AR.4 Anti-Distructive Recommendation Default
+
+**Trigger pattern:** Claude propose acțiuni distructive (ștergere fișier, `git reset --hard`, `git push --force-with-lease`, `git rebase -i` interactive blocked, etc.) bazat pe assumption NU ground truth. Daniel push-back instinct corect inarticulat → reveal assumption greșit + acțiune distructive ar fi cauzat info loss permanent.
+
+**Source examples:**
+- DECISION_LOG.md:170-174 chat-5 — cerut ștergere 3 prompts (1 valid integral) post acuzare halucinare incorectă
+- DECISION_LOG.md:172 — ÎNAINTE acțiuni distructive → MANDATORY ground truth git verify
+
+**Anti-recurrence rule:** distructive operations (delete, reset --hard, force-push, --no-verify hooks, git checkout HEAD~ destructive) = LAST RESORT only post ground truth verify. Default = preserve + investigate first. Recovery path = `git tag backup-<context>-<SHA>` BEFORE distructive. Reversible options exhausted before irreversible.
+
+**Verification mechanism:** prompt CC distructive operations section MUST require explicit Daniel approval per-execution + backup tag mandatory. NU autonomous distructive without explicit Daniel sign-off.
+
+**Cross-ref existing:** §AR.3 ground truth verify | memory rule `feedback_verify_remote_state.md` "NEW anti-distructive recommendation rule"
+
+---
+
+### §AR.5 Audit Count Methodology Drift (NEW Run 2 Task 2 STOP)
+
+**Trigger pattern:** Audit Phase B inbound count cited în spec stop-condition (e.g., "12 expected", "X files baseline") used permissive grep (any reference style: wikilinks + filename strings + path mentions). Spec inherits count literal expecting strict `[[wikilink]]` form. Real strict count diverges ≥3 → fail-stop trigger fires.
+
+**Source examples:**
+- Run 2 Task 2 STOP `12e0506` — audit "12 expected" inbound HANDOVER_VAULT_HYGIENE + HANDOVER_MISC. Strict wikilink scope = 4 instances. Variance ≥3 → STOP triggered correctly. Methodology mismatch documented + Option A override Daniel-approved (4 wikilinks surgical).
+
+**Anti-recurrence rule:** când spec stop-condition cites audit count baseline → audit grep methodology MUST be documented verbatim (exact pattern + scope filter + exclusion dirs). Strict scope `[[wikilink]]` form ≠ permissive grep methodology counting filename strings + path mentions. Spec MUST clarify which form used pentru count, NU presume implicit. Variance ≥3 → escalate Daniel review (audit may be stale OR grep pattern incomplete OR methodology mismatch).
+
+**Verification mechanism:** spec pre-flight section MUST include exact grep command + tolerance window justification. Stop-condition baseline citation = "audit Phase X count Y using <grep-pattern>" not just "Y expected".
+
+**Cross-ref existing:** §AR.1 pre-flight grep | §HANDOVER_PROTOCOL §7 DIFF protocol | Run 2 LATEST.md (28598a9) Task 2 Option A
+
+---
+
+### §AR.6 §-Prefix Regex Strict Over-Specification (NEW Run 2 Task 1 STOP)
+
+**Trigger pattern:** Audit Phase B+ uses `§` ca shorthand notation pentru section labels (e.g., "§29.7 Pre-Launch Checklist"). Spec inherits literal `^## §X` regex strict over source files cu mixed convention drift — older sections `## N.M` (legacy NO § prefix), newer `## §N.M` (post-2026-05-02 convention). Pre-flight stop-trigger fires correctly when 3 of 4 headers fail strict regex.
+
+**Source examples:**
+- Run 2 Task 1 STOP `34f21ba` — HANDOVER_MISC actual headers `## 29.7 / ## 31. / ## 32.` (no §) + `## §36.103` (with §). Spec v1 over-specified `^## §X` literal. Option A relaxation `§?` + `\b` boundary applied (commit `c9dac4e`).
+
+**Anti-recurrence rule:** audit notation ≠ source verbatim. Spec regex MUST relax `§?` optional pe source files cu known mixed convention drift. `\b` word boundary RETAIN pentru drift detection (line shift would still fail). Document în spec when source uses legacy convention vs newer §-prefix.
+
+**Verification mechanism:** spec pre-flight regex `^## §?<N>\.<M>\b` (optional § + word boundary) when source mixed convention. Header diff strict-vs-relaxed documented în spec rationale.
+
+**Cross-ref existing:** §AR.5 audit count methodology | Run 2 STOP raport (12e0506 + 34f21ba) | Run 2 spec patch v2 (c9dac4e)
+
+---
+
+### §AR.7 §ACTIVE_REFS REPLACE/ADD Pre-Verify Target State (NEW Run 2 Task 2 CC craft)
+
+**Trigger pattern:** Spec instructs REPLACE `[[<archived>]]` references în CURRENT_STATE §ACTIVE_REFS. CC verifies pre-edit: §ACTIVE_REFS NU contains direct wikilinks → archived files (pointers reference HANDOVER_GLOBAL INDEX cu internal § anchors instead). REPLACE instruction MOOT, ADD instruction relevant.
+
+**Source examples:**
+- Run 2 Task 2 CC raport — spec line 86-87 REPLACE `[[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] §41-§49` în §ACTIVE_REFS. Pre-verify: §ACTIVE_REFS lines 1737-1752 reference `HANDOVER_GLOBAL_2026-04-30_evening.md §41-§45` (GLOBAL INDEX cu internal anchors NOT archived files directly). REPLACE moot. ADD 4 NEW Task 1 split file pointers relevant (preserved în execution).
+
+**Anti-recurrence rule:** spec REPLACE/ADD/REDIRECT instructions MUST verify pre-edit target state actual exists VERBATIM, NU presume from spec narrative. Bugatti CC craft = surface MOOT vs execute mock-replace producing zero-effect commit.
+
+**Verification mechanism:** prompt CC pre-edit section: `grep -n '<old_pattern>' <file>` to confirm match exists. If 0 matches → flag MOOT în raport, skip edit. NU fabricate edit op cu "find no match" silent.
+
+**Cross-ref existing:** §AR.1 pre-flight grep | §AR.5 + §AR.6 above | §CC.4 citation enforcement
+
+---
+
+### §AR.8 Markdown Chat Block vs Artefact (Memory Rule #2 RECIDIVĂ)
+
+**Trigger pattern:** Claude livrează prompt CC ca code block markdown în chat în loc de artefact 1-click DOWNLOADABLE. Daniel push-back: *"de ce ai dat markdown in loc de artefact... i-am dat eu manual paste"*. Memory rule #2 ("Artefacte mereu pentru prompts CC") violated.
+
+**Source examples:**
+- DECISION_LOG.md:354 chat-3 acasă §9.1 compile prompt — markdown chat block forced manual paste
+- DECISION_LOG.md:240 chat-3+chat-4 — slip "puppy" recidivă fixed post Daniel push-back
+
+**Anti-recurrence rule:** prompts CC = artefact direct sine excepție (UI affordance: 1-click drag în inbox). NU code block markdown in chat. Pattern Daniel-isms: "*tu esti cto sau puppy?*" = parodie pattern, instinct corect.
+
+**Verification mechanism:** workflow Claude when generating prompt CC for autonomous execution → use artefact tool (single complete prompt artefact) NOT markdown chat block. Daniel acceptable workflow: drag artefact → 📥_inbox/.
+
+**Cross-ref existing:** memory rule #2 (Artefacte mereu pentru prompts CC) | DECISION_LOG.md chat-3 + chat-4 mea culpa scribe
+
+---
+
+### §AR.9 Format Fatigue + 2-Options Theater Anti-Pattern
+
+**Trigger pattern:** Claude verbose responses (300 cuvinte mea culpa + 200 despre palmă) post slip detection, OR 2-options confirmation theater ("vad 2 pathuri... oare sigur?", "tu zici?", "ne certam :))") repetitiv în loc decizie tactică Co-CTO. Daniel parody recidivă subtle în fiecare slip ulterior.
+
+**Source examples:**
+- DECISION_LOG.md:436 chat-2 — Daniel parody 4-5 instances ("trebuie sa ma rog de tine sa dam drumul la cc?", "obosesti", "300 cuvinte mea culpa + 200 despre palmă")
+- DECISION_LOG.md:450 chat-2 — Format fatigue Claude verbose violations memory rule #10 replaced
+- DECISION_LOG.md:502 — push-back meta Daniel "*facem aia? ia zi sigur facem aia? vad 2 pathuri...*" parodie 5-6 răspunsuri pattern recidivă
+- memory rule `feedback_format_fatigue.md` — 4+ LOCK consecutiv fără push-back = format fatigue NU convingere; switch instant lean mode
+
+**Anti-recurrence rule:** mea culpa scribe rapid fără auto-flagelare verbose. Decizii tactice Co-CTO = decid singur, NU întreabă confirmation 2-options theater. Format fatigue → switch lean mode 1-2 propoziții decizie. 4+ LOCK consecutiv fără push-back substanțial = signal Daniel epuizat NU convingere.
+
+**Verification mechanism:** post-slip response = 1-2 sentence acknowledgment + immediate action. Pattern "2x agreeable" applied invers Claude verbose → Daniel epuizat = anti-pattern documented.
+
+**Cross-ref existing:** memory rule `feedback_format_fatigue.md` | DECISION_LOG.md chat-2 mea culpa scribe consolidat
+
+---
+
+### §AR.10 PowerShell-in-Bash Tool Slip (CC Bash = POSIX Strict)
+
+**Trigger pattern:** Claude scribe prompt CC referencing PowerShell-specific syntax (`$null`, `$env:VAR`, backtick line continuation) într-un Bash tool script. CC bash tool = POSIX strict — interpreted ca shell error.
+
+**Source examples:**
+- DECISION_LOG.md:398 chat-2 morning — `PowerShell-in-bash empty-ts tag` slip flagged. Memory rule NEW.
+
+**Anti-recurrence rule:** prompt CC Bash tool blocks = POSIX shell strict (sh/bash). PowerShell syntax NU permis. Use `/dev/null` not `$null`, `export VAR=` not `$env:VAR=`, `\` line continuation not backtick. CMD `Update Bash tool description Windows-PowerShell-aware` only when Bash tool NOT being used (system_prompt environment hint).
+
+**Verification mechanism:** review prompt CC scripts pentru PowerShell-only syntax. If detected → rewrite POSIX-equivalent or use PowerShell-specific tool (rare).
+
+**Cross-ref existing:** memory note PowerShell-in-bash slip flagged | environment system prompt Windows shell guidance
+
+---
+
+### §AR.11 4-Way Parity Check Sources Anti-Recurrence Proof
+
+**Trigger pattern:** ADR/spec compile from multiple sources scattered cu drift risk silent. Single-source citation = vulnerable to stale assumption (§AR.2). Multi-source parity check = stronger anti-recurrence proof.
+
+**Source examples:**
+- DECISION_LOG.md §9.8 Deload Protocol compile — **4-way parity check ✅ ZERO substantive divergence** Sources: 148_HANDOVER + 013-auto-aggression-detection + ADR_COMPOSITE_SIGNAL_LAYER_v1 §36.41 + CURRENT_STATE §RECENT lines 715-737. Stronger than §9.7 2-way parity precedent.
+
+**Anti-recurrence rule:** for compile/aggregation prompts CC, cite ≥3-4 cross-sources verbatim. Document parity check explicit în raport (sources reconciled + zero divergence OR list of differences resolved). Single-source compile = high stale assumption risk.
+
+**Verification mechanism:** prompt CC compile section = "Sources (mandatory ≥3-4): file1 §X + file2 §Y + file3 §Z". CC raport documents parity check pass/fail.
+
+**Cross-ref existing:** §AR.1 + §AR.2 | §HANDOVER_PROTOCOL §7 DIFF protocol
+
+---
+
+### §AR.12 Workflow Matured Pattern (file present_files real DOWNLOADABLE → silent verde → CTO pivot)
+
+**Trigger pattern:** Daniel-approved workflow consistent: file present_files real DOWNLOADABLE in chat artefact + Daniel paste LATEST → Claude direct prompt CC NEXT P1 fără bate-la-cap + CC raport accept silent verde Status=Complete → CTO pivot direct + pre-flight grep filesystem mandatory + 4-way parity ≥3 sources + bandwidth proactive 1-line flag.
+
+**Source examples:**
+- DECISION_LOG.md:145 chat-8 workflow matured pattern continuation
+- DECISION_LOG.md:182 chat-5 workflow matured AMENDED — preserve workflow + add post 3 verde reports `git fetch --all` periodic check
+
+**Anti-recurrence rule:** preserve mature workflow pattern (file artefact + paste LATEST + silent verde + CTO pivot). EXTEND post 3 verde reports consecutive → recommend Daniel `git fetch --all` periodic trust-but-verify check drift local-vs-remote (per §AR.3).
+
+**Verification mechanism:** Claude scribe convention: prompt CC = artefact (NU markdown chat) + cite source files verbatim + pre-flight grep + raport accept silent verde green-Status pattern + pivot CTO mode direct NEXT P1 fără 2-options theater.
+
+**Cross-ref existing:** §AR.3 + §AR.8 + §AR.9 above | DECISION_LOG.md chat-8 workflow consolidat
+
+---
+
+### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
+
+**Authority:** Consolidat din §AR.1-§AR.12. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
+
+1. ☐ Backup tag pre-execution + push origin (rollback safety)
+2. ☐ Pre-flight grep filesystem verbatim — paths/files/tooling cited în spec (per §AR.1) NU presume
+3. ☐ Source-of-truth verify HANDOVER_GLOBAL split → consumed archives NN_*_CONSUMED.md (per §AR.2)
+4. ☐ Verify regex relaxation pe source convention drift (`§?` optional + `\b` boundary, per §AR.6)
+5. ☐ Verify target state actual pre-REPLACE/ADD edit (per §AR.7) — surface MOOT vs execute mock-replace
+6. ☐ Citation enforcement post-startup §CC.4 — every claim path:line OR §X
+7. ☐ Variance check audit count: stop-trigger if ≥3 divergence + escalate Daniel (per §AR.5)
+8. ☐ Methodology mismatch check — strict scope filter ≠ permissive count (per §AR.5)
+9. ☐ Tests baseline preserved verify pre-commit (doc-only operations) per pre-commit hook
+10. ☐ Distructive operations — backup tag mandatory + Daniel approval explicit per-execution (per §AR.4)
+11. ☐ Ground truth git verify ÎNAINTE acuzare hallucination — `git fetch --all && git status` (per §AR.3)
+12. ☐ Format lean — mea culpa rapid 1-2 sentences + immediate action (per §AR.9)
+
+**Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
+
+---

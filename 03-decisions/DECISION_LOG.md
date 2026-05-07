@@ -1,5 +1,55 @@
 # DECISION LOG — Andura
 
+## 2026-05-07 — VAULT_RULES §ANTI_RECURRENCE_RULES amendment LOCK V1 (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
+
+**Authority:** Run 3 anti-recurrence consolidation post Run 2 LANDED 2026-05-07 + chat-uri 1-9 slip-uri scribe directive §NEXT P-CARRY-FORWARD entry chat-9 acasă closure mecanic.
+
+**Decision:** §ANTI_RECURRENCE_RULES NEW section în VAULT_RULES.md after §HANDOVER_PROTOCOL STEP 16 amendment (additive convention).
+
+**Rules consolidated:** 12 rules (§AR.1-§AR.12) + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT 12-step mandatory invariant.
+
+**Source extraction:** /tmp/anti-recurrence-raw.txt (91 pattern matches grep multi-source 06-sessions-log/HANDOVER_*.md + DECISION_LOG.md keywords: slip / mea culpa / hallucina / drift / lesson learned / anti-recurrence / repeated mistake / halucinez).
+
+**12 rules consolidated (categorized):**
+
+**Pre-flight discipline (anti-fabrication):**
+- §AR.1 Pre-flight grep filesystem ÎNAINTE reference paths/files/tooling
+- §AR.2 Source-of-truth HANDOVER_GLOBAL stale assumption (split atomic vs consumed archives)
+- §AR.11 4-way parity check sources anti-recurrence proof
+
+**Ground truth verify (anti-distructive):**
+- §AR.3 Ground truth git verify ÎNAINTE acuzare CC hallucination sau acțiuni distructive
+- §AR.4 Anti-distructive recommendation default
+
+**Spec methodology (Run 2 NEW — 3 rules):**
+- §AR.5 Audit count methodology drift (Run 2 Task 2 STOP `12e0506`)
+- §AR.6 §-prefix regex strict over-specification (Run 2 Task 1 STOP `34f21ba`)
+- §AR.7 §ACTIVE_REFS REPLACE/ADD pre-verify target state (Run 2 Task 2 CC craft)
+
+**Format + tooling discipline:**
+- §AR.8 Markdown chat block vs artefact (memory rule #2 RECIDIVĂ)
+- §AR.9 Format fatigue + 2-options theater anti-pattern
+- §AR.10 PowerShell-in-bash tool slip (CC bash = POSIX strict)
+
+**Workflow consolidat:**
+- §AR.12 Workflow matured pattern (file artefact → silent verde → CTO pivot)
+
+**12-step invariant pre-flight checklist** consolidat din §AR.1-§AR.12 → §AR.PRE_FLIGHT_CHECKLIST_INVARIANT.
+
+**Files modified atomic single batch:**
+- UPDATED: `VAULT_RULES.md` (§ANTI_RECURRENCE_RULES NEW section ~250 LOC after §HANDOVER_PROTOCOL STEP 16 + §CC.4 + §HANDOVER_PROTOCOL §7 cross-refs)
+- UPDATED: `03-decisions/DECISION_LOG.md` (this entry)
+
+**Backup tag:** `pre-anti-recurrence-consolidation-2026-05-07-2337` (rollback safety).
+
+**Cross-refs:** [[../VAULT_RULES]] §ANTI_RECURRENCE_RULES + §CC.4 citation enforcement + §HANDOVER_PROTOCOL §7 DIFF protocol | [[../PROMPT_CC_HYGIENE]] §3 pre-flight grep mandatory | Run 2 LATEST.md (commit `28598a9`) + STOP raports `12e0506` + `34f21ba` | memory rules `feedback_grep_before_prompt_cc.md` + `feedback_verify_remote_state.md` + `feedback_format_fatigue.md`.
+
+**Note explicit:** §ANTI_RECURRENCE_RULES = vault meta-tooling. NU contabilizat în cumulative LOCKED count product/architecture (separate concern — meta-tooling decisions live aici în DECISION_LOG dar NU inflate domain decision count).
+
+---
+
 ## 2026-05-07 — VAULT_RULES §CC.9 amendment LOCK V1 Mandatory File Updates Per Handover (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
