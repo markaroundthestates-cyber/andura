@@ -343,6 +343,24 @@ Tone bond preserved. Daniel productive frustrat dar fără escalation. **Pattern
 
 ## JUST DECIDED — Recent LOCKED entries (descending chronologic)
 
+**2026-05-07 — Run 2 Vault Cleanup LANDED (Capacity A archive + sub-section split + 4 wikilinks REDIRECT canonical):**
+
+*Run 2 multi-task batch CC autonomous Opus: Task 1 split 4 sub-sections HANDOVER_MISC (PRE_LAUNCH_CHECKLIST_V1 / INVESTITII_PRIVATE / 033-muscle-memory-index / KNOWLEDGE_LAYER_CADENCE_V1) + Task 2 REDIRECT 4 strict wikilinks Option A override (audit "12" methodology drift documented LATEST raport) + Task 3 archive 3 files (HANDOVER_GLOBAL_SPLIT_PLAN + HANDOVER_VAULT_HYGIENE + HANDOVER_MISC) → 📤_outbox/_archive/2026-05/221+222+223 DEPRECATED + Task 4 canonical spans (Span 1 Pricing MOAT + INDEX_MASTER NAVIGARE → PRODUCT_STRATEGY §AMENDMENT 2026-05-02; Spans 5+6+8 verified canonical no-edit) + Task 5 INDEX/CURRENT_STATE/DIFF_FLAGS refresh.*
+
+**Files split (Task 1):** `08-workflows/PRE_LAUNCH_CHECKLIST_V1.md` + `01-vision/INVESTITII_PRIVATE.md` + `03-decisions/033-muscle-memory-index.md` (ADR 033 STUB SPEC PLACEHOLDER post-Beta v1.5 candidate) + `08-workflows/KNOWLEDGE_LAYER_CADENCE_V1.md`.
+
+**Files archived (Task 3):** HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05 + HANDOVER_VAULT_HYGIENE_2026-04-30_evening + HANDOVER_MISC_2026-04-30_evening → `📤_outbox/_archive/2026-05/<NN>_*_DEPRECATED.md`.
+
+**Stats refresh (Task 5):** 92 → **93 fișiere active vault** (+4 / -3 net +1) | **33 numbered ADRs** (was 32 numerical, +1 ADR 033 NEW) | 9 named ADRs unchanged | total 42 ADRs.
+
+**Cumulative LOCKED V1 ~659 PRESERVED unchanged** (vault hygiene meta-tooling NU product/architecture additive).
+
+**Tests baseline 2648 PASS preserved.** Backup tag `pre-vault-cleanup-batch-2026-05-07-2257` rollback safety.
+
+**Cross-refs:** `audit-vault-2026-05-07.md` (1454 LOC singular self-sufficient) Phase D Batch 1+2+3+5 + Phase B+ §HANDOVER_MISC table (line ranges verbatim §29.7+§31+§32+§36.103) + Phase C.1 Spans 1+5+6+8 + LATEST.md Run 2 Task 2 STOP analysis (commit `12e0506`) Option A path Daniel Co-CTO approved.
+
+---
+
 **2026-05-07 chat NEW startup — §CC.5 fast handover ingest chat-NEW3 birou React direction LOCK + CD V2 mockup canonical SSOT + vault size strategic question Capacity A early trigger LOCK (cumulative ~685 → ~688, +3 net product/architecture additive + 2 commits vault hygiene LANDED):**
 
 *§CC.5 ingest sursa: `📥_inbox/handover-chat-2026-05-07-birou-react-direction-lock-mockup-canonical-vault-size.md`. Tip: §CC.5 fast handover (chat-to-chat continuity, NU saturation-driven). Scope: chat-NEW3 = continuation chat-NEW2 (acasă/birou/birou same date 2026-05-07) cu mood productiv direct + critical thinking sharp 3 React corrections cumulate substantial + 1 boundary correction strategic vs tactical Co-CTO scope. ~3 LOCKED V1 entries net product/architecture additive cumulative + 2 commits LANDED vault hygiene chat-NEW3.*

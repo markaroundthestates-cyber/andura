@@ -3,7 +3,7 @@
 **Last updated:** 2026-05-04 evening (§CHAT_CONTINUITY_PROTOCOL LOCKED V1 — CURRENT_STATE.md live SSOT layer added per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL; preserved post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT).
 **SSOT activ chat-state:** [[CURRENT_STATE]] — **READ FIRST chat NEW startup** (live layered ~200 LOC, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2).
 **SSOT deep archive:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — drill-down doar pentru sections referenced în CURRENT_STATE `## ACTIVE_REFS` (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG).
-**Stats:** 92 fișiere active vault (post 🦫 pipeline §42.10 V1 closure 8/8 prescriptive engines milestone 2026-05-06 evening chat-8 + ADR cleanup batch chat-9 `dccda1f` — 031 Warm-up + 032 Deload NEW direct SPEC REFERENCE + 027/028/029 STUB→SPEC REFERENCE flip; 42 ADR-uri active total — 33 numbered 001-032 + 9 named ADR_*).
+**Stats:** 93 fișiere active vault (post 🦫 Run 2 Capacity A LANDED 2026-05-07 — +4 split files Task 1 / -3 archived Task 3 net +1 vs pre-cleanup; 42 ADR-uri active total — 33 numbered 001-033 + 9 named ADR_* — ADR 033 Muscle Memory Index STUB SPEC PLACEHOLDER NEW din §32 split).
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
@@ -255,6 +255,33 @@ Detalii complete: `📤_outbox/_archive/2026-04/11_VAULT_CLEANUP_REPORT.md`.
 - **Cumulative LOCKED count:** 100 → **175** (+75 substantive ADR 026 spec decisions)
 - **DECISION_LOG +1 condensed entry** referencing HANDOVER_GLOBAL §45.2-§45.7 verbatim (top of file, cronologic descending)
 - **HANDOVER_GLOBAL split FLAG approaching threshold:** post-merge §45-§49 ~6700-6900 LOC (pre-merge 6243 + §45-§49 added). Sub 7000 LOC threshold §VAULT_HYGIENE_PASS STEP 13 — flag NU triggered yet but recommend monitor next handover
+
+### 2026-05-07 (Run 2 Vault Cleanup — Capacity A LANDED + sub-section split)
+
+**Scope:** Run 2 multi-task batch CC autonomous (8 tasks sequential fail-stop).
+
+**Capacity A archive (Task 3):**
+- `📤_outbox/_archive/2026-05/221_HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05_DEPRECATED.md` (171 LOC, 0 inbound, plan executed)
+- `📤_outbox/_archive/2026-05/222_HANDOVER_VAULT_HYGIENE_2026-04-30_evening_CAPACITY_A_DEPRECATED.md` (127 LOC, content covered VAULT_RULES §VAULT_HYGIENE_PASS + §HANDOVER_PROTOCOL step 9)
+- `📤_outbox/_archive/2026-05/223_HANDOVER_MISC_2026-04-30_evening_CAPACITY_A_DEPRECATED.md` (5716 LOC, content covered ADR 026 §9.X canonical post-pipeline)
+
+**Pre-archive sub-section split preservation (Task 1 — 4 unique active value sections):**
+- `08-workflows/PRE_LAUNCH_CHECKLIST_V1.md` (din §29.7)
+- `01-vision/INVESTITII_PRIVATE.md` (din §31)
+- `03-decisions/033-muscle-memory-index.md` (din §32, ADR 033 STUB SPEC PLACEHOLDER)
+- `08-workflows/KNOWLEDGE_LAYER_CADENCE_V1.md` (din §36.103)
+
+**Pre-archive REDIRECT (Task 2 Option A override):** 4 strict wikilinks redirected → canonical SSOT targets (VAULT_RULES + ADR 026 §9.X + 4 NEW split files Task 1). Filename string mentions în DECISION_LOG / SPLIT_PLAN / DIFF_FLAGS preserved (audit-trail historical, NOT broken-link risk).
+
+**Canonical REDIRECT spans (Task 4):** Span 1 Pricing → PRODUCT_STRATEGY §AMENDMENT 2026-05-02 canonical (MOAT_STRATEGY line 113 + INDEX_MASTER NAVIGARE entry redirected). Spans 5+6+8 verified canonical (no edit needed).
+
+**Stats refresh:** 92 → **93 fișiere active vault** (+4 split files / -3 archived = +1 net) | **33 numbered ADRs** (was 32 numerical, +1 ADR 033 NEW din §32 split) | 9 named ADRs unchanged | total 42 ADRs.
+
+**Backup tag:** `pre-vault-cleanup-batch-2026-05-07-2257` (rollback safety).
+
+**Tests baseline:** 2648 PASS / 0 FAIL preserved (doc-only operations ZERO src changes).
+
+**Cumulative LOCKED V1 ~659 PRESERVED unchanged** (vault hygiene meta-tooling NU product/architecture additive).
 
 ---
 

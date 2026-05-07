@@ -287,6 +287,25 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ## RESOLVED (audit trail)
 
+### P1-FLAG-CAPACITY-A-LANDED — Run 2 Vault Cleanup ✅ LANDED 2026-05-07
+
+**Status:** ✅ LANDED 2026-05-07 (vault hygiene meta-tooling)
+
+**Scope:** Capacity A LOCKED archive + sub-section split + REDIRECT + canonical spans + INDEX/CURRENT_STATE/DIFF_FLAGS refresh.
+
+**Evidence:**
+- Tasks 1-5 complete sequential fail-stop (CC autonomous Run 2 Opus)
+- 3 files archived: HANDOVER_GLOBAL_SPLIT_PLAN + HANDOVER_VAULT_HYGIENE + HANDOVER_MISC → `📤_outbox/_archive/2026-05/221+222+223_*_DEPRECATED.md`
+- 4 new split files created standalone canonical (Task 1): PRE_LAUNCH_CHECKLIST_V1 + INVESTITII_PRIVATE + 033-muscle-memory-index + KNOWLEDGE_LAYER_CADENCE_V1
+- 4 strict wikilinks REDIRECT verified 0 residual matches active vault (Task 2 Option A override; audit "12" methodology drift documented)
+- Span 1 Pricing canonical → PRODUCT_STRATEGY §AMENDMENT 2026-05-02 (MOAT_STRATEGY line 113 + INDEX_MASTER NAVIGARE entry redirected)
+- Tests baseline 2648 PASS preserved (doc-only ZERO src changes)
+- Backup tag `pre-vault-cleanup-batch-2026-05-07-2257`
+
+**Cross-refs:** `audit-vault-2026-05-07.md` + CURRENT_STATE §JUST_DECIDED 2026-05-07 entry + INDEX_MASTER VAULT CLEANUP HISTORY 2026-05-07 entry.
+
+---
+
 ### §36.80 BUG 2 Firebase 401 — RESOLVED chat strategic 2026-05-04 evening (CC implementation pending Priority 1 ABSOLUT)
 
 **Status:** ✅ RESOLVED chat strategic (CC Opus implementation pending P1-FLAG-AUTH-DANIEL-PREP prerequisite)
