@@ -1,40 +1,54 @@
-# LATEST — REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (chat-current acasă 2026-05-08)
+# LATEST — Batch 1 Vite+React 19 Scaffold LANDED (chat-current acasă 2026-05-08)
 
-**Task:** Create REACT_MIGRATION_STATE_MAPPING_V1.md canonical SSOT (vault scribe doc + atomic batch)
+**Task:** Batch 1 Vite+React 19 scaffold parallel multi-page entry (build tooling foundation atomic batch)
 **Model:** Opus
 **Status:** ✅ Complete
 
 ## Pre-flight
 - Clean tree pre-execution: ✅
-- Backup tag: `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin: ✅
-- Source files exist verified: src/state.js (32 LOC, 24 fields confirmed) + src/pages/coach/state.js (20 LOC, 4 concerns confirmed) + src/db.js (22 LOC, localStorage Tier 0): ✅
-- Target file NOT exists pre-create (avoid overwrite): ✅
-- Anti-hallucination grep: surfaced `src/auth/` directory NU exista — auth files actually `src/auth.js` + `src/pages/auth.js` + `src/pages/authShell.js` (corrected în §6 doc); `src/storage/db.js` separate Tier 1 Dexie IndexedDB layer (clarificat §1.3 + §6 doc — split tier modules)
+- Backup tag: `pre-batch1-vite-react-scaffold-2026-05-08-2128` pushed origin: ✅
+- Source files exist verified: package.json + vite.config.js + tsconfig.json + index.html + src/main.js: ✅
+- Target NEW files NOT exist pre-create: ✅ (react-test.html + src/main.jsx + src/App.jsx)
+- React deps NOT yet installed pre-flight: ✅
+- Existing deps intact (vite, dexie, @sentry/browser): ✅
 
 ## Modificări
-- `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md`: NEW canonical SSOT (630 LOC, 24,139 bytes) — 9 sections: current state inventory + Context provider shape + coach scope hooks + component boundaries + engines integration + DB compat + 8-batch strategy + out of scope + cross-refs
-- `03-decisions/DECISION_LOG.md`: entry top descending cronologic (~30 LOC added)
-- `00-index/CURRENT_STATE.md`: header Updated refresh + §JUST_DECIDED top entry append + §NOW move-then-replace (precedent ADR 005 §AMENDMENT narrative → §RECENT top per §CC.6 NU rewrite)
+- `package.json`: add deps react@^19 + react-dom@^19 + react-router-dom@^6 + devDeps @vitejs/plugin-react@^4 + @types/react@^19 + @types/react-dom@^19
+- `package-lock.json`: regenerated post `npm install` (18 packages added, total 421 packages audited)
+- `vite.config.js`: add @vitejs/plugin-react import + react() plugin + multi-entry rollupOptions.input (main + react-test)
+- `tsconfig.json`: add `"jsx": "react-jsx"` modern transform
+- NEW `react-test.html`: parallel entry root level (646 bytes, clean minimal, NU Firebase keys, NU onclick handlers)
+- NEW `src/main.jsx`: ReactDOM createRoot + StrictMode + `<App />` render (809 bytes)
+- NEW `src/App.jsx`: placeholder component cu cross-refs ADR 005 §AMENDMENT + REACT_MIGRATION_STATE_MAPPING_V1 (1040 bytes)
+- UPDATED: `03-decisions/DECISION_LOG.md` (entry top descending cronologic)
+- UPDATED: `00-index/CURRENT_STATE.md` (header Updated + §JUST_DECIDED top entry + §NOW move-then-replace)
 
-## Build + Tests
-- vitest pre-commit hook: ✅ PASS (2683 PASS / 0 FAIL preserved, 144 test files, 21.74s — ZERO src regression)
+## Build + Tests (smoke validation gate)
+- `npm install`: ✅ Complete (18 packages added, 2 moderate vulnerabilities pre-existing peer deps NU blocking)
+- `npm run typecheck`: ✅ PASS (zero TS errors)
+- `npm run test:run` vitest: ✅ PASS (2683 / 0 preserved exact, 144 test files, 27.59s)
+- `npm run build` Vite multi-entry: ✅ PASS — `dist/index.html` 62.98 kB + `dist/react-test.html` 0.76 kB + `dist/assets/react-test-*.js` 193.41 kB (gzip 60.50 kB) + `dist/assets/main-*.js` 398.85 kB (gzip 125.20 kB) + 419 modules transformed în 3.89s
+- Pre-existing warning preserved: `src/ui/nav.js` dynamic+static import duplicate (NU related Batch 1, pre-existing legacy)
 - Playwright: untouched (orthogonal vs vitest src baseline)
 
 ## Commits
-- `da31b25`: feat(arch): React migration state mapping V1 canonical SSOT
+- `42e1edd`: feat(react): Batch 1 Vite+React 19 scaffold parallel multi-page entry
 
 ## Pushed
-- origin/main: ✅ pushed (`8a7f4b5..da31b25`)
+- origin/main: ✅ pushed (`3caeba9..42e1edd`)
 
 ## Issues
-- None. Anti-hallucination check pre-write surfaced 2 corrections aplicate la doc body: (1) `src/auth/` directory NU exista — corrected la `src/auth.js` + `src/pages/auth.js` + `src/pages/authShell.js` (filesystem grep verified); (2) `src/db.js` only Tier 0 localStorage — Tier 1 Dexie IndexedDB e `src/storage/db.js` separate layer; §1.3 + §6 split tier modules clarified accurate. Nu propagat halucinations propuse în prompt body.
+- None. Anti-hallucination grep verified pre-write all paths (existing index.html + src/main.js preserved, package.json structure verified, vite.config.js + tsconfig.json baseline confirmed).
+- Pending Daniel manual gate: dev server smoke `localhost:5173/react-test.html` placeholder render visual check (CC autonomous NU launch browser).
 
 ## PK Delta verify (§AR.13 Growth Control mandatory per-handover)
-- Pre: 597,181 bytes (DECISION_LOG 268,877 + CURRENT_STATE 328,304 + new doc 0 pre-create)
-- Post: 627,785 bytes (DECISION_LOG 271,117 + CURRENT_STATE 332,529 + REACT_MIGRATION_STATE_MAPPING_V1 24,139)
-- Delta: +30,604 bytes (+5.12%)
-- Band: SOFT ≤10% ✅ (mostly NEW doc 24KB + DECISION_LOG entry + CURRENT_STATE refactor net +4KB)
+- Pre: 606,367 bytes (8 affected files combined: package.json 1,943 + vite.config.js 194 + tsconfig.json 584 + DECISION_LOG 271,117 + CURRENT_STATE 332,529 + new files 0 pre-create)
+- Post: 615,514 bytes (package.json 2,140 + vite.config.js 306 + tsconfig.json 608 + react-test.html 646 + src/main.jsx 809 + src/App.jsx 1,040 + DECISION_LOG 273,249 + CURRENT_STATE 336,716)
+- Delta: +9,147 bytes (+1.51%)
+- Band: SOFT ≤10% ✅ (small surgical config edits + 3 NEW small files + DECISION_LOG entry + CURRENT_STATE refactor)
 - Verdict: PASS
+- Note: package-lock.json regenerated (npm artifact, NU PK content per convention).
 
 ## Next action
-- chat-current continuation OR next chat dedicat: Batch 1 Vite+React 19 scaffold prompt CC tactical (per-batch implementation 8 sequential).
+- Daniel manual smoke: `npm run dev` + visit `localhost:5173/react-test.html` (placeholder render) + `localhost:5173/` (existing app intact)
+- chat-current continuation OR next chat dedicat: Batch 2 React Router skeleton + 4 root nav routes per V2 mockup canonical (Antrenor / Progres / Istoric / Cont)
