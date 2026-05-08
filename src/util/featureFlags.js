@@ -129,6 +129,40 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
   bayesian_nutrition_via_orchestrator: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 5 Tempo wiring real (ADR 030 D1-D5 LOCKED V1 +
+  // Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #5 + ADR 026
+  // §9.5 canonical SSOT + ADR 028 SPEC REFERENCE redirect). When ON, coach
+  // decision flow invokes Tempo Engine via orchestrator `runPipeline` cu
+  // `tempoAdapter` cumulative 5-adapter chain (Periodization → Goal Adaptation
+  // → Energy Adjustment → Bayesian Nutrition → Tempo); when OFF, Tempo remains
+  // un-invoked via orchestrator (engine V1 LANDED commit `d82d118` Faza 2.5
+  // batch 5 standalone, NU yet wired into live coach flow).
+  //
+  // Adapter D2 shape mapping concrete (identical pattern batches 2-4):
+  // orchestrator slot `meta.constraintObject` → engine-side
+  // `meta.periodizationConstraint` (per §9.5 Cluster A1 Hook 1 convention).
+  // Engine consumes Constraint Object read-only — adapter follows Bayesian
+  // Nutrition / Goal Adaptation pattern (NU re-emit `output.constraintObject`,
+  // since engine doesn't emit `meta.forward_constraint_object` în output
+  // blueprint, only `trace.forwardedConstraint` boolean). Constraint Object
+  // stays propagated downstream din upstream Energy Adjustment Hook 4 emission
+  // (batch 3) prin orchestrator's existing currentCtx chain.
+  //
+  // Convergence Guard "T2 Unlock" (ADR 009 §AMENDMENT 2026-05-05) =
+  // orchestrator-level concern via
+  // `src/coach/orchestrator/utilities/convergenceGuard.js`, NU engine-emitted
+  // metadata. Adapter does NOT propagate convergenceGuard.
+  //
+  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
+  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
+  //
+  // Default 0% — production behavior unchanged. Golden-master parity tests
+  // legacy↔orchestrated zero-behavior-change strict în
+  // `src/coach/orchestrator/__tests__/tempoParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
+  // Faza 4 smoke validation orchestrated path comportament corect.
+  tempo_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
