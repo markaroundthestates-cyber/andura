@@ -505,7 +505,7 @@
     <div id="screen-container" style="height: calc(100% - 28px - 48px - 72px); position: relative; overflow: hidden;">
 
       <!-- 1. SPLASH -->
-      <div class="screen paper-bg" id="screen-splash" style="height:100%; flex-direction:column; padding: 48px 28px 32px; align-items:center; justify-content:space-between;">
+      <div class="screen paper-bg active" id="screen-splash" style="height:100%; flex-direction:column; padding: 48px 28px 32px; align-items:center; justify-content:space-between;">
         <div></div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center;">
           <div style="width:72px; height:72px; border-radius:22px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; letter-spacing:-0.04em;">A</div>
@@ -1272,25 +1272,25 @@
                 <div class="set-num">1</div>
                 <div class="set-val">22.5 kg</div>
                 <div class="set-val">10</div>
-                <button class="set-check done"><i data-lucide="check"></i></button>
+                <button class="set-check done" onclick="toggleSet(this)"><i data-lucide="check"></i></button>
               </div>
               <div class="set-row" data-set="2" data-done="true">
                 <div class="set-num">2</div>
                 <div class="set-val">22.5 kg</div>
                 <div class="set-val">10</div>
-                <button class="set-check done"><i data-lucide="check"></i></button>
+                <button class="set-check done" onclick="toggleSet(this)"><i data-lucide="check"></i></button>
               </div>
               <div class="set-row current" data-set="3">
                 <div class="set-num" style="color:#d4a574;">3</div>
                 <div class="set-val">22.5 kg</div>
                 <div class="set-val" style="color:#d4a574; font-weight:600;">— rep</div>
-                <button class="set-check" onclick="completeSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div></button>
+                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div></button>
               </div>
               <div class="set-row" data-set="4">
                 <div class="set-num">4</div>
                 <div class="set-val" style="color:#8b8470;">22.5 kg</div>
                 <div class="set-val" style="color:#8b8470;">8–10</div>
-                <button class="set-check"><div style="width:18px; height:18px; border-radius:50%; border:1px solid rgba(212,165,116,0.2);"></div></button>
+                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:1px solid rgba(212,165,116,0.2);"></div></button>
               </div>
             </div>
           </div>
@@ -2399,7 +2399,22 @@
     if (window.lucide) lucide.createIcons();
   }
 
-  function completeSet(btn) { logCurrentSet(); }
+  function toggleSet(btn) {
+    const row = btn.closest('.set-row');
+    if (!row) return;
+    const wasDone = row.dataset.done === 'true';
+    if (wasDone) {
+      row.dataset.done = 'false';
+      btn.classList.remove('done');
+      btn.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div>';
+    } else {
+      row.dataset.done = 'true';
+      btn.classList.add('done');
+      btn.innerHTML = '<i data-lucide="check"></i>';
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+  function completeSet(btn) { toggleSet(btn); }
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;

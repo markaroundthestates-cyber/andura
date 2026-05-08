@@ -1345,9 +1345,9 @@
     <div class="ex-card active" style="margin: 18px 24px;">
       <div style="display:flex; justify-content:space-between; align-items:baseline;"><div><div class="etched" style="margin-bottom:6px;">II · Activ</div><div style="font-family: 'Cormorant Garamond', serif; font-size:22px; color:white;">Bench înclinat · gantere</div></div><div class="etched">28 kg</div></div>
       <div style="margin-top:18px;">
-        <div class="ex-set"><span class="ex-set-num">I</span><span class="ex-set-val">28 kg</span><span class="ex-set-val">10 rep</span><span class="ex-set-val">RIR 3</span><div class="ex-set-check done">✓</div></div>
-        <div class="ex-set"><span class="ex-set-num">II</span><span class="ex-set-val">28 kg</span><span class="ex-set-val">10 rep</span><span class="ex-set-val">RIR 2</span><div class="ex-set-check done">✓</div></div>
-        <div class="ex-set"><span class="ex-set-num" style="color:var(--champagne); font-weight:500;">III</span><span class="ex-set-val" style="color:var(--champagne);">28</span><span class="ex-set-val" style="color:var(--champagne);">— —</span><span class="ex-set-val" style="color:var(--champagne);">— —</span><div class="ex-set-check"></div></div>
+        <div class="ex-set"><span class="ex-set-num">1</span><span class="ex-set-val">28 kg</span><span class="ex-set-val">10 rep</span><span class="ex-set-val">RIR 3</span><div class="ex-set-check done" onclick="toggleExSet(this)" style="cursor:pointer;">✓</div></div>
+        <div class="ex-set"><span class="ex-set-num">2</span><span class="ex-set-val">28 kg</span><span class="ex-set-val">10 rep</span><span class="ex-set-val">RIR 2</span><div class="ex-set-check done" onclick="toggleExSet(this)" style="cursor:pointer;">✓</div></div>
+        <div class="ex-set"><span class="ex-set-num" style="color:var(--champagne); font-weight:500;">3</span><span class="ex-set-val" style="color:var(--champagne);">28</span><span class="ex-set-val" style="color:var(--champagne);">— —</span><span class="ex-set-val" style="color:var(--champagne);">— —</span><div class="ex-set-check" onclick="toggleExSet(this)" style="cursor:pointer;"></div></div>
       </div>
     </div>
     <div style="margin: 0 24px;">
@@ -2340,6 +2340,17 @@
     if (e.key === 'Escape' && grid.classList.contains('open')) closeGrid();
     if (e.key === 'Backspace' && history.length && !grid.classList.contains('open')) back();
   });
+
+  // Exercise checkbox toggle (bidirectional bif/debif)
+  window.toggleExSet = function(el) {
+    if (el.classList.contains('done')) {
+      el.classList.remove('done');
+      el.textContent = '';
+    } else {
+      el.classList.add('done');
+      el.textContent = '✓';
+    }
+  };
 
   go(1);
 })();

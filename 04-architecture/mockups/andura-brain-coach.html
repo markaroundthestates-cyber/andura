@@ -1,0 +1,4707 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Andura V7 — 45 Ecrane Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c10;
+    --bg-2: #12141a;
+    --bg-3: #1a1d26;
+    --bg-4: #22262f;
+    --ink: #f0f1f5;
+    --ink-2: #b8bcc8;
+    --ink-3: #6c7280;
+    --ink-4: #3a3e48;
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.05);
+    --think: #8b6dff;
+    --think-soft: #b09cff;
+    --think-deep: #5b3dcf;
+    --signal: #4ade80;
+    --warm: #f59e6b;
+    --calm: #5dd6e6;
+    --danger: #ef5a5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #000;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: var(--ink);
+  }
+  body {
+    background: radial-gradient(ellipse at 50% 0%, #1a1530, #050608 70%);
+    min-height: 100vh;
+    padding: 40px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .deck-header {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .deck-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 32px;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .deck-title .accent {
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .deck-sub {
+    color: var(--think-soft);
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* ───── PHONE FRAME ───── */
+  .phone {
+    width: 380px;
+    height: 820px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 12px solid #000;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,0.04),
+      0 30px 80px rgba(0,0,0,0.7),
+      0 0 120px rgba(139, 109, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ───── STATUS BAR ───── */
+  .status-bar {
+    height: 28px;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+  }
+  .status-bar .notch {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 86px;
+    height: 22px;
+    background: #000;
+    border-radius: 12px;
+  }
+  .status-bar .right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .status-bar .signal-dots {
+    display: inline-flex;
+    align-items: end;
+    gap: 2px;
+  }
+  .status-bar .signal-dots i {
+    width: 3px;
+    background: var(--ink);
+    border-radius: 1px;
+  }
+  .status-bar .signal-dots i:nth-child(1) { height: 4px; }
+  .status-bar .signal-dots i:nth-child(2) { height: 6px; }
+  .status-bar .signal-dots i:nth-child(3) { height: 8px; }
+  .status-bar .signal-dots i:nth-child(4) { height: 10px; }
+  .status-bar .battery {
+    width: 24px;
+    height: 11px;
+    border: 1px solid var(--ink);
+    border-radius: 3px;
+    position: relative;
+    padding: 1px;
+  }
+  .status-bar .battery::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 2px;
+    height: 5px;
+    background: var(--ink);
+    border-radius: 0 1px 1px 0;
+  }
+  .status-bar .battery span {
+    display: block;
+    height: 100%;
+    width: 80%;
+    background: var(--ink);
+    border-radius: 1px;
+  }
+
+  /* ───── GLOBAL HEADER (under status) ───── */
+  .global-header {
+    height: 48px;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line-2);
+    flex-shrink: 0;
+  }
+  .global-header .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .global-header .brand {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .global-header .right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .global-header .think-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(139,109,255,0.10);
+    border: 1px solid rgba(139,109,255,0.25);
+    border-radius: 999px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--think-soft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .global-header .think-pill .pulse-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--think);
+    box-shadow: 0 0 6px var(--think);
+    animation: pulse-think 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse-think {
+    0%, 100% { opacity: 0.45; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  /* ───── BRAIN LOGO (neuron SVG) ───── */
+  .brain-logo {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .brain-logo .node {
+    fill: var(--think);
+  }
+  .brain-logo .node-2 { fill: var(--calm); }
+  .brain-logo .node-3 { fill: var(--think-soft); }
+  .brain-logo .link {
+    stroke: var(--think);
+    stroke-width: 1.2;
+    fill: none;
+    opacity: 0.7;
+  }
+
+  /* ───── SCREEN CONTAINER ───── */
+  .screen-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .screen.active {
+    display: flex;
+  }
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 22px 28px;
+  }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .scroll-tight {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 22px 24px;
+  }
+  .scroll-tight::-webkit-scrollbar { width: 0; }
+
+  /* ───── HERO ───── */
+  .greeting {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .greeting .name {
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--ink-3);
+    font-size: 13px;
+    margin-bottom: 18px;
+    font-family: 'Geist Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .hero-eyebrow {
+    color: var(--think-soft);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* ───── THINKING CARD ───── */
+  .thinking-card {
+    background: linear-gradient(180deg, rgba(139,109,255,0.06), rgba(139,109,255,0.02));
+    border: 1px solid rgba(139,109,255,0.18);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .thinking-card.compact {
+    padding: 12px 14px;
+  }
+  .thinking-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--think), transparent);
+    animation: scan 4s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+  }
+  .think-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .think-head .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--think);
+    box-shadow: 0 0 8px var(--think);
+    animation: pulse-think 1.6s ease-in-out infinite;
+  }
+  .think-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--think-soft);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .thought-step {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 5px 0;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .thought-step .check {
+    color: var(--signal);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+  .thought-step .pending {
+    color: var(--think);
+    font-size: 11px;
+    margin-top: 2px;
+    animation: spin 1.6s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+  }
+  .thought-step .data {
+    background: rgba(139,109,255,0.14);
+    color: var(--think-soft);
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin: 0 2px;
+  }
+
+  /* ───── CONCLUSION CARD ───── */
+  .conclusion {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .conclusion-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .conclusion-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .conclusion-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--think-soft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .confidence-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--think) 0%, var(--calm) 100%);
+    border-radius: 2px;
+  }
+  .meta-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line-2);
+    font-size: 12.5px;
+  }
+  .meta-row:first-of-type { border-top: none; padding-top: 0; }
+  .meta-row .key {
+    color: var(--ink-3);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    align-self: center;
+  }
+  .meta-row .val {
+    color: var(--ink);
+    font-weight: 500;
+    text-align: right;
+  }
+  .meta-row .unit {
+    color: var(--ink-3);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    align-self: center;
+  }
+
+  /* ───── BUTTONS ───── */
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(135deg, var(--think) 0%, var(--think-deep) 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(139,109,255,0.28);
+  }
+  .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 48px;
+    background: var(--bg-3);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    height: 44px;
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-danger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 48px;
+    background: rgba(239,90,90,0.10);
+    color: var(--danger);
+    border: 1px solid rgba(239,90,90,0.30);
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  /* ───── SECTION ───── */
+  .section {
+    margin-bottom: 18px;
+  }
+  .section-title {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title .count {
+    color: var(--think-soft);
+  }
+
+  /* ───── SIGNAL ROW (47 signals motif) ───── */
+  .signals-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .signal-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-2);
+  }
+  .signal-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: rgba(139,109,255,0.10);
+    color: var(--think-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .signal-icon.warm {
+    background: rgba(245,158,107,0.10);
+    color: var(--warm);
+  }
+  .signal-icon.calm {
+    background: rgba(93,214,230,0.10);
+    color: var(--calm);
+  }
+  .signal-icon.signal {
+    background: rgba(74,222,128,0.10);
+    color: var(--signal);
+  }
+  .signal-text { min-width: 0; }
+  .signal-strong {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 1px;
+  }
+  .signal-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .signal-delta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .delta-up { color: var(--signal); }
+  .delta-down { color: var(--warm); }
+  .delta-neutral { color: var(--ink-3); }
+
+  /* ───── FORECAST ───── */
+  .forecast {
+    background: linear-gradient(180deg, rgba(139,109,255,0.05), transparent);
+    border: 1px solid rgba(139,109,255,0.15);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .spark {
+    width: 100%;
+    height: 60px;
+    margin: 10px 0 8px;
+  }
+  .spark-past { stroke: var(--ink-3); stroke-width: 1.5; fill: none; }
+  .spark-future {
+    stroke: var(--think);
+    stroke-width: 1.8;
+    fill: none;
+    stroke-dasharray: 3 3;
+  }
+  .spark-area {
+    fill: url(#sparkGrad);
+    opacity: 0.4;
+  }
+  .day-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .day-row .today {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .day-row .peak {
+    color: var(--signal);
+    font-weight: 600;
+  }
+
+  /* ───── FOOTNOTE ───── */
+  .footnote {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.55;
+  }
+  .footnote-tag {
+    color: var(--think-soft);
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .etched {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+
+  /* ───── BOTTOM NAV ───── */
+  .nav {
+    height: 72px;
+    border-top: 1px solid var(--line);
+    background: rgba(11,12,16,0.92);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 12px 14px;
+    flex-shrink: 0;
+  }
+  .nav-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0;
+    color: var(--ink-3);
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-tab .icon-svg {
+    width: 22px;
+    height: 22px;
+    opacity: 0.6;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
+  }
+  .nav-tab.tab-active {
+    color: var(--think-soft);
+  }
+  .nav-tab.tab-active .icon-svg {
+    opacity: 1;
+  }
+  .nav-tab.tab-active::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 38px;
+    height: 32px;
+    background: rgba(139,109,255,0.15);
+    border-radius: 12px;
+    z-index: -1;
+  }
+
+  /* ───── STEPPER (onboarding) ───── */
+  .stepper-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    position: relative;
+  }
+  .step-dot.done {
+    background: var(--think);
+  }
+  .step-dot.active {
+    background: linear-gradient(90deg, var(--think) 0%, rgba(139,109,255,0.15) 100%);
+  }
+  .step-counter {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-4);
+    letter-spacing: 0.2em;
+    margin-left: 6px;
+  }
+  .onb-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.4px;
+    margin-bottom: 6px;
+  }
+  .onb-sub {
+    color: var(--ink-3);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  /* ───── PICKER (varsta, frecventa) ───── */
+  .picker-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px 18px 22px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .picker-big {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .picker-unit {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .picker-track {
+    position: relative;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    margin: 0 8px;
+  }
+  .picker-track .fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--think) 0%, var(--calm) 100%);
+    border-radius: 3px;
+  }
+  .picker-track .handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(139,109,255,0.20), 0 4px 12px rgba(0,0,0,0.5);
+  }
+
+  /* ───── CHOICE GRID (sex, obiectiv) ───── */
+  .choice-grid {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .choice-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .choice {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--ink);
+  }
+  .choice.selected {
+    background: linear-gradient(135deg, rgba(139,109,255,0.14), rgba(139,109,255,0.04));
+    border-color: var(--think);
+    box-shadow: 0 0 0 1px var(--think), 0 8px 24px rgba(139,109,255,0.18);
+  }
+  .choice-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(139,109,255,0.08);
+    color: var(--think-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .choice.selected .choice-icon {
+    background: rgba(139,109,255,0.20);
+    color: var(--think-soft);
+  }
+  .choice-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .choice-sub {
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  /* ───── CHECK LIST (medical, equipment) ───── */
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .check-item {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .check-item.checked {
+    background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02));
+    border-color: rgba(139,109,255,0.4);
+  }
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-4);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .check-item.checked .check-box {
+    background: var(--think);
+    border-color: var(--think);
+    color: white;
+  }
+  .check-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 1px;
+  }
+  .check-sub {
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  /* ───── ROW LIST (settings) ───── */
+  .row-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .list-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line-2);
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: rgba(139,109,255,0.08);
+    color: var(--think-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .list-icon.warm { background: rgba(245,158,107,0.10); color: var(--warm); }
+  .list-icon.calm { background: rgba(93,214,230,0.10); color: var(--calm); }
+  .list-icon.danger { background: rgba(239,90,90,0.10); color: var(--danger); }
+  .list-icon.neutral { background: rgba(255,255,255,0.04); color: var(--ink-2); }
+  .list-text { min-width: 0; }
+  .list-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .list-sub {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .list-chevron {
+    color: var(--ink-4);
+    font-size: 14px;
+  }
+  .list-toggle {
+    width: 38px;
+    height: 22px;
+    background: var(--bg-4);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .list-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: var(--ink-2);
+    border-radius: 50%;
+    transition: all 0.15s;
+  }
+  .list-toggle.on {
+    background: var(--think);
+  }
+  .list-toggle.on::after {
+    left: 18px;
+    background: white;
+  }
+  .list-value {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+
+  /* ───── CHAT ───── */
+  .chat-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px 0 12px;
+  }
+  .bubble {
+    max-width: 84%;
+    padding: 11px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .bubble-coach {
+    align-self: flex-start;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-bottom-left-radius: 6px;
+  }
+  .bubble-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--think) 0%, var(--think-deep) 100%);
+    color: white;
+    border-bottom-right-radius: 6px;
+  }
+  .bubble-thinking {
+    align-self: flex-start;
+    border: 1px dashed rgba(139,109,255,0.4);
+    background: rgba(139,109,255,0.04);
+    color: var(--think-soft);
+    border-radius: 16px;
+    border-bottom-left-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .chat-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    align-self: center;
+    margin: 6px 0 2px;
+  }
+  .composer {
+    border-top: 1px solid var(--line);
+    padding: 10px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .composer-input {
+    flex: 1;
+    height: 40px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0 14px;
+    color: var(--ink);
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .composer-input::placeholder { color: var(--ink-4); }
+  .composer-send {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--think), var(--think-deep));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ───── HEAD BAR (sub-page) ───── */
+  .head-bar {
+    height: 52px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--line-2);
+    flex-shrink: 0;
+  }
+  .back-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .head-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    flex: 1;
+  }
+  .head-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--think-soft);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ───── GAUGE (energy check, RPE) ───── */
+  .gauge-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 20px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .gauge-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .gauge-val {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 56px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+  .gauge-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    position: relative;
+    margin: 0 6px 8px;
+  }
+  .gauge-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--warm) 0%, var(--think) 50%, var(--signal) 100%);
+    border-radius: 3px;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(139,109,255,0.25);
+  }
+  .gauge-scale {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-4);
+    letter-spacing: 0.1em;
+  }
+
+  /* ───── CHIPS ───── */
+  .chip-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
+  }
+  .chip.success { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.24); color: var(--signal); }
+  .chip.purple { background: rgba(139,109,255,0.08); border-color: rgba(139,109,255,0.28); color: var(--think-soft); }
+  .chip.warm { background: rgba(245,158,107,0.08); border-color: rgba(245,158,107,0.24); color: var(--warm); }
+  .chip.calm { background: rgba(93,214,230,0.08); border-color: rgba(93,214,230,0.24); color: var(--calm); }
+
+  /* ───── BODY SVG (pain) ───── */
+  .body-svg {
+    width: 200px;
+    height: 320px;
+    margin: 0 auto 14px;
+    display: block;
+  }
+  .body-zone {
+    fill: rgba(255,255,255,0.05);
+    stroke: var(--line);
+    stroke-width: 0.8;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .body-zone.selected {
+    fill: rgba(245,158,107,0.35);
+    stroke: var(--warm);
+    stroke-width: 1.5;
+  }
+
+  /* ───── WORKOUT CARD ───── */
+  .workout-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .workout-card.active {
+    border-color: var(--think);
+    background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02));
+    box-shadow: 0 0 0 1px var(--think), 0 8px 24px rgba(139,109,255,0.15);
+  }
+  .workout-card.done {
+    opacity: 0.55;
+  }
+  .workout-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .ex-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ex-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  .ex-prescription {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--think-soft);
+    letter-spacing: 0.04em;
+  }
+
+  /* ───── SET GRID ───── */
+  .set-grid {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 60px;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .set-cell {
+    background: var(--bg-2);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .set-cell.head {
+    background: var(--bg-3);
+    color: var(--ink-3);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .set-cell.done {
+    color: var(--signal);
+  }
+  .set-cell.current {
+    background: linear-gradient(135deg, rgba(139,109,255,0.15), rgba(139,109,255,0.05));
+    color: var(--think-soft);
+    font-weight: 600;
+  }
+
+  /* ───── TIMER DISPLAY (rest timer big) ───── */
+  .timer-display {
+    width: 220px;
+    height: 220px;
+    margin: 8px auto 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timer-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .timer-ring .track {
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 6;
+    fill: none;
+  }
+  .timer-ring .progress {
+    stroke: url(#timerGrad);
+    stroke-width: 6;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .timer-num {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .timer-num .big {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .timer-num .label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .timer-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--think-soft);
+    letter-spacing: 0.06em;
+  }
+
+  /* ───── CHART CARD (progres) ───── */
+  .chart-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    margin-bottom: 14px;
+  }
+  .chart-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-3);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 14px;
+  }
+  .chart-tab {
+    flex: 1;
+    padding: 7px 0;
+    background: transparent;
+    border: none;
+    color: var(--ink-3);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .chart-tab.active {
+    background: rgba(139,109,255,0.15);
+    color: var(--think-soft);
+  }
+  .chart-svg {
+    width: 100%;
+    height: 130px;
+  }
+  .chart-axis {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+  .chart-line {
+    stroke: var(--think);
+    stroke-width: 2;
+    fill: none;
+  }
+  .chart-area {
+    fill: url(#chartGrad);
+    opacity: 0.5;
+  }
+  .chart-dot {
+    fill: var(--think);
+  }
+  .chart-dot.peak { fill: var(--signal); }
+
+  /* ───── MODAL (confirm) ───── */
+  .modal-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(5,6,8,0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px 22px 20px;
+    text-align: center;
+    box-shadow: 0 0 80px rgba(139,109,255,0.20);
+  }
+  .modal-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: rgba(139,109,255,0.10);
+    color: var(--think-soft);
+  }
+  .modal-icon.danger {
+    background: rgba(239,90,90,0.10);
+    color: var(--danger);
+  }
+  .modal-icon.warm {
+    background: rgba(245,158,107,0.10);
+    color: var(--warm);
+  }
+  .modal-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .modal-body {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  /* ───── LOCK SCREEN (push notif) ───── */
+  .lock-screen {
+    flex: 1;
+    background:
+      radial-gradient(ellipse at 50% 0%, #2a1f4a 0%, #050608 70%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 24px;
+    position: relative;
+  }
+  .lock-time {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 88px;
+    line-height: 0.95;
+    color: var(--ink);
+    letter-spacing: -2px;
+    margin-bottom: 4px;
+  }
+  .lock-date {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+  .push-card {
+    width: 100%;
+    background: rgba(28,24,46,0.78);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(139,109,255,0.25);
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .push-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .push-app {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--think-soft);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .push-time {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  .push-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .push-msg {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+
+  /* ───── SPLASH ───── */
+  .splash-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 50%, #1a1530, #050608 70%);
+  }
+  .splash-logo {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 28px;
+    animation: pulse-logo 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-logo {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(139,109,255,0.4)); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 28px rgba(139,109,255,0.7)); transform: scale(1.04); }
+  }
+  .splash-mark {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 44px;
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .splash-sub {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--think-soft);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+  }
+  .splash-load {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .splash-load .dots {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .splash-load .dots i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--think);
+    animation: dot-pulse 1.4s ease-in-out infinite;
+  }
+  .splash-load .dots i:nth-child(2) { animation-delay: 0.18s; }
+  .splash-load .dots i:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes dot-pulse {
+    0%, 80%, 100% { opacity: 0.25; }
+    40% { opacity: 1; }
+  }
+
+  /* ───── PB BURST ───── */
+  .pb-burst {
+    width: 200px;
+    height: 200px;
+    margin: 14px auto 18px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pb-rays {
+    position: absolute;
+    inset: 0;
+    animation: rays-spin 18s linear infinite;
+  }
+  @keyframes rays-spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
+  }
+  .pb-rays line {
+    stroke: var(--think);
+    stroke-width: 1.2;
+    opacity: 0.35;
+  }
+  .pb-mark {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,109,255,0.30), rgba(139,109,255,0.05));
+    border: 1px solid rgba(139,109,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: 0 0 60px rgba(139,109,255,0.40);
+  }
+  .pb-mark .glyph {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 38px;
+    background: linear-gradient(135deg, var(--think) 0%, var(--calm) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .pb-mark .tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--think-soft);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ───── CHECK-IN BIG (morning) ───── */
+  .checkin-card {
+    background: linear-gradient(180deg, rgba(245,158,107,0.06), rgba(245,158,107,0.02));
+    border: 1px solid rgba(245,158,107,0.25);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    margin-bottom: 14px;
+  }
+  .checkin-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .checkin-head .glyph {
+    font-size: 22px;
+  }
+  .checkin-msg {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  /* ───── DEBUG SIDE PICKER ───── */
+  .picker-wrap {
+    width: 100%;
+    max-width: 380px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .picker-toggle {
+    width: 100%;
+    padding: 10px 16px;
+    background: rgba(139,109,255,0.10);
+    border: 1px solid rgba(139,109,255,0.28);
+    border-radius: 12px;
+    color: var(--think-soft);
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .picker-list {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 8px;
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    max-height: 380px;
+    overflow-y: auto;
+  }
+  .picker-list.open { display: grid; }
+  .picker-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink-2);
+  }
+  .picker-item:hover {
+    background: rgba(139,109,255,0.06);
+    border-color: rgba(139,109,255,0.18);
+    color: var(--ink);
+  }
+  .picker-item.active {
+    background: rgba(139,109,255,0.14);
+    border-color: rgba(139,109,255,0.4);
+    color: var(--think-soft);
+  }
+  .picker-item .num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-4);
+    letter-spacing: 0.1em;
+  }
+  .picker-item.active .num { color: var(--think-soft); }
+  .picker-item .lbl {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  /* ───── UTILITIES ───── */
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .grow { flex: 1; }
+  .center-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    flex: 1;
+  }
+  .text-c { text-align: center; }
+  .mb-s { margin-bottom: 8px; }
+  .mb-m { margin-bottom: 14px; }
+  .mb-l { margin-bottom: 22px; }
+  .mt-m { margin-top: 14px; }
+  .danger-text { color: var(--danger); }
+  .warm-text { color: var(--warm); }
+  .signal-text-c { color: var(--signal); }
+
+</style>
+</head>
+<body>
+
+<div class="deck-header">
+  <div class="deck-title">Andura <span class="accent">V7</span> — XLV ecrane</div>
+  <div class="deck-sub">AI Brain Coach · Mockup complet · RO</div>
+</div>
+
+<!-- ═══════════════ PHONE FRAME ═══════════════ -->
+<div class="phone">
+  <!-- SVG defs (gradients) -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <linearGradient id="sparkGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#8b6dff" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#8b6dff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="timerGrad" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#8b6dff"/>
+        <stop offset="100%" stop-color="#5dd6e6"/>
+      </linearGradient>
+      <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#8b6dff" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#8b6dff" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="notch"></div>
+    <span>9:41</span>
+    <div class="right">
+      <div class="signal-dots"><i></i><i></i><i></i><i></i></div>
+      <div class="battery"><span></span></div>
+    </div>
+  </div>
+
+  <!-- GLOBAL HEADER (hide on splash/auth/onb) -->
+  <div class="global-header" id="global-header">
+    <div class="left">
+      <svg class="brain-logo" viewBox="0 0 24 24">
+        <line class="link" x1="6" y1="8" x2="12" y2="12"/>
+        <line class="link" x1="12" y1="12" x2="18" y2="9"/>
+        <line class="link" x1="12" y1="12" x2="14" y2="18"/>
+        <line class="link" x1="6" y1="8" x2="14" y2="18"/>
+        <circle class="node" cx="6" cy="8" r="2.4"/>
+        <circle class="node-2" cx="18" cy="9" r="2"/>
+        <circle class="node-3" cx="14" cy="18" r="2.2"/>
+        <circle class="node" cx="12" cy="12" r="1.6"/>
+      </svg>
+      <span class="brand">Andura</span>
+    </div>
+    <div class="right">
+      <span class="think-pill"><span class="pulse-dot"></span>Gândește</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 45 SCREENS ═══════════════ -->
+  <div class="screen-container" id="screen-container">
+
+
+    <!-- ═══ I · SPLASH ═══ -->
+    <div class="screen active" id="screen-splash">
+      <div class="splash-stage">
+        <svg class="splash-logo" viewBox="0 0 96 96">
+          <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="24" y1="32" x2="48" y2="48" opacity="0.6"/>
+          <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="48" y1="48" x2="72" y2="36" opacity="0.6"/>
+          <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="48" y1="48" x2="56" y2="72" opacity="0.6"/>
+          <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="24" y1="32" x2="56" y2="72" opacity="0.5"/>
+          <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="72" y1="36" x2="56" y2="72" opacity="0.5"/>
+          <circle fill="#8b6dff" cx="24" cy="32" r="9"/>
+          <circle fill="#5dd6e6" cx="72" cy="36" r="7"/>
+          <circle fill="#b09cff" cx="56" cy="72" r="8"/>
+          <circle fill="#8b6dff" cx="48" cy="48" r="5"/>
+        </svg>
+        <div class="splash-mark">Andura</div>
+        <div class="splash-sub">A.I. — Inteligență adaptativă</div>
+        <div class="splash-load">
+          Inițializare neuroni
+          <span class="dots"><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ II · AUTH ═══ -->
+    <div class="screen" id="screen-auth">
+      <div class="scroll" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="text-c mb-l">
+          <svg class="brain-logo" style="width:48px;height:48px;margin:0 auto 16px;display:block;" viewBox="0 0 24 24">
+            <line class="link" x1="6" y1="8" x2="12" y2="12"/>
+            <line class="link" x1="12" y1="12" x2="18" y2="9"/>
+            <line class="link" x1="12" y1="12" x2="14" y2="18"/>
+            <circle class="node" cx="6" cy="8" r="2.4"/>
+            <circle class="node-2" cx="18" cy="9" r="2"/>
+            <circle class="node-3" cx="14" cy="18" r="2.2"/>
+            <circle class="node" cx="12" cy="12" r="1.6"/>
+          </svg>
+          <div class="onb-title text-c">Bun venit la <span style="background:linear-gradient(135deg,var(--think),var(--calm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Andura</span></div>
+          <div class="onb-sub text-c">Coach-ul tău AI care învață cum răspunzi tu, nu cum ar răspunde un model mediu.</div>
+        </div>
+
+        <button class="btn-primary mb-s">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="opacity:0.95;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuă cu Google
+        </button>
+        <button class="btn-secondary mb-m">
+          ✉ Continuă cu email
+        </button>
+
+        <div class="footnote mt-m">
+          <span class="footnote-tag">Confidențialitate</span>
+          Datele tale rămân ale tale. Nu antrenăm modele cu ele, nu le vindem, nu le partajăm.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ III · ONB WELCOME ═══ -->
+    <div class="screen" id="screen-onboard">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">I/V</span>
+        </div>
+        <div class="onb-title">Bună. Hai să te cunosc.</div>
+        <div class="onb-sub">Am nevoie de cinci răspunsuri ca să încep să-ți construiesc coach-ul. Două minute, nu mai mult.</div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">De ce întreb</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recuperarea variază <span class="data">±36%</span> pe vârstă</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Răspuns la volum diferă <span class="data">2.4×</span> pe sex</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Istoric medical = lock-uri pe <span class="data">347</span> exerciții posibile</span>
+          </div>
+          <div class="thought-step">
+            <span class="pending">◐</span>
+            <span>Calibrez modelul tău neural personal</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-varsta')">Începem →</button>
+        <div class="etched text-c mt-m">Durată estimată — II minute</div>
+      </div>
+    </div>
+
+    <!-- ═══ IV · ONB VÂRSTA ═══ -->
+    <div class="screen" id="screen-onb-varsta">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">II/V</span>
+        </div>
+        <div class="onb-title">Câți ani ai?</div>
+        <div class="onb-sub">Recuperarea, capacitatea aerobă și răspunsul la volum se schimbă cu vârsta. Asta îmi setează prima dimensiune.</div>
+
+        <div class="picker-card">
+          <div class="picker-big">XXVIII</div>
+          <div class="picker-unit">ani</div>
+          <div class="picker-track">
+            <div class="fill" style="width:36%;"></div>
+            <div class="handle" style="left:36%;"></div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Asta îmi spune</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recuperare estimată <span class="data">36-48h</span> între sesiuni grele</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Pragul de saturare volum — sus <span class="data">≈18 sets/grup</span></span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-sex')">Continuă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ V · ONB SEX ═══ -->
+    <div class="screen" id="screen-onb-sex">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">III/V</span>
+        </div>
+        <div class="onb-title">Sex biologic?</div>
+        <div class="onb-sub">Pentru bias-ul fiziologic al modelului — nu pentru identitate. Influențează masă musculară de bază, testosteron, distribuție grăsime.</div>
+
+        <div class="choice-grid cols-2">
+          <button class="choice selected">
+            <div class="choice-icon">♂</div>
+            <div class="choice-label">Masculin</div>
+            <div class="choice-sub">Bias hipertrofie + forță</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon">♀</div>
+            <div class="choice-label">Feminin</div>
+            <div class="choice-sub">Bias rezistență + tonus</div>
+          </button>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Notă model</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Bias inițial; modelul recalibrează din răspunsul tău real în <span class="data">III-IV săpt</span></span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-medical')">Continuă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ VI · ONB MEDICAL ═══ -->
+    <div class="screen" id="screen-onb-medical">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">IV/V</span>
+        </div>
+        <div class="onb-title">Ai constrângeri?</div>
+        <div class="onb-sub">Bifează tot ce e relevant. Lock-ez exercițiile riscante și-ți construiesc alternative sigure.</div>
+
+        <div class="check-list">
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div>
+              <div class="check-label">Genunchi sensibil</div>
+              <div class="check-sub">Stop la flexie profundă cu sarcină</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Lombar / spate jos</div>
+              <div class="check-sub">Limitez deadlift, hyperextension</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Umăr / coif rotator</div>
+              <div class="check-sub">Lock pe overhead direct</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Cardiovascular</div>
+              <div class="check-sub">Plafon HR efort</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Hernie de disc / discopatie</div>
+              <div class="check-sub">Protocol special — neutral spine only</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Nimic semnificativ</div>
+              <div class="check-sub">Plin acces la întreaga bibliotecă</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footnote">
+          <span class="footnote-tag">Disclaimer</span>
+          Andura nu înlocuiește avizul medical. Pentru afecțiuni active sau recuperare, consultă medicul înainte.
+        </div>
+
+        <button class="btn-primary mt-m" onclick="goto('onb-frecventa')">Continuă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ VII · ONB FRECVENȚĂ ═══ -->
+    <div class="screen" id="screen-onb-frecventa">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <span class="step-counter">V/V</span>
+        </div>
+        <div class="onb-title">Câte sesiuni / săpt?</div>
+        <div class="onb-sub">Realist, nu aspirational. Mai bine III consistent decât V planificate și II făcute. Pot ajusta oricând.</div>
+
+        <div class="picker-card">
+          <div class="picker-big">IV</div>
+          <div class="picker-unit">zile pe săpt</div>
+          <div class="picker-track">
+            <div class="fill" style="width:57%;"></div>
+            <div class="handle" style="left:57%;"></div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Optim pentru tine</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Split <span class="data">Upper/Lower</span> — recuperare 48h echilibrată</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Volum săptămânal țintă <span class="data">12-16 sets</span> per grup mare</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Buffer <span class="data">III zile</span> de odihnă activă</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('home')">Construiește coach-ul →</button>
+      </div>
+    </div>
+
+    <!-- ═══ VIII · MEDICAL DISCLAIMER ═══ -->
+    <div class="screen" id="screen-medical-disclaimer">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Disclaimer medical</div>
+        <div class="head-tag">Onb · ext</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Important</span>
+          </div>
+          <div style="font-size:13px; color:var(--ink-2); line-height:1.6;">
+            Andura este un asistent. <strong style="color:var(--ink);">Nu</strong> substituie evaluarea medicală sau kinetoterapia. Modelul recomandă pe baza profilului declarat și a răspunsului tău real, dar nu poate detecta:
+          </div>
+          <div class="thought-step" style="margin-top:10px;">
+            <span class="check" style="color:var(--warm);">!</span>
+            <span>Patologii nediagnosticate</span>
+          </div>
+          <div class="thought-step">
+            <span class="check" style="color:var(--warm);">!</span>
+            <span>Interacțiuni cu medicamente</span>
+          </div>
+          <div class="thought-step">
+            <span class="check" style="color:var(--warm);">!</span>
+            <span>Condiții acute (durere bruscă, amețeli)</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">REGULA <span class="count">∅</span></div>
+          <div class="conclusion">
+            <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; color:var(--ink); line-height:1.4;">
+              "Dacă doare diferit decât te-ai așteptat — oprește. Întreabă coach-ul. Dacă persistă — întreabă medicul."
+            </div>
+          </div>
+        </div>
+
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon warm">⚠</div>
+            <div class="list-text">
+              <div class="list-title">Durere ascuțită / bruscă</div>
+              <div class="list-sub">Stop imediat, nu treci peste</div>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon calm">♡</div>
+            <div class="list-text">
+              <div class="list-title">Disconfort articular</div>
+              <div class="list-sub">Reducem amplitudine + sarcină</div>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">↺</div>
+            <div class="list-text">
+              <div class="list-title">Oboseală extremă neașteptată</div>
+              <div class="list-sub">Posibil deficit somn / stres / boală</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary mt-m" onclick="back()">Am înțeles</button>
+      </div>
+    </div>
+
+    <!-- ═══ IX · HOME (Antrenor landing) ═══ -->
+    <div class="screen" id="screen-home">
+      <div class="scroll">
+        <div class="hero-eyebrow">Joi · 8 mai · 09:24</div>
+        <div class="greeting">Bună, <span class="name">Andrei</span></div>
+        <div class="hero-sub">Sesiunea LXXXVII — am gândit-o pentru tine</div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Cum am ajuns aici</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Răspunzi <span class="data">+8%</span> mai bine la volum decât profilul tipic 28M</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>HRV <span class="data">52ms</span> — recuperat din ședința de marți</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Somn <span class="data">7h22</span>, eficiență <span class="data">88%</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Volum săpt deja <span class="data">14/16 sets</span> piept</span>
+          </div>
+          <div class="thought-step">
+            <span class="pending">◐</span>
+            <span>Compun sesiunea care fructifică fereastra de azi</span>
+          </div>
+        </div>
+
+        <div class="conclusion">
+          <div class="conclusion-head">
+            <div class="conclusion-title">Upper · Hipertrofie</div>
+            <div class="conclusion-tag">87% încredere</div>
+          </div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width:87%;"></div>
+          </div>
+          <div class="meta-row">
+            <span class="key">Durată</span>
+            <span class="val">52</span>
+            <span class="unit">min</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Volum</span>
+            <span class="val">VI</span>
+            <span class="unit">exerciții</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Țintă RPE</span>
+            <span class="val">7.5</span>
+            <span class="unit">/10</span>
+          </div>
+          <button class="btn-primary mt-m" onclick="goto('sala')">Începe sesiunea →</button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">SEMNALE <span class="count">V/XLVII active</span></div>
+          <div class="signals-grid">
+            <div class="signal-row">
+              <div class="signal-icon signal">♡</div>
+              <div class="signal-text">
+                <div class="signal-strong">HRV recuperat</div>
+                <div class="signal-meta">52ms · de la 47ms marți</div>
+              </div>
+              <div class="signal-delta delta-up">+10.6%</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon">↻</div>
+              <div class="signal-text">
+                <div class="signal-strong">Streak 12 zile</div>
+                <div class="signal-meta">Cea mai lungă secvență 2026</div>
+              </div>
+              <div class="signal-delta delta-up">↑</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon calm">☾</div>
+              <div class="signal-text">
+                <div class="signal-strong">Somn 72/100</div>
+                <div class="signal-meta">7h22 · profundă 1h45</div>
+              </div>
+              <div class="signal-delta delta-neutral">≈</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon signal">★</div>
+              <div class="signal-text">
+                <div class="signal-strong">PR bench saptămâna asta</div>
+                <div class="signal-meta">82.5kg × 8 reps · 2 mai</div>
+              </div>
+              <div class="signal-delta delta-up">PR</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon warm">☀</div>
+              <div class="signal-text">
+                <div class="signal-strong">Vremea — 14°C</div>
+                <div class="signal-meta">Cardio outdoor optim 17:00</div>
+              </div>
+              <div class="signal-delta delta-neutral">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">PROIECȚIE <span class="count">VII zile</span></div>
+          <div class="forecast">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;color:var(--ink);">Vârf de formă</div>
+              <div class="signal-delta delta-up" style="font-size:13px;">94/100</div>
+            </div>
+            <div class="hero-sub" style="margin:0;">Joi viitoare — fereastră optimă pentru testarea unui PR</div>
+            <svg class="spark" viewBox="0 0 280 60" preserveAspectRatio="none">
+              <path class="spark-area" d="M0,40 L40,38 L80,32 L120,30 L120,30 L160,22 L200,14 L240,10 L280,8 L280,60 L0,60 Z"/>
+              <path class="spark-past" d="M0,40 L40,38 L80,32 L120,30"/>
+              <path class="spark-future" d="M120,30 L160,22 L200,14 L240,10 L280,8"/>
+              <circle cx="120" cy="30" r="3.5" fill="#b09cff"/>
+              <circle cx="240" cy="10" r="4" fill="#4ade80"/>
+            </svg>
+            <div class="day-row">
+              <span>L</span><span>M</span><span>M</span>
+              <span class="today">J ●</span>
+              <span>V</span><span>S</span>
+              <span class="peak">J ★</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="footnote">
+          <span class="footnote-tag">Filosofie</span>
+          Coach-ul tău nu te împinge la maxim azi. Te calibrează spre vârf joia viitoare.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ X · ANTRENOR (chat) ═══ -->
+    <div class="screen" id="screen-antrenor">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Antrenor</div>
+        <div class="head-tag">⊕ context activ</div>
+      </div>
+      <div class="scroll-tight" style="display:flex; flex-direction:column;">
+        <div class="chat-stream grow">
+          <div class="chat-tag">— Joi · 09:24 —</div>
+          <div class="bubble bubble-coach">
+            Bună Andrei. Văd că HRV s-a recuperat la 52ms și ai bench peste 80kg săptămâna asta — vrei să mergem cu Upper hipertrofie azi sau preferi un push diferit?
+          </div>
+          <div class="bubble bubble-user">
+            Mă simt bine, dar genunchiul drept e ușor sensibil de la alergare ieri.
+          </div>
+          <div class="bubble bubble-thinking">
+            ◐ Analizez: cvadriceps + flexie încărcată → swap squat cu leg press, scad amplitudine 70°...
+          </div>
+          <div class="bubble bubble-coach">
+            Înțeles. Astăzi rămâne Upper integral, fără leg work direct. Mâine îți propun mobility + leg press la 70° cu sarcină ușoară. Sună OK?
+          </div>
+          <div class="bubble bubble-user">
+            Perfect. Mergem.
+          </div>
+          <div class="bubble bubble-coach">
+            Să-ți deschid sesiunea? Am pregătit VI exerciții, 52 min, RPE țintă 7.5.
+          </div>
+        </div>
+      </div>
+      <div class="composer">
+        <input class="composer-input" placeholder="Spune-mi ce simți..." />
+        <button class="composer-send">↑</button>
+      </div>
+    </div>
+
+    <!-- ═══ XI · SALA (queue workout) ═══ -->
+    <div class="screen" id="screen-sala">
+      <div class="scroll">
+        <div class="hero-eyebrow">Sesiunea LXXXVII · Upper</div>
+        <div class="greeting" style="font-size:30px;">Hipertrofie <span class="name">moderată</span></div>
+        <div class="chip-row" style="margin-top:14px;">
+          <span class="chip purple">RPE țintă 7.5</span>
+          <span class="chip">VI exerciții</span>
+          <span class="chip">≈52 min</span>
+          <span class="chip success">87% încredere</span>
+        </div>
+
+        <div class="section">
+          <div class="section-title">PLAN <span class="count">VI exerciții</span></div>
+          <div class="workout-card active">
+            <div class="workout-head">
+              <div class="ex-name">Bench Press</div>
+              <div class="ex-meta">I/VI</div>
+            </div>
+            <div class="ex-prescription">IV × 8 @ 82.5kg · RPE 7</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Pull-up cu greutate</div>
+              <div class="ex-meta">II/VI</div>
+            </div>
+            <div class="ex-prescription">III × 6 @ +10kg · RPE 8</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Overhead Press</div>
+              <div class="ex-meta">III/VI</div>
+            </div>
+            <div class="ex-prescription">III × 8 @ 50kg · RPE 7.5</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Cable Row</div>
+              <div class="ex-meta">IV/VI</div>
+            </div>
+            <div class="ex-prescription">III × 12 @ 65kg · RPE 7</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Lateral Raise</div>
+              <div class="ex-meta">V/VI</div>
+            </div>
+            <div class="ex-prescription">III × 15 @ 8kg · RPE 8</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Face Pull</div>
+              <div class="ex-meta">VI/VI</div>
+            </div>
+            <div class="ex-prescription">II × 20 @ 25kg · RPE 7</div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">De ce ordinea asta</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Compus mare prima oară când SNC e proaspăt</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Antagonist după agonist — recuperare locală</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('workout')">Începe → Bench Press</button>
+      </div>
+    </div>
+
+    <!-- ═══ XII · WORKOUT ACTIVE ═══ -->
+    <div class="screen" id="screen-workout">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Bench Press</div>
+        <div class="head-tag">I/VI · LXXXVII</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="conclusion">
+          <div class="conclusion-head">
+            <div class="conclusion-title">Set III/IV</div>
+            <div class="conclusion-tag">@ 82.5kg</div>
+          </div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width:50%;"></div>
+          </div>
+          <div class="set-grid">
+            <div class="set-cell head">#</div>
+            <div class="set-cell head">kg</div>
+            <div class="set-cell head">reps</div>
+            <div class="set-cell head">RPE</div>
+            <div class="set-cell done">I</div>
+            <div class="set-cell done">82.5</div>
+            <div class="set-cell done">8</div>
+            <div class="set-cell done">7</div>
+            <div class="set-cell done">II</div>
+            <div class="set-cell done">82.5</div>
+            <div class="set-cell done">8</div>
+            <div class="set-cell done">7.5</div>
+            <div class="set-cell current">III</div>
+            <div class="set-cell current">82.5</div>
+            <div class="set-cell current">—</div>
+            <div class="set-cell current">—</div>
+            <div class="set-cell" style="opacity:0.45;">IV</div>
+            <div class="set-cell" style="opacity:0.45;">82.5</div>
+            <div class="set-cell" style="opacity:0.45;">—</div>
+            <div class="set-cell" style="opacity:0.45;">—</div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Observ în timp real</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Set II RPE 7.5 vs țintă 7 — încă bun</span>
+          </div>
+          <div class="thought-step">
+            <span class="pending">◐</span>
+            <span>Dacă set III ≥ 8 → tai set IV automat</span>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="btn-secondary grow" onclick="goto('rest-timer')">⏱ Rest 90s</button>
+          <button class="btn-primary grow" onclick="goto('post-rpe')">Set III gata →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XIII · POST-RPE ═══ -->
+    <div class="screen" id="screen-post-rpe">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Cum a fost?</div>
+        <div class="head-tag">Set III · Bench</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="gauge-card">
+          <div class="gauge-label">RPE percepută</div>
+          <div class="gauge-val">VIII</div>
+          <div class="gauge-track">
+            <div class="gauge-fill" style="width:80%;"></div>
+            <div class="gauge-marker" style="left:80%;"></div>
+          </div>
+          <div class="gauge-scale">
+            <span>I</span><span>III</span><span>V</span><span>VII</span><span>X</span>
+          </div>
+        </div>
+
+        <div class="chip-row">
+          <span class="chip warm">8 = greu, dar finalizabil</span>
+          <span class="chip purple">II reps în rezervă</span>
+        </div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Interpretare model</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Răspuns peste țintă — set IV se taie</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Săpt viitoare propun <span class="data">85kg × 8</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recalibrez pragul tău <span class="data">+1.2%</span></span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('sala')">Următorul exercițiu →</button>
+      </div>
+    </div>
+
+    <!-- ═══ XIV · ENERGY CHECK ═══ -->
+    <div class="screen" id="screen-energy-check">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Cum te simți?</div>
+        <div class="head-tag">Pre-sesiune</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:18px;">Răspunsul tău determină dacă mergem cu sesiunea propusă sau adaptăm.</div>
+
+        <div class="gauge-card">
+          <div class="gauge-label">Energie generală</div>
+          <div class="gauge-val">VI</div>
+          <div class="gauge-track">
+            <div class="gauge-fill" style="width:60%;"></div>
+            <div class="gauge-marker" style="left:60%;"></div>
+          </div>
+          <div class="gauge-scale">
+            <span>Frânt</span><span></span><span>OK</span><span></span><span>Rachetă</span>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Compus cu</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>HRV obiectiv <span class="data">52ms</span> + percepție subiectivă VI/X</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Decid: sesiune <span class="data">-12% volum</span>, păstrez intensitate</span>
+          </div>
+        </div>
+
+        <button class="btn-primary mb-s" onclick="goto('sala')">Mergem →</button>
+        <button class="btn-secondary" onclick="goto('energy-cause')">De ce mă simt așa?</button>
+      </div>
+    </div>
+
+    <!-- ═══ XV · ENERGY CAUSE ═══ -->
+    <div class="screen" id="screen-energy-cause">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Ce a contribuit?</div>
+        <div class="head-tag">Diag · cauză</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:14px;">Bifează tot ce simți. Mă ajută să gândesc adaptarea bună, nu cea generică.</div>
+
+        <div class="check-list">
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div>
+              <div class="check-label">Somn slab / scurt</div>
+              <div class="check-sub">Sub 6h sau treziri repetate</div>
+            </div>
+          </div>
+          <div class="check-item checked">
+            <div class="check-box">✓</div>
+            <div>
+              <div class="check-label">Stres ridicat azi</div>
+              <div class="check-sub">Muncă, conflict, deadline</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Mâncare insuficientă</div>
+              <div class="check-sub">Sub mentenanță sau intermitent</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Boală sau simptome</div>
+              <div class="check-sub">Răceală, alergii, durere de cap</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Antrenament dur recent</div>
+              <div class="check-sub">Sub 24h de la sesiune grea</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div>
+              <div class="check-label">Nu știu / nu pot identifica</div>
+              <div class="check-sub">Doar simt așa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Combinație cortizol</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Somn slab + stres = răspuns hormonal supresat</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recomand <span class="data">-25% volum</span>, intensitate ușoară</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('sala')">Adaptează sesiunea →</button>
+      </div>
+    </div>
+
+
+    <!-- ═══ XVI · PAIN BUTTON ═══ -->
+    <div class="screen" id="screen-pain-button">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Unde te doare?</div>
+        <div class="head-tag">⚠ priority</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:8px;">Atinge zona. Lock instant pe tot ce încarcă acolo.</div>
+
+        <svg class="body-svg" viewBox="0 0 100 160">
+          <!-- Cap -->
+          <ellipse class="body-zone" cx="50" cy="14" rx="9" ry="11"/>
+          <!-- Gât + trunchi superior -->
+          <rect class="body-zone" x="44" y="24" width="12" height="6" rx="2"/>
+          <!-- Umeri -->
+          <ellipse class="body-zone" cx="32" cy="34" rx="9" ry="6"/>
+          <ellipse class="body-zone" cx="68" cy="34" rx="9" ry="6"/>
+          <!-- Piept -->
+          <rect class="body-zone" x="38" y="32" width="24" height="20" rx="5"/>
+          <!-- Brațe -->
+          <rect class="body-zone" x="22" y="40" width="9" height="28" rx="4"/>
+          <rect class="body-zone" x="69" y="40" width="9" height="28" rx="4"/>
+          <!-- Antebrațe -->
+          <rect class="body-zone" x="20" y="68" width="8" height="22" rx="4"/>
+          <rect class="body-zone" x="72" y="68" width="8" height="22" rx="4"/>
+          <!-- Abdomen -->
+          <rect class="body-zone" x="40" y="52" width="20" height="22" rx="4"/>
+          <!-- Bazin -->
+          <rect class="body-zone" x="38" y="74" width="24" height="10" rx="4"/>
+          <!-- Cvadriceps stâng -->
+          <rect class="body-zone" x="40" y="84" width="9" height="32" rx="4"/>
+          <!-- Cvadriceps drept SELECTED -->
+          <rect class="body-zone selected" x="51" y="84" width="9" height="32" rx="4"/>
+          <!-- Genunchi -->
+          <ellipse class="body-zone" cx="44.5" cy="118" rx="5" ry="4"/>
+          <ellipse class="body-zone selected" cx="55.5" cy="118" rx="5" ry="4"/>
+          <!-- Tibia -->
+          <rect class="body-zone" x="40" y="122" width="9" height="28" rx="4"/>
+          <rect class="body-zone" x="51" y="122" width="9" height="28" rx="4"/>
+          <!-- Glezne -->
+          <ellipse class="body-zone" cx="44.5" cy="153" rx="4.5" ry="3"/>
+          <ellipse class="body-zone" cx="55.5" cy="153" rx="4.5" ry="3"/>
+        </svg>
+
+        <div class="chip-row">
+          <span class="chip warm">Cvadriceps drept</span>
+          <span class="chip warm">Genunchi drept</span>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Adaptez instant</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Lock <span class="data">XII exerciții</span> care încarcă cvadriceps + flexie genunchi</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Swap squat → leg press <span class="data">70°</span> sarcină ușoară</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Adaug mobility ham + cvadriceps în warm-up</span>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="btn-secondary grow" onclick="back()">Anulează</button>
+          <button class="btn-primary grow" onclick="back()">Aplică →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XVII · EQUIPMENT SWAP ═══ -->
+    <div class="screen" id="screen-equipment-swap">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Schimbă exercițiul</div>
+        <div class="head-tag">Bench → ?</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="workout-card" style="margin-bottom:14px;">
+          <div class="workout-head">
+            <div class="ex-name">Bench Press · curent</div>
+            <div class="ex-meta">indispus</div>
+          </div>
+          <div class="ex-prescription">IV × 8 @ 82.5kg · RPE 7</div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Caut alternative</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Filtru pe pattern motor: <span class="data">push orizontal</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Echipament disponibil + zone fără durere</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">ALTERNATIVE <span class="count">III propuneri</span></div>
+          <div class="workout-card active">
+            <div class="workout-head">
+              <div class="ex-name">Dumbbell Bench Press</div>
+              <div class="ex-meta">96% match</div>
+            </div>
+            <div class="ex-prescription">IV × 10 @ 32.5kg · RPE 7.5</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Cable Press înclinat</div>
+              <div class="ex-meta">82% match</div>
+            </div>
+            <div class="ex-prescription">III × 12 @ 50kg · RPE 7</div>
+          </div>
+          <div class="workout-card">
+            <div class="workout-head">
+              <div class="ex-name">Push-up cu greutate</div>
+              <div class="ex-meta">71% match</div>
+            </div>
+            <div class="ex-prescription">III × 15 BW · RPE 8</div>
+          </div>
+        </div>
+
+        <button class="btn-primary mb-s" onclick="back()">Aplică Dumbbell →</button>
+        <button class="btn-ghost" onclick="back()">Sari peste exercițiu</button>
+      </div>
+    </div>
+
+    <!-- ═══ XVIII · ISTORIC ═══ -->
+    <div class="screen" id="screen-istoric">
+      <div class="scroll">
+        <div class="hero-eyebrow">Mai · 2026</div>
+        <div class="greeting" style="font-size:30px;"><span class="name">XII</span> sesiuni</div>
+        <div class="hero-sub">Streak 12 zile · cea mai bună secvență 2026</div>
+
+        <div class="thinking-card compact" style="margin-top:12px;">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Pattern observat</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Răspunzi mai bine la <span class="data">U/L split</span> decât la PPL</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Volumul tău săpt optim <span class="data">14-16 sets</span> grup mare</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">SESIUNI <span class="count">recente</span></div>
+          <div class="row-list">
+            <div class="list-row">
+              <div class="list-icon signal">★</div>
+              <div class="list-text">
+                <div class="list-title">Marți 6 mai · Lower forță</div>
+                <div class="list-sub">PR squat 105kg × 5 · RPE 8.5</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">↻</div>
+              <div class="list-text">
+                <div class="list-title">Duminică 4 mai · Upper hipertrofie</div>
+                <div class="list-sub">VI ex · 48 min · RPE 7.2</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon calm">~</div>
+              <div class="list-text">
+                <div class="list-title">Vineri 2 mai · PR Bench</div>
+                <div class="list-sub">82.5kg × 8 · primul peste 80</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">↻</div>
+              <div class="list-text">
+                <div class="list-title">Miercuri 30 apr · Lower</div>
+                <div class="list-sub">V ex · 54 min · RPE 7.8</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">CORP <span class="count">monitorizat</span></div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('weight-timeline')">
+              <div class="list-icon">⚖</div>
+              <div class="list-text">
+                <div class="list-title">Greutate & compoziție</div>
+                <div class="list-sub">82.4kg · BF 16.2% · ↓ 1.8kg / 30z</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon calm">♡</div>
+              <div class="list-text">
+                <div class="list-title">HRV & somn</div>
+                <div class="list-sub">52ms med · 7h22 med</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XIX · WEIGHT TIMELINE ═══ -->
+    <div class="screen" id="screen-weight-timeline">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Greutate & BF</div>
+        <div class="head-tag">XXX zile</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="conclusion">
+          <div class="conclusion-head">
+            <div class="conclusion-title">82.4 kg</div>
+            <div class="conclusion-tag delta-down">↓ 1.8 / 30z</div>
+          </div>
+          <div class="meta-row">
+            <span class="key">BF estimat</span>
+            <span class="val">16.2</span>
+            <span class="unit">%</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Masă slabă</span>
+            <span class="val">69.0</span>
+            <span class="unit">kg</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Țintă vârf</span>
+            <span class="val">81.0</span>
+            <span class="unit">kg</span>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-tabs">
+            <button class="chart-tab">VII zile</button>
+            <button class="chart-tab active">XXX zile</button>
+            <button class="chart-tab">XII luni</button>
+          </div>
+          <svg class="chart-svg" viewBox="0 0 280 130" preserveAspectRatio="none">
+            <line class="chart-axis" x1="0" y1="65" x2="280" y2="65"/>
+            <path class="chart-area" d="M0,40 L40,42 L80,46 L120,52 L160,58 L200,62 L240,68 L280,72 L280,130 L0,130 Z"/>
+            <path class="chart-line" d="M0,40 L40,42 L80,46 L120,52 L160,58 L200,62 L240,68 L280,72"/>
+            <circle class="chart-dot" cx="280" cy="72" r="3.5"/>
+            <circle class="chart-dot peak" cx="0" cy="40" r="3"/>
+          </svg>
+          <div class="day-row">
+            <span>Apr 8</span><span></span><span>Apr 22</span><span></span><span>Mai 8</span>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Pace observată</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Pierdere <span class="data">0.45kg/săpt</span> — sustenabil</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Masă slabă păstrată <span class="data">+0.2kg</span> — cut sănătos</span>
+          </div>
+        </div>
+
+        <button class="btn-secondary">+ Adaugă măsurătoare nouă</button>
+      </div>
+    </div>
+
+    <!-- ═══ XX · PROGRES ═══ -->
+    <div class="screen" id="screen-progres">
+      <div class="scroll">
+        <div class="hero-eyebrow">Progres · 2026</div>
+        <div class="greeting" style="font-size:30px;"><span class="name">+12.4%</span> volum</div>
+        <div class="hero-sub">Ultimele XII săpt · trend ascendent stabil</div>
+
+        <div class="chart-card" style="margin-top:14px;">
+          <div class="chart-tabs">
+            <button class="chart-tab">Volum</button>
+            <button class="chart-tab active">Forță</button>
+            <button class="chart-tab">Compoziție</button>
+            <button class="chart-tab">RPE</button>
+          </div>
+          <svg class="chart-svg" viewBox="0 0 280 130" preserveAspectRatio="none">
+            <line class="chart-axis" x1="0" y1="100" x2="280" y2="100" stroke-dasharray="2 3"/>
+            <line class="chart-axis" x1="0" y1="65" x2="280" y2="65" stroke-dasharray="2 3"/>
+            <line class="chart-axis" x1="0" y1="30" x2="280" y2="30" stroke-dasharray="2 3"/>
+            <path class="chart-area" d="M0,90 L40,80 L80,72 L120,68 L160,55 L200,48 L240,38 L280,30 L280,130 L0,130 Z"/>
+            <path class="chart-line" d="M0,90 L40,80 L80,72 L120,68 L160,55 L200,48 L240,38 L280,30"/>
+            <circle class="chart-dot" cx="40" cy="80" r="3"/>
+            <circle class="chart-dot" cx="120" cy="68" r="3"/>
+            <circle class="chart-dot" cx="200" cy="48" r="3"/>
+            <circle class="chart-dot peak" cx="280" cy="30" r="4"/>
+          </svg>
+          <div class="day-row">
+            <span>S1</span><span>S3</span><span>S5</span><span>S7</span><span>S9</span><span>S11</span><span>S12 ★</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">PR <span class="count">XXX zile</span></div>
+          <div class="signals-grid">
+            <div class="signal-row">
+              <div class="signal-icon signal">★</div>
+              <div class="signal-text">
+                <div class="signal-strong">Bench Press</div>
+                <div class="signal-meta">82.5kg × 8 · 2 mai</div>
+              </div>
+              <div class="signal-delta delta-up">+5kg</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon signal">★</div>
+              <div class="signal-text">
+                <div class="signal-strong">Squat</div>
+                <div class="signal-meta">105kg × 5 · 6 mai</div>
+              </div>
+              <div class="signal-delta delta-up">+7.5kg</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon">↻</div>
+              <div class="signal-text">
+                <div class="signal-strong">Deadlift</div>
+                <div class="signal-meta">130kg × 5 · 28 apr</div>
+              </div>
+              <div class="signal-delta delta-up">+10kg</div>
+            </div>
+            <div class="signal-row">
+              <div class="signal-icon calm">↻</div>
+              <div class="signal-text">
+                <div class="signal-strong">Pull-up cu greutate</div>
+                <div class="signal-meta">+15kg × 6 · 25 apr</div>
+              </div>
+              <div class="signal-delta delta-up">+5kg</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footnote">
+          <span class="footnote-tag">Insight model</span>
+          Forța crește mai repede pe upper push (bench +6.4%) decât pe pull (rows +3.1%). Rebalansăm volum în săpt 13.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXI · COACH (overview adaptări) ═══ -->
+    <div class="screen" id="screen-coach">
+      <div class="scroll">
+        <div class="hero-eyebrow">Coach · adaptări active</div>
+        <div class="greeting" style="font-size:30px;">Te-am învățat <span class="name">XLVII</span> lucruri</div>
+        <div class="hero-sub">Modelul tău e calibrat acum la 87% încredere</div>
+
+        <div class="thinking-card" style="margin-top:14px;">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Adaptări recente</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Pragul tău RPE pentru hipertrofie = <span class="data">7.2-7.8</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Răspuns optim pe <span class="data">4×8</span>, nu 3×10</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recuperarea ta reală = <span class="data">42h</span> nu 48h</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Performezi <span class="data">+11%</span> la sesiuni înainte de 11:00</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Genunchi drept = lock 12 exerciții</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">FAZĂ <span class="count">curentă</span></div>
+          <div class="conclusion">
+            <div class="conclusion-head">
+              <div class="conclusion-title">Hipertrofie moderată</div>
+              <div class="conclusion-tag">săpt VII/XII</div>
+            </div>
+            <div class="confidence-bar">
+              <div class="confidence-fill" style="width:58%;"></div>
+            </div>
+            <div class="meta-row">
+              <span class="key">Volum săpt</span>
+              <span class="val">14-16</span>
+              <span class="unit">sets</span>
+            </div>
+            <div class="meta-row">
+              <span class="key">Intensitate</span>
+              <span class="val">70-78</span>
+              <span class="unit">% 1RM</span>
+            </div>
+            <div class="meta-row">
+              <span class="key">Următor</span>
+              <span class="val">deload</span>
+              <span class="unit">săpt VIII</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-list">
+          <div class="list-row" onclick="goto('coach-philosophy')">
+            <div class="list-icon">∞</div>
+            <div class="list-text">
+              <div class="list-title">Filosofia coach-ului</div>
+              <div class="list-sub">De ce te tratez așa</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-reset-coach')">
+            <div class="list-icon warm">↻</div>
+            <div class="list-text">
+              <div class="list-title">Resetează adaptările</div>
+              <div class="list-sub">Începe de la zero</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-schimba-faza')">
+            <div class="list-icon calm">⇄</div>
+            <div class="list-text">
+              <div class="list-title">Schimbă faza</div>
+              <div class="list-sub">Forță · slăbire · longevitate</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXII · COACH PHILOSOPHY ═══ -->
+    <div class="screen" id="screen-coach-philosophy">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Filosofia coach-ului</div>
+        <div class="head-tag">manifest</div>
+      </div>
+      <div class="scroll-tight">
+        <div style="text-align:center; padding:14px 0 22px;">
+          <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:28px;color:var(--ink);line-height:1.3;background:linear-gradient(135deg,var(--think),var(--calm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+            "Nu te împing la maxim azi.<br/>Te calibrez spre vârf joia viitoare."
+          </div>
+        </div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Cum gândesc</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Bug la 02:00 vs <span class="data">V commits</span> grăbite — aleg primul</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Refactor "later" = <span class="data">never</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recuperarea = parte a antrenamentului, nu pauză</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Modelul tău > model mediu populațional</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">PRINCIPII <span class="count">IV</span></div>
+          <div class="row-list">
+            <div class="list-row">
+              <div class="list-icon">I</div>
+              <div class="list-text">
+                <div class="list-title">Calitate &gt; Cantitate</div>
+                <div class="list-sub">VI seturi perfecte bat XII haotice</div>
+              </div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">II</div>
+              <div class="list-text">
+                <div class="list-title">Date &gt; Intuiție populațională</div>
+                <div class="list-sub">Învăț cum răspunzi tu, nu ce zice studiul mediu</div>
+              </div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">III</div>
+              <div class="list-text">
+                <div class="list-title">Ascult corpul, nu calendarul</div>
+                <div class="list-sub">HRV scăzut = adaptez, nu insist</div>
+              </div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">IV</div>
+              <div class="list-text">
+                <div class="list-title">Vârf real &gt; vârf forțat</div>
+                <div class="list-sub">Ne pregătim pentru ziua când contează</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footnote">
+          <span class="footnote-tag">Andura · 2026</span>
+          Modelul tău devine mai bun cu fiecare sesiune. Asta e diferența.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXIII · SETTINGS ROOT (Cont) ═══ -->
+    <div class="screen" id="screen-settings">
+      <div class="scroll">
+        <div class="hero-eyebrow">Cont · setări</div>
+        <div class="greeting" style="font-size:30px;"><span class="name">Andrei</span> Popescu</div>
+        <div class="hero-sub">Plan Premium · activ până 12 dec 2026</div>
+
+        <div class="section" style="margin-top:14px;">
+          <div class="section-title">PROFIL</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('settings-profile')">
+              <div class="list-icon">◉</div>
+              <div class="list-text">
+                <div class="list-title">Date personale</div>
+                <div class="list-sub">Vârstă, sex, înălțime, greutate</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-notifications')">
+              <div class="list-icon calm">🔔</div>
+              <div class="list-text">
+                <div class="list-title">Notificări</div>
+                <div class="list-sub">Push · email · check-in zilnic</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-subscription')">
+              <div class="list-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">★</div>
+              <div class="list-text">
+                <div class="list-title">Abonament</div>
+                <div class="list-sub">Premium · 39 RON/lună</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">APARENȚĂ & PREFERINȚE</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('settings-appearance')">
+              <div class="list-icon">◐</div>
+              <div class="list-text">
+                <div class="list-title">Aspect</div>
+                <div class="list-sub">Temă · contrast · text</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-prefs')">
+              <div class="list-icon neutral">⚙</div>
+              <div class="list-text">
+                <div class="list-title">Setări avansate</div>
+                <div class="list-sub">Limbă · unități · format</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">DATE & PRIVACY</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('settings-privacy')">
+              <div class="list-icon">🔒</div>
+              <div class="list-text">
+                <div class="list-title">Confidențialitate</div>
+                <div class="list-sub">Cum îți folosesc datele</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-export')">
+              <div class="list-icon">⤓</div>
+              <div class="list-text">
+                <div class="list-title">Export date</div>
+                <div class="list-sub">JSON · CSV · GDPR</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-terms')">
+              <div class="list-icon neutral">§</div>
+              <div class="list-text">
+                <div class="list-title">Termeni & politici</div>
+                <div class="list-sub">Versiune 2026.05</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">SUPORT</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('settings-faq')">
+              <div class="list-icon neutral">?</div>
+              <div class="list-text">
+                <div class="list-title">FAQ</div>
+                <div class="list-sub">Răspunsuri rapide</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-support')">
+              <div class="list-icon neutral">✉</div>
+              <div class="list-text">
+                <div class="list-title">Contact suport</div>
+                <div class="list-sub">Răspuns &lt; XXIV ore</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+            <div class="list-row" onclick="goto('settings-about')">
+              <div class="list-icon neutral">i</div>
+              <div class="list-text">
+                <div class="list-title">Despre Andura</div>
+                <div class="list-sub">v7.4.2 · build 2026.05.08</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title danger-text">ZONĂ SENSIBILĂ</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('settings-danger')">
+              <div class="list-icon danger">⚠</div>
+              <div class="list-text">
+                <div class="list-title">Acțiuni ireversibile</div>
+                <div class="list-sub">Logout · ștergere · refacere</div>
+              </div>
+              <div class="list-chevron">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXIV · SETTINGS PROFILE ═══ -->
+    <div class="screen" id="screen-settings-profile">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Profil</div>
+        <div class="head-tag">date personale</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">A</div>
+            <div class="list-text">
+              <div class="list-title">Nume afișat</div>
+            </div>
+            <div class="list-value">Andrei P.</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">@</div>
+            <div class="list-text">
+              <div class="list-title">Email</div>
+            </div>
+            <div class="list-value">a.p@mail.com</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">CORP & FIZIOLOGIE</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">⌬</div>
+            <div class="list-text">
+              <div class="list-title">Vârstă</div>
+            </div>
+            <div class="list-value">XXVIII ani</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">♂</div>
+            <div class="list-text">
+              <div class="list-title">Sex biologic</div>
+            </div>
+            <div class="list-value">Masculin</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">↕</div>
+            <div class="list-text">
+              <div class="list-title">Înălțime</div>
+            </div>
+            <div class="list-value">182 cm</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">⚖</div>
+            <div class="list-text">
+              <div class="list-title">Greutate</div>
+            </div>
+            <div class="list-value">82.4 kg</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">CONSTRÂNGERI</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon warm">⚠</div>
+            <div class="list-text">
+              <div class="list-title">Genunchi sensibil</div>
+              <div class="list-sub">Lock pe XII exerciții</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('medical-disclaimer')">
+            <div class="list-icon neutral">+</div>
+            <div class="list-text">
+              <div class="list-title">Adaugă constrângere</div>
+              <div class="list-sub">Vezi disclaimer medical</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXV · SETTINGS NOTIFICATIONS ═══ -->
+    <div class="screen" id="screen-settings-notifications">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Notificări</div>
+        <div class="head-tag">push & email</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:14px;">Coach-ul îți trimite doar ce e relevant. Frecvență adaptată ritmului tău, nu spam.</div>
+
+        <div class="section-title">PUSH</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">☀</div>
+            <div class="list-text">
+              <div class="list-title">Check-in dimineață</div>
+              <div class="list-sub">07:30 · cum te simți azi</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">⏱</div>
+            <div class="list-text">
+              <div class="list-title">Reminder sesiune</div>
+              <div class="list-sub">XXX min înainte</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon signal">★</div>
+            <div class="list-text">
+              <div class="list-title">PR & milestones</div>
+              <div class="list-sub">Doar evenimente reale</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon calm">~</div>
+            <div class="list-text">
+              <div class="list-title">Adaptări coach</div>
+              <div class="list-sub">Când schimb faza sau planul</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">EMAIL</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon neutral">∑</div>
+            <div class="list-text">
+              <div class="list-title">Raport săptămânal</div>
+              <div class="list-sub">Duminică · sumar XII zile</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">i</div>
+            <div class="list-text">
+              <div class="list-title">Update produs</div>
+              <div class="list-sub">Funcții noi, rar</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXVI · SETTINGS SUBSCRIPTION ═══ -->
+    <div class="screen" id="screen-settings-subscription">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Abonament</div>
+        <div class="head-tag">Premium</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="conclusion">
+          <div class="conclusion-head">
+            <div class="conclusion-title">Premium</div>
+            <div class="conclusion-tag" style="color:var(--warm);">activ</div>
+          </div>
+          <div class="meta-row">
+            <span class="key">Cost</span>
+            <span class="val">39</span>
+            <span class="unit">RON/lună</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Reînnoire</span>
+            <span class="val">12 dec</span>
+            <span class="unit">2026</span>
+          </div>
+          <div class="meta-row">
+            <span class="key">Plată</span>
+            <span class="val">●●●● 4521</span>
+            <span class="unit">VISA</span>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">INCLUS PREMIUM</div>
+        <div class="signals-grid">
+          <div class="signal-row">
+            <div class="signal-icon signal">✓</div>
+            <div class="signal-text">
+              <div class="signal-strong">Coach AI personalizat</div>
+              <div class="signal-meta">Modelul tău neural</div>
+            </div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-icon signal">✓</div>
+            <div class="signal-text">
+              <div class="signal-strong">Bibliotecă completă</div>
+              <div class="signal-meta">347 exerciții + alternative</div>
+            </div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-icon signal">✓</div>
+            <div class="signal-text">
+              <div class="signal-strong">Adaptări nelimitate</div>
+              <div class="signal-meta">Pain, energie, echipament</div>
+            </div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-icon signal">✓</div>
+            <div class="signal-text">
+              <div class="signal-strong">Forecast & istoric infinit</div>
+              <div class="signal-meta">Toate datele tale</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-secondary mt-m">Schimbă metoda de plată</button>
+        <button class="btn-ghost" style="margin-top:8px;color:var(--ink-3);">Anulează abonament</button>
+      </div>
+    </div>
+
+    <!-- ═══ XXVII · SETTINGS APPEARANCE ═══ -->
+    <div class="screen" id="screen-settings-appearance">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Aspect</div>
+        <div class="head-tag">UI</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="section-title">MOD</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">●</div>
+            <div class="list-text">
+              <div class="list-title">Întunecat</div>
+              <div class="list-sub">Recomandat pentru sală seara</div>
+            </div>
+            <div class="list-value">activ</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">○</div>
+            <div class="list-text">
+              <div class="list-title">Luminat</div>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">◐</div>
+            <div class="list-text">
+              <div class="list-title">Auto (sistem)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">TEMĂ</div>
+        <div class="row-list">
+          <div class="list-row" onclick="goto('settings-themes')">
+            <div class="list-icon">⬢</div>
+            <div class="list-text">
+              <div class="list-title">Brain Purple</div>
+              <div class="list-sub">V7 · default</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">TEXT</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon neutral">A</div>
+            <div class="list-text">
+              <div class="list-title">Mărime text</div>
+            </div>
+            <div class="list-value">Standard</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">◑</div>
+            <div class="list-text">
+              <div class="list-title">Contrast ridicat</div>
+              <div class="list-sub">Accesibilitate</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXVIII · SETTINGS THEMES ═══ -->
+    <div class="screen" id="screen-settings-themes">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Teme</div>
+        <div class="head-tag">V7 · IV variante</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:14px;">Skin-ul UI fără să schimbi structura. V7 e default-ul Andura.</div>
+
+        <div class="choice-grid cols-2">
+          <button class="choice selected">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#8b6dff,#5dd6e6);color:white;">⬢</div>
+            <div class="choice-label">Brain Purple</div>
+            <div class="choice-sub">V7 default · think focus</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#f59e6b,#ef5a5a);color:white;">☀</div>
+            <div class="choice-label">Forge Orange</div>
+            <div class="choice-sub">Sesiuni intense</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#4ade80,#5dd6e6);color:white;">~</div>
+            <div class="choice-label">Calm Mint</div>
+            <div class="choice-sub">Recovery & deload</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#1a1d26,#3a3e48);color:white;">●</div>
+            <div class="choice-label">Carbon</div>
+            <div class="choice-sub">Minimalist mono</div>
+          </button>
+        </div>
+
+        <div class="footnote">
+          <span class="footnote-tag">Notă</span>
+          Tema afectează culorile accent. Skin-ul V7 (chain-of-thought, neuron logo, layout) rămâne identic.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXIX · SETTINGS PRIVACY ═══ -->
+    <div class="screen" id="screen-settings-privacy">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Confidențialitate</div>
+        <div class="head-tag">date · GDPR</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Promisiune</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink-2);line-height:1.6;">
+            Datele tale rămân ale tale. <strong style="color:var(--ink);">Nu le antrenăm pe modele publice. Nu le vindem. Nu le partajăm.</strong>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">CONTROL</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon signal">⊕</div>
+            <div class="list-text">
+              <div class="list-title">Permite analytics anonim</div>
+              <div class="list-sub">Bug fixes & îmbunătățiri produs</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">↻</div>
+            <div class="list-text">
+              <div class="list-title">Permite cercetare științifică</div>
+              <div class="list-sub">Date agregate, fără identificare</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">📡</div>
+            <div class="list-text">
+              <div class="list-title">Sincronizare cloud</div>
+              <div class="list-sub">Backup criptat E2E</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">DREPTURILE TALE</div>
+        <div class="row-list">
+          <div class="list-row" onclick="goto('settings-export')">
+            <div class="list-icon">⤓</div>
+            <div class="list-text">
+              <div class="list-title">Exportă datele</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-delete')">
+            <div class="list-icon danger">✕</div>
+            <div class="list-text">
+              <div class="list-title">Șterge totul (drept la uitare)</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXX · SETTINGS TERMS ═══ -->
+    <div class="screen" id="screen-settings-terms">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Termeni & politici</div>
+        <div class="head-tag">v 2026.05</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon neutral">§</div>
+            <div class="list-text">
+              <div class="list-title">Termeni de utilizare</div>
+              <div class="list-sub">Actualizat 1 mai 2026</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">§</div>
+            <div class="list-text">
+              <div class="list-title">Politică de confidențialitate</div>
+              <div class="list-sub">GDPR · ePrivacy</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⚕</div>
+            <div class="list-text">
+              <div class="list-title">Disclaimer medical</div>
+              <div class="list-sub">Important · citește</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">©</div>
+            <div class="list-text">
+              <div class="list-title">Licențe & atribuiri</div>
+              <div class="list-sub">Inter, Geist Mono, Instrument Serif</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="footnote mt-m">
+          <span class="footnote-tag">Versiune</span>
+          Ultima modificare: 1 mai 2026 · Vom anunța prin email când se schimbă ceva esențial.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══ XXXI · SETTINGS PREFS (avansate) ═══ -->
+    <div class="screen" id="screen-settings-prefs">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Setări avansate</div>
+        <div class="head-tag">prefs</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="section-title">LIMBĂ & FORMAT</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">RO</div>
+            <div class="list-text">
+              <div class="list-title">Limba interfață</div>
+            </div>
+            <div class="list-value">Română</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⚖</div>
+            <div class="list-text">
+              <div class="list-title">Unități greutate</div>
+            </div>
+            <div class="list-value">kg</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">↕</div>
+            <div class="list-text">
+              <div class="list-title">Unități înălțime</div>
+            </div>
+            <div class="list-value">cm</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⏱</div>
+            <div class="list-text">
+              <div class="list-title">Format oră</div>
+            </div>
+            <div class="list-value">24h</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">XII</div>
+            <div class="list-text">
+              <div class="list-title">Numerotare cifre romane</div>
+              <div class="list-sub">Stil V7 etched</div>
+            </div>
+            <div class="list-toggle on"></div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">EXPERIMENTAL</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon" style="background:rgba(139,109,255,0.10);color:var(--think-soft);">β</div>
+            <div class="list-text">
+              <div class="list-title">Funcții beta</div>
+              <div class="list-sub">Acces la features în testare</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">∴</div>
+            <div class="list-text">
+              <div class="list-title">Mod debug</div>
+              <div class="list-sub">Detalii model + decizii vizibile</div>
+            </div>
+            <div class="list-toggle"></div>
+          </div>
+        </div>
+
+        <div class="footnote mt-m">
+          <span class="footnote-tag">Notă</span>
+          Setările aplicate aici nu afectează modelul tău neural — doar afișarea & interacțiunea.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXII · SETTINGS DANGER (acțiuni ireversibile) ═══ -->
+    <div class="screen" id="screen-settings-danger">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Zonă sensibilă</div>
+        <div class="head-tag danger-text">⚠ ireversibil</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="thinking-card" style="border-color:rgba(239,90,90,0.25);background:linear-gradient(180deg,rgba(239,90,90,0.04),transparent);">
+          <div class="think-head">
+            <span class="pulse-dot" style="background:var(--danger);box-shadow:0 0 8px var(--danger);"></span>
+            <span class="think-label" style="color:var(--danger);">⚠ Atenție</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink-2);line-height:1.5;">
+            Acțiunile de mai jos nu pot fi anulate. Vom cere confirmare suplimentară pentru fiecare.
+          </div>
+        </div>
+
+        <div class="row-list">
+          <div class="list-row" onclick="goto('confirm-reset-coach')">
+            <div class="list-icon warm">↻</div>
+            <div class="list-text">
+              <div class="list-title">Resetează adaptările coach-ului</div>
+              <div class="list-sub">Pierd toate cele XLVII învățate</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-redo-onboarding')">
+            <div class="list-icon warm">↺</div>
+            <div class="list-text">
+              <div class="list-title">Refă onboarding-ul</div>
+              <div class="list-sub">Răspund din nou la cele V întrebări</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-logout')">
+            <div class="list-icon neutral">⤴</div>
+            <div class="list-text">
+              <div class="list-title">Deconectare</div>
+              <div class="list-sub">Date păstrate, sesiune închisă</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row" onclick="goto('confirm-delete')">
+            <div class="list-icon danger">✕</div>
+            <div class="list-text">
+              <div class="list-title">Șterge contul & toate datele</div>
+              <div class="list-sub danger-text">Drept la uitare GDPR</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXIII · SETTINGS EXPORT ═══ -->
+    <div class="screen" id="screen-settings-export">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Export date</div>
+        <div class="head-tag">GDPR · art. 20</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:14px;">Ai dreptul la portabilitate. Toate datele tale, format deschis, fără restricții.</div>
+
+        <div class="section-title">FORMAT</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">{ }</div>
+            <div class="list-text">
+              <div class="list-title">JSON complet</div>
+              <div class="list-sub">Toate sesiunile + adaptări + signals</div>
+            </div>
+            <div class="list-chevron">⤓</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">≡</div>
+            <div class="list-text">
+              <div class="list-title">CSV — sesiuni</div>
+              <div class="list-sub">Pentru Excel / Google Sheets</div>
+            </div>
+            <div class="list-chevron">⤓</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⊕</div>
+            <div class="list-text">
+              <div class="list-title">Pachet GDPR (toate datele)</div>
+              <div class="list-sub">ZIP · JSON + audit log + meta</div>
+            </div>
+            <div class="list-chevron">⤓</div>
+          </div>
+        </div>
+
+        <div class="thinking-card compact mt-m">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Procesare</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Pachet pregătit în <span class="data">≈ XXX sec</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Link valid <span class="data">XXIV ore</span>, criptat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXIV · SETTINGS SUPPORT ═══ -->
+    <div class="screen" id="screen-settings-support">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Contact suport</div>
+        <div class="head-tag">&lt; XXIV ore</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="hero-sub" style="margin-bottom:14px;">Echipa Andura · oameni reali · răspuns mediu sub 6h în zile lucrătoare.</div>
+
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon calm">✉</div>
+            <div class="list-text">
+              <div class="list-title">Email</div>
+              <div class="list-sub">salut@andura.app</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">⌨</div>
+            <div class="list-text">
+              <div class="list-title">Trimite mesaj din app</div>
+              <div class="list-sub">Atașăm context tehnic automat</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⚠</div>
+            <div class="list-text">
+              <div class="list-title">Raportează un bug</div>
+              <div class="list-sub">Cu screenshot + log</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">COMUNITATE</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon neutral">@</div>
+            <div class="list-text">
+              <div class="list-title">Discord Andura</div>
+              <div class="list-sub">3.2k membri · feedback direct</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXV · SETTINGS ABOUT ═══ -->
+    <div class="screen" id="screen-settings-about">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Despre Andura</div>
+        <div class="head-tag">v7.4.2</div>
+      </div>
+      <div class="scroll-tight">
+        <div style="text-align:center; padding:14px 0 22px;">
+          <svg class="brain-logo" style="width:64px;height:64px;margin:0 auto 14px;display:block;" viewBox="0 0 24 24">
+            <line class="link" x1="6" y1="8" x2="12" y2="12"/>
+            <line class="link" x1="12" y1="12" x2="18" y2="9"/>
+            <line class="link" x1="12" y1="12" x2="14" y2="18"/>
+            <circle class="node" cx="6" cy="8" r="2.4"/>
+            <circle class="node-2" cx="18" cy="9" r="2"/>
+            <circle class="node-3" cx="14" cy="18" r="2.2"/>
+            <circle class="node" cx="12" cy="12" r="1.6"/>
+          </svg>
+          <div class="splash-mark" style="font-size:32px;">Andura</div>
+          <div class="splash-sub" style="margin-bottom:0;">v 7.4.2 · build 2026.05.08</div>
+        </div>
+
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">∞</div>
+            <div class="list-text">
+              <div class="list-title">Manifest</div>
+              <div class="list-sub">Cum gândim coach-ul AI</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">⚐</div>
+            <div class="list-text">
+              <div class="list-title">Roadmap public</div>
+              <div class="list-sub">Ce urmează</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">∴</div>
+            <div class="list-text">
+              <div class="list-title">Schimbări recente</div>
+              <div class="list-sub">v7.4 · 28 apr 2026</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon neutral">©</div>
+            <div class="list-text">
+              <div class="list-title">Echipa</div>
+              <div class="list-sub">București · 2026</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="footnote mt-m text-c">
+          <span class="footnote-tag">Andura · 2026</span>
+          Construit în România. Pentru cei care vor un coach care gândește, nu unul care urlă.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXVI · SETTINGS FAQ ═══ -->
+    <div class="screen" id="screen-settings-faq">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">FAQ</div>
+        <div class="head-tag">răspunsuri rapide</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="section-title">UTILIZARE</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Cât durează până coach-ul mă cunoaște?</div>
+              <div class="list-sub">III-IV săpt — modelul calibrează din răspuns real</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Pot folosi fără sală echipată?</div>
+              <div class="list-sub">Da — coach-ul propune alternative bodyweight</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Funcționează pe smartwatch?</div>
+              <div class="list-sub">Apple Watch · Garmin · WearOS — sync HRV automat</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">DATE</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Ce se întâmplă dacă-mi pierd telefonul?</div>
+              <div class="list-sub">Sync cloud E2E — login din alt device, datele vin</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Andura îmi vinde datele?</div>
+              <div class="list-sub">Nu. Niciodată. Vezi politica de confidențialitate</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+
+        <div class="section-title mt-m">PLATĂ</div>
+        <div class="row-list">
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Există plan gratuit?</div>
+              <div class="list-sub">Da — limitat la VII zile / lună</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+          <div class="list-row">
+            <div class="list-icon">?</div>
+            <div class="list-text">
+              <div class="list-title">Pot anula oricând?</div>
+              <div class="list-sub">Da — fără penalizări, până la sfârșitul ciclului</div>
+            </div>
+            <div class="list-chevron">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXVII · CONFIRM RESET COACH ═══ -->
+    <div class="screen" id="screen-confirm-reset-coach">
+      <div class="modal-bg">
+        <div class="modal">
+          <div class="modal-icon warm">↻</div>
+          <div class="modal-title">Resetezi coach-ul?</div>
+          <div class="modal-body">
+            Modelul va uita cele <strong style="color:var(--ink);">XLVII adaptări</strong> învățate despre tine. Vei reveni la setările inițiale și calibrarea va începe de la zero.<br/><br/>
+            <span class="warm-text">Această acțiune nu poate fi anulată.</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="back()">Anulează</button>
+            <button class="btn-danger" onclick="back()">Resetează</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXVIII · CONFIRM SCHIMBĂ FAZA ═══ -->
+    <div class="screen" id="screen-confirm-schimba-faza">
+      <div class="modal-bg">
+        <div class="modal">
+          <div class="modal-icon">⇄</div>
+          <div class="modal-title">Schimbi faza?</div>
+          <div class="modal-body">
+            Acum ești în <strong style="color:var(--ink);">Hipertrofie · săpt VII/XII</strong>. Schimbarea fazei reorganizează planul săptămânal și recalibrează țintele de volum & intensitate.<br/><br/>
+            Adaptările coach-ului se păstrează.
+          </div>
+          <div class="choice-grid cols-2" style="margin-bottom:14px;">
+            <button class="choice">
+              <div class="choice-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">⚡</div>
+              <div class="choice-label">Forță</div>
+              <div class="choice-sub">3-5 reps · 85%+</div>
+            </button>
+            <button class="choice">
+              <div class="choice-icon" style="background:rgba(93,214,230,0.10);color:var(--calm);">↓</div>
+              <div class="choice-label">Slăbire</div>
+              <div class="choice-sub">Volum + cardio</div>
+            </button>
+            <button class="choice">
+              <div class="choice-icon" style="background:rgba(74,222,128,0.10);color:var(--signal);">∞</div>
+              <div class="choice-label">Longevitate</div>
+              <div class="choice-sub">Mobility + funcțional</div>
+            </button>
+            <button class="choice">
+              <div class="choice-icon" style="background:rgba(139,109,255,0.10);color:var(--think-soft);">~</div>
+              <div class="choice-label">Deload</div>
+              <div class="choice-sub">Recuperare activă</div>
+            </button>
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="back()">Anulează</button>
+            <button class="btn-primary" onclick="back()">Aplică</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XXXIX · CONFIRM REDO ONBOARDING ═══ -->
+    <div class="screen" id="screen-confirm-redo-onboarding">
+      <div class="modal-bg">
+        <div class="modal">
+          <div class="modal-icon warm">↺</div>
+          <div class="modal-title">Refaci onboarding-ul?</div>
+          <div class="modal-body">
+            Vei răspunde din nou la cele <strong style="color:var(--ink);">V întrebări</strong> de bază (vârstă, sex, medical, frecvență). Modelul tău neural se păstrează — doar parametrii de pornire se actualizează.<br/><br/>
+            Util dacă s-au schimbat circumstanțele tale (recuperare după leziune, schimbare obiectiv, etc.).
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="back()">Anulează</button>
+            <button class="btn-primary" onclick="back()">Începe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XL · CONFIRM LOGOUT ═══ -->
+    <div class="screen" id="screen-confirm-logout">
+      <div class="modal-bg">
+        <div class="modal">
+          <div class="modal-icon">⤴</div>
+          <div class="modal-title">Deconectare?</div>
+          <div class="modal-body">
+            Sesiunea curentă se închide. Datele tale rămân sincronizate în cloud — la următorul login le găsești toate aici.
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="back()">Rămâi</button>
+            <button class="btn-primary" onclick="back()">Deconectează-mă</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XLI · CONFIRM DELETE (danger max) ═══ -->
+    <div class="screen" id="screen-confirm-delete">
+      <div class="modal-bg">
+        <div class="modal" style="border-color:rgba(239,90,90,0.35);box-shadow:0 0 80px rgba(239,90,90,0.20);">
+          <div class="modal-icon danger">✕</div>
+          <div class="modal-title danger-text">Șterge contul?</div>
+          <div class="modal-body">
+            Vei pierde <strong style="color:var(--ink);">tot</strong>: cele LXXXVII sesiuni, XLVII adaptări învățate, toate PR-urile, istoric corp, signals.<br/><br/>
+            <span class="danger-text">Această acțiune este permanentă, conform GDPR (drept la uitare). Datele se șterg ireversibil în XXX zile.</span>
+          </div>
+          <div style="background:rgba(239,90,90,0.08);border:1px solid rgba(239,90,90,0.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--ink-2);">
+            Tastează <strong class="danger-text">ȘTERGE</strong> pentru confirmare:
+            <input style="width:100%;height:36px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:0 12px;color:var(--ink);font-family:'Geist Mono',monospace;font-size:12px;margin-top:6px;" placeholder="ȘTERGE" />
+          </div>
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="back()">Renunț</button>
+            <button class="btn-danger" onclick="back()">Șterge tot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XLII · REST TIMER ═══ -->
+    <div class="screen" id="screen-rest-timer">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Pauză activă</div>
+        <div class="head-tag">între seturi</div>
+      </div>
+      <div class="scroll-tight" style="display:flex;flex-direction:column;justify-content:center;text-align:center;">
+        <div class="hero-eyebrow text-c" style="margin-bottom:0;">Bench Press · între set II și III</div>
+
+        <div class="timer-display">
+          <svg class="timer-ring" viewBox="0 0 100 100">
+            <circle class="track" cx="50" cy="50" r="44"/>
+            <circle class="progress" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dasharray="276.46" stroke-dashoffset="92.15"/>
+          </svg>
+          <div class="timer-num">
+            <span class="big">01:08</span>
+            <span class="label">rămas</span>
+          </div>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Adaptez pauza</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Set II RPE 7.5 → pauză recomandată <span class="data">90s</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>HRV restaurat <span class="data">94%</span> — gata curând</span>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="btn-secondary grow">+30s</button>
+          <button class="btn-primary grow" onclick="back()">Sari peste →</button>
+        </div>
+
+        <div class="footnote mt-m text-c">
+          <span class="footnote-tag">Ritm cardiac</span>
+          ♡ 122 → 98 bpm · scădere normală
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XLIII · CHECK-IN DIMINEAȚĂ ═══ -->
+    <div class="screen" id="screen-checkin-dimineata">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Check-in</div>
+        <div class="head-tag">07:34 · joi</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="checkin-card">
+          <div class="checkin-head">
+            <span class="glyph">☀</span>
+            <span class="hero-eyebrow" style="margin:0;color:var(--warm);">Bună dimineața, Andrei</span>
+          </div>
+          <div class="checkin-msg">
+            "Am observat că ai dormit <strong style="font-style:normal;font-family:'Geist Mono',monospace;font-size:18px;color:var(--warm);">6h12</strong> — sub media ta. Cum te simți?"
+          </div>
+        </div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Ce am văzut peste noapte</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>HRV <span class="data">44ms</span> — sub media ta de 52ms</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Somn profund <span class="data">1h08</span> — scurtat cu 40 min</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Puls în repaus <span class="data">61 bpm</span> — în normă</span>
+          </div>
+          <div class="thought-step">
+            <span class="pending">◐</span>
+            <span>Aștept input subiectiv ca să decid sesiunea de azi</span>
+          </div>
+        </div>
+
+        <div class="section-title">CUM TE SIMȚI?</div>
+        <div class="choice-grid cols-2">
+          <button class="choice">
+            <div class="choice-icon signal" style="background:rgba(74,222,128,0.10);color:var(--signal);">↑</div>
+            <div class="choice-label">Surprinzător bine</div>
+            <div class="choice-sub">Mergem normal</div>
+          </button>
+          <button class="choice selected">
+            <div class="choice-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">~</div>
+            <div class="choice-label">Tras la față</div>
+            <div class="choice-sub">Adaptăm sesiunea</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:rgba(239,90,90,0.10);color:var(--danger);">↓</div>
+            <div class="choice-label">Frânt</div>
+            <div class="choice-sub">Recuperare azi</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon neutral" style="background:rgba(255,255,255,0.04);color:var(--ink-3);">?</div>
+            <div class="choice-label">Nu știu încă</div>
+            <div class="choice-sub">Întreabă-mă mai târziu</div>
+          </button>
+        </div>
+
+        <button class="btn-primary mt-m" onclick="goto('home')">Confirmă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ XLIV · PB RECORD (celebration) ═══ -->
+    <div class="screen" id="screen-pb-record">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title signal-text-c">Personal Best</div>
+        <div class="head-tag" style="color:var(--signal);">★ nou record</div>
+      </div>
+      <div class="scroll-tight" style="text-align:center;">
+        <div class="pb-burst">
+          <svg class="pb-rays" viewBox="-100 -100 200 200">
+            <line x1="0" y1="-90" x2="0" y2="-70"/>
+            <line x1="63" y1="-63" x2="49" y2="-49"/>
+            <line x1="90" y1="0" x2="70" y2="0"/>
+            <line x1="63" y1="63" x2="49" y2="49"/>
+            <line x1="0" y1="90" x2="0" y2="70"/>
+            <line x1="-63" y1="63" x2="-49" y2="49"/>
+            <line x1="-90" y1="0" x2="-70" y2="0"/>
+            <line x1="-63" y1="-63" x2="-49" y2="-49"/>
+            <line x1="32" y1="-84" x2="25" y2="-66"/>
+            <line x1="84" y1="-32" x2="66" y2="-25"/>
+            <line x1="84" y1="32" x2="66" y2="25"/>
+            <line x1="32" y1="84" x2="25" y2="66"/>
+            <line x1="-32" y1="84" x2="-25" y2="66"/>
+            <line x1="-84" y1="32" x2="-66" y2="25"/>
+            <line x1="-84" y1="-32" x2="-66" y2="-25"/>
+            <line x1="-32" y1="-84" x2="-25" y2="-66"/>
+          </svg>
+          <div class="pb-mark">
+            <div class="glyph">★</div>
+            <div class="tag">PR Bench</div>
+          </div>
+        </div>
+
+        <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:34px;line-height:1.1;color:var(--ink);margin-bottom:6px;">
+          <span style="background:linear-gradient(135deg,var(--think),var(--calm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">82.5 kg × 8</span>
+        </div>
+        <div class="hero-sub text-c" style="margin-bottom:16px;">Bench Press · joi 8 mai · sesiunea LXXXVII</div>
+
+        <div class="chip-row" style="justify-content:center;">
+          <span class="chip success">+5 kg vs PR anterior</span>
+          <span class="chip purple">RPE 8 · 2 reps în rezervă</span>
+        </div>
+
+        <div class="thinking-card">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Ce înseamnă pentru tine</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Primul peste <span class="data">80 kg</span> la 8 reps</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>1RM estimat acum <span class="data">≈ 102 kg</span></span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>Recalibrez progresia <span class="data">+2.4%</span></span>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn-secondary grow">⤓ Salvează imaginea</button>
+          <button class="btn-primary grow" onclick="back()">Continuă →</button>
+        </div>
+
+        <div class="footnote mt-m">
+          <span class="footnote-tag">Atenție</span>
+          PR-urile sunt rare — următorul probabil în III-IV săpt. Nu împinge azi peste, lasă recuperarea să facă treaba.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ XLV · DRILL PUSH (lock screen + push notif) ═══ -->
+    <div class="screen" id="screen-drill-push">
+      <div class="lock-screen">
+        <div class="lock-time">9:41</div>
+        <div class="lock-date">joi · 8 mai 2026</div>
+
+        <div class="push-card" style="margin-bottom:10px;">
+          <div class="push-head">
+            <div class="push-app">
+              <svg style="width:14px;height:14px;" viewBox="0 0 24 24">
+                <line stroke="#8b6dff" stroke-width="1.5" x1="6" y1="8" x2="12" y2="12"/>
+                <line stroke="#8b6dff" stroke-width="1.5" x1="12" y1="12" x2="18" y2="9"/>
+                <line stroke="#8b6dff" stroke-width="1.5" x1="12" y1="12" x2="14" y2="18"/>
+                <circle fill="#8b6dff" cx="6" cy="8" r="2.4"/>
+                <circle fill="#5dd6e6" cx="18" cy="9" r="2"/>
+                <circle fill="#b09cff" cx="14" cy="18" r="2.2"/>
+              </svg>
+              Andura
+            </div>
+            <div class="push-time">acum</div>
+          </div>
+          <div class="push-title">Sesiunea LXXXVII e gata</div>
+          <div class="push-msg">Upper · Hipertrofie · 52 min · 87% încredere. HRV 52ms — recuperat. Joi e fereastra ta.</div>
+        </div>
+
+        <div class="push-card" style="margin-bottom:10px;opacity:0.92;">
+          <div class="push-head">
+            <div class="push-app">
+              <svg style="width:14px;height:14px;" viewBox="0 0 24 24">
+                <circle fill="#8b6dff" cx="12" cy="12" r="10"/>
+              </svg>
+              Andura
+            </div>
+            <div class="push-time">07:34</div>
+          </div>
+          <div class="push-title">Check-in dimineață</div>
+          <div class="push-msg">Ai dormit 6h12 — sub media ta. Cum te simți? Adaptez sesiunea.</div>
+        </div>
+
+        <div class="push-card" style="opacity:0.78;">
+          <div class="push-head">
+            <div class="push-app">
+              <svg style="width:14px;height:14px;" viewBox="0 0 24 24">
+                <circle fill="#4ade80" cx="12" cy="12" r="10"/>
+              </svg>
+              Andura
+            </div>
+            <div class="push-time">ieri</div>
+          </div>
+          <div class="push-title">★ PR confirmat — Bench 82.5kg × 8</div>
+          <div class="push-msg">Primul peste 80 la 8 reps. Felicitări. 1RM estimat ≈ 102kg.</div>
+        </div>
+
+        <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;"></div>
+      </div>
+    </div>
+
+  </div>
+  <!-- ═══════════════ END SCREENS ═══════════════ -->
+
+  <!-- BOTTOM NAV (4 tabs — Antrenor / Progres / Istoric / Cont) -->
+  <div class="nav" id="bottom-nav">
+    <button class="nav-tab tab-active" data-tab="antrenor" onclick="goto('antrenor')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6.5 6.5L9 9l-2 2-2.5-2.5zM17.5 6.5L15 9l2 2 2.5-2.5zM4 12h16M2 14l3-3M22 14l-3-3M9 9l6 6M15 9l-6 6"/></svg>
+      Antrenor
+    </button>
+    <button class="nav-tab" data-tab="progres" onclick="goto('progres')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M21 7v6h-6"/></svg>
+      Progres
+    </button>
+    <button class="nav-tab" data-tab="istoric" onclick="goto('istoric')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Istoric
+    </button>
+    <button class="nav-tab" data-tab="settings" onclick="goto('settings')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+      Cont
+    </button>
+  </div>
+
+</div>
+<!-- ═══════════════ END PHONE ═══════════════ -->
+
+
+<!-- ═══════════════ DEBUG PICKER (toate 45 ecrane) ═══════════════ -->
+<div class="picker-wrap">
+  <button class="picker-toggle" onclick="togglePicker()">
+    <span>Index ecrane · XLV total</span>
+    <span id="picker-arrow">▾</span>
+  </button>
+  <div class="picker-list" id="picker-list">
+    <button class="picker-item" onclick="goto('splash',{replace:true})"><span class="num">I</span><span class="lbl">Splash</span></button>
+    <button class="picker-item" onclick="goto('auth',{replace:true})"><span class="num">II</span><span class="lbl">Auth</span></button>
+    <button class="picker-item" onclick="goto('onboard',{replace:true})"><span class="num">III</span><span class="lbl">Onb · welcome</span></button>
+    <button class="picker-item" onclick="goto('onb-varsta',{replace:true})"><span class="num">IV</span><span class="lbl">Onb · vârstă</span></button>
+    <button class="picker-item" onclick="goto('onb-sex',{replace:true})"><span class="num">V</span><span class="lbl">Onb · sex</span></button>
+    <button class="picker-item" onclick="goto('onb-medical',{replace:true})"><span class="num">VI</span><span class="lbl">Onb · medical</span></button>
+    <button class="picker-item" onclick="goto('onb-frecventa',{replace:true})"><span class="num">VII</span><span class="lbl">Onb · frecvență</span></button>
+    <button class="picker-item" onclick="goto('medical-disclaimer',{replace:true})"><span class="num">VIII</span><span class="lbl">Disclaimer medical</span></button>
+    <button class="picker-item active" onclick="goto('home',{replace:true})"><span class="num">IX</span><span class="lbl">Home (Antrenor)</span></button>
+    <button class="picker-item" onclick="goto('antrenor',{replace:true})"><span class="num">X</span><span class="lbl">Antrenor · chat</span></button>
+    <button class="picker-item" onclick="goto('sala',{replace:true})"><span class="num">XI</span><span class="lbl">Sala · queue</span></button>
+    <button class="picker-item" onclick="goto('workout',{replace:true})"><span class="num">XII</span><span class="lbl">Workout · activ</span></button>
+    <button class="picker-item" onclick="goto('post-rpe',{replace:true})"><span class="num">XIII</span><span class="lbl">Post-RPE</span></button>
+    <button class="picker-item" onclick="goto('energy-check',{replace:true})"><span class="num">XIV</span><span class="lbl">Energy check</span></button>
+    <button class="picker-item" onclick="goto('energy-cause',{replace:true})"><span class="num">XV</span><span class="lbl">Energy cause</span></button>
+    <button class="picker-item" onclick="goto('pain-button',{replace:true})"><span class="num">XVI</span><span class="lbl">Pain button</span></button>
+    <button class="picker-item" onclick="goto('equipment-swap',{replace:true})"><span class="num">XVII</span><span class="lbl">Equipment swap</span></button>
+    <button class="picker-item" onclick="goto('istoric',{replace:true})"><span class="num">XVIII</span><span class="lbl">Istoric</span></button>
+    <button class="picker-item" onclick="goto('weight-timeline',{replace:true})"><span class="num">XIX</span><span class="lbl">Weight timeline</span></button>
+    <button class="picker-item" onclick="goto('progres',{replace:true})"><span class="num">XX</span><span class="lbl">Progres</span></button>
+    <button class="picker-item" onclick="goto('coach',{replace:true})"><span class="num">XXI</span><span class="lbl">Coach</span></button>
+    <button class="picker-item" onclick="goto('coach-philosophy',{replace:true})"><span class="num">XXII</span><span class="lbl">Coach · philosophy</span></button>
+    <button class="picker-item" onclick="goto('settings',{replace:true})"><span class="num">XXIII</span><span class="lbl">Cont (root)</span></button>
+    <button class="picker-item" onclick="goto('settings-profile',{replace:true})"><span class="num">XXIV</span><span class="lbl">Cont · profil</span></button>
+    <button class="picker-item" onclick="goto('settings-notifications',{replace:true})"><span class="num">XXV</span><span class="lbl">Cont · notificări</span></button>
+    <button class="picker-item" onclick="goto('settings-subscription',{replace:true})"><span class="num">XXVI</span><span class="lbl">Cont · abonament</span></button>
+    <button class="picker-item" onclick="goto('settings-appearance',{replace:true})"><span class="num">XXVII</span><span class="lbl">Cont · aspect</span></button>
+    <button class="picker-item" onclick="goto('settings-themes',{replace:true})"><span class="num">XXVIII</span><span class="lbl">Cont · teme</span></button>
+    <button class="picker-item" onclick="goto('settings-privacy',{replace:true})"><span class="num">XXIX</span><span class="lbl">Cont · privacy</span></button>
+    <button class="picker-item" onclick="goto('settings-terms',{replace:true})"><span class="num">XXX</span><span class="lbl">Cont · termeni</span></button>
+    <button class="picker-item" onclick="goto('settings-prefs',{replace:true})"><span class="num">XXXI</span><span class="lbl">Cont · avansate</span></button>
+    <button class="picker-item" onclick="goto('settings-danger',{replace:true})"><span class="num">XXXII</span><span class="lbl">Cont · danger</span></button>
+    <button class="picker-item" onclick="goto('settings-export',{replace:true})"><span class="num">XXXIII</span><span class="lbl">Cont · export</span></button>
+    <button class="picker-item" onclick="goto('settings-support',{replace:true})"><span class="num">XXXIV</span><span class="lbl">Cont · suport</span></button>
+    <button class="picker-item" onclick="goto('settings-about',{replace:true})"><span class="num">XXXV</span><span class="lbl">Cont · despre</span></button>
+    <button class="picker-item" onclick="goto('settings-faq',{replace:true})"><span class="num">XXXVI</span><span class="lbl">Cont · FAQ</span></button>
+    <button class="picker-item" onclick="goto('confirm-reset-coach',{replace:true})"><span class="num">XXXVII</span><span class="lbl">Confirm · reset</span></button>
+    <button class="picker-item" onclick="goto('confirm-schimba-faza',{replace:true})"><span class="num">XXXVIII</span><span class="lbl">Confirm · fază</span></button>
+    <button class="picker-item" onclick="goto('confirm-redo-onboarding',{replace:true})"><span class="num">XXXIX</span><span class="lbl">Confirm · refacere</span></button>
+    <button class="picker-item" onclick="goto('confirm-logout',{replace:true})"><span class="num">XL</span><span class="lbl">Confirm · logout</span></button>
+    <button class="picker-item" onclick="goto('confirm-delete',{replace:true})"><span class="num">XLI</span><span class="lbl">Confirm · ștergere</span></button>
+    <button class="picker-item" onclick="goto('rest-timer',{replace:true})"><span class="num">XLII</span><span class="lbl">Rest timer</span></button>
+    <button class="picker-item" onclick="goto('checkin-dimineata',{replace:true})"><span class="num">XLIII</span><span class="lbl">Check-in dimineață</span></button>
+    <button class="picker-item" onclick="goto('pb-record',{replace:true})"><span class="num">XLIV</span><span class="lbl">PB record</span></button>
+    <button class="picker-item" onclick="goto('drill-push',{replace:true})"><span class="num">XLV</span><span class="lbl">Drill · push notif</span></button>
+  </div>
+</div>
+
+<script>
+  // ─── Navigation ───────────────────────────────────────────────
+  const tabbedScreens = ['antrenor','progres','istoric','settings','sala','home','workout','coach'];
+  const tabFor = {
+    antrenor:'antrenor', progres:'progres', istoric:'istoric', settings:'settings',
+    sala:'antrenor', home:'antrenor', workout:'antrenor', coach:'antrenor'
+  };
+  const navStack = [];
+
+  function goto(name, opts) {
+    opts = opts || {};
+    const current = document.querySelector('.screen.active');
+    const currentName = current ? current.id.replace('screen-','') : null;
+    if (currentName && currentName !== name && !opts.replace && !opts.back) {
+      navStack.push(currentName);
+    }
+    if (opts.replace) navStack.length = 0;
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + name);
+    if (el) el.classList.add('active');
+
+    // Bottom nav: visible only on top-level tabbed screens
+    const nav = document.getElementById('bottom-nav');
+    const isTabbed = tabbedScreens.includes(name);
+    nav.style.display = isTabbed ? 'flex' : 'none';
+
+    // Update active tab — settings sub + confirm still highlight Cont
+    const activeTab = isTabbed
+      ? (tabFor[name] || name)
+      : (name.startsWith('settings') || name.startsWith('confirm') ? 'settings'
+        : (name === 'weight-timeline' ? 'istoric'
+        : (name === 'coach-philosophy' ? 'antrenor'
+        : (['energy-check','energy-cause','pain-button','equipment-swap','post-rpe','rest-timer','checkin-dimineata','pb-record','medical-disclaimer'].includes(name) ? 'antrenor'
+        : null))));
+    document.querySelectorAll('.nav-tab').forEach(t => {
+      t.classList.toggle('tab-active', t.dataset.tab === activeTab);
+    });
+
+    // Hide global header on splash / auth / onb / drill-push (lock screen)
+    const header = document.getElementById('global-header');
+    if (header) {
+      const hideHeader = ['splash','auth','onboard','onb-varsta','onb-sex','onb-medical','onb-frecventa','drill-push'].includes(name);
+      header.style.display = hideHeader ? 'none' : 'flex';
+    }
+
+    // Update picker active state
+    document.querySelectorAll('.picker-item').forEach(p => p.classList.remove('active'));
+    const pickerBtn = document.querySelector(`.picker-item[onclick*="'${name}'"]`);
+    if (pickerBtn) pickerBtn.classList.add('active');
+
+    // Scroll inner content to top
+    const scroller = el && el.querySelector('.scroll, .scroll-tight');
+    if (scroller) scroller.scrollTop = 0;
+  }
+
+  function back() {
+    const prev = navStack.pop();
+    if (prev) goto(prev, { back: true });
+    else goto('home', { replace: true });
+  }
+
+  // ─── Picker drawer ────────────────────────────────────────────
+  function togglePicker() {
+    const list = document.getElementById('picker-list');
+    const arrow = document.getElementById('picker-arrow');
+    const isOpen = list.classList.toggle('open');
+    arrow.textContent = isOpen ? '▴' : '▾';
+  }
+
+  // ─── Default landing ──────────────────────────────────────────
+  // Splash is active by default; auto-advance to auth after 1.5s
+  setTimeout(() => {
+    const cur = document.querySelector('.screen.active');
+    if (cur && cur.id === 'screen-splash') goto('auth', {replace: true});
+  }, 1500);
+</script>
+
+</body>
+</html>
