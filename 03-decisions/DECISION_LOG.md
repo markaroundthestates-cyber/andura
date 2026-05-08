@@ -1,5 +1,36 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — CURRENT_STATE update post §CC.5 fast handover ingest "ADR 030 Q-OPEN 7/7 + Faza 3 STRANGLER batch 1+2 LANDED" (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~697 PRESERVED unchanged (chat-current 3 commits already accounted prior-ingest în §JUST_DECIDED entries below: ADR 030 Q-OPEN +7 + Faza 3 batch 1 +1 + Faza 3 batch 2 +1 = +9 net cumulative chat-current = ~688 → ~697; acest §CC.5 fast ingest = vault meta-tooling reconciliation NU additive).
+
+**Authority:** Daniel command "Update CURRENT_STATE per inbox handover" 2026-05-08 post §CC.5 fast handover livrare în `📥_inbox/HANDOVER_2026-05-08_chat_birou_adr030_qopen_faza3_batch1_2_LANDED.md`. Per VAULT_RULES §CC.5 Fast Handover Workflow + §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover + §AR.13 PK Growth Control PK Delta line LATEST.
+
+**Decision:** §CC.6 append-only ingest:
+1. Compress current NOW thread (chat NEW startup §CC.5 fast Run 6 elevated complete + side-quest device security + VS Code Desktop birou Y/N pending) → "precedent compressed below this line"
+2. Prepend new NOW thread descriere chat NEW startup post §CC.5 fast handover ingest chat-current 3 commits sequential narrative (ADR 030 Q-OPEN + Faza 3 batch 1 + Faza 3 batch 2) + caveman correction autonomy lock + workflow matured pattern + mid-flight unresolved next chat priority
+3. Add NEW §JUST_DECIDED top entry (descending chronologic) "§CC.5 fast handover ingest ADR 030 Q-OPEN 7/7 + Faza 3 STRANGLER batch 1+2 LANDED"
+4. Update "Updated:" frontmatter line refresh §CC.5 fast handover ingest description
+5. DECISION_LOG entry (acest)
+6. Archive handover consumed → `📤_outbox/_archive/2026-05/254_HANDOVER_2026-05-08_BIROU_ADR030_FAZA3_B12_CONSUMED.md`
+7. Cycle LATEST.md → `📤_outbox/_archive/2026-05/253_LATEST_FAZA3_BATCH2_GOAL_ADAPTATION_CONSUMED.md` (new LATEST §CC.5 fast ingest report)
+
+**Caveman correction critical mid-chat-current Daniel autonomy lock real CTO mode** preserved în CURRENT_STATE §NOW Active narrative + §JUST_DECIDED top entry. Pattern matured workflow trust rest of chat-current (3 commits sequential ZERO slip-uri post caveman correction).
+
+**Strategic axis BLOCKED → UNBLOCKED post chat-current 3 commits:** Faza 3 STRANGLER 2/8 batches LANDED. Remaining 6 batches sequential per ADR 026 §42.10. (a) React migration tactical + (b) Scenarios coverage gap reduction = orthogonal Faza 3, Daniel decide priority next chat dedicat.
+
+**Files modified atomic batch:**
+- UPDATED: 00-index/CURRENT_STATE.md (NOW thread compress + new top NOW + §JUST_DECIDED top entry + Updated header)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+- ARCHIVED: 📥_inbox/HANDOVER_2026-05-08_chat_birou_adr030_qopen_faza3_batch1_2_LANDED.md → 📤_outbox/_archive/2026-05/254_HANDOVER_..._CONSUMED.md
+- CYCLED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/253_LATEST_FAZA3_BATCH2_GOAL_ADAPTATION_CONSUMED.md (new LATEST §CC.5 fast ingest report)
+
+**Backup tag:** `pre-cc5-fast-ingest-faza3-b12-2026-05-08-1216` pushed origin.
+
+**Cross-refs:** Chat-current 3 commits chain (`63f4634` ADR 030 Q-OPEN + `f6d2f58` SHA record + `de4222b` Faza 3 batch 1 Periodization + final SHA + `905946c` Faza 3 batch 2 Goal Adaptation + final SHA record). Plus Run 6 elevated cumulative chain + ADR 030 SPEC FULL V1 LANDED prior. VAULT_RULES §CC.5 + §CC.6 + §CC.9 + §AR.13 + §3.3 archive schema NN continuous (253+254 NEXT post 252).
+
+---
+
 ## 2026-05-08 — Faza 3 STRANGLER batch 2 Goal Adaptation wiring real LANDED (product/architecture additive)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~696 → ~697 (+1 net — first downstream Constraint Object consumer propagation pattern crystallized).
