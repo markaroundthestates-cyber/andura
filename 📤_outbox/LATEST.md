@@ -78,12 +78,12 @@
 
 ## Commits
 
-- TBD post-Write commit (single commit message): `chore(vault): §CC.5 fast handover ingest ADR 030 Q-OPEN 7/7 + Faza 3 STRANGLER batch 1+2 LANDED → cumulative ~697 PRESERVED`
+- `8779b87` chore(vault): §CC.5 fast handover ingest ADR 030 Q-OPEN 7/7 + Faza 3 STRANGLER batch 1+2 LANDED → cumulative ~697 PRESERVED
 
 ## Pushed
 
 - Safety tag `pre-cc5-fast-ingest-faza3-b12-2026-05-08-1216` → origin ✓
-- Commit TBD post
+- Commit `8779b87` → origin/main (`c8f4098..8779b87`) ✅ + tests 2671 PASS pre-commit (gate verified)
 
 ## Issues / Ambiguities
 
