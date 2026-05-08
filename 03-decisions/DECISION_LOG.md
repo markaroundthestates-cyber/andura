@@ -1,5 +1,33 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 chat NEW acasă — REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (+1 LOCKED V1 mapping)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~689 → ~690 (+1 net mapping doc canonical).
+
+**Authority:** Daniel chat-NEW3 birou 2026-05-07 direction LOCK + chat-current acasă 2026-05-08 React migration plan tactical chat dedicat (§NEXT P1 Claude chat per CURRENT_STATE).
+
+**Decision:** Create `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md` canonical SSOT migration reference. 9 sections: current state inventory + Context provider shape + coach scope hooks + component boundaries + engines integration + DB compat + 8-batch strategy + out of scope + cross-refs.
+
+**Tactical scope LOCKED V1 mapping:**
+- AppContext + useReducer (split state/dispatch contexts perf)
+- INITIAL_STATE mirror EXACT current state.js 24 fields (Set → Array 2 fields rationale)
+- 22 action types ACTIONS.* enum dispatch namespace
+- 5 custom hooks coach scope (useDirectorCache + useWakeLock + useSessionTimer + useDraftPersistence + useStorageKey)
+- Component boundaries page-level + Antrenor sub-tree + Onboarding flow + Cont V2 inventar
+- Engines pure imports preserved exact useMemo/useEffect pattern
+- DB layer preserved exact + hook wrapper reactive
+
+**Migration 8 batches estimative 7-10 zile CC continuous (~1-2 săpt per Daniel chat-NEW3 LOCK):** Vite+React scaffold → Router skeleton → state→Context → page shells → Onboarding → Coach session → Settings+auth → Theme picker.
+
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] + [[018-engine-extensibility-architecture]] §2 pure invariant + [[030-decision-cluster-strangler]] D2 preserved.
+
+**Backup tag:** `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin.
+
+**Files modified atomic batch:**
+- 04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md (NEW canonical SSOT ~470 LOC)
+- 03-decisions/DECISION_LOG.md (this entry top descending cronologic)
+- 00-index/CURRENT_STATE.md (header Updated refresh + cumulative ~689 → ~690 + §JUST_DECIDED top entry append + §NOW move-then-replace)
+
 ## 2026-05-08 chat NEW acasă — ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE Vanilla (+1 LOCKED V1 foundation)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~688 → ~689 (+1 net foundation amendment).

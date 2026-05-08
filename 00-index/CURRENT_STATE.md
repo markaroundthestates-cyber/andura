@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-08 chat NEW acasă — §CC.5 fast ingest ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE vanilla (cumulative LOCKED V1 ~688 → ~689, +1 net foundation amendment)
+**Updated:** 2026-05-08 chat NEW acasă — §CC.5 fast ingest REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (cumulative LOCKED V1 ~689 → ~690, +1 net mapping doc)
 **Last LOCKED count (product/architecture):** **~688 LOCKED V1** (+3 net chat-NEW3 birou: React migration direction LOCK strategic Daniel side (1-2 săpt CC continuous time realist, 16 zile zero refactor window optim, state.js arhitectat componentizabil din start single mutable obj + engines pure functions + UI separation = mapping mecanic React) + CD V2 mockup canonical SSOT path `04-architecture/mockups/andura-v2-2026-05-07.html` 2126 LOC ~98-99% spec match (commits `03b9456` mockup canonical + README index folder + `34bd52a` archive cleanup post §CC.5 fast cycle LATEST 213 + handover 214) + Capacity Opțiunea A early trigger LOCK pre-saturation (search `project_knowledge` startup §CC.2 NU surface CURRENT_STATE 4 query-uri = signal valid; plan 3 acțiuni: archive HANDOVER_VAULT_HYGIENE + HANDOVER_MISC + REMOVE/REDIRECT pointers orphane + NU index tests în PK ~150+ files + archive selective HANDOVER_GLOBAL split 7 themes superseded long-term)). Predecessor ~685 LOCKED V1 (+14 net chat-NEW2 birou UX pivot: pivot semantic naming SUPERSEDE chat-NEW1 Sala→Antrenor + Antrenor body comp→Progres + Antrenor tab restructure (Programe MUTATE Progres→Antrenor + Bibliotecă drill 2° + RPE post-sesiune) + Pain/Equipment text drill secundar LOCK V1 + 3 stări energy LOCK V1 NU 5 production drift + bloc closure 8 itemi (Antrenament liber DROP + Filtru/sort DROP + Loghează kcal+proteine DROP + Themes 3 V1 LOCK preserved + Schimbă fază destructive + Progres↔Istoric greutate distincție + Onboarding §63.1 aliniere + Footer v1.0.0 ADD)). Predecessor ~671 LOCKED V1 chat-NEW1 UX brainstorm (4 taburi root SUPERSEDED + naming evolutions + Cont V2 inventar complet + patterns universal drill-down/destructive/SSOT/bilingv RO+EN/selector limbă). Predecessor ~659 PRESERVED post chat-9 closure mecanic (vault hygiene meta-tooling 4 commits cumulative ZERO substantive).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -15,6 +15,27 @@
 ---
 
 ## JUST_DECIDED
+
+**2026-05-08 chat NEW acasă — REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (+1 LOCKED V1 mapping):**
+
+*Daniel chat NEW acasă continuation post ADR 005 §AMENDMENT LANDED (`10e4eb4`). React migration plan tactical chat dedicat continuă cu state.js componentizare mapping artefact. Tactical decisions LOCK Co-CTO scope: AppContext + useReducer split state/dispatch + INITIAL_STATE mirror exact 24 fields + 22 action types ACTIONS.* + 5 custom hooks coach scope + DB layer preserved + engines pure imports preserved. ZERO întreabă pattern matured.*
+
+**9 sections doc canonical:** §1 current state inventory + §2 Context provider shape + §3 coach scope hooks + §4 component boundaries + §5 engines integration + §6 DB compat + §7 8-batch strategy + §8 out of scope + §9 cross-refs.
+
+**Migration 8 batches estimative 7-10 zile CC continuous:** (1) Vite+React 19 scaffold + entry (2) React Router skeleton + 4 root nav routes (3) state.js → AppContext mapping mecanic ZERO logic change (4) Top-level page shells (5) Onboarding §63.1 5 ecrane (6) Coach session UI sub-tree + custom hooks (7) Settings + auth Phase 2 LANDED preserved (8) Theme picker Andura Clasic + Living Body switcher.
+
+**Files modified §CC.5 fast handover ingest atomic batch:**
+- NEW: `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md` canonical SSOT (~470 LOC)
+- UPDATED: `03-decisions/DECISION_LOG.md` (entry top descending cronologic)
+- UPDATED: `00-index/CURRENT_STATE.md` (header Updated + §JUST_DECIDED top entry + §NOW move-then-replace)
+
+**Backup tag:** `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin.
+
+**Cross-refs:** [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] canonical SSOT + [[../03-decisions/030-decision-cluster-strangler]] D2 preserved + [[../03-decisions/018-engine-extensibility-architecture]] §2 pure invariant + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] design tokens.
+
+**Next chat:** per-batch prompts CC tactical 8 batches sequential — Batch 1 Vite+React 19 scaffold next artefact (chat-current continuation OR next chat dedicat per Daniel decide).
+
+---
 
 **2026-05-08 chat NEW acasă — ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE Vanilla (+1 LOCKED V1 foundation):**
 
@@ -39,21 +60,20 @@
 
 ## NOW — Active conversation thread
 
-**Chat NEW acasă 2026-05-08 — §CC.5 fast ingest ADR 005 §AMENDMENT React Migration LOCK V1 (+1 LOCKED V1 foundation):**
+**Chat NEW acasă 2026-05-08 — §CC.5 fast ingest REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (+1 LOCKED V1 mapping):**
 
-Setup: ACASĂ Windows VS Code Desktop + PowerShell, `C:\Users\Daniel\Documents\salafull`. Startup §CC.2 layered read complete (4/4 layers). Pivot direct §NEXT P1 Claude chat React migration plan tactical chat dedicat (post Run 6 elevated 6/6 LANDED birou — strategic axis UNBLOCKED, Daniel decided ordering: React migration plan PRIMUL per §NEXT, NU întreba opțiuni).
+Setup: ACASĂ Windows VS Code Desktop + PowerShell, `C:UsersDanielDocumentssalafull`. Continuare chat-current post ADR 005 §AMENDMENT LANDED (`10e4eb4`, PK Delta -1.15% SOFT PASS, tests 2683 PASS preserved). Pivot direct state.js componentizare mapping per pattern matured §NEXT P1 Claude chat (NU întreabă, decide tactical singur per Co-CTO scope boundary correction chat-NEW3).
 
-ADR 005 §AMENDMENT 2026-05-08 LOCK V1 SUPERSEDE vanilla → React 19 + Vite preserved + JSX. Tactical decisions Co-CTO scope luate fără întreba: Vite preserve + React Router v6 + Context+useReducer + CSS vars preserve + JSX vanilla + engines pure imports + PWA/SW/Firebase/IndexedDB preserve. 8-batch migration ordering estimative 1-2 săpt CC continuous.
+Tactical decisions LOCK chat-current: AppContext + useReducer split state/dispatch + INITIAL_STATE mirror exact 24 fields (Set→Array 2 fields rationale) + 22 action types ACTIONS.* enum + 5 custom hooks coach scope (useDirectorCache TTL 5min + useWakeLock + useSessionTimer + useDraftPersistence + useStorageKey reactive wrapper) + component boundaries 4 routes + Antrenor sub-tree + Onboarding 5 ecrane + Cont V2 inventar + engines pure imports preserved useMemo/useEffect + DB layer preserved exact (NU touch).
 
-**Cumulative LOCKED V1 ~688 → ~689 (+1 net foundation amendment).** Tests baseline 2648 PASS preserved (strategic chat ZERO src changes). PK Delta SOFT band expected (3 file modifications + 1 amendment block).
+**Cumulative LOCKED V1 ~689 → ~690 (+1 net mapping doc canonical).** Tests baseline 2683 PASS preserved (strategic chat ZERO src changes).
 
 **Mid-flight unresolved chat-current continuation:**
-- state.js componentizare mapping artefact next (Context provider scope draft + hook signatures)
-- Per-batch prompts CC tactical 8 batches sequential
+- Per-batch prompts CC tactical 8 batches sequential — Batch 1 Vite+React 19 scaffold next artefact
 - Faza 3 STRANGLER pre-flight scope decisions Co-CTO (deferred until React migration LANDED per §NEXT CC mecanic #4 dependency chain)
 - Scenarios coverage gap reduction P3 Claude chat (deferred until React migration plan tactical complete)
 
-🦫 Bugatti craft — foundation lock primul, implementation tactical urmează.
+🦫 Bugatti craft — mapping canonical SSOT lock primul, per-batch implementation tactical urmează.
 
 ---
 
@@ -1971,6 +1991,24 @@ Section pointers only (NU line numbers — go stale at every HANDOVER edit, navi
 ---
 
 ## RECENT — Older context preserved (truncate to HANDOVER deep când >50 LOC)
+
+**2026-05-08 chat NEW acasă — §CC.5 fast ingest ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE vanilla (precedent thread, demoted from §NOW per chat NEW acasă 2026-05-08 REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT move-then-replace) — preserved integral per §CC.6 (NU rewrite):**
+
+**Chat NEW acasă 2026-05-08 — §CC.5 fast ingest ADR 005 §AMENDMENT React Migration LOCK V1 (+1 LOCKED V1 foundation):**
+
+Setup: ACASĂ Windows VS Code Desktop + PowerShell, `C:\Users\Daniel\Documents\salafull`. Startup §CC.2 layered read complete (4/4 layers). Pivot direct §NEXT P1 Claude chat React migration plan tactical chat dedicat (post Run 6 elevated 6/6 LANDED birou — strategic axis UNBLOCKED, Daniel decided ordering: React migration plan PRIMUL per §NEXT, NU întreba opțiuni).
+
+ADR 005 §AMENDMENT 2026-05-08 LOCK V1 SUPERSEDE vanilla → React 19 + Vite preserved + JSX. Tactical decisions Co-CTO scope luate fără întreba: Vite preserve + React Router v6 + Context+useReducer + CSS vars preserve + JSX vanilla + engines pure imports + PWA/SW/Firebase/IndexedDB preserve. 8-batch migration ordering estimative 1-2 săpt CC continuous.
+
+**Cumulative LOCKED V1 ~688 → ~689 (+1 net foundation amendment).** Tests baseline 2648 PASS preserved (strategic chat ZERO src changes). PK Delta SOFT band expected (3 file modifications + 1 amendment block).
+
+**Mid-flight unresolved chat-current continuation:**
+- state.js componentizare mapping artefact next (Context provider scope draft + hook signatures)
+- Per-batch prompts CC tactical 8 batches sequential
+- Faza 3 STRANGLER pre-flight scope decisions Co-CTO (deferred until React migration LANDED per §NEXT CC mecanic #4 dependency chain)
+- Scenarios coverage gap reduction P3 Claude chat (deferred until React migration plan tactical complete)
+
+🦫 Bugatti craft — foundation lock primul, implementation tactical urmează.
 
 **2026-05-08 chat birou §CC.5 fast handover ingest "Faza 3 STRANGLER batch 3 Energy Adjustment LANDED + side-quest theme V8 Living Body compliance fixe + skin naming convention LOCK V1" (precedent thread, demoted from §NOW per chat NEW acasă 2026-05-08 ADR 005 §AMENDMENT React Migration LOCK V1 move-then-replace) — preserved integral per §CC.6 (NU rewrite):**
 
