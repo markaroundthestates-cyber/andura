@@ -140,8 +140,8 @@
     - §ACTIVE_REFS expanded cu 2 NEW entries (ROOT_NAV_V2 + VAULT_RULES §AR.14+§AR.15) + 1 description update (PRE_LAUNCH_CHECKLIST_V1 Run 6 Task 5 APPEND)
 - **Wikilinks orphane verified:** 0 live orphans (1 documentation-reference inside backticks acceptable, 3 new Task 3 references all resolve correct)
 - **Timestamp consistency:** ✅ CURRENT_STATE + DECISION_LOG + INDEX_MASTER aligned 2026-05-08
-- **Commits:** TBD post-Write atomic Task 6 final
-- **Pushed:** TBD post-commit
+- **Commits:** `83bbe4b` feat(vault-hygiene): Run 6 elevated Task 6 §CC.9 mandatory updates
+- **Pushed:** Commit `83bbe4b` → origin/main (`8be01cf..83bbe4b`) ✅ + tests 2648 PASS pre-commit
 - **Issues:** none
 - **Next:** STOP. Run 6 elevated COMPLETE. Daniel decide priority order chat strategic NEW dedicat.
 
@@ -169,9 +169,13 @@
 
 ### PK Delta self-test §AR.13 (Run 6 elevated cumulative scope)
 
-- Baseline LOC pre-Task-1: 28031 (post §CC.5 fast unified ingest commit `69cb1a6`)
-- Post-Task-6 LOC: TBD final pre-commit (additive: +1 NEW file ROOT_NAV_V2_29_5_7 + §NEXT shrink ~225 lines + DECISION_LOG +3 entries ~115 lines + VAULT_RULES §AR.14+15 +30 lines + PRE_LAUNCH §29.7 APPEND ~70 lines + LATEST.md ~+200 lines + CURRENT_STATE §RECENT add Run 6 §NOW move + INDEX_MASTER stats line ~3 lines)
-- Estimate net Δ: ~+150-300 LOC across 6 tasks (additive new content + §NEXT shrink). Threshold band expected: SOFT (<10%) — well under 20% hard escalation.
+- Baseline LOC pre-Run-6 (post §CC.5 fast unified ingest commit `69cb1a6`): 28031
+- Post-Task-6 final LOC: **28177** (active vault .md excl _archive subtrees + 📥_inbox)
+- Delta LOC: **+146** (additive: NEW ROOT_NAV_V2_29_5_7 + DECISION_LOG +3 entries + VAULT_RULES §AR.14+15 + PRE_LAUNCH §29.7 APPEND + CURRENT_STATE §RECENT add Run 6 §NOW move + INDEX_MASTER stats refresh; offsets: §NEXT shrink ~225 lines net mostly compensated by additions)
+- Delta percent: **+0.52%**
+- Threshold band: ✅ **SOFT (<10%)** — transparent monitoring, no action required
+
+§AR.13 mechanism continues operational across all 6 Run 6 tasks: cumulative additive ~150 LOC net well within soft band, no hard escalation triggered. 3rd operationalized PK Delta verification post Run 5 (+0.22% SOFT) + post §CC.5 fast unified ingest (-0.16% SOFT).
 
 ### Issues consolidated
 
