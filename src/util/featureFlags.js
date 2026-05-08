@@ -72,6 +72,31 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
   goal_adaptation_via_orchestrator: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 3 Energy Adjustment wiring real (ADR 026 §42.10
+  // pipeline #3; second downstream Constraint Object consumer + Forward
+  // Constraint Object Hook 4 propagation per §9.3.1 #5). When ON, coach
+  // decision flow invokes Energy Adjustment via `runPipeline` cu
+  // `energyAdjustmentAdapter`; when OFF, Energy Adjustment remains un-invoked
+  // (orphan pre-Strangler same as Periodization + Goal Adaptation).
+  //
+  // Adapter D2 shape mapping concrete (identical pattern batch 2): orchestrator
+  // slot `meta.constraintObject` → engine-side `meta.periodizationConstraint`
+  // (per §9.3 Cluster 5 Hook 1 convention). Adapter additionally surfaces
+  // `engineResult.meta.forward_constraint_object` (frozen pass-through Hook 4)
+  // as `output.constraintObject` for orchestrator downstream propagation
+  // (Bayesian Nutrition #4 + Tempo #5 + Specialization #6 + Warm-up #7 +
+  // Deload #8 toate consume forwarded Floor/Ceiling).
+  //
+  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
+  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
+  //
+  // Default 0% — production behavior unchanged. Golden-master parity tests
+  // legacy↔orchestrated zero-behavior-change strict în
+  // `src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
+  // Faza 4 smoke validation orchestrated path comportament corect.
+  energy_adjustment_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
