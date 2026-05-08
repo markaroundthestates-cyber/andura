@@ -205,6 +205,46 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
   specialization_via_orchestrator: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 7 Warm-up wiring real (ADR 030 D1-D5 LOCKED V1 +
+  // Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #7 + ADR 026 §9.7
+  // canonical SSOT + ADR 031 SPEC REFERENCE direct). When ON, coach decision flow
+  // invokes Warm-up Engine via orchestrator `runPipeline` cu `warmupAdapter`
+  // cumulative 7-adapter chain (Periodization → Goal Adaptation → Energy
+  // Adjustment → Bayesian Nutrition → Tempo → Specialization → Warm-up); when
+  // OFF, Warm-up remains un-invoked via orchestrator (engine V1 LANDED commit
+  // `20999fb` Faza 2.5 batch 7 standalone, NU yet wired into live coach flow).
+  //
+  // Engine = adaptive warm-up routine 5-10 min Hybrid 1-2 general dynamic + 2-3
+  // specific muscle prep, persona-aware thresholds (Maria 5-10 mobility flow /
+  // Gigica 5-7 dynamic+ramp / Marius 8-10 ramp 50-70-90%), T0 Instant Skip
+  // default §65.3 Source 1 Option A (skipDecision metadata flag — warmup_state
+  // stays ACTIVE pentru T0 fresh fără explicit userOptedSkip per anti-paternalism
+  // ADR 025) + T1+ opt-in expanded routine, optional 2 min text-only cooldown
+  // post-session (§65.4 Source 1 OVERRIDE Q4 reconciled). Hook D1 read-only
+  // consume CO. Convergence Guard orchestrator-level NU engine-emitted
+  // (Specialization/Tempo/Bayesian/Goal Adaptation precedent).
+  //
+  // Adapter D2 shape mapping concrete (identical pattern batches 2-6):
+  // orchestrator slot `meta.constraintObject` → engine-side
+  // `meta.periodizationConstraint` (per §9.7 Cluster D Hook D1 convention).
+  // Engine consumes Constraint Object read-only — adapter follows Specialization
+  // / Tempo / Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
+  // `output.constraintObject`, since engine doesn't emit
+  // `meta.forward_constraint_object` în output blueprint, only
+  // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
+  // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
+  // orchestrator's existing currentCtx chain pentru batch 8 Deload.
+  //
+  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
+  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
+  //
+  // Default 0% — production behavior unchanged. Golden-master parity tests
+  // legacy↔orchestrated zero-behavior-change strict în
+  // `src/coach/orchestrator/__tests__/warmupParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
+  // Faza 4 smoke validation orchestrated path comportament corect.
+  warmup_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
