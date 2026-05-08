@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Andura V7 — 45 Ecrane Mockup</title>
+<title>Andura · Brain Coach</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -2364,34 +2364,99 @@
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
         <div class="head-title">Antrenor</div>
-        <div class="head-tag">⊕ context activ</div>
+        <div class="head-tag">Andrei Popescu</div>
       </div>
-      <div class="scroll-tight" style="display:flex; flex-direction:column;">
-        <div class="chat-stream grow">
-          <div class="chat-tag">— Joi · 09:24 —</div>
-          <div class="bubble bubble-coach">
-            Bună Andrei. Văd că HRV s-a recuperat la 52ms și ai bench peste 80kg săptămâna asta — vrei să mergem cu Upper hipertrofie azi sau preferi un push diferit?
+      <div class="scroll-tight">
+
+        <!-- 1. Coach card — programul săptămânii -->
+        <div class="workout-card active" style="margin-bottom:18px;">
+          <div class="hero-eyebrow" style="margin-bottom:6px;">PROGRAMUL SĂPTĂMÂNII</div>
+          <div class="ex-name" style="font-size:20px; margin-bottom:4px;">Tonifiere · Săpt. 3</div>
+          <div class="ex-meta" style="margin-bottom:12px;">Ziua 3/4 · Push (piept &amp; umeri)</div>
+          <div class="chip-row" style="margin-bottom:14px;">
+            <span class="chip">≈ 52 min</span>
+            <span class="chip">5 exerciții</span>
+            <span class="chip purple">RPE țintă 7.5</span>
           </div>
-          <div class="bubble bubble-user">
-            Mă simt bine, dar genunchiul drept e ușor sensibil de la alergare ieri.
-          </div>
-          <div class="bubble bubble-thinking">
-            ◐ Analizez: cvadriceps + flexie încărcată → swap squat cu leg press, scad amplitudine 70°...
-          </div>
-          <div class="bubble bubble-coach">
-            Înțeles. Astăzi rămâne Upper integral, fără leg work direct. Mâine îți propun mobility + leg press la 70° cu sarcină ușoară. Sună OK?
-          </div>
-          <div class="bubble bubble-user">
-            Perfect. Mergem.
-          </div>
-          <div class="bubble bubble-coach">
-            Să-ți deschid sesiunea? Am pregătit VI exerciții, 52 min, RPE țintă 7.5.
+          <button class="btn-primary" onclick="goto('energy-check')" style="width:100%;">Începe sesiunea →</button>
+        </div>
+
+        <!-- 2. Acces rapid: Energy / Pain / Equipment -->
+        <div class="section">
+          <div class="section-title">ACCES RAPID</div>
+          <div class="row-list">
+            <div class="list-row" onclick="goto('energy-check')">
+              <div class="list-icon">⚡</div>
+              <div><div class="ex-name">Cum te simți astăzi</div><div class="ex-meta">3 stări simple</div></div>
+              <div class="ex-meta">drill ›</div>
+            </div>
+            <div class="list-row" onclick="goto('pain-button')">
+              <div class="list-icon">⚠</div>
+              <div><div class="ex-name">Mă doare ceva</div><div class="ex-meta">siguranța întâi</div></div>
+              <div class="ex-meta">drill ›</div>
+            </div>
+            <div class="list-row" onclick="goto('equipment-swap')">
+              <div class="list-icon">⇄</div>
+              <div><div class="ex-name">Schimbă echipament</div><div class="ex-meta">3 alternative</div></div>
+              <div class="ex-meta">drill ›</div>
+            </div>
+            <div class="list-row" onclick="goto('post-rpe')">
+              <div class="list-icon">◐</div>
+              <div><div class="ex-name">Cum a fost ultima sesiune</div><div class="ex-meta">RPE drill</div></div>
+              <div class="ex-meta">drill ›</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="composer">
-        <input class="composer-input" placeholder="Spune-mi ce simți..." />
-        <button class="composer-send">↑</button>
+
+        <!-- 3. Programe (5 templates) -->
+        <div class="section">
+          <div class="section-title">📋 PROGRAME <span class="count">5 templates</span></div>
+          <div class="row-list">
+            <div class="list-row">
+              <div class="list-icon">💪</div>
+              <div><div class="ex-name">Forță</div><div class="ex-meta">Greutăți mari, repetări puține</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+            <div class="list-row" style="background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02));">
+              <div class="list-icon" style="background: rgba(139,109,255,0.22); color: var(--think);">✓</div>
+              <div><div class="ex-name">Tonifiere · activ</div><div class="ex-meta">Definire musculară</div></div>
+              <div class="ex-meta" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em;">ALES</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">⬇</div>
+              <div><div class="ex-name">Slăbire</div><div class="ex-meta">Deficit caloric structurat</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">❤</div>
+              <div><div class="ex-name">Longevitate</div><div class="ex-meta">Mobility + low-impact</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+            <div class="list-row">
+              <div class="list-icon">⚡</div>
+              <div><div class="ex-name">Sănătate generală</div><div class="ex-meta">Echilibru complet</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Bibliotecă exerciții (drill 2°) -->
+        <div class="section">
+          <div class="section-title">RESURSE</div>
+          <div class="row-list">
+            <div class="list-row">
+              <div class="list-icon">📚</div>
+              <div><div class="ex-name">Bibliotecă exerciții</div><div class="ex-meta">filtre + tutoriale</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+            <div class="list-row" onclick="goto('coach-philosophy')">
+              <div class="list-icon">🧠</div>
+              <div><div class="ex-name">Filosofia coach-ului</div><div class="ex-meta">cum gândește Andrei</div></div>
+              <div class="ex-meta">›</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3343,7 +3408,7 @@
               <div class="list-icon neutral">i</div>
               <div class="list-text">
                 <div class="list-title">Despre Andura</div>
-                <div class="list-sub">v7.4.2 · build 2026.05.08</div>
+                <div class="list-sub">Andura v1.0.0</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3650,37 +3715,37 @@
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
         <div class="head-title">Teme</div>
-        <div class="head-tag">V7 · IV variante</div>
+        <div class="head-tag">4 disponibile</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Skin-ul UI fără să schimbi structura. V7 e default-ul Andura.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Alege paleta. Se aplică instant.</div>
 
         <div class="choice-grid cols-2">
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#faf7f1,#c8412e);color:white;">🤍</div>
+            <div class="choice-label">Andura Clasic</div>
+            <div class="choice-sub">Cremos · implicit</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#07090f,#d4a574);color:white;">🌑</div>
+            <div class="choice-label">Andura Living Body</div>
+            <div class="choice-sub">Navy & auriu cald</div>
+          </button>
+          <button class="choice">
+            <div class="choice-icon" style="background:linear-gradient(135deg,#0a1a3f,#c9a55c);color:white;">💎</div>
+            <div class="choice-label">Andura Luxury</div>
+            <div class="choice-sub">Bleu & champagne</div>
+          </button>
           <button class="choice selected">
-            <div class="choice-icon" style="background:linear-gradient(135deg,#8b6dff,#5dd6e6);color:white;">⬢</div>
-            <div class="choice-label">Brain Purple</div>
-            <div class="choice-sub">V7 default · think focus</div>
-          </button>
-          <button class="choice">
-            <div class="choice-icon" style="background:linear-gradient(135deg,#f59e6b,#ef5a5a);color:white;">☀</div>
-            <div class="choice-label">Forge Orange</div>
-            <div class="choice-sub">Sesiuni intense</div>
-          </button>
-          <button class="choice">
-            <div class="choice-icon" style="background:linear-gradient(135deg,#4ade80,#5dd6e6);color:white;">~</div>
-            <div class="choice-label">Calm Mint</div>
-            <div class="choice-sub">Recovery & deload</div>
-          </button>
-          <button class="choice">
-            <div class="choice-icon" style="background:linear-gradient(135deg,#1a1d26,#3a3e48);color:white;">●</div>
-            <div class="choice-label">Carbon</div>
-            <div class="choice-sub">Minimalist mono</div>
+            <div class="choice-icon" style="background:linear-gradient(135deg,#8b6dff,#5dd6e6);color:white;">🧠</div>
+            <div class="choice-label">Andura Brain Coach</div>
+            <div class="choice-sub">Purple AI gradient</div>
           </button>
         </div>
 
         <div class="footnote">
           <span class="footnote-tag">Notă</span>
-          Tema afectează culorile accent. Skin-ul V7 (chain-of-thought, neuron logo, layout) rămâne identic.
+          4 teme disponibile.
         </div>
       </div>
     </div>
@@ -4057,7 +4122,7 @@
             <circle class="node" cx="12" cy="12" r="1.6"/>
           </svg>
           <div class="splash-mark" style="font-size:32px;">Andura</div>
-          <div class="splash-sub" style="margin-bottom:0;">v 7.4.2 · build 2026.05.08</div>
+          <div class="splash-sub" style="margin-bottom:0;">Andura v1.0.0</div>
         </div>
 
         <div class="row-list">

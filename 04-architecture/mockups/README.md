@@ -13,10 +13,12 @@
 
 ---
 
-## Active SSOT skins
+## Active SSOT skins (4 LANDED)
 
-- **`andura-clasic.html`** — **Andura Clasic** (skin 1, V2 SSOT cremos baseline). Spec V1 ~685 cumulative coverage ~99% post chat-NEW2 birou UX pivot SUPERSEDE chat-NEW1 + bloc closure 8 itemi tactici LOCKED. Current design reference active for implementation phase.
-- **`andura-living-body.html`** — **Andura Living Body** (skin 2, V8 dark navy + auriu cald, compliance fixe LANDED 2026-05-08 chat-current). Theme alternative SSOT post side-quest theme V8 compliance fixe (HRV/BPM scope creep eliminat per ADR 026 §9.3.2 Cluster 2 Q4=A+Q5=A defer biometrics v1.5+ + theme picker swatch reconcile 4 modificări mecanice).
+- **`andura-clasic.html`** — **Andura Clasic** (skin 1, V2 SSOT cremos baseline). Spec V1 ~685 cumulative coverage ~99% post chat-NEW2 birou UX pivot SUPERSEDE chat-NEW1 + bloc closure 8 itemi tactici LOCKED.
+- **`andura-living-body.html`** — **Andura Living Body** (skin 2, V8 dark navy `#07090f` + auriu cald `#d4a574`).
+- **`andura-luxury.html`** — **Andura Luxury** (skin 3, bleu royal `#0a1a3f` + champagne `#c9a55c` + Cormorant Garamond, Bugatti craft aesthetic, Gigel-test compliant cu roman numerals/french formal/latin dates eliminate din text vizibil user; CSS-hidden stage-num/stage-label preserved).
+- **`andura-brain-coach.html`** — **Andura Brain Coach** (skin 4, purple AI gradient `#8b6dff` + `#5dd6e6`, chain-of-thought aesthetic + brain-logo SVG, screen-antrenor canonical V2 SSOT structure post-LLM-chat-replacement 2026-05-08).
 
 ### Coverage scope V2 (Andura Clasic baseline)
 
@@ -49,12 +51,14 @@
 
 ---
 
-## Themes V1 LOCKED (per PRE_LAUNCH_CHECKLIST_V1 §Daniel updates 2026-05-08)
+## Themes V1 LOCKED (4 LANDED 2026-05-08)
 
-**Plan revizuit V2 default + 3 themes "când gata CD":**
-- Andura Clasic = skin 1 LANDED ✅ (baseline V2 SSOT)
-- Andura Living Body = skin 2 LANDED ✅ (V8 compliance fixe)
-- 2 remaining themes "când gata CD" PENDING — theme picker afișează "⋯ Curând" placeholder pentru cele 2 până ready
+**Plan landed:**
+- 🤍 Andura Clasic = skin 1 LANDED ✅ (baseline V2 SSOT cremos)
+- 🌑 Andura Living Body = skin 2 LANDED ✅ (V8 dark navy + auriu cald)
+- 💎 Andura Luxury = skin 3 LANDED ✅ (bleu + champagne + Cormorant, Gigel-test pass)
+- 🧠 Andura Brain Coach = skin 4 LANDED ✅ (purple AI gradient + chain-of-thought)
+- Theme picker uniform cross-skin: 4 cards brand-prefixed + selected = current skin + footer "4 teme disponibile."
 - ⚠️ SUPERSEDED chat-8 carry-forward "6 themes a11y WCAG AA pre-Beta candidate" — NU mai canonical, plan revizuit Daniel updates 2026-05-08 chat NEW PRE_LAUNCH_CHECKLIST_V1 §DROPPED
 
 ---

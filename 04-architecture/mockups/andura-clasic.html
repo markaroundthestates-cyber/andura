@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Andura V2 — Antrenor personal</title>
+<title>Andura · Clasic</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -632,9 +632,9 @@
           <!-- Energy check -->
           <div class="settings-section" style="margin-top:22px;">Cum te simți?</div>
           <div style="display:flex; gap:10px;">
-            <button class="energy-btn" onclick="showToast('Marcăm: în formă')"><span style="font-size:28px;">🟢</span><span class="small-text">În formă</span></button>
-            <button class="energy-btn" onclick="showToast('Marcăm: așa și-așa')"><span style="font-size:28px;">🟡</span><span class="small-text">Așa și-așa</span></button>
-            <button class="energy-btn" onclick="showToast('Adaptăm sesiunea')"><span style="font-size:28px;">🔴</span><span class="small-text">Greu</span></button>
+            <button class="energy-btn" onclick="showToast('Marcăm: Excelent')"><span style="font-size:28px;">🟢</span><span class="small-text">Excelent</span></button>
+            <button class="energy-btn" onclick="showToast('Marcăm: Normal · OK')"><span style="font-size:28px;">🟡</span><span class="small-text">Normal · OK</span></button>
+            <button class="energy-btn" onclick="showToast('Adaptăm sesiunea')"><span style="font-size:28px;">🔴</span><span class="small-text">Obosit</span></button>
           </div>
 
           <!-- Quick links -->
@@ -729,9 +729,9 @@
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
           <p class="body-text" style="color:#3a342d; margin: 4px 0 22px; line-height:1.5;">Coach-ul reduce intensitatea sau schimbă exercițiul. Spune ce simți:</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="onb-opt stack-row" onclick="showToast('Pain noted: durere acută')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="zap" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere acută</div><div class="small-text" style="color:#8a8278;">Stop imediat exercițiu, swap sigur</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Pain noted: disconfort articulație')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="bone"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Disconfort articulație</div><div class="small-text" style="color:#8a8278;">Reducem amplitudine + greutate</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Pain noted: oboseală extremă')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="battery-low"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Oboseală extremă</div><div class="small-text" style="color:#8a8278;">Tăiem volum 30% astăzi</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="zap" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere acută</div><div class="small-text" style="color:#8a8278;">Stop imediat exercițiu, swap sigur</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="bone"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Disconfort articulație</div><div class="small-text" style="color:#8a8278;">Reducem amplitudine + greutate</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="battery-low"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Oboseală extremă</div><div class="small-text" style="color:#8a8278;">Tăiem volum 30% astăzi</div></div></button>
             <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:#8a8278;">Descrie liber</div></div></button>
           </div>
           <div id="pain-altceva" style="display:none; margin-top:14px;">
@@ -1363,27 +1363,33 @@
           <p class="body-text" style="color:#3a342d; margin: 4px 0 18px; line-height:1.5;">Alege paleta. Se aplică instant.</p>
 
           <div class="theme-grid">
-            <button class="theme-card selected" data-theme="alabaster" onclick="pickTheme(this, 'alabaster')">
+            <button class="theme-card selected" data-theme="clasic" onclick="pickTheme(this, 'clasic')">
               <div class="theme-swatch" style="background:linear-gradient(135deg, #faf7f1 0%, #faf7f1 50%, #c8412e 50%, #c8412e 100%);"></div>
-              <div class="theme-name">🤍 Alabaster</div>
-              <div class="theme-meta">Light · implicit</div>
+              <div class="theme-name">🤍 Andura Clasic</div>
+              <div class="theme-meta">Cremos · implicit</div>
               <div class="theme-check"><i data-lucide="check"></i></div>
             </button>
-            <button class="theme-card" data-theme="obsidian" onclick="pickTheme(this, 'obsidian')">
-              <div class="theme-swatch" style="background:linear-gradient(135deg, #0f0e0c 0%, #0f0e0c 50%, #c8412e 50%, #c8412e 100%);"></div>
-              <div class="theme-name">🌑 Obsidian</div>
-              <div class="theme-meta">Dark premium</div>
+            <button class="theme-card" data-theme="living-body" onclick="pickTheme(this, 'living-body')">
+              <div class="theme-swatch" style="background:linear-gradient(135deg, #07090f 0%, #07090f 50%, #d4a574 50%, #d4a574 100%);"></div>
+              <div class="theme-name">🌑 Andura Living Body</div>
+              <div class="theme-meta">Navy &amp; auriu cald</div>
               <div class="theme-check"><i data-lucide="check"></i></div>
             </button>
-            <button class="theme-card" data-theme="carbon" onclick="pickTheme(this, 'carbon')">
-              <div class="theme-swatch" style="background:linear-gradient(135deg, #3a3530 0%, #3a3530 50%, #b8a285 50%, #b8a285 100%);"></div>
-              <div class="theme-name">🪨 Carbon</div>
-              <div class="theme-meta">Mid neutral</div>
+            <button class="theme-card" data-theme="luxury" onclick="pickTheme(this, 'luxury')">
+              <div class="theme-swatch" style="background:linear-gradient(135deg, #0a1a3f 0%, #0a1a3f 50%, #c9a55c 50%, #c9a55c 100%);"></div>
+              <div class="theme-name">💎 Andura Luxury</div>
+              <div class="theme-meta">Bleu &amp; champagne</div>
+              <div class="theme-check"><i data-lucide="check"></i></div>
+            </button>
+            <button class="theme-card" data-theme="brain-coach" onclick="pickTheme(this, 'brain-coach')">
+              <div class="theme-swatch" style="background:linear-gradient(135deg, #8b6dff 0%, #8b6dff 50%, #5dd6e6 50%, #5dd6e6 100%);"></div>
+              <div class="theme-name">🧠 Andura Brain Coach</div>
+              <div class="theme-meta">Purple AI gradient</div>
               <div class="theme-check"><i data-lucide="check"></i></div>
             </button>
           </div>
 
-          <p class="small-text" style="color:#8a8278; text-align:center; margin-top:20px; line-height:1.5;">3 teme V1. Restul candidate vor fi explorate post-Beta.</p>
+          <p class="small-text" style="color:#8a8278; text-align:center; margin-top:20px; line-height:1.5;">4 teme disponibile.</p>
         </div>
       </div>
 
