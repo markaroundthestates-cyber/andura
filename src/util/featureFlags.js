@@ -54,6 +54,24 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici once Daniel cont propriu
   // smoke (Faza 4) validates wiring real comportament corect.
   periodization_via_orchestrator: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 2 Goal Adaptation wiring real (ADR 026 §42.10
+  // pipeline #2; first downstream Constraint Object consumer post Periodization
+  // batch 1 commit `de4222b`). When ON, coach decision flow invokes Goal
+  // Adaptation via `runPipeline` cu `goalAdaptationAdapter`; when OFF, Goal
+  // Adaptation remains un-invoked (orphan pre-Strangler same as Periodization).
+  //
+  // Adapter D2 shape mapping concrete: orchestrator slot `meta.constraintObject`
+  // → engine-side `meta.periodizationConstraint` (per §9.2.5 Cluster 5 Hook 1
+  // convention). Missing upstream Constraint Object = INVALID_INPUT 'hard'
+  // severity halt per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
+  //
+  // Default 0% — production behavior unchanged. Golden-master parity tests
+  // legacy↔orchestrated zero-behavior-change strict în
+  // `src/coach/orchestrator/__tests__/goalAdaptationParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
+  // Faza 4 smoke validation orchestrated path comportament corect.
+  goal_adaptation_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

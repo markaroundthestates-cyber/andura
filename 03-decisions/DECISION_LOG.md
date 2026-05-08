@@ -1,5 +1,50 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — Faza 3 STRANGLER batch 2 Goal Adaptation wiring real LANDED (product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~696 → ~697 (+1 net — first downstream Constraint Object consumer propagation pattern crystallized).
+
+**Authority:** Faza 3 STRANGLER batch 2 = al 2-lea adapter LANDED post batch 1 Periodization (`de4222b`). Pattern follows batch 1 cu critical addition: adapter D2 shape mapping rename `meta.constraintObject` (orchestrator generic propagation slot per batch 1 Periodization adapter surface) → `meta.periodizationConstraint` (engine-specific input field name per ADR 026 §9.2.5 Cluster 5 Hook 1 convention în `src/engine/goalAdaptation/index.js:92`). Hexagonal translation layer per ADR 030 §2.2 D2 thin scope precedent — engine purity ADR 018 §2 preserved (engine reads its expected field, adapter handles propagation slot translation).
+
+**Decision:** Faza 3 batch 2 Goal Adaptation wiring real (ADR 026 §42.10 pipeline #2; first downstream Constraint Object consumer post Periodization batch 1) per STRANGLER pattern:
+
+1. **`src/coach/orchestrator/adapters/goalAdaptationAdapter.js` NEW** — `EngineAdapter` contract D1-D5 + D4 severity. `id: 'goalAdaptation'`. Pure shape mapping cu critical rename `meta.constraintObject` → `meta.periodizationConstraint` (engine input contract per Cluster 5 Hook 1) + Result wrap. ENGINE_THREW + INVALID_INPUT defensive structured err cu severity 'hard' per §3.6 taxonomy table. **Co-CTO tactical lock decision pe missing-CO handling:** când `engineContext.meta.constraintObject == null/undefined` (Periodization NU ran upstream OR ran cu hard severity halt), Goal Adaptation adapter returns `INVALID_INPUT` 'hard' severity per §3.6 fail-safe Anti-Cascade Silent default — contract violation (downstream cannot trust engine output without upstream baseline). Pattern fail-safe Bugatti craft = halt-strict, NU silent compute on missing upstream constraint.
+
+2. **`src/coach/orchestrator/adapters/index.js` UPDATED** — barrel export adds `goalAdaptationAdapter`. Status comment refreshed (batch 1 + batch 2 ✅ LANDED, batches 3-8 PENDING per ADR 026 §42.10 sequential ordering: Energy Adjustment → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload).
+
+3. **`src/util/featureFlags.js` UPDATED** — `goal_adaptation_via_orchestrator: { rollout: 0, default: false }` flag added FLAGS registry. Production behavior unchanged (Goal Adaptation also orphan în coach decision flow legacy per batch 1 pattern — Strangler creates SHELL invocation gated). Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu Faza 4 smoke validation orchestrated path comportament corect.
+
+4. **Golden-master parity tests `src/coach/orchestrator/__tests__/goalAdaptationParity.test.js` NEW** — 10 tests (3 fixture cases T0/T1/T2 zero-behavior-change deep-equal legacy↔orchestrated cu LOAD/DELOAD CO + 5 edge cases: MISSING constraintObject INVALID_INPUT hard halt + ENGINE_THREW hard + BUDGET_EXCEEDED soft continue + sub-span fires cu adapterId='goalAdaptation' + sub-span captures err code+severity on hard halt + 2 pipeline integration tests: Periodization → Goal Adaptation propagation frozen Constraint Object end-to-end + Periodization fails hard → Goal Adaptation skipped downstream halt cascade).
+
+**Faza 3 STRANGLER batch 2 acceptance gate verified:**
+- ✅ Adapter D2 thin scope strict cu rename concrete (NU business logic, doar shape mapping rename + Result wrap)
+- ✅ featureFlag rollout 0% default OFF (production behavior unchanged)
+- ✅ Golden-master parity 3 fixture cases T0/T1/T2 deep-equal (zero-behavior-change strict — DELOAD CO triggers Cluster 3 kcal override signal verified)
+- ✅ MISSING `meta.constraintObject` → `INVALID_INPUT` 'hard' severity halt per §3.6 fail-safe
+- ✅ Pipeline integration test Periodization → Goal Adaptation propagation frozen Constraint Object end-to-end (both adapters succeed, sub-spans both fire)
+- ✅ Pipeline halt cascade: Periodization fails hard → Goal Adaptation skipped
+- ✅ Severity-aware policy taxonomy enforced (ENGINE_THREW/ADAPTER_THREW hard halt; BUDGET_EXCEEDED soft continue)
+- ✅ Sub-span telemetry capture per Q-OPEN-3 RESOLVED V1
+- ✅ Tests 2661 → 2671 PASS (+10 net); ZERO src regression strict
+
+**Files modified atomic batch:**
+- NEW: src/coach/orchestrator/adapters/goalAdaptationAdapter.js
+- NEW: src/coach/orchestrator/__tests__/goalAdaptationParity.test.js
+- UPDATED: src/coach/orchestrator/adapters/index.js (barrel export `goalAdaptationAdapter` + status comment refresh)
+- UPDATED: src/util/featureFlags.js (`goal_adaptation_via_orchestrator` flag default OFF)
+- UPDATED: 00-index/CURRENT_STATE.md (Updated header + §JUST_DECIDED top entry acest)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+- UPDATED: 00-index/INDEX_MASTER.md (stats refresh + Last updated timestamp)
+- CYCLED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/252_LATEST_FAZA3_BATCH1_PERIODIZATION_CONSUMED.md
+
+**Backup tag:** `pre-faza3-batch2-goal-adaptation-wiring-2026-05-08-1156` pushed origin.
+
+**Strategic axis post-resolution:** Faza 3 STRANGLER batch 2 LANDED → next **Faza 3 batch 3 Energy Adjustment wiring** (ADR 026 §42.10 pipeline #3 — `src/engine/energyAdjustment/` V1 LANDED commit `69ec9ce`, ADR 027 SPEC REFERENCE redirect §9.3 SSOT canonical). Pattern adapter Goal Adaptation cu D2 rename = template pentru subsequent 6 batches downstream cu engine-specific field name conventions.
+
+**Cross-refs:** Run 6 elevated cumulative chain + ADR 030 Q-OPEN applied (`63f4634` + `f6d2f58`) + Faza 3 batch 1 Periodization (`de4222b`) + this commit. Plus VAULT_RULES §CC.6 + §CC.9 + §AR.13 PK Delta verification + §3.3 archive schema NN chronologic continuous (252 LATEST cycle prior).
+
+---
+
 ## 2026-05-08 — Faza 3 STRANGLER batch 1 Periodization wiring real LANDED (product/architecture additive)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~695 → ~696 (+1 net — adapter precedent pattern crystallized pentru remaining 7 engines).
