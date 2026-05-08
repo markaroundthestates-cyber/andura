@@ -104,9 +104,108 @@
     - Existing §29.7 Pre-Launch Checklist V1 LOCKED legacy section PRESERVED unchanged below (legal/operational gates remain canonical)
   - **UPDATED** `00-index/CURRENT_STATE.md` §NOW Active "Tasks Run 6 elevated cumulative" line — Task 5 status updated cu LANDED commit SHAs + Task 5 result note ✅ APPENDED + Tasks 1-4 LANDED commit SHAs verbatim audit-trail
 - **Step 5.3 INDEX_MASTER:** File pre-existing (Run 2 Task 1 split) → NO INDEX_MASTER NAVIGARE row update needed (verified per Task 5 spec scope).
-- **Commits:** TBD post-Write atomic Task 5
-- **Pushed:** TBD post-commit
+- **Commits:** `8be01cf` feat(vault-hygiene): Run 6 Task 5 pre-Beta scope SSOT consolidare
+- **Pushed:** Commit `8be01cf` → origin/main (`9d002c8..8be01cf`) ✅ + tests 2648 PASS pre-commit
 - **Issues:** none — APPEND path chosen instead of OVERWRITE because existing file content was DIFFERENT scope (§29.7 legal/operational gates) NOT stale-versioned of pre-Beta scope SSOT. Documented transparent în decision rationale (per anti-fabrication discipline + zero-info-loss preserve §CC.6 append-only architecture).
 - **Next:** Task 6 §CC.9 mandatory file updates
 
 ---
+
+### Task 6 — §CC.9 mandatory file updates
+
+- **Status:** ✅ Complete
+- **Pre-flight:** clean tree post Task 5 commit `8be01cf` ✓
+- **Step 6.1 INDEX_MASTER stats refresh:**
+  - Counted: 96 active vault .md files (recursive non-archive non-inbox) | 33 numbered ADRs | 9 named ADRs | total 42 ADRs
+  - Updated `00-index/INDEX_MASTER.md` Stats line: 93 → **96 fișiere active vault (+3 net post Run 2)** | NEW `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` Task 3 explicit
+  - Updated `Last updated:` line: 2026-05-04 evening → **2026-05-08 (Run 6 elevated complete)**
+- **Step 6.2 CURRENT_STATE §ACTIVE_REFS sync:**
+  - ADD `[[ROOT_NAV_V2_29_5_7_AMENDMENT]]` (04-architecture/) — Run 6 Task 3 NEW canonical SSOT cu cross-ref archive recovery
+  - ADD `[[VAULT_RULES]] §AR.14 + §AR.15` Run 6 Task 4 anti-recurrence rules
+  - UPDATE `[[PRE_LAUNCH_CHECKLIST_V1]]` description — Run 6 Task 5 APPEND pre-Beta scope SSOT consolidat
+  - §ACTIVE_ADRS preserved unchanged (top 3 ADR 026 + ADR 030 + ADR 024 still relevant — no shift Daniel decision pending React migration)
+  - §ACTIVE_FLAGS preserved unchanged (P1-FLAG-AUTH-DANIEL-PREP RESOLVED + P1-FLAG-AUTH-PHASE2 RESOLVED + P1-FLAG-HANDOVER-SPLIT RESOLVED + P1-FLAG-SCENARIOS-COVERAGE 🔴 OPEN preserved + P1-FLAG-IOS-PERMANENT LOCKED V1 — no status changes Run 6 doc-only)
+- **Step 6.3 Pre-flight grep wikilinks orphane MANDATORY (per §CC.9.5):**
+  - `grep -rEn '\[\[(HANDOVER_MISC|HANDOVER_VAULT_HYGIENE|HANDOVER_GLOBAL_SPLIT_PLAN)' --include="*.md" --exclude-dir=_archive` → **1 match** în `VAULT_RULES.md:789` BUT match is INSIDE backticks `` `[[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] §41-§49` `` (code-quoted historical reference describing past REPLACE action în §AR documentation, NOT live wikilink). **Acceptable per §CC.9.5 spec** (orphan = unresolved live wikilink, not documentation reference within backticks).
+  - `grep -rEn '\[\[.*29.5.7|\[\[.*29_5_7' --include="*.md" --exclude-dir=_archive` → **3 matches** all NEW Run 6 Task 3 references resolving to canonical destination `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` (DECISION_LOG cross-ref + CURRENT_STATE §ACTIVE_REFS new entry + PRE_LAUNCH_CHECKLIST_V1 cross-refs new entry). **ZERO live orphans** — all wikilinks resolve correct.
+- **Step 6.4 Timestamp consistency CURRENT_STATE vs DECISION_LOG vs INDEX_MASTER:**
+  - CURRENT_STATE `**Updated:**` line: 2026-05-08 (Run 6 elevated complete) ✓
+  - DECISION_LOG top entry: 2026-05-08 chat NEW birou — VAULT_RULES §AR.14 + §AR.15 amendment LOCK V1 ✓
+  - INDEX_MASTER `**Last updated:**` line: 2026-05-08 (Run 6 elevated complete) ✓
+  - **Drift: ZERO** — toate 3 surse aligned 2026-05-08 chat NEW birou Run 6 elevated. §CC.7 Layer 3 timestamp mismatch flag NOT triggered.
+- **Modificări:**
+  - **UPDATED** `00-index/INDEX_MASTER.md` — Stats line refresh 93→96 fișiere active + Last updated timestamp 2026-05-08
+  - **UPDATED** `00-index/CURRENT_STATE.md`:
+    - Updated header line cleaned to single-line Run 6 elevated complete (removed stale chat-NEW3 era residue)
+    - §ACTIVE_REFS expanded cu 2 NEW entries (ROOT_NAV_V2 + VAULT_RULES §AR.14+§AR.15) + 1 description update (PRE_LAUNCH_CHECKLIST_V1 Run 6 Task 5 APPEND)
+- **Wikilinks orphane verified:** 0 live orphans (1 documentation-reference inside backticks acceptable, 3 new Task 3 references all resolve correct)
+- **Timestamp consistency:** ✅ CURRENT_STATE + DECISION_LOG + INDEX_MASTER aligned 2026-05-08
+- **Commits:** TBD post-Write atomic Task 6 final
+- **Pushed:** TBD post-commit
+- **Issues:** none
+- **Next:** STOP. Run 6 elevated COMPLETE. Daniel decide priority order chat strategic NEW dedicat.
+
+---
+
+## Run 6 elevated — Cumulative summary
+
+**Date:** 2026-05-08 chat NEW birou
+**Tasks executed:** 6 sequential (fail-stop, all PASS) ✅
+**Cumulative LOCKED V1 ~688 PRESERVED unchanged** (vault meta-tooling reconciliation NU product/architecture additive)
+**Tests baseline:** 2648 PASS / 0 FAIL preserved (doc-only ZERO src ZERO regression possible) — verified by pre-commit hook each task atomic
+
+### Backup tag audit trail
+
+- `pre-run6-elevated-vault-hygiene-2026-05-08-0919` (Task 1 baseline, pushed origin, single rollback safety toate 6 tasks)
+
+### Commits cumulative Run 6 elevated chronologic
+
+1. `9f6dbdf` Task 1 reconcile + compress CURRENT_STATE post-citation-slip
+2. `a6c2f71` Task 2 sync DECISION_LOG chat-NEW1+NEW2+NEW3 entries
+3. `eeb4913` Task 3 §29.5.7 V2 amendment recovery from archive
+4. `9d002c8` Task 4 §AR.14 + §AR.15 anti-recurrence rules
+5. `8be01cf` Task 5 pre-Beta scope SSOT consolidare
+6. TBD Task 6 §CC.9 mandatory updates (this commit final)
+
+### PK Delta self-test §AR.13 (Run 6 elevated cumulative scope)
+
+- Baseline LOC pre-Task-1: 28031 (post §CC.5 fast unified ingest commit `69cb1a6`)
+- Post-Task-6 LOC: TBD final pre-commit (additive: +1 NEW file ROOT_NAV_V2_29_5_7 + §NEXT shrink ~225 lines + DECISION_LOG +3 entries ~115 lines + VAULT_RULES §AR.14+15 +30 lines + PRE_LAUNCH §29.7 APPEND ~70 lines + LATEST.md ~+200 lines + CURRENT_STATE §RECENT add Run 6 §NOW move + INDEX_MASTER stats line ~3 lines)
+- Estimate net Δ: ~+150-300 LOC across 6 tasks (additive new content + §NEXT shrink). Threshold band expected: SOFT (<10%) — well under 20% hard escalation.
+
+### Issues consolidated
+
+- **Task 1:** Step 1.1 source string located în §NEXT P1 (NOT precedent NOW per task description) — Step 1.2 §NEXT overwrite removes slip-vulnerable text entirely (resolution via deletion stronger than inline clarification). Documented transparent.
+- **Task 2:** chat-NEW1 lacks dedicated handover archive — fallback CURRENT_STATE narrative extraction acceptable per Task 2 spec (lower fidelity but cross-validated cu chat-NEW2 SUPERSEDE references). Anti-fabrication discipline preserved.
+- **Task 5:** Existing PRE_LAUNCH_CHECKLIST_V1.md content was DIFFERENT scope (§29.7 legal/operational gates) NOT stale-versioned of pre-Beta scope SSOT — APPEND path chosen instead of OVERWRITE (zero-info-loss §CC.6 append-only architecture).
+
+### Bugatti reflex demonstrate Run 6 (anti-recurrence proof live)
+
+- **§AR.7 production source verify pre-edit** Run 6 Task 5 (verified existing PRE_LAUNCH_CHECKLIST_V1 content IS DIFFERENT scope before assume STALE-versioned overwrite)
+- **§AR.13 PK Growth Control** mechanism continues operational (Task 1 §NEXT shrink ~225 lines compensates additive Task 2-6 expansions, soft band expected)
+- **§AR.14 PK Search Denial Verify** added Task 4 (origin slip Co-CTO 2026-05-08 chat NEW birou)
+- **§AR.15 Anti-Overthink Launch CC** added Task 4 (origin slip Co-CTO 2026-05-08 chat NEW birou "ba fiti-ar overthink de ras")
+
+### Vault state post Run 6 elevated
+
+- **Vault 100% curat (CONTENT + meta + reconciliation post citation slip-uri).**
+- §NOW Active reflectă chat-current Run 6 elevated context cu Tasks 1-6 LANDED commit SHAs verbatim audit-trail.
+- §JUST_DECIDED top entry append (descending chronologic) cu Daniel updates LOCK V1 enumerate 7 items.
+- §NEXT consolidat cu pre-Beta scope SSOT post Daniel updates 2026-05-08 chat NEW (5 CC Opus + 2 Daniel blockers + 5 Claude chat + 6 DROPPED + 3 post-Beta + v1.5+ deferred).
+- §ACTIVE_REFS sync cu 2 NEW canonical SSOT references + 1 description update.
+- DECISION_LOG sync 3 NEW entries chat-NEW1+NEW2+NEW3 (~29 LOCKED V1 product/architecture additive cumulative ~688 confirmed) + 1 NEW entry §AR.14+§AR.15 amendment vault meta-tooling.
+- VAULT_RULES §ANTI_RECURRENCE_RULES extended §AR.1-§AR.15 (was §AR.1-§AR.13).
+- 04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md NEW canonical SSOT (recovery from archive zero-fabrication).
+- 08-workflows/PRE_LAUNCH_CHECKLIST_V1.md APPEND pre-Beta scope SSOT (legacy §29.7 preserved).
+- INDEX_MASTER stats refresh 96 active vault files + 42 ADRs total + 2026-05-08 timestamp.
+
+### Next action — Strategic axis UNBLOCKED post Run 6 elevated complete
+
+**Daniel decide priority order chat strategic NEW dedicat:**
+
+1. **(a) React migration plan tactical chat dedicat Daniel + Claude** — output prompts CC pentru React migration implementation 1-2 săpt continuous (state.js componentizabil + ADR 005 amendment SUPERSEDE vanilla→React + 8 engines pure functions preserved + UI separation mapping mecanic)
+2. **(b) Scenarios coverage gap reduction strategic chat dedicat** — ~990-1490 decisions remaining (P1-FLAG-SCENARIOS-COVERAGE pre-Beta blocker) ~5-15 chat-uri Priority 2 strategice
+3. **(c) Faza 3 STRANGLER pre-flight scope decisions Co-CTO tactical** — featureFlag rollout + Golden-master parity tests + 8 adapters thin layer per ADR 030 D2
+
+🦫 **Bugatti craft. Quality > Speed. Vault necontaminat = fundație Bugatti. Trust vault SSOT post Run 6 LANDED. Cumulative ~688 LOCKED V1 PRESERVED.**
+

@@ -1,9 +1,9 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-04 evening (§CHAT_CONTINUITY_PROTOCOL LOCKED V1 — CURRENT_STATE.md live SSOT layer added per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL; preserved post handover ingest §62-§73 — Batch 1-6 + Closure 63 sub-decisions LOCKED V1 + ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-04 evening BATCH 1-6 + cumulative 243 → 306 + Scenarios Coverage PRE-BETA BLOCKER NEW + iOS REJECTED LOCKED PERMANENT).
+**Last updated:** 2026-05-08 (Run 6 elevated complete — 6 tasks sequential vault hygiene reconciliation post Claude chat citation slip-uri root cause analysis; cumulative LOCKED V1 ~688 PRESERVED unchanged vault meta-tooling NU additive).
 **SSOT activ chat-state:** [[CURRENT_STATE]] — **READ FIRST chat NEW startup** (live layered ~200 LOC, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2).
 **SSOT deep archive:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — drill-down doar pentru sections referenced în CURRENT_STATE `## ACTIVE_REFS` (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG).
-**Stats:** 93 fișiere active vault (post 🦫 Run 2 Capacity A LANDED 2026-05-07 — +4 split files Task 1 / -3 archived Task 3 net +1 vs pre-cleanup; 42 ADR-uri active total — 33 numbered 001-033 + 9 named ADR_* — ADR 033 Muscle Memory Index STUB SPEC PLACEHOLDER NEW din §32 split).
+**Stats:** 96 fișiere active vault (post 🦫 Run 6 elevated 2026-05-08 — +1 NEW `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` Task 3 §29.5.7 V2 recovery, vs Run 2 baseline 93 +3 net cumulative); 42 ADR-uri active total — 33 numbered 001-033 + 9 named ADR_* — ADR 033 Muscle Memory Index STUB SPEC PLACEHOLDER NEW din §32 split (no new ADR Run 6).
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---
