@@ -1,5 +1,70 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — Faza 3 STRANGLER batch 3 Energy Adjustment wiring real LANDED + skin naming convention LOCK V1 (product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~697 → ~698 (+1 net — Faza 3 batch 3 Energy Adjustment adapter pattern + Forward CO Hook 4 propagation + skin naming convention LOCK V1 mockup hygiene shift).
+
+**Authority:** Faza 3 STRANGLER batch 3 = al 3-lea adapter LANDED post batch 1 Periodization (`de4222b`) + batch 2 Goal Adaptation (`905946c`). Pattern follows batch 2 cu addition Forward Constraint Object Hook 4 propagation (per ADR 026 §9.3.1 #5 — engine emits `meta.forward_constraint_object` frozen pass-through pentru downstream consumers; adapter surfaces as `output.constraintObject` for orchestrator runPipeline propagation to Bayesian/Tempo/Specialization/Warm-up/Deload). Plus skin naming convention LOCK V1 mockup directory shift de la version+date naming la brand-prefixed skin-themed (kebab-case lowercase cross-platform safety).
+
+**Decision Faza 3 batch 3 Energy Adjustment wiring real (ADR 026 §42.10 pipeline #3) per STRANGLER pattern:**
+
+1. **`src/coach/orchestrator/adapters/energyAdjustmentAdapter.js` NEW** — `EngineAdapter` contract D1-D5 + D4 severity. `id: 'energyAdjustment'`. Pure shape mapping cu rename `meta.constraintObject` → `meta.periodizationConstraint` (engine input contract per Cluster 5 Hook 1 — `src/engine/energyAdjustment/index.js:99` pre-flight grep verify) + Forward CO surface `engineResult.meta.forward_constraint_object` → `output.constraintObject` (Hook 4 propagation per §9.3.1 #5). ENGINE_THREW + INVALID_INPUT defensive structured err cu severity 'hard' per §3.6 taxonomy. **Co-CTO tactical lock missing-CO** identical pattern batch 2: missing upstream CO → INVALID_INPUT 'hard' severity halt per §3.6 fail-safe (contract violation downstream cannot trust without baseline).
+
+2. **`src/coach/orchestrator/adapters/index.js` UPDATED** — barrel export adds `energyAdjustmentAdapter`. Status comment "3/8 adapters wired" (Periodization + Goal Adaptation + Energy Adjustment LANDED, 5 PENDING per ADR 026 §42.10).
+
+3. **`src/util/featureFlags.js` UPDATED** — `energy_adjustment_via_orchestrator: { rollout: 0, default: false }` flag added FLAGS registry. JSDoc explicit pe Forward CO Hook 4 propagation note.
+
+4. **Golden-master parity tests `src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js` NEW** — 12 tests (3 fixture cases T0/T1/T2 cu LOAD/DELOAD CO + 5 edge cases + 4 pipeline integration cu 4-adapter chain Periodization → Goal Adaptation → Energy Adjustment full propagation end-to-end + Forward CO Hook 4 propagation downstream verified frozen reference + cascade halt semantics).
+
+**Decision skin naming convention LOCK V1 mockup directory shift:**
+- **"Andura Clasic"** = skin 1 (V2 SSOT cremos baseline) — Daniel propose, Co-CTO push-back productive cu citation V2 breadcrumb + recomandare brand-prefixed naming
+- **"Andura Living Body"** = skin 2 (V8 dark navy + auriu cald, compliance fixe HRV/BPM scope creep eliminat)
+- Path: `04-architecture/mockups/<skin>.html` kebab-case lowercase cross-platform path safety (NU spațiu fragil CLI/URL escape)
+- Convention shift: de la version+date (`andura-v2-2026-05-07.html`) la skin-themed (`andura-<skin>.html`) — pattern uniform brand-prefixed across mockups
+
+**Side-quest theme V8 Living Body compliance fixe (paralel CC execution):** Daniel uploadat `Andura-V8.html` 2456 LOC mid-CC. Push-back productiv 2 fixe: HRV/BPM `58/62 BPM` hardcoded scope creep biometric V1 vs ADR 026 §9.3.2 Cluster 2 LOCKED V1 (Q4=A+Q5=A defer biometrics v1.5+) + theme card swatch wording contradicție vizual. 4 modificări mecanice aplicate via str_replace pe copie `/home/claude/Andura-V8.html`: scos HTML+CSS dead code `lb-hrv` block + theme picker compliance Alabaster/Obsidian/Carbon swatch reconcile + breadcrumb settings consistency. Output `Andura-V8-compliant.html` 2456 → 2425 linii (-31). Slip Co-CTO mid-side-quest A/B teatru HRV recunoscut + acțiune directă fără auto-flagelare. Citation slip "6 themes" superseded de PRE_LAUNCH_CHECKLIST_V1 §DROPPED — mea culpa rapid.
+
+**Faza 3 STRANGLER batch 3 acceptance gate verified:**
+- ✅ Adapter D2 thin scope strict cu rename input + Forward CO surface output (NO business logic)
+- ✅ featureFlag rollout 0% default OFF
+- ✅ Golden-master parity 3 fixture cases T0/T1/T2 deep-equal zero-behavior-change strict
+- ✅ MISSING `meta.constraintObject` → INVALID_INPUT 'hard' halt per §3.6 fail-safe
+- ✅ Pipeline integration 3-adapter chain Periodization → Goal Adaptation → Energy Adjustment frozen propagation
+- ✅ Forward CO Hook 4 propagation downstream verified frozen reference (4-adapter chain inspector test §9.3.1 #5)
+- ✅ Pipeline halt cascade upstream fail (Periodization OR Goal Adaptation hard) → Energy Adjustment skipped
+- ✅ Severity-aware policy taxonomy enforced
+- ✅ Sub-span telemetry capture per Q-OPEN-3 RESOLVED V1
+- ✅ Tests 2671 → 2683 PASS (+12 net); ZERO src regression strict
+- ✅ Pre-commit hook gate verified twice (atomic per commit)
+
+**Files modified atomic batch (Faza 3 batch 3 chat-current 3 commits prior):**
+- NEW: src/coach/orchestrator/adapters/energyAdjustmentAdapter.js
+- NEW: src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js
+- UPDATED: src/coach/orchestrator/adapters/index.js (barrel export `energyAdjustmentAdapter` + status comment refresh 3/8)
+- UPDATED: src/util/featureFlags.js (`energy_adjustment_via_orchestrator` flag default OFF)
+
+**Files modified §CC.5 ingest commit 1 acest entry (vault docs):**
+- UPDATED: 00-index/CURRENT_STATE.md (Updated header + §NOW move-then-replace + §JUST_DECIDED top entry acest)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+- UPDATED: 00-index/INDEX_MASTER.md (Last updated timestamp + tests count refresh)
+- ARCHIVED: 📥_inbox/HANDOVER_2026-05-08_chat_birou_faza3_batch3_energy_LANDED_skin_naming_lock.md → 📤_outbox/_archive/2026-05/257_HANDOVER_..._CONSUMED.md
+- CYCLED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/256_LATEST_FAZA3_BATCH3_ENERGY_ADJUSTMENT_CONSUMED.md
+
+**Files modified mockup vault hygiene commit 2 separate atomic (per anti-mega-commit pattern PROMPT_CC_HYGIENE.md §4):**
+- DELETED: 04-architecture/mockups/andura-v2-2026-05-07.html (formalizat git rm)
+- NEW: 04-architecture/mockups/andura-clasic.html (skin 1 V2 SSOT cremos baseline)
+- NEW: 04-architecture/mockups/andura-living-body.html (skin 2 V8 compliance fixe LANDED)
+- UPDATED: 04-architecture/mockups/README.md (convention shift skin-themed + skin 2 V8 Living Body LANDED active list)
+- UPDATED: 04-architecture/mockups/andura-clasic.html breadcrumb "Cremos" → "Andura Clasic" consistency naming uniform brand-prefixed
+
+**Backup tag:** `pre-cc5-fast-ingest-faza3-b3-skin-naming-2026-05-08-1306` pushed origin (rollback safety acest ingest + mockup hygiene atomic batch).
+
+**Strategic axis post-resolution:** Faza 3 STRANGLER 3/8 batches LANDED + skin naming LOCK V1 → next **Faza 3 batch 4 Bayesian Nutrition wiring real** (ADR 026 §42.10 pipeline #4 — `src/engine/bayesianNutrition/` V1 LANDED commit `8615ec1` cu normalCdf Abramowitz & Stegun 26.2.17 approximation + Convergence Guard "T2 Unlock" reference-only metadata Hook D4). Pattern crystallized template clear pentru downstream 5 batches.
+
+**Cross-refs:** Faza 3 batch 3 commits chain (`8bd44ae` + `05bb1b0` + `cfe4ed9`) + ADR 026 §9.3 + §9.3.1 #5 Forward CO Hook 4 + ADR 027 SPEC REFERENCE redirect + ADR 030 D1-D5 + Q-OPEN-1→7 RESOLVED V1 + Run 6 elevated cumulative chain. Plus VAULT_RULES §CC.5 + §CC.6 + §CC.9 + §AR.13 PK Delta + §3.3 archive schema NN chronologic continuous (256+257 NEXT post 255).
+
+---
+
 ## 2026-05-08 — CURRENT_STATE update post §CC.5 fast handover ingest "ADR 030 Q-OPEN 7/7 + Faza 3 STRANGLER batch 1+2 LANDED" (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~697 PRESERVED unchanged (chat-current 3 commits already accounted prior-ingest în §JUST_DECIDED entries below: ADR 030 Q-OPEN +7 + Faza 3 batch 1 +1 + Faza 3 batch 2 +1 = +9 net cumulative chat-current = ~688 → ~697; acest §CC.5 fast ingest = vault meta-tooling reconciliation NU additive).

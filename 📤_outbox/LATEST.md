@@ -1,77 +1,108 @@
-# Faza 3 STRANGLER batch 3 Energy Adjustment wiring real
+# §CC.5 fast handover ingest — Faza 3 STRANGLER batch 3 Energy Adjustment LANDED + side-quest theme V8 Living Body compliance fixe + skin naming convention LOCK V1 (2026-05-08)
 
-**Status:** ✅ Complete
-**Date:** 2026-05-08 12:50
-**Run wall-clock:** ~14 min
-**Model:** 🔴 Opus
+**Task:** §CC.5 fast handover ingest (`📥_inbox/HANDOVER_2026-05-08_chat_birou_faza3_batch3_energy_LANDED_skin_naming_lock.md`) — chat-current Faza 3 STRANGLER batch 3 Energy Adjustment wiring real (3 commits: `8bd44ae` adapter+barrel+flag + `05bb1b0` parity tests + `cfe4ed9` LATEST raport) + side-quest theme V8 Living Body compliance fixe paralel CC execution (HRV scope creep eliminat + theme picker swatch reconcile) + skin naming convention LOCK V1 (mockup directory shift de la version+date la brand-prefixed kebab-case lowercase). Bundle complet 2 commits granulare per anti-mega-commit pattern PROMPT_CC_HYGIENE.md §4.
+**Model:** 🔴 OPUS interactive
+**Status:** ✅ COMPLETE (2 commits granulare planned: vault docs ingest + mockup hygiene shift)
+**Predecessor chain:** Faza 3 batch 3 chat-current commits (`8bd44ae` + `05bb1b0` + `cfe4ed9`) → §CC.5 fast Faza 3 batch 1+2 LANDED (`8779b87`) → Run 6 elevated cumulative chain.
 
 ---
 
 ## Pre-flight
 
-- Clean tree post §CC.5 fast ingest (working tree clean) ✅
-- `git pull origin main` already up to date ✅
-- Backup tag `pre-faza3-batch3-energy-wiring-2026-05-08-1240` pushed origin ✅
+- ✅ `git pull origin main` already up to date
+- ✅ Inbox handover saved (untracked) + Faza 3 batch 3 LATEST.md preserved + mockup files filesystem changes Daniel chat-current pending git formalize
+- ✅ Backup tag `pre-cc5-fast-ingest-faza3-b3-skin-naming-2026-05-08-1306` created + pushed origin
+- ✅ PK proxy baseline LOC pre-execution: **28806** (post Faza 3 batch 3 final docs(outbox) cycle)
 
-## Engine field name verdict §2
+## Modificări summary
 
-- **Engine input field:** `meta.periodizationConstraint` (same convention as Goal Adaptation batch 2 — `src/engine/energyAdjustment/index.js:99`)
-- **Engine evaluate signature:** `evaluate(ctx) → EnergyAdjustmentResult` (async, total function NEVER throws per spec)
-- **ENGINE_ID:** `'energyAdjustment'`
-- **Engine emits `forward_constraint_object`:** ✅ YES (`engineResult.meta.forward_constraint_object` per ADR 026 §9.3.1 #5 Output blueprint, frozen pass-through via `forwardConstraintObject(periodizationConstraint)` în crossEngineHooks.js:224 — Hook 4 anti-cascade safeguard)
-- **Adapter mapping:** rename `meta.constraintObject` → `meta.periodizationConstraint` (input) + surface `engineResult.meta.forward_constraint_object` as `output.constraintObject` (output for orchestrator downstream propagation to Bayesian/Tempo/Specialization/Warm-up/Deload batches)
+### COMMIT 1 — vault docs ingest (feat(chat-continuity))
 
-## Modificări
+**`00-index/CURRENT_STATE.md`:**
+- Updated header refresh la 2026-05-08 §CC.5 fast handover ingest "Faza 3 STRANGLER batch 3 Energy Adjustment LANDED + side-quest theme V8 Living Body compliance fixe + skin naming convention LOCK V1" + cumulative ~697 → ~698
+- Replaced Active §NOW cu chat NEW startup §CC.5 fast ingest content:
+  - Faza 3 batch 3 Energy Adjustment wiring real narrative cu 3 commits SHAs verbatim (`8bd44ae` + `05bb1b0` + `cfe4ed9`)
+  - Side-quest theme V8 Living Body compliance fixe paralel CC (Daniel push-back productiv 2 fixe + slip Co-CTO mid-side-quest A/B teatru HRV recunoscut + citation slip "6 themes" superseded mea culpa rapid + 4 modificări mecanice via str_replace `Andura-V8-compliant.html` 2456 → 2425 LOC -31)
+  - Skin naming convention LOCK V1 (Andura Clasic + Andura Living Body brand-prefixed kebab-case lowercase cross-platform path safety)
+  - Daniel-isms tone shifts observed + workflow matured pattern continuat
+  - Mid-flight unresolved next chat priority: Faza 3 batch 4 Bayesian Nutrition (#4 ADR 026 §42.10) + 4 batches remaining sequential + (a)/(b) strategic axis orthogonal
+  - Backup tag pre-§CC.5-fast-ingest verbatim
+- PRECEDENT compressed §NOW chat-current Faza 3 batch 1+2 §CC.5 fast ingest (active prev) — moved-then-replaced compressed paragraph
+- §JUST_DECIDED top entry append: "Faza 3 STRANGLER batch 3 Energy Adjustment wiring real LANDED + skin naming convention LOCK V1 (cumulative ~698, +1 net product/architecture additive)" cu enumerate Faza 3 batch 3 commits + side-quest narrative + skin naming decision + acceptance gate verified + Files modified atomic batch + Backup tag + Cross-refs
 
-- **NEW** `src/coach/orchestrator/adapters/energyAdjustmentAdapter.js` (115 LOC): `EngineAdapter` contract D1-D5 + D4 severity. Pure shape mapping cu rename input + Forward CO surface output. `INVALID_INPUT` 'hard' missing-CO halt + `ENGINE_THREW` 'hard' D4 violation insurance. JSDoc complet ADR 030 + ADR 026 §9.3 + §1.10 + Hexagonal D2 thin scope.
-- **NEW** `src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js` (12 tests, ~417 LOC): 3 fixture cases T0/T1/T2 zero-behavior-change deep-equal legacy↔orchestrated (T0 no-emoji tier 'none' + T1 🟢 emoji LOAD UP eligible + T2 🔴 emoji DELOAD DOWN immediate phase gate) + 5 edge cases (MISSING CO INVALID_INPUT hard halt + ADAPTER_THREW hard halt + BUDGET_EXCEEDED soft continue + sub-span fires cu adapterId='energyAdjustment' + sub-span captures errorCode + severity on hard halt) + 4 pipeline integration tests (3-adapter chain Periodization → Goal Adaptation → Energy Adjustment full propagation end-to-end + Forward CO Hook 4 propagation downstream Hook 4 §9.3.1 #5 frozen reference verified + Periodization fails hard cascade halt all downstream skipped + Goal Adaptation fails hard mid-pipeline → Energy Adjustment skipped).
-- **UPDATED** `src/coach/orchestrator/adapters/index.js`: barrel export adds `energyAdjustmentAdapter`. Status comment refresh "3/8 adapters wired" (Periodization + Goal Adaptation + Energy Adjustment LANDED, 5 PENDING per ADR 026 §42.10 sequential ordering).
-- **UPDATED** `src/util/featureFlags.js`: `energy_adjustment_via_orchestrator: { rollout: 0, default: false }` added FLAGS registry. JSDoc explicit pe Forward CO Hook 4 propagation note + same-pattern-as-batch-2 missing-CO INVALID_INPUT hard severity halt.
+**`03-decisions/DECISION_LOG.md`:**
+- NEW top entry "2026-05-08 — Faza 3 STRANGLER batch 3 Energy Adjustment wiring real LANDED + skin naming convention LOCK V1 (product/architecture additive)" cu detailed Decision sections enumerate (4 modificări Faza 3 batch 3 + skin naming convention + side-quest theme V8 + acceptance gate + Files modified split commit 1+2 + cross-refs)
+
+**`00-index/INDEX_MASTER.md`:**
+- Last updated timestamp refresh + cumulative ~698 + tests 2683 PASS
+
+**Inbox/Outbox cycle:**
+- `📤_outbox/LATEST.md` (Faza 3 batch 3 raport prior `cfe4ed9`) → archive `📤_outbox/_archive/2026-05/256_LATEST_FAZA3_BATCH3_ENERGY_ADJUSTMENT_CONSUMED.md`
+- `📥_inbox/HANDOVER_2026-05-08_chat_birou_faza3_batch3_energy_LANDED_skin_naming_lock.md` → archive `📤_outbox/_archive/2026-05/257_HANDOVER_2026-05-08_BIROU_FAZA3_B3_SKIN_NAMING_CONSUMED.md` + drag-slot cleared
+- New LATEST.md = acest raport §CC.5 fast handover ingest
+
+### COMMIT 2 — mockup vault hygiene shift (chore(vault))
+
+**Mockup directory `04-architecture/mockups/` convention shift:**
+- DELETED: `andura-v2-2026-05-07.html` (formalizat git rm post filesystem delete Daniel chat-current)
+- NEW: `andura-clasic.html` (skin 1 V2 SSOT cremos baseline brand-prefixed naming)
+- NEW: `andura-living-body.html` (skin 2 V8 compliance fixe LANDED chat-current cu HRV scope creep eliminat + theme picker swatch reconcile)
+- UPDATED: `README.md` mockups (convention shift section refresh: skin-themed naming `andura-<skin>.html` kebab-case lowercase + skin 2 V8 Living Body LANDED list active + deprecation note v2-2026-05-07.html)
+- UPDATED: `andura-clasic.html` breadcrumb settings row "Cremos" → "Andura Clasic" (consistency naming uniform brand-prefixed across mockups)
+
+### Cumulative state
+
+- **Cumulative LOCKED V1 ~697 → ~698 (+1 net product/architecture additive)** — Faza 3 STRANGLER batch 3 Energy Adjustment adapter pattern + Forward CO Hook 4 propagation crystallized + skin naming convention LOCK V1 mockup directory shift.
 
 ## Build + Tests
 
-- Tests: 2671 → **2683 PASS** (+12 net new)
-- ZERO src regression strict ✅
-- Pre-commit hook `npm run test:run` PASSED twice (commit 1 + commit 2 atomic gates)
+- Tests baseline **2683 PASS** preserved (NU src changes acest §CC.5 fast ingest — doc-only vault operation, ZERO regression possible)
+- Playwright 28/0 preserved (Run 4 LANDED prior)
+- ZERO src changes acest ingest (mockup .html updates NU touch src/.js production)
+- Pre-commit hook va rula vitest second time auto cu commit gate
 
-## PK Delta §AR.13 self-test
+## PK Delta (per §AR.13 self-test mechanism)
 
-- Baseline LOC pre-execution: 28806 (post §CC.5 fast ingest Faza 3 batch 1+2)
-- Post-execution LOC: same (src/.js files NU counted în PK proxy — adapter + parity tests + featureFlag flag JS additions); LATEST.md cycled archive 255 (excluded from count)
-- Delta: ~0% (acest task = src JS only, NU vault docs additive)
-- Threshold band: ✅ **SOFT** (NU operationalized acest task — vault docs out-of-scope per §11)
+- **Baseline LOC pre-execution:** 28806
+- **Post-execution LOC pre-LATEST-write:** 28938 (+132 LOC additive — CURRENT_STATE §JUST_DECIDED top entry verbose + DECISION_LOG entry verbose + new §NOW Active expanded chat-current narrative + INDEX_MASTER timestamp; src/.js NU counted; mockup .html files NU counted .md PK proxy)
+- **Post-LATEST-write final LOC:** TBD post-write
+- **Delta percent:** TBD (estimate ~+0.5% — similar batch 1+2 §CC.5 ingest magnitude)
+- **Threshold band:** ✅ **SOFT (<10%)** expected — transparent monitoring, no action required
+
+§AR.13 mechanism continues operational: 9th operationalized PK Delta verification post §CC.5 fast Faza 3 batch 1+2 (+0.33%) + Faza 3 batch 3 src JS only (~0%) + Run 6 cumulative + chain prior. Pattern stable additive doc-only operations remain well within soft band.
+
+## Verifications
+
+- ✅ Inbox handover removed (drag-slot cleared)
+- ✅ Archive NN 256 LATEST Faza 3 batch 3 + NN 257 handover §CC.5 fast ingest consumed (continuous chronologic post 255)
+- ✅ CURRENT_STATE.md NEW §NOW Active reflectă chat NEW startup §CC.5 fast ingest Faza 3 batch 3 + side-quest + skin naming + precedent compressed Faza 3 batch 1+2 below + earlier preserved unchanged
+- ✅ §JUST_DECIDED top entry append descending chronologic
+- ✅ Cumulative ~698 LOCKED V1 (+1 net product/architecture)
+- ✅ Tests baseline 2683 PASS preserved
+- ✅ Backup tag `pre-cc5-fast-ingest-faza3-b3-skin-naming-2026-05-08-1306` pushed origin
+- ✅ Mockup convention shift formalized git: v2 deleted + clasic + living-body added + README refresh + clasic breadcrumb consistency
 
 ## Commits
 
-- `8bd44ae` feat(orchestrator): Faza 3 batch 3 Energy Adjustment adapter D2 thin scope + featureFlag rollout 0% (ADR 030 + ADR 026 §9.3 §42.10 pipeline #3)
-- `05bb1b0` test(orchestrator): Energy Adjustment Golden-master parity legacy↔orchestrated + 3-adapter chain integration (Faza 3 batch 3)
+- TBD post-Write commit 1: `feat(chat-continuity): §CC.5 fast handover ingest faza3 batch3 energy + skin naming lock`
+- TBD post-Write commit 2: `chore(vault): mockup convention shift skin-themed — rename V2→Clasic + add Living Body + README + breadcrumb`
 
 ## Pushed
 
-- Safety tag `pre-faza3-batch3-energy-wiring-2026-05-08-1240` → origin ✅
-- Commits `8bd44ae` + `05bb1b0` → origin/main (`9b98e61..05bb1b0`) ✅
-- Pre-commit hook vitest gate verified twice (atomic per commit)
-
-## Acceptance gate verify
-
-- ✅ Adapter D2 thin scope strict (NO business logic, doar shape mapping rename input + Forward CO surface output + Result wrap)
-- ✅ featureFlag rollout 0% default OFF (production behavior unchanged)
-- ✅ Golden-master parity 3 fixture cases T0/T1/T2 deep-equal zero-behavior-change strict
-- ✅ MISSING `meta.constraintObject` → INVALID_INPUT 'hard' halt per §3.6 fail-safe
-- ✅ Pipeline integration 3-adapter chain Periodization → Goal Adaptation → Energy Adjustment propagation frozen Constraint Object end-to-end (3 sub-spans verified)
-- ✅ Forward CO Hook 4 propagation downstream verified frozen reference (4-adapter chain inspector test §9.3.1 #5)
-- ✅ Pipeline halt cascade upstream fail (Periodization OR Goal Adaptation hard) → Energy Adjustment skipped
-- ✅ Severity-aware policy taxonomy enforced (ENGINE_THREW/ADAPTER_THREW hard halt; BUDGET_EXCEEDED soft continue)
-- ✅ Sub-span telemetry capture per Q-OPEN-3 RESOLVED V1
-- ✅ Tests baseline 2671 → 2683 PASS (+12 net); ZERO src regression strict
-- ✅ npm run test:run full PASS pre-commit hook (twice — commit 1 + commit 2)
+- Safety tag `pre-cc5-fast-ingest-faza3-b3-skin-naming-2026-05-08-1306` → origin ✓
+- Commits TBD post (after both granular commits land)
 
 ## Issues / Ambiguities
 
-- **None.** Engine field name verdict §2 unambiguous (`meta.periodizationConstraint` pre-flight grep confirmed). `forward_constraint_object` Hook 4 propagation per ADR 026 §9.3.1 #5 verified pre-flight + surface implemented adapter side. Pipeline integration chain 3-adapter end-to-end verified frozen propagation + cascade halt semantics. Pattern adapter D2 + rename Hexagonal + featureFlag default OFF + Golden-master parity 3 fixtures + missing-prerequisite hard severity + pipeline integration cumulative upstream chain + Forward CO Hook 4 surface + sub-span telemetry = template clear pentru remaining 5 batches downstream (Bayesian Nutrition #4 + Tempo #5 + Specialization #6 + Warm-up #7 + Deload #8).
+- **None.** Daniel chat-current narrative captured verbatim per handover archive source-of-truth (anti-fabrication discipline preserved). Side-quest theme V8 compliance fixe + slip Co-CTO mid-side-quest A/B teatru HRV recunoscut + citation slip "6 themes" superseded mea culpa rapid + skin naming convention LOCK V1 brand-prefixed kebab-case lowercase decision all surfaced clean.
 
-## Next action Daniel
+## Next action
 
-- **§CC.5 fast handover ingest end-of-chat** SAU **continue Faza 3 batch 4 Bayesian Nutrition** (ADR 026 §42.10 pipeline #4 — NEXT downstream Constraint Object consumer cu Bayesian σ variance modifier Q12=C cross-engine integration; engine V1 LANDED commit `8615ec1` Faza 2.5 batch 4 cu normalCdf Abramowitz & Stegun approximation + Convergence Guard "T2 Unlock" reference-only metadata Hook D4)
+**Daniel decide priority order chat strategic NEW dedicat:**
 
-🦫 **Bugatti craft. Quality > Speed. Faza 3 STRANGLER 3/8 batches LANDED pattern crystallized + Forward CO Hook 4 propagation verified. Tests 2683 PASS. ZERO regression.**
+1. **(c-priority) Faza 3 STRANGLER batch 4 Bayesian Nutrition wiring real** — directly continue pattern crystallized (#4 ADR 026 §42.10 pipeline order). Adapter D2 thin + featureFlag `bayesian_nutrition_via_orchestrator` default OFF + Golden-master parity 3 fixtures + missing-prerequisite hard severity halt + pipeline integration cumulative upstream chain (4-adapter chain post batch 3) + sub-span telemetry + Convergence Guard "T2 Unlock" Hook D4 reference-only metadata. Engine V1 LANDED `8615ec1` Faza 2.5 batch 4 cu normalCdf Abramowitz & Stegun 26.2.17 approximation.
+2. **Plus 4 batches remaining sequential** Tempo #5 + Specialization #6 + Warm-up #7 + Deload #8 — toate pattern reusable per template batch 1-3 crystallized. Estimat 1-2 chat-uri remaining batches (velocity 2-3 batches/chat la pattern matured).
+3. **(a) React migration plan tactical chat dedicat Daniel + Claude** — output prompts CC implementation 1-2 săpt continuous (state.js componentizabil + ADR 005 amendment SUPERSEDE vanilla→React + window optim 16 zile chat-NEW3 LOCK direction)
+4. **(b) Scenarios coverage gap reduction strategic chat dedicat** — ~990-1490 decisions remaining (P1-FLAG-SCENARIOS-COVERAGE pre-Beta blocker) ~5-15 chat-uri Priority 2 strategice
+
+🦫 **Bugatti craft. Quality > Speed. Vault clean ready next chat dedicat. Faza 3 STRANGLER 3/8 batches LANDED + skin naming convention LOCK V1 + theme V8 compliant. Cumulative ~698 LOCKED V1. Strategic axis (a)/(b) preserved orthogonal. Daniel decide priority order: continue Faza 3 batch 4 Bayesian Nutrition OR pivot strategic axis.**
