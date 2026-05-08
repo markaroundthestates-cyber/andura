@@ -1,38 +1,40 @@
-# LATEST — ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE vanilla (chat-current acasă 2026-05-08)
+# LATEST — REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (chat-current acasă 2026-05-08)
 
-**Task:** ADR 005 §AMENDMENT 2026-05-08 React Migration LOCK V1 SUPERSEDE vanilla (foundation lock + vault scribe atomic batch)
+**Task:** Create REACT_MIGRATION_STATE_MAPPING_V1.md canonical SSOT (vault scribe doc + atomic batch)
 **Model:** Opus
 **Status:** ✅ Complete
 
 ## Pre-flight
 - Clean tree pre-execution: ✅
-- Backup tag: `pre-adr005-amendment-react-migration-2026-05-08-2051` pushed origin: ✅
-- Files exist verified: ADR 005 + DECISION_LOG + CURRENT_STATE: ✅
+- Backup tag: `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin: ✅
+- Source files exist verified: src/state.js (32 LOC, 24 fields confirmed) + src/pages/coach/state.js (20 LOC, 4 concerns confirmed) + src/db.js (22 LOC, localStorage Tier 0): ✅
+- Target file NOT exists pre-create (avoid overwrite): ✅
+- Anti-hallucination grep: surfaced `src/auth/` directory NU exista — auth files actually `src/auth.js` + `src/pages/auth.js` + `src/pages/authShell.js` (corrected în §6 doc); `src/storage/db.js` separate Tier 1 Dexie IndexedDB layer (clarificat §1.3 + §6 doc — split tier modules)
 
 ## Modificări
-- `03-decisions/005-vanilla-js-no-framework.md`: header SUPERSEDED flag + §AMENDMENT 2026-05-08 final fișier APPEND (~75 LOC added, 22 → 97 lines)
-- `03-decisions/DECISION_LOG.md`: entry top descending cronologic (~28 LOC added)
-- `00-index/CURRENT_STATE.md`: header Updated refresh (legacy paragraph removed) + §JUST_DECIDED top entry NEW heading + §NOW move-then-replace (Faza 3 batch 3 narrative preserved integral → §RECENT top per §CC.6 NU rewrite)
+- `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md`: NEW canonical SSOT (630 LOC, 24,139 bytes) — 9 sections: current state inventory + Context provider shape + coach scope hooks + component boundaries + engines integration + DB compat + 8-batch strategy + out of scope + cross-refs
+- `03-decisions/DECISION_LOG.md`: entry top descending cronologic (~30 LOC added)
+- `00-index/CURRENT_STATE.md`: header Updated refresh + §JUST_DECIDED top entry append + §NOW move-then-replace (precedent ADR 005 §AMENDMENT narrative → §RECENT top per §CC.6 NU rewrite)
 
 ## Build + Tests
-- vitest pre-commit hook: ✅ PASS (2683 PASS / 0 FAIL preserved, 144 test files, 21.60s — ZERO src regression strict)
+- vitest pre-commit hook: ✅ PASS (2683 PASS / 0 FAIL preserved, 144 test files, 21.74s — ZERO src regression)
 - Playwright: untouched (orthogonal vs vitest src baseline)
 
 ## Commits
-- `10e4eb4`: feat(adr-005): React migration LOCK V1 SUPERSEDE vanilla — §AMENDMENT 2026-05-08
+- `da31b25`: feat(arch): React migration state mapping V1 canonical SSOT
 
 ## Pushed
-- origin/main: ✅ pushed (`73580a8..10e4eb4`)
+- origin/main: ✅ pushed (`8a7f4b5..da31b25`)
 
 ## Issues
-- None. Mid-execution housekeeping note transparent: prompt step 3a "Replace existing **Updated:** line" — original line was a single ~22KB paragraph carrying inline §JUST_DECIDED narrative chain. Replaced cleanly via Node surgical line removal post Edit (unicode CRLF + emoji content, beyond practical Edit tool match span). Result identical to prompt-specified short Updated line. §JUST_DECIDED `## JUST_DECIDED` heading nu exista în file (legacy convention had inline references) — created new heading per prompt step 3b directive between chat-startup callout and `## NOW`. NU drift, prompt structural intent honored.
+- None. Anti-hallucination check pre-write surfaced 2 corrections aplicate la doc body: (1) `src/auth/` directory NU exista — corrected la `src/auth.js` + `src/pages/auth.js` + `src/pages/authShell.js` (filesystem grep verified); (2) `src/db.js` only Tier 0 localStorage — Tier 1 Dexie IndexedDB e `src/storage/db.js` separate layer; §1.3 + §6 split tier modules clarified accurate. Nu propagat halucinations propuse în prompt body.
 
 ## PK Delta verify (§AR.13 Growth Control mandatory per-handover)
-- Pre: 611,768 bytes (3 vault files combined: CURRENT_STATE 343,814 + ADR 005 1,024 + DECISION_LOG 266,930)
-- Post: 604,733 bytes (CURRENT_STATE 328,304 + ADR 005 7,552 + DECISION_LOG 268,877)
-- Delta: -7,035 bytes (-1.15%)
-- Band: SOFT ≤10% ✅ (negative net delta — CURRENT_STATE legacy paragraph compression > ADR 005 §AMENDMENT + DECISION_LOG entry additions)
+- Pre: 597,181 bytes (DECISION_LOG 268,877 + CURRENT_STATE 328,304 + new doc 0 pre-create)
+- Post: 627,785 bytes (DECISION_LOG 271,117 + CURRENT_STATE 332,529 + REACT_MIGRATION_STATE_MAPPING_V1 24,139)
+- Delta: +30,604 bytes (+5.12%)
+- Band: SOFT ≤10% ✅ (mostly NEW doc 24KB + DECISION_LOG entry + CURRENT_STATE refactor net +4KB)
 - Verdict: PASS
 
 ## Next action
-- chat-current continuation: state.js componentizare mapping artefact (Context provider scope draft + per-batch prompts CC tactical 8 batches sequential — Vite+React 19 scaffold #1 next).
+- chat-current continuation OR next chat dedicat: Batch 1 Vite+React 19 scaffold prompt CC tactical (per-batch implementation 8 sequential).
