@@ -17,10 +17,32 @@
   - **Step 1.3 — §JUST DECIDED top entry append:** New top entry "2026-05-08 chat NEW birou — Pre-Beta scope SSOT reconciliation + DROP resolved items + deploy DEFER clarification" cu Daniel updates LOCK V1 enumerate 7 items (V2 launch theme #1 + Sala→Antrenor LOCK + cohort 50 SUPERSEDED + Privacy/ToS DROP + suport@ DROP + Validation Hibrid post-Beta + anti-overthink launch CC §AR.15 candidate). Cumulative ~688 PRESERVED.
   - **Step 1.4 — §NOW move-then-replace:** Active §NOW content (chat-current 2026-05-08 §CC.5 fast handover ingest unified) MOVED la TOP §RECENT section (preserve append-only zero-info-loss). Replaced cu new Active §NOW = "Chat NEW birou 2026-05-08 — Run 6 elevated vault hygiene COMPLETĂ + reconciliation post Claude chat citation slip-uri root cause analysis" + Tasks Run 6 elevated cumulative checklist + backup tag chat-current.
   - **Step 1.5 — Updated header timestamp:** Refreshed la `Updated: 2026-05-08 (Run 6 elevated Task 1 reconcile + compress)`.
-- **Commits:** TBD post-Write atomic Task 1
-- **Pushed:** TBD post-commit
+- **Commits:** `9f6dbdf` feat(vault-hygiene): Run 6 Task 1 reconcile CURRENT_STATE post-citation-slip
+- **Pushed:** Commit `9f6dbdf` → origin/main (`836b579..9f6dbdf`) ✅ + tests 2648 PASS pre-commit
 - **Issues:**
   - Step 1.1 source string located in §NEXT P1 (NOT precedent NOW per task description) — Step 1.2 §NEXT overwrite removes the slip-vulnerable text entirely (resolution via deletion, stronger than inline clarification). Documented transparent (NU silent extraction wrong content per §AR-discipline).
 - **Next:** Task 2 sync DECISION_LOG entries
+
+---
+
+### Task 2 — Sync DECISION_LOG entries chat-NEW1+NEW2+NEW3
+
+- **Status:** ✅ Complete
+- **Pre-flight:** clean tree post Task 1 commit `9f6dbdf` ✓ + handover archives located:
+  - chat-NEW3: `📤_outbox/_archive/2026-05/216_HANDOVER_CHATNEW3_BIROU_INGESTED.md` (7567 bytes, full content used)
+  - chat-NEW2: `📤_outbox/_archive/2026-05/214_HANDOVER_CHATNEW2_BIROU_INGESTED.md` (10091 bytes, 14 entries verbatim)
+  - chat-NEW1: NO dedicated archive (chat-NEW1 ingested direct CURRENT_STATE without standalone handover artefact preserved). Fallback per Task 2 spec acceptable: CURRENT_STATE §JUST_DECIDED + precedent §NOW chat-NEW1 narrative summary used (12 entries extracted) + chat-NEW2 archive SUPERSEDE references cross-validated.
+- **Modificări `03-decisions/DECISION_LOG.md`:**
+  - 3 NEW entries appended chronologic descending position (between existing 2026-05-08 vault meta-tooling top entry and 2026-05-07 §AR.13 vault meta-tooling next entry):
+    - **2026-05-07 chat-NEW3 birou** (+3 LOCKED V1: React migration direction LOCK strategic + CD V2 mockup canonical SSOT path `Andura-V2.html` 2126 LOC ~98-99% spec match + Capacity Opțiunea A early trigger LOCK pre-saturation)
+    - **2026-05-07 chat-NEW2 birou** (+14 LOCKED V1 verbatim handover archive: 1 pivot semantic naming SUPERSEDE + 3 Antrenor tab restructure (Programe MUTATE/Bibliotecă drill 2°/RPE post-sesiune) + 1 Pain+Equipment text drill secundar + 1 3 stări energy + 8 bloc closure tactici (Antrenament liber DROP/Filtru/sort DROP/Loghează kcal+proteine DROP/Themes 3 V1 LOCK preserved/Schimbă fază destructive/Progres↔Istoric distincție/Onboarding §63.1/Footer v1.0.0))
+    - **2026-05-07 chat-NEW1 acasă** (+12 LOCKED V1 narrative extraction: 4 root nav + naming evolutions + body comp + sport sesiune labels SUPERSEDED chat-NEW2 + Cont V2 inventar + 3 patterns universal + bilingv §29.5 V2 + selector limbă + mockup CD V1 review + 3 push-back CD V2)
+  - Entry count post-sync: 52 → 55 (+3 new entries verified `grep -c "^## "`)
+  - Cumulative ~688 LOCKED V1 confirmed în each entry status line + cross-refs valid (CURRENT_STATE + handover archives + ADR 023 + ADR 026 §9.3 + ADR 027 + ONBOARDING_SSOT_V1 §63.1 + PRODUCT_STRATEGY §3.5 + §29.5.1 Themes V1)
+- **Commits:** TBD post-Write atomic Task 2
+- **Pushed:** TBD post-commit
+- **Issues:**
+  - chat-NEW1 lacks dedicated handover archive — fallback CURRENT_STATE narrative extraction acceptable per Task 2 spec (lower fidelity than handover archive verbatim, but entries cross-validated cu chat-NEW2 archive SUPERSEDE references). Documented transparent în chat-NEW1 entry "Source" line + Cross-refs (anti-fabrication discipline preserved — entries derived from CURRENT_STATE narrative, NOT invented).
+- **Next:** Task 3 §29.5.7 V2 amendment verify + recovery from archive if needed
 
 ---

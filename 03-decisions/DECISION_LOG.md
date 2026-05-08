@@ -27,6 +27,97 @@
 
 ---
 
+## 2026-05-07 chat-NEW3 birou — React migration direction LOCK + CD V2 mockup canonical SSOT + Capacity Opțiunea A early trigger (+3 LOCKED V1 product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~685 → ~688 (+3 net chat-NEW3).
+
+**Authority:** Daniel chat strategic post-design closure 2026-05-07 birou (Codespaces `/workspaces/salafull`, bash) — direction LOCK React migration confirmed *"pt react mai avem chat strategic? avem totul discutat"*. Time realist 1-2 săpt CC continuous (NU 3-6 săpt human dev solo, NU 5-7 zile fanboying inflated). Reasoning consolidat post Daniel push-back-uri substantial: 16 zile de la 0 = window optim refactor pre-debt accumulation + non-dev workflow CC scriu/citesc velocity reading code irelevant + RO broadband top 5 mondial bundle null + state.js arhitectat componentizabil din start (single mutable obj + engines pure functions + UI separation = mapping mecanic React fără rewrite logic).
+
+**3 LOCKED V1 entries:**
+1. **React migration direction LOCK strategic Daniel side** — direction confirmed, NU strategic chat needed. Tactical execution rămâne pending Daniel ordering decision (ADR 005 amendment SUPERSEDE vanilla → React + scribe + migration plan CC mecanic). Slip-uri Co-CTO mele acceptate mea culpa rapid: "refuz" boundary overreach (decizie strategică = Daniel scope, tactical = Co-CTO) + "5-7 zile fantasy" inflated assumption opposite + sloppy "Maria 65 phone older JS engine" stereotype.
+2. **CD V2 mockup canonical SSOT path LANDED** — Daniel paste prompt CD V2 generated chat (full re-aliniere spec V1 LOCKED ~685 cumulative; 10 categorii A-J: root nav 4 taburi + Antrenor restructure + Progres/Istoric scope-cuts + Cont V2 inventar + Onboarding §63.1 + 3 stări energy + selector limbă RO/EN + persona switcher remove + vestigial cleanup). CD livrat `04-architecture/mockups/andura-v2-2026-05-07.html` 2126 LOC ~98-99% spec match near-complete. 1 push-back productive substantial: "Pilot Automat" preserved literal (slip prompt drafting). Daniel a redenumit manual "Pilot Automat" → "Auto" post-CD. 2 commits CC LANDED: `03b9456` mockup canonical path + README index folder cu coverage scope V2 enumerated + cross-refs vault SSOT + `34bd52a` archive cleanup post §CC.5 fast cycle LATEST 213 + handover 214.
+3. **Capacity Opțiunea A early trigger LOCK pre-saturation** — Daniel question strategic *"vaultul nostru nu e prea mare? indexăm prea multe în PK acum că totul stabilit?"* = early signal valid pre-saturation (era DEFERRED ~95% saturation OR pre-Faza 3 carry-over chat-9). Confirm concret: la startup §CC.2 search `project_knowledge` NU a surface `CURRENT_STATE.md` în 4 query-uri — tokens diluted. Plan 3 acțiuni priority: (a) Capacity A LANDED archive `HANDOVER_VAULT_HYGIENE` + `HANDOVER_MISC` + REMOVE/REDIRECT pointers orphane CURRENT_STATE §ACTIVE_REFS + pre-flight grep wikilinks orphane mandatory + (b) NU index tests în PK (`src/engine/*/__tests__/` ~150+ files mare consumer tokens) + (c) archive selective HANDOVER_GLOBAL split 7 themes superseded SSOT (long-term post-Faza 3).
+
+**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW3 narrative + `Andura-V2.html` mockup + Capacity A spec preserved | [[../03-decisions/005-vanilla-js-stack]] amendment scope draft pending Co-CTO tactical chat dedicat | Run 2 LANDED Capacity A archive `28598a9` (post chat-NEW3 deploy) | handover archive source `📤_outbox/_archive/2026-05/216_HANDOVER_CHATNEW3_BIROU_INGESTED.md` verbatim.
+
+---
+
+## 2026-05-07 chat-NEW2 birou — UX pivot Antrenor/Progres + Antrenor tab restructure + bloc closure 8 itemi tactici (+14 LOCKED V1 product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~671 → ~685 (+14 net chat-NEW2).
+
+**Authority:** Daniel chat strategic 2026-05-07 birou continuation chat-NEW1 acasă — mood productiv direct articulate clar pe instincte semantice (*"denumirea mi se pare mai umana asa... si in chat 1 asta am vrut sa zic"*), articulate închidere mode *"vreau să terminăm cu itemii pending"*. Schema xlsx `andura_2.xlsx` mapping butoane fiecare tab uploadat sursă verificare. Source-of-truth verbatim: `📤_outbox/_archive/2026-05/214_HANDOVER_CHATNEW2_BIROU_INGESTED.md`.
+
+**14 LOCKED V1 entries (verbatim handover archive):**
+
+1. **Pivot semantic naming root nav SUPERSEDE chat-NEW1** — "Sala" (chat-NEW1) → **"Antrenor"** (cine te ghidează în sală — sport sesiune log seturi/RPE/timer) + "Antrenor" body comp (chat-NEW1) → **"Progres"** (body comp + nutriție + Auto + sport plan supervision — măsori NU te antrenezi). Subtitle xlsx Daniel verbatim: *"Antrenor = cine te ghidează în sală. Progres = body comp & nutriție. Istoric = trecut. Cont = admin."* **Root nav primary V2 SUPERSEDE LOCK 4 taburi: Antrenor / Progres / Istoric / Cont.**
+
+2. **Antrenor tab restructure — Programe MUTATE Progres→Antrenor** — Programe (5 templates) MUTATE din Progres → Antrenor sub secțiune nouă `📋 PROGRAM` + Programul săptămânii (semantic correct — programele = ce rulează antrenorul).
+
+3. **Antrenor tab restructure — Bibliotecă exerciții drill 2°** — Bibliotecă exerciții → drill 2° (NU first-class pagina principală, frecvență click rară post-onboarding).
+
+4. **Antrenor tab restructure — POST-SESIUNE RPE / Recovery rating** — POST-SESIUNE adaugă "RPE / Recovery rating" (push-back productive Co-CTO — DECISION_LOG batch 5 §66 cross-ref).
+
+5. **Pain text + Equipment text drill secundar LOCKED V1** — Per ADR 023 §36.38 (Pain) + §36.55.2/§36.81.2 (Equipment) — singurele 2 trigger points LLM intent classification permise. NU first-class pagina principală Antrenor (xlsx-ul inițial le-avea acolo) — Gigel test fail "ce vrea de la mine?". Pain text drill: sub Pain Button modal (toggle "Altceva" Marius power user post 3 opțiuni predefined). Equipment text drill: sub Swap exercițiu flow (când smart-routing nu prinde). Mea culpa amnezia Co-CTO ADR 023 (Daniel *"Din specul tău..."*) calm corect, action clarify rapid.
+
+6. **3 stări energy LOCKED V1 (NU 5 production drift)** — 🟢 Excelent / 🟡 Normal-Ok / 🔴 Obosit-Slab + drill strict 🔴 only 4 cauze (stres/somn/durere/altul). Per §36.82.1 + ADR 026 §9.3 + ADR 027 + `src/engine/energyAdjustment/constants.js` `AGGREGATION_RULES_TABLE` deja codat 3-state (green→UP eligible / yellow→NONE / red→DOWN immediate). Production are 5 stări (1-5 emoji) = drift care va fi refactor la 6→4. Spec V1 LOCKED câștigă peste production drift. Naming xlsx clarificat semantic Engine Energy NU Readiness/Vitality.
+
+7. **Antrenament liber DROP V1** → defer v1.5+ (frecvență scăzută Marius post-luni, Maria zero need, custom exercises deja INTERZIS V1 PRODUCT_STRATEGY §3.2). Pattern scope-cut consistent Notifications/Badges.
+
+8. **Filtru/sort istoric DROP V1** → defer v1.5 (lista cronologică minimalistă §29.5.9 LOCKED suficient, power user only post-luni).
+
+9. **Loghează kcal + proteine DROP V1** → PRODUCT_STRATEGY §3.5 amended 2026-04-30 EXPLICIT *"Nutrition logging = OUT_OF_SCOPE v1. NU facem nutriție Dacia."* Bayesian Nutrition INFERENCE = motor pasiv backend NU buton user. Păstrează DOAR "Loghează greutate" (weight tracking in scope).
+
+10. **Themes 3 V1 LOCKED preserved** — per §29.5.1 (Obsidian/Alabaster/Carbon). 6 candidate (Editorial/Warm/Living Body/Nature/Bugatti/AI Brain) = "ne mai gandim" dormant chat-8 NU LOCKED, post-Beta scope. Producția implementată 3 (forge/zen/anime) = re-naming dar count match.
+
+11. **Schimbă fază manual destructive confirm pattern LOCK V2 universal** — icon ⚠️ + warning + Confirmă roșu/Anulează neutru, drill-down page. Wording draft: *"Schimbi faza activă manual? Aceasta resetează unele calibrări. Continui?"*
+
+12. **Progres↔Istoric greutate distincție UX** — Progres "Greutate trend 7z snapshot" = mini-chart spark inline static NO tap drill (quick glance) / Istoric "Greutate & BF full timeline" = drill range selector 30/60/90/Tot + photo progress + BF tracking (deep analysis). Pattern SSOT 1-write multi-read deja LOCKED reused.
+
+13. **Onboarding aliniere spec EXISTING `01-vision/ONBOARDING_SSOT_V1.md` §AMENDMENT 2026-05-04 Batch 2 §63.1** — Order LOCKED: Obiectiv→Vârstă→Sex→Istoric medical simplu→Frecvență (<45 sec target). Nume + Greutate + Înălțime MOVED post-onboarding la Profile. xlsx-ul "5 ecrane <60s" generic = aliniază.
+
+14. **Footer "Andura v1.0.0" text gri ADD** — confirm chat-NEW1 spec, Daniel "o sa punem aia".
+
+**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW2 narrative summary | handover archive source `📤_outbox/_archive/2026-05/214_HANDOVER_CHATNEW2_BIROU_INGESTED.md` verbatim | [[ADR_023]] §36.38 Pain text + §36.55.2/§36.81.2 Equipment text intent classification | ADR 026 §9.3 + ADR 027 Engine Energy 3-state aggregation | PRODUCT_STRATEGY §3.5 Nutrition OUT_OF_SCOPE | §29.5.1 Themes V1 + §29.5.9 Istoric minimalist | ONBOARDING_SSOT_V1 §63.1 Order + post-onboarding fields.
+
+---
+
+## 2026-05-07 chat-NEW1 acasă — UX brainstorm root nav + Cont V2 inventar + naming pivot + patterns universal + selector limbă + mockup CD V1 review (+12 LOCKED V1 product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~659 → ~671 (+12 net chat-NEW1). ⚠️ **NAMING SUPERSEDED chat-NEW2 birou pivot 2026-05-07** ("Sala"→"Antrenor" + "Antrenor" body comp→"Progres" V2 LOCK Antrenor/Progres/Istoric/Cont per Daniel *"denumirea mi se pare mai umana"*).
+
+**Authority:** Daniel chat strategic 2026-05-07 acasă — UX brainstorm chat dedicat post Vault Hygiene Sprint complete. Mood productiv "am chef de design", warm bond moments natural (*"tataie"*, glumă *"ce m-aș face fără voi... poverty :))"*), articulate framework Bugatti separation of concerns (*"motor de camion sub capotă Bugatti = catastrofă"*). Push-back productive activ ambele direcții. Source: CURRENT_STATE §JUST_DECIDED chat-NEW1 precedent narrative summary (NU dedicated archive — chat-NEW1 ingested direct CURRENT_STATE without standalone handover artefact preserved; fallback narrative extraction acceptable per Task 2 spec).
+
+**12 LOCKED V1 entries (extracted from CURRENT_STATE §JUST_DECIDED narrative + chat-NEW2 archive references chat-NEW1 SUPERSEDE):**
+
+1. **Root nav primary V1 LOCKED 4 taburi distincte non-overlapping** (Sala/Antrenor/Istoric/Cont — ⚠️ SUPERSEDED chat-NEW2 → Antrenor/Progres/Istoric/Cont). Replaces spec V1 §29.5.7 trio Azi/Istoric/Profil → amendment §29.5.7 V2 LOCKED. Drift production 6→4 taburi de implementat.
+
+2. **Naming evolution: "Coach" → "Antrenor"** (RO pure, drop Anglicisms inconsistent).
+
+3. **Naming evolution: "Pilot Automat" → "Auto"** simplified (concision + scan-friendly).
+
+4. **Body comp tab = "Antrenor" (IRL holistic argument)** — ⚠️ SUPERSEDED chat-NEW2 → "Progres" (Daniel retracted — "Antrenor" semantic mai bun pentru sport sesiune cine te ghidează în sală).
+
+5. **Sport sesiune tab = "Sala"** verdict explicit pending — ⚠️ SUPERSEDED chat-NEW2 → "Antrenor" V2 LOCK final.
+
+6. **Cont V2 inventar LOCKED complet** (artefacte vault: `prompt-claude-design-andura-v2.md` + `inventar-tab-cont-spec-v2.md`) — header avatar inițial+nume+email + CONT (Profil&ținte / Notificări / Abonament placeholder) + GENERAL (Aspect→Themes drill 4 themes labels TBD + Setări→Resetează coach+Refă onboarding) + DATE&CONFIDENȚIALITATE (Politica/Termeni/Descarcă JSON) + ZONĂ SENSIBILĂ drill separate (Logout+Delete 30 zile grație) + Footer (Suport/Despre Andura/FAQ/v1.0.0 text gri).
+
+7. **Pattern drill-down universal physical pages LOCKED V1 universal** — ZERO modals/dropdowns/accordion (back button PWA history real navStack).
+
+8. **Pattern destructive confirm warning page LOCKED V1 universal** — icon+text+2 butoane (Confirmă roșu/Anulează neutru).
+
+9. **Pattern SSOT data layer LOCKED V1** — 1 write entry per metric multi-read views.
+
+10. **§29.5 V2 amendment bilingv RO+EN launch LOCKED** (NU mai e RO pure) — pre-Beta launch readiness.
+
+11. **Selector limbă text toggle "RO/EN" Apple-style state-flip LOCKED V1** — inline header (NU steguleț — argument valid: stegul ≠ limbă, RO/MD diaspora; NU dropdown — zero-dropdown rule), vizibil cross-cutting toate taburi root.
+
+12. **Mockup CD V1 review Bugatti excellent overall + 3 push-back-uri carry CD V2** — Andura-V1.html review: Cont V2 implementat faithfully + 4 taburi root match + pattern destructive perfect (4 confirm pages drill-down: reset-coach/redo-onboarding/logout/delete) + navigation back-stack real navStack + lang toggle visual-only correct + paleta warm paper + brick + olive + deep blue + Lora serif coach quotes Bugatti artistic touch + persona-aware text scaling. **3 modificări push-back productive flag-ate CD V2:** 🚨 CRITIC modal-medical onboarding (line 493+1755 `showMedicalModal()`) violation pattern V2 zero-modal universal → convert drill-down page confirm + 🟡 MINOR modal-logout dead code (line 1524+1757) cleanup HTML/CSS/JS + 🟡 CLARIFY persona switcher mock-only sau production (suggest mock-only — overlap Cont>Profil&ținte oricum).
+
+**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW1 narrative summary (precedent §NOW compressed) | handover archive source: NO dedicated chat-NEW1 archive — fallback CURRENT_STATE narrative extraction acceptable per Task 2 anti-fabrication discipline | §29.5.7 V2 amendment carry-forward Task 3 verify migration ADR 026 §9.X canonical SAU recovery extraction din `📤_outbox/_archive/2026-05/223_HANDOVER_MISC_2026-04-30_evening_CAPACITY_A_DEPRECATED.md` standalone canonical | chat-NEW2 SUPERSEDE references (NN 214 archive line 7-12 verbatim).
+
+---
+
 ## 2026-05-07 — VAULT_RULES §AR.13 PK Growth Control Per Sesiune amendment LOCK V1 (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged.
