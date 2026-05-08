@@ -1,5 +1,33 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 chat NEW acasă — ADR 005 §AMENDMENT React Migration LOCK V1 SUPERSEDE Vanilla (+1 LOCKED V1 foundation)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~688 → ~689 (+1 net foundation amendment).
+
+**Authority:** Daniel chat-NEW3 birou 2026-05-07 direction LOCK strategic + chat-current acasă 2026-05-08 React migration plan tactical chat dedicat (§NEXT P1 Claude chat per CURRENT_STATE).
+
+**Decision SUPERSEDE:** Original ADR 005 vanilla (2026-04-23) → React 19 + Vite preserved + JSX. Engines pure functions preserved exact. Effort 1-2 săpt CC continuous.
+
+**Tactical scope LOCKED V1:**
+- Build: Vite preserved (`@vitejs/plugin-react`)
+- Routing: React Router v6
+- State: Context API + useReducer (NO Redux)
+- CSS: CSS variables existing preserve (V2 mockup tokens)
+- Lang: vanilla JSX (NU TS V1, separate decision v1.5+)
+- Engines: pure functions imports preserved exact
+- PWA + SW + Firebase + IndexedDB: preserved exact
+
+**Migration ordering 8 batches:** Vite+React scaffold → Router skeleton → state.js→Context → page shells → Onboarding → Coach session → Settings+auth → Theme picker. Per-batch prompts CC tactical urmează.
+
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[030-decision-cluster-strangler]] D2 orchestrator preserved.
+
+**Backup tag:** `pre-adr005-amendment-react-migration-2026-05-08-2051` pushed origin.
+
+**Files modified atomic batch:**
+- 03-decisions/005-vanilla-js-no-framework.md (header SUPERSEDED flag + §AMENDMENT 2026-05-08 final fișier APPEND)
+- 03-decisions/DECISION_LOG.md (this entry top descending cronologic)
+- 00-index/CURRENT_STATE.md (header Updated refresh + cumulative ~688 → ~689 + §JUST_DECIDED top entry append + §NOW move-then-replace)
+
 ## 2026-05-08 — Faza 3 STRANGLER batch 3 Energy Adjustment wiring real LANDED + skin naming convention LOCK V1 (product/architecture additive)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~697 → ~698 (+1 net — Faza 3 batch 3 Energy Adjustment adapter pattern + Forward CO Hook 4 propagation + skin naming convention LOCK V1 mockup hygiene shift).
