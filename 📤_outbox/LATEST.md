@@ -84,13 +84,13 @@
 
 ## Commits
 
-- TBD post-Write commit 1: `feat(chat-continuity): §CC.5 fast handover ingest faza3 batch3 energy + skin naming lock`
-- TBD post-Write commit 2: `chore(vault): mockup convention shift skin-themed — rename V2→Clasic + add Living Body + README + breadcrumb`
+- `94e3a87` feat(chat-continuity): §CC.5 fast handover ingest faza3 batch3 energy + skin naming lock
+- `33f9b33` chore(vault): mockup convention shift skin-themed — rename V2→Clasic + add Living Body + README + breadcrumb
 
 ## Pushed
 
 - Safety tag `pre-cc5-fast-ingest-faza3-b3-skin-naming-2026-05-08-1306` → origin ✓
-- Commits TBD post (after both granular commits land)
+- Commits `94e3a87` + `33f9b33` → origin/main (`cfe4ed9..33f9b33`) ✅ + tests 2683 PASS pre-commit (gate verified twice — atomic per commit)
 
 ## Issues / Ambiguities
 
