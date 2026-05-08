@@ -71,11 +71,12 @@ Self-test confirms §AR.13 mechanism continues correctly post-Run 5 LOCK: §CC.5
 
 ## Commits
 
-- TBD post-Write commit (single commit message): `chore(vault): §CC.5 fast ingest unified chat-NEW3 + acasă PK + birou slip recovery → cumulative ~688`
+- `69cb1a6` chore(vault): §CC.5 fast ingest unified chat-NEW3 + acasă PK + birou slip recovery → cumulative ~688
 
 ## Pushed
 
-- TBD post-commit (backup tag + commit pushed origin/main)
+- Safety tag `pre-cc5-fast-ingest-unified-2026-05-08-0829` → origin ✓
+- Commit `69cb1a6` → origin/main (`67eb9e8..69cb1a6`) ✅ PUSH SUCCESS
 
 ## Issues / Ambiguities
 
