@@ -2,15 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { buildEngineContext } from '../contextBuilder.js';
 
 describe('buildEngineContext — ADR 030 D3 LOCKED V1', () => {
-  it('returns minimal frozen ctx pe input gol', () => {
+  it('returns minimal frozen ctx pe input gol cu constraintObject placeholder', () => {
     const ctx = buildEngineContext();
     expect(ctx.user).toEqual({});
     expect(ctx.recentSessions).toEqual([]);
     expect(ctx.weights).toEqual({});
     expect(ctx.profileTier).toBeNull();
     expect(ctx.flags).toEqual({});
-    expect(ctx.meta).toEqual({});
+    // Constraint Object placeholder slot per ADR 026 §1.10 + ADR 030 D3 (Faza 3 batch 1 LANDED 2026-05-08)
+    expect(ctx.meta).toEqual({ constraintObject: null });
     expect(Object.isFrozen(ctx)).toBe(true);
+    expect(Object.isFrozen(ctx.meta)).toBe(true);
   });
 
   it('passes user object through', () => {
@@ -35,7 +37,7 @@ describe('buildEngineContext — ADR 030 D3 LOCKED V1', () => {
     expect(buildEngineContext({ profileTier: 'T2' }).profileTier).toBe('T2');
   });
 
-  it('passes weights / flags / meta through când present', () => {
+  it('passes weights / flags / meta through când present (cu constraintObject placeholder slot)', () => {
     const ctx = buildEngineContext({
       weights: { squat: 100 },
       flags: { foo: true },
@@ -43,7 +45,14 @@ describe('buildEngineContext — ADR 030 D3 LOCKED V1', () => {
     });
     expect(ctx.weights).toEqual({ squat: 100 });
     expect(ctx.flags).toEqual({ foo: true });
-    expect(ctx.meta).toEqual({ traceId: 'abc' });
+    // meta extended cu constraintObject: null placeholder pentru Faza 3 propagation
+    expect(ctx.meta).toEqual({ traceId: 'abc', constraintObject: null });
+  });
+
+  it('preserves explicit meta.constraintObject când caller provides it', () => {
+    const co = Object.freeze({ phase: 'LOAD', immutable_snapshot: true });
+    const ctx = buildEngineContext({ meta: { constraintObject: co } });
+    expect(ctx.meta.constraintObject).toBe(co);
   });
 
   it('frozen ctx prevents mutation by adapters (D2 thin scope guard)', () => {

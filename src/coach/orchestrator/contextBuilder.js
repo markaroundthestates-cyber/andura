@@ -30,20 +30,54 @@
  * missing fields — V1 minimum required = `user` object; rest default empty.
  *
  * The output is `Object.freeze`-d shallow to surface accidental mutation by
- * adapters during faza 3 wiring (D2 thin scope = NU side effects).
+ * adapters during faza 3 wiring (D2 thin scope = NU side effects). `meta` is
+ * also frozen (so Constraint Object propagation requires new frozen context
+ * per pipeline step — see `runPipeline` în index.js).
+ *
+ * `meta.constraintObject` placeholder slot per ADR 026 §1.10 + ADR 030 D3:
+ * Periodization (ADR 026 §9.1) emits Constraint Object via adapter result
+ * `output.constraintObject`; orchestrator (`runPipeline` în index.js) freezes
+ * și propagates it via new frozen EngineContext to downstream engines (Goal
+ * Adaptation, Energy Adjustment, Bayesian Nutrition, Tempo, Specialization,
+ * Warm-up, Deload — all 7 downstream consume Floor/Ceiling per ADR 030 §3.4
+ * sequential strict V1 + §3.6 ENGINE_THREW 'hard' severity halt protect).
  *
  * @param {object} [userState] - Aggregate care include user + recentSessions + weights + flags + meta
  * @returns {import('./types.js').EngineContext}
  */
 export function buildEngineContext(userState) {
   const us = userState ?? {};
+  const sourceMeta = us.meta && typeof us.meta === 'object' ? us.meta : {};
+  const meta = { ...sourceMeta };
+  // Constraint Object placeholder — populated by orchestrator post-Periodization.
+  if (!('constraintObject' in meta)) {
+    meta.constraintObject = null;
+  }
   const ctx = {
     user: us.user ?? {},
     recentSessions: Array.isArray(us.recentSessions) ? us.recentSessions : [],
     weights: us.weights ?? {},
     profileTier: us.profileTier ?? null,
     flags: us.flags ?? {},
-    meta: us.meta ?? {},
+    meta: Object.freeze(meta),
   };
   return Object.freeze(ctx);
+}
+
+/**
+ * Extend a frozen EngineContext with additional meta fields, returning a new
+ * frozen context. Used by `runPipeline` în index.js to propagate Constraint
+ * Object emitted by Periodization (ADR 026 §9.1) to downstream engines per
+ * ADR 030 D3 + §3.4 sequential strict V1.
+ *
+ * @param {import('./types.js').EngineContext} ctx
+ * @param {object} metaPatch - Shallow merge into existing meta
+ * @returns {import('./types.js').EngineContext}
+ */
+export function extendEngineContext(ctx, metaPatch) {
+  if (!ctx || typeof ctx !== 'object' || !metaPatch || typeof metaPatch !== 'object') {
+    return ctx;
+  }
+  const nextMeta = Object.freeze({ ...ctx.meta, ...metaPatch });
+  return Object.freeze({ ...ctx, meta: nextMeta });
 }

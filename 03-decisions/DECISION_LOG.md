@@ -1,5 +1,62 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — Faza 3 STRANGLER batch 1 Periodization wiring real LANDED (product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~695 → ~696 (+1 net — adapter precedent pattern crystallized pentru remaining 7 engines).
+
+**Authority:** Faza 3 STRANGLER batch 1 = primul adapter LANDED post ADR 030 SPEC FULL V1 LANDED 2026-05-08 (Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment severity additive). Pattern: D2 thin scope + featureFlag rollout 0% default OFF + Golden-master parity tests legacy↔orchestrated zero-behavior-change strict + Constraint Object immutable propagation `EngineContext.meta` + sub-span CDL telemetry per ADR 030 §3.3 + Q-OPEN-3 RESOLVED V1.
+
+**Decision:** Faza 3 batch 1 Periodization wiring real (ADR 026 §42.10 pipeline #1) per STRANGLER pattern:
+
+1. **`src/coach/orchestrator/adapters/periodizationAdapter.js` NEW** — `EngineAdapter` contract D1-D5 + D4 severity. Pure shape mapping `engineContext → periodizationInput` (passthrough since `evaluate(ctx)` accepts `EngineContext` directly per ADR 018 §2 + Periodization V1 LANDED `1303b62` signature alignment) + Result wrap + Constraint Object surface în `output.constraintObject` for orchestrator propagation. ENGINE_THREW + INVALID_INPUT defensive structured err cu severity 'hard' per §3.6 taxonomy table.
+
+2. **`src/coach/orchestrator/adapters/index.js` NEW** — barrel export per ADR 030 D1 plug-in additive Open-Closed pattern. 7 remaining adapters PENDING Faza 3 batches 2-8 (commented out per ADR 026 §42.10 sequential ordering: Goal Adaptation → Energy → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload).
+
+3. **`src/coach/orchestrator/contextBuilder.js` UPDATED** — `EngineContext.meta.constraintObject: null` placeholder slot per ADR 026 §1.10 + ADR 030 D3. Added `extendEngineContext(ctx, metaPatch)` helper pentru orchestrator-level Constraint Object propagation post-Periodization (creates new frozen EngineContext via shallow merge — preserves D3 immutability invariant).
+
+4. **`src/coach/orchestrator/index.js` UPDATED — `runPipeline`:**
+   - Extends ctx via `extendEngineContext` post-adapter când `output.constraintObject` detected → frozen + propagated to downstream EngineContext.meta
+   - Added telemetry `onSubSpan` callback parameter per Q-OPEN-3 RESOLVED V1 (subSpan: `{ adapterId, durationMs, ok, errorCode?, severity? }`)
+   - `nowMs()` helper monotonic timer (performance.now fallback Date.now)
+   - Backward-compatible API: third options parameter optional
+
+5. **`src/util/featureFlags.js` UPDATED** — `periodization_via_orchestrator: { rollout: 0, default: false }` flag added FLAGS registry. Production behavior unchanged (Periodization stays orphan pre-Strangler — Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" 2026-05-06 morning chat-2 acasă: 0/8 engines wired în coach decision flow live). Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu Faza 4 smoke validation.
+
+6. **Golden-master parity tests `src/coach/orchestrator/__tests__/periodizationParity.test.js` NEW** — 8 tests (3 fixture cases T0/T1/T2 zero-behavior-change deep-equal legacy↔orchestrated + 5 edge cases: ENGINE_THREW hard halt + BUDGET_EXCEEDED soft continue + Constraint Object frozen + propagated to downstream meta + sub-span fires per adapter + sub-span captures err code + severity).
+
+7. **`src/coach/orchestrator/__tests__/contextBuilder.test.js` UPDATED** — 2 existing tests updated cu `constraintObject: null` placeholder expectation + 1 NEW test "preserves explicit meta.constraintObject when caller provides it".
+
+**Faza 3 STRANGLER batch 1 acceptance gate verified:**
+- ✅ Adapter D2 thin scope strict (ZERO business logic, just shape passthrough + Result wrap + Constraint Object surface)
+- ✅ featureFlag rollout 0% default OFF (production behavior unchanged)
+- ✅ Golden-master parity 3 fixture cases T0/T1/T2 deep-equal (zero-behavior-change strict)
+- ✅ Constraint Object immutable propagation `EngineContext.meta` post-Periodization
+- ✅ Severity-aware policy taxonomy enforced (ENGINE_THREW/ADAPTER_THREW hard halt; BUDGET_EXCEEDED soft continue)
+- ✅ Sub-span telemetry capture per Q-OPEN-3 RESOLVED V1 + ADR 011 schema
+- ✅ Tests 2652 → 2660 PASS (+8 net); ZERO src regression strict
+- ✅ Backup tag pushed origin
+
+**Files modified atomic batch:**
+- NEW: src/coach/orchestrator/adapters/periodizationAdapter.js
+- NEW: src/coach/orchestrator/adapters/index.js
+- NEW: src/coach/orchestrator/__tests__/periodizationParity.test.js
+- UPDATED: src/coach/orchestrator/contextBuilder.js (constraintObject placeholder + extendEngineContext helper)
+- UPDATED: src/coach/orchestrator/index.js (runPipeline ctx extend + onSubSpan callback + nowMs helper)
+- UPDATED: src/util/featureFlags.js (periodization_via_orchestrator flag default OFF)
+- UPDATED: src/coach/orchestrator/__tests__/contextBuilder.test.js (constraintObject placeholder expectation +1 new test)
+- UPDATED: 00-index/CURRENT_STATE.md (Updated header + §JUST_DECIDED top entry acest)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+- UPDATED: 00-index/INDEX_MASTER.md (stats refresh + Last updated timestamp)
+- CYCLED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/251_LATEST_ADR030_QOPEN_APPLIED_CONSUMED.md
+
+**Backup tag:** `pre-faza3-batch1-periodization-wiring-2026-05-08-1133` pushed origin.
+
+**Strategic axis post-resolution:** Faza 3 STRANGLER batch 1 LANDED → next **Faza 3 batch 2 Goal Adaptation wiring** (ADR 026 §42.10 pipeline #2 — `src/engine/goalAdaptation/` V1 LANDED commit `bf9814e`, ADR 024 Q1-Q8 LOCKED V1, Adapter Periodization = template pentru subsequent 7 batches sequential).
+
+**Cross-refs:** ADR 030 Q-OPEN applied chain (`63f4634` + `f6d2f58`) + Run 6 elevated cumulative + Periodization V1 LANDED `1303b62`. Plus VAULT_RULES §CC.6 + §CC.9 + §AR.13 PK Delta verification + §AR.PRE_FLIGHT 13-step + §3.3 archive schema NN chronologic continuous (251 LATEST cycle prior).
+
+---
+
 ## 2026-05-08 — ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 Co-CTO tactical lock + D4 amendment additive `severity` field + cross-refs bidirectional 8 ADRs (product/architecture additive)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~688 → ~695 (+7 net product/architecture additive — 7 Q-OPEN tactical resolutions; D4 severity field additive treated additive amendment NU separate count).

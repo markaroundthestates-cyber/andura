@@ -1,149 +1,104 @@
-# ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment additive severity + cross-refs bidirectional 8 ADRs (2026-05-08)
+# Faza 3 STRANGLER batch 1 Periodization wiring real LANDED (2026-05-08)
 
-**Task:** Apply 7/7 Q-OPEN tactical resolutions to ADR 030 §3 (verbatim expand cu mechanism V1 + V1.5 trigger thresholds empirical) + D4 additive `AdapterError.severity: 'soft' | 'hard'` field (default `'hard'` fail-safe) + orchestrator `runPipeline` policy-aware halt logic + cross-refs bidirectional 8 ADRs (009/011/018/020/022/025/026 + ADR_CASCADE_DEFENSE_v1) + §CC.9 mandatory updates per handover (DECISION_LOG + CURRENT_STATE §JUST_DECIDED + INDEX_MASTER stats refresh) + tests baseline preserved + §AR.13 PK Delta self-test + commit + push.
+**Task:** Faza 3 STRANGLER pattern wiring real Periodization Engine #1 (ADR 026 §42.10 pipeline first) via orchestrator. Adapter D2 thin + featureFlag rollout 0% default OFF + Golden-master parity tests legacy↔orchestrated zero-behavior-change strict + Constraint Object immutable propagation `EngineContext.meta` + sub-span CDL telemetry per Q-OPEN-3 RESOLVED + §CC.9 mandatory updates + tests baseline + commit + push.
 **Model:** 🔴 OPUS interactive
 **Status:** ✅ COMPLETE
-**Predecessor chain:** §CC.5 fast handover ingest Run 6 elevated COMPLETE (`470b358`) → Run 6 elevated 6/6 + docs(outbox) (`9f6dbdf` + `a6c2f71` + `eeb4913` + `9d002c8` + `8be01cf` + `83bbe4b` + `846a8a1` + `09257d8`) → Co-CTO read-only DRAFT artefact `030-QOPEN-RESOLUTION-PROPOSE-DRAFT.md` (NU committed prior, archived NN 250 acest batch).
+**Predecessor chain:** ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment severity additive (`63f4634` + `f6d2f58`) → Run 6 elevated cumulative chain (`9f6dbdf` + `a6c2f71` + `eeb4913` + `9d002c8` + `8be01cf` + `83bbe4b` + `846a8a1` + `09257d8` + `470b358`) → Periodization V1 LANDED Faza 2.5 batch 1 (`1303b62` 12 files, 2271 LOC, 210 new tests).
 
 ---
 
 ## Pre-flight
 
-- ✅ `git fetch origin` + clean tree (working tree clean)
-- ✅ Backup tag `pre-adr030-qopen-applied-resolution-2026-05-08-1101` created + pushed origin
-- ✅ Pre-flight grep filesystem: ADR 030 = 239 LOC; 5 orchestrator files prezente cu Q-OPEN inline comments; AdapterError typedef poziție types.js:53; toate 8 source ADRs exist (009/011/018/020/022/025/026 + ADR_CASCADE_DEFENSE_v1)
-- ✅ PK proxy baseline LOC pre-execution: **28463** (active vault .md excl _archive subtrees + 📥_inbox)
+- ✅ `git fetch origin` + clean tree (working tree clean post §CC.5 fast Run 6 complete `09257d8`)
+- ✅ Backup tag `pre-faza3-batch1-periodization-wiring-2026-05-08-1133` created + pushed origin
+- ✅ Pre-flight grep filesystem: Periodization `evaluate(ctx)` async pure function în `src/engine/periodization/index.js`; ENGINE_ID = `'periodization'`; result shape `{ id, tier, confidence, signals, recommendations, trace, meta }` cu `trace.constraintObject` (frozen Constraint Object emit per §9.1)
+- ✅ featureFlag infrastructure existing `src/util/featureFlags.js` cu `isEnabled(flagId, userId)` per ADR 018 §5 — Path A applicable (no STOP scope amendment needed)
+- ✅ Periodization NU wired în coach decision flow legacy (ADR 030 Faza 3 BLOCKED scope-major discovery seminal "vizor fără ușă" preserved — orphan engine V1 LANDED, Strangler creates SHELL invocation gated)
 
 ## Modificări summary
 
-### ADR 030 (`03-decisions/030-adapter-design-pattern.md`)
+### NEW files (3)
 
-- **Status line refresh:** `SPEC READY V1 (partial — D1-D5 LOCKED + Q-OPEN-1→7 PENDING)` → `SPEC FULL V1 LANDED 2026-05-08 (D1-D5 LOCKED + Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment additive severity)`
-- **Cumulative count refresh:** 5 D1-D5 LOCKED V1 → **13 substantive decisions LOCKED V1** (5 D1-D5 + 7 Q-OPEN resolved + 1 D4 amendment severity additive)
-- **§2.4 D4 §AMENDMENT 2026-05-08 additive:** `AdapterError.severity: 'soft' | 'hard'` field added (default `'hard'` fail-safe Anti-Cascade Silent). Contract D4 `{ ok, output | error }` preserved unchanged.
-- **§3 RESOLVED V1 7/7 expand verbatim** cu mechanism V1 concret + V1.5 trigger thresholds empirical per Q-OPEN:
-  - §3.1 Q-OPEN-1 Versioning/migration → Migration Runner orchestrator-level pre-pipeline (D2 thin scope preserved); ADR 018 §4 alignment confirm
-  - §3.2 Q-OPEN-2 Layer D ≤50ms enforcement → V1 sync Promise.race timeout + `BUDGET_EXCEEDED` severity 'soft'; V1.5 AbortController trigger când Faza 3 batch 1 ≥1 engine reproducibly p95 >50ms
-  - §3.3 Q-OPEN-3 Observability granularity → Aggregate orchestrator-level (1 CDL `pipeline_event` + `subSpans[]` array) per session-tick; ADR 011 §X amendment defining payload schema applied
-  - §3.4 Q-OPEN-4 Pipeline ordering → SEQUENTIAL STRICT preserved per ADR 026 §1.10 LOCKED; V1.5 parallel-where-safe trigger §5.6 threshold preserved
-  - §3.5 Q-OPEN-5 State source resolution → Hierarchical fallback Tier 1 → Tier 0 → Tier 2 (NEVER blocking); silent degradation default per ADR 025
-  - §3.6 Q-OPEN-6 Error recovery semantics → HYBRID per error code taxonomy + D4 amendment severity field; resolves ADR 025 graceful vs Anti-Cascade Silent strict tension
-  - §3.7 Q-OPEN-7 Convergence Guard tier downgrade → Batch periodic per session-end + cooldown asymmetric (T0→T2 instant, T2→T1/T1→T0 cooldown 7 zile + N=3 per ADR 009)
-- **§5.7 reconsideration trigger** updated: `Q-OPEN-1 → Q-OPEN-7 PENDING` → `RESOLVED V1 2026-05-08` cu V1.5 reconsideration triggers preserved per Q resolution (concrete empirical thresholds)
-- **Footer 🦫** rewritten: `SPEC READY V1 partial` → `SPEC FULL V1 LANDED 2026-05-08`. Faza 3 STRANGLER pre-wiring blocker CLOSED.
-- **LOC delta:** ~239 → **~440+** LOC (+200 LOC additive Q-OPEN expand verbatim)
+- **`src/coach/orchestrator/adapters/periodizationAdapter.js`** — `EngineAdapter` contract D1-D5 + D4 severity. `id: 'periodization'`. Pure shape mapping `engineContext → periodizationInput` (passthrough since `evaluate(ctx)` accepts `EngineContext` directly per ADR 018 §2 alignment) + Result wrap + Constraint Object surface în `output.constraintObject` for orchestrator propagation. ENGINE_THREW (engine spec NEVER throws but D4 violation insurance preserved) + INVALID_INPUT defensive structured err cu severity 'hard' per §3.6 taxonomy table.
+- **`src/coach/orchestrator/adapters/index.js`** — barrel export per ADR 030 D1 plug-in additive Open-Closed pattern. `periodizationAdapter` exported; 7 remaining adapters PENDING Faza 3 batches 2-8 commented out per ADR 026 §42.10 sequential ordering.
+- **`src/coach/orchestrator/__tests__/periodizationParity.test.js`** — Golden-master parity tests 8 NEW tests:
+  - 3 fixture cases T0/T1/T2 zero-behavior-change deep-equal legacy↔orchestrated
+  - 5 edge cases: ENGINE_THREW (ADAPTER_THREW catch) hard halt + BUDGET_EXCEEDED soft continue + Constraint Object frozen + propagated to downstream meta (spy assertion) + sub-span fires per adapter + sub-span captures err code + severity
 
-### `src/coach/orchestrator/types.js`
+### UPDATED files
 
-- `AdapterError` typedef extended: optional `severity: 'soft' | 'hard'` field added cu JSDoc explaining default 'hard' fail-safe per ADR 030 §3.6
-- D4 contract preserved unchanged (additive)
+- **`src/coach/orchestrator/contextBuilder.js`** — `EngineContext.meta.constraintObject: null` placeholder slot per ADR 026 §1.10 + ADR 030 D3. `meta` now frozen (so propagation requires new frozen ctx per pipeline step). Added `extendEngineContext(ctx, metaPatch)` helper for orchestrator-level immutable propagation.
+- **`src/coach/orchestrator/index.js`** — `runPipeline` extends ctx via `extendEngineContext` post-adapter când `output.constraintObject` detected (frozen + propagated to downstream EngineContext.meta). Added telemetry `onSubSpan` callback parameter per Q-OPEN-3 RESOLVED V1 + ADR 011 §X Changelog 2026-05-08 schema (`{ adapterId, durationMs, ok, errorCode?, severity? }`). `nowMs()` helper monotonic timer (performance.now fallback Date.now). Backward-compat: third options parameter optional.
+- **`src/util/featureFlags.js`** — `periodization_via_orchestrator: { rollout: 0, default: false }` flag added FLAGS registry. Production behavior unchanged (Periodization stays orphan pre-Strangler — no legacy invocation existed to break). Ramp via _devFlags or explicit edit aici post Faza 4 smoke validation Daniel cont propriu.
+- **`src/coach/orchestrator/__tests__/contextBuilder.test.js`** — 2 existing tests updated cu `constraintObject: null` placeholder expectation + 1 NEW test "preserves explicit meta.constraintObject când caller provides it".
+- **`00-index/CURRENT_STATE.md`** — Updated header refresh + §JUST_DECIDED top entry "Faza 3 STRANGLER batch 1 Periodization wiring real LANDED" cu enumerate Files modified + acceptance gate verified + cumulative ~696
+- **`03-decisions/DECISION_LOG.md`** — NEW top entry cu detailed Decision sections enumerate 7 modificări + acceptance gate + cross-refs
+- **`00-index/INDEX_MASTER.md`** — Last updated timestamp refresh
 
-### `src/coach/orchestrator/index.js`
+### Cycled
 
-- `runPipeline` policy-aware severity halt logic implemented per Q-OPEN-6 RESOLVED V1 taxonomy
-- `resolveSeverity(error)` helper added — engine emits explicit 'soft'|'hard' → respect; `BUDGET_EXCEEDED` code → 'soft' default; otherwise 'hard' fail-safe
-- INVALID_ADAPTER + ADAPTER_THREW now emit explicit `severity: 'hard'` (halt-strict per taxonomy)
-- Continue-on-soft / halt-on-hard logic per `if (severity === 'hard') break;` after each adapter result
-- Inline header comment updated: Q-OPEN-4 + Q-OPEN-6 RESOLVED V1 2026-05-08 cross-refs §3.4 + §3.6
-
-### Other orchestrator files inline Q-OPEN PENDING → RESOLVED V1 comments
-
-- `budget.js`: Q-OPEN-2 PENDING → RESOLVED V1 + `BUDGET_EXCEEDED` severity 'soft' propagation
-- `convergenceGuard.js`: Q-OPEN-7 PENDING → RESOLVED V1 + V1.5 mechanism docs (per session-end cadence + cooldown asymmetric)
-- `contextBuilder.js`: Q-OPEN-1 + Q-OPEN-5 PENDING → RESOLVED V1 + V1.5 mechanism docs (Migration Runner integration + storageAdapter parameter)
-
-### Tests update (`src/coach/orchestrator/__tests__/orchestrator.test.js`)
-
-- Added 7 new severity-aware policy tests under "ADR 030 §3.6 RESOLVED V1 severity-aware policy" describe block:
-  - halts after err with default severity (no severity → hard fail-safe)
-  - halts after err with explicit severity hard
-  - continues after err with explicit severity soft (ADR 025 graceful)
-  - treats BUDGET_EXCEEDED as soft default (continue-graceful per Q-OPEN-2 + §3.6)
-  - halts after ADAPTER_THREW (hard severity, Anti-Cascade Silent default)
-  - halts on first INVALID_ADAPTER (hard severity)
-  - mixed pipeline ok → soft err → ok → hard err halts (downstream skipped)
-- Removed 3 old tests că asumau prior continue-on-err V1 default (Q-OPEN-6 PENDING graceful) — replaced cu severity-aware semantics
-- Updated `errAdapter` factory cu optional severity parameter
-- ADAPTER_THREW test extended cu `severity: 'hard'` assertion
-
-### Cross-refs bidirectional 8 ADRs
-
-| ADR | Cross-ref applied | Q-OPEN coverage |
-|-----|-------------------|-----------------|
-| ADR_CASCADE_DEFENSE_v1 | §AMENDMENT 2026-05-08 cross-ref §3.2 + §3.6 | Q-OPEN-2 + Q-OPEN-6 |
-| ADR 009 | §CROSS-REF 2026-05-08 N=3 reuse Behavioral Validation Rule | Q-OPEN-7 |
-| ADR 011 | §X Changelog 2026-05-08 `pipeline_event` payload schema cu `subSpans[]` | Q-OPEN-3 |
-| ADR 018 | §CROSS-REF 2026-05-08 §4 Migration Runner alignment confirm | Q-OPEN-1 |
-| ADR 020 | §CROSS-REF 2026-05-08 Tier hierarchical fallback alignment confirm | Q-OPEN-5 |
-| ADR 022 | §CROSS-REF 2026-05-08 fallback severity 'soft' + Cluster B Cadence reuse | Q-OPEN-6 + Q-OPEN-7 |
-| ADR 025 | §CROSS-REF 2026-05-08 silent degradation default + severity 'soft' graceful | Q-OPEN-5 + Q-OPEN-6 |
-| ADR 026 | §AMENDMENT 2026-05-08 §9.1-§9.8 engine adapters severity mapping table (8 engines) | Q-OPEN-6 + Q-OPEN-7 |
-
-### §CC.9 mandatory updates per handover
-
-- **CURRENT_STATE.md:** Updated header refresh + §JUST_DECIDED top entry "ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment + cross-refs 8 ADRs (~688 → ~695)" + §ACTIVE_ADRS row update ADR 030 status SPEC FULL V1 LANDED 2026-05-08
-- **DECISION_LOG.md:** NEW top entry "2026-05-08 — ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 Co-CTO tactical lock + D4 amendment additive severity field + cross-refs bidirectional 8 ADRs (product/architecture additive)" cu enumerate per Q resolution + cross-refs + commit chain + cumulative ~695
-- **INDEX_MASTER.md:** Last updated timestamp refresh + Stats line ADR 030 status SPEC FULL V1 LANDED 2026-05-08 (no file count change — additive expand cross-refs only)
-
-### Inbox/Outbox cycle
-
-- `📤_outbox/LATEST.md` (Run 6 elevated complete §CC.5 fast ingest report) → archive `📤_outbox/_archive/2026-05/249_LATEST_PREVIOUS_CC5_FAST_RUN6_COMPLETE_CONSUMED.md`
-- `03-decisions/030-QOPEN-RESOLUTION-PROPOSE-DRAFT.md` (Co-CTO read-only DRAFT artefact 311 LOC) → archive `📤_outbox/_archive/2026-05/250_ADR030_QOPEN_PROPOSE_DRAFT_CONSUMED.md` (audit-trail provenance)
-- New LATEST.md = acest raport ADR 030 Q-OPEN applied resolution
+- **`📤_outbox/LATEST.md`** (ADR 030 Q-OPEN applied resolution prior raport) → archive `📤_outbox/_archive/2026-05/251_LATEST_ADR030_QOPEN_APPLIED_CONSUMED.md`
+- New LATEST.md = acest raport Faza 3 STRANGLER batch 1
 
 ### Cumulative state
 
-- **Cumulative LOCKED V1 ~688 → ~695 (+7 net product/architecture additive)** — 7 Q-OPEN tactical resolutions counted; D4 severity field additive treated additive amendment NU separate count
+- **Cumulative LOCKED V1 ~695 → ~696 (+1 net product/architecture additive)** — Faza 3 STRANGLER batch 1 Periodization adapter pattern crystallized. Primul adapter LANDED setează precedent pentru remaining 7 (Goal Adaptation #2, Energy #3, Bayesian Nutrition #4, Tempo #5, Specialization #6, Warm-up #7, Deload #8 — toate per ADR 026 §42.10 sequential strict).
 
 ## Build + Tests
 
-- Tests baseline 2648 → **2652 PASS** (+4 net new severity policy tests; removed 3 old tests că asumau Q-OPEN-6 PENDING continue-on-err graceful default — replaced cu severity-aware semantics; added 7 new severity tests)
+- Tests baseline 2652 → **2661 PASS** (+9 net new):
+  - +8 in `periodizationParity.test.js` (3 fixture parity + 5 edge cases)
+  - +1 in `contextBuilder.test.js` (preserves explicit meta.constraintObject)
+- 2 contextBuilder existing tests updated cu `constraintObject: null` placeholder expectation (additive change, NU breaking)
 - ZERO src regression strict
 - Pre-commit hook vitest gate va verifica auto cu commit
 
 ## PK Delta (per §AR.13 self-test mechanism)
 
-- **Baseline LOC pre-execution:** 28463
-- **Post-execution LOC:** 28545
-- **Delta LOC:** +82 (additive: ADR 030 §3 expand ~200 LOC + DECISION_LOG entry verbose + CURRENT_STATE §JUST_DECIDED top entry verbose + INDEX_MASTER stats refresh + cross-refs 8 ADRs append + tests +7 new + orchestrator severity logic; offsets: DRAFT artefact 311 LOC moved to archive — net positive +82 LOC scope)
-- **Delta percent:** +0.29%
+- **Baseline LOC pre-execution:** 28545 (post ADR 030 Q-OPEN applied resolution baseline)
+- **Post-execution LOC:** 28635
+- **Delta LOC:** +90 (additive: CURRENT_STATE §JUST_DECIDED top entry verbose + DECISION_LOG entry verbose + this LATEST.md content + INDEX_MASTER timestamp refresh; src/.js changes NU counted în PK proxy — orchestrator adapters folder + parity tests + featureFlag flag + propagation logic = JS files, NU .md)
+- **Delta percent:** +0.32%
 - **Threshold band:** ✅ **SOFT (<10%)** — transparent monitoring, no action required
 
-§AR.13 mechanism continues operational: 5th operationalized PK Delta verification post Run 6 cumulative (+0.52% SOFT) + Run 5 (+0.22% SOFT) + §CC.5 fast unified ingest (-0.16% SOFT) + §CC.5 fast Run 6 complete ingest (+0.29% SOFT). Pattern stable additive doc-only operations remain well within soft band.
+§AR.13 mechanism continues operational: 6th operationalized PK Delta verification post Run 6 cumulative + Run 5 + §CC.5 fast unified + §CC.5 fast Run 6 complete + ADR 030 Q-OPEN applied. Pattern stable additive doc-only operations remain well within soft band.
 
 ## Verifications
 
-- ✅ ADR 030 §3 RESOLVED V1 7/7 verbatim expand cu mechanism V1 + V1.5 trigger thresholds concrete
-- ✅ D4 amendment additive severity field documented (§2.4 §AMENDMENT 2026-05-08 + types.js JSDoc + DECISION_LOG entry)
-- ✅ Orchestrator `runPipeline` policy-aware severity halt logic implemented + tested 7 new severity tests pass
-- ✅ Cross-refs bidirectional 8 ADRs applied (ADR_CASCADE_DEFENSE_v1 + 009 + 011 + 018 + 020 + 022 + 025 + 026)
-- ✅ ADR 011 §X Changelog 2026-05-08 `pipeline_event` payload schema cu `subSpans[]` defined (Q-OPEN-3 dependency)
-- ✅ ADR 026 §AMENDMENT 2026-05-08 §9.1-§9.8 engine adapters severity mapping table (8 engines documented)
-- ✅ §CC.9 mandatory updates: CURRENT_STATE §JUST_DECIDED top + Updated header + §ACTIVE_ADRS row update + DECISION_LOG top entry + INDEX_MASTER stats refresh
-- ✅ Inbox/Outbox cycle: 249 LATEST + 250 DRAFT archived NN chronologic continuous
-- ✅ Tests 2648 → 2652 PASS (+4 net) preserved baseline + ZERO src regression
-- ✅ PK Delta +0.29% SOFT band 5th operationalized §AR.13 verification
-- ✅ Backup tag `pre-adr030-qopen-applied-resolution-2026-05-08-1101` pushed origin
+- ✅ Adapter D2 thin scope strict (ZERO business logic, just shape passthrough + Result wrap + Constraint Object surface)
+- ✅ featureFlag `periodization_via_orchestrator` rollout 0% default OFF (production behavior unchanged)
+- ✅ Golden-master parity 3 fixture cases T0/T1/T2 deep-equal legacy↔orchestrated (zero-behavior-change strict)
+- ✅ Constraint Object immutable propagation `EngineContext.meta` post-Periodization adapter (frozen reference, downstream adapters receive via spy assertion)
+- ✅ ENGINE_THREW + ADAPTER_THREW 'hard' severity halt per §3.6 taxonomy
+- ✅ BUDGET_EXCEEDED 'soft' severity continues per Q-OPEN-2 + §3.6 alignment
+- ✅ Sub-span telemetry capture per Q-OPEN-3 RESOLVED V1 (callback fires per adapter cu adapterId + durationMs + ok + errorCode + severity)
+- ✅ Tests 2652 → 2661 PASS (+9 net new); ZERO src regression strict
+- ✅ §CC.9 mandatory updates: CURRENT_STATE §JUST_DECIDED top + Updated header + DECISION_LOG top entry + INDEX_MASTER timestamp
+- ✅ Inbox/Outbox cycle: 251 LATEST archived NN chronologic continuous
+- ✅ Backup tag `pre-faza3-batch1-periodization-wiring-2026-05-08-1133` pushed origin
 
 ## Commits
 
-- `63f4634` feat(adr-030): Q-OPEN-1→7 RESOLVED V1 7/7 + D4 severity amendment + cross-refs bidirectional
+- TBD post-Write commit cu detailed message
 
 ## Pushed
 
-- Safety tag `pre-adr030-qopen-applied-resolution-2026-05-08-1101` → origin ✓
-- Commit `63f4634` → origin/main (`846629e..63f4634`) ✅ + tests 2652 PASS pre-commit (gate verified)
+- Safety tag `pre-faza3-batch1-periodization-wiring-2026-05-08-1133` → origin ✓
+- Commit TBD post
 
 ## Issues / Ambiguities
 
-- **None.** All 7/7 Q-OPEN tactical resolutions applied per Co-CTO read-only DRAFT artefact provenance + cross-validation LOCKED V1 ADRs constraints. D4 amendment additive severity field preserves D4 contract unchanged (no breaking change). Orchestrator V1 stubs minimal change (severity-aware policy ~30 LOC addition + helper). Tests +4 net (added 7, removed 3 obsolete) ZERO regression.
+- **None.** Faza 3 STRANGLER batch 1 Periodization wiring real LANDED clean. featureFlag rollout 0% default OFF preserves production behavior unchanged (Periodization remains orphan în coach decision flow until Daniel cont propriu Faza 4 smoke validates orchestrated path comportament corect). Adapter pattern crystallized = template clear pentru subsequent 7 batches sequential per ADR 026 §42.10.
 
 ## Next action
 
-**Faza 3 STRANGLER pre-wiring blocker CLOSED.** Strategic axis 3 priority candidate UNBLOCKED post ADR 030 SPEC FULL V1 LANDED:
+**Faza 3 STRANGLER batch 2 Goal Adaptation wiring real next chat dedicat** (ADR 026 §42.10 pipeline #2):
 
-1. **(c) Faza 3 STRANGLER batch 1 Periodization wiring real chat NEW dedicat** — orchestrator V1 stubs `5a16550` cu severity-aware `runPipeline` ready; `src/engine/periodization/` V1 implementation LANDED `1303b62` (12 files, 2271 LOC, 210 tests); next: adapter Periodization implementing `EngineAdapter` contract + Constraint Object immutable propagation via `EngineContext.meta` + featureFlag `periodization_via_orchestrator` rollout 0% default OFF + Golden-master parity tests legacy↔orchestrated. Faza 3 batch 1 Periodization wiring = baseline measurement Q-OPEN-2 V1.5 AbortController trigger evaluation.
-2. **(a) React migration plan tactical chat dedicat Daniel + Claude** — output prompts CC pentru implementation 1-2 săpt continuous (state.js componentizabil + ADR 005 amendment SUPERSEDE vanilla→React + 8 engines pure functions preserved + UI separation mapping mecanic)
-3. **(b) Scenarios coverage gap reduction strategic chat dedicat** — ~990-1490 decisions remaining (P1-FLAG-SCENARIOS-COVERAGE pre-Beta blocker) ~5-15 chat-uri Priority 2 strategice
+- `src/engine/goalAdaptation/` V1 LANDED commit `bf9814e` (13 files, +128 tests, ZERO src bugs first-pass)
+- ADR 024 Q1-Q8 LOCKED V1 compile draft full `8674782` foundation
+- Adapter pattern Periodization = template (D2 thin + featureFlag default OFF + Golden-master parity 3 fixtures + Constraint Object consume from meta downstream + sub-span telemetry per Q-OPEN-3)
+- Goal Adaptation downstream consume Periodization Constraint Object (Floor/Ceiling intensity_pct_1rm + volume_per_muscle) per ADR 026 §1.10 sequential strict — first downstream consumer of Constraint Object propagation
 
-🦫 **Bugatti craft. Quality > Speed. ADR 030 SPEC FULL V1 LANDED 2026-05-08 — Q-OPEN-1→7 RESOLVED V1 7/7 + D4 amendment severity additive + cross-refs bidirectional 8 ADRs. Faza 3 STRANGLER pre-wiring blocker CLOSED. Cumulative ~695 LOCKED V1.**
+**Strategic axis preserved:** (a) React migration plan tactical chat dedicat + (b) Scenarios coverage gap reduction strategic + (c) Faza 3 batch 2 Goal Adaptation wiring (acest path) — Daniel decide priority order chat NEW dedicat.
+
+🦫 **Bugatti craft. Quality > Speed. Faza 3 STRANGLER batch 1 Periodization wiring real LANDED 2026-05-08 — adapter D2 thin + featureFlag default OFF + Golden-master parity 3 fixture cases zero-behavior-change + Constraint Object immutable propagation + sub-span CDL telemetry. Cumulative ~696 LOCKED V1. Primul adapter LANDED setează precedent pentru remaining 7.**

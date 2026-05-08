@@ -12,10 +12,23 @@
 //     OR if `INVALID_INPUT`/`ENGINE_THREW`/`ADAPTER_THREW`/`INVALID_ADAPTER`) →
 //     halt-strict pipeline, return aggregate cu first hard error
 //
+// Constraint Object propagation per ADR 026 §1.10 + ADR 030 D3:
+//   When adapter Result `ok: true` includes `output.constraintObject`,
+//   orchestrator extends EngineContext.meta.constraintObject (frozen) for
+//   downstream adapters. Periodization (ADR 026 §9.1) emits Constraint Object
+//   first; downstream 7 engines consume Floor/Ceiling.
+//
+// Telemetry sub-span capture per Q-OPEN-3 RESOLVED V1 (ADR 030 §3.3):
+//   Optional `onSubSpan` callback fired per adapter cu `{ adapterId,
+//   durationMs, ok, errorCode?, severity? }`. ADR 011 §X Changelog 2026-05-08
+//   `pipeline_event` payload schema. Sentry per-error capture = separate scope.
+//
 // See: 03-decisions/030-adapter-design-pattern.md §2.4 D4 §AMENDMENT 2026-05-08
-//      + §3.6 RESOLVED V1 + §3.4 RESOLVED V1
+//      + §3.3 + §3.4 + §3.6 RESOLVED V1
+//      03-decisions/011-coach-decision-log-architecture.md Changelog 2026-05-08
 
 import { err } from './result.js';
+import { extendEngineContext } from './contextBuilder.js';
 
 const SOFT_DEFAULT_CODES = new Set(['BUDGET_EXCEEDED']);
 
@@ -39,6 +52,20 @@ function resolveSeverity(error) {
 }
 
 /**
+ * Monotonic timer source — uses `performance.now()` when available (browser +
+ * modern Node), falls back to Date.now (Date.now is wall-clock, NOT monotonic,
+ * but acceptable telemetry-only baseline for environments without performance).
+ *
+ * @returns {number}
+ */
+function nowMs() {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+    return performance.now();
+  }
+  return Date.now();
+}
+
+/**
  * Run a pipeline of adapters sequentially over an EngineContext.
  *
  * Each adapter's `invoke(ctx)` returns an `AdapterResult`. Orchestrator
@@ -47,15 +74,23 @@ function resolveSeverity(error) {
  *
  * Severity-aware policy V1 (Q-OPEN-6 RESOLVED): 'soft' → continue, 'hard' → halt.
  *
+ * Constraint Object propagation V1 (ADR 030 D3 + §3.4): when adapter output
+ * includes `constraintObject`, orchestrator extends EngineContext.meta and
+ * passes new frozen ctx to next adapter. Sequential strict per ADR 026 §1.10.
+ *
  * @param {import('./types.js').EngineContext} engineContext
  * @param {Array<import('./types.js').EngineAdapter>} adapters
+ * @param {{ onSubSpan?: (subSpan: {adapterId: string, durationMs: number, ok: boolean, errorCode?: string, severity?: 'soft'|'hard'}) => void }} [options]
  * @returns {Promise<Array<import('./types.js').AdapterResult>>}
  */
-export async function runPipeline(engineContext, adapters) {
+export async function runPipeline(engineContext, adapters, options = {}) {
   if (!Array.isArray(adapters)) {
     return [];
   }
+  const onSubSpan = typeof options?.onSubSpan === 'function' ? options.onSubSpan : null;
   const results = [];
+  let currentCtx = engineContext;
+
   for (const adapter of adapters) {
     if (!adapter || typeof adapter.invoke !== 'function') {
       // INVALID_ADAPTER → 'hard' severity per §3.6 taxonomy → halt
@@ -66,11 +101,22 @@ export async function runPipeline(engineContext, adapters) {
         severity: 'hard',
       });
       results.push(invalidErr);
+      if (onSubSpan) {
+        onSubSpan({
+          adapterId: adapter?.id ?? '<unknown>',
+          durationMs: 0,
+          ok: false,
+          errorCode: 'INVALID_ADAPTER',
+          severity: 'hard',
+        });
+      }
       break;
     }
+
+    const startMs = nowMs();
     let result;
     try {
-      result = await adapter.invoke(engineContext);
+      result = await adapter.invoke(currentCtx);
       // Defensive: tag adapterId on err envelopes that didn't include it.
       if (result && result.ok === false && result.error && !result.error.adapterId) {
         result.error.adapterId = adapter.id;
@@ -86,7 +132,23 @@ export async function runPipeline(engineContext, adapters) {
         severity: 'hard',
       });
     }
+    const durationMs = nowMs() - startMs;
     results.push(result);
+
+    // Telemetry sub-span capture per Q-OPEN-3 RESOLVED V1 (§3.3)
+    if (onSubSpan) {
+      const subSpan = {
+        adapterId: adapter.id,
+        durationMs,
+        ok: Boolean(result?.ok),
+      };
+      if (result && result.ok === false) {
+        subSpan.errorCode = result.error?.code;
+        subSpan.severity = resolveSeverity(result.error);
+      }
+      onSubSpan(subSpan);
+    }
+
     if (result && result.ok === false) {
       const severity = resolveSeverity(result.error);
       if (severity === 'hard') {
@@ -94,6 +156,18 @@ export async function runPipeline(engineContext, adapters) {
         break;
       }
       // 'soft' → continue-graceful per ADR 025 (engine pre-fill default downstream)
+      continue;
+    }
+
+    // Constraint Object propagation per ADR 026 §1.10 + ADR 030 D3:
+    // when adapter output exposes `constraintObject`, extend ctx for downstream
+    if (result?.ok === true && result?.output && typeof result.output === 'object') {
+      const co = result.output.constraintObject;
+      if (co !== undefined && co !== null) {
+        currentCtx = extendEngineContext(currentCtx, {
+          constraintObject: Object.isFrozen(co) ? co : Object.freeze(co),
+        });
+      }
     }
   }
   return results;

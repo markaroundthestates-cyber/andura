@@ -39,6 +39,21 @@ export const FLAGS = Object.freeze({
   // Default 0% — production behavior unchanged. Ramp via _devFlags or
   // explicit edit here once golden-master parity is validated.
   aa_via_cluster: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 1 Periodization wiring real (ADR 030 D1-D5 LOCKED V1
+  // + Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #1). When ON,
+  // coach decision flow invokes Periodization Engine via orchestrator
+  // `runPipeline` cu `periodizationAdapter`; when OFF, Periodization remains
+  // un-invoked (current state — Faza 3 BLOCKED scope-major discovery seminal
+  // "vizor fără ușă" 2026-05-06 morning chat-2 acasă: 0/8 engines wired în
+  // coach decision flow live pre-Strangler).
+  //
+  // Default 0% — production behavior unchanged (Periodization stays orphan).
+  // Golden-master parity tests legacy↔orchestrated zero-behavior-change strict
+  // în `src/coach/orchestrator/__tests__/periodizationParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici once Daniel cont propriu
+  // smoke (Faza 4) validates wiring real comportament corect.
+  periodization_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
