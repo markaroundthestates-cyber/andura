@@ -165,8 +165,9 @@ NU s-au aplicat renames până Daniel review pe handling Bugatti references (vez
 
 ## §7 Commits + push
 
-- **NU commit pending** (no file changes Task 1 audit-only).
-- LATEST.md raport va fi commit-ed singur post Daniel review pe handling Bugatti references.
+- ✅ Commit `adec665` docs(outbox): LATEST themes batch 1 AUDIT raport — Task 2 BLOCKED Bugatti refs
+- ✅ Push `origin/main` `de816fc..adec665` verify success
+- ✅ Pre-commit hooks PASS (`npm run test:run` 148 files, 2731 tests)
 
 ---
 
