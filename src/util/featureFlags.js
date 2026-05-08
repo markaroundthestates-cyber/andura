@@ -163,6 +163,48 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
   tempo_via_orchestrator: { rollout: 0, default: false },
+
+  // Faza 3 STRANGLER batch 6 Specialization wiring real (ADR 030 D1-D5 LOCKED V1
+  // + Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #6 + ADR 026
+  // §9.6 canonical SSOT + ADR 029 SPEC REFERENCE redirect). When ON, coach
+  // decision flow invokes Specialization Engine via orchestrator `runPipeline`
+  // cu `specializationAdapter` cumulative 6-adapter chain (Periodization →
+  // Goal Adaptation → Energy Adjustment → Bayesian Nutrition → Tempo →
+  // Specialization); when OFF, Specialization remains un-invoked via
+  // orchestrator (engine V1 LANDED commit `4cf50ab` Faza 2.5 batch 6 standalone
+  // — wires `weaknessDetector` orfan per §36.84 Gap #1 via import în
+  // `weaknessConsumer.js`, NU yet wired into live coach flow).
+  //
+  // Engine = PARALLEL volume+frequency modifier on top of Periodization for
+  // advanced users (Marius persona gate strict Q12 §45.3 LOCKED + tier T1+ +
+  // phase Bulk/Recomp + NU injury invariant 5). Hook 1 read-only consume CO
+  // (anti-cascade safeguard).
+  //
+  // Adapter D2 shape mapping concrete (identical pattern batches 2-5):
+  // orchestrator slot `meta.constraintObject` → engine-side
+  // `meta.periodizationConstraint` (per §9.6 Cluster A Hook 1 convention).
+  // Engine consumes Constraint Object read-only — adapter follows Tempo /
+  // Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
+  // `output.constraintObject`, since engine doesn't emit
+  // `meta.forward_constraint_object` în output blueprint, only
+  // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
+  // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
+  // orchestrator's existing currentCtx chain.
+  //
+  // Convergence Guard "T2 Unlock" (ADR 009 §AMENDMENT 2026-05-05) =
+  // orchestrator-level concern via
+  // `src/coach/orchestrator/utilities/convergenceGuard.js`, NU engine-emitted
+  // metadata. Adapter does NOT propagate convergenceGuard.
+  //
+  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
+  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
+  //
+  // Default 0% — production behavior unchanged. Golden-master parity tests
+  // legacy↔orchestrated zero-behavior-change strict în
+  // `src/coach/orchestrator/__tests__/specializationParity.test.js`.
+  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
+  // Faza 4 smoke validation orchestrated path comportament corect.
+  specialization_via_orchestrator: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
