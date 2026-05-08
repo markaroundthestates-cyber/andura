@@ -46,3 +46,30 @@
 - **Next:** Task 3 §29.5.7 V2 amendment verify + recovery from archive if needed
 
 ---
+
+### Task 3 — §29.5.7 V2 amendment verify + recovery
+
+- **Status:** ✅ Complete (RECOVERY path executed — NU migrated în ADR 026 §9.X)
+- **Pre-flight:** clean tree post Task 2 commit `a6c2f71` ✓
+- **Step 3.1 verify ADR 026 §9.X:** `grep -n "29.5.7\|§29.5.7" 03-decisions/026-offline-coaching-decision-tree-exhaustive.md` → **NO results** (NU migrated). Vault-wide grep `29.5.7` → only carry-forward references în DECISION_LOG chat-NEW1 entry (Task 2 just-added) + CURRENT_STATE narrative + task_*.md inbox files. **MIGRATED status: NEGATIVE** → Recovery path needed.
+- **Step 3.2 locate archive:** `📤_outbox/_archive/2026-05/223_HANDOVER_MISC_2026-04-30_evening_CAPACITY_A_DEPRECATED.md:2488` `#### 29.5.7 Tab Bar Navigation (LOCKED V1)` content extracted verbatim (5 lines: trio Azi/Istoric/Profil + Sesiune persistentă pattern).
+- **Step 3.3 recovery decision tree:** **Option B — Standalone canonical file** chosen (§29.5.7 = UX root nav architecture scope, NU engine adaptation Option A NU punctual decision Option C).
+- **Modificări:**
+  - **NEW** `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` — canonical SSOT containing:
+    - §29.5.7 V1 ORIGINAL verbatim from archive (preserved baseline)
+    - §29.5.7 V2 AMENDMENT 2026-05-07 (chat-NEW1 LOCK step 1 Sala/Antrenor/Istoric/Cont + chat-NEW2 SUPERSEDE FINAL Antrenor/Progres/Istoric/Cont)
+    - Naming evolutions (Coach→Antrenor + Pilot Automat→Auto)
+    - Subtitle xlsx Daniel verbatim semantic clarification
+    - Root nav primary V2 SUPERSEDE LOCK FINAL 4 taburi table (Antrenor/Progres/Istoric/Cont) cu scope + cross-refs
+    - Drift production 6→4 documented
+    - Sesiune persistentă pattern V1 PRESERVED unchanged
+    - Cross-refs DECISION_LOG entries chat-NEW1+NEW2 + mockup canonical Andura-V2.html chat-NEW3 LOCKED
+  - **UPDATED** `00-index/CURRENT_STATE.md` §JUST_DECIDED Task 1 entry "Mid-flight unresolved carry-forward" line — `§29.5.7 V2 amendment verify + recovery — Task 3 acest batch` → `§29.5.7 V2 amendment ✅ recovered from archive → 04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md canonical SSOT new`
+- **Step 3.5 wikilinks orphane:** `grep -rEn "\[\[.*29.5.7|\[\[.*29_5_7" --include="*.md" --exclude-dir=_archive` → ZERO bracketed wikilink references found (only narrative cross-refs in DECISION_LOG Task 2 entry + inbox task files). New file accessible via canonical path; no wikilink updates needed.
+- **Anti-fabrication discipline:** Verbatim extraction from archive only — no §29.5.7 content invented. V1 original preserved baseline. V2 amendment narrative sourced from chat-NEW1+NEW2 LOCK V1 entries (DECISION_LOG just-synced + handover archive 214 verbatim).
+- **Commits:** TBD post-Write atomic Task 3
+- **Pushed:** TBD post-commit
+- **Issues:** none
+- **Next:** Task 4 §AR.14 + §AR.15 add VAULT_RULES
+
+---

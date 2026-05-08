@@ -379,7 +379,7 @@ Tone bond preserved. Daniel productive frustrat dar fără escalation. **Pattern
 **Mid-flight unresolved carry-forward chat NEW:**
 - ~~13 wording-uri canonice butoane TBD~~ → DROPPED (deja stabilite)
 - ~~xlsx Daniel update~~ → DROPPED (personal NU vault)
-- §29.5.7 V2 amendment verify + recovery — Task 3 acest batch
+- §29.5.7 V2 amendment ✅ recovered from archive → `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` canonical SSOT new (Run 6 Task 3 LANDED — V1 verbatim from `223_HANDOVER_MISC_..._DEPRECATED.md:2488` + V2 amendment chat-NEW1 LOCK step 1 Sala/Antrenor/Istoric/Cont + chat-NEW2 SUPERSEDE FINAL Antrenor/Progres/Istoric/Cont)
 - LOCK V1 pending decisions chat-NEW1+NEW2+NEW3 — Task 2 sync DECISION_LOG
 - Capacity Opțiunea A scribe deferred — preserved (~95%+ saturation OR pre-Faza 3)
 - Implementation pending nav root 6→4 + CD V2 implementation — strategic axis tactical post Run 6
