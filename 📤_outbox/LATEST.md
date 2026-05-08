@@ -42,10 +42,10 @@
 
 - `b2c07d0`: feat(strangler): Specialization adapter + flag + barrel — Faza 3 batch 6 wiring real
 - `a051768`: test(strangler): Specialization golden-master parity 12 tests — Faza 3 batch 6
-- `<this raport commit hash TBD>`: docs(outbox): LATEST cycle Faza 3 batch 6 Specialization wiring complete
+- `65d205f`: docs(outbox): LATEST cycle Faza 3 batch 6 Specialization wiring complete
 
 ## Pushed
-- origin/main: ✅ 2 commits pushed (`b2c07d0` + `a051768`); LATEST raport commit pending push (commit 3 final)
+- origin/main: ✅ all 3 commits pushed (`b2c07d0` + `a051768` + `65d205f`) verified `git log origin/main -3 --oneline`
 - Backup tag `pre-faza3-batch6-specialization-wiring-2026-05-08-2238` pushed origin
 - Note: auto-commit `395a9cd chore(auto): 04-architecture/mockups/andura-luxury.html` landed origin between batch 5 LATEST push (commit `16c20e0`) and batch 6 commit 1 (`b2c07d0`) — unrelated mockup file artifact, NU related Faza 3
 
