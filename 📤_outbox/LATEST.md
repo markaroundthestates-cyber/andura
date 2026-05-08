@@ -80,12 +80,12 @@
 
 ## Commits
 
-- TBD post-Write commit (single commit message): `chore(vault): §CC.5 fast handover ingest Run 6 elevated COMPLETE + side-quest device security + VS Code Desktop birou Y/N pending → cumulative ~688 PRESERVED`
+- `470b358` chore(vault): §CC.5 fast handover ingest Run 6 elevated COMPLETE + side-quest device security + VS Code Desktop birou Y/N pending → cumulative ~688 PRESERVED
 
 ## Pushed
 
 - Safety tag `pre-cc5-fast-ingest-run6-complete-2026-05-08-1003` → origin ✓
-- Commit TBD post
+- Commit `470b358` → origin/main (`846a8a1..470b358`) ✅ PUSH SUCCESS + tests 2648 PASS pre-commit
 
 ## Issues / Ambiguities
 
