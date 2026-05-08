@@ -1,5 +1,100 @@
 # DECISION LOG — Andura
 
+## 2026-05-09 chat ACASĂ — themes Batch 1 AUDIT + Batch 2a mecanic LANDED (Q1-Q7 LOCKED Co-CTO scope, mockup polish ~707-709 PRESERVED)
+
+**Status:** Mockup polish meta-tooling. Cumulative LOCKED V1 ~707-709 PRESERVED unchanged (NU product/architecture additive — Q1-Q7 Co-CTO scope decisions tactical autonomous + mecanic str_replace 4 mockups).
+
+**Authority:** Daniel autonomy lock real CTO mode (*"Ai mână liberă să-mi zici să-i cer lui CC ce detalii vrei"* + *"executie cu intreruperi doar cand e ceva ce chiar tine de mine"*) + production-ready directive strict (*"100% compliant or no UX = no Beta"*).
+
+### Q1-Q7 LOCKED chat-current Co-CTO scope tactical autonomous
+
+1. **Q1 Body fatigue Living Body = V2 prep wiring** (NU V1 hardcoded recommend). Pivot post Daniel push-back productiv validat: engine REAL există `src/engine/muscleMap.js getMuscleState()` exponential decay RPE × recovery hours + `weaknessDetector.js` 1RM ratio<0.8.
+   - Plan: DOM zones `data-muscle="biceps"/chest/shoulders/legs/back/triceps/core` per 7 grupe canonice + CSS palette `.fatigue-fresh/recovering-light/recovering-deep/fatigued` per state[muscle] thresholds + placeholder JS `applyMuscleState()` + demo hardcoded scenario "post upper-body day"
+   - Plug-and-play 1-line swap React migration (`useMuscleState()` hook)
+   - Implementare structural Batch 2b pending
+
+2. **Q2 "Mă doare ceva" + "Schimbă echipament" preset driven CONFIRMED Cazul B verify** — drill-down preset 4 opțiuni pain-button + `alternativeEngine.js` list, NU textbox liber. Daniel claim "rolul textbox neclar" = misperception, drop scope.
+
+3. **Q3 Tab Nutriție DROP din scope mea culpa Co-CTO direct** — eu am decis ELIMINATE cu citation `PRODUCT_STRATEGY §3.5` + `ROOT_NAV_V2_29_5_7`, dar CC Batch 1 audit verify §2.5: tab Nutriție NU există în niciun mockup (4 au `antrenor/progres/istoric/settings` quad). Daniel a remembered V1 spec greșit + eu am amplificat fără pre-flight grep. **Anti-recurrence §0 confirmed needed chiar și pentru deciziile Co-CTO mele.**
+
+4. **Q4 "Streak zile" → "Zile consecutive"** canonical engine wording per `proactiveEngine.js:108` — ✅ LANDED Batch 2a (2 occurrences Clasic 767 + Living Body 1067 stat-card labels).
+
+5. **Q5 "Maître d'entraîneur" → "Antrenor personal"** drop French Gigel fail — ✅ LANDED Batch 2a (3 occurrences Luxury 1123 + 1543 + 2068).
+
+6. **Q6 Auth flow direction = A canonical auth-banner-soft post-T0** + risk text local data inline (drop auth screen blocking pre-T0). Per `HANDOVER_AUTH_FLOW §56.1.1 + §56.3.1` + Bugatti F4 frictionless Maria 65. Daniel "Continuă fără cont" wording = adopt în banner soft post-T0 ca CTA secundar lângă Google/Email link cu prompt risc inline ("Datele se salvează doar pe acest dispozitiv. Riști să le pierzi (telefon resetat, browser cache șters, app reinstalat)."). Implementare structural Batch 2b pending.
+
+7. **Q7 Repo GitHub `andura` privat confirmed** → ZERO git history rewrite needed (calculated risk acceptabil pentru 7 Bugatti refs istoric).
+
+### Bugatti Option B LANDED Batch 2a
+
+Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facing aesthetic philosophy signature, repo privat ZERO public exposure):
+- Line 1584 Settings row "Bugatti" → "Luxury" (user-facing)
+- Line 1694 theme picker "Bugatti · bleu & champagne" → "Luxury · bleu & champagne" (user-facing)
+- Line 1869 mock notification "skin Bugatti" → "skin Luxury" (user-facing)
+- Line 2206 JS routes data key `'bugatti': 30` → `'luxury': 30` (text-match routing preserved cu noul key matching new row text)
+- Line 135 CSS comment "Bugatti grille moment" → "Luxury grille moment"
+- README lines 20 + 100 PRESERVED (2 motto references developer-facing)
+
+### Batches LANDED chat-current
+
+**Batch 1 AUDIT-only** (`adec665 docs(outbox): LATEST themes batch 1 AUDIT raport — Task 2 BLOCKED Bugatti refs`):
+- Cazul A vs B per Daniel claims + cross-skin pattern audit (12 patterns checked) + Brain Coach blocker analysis
+- 7 Bugatti refs found legitim BLOCKED Task 2 mecanic until Daniel approve handling per §5 Failure Mode
+- Pre-existing bugs flagged §9 list 15 items deferred Batch 2 structural fixes
+- ZERO mockup file changes, audit-only LATEST.md raport
+
+**Batch 2a mecanic** (`e91768f feat(mockups): batch 2a Bugatti cleanup + cross-skin renames + Roman→arabic` + LATEST hash update `ca645ac`):
+- 127 atomic line edits 4 files (Clasic 9 + Living Body 9 + Luxury 81 + Brain Coach 28), ZERO net drift (insertions=deletions exact 1:1 atomic str_replace pairs)
+- Task 1 BUGATTI Option B (Luxury 5 refs replaced + README 2 motto preserved)
+- Task 2 cross-skin renames (Streak zile → Zile consecutive 2 + PR-uri → Recorduri / Recorduri Personale 6 context-aware + Zonă sensibilă → Deconectare/Ștergere 17 cu Luxury routes keys 'sensibilă/zonă sensibilă' → 'deconectare/ștergere' + Maître d'entraîneur → Antrenor personal 3 Luxury)
+- Task 3 Roman→arabic user-facing (Brain Coach 24 occurrences + Luxury 33 occurrences peste estimate Batch 1 — onboarding step counters + session UI + warm-up sets + RPE values + frequency + slider labels). Preserved: HTML comments + picker dev nav + V7 deck-title + stage-num CSS-hidden Luxury + V1/V3 version labels + SVG path coords
+
+### Mid-flight unresolved Batch 2b structural pickup chat NEW
+
+12 items DOM modify + JS init logic (NU mecanic str_replace):
+1. Auth flow refactor cross-skin (Q6 implementation)
+2. Brain Coach blocker fix `screen-auth` setTimeout 1.5s splash→auth fără skip path
+3. Onboarding splash auto-advance Clasic + Living Body
+4. Luxury onboarding bugs deep CSS audit (slider age + sex selector + antecedente unresponsive + frecvență WCAG)
+5. Living Body modal "Confirmă acțiunea" z-index/opacity
+6. Body fatigue Living Body V2 prep wiring (Q1 implementation)
+7. Luxury Cum e azi flow broken multi-screen
+8. Luxury Istoric placeholder data lipsă
+9. Luxury tab nav root drift `Azi/Antren./Progres/Cont` vs V2 SSOT canonical
+10. Luxury "Zona sensibilă" UI nesting deep DOM audit
+11. Andura Clasic Progres "Loghează greutate" toast → real drill-down
+12. Brain Coach theme picker DOM structure unification (optional aesthetic)
+
+### Push-backs productive + Daniel-isms
+
+- *"daca avem aplicatia full functionala fara buguri acum pe PWA, ar trebuii ca migrarea sa fie smooth"* — push-back V1/V2 body fatigue, eu mea culpa rapid pe presupunere engine inexistent + pivot V2 prep wiring path
+- *"explica-mi ca la prosti ca am citit 50 chaturi azi si nu fac fata"* — fatigue burnout tone, validate frustrare zero defend, eu pivot conversational simplu Maria 65 narrative
+- *"de ce 2 artefacte"* — caveman correction direct overhead drop, eu pivot la 1 artefact prompt CC pure
+- *"cat ai bw 30%???"* — caveman bandwidth honesty proactive, eu honest recalibrate ~50-60% real → handover ACUM threshold
+- *"ce ai nevoie de la mine"* — boundary correction Co-CTO, eu trebuie cercetare vault primul (5 search-uri pentru Q2-Q5), NU întreba pe Daniel ce e deja documentat
+- CC Batch 1 push-back Q3 Nutriție tab NU există — eu mea culpa direct Co-CTO citation falsă fără pre-flight grep, anti-recurrence §0 reaffirm
+
+### Cross-refs
+
+- [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-brain-coach]] design tokens cross-skin V2 SSOT compliant
+- [[ADR_BIAS_DETECTION_OBSERVABLE_v1]] anti-RE wording (zero numeric values + zero Roman user-facing per Gigel test)
+- [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] preset 12-zone body grid + 3-tier severity
+- `src/engine/alternativeEngine.js` ALTERNATIVES map fixed list per exercise
+- `src/engine/proactiveEngine.js:108` Zile consecutive canonical engine wording
+- `src/engine/muscleMap.js getMuscleState()` exponential decay RPE × recovery hours
+- `src/engine/weaknessDetector.js` 1RM ratio<0.8 threshold
+- [[../00-index/CURRENT_STATE]] §JUST_DECIDED entry top descending cronologic + §NOW active
+
+### Backup tags + Tests
+
+**Backup tags pre-§CC.5-fast-ingest:** `pre-themes-batch1-2026-05-09-0027` + `pre-themes-batch2a-2026-05-09-0041` + `pre-cc5-fast-ingest-themes-b1-b2a-2026-05-09-0058` (acest ingest). Toate pushed origin rollback safety preserved.
+
+**Tests baseline:** 2731 PASS preserved EXACT chat-current (mockup-only edits, ZERO src changes).
+
+**Next:** Batch 2b structural sub-batches granular fail-stop (2b-i auth flow + Brain Coach blocker / 2b-ii onboarding splash auto-advance / 2b-iii Living Body modal + body fatigue V2 prep / 2b-iv Luxury onboarding bugs / 2b-v Luxury Cum e azi flow / 2b-vi Luxury Istoric data + tab nav + UI nesting / 2b-vii Andura Clasic Loghează greutate). Daniel decide priority order.
+
+---
+
 ## 2026-05-08 chat unified — Faza 3 STRANGLER batches 4-7 LANDED (chat strategic acasă) + 4 themes V2 SSOT compliance LANDED (chat-current paralel) + Brain Coach Patch 2 drift-uri (~10-12 LOCKED V1 cumulative)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~697 → ~707-709 (+10-12 net cumulative chat unified).
