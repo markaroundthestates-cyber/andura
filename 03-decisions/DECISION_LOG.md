@@ -1,5 +1,34 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 chat NEW acasă — Batch 1 Vite+React 19 Scaffold LANDED (parallel multi-page entry, +1 LOCKED V1 implementation)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~690 → ~691 (+1 net Batch 1 LANDED).
+
+**Authority:** Daniel chat-NEW3 birou 2026-05-07 direction LOCK + chat-current acasă 2026-05-08 React migration plan tactical chat dedicat — Batch 1 first implementation step per REACT_MIGRATION_STATE_MAPPING_V1 §7 8-batch strategy.
+
+**Scope strict Batch 1:** scaffold parallel React entry validate end-to-end deps work. NU migrate existing app. `index.html` + `src/main.js` preserved unchanged exact.
+
+**Files modified atomic batch:**
+- `package.json`: add deps `react@^19` + `react-dom@^19` + `react-router-dom@^6` + devDeps `@vitejs/plugin-react@^4` + `@types/react@^19` + `@types/react-dom@^19`
+- `package-lock.json`: regenerated post npm install (18 packages added)
+- `vite.config.js`: add `react()` plugin + multi-entry `rollupOptions.input` (`main` + `react-test`)
+- `tsconfig.json`: add `"jsx": "react-jsx"` modern transform
+- NEW `react-test.html`: parallel entry root level (clean, NU Firebase keys, NU onclick handlers)
+- NEW `src/main.jsx`: ReactDOM root + StrictMode + `<App />` render
+- NEW `src/App.jsx`: placeholder component (Batch 2 va adds Router)
+
+**Smoke validation gate (CRITICAL):**
+- `npm run typecheck` PASS ✅
+- `npm run test:run` PASS 2683 / 0 preserved exact ✅
+- `npm run build` PASS multi-entry build success (`dist/index.html` 62.98 kB + `dist/react-test.html` 0.76 kB + `dist/assets/react-test-*.js` 193.41 kB) ✅
+- Dev server smoke `localhost:5173/react-test.html` placeholder render — pending Daniel manual gate
+
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] §7.1 Batch 1 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED entry top.
+
+**Backup tag:** `pre-batch1-vite-react-scaffold-2026-05-08-2128` pushed origin.
+
+**Next batch:** Batch 2 React Router skeleton + 4 root nav routes (Antrenor / Progres / Istoric / Cont) per V2 mockup canonical.
+
 ## 2026-05-08 chat NEW acasă — REACT_MIGRATION_STATE_MAPPING_V1 doc canonical SSOT (+1 LOCKED V1 mapping)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~689 → ~690 (+1 net mapping doc canonical).
