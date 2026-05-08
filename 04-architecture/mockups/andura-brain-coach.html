@@ -2655,37 +2655,31 @@
         <div class="head-tag">Pre-sesiune</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:18px;">Răspunsul tău determină dacă mergem cu sesiunea propusă sau adaptăm.</div>
+        <div class="hero-sub" style="margin-bottom:18px;">Engine-ul ajustează intensitatea pe baza energiei tale. <b>3 stări simple.</b></div>
 
-        <div class="gauge-card">
-          <div class="gauge-label">Energie generală</div>
-          <div class="gauge-val">VI</div>
-          <div class="gauge-track">
-            <div class="gauge-fill" style="width:60%;"></div>
-            <div class="gauge-marker" style="left:60%;"></div>
-          </div>
-          <div class="gauge-scale">
-            <span>Frânt</span><span></span><span>OK</span><span></span><span>Rachetă</span>
-          </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="btn-secondary" onclick="goto('sala')" style="height:auto; padding:18px 20px; justify-content:flex-start; gap:14px; text-align:left;">
+            <span style="font-size:32px;">🟢</span>
+            <span style="display:flex; flex-direction:column; align-items:flex-start; gap:3px;">
+              <span style="font-weight:700; color:var(--ink); font-size:15px; letter-spacing:0.01em;">Excelent</span>
+              <span style="font-size:12px; color:var(--ink-2);">Engine UP +15% eligible</span>
+            </span>
+          </button>
+          <button class="btn-secondary" onclick="goto('sala')" style="height:auto; padding:18px 20px; justify-content:flex-start; gap:14px; text-align:left;">
+            <span style="font-size:32px;">🟡</span>
+            <span style="display:flex; flex-direction:column; align-items:flex-start; gap:3px;">
+              <span style="font-weight:700; color:var(--ink); font-size:15px; letter-spacing:0.01em;">Normal · OK</span>
+              <span style="font-size:12px; color:var(--ink-2);">Engine NONE — baseline</span>
+            </span>
+          </button>
+          <button class="btn-secondary" onclick="goto('energy-cause')" style="height:auto; padding:18px 20px; justify-content:flex-start; gap:14px; text-align:left;">
+            <span style="font-size:32px;">🔴</span>
+            <span style="display:flex; flex-direction:column; align-items:flex-start; gap:3px;">
+              <span style="font-weight:700; color:var(--ink); font-size:15px; letter-spacing:0.01em;">Obosit</span>
+              <span style="font-size:12px; color:var(--ink-2);">Engine DOWN imediat</span>
+            </span>
+          </button>
         </div>
-
-        <div class="thinking-card compact">
-          <div class="think-head">
-            <span class="pulse-dot"></span>
-            <span class="think-label">Compus cu</span>
-          </div>
-          <div class="thought-step">
-            <span class="check">✓</span>
-            <span>HRV obiectiv <span class="data">52ms</span> + percepție subiectivă VI/X</span>
-          </div>
-          <div class="thought-step">
-            <span class="check">✓</span>
-            <span>Decid: sesiune <span class="data">-12% volum</span>, păstrez intensitate</span>
-          </div>
-        </div>
-
-        <button class="btn-primary mb-s" onclick="goto('sala')">Mergem →</button>
-        <button class="btn-secondary" onclick="goto('energy-cause')">De ce mă simt așa?</button>
       </div>
     </div>
 
