@@ -1,9 +1,9 @@
 # ANDURA VAULT — INDEX MASTER
 
-**Last updated:** 2026-05-08 (Run 6 elevated complete — 6 tasks sequential vault hygiene reconciliation post Claude chat citation slip-uri root cause analysis; cumulative LOCKED V1 ~688 PRESERVED unchanged vault meta-tooling NU additive).
+**Last updated:** 2026-05-08 — ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 Co-CTO tactical lock + D4 amendment additive `severity` field + cross-refs bidirectional 8 ADRs (cumulative LOCKED V1 ~688 → ~695 +7 net product/architecture; Faza 3 STRANGLER pre-wiring blocker CLOSED; orchestrator V1 stubs `5a16550` ready Faza 3 batch 1 Periodization wiring real).
 **SSOT activ chat-state:** [[CURRENT_STATE]] — **READ FIRST chat NEW startup** (live layered ~200 LOC, layered read mandatory per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.2).
 **SSOT deep archive:** [[HANDOVER_GLOBAL_2026-04-30_evening]] — drill-down doar pentru sections referenced în CURRENT_STATE `## ACTIVE_REFS` (306 LOCKED V1 + §36.99-§36.107 offline coaching tree + 8 prescriptive engines + D1/D2/D3.1/D4 LOCKED V1 + §41-§44 Vault Hygiene COMPLETE + §45 ADR 026 spec 75 decisions + §47 Alignment Questions Rule LOCKED V1 + §50 D-cluster 41 net + §56 Auth Flow Resolution 35 sub-decisions + §62-§68 Batch 1-6 + Closure 63 sub-decisions + §69 Scenarios Coverage PRE-BETA BLOCKER FLAG).
-**Stats:** 96 fișiere active vault (post 🦫 Run 6 elevated 2026-05-08 — +1 NEW `04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md` Task 3 §29.5.7 V2 recovery, vs Run 2 baseline 93 +3 net cumulative); 42 ADR-uri active total — 33 numbered 001-033 + 9 named ADR_* — ADR 033 Muscle Memory Index STUB SPEC PLACEHOLDER NEW din §32 split (no new ADR Run 6).
+**Stats:** 96 fișiere active vault (preserved post Run 6 elevated 2026-05-08 — ADR 030 Q-OPEN resolution = additive expand 30 LOC + cross-refs 8 ADRs append, NU file count change); 42 ADR-uri active total — 33 numbered 001-033 + 9 named ADR_* (no new ADR Run ADR 030 Q-OPEN resolution); ADR 030 status row `SPEC READY V1 partial` → `SPEC FULL V1 LANDED 2026-05-08` (D1-D5 + Q-OPEN-1→7 RESOLVED V1 + D4 amendment severity additive — Faza 3 STRANGLER pre-wiring blocker CLOSED).
 **Tooling:** VS Code only (Obsidian dropped per HANDOVER §7.6). Markdown preview built-in `Ctrl+K V`.
 
 ---

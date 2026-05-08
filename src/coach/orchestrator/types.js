@@ -48,13 +48,20 @@
 
 /**
  * Structured error envelope. `code` = stable machine-readable taxonomy;
- * `message` = human-readable detail; `cause` = optional original throwable.
+ * `message` = human-readable detail; `cause` = optional original throwable;
+ * `severity` = orchestrator policy hint per ADR 030 §3.6 RESOLVED V1 2026-05-08.
+ *
+ * Default `severity: 'hard'` if absent (fail-safe Anti-Cascade Silent per
+ * ADR 030 §3.6 + §2.4 D4 §AMENDMENT 2026-05-08). 'soft' = continue-graceful
+ * (ADR 025 alignment, engine pre-fill default); 'hard' = halt-strict
+ * (Anti-Cascade Silent ADR_CASCADE_DEFENSE_v1 §EXT-2 alignment).
  *
  * @typedef {object} AdapterError
- * @property {string} code              - Stable taxonomy (e.g. 'BUDGET_EXCEEDED', 'INVALID_INPUT', 'ENGINE_THREW')
- * @property {string} message           - Human-readable explanation
- * @property {Error|unknown} [cause]    - Original exception when adapter caught a throw
- * @property {string} [adapterId]       - Which adapter produced this error (set by orchestrator)
+ * @property {string} code                       - Stable taxonomy (e.g. 'BUDGET_EXCEEDED', 'INVALID_INPUT', 'ENGINE_THREW')
+ * @property {string} message                    - Human-readable explanation
+ * @property {Error|unknown} [cause]             - Original exception when adapter caught a throw
+ * @property {string} [adapterId]                - Which adapter produced this error (set by orchestrator)
+ * @property {'soft'|'hard'} [severity]          - Orchestrator policy hint; default 'hard' if absent
  */
 
 export {};

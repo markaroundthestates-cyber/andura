@@ -93,3 +93,14 @@ Articulare retroactivă a principiului fondator implicit: deciziile bune existen
 ---
 
 🦫 **Stub created Faza 3. Candidate status preserved (NU LOCKED — pending chat strategic dedicat). Full spec PENDING. ZERO fabrication. Articulare retroactivă a principiului fondator implicit în deciziile bune existente. "Andura gândește pentru user" — Bugatti paradigm peak craft.**
+
+---
+
+## §CROSS-REF 2026-05-08 — ADR 030 §3.5 + §3.6 Q-OPEN RESOLVED V1
+
+ADR 030 §3.5 + §3.6 RESOLVED V1 2026-05-08 chat NEW birou cross-refs ADR 025 graceful degradation:
+
+- **§3.5 Q-OPEN-5 (state source resolution Tier hierarchical fallback):** silent degradation default per acest ADR 025 — engine pre-fill default cu staleness signal când Tier miss (no user-visible offline indicator V1, deferred V1.5 când ≥3 testers raportează confuzie). User experience consistency cu pattern existing graceful skip + auto-pre-fill.
+- **§3.6 Q-OPEN-6 (error recovery semantics severity-aware policy):** ADR 025 graceful degradation = engine emits `severity: 'soft'` cu pre-filled default → orchestrator continues-graceful per §3.6 taxonomy table. Tension cu Anti-Cascade Silent ADR_CASCADE_DEFENSE_v1 §EXT-2 strict resolved per concrete error semantics: data degradation continues (acest ADR 025 alignment), contract violations halt (Cascade Defense alignment).
+
+*Cross-ref added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*

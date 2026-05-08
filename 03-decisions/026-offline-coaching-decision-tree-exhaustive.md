@@ -1946,4 +1946,29 @@ Revisit Cluster A-E LOCKED V1 → V1.5 candidate dacă (consistent §9.1.7 + §9
 
 ---
 
+## §AMENDMENT 2026-05-08 — ADR 030 §3.6 + §3.7 Q-OPEN RESOLVED V1 cross-ref §9.1-§9.8 engine adapters
+
+ADR 030 §3.6 Q-OPEN-6 RESOLVED V1 2026-05-08 chat NEW birou — engine adapters per §9.1-§9.8 pipeline annotate emitted errs cu `severity: 'soft' | 'hard'` field per ADR 030 §3.6 taxonomy table:
+
+| Engine spec section | Engine | Severity mapping per concrete failure scenario |
+|---------------------|--------|------------------------------------------------|
+| §9.1 | Periodization (Engine #1) | Constraint Object stale CDL corruption → **'hard'** (downstream cannot trust Floor/Ceiling baseline) |
+| §9.2 | Goal Adaptation (Engine #2) | Big 6 lifecycle phase auto-detection ambiguous → **'soft'** (use template default per Q6 D Hybrid LOCKED V1) |
+| §9.3 | Energy Adjustment (Engine #3 in pipeline §42.10) | Manual emoji absent (user skipped pre-session) → **'soft'** (use neutral 🟡 default per ADR 025) |
+| §9.4 | Bayesian Nutrition (Engine #4 in pipeline §42.10) | Convergence corruption insufficient samples → **'soft'** (use prior per ADR 022 fallback alignment) |
+| §9.5 | Tempo (Engine #5 in pipeline §42.10) | Form breakdown report processing error → **'soft'** (degrade default tempo per ADR 025 graceful) |
+| §9.6 | Specialization (Engine #6 in pipeline §42.10) | Insufficient lagging detection data → **'soft'** (pre-fill no specialization per ADR 025) |
+| §9.7 | Warm-up (Engine #7 in pipeline §42.10) | Mood + temperature missing → **'soft'** (use baseline routine per ADR 025) |
+| §9.8 | Deload Protocol (Engine #8 FINAL in pipeline §42.10) | Composite trigger insufficient signals → **'soft'** (defer deload prescription) |
+
+**Default fail-safe:** if engine adapter forgets `severity` field → orchestrator treats as `'hard'` (Anti-Cascade Silent default per ADR_CASCADE_DEFENSE_v1 §EXT-2 + ADR 030 §3.6).
+
+**ADR 030 §3.7 Q-OPEN-7 RESOLVED V1** — Convergence Guard re-eval cadence orchestrator-level batch periodic per session-end (NOT per-session-tick), aligns CDL ADR 011 write cadence + reuses ADR 009 §AMENDMENT 2026-05-05 N=3 consecutive sessions Behavioral Validation Rule. Tier downgrade cooldown 7 zile minim derives ADR 022 Cluster B Cadence pattern (acest ADR 026 §9.4 referenced).
+
+**ADR 030 §1.10 Pipeline Order LOCKED V1 + §3.4 Q-OPEN-4 RESOLVED V1 alignment confirm:** `runPipeline` `for (const adapter of adapters) await` sequential strict V1 preserved în `src/coach/orchestrator/index.js` `5a16550`. Constraint Object immutable propagation engine-to-engine via `EngineContext.meta` extension (Faza 3 batch 1 will populate). V1.5 candidate parallel-where-safe trigger (Tempo ⊥ Specialization, Warm-up ⊥ Deload) per ADR 030 §5.6 reconsideration threshold profiling >30% session-tick budget overhead.
+
+*Amendment added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*
+
+---
+
 🦫 **§9.8 Engine Deload Protocol Module-Level Spec V1 compiled 2026-05-06 evening chat-8 acasă.** ZERO net new substantive decisions — aggregation only verbatim from chat strategic 2026-05-05 birou after sources (`148_HANDOVER_..._engines3-4-5_spec_sessions_CONSUMED.md` line 16 Engine #4 Deload Protocol section + `00-index/CURRENT_STATE.md` §RECENT 2026-05-05 birou after lines 715-737 + `03-decisions/013-auto-aggression-detection.md` cross-ref AA-driven mechanic + `03-decisions/ADR_COMPOSITE_SIGNAL_LAYER_v1.md` cross-ref §36.41 hard-disabled — **4-way parity check ✅ ZERO substantive divergence flagged**). ~32 decisions Cluster A-E cumulative (5+14+5+7+5 = 36 decisions structural decomposition, but Source 1 Engine #4 spec ~22 substantive bullet decisions verbatim + cross-ref Sources 2+3 derived Cluster D Hook integration + standard pattern Cluster A+E decomposition = ~32 effective consistent prompt expected ~26-32 range). **Pipeline §42.10 SPEC closure FINAL 8/8 prescriptive engines** — §9.8 spec compile = penultimate milestone. Pre Faza 2.5 batch 8 V1 implementation per Option A LOCKED 2026-05-06 morning chat-2 — pipeline §42.10 sequential post Engine Warm-up V1 LANDED commit `20999fb` (batch 7). Pattern Bugatti SSOT consistent §9.1 Engine #1 Periodization (`cd6d9a4`) + §9.2 Goal Adaptation (`6be84f8`) + §9.3 Energy Adjustment (`2f9aa79`) + §9.4 Bayesian Nutrition Inference (`685fdd4`) + §9.5 Tempo (`a9b7cbd`) + §9.6 Specialization (`92a69fd`) + §9.7 Warm-up (`c15ad0f`). Pipeline §42.10 position 8th canonical FINAL (NU "Engine #4" naming legacy chat strategic spec session ordering 2026-05-05 birou after 3-engine cluster). Source 4 [[032-engine-deload-protocol|ADR 032]] 🔵 SPEC REFERENCE NEW direct post-create `dccda1f` 2026-05-06 evening chat-9 — redirects la §9.8 SSOT canonical (precedent reverse vs ADR 027/028/029 stub flip pattern; filename per §36.95 Additive convention post `031-engine-warmup-mobility.md` §9.7). **Source 2 path slip resolved transparency:** prompt referenced `013-ADR-aa-detection.md` but actual filename `013-auto-aggression-detection.md` — anti-Slip 4 grep filesystem corrected. Faza 2.5 batch 8 second half = Engine Deload V1 implement `src/engine/deload/` pure-function module — pipeline §42.10 8/8 V1 implement closure complete post batch 8 LANDED.

@@ -180,3 +180,18 @@ La primul deploy post-ADR:
 ---
 
 🦫 **ADR 020 — Storage Tiering Strategy. Foundation extensibilitate. Pre-launch v1 mandatory.**
+
+---
+
+## §CROSS-REF 2026-05-08 — ADR 030 §3.5 Q-OPEN-5 RESOLVED V1
+
+ADR 030 §3.5 RESOLVED V1 2026-05-08 chat NEW birou locks hierarchical fallback strategy aliniat ADR 020 Local-First:
+
+- **Tier 1 IndexedDB primary** (acest ADR 020 LOCKED V1 alignment confirm) — sub-50ms typical orchestrator pipeline read
+- **Tier 0 ephemeral session memory fallback** — when Tier 1 miss/error (e.g., Dexie transaction race)
+- **Tier 2 Firestore async background sync** — NEVER pipeline blocking (≥200ms typical >> 50ms Layer D budget); staleness propagated `EngineContext.meta.staleness_ms` for engine awareness
+- **Silent degradation default** per ADR 025 graceful (engine pre-fill default cu staleness signal)
+- **Integration point:** `src/coach/orchestrator/contextBuilder.js` cu optional `storageAdapter` parameter — `read(key)` returns `{ value, tier, staleness_ms }`
+- **No ADR 020 amendment needed** — Local-First Tier 1 primary alignment confirm
+
+*Cross-ref added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*

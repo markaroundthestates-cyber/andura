@@ -1,5 +1,56 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 — ADR 030 Q-OPEN-1→7 RESOLVED V1 7/7 Co-CTO tactical lock + D4 amendment additive `severity` field + cross-refs bidirectional 8 ADRs (product/architecture additive)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~688 → ~695 (+7 net product/architecture additive — 7 Q-OPEN tactical resolutions; D4 severity field additive treated additive amendment NU separate count).
+
+**Authority:** Co-CTO tactical lock 7/7 Q-OPEN per ADR 030 §3 RESOLVED V1 mechanism concret + V1.5 trigger thresholds empirical post Faza 3 batch 1 Periodization wiring discovery + post-Beta useri reali signal. Provenance: DRAFT artefact `030-QOPEN-RESOLUTION-PROPOSE-DRAFT.md` Co-CTO read-only analysis (consumed archive NN 250 post-batch) + cross-validation ADR 026 §9.X engines V1 LANDED + orchestrator V1 stubs `5a16550` inline Q-OPEN comments + LOCKED V1 ADRs constraint reconciliation (009/011/018/020/022/025/026 + ADR_CASCADE_DEFENSE_v1).
+
+**Decision:** Apply 7/7 Q-OPEN resolutions to ADR 030 §3 (verbatim expand cu mechanism V1 concret + V1.5 trigger thresholds empirical) + D4 amendment additive `AdapterError.severity: 'soft' | 'hard'` field (default `'hard'` if absent — fail-safe Anti-Cascade Silent Bugatti craft) + orchestrator `runPipeline` policy-aware halt logic + cross-refs bidirectional 8 ADRs.
+
+**7 Q-OPEN RESOLVED V1:**
+
+1. **§3.1 Q-OPEN-1 Versioning/migration** — Migration Runner orchestrator-level pre-pipeline în `contextBuilder.js` (D2 thin scope preserved); ADR 018 §4 alignment confirm
+2. **§3.2 Q-OPEN-2 Layer D ≤50ms enforcement** — V1 sync Promise.race timeout (current `budget.js`) + `BUDGET_EXCEEDED` severity 'soft' default; V1.5 AbortController trigger când Faza 3 batch 1 ≥1 engine reproducibly p95 >50ms
+3. **§3.3 Q-OPEN-3 Observability granularity** — Aggregate orchestrator-level (1 CDL `pipeline_event` + `subSpans[]` array) per session-tick; per-adapter Sentry only on err. ADR 011 §X Changelog 2026-05-08 amendment defining payload schema applied
+4. **§3.4 Q-OPEN-4 Pipeline ordering** — SEQUENTIAL STRICT preserved per ADR 026 §1.10 LOCKED; V1.5 parallel-where-safe trigger §5.6 threshold preserved
+5. **§3.5 Q-OPEN-5 State source resolution** — Hierarchical fallback Tier 1 IndexedDB primary → Tier 0 ephemeral → Tier 2 Firestore async background (NEVER pipeline blocking); silent degradation default per ADR 025
+6. **§3.6 Q-OPEN-6 Error recovery semantics** — HYBRID per error code taxonomy + D4 amendment additive `AdapterError.severity: 'soft' | 'hard'` field. Resolves ADR 025 graceful vs ADR_CASCADE_DEFENSE_v1 strict tension. `runPipeline` policy-aware halt logic implemented
+7. **§3.7 Q-OPEN-7 Convergence Guard tier downgrade** — Batch periodic per session-end (NOT per-session-tick) + cooldown asymmetric (T0→T1→T2 instant, T2→T1/T1→T0 cooldown 7 zile + N=3 consecutive sessions per ADR 009 §AMENDMENT)
+
+**D4 amendment additive `severity` field LOCKED V1 2026-05-08:** `AdapterError` envelope additive optional `severity: 'soft' | 'hard'` field. Default `'hard'` if absent (fail-safe). Severity-aware policy `runPipeline`: 'soft' → continue-graceful (ADR 025 alignment); 'hard' → halt-strict (Anti-Cascade Silent alignment). Concrete engine severity mapping per ADR 026 §9.1-§9.8 (Periodization stale CDL → 'hard'; Tempo/Bayesian/Specialization/Warm-up/Deload/Goal Adaptation/Energy data degradation → 'soft').
+
+**Cross-refs bidirectional 8 ADRs applied:** ADR 030 §3 expanded RESOLVED V1 + §2.4 D4 §AMENDMENT 2026-05-08; ADR_CASCADE_DEFENSE_v1 §AMENDMENT 2026-05-08; ADR 009 §CROSS-REF 2026-05-08 N=3 reuse; ADR 011 §X Changelog 2026-05-08 `pipeline_event` payload schema; ADR 018 §CROSS-REF 2026-05-08 §4 alignment; ADR 020 §CROSS-REF 2026-05-08 Tier hierarchical fallback; ADR 022 §CROSS-REF 2026-05-08 fallback severity 'soft' + Cluster B Cadence reuse; ADR 025 §CROSS-REF 2026-05-08 silent degradation + severity 'soft' graceful; ADR 026 §AMENDMENT 2026-05-08 §9.1-§9.8 severity mapping table.
+
+**Files modified atomic batch:**
+- UPDATED: 03-decisions/030-adapter-design-pattern.md (status SPEC FULL V1 LANDED + §2.4 D4 §AMENDMENT additive severity + §3 RESOLVED V1 7/7 expand + §5.7 RESOLVED + footer 🦫 update; ~239 → ~440+ LOC)
+- UPDATED: 03-decisions/ADR_CASCADE_DEFENSE_v1.md (§AMENDMENT 2026-05-08 cross-ref §3.2 + §3.6)
+- UPDATED: 03-decisions/009-calibration-tiers.md (§CROSS-REF 2026-05-08 §3.7 N=3 reuse)
+- UPDATED: 03-decisions/011-coach-decision-log-architecture.md (Changelog 2026-05-08 §X `pipeline_event` payload schema)
+- UPDATED: 03-decisions/018-engine-extensibility-architecture.md (§CROSS-REF 2026-05-08 §3.1 Migration Runner alignment)
+- UPDATED: 03-decisions/020-storage-tiering-strategy.md (§CROSS-REF 2026-05-08 §3.5 Tier fallback)
+- UPDATED: 03-decisions/022-bayesian-nutrition-inference.md (§CROSS-REF 2026-05-08 §3.6 + §3.7)
+- UPDATED: 03-decisions/025-andura-gandeste-pentru-user.md (§CROSS-REF 2026-05-08 §3.5 + §3.6)
+- UPDATED: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md (§AMENDMENT 2026-05-08 §9.1-§9.8 severity mapping table)
+- UPDATED: src/coach/orchestrator/types.js (D4 `AdapterError.severity` field JSDoc)
+- UPDATED: src/coach/orchestrator/index.js (`runPipeline` policy-aware severity halt logic + `resolveSeverity` helper)
+- UPDATED: src/coach/orchestrator/utilities/budget.js (`BUDGET_EXCEEDED` severity 'soft' + Q-OPEN-2 RESOLVED inline comment)
+- UPDATED: src/coach/orchestrator/utilities/convergenceGuard.js (Q-OPEN-7 RESOLVED inline comment + V1.5 mechanism docs)
+- UPDATED: src/coach/orchestrator/contextBuilder.js (Q-OPEN-1+5 RESOLVED inline comments + V1.5 mechanism docs)
+- UPDATED: src/coach/orchestrator/__tests__/orchestrator.test.js (severity-aware policy tests +7 new — soft continues, hard halts, default 'hard' halts, BUDGET_EXCEEDED soft, ADAPTER_THREW hard halt, INVALID_ADAPTER hard halt, mixed pipeline ok→soft→ok→hard halt)
+- ARCHIVED: 03-decisions/030-QOPEN-RESOLUTION-PROPOSE-DRAFT.md → 📤_outbox/_archive/2026-05/250_ADR030_QOPEN_PROPOSE_DRAFT_CONSUMED.md (audit-trail provenance)
+- CYCLED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/249_LATEST_PREVIOUS_CC5_FAST_RUN6_COMPLETE_CONSUMED.md
+
+**Tests:** 2648 → 2652 PASS (+4 net new severity policy tests). ZERO src regression. Pre-commit hook vitest gate verified.
+
+**Backup tag:** `pre-adr030-qopen-applied-resolution-2026-05-08-1101` pushed origin.
+
+**Strategic axis post-resolution:** **Faza 3 STRANGLER pre-wiring blocker CLOSED** — orchestrator V1 stubs `5a16550` cu severity-aware `runPipeline` ready for Faza 3 batch 1 Periodization wiring real next chat dedicat. (a) React migration plan tactical + (b) Scenarios coverage gap reduction strategic + (c) Faza 3 STRANGLER batch 1 Periodization wiring real — toate UNBLOCKED.
+
+**Cross-refs:** Run 6 elevated cumulative commits chain (`9f6dbdf` Task 1 + `a6c2f71` Task 2 + `eeb4913` Task 3 + `9d002c8` Task 4 + `8be01cf` Task 5 + `83bbe4b` Task 6 + `846a8a1` docs(outbox) final) + `09257d8` SHA record + `470b358` §CC.5 fast ingest Run 6 complete + this commit. Plus VAULT_RULES §CC.6 + §CC.9 + §AR.13 PK Delta verification + §AR.14 + §AR.15 + §AR.PRE_FLIGHT 13-step + §3.3 archive schema NN chronologic continuous (249+250 NEXT post 248).
+
+---
+
 ## 2026-05-08 — CURRENT_STATE update post §CC.5 fast handover ingest "Run 6 elevated COMPLETE + side-quest device security tehnic CURAT + VS Code Desktop birou Y/N pending Daniel decision" (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~688 PRESERVED unchanged (Run 6 elevated 6/6 vault hygiene reconciliation + side-quest device security verdict + acest CURRENT_STATE update §CC.6 append-only).

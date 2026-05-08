@@ -165,3 +165,14 @@ ZERO T2 disclosure (anti-regret + anti-behavioral conditioning Gigel ignoring pa
 ---
 
 🦫 **Stub Faza 3 → SPEC READY V1 chat strategic 2026-05-05 birou after. Convergence Guard "T2 Unlock" architectural extension cross-cutting ADR 009 (NU Engine #3 specific). Bugatti paradigm: behavioral validation NOT just statistical convergence + Maria 65 autonomy preserve + Pain-Aware Hybrid Spec V1 binary + forward-compat v1.5 vector ZERO migration. ZERO fabrication, zero scope creep. Engine #3 of 7 prescriptive engines roadmap §36.100 SPEC COMPLETE.**
+
+---
+
+## §CROSS-REF 2026-05-08 — ADR 030 §3.6 Q-OPEN-6 RESOLVED V1 + §3.7 Q-OPEN-7 RESOLVED V1
+
+ADR 030 §3.6 + §3.7 RESOLVED V1 2026-05-08 chat NEW birou cross-refs Bayesian Nutrition adapter:
+
+- **§3.6 Q-OPEN-6 (error recovery semantics):** Bayesian Nutrition convergence corruption insufficient samples → adapter emits `severity: 'soft'` (use prior per acest ADR 022 fallback alignment). Cluster A Convergence Guard data corruption fallback = engine pre-fill default per ADR 025 graceful → orchestrator continues-graceful via §3.6 taxonomy table.
+- **§3.7 Q-OPEN-7 (Convergence Guard re-eval cadence):** ADR 030 §3.7 reuses Cluster B Cadence Adaptive T1+ pattern din acest ADR 022 + ADR 009 §AMENDMENT 2026-05-05 Behavioral Validation Rule N=3 consecutive sessions threshold. Tier downgrade cooldown 7 zile minim derives Cluster B re-prompt anti-spam similar reasoning (prevents flap on noisy convergence signals).
+
+*Cross-ref added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*

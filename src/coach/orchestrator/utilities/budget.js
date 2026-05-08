@@ -1,15 +1,17 @@
 // Layer D ≤50ms budget wrapper per ADR 030 D5 LOCKED V1.
 //
-// Cross-cutting orchestrator-level utility (NOT per-adapter) per D5. V1 stub
-// = simple Promise.race timeout. Concrete enforcement mechanism Q-OPEN-2
-// PENDING (sync timeout, async profiling, fail-fast on overrun) — defer post
-// faza 3 batch 1 wiring + measure actual budget per engine before mechanism
-// choice.
+// Cross-cutting orchestrator-level utility (NOT per-adapter) per D5.
+// Q-OPEN-2 RESOLVED V1 2026-05-08 — sync Promise.race timeout V1 preserved
+// per ADR 030 §3.2; AbortController + cancel-aware adapter contract V1.5
+// trigger când Faza 3 batch 1 measures ≥1 engine reproducibly p95 >50ms.
+//
+// `BUDGET_EXCEEDED` err code → severity 'soft' default per §3.6 taxonomy
+// (continue-graceful, engine pre-fill default per ADR 025 alignment).
 //
 // Per ADR_CASCADE_DEFENSE_v1 §EXT-2 Composite Signal Layer Layer D Budget
 // Reaffirmation (§36.41): ≤50ms hard ceiling per engine pipeline step.
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.5 D5 + §3 Q-OPEN-2
+// See: 03-decisions/030-adapter-design-pattern.md §2.5 D5 + §3.2 RESOLVED V1
 //      03-decisions/ADR_CASCADE_DEFENSE_v1.md §EXT-2
 
 import { err, isOk } from '../result.js';
@@ -40,7 +42,7 @@ export async function withBudget(fn, budgetMs = DEFAULT_BUDGET_MS) {
   let timeoutId;
   const timeout = new Promise((resolve) => {
     timeoutId = setTimeout(
-      () => resolve(err({ code: 'BUDGET_EXCEEDED', message: `over ${ms}ms budget` })),
+      () => resolve(err({ code: 'BUDGET_EXCEEDED', message: `over ${ms}ms budget`, severity: 'soft' })),
       ms,
     );
   });

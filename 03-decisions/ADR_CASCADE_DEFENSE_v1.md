@@ -143,4 +143,13 @@ Schema invalid (exercițiu ID inexistent / shape malformed) → throw + log + sa
 
 ---
 
+## §AMENDMENT 2026-05-08 chat NEW birou — Cross-ref ADR 030 §3 Q-OPEN RESOLVED V1
+
+- **§3.2 Q-OPEN-2 RESOLVED V1 (Layer D ≤50ms enforcement):** sync `Promise.race` timeout V1 in `src/coach/orchestrator/utilities/budget.js` propagates `BUDGET_EXCEEDED` cu `severity: 'soft'` per §3.6 taxonomy (continue-graceful per ADR 025 alignment). V1.5 trigger = AbortController + cancel-aware adapter contract amendment când Faza 3 batch 1 Periodization wiring measures ≥1 engine reproducibly p95 >50ms în synthetic stress test. Anti-Cascade Silent precedent EXT-2 alignment: fail-fast on overrun preserved în taxonomy (other hard error codes `INVALID_INPUT`/`ENGINE_THREW`/`ADAPTER_THREW`/`INVALID_ADAPTER` halt-strict default).
+- **§3.6 Q-OPEN-6 RESOLVED V1 (error recovery semantics — D4 amendment additive `severity` field):** Anti-Cascade Silent default `severity: 'hard'` if absent (engine forgets severity field = treated halt-strict, NU silent continue). 'soft' severity codes resolve ADR 025 graceful tension via concrete taxonomy: data degradation continues, contract violations halt. Cascade Defense Layer D ≤50ms budget compliance preserved cu `BUDGET_EXCEEDED` 'soft' override (latency overrun ≠ logic violation, downstream may proceed cu prev tick value).
+
+*Amendment added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*
+
+---
+
 *EXT-2 added 2026-05-02 CHAT C SELF-CORRECTION EXTENSION ingest.*

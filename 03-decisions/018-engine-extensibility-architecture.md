@@ -555,3 +555,16 @@ Daniel approved 7/7 decision points after triangulation review (Claude chat pre-
 - DP-7 Migration tempo gradual strangler: APPROVED
 
 *ADR 018 — Accepted 2026-04-27*
+
+---
+
+## §CROSS-REF 2026-05-08 — ADR 030 §3.1 Q-OPEN-1 RESOLVED V1
+
+ADR 030 §3.1 RESOLVED V1 2026-05-08 chat NEW birou locks Migration Runner orchestrator-level pre-pipeline integration:
+
+- **Integration point:** `src/coach/orchestrator/contextBuilder.js` `buildEngineContext(userState)` invokes ADR 018 §4 Migration Runner BEFORE shape freeze
+- **Schema version tracking:** `EngineContext.meta.schemaVersion` field tracks running migration generation
+- **Adapter D2 thin scope preserved:** Adapter consumes already-migrated canonical shape — pure mapping unchanged
+- **No ADR 018 amendment needed** — §4 eager-on-app-load LOCKED V1 alignment confirm (orchestrator pre-pipeline NOT duplicate per-adapter)
+
+*Cross-ref added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*

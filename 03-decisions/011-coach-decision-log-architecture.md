@@ -464,4 +464,38 @@ Field write semantics defined in ADR 014 (onboarding UI) or spec EXEC_QUEUE foll
 
 References: ADR 013 (auto-aggression detection), ADR 014 (onboarding profile typing — pending).
 
+### 2026-05-08 — `pipeline_event` payload schema (ADR 030 §3.3 Q-OPEN-3 RESOLVED V1 dependency)
+
+ADR 030 §3.3 Q-OPEN-3 RESOLVED V1 2026-05-08 (Observability granularity) locks aggregate orchestrator-level telemetry — 1 CDL `pipeline_event` per session-tick + `subSpans: [{ adapterId, durationMs, ok, errorCode? }]` array. Per-adapter Sentry capture ONLY on err per D4 (severity-aware via §3.6 taxonomy field).
+
+**`pipeline_event` payload schema V1:**
+
+```js
+{
+  type: 'pipeline_event',
+  sessionTickId: string,           // correlation cu CDL tick
+  pipelineDurationMs: number,      // total wall-clock orchestrator runPipeline
+  subSpans: [
+    {
+      adapterId: string,           // e.g. 'periodization', 'goalAdaptation'
+      durationMs: number,          // per-adapter wall-clock
+      ok: boolean,                 // adapter result status
+      errorCode?: string,          // present dacă !ok (taxonomy per ADR 030 §3.6)
+      severity?: 'soft'|'hard',    // present dacă !ok (per ADR 030 D4 §AMENDMENT 2026-05-08)
+    }
+  ],
+  halted: boolean,                 // true dacă pipeline stopped mid-way (hard severity halt per §3.6)
+}
+```
+
+**Rationale:**
+- ADR 011 LOCKED per session-tick cadence preserved — 1 write per pipeline run (NU 8x per-engine multiplier)
+- Hot path identification via sub-spans p95 latency analysis post-Beta — sufficient observability granularity
+- Failure correlation across engines surfaced via subSpans inspection în 1 payload
+- Sentry per-error event lane separate (D4 ok=false → Sentry capture cu structured `AdapterError` envelope including severity)
+
+**V1.5 trigger (ADR 030 §3.3 V1.5):** per-adapter granularity când concrete debug scenario require sub-spans payload insufficient (e.g., A/B test adapter optimization deep-dive).
+
+References: ADR 030 §3.3 RESOLVED V1 (this dependency); ADR 030 §2.4 D4 §AMENDMENT 2026-05-08 (severity field); ADR 020 Storage Tiering Tier 2 sync write impact.
+
 Schema Reconsideration Trigger #8 acoperă acest tip de adăugare ca normal evolution post-implementation.

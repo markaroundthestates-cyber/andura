@@ -376,3 +376,17 @@ Future engines #6 + #7 spec sessions vor reference Cross-cutting Applicability m
 ---
 
 *Amendment authored 2026-05-05 birou after chat strategic Daniel + Claude (Engine #3 Bayesian Nutrition spec session, mid-flight Convergence Guard surfaced). Daniel push-back fundamental seminal "T2 = Behavioral Validation NOT just statistical convergence" — formula final post 5 iterations refinement. Sign-off implicit via §CC.5 fast handover ingest.*
+
+---
+
+## §CROSS-REF 2026-05-08 — ADR 030 §3.7 Q-OPEN-7 RESOLVED V1
+
+ADR 030 §3.7 RESOLVED V1 2026-05-08 chat NEW birou reuses Behavioral Validation Rule N=3 consecutive sessions threshold (this §AMENDMENT 2026-05-05 LOCKED V1) pentru tier downgrade re-eval cadence orchestrator-level:
+
+- **Cadence:** batch periodic per session-end (NOT per-session-tick) — aligns ADR 011 CDL write cadence + avoids Q-OPEN-2 50ms hot path budget concern
+- **Tier upgrade (T0→T1→T2):** NO cooldown (welcome event, low risk)
+- **Tier downgrade (T2→T1, T1→T0):** cooldown 7 zile minim + N=3 consecutive sessions (acest §AMENDMENT Behavioral Validation Rule reuse) confirming pattern
+- **Cooldown enforcement:** `userState.profileTier_lastChange_ts` field check în `src/coach/orchestrator/utilities/convergenceGuard.js` V1.5 amendment
+- **Engagement-modulated cooldown:** DEFER post-Beta concrete signal când persona-tier asymmetric fatigue patterns surface (Marius 4×/săpt vs Maria 2×/săpt)
+
+*Cross-ref added 2026-05-08 chat NEW birou Run ADR 030 Q-OPEN-1→7 RESOLVED V1 batch.*
