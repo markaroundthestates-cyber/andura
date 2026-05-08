@@ -87,11 +87,12 @@
 
 1. `f9c5428` — feat(strangler): Warm-up adapter + flag + barrel — Faza 3 batch 7 wiring real (3 files, +246/-4)
 2. `7e75493` — test(strangler): Warm-up golden-master parity 12 tests — Faza 3 batch 7 (1 file, +493)
-3. (this raport — populated post-LATEST commit)
+3. `c806a8b` — docs(outbox): LATEST cycle Faza 3 batch 7 Warm-up wiring complete (2 files, +255 — LATEST + archive 266)
 
 ## Pushed
 
-(populated post-push origin main)
+- ✅ origin/main — toate 3 commits visible: `git log origin/main -6 --oneline` confirmed `c806a8b` + `7e75493` + `f9c5428` (parallel themes commit `238a66c` interleaved during push, expected)
+- ✅ tag `pre-faza3-batch7-warmup-wiring-2026-05-08-2254` pushed origin (backup pre-execution)
 
 ---
 
