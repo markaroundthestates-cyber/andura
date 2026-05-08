@@ -1,5 +1,25 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 chat NEW birou — VAULT_RULES §AR.14 + §AR.15 amendment LOCK V1 (vault meta-tooling)
+
+**Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~688 PRESERVED unchanged.
+
+**Authority:** Daniel chat NEW birou Run 6 elevated Task 4 — anti-recurrence rules consolidation post slip-uri identificate same chat (§AR.14 PK search denial verify origin chat-NEW3 + §AR.15 anti-overthink launch CC origin chat-current Co-CTO artefact slip *"ba fiti-ar overthink de ras"* push-back productive).
+
+**Rules added VAULT_RULES.md §ANTI_RECURRENCE_RULES section:**
+- §AR.14 PK Search Denial Verify Mandatory — pause + verify + reconcile explicit (NU silent invalidation user denial)
+- §AR.15 Anti-Overthink Launch CC Standalone — `claude --dangerously-skip-permissions` standalone, NU `cd <path> &&` redundant prefix (Daniel always în repo dir default)
+
+**Files modified atomic batch:**
+- UPDATED: VAULT_RULES.md (§AR.14 + §AR.15 NEW after §AR.13 + §AR.PRE_FLIGHT Authority line `§AR.1-§AR.13` → `§AR.1-§AR.15`)
+- UPDATED: 03-decisions/DECISION_LOG.md (this entry)
+
+**Backup tag:** pre-run6-elevated-vault-hygiene-2026-05-08-0919 (Task 1 same backup, single baseline toate 6 tasks).
+
+**Cross-refs:** §AR.13 PK Growth Control predecessor | §CC.4 Citation Enforcement | §CC.6 Append-Only Architecture | §CC.9 Mandatory File Updates Per Handover.
+
+---
+
 ## 2026-05-08 — CURRENT_STATE update post §CC.5 fast handover ingest "Vault Hygiene Sweep complete (Runs 1-5 + audit archive) → Run 6 vault CONTENT scribe FINAL pending" (vault meta-tooling)
 
 **Status:** Vault meta-tooling decision (NU product/architecture). Cumulative LOCKED V1 ~659 PRESERVED unchanged (toate 5 Runs vault hygiene cumulative — Run 2 + Run 3-5 amendments + audit archive + acest CURRENT_STATE update §CC.6 append-only).

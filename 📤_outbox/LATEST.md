@@ -67,9 +67,26 @@
   - **UPDATED** `00-index/CURRENT_STATE.md` §JUST_DECIDED Task 1 entry "Mid-flight unresolved carry-forward" line — `§29.5.7 V2 amendment verify + recovery — Task 3 acest batch` → `§29.5.7 V2 amendment ✅ recovered from archive → 04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT.md canonical SSOT new`
 - **Step 3.5 wikilinks orphane:** `grep -rEn "\[\[.*29.5.7|\[\[.*29_5_7" --include="*.md" --exclude-dir=_archive` → ZERO bracketed wikilink references found (only narrative cross-refs in DECISION_LOG Task 2 entry + inbox task files). New file accessible via canonical path; no wikilink updates needed.
 - **Anti-fabrication discipline:** Verbatim extraction from archive only — no §29.5.7 content invented. V1 original preserved baseline. V2 amendment narrative sourced from chat-NEW1+NEW2 LOCK V1 entries (DECISION_LOG just-synced + handover archive 214 verbatim).
-- **Commits:** TBD post-Write atomic Task 3
-- **Pushed:** TBD post-commit
+- **Commits:** `eeb4913` feat(vault-hygiene): Run 6 Task 3 §29.5.7 V2 amendment recovery from archive
+- **Pushed:** Commit `eeb4913` → origin/main (`a6c2f71..eeb4913`) ✅ + tests 2648 PASS pre-commit
 - **Issues:** none
 - **Next:** Task 4 §AR.14 + §AR.15 add VAULT_RULES
+
+---
+
+### Task 4 — §AR.14 + §AR.15 add VAULT_RULES
+
+- **Status:** ✅ Complete
+- **Pre-flight:** clean tree post Task 3 commit `eeb4913` ✓ + §AR.13 located VAULT_RULES.md line 879 + §AR.PRE_FLIGHT line 913 (insertion anchor between)
+- **Modificări:**
+  - **VAULT_RULES.md:**
+    - **NEW §AR.14 PK Search Denial Verify Mandatory** (LOCK V1 2026-05-08 chat NEW birou) — origin slip Claude chat Daniel denial silent invalidation; rule 4-step PAUSE+VERIFY+Reconcile+NU pretend; anti-pattern silent agreement-theater violation §CC.4. Inserted after §AR.13 closing `---` (line 911).
+    - **NEW §AR.15 Anti-Overthink Launch CC Standalone** (LOCK V1 2026-05-08 chat NEW birou) — origin slip Co-CTO `cd /workspaces/salafull && claude --dangerously-skip-permissions` redundant; rule `claude --dangerously-skip-permissions` standalone ONLY; rationale BIROU+ACASĂ Daniel always în repo dir default; exception subfolder-cd justified inline.
+    - **§AR.PRE_FLIGHT Authority line updated:** `§AR.1-§AR.13` → `§AR.1-§AR.15`.
+  - **DECISION_LOG.md:** NEW top entry "2026-05-08 chat NEW birou — VAULT_RULES §AR.14 + §AR.15 amendment LOCK V1 (vault meta-tooling)" inserted above existing 2026-05-08 vault meta-tooling entry; cross-refs §AR.13 + §CC.4 + §CC.6 + §CC.9 verified valid.
+- **Commits:** TBD post-Write atomic Task 4
+- **Pushed:** TBD post-commit
+- **Issues:** none
+- **Next:** Task 5 Pre-Beta scope SSOT consolidare verify
 
 ---

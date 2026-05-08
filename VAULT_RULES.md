@@ -910,9 +910,43 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 
 ---
 
+### §AR.14 PK Search Denial Verify Mandatory (LOCK V1 2026-05-08 chat NEW birou)
+
+**Origin slip:** Claude chat 2026-05-08 chat NEW birou — surface info from search/memory presented to Daniel, Daniel responded with denial ("nu deja am stabilit astea?" / "daca nu ma insel..."), Claude initially treated denial as authoritative + invalidated search result without verify. Pattern recidiv: AI consensus deference vs vault SSOT verify discipline.
+
+**Rule:** When user denies / questions information surfaced from project_knowledge_search OR memory:
+1. **PAUSE** — NU invalidate search result silently
+2. **VERIFY** with second search OR explicit citation `path:§` from vault SSOT
+3. **Reconcile** explicit: if vault confirms search result → present citation evidence + clarify ambiguity inline (don't blindly accept user denial); if vault confirms user denial → mea culpa rapid + correct
+4. **NU pretend** uncertainty doesn't exist — explicit "verific cu search" if ambiguous
+
+**Anti-pattern:** "Ai dreptate, [retract search result]" without verify = silent agreement-theater violation §CC.4 citation enforcement. User instinct often correct DAR vault SSOT > deference inarticulat.
+
+**Cross-refs:** §CC.4 Citation Enforcement Anti-Hallucination | DECISION_LOG 2026-05-08 chat NEW birou Run 6 elevated entry | Slip origin chat-NEW3 birou (preserved precedent narrative CURRENT_STATE §JUST_DECIDED).
+
+---
+
+### §AR.15 Anti-Overthink Launch CC `claude --dangerously-skip-permissions` Standalone (LOCK V1 2026-05-08 chat NEW birou)
+
+**Origin slip:** Claude chat 2026-05-08 chat NEW birou Co-CTO — livrat command `cd /workspaces/salafull && claude --dangerously-skip-permissions` în prompt CC artefact. Daniel push-back productive: *"ba fiti-ar overthink de ras"*. Reasoning slip: redundant `cd` injection assumption Daniel NU în repo dir. Realitate: Daniel terminal Codespaces deschis în `/workspaces/salafull` default — ALWAYS already în repo dir.
+
+**Rule:** Launch CC commands în prompts/artefacte/instructions = `claude --dangerously-skip-permissions` standalone ONLY. NU `cd <path> &&` redundant prefix.
+
+**Rationale:**
+- BIROU setup (per memory): GitHub Codespaces browser web jubilant-chainsaw URL pattern github.dev — terminal integrat default opens în `/workspaces/salafull` (repo root)
+- ACASĂ setup (per memory): Windows VS Code Desktop + PowerShell terminal opens în `C:\Users\Daniel\Documents\salafull` (repo root)
+- Daniel ALWAYS already în repo dir când lansează CC — `cd` injection = noise pure
+- Anti-overthink discipline: command precision > defensive padding
+
+**Exception:** dacă explicit need cd la subfolder (e.g., `functions/` Cloud Functions deployment) → cd justified inline cu rationale; default standalone.
+
+**Cross-refs:** memory rule "Daniel always starts Claude Code with `claude --dangerously-skip-permissions` flag" preserved | DECISION_LOG 2026-05-08 chat NEW birou Run 6 elevated entry | Slip origin chat-current Co-CTO artefact prompt CC delivery.
+
+---
+
 ### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
 
-**Authority:** Consolidat din §AR.1-§AR.13. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
+**Authority:** Consolidat din §AR.1-§AR.15. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
 
 1. ☐ Backup tag pre-execution + push origin (rollback safety)
 2. ☐ Pre-flight grep filesystem verbatim — paths/files/tooling cited în spec (per §AR.1) NU presume
