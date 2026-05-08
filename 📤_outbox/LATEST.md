@@ -84,9 +84,29 @@
     - **NEW §AR.15 Anti-Overthink Launch CC Standalone** (LOCK V1 2026-05-08 chat NEW birou) — origin slip Co-CTO `cd /workspaces/salafull && claude --dangerously-skip-permissions` redundant; rule `claude --dangerously-skip-permissions` standalone ONLY; rationale BIROU+ACASĂ Daniel always în repo dir default; exception subfolder-cd justified inline.
     - **§AR.PRE_FLIGHT Authority line updated:** `§AR.1-§AR.13` → `§AR.1-§AR.15`.
   - **DECISION_LOG.md:** NEW top entry "2026-05-08 chat NEW birou — VAULT_RULES §AR.14 + §AR.15 amendment LOCK V1 (vault meta-tooling)" inserted above existing 2026-05-08 vault meta-tooling entry; cross-refs §AR.13 + §CC.4 + §CC.6 + §CC.9 verified valid.
-- **Commits:** TBD post-Write atomic Task 4
-- **Pushed:** TBD post-commit
+- **Commits:** `9d002c8` feat(vault-hygiene): Run 6 Task 4 §AR.14 + §AR.15 anti-recurrence rules
+- **Pushed:** Commit `9d002c8` → origin/main (`eeb4913..9d002c8`) ✅ + tests 2648 PASS pre-commit
 - **Issues:** none
 - **Next:** Task 5 Pre-Beta scope SSOT consolidare verify
+
+---
+
+### Task 5 — Pre-Beta scope SSOT consolidare
+
+- **Status:** ✅ Complete (APPEND path executed — existing file PRESERVED + new section ADD)
+- **Pre-flight:** clean tree post Task 4 commit `9d002c8` ✓ + `08-workflows/PRE_LAUNCH_CHECKLIST_V1.md` located (created Run 2 Task 1 split din HANDOVER_MISC §29.7 archive) + content assessed.
+- **Step 5.1 verify content:** Existing file content is **NEITHER current NOR stale-versioned** of pre-Beta scope SSOT — file contains §29.7 legacy legal/operational gates (legal guardrails + ADR 020 logs rotation + D1 DEVELOPING refactor + smoke gate + ADR 022 V2 workflow + DoD Bugatti grade). Different scope than new "pre-Beta scope SSOT consolidat post Daniel updates 2026-05-08" (priority/scope outline). Decision: **APPEND new top section** preserving §29.7 legacy zero-info-loss (NU OVERWRITE per task spec when STALE — file content was DIFFERENT scope, not stale-versioned).
+- **Modificări:**
+  - **UPDATED** `08-workflows/PRE_LAUNCH_CHECKLIST_V1.md`:
+    - Frontmatter `Updated:` line refreshed cu Run 6 elevated Task 5 description
+    - Cross-refs expanded (CURRENT_STATE §NEXT mirror + DECISION_LOG 2026-05-08 entries + ROOT_NAV_V2_29_5_7 + Andura-V2 mockup canonical + Privacy/ToS DROP note for prieteni-only Beta + DIFF_FLAGS scenarios coverage gap)
+    - **NEW top section "Pre-Beta scope SSOT consolidat (post Daniel updates 2026-05-08 chat NEW)"** — verbatim from CURRENT_STATE §NEXT Task 1 overwrite content (CC Opus mecanic autonomous 5 + Daniel pre-Beta blockers 2 + Claude chat Co-CTO + Reviewer 5 + DROPPED entirely 6 + Post-Beta cu date Beta 3 + v1.5+ deferred) — live SSOT mirror, drift cu CURRENT_STATE §NEXT + DECISION_LOG entries = §CC.7 Layer 3 timestamp mismatch flag mandatory sync
+    - Existing §29.7 Pre-Launch Checklist V1 LOCKED legacy section PRESERVED unchanged below (legal/operational gates remain canonical)
+  - **UPDATED** `00-index/CURRENT_STATE.md` §NOW Active "Tasks Run 6 elevated cumulative" line — Task 5 status updated cu LANDED commit SHAs + Task 5 result note ✅ APPENDED + Tasks 1-4 LANDED commit SHAs verbatim audit-trail
+- **Step 5.3 INDEX_MASTER:** File pre-existing (Run 2 Task 1 split) → NO INDEX_MASTER NAVIGARE row update needed (verified per Task 5 spec scope).
+- **Commits:** TBD post-Write atomic Task 5
+- **Pushed:** TBD post-commit
+- **Issues:** none — APPEND path chosen instead of OVERWRITE because existing file content was DIFFERENT scope (§29.7 legal/operational gates) NOT stale-versioned of pre-Beta scope SSOT. Documented transparent în decision rationale (per anti-fabrication discipline + zero-info-loss preserve §CC.6 append-only architecture).
+- **Next:** Task 6 §CC.9 mandatory file updates
 
 ---
