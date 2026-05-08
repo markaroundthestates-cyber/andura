@@ -1064,9 +1064,9 @@
 
           <!-- Quick stats -->
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:22px;">
-            <div class="stat-card"><div class="num">12</div><div class="lbl">Streak zile</div></div>
+            <div class="stat-card"><div class="num">12</div><div class="lbl">Zile consecutive</div></div>
             <div class="stat-card"><div class="num">68</div><div class="lbl">Sesiuni total</div></div>
-            <div class="stat-card"><div class="num">14</div><div class="lbl">PR-uri</div></div>
+            <div class="stat-card"><div class="num">14</div><div class="lbl">Recorduri</div></div>
           </div>
 
           <!-- Calendar heat map -->
@@ -1110,7 +1110,7 @@
           <div class="settings-stack">
             <button class="settings-row" onclick="goto('weight-timeline')"><i data-lucide="line-chart"></i><span>Greutate &amp; BF</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Nutriție istoric')"><i data-lucide="utensils"></i><span>Nutriție</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('PR-uri')"><i data-lucide="award"></i><span>PR-uri</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="showToast('Recorduri Personale')"><i data-lucide="award"></i><span>Recorduri Personale</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Programe arhivă')" style="border-bottom:none;"><i data-lucide="archive"></i><span>Programe arhivă</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
         </div>
@@ -1535,10 +1535,10 @@
             <button class="settings-row" onclick="goto('settings-export')"><i data-lucide="download"></i><span>Descarcă datele tale (JSON)</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
-          <!-- Section: Zonă sensibilă (single drill-down) -->
-          <div class="settings-section" style="color:#d4a574;">Zonă sensibilă</div>
+          <!-- Section: Deconectare/Ștergere (single drill-down) -->
+          <div class="settings-section" style="color:#d4a574;">Deconectare/Ștergere</div>
           <div class="settings-stack" style="border-color:#f0d5cf;">
-            <button class="settings-row" onclick="goto('settings-danger')" style="color:#d4a574;"><i data-lucide="alert-triangle" style="color:#d4a574;"></i><span>Zonă sensibilă</span><i data-lucide="chevron-right" class="ml-auto" style="color:#d4a574;"></i></button>
+            <button class="settings-row" onclick="goto('settings-danger')" style="color:#d4a574;"><i data-lucide="alert-triangle" style="color:#d4a574;"></i><span>Deconectare/Ștergere</span><i data-lucide="chevron-right" class="ml-auto" style="color:#d4a574;"></i></button>
           </div>
 
           <!-- Footer: Suport / Despre / FAQ -->
@@ -1753,9 +1753,9 @@
         </div>
       </div>
 
-      <!-- 9.X ZONĂ SENSIBILĂ (pagină dedicată) -->
-      <div class="screen paper-bg sub-page" id="screen-settings-danger" data-screen-label="Cont › Zonă sensibilă" style="height:100%; flex-direction:column;">
-        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:#d4a574;">Zonă sensibilă</h2></div>
+      <!-- 9.X DECONECTARE/ȘTERGERE (pagină dedicată) -->
+      <div class="screen paper-bg sub-page" id="screen-settings-danger" data-screen-label="Cont › Deconectare/Ștergere" style="height:100%; flex-direction:column;">
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:#d4a574;">Deconectare/Ștergere</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
 
           <div style="background:rgba(239,79,107,0.08); border:1px solid #f0d5cf; border-radius:14px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:18px;">
