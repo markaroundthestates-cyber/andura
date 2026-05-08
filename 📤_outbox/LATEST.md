@@ -34,10 +34,10 @@
 - **NU ruled** `npm run test:run` post-edit — doc-only updates (CURRENT_STATE + DECISION_LOG), zero src changes, zero test impact possible. Pre-commit hook va rula `vitest run` la commit (preserved 2731 baseline expected).
 
 ## Commits
-- (populated post-commit)
+- `f279e9b` docs(vault): §CC.5 fast ingest chat unified Faza 3 b4-7 + 4 themes compliance
 
 ## Pushed
-- (populated post-push)
+- ✅ `origin/main` `a6edcaa..f279e9b` push verify success
 
 ## Issues / Decisions made
 - **Cumulative LOCKED V1 reconciliation transparency:** existing CURRENT_STATE header line 5 said "~688 → ~691 (+3 net chat acasă)" — that count came from chat NEW acasă which started from ~688 baseline (chat-NEW3 birou close), NU ~697 baseline (chat birou Faza 3 b1+b2 + ADR 030 close per precedent NOW line 129). Two parallel chat threads converged on different baseline counts. Per handover §Decizii LOCKED V1 framing "estimat ~10-12 cumulative incremental ~697 → ~707-709", I trusted Faza 3 baseline ~697 + chat unified +10-12 = ~707-709 final. React migration +3 chat acasă orthogonal preserved separat (NOT double-counted). Header retroactive note "~691 baseline header reconciled retroactive cu chat birou Faza 3 b1+b2 +9 net" added pentru transparency.
