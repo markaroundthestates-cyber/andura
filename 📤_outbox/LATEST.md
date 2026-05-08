@@ -78,12 +78,12 @@
 
 ## Commits
 
-- TBD post-Write commit cu detailed message
+- `905946c` feat(faza-3-strangler): batch 2 Goal Adaptation wiring real LANDED
 
 ## Pushed
 
 - Safety tag `pre-faza3-batch2-goal-adaptation-wiring-2026-05-08-1156` → origin ✓
-- Commit TBD post
+- Commit `905946c` → origin/main (`945625f..905946c`) ✅ + tests 2671 PASS pre-commit (gate verified)
 
 ## Issues / Ambiguities
 
