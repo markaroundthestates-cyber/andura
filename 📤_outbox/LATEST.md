@@ -247,10 +247,9 @@ Python script syntax validation NU available local (Python NU installed Windows 
 
 ## §8 Commits + push
 
-- ✅ Commit: `feat(mockups): batch 2a Bugatti cleanup + cross-skin renames + Roman→arabic`
-- ✅ SHA: (populated post-commit)
-- ✅ Pushed: (populated post-push)
-- ✅ Pre-commit hooks: PASS (`npm run test:run` 2731 baseline preserved exact)
+- ✅ Commit `e91768f` feat(mockups): batch 2a Bugatti cleanup + cross-skin renames + Roman→arabic
+- ✅ Push `origin/main` `114a246..e91768f` verify success
+- ✅ Pre-commit hooks PASS (`npm run test:run` 148 files, 2731 tests, baseline preserved exact)
 
 ---
 
