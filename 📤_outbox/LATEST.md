@@ -34,10 +34,11 @@
 - **NU rulat** `npm run test:run` post-edit — doc-only updates (CURRENT_STATE + DECISION_LOG), zero src changes, zero test impact possible. Pre-commit hook va rula `vitest run` la commit (preserved 2731 baseline expected).
 
 ## Commits
-- (populated post-commit)
+- `6cf53d0` docs(vault): §CC.5 fast ingest chat ACASĂ themes Batch 1+2a (Q1-Q7 LOCKED, ~707-709 PRESERVED)
 
 ## Pushed
-- (populated post-push)
+- ✅ `origin/main` `ca645ac..6cf53d0` push verify success
+- ✅ Pre-commit hooks PASS (`npm run test:run` 148 files, 2731 tests baseline preserved)
 
 ## Issues / Decisions made
 - **Cumulative LOCKED V1 PRESERVED ~707-709:** themes Batch 1+2a = mockup polish meta-tooling (audit + mecanic str_replace 127 atomic line edits + Q1-Q7 chat-current decisions Co-CTO scope tactical autonomous), NU product/architecture additive. Q4 Streak/Q5 Maître = wording renames, Q1-Q2-Q3 = scope clarifications/drops, Q6-Q7 = direction LOCK pending implementation. Cumulative count preserved consistent.
