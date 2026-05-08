@@ -127,12 +127,12 @@
 
 ## Commits
 
-- TBD post-Write commit cu detailed message
+- `63f4634` feat(adr-030): Q-OPEN-1→7 RESOLVED V1 7/7 + D4 severity amendment + cross-refs bidirectional
 
 ## Pushed
 
 - Safety tag `pre-adr030-qopen-applied-resolution-2026-05-08-1101` → origin ✓
-- Commit TBD post
+- Commit `63f4634` → origin/main (`846629e..63f4634`) ✅ + tests 2652 PASS pre-commit (gate verified)
 
 ## Issues / Ambiguities
 
