@@ -1,5 +1,98 @@
 # DECISION LOG — Andura
 
+## 2026-05-08 chat unified — Faza 3 STRANGLER batches 4-7 LANDED (chat strategic acasă) + 4 themes V2 SSOT compliance LANDED (chat-current paralel) + Brain Coach Patch 2 drift-uri (~10-12 LOCKED V1 cumulative)
+
+**Status:** Product/architecture additive. Cumulative LOCKED V1 ~697 → ~707-709 (+10-12 net cumulative chat unified).
+
+**Authority:** Daniel autonomy lock real CTO mode reaffirmed start session (*"Esti co cto"* + *"Executie cu intreruperi doar cand e ceva ce chiar tine de mine"*) + chat strategic acasă Co-CTO Claude prompts CC generation Faza 3 batches 4-7 sequential + chat-current themes paralel CC #2 mockups V2 SSOT compliance 4 themes drop-in production ready.
+
+### Faza 3 STRANGLER 7/8 batches LANDED (chat strategic acasă)
+
+**Batch 4 Bayesian Nutrition** (`d2450ba` adapter+flag+barrel + `125ba0e` 12 parity tests):
+- Hook 1 read-only consume CONFIRMED pattern (default safe)
+- D2 thin adapter rename `meta.constraintObject` → `meta.periodizationConstraint`
+- featureFlag `bayesian_nutrition_via_orchestrator` rollout 0% default OFF
+- Missing-CO INVALID_INPUT 'hard' severity halt + try/catch ENGINE_THREW 'hard' D4 violation insurance
+- Sub-span CDL telemetry orchestrator-level
+- 12 NEW tests (3 parity T0/T1/T2 + 5 edge + 4 pipeline integration)
+- Tests 2683 → 2695 (+12 net)
+- Slip prompt §2/§4: halucinare engine emissions `meta.forward_constraint_object` + `meta.convergenceGuard` Hook D4 — FALS, engine doar `trace.forwardedConstraint=boolean` + `trace.convergenceGuardRef`. CC pre-flight grep prinse, corectat autonom Hook 1 read-only consume. Anti-recurrence pattern §0 "discover-first NU presupune emissions" adoptat batches 5-6-7
+
+**Batch 5 Tempo** (`86bc57e` adapter + `189d764` 12 parity tests + `28e5083` LATEST cycle):
+- Hook 1 confirmation Tempo identic Bayesian
+- featureFlag `tempo_via_orchestrator` rollout 0% default OFF
+- 12 NEW tests
+- Tests 2695 → 2707 (+12 net)
+
+**Batch 6 Specialization** (`b2c07d0` adapter + `a051768` 12 parity tests + `65d205f` LATEST cycle):
+- ACTIVATION_STATE descriptive snake_case enum (`'ineligible_not_marius_persona_q12_locked'` etc), DIFERIT vs Warm-up batch 7 simple uppercase
+- Activation gating 4-gate priority order: persona Marius ONLY → tier T1+ → phase Bulk/Recomp → injury PainButton
+- weaknessDetector orfan §36.84 Gap #1 wired engine-side via `weaknessConsumer.js:25` import (NU adapter-level concern)
+- featureFlag `specialization_via_orchestrator` rollout 0% default OFF
+- 12 NEW tests
+- Tests 2707 → 2719 (+12 net)
+
+**Batch 7 Warm-up** (`f9c5428` adapter + `7e75493` 12 parity tests + `c78e530` LATEST cycle):
+- WARMUP_STATE simple uppercase keys (`'ACTIVE'`, `'SKIPPED'`, `'DELOAD_LIGHTER'`, `'INJURY_DISABLED'`)
+- Persona thresholds Maria 5-10 / Gigica 5-7 / Marius 8-10
+- T0 Instant Skip default `t0InstantSkipDefault` metadata flag NU automatic state
+- featureFlag `warmup_via_orchestrator` rollout 0% default OFF
+- 12 NEW tests
+- Tests 2719 → 2731 (+12 net)
+
+**Pattern crystallized 7-adapter chain template clear:** D2 thin adapter rename + missing-CO INVALID_INPUT 'hard' halt + try/catch ENGINE_THREW 'hard' D4 violation insurance + Hook 1 read-only consume (NU re-emit `output.constraintObject`) + sub-span telemetry orchestrator-level + 12 tests minim per batch (3 fixtures + 5 edge + 4 pipeline integration). Convergence Guard orchestrator-level NU engine-emitted = pattern consistent cross 4 engines. Enum styles vary per engine (Specialization snake_case descriptive vs Warm-up uppercase simple), tests import constanta direct anti-drift.
+
+### 4 themes V2 SSOT cross-skin compliance LANDED final (chat-current paralel)
+
+**Primary 4 themes 100% compliant** (`238a66c feat(mockups): 4 themes 100% compliant + production ready`):
+- Theme picker uniform brand-prefixed: 🤍 Andura Clasic + 🌑 Andura Living Body + 💎 Andura Luxury + 🧠 Andura Brain Coach
+- Title `Andura · <skin>` cross-skin
+- Skin naming convention LOCK V1 enforced (filesystem rename `bugatti.html` → `luxury.html`)
+- Brain Coach antrenor canonical V2 SSOT 7-element (replaced LLM chat-stream cu Coach + Energy + Pain + Equipment + Programe + Bibliotecă + RPE preserving Brain Coach aesthetic dark + purple/think palette)
+- Luxury Gigel test pass (50+ Roman → arabic + French formal → RO familiar + dates Latin → 2026 RO; aesthetic luxury preserved)
+- Default render fix (`active` class on `screen-splash` + JS init defensive cross-skin)
+- Wording canonical: Pilot Automat→Auto + 3 stări energy canonical + anti-RE coach prompts (ADR 013 + ADR_BIAS_DETECTION_OBSERVABLE_v1: zero numeric values user-facing, categorical ✓/OK/⚠ only) + Pain Button preserve + RPE drill + Andrei Popescu coach + Andura v1.0.0 footer
+
+**Brain Coach Patch 2 drift-uri** (`2b96116 fix(mockups): Brain Coach energy 3 stări canonical + checkbox audit` + `a6edcaa docs(outbox): LATEST Brain Coach Patch 2 drift-uri FINAL post-2b96116`):
+- Co-CTO push-back rejected pe 2 drift-uri raport precedent: (1) energy-check păstra Roman VI/VIII + 1-10 scale "aesthetic identity > canonical" REJECT — V2 SSOT canonical 3 stări universal cross-skin enforced (🟢 Excelent / 🟡 Normal · OK / 🔴 Obosit); aesthetic = palette/typography NU semantic+scale paradigm
+- Brain Coach `screen-energy-check`: replaced gauge-card Roman VI + 1-10 scale (Frânt/OK/Rachetă) cu 3 butoane canonical V2 SSOT preserving Brain Coach aesthetic (purple/think palette via btn-secondary, var(--ink)/var(--ink-2) typography, dark theme)
+- Drill 4 cauze pentru 🔴 Obosit only preserved în `screen-energy-cause` existent (6 check-items + chain-of-thought "Combinație cortizol")
+- Checkbox audit Cazul A confirmed: Brain Coach `.set-cell` truly display-only data-table grid (workout log table cu kg/reps/RPE per row, NU butoane interactive). Cross-skin parity: Clasic + Living Body + Luxury au `.set-check` buttons cu `toggleSet` bidirectional (verified Clasic linii 2109-2123); Brain Coach paradigm legitim diferit exempt
+- Anti-recurrence raport FULL: post-commit/push cu commit SHA + push verify populated NU intermediate `(populated post-X)` placeholder pattern (slip precedent commit `238a66c` rezolvat)
+
+### Mid-flight serioase prinse (next chat priority)
+
+- **Auto-commit watcher race condition:** themes terminal a făcut bad commit `8860fab` cu mesaj batch 7 dar conținut mockup files. CC recovered via `git reset --soft HEAD~1` + `--no-verify` justified bypass. Bad commit local-only NU pushed. Watcher NU izolat la `04-architecture/mockups/` glob = risk activ pentru orice batch viitor paralel cu themes. **P3 Auto-commit watcher investigation pending next chat.**
+- **LATEST archive cycle broken:** themes LATEST a overwritten batch 6 Specialization LATEST fără proper archiving cycle → batch 6 LATEST raport content lost from outbox SSOT (commits preserved git log). **P5 Vault hygiene LATEST archive cycle fix pending next chat.**
+
+### Anti-recurrence patterns LOCKED chat unified
+
+- §0 pre-flight grep mandatory anti-hallucination ÎNAINTE referencing engine emissions/paths/enum values în prompt CC
+- Adapter pattern Hook 1 read-only consume = default safe (Bayesian + Tempo + Specialization + Warm-up confirmed; doar Energy Adjustment unique Hook 4 re-emission upstream)
+- Convergence Guard orchestrator-level NU engine-emitted (consistent batches 4-7)
+- Enum styles vary per engine, tests import constanta direct anti-drift
+- Paralel terminale safe DA cu git status pre-flight DAR auto-watcher = risk needs mutex coordination
+- Raport CC FULL post-commit + push (NU intermediate `(populated post-X)` placeholders)
+- Audit-before-fix (Cazul A vs Cazul B verify pre force-fix orb)
+- Co-CTO push-back direct rejected = authoritative pe drift-uri (V2 SSOT universal cross-skin, semantic align over aesthetic)
+- Bandwidth proactive 1-line tracking (~85% → 40% threshold strict per Daniel directive)
+
+### Cross-refs
+
+- [[026-offline-coaching-decision-tree-exhaustive]] §42.10 pipeline order + §9.3 Energy Adjustment SSOT
+- [[030-adapter-design-pattern]] D2 thin + Q-OPEN 7/7 RESOLVED V1 + D4 severity field
+- [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-brain-coach]] design tokens cross-skin V2 SSOT compliant
+- [[ADR_BIAS_DETECTION_OBSERVABLE_v1]] zero numeric values user-facing categorical ✓/OK/⚠ only
+- [[../00-index/CURRENT_STATE]] §JUST_DECIDED entry top descending cronologic + §NOW active
+
+**Backup tag pre-§CC.5-fast-ingest:** `pre-cc5-fast-ingest-faza3-b4-7-themes-2026-05-08-2330` pushed origin.
+
+**Tests baseline:** 2683 → 2731 PASS (+48 net cumulative chat unified Faza 3 b4-7 batch increments). ZERO src regression strict toate batches.
+
+**Next:** Batch 8 Deload ULTIM Faza 3 (pipeline #8 ADR 026 §42.10 closure) + Faza 4 Daniel cont propriu smoke validation cumulative 7-adapter chain pipeline live.
+
+---
+
 ## 2026-05-08 chat NEW acasă — Batch 1 Vite+React 19 Scaffold LANDED (parallel multi-page entry, +1 LOCKED V1 implementation)
 
 **Status:** Product/architecture additive. Cumulative LOCKED V1 ~690 → ~691 (+1 net Batch 1 LANDED).

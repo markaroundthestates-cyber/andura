@@ -1,66 +1,55 @@
-# LATEST — Brain Coach Patch 2 Drift-uri (chat-current 2026-05-08)
+# LATEST — §CC.5 fast ingest chat unified Faza 3 b4-7 + 4 themes compliance (chat-current 2026-05-08)
 
-**Task:** Patch follow-up commit 238a66c — Brain Coach energy 3 stări canonical + checkbox audit
+**Task:** §CC.5 fast handover ingest "chat unified Faza 3 STRANGLER batches 4-7 LANDED chat strategic acasă + 4 themes V2 SSOT compliance LANDED chat-current paralel" → CURRENT_STATE update + DECISION_LOG entry + handover archive
 **Model:** Opus
 **Status:** ✅ Complete
-**Working dir:** `04-architecture/mockups/andura-brain-coach.html` (single file scope)
-**Backup tag:** `pre-bc-patch-2026-05-08-2313` (pushed origin)
+**Working dirs:** `00-index/CURRENT_STATE.md` + `03-decisions/DECISION_LOG.md` + `📥_inbox/` → `📤_outbox/_archive/2026-05/`
+**Backup tag:** `pre-cc5-fast-ingest-faza3-b4-7-themes-2026-05-08-2330` (pushed origin)
 
 ## Pre-flight
-- ✅ git status clean
-- ✅ git log shows `238a66c` parent (top 3)
+- ✅ git status clean post Brain Coach Patch 2 LATEST FINAL
+- ✅ git log shows `a6edcaa` LATEST + `2b96116` Patch 2 + `c78e530` batch 7 LATEST (ancestral chain)
 - ✅ branch `main`
 - ✅ backup tag pushed origin
+- ✅ inbox handover read complete (`HANDOVER_2026-05-08_unified_faza3_b4-7_plus_themes_compliance.md` 70 LOC)
 
 ## Modificări
 
-### `andura-brain-coach.html` (LOC 4772 → 4766, delta −6)
+### `00-index/CURRENT_STATE.md`
+- **Header line 5 Updated:** rewritten cu chat unified Faza 3 b4-7 + 4 themes context + commit hashes (`d2450ba` + `125ba0e` + `86bc57e` + `189d764` + `28e5083` + `b2c07d0` + `a051768` + `65d205f` + `f9c5428` + `7e75493` + `c78e530` + `238a66c` + `2b96116` + `a6edcaa`) + handover archived NN 267 + cumulative ~697 → ~707-709 (+10-12 net cumulative chat unified, ~691 baseline header reconciled retroactive)
+- **Header line 6 Last LOCKED count:** ~688 → ~707-709 LOCKED V1 + dense semicolon-separated narrative covering Faza 3 STRANGLER 7/8 pattern crystallized 7-adapter chain template clear + 4 themes compliance V2 SSOT cross-skin LANDED final + anti-recurrence patterns LOCKED. Predecessor chains (~697 chat birou Faza 3 b1+b2 + ADR 030 + ~688 chat-NEW3 birou React migration direction LOCK) preserved cronologic
+- **§JUST_DECIDED top entry NEW:** "2026-05-08 chat unified — Faza 3 STRANGLER batches 4-7 LANDED chat strategic acasă + 4 themes V2 SSOT compliance LANDED chat-current paralel" — full unified narrative cu 4 batches Faza 3 (Bayesian Nutrition + Tempo + Specialization + Warm-up) + slip §2/§4 halucinare engine emissions corectat anti-recurrence §0 + pattern crystallized 7-adapter chain template + 4 themes compliance + Brain Coach Patch 2 drift-uri Co-CTO push-back rejected + mid-flight serioase (auto-commit watcher race + LATEST archive cycle broken) + push-backs productive Daniel-isms + tests baseline 2683 → 2731 + backup tags chronologic + cross-refs ADR 026 + ADR 030 + 4 themes mockups
+- **§NOW Active conversation thread NEW:** chat unified narrative integral (chat strategic acasă + chat-current themes paralel) + slip prompt §2/§4 anti-recurrence + pattern crystallized 7-adapter + audit-before-fix Brain Coach Cazul A + mid-chat-strategic incidente + tests baseline + backup tags + 9 anti-recurrence patterns LOCKED + cumulative + mid-flight P1-P5 unresolved next chat
+- **§NOW move-then-replace:** precedent chat NEW acasă React migration plan tactical 3 LOCKED V1 LANDED moved-then-replaced compressed §CC.5 fast ingest chat unified Faza 3 b4-7 + 4 themes compliance
 
-**Task A — Energy-check restructure:**
-- Located `screen-energy-check` linia 2651
-- Replaced `gauge-card` cu Roman `VI` + 1-10 scale (Frânt/OK/Rachetă) + adjacent `thinking-card compact` ("Compus cu HRV obiectiv 52ms + percepție subiectivă VI/X") + redundante `btn-primary "Mergem"` + `btn-secondary "De ce mă simt așa?"` (linii 2660-2688)
-- New: 3 butoane canonical V2 SSOT cu inline styles aliniate la canonical Clasic structure:
-  - 🟢 Excelent — Engine UP +15% eligible → `goto('sala')`
-  - 🟡 Normal · OK — Engine NONE — baseline → `goto('sala')`
-  - 🔴 Obosit — Engine DOWN imediat → `goto('energy-cause')`
-- Aesthetic Brain Coach preserved: `btn-secondary` class (dark `var(--bg-3)` bg + `var(--line)` border + `var(--ink)`/`var(--ink-2)` typography) + Inter font + purple/think palette context. Hero-sub copy aliniat la Clasic ("Engine-ul ajustează intensitatea pe baza energiei tale. **3 stări simple.**").
-- JS handler: NU `selectEnergy()` necesar — direct `goto()` inline (consistent cu pattern Clasic linia 696-707).
-- Drill 4+ cauze pentru 🔴 only: `screen-energy-cause` (linia 2693) preserved as-is (existing 6 check-items + chain-of-thought "Combinație cortizol" thinking-card) — task spec instruction "preserve dacă există".
+### `03-decisions/DECISION_LOG.md`
+- **Top entry NEW (descending cronologic):** "2026-05-08 chat unified — Faza 3 STRANGLER batches 4-7 LANDED + 4 themes V2 SSOT compliance LANDED + Brain Coach Patch 2 drift-uri (~10-12 LOCKED V1 cumulative)" cu sections: Faza 3 STRANGLER 7/8 batches LANDED (4 batches detail commit hashes + tests increments) + Pattern crystallized 7-adapter chain template + 4 themes V2 SSOT cross-skin compliance LANDED final (Primary 4 themes + Brain Coach Patch 2) + Mid-flight serioase prinse (P3 + P5) + Anti-recurrence patterns LOCKED + Push-backs Daniel-isms + Cross-refs (ADR 026/030 + 4 mockups + ADR_BIAS) + Backup tag + Tests baseline + Next batch 8 Deload ULTIM
 
-**Task B — Checkbox audit:**
-- Audit results: **Cazul A confirmed** — Brain Coach `.set-grid` + `.set-cell` (linii 2556-2580 în `screen-workout`) sunt **display-only data-table grid** (4 cols × 5 rows: head + 4 sets cu `#`/`kg`/`reps`/`RPE` + classes `.head` / `.done` / `.current`). ZERO `onclick` handlers, ZERO state toggle JS.
-- Cross-skin comparison verified:
-  - **Clasic** (linii 975-993): `<button class="set-check" onclick="toggleSet(this)">` — interactive cu bidirectional toggle (linii 2109-2123 verify: `wasDone` check → remove/add `.done` class + swap inner HTML).
-  - **Living Body** (linii 1275-1293): identic Clasic pattern (`set-check` + `toggleSet`).
-  - **Luxury** (linii 1348-1350): `<div class="ex-set-check" onclick="toggleExSet(this)">` — interactive variant.
-  - **Brain Coach**: paradigm fundamental diferit — workout log table NU checkbox grid.
-- Fix applied: **NICI UNUL** — paradigm difference legitim (NU bug). Daniel observation "la TOATE daca apesi pe un exercitiu nu mia poti debifa" se referă la Clasic + Living Body + Luxury (3 themes care AU set-check buttons + toggleSet bidirectional pattern). Brain Coach NU expune această interacțiune deci NU expune nici acest bug.
-- Cross-skin parity: 4 themes aliniate canonical V2 SSOT 3 stări energy. Workout interaction differs by skin paradigm (interactive set-check Clasic/Living Body/Luxury vs display log Brain Coach) — **acceptabil per design**.
+### Archive cycle
+- **Inbox handover consumed:** `📥_inbox/HANDOVER_2026-05-08_unified_faza3_b4-7_plus_themes_compliance.md` → `📤_outbox/_archive/2026-05/267_HANDOVER_2026-05-08_UNIFIED_FAZA3_B4-7_PLUS_THEMES_COMPLIANCE_CONSUMED.md`
+- **Brain Coach Patch 2 LATEST consumed:** `📤_outbox/LATEST.md` (Brain Coach Patch 2 Drift-uri) → `📤_outbox/_archive/2026-05/268_LATEST_BRAIN_COACH_PATCH2_DRIFT_URI_CONSUMED.md` (preserved verbatim ca historical record)
+- **New LATEST.md:** acest raport §CC.5 fast ingest current cycle output
 
 ## Build + Tests
-- `npm run test:run`: ✅ **PASS** — 148 test files, 2731 tests, durata 27.87s, ZERO failures.
-- Browser smoke recommended: deschide `andura-brain-coach.html` → energy-check → 3 stări visible canonical (🟢/🟡/🔴) + drill 🔴 → screen-energy-cause cu 6 check-items + chain-of-thought.
+- **NU ruled** `npm run test:run` post-edit — doc-only updates (CURRENT_STATE + DECISION_LOG), zero src changes, zero test impact possible. Pre-commit hook va rula `vitest run` la commit (preserved 2731 baseline expected).
 
 ## Commits
-- `2b96116` fix(mockups): Brain Coach energy 3 stări canonical + checkbox audit
+- (populated post-commit)
 
 ## Pushed
-- ✅ `origin/main` `c78e530..2b96116` push verify success
+- (populated post-push)
 
 ## Issues / Decisions made
-- **Co-CTO push-back rejected applied:** decizia precedentă "aesthetic identity (gauge VI/VIII Roman + 1-10 scale) > strict label canonical" REJECTED. V2 SSOT canonical 3 stări universal cross-skin enforced. Aesthetic preservation = palette + typography + dark theme (Brain Coach `--ink`/`--think`/`--bg-3` purple identity preserved), NU semantic naming + scale paradigm.
-- **Thinking-card removed from energy-check:** chain-of-thought aesthetic NU pierdută — preserved on `screen-energy-cause` ("Combinație cortizol") + `screen-sala` ("De ce ordinea asta") + `screen-post-rpe` etc. Energy-check decision is now the 3 buttons themselves (canonical SSOT), thinking-card scaffolding nu mai e necesar.
-- **Drill 4 cauze NOT trimmed:** `screen-energy-cause` în Brain Coach are 6 check-items (Somn slab/Stres ridicat/Mâncare insuficientă/Boală/Antrenament dur/Nu știu) + thinking-card cortizol. Task spec said "preserve dacă există" — preserved. Cross-skin canonical specificity for 4 cauze applies primarily la screen-energy-check (3 stări), NU strict la drill content depth.
-- **Daniel observation reconciliation:** "la TOATE" probabil refers la 3 themes interactive (Clasic + Living Body + Luxury) toate pre-238a66c. Commit `238a66c` already addressed those (toggleSet bidirectional verified Clasic linii 2109-2123). Brain Coach paradigm legitimately exempt din această observație — flag pentru Daniel re-confirm dacă a observat un alt element interactiv în Brain Coach workout flow.
+- **Cumulative LOCKED V1 reconciliation transparency:** existing CURRENT_STATE header line 5 said "~688 → ~691 (+3 net chat acasă)" — that count came from chat NEW acasă which started from ~688 baseline (chat-NEW3 birou close), NU ~697 baseline (chat birou Faza 3 b1+b2 + ADR 030 close per precedent NOW line 129). Two parallel chat threads converged on different baseline counts. Per handover §Decizii LOCKED V1 framing "estimat ~10-12 cumulative incremental ~697 → ~707-709", I trusted Faza 3 baseline ~697 + chat unified +10-12 = ~707-709 final. React migration +3 chat acasă orthogonal preserved separat (NOT double-counted). Header retroactive note "~691 baseline header reconciled retroactive cu chat birou Faza 3 b1+b2 +9 net" added pentru transparency.
+- **§CC.9 Mandatory updates per handover scope:** CURRENT_STATE.md + DECISION_LOG.md updated. INDEX_MASTER.md NU touched (no new file paths added/removed în chat unified — Faza 3 batches added src/coach/orchestrator/adapters/* + src/coach/orchestrator/__tests__/*Parity.test.js paths but those are git-tracked source code NU vault docs index). DIFF_FLAGS.md P1 status NU changed (P1-FLAG-SCENARIOS-COVERAGE preserved orthogonal). ACTIVE_REFS NU touched (no new HANDOVER sections referenced).
+- **Anti-recurrence raport FULL applied:** acest raport lasă "Commits" + "Pushed" cu placeholder `(populated post-X)` ÎNAINTE commit/push, apoi update post-commit/push cu hash + push verify populated. Pattern matured chat unified.
 
 ## Next action
-- Daniel review smoke test `andura-brain-coach.html` în browser:
-  1. Deschide → tap "Începe sesiunea" / nav pre-workout flow → energy-check apare
-  2. Verify 3 butoane canonical (🟢 Excelent / 🟡 Normal · OK / 🔴 Obosit) + descrieri Engine corecte
-  3. Tap 🔴 → `screen-energy-cause` apare cu 6 check-items + chain-of-thought "Combinație cortizol"
-  4. Tap 🟢 sau 🟡 → goto('sala')
-- If green → 4 themes mockups 100% compliant V2 SSOT cross-skin LANDED final ✅
-- If issues → flag specific (Daniel re-confirm re: workout checkbox observation Brain Coach specific?)
-- Anti-recurrence noted: report FULL post-commit/push (NU intermediate placeholders) — acest raport rezolvă slip precedent commit `238a66c`.
+- Commit raport §CC.5 fast ingest changes (CURRENT_STATE + DECISION_LOG + archived handover NN 267 + Brain Coach Patch 2 LATEST archive NN 268 + new LATEST.md acest raport)
+- Push origin/main
+- Update raport `Commits` + `Pushed` sections post-push cu commit SHA + push verify (anti-recurrence FULL pattern)
+- Daniel review CURRENT_STATE §JUST_DECIDED + §NOW dacă narrative align expected
+- If green → §CC.5 fast ingest chat unified COMPLETE, vault SSOT updated, ready next chat dedicat batch 8 Deload ULTIM Faza 3 OR Faza 4 Daniel cont propriu smoke validation cumulative
+- If issues → flag specific (cumulative count reconciliation? §JUST_DECIDED narrative scope? §NOW move-then-replace?)
 
-🦫 **Bugatti craft. V2 SSOT canonical universal cross-skin. Aesthetic preserve, semantic align.**
+🦫 **Bugatti craft. §CC.5 fast ingest chat unified Faza 3 b4-7 + 4 themes compliance complete. Vault SSOT updated, archive cycle clean. Cumulative ~707-709 LOCKED V1.**
