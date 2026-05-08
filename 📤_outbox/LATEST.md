@@ -79,12 +79,12 @@
 
 ## Commits
 
-- TBD post-Write commit cu detailed message
+- `de4222b` feat(faza-3-strangler): batch 1 Periodization wiring real LANDED
 
 ## Pushed
 
 - Safety tag `pre-faza3-batch1-periodization-wiring-2026-05-08-1133` → origin ✓
-- Commit TBD post
+- Commit `de4222b` → origin/main (`f6d2f58..de4222b`) ✅ + tests 2661 PASS pre-commit (gate verified)
 
 ## Issues / Ambiguities
 
