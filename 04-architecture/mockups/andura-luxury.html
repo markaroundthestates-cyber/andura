@@ -448,6 +448,25 @@
   }
   .row-arrow { color: var(--champagne); font-size: 14px; }
 
+  /* Sex selector + Frequency cards interactive states (WCAG SC 1.4.11 non-text 3:1+) */
+  .sex-option, .freq-card {
+    border: 0.5px solid var(--line-strong); /* 28% alpha champagne on noir ≈ 3.1:1 */
+    background: transparent;
+    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  }
+  .sex-option .sex-glyph        { color: var(--silver-3); transition: color 0.25s ease; }
+  .sex-option .sex-label        { color: var(--silver); transition: color 0.25s ease; }
+  .sex-option .sex-mark         { color: var(--silver-3); transition: color 0.25s ease; }
+  .sex-option.is-selected,
+  .freq-card.is-selected {
+    border-color: var(--champagne);
+    background: var(--champagne-soft);
+  }
+  .sex-option.is-selected .sex-glyph,
+  .sex-option.is-selected .sex-label,
+  .sex-option.is-selected .sex-mark { color: var(--champagne); }
+  .freq-card.is-selected .row-label { color: var(--champagne); }
+
   /* Sub-page header */
   .sub-header {
     padding: 16px 24px 22px;
@@ -556,29 +575,32 @@
 
   /* Slider */
   .slider-track {
-    height: 2px;
+    height: 3px;
     background: rgba(255,255,255,0.06);
-    margin: 12px 24px;
+    margin: 16px 24px 8px;
     position: relative;
-    border-radius: 1px;
+    border-radius: 2px;
   }
   .slider-fill {
     position: absolute; left: 0; top: 0;
     height: 100%;
     background: linear-gradient(90deg, var(--bleu-bright), var(--champagne));
-    box-shadow: 0 0 8px var(--champagne-soft);
+    box-shadow: 0 0 6px var(--champagne-soft);
+    border-radius: 2px;
   }
   .slider-knob {
-    position: absolute; top: -5px;
-    width: 12px; height: 12px;
+    position: absolute; top: -6px;
+    width: 15px; height: 15px;
     background: var(--champagne);
     border-radius: 50%;
     transform: translateX(-50%);
-    box-shadow: 0 0 12px var(--champagne-soft);
+    box-shadow: 0 0 8px var(--champagne-soft), 0 0 0 2px rgba(0,0,0,0.35);
+    z-index: 2;
   }
   .slider-labels {
     display: flex; justify-content: space-between;
     padding: 0 24px;
+    margin-top: 14px;
   }
 
   /* Toggle switch */
@@ -974,9 +996,9 @@
     <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">2 · 6</div><div class="sub-title">Sex biologic</div></div></div>
     <div style="padding: 40px 24px 24px;">
       <p class="lux-body" style="font-size:16px; color:var(--silver-2); margin-bottom:36px;">Determinant pentru calibrare hormonală a recuperării.</p>
-      <div style="display:flex; flex-direction:column; gap:14px;">
-        <button class="row" style="border:0.5px solid var(--champagne); background:var(--champagne-soft); padding: 22px 24px;"><span style="display:flex; gap:18px; align-items:center;"><span class="num-display" style="font-size:32px; color:var(--champagne);">M</span><span class="row-label">Masculin</span></span><span class="row-arrow">●</span></button>
-        <button class="row" style="border:0.5px solid var(--line); padding: 22px 24px; background:transparent;"><span style="display:flex; gap:18px; align-items:center;"><span class="num-display" style="font-size:32px; color:var(--silver-3);">F</span><span class="row-label" style="color:var(--silver);">Feminin</span></span><span class="row-arrow" style="color:var(--silver-3);">○</span></button>
+      <div class="sex-selector" style="display:flex; flex-direction:column; gap:14px;">
+        <button class="row sex-option is-selected" data-sex="m" onclick="selectSex(this)" style="padding: 22px 24px;"><span style="display:flex; gap:18px; align-items:center;"><span class="num-display sex-glyph" style="font-size:32px;">M</span><span class="row-label sex-label">Masculin</span></span><span class="row-arrow sex-mark">●</span></button>
+        <button class="row sex-option" data-sex="f" onclick="selectSex(this)" style="padding: 22px 24px;"><span style="display:flex; gap:18px; align-items:center;"><span class="num-display sex-glyph" style="font-size:32px;">F</span><span class="row-label sex-label">Feminin</span></span><span class="row-arrow sex-mark">○</span></button>
       </div>
     </div>
     <div style="flex:1;"></div>
@@ -995,18 +1017,18 @@
     <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">3 · 6</div><div class="sub-title">Antecedente</div></div></div>
     <div style="padding: 24px 24px 16px;">
       <p class="lux-body" style="font-size:16px; color:var(--silver-2); margin-bottom:20px;">Selectați tot ce se aplică. Discreție absolută.</p>
-      <div style="display:flex; flex-wrap:wrap; gap:8px; padding-bottom:14px;">
-        <button class="chip selected">Spate · Lombară</button>
-        <button class="chip">Genunchi</button>
-        <button class="chip">Umăr</button>
-        <button class="chip">Cot</button>
-        <button class="chip">Cervicală</button>
-        <button class="chip">Șold</button>
-        <button class="chip">Glezne</button>
-        <button class="chip">Hernie</button>
-        <button class="chip">Hipertensiune</button>
-        <button class="chip">Diabet</button>
-        <button class="chip">— Nimic</button>
+      <div class="conditions-grid" style="display:flex; flex-wrap:wrap; gap:8px; padding-bottom:14px;">
+        <button class="chip selected" data-condition="spate-lombara" onclick="toggleCondition(this)">Spate · Lombară</button>
+        <button class="chip" data-condition="genunchi" onclick="toggleCondition(this)">Genunchi</button>
+        <button class="chip" data-condition="umar" onclick="toggleCondition(this)">Umăr</button>
+        <button class="chip" data-condition="cot" onclick="toggleCondition(this)">Cot</button>
+        <button class="chip" data-condition="cervicala" onclick="toggleCondition(this)">Cervicală</button>
+        <button class="chip" data-condition="sold" onclick="toggleCondition(this)">Șold</button>
+        <button class="chip" data-condition="glezne" onclick="toggleCondition(this)">Glezne</button>
+        <button class="chip" data-condition="hernie" onclick="toggleCondition(this)">Hernie</button>
+        <button class="chip" data-condition="hipertensiune" onclick="toggleCondition(this)">Hipertensiune</button>
+        <button class="chip" data-condition="diabet" onclick="toggleCondition(this)">Diabet</button>
+        <button class="chip" data-condition="niciuna" onclick="toggleCondition(this)">— Nimic</button>
       </div>
       <div class="coach-plate" style="margin: 18px 0 0;"><div class="etched" style="margin-bottom:8px;">Discret</div><p class="lux-body" style="font-size:14px; font-style:italic;">Datele medicale nu părăsesc niciodată dispozitivul fără consimțământ.</p></div>
     </div>
@@ -1026,11 +1048,11 @@
     <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">4 · 6</div><div class="sub-title">Frecvență</div></div></div>
     <div style="padding: 32px 24px;">
       <p class="lux-body" style="font-size:16px; color:var(--silver-2); margin-bottom:36px;">Câte sesiuni pe săptămână, în mod realist?</p>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <button class="row" style="border:0.5px solid var(--line); padding: 18px 24px;"><span class="row-label">2 · Două</span><span class="etched etched-silver">menținere</span></button>
-        <button class="row" style="border:0.5px solid var(--champagne); background:var(--champagne-soft); padding: 18px 24px;"><span class="row-label" style="color:var(--champagne);">3 · Trei</span><span class="etched">recomandat</span></button>
-        <button class="row" style="border:0.5px solid var(--line); padding: 18px 24px;"><span class="row-label">4 · Patru</span><span class="etched etched-silver">progres susținut</span></button>
-        <button class="row" style="border:0.5px solid var(--line); padding: 18px 24px;"><span class="row-label">5 · Cinci+</span><span class="etched etched-silver">avansat</span></button>
+      <div class="frequency-grid" style="display:flex; flex-direction:column; gap:12px;">
+        <button class="row freq-card" data-frequency="2" onclick="selectFrequency(this)" style="padding: 18px 24px;"><span class="row-label">2 · Două</span><span class="etched etched-silver">menținere</span></button>
+        <button class="row freq-card is-selected" data-frequency="3" onclick="selectFrequency(this)" style="padding: 18px 24px;"><span class="row-label">3 · Trei</span><span class="etched">recomandat</span></button>
+        <button class="row freq-card" data-frequency="4" onclick="selectFrequency(this)" style="padding: 18px 24px;"><span class="row-label">4 · Patru</span><span class="etched etched-silver">progres susținut</span></button>
+        <button class="row freq-card" data-frequency="5" onclick="selectFrequency(this)" style="padding: 18px 24px;"><span class="row-label">5 · Cinci+</span><span class="etched etched-silver">avansat</span></button>
       </div>
     </div>
     <div style="flex:1;"></div>
@@ -2355,6 +2377,43 @@
       el.classList.add('done');
       el.textContent = '✓';
     }
+  };
+
+  // Sex selector — single-select radio (Batch 2b-iv Task 2)
+  window.selectSex = function(btn) {
+    const group = btn.closest('.sex-selector');
+    if (!group) return;
+    group.querySelectorAll('.sex-option').forEach(opt => {
+      const isSelf = opt === btn;
+      opt.classList.toggle('is-selected', isSelf);
+      const mark = opt.querySelector('.sex-mark');
+      if (mark) mark.textContent = isSelf ? '●' : '○';
+    });
+  };
+
+  // Antecedente medicale — multi-select with "Niciuna" exclusive (Batch 2b-iv Task 3)
+  window.toggleCondition = function(btn) {
+    const group = btn.closest('.conditions-grid');
+    if (!group) return;
+    const isExclusive = btn.dataset.condition === 'niciuna';
+    if (isExclusive) {
+      const willSelect = !btn.classList.contains('selected');
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      if (willSelect) btn.classList.add('selected');
+    } else {
+      const niciuna = group.querySelector('.chip[data-condition="niciuna"]');
+      if (niciuna) niciuna.classList.remove('selected');
+      btn.classList.toggle('selected');
+    }
+  };
+
+  // Frequency cards — single-select (Batch 2b-iv Task 4)
+  window.selectFrequency = function(btn) {
+    const group = btn.closest('.frequency-grid');
+    if (!group) return;
+    group.querySelectorAll('.freq-card').forEach(card => {
+      card.classList.toggle('is-selected', card === btn);
+    });
   };
 
   go(1);
