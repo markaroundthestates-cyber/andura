@@ -148,8 +148,8 @@ L_paper-2 = 0.855: ink-3 ratio = (0.855+0.05)/(0.141+0.05) = 0.905/0.191 ≈ **4
 
 ## Commits + Push
 
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `dfa3bbdb4a3f5899f5ecdd1172d5946b51f35189`
+- Push status: `pushed origin/main` (range `4afb16f..dfa3bbd`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
