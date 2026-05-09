@@ -15,9 +15,10 @@
     --ink: #f0f1f5;
     --ink-2: #b8bcc8;
     --ink-3: #7c8090; /* WCAG audit batch 2026-05-09: was #6c7280 (3.93:1 FAIL AA) → #7c8090 (~4.85:1 PASS AA 4.5:1, hierarchy ink-3 < ink-2 #b8bcc8 preserved, cool tint B>G>R preserved) */
-    --ink-4: #5d6172; /* WCAG audit batch 2026-05-09: was #3a3e48 (1.78:1 FAIL) → #5d6172 (~3.11:1 PASS SC 1.4.11 non-text 3:1, hierarchy ink-4 < ink-3 preserved; usage 9px etched text @3 occurrences fails strict 4.5:1 AA — flagged tonal hierarchy constraint, Daniel decide stricter via per-element override) */
-    --line: rgba(255,255,255,0.08);
-    --line-2: rgba(255,255,255,0.05);
+    --ink-4: #5d6172; /* WCAG audit batch 2026-05-09 + v5 closure 2026-05-10: ~3.11:1 PASS SC 1.4.11 non-text 3:1 (used by .check-box border + .list-chevron icon + .composer-input::placeholder). 9px text usages migrated to var(--ink-3) per WCAG v5 closure (6 contexts: .day-row/.etched/.step-counter/.chat-tag/step-labels/.picker-item .num — see commit 2026-05-10). Hierarchy ink-4 (L=0.118) < ink-3 (L=0.218) preserved cool tonal B>G>R Brain Coach playful. */
+    --line: rgba(255,255,255,0.08); /* Decorative hairlines on dark bg — composite ~1.21:1 (Bugatti restraint subtle dividers/frames per WCAG v5 audit closure 2026-05-10) */
+    --line-2: rgba(255,255,255,0.05); /* Even more subtle hairlines — composite ~1.13:1 (decorative section separators only) */
+    --line-strong-bc: #5e6478; /* WCAG v5 batch 2026-05-10 — interactive UI essential boundary RGB(94,100,120) L=0.126 → 3.26:1 vs --bg #0b0c10 PASS SC 1.4.11 non-text 3:1 minimum. Used by .ai-chip/.ai-chip-ghost/.choice/.check-item/.composer-input/.back-btn + auth-skip-btn + ȘTERGE confirm input — all interactive UI essential boundaries. Cross-skin parity: Luxury --line-strong #6e5a2a (3.15:1) + Clasic --line-strong #9a8770 (3.23:1) + BC --line-strong-bc #5e6478 (3.26:1). Cool gray-blue tonal Brain Coach playful preserved (B>G>R 94<100<120). */
     --think: #8b6dff;
     --think-soft: #b09cff;
     --think-deep: #5b3dcf;
@@ -468,7 +469,7 @@
     height: 48px;
     background: var(--bg-3);
     color: var(--ink);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive auth chip button boundary 3.26:1 */
     border-radius: 14px;
     font-family: 'Inter', sans-serif;
     font-size: 13px;
@@ -484,7 +485,7 @@
     height: 44px;
     background: transparent;
     color: var(--ink-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive ghost auth chip boundary 3.26:1 */
     border-radius: 12px;
     font-size: 12.5px;
     font-weight: 500;
@@ -624,7 +625,7 @@
     margin-top: 4px;
     font-family: 'Geist Mono', monospace;
     font-size: 9px;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -662,7 +663,7 @@
     font-size: 9px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
   }
 
   /* ───── BOTTOM NAV ───── */
@@ -745,7 +746,7 @@
   .step-counter {
     font-family: 'Geist Mono', monospace;
     font-size: 9px;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
     letter-spacing: 0.2em;
     margin-left: 6px;
   }
@@ -828,7 +829,7 @@
   .choice-grid.cols-2 { grid-template-columns: 1fr 1fr; }
   .choice {
     background: var(--bg-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive choice button boundary 3.26:1 */
     border-radius: 14px;
     padding: 16px 14px;
     text-align: left;
@@ -883,7 +884,7 @@
     align-items: center;
     padding: 14px;
     background: var(--bg-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive checkbox-item boundary 3.26:1 */
     border-radius: 12px;
     cursor: pointer;
   }
@@ -1047,7 +1048,7 @@
   .chat-tag {
     font-family: 'Geist Mono', monospace;
     font-size: 9px;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
     letter-spacing: 0.14em;
     text-transform: uppercase;
     align-self: center;
@@ -1066,7 +1067,7 @@
     flex: 1;
     height: 40px;
     background: var(--bg-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive form input boundary 3.26:1 */
     border-radius: 12px;
     padding: 0 14px;
     color: var(--ink);
@@ -1101,7 +1102,7 @@
     width: 32px;
     height: 32px;
     background: var(--bg-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong-bc); /* WCAG v5 cross-skin: interactive back navigation button 3.26:1 */
     border-radius: 9px;
     color: var(--ink);
     cursor: pointer;
@@ -1182,7 +1183,7 @@
     padding: 0 4px;
     font-family: 'Geist Mono', monospace;
     font-size: 9px;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
     letter-spacing: 0.1em;
   }
 
@@ -1767,7 +1768,7 @@
   .picker-item .num {
     font-family: 'Geist Mono', monospace;
     font-size: 9px;
-    color: var(--ink-4);
+    color: var(--ink-3); /* WCAG v5 2026-05-10: 9px text 4.96:1 AA (was var(--ink-4) 3.11:1 FAIL strict 4.5:1) */
     letter-spacing: 0.1em;
   }
   .picker-item.active .num { color: var(--think-soft); }
@@ -1909,7 +1910,7 @@
         </button>
 
         <button class="auth-skip-btn mb-s" data-action="skip-auth" onclick="goto('onboard')"
-                style="display:block; width:100%; background:transparent; border:1px solid var(--line); border-radius:12px; padding:13px 16px; font-size:14px; font-weight:500; color:var(--ink-3); cursor:pointer;">
+                style="display:block; width:100%; background:transparent; border:1px solid var(--line-strong-bc); border-radius:12px; padding:13px 16px; font-size:14px; font-weight:500; color:var(--ink-3); cursor:pointer;">
           Continuă fără cont
         </button>
         <p class="auth-risk-note" style="font-size:12px; color:var(--ink-3); margin: 4px 4px 12px; line-height:1.5; text-align:center;">
@@ -4352,7 +4353,7 @@
           </div>
           <div style="background:rgba(239,90,90,0.08);border:1px solid rgba(239,90,90,0.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--ink-2);">
             Tastează <strong class="danger-text">ȘTERGE</strong> pentru confirmare:
-            <input style="width:100%;height:36px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:0 12px;color:var(--ink);font-family:'Geist Mono',monospace;font-size:12px;margin-top:6px;" placeholder="ȘTERGE" />
+            <input style="width:100%;height:36px;background:var(--bg);border:1px solid var(--line-strong-bc);border-radius:8px;padding:0 12px;color:var(--ink);font-family:'Geist Mono',monospace;font-size:12px;margin-top:6px;" placeholder="ȘTERGE" />
           </div>
           <div class="btn-row">
             <button class="btn-secondary" onclick="back()">Renunț</button>
