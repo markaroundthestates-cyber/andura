@@ -419,6 +419,17 @@
   .aura { animation: aura-pulse 4s ease-in-out infinite; transform-origin: 190px 280px; }
   .aura.delay { animation-delay: 2s; }
 
+  /* ── Body fatigue states V2 prep wiring (Q1 LOCKED 2026-05-09) ──
+     Engine canonical: src/engine/muscleMap.js getMuscleState() exponential decay RPE × recovery hours
+     Plug-and-play React migration: replace DEMO_MUSCLE_STATE cu useMuscleState() hook 1-line swap. */
+  .muscle-zone {
+    transition: fill 0.5s ease, opacity 0.5s ease;
+  }
+  .muscle-zone.fatigue-fresh    { fill: rgba(212, 165, 116, 0.55); }
+  .muscle-zone.recovering-light { fill: rgba(212, 165, 116, 0.30); }
+  .muscle-zone.recovering-deep  { fill: rgba(139, 132, 112, 0.50); }
+  .muscle-zone.fatigued         { fill: rgba(190, 95, 70, 0.65); }
+
   /* Recovery bar */
   .lb-recovery {
     display: flex;
@@ -890,28 +901,35 @@
           </g>
 
           <!-- MUSCLE GROUP GLOWS -->
-          <!-- Chest (pecs) - tired -->
-          <ellipse class="m-tired" cx="178" cy="195" rx="14" ry="13" fill="url(#mTired)" filter="url(#glow)"/>
-          <ellipse class="m-tired" cx="202" cy="195" rx="14" ry="13" fill="url(#mTired)" filter="url(#glow)"/>
+          <!-- Chest (pecs) — Q1 V2 wiring -->
+          <ellipse class="m-tired muscle-zone" data-muscle="chest" cx="178" cy="195" rx="14" ry="13" fill="url(#mTired)" filter="url(#glow)"/>
+          <ellipse class="m-tired muscle-zone" data-muscle="chest" cx="202" cy="195" rx="14" ry="13" fill="url(#mTired)" filter="url(#glow)"/>
 
-          <!-- Shoulders (delts) - ready -->
-          <ellipse class="m-ready" cx="158" cy="180" rx="13" ry="10" fill="url(#mReady)" filter="url(#glow)"/>
-          <ellipse class="m-ready-2" cx="222" cy="180" rx="13" ry="10" fill="url(#mReady)" filter="url(#glow)"/>
+          <!-- Shoulders (delts) — Q1 V2 wiring -->
+          <ellipse class="m-ready muscle-zone" data-muscle="shoulders" cx="158" cy="180" rx="13" ry="10" fill="url(#mReady)" filter="url(#glow)"/>
+          <ellipse class="m-ready-2 muscle-zone" data-muscle="shoulders" cx="222" cy="180" rx="13" ry="10" fill="url(#mReady)" filter="url(#glow)"/>
 
-          <!-- Biceps - ready -->
-          <ellipse class="m-ready-3" cx="146" cy="218" rx="9" ry="20" fill="url(#mReady)" filter="url(#glow)"/>
-          <ellipse class="m-ready-3" cx="234" cy="218" rx="9" ry="20" fill="url(#mReady)" filter="url(#glow)"/>
+          <!-- Biceps — Q1 V2 wiring -->
+          <ellipse class="m-ready-3 muscle-zone" data-muscle="biceps" cx="146" cy="218" rx="9" ry="20" fill="url(#mReady)" filter="url(#glow)"/>
+          <ellipse class="m-ready-3 muscle-zone" data-muscle="biceps" cx="234" cy="218" rx="9" ry="20" fill="url(#mReady)" filter="url(#glow)"/>
+
+          <!-- Triceps — Q1 V2 wiring (lateral arm hint, front view subtle) -->
+          <ellipse class="muscle-zone" data-muscle="triceps" cx="138" cy="232" rx="6" ry="14" fill="url(#mGold)" filter="url(#glow)" opacity="0.45"/>
+          <ellipse class="muscle-zone" data-muscle="triceps" cx="242" cy="232" rx="6" ry="14" fill="url(#mGold)" filter="url(#glow)" opacity="0.45"/>
+
+          <!-- Back — Q1 V2 wiring (front-view abstract hint, behind torso center) -->
+          <ellipse class="muscle-zone" data-muscle="back" cx="190" cy="220" rx="22" ry="14" fill="url(#mGold)" filter="url(#glow)" opacity="0.30"/>
 
           <!-- Forearms - ready -->
           <ellipse class="m-ready" cx="138" cy="280" rx="7" ry="22" fill="url(#mReady)" filter="url(#glow)" opacity="0.8"/>
           <ellipse class="m-ready" cx="242" cy="280" rx="7" ry="22" fill="url(#mReady)" filter="url(#glow)" opacity="0.8"/>
 
-          <!-- Abs - gold (steady) -->
-          <ellipse class="m-ready-2" cx="190" cy="262" rx="12" ry="30" fill="url(#mGold)" filter="url(#glow)"/>
+          <!-- Abs — Q1 V2 wiring (core) -->
+          <ellipse class="m-ready-2 muscle-zone" data-muscle="core" cx="190" cy="262" rx="12" ry="30" fill="url(#mGold)" filter="url(#glow)"/>
 
-          <!-- Quads - strain -->
-          <ellipse class="m-strain" cx="178" cy="410" rx="11" ry="36" fill="url(#mStrain)" filter="url(#glow-strong)"/>
-          <ellipse class="m-strain" cx="202" cy="410" rx="11" ry="36" fill="url(#mStrain)" filter="url(#glow-strong)"/>
+          <!-- Quads — Q1 V2 wiring (legs) -->
+          <ellipse class="m-strain muscle-zone" data-muscle="legs" cx="178" cy="410" rx="11" ry="36" fill="url(#mStrain)" filter="url(#glow-strong)"/>
+          <ellipse class="m-strain muscle-zone" data-muscle="legs" cx="202" cy="410" rx="11" ry="36" fill="url(#mStrain)" filter="url(#glow-strong)"/>
 
           <!-- HEART -->
           <g class="heart">
@@ -2464,6 +2482,38 @@
       goto('auth', {replace: true});
     }
   }, 1500);
+
+  // ─── Body fatigue V2 prep wiring (Q1 LOCKED 2026-05-09) ──
+  // Plug-and-play React migration ready: replace `DEMO_MUSCLE_STATE` with `useMuscleState()` hook.
+  // Engine canonical: src/engine/muscleMap.js getMuscleState() exponential decay RPE × recovery hours.
+  function applyMuscleState(state) {
+    const STATE_TO_CLASS = {
+      fresh: 'fatigue-fresh',
+      recovering_light: 'recovering-light',
+      recovering_deep: 'recovering-deep',
+      fatigued: 'fatigued',
+    };
+    const zones = document.querySelectorAll('.muscle-zone[data-muscle]');
+    zones.forEach(zone => {
+      const muscle = zone.dataset.muscle;
+      const muscleState = state[muscle] || 'fresh';
+      Object.values(STATE_TO_CLASS).forEach(cls => zone.classList.remove(cls));
+      const targetClass = STATE_TO_CLASS[muscleState];
+      if (targetClass) zone.classList.add(targetClass);
+    });
+  }
+
+  const DEMO_MUSCLE_STATE = {
+    chest: 'fatigued',
+    shoulders: 'fatigued',
+    triceps: 'fatigued',
+    biceps: 'recovering_light',
+    back: 'fresh',
+    legs: 'fresh',
+    core: 'fresh',
+  };
+
+  applyMuscleState(DEMO_MUSCLE_STATE);
 </script>
 </body>
 </html>
