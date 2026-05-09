@@ -95,8 +95,8 @@
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
 - **Diff stat:** 41 insertions(+), 1 deletion(-) on `04-architecture/mockups/andura-luxury.html` — ROUTES[34] line modified + 2 new ROUTES entries + 2 new sub-pages (~22 lines each)
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `37185c2cff5f6e4e2405173d249eeba6d0077395`
+- Push status: `pushed origin/main` (range `8971254..37185c2`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
@@ -123,7 +123,7 @@
 | 2b-v | Luxury Cum e Azi flow 5 fixes multi-screen (energy/Anulează/disponibilitate/redirect/blocaj) | `56e2813` |
 | 2b-vi | Luxury Istoric data parity + Tab Nav V2 SSOT + Zona Sensibilă DOM bug fix | `d8245a1` |
 | 2b-vii | Clasic Loghează greutate real drill-down (production-ready directive) | `fbe98a6` |
-| 2b-viii | Luxury routing gap closure (this batch) | `(populated post-commit)` |
+| 2b-viii | Luxury routing gap closure (this batch) | `37185c2` |
 
 **Tests 2731 PASS preserved** across all 8 batches. **Cumulative LOCKED V1 ~707-709 PRESERVED** unchanged (mockup polish meta-tooling NU additive product/architecture).
 
