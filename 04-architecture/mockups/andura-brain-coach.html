@@ -14,8 +14,8 @@
     --bg-4: #22262f;
     --ink: #f0f1f5;
     --ink-2: #b8bcc8;
-    --ink-3: #6c7280;
-    --ink-4: #3a3e48;
+    --ink-3: #7c8090; /* WCAG audit batch 2026-05-09: was #6c7280 (3.93:1 FAIL AA) → #7c8090 (~4.85:1 PASS AA 4.5:1, hierarchy ink-3 < ink-2 #b8bcc8 preserved, cool tint B>G>R preserved) */
+    --ink-4: #5d6172; /* WCAG audit batch 2026-05-09: was #3a3e48 (1.78:1 FAIL) → #5d6172 (~3.11:1 PASS SC 1.4.11 non-text 3:1, hierarchy ink-4 < ink-3 preserved; usage 9px etched text @3 occurrences fails strict 4.5:1 AA — flagged tonal hierarchy constraint, Daniel decide stricter via per-element override) */
     --line: rgba(255,255,255,0.08);
     --line-2: rgba(255,255,255,0.05);
     --think: #8b6dff;
