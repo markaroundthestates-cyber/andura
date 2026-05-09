@@ -904,6 +904,10 @@
       <button class="btn-champagne btn-block">Autentificare</button>
       <div style="text-align:center; margin: 22px 0 16px;"><span class="etched etched-silver">— sau —</span></div>
       <button class="btn-noir btn-block" style="margin-bottom:10px;">Continuă cu Google</button>
+      <button class="btn-noir btn-block auth-skip-btn" data-action="skip-auth" style="margin-bottom:10px; background:transparent; border:1px solid var(--line-strong); color:var(--silver-2); font-weight:500;">Continuă fără cont</button>
+      <p class="auth-risk-note" style="font-size:12px; color:var(--silver-3); margin: 8px 4px 0; line-height:1.55; text-align:center; font-style:italic;">
+        Datele se salvează doar pe acest dispozitiv. Riști să le pierzi (telefon resetat, browser cache șters, app reinstalat).
+      </p>
       <div style="text-align:center; margin-top:24px;"><span class="etched etched-silver">Membru nou? · </span><span class="etched">Cere acces</span></div>
     </div>
   </div>
@@ -2164,7 +2168,7 @@
   // ROUTES — strict clasic V1 LOCKED flow
   const ROUTES = {
     1:  { '*click*': 2 },
-    2:  { 'autentificare': 3, 'continuă cu google': 3, 'începe': 3, 'linkul': 3, 'cere acces': 3 },
+    2:  { 'autentificare': 3, 'continuă cu google': 3, 'fără cont': 3, 'începe': 3, 'linkul': 3, 'cere acces': 3 },
     3:  { 'începe inițierea': 4, 'continuă': 4 },
     4:  { 'continuă': 5 },
     5:  { 'continuă': 6 },
