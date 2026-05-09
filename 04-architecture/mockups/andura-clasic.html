@@ -1138,8 +1138,8 @@
             <div class="alert-row"><i data-lucide="trending-up"></i><div style="flex:1;"><b style="color:#1a1815; font-size:14px;">Volum stabil 7 zile</b><div class="small-text" style="color:#3a342d;">Poți crește ușor progresia săptămâna viitoare.</div></div></div>
           </div>
 
-          <!-- Loghează greutate (singur input nutrition-related) -->
-          <button class="btn-brick" onclick="showToast('Loghează greutate — drill input')" style="width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <!-- Loghează greutate (real drill-down sub-page Batch 2b-vii — production-ready directive Daniel 2026-05-09) -->
+          <button class="btn-brick" onclick="goto('log-weight')" style="width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;">
             <i data-lucide="scale"></i> Loghează greutate
           </button>
           <p class="small-text" style="color:#8a8278; margin-top:10px; text-align:center; line-height:1.5;">V1: nu loghezi kcal / proteine / apă. Engine inferază.</p>
@@ -1639,6 +1639,27 @@
             <button class="btn-danger" onclick="runConfirm('Cont înghețat. 30 zile pentru recuperare.')">Confirmă acțiunea</button>
             <button class="btn-ghost" onclick="back()">Anulează</button>
           </div>
+        </div>
+      </div>
+
+      <!-- Loghează greutate (V1 zero-modals canonical drill-down — Batch 2b-vii) -->
+      <div class="screen paper-bg sub-page" id="screen-log-weight" data-screen-label="Antrenor › Loghează greutate" style="height:100%; flex-direction:column;">
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Loghează greutate</h2></div>
+        <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:18px;">
+          <div>
+            <label for="weight-kg-input" class="small-text" style="color:#3a342d; font-weight:500; display:block; margin-bottom:8px;">Greutate (kg)</label>
+            <input type="number" id="weight-kg-input" step="0.1" min="30" max="250" placeholder="ex. 78.5" inputmode="decimal"
+                   style="width:100%; padding:18px 20px; border:1px solid #e7e0d0; border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:white; color:#1a1815; font-family:'JetBrains Mono', monospace;"/>
+          </div>
+          <div>
+            <label for="weight-date-input" class="small-text" style="color:#3a342d; font-weight:500; display:block; margin-bottom:8px;">Data</label>
+            <input type="date" id="weight-date-input"
+                   style="width:100%; padding:14px 16px; border:1px solid #e7e0d0; border-radius:12px; font-size:16px; background:white; color:#1a1815;"/>
+          </div>
+          <p class="small-text" style="color:#8a8278; line-height:1.5; margin:0;">Înregistrarea este salvată local. Vei vedea evoluția în Greutate &amp; BF.</p>
+          <div style="flex:1;"></div>
+          <button class="btn-brick" onclick="saveWeightEntry()">Salvează</button>
+          <button class="btn-ghost" onclick="back()" style="background:transparent; border:none; color:#8a8278;">Anulează</button>
         </div>
       </div>
 
@@ -2164,6 +2185,37 @@
       goto('auth', {replace: true});
     }
   }, 1500);
+
+  // ─── Loghează greutate handler (V1 mockup state — V2 swap useWeightLog().add() hook) ───
+  // Authority: Daniel directive 2026-05-09 production-ready strict (Batch 2b-vii)
+  function saveWeightEntry() {
+    const kgInput = document.getElementById('weight-kg-input');
+    const dateInput = document.getElementById('weight-date-input');
+    const kg = parseFloat(kgInput && kgInput.value);
+    const date = dateInput && dateInput.value;
+    if (!kg || isNaN(kg) || kg < 30 || kg > 250) {
+      showToast('Introdu o greutate validă (30–250 kg)');
+      if (kgInput) kgInput.focus();
+      return;
+    }
+    if (!date) {
+      showToast('Selectează data înregistrării');
+      if (dateInput) dateInput.focus();
+      return;
+    }
+    showToast('Salvat: ' + kg + ' kg · ' + date);
+    if (kgInput) kgInput.value = '';
+    back();
+  }
+  window.saveWeightEntry = saveWeightEntry;
+
+  // Auto-fill weight-date-input default = today (so user only types kg)
+  window.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('weight-date-input');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+  });
 </script>
 </body>
 </html>
