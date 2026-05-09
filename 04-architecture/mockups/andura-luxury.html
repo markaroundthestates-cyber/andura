@@ -2126,6 +2126,44 @@
 <div class="stage-label">Antrenor · filosofia</div>
 </div>
 
+<!-- 46 · CONFIRM HISTORY DELETE (Batch 2b-viii routing gap closure — production-ready) -->
+<div class="stage-wrap" data-stage-id="46" data-screen-id="confirm-history-delete">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><span style="font-size:10px;">●●●</span><span style="font-size:11px;">📶</span><div class="battery"><div></div></div></div></div>
+  <div class="scroll" style="display:flex; flex-direction:column;">
+    <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">Confirm › Istoric</div><div class="sub-title">Șterg istoricul?</div></div></div>
+    <div class="confirm-block">
+      <div class="splash-monogram" style="width:72px; height:72px; font-size:36px; border-color:#c87878; color:#c87878; margin-bottom:24px;">!</div>
+      <div class="etched" style="margin-bottom:14px; color:#c87878;">Ireversibil</div>
+      <p class="lux-body" style="font-size:17px; margin-bottom:20px;">Toate sesiunile, statisticile și recordurile vor fi <span class="lux-italic">șterse permanent</span>.</p>
+      <p class="lux-body" style="font-size:14px; color:var(--silver-2); margin-bottom:32px;">Programele și setările contului rămân intacte.</p>
+    </div>
+    <div class="action-bar"><button class="btn-noir" style="flex:1;" onclick="back()">Anulează</button><button class="btn-danger" style="flex:1;">Confirm ștergere</button></div>
+  </div>
+</div>
+<div class="stage-num">XLVI</div>
+<div class="stage-label">Confirm › Istoric</div>
+</div>
+
+<!-- 47 · CONFIRM ACCOUNT DELETE (Batch 2b-viii routing gap closure — FINAL destructive nuclear) -->
+<div class="stage-wrap" data-stage-id="47" data-screen-id="confirm-account-delete">
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><div class="status-icons"><span style="font-size:10px;">●●●</span><span style="font-size:11px;">📶</span><div class="battery"><div></div></div></div></div>
+  <div class="scroll" style="display:flex; flex-direction:column;">
+    <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">Confirm › Cont</div><div class="sub-title">Șterg contul?</div></div></div>
+    <div class="confirm-block">
+      <div class="splash-monogram" style="width:72px; height:72px; font-size:36px; border-color:#c87878; color:#c87878; margin-bottom:24px;">!</div>
+      <div class="etched" style="margin-bottom:14px; color:#c87878;">Ireversibil — definitiv</div>
+      <p class="lux-body" style="font-size:17px; margin-bottom:20px;">Contul, datele biometrice, istoricul și abonamentul vor fi <span class="lux-italic">șterse permanent</span>. Nu pot fi recuperate.</p>
+      <p class="lux-body" style="font-size:14px; color:var(--silver-2); margin-bottom:32px;">Vei fi deconectat și redirecționat la ecranul inițial.</p>
+    </div>
+    <div class="action-bar"><button class="btn-noir" style="flex:1;" onclick="back()">Anulează</button><button class="btn-danger" style="flex:1;">Confirm ștergere</button></div>
+  </div>
+</div>
+<div class="stage-num">XLVII</div>
+<div class="stage-label">Confirm › Cont</div>
+</div>
+
 <script>
   // Disponibilitate label state copy (Batch 2b-v Task 3 — Bugatti restraint, NU alarmist)
   const DISPO_LABELS = {
@@ -2260,7 +2298,7 @@
     },
     29: { 'teme': 30, 'luxury': 30 },
     30: { },
-    34: { 'reset': 35, 'schimbă': 36, 'fază': 36, 'faza': 36 },
+    34: { 'reset': 35, 'schimbă': 36, 'fază': 36, 'faza': 36, 'șterg istoricul': 46, 'șterg contul': 47 },
     35: { 'confirm': 25, 'da': 25, 'șterge': 25 },
     36: { 'confirm': 25, 'da': 25, 'aplică': 25 },
     37: { 'închide': 11, 'ok': 11, 'continuă': 11 },
@@ -2272,6 +2310,8 @@
     43: { 'continuă': 18, 'următor': 18 },
     44: { 'închide': 11, 'ok': 11 },
     45: { 'închide': 11 },
+    46: { 'confirm': 25, 'da': 25, 'șterg': 25 },
+    47: { 'confirm': 25, 'da': 25, 'șterg': 25 },
   };
 
   document.addEventListener('click', function(e) {
