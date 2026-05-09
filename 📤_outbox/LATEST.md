@@ -93,8 +93,8 @@ Validation: range 30–250 kg + required date. Both errors trigger toast + focus
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
 - **Diff stat:** 54 insertions(+), 2 deletions(-) on `04-architecture/mockups/andura-clasic.html` — additive (new sub-page DOM 19 lines + JS handler 25 lines + DOMContentLoaded 6 lines + button onclick 2-line swap)
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `fbe98a61d6b8187413f8b69a1cc5e2083c45af1a`
+- Push status: `pushed origin/main` (range `0efa8e9..fbe98a6`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
