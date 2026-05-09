@@ -3,6 +3,20 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '04-architecture/mockups/**'
+      - '00-index/**'
+      - '01-vision/**'
+      - '02-audit/**'
+      - '03-decisions/**'
+      - '05-findings-tracker/**'
+      - '06-sessions-log/**'
+      - '07-meta/**'
+      - '08-workflows/**'
+      - '📥_inbox/**'
+      - '📤_outbox/**'
+      - '**.md'
+  workflow_dispatch:
 
 permissions:
   contents: write
