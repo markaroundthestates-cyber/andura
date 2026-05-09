@@ -106,8 +106,8 @@ Phone bg = `--noir #050507` → relative luminance L_noir ≈ 0.0014 (very dark)
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
 - **Diff stat:** 86 insertions(+), 27 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor+additive
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `1ca105a7443581309f16362e4ce6a6b0aa549f51`
+- Push status: `pushed origin/main` (range `de2a061..1ca105a`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
