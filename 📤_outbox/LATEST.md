@@ -1,108 +1,91 @@
-# LATEST — Themes Batch 2b-i Auth Cross-Skin + BC Blocker Fix
+# LATEST — Themes Batch 2b-ii Splash Auto-Advance Clasic + Living Body
 
 **Status:** ✅ Complete
 **Model:** Opus
-**Date:** 2026-05-09 2100
-**Backup tag:** `pre-themes-batch2b-i-auth-cross-skin-2026-05-09-2100` (pushed origin)
-**Authority:** HANDOVER_AUTH_FLOW §56.1.1 + §56.3.1 (auth-banner-soft post-T0 canonical) + Bugatti F4 frictionless Maria 65 + Daniel directive "100% compliant or no UX = no Beta"
+**Date:** 2026-05-09 2132
+**Backup tag:** `pre-themes-batch2b-ii-splash-autoadvance-2026-05-09-2132` (pushed origin)
+**Authority:** `00-index/CURRENT_STATE.md` §NOW Mid-flight Batch 2b item #3 — "JS init lipsă auto-advance setTimeout (precum Brain Coach pattern)"
 
 ---
 
 ## PHASE 1 — Pre-flight grep & audit findings
 
-### Andura Clasic (`04-architecture/mockups/andura-clasic.html`)
-- `screen-auth` container: line 387 `<div class="screen paper-bg" id="screen-auth">`
-- `screen-onboard` container: line 435 `<div class="screen paper-bg" id="screen-onboard">`
-- Routes pattern: `goto(name)` function (defined line 1908)
-- Auth buttons: Email link form + "Continuă cu Google" btn-ghost line 410-413 with `onclick="goto('onboard')"`
-- Insertion point identified: AFTER Google btn closing `</button>` (line 413), BEFORE `</div>` of `auth-form` (was line 414)
-- CSS tokens: NO `:root` declared — hardcoded hex throughout (`#1a1815`, `#3a342d`, `#8a8278`, `#c8412e`, `#e7e0d0`, `#f3ede1`)
+### Brain Coach canonical reference (UNTOUCHED)
+- File: `04-architecture/mockups/andura-brain-coach.html`
+- Lines 4765-4770: bare setTimeout (NOT wrapped DOMContentLoaded)
+  ```js
+  // ─── Default landing ──────────────────────────────────────────
+  // Splash is active by default; auto-advance to auth after 1.5s
+  setTimeout(() => {
+    const cur = document.querySelector('.screen.active');
+    if (cur && cur.id === 'screen-splash') goto('auth', {replace: true});
+  }, 1500);
+  ```
+- goto() signature: `function goto(name, opts)` line 4704 — `opts.replace` clears navStack
 
-### Andura Living Body (`04-architecture/mockups/andura-living-body.html`)
-- `screen-auth` container: line 527 `<div class="screen paper-bg" id="screen-auth">`
-- `screen-onboard` container: line 575
-- Routes pattern: `goto(name)` function
-- Auth buttons: Email + "Continuă cu Google" btn-ghost line 550-553 with `onclick="goto('onboard')"`
-- Insertion point: AFTER Google btn `</button>` (line 553), BEFORE `</div>` of `auth-form` (was line 554)
-- CSS tokens: NO `:root` — hardcoded LB palette (`#f0eadb`, `#b8b0a0`, `#8b8470`, `#d4a574`, `rgba(212,165,116,0.15)`)
+### Andura Clasic
+- screen-splash: line 368 `<div class="screen paper-bg active" id="screen-splash">` — only screen with `active` class default ✅
+- goto() function: line 1922 — signature `function goto(name, opts)` with `opts.replace` support (line 1929 `if (opts.replace) navStack.length = 0;`) — EXACT parity Brain Coach
+- JS init block end: line 2151-2158 (DOMContentLoaded for lucide icons + bare `if (window.lucide) lucide.createIcons()` at line 2158)
+- `</script>` close: line 2159
+- Existing splash setTimeout: NONE (anti-duplicate verified — only `setTimeout` matches were toast clearTimeout pattern + input focus)
+- Default active: ✅ `screen-splash` only
 
-### Andura Luxury (`04-architecture/mockups/andura-luxury.html`)
-- Auth structure DIVERGENT: `<div class="stage-wrap" data-stage-id="2" data-screen-id="auth">` line 889 (stage-based showcase, NU classic screen container)
-- Routing pattern DIVERGENT: `go(id)` function (line 2150) + `ROUTES[id]` map (line 2165) text-match — buttons static, click handler matches button text against `routes[k]` keys
-- ROUTES[2] (auth → onboard) line 2167 had: `'autentificare': 3, 'continuă cu google': 3, 'începe': 3, 'linkul': 3, 'cere acces': 3`
-- Insertion point: AFTER Google btn-noir line 906, BEFORE "Membru nou? · Cere acces" footer (line 907)
-- CSS tokens: `:root` declared lines 11-30 — `--champagne #c9a663`, `--silver-2 #8a877f`, `--silver-3 #5a5851`, `--noir`, `--line`, `--line-strong`, `--hair`
-
-### Andura Brain Coach (`04-architecture/mockups/andura-brain-coach.html`)
-- `screen-splash` line 1864 `<div class="screen active" id="screen-splash">`
-- `screen-auth` line 1887 `<div class="screen" id="screen-auth">`
-- `screen-onboard` line 1919
-- Routes pattern: `goto(name, opts)` function (line 4696)
-- setTimeout splash→auth: lines 4759-4762 `setTimeout(() => { ... if (cur && cur.id === 'screen-splash') goto('auth', {replace: true}); }, 1500);` — CONFIRMED 1.5s flow
-- **BLOCKER CONFIRMED**: existing Google btn (line 1903) + email btn (line 1907) have NO `onclick` handlers — user lands on auth post-1.5s with no escape path
-- Insertion point: AFTER email btn `</button>` (line 1909), BEFORE footnote div (line 1911)
-- CSS tokens: `:root` declared lines 10-27 — `--ink-2`, `--ink-3`, `--line`, `--bg-3`, `--think #8b6dff`, `--calm #5dd6e6`
+### Andura Living Body
+- screen-splash: line 508 `<div class="screen paper-bg active" id="screen-splash">` — only screen with `active` class default ✅
+- goto() function: line 2222 — signature `function goto(name, opts)` with `opts.replace` (line 2229) — EXACT parity Brain Coach
+- JS init block end: line 2451-2458 (DOMContentLoaded + bare lucide call)
+- `</script>` close: line 2459
+- Existing splash setTimeout: NONE
+- Default active: ✅ `screen-splash` only
 
 ### Continue criteria PHASE 1 → PHASE 2: ALL PASS
-- ✅ 4 mockups have auth screens discoverable
-- ✅ Routing pattern documented per skin (3× `goto(name)`, 1× `ROUTES[id]` text-match for Luxury)
-- ✅ Insertion points identified
-- ✅ Brain Coach setTimeout splash→auth flow traced + skip path target `screen-onboard` confirmed
+- ✅ screen-splash discoverable Clasic + LB (both `class="screen paper-bg active"`)
+- ✅ goto() uniform signature `goto(name, opts)` w/ `opts.replace` — exact parity Brain Coach
+- ✅ Splash = default active (only screen-splash carries `active` class)
+- ✅ NO existing setTimeout splash→auth in Clasic/LB
 
 ---
 
 ## PHASE 2 — Implementation modifications
 
 ### Andura Clasic
-- Lines 414-426 (~13 inserted): subtle separator (`sau`) + `auth-skip-btn` ghost-style + risk-note paragraph
-- Inline styles: `border:1px solid #e7e0d0; color:#8a8278; border-radius:12px; padding:14px 16px` + risk-note `font-size:12.5px; color:#8a8278`
-- Routes: `onclick="goto('onboard')"` (uses existing `goto` function)
+- Lines 2160-2167 (8 inserted): bare setTimeout 1500ms after `if (window.lucide) lucide.createIcons();`, before `</script>`
+- Pattern verbatim parity Brain Coach: `setTimeout(() => { const cur = document.querySelector('.screen.active'); if (cur && cur.id === 'screen-splash') { goto('auth', {replace: true}); } }, 1500);`
+- Comment marker: `// ─── Splash auto-advance 1.5s → auth (parity Brain Coach Batch 2b-ii) ──`
 
 ### Andura Living Body
-- Lines 554-566 (~13 inserted): subtle separator + `auth-skip-btn` + risk-note
-- Inline styles: `border:1px solid rgba(212,165,116,0.20); color:#b8b0a0` + risk-note `color:#8b8470`
-- Routes: `onclick="goto('onboard')"`
-
-### Andura Luxury
-- Lines 907-910 (~5 inserted): `auth-skip-btn btn-noir btn-block` + italic etched-style risk-note
-- Inline styles: `background:transparent; border:1px solid var(--line-strong); color:var(--silver-2)` + risk-note `color:var(--silver-3); font-style:italic; text-align:center`
-- Routes: ROUTES[2] line 2167 added `'fără cont': 3` key (text-match handler routes button text containing "fără cont" → stage 3 onboard)
-
-### Andura Brain Coach
-- Lines 1910-1917 (~8 inserted): `auth-skip-btn` + risk-note centered
-- Inline styles: `border:1px solid var(--line); color:var(--ink-3); border-radius:12px; padding:13px 16px` + risk-note `color:var(--ink-3); text-align:center`
-- Routes: `onclick="goto('onboard')"` (uses existing `goto` function from line 4696)
-- **Blocker fix verified**: setTimeout 1.5s splash→auth pattern PRESERVED unchanged (lines 4759-4762 untouched). Click "Continuă fără cont" now triggers `goto('onboard')` direct → `screen-onboard` activated (`<100ms` synchronous DOM `classList.toggle`)
+- Lines 2460-2467 (8 inserted): same pattern identic Clasic
+- Same comment marker for cross-skin grep traceability
 
 ---
 
 ## PHASE 3 — Verify
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
-- **CTA grep `Continuă fără cont`:** clasic=1 / living-body=1 / luxury=1 / brain-coach=1 ✅ (4/4)
-- **Risk text grep `Datele se salvează doar pe acest dispozitiv`:** clasic=1 / living-body=1 / luxury=1 / brain-coach=1 ✅ (4/4)
-- **Skip handler grep `skip-auth|auth-skip-btn`:** clasic=1 / living-body=1 / luxury=1 / brain-coach=1 ✅ (4/4)
-- **DOM structure validation:** No broken HTML / unclosed tags. Diff stat: `41 insertions(+), 1 deletion(-)` across 4 files (Luxury -1/+1 from ROUTES[2] line update; rest pure additive)
-- **Brain Coach blocker flow trace (manual code-path):** splash active default → setTimeout 1500ms fires → `goto('auth', {replace:true})` activates `screen-auth` → user clicks "Continuă fără cont" (line 1910) → `onclick="goto('onboard')"` → `screen-onboard` (line 1919) activated synchronously via DOM `classList` toggle (sub-100ms)
+- **setTimeout splash→auth grep `cur.id === 'screen-splash'`:** clasic=1 / living-body=1 ✅ (2/2)
+- **Timing `}, 1500);` line presence:** clasic line 2166 / living-body line 2466 / brain-coach line 4770 ✅ (3/3 uniform 1500ms cross-skin)
+- **Brain Coach untouched verify:** `git diff --stat 04-architecture/mockups/andura-brain-coach.html` → empty ✅ (canonical reference preserved)
+- **Luxury untouched verify:** `git diff --stat 04-architecture/mockups/andura-luxury.html` → empty ✅ (out of scope intentional, stage-based architecture deferred Batch 2b-vi)
+- **Diff stat:** 16 insertions(+), 0 deletions across 2 files (pure additive, no rewrites)
 
 ---
 
 ## Commits + Push
 
-- Commit SHA: `f5e9dc0a32daebb0fb1a8d4dd7f410a821e95545`
-- Push status: `pushed origin/main` (range `85868fd..f5e9dc0`) confirmed via `git log -1 --format='%H %s'` + `git status` clean tree
+- Commit SHA: `(populated post-commit below)`
+- Push status: `(populated post-push below)`
 
 ---
 
 ## Issues (drift / push-back / ambiguity)
 
-- **Luxury skin divergent routing:** stage-based `data-stage-id` + `ROUTES[id]` text-match pattern (NU `goto(name)`). Adapted by adding `'fără cont': 3` key to ROUTES[2] — handler matches button text substring (case-insensitive). NU breaks existing keys (no overlap with `'continuă cu google'` / `'autentificare'` / `'cere acces'` / `'începe'` / `'linkul'`).
-- **Clasic + Living Body NO `:root` CSS variables:** prompt assumed token names like `--color-text-muted` / `--lb-text-secondary` not present. Adapted with hardcoded hex matching existing inline patterns elsewhere in same skin (consistent with mockup style).
-- **Brain Coach existing Google + email buttons still have NO `onclick`:** out of scope per prompt §2.2 ("PRESERVE setTimeout pattern, ADAUGĂ skip path"). Skip button provides the escape route as specified. Touch existing auth buttons → separate batch.
-- **No format fatigue / no scope creep / no recurring slip:** clean execution PHASE 1 audit ÎNAINTE PHASE 2 modify (anti-recurrence §0 honored post `238a66c` + `2b96116` slip-uri).
+- **Stale comment in existing DOMContentLoaded listener** Clasic line 2155 + LB line 2455: `// Stay on home (already there)` — misleading because actual default is `screen-splash`, NOT home. NU touch (out of scope, separate cleanup batch).
+- **Pattern parity exact:** signature `goto(name, opts)` + `opts.replace` support identical across all 3 skins (BC + Clasic + LB). NO adaptation needed. Bare setTimeout (not DOMContentLoaded-wrapped) matches BC canonical literal.
+- **No format fatigue / no scope creep / no recurring slip:** clean execution PHASE 1 audit ÎNAINTE PHASE 2 modify.
 
 ---
 
 ## Next action
 
-Batch 2b-ii: Onboarding splash auto-advance Clasic + Living Body cross-skin alignment cu Brain Coach 1.5s pattern. Prompt CC tactical urmează chat curent OR next chat.
+Batch 2b-iii: Living Body modal "Confirmă acțiunea" z-index/opacity fix + Body fatigue Living Body V2 prep wiring (Q1 implementation: DOM zones data-muscle 7 grupe + CSS palette + placeholder JS + demo). Prompt CC tactical urmează chat curent OR next.

@@ -2456,6 +2456,14 @@
   });
   // Render icons immediately too (script after CDN)
   if (window.lucide) lucide.createIcons();
+
+  // ─── Splash auto-advance 1.5s → auth (parity Brain Coach Batch 2b-ii) ──
+  setTimeout(() => {
+    const cur = document.querySelector('.screen.active');
+    if (cur && cur.id === 'screen-splash') {
+      goto('auth', {replace: true});
+    }
+  }, 1500);
 </script>
 </body>
 </html>
