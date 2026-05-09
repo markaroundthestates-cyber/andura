@@ -50,7 +50,8 @@
     --ink: #1a1815;       /* Primary text dark L=0.0042 → 17.94:1 vs paper ✅ AAA */
     --ink-2: #3a342d;     /* Secondary text L=0.0347 → 11.57:1 vs paper ✅ AAA */
     --ink-3: #6e6862;     /* Muted text L=0.141 → 5.13:1 vs paper ✅ AA (was var(--ink-3) 3.56:1 ❌ FAIL — WCAG fix) */
-    --line: #e7e0d0;      /* Decorative border on cream — 1.23:1 vs paper (DEFER strict 3:1, decorative interpretation pure dividers, Daniel decide future split essential vs decorative) */
+    --line: #e7e0d0;      /* Decorative border on cream — 1.23:1 vs paper (decorative interpretation pure dividers/hairlines/info-card frames per WCAG v4 cross-skin --line split classification 2026-05-10) */
+    --line-strong: #9a8770; /* WCAG v4 batch 2026-05-10 — interactive UI essential boundary RGB(154,135,112) L=0.254 → 3.23:1 vs paper #faf7f1 PASS SC 1.4.11 non-text 3:1 minimum. Used by .btn-ghost/.energy-btn/.cause-btn/.sw/.theme-card + form input borders + auth-skip-btn + checkbox labels — all interactive UI essential boundaries. Tonal hierarchy preserved: --ink-3 (L=0.141) < --line-strong (L=0.254) < --line (L=0.748). Warm taupe Clasic clinical character preserved (R>G>B). */
     --brick: #c8412e;     /* Accent brick red Clasic signature */
   }
   html, body {
@@ -205,7 +206,7 @@
     font-weight: 600;
     border-radius: 14px;
     padding: 14px 20px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong); /* WCAG v4 cross-skin: interactive ghost button boundary 3.23:1 */
     cursor: pointer;
   }
 
@@ -228,7 +229,7 @@
     flex: 1;
     aspect-ratio: 1;
     border-radius: 20px;
-    border: 1.5px solid var(--line);
+    border: 1.5px solid var(--line-strong); /* WCAG v4 cross-skin: interactive energy state selector boundary 3.23:1 */
     background: white;
     display: flex;
     flex-direction: column;
@@ -412,7 +413,7 @@
           <label style="display:flex; flex-direction:column; gap:6px;">
             <span class="small-text" style="color:var(--ink-2); font-weight:500;">Email</span>
             <input type="email" placeholder="numele.tau@email.ro" value="daniel@andura.ro"
-                   style="padding:14px 16px; border:1px solid var(--line); border-radius:12px; font-size:16px; background:white; color:var(--ink);"/>
+                   style="padding:14px 16px; border:1px solid var(--line-strong); border-radius:12px; font-size:16px; background:white; color:var(--ink);"/>
           </label>
           <button class="btn-brick" onclick="showAuthPending()">Trimite link de intrare</button>
 
@@ -434,7 +435,7 @@
           </div>
 
           <button class="auth-skip-btn" data-action="skip-auth" onclick="goto('onboard')"
-                  style="background:transparent; border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:15px; font-weight:500; color:var(--ink-3); cursor:pointer;">
+                  style="background:transparent; border:1px solid var(--line-strong); border-radius:12px; padding:14px 16px; font-size:15px; font-weight:500; color:var(--ink-3); cursor:pointer;">
             Continuă fără cont
           </button>
           <p class="auth-risk-note" style="font-size:12.5px; color:var(--ink-3); margin: 4px 4px 0; line-height:1.5;">
@@ -527,7 +528,7 @@
           <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Câți ani ai?</h1>
           <p class="body-text" style="color:var(--ink-2); margin:0 0 28px;">Ne ajută să adaptăm intensitatea și recuperarea.</p>
           <input type="number" min="16" max="99" placeholder="ex. 31" id="onb-age-input"
-                 style="width:100%; padding:18px 20px; border:1px solid var(--line); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:white; color:var(--ink); font-family:'JetBrains Mono', monospace;"/>
+                 style="width:100%; padding:18px 20px; border:1px solid var(--line-strong); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:white; color:var(--ink); font-family:'JetBrains Mono', monospace;"/>
           <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center;">Între 16 și 99 ani</p>
         </div>
         <div style="flex:1;"></div>
@@ -764,7 +765,7 @@
             <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrie liber</div></div></button>
           </div>
           <div id="pain-altceva" style="display:none; margin-top:14px;">
-            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" style="width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
+            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
             <button class="btn-brick" onclick="showToast('Trimis. Coach-ul adaptează.')" style="width:100%; margin-top:10px;">Trimite la coach</button>
           </div>
         </div>
@@ -780,7 +781,7 @@
             <div class="body-text" style="font-weight:600; color:var(--ink); margin-top:2px;">Împins înclinat halteră</div>
           </div>
           <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:6px;">Ce echipament ai în loc?</label>
-          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" style="width:100%; padding:14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
+          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
           <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.5; font-style:italic;">Coach-ul interpretează liber și propune un swap echivalent.</p>
           <button class="btn-brick" onclick="showToast('Caut swap echivalent...')" style="width:100%; margin-top:14px;">Cere swap</button>
         </div>
@@ -854,7 +855,7 @@
               <div class="small-text" style="color:var(--ink-3); font-weight:500;">Marți, 6 mai</div>
               <div style="font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.02em;">Bună, Daniel</div>
             </div>
-            <button style="width:40px; height:40px; border-radius:50%; background:white; border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <button style="width:40px; height:40px; border-radius:50%; background:white; border:1px solid var(--line-strong); cursor:pointer; display:flex; align-items:center; justify-content:center;">
               <i data-lucide="bell"></i>
             </button>
           </div>
@@ -978,7 +979,7 @@
             </div>
 
             <!-- Cue 💡 -->
-            <button onclick="toggleCue()" style="margin-top:12px; width:100%; padding:10px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <button onclick="toggleCue()" style="margin-top:12px; width:100%; padding:10px 12px; background:var(--paper-2); border:1px solid var(--line-strong); border-radius:10px; display:flex; align-items:center; gap:8px; cursor:pointer;">
               <span style="font-size:18px;">💡</span>
               <span class="body-text" style="font-weight:500; color:var(--ink);">Pont de execuție</span>
               <i data-lucide="chevron-down" id="cue-chev" style="margin-left:auto;"></i>
@@ -1019,7 +1020,7 @@
                 <div class="set-num">4</div>
                 <div class="set-val" style="color:var(--ink-3);">22.5 kg</div>
                 <div class="set-val" style="color:var(--ink-3);">8–10</div>
-                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--line);"></div></button>
+                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--line-strong);"></div></button>
               </div>
             </div>
           </div>
@@ -1664,12 +1665,12 @@
           <div>
             <label for="weight-kg-input" class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:8px;">Greutate (kg)</label>
             <input type="number" id="weight-kg-input" step="0.1" min="30" max="250" placeholder="ex. 78.5" inputmode="decimal"
-                   style="width:100%; padding:18px 20px; border:1px solid var(--line); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:white; color:var(--ink); font-family:'JetBrains Mono', monospace;"/>
+                   style="width:100%; padding:18px 20px; border:1px solid var(--line-strong); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:white; color:var(--ink); font-family:'JetBrains Mono', monospace;"/>
           </div>
           <div>
             <label for="weight-date-input" class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:8px;">Data</label>
             <input type="date" id="weight-date-input"
-                   style="width:100%; padding:14px 16px; border:1px solid var(--line); border-radius:12px; font-size:16px; background:white; color:var(--ink);"/>
+                   style="width:100%; padding:14px 16px; border:1px solid var(--line-strong); border-radius:12px; font-size:16px; background:white; color:var(--ink);"/>
           </div>
           <p class="small-text" style="color:var(--ink-3); line-height:1.5; margin:0;">Înregistrarea este salvată local. Vei vedea evoluția în Greutate &amp; BF.</p>
           <div style="flex:1;"></div>
@@ -1809,7 +1810,7 @@
           <li>operație sau accidentare în ultimele 12 luni</li>
           <li>sarcină sau perioadă post-natală</li>
         </ul>
-        <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:white; border:1px solid var(--line); border-radius:12px; cursor:pointer; max-width:340px; margin: 0 auto 18px;">
+        <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:white; border:1px solid var(--line-strong); border-radius:12px; cursor:pointer; max-width:340px; margin: 0 auto 18px;">
           <input type="checkbox" id="medical-check" onchange="document.getElementById('medical-cta').disabled = !this.checked; document.getElementById('medical-cta').style.opacity = this.checked ? '1' : '0.4';" style="margin-top:3px; accent-color:#c8412e;"/>
           <span class="body-text" style="color:var(--ink); line-height:1.5; text-align:left;">Am înțeles și îmi asum responsabilitatea pentru starea mea de sănătate.</span>
         </label>
@@ -1829,7 +1830,7 @@
 </div>
 
 <style>
-  .cause-btn { display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; cursor:pointer; font-size:13px; font-weight:500; color:var(--ink); }
+  .cause-btn { display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--paper-2); border:1px solid var(--line-strong); border-radius:10px; cursor:pointer; font-size:13px; font-weight:500; color:var(--ink); } /* WCAG v4 cross-skin: interactive cause selection button 3.23:1 */
   .cause-btn:active { background:var(--ink); color:white; }
   .cause-btn [data-lucide] { width:16px; height:16px; }
 
@@ -1903,7 +1904,7 @@
 
   .toggle-row { padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid var(--paper-2); cursor:pointer; }
   .toggle-row b { font-size:15px; color:var(--ink); font-weight:500; }
-  .sw { width:36px; height:22px; background:var(--line); border-radius:11px; position:relative; transition:background .2s; flex-shrink:0; }
+  .sw { width:36px; height:22px; background:var(--line-strong); border-radius:11px; position:relative; transition:background .2s; flex-shrink:0; } /* WCAG v4 cross-skin: interactive switch toggle visual 3.23:1 */
   .sw::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; background:white; border-radius:50%; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
   .sw.on { background:#c8412e; }
   .sw.on::after { left:16px; }
@@ -1914,7 +1915,7 @@
   .legal-p { font-size:14px; color:var(--ink-2); line-height:1.65; margin: 0 0 4px; }
 
   .theme-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-  .theme-card { position:relative; padding: 12px; border-radius:16px; background:white; border:2px solid var(--line); cursor:pointer; text-align:left; transition:border-color .15s; }
+  .theme-card { position:relative; padding: 12px; border-radius:16px; background:white; border:2px solid var(--line-strong); cursor:pointer; text-align:left; transition:border-color .15s; } /* WCAG v4 cross-skin: interactive theme picker card 3.23:1 */
   .theme-card.selected { border-color:#c8412e; }
   .theme-swatch { aspect-ratio: 1.4 / 1; border-radius:10px; margin-bottom:10px; border:1px solid rgba(0,0,0,0.06); }
   .theme-name { font-size:14px; font-weight:600; color:var(--ink); }
@@ -2044,7 +2045,7 @@
   // ─── Onboarding helpers (5 ecrane §63.1) ─────────────────────────
   function pickGoal(btn, goal) {
     document.querySelectorAll('#screen-onboard .onb-opt').forEach(b => {
-      b.style.border = '1px solid var(--line)';
+      b.style.border = '1px solid var(--line-strong)'; /* WCAG v4 cross-skin: interactive option deselect 3.23:1 */
       const chk = b.querySelector('[data-lucide="check"]'); if (chk) chk.remove();
     });
     btn.style.border = '2px solid var(--ink)';
