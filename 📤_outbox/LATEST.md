@@ -82,8 +82,8 @@ User chose **"Clean static HTML (28 edits)"** option to align static = runtime S
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
 - **Diff stat:** 39 insertions(+), 32 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor heavy (28 nav button replacements + 4 tag fixes + 9 row stats/data adds)
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `d8245a14acc2611d2c538b6ee4c1717c462d00c1`
+- Push status: `pushed origin/main` (range `b422e10..d8245a1`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
