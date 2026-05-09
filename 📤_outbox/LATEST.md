@@ -1,136 +1,103 @@
-# LATEST — Themes Batch 2b-v Luxury Cum e Azi Flow 5 Fixes Multi-Screen
+# LATEST — Themes Batch 2b-vi Luxury Istoric + Tab Nav + Zona Sensibilă
 
-**Status:** ✅ Complete
+**Status:** ✅ Complete (Task 1 enriched, Task 2 user-confirmed full cleanup, Task 3 critical DOM bug fixed)
 **Model:** Opus
-**Date:** 2026-05-09 2217
-**Backup tag:** `pre-themes-batch2b-v-luxury-cum-e-azi-flow-2026-05-09-2217` (pushed origin)
-**Authority:** `00-index/CURRENT_STATE.md` §NOW Mid-flight Batch 2b item #7 — "Luxury Cum e azi flow broken multi-screen"
+**Date:** 2026-05-09 2235
+**Backup tag:** `pre-themes-batch2b-vi-luxury-istoric-tabnav-zonasens-2026-05-09-2235` (pushed origin)
+**Authority:** `00-index/CURRENT_STATE.md` §NOW Mid-flight Batch 2b items #8 + #9 + #10
 
 ---
 
-## Task 1 — Energy Cards Palette
+## Task 1 — Istoric Placeholder Data Parity
 
 ### PHASE 1.1 — Audit findings
-- Stage 13 `screen-energy-check` lines 1228-1248: 3 cards (`🟢 Excelent / 🟡 Normal · OK / 🔴 Obosit`) with `class="row"` + inner `<span class="energy-diamond" data-e>` indicator
-- **Visual inconsistency**: card 1 diamond has `class="energy-diamond selected"` ✅ but cards 2/3 diamonds have NO `selected` class — instead inline `style="background:var(--champagne)..."` and `style="background:#c87878..."` mimicking selected state. Visually all 3 diamonds appear colored simultaneously.
-- **Existing diamond click handler bug** (line 2114, pre-fix): `parent.querySelectorAll('.energy-diamond')` — but each diamond is wrapped in own `<span>` parent → cross-row sibling deselection FAILS (only diamonds in same parent get cleared).
-- **WCAG fail**: card border `var(--line)` (12% champagne alpha) on `var(--noir)` bg = ~1.3:1 contrast — fails SC 1.4.11 non-text minimum 3:1 (same issue as freq cards Batch 2b-iv)
+- **Luxury Istoric** (stage 21 line 1473+ pre-fix): title + 4 filter chips + 7 workout rows (3 Împins + 2 Tras + 2 Picioare). NO aggregate/summary data
+- **Clasic Istoric** (line 775+): title + 3 stat cards (12 Zile / 68 Sesiuni / 14 Recorduri) + heatmap calendar Mai 2026 + 3 recent sessions detailed + 4 drill-downs (Greutate&BF, Nutriție, Recorduri Personale, Programe arhivă)
+- **Living Body Istoric** (line 1093+): identical structure to Clasic (mirror)
+- **Parity gap**: Luxury has more workout rows (7 vs 3) but lacks AGGREGATE data layer (stats/heatmap/drill-downs)
+- **Filter chips functionality** already landed Batch 2b-v Task 4 ✅
 
 ### PHASE 1.2 — Implementation
-- DOM lines 1235-1239: wrapped 3 cards in `<div class="energy-grid">` parent + each card adds `class="row energy-card [is-selected]" data-energy="green|yellow|red" onclick="selectEnergy(this)"`; removed mismatched inline `style="background..."` from cards 2/3 diamonds (now driven by CSS via row's `[data-energy].is-selected` selector); card 1 marked `is-selected` initially (preserves visual default state)
-- CSS additions (post `.freq-card` rules): `.energy-card { border: --line-strong; transitions }` + `.energy-card.is-selected { border-color: --champagne; bg: --champagne-soft }` + per-state diamond fills via `.energy-card.is-selected[data-energy="green|yellow|red"] .energy-diamond { background: ... }` (green #88b482 / yellow champagne / red #c87878 — all muted Bugatti, NU saturated)
-- JS `window.selectEnergy(btn)`: single-select via `closest('.energy-grid')`, toggles `is-selected` class
-- Token discipline: existing canonical `--line-strong` (28% alpha = 3.1:1 PASS WCAG SC 1.4.11) + `--champagne-soft` reuse — NU introduced new colors
+Added (preserving Bugatti restraint, NOT full Clasic-feature copy which would be anti-aesthetic bloat):
+- **Stats summary line** before filter chips: 3 numbers (12 Zile · streak / 68 Sesiuni / 14 Recorduri) using `num-display` Cormorant + `etched etched-silver` muted labels (matches Luxury aesthetic)
+- **2 additional rows** for richer filter UX: 1 Picioare (Sâmbătă · 19 Apr) + 1 Tras (Joi · 17 Apr) — total 9 rows distributed 3+3+3 across filter chip categories (better demo for filterHistory single-select chip behavior)
+- Token discipline: `var(--champagne)` accent on streak number, default white on others, `etched-silver` (silver-2 #8a877f passing 5.66:1 WCAG AA) labels — NO new tokens
 
 ---
 
-## Task 2 — Anulează Handler
+## Task 2 — Tab Nav Root V2 SSOT
 
 ### PHASE 2.1 — Audit findings
-- 4 occurrences of "Anulez/Anulează" cross-Luxury (pre-fix): line 1248 energy-check ("Anulez"), line 1709 abonament ("Anulez reînnoirea"), line 1858 confirm-reset-coach ("Anulez"), line 1878 confirm-schimba-faza ("Anulez")
-- Wording inconsistency: 3 use "Anulez" (first-person), 1 uses "Anulez reînnoirea" (destructive action label)
-- NO onclick handlers on action-bar Anulez buttons
-- Sibling skins (Living Body confirm screens) consistently use "Anulează" (imperative) — Luxury "Anulez" diverges
-- `back()` function exists at line 2185 but inside IIFE (`(function(){})()`) — NOT globally accessible → inline `onclick="back()"` would FAIL silently
-- Global ROUTES handler text-matches "anulez" against ROUTES[stage]; none of ROUTES[13/35/36] include "anulez" → click does nothing
+- **TAB_LABELS array (line 2170)**: `['Antrenor', 'Progres', 'Istoric', 'Cont']` — V2 SSOT canonical ALREADY ✅
+- **TABS array (line 2169)**: `[11, 23, 21, 25]` — stage-id mapping per V2 canonical
+- **JS rewrite (line 2179-2185)**: `stages.forEach((s) => { ... s.querySelector('.nav').innerHTML = TAB_LABELS.map(...).join('') })` — overrides ALL static `.nav` blocks at runtime forcing V2 canonical
+- **Static HTML** (7 nav blocks at lines 1189/1223/1358/1495/1568/1602/1637 pre-fix): drift labels `Azi / Antren. / Progres / Cont` — overridden at runtime but visible during FOUC <50ms
+
+### Premise validation — discussed with user via AskUserQuestion (2026-05-09 ~22:38)
+User chose **"Clean static HTML (28 edits)"** option to align static = runtime SSOT (eliminate FOUC + code clarity).
 
 ### PHASE 2.2 — Implementation
-- Lines 1248 (energy-check), 1858 (confirm-reset-coach), 1878 (confirm-schimba-faza): "Anulez" → "Anulează" (imperative, sibling-skin parity) + added `onclick="back()"`
-- Line 1709 (abonament): "Anulez reînnoirea" PRESERVED (different semantic — destructive action label first-person, NOT navigation back)
-- Exposed `back()` globally via `window.back = back;` inside IIFE before `go(1)` so inline onclick works
+- All 7 static `.nav` blocks rewritten to match JS rewrite output exactly: 4 buttons with `data-tab-idx="0|1|2|3"` + V2 canonical labels (Antrenor/Progres/Istoric/Cont) + matching TAB_ICONS SVGs (sparkle/lightning/calendar/person, Lucide-style stroke 1.6, currentColor)
+- 4 distinct edits per active-tab variant (1 with pos-1 active + 4 replace_all=true with pos-2 active + 1 with pos-3 + 1 with pos-4) → 7 blocks total
+- `.active` class removed from static (added dynamically by `setActive()` line 2191-2193 via tabIdx match) — clean separation static structure / runtime state
+- Verified: `>Azi<` count 0 / `>Antren.<` count 0 / `>Antrenor<` count 9 (7 nav + 2 elsewhere) / `>Istoric<` count 8 (7 nav + 1 history heading) / `data-tab-idx="0"` count 7
 
 ---
 
-## Task 3 — Disponibilitate Roșu Prompt
+## Task 3 — Zona Sensibilă UI Nesting Deep DOM
 
-### PHASE 3.1 — Audit findings
-- **Premise mostly invalidated**: Luxury already uses muted `#c87878` red consistently (Bugatti restraint compliant) — NO alarmist red anywhere:
-  - Line 30: `--red-soft: rgba(200, 100, 100, 0.7)` defined (unused)
-  - Line 282: `.btn-danger { color: #c87878; transparent bg; soft border }` — restraint
-  - Line 325: `.energy-diamond[data-e="red"].selected { background: #c87878 }` — muted
-  - Line 1853: confirm-reset-coach "Ireversibil" warning text `#c87878` — muted
-  - All red usage Bugatti-aesthetic compliant
-- **Real bug discovered** (different from prompt): line 1181 italic label `— În formă deplină` is HARDCODED for green state but Disponibilitate diamonds line 1180 toggle dynamically. Clicking yellow/red diamond → diamond visually selected but label stays mismatched "În formă deplină" (semantic inconsistency)
+### PHASE 3.1 — Audit findings + visual hierarchy mental walk
+
+**5-step trace settings structure:**
+
+1. **Outermost section** stage 25 Cont root (line 1614+): `.stage-wrap > .phone > .scroll > [direct-children]` — 3 levels deep. Clean.
+2. **Subsection groups** stage 25: 4 logical sections grouped by `<div class="etched">SECTION</div>` headers — "Profil & date" / "Aspect" / "Privacy & legal" / "Sensibil"
+3. **"Deconectare/Ștergere" placement** (line 1633): single row in "Sensibil" section, color `#c87878` muted red, arrow `→` indicating drill-down. Routes to stage 34 (settings-danger sub-page) via ROUTES[25]['deconectare'/'ștergere']: 34. Bugatti restraint compliant ✅
+4. **Visual hierarchy fonts/spacing**: section headers `etched` 9px JetBrains Mono uppercase + 22px padding-top spacing between sections. Clean.
+5. **Comparison Clasic+LB Cont stage**: similar structure (sections + rows + sub-page drill for destructive). Parity OK.
+
+### CRITICAL BUG FOUND — stage 34 settings-danger lines 1844-1847
+
+4 destructive cards opened with `<div class="row" style="...">` but CLOSED with `</button>` — **MISMATCHED HTML TAGS**. Browsers may auto-close divs prematurely or interpret as text content, corrupting DOM hierarchy and breaking layout.
+
+```html
+<!-- Pre-fix BROKEN: -->
+<div class="row" style="border:0.5px solid rgba(200,120,120,0.2); ..."><span class="row-label">Reset antrenor</span>...</button>
+```
 
 ### PHASE 3.2 — Implementation
-- DOM line 1180: added `class="dispo-cluster"` to diamond cluster wrapper (parent ref for `closest()`)
-- DOM line 1181: added `class="dispo-label"` to italic label (queryable target)
-- JS extended existing energy-diamond click handler (lines 2114-2127): added `DISPO_LABELS = { green: '— În formă deplină.', yellow: '— Funcțional, baseline.', red: '— Astăzi limitat. Doar mobilitate ușoară.' }` + on click in dispo-cluster context, sync sibling label text. **Bugatti restraint**: red copy is "Astăzi limitat. Doar mobilitate ușoară" — NU "ÎNTRERUPT" caps, NU "BLOCAT", NU emergency icons
+- 4 mismatched cards fixed: `<div class="row">` → `<button class="row">` (matches existing `</button>` close)
+- 3 cards used replace_all=true for shared opening pattern (alpha 0.2)
+- 1 card (Șterg contul, line 1847) used unique edit for distinct opening (alpha 0.4 — final destructive emphasis)
+- `<button>` is also semantically correct (clickable destructive action) + works with global click handler `e.target.closest('button, .chip')` for ROUTES text-match
 
----
-
-## Task 4 — Împins/Tras/Picioare Redirect
-
-### PHASE 4.1 — Audit findings
-- **Real bug location** (different from prompt assumption): 4 filter chips in stage 21 Istoric (line 1476): `Tot / Împins / Tras / Picioare`
-- ROUTES[21] = `{ 'queue-card': 22, 'greutate': 22, 'timeline': 22 }` — none of "împins"/"tras"/"picioare" match → chip click does nothing
-- These should be HISTORY FILTER chips, not navigation triggers
-- Other Push/Pull/Legs occurrences (lines 1130-1132 plan schedule / 1184-1186 home queue-cards / 1343 sala hero / 1505 workout heading) are decorative/contextual, not interactive
-
-### PHASE 4.2 — Implementation
-- DOM line 1476 chips: added `class="istoric-filters"` parent + each chip `data-filter="all|impins|tras|picioare"` + `onclick="filterHistory(this)"`
-- DOM lines 1477-1483: wrapped history rows in `<div class="istoric-list">` + each row `class="row istoric-row"` + `data-workout="impins|tras|picioare"` (parsed from row text)
-- JS `window.filterHistory(chip)`: single-select chip + show/hide rows where `row.dataset.workout === chip.dataset.filter` OR show all if filter='all' (display:none toggle)
-
----
-
-## Task 5 — Pornit Antrenament Blocaj
-
-### PHASE 5.1 — Audit findings (verbose flow trace)
-
-**Flow chain pre-fix (the BLOCAJ):**
-1. User on stage 11 (Antrenor home, line 1164) clicks "Începe sesiunea" → ROUTES[11]['începe sesiunea']: 13 → energy-check ✅
-2. User on stage 13 (energy-check) clicks an energy card → after Task 1 fix `onclick="selectEnergy(this)"` adds `is-selected` class ✅
-3. User clicks action-bar "Confirm" button (line 1248 pre-fix) → text "Confirm" doesn't match ROUTES[13] keys (`green/yellow/red/în formă/așa și/greu/continuă`) → **CLICK DOES NOTHING — flow blocked here**
-4. User stuck on energy-check screen, can't reach workout (stage 18) or energy-cause drill (stage 14)
-
-**Root cause Caz A**: button text "Confirm" not in ROUTES[13]. Per ROUTES design, navigation should depend on which energy state was selected (red → 14 cause / green-yellow → 18 workout). Plain text-match doesn't capture this conditional logic.
-
-### PHASE 5.2 — Implementation
-- DOM line 1248: changed "Confirm" → "Continuă" (better wording fit + Luxury action-bar consistency) + added `onclick="confirmEnergy(this)"` (smart conditional handler)
-- JS `window.confirmEnergy(btn)`: reads `stage.querySelector('.energy-card.is-selected')` → state from `data-energy` → calls `go(14)` if red OR `go(18)` if green/yellow (matches ROUTES[13] semantic exactly: red→cause drill, others→workout direct)
-- Exposed `go()` globally via `window.go = go;` inside IIFE (parallel to `window.back = back`)
-
-**Final flow chain post-fix (verified mental walk):**
-1. Stage 11 home → "Începe sesiunea" → ROUTES[11]['începe sesiunea']:13 → energy-check (line 1228) ✅
-2. Energy-check stage 13 → click card via `selectEnergy(this)` → is-selected applied ✅
-3. Click "Continuă" → `confirmEnergy(this)` → reads selected energy → `go(14)` red OR `go(18)` green/yellow ✅
-4a. (red path) Stage 14 energy-cause (line 1256) → click chip "Somn slab"/"Stres job" etc. → ROUTES[14] text-match → 18 ✅
-4b. (green/yellow path) Stage 18 workout (line 1370) → workout active session ✅
-
-End-to-end flow chain UNBLOCKED ✅
-
-### PHASE 5.3 — End-to-end validation
-- selectEnergy refs: 4 (3 onclick + 1 def) ✅
-- confirmEnergy refs: 2 (1 onclick + 1 def) ✅
-- filterHistory refs: 2 (4 chip onclicks on same line + 1 def) ✅
-- window.back: 1 ✅ / window.go: 1 ✅
-- Anulează: 3 (post-normalize) / Anulez: 1 (intentional "Anulez reînnoirea" abonament destructive action) ✅
-- Stage 18 workout target line 1370 ✅
-- Stage 14 energy-cause target line 1256 ✅
+### PHASE 3.3 — Verify
+- Mismatched `<div class="row">...</button>` count: 0 ✅ (was 4)
+- 4 cards now properly `<button class="row">...</button>` confirmed via grep at lines 1844-1847
 - Other skins untouched: clasic + living-body + brain-coach all `git diff --stat` empty ✅
 
 ---
 
-## PHASE 6 — Tests + Commit + Push
+## PHASE 4 — Tests + Commit + Push
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
-- **Diff stat:** 80 insertions(+), 20 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor+additive, no rewrite
-- Commit SHA: `56e2813d85c2a563c7ddede99e25e31ffc5f2c01`
-- Push status: `pushed origin/main` (range `f4f1103..56e2813`) confirmed via `git log -1 --format='%H %s'`
+- **Diff stat:** 39 insertions(+), 32 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor heavy (28 nav button replacements + 4 tag fixes + 9 row stats/data adds)
+- Commit SHA: `(populated post-commit below)`
+- Push status: `(populated post-push below)`
 
 ---
 
 ## Issues (drift / push-back / ambiguity)
 
-- **Task 3 PREMISE MOSTLY INVALIDATED:** Luxury already uses muted `#c87878` red Bugatti-compliant throughout — no alarmist red exists. Real bug found: Disponibilitate label-state mismatch on diamond click. Fixed within Bugatti restraint discipline (red state copy: "Astăzi limitat. Doar mobilitate ușoară" — NU caps/alarms).
-- **Task 4 LOCATION DIFFERENT FROM PROMPT:** Prompt assumed muscle group buttons exist as redirect triggers; actual real bug is Istoric filter chips (stage 21 line 1476) where ROUTES doesn't match chip text. Fix is filter logic, not navigation. Plan-schedule lines 1130-1132 + home queue-cards lines 1184-1186 already work via existing `'queue-card': 13` route handler.
-- **Task 5 BLOCAJ ROOT CAUSE PRECISE:** "Confirm" button text not in ROUTES[13]. Fix is dual: rename text + add smart onclick that respects state-conditional routing. Preserved ROUTES design intent (red→cause drill, green/yellow→workout direct).
-- **Bugatti aesthetic preserved strict:** all 5 fixes use existing Luxury tokens (`--champagne` / `--silver-*` / `--noir` / `--line-strong` / `#c87878` muted red / Cormorant Garamond). NO new hues. NO alarms. NO shouting caps.
-- **Anulez "Anulez reînnoirea" line 1709 intentionally NOT normalized:** different semantic context (destructive subscription action label, first-person voice) — out of Task 2 scope (action-bar generic-cancel buttons).
+- **Task 2 PREMISE INVALIDATED at runtime — but accepted user-directed cleanup**: V2 canonical labels were already enforced via TAB_LABELS array + JS rewrite. Static HTML was dead code with FOUC <50ms visible drift. User chose to clean static for full alignment (preferred craft over minimal-diff).
+- **Task 3 ROUTING GAP for "Șterg istoricul" + "Șterg contul"**: ROUTES[34] = `{ 'reset': 35, 'schimbă': 36, 'fază': 36, 'faza': 36 }` — only 2/4 destructive cards have valid routes. "Șterg istoricul" + "Șterg contul" click → no route match → silent fail. Out of Task 3 structural scope (would need new confirm-history-delete + confirm-account-delete sub-pages = scope creep). **Flagged for follow-up batch.**
+- **Task 1 NOT FULL FEATURE PARITY with Clasic+LB**: Clasic+LB Istoric have stat-cards + calendar heatmap + drill-downs. Luxury added stats summary line + 2 more rows but NOT heatmap/drill-downs. Decision per Bugatti restraint: heatmap copy = anti-aesthetic bloat for Luxury Cormorant Garamond minimal aesthetic. Drill-downs = separate scope (would touch settings/history weight-timeline integration).
+- **Bugatti aesthetic preserved strict** all 3 tasks: existing tokens only (`--champagne` / `--silver-*` / `--noir` / `#c87878` muted red / Cormorant Garamond), NO new hues, NO alarmist destructive UI.
 
 ---
 
 ## Next action
 
-Batch 2b-vi: Luxury Istoric placeholder data lipsă vs Clasic + Living Body + tab nav root drift V2 SSOT + Zona sensibilă UI nesting deep DOM audit. Single skin Luxury, multi-issue, MEDIU risk.
+Batch 2b-vii: Andura Clasic Progres "Loghează greutate" toast → real drill-down weight log entry (kg + dată per Daniel directive "production-ready strict"). Single skin Clasic, single feature, LOW-MEDIU risk.
+
+Optional follow-up: Add `'șterg istoricul': X, 'șterg contul': Y` ROUTES entries + 2 new confirm sub-page screens (confirm-history-delete + confirm-account-delete) for Luxury production-ready completeness. Estimated effort: 2 confirm screens ~30 lines each + ROUTES patch.
