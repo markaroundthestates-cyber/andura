@@ -143,8 +143,8 @@ Target: L ≥ 0.1042 for ratio ≥ 3:1 vs `--noir` L=0.0014.
 
 ## Commits + Push
 
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `b4395302f0bae7e39de2fb5ab8ac75b1eef5ddbf`
+- Push status: `pushed origin/main` (range `82aa958..b439530`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
