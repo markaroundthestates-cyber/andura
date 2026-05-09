@@ -22,8 +22,8 @@
     --champagne-bright: #e0bd75;
     --champagne-soft: rgba(201, 166, 99, 0.15);
     --champagne-faint: rgba(201, 166, 99, 0.05);
-    --line: rgba(201, 166, 99, 0.12);
-    --line-strong: rgba(201, 166, 99, 0.28);
+    --line: rgba(201, 166, 99, 0.12); /* WCAG v3 batch 2026-05-09: 27 usages mostly decorative dividers (composite ~rgb(28,24,18) on noir ≈ 1.31:1) — DEFER architectural restructure (split decorative vs interactive token would touch 27 contexts), Daniel decide stricter per future batch. Bugatti restraint preserved. */
+    --line-strong: #6e5a2a; /* WCAG v3 batch 2026-05-09 — closes 2b-iv miscalc (commit 1ca105a claimed rgba(201,166,99,0.28) ≈ 3.1:1, ACTUAL contrast 1.62:1 via proper alpha compositing → composite rgb(60,50,33) L=0.0332 → ratio 1.62:1 FAIL SC 1.4.11). New solid hex #6e5a2a (110,90,42) L=0.111 → ratio ~3.15:1 PASS SC 1.4.11 non-text 3:1 minimum. Champagne tonal family preserved (R>G>B 1.22/2.14 close to --champagne #c9a663 1.21/1.68). Used by .sex-option/.freq-card/.energy-card selectable card borders + .auth-skip-btn + .field-input border-bottom — all interactive UI essential boundaries. Bugatti chiaroscuro restraint maintained (NOT solid champagne #c9a663 8.87:1 industrial). */
     --hair: rgba(255, 255, 255, 0.04);
     --green-soft: rgba(120, 180, 130, 0.7);
     --yellow-soft: rgba(220, 180, 100, 0.7);
@@ -448,9 +448,9 @@
   }
   .row-arrow { color: var(--champagne); font-size: 14px; }
 
-  /* Sex selector + Frequency cards + Energy cards interactive states (WCAG SC 1.4.11 non-text 3:1+) */
+  /* Sex selector + Frequency cards + Energy cards interactive states (WCAG SC 1.4.11 non-text 3:1+ — fixed v3 batch 2026-05-09) */
   .sex-option, .freq-card, .energy-card {
-    border: 0.5px solid var(--line-strong); /* 28% alpha champagne on noir ≈ 3.1:1 */
+    border: 0.5px solid var(--line-strong); /* --line-strong now solid #6e5a2a → 3.15:1 vs noir (was rgba 0.28 → 1.62:1 corrected per WCAG v3 batch) */
     background: transparent;
     transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
   }
