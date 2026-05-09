@@ -106,8 +106,8 @@ Token discipline: hardcoded RGBA matching Living Body palette (auriu `#d4a574` r
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
 - **Diff stat:** 64 insertions(+), 14 deletions(-) on `04-architecture/mockups/andura-living-body.html` — additive plus inline refactor of 5 existing comments+ellipse classes
-- Commit SHA: `(populated post-commit below)`
-- Push status: `(populated post-push below)`
+- Commit SHA: `4c79fbc9ab8d41374a19a5349736037e4d122795`
+- Push status: `pushed origin/main` (range `7a1f4d1..4c79fbc`) confirmed via `git log -1 --format='%H %s'`
 
 ---
 
