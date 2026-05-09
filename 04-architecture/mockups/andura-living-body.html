@@ -19,13 +19,13 @@
           mono: ['Geist Mono', 'monospace'],
         },
         colors: {
-          paper: '#07090f',
+          paper: '#07090f', /* WCAG v6 Path 2b 2026-05-10: Tailwind palette synced cu :root --bg-2 token (dead palette zero usage but kept for future-proofing) */
           paper2: '#0d1018',
-          ink: '#f0eadb',
-          ink2: '#b8b0a0',
-          mute: '#8b8470',
+          ink: '#f0eadb', /* synced cu :root --ink */
+          ink2: '#b8b0a0', /* synced cu :root --ink-2 */
+          mute: '#8b8470', /* synced cu :root --ink-3 */
           line: '#1f2330',
-          brick: '#d4a574',
+          brick: '#d4a574', /* synced cu :root --accent */
           brickdark: '#b88554',
           olive: '#6ee7c7',
           deep: '#5a8fbf',
@@ -38,6 +38,21 @@
   }
 </script>
 <style>
+  /* WCAG audit batch v6 Path 2b — Living Body :root architectural lift (2026-05-10).
+     Token tonal hierarchy (warm dark earthy organic theme) — cross-skin parity post v1+v2+v3+v4+v5
+     (Luxury + Clasic + Brain Coach all :root vars-based; LB lift completes 4/4 themes uniformity).
+     Tonal hierarchy strict-decreasing dark→light: --bg → --bg-2 → --ink-3 → --ink-2 → --ink (text contrast preserves WCAG AA/AAA).
+     LB passes WCAG AA already pre-lift (--ink-3 #8b8470 5.49:1 + --ink-2 #b8b0a0 9.73:1) — this lift = token discipline NU contrast remediation.
+     Bg context: phone bg --bg #03050a L=0.0015 (very dark, dark theme polarity consistent Luxury/Brain Coach).
+     Cumulative LOCKED V1 ~707-709 PRESERVED (mockup polish meta-tooling NU additive). */
+  :root {
+    --bg: #03050a;        /* Phone bg primary L=0.0015 (very dark warm earth) */
+    --bg-2: #07090f;      /* Secondary surface dark L≈0.0028 */
+    --ink: #f0eadb;       /* Primary text L=0.831 → 17.11:1 vs bg ✅ AAA */
+    --ink-2: #b8b0a0;     /* Secondary text L=0.451 → 9.73:1 vs bg ✅ AAA */
+    --ink-3: #8b8470;     /* Muted text L=0.233 → 5.49:1 vs bg ✅ AA */
+    --accent: #d4a574;    /* Warm gold/copper Living Body signature L=0.436 → 9.43:1 ✅ AAA */
+  }
   html, body {
     margin: 0; padding: 0;
     background: #000;
@@ -68,7 +83,7 @@
   .screen.active { display: flex; }
 
   /* Tab indicator */
-  .tab-active { color: #d4a574; }
+  .tab-active { color: var(--accent); }
   .tab-active .tab-dot { opacity: 1; }
   .tab-dot { opacity: 0; transition: opacity 0.15s; }
 
@@ -81,7 +96,7 @@
 
   /* Subtle paper texture */
   .paper-bg {
-    background-color: #07090f;
+    background-color: var(--bg-2);
     background-image:
       radial-gradient(circle at 20% 30%, rgba(212,165,116,0.04) 0%, transparent 50%),
       radial-gradient(circle at 80% 70%, rgba(255,107,138,0.04) 0%, transparent 50%);
@@ -96,7 +111,7 @@
   }
 
   /* Input focus */
-  input:focus, select:focus { outline: 2px solid #d4a574; outline-offset: 2px; }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* Marius-only sections */
   .marius-only { display: none; }
@@ -109,7 +124,7 @@
   .phone {
     width: 380px;
     height: 820px;
-    background: #03050a;
+    background: var(--bg);
     border-radius: 44px;
     border: 12px solid #000;
     box-shadow:
@@ -120,7 +135,7 @@
   }
 
   .stage-label {
-    color: #d4a574;
+    color: var(--accent);
     font-family: 'Geist Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.18em;
@@ -139,7 +154,7 @@
     padding: 0 22px;
     font-size: 13px;
     font-weight: 500;
-    color: #f0eadb;
+    color: var(--ink);
     position: relative;
   }
   .status-bar::before {
@@ -161,7 +176,7 @@
     justify-content: center;
     gap: 4px;
     padding: 8px 0 6px;
-    color: #8b8470;
+    color: var(--ink-3);
     font-size: 10px;
     letter-spacing: 0.04em;
     font-weight: 500;
@@ -173,8 +188,8 @@
 
   /* Brick CTA */
   .btn-brick {
-    background: linear-gradient(135deg, #d4a574, #b88554);
-    color: #07090f;
+    background: linear-gradient(135deg, var(--accent), #b88554);
+    color: var(--bg-2);
     font-weight: 600;
     border-radius: 14px;
     padding: 14px 20px;
@@ -187,7 +202,7 @@
 
   .btn-ghost {
     background: rgba(212,165,116,0.06);
-    color: #f0eadb;
+    color: var(--ink);
     font-weight: 500;
     border-radius: 14px;
     padding: 14px 20px;
@@ -205,7 +220,7 @@
     border: 1px solid rgba(212,165,116,0.18);
     border-radius: 999px;
     font-size: 12px;
-    color: #b8b0a0;
+    color: var(--ink-2);
     font-weight: 500;
     font-family: 'Geist Mono', monospace;
     letter-spacing: 0.04em;
@@ -218,7 +233,7 @@
     border-radius: 20px;
     border: 1px solid rgba(212,165,116,0.18);
     background: rgba(255,255,255,0.02);
-    color: #f0eadb;
+    color: var(--ink);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -228,16 +243,16 @@
     font-weight: 600;
   }
   .energy-btn.selected {
-    border-color: #d4a574;
+    border-color: var(--accent);
     background: rgba(212,165,116,0.12);
-    color: #f0eadb;
+    color: var(--ink);
     box-shadow: 0 0 30px rgba(212,165,116,0.18);
   }
 
   /* Progress dot */
   .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(212,165,116,0.2); }
-  .progress-dot.done { background: #d4a574; }
-  .progress-dot.current { background: #f0eadb; transform: scale(1.4); box-shadow: 0 0 12px rgba(240,234,219,0.5); }
+  .progress-dot.done { background: var(--accent); }
+  .progress-dot.current { background: var(--ink); transform: scale(1.4); box-shadow: 0 0 12px rgba(240,234,219,0.5); }
 
   /* Bar viz */
   .prob-bar {
@@ -271,8 +286,8 @@
     letter-spacing: 0.02em;
   }
   .persona-pill button.active {
-    background: #d4a574;
-    color: #07090f;
+    background: var(--accent);
+    color: var(--bg-2);
   }
 
   /* Hint card (Marius) */
@@ -287,7 +302,7 @@
     position: absolute;
     bottom: 100px; left: 16px; right: 16px;
     background: #0d1018;
-    color: #f0eadb;
+    color: var(--ink);
     padding: 12px 16px;
     border-radius: 12px;
     border: 1px solid rgba(212,165,116,0.2);
@@ -309,14 +324,14 @@
     border-radius: 12px;
     padding: 12px 14px;
     font-size: 14px;
-    color: #b8b0a0;
+    color: var(--ink-2);
   }
 
   /* svg icons */
   [data-lucide] { width: 20px; height: 20px; stroke-width: 1.6; }
 
   /* Section header card layout */
-  .stack-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.025); border-radius: 14px; border: 1px solid rgba(212,165,116,0.12); color: #f0eadb; }
+  .stack-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.025); border-radius: 14px; border: 1px solid rgba(212,165,116,0.12); color: var(--ink); }
 
   /* Logo mark */
   .andura-mark {
@@ -325,8 +340,8 @@
     justify-content: center;
     width: 48px; height: 48px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #d4a574, #b88554);
-    color: #07090f;
+    background: linear-gradient(135deg, var(--accent), #b88554);
+    color: var(--bg-2);
     font-weight: 700;
     font-size: 22px;
     letter-spacing: -0.02em;
@@ -338,7 +353,7 @@
     position: relative;
     background:
       radial-gradient(ellipse at 50% 60%, rgba(212,165,116,0.06), transparent 60%),
-      linear-gradient(180deg, #07090f 0%, #03050a 100%);
+      linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
     border: 1px solid rgba(212,165,116,0.15);
     border-radius: 22px;
     padding: 18px 16px 16px;
@@ -355,13 +370,13 @@
     font-family: 'Instrument Serif', Georgia, serif;
     font-style: italic;
     font-size: 14px;
-    color: #b8b0a0;
+    color: var(--ink-2);
     letter-spacing: 0.01em;
   }
   .lb-name {
     font-family: 'Instrument Serif', Georgia, serif;
     font-size: 30px;
-    color: #f0eadb;
+    color: var(--ink);
     line-height: 1;
     letter-spacing: -0.02em;
     margin-top: 2px;
@@ -460,7 +475,7 @@
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     font-size: 15px;
-    color: #f0eadb;
+    color: var(--ink);
     line-height: 1.45;
     margin: 14px 0 4px;
     padding: 0 4px;
@@ -495,15 +510,15 @@
       <span>9:41</span>
       <div style="display:flex; gap:5px; align-items:center;">
         <svg width="14" height="10" viewBox="0 0 14 10" fill="#f0eadb"><path d="M7 0a10 10 0 0 1 7 2.9l-1.4 1.4A8 8 0 0 0 7 2a8 8 0 0 0-5.6 2.3L0 2.9A10 10 0 0 1 7 0zm0 4a6 6 0 0 1 4.2 1.7L9.8 7.1A4 4 0 0 0 7 6a4 4 0 0 0-2.8 1.1L2.8 5.7A6 6 0 0 1 7 4zm0 4a2 2 0 0 1 1.4.6L7 10 5.6 8.6A2 2 0 0 1 7 8z"/></svg>
-        <div style="width:22px; height:10px; border:1px solid #f0eadb; border-radius:3px; padding:1px;"><div style="width:80%; height:100%; background:#0f1218; border-radius:1px;"></div></div>
+        <div style="width:22px; height:10px; border:1px solid var(--ink); border-radius:3px; padding:1px;"><div style="width:80%; height:100%; background:#0f1218; border-radius:1px;"></div></div>
       </div>
     </div>
 
     <!-- Global header -->
-    <div id="global-header" style="height:48px; display:flex; align-items:center; justify-content:space-between; padding: 0 20px; background:#07090f; border-bottom:1px solid rgba(212,165,116,0.12);">
+    <div id="global-header" style="height:48px; display:flex; align-items:center; justify-content:space-between; padding: 0 20px; background:var(--bg-2); border-bottom:1px solid rgba(212,165,116,0.12);">
       <div style="display:flex; align-items:center; gap:8px;">
-        <div style="width:24px; height:24px; border-radius:8px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; letter-spacing:-0.02em;">A</div>
-        <span style="font-size:16px; font-weight:600; color:#f0eadb; letter-spacing:-0.02em;">Andura</span>
+        <div style="width:24px; height:24px; border-radius:8px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; letter-spacing:-0.02em;">A</div>
+        <span style="font-size:16px; font-weight:600; color:var(--ink); letter-spacing:-0.02em;">Andura</span>
       </div>
       <div class="lang-toggle">
         <button class="lang-btn active" onclick="setLang(this, 'ro')">RO</button>
@@ -519,16 +534,16 @@
       <div class="screen paper-bg active" id="screen-splash" style="height:100%; flex-direction:column; padding: 48px 28px 32px; align-items:center; justify-content:space-between;">
         <div></div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center;">
-          <div style="width:72px; height:72px; border-radius:22px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; letter-spacing:-0.04em;">A</div>
+          <div style="width:72px; height:72px; border-radius:22px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; letter-spacing:-0.04em;">A</div>
           <div>
-            <div style="font-size:42px; font-weight:700; letter-spacing:-0.03em; color:#f0eadb;">Andura</div>
-            <div class="coach-quote" style="font-size:18px; color:#b8b0a0; margin-top:8px; max-width:260px;">Antrenorul tău personal,<br/>fără zgomot.</div>
+            <div style="font-size:42px; font-weight:700; letter-spacing:-0.03em; color:var(--ink);">Andura</div>
+            <div class="coach-quote" style="font-size:18px; color:var(--ink-2); margin-top:8px; max-width:260px;">Antrenorul tău personal,<br/>fără zgomot.</div>
           </div>
         </div>
         <div style="width:100%; display:flex; flex-direction:column; gap:12px;">
           <button class="btn-brick" onclick="goto('auth')">Începe</button>
-          <button class="btn-ghost" onclick="goto('auth')" style="background:transparent; border:none; color:#8b8470;">Am deja cont</button>
-          <div style="text-align:center; font-size:11px; color:#8b8470; margin-top:8px; line-height:1.6;">
+          <button class="btn-ghost" onclick="goto('auth')" style="background:transparent; border:none; color:var(--ink-3);">Am deja cont</button>
+          <div style="text-align:center; font-size:11px; color:var(--ink-3); margin-top:8px; line-height:1.6;">
             Făcut în România · Datele tale rămân ale tale
           </div>
         </div>
@@ -536,25 +551,25 @@
 
       <!-- 2. AUTH -->
       <div class="screen paper-bg" id="screen-auth" style="height:100%; flex-direction:column; padding: 24px 24px 32px;">
-        <button onclick="goto('splash')" style="background:none; border:none; color:#b8b0a0; padding:0; align-self:flex-start; display:flex; align-items:center; gap:6px; font-weight:500; cursor:pointer;">
+        <button onclick="goto('splash')" style="background:none; border:none; color:var(--ink-2); padding:0; align-self:flex-start; display:flex; align-items:center; gap:6px; font-weight:500; cursor:pointer;">
           <i data-lucide="arrow-left"></i> Înapoi
         </button>
         <div style="margin-top:32px;">
-          <h1 style="font-size:28px; font-weight:700; letter-spacing:-0.02em; color:#f0eadb; margin:0;">Intră în cont</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:6px 0 0;">Îți trimitem un link pe email. Fără parolă.</p>
+          <h1 style="font-size:28px; font-weight:700; letter-spacing:-0.02em; color:var(--ink); margin:0;">Intră în cont</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:6px 0 0;">Îți trimitem un link pe email. Fără parolă.</p>
         </div>
 
         <div id="auth-form" style="margin-top:24px; display:flex; flex-direction:column; gap:12px;">
           <label style="display:flex; flex-direction:column; gap:6px;">
-            <span class="small-text" style="color:#b8b0a0; font-weight:500;">Email</span>
+            <span class="small-text" style="color:var(--ink-2); font-weight:500;">Email</span>
             <input type="email" placeholder="numele.tau@email.ro" value="daniel@andura.ro"
-                   style="padding:14px 16px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-size:16px; background:rgba(255,255,255,0.025); color:#f0eadb;"/>
+                   style="padding:14px 16px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-size:16px; background:rgba(255,255,255,0.025); color:var(--ink);"/>
           </label>
           <button class="btn-brick" onclick="showAuthPending()">Trimite link de intrare</button>
 
           <div style="display:flex; align-items:center; gap:12px; margin: 8px 0;">
             <div style="flex:1; height:1px; background:rgba(212,165,116,0.15);"></div>
-            <span class="small-text" style="color:#8b8470;">sau</span>
+            <span class="small-text" style="color:var(--ink-3);">sau</span>
             <div style="flex:1; height:1px; background:rgba(212,165,116,0.15);"></div>
           </div>
 
@@ -565,32 +580,32 @@
 
           <div style="display:flex; align-items:center; gap:12px; margin: 4px 0;">
             <div style="flex:1; height:1px; background:rgba(212,165,116,0.15);"></div>
-            <span class="small-text" style="color:#8b8470;">sau</span>
+            <span class="small-text" style="color:var(--ink-3);">sau</span>
             <div style="flex:1; height:1px; background:rgba(212,165,116,0.15);"></div>
           </div>
 
           <button class="auth-skip-btn" data-action="skip-auth" onclick="goto('onboard')"
-                  style="background:transparent; border:1px solid rgba(212,165,116,0.20); border-radius:12px; padding:14px 16px; font-size:15px; font-weight:500; color:#b8b0a0; cursor:pointer;">
+                  style="background:transparent; border:1px solid rgba(212,165,116,0.20); border-radius:12px; padding:14px 16px; font-size:15px; font-weight:500; color:var(--ink-2); cursor:pointer;">
             Continuă fără cont
           </button>
-          <p class="auth-risk-note" style="font-size:12.5px; color:#8b8470; margin: 4px 4px 0; line-height:1.5;">
+          <p class="auth-risk-note" style="font-size:12.5px; color:var(--ink-3); margin: 4px 4px 0; line-height:1.5;">
             Datele se salvează doar pe acest dispozitiv. Riști să le pierzi (telefon resetat, browser cache șters, app reinstalat).
           </p>
         </div>
 
         <div id="auth-pending" style="display:none; margin-top:24px; flex-direction:column; gap:16px; align-items:center; text-align:center; padding: 32px 8px;">
           <div style="width:64px; height:64px; border-radius:50%; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center;">
-            <i data-lucide="mail" style="width:28px; height:28px; color:#d4a574;"></i>
+            <i data-lucide="mail" style="width:28px; height:28px; color:var(--accent);"></i>
           </div>
           <div>
-            <div style="font-size:20px; font-weight:600; color:#f0eadb;">Verifică emailul</div>
-            <p class="body-text" style="color:#b8b0a0; margin-top:6px; max-width:280px;">Ți-am trimis linkul pe <b><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6206030c0b070e22030c061710034c100d">[email&#160;protected]</a></b>. Deschide-l de pe acest telefon.</p>
+            <div style="font-size:20px; font-weight:600; color:var(--ink);">Verifică emailul</div>
+            <p class="body-text" style="color:var(--ink-2); margin-top:6px; max-width:280px;">Ți-am trimis linkul pe <b><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6206030c0b070e22030c061710034c100d">[email&#160;protected]</a></b>. Deschide-l de pe acest telefon.</p>
           </div>
-          <button class="btn-ghost" onclick="goto('onboard')" style="background:transparent; border:none; color:#d4a574;">Folosesc linkul (demo)</button>
+          <button class="btn-ghost" onclick="goto('onboard')" style="background:transparent; border:none; color:var(--accent);">Folosesc linkul (demo)</button>
         </div>
 
         <div style="flex:1;"></div>
-        <div class="small-text" style="text-align:center; color:#8b8470; line-height:1.6;">
+        <div class="small-text" style="text-align:center; color:var(--ink-3); line-height:1.6;">
           Continuând accepți <u>Termenii</u> și <u>Confidențialitatea</u>. Nu folosim datele tale pentru reclame.
         </div>
       </div>
@@ -599,7 +614,7 @@
       <!-- Onboarding step 1: Obiectiv + disclaimer integrat -->
       <div class="screen paper-bg" id="screen-onboard" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <button onclick="goto('auth')" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:#b8b0a0;"></i></button>
+          <button onclick="goto('auth')" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
             <div class="progress-dot current"></div>
             <div class="progress-dot"></div>
@@ -607,37 +622,37 @@
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
           </div>
-          <span class="small-text" style="color:#8b8470; font-weight:500;">1 din 5</span>
+          <span class="small-text" style="color:var(--ink-3); font-weight:500;">1 din 5</span>
         </div>
 
         <div style="margin-top:32px;">
-          <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 1</div>
-          <h1 class="display-text" style="font-weight:700; color:#f0eadb; margin:6px 0 8px; line-height:1.1;">Ce vrei să obții?</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 20px;">Alegi unul. Poți schimba mai târziu.</p>
+          <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 1</div>
+          <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Ce vrei să obții?</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 20px;">Alegi unul. Poți schimba mai târziu.</p>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
             <button class="onb-opt stack-row" onclick="pickGoal(this, 'forta')" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Forță</div><div class="small-text" style="color:#8b8470;">Greutăți mari, repetări puține</div></div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Forță</div><div class="small-text" style="color:var(--ink-3);">Greutăți mari, repetări puține</div></div>
             </button>
-            <button class="onb-opt stack-row" onclick="pickGoal(this, 'tonifiere')" style="cursor:pointer; text-align:left; width:100%; border:1px solid #d4a574;">
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Tonifiere</div><div class="small-text" style="color:#8b8470;">Definire musculară</div></div>
-              <i data-lucide="check" style="color:#d4a574;"></i>
+            <button class="onb-opt stack-row" onclick="pickGoal(this, 'tonifiere')" style="cursor:pointer; text-align:left; width:100%; border:1px solid var(--accent);">
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Tonifiere</div><div class="small-text" style="color:var(--ink-3);">Definire musculară</div></div>
+              <i data-lucide="check" style="color:var(--accent);"></i>
             </button>
             <button class="onb-opt stack-row" onclick="pickGoal(this, 'slabire')" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Slăbire</div><div class="small-text" style="color:#8b8470;">Reducere greutate &amp; grăsime</div></div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Slăbire</div><div class="small-text" style="color:var(--ink-3);">Reducere greutate &amp; grăsime</div></div>
             </button>
             <button class="onb-opt stack-row" onclick="pickGoal(this, 'longevitate')" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Longevitate</div><div class="small-text" style="color:#8b8470;">Mobilitate &amp; sănătate articulară</div></div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Longevitate</div><div class="small-text" style="color:var(--ink-3);">Mobilitate &amp; sănătate articulară</div></div>
             </button>
             <button class="onb-opt stack-row" onclick="pickGoal(this, 'sanatate')" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Sănătate generală</div><div class="small-text" style="color:#8b8470;">Activ, fără țintă specifică</div></div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Sănătate generală</div><div class="small-text" style="color:var(--ink-3);">Activ, fără țintă specifică</div></div>
             </button>
           </div>
 
           <!-- Disclaimer medical integrat (§63.1) -->
           <label style="margin-top:18px; display:flex; gap:10px; align-items:flex-start; padding:14px; background:rgba(232,200,150,0.08); border:1px solid rgba(232,200,150,0.25); border-radius:12px; cursor:pointer;" id="onb1-disclaimer-row">
-            <input type="checkbox" id="onb1-disclaimer" onchange="updateOnb1Btn()" style="width:20px; height:20px; flex-shrink:0; margin-top:1px; accent-color:#d4a574;"/>
-            <span class="small-text" style="color:#b8b0a0; line-height:1.45;">Am înțeles: <b>Andura e instrument de coaching, NU înlocuiește consult medical</b>. Mă consult cu un medic dacă apare durere sau disconfort.</span>
+            <input type="checkbox" id="onb1-disclaimer" onchange="updateOnb1Btn()" style="width:20px; height:20px; flex-shrink:0; margin-top:1px; accent-color:var(--accent);"/>
+            <span class="small-text" style="color:var(--ink-2); line-height:1.45;">Am înțeles: <b>Andura e instrument de coaching, NU înlocuiește consult medical</b>. Mă consult cu un medic dacă apare durere sau disconfort.</span>
           </label>
         </div>
 
@@ -648,7 +663,7 @@
       <!-- Onboarding step 2: Vârstă -->
       <div class="screen paper-bg" id="screen-onb-varsta" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:#b8b0a0;"></i></button>
+          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
             <div class="progress-dot done"></div>
             <div class="progress-dot current"></div>
@@ -656,15 +671,15 @@
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
           </div>
-          <span class="small-text" style="color:#8b8470; font-weight:500;">2 din 5</span>
+          <span class="small-text" style="color:var(--ink-3); font-weight:500;">2 din 5</span>
         </div>
         <div style="margin-top:32px;">
-          <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 2</div>
-          <h1 class="display-text" style="font-weight:700; color:#f0eadb; margin:6px 0 8px; line-height:1.1;">Câți ani ai?</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 28px;">Ne ajută să adaptăm intensitatea și recuperarea.</p>
+          <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 2</div>
+          <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Câți ani ai?</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 28px;">Ne ajută să adaptăm intensitatea și recuperarea.</p>
           <input type="number" min="16" max="99" placeholder="ex. 31" id="onb-age-input"
-                 style="width:100%; padding:18px 20px; border:1px solid rgba(212,165,116,0.15); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:rgba(255,255,255,0.025); color:#f0eadb; font-family:'Geist Mono', monospace;"/>
-          <p class="small-text" style="color:#8b8470; margin-top:10px; text-align:center;">Între 16 și 99 ani</p>
+                 style="width:100%; padding:18px 20px; border:1px solid rgba(212,165,116,0.15); border-radius:14px; font-size:28px; font-weight:600; text-align:center; background:rgba(255,255,255,0.025); color:var(--ink); font-family:'Geist Mono', monospace;"/>
+          <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center;">Între 16 și 99 ani</p>
         </div>
         <div style="flex:1;"></div>
         <button class="btn-brick" onclick="goto('onb-sex')">Continuă</button>
@@ -673,7 +688,7 @@
       <!-- Onboarding step 3: Sex -->
       <div class="screen paper-bg" id="screen-onb-sex" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:#b8b0a0;"></i></button>
+          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
             <div class="progress-dot done"></div>
             <div class="progress-dot done"></div>
@@ -681,12 +696,12 @@
             <div class="progress-dot"></div>
             <div class="progress-dot"></div>
           </div>
-          <span class="small-text" style="color:#8b8470; font-weight:500;">3 din 5</span>
+          <span class="small-text" style="color:var(--ink-3); font-weight:500;">3 din 5</span>
         </div>
         <div style="margin-top:32px;">
-          <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 3</div>
-          <h1 class="display-text" style="font-weight:700; color:#f0eadb; margin:6px 0 8px; line-height:1.1;">Sex biologic</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 28px;">Influențează estimarea TDEE și ratele de recuperare.</p>
+          <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 3</div>
+          <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Sex biologic</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 28px;">Influențează estimarea TDEE și ratele de recuperare.</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;"><div style="flex:1;"><div class="body-text" style="font-weight:600;">Bărbat (M)</div></div></button>
             <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;"><div style="flex:1;"><div class="body-text" style="font-weight:600;">Femeie (F)</div></div></button>
@@ -699,7 +714,7 @@
       <!-- Onboarding step 4: Istoric medical -->
       <div class="screen paper-bg" id="screen-onb-medical" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:#b8b0a0;"></i></button>
+          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
             <div class="progress-dot done"></div>
             <div class="progress-dot done"></div>
@@ -707,23 +722,23 @@
             <div class="progress-dot current"></div>
             <div class="progress-dot"></div>
           </div>
-          <span class="small-text" style="color:#8b8470; font-weight:500;">4 din 5</span>
+          <span class="small-text" style="color:var(--ink-3); font-weight:500;">4 din 5</span>
         </div>
         <div style="margin-top:32px;">
-          <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 4</div>
-          <h1 class="display-text" style="font-weight:700; color:#f0eadb; margin:6px 0 8px; line-height:1.1;">Istoric medical</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 22px;">Bifează ce te privește. Coach-ul va fi mai prudent.</p>
+          <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 4</div>
+          <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Istoric medical</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 22px;">Bifează ce te privește. Coach-ul va fi mai prudent.</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
-              <input type="checkbox" style="width:20px; height:20px; accent-color:#d4a574;"/>
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Condiții cardiovasculare</div><div class="small-text" style="color:#8b8470;">Hipertensiune, aritmii, etc.</div></div>
+              <input type="checkbox" style="width:20px; height:20px; accent-color:var(--accent);"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Condiții cardiovasculare</div><div class="small-text" style="color:var(--ink-3);">Hipertensiune, aritmii, etc.</div></div>
             </label>
             <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
-              <input type="checkbox" style="width:20px; height:20px; accent-color:#d4a574;"/>
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Accidentări recente</div><div class="small-text" style="color:#8b8470;">În ultimele 12 luni</div></div>
+              <input type="checkbox" style="width:20px; height:20px; accent-color:var(--accent);"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Accidentări recente</div><div class="small-text" style="color:var(--ink-3);">În ultimele 12 luni</div></div>
             </label>
-            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%; border:1px solid #d4a574;">
-              <input type="checkbox" checked style="width:20px; height:20px; accent-color:#d4a574;"/>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%; border:1px solid var(--accent);">
+              <input type="checkbox" checked style="width:20px; height:20px; accent-color:var(--accent);"/>
               <div style="flex:1;"><div class="body-text" style="font-weight:600;">Nimic dintre cele de mai sus</div></div>
             </label>
           </div>
@@ -735,7 +750,7 @@
       <!-- Onboarding step 5: Frecvență -->
       <div class="screen paper-bg" id="screen-onb-frecventa" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:#b8b0a0;"></i></button>
+          <button onclick="back()" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
             <div class="progress-dot done"></div>
             <div class="progress-dot done"></div>
@@ -743,25 +758,25 @@
             <div class="progress-dot done"></div>
             <div class="progress-dot current"></div>
           </div>
-          <span class="small-text" style="color:#8b8470; font-weight:500;">5 din 5</span>
+          <span class="small-text" style="color:var(--ink-3); font-weight:500;">5 din 5</span>
         </div>
         <div style="margin-top:32px;">
-          <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 5</div>
-          <h1 class="display-text" style="font-weight:700; color:#f0eadb; margin:6px 0 8px; line-height:1.1;">Cât de des?</h1>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 22px;">Zile pe săptămână în care poți să te antrenezi.</p>
+          <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">Pasul 5</div>
+          <h1 class="display-text" style="font-weight:700; color:var(--ink); margin:6px 0 8px; line-height:1.1;">Cât de des?</h1>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 22px;">Zile pe săptămână în care poți să te antrenezi.</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="width:42px; height:42px; border-radius:50%; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-weight:700; color:#b8b0a0;">1–2</div>
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">1–2 zile</div><div class="small-text" style="color:#8b8470;">Începem ușor, recuperare lungă</div></div>
+              <div style="width:42px; height:42px; border-radius:50%; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--ink-2);">1–2</div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">1–2 zile</div><div class="small-text" style="color:var(--ink-3);">Începem ușor, recuperare lungă</div></div>
             </button>
-            <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%; border:1px solid #d4a574;">
-              <div style="width:42px; height:42px; border-radius:50%; background:#0f1218; color:#f0eadb; border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-weight:700;">3–4</div>
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">3–4 zile</div><div class="small-text" style="color:#8b8470;">Ritm echilibrat, recomandat</div></div>
-              <i data-lucide="check" style="color:#d4a574;"></i>
+            <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%; border:1px solid var(--accent);">
+              <div style="width:42px; height:42px; border-radius:50%; background:#0f1218; color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-weight:700;">3–4</div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">3–4 zile</div><div class="small-text" style="color:var(--ink-3);">Ritm echilibrat, recomandat</div></div>
+              <i data-lucide="check" style="color:var(--accent);"></i>
             </button>
             <button class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
-              <div style="width:42px; height:42px; border-radius:50%; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-weight:700; color:#b8b0a0;">5+</div>
-              <div style="flex:1;"><div class="body-text" style="font-weight:600;">5+ zile</div><div class="small-text" style="color:#8b8470;">Volum mare, atenție la recuperare</div></div>
+              <div style="width:42px; height:42px; border-radius:50%; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--ink-2);">5+</div>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">5+ zile</div><div class="small-text" style="color:var(--ink-3);">Volum mare, atenție la recuperare</div></div>
             </button>
           </div>
         </div>
@@ -772,8 +787,8 @@
       <!-- 5b. SALA (idle state) -->
       <div class="screen paper-bg" id="screen-sala" data-screen-label="Sala" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <div class="small-text" style="color:#8b8470; margin-bottom:4px;">Joi, 7 mai · 18:30</div>
-          <h1 style="font-size:26px; font-weight:700; color:#f0eadb; margin:0 0 18px; letter-spacing:-0.02em;">Sesiunea de azi</h1>
+          <div class="small-text" style="color:var(--ink-3); margin-bottom:4px;">Joi, 7 mai · 18:30</div>
+          <h1 style="font-size:26px; font-weight:700; color:var(--ink); margin:0 0 18px; letter-spacing:-0.02em;">Sesiunea de azi</h1>
 
           <!-- Hero card with today's session -->
           <div class="hero-card">
@@ -977,7 +992,7 @@
               <div class="lb-rec-orb">72</div>
               <div style="flex:1; min-width:0;">
                 <div style="font-family:'Geist Mono', monospace; font-size:9px; color:#6b6555; letter-spacing:0.18em; text-transform:uppercase;">Recuperare globală</div>
-                <div style="font-family:'Instrument Serif', serif; font-size:14px; color:#f0eadb; margin-top:2px; font-style:italic; line-height:1.3;">corpul tău e în <span style="color:#6ee7c7;">drum spre vârf</span></div>
+                <div style="font-family:'Instrument Serif', serif; font-size:14px; color:var(--ink); margin-top:2px; font-style:italic; line-height:1.3;">corpul tău e în <span style="color:#6ee7c7;">drum spre vârf</span></div>
               </div>
             </div>
             <p class="lb-reading">
@@ -987,9 +1002,9 @@
           </div>
 
           <!-- Program săptămânii (template activ) -->
-          <div style="background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden;">
+          <div style="background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px; margin-bottom:14px; position:relative; overflow:hidden;">
             <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, rgba(212,165,116,0.35), transparent 70%);"></div>
-            <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Programul săptămânii</div>
+            <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Programul săptămânii</div>
             <div style="font-size:22px; font-weight:700; margin-top:4px; letter-spacing:-0.01em; position:relative;">Tonifiere · Săpt. 3</div>
             <div class="small-text" style="color:#a8a09a; margin-top:2px; position:relative;">Ziua 3/4 · Push (piept &amp; umeri)</div>
             <div style="display:flex; gap:14px; margin-top:14px; position:relative;">
@@ -1002,8 +1017,8 @@
           <!-- Programe (5 templates) -->
           <div class="settings-section">📋 Program</div>
           <div class="settings-stack">
-            <button class="settings-row" onclick="showToast('Forță — drill confirm')"><i data-lucide="dumbbell"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Forță</span><span class="small-text" style="color:#8b8470; font-weight:400;">Greutăți mari, repetări puține</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" style="background:rgba(232,200,150,0.08);"><i data-lucide="check-circle-2" style="color:#d4a574;"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span><b>Tonifiere</b> · activ</span><span class="small-text" style="color:#8b8470; font-weight:400;">Definire musculară</span></span><span class="small-text" style="color:#d4a574; font-weight:600; margin-left:auto;">ALES</span></button>
+            <button class="settings-row" onclick="showToast('Forță — drill confirm')"><i data-lucide="dumbbell"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Forță</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Greutăți mari, repetări puține</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" style="background:rgba(232,200,150,0.08);"><i data-lucide="check-circle-2" style="color:var(--accent);"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span><b>Tonifiere</b> · activ</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Definire musculară</span></span><span class="small-text" style="color:var(--accent); font-weight:600; margin-left:auto;">ALES</span></button>
             <button class="settings-row" onclick="showToast('Slăbire — drill confirm')"><i data-lucide="trending-down"></i><span>Slăbire</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Longevitate — drill confirm')"><i data-lucide="heart-pulse"></i><span>Longevitate</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Sănătate — drill confirm')" style="border-bottom:none;"><i data-lucide="activity"></i><span>Sănătate generală</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
@@ -1012,8 +1027,8 @@
           <!-- Drill 2° -->
           <div class="settings-section">Acces rapid</div>
           <div class="settings-stack">
-            <button class="settings-row" onclick="goto('pain-button')"><i data-lucide="alert-circle"></i><span>Mă doare ceva</span><span class="small-text" style="color:#8b8470; margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
-            <button class="settings-row" onclick="goto('equipment-swap')"><i data-lucide="repeat"></i><span>Schimbă echipament</span><span class="small-text" style="color:#8b8470; margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
+            <button class="settings-row" onclick="goto('pain-button')"><i data-lucide="alert-circle"></i><span>Mă doare ceva</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
+            <button class="settings-row" onclick="goto('equipment-swap')"><i data-lucide="repeat"></i><span>Schimbă echipament</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
             <button class="settings-row" onclick="showToast('Bibliotecă exerciții')" style="border-bottom:none;"><i data-lucide="book-open"></i><span>Bibliotecă exerciții</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
         </div>
@@ -1023,19 +1038,19 @@
       <div class="screen paper-bg sub-page" id="screen-energy-check" data-screen-label="Antrenor › Energy" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Cum te simți?</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 22px; line-height:1.5;">Engine-ul ajustează intensitatea pe baza energiei tale. <b>3 stări simple.</b></p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 22px; line-height:1.5;">Engine-ul ajustează intensitatea pe baza energiei tale. <b>3 stări simple.</b></p>
           <div style="display:flex; flex-direction:column; gap:12px;">
             <button class="energy-big" onclick="goto('workout')">
               <span style="font-size:36px;">🟢</span>
-              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:#f0eadb;">Excelent</span><span class="small-text" style="color:#8b8470;">Engine UP +15% eligible</span></span>
+              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:var(--ink);">Excelent</span><span class="small-text" style="color:var(--ink-3);">Engine UP +15% eligible</span></span>
             </button>
             <button class="energy-big" onclick="goto('workout')">
               <span style="font-size:36px;">🟡</span>
-              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:#f0eadb;">Normal · OK</span><span class="small-text" style="color:#8b8470;">Engine NONE — baseline</span></span>
+              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:var(--ink);">Normal · OK</span><span class="small-text" style="color:var(--ink-3);">Engine NONE — baseline</span></span>
             </button>
             <button class="energy-big" onclick="goto('energy-cause')">
               <span style="font-size:36px;">🔴</span>
-              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:#f0eadb;">Obosit / slab</span><span class="small-text" style="color:#8b8470;">Engine DOWN imediat</span></span>
+              <span style="display:flex; flex-direction:column; align-items:flex-start;"><span class="body-text" style="font-weight:700; color:var(--ink);">Obosit / slab</span><span class="small-text" style="color:var(--ink-3);">Engine DOWN imediat</span></span>
             </button>
           </div>
         </div>
@@ -1045,7 +1060,7 @@
       <div class="screen paper-bg sub-page" id="screen-energy-cause" data-screen-label="Antrenor › Cauză" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Ce e mai greu azi?</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 22px; line-height:1.5;">Alege una. Engine-ul folosește răspunsul ca să adapteze sesiunea.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 22px; line-height:1.5;">Alege una. Engine-ul folosește răspunsul ca să adapteze sesiunea.</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <button class="onb-opt stack-row" onclick="goto('workout')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="wind"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Stres</div></div></button>
             <button class="onb-opt stack-row" onclick="goto('workout')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="moon"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Somn slab</div></div></button>
@@ -1059,15 +1074,15 @@
       <div class="screen paper-bg sub-page" id="screen-pain-button" data-screen-label="Antrenor › Pain" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Mă doare ceva</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 22px; line-height:1.5;">Coach-ul reduce intensitatea sau schimbă exercițiul. Spune ce simți:</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 22px; line-height:1.5;">Coach-ul reduce intensitatea sau schimbă exercițiul. Spune ce simți:</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="zap" style="color:#d4a574;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere acută</div><div class="small-text" style="color:#8b8470;">Stop imediat exercițiu, swap sigur</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="bone"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Disconfort articulație</div><div class="small-text" style="color:#8b8470;">Reducem amplitudine + greutate</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="battery-low"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Oboseală extremă</div><div class="small-text" style="color:#8b8470;">Tăiem volum 30% astăzi</div></div></button>
-            <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:#8b8470;">Descrie liber</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="zap" style="color:var(--accent);"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere acută</div><div class="small-text" style="color:var(--ink-3);">Stop imediat exercițiu, swap sigur</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="bone"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Disconfort articulație</div><div class="small-text" style="color:var(--ink-3);">Reducem amplitudine + greutate</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="battery-low"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Oboseală extremă</div><div class="small-text" style="color:var(--ink-3);">Tăiem volum 30% astăzi</div></div></button>
+            <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrie liber</div></div></button>
           </div>
           <div id="pain-altceva" style="display:none; margin-top:14px;">
-            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" style="width:100%; padding:14px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-family:inherit; font-size:15px; background:rgba(255,255,255,0.025); color:#f0eadb; resize:none;"></textarea>
+            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" style="width:100%; padding:14px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-family:inherit; font-size:15px; background:rgba(255,255,255,0.025); color:var(--ink); resize:none;"></textarea>
             <button class="btn-brick" onclick="showToast('Trimis. Coach-ul adaptează.')" style="width:100%; margin-top:10px;">Trimite la coach</button>
           </div>
         </div>
@@ -1077,14 +1092,14 @@
       <div class="screen paper-bg sub-page" id="screen-equipment-swap" data-screen-label="Antrenor › Echipament" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Schimbă echipament</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 16px; line-height:1.5;">Smart-routing nu a găsit alternativă. Spune ce ai la îndemână.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 16px; line-height:1.5;">Smart-routing nu a găsit alternativă. Spune ce ai la îndemână.</p>
           <div style="background:rgba(212,165,116,0.06); border-radius:12px; padding:14px; margin-bottom:14px;">
-            <div class="small-text" style="color:#8b8470; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Exercițiu curent</div>
-            <div class="body-text" style="font-weight:600; color:#f0eadb; margin-top:2px;">Împins înclinat halteră</div>
+            <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Exercițiu curent</div>
+            <div class="body-text" style="font-weight:600; color:var(--ink); margin-top:2px;">Împins înclinat halteră</div>
           </div>
-          <label class="small-text" style="color:#b8b0a0; font-weight:500; display:block; margin-bottom:6px;">Ce echipament ai în loc?</label>
-          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" style="width:100%; padding:14px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-family:inherit; font-size:15px; background:rgba(255,255,255,0.025); color:#f0eadb; resize:none;"></textarea>
-          <p class="small-text" style="color:#8b8470; margin-top:8px; line-height:1.5; font-style:italic;">Coach-ul interpretează liber și propune un swap echivalent.</p>
+          <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:6px;">Ce echipament ai în loc?</label>
+          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" style="width:100%; padding:14px; border:1px solid rgba(212,165,116,0.15); border-radius:12px; font-family:inherit; font-size:15px; background:rgba(255,255,255,0.025); color:var(--ink); resize:none;"></textarea>
+          <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.5; font-style:italic;">Coach-ul interpretează liber și propune un swap echivalent.</p>
           <button class="btn-brick" onclick="showToast('Caut swap echivalent...')" style="width:100%; margin-top:14px;">Cere swap</button>
         </div>
       </div>
@@ -1092,7 +1107,7 @@
       <!-- 7b. ISTORIC (timeline) -->
       <div class="screen paper-bg" id="screen-istoric" data-screen-label="Istoric" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <h1 style="font-size:26px; font-weight:700; color:#f0eadb; margin:0 0 18px; letter-spacing:-0.02em;">Istoric</h1>
+          <h1 style="font-size:26px; font-weight:700; color:var(--ink); margin:0 0 18px; letter-spacing:-0.02em;">Istoric</h1>
 
           <!-- Quick stats -->
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:22px;">
@@ -1103,7 +1118,7 @@
 
           <!-- Calendar heat map -->
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <div style="font-size:16px; font-weight:600; color:#f0eadb;">Mai 2026</div>
+            <div style="font-size:16px; font-weight:600; color:var(--ink);">Mai 2026</div>
             <div style="display:flex; gap:6px;">
               <button style="width:32px; height:32px; border-radius:8px; background:rgba(212,165,116,0.06); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="chevron-left" style="width:14px; height:14px;"></i></button>
               <button style="width:32px; height:32px; border-radius:8px; background:rgba(212,165,116,0.06); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i data-lucide="chevron-right" style="width:14px; height:14px;"></i></button>
@@ -1124,16 +1139,16 @@
           <div class="settings-section">Sesiuni recente</div>
           <div class="settings-stack">
             <button class="settings-row" onclick="showToast('Detaliu sesiune')" style="flex-direction:column; align-items:flex-start; padding:14px 16px; gap:6px;">
-              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:#f0eadb;">Piept &amp; umeri</span><span class="small-text" style="color:#8b8470; margin-left:auto;">azi · 18:30</span></div>
-              <div class="small-text" style="color:#8b8470;">5 exerciții · 52 min · RPE 7.2 · 12 845 kg volum</div>
+              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:var(--ink);">Piept &amp; umeri</span><span class="small-text" style="color:var(--ink-3); margin-left:auto;">azi · 18:30</span></div>
+              <div class="small-text" style="color:var(--ink-3);">5 exerciții · 52 min · RPE 7.2 · 12 845 kg volum</div>
             </button>
             <button class="settings-row" onclick="showToast('Detaliu sesiune')" style="flex-direction:column; align-items:flex-start; padding:14px 16px; gap:6px;">
-              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:#f0eadb;">Picioare</span><span class="small-text" style="color:#8b8470; margin-left:auto;">marți · 19:00</span></div>
-              <div class="small-text" style="color:#8b8470;">6 exerciții · 64 min · RPE 8.1 · 18 200 kg volum</div>
+              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:var(--ink);">Picioare</span><span class="small-text" style="color:var(--ink-3); margin-left:auto;">marți · 19:00</span></div>
+              <div class="small-text" style="color:var(--ink-3);">6 exerciții · 64 min · RPE 8.1 · 18 200 kg volum</div>
             </button>
             <button class="settings-row" onclick="showToast('Detaliu sesiune')" style="flex-direction:column; align-items:flex-start; padding:14px 16px; gap:6px; border-bottom:none;">
-              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:#f0eadb;">Spate &amp; biceps</span><span class="small-text" style="color:#8b8470; margin-left:auto;">duminică · 11:00</span></div>
-              <div class="small-text" style="color:#8b8470;">5 exerciții · 48 min · RPE 6.8 · 11 320 kg volum</div>
+              <div style="display:flex; align-items:center; gap:10px; width:100%;"><span style="font-weight:600; color:var(--ink);">Spate &amp; biceps</span><span class="small-text" style="color:var(--ink-3); margin-left:auto;">duminică · 11:00</span></div>
+              <div class="small-text" style="color:var(--ink-3);">5 exerciții · 48 min · RPE 6.8 · 11 320 kg volum</div>
             </button>
           </div>
 
@@ -1154,8 +1169,8 @@
           <!-- Greeting -->
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
             <div>
-              <div class="small-text" style="color:#8b8470; font-weight:500;">Marți, 6 mai</div>
-              <div style="font-size:22px; font-weight:700; color:#f0eadb; letter-spacing:-0.02em;">Bună, Daniel</div>
+              <div class="small-text" style="color:var(--ink-3); font-weight:500;">Marți, 6 mai</div>
+              <div style="font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.02em;">Bună, Daniel</div>
             </div>
             <button style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); cursor:pointer; display:flex; align-items:center; justify-content:center;">
               <i data-lucide="bell"></i>
@@ -1163,16 +1178,16 @@
           </div>
 
           <!-- Coach card (peak craft) -->
-          <div style="background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border-radius:20px; padding:22px; position:relative; overflow:hidden;">
+          <div style="background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); border-radius:20px; padding:22px; position:relative; overflow:hidden;">
             <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, rgba(212,165,116,0.4), transparent 70%);"></div>
-            <div class="small-text" style="color:#d4a574; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Recomandare azi</div>
-            <div class="coach-quote" style="font-size:22px; color:#f0eadb; line-height:1.3; margin:10px 0 18px; position:relative;">
+            <div class="small-text" style="color:var(--accent); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Recomandare azi</div>
+            <div class="coach-quote" style="font-size:22px; color:var(--ink); line-height:1.3; margin:10px 0 18px; position:relative;">
               "Astăzi facem împins, mai degajat. Săptămâna trecută ai dus greu. Recuperăm puterea, nu o forțăm."
             </div>
             <div style="display:flex; gap:8px; margin-bottom:18px; position:relative;">
-              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:#f0eadb;"><i data-lucide="clock" style="width:14px; height:14px;"></i> 45 min</div>
-              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:#f0eadb;"><i data-lucide="dumbbell" style="width:14px; height:14px;"></i> Sală</div>
-              <div class="chip marius-only" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:#f0eadb; display:none;"><span style="font-family:'Geist Mono', monospace;">RIR 2</span></div>
+              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--ink);"><i data-lucide="clock" style="width:14px; height:14px;"></i> 45 min</div>
+              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--ink);"><i data-lucide="dumbbell" style="width:14px; height:14px;"></i> Sală</div>
+              <div class="chip marius-only" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--ink); display:none;"><span style="font-family:'Geist Mono', monospace;">RIR 2</span></div>
             </div>
             <button class="btn-brick" onclick="goto('workout')" style="width:100%; position:relative;">Începe sesiunea →</button>
           </div>
@@ -1180,8 +1195,8 @@
           <!-- Energy state -->
           <div style="margin-top:24px;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
-              <div class="body-text" style="font-weight:600; color:#f0eadb;">Cum te simți azi?</div>
-              <span class="small-text" style="color:#8b8470;">Doar tu vezi asta</span>
+              <div class="body-text" style="font-weight:600; color:var(--ink);">Cum te simți azi?</div>
+              <span class="small-text" style="color:var(--ink-3);">Doar tu vezi asta</span>
             </div>
             <div style="display:flex; gap:10px;">
               <button class="energy-btn" data-energy="green" onclick="selectEnergy('green')">
@@ -1200,7 +1215,7 @@
 
             <!-- 🔴 drill-down (4 fixed cauze) -->
             <div id="energy-drill" style="display:none; margin-top:14px; padding:16px; background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px;">
-              <div class="body-text" style="font-weight:600; margin-bottom:10px; color:#f0eadb;">Ce e mai greu azi?</div>
+              <div class="body-text" style="font-weight:600; margin-bottom:10px; color:var(--ink);">Ce e mai greu azi?</div>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                 <button class="cause-btn" onclick="pickCause('Oboseală')"><i data-lucide="battery-low"></i> Oboseală</button>
                 <button class="cause-btn" onclick="pickCause('Stres')"><i data-lucide="wind"></i> Stres</button>
@@ -1213,19 +1228,19 @@
           <!-- Quick stats strip -->
           <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
             <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:#8b8470;">Săptămâna</div>
-              <div style="font-size:20px; font-weight:700; color:#f0eadb; font-family:'Geist Mono', monospace;">3<span style="color:#8b8470; font-size:14px;">/4</span></div>
+              <div class="small-text" style="color:var(--ink-3);">Săptămâna</div>
+              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'Geist Mono', monospace;">3<span style="color:var(--ink-3); font-size:14px;">/4</span></div>
               <div class="small-text" style="color:#6ee7c7; font-weight:500;">pe traseu</div>
             </div>
             <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:#8b8470;">Volum</div>
-              <div style="font-size:20px; font-weight:700; color:#f0eadb; font-family:'Geist Mono', monospace;">+8%</div>
-              <div class="small-text" style="color:#8b8470;">vs. săpt. trec.</div>
+              <div class="small-text" style="color:var(--ink-3);">Volum</div>
+              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'Geist Mono', monospace;">+8%</div>
+              <div class="small-text" style="color:var(--ink-3);">vs. săpt. trec.</div>
             </div>
             <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:#8b8470;">Streak</div>
-              <div style="font-size:20px; font-weight:700; color:#f0eadb; font-family:'Geist Mono', monospace;">12<span style="color:#8b8470; font-size:14px;">z</span></div>
-              <div class="small-text" style="color:#d4a574; font-weight:500;">consecutive</div>
+              <div class="small-text" style="color:var(--ink-3);">Streak</div>
+              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'Geist Mono', monospace;">12<span style="color:var(--ink-3); font-size:14px;">z</span></div>
+              <div class="small-text" style="color:var(--accent); font-weight:500;">consecutive</div>
             </div>
           </div>
         </div>
@@ -1240,54 +1255,54 @@
               <i data-lucide="x"></i>
             </button>
             <div style="text-align:center;">
-              <div class="small-text" style="color:#8b8470;">Sesiune A · Împins</div>
-              <div style="font-family:'Geist Mono', monospace; font-weight:600; color:#f0eadb;">14:32</div>
+              <div class="small-text" style="color:var(--ink-3);">Sesiune A · Împins</div>
+              <div style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink);">14:32</div>
             </div>
             <button style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="more-horizontal"></i></button>
           </div>
 
           <!-- Exercise progress -->
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-            <div class="small-text" style="color:#8b8470; font-family:'Geist Mono', monospace;">02/05</div>
+            <div class="small-text" style="color:var(--ink-3); font-family:'Geist Mono', monospace;">02/05</div>
             <div style="flex:1; height:4px; background:rgba(212,165,116,0.15); border-radius:2px; overflow:hidden;">
-              <div style="width:40%; height:100%; background:#d4a574;"></div>
+              <div style="width:40%; height:100%; background:var(--accent);"></div>
             </div>
-            <div class="small-text" style="color:#8b8470;">Împins · 2/5</div>
+            <div class="small-text" style="color:var(--ink-3);">Împins · 2/5</div>
           </div>
 
           <!-- Exercise card -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
               <div>
-                <div class="small-text" style="color:#d4a574; font-weight:600; text-transform:uppercase; letter-spacing:0.06em;">Exercițiul curent</div>
-                <h2 style="font-size:24px; font-weight:700; color:#f0eadb; margin:4px 0 2px; letter-spacing:-0.02em;">Împins înclinat</h2>
-                <div class="small-text" style="color:#b8b0a0;">Cu gantere · banc 30°</div>
+                <div class="small-text" style="color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.06em;">Exercițiul curent</div>
+                <h2 style="font-size:24px; font-weight:700; color:var(--ink); margin:4px 0 2px; letter-spacing:-0.02em;">Împins înclinat</h2>
+                <div class="small-text" style="color:var(--ink-2);">Cu gantere · banc 30°</div>
               </div>
               <button style="width:36px; height:36px; border-radius:10px; background:rgba(212,165,116,0.06); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-                <i data-lucide="play-circle" style="color:#b8b0a0;"></i>
+                <i data-lucide="play-circle" style="color:var(--ink-2);"></i>
               </button>
             </div>
 
             <!-- Tempo + RIR (Marius only) -->
-            <div class="marius-only" style="margin-top:14px; padding:10px 12px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border-radius:10px; gap:14px; font-family:'Geist Mono', monospace; font-size:13px;">
-              <span><span style="color:#8b8470;">tempo</span> 3-1-1-0</span>
-              <span><span style="color:#8b8470;">RIR</span> 2</span>
-              <span><span style="color:#8b8470;">RPE</span> 7-8</span>
+            <div class="marius-only" style="margin-top:14px; padding:10px 12px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); border-radius:10px; gap:14px; font-family:'Geist Mono', monospace; font-size:13px;">
+              <span><span style="color:var(--ink-3);">tempo</span> 3-1-1-0</span>
+              <span><span style="color:var(--ink-3);">RIR</span> 2</span>
+              <span><span style="color:var(--ink-3);">RPE</span> 7-8</span>
             </div>
 
             <!-- Maria readable cue -->
             <div class="persona-maria-only" style="margin-top:14px; padding:12px; background:rgba(232,200,150,0.08); border-radius:10px; display:none;">
-              <div class="body-text" style="color:#b8b0a0; line-height:1.5;">Coboară controlat, oprește jos un moment, ridică ferm.</div>
+              <div class="body-text" style="color:var(--ink-2); line-height:1.5;">Coboară controlat, oprește jos un moment, ridică ferm.</div>
             </div>
 
             <!-- Cue 💡 -->
             <button onclick="toggleCue()" style="margin-top:12px; width:100%; padding:10px 12px; background:rgba(212,165,116,0.06); border:1px solid rgba(212,165,116,0.15); border-radius:10px; display:flex; align-items:center; gap:8px; cursor:pointer;">
               <span style="font-size:18px;">💡</span>
-              <span class="body-text" style="font-weight:500; color:#f0eadb;">Pont de execuție</span>
+              <span class="body-text" style="font-weight:500; color:var(--ink);">Pont de execuție</span>
               <i data-lucide="chevron-down" id="cue-chev" style="margin-left:auto;"></i>
             </button>
             <div id="cue-body" style="display:none; margin-top:8px; padding:12px; background:#fdf9ee; border:1px solid rgba(232,200,150,0.25); border-radius:10px;">
-              <div class="body-text coach-quote" style="color:#b8b0a0; line-height:1.5;">
+              <div class="body-text coach-quote" style="color:var(--ink-2); line-height:1.5;">
                 "Coatele la 45°, nu prea larg. Strângi pieptul sus, fără să blochezi cotul complet. Respiră adânc înainte să cobori."
               </div>
             </div>
@@ -1295,9 +1310,9 @@
             <!-- Sets -->
             <div style="margin-top:16px;">
               <div style="display:grid; grid-template-columns:32px 1fr 1fr 44px; gap:10px; padding-bottom:8px; border-bottom:1px solid rgba(212,165,116,0.12);">
-                <div class="small-text" style="color:#8b8470; text-align:center;">SET</div>
-                <div class="small-text" style="color:#8b8470;">KG</div>
-                <div class="small-text" style="color:#8b8470;">REPETĂRI</div>
+                <div class="small-text" style="color:var(--ink-3); text-align:center;">SET</div>
+                <div class="small-text" style="color:var(--ink-3);">KG</div>
+                <div class="small-text" style="color:var(--ink-3);">REPETĂRI</div>
                 <div></div>
               </div>
               <div class="set-row" data-set="1" data-done="true">
@@ -1313,22 +1328,22 @@
                 <button class="set-check done" onclick="toggleSet(this)"><i data-lucide="check"></i></button>
               </div>
               <div class="set-row current" data-set="3">
-                <div class="set-num" style="color:#d4a574;">3</div>
+                <div class="set-num" style="color:var(--accent);">3</div>
                 <div class="set-val">22.5 kg</div>
-                <div class="set-val" style="color:#d4a574; font-weight:600;">— rep</div>
-                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div></button>
+                <div class="set-val" style="color:var(--accent); font-weight:600;">— rep</div>
+                <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--accent);"></div></button>
               </div>
               <div class="set-row" data-set="4">
                 <div class="set-num">4</div>
-                <div class="set-val" style="color:#8b8470;">22.5 kg</div>
-                <div class="set-val" style="color:#8b8470;">8–10</div>
+                <div class="set-val" style="color:var(--ink-3);">22.5 kg</div>
+                <div class="set-val" style="color:var(--ink-3);">8–10</div>
                 <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:1px solid rgba(212,165,116,0.2);"></div></button>
               </div>
             </div>
           </div>
 
           <!-- Rest timer (visible when active) -->
-          <div id="rest-timer" style="display:none; margin-top:14px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px; display:none; align-items:center; gap:16px;">
+          <div id="rest-timer" style="display:none; margin-top:14px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px; display:none; align-items:center; gap:16px;">
             <div style="position:relative; width:72px; height:72px;">
               <svg width="72" height="72" style="transform:rotate(-90deg);">
                 <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
@@ -1337,10 +1352,10 @@
               <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Geist Mono', monospace; font-size:16px; font-weight:600;" id="rest-time">1:18</div>
             </div>
             <div style="flex:1;">
-              <div class="small-text" style="color:#8b8470; text-transform:uppercase; letter-spacing:0.06em;">Pauză</div>
+              <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em;">Pauză</div>
               <div class="body-text" style="font-weight:500;">Următorul: 22.5 kg × 8–10</div>
             </div>
-            <button onclick="document.getElementById('rest-timer').style.display='none'" style="background:#d4a574; color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600;">Sari</button>
+            <button onclick="document.getElementById('rest-timer').style.display='none'" style="background:var(--accent); color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600;">Sari</button>
           </div>
 
           <button class="btn-brick" style="width:100%; margin-top:16px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="logCurrentSet()">
@@ -1357,63 +1372,63 @@
       <div class="screen paper-bg sub-page" id="screen-post-rpe" data-screen-label="Antrenor › Post-RPE" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Cum a fost sesiunea?</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <div class="coach-quote" style="font-family:'Lora', serif; font-size:19px; line-height:1.5; color:#b8b0a0; margin: 8px 0 24px; font-style:italic;">„Răspunsul tău calibrează sesiunea de mâine. O singură întrebare."</div>
+          <div class="coach-quote" style="font-family:'Lora', serif; font-size:19px; line-height:1.5; color:var(--ink-2); margin: 8px 0 24px; font-style:italic;">„Răspunsul tău calibrează sesiunea de mâine. O singură întrebare."</div>
 
-          <p class="body-text" style="color:#f0eadb; font-weight:600; margin: 0 0 14px;">Cât de greu a fost — pe ansamblu?</p>
+          <p class="body-text" style="color:var(--ink); font-weight:600; margin: 0 0 14px;">Cât de greu a fost — pe ansamblu?</p>
 
           <div style="display:flex; flex-direction:column; gap:10px;">
             <button class="onb-opt stack-row" onclick="submitPostRpe('ușor')" style="cursor:pointer; text-align:left; width:100%;">
               <span style="font-size:32px;">🟢</span>
               <div style="flex:1;">
-                <div class="body-text" style="font-weight:600; color:#f0eadb;">Ușor — mai aveam în rezervă</div>
-                <div class="small-text" style="color:#8b8470;">RPE ~5–6 · Coach urcă volumul mâine</div>
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Ușor — mai aveam în rezervă</div>
+                <div class="small-text" style="color:var(--ink-3);">RPE ~5–6 · Coach urcă volumul mâine</div>
               </div>
             </button>
             <button class="onb-opt stack-row" onclick="submitPostRpe('potrivit')" style="cursor:pointer; text-align:left; width:100%;">
               <span style="font-size:32px;">🟡</span>
               <div style="flex:1;">
-                <div class="body-text" style="font-weight:600; color:#f0eadb;">Potrivit — am terminat-o curat</div>
-                <div class="small-text" style="color:#8b8470;">RPE ~7–8 · Continuăm pe traiectorie</div>
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Potrivit — am terminat-o curat</div>
+                <div class="small-text" style="color:var(--ink-3);">RPE ~7–8 · Continuăm pe traiectorie</div>
               </div>
             </button>
             <button class="onb-opt stack-row" onclick="submitPostRpe('greu')" style="cursor:pointer; text-align:left; width:100%;">
               <span style="font-size:32px;">🔴</span>
               <div style="flex:1;">
-                <div class="body-text" style="font-weight:600; color:#f0eadb;">Greu — la limită spre final</div>
-                <div class="small-text" style="color:#8b8470;">RPE ~9–10 · Coach reduce intensitatea</div>
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Greu — la limită spre final</div>
+                <div class="small-text" style="color:var(--ink-3);">RPE ~9–10 · Coach reduce intensitatea</div>
               </div>
             </button>
           </div>
 
-          <p class="small-text" style="color:#8b8470; margin-top:22px; line-height:1.5; text-align:center;">Răspunsul tău e singurul input pe care nu-l putem deduce singuri. Mulțumim.</p>
+          <p class="small-text" style="color:var(--ink-3); margin-top:22px; line-height:1.5; text-align:center;">Răspunsul tău e singurul input pe care nu-l putem deduce singuri. Mulțumim.</p>
         </div>
       </div>
 
       <!-- PROGRES (body comp + nutriție DISPLAY only — V1 LOCKED) -->
       <div class="screen paper-bg" id="screen-progres" data-screen-label="Progres" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <h1 style="font-size:26px; font-weight:700; color:#f0eadb; margin:0 0 4px; letter-spacing:-0.02em;">Progres</h1>
-          <div class="coach-quote small-text" style="color:#b8b0a0; margin-bottom:16px;">Body composition · estimări calibrate.</div>
+          <h1 style="font-size:26px; font-weight:700; color:var(--ink); margin:0 0 4px; letter-spacing:-0.02em;">Progres</h1>
+          <div class="coach-quote small-text" style="color:var(--ink-2); margin-bottom:16px;">Body composition · estimări calibrate.</div>
 
           <!-- Status TDEE / fază -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:18px; padding:18px; margin-bottom:12px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
               <span style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background:rgba(232,200,150,0.12); color:#e8c896; border-radius:999px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em;"><span style="width:6px; height:6px; border-radius:50%; background:#c69a2c;"></span> Faza: Menținere</span>
-              <span class="small-text" style="color:#8b8470;">Săpt. 3 / mesociclu</span>
+              <span class="small-text" style="color:var(--ink-3);">Săpt. 3 / mesociclu</span>
             </div>
             <div>
-              <div class="small-text" style="color:#8b8470; text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">TDEE estimat</div>
-              <div style="font-size:26px; font-weight:700; color:#f0eadb; letter-spacing:-0.01em;">2 640 <span style="font-size:14px; color:#8b8470; font-weight:400;">kcal · țintă 2 600</span></div>
+              <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">TDEE estimat</div>
+              <div style="font-size:26px; font-weight:700; color:var(--ink); letter-spacing:-0.01em;">2 640 <span style="font-size:14px; color:var(--ink-3); font-weight:400;">kcal · țintă 2 600</span></div>
             </div>
-            <p class="small-text" style="color:#8b8470; margin-top:10px; line-height:1.5; font-style:italic;">Engine emite. Tu citești. Nu loghezi calorii.</p>
+            <p class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5; font-style:italic;">Engine emite. Tu citești. Nu loghezi calorii.</p>
           </div>
 
           <!-- Greutate snapshot 7z (NO drill, doar vizibil) -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:12px;">
             <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px;">
               <div>
-                <div class="small-text" style="color:#8b8470; text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Greutate (7 zile)</div>
-                <div style="font-size:22px; font-weight:700; color:#f0eadb; font-family:'Geist Mono', monospace; letter-spacing:-0.02em;">81.2 <span style="font-size:13px; color:#8b8470; font-weight:400;">kg</span></div>
+                <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Greutate (7 zile)</div>
+                <div style="font-size:22px; font-weight:700; color:var(--ink); font-family:'Geist Mono', monospace; letter-spacing:-0.02em;">81.2 <span style="font-size:13px; color:var(--ink-3); font-weight:400;">kg</span></div>
               </div>
               <div class="small-text" style="color:#6ee7c7; font-weight:500;">↓ 0.4 kg / 7z</div>
             </div>
@@ -1426,41 +1441,41 @@
               <div class="bar" style="height:60%;"></div>
               <div class="bar" style="height:58%;"></div>
             </div>
-            <p class="small-text" style="color:#8b8470; margin-top:8px;">Pentru analiză profundă → vezi <b>Istoric › Greutate &amp; BF</b></p>
+            <p class="small-text" style="color:var(--ink-3); margin-top:8px;">Pentru analiză profundă → vezi <b>Istoric › Greutate &amp; BF</b></p>
           </div>
 
           <!-- Greutate țintă -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:12px;">
-            <div class="small-text" style="color:#8b8470; text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Greutatea țintă</div>
+            <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Greutatea țintă</div>
             <div style="display:flex; align-items:baseline; gap:10px; margin-top:4px;">
-              <span style="font-size:20px; font-weight:700; color:#f0eadb;">80.5 kg</span>
-              <span class="small-text" style="color:#8b8470;">→ estimat <b>septembrie 2026</b></span>
+              <span style="font-size:20px; font-weight:700; color:var(--ink);">80.5 kg</span>
+              <span class="small-text" style="color:var(--ink-3);">→ estimat <b>septembrie 2026</b></span>
             </div>
           </div>
 
           <!-- Plan nutriție (text-based) -->
           <div style="background:rgba(232,200,150,0.08); border:1px solid rgba(232,200,150,0.25); border-radius:16px; padding:16px; margin-bottom:12px;">
             <div class="small-text" style="color:#e8c896; text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Plan nutriție · azi</div>
-            <p class="body-text coach-quote" style="color:#b8b0a0; margin:6px 0 0; line-height:1.5;">"Protein-forward, carbohidrați moderați. La cină: legume + sursă proteică ~30g. Hidratează bine."</p>
+            <p class="body-text coach-quote" style="color:var(--ink-2); margin:6px 0 0; line-height:1.5;">"Protein-forward, carbohidrați moderați. La cină: legume + sursă proteică ~30g. Hidratează bine."</p>
           </div>
 
           <!-- Auto toggle -->
           <div class="settings-stack" style="margin-top:4px;">
-            <button class="settings-row" onclick="showToast('Auto — drill setări')" style="border-bottom:none;"><i data-lucide="bot"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Auto</span><span class="small-text" style="color:#8b8470; font-weight:400;">Engine ajustează singur volumul</span></span><span class="sw on" style="margin-left:auto;"></span></button>
+            <button class="settings-row" onclick="showToast('Auto — drill setări')" style="border-bottom:none;"><i data-lucide="bot"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Auto</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Engine ajustează singur volumul</span></span><span class="sw on" style="margin-left:auto;"></span></button>
           </div>
 
           <!-- Alerte azi -->
           <div class="settings-section">Alerte azi</div>
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="alert-row warn"><i data-lucide="scale"></i><div style="flex:1;"><b style="color:#f0eadb; font-size:14px;">N-ai logat greutatea azi</b><div class="small-text" style="color:#b8b0a0;">Cântărește-te dimineața pentru estimare exactă.</div></div></div>
-            <div class="alert-row"><i data-lucide="trending-up"></i><div style="flex:1;"><b style="color:#f0eadb; font-size:14px;">Volum stabil 7 zile</b><div class="small-text" style="color:#b8b0a0;">Poți crește ușor progresia săptămâna viitoare.</div></div></div>
+            <div class="alert-row warn"><i data-lucide="scale"></i><div style="flex:1;"><b style="color:var(--ink); font-size:14px;">N-ai logat greutatea azi</b><div class="small-text" style="color:var(--ink-2);">Cântărește-te dimineața pentru estimare exactă.</div></div></div>
+            <div class="alert-row"><i data-lucide="trending-up"></i><div style="flex:1;"><b style="color:var(--ink); font-size:14px;">Volum stabil 7 zile</b><div class="small-text" style="color:var(--ink-2);">Poți crește ușor progresia săptămâna viitoare.</div></div></div>
           </div>
 
           <!-- Loghează greutate (singur input nutrition-related) -->
           <button class="btn-brick" onclick="showToast('Loghează greutate — drill input')" style="width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;">
             <i data-lucide="scale"></i> Loghează greutate
           </button>
-          <p class="small-text" style="color:#8b8470; margin-top:10px; text-align:center; line-height:1.5;">V1: nu loghezi kcal / proteine / apă. Engine inferază.</p>
+          <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center; line-height:1.5;">V1: nu loghezi kcal / proteine / apă. Engine inferază.</p>
         </div>
       </div>
 
@@ -1473,21 +1488,21 @@
       <!-- 8. COACH FEEDBACK / Push-back -->
       <div class="screen paper-bg" id="screen-coach" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <h1 style="font-size:24px; font-weight:700; color:#f0eadb; margin:0 0 4px; letter-spacing:-0.02em;">Antrenor</h1>
-          <div class="small-text" style="color:#8b8470; margin-bottom:18px;">Cum îți răspunde Andura când ceva nu se potrivește.</div>
+          <h1 style="font-size:24px; font-weight:700; color:var(--ink); margin:0 0 4px; letter-spacing:-0.02em;">Antrenor</h1>
+          <div class="small-text" style="color:var(--ink-3); margin-bottom:18px;">Cum îți răspunde Andura când ceva nu se potrivește.</div>
 
           <!-- Tier 1: silent toast -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:12px;">
             <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
               <div style="width:24px; height:24px; border-radius:50%; background:#6ee7c7; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">1</div>
               <div class="body-text" style="font-weight:600;">Notă în jurnal</div>
-              <span class="small-text" style="color:#8b8470; margin-left:auto;">tăcut</span>
+              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">tăcut</span>
             </div>
-            <div style="background:#0f1218; color:#f0eadb; border:1px solid rgba(212,165,116,0.15); padding:12px 14px; border-radius:10px; display:flex; align-items:center; gap:10px;">
+            <div style="background:#0f1218; color:var(--ink); border:1px solid rgba(212,165,116,0.15); padding:12px 14px; border-radius:10px; display:flex; align-items:center; gap:10px;">
               <i data-lucide="check-circle-2" style="color:#6ee7c7;"></i>
               <span class="body-text">Set înregistrat — 22.5 kg × 10</span>
             </div>
-            <div class="small-text" style="color:#8b8470; margin-top:10px; line-height:1.5;">Pentru tot ce e normal: confirmare scurtă, apoi dispare. Te lasă în flow.</div>
+            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Pentru tot ce e normal: confirmare scurtă, apoi dispare. Te lasă în flow.</div>
           </div>
 
           <!-- Tier 2: banner soft -->
@@ -1495,35 +1510,35 @@
             <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
               <div style="width:24px; height:24px; border-radius:50%; background:#e8c896; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">2</div>
               <div class="body-text" style="font-weight:600;">Sugestie ușoară</div>
-              <span class="small-text" style="color:#8b8470; margin-left:auto;">non-blocant</span>
+              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">non-blocant</span>
             </div>
             <div class="banner-warn">
               <div style="font-weight:600; margin-bottom:2px;">Ai sărit 3 din 4 sesiuni săptămâna asta.</div>
               <div class="coach-quote" style="font-size:14px;">Vrei să trecem la 2 zile pentru o săptămână? Mai târziu o creștem.</div>
               <div style="display:flex; gap:8px; margin-top:10px;">
-                <button style="padding:6px 12px; background:#0f1218; color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Da, schimbă</button>
-                <button style="padding:6px 12px; background:transparent; color:#b8b0a0; border:none; font-size:13px; font-weight:600; cursor:pointer;">Nu, las așa</button>
+                <button style="padding:6px 12px; background:#0f1218; color:var(--ink); border:1px solid rgba(212,165,116,0.15); border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Da, schimbă</button>
+                <button style="padding:6px 12px; background:transparent; color:var(--ink-2); border:none; font-size:13px; font-weight:600; cursor:pointer;">Nu, las așa</button>
               </div>
             </div>
-            <div class="small-text" style="color:#8b8470; margin-top:10px; line-height:1.5;">Dacă ceva merge prost, sugerăm — dar tu decizi.</div>
+            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Dacă ceva merge prost, sugerăm — dar tu decizi.</div>
           </div>
 
           <!-- Tier 3: blocking warning card -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px;">
             <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-              <div style="width:24px; height:24px; border-radius:50%; background:#d4a574; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">3</div>
+              <div style="width:24px; height:24px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">3</div>
               <div class="body-text" style="font-weight:600;">Limită prudentă</div>
-              <span class="small-text" style="color:#8b8470; margin-left:auto;">blocant</span>
+              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">blocant</span>
             </div>
-            <div style="border:1.5px solid #d4a574; background:rgba(239,79,107,0.08); padding:14px; border-radius:12px;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><i data-lucide="alert-triangle" style="color:#d4a574;"></i><span class="body-text" style="font-weight:600; color:#f0eadb;">Vrei să crești 12 kg dintr-o dată</span></div>
-              <div class="body-text" style="color:#b8b0a0; line-height:1.45;">Riscul de accidentare crește mult peste +5 kg per sesiune. Reducem la 87 kg sau preferi să continui?</div>
+            <div style="border:1.5px solid var(--accent); background:rgba(239,79,107,0.08); padding:14px; border-radius:12px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><i data-lucide="alert-triangle" style="color:var(--accent);"></i><span class="body-text" style="font-weight:600; color:var(--ink);">Vrei să crești 12 kg dintr-o dată</span></div>
+              <div class="body-text" style="color:var(--ink-2); line-height:1.45;">Riscul de accidentare crește mult peste +5 kg per sesiune. Reducem la 87 kg sau preferi să continui?</div>
               <div style="display:flex; gap:8px; margin-top:12px;">
                 <button class="btn-brick" style="flex:1; padding:10px;">Mergi la 87 kg</button>
                 <button class="btn-ghost" style="flex:1; padding:10px;">Continuu</button>
               </div>
             </div>
-            <div class="small-text" style="color:#8b8470; margin-top:10px; line-height:1.5;">Doar pentru siguranță — nu te oprim pentru preferințe.</div>
+            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Doar pentru siguranță — nu te oprim pentru preferințe.</div>
           </div>
 
           <button class="btn-ghost" onclick="showToast()" style="width:100%; margin-top:16px;">Vezi exemplul tier 1 →</button>
@@ -1533,14 +1548,14 @@
       <!-- 9. SETTINGS / CONT — main page -->
       <div class="screen paper-bg" id="screen-settings" data-screen-label="Cont" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <h1 style="font-size:24px; font-weight:700; color:#f0eadb; margin:0 0 18px; letter-spacing:-0.02em;">Cont</h1>
+          <h1 style="font-size:24px; font-weight:700; color:var(--ink); margin:0 0 18px; letter-spacing:-0.02em;">Cont</h1>
 
           <!-- Account card (header) -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:6px; display:flex; align-items:center; gap:14px;">
-            <div style="width:52px; height:52px; border-radius:50%; background:#d4a574; color:white; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:600;">D</div>
+            <div style="width:52px; height:52px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:600;">D</div>
             <div style="flex:1; min-width:0;">
-              <div class="body-text" style="font-weight:600; color:#f0eadb;">Daniel</div>
-              <div class="small-text" style="color:#8b8470; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b5b0bfb8b4bd91b0bfb5a4a3b0ffa3be">[email&#160;protected]</a></div>
+              <div class="body-text" style="font-weight:600; color:var(--ink);">Daniel</div>
+              <div class="small-text" style="color:var(--ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b5b0bfb8b4bd91b0bfb5a4a3b0ffa3be">[email&#160;protected]</a></div>
             </div>
           </div>
 
@@ -1568,9 +1583,9 @@
           </div>
 
           <!-- Section: Deconectare/Ștergere (single drill-down) -->
-          <div class="settings-section" style="color:#d4a574;">Deconectare/Ștergere</div>
+          <div class="settings-section" style="color:var(--accent);">Deconectare/Ștergere</div>
           <div class="settings-stack" style="border-color:#f0d5cf;">
-            <button class="settings-row" onclick="goto('settings-danger')" style="color:#d4a574;"><i data-lucide="alert-triangle" style="color:#d4a574;"></i><span>Deconectare/Ștergere</span><i data-lucide="chevron-right" class="ml-auto" style="color:#d4a574;"></i></button>
+            <button class="settings-row" onclick="goto('settings-danger')" style="color:var(--accent);"><i data-lucide="alert-triangle" style="color:var(--accent);"></i><span>Deconectare/Ștergere</span><i data-lucide="chevron-right" class="ml-auto" style="color:var(--accent);"></i></button>
           </div>
 
           <!-- Footer: Suport / Despre / FAQ -->
@@ -1581,7 +1596,7 @@
             <button class="settings-row" onclick="goto('settings-faq')" style="border-bottom:none;"><i data-lucide="help-circle"></i><span>FAQ</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
-          <div class="small-text" style="color:#8b8470; text-align:center; margin-top:22px; line-height:1.5;">
+          <div class="small-text" style="color:var(--ink-3); text-align:center; margin-top:22px; line-height:1.5;">
             Andura v1.0.0
           </div>
         </div>
@@ -1593,7 +1608,7 @@
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
 
           <div style="display:flex; flex-direction:column; align-items:center; gap:10px; padding: 14px 0 22px;">
-            <div style="width:80px; height:80px; border-radius:50%; background:#d4a574; color:white; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:600;">D</div>
+            <div style="width:80px; height:80px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:600;">D</div>
             <button class="link-btn">Schimbă inițiala</button>
           </div>
 
@@ -1608,17 +1623,17 @@
           <div class="settings-section">Obiective active</div>
           <div class="settings-stack">
             <div class="goal-row">
-              <i data-lucide="target" style="color:#d4a574;"></i>
+              <i data-lucide="target" style="color:var(--accent);"></i>
               <div style="flex:1;">
-                <div class="body-text" style="font-weight:600; color:#f0eadb;">Forță · piept &amp; spate</div>
-                <div class="small-text" style="color:#8b8470;">3× pe săptămână · sesiuni de 50 min</div>
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Forță · piept &amp; spate</div>
+                <div class="small-text" style="color:var(--ink-3);">3× pe săptămână · sesiuni de 50 min</div>
               </div>
             </div>
             <div class="goal-row" style="border-bottom:none;">
               <i data-lucide="trending-up"></i>
               <div style="flex:1;">
-                <div class="body-text" style="font-weight:600; color:#f0eadb;">+5 kg la împins din culcat</div>
-                <div class="small-text" style="color:#8b8470;">Țintă · până în iulie</div>
+                <div class="body-text" style="font-weight:600; color:var(--ink);">+5 kg la împins din culcat</div>
+                <div class="small-text" style="color:var(--ink-3);">Țintă · până în iulie</div>
               </div>
             </div>
           </div>
@@ -1632,19 +1647,19 @@
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Notificări</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
 
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.5;">Alegi când să primești îmboldiri. Nimic intruziv.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.5;">Alegi când să primești îmboldiri. Nimic intruziv.</p>
 
           <div class="settings-section">Antrenament</div>
           <div class="settings-stack">
-            <label class="toggle-row"><span><b>Reamintire sesiune</b><span class="small-text" style="color:#8b8470; display:block;">Cu 30 min înainte de fereastra ta</span></span><span class="sw on"></span></label>
-            <label class="toggle-row"><span><b>Pauză între seturi</b><span class="small-text" style="color:#8b8470; display:block;">Sunet scurt când expiră</span></span><span class="sw on"></span></label>
-            <label class="toggle-row" style="border-bottom:none;"><span><b>Sărit ședință</b><span class="small-text" style="color:#8b8470; display:block;">Întreabă cum te simți</span></span><span class="sw"></span></label>
+            <label class="toggle-row"><span><b>Reamintire sesiune</b><span class="small-text" style="color:var(--ink-3); display:block;">Cu 30 min înainte de fereastra ta</span></span><span class="sw on"></span></label>
+            <label class="toggle-row"><span><b>Pauză între seturi</b><span class="small-text" style="color:var(--ink-3); display:block;">Sunet scurt când expiră</span></span><span class="sw on"></span></label>
+            <label class="toggle-row" style="border-bottom:none;"><span><b>Sărit ședință</b><span class="small-text" style="color:var(--ink-3); display:block;">Întreabă cum te simți</span></span><span class="sw"></span></label>
           </div>
 
           <div class="settings-section">Coaching</div>
           <div class="settings-stack">
-            <label class="toggle-row"><span><b>Mesaj zilnic de la antrenor</b><span class="small-text" style="color:#8b8470; display:block;">07:30 · text scurt</span></span><span class="sw on"></span></label>
-            <label class="toggle-row" style="border-bottom:none;"><span><b>Sumar săptămânal</b><span class="small-text" style="color:#8b8470; display:block;">Duminică seara</span></span><span class="sw on"></span></label>
+            <label class="toggle-row"><span><b>Mesaj zilnic de la antrenor</b><span class="small-text" style="color:var(--ink-3); display:block;">07:30 · text scurt</span></span><span class="sw on"></span></label>
+            <label class="toggle-row" style="border-bottom:none;"><span><b>Sumar săptămânal</b><span class="small-text" style="color:var(--ink-3); display:block;">Duminică seara</span></span><span class="sw on"></span></label>
           </div>
 
           <div class="settings-section">Ore de liniște</div>
@@ -1659,17 +1674,17 @@
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Abonament</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
           <div style="width:88px; height:88px; border-radius:50%; background:rgba(239,79,107,0.08); display:flex; align-items:center; justify-content:center; margin-bottom:18px;">
-            <i data-lucide="sparkles" style="color:#d4a574; width:36px; height:36px;"></i>
+            <i data-lucide="sparkles" style="color:var(--accent); width:36px; height:36px;"></i>
           </div>
-          <h2 style="font-size:22px; font-weight:700; color:#f0eadb; margin:0 0 8px; letter-spacing:-0.02em;">În curând</h2>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 22px; line-height:1.55; max-width:280px;">
+          <h2 style="font-size:22px; font-weight:700; color:var(--ink); margin:0 0 8px; letter-spacing:-0.02em;">În curând</h2>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 22px; line-height:1.55; max-width:280px;">
             Lucrăm la planuri de abonament transparente. Până atunci, totul e gratuit pentru utilizatorii beta.
           </p>
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px 16px; width:100%; display:flex; align-items:center; gap:12px; text-align:left;">
-            <i data-lucide="gift" style="color:#d4a574;"></i>
+            <i data-lucide="gift" style="color:var(--accent);"></i>
             <div style="flex:1;">
-              <div class="body-text" style="font-weight:600; color:#f0eadb;">Beta gratuit</div>
-              <div class="small-text" style="color:#8b8470;">Acces complet · fără card</div>
+              <div class="body-text" style="font-weight:600; color:var(--ink);">Beta gratuit</div>
+              <div class="small-text" style="color:var(--ink-3);">Acces complet · fără card</div>
             </div>
           </div>
           <button class="link-btn" style="margin-top:20px;" onclick="showToast('Te anunțăm când e gata')">Anunță-mă când e gata</button>
@@ -1680,10 +1695,10 @@
       <div class="screen paper-bg sub-page" id="screen-settings-appearance" data-screen-label="Cont › Aspect" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Aspect</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.5;">Cum arată Andura pentru tine.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.5;">Cum arată Andura pentru tine.</p>
 
           <div class="settings-stack">
-            <button class="settings-row" onclick="goto('settings-themes')"><i data-lucide="swatch-book"></i><span>Teme</span><span class="small-text" style="color:#8b8470; margin-left:auto; margin-right:8px;">Living Body</span><i data-lucide="chevron-right"></i></button>
+            <button class="settings-row" onclick="goto('settings-themes')"><i data-lucide="swatch-book"></i><span>Teme</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">Living Body</span><i data-lucide="chevron-right"></i></button>
           </div>
         </div>
       </div>
@@ -1692,7 +1707,7 @@
       <div class="screen paper-bg sub-page" id="screen-settings-themes" data-screen-label="Cont › Aspect › Teme" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Teme</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.5;">Alege paleta. Se aplică instant.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.5;">Alege paleta. Se aplică instant.</p>
 
           <div class="theme-grid">
             <button class="theme-card" data-theme="clasic" onclick="pickTheme(this, 'clasic')">
@@ -1702,7 +1717,7 @@
               <div class="theme-check"><i data-lucide="check"></i></div>
             </button>
             <button class="theme-card selected" data-theme="living-body" onclick="pickTheme(this, 'living-body')">
-              <div class="theme-swatch" style="background:linear-gradient(135deg, #07090f 0%, #07090f 50%, #d4a574 50%, #d4a574 100%);"></div>
+              <div class="theme-swatch" style="background:linear-gradient(135deg, var(--bg-2) 0%, var(--bg-2) 50%, var(--accent) 50%, var(--accent) 100%);"></div>
               <div class="theme-name">🌑 Andura Living Body</div>
               <div class="theme-meta">Navy &amp; auriu cald</div>
               <div class="theme-check"><i data-lucide="check"></i></div>
@@ -1721,7 +1736,7 @@
             </button>
           </div>
 
-          <p class="small-text" style="color:#8b8470; text-align:center; margin-top:20px; line-height:1.5;">4 teme disponibile.</p>
+          <p class="small-text" style="color:var(--ink-3); text-align:center; margin-top:20px; line-height:1.5;">4 teme disponibile.</p>
         </div>
       </div>
 
@@ -1729,7 +1744,7 @@
       <div class="screen paper-bg sub-page" id="screen-settings-privacy" data-screen-label="Cont › Confidențialitate" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Politica de confidențialitate</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="small-text" style="color:#8b8470; margin: 4px 0 16px;">Ultima actualizare: 1 mai 2026</p>
+          <p class="small-text" style="color:var(--ink-3); margin: 4px 0 16px;">Ultima actualizare: 1 mai 2026</p>
 
           <h3 class="legal-h">Datele pe care le colectăm</h3>
           <p class="legal-p">Numele și emailul tău, datele de antrenament (greutăți, repetări, durată), starea de energie pe care o raportezi tu și măsurătorile corporale dacă alegi să le adaugi.</p>
@@ -1752,7 +1767,7 @@
       <div class="screen paper-bg sub-page" id="screen-settings-terms" data-screen-label="Cont › Termeni" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Termeni și condiții</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="small-text" style="color:#8b8470; margin: 4px 0 16px;">Versiunea 1.0 · în vigoare din 1 mai 2026</p>
+          <p class="small-text" style="color:var(--ink-3); margin: 4px 0 16px;">Versiunea 1.0 · în vigoare din 1 mai 2026</p>
 
           <h3 class="legal-h">Ce e Andura</h3>
           <p class="legal-p">Un instrument de coaching pentru antrenamentele tale de forță. Te ajută să planifici și să urmărești sesiuni. Nu înlocuiește consultul medical.</p>
@@ -1775,35 +1790,35 @@
       <div class="screen paper-bg sub-page" id="screen-settings-prefs" data-screen-label="Cont › Setări" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Setări</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.5;">Opțiuni avansate pentru experiența ta cu Andura.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.5;">Opțiuni avansate pentru experiența ta cu Andura.</p>
 
           <div class="settings-stack">
-            <button class="settings-row" onclick="goto('confirm-reset-coach')"><i data-lucide="refresh-ccw"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Resetează coach</span><span class="small-text" style="color:#8b8470; font-weight:400;">Repornește învățarea AI de la zero</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="goto('confirm-redo-onboarding')"><i data-lucide="rotate-ccw"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Refă onboarding</span><span class="small-text" style="color:#8b8470; font-weight:400;">Reia configurarea inițială</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="goto('confirm-schimba-faza')" style="border-bottom:none;"><i data-lucide="git-branch"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Schimbă faza manual</span><span class="small-text" style="color:#8b8470; font-weight:400;">Resetează unele calibrări</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('confirm-reset-coach')"><i data-lucide="refresh-ccw"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Resetează coach</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Repornește învățarea AI de la zero</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('confirm-redo-onboarding')"><i data-lucide="rotate-ccw"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Refă onboarding</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Reia configurarea inițială</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('confirm-schimba-faza')" style="border-bottom:none;"><i data-lucide="git-branch"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Schimbă faza manual</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Resetează unele calibrări</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
         </div>
       </div>
 
       <!-- 9.X DECONECTARE/ȘTERGERE (pagină dedicată) -->
       <div class="screen paper-bg sub-page" id="screen-settings-danger" data-screen-label="Cont › Deconectare/Ștergere" style="height:100%; flex-direction:column;">
-        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:#d4a574;">Deconectare/Ștergere</h2></div>
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:var(--accent);">Deconectare/Ștergere</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
 
           <div style="background:rgba(239,79,107,0.08); border:1px solid #f0d5cf; border-radius:14px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:18px;">
-            <i data-lucide="alert-triangle" style="color:#d4a574; flex-shrink:0; margin-top:2px;"></i>
-            <p class="body-text" style="color:#b8b0a0; line-height:1.55; margin:0;">Acțiunile de mai jos afectează contul tău. Citește cu atenție pe pagina de confirmare înainte să le execuți.</p>
+            <i data-lucide="alert-triangle" style="color:var(--accent); flex-shrink:0; margin-top:2px;"></i>
+            <p class="body-text" style="color:var(--ink-2); line-height:1.55; margin:0;">Acțiunile de mai jos afectează contul tău. Citește cu atenție pe pagina de confirmare înainte să le execuți.</p>
           </div>
 
           <div class="settings-stack" style="border-color:#f0d5cf;">
-            <button class="settings-row" onclick="goto('confirm-logout')" style="color:#b8b0a0;"><i data-lucide="log-out"></i><span>Ieși din cont</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="goto('confirm-delete')" style="color:#d4a574; border-bottom:none;">
-              <i data-lucide="trash-2" style="color:#d4a574;"></i>
+            <button class="settings-row" onclick="goto('confirm-logout')" style="color:var(--ink-2);"><i data-lucide="log-out"></i><span>Ieși din cont</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('confirm-delete')" style="color:var(--accent); border-bottom:none;">
+              <i data-lucide="trash-2" style="color:var(--accent);"></i>
               <span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
                 <span>Șterge contul</span>
-                <span class="small-text" style="color:#8b8470; font-weight:400;">30 zile grație pentru recuperare</span>
+                <span class="small-text" style="color:var(--ink-3); font-weight:400;">30 zile grație pentru recuperare</span>
               </span>
-              <i data-lucide="chevron-right" class="ml-auto" style="color:#d4a574;"></i>
+              <i data-lucide="chevron-right" class="ml-auto" style="color:var(--accent);"></i>
             </button>
           </div>
         </div>
@@ -1848,22 +1863,22 @@
 
           <!-- Range selector (text-toggle, NU dropdown) -->
           <div style="display:flex; gap:6px; padding:4px; background:rgba(232,200,150,0.12); border-radius:12px; margin-bottom:16px;">
-            <button class="range-tab" data-range="30" onclick="setRange(30)" style="flex:1; padding:8px 0; border:none; background:rgba(255,255,255,0.025); border-radius:9px; font-weight:600; font-size:13px; color:#f0eadb; cursor:pointer;">30 zile</button>
-            <button class="range-tab" data-range="60" onclick="setRange(60)" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:#8b8470; cursor:pointer;">60</button>
-            <button class="range-tab" data-range="90" onclick="setRange(90)" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:#8b8470; cursor:pointer;">90</button>
-            <button class="range-tab" data-range="all" onclick="setRange('all')" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:#8b8470; cursor:pointer;">Tot</button>
+            <button class="range-tab" data-range="30" onclick="setRange(30)" style="flex:1; padding:8px 0; border:none; background:rgba(255,255,255,0.025); border-radius:9px; font-weight:600; font-size:13px; color:var(--ink); cursor:pointer;">30 zile</button>
+            <button class="range-tab" data-range="60" onclick="setRange(60)" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:var(--ink-3); cursor:pointer;">60</button>
+            <button class="range-tab" data-range="90" onclick="setRange(90)" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:var(--ink-3); cursor:pointer;">90</button>
+            <button class="range-tab" data-range="all" onclick="setRange('all')" style="flex:1; padding:8px 0; border:none; background:transparent; border-radius:9px; font-weight:500; font-size:13px; color:var(--ink-3); cursor:pointer;">Tot</button>
           </div>
 
           <!-- KPI row -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
             <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:#8b8470; text-transform:uppercase; letter-spacing:0.06em; font-weight:600;">Greutate</div>
-              <div style="font-size:22px; font-weight:700; color:#f0eadb; margin-top:2px;">82.4 <span style="font-size:13px; color:#8b8470; font-weight:400;">kg</span></div>
+              <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em; font-weight:600;">Greutate</div>
+              <div style="font-size:22px; font-weight:700; color:var(--ink); margin-top:2px;">82.4 <span style="font-size:13px; color:var(--ink-3); font-weight:400;">kg</span></div>
               <div class="small-text" style="color:#5a7d4f; margin-top:2px;">−1.6 kg / 30z</div>
             </div>
             <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:#8b8470; text-transform:uppercase; letter-spacing:0.06em; font-weight:600;">BF estimat</div>
-              <div style="font-size:22px; font-weight:700; color:#f0eadb; margin-top:2px;">17.2 <span style="font-size:13px; color:#8b8470; font-weight:400;">%</span></div>
+              <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em; font-weight:600;">BF estimat</div>
+              <div style="font-size:22px; font-weight:700; color:var(--ink); margin-top:2px;">17.2 <span style="font-size:13px; color:var(--ink-3); font-weight:400;">%</span></div>
               <div class="small-text" style="color:#5a7d4f; margin-top:2px;">−0.8 % / 30z</div>
             </div>
           </div>
@@ -1871,8 +1886,8 @@
           <!-- Chart -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:14px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-              <span class="body-text" style="font-weight:600; color:#f0eadb;">Trend</span>
-              <span class="small-text" style="color:#8b8470;" id="weight-range-label">ultimele 30 zile</span>
+              <span class="body-text" style="font-weight:600; color:var(--ink);">Trend</span>
+              <span class="small-text" style="color:var(--ink-3);" id="weight-range-label">ultimele 30 zile</span>
             </div>
             <svg viewBox="0 0 320 140" style="width:100%; height:auto; display:block;">
               <line x1="0" y1="35" x2="320" y2="35" stroke="rgba(212,165,116,0.1)" stroke-width="1"/>
@@ -1884,32 +1899,32 @@
                 points="10,72 38,74 66,76 94,80 122,82 150,86 178,88 206,90 234,94 262,98 290,102 310,104"/>
             </svg>
             <div style="display:flex; gap:14px; margin-top:10px; font-size:12px;">
-              <span style="display:inline-flex; align-items:center; gap:6px; color:#b8b0a0;"><span style="width:10px; height:2px; background:#d4a574;"></span> Greutate (kg)</span>
-              <span style="display:inline-flex; align-items:center; gap:6px; color:#b8b0a0;"><span style="width:10px; height:2px; background:#5a8fbf;"></span> BF (%)</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; color:var(--ink-2);"><span style="width:10px; height:2px; background:var(--accent);"></span> Greutate (kg)</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; color:var(--ink-2);"><span style="width:10px; height:2px; background:#5a8fbf;"></span> BF (%)</span>
             </div>
           </div>
 
           <!-- Photo progress -->
           <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:16px; margin-bottom:14px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-              <span class="body-text" style="font-weight:600; color:#f0eadb;">Photo progress</span>
-              <button class="small-text" style="background:none; border:none; color:#d4a574; font-weight:600; cursor:pointer;" onclick="showToast('Adaugă fotografie')">+ Adaugă</button>
+              <span class="body-text" style="font-weight:600; color:var(--ink);">Photo progress</span>
+              <button class="small-text" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer;" onclick="showToast('Adaugă fotografie')">+ Adaugă</button>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(212,165,116,0.18),rgba(212,165,116,0.08)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:#f0eadb; font-size:11px; font-weight:600;">7 apr</div>
-              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(232,200,150,0.18),rgba(232,200,150,0.08)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:#f0eadb; font-size:11px; font-weight:600;">21 apr</div>
-              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(255,107,138,0.15),rgba(255,107,138,0.06)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:#f0eadb; font-size:11px; font-weight:600;">5 mai</div>
+              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(212,165,116,0.18),rgba(212,165,116,0.08)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:var(--ink); font-size:11px; font-weight:600;">7 apr</div>
+              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(232,200,150,0.18),rgba(232,200,150,0.08)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:var(--ink); font-size:11px; font-weight:600;">21 apr</div>
+              <div style="aspect-ratio:3/4; background:linear-gradient(135deg,rgba(255,107,138,0.15),rgba(255,107,138,0.06)); border-radius:10px; display:flex; align-items:flex-end; padding:8px; color:var(--ink); font-size:11px; font-weight:600;">5 mai</div>
             </div>
-            <p class="small-text" style="color:#8b8470; margin-top:10px; line-height:1.5; font-style:italic;">Fotografii la 2 săptămâni · păstrate doar pe device-ul tău.</p>
+            <p class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5; font-style:italic;">Fotografii la 2 săptămâni · păstrate doar pe device-ul tău.</p>
           </div>
 
           <!-- Lista loguri recente -->
           <div class="settings-section" style="margin-top:6px;">Loguri recente</div>
           <div class="settings-stack">
-            <div class="settings-row" style="justify-content:space-between;"><span style="color:#f0eadb; font-weight:500;">5 mai</span><span class="small-text" style="color:#8b8470;">82.4 kg · BF 17.2%</span></div>
-            <div class="settings-row" style="justify-content:space-between;"><span style="color:#f0eadb; font-weight:500;">28 apr</span><span class="small-text" style="color:#8b8470;">82.9 kg · BF 17.5%</span></div>
-            <div class="settings-row" style="justify-content:space-between;"><span style="color:#f0eadb; font-weight:500;">21 apr</span><span class="small-text" style="color:#8b8470;">83.4 kg · BF 17.8%</span></div>
-            <div class="settings-row" style="justify-content:space-between; border-bottom:none;"><span style="color:#f0eadb; font-weight:500;">14 apr</span><span class="small-text" style="color:#8b8470;">84.0 kg · BF 18.0%</span></div>
+            <div class="settings-row" style="justify-content:space-between;"><span style="color:var(--ink); font-weight:500;">5 mai</span><span class="small-text" style="color:var(--ink-3);">82.4 kg · BF 17.2%</span></div>
+            <div class="settings-row" style="justify-content:space-between;"><span style="color:var(--ink); font-weight:500;">28 apr</span><span class="small-text" style="color:var(--ink-3);">82.9 kg · BF 17.5%</span></div>
+            <div class="settings-row" style="justify-content:space-between;"><span style="color:var(--ink); font-weight:500;">21 apr</span><span class="small-text" style="color:var(--ink-3);">83.4 kg · BF 17.8%</span></div>
+            <div class="settings-row" style="justify-content:space-between; border-bottom:none;"><span style="color:var(--ink); font-weight:500;">14 apr</span><span class="small-text" style="color:var(--ink-3);">84.0 kg · BF 18.0%</span></div>
           </div>
 
         </div>
@@ -1947,7 +1962,7 @@
 
       <!-- Confirm: Delete account -->
       <div class="screen paper-bg sub-page" id="screen-confirm-delete" data-screen-label="Confirm › Ștergere" style="height:100%; flex-direction:column;">
-        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:#d4a574;">Șterge contul</h2></div>
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2 style="color:var(--accent);">Șterge contul</h2></div>
         <div class="phone-scroll confirm-page" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
           <div class="confirm-icon danger"><i data-lucide="trash-2"></i></div>
           <h3 class="confirm-title">Atenție</h3>
@@ -1966,10 +1981,10 @@
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Descarcă datele tale</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
           <div style="width:64px; height:64px; border-radius:16px; background:rgba(239,79,107,0.08); display:flex; align-items:center; justify-content:center; margin: 8px 0 16px;">
-            <i data-lucide="download" style="color:#d4a574; width:28px; height:28px;"></i>
+            <i data-lucide="download" style="color:var(--accent); width:28px; height:28px;"></i>
           </div>
-          <h3 style="font-size:18px; font-weight:700; color:#f0eadb; margin:0 0 8px; letter-spacing:-0.01em;">Tot ce avem despre tine, într-un fișier</h3>
-          <p class="body-text" style="color:#b8b0a0; margin:0 0 18px; line-height:1.55;">Generăm un fișier JSON cu profilul tău, antrenamentele, măsurătorile și mesajele cu antrenorul. Îl primești pe email în câteva minute.</p>
+          <h3 style="font-size:18px; font-weight:700; color:var(--ink); margin:0 0 8px; letter-spacing:-0.01em;">Tot ce avem despre tine, într-un fișier</h3>
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 18px; line-height:1.55;">Generăm un fișier JSON cu profilul tău, antrenamentele, măsurătorile și mesajele cu antrenorul. Îl primești pe email în câteva minute.</p>
 
           <div class="settings-stack">
             <div class="info-row"><span class="info-label">Format</span><span class="info-val">JSON</span></div>
@@ -1978,7 +1993,7 @@
           </div>
 
           <button class="btn-brick" style="width:100%; margin-top:18px;" onclick="runConfirm('Pregătim fișierul. Îți trimitem emailul în 5–10 min.')">Generează și trimite</button>
-          <p class="small-text" style="color:#8b8470; text-align:center; margin-top:14px; line-height:1.5;">Linkul de descărcare expiră în 24 de ore.</p>
+          <p class="small-text" style="color:var(--ink-3); text-align:center; margin-top:14px; line-height:1.5;">Linkul de descărcare expiră în 24 de ore.</p>
         </div>
       </div>
 
@@ -1986,12 +2001,12 @@
       <div class="screen paper-bg sub-page" id="screen-settings-support" data-screen-label="Cont › Suport" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Suport</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.55;">Răspundem la mesaje în maxim 24 de ore lucrătoare. Suntem o echipă mică, dar atenți.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.55;">Răspundem la mesaje în maxim 24 de ore lucrătoare. Suntem o echipă mică, dar atenți.</p>
 
           <div class="settings-section">Contactează-ne</div>
           <div class="settings-stack">
-            <button class="settings-row" onclick="showToast('Deschidem clientul de email')"><i data-lucide="mail"></i><span style="display:flex; flex-direction:column; align-items:flex-start;"><span>Email</span><span class="small-text" style="color:#8b8470;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8af9ebe6fffecaebe4eefff8eba4f8e5">[email&#160;protected]</a></span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Deschidem WhatsApp')" style="border-bottom:none;"><i data-lucide="message-square"></i><span style="display:flex; flex-direction:column; align-items:flex-start;"><span>WhatsApp</span><span class="small-text" style="color:#8b8470;">L–V · 09:00–18:00</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="showToast('Deschidem clientul de email')"><i data-lucide="mail"></i><span style="display:flex; flex-direction:column; align-items:flex-start;"><span>Email</span><span class="small-text" style="color:var(--ink-3);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8af9ebe6fffecaebe4eefff8eba4f8e5">[email&#160;protected]</a></span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="showToast('Deschidem WhatsApp')" style="border-bottom:none;"><i data-lucide="message-square"></i><span style="display:flex; flex-direction:column; align-items:flex-start;"><span>WhatsApp</span><span class="small-text" style="color:var(--ink-3);">L–V · 09:00–18:00</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
           <div class="settings-section">Întrebări frecvente</div>
@@ -2002,7 +2017,7 @@
             <button class="settings-row" style="border-bottom:none;"><i data-lucide="help-circle"></i><span>Cum recuperez parola?</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
-          <p class="small-text" style="color:#8b8470; text-align:center; margin-top:20px; line-height:1.5;">Andura v1.0.0</p>
+          <p class="small-text" style="color:var(--ink-3); text-align:center; margin-top:20px; line-height:1.5;">Andura v1.0.0</p>
         </div>
       </div>
 
@@ -2010,11 +2025,11 @@
       <div class="screen paper-bg sub-page" id="screen-settings-about" data-screen-label="Cont › Despre" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Despre Andura</h2></div>
         <div class="phone-scroll" style="padding: 4px 24px 24px; overflow-y:auto; flex:1; text-align:center;">
-          <div style="width:72px; height:72px; border-radius:20px; background:#0f1218; color:#f0eadb; border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:700; margin: 16px auto 18px; letter-spacing:-0.04em;">A</div>
-          <h3 style="font-family:'Lora', serif; font-size:24px; font-weight:600; color:#f0eadb; margin: 0 0 14px; line-height:1.3; letter-spacing:-0.01em;">Antrenament cu cap. Făcut în România.</h3>
-          <p class="body-text" style="color:#b8b0a0; line-height:1.65; margin: 0 0 22px; max-width:300px; margin-left:auto; margin-right:auto;">Andura te ajută să te antrenezi cu intencție — nu mai mult, ci mai bine. Coach-ul învață din feedback-ul tău și adaptează fiecare sesiune.</p>
+          <div style="width:72px; height:72px; border-radius:20px; background:#0f1218; color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:700; margin: 16px auto 18px; letter-spacing:-0.04em;">A</div>
+          <h3 style="font-family:'Lora', serif; font-size:24px; font-weight:600; color:var(--ink); margin: 0 0 14px; line-height:1.3; letter-spacing:-0.01em;">Antrenament cu cap. Făcut în România.</h3>
+          <p class="body-text" style="color:var(--ink-2); line-height:1.65; margin: 0 0 22px; max-width:300px; margin-left:auto; margin-right:auto;">Andura te ajută să te antrenezi cu intencție — nu mai mult, ci mai bine. Coach-ul învață din feedback-ul tău și adaptează fiecare sesiune.</p>
 
-          <a href="https://andura.app" style="display:inline-flex; align-items:center; gap:6px; color:#d4a574; font-weight:500; text-decoration:none; margin-bottom:24px;" onclick="event.preventDefault(); showToast('andura.app');"><i data-lucide="globe" style="width:16px; height:16px;"></i> andura.app</a>
+          <a href="https://andura.app" style="display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-weight:500; text-decoration:none; margin-bottom:24px;" onclick="event.preventDefault(); showToast('andura.app');"><i data-lucide="globe" style="width:16px; height:16px;"></i> andura.app</a>
 
           <div class="settings-stack" style="text-align:left;">
             <div class="info-row"><span class="info-label">Versiune</span><span class="info-val">v1.0.0</span></div>
@@ -2022,7 +2037,7 @@
             <div class="info-row" style="border-bottom:none;"><span class="info-label">Echipa</span><span class="info-val">Daniel &amp; co.</span></div>
           </div>
 
-          <p class="small-text" style="color:#8b8470; margin-top:24px; line-height:1.6;">Cu mulțumiri tuturor utilizatorilor beta care au ajutat la şlefuirea aplicației.</p>
+          <p class="small-text" style="color:var(--ink-3); margin-top:24px; line-height:1.6;">Cu mulțumiri tuturor utilizatorilor beta care au ajutat la şlefuirea aplicației.</p>
         </div>
       </div>
 
@@ -2030,7 +2045,7 @@
       <div class="screen paper-bg sub-page" id="screen-settings-faq" data-screen-label="Cont › FAQ" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>FAQ</h2></div>
         <div class="phone-scroll" style="padding: 4px 20px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:#b8b0a0; margin: 4px 0 18px; line-height:1.5;">Răspunsuri scurte la întrebările pe care le primim cel mai des.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 18px; line-height:1.5;">Răspunsuri scurte la întrebările pe care le primim cel mai des.</p>
 
           <div class="settings-section">Antrenament</div>
           <div class="settings-stack">
@@ -2051,7 +2066,7 @@
             <button class="settings-row" onclick="showToast('Detalii în curs de scriere')" style="border-bottom:none;"><i data-lucide="help-circle"></i><span>De ce nu primesc notificări?</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
-          <p class="small-text" style="color:#8b8470; text-align:center; margin-top:22px; line-height:1.5;">Nu găsești răspuns? Scrie-ne din <button class="link-btn" style="padding:0; display:inline;" onclick="goto('settings-support')">Suport</button>.</p>
+          <p class="small-text" style="color:var(--ink-3); text-align:center; margin-top:22px; line-height:1.5;">Nu găsești răspuns? Scrie-ne din <button class="link-btn" style="padding:0; display:inline;" onclick="goto('settings-support')">Suport</button>.</p>
         </div>
       </div>
     </div>
@@ -2061,7 +2076,7 @@
       <button class="nav-tab tab-active" data-tab="antrenor" onclick="goto('antrenor')">
         <i data-lucide="dumbbell"></i>
         <span>Antrenor</span>
-        <div class="tab-dot" style="width:4px; height:4px; border-radius:50%; background:#d4a574; position:absolute; bottom:8px;"></div>
+        <div class="tab-dot" style="width:4px; height:4px; border-radius:50%; background:var(--accent); position:absolute; bottom:8px;"></div>
       </button>
       <button class="nav-tab" data-tab="progres" onclick="goto('progres')">
         <i data-lucide="activity"></i>
@@ -2085,15 +2100,15 @@
         <h3 class="confirm-title">Înainte să mergem mai departe</h3>
         <p class="confirm-body">Consultă medicul de familie sau un specialist în medicină sportivă înainte să începi un program nou de antrenament.</p>
         <p class="confirm-body" style="margin-bottom:8px;">Mai ales dacă ai vreuna din situațiile de mai jos:</p>
-        <ul style="padding-left:18px; margin:0 0 18px; color:#b8b0a0; line-height:1.75; max-width:320px;" class="body-text">
+        <ul style="padding-left:18px; margin:0 0 18px; color:var(--ink-2); line-height:1.75; max-width:320px;" class="body-text">
           <li>probleme cardiace sau tensiune ridicată</li>
           <li>dureri vechi de spate, genunchi sau umeri</li>
           <li>operație sau accidentare în ultimele 12 luni</li>
           <li>sarcină sau perioadă post-natală</li>
         </ul>
         <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:12px; cursor:pointer; max-width:340px; margin: 0 auto 18px;">
-          <input type="checkbox" id="medical-check" onchange="document.getElementById('medical-cta').disabled = !this.checked; document.getElementById('medical-cta').style.opacity = this.checked ? '1' : '0.4';" style="margin-top:3px; accent-color:#d4a574;"/>
-          <span class="body-text" style="color:#f0eadb; line-height:1.5; text-align:left;">Am înțeles și îmi asum responsabilitatea pentru starea mea de sănătate.</span>
+          <input type="checkbox" id="medical-check" onchange="document.getElementById('medical-cta').disabled = !this.checked; document.getElementById('medical-cta').style.opacity = this.checked ? '1' : '0.4';" style="margin-top:3px; accent-color:var(--accent);"/>
+          <span class="body-text" style="color:var(--ink); line-height:1.5; text-align:left;">Am înțeles și îmi asum responsabilitatea pentru starea mea de sănătate.</span>
         </label>
         <div class="confirm-actions">
           <button class="btn-brick" id="medical-cta" disabled style="opacity:0.4;" onclick="goto('home')">Sunt de acord, continuă</button>
@@ -2103,7 +2118,7 @@
     </div>
 
     <!-- Toast -->
-    <div class="toast" id="toast"><i data-lucide="check-circle-2" style="color:#d4a574;"></i><span id="toast-msg">Set înregistrat</span></div>
+    <div class="toast" id="toast"><i data-lucide="check-circle-2" style="color:var(--accent);"></i><span id="toast-msg">Set înregistrat</span></div>
 
   </div> <!-- end phone -->
 
@@ -2111,108 +2126,108 @@
 </div>
 
 <style>
-  .cause-btn { display:flex; align-items:center; gap:8px; padding:10px 12px; background:rgba(212,165,116,0.06); border:1px solid rgba(212,165,116,0.15); border-radius:10px; cursor:pointer; font-size:13px; font-weight:500; color:#f0eadb; }
-  .cause-btn:active { background:#0f1218; color:#f0eadb; border:1px solid rgba(212,165,116,0.15); }
+  .cause-btn { display:flex; align-items:center; gap:8px; padding:10px 12px; background:rgba(212,165,116,0.06); border:1px solid rgba(212,165,116,0.15); border-radius:10px; cursor:pointer; font-size:13px; font-weight:500; color:var(--ink); }
+  .cause-btn:active { background:#0f1218; color:var(--ink); border:1px solid rgba(212,165,116,0.15); }
   .cause-btn [data-lucide] { width:16px; height:16px; }
 
-  .prog-tab { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:500; color:#8b8470; cursor:pointer; }
-  .prog-tab.active { background:rgba(255,255,255,0.025); color:#f0eadb; box-shadow:0 1px 2px rgba(0,0,0,0.05); }
+  .prog-tab { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:500; color:var(--ink-3); cursor:pointer; }
+  .prog-tab.active { background:rgba(255,255,255,0.025); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,0.05); }
 
   .set-row { display:grid; grid-template-columns:32px 1fr 1fr 44px; gap:10px; padding:12px 0; border-bottom:1px solid rgba(212,165,116,0.06); align-items:center; }
   .set-row[data-done="true"] { opacity:0.5; }
   .set-row.current { background:rgba(212,165,116,0.04); margin: 0 -8px; padding-left:8px; padding-right:8px; border-radius:8px; }
-  .set-num { text-align:center; font-family:'Geist Mono', monospace; font-weight:600; color:#b8b0a0; }
-  .set-val { font-family:'Geist Mono', monospace; font-size:15px; color:#f0eadb; }
+  .set-num { text-align:center; font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink-2); }
+  .set-val { font-family:'Geist Mono', monospace; font-size:15px; color:var(--ink); }
   .set-check { background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .set-check.done { background:#d4a574; color:white; width:30px; height:30px; border-radius:8px; }
+  .set-check.done { background:var(--accent); color:white; width:30px; height:30px; border-radius:8px; }
   .set-check.done [data-lucide] { width:16px; height:16px; stroke-width:3; }
 
-  .settings-section { font-size:11px; color:#8b8470; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin: 16px 4px 8px; }
+  .settings-section { font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin: 16px 4px 8px; }
   .settings-stack { background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; overflow:hidden; }
-  .settings-row { width:100%; padding:14px 16px; background:transparent; border:none; display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px; color:#f0eadb; border-bottom:1px solid rgba(212,165,116,0.06); text-align:left; }
+  .settings-row { width:100%; padding:14px 16px; background:transparent; border:none; display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px; color:var(--ink); border-bottom:1px solid rgba(212,165,116,0.06); text-align:left; }
   .settings-row:last-child { border-bottom:none; }
-  .settings-row [data-lucide] { color:#8b8470; }
+  .settings-row [data-lucide] { color:var(--ink-3); }
   .settings-row .ml-auto { margin-left:auto; }
 
   /* Global header lang toggle */
   .lang-toggle { display:flex; align-items:center; gap:6px; }
-  .lang-btn { background:none; border:none; padding: 4px 6px; font-size:13px; font-weight:600; color:#8b8470; cursor:pointer; letter-spacing:0.04em; transition:color .15s; }
-  .lang-btn.active { color:#f0eadb; }
+  .lang-btn { background:none; border:none; padding: 4px 6px; font-size:13px; font-weight:600; color:var(--ink-3); cursor:pointer; letter-spacing:0.04em; transition:color .15s; }
+  .lang-btn.active { color:var(--ink); }
   .lang-sep { color:#cbc5b5; font-size:13px; }
 
   /* Sala / Antrenor / Istoric specifics */
-  .hero-card { background:linear-gradient(180deg,#0f1218,#0a0d14); color:#f0eadb; border:1px solid rgba(212,165,116,0.15); border-radius:20px; padding: 22px; position:relative; overflow:hidden; }
+  .hero-card { background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); border-radius:20px; padding: 22px; position:relative; overflow:hidden; }
   .hero-card .meta { font-size:12px; color:#a8a09a; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
   .hero-card h2 { font-family:'Lora', serif; font-size:26px; font-weight:600; letter-spacing:-0.01em; margin: 8px 0 12px; line-height:1.2; }
   .hero-card .ex-list { display:flex; flex-direction:column; gap:8px; margin: 12px 0 18px; }
   .hero-card .ex-row { display:flex; justify-content:space-between; font-size:14px; color:#d4cdc1; padding: 6px 0; border-bottom:1px solid rgba(255,255,255,0.08); }
   .hero-card .ex-row:last-child { border-bottom:none; }
-  .hero-card .start-btn { width:100%; padding: 14px; background:#d4a574; color:white; border:none; border-radius:14px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .hero-card .start-btn { width:100%; padding: 14px; background:var(--accent); color:white; border:none; border-radius:14px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
 
   .stat-card { background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:14px; padding: 14px; text-align:center; }
-  .stat-card .num { font-size:24px; font-weight:700; color:#f0eadb; letter-spacing:-0.02em; }
-  .stat-card .lbl { font-size:11px; color:#8b8470; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; margin-top:4px; }
+  .stat-card .num { font-size:24px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; }
+  .stat-card .lbl { font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em; font-weight:600; margin-top:4px; }
 
   .mini-chart { display:flex; align-items:flex-end; gap:4px; height:40px; }
-  .mini-chart .bar { flex:1; background:#d4a574; border-radius:2px; opacity:0.85; }
+  .mini-chart .bar { flex:1; background:var(--accent); border-radius:2px; opacity:0.85; }
 
   .alert-row { display:flex; gap:12px; padding:12px 14px; background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:12px; align-items:flex-start; }
   .alert-row.warn { background:#fdf6e8; border-color:#f0e0b8; }
-  .alert-row [data-lucide] { color:#d4a574; flex-shrink:0; margin-top:2px; width:18px; height:18px; }
+  .alert-row [data-lucide] { color:var(--accent); flex-shrink:0; margin-top:2px; width:18px; height:18px; }
   .alert-row.warn [data-lucide] { color:#c69a2c; }
 
   /* Calendar heat map */
   .heatmap { display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; }
-  .hm-cell { aspect-ratio:1; border-radius:6px; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-size:11px; color:#8b8470; }
-  .hm-cell.l1 { background:rgba(212,165,116,0.15); color:#b8b0a0; }
+  .hm-cell { aspect-ratio:1; border-radius:6px; background:rgba(212,165,116,0.06); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--ink-3); }
+  .hm-cell.l1 { background:rgba(212,165,116,0.15); color:var(--ink-2); }
   .hm-cell.l2 { background:rgba(212,165,116,0.4); color:white; }
-  .hm-cell.l3 { background:#d4a574; color:white; font-weight:600; }
-  .hm-head { font-size:10px; color:#8b8470; text-align:center; padding:4px 0; font-weight:600; letter-spacing:0.04em; }
+  .hm-cell.l3 { background:var(--accent); color:white; font-weight:600; }
+  .hm-head { font-size:10px; color:var(--ink-3); text-align:center; padding:4px 0; font-weight:600; letter-spacing:0.04em; }
 
   /* ── Sub-pages (drill-down) ───────────────────────── */
   .sub-header { display:flex; align-items:center; gap:12px; padding: 14px 16px 8px; }
-  .sub-header h2 { font-size:18px; font-weight:700; color:#f0eadb; margin:0; letter-spacing:-0.01em; }
-  .back-btn { width:40px; height:40px; border-radius:12px; background:transparent; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#f0eadb; margin-left:-8px; }
+  .sub-header h2 { font-size:18px; font-weight:700; color:var(--ink); margin:0; letter-spacing:-0.01em; }
+  .back-btn { width:40px; height:40px; border-radius:12px; background:transparent; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); margin-left:-8px; }
   .back-btn:active { background:rgba(212,165,116,0.06); }
   .back-btn [data-lucide] { width:22px; height:22px; }
 
   .info-row { padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid rgba(212,165,116,0.06); }
-  .info-label { font-size:14px; color:#8b8470; }
-  .info-val { font-size:15px; color:#f0eadb; font-weight:500; }
+  .info-label { font-size:14px; color:var(--ink-3); }
+  .info-val { font-size:15px; color:var(--ink); font-weight:500; }
 
   .goal-row { padding:14px 16px; display:flex; align-items:flex-start; gap:12px; border-bottom:1px solid rgba(212,165,116,0.06); }
   .goal-row [data-lucide] { width:18px; height:18px; margin-top:2px; }
 
   .toggle-row { padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid rgba(212,165,116,0.06); cursor:pointer; }
-  .toggle-row b { font-size:15px; color:#f0eadb; font-weight:500; }
+  .toggle-row b { font-size:15px; color:var(--ink); font-weight:500; }
   .sw { width:36px; height:22px; background:rgba(212,165,116,0.15); border-radius:11px; position:relative; transition:background .2s; flex-shrink:0; }
   .sw::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; background:rgba(255,255,255,0.025); border-radius:50%; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
-  .sw.on { background:#d4a574; }
+  .sw.on { background:var(--accent); }
   .sw.on::after { left:16px; }
 
-  .link-btn { background:transparent; border:none; color:#d4a574; font-weight:500; font-size:14px; cursor:pointer; padding:8px; }
+  .link-btn { background:transparent; border:none; color:var(--accent); font-weight:500; font-size:14px; cursor:pointer; padding:8px; }
 
-  .legal-h { font-size:15px; font-weight:700; color:#f0eadb; margin: 18px 0 8px; letter-spacing:-0.01em; }
-  .legal-p { font-size:14px; color:#b8b0a0; line-height:1.65; margin: 0 0 4px; }
+  .legal-h { font-size:15px; font-weight:700; color:var(--ink); margin: 18px 0 8px; letter-spacing:-0.01em; }
+  .legal-p { font-size:14px; color:var(--ink-2); line-height:1.65; margin: 0 0 4px; }
 
   .theme-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
   .theme-card { position:relative; padding: 12px; border-radius:16px; background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.2); cursor:pointer; text-align:left; transition:border-color .15s; }
-  .theme-card.selected { border-color:#d4a574; }
+  .theme-card.selected { border-color:var(--accent); }
   .theme-swatch { aspect-ratio: 1.4 / 1; border-radius:10px; margin-bottom:10px; border:1px solid rgba(0,0,0,0.06); }
-  .theme-name { font-size:14px; font-weight:600; color:#f0eadb; }
-  .theme-meta { font-size:12px; color:#8b8470; margin-top:2px; }
-  .theme-check { position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%; background:#d4a574; color:white; display:none; align-items:center; justify-content:center; }
+  .theme-name { font-size:14px; font-weight:600; color:var(--ink); }
+  .theme-meta { font-size:12px; color:var(--ink-3); margin-top:2px; }
+  .theme-check { position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%; background:var(--accent); color:white; display:none; align-items:center; justify-content:center; }
   .theme-check [data-lucide] { width:14px; height:14px; stroke-width:3; }
   .theme-card.selected .theme-check { display:flex; }
 
   .timeline { display:flex; flex-direction:column; padding-left:4px; }
   .tl-step { display:flex; gap:14px; padding-bottom:18px; position:relative; }
   .tl-step:not(:last-child)::before { content:''; position:absolute; left:5px; top:14px; bottom:0; width:2px; background:rgba(212,165,116,0.15); }
-  .tl-step.done:not(:last-child)::before { background:#d4a574; }
-  .tl-dot { width:12px; height:12px; border-radius:50%; background:rgba(212,165,116,0.15); flex-shrink:0; margin-top:4px; border:2px solid #07090f; box-shadow: 0 0 0 2px rgba(212,165,116,0.15); }
-  .tl-step.done .tl-dot { background:#d4a574; box-shadow: 0 0 0 2px #d4a574; }
-  .tl-dot.danger { background:#d4a574; box-shadow: 0 0 0 2px #d4a574; }
-  .tl-body b { font-size:14px; color:#f0eadb; display:block; margin-bottom:2px; }
+  .tl-step.done:not(:last-child)::before { background:var(--accent); }
+  .tl-dot { width:12px; height:12px; border-radius:50%; background:rgba(212,165,116,0.15); flex-shrink:0; margin-top:4px; border:2px solid var(--bg-2); box-shadow: 0 0 0 2px rgba(212,165,116,0.15); }
+  .tl-step.done .tl-dot { background:var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .tl-dot.danger { background:var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .tl-body b { font-size:14px; color:var(--ink); display:block; margin-bottom:2px; }
 </style>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -2329,7 +2344,7 @@
       b.style.border = '1px solid rgba(212,165,116,0.15)';
       const chk = b.querySelector('[data-lucide="check"]'); if (chk) chk.remove();
     });
-    btn.style.border = '2px solid #f0eadb';
+    btn.style.border = '2px solid var(--ink)';
     const ic = document.createElement('i');
     ic.setAttribute('data-lucide', 'check');
     ic.style.color = '#d4a574';
@@ -2383,7 +2398,7 @@
     document.querySelectorAll('.range-tab').forEach(b => {
       const active = String(b.dataset.range) === String(days);
       b.style.background = active ? 'white' : 'transparent';
-      b.style.color = active ? '#f0eadb' : '#8b8470';
+      b.style.color = active ? 'var(--ink)' : 'var(--ink-3)';
       b.style.fontWeight = active ? '600' : '500';
     });
     const labels = { '30': 'ultimele 30 zile', '60': 'ultimele 60 zile', '90': 'ultimele 90 zile', 'all': 'tot intervalul' };
@@ -2428,7 +2443,7 @@
       reps.style.fontWeight = '600';
       reps.textContent = '— rep';
       const ch = next.querySelector('.set-check');
-      ch.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div>';
+      ch.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--accent);"></div>';
       ch.onclick = () => completeSet(ch);
     }
     // start rest
@@ -2445,7 +2460,7 @@
     if (wasDone) {
       row.dataset.done = 'false';
       btn.classList.remove('done');
-      btn.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid #d4a574;"></div>';
+      btn.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--accent);"></div>';
     } else {
       row.dataset.done = 'true';
       btn.classList.add('done');
