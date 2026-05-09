@@ -448,8 +448,8 @@
   }
   .row-arrow { color: var(--champagne); font-size: 14px; }
 
-  /* Sex selector + Frequency cards interactive states (WCAG SC 1.4.11 non-text 3:1+) */
-  .sex-option, .freq-card {
+  /* Sex selector + Frequency cards + Energy cards interactive states (WCAG SC 1.4.11 non-text 3:1+) */
+  .sex-option, .freq-card, .energy-card {
     border: 0.5px solid var(--line-strong); /* 28% alpha champagne on noir ≈ 3.1:1 */
     background: transparent;
     transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
@@ -458,7 +458,8 @@
   .sex-option .sex-label        { color: var(--silver); transition: color 0.25s ease; }
   .sex-option .sex-mark         { color: var(--silver-3); transition: color 0.25s ease; }
   .sex-option.is-selected,
-  .freq-card.is-selected {
+  .freq-card.is-selected,
+  .energy-card.is-selected {
     border-color: var(--champagne);
     background: var(--champagne-soft);
   }
@@ -466,6 +467,12 @@
   .sex-option.is-selected .sex-label,
   .sex-option.is-selected .sex-mark { color: var(--champagne); }
   .freq-card.is-selected .row-label { color: var(--champagne); }
+
+  /* Energy diamond fills driven by row data-energy + is-selected (Batch 2b-v Task 1) */
+  .energy-card .energy-diamond { transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
+  .energy-card.is-selected[data-energy="green"]  .energy-diamond { background: #88b482; border-color: #88b482; box-shadow: 0 0 12px rgba(136,180,130,0.45); }
+  .energy-card.is-selected[data-energy="yellow"] .energy-diamond { background: var(--champagne); border-color: var(--champagne); box-shadow: 0 0 12px var(--champagne-soft); }
+  .energy-card.is-selected[data-energy="red"]    .energy-diamond { background: #c87878; border-color: #c87878; box-shadow: 0 0 12px rgba(200,120,120,0.45); }
 
   /* Sub-page header */
   .sub-header {
@@ -1170,8 +1177,8 @@
       <div class="telemetry-row"><span class="etched etched-silver">Puls med.</span><span class="num-display" style="font-size:22px;">142<span style="font-size:11px; color:var(--silver-2); margin-left:4px;">bpm</span></span></div>
     </div>
     <div style="padding: 28px 24px 16px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><span class="etched">Disponibilitate</span><div style="display:flex; gap:12px; align-items:center;"><button class="energy-diamond selected" data-e="green"></button><button class="energy-diamond" data-e="yellow"></button><button class="energy-diamond" data-e="red"></button></div></div>
-      <div class="lux-body" style="font-size:14px; color:var(--silver-2); font-style:italic;">— În formă deplină.</div>
+      <div class="dispo-cluster" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><span class="etched">Disponibilitate</span><div style="display:flex; gap:12px; align-items:center;"><button class="energy-diamond selected" data-e="green"></button><button class="energy-diamond" data-e="yellow"></button><button class="energy-diamond" data-e="red"></button></div></div>
+      <div class="dispo-label lux-body" style="font-size:14px; color:var(--silver-2); font-style:italic;">— În formă deplină.</div>
     </div>
     <div class="section-head" style="padding-top:16px;"><div class="etched">Sesiunile săptămânii</div><div class="etched etched-silver">4 programate</div></div>
     <div class="queue-card"><span class="roman-num">2</span><div><div style="font-family: 'Cormorant Garamond', serif; font-size: 19px; color: white;">Împins</div><div class="etched etched-silver" style="margin-top:4px;">Astăzi · 45 min</div></div><div style="margin-left:auto;" class="etched">Acum →</div></div>
@@ -1232,13 +1239,13 @@
     <div class="sub-header"><button class="back-arrow">←</button><div><div class="sub-crumb">Antrenor › Energie</div><div class="sub-title">Cum e azi?</div></div></div>
     <div style="padding: 32px 24px; flex:1;">
       <p class="lux-body" style="font-size:16px; color:var(--silver-2); margin-bottom:48px;">Selectați starea care vă reprezintă acum.</p>
-      <div style="display:flex; flex-direction:column; gap:14px;">
-        <button class="row" style="border:0.5px solid var(--line); padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond selected" data-e="green" style="width:18px; height:18px;"></span><span class="row-label">🟢 Excelent</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Somn bun, energie ridicată, fără durere.</span></button>
-        <button class="row" style="border:0.5px solid var(--line); padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond" data-e="yellow" style="width:18px; height:18px; background:var(--champagne); border-color:var(--champagne);"></span><span class="row-label">🟡 Normal · OK</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Funcțional, baseline.</span></button>
-        <button class="row" style="border:0.5px solid var(--line); padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond" data-e="red" style="width:18px; height:18px; background:#c87878; border-color:#c87878;"></span><span class="row-label">🔴 Obosit</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Stres, somn slab, durere. Drill 4 cauze.</span></button>
+      <div class="energy-grid" style="display:flex; flex-direction:column; gap:14px;">
+        <button class="row energy-card is-selected" data-energy="green" onclick="selectEnergy(this)" style="padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond" data-e="green" style="width:18px; height:18px;"></span><span class="row-label">🟢 Excelent</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Somn bun, energie ridicată, fără durere.</span></button>
+        <button class="row energy-card" data-energy="yellow" onclick="selectEnergy(this)" style="padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond" data-e="yellow" style="width:18px; height:18px;"></span><span class="row-label">🟡 Normal · OK</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Funcțional, baseline.</span></button>
+        <button class="row energy-card" data-energy="red" onclick="selectEnergy(this)" style="padding:24px; flex-direction:column; align-items:flex-start; gap:8px;"><span style="display:flex; align-items:center; gap:14px;"><span class="energy-diamond" data-e="red" style="width:18px; height:18px;"></span><span class="row-label">🔴 Obosit</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">Stres, somn slab, durere. Drill 4 cauze.</span></button>
       </div>
     </div>
-    <div class="action-bar"><button class="btn-noir">Anulez</button><button class="btn-champagne" style="flex:1;">Confirm</button></div>
+    <div class="action-bar"><button class="btn-noir" onclick="back()">Anulează</button><button class="btn-champagne" style="flex:1;" onclick="confirmEnergy(this)">Continuă</button></div>
   </div>
 </div>
 <div class="stage-num">XIII</div>
@@ -1466,14 +1473,16 @@
       <div class="etched" style="margin-bottom:8px;">Arhiva</div>
       <h1 class="num-display" style="font-size:32px;">Istoric</h1>
     </div>
-    <div style="padding: 0 24px 14px; display:flex; gap:8px;"><button class="chip selected">Tot</button><button class="chip">Împins</button><button class="chip">Tras</button><button class="chip">Picioare</button></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 06 Mai</div><div class="row-label">Împins · 87</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.4<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Sâmbătă · 03 Mai</div><div class="row-label">Picioare · 86</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">8.1<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 8</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Joi · 01 Mai</div><div class="row-label">Tras · 85</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">7.2<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 6</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 29 Apr</div><div class="row-label">Împins · 84</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.0<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Sâmbătă · 26 Apr</div><div class="row-label">Picioare · 83</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">7.8<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 8</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Joi · 24 Apr</div><div class="row-label">Tras · 82</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.9<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
-    <div class="row" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 22 Apr</div><div class="row-label">Împins · 81</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">5.8<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 6</div></div></div>
+    <div class="istoric-filters" style="padding: 0 24px 14px; display:flex; gap:8px;"><button class="chip selected" data-filter="all" onclick="filterHistory(this)">Tot</button><button class="chip" data-filter="impins" onclick="filterHistory(this)">Împins</button><button class="chip" data-filter="tras" onclick="filterHistory(this)">Tras</button><button class="chip" data-filter="picioare" onclick="filterHistory(this)">Picioare</button></div>
+    <div class="istoric-list">
+    <div class="row istoric-row" data-workout="impins" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 06 Mai</div><div class="row-label">Împins · 87</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.4<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
+    <div class="row istoric-row" data-workout="picioare" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Sâmbătă · 03 Mai</div><div class="row-label">Picioare · 86</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">8.1<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 8</div></div></div>
+    <div class="row istoric-row" data-workout="tras" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Joi · 01 Mai</div><div class="row-label">Tras · 85</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">7.2<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 6</div></div></div>
+    <div class="row istoric-row" data-workout="impins" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 29 Apr</div><div class="row-label">Împins · 84</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.0<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
+    <div class="row istoric-row" data-workout="picioare" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Sâmbătă · 26 Apr</div><div class="row-label">Picioare · 83</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">7.8<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 8</div></div></div>
+    <div class="row istoric-row" data-workout="tras" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Joi · 24 Apr</div><div class="row-label">Tras · 82</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">6.9<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 7</div></div></div>
+    <div class="row istoric-row" data-workout="impins" style="padding:18px 24px;"><div><div class="etched etched-silver" style="margin-bottom:4px;">Marți · 22 Apr</div><div class="row-label">Împins · 81</div></div><div style="text-align:right;"><div class="num-display" style="font-size:18px;">5.8<span style="color:var(--silver-2); font-size:11px;">t</span></div><div class="etched etched-silver" style="margin-top:2px;">RPE 6</div></div></div>
+    </div>
     <div style="height:90px;"></div>
   </div>
   <div class="nav">
@@ -1848,7 +1857,7 @@
       <p class="lux-body" style="font-size:17px; margin-bottom:20px;">Toate adaptările pe care antrenorul le-a învățat în <span class="lux-italic">18 săptămâni</span> vor fi pierdute.</p>
       <p class="lux-body" style="font-size:14px; color:var(--silver-2); margin-bottom:32px;">Veți relua onboarding-ul. Istoricul rămâne. Doar inteligența personalizată este ștearsă.</p>
     </div>
-    <div class="action-bar"><button class="btn-noir" style="flex:1;">Anulez</button><button class="btn-danger" style="flex:1;">Confirm reset</button></div>
+    <div class="action-bar"><button class="btn-noir" style="flex:1;" onclick="back()">Anulează</button><button class="btn-danger" style="flex:1;">Confirm reset</button></div>
   </div>
 </div>
 <div class="stage-num">XXXV</div>
@@ -1868,7 +1877,7 @@
       <div style="text-align:center; padding: 8px 0;"><span class="etched" style="color:var(--champagne);">↓</span></div>
       <div class="row" style="border:0.5px solid var(--champagne); background:var(--champagne-soft); padding:18px 22px; flex-direction:column; align-items:flex-start; gap:6px;"><span style="display:flex; justify-content:space-between; width:100%;"><span class="row-label" style="color:var(--champagne);">Forță</span><span class="etched">selectată</span></span><span class="lux-body" style="font-size:13px; color:var(--silver-2);">3-6 reps · intensitate mare · RIR 0-2</span></div>
     </div>
-    <div class="action-bar"><button class="btn-noir" style="flex:1;">Anulez</button><button class="btn-champagne" style="flex:1;">Confirm</button></div>
+    <div class="action-bar"><button class="btn-noir" style="flex:1;" onclick="back()">Anulează</button><button class="btn-champagne" style="flex:1;">Confirm</button></div>
   </div>
 </div>
 <div class="stage-num">XXXVI</div>
@@ -2111,11 +2120,24 @@
 </div>
 
 <script>
+  // Disponibilitate label state copy (Batch 2b-v Task 3 — Bugatti restraint, NU alarmist)
+  const DISPO_LABELS = {
+    green:  '— În formă deplină.',
+    yellow: '— Funcțional, baseline.',
+    red:    '— Astăzi limitat. Doar mobilitate ușoară.',
+  };
   document.querySelectorAll('.energy-diamond').forEach(d => {
     d.addEventListener('click', () => {
       const parent = d.parentElement;
       parent.querySelectorAll('.energy-diamond').forEach(x => x.classList.remove('selected'));
       d.classList.add('selected');
+      // If diamond is inside Disponibilitate cluster, sync sibling label text
+      const cluster = d.closest('.dispo-cluster');
+      if (cluster) {
+        const label = cluster.parentElement.querySelector('.dispo-label');
+        const state = d.dataset.e;
+        if (label && DISPO_LABELS[state]) label.textContent = DISPO_LABELS[state];
+      }
     });
   });
   document.querySelectorAll('.toggle').forEach(t => {
@@ -2414,6 +2436,44 @@
     group.querySelectorAll('.freq-card').forEach(card => {
       card.classList.toggle('is-selected', card === btn);
     });
+  };
+
+  // Energy cards "Cum e azi?" — single-select (Batch 2b-v Task 1)
+  window.selectEnergy = function(btn) {
+    const group = btn.closest('.energy-grid');
+    if (!group) return;
+    group.querySelectorAll('.energy-card').forEach(card => {
+      card.classList.toggle('is-selected', card === btn);
+    });
+  };
+
+  // Istoric filter chips — single-select + show/hide rows (Batch 2b-v Task 4)
+  window.filterHistory = function(chip) {
+    const filters = chip.closest('.istoric-filters');
+    if (!filters) return;
+    filters.querySelectorAll('.chip').forEach(c => c.classList.toggle('selected', c === chip));
+    const filter = chip.dataset.filter;
+    const stage = chip.closest('.scroll');
+    if (!stage) return;
+    stage.querySelectorAll('.istoric-row').forEach(row => {
+      const match = filter === 'all' || row.dataset.workout === filter;
+      row.style.display = match ? '' : 'none';
+    });
+  };
+
+  // Expose back() + go() globally so inline onclick=... works (Batch 2b-v Tasks 2+5)
+  window.back = back;
+  window.go = go;
+
+  // Confirm energy state → route per selection (Batch 2b-v Task 5)
+  // green/yellow → stage 18 workout / red → stage 14 energy-cause drill
+  window.confirmEnergy = function(btn) {
+    const stage = btn.closest('.stage-wrap');
+    if (!stage) return;
+    const selected = stage.querySelector('.energy-card.is-selected');
+    const state = selected ? selected.dataset.energy : 'green';
+    const target = state === 'red' ? 14 : 18;
+    go(target);
   };
 
   go(1);

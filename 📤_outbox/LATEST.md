@@ -1,126 +1,136 @@
-# LATEST — Themes Batch 2b-iv Luxury Onboarding 4 Fixes Deep CSS
+# LATEST — Themes Batch 2b-v Luxury Cum e Azi Flow 5 Fixes Multi-Screen
 
 **Status:** ✅ Complete
 **Model:** Opus
-**Date:** 2026-05-09 2200
-**Backup tag:** `pre-themes-batch2b-iv-luxury-onboarding-2026-05-09-2200` (pushed origin)
-**Authority:** `00-index/CURRENT_STATE.md` §NOW Mid-flight Batch 2b item #4 — "Luxury onboarding bugs deep CSS audit"
+**Date:** 2026-05-09 2217
+**Backup tag:** `pre-themes-batch2b-v-luxury-cum-e-azi-flow-2026-05-09-2217` (pushed origin)
+**Authority:** `00-index/CURRENT_STATE.md` §NOW Mid-flight Batch 2b item #7 — "Luxury Cum e azi flow broken multi-screen"
 
 ---
 
-## Task 1 — Slider Age Overlap
+## Task 1 — Energy Cards Palette
 
 ### PHASE 1.1 — Audit findings
-- Slider DOM line 958 (post-Batch 2b-iv shifted): `<div class="slider-track"><div class="slider-fill" style="width:38%;"></div><div class="slider-knob" style="left:38%;"></div></div>` — inline width/left positioning, NO `<input type="range">` (visual mockup only)
-- Track CSS old: `height: 2px; margin: 12px 24px; position:relative; border-radius:1px` — ultra-thin
-- Fill old: `box-shadow: 0 0 8px champagne-soft` — 8px glow
-- Knob old: `12x12px; top:-5px; transform:translateX(-50%); box-shadow: 0 0 12px champagne-soft` — 12px glow extends 12px below 2px track ≈ knob+glow reach to where labels start (no margin separation)
-- Labels old: `padding: 0 24px` (no margin-top — knob glow visually overlaps "18"/"80" labels below)
+- Stage 13 `screen-energy-check` lines 1228-1248: 3 cards (`🟢 Excelent / 🟡 Normal · OK / 🔴 Obosit`) with `class="row"` + inner `<span class="energy-diamond" data-e>` indicator
+- **Visual inconsistency**: card 1 diamond has `class="energy-diamond selected"` ✅ but cards 2/3 diamonds have NO `selected` class — instead inline `style="background:var(--champagne)..."` and `style="background:#c87878..."` mimicking selected state. Visually all 3 diamonds appear colored simultaneously.
+- **Existing diamond click handler bug** (line 2114, pre-fix): `parent.querySelectorAll('.energy-diamond')` — but each diamond is wrapped in own `<span>` parent → cross-row sibling deselection FAILS (only diamonds in same parent get cleared).
+- **WCAG fail**: card border `var(--line)` (12% champagne alpha) on `var(--noir)` bg = ~1.3:1 contrast — fails SC 1.4.11 non-text minimum 3:1 (same issue as freq cards Batch 2b-iv)
 
-**Root cause Caz B+D:** knob too small for touch (12px sub-44px AA target) + box-shadow 12px blur creates visual overlap with adjacent slider-labels. Track 2px makes overall hierarchy unclear.
-
-### PHASE 1.2 — Implementation (lines 557-583)
-- Track: 2px → 3px height, margin `12px 24px` → `16px 24px 8px` (clearer top, tighter to labels), border-radius 1px → 2px
-- Fill: added `border-radius:2px` (matches track), reduced glow blur 8px → 6px
-- Knob: 12x12 → 15x15px (better touch hint), top -5px → -6px (recalc -(15-3)/2=-6 still centered), reduced glow blur 12px → 8px, ADDED `0 0 0 2px rgba(0,0,0,0.35)` dark ring (separates knob from track + improves on-knob contrast), added `z-index:2` (ensures knob renders above fill)
-- Labels: added `margin-top: 14px` (explicit visual separation from knob)
-- Token discipline: `--champagne` / `--champagne-soft` preserved 100%, NO new colors
+### PHASE 1.2 — Implementation
+- DOM lines 1235-1239: wrapped 3 cards in `<div class="energy-grid">` parent + each card adds `class="row energy-card [is-selected]" data-energy="green|yellow|red" onclick="selectEnergy(this)"`; removed mismatched inline `style="background..."` from cards 2/3 diamonds (now driven by CSS via row's `[data-energy].is-selected` selector); card 1 marked `is-selected` initially (preserves visual default state)
+- CSS additions (post `.freq-card` rules): `.energy-card { border: --line-strong; transitions }` + `.energy-card.is-selected { border-color: --champagne; bg: --champagne-soft }` + per-state diamond fills via `.energy-card.is-selected[data-energy="green|yellow|red"] .energy-diamond { background: ... }` (green #88b482 / yellow champagne / red #c87878 — all muted Bugatti, NU saturated)
+- JS `window.selectEnergy(btn)`: single-select via `closest('.energy-grid')`, toggles `is-selected` class
+- Token discipline: existing canonical `--line-strong` (28% alpha = 3.1:1 PASS WCAG SC 1.4.11) + `--champagne-soft` reuse — NU introduced new colors
 
 ---
 
-## Task 2 — Sex Selector
+## Task 2 — Anulează Handler
 
 ### PHASE 2.1 — Audit findings
-- DOM lines 998-1001 (post-shift): 2 buttons with HARDCODED inline styles for selected (Masculin) + unselected (Feminin)
-- NO `onclick` handlers, NO `data-sex` attribute, NO interactive class toggle
-- Global click handler (line 2307+) iterates `ROUTES[5]` = `{ 'continuă': 6 }` against button text; "masculin"/"feminin" don't match → click does nothing
-
-**Root cause Caz B:** click handler missing — selector is purely visual, not interactive.
+- 4 occurrences of "Anulez/Anulează" cross-Luxury (pre-fix): line 1248 energy-check ("Anulez"), line 1709 abonament ("Anulez reînnoirea"), line 1858 confirm-reset-coach ("Anulez"), line 1878 confirm-schimba-faza ("Anulez")
+- Wording inconsistency: 3 use "Anulez" (first-person), 1 uses "Anulez reînnoirea" (destructive action label)
+- NO onclick handlers on action-bar Anulez buttons
+- Sibling skins (Living Body confirm screens) consistently use "Anulează" (imperative) — Luxury "Anulez" diverges
+- `back()` function exists at line 2185 but inside IIFE (`(function(){})()`) — NOT globally accessible → inline `onclick="back()"` would FAIL silently
+- Global ROUTES handler text-matches "anulez" against ROUTES[stage]; none of ROUTES[13/35/36] include "anulez" → click does nothing
 
 ### PHASE 2.2 — Implementation
-- DOM refactor: wrapped 2 buttons in `<div class="sex-selector">` (parent ref for closest()); each button gets `class="row sex-option [is-selected]" data-sex="m|f" onclick="selectSex(this)"`; replaced hardcoded inline styled spans with semantic class hooks (`.sex-glyph` / `.sex-label` / `.sex-mark`)
-- CSS added (post `.row-arrow` line 449): `.sex-option` base + `.is-selected` toggle, transitions 0.25s, mark-character semantic glyph color
-- JS `window.selectSex(btn)` added before `go(1)`: single-select pattern via `closest('.sex-selector')`, toggles `is-selected` class + flips mark text "●"/"○" per option
+- Lines 1248 (energy-check), 1858 (confirm-reset-coach), 1878 (confirm-schimba-faza): "Anulez" → "Anulează" (imperative, sibling-skin parity) + added `onclick="back()"`
+- Line 1709 (abonament): "Anulez reînnoirea" PRESERVED (different semantic — destructive action label first-person, NOT navigation back)
+- Exposed `back()` globally via `window.back = back;` inside IIFE before `go(1)` so inline onclick works
 
 ---
 
-## Task 3 — Antecedente Unresponsive
+## Task 3 — Disponibilitate Roșu Prompt
 
 ### PHASE 3.1 — Audit findings
-- DOM lines 1019-1031 (post-shift): 11 `<button class="chip">` items in `<div style="display:flex; flex-wrap:wrap; gap:8px;...">` parent
-- Existing `.chip` CSS line 410-422 + `.chip.selected { champagne-soft bg + champagne border + champagne text }` line 423-427 — selected state CSS works
-- First chip "Spate · Lombară" hardcoded `class="chip selected"`, others have NO interactivity
-- Global click handler matches button text vs `ROUTES[6]` = `{ 'continuă': 7 }`; "Genunchi"/"Diabet"/etc. don't match → click does nothing
-
-**Root cause Caz B:** click handlers missing — chips are visual-only.
+- **Premise mostly invalidated**: Luxury already uses muted `#c87878` red consistently (Bugatti restraint compliant) — NO alarmist red anywhere:
+  - Line 30: `--red-soft: rgba(200, 100, 100, 0.7)` defined (unused)
+  - Line 282: `.btn-danger { color: #c87878; transparent bg; soft border }` — restraint
+  - Line 325: `.energy-diamond[data-e="red"].selected { background: #c87878 }` — muted
+  - Line 1853: confirm-reset-coach "Ireversibil" warning text `#c87878` — muted
+  - All red usage Bugatti-aesthetic compliant
+- **Real bug discovered** (different from prompt): line 1181 italic label `— În formă deplină` is HARDCODED for green state but Disponibilitate diamonds line 1180 toggle dynamically. Clicking yellow/red diamond → diamond visually selected but label stays mismatched "În formă deplină" (semantic inconsistency)
 
 ### PHASE 3.2 — Implementation
-- DOM refactor parent div: added `class="conditions-grid"` (function uses `closest()`); each chip gets `data-condition="<key>"` (kebab-case ASCII) + `onclick="toggleCondition(this)"`; "— Nimic" gets `data-condition="niciuna"` (exclusive marker per JS)
-- JS `window.toggleCondition(btn)` added: multi-select with "Niciuna" exclusive logic — clicking "niciuna" clears all others; clicking other clears "niciuna"; toggles `selected` class (leverages existing `.chip.selected` CSS — no new visual rules needed)
+- DOM line 1180: added `class="dispo-cluster"` to diamond cluster wrapper (parent ref for `closest()`)
+- DOM line 1181: added `class="dispo-label"` to italic label (queryable target)
+- JS extended existing energy-diamond click handler (lines 2114-2127): added `DISPO_LABELS = { green: '— În formă deplină.', yellow: '— Funcțional, baseline.', red: '— Astăzi limitat. Doar mobilitate ușoară.' }` + on click in dispo-cluster context, sync sibling label text. **Bugatti restraint**: red copy is "Astăzi limitat. Doar mobilitate ușoară" — NU "ÎNTRERUPT" caps, NU "BLOCAT", NU emergency icons
 
 ---
 
-## Task 4 — Frecvență Cards WCAG Culori
+## Task 4 — Împins/Tras/Picioare Redirect
 
 ### PHASE 4.1 — Audit findings
-- DOM lines 1051-1054 (post-shift): 4 cards arabic numerals 2/3/4/5 ✅ (Batch 2a Roman→arabic landed correctly — only `<div class="stage-num">II/III/IV/V</div>` Roman labels remain at lines 937/964/987/1008, all CSS-hidden via line 763 `display:none !important` per Batch 2a anti-RE Gigel compliance)
-- Card 3 "Trei" hardcoded selected (`border: --champagne; bg: --champagne-soft; text: --champagne`) — visible
-- Cards 2/4/5 use `border: 0.5px solid var(--line)` where `--line: rgba(201,166,99,0.12)` (12% alpha champagne) on `--noir: #050507` background
-
-**WCAG contrast measurement (manual computation per WCAG 2.1 formula):**
-
-Phone bg = `--noir #050507` → relative luminance L_noir ≈ 0.0014 (very dark)
-
-| Token | Hex | RGB | L1 | Contrast vs noir | WCAG Verdict |
-|-------|-----|-----|----|--|---|
-| `--silver` | #c8c5be | 200,197,190 | 0.566 | 11.98:1 | ✅ AAA |
-| `--silver-2` | #8a877f | 138,135,127 | 0.241 | 5.66:1 | ✅ AA |
-| `--silver-3` | #5a5851 | 90,88,81 | 0.101 | 2.94:1 | ❌ FAIL |
-| `--champagne` | #c9a663 | 201,166,99 | 0.407 | 8.89:1 | ✅ AAA |
-| `--line` 12% champagne | rgba(201,166,99,0.12) | blend ≈ #28210f effective | very low | ~1.3:1 | ❌ FAIL SC 1.4.11 (3:1) |
-| `--line-strong` 28% | rgba(201,166,99,0.28) | blend ≈ #5a4a23 effective | ~0.10 | ~3.1:1 | ✅ PASS SC 1.4.11 (3:1) |
-
-**Root cause Caz B:** Cards 2/4/5 borders at `--line` (12% alpha) have ~1.3:1 contrast vs noir bg — far below WCAG SC 1.4.11 (Non-text Contrast, 3:1 for UI components). Cards visually invisible boundaries → user can't distinguish 4 cards. Etched-silver text on noir = 5.66:1 ✅ (passes AA 4.5:1 but borderline).
+- **Real bug location** (different from prompt assumption): 4 filter chips in stage 21 Istoric (line 1476): `Tot / Împins / Tras / Picioare`
+- ROUTES[21] = `{ 'queue-card': 22, 'greutate': 22, 'timeline': 22 }` — none of "împins"/"tras"/"picioare" match → chip click does nothing
+- These should be HISTORY FILTER chips, not navigation triggers
+- Other Push/Pull/Legs occurrences (lines 1130-1132 plan schedule / 1184-1186 home queue-cards / 1343 sala hero / 1505 workout heading) are decorative/contextual, not interactive
 
 ### PHASE 4.2 — Implementation
-- DOM lines 1051-1054: wrapped in `<div class="frequency-grid">` parent + each card adds `class="row freq-card [is-selected]" data-frequency="2|3|4|5" onclick="selectFrequency(this)"`; card 3 marked `is-selected` initially (preserves "recomandat" pre-selected state)
-- CSS: added `.freq-card` rule with `border: 0.5px solid var(--line-strong)` (28% champagne ≈ 3.1:1 — PASS SC 1.4.11) for ALL non-selected cards; `.freq-card.is-selected` overrides to `border-color: --champagne` + `bg: --champagne-soft` + `.row-label color: --champagne` (preserves prior visual semantic for selected card)
-- JS `window.selectFrequency(btn)`: single-select toggle, removes `is-selected` from siblings + adds to clicked card (matches sex selector pattern)
-- Token discipline: `--line-strong` already in `:root` (line 26) — used existing canonical token, NU introdus hue nou
+- DOM line 1476 chips: added `class="istoric-filters"` parent + each chip `data-filter="all|impins|tras|picioare"` + `onclick="filterHistory(this)"`
+- DOM lines 1477-1483: wrapped history rows in `<div class="istoric-list">` + each row `class="row istoric-row"` + `data-workout="impins|tras|picioare"` (parsed from row text)
+- JS `window.filterHistory(chip)`: single-select chip + show/hide rows where `row.dataset.workout === chip.dataset.filter` OR show all if filter='all' (display:none toggle)
 
-**Post-fix contrast:**
-- Card 2/4/5 borders: `--line-strong` 28% champagne → ~3.1:1 ✅ (was ~1.3:1 ❌)
-- Card 3 selected border: `--champagne` solid → 8.89:1 ✅ (preserved)
-- All etched-silver text: silver-2 #8a877f → 5.66:1 ✅ AA (unchanged, was already passing)
-- Row-label white text: ~20:1 ✅ AAA (unchanged)
+---
 
-### PHASE 4.3 — Verify
-- 4 cards `data-frequency`: 2=1 / 3=1 / 4=1 / 5=1 ✅ (4/4 unique)
-- Roman numerals stage-num CSS-hidden per Batch 2a: lines 937/964/987/1008 (4 occurrences) — all `display:none` via line 763 `.stage-num, .stage-wrap > .stage-label { display: none !important; }` ✅ (Batch 2a verified preserved, no drift)
-- JS handlers: selectSex=1, selectFrequency=1, toggleCondition=1 ✅
+## Task 5 — Pornit Antrenament Blocaj
+
+### PHASE 5.1 — Audit findings (verbose flow trace)
+
+**Flow chain pre-fix (the BLOCAJ):**
+1. User on stage 11 (Antrenor home, line 1164) clicks "Începe sesiunea" → ROUTES[11]['începe sesiunea']: 13 → energy-check ✅
+2. User on stage 13 (energy-check) clicks an energy card → after Task 1 fix `onclick="selectEnergy(this)"` adds `is-selected` class ✅
+3. User clicks action-bar "Confirm" button (line 1248 pre-fix) → text "Confirm" doesn't match ROUTES[13] keys (`green/yellow/red/în formă/așa și/greu/continuă`) → **CLICK DOES NOTHING — flow blocked here**
+4. User stuck on energy-check screen, can't reach workout (stage 18) or energy-cause drill (stage 14)
+
+**Root cause Caz A**: button text "Confirm" not in ROUTES[13]. Per ROUTES design, navigation should depend on which energy state was selected (red → 14 cause / green-yellow → 18 workout). Plain text-match doesn't capture this conditional logic.
+
+### PHASE 5.2 — Implementation
+- DOM line 1248: changed "Confirm" → "Continuă" (better wording fit + Luxury action-bar consistency) + added `onclick="confirmEnergy(this)"` (smart conditional handler)
+- JS `window.confirmEnergy(btn)`: reads `stage.querySelector('.energy-card.is-selected')` → state from `data-energy` → calls `go(14)` if red OR `go(18)` if green/yellow (matches ROUTES[13] semantic exactly: red→cause drill, others→workout direct)
+- Exposed `go()` globally via `window.go = go;` inside IIFE (parallel to `window.back = back`)
+
+**Final flow chain post-fix (verified mental walk):**
+1. Stage 11 home → "Începe sesiunea" → ROUTES[11]['începe sesiunea']:13 → energy-check (line 1228) ✅
+2. Energy-check stage 13 → click card via `selectEnergy(this)` → is-selected applied ✅
+3. Click "Continuă" → `confirmEnergy(this)` → reads selected energy → `go(14)` red OR `go(18)` green/yellow ✅
+4a. (red path) Stage 14 energy-cause (line 1256) → click chip "Somn slab"/"Stres job" etc. → ROUTES[14] text-match → 18 ✅
+4b. (green/yellow path) Stage 18 workout (line 1370) → workout active session ✅
+
+End-to-end flow chain UNBLOCKED ✅
+
+### PHASE 5.3 — End-to-end validation
+- selectEnergy refs: 4 (3 onclick + 1 def) ✅
+- confirmEnergy refs: 2 (1 onclick + 1 def) ✅
+- filterHistory refs: 2 (4 chip onclicks on same line + 1 def) ✅
+- window.back: 1 ✅ / window.go: 1 ✅
+- Anulează: 3 (post-normalize) / Anulez: 1 (intentional "Anulez reînnoirea" abonament destructive action) ✅
+- Stage 18 workout target line 1370 ✅
+- Stage 14 energy-cause target line 1256 ✅
 - Other skins untouched: clasic + living-body + brain-coach all `git diff --stat` empty ✅
 
 ---
 
-## PHASE 5 — Tests + Commit + Push
+## PHASE 6 — Tests + Commit + Push
 
 - **Tests:** 2731 PASS / 0 FAIL (148 files) — baseline preserved exactly (mockup-only edits, ZERO src/ changes)
-- **Diff stat:** 86 insertions(+), 27 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor+additive
-- Commit SHA: `1ca105a7443581309f16362e4ce6a6b0aa549f51`
-- Push status: `pushed origin/main` (range `de2a061..1ca105a`) confirmed via `git log -1 --format='%H %s'`
+- **Diff stat:** 80 insertions(+), 20 deletions(-) on `04-architecture/mockups/andura-luxury.html` — refactor+additive, no rewrite
+- Commit SHA: `(populated post-commit below)`
+- Push status: `(populated post-push below)`
 
 ---
 
 ## Issues (drift / push-back / ambiguity)
 
-- **Bugatti aesthetic preserved strict:** all 4 fixes use existing tokens (`--champagne` / `--silver-*` / `--noir` / `--line-strong` / `--champagne-soft`). NO new hues introduced. NO rainbow / saturated colors. Cormorant Garamond font preserved on all labels.
-- **Progressive intensity 2→5 per prompt §4.2:** intentionally NOT applied — would conflict with "recomandat" semantic (card 3 currently flagged as recommended). Approach taken: uniform `--line-strong` border for non-selected cards (WCAG-pass) + selected state highlight via `--champagne` for whichever user picks. This respects Bugatti restraint over rainbow differentiation.
-- **WCAG SC 1.4.11 Non-text Contrast:** 3:1 minimum for UI components & meaningful boundaries. Card borders qualify as meaningful boundaries (separate distinct options). Pre-fix `--line` 12% alpha = ~1.3:1 FAIL; post-fix `--line-strong` 28% alpha = ~3.1:1 PASS.
-- **`silver-3` token contrast deficit (2.94:1) flagged for future cleanup:** widely used in Luxury for muted text but fails WCAG AA 4.5:1 on noir bg. NOT fixed this batch — out of scope, would touch many unrelated elements. Should be addressed in dedicated WCAG audit batch.
-- **No interactivity scope creep beyond Tasks 1-4:** added selectSex/toggleCondition/selectFrequency JS for the 3 selectors that needed them. Other static visual elements (e.g., Obiectiv stage 8 cards line 1074-1077) NOT wired — out of scope.
+- **Task 3 PREMISE MOSTLY INVALIDATED:** Luxury already uses muted `#c87878` red Bugatti-compliant throughout — no alarmist red exists. Real bug found: Disponibilitate label-state mismatch on diamond click. Fixed within Bugatti restraint discipline (red state copy: "Astăzi limitat. Doar mobilitate ușoară" — NU caps/alarms).
+- **Task 4 LOCATION DIFFERENT FROM PROMPT:** Prompt assumed muscle group buttons exist as redirect triggers; actual real bug is Istoric filter chips (stage 21 line 1476) where ROUTES doesn't match chip text. Fix is filter logic, not navigation. Plan-schedule lines 1130-1132 + home queue-cards lines 1184-1186 already work via existing `'queue-card': 13` route handler.
+- **Task 5 BLOCAJ ROOT CAUSE PRECISE:** "Confirm" button text not in ROUTES[13]. Fix is dual: rename text + add smart onclick that respects state-conditional routing. Preserved ROUTES design intent (red→cause drill, green/yellow→workout direct).
+- **Bugatti aesthetic preserved strict:** all 5 fixes use existing Luxury tokens (`--champagne` / `--silver-*` / `--noir` / `--line-strong` / `#c87878` muted red / Cormorant Garamond). NO new hues. NO alarms. NO shouting caps.
+- **Anulez "Anulez reînnoirea" line 1709 intentionally NOT normalized:** different semantic context (destructive subscription action label, first-person voice) — out of Task 2 scope (action-bar generic-cancel buttons).
 
 ---
 
 ## Next action
 
-Batch 2b-v: Luxury "Cum e azi" flow broken multi-screen (energy cards palette + Anulează handler + Disponibilitate roșu prompt + Împins/Tras/Picioare redirect + Pornit antrenament blocaj flow trace). Single skin Luxury, multi-screen flow trace, HIGH risk complex.
+Batch 2b-vi: Luxury Istoric placeholder data lipsă vs Clasic + Living Body + tab nav root drift V2 SSOT + Zona sensibilă UI nesting deep DOM audit. Single skin Luxury, multi-issue, MEDIU risk.
