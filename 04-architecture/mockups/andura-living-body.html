@@ -2081,7 +2081,7 @@
           <p class="confirm-body">Vei relua configurarea inițială — obiective, nivel de experiență, disponibilitate.</p>
           <p class="confirm-body">Profilul actual se păstrează, dar răspunsurile vechi vor fi suprascrise. Reversibil dacă termini din nou onboarding-ul.</p>
           <div class="confirm-actions">
-            <button class="btn-danger" onclick="runConfirm('Începem onboarding-ul din nou')">Confirmă acțiunea</button>
+            <button class="btn-danger" onclick="goto('onboard', {replace:true}); showToast('Onboarding repornit');">Confirmă acțiunea</button>
             <button class="btn-ghost" onclick="back()">Anulează</button>
           </div>
         </div>
@@ -2470,6 +2470,40 @@
     back();
     showToast(msg || 'Gata');
   }
+
+  // Task Q sync greutate → profil display + Task R notif handlers + Task W FAQ placeholder + Task S setRange (already exists deasupra)
+  function syncWeightDisplay(kg) {
+    document.querySelectorAll('.info-row').forEach(r => {
+      const lbl = r.querySelector('.info-label');
+      if (lbl && lbl.textContent.trim() === 'Greutate') {
+        const val = r.querySelector('.info-val');
+        if (val) val.textContent = `${kg} kg`;
+      }
+    });
+    const snapshotEl = document.querySelector('#screen-progres [style*="Geist Mono"]');
+    if (snapshotEl) snapshotEl.firstChild.textContent = `${kg} `;
+  }
+  window.syncWeightDisplay = syncWeightDisplay;
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const weights = JSON.parse(localStorage.getItem('weights') || '{}');
+      const dates = Object.keys(weights).sort();
+      if (dates.length) syncWeightDisplay(weights[dates[dates.length - 1]]);
+    } catch (e) {}
+  });
+  // Notif buttons handlers
+  document.addEventListener('click', (e) => {
+    const alert = e.target.closest('.alert-row');
+    if (alert) {
+      const text = alert.querySelector('b')?.textContent || 'Notificare';
+      showToast(`✓ Notat: ${text}`);
+    }
+  });
+  // FAQ placeholder
+  document.addEventListener('click', (e) => {
+    const faqItem = e.target.closest('[data-faq], .faq-item, .help-item');
+    if (faqItem) showToast('Conținut în curs de pregătire — disponibil curând');
+  });
 
   // Lang toggle (visual only)
   function setLang(btn, code) {

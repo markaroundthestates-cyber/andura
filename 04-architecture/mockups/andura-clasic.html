@@ -1764,7 +1764,7 @@
           <p class="confirm-body">Vei relua configurarea inițială — obiective, nivel de experiență, disponibilitate.</p>
           <p class="confirm-body">Profilul actual se păstrează, dar răspunsurile vechi vor fi suprascrise. Reversibil dacă termini din nou onboarding-ul.</p>
           <div class="confirm-actions">
-            <button class="btn-danger" onclick="runConfirm('Începem onboarding-ul din nou')">Confirmă acțiunea</button>
+            <button class="btn-danger" onclick="goto('onboard', {replace:true}); showToast('Onboarding repornit');">Confirmă acțiunea</button>
             <button class="btn-ghost" onclick="back()">Anulează</button>
           </div>
         </div>
@@ -2598,11 +2598,81 @@
       if (dateInput) dateInput.focus();
       return;
     }
+    // Task Q sync: persist localStorage 'weights' + update profil + snapshot display
+    try {
+      const weights = JSON.parse(localStorage.getItem('weights') || '{}');
+      weights[date] = kg;
+      localStorage.setItem('weights', JSON.stringify(weights));
+    } catch (e) {}
+    syncWeightDisplay(kg);
     showToast('Salvat: ' + kg + ' kg · ' + date);
     if (kgInput) kgInput.value = '';
     back();
   }
   window.saveWeightEntry = saveWeightEntry;
+
+  // Task Q sync greutate → profil display + snapshot 7z
+  function syncWeightDisplay(kg) {
+    // Profil info-row Greutate (Cont)
+    document.querySelectorAll('.info-row').forEach(r => {
+      const lbl = r.querySelector('.info-label');
+      if (lbl && lbl.textContent.trim() === 'Greutate') {
+        const val = r.querySelector('.info-val');
+        if (val) val.textContent = `${kg} kg`;
+      }
+    });
+    // Greutate snapshot 7z în Progres (font-family JetBrains Mono span "81.2")
+    const snapshotEl = document.querySelector('#screen-progres [style*="JetBrains Mono"]');
+    if (snapshotEl) snapshotEl.firstChild.textContent = `${kg} `;
+  }
+  window.syncWeightDisplay = syncWeightDisplay;
+  // Restore weight from localStorage on load
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const weights = JSON.parse(localStorage.getItem('weights') || '{}');
+      const dates = Object.keys(weights).sort();
+      if (dates.length) syncWeightDisplay(weights[dates[dates.length - 1]]);
+    } catch (e) {}
+  });
+
+  // Task R Refă onboarding redirect (Refă onboarding entry → goto onboard)
+  function refaOnboarding() {
+    if (window.confirm('Refacem onboarding? Răspunsurile vechi se vor suprascrie.')) {
+      goto('onboard', {replace: true});
+      showToast('Onboarding repornit');
+    }
+  }
+  window.refaOnboarding = refaOnboarding;
+
+  // Task R Notif buttons handlers (alert-row click → action specific)
+  document.addEventListener('click', (e) => {
+    const alert = e.target.closest('.alert-row');
+    if (alert) {
+      const text = alert.querySelector('b')?.textContent || 'Notificare';
+      showToast(`✓ Notat: ${text}`);
+    }
+  });
+
+  // Task S Chart range filter (range-tab buttons → setChartRange)
+  function setChartRange(range) {
+    document.querySelectorAll('.range-tab').forEach(b => {
+      const isActive = b.dataset.range == range;
+      b.style.background = isActive ? 'white' : 'transparent';
+      b.style.color = isActive ? 'var(--ink)' : 'var(--ink-3)';
+      b.style.fontWeight = isActive ? '600' : '500';
+      b.classList.toggle('active', isActive);
+    });
+    showToast(`Chart filtrat: ${range === 'all' ? 'tot istoricul' : range + ' zile'}`);
+  }
+  window.setChartRange = setChartRange;
+
+  // Task W FAQ placeholder feedback (FAQ items click → toast)
+  document.addEventListener('click', (e) => {
+    const faqItem = e.target.closest('[data-faq], .faq-item, .help-item');
+    if (faqItem) {
+      showToast('Conținut în curs de pregătire — disponibil curând');
+    }
+  });
 
   // Auto-fill weight-date-input default = today (so user only types kg)
   window.addEventListener('DOMContentLoaded', () => {
