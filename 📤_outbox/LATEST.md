@@ -1,29 +1,30 @@
-# TASK M — Workflow set advance sequential gate ✅
+# TASK N — Pause timer real countdown ✅
 
-- **Task:** M — set advance sequential gate cross-skin × 4
+- **Task:** N — pause timer tickPause real countdown cross-skin × 4
 - **Model:** Opus
-- **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (BC already sequential by design + Lux storyboard Task X scope)
+- **Status:** ✅ LANDED (Clasic+LB+BC) + Lux Task X scope
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB: toggleSet(btn) function permite click pe orice set-row, NU enforce sequential gate (Daniel verbatim "pot bifa setul 4 când sunt la set 2")
-- BC: set-grid display-only cells (NU clickabile per individual), advance doar prin "Set III gata →" button → INHERENTLY sequential by design
-- Lux: storyboard paradigm Task X scope
+- Clasic+LB Task F LANDED: rest-timer cu static "1:18" display, NO countdown wired (Daniel verbatim: "timerul e blocat la 1:18")
+- BC: separate screen-rest-timer cu "01:08" static
+- Source-of-truth `src/pages/coach/restTimer.js` startPause/tickPause/stopPause pattern
 
 ## Modificări
-- `andura-clasic.html` toggleSet(btn): adăugat sequential gate — dacă row.contains('current') = false → toast "Finalizează setul {currentSetN} întâi" + return; current row done → mark next row .current cu visual highlights (color #c8412e + bold + border accent)
-- `andura-living-body.html` toggleSet(btn): same pattern, palette divergent var(--accent) auriu cald
-- BC: NO changes (architecture already sequential — only "Set N gata →" button advances)
-- Lux: NO changes (Task X scope refactor)
+- `andura-clasic.html`: `startPause(90)` în confirmSetInline → state.pauseLeft=90 + setInterval(tickPause,1000) + `fmtMS(secs)` formatter "M:SS" + tickPause decrement + circle progress dashoffset transition + beep last 3 sec (visual flash color #c8412e) + auto stopPause+toast "⏰ Gata!" la 0
+- `andura-living-body.html`: same pattern, palette divergent var(--accent) auriu
+- `andura-brain-coach.html`: bc-rest-time + bc-rest-progress IDs + startPause(90)+tickPause+stopPause + auto-trigger via document.addEventListener click pe `[onclick*="rest-timer"]` + back() la 0
+- `andura-luxury.html`: NO changes (Task X scope storyboard refactor)
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task M atomic).
+- Pending commit (Task N atomic).
 
 ## Issues
-- None — sequential gate enforced strict cu toast informativ.
+- Beep last 3 sec = visual color flash NU audio (mockup constraint, prod uses beep audio per src/pages/coach/restTimer.js)
+- skipRestPause stopPause + toast warning preserved (Task F LANDED)
 
 ## Next action
-Task N — pause timer real countdown cross-skin × 4.
+Task O — manual kg input + engine increments per exercise cross-skin × 4.

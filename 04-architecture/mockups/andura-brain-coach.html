@@ -4620,10 +4620,10 @@
         <div class="timer-display">
           <svg class="timer-ring" viewBox="0 0 100 100">
             <circle class="track" cx="50" cy="50" r="44"/>
-            <circle class="progress" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dasharray="276.46" stroke-dashoffset="92.15"/>
+            <circle class="progress" id="bc-rest-progress" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/>
           </svg>
           <div class="timer-num">
-            <span class="big">01:08</span>
+            <span class="big" id="bc-rest-time">01:30</span>
             <span class="label">rămas</span>
           </div>
         </div>
@@ -4949,8 +4949,53 @@
     clearTimeout(__toastT);
     __toastT = setTimeout(() => t.classList.remove('show'), 2200);
   }
-  // ─── Workflow V1 cap-coadă Task F 2026-05-10 chat ACASĂ post-smoke (port src/pages/coach/* — Phase 7 skip pause + Phase 10 cancel) ──
+  // ─── Workflow V1 cap-coadă Task F + N 2026-05-10 chat ACASĂ post-smoke (port src/pages/coach/* — Phase 7 skip + countdown + Phase 10 cancel) ──
+  // Pause timer real countdown Task N
+  let _bcPauseInterval = null;
+  let _bcPauseLeft = 0;
+  function fmtMS(secs) {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+  function startPause(seconds) {
+    _bcPauseLeft = seconds;
+    const timeEl = document.getElementById('bc-rest-time');
+    const progress = document.getElementById('bc-rest-progress');
+    if (timeEl) { timeEl.textContent = fmtMS(_bcPauseLeft); timeEl.style.color = ''; }
+    if (progress) progress.setAttribute('stroke-dashoffset', '0');
+    if (_bcPauseInterval) clearInterval(_bcPauseInterval);
+    _bcPauseInterval = setInterval(tickPause, 1000);
+  }
+  function tickPause() {
+    _bcPauseLeft--;
+    const timeEl = document.getElementById('bc-rest-time');
+    const progress = document.getElementById('bc-rest-progress');
+    if (timeEl) timeEl.textContent = fmtMS(Math.max(0, _bcPauseLeft));
+    if (progress) {
+      const total = 90;
+      progress.setAttribute('stroke-dashoffset', 276.46 * (1 - Math.max(0, _bcPauseLeft) / total));
+    }
+    if (_bcPauseLeft <= 3 && _bcPauseLeft > 0 && timeEl) timeEl.style.color = 'var(--think)';
+    if (_bcPauseLeft <= 0) { stopPause(); showTemplateToast('⏰ Gata! Setul următor'); back(); }
+  }
+  function stopPause() {
+    if (_bcPauseInterval) { clearInterval(_bcPauseInterval); _bcPauseInterval = null; }
+    const timeEl = document.getElementById('bc-rest-time');
+    if (timeEl) timeEl.style.color = '';
+  }
+  window.startPause = startPause;
+  window.stopPause = stopPause;
+  // Trigger countdown when rest-timer screen opens
+  const _origGoto = window.goto;
+  if (typeof _origGoto === 'function' || true) {
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[onclick*="rest-timer"]');
+      if (el) setTimeout(() => startPause(90), 50);
+    });
+  }
   function skipRestPause() {
+    stopPause();
     showTemplateToast('⚠️ Pauza scurtă poate reduce performanța la setul următor');
     setTimeout(() => back(), 250);
   }

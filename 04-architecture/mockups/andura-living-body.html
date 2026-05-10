@@ -2703,13 +2703,57 @@
     document.getElementById('rpe-inline').style.display = 'none';
     _sessionRpe = null;
     document.querySelectorAll('.rpe-btn-inline').forEach(b => b.classList.remove('sel'));
-    const restEl = document.getElementById('rest-timer');
-    if (restEl) restEl.style.display = 'flex';
+    startPause(90);
   }
   window.confirmSetInline = confirmSetInline;
-  function skipRestPause() {
+  // Pause timer real countdown Task N
+  let _pauseInterval = null;
+  let _pauseLeft = 0;
+  function fmtMS(secs) {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+  function startPause(seconds) {
+    _pauseLeft = seconds;
+    const restEl = document.getElementById('rest-timer');
+    const timeEl = document.getElementById('rest-time');
+    const circle = document.getElementById('rest-circle');
+    if (restEl) restEl.style.display = 'flex';
+    if (timeEl) timeEl.textContent = fmtMS(_pauseLeft);
+    if (circle) circle.setAttribute('stroke-dashoffset', '0');
+    if (_pauseInterval) clearInterval(_pauseInterval);
+    _pauseInterval = setInterval(tickPause, 1000);
+  }
+  function tickPause() {
+    _pauseLeft--;
+    const timeEl = document.getElementById('rest-time');
+    const circle = document.getElementById('rest-circle');
+    if (timeEl) timeEl.textContent = fmtMS(Math.max(0, _pauseLeft));
+    if (circle) {
+      const total = 90;
+      const dashOffset = 188.5 * (1 - Math.max(0, _pauseLeft) / total);
+      circle.setAttribute('stroke-dashoffset', dashOffset);
+    }
+    if (_pauseLeft <= 3 && _pauseLeft > 0 && timeEl) {
+      timeEl.style.color = 'var(--accent)';
+    }
+    if (_pauseLeft <= 0) {
+      stopPause();
+      showToast('⏰ Gata! Setul următor');
+    }
+  }
+  function stopPause() {
+    if (_pauseInterval) { clearInterval(_pauseInterval); _pauseInterval = null; }
     const restEl = document.getElementById('rest-timer');
     if (restEl) restEl.style.display = 'none';
+    const timeEl = document.getElementById('rest-time');
+    if (timeEl) timeEl.style.color = '';
+  }
+  window.startPause = startPause;
+  window.stopPause = stopPause;
+  function skipRestPause() {
+    stopPause();
     showToast('⚠️ Pauza scurtă poate reduce performanța la setul următor');
   }
   window.skipRestPause = skipRestPause;
