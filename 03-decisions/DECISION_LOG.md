@@ -1,5 +1,52 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 — chat ACASĂ — §CC.5 §AMENDMENT Direct-to-CC + §CC.2.1 MCP filesystem PRIMARY LOCK V1 (vault meta-tooling) — secondary handover consume reaffirmation
+
+**Status:** Vault meta-tooling decision (NU product/architecture additive). Cumulative LOCKED V1 **~719 PRESERVED unchanged** (secondary handover consume vault meta-tooling — chat-current narrative integral covered predecessor entry below). §CC.5 fast handover ingest from `📥_inbox/HANDOVER_2026-05-10_chat_acasa_direct_to_cc_paradigm_mcp_filesystem_lock.md` (NN 355 archive _CONSUMED). Chat-current = same strategic chat ACASĂ post Port-First-Then-React pivot continuation; secondary handover artefact reaffirmation post-precedent ingest NN 354 mcp_filesystem_paradigm_shift. CC autonomous ingest workflow §CC.5 §AMENDMENT 2026-05-10 LIVE end-to-end validated.
+
+**Authority:** Daniel directive verbatim chat-current:
+- *"update vault rules si tot ce trebuie cat sa nu mai indexezi prin knowladge base cand iti zic Salut acasa... ci sa cauti prin MCP"* (§CC.2.1 MCP filesystem PRIMARY LOCK V1)
+- *"handover... eu doar deschid nou chat si zic salut acasa, si mcp isi face treaba"* + *"in continuare o sa faci handover ca sa nu halucinezi. Diferenta e ca handover o sa il dai direct la cc tu"* (§CC.5 §AMENDMENT Direct-to-CC paradigm LOCK V1)
+- *"salut acasa, si mcp isi face treaba"* (Daniel zero courier paradigm validation)
+- *"stai... ca te trec imediat pe desktop si iti dau full autonomy pe cc tie"* + *"ai autonomie totala acum pe mcp, sa citesti si sa scrii ce vrei in vault"* (Co-CTO autonomy mode chat-current)
+
+**Decision LANDED chat-current:** 2 LOCK V1 NEW substantive vault meta-tooling (already LANDED main precedent ingest commits, reaffirmed secondary handover consume):
+
+- **§CC.2.1 MCP filesystem PRIMARY / KB FALLBACK LOCK V1** — VAULT_RULES.md edit inline: PRIMARY MCP filesystem direct read (`filesystem:read_text_file/read_multiple_files/list_directory/search_files`) când available real-time zero lag zero capacity limit; FALLBACK `project_knowledge_search` doar când MCP unavailable. Detection `tool_search filesystem` ÎNAINTE first action. PROMPT_CC_HYGIENE.md §11 sync. Memorii #21 + #22 + #30 updated. Commit `e54c250` LANDED main (cherry-pick din feature watcher auto-chore `2deba60`).
+
+- **§CC.5 §AMENDMENT 2026-05-10 Direct-to-CC paradigm LOCK V1 (Daniel zero courier)** — Workflow nou: trigger BW ~25-30% saturat OR Daniel "fă handover" → Claude scrie direct `📥_inbox/<HANDOVER>.md` via filesystem:write_file → invoke claude_code §CC.5 autonomous ingest (CURRENT_STATE move-then-replace + DECISION_LOG append + archive _CONSUMED + backup tag + commit+push main) → confirm LANDED → signal explicit "e timpul pt noul chat". Daniel zero courier (zero drag, zero comandă, zero paste startup). Daniel chat NEW + "salut acasă" = MCP §CC.2 self-serve. Memorii #15 + #24 updated paradigm shift. Commit `0c052cf` LANDED main.
+
+Plus commit `e54c250` cherry-pick din feature/v2-vanilla-port watcher auto-chore `2deba60` (post BATCH 1 Antrenor INVENTORY+PLAN raport CC verde clean).
+
+**BATCH 1 Antrenor INVENTORY+PLAN raport CC verde clean** post `feature/v2-vanilla-port` branch creat (commit `2deba60` feature branch, NU main). Co-CTO LOCK tacit: PRESERVE `src/pages/coach/` (36+ imports blast radius) + state.js +2 fields (currentScreen + cevaNuMergeReason) + persona JS render conditional + test target ~2780. ZERO Antrenor blocker bugs (slip §AR.1 acknowledged eu — preluat lista buguri din handover Phase 3.6 fără pre-flight grep verify mockup/src; CC raport invalidat 4/5 buguri non-Antrenor sau inexistent în mockup, port baseline curat).
+
+**5 escalations CC raport flagged** (resolved sau next chat decision):
+1. ADR 005 §AMENDMENT 2026-05-10 NOT documented (port-first pivot NU revert SUPERSEDE inline) — RESOLVED Step 3 chat-precedent commit `a6e2a0e`
+2. Bug §1.4 prompt slip 4/5 NOT verifiable verbatim — RESOLVED ZERO Antrenor blocker bugs port baseline curat
+3. V1→V2 naming PRESERVE `src/pages/coach/` (36+ imports blast) — Co-CTO LOCK tacit
+4. state.js +2 fields proposed (currentScreen + cevaNuMergeReason) — Co-CTO LOCK tacit
+5. V1 features audit risc trim renderIdle 465→180 LOC + rating 150→70 LOC — pending CEO decision next chat
+
+**Mid-flight unresolved next chat:** CEO decizie V1 features keep/drop blocking BATCH 2 Antrenor port implement (renderIdle.js 465→180 LOC pierde streak counter + BMR strip; rating.js 150→70 LOC pierde per-set RPE granularity). Decizie strategic UX = CEO scope NU Co-CTO. Plus order port post-Antrenor: Onboarding → Progres → Istoric → Settings (Co-CTO LOCK tacit chat-current). Plus Step 2 React migration mecanic mapping post Step 1 validation Daniel Gates smoke andura.app.
+
+**4 slip-uri Co-CTO consecutive Daniel push-back jucăuș repetitiv corectat** chat-current (vezi predecessor entry verbatim): A/B port paradigm "cateii mei din curte?" / pasat decizie tactică "am CTO cred nu? CHIEF TECHNICAL OFFICER" / întrebat permisiune "pai tu ma intrebi pe mine ce sa faci? zici ca esti fimiu" / cerut ordine sequence "Acum ce intrebi tu de ordine... figure it out :)".
+
+**Direct-to-CC paradigm LIVE TESTED end-to-end** chat-current secondary handover consume validate full Daniel zero courier paradigm: Claude direct write inbox via filesystem:write_file (handover artefact) → invoke claude_code agent §CC.5 autonomous ingest → confirm LANDED → signal explicit "e timpul pt noul chat". Workflow matured Daniel zero courier validated.
+
+**Tests baseline 2731 PASS preserved EXACT** chat-current secondary handover consume = pure vault docs ZERO src/ touched. Pre-commit hook vitest verde.
+
+**Cross-refs:**
+- Predecessor §CC.5 ingest entry below — primă consumare same chat narrative integral (handover NN 354 mcp_filesystem_paradigm_shift)
+- Handover NEW Direct-to-CC paradigm + MCP filesystem PRIMARY LOCK V1 reaffirmation secondary (NN 355 _CONSUMED archive)
+- 3 commits Step 1+2+3 LANDED main precedent ingest: `e54c250` (§CC.2.1) + `0c052cf` (§CC.5 §AMENDMENT) + `a6e2a0e` (ADR 005 §AMENDMENT)
+- BATCH 1 Antrenor commit `2deba60` pe `feature/v2-vanilla-port` branch (NU main, code work preserved separate)
+- VAULT_RULES.md §CC.2.1 + §CC.5 §AMENDMENT 2026-05-10 + PROMPT_CC_HYGIENE.md §11 + memorii Claude #15+#21+#22+#24+#30 updated
+- Backup tag chat-current ingest: `pre-handover-2026-05-10-direct-to-cc-paradigm-1642`
+
+🦫 **Bugatti craft. Direct-to-CC paradigm LIVE TESTED end-to-end secondary ingest. MCP filesystem real-time + claude_code §CC.5 autonomous ingest validated. Cumulative LOCKED V1 ~719 PRESERVED.**
+
+---
+
 ## 2026-05-10 — chat ACASĂ MCP filesystem paradigm shift + ADR 005 §AMENDMENT REVERT SUPERSEDE + §CC.5 Direct-to-CC LOCK V1 (~718→~719 cumulative, +1 net Port-First-Then-React preserved chat-precedent ingest)
 
 **Status:** §CC.5 fast handover ingest from `📥_inbox/HANDOVER_2026-05-10_chat_acasa_mcp_filesystem_paradigm_shift.md` (NN 354 archive). 3 vault meta-tooling commits Step 1+2+3 atomic Bugatti sequence LANDED chat-current pure docs ZERO src/ touched. Direct-to-CC paradigm LIVE TESTED chat-current handover (Claude direct write inbox + invoke claude_code autonomous + signal "e timpul pt noul chat"). Cumulative LOCKED V1 ~718 → **~719** (+1 net Port-First-Then-React preserved chat-precedent ingest, NU duplicate count).
