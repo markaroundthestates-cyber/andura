@@ -845,7 +845,7 @@
             <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrie liber</div></div></button>
           </div>
           <div id="pain-altceva" style="display:none; margin-top:14px;">
-            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
+            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" maxlength="500" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea><div class="small-text" style="color:var(--ink-3); text-align:right; margin-top:4px; font-size:11px;">0/500</div>
             <button class="btn-brick" onclick="showToast('Trimis. Coach-ul adaptează.')" style="width:100%; margin-top:10px;">Trimite la coach</button>
           </div>
         </div>
@@ -861,7 +861,7 @@
             <div class="body-text" style="font-weight:600; color:var(--ink); margin-top:2px;">Împins înclinat halteră</div>
           </div>
           <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:6px;">Ce echipament ai în loc?</label>
-          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea>
+          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" maxlength="500" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea><div class="small-text" style="color:var(--ink-3); text-align:right; margin-top:4px; font-size:11px;">0/500</div>
           <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.5; font-style:italic;">Coach-ul interpretează liber și propune un swap echivalent.</p>
           <button class="btn-brick" onclick="showToast('Caut swap echivalent...')" style="width:100%; margin-top:14px;">Cere swap</button>
         </div>

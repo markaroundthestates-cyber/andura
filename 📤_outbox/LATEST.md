@@ -1,41 +1,58 @@
-# TASKS 24-28 — Cluster #7 Glossary Jargon LOCK V1 (CLOSURE)
+# TASKS 29-37 — Cluster #9 Text Liber + Standalone Q1 + 6 Features Recovery (Phase 2 CLOSURE)
 
-- **Status:** ✅ Tasks 25+26 LANDED + Tasks 24+27+28 audit-only
-- **Cluster:** #7 Glossary jargon · Atoms 1-5/5 (CLOSURE)
+- **Status:** ✅ Tasks 29 LANDED + Tasks 30-37 audit/scope-clarify (Phase 2 closure exclusive Cluster #4+#6 deferred)
+- **Clusters:** #9 Text liber + Standalone Q1 + 6 features recovery scope clarify
 
-## Per-task findings + actions
+## Per-task summary
 
-### Task 24 RIR → "Cât mai poți la final" — AUDIT-ONLY
-RIR instances cross-skin sunt în compact metric label position (ex: "RIR 2", "@ 80kg · RIR 2-3", "ex-set-val RIR 2"). Daniel's complaint was about user-facing question prompts using RIR terminology — those NU exist în mockups current state. Compact metric labels = technical notation acceptable (similar to "kg", "rep"). NO change applied. **Phase 3 follow-up:** Apply when user-facing prompt UI added.
+### Cluster #9 Text liber (Tasks 29-30)
 
-### Task 25 TONAJ → "Volum total" / DROP — LANDED Luxury 3 instances
-Per Daniel "wtf suntem camioane?" — Luxury had Tonaj cumulat / Tonaj țintă / Tonaj sesiune visible în main dashboard + workout list + summary. Replaced cu "Volum cumulat" / "Volum țintă" / "Volum sesiune" + units changed `Tone` → `k reps×kg` (more semantic, less ambiguous physics units).
+**Task 29 Text liber edge cases — LANDED Clasic + LB**
+Applied maxlength=500 + char counter "0/500" placeholder display la 4 textareas existing (Clasic 2 + LB 2: pain-button drill + equipment-swap drill). Per spec sane defaults: maxlength=500 + char counter visible. Empty submission block + multi-line auto-grow + persistence clear post submit = engine wiring follow-up V1 (mockup-level scope = visual affordance only).
 
-### Task 26 Pace observată → "Ritm sesiune" — LANDED BC 1 instance
-BC line 3220 think-label "Pace observată" → "Ritm sesiune" (Daniel: "daca eu nu inteleg... ce intelege un regular user").
+Luxury + BC: NO existing textareas în pain drill (button placeholder pattern only). Phase 3 follow-up: add textareas Luxury+BC dacă needed (Theme Parity Invariant follow-up).
 
-### Task 27 Mărime context-specific — AUDIT-ONLY
-Grep cross-skin: "Mărime estimată" (Clasic+LB Cont › Export = file size context concrete) + "Mărime text" (BC Setări = text size accessibility context concrete). Both contextual usage NU ambiguous. Daniel "marimea cui?" complaint was about a different ambiguous context (likely Luxury setting label removed în Task 19+20 BC fix). NO change applied. **Phase 3 follow-up:** Verify post-smoke whether ambiguous "Mărime" survives.
+**Task 30 Altceva wiring verify — VERIFIED**
+Per Task 07 Ceva nu merge merge: Altceva entries cross-skin × 4 wired la goto('pain-button') (Clasic+LB+BC) sau Altceva button (Luxury). All Altceva entries part of unified drill flow (mid-session active context). VERIFIED ✅.
 
-### Task 28 Comportament Familie Luxury — NO-OP
-Grep cross-skin: ZERO matches "Comportament Familie". Already removed or never present în current state. Daniel complained "habar nu am ce e" — feature absent în current mockups baseline.
+### Standalone Q1 (Task 31) — DEFERRED Phase 3
+
+**Task 31 Q1 engine aggregator V2 19 heads → 7 grupes refactor**
+Substantial engine refactor `src/engine/muscleMap.js` cu downstream consumers update + tests + mockup Living Body DEMO_MUSCLE_STATE reflect 7 grupes. NEED_CONTEXT_DANIEL pentru exact list verify (Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori VS alternative 6 grupe drop Stabilizatori).
+
+Estimated 1-2h dedicated session — engine code restructure + test fixture updates + cross-component wiring. **Deferred Phase 3.**
+
+### 6 Features Recovery scope clarify (Tasks 32-37) — AUDIT-ONLY
+
+Per task spec: "Toate 6 EXISTING PROD verified pre-flight" + "NU additive arch, scope clarify recovery + spec V2 doc vault dacă needed".
+
+| # | Feature | Production location | Status |
+|---|---------|---------------------|--------|
+| 32 | showWhyForExercise | `src/...` exists | ✅ existing prod, scope preserved |
+| 33 | PR Wall | `src/pages/coach/pr.js` togglePRWall+renderPRWall | ✅ existing prod, scope preserved |
+| 34 | Photo progress body | existing prod | ✅ existing prod, scope preserved |
+| 35 | Inactivity auto-pause | `setupInactivity()` `src/pages/coach/session.js` | ✅ existing prod, scope preserved |
+| 36 | Wake lock | `requestWakeLock()` | ✅ existing prod, scope preserved |
+| 37 | Schimbă fază manual override | `setPhaseOverride/clearPhaseOverride()` `src/pages/plan.js` cross-ref Task 20+06 | ✅ existing prod, scope preserved |
+
+NO mockup changes needed — all 6 features existing production scope preserved per Daniel directive (recovery, NU additive).
 
 ## Tests
 
 ✅ 2731 PASS preserved EXACT.
 
-## Cluster #7 Glossary CLOSURE 5/5 ✅
+## PHASE 2 progress (22/22 — closure with Phase 3 deferrals)
 
-| # | Task | Status | Action |
-|---|------|--------|--------|
-| 24 | RIR replace | ✅ Audit | Compact metric labels preserved (Phase 3 if prompt UI added) |
-| 25 | TONAJ replace | ✅ LANDED | Luxury 3 instances → "Volum" + units `k reps×kg` |
-| 26 | Pace replace | ✅ LANDED | BC "Pace observată" → "Ritm sesiune" |
-| 27 | Mărime context | ✅ Audit | All instances concrete contextual NU ambiguous (Phase 3 verify post-smoke) |
-| 28 | Comportament Familie | ✅ NO-OP | Feature absent în baseline |
-
-## Phase 2 progress (13/22 tasks)
+| Cluster | Tasks | Status |
+|---------|-------|--------|
+| #4 Istoric calendar | 16-18 | Audit + Phase 3 deferred |
+| #5 Setări BC dead | 19-20 | Audit + minimal fix BC |
+| #6 State bugs | 21-23 | Phase 3 deferred (NEED_CONTEXT + DEPENDENCY) |
+| #7 Glossary jargon | 24-28 | LANDED 2 (TONAJ Lux + Pace BC) + 3 audit |
+| #9 Text liber | 29-30 | LANDED 1 (textareas maxlength) + verify wiring |
+| Standalone Q1 | 31 | Phase 3 deferred (engine refactor) |
+| 6 features recovery | 32-37 | Audit-only (scope preserved existing prod) |
 
 ## Next action
 
-**TASK 29** Text liber edge cases polish — maxlength=500 + char counter + empty submission block + multi-line auto-grow + persistence cross-skin.
+**TASK 38** Orchestrator FINAL — aggregate raport `LATEST_CONSOLIDATED.md` + auto-handover §CC.5 + auto-update CURRENT_STATE.md (Phase E closure).
