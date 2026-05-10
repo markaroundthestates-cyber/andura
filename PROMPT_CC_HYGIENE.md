@@ -478,13 +478,18 @@ Cross-ref: VAULT_RULES.md §CC.9 (canonical authority).
 
 ## 11. CHAT NEW STARTUP VERIFY FORMAT (§CHAT_CONTINUITY_PROTOCOL §CC.2-§CC.3)
 
-**Authority:** VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.3.
+**Authority:** VAULT_RULES.md §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.2.1 + §CC.3.
 
 **Mandatory layered read order chat NEW:**
 1. `00-index/CURRENT_STATE.md` (full)
 2. `06-sessions-log/HANDOVER_GLOBAL_*.md` sections referenced în CURRENT_STATE `## ACTIVE_REFS`
 3. Top 3 ADRs din CURRENT_STATE `## ACTIVE_ADRS`
 4. `DIFF_FLAGS.md` P1 active (din CURRENT_STATE `## ACTIVE_FLAGS`)
+
+**Read source priority (per §CC.2.1 LOCK V1 2026-05-10):**
+- PRIMARY: MCP filesystem direct read (`filesystem:read_text_file` / `filesystem:read_multiple_files` / `filesystem:list_directory` / `filesystem:search_files`) when available
+- FALLBACK: `project_knowledge_search` (KB GitHub sync) when MCP filesystem unavailable
+- Detection: `tool_search` filesystem tools ÎNAINTE first action → available = MCP, unavailable = KB
 
 **Output format recommended:**
 
@@ -499,8 +504,8 @@ Continuăm?
 
 **Anti-hallucination enforcement (§CC.4):**
 - Every factual claim post-startup = citation `path:§`
-- Memory recall fără citation verifiabilă = re-verify cu read/grep
-- Uncertain = explicit "verific cu search"
+- Memory recall fără citation verifiabilă = re-verify cu MCP filesystem read (PRIMARY) sau KB search (FALLBACK) per §CC.2.1
+- Uncertain = explicit "verific cu MCP filesystem read" (acasă) sau "verific cu KB search" (fallback)
 
 **Enforcement mechanism reality-check:** Acest protocol e enforced pe convention (Daniel manual paste la chat NEW + Project Knowledge include CURRENT_STATE). NU există filesystem-side mechanism care forțează chat NEW să respecte. Semnalele vizibile = INDEX_MASTER "READ FIRST" entry top + README pointer.
 

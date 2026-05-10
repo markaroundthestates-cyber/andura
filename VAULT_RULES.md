@@ -520,6 +520,16 @@ Sequential read order — NU parallel skip, NU shortcut:
 
 **Skip oricare layer fără cause justificată = drift risk.** Chat NEW recomandare: explicit "READ-ONLY mode până layered read complet" dacă bandwidth insuficient.
 
+### §CC.2.1 Read Source Priority (LOCK V1 2026-05-10 — MCP Filesystem Primary)
+
+**PRIMARY (default acasă + orice environment cu MCP filesystem available):** MCP filesystem direct read via `filesystem:read_text_file` / `filesystem:read_multiple_files` / `filesystem:list_directory` / `filesystem:search_files`. Real-time vault state, ZERO lag, ZERO capacity limit. Scope: `C:\Users\Daniel\Documents\salafull` (acasă) sau `/workspaces/salafull` (birou Codespaces dacă MCP filesystem configurat).
+
+**FALLBACK (chat-uri fără MCP filesystem tools):** `project_knowledge_search` (Knowledge Base GitHub sync). Used only when MCP filesystem unavailable.
+
+**Rationale:** KB indexare GitHub sync = lag minute-ore între push și KB indexed + capacity limited (~86-87% per 2026-05-10 Daniel cuts) + occasional stale snapshot post-merge. MCP filesystem = real-time, instant post-edit, zero capacity constraint. Vault SSOT real-time > KB snapshot. Anti-recurrence pattern: chat-uri 2026-05-08→05-10 surprise KB lag post-§CC.5 fast handover ingest cycle (CURRENT_STATE updated push, KB unsynced 5-30 min).
+
+**Detection:** chat NEW startup verifică `tool_search` pentru filesystem tools availability ÎNAINTE first action. Available → MCP primary. Unavailable → KB fallback.
+
 **NOTE enforcement:** Acest protocol e enforced pe convention (Daniel paste-uiește prompt context pentru chat NEW + project knowledge include CURRENT_STATE). NU există mecanism filesystem-side care forțează chat NEW să citească. CURRENT_STATE = `## INDEX_MASTER` top entry "READ FIRST" + README pointer servesc ca semnale vizibile.
 
 ### §CC.3 Startup Output Format Recommended
@@ -537,9 +547,9 @@ Continuăm?
 
 - Every factual claim post-startup = citation `path:§` obligatoriu
 - Format: `Per CURRENT_STATE §NOW: ...` sau `Per HANDOVER_GLOBAL §X: ...`
-- Memory recall fără citation verifiabilă = re-verify cu read/grep
-- Uncertain pe topic = explicit "verific cu search" NU pretinde
-- Daniel "halucinezi" → instant pause + "ai dreptate" + verify search NU defend
+- Memory recall fără citation verifiabilă = re-verify cu MCP filesystem read direct (PRIMARY) sau project_knowledge_search (FALLBACK) per §CC.2.1
+- Uncertain pe topic = explicit "verific cu MCP filesystem read" (acasă) sau "verific cu KB search" (fallback) NU pretinde
+- Daniel "halucinezi" → instant pause + "ai dreptate" + verify cu MCP filesystem direct read NU defend
 
 ### §CC.5 Fast Handover Workflow (chat-to-chat)
 
