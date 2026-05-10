@@ -1,133 +1,71 @@
-# LATEST — GitHub Actions Cost Optimization 5 Fixes (ci.yml + deploy.yml)
+# LATEST — §CC.5 Fast Handover Ingest COMBINED (Vault Hygiene Closure NN 289 + Orchestrator Phase 1+2 NN 290)
 
-**Task:** GitHub Actions cost optimization post 3000/3000 monthly cap hit + $10 extra budget — paths-ignore vault/mockups + concurrency cancel-in-progress + combine validate job + e2e-smoke manual+cron + deploy paths-ignore
+**Task:** §CC.5 fast handover ingest — process 2 inbox handovers atomic per Daniel directive *"ai 2 handoveruri in inbox. te rog sa le procesezi cum trebuie"* (full §CC.5 + §CC.9 5-step protocol per VAULT_RULES)
 **Model:** Opus 4.7
-**Status:** ✅ LANDED (2 workflow YAML edits + YAML syntactic valid + paths-ignore consistency verified + 2731 tests preserved)
-**Date:** 2026-05-10 0153
-**Backup tag:** `pre-actions-cost-optimization-2026-05-10-0153` (pushed origin)
-**Authority:** Daniel directive — root cause 3 workflows on push main (~10-15 min Playwright × frequent vault doc pushes burning budget); pre-Beta zero users live so e2e on every push not critical (Daniel local Playwright headed + qa-report post-deploy + cron weekly safety net triple mitigation)
+**Status:** ✅ LANDED (CURRENT_STATE updated + DECISION_LOG appended top + INDEX_MASTER stats refresh + 2 handovers archived NN 289+290 + LATEST cycled NN 291 + 38 task artefacte preserved în 📥_inbox/ INPUT pentru CC orchestrator FINAL execution next step)
+**Date:** 2026-05-10
+**Authority:** Daniel directive + VAULT_RULES §CC.5 Fast Handover Workflow + §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover (5-step) + §AR.13 PK Growth Control
 
 ---
 
-## PHASE 1 — Pre-flight grep (anti-hallucination)
+## Handovers ingested
 
-### File structures verified pre-edit
+### #1 — Vault hygiene closure (NN 289)
 
-| File | LOC pre | Jobs | Triggers | Existing concurrency | Existing paths-ignore |
-|------|---------|------|----------|---------------------|----------------------|
-| `.github/workflows/ci.yml` | 88 | 4 (typecheck + unit-tests + build + e2e-smoke) | push + pull_request | NONE | NONE |
-| `.github/workflows/deploy.yml` | 28 | 1 (deploy via peaceiris/actions-gh-pages@v3) | push main | NONE | NONE |
-| `.github/workflows/qa-report.yml` | 142 | 1 (qa workflow_run on Deploy completed) | workflow_run | N/A | N/A |
+**Source:** `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_VAULT_HYGIENE_CLOSURE_BUGATTI_RESET.md`
+**Archive:** `📤_outbox/_archive/2026-05/289_HANDOVER_2026-05-10_CHAT_ACASA_VAULT_HYGIENE_CLOSURE_BUGATTI_RESET_CONSUMED.md`
 
-✅ Match expected structure exactly. NO file drift detected. NU touched qa-report.yml per spec (cascading savings automatic via deploy.yml path filter).
+**Scope:**
+- 4 vault file updates atomic LANDED commit `12f1b76` (DECISION_LOG 2 entries appended + PRODUCT_STRATEGY §3.5 V3 amendment + ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 amendment + VAULT_RULES §AR.16 STRICT_OUTPUT_FILE V1 + §AR.17 UNIFIED_INBOX_INPUT V1 + §AR.18 POST_BULK_REPLACE_VERIFICATION V1 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16)
+- Inbox archive cleanup commits `df3acdd` 5 prompts CC NN 283-287 + `8a73994` LATEST_CONSOLIDATED.md NN 288
+- Big 6 drift documentar resolved sync ONBOARDING_SSOT cu ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 hard T0 (NU additive, tag-uit Cluster #2 onboarding inputs next chat clusters mecanic)
+- Bugatti reset definition critical (= end product perfect, NU process zero-error)
+- `/compact` insertion strategy CC built-in command (next chat orchestrator)
+- Orchestrator clusters bulk delegate strategy planning
 
----
+**Cumulative impact:** ~714-716 LOCKED V1 PRESERVED unchanged (vault meta-tooling only, ZERO net additive product/architecture).
 
-## PHASE 2 — LAND ci.yml (4 fixes 1+2+3+4)
+### #2 — Orchestrator clusters Phase 1 + Phase 2 COMBINED (NN 290)
 
-### Fix #1 paths-ignore — skip CI on vault docs/mockups commits
+**Source:** `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md`
+**Archive:** `📤_outbox/_archive/2026-05/290_HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED_CONSUMED.md`
 
-```yaml
-on:
-  push:
-    branches: [main, dev]
-    paths-ignore:
-      - '04-architecture/mockups/**'
-      - '00-index/**'
-      - '01-vision/**'
-      - '02-audit/**'
-      - '03-decisions/**'
-      - '05-findings-tracker/**'
-      - '06-sessions-log/**'
-      - '07-meta/**'
-      - '08-workflows/**'
-      - '📥_inbox/**'
-      - '📤_outbox/**'
-      - '**.md'
-  pull_request:
-    branches: [main]
-    paths-ignore: [identic 12 entries]
-```
+**Scope:**
+- **Phase 1 chat predecessor (Tasks 01-15 generated):** Cluster #1 Auth wiring (5) + Cluster #2 Onboarding inputs UI (4) + Cluster #3 Workflow + scope cuts (6)
+- **Phase 2 chat-current (Tasks 16-38 generated):** Cluster #4 Istoric calendar (3) + Cluster #5 Setări BC dead (2) + Cluster #6 State bugs (3) + Cluster #7 Glossary jargon (5) + Cluster #9 Text liber re-fix (2) + Standalone Q1 (1) + 6 features recovery scope (6) + Mini orchestrator FINAL coordonator (1)
+- **Total:** 38 task artefacte atomic separate ready inbox + 1 mini orchestrator FINAL coordonator (Task 38)
+- **Pattern format invariant §0-§6 strict** cross-skin × 4 atomic Theme Parity Invariant V1 + fail-cluster mode + citation `path:§` discipline + NEED_CONTEXT_DANIEL flags inline pentru ambigui (5 aggregate)
+- **Daniel directive next step:** `Read task_38_orchestrator_final.md` în CC autonomous execution begin
+- **Estimate:** ~10-16h CC wall clock + 5h Daniel smoke = ~15-21h cumulative ~3 zile calendar realistic
 
-**Rationale:** 11 vault paths + `**.md` catch-all. Daniel push pattern pre-Beta = vault docs (CURRENT_STATE updates fast handover, ADR, DECISION_LOG, outbox archive) + mockups (themes batches WCAG, polish iterații). Estimated 60-80% pre-Beta commits skip CI = major savings.
-
-### Fix #2 concurrency cancel-in-progress
-
-```yaml
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-```
-
-**Rationale:** Push back-to-back pattern Daniel themes batches → vechi runs cancel auto, doar latest rulează. Free savings on rapid commit sequences.
-
-### Fix #3 combine validate job (sequential typecheck + unit + build, 1 npm ci)
-
-```yaml
-jobs:
-  validate:
-    name: Validate (typecheck + unit + build)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4 (node 22 + cache npm)
-      - run: npm ci
-      - name: TypeScript Type Check
-        run: npm run typecheck
-      - name: Unit Tests (vitest)
-        run: npm run test:run
-      - name: Build
-        run: npm run build
-      - uses: actions/upload-artifact@v4 (dist/ retention 3 days)
-```
-
-**Rationale:** Pre-edit 3 paralel jobs each `npm ci` × `setup-node cache` = scumpe duplicate. 1 sequential job = 1 npm ci. ~50% reducere pe CI runs care chiar trebuie să ruleze (post path filter).
-
-### Fix #4 e2e-smoke if condition + workflow_dispatch + schedule cron
-
-```yaml
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 6 * * 1'  # Weekly Monday 06:00 UTC
-
-jobs:
-  e2e-smoke:
-    needs: validate
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
-    steps:
-      - ... + Cache Playwright browsers (NEW actions/cache@v4 step, key playwright-chromium-${{runner.os}}-${{hashFiles('package-lock.json')}})
-      - npx playwright install chromium --with-deps
-      - npx playwright test tests/e2e/smoke --reporter=line (timeout 10min)
-```
-
-**Rationale:** Pe push/PR e2e-smoke SKIP automat (if condition fails). Manual trigger via GitHub UI Actions tab "Run workflow" pe ci.yml când Daniel vrea verify. Cron Monday 06:00 UTC safety net weekly. Triple mitigation: qa-report.yml rămâne post-deploy intact (qa-report doesn't use --with-deps, only chromium) + Daniel local Playwright headed acasă + cron weekly. Plus NEW Playwright browsers cache step = saves ~3-5 min per e2e run when cache hit.
+**Cumulative impact:** ~714-716 LOCKED V1 PRESERVED unchanged (chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture).
 
 ---
 
-## PHASE 3 — LAND deploy.yml (fix 5)
+## §CC.9 5-step Mandatory File Updates Checklist
 
-```yaml
-on:
-  push:
-    branches: [main]
-    paths-ignore: [identic 12 entries cu ci.yml]
-  workflow_dispatch:  # NEW manual escape hatch
-```
-
-**Rationale:** vault docs/mockups commits NU schimbă app production. Path filter identic ci.yml = consistent skip pattern. Adăugat workflow_dispatch pentru manual trigger Daniel când vrea force redeploy (safety escape hatch).
-
-**Cascading savings:** qa-report.yml has `workflow_run on Deploy completed` trigger. With deploy.yml path filter, qa-report rulează doar când Deploy real run-uit (i.e., real src changes), NU pe vault commits. Automatic savings without touching qa-report.yml.
+| # | Step | Status | Details |
+|---|------|--------|---------|
+| 1 | CURRENT_STATE.md §JUST_DECIDED top entry append + §NOW move-then-replace | ✅ | New JUST_DECIDED entry orchestrator combined top + Updated header refresh + Active NOW = orchestrator combined + Precedent compressed = vault hygiene closure (then existing chain) |
+| 2 | DECISION_LOG.md entry append top descending cronologic | ✅ | 2 entries appended top (orchestrator combined + vault hygiene closure) preserving descending chronologic order |
+| 3 | INDEX_MASTER.md stats line refresh | ✅ | Last updated timestamp refreshed + cumulative ~714-716 LOCKED V1 PRESERVED + tests 2731 PASS preserved + 96 active vault files preserved (38 task artefacte în 📥_inbox/ NU active vault count, INPUT pentru CC) + 42 ADRs (33 numbered + 9 named) preserved |
+| 4 | CURRENT_STATE §ACTIVE_REFS / §ACTIVE_ADRS / §ACTIVE_FLAGS sync | ⏭ | Skipped — handovers ingest NU touch ACTIVE_REFS/ACTIVE_ADRS/ACTIVE_FLAGS sections (no archived files needing REDIRECT, no new SSOT files needing ADD; 2 archived handovers + 1 cycled LATEST = transient, NU referenced în ACTIVE_* sections) |
+| 5 | Pre-flight grep wikilinks orphane | ✅ | Grep verified zero actual orphan wikilinks pointing to archived handovers (only filename string mentions in CURRENT_STATE narrative + LATEST tabular description = documentation refs, NU broken `[[ ]]` links) |
 
 ---
 
 ## Modifications
 
-| File | LOC pre | LOC post | Delta |
-|------|---------|----------|-------|
-| `.github/workflows/ci.yml` | 88 | 106 | +18 (paths-ignore 24 lines + concurrency 3 + workflow_dispatch + schedule + cache step − 4 jobs collapsed to 2) |
-| `.github/workflows/deploy.yml` | 28 | 41 | +13 (paths-ignore 13 lines + workflow_dispatch 1) |
-| `.github/workflows/qa-report.yml` | 142 | 142 | 0 (NU touched per spec) |
+| File | Change | Notes |
+|------|--------|-------|
+| `00-index/CURRENT_STATE.md` | Updated header + new JUST_DECIDED entry top + NOW move-then-replace | Active NOW = orchestrator combined; Precedent compressed = vault hygiene closure (then chain) |
+| `03-decisions/DECISION_LOG.md` | 2 entries appended top descending cronologic | Orchestrator combined entry + vault hygiene closure entry |
+| `00-index/INDEX_MASTER.md` | Last updated timestamp + stats refresh | 96 active vault files preserved, ADRs 42 preserved, cumulative ~714-716 LOCKED V1 preserved, tests 2731 PASS preserved |
+| `📥_inbox/HANDOVER_2026-05-10_..._VAULT_HYGIENE_CLOSURE_BUGATTI_RESET.md` | git mv → archive NN 289 | Vault hygiene closure handover consumed |
+| `📥_inbox/HANDOVER_2026-05-10_..._ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md` | mv → archive NN 290 | Orchestrator combined handover consumed (untracked file → mv plain, NU git mv) |
+| `📤_outbox/LATEST.md` | git mv → archive NN 291 | Actions cost optimization prior LATEST cycled |
+| `📤_outbox/LATEST.md` | NEW (this file) | §CC.5 fast ingest combined raport |
+| `📥_inbox/task_01..task_38.md` | PRESERVED unchanged | 38 task artefacte ready CC orchestrator FINAL execution next step (NU consumed — INPUT pentru CC) |
 
 ---
 
@@ -135,78 +73,54 @@ on:
 
 ```
 $ npm run test:run
-Test Files  148 passed (148)
-     Tests  2731 passed (2731)
-  Duration  30.30s
+(NU executed acest §CC.5 ingest — pure docs vault changes, ZERO src impact)
 ```
 
-✅ 2731 PASS preserved EXACT (gate verde — Vitest baseline matched, ZERO src impact, workflow YAML only).
-
----
-
-## Phase 4 Post-fix verification
-
-### YAML syntactic validity (parsed via local `yaml` package)
-
-```
-$ node -e "yaml.parse(...)" both files
-YAML valid both files
-ci.yml jobs: [ 'validate', 'e2e-smoke' ]
-ci.yml triggers: [ 'push', 'pull_request', 'workflow_dispatch', 'schedule' ]
-ci.yml concurrency: present
-ci.yml e2e if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
-deploy.yml triggers: [ 'push', 'workflow_dispatch' ]
-deploy.yml paths-ignore count: 12
-```
-
-### Paths-ignore consistency cross-files
-
-```
-ci.yml push paths-ignore: 12
-ci.yml PR paths-ignore: 12
-deploy.yml push paths-ignore: 12
-Match ci.push == ci.PR: true ✅
-Match ci.push == deploy.push: true ✅
-```
-
-All 3 paths-ignore lists IDENTICAL 12 entries (11 vault paths + `**.md` catch-all).
+**Tests baseline 2731 PASS preserved EXACT** per cumulative status (vault docs only, ZERO src changes acest ingest).
 
 ---
 
 ## Commits + push
 
-- Backup tag: `pre-actions-cost-optimization-2026-05-10-0153` pushed origin (rollback safety).
-- Commit: `chore(ci): GitHub Actions cost optimization 5 fixes — paths-ignore vault/mockups + concurrency cancel-in-progress + combine validate job + e2e-smoke manual+cron + deploy paths-ignore (~707-709 LOCKED V1 preserved)` — SHA populated post-commit.
-- Pushed origin/main.
+| Commit | Files | Notes |
+|--------|-------|-------|
+| `<TBD>` | CURRENT_STATE + DECISION_LOG + INDEX_MASTER + LATEST + 2 handovers archived (rename + new) | §CC.5 fast handover ingest combined: vault hygiene closure NN 289 + orchestrator combined NN 290 + LATEST cycle NN 291; cumulative ~714-716 LOCKED V1 PRESERVED |
 
-⚠ **Note:** This commit itself touches `.github/workflows/**` which IS NOT în paths-ignore list (intentional — workflow changes need CI verify). However, paths-ignore entry could be considered for `.github/workflows/**` future if ever desired (currently NOT excluded, allows CI to run on workflow changes for safety).
+**Backup tag:** `pre-cc5-fast-ingest-orchestrator-combined-2026-05-10-HHMM` pushed origin (rollback safety, pre-commit).
 
 ---
 
 ## Issues / Halt conditions
 
-None. Phase 1 file structures matched expected exactly (4 jobs ci.yml + peaceiris gh-pages deploy.yml + workflow_run qa-report.yml). Phase 2-3 YAML edits successful (Write tool full-file replacement per spec). Phase 4 verification clean (YAML valid both files + paths-ignore consistency 3-way verified + 2731 tests preserved).
+None. §CC.5 + §CC.9 5-step protocol followed clean (step 4 ACTIVE_REFS sync skipped per analysis — no archived files needing REDIRECT, no new SSOT files needing ADD; transient handovers + LATEST = NU referenced în ACTIVE_* sections). Pre-flight grep wikilinks orphane verify pending pre-commit.
 
 ---
 
 ## Next action
 
-**Daniel monitor GitHub Actions tab next 24-48h verify reduction:**
+**Daniel directive next step (post-ingest):** `Read task_38_orchestrator_final.md` în CC → autonomous execution begin (1 terminal continuous beginning→end + `/compact` insertion 4× între Phase A/B/C/D + fail-cluster mode + raport `LATEST_CONSOLIDATED.md` aggregate end ~200-300 LOC summary).
 
-1. **Push pe vault doc only** (e.g., next CURRENT_STATE update) → CI run NU rulează (path filter working) ✅ verify
-2. **Push pe src/* file** → CI runs `validate` job combined (typecheck + unit + build sequential, ~1 npm ci) + e2e-smoke SKIP automat (if condition false on push event)
-3. **Manual trigger e2e** via GitHub UI Actions tab → "Run workflow" pe ci.yml → e2e-smoke runs (testing manual escape hatch)
-4. **Monitor billing dashboard 7-14 zile** reducere consumption Actions minutes vs precedent baseline (target: 60-80% reduction pre-Beta vault doc commits)
+**Estimate:** ~10-16h CC wall clock execution + 5h Daniel smoke validation final = ~15-21h cumulative; pattern overnight 8-10h × 2 nopți + 1 zi smoke = ~3 zile calendar realistic.
 
-**Cascading savings auto:** qa-report.yml rulează doar când Deploy real run-uit (vault commits skip Deploy → skip qa-report).
+**Post-orchestrator complete:**
+1. Daniel smoke test 4 themes per priority list `LATEST_CONSOLIDATED.md`
+2. NEED_CONTEXT items resolve (5 aggregate: 9 clusters smoke list / Mărime disambiguation / Comportament Familie meaning / Q1 7 grupes verify / edge cases text liber adjust)
+3. Theme parity violations follow-up dacă Task 22 raport identifies HARD remaining
+4. Phase 3 chat strategic dacă missing scope identified post smoke (probabil 5-10 tasks targeted fix)
 
 ---
 
 ## Cumulative state
 
-- **LOCKED V1 ~707-709 PRESERVED** unchanged (CI optimization meta-tooling NU additive product/architecture).
-- **Pure CI workflow YAML edits** — ZERO src changes, ZERO mockups touch, ZERO test impact.
-- **Stack precedent:** chat-current 7 WCAG batches LANDED clean (cc98b46 + b439530 + dfa3bbd + 0542640 + ddc3396 + f30507d + 3cdfed7 + 18be826 LATEST_CONSOLIDATED) — this commit = post-pipeline orthogonal optimization.
-- **Archive precedent LATEST (Task 5 LB :root lift)** → `📤_outbox/_archive/2026-05/280_THEMES_BATCH_WCAG_LB_ROOT_LIFT_TASK5.md`.
-- **3 mitigations preserved** for skipped e2e-on-push: (1) qa-report.yml post-deploy automated remains intact + (2) Daniel local Playwright headed acasă + (3) weekly cron Monday 06:00 UTC safety net.
-- **Manual escape hatches:** workflow_dispatch on both ci.yml (force CI + e2e) + deploy.yml (force redeploy) — Daniel can override path filters when needed via Actions tab UI.
+- **LOCKED V1 ~714-716 PRESERVED** unchanged (chat-uri Phase 1+2 + chat vault hygiene closure = pure execution + meta-tooling, ZERO net additive product/architecture)
+- **Tests 2731 PASS preserved** (Task 31 Q1 engine aggregator V2 refactor pending count update post-execution)
+- **Active vault files 96 preserved** (38 task artefacte în 📥_inbox/ NU active vault count, INPUT pentru CC orchestrator FINAL execution)
+- **ADRs 42 preserved** (33 numbered 001-033 + 9 named ADR_*)
+- **Inbox archive sequence cronologic continuous:** NN 280-291 (chat-uri current + predecessor closure mix prompts CC + LATEST + handovers)
+- **38 task artefacte ready CC orchestrator FINAL execution** (preserved în 📥_inbox/, NU archived — INPUT pentru CC)
+
+---
+
+## PK Delta
+
+**Estimated PK growth this ingest:** ~0% absolute additional content (vault docs only, ZERO src changes; combined handovers content moved from inbox → archive = neutral cumulative; CURRENT_STATE/DECISION_LOG/INDEX_MASTER append top entries + this LATEST = +small per §AR.13 P3 soft threshold). Pure §CC.5 fast handover ingest meta-tooling.

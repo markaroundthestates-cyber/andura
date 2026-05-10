@@ -1,5 +1,123 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 chat ACASĂ orchestrator clusters generation Phase 1 + Phase 2 COMBINED — Tasks 01-38 atomic artefacte ready inbox + 1 mini orchestrator FINAL coordonator (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture)
+
+**Status:** Pure execution scope orchestrator clusters generation (NU commits chat-uri Phase 1+2 — predecessor chain commit `12f1b76` chat vault hygiene closure preserved). Cumulative LOCKED V1 ~714-716 PRESERVED unchanged. Tests 2731 PASS preserved EXACT (NU code changes chat-uri Phase 1+2 — pure prompt artefact generation; Task 31 Q1 engine aggregator V2 refactor → tests count update tracked post-refactor 2731 → N).
+
+**Authority:** Daniel directive cumulative chat-uri Phase 1+2 (*"avem material să lasăm un batch de 30-40 iteme în CC să ruleze cu orchestrator?"* + *"baga-i in orchestrator comanda de /compact periodic si nu mai are context window mic"* + Bugatti reset definition critical *"bugatti patern nu ma intereseaza acum... ma intereseaza la final. Si bugatti da erori in executie dar la productie sunt fixed"* = end product perfect, NU process zero-error).
+
+### Phase 1 chat predecessor (Tasks 01-15 generated)
+
+**Cluster #1 Auth wiring (Tasks 01-05):** Big 6 hard T0 wiring cross-skin × 4 mockup files atomic per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 (Sex / Vârstă / Înălțime / Greutate / Obiectiv / Frecvență toate hard required, ZERO skip pe Greutate+Înălțime). Plus Task 05 ONBOARDING_SSOT_V1 §AMENDMENT 2026-05-10 vault hygiene doc sync drift documentar resolved.
+
+**Cluster #2 Onboarding inputs UI (Tasks 06-09):** 6 templates V2 user-facing rename Mentenanță SUPERSEDE Sănătate Generală + Auto al 6-lea opțiune NEW production-aligned `setPhaseOverride/clearPhaseOverride`. 1 buton "Ceva nu merge" merge unified Pain+Equipment drill secundar SUPERSEDE ADR 023 split. BF auto US Navy waist+neck+înălțime+sex method + override manual UI Profile section + Demographic Prior K-NN K=10 fallback (ADR 017). Loghează kcal+proteine auto-fill rule + UI cross-skin generic wording anti-MFP-mention legal cover.
+
+**Cluster #3 Workflow + scope cuts (Tasks 10-15):** 1800 kcal hardcoded test data removal production. Pain Button idle scos (mid-session only). Sport plan supervision DROP complet. saveStepsQuick step counter DROP. Antrenament liber DROP confirmat preservat. Task 15 audit READ-ONLY workflow antrenament V1 prod parity cross-skin × 4 — output raport pentru Phase 2 follow-up theme parity violations (Task 22).
+
+### Phase 2 chat-current (Tasks 16-38 generated cu NEED_CONTEXT_DANIEL flags inline)
+
+**Cluster #4 Istoric calendar (Tasks 16-18):** Layout audit + fix cross-skin × 4 + Range selector 30/60/90/Tot drill + Greutate+BF timeline + photo progress body integration cross-skin × 4 (closure Cluster #4).
+
+**Cluster #5 Setări BC dead (Tasks 19-20):** Dead links audit cross-skin × 4 + Schimbă fază manual override destructive confirm pattern V2 universal cross-skin × 4 cu wording verbatim (closure Cluster #5).
+
+**Cluster #6 State bugs (Tasks 21-23) cu NEED_CONTEXT_DANIEL inline:** Task 21 audit READ-ONLY 9 dimensions × 4 skins parity matrix (NEED_CONTEXT). Task 22 Theme parity violations fix per Tasks 15+21 audits (DEPENDENCY). Task 23 Workflow antrenament V1 LOCK auto-advance pauză + edit manual kg+reps post-set + 3-state ENERGY 🟢🟡🔴 cross-skin × 4 (closure Cluster #6).
+
+**Cluster #7 Glossary jargon LOCK V1 (Tasks 24-28) per Daniel-isms verbalize:** Task 24 RIR → "Cât mai poți la final" + Task 25 TONAJ → "Volum total" + Task 26 Pace → "Ritm sesiune" cu NEED_CONTEXT + Task 27 Mărime context-specific NEED_CONTEXT 5 candidates + Task 28 Comportament Familie Luxury "Stilul tău" sau Option D REMOVE NEED_CONTEXT.
+
+**Cluster #9 Text liber re-fix (Tasks 29-30):** Task 29 edge cases polish — maxlength=500 + char counter + empty submission block + multi-line auto-grow + placeholder context-specific + persistence clear post submit (NEED_CONTEXT inline). Task 30 "Altceva" wiring verify sub Task 07 merge cross-skin × 4 (closure Cluster #9).
+
+**Standalone Q1 (Task 31):** Engine refactor `src/engine/muscleMap.js` 19 heads → 7 grupes (Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori) per Q1 LOCK 2026-05-09. Backwards compat shim. NEED_CONTEXT_DANIEL pentru exact list verify.
+
+**6 features recovery scope clarify (Tasks 32-37):** Toate 6 EXISTING PROD verified pre-flight (showWhyForExercise / PR Wall / Photo progress body / Inactivity auto-pause / Wake lock / Schimbă fază manual override). NU additive arch, scope clarify recovery.
+
+**Task 38 mini orchestrator FINAL coordonator:** Citește toate ~37 tasks din 📥_inbox/ sequential 1→N + `/compact` insertion 4× între Phase A/B/C/D (post Tasks 10/20/30/37) + fail-cluster mode (NU fail-stop atomic global per Bugatti reset definition: end product perfect, NU process zero-error) + raport `LATEST_CONSOLIDATED.md` aggregate end ~200-300 LOC summary. Estimate ~10-16h CC wall clock + 5h Daniel smoke = ~15-21h cumulative; pattern overnight 8-10h × 2 nopți + 1 zi smoke = ~3 zile calendar realistic.
+
+### Pattern format invariant artefacte (replicated Phase 1 → Phase 2)
+
+- §0 pre-flight grep mandatory cross-skin × 4 verify paths
+- §1-§4 scope + files + acceptance criteria + backup tag
+- §5 commit message + push origin main
+- §6 raport `📤_outbox/LATEST_TASK_NN.md` Status / Pre-flight / Modificări / Build+Tests / Commits / Pushed / Issues / Next
+- Theme Parity Invariant V1 mandatory cross-skin × 4 mockup files
+- Fail-cluster mode (NU fail-stop atomic global per Bugatti reset definition end product perfect)
+- Citation discipline `path:§` MANDATORY (NU memory recall)
+
+### Mid-decision pe NEED_CONTEXT items aggregate (Daniel post-handover decide)
+
+1. Listă explicită 9 clusters smoke noapte (Task 21 input — sau Co-CTO scope decide audit 9 dimensions × 4 skins matrix discovery-driven)
+2. Mărime disambiguation per instance (Task 27 — pre-flight grep identifies + Co-CTO propose Option per instance + Daniel confirm rapid)
+3. Comportament Familie functional meaning (Task 28 — Luxury-only parity violation candidate)
+4. Q1 7 grupes exact list verify (Task 31 pre-implementation)
+5. Edge cases text liber Daniel adjust (Task 29 sane defaults applied — verify post smoke)
+
+### Cross-refs
+
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + Predecessor handover NN 289 (chat ACASĂ post-noapte vault hygiene closure 2026-05-10) + Handover NN 290 acest archive + Phase 1 chat predecessor Tasks 01-15 generated (chat anterior — handover NU separate, acoperit combined narrative) + Phase 2 chat-current Tasks 16-38 generated (23 atomic + 1 orchestrator FINAL) + Theme Parity Invariant V1 reaffirmation final preserved + 38 task artefacte preserved în 📥_inbox/ pentru CC orchestrator FINAL `Read task_38_orchestrator_final.md` autonomous execution + Cumulative LOCKED V1 ~714-716 PRESERVED + Tests 2731 PASS preserved (Task 31 refactor pending count update).
+
+### Next chat priority
+
+1. **Daniel directive next step:** `Read task_38_orchestrator_final.md` în CC → autonomous execution begin
+2. Daniel smoke test 4 themes per priority list `LATEST_CONSOLIDATED.md` post CC orchestrator FINAL
+3. NEED_CONTEXT items resolve (5 aggregate)
+4. Theme parity violations follow-up dacă Task 22 raport identifies HARD remaining
+5. Phase 3 chat strategic dacă missing scope identified post smoke
+
+---
+
+## 2026-05-10 chat ACASĂ post-noapte vault hygiene closure — pendings ingested 4 vault file updates LANDED commit `12f1b76` (DECISION_LOG 2 entries appended top + PRODUCT_STRATEGY §3.5 V3 amendment + ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 amendment + VAULT_RULES §AR.16 STRICT_OUTPUT_FILE V1 + §AR.17 UNIFIED_INBOX_INPUT V1 + §AR.18 POST_BULK_REPLACE_VERIFICATION V1 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16) + inbox archive cleanup commits `df3acdd` 5 prompts CC NN 283-287 + `8a73994` LATEST_CONSOLIDATED.md NN 288 + Big 6 drift documentar resolved sync ONBOARDING_SSOT cu ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 hard T0 (NU additive, tag-uit Cluster #2 onboarding inputs next chat clusters mecanic) + Bugatti reset definition critical (= end product perfect, NU process zero-error) + `/compact` insertion strategy CC built-in command + orchestrator clusters bulk delegate strategy planning ~30-50 tasks LOCK clear (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-current = vault meta-tooling only, ZERO net additive product/architecture)
+
+**Status:** Vault meta-tooling closure (chat-current commits chain: vault hygiene LANDED `12f1b76` + inbox archive cleanup `df3acdd` NN 283-287 + LATEST_CONSOLIDATED archive `8a73994` NN 288). Cumulative LOCKED V1 ~714-716 PRESERVED unchanged. Tests 2731 PASS preserved EXACT (vault docs only, ZERO src changes).
+
+**Authority:** Daniel directive *"tot ce ai arhivat se regaseste in CURRENT_STATE si pe unde mai trebuie?"* (vault hygiene incomplete discovered post §CC.5 fast workflow streak — DECISION_LOG STALE 2026-05-09 + PRODUCT_STRATEGY §3.5 STALE + ONBOARDING_SSOT §2 STALE + §ANTI_RECURRENCE_RULES pending verify) + *"pai de ce il lasam pending?"* (anti-confirmation theater Co-CTO scope decide singur) + *"e simplu, dai comanda la cc sa le verifice"* (corecție over-engineering inbox sweep mecanic) + *"bugatti patern nu ma intereseaza acum... ma intereseaza la final"* (Bugatti definition reset critical = end product perfect, NU process zero-error) + *"baga-i in orchestrator comanda de /compact periodic"* (CC built-in command insertion strategy între phases pentru fresh context fără drift quality).
+
+### Vault hygiene meta-tooling LANDED commit `12f1b76` (4 file updates atomic single commit)
+
+- **03-decisions/DECISION_LOG.md** → 2 entries appended top descending cronologic (chat noapte WCAG + chat post-noapte continuation inventory)
+- **01-vision/PRODUCT_STRATEGY_SPEC_v1.md** → §3.5 V3 amendment 2026-05-10 (REVERSAL nutrition logging RE-IN-SCOPE V1 + tab UI REMOVED + MFP CSV generic wording legal cover)
+- **01-vision/ONBOARDING_SSOT_V1.md** → §2 GOAL TAXONOMY V2 amendment (Mentenanță rename + Auto al 6-lea template production-aligned `setPhaseOverride()`)
+- **VAULT_RULES.md** → §AR.16 STRICT_OUTPUT_FILE V1 + §AR.17 UNIFIED_INBOX_INPUT V1 + §AR.18 POST_BULK_REPLACE_VERIFICATION V1 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16
+
+### Inbox archive cleanup commits
+
+- **`df3acdd`** — 5 files renamed via git mv (NN 283-287, zero info loss 100% similarity preserved): PROMPT_CC_TASK_3/4/5 + ORCHESTRATOR_WCAG_PATH_A_PLUS_TASKS_3_4_5 + PROMPT_CC_TASK_0_HOTFIX
+- **`8a73994`** — LATEST_CONSOLIDATED.md archived NN 288 (axis WCAG closed, smoke validation done chat-precedent)
+
+### Big 6 drift documentar resolved (NU additive)
+
+Vault hygiene sync ONBOARDING_SSOT V1 doc cu ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 Big 6 hard T0 = tag-uit Cluster #2 onboarding inputs next chat clusters mecanic. Real situație clarificat (Daniel push-back direct): drift documentar (ADR_MULTI_TENANT_AUTH §AMENDMENT posterior OVERRIDE Big 6 hard T0, ONBOARDING_SSOT V1 §AMENDMENT 2026-05-04 evening anterior SUPERSEDED stale, NU rewritten).
+
+### Bugatti reset definition critical (Daniel directive)
+
+*"bugatti patern nu ma intereseaza acum... ma intereseaza la final. Adica daca la final iesim full quality sunt ok. Si bugatti da erori in executie dar la productie sunt fixed."* — Bugatti = end product perfect, NU process zero-error. Anti-pattern Co-CTO over-applied process quality (drift, attrition rate, fail-cluster mode) corectat.
+
+### `/compact` insertion strategy CC built-in command (Daniel insight tehnic)
+
+*"baga-i in orchestrator comanda de /compact periodic si nu mai are context window mic"* — strategie next chat orchestrator: insert `/compact` între phases (ex. după fiecare 10-15 tasks) = fresh context CC, 1 terminal continuous beginning→end fără drift quality. Reset estimate cu `/compact`: 30-50 tasks single CC = quality preserved end, no caveat drift.
+
+### Orchestrator clusters bulk delegate strategy planning
+
+Daniel întreabă *"avem material să lasăm un batch de 30-40 iteme în CC să ruleze cu orchestrator?"*. Co-CTO assessment: DA, ~30-50 tasks LOCK clear (9 clusters mecanic + 4 net additive LOCK-uri + 6 features recovery + standalone). UI tasks cross-skin × 4 themes mockup files separate quadruplează count efectiv. Estimate ~30-45h CC wall clock + 5h smoke final = ~35-50h total. Pattern Daniel overnight 8-10h × 4-5 nopți + 1 zi smoke morning = ~4-6 zile calendar (subsequent chat orchestrator combined Phase 1+2 reset estimate ~10-16h CC wall clock + 5h smoke = ~3 zile calendar realistic cu `/compact` insertion strategy).
+
+### Slip-uri Co-CTO chat-current (5 onest identified — consolidate anti-recurrence next chat)
+
+1. **KB cache drift** state cumulative ~707-709 stale — fresh upload override needed
+2. **§AR.1 grep mandatory ratat** Big 6 fals conflict (handover §Mid-flight cited fără verify ONBOARDING_SSOT direct)
+3. **Over-engineering inbox sweep** prompt CC monolitic execute mode când era cleanup mecanic
+4. **Confirmation theater** "OK go?" pe vault hygiene când era evident go
+5. **Bugatti over-applied process quality** drift/attrition/fail-cluster când Bugatti = end product perfect
+
+**Anti-recurrence reaffirm next chat:** §AR.1 pre-flight grep mandatory MEREU (slip recurent 3-4 chats consecutive — VAULT_RULES §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16 LANDED commit `12f1b76` să prevent recurrence). Plus Bugatti definition correct = end product perfect, NU process zero-error.
+
+### Cross-refs
+
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest (precedent compressed) + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 LANDED `12f1b76` + [[../01-vision/ONBOARDING_SSOT_V1]] §2 V2 LANDED `12f1b76` (sync Big 6 ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 = Cluster #2 onboarding inputs next chat clusters) + [[../03-decisions/ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-05.7 Big 6 hard T0 + [[VAULT_RULES]] §AR.16+17+18 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16 LANDED `12f1b76` + Inbox archive sequence cronologic continuous: NN 280-289 (chat-current + predecessor closure mix prompts CC + LATEST + handover) + Theme Parity Invariant V1 reaffirmation final preserved.
+
+### Mid-flight unresolved next chat priority — single axis
+
+Orchestrator clusters CC generation 30-50 tasks artefacte separate + 1 mini orchestrator coordonator → 2 chats strategice × ~20-25 tasks each (sau 3 chats × ~12-15 tasks) cu handover §CC.5 între; per chat: pre-flight grep mandatory per task + verify cross-skin × 4 themes paths; output: artefacte separate per task (1-button copy each) + mini orchestrator artefact coordonator; Daniel drag toate artefacte în 📥_inbox/ + comandă CC orchestrator; CC autonomous 1 terminal continuous beginning→end cu `/compact` insertion între phases (fiecare 10-15 tasks) + fail-cluster mode + estimate ~30-45h CC wall clock + 5h Daniel smoke final = ~35-50h total.
+
+---
+
 ## 2026-05-10 chat ACASĂ post-noapte continuation — inventory exercițiu Clasic baseline + Theme Parity Invariant V1 reaffirmation FINAL + 4 net additive LOCK-uri + 2 amendments majore PRODUCT_STRATEGY §3.5 V3 + ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 (cumulative ~714-716 LOCKED V1, +3-4 net additive)
 
 **Status:** Pure decision streak + handover (NU commits chat-current — predecessor chain `cc98b46 → 2a0f8be` din chat noapte preserved). Cumulative LOCKED V1 ~709-711 → **~714-716** (+3-4 net product/architecture additive substantive + 2 amendments majore). Tests 2731 PASS preserved EXACT (NU code changes chat-current).
