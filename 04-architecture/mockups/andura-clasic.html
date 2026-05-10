@@ -822,49 +822,52 @@
         </div>
       </div>
 
-      <!-- CEVA NU MERGE drill unified (Pain+Equipment merged per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 SUPERSEDE ADR 023 split — 4 opțiuni preset fan-out la flow-uri existing) -->
+      <!-- CEVA NU MERGE drill unified (4 opțiuni preset ZERO text input — Task C 2026-05-10 chat ACASĂ post-smoke + Task E NEW LOCK V1 descriere liberă universal SCOASĂ) -->
       <div class="screen paper-bg sub-page" id="screen-ceva-nu-merge" data-screen-label="Antrenor › Ceva nu merge" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Ce nu merge?</h2></div>
         <div class="phone-scroll" style="padding: 16px 24px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
           <p class="body-text" style="color:var(--ink-2); margin:0 0 12px;">Alege opțiunea care se potrivește. Coach-ul ajustează imediat.</p>
-          <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="alert-circle" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Mă doare</div><div class="small-text" style="color:var(--ink-3);">Durere acută, articulară sau musculară</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
-          <button class="onb-opt stack-row" onclick="goto('equipment-swap')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="repeat"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Nu am aparat</div><div class="small-text" style="color:var(--ink-3);">Aparat ocupat sau lipsă — propunem alternative</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
-          <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="message-square"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrii liber — coach-ul interpretează</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="alert-circle" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Mă doare</div><div class="small-text" style="color:var(--ink-3);">Alegi zona — propunem alternative sigure</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="goto('equipment-swap')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="repeat"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Nu am aparat</div><div class="small-text" style="color:var(--ink-3);">Alegi ce ai — propunem swap echivalent</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="showToast('Coach-ul a notat. Ajustează restul sesiunii.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="message-square"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Coach-ul ajustează generic</div></div></button>
           <button class="onb-opt stack-row" onclick="back()" style="cursor:pointer; text-align:left; width:100%; margin-top:8px;"><i data-lucide="x"></i><div style="flex:1;"><div class="body-text" style="font-weight:600; color:var(--ink-3);">Anulează</div></div></button>
         </div>
       </div>
 
-      <!-- PAIN BUTTON drill (3 predefined + Altceva text input) -->
+      <!-- PAIN BUTTON drill (body parts preset 6 opțiuni — Task C 2026-05-10 chat ACASĂ post-smoke + ZERO textarea Task E NEW LOCK V1) -->
       <div class="screen paper-bg sub-page" id="screen-pain-button" data-screen-label="Antrenor › Pain" style="height:100%; flex-direction:column;">
-        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Mă doare ceva</h2></div>
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Unde te doare?</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 22px; line-height:1.5;">Coach-ul reduce intensitatea sau schimbă exercițiul. Spune ce simți:</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 22px; line-height:1.5;">Coach-ul reduce intensitatea sau schimbă exercițiul pentru zona aleasă:</p>
           <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="zap" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere acută</div><div class="small-text" style="color:var(--ink-3);">Stop imediat exercițiu, swap sigur</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="bone"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Disconfort articulație</div><div class="small-text" style="color:var(--ink-3);">Reducem amplitudine + greutate</div></div></button>
-            <button class="onb-opt stack-row" onclick="showToast('Siguranța e pe primul loc. Am ajustat restul sesiunii.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="battery-low"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Oboseală extremă</div><div class="small-text" style="color:var(--ink-3);">Tăiem volum 30% astăzi</div></div></button>
-            <button class="onb-opt stack-row" onclick="document.getElementById('pain-altceva').style.display='block'" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrie liber</div></div></button>
-          </div>
-          <div id="pain-altceva" style="display:none; margin-top:14px;">
-            <textarea placeholder="Descrie ce simți. Ex: înțepătură ușoară lombar la genuflexiuni..." rows="4" maxlength="500" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea><div class="small-text" style="color:var(--ink-3); text-align:right; margin-top:4px; font-size:11px;">0/500</div>
-            <button class="btn-brick" onclick="showToast('Trimis. Coach-ul adaptează.')" style="width:100%; margin-top:10px;">Trimite la coach</button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Ajustăm exercițiile pentru umăr.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Umăr</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Ajustăm exercițiile pentru spate.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Spate</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Ajustăm exercițiile pentru genunchi.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Genunchi</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Ajustăm exercițiile pentru cot.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Cot</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Ajustăm exercițiile pentru gleznă.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Gleznă</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Siguranța primul loc. Coach-ul ajustează generic.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altă zonă</div><div class="small-text" style="color:var(--ink-3);">Engine flag generic</div></div></button>
+            <button class="onb-opt stack-row" onclick="back()" style="cursor:pointer; text-align:left; width:100%; margin-top:8px;"><i data-lucide="x"></i><div style="flex:1;"><div class="body-text" style="font-weight:600; color:var(--ink-3);">Anulează</div></div></button>
           </div>
         </div>
       </div>
 
-      <!-- EQUIPMENT SWAP drill (text input liber, ADR 023) -->
+      <!-- EQUIPMENT SWAP drill (preset 5 opțiuni — Task C 2026-05-10 chat ACASĂ post-smoke + ZERO textarea Task E NEW LOCK V1) -->
       <div class="screen paper-bg sub-page" id="screen-equipment-swap" data-screen-label="Antrenor › Echipament" style="height:100%; flex-direction:column;">
         <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Schimbă echipament</h2></div>
         <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
-          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 16px; line-height:1.5;">Smart-routing nu a găsit alternativă. Spune ce ai la îndemână.</p>
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 16px; line-height:1.5;">Alege ce ai la îndemână — coach-ul propune swap echivalent:</p>
           <div style="background:var(--paper-2); border-radius:12px; padding:14px; margin-bottom:14px;">
             <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">Exercițiu curent</div>
             <div class="body-text" style="font-weight:600; color:var(--ink); margin-top:2px;">Împins înclinat halteră</div>
           </div>
-          <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:6px;">Ce echipament ai în loc?</label>
-          <textarea placeholder="Ex: doar gantere până la 12 kg, fără banc înclinat. Sau: cablu cu pulley jos." rows="5" maxlength="500" style="width:100%; padding:14px; border:1px solid var(--line-strong); border-radius:12px; font-family:inherit; font-size:15px; background:white; color:var(--ink); resize:none;"></textarea><div class="small-text" style="color:var(--ink-3); text-align:right; margin-top:4px; font-size:11px;">0/500</div>
-          <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.5; font-style:italic;">Coach-ul interpretează liber și propune un swap echivalent.</p>
-          <button class="btn-brick" onclick="showToast('Caut swap echivalent...')" style="width:100%; margin-top:14px;">Cere swap</button>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="onb-opt stack-row" onclick="showToast('Caut swap cu gantere...'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="dumbbell"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Doar gantere</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Caut variantă bodyweight...'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Doar greutate corporală</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Caut swap cu bandă elastică...'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="cable"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Doar bandă elastică</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Aparat ocupat — propun alt exercițiu compatibil...'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="clock"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Aparat ocupat</div><div class="small-text" style="color:var(--ink-3);">Vine altul în 5 min</div></div></button>
+            <button class="onb-opt stack-row" onclick="showToast('Coach-ul ajustează generic.'); back();" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Engine flag generic</div></div></button>
+            <button class="onb-opt stack-row" onclick="back()" style="cursor:pointer; text-align:left; width:100%; margin-top:8px;"><i data-lucide="x"></i><div style="flex:1;"><div class="body-text" style="font-weight:600; color:var(--ink-3);">Anulează</div></div></button>
+          </div>
         </div>
       </div>
 

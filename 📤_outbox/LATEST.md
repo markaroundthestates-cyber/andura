@@ -1,29 +1,29 @@
-# TASK B — Templates active state ✅
+# TASK C — Pain button merge 4 preset ✅
 
-- **Task:** B — templates active state visual feedback cross-skin × 4
+- **Task:** C — pain-button merge 4 opțiuni preset cross-skin × 4
 - **Model:** Opus
 - **Status:** ✅ LANDED
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Found Antrenor templates section în Clasic+LB+BC (5 templates hardcoded "Tonifiere" active, NU JS toggle, missing 6th "Auto" + "Sănătate generală" instead of "Mentenanță")
-- Found Lux storyboard onboarding (line 956-963): 6 templates already aligned baseline cu "Forță" pre-selected (storyboard paradigm, NU runtime click)
+- Clasic+LB: ceva-nu-merge parent → pain-button drill (3 type buttons + Altceva→textarea reveal BUG) + equipment-swap (textarea-based BUG)
+- BC: pain-button uses SVG body zones (preset, NU textarea ✓) + equipment-swap uses thinking-card alternative cards (NU textarea ✓) + ceva-nu-merge parent "Altceva"→pain-button routing bug
+- Luxury: pain-button uses pain-grid preset zones (NU textarea ✓) + equipment-swap toggle list (NU textarea ✓) + ceva-nu-merge "Altceva" wording mentions "Descrii liber"
 
 ## Modificări
-- `andura-clasic.html` — Antrenor Programe section: 5→6 templates (Sănătate generală → Mentenanță rename + Auto add baseline) + JS `pickTemplate(this)` handler + CSS `.template-active` class (background #fdf3df + border-left rust accent + bold label + " · activ" suffix + ALES badge swap chevron)
-- `andura-living-body.html` — same pattern, accent palette divergent (`var(--accent)` aurium cald + background `rgba(232,200,150,0.08)`)
-- `andura-brain-coach.html` — same pattern + minimal `#templates-toast` div + `showTemplateToast()` helper (BC didn't have showToast); active styling cu --think-soft electric blue + gradient overlay
-- `andura-luxury.html` — UNCHANGED (storyboard paradigm: doar onboarding goal selection există, deja are 6 templates baseline cu "Forță" selectată via champagne-soft styling + row-label color)
+- `andura-clasic.html` — ceva-nu-merge: 4 buttons preset (Mă doare/Nu am aparat/Altceva engine flag/Anulează), Altceva NU mai goto pain-button. pain-button: 6 body parts preset (Umăr/Spate/Genunchi/Cot/Gleznă/Altă zonă) + Anulează, ZERO textarea. equipment-swap: 5 preset (Doar gantere/Doar bodyweight/Doar bandă/Aparat ocupat/Altceva engine flag) + Anulează, ZERO textarea.
+- `andura-living-body.html` — same pattern, palette divergent var(--accent) auriu cald
+- `andura-brain-coach.html` — ceva-nu-merge "Altceva" → showTemplateToast generic + back (NU goto pain-button); pain-button SVG body + equipment-swap thinking-card preserved (already preset)
+- `andura-luxury.html` — ceva-nu-merge "Altceva" wording fix "Descrii liber" → "Coach-ul ajustează generic"; pain-button + equipment-swap preserved (already preset)
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task B atomic).
+- Pending commit (Task C atomic).
 
 ## Issues
-- BC nu avea function showToast — added minimal `#templates-toast` + `showTemplateToast` BC-specific helper. Future Task: extract to shared util dacă needed cross-skin BC.
-- 5 templates → 6 baseline rename `Sănătate generală` → `Mentenanță` + ADD `Auto` au LANDED Phase 1 Task 06 doar în onboarding choice screens, NU în Antrenor settings list — corectat aici (scope bridge)
+- Theme Parity Invariant V1 strict: Clasic+LB structurally aligned (preset list pattern), BC+Lux divergent display paradigm (SVG body + zone grid + toggle list) DAR same outcome behaviorat (no textarea + preset selection only)
 
 ## Next action
-Task C — pain-button merge 4 opțiuni preset.
+Task D — remove tab Nutriție Progres cross-skin × 4.
