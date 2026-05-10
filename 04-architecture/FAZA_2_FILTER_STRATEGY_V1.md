@@ -1,6 +1,6 @@
 # FAZA 2 FILTER STRATEGY V1
 
-**Status:** SPEC DRAFT V1 — pending Daniel LOCK pre Faza 2 chat-uri kickoff
+**Status:** SPEC DRAFT V1 — pending Daniel LOCK pre Faza 2 chat-uri kickoff (§7 Pre-Beta gate criteria sync’d 2026-05-10 cu ANDURA_VALIDATION_FRAMEWORK_V1 §7 LOCKED V1 2026-05-05 evening: Gate 1 ≥95% strict + Gate 2 DROPPED + Gate 3 selective Daniel review)
 **Authority:** workflow plan post simulator delivery for Claude reasoning fill + Daniel product policy lock
 **Path target:** `04-architecture/FAZA_2_FILTER_STRATEGY_V1.md`
 
@@ -144,9 +144,9 @@ Post Faza 2 complete:
 1. CC bake all `claude_reasoning_baked/*_final.json` în decision tree storage
 2. Re-run simulator full → validate AUTO_RESOLVED rate increase + FLAGGED decrease
 3. Run validation framework full corpus per Artefact 1 §6 → match rate vs ground_truth_v1.json
-4. Pre-Beta gate eval: ≥90% MATCH on full corpus (Gate 1) + ≤5% MISS critical safety (Gate 2) + ≥80% Daniel approval n=50 sample (Gate 3)
+4. Pre-Beta gate eval per ANDURA_VALIDATION_FRAMEWORK_V1 §7 LOCKED V1 2026-05-05 evening: **Gate 1 ≥95% MATCH on 500-query corpus** (Claude-judge weighted scoring §5.1 Safety 0.35 dominant universal) + **Gate 2 DROPPED entirely** (Safety 0.35 universal weight absorbs critical safety semantics) + **Gate 3 selective Daniel review** queries flagged uncertain de Claude-judge ~5-15% corpus = ~25-75 queries (NU random n=50, qualitative blocker check catastrophic safety / philosophy violation).
 
-Toate 3 gates PASS = scenarios coverage layer Beta-ready.
+Both gates PASS (Gate 1 ≥95% + Gate 3 zero blocker flag) = scenarios coverage layer Beta-ready.
 
 ---
 
