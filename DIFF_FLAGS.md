@@ -8,6 +8,54 @@
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
+### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot LOCK V1 (2026-05-10)
+
+**Status:** 🟢 LOCKED V1 SUBSTANTIVE (cumulative ~718 → ~719 +1 net Port-First-Then-React strategic pivot — Daniel directive verbatim post Phase 3.6 attempt + mockup vs prod distincție revelation)
+**Severity:** P1 strategic pivot — affects ALL future development paradigm
+
+**Issue:**
+Phase 3.6 cluster #1 attempt CC autonomous revealed mockup vs prod distincție FUNDAMENTAL ratat 15 chat-uri. `git diff origin/main..HEAD -- src/` = ZERO LINES = Phase 1+2+3+3.5 work was 100% mockup files (`04-architecture/mockups/`) + vault docs, ZERO src/ prod changes. Daniel screenshot andura.app prod live = layout VECHI complet diferit (6 taburi Coach/Dashboard/Greutate/Program/Plan/Setări) vs mockup V2 (4 taburi Antrenor/Progres/Istoric/Settings).
+
+**Mockup vs prod distincție LOCKED:**
+- `04-architecture/mockups/` = DESIGN MASTER pre-React migration target
+- prod `src/` = current state separate (layout vechi V1)
+- Două lumi paralele care n-au comunicat 15 chat-uri
+
+**Port-First-Then-React strategy:**
+- **Step 1** ~1-2 săpt: port mockup V2 design + Phase 3+3.5 fixes → prod vanilla JS modules `src/`. UI restructure prod V1 6 taburi → V2 4 taburi cap-coadă mockup design. Phase 3+3.5 HTML inline JS handlers → module ES refactor (NU copy-paste).
+- **Step 2** ~1-2 săpt: React migration mecanic mapping post — state.js → useState/Context, src/pages/ → components/, src/engine/ preserved import direct.
+
+**Beneficii vs React migration NOW direct:**
+- App funcțional interim NU 2-3 săpt black hole
+- Phase 3+3.5 mockup polish = real value (port la prod), NU throwaway
+- Migration React = mecanic mapping (preserve structure), NU greenfield rewrite
+- Risk-averse: validate vanilla JS port → migration React clean
+
+**Action Daniel (next chat strategic dedicated — Step 1 scope clarification — 7 mid-flight unresolved):**
+1. Pre-port mockup buguri fix decision: clean state mockup ÎNTÂI sau direct port + fix vanilla forward
+2. Step 1 port paradigm: incremental tab-by-tab sau structural restructure cap-coadă
+3. UI restructure scope: prod V1 6 taburi → V2 4 taburi (rename+merge+drop sau structural rewrite)
+4. Phase 3+3.5 fixes selective port (which carry value vs which throwaway buggy)
+5. Branch strategy: continue feature/phase-3-orchestrator-final sau new branch feature/v2-vanilla-port
+6. Testing strategy step 1: vitest 2731 PASS preserved sau test rewrites
+7. Mockup paradigm post-port: archive historic sau preserve as design reference
+
+**OBSOLETE drops post-pivot (cross-ref):**
+- Phase 3.6 cluster #1 prompt CC = OBSOLETE drop (mockup vs prod distincție corectat — engine src/ NU broken)
+- Phase 4 dedicate session ~22-30h backlog (Tasks T+U+X+Y + Cluster #4+#6 + Task I muscleMap + QA calibration banner) = OBSOLETE drop
+- Mockup polish further = OBSOLETE post-pivot
+
+**Cross-refs:**
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry 2026-05-10 Phase 3.6 + Port-First-Then-React pivot
+- `03-decisions/DECISION_LOG.md` top entry same date
+- Handover archived NN 353
+- Phase 3.6 cluster #1 raports archived NN 350-352 (PREFLIGHT + AUDIT + LATEST_HALT)
+- ADR 005 vanilla JS preserved + react-migration ADR new TBD
+- Memory rule #18 updated permanent (mockup vs prod distincție)
+- P1-FLAG-STRATEGIC-SHIFT-CLASIC-MASTER (chat-precedent ~717 → ~718) preserved valid + compatibil port-first paradigm
+
+---
+
 ### P1-FLAG-STRATEGIC-SHIFT-CLASIC-MASTER — Single-theme Clasic master FIRST cap-coadă LOCKED V1 (2026-05-10)
 
 **Status:** 🟢 LOCKED V1 SUBSTANTIVE (cumulative ~717 → ~718 +1 net STRATEGIC SHIFT — Daniel directive verbatim post Phase 3.5 closure receipt)

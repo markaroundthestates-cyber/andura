@@ -1,5 +1,60 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 chat ACASĂ post Phase 3.6 attempt + mockup vs prod distincție + PORT-FIRST-THEN-REACT pivot LOCK V1 (cumulative ~718 → ~719, +1 net strategic pivot substantive)
+
+**Status:** §CC.5 fast handover ingest from `📥_inbox/handover_2026-05-10_chat_acasa_port_first_then_react_pivot.md`. Strategic pivot LOCK V1: mockup `04-architecture/mockups/` = DESIGN MASTER pre-React migration target SEPARATE de prod `src/` current state (layout vechi). Step 1 port mockup V2 design + Phase 3+3.5 fixes → prod vanilla JS modules ~1-2 săpt + Step 2 React migration mecanic mapping ~1-2 săpt. Cumulative LOCKED V1 ~718 → **~719** (+1 net strategic pivot substantive).
+
+**Authority:** Daniel directives chat-current verbatim:
+- *"tu realizezi ca andura.app arata asa nu? nu e ca mockup andura clasic nu?"* (mockup vs prod distincție revealed via screenshot prod live)
+- *"stai... asta inseamna ca tot ce am fixuit pana acum de 15 chaturi incoa... a fost degeaba?"* (meta-question critical post-distincție revelation)
+- *"Facem react migration now ca sa avem pe ce lucra. Aplicatia din prod e inca in development deci putem lucra pe ea si testa real time."* (initial pivot LOCKED V1 cap-coadă, refined later)
+- *"daca toate fixurile pe care le avem pana acum le-am face push in prod... si dupa ce ne asiguram ca functioneaza tot, am face migrarea la react si la noul clasic theme... nu ar fi mai usor?"* (Port-First-Then-React refinement)
+- *"vezi ca e vanila js da a fost facuta cu intentia de a migra la react"* (critical context Co-CTO ratat — vanilla JS arhitectat React-friendly)
+
+**Phase 3.6 cluster #1 attempt context:** CC autonomous executed `feature/phase-3-orchestrator-final` Phase 3.6 prompt (engine integration regresie audit-then-fix Buguri 6+7+11). Pre-flight grep §0 revealed `git diff origin/main..HEAD -- src/` = ZERO LINES → Hypothesis "Phase 3+3.5 broke observer pattern în src/" FALSIFIED. CC HALT spec §0 disciplină corectă: ZERO src/ commit, audit raports only. Observer pattern WIRED CORRECTLY pe main src/ pentru toate 3 buguri (setPhaseOverride emit + storage listener + renderPlan + saveW propagate renderDash + setBFOverride dispatchEvent + storage listener). Bug 7 LATENT gap detected (saveW NU calls renderPlan explicit, exists pe main TOO — NU regression Phase 3+3.5). Tests 2731 PASS preserved.
+
+**Mea culpa Co-CTO directional fail major (4 slip-uri chat-current consolidate):**
+1. Phase 3.6 cluster #1 prompt CC src/ audit target = WRONG location (CC HALT corect, eu redirected mockup target post-HALT NU real fix paradigm)
+2. Mecanic fix pattern "12 buguri orchestrator atomic" prim plan = ratat reasoning real cap-coadă (Daniel push-back "think really hard" + 22 engines + button-to-engine map + user flow gym user)
+3. **Mockup vs prod distincție ratat 15 chat-uri** = directional fail major (trebuia chat 1 Phase 1, NU chat 15)
+4. React migration NOW initial pivot = ratat context vanilla JS React-ready (Daniel push-back corectat: port-first-then-React mai logic)
+
+**Daniel mockup vs prod brutal honest assessment:** ~70% degeaba pentru prod app live (ZERO src/ diff = andura.app prod exact same state ca acum 15 chat-uri); restul ~30% util permanent (~718 LOCKED V1 decisions product/architecture spec valid + mockup design refined cosmetic ghid React port + vault hygiene + workflow patterns + 3-tier testing distinction + Bugatti/Gigel filters infrastructure permanent). Mockup paradigma a confuz ambii — eu crezut simulează prod, Daniel sperat polish = prod fix. Două lumi paralele care n-au comunicat.
+
+**FINAL LOCK V1 SUBSTANTIVE — PORT-FIRST-THEN-REACT pivot:**
+
+Sequence productiv real:
+- **Step 1** ~1-2 săpt: port mockup V2 design + Phase 3+3.5 fixes → prod vanilla JS modules `src/`. UI restructure prod V1 6 taburi → V2 4 taburi cap-coadă mockup design. Phase 3+3.5 HTML inline JS handlers → module ES refactor (NU copy-paste). Daniel obține app funcțional V2 pe andura.app live (prod în development per Daniel verbatim "putem lucra pe ea si testa real time"). Smoke real-time per commit.
+- **Step 2** ~1-2 săpt: React migration mecanic mapping post — state.js → useState/Context, src/pages/ → components/, src/engine/ preserved import direct. Clean port post-validation step 1 functional.
+
+**Beneficii vs React migration NOW direct:**
+- App funcțional interim NU 2-3 săpt black hole așteptare
+- Phase 3+3.5 mockup polish = real value (port la prod), NU throwaway
+- Migration React = mecanic mapping (preserve structure), NU greenfield rewrite
+- Risk-averse: validate vanilla JS port → migration React clean
+
+**OBSOLETE drops post-pivot:**
+- Phase 3.6 cluster #1 prompt CC = OBSOLETE (mockup vs prod distincție corectat)
+- Phase 4 dedicate session ~22-30h backlog (Tasks T+U+X+Y + carry-forward Cluster #4+#6 + Task I muscleMap + QA calibration banner) = OBSOLETE drop
+- Mockup polish further = OBSOLETE post-pivot
+
+**STRATEGIC SHIFT single-theme Clasic master (chat-precedent ~717 → ~718) preserved valid** — cap-coadă development on Clasic master + sequential port LB→Lux→BC dedicate session ulterior. Compatibil cu Port-First-Then-React: Step 1 port Clasic V2 → prod, apoi LB+Lux+BC port mecanic similar pattern.
+
+**Memory rule #18 updated permanent:** mockup vs prod distincție — `04-architecture/mockups/` = DESIGN MASTER pre-React migration target, prod `src/` = current state separate. NU confuza între cele două. Future CC orchestrator: pre-flight grep MANDATORY să distingă target (mockup design refinement vs prod src/ engine fix vs vault docs).
+
+**Caveats step 1 pre-port (mid-flight unresolved 7 items next chat strategic dedicated):**
+1. Pre-port mockup buguri fix decision: clean state mockup ÎNTÂI sau direct port + fix vanilla forward
+2. Step 1 port paradigm: incremental tab-by-tab (preserve goTo() pattern minimal) sau structural restructure cap-coadă
+3. UI restructure scope: mapping prod V1 6 taburi → V2 4 taburi exact (rename + merge + drop sau structural rewrite)
+4. Phase 3+3.5 fixes selective port (which fixes carry value vs which throwaway buggy)
+5. Branch strategy: continue feature/phase-3-orchestrator-final sau new branch feature/v2-vanilla-port
+6. Testing strategy step 1: vitest 2731 PASS preserved sau test rewrites pentru new structure
+7. Mockup paradigm post-port: archive historic sau preserve as design reference perpetual
+
+**Cumulative LOCKED V1 ~718 → ~719** (+1 net Port-First-Then-React strategic pivot substantive). Predecessor STRATEGIC SHIFT single-theme Clasic master (chat-precedent ~717 → ~718) preserved valid + compatibil port-first paradigm.
+
+---
+
 ## 2026-05-10 chat ACASĂ post Phase 3.5 closure + STRATEGIC SHIFT single-theme Clasic master LOCKED V1 (cumulative ~717 → ~718, +1 net strategic shift substantive)
 
 **Status:** §CC.5 fast handover ingest from `📥_inbox/handover_2026-05-10_chat_acasa_post_phase_3_5_closure_strategic_shift.md`. Pure execution scope handler wiring + workflow critical fixes Phase 3+3.5 + STRATEGIC SHIFT NEW LOCK V1 substantive (single-theme Clasic master FIRST cap-coadă + sequential port mecanic LB→Lux→BC dedicate session ulterior). Cumulative LOCKED V1 ~717 → **~718** (+1 net STRATEGIC SHIFT substantive). Tests 2731 PASS preserved EXACT cross all 16 commits chain `47dcca8 → 3ff5726` LOCAL vitest pe `feature/phase-3-orchestrator-final` branch (NU merged main yet).
