@@ -16,7 +16,9 @@
 
 ## NOW — Active conversation thread
 
-**Chat ACASĂ continuation 2 2026-05-10 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED (cumulative ~719 → ~742 +23 net):**
+**Chat ACASĂ continuation 2 2026-05-10 — Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED + Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive precedent (cumulative ~719 → ~742 +23 net product/architecture additive PRESERVED, +mockup polish):**
+
+Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED chain `a9ddfa8 → 8d16361` (8 substantive fixes + 1 auto-watcher capture `53badcc`): 3 P0 (Cloudflare email injection removal `a9ddfa8` + duplicate ID stub divs removal `37f8a42` + medical disclaimer routing `0930b2a`) + 4 P1 audit-driven (typo `b2acb11` + 3 dead legacy screens removal `2100eef` + Engine jargon → Coach `abcb8fd` + RPE numeric → intensitate buckets `8d16361`) + 1 follow-up extra during exec (pickTheme JS unicode escape ă strip `55846b3`). File `04-architecture/mockups/andura-clasic.html`: 2351 → 2144 LOC (-207 net). Tests 2732 PASS preserved EXACT (mockup-only changes ZERO src/ touched). Sub-decision #1 prerequisite RESOLVED → **BATCH 2 Antrenor port unblocked NEXT P1** (checkout NEW branch `feature/v2-vanilla-port` per Sub-decision #5 LOCK V1 + execute selective port `renderIdle.js` 465 LOC + `rating.js` 150 LOC per V1_FEATURES_AUDIT_V1 §LOCK V1).
 
 Daniel autonomy lock EXTINS verbatim chat-current: *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* + UX scope mine + diacritics directive global strip. Claude chat strategic autonomous scope EXTENDED — NU doar Co-CTO Reviewer tactical, ci CTO figure-it-out paradigm complete UX scope mine until Beta launch a-z review.
 

@@ -71,7 +71,7 @@
 
 ### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot LOCK V1 EXECUTION-READY (2026-05-10 chat-current 2)
 
-**Status:** 🟢 LOCKED V1 EXECUTION-READY 2026-05-10 chat-current 2 (predecessor 🟢 LOCKED V1 SUBSTANTIVE chat-current 1 superseded). All 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*. BATCH 2 Antrenor unblocked pending mockup buguri sweep prerequisite #1. Cumulative impact ~719 → ~727 (+7 net via PORT_FIRST_STEP_1_PARADIGM_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous).
+**Status:** 🟢 LOCKED V1 EXECUTION-READY 2026-05-10 chat-current 2 — **sub-decision #1 prerequisite RESOLVED LANDED (mockup buguri sweep #1 chain `a9ddfa8 → 8d16361` LANDED, P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED 🟢 RESOLVED top entry)**. Sub-decisions #2 paradigm + #5 NEW branch + selective port `renderIdle.js`/`rating.js` per V1_FEATURES_AUDIT_V1 LOCK V1 = NEXT P1 BATCH 2 Antrenor execution unblocked. Predecessor 🟢 LOCKED V1 SUBSTANTIVE chat-current 1 superseded. All 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*. Cumulative impact ~719 → ~727 (+7 net via PORT_FIRST_STEP_1_PARADIGM_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous).
 **Severity:** P1 strategic pivot — affects ALL future development paradigm
 
 **Issue:**
