@@ -1,38 +1,33 @@
-# TASK 04 — Big 6 Hard T0 Brain Coach Mockup (STRUCTURAL_DRIFT_RESOLVED)
+# TASK 05 — ONBOARDING_SSOT §1 ECRANE Doc Sync (Cluster #1 CLOSURE)
 
-- **Status:** ✅ Complete + Cluster #1 cross-skin × 4 CLOSURE
-- **Backup tag:** `pre-task04-big6-braincoach-2026-05-10-0949` (pushed origin)
-- **Commit:** `21f9360` pushed origin/main
+- **Status:** ✅ Complete
+- **Commit:** `4d23fd8` pushed origin/main
 
-## STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule
+## Modificări
 
-BC had 5 ecrane Welcome+Vârstă+Sex+Medical+Frecvență — **MISSING Obiectiv entirely** (significant gap vs Clasic/LB baseline). Plus mixed Roman/Arabic step-counter "I/V","2/5","III/V","IV/V","V/V" inconsistent.
+`01-vision/ONBOARDING_SSOT_V1.md` §1 ECRANE — appended §AMENDMENT 2026-05-10 NEW section:
+- Marks §AMENDMENT 2026-05-04 evening "Greutate+Înălțime move post-onboarding" SUPERSEDED (preserved istoric supra)
+- Documents Big 6 hard required T0 (Sex/Vârstă/Înălțime/Greutate/Obiectiv/Frecvență)
+- Logic ecrane V2 structure table (7 ecrane = Big 6 hard + Istoric medical skippable §50.3 D2)
+- Skip path V2 updated
+- Total timp target updated <60 sec (was <45 sec)
+- Cross-skin × 4 implementation LANDED documented (Cluster #1 Tasks 01-04 commits)
+- Theme Parity Invariant V1 ACHIEVED 4/4 themes documented
 
-**Auto-resolved:**
-- DROP Welcome stage (replaced cu Obiectiv ecran)
-- ADD Obiectiv ecran NEW cu BC styling (thinking-card "Asta îmi spune" + 4 templates choice-grid + disclaimer integrat footnote checkbox)
-- INSERT Înălțime + Greutate ecrane (BC styling: picker-card + thinking-card cu BMR/TDEE estimat)
-- ADD Sex Altul option (M/F/Altul + "Model neutru, recalibrare adaptivă" sub-text)
-- Vârstă input added hidden required min=16 max=99
-- step-counter universal arabic "X/7" cross-ecran (was mixed Roman/Arabic)
-- step-dots 5→7 cross-ecran
-- Final order: Obiectiv → Vârstă → Sex → Înălțime → Greutate → Medical → Frecvență
+## Cluster #1 Auth wiring CLOSURE 5/5 ✅
 
-## Cluster #1 Auth wiring CLOSURE (Tasks 01-04 cross-skin × 4 ✅ COMPLETE)
-
-| Skin | Commit | Notes |
-|------|--------|-------|
-| Clasic | `c6b1204` | 5→7 ecrane |
-| Living Body | `5bd66c2` | 5→7 ecrane |
-| Luxury | `8862827` | 6→7 (drop Welcome+Echipament + reorder Obiectiv-first) |
-| Brain Coach | `21f9360` | 5→7 (drop Welcome + ADD Obiectiv + add Înălțime+Greutate) |
-
-**Theme Parity Invariant V1 ACHIEVED 4/4** — 7 ecrane Obiectiv→Vârstă→Sex→Înălțime→Greutate→Medical→Frecvență cross-skin uniform (visual character per skin preserved).
+| # | Task | Commit |
+|---|------|--------|
+| 01 | Big 6 Clasic | `c6b1204` |
+| 02 | Big 6 Living Body | `5bd66c2` |
+| 03 | Big 6 Luxury (STRUCTURAL_DRIFT_RESOLVED) | `8862827` |
+| 04 | Big 6 Brain Coach (STRUCTURAL_DRIFT_RESOLVED) | `21f9360` |
+| 05 | ONBOARDING_SSOT doc sync §1 ECRANE | `4d23fd8` |
 
 ## Tests
 
-✅ 2731 PASS preserved EXACT.
+✅ 2731 PASS preserved EXACT (vault docs only).
 
 ## Next action
 
-**TASK 05** ONBOARDING_SSOT_V1.md §1 ECRANE doc sync (5-10 min, small) — closure Cluster #1.
+**TASK 06** — 6 templates V2 rename Mentenanță+Auto add cross-skin × 4 (Cluster #2 Onboarding inputs UI start).
