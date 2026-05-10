@@ -1,31 +1,37 @@
-# TASK 11 — Pain Button Idle Remove (NO-OP — already done via Task 07)
+# TASKS 12 + 13 + 14 — Scope Cuts Verification (NO-OP batch)
 
-- **Status:** ✅ Complete (verification only — no file changes needed)
-- **Commit:** Cycle commit only (no production changes)
+- **Status:** ✅ Complete (verification batch — no file changes needed)
+- **Cluster:** #3 Workflow + scope cuts · Atoms 3-5/6
 
 ## Pre-flight findings
 
-Cross-skin × 4 grep `goto('pain-button')` entry triggers — ALL Pain Button entries now exclusively inside Ceva nu merge drill ecran (mid-session context preserved per Task 07):
+Per Daniel directives 2026-05-10 chat ACASĂ post-noapte, 3 features marked DROP — verified ZERO presence cross-skin × 4 mockup files (features were conceptual, never implemented):
 
-| Skin | Pain Button triggers | Location |
-|------|----------------------|----------|
-| Clasic | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva fan-out) |
-| Living Body | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva fan-out) |
-| Luxury | 0 explicit triggers | Stage 15 pain-button accessible via voice keyword + Ceva nu merge drill (stage 48) |
-| Brain Coach | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva check-items) |
-
-**Idle context Antrenor homepage / pre-session / post-session:** ZERO standalone Pain Button entries cross-skin × 4 (Task 07 already removed via merge "Mă doare ceva" + "Schimbă echipament" → 1 buton "Ceva nu merge").
-
-**Pain Button mid-session:** PRESERVED accessible only via Ceva nu merge → Mă doare drill option (per Task 07 spec).
+| Task | Feature | Cross-skin grep result |
+|------|---------|----------------------|
+| 12 | Sport plan supervision | 0/4 occurrences (Daniel: "nu inteleg rostul" — Auto+Antrenor existing pattern suficient) |
+| 13 | saveStepsQuick (pedometer) | 0/4 occurrences (BC matches "step-counter" = onboarding ecran progress counters, NOT pedometer feature) |
+| 14 | Antrenament liber | 0/4 occurrences (Maria 65 zero need / Marius rare frecvență / custom exercises interzis V1 / engine signal corruption fără phase context) |
 
 ## Modificări
 
-ZERO file changes (Task 07 already accomplished Task 11 scope as side effect).
+ZERO file changes needed (features absent în mockup baseline).
 
 ## Tests
 
 ✅ 2731 PASS preserved EXACT (no changes).
 
+## Cluster #3 Workflow + scope cuts progress (5/6)
+
+| # | Task | Status |
+|---|------|--------|
+| 10 | 1800 kcal hardcoded grep+remove production | ✅ Complete (commit d68d05c) |
+| 11 | Pain Button idle remove | ✅ NO-OP (already done by Task 07) |
+| 12 | Sport plan supervision DROP | ✅ NO-OP (feature absent) |
+| 13 | saveStepsQuick DROP | ✅ NO-OP (feature absent) |
+| 14 | Antrenament liber DROP | ✅ NO-OP (feature absent) |
+| 15 | Workflow audit READ-ONLY parity cross-skin | Pending |
+
 ## Next action
 
-**TASK 12** Sport plan supervision DROP complet.
+**TASK 15** Workflow audit READ-ONLY workflow antrenament V1 prod parity cross-skin × 4 (Cluster #3 closure + Phase 1 closure).
