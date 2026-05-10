@@ -1,32 +1,31 @@
-# TASK G — Istoric calendar zile clickuibile ✅
+# TASK H — Progres Auto button toggle unlock ✅
 
-- **Task:** G — Istoric calendar zile clickuibile detail zi cross-skin × 4
+- **Task:** H — Progres Auto button toggle Auto/Manual unlock cross-skin × 4
 - **Model:** Opus
 - **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (BC+Lux different paradigm)
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB: heatmap calendar `.hm-cell` cu day numbers + intensity classes (l1/l2/l3) — NU click handlers (Daniel smoke confirmed)
-- BC: NU calendar — Istoric uses list-row pattern (sesiuni recente list)
-- Lux: NU calendar (storyboard paradigm + Istoric stage uses different layout)
+- Clasic+LB: Auto button în Progres ("Engine ajustează singur volumul") cu `<span class="sw on">` static + onclick="showToast('Auto — drill setări')" (NU toggle, locked on)
+- Lux: Auto-progression + Auto-rest timer toggles în settings storyboard (visual-only, no JS handler)
+- BC: NU buton Auto distinct în Progres (paradigm diferit — thinking-card + auto-decisions vizualizate)
 
 ## Modificări
-- `andura-clasic.html` (line ~897): toate `.hm-cell` 1-31 + onclick="openDayDetail(this, N)" + cursor:pointer + comment Task G
-- `andura-clasic.html` JS: `openDayDetail(cell, day)` function — verify cell has activity (l1/l2/l3) → toast detail "X mai · sesiune + greutate + kcal · volum-level"; else toast "X mai · nicio activitate înregistrată"
-- `andura-living-body.html` (line ~1214): same pattern, palette divergent (auriu cald background pentru hm-cell.l1/l2/l3)
-- `andura-living-body.html` JS: same openDayDetail handler
-- BC: NO changes (no calendar paradigm — Istoric uses list-row)
-- Lux: NO changes (no calendar paradigm — storyboard format)
+- `andura-clasic.html` (line ~1253): button cu id=`progres-auto-row` + onclick=`toggleProgresAuto()` + sub-text id `progres-auto-sub` + sw element id `progres-auto-sw`
+- `andura-clasic.html` JS: `toggleProgresAuto()` function — toggle .on class + update sub-text "Engine ajustează singur volumul" / "Manual — tu controlezi volumul" + persist `localStorage['progres-mode']` + toast feedback "🤖 Auto activ" / "✋ Manual activ" + restore state on DOMContentLoaded
+- `andura-living-body.html` (line ~1570): same pattern, palette divergent
+- `andura-living-body.html` JS: same toggleProgresAuto handler + localStorage restore
+- BC: NO changes (no Auto button paradigm)
+- Lux: NO changes (storyboard, multiple Auto toggles visual-only)
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task G atomic).
+- Pending commit (Task H atomic).
 
 ## Issues
-- Detail zi shown via toast (Bugatti minimal — full modal/page UI deferred Phase 3 dedicated session per LATEST_CONSOLIDATED Cluster #4 backlog)
-- Theme Parity Invariant V1 strict: Clasic+LB heatmap aligned; BC+Lux paradigm divergent intentional (list/storyboard format vs heatmap), behavior outcome equivalent (sesiunile recente accesibile)
+- Theme Parity Invariant V1: Clasic+LB aligned (toggle behavior); BC+Lux paradigm divergent intentional
 
 ## Next action
-Task H — Progres Auto button toggle unlock cross-skin × 4.
+Task I — muscleMap 19→7 refactor (engine src/ refactor cu downstream consumers + tests).

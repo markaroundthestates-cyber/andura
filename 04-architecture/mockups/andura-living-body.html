@@ -1567,7 +1567,7 @@
 
           <!-- Auto toggle -->
           <div class="settings-stack" style="margin-top:4px;">
-            <button class="settings-row" onclick="showToast('Auto — drill setări')" style="border-bottom:none;"><i data-lucide="bot"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Auto</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Engine ajustează singur volumul</span></span><span class="sw on" style="margin-left:auto;"></span></button>
+            <button class="settings-row" id="progres-auto-row" onclick="toggleProgresAuto()" style="border-bottom:none;" title="Toggle Auto / Manual"><i data-lucide="bot"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Auto</span><span class="small-text" style="color:var(--ink-3); font-weight:400;" id="progres-auto-sub">Engine ajustează singur volumul</span></span><span class="sw on" id="progres-auto-sw" style="margin-left:auto;"></span></button>
           </div>
 
           <!-- Alerte azi -->
@@ -2623,6 +2623,29 @@
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;
+  // ─── Progres Auto toggle Task H 2026-05-10 chat ACASĂ post-smoke (Cluster #6 Task 21 deferred) ──
+  function toggleProgresAuto() {
+    const sw = document.getElementById('progres-auto-sw');
+    const sub = document.getElementById('progres-auto-sub');
+    if (!sw) return;
+    const isOn = sw.classList.toggle('on');
+    if (sub) sub.textContent = isOn ? 'Engine ajustează singur volumul' : 'Manual — tu controlezi volumul';
+    try { localStorage.setItem('progres-mode', isOn ? 'auto' : 'manual'); } catch (e) {}
+    showToast(isOn ? '🤖 Auto activ' : '✋ Manual activ');
+  }
+  window.toggleProgresAuto = toggleProgresAuto;
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const mode = localStorage.getItem('progres-mode');
+      if (mode === 'manual') {
+        const sw = document.getElementById('progres-auto-sw');
+        const sub = document.getElementById('progres-auto-sub');
+        if (sw) sw.classList.remove('on');
+        if (sub) sub.textContent = 'Manual — tu controlezi volumul';
+      }
+    } catch (e) {}
+  });
+
   // ─── Istoric calendar zile clickuibile Task G 2026-05-10 chat ACASĂ post-smoke (Cluster #4 deferred) ──
   function openDayDetail(cell, day) {
     const hasActivity = cell.classList.contains('l1') || cell.classList.contains('l2') || cell.classList.contains('l3');
