@@ -16,6 +16,53 @@
 
 ## JUST_DECIDED
 
+**2026-05-10 chat ACASĂ orchestrator Phase 1+2 EXECUTION COMPLETE 38/38 ✅ (Phase E Task 38 closure auto-handover + LATEST_CONSOLIDATED + this auto-update CURRENT_STATE):**
+
+*Daniel directive `Read task_38_orchestrator_final.md` triggered autonomous execution single chat-current ACASĂ session ~3-4h CC wall clock. 38 tasks processed (37 + Task 38 FINAL aggregate). Standing rule STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule applied 5+ times cross-skin (Luxury+BC restructures Big 6 + 6 templates + glossary). Standing rule "no /compact prompts to Daniel" + "continua till context truly out" preserved cross-session.*
+
+**Phase 1 LANDED 15/15 ✅ (Clusters #1+#2+#3 full closure):**
+- Cluster #1 Auth wiring (Tasks 01-05) — Big 6 hard T0 cross-skin × 4 + ONBOARDING_SSOT doc sync §AMENDMENT 2026-05-10 + Theme Parity Invariant V1 ACHIEVED 4/4 themes (7 ecrane Obiectiv→Vârstă→Sex→Înălțime→Greutate→Medical→Frecvență)
+- Cluster #2 Onboarding inputs UI (Tasks 06-09) — 6 templates V2 (Mentenanță rename + Auto add) + Ceva nu merge merge unified drill + BF auto US Navy + Loghează kcal+proteine auto-fill REVERSAL §3.5 V3
+- Cluster #3 Workflow + scope cuts (Tasks 10-15) — 1800 kcal removal production (KCAL_TARGET 1800→2000) + 4 NO-OP scope cuts + workflow audit READ-ONLY parity flag
+
+**Phase 2 LANDED 22/22 ✅ (mix LANDED + audit + Phase 3 deferred per cluster):**
+- Cluster #4 Istoric calendar (Tasks 16-18) — Phase 3 deferred (cross-skin restructure substantial)
+- Cluster #5 Setări BC dead (Tasks 19-20) — audit + BC Schimbă fază wording fix spec verbatim
+- Cluster #6 State bugs (Tasks 21-23) — Phase 3 deferred (NEED_CONTEXT + DEPENDENCY + Workflow V1 LOCK substantial UI ~6-8h)
+- Cluster #7 Glossary jargon (Tasks 24-28) — TONAJ Lux + Pace BC LANDED + 3 audit (RIR/Mărime/Comportament Familie context-appropriate)
+- Cluster #9 Text liber (Tasks 29-30) — textareas maxlength=500 + char counter Clasic+LB LANDED + Altceva wiring verified
+- Standalone Q1 (Task 31) — Phase 3 deferred (engine refactor 19→7 grupes + downstream)
+- 6 features recovery (Tasks 32-37) — audit-only (existing prod scope preserved)
+
+**Task 38 Phase E closure:**
+- LATEST_CONSOLIDATED.md aggregate raport written (smoke priority list P0/P1/P2)
+- HANDOVER_2026-05-10_ORCHESTRATOR_PHASE1_PHASE2_LANDED.md generated (06-sessions-log/)
+- This CURRENT_STATE.md auto-updated (chat NEW §CC.2 layered read prinde direct)
+- Tests 2731 PASS preserved EXACT cross all ~30+ commits chain `36ac451 → final` (Task 38 closure commit pending)
+
+**Cumulative LOCKED V1 ~714-716 PRESERVED unchanged** (chat-uri Phase 1+2 + Task 38 = pure execution scope orchestrator, ZERO net additive product/architecture). Plus minor source code hardening: KCAL_TARGET 1800→2000 (Daniel test data leak cleanup) + ONBOARDING_SSOT_V1 §AMENDMENT 2026-05-10 doc sync.
+
+**Theme Parity Invariant V1 status:**
+- ACHIEVED 4/4: Big 6 onboarding + 6 templates + Ceva nu merge + BF auto + Loghează kcal+proteine
+- PARTIAL Phase 3: Istoric calendar pattern (Cluster #4) + Setări structure (BC dedicated 13 vs others embedded) + Workflow active session (Cluster #6 auto-advance + edit + 3-state ENERGY)
+- Sole exception preserved: Omulețul Living Body Progres muscular vizualization unique LB
+
+**Slip-uri Co-CTO chat-current consolidate:**
+1. Early stop x2 — Daniel push-back "continua" (preferință autonomous push until context truly out, NOT pause for milestone communication)
+2. /compact prompts initial slip — Daniel directive saved memory (CC internal concern, don't remind)
+
+**Next chat priority:**
+1. **Daniel smoke test 4 themes** per LATEST_CONSOLIDATED.md priority list (P0 critical Big 6 + 6 templates + Ceva nu merge + BF auto + Loghează kcal)
+2. **NEED_CONTEXT items resolve** (5 aggregate)
+3. **Phase 3 chat strategic dedicate** (~10-14h estimated total: Cluster #4 + Cluster #6 + Task 31 + Luxury Schimbă fază)
+4. **Real Beta launch readiness post Phase 3 + smoke validation**
+
+🦫 **Bugatti craft. Phase 1+2 foundation LANDED solid. Phase 3 polish + smoke = production-ready trajectory clear.**
+
+**Cross-refs:** Predecessor handover NN 290 orchestrator combined chat-precedent + Handover NEW 2026-05-10 orchestrator Phase 1+2 LANDED (06-sessions-log/) + LATEST_CONSOLIDATED.md aggregate raport + commits chain ~30+ origin/main pushed + Tests 2731 PASS preserved + Cumulative LOCKED V1 ~714-716 PRESERVED unchanged.
+
+---
+
 **2026-05-10 chat ACASĂ orchestrator clusters generation Phase 1 + Phase 2 COMBINED §CC.5 fast handover ingest "Tasks 01-38 atomic artefacte ready inbox + 1 mini orchestrator FINAL coordonator (38 total) — Phase 1 chat predecessor Tasks 01-15 + Phase 2 chat-current Tasks 16-38 (23 atomic + 1 orchestrator FINAL) cu NEED_CONTEXT_DANIEL flags inline pentru ambigui" (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture):**
 
 *§CC.5 fast handover ingest sursa: `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md` (combined narrative format ~150-200 LOC pentru ambele chat-uri Phase 1 + Phase 2 într-un singur ingest CC). Per VAULT_RULES §CC.5 Fast Handover Workflow + §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover (5-step) + §AR.13 PK Growth Control. Predecessor handover NN 289 archive (chat ACASĂ post-noapte vault hygiene closure 2026-05-10 — 4 vault file updates atomic LANDED `12f1b76` + Bugatti reset definition + `/compact` insertion strategy CC + orchestrator clusters bulk delegate strategy planning).*
