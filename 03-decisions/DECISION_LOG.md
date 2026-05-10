@@ -1,5 +1,41 @@
 # DECISION LOG — Andura
 
+
+## 2026-05-10 chat ACASĂ MCP filesystem vault hygiene massive cleanup — CURRENT_STATE.md split 596KB→~200LOC §CC.6 compliance + INDEX_MASTER header trim + RECENT_DECIDED_ARCHIVE first populate (vault meta-tooling, cumulative ~719 PRESERVED unchanged)
+
+**Status:** Vault meta-tooling cleanup. Cumulative LOCKED V1 ~719 PRESERVED unchanged.
+
+**Authority:** Daniel directive chat-current ACASĂ MCP filesystem 2026-05-10 — priority 1 vault cleanup massive scope post §CC.2 layered read drift flag identification (CURRENT_STATE.md 596KB / 3810 LOC violates §CC.6 spec ~200 LOC; MCP 1MB read limit blocks future chats §CC.2.1 PRIMARY → forced PK fallback degraded).
+
+**Decision:** atomic batch claude_code agent execution Phase 0-9 (backup tag + read + analyze + synthesize clean + migrate + trim + entry + tests + commit + push + PK delta verify):
+
+1. **CURRENT_STATE.md split 596KB / 3810 LOC → 130 LOC** per VAULT_RULES.md §CC.6 canonical architecture spec (## NOW + ## JUST DECIDED + ## NEXT + ## ACTIVE_REFS + ## ACTIVE_ADRS + ## ACTIVE_FLAGS + ## RECENT 50 LOC max + ## POINTERS). Pre-cleanup §JUST_DECIDED entries (both blocks: original underscore variant + duplicate space variant) + §NOW precedent threads stacked + §RECENT older content migrated verbatim to RECENT_DECIDED_ARCHIVE.md per §CC.6 truncate threshold mechanic finally enforced. Pragmatic deviation from prompt's literal "<2026-05-04 only migrate" cutoff: ALL pre-cleanup §JUST_DECIDED entries are 2026-05-04+ (no entries before exist), applying literal cutoff would yield ZERO migration + leave file violating ~200 LOC goal. Migrated entire pre-cleanup body verbatim instead — zero info loss preserved via git history + RECENT_DECIDED_ARCHIVE = double safety per §CC.7 Layer 5.
+
+2. **RECENT_DECIDED_ARCHIVE.md scaffold first populate** — `06-sessions-log/RECENT_DECIDED_ARCHIVE.md` created 2026-05-07 Run 2 vault cleanup Task 6 (per VAULT_RULES.md §CC.6 + §CC.9 NEW Task 7) but body NEVER populated ("none yet — first periodic compaction 2026-05-07 found ZERO pre-cutoff entries; all §JUST_DECIDED entries 2026-05-04 to 2026-05-07 within 7-day window"). Chat-current first periodic compaction migration LANDED — 24 LOC scaffold → 3671 LOC populated.
+
+3. **INDEX_MASTER.md header trim** — `Last updated:` line stacked 4+ predecessor verbose entries (~700 words single field) replaced with 1-line single descriptive per spec.
+
+4. **2 prod bugs flagged §ACTIVE_FLAGS + §NEXT P1+P2** for post-cleanup follow-up (Daniel verbalize chat-current):
+   - Bug auto-faza Auto template fallback 2000 kcal hardcoded vs auto-detect goal+calibrations
+   - Bug BF manual edit nu recalc kcal phase (BMR formula audit + recalc trigger on BF change)
+
+**Tests baseline:** 2731 PASS preserved EXACT (doc-only operations ZERO src changes; pre-commit hook vitest gate verde).
+
+**Backup tag:** `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` pushed origin (rollback safety).
+
+**Cross-refs:** [[../VAULT_RULES]] §CC.6 Append-Only Architecture canonical spec + §CC.9 Mandatory File Updates Per Handover (5-step) + §AR.13 PK Growth Control + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 1+13 + [[../00-index/CURRENT_STATE]] complete rewrite ~200 LOC + [[../06-sessions-log/RECENT_DECIDED_ARCHIVE]] first populate + [[../00-index/INDEX_MASTER]] header trim 1-line.
+
+**Cumulative LOCKED V1 ~719 PRESERVED unchanged** (vault meta-tooling NU product/architecture additive).
+
+**Files modified atomic batch:**
+- 00-index/CURRENT_STATE.md (REWRITE 3810 → 130 LOC clean per §CC.6 spec)
+- 06-sessions-log/RECENT_DECIDED_ARCHIVE.md (APPEND 24 → 3671 LOC first populate migration content)
+- 00-index/INDEX_MASTER.md (header `Last updated:` trim 1-line single)
+- 03-decisions/DECISION_LOG.md (this entry top descending cronologic)
+
+**Next:** 2 prod bugs investigation (P1-FLAG-PROD-AUTO-FAZA + P1-FLAG-PROD-BF-EDIT-KCAL) + Daniel smoke 4 themes carry-forward + Phase 4 dedicate session.
+
+---
 ## 2026-05-10 — chat ACASĂ — §CC.5 §AMENDMENT Direct-to-CC + §CC.2.1 MCP filesystem PRIMARY LOCK V1 (vault meta-tooling) — secondary handover consume reaffirmation
 
 **Status:** Vault meta-tooling decision (NU product/architecture additive). Cumulative LOCKED V1 **~719 PRESERVED unchanged** (secondary handover consume vault meta-tooling — chat-current narrative integral covered predecessor entry below). §CC.5 fast handover ingest from `📥_inbox/HANDOVER_2026-05-10_chat_acasa_direct_to_cc_paradigm_mcp_filesystem_lock.md` (NN 355 archive _CONSUMED). Chat-current = same strategic chat ACASĂ post Port-First-Then-React pivot continuation; secondary handover artefact reaffirmation post-precedent ingest NN 354 mcp_filesystem_paradigm_shift. CC autonomous ingest workflow §CC.5 §AMENDMENT 2026-05-10 LIVE end-to-end validated.
