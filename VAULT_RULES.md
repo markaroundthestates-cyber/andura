@@ -248,6 +248,8 @@ Daniel decision-driven, NU automated. Cross-ref `08-workflows/CHAT_MIGRATION_PRO
 
 **Steps:**
 
+**§AMENDMENT 2026-05-10 cross-ref Direct-to-CC Paradigm:** Steps 1-3 below describe Daniel-as-courier legacy flow (preserved fallback). When Claude chat has MCP filesystem + claude_code agent available, same paradigm shift applies as §CC.5 §AMENDMENT 2026-05-10 — Claude chat replaces Daniel courier role: writes handover direct în `📥_inbox/` via `filesystem:write_file`, invokes `claude_code` agent for autonomous ingest (steps 4-10 below), confirms commit+push success, signals explicit Daniel "e timpul pt noul chat". Daniel chat NEW + `salut acasă` = self-serve MCP filesystem layered read. See §CC.5 §AMENDMENT 2026-05-10 detail.
+
 1. **Claude chat strategic** scrie handover comprehensive ca artefact descărcabil (`HANDOVER_INPUT_<topic>.md`)
 2. **Daniel** drag în `📥_inbox/`
 3. **Daniel** rulează prompt CC scurt pentru ingest (vezi §INGEST_PROMPT)
@@ -569,6 +571,33 @@ Continuăm?
    - Backup tag: `pre-handover-<YYYY-MM-DD-HHMM>`
    - Commit + push origin main (hooks normal, NU `--no-verify` decât justificat)
 4. **STOP.** NU touch `HANDOVER_GLOBAL.md` deep, NU sync alte SSOT-uri. §HANDOVER_PROTOCOL existing preserved unchanged.
+
+**§AMENDMENT 2026-05-10 — Direct-to-CC Paradigm LOCK V1 (Daniel zero courier):**
+
+**Trigger reaffirm dual condition (canonical post-LOCK):**
+1. Daniel "fă handover" voluntary checkpoint mid-chat (explicit signal)
+2. Bandwidth ~25-30% saturat + risc halucinații detected by Claude (proactive flag per §HANDOVER_PROTOCOL Self-monitoring)
+
+**Workflow updated când Claude chat has MCP filesystem + claude_code agent available (default acasă):**
+
+1. **Claude chat strategic** scrie handover narrativ ~50-100 LOC direct în `📥_inbox/<HANDOVER>.md` via `filesystem:write_file` (NU Daniel courier drag manual)
+2. **Claude chat** invoke `claude_code` agent cu prompt §CC.5 ingest autonomous workflow: CURRENT_STATE move-then-replace + DECISION_LOG append + archive _CONSUMED + backup tag pre-handover-<YYYY-MM-DD-HHMM> + commit + push origin main + §CC.9 5-step mandatory checklist
+3. **Claude chat** confirm ingest LANDED (verify commit pushed + tag pushed + archive moved) + signal explicit Daniel: **"e timpul pt noul chat"**
+4. **Daniel** deschide chat NEW + `salut acasă` → MCP filesystem direct §CC.2 layered read self-serve (zero paste, zero comandă, zero context loss)
+
+**Eliminate (DEPRECATED 2026-05-10):** Vechiul step 2 "Daniel drag artefact în `📥_inbox/` + 1 comandă `Update CURRENT_STATE per inbox handover`" = deprecated când Claude has MCP filesystem + claude_code agent. Daniel-as-courier paradigm preserved DOAR fallback când Claude chat strategic NU has MCP filesystem tools (rare environments).
+
+**Rationale:** Eliminate Daniel friction (zero drag, zero comandă manual, zero paste) → Claude chat full autonomy ingest direct via MCP filesystem + claude_code agent. Preserves §CC.5 audit trail consistent (commit + tag + archive intact). Chat-to-chat seamless: Claude chat-current ingest LANDED → Daniel chat NEW + "salut acasă" + MCP filesystem self-serve = zero context loss + zero handoff friction.
+
+**Signal post-ingest mandatory:** Claude chat după confirm ingest success **MUST** zice explicit "e timpul pt noul chat" (sau echivalent semantic clar). NU continua chat-current cu work nou post-ingest — chat-current = saturated, work nou în chat NEW. Anti-pattern: Claude continuă chat-current mid-work post-ingest = drift risk + bandwidth waste.
+
+**Constraints preserved:**
+- Inbox = strict input Claude chat OR Daniel (NU CC autonomous random write — inbox e curated input layer)
+- Backup tag git pre-ingest MANDATORY `pre-handover-<YYYY-MM-DD-HHMM>` (preserved §CC.7 Layer 5)
+- Append-only architecture preserved §CC.6 (NU rewrite destructive)
+- §CC.9 5-step mandatory checklist preserved (CURRENT_STATE + DECISION_LOG + INDEX_MASTER stats + ACTIVE_REFS sync + pre-flight grep wikilinks orphane)
+
+**Cross-refs:** §CC.2.1 MCP filesystem priority LOCK V1 2026-05-10 + §CC.7 safety nets + §CC.9 mandatory file updates + chat-current 2026-05-10 ACASĂ Daniel directive verbatim "il dai direct la cc tu" + paradigm shift LOCK V1.
 
 **§CC.9 extension (LOCKED V1 2026-05-07 Run 2 Task 7):** Fast handover workflow §CC.5 minimum steps 1-2 (CURRENT_STATE + DECISION_LOG). §CC.9 Mandatory File Updates Per Handover extends pentru full vault hygiene completeness — see §CC.9 below for 5-step mandatory checklist (3 INDEX_MASTER stats refresh + 4 §ACTIVE_REFS sync + 5 Pre-flight grep wikilinks orphane). Daniel's command "Update CURRENT_STATE per inbox handover" implicitly invokes §CC.9 (NU optional).
 
