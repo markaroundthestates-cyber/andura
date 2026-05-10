@@ -1,14 +1,14 @@
-// ══ PREDICTION ENGINE — Pattern absență per zi săptămână ═════════════════
-// Detectează zilele cu probabilitate mare de absență bazat pe istoricul
-// logurilor. Returnează predicții și recomandări de replanificare.
+// ══ PREDICTION ENGINE — Pattern absenta per zi saptamana ═════════════════
+// Detecteaza zilele cu probabilitate mare de absenta bazat pe istoricul
+// logurilor. Returneaza predictii si recomandari de replanificare.
 
 import { todTs } from '../db.js';
 
-const DAY_NAMES = ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'];
+const DAY_NAMES = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
 
 /**
- * Calculează câte sesiuni au fost planificate vs. efectuate per zi.
- * Sesiunea = set distinct de logs cu același `session` timestamp (sau ts zi).
+ * Calculeaza cate sesiuni au fost planificate vs. efectuate per zi.
+ * Sesiunea = set distinct de logs cu acelasi `session` timestamp (sau ts zi).
  */
 function sessionsPerDayOfWeek(logs) {
   const sessions = new Map();
@@ -28,7 +28,7 @@ function sessionsPerDayOfWeek(logs) {
 }
 
 /**
- * Detectează zilele cu absență frecventă folosind workout-skips din localStorage.
+ * Detecteaza zilele cu absenta frecventa folosind workout-skips din localStorage.
  * workoutSkips: { 'YYYY-MM-DD': true }
  */
 function skipsPerDayOfWeek(skips) {
@@ -41,8 +41,8 @@ function skipsPerDayOfWeek(skips) {
 }
 
 /**
- * Calculează probabilitatea de absență per zi (0–1).
- * Dacă skips[dow] / (sessions[dow] + skips[dow]) > 0.3 → risc ridicat.
+ * Calculeaza probabilitatea de absenta per zi (0–1).
+ * Daca skips[dow] / (sessions[dow] + skips[dow]) > 0.3 → risc ridicat.
  */
 export function absenceProbabilityByDay(logs, workoutSkips) {
   const sessionCounts = sessionsPerDayOfWeek(logs ?? []);
@@ -58,7 +58,7 @@ export function absenceProbabilityByDay(logs, workoutSkips) {
 }
 
 /**
- * Returnează zilele cu probabilitate de absență > threshold (default 0.3).
+ * Returneaza zilele cu probabilitate de absenta > threshold (default 0.3).
  * @param {Array} logs
  * @param {Object} workoutSkips
  * @param {number} threshold
@@ -69,12 +69,12 @@ export function getHighRiskDays(logs, workoutSkips, threshold = 0.3) {
     .filter(d => !d.insufficient && d.probability > threshold)
     .map(d => ({
       ...d,
-      recommendation: `Planifică sesiunea mai scurtă sau mută-o. Risc absență: ${Math.round(d.probability * 100)}%`,
+      recommendation: `Planifica sesiunea mai scurta sau muta-o. Risc absenta: ${Math.round(d.probability * 100)}%`,
     }));
 }
 
 /**
- * Predicție pentru ziua curentă: este azi o zi cu risc ridicat?
+ * Predictie pentru ziua curenta: este azi o zi cu risc ridicat?
  * @param {Array} logs
  * @param {Object} workoutSkips
  * @returns {{ isHighRisk: boolean, probability: number, recommendation: string|null }}
@@ -90,7 +90,7 @@ export function predictToday(logs, workoutSkips) {
     dow,
     day: today.day,
     recommendation: isHighRisk
-      ? `Istoric: ${Math.round(today.probability * 100)}% șanse să sari azi. Sesiune scurtă recomandată.`
+      ? `Istoric: ${Math.round(today.probability * 100)}% sanse sa sari azi. Sesiune scurta recomandata.`
       : null,
   };
 }

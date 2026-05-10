@@ -209,7 +209,7 @@ describe('evaluate — depth + duration + intensity_modifier', () => {
     expect(r.meta.duration_weeks).toBe(1);
   });
 
-  it('intensity_modifier obligatoriu RIR +1 + Intensity -12.5% când active', async () => {
+  it('intensity_modifier obligatoriu RIR +1 + Intensity -12.5% cand active', async () => {
     const r = await evaluate(buildCtx({
       profileTier: 'T1',
       aaDetectionActive: true,
@@ -218,13 +218,13 @@ describe('evaluate — depth + duration + intensity_modifier', () => {
     expect(r.meta.intensity_modifier.intensity_pct_decrement).toBe(12.5);
   });
 
-  it('intensity_modifier zero când IDLE', async () => {
+  it('intensity_modifier zero cand IDLE', async () => {
     const r = await evaluate(buildCtx({ profileTier: 'T1' }));
     expect(r.meta.intensity_modifier.rir_increment).toBe(0);
     expect(r.meta.intensity_modifier.intensity_pct_decrement).toBe(0);
   });
 
-  it('AA-driven mechanic signal emitted când active (Daniel push-back B4)', async () => {
+  it('AA-driven mechanic signal emitted cand active (Daniel push-back B4)', async () => {
     const r = await evaluate(buildCtx({
       profileTier: 'T1',
       aaDetectionActive: true,
@@ -234,7 +234,7 @@ describe('evaluate — depth + duration + intensity_modifier', () => {
 });
 
 describe('evaluate — wording RO native specific per trigger source (C5)', () => {
-  it('Linear → "Săpt 5 — recuperare programată"', async () => {
+  it('Linear → "Sapt 5 — recuperare programata"', async () => {
     const r = await evaluate(buildCtx({
       profileTier: 'T1',
       periodizationConstraint: buildPeriodConstraint('DELOAD', { trigger: 'CALENDAR', days: 7 }),
@@ -242,7 +242,7 @@ describe('evaluate — wording RO native specific per trigger source (C5)', () =
     expect(r.meta.wording).toBe(WORDING_RO.linear);
   });
 
-  it('Composite → "Corpul tău cere recovery"', async () => {
+  it('Composite → "Corpul tau cere recovery"', async () => {
     const r = await evaluate(buildCtx({
       profileTier:         'T1',
       performanceDropPct:  20,
@@ -252,7 +252,7 @@ describe('evaluate — wording RO native specific per trigger source (C5)', () =
     expect(r.meta.wording).toBe(WORDING_RO.composite);
   });
 
-  it('AA → "Reglăm intensitatea — volumul a urcat agresiv"', async () => {
+  it('AA → "Reglam intensitatea — volumul a urcat agresiv"', async () => {
     const r = await evaluate(buildCtx({
       profileTier: 'T1',
       aaDetectionActive: true,
@@ -298,12 +298,12 @@ describe('evaluate — ui_label RO native', () => {
     expect(r.meta.ui_label).toBe('');
   });
 
-  it('1 săpt → "Săptămână de recuperare"', async () => {
+  it('1 sapt → "Saptamana de recuperare"', async () => {
     const r = await evaluate(buildCtx({
       profileTier: 'T1',
       periodizationConstraint: buildPeriodConstraint('DELOAD', { trigger: 'CALENDAR', days: 7 }),
     }));
-    expect(r.meta.ui_label).toBe('Săptămână de recuperare');
+    expect(r.meta.ui_label).toBe('Saptamana de recuperare');
   });
 });
 

@@ -13,7 +13,7 @@
 // C3 Fixed 4 weeks exit (Q9=A simplicity V1):
 //    4-week mesocycle window deterministic exit. Adaptive early exit non-
 //    responders defer v1.5 (§9.6.6 Reconsideration Trigger 3).
-// C4 "Bloc focus [Grupă]" Bugatti craft RO terminology (Q17=C):
+// C4 "Bloc focus [Grupa]" Bugatti craft RO terminology (Q17=C):
 //    UI label RO native NU Englez calque (anti-friction Maria/Gigica
 //    accessibility, Marius RO native preferred).
 // C5 Volume/Frequency modifier targeting accumulation phases ONLY:
@@ -34,7 +34,7 @@ import {
 
 /**
  * Capitalize first letter of muscle group RO label per Cluster C4 Q17=C
- * verbatim. "Bloc focus [Grupă]" UI label format.
+ * verbatim. "Bloc focus [Grupa]" UI label format.
  *
  * @param {string|null|undefined} group
  * @returns {string} Capitalized group label or empty
@@ -69,7 +69,7 @@ export function translateGroupToRO(group) {
 }
 
 /**
- * Build UI label per Cluster C4 Q17=C verbatim — "Bloc focus [Grupă]" RO
+ * Build UI label per Cluster C4 Q17=C verbatim — "Bloc focus [Grupa]" RO
  * native terminology Bugatti craft signature.
  *
  * @param {string|null|undefined} group
@@ -108,7 +108,7 @@ export function isApplicationPhaseEligible(periodizationPhase) {
  * @param {Object} input
  * @param {string|null} [input.targetGroup]
  * @param {string} [input.periodizationPhase]      - ACCUMULATION/LOAD/PEAK/DELOAD
- * @param {boolean} [input.specializationActive]   - True dacă proposal accepted Q15=B
+ * @param {boolean} [input.specializationActive]   - True daca proposal accepted Q15=B
  * @returns {import('./types.js').VolumeModifier}
  */
 export function computeVolumeModifier({

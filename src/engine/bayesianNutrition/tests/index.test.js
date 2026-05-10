@@ -206,7 +206,7 @@ describe('evaluate — integration end-to-end §9.4 ADR 026', () => {
     expect(result.signals).toContain('isolation_graceful_degradation_compound_below_3');
   });
 
-  it('confidence high când observations + demographic + periodConstraint toate prezente', async () => {
+  it('confidence high cand observations + demographic + periodConstraint toate prezente', async () => {
     const result = await evaluate(buildCtx({
       profileTier: 'T1',
       observations: [{ weightDelta: -0.5 }],

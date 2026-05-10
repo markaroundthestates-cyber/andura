@@ -1,15 +1,15 @@
 // Cluster E1 + Cluster B4 — Skip management per ADR 026 §9.7.5 + §9.7.2 verbatim.
 //
 // E1 Source 2 §45.6.5 Instant Skip principle:
-//    Default T0 skip → engine auto-calculates ramp-up sets integrated în first
+//    Default T0 skip → engine auto-calculates ramp-up sets integrated in first
 //    exercise (ZERO friction, ZERO ecran suplimentar)
 //    T1+ Profile Typing: opt-in expanded warm-up routine
 //    In-session toggle: "skip warm-up" button = engine collapse to ramp-up sets only
 //
 // B4 Source 1 §65.3 verbatim Q65.3 Option A:
-//    "Sari peste încălzire" buton vizibil de la prima sesiune
+//    "Sari peste incalzire" buton vizibil de la prima sesiune
 //    NU skip after 3+ logged warm-ups (paternalism violation ADR 025)
-//    NU NEVER skip (paternalism violation ADR 025 — "Andura gândește pentru user")
+//    NU NEVER skip (paternalism violation ADR 025 — "Andura gandeste pentru user")
 //
 // Anti-paternalism consistent ADR 025 graceful degradation — engine pre-fills
 // default, user keeps autonomy. Engine emits skip availability boolean +
@@ -24,7 +24,7 @@ import {
 /**
  * Resolve skip default per tier per Cluster E1 verbatim Source 2 §45.6.5.
  *
- * T0 cold start: instant skip default (ramp-up integrated în first exercise,
+ * T0 cold start: instant skip default (ramp-up integrated in first exercise,
  * ZERO ecran suplimentar — anti-friction calibration window)
  * T1+ established: opt-in expanded warm-up routine respected (NU default skip)
  *
@@ -66,8 +66,8 @@ export function resolveSkipDefaultByTier(tier) {
  *   NU NEVER skip (paternalism violation ADR 025)
  *
  * V1 LOCKED true. Future §9.7.6 Reconsideration Trigger 3 candidate post-Beta:
- * progressive nudge "te-am observat sari încălzirea — recomand X" Tier 2 banner
- * (NU Tier 3 modal blocking — preserve autonomy) când skip rate >50% correlates
+ * progressive nudge "te-am observat sari incalzirea — recomand X" Tier 2 banner
+ * (NU Tier 3 modal blocking — preserve autonomy) cand skip rate >50% correlates
  * cu injury rate elevated.
  *
  * @returns {boolean}

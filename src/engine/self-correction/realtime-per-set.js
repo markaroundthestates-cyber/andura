@@ -9,7 +9,7 @@
  *
  * Trigger conditions:
  *   - 2× RPE 10 consecutive → adjust DOWN (greutate prea mare)
- *   - 2× Easy (RPE ≤6.5) + reps maxime → adjust UP (greutate prea mică)
+ *   - 2× Easy (RPE ≤6.5) + reps maxime → adjust UP (greutate prea mica)
  *
  * @param {{ rpes: number[], reps: number[], rMax: number }} sessionState
  * @returns {{ direction: 'up'|'down'|'none', reason: string|null }}

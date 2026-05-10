@@ -338,7 +338,7 @@ describe('Goal Adaptation Adapter — Pipeline integration cu Periodization upst
 
     const results = await runPipeline(ctx, [failingPeriodAdapter, wrappedGoalAdapter]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].ok).toBe(false);
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');

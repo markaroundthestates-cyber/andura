@@ -69,7 +69,7 @@ describe('selectSpecificExercises — Cluster B2+D4 weak group prioritize', () =
     expect(r.groupsUsed[0]).toBe('shoulders');
   });
 
-  it('Weak group not în today targets — still prioritized when active (D4 PARALLEL modifier)', () => {
+  it('Weak group not in today targets — still prioritized when active (D4 PARALLEL modifier)', () => {
     const r = selectSpecificExercises({
       targetMuscleGroups: ['chest'],
       weakGroup: 'core',
@@ -107,7 +107,7 @@ describe('selectSpecificExercises — Cluster B2+D4 weak group prioritize', () =
       setsCount: 1,
     });
     expect(r.exercises[0]).toBe(SPECIFIC_MUSCLE_EXERCISES.chest);
-    expect(r.exercises[0]).toContain('Flotări');
+    expect(r.exercises[0]).toContain('Flotari');
   });
 
   it('unknown muscle group skipped defensive', () => {

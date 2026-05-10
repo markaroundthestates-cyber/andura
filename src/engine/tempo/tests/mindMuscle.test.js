@@ -88,15 +88,15 @@ describe('detectImplicitAcquisition — Cluster C7 Q9=D N=10 dual signal', () =>
   });
 });
 
-describe('detectExplicitAcquisition — Cluster C7 Q9 user toggle "știu"', () => {
-  it('movementId în user toggle list → explicit acquired', () => {
+describe('detectExplicitAcquisition — Cluster C7 Q9 user toggle "stiu"', () => {
+  it('movementId in user toggle list → explicit acquired', () => {
     expect(detectExplicitAcquisition({
       movementId:                'back_squat',
       userKnowToggleMovements:   ['back_squat', 'deadlift'],
     })).toBe(true);
   });
 
-  it('movementId NOT în list → not acquired', () => {
+  it('movementId NOT in list → not acquired', () => {
     expect(detectExplicitAcquisition({
       movementId:                'bench_press',
       userKnowToggleMovements:   ['back_squat'],

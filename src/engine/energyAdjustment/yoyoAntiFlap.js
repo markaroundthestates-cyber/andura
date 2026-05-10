@@ -1,7 +1,7 @@
 // Cluster 4 sub-section — Yo-yo Anti-Flap per ADR 026 §9.3.4 Q14=D verbatim.
 //
 // 3-session rolling window V1 only:
-//   dacă adjustment direction flipped UP→DOWN→UP în 3 sesiuni consecutive →
+//   daca adjustment direction flipped UP→DOWN→UP in 3 sesiuni consecutive →
 //   engine SUPPRESSES 3rd flip, holds current direction, logs signal
 //   'yoyo_anti_flap_suppressed'.
 //
@@ -17,9 +17,9 @@
 import { ADJUSTMENT_DIRECTION, YOYO_ANTI_FLAP } from './constants.js';
 
 /**
- * Detect yo-yo flap pattern în 3-session rolling window per Q14=D verbatim.
+ * Detect yo-yo flap pattern in 3-session rolling window per Q14=D verbatim.
  *
- * Pattern: UP→DOWN→UP (or DOWN→UP→DOWN — symmetric) în trailing window.
+ * Pattern: UP→DOWN→UP (or DOWN→UP→DOWN — symmetric) in trailing window.
  * V1 windowSize = 3 (LOCKED). recentDirections array ordered most-recent-first
  * (consistent CDL convention recentSessions descending).
  *

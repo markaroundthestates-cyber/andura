@@ -2,7 +2,7 @@
 // Standardized Dimension Contract.
 //
 // GoalAdaptationResult extends DimensionResult per ADR 018 §2 — adds 6 blueprint
-// fields în `meta` per §9.2.1 Cluster 1 verbatim.
+// fields in `meta` per §9.2.1 Cluster 1 verbatim.
 //
 // Per ADR 005 Vanilla JS: types pinned via JSDoc typedefs (NU TypeScript).
 
@@ -26,7 +26,7 @@
  */
 
 /**
- * Push-back tier 3-tier proporțional per §9.2.5 Cluster 5.
+ * Push-back tier 3-tier proportional per §9.2.5 Cluster 5.
  *
  * @typedef {'TIER_1_SILENT'|'TIER_2_BANNER'|'TIER_3_MODAL'} PushBackTier
  */
@@ -43,7 +43,7 @@
  */
 
 /**
- * Goal Adaptation-specific blueprint emit (lives în DimensionResult.meta per
+ * Goal Adaptation-specific blueprint emit (lives in DimensionResult.meta per
  * §9.2.1 Cluster 1 + ADR 018 §2 dimension-specific meta convention). 6 fields
  * verbatim Source 1 line 43.
  *
@@ -57,11 +57,11 @@
  */
 
 /**
- * Push-back signal emitted către UI layer per §9.2.5 Cluster 5 (consumed by
+ * Push-back signal emitted catre UI layer per §9.2.5 Cluster 5 (consumed by
  * Stage 3 ENHANCEMENT per ADR 018 §3 Decision Cluster).
  *
  * @typedef {Object} PushBackSignal
- * @property {PushBackTier} tier                  - Tier 1/2/3 proporțional cu risc
+ * @property {PushBackTier} tier                  - Tier 1/2/3 proportional cu risc
  * @property {number} riskScore                   - Additive risk score 0..N
  * @property {string[]} reasons                   - Human-readable reasons (e.g. 'bf_pct_high', 'age_60_plus')
  * @property {{volumeMul: number, intensityCap: number}} [conservativeModifiers]  - Tier 3 modifiers cap
@@ -85,7 +85,7 @@
  * §2.8 Q8 LOCKED.
  *
  * @typedef {Object} RepromptDecision
- * @property {boolean} shouldPrompt              - True dacă re-prompt due (toate cooldowns + cap respected)
+ * @property {boolean} shouldPrompt              - True daca re-prompt due (toate cooldowns + cap respected)
  * @property {string[]} blockedReasons           - Empty when shouldPrompt = true; otherwise reasons (e.g. 'cooldown_post_confirm', 'cap_per_year_reached')
  */
 

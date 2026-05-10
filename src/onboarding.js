@@ -6,19 +6,19 @@ import { toast } from './ui/ui.js';
 import { renderCoachIdle } from './pages/coach.js';
 import { renderDash } from './pages/dashboard.js';
 
-// ══════════════ ONBOARDING GREUTĂȚI INIȚIALE ══════════════
+// ══════════════ ONBOARDING GREUTATI INITIALE ══════════════
 const INIT_EXERCISES = [
-  {ex:'Incline DB Press', label:'Incline DB Press (per ganteră)', placeholder:'ex: 30'},
-  {ex:'DB Shoulder Press', label:'Shoulder Press DB (per ganteră)', placeholder:'ex: 20'},
-  {ex:'Lat Pulldown', label:'Lat Pulldown (greutate totală)', placeholder:'ex: 64'},
-  {ex:'Cable Row', label:'Cable Row (greutate totală)', placeholder:'ex: 72'},
-  {ex:'Lateral Raises', label:'Lateral Raises (per ganteră)', placeholder:'ex: 10'},
-  {ex:'Face Pulls', label:'Face Pulls (cablu, greutate totală)', placeholder:'ex: 41'},
-  {ex:'Incline DB Curl', label:'Incline DB Curl (per ganteră)', placeholder:'ex: 10'},
+  {ex:'Incline DB Press', label:'Incline DB Press (per gantera)', placeholder:'ex: 30'},
+  {ex:'DB Shoulder Press', label:'Shoulder Press DB (per gantera)', placeholder:'ex: 20'},
+  {ex:'Lat Pulldown', label:'Lat Pulldown (greutate totala)', placeholder:'ex: 64'},
+  {ex:'Cable Row', label:'Cable Row (greutate totala)', placeholder:'ex: 72'},
+  {ex:'Lateral Raises', label:'Lateral Raises (per gantera)', placeholder:'ex: 10'},
+  {ex:'Face Pulls', label:'Face Pulls (cablu, greutate totala)', placeholder:'ex: 41'},
+  {ex:'Incline DB Curl', label:'Incline DB Curl (per gantera)', placeholder:'ex: 10'},
   {ex:'Bayesian Curl', label:'Bayesian Curl (cablu)', placeholder:'ex: 18'},
   {ex:'Overhead Triceps', label:'Overhead Triceps (cablu)', placeholder:'ex: 41'},
   {ex:'Pushdown', label:'Pushdown (cablu)', placeholder:'ex: 41'},
-  {ex:'Leg Press', label:'Leg Press (greutate totală)', placeholder:'ex: 150'},
+  {ex:'Leg Press', label:'Leg Press (greutate totala)', placeholder:'ex: 150'},
 ];
 
 export function checkOnboarding() {
@@ -41,9 +41,9 @@ function showOnboarding() {
   overlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;padding:0 0 40px';
   overlay.innerHTML = `
     <div style="padding:52px 20px 20px;background:linear-gradient(180deg,var(--bg2) 0%,transparent 100%)">
-      <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">SETUP INIȚIAL</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:8px">GREUTĂȚILE TALE ACTUALE</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.6">Introdu greutățile cu care lucrezi acum + câte reps faci. Sistemul va ști de unde să înceapă fără să ghicească.</div>
+      <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">SETUP INITIAL</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:8px">GREUTATILE TALE ACTUALE</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Introdu greutatile cu care lucrezi acum + cate reps faci. Sistemul va sti de unde sa inceapa fara sa ghiceasca.</div>
     </div>
     <div style="padding:0 16px">
       ${INIT_EXERCISES.map((e,i) => `
@@ -56,13 +56,13 @@ function showOnboarding() {
                 style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;outline:none;text-align:center"/>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--text3);margin-bottom:4px">REPS FĂCUȚI</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px">REPS FACUTI</div>
               <input type="number" id="ob-reps-${i}" placeholder="8" inputmode="numeric"
                 style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;outline:none;text-align:center"/>
             </div>
           </div>
           <div style="margin-top:8px">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:4px">RPE (cât de greu a fost?)</div>
+            <div style="font-size:9px;color:var(--text3);margin-bottom:4px">RPE (cat de greu a fost?)</div>
             <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">
               ${[7,8,9,10].map(r => `<button onclick="setObRPE(${i},${r})" id="ob-rpe-${i}-${r}"
                 style="padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s">${r}</button>`).join('')}
@@ -71,12 +71,12 @@ function showOnboarding() {
             </div>
           </div>
         </div>`).join('')}
-      <div style="margin-top:4px;margin-bottom:12px;font-size:11px;color:var(--text3);text-align:center">Dacă nu faci un exercițiu, lasă gol și apasă Skip.</div>
+      <div style="margin-top:4px;margin-bottom:12px;font-size:11px;color:var(--text3);text-align:center">Daca nu faci un exercitiu, lasa gol si apasa Skip.</div>
       <button onclick="saveOnboarding()" style="width:100%;padding:16px;background:var(--accent);color:#000;font-weight:700;font-size:16px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">
-        ✓ SALVEAZĂ ȘI ÎNCEPE
+        ✓ SALVEAZA SI INCEPE
       </button>
       <button onclick="skipOnboarding()" style="width:100%;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px">
-        Skip — introduc mai târziu
+        Skip — introduc mai tarziu
       </button>
     </div>`;
   document.body.appendChild(overlay);
@@ -122,7 +122,7 @@ export function saveOnboarding() {
   DB.set('onboarding-done', true);
   const el = document.getElementById('onboarding-overlay');
   if (el) el.remove();
-  toast(`✓ ${saved} exerciții salvate ca baseline`, 'var(--green)');
+  toast(`✓ ${saved} exercitii salvate ca baseline`, 'var(--green)');
   renderCoachIdle();
   renderDash();
 }

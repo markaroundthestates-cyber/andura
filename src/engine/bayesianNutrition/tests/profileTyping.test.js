@@ -94,7 +94,7 @@ describe('exceedsHammingHysteresis — Cluster D3 15% anti-flap', () => {
 });
 
 describe('meetsConsecutiveQualifier — Cluster D3 2 sesiuni 14d window', () => {
-  it('2 consecutive aligned în 14d → true', () => {
+  it('2 consecutive aligned in 14d → true', () => {
     const sessions = [
       { thresholdAligned: true, daysAgo: 1 },
       { thresholdAligned: true, daysAgo: 5 },

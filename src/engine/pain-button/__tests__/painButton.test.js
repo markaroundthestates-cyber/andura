@@ -6,8 +6,8 @@ describe('Pain Button §36.38', () => {
     expect(PAIN_OPTIONS).toHaveLength(3);
     expect(PAIN_OPTIONS.map(o => o.level)).toEqual(['general', 'specific', 'technical']);
   });
-  it('"Mișcarea mă deranjează" wording locked V1', () => {
-    expect(PAIN_OPTIONS[0].label).toBe('Mișcarea mă deranjează');
+  it('"Miscarea ma deranjeaza" wording locked V1', () => {
+    expect(PAIN_OPTIONS[0].label).toBe('Miscarea ma deranjeaza');
   });
   it('processPainInput general → suggest_alternative', () => {
     expect(processPainInput('discomfort_general').action).toBe('suggest_alternative');

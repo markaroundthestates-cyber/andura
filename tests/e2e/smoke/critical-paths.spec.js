@@ -68,16 +68,16 @@ test('CUT phase user does NOT see Zi de PR with max readiness', async ({ page })
 
     // Should see a conservative label instead
     const hasConservativeLabel =
-      bodyText.includes('Sesiune solidă') ||
-      bodyText.includes('Sesiune normală') ||
-      bodyText.includes('Sesiune moderată');
+      bodyText.includes('Sesiune solida') ||
+      bodyText.includes('Sesiune normala') ||
+      bodyText.includes('Sesiune moderata');
 
     // Only assert if readiness card is rendered (not all views show it)
     const hasReadinessInfo = bodyText.includes('Readiness') || bodyText.includes('readiness');
     if (hasReadinessInfo) {
       expect(
         hasConservativeLabel,
-        'CUT phase should show a conservative label (Sesiune solidă/normală/moderată)'
+        'CUT phase should show a conservative label (Sesiune solida/normala/moderata)'
       ).toBe(true);
     }
   } else {
@@ -115,7 +115,7 @@ test('Reset Test Data removes contaminated residue', async ({ page }) => {
     const afterAutoRec = await page.evaluate(() => localStorage.getItem('auto-recommendations'));
     // applied-patterns PRESERVED post-resetTestData per ADR 011 CDL_KEYS semantic (TASK #2, 52e09f1)
     expect(afterApplied, 'applied-patterns should be PRESERVED after resetTestData (CDL_KEYS per ADR 011)').not.toBeNull();
-    // auto-recommendations rămâne TEST_RESIDUE_KEYS — legitim wipe la resetTestData
+    // auto-recommendations ramane TEST_RESIDUE_KEYS — legitim wipe la resetTestData
     expect(afterAutoRec, 'auto-recommendations should be null after reset').toBeNull();
   } else {
     // resetTestData not exposed — skip rather than fail
@@ -123,7 +123,7 @@ test('Reset Test Data removes contaminated residue', async ({ page }) => {
   }
 });
 
-// ── Test 5: Session history shows correct counts (≠ '3 exerciții · 3 seturi') ─
+// ── Test 5: Session history shows correct counts (≠ '3 exercitii · 3 seturi') ─
 test('Session history shows correct counts for 5-exercise sessions', async ({ page }) => {
   await setupUser(page, WITH_HISTORY);
   await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });

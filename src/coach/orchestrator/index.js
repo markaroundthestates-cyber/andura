@@ -35,7 +35,7 @@ const SOFT_DEFAULT_CODES = new Set(['BUDGET_EXCEEDED']);
 /**
  * Resolve severity per ADR 030 §3.6 RESOLVED V1 taxonomy.
  * - Engine emits explicit 'soft' OR 'hard' → respect
- * - Code în SOFT_DEFAULT_CODES (e.g., BUDGET_EXCEEDED) → 'soft'
+ * - Code in SOFT_DEFAULT_CODES (e.g., BUDGET_EXCEEDED) → 'soft'
  * - Otherwise default 'hard' (fail-safe Anti-Cascade Silent per §3.6)
  *
  * @param {{code?: string, severity?: 'soft'|'hard'}} [error]
@@ -69,7 +69,7 @@ function nowMs() {
  * Run a pipeline of adapters sequentially over an EngineContext.
  *
  * Each adapter's `invoke(ctx)` returns an `AdapterResult`. Orchestrator
- * collects results în order; an adapter that throws (defensive against
+ * collects results in order; an adapter that throws (defensive against
  * D4 violations) is captured ca structured err with code `ADAPTER_THREW`.
  *
  * Severity-aware policy V1 (Q-OPEN-6 RESOLVED): 'soft' → continue, 'hard' → halt.

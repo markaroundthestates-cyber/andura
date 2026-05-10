@@ -148,7 +148,7 @@ export const ANTI_SPAM = Object.freeze({
  * Volume landmarks Hibrid lookup + regression per Cluster C1 verbatim.
  *
  * Israetel base lookup + regression personalized STRICT compound only.
- * Isolation graceful degradation 0.3× când compound observations <3 în
+ * Isolation graceful degradation 0.3× cand compound observations <3 in
  * window 14 zile (anti-overfit small-N isolation noise).
  *
  * @type {Readonly<{
@@ -195,7 +195,7 @@ export const EDGE_CASES = Object.freeze({
   passiveModeConditions: Object.freeze(['pregnant', 'post_bariatric', 'kidney_disease']),
   specialPriorsAgeThreshold: 75,
   specialPriorsConditions: Object.freeze(['ed_history']),
-  disclaimerCopy: 'Andura NU înlocuiește sfat medical',
+  disclaimerCopy: 'Andura NU inlocuieste sfat medical',
 });
 
 /**
@@ -213,7 +213,7 @@ export const UI_TIER = Object.freeze({
 
 /**
  * Hard rule preserved §3.5.1 per Cluster D5 verbatim:
- *   NEVER specific kcal output în UI — output {deficit/surplus/maintenance}_likelihood
+ *   NEVER specific kcal output in UI — output {deficit/surplus/maintenance}_likelihood
  *   probabilities only.
  *
  *   Bugatti differential vs MFP/Lose-It (specific kcal pseudo-precision Maria 65 confusion).
@@ -225,8 +225,8 @@ export const NEVER_SPECIFIC_KCAL_UI = true;
 /**
  * Cross-engine #5 Energy Adjustment σ variance modifier per Cluster C3 verbatim.
  *
- * NU linear discount — readiness scăzut crește σ observații recent (zgomot
- * inflamație/stres/cortisol). Neutral fallback T0 cold start (sigma_modifier
+ * NU linear discount — readiness scazut creste σ observatii recent (zgomot
+ * inflamatie/stres/cortisol). Neutral fallback T0 cold start (sigma_modifier
  * = 1.0 default until 14 zile observations).
  *
  * V1 conservative pick: readiness DOWN → σ × 1.30 (amplify variance dampening).

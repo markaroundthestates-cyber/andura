@@ -2,8 +2,8 @@
 // ADR 026 §9.8.2 verbatim.
 //
 // B6 Adaptive duration (Source 1 line 16 verbatim):
-//    Scheduled fix: 1 săpt (calendar Linear Block Week 4)
-//    Reactive adaptive: 1-2 săpt cu Flagged-only state qualifier (Composite/AA trigger)
+//    Scheduled fix: 1 sapt (calendar Linear Block Week 4)
+//    Reactive adaptive: 1-2 sapt cu Flagged-only state qualifier (Composite/AA trigger)
 //
 // B7 Reactive deload Hard Reset Linear Block counter (Source 1 line 16 verbatim):
 //    Week N reactive deload triggered → Week 1 NEW cycle post-deload
@@ -11,7 +11,7 @@
 //    double deload exploitation prevention)
 //
 // B8 Extension week 2 Flagged-only (Source 1 line 16 verbatim):
-//    Reactive deload extended la 2 săpt DOAR dacă Flagged state still active
+//    Reactive deload extended la 2 sapt DOAR daca Flagged state still active
 //    end-of-Week-1
 //    NU Cooldown / NU Resolving state extension (anti false-positive deload prelungit)
 //
@@ -25,14 +25,14 @@ import {
 /**
  * Compute duration per Cluster B6 verbatim.
  *
- * Scheduled fix: 1 săpt (calendar Linear Block Week 4)
- * Reactive adaptive: 1-2 săpt cu Flagged-only state qualifier
- * Extension flagged: total = 2 săpt (Week 1 reactive + Week 2 extension)
- * Resolving / IDLE: 0 săpt
+ * Scheduled fix: 1 sapt (calendar Linear Block Week 4)
+ * Reactive adaptive: 1-2 sapt cu Flagged-only state qualifier
+ * Extension flagged: total = 2 sapt (Week 1 reactive + Week 2 extension)
+ * Resolving / IDLE: 0 sapt
  *
  * @param {Object} input
  * @param {string} input.deloadState
- * @param {boolean} [input.flaggedStillActive]   - True dacă Flagged state still active end-of-Week-1
+ * @param {boolean} [input.flaggedStillActive]   - True daca Flagged state still active end-of-Week-1
  * @returns {import('./types.js').DurationDecision}
  */
 export function computeDuration({ deloadState, flaggedStillActive }) {
@@ -44,14 +44,14 @@ export function computeDuration({ deloadState, flaggedStillActive }) {
   if (deloadState === DELOAD_STATE.IDLE || deloadState === DELOAD_STATE.RESOLVING) {
     durationWeeks = 0;
   } else if (deloadState === DELOAD_STATE.SCHEDULED_LINEAR) {
-    durationWeeks = SCHEMA_CONSTANTS.durationScheduledWeeks; // 1 săpt fix
+    durationWeeks = SCHEMA_CONSTANTS.durationScheduledWeeks; // 1 sapt fix
   } else if (deloadState === DELOAD_STATE.REACTIVE_COMPOSITE
              || deloadState === DELOAD_STATE.REACTIVE_AA) {
-    durationWeeks = SCHEMA_CONSTANTS.durationReactiveMinWeeks; // 1 săpt initial reactive
+    durationWeeks = SCHEMA_CONSTANTS.durationReactiveMinWeeks; // 1 sapt initial reactive
     extensionEvaluated = true; // extension considered end-of-Week-1
     hardResetLinearApplied = true; // B7 reactive triggered → Hard Reset Linear post-deload
   } else if (deloadState === DELOAD_STATE.EXTENSION_FLAGGED) {
-    durationWeeks = SCHEMA_CONSTANTS.durationReactiveMaxWeeks; // 2 săpt total (Week 1 + Week 2)
+    durationWeeks = SCHEMA_CONSTANTS.durationReactiveMaxWeeks; // 2 sapt total (Week 1 + Week 2)
     extensionEvaluated = true;
     extensionGranted = flaggedStillActive === true;
     hardResetLinearApplied = true;
@@ -84,12 +84,12 @@ export function computeDuration({ deloadState, flaggedStillActive }) {
 /**
  * Evaluate extension Week 2 per Cluster B8 verbatim.
  *
- * Reactive deload extended la 2 săpt DOAR dacă Flagged state still active
+ * Reactive deload extended la 2 sapt DOAR daca Flagged state still active
  * end-of-Week-1. NU Cooldown / NU Resolving state extension (anti false-positive
  * deload prelungit).
  *
  * @param {Object} input
- * @param {number} [input.weekActiveCount]              - Current week count în deload (1 = Week 1, 2 = Week 2)
+ * @param {number} [input.weekActiveCount]              - Current week count in deload (1 = Week 1, 2 = Week 2)
  * @param {boolean} [input.flaggedStillActive]          - End-of-Week-1 evaluation result
  * @param {boolean} [input.cooldownStateActive]         - True if Composite Signal lifecycle Cooldown
  * @param {boolean} [input.resolvingStateActive]        - True if Composite Signal lifecycle Resolving

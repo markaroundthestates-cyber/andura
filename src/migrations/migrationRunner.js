@@ -4,8 +4,8 @@
 //
 // Per ADR 018 DP-5 (APPROVED 2026-04-27): eager > lazy. Local-first storage,
 // CDL Tier 1 max ~250 entries — sub-millisecond per entry. Fail-loud (Sentry
-// critical) on migrate() throws. App continues în graceful degradation
-// (aggregation engines already gestionează nullable fields per ADR 011).
+// critical) on migrate() throws. App continues in graceful degradation
+// (aggregation engines already gestioneaza nullable fields per ADR 011).
 
 import { DB } from '../db.js';
 import { captureException as sentryCaptureException } from '../util/sentry.js';
@@ -15,7 +15,7 @@ import { MIGRATIONS } from './MIGRATIONS.js';
 export const LARGE_MIGRATION_THRESHOLD = 100;
 
 /**
- * Returns the schema version of an entry. Entries fără explicit schemaVersion
+ * Returns the schema version of an entry. Entries fara explicit schemaVersion
  * field tratate ca v1 per ADR 018 §4 Implementation notes (existing entries
  * pre-versioning treated as initial schema).
  *
@@ -32,9 +32,9 @@ export function getEntryVersion(entry) {
  *
  * Failsafe contract per ADR 018 §4:
  *   - migrate() throws on entry X → entries deja migrate (indices < X)
- *     persistate; restul (X şi după) lăsate în vechea formă; Sentry critical.
- *   - DB.set throws → Sentry critical, error recorded; runner continuă cu
- *     migration-ul / key-ul următor.
+ *     persistate; restul (X si dupa) lasate in vechea forma; Sentry critical.
+ *   - DB.set throws → Sentry critical, error recorded; runner continua cu
+ *     migration-ul / key-ul urmator.
  *   - Non-array entries la storageKey → log warning + skip (defensive).
  *
  * @param {object} [opts]
@@ -54,7 +54,7 @@ export function runMigrations(opts = {}) {
     return { migrationsRun: 0, totalEntriesMigrated: 0, perMigration: [], errors: [] };
   }
 
-  // Stable sort by fromVersion ASC — chains apply în order even dacă registry
+  // Stable sort by fromVersion ASC — chains apply in order even daca registry
   // is registered out-of-order (defensive). V8 sort is stable per ECMA-2019.
   const sorted = [...migrations].sort((a, b) => a.fromVersion - b.fromVersion);
 

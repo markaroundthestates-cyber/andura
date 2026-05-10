@@ -2,7 +2,7 @@
 // Standardized Dimension Contract.
 //
 // EnergyAdjustmentResult extends DimensionResult per ADR 018 §2 — adds 6
-// blueprint fields în `meta` per §9.3.1 Cluster 1 verbatim.
+// blueprint fields in `meta` per §9.3.1 Cluster 1 verbatim.
 //
 // Pipeline §42.10 position 3rd canonical (NU 5th legacy ADR 027 naming).
 //
@@ -36,8 +36,8 @@
  * Selective scope volume + intensity per Cluster 3 §9.3.3 Q33 §45.5 reuse.
  *
  * @typedef {Object} VolumeIntensityScope
- * @property {boolean} volume    - True dacă engine targets volume_per_muscle corridor
- * @property {boolean} intensity - True dacă engine targets intensity_pct_1rm corridor
+ * @property {boolean} volume    - True daca engine targets volume_per_muscle corridor
+ * @property {boolean} intensity - True daca engine targets intensity_pct_1rm corridor
  */
 
 /**
@@ -45,7 +45,7 @@
  *
  * @typedef {Object} EnergyAggregationSignal
  * @property {EmojiState} state                       - Holistic emoji input
- * @property {DrillDownCause|null} drillDownCause     - Strict 🔴 only (null când NOT 🔴)
+ * @property {DrillDownCause|null} drillDownCause     - Strict 🔴 only (null cand NOT 🔴)
  * @property {'UP_ELIGIBLE'|'DOWN_IMMEDIATE'|'NONE'} categoryRule - Aggregation rule lookup
  */
 
@@ -54,8 +54,8 @@
  *
  * @typedef {Object} BidirectionalAdjustmentDecision
  * @property {AdjustmentDirection} direction
- * @property {number} magnitudePct                    - Float în [-0.15, +0.15] tier-aware
- * @property {boolean} upGatingPassed                 - True dacă N≥3 + recovery + phase gate
+ * @property {number} magnitudePct                    - Float in [-0.15, +0.15] tier-aware
+ * @property {boolean} upGatingPassed                 - True daca N≥3 + recovery + phase gate
  * @property {string[]} gatingReasons                 - Reasons UP blocked sau passed
  */
 
@@ -63,19 +63,19 @@
  * Yo-yo flap state per Cluster 4 §9.3.4 Q14=D 3-session window.
  *
  * @typedef {Object} YoyoFlapState
- * @property {boolean} flapDetected                   - True dacă UP→DOWN→UP în window
- * @property {boolean} suppressed                     - True dacă 3rd flip suppressed (V1 only)
+ * @property {boolean} flapDetected                   - True daca UP→DOWN→UP in window
+ * @property {boolean} suppressed                     - True daca 3rd flip suppressed (V1 only)
  * @property {AdjustmentDirection} heldDirection      - Direction held when suppressed
  */
 
 /**
- * Energy Adjustment-specific blueprint emit (lives în DimensionResult.meta per
+ * Energy Adjustment-specific blueprint emit (lives in DimensionResult.meta per
  * §9.3.1 Cluster 1 + ADR 018 §2). 6 fields verbatim Cluster 1.
  *
  * @typedef {Object} EnergyAdjustmentBlueprint
  * @property {EmojiState|null} energy_state                          - Holistic emoji aggregate
  * @property {AdjustmentDirection} adjustment_direction              - UP / DOWN / NONE
- * @property {number} adjustment_magnitude_pct                       - Float în [-0.15, +0.15]
+ * @property {number} adjustment_magnitude_pct                       - Float in [-0.15, +0.15]
  * @property {VolumeIntensityScope} volume_intensity_scope           - Selective scope per Q33
  * @property {Object|null} forward_constraint_object                 - Periodization corridor pass-through frozen
  * @property {string[]} signals                                      - Mirror DimensionResult.signals
@@ -100,7 +100,7 @@
  *
  * @typedef {Object} BayesianVarianceSignal
  * @property {number} sigmaObserved
- * @property {boolean} dampeningApplied              - True dacă σ > threshold → adjustment × 0.7
+ * @property {boolean} dampeningApplied              - True daca σ > threshold → adjustment × 0.7
  * @property {number} adjustmentMagnitudePostDampening
  */
 
@@ -110,7 +110,7 @@
  *
  * @typedef {Object} DeloadTriggerSignal
  * @property {number} consecutiveSubFloorSessions
- * @property {boolean} escalationTriggered           - True când 3rd session sub-Floor
+ * @property {boolean} escalationTriggered           - True cand 3rd session sub-Floor
  * @property {string} reason                         - Human-readable escalation reason
  */
 

@@ -1,7 +1,7 @@
 // ══ src/firebase.js — getUserPath() BUG 2 fix tests ════════════════════════
 //
 // Per §AMENDMENT 2026-05-04 evening + §56.1.3 LOCKED V1 (HANDOVER_GLOBAL):
-// Mode Anonymous (`getAuthState() === null`) → `getUserPath()` returnează
+// Mode Anonymous (`getAuthState() === null`) → `getUserPath()` returneaza
 // **null** (NU fallback hardcodat `LEGACY_USER_PATH = 'users/daniel'`).
 // Eliminates 401 cycle infinit per §36.80 BUG 2 RESOLUTION.
 
@@ -37,7 +37,7 @@ describe('firebase — getUserPath() §56.1.3 BUG 2 fix', () => {
   it('preserves LEGACY_USER_PATH export as migration source constant', () => {
     // Per §56.4.1: legacy literal preserved pentru one-time Daniel migration
     // source (`users/daniel` → `users/{uid}` via 2026-05-02 runner).
-    // Constant rămâne exported, NU returned by getUserPath() Anonymous.
+    // Constant ramane exported, NU returned by getUserPath() Anonymous.
     expect(LEGACY_USER_PATH).toBe('users/daniel');
     expect(USER_PATH).toBe('users/daniel'); // back-compat alias
   });

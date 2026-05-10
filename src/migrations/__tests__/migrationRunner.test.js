@@ -257,7 +257,7 @@ describe('migrationRunner — failsafe on migrate() throws', () => {
     expect(result.errors[0].entryId).toBe('BOOM');
   });
 
-  it('does not throw — app continues în graceful degradation', () => {
+  it('does not throw — app continues in graceful degradation', () => {
     const db = makeDb({ 'cdl': [{ id: 'BOOM' }] });
     const m = {
       fromVersion: 1, toVersion: 2, description: 'risky',

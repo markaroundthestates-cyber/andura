@@ -12,10 +12,10 @@ describe('§56.14.A admin-cleanup helpers — pure', () => {
 
   describe('isExpiredArchive — 7 zile grace cutoff', () => {
     const now = 1_700_000_000_000;
-    it('timestamp 8 zile în trecut → expired', () => {
+    it('timestamp 8 zile in trecut → expired', () => {
       expect(isExpiredArchive(now - 8 * 24 * 60 * 60 * 1000, now)).toBe(true);
     });
-    it('timestamp 6 zile în trecut → NU expired', () => {
+    it('timestamp 6 zile in trecut → NU expired', () => {
       expect(isExpiredArchive(now - 6 * 24 * 60 * 60 * 1000, now)).toBe(false);
     });
     it('exact 7 zile → NU expired (strict <)', () => {
@@ -30,10 +30,10 @@ describe('§56.14.A admin-cleanup helpers — pure', () => {
 
   describe('isPastHardDeleteSchedule — 30 zile soft delete cutoff', () => {
     const now = 1_700_000_000_000;
-    it('scheduledHardDelete în trecut → past schedule', () => {
+    it('scheduledHardDelete in trecut → past schedule', () => {
       expect(isPastHardDeleteSchedule(now - 1000, now)).toBe(true);
     });
-    it('scheduledHardDelete în viitor → NU past schedule', () => {
+    it('scheduledHardDelete in viitor → NU past schedule', () => {
       expect(isPastHardDeleteSchedule(now + 1000, now)).toBe(false);
     });
     it('non-number → false', () => {

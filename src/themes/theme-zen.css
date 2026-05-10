@@ -21,7 +21,7 @@
   100% { background-position: 200% 50%; }
 }
 
-/* ── Aurora verde pulsând organic ── */
+/* ── Aurora verde pulsand organic ── */
 [data-theme="zen"] body::before {
   content: '';
   position: fixed;

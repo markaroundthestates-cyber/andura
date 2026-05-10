@@ -405,7 +405,7 @@ describe('Specialization Adapter — Pipeline integration 6-adapter chain (ADR 0
     expect(propagatedCO.immutable_snapshot).toBe(true); // anti-cascade preserved
     expect(propagatedCO.phase).toBeTruthy(); // phase preserved post chain
 
-    // Specialization adapter NU expose constraintObject în output (Tempo /
+    // Specialization adapter NU expose constraintObject in output (Tempo /
     // Bayesian Nutrition / Goal Adaptation pattern, NU Energy Adjustment Hook
     // 4 re-emission pattern)
     const specializationOutput = results[5].output;
@@ -435,7 +435,7 @@ describe('Specialization Adapter — Pipeline integration 6-adapter chain (ADR 0
       Object.freeze({ id: 'specialization', invoke: specializationSpy }),
     ]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');
     expect(goalAdSpy).not.toHaveBeenCalled();

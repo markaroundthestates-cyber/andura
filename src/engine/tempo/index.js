@@ -19,7 +19,7 @@
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.5
-// (commit a9b7cbd LANDED 2026-05-06 afternoon chat-6 acasă, 28-30 decisions
+// (commit a9b7cbd LANDED 2026-05-06 afternoon chat-6 acasa, 28-30 decisions
 // Cluster A-E verbatim).
 //
 // Source 3 NU disponibil: ADR 028 = STUB legacy precedent §9.3 Energy ADR 027
@@ -80,7 +80,7 @@ function computeConfidence({
  * §9.5.3 Cluster C5 verbatim.
  *
  * @param {Object} [ctx]
- * @returns {string|null} 'T0' | 'T1' | 'T2' or null dacă unresolvable
+ * @returns {string|null} 'T0' | 'T1' | 'T2' or null daca unresolvable
  */
 function resolveTier(ctx) {
   const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
@@ -226,7 +226,7 @@ export async function evaluate(ctx) {
   if (mindMuscleState.acquiredExplicit) signals.push('mind_muscle_acquired_explicit_user_toggle_stiu_q9');
 
   // Cluster A1 — Hook reference Convergence Guard cross-cutting (NU duplicate
-  // logic în Tempo, ADR 009 §AMENDMENT canonical SSOT — pattern §9.4 Bayesian).
+  // logic in Tempo, ADR 009 §AMENDMENT canonical SSOT — pattern §9.4 Bayesian).
   const convergenceGuardRef = getConvergenceGuardReference();
   trace.convergenceGuardRef = convergenceGuardRef;
 

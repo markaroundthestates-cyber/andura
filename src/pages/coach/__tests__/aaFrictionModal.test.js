@@ -93,7 +93,7 @@ describe('showAAFrictionModal — DOM structure (anti-RE)', () => {
     expect(document.querySelector('.aa-friction-override code')).toBeNull();
 
     const text = document.querySelector('.aa-friction-sheet').textContent;
-    expect(text).not.toMatch(/escalează/i);
+    expect(text).not.toMatch(/escaleaza/i);
     expect(text).not.toMatch(/2-a override/i);
     expect(text).not.toMatch(/typing/i);
 
@@ -109,7 +109,7 @@ describe('showAAFrictionModal — DOM structure (anti-RE)', () => {
     expect(document.querySelector('.btn-override-simple')).not.toBeNull();
     const more = document.querySelector('.aa-friction-more');
     expect(more).not.toBeNull();
-    expect(more.querySelector('p').textContent).toMatch(/oboseală|accidentări/i);
+    expect(more.querySelector('p').textContent).toMatch(/oboseala|accidentari/i);
 
     clickBtn('.btn-cancel');
     await modalPromise;
@@ -117,7 +117,7 @@ describe('showAAFrictionModal — DOM structure (anti-RE)', () => {
 });
 
 describe('showAAFrictionModal — actions + sources', () => {
-  it('"Acceptă plan redus" resolves {action:"cancel", source:"accept"} — does NOT mark dismissed', async () => {
+  it('"Accepta plan redus" resolves {action:"cancel", source:"accept"} — does NOT mark dismissed', async () => {
     const session = makeSession();
     const modalPromise = showAAFrictionModal(session);
 
@@ -129,7 +129,7 @@ describe('showAAFrictionModal — actions + sources', () => {
     expect(localStorage.getItem(FRICTION_DISMISSED_DATE_KEY)).toBeNull();
   });
 
-  it('"Override (înțeleg riscurile)" — single click, resolves override + marks dismissed today', async () => {
+  it('"Override (inteleg riscurile)" — single click, resolves override + marks dismissed today', async () => {
     const session = makeSession();
     const modalPromise = showAAFrictionModal(session);
 

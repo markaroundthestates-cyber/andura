@@ -10,7 +10,7 @@
 // D4 Hook upstream consume — Bayesian §9.4 σ + Pain-Aware §9.4.6 reference-only
 //    metadata (NU duplicate Convergence Guard logic — pattern §9.4-§9.7 precedent)
 // D5 Hook upstream consume — Specialization §9.6 active state (Specialization
-//    suspended Q12=A non-negotiable când Engine Deload REACTIVE triggered)
+//    suspended Q12=A non-negotiable cand Engine Deload REACTIVE triggered)
 // D6 Hook downstream signal — Warm-up §9.7 light coupling (DELOAD_LIGHTER state
 //    signal next-session lookahead)
 // D7 forwardConstraintObject — Engine Deload TERMINAL pipeline §42.10 8th FINAL
@@ -282,7 +282,7 @@ export function getConvergenceGuardReference() {
  * "T2 Unlock" Clean Signal rule.
  *
  * Engine Deload NU proactive Pain-Aware trigger — NU contribuie pain_aware:true
- * flag CDL (flag se setează STRICT user-triggered Pain Button only per
+ * flag CDL (flag se seteaza STRICT user-triggered Pain Button only per
  * ADR_PAIN_DISCOMFORT_BUTTON_v1).
  *
  * Returns false always V1 — consistent §9.5+§9.6+§9.7 precedent.

@@ -119,7 +119,7 @@ describe('progressionMatrix — Sprinter Cap modifier (Q-0231)', () => {
 describe('progressionMatrix — Deload skip warning (Bugatti tone LOCKED)', () => {
   it('returns the LOCKED wording verbatim per HANDOVER §22 F-NEW-2', () => {
     expect(getDeloadSkipWarning()).toBe(
-      'Săptămâna de deload a trecut neutilizată. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recuperează în mișcare, nu doar în repaus.'
+      'Saptamana de deload a trecut neutilizata. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recupereaza in miscare, nu doar in repaus.'
     );
   });
 

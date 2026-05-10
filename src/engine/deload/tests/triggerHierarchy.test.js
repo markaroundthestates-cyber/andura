@@ -97,7 +97,7 @@ describe('detectAATrigger — Cluster B13 + Source 2 ADR 013 cross-ref', () => {
     expect(r.sources).toContain('skip_penalty_aa_marker_direct_c4');
   });
 
-  it('Multiple sources → all included în sources list', () => {
+  it('Multiple sources → all included in sources list', () => {
     const r = detectAATrigger({
       aaDetectionActive:    true,
       energyDownSustained:  true,
@@ -123,7 +123,7 @@ describe('detectLinearTrigger — Cluster B1 §9.1 cross-ref', () => {
     expect(r.triggered).toBe(true);
   });
 
-  it('LOAD phase + CALENDAR → NOT triggered (NU în deload phase)', () => {
+  it('LOAD phase + CALENDAR → NOT triggered (NU in deload phase)', () => {
     const r = detectLinearTrigger({
       periodizationPhase:    'LOAD',
       deloadWindowTrigger:   'CALENDAR',
@@ -218,7 +218,7 @@ describe('resolveTriggerHierarchy — Cluster B2 priority Composite > AA > Linea
     expect(r.sourcesActive).toContain(TRIGGER_SOURCE.AA);
   });
 
-  it('Composite + AA + Linear → COMPOSITE wins, all 3 în sourcesActive (multi-signal additive)', () => {
+  it('Composite + AA + Linear → COMPOSITE wins, all 3 in sourcesActive (multi-signal additive)', () => {
     const r = resolveTriggerHierarchy({
       composite:    triggered(true),
       aa:           triggered(true),

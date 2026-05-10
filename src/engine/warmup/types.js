@@ -2,7 +2,7 @@
 // Contract.
 //
 // WarmupResult extends DimensionResult per ADR 018 §2 — adds blueprint fields
-// în `meta` per §9.7.1 Cluster A1 verbatim.
+// in `meta` per §9.7.1 Cluster A1 verbatim.
 //
 // Pipeline §42.10 position 7th canonical (NU "Engine #8" naming legacy).
 //
@@ -57,8 +57,8 @@
  * @property {number} durationMin                 - Final adaptive duration 5-10 (or 5-7 cu Energy DOWN)
  * @property {number} lowerBound                  - 5 min default safety floor
  * @property {number} upperBound                  - 10 default | 7 cu Energy DOWN | 0 SKIPPED
- * @property {boolean} energyDownAutoShortened    - True dacă Energy DOWN auto-shorten applied
- * @property {boolean} deloadLighter              - True dacă Periodization DELOAD week → lighter
+ * @property {boolean} energyDownAutoShortened    - True daca Energy DOWN auto-shorten applied
+ * @property {boolean} deloadLighter              - True daca Periodization DELOAD week → lighter
  * @property {string} rationale                   - Human-readable rationale signal ID
  */
 
@@ -82,8 +82,8 @@
  * @typedef {Object} SkipDecision
  * @property {boolean} skipAvailable                         - Always true V1 (Source 1 §65.3 buton vizibil session 1)
  * @property {boolean} userOptedSkip                         - Caller passes from session ctx (in-session toggle)
- * @property {boolean} t0InstantSkipDefault                  - True dacă tier T0 → ramp-up integrated în first exercise
- * @property {boolean} t1PlusOptInExpanded                   - True dacă T1+ user opt-in expanded routine
+ * @property {boolean} t0InstantSkipDefault                  - True daca tier T0 → ramp-up integrated in first exercise
+ * @property {boolean} t1PlusOptInExpanded                   - True daca T1+ user opt-in expanded routine
  * @property {string} rationale
  */
 
@@ -91,7 +91,7 @@
  * Cooldown state per Cluster C verbatim Source 1 §65.4 OVERRIDE Q4 reconciled.
  *
  * @typedef {Object} CooldownState
- * @property {boolean} offered                               - True dacă optional cooldown offered post-session
+ * @property {boolean} offered                               - True daca optional cooldown offered post-session
  * @property {number} durationMin                            - 2 min text-only Source 1 §65.4
  * @property {string} content                                - 'text-only' V1 (NU GIF NU video Bugatti consistency)
  * @property {ReadonlyArray<string>} stretches               - RO native static stretches list
@@ -121,7 +121,7 @@
  *
  * @typedef {Object} EnergyReadinessSignal
  * @property {EnergyDirection} energyDirection
- * @property {boolean} autoShortenApplied                    - True dacă DOWN → 5-7 min upper bound applied
+ * @property {boolean} autoShortenApplied                    - True daca DOWN → 5-7 min upper bound applied
  * @property {string} rationale
  */
 
@@ -130,7 +130,7 @@
  *
  * @typedef {Object} SpecializationWeakGroupSignal
  * @property {string|null} weakGroup
- * @property {boolean} prioritized                           - True dacă weak group included specific sets
+ * @property {boolean} prioritized                           - True daca weak group included specific sets
  * @property {string} rationale
  */
 
@@ -148,7 +148,7 @@
  */
 
 /**
- * Warm-up-specific blueprint emit (lives în DimensionResult.meta per §9.7.1
+ * Warm-up-specific blueprint emit (lives in DimensionResult.meta per §9.7.1
  * Cluster A1).
  *
  * @typedef {Object} WarmupBlueprint
@@ -162,7 +162,7 @@
  * @property {ReadonlyArray<string>} target_muscle_groups    - Target muscle groups for the day
  * @property {boolean} skip_available                        - Always true V1 §65.3 buton vizibil session 1
  * @property {CooldownState} cooldown_state                  - Cluster C optional 2 min stretch
- * @property {string} ui_label                               - "Încălzire ~X min" RO native
+ * @property {string} ui_label                               - "Incalzire ~X min" RO native
  * @property {string[]} signals                              - Mirror DimensionResult.signals
  */
 

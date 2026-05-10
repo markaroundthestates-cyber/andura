@@ -88,7 +88,7 @@ describe('computeWeightedVolume — full session aggregate', () => {
 });
 
 describe('countCompoundObservations — Cluster C1 trailing window', () => {
-  it('counts sessions with compound în 14d window', () => {
+  it('counts sessions with compound in 14d window', () => {
     const sessions = [
       { daysAgo: 1, movements: [{ movementId: 'squat' }] },
       { daysAgo: 5, movements: [{ movementId: 'bench_press' }] },
@@ -109,7 +109,7 @@ describe('countCompoundObservations — Cluster C1 trailing window', () => {
   });
 });
 
-describe('computeIsolationDegradation — Cluster C1 0.3× când compound <3', () => {
+describe('computeIsolationDegradation — Cluster C1 0.3× cand compound <3', () => {
   it('compound observations >= 3 → factor 1.0', () => {
     const sessions = [
       { daysAgo: 1, movements: [{ movementId: 'squat' }] },

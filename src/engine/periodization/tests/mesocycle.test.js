@@ -121,12 +121,12 @@ describe('isMariusDualSignalGreen — §9.3 Cluster 2.3 §45.4 Q21 §36.82', () 
 });
 
 describe('hasInjuryBlock — §9.3 anti-abuse Invariant 5 Medical Safety', () => {
-  it('detects injury within 6 săpt window (42 days)', () => {
+  it('detects injury within 6 sapt window (42 days)', () => {
     expect(hasInjuryBlock([{ injury: true, daysAgo: 10 }])).toBe(true);
     expect(hasInjuryBlock([{ injury: true, daysAgo: 41 }])).toBe(true);
     expect(hasInjuryBlock([{ injury: true, daysAgo: 42 }])).toBe(true);
   });
-  it('NU blocks injury older than 6 săpt window', () => {
+  it('NU blocks injury older than 6 sapt window', () => {
     expect(hasInjuryBlock([{ injury: true, daysAgo: 43 }])).toBe(false);
     expect(hasInjuryBlock([{ injury: true, daysAgo: 100 }])).toBe(false);
   });

@@ -1,9 +1,9 @@
 /**
  * TASK #26 — C10c cache invalidation coalesce
  *
- * Verifică:
- * 1. suppressInvalidations(fn) foldează toate DB.set-urile pe COACH_RELEVANT_KEYS într-o singură invalidare.
- * 2. În afara batch-mode, invalidările succesive sunt debounced într-o fereastră de 250ms.
+ * Verifica:
+ * 1. suppressInvalidations(fn) foldeaza toate DB.set-urile pe COACH_RELEVANT_KEYS intr-o singura invalidare.
+ * 2. In afara batch-mode, invalidarile succesive sunt debounced intr-o fereastra de 250ms.
  * 3. Direct `window._directorCache.invalidate()` nu e afectat (bypass explicit).
  */
 

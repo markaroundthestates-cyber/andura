@@ -8,7 +8,7 @@
 //    DOWN auto-shorten upper bound 5-10 → 5-7 min anti-cascade)
 // D4 Hook upstream consume — Specialization §9.6 weak group focus (PARALLEL
 //    modifier precedent Q11=B — Warm-up serves Specialization NU compete;
-//    weak group prioritized în specific muscle exercises)
+//    weak group prioritized in specific muscle exercises)
 // D5 Hook downstream forward — Deload §9.8 (light coupling Cooldown post-session
 //    compatible cu deload week §65.6 trigger §36.82 readiness 🔴 3x consecutive)
 //
@@ -37,7 +37,7 @@ import {
  *
  * Defensive defaults preserve total function semantics. Returns metadata-only
  * signal cu phase + deload window flag — actual phase impact applied via
- * `durationCalculator.isDeloadWeek()` (NU în this hook).
+ * `durationCalculator.isDeloadWeek()` (NU in this hook).
  *
  * @param {Object|null|undefined} constraint
  * @returns {import('./types.js').PeriodizationFrozenSignal}
@@ -95,7 +95,7 @@ export function consumeGoalPhase(goalPhase) {
  * Hook D3 — Consume Energy Adjustment readiness state.
  *
  * Energy DOWN signal → auto-shorten upper bound 5-10 → 5-7 min applied
- * downstream în `durationCalculator.computeDuration()`. This hook returns
+ * downstream in `durationCalculator.computeDuration()`. This hook returns
  * metadata-only signal pentru transparency.
  *
  * Anti-cascade preserve §1.10 Pipeline Order LOCKED V1 (consistent §9.5 Tempo
@@ -189,7 +189,7 @@ export function getConvergenceGuardReference() {
  * Unlock" Clean Signal rule.
  *
  * Engine Warm-up NOT proactive Pain-Aware trigger — Warm-up references metadata
- * only (engine NU contribuie pain_aware:true flag CDL — flag se setează STRICT
+ * only (engine NU contribuie pain_aware:true flag CDL — flag se seteaza STRICT
  * user-triggered Pain Button only).
  *
  * Returns false always V1 — Warm-up NU proactive Pain-Aware trigger consistent

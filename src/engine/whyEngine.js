@@ -22,7 +22,7 @@
 //   - verdict: one of `progression_up | progression_down | hold | recovery`
 //   - reasons: legacy array (kept for backward-compat callers care still
 //     citesc — DAR populated cu single-element [{ text: summary }] only;
-//     NU mai conține `category` field cu raw codes leakable user-facing)
+//     NU mai contine `category` field cu raw codes leakable user-facing)
 
 import { READINESS_MED } from './readiness.js';
 import { t } from '../i18n/index.js';
@@ -83,7 +83,7 @@ export function explainRecommendation(exercise, ctx) {
 }
 
 /**
- * Shorthand: returnează doar summary string (categorical wording).
+ * Shorthand: returneaza doar summary string (categorical wording).
  */
 export function whySummary(exercise, ctx) {
   return explainRecommendation(exercise, ctx).summary;

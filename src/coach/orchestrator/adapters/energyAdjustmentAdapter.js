@@ -11,7 +11,7 @@
 //   **D2 shape mapping concrete (identical pattern batch 2 Goal Adaptation):**
 //   orchestrator slot `meta.constraintObject` → engine-specific input
 //   `meta.periodizationConstraint` (per ADR 026 §9.3 Cluster 5 Hook 1 read-only
-//   convention în engine source `src/engine/energyAdjustment/index.js:99`).
+//   convention in engine source `src/engine/energyAdjustment/index.js:99`).
 //   Adapter does the rename — engine purity ADR 018 §2 preserved.
 // D3 Context Object Pre-Built Input: orchestrator builds engineContext once;
 //   adapter consumes ready-data including upstream Constraint Object.

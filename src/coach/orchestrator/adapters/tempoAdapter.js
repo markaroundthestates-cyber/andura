@@ -13,7 +13,7 @@
 //   **D2 shape mapping concrete (identical pattern batches 2-4):** orchestrator
 //   slot `meta.constraintObject` → engine-specific input
 //   `meta.periodizationConstraint` (per ADR 026 §9.5 Cluster A1 Hook 1
-//   read-only convention în engine source `src/engine/tempo/index.js:147`).
+//   read-only convention in engine source `src/engine/tempo/index.js:147`).
 //   Adapter does the rename — engine purity ADR 018 §2 preserved.
 // D3 Context Object Pre-Built Input: orchestrator builds engineContext once;
 //   adapter consumes ready-data including upstream Constraint Object.
@@ -25,9 +25,9 @@
 // DIVERGENCE vs Energy Adjustment batch 3 Hook 4 explicit re-emission):**
 //   Tempo engine consumes `meta.periodizationConstraint` read-only per Cluster
 //   A1 Hook 1 (NU mutates, NU emits new Constraint Object). The engine
-//   internally invokes `forwardConstraintObject(periodizationConstraint)` în
-//   crossEngineHooks.js dar stochează doar `trace.forwardedConstraint =
-//   boolean` (NU `meta.forward_constraint_object` în output blueprint). Per
+//   internally invokes `forwardConstraintObject(periodizationConstraint)` in
+//   crossEngineHooks.js dar stocheaza doar `trace.forwardedConstraint =
+//   boolean` (NU `meta.forward_constraint_object` in output blueprint). Per
 //   investigation pre-flight grep filesystem: Tempo engine output blueprint is
 //   `{ tempo_prescription, form_cue, mind_muscle_active, cue_delivery_timing,
 //   signals, mind_muscle_state }` — Hook 4 re-emission divergence vs Energy
@@ -36,7 +36,7 @@
 //   Adapter therefore follows Bayesian Nutrition / Goal Adaptation pattern (NU
 //   surface `output.constraintObject`) — orchestrator's
 //   `currentCtx.meta.constraintObject` was already populated by Energy
-//   Adjustment batch 3 Hook 4 re-emission upstream și rămâne propagated frozen
+//   Adjustment batch 3 Hook 4 re-emission upstream si ramane propagated frozen
 //   pentru downstream batches 6-8 (Specialization, Warm-up, Deload) prin
 //   orchestrator's existing currentCtx chain (NU explicit Hook 4 re-emission
 //   needed when engine doesn't emit).
@@ -49,7 +49,7 @@
 //   commit `5a16550` reusable) — orchestrator-level concern, NU engine-emitted
 //   metadata. Adapter does NOT propagate convergenceGuard (engine doesn't emit
 //   `meta.convergenceGuard`; reference-only via `getConvergenceGuardReference()`
-//   în engine module, called doar pentru `trace.convergenceGuardRef` NU output).
+//   in engine module, called doar pentru `trace.convergenceGuardRef` NU output).
 //
 // **Missing Constraint Object handling per ADR 030 §3.6 RESOLVED V1 taxonomy
 // (identical pattern batches 2-4):** when
@@ -146,13 +146,13 @@ export const tempoAdapter = Object.freeze({
       const engineResult = await evaluateTempo(adaptedCtx);
 
       // Tempo engine consumes Constraint Object read-only per Hook 1 convention
-      // (§9.5 Cluster A1). Engine NU emits new Constraint Object în output
+      // (§9.5 Cluster A1). Engine NU emits new Constraint Object in output
       // blueprint (`meta.forward_constraint_object` absent in engine output —
       // only trace boolean flag). Constraint Object stays propagated frozen din
       // upstream Energy Adjustment Hook 4 batch 3 prin orchestrator's existing
       // currentCtx chain pentru downstream batches 6-8 (Specialization, Warm-up,
       // Deload toate consume Floor/Ceiling). NU surface constraintObject din
-      // această adapter output (Bayesian Nutrition / Goal Adaptation pattern,
+      // aceasta adapter output (Bayesian Nutrition / Goal Adaptation pattern,
       // NU Energy Adjustment Hook 4 re-emission pattern).
       return ok({ ...engineResult });
     } catch (cause) {

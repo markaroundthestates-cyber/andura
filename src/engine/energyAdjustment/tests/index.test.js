@@ -122,7 +122,7 @@ describe('evaluate — integration end-to-end §9.3 ADR 026', () => {
     expect(result.signals).toContain('up_gating_all_conditions_passed');
   });
 
-  it('🟢 GREEN + PEAK phase blocks UP — anti "Sarcastic UP" Marius 5:1 săpt 4-5', async () => {
+  it('🟢 GREEN + PEAK phase blocks UP — anti "Sarcastic UP" Marius 5:1 sapt 4-5', async () => {
     const greenSessions = [
       { energyEmoji: 'green', energy: 'green' },
       { energyEmoji: 'green', energy: 'green' },
@@ -202,7 +202,7 @@ describe('evaluate — integration end-to-end §9.3 ADR 026', () => {
     }));
     expect(result.signals).toContain('medical_referral_banner_surfaced');
     expect(result.trace.referralBanner.copy).toBe(MEDICAL_REFERRAL_COPY);
-    expect(result.trace.referralBanner.copy).toBe('Consultă medicul de familie sau un specialist în medicină sportivă');
+    expect(result.trace.referralBanner.copy).toBe('Consulta medicul de familie sau un specialist in medicina sportiva');
   });
 
   it('Sub-Floor escalation NU composite low → NU banner', async () => {
@@ -243,12 +243,12 @@ describe('evaluate — integration end-to-end §9.3 ADR 026', () => {
     expect(result.confidence).toBe('high');
   });
 
-  it('confidence low când emoji missing + no constraint + no sessions', async () => {
+  it('confidence low cand emoji missing + no constraint + no sessions', async () => {
     const result = await evaluate({ user: {}, meta: {} });
     expect(result.confidence).toBe('low');
   });
 
-  it('UP gating — recovery red flag în window blocks UP', async () => {
+  it('UP gating — recovery red flag in window blocks UP', async () => {
     const sessionsWithRed = [
       { energyEmoji: 'green', energy: 'red' },
       { energyEmoji: 'green', energy: 'green' },

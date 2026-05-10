@@ -91,7 +91,7 @@ describe('hasNoRecoveryRedFlags — UP gating condition 2', () => {
     ];
     expect(hasNoRecoveryRedFlags(sessions)).toBe(true);
   });
-  it('any red în window → false', () => {
+  it('any red in window → false', () => {
     const sessions = [
       { energy: 'green' },
       { energy: 'red' },
@@ -140,7 +140,7 @@ describe('evaluateUpGating — §9.3.3 Q7=B asymmetric UP gating cumulative', ()
     expect(r.passed).toBe(false);
     expect(r.reasons).toContain('up_blocked_insufficient_consecutive_green');
   });
-  it('PEAK phase blocks UP — anti "Sarcastic UP" Marius 5:1 săpt 4-5', () => {
+  it('PEAK phase blocks UP — anti "Sarcastic UP" Marius 5:1 sapt 4-5', () => {
     const r = evaluateUpGating({
       recentSessions: greenSessions,
       periodizationPhase: 'PEAK',

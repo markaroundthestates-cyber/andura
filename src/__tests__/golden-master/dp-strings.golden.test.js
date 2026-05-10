@@ -44,7 +44,7 @@ describe('Golden Master — dp.js getInitialRecommendation verdicte', () => {
     captureSnapshot('dp_initial_fallback', { statusLabel: r.statusLabel, rationale: r.rationale });
   });
 
-  it('EXACT_MATCH → "🟡 Continuăm"', () => {
+  it('EXACT_MATCH → "🟡 Continuam"', () => {
     const r = getInitialRecommendation('Cable Row', {
       recentLogs: [{ logs: [{ ex: 'Cable Row', w: 60, reps: 10 }] }],
     });

@@ -20,13 +20,13 @@
 //   4. volume_modifier          — Hibrid V+F target +30%/+1session, other -25% (Q7=C+Q8=B)
 //   5. cooldown_state           — N=12 weeks Q10=B + Q16=A hard reject anti-nagging
 //   6. signals                  — human-readable IDs
-// + ui_label "Bloc focus [Grupă]" Q17=C RO native
+// + ui_label "Bloc focus [Grupa]" Q17=C RO native
 //
 // Wire-up Faza 3 STRANGLER post engines V1 LANDED — separate task.
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.6
-// (commit 92a69fd LANDED 2026-05-06 afternoon chat-6 acasă, 28 decisions
+// (commit 92a69fd LANDED 2026-05-06 afternoon chat-6 acasa, 28 decisions
 // Cluster A-E verbatim).
 //
 // Source 3 NU disponibil: ADR 029 = STUB legacy precedent §9.3 Energy ADR 027
@@ -92,7 +92,7 @@ function computeConfidence({
  * §9.6.1 Cluster A verbatim.
  *
  * @param {Object} [ctx]
- * @returns {string|null} 'T0' | 'T1' | 'T2' or null dacă unresolvable
+ * @returns {string|null} 'T0' | 'T1' | 'T2' or null daca unresolvable
  */
 function resolveTier(ctx) {
   const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
@@ -162,7 +162,7 @@ function buildIneligibleBlueprint(activationState, targetGroup = null) {
  *   4. volume_modifier (hybrid V+F target + other -25% Q7=C+Q8=B+Q11=B)
  *   5. cooldown_state (N=12 weeks Q10=B + Q16=A)
  *   6. signals (human-readable IDs)
- * + ui_label "Bloc focus [Grupă]" Q17=C RO native
+ * + ui_label "Bloc focus [Grupa]" Q17=C RO native
  *
  * @param {import('../../coach/orchestrator/types.js').EngineContext} [ctx]
  * @returns {Promise<import('./types.js').SpecializationResult>}

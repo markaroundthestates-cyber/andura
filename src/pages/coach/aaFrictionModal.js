@@ -35,7 +35,7 @@ export function isAAFrictionDismissedToday() {
  * Mark the modal as dismissed for today. Persists across page refreshes.
  * Called for every "user did not accept the reduced plan" outcome:
  *   - backdrop tap, swipe-down, or override click.
- * NOT called for the "Acceptă plan redus" button (that is acceptance, not dismiss).
+ * NOT called for the "Accepta plan redus" button (that is acceptance, not dismiss).
  */
 export function markAAFrictionDismissedToday() {
   try {
@@ -131,12 +131,12 @@ export function showAAFrictionModal(session /*, ctx */) {
       <h2 id="aa-friction-title">Plan ajustat — recovery</h2>
 
       <p class="aa-friction-context">
-        Coach-ul observă oboseală acumulată. Plan redus 30% astăzi pentru recovery.
+        Coach-ul observa oboseala acumulata. Plan redus 30% astazi pentru recovery.
       </p>
 
       <div class="aa-friction-comparison">
         <div class="plan-original">
-          <span class="label">Plan inițial</span>
+          <span class="label">Plan initial</span>
           <ul>${origHtml}</ul>
         </div>
         <div class="plan-reduced">
@@ -145,12 +145,12 @@ export function showAAFrictionModal(session /*, ctx */) {
         </div>
       </div>
 
-      <button class="btn-primary btn-cancel">Acceptă plan redus</button>
-      <button class="btn-override-simple">Override (înțeleg riscurile)</button>
+      <button class="btn-primary btn-cancel">Accepta plan redus</button>
+      <button class="btn-override-simple">Override (inteleg riscurile)</button>
 
       <details class="aa-friction-more">
         <summary>Mai multe?</summary>
-        <p>Coach-ul ajustează automat când vede pattern-uri de oboseală. Te ajută să eviți accidentări.</p>
+        <p>Coach-ul ajusteaza automat cand vede pattern-uri de oboseala. Te ajuta sa eviti accidentari.</p>
       </details>
     `;
 
@@ -174,7 +174,7 @@ export function showAAFrictionModal(session /*, ctx */) {
       }, 200);
     }
 
-    // "Acceptă plan redus" — accept = NOT a dismiss; do not write the day flag.
+    // "Accepta plan redus" — accept = NOT a dismiss; do not write the day flag.
     cancelBtn.addEventListener('click', () => {
       cleanup(() => resolve({ action: 'cancel', source: 'accept' }));
     });

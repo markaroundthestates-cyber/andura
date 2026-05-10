@@ -22,7 +22,7 @@
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.4
-// (commit 685fdd4 LANDED 2026-05-06 afternoon chat-5 acasă, 32-35 decisions
+// (commit 685fdd4 LANDED 2026-05-06 afternoon chat-5 acasa, 32-35 decisions
 // Cluster A-E verbatim).
 
 import {
@@ -170,8 +170,8 @@ function computeConfidenceInterval(posterior) {
 
 /**
  * Resolve UI tier per Cluster D4 verbatim:
- *   Tier 1 silent (CDL log only) când disagreement signal active
- *   Tier 2 banner (informational) când stable inference + signal user
+ *   Tier 1 silent (CDL log only) cand disagreement signal active
+ *   Tier 2 banner (informational) cand stable inference + signal user
  *   NU blocking modal (Maria 65 autonomy preserve)
  *
  * @param {Object} input

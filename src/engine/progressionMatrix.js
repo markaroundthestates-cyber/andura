@@ -119,7 +119,7 @@ export function isSprinterCapActive(profileType) {
  * @returns {string}
  */
 export function getDeloadSkipWarning() {
-  return 'Săptămâna de deload a trecut neutilizată. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recuperează în mișcare, nu doar în repaus.';
+  return 'Saptamana de deload a trecut neutilizata. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recupereaza in miscare, nu doar in repaus.';
 }
 
 function _isSprinter(profileType) {

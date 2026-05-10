@@ -62,10 +62,10 @@ describe('composePreSetIntro — Q1=C Hibrid + Q3 persona-aware Maria zero notat
   it('Maria persona → verbal-only intro (zero notation strict Daniel push-back fundamental)', () => {
     const r = composePreSetIntro({
       notation: '2-1-2-0',
-      cueText:  'controlează coborârea',
+      cueText:  'controleaza coborarea',
       persona:  'maria',
     });
-    expect(r.preSetIntro).toBe('controlează coborârea');
+    expect(r.preSetIntro).toBe('controleaza coborarea');
     expect(r.preSetIntro).not.toContain('2-1-2-0');
     expect(r.preSetIntro).not.toMatch(/[0-9]+-[0-9]+/);
   });
@@ -73,11 +73,11 @@ describe('composePreSetIntro — Q1=C Hibrid + Q3 persona-aware Maria zero notat
   it('Gigica persona → hibrid notation + verbal', () => {
     const r = composePreSetIntro({
       notation: '2-1-2-0',
-      cueText:  'controlează',
+      cueText:  'controleaza',
       persona:  'gigica',
     });
     expect(r.preSetIntro).toContain('Tempo 2-1-2-0');
-    expect(r.preSetIntro).toContain('controlează');
+    expect(r.preSetIntro).toContain('controleaza');
   });
 
   it('Marius persona → notation strict (numeric pure)', () => {
@@ -103,7 +103,7 @@ describe('composePreSetIntro — Q1=C Hibrid + Q3 persona-aware Maria zero notat
 });
 
 describe('resolveCueDeliveryTiming — Q8=D NU intra-set distraction', () => {
-  it('default → PRE_SET (engine surfaces ÎNAINTE of set)', () => {
+  it('default → PRE_SET (engine surfaces INAINTE of set)', () => {
     expect(resolveCueDeliveryTiming({})).toBe(CUE_DELIVERY_TIMING.PRE_SET);
   });
 
@@ -144,12 +144,12 @@ describe('composeTempoPrescription — bundle integration', () => {
     const r = composeTempoPrescription({
       periodizationPhase: 'LOAD',
       energyDirection:    'NONE',
-      cueText:            'controlează',
+      cueText:            'controleaza',
       persona:            'gigica',
     });
     expect(r.notation).toBe(TEMPO_NOTATION.FORM_CONSERVATIVE_AMPLIFIED);
     expect(r.preSetIntro).toContain('Tempo');
-    expect(r.reactiveExpanded).toContain('controlează');
+    expect(r.reactiveExpanded).toContain('controleaza');
     expect(r.timing).toBe(CUE_DELIVERY_TIMING.PRE_SET);
     expect(r.rationale).toContain('q11_b');
   });
@@ -158,16 +158,16 @@ describe('composeTempoPrescription — bundle integration', () => {
     const r = composeTempoPrescription({
       periodizationPhase: 'ACCUMULATION',
       energyDirection:    'DOWN',
-      cueText:            'coboară lent',
+      cueText:            'coboara lent',
       persona:            'maria',
     });
     expect(r.notation).toBe(TEMPO_NOTATION.SLOW_ECCENTRIC_UNIVERSAL);
     // Maria zero notation strict — preSetIntro NU contains numeric notation
-    expect(r.preSetIntro).toBe('coboară lent');
+    expect(r.preSetIntro).toBe('coboara lent');
     expect(r.preSetIntro).not.toMatch(/[0-9]+-[0-9]+/);
   });
 
-  it('user tap-to-expand mid-rest reflected în timing field', () => {
+  it('user tap-to-expand mid-rest reflected in timing field', () => {
     const r = composeTempoPrescription({
       periodizationPhase:        'LOAD',
       energyDirection:           'NONE',

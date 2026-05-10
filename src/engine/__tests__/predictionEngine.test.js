@@ -62,7 +62,7 @@ describe('absenceProbabilityByDay', () => {
     const result = absenceProbabilityByDay([], {});
     const dayNames = result.map(d => d.day);
     expect(dayNames).toContain('Luni');
-    expect(dayNames).toContain('Sâmbătă');
+    expect(dayNames).toContain('Sambata');
   });
 });
 

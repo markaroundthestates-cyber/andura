@@ -34,7 +34,7 @@ import {
  * Stretches list = canonical pool 2-3 RO native static stretches ~30 sec each.
  *
  * @param {Object} input
- * @param {boolean} [input.suppressForInjuryDisabled]    - True dacă WARMUP_STATE = INJURY_DISABLED
+ * @param {boolean} [input.suppressForInjuryDisabled]    - True daca WARMUP_STATE = INJURY_DISABLED
  *                                                         (Pain-Aware reference §9.4.6 Convergence Guard)
  * @returns {import('./types.js').CooldownState}
  */

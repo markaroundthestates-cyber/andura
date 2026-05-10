@@ -245,13 +245,13 @@ describe('evaluate — Persona-aware tone Cluster B3 + D18 verbatim', () => {
     expect(result.meta.form_cue.cueText).toContain('Execute');
   });
 
-  it('Maria persona → form cue contains rationale-first "De ce așa?"', async () => {
+  it('Maria persona → form cue contains rationale-first "De ce asa?"', async () => {
     const result = await evaluate(buildCtx({
       persona:            'maria',
       movementId:         'back_squat',
       movementCategory:   'compound',
     }));
-    expect(result.meta.form_cue.cueText).toContain('De ce așa?');
+    expect(result.meta.form_cue.cueText).toContain('De ce asa?');
   });
 });
 

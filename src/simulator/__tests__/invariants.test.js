@@ -57,7 +57,7 @@ describe('I2 RIR > 0', () => {
   it('all RIR ≥1 → PASS', () => {
     expect(validateBranch(mkOutput(), mkConstraint()).I2_rir_above_zero).toBe('PASS');
   });
-  it('RIR=0 fără intentional_failure → FAIL', () => {
+  it('RIR=0 fara intentional_failure → FAIL', () => {
     const out = mkOutput({
       execution: { sets_reps_rir: [{ exercise: 'squat', sets: 4, reps: 6, rir: 0 }] },
       deload: { triggered: false, depth: null },
@@ -80,7 +80,7 @@ describe('I2 RIR > 0', () => {
   });
 });
 
-describe('I3 frequency under 6/săpt', () => {
+describe('I3 frequency under 6/sapt', () => {
   it('frequency 5 → PASS', () => {
     const r = validateBranch(mkOutput(), mkConstraint({ schedule: { frequency: 5, session_duration_target: 60 } }));
     expect(r.I3_frequency_under_6).toBe('PASS');

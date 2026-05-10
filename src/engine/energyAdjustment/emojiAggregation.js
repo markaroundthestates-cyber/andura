@@ -83,7 +83,7 @@ export function applyAggregationRule(emoji) {
  */
 export function aggregateEmojiInputs({ emoji, drillDownCause }) {
   const safeEmoji = emoji ?? null;
-  // Drill-down strict 🔴 only — discard cause când emoji NOT 🔴 (anti-fabrication)
+  // Drill-down strict 🔴 only — discard cause cand emoji NOT 🔴 (anti-fabrication)
   const safeDrillDown = safeEmoji === EMOJI_STATE.RED ? (drillDownCause ?? null) : null;
   return {
     state:           safeEmoji,

@@ -91,7 +91,7 @@ export async function trackEvent(eventName, {
       // Firestore REST API uses `writes[].transform.fieldTransforms` shape;
       // standard PATCH path with updateMask.fieldPaths increments via
       // dedicated commit endpoint — kept simple here cu fieldTransforms
-      // documented în payload helper. Server-side rules validate keys.
+      // documented in payload helper. Server-side rules validate keys.
     };
     const r = await fetchImpl(url, {
       method: 'PATCH',

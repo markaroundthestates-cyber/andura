@@ -1,12 +1,12 @@
 // ══ RESPONSE PROFILE ENGINE — Profilul de adaptare al utilizatorului ═════
-// computeUserProfile(logs) analizează cum răspunde user-ul la volum,
-// intensitate și frecvență, returnând sensitivitate pe fiecare dimensiune.
+// computeUserProfile(logs) analizeaza cum raspunde user-ul la volum,
+// intensitate si frecventa, returnand sensitivitate pe fiecare dimensiune.
 
 import { brzycki1RM } from './weaknessDetector.js';
 import { todTs } from '../db.js';
 
 /**
- * Grupează logurile pe sesiuni (timestamp-ul `session` sau zi din `ts`).
+ * Grupeaza logurile pe sesiuni (timestamp-ul `session` sau zi din `ts`).
  */
 function groupBySessions(logs) {
   const sessions = new Map();
@@ -22,14 +22,14 @@ function groupBySessions(logs) {
 }
 
 /**
- * Calculează câte seturi conține o sesiune.
+ * Calculeaza cate seturi contine o sesiune.
  */
 function setsInSession(sessionLogs) {
   return sessionLogs.length;
 }
 
 /**
- * Calculează 1RM mediu pentru o sesiune (toate exercițiile).
+ * Calculeaza 1RM mediu pentru o sesiune (toate exercitiile).
  */
 function avg1RMForSession(sessionLogs) {
   const orms = sessionLogs
@@ -40,8 +40,8 @@ function avg1RMForSession(sessionLogs) {
 }
 
 /**
- * Calculează sensitivitatea la volum.
- * High volume sensitivity = performanța scade semnificativ în sesiunile cu > 20 seturi.
+ * Calculeaza sensitivitatea la volum.
+ * High volume sensitivity = performanta scade semnificativ in sesiunile cu > 20 seturi.
  * @returns {{ score: number, label: string }}
  */
 function computeVolumeSensitivity(sessions) {
@@ -64,8 +64,8 @@ function computeVolumeSensitivity(sessions) {
 }
 
 /**
- * Calculează sensitivitatea la frecvență.
- * Măsoară dacă user-ul progresează mai bine cu 3+ sesiuni/săptămână vs. 2.
+ * Calculeaza sensitivitatea la frecventa.
+ * Masoara daca user-ul progreseaza mai bine cu 3+ sesiuni/saptamana vs. 2.
  */
 function computeFrequencySensitivity(logs) {
   if (logs.length < 10) return { score: 0.5, label: 'insuficient', insufficient: true };
@@ -109,7 +109,7 @@ function computeFrequencySensitivity(logs) {
 }
 
 /**
- * Calculează profilul complet al utilizatorului.
+ * Calculeaza profilul complet al utilizatorului.
  * @param {Array} logs
  * @returns {{ volume: object, frequency: object, overallProfile: string }}
  */

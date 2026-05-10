@@ -12,7 +12,7 @@
 //   **D2 shape mapping concrete (identical pattern batches 2-3):** orchestrator
 //   slot `meta.constraintObject` → engine-specific input
 //   `meta.periodizationConstraint` (per ADR 026 §9.4 Cluster C Hook 1 read-only
-//   convention în engine source `src/engine/bayesianNutrition/index.js:222`).
+//   convention in engine source `src/engine/bayesianNutrition/index.js:222`).
 //   Adapter does the rename — engine purity ADR 018 §2 preserved.
 // D3 Context Object Pre-Built Input: orchestrator builds engineContext once;
 //   adapter consumes ready-data including upstream Constraint Object.
@@ -24,9 +24,9 @@
 // batch 3 Hook 4 explicit re-emission):**
 //   Bayesian Nutrition engine consumes `meta.periodizationConstraint` read-only
 //   per Cluster C Hook 1 (NU mutates, NU emits new Constraint Object). The engine
-//   internally invokes `forwardConstraintObject(periodizationConstraint)` în
-//   crossEngineHooks.js dar stochează doar `trace.forwardedConstraint = boolean`
-//   (NU `meta.forward_constraint_object` în output blueprint). Per investigation
+//   internally invokes `forwardConstraintObject(periodizationConstraint)` in
+//   crossEngineHooks.js dar stocheaza doar `trace.forwardedConstraint = boolean`
+//   (NU `meta.forward_constraint_object` in output blueprint). Per investigation
 //   pre-flight grep filesystem: Bayesian engine output blueprint is
 //   `{ nutrition_inference_metadata, likelihood_probabilities, profile_typing,
 //   ui_tier, passive_mode_active, signals }` — Hook 4 re-emission divergence
@@ -35,7 +35,7 @@
 //   Adapter therefore follows Goal Adaptation pattern (NU surface
 //   `output.constraintObject`) — orchestrator's `currentCtx.meta.constraintObject`
 //   was already populated by Energy Adjustment batch 3 Hook 4 re-emission upstream
-//   și rămâne propagated frozen pentru downstream batches 5-8 (Tempo,
+//   si ramane propagated frozen pentru downstream batches 5-8 (Tempo,
 //   Specialization, Warm-up, Deload) prin orchestrator's existing currentCtx
 //   chain (NU explicit Hook 4 re-emission needed when engine doesn't emit).
 //
@@ -47,7 +47,7 @@
 //   commit `5a16550` reusable) — orchestrator-level concern, NU engine-emitted
 //   metadata. Adapter does NOT propagate convergenceGuard (engine doesn't emit
 //   `meta.convergenceGuard`; reference-only via `getConvergenceGuardReference()`
-//   în engine module, NU called în evaluate output).
+//   in engine module, NU called in evaluate output).
 //
 // **Missing Constraint Object handling per ADR 030 §3.6 RESOLVED V1 taxonomy
 // (identical pattern batches 2-3):** when
@@ -144,12 +144,12 @@ export const bayesianNutritionAdapter = Object.freeze({
 
       // Bayesian Nutrition engine consumes Constraint Object read-only per
       // Hook 1 convention (§9.4 Cluster C). Engine NU emits new Constraint
-      // Object în output blueprint (`meta.forward_constraint_object` absent
+      // Object in output blueprint (`meta.forward_constraint_object` absent
       // in engine output — only trace boolean flag). Constraint Object stays
       // propagated frozen din upstream Energy Adjustment Hook 4 batch 3 prin
       // orchestrator's existing currentCtx chain pentru downstream batches
       // 5-8 (Tempo, Specialization, Warm-up, Deload toate consume Floor/Ceiling).
-      // NU surface constraintObject din această adapter output (Goal Adaptation
+      // NU surface constraintObject din aceasta adapter output (Goal Adaptation
       // pattern, NU Energy Adjustment Hook 4 re-emission pattern).
       return ok({ ...engineResult });
     } catch (cause) {

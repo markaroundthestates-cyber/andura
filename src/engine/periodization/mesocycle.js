@@ -1,6 +1,6 @@
 // Cluster 2 — Mesocycle Phase Transitions per ADR 026 §9.3 verbatim.
 //
-// 2.1 Double progression rep-first → weight săpt (W1 LOAD baseline →
+// 2.1 Double progression rep-first → weight sapt (W1 LOAD baseline →
 //     W2 LOAD+ → W3 PEAK → W4 DELOAD −45%/−12.5%) per §45.3 Q18 LOCKED + §65.5
 // 2.2 Trigger hierarchy: EARLY DELOAD safety > EXTENSION Marius only > CALENDAR
 // 2.3 Marius 5:1 dual-signal pure function per §45.4 Q21 §36.82
@@ -81,7 +81,7 @@ export function rirTargetForPhase(phase, baselineRir) {
  * Marius 5:1 dual-signal evaluation per §9.3 2.3 verbatim.
  *
  * Signal 1: RIR stable [1, 2] ALL 4 weeks (zero RIR drift week-over-week)
- * Signal 2: Energy ZERO red last 3 sessions (no recovery red flag în trailing
+ * Signal 2: Energy ZERO red last 3 sessions (no recovery red flag in trailing
  *           3-session window)
  *
  * Both signals required — boolean AND. Insufficient data (NU 4 weeks RIR
@@ -95,7 +95,7 @@ export function isMariusDualSignalGreen(recentSessions) {
   if (!Array.isArray(recentSessions)) return false;
 
   // Signal 2: Energy ZERO red last N energy-bearing sessions (window = 3).
-  // Filter for entries cu energy field; need ≥N în trailing window.
+  // Filter for entries cu energy field; need ≥N in trailing window.
   const energyBearing = recentSessions.filter((s) => s && typeof s.energy === 'string');
   const energyWindow = energyBearing.slice(0, MARIUS_5_1_THRESHOLDS.energyRedWindow);
   if (energyWindow.length < MARIUS_5_1_THRESHOLDS.energyRedWindow) return false;
@@ -125,7 +125,7 @@ export function isMariusDualSignalGreen(recentSessions) {
 
 /**
  * Detect injury block per §9.3 anti-abuse + Invariant 5 Medical Safety.
- * Looks for any CDL/session entry tagged injury within trailing 6 săpt window.
+ * Looks for any CDL/session entry tagged injury within trailing 6 sapt window.
  *
  * @param {ReadonlyArray<{injury?: boolean, daysAgo?: number}>} recentSessions
  * @returns {boolean}

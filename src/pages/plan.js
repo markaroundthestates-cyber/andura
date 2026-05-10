@@ -22,10 +22,10 @@ export function renderPlan() {
 
   // Phase banner
   const phaseConfig = {
-    CUT: {color:'var(--accent3)', detail:`BF ${bf}% → obiectiv vară · Deficit caloric activ`},
-    BULK: {color:'var(--accent3)', detail:`BF ${bf}% → creștere masă musculară · Surplus controlat`},
-    MAINTENANCE: {color:'var(--green)', detail:`BF ${bf}% → menții masa musculară · Sezon vară`},
-    STRENGTH: {color:'var(--purple)', detail:`Focus forță · Volum redus, intensitate crescută`}
+    CUT: {color:'var(--accent3)', detail:`BF ${bf}% → obiectiv vara · Deficit caloric activ`},
+    BULK: {color:'var(--accent3)', detail:`BF ${bf}% → crestere masa musculara · Surplus controlat`},
+    MAINTENANCE: {color:'var(--green)', detail:`BF ${bf}% → mentii masa musculara · Sezon vara`},
+    STRENGTH: {color:'var(--purple)', detail:`Focus forta · Volum redus, intensitate crescuta`}
   };
   const pc = phaseConfig[phase] || phaseConfig.CUT;
   const pbEl = $('phase-banner'); if(pbEl) pbEl.style.borderColor = pc.color;
@@ -48,7 +48,7 @@ export function renderPlan() {
   $('kcal-display').parentElement.insertAdjacentHTML('afterend', `
     <div style="background:var(--card);border:1px solid ${todProt>=PROT_TARGET?'rgba(48,209,88,0.3)':'var(--border)'};border-radius:var(--r);padding:14px;position:relative;overflow:hidden;margin-bottom:0" id="prot-plan-box">
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${todProt>=PROT_TARGET?'var(--green)':'var(--text3)'}"></div>
-      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină azi</div>
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteina azi</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${todProt>=PROT_TARGET?'var(--green)':todProt>0?'var(--accent3)':'var(--text3)'}">${todProt||'—'}</div>
       <div style="font-size:10px;color:var(--text2);margin-top:2px">g / target ${PROT_TARGET}g</div>
     </div>`);
@@ -58,7 +58,7 @@ export function renderPlan() {
   const bfNoteEl = $('bf-override-note');
   if(bfNoteEl) bfNoteEl.textContent = bfOvr
     ? `✅ Override activ: ${bfOvr}% (setat manual)`
-    : 'Sistemul estimează automat. Corectează dacă realitatea diferă.';
+    : 'Sistemul estimeaza automat. Corecteaza daca realitatea difera.';
   if (bfOvr) { const bfInpEl = $('bf-override-input'); if(bfInpEl) bfInpEl.value = bfOvr; }
 
   // Active phase button
@@ -77,7 +77,7 @@ export function renderPlan() {
       </div>
       <div class="ci-right">
         <div class="ci-weeks" style="color:${cp.color}">${cp.weeks}</div>
-        <div class="ci-weeks-lbl">săptămâni</div>
+        <div class="ci-weeks-lbl">saptamani</div>
       </div>
     </div>`).join('') || '<div style="color:var(--text3);font-size:12px;padding:8px 0">Toate checkpoints-urile atinse ✅</div>';
 
@@ -113,12 +113,12 @@ export function renderProg(){
   // Day colors — consistent per day
   const dayColors = {
     'Luni':    {bg:'rgba(80,80,80,0.15)', border:'rgba(120,120,120,0.3)', text:'var(--text3)'},
-    'Marți':   {bg:'rgba(0,212,255,0.08)', border:'rgba(0,212,255,0.25)', text:'var(--accent3)'},
+    'Marti':   {bg:'rgba(0,212,255,0.08)', border:'rgba(0,212,255,0.25)', text:'var(--accent3)'},
     'Miercuri':{bg:'rgba(200,255,0,0.08)', border:'rgba(200,255,0,0.25)', text:'var(--accent)'},
     'Joi':     {bg:'rgba(191,90,242,0.08)', border:'rgba(191,90,242,0.25)', text:'var(--purple)'},
     'Vineri':  {bg:'rgba(255,107,53,0.08)', border:'rgba(255,107,53,0.25)', text:'var(--accent2)'},
-    'Sâmbătă': {bg:'rgba(48,209,88,0.08)', border:'rgba(48,209,88,0.25)', text:'var(--green)'},
-    'Duminică':{bg:'rgba(80,80,80,0.15)', border:'rgba(120,120,120,0.3)', text:'var(--text3)'},
+    'Sambata': {bg:'rgba(48,209,88,0.08)', border:'rgba(48,209,88,0.25)', text:'var(--green)'},
+    'Duminica':{bg:'rgba(80,80,80,0.15)', border:'rgba(120,120,120,0.3)', text:'var(--text3)'},
   };
 
   pc.innerHTML=PROG.map(day=>{
@@ -126,9 +126,9 @@ export function renderProg(){
     if(day.t==='off') return `
       <div style="margin:0 16px 10px;background:${col.bg};border:1px solid ${col.border};border-radius:var(--r);padding:12px 16px">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:${col.text};margin-bottom:4px">😴 ${day.day} — OFF</div>
-        <div style="font-size:12px;color:var(--text3)">Recuperare activă · Mobilitate · Stretching</div>
+        <div style="font-size:12px;color:var(--text3)">Recuperare activa · Mobilitate · Stretching</div>
       </div>`;
-    // Folosește getDisplayTime (același ca Coach) — afișează timp adaptiv real, nu hardcodat
+    // Foloseste getDisplayTime (acelasi ca Coach) — afiseaza timp adaptiv real, nu hardcodat
     const displayTime = getDisplayTime(day);
     return `
       <div style="margin:0 16px 10px">
@@ -147,18 +147,18 @@ export function renderProg(){
 export function setPhaseOverride(phase) {
   DB.set('phase-change-date', tod());
   DB.set('phase-override', phase);
-  // Logăm schimbarea de fază cu data și kcalTarget — pentru culori corecte în istoric
+  // Logam schimbarea de faza cu data si kcalTarget — pentru culori corecte in istoric
   const today = tod();
   const phaseLogs = DB.get('phase-log') || [];
-  // Calculăm kcalTarget temporar (după ce setăm override-ul)
+  // Calculam kcalTarget temporar (dupa ce setam override-ul)
   const tdee = SYS.estimateTDEE();
   const kcalMap = { CUT: Math.round(tdee*0.82), BULK: Math.round(tdee*1.08), MAINTENANCE: tdee, STRENGTH: Math.round(tdee*1.05) };
   const kcalTarget = kcalMap[phase] || KCAL_TARGET;
-  // Înlocuim sau adăugăm entry pentru azi
+  // Inlocuim sau adaugam entry pentru azi
   const filtered = phaseLogs.filter(e => e.date !== today);
   filtered.push({ date: today, phase, kcalTarget });
   DB.set('phase-log', filtered);
-  toast(`✓ Fază setată: ${phase} · ${kcalTarget} kcal`);
+  toast(`✓ Faza setata: ${phase} · ${kcalTarget} kcal`);
   renderPlan();
   renderDash();
   renderUnifiedHistory();
@@ -180,7 +180,7 @@ export function clearPhaseOverride() {
   const autoKcal = SYS.getKcalTarget();
   filtered.push({ date: today, phase: 'AUTO', kcalTarget: autoKcal });
   DB.set('phase-log', filtered);
-  toast(`✓ Fază setată: AUTO · ${autoKcal} kcal`);
+  toast(`✓ Faza setata: AUTO · ${autoKcal} kcal`);
   renderPlan();
   renderDash();
   renderUnifiedHistory();

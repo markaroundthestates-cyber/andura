@@ -44,8 +44,8 @@ export const PERSONA_MODIFIERS = Object.freeze({
 
 /**
  * Recovery green bonus range — applied multiplicatively post-persona modifier
- * dacă Vitality Layer signal aggregate (ADR 016) = green. Per §9.4 verbatim
- * "+10-15% dacă recovery green". V1 conservative pick lower bound +10% default,
+ * daca Vitality Layer signal aggregate (ADR 016) = green. Per §9.4 verbatim
+ * "+10-15% daca recovery green". V1 conservative pick lower bound +10% default,
  * upper bound +15% reserved future Vitality Layer maturity calibration.
  *
  * @type {Readonly<{LOW: number, HIGH: number}>}
@@ -60,7 +60,7 @@ export const RECOVERY_GREEN_BONUS = Object.freeze({ LOW: 1.10, HIGH: 1.15 });
  */
 export const GOAL_MODIFIERS = Object.freeze({
   hipertrofie:  1.00, // Israetel canonical hypertrophy MEV-MAV target
-  forta:        0.70, // lower volume / higher intensity per Forță template ADR 024 §1.2
+  forta:        0.70, // lower volume / higher intensity per Forta template ADR 024 §1.2
   recompozitie: 0.85, // intermediate volume CUT-aware
   longevitate:  0.60, // sustainable load mobility emphasis ADR 024 §1.2
   sanatate:     0.50, // lifestyle integration controlled intensity ADR 024 §1.2
@@ -82,7 +82,7 @@ export const MARIA_FUNCTIONAL_MAPPING = Object.freeze({
 });
 
 /**
- * Mesocycle 4-week phase map per §9.3 Cluster 2 + §65.5 4 săpt clasic Option A.
+ * Mesocycle 4-week phase map per §9.3 Cluster 2 + §65.5 4 sapt clasic Option A.
  *
  * @type {Readonly<Object<number, 'LOAD'|'LOAD+'|'PEAK'|'DELOAD'>>}
  */
@@ -115,13 +115,13 @@ export const BLOCK_SCALING = Object.freeze({
 });
 
 /**
- * Block length variants per goal (săptămâni). Per §9.5 Cluster 4 verbatim.
+ * Block length variants per goal (saptamani). Per §9.5 Cluster 4 verbatim.
  *
  * @type {Readonly<{DEFAULT: number, FORTA: number}>}
  */
 export const BLOCK_LENGTH_WEEKS = Object.freeze({
   DEFAULT: 12, // BUILD-only majoritar templates
-  FORTA:   21, // BUILD + PEAK + TRANSITION pentru Forță
+  FORTA:   21, // BUILD + PEAK + TRANSITION pentru Forta
 });
 
 /**
@@ -140,18 +140,18 @@ export const MARIUS_5_1_THRESHOLDS = Object.freeze({
 /**
  * Anti-abuse safeguards per §9.3 Cluster 2.
  * - Max 2 consecutive extensions (prevent indefinite extension exploitation)
- * - Injury block window 6 săpt (Invariant 5 Medical Safety)
+ * - Injury block window 6 sapt (Invariant 5 Medical Safety)
  *
  * @type {Readonly<{maxConsecutiveExtensions: number, injuryBlockWindowDays: number}>}
  */
 export const ANTI_ABUSE = Object.freeze({
   maxConsecutiveExtensions: 2,
-  injuryBlockWindowDays:    6 * 7, // 6 săpt = 42 zile
+  injuryBlockWindowDays:    6 * 7, // 6 sapt = 42 zile
 });
 
 /**
- * Maria adaptive override per §9.5 Cluster 4: NU advance la M2/M3 fără
- * calibration tier ≥ DEVELOPING + zero injury 6 săpt window.
+ * Maria adaptive override per §9.5 Cluster 4: NU advance la M2/M3 fara
+ * calibration tier ≥ DEVELOPING + zero injury 6 sapt window.
  *
  * Calibration tier ordering per ADR 009 (lower → higher maturity).
  *
@@ -174,7 +174,7 @@ export const MARIA_ADVANCE_GATE = Object.freeze({
 export const HARD_CAP_INTENSITY_PCT_1RM = 0.90;
 
 /**
- * Persona age boundaries V1 (resolve persona id from user.age fallback când
+ * Persona age boundaries V1 (resolve persona id from user.age fallback cand
  * user.persona missing). Per ADR 017 demographic prior database personas.
  *
  * @type {Readonly<{mariaMinAge: number, gigicaMinAge: number}>}

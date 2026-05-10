@@ -13,7 +13,7 @@ const GOAL_SHIFT_CALIBRATION_SESSIONS = 2; // primele 2 sesiuni post-shift = cal
  * @property {number} weight kg
  * @property {number} reps
  * @property {number} ts timestamp ms
- * @property {boolean} [postGoalShift] true dacă session este în calibration window post-shift
+ * @property {boolean} [postGoalShift] true daca session este in calibration window post-shift
  */
 
 /**

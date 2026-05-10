@@ -35,7 +35,7 @@ export function getExGroup(ex) {
     picioare:['Romanian Deadlift','Leg Press','Leg Curl','Leg Extension','Calf Raises']
   };
   for (const [grp, exs] of Object.entries(g)) { if (exs.some(e => ex.includes(e))) return grp.toUpperCase(); }
-  return 'EXERCIȚIU';
+  return 'EXERCITIU';
 }
 
 export function getDisplayTime(prog) {

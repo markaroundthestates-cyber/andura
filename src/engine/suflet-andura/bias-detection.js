@@ -10,7 +10,7 @@
  * @property {number} whyTapRate rolling 8 sessions, "De ce?" button tap rate (0-1)
  * @property {number} avgSummaryDwellMs average time spent on session summary
  * @property {number} repRangeOverrideRate user adjusts engine-suggested rep range (0-1)
- * @property {string} declaredMode user-declared mode în onboarding (STRATEGIC/EXECUTOR/HYBRID/AUTO)
+ * @property {string} declaredMode user-declared mode in onboarding (STRATEGIC/EXECUTOR/HYBRID/AUTO)
  */
 
 /**

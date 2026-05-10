@@ -81,14 +81,14 @@ export function resolveProfileTypingThreshold({ tier, adaptiveValue }) {
       Math.max(PROFILE_TYPING.t1PlusMin, adaptiveValue),
     );
   }
-  return PROFILE_TYPING.t0Default; // V1 default midpoint când no adaptiveValue
+  return PROFILE_TYPING.t0Default; // V1 default midpoint cand no adaptiveValue
 }
 
 /**
  * Hamming hysteresis 15% anti-flap check per Cluster D3 verbatim.
  *
- * Returns true dacă incoming threshold differs >15% from current → flip allowed.
- * Returns false dacă diff <=15% → suppress flap (preserve current threshold).
+ * Returns true daca incoming threshold differs >15% from current → flip allowed.
+ * Returns false daca diff <=15% → suppress flap (preserve current threshold).
  *
  * @param {Object} input
  * @param {number} input.currentThreshold
@@ -107,7 +107,7 @@ export function exceedsHammingHysteresis({ currentThreshold, incomingThreshold }
 /**
  * 2 sesiuni consecutive 14 zile window qualifier per Cluster D3 verbatim.
  *
- * Returns true dacă ≥2 sessions consecutive align cu incoming threshold în
+ * Returns true daca ≥2 sessions consecutive align cu incoming threshold in
  * trailing 14 zile window.
  *
  * @param {Object} input

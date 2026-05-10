@@ -14,14 +14,14 @@ import {
 } from '../constants.js';
 
 describe('resolveModeOverlay — case + diacritic insensitive', () => {
-  it('estetica / Estetică → estetica', () => {
+  it('estetica / Estetica → estetica', () => {
     expect(resolveModeOverlay({ mode: 'estetica' })).toBe('estetica');
-    expect(resolveModeOverlay({ mode: 'Estetică' })).toBe('estetica');
+    expect(resolveModeOverlay({ mode: 'Estetica' })).toBe('estetica');
     expect(resolveModeOverlay({ mode: 'ESTETICA' })).toBe('estetica');
   });
-  it('forta / Forță → forta', () => {
+  it('forta / Forta → forta', () => {
     expect(resolveModeOverlay({ mode: 'forta' })).toBe('forta');
-    expect(resolveModeOverlay({ mode: 'Forță' })).toBe('forta');
+    expect(resolveModeOverlay({ mode: 'Forta' })).toBe('forta');
   });
   it('missing / unknown → none', () => {
     expect(resolveModeOverlay({})).toBe('none');
@@ -31,7 +31,7 @@ describe('resolveModeOverlay — case + diacritic insensitive', () => {
 });
 
 describe('computeRepRangeModifier — §9.2.4 Cluster 4 base table verbatim', () => {
-  it('Forța & Dezvoltare baseline → rep [3, 8]', () => {
+  it('Forta & Dezvoltare baseline → rep [3, 8]', () => {
     const r = computeRepRangeModifier({
       templateId: TEMPLATE_IDS.forta_dezvoltare,
       phase: PHASES.MAINTAIN,
@@ -47,7 +47,7 @@ describe('computeRepRangeModifier — §9.2.4 Cluster 4 base table verbatim', ()
     });
     expect(r).toEqual(TEMPLATE_BASE_MODIFIERS.tonifiere_definire.rep);
   });
-  it('Slăbire baseline → rep [10, 15]', () => {
+  it('Slabire baseline → rep [10, 15]', () => {
     const r = computeRepRangeModifier({
       templateId: TEMPLATE_IDS.slabire,
       phase: PHASES.MAINTAIN,
@@ -116,7 +116,7 @@ describe('computeRepRangeModifier — §9.2.4 Cluster 4 base table verbatim', ()
 });
 
 describe('computeRirTargetModifier — §9.2.4 Cluster 4 RIR ranges', () => {
-  it('Forța → RIR [1, 3]', () => {
+  it('Forta → RIR [1, 3]', () => {
     const r = computeRirTargetModifier({
       templateId: TEMPLATE_IDS.forta_dezvoltare,
       phase: PHASES.MAINTAIN,
@@ -140,7 +140,7 @@ describe('computeRirTargetModifier — §9.2.4 Cluster 4 RIR ranges', () => {
     });
     expect(r).toEqual([2, 3]);
   });
-  it('Sănătate Generală → RIR [2, 3]', () => {
+  it('Sanatate Generala → RIR [2, 3]', () => {
     const r = computeRirTargetModifier({
       templateId: TEMPLATE_IDS.sanatate_generala,
       phase: PHASES.MAINTAIN,
@@ -159,7 +159,7 @@ describe('computeRirTargetModifier — §9.2.4 Cluster 4 RIR ranges', () => {
 });
 
 describe('computeRestTimeModifier — §1.2 ADR 024 verbatim seconds bands', () => {
-  it('Forța → 120-240s (compound focus)', () => {
+  it('Forta → 120-240s (compound focus)', () => {
     const r = computeRestTimeModifier({
       templateId: TEMPLATE_IDS.forta_dezvoltare,
       phase: PHASES.MAINTAIN,
@@ -168,7 +168,7 @@ describe('computeRestTimeModifier — §1.2 ADR 024 verbatim seconds bands', () 
     expect(r[0]).toBe(120);
     expect(r[1]).toBe(240);
   });
-  it('Slăbire → 45-90s (cut + conditioning shorter rest)', () => {
+  it('Slabire → 45-90s (cut + conditioning shorter rest)', () => {
     const r = computeRestTimeModifier({
       templateId: TEMPLATE_IDS.slabire,
       phase: PHASES.MAINTAIN,

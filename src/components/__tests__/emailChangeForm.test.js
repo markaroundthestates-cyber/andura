@@ -7,7 +7,7 @@ import {
 
 describe('§56.5.4 Email change — wording LOCKED V1 verbatim', () => {
   it('errorAlreadyUsed verbatim', () => {
-    expect(EMAIL_CHANGE_COPY.errorAlreadyUsed).toBe('Adresa este deja folosită de un alt cont.');
+    expect(EMAIL_CHANGE_COPY.errorAlreadyUsed).toBe('Adresa este deja folosita de un alt cont.');
   });
   it('EMAIL_CHANGE_COPY frozen', () => {
     expect(Object.isFrozen(EMAIL_CHANGE_COPY)).toBe(true);

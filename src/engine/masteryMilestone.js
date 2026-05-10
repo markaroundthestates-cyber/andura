@@ -13,9 +13,9 @@
 const STORAGE_KEY = 'masteryCounters';
 
 export const MASTERY_MILESTONES = Object.freeze([
-  { count: 10,  name: 'Început' },
-  { count: 30,  name: 'Constanță' },
-  { count: 60,  name: 'Stăpânire' },
+  { count: 10,  name: 'Inceput' },
+  { count: 30,  name: 'Constanta' },
+  { count: 60,  name: 'Stapanire' },
   { count: 120, name: 'Maestru' },
 ]);
 
@@ -81,7 +81,7 @@ export function getCurrentMilestone(exercise, storage) {
 
 /**
  * Returns the next milestone above the current count (for "X sessions
- * până la <tier>" style display).
+ * pana la <tier>" style display).
  *
  * @param {string} exercise
  * @param {Storage} [storage]

@@ -7,7 +7,7 @@
 // A2 Strong Prior dynamic slope tier-based:
 //    - T0 = 70/30 (prior dominated, anti-overshoot)
 //    - T1 = 80/20 (input dominated, calibration -50% per §3.5.1)
-//    - T2 = 90/10 (input strong, inference erodează prior)
+//    - T2 = 90/10 (input strong, inference erodeaza prior)
 // A3 Bayesian decay natural posterior(week N) = prior(week N+1)
 //    NU explicit decay rule — math-native, self-balancing per Conjugate update
 // A5 Phase reset Hibrid: Layer 1+2 RESET / preserve Layer 4 Goal Shift §36.35

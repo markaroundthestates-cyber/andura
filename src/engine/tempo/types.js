@@ -3,7 +3,7 @@
 //
 // TempoResult extends DimensionResult per ADR 018 §2 — adds Cluster A1 output
 // blueprint emit fields (tempo_prescription, form_cue, mind_muscle_active,
-// cue_delivery_timing) în `meta` per §9.5.1 verbatim.
+// cue_delivery_timing) in `meta` per §9.5.1 verbatim.
 //
 // Pipeline §42.10 position 5th canonical (NU "Engine #6" naming legacy).
 //
@@ -57,7 +57,7 @@
  *
  * @typedef {Object} TempoPrescription
  * @property {string} notation                 - Tempo notation eg "2-1-2-0" (eccentric-pauseBottom-concentric-pauseTop)
- * @property {string} preSetIntro              - Pre-set surface text (engine emite ÎNAINTE of set, Q1=C Hibrid)
+ * @property {string} preSetIntro              - Pre-set surface text (engine emite INAINTE of set, Q1=C Hibrid)
  * @property {string} reactiveExpanded         - Mid-rest tap-to-expand 💡 elaboration (Q6=D Bugatti minimal-friction)
  * @property {CueDeliveryTiming} timing        - Pre-set sau post-set ONLY (NU intra-set Q8=D)
  * @property {string} rationale                - Why this tempo (transparency CDL audit trail)
@@ -80,14 +80,14 @@
  * @typedef {Object} MindMuscleState
  * @property {boolean} active                  - Tier-aware T0 OFF / T1+ profile-typing Q5=C
  * @property {SuppressionMode} suppressionMode - Hard T0/T1 / soft auto-retire T2+ Q17=C
- * @property {boolean} acquiredExplicit        - User toggle "știu" Q9 explicit
+ * @property {boolean} acquiredExplicit        - User toggle "stiu" Q9 explicit
  * @property {boolean} acquiredImplicit        - N=10 sessions consecutive form breakdown < threshold Q9 implicit
  * @property {boolean} suppressedForMovement   - Result: cue NU surface for movement
  * @property {string} rationale                - Why active/suppressed (transparency)
  */
 
 /**
- * Tempo-specific blueprint emit (lives în DimensionResult.meta per §9.5.1
+ * Tempo-specific blueprint emit (lives in DimensionResult.meta per §9.5.1
  * Cluster A1 + ADR 018 §2).
  *
  * @typedef {Object} TempoBlueprint

@@ -2,28 +2,28 @@
   "_meta": {
     "locale": "en",
     "version": 1,
-    "description": "EN bundle — placeholder cu TODO_EN markers + RO content fallback inline pentru context. Daniel completează manual via wording rewrite session. Acest fișier NU se editează de CC fără explicit Daniel approval (fitness terms culturale)."
+    "description": "EN bundle — placeholder cu TODO_EN markers + RO content fallback inline pentru context. Daniel completeaza manual via wording rewrite session. Acest fisier NU se editeaza de CC fara explicit Daniel approval (fitness terms culturale)."
   },
 
   "why": {
     "title": "TODO_EN: ❓ De ce {exercise}?",
-    "dismiss": "TODO_EN: Am înțeles",
-    "unavailable": "TODO_EN: Explicația temporar indisponibilă. Recomandarea rămâne validă.",
+    "dismiss": "TODO_EN: Am inteles",
+    "unavailable": "TODO_EN: Explicatia temporar indisponibila. Recomandarea ramane valida.",
     "categorical": {
-      "progression_up": "TODO_EN: Creștem greutatea la {exercise} pentru că ai progresat constant în ultimele săptămâni. Noua țintă e adaptată astfel încât să menținem ritmul, fără să sacrificăm forma.",
-      "progression_down": "TODO_EN: Reducem puțin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas în spate e necesar pentru a debloca următorul salt în forță. Rămânem pe poziții!",
-      "hold": "TODO_EN: Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă înainte de următoarea creștere.",
-      "recovery": "TODO_EN: Reducem volumul la {exercise} pentru că semnele de oboseală sunt prezente. E mai inteligent să te refaci azi, ca să revii cu forțe proaspete la antrenamentul următor."
+      "progression_up": "TODO_EN: Crestem greutatea la {exercise} pentru ca ai progresat constant in ultimele saptamani. Noua tinta e adaptata astfel incat sa mentinem ritmul, fara sa sacrificam forma.",
+      "progression_down": "TODO_EN: Reducem putin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas in spate e necesar pentru a debloca urmatorul salt in forta. Ramanem pe pozitii!",
+      "hold": "TODO_EN: Pastram greutatea la {exercise} astazi. Esti intr-o zona excelenta de consolidare, iar asta ne asigura ca baza e solida inainte de urmatoarea crestere.",
+      "recovery": "TODO_EN: Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
     }
   },
 
   "modals": {
     "alternative": {
-      "title": "TODO_EN: Înlocuiește exercițiul"
+      "title": "TODO_EN: Inlocuieste exercitiul"
     },
     "readiness": {
-      "title": "TODO_EN: Cum te simți azi?",
-      "subtitle": "TODO_EN: Răspunsul afectează recomandările de azi"
+      "title": "TODO_EN: Cum te simti azi?",
+      "subtitle": "TODO_EN: Raspunsul afecteaza recomandarile de azi"
     },
     "skip": {
       "title": "TODO_EN: De ce sari azi?"
@@ -32,9 +32,9 @@
 
   "common": {
     "ok": "TODO_EN: OK",
-    "cancel": "TODO_EN: Anulează",
-    "close": "TODO_EN: Închide",
-    "confirm": "TODO_EN: Confirmă",
-    "loading": "TODO_EN: Se încarcă..."
+    "cancel": "TODO_EN: Anuleaza",
+    "close": "TODO_EN: Inchide",
+    "confirm": "TODO_EN: Confirma",
+    "loading": "TODO_EN: Se incarca..."
   }
 }

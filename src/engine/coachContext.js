@@ -1,4 +1,4 @@
-// ══ COACH CONTEXT — Sursă unică de adevăr pentru toate engines ══════════
+// ══ COACH CONTEXT — Sursa unica de adevar pentru toate engines ══════════
 // Engines nu mai citesc din localStorage direct — primesc context de aici.
 import { getMuscleState } from './muscleMap.js';
 import { DB, tod } from '../db.js';
@@ -71,7 +71,7 @@ function calculateVolumeMultiplier(readinessScore) {
 }
 
 // ── Readiness helpers ──────────────────────────────────────────────────────
-// Suportă două formate: { score, emoji } (vitest) și număr 1-5 (app real)
+// Suporta doua formate: { score, emoji } (vitest) si numar 1-5 (app real)
 
 function getTodayReadinessScore() {
   try {
@@ -80,7 +80,7 @@ function getTodayReadinessScore() {
     const val = all[todayDate];
     if (val === null || val === undefined) return null;
     if (typeof val === 'object' && val.score !== undefined) return val.score;
-    // Format real: număr 1–5 → convertit în scor 0–100
+    // Format real: numar 1–5 → convertit in scor 0–100
     const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
     return Math.max(10, Math.min(100, 60 + (readinessPoints[val] ?? 0)));
   } catch { return null; }
@@ -113,7 +113,7 @@ function getPhaseFromStorage() {
   try {
     const raw = localStorage.getItem('phase-override');
     if (!raw) return 'AUTO';
-    // Suportă atât string JSON ("AUTO") cât și string plain (AUTO)
+    // Suporta atat string JSON ("AUTO") cat si string plain (AUTO)
     try { return JSON.parse(raw); }
     catch { return raw; }
   } catch { return 'AUTO'; }

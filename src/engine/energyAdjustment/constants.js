@@ -73,7 +73,7 @@ export const ADJUSTMENT_MAGNITUDE = Object.freeze({
  * - no stagnation markers
  * - Periodization phase gate "high_intensity != true" (NU PEAK NU LOAD+)
  *
- * Anti "Sarcastic UP" Marius 5:1 săpt 4-5 scenario unde cascade aggressive
+ * Anti "Sarcastic UP" Marius 5:1 sapt 4-5 scenario unde cascade aggressive
  * compound (5:1 dual-signal green PLUS Energy UP +15% PLUS PEAK phase) =
  * Invariant 1 (V ≤ MRV) + Invariant 5 Medical Safety violation.
  *
@@ -92,7 +92,7 @@ export const UP_GATING_CONDITIONS = Object.freeze({
 /**
  * Yo-yo anti-flap 3-session window V1 only per Cluster 4 §9.3.4 Q14=D verbatim.
  *
- * Anti-flap rolling window: dacă adjustment direction flipped UP→DOWN→UP în 3
+ * Anti-flap rolling window: daca adjustment direction flipped UP→DOWN→UP in 3
  * sesiuni consecutive → engine SUPPRESSES 3rd flip, holds current direction,
  * logs signal 'yoyo_anti_flap_suppressed'.
  *
@@ -134,7 +134,7 @@ export const SUB_FLOOR_MAX_CONSECUTIVE = 2;
  */
 export const BAYESIAN_VARIANCE_MODIFIER = Object.freeze({
   sigmaThresholdHigh: 0.20, // V1 conservative pick — calibration target post-Beta
-  dampeningFactor:    0.70, // adjustment × 0.7 când σ > threshold
+  dampeningFactor:    0.70, // adjustment × 0.7 cand σ > threshold
 });
 
 /**
@@ -176,12 +176,12 @@ export const HARD_CAP_INTENSITY_PCT_1RM = 0.90;
  * Medical referral copy verbatim Gigel test PASS per Cluster 5 §9.3.5 Q18=D.
  *
  * Generic "specialist" REJECTED (Daniel push-back mid-flight): ambiguous user
- * could interpret as "antrenor specializat" sau "nutritionist" → diluează
+ * could interpret as "antrenor specializat" sau "nutritionist" → dilueaza
  * Invariant 5 Medical Safety message. Specific pathway = unambiguous.
  *
  * @type {string}
  */
-export const MEDICAL_REFERRAL_COPY = 'Consultă medicul de familie sau un specialist în medicină sportivă';
+export const MEDICAL_REFERRAL_COPY = 'Consulta medicul de familie sau un specialist in medicina sportiva';
 
 /**
  * Categorical aggregation rules table per Cluster 2 §9.3.2 Q3=C auditable.

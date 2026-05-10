@@ -1,11 +1,11 @@
 // Cluster 4 — Macrocycle Structure Linear Block V1 per ADR 026 §9.5 verbatim.
 //
 // Linear Block Periodization V1 (NU DUP NU Conjugate). 3 mesocycles/block.
-//   - 12 săpt BUILD-only (default majoritar templates)
-//   - 21 săpt BUILD + PEAK + TRANSITION pentru Forță
+//   - 12 sapt BUILD-only (default majoritar templates)
+//   - 21 sapt BUILD + PEAK + TRANSITION pentru Forta
 // Volume scaling intra-block M1 1.00× → M2 1.10× → M3 1.15× cap MRV absolut.
-// Maria adaptive override: NU advance la M2/M3 fără calibration ≥DEVELOPING +
-//   zero injury 6 săpt (both AND).
+// Maria adaptive override: NU advance la M2/M3 fara calibration ≥DEVELOPING +
+//   zero injury 6 sapt (both AND).
 //
 // Pure functions — no Date.now / Math.random / state reads.
 
@@ -16,7 +16,7 @@ import {
 } from './constants.js';
 
 /**
- * Resolve block length în weeks for goal id.
+ * Resolve block length in weeks for goal id.
  *
  * @param {string} goalId
  * @returns {number}
@@ -68,9 +68,9 @@ export function getBlockScaling(mesocycleIdx) {
 /**
  * Maria adaptive override gate per §9.5 verbatim:
  *   - Calibration tier ≥ DEVELOPING (per ADR 009 — DEVELOPING / STABLE / OPTIMIZED accepted)
- *   - Zero injury în trailing 6 săpt window (AND condition)
+ *   - Zero injury in trailing 6 sapt window (AND condition)
  *
- * Returns true dacă Maria CAN advance to M2/M3. False = stay în M1 (engine
+ * Returns true daca Maria CAN advance to M2/M3. False = stay in M1 (engine
  * holds at baseline scaling 1.00× regardless of mesocycleIdx computed).
  *
  * Non-Maria personas always pass through — gate applies only to maria persona
@@ -97,7 +97,7 @@ export function evaluateMariaAdvanceGate({ personaId, profileTier, recentSession
     signals.push('maria_advance_gate_blocked_tier');
   }
 
-  // Injury history check (6 săpt window)
+  // Injury history check (6 sapt window)
   let injuryOk = true;
   if (Array.isArray(recentSessions)) {
     const recentInjury = recentSessions.some((s) => {

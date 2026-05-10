@@ -7,21 +7,21 @@
 // data from DOM keeps the wiring testable in isolation.
 //
 // LOCKED wording — DO NOT paraphrase:
-//   - F-NEW-4 plan-ajustat: "Plan ajustat astăzi pentru recovery." +
+//   - F-NEW-4 plan-ajustat: "Plan ajustat astazi pentru recovery." +
 //     "Folosesc varianta mea" action
 //   - F-NEW-2 deload-skip: getDeloadSkipWarning() (verbatim from
 //     progressionMatrix)
 //   - Plateau §27 two-layer:
 //       Layer 1 (info, suggestion): "Greutatea s-a oprit. Sesiunea de azi
-//         încearcă o variantă diferită."
-//       Layer 2 (warning, intervention): "Săptămâna a {N}-a fără progres.
-//         Încercăm {tehnică} astăzi."
+//         incearca o varianta diferita."
+//       Layer 2 (warning, intervention): "Saptamana a {N}-a fara progres.
+//         Incercam {tehnica} astazi."
 
 import { getDeloadSkipWarning } from '../engine/progressionMatrix.js';
 
 // ── Wiring 1: F-NEW-4 plan-ajustat banner ───────────────────────────────
 
-const PLAN_ADJUSTED_MESSAGE = 'Plan ajustat astăzi pentru recovery.';
+const PLAN_ADJUSTED_MESSAGE = 'Plan ajustat astazi pentru recovery.';
 const PLAN_ADJUSTED_ACTION_LABEL = 'Folosesc varianta mea';
 
 /**
@@ -63,7 +63,7 @@ export function buildDeloadSkipBanner() {
 
 // ── Wiring 3: Plateau §27 two-layer ─────────────────────────────────────
 
-const PLATEAU_LAYER1_MESSAGE = 'Greutatea s-a oprit. Sesiunea de azi încearcă o variantă diferită.';
+const PLATEAU_LAYER1_MESSAGE = 'Greutatea s-a oprit. Sesiunea de azi incearca o varianta diferita.';
 
 /**
  * Build the plateau intervention banner. Two layers:
@@ -88,13 +88,13 @@ export function buildPlateauBanner(opts) {
   const weeks = Number(opts.weeks);
   const tech = (typeof opts.technique === 'string' && opts.technique.trim())
     ? opts.technique.trim()
-    : 'o variantă tehnică';
+    : 'o varianta tehnica';
   const weeksPart = (Number.isFinite(weeks) && weeks >= 3)
-    ? `Săptămâna a ${weeks}-a fără progres. `
+    ? `Saptamana a ${weeks}-a fara progres. `
     : '';
   return {
     severity: 'warning',
-    message: `${weeksPart}Încercăm ${tech} astăzi.`,
+    message: `${weeksPart}Incercam ${tech} astazi.`,
     dismissId: 'plateau-layer2',
   };
 }

@@ -11,7 +11,7 @@
 // D2 Thin Adapter Scope: pure shape mapping `engineContext → engineInput`.
 //   **D2 shape mapping concrete:** generic orchestrator slot `meta.constraintObject`
 //   → engine-specific input `meta.periodizationConstraint` (per ADR 026 §9.2
-//   Cluster 5 Hook 1 read-only convention în engine source). Adapter does the
+//   Cluster 5 Hook 1 read-only convention in engine source). Adapter does the
 //   rename — engine purity ADR 018 §2 preserved (engine reads its own field name,
 //   adapter handles propagation slot translation).
 // D3 Context Object Pre-Built Input: orchestrator builds engineContext once;
@@ -105,7 +105,7 @@ export const goalAdaptationAdapter = Object.freeze({
       // per Hook 1 read-only convention §9.2.5). Constraint Object stays
       // propagated frozen din upstream Periodization for downstream batches
       // (Energy Adjustment, Bayesian Nutrition, etc.). NU surface
-      // constraintObject din această adapter output.
+      // constraintObject din aceasta adapter output.
       return ok({ ...engineResult });
     } catch (cause) {
       // Engine spec says NEVER throws but D4 violation insurance per §3.6 taxonomy.

@@ -73,7 +73,7 @@ describe('Golden Master — Composite Signal Layer (3/3 simultaneous threshold)'
 });
 
 describe('Golden Master — Smart Routing Equipment (tier-aware filtering)', () => {
-  it('Tier 1 forță (Lat Pulldown) → strict force_demand: high', () => {
+  it('Tier 1 forta (Lat Pulldown) → strict force_demand: high', () => {
     const r = findAlternatives('Lat Pulldown');
     captureSnapshot('smart_routing_tier1_lat_pulldown', r);
   });

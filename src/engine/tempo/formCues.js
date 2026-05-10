@@ -9,13 +9,13 @@
 //
 // B3 Q33 §45.5 elaboration persona-aware notation (Q3 Daniel push-back fundamental
 //    Maria zero notation strict):
-//    - Maria verbal: "coboară lent, două secunde" (NU "2-X-2-X" — zero numeric
+//    - Maria verbal: "coboara lent, doua secunde" (NU "2-X-2-X" — zero numeric
 //      strict, anti-friction Maria 65 cognitive load SUFLET F2 alignment)
-//    - Gigica hibrid: "tempo 2-X-2-X (coboară 2s)" (verbal + notation)
+//    - Gigica hibrid: "tempo 2-X-2-X (coboara 2s)" (verbal + notation)
 //    - Marius numeric pure: "Tempo 2-1-2-0" (notation strict)
 //
 // D18 Persona-aware tone Q18=D verbatim:
-//    - Maria rationale-first: "De ce coboară lent? Pentru a controla încărcarea articulară."
+//    - Maria rationale-first: "De ce coboara lent? Pentru a controla incarcarea articulara."
 //    - Gigica suggestion: "Sugerez tempo 2-1-2-0 pentru hipertrofie."
 //    - Marius imperative: "Tempo 2-1-2-0. Execute."
 //
@@ -39,8 +39,8 @@ import {
  * @type {Readonly<{compound: string, isolation: string}>}
  */
 const BASE_LIBRARY_RO = Object.freeze({
-  compound:  'controlează coborârea, păstrează tensiunea',
-  isolation: 'concentrează-te pe mușchiul țintă, mișcare lentă',
+  compound:  'controleaza coborarea, pastreaza tensiunea',
+  isolation: 'concentreaza-te pe muschiul tinta, miscare lenta',
 });
 
 /**
@@ -48,23 +48,23 @@ const BASE_LIBRARY_RO = Object.freeze({
  * pick covers majority sessions. Full top-30 expansion candidate post-Beta ML
  * cue selection §9.5.6 Reconsideration Trigger 7.
  *
- * Cues în RO native per Q3 + D18 persona-aware tone resolved at compose time.
+ * Cues in RO native per Q3 + D18 persona-aware tone resolved at compose time.
  *
  * @type {Readonly<Object<string, string>>}
  */
 const TOP_COMPOUND_OVERRIDES_RO = Object.freeze({
-  back_squat:              'piept sus, genunchii peste vârfurile picioarelor, coboară controlat sub paralel',
-  front_squat:             'coate sus, vertical torso, coboară controlat',
-  deadlift:                'spate neutru, împinge prin podea, șolduri și genunchi simultan',
-  romanian_deadlift:       'șolduri înapoi, spate neutru, simte hamstring-ii',
-  bench_press:             'omoplați strânși, coatele 45°, atinge controlat pieptul',
-  incline_bench_press:     'omoplați strânși, coatele moderate, controlează coborârea',
-  overhead_press:          'fund strâns, coate sub bară, împinge vertical',
+  back_squat:              'piept sus, genunchii peste varfurile picioarelor, coboara controlat sub paralel',
+  front_squat:             'coate sus, vertical torso, coboara controlat',
+  deadlift:                'spate neutru, impinge prin podea, solduri si genunchi simultan',
+  romanian_deadlift:       'solduri inapoi, spate neutru, simte hamstring-ii',
+  bench_press:             'omoplati stransi, coatele 45°, atinge controlat pieptul',
+  incline_bench_press:     'omoplati stransi, coatele moderate, controleaza coborarea',
+  overhead_press:          'fund strans, coate sub bara, impinge vertical',
   barbell_row:             'spate neutru, trage cu coatele, atinge abdomenul',
-  pull_up:                 'omoplați activi, trage cu spatele NU cu brațele',
-  hip_thrust:              'bărbie în piept, contractă fesieri în vârf, controlează coborârea',
-  lunge:                   'genunchi peste vârful piciorului, torso vertical, controlează revenirea',
-  bulgarian_split_squat:   'piciorul din spate sus, coboară vertical, controlează echilibrul',
+  pull_up:                 'omoplati activi, trage cu spatele NU cu bratele',
+  hip_thrust:              'barbie in piept, contracta fesieri in varf, controleaza coborarea',
+  lunge:                   'genunchi peste varful piciorului, torso vertical, controleaza revenirea',
+  bulgarian_split_squat:   'piciorul din spate sus, coboara vertical, controleaza echilibrul',
 });
 
 /**
@@ -83,7 +83,7 @@ export function getBaseCue(category) {
  * Lookup top-30 compound override (V1 = top-12 covers majority).
  *
  * @param {string} movementId
- * @returns {string|null} Override cue or null dacă movement NU în top-30 list
+ * @returns {string|null} Override cue or null daca movement NU in top-30 list
  */
 export function getTopCompoundOverride(movementId) {
   if (typeof movementId !== 'string' || movementId.length === 0) return null;
@@ -129,7 +129,7 @@ export function applyPersonaTone({ cueText, persona }) {
 
   switch (persona) {
     case PERSONA.MARIA:
-      return `De ce așa? Pentru control: ${safeCue}.`;
+      return `De ce asa? Pentru control: ${safeCue}.`;
     case PERSONA.GIGICA:
       return `Sugerez: ${safeCue}.`;
     case PERSONA.MARIUS:

@@ -12,7 +12,7 @@
 
 /** @type {Record<string, IntensityVerdict>} */
 export const RIR_MATRIX = {
-  LIMIT:       { key: 'LIMIT',       label: '🔴 La limită',   rirMin: 0, rirMax: 1 },
+  LIMIT:       { key: 'LIMIT',       label: '🔴 La limita',   rirMin: 0, rirMax: 1 },
   HEAVY:       { key: 'HEAVY',       label: '🟠 Greu',         rirMin: 1, rirMax: 2 },
   CHALLENGING: { key: 'CHALLENGING', label: '🟡 Provocator',   rirMin: 2, rirMax: 3 },
   COMFORTABLE: { key: 'COMFORTABLE', label: '🟢 Confortabil',  rirMin: 3, rirMax: Infinity },
@@ -20,7 +20,7 @@ export const RIR_MATRIX = {
 
 /**
  * Map a numeric RIR value (reps in reserve) to a 4-tier intensity verdict.
- * @param {number} rir reps în rezervă (0 = la limită, 3+ = confortabil)
+ * @param {number} rir reps in rezerva (0 = la limita, 3+ = confortabil)
  * @returns {IntensityVerdict}
  */
 export function rirToIntensity(rir) {
@@ -37,7 +37,7 @@ export function rirToIntensity(rir) {
  * @returns {{ targetRirMin: number, targetRirMax: number }}
  */
 export function getTargetRirRange(ctx) {
-  const isStrength = ctx.profile === 'STRENGTH' || ctx.profile === 'Forță';
+  const isStrength = ctx.profile === 'STRENGTH' || ctx.profile === 'Forta';
   if (isStrength && ctx.exerciseCategory === 'compound') return { targetRirMin: 1, targetRirMax: 2 };
   if (isStrength) return { targetRirMin: 1, targetRirMax: 3 };
   // Hipertrofie default

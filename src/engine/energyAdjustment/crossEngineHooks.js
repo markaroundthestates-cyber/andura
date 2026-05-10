@@ -69,7 +69,7 @@ export function readPeriodizationCorridor(constraint) {
  *
  * @param {Object} input
  * @param {{floor: number, ceiling: number}} input.intensityCorridor
- * @param {number} input.adjustmentMagnitudePct  - Float în [-0.15, +0.15]
+ * @param {number} input.adjustmentMagnitudePct  - Float in [-0.15, +0.15]
  * @returns {{floor: number, ceiling: number}}
  */
 export function applyIntensityAdjustmentInterior({ intensityCorridor, adjustmentMagnitudePct }) {

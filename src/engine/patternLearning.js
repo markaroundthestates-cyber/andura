@@ -73,7 +73,7 @@ function _analyze(logs) {
   if (exStagnation.length) {
     const alreadyApplied = applied.some(p => p.type === 'STAGNATION' && Date.now() - p.appliedAt < 7*86400000);
     if (!alreadyApplied && exStagnation.length) {
-      newPatterns.push({ type: 'STAGNATION', exercises: exStagnation.map(e=>e.ex), appliedAt: Date.now(), description: `${exStagnation.length} exerciții stagnate 3+ săptămâni` });
+      newPatterns.push({ type: 'STAGNATION', exercises: exStagnation.map(e=>e.ex), appliedAt: Date.now(), description: `${exStagnation.length} exercitii stagnate 3+ saptamani` });
     }
   }
 
@@ -117,7 +117,7 @@ export function analyzeFromCDL({ windowDays = 30 } = {}) {
       type: 'STAGNATION',
       exercises: exStagnation,
       appliedAt: Date.now(),
-      description: `${exStagnation.length} exerciții stagnate 3+ săptămâni`,
+      description: `${exStagnation.length} exercitii stagnate 3+ saptamani`,
     });
   }
 
@@ -156,7 +156,7 @@ export function analyzeFromCDL({ windowDays = 30 } = {}) {
       type: 'LOW_ADHERENCE',
       adherenceRate: Math.round(adherenceRate * 100),
       appliedAt: Date.now(),
-      description: `Adherence scăzută ultimele ${windowDays} zile: ${Math.round(adherenceRate * 100)}%. Reducem volum și verificăm contextul.`,
+      description: `Adherence scazuta ultimele ${windowDays} zile: ${Math.round(adherenceRate * 100)}%. Reducem volum si verificam contextul.`,
     });
   }
 
@@ -165,7 +165,7 @@ export function analyzeFromCDL({ windowDays = 30 } = {}) {
       type: 'HIGH_DEVIATION',
       deviationRate: Math.round(deviationRate * 100),
       appliedAt: Date.now(),
-      description: `Deviation crescut: ${Math.round(deviationRate * 100)}% sesiuni diferite de propunere. Coach-ul ajustează propunerile.`,
+      description: `Deviation crescut: ${Math.round(deviationRate * 100)}% sesiuni diferite de propunere. Coach-ul ajusteaza propunerile.`,
     });
   }
 

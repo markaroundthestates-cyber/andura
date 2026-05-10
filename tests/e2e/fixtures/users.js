@@ -73,9 +73,9 @@ const WITH_HISTORY_LOGS = [
 ];
 
 const WITH_HISTORY_BURNS = [
-  { date: session1Date, day: 'Marți',    mins: 55, kcal: 290, sets: 15, startHour: 18 },
+  { date: session1Date, day: 'Marti',    mins: 55, kcal: 290, sets: 15, startHour: 18 },
   { date: session2Date, day: 'Joi',      mins: 58, kcal: 305, sets: 15, startHour: 18 },
-  { date: session3Date, day: 'Sâmbătă',  mins: 60, kcal: 315, sets: 15, startHour: 10 },
+  { date: session3Date, day: 'Sambata',  mins: 60, kcal: 315, sets: 15, startHour: 10 },
 ];
 
 export const WITH_HISTORY = {

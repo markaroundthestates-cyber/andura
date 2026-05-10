@@ -1,12 +1,12 @@
-// ══ STAGNATION DETECTOR — Săptămâni consecutive de stagnare ══════════════
-// Grupează logurile pe săptămâni ISO, calculează 1RM mediu per săptămână,
-// și numără câte săptămâni consecutive nu au progresat.
+// ══ STAGNATION DETECTOR — Saptamani consecutive de stagnare ══════════════
+// Grupeaza logurile pe saptamani ISO, calculeaza 1RM mediu per saptamana,
+// si numara cate saptamani consecutive nu au progresat.
 
 import { brzycki1RM } from './weaknessDetector.js';
 import { isoWeek } from '../util/isoWeek.js';
 
 /**
- * Calculează 1RM mediu pentru logs date (un singur exercițiu).
+ * Calculeaza 1RM mediu pentru logs date (un singur exercitiu).
  */
 function avg1RM(logs) {
   const orms = logs
@@ -17,7 +17,7 @@ function avg1RM(logs) {
 }
 
 /**
- * Grupează logurile unui exercițiu pe săptămâni și calculează 1RM mediu/săptămână.
+ * Grupeaza logurile unui exercitiu pe saptamani si calculeaza 1RM mediu/saptamana.
  * @param {string} exerciseName
  * @param {Array} logs
  * @returns {Array<{ week: string, avg1RM: number }>} cronologic
@@ -41,8 +41,8 @@ export function weeklyProgression(exerciseName, logs) {
 }
 
 /**
- * Numără săptămânile consecutive de stagnare la final de serie.
- * Stagnare = creștere < 1% față de săptămâna precedentă.
+ * Numara saptamanile consecutive de stagnare la final de serie.
+ * Stagnare = crestere < 1% fata de saptamana precedenta.
  * @param {string} exerciseName
  * @param {Array} logs
  * @returns {{ stagnationWeeks: number, progression: Array }}
@@ -66,7 +66,7 @@ export function detectStagnation(exerciseName, logs) {
 }
 
 /**
- * Găsește numărul maxim de săptămâni de stagnare across all exercises.
+ * Gaseste numarul maxim de saptamani de stagnare across all exercises.
  * @param {Array} logs
  * @returns {{ maxStagnationWeeks: number, byExercise: Object }}
  */

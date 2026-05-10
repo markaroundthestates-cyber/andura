@@ -7,11 +7,11 @@
 // Architecture:
 //   - showAuthScreen(opts)         → opens auth modal overlay (Bugatti-styled)
 //   - handleAuthCallbackRoute()    → detects /auth-callback URL, processes Magic Link
-//   - mountAuthBanner({ onAuth })  → "Salvează contul" non-blocking banner per §56.1.1
+//   - mountAuthBanner({ onAuth })  → "Salveaza contul" non-blocking banner per §56.1.1
 //   - hideAuthScreen()             → tears down modal cleanly
 //
 // Per ADR 005: vanilla JS, bare DOM. NU framework. Per §56.17.1 SW + Firebase
-// Auth coexistence — SW NU intercepteză /auth-callback (handled aici client-side).
+// Auth coexistence — SW NU intercepteza /auth-callback (handled aici client-side).
 
 import {
   createAuthScreen,
@@ -34,7 +34,7 @@ let _activeOverlay = null;
  * Open the auth screen as a modal overlay over the SPA. Tears down on
  * successful auth (default) or when user dismisses.
  *
- * Per §56.3.1 LOCKED V1: auth-screen position = DUPĂ T0 onboarding (post
+ * Per §56.3.1 LOCKED V1: auth-screen position = DUPA T0 onboarding (post
  * Investment Phase commitment psihologic maxim). Caller decides trigger.
  *
  * @param {object} [opts]
@@ -69,7 +69,7 @@ export function showAuthScreen(opts = {}) {
   if (dismissable) {
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
-    closeBtn.setAttribute('aria-label', 'Închide');
+    closeBtn.setAttribute('aria-label', 'Inchide');
     closeBtn.textContent = '×';
     closeBtn.style.cssText = [
       'position:absolute', 'top:18px', 'right:22px',
@@ -84,7 +84,7 @@ export function showAuthScreen(opts = {}) {
   const screen = createAuthScreen({
     googleClientId,
     onAuthSuccess: (info) => {
-      _toast(AUTH_SCREEN_COPY.successWelcome || 'Bine ai venit înapoi!', 'var(--green)');
+      _toast(AUTH_SCREEN_COPY.successWelcome || 'Bine ai venit inapoi!', 'var(--green)');
       hideAuthScreen();
       if (typeof onAuthSuccess === 'function') {
         try { onAuthSuccess(info); } catch (err) { console.warn('[authShell] onAuthSuccess threw:', err); }
@@ -126,7 +126,7 @@ export function hideAuthScreen() {
  *
  * Per §56.10.1: continueUrl `https://andura.app/auth-callback`. Pre-Beta
  * Android Universal Links handles native PWA deep-link; pe browsers
- * fără Universal Links handler, route processing happens here.
+ * fara Universal Links handler, route processing happens here.
  *
  * Returns null when current URL is NOT /auth-callback (no-op).
  *
@@ -137,7 +137,7 @@ export async function handleAuthCallbackRoute() {
   const path = window.location.pathname || '';
   if (!path.endsWith('/auth-callback')) return null;
 
-  // Magic Link path — params în query string.
+  // Magic Link path — params in query string.
   const { oobCode, email: emailFromUrl } = parseMagicLinkUrl();
   if (oobCode) {
     const email = emailFromUrl || _readPendingEmail();
@@ -154,7 +154,7 @@ export async function handleAuthCallbackRoute() {
     return { ok: false, provider: 'magic-link', error: res.error };
   }
 
-  // Google OAuth implicit flow — id_token în URL fragment.
+  // Google OAuth implicit flow — id_token in URL fragment.
   const hash = window.location.hash || '';
   if (hash) {
     const params = new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
@@ -175,10 +175,10 @@ export async function handleAuthCallbackRoute() {
 
 /**
  * Mount the auth-banner-soft per §56.1.1 LOCKED V1. Non-blocking strip
- * la top: "Salvează-ți progresul →" pentru Anonymous users. Click → opens
+ * la top: "Salveaza-ti progresul →" pentru Anonymous users. Click → opens
  * showAuthScreen(). Auto-hides cand `isAuthenticated()` becomes true.
  *
- * Anti-spam: NU mount dacă deja authenticated. Banner persists Bugatti F4
+ * Anti-spam: NU mount daca deja authenticated. Banner persists Bugatti F4
  * Maria 65 — non-blocking, NU modal, NU hard-prompt.
  *
  * @param {object} [opts]
@@ -194,7 +194,7 @@ export function mountAuthBanner(opts = {}) {
   const banner = document.createElement('div');
   banner.id = 'auth-banner-soft';
   banner.setAttribute('role', 'region');
-  banner.setAttribute('aria-label', 'Salvează contul');
+  banner.setAttribute('aria-label', 'Salveaza contul');
   banner.style.cssText = [
     'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:400',
     'background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)',
@@ -205,12 +205,12 @@ export function mountAuthBanner(opts = {}) {
   ].join(';');
 
   const label = document.createElement('span');
-  label.textContent = 'Salvează-ți progresul';
+  label.textContent = 'Salveaza-ti progresul';
   label.style.flex = '1';
   banner.appendChild(label);
 
   const cta = document.createElement('span');
-  cta.textContent = 'Conectează-te →';
+  cta.textContent = 'Conecteaza-te →';
   cta.style.cssText = 'color:var(--accent);font-weight:600';
   banner.appendChild(cta);
 

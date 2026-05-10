@@ -4,10 +4,10 @@
 // Engine derives phase runtime din persona signals + goal + sezon.
 //
 // TDEE multipliers verbatim §9.2.3 Cluster 3:
-//   CUT conservative 0.82 / aggressive 0.75 (Marius advanced 4-6 săpt max)
-//   BULK conservative 1.08 / aggressive 1.15 (newbie + Forță combo)
+//   CUT conservative 0.82 / aggressive 0.75 (Marius advanced 4-6 sapt max)
+//   BULK conservative 1.08 / aggressive 1.15 (newbie + Forta combo)
 //   MAINTAIN 1.00 / RECOMP ±2%
-//   DELOAD week kcal +3-5% override (chiar dacă phase=CUT — recovery imperative)
+//   DELOAD week kcal +3-5% override (chiar daca phase=CUT — recovery imperative)
 //
 // Macro split: protein 1.6-2.2 g/kg LBM, fat 0.8-1.0 g/kg floor hormonal,
 // carb remainder template-variable (calculate post protein + fat + kcal target).
@@ -76,8 +76,8 @@ export function basePhaseForTemplate(templateId) {
  * Compute TDEE multiplier per phase + persona × goal context.
  *
  * Aggressive variants triggered persona-specific:
- *   - CUT_AGGRESSIVE 0.75: Marius advanced 4-6 săpt max (anti-burnout cap)
- *   - BULK_AGGRESSIVE 1.15: newbie + Forță template combo
+ *   - CUT_AGGRESSIVE 0.75: Marius advanced 4-6 sapt max (anti-burnout cap)
+ *   - BULK_AGGRESSIVE 1.15: newbie + Forta template combo
  *
  * V1 conservative defaults; aggressive variants opt-in via flags.
  *
@@ -104,7 +104,7 @@ export function tdeeMultiplierForPhase({
     return TDEE_MULTIPLIERS.CUT_CONSERVATIVE;
   }
   if (phase === PHASES.BULK) {
-    // Aggressive bulk: newbie + Forță combo
+    // Aggressive bulk: newbie + Forta combo
     if (isNewbie === true && templateId === TEMPLATE_IDS.forta_dezvoltare) {
       return TDEE_MULTIPLIERS.BULK_AGGRESSIVE;
     }
@@ -119,12 +119,12 @@ export function tdeeMultiplierForPhase({
 
 /**
  * Apply DELOAD week kcal bonus override per §9.2.3 Cluster 3 verbatim:
- * "kcal +3-5% chiar dacă phase=CUT (recovery imperative)".
+ * "kcal +3-5% chiar daca phase=CUT (recovery imperative)".
  *
  * V1 conservative pick LOW (1.03) default green; HIGH (1.05) reserved.
  *
  * @param {number} baseMultiplier      - Output of tdeeMultiplierForPhase
- * @param {boolean} isDeloadWeek       - True dacă mesocycle phase = DELOAD (Engine #1 §9.3 W4)
+ * @param {boolean} isDeloadWeek       - True daca mesocycle phase = DELOAD (Engine #1 §9.3 W4)
  * @returns {number}
  */
 export function applyDeloadKcalOverride(baseMultiplier, isDeloadWeek) {
@@ -148,7 +148,7 @@ export function applyDeloadKcalOverride(baseMultiplier, isDeloadWeek) {
 export function detectPhase({ goalId, templateId, user, recentSessions }) {
   const signals = [];
 
-  // 1. RECOMP sub-phase detection prima (Tonifiere/Slăbire context)
+  // 1. RECOMP sub-phase detection prima (Tonifiere/Slabire context)
   const recomp = detectRecompSubPhase({ templateId, user, recentSessions });
   if (recomp.isRecomp) {
     signals.push('phase_recomp_sub_detected');
@@ -163,7 +163,7 @@ export function detectPhase({ goalId, templateId, user, recentSessions }) {
 }
 
 /**
- * Compute LBM (lean body mass) from weight + BF%. Defensive fallback când
+ * Compute LBM (lean body mass) from weight + BF%. Defensive fallback cand
  * BF% missing → LBM = weight × 0.85 (V1 conservative anchor).
  *
  * @param {{kg?: number, bfPct?: number}} [user]

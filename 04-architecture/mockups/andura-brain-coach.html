@@ -18,7 +18,7 @@
     --ink-4: #5d6172; /* WCAG audit batch 2026-05-09 + v5 closure 2026-05-10: ~3.11:1 PASS SC 1.4.11 non-text 3:1 (used by .check-box border + .list-chevron icon + .composer-input::placeholder). 9px text usages migrated to var(--ink-3) per WCAG v5 closure (6 contexts: .day-row/.etched/.step-counter/.chat-tag/step-labels/.picker-item .num — see commit 2026-05-10). Hierarchy ink-4 (L=0.118) < ink-3 (L=0.218) preserved cool tonal B>G>R Brain Coach playful. */
     --line: rgba(255,255,255,0.08); /* Decorative hairlines on dark bg — composite ~1.21:1 (Bugatti restraint subtle dividers/frames per WCAG v5 audit closure 2026-05-10) */
     --line-2: rgba(255,255,255,0.05); /* Even more subtle hairlines — composite ~1.13:1 (decorative section separators only) */
-    --line-strong-bc: #5e6478; /* WCAG v5 batch 2026-05-10 — interactive UI essential boundary RGB(94,100,120) L=0.126 → 3.26:1 vs --bg #0b0c10 PASS SC 1.4.11 non-text 3:1 minimum. Used by .ai-chip/.ai-chip-ghost/.choice/.check-item/.composer-input/.back-btn + auth-skip-btn + ȘTERGE confirm input — all interactive UI essential boundaries. Cross-skin parity: Luxury --line-strong #6e5a2a (3.15:1) + Clasic --line-strong #9a8770 (3.23:1) + BC --line-strong-bc #5e6478 (3.26:1). Cool gray-blue tonal Brain Coach playful preserved (B>G>R 94<100<120). */
+    --line-strong-bc: #5e6478; /* WCAG v5 batch 2026-05-10 — interactive UI essential boundary RGB(94,100,120) L=0.126 → 3.26:1 vs --bg #0b0c10 PASS SC 1.4.11 non-text 3:1 minimum. Used by .ai-chip/.ai-chip-ghost/.choice/.check-item/.composer-input/.back-btn + auth-skip-btn + STERGE confirm input — all interactive UI essential boundaries. Cross-skin parity: Luxury --line-strong #6e5a2a (3.15:1) + Clasic --line-strong #9a8770 (3.23:1) + BC --line-strong-bc #5e6478 (3.26:1). Cool gray-blue tonal Brain Coach playful preserved (B>G>R 94<100<120). */
     --think: #8b6dff;
     --think-soft: #b09cff;
     --think-deep: #5b3dcf;
@@ -1853,7 +1853,7 @@
       <span class="brand">Andura</span>
     </div>
     <div class="right">
-      <span class="think-pill"><span class="pulse-dot"></span>Gândește</span>
+      <span class="think-pill"><span class="pulse-dot"></span>Gandeste</span>
     </div>
   </div>
 
@@ -1876,9 +1876,9 @@
           <circle fill="#8b6dff" cx="48" cy="48" r="5"/>
         </svg>
         <div class="splash-mark">Andura</div>
-        <div class="splash-sub">A.I. — Inteligență adaptativă</div>
+        <div class="splash-sub">A.I. — Inteligenta adaptativa</div>
         <div class="splash-load">
-          Inițializare neuroni
+          Initializare neuroni
           <span class="dots"><i></i><i></i><i></i></span>
         </div>
       </div>
@@ -1898,28 +1898,28 @@
             <circle class="node" cx="12" cy="12" r="1.6"/>
           </svg>
           <div class="onb-title text-c">Bun venit la <span style="background:linear-gradient(135deg,var(--think),var(--calm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Andura</span></div>
-          <div class="onb-sub text-c">Coach-ul tău AI care învață cum răspunzi tu, nu cum ar răspunde un model mediu.</div>
+          <div class="onb-sub text-c">Coach-ul tau AI care invata cum raspunzi tu, nu cum ar raspunde un model mediu.</div>
         </div>
 
         <button class="btn-primary mb-s">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="opacity:0.95;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continuă cu Google
+          Continua cu Google
         </button>
         <button class="btn-secondary mb-m">
-          ✉ Continuă cu email
+          ✉ Continua cu email
         </button>
 
         <button class="auth-skip-btn mb-s" data-action="skip-auth" onclick="goto('onboard')"
                 style="display:block; width:100%; background:transparent; border:1px solid var(--line-strong-bc); border-radius:12px; padding:13px 16px; font-size:14px; font-weight:500; color:var(--ink-3); cursor:pointer;">
-          Continuă fără cont
+          Continua fara cont
         </button>
         <p class="auth-risk-note" style="font-size:12px; color:var(--ink-3); margin: 4px 4px 12px; line-height:1.5; text-align:center;">
-          Datele se salvează doar pe acest dispozitiv. Riști să le pierzi (telefon resetat, browser cache șters, app reinstalat).
+          Datele se salveaza doar pe acest dispozitiv. Risti sa le pierzi (telefon resetat, browser cache sters, app reinstalat).
         </p>
 
         <div class="footnote mt-m">
-          <span class="footnote-tag">Confidențialitate</span>
-          Datele tale rămân ale tale. Nu antrenăm modele cu ele, nu le vindem, nu le partajăm.
+          <span class="footnote-tag">Confidentialitate</span>
+          Datele tale raman ale tale. Nu antrenam modele cu ele, nu le vindem, nu le partajam.
         </div>
       </div>
     </div>
@@ -1937,62 +1937,62 @@
           <div class="step-dot"></div>
           <span class="step-counter">1/7</span>
         </div>
-        <div class="onb-title">Ce vrei să obții?</div>
-        <div class="onb-sub">Alegi unul. Modelul calibrează strategia. Poți schimba mai târziu — coach-ul se adaptează.</div>
+        <div class="onb-title">Ce vrei sa obtii?</div>
+        <div class="onb-sub">Alegi unul. Modelul calibreaza strategia. Poti schimba mai tarziu — coach-ul se adapteaza.</div>
 
-        <!-- 6 templates V2 — STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule (BC had 4 templates Forță&masă/Tonifiere/Slăbire/Longevitate, ADD Mentenanță+Auto + rename 'Forță & masă' → 'Forță' per Goal Taxonomy V2 baseline Clasic/LB) -->
+        <!-- 6 templates V2 — STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule (BC had 4 templates Forta&masa/Tonifiere/Slabire/Longevitate, ADD Mentenanta+Auto + rename 'Forta & masa' → 'Forta' per Goal Taxonomy V2 baseline Clasic/LB) -->
         <div class="choice-grid cols-1">
           <button class="choice selected">
-            <div class="choice-label">Forță</div>
-            <div class="choice-sub">Greutăți mari, repetări puține</div>
+            <div class="choice-label">Forta</div>
+            <div class="choice-sub">Greutati mari, repetari putine</div>
           </button>
           <button class="choice">
             <div class="choice-label">Tonifiere</div>
-            <div class="choice-sub">Definire musculară, recomp echilibrat</div>
+            <div class="choice-sub">Definire musculara, recomp echilibrat</div>
           </button>
           <button class="choice">
-            <div class="choice-label">Slăbire</div>
-            <div class="choice-sub">Reducere greutate cu păstrare masă</div>
+            <div class="choice-label">Slabire</div>
+            <div class="choice-sub">Reducere greutate cu pastrare masa</div>
           </button>
           <button class="choice">
             <div class="choice-label">Longevitate</div>
-            <div class="choice-sub">Mobilitate, sănătate articulară</div>
+            <div class="choice-sub">Mobilitate, sanatate articulara</div>
           </button>
           <button class="choice">
-            <div class="choice-label">Mentenanță</div>
+            <div class="choice-label">Mentenanta</div>
             <div class="choice-sub">Lifestyle activ echilibrat</div>
           </button>
           <button class="choice">
             <div class="choice-label">Auto</div>
-            <div class="choice-sub">Coach-ul decide după context</div>
+            <div class="choice-sub">Coach-ul decide dupa context</div>
           </button>
         </div>
 
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Asta îmi spune</span>
+            <span class="think-label">Asta imi spune</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Strategie inițială: <span class="data">Linear Block 4+1</span> — recalibrez în <span class="data">3-4 săpt</span></span>
+            <span>Strategie initiala: <span class="data">Linear Block 4+1</span> — recalibrez in <span class="data">3-4 sapt</span></span>
           </div>
         </div>
 
         <div class="footnote">
           <span class="footnote-tag">Disclaimer</span>
-          Andura e instrument de coaching, NU înlocuiește consult medical. Mă consult cu medicul dacă apare durere sau disconfort.
+          Andura e instrument de coaching, NU inlocuieste consult medical. Ma consult cu medicul daca apare durere sau disconfort.
           <label style="display:flex; gap:8px; align-items:center; margin-top:10px; cursor:pointer;">
             <input type="checkbox" required style="width:18px; height:18px;"/>
-            <span>Am înțeles</span>
+            <span>Am inteles</span>
           </label>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-varsta')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-varsta')">Continua →</button>
       </div>
     </div>
 
-    <!-- ═══ IV · ONB VÂRSTA (Big 6 Pasul 2 — required hard T0) ═══ -->
+    <!-- ═══ IV · ONB VARSTA (Big 6 Pasul 2 — required hard T0) ═══ -->
     <div class="screen" id="screen-onb-varsta">
       <div class="scroll">
         <div class="stepper-row">
@@ -2005,8 +2005,8 @@
           <div class="step-dot"></div>
           <span class="step-counter">2/7</span>
         </div>
-        <div class="onb-title">Câți ani ai?</div>
-        <div class="onb-sub">Recuperarea, capacitatea aerobă și răspunsul la volum se schimbă cu vârsta. Asta îmi setează prima dimensiune.</div>
+        <div class="onb-title">Cati ani ai?</div>
+        <div class="onb-sub">Recuperarea, capacitatea aeroba si raspunsul la volum se schimba cu varsta. Asta imi seteaza prima dimensiune.</div>
 
         <div class="picker-card">
           <div class="picker-big">28</div>
@@ -2021,11 +2021,11 @@
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Asta îmi spune</span>
+            <span class="think-label">Asta imi spune</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recuperare estimată <span class="data">36-48h</span> între sesiuni grele</span>
+            <span>Recuperare estimata <span class="data">36-48h</span> intre sesiuni grele</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -2033,7 +2033,7 @@
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-sex')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-sex')">Continua →</button>
       </div>
     </div>
 
@@ -2051,42 +2051,42 @@
           <span class="step-counter">3/7</span>
         </div>
         <div class="onb-title">Sex biologic?</div>
-        <div class="onb-sub">Pentru bias-ul fiziologic al modelului — nu pentru identitate. Influențează masă musculară de bază, testosteron, distribuție grăsime.</div>
+        <div class="onb-sub">Pentru bias-ul fiziologic al modelului — nu pentru identitate. Influenteaza masa musculara de baza, testosteron, distributie grasime.</div>
 
         <div class="choice-grid cols-2">
           <button class="choice selected">
             <div class="choice-icon">♂</div>
             <div class="choice-label">Masculin</div>
-            <div class="choice-sub">Bias hipertrofie + forță</div>
+            <div class="choice-sub">Bias hipertrofie + forta</div>
           </button>
           <button class="choice">
             <div class="choice-icon">♀</div>
             <div class="choice-label">Feminin</div>
-            <div class="choice-sub">Bias rezistență + tonus</div>
+            <div class="choice-sub">Bias rezistenta + tonus</div>
           </button>
           <button class="choice">
             <div class="choice-icon">·</div>
             <div class="choice-label">Altul</div>
-            <div class="choice-sub">Model neutru, recalibrare adaptivă</div>
+            <div class="choice-sub">Model neutru, recalibrare adaptiva</div>
           </button>
         </div>
 
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Notă model</span>
+            <span class="think-label">Nota model</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Bias inițial; modelul recalibrează din răspunsul tău real în <span class="data">III-IV săpt</span></span>
+            <span>Bias initial; modelul recalibreaza din raspunsul tau real in <span class="data">III-IV sapt</span></span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-inaltime')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-inaltime')">Continua →</button>
       </div>
     </div>
 
-    <!-- ═══ VI · ONB ÎNĂLȚIME (Big 6 Pasul 4 NEW per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 — Mifflin-St Jeor BMR/TDEE necesită) ═══ -->
+    <!-- ═══ VI · ONB INALTIME (Big 6 Pasul 4 NEW per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 — Mifflin-St Jeor BMR/TDEE necesita) ═══ -->
     <div class="screen" id="screen-onb-inaltime">
       <div class="scroll">
         <div class="stepper-row">
@@ -2099,8 +2099,8 @@
           <div class="step-dot"></div>
           <span class="step-counter">4/7</span>
         </div>
-        <div class="onb-title">Cât ești de înalt?</div>
-        <div class="onb-sub">Necesar pentru calculul aportului caloric. Modelul calibrează BMR/TDEE Mifflin-St Jeor — fără asta, predicțiile ratează ±20%.</div>
+        <div class="onb-title">Cat esti de inalt?</div>
+        <div class="onb-sub">Necesar pentru calculul aportului caloric. Modelul calibreaza BMR/TDEE Mifflin-St Jeor — fara asta, predictiile rateaza ±20%.</div>
 
         <div class="picker-card">
           <div class="picker-big">175</div>
@@ -2112,7 +2112,7 @@
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Asta îmi spune</span>
+            <span class="think-label">Asta imi spune</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -2120,7 +2120,7 @@
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-greutate')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-greutate')">Continua →</button>
       </div>
     </div>
 
@@ -2137,8 +2137,8 @@
           <div class="step-dot"></div>
           <span class="step-counter">5/7</span>
         </div>
-        <div class="onb-title">Cât cântărești?</div>
-        <div class="onb-sub">Baseline pentru calibrare. Actualizezi oricând în Profil — modelul se recalibrează în timp real.</div>
+        <div class="onb-title">Cat cantaresti?</div>
+        <div class="onb-sub">Baseline pentru calibrare. Actualizezi oricand in Profil — modelul se recalibreaza in timp real.</div>
 
         <div class="picker-card">
           <div class="picker-big">75.5</div>
@@ -2150,15 +2150,15 @@
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Asta îmi spune</span>
+            <span class="think-label">Asta imi spune</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>TDEE estimat <span class="data">≈2400 kcal</span> — calibrare strategie nutriție</span>
+            <span>TDEE estimat <span class="data">≈2400 kcal</span> — calibrare strategie nutritie</span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-medical')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-medical')">Continua →</button>
       </div>
     </div>
 
@@ -2175,15 +2175,15 @@
           <div class="step-dot"></div>
           <span class="step-counter">6/7</span>
         </div>
-        <div class="onb-title">Ai constrângeri?</div>
-        <div class="onb-sub">Bifează tot ce e relevant. Lock-ez exercițiile riscante și-ți construiesc alternative sigure.</div>
+        <div class="onb-title">Ai constrangeri?</div>
+        <div class="onb-sub">Bifeaza tot ce e relevant. Lock-ez exercitiile riscante si-ti construiesc alternative sigure.</div>
 
         <div class="check-list">
           <div class="check-item checked">
             <div class="check-box">✓</div>
             <div>
               <div class="check-label">Genunchi sensibil</div>
-              <div class="check-sub">Stop la flexie profundă cu sarcină</div>
+              <div class="check-sub">Stop la flexie profunda cu sarcina</div>
             </div>
           </div>
           <div class="check-item">
@@ -2196,7 +2196,7 @@
           <div class="check-item">
             <div class="check-box"></div>
             <div>
-              <div class="check-label">Umăr / coif rotator</div>
+              <div class="check-label">Umar / coif rotator</div>
               <div class="check-sub">Lock pe overhead direct</div>
             </div>
           </div>
@@ -2218,21 +2218,21 @@
             <div class="check-box"></div>
             <div>
               <div class="check-label">Nimic semnificativ</div>
-              <div class="check-sub">Plin acces la întreaga bibliotecă</div>
+              <div class="check-sub">Plin acces la intreaga biblioteca</div>
             </div>
           </div>
         </div>
 
         <div class="footnote">
           <span class="footnote-tag">Disclaimer</span>
-          Andura nu înlocuiește avizul medical. Pentru afecțiuni active sau recuperare, consultă medicul înainte.
+          Andura nu inlocuieste avizul medical. Pentru afectiuni active sau recuperare, consulta medicul inainte.
         </div>
 
-        <button class="btn-primary mt-m" onclick="goto('onb-frecventa')">Continuă →</button>
+        <button class="btn-primary mt-m" onclick="goto('onb-frecventa')">Continua →</button>
       </div>
     </div>
 
-    <!-- ═══ IX · ONB FRECVENȚĂ (Big 6 Pasul 7 — closure 7 ecrane V2 onboarding flow) ═══ -->
+    <!-- ═══ IX · ONB FRECVENTA (Big 6 Pasul 7 — closure 7 ecrane V2 onboarding flow) ═══ -->
     <div class="screen" id="screen-onb-frecventa">
       <div class="scroll">
         <div class="stepper-row">
@@ -2245,12 +2245,12 @@
           <div class="step-dot active"></div>
           <span class="step-counter">7/7</span>
         </div>
-        <div class="onb-title">Câte sesiuni / săpt?</div>
-        <div class="onb-sub">Realist, nu aspirational. Mai bine III consistent decât V planificate și II făcute. Pot ajusta oricând.</div>
+        <div class="onb-title">Cate sesiuni / sapt?</div>
+        <div class="onb-sub">Realist, nu aspirational. Mai bine III consistent decat V planificate si II facute. Pot ajusta oricand.</div>
 
         <div class="picker-card">
           <div class="picker-big">IV</div>
-          <div class="picker-unit">zile pe săpt</div>
+          <div class="picker-unit">zile pe sapt</div>
           <div class="picker-track">
             <div class="fill" style="width:57%;"></div>
             <div class="handle" style="left:57%;"></div>
@@ -2264,19 +2264,19 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Split <span class="data">Upper/Lower</span> — recuperare 48h echilibrată</span>
+            <span>Split <span class="data">Upper/Lower</span> — recuperare 48h echilibrata</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Volum săptămânal țintă <span class="data">12-16 sets</span> per grup mare</span>
+            <span>Volum saptamanal tinta <span class="data">12-16 sets</span> per grup mare</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Buffer <span class="data">III zile</span> de odihnă activă</span>
+            <span>Buffer <span class="data">III zile</span> de odihna activa</span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('home')">Construiește coach-ul →</button>
+        <button class="btn-primary" onclick="goto('home')">Construieste coach-ul →</button>
       </div>
     </div>
 
@@ -2294,7 +2294,7 @@
             <span class="think-label">Important</span>
           </div>
           <div style="font-size:13px; color:var(--ink-2); line-height:1.6;">
-            Andura este un asistent. <strong style="color:var(--ink);">Nu</strong> substituie evaluarea medicală sau kinetoterapia. Modelul recomandă pe baza profilului declarat și a răspunsului tău real, dar nu poate detecta:
+            Andura este un asistent. <strong style="color:var(--ink);">Nu</strong> substituie evaluarea medicala sau kinetoterapia. Modelul recomanda pe baza profilului declarat si a raspunsului tau real, dar nu poate detecta:
           </div>
           <div class="thought-step" style="margin-top:10px;">
             <span class="check" style="color:var(--warm);">!</span>
@@ -2302,11 +2302,11 @@
           </div>
           <div class="thought-step">
             <span class="check" style="color:var(--warm);">!</span>
-            <span>Interacțiuni cu medicamente</span>
+            <span>Interactiuni cu medicamente</span>
           </div>
           <div class="thought-step">
             <span class="check" style="color:var(--warm);">!</span>
-            <span>Condiții acute (durere bruscă, amețeli)</span>
+            <span>Conditii acute (durere brusca, ameteli)</span>
           </div>
         </div>
 
@@ -2314,7 +2314,7 @@
           <div class="section-title">REGULA <span class="count">∅</span></div>
           <div class="conclusion">
             <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:18px; color:var(--ink); line-height:1.4;">
-              "Dacă doare diferit decât te-ai așteptat — oprește. Întreabă coach-ul. Dacă persistă — întreabă medicul."
+              "Daca doare diferit decat te-ai asteptat — opreste. Intreaba coach-ul. Daca persista — intreaba medicul."
             </div>
           </div>
         </div>
@@ -2323,7 +2323,7 @@
           <div class="list-row">
             <div class="list-icon warm">⚠</div>
             <div class="list-text">
-              <div class="list-title">Durere ascuțită / bruscă</div>
+              <div class="list-title">Durere ascutita / brusca</div>
               <div class="list-sub">Stop imediat, nu treci peste</div>
             </div>
           </div>
@@ -2331,19 +2331,19 @@
             <div class="list-icon calm">♡</div>
             <div class="list-text">
               <div class="list-title">Disconfort articular</div>
-              <div class="list-sub">Reducem amplitudine + sarcină</div>
+              <div class="list-sub">Reducem amplitudine + sarcina</div>
             </div>
           </div>
           <div class="list-row">
             <div class="list-icon">↺</div>
             <div class="list-text">
-              <div class="list-title">Oboseală extremă neașteptată</div>
-              <div class="list-sub">Posibil deficit somn / stres / boală</div>
+              <div class="list-title">Oboseala extrema neasteptata</div>
+              <div class="list-sub">Posibil deficit somn / stres / boala</div>
             </div>
           </div>
         </div>
 
-        <button class="btn-primary mt-m" onclick="back()">Am înțeles</button>
+        <button class="btn-primary mt-m" onclick="back()">Am inteles</button>
       </div>
     </div>
 
@@ -2351,8 +2351,8 @@
     <div class="screen" id="screen-home">
       <div class="scroll">
         <div class="hero-eyebrow">Joi · 8 mai · 09:24</div>
-        <div class="greeting">Bună, <span class="name">Andrei</span></div>
-        <div class="hero-sub">Sesiunea 87 — am gândit-o pentru tine</div>
+        <div class="greeting">Buna, <span class="name">Andrei</span></div>
+        <div class="hero-sub">Sesiunea 87 — am gandit-o pentru tine</div>
 
         <div class="thinking-card">
           <div class="think-head">
@@ -2361,50 +2361,50 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Răspunzi <span class="data">+8%</span> mai bine la volum decât profilul tipic 28M</span>
+            <span>Raspunzi <span class="data">+8%</span> mai bine la volum decat profilul tipic 28M</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>HRV <span class="data">52ms</span> — recuperat din ședința de marți</span>
+            <span>HRV <span class="data">52ms</span> — recuperat din sedinta de marti</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Somn <span class="data">7h22</span>, eficiență <span class="data">88%</span></span>
+            <span>Somn <span class="data">7h22</span>, eficienta <span class="data">88%</span></span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Volum săpt deja <span class="data">14/16 sets</span> piept</span>
+            <span>Volum sapt deja <span class="data">14/16 sets</span> piept</span>
           </div>
           <div class="thought-step">
             <span class="pending">◐</span>
-            <span>Compun sesiunea care fructifică fereastra de azi</span>
+            <span>Compun sesiunea care fructifica fereastra de azi</span>
           </div>
         </div>
 
         <div class="conclusion">
           <div class="conclusion-head">
             <div class="conclusion-title">Upper · Hipertrofie</div>
-            <div class="conclusion-tag">87% încredere</div>
+            <div class="conclusion-tag">87% incredere</div>
           </div>
           <div class="confidence-bar">
             <div class="confidence-fill" style="width:87%;"></div>
           </div>
           <div class="meta-row">
-            <span class="key">Durată</span>
+            <span class="key">Durata</span>
             <span class="val">52</span>
             <span class="unit">min</span>
           </div>
           <div class="meta-row">
             <span class="key">Volum</span>
             <span class="val">VI</span>
-            <span class="unit">exerciții</span>
+            <span class="unit">exercitii</span>
           </div>
           <div class="meta-row">
-            <span class="key">Țintă RPE</span>
+            <span class="key">Tinta RPE</span>
             <span class="val">7.5</span>
             <span class="unit">/10</span>
           </div>
-          <button class="btn-primary mt-m" onclick="goto('sala')">Începe sesiunea →</button>
+          <button class="btn-primary mt-m" onclick="goto('sala')">Incepe sesiunea →</button>
         </div>
 
         <div class="section">
@@ -2414,7 +2414,7 @@
               <div class="signal-icon signal">♡</div>
               <div class="signal-text">
                 <div class="signal-strong">HRV recuperat</div>
-                <div class="signal-meta">52ms · de la 47ms marți</div>
+                <div class="signal-meta">52ms · de la 47ms marti</div>
               </div>
               <div class="signal-delta delta-up">+10.6%</div>
             </div>
@@ -2422,7 +2422,7 @@
               <div class="signal-icon">↻</div>
               <div class="signal-text">
                 <div class="signal-strong">Streak 12 zile</div>
-                <div class="signal-meta">Cea mai lungă secvență 2026</div>
+                <div class="signal-meta">Cea mai lunga secventa 2026</div>
               </div>
               <div class="signal-delta delta-up">↑</div>
             </div>
@@ -2430,14 +2430,14 @@
               <div class="signal-icon calm">☾</div>
               <div class="signal-text">
                 <div class="signal-strong">Somn 72/100</div>
-                <div class="signal-meta">7h22 · profundă 1h45</div>
+                <div class="signal-meta">7h22 · profunda 1h45</div>
               </div>
               <div class="signal-delta delta-neutral">≈</div>
             </div>
             <div class="signal-row">
               <div class="signal-icon signal">★</div>
               <div class="signal-text">
-                <div class="signal-strong">PR bench saptămâna asta</div>
+                <div class="signal-strong">PR bench saptamana asta</div>
                 <div class="signal-meta">82.5kg × 8 reps · 2 mai</div>
               </div>
               <div class="signal-delta delta-up">PR</div>
@@ -2454,13 +2454,13 @@
         </div>
 
         <div class="section">
-          <div class="section-title">PROIECȚIE <span class="count">VII zile</span></div>
+          <div class="section-title">PROIECTIE <span class="count">VII zile</span></div>
           <div class="forecast">
             <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
-              <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;color:var(--ink);">Vârf de formă</div>
+              <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;color:var(--ink);">Varf de forma</div>
               <div class="signal-delta delta-up" style="font-size:13px;">94/100</div>
             </div>
-            <div class="hero-sub" style="margin:0;">Joi viitoare — fereastră optimă pentru testarea unui PR</div>
+            <div class="hero-sub" style="margin:0;">Joi viitoare — fereastra optima pentru testarea unui PR</div>
             <svg class="spark" viewBox="0 0 280 60" preserveAspectRatio="none">
               <path class="spark-area" d="M0,40 L40,38 L80,32 L120,30 L120,30 L160,22 L200,14 L240,10 L280,8 L280,60 L0,60 Z"/>
               <path class="spark-past" d="M0,40 L40,38 L80,32 L120,30"/>
@@ -2479,15 +2479,15 @@
 
         <div class="footnote">
           <span class="footnote-tag">Filosofie</span>
-          Coach-ul tău nu te împinge la maxim azi. Te calibrează spre vârf joia viitoare.
+          Coach-ul tau nu te impinge la maxim azi. Te calibreaza spre varf joia viitoare.
         </div>
 
-        <!-- Nutriție per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10 (REVERSAL OUT_OF_SCOPE 2026-04-30 — RE-IN-SCOPE V1 cu auto-fill rule + MFP CSV import generic wording legal cover) -->
-        <div class="section-title mt-m">NUTRIȚIE · AZI</div>
+        <!-- Nutritie per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10 (REVERSAL OUT_OF_SCOPE 2026-04-30 — RE-IN-SCOPE V1 cu auto-fill rule + MFP CSV import generic wording legal cover) -->
+        <div class="section-title mt-m">NUTRITIE · AZI</div>
         <div class="thinking-card">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Engine calculează auto · loghezi opțional</span>
+            <span class="think-label">Engine calculeaza auto · loghezi optional</span>
           </div>
           <div style="display:flex; gap:12px; margin-top:14px;">
             <div style="flex:1;">
@@ -2499,12 +2499,12 @@
               <input type="number" min="0" max="500" placeholder="180 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid var(--ink-3); background:transparent; color:var(--ink); font-family:inherit; font-size:16px; text-align:center;"/>
             </div>
           </div>
-          <button class="btn-primary mt-m" style="width:100%;">Salvează ziua</button>
-          <button class="btn-primary mt-s" style="width:100%; background:transparent; border:1px solid var(--ink-3);">Importă nutriție CSV</button>
+          <button class="btn-primary mt-m" style="width:100%;">Salveaza ziua</button>
+          <button class="btn-primary mt-s" style="width:100%; background:transparent; border:1px solid var(--ink-3);">Importa nutritie CSV</button>
         </div>
         <div class="footnote">
           <span class="footnote-tag">Compatibilitate</span>
-          Compatibil cu majoritatea aplicațiilor de tracking nutriție (export CSV). Auto target din engine dacă nu loghezi manual — engine calibrează din date reale.
+          Compatibil cu majoritatea aplicatiilor de tracking nutritie (export CSV). Auto target din engine daca nu loghezi manual — engine calibreaza din date reale.
         </div>
       </div>
     </div>
@@ -2518,17 +2518,17 @@
       </div>
       <div class="scroll-tight">
 
-        <!-- 1. Coach card — programul săptămânii -->
+        <!-- 1. Coach card — programul saptamanii -->
         <div class="workout-card active" style="margin-bottom:18px;">
-          <div class="hero-eyebrow" style="margin-bottom:6px;">PROGRAMUL SĂPTĂMÂNII</div>
-          <div class="ex-name" style="font-size:20px; margin-bottom:4px;">Tonifiere · Săpt. 3</div>
+          <div class="hero-eyebrow" style="margin-bottom:6px;">PROGRAMUL SAPTAMANII</div>
+          <div class="ex-name" style="font-size:20px; margin-bottom:4px;">Tonifiere · Sapt. 3</div>
           <div class="ex-meta" style="margin-bottom:12px;">Ziua 3/4 · Push (piept &amp; umeri)</div>
           <div class="chip-row" style="margin-bottom:14px;">
             <span class="chip">≈ 52 min</span>
-            <span class="chip">5 exerciții</span>
-            <span class="chip purple">RPE țintă 7.5</span>
+            <span class="chip">5 exercitii</span>
+            <span class="chip purple">RPE tinta 7.5</span>
           </div>
-          <button class="btn-primary" onclick="goto('energy-check')" style="width:100%;">Începe sesiunea →</button>
+          <button class="btn-primary" onclick="goto('energy-check')" style="width:100%;">Incepe sesiunea →</button>
         </div>
 
         <!-- 2. Acces rapid: Energy / Pain / Equipment -->
@@ -2537,13 +2537,13 @@
           <div class="row-list">
             <div class="list-row" onclick="goto('energy-check')">
               <div class="list-icon">⚡</div>
-              <div><div class="ex-name">Cum te simți astăzi</div><div class="ex-meta">3 stări simple</div></div>
+              <div><div class="ex-name">Cum te simti astazi</div><div class="ex-meta">3 stari simple</div></div>
               <div class="ex-meta">drill ›</div>
             </div>
-            <!-- 1 buton "Ceva nu merge" merged Pain+Equipment per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (SUPERSEDE ADR 023 split — drill secundar 4 opțiuni preset) -->
+            <!-- 1 buton "Ceva nu merge" merged Pain+Equipment per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (SUPERSEDE ADR 023 split — drill secundar 4 optiuni preset) -->
             <div class="list-row" onclick="goto('ceva-nu-merge')">
               <div class="list-icon">⚠</div>
-              <div><div class="ex-name">Ceva nu merge</div><div class="ex-meta">siguranța sau alternativă</div></div>
+              <div><div class="ex-name">Ceva nu merge</div><div class="ex-meta">siguranta sau alternativa</div></div>
               <div class="ex-meta">drill ›</div>
             </div>
             <div class="list-row" onclick="goto('post-rpe')">
@@ -2560,17 +2560,17 @@
           <div class="row-list">
             <div class="list-row">
               <div class="list-icon">💪</div>
-              <div><div class="ex-name">Forță</div><div class="ex-meta">Greutăți mari, repetări puține</div></div>
+              <div><div class="ex-name">Forta</div><div class="ex-meta">Greutati mari, repetari putine</div></div>
               <div class="ex-meta">›</div>
             </div>
             <div class="list-row" style="background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02));">
               <div class="list-icon" style="background: rgba(139,109,255,0.22); color: var(--think);">✓</div>
-              <div><div class="ex-name">Tonifiere · activ</div><div class="ex-meta">Definire musculară</div></div>
+              <div><div class="ex-name">Tonifiere · activ</div><div class="ex-meta">Definire musculara</div></div>
               <div class="ex-meta" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em;">ALES</div>
             </div>
             <div class="list-row">
               <div class="list-icon">⬇</div>
-              <div><div class="ex-name">Slăbire</div><div class="ex-meta">Deficit caloric structurat</div></div>
+              <div><div class="ex-name">Slabire</div><div class="ex-meta">Deficit caloric structurat</div></div>
               <div class="ex-meta">›</div>
             </div>
             <div class="list-row">
@@ -2580,24 +2580,24 @@
             </div>
             <div class="list-row">
               <div class="list-icon">⚡</div>
-              <div><div class="ex-name">Sănătate generală</div><div class="ex-meta">Echilibru complet</div></div>
+              <div><div class="ex-name">Sanatate generala</div><div class="ex-meta">Echilibru complet</div></div>
               <div class="ex-meta">›</div>
             </div>
           </div>
         </div>
 
-        <!-- 4. Bibliotecă exerciții (drill 2°) -->
+        <!-- 4. Biblioteca exercitii (drill 2°) -->
         <div class="section">
           <div class="section-title">RESURSE</div>
           <div class="row-list">
             <div class="list-row">
               <div class="list-icon">📚</div>
-              <div><div class="ex-name">Bibliotecă exerciții</div><div class="ex-meta">filtre + tutoriale</div></div>
+              <div><div class="ex-name">Biblioteca exercitii</div><div class="ex-meta">filtre + tutoriale</div></div>
               <div class="ex-meta">›</div>
             </div>
             <div class="list-row" onclick="goto('coach-philosophy')">
               <div class="list-icon">🧠</div>
-              <div><div class="ex-name">Filosofia coach-ului</div><div class="ex-meta">cum gândește Andrei</div></div>
+              <div><div class="ex-name">Filosofia coach-ului</div><div class="ex-meta">cum gandeste Andrei</div></div>
               <div class="ex-meta">›</div>
             </div>
           </div>
@@ -2610,16 +2610,16 @@
     <div class="screen" id="screen-sala">
       <div class="scroll">
         <div class="hero-eyebrow">Sesiunea 87 · Upper</div>
-        <div class="greeting" style="font-size:30px;">Hipertrofie <span class="name">moderată</span></div>
+        <div class="greeting" style="font-size:30px;">Hipertrofie <span class="name">moderata</span></div>
         <div class="chip-row" style="margin-top:14px;">
-          <span class="chip purple">RPE țintă 7.5</span>
-          <span class="chip">VI exerciții</span>
+          <span class="chip purple">RPE tinta 7.5</span>
+          <span class="chip">VI exercitii</span>
           <span class="chip">≈52 min</span>
-          <span class="chip success">87% încredere</span>
+          <span class="chip success">87% incredere</span>
         </div>
 
         <div class="section">
-          <div class="section-title">PLAN <span class="count">VI exerciții</span></div>
+          <div class="section-title">PLAN <span class="count">VI exercitii</span></div>
           <div class="workout-card active">
             <div class="workout-head">
               <div class="ex-name">Bench Press</div>
@@ -2671,15 +2671,15 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Compus mare prima oară când SNC e proaspăt</span>
+            <span>Compus mare prima oara cand SNC e proaspat</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Antagonist după agonist — recuperare locală</span>
+            <span>Antagonist dupa agonist — recuperare locala</span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('workout')">Începe → Bench Press</button>
+        <button class="btn-primary" onclick="goto('workout')">Incepe → Bench Press</button>
       </div>
     </div>
 
@@ -2726,15 +2726,15 @@
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Observ în timp real</span>
+            <span class="think-label">Observ in timp real</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Set II RPE 7.5 vs țintă 7 — încă bun</span>
+            <span>Set II RPE 7.5 vs tinta 7 — inca bun</span>
           </div>
           <div class="thought-step">
             <span class="pending">◐</span>
-            <span>Dacă set III ≥ 8 → tai set IV automat</span>
+            <span>Daca set III ≥ 8 → tai set IV automat</span>
           </div>
         </div>
 
@@ -2754,7 +2754,7 @@
       </div>
       <div class="scroll-tight">
         <div class="gauge-card">
-          <div class="gauge-label">RPE percepută</div>
+          <div class="gauge-label">RPE perceputa</div>
           <div class="gauge-val">8</div>
           <div class="gauge-track">
             <div class="gauge-fill" style="width:80%;"></div>
@@ -2767,7 +2767,7 @@
 
         <div class="chip-row">
           <span class="chip warm">8 = greu, dar finalizabil</span>
-          <span class="chip purple">II reps în rezervă</span>
+          <span class="chip purple">II reps in rezerva</span>
         </div>
 
         <div class="thinking-card">
@@ -2777,19 +2777,19 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Răspuns peste țintă — set IV se taie</span>
+            <span>Raspuns peste tinta — set IV se taie</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Săpt viitoare propun <span class="data">85kg × 8</span></span>
+            <span>Sapt viitoare propun <span class="data">85kg × 8</span></span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recalibrez pragul tău <span class="data">+1.2%</span></span>
+            <span>Recalibrez pragul tau <span class="data">+1.2%</span></span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('sala')">Următorul exercițiu →</button>
+        <button class="btn-primary" onclick="goto('sala')">Urmatorul exercitiu →</button>
       </div>
     </div>
 
@@ -2797,11 +2797,11 @@
     <div class="screen" id="screen-energy-check">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Cum te simți?</div>
+        <div class="head-title">Cum te simti?</div>
         <div class="head-tag">Pre-sesiune</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:18px;">Engine-ul ajustează intensitatea pe baza energiei tale. <b>3 stări simple.</b></div>
+        <div class="hero-sub" style="margin-bottom:18px;">Engine-ul ajusteaza intensitatea pe baza energiei tale. <b>3 stari simple.</b></div>
 
         <div style="display:flex; flex-direction:column; gap:12px;">
           <button class="btn-secondary" onclick="goto('sala')" style="height:auto; padding:18px 20px; justify-content:flex-start; gap:14px; text-align:left;">
@@ -2834,10 +2834,10 @@
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
         <div class="head-title">Ce a contribuit?</div>
-        <div class="head-tag">Diag · cauză</div>
+        <div class="head-tag">Diag · cauza</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Bifează tot ce simți. Mă ajută să gândesc adaptarea bună, nu cea generică.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Bifeaza tot ce simti. Ma ajuta sa gandesc adaptarea buna, nu cea generica.</div>
 
         <div class="check-list">
           <div class="check-item checked">
@@ -2851,21 +2851,21 @@
             <div class="check-box">✓</div>
             <div>
               <div class="check-label">Stres ridicat azi</div>
-              <div class="check-sub">Muncă, conflict, deadline</div>
+              <div class="check-sub">Munca, conflict, deadline</div>
             </div>
           </div>
           <div class="check-item">
             <div class="check-box"></div>
             <div>
-              <div class="check-label">Mâncare insuficientă</div>
-              <div class="check-sub">Sub mentenanță sau intermitent</div>
+              <div class="check-label">Mancare insuficienta</div>
+              <div class="check-sub">Sub mentenanta sau intermitent</div>
             </div>
           </div>
           <div class="check-item">
             <div class="check-box"></div>
             <div>
-              <div class="check-label">Boală sau simptome</div>
-              <div class="check-sub">Răceală, alergii, durere de cap</div>
+              <div class="check-label">Boala sau simptome</div>
+              <div class="check-sub">Raceala, alergii, durere de cap</div>
             </div>
           </div>
           <div class="check-item">
@@ -2878,8 +2878,8 @@
           <div class="check-item">
             <div class="check-box"></div>
             <div>
-              <div class="check-label">Nu știu / nu pot identifica</div>
-              <div class="check-sub">Doar simt așa</div>
+              <div class="check-label">Nu stiu / nu pot identifica</div>
+              <div class="check-sub">Doar simt asa</div>
             </div>
           </div>
         </div>
@@ -2887,24 +2887,24 @@
         <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Combinație cortizol</span>
+            <span class="think-label">Combinatie cortizol</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Somn slab + stres = răspuns hormonal supresat</span>
+            <span>Somn slab + stres = raspuns hormonal supresat</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recomand <span class="data">-25% volum</span>, intensitate ușoară</span>
+            <span>Recomand <span class="data">-25% volum</span>, intensitate usoara</span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('sala')">Adaptează sesiunea →</button>
+        <button class="btn-primary" onclick="goto('sala')">Adapteaza sesiunea →</button>
       </div>
     </div>
 
 
-    <!-- ═══ XVI-PRE · CEVA NU MERGE drill unified (Pain+Equipment merged per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 SUPERSEDE ADR 023 split — 4 opțiuni preset fan-out la flow-uri existing) ═══ -->
+    <!-- ═══ XVI-PRE · CEVA NU MERGE drill unified (Pain+Equipment merged per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 SUPERSEDE ADR 023 split — 4 optiuni preset fan-out la flow-uri existing) ═══ -->
     <div class="screen" id="screen-ceva-nu-merge">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
@@ -2912,33 +2912,33 @@
         <div class="head-tag">drill</div>
       </div>
       <div class="scroll-tight">
-        <div class="onb-sub">Alege opțiunea care se potrivește. Coach-ul ajustează imediat.</div>
+        <div class="onb-sub">Alege optiunea care se potriveste. Coach-ul ajusteaza imediat.</div>
         <div class="check-list">
           <div class="check-item" onclick="goto('pain-button')">
             <div class="check-box">⚠</div>
             <div>
-              <div class="check-label">Mă doare</div>
-              <div class="check-sub">Durere acută, articulară sau musculară</div>
+              <div class="check-label">Ma doare</div>
+              <div class="check-sub">Durere acuta, articulara sau musculara</div>
             </div>
           </div>
           <div class="check-item" onclick="goto('equipment-swap')">
             <div class="check-box">⇄</div>
             <div>
               <div class="check-label">Nu am aparat</div>
-              <div class="check-sub">Aparat ocupat sau lipsă — propunem alternative</div>
+              <div class="check-sub">Aparat ocupat sau lipsa — propunem alternative</div>
             </div>
           </div>
           <div class="check-item" onclick="goto('pain-button')">
             <div class="check-box">✎</div>
             <div>
               <div class="check-label">Altceva</div>
-              <div class="check-sub">Descrii liber — coach-ul interpretează</div>
+              <div class="check-sub">Descrii liber — coach-ul interpreteaza</div>
             </div>
           </div>
           <div class="check-item" onclick="back()">
             <div class="check-box">×</div>
             <div>
-              <div class="check-label">Anulează</div>
+              <div class="check-label">Anuleaza</div>
             </div>
           </div>
         </div>
@@ -2953,29 +2953,29 @@
         <div class="head-tag">⚠ priority</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:8px;">Atinge zona. Lock instant pe tot ce încarcă acolo.</div>
+        <div class="hero-sub" style="margin-bottom:8px;">Atinge zona. Lock instant pe tot ce incarca acolo.</div>
 
         <svg class="body-svg" viewBox="0 0 100 160">
           <!-- Cap -->
           <ellipse class="body-zone" cx="50" cy="14" rx="9" ry="11"/>
-          <!-- Gât + trunchi superior -->
+          <!-- Gat + trunchi superior -->
           <rect class="body-zone" x="44" y="24" width="12" height="6" rx="2"/>
           <!-- Umeri -->
           <ellipse class="body-zone" cx="32" cy="34" rx="9" ry="6"/>
           <ellipse class="body-zone" cx="68" cy="34" rx="9" ry="6"/>
           <!-- Piept -->
           <rect class="body-zone" x="38" y="32" width="24" height="20" rx="5"/>
-          <!-- Brațe -->
+          <!-- Brate -->
           <rect class="body-zone" x="22" y="40" width="9" height="28" rx="4"/>
           <rect class="body-zone" x="69" y="40" width="9" height="28" rx="4"/>
-          <!-- Antebrațe -->
+          <!-- Antebrate -->
           <rect class="body-zone" x="20" y="68" width="8" height="22" rx="4"/>
           <rect class="body-zone" x="72" y="68" width="8" height="22" rx="4"/>
           <!-- Abdomen -->
           <rect class="body-zone" x="40" y="52" width="20" height="22" rx="4"/>
           <!-- Bazin -->
           <rect class="body-zone" x="38" y="74" width="24" height="10" rx="4"/>
-          <!-- Cvadriceps stâng -->
+          <!-- Cvadriceps stang -->
           <rect class="body-zone" x="40" y="84" width="9" height="32" rx="4"/>
           <!-- Cvadriceps drept SELECTED -->
           <rect class="body-zone selected" x="51" y="84" width="9" height="32" rx="4"/>
@@ -3002,21 +3002,21 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Lock <span class="data">12 exerciții</span> care încarcă cvadriceps + flexie genunchi</span>
+            <span>Lock <span class="data">12 exercitii</span> care incarca cvadriceps + flexie genunchi</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Swap squat → leg press <span class="data">70°</span> sarcină ușoară</span>
+            <span>Swap squat → leg press <span class="data">70°</span> sarcina usoara</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Adaug mobility ham + cvadriceps în warm-up</span>
+            <span>Adaug mobility ham + cvadriceps in warm-up</span>
           </div>
         </div>
 
         <div class="row" style="margin-top:14px;">
-          <button class="btn-secondary grow" onclick="back()">Anulează</button>
-          <button class="btn-primary grow" onclick="back()">Aplică →</button>
+          <button class="btn-secondary grow" onclick="back()">Anuleaza</button>
+          <button class="btn-primary grow" onclick="back()">Aplica →</button>
         </div>
       </div>
     </div>
@@ -3025,7 +3025,7 @@
     <div class="screen" id="screen-equipment-swap">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Schimbă exercițiul</div>
+        <div class="head-title">Schimba exercitiul</div>
         <div class="head-tag">Bench → ?</div>
       </div>
       <div class="scroll-tight">
@@ -3048,7 +3048,7 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Echipament disponibil + zone fără durere</span>
+            <span>Echipament disponibil + zone fara durere</span>
           </div>
         </div>
 
@@ -3063,7 +3063,7 @@
           </div>
           <div class="workout-card">
             <div class="workout-head">
-              <div class="ex-name">Cable Press înclinat</div>
+              <div class="ex-name">Cable Press inclinat</div>
               <div class="ex-meta">82% match</div>
             </div>
             <div class="ex-prescription">III × 12 @ 50kg · RPE 7</div>
@@ -3077,8 +3077,8 @@
           </div>
         </div>
 
-        <button class="btn-primary mb-s" onclick="back()">Aplică Dumbbell →</button>
-        <button class="btn-ghost" onclick="back()">Sari peste exercițiu</button>
+        <button class="btn-primary mb-s" onclick="back()">Aplica Dumbbell →</button>
+        <button class="btn-ghost" onclick="back()">Sari peste exercitiu</button>
       </div>
     </div>
 
@@ -3087,7 +3087,7 @@
       <div class="scroll">
         <div class="hero-eyebrow">Mai · 2026</div>
         <div class="greeting" style="font-size:30px;"><span class="name">12</span> sesiuni</div>
-        <div class="hero-sub">Streak 12 zile · cea mai bună secvență 2026</div>
+        <div class="hero-sub">Streak 12 zile · cea mai buna secventa 2026</div>
 
         <div class="thinking-card compact" style="margin-top:12px;">
           <div class="think-head">
@@ -3096,11 +3096,11 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Răspunzi mai bine la <span class="data">U/L split</span> decât la PPL</span>
+            <span>Raspunzi mai bine la <span class="data">U/L split</span> decat la PPL</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Volumul tău săpt optim <span class="data">14-16 sets</span> grup mare</span>
+            <span>Volumul tau sapt optim <span class="data">14-16 sets</span> grup mare</span>
           </div>
         </div>
 
@@ -3110,7 +3110,7 @@
             <div class="list-row">
               <div class="list-icon signal">★</div>
               <div class="list-text">
-                <div class="list-title">Marți 6 mai · Lower forță</div>
+                <div class="list-title">Marti 6 mai · Lower forta</div>
                 <div class="list-sub">PR squat 105kg × 5 · RPE 8.5</div>
               </div>
               <div class="list-chevron">›</div>
@@ -3118,7 +3118,7 @@
             <div class="list-row">
               <div class="list-icon">↻</div>
               <div class="list-text">
-                <div class="list-title">Duminică 4 mai · Upper hipertrofie</div>
+                <div class="list-title">Duminica 4 mai · Upper hipertrofie</div>
                 <div class="list-sub">VI ex · 48 min · RPE 7.2</div>
               </div>
               <div class="list-chevron">›</div>
@@ -3148,7 +3148,7 @@
             <div class="list-row" onclick="goto('weight-timeline')">
               <div class="list-icon">⚖</div>
               <div class="list-text">
-                <div class="list-title">Greutate & compoziție</div>
+                <div class="list-title">Greutate & compozitie</div>
                 <div class="list-sub">82.4kg · BF 16.2% · ↓ 1.8kg / 30z</div>
               </div>
               <div class="list-chevron">›</div>
@@ -3185,12 +3185,12 @@
             <span class="unit">%</span>
           </div>
           <div class="meta-row">
-            <span class="key">Masă slabă</span>
+            <span class="key">Masa slaba</span>
             <span class="val">69.0</span>
             <span class="unit">kg</span>
           </div>
           <div class="meta-row">
-            <span class="key">Țintă vârf</span>
+            <span class="key">Tinta varf</span>
             <span class="val">81.0</span>
             <span class="unit">kg</span>
           </div>
@@ -3221,15 +3221,15 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Pierdere <span class="data">0.45kg/săpt</span> — sustenabil</span>
+            <span>Pierdere <span class="data">0.45kg/sapt</span> — sustenabil</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Masă slabă păstrată <span class="data">+0.2kg</span> — cut sănătos</span>
+            <span>Masa slaba pastrata <span class="data">+0.2kg</span> — cut sanatos</span>
           </div>
         </div>
 
-        <button class="btn-secondary">+ Adaugă măsurătoare nouă</button>
+        <button class="btn-secondary">+ Adauga masuratoare noua</button>
       </div>
     </div>
 
@@ -3238,13 +3238,13 @@
       <div class="scroll">
         <div class="hero-eyebrow">Progres · 2026</div>
         <div class="greeting" style="font-size:30px;"><span class="name">+12.4%</span> volum</div>
-        <div class="hero-sub">Ultimele 12 săpt · trend ascendent stabil</div>
+        <div class="hero-sub">Ultimele 12 sapt · trend ascendent stabil</div>
 
         <div class="chart-card" style="margin-top:14px;">
           <div class="chart-tabs">
             <button class="chart-tab">Volum</button>
-            <button class="chart-tab active">Forță</button>
-            <button class="chart-tab">Compoziție</button>
+            <button class="chart-tab active">Forta</button>
+            <button class="chart-tab">Compozitie</button>
             <button class="chart-tab">RPE</button>
           </div>
           <svg class="chart-svg" viewBox="0 0 280 130" preserveAspectRatio="none">
@@ -3303,57 +3303,57 @@
 
         <div class="footnote">
           <span class="footnote-tag">Insight model</span>
-          Forța crește mai repede pe upper push (bench +6.4%) decât pe pull (rows +3.1%). Rebalansăm volum în săpt 13.
+          Forta creste mai repede pe upper push (bench +6.4%) decat pe pull (rows +3.1%). Rebalansam volum in sapt 13.
         </div>
       </div>
     </div>
 
-    <!-- ═══ XXI · COACH (overview adaptări) ═══ -->
+    <!-- ═══ XXI · COACH (overview adaptari) ═══ -->
     <div class="screen" id="screen-coach">
       <div class="scroll">
-        <div class="hero-eyebrow">Coach · adaptări active</div>
-        <div class="greeting" style="font-size:30px;">Te-am învățat <span class="name">47</span> lucruri</div>
-        <div class="hero-sub">Modelul tău e calibrat acum la 87% încredere</div>
+        <div class="hero-eyebrow">Coach · adaptari active</div>
+        <div class="greeting" style="font-size:30px;">Te-am invatat <span class="name">47</span> lucruri</div>
+        <div class="hero-sub">Modelul tau e calibrat acum la 87% incredere</div>
 
         <div class="thinking-card" style="margin-top:14px;">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Adaptări recente</span>
+            <span class="think-label">Adaptari recente</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Pragul tău RPE pentru hipertrofie = <span class="data">7.2-7.8</span></span>
+            <span>Pragul tau RPE pentru hipertrofie = <span class="data">7.2-7.8</span></span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Răspuns optim pe <span class="data">4×8</span>, nu 3×10</span>
+            <span>Raspuns optim pe <span class="data">4×8</span>, nu 3×10</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recuperarea ta reală = <span class="data">42h</span> nu 48h</span>
+            <span>Recuperarea ta reala = <span class="data">42h</span> nu 48h</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Performezi <span class="data">+11%</span> la sesiuni înainte de 11:00</span>
+            <span>Performezi <span class="data">+11%</span> la sesiuni inainte de 11:00</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Genunchi drept = lock 12 exerciții</span>
+            <span>Genunchi drept = lock 12 exercitii</span>
           </div>
         </div>
 
         <div class="section">
-          <div class="section-title">FAZĂ <span class="count">curentă</span></div>
+          <div class="section-title">FAZA <span class="count">curenta</span></div>
           <div class="conclusion">
             <div class="conclusion-head">
-              <div class="conclusion-title">Hipertrofie moderată</div>
-              <div class="conclusion-tag">săpt 7/12</div>
+              <div class="conclusion-title">Hipertrofie moderata</div>
+              <div class="conclusion-tag">sapt 7/12</div>
             </div>
             <div class="confidence-bar">
               <div class="confidence-fill" style="width:58%;"></div>
             </div>
             <div class="meta-row">
-              <span class="key">Volum săpt</span>
+              <span class="key">Volum sapt</span>
               <span class="val">14-16</span>
               <span class="unit">sets</span>
             </div>
@@ -3363,9 +3363,9 @@
               <span class="unit">% 1RM</span>
             </div>
             <div class="meta-row">
-              <span class="key">Următor</span>
+              <span class="key">Urmator</span>
               <span class="val">deload</span>
-              <span class="unit">săpt 8</span>
+              <span class="unit">sapt 8</span>
             </div>
           </div>
         </div>
@@ -3375,23 +3375,23 @@
             <div class="list-icon">∞</div>
             <div class="list-text">
               <div class="list-title">Filosofia coach-ului</div>
-              <div class="list-sub">De ce te tratez așa</div>
+              <div class="list-sub">De ce te tratez asa</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('confirm-reset-coach')">
             <div class="list-icon warm">↻</div>
             <div class="list-text">
-              <div class="list-title">Resetează adaptările</div>
-              <div class="list-sub">Începe de la zero</div>
+              <div class="list-title">Reseteaza adaptarile</div>
+              <div class="list-sub">Incepe de la zero</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('confirm-schimba-faza')">
             <div class="list-icon calm">⇄</div>
             <div class="list-text">
-              <div class="list-title">Schimbă faza</div>
-              <div class="list-sub">Forță · slăbire · longevitate</div>
+              <div class="list-title">Schimba faza</div>
+              <div class="list-sub">Forta · slabire · longevitate</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -3409,18 +3409,18 @@
       <div class="scroll-tight">
         <div style="text-align:center; padding:14px 0 22px;">
           <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:28px;color:var(--ink);line-height:1.3;background:linear-gradient(135deg,var(--think),var(--calm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-            "Nu te împing la maxim azi.<br/>Te calibrez spre vârf joia viitoare."
+            "Nu te imping la maxim azi.<br/>Te calibrez spre varf joia viitoare."
           </div>
         </div>
 
         <div class="thinking-card">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Cum gândesc</span>
+            <span class="think-label">Cum gandesc</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Bug la 02:00 vs <span class="data">V commits</span> grăbite — aleg primul</span>
+            <span>Bug la 02:00 vs <span class="data">V commits</span> grabite — aleg primul</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -3428,11 +3428,11 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recuperarea = parte a antrenamentului, nu pauză</span>
+            <span>Recuperarea = parte a antrenamentului, nu pauza</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Modelul tău > model mediu populațional</span>
+            <span>Modelul tau > model mediu populational</span>
           </div>
         </div>
 
@@ -3449,22 +3449,22 @@
             <div class="list-row">
               <div class="list-icon">II</div>
               <div class="list-text">
-                <div class="list-title">Date &gt; Intuiție populațională</div>
-                <div class="list-sub">Învăț cum răspunzi tu, nu ce zice studiul mediu</div>
+                <div class="list-title">Date &gt; Intuitie populationala</div>
+                <div class="list-sub">Invat cum raspunzi tu, nu ce zice studiul mediu</div>
               </div>
             </div>
             <div class="list-row">
               <div class="list-icon">III</div>
               <div class="list-text">
                 <div class="list-title">Ascult corpul, nu calendarul</div>
-                <div class="list-sub">HRV scăzut = adaptez, nu insist</div>
+                <div class="list-sub">HRV scazut = adaptez, nu insist</div>
               </div>
             </div>
             <div class="list-row">
               <div class="list-icon">IV</div>
               <div class="list-text">
-                <div class="list-title">Vârf real &gt; vârf forțat</div>
-                <div class="list-sub">Ne pregătim pentru ziua când contează</div>
+                <div class="list-title">Varf real &gt; varf fortat</div>
+                <div class="list-sub">Ne pregatim pentru ziua cand conteaza</div>
               </div>
             </div>
           </div>
@@ -3472,7 +3472,7 @@
 
         <div class="footnote">
           <span class="footnote-tag">Andura · 2026</span>
-          Modelul tău devine mai bun cu fiecare sesiune. Asta e diferența.
+          Modelul tau devine mai bun cu fiecare sesiune. Asta e diferenta.
         </div>
       </div>
     </div>
@@ -3480,9 +3480,9 @@
     <!-- ═══ XXIII · SETTINGS ROOT (Cont) ═══ -->
     <div class="screen" id="screen-settings">
       <div class="scroll">
-        <div class="hero-eyebrow">Cont · setări</div>
+        <div class="hero-eyebrow">Cont · setari</div>
         <div class="greeting" style="font-size:30px;"><span class="name">Andrei</span> Popescu</div>
-        <div class="hero-sub">Plan Premium · activ până 12 dec 2026</div>
+        <div class="hero-sub">Plan Premium · activ pana 12 dec 2026</div>
 
         <div class="section" style="margin-top:14px;">
           <div class="section-title">PROFIL</div>
@@ -3491,14 +3491,14 @@
               <div class="list-icon">◉</div>
               <div class="list-text">
                 <div class="list-title">Date personale</div>
-                <div class="list-sub">Vârstă, sex, înălțime, greutate</div>
+                <div class="list-sub">Varsta, sex, inaltime, greutate</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
             <div class="list-row" onclick="goto('settings-notifications')">
               <div class="list-icon calm">🔔</div>
               <div class="list-text">
-                <div class="list-title">Notificări</div>
+                <div class="list-title">Notificari</div>
                 <div class="list-sub">Push · email · check-in zilnic</div>
               </div>
               <div class="list-chevron">›</div>
@@ -3507,7 +3507,7 @@
               <div class="list-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">★</div>
               <div class="list-text">
                 <div class="list-title">Abonament</div>
-                <div class="list-sub">Premium · 39 RON/lună</div>
+                <div class="list-sub">Premium · 39 RON/luna</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3515,21 +3515,21 @@
         </div>
 
         <div class="section">
-          <div class="section-title">APARENȚĂ & PREFERINȚE</div>
+          <div class="section-title">APARENTA & PREFERINTE</div>
           <div class="row-list">
             <div class="list-row" onclick="goto('settings-appearance')">
               <div class="list-icon">◐</div>
               <div class="list-text">
                 <div class="list-title">Aspect</div>
-                <div class="list-sub">Temă · contrast · text</div>
+                <div class="list-sub">Tema · contrast · text</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
             <div class="list-row" onclick="goto('settings-prefs')">
               <div class="list-icon neutral">⚙</div>
               <div class="list-text">
-                <div class="list-title">Setări avansate</div>
-                <div class="list-sub">Limbă · unități · format</div>
+                <div class="list-title">Setari avansate</div>
+                <div class="list-sub">Limba · unitati · format</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3542,8 +3542,8 @@
             <div class="list-row" onclick="goto('settings-privacy')">
               <div class="list-icon">🔒</div>
               <div class="list-text">
-                <div class="list-title">Confidențialitate</div>
-                <div class="list-sub">Cum îți folosesc datele</div>
+                <div class="list-title">Confidentialitate</div>
+                <div class="list-sub">Cum iti folosesc datele</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3573,7 +3573,7 @@
               <div class="list-icon neutral">?</div>
               <div class="list-text">
                 <div class="list-title">FAQ</div>
-                <div class="list-sub">Răspunsuri rapide</div>
+                <div class="list-sub">Raspunsuri rapide</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3581,7 +3581,7 @@
               <div class="list-icon neutral">✉</div>
               <div class="list-text">
                 <div class="list-title">Contact suport</div>
-                <div class="list-sub">Răspuns &lt; XXIV ore</div>
+                <div class="list-sub">Raspuns &lt; XXIV ore</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3597,13 +3597,13 @@
         </div>
 
         <div class="section">
-          <div class="section-title danger-text">DECONECTARE/ȘTERGERE</div>
+          <div class="section-title danger-text">DECONECTARE/STERGERE</div>
           <div class="row-list">
             <div class="list-row" onclick="goto('settings-danger')">
               <div class="list-icon danger">⚠</div>
               <div class="list-text">
-                <div class="list-title">Acțiuni ireversibile</div>
-                <div class="list-sub">Logout · ștergere · refacere</div>
+                <div class="list-title">Actiuni ireversibile</div>
+                <div class="list-sub">Logout · stergere · refacere</div>
               </div>
               <div class="list-chevron">›</div>
             </div>
@@ -3624,7 +3624,7 @@
           <div class="list-row">
             <div class="list-icon">A</div>
             <div class="list-text">
-              <div class="list-title">Nume afișat</div>
+              <div class="list-title">Nume afisat</div>
             </div>
             <div class="list-value">Andrei P.</div>
           </div>
@@ -3642,7 +3642,7 @@
           <div class="list-row">
             <div class="list-icon">⌬</div>
             <div class="list-text">
-              <div class="list-title">Vârstă</div>
+              <div class="list-title">Varsta</div>
             </div>
             <div class="list-value">28 ani</div>
           </div>
@@ -3656,7 +3656,7 @@
           <div class="list-row">
             <div class="list-icon">↕</div>
             <div class="list-text">
-              <div class="list-title">Înălțime</div>
+              <div class="list-title">Inaltime</div>
             </div>
             <div class="list-value">182 cm</div>
           </div>
@@ -3669,8 +3669,8 @@
           </div>
         </div>
 
-        <!-- BF auto US Navy + override manual per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (waist+neck+înălțime+sex US Navy method, fallback Demographic Prior K-NN K=10 ADR 017) -->
-        <div class="section-title mt-m">COMPOZIȚIE CORPORALĂ</div>
+        <!-- BF auto US Navy + override manual per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (waist+neck+inaltime+sex US Navy method, fallback Demographic Prior K-NN K=10 ADR 017) -->
+        <div class="section-title mt-m">COMPOZITIE CORPORALA</div>
         <div class="row-list">
           <div class="list-row">
             <div class="list-icon">↔</div>
@@ -3683,7 +3683,7 @@
           <div class="list-row">
             <div class="list-icon">⬡</div>
             <div class="list-text">
-              <div class="list-title">Gât</div>
+              <div class="list-title">Gat</div>
               <div class="list-sub">cm — pentru BF auto US Navy</div>
             </div>
             <input type="number" min="25" max="60" step="0.5" value="38" inputmode="decimal" style="width:80px; padding:6px 10px; text-align:right; border:1px solid var(--ink-3); background:transparent; color:var(--ink); font-family:inherit; font-size:14px;"/>
@@ -3709,23 +3709,23 @@
           </div>
         </div>
         <div class="footnote">
-          Calculat automat (US Navy: talie + gât + înălțime + sex) sau editat manual. Fallback Demographic Prior dacă lipsesc măsurători.
+          Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
         </div>
 
-        <div class="section-title mt-m">CONSTRÂNGERI</div>
+        <div class="section-title mt-m">CONSTRANGERI</div>
         <div class="row-list">
           <div class="list-row">
             <div class="list-icon warm">⚠</div>
             <div class="list-text">
               <div class="list-title">Genunchi sensibil</div>
-              <div class="list-sub">Lock pe 12 exerciții</div>
+              <div class="list-sub">Lock pe 12 exercitii</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('medical-disclaimer')">
             <div class="list-icon neutral">+</div>
             <div class="list-text">
-              <div class="list-title">Adaugă constrângere</div>
+              <div class="list-title">Adauga constrangere</div>
               <div class="list-sub">Vezi disclaimer medical</div>
             </div>
             <div class="list-chevron">›</div>
@@ -3738,19 +3738,19 @@
     <div class="screen" id="screen-settings-notifications">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Notificări</div>
+        <div class="head-title">Notificari</div>
         <div class="head-tag">push & email</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Coach-ul îți trimite doar ce e relevant. Frecvență adaptată ritmului tău, nu spam.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Coach-ul iti trimite doar ce e relevant. Frecventa adaptata ritmului tau, nu spam.</div>
 
         <div class="section-title">PUSH</div>
         <div class="row-list">
           <div class="list-row">
             <div class="list-icon">☀</div>
             <div class="list-text">
-              <div class="list-title">Check-in dimineață</div>
-              <div class="list-sub">07:30 · cum te simți azi</div>
+              <div class="list-title">Check-in dimineata</div>
+              <div class="list-sub">07:30 · cum te simti azi</div>
             </div>
             <div class="list-toggle on"></div>
           </div>
@@ -3758,7 +3758,7 @@
             <div class="list-icon">⏱</div>
             <div class="list-text">
               <div class="list-title">Reminder sesiune</div>
-              <div class="list-sub">XXX min înainte</div>
+              <div class="list-sub">XXX min inainte</div>
             </div>
             <div class="list-toggle on"></div>
           </div>
@@ -3773,8 +3773,8 @@
           <div class="list-row">
             <div class="list-icon calm">~</div>
             <div class="list-text">
-              <div class="list-title">Adaptări coach</div>
-              <div class="list-sub">Când schimb faza sau planul</div>
+              <div class="list-title">Adaptari coach</div>
+              <div class="list-sub">Cand schimb faza sau planul</div>
             </div>
             <div class="list-toggle"></div>
           </div>
@@ -3785,8 +3785,8 @@
           <div class="list-row">
             <div class="list-icon neutral">∑</div>
             <div class="list-text">
-              <div class="list-title">Raport săptămânal</div>
-              <div class="list-sub">Duminică · sumar 12 zile</div>
+              <div class="list-title">Raport saptamanal</div>
+              <div class="list-sub">Duminica · sumar 12 zile</div>
             </div>
             <div class="list-toggle on"></div>
           </div>
@@ -3794,7 +3794,7 @@
             <div class="list-icon neutral">i</div>
             <div class="list-text">
               <div class="list-title">Update produs</div>
-              <div class="list-sub">Funcții noi, rar</div>
+              <div class="list-sub">Functii noi, rar</div>
             </div>
             <div class="list-toggle"></div>
           </div>
@@ -3818,15 +3818,15 @@
           <div class="meta-row">
             <span class="key">Cost</span>
             <span class="val">39</span>
-            <span class="unit">RON/lună</span>
+            <span class="unit">RON/luna</span>
           </div>
           <div class="meta-row">
-            <span class="key">Reînnoire</span>
+            <span class="key">Reinnoire</span>
             <span class="val">12 dec</span>
             <span class="unit">2026</span>
           </div>
           <div class="meta-row">
-            <span class="key">Plată</span>
+            <span class="key">Plata</span>
             <span class="val">●●●● 4521</span>
             <span class="unit">VISA</span>
           </div>
@@ -3838,20 +3838,20 @@
             <div class="signal-icon signal">✓</div>
             <div class="signal-text">
               <div class="signal-strong">Coach AI personalizat</div>
-              <div class="signal-meta">Modelul tău neural</div>
+              <div class="signal-meta">Modelul tau neural</div>
             </div>
           </div>
           <div class="signal-row">
             <div class="signal-icon signal">✓</div>
             <div class="signal-text">
-              <div class="signal-strong">Bibliotecă completă</div>
-              <div class="signal-meta">347 exerciții + alternative</div>
+              <div class="signal-strong">Biblioteca completa</div>
+              <div class="signal-meta">347 exercitii + alternative</div>
             </div>
           </div>
           <div class="signal-row">
             <div class="signal-icon signal">✓</div>
             <div class="signal-text">
-              <div class="signal-strong">Adaptări nelimitate</div>
+              <div class="signal-strong">Adaptari nelimitate</div>
               <div class="signal-meta">Pain, energie, echipament</div>
             </div>
           </div>
@@ -3864,8 +3864,8 @@
           </div>
         </div>
 
-        <button class="btn-secondary mt-m">Schimbă metoda de plată</button>
-        <button class="btn-ghost" style="margin-top:8px;color:var(--ink-3);">Anulează abonament</button>
+        <button class="btn-secondary mt-m">Schimba metoda de plata</button>
+        <button class="btn-ghost" style="margin-top:8px;color:var(--ink-3);">Anuleaza abonament</button>
       </div>
     </div>
 
@@ -3882,8 +3882,8 @@
           <div class="list-row">
             <div class="list-icon">●</div>
             <div class="list-text">
-              <div class="list-title">Întunecat</div>
-              <div class="list-sub">Recomandat pentru sală seara</div>
+              <div class="list-title">Intunecat</div>
+              <div class="list-sub">Recomandat pentru sala seara</div>
             </div>
             <div class="list-value">activ</div>
           </div>
@@ -3901,7 +3901,7 @@
           </div>
         </div>
 
-        <div class="section-title mt-m">TEMĂ</div>
+        <div class="section-title mt-m">TEMA</div>
         <div class="row-list">
           <div class="list-row" onclick="goto('settings-themes')">
             <div class="list-icon">⬢</div>
@@ -3918,7 +3918,7 @@
           <div class="list-row">
             <div class="list-icon neutral">A</div>
             <div class="list-text">
-              <div class="list-title">Mărime text</div>
+              <div class="list-title">Marime text</div>
             </div>
             <div class="list-value">Standard</div>
           </div>
@@ -3942,7 +3942,7 @@
         <div class="head-tag">4 disponibile</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Alege paleta. Se aplică instant.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Alege paleta. Se aplica instant.</div>
 
         <div class="choice-grid cols-2">
           <button class="choice">
@@ -3968,7 +3968,7 @@
         </div>
 
         <div class="footnote">
-          <span class="footnote-tag">Notă</span>
+          <span class="footnote-tag">Nota</span>
           4 teme disponibile.
         </div>
       </div>
@@ -3978,7 +3978,7 @@
     <div class="screen" id="screen-settings-privacy">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Confidențialitate</div>
+        <div class="head-title">Confidentialitate</div>
         <div class="head-tag">date · GDPR</div>
       </div>
       <div class="scroll-tight">
@@ -3988,7 +3988,7 @@
             <span class="think-label">Promisiune</span>
           </div>
           <div style="font-size:13px;color:var(--ink-2);line-height:1.6;">
-            Datele tale rămân ale tale. <strong style="color:var(--ink);">Nu le antrenăm pe modele publice. Nu le vindem. Nu le partajăm.</strong>
+            Datele tale raman ale tale. <strong style="color:var(--ink);">Nu le antrenam pe modele publice. Nu le vindem. Nu le partajam.</strong>
           </div>
         </div>
 
@@ -3998,15 +3998,15 @@
             <div class="list-icon signal">⊕</div>
             <div class="list-text">
               <div class="list-title">Permite analytics anonim</div>
-              <div class="list-sub">Bug fixes & îmbunătățiri produs</div>
+              <div class="list-sub">Bug fixes & imbunatatiri produs</div>
             </div>
             <div class="list-toggle on"></div>
           </div>
           <div class="list-row">
             <div class="list-icon">↻</div>
             <div class="list-text">
-              <div class="list-title">Permite cercetare științifică</div>
-              <div class="list-sub">Date agregate, fără identificare</div>
+              <div class="list-title">Permite cercetare stiintifica</div>
+              <div class="list-sub">Date agregate, fara identificare</div>
             </div>
             <div class="list-toggle"></div>
           </div>
@@ -4025,14 +4025,14 @@
           <div class="list-row" onclick="goto('settings-export')">
             <div class="list-icon">⤓</div>
             <div class="list-text">
-              <div class="list-title">Exportă datele</div>
+              <div class="list-title">Exporta datele</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('confirm-delete')">
             <div class="list-icon danger">✕</div>
             <div class="list-text">
-              <div class="list-title">Șterge totul (drept la uitare)</div>
+              <div class="list-title">Sterge totul (drept la uitare)</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -4060,7 +4060,7 @@
           <div class="list-row">
             <div class="list-icon neutral">§</div>
             <div class="list-text">
-              <div class="list-title">Politică de confidențialitate</div>
+              <div class="list-title">Politica de confidentialitate</div>
               <div class="list-sub">GDPR · ePrivacy</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4069,14 +4069,14 @@
             <div class="list-icon neutral">⚕</div>
             <div class="list-text">
               <div class="list-title">Disclaimer medical</div>
-              <div class="list-sub">Important · citește</div>
+              <div class="list-sub">Important · citeste</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">©</div>
             <div class="list-text">
-              <div class="list-title">Licențe & atribuiri</div>
+              <div class="list-title">Licente & atribuiri</div>
               <div class="list-sub">Inter, Geist Mono, Instrument Serif</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4085,7 +4085,7 @@
 
         <div class="footnote mt-m">
           <span class="footnote-tag">Versiune</span>
-          Ultima modificare: 1 mai 2026 · Vom anunța prin email când se schimbă ceva esențial.
+          Ultima modificare: 1 mai 2026 · Vom anunta prin email cand se schimba ceva esential.
         </div>
       </div>
     </div>
@@ -4095,37 +4095,37 @@
     <div class="screen" id="screen-settings-prefs">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Setări avansate</div>
+        <div class="head-title">Setari avansate</div>
         <div class="head-tag">prefs</div>
       </div>
       <div class="scroll-tight">
-        <div class="section-title">LIMBĂ & FORMAT</div>
+        <div class="section-title">LIMBA & FORMAT</div>
         <div class="row-list">
           <div class="list-row">
             <div class="list-icon">RO</div>
             <div class="list-text">
-              <div class="list-title">Limba interfață</div>
+              <div class="list-title">Limba interfata</div>
             </div>
-            <div class="list-value">Română</div>
+            <div class="list-value">Romana</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">⚖</div>
             <div class="list-text">
-              <div class="list-title">Unități greutate</div>
+              <div class="list-title">Unitati greutate</div>
             </div>
             <div class="list-value">kg</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">↕</div>
             <div class="list-text">
-              <div class="list-title">Unități înălțime</div>
+              <div class="list-title">Unitati inaltime</div>
             </div>
             <div class="list-value">cm</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">⏱</div>
             <div class="list-text">
-              <div class="list-title">Format oră</div>
+              <div class="list-title">Format ora</div>
             </div>
             <div class="list-value">24h</div>
           </div>
@@ -4144,8 +4144,8 @@
           <div class="list-row">
             <div class="list-icon" style="background:rgba(139,109,255,0.10);color:var(--think-soft);">β</div>
             <div class="list-text">
-              <div class="list-title">Funcții beta</div>
-              <div class="list-sub">Acces la features în testare</div>
+              <div class="list-title">Functii beta</div>
+              <div class="list-sub">Acces la features in testare</div>
             </div>
             <div class="list-toggle"></div>
           </div>
@@ -4160,27 +4160,27 @@
         </div>
 
         <div class="footnote mt-m">
-          <span class="footnote-tag">Notă</span>
-          Setările aplicate aici nu afectează modelul tău neural — doar afișarea & interacțiunea.
+          <span class="footnote-tag">Nota</span>
+          Setarile aplicate aici nu afecteaza modelul tau neural — doar afisarea & interactiunea.
         </div>
       </div>
     </div>
 
-    <!-- ═══ XXXII · SETTINGS DANGER (acțiuni ireversibile) ═══ -->
+    <!-- ═══ XXXII · SETTINGS DANGER (actiuni ireversibile) ═══ -->
     <div class="screen" id="screen-settings-danger">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Deconectare/Ștergere</div>
+        <div class="head-title">Deconectare/Stergere</div>
         <div class="head-tag danger-text">⚠ ireversibil</div>
       </div>
       <div class="scroll-tight">
         <div class="thinking-card" style="border-color:rgba(239,90,90,0.25);background:linear-gradient(180deg,rgba(239,90,90,0.04),transparent);">
           <div class="think-head">
             <span class="pulse-dot" style="background:var(--danger);box-shadow:0 0 8px var(--danger);"></span>
-            <span class="think-label" style="color:var(--danger);">⚠ Atenție</span>
+            <span class="think-label" style="color:var(--danger);">⚠ Atentie</span>
           </div>
           <div style="font-size:13px;color:var(--ink-2);line-height:1.5;">
-            Acțiunile de mai jos nu pot fi anulate. Vom cere confirmare suplimentară pentru fiecare.
+            Actiunile de mai jos nu pot fi anulate. Vom cere confirmare suplimentara pentru fiecare.
           </div>
         </div>
 
@@ -4188,16 +4188,16 @@
           <div class="list-row" onclick="goto('confirm-reset-coach')">
             <div class="list-icon warm">↻</div>
             <div class="list-text">
-              <div class="list-title">Resetează adaptările coach-ului</div>
-              <div class="list-sub">Pierd toate cele 47 învățate</div>
+              <div class="list-title">Reseteaza adaptarile coach-ului</div>
+              <div class="list-sub">Pierd toate cele 47 invatate</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('confirm-redo-onboarding')">
             <div class="list-icon warm">↺</div>
             <div class="list-text">
-              <div class="list-title">Refă onboarding-ul</div>
-              <div class="list-sub">Răspund din nou la cele V întrebări</div>
+              <div class="list-title">Refa onboarding-ul</div>
+              <div class="list-sub">Raspund din nou la cele V intrebari</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -4205,14 +4205,14 @@
             <div class="list-icon neutral">⤴</div>
             <div class="list-text">
               <div class="list-title">Deconectare</div>
-              <div class="list-sub">Date păstrate, sesiune închisă</div>
+              <div class="list-sub">Date pastrate, sesiune inchisa</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row" onclick="goto('confirm-delete')">
             <div class="list-icon danger">✕</div>
             <div class="list-text">
-              <div class="list-title">Șterge contul & toate datele</div>
+              <div class="list-title">Sterge contul & toate datele</div>
               <div class="list-sub danger-text">Drept la uitare GDPR</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4229,7 +4229,7 @@
         <div class="head-tag">GDPR · art. 20</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Ai dreptul la portabilitate. Toate datele tale, format deschis, fără restricții.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Ai dreptul la portabilitate. Toate datele tale, format deschis, fara restrictii.</div>
 
         <div class="section-title">FORMAT</div>
         <div class="row-list">
@@ -4237,7 +4237,7 @@
             <div class="list-icon">{ }</div>
             <div class="list-text">
               <div class="list-title">JSON complet</div>
-              <div class="list-sub">Toate sesiunile + adaptări + signals</div>
+              <div class="list-sub">Toate sesiunile + adaptari + signals</div>
             </div>
             <div class="list-chevron">⤓</div>
           </div>
@@ -4266,7 +4266,7 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Pachet pregătit în <span class="data">≈ XXX sec</span></span>
+            <span>Pachet pregatit in <span class="data">≈ XXX sec</span></span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -4284,7 +4284,7 @@
         <div class="head-tag">&lt; XXIV ore</div>
       </div>
       <div class="scroll-tight">
-        <div class="hero-sub" style="margin-bottom:14px;">Echipa Andura · oameni reali · răspuns mediu sub 6h în zile lucrătoare.</div>
+        <div class="hero-sub" style="margin-bottom:14px;">Echipa Andura · oameni reali · raspuns mediu sub 6h in zile lucratoare.</div>
 
         <div class="row-list">
           <div class="list-row">
@@ -4299,14 +4299,14 @@
             <div class="list-icon">⌨</div>
             <div class="list-text">
               <div class="list-title">Trimite mesaj din app</div>
-              <div class="list-sub">Atașăm context tehnic automat</div>
+              <div class="list-sub">Atasam context tehnic automat</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">⚠</div>
             <div class="list-text">
-              <div class="list-title">Raportează un bug</div>
+              <div class="list-title">Raporteaza un bug</div>
               <div class="list-sub">Cu screenshot + log</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4354,7 +4354,7 @@
             <div class="list-icon">∞</div>
             <div class="list-text">
               <div class="list-title">Manifest</div>
-              <div class="list-sub">Cum gândim coach-ul AI</div>
+              <div class="list-sub">Cum gandim coach-ul AI</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -4362,14 +4362,14 @@
             <div class="list-icon neutral">⚐</div>
             <div class="list-text">
               <div class="list-title">Roadmap public</div>
-              <div class="list-sub">Ce urmează</div>
+              <div class="list-sub">Ce urmeaza</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row">
             <div class="list-icon neutral">∴</div>
             <div class="list-text">
-              <div class="list-title">Schimbări recente</div>
+              <div class="list-title">Schimbari recente</div>
               <div class="list-sub">v7.4 · 28 apr 2026</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4378,7 +4378,7 @@
             <div class="list-icon neutral">©</div>
             <div class="list-text">
               <div class="list-title">Echipa</div>
-              <div class="list-sub">București · 2026</div>
+              <div class="list-sub">Bucuresti · 2026</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -4386,7 +4386,7 @@
 
         <div class="footnote mt-m text-c">
           <span class="footnote-tag">Andura · 2026</span>
-          Construit în România. Pentru cei care vor un coach care gândește, nu unul care urlă.
+          Construit in Romania. Pentru cei care vor un coach care gandeste, nu unul care urla.
         </div>
       </div>
     </div>
@@ -4396,7 +4396,7 @@
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
         <div class="head-title">FAQ</div>
-        <div class="head-tag">răspunsuri rapide</div>
+        <div class="head-tag">raspunsuri rapide</div>
       </div>
       <div class="scroll-tight">
         <div class="section-title">UTILIZARE</div>
@@ -4404,15 +4404,15 @@
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Cât durează până coach-ul mă cunoaște?</div>
-              <div class="list-sub">III-IV săpt — modelul calibrează din răspuns real</div>
+              <div class="list-title">Cat dureaza pana coach-ul ma cunoaste?</div>
+              <div class="list-sub">III-IV sapt — modelul calibreaza din raspuns real</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Pot folosi fără sală echipată?</div>
+              <div class="list-title">Pot folosi fara sala echipata?</div>
               <div class="list-sub">Da — coach-ul propune alternative bodyweight</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4420,7 +4420,7 @@
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Funcționează pe smartwatch?</div>
+              <div class="list-title">Functioneaza pe smartwatch?</div>
               <div class="list-sub">Apple Watch · Garmin · WearOS — sync HRV automat</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4432,7 +4432,7 @@
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Ce se întâmplă dacă-mi pierd telefonul?</div>
+              <div class="list-title">Ce se intampla daca-mi pierd telefonul?</div>
               <div class="list-sub">Sync cloud E2E — login din alt device, datele vin</div>
             </div>
             <div class="list-chevron">›</div>
@@ -4440,28 +4440,28 @@
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Andura îmi vinde datele?</div>
-              <div class="list-sub">Nu. Niciodată. Vezi politica de confidențialitate</div>
+              <div class="list-title">Andura imi vinde datele?</div>
+              <div class="list-sub">Nu. Niciodata. Vezi politica de confidentialitate</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
         </div>
 
-        <div class="section-title mt-m">PLATĂ</div>
+        <div class="section-title mt-m">PLATA</div>
         <div class="row-list">
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Există plan gratuit?</div>
-              <div class="list-sub">Da — limitat la VII zile / lună</div>
+              <div class="list-title">Exista plan gratuit?</div>
+              <div class="list-sub">Da — limitat la VII zile / luna</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
           <div class="list-row">
             <div class="list-icon">?</div>
             <div class="list-text">
-              <div class="list-title">Pot anula oricând?</div>
-              <div class="list-sub">Da — fără penalizări, până la sfârșitul ciclului</div>
+              <div class="list-title">Pot anula oricand?</div>
+              <div class="list-sub">Da — fara penalizari, pana la sfarsitul ciclului</div>
             </div>
             <div class="list-chevron">›</div>
           </div>
@@ -4476,52 +4476,52 @@
           <div class="modal-icon warm">↻</div>
           <div class="modal-title">Resetezi coach-ul?</div>
           <div class="modal-body">
-            Modelul va uita cele <strong style="color:var(--ink);">47 adaptări</strong> învățate despre tine. Vei reveni la setările inițiale și calibrarea va începe de la zero.<br/><br/>
-            <span class="warm-text">Această acțiune nu poate fi anulată.</span>
+            Modelul va uita cele <strong style="color:var(--ink);">47 adaptari</strong> invatate despre tine. Vei reveni la setarile initiale si calibrarea va incepe de la zero.<br/><br/>
+            <span class="warm-text">Aceasta actiune nu poate fi anulata.</span>
           </div>
           <div class="btn-row">
-            <button class="btn-secondary" onclick="back()">Anulează</button>
-            <button class="btn-danger" onclick="back()">Resetează</button>
+            <button class="btn-secondary" onclick="back()">Anuleaza</button>
+            <button class="btn-danger" onclick="back()">Reseteaza</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ═══ XXXVIII · CONFIRM SCHIMBĂ FAZA ═══ -->
+    <!-- ═══ XXXVIII · CONFIRM SCHIMBA FAZA ═══ -->
     <div class="screen" id="screen-confirm-schimba-faza">
       <div class="modal-bg">
         <div class="modal">
           <div class="modal-icon">⇄</div>
-          <div class="modal-title">Schimbi faza activă manual?</div>
+          <div class="modal-title">Schimbi faza activa manual?</div>
           <div class="modal-body">
-            Schimbi faza activă manual? Aceasta resetează unele calibrări. Continui?<br/><br/>
-            Acum ești în <strong style="color:var(--ink);">Hipertrofie · săpt 7/12</strong>. Adaptările coach-ului se păstrează.
+            Schimbi faza activa manual? Aceasta reseteaza unele calibrari. Continui?<br/><br/>
+            Acum esti in <strong style="color:var(--ink);">Hipertrofie · sapt 7/12</strong>. Adaptarile coach-ului se pastreaza.
           </div>
           <div class="choice-grid cols-2" style="margin-bottom:14px;">
             <button class="choice">
               <div class="choice-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">⚡</div>
-              <div class="choice-label">Forță</div>
+              <div class="choice-label">Forta</div>
               <div class="choice-sub">3-5 reps · 85%+</div>
             </button>
             <button class="choice">
               <div class="choice-icon" style="background:rgba(93,214,230,0.10);color:var(--calm);">↓</div>
-              <div class="choice-label">Slăbire</div>
+              <div class="choice-label">Slabire</div>
               <div class="choice-sub">Volum + cardio</div>
             </button>
             <button class="choice">
               <div class="choice-icon" style="background:rgba(74,222,128,0.10);color:var(--signal);">∞</div>
               <div class="choice-label">Longevitate</div>
-              <div class="choice-sub">Mobility + funcțional</div>
+              <div class="choice-sub">Mobility + functional</div>
             </button>
             <button class="choice">
               <div class="choice-icon" style="background:rgba(139,109,255,0.10);color:var(--think-soft);">~</div>
               <div class="choice-label">Deload</div>
-              <div class="choice-sub">Recuperare activă</div>
+              <div class="choice-sub">Recuperare activa</div>
             </button>
           </div>
           <div class="btn-row">
-            <button class="btn-secondary" onclick="back()">Anulează</button>
-            <button class="btn-primary" onclick="back()">Aplică</button>
+            <button class="btn-secondary" onclick="back()">Anuleaza</button>
+            <button class="btn-primary" onclick="back()">Aplica</button>
           </div>
         </div>
       </div>
@@ -4534,12 +4534,12 @@
           <div class="modal-icon warm">↺</div>
           <div class="modal-title">Refaci onboarding-ul?</div>
           <div class="modal-body">
-            Vei răspunde din nou la cele <strong style="color:var(--ink);">V întrebări</strong> de bază (vârstă, sex, medical, frecvență). Modelul tău neural se păstrează — doar parametrii de pornire se actualizează.<br/><br/>
-            Util dacă s-au schimbat circumstanțele tale (recuperare după leziune, schimbare obiectiv, etc.).
+            Vei raspunde din nou la cele <strong style="color:var(--ink);">V intrebari</strong> de baza (varsta, sex, medical, frecventa). Modelul tau neural se pastreaza — doar parametrii de pornire se actualizeaza.<br/><br/>
+            Util daca s-au schimbat circumstantele tale (recuperare dupa leziune, schimbare obiectiv, etc.).
           </div>
           <div class="btn-row">
-            <button class="btn-secondary" onclick="back()">Anulează</button>
-            <button class="btn-primary" onclick="back()">Începe</button>
+            <button class="btn-secondary" onclick="back()">Anuleaza</button>
+            <button class="btn-primary" onclick="back()">Incepe</button>
           </div>
         </div>
       </div>
@@ -4552,11 +4552,11 @@
           <div class="modal-icon">⤴</div>
           <div class="modal-title">Deconectare?</div>
           <div class="modal-body">
-            Sesiunea curentă se închide. Datele tale rămân sincronizate în cloud — la următorul login le găsești toate aici.
+            Sesiunea curenta se inchide. Datele tale raman sincronizate in cloud — la urmatorul login le gasesti toate aici.
           </div>
           <div class="btn-row">
-            <button class="btn-secondary" onclick="back()">Rămâi</button>
-            <button class="btn-primary" onclick="back()">Deconectează-mă</button>
+            <button class="btn-secondary" onclick="back()">Ramai</button>
+            <button class="btn-primary" onclick="back()">Deconecteaza-ma</button>
           </div>
         </div>
       </div>
@@ -4567,18 +4567,18 @@
       <div class="modal-bg">
         <div class="modal" style="border-color:rgba(239,90,90,0.35);box-shadow:0 0 80px rgba(239,90,90,0.20);">
           <div class="modal-icon danger">✕</div>
-          <div class="modal-title danger-text">Șterge contul?</div>
+          <div class="modal-title danger-text">Sterge contul?</div>
           <div class="modal-body">
-            Vei pierde <strong style="color:var(--ink);">tot</strong>: cele 87 sesiuni, 47 adaptări învățate, toate recordurile, istoric corp, signals.<br/><br/>
-            <span class="danger-text">Această acțiune este permanentă, conform GDPR (drept la uitare). Datele se șterg ireversibil în XXX zile.</span>
+            Vei pierde <strong style="color:var(--ink);">tot</strong>: cele 87 sesiuni, 47 adaptari invatate, toate recordurile, istoric corp, signals.<br/><br/>
+            <span class="danger-text">Aceasta actiune este permanenta, conform GDPR (drept la uitare). Datele se sterg ireversibil in XXX zile.</span>
           </div>
           <div style="background:rgba(239,90,90,0.08);border:1px solid rgba(239,90,90,0.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--ink-2);">
-            Tastează <strong class="danger-text">ȘTERGE</strong> pentru confirmare:
-            <input style="width:100%;height:36px;background:var(--bg);border:1px solid var(--line-strong-bc);border-radius:8px;padding:0 12px;color:var(--ink);font-family:'Geist Mono',monospace;font-size:12px;margin-top:6px;" placeholder="ȘTERGE" />
+            Tasteaza <strong class="danger-text">STERGE</strong> pentru confirmare:
+            <input style="width:100%;height:36px;background:var(--bg);border:1px solid var(--line-strong-bc);border-radius:8px;padding:0 12px;color:var(--ink);font-family:'Geist Mono',monospace;font-size:12px;margin-top:6px;" placeholder="STERGE" />
           </div>
           <div class="btn-row">
-            <button class="btn-secondary" onclick="back()">Renunț</button>
-            <button class="btn-danger" onclick="back()">Șterge tot</button>
+            <button class="btn-secondary" onclick="back()">Renunt</button>
+            <button class="btn-danger" onclick="back()">Sterge tot</button>
           </div>
         </div>
       </div>
@@ -4588,11 +4588,11 @@
     <div class="screen" id="screen-rest-timer">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
-        <div class="head-title">Pauză activă</div>
-        <div class="head-tag">între seturi</div>
+        <div class="head-title">Pauza activa</div>
+        <div class="head-tag">intre seturi</div>
       </div>
       <div class="scroll-tight" style="display:flex;flex-direction:column;justify-content:center;text-align:center;">
-        <div class="hero-eyebrow text-c" style="margin-bottom:0;">Bench Press · între set II și III</div>
+        <div class="hero-eyebrow text-c" style="margin-bottom:0;">Bench Press · intre set II si III</div>
 
         <div class="timer-display">
           <svg class="timer-ring" viewBox="0 0 100 100">
@@ -4601,7 +4601,7 @@
           </svg>
           <div class="timer-num">
             <span class="big">01:08</span>
-            <span class="label">rămas</span>
+            <span class="label">ramas</span>
           </div>
         </div>
 
@@ -4612,11 +4612,11 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Set II RPE 7.5 → pauză recomandată <span class="data">90s</span></span>
+            <span>Set II RPE 7.5 → pauza recomandata <span class="data">90s</span></span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>HRV restaurat <span class="data">94%</span> — gata curând</span>
+            <span>HRV restaurat <span class="data">94%</span> — gata curand</span>
           </div>
         </div>
 
@@ -4627,12 +4627,12 @@
 
         <div class="footnote mt-m text-c">
           <span class="footnote-tag">Ritm cardiac</span>
-          ♡ 122 → 98 bpm · scădere normală
+          ♡ 122 → 98 bpm · scadere normala
         </div>
       </div>
     </div>
 
-    <!-- ═══ XLIII · CHECK-IN DIMINEAȚĂ ═══ -->
+    <!-- ═══ XLIII · CHECK-IN DIMINEATA ═══ -->
     <div class="screen" id="screen-checkin-dimineata">
       <div class="head-bar">
         <button class="back-btn" onclick="back()">←</button>
@@ -4643,17 +4643,17 @@
         <div class="checkin-card">
           <div class="checkin-head">
             <span class="glyph">☀</span>
-            <span class="hero-eyebrow" style="margin:0;color:var(--warm);">Bună dimineața, Andrei</span>
+            <span class="hero-eyebrow" style="margin:0;color:var(--warm);">Buna dimineata, Andrei</span>
           </div>
           <div class="checkin-msg">
-            "Am observat că ai dormit <strong style="font-style:normal;font-family:'Geist Mono',monospace;font-size:18px;color:var(--warm);">6h12</strong> — sub media ta. Cum te simți?"
+            "Am observat ca ai dormit <strong style="font-style:normal;font-family:'Geist Mono',monospace;font-size:18px;color:var(--warm);">6h12</strong> — sub media ta. Cum te simti?"
           </div>
         </div>
 
         <div class="thinking-card">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Ce am văzut peste noapte</span>
+            <span class="think-label">Ce am vazut peste noapte</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -4665,39 +4665,39 @@
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Puls în repaus <span class="data">61 bpm</span> — în normă</span>
+            <span>Puls in repaus <span class="data">61 bpm</span> — in norma</span>
           </div>
           <div class="thought-step">
             <span class="pending">◐</span>
-            <span>Aștept input subiectiv ca să decid sesiunea de azi</span>
+            <span>Astept input subiectiv ca sa decid sesiunea de azi</span>
           </div>
         </div>
 
-        <div class="section-title">CUM TE SIMȚI?</div>
+        <div class="section-title">CUM TE SIMTI?</div>
         <div class="choice-grid cols-2">
           <button class="choice">
             <div class="choice-icon signal" style="background:rgba(74,222,128,0.10);color:var(--signal);">↑</div>
-            <div class="choice-label">Surprinzător bine</div>
+            <div class="choice-label">Surprinzator bine</div>
             <div class="choice-sub">Mergem normal</div>
           </button>
           <button class="choice selected">
             <div class="choice-icon" style="background:rgba(245,158,107,0.10);color:var(--warm);">~</div>
-            <div class="choice-label">Tras la față</div>
-            <div class="choice-sub">Adaptăm sesiunea</div>
+            <div class="choice-label">Tras la fata</div>
+            <div class="choice-sub">Adaptam sesiunea</div>
           </button>
           <button class="choice">
             <div class="choice-icon" style="background:rgba(239,90,90,0.10);color:var(--danger);">↓</div>
-            <div class="choice-label">Frânt</div>
+            <div class="choice-label">Frant</div>
             <div class="choice-sub">Recuperare azi</div>
           </button>
           <button class="choice">
             <div class="choice-icon neutral" style="background:rgba(255,255,255,0.04);color:var(--ink-3);">?</div>
-            <div class="choice-label">Nu știu încă</div>
-            <div class="choice-sub">Întreabă-mă mai târziu</div>
+            <div class="choice-label">Nu stiu inca</div>
+            <div class="choice-sub">Intreaba-ma mai tarziu</div>
           </button>
         </div>
 
-        <button class="btn-primary mt-m" onclick="goto('home')">Confirmă →</button>
+        <button class="btn-primary mt-m" onclick="goto('home')">Confirma →</button>
       </div>
     </div>
 
@@ -4741,13 +4741,13 @@
 
         <div class="chip-row" style="justify-content:center;">
           <span class="chip success">+5 kg vs PR anterior</span>
-          <span class="chip purple">RPE 8 · 2 reps în rezervă</span>
+          <span class="chip purple">RPE 8 · 2 reps in rezerva</span>
         </div>
 
         <div class="thinking-card">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">Ce înseamnă pentru tine</span>
+            <span class="think-label">Ce inseamna pentru tine</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
@@ -4764,13 +4764,13 @@
         </div>
 
         <div class="row">
-          <button class="btn-secondary grow">⤓ Salvează imaginea</button>
-          <button class="btn-primary grow" onclick="back()">Continuă →</button>
+          <button class="btn-secondary grow">⤓ Salveaza imaginea</button>
+          <button class="btn-primary grow" onclick="back()">Continua →</button>
         </div>
 
         <div class="footnote mt-m">
-          <span class="footnote-tag">Atenție</span>
-          Recordurile sunt rare — următorul probabil în 3-4 săpt. Nu împinge azi peste, lasă recuperarea să facă treaba.
+          <span class="footnote-tag">Atentie</span>
+          Recordurile sunt rare — urmatorul probabil in 3-4 sapt. Nu impinge azi peste, lasa recuperarea sa faca treaba.
         </div>
       </div>
     </div>
@@ -4797,7 +4797,7 @@
             <div class="push-time">acum</div>
           </div>
           <div class="push-title">Sesiunea 87 e gata</div>
-          <div class="push-msg">Upper · Hipertrofie · 52 min · 87% încredere. HRV 52ms — recuperat. Joi e fereastra ta.</div>
+          <div class="push-msg">Upper · Hipertrofie · 52 min · 87% incredere. HRV 52ms — recuperat. Joi e fereastra ta.</div>
         </div>
 
         <div class="push-card" style="margin-bottom:10px;opacity:0.92;">
@@ -4810,8 +4810,8 @@
             </div>
             <div class="push-time">07:34</div>
           </div>
-          <div class="push-title">Check-in dimineață</div>
-          <div class="push-msg">Ai dormit 6h12 — sub media ta. Cum te simți? Adaptez sesiunea.</div>
+          <div class="push-title">Check-in dimineata</div>
+          <div class="push-msg">Ai dormit 6h12 — sub media ta. Cum te simti? Adaptez sesiunea.</div>
         </div>
 
         <div class="push-card" style="opacity:0.78;">
@@ -4825,7 +4825,7 @@
             <div class="push-time">ieri</div>
           </div>
           <div class="push-title">★ PR confirmat — Bench 82.5kg × 8</div>
-          <div class="push-msg">Primul peste 80 la 8 reps. Felicitări. 1RM estimat ≈ 102kg.</div>
+          <div class="push-msg">Primul peste 80 la 8 reps. Felicitari. 1RM estimat ≈ 102kg.</div>
         </div>
 
         <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;"></div>
@@ -4869,10 +4869,10 @@
     <button class="picker-item" onclick="goto('splash',{replace:true})"><span class="num">I</span><span class="lbl">Splash</span></button>
     <button class="picker-item" onclick="goto('auth',{replace:true})"><span class="num">II</span><span class="lbl">Auth</span></button>
     <button class="picker-item" onclick="goto('onboard',{replace:true})"><span class="num">III</span><span class="lbl">Onb · welcome</span></button>
-    <button class="picker-item" onclick="goto('onb-varsta',{replace:true})"><span class="num">IV</span><span class="lbl">Onb · vârstă</span></button>
+    <button class="picker-item" onclick="goto('onb-varsta',{replace:true})"><span class="num">IV</span><span class="lbl">Onb · varsta</span></button>
     <button class="picker-item" onclick="goto('onb-sex',{replace:true})"><span class="num">V</span><span class="lbl">Onb · sex</span></button>
     <button class="picker-item" onclick="goto('onb-medical',{replace:true})"><span class="num">VI</span><span class="lbl">Onb · medical</span></button>
-    <button class="picker-item" onclick="goto('onb-frecventa',{replace:true})"><span class="num">VII</span><span class="lbl">Onb · frecvență</span></button>
+    <button class="picker-item" onclick="goto('onb-frecventa',{replace:true})"><span class="num">VII</span><span class="lbl">Onb · frecventa</span></button>
     <button class="picker-item" onclick="goto('medical-disclaimer',{replace:true})"><span class="num">VIII</span><span class="lbl">Disclaimer medical</span></button>
     <button class="picker-item active" onclick="goto('home',{replace:true})"><span class="num">IX</span><span class="lbl">Home (Antrenor)</span></button>
     <button class="picker-item" onclick="goto('antrenor',{replace:true})"><span class="num">X</span><span class="lbl">Antrenor · chat</span></button>
@@ -4890,7 +4890,7 @@
     <button class="picker-item" onclick="goto('coach-philosophy',{replace:true})"><span class="num">XXII</span><span class="lbl">Coach · philosophy</span></button>
     <button class="picker-item" onclick="goto('settings',{replace:true})"><span class="num">XXIII</span><span class="lbl">Cont (root)</span></button>
     <button class="picker-item" onclick="goto('settings-profile',{replace:true})"><span class="num">XXIV</span><span class="lbl">Cont · profil</span></button>
-    <button class="picker-item" onclick="goto('settings-notifications',{replace:true})"><span class="num">XXV</span><span class="lbl">Cont · notificări</span></button>
+    <button class="picker-item" onclick="goto('settings-notifications',{replace:true})"><span class="num">XXV</span><span class="lbl">Cont · notificari</span></button>
     <button class="picker-item" onclick="goto('settings-subscription',{replace:true})"><span class="num">XXVI</span><span class="lbl">Cont · abonament</span></button>
     <button class="picker-item" onclick="goto('settings-appearance',{replace:true})"><span class="num">XXVII</span><span class="lbl">Cont · aspect</span></button>
     <button class="picker-item" onclick="goto('settings-themes',{replace:true})"><span class="num">XXVIII</span><span class="lbl">Cont · teme</span></button>
@@ -4903,12 +4903,12 @@
     <button class="picker-item" onclick="goto('settings-about',{replace:true})"><span class="num">XXXV</span><span class="lbl">Cont · despre</span></button>
     <button class="picker-item" onclick="goto('settings-faq',{replace:true})"><span class="num">XXXVI</span><span class="lbl">Cont · FAQ</span></button>
     <button class="picker-item" onclick="goto('confirm-reset-coach',{replace:true})"><span class="num">XXXVII</span><span class="lbl">Confirm · reset</span></button>
-    <button class="picker-item" onclick="goto('confirm-schimba-faza',{replace:true})"><span class="num">XXXVIII</span><span class="lbl">Confirm · fază</span></button>
+    <button class="picker-item" onclick="goto('confirm-schimba-faza',{replace:true})"><span class="num">XXXVIII</span><span class="lbl">Confirm · faza</span></button>
     <button class="picker-item" onclick="goto('confirm-redo-onboarding',{replace:true})"><span class="num">XXXIX</span><span class="lbl">Confirm · refacere</span></button>
     <button class="picker-item" onclick="goto('confirm-logout',{replace:true})"><span class="num">XL</span><span class="lbl">Confirm · logout</span></button>
-    <button class="picker-item" onclick="goto('confirm-delete',{replace:true})"><span class="num">XLI</span><span class="lbl">Confirm · ștergere</span></button>
+    <button class="picker-item" onclick="goto('confirm-delete',{replace:true})"><span class="num">XLI</span><span class="lbl">Confirm · stergere</span></button>
     <button class="picker-item" onclick="goto('rest-timer',{replace:true})"><span class="num">XLII</span><span class="lbl">Rest timer</span></button>
-    <button class="picker-item" onclick="goto('checkin-dimineata',{replace:true})"><span class="num">XLIII</span><span class="lbl">Check-in dimineață</span></button>
+    <button class="picker-item" onclick="goto('checkin-dimineata',{replace:true})"><span class="num">XLIII</span><span class="lbl">Check-in dimineata</span></button>
     <button class="picker-item" onclick="goto('pb-record',{replace:true})"><span class="num">XLIV</span><span class="lbl">PB record</span></button>
     <button class="picker-item" onclick="goto('drill-push',{replace:true})"><span class="num">XLV</span><span class="lbl">Drill · push notif</span></button>
   </div>

@@ -21,7 +21,7 @@ export const EQUIPMENT_WEIGHTS = {
   'dumbbell': [7, 8, 9, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50],
 };
 
-// Mapare exercițiu → tipul de echipament din sală
+// Mapare exercitiu → tipul de echipament din sala
 export const EXERCISE_EQUIPMENT_MAP = {
   'Lat Pulldown':          'bailib_stack',
   'Cable Row':             'bailib_stack',

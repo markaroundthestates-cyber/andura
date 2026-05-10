@@ -73,7 +73,7 @@ describe('ruleEngine', () => {
   it('PATTERN_EARLY_END fires when patterns include early_end', () => {
     const ctx = {
       readiness: { score: 70 },
-      patterns: [{ type: 'early_end', message: 'Sesiune scurtată frecvent' }],
+      patterns: [{ type: 'early_end', message: 'Sesiune scurtata frecvent' }],
     };
     const result = evaluate(ctx);
     expect(result.winner.id).toBe('PATTERN_EARLY_END');

@@ -7,7 +7,7 @@
 // canonical position 7th penultimate prescriptive engine).
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.7
-// (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasă, 21 decisions
+// (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasa, 21 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-04-30 evening §45.6 +
 // 2026-05-04 evening BATCH 4 §65.1-§65.4).
 //
@@ -35,8 +35,8 @@ export const CALIBRATION_TIERS = Object.freeze({
 /**
  * Persona archetype per ADR 017 demographic prior + Cluster B3 persona
  * thresholds verbatim:
- *   Maria 65: rutină blândă activare articulară 5-10 min (mobility flow + bands light)
- *   Gigica 35: warm-up general dynamic 5 min + 1 set ușor ramp pe primul exercițiu
+ *   Maria 65: rutina blanda activare articulara 5-10 min (mobility flow + bands light)
+ *   Gigica 35: warm-up general dynamic 5 min + 1 set usor ramp pe primul exercitiu
  *   Marius 25: ramp protocol heavy compounds (50%/70%/90% × 3-5 sets) + general warm-up minimal
  *
  * @type {Readonly<{MARIA: 'maria', GIGICA: 'gigica', MARIUS: 'marius'}>}
@@ -117,7 +117,7 @@ export const PERIODIZATION_PHASE = Object.freeze({
  * Energy adjustment direction enum per §9.3 Engine Energy Adjustment Cluster D3
  * Hook cross-ref. Energy DOWN → auto-shorten upper bound 5-10 → 5-7 min
  * (anti-cascade preserve consistent §9.5 Tempo D13 precedent — Energy DOWN
- * modulates duration NU intensity directly în Warm-up).
+ * modulates duration NU intensity directly in Warm-up).
  *
  * @type {Readonly<{UP: 'UP', DOWN: 'DOWN', NONE: 'NONE'}>}
  */
@@ -203,16 +203,16 @@ export const PERSONA_DURATION = Object.freeze({
  * @type {ReadonlyArray<string>}
  */
 export const GENERAL_DYNAMIC_EXERCISES = Object.freeze([
-  'Cercuri brațe controlate (10 reps)',
-  'Cercuri șolduri ușoare (8 reps fiecare direcție)',
-  'Genuflexiuni cu greutate proprie ușoare (10 reps)',
+  'Cercuri brate controlate (10 reps)',
+  'Cercuri solduri usoare (8 reps fiecare directie)',
+  'Genuflexiuni cu greutate proprie usoare (10 reps)',
   'Mers controlat pe loc (30 sec)',
-  'Mobilitate coloană "pisica-vaca" (8 reps)',
+  'Mobilitate coloana "pisica-vaca" (8 reps)',
 ]);
 
 /**
  * RO native specific muscle group warm-up patterns per Cluster B2 Source 1
- * §65.2 verbatim "exerciții specifice grupe musculare vizate ziua respectivă".
+ * §65.2 verbatim "exercitii specifice grupe musculare vizate ziua respectiva".
  *
  * Map muscle group → specific warm-up exercise (1 per group V1; orchestrator
  * may apply 2-3 sets ramp-up via specificSetsMin..Max).
@@ -223,14 +223,14 @@ export const GENERAL_DYNAMIC_EXERCISES = Object.freeze([
  * @type {Readonly<Object<string, string>>}
  */
 export const SPECIFIC_MUSCLE_EXERCISES = Object.freeze({
-  chest:      'Flotări ușoare cu controlul (8 reps)',
-  back:       'Tracțiuni ușoare la bară joasă (5 reps)',
-  shoulders:  'Mobilitate umeri cu cordeluțe (10 reps)',
-  legs:       'Genuflexiuni cu greutate proprie ușoare (10 reps)',
+  chest:      'Flotari usoare cu controlul (8 reps)',
+  back:       'Tractiuni usoare la bara joasa (5 reps)',
+  shoulders:  'Mobilitate umeri cu cordelute (10 reps)',
+  legs:       'Genuflexiuni cu greutate proprie usoare (10 reps)',
   glutes:     'Hip thrust greutate proprie (12 reps)',
   arms:       'Cercuri coate controlate (10 reps)',
-  core:       'Plank ușor (20 sec)',
-  hamstrings: 'Întinderi dinamice picioare (8 reps)',
+  core:       'Plank usor (20 sec)',
+  hamstrings: 'Intinderi dinamice picioare (8 reps)',
   quads:      'Lunges greutate proprie (8 reps fiecare)',
 });
 
@@ -258,20 +258,20 @@ export const MARIUS_RAMP_PROTOCOL = Object.freeze([
  * @type {ReadonlyArray<string>}
  */
 export const COOLDOWN_STRETCHES = Object.freeze([
-  'Întindere coapse anterioare (30 sec fiecare picior)',
-  'Întindere lombar "copilul" (30 sec)',
-  'Întindere pectorali la perete (30 sec fiecare braț)',
+  'Intindere coapse anterioare (30 sec fiecare picior)',
+  'Intindere lombar "copilul" (30 sec)',
+  'Intindere pectorali la perete (30 sec fiecare brat)',
 ]);
 
 /**
  * UI label RO native — Cluster A1 output blueprint emit per persona threshold.
  *
- * Format: "Încălzire ~X min" cu duration adaptive per Cluster B1.
+ * Format: "Incalzire ~X min" cu duration adaptive per Cluster B1.
  *
  * @param {number} durationMin
  * @returns {string}
  */
 export function buildUiLabel(durationMin) {
   const d = Number.isFinite(durationMin) ? Math.round(durationMin) : SCHEMA_CONSTANTS.durationMinDefault;
-  return `Încălzire ~${d} min`;
+  return `Incalzire ~${d} min`;
 }

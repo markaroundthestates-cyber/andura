@@ -3,7 +3,7 @@
 // Cross-cutting orchestrator-level utility (NOT per-adapter) per D5.
 // Q-OPEN-2 RESOLVED V1 2026-05-08 — sync Promise.race timeout V1 preserved
 // per ADR 030 §3.2; AbortController + cancel-aware adapter contract V1.5
-// trigger când Faza 3 batch 1 measures ≥1 engine reproducibly p95 >50ms.
+// trigger cand Faza 3 batch 1 measures ≥1 engine reproducibly p95 >50ms.
 //
 // `BUDGET_EXCEEDED` err code → severity 'soft' default per §3.6 taxonomy
 // (continue-graceful, engine pre-fill default per ADR 025 alignment).
@@ -19,14 +19,14 @@ import { err, isOk } from '../result.js';
 export const DEFAULT_BUDGET_MS = 50;
 
 /**
- * Wrap a function call în a budget-enforced race. Returns the fn's result if
+ * Wrap a function call in a budget-enforced race. Returns the fn's result if
  * it settles within `budgetMs`, otherwise an err Result `BUDGET_EXCEEDED`.
  *
  * Defensive: if `fn` throws synchronously, captured ca err `WITHIN_BUDGET_THREW`.
  * If `fn` returns a non-Result value (rare misuse), result is wrapped passthrough.
  *
  * V1 simple Promise.race — does NOT cancel the underlying fn (no AbortController
- * threading în adapter contract V1). Concrete cancel semantics Q-OPEN-2 PENDING.
+ * threading in adapter contract V1). Concrete cancel semantics Q-OPEN-2 PENDING.
  *
  * @template T
  * @param {() => Promise<T>|T} fn

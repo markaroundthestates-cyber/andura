@@ -1,6 +1,6 @@
-// ══ PLATEAU INTERVENTIONS — 20 intervenții anti-platou ════════════════════
-// Fiecare intervenție are: id, label, efficacy (0-1), when (condiții),
-// apply (funcție care modifică sesiunea).
+// ══ PLATEAU INTERVENTIONS — 20 interventii anti-platou ════════════════════
+// Fiecare interventie are: id, label, efficacy (0-1), when (conditii),
+// apply (functie care modifica sesiunea).
 
 export const INTERVENTIONS = [
   {
@@ -19,7 +19,7 @@ export const INTERVENTIONS = [
   },
   {
     id: 'partial_reps',
-    label: 'Reps Parțiale',
+    label: 'Reps Partiale',
     efficacy: 0.7,
     when: ctx => ctx.stagnationWeeks >= 3,
     apply: exercise => ({ ...exercise, technique: 'partial', repsTarget: (exercise.repsTarget || 8) + 4 }),
@@ -51,7 +51,7 @@ export const INTERVENTIONS = [
   },
   {
     id: 'exercise_swap',
-    label: 'Schimb Exercițiu',
+    label: 'Schimb Exercitiu',
     efficacy: 0.78,
     when: ctx => ctx.stagnationWeeks >= 6,
     apply: exercise => ({ ...exercise, swapRecommended: true }),
@@ -65,14 +65,14 @@ export const INTERVENTIONS = [
   },
   {
     id: 'pyramid_up',
-    label: 'Piramidă Ascendentă',
+    label: 'Piramida Ascendenta',
     efficacy: 0.7,
     when: ctx => ctx.stagnationWeeks >= 4,
     apply: exercise => ({ ...exercise, technique: 'pyramid_up' }),
   },
   {
     id: 'pyramid_down',
-    label: 'Piramidă Descendentă',
+    label: 'Piramida Descendenta',
     efficacy: 0.69,
     when: ctx => ctx.stagnationWeeks >= 4,
     apply: exercise => ({ ...exercise, technique: 'pyramid_down' }),
@@ -93,7 +93,7 @@ export const INTERVENTIONS = [
   },
   {
     id: 'deload_week',
-    label: 'Săptămână Deload',
+    label: 'Saptamana Deload',
     efficacy: 0.9,
     when: ctx => ctx.stagnationWeeks >= 8,
     apply: exercise => ({
@@ -105,14 +105,14 @@ export const INTERVENTIONS = [
   },
   {
     id: 'unilateral_switch',
-    label: 'Versiune Unilaterală',
+    label: 'Versiune Unilaterala',
     efficacy: 0.71,
     when: ctx => ctx.stagnationWeeks >= 5,
     apply: exercise => ({ ...exercise, unilateral: true }),
   },
   {
     id: 'forced_reps',
-    label: 'Reps Forțate (cu spotter)',
+    label: 'Reps Fortate (cu spotter)',
     efficacy: 0.79,
     when: ctx => ctx.stagnationWeeks >= 6 && !ctx.isInCut,
     apply: exercise => ({ ...exercise, technique: 'forced_reps', requiresSpotter: true }),
@@ -126,7 +126,7 @@ export const INTERVENTIONS = [
   },
   {
     id: 'frequency_increase',
-    label: 'Frecvență +1/săptămână',
+    label: 'Frecventa +1/saptamana',
     efficacy: 0.77,
     when: ctx => ctx.stagnationWeeks >= 4 && (ctx.sessionFrequency ?? 3) <= 3,
     apply: exercise => ({ ...exercise, addFrequency: true }),
@@ -155,9 +155,9 @@ export const INTERVENTIONS = [
 ];
 
 /**
- * Returnează intervențiile aplicabile în contextul dat, sortate după eficacitate.
+ * Returneaza interventiile aplicabile in contextul dat, sortate dupa eficacitate.
  * @param {object} ctx - cu stagnationWeeks, isInCut, readiness, sessionFrequency
- * @returns {Array} intervențiile aplicabile sortate DESC efficacy
+ * @returns {Array} interventiile aplicabile sortate DESC efficacy
  */
 export function getApplicableInterventions(ctx) {
   return INTERVENTIONS
@@ -166,7 +166,7 @@ export function getApplicableInterventions(ctx) {
 }
 
 /**
- * Aplică cea mai eficientă intervenție la un exercițiu.
+ * Aplica cea mai eficienta interventie la un exercitiu.
  * @param {object} exercise
  * @param {object} ctx
  * @returns {{ exercise: object, intervention: object|null }}

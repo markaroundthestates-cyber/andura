@@ -1,6 +1,6 @@
 // ══ COMPOSITE SIGNAL §36.41 — 3-metric AND trigger ════════════════════════════
 // LOCKED V1 per §36.41 Chat C — 3/3 simultaneous threshold (NU cumulative).
-// False positive prevention: triggered DOAR când TOATE 3 metrici simultan abnormal.
+// False positive prevention: triggered DOAR cand TOATE 3 metrici simultan abnormal.
 
 /**
  * @typedef {Object} CompositeSignalInput

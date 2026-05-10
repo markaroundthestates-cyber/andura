@@ -3,17 +3,17 @@
 // Wording UI LOCKED V1 verbatim — ZERO drift even minor punctuation, RO diacritics.
 //
 // Pre-Beta refusal pattern: NU SMS verify, NU email secundar. Explicit modal
-// info-only cu single "Înțeleg" close button.
+// info-only cu single "Inteleg" close button.
 
 /**
  * Wording UI LOCKED V1 — DO NOT modify (anti-drift §56.5.1 verbatim).
  * @type {string}
  */
 export const RECOVERY_EMAIL_LOST_COPY
-  = 'Contul tău în cloud nu mai poate fi accesat. Totuși, datele tale de antrenament de pe acest dispozitiv sunt în siguranță și rămân aici. Pierzi doar sincronizarea automată cu alte telefoane sau tablete.';
+  = 'Contul tau in cloud nu mai poate fi accesat. Totusi, datele tale de antrenament de pe acest dispozitiv sunt in siguranta si raman aici. Pierzi doar sincronizarea automata cu alte telefoane sau tablete.';
 
 /**
- * Open the recovery email lost modal. Returns when user clicks "Înțeleg".
+ * Open the recovery email lost modal. Returns when user clicks "Inteleg".
  *
  * @param {object} [opts]
  * @param {Document} [opts.doc]    test injection
@@ -30,7 +30,7 @@ export function openRecoveryEmailLostModal({ doc = (typeof document !== 'undefin
     body.className = 'andura-modal-body';
     body.textContent = RECOVERY_EMAIL_LOST_COPY;
     const btn = doc.createElement('button');
-    btn.textContent = 'Înțeleg';
+    btn.textContent = 'Inteleg';
     btn.className = 'andura-modal-button';
     btn.addEventListener('click', () => {
       try { overlay.remove(); } catch { /* swallow */ }

@@ -29,7 +29,7 @@ import {
 /**
  * Resolve persona duration thresholds per Cluster B3 verbatim mapping.
  *
- * Defensive default → Maria 5-10 min mobility flow (NU restrictive) când
+ * Defensive default → Maria 5-10 min mobility flow (NU restrictive) cand
  * persona unresolved (caller should pass valid persona; defensive ensures
  * total function semantics).
  *

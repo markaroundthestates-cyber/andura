@@ -1,12 +1,12 @@
-// ══ PROACTIVE ENGINE — 10 verificări proactive ════════════════════════════
-// Returnează alerte acționabile pentru user (proteină, somn, PR, recuperare etc.)
+// ══ PROACTIVE ENGINE — 10 verificari proactive ════════════════════════════
+// Returneaza alerte actionabile pentru user (proteina, somn, PR, recuperare etc.)
 import { KCAL_TARGET } from '../constants.js';
 import { tod, todDate, todTs } from '../db.js';
 import { READINESS_PR, READINESS_MED } from './readiness.js';
 
 /**
- * Check 1: Deficit de proteină.
- * Țintă: 2.2g/kg corp. Alertă dacă media ultimelor 3 zile e sub 80% din țintă.
+ * Check 1: Deficit de proteina.
+ * Tinta: 2.2g/kg corp. Alerta daca media ultimelor 3 zile e sub 80% din tinta.
  */
 export function checkProteinDeficit(prots, bodyweightKg) {
   if (!prots || !bodyweightKg) return null;
@@ -24,7 +24,7 @@ export function checkProteinDeficit(prots, bodyweightKg) {
     return {
       type: 'protein_deficit',
       severity: 'warning',
-      message: `Proteină medie ultimele ${values.length} zile: ${Math.round(avgProt)}g. Țintă: ${Math.round(target)}g. Crește aportul.`,
+      message: `Proteina medie ultimele ${values.length} zile: ${Math.round(avgProt)}g. Tinta: ${Math.round(target)}g. Creste aportul.`,
       avgProtein: Math.round(avgProt),
       target: Math.round(target),
     };
@@ -33,7 +33,7 @@ export function checkProteinDeficit(prots, bodyweightKg) {
 }
 
 /**
- * Check 2: Sleep debt proxy — readiness trend descrescător.
+ * Check 2: Sleep debt proxy — readiness trend descrescator.
  * 3+ zile consecutive cu readiness < 60.
  */
 export function checkSleepDebt(readiness) {
@@ -56,7 +56,7 @@ export function checkSleepDebt(readiness) {
     return {
       type: 'sleep_debt',
       severity: 'warning',
-      message: `Readiness sub ${READINESS_MED} pentru ${values.slice(0, 3).length} zile consecutive. Prioritizează somnul.`,
+      message: `Readiness sub ${READINESS_MED} pentru ${values.slice(0, 3).length} zile consecutive. Prioritizeaza somnul.`,
       values: values.slice(0, 3),
     };
   }
@@ -64,7 +64,7 @@ export function checkSleepDebt(readiness) {
 }
 
 /**
- * Check 3: Oportunitate PR — readiness >= 85 și nu a mai fost PR în 14 zile.
+ * Check 3: Oportunitate PR — readiness >= 85 si nu a mai fost PR in 14 zile.
  */
 export function checkPROpportunity(readiness, logs) {
   if (!readiness || !logs) return null;
@@ -82,7 +82,7 @@ export function checkPROpportunity(readiness, logs) {
     return {
       type: 'pr_opportunity',
       severity: 'info',
-      message: `Readiness la ${todayScore} — zi bună pentru un PR. Nu ai mai setat niciun PR în 14 zile.`,
+      message: `Readiness la ${todayScore} — zi buna pentru un PR. Nu ai mai setat niciun PR in 14 zile.`,
       readinessScore: todayScore,
     };
   }
@@ -149,7 +149,7 @@ export function checkTrainingStreak(logs) {
     return {
       type: 'training_streak',
       severity: 'success',
-      message: `${streak} zile consecutive de antrenament! Menține ritmul.`,
+      message: `${streak} zile consecutive de antrenament! Mentine ritmul.`,
       streak,
     };
   }
@@ -157,7 +157,7 @@ export function checkTrainingStreak(logs) {
 }
 
 /**
- * Check 6: Kcal sub țintă (KCAL_TARGET) — prea mult deficit.
+ * Check 6: Kcal sub tinta (KCAL_TARGET) — prea mult deficit.
  */
 export function checkKcalDeficit(kcals, currentKcalTarget) {
   if (!kcals || !currentKcalTarget) return null;
@@ -174,7 +174,7 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
     return {
       type: 'kcal_too_low',
       severity: 'warning',
-      message: `Kcal medii ultimele ${values.length} zile: ${Math.round(avgKcal)}. Sub ${KCAL_TARGET} kcal — risc de masă musculară.`,
+      message: `Kcal medii ultimele ${values.length} zile: ${Math.round(avgKcal)}. Sub ${KCAL_TARGET} kcal — risc de masa musculara.`,
       avgKcal: Math.round(avgKcal),
     };
   }
@@ -182,7 +182,7 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
 }
 
 /**
- * Check 7: Sesiune planificată dar ore de vârf depășite.
+ * Check 7: Sesiune planificata dar ore de varf depasite.
  */
 export function checkPeakHours(peakHours) {
   if (!peakHours || Object.keys(peakHours).length === 0) return null;
@@ -193,14 +193,14 @@ export function checkPeakHours(peakHours) {
     return {
       type: 'past_peak_hours',
       severity: 'info',
-      message: `Ați depășit orele de vârf (${peakStart}:00–${peakStart + 2}:00). Totuși antrenează-te — orice sesiune contează.`,
+      message: `Ati depasit orele de varf (${peakStart}:00–${peakStart + 2}:00). Totusi antreneaza-te — orice sesiune conteaza.`,
     };
   }
   return null;
 }
 
 /**
- * Check 8: Greutate corporală în creștere la CUT.
+ * Check 8: Greutate corporala in crestere la CUT.
  */
 export function checkWeightTrend(weights, isInCut) {
   if (!isInCut || !weights) return null;
@@ -219,7 +219,7 @@ export function checkWeightTrend(weights, isInCut) {
     return {
       type: 'weight_increasing_in_cut',
       severity: 'warning',
-      message: `Greutatea a crescut cu ${(avgNew - avgOld).toFixed(1)}kg în CUT. Verifică caloriile.`,
+      message: `Greutatea a crescut cu ${(avgNew - avgOld).toFixed(1)}kg in CUT. Verifica caloriile.`,
       trend: +(avgNew - avgOld).toFixed(2),
     };
   }
@@ -238,7 +238,7 @@ export function checkInactivity(logs) {
     return {
       type: 'inactivity',
       severity: 'warning',
-      message: `Nu ai antrenat de ${Math.floor(daysSinceLast)} zile. Reîncepe cu o sesiune ușoară.`,
+      message: `Nu ai antrenat de ${Math.floor(daysSinceLast)} zile. Reincepe cu o sesiune usoara.`,
       daysSinceLast: Math.floor(daysSinceLast),
     };
   }
@@ -246,7 +246,7 @@ export function checkInactivity(logs) {
 }
 
 /**
- * Check 10: Hidratare insuficientă (waters < 2L).
+ * Check 10: Hidratare insuficienta (waters < 2L).
  */
 export function checkHydration(waters) {
   if (!waters) return null;
@@ -256,7 +256,7 @@ export function checkHydration(waters) {
     return {
       type: 'low_hydration',
       severity: 'info',
-      message: `Hidratare azi: ${Number(todayWater)}ml. Țintă: 2000ml. Bea apă înainte de antrenament.`,
+      message: `Hidratare azi: ${Number(todayWater)}ml. Tinta: 2000ml. Bea apa inainte de antrenament.`,
       ml: Number(todayWater),
     };
   }
@@ -264,7 +264,7 @@ export function checkHydration(waters) {
 }
 
 /**
- * Rulează toate cele 10 verificări și returnează alertele active.
+ * Ruleaza toate cele 10 verificari si returneaza alertele active.
  * @param {object} ctx - CoachContext + extra fields
  * @returns {Array} alerts sorted by severity (warning first, then info, then success)
  */

@@ -25,7 +25,7 @@ export function cleanFakeLogs() {
   const result = filterValidLogs(logs);
   if (result.length !== logs.length) DB.set('logs', result);
   const removed = before - result.length;
-  toast(`✅ Curățat ${removed} loguri (${result.length} rămase)`, 'var(--green)');
+  toast(`✅ Curatat ${removed} loguri (${result.length} ramase)`, 'var(--green)');
   renderCoachIdle();
   if (window.renderDash) window.renderDash();
 }
@@ -44,8 +44,8 @@ export function renderPRWall() {
   if (!prs.length || !entries.length) {
     el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
       <div style="font-size:32px;margin-bottom:10px">🎯</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Niciun record personal încă</div>
-      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completează primul antrenament pentru a-ți vedea recordurile personale</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Niciun record personal inca</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completeaza primul antrenament pentru a-ti vedea recordurile personale</div>
     </div>`;
     return;
   }
@@ -66,6 +66,6 @@ export function renderPRWall() {
       <div style="font-size:11px;color:var(--text3);min-width:40px;text-align:right">×${e.reps || '—'}</div>
     </div>`;
   }).join('') + (hasMore ? `<div onclick="togglePRWall()" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
-    ${uiToggleFlags.prWallExpanded ? '▴ Restrânge' : `▾ Vezi toate (${entries.length})`}
+    ${uiToggleFlags.prWallExpanded ? '▴ Restrange' : `▾ Vezi toate (${entries.length})`}
   </div>` : '');
 }

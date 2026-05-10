@@ -9,11 +9,11 @@ import {
 import { BLOCK_LENGTH_WEEKS, BLOCK_SCALING } from '../constants.js';
 
 describe('getBlockLengthWeeks — §9.5 Cluster 4 block length variants', () => {
-  it('Forța → 21 săpt (BUILD+PEAK+TRANSITION)', () => {
+  it('Forta → 21 sapt (BUILD+PEAK+TRANSITION)', () => {
     expect(getBlockLengthWeeks('forta')).toBe(BLOCK_LENGTH_WEEKS.FORTA);
     expect(getBlockLengthWeeks('forta')).toBe(21);
   });
-  it('non-Forța goals → 12 săpt BUILD-only default', () => {
+  it('non-Forta goals → 12 sapt BUILD-only default', () => {
     expect(getBlockLengthWeeks('hipertrofie')).toBe(12);
     expect(getBlockLengthWeeks('recompozitie')).toBe(12);
     expect(getBlockLengthWeeks('longevitate')).toBe(12);
@@ -50,7 +50,7 @@ describe('computeMacrocycleBlock — block/mesocycle/week resolution', () => {
     expect(block.weekInMesocycle).toBe(1);
   });
 
-  it('Forța block length = 21', () => {
+  it('Forta block length = 21', () => {
     const block = computeMacrocycleBlock(0, 'forta');
     expect(block.blockLengthWeeks).toBe(21);
   });
@@ -146,7 +146,7 @@ describe('evaluateMariaAdvanceGate — §9.5 Maria adaptive override', () => {
     expect(result.signals).toContain('maria_advance_gate_blocked_tier');
   });
 
-  it('Maria + tier OK + injury within 6 săpt → blocked (signal injury)', () => {
+  it('Maria + tier OK + injury within 6 sapt → blocked (signal injury)', () => {
     const result = evaluateMariaAdvanceGate({
       personaId: 'maria',
       profileTier: 'STABLE',
@@ -156,7 +156,7 @@ describe('evaluateMariaAdvanceGate — §9.5 Maria adaptive override', () => {
     expect(result.signals).toContain('maria_advance_gate_blocked_injury');
   });
 
-  it('Maria + tier OK + injury older than 6 săpt → allowed', () => {
+  it('Maria + tier OK + injury older than 6 sapt → allowed', () => {
     const result = evaluateMariaAdvanceGate({
       personaId: 'maria',
       profileTier: 'STABLE',

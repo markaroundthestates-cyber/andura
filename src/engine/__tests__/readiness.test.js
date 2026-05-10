@@ -23,9 +23,9 @@ describe('readiness — named threshold exports', () => {
 });
 
 describe('readiness — getReadinessVerdict', () => {
-  it('score=85 CUT → Sesiune solidă, canPR=false', () => {
+  it('score=85 CUT → Sesiune solida, canPR=false', () => {
     const v = getReadinessVerdict(85, { isInCut: true });
-    expect(v.label).toBe('Sesiune solidă');
+    expect(v.label).toBe('Sesiune solida');
     expect(v.canPR).toBe(false);
     expect(v.volumeMultiplier).toBe(1.0);
   });
@@ -50,9 +50,9 @@ describe('readiness — getReadinessVerdict', () => {
     expect(v.volumeMultiplier).toBe(1.0);
   });
 
-  it('READINESS_MED boundary (55) → Sesiune moderată, volumeMultiplier=0.85', () => {
+  it('READINESS_MED boundary (55) → Sesiune moderata, volumeMultiplier=0.85', () => {
     const v = getReadinessVerdict(READINESS_MED, { isInCut: false });
-    expect(v.label).toBe('Sesiune moderată');
+    expect(v.label).toBe('Sesiune moderata');
     expect(v.volumeMultiplier).toBe(0.85);
   });
 });

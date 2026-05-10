@@ -13,8 +13,8 @@ export function getAdherenceScore() {
   const logs = DB.get('logs') || [];
 
   // Map JS getDay() to PROG index
-  // PROG: [0]=Luni(Mon), [1]=Marți(Tue), [2]=Mie(Wed), [3]=Joi(Thu),
-  //        [4]=Vineri(Fri), [5]=Sâmbătă(Sat), [6]=Duminică(Sun)
+  // PROG: [0]=Luni(Mon), [1]=Marti(Tue), [2]=Mie(Wed), [3]=Joi(Thu),
+  //        [4]=Vineri(Fri), [5]=Sambata(Sat), [6]=Duminica(Sun)
   const dayMap = [6, 0, 1, 2, 3, 4, 5]; // JS 0(Sun)→PROG[6], JS 1(Mon)→PROG[0], etc.
   const progDay = PROG[dayMap[dayOfWeek]];
 

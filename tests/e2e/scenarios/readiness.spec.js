@@ -9,7 +9,7 @@ const BASE_URL = '/';
 const TODAY = new Date().toISOString().slice(0, 10);
 
 test.describe('Readiness Verdict — Phase-aware labels', () => {
-  test('AUTO phase before July 20 2026: score>=85 shows Sesiune solidă (not Zi de PR)', async ({ page }) => {
+  test('AUTO phase before July 20 2026: score>=85 shows Sesiune solida (not Zi de PR)', async ({ page }) => {
     await setupUser(page, {
       _suppressFirebaseSync: true,
       'onboarding-done': true,
@@ -26,7 +26,7 @@ test.describe('Readiness Verdict — Phase-aware labels', () => {
     expect(bodyText).not.toContain('Zi de PR');
   });
 
-  test('CUT phase: score>=85 shows Sesiune solidă (not Zi de PR)', async ({ page }) => {
+  test('CUT phase: score>=85 shows Sesiune solida (not Zi de PR)', async ({ page }) => {
     await setupUser(page, {
       _suppressFirebaseSync: true,
       'onboarding-done': true,
@@ -58,6 +58,6 @@ test.describe('Readiness Verdict — Phase-aware labels', () => {
 
     // Should not show any verdict when readiness is not set
     expect(bodyText).not.toContain('Zi de PR');
-    expect(bodyText).not.toContain('Sesiune solidă');
+    expect(bodyText).not.toContain('Sesiune solida');
   });
 });

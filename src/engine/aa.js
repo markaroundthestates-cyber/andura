@@ -29,47 +29,47 @@ export const AA = {
       : last3Sessions;
     const formBad = exSessions.filter(s => s.some(l => (l.notes||[]).includes('form'))).length;
 
-    // Somn prost în 2+ sesiuni → RPE artificial ridicat, IGNORE decrease
+    // Somn prost in 2+ sesiuni → RPE artificial ridicat, IGNORE decrease
     if (sleepBad >= 2) {
       return {
         ok: false,
         suppressDecrease: true,
         suppressIncrease: false,
-        reason: `😴 Somn prost în ${sleepBad} sesiuni → RPE artificial. Nu scad greutatea.`,
+        reason: `😴 Somn prost in ${sleepBad} sesiuni → RPE artificial. Nu scad greutatea.`,
         color: 'var(--accent2)'
       };
     }
 
-    // Oboseală repetată + form slabă → sugerează deload
+    // Oboseala repetata + form slaba → sugereaza deload
     if (fatigue >= 3 || (fatigue >= 2 && formBad >= 2)) {
       return {
         ok: false,
         suppressDecrease: false,
         suppressIncrease: true,
         forceDeload: true,
-        reason: `😓 Oboseală repetată (${fatigue}x) → consider deload săptămâna asta`,
+        reason: `😓 Oboseala repetata (${fatigue}x) → consider deload saptamana asta`,
         color: 'var(--accent2)'
       };
     }
 
-    // Formă slabă pe același exercițiu → scade independent de RPE
+    // Forma slaba pe acelasi exercitiu → scade independent de RPE
     if (formBad >= 2) {
       return {
         ok: false,
         suppressDecrease: false,
         suppressIncrease: true,
         formIssue: true,
-        reason: `⚠️ Formă slabă repetată → nu crești greutatea`,
+        reason: `⚠️ Forma slaba repetata → nu cresti greutatea`,
         color: 'var(--accent2)'
       };
     }
 
-    // Sesiune puternică repetată → poate fi mai agresiv
+    // Sesiune puternica repetata → poate fi mai agresiv
     if (strong >= 3) {
       return {
         ok: true,
         aggressive: true,
-        reason: `💪 Formă excelentă repetată → progresie accelerată`,
+        reason: `💪 Forma excelenta repetata → progresie accelerata`,
         color: 'var(--green)'
       };
     }
@@ -77,8 +77,8 @@ export const AA = {
     return { ok: true, reason: null };
   },
 
-  // Notes-only safety net: intervine NUMAI când există semnal negativ din notes.
-  // RPE per-set nu e colectat → logica INCREASE/DECREASE bazată pe RPE eliminată.
+  // Notes-only safety net: intervine NUMAI cand exista semnal negativ din notes.
+  // RPE per-set nu e colectat → logica INCREASE/DECREASE bazata pe RPE eliminata.
   check(ex) {
     const cooldownKey = 'aa-cooldown-' + ex;
     const lastAdj = DB.get(cooldownKey);
@@ -94,7 +94,7 @@ export const AA = {
     const lastW = logs[0].w || 20;
     const inc = DP.getIncrement(ex);
 
-    // Oboseală repetată + formă slabă → forțează deload
+    // Oboseala repetata + forma slaba → forteaza deload
     if (recovery.forceDeload) {
       DB.set('aa-cooldown-' + ex, Date.now());
       return {
@@ -105,7 +105,7 @@ export const AA = {
       };
     }
 
-    // Somn prost / oboseală → ține greutatea, nu crește
+    // Somn prost / oboseala → tine greutatea, nu creste
     if (!recovery.ok && recovery.suppressIncrease) {
       return {
         action: 'HOLD',
@@ -118,7 +118,7 @@ export const AA = {
     // Stop fizic recent → reduce volum 10%
     const earlyStops = DB.get('early-stops') || [];
     const hasPhysicalStop = earlyStops.slice(-3).some(
-      s => s.reason === 'Oboseală extremă' || s.reason === 'Am dureri'
+      s => s.reason === 'Oboseala extrema' || s.reason === 'Am dureri'
     );
     if (hasPhysicalStop) {
       return {
@@ -131,14 +131,14 @@ export const AA = {
       };
     }
 
-    // Formă slabă repetată → scade
+    // Forma slaba repetata → scade
     if (recovery.formIssue && logs.filter(l => (l.notes||[]).includes('form')).length >= 2) {
       const newW = Math.max(1, Math.round((lastW - inc) * 2) / 2);
       DB.set('aa-cooldown-' + ex, Date.now());
       return {
         action: 'DECREASE',
         newKg: newW,
-        reason: `⚠️ Formă slabă repetată → scad ${inc}kg pentru execuție corectă`,
+        reason: `⚠️ Forma slaba repetata → scad ${inc}kg pentru executie corecta`,
         color: 'var(--accent2)'
       };
     }

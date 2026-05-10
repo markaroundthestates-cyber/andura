@@ -6,7 +6,7 @@
 //   DOWN -15%: single trigger immediate (anti-burnout protect prima)
 //   UP +15%: strict requires N≥3 conditions cumulative AND Periodization phase
 //            gate "high_intensity != true" (anti "Sarcastic UP" Marius 5:1
-//            săpt 4-5 cascade aggressive Invariant 1 + Invariant 5 violation).
+//            sapt 4-5 cascade aggressive Invariant 1 + Invariant 5 violation).
 //
 // Tier-aware Q13=B: T0=±10% conservative / T1+=±15% full range.
 //
@@ -76,7 +76,7 @@ export function countConsecutiveGreenSessions(recentSessions) {
 
 /**
  * Check recovery red flags absent in trailing N-session window (default 3).
- * Returns true dacă ZERO 'red' energy în window (UP gating condition 2).
+ * Returns true daca ZERO 'red' energy in window (UP gating condition 2).
  *
  * @param {ReadonlyArray<{energy?: string}>} recentSessions
  * @param {number} [windowSize]
@@ -93,9 +93,9 @@ export function hasNoRecoveryRedFlags(recentSessions, windowSize = UP_GATING_CON
 
 /**
  * Check Periodization phase gate "high_intensity != true" per Q7 4th condition
- * verbatim. UP +15% NU triggers când Periodization mesocycle phase = PEAK or LOAD+.
+ * verbatim. UP +15% NU triggers cand Periodization mesocycle phase = PEAK or LOAD+.
  *
- * Anti "Sarcastic UP" Marius 5:1 săpt 4-5 cascade aggressive prevent.
+ * Anti "Sarcastic UP" Marius 5:1 sapt 4-5 cascade aggressive prevent.
  *
  * @param {string|null|undefined} periodizationPhase
  * @returns {boolean}

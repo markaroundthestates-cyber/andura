@@ -2,7 +2,7 @@
 // Per ADR 021 §Decision SSOT: multi-device sync algorithm cu zero progress loss.
 //
 //   - engine_tier:           Max Wins Monotonic (cantitate — session count)
-//   - calibration_confidence: Monotonic Clock (calitate — observații negative
+//   - calibration_confidence: Monotonic Clock (calitate — observatii negative
 //                             preserved monotonic; state never regresses)
 //   - version_vector:        Element-wise MAX merge per device UUID
 //   - observations:          Union-merge (yo_yo + AA HIGH events monotonic)
@@ -13,9 +13,9 @@
 // No persistence integration; consumers build `calibration_state` ad-hoc and
 // pass to `reconcile(branchA, branchB)`.
 //
-// **Faza 2 (Sprint 4.x — D13 logs-first):** integrate reconciliation în
+// **Faza 2 (Sprint 4.x — D13 logs-first):** integrate reconciliation in
 // Arbitrator T&B core post `calibrationContext.buildContext` async refactor.
-// Persistence via CDL or dedicated `calibration-state` storage key TBD în
+// Persistence via CDL or dedicated `calibration-state` storage key TBD in
 // Faza 2 design.
 //
 // **Faza 3 (post-launch v1):** decommission LWW. Cross-ref ADR 011 §Firebase
@@ -124,7 +124,7 @@ export function maxConfidence(a, b) {
  * Element-wise MAX merge of version vectors per ADR 021 §Reconciliation
  * algorithm.
  *
- * For each device key în either input, take MAX(va[key], vb[key]). Missing
+ * For each device key in either input, take MAX(va[key], vb[key]). Missing
  * keys treated as 0. Output contains union of all device keys.
  *
  * @param {Record<string, number> | undefined} va

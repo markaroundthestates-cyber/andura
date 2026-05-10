@@ -180,7 +180,7 @@ describe('evaluate — integration end-to-end §9.1 ADR 026', () => {
               expect(sets).toBeLessThanOrEqual(baseline.MRV);
             }
           }
-          // Invariant 3: Frecvență ≤ 6 sessions/week per muscle group — V1 not enforced inside engine
+          // Invariant 3: Frecventa ≤ 6 sessions/week per muscle group — V1 not enforced inside engine
           //   (orchestrator concern); we verify volume capped
         });
       }
@@ -220,7 +220,7 @@ describe('evaluate — integration end-to-end §9.1 ADR 026', () => {
           }
         }
         // Invariant 2: RIR ≥ 0 (mesocycle.rirTargetForPhase enforces floor 0)
-        // — V1 not exposed în blueprint directly; covered în mesocycle.test.js
+        // — V1 not exposed in blueprint directly; covered in mesocycle.test.js
 
         // Invariant 5 Medical Safety: NO injury override possible if blocked
         // — gate logic verified mesocycle.test.js + macrocycle.test.js
@@ -248,12 +248,12 @@ describe('evaluate — integration end-to-end §9.1 ADR 026', () => {
     expect(r.trace.personaId).toBe('marius');
   });
 
-  it('Forța goal → 21-week block (BUILD+PEAK+TRANSITION)', async () => {
+  it('Forta goal → 21-week block (BUILD+PEAK+TRANSITION)', async () => {
     const r = await evaluate(buildCtx({ persona: 'marius', goal: 'forta' }));
     expect(r.meta.macrocycle_block.blockLengthWeeks).toBe(21);
   });
 
-  it('non-Forța goals → 12-week block (BUILD-only)', async () => {
+  it('non-Forta goals → 12-week block (BUILD-only)', async () => {
     for (const goal of ['hipertrofie', 'recompozitie', 'longevitate', 'sanatate']) {
       const r = await evaluate(buildCtx({ persona: 'marius', goal }));
       expect(r.meta.macrocycle_block.blockLengthWeeks).toBe(12);

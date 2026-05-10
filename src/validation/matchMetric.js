@@ -2,7 +2,7 @@
 // Per `04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1.md` §5.1 LOCKED V1
 // (2026-05-05 evening late):
 //
-//   Universal weights (NU ghilotină conditional pe profile flags):
+//   Universal weights (NU ghilotina conditional pe profile flags):
 //     Safety considerations    0.35   (dominant — Maria 65 100-500 organici
 //                                       absorbs critical safety semantics)
 //     Exercise selection       0.25   (Jaccard similarity exercises set)
@@ -103,8 +103,8 @@ export function scoreSetsRepsRir(claudePrescription, anduraPrescription) {
 
 /**
  * Safety considerations: Claude flags ⊆ Andura flags.
- * Andura can include MORE flags (extra safety), NU mai puțin.
- * Score = 1 dacă subset, else fraction of Claude flags present in Andura.
+ * Andura can include MORE flags (extra safety), NU mai putin.
+ * Score = 1 daca subset, else fraction of Claude flags present in Andura.
  *
  * @param {ReadonlyArray<string>} claudeFlags
  * @param {ReadonlyArray<string>} anduraFlags

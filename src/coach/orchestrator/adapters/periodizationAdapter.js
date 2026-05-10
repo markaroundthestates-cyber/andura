@@ -2,7 +2,7 @@
 //
 // D1 Per-Engine Topology: 1-of-8 adapters, this is `periodization` (ADR 026 §42.10 pipeline #1).
 // D2 Thin Adapter Scope: pure shape mapping `engineContext → periodizationInput`
-//   + Periodization engine call + Result type wrap. ZERO business logic în adapter
+//   + Periodization engine call + Result type wrap. ZERO business logic in adapter
 //   (engine stays pure per ADR 018 §2 Standardized Dimension Contract).
 // D3 Context Object Pre-Built Input: orchestrator builds `engineContext` once;
 //   adapter consumes ready-data, NO direct app state pulls.
@@ -29,7 +29,7 @@ import { evaluate as evaluatePeriodization, ENGINE_ID } from '../../../engine/pe
  *
  * Pure shape mapping: `EngineContext` is already the canonical input shape per
  * ADR 018 §2 + Periodization V1 `evaluate(ctx)` signature. Adapter passes ctx
- * through (D2 thin scope honored) + wraps result în AdapterResult Result type
+ * through (D2 thin scope honored) + wraps result in AdapterResult Result type
  * + extracts Constraint Object for orchestrator propagation.
  *
  * `evaluate` is a TOTAL function (NEVER throws per its docstring) — defensive
@@ -49,7 +49,7 @@ export const periodizationAdapter = Object.freeze({
    */
   async invoke(ctx) {
     // D4 contract surface: validate input shape minimally — total function
-    // semantic preserved în engine (engine handles ctx===undefined gracefully)
+    // semantic preserved in engine (engine handles ctx===undefined gracefully)
     // dar adapter still emits structured INVALID_INPUT for non-object input
     // pentru consistency cu §3.6 taxonomy halt-strict.
     if (ctx !== undefined && (ctx === null || typeof ctx !== 'object')) {
@@ -63,7 +63,7 @@ export const periodizationAdapter = Object.freeze({
     try {
       const engineResult = await evaluatePeriodization(ctx);
 
-      // Constraint Object lives în engine `trace.constraintObject` per
+      // Constraint Object lives in engine `trace.constraintObject` per
       // src/engine/periodization/index.js line 161. Surface it via output for
       // orchestrator propagation to engineContext.meta.constraintObject pe
       // downstream engines (ADR 026 §1.10 + ADR 030 D3).

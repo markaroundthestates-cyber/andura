@@ -2,7 +2,7 @@
 // Standardized Dimension Contract.
 //
 // PeriodizationResult extends DimensionResult per ADR 018 §2 — adds 5 blueprint
-// fields în `meta` per §9.2 Cluster 1 verbatim.
+// fields in `meta` per §9.2 Cluster 1 verbatim.
 //
 // Per ADR 005 Vanilla JS: types pinned via JSDoc typedefs (NU TypeScript).
 
@@ -13,7 +13,7 @@
  */
 
 /**
- * Trigger source identifying which path în the 3-level hierarchy fired.
+ * Trigger source identifying which path in the 3-level hierarchy fired.
  * Per §9.3 Cluster 2.2:
  * - EARLY_SAFETY = Invariant 5 Medical Safety override (highest priority)
  * - EXTENSION_MARIUS = Marius 5:1 dual-signal recovery green extension
@@ -47,11 +47,11 @@
  * @property {number} blockIdx   - Block index (1-based, increments after each 3-mesocycle complete cycle)
  * @property {1|2|3} mesocycleIdx - Current mesocycle within block (M1/M2/M3)
  * @property {1|2|3|4} weekInMesocycle - Current week within mesocycle (1..4)
- * @property {number} blockLengthWeeks - Total block length în weeks (12 default sau 21 Forță)
+ * @property {number} blockLengthWeeks - Total block length in weeks (12 default sau 21 Forta)
  */
 
 /**
- * Periodization-specific blueprint emit (lives în DimensionResult.meta per
+ * Periodization-specific blueprint emit (lives in DimensionResult.meta per
  * §9.2 Cluster 1 + ADR 018 §2 dimension-specific meta convention).
  *
  * @typedef {Object} PeriodizationBlueprint

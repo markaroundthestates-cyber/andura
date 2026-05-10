@@ -31,7 +31,7 @@ export class CoachDirector {
     if (!ctx.readiness.isSet) {
       return {
         requiresReadinessInput: true,
-        message: 'Cum te simți azi?',
+        message: 'Cum te simti azi?',
         exercises: [],
         context: { patterns: ctx.patterns ?? [], patternsSuppressed: ctx.patternsSuppressed ?? true },
       };
@@ -89,7 +89,7 @@ export class CoachDirector {
     if (ruleResult.action === 'rest') {
       return {
         restDay: true,
-        message: 'Odihnește-te azi. Recovery activ recomandat.',
+        message: 'Odihneste-te azi. Recovery activ recomandat.',
         exercises: [],
         readinessScore: ctx.readiness.score,
         ruleTrace: ruleResult.trace,
@@ -337,7 +337,7 @@ export class CoachDirector {
         session.exercises = session.exercises.slice(0, newCount);
         session.patternApplied = {
           type: 'EARLY_END',
-          reason: `Pattern detectat: ${pattern.earlyEndRate || Math.round((pattern.confidence ?? 0) * 100)}% sesiuni terminate devreme. Redus la ${newCount} exerciții.`,
+          reason: `Pattern detectat: ${pattern.earlyEndRate || Math.round((pattern.confidence ?? 0) * 100)}% sesiuni terminate devreme. Redus la ${newCount} exercitii.`,
           originalCount,
           newCount,
         };

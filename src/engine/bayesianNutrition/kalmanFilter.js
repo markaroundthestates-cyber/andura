@@ -20,7 +20,7 @@ import { KALMAN_DEFAULTS } from './constants.js';
  *   SS_res = Σ (y - ŷ)²
  *   SS_tot = Σ (y - ȳ)²
  *
- * Returns 0 când insufficient data sau SS_tot=0 (defensive total function).
+ * Returns 0 cand insufficient data sau SS_tot=0 (defensive total function).
  *
  * @param {ReadonlyArray<number>} observed
  * @param {ReadonlyArray<number>} predicted

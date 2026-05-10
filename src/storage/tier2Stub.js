@@ -1,14 +1,14 @@
 // ══ TIER 2 COLD STORAGE — Firebase Firestore stub (ADR 020 §Tier 2) ════════
-// Per ADR 020: archive >180 zile (pre-launch) / >365 zile (post-Pro) în
+// Per ADR 020: archive >180 zile (pre-launch) / >365 zile (post-Pro) in
 // Firestore via REST API (ADR 002 — REST not SDK). Lazy fetch on-demand only
 // (e.g., user views "all-time progress" chart → fetch Tier 2 batch).
 //
 // ── Status ──────────────────────────────────────────────────────────────────
 //
 // **DEFERRED post-launch v1 + Pro tier launch.** Firebase Firestore costs at
-// scale ($125/lună @ 100 users, $1500/lună @ 1000) gate this feature behind
+// scale ($125/luna @ 100 users, $1500/luna @ 1000) gate this feature behind
 // Pro paywall (DECISION_LOG §Pricing locked: Founding Members €60 lifetime,
-// Pro €6/lună sau €65/an). Tier 1 (IndexedDB) covers up to 1 year retention
+// Pro €6/luna sau €65/an). Tier 1 (IndexedDB) covers up to 1 year retention
 // pre-Pro — sufficient pentru launch beta.
 //
 // ── Future contract (when implemented) ──────────────────────────────────────
@@ -26,7 +26,7 @@
 //  - Public API surface declared early → consumers can call no-op fns without
 //    branching on feature flag.
 //  - Documentation locality: all Tier 2 design notes live alongside Tier 0/1
-//    code, NU scattered în ADR-only.
+//    code, NU scattered in ADR-only.
 //  - Future implementer (Sprint 4.x or post-launch) has clear entry point.
 
 /**

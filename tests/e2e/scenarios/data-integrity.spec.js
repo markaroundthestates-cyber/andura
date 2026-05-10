@@ -238,7 +238,7 @@ test.describe('Data integrity after reset', () => {
     // Load without onboarding-done → wizard should appear
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(500);
-    await expect(page.locator('text=GREUTĂȚILE TALE ACTUALE').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=GREUTATILE TALE ACTUALE').first()).toBeVisible({ timeout: 5000 });
 
     // Simulate completing onboarding
     await page.evaluate(() => {
@@ -248,7 +248,7 @@ test.describe('Data integrity after reset', () => {
     await page.waitForTimeout(500);
 
     // Wizard gone after onboarding-done is set
-    const wizardAfterComplete = await page.locator('text=GREUTĂȚILE TALE ACTUALE').count();
+    const wizardAfterComplete = await page.locator('text=GREUTATILE TALE ACTUALE').count();
     expect(wizardAfterComplete).toBe(0);
 
     // Re-run onboarding: remove the key (addInitScript does NOT restore it since it only sets the suppress flag)
@@ -259,6 +259,6 @@ test.describe('Data integrity after reset', () => {
     await page.waitForTimeout(500);
 
     // Wizard reappears
-    await expect(page.locator('text=GREUTĂȚILE TALE ACTUALE').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('text=GREUTATILE TALE ACTUALE').first()).toBeVisible({ timeout: 5000 });
   });
 });

@@ -1,6 +1,6 @@
 // ══ TIER STORAGE — Stocare pe 3 niveluri temporale ════════════════════════
 // live:      ultimele 90 zile — date complete, per-entry
-// aggregate: 90 zile – 1 an — agregate zilnice/săptămânale
+// aggregate: 90 zile – 1 an — agregate zilnice/saptamanale
 // archive:   > 1 an — sumar lunar comprimat
 
 import { DB, todTs, todDate } from '../db.js';
@@ -17,7 +17,7 @@ const LIVE_CUTOFF_DAYS = 90;
 const AGGREGATE_CUTOFF_DAYS = 365;
 
 /**
- * Returnează data de start pentru fiecare tier.
+ * Returneaza data de start pentru fiecare tier.
  */
 export function getTierBoundaries(now = NOW()) {
   const liveCutoff = new Date(now.getTime() - LIVE_CUTOFF_DAYS * MS_DAY);
@@ -26,7 +26,7 @@ export function getTierBoundaries(now = NOW()) {
 }
 
 /**
- * Clasifică un array de intrări logs pe tiers.
+ * Clasifica un array de intrari logs pe tiers.
  * @param {Array} logs - fiecare cu { ts } sau { date }
  * @param {Date} now
  * @returns {{ live: Array, aggregate: Array, archive: Array }}
@@ -50,7 +50,7 @@ export function classifyLogs(logs, now = NOW()) {
 }
 
 /**
- * Agregează logs vechi (90d-1yr) în sumar zilnic.
+ * Agregeaza logs vechi (90d-1yr) in sumar zilnic.
  * @param {Array} logs
  * @returns {Object} { 'YYYY-MM-DD': { sets: N, avgWeight: N, exercises: [...] } }
  */
@@ -77,7 +77,7 @@ export function aggregateLogs(logs) {
 }
 
 /**
- * Arhivează logs > 1 an în sumar lunar.
+ * Arhiveaza logs > 1 an in sumar lunar.
  * @param {Array} logs
  * @returns {Object} { 'YYYY-MM': { sessions: N, totalSets: N, topExercises: [...] } }
  */
@@ -118,7 +118,7 @@ export function archiveLogs(logs) {
 }
 
 /**
- * Salvează tiers în localStorage (optimizat: doar live e stocat complet).
+ * Salveaza tiers in localStorage (optimizat: doar live e stocat complet).
  * @param {Array} logs
  */
 export function saveTiers(logs) {
@@ -129,7 +129,7 @@ export function saveTiers(logs) {
 }
 
 /**
- * Citește doar logs live (ultimele 90 zile) — fast path pentru UI.
+ * Citeste doar logs live (ultimele 90 zile) — fast path pentru UI.
  * @returns {Array}
  */
 export function getLiveLogs() {
@@ -137,7 +137,7 @@ export function getLiveLogs() {
 }
 
 /**
- * Citește sumar agregat pentru grafice istorice.
+ * Citeste sumar agregat pentru grafice istorice.
  * @returns {Object}
  */
 export function getAggregateData() {
@@ -145,7 +145,7 @@ export function getAggregateData() {
 }
 
 /**
- * Citește arhiva lunară pentru statistici pe termen lung.
+ * Citeste arhiva lunara pentru statistici pe termen lung.
  * @returns {Object}
  */
 export function getArchiveData() {

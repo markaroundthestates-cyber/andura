@@ -19,7 +19,7 @@
 //   (engine source line 187). Engine output blueprint = `{ warmup_state,
 //   duration_min, routine_type, general_sets (count), general_sets_list,
 //   specific_sets (count), specific_sets_list, target_muscle_groups,
-//   skip_available, cooldown_state, ui_label, signals }` — 12 fields în meta —
+//   skip_available, cooldown_state, ui_label, signals }` — 12 fields in meta —
 //   NU include `forward_constraint_object` (only `trace.forwardedConstraint`
 //   boolean flag). Adapter NU re-surface `output.constraintObject`.
 //
@@ -34,8 +34,8 @@
 // (anti-drift if enum renamed future, batch 6 lesson preserved).
 //
 // **T0 Instant Skip default semantics (§65.3 Source 1 Option A):**
-// SkipDecision returns `t0InstantSkipDefault: true` în trace metadata, dar
-// warmup_state STAYS ACTIVE pentru T0 fresh user fără explicit `userOptedSkip:
+// SkipDecision returns `t0InstantSkipDefault: true` in trace metadata, dar
+// warmup_state STAYS ACTIVE pentru T0 fresh user fara explicit `userOptedSkip:
 // true` (anti-paternalism ADR 025 — engine pre-fills, user keeps autonomy).
 // `skip_available` boolean = true ALWAYS V1 (buton vizibil session 1).
 //
@@ -52,7 +52,7 @@
 //      duration_min = 8 (Maria 5-10 midpoint). Confirms §65.3 Option A.
 //   2. T1 Marius Bulk active expanded routine — ACTIVE state, hybrid routine,
 //      Marius range 8-10 midpoint 9. cooldown_state.offered=true (post-session
-//      §65.4 OVERRIDE Q4). ui_label "Încălzire ~9 min" RO native.
+//      §65.4 OVERRIDE Q4). ui_label "Incalzire ~9 min" RO native.
 //   3. T2 Marius Deload week + Energy DOWN auto-shorten D3 — DELOAD_LIGHTER
 //      state (priority over Energy DOWN), Marius range clamped 7. tier 'MED'.
 //
@@ -198,7 +198,7 @@ describe('Warm-up Adapter — Golden-master parity legacy↔orchestrated (ADR 03
     expect(isOk(orchResults[0])).toBe(true);
     expect(orchResults[0].output).toEqual(legacyOutput);
     expect(orchResults[0].output.id).toBe('warmup');
-    // T0 Maria fresh user fără userOptedSkip → default ACTIVE state (engine
+    // T0 Maria fresh user fara userOptedSkip → default ACTIVE state (engine
     // anti-paternalism ADR 025 — engine pre-fills, user keeps autonomy).
     expect(orchResults[0].output.meta.warmup_state).toBe(WARMUP_STATE.ACTIVE);
     expect(orchResults[0].output.tier).toBe('HIGH'); // ACTIVE → HIGH per engine line 313-316
@@ -207,7 +207,7 @@ describe('Warm-up Adapter — Golden-master parity legacy↔orchestrated (ADR 03
     // Maria 65 mobility flow 5-10 min → midpoint 8
     expect(orchResults[0].output.meta.duration_min).toBe(8);
     expect(orchResults[0].output.meta.routine_type).toBe('hybrid'); // V1 LOCKED Q65.2 Option C
-    expect(orchResults[0].output.meta.ui_label).toBe('Încălzire ~8 min');
+    expect(orchResults[0].output.meta.ui_label).toBe('Incalzire ~8 min');
   });
 
   it('T1 Marius Bulk active expanded routine — ACTIVE hybrid Marius 8-10 range midpoint 9 (legacy ≡ orchestrated)', async () => {
@@ -235,8 +235,8 @@ describe('Warm-up Adapter — Golden-master parity legacy↔orchestrated (ADR 03
     expect(orchResults[0].output.meta.cooldown_state.offered).toBe(true);
     expect(orchResults[0].output.meta.cooldown_state.content).toBe('text-only');
     expect(orchResults[0].output.meta.cooldown_state.durationMin).toBe(2);
-    // ui_label RO native "Încălzire ~9 min"
-    expect(orchResults[0].output.meta.ui_label).toBe('Încălzire ~9 min');
+    // ui_label RO native "Incalzire ~9 min"
+    expect(orchResults[0].output.meta.ui_label).toBe('Incalzire ~9 min');
   });
 
   it('T2 Marius Deload week + Energy DOWN auto-shorten D3 → DELOAD_LIGHTER (priority over Energy DOWN per Cluster A1 priority order) (legacy ≡ orchestrated)', async () => {
@@ -417,7 +417,7 @@ describe('Warm-up Adapter — Pipeline integration 7-adapter chain (ADR 026 §1.
     expect(propagatedCO.immutable_snapshot).toBe(true); // anti-cascade preserved
     expect(propagatedCO.phase).toBeTruthy(); // phase preserved post chain
 
-    // Warm-up adapter NU expose constraintObject în output (Specialization /
+    // Warm-up adapter NU expose constraintObject in output (Specialization /
     // Tempo / Bayesian Nutrition / Goal Adaptation pattern, NU Energy Adjustment
     // Hook 4 re-emission pattern)
     const warmupOutput = results[6].output;
@@ -449,7 +449,7 @@ describe('Warm-up Adapter — Pipeline integration 7-adapter chain (ADR 026 §1.
       Object.freeze({ id: 'warmup', invoke: warmupSpy }),
     ]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');
     expect(goalAdSpy).not.toHaveBeenCalled();

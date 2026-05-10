@@ -30,9 +30,9 @@ export function renderWeight(){
   else{unlockWeight();}
   const tr=$('wtr2');
   if(tr){
-    if(trend===null){tr.className='wtr nt';tr.textContent='— completează câteva zile';}
+    if(trend===null){tr.className='wtr nt';tr.textContent='— completeaza cateva zile';}
     else if(trend<-1.2){tr.className='wtr ft';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · Scade rapid → +150 kcal`;}
-    else if(trend>0){tr.className='wtr sl';tr.innerHTML=`↑ ${trend.toFixed(2)} kg/7z · Probabil retenție apă — trendul pe 7 zile contează, nu ziua de azi`;}
+    else if(trend>0){tr.className='wtr sl';tr.innerHTML=`↑ ${trend.toFixed(2)} kg/7z · Probabil retentie apa — trendul pe 7 zile conteaza, nu ziua de azi`;}
     else if(trend>-0.3){tr.className='wtr sl';tr.innerHTML=`→ ${Math.abs(trend).toFixed(2)} kg/7z · Prea lent → −100 kcal`;}
     else{tr.className='wtr gd';tr.innerHTML=`↓ ${Math.abs(trend).toFixed(2)} kg/7z · ✅ Pe traseu`;}
   }
@@ -52,7 +52,7 @@ export function saveW(){
   const ws=DB.get('weights')||{};
   ws[getLogDate()]=curW;DB.set('weights',ws);
   const label=state.logDateOffset ===0?'azi':getLogDateLabel();
-  toast(`✓ Greutate salvată (${label})`,'var(--green)');
+  toast(`✓ Greutate salvata (${label})`,'var(--green)');
   if(state.logDateOffset ===0) lockWeight(curW);
   renderWeight();if(window.renderDash)window.renderDash();
 }
@@ -116,7 +116,7 @@ export function saveKcal() {
   DB.set('kcals', kcals);
   if(state.logDateOffset ===0) DB.set('current-kcal', currentKcal);
   const diff = currentKcal - KCAL_TARGET;
-  toast(diff === 0 ? `✓ ${KCAL_TARGET} kcal salvat` : diff > 0 ? `✓ Salvat (+${diff} față de target)` : `✓ Salvat (${diff} față de target)`,
+  toast(diff === 0 ? `✓ ${KCAL_TARGET} kcal salvat` : diff > 0 ? `✓ Salvat (+${diff} fata de target)` : `✓ Salvat (${diff} fata de target)`,
     diff > 200 ? 'var(--accent2)' : 'var(--accent)');
   renderWeight();
   if (state.logDateOffset === 0) lockKcal();
@@ -142,7 +142,7 @@ export function renderUnifiedHistory() {
   const prots = DB.get('prots') || {};
   const ws = DB.get('weights') || {};
 
-  // Toate datele cu orice dată logată
+  // Toate datele cu orice data logata
   const allDates = [...new Set([
     ...Object.keys(kcals),
     ...Object.keys(prots),
@@ -152,8 +152,8 @@ export function renderUnifiedHistory() {
   if (!allDates.length) {
     el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
       <div style="font-size:32px;margin-bottom:10px">📋</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio înregistrare</div>
-      <div style="font-size:12px;color:var(--text3);line-height:1.5">Loghează greutatea, kcal sau proteina pentru a vedea istoricul</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio inregistrare</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Logheaza greutatea, kcal sau proteina pentru a vedea istoricul</div>
     </div>`;
     return;
   }
@@ -175,14 +175,14 @@ export function renderUnifiedHistory() {
     const p = prots[d];
     const w = ws[d];
 
-    // Greutate cu diff față de ziua anterioară
+    // Greutate cu diff fata de ziua anterioara
     const prevDate = allDates[i + 1];
     const prevW = prevDate ? ws[prevDate] : null;
     const wDiff = (w && prevW) ? Math.round((w - prevW) * 10) / 10 : null;
     const wDiffStr = wDiff === null ? '' : (wDiff > 0 ? `+${wDiff.toFixed(1)}` : wDiff.toFixed(1));
     const wDiffColor = wDiff === null ? '' : wDiff < 0 ? 'var(--green)' : wDiff > 0 ? 'var(--red)' : 'var(--text3)';
 
-    // Kcal color bazat pe target-ul din data respectivă
+    // Kcal color bazat pe target-ul din data respectiva
     const kcalTarget = getKcalTargetForDate(d);
     const kdiff = k !== undefined ? k - kcalTarget : null;
     const kc = kdiff === null ? 'var(--text3)' : kdiff > 200 ? 'var(--accent2)' : kdiff < -200 ? 'var(--accent3)' : 'var(--green)';
@@ -202,7 +202,7 @@ export function renderUnifiedHistory() {
   }).join('');
 
   const footer = !historyShowAll && allDates.length > 7
-    ? `<div style="padding:10px 16px;text-align:center;color:var(--text3);font-size:11px">+${allDates.length - 7} zile mai vechi — apasă TOATE</div>`
+    ? `<div style="padding:10px 16px;text-align:center;color:var(--text3);font-size:11px">+${allDates.length - 7} zile mai vechi — apasa TOATE</div>`
     : '';
 
   el.innerHTML = header + rows + footer;
@@ -211,14 +211,14 @@ export function renderUnifiedHistory() {
 export function toggleHistoryAll() {
   historyShowAll = !historyShowAll;
   const btn = $('hist-expand-btn');
-  if (btn) btn.textContent = historyShowAll ? 'RESTRÂNGE ▴' : 'TOATE ▾';
+  if (btn) btn.textContent = historyShowAll ? 'RESTRANGE ▴' : 'TOATE ▾';
   renderUnifiedHistory();
 }
 
 export function getKcalTargetForDate(dateStr) {
-  // Citește phase-log pentru a ști ce target era activ în data respectivă
+  // Citeste phase-log pentru a sti ce target era activ in data respectiva
   const phaseLogs = DB.get('phase-log') || []; // [{date, phase, kcalTarget}]
-  // Sortate desc — găsim primul log cu data <= dateStr
+  // Sortate desc — gasim primul log cu data <= dateStr
   const sorted = [...phaseLogs].sort((a,b) => b.date.localeCompare(a.date));
   const entry = sorted.find(e => e.date <= dateStr);
   return entry ? entry.kcalTarget : KCAL_TARGET; // default CUT
@@ -240,7 +240,7 @@ export function syncProtDisplay() {
   const bar = $('prot-bar'); if(bar) { bar.style.width = pct + '%'; bar.style.background = pct >= 100 ? 'var(--green)' : pct >= 80 ? 'var(--accent)' : 'var(--accent2)'; }
   el.style.color = pct >= 100 ? 'var(--green)' : pct >= 80 ? 'var(--accent)' : 'var(--accent2)';
   const dEl = $('prot-diff-display');
-  if(dEl) { const diff = currentProt - PROT_TARGET; if(diff >= 0) { dEl.textContent = `✅ ${pct}%`; dEl.style.color = 'var(--green)'; } else { dEl.textContent = `${diff}g față de target`; dEl.style.color = 'var(--accent2)'; } }
+  if(dEl) { const diff = currentProt - PROT_TARGET; if(diff >= 0) { dEl.textContent = `✅ ${pct}%`; dEl.style.color = 'var(--green)'; } else { dEl.textContent = `${diff}g fata de target`; dEl.style.color = 'var(--accent2)'; } }
 }
 
 export function adjProt(d) { currentProt = Math.max(0, Math.min(500, currentProt + d)); syncProtDisplay(); }
@@ -302,7 +302,7 @@ export function exportJSON() {
   a.href = url; a.download = `andura-backup-${tod()}.json`;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
-  toast('✓ Backup exportat — trimite fișierul pe telefon', 'var(--green)');
+  toast('✓ Backup exportat — trimite fisierul pe telefon', 'var(--green)');
 }
 
 export function importJSON() {
@@ -315,7 +315,7 @@ export function importJSON() {
       try {
         const data = JSON.parse(ev.target.result);
         if(!data.version || (!data.version.includes('andura') && !data.version.includes('salafull'))) {
-          toast('⚠ Fișier invalid', 'var(--red)'); return;
+          toast('⚠ Fisier invalid', 'var(--red)'); return;
         }
         const skip = ['version','exported'];
         let count = 0;
@@ -324,7 +324,7 @@ export function importJSON() {
           localStorage.setItem(k, JSON.stringify(data[k]));
           count++;
         });
-        toast(`✓ ${count} chei importate · Reîncarcă pagina`, 'var(--green)');
+        toast(`✓ ${count} chei importate · Reincarca pagina`, 'var(--green)');
         setTimeout(() => location.reload(), 1500);
       } catch(err) {
         toast('⚠ Eroare import: ' + err.message, 'var(--red)');
@@ -343,7 +343,7 @@ async function importMFPNutritionCSV(text) {
   const dateIdx = headers.findIndex(h => h.includes('date'));
   const kcalIdx = headers.findIndex(h => h.includes('calori') || h.includes('kcal'));
   const protIdx = headers.findIndex(h => h.includes('protein'));
-  if (dateIdx === -1) { toast('⚠ Nu am găsit coloana Date', 'var(--accent2)'); return; }
+  if (dateIdx === -1) { toast('⚠ Nu am gasit coloana Date', 'var(--accent2)'); return; }
 
   const kcals = DB.get('kcals') || {};
   const prots = DB.get('prots') || {};
@@ -374,7 +374,7 @@ async function importMFPNutritionCSV(text) {
 
   if (kcalIdx !== -1) DB.set('kcals', kcals);
   if (protIdx !== -1) DB.set('prots', prots);
-  toast(`✓ Import nutriție: ${countK} kcal + ${countP} prot`, 'var(--green)');
+  toast(`✓ Import nutritie: ${countK} kcal + ${countP} prot`, 'var(--green)');
   renderWeight();
   if (window.renderDash) window.renderDash();
 }
@@ -408,14 +408,14 @@ async function importMFPMeasurementCSV(text) {
   });
 
   DB.set('weights', ws);
-  toast(`✓ Import greutăți: ${count} înregistrări`, 'var(--green)');
+  toast(`✓ Import greutati: ${count} inregistrari`, 'var(--green)');
   renderWeight();
   if (window.renderDash) window.renderDash();
 }
 
 async function importMFPZip(file) {
   // ZIP import requires JSZip — not available, show informative message
-  toast('⚠ Import ZIP: folosește CSV individual din MFP Export', 'var(--accent2)');
+  toast('⚠ Import ZIP: foloseste CSV individual din MFP Export', 'var(--accent2)');
 }
 
 export function triggerMFPImport(){
@@ -425,7 +425,7 @@ export function triggerMFPImport(){
   input.onchange = async (e) => {
     const file = e.target.files[0];
     if(!file) return;
-    toast('⏳ Se procesează...', 'var(--accent)');
+    toast('⏳ Se proceseaza...', 'var(--accent)');
     try {
       if(file.name.endsWith('.zip')) {
         await importMFPZip(file);
@@ -547,7 +547,7 @@ export function savePhoto(input) {
     const photos = DB.get('photos') || [];
     photos.unshift({ date: tod(), src: e.target.result });
     DB.set('photos', photos.slice(0, 20));
-    toast('✓ Poză salvată', 'var(--green)');
+    toast('✓ Poza salvata', 'var(--green)');
   };
   reader.readAsDataURL(file);
 }
@@ -564,7 +564,7 @@ export function setBFOverride() {
 export function clearBFOverride() {
   localStorage.removeItem('bf-override');
   window.dispatchEvent(new StorageEvent('storage', { key: 'bf-override', newValue: null }));
-  toast('✓ BF override șters', 'var(--accent)');
+  toast('✓ BF override sters', 'var(--accent)');
 }
 
 // TODO: implement water tracking (currently not shown in UI)
@@ -611,7 +611,7 @@ function renderChart() {
     ctx.fillStyle = 'rgba(255,255,255,0.1)';
     ctx.font = '12px DM Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Adaugă cel puțin 2 zile de greutate', W / 2, H / 2);
+    ctx.fillText('Adauga cel putin 2 zile de greutate', W / 2, H / 2);
     return;
   }
 
@@ -697,12 +697,12 @@ export function renderDailyDropdown() {
   ])].sort().reverse().slice(0, 30);
 
   if (!allDates.length) {
-    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio înregistrare în ultimele 30 de zile.</div>';
+    el.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio inregistrare in ultimele 30 de zile.</div>';
     return;
   }
 
   el.innerHTML = `<div style="padding:8px 16px 12px">
-    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Selectează ziua</div>
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Selecteaza ziua</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px">
       ${allDates.map(d => {
         const [, m, day] = d.split('-');
@@ -751,7 +751,7 @@ export function showDayDetail(date) {
   panel.innerHTML = `<div style="margin:0 0 0;border-top:1px solid var(--border);padding:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div style="font-size:13px;font-weight:700;color:var(--accent)">${dateLabel}</div>
-      <button onclick="closeDayDetail()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:5px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕ Închide</button>
+      <button onclick="closeDayDetail()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:5px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕ Inchide</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
@@ -763,7 +763,7 @@ export function showDayDetail(date) {
         <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${kc}">${k !== undefined ? k : '—'}</div>
       </div>
       <div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteină</div>
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Proteina</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:${pc}">${p !== undefined ? p + 'g' : '—'}</div>
       </div>
       ${hasWellbeing ? `<div style="background:var(--bg3);border-radius:var(--rs);padding:12px">
@@ -839,8 +839,8 @@ export function renderSessionsDropdown() {
   if (!sessions.length) {
     el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
       <div style="font-size:32px;margin-bottom:10px">🏋️</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune în ultimele 14 zile</div>
-      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completează primul antrenament pentru a vedea istoricul</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune in ultimele 14 zile</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Completeaza primul antrenament pentru a vedea istoricul</div>
     </div>`;
     return;
   }
@@ -889,7 +889,7 @@ export function showSessionDetail(sessionTs) {
   }
 
   if (!sessionLogs.length) {
-    detailView.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio dată pentru această sesiune.</div>';
+    detailView.innerHTML = '<div style="padding:14px 16px;color:var(--text3);font-size:12px">Nicio data pentru aceasta sesiune.</div>';
   } else {
     const date = sessionLogs[0].date;
     const d = new Date(date);
@@ -917,7 +917,7 @@ export function showSessionDetail(sessionTs) {
 
     detailView.innerHTML = `<div>
       <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">
-        <button onclick="hideSessionDetail()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif">← Înapoi</button>
+        <button onclick="hideSessionDetail()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif">← Inapoi</button>
         <div style="font-size:13px;font-weight:700;color:var(--accent)">${dateLabel}</div>
       </div>
       ${rowsHtml}
@@ -981,13 +981,13 @@ function renderSessionHistory() {
   if (!sessions.length) {
     el.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin:4px 0">
       <div style="font-size:32px;margin-bottom:10px">💪</div>
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune înregistrată</div>
-      <div style="font-size:12px;color:var(--text3);line-height:1.5">Antrenamentele tale vor apărea aici după primul workout</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune inregistrata</div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.5">Antrenamentele tale vor aparea aici dupa primul workout</div>
     </div>`;
     return;
   }
 
-  const ratingLabel = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
+  const ratingLabel = { easy: '⚡ Usoara', normal: '👍 Normala', hard: '💀 Grea' };
   const ratingColor = { easy: 'var(--green)', normal: 'var(--accent)', hard: 'var(--red)' };
 
   el.innerHTML = sessions.map(s => {
@@ -1015,7 +1015,7 @@ function renderSessionHistory() {
         <span style="flex:1;font-size:12px;color:var(--text)">${summary}</span>
         <span style="font-size:14px;color:var(--text3)">›</span>
       </summary>
-      <div style="padding:8px 16px 12px;background:var(--bg2)">${exDetails || '<div style="font-size:11px;color:var(--text3)">Nicio exerciție înregistrată</div>'}</div>
+      <div style="padding:8px 16px 12px;background:var(--bg2)">${exDetails || '<div style="font-size:11px;color:var(--text3)">Nicio exercitie inregistrata</div>'}</div>
     </details>`;
   }).join('');
 }

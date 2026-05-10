@@ -222,7 +222,7 @@ describe('emitLightCoupling — Cluster D5 Engine #5 + #6 light coupling Q18=C',
   });
 });
 
-describe('getConvergenceGuardReference — NU duplicate logic în Specialization', () => {
+describe('getConvergenceGuardReference — NU duplicate logic in Specialization', () => {
   it('returns frozen metadata describing Convergence Guard SSOT', () => {
     const r = getConvergenceGuardReference();
     expect(Object.isFrozen(r)).toBe(true);

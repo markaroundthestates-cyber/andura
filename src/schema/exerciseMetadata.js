@@ -4,9 +4,9 @@
 //
 // Schema fields (per §36.36):
 //   - equipment_type: 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'band'
-//   - equipment_alternatives: string[] (exercise names cu același muscle target, equipment diferit)
-//   - force_demand: 'low' | 'medium' | 'high' (Tier 1 forță detection)
-//   - tier: 1 | 2 | 3 (forță / hipertrofie / accesoriu)
+//   - equipment_alternatives: string[] (exercise names cu acelasi muscle target, equipment diferit)
+//   - force_demand: 'low' | 'medium' | 'high' (Tier 1 forta detection)
+//   - tier: 1 | 2 | 3 (forta / hipertrofie / accesoriu)
 //   - muscle_target_primary: string
 //   - muscle_target_secondary: string[]
 //
@@ -30,7 +30,7 @@
 
 /** @type {Record<string, ExerciseMetadata>} */
 export const EXERCISE_METADATA = {
-  // ── Tier 1 — Compound forță (force_demand: high) ────────────────────────────
+  // ── Tier 1 — Compound forta (force_demand: high) ────────────────────────────
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — DB compound anchor shoulder
   'DB Shoulder Press':       { equipment_type: 'dumbbell', equipment_alternatives: ['Incline DB Press'],          force_demand: 'high',   tier: 1, muscle_target_primary: 'umeri',     muscle_target_secondary: ['triceps'] },
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — DB compound chest primary
@@ -107,8 +107,8 @@ export function getExerciseMetadata(exerciseName) {
 
 /**
  * Filter alternatives by tier-aware constraints (per §36.37 Smart-Routing).
- * Tier 1 forță: alternatives DOAR cu force_demand: 'high' (strict).
- * Tier 2/3: flexibility ridicată (toate alternatives cu același muscle_target_primary).
+ * Tier 1 forta: alternatives DOAR cu force_demand: 'high' (strict).
+ * Tier 2/3: flexibility ridicata (toate alternatives cu acelasi muscle_target_primary).
  * @param {string} exerciseName
  * @returns {string[]} filtered alternative exercise names
  */

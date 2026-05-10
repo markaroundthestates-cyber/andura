@@ -104,7 +104,7 @@ describe('scoreSetsRepsRir', () => {
   it('RIR over ±1 → fail', () => {
     expect(scoreSetsRepsRir(claude, [{ exercise: 'squat', sets: 5, reps: 5, rir: 4 }])).toBe(0);
   });
-  it('exercise NU în Andura → not evaluated (handled by Exercise dim)', () => {
+  it('exercise NU in Andura → not evaluated (handled by Exercise dim)', () => {
     expect(scoreSetsRepsRir(claude, [{ exercise: 'bench', sets: 5, reps: 5, rir: 2 }])).toBe(0);
   });
   it('empty Claude prescription + non-empty Andura → 0', () => {

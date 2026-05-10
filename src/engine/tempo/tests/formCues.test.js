@@ -11,12 +11,12 @@ import {
 import { PERSONA, MOVEMENT_CATEGORY, CUE_DEPTH_BY_TIER } from '../constants.js';
 
 describe('getBaseCue — Cluster B2 base library per category', () => {
-  it('compound category → controlează coborârea cue', () => {
-    expect(getBaseCue(MOVEMENT_CATEGORY.COMPOUND)).toContain('controlează');
+  it('compound category → controleaza coborarea cue', () => {
+    expect(getBaseCue(MOVEMENT_CATEGORY.COMPOUND)).toContain('controleaza');
   });
 
-  it('isolation category → mușchiul țintă cue', () => {
-    expect(getBaseCue(MOVEMENT_CATEGORY.ISOLATION)).toContain('mușchiul țintă');
+  it('isolation category → muschiul tinta cue', () => {
+    expect(getBaseCue(MOVEMENT_CATEGORY.ISOLATION)).toContain('muschiul tinta');
   });
 
   it('unknown category → safe default compound', () => {
@@ -33,15 +33,15 @@ describe('getTopCompoundOverride — Cluster B2 top-12 (V1 majority)', () => {
     expect(getTopCompoundOverride('deadlift')).toContain('spate neutru');
   });
 
-  it('bench_press returns omoplați cue', () => {
-    expect(getTopCompoundOverride('bench_press')).toContain('omoplați');
+  it('bench_press returns omoplati cue', () => {
+    expect(getTopCompoundOverride('bench_press')).toContain('omoplati');
   });
 
   it('hip_thrust returns fesieri cue', () => {
     expect(getTopCompoundOverride('hip_thrust')).toContain('fesieri');
   });
 
-  it('movement NOT în top-30 list → null', () => {
+  it('movement NOT in top-30 list → null', () => {
     expect(getTopCompoundOverride('cable_curl')).toBeNull();
   });
 
@@ -57,7 +57,7 @@ describe('getTopCompoundOverride — Cluster B2 top-12 (V1 majority)', () => {
 });
 
 describe('resolveCueText — top-30 override priority over base library', () => {
-  it('movement în top-30 → override wins', () => {
+  it('movement in top-30 → override wins', () => {
     const r = resolveCueText({
       movementId:       'back_squat',
       movementCategory: MOVEMENT_CATEGORY.COMPOUND,
@@ -65,40 +65,40 @@ describe('resolveCueText — top-30 override priority over base library', () => 
     expect(r).toContain('genunchii');
   });
 
-  it('movement NOT în top-30 → base library fallback per category', () => {
+  it('movement NOT in top-30 → base library fallback per category', () => {
     const r = resolveCueText({
       movementId:       'cable_curl',
       movementCategory: MOVEMENT_CATEGORY.ISOLATION,
     });
-    expect(r).toContain('mușchiul țintă');
+    expect(r).toContain('muschiul tinta');
   });
 
   it('no movementId → base library category fallback', () => {
     const r = resolveCueText({ movementCategory: MOVEMENT_CATEGORY.COMPOUND });
-    expect(r).toContain('controlează');
+    expect(r).toContain('controleaza');
   });
 });
 
 describe('applyPersonaTone — Cluster D18 Q18=D persona-aware tone', () => {
-  it('Maria persona → rationale-first "De ce așa? Pentru control"', () => {
-    const r = applyPersonaTone({ cueText: 'controlează', persona: 'maria' });
-    expect(r).toContain('De ce așa?');
+  it('Maria persona → rationale-first "De ce asa? Pentru control"', () => {
+    const r = applyPersonaTone({ cueText: 'controleaza', persona: 'maria' });
+    expect(r).toContain('De ce asa?');
     expect(r).toContain('Pentru control');
   });
 
   it('Gigica persona → suggestion "Sugerez"', () => {
-    const r = applyPersonaTone({ cueText: 'controlează', persona: 'gigica' });
+    const r = applyPersonaTone({ cueText: 'controleaza', persona: 'gigica' });
     expect(r).toContain('Sugerez');
   });
 
   it('Marius persona → imperative "Execute"', () => {
-    const r = applyPersonaTone({ cueText: 'controlează', persona: 'marius' });
+    const r = applyPersonaTone({ cueText: 'controleaza', persona: 'marius' });
     expect(r).toContain('Execute');
   });
 
   it('unknown persona → neutral fallback (raw cue)', () => {
-    const r = applyPersonaTone({ cueText: 'controlează', persona: 'unknown' });
-    expect(r).toBe('controlează');
+    const r = applyPersonaTone({ cueText: 'controleaza', persona: 'unknown' });
+    expect(r).toBe('controleaza');
   });
 
   it('empty cue → empty string safe', () => {
@@ -158,7 +158,7 @@ describe('composeFormCue — bundle integration', () => {
       persona:          'maria',
       tier:             'T1',
     });
-    expect(r.cueText).toContain('De ce așa?');
+    expect(r.cueText).toContain('De ce asa?');
     expect(r.cueText).toContain('genunchii');
     expect(r.category).toBe(MOVEMENT_CATEGORY.COMPOUND);
     expect(r.movementId).toBe('back_squat');

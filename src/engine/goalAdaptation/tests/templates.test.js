@@ -84,13 +84,13 @@ describe('isFatRichProfile — §9.2.2 BF% high persona-specific', () => {
     expect(isFatRichProfile({})).toBe(false);
     expect(isFatRichProfile(null)).toBe(false);
   });
-  it('default sex male când missing', () => {
+  it('default sex male cand missing', () => {
     expect(isFatRichProfile({ bfPct: 0.30 })).toBe(true); // 30% > male 25% threshold
   });
 });
 
 describe('detectRecompSubPhase — §9.2.2 Cluster 2 + ADR 024 §2.5 Q5 LOCKED', () => {
-  it('only eligible în Tonifiere/Slăbire templates', () => {
+  it('only eligible in Tonifiere/Slabire templates', () => {
     const r = detectRecompSubPhase({
       templateId: TEMPLATE_IDS.forta_dezvoltare,
       user: { trainingWeeks: 5 },
@@ -105,7 +105,7 @@ describe('detectRecompSubPhase — §9.2.2 Cluster 2 + ADR 024 §2.5 Q5 LOCKED',
     expect(r.isRecomp).toBe(true);
     expect(r.reasons).toContain('newbie_effect_first_12_weeks');
   });
-  it('Slăbire + detrained return → RECOMP detected', () => {
+  it('Slabire + detrained return → RECOMP detected', () => {
     const r = detectRecompSubPhase({
       templateId: TEMPLATE_IDS.slabire,
       user: { trainingWeeks: 100 },

@@ -1,12 +1,12 @@
 // ══ SMART-ROUTING §36.37 — Alternative Finder ════════════════════════════════
-// Tier 1 forță = alternatives DOAR cu force_demand: 'high' (strict).
-// Tier 2/3 = flexibility ridicată (toate alternatives cu același muscle_target_primary).
+// Tier 1 forta = alternatives DOAR cu force_demand: 'high' (strict).
+// Tier 2/3 = flexibility ridicata (toate alternatives cu acelasi muscle_target_primary).
 
 import { EXERCISE_METADATA, getValidAlternatives } from '../../schema/exerciseMetadata.js';
 
 /**
  * Find ranked alternatives for an exercise. Default: skip if zero valid alternatives
- * (NU forțezi substituție inferior — anti-paternalism per §36.37).
+ * (NU fortezi substitutie inferior — anti-paternalism per §36.37).
  *
  * @param {string} exerciseName
  * @returns {{ alternatives: { name: string, similarity: number }[], shouldSkip: boolean }}

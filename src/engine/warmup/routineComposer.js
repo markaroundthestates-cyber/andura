@@ -46,12 +46,12 @@ export function selectGeneralExercises(setsCount) {
  * Algorithm:
  *   1. Resolve target muscle groups from session ctx (orchestrator passes list
  *      din workout primary muscles).
- *   2. Cluster D4 cross-ref §9.6: dacă Specialization weak group active →
- *      prioritize weak group în specific sets (top-1 priority queue).
+ *   2. Cluster D4 cross-ref §9.6: daca Specialization weak group active →
+ *      prioritize weak group in specific sets (top-1 priority queue).
  *   3. Select specific exercises pe target groups, capped la setsCount
  *      (specificSetsMin..Max = 2-3).
  *
- * Defensive fallback când targetMuscleGroups empty → return general fallback
+ * Defensive fallback cand targetMuscleGroups empty → return general fallback
  * 1 specific exercise (preserve total function).
  *
  * @param {Object} input
@@ -76,7 +76,7 @@ export function selectSpecificExercises({ targetMuscleGroups, weakGroup, setsCou
   if (weak && targetGroups.includes(weak)) {
     orderedGroups.push(weak);
   } else if (weak && SPECIFIC_MUSCLE_EXERCISES[weak]) {
-    // Weak group not în today's primary but Specialization active → still prioritize
+    // Weak group not in today's primary but Specialization active → still prioritize
     orderedGroups.push(weak);
   }
   for (const g of targetGroups) {

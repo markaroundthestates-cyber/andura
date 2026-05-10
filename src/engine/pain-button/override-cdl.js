@@ -1,5 +1,5 @@
 // ══ PAIN BUTTON §36.38 — CDL Override Flag ═══════════════════════════════════
-// LOCKED V1 — F2 SUFLET respected (AI-ul informează, nu impune).
+// LOCKED V1 — F2 SUFLET respected (AI-ul informeaza, nu impune).
 // Logged ca user_override_pain_redflag pentru audit, NU blocking.
 
 /**

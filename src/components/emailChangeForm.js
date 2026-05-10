@@ -7,7 +7,7 @@
  * Wording UI LOCKED V1 — DO NOT modify.
  */
 export const EMAIL_CHANGE_COPY = Object.freeze({
-  errorAlreadyUsed: 'Adresa este deja folosită de un alt cont.',
+  errorAlreadyUsed: 'Adresa este deja folosita de un alt cont.',
 });
 
 /**
@@ -50,14 +50,14 @@ export function openEmailChangeForm({ doc = (typeof document !== 'undefined' ? d
     overlay.setAttribute('role', 'dialog');
 
     const labelPrimary = doc.createElement('label');
-    labelPrimary.textContent = 'Adresa nouă';
+    labelPrimary.textContent = 'Adresa noua';
     const inputPrimary = doc.createElement('input');
     inputPrimary.type = 'email';
     inputPrimary.className = 'andura-email-input-primary';
     labelPrimary.appendChild(inputPrimary);
 
     const labelConfirm = doc.createElement('label');
-    labelConfirm.textContent = 'Confirmă adresa nouă';
+    labelConfirm.textContent = 'Confirma adresa noua';
     const inputConfirm = doc.createElement('input');
     inputConfirm.type = 'email';
     inputConfirm.className = 'andura-email-input-confirm';
@@ -72,7 +72,7 @@ export function openEmailChangeForm({ doc = (typeof document !== 'undefined' ? d
     btnSubmit.className = 'andura-modal-button-primary';
 
     const btnCancel = doc.createElement('button');
-    btnCancel.textContent = 'Renunță';
+    btnCancel.textContent = 'Renunta';
     btnCancel.className = 'andura-modal-button-secondary';
 
     btnSubmit.addEventListener('click', () => {
@@ -81,7 +81,7 @@ export function openEmailChangeForm({ doc = (typeof document !== 'undefined' ? d
         errLine.style.display = 'block';
         errLine.textContent = verdict.reason === 'mismatch'
           ? 'Adresele introduse nu corespund.'
-          : 'Adresă invalidă.';
+          : 'Adresa invalida.';
         return;
       }
       try { overlay.remove(); } catch { /* swallow */ }

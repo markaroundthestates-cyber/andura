@@ -49,12 +49,12 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
     expect(resolveGoalId({ goal: 'hypertrophy' })).toBe('hipertrofie');
   });
   it('forta diacritic-insensitive', () => {
-    expect(resolveGoalId({ goal: 'Forță' })).toBe('forta');
+    expect(resolveGoalId({ goal: 'Forta' })).toBe('forta');
     expect(resolveGoalId({ goal: 'forta' })).toBe('forta');
     expect(resolveGoalId({ goal: 'strength' })).toBe('forta');
   });
   it('recompozitie diacritic-insensitive', () => {
-    expect(resolveGoalId({ goal: 'Recompoziție' })).toBe('recompozitie');
+    expect(resolveGoalId({ goal: 'Recompozitie' })).toBe('recompozitie');
     expect(resolveGoalId({ goal: 'recomp' })).toBe('recompozitie');
   });
   it('longevitate', () => {
@@ -62,7 +62,7 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
     expect(resolveGoalId({ goal: 'longevity' })).toBe('longevitate');
   });
   it('sanatate diacritic-insensitive', () => {
-    expect(resolveGoalId({ goal: 'Sănătate Generală' })).toBe('sanatate');
+    expect(resolveGoalId({ goal: 'Sanatate Generala' })).toBe('sanatate');
     expect(resolveGoalId({ goal: 'sanatate' })).toBe('sanatate');
     expect(resolveGoalId({ goal: 'health' })).toBe('sanatate');
   });
@@ -73,7 +73,7 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
   });
 });
 
-describe('recoveryGreenMultiplier — §9.4 +10-15% bonus dacă recovery green', () => {
+describe('recoveryGreenMultiplier — §9.4 +10-15% bonus daca recovery green', () => {
   it('1.0 when recoveryGreen NOT true', () => {
     expect(recoveryGreenMultiplier({})).toBe(1.0);
     expect(recoveryGreenMultiplier({ recoveryGreen: false })).toBe(1.0);
@@ -138,7 +138,7 @@ describe('computeMuscleVolumeTarget — Israetel × persona × goal × scaling �
     // For chest MRV cap, we test with shoulders MAV=16, MRV=26, scaling 1.15,
     // recoveryGreen high 1.15: 16 × 1.0 × 1.0 × 1.15 × 1.15 × 1.0 ≈ 21.16 → 21
     // (under MRV 26, no cap). For cap test, use abs MAV=14, MRV=25 — same.
-    // Bicepș MAV=14, MRV=26: also no cap likely.
+    // Biceps MAV=14, MRV=26: also no cap likely.
     // Force cap: muscleGroup with very low MRV vs MAV ratio. Quads MAV=14,
     // MRV=20: 14 × 1.0 × 1.0 × 1.15 × 1.15 ≈ 18.5 → 19 (still under 20).
     // To trigger cap, we need raw > MRV. Use marius hipertrofie chest with
@@ -232,7 +232,7 @@ describe('computeVolumeMap — full Israetel 11 grupuri matrix', () => {
     }
   });
 
-  it('Forța goal reduces volumes vs Hipertrofie (modifier 0.70 < 1.00)', () => {
+  it('Forta goal reduces volumes vs Hipertrofie (modifier 0.70 < 1.00)', () => {
     const hyperMap = computeVolumeMap({
       personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0,
     });

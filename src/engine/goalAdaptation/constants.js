@@ -4,14 +4,14 @@
 // (Cluster 2 5 templates + Mode overlay) +
 // §9.2.3 (Cluster 3 Phase auto-detection thresholds verbatim TDEE multipliers) +
 // §9.2.4 (Cluster 4 Training modifiers per template × phase tabel verbatim) +
-// §9.2.5 (Cluster 5 Push-back proporțional 3 tiers + Re-prompt anti-spam logic).
+// §9.2.5 (Cluster 5 Push-back proportional 3 tiers + Re-prompt anti-spam logic).
 //
 // ZERO fabrication beyond §9.2 spec. ZERO Date.now / Math.random — all values
 // static per ADR 018 §2 deterministic contract.
 
 /**
  * 5 templates V1 enumerare verbatim §9.2 Cluster 2 (NU 8 — misnumber legacy
- * §26 rezolvat în favor enumerare ADR 024 §2.1 Q1 LOCKED).
+ * §26 rezolvat in favor enumerare ADR 024 §2.1 Q1 LOCKED).
  *
  * @type {Readonly<{
  *   forta_dezvoltare: 'forta_dezvoltare',
@@ -61,8 +61,8 @@ export const PHASES = Object.freeze({
  * line 45 verbatim aggregation).
  *
  * Conservative defaults default; aggressive variants triggered persona-specific:
- * - CUT_AGGRESSIVE 0.75: Marius advanced 4-6 săpt max (anti-burnout cap)
- * - BULK_AGGRESSIVE 1.15: newbie + Forță template combo
+ * - CUT_AGGRESSIVE 0.75: Marius advanced 4-6 sapt max (anti-burnout cap)
+ * - BULK_AGGRESSIVE 1.15: newbie + Forta template combo
  *
  * @type {Readonly<{
  *   CUT_CONSERVATIVE: number,
@@ -84,7 +84,7 @@ export const TDEE_MULTIPLIERS = Object.freeze({
 
 /**
  * DELOAD week kcal override per §9.2.3 Cluster 3 verbatim:
- * "kcal +3-5% chiar dacă phase=CUT (recovery imperative)".
+ * "kcal +3-5% chiar daca phase=CUT (recovery imperative)".
  *
  * V1 conservative pick LOW (1.03) default; HIGH (1.05) reserved Vitality Layer
  * maturity calibration future. Cross-engine constraint Hook Engine #4 Deload.
@@ -131,7 +131,7 @@ export const MACRO_BANDS = Object.freeze({
  */
 export const RECOMP_THRESHOLDS = Object.freeze({
   newbieMaxWeeks:   12,
-  detrainedGapDays: 6 * 7, // 6 săpt = 42 zile
+  detrainedGapDays: 6 * 7, // 6 sapt = 42 zile
   bfPctHighMale:    0.25,  // 25% BF male
   bfPctHighFemale:  0.32,  // 32% BF female
 });
@@ -143,11 +143,11 @@ export const RECOMP_THRESHOLDS = Object.freeze({
  * Phase modifiers applied multiplicative post-base table (Mode overlay separate).
  *
  * Rep range bands verbatim §9.2.4:
- * - Forța & Dezvoltare:   RIR 1-3, rep 3-8
+ * - Forta & Dezvoltare:   RIR 1-3, rep 3-8
  * - Tonifiere & Definire: RIR 0-2, rep 8-12
- * - Slăbire:              RIR 1-2, rep 10-15
+ * - Slabire:              RIR 1-2, rep 10-15
  * - Longevitate:          RIR 2-3, rep 8-12
- * - Sănătate Generală:    RIR 2-3, rep 8-12
+ * - Sanatate Generala:    RIR 2-3, rep 8-12
  *
  * @type {Readonly<Object<string, {rir: [number, number], rep: [number, number]}>>}
  */
@@ -175,10 +175,10 @@ export const TEMPLATE_REST_SECONDS = Object.freeze({
 
 /**
  * Mode overlay multiplicative post-template × phase per §9.2.2 + §9.2.4.
- * - Estetică: emphasizes hipertrofie volume + rep range moderate
- * - Forță:    emphasizes intensity + rep range low + RIR low
+ * - Estetica: emphasizes hipertrofie volume + rep range moderate
+ * - Forta:    emphasizes intensity + rep range low + RIR low
  *
- * NU duplicate templates — overlay multiplicativ aplicat după base table.
+ * NU duplicate templates — overlay multiplicativ aplicat dupa base table.
  *
  * @type {Readonly<Object<string, {volumeMul: number, intensityMul: number, repRangeShift: number, rirShift: number}>>}
  */
@@ -190,7 +190,7 @@ export const MODE_OVERLAY = Object.freeze({
     rirShift:      0,     // RIR baseline preserved
   }),
   forta: Object.freeze({
-    volumeMul:     0.95,  // −5% volume forță emphasis
+    volumeMul:     0.95,  // −5% volume forta emphasis
     intensityMul:  1.05,  // +5% intensity emphasis
     repRangeShift: -1,    // −1 rep ceiling shift lower
     rirShift:      0,     // RIR baseline preserved
@@ -249,7 +249,7 @@ export const PUSHBACK_TIERS = Object.freeze({
 
 /**
  * Push-back risk-tier mapping thresholds per §9.2.5 Cluster 5 example
- * verbatim: "Forță + BF% high + age 60+ + recent injury → Tier 3 modal cu
+ * verbatim: "Forta + BF% high + age 60+ + recent injury → Tier 3 modal cu
  * volume cap MEV-50% + intensity cap 75% 1RM Layer C sanity bound".
  *
  * Risk score V1 conservative additive:
@@ -276,7 +276,7 @@ export const PUSHBACK_RISK_THRESHOLDS = Object.freeze({
   bfPctHighFemale:      0.32,
   ageOlder:             60,
   ageOlderRiskAge:      55,
-  injuryWindowDays:     6 * 7, // 6 săpt
+  injuryWindowDays:     6 * 7, // 6 sapt
   tier2Threshold:       1,
   tier3Threshold:       2,
   tier3MaxConservativeVolMul:        0.50, // MEV − 50% volume cap (verbatim spec example)
@@ -286,8 +286,8 @@ export const PUSHBACK_RISK_THRESHOLDS = Object.freeze({
 /**
  * Re-prompt anti-spam logic verbatim §9.2.5 Cluster 5 + ADR 024 §2.8 Q8 LOCKED:
  *
- * - Trigger 28 zile rolling (rolling window din ultima interacțiune)
- * - Cooldown 21 zile post-confirm (user "Da, încă X" → 21 zile NU re-prompt)
+ * - Trigger 28 zile rolling (rolling window din ultima interactiune)
+ * - Cooldown 21 zile post-confirm (user "Da, inca X" → 21 zile NU re-prompt)
  * - Cooldown 60 zile post Goal Shift (preserve calibration window §36.35)
  * - Cap absolut max 4 re-prompts/an (anti-spam hardcap)
  *

@@ -26,7 +26,7 @@
 //   NU adjusts session current). V1.5+ candidate §9.5.6 Reconsideration Trigger 2.
 //
 // Convergence Guard reference §9.5 cross-ref ADR 009 §AMENDMENT canonical SSOT.
-// **NU duplicate logic în Tempo module** — reference ONLY (rule = behavioral
+// **NU duplicate logic in Tempo module** — reference ONLY (rule = behavioral
 // validation cross-cutting all tier transitions T0→T1→T2, NU Tempo specific).
 // Pattern from §9.4 Bayesian crossEngineHooks.getConvergenceGuardReference()
 // commit `8615ec1` finally consumed `src/coach/orchestrator/utilities/convergenceGuard.js`
@@ -178,7 +178,7 @@ export function detectRirMismatchSilentTelemetry({
  * Convergence Guard reference per §9.5 cross-ref verbatim — ADR 009 §AMENDMENT
  * 2026-05-05 birou after canonical SSOT.
  *
- * **NU duplicate rule logic în Tempo module** — reference ONLY (rule =
+ * **NU duplicate rule logic in Tempo module** — reference ONLY (rule =
  * behavioral validation cross-cutting all tier transitions T0→T1→T2, NU
  * Tempo specific).
  *

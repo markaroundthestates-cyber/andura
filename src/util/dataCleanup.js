@@ -1,4 +1,4 @@
-// ══ DATA CLEANUP — Utilitare pentru resetare date de test și debugging ═══════
+// ══ DATA CLEANUP — Utilitare pentru resetare date de test si debugging ═══════
 import { FIREBASE_URL, getUserPath, buildAuthUrl, scheduleInvalidation } from '../firebase.js';
 import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, getAllDynamicKeys } from './dataRegistry.js';
 
@@ -69,11 +69,11 @@ export function restoreFromBackup(jsonString) {
   try {
     backup = JSON.parse(jsonString);
   } catch (e) {
-    alert('Fișierul nu este un JSON valid.');
+    alert('Fisierul nu este un JSON valid.');
     return false;
   }
   if (!backup || typeof backup.data !== 'object' || backup.data === null) {
-    alert('Structura backup-ului este invalidă (lipsă câmp "data").');
+    alert('Structura backup-ului este invalida (lipsa camp "data").');
     return false;
   }
 
@@ -90,7 +90,7 @@ export function restoreFromBackup(jsonString) {
 export function restoreLastBackup() {
   const raw = localStorage.getItem('last-backup');
   if (!raw) {
-    alert('Nu există niciun auto-backup salvat local.');
+    alert('Nu exista niciun auto-backup salvat local.');
     return null;
   }
   return restoreFromBackup(raw);
@@ -163,7 +163,7 @@ export async function fullReset(options = {}) {
     createAutoBackup();
   } catch (err) {
     console.warn('[DataCleanup] Auto-backup failed:', err.message);
-    if (!confirm('Backup a eșuat. Continui oricum cu Full Reset?')) return;
+    if (!confirm('Backup a esuat. Continui oricum cu Full Reset?')) return;
   }
 
   window._suppressFirebaseSync = true;
@@ -323,8 +323,8 @@ export function inspectStorage() {
 }
 
 // ── Restore real training logs (Apr 21–22, 2026) ─────────────────────────
-// Folosit pentru a reinjecta antrenamentele reale după un full reset accidental.
-// Datele sunt hardcodate ca sursă de adevăr verificată manual.
+// Folosit pentru a reinjecta antrenamentele reale dupa un full reset accidental.
+// Datele sunt hardcodate ca sursa de adevar verificata manual.
 
 export function restoreRealLogs({ merge = true } = {}) {
   const PULL_SESSION_TS = new Date('2026-04-21T10:00:00').getTime();

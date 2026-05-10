@@ -6,14 +6,14 @@
 // Wording 4-elemente fix LOCKED per §1.5.2 — verbatim, no paraphrase.
 //
 // Cross-refs:
-//   - HANDOVER §29.2.5 Forță & Dezvoltare V1
-//   - §29.2.6 Slăbire Majoră (Hip Thrust pe aparat)
+//   - HANDOVER §29.2.5 Forta & Dezvoltare V1
+//   - §29.2.6 Slabire Majora (Hip Thrust pe aparat)
 //   - §1.5 Imagini Claude Design — pilot pending
 
 // LOCKED wording (4 elemente fix per §1.5.2). Do NOT paraphrase.
-export const HIP_THRUST_FORM_GUIDE = 'Pornești așezat pe sol, cu spatele sprijinit de o bancă, bara peste șolduri și picioarele depărtate la lățimea umerilor. Ridici bazinul împingând puternic în călcâie, până când coapsele și trunchiul formează o linie dreaptă. Cobori controlat la poziția de start. Atenție: nu hiperextinde lombarii la vârf — oprește când șoldurile sunt paralele cu solul.';
+export const HIP_THRUST_FORM_GUIDE = 'Pornesti asezat pe sol, cu spatele sprijinit de o banca, bara peste solduri si picioarele departate la latimea umerilor. Ridici bazinul impingand puternic in calcaie, pana cand coapsele si trunchiul formeaza o linie dreapta. Cobori controlat la pozitia de start. Atentie: nu hiperextinde lombarii la varf — opreste cand soldurile sunt paralele cu solul.';
 
-const PLACEHOLDER_NOTE = 'Imagine în lucru.';
+const PLACEHOLDER_NOTE = 'Imagine in lucru.';
 
 /**
  * Build the Hip Thrust setup card. Caller appends `element` to a
@@ -38,7 +38,7 @@ export function createHipThrustSetup(opts = {}) {
   rom.className = 'hip-thrust-setup__rom';
   rom.setAttribute('data-slot', 'rom');
   rom.setAttribute('aria-label', 'Range of motion');
-  rom.textContent = `Range of motion: șold paralel cu solul → extensie completă (${PLACEHOLDER_NOTE})`;
+  rom.textContent = `Range of motion: sold paralel cu solul → extensie completa (${PLACEHOLDER_NOTE})`;
   root.appendChild(rom);
 
   // Foot positioning placeholder (image pending)
@@ -46,7 +46,7 @@ export function createHipThrustSetup(opts = {}) {
   foot.className = 'hip-thrust-setup__foot';
   foot.setAttribute('data-slot', 'foot');
   foot.setAttribute('aria-label', 'Foot positioning');
-  foot.textContent = `Picioare: lățimea umerilor, vârfuri ușor în afară (${PLACEHOLDER_NOTE})`;
+  foot.textContent = `Picioare: latimea umerilor, varfuri usor in afara (${PLACEHOLDER_NOTE})`;
   root.appendChild(foot);
 
   // Form guide (LOCKED wording)

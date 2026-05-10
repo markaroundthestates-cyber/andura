@@ -3,13 +3,13 @@
 // (ADR 018 §1) to gate dimensions behind staged rollout (10% → 50% → 100%).
 //
 // Per ADR 018 DP-6 (APPROVED 2026-04-27): per-user rollout NU global on/off.
-// Independent buckets per flag — Vitality 10% și Demographic Prior 10% NU sunt
-// același 10% useri.
+// Independent buckets per flag — Vitality 10% si Demographic Prior 10% NU sunt
+// acelasi 10% useri.
 //
 // Resolution order pentru `isEnabled(flagId, userId)`:
 //   1. localStorage._devFlags JSON override (dev-only force; ignored if malformed)
 //   2. Per-user hash bucketing: hash(userId + flagId) % 100 < rollout * 100
-//   3. Flag default boolean (false dacă flag necunoscut)
+//   3. Flag default boolean (false daca flag necunoscut)
 
 /**
  * @typedef {object} FlagDefinition
@@ -18,9 +18,9 @@
  */
 
 /**
- * Static flag registry. Adăugare flag = edit aici (rollout %, default).
+ * Static flag registry. Adaugare flag = edit aici (rollout %, default).
  *
- * Initial state Sprint Foundation Batch 2: empty. Flags se adaugă on
+ * Initial state Sprint Foundation Batch 2: empty. Flags se adauga on
  * dimension port (Vitality, Demographic Prior, AA detection, Profile Typing).
  *
  *   FLAGS = {
@@ -45,12 +45,12 @@ export const FLAGS = Object.freeze({
   // coach decision flow invokes Periodization Engine via orchestrator
   // `runPipeline` cu `periodizationAdapter`; when OFF, Periodization remains
   // un-invoked (current state — Faza 3 BLOCKED scope-major discovery seminal
-  // "vizor fără ușă" 2026-05-06 morning chat-2 acasă: 0/8 engines wired în
+  // "vizor fara usa" 2026-05-06 morning chat-2 acasa: 0/8 engines wired in
   // coach decision flow live pre-Strangler).
   //
   // Default 0% — production behavior unchanged (Periodization stays orphan).
   // Golden-master parity tests legacy↔orchestrated zero-behavior-change strict
-  // în `src/coach/orchestrator/__tests__/periodizationParity.test.js`.
+  // in `src/coach/orchestrator/__tests__/periodizationParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici once Daniel cont propriu
   // smoke (Faza 4) validates wiring real comportament corect.
   periodization_via_orchestrator: { rollout: 0, default: false },
@@ -67,7 +67,7 @@ export const FLAGS = Object.freeze({
   // severity halt per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/goalAdaptationParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -92,7 +92,7 @@ export const FLAGS = Object.freeze({
   // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -111,7 +111,7 @@ export const FLAGS = Object.freeze({
   // `meta.periodizationConstraint` (per §9.4 Cluster C Hook 1 convention).
   // Engine consumes Constraint Object read-only — adapter follows Goal
   // Adaptation pattern (NU re-emit `output.constraintObject`, since engine
-  // doesn't emit `meta.forward_constraint_object` în output blueprint).
+  // doesn't emit `meta.forward_constraint_object` in output blueprint).
   // Constraint Object stays propagated downstream din upstream Energy
   // Adjustment Hook 4 emission (batch 3) prin orchestrator's existing
   // currentCtx chain.
@@ -124,7 +124,7 @@ export const FLAGS = Object.freeze({
   // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/bayesianNutritionParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -144,7 +144,7 @@ export const FLAGS = Object.freeze({
   // `meta.periodizationConstraint` (per §9.5 Cluster A1 Hook 1 convention).
   // Engine consumes Constraint Object read-only — adapter follows Bayesian
   // Nutrition / Goal Adaptation pattern (NU re-emit `output.constraintObject`,
-  // since engine doesn't emit `meta.forward_constraint_object` în output
+  // since engine doesn't emit `meta.forward_constraint_object` in output
   // blueprint, only `trace.forwardedConstraint` boolean). Constraint Object
   // stays propagated downstream din upstream Energy Adjustment Hook 4 emission
   // (batch 3) prin orchestrator's existing currentCtx chain.
@@ -158,7 +158,7 @@ export const FLAGS = Object.freeze({
   // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/tempoParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -172,7 +172,7 @@ export const FLAGS = Object.freeze({
   // Goal Adaptation → Energy Adjustment → Bayesian Nutrition → Tempo →
   // Specialization); when OFF, Specialization remains un-invoked via
   // orchestrator (engine V1 LANDED commit `4cf50ab` Faza 2.5 batch 6 standalone
-  // — wires `weaknessDetector` orfan per §36.84 Gap #1 via import în
+  // — wires `weaknessDetector` orfan per §36.84 Gap #1 via import in
   // `weaknessConsumer.js`, NU yet wired into live coach flow).
   //
   // Engine = PARALLEL volume+frequency modifier on top of Periodization for
@@ -186,7 +186,7 @@ export const FLAGS = Object.freeze({
   // Engine consumes Constraint Object read-only — adapter follows Tempo /
   // Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
   // `output.constraintObject`, since engine doesn't emit
-  // `meta.forward_constraint_object` în output blueprint, only
+  // `meta.forward_constraint_object` in output blueprint, only
   // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
   // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
   // orchestrator's existing currentCtx chain.
@@ -200,7 +200,7 @@ export const FLAGS = Object.freeze({
   // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/specializationParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -219,7 +219,7 @@ export const FLAGS = Object.freeze({
   // specific muscle prep, persona-aware thresholds (Maria 5-10 mobility flow /
   // Gigica 5-7 dynamic+ramp / Marius 8-10 ramp 50-70-90%), T0 Instant Skip
   // default §65.3 Source 1 Option A (skipDecision metadata flag — warmup_state
-  // stays ACTIVE pentru T0 fresh fără explicit userOptedSkip per anti-paternalism
+  // stays ACTIVE pentru T0 fresh fara explicit userOptedSkip per anti-paternalism
   // ADR 025) + T1+ opt-in expanded routine, optional 2 min text-only cooldown
   // post-session (§65.4 Source 1 OVERRIDE Q4 reconciled). Hook D1 read-only
   // consume CO. Convergence Guard orchestrator-level NU engine-emitted
@@ -231,7 +231,7 @@ export const FLAGS = Object.freeze({
   // Engine consumes Constraint Object read-only — adapter follows Specialization
   // / Tempo / Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
   // `output.constraintObject`, since engine doesn't emit
-  // `meta.forward_constraint_object` în output blueprint, only
+  // `meta.forward_constraint_object` in output blueprint, only
   // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
   // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
   // orchestrator's existing currentCtx chain pentru batch 8 Deload.
@@ -240,7 +240,7 @@ export const FLAGS = Object.freeze({
   // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
   //
   // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict în
+  // legacy↔orchestrated zero-behavior-change strict in
   // `src/coach/orchestrator/__tests__/warmupParity.test.js`.
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
@@ -271,10 +271,10 @@ export function hashStringDjb2(str) {
 
 /**
  * Resolve userId pentru bucketing. Order: 'user-id' > 'device-id' > null.
- * Defensive — returns null dacă localStorage throws sau ambele missing.
+ * Defensive — returns null daca localStorage throws sau ambele missing.
  *
  * Per ADR 018 §5 Implementation notes: 'device-id' e UUID generated first run
- * în firebase.js. 'user-id' rezervat pentru future multi-tenant auth (per
+ * in firebase.js. 'user-id' rezervat pentru future multi-tenant auth (per
  * ADR 011 reconsideration trigger #6).
  *
  * @returns {string|null}
@@ -317,9 +317,9 @@ export function readDevFlags() {
  * Resolution order:
  *   1. _devFlags JSON override (dev only)
  *   2. Per-user hash bucketing — hash(userId + flagId) % 100 < rollout * 100
- *   3. Flag default (false dacă flag unknown)
+ *   3. Flag default (false daca flag unknown)
  *
- * @param {string} flagId - Flag identifier (must exist în FLAGS for non-default behavior)
+ * @param {string} flagId - Flag identifier (must exist in FLAGS for non-default behavior)
  * @param {string} [userId] - Defaults to resolveUserId() output
  * @param {object} [opts]
  * @param {Object<string, FlagDefinition>} [opts.flags=FLAGS] - Override registry (testing)

@@ -179,7 +179,7 @@ describe('resolveIntensityModifier — Cluster B4 verbatim AA-driven', () => {
   });
 
   it('Daniel push-back B4 verbatim — Volume CUT 30% + RIR ↑ + Intensity ↓ all obligatoriu when active', () => {
-    // Volume CUT 30% NU în intensity_modifier (separat în depth_pct field)
+    // Volume CUT 30% NU in intensity_modifier (separat in depth_pct field)
     // intensity_modifier = RIR + intensity decrement only per B4 verbatim
     const r = resolveIntensityModifier(DELOAD_STATE.REACTIVE_AA);
     expect(r.rir_increment).toBeGreaterThan(0);
