@@ -1500,7 +1500,7 @@
               <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">TDEE estimat</div>
               <div style="font-size:26px; font-weight:700; color:var(--ink); letter-spacing:-0.01em;">2 640 <span style="font-size:14px; color:var(--ink-3); font-weight:400;">kcal · țintă 2 600</span></div>
             </div>
-            <p class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5; font-style:italic;">Engine emite. Tu citești. Nu loghezi calorii.</p>
+            <p class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5; font-style:italic;">Engine calculează auto. Loghezi opțional pentru calibrare reală.</p>
           </div>
 
           <!-- Greutate snapshot 7z (NO drill, doar vizibil) -->
@@ -1555,7 +1555,25 @@
           <button class="btn-brick" onclick="showToast('Loghează greutate — drill input')" style="width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;">
             <i data-lucide="scale"></i> Loghează greutate
           </button>
-          <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center; line-height:1.5;">V1: nu loghezi kcal / proteine / apă. Engine inferază.</p>
+
+          <!-- Loghează nutriție per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10 (REVERSAL OUT_OF_SCOPE 2026-04-30 — RE-IN-SCOPE V1 cu auto-fill rule + MFP CSV import generic wording legal cover) -->
+          <div class="settings-section" style="margin-top:18px;">Nutriție · azi</div>
+          <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.15); border-radius:16px; padding:14px; margin-bottom:10px;">
+            <div style="display:flex; gap:12px; margin-bottom:10px;">
+              <div style="flex:1;">
+                <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:4px;">Kcal</label>
+                <input type="number" min="0" max="9999" placeholder="2 640 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid rgba(212,165,116,0.15); border-radius:8px; background:rgba(0,0,0,0.2); color:var(--ink); font-family:'Geist Mono', monospace; font-size:14px;"/>
+              </div>
+              <div style="flex:1;">
+                <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:4px;">Proteine (g)</label>
+                <input type="number" min="0" max="500" placeholder="180 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid rgba(212,165,116,0.15); border-radius:8px; background:rgba(0,0,0,0.2); color:var(--ink); font-family:'Geist Mono', monospace; font-size:14px;"/>
+              </div>
+            </div>
+            <button class="btn-brick" style="width:100%; margin-bottom:8px;"><i data-lucide="check"></i> Salvează ziua</button>
+            <button class="settings-row" onclick="showToast('CSV picker — generic nutrition import')" style="width:100%; border:1px solid rgba(212,165,116,0.15); border-radius:8px; padding:10px 14px;"><i data-lucide="upload"></i><span>Importă nutriție CSV</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.4;">Compatibil cu majoritatea aplicațiilor de tracking nutriție (export CSV). Auto target din engine dacă nu loghezi manual.</p>
+          </div>
+          <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center; line-height:1.5;">Auto target engine + manual log opțional + CSV batch import. Engine calibrează din date reale.</p>
         </div>
       </div>
 
