@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED (chain `a9ddfa8 → 8d16361` 8 substantive + 1 auto-watcher; 3 P0 + 4 P1 audit-driven fixes + 1 follow-up + 2 P1 Glossary V1 LOCK jargon strips Engine/RPE; mockup `andura-clasic.html` 2351 → 2144 LOC -207 net; tests 2732 PASS preserved EXACT mockup-only changes ZERO src/ touched; cumulative ~742 PRESERVED unchanged — mockup polish NU additive product/architecture). Sub-decision #1 prerequisite RESOLVED → **BATCH 2 Antrenor port unblocked NEXT P1**. Predecessor: chat-current 2 vault sync 3 LOCK V1 (NO_DIACRITICS_RULE + PORT_FIRST_STEP_1 7/7 + V1_FEATURES_AUDIT_V1 15/15, cumulative ~719 → ~742 +23 net commit `195d031`).
+**Updated:** 2026-05-10 chat ACASĂ continuation 3 — Mockup buguri sweep #1 LANDED main + BATCH 2 Antrenor port SUB-BATCH 1 LANDED `feature/v2-vanilla-port` autonomous Co-CTO scope per Daniel autonomy lock EXTINS reaffirmed *"esti autonomous pana la launch beta cand fac eu review"*. Main HEAD `71e6445` (mockup sweep + INDEX_MASTER refresh). feature/v2-vanilla-port HEAD `a0e8113` (router + state +2 fields + 4 tests). Tests 2732 → **2736 PASS** (+4 router cases). Cumulative ~742 PRESERVED unchanged (router scaffold meta-tooling NU additive). **NEXT P1 chat NEW = BIROU SETUP MCP** pe laptop birou Daniel mâine (clone repo + npm install + Claude Desktop config + restart + test "salut birou"); subsequent BATCH 2 SUB-BATCH 2 idle.js. Predecessor: chat-current 2 vault sync 3 LOCK V1 (NO_DIACRITICS_RULE + PORT_FIRST_STEP_1 7/7 + V1_FEATURES_AUDIT_V1 15/15, cumulative ~719 → ~742 +23 net commit `195d031`).
 **Last LOCKED count (product/architecture):** **~742 LOCKED V1** (cumulative ~719 → ~742 +23 net chat-current 2: NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 sub-decisions + V1_FEATURES_AUDIT_V1 +15 features Co-CTO Autonomous Daniel autonomy lock EXTINS scope).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -16,25 +16,26 @@
 
 ## NOW — Active conversation thread
 
-**Chat ACASĂ continuation 2 2026-05-10 — Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED + Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive precedent (cumulative ~719 → ~742 +23 net product/architecture additive PRESERVED, +mockup polish):**
+**Chat ACASĂ continuation 3 2026-05-10 — Mockup buguri sweep #1 LANDED main + BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port + Daniel autonomy lock EXTINS REAFFIRMED + BIROU SETUP MCP NEXT P1 chat NEW (cumulative ~742 PRESERVED unchanged, router scaffold meta-tooling NU additive):**
 
-Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED chain `a9ddfa8 → 8d16361` (8 substantive fixes + 1 auto-watcher capture `53badcc`): 3 P0 (Cloudflare email injection removal `a9ddfa8` + duplicate ID stub divs removal `37f8a42` + medical disclaimer routing `0930b2a`) + 4 P1 audit-driven (typo `b2acb11` + 3 dead legacy screens removal `2100eef` + Engine jargon → Coach `abcb8fd` + RPE numeric → intensitate buckets `8d16361`) + 1 follow-up extra during exec (pickTheme JS unicode escape ă strip `55846b3`). File `04-architecture/mockups/andura-clasic.html`: 2351 → 2144 LOC (-207 net). Tests 2732 PASS preserved EXACT (mockup-only changes ZERO src/ touched). Sub-decision #1 prerequisite RESOLVED → **BATCH 2 Antrenor port unblocked NEXT P1** (checkout NEW branch `feature/v2-vanilla-port` per Sub-decision #5 LOCK V1 + execute selective port `renderIdle.js` 465 LOC + `rating.js` 150 LOC per V1_FEATURES_AUDIT_V1 §LOCK V1).
+Daniel deschis cu *"salut acasă"* — eu §CC.2 layered read MCP filesystem PRIMARY (CURRENT_STATE.md full + DIFF_FLAGS P1 + ADR 005 + PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT_V1) + output §CC.3 format. Daniel autonomy lock REAFFIRMED *"esti autonomous pana la launch beta cand fac eu review"* → eu execute end-to-end fără check-in per task. Slip Co-CTO scribe corectat: handover suggest spontaneous mid-execute la ~55% bandwidth → Daniel push-back direct *"de ce sa faci handover la 55%"* = paternalism anti-Bugatti, recunoscut "ai dreptate, slip" + continue tactical autonomous.
 
-Daniel autonomy lock EXTINS verbatim chat-current: *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* + UX scope mine + diacritics directive global strip. Claude chat strategic autonomous scope EXTENDED — NU doar Co-CTO Reviewer tactical, ci CTO figure-it-out paradigm complete UX scope mine until Beta launch a-z review.
+**1. Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED main** (chain `a9ddfa8..71e6445` 9 commits): Phase A audit 18 findings (3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward) + Phase B fixes 8 atomic (3 P0 Cloudflare/stub-divs/disclaimer + 4 P1 typo/dead-screens/Engine→Coach/RPE→intensitate + 1 extra pickTheme unicode escape ă strip) + Phase C vault sync (CURRENT_STATE + DECISION_LOG + DIFF_FLAGS P2/P3 carry-forward + INDEX_MASTER refresh + LATEST.md cycle NN 365 + audit raport archive NN 366). File `04-architecture/mockups/andura-clasic.html`: 2351 → 2144 LOC (-207 net). Tests 2732 PASS preserved EXACT (mockup-only ZERO src/ touched). Sub-decision #1 RESOLVED LANDED.
 
-**3 LOCK V1 substantive LANDED autonomous chat-current 2:**
+**2. BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port** (chain `f23453f..a0e8113` 4 substantive + 1 auto-watcher): amendment §4 checklist 7/7 RESOLVED post-LOCK V1 reconciliation `📤_outbox/BATCH_2_AMENDMENT_POST_LOCK_V1.md` (5/7 via PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT_V1 LOCKs SSOT + 2/7 Co-CTO autonomous lock) + `src/router.js` NEW (~50 LOC) minimal intra-coach navigation + `andura:screen-change` event dispatch (replaces mockup `goto()` global pattern) + `src/state.js` +2 fields (24→26: `currentScreen: 'antrenor'` default + `cevaNuMergeReason: null`) + `src/__tests__/router.test.js` NEW 4 cases (navigate sets state + event dispatch + sequential preserve + defensive validation). Tests **2732 → 2736 PASS** (+4 net). Branch tracking origin synced.
 
-1. **NO_DIACRITICS_RULE** (LOCKED V1 PERMANENT 2026-05-10) — strip global UI/tests/mockups landed commit `0841ed4` (263 files / 6034 replacements). Vault docs preserved (fluency RO chat continuity). E2e calibration-ui.spec.js:194 SKIP'd post-strip (cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER — banner F1 port unblocks re-enable). +1 net cumulative.
-2. **PORT_FIRST_STEP_1_PARADIGM_V1 LOCK V1 7/7** — sub-decisions Co-CTO bias preserved verbatim (#1 mockup clean state întâi + #2 structural restructure cap-coadă + #3 Option B structural rewrite per mockup + #4 selective port driven by V1_FEATURES_AUDIT_V1 LOCK V1 + #5 NEW branch `feature/v2-vanilla-port` + #6 Vitest 2732 PASS preserved post-strip + extend + #7 Option B preserve frozen mockup post-port). +7 net cumulative.
-3. **V1_FEATURES_AUDIT_V1 LOCK V1 15/15** — features Co-CTO bias preserved verbatim (10 keep + 4 modify + 1 drop V2-deferred F5 AA friction modal). F1 LOW_ADHERENCE banner port unblocks e2e re-enable. F14 extend window 20→90 ratings cu Tier archive ADR 020. +15 net cumulative.
+**3. BATCH 1 docs preserved** `📤_outbox/BATCH_1_ANTRENOR_INVENTORY.md` + `BATCH_1_ANTRENOR_PLAN.md` solid base post-LOCK reconciliation via amendment. Plan §3 EXECUTION 10-step preserved valid foundation BATCH 2 progress.
 
-**Tests baseline:** 2732 PASS preserved EXACT post-diacritic strip + 1 e2e skip (calibration-ui.spec.js:194 LOW_ADHERENCE banner display bug F1 cross-ref).
+**State final chat-current 3:**
+- main HEAD `71e6445` (mockup sweep INDEX_MASTER refresh)
+- feature/v2-vanilla-port HEAD `a0e8113` (router + state +2 fields + 4 tests + auto-watcher capture)
+- Tests **2736 PASS / 1 e2e skip** (calibration-ui.spec.js:194 F1 port unblocks re-enable)
+- Cumulative LOCKED V1 **~742 PRESERVED unchanged** (mockup polish + router scaffold NU additive product/architecture)
+- ~17 commits chain end-to-end (9 mockup main + 4 BATCH 2 SUB-BATCH 1 feature + auto-watchers)
 
-**Auto-watcher self-validation chat-current:** 2 captures `1310a01` + `582584f` post commit `0841ed4` (LATEST.md edits) = expected behavior NOT race recurrence. Time gate 90s LANDED `8bd5dbb` precedent chat-current 1 self-validates: AGE > 90s post-commit → normal capture flow recapturează LATEST.md edits subsequent (NU race window 31s pre-fix). Race P3 fix sustains stable.
+**Mid-flight NEXT P1 chat NEW = BIROU SETUP MCP** pe laptop birou Daniel mâine. Steps: clone repo `C:\Users\<userprofile>\Documents\salafull` + `npm install` + Claude Desktop config allowed paths + restart + test cu chat NEW *"salut birou"* eu §CC.2 layered read MCP filesystem PRIMARY autonomous. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope HR Senior preserved (NU sync work files acasă pe equipment work). Subsequent: BATCH 2 SUB-BATCH 2 = Step 2 idle.js implementation (replaces renderIdle.js 465 LOC per V1_FEATURES_AUDIT_V1 LOCK V1). Scope ~30-45 min CC + 1-2 tests + 2 commits atomic pe `feature/v2-vanilla-port`.
 
-**Mid-flight pending:** BATCH 2 Antrenor port execution NEXT P1 priority on `feature/v2-vanilla-port` branch (renderIdle.js + rating.js port per V1_FEATURES_AUDIT_V1 LOCK V1 + mockup buguri sweep prerequisite #1 PORT_FIRST tactical).
-
-🦫 **Bugatti craft. 3 LOCK V1 substantive LANDED autonomous chat-current 2 Daniel autonomy lock EXTINS scope (CTO figure-it-out). Cumulative ~719 → ~742 (+23 net). Tests 2732 PASS preserved EXACT post-strip. Path către Beta cel mai high-leverage unblock LANDED.**
+🦫 **Bugatti craft. Mockup sweep #1 + BATCH 2 SUB-BATCH 1 LANDED autonomous Co-CTO scope. Tests 2736 PASS / 1 e2e skip. Daniel ies acum, mâine BIROU MCP setup PRIMARY next-chat. Continuă autonomous post-setup birou direct BATCH 2 SUB-BATCH 2 idle.js.**
 
 ---
 
@@ -58,6 +59,55 @@ Daniel autonomy lock real reaffirmed permanent: *"ne oprim cand facem launch la 
 ---
 
 ## JUST DECIDED
+
+**2026-05-10 chat ACASĂ continuation 3 — MOCKUP SWEEP #1 LANDED main + BATCH 2 ANTRENOR PORT SUB-BATCH 1 LANDED feature/v2-vanilla-port — autonomous Co-CTO scope (cumulative ~742 PRESERVED, router scaffold meta-tooling NU additive):**
+
+Per Daniel autonomy lock EXTINS REAFFIRMED chat-current 3 verbatim *"esti autonomous pana la launch beta cand fac eu review"* + push-back productive *"de ce sa faci handover la 55%"* (slip Co-CTO scribe handover spontaneous mid-execute corectat instant), executed end-to-end 17 commits chain pe 2 branch:
+
+**Main chain `a9ddfa8..71e6445` (9 commits) — Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED:**
+- Phase A audit `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` 18 findings (3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward DIFF_FLAGS)
+- Phase B fixes 8 atomic: P0 (Cloudflare email-protection injection × 7 sites `a9ddfa8` + duplicate ID stub divs `37f8a42` + medical disclaimer routing home → antrenor `0930b2a`) + P1 (typo intenctie → intentie `b2acb11` + 3 dead legacy screens removed sala/home/coach `2100eef`) + extras Bugatti gestated (pickTheme JS unicode escape ă strip `55846b3` + Engine jargon → Coach jargon `abcb8fd` + RPE numeric → intensitate buckets Glossary V1 `8d16361`)
+- Phase C vault sync `699de65` + `4c0becf` + `42c4108` + `71e6445` (CURRENT_STATE + DECISION_LOG + DIFF_FLAGS P2/P3 carry-forward + INDEX_MASTER refresh + LATEST.md cycle NN 365 + audit raport archive NN 366)
+- File `04-architecture/mockups/andura-clasic.html`: 2351 → 2144 LOC (-207 net)
+- Tests baseline 2732 PASS preserved EXACT (mockup-only changes ZERO src/ touched)
+
+**Feature branch chain `f23453f..a0e8113` (4 substantive + 1 auto-watcher) — BATCH 2 Antrenor port SUB-BATCH 1 LANDED:**
+- `f23453f` amendment §4 checklist 7/7 RESOLVED post-LOCK V1 reconciliation `📤_outbox/BATCH_2_AMENDMENT_POST_LOCK_V1.md` (5/7 via PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT_V1 LOCKs SSOT + 2/7 Co-CTO autonomous lock)
+- `dab7247` `src/router.js` NEW ~50 LOC minimal intra-coach navigation + `andura:screen-change` event dispatch — replaces mockup `goto()` global pattern
+- `ce30efe` `src/state.js` +2 fields (24→26): `currentScreen: 'antrenor'` default + `cevaNuMergeReason: null`
+- `be82938` `src/__tests__/router.test.js` NEW 4 cases (navigate sets state + event dispatch + sequential preserve + defensive validation)
+- `a0e8113` chore(auto): outbox/LATEST.md (auto-watcher capture)
+- Tests: **2732 → 2736 PASS** (+4 net router cases)
+- Branch tracking origin/feature/v2-vanilla-port synced
+
+**Decisions silent log scribe (chat-current 3 tactical autonomous, NU additive product/architecture):**
+- Mockup sweep #1 sub-decisions 8 (audit-driven fixes + 3 extras gestated during exec)
+- BATCH 2 SUB-BATCH 1 §4 checklist 7/7 resolutions (5 via LOCK V1 SSOT + 2 Co-CTO autonomous)
+- Naming preserve `src/pages/coach/` directory (engine cross-file imports stability priority)
+- state.js +2 fields singleton pattern (NU router context object, V1 consistency)
+- Persona conditional = JS render-on-mount + persona-change event listener (NU CSS class direct)
+- Tests target ~2790-2810 adjusted upward from BATCH 1 PLAN ~2780 baseline (F14 + F15 retention)
+
+**Push-backs productive scribe Daniel chat-current 3:**
+- *"de ce sa faci handover la 55%"* → slip handover spontaneous mid-execute corrected. Memory rule reaffirmed handover timing = natural saturation OR Daniel signal explicit. Discipline anti-paternalism.
+- Agent claude_code internal push-back: rebase/destructive ops require explicit permission gate. Switched to merge non-destructive. BATCH 1 docs preserved.
+- Agent claude_code surface "stale BATCH 1 vs main SSOT" finding pre-merge → resolved via amendment file post-LOCK reconciliation.
+
+**Mid-flight NEXT P1 chat NEW = 🔴 BIROU SETUP MCP** pe laptop birou Daniel mâine. Steps pas-cu-pas: 1) clone repo `C:\Users\<userprofile>\Documents\salafull` + 2) `npm install` + 3) Claude Desktop config `claude_desktop_config.json` allowed paths add path local + 4) restart Claude Desktop + 5) test cu chat NEW *"salut birou"* eu §CC.2 layered read MCP filesystem PRIMARY autonomous self-serve + 6) memory rule update post-confirm paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local. Caveat legal IP RO scope HR Senior preserved.
+
+**Subsequent post-birou:** BATCH 2 SUB-BATCH 2 = Step 2 idle.js implementation (replaces renderIdle.js 465 LOC per V1_FEATURES_AUDIT_V1 LOCK V1 — F2 last session memory + F4 readiness + F6 PR wall + F7 coach director + F8 streak counter keep verbatim + F1 patterns 5→2 + F3 fatigue single number + F9 BMR single-line). Scope ~30-45 min CC + 1-2 tests + 2 commits atomic pe `feature/v2-vanilla-port`. Subsequent SUB-BATCH 3-6 per BATCH_1_ANTRENOR_PLAN.md §3 Steps 3-10.
+
+**Cross-refs:**
+- `📤_outbox/_archive/2026-05/367_HANDOVER_2026-05-10_chat_acasa_continuation_3_BATCH_2_SUB_BATCH_1_LANDED_BIROU_SETUP_NEXT_CONSUMED.md` (handover NN 367 archived)
+- `📤_outbox/_archive/2026-05/368_LATEST_MOCKUP_SWEEP_BUGURI_RAPORT_CONSUMED.md` (previous LATEST cycled NN 368 sequential)
+- `00-index/CURRENT_STATE.md` §NOW move-then-replace + this §JUST_DECIDED top descending
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-10 chat-current 3
+- `DIFF_FLAGS.md` P1-FLAG-PORT-FIRST-THEN-REACT status update IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED + NEW P1-FLAG-BIROU-SETUP-MCP
+- Backup tag pre-§CC.5 ingest pushed origin (rollback safety)
+
+🦫 **Bugatti craft. Mockup sweep #1 + BATCH 2 SUB-BATCH 1 LANDED autonomous Co-CTO scope. Tests 2736 PASS / 1 e2e skip. Cumulative ~742 PRESERVED unchanged. BIROU SETUP MCP P1 chat NEW.**
+
+---
 
 **2026-05-10 chat ACASĂ continuation 2 — MOCKUP BURURI SWEEP #1 LANDED — 8 atomic commits autonomous (cumulative ~742 PRESERVED, mockup polish meta-tooling NU additive):**
 
@@ -252,9 +302,9 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 ## NEXT — Priority order
 
-1. **BATCH 2 Antrenor port implement on `feature/v2-vanilla-port` branch** — execute renderIdle.js 465 LOC + rating.js 150 LOC port per V1_FEATURES_AUDIT_V1 LOCK V1 (10 keep verbatim + 4 modify simplified + 1 drop F5). F1 LOW_ADHERENCE banner port unblocks e2e test re-enable `tests/e2e/scenarios/calibration-ui.spec.js:194` SKIP'd. Prerequisite #2: Mockup buguri sweep pre-port (#1 PORT_FIRST tactical, audit-list ready). Separate prompt CC artefact next chat dedicat.
-2. **Mockup buguri sweep pre-port** (#1 PORT_FIRST tactical prerequisite) — clean state mockup ÎNTÂI per Bugatti SoT clean port single. ~30-60 min audit-list ready. Blocks BATCH 2 Antrenor execution.
-3. **Birou setup MCP filesystem mâine cu laptop birou** (Daniel constraint: NU mai vrea Codespaces, atins limita; are Claude Desktop deja instalat birou). Steps: clone repo local laptop birou + `npm install` + config `claude_desktop_config.json` allowed paths cu local path + restart Claude Desktop + test cu chat NEW *"salut birou"*. Path consistent recomandat: `C:\Users\<userprofile>\Documents\salafull`. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved.
+1. **🔴 BIROU SETUP MCP filesystem chat NEW PRIMARY** (Daniel mâine la birou laptop, vrea MCP funcțional NU halucineze chat-uri). Steps pas-cu-pas: clone repo `git clone https://github.com/markaroundthestates-cyber/andura.git C:\Users\<userprofile>\Documents\salafull` + `cd salafull` + `npm install` + Claude Desktop config `claude_desktop_config.json` allowed paths add `C:\Users\<userprofile>\Documents\salafull` + restart Claude Desktop + test chat NEW *"salut birou"* → eu §CC.2 layered read MCP filesystem PRIMARY autonomous self-serve. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved (NU sync work files acasă pe equipment work). Chat NEW deschid cu *"salut birou"* trigger + ghidare pas-cu-pas. Daniel zero courier paradigm.
+2. **BATCH 2 Antrenor port SUB-BATCH 2 = Step 2 idle.js implementation on `feature/v2-vanilla-port` branch** post-birou setup confirmed — replaces renderIdle.js 465 LOC per V1_FEATURES_AUDIT_V1 LOCK V1 (F2 last session memory + F4 readiness + F6 PR wall + F7 coach director + F8 streak counter keep verbatim + F1 patterns 5→2 + F3 fatigue single number + F9 BMR single-line). Scope ~30-45 min CC + 1-2 tests + 2 commits atomic. Foundation laid SUB-BATCH 1 router + state +2 fields LANDED chat-current 3.
+3. **BATCH 2 Antrenor port SUB-BATCH 3-6** per `BATCH_1_ANTRENOR_PLAN.md` §3 EXECUTION 10-step Steps 3-10 (energyCheck + cevaNuMerge + workout + postRpe + session trim + tests + smoke validation + PR feature/v2-vanilla-port → main). F1 LOW_ADHERENCE banner port unblocks e2e test re-enable `tests/e2e/scenarios/calibration-ui.spec.js:194` SKIP'd.
 4. **Daniel smoke test prod bugs fix LANDED `05ba372`** — andura.app live validate Bug 1 visual (Auto template auto-faza behavior — phase auto-detect din BF + sezon, kcal NU mai 2000 hardcoded) + Bug 2 visual (BF manual edit pe greutate constantă → kcal phase recalculate Katch-McArdle).
 5. **Auto-watcher race P3 validation natural next claude_code session** — passive monitor commits subsequent post time gate 90s fix LANDED `.claude/settings.json` (chat-current 1 + chat-current 2 sustained stable, 2 captures `1310a01` + `582584f` post-90s flow expected NOT recurrence). Dacă recurrence → escalate (glob filter narrow, debounce, sau disable hook).
 6. **Phase 4 dedicate session** post Clasic 100% smoke validation OK ~22-30h estimated combined backlog (Tasks X+Y full + T+U + carry-forward Phase 3+3.5 muscleMap + QA calibration + Cluster #4+#6).
@@ -305,6 +355,7 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 ## RECENT — Older context preserved (truncate >50 LOC per §CC.6)
 
+- 2026-05-10 chat ACASĂ continuation 3 — Mockup sweep #1 LANDED main (chain `a9ddfa8..71e6445` 9 commits, 18 audit findings + 8 atomic fixes + vault sync) + BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port (chain `f23453f..a0e8113` 4 substantive: amendment §4 7/7 + router.js NEW + state.js +2 fields + router.test.js 4 cases). Tests 2732 → 2736 PASS (+4 net). Cumulative ~742 PRESERVED unchanged. NEXT P1 chat NEW = BIROU SETUP MCP. Subsequent BATCH 2 SUB-BATCH 2 idle.js. Daniel autonomy lock EXTINS REAFFIRMED *"esti autonomous pana la launch beta"*. Slip handover spontaneous mid-execute corectat per push-back productive *"de ce sa faci handover la 55%"*.
 - 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous CTO figure-it-out paradigm + 3 LOCK V1 substantive LANDED autonomous (NO_DIACRITICS_RULE +1 commit `0841ed4` 263 files / 6034 replacements + PORT_FIRST_STEP_1_PARADIGM_V1 LOCK V1 7/7 sub-decisions + V1_FEATURES_AUDIT_V1 LOCK V1 15/15 features). Cumulative ~719 → ~742 (+23 net). Tests 2732 PASS preserved EXACT post-strip + 1 e2e skip (calibration-ui.spec.js:194 LOW_ADHERENCE banner F1 cross-ref). Auto-watcher race P3 sustains stable (2 captures expected post-90s flow).
 - 2026-05-10 chat ACASĂ continuation MCP filesystem §CC.5 fast handover ingest LANDED — 6 commits substantive atomic chain `8bd5dbb..6a76808` (auto-watcher race P3 fix Stop hook time gate 90s + DIFF_FLAGS 5-day drift cleanup + 2 SPEC DRAFTs pre-LOCK V1: PORT_FIRST_STEP_1_PARADIGM_V1 + V1_FEATURES_AUDIT_V1 + REACT_MIGRATION status update + FAZA_2 §7 stale gates sync) + §CC.5 ingest commits 7-8 (handover archive NN 360 _CONSUMED + LATEST cycle NN 361 _CONSUMED + vault file edits final). Cumulative ~719 PRESERVED, tests 2734 PASS, Co-CTO real autonomy lock reaffirmed permanent.
 
