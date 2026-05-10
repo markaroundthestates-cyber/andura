@@ -1,6 +1,10 @@
 # REACT MIGRATION — STATE MAPPING V1
 
-**Status:** ACTIVE_SSOT (canonical migration reference, pre-implementation)
+> **⚠️ STATUS UPDATE 2026-05-10 §AMENDMENT — Post Port-First-Then-React paradigm REVERT SUPERSEDE.**
+> Per [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10 REVERT SUPERSEDE 2026-05-08: this doc remains canonical SSOT pentru **Step 2 React migration mecanic mapping** (post Step 1 vanilla port mockup V2 → prod `src/` complete). Step 2 execution PENDING Step 1 LANDED + Daniel Gates smoke validation → merge `feature/v2-vanilla-port` → main. State mapping spec body below preserved compatible Step 2 — state.js → Context+useReducer mecanic mapping unchanged.
+> Active stack canonical: see [[PORT_FIRST_STEP_1_PARADIGM_V1]] (Step 1 paradigm SPEC DRAFT V1 pending CEO LOCK V1) + [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10 final.
+
+**Status:** ACTIVE_SSOT Step 2 reference (canonical migration mapping, pre-Step-2-implementation; Step 1 vanilla port prerequisite per Port-First-Then-React paradigm 2026-05-10 LOCK V1)
 **Date:** 2026-05-08 chat NEW acasă React migration plan tactical chat dedicat
 **Authority:** Daniel chat-NEW3 birou 2026-05-07 direction LOCK + chat-current acasă 2026-05-08 tactical scope LOCK Co-CTO scope
 **Cumulative LOCKED V1:** ~689 → ~690 (+1 net mapping doc canonical)
