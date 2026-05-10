@@ -1025,6 +1025,32 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 
 ---
 
+### §AR.19 claude_code Agent Timeout MCP Response Delivery NU = Agent Crash (LOCK V1 2026-05-10)
+
+**Origin slip:** Chat ACASĂ 2026-05-10 vault hygiene massive cleanup atomic batch — claude_code agent invoked atomic 9-phase prompt (~600 LOC spec). MCP response delivery layer timeout 4 minutes; Claude Desktop returned error *"No result received from the Claude Desktop app after waiting 4 minutes. The local MCP server providing this tool may be unresponsive, crashed, or not running."* Claude scribe assumed agent crashed mid-execution → initiated recovery flow (verify file sizes via filesystem:get_file_info, propose granular retry).
+
+**Trigger pattern:** filesystem:get_file_info returned stale data immediately post-timeout (CURRENT_STATE.md still 596KB, RECENT_DECIDED_ARCHIVE.md still 2KB) — Windows OS metadata cache lag few seconds post-write reinforced "no work landed" assumption falsely. Real ground truth: agent had completed full Phase 0-9 atomic batch INCLUDING git push to origin/main. Commit `cc34ca9` cleanup landed remote BEFORE timeout signal returned. MCP delivery layer hung post-execution, NU agent crash.
+
+**Anti-recurrence rule (default trust + verify, NOT assume failure + recover):** When claude_code agent times out OR MCP response delivery fails after agent invocation, BEFORE assuming work failure or initiating recovery/retry/rollback flow, MANDATORY verify în ordine:
+
+1. `git log --oneline origin/main -5` — verify expected commit landed remote (most reliable signal — push success = work landed)
+2. `📤_outbox/LATEST.md` raport content — agent's structured output file (final phase normally written)
+3. File sizes/state via filesystem MCP — caveat OS metadata cache may lag few seconds post-write Windows. Re-check after ~5-10s if first call suggests no changes; OR cross-verify via `git status` + `git log` (both reflect committed state instantly).
+
+ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust completion + verify, NOT assume failure + recover.
+
+**Verification mechanism:** Claude scribe post-claude_code-timeout response sequence:
+- Step 1: explicit check `git log origin/main -5` (NOT just local file state)
+- Step 2: read `📤_outbox/LATEST.md` if exists post-execution
+- Step 3: filesystem file sizes (with cache-stale awareness — re-check after delay if suspect)
+- Step 4: ONLY post-3-fail → consider rollback/retry
+
+**Anti-pattern documented:** filesystem:get_file_info first → stale data trap → false-positive "no changes" conclusion → unnecessary recovery flow + double-work risk.
+
+**Cross-refs:** §AR.3 Ground Truth Git Verify ÎNAINTE Acuzare Hallucination (related pattern, broader scope) | §AR.4 Anti-Distructive Recommendation Default | Slip origin chat ACASĂ 2026-05-10 vault hygiene massive cleanup successful atomic batch (commit `cc34ca9`) post-completion verify slip (zero damage but wasted verify cycles post-completion before realizing work landed).
+
+---
+
 ### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
 
 **Authority:** Consolidat din §AR.1-§AR.18. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
@@ -1045,6 +1071,7 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 14. ☐ Output ≥10-15 LOC structured = file artefact via present_files DOWNLOADABLE NU markdown chat block (per §AR.16)
 15. ☐ Daniel inputs (handover/prompts CC/files) → 📥_inbox/ MANDATORY single path (per §AR.17)
 16. ☐ Post-bulk-replace verification: self-ref grep `:[\s]*var\(--SAME\)` zero matches + browser smoke spot-check OR sequence bulk-FIRST :root-LAST anti-circular-ref slip (per §AR.18)
+17. ☐ claude_code agent timeout MCP response → verify `git log origin/main -5` + `📤_outbox/LATEST.md` FIRST before assuming crash/retry (per §AR.19) — default trust completion + verify, NOT assume failure + recover
 
 **Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
 
