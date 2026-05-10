@@ -1,5 +1,56 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 chat ACASĂ post-smoke pivot — Phase 3 atomic orchestrator FINAL GENERATED Tasks A-J + Task K coordonator + NEW LOCK V1 descriere liberă universal SCOASĂ + workflow V1 verbatim cap-coadă + Daniel real CTO autonomy mode REAFFIRMED (cumulative ~714-716 → ~717, +1 net descriere liberă scope cut universal substantive)
+
+**Status:** §CC.5 fast handover ingest from `handover_2026-05-10_chat_acasa_post_smoke_pivot.md`. Pure execution scope orchestrator Phase 3 generation (NU commits chat-current — predecessor `4ee0cad` chat-precedent Phase 1+2 closure preserved). Cumulative LOCKED V1 ~714-716 → **~717** (+1 net descriere liberă universal scope cut substantive). Tests 2731 PASS preserved EXACT (NU code changes chat-current — pure prompt artefact generation; Task K orchestrator execution upcoming).
+
+**Authority:** Daniel directive chat ACASĂ post-smoke pivot 2026-05-10 verbatim:
+- *"La ma doare ceva inca apare si descriere libera. Nu trebuie sa avem descriere libera in nici o tema, la nimic."* (NEW LOCK V1 universal scope cut)
+- *"incepi sesiunea, zici cum te simti... imediat iti zicea cu ce incepi si cate serii ai... dupa ce dadeai finish la primul set te intreba cate reps... pauza... skip pauza warning... next set incepea automat... si asa mai departe"* (Workflow V1 spec verbatim cap-coadă)
+- *"ma nu inteleg ce vrei de la mine... Stii ce trebuie facut la andura... make it happen... daca ma pui de fiecare data sa fac smoketests si ma intrebi fac asta sau asta?... chiar nu e ok... Da-i drumu la ce vrei tu si imi zici clar doar cand e totul gata de verificare sa ma uit eu iar peste ele"* (Daniel real CTO autonomy mode REAFFIRMED)
+
+**4 bug-uri Phase 1+2 escapate audit CC (raportate LANDED dar funcțional broken la smoke):**
+1. Onboarding NU default render — app pornește în alt screen NU onboarding flow (precedent Batch 2a chat noapte fix `screen-splash` active LANDED, pattern recurent)
+2. Templates active state visual lipsă — apăsare template în Antrenor → toast jos apare DAR UI NU reflectă selecția pe linia clickuită (Cluster #2 Task 06 LANDED funcțional incomplet)
+3. "Mă doare ceva" descriere liberă reziduu — încă apare textarea descriere liberă în pain modal (Cluster #2 Task 07 merge incomplete)
+4. Tab Nutriție în Progres reziduu — apare contrar PRODUCT_STRATEGY §3.5 V3 amendment 2026-05-10 LOCKED V1 (tab UI REMOVED MFP CSV import only generic)
+
+**3 bug-uri Phase 3 deferred confirmed matched așteptări:**
+- Antrenor lipsă inline edit kg+reps post-set + workflow auto-advance (Cluster #6 Task 23)
+- Progres "buton auto blocat pe auto" state bug (Cluster #6 Task 21)
+- Istoric calendar zilele NU clickuibile (Cluster #4 Tasks 16-18)
+
+**Phase 3 atomic orchestrator FINAL artefacte chat-current generated (11 total):**
+- `task_A_onboarding_default_render.md` — Phase 1 escapat onboarding default render Big 6 hard T0 cross-skin × 4
+- `task_B_templates_active_state.md` — Phase 1 escapat templates active state visual feedback cross-skin × 4
+- `task_C_pain_button_merge.md` — Phase 1 escapat pain-button merge 4 opțiuni preset only ZERO textarea cross-skin × 4
+- `task_D_nutrition_tab_remove.md` — Phase 1 escapat tab Nutriție Progres REMOVED cross-skin × 4
+- `task_E_free_text_universal_remove.md` — NEW LOCK V1 SUPERSEDE Cluster #9 Task 29 (descriere liberă universal SCOASĂ cross-skin × 4 ZERO `<textarea>`)
+- `task_F_workflow_antrenament_v1_capture.md` — CRITICAL workflow V1 cap-coadă 10 phases cross-skin × 4 source-of-truth `src/pages/coach/*` verbatim extract
+- `task_G_history_calendar_clickable.md` — Cluster #4 deferred fix Istoric calendar zile clickuibile detail zi cross-skin × 4
+- `task_H_progress_auto_button_unlocked.md` — Cluster #6 Task 21 deferred fix Progres Auto button toggle state unlocked cross-skin × 4
+- `task_I_muscleMap_19_to_7_refactor.md` — Standalone Q1 engine refactor `src/engine/muscleMap.js` 19 heads → 7 grupes + downstream consumers
+- `task_J_luxury_change_phase_entry.md` — Cluster #5 Luxury Schimbă fază entry parity Theme Parity Invariant V1
+- `task_K_orchestrator_final.md` — Mini orchestrator FINAL coordonator fail-cluster mode + `/compact` insertion + `LATEST_CONSOLIDATED.md` aggregate end
+
+**Pre-flight grep prod source workflow V1 EXECUTAT chat-current** (anti-recurrence §0 ABSOLUT — NU memory recall, NU presupun andura.app fără verify cod real). Extracts complete:
+- session.js: startSession + skipExercise + cancelWorkout + endSession + setupInactivity + requestWakeLock + releaseWakeLock + finishEarly + confirmEarlyStop
+- logging.js: setDone + confirmReps + selectRPE (RPE 4-tap mapping `{6.5:'easy', 8:'ok', 9:'hard', 10:'very-hard'}`) + adjSessionReps + renderSessLog + editSessionKg + adjSessionKg + confirmSessionKg + confirmEditKg + toggleMute
+- restTimer.js: startPause + stopPause + skipPause (toast warning ⚠️ engine flag) + tickPause + setupInactivity (2 min auto-pause + 5 min sinceLastRest threshold) + INACTIVITY_DELAY
+- coach.js orchestrator exports + main.js window.* exports for HTML onclick
+
+**LOCK-uri product/architecture chat-current — 1 NET ADDITIVE SUBSTANTIVE:**
+
+1. **NEW LOCK V1 SUBSTANTIVE — descriere liberă SCOASĂ universal cross-skin × 4 themes la TOT** (NU pain "Altceva" + NU equipment "Altceva" + NU Big 6 + NU oriunde alt context, ZERO `<textarea>` mockup files cross-skin × 4 + ZERO maxlength=500 + char counter, replace cu engine flag generic preset button + close modal). SUPERSEDE Cluster #9 Task 29 textareas LANDED Clasic+LB (chat ACASĂ post-noapte = OUT). **+1 net cumulative LOCKED V1 substantive.**
+
+2. **Workflow antrenament V1 spec ARTICULAT verbatim cap-coadă** (Daniel directive verbatim narrativ 10 phases) source-of-truth `src/pages/coach/*` extract verbatim — Theme Parity Invariant V1 strict cross-skin × 4. Sole exception preserved omuleț Living Body Progres unique vizualization. NU additive product/architecture (existing prod source-of-truth, port în mockups doar). NU contat în cumulative count.
+
+3. **Daniel real CTO autonomy mode REAFFIRMED** standing rule cross-session: NO confirmation theater + NO intermediate progress reports + NO premature handover suggestions + ZERO 2-options pattern. Direct execute autonomous + raport final smoke ready. NU additive product/architecture (process directive). NU contat în cumulative count.
+
+**Cumulative LOCKED V1 ~714-716 → ~717** (+1 net descriere liberă universal scope cut substantive). Predecessor cumulative chat-uri Phase 1+2 + Task 38 closure preserved unchanged.
+
+---
+
 ## 2026-05-10 chat ACASĂ orchestrator clusters generation Phase 1 + Phase 2 COMBINED — Tasks 01-38 atomic artefacte ready inbox + 1 mini orchestrator FINAL coordonator (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture)
 
 **Status:** Pure execution scope orchestrator clusters generation (NU commits chat-uri Phase 1+2 — predecessor chain commit `12f1b76` chat vault hygiene closure preserved). Cumulative LOCKED V1 ~714-716 PRESERVED unchanged. Tests 2731 PASS preserved EXACT (NU code changes chat-uri Phase 1+2 — pure prompt artefact generation; Task 31 Q1 engine aggregator V2 refactor → tests count update tracked post-refactor 2731 → N).

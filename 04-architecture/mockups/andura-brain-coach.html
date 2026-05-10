@@ -4985,10 +4985,10 @@
   }
 
   // ─── Default landing ──────────────────────────────────────────
-  // Splash is active by default; auto-advance to auth after 1.5s
+  // Splash is active by default; auto-advance to onboard (Big 6 hard T0 default render Task A 2026-05-10 chat ACASĂ post-smoke)
   setTimeout(() => {
     const cur = document.querySelector('.screen.active');
-    if (cur && cur.id === 'screen-splash') goto('auth', {replace: true});
+    if (cur && cur.id === 'screen-splash') goto('onboard', {replace: true});
   }, 1500);
 </script>
 
