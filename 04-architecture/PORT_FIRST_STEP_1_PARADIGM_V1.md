@@ -1,6 +1,6 @@
-# Port-First Step 1 Paradigm — SPEC DRAFT V1
+# Port-First Step 1 Paradigm — LOCKED V1 2026-05-10
 
-**Status:** SPEC DRAFT V1 (Co-CTO recommendations pe 5 tactical sub-decisions + 2 flagged Daniel-decide strategic). Pending Daniel CEO LOCK V1 → execute Step 1 Port-First-Then-React paradigm per [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10.
+**Status:** LOCKED V1 2026-05-10 chat ACASĂ continuation 2 (Claude chat autonomous Co-CTO scope per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*). All 7 sub-decisions LOCK V1 Co-CTO bias preserved. Predecessor `SPEC DRAFT V1` (Co-CTO recommendations pe 5 tactical + 2 flagged Daniel-decide strategic) superseded. Execute Step 1 Port-First-Then-React paradigm per [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10.
 **Date:** 2026-05-10 chat ACASĂ continuation MCP filesystem (Co-CTO autonomous draft per Daniel directive *"continuă autonomy până Beta"*)
 **Owner:** Daniel (CEO + Product, final LOCK V1) + Claude chat (Co-CTO Reviewer scope tactical)
 **Cumulative LOCKED V1:** ~719 PRESERVED unchanged pre-LOCK. Post-LOCK V1: TBD (+5-7 net depending Daniel sign-off).
@@ -139,4 +139,28 @@ Per [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10 Port-
 
 ---
 
-🦫 **Bugatti craft. SPEC DRAFT V1 Co-CTO Reviewer scope tactical autonomous per Daniel directive cap-coadă chat-current. Pending Daniel CEO LOCK V1 strategic sub-decisions #3 + #4 + #7 → execute Step 1 Port-First paradigm. Path către Beta cel mai high-leverage unblock.**
+## §LOCK V1 2026-05-10 Co-CTO Autonomous (Daniel autonomy lock EXTINS)
+
+**Authority:** Daniel autonomy lock EXTINS verbatim chat-current 2026-05-10 *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* — Claude chat strategic autonomous scope EXTENDED (NU doar Co-CTO Reviewer tactical, ci CTO figure-it-out paradigm complete UX scope mine until Beta launch). Tactical + strategic sub-decisions toate Co-CTO autonomous LOCK V1.
+
+**Verdict 7/7 sub-decisions Co-CTO bias preserved verbatim per recommendations §#1-§#7:**
+
+- **#1 LOCK V1: Clean state mockup ÎNTÂI** — Bugatti single SoT clean port. Mockup buguri sweep pre-port (~30-60 min) prerequisite execution BATCH 2 Antrenor. Carry mockup debt forward = anti-Bugatti rejected.
+- **#2 LOCK V1: Structural restructure cap-coadă** — port-once paradigm, Daniel-only env zero downtime cost. Tab-by-tab incremental rejected (mid-port app contradictoriu user-facing + double maintenance window).
+- **#3 LOCK V1: Option B Structural rewrite per mockup** — Bugatti SoT V2 design canonical. Gated by #4 audit V1_FEATURES_AUDIT_V1 LOCK V1 — carry value subset preserved (WCAG + Theme Parity + Glossary + Actions cost). Conditional clusters: Coach Setări split = port (V2 4-tab paradigm), Istoric layout = port from mockup, Workflow V1 (auto-advance pauză + edit manual kg+reps post-set) = port mandatory pre-Beta SUFLET ANDURA scope per §36.57.
+- **#4 LOCK V1: Selective port driven by V1_FEATURES_AUDIT_V1 LOCK V1** — 10 keep + 4 modify + 1 drop V2-deferred (per V1_FEATURES_AUDIT_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous companion document).
+- **#5 LOCK V1: NEW branch `feature/v2-vanilla-port`** — clean slate isolated rollback safety. `feature/phase-3-orchestrator-final` archived NU merged main (audit raports preserved NN 350-352).
+- **#6 LOCK V1: Vitest 2732 PASS preserved (post-strip baseline) + extend** — engineering capital cumulative preserved (engines pure functions ADR 018 §2 contract preserved). Test rewrites rejected (anti-Bugatti).
+- **#7 LOCK V1: Option B Preserve frozen mockup post-port** — design SoT continuity Step 1 → Step 2 React → future themes Lux/BC. Mockup frozen pre-React (NU updated forward post-port). Step 2 React = mecanic mapping din mockup snapshot Step 1 LANDED.
+
+**Cumulative impact:** +7 net LOCK V1 (cumulative ~719 PRESERVED → +7 = ~726, partial pre-companion V1_FEATURES_AUDIT_V1 +15).
+
+**Cross-refs:**
+- [[V1_FEATURES_AUDIT_V1]] §LOCK V1 2026-05-10 Co-CTO Autonomous (companion document, gates #4 selective port scope)
+- [[../00-index/CURRENT_STATE]] §JUST_DECIDED top entry chat-current 2026-05-10 chat ACASĂ continuation 2
+- [[../03-decisions/DECISION_LOG]] entry top descending cronologic 2026-05-10 chat ACASĂ continuation 2
+- [[../DIFF_FLAGS]] P1-FLAG-PORT-FIRST-THEN-REACT 🟢 LOCKED V1 SUBSTANTIVE → 🟢 LOCKED V1 EXECUTION-READY (sub-decisions all LOCK V1 autonomous)
+
+---
+
+🦫 **Bugatti craft. LOCKED V1 2026-05-10 Co-CTO Autonomous Daniel autonomy lock EXTINS scope (CTO figure-it-out paradigm). 7/7 sub-decisions LOCK V1 bias preserved. Execute Step 1 Port-First paradigm BATCH 2 Antrenor port unblocked pending mockup buguri sweep prerequisite (#1). Path către Beta cel mai high-leverage unblock LANDED autonomous.**

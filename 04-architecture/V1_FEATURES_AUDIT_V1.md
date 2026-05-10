@@ -1,6 +1,6 @@
-# V1 Features Audit — SPEC DRAFT V1 (renderIdle + rating)
+# V1 Features Audit — LOCKED V1 2026-05-10 (renderIdle + rating)
 
-**Status:** SPEC DRAFT V1 (Co-CTO recommendations per feature pe `src/pages/coach/renderIdle.js` 465 LOC + `src/pages/coach/rating.js` 150 LOC vs V2 mockup target 180 + 70 LOC). Pending Daniel CEO LOCK V1 keep/drop per feature → unblocks BATCH 2 Antrenor port implement.
+**Status:** LOCKED V1 2026-05-10 chat ACASĂ continuation 2 (Claude chat autonomous Co-CTO scope per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*). All 15 features LOCK V1 Co-CTO bias preserved verbatim. Predecessor `SPEC DRAFT V1` superseded. Unblocks BATCH 2 Antrenor port implement on `feature/v2-vanilla-port` branch.
 **Date:** 2026-05-10 chat ACASĂ continuation MCP filesystem (Co-CTO autonomous prep per Daniel directive *"ia tu decizia si fa ce trebuie"*)
 **Owner:** Daniel (CEO + Product, final LOCK V1) + Claude chat (Co-CTO Reviewer scope tactical)
 **Scope:** **Limited to renderIdle.js + rating.js** (2 files mentioned `00-index/CURRENT_STATE.md §NEXT` priority #5 explicit). Other V1 prod files audit deferred separate dedicated chat dacă Daniel cere.
@@ -224,4 +224,32 @@ Per feature identified V1 prod, Co-CTO recommendation:
 
 ---
 
-🦫 **Bugatti craft. SPEC DRAFT V1 Co-CTO Reviewer scope tactical autonomous per Daniel directive cap-coadă chat-current "ia tu decizia si fa ce trebuie". 15 features identified, 10 keep + 4 modify + 1 drop V2-deferred. Pending Daniel CEO LOCK V1 → unblocks BATCH 2 Antrenor port implement. Path către Beta cel mai high-leverage unblock post Step 1 paradigm.**
+## §LOCK V1 2026-05-10 Co-CTO Autonomous
+
+**Authority:** Daniel autonomy lock EXTINS verbatim chat-current 2026-05-10 *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* — Claude chat strategic autonomous scope EXTENDED, UX scope mine until Beta launch. All 15 features LOCK V1 Co-CTO bias preserved verbatim per recommendations §F1-§F15.
+
+**Verdict 15/15 features Co-CTO bias preserved verbatim:**
+
+| Verdict | Count | Features |
+|---------|-------|----------|
+| **Keep verbatim (port direct)** | 10 | F2 last session memory + F4 readiness verdict + F6 PR wall + F7 coach director + F8 streak counter + F10 stats grid + F11 PRs notification + F12 rating buttons + F13 rating notes auto-apply + F15 per-set RPE granularity |
+| **Modify (port simplified)** | 4 | F1 patterns 5→2 (LOW_ADHERENCE + STAGNATION; drop HIGH_DEVIATION + EARLY_END + PEAK_HOURS gimmick territory) + F3 fatigue (drop visual bar, single number + culoare verde/galben/roșu) + F9 BMR strip (drop strip, single line "🎯 Azi: 2400 kcal · 180g protein") + F14 ratings window (extend 20→90 cu Tier archive ADR 020) |
+| **Drop V2-deferred (defer v1.5)** | 1 | F5 AA friction modal (defer v1.5 inline UX flow non-blocking; modal pe start sesiune = friction Gigel rejected) |
+
+**F1 LOW_ADHERENCE banner port unblocks e2e test re-enable** — currently SKIP'd `tests/e2e/scenarios/calibration-ui.spec.js:194` per QA flag P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER. Port F1 LOW_ADHERENCE banner V2 vanilla = unblocks re-enable test cross-ref.
+
+**F14 extend window 20→90 cu Tier archive** = ADR 020 Storage Tiering Strategy aligned (Tier 0 active 20 ratings rolling + Tier 1 archive 70 ratings IndexedDB Dexie per ADR 020 §1.4 + ADR 020 §2.3 storage budget post-archive).
+
+**Cumulative impact:** +15 net LOCK V1 (cumulative ~719 → +15 features = ~734 partial pre-companion PORT_FIRST_STEP_1_PARADIGM_V1 +7 sub-decisions = total ~742 cumulative chat-current 2 final +23 net inclusive NO_DIACRITICS_RULE +1).
+
+**Cross-refs:**
+- [[PORT_FIRST_STEP_1_PARADIGM_V1]] §LOCK V1 2026-05-10 Co-CTO Autonomous (parent paradigm document, gates #4 selective port scope = this audit LOCK)
+- [[../00-index/CURRENT_STATE]] §JUST_DECIDED top entry chat-current 2026-05-10 chat ACASĂ continuation 2
+- [[../03-decisions/DECISION_LOG]] entry top descending cronologic 2026-05-10 chat ACASĂ continuation 2
+- [[../DIFF_FLAGS]] P1-FLAG-V1-FEATURES-AUDIT-RESOLVED 🟢 RESOLVED LOCK V1 NEW 2026-05-10
+- [[../05-findings-tracker/FINDINGS_MASTER]] P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER (F1 port unblocks re-enable)
+- [[../03-decisions/020-storage-tiering-strategy]] §1.4 + §2.3 (F14 extend window Tier 0/1 architecture)
+
+---
+
+🦫 **Bugatti craft. LOCKED V1 2026-05-10 Co-CTO Autonomous Daniel autonomy lock EXTINS scope (CTO figure-it-out paradigm). 15/15 features bias preserved verbatim (10 keep + 4 modify + 1 drop V2-deferred). Unblocks BATCH 2 Antrenor port implement on `feature/v2-vanilla-port` branch. Path către Beta cel mai high-leverage unblock post Step 1 paradigm LANDED autonomous.**

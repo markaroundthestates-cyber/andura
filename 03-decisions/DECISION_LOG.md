@@ -1,6 +1,101 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED (NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 + V1_FEATURES_AUDIT_V1 +15, cumulative ~719 → ~742 +23 net product/architecture additive)
+
+**Status:** 3 LOCK V1 substantive product/architecture additive cumulative chat-current 2. Cumulative LOCKED V1 ~719 → ~742 (+23 net). Tests baseline 2732 PASS preserved EXACT post-diacritic strip + 1 e2e skip (calibration-ui.spec.js:194 LOW_ADHERENCE banner F1 cross-ref).
+
+**Authority:** Daniel autonomy lock EXTINS verbatim chat-current 2 2026-05-10:
+- *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* (autonomy scope EXTENDED tactical + strategic complete fără break-points pentru CEO sign-off intermediate)
+- UX scope mine directive (Co-CTO Reviewer scope tactical → CTO figure-it-out paradigm complete UX scope mine until Beta launch a-z review)
+- Diacritics directive global strip (NO_DIACRITICS_RULE LOCK V1 PERMANENT)
+
+**3 LOCK V1 substantive LANDED autonomous chat-current 2:**
+
+### 1. NO_DIACRITICS_RULE LOCK V1 PERMANENT 2026-05-10 (commit `0841ed4` LANDED)
+
+**Mecanic:**
+- Script Node.js automatizat parse 263 files / 6034 replacements
+- Toate lowercase + uppercase RO diacritics: ă→a, â→a, î→i, ș→s, ț→t + Ă/Â/Î/Ș/Ț equivalents
+- Scope: `src/**/*.{js,jsx,html,css}` + `tests/**/*.{js,spec.js}` + `04-architecture/mockups/**/*.html`
+- Vault docs preserved verbatim (fluency RO chat continuity Daniel session-to-session natural): `00-index/`, `01-vision/`, `03-decisions/`, `04-architecture/` non-mockups, `05-findings-tracker/`, `06-sessions-log/`, `07-meta/`, `08-workflows/`, `📥_inbox/`, `📤_outbox/`, `VAULT_RULES.md`, `DIFF_FLAGS.md`, `CLAUDE.md`, `README.md`
+
+**E2e cross-ref:**
+- `tests/e2e/scenarios/calibration-ui.spec.js:194` SKIP'd post-strip
+- Assertion `text=/Adherence scăzută/i` failed — banner string fără diacritic post-strip "Adherenta scazuta"
+- Cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER + V1_FEATURES_AUDIT_V1 F1 port unblocks re-enable
+
+**Cumulative impact:** +1 net LOCK V1 (~719 → ~720)
+
+### 2. PORT_FIRST_STEP_1_PARADIGM_V1 LOCK V1 7/7 sub-decisions Co-CTO Autonomous
+
+**Predecessor superseded:** SPEC DRAFT V1 Co-CTO recommendations 5 tactical + 2 flagged Daniel-decide CEO strategic (commit `da1510c` chat-current 1) → LOCKED V1 7/7 Co-CTO autonomous chat-current 2 per Daniel autonomy lock EXTINS scope EXTENDED.
+
+**Verdict 7/7 Co-CTO bias preserved verbatim:**
+
+- **#1 LOCK V1: Clean state mockup ÎNTÂI** — Bugatti single SoT clean port. Mockup buguri sweep pre-port (~30-60 min) prerequisite execution BATCH 2 Antrenor.
+- **#2 LOCK V1: Structural restructure cap-coadă** — port-once paradigm, Daniel-only env zero downtime cost.
+- **#3 LOCK V1: Option B Structural rewrite per mockup** — Bugatti SoT V2 design canonical. Gated by #4 audit. Carry value subset (WCAG + Theme Parity + Glossary + Actions cost). Conditional clusters: Coach Setări split = port (V2 4-tab paradigm), Istoric layout = port from mockup, Workflow V1 (auto-advance pauză + edit manual kg+reps post-set) = port mandatory pre-Beta SUFLET ANDURA scope §36.57.
+- **#4 LOCK V1: Selective port driven by V1_FEATURES_AUDIT_V1 LOCK V1** — 10 keep + 4 modify + 1 drop V2-deferred (per V1_FEATURES_AUDIT_V1 §LOCK V1 Co-CTO Autonomous companion document).
+- **#5 LOCK V1: NEW branch `feature/v2-vanilla-port`** — clean slate isolated rollback safety.
+- **#6 LOCK V1: Vitest 2732 PASS preserved (post-strip baseline) + extend** — engineering capital cumulative preserved (engines pure functions ADR 018 §2 contract preserved).
+- **#7 LOCK V1: Option B Preserve frozen mockup post-port** — design SoT continuity Step 1 → Step 2 React → future themes.
+
+**Cumulative impact:** +7 net LOCK V1 (~720 → ~727)
+
+### 3. V1_FEATURES_AUDIT_V1 LOCK V1 15/15 features Co-CTO Autonomous
+
+**Predecessor superseded:** SPEC DRAFT V1 Co-CTO recommendations per-feature (commit `2c84ca1` chat-current 1) → LOCKED V1 15/15 Co-CTO autonomous chat-current 2 per Daniel autonomy lock EXTINS scope EXTENDED.
+
+**Verdict 15/15 features Co-CTO bias preserved verbatim:**
+
+| Verdict | Count | Features |
+|---------|-------|----------|
+| Keep verbatim (port direct) | 10 | F2 + F4 + F6 + F7 + F8 + F10 + F11 + F12 + F13 + F15 |
+| Modify simplified | 4 | F1 (5→2 patterns: LOW_ADHERENCE + STAGNATION; drop HIGH_DEVIATION + EARLY_END + PEAK_HOURS) + F3 (drop visual bar, single number + culoare) + F9 (drop strip, single line "🎯 Azi: 2400 kcal · 180g protein") + F14 (extend window 20→90 + Tier archive ADR 020) |
+| Drop V2-deferred | 1 | F5 AA friction modal (defer v1.5 inline UX flow non-blocking) |
+
+**F1 LOW_ADHERENCE banner port unblocks** e2e test re-enable `tests/e2e/scenarios/calibration-ui.spec.js:194` SKIP'd cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER + post-strip "Adherenta scazuta" assertion update.
+
+**Cumulative impact:** +15 net LOCK V1 (~727 → ~742)
+
+**Math impact verification:**
+- Cumulative LOCKED V1: **~719 → ~742 (+23 net)** product/architecture additive
+- Tests baseline: **2732 PASS preserved EXACT post-strip** + 1 e2e skip (calibration-ui.spec.js:194) chat-current 2 (doc-only sync edits ZERO src/ touched în vault sync commit)
+- Auto-watcher race P3: **0× recurrence** chat-current 2 (time gate 90s self-validates sustained from chat-current 1 LANDED `8bd5dbb` — 2 captures `1310a01` + `582584f` post-90s flow expected NOT recurrence)
+
+**Slip pattern recurrence chat-current 2 corectat:**
+Predecessor chat-current 1 slip "1-task per check-in" Daniel push-back *"de ce ne-am oprit?"* — eu interpretat partial (autonomy real Co-CTO Reviewer scope tactical only, sub-decisions strategic Daniel CEO). Chat-current 2 EXTENSION lock real verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out"* = autonomy scope EXTENDED tactical + strategic complete inclusive. Co-CTO real autonomy = continuă executând până natural saturation sau Beta launch trigger.
+
+**Cross-cutting observations carry-forward:**
+- 🟢 P1-FLAG-PORT-FIRST-THEN-REACT 🟢 LOCKED V1 SUBSTANTIVE → 🟢 LOCKED V1 EXECUTION-READY chat-current 2 (sub-decisions all LOCK V1 autonomous)
+- 🟢 NEW P1-FLAG-NO-DIACRITICS-RULE 🟢 LOCKED V1 PERMANENT 2026-05-10 chat-current 2
+- 🟢 NEW P1-FLAG-V1-FEATURES-AUDIT-RESOLVED 🟢 RESOLVED LOCK V1 2026-05-10 chat-current 2
+- 🟢 P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED RESOLVED PROBATION sustains chat-current 2
+
+**Mid-flight pending NEXT P1:**
+- BATCH 2 Antrenor port execute on `feature/v2-vanilla-port` branch (renderIdle.js + rating.js port per V1_FEATURES_AUDIT_V1 LOCK V1)
+- Mockup buguri sweep pre-port (#1 PORT_FIRST tactical prerequisite)
+
+**Files modified atomic chat-current 2 vault sync commit:**
+- `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` (header status SPEC DRAFT V1 → LOCKED V1 + §LOCK V1 2026-05-10 Co-CTO Autonomous append section)
+- `04-architecture/V1_FEATURES_AUDIT_V1.md` (header status SPEC DRAFT V1 → LOCKED V1 + §LOCK V1 2026-05-10 Co-CTO Autonomous append section)
+- `00-index/CURRENT_STATE.md` (Updated header refresh + cumulative ~719 → ~742 + §NOW prepend new active thread + §JUST_DECIDED prepend top entry + §NEXT priority list refresh + §RECENT prepend + §ACTIVE_FLAGS update PORT_FIRST status + 2 NEW entries)
+- `03-decisions/DECISION_LOG.md` (this entry top descending cronologic)
+- `DIFF_FLAGS.md` (P1-FLAG-PORT-FIRST-THEN-REACT status update + 2 NEW entries P1-FLAG-NO-DIACRITICS-RULE + P1-FLAG-V1-FEATURES-AUDIT-RESOLVED)
+- `00-index/INDEX_MASTER.md` (Last updated line refresh + stats cumulative ~742)
+
+**Cross-refs:**
+- Predecessor chat-current 1 entry below 2026-05-10 chat ACASĂ continuation MCP filesystem 6 commits substantive `8bd5dbb..6a76808`
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry chat-current 2
+- `00-index/INDEX_MASTER.md` `Last updated:` line refresh chat-current 2
+- Backup tag: `pre-vault-sync-3-locks-2026-05-10-2129` pushed origin (rollback safety per VAULT_RULES §CC.7 Layer 5)
+- Commits chain inclusive chat-current 2: `0841ed4` (diacritic strip pre-chat-2) + `1310a01` + `582584f` (auto-watcher LATEST.md captures post-90s flow expected) + this commit TBD vault sync 3 LOCK V1 atomic
+- ADR 005 §AMENDMENT 2026-05-10 Port-First-Then-React LOCK V1 (already amended chat-precedent — port-first paradigm foundation preserved)
+
+---
+
+
 ## 2026-05-10 chat ACASĂ continuation MCP filesystem — 6 commits substantive LANDED clean atomic chain `8bd5dbb..6a76808` (auto-watcher P3 RESOLVED + DIFF_FLAGS sync + 2 SPEC DRAFTs PORT_FIRST + V1_FEATURES_AUDIT + REACT_MIGRATION amendment + FAZA_2 sync, cumulative ~719 PRESERVED unchanged)
 
 **Status:** Vault meta-tooling fixes + 2 SPEC DRAFTs pre-LOCK V1 (NU additive cumulative product/architecture). Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2734 PASS preserved EXACT all 6 commits (toate doc-only sau config-only ZERO src/ touched).

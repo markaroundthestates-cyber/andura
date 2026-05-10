@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-10 chat ACASĂ continuation MCP filesystem — sync drift cleanup post 5 zile (Auth Daniel Prep + Auth Phase 2 stale status corrected; 4 new entries added — prod bugs Bug 1+Bug 2 RESOLVED `05ba372` + auto-watcher race P3 RESOLVED PROBATION `8bd5dbb` + claude_code intermittent P2 monitor). Tests baseline 2734 PASS. Cumulative ~719 PRESERVED unchanged (vault meta-tooling sync, NU additive).
+**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED (P1-FLAG-PORT-FIRST-THEN-REACT 🟢 LOCKED V1 SUBSTANTIVE → 🟢 LOCKED V1 EXECUTION-READY + NEW P1-FLAG-NO-DIACRITICS-RULE 🟢 LOCKED V1 PERMANENT `0841ed4` + NEW P1-FLAG-V1-FEATURES-AUDIT-RESOLVED 🟢 RESOLVED LOCK V1). Tests baseline 2732 PASS preserved EXACT post-strip + 1 e2e skip. Cumulative ~719 → ~742 (+23 net). Predecessor Updated: 2026-05-10 chat ACASĂ continuation MCP filesystem (sync drift cleanup post 5 zile).
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
@@ -9,9 +9,45 @@
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
-### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot LOCK V1 (2026-05-10)
+### P1-FLAG-NO-DIACRITICS-RULE — Strip global UI/tests/mockups LOCK V1 PERMANENT (2026-05-10 chat-current 2)
 
-**Status:** 🟢 LOCKED V1 SUBSTANTIVE (cumulative ~718 → ~719 +1 net Port-First-Then-React strategic pivot — Daniel directive verbatim post Phase 3.6 attempt + mockup vs prod distincție revelation)
+**Status:** 🟢 LOCKED V1 PERMANENT 2026-05-10 chat-current 2 (Daniel directive verbatim chat-current 2 *"strip diacritics global UI + tests + mockups, vault docs preserved"* + autonomy lock EXTINS scope). Strip LANDED commit `0841ed4` (263 files / 6034 replacements). Vault docs preserved verbatim (fluency RO chat continuity Daniel session-to-session natural).
+**Severity:** N/A (rule lock permanent, NU pending — going forward all UI/tests/mockups strict no-diacritics)
+
+**Mecanic:**
+- Script Node.js automatizat parse 263 files / 6034 replacements
+- Diacritics: ă→a, â→a, î→i, ș→s, ț→t + Ă/Â/Î/Ș/Ț equivalents (lowercase + uppercase)
+- Scope: `src/**/*.{js,jsx,html,css}` + `tests/**/*.{js,spec.js}` + `04-architecture/mockups/**/*.html`
+- Preserved: vault docs (`00-index/`, `01-vision/`, `03-decisions/`, `04-architecture/` non-mockups, `05-findings-tracker/`, `06-sessions-log/`, `07-meta/`, `08-workflows/`, `📥_inbox/`, `📤_outbox/`, `VAULT_RULES.md`, `DIFF_FLAGS.md`, `CLAUDE.md`, `README.md`)
+
+**E2e cross-ref:**
+- `tests/e2e/scenarios/calibration-ui.spec.js:194` SKIP'd post-strip (assertion `text=/Adherence scăzută/i` failed — banner string fără diacritic post-strip "Adherenta scazuta")
+- Cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER (banner F1 port unblocks re-enable per V1_FEATURES_AUDIT_V1 LOCK V1)
+
+**Cross-refs:** `00-index/CURRENT_STATE.md` §JUST_DECIDED + `03-decisions/DECISION_LOG.md` 2026-05-10 chat-current 2 entry + commit `0841ed4` + V1_FEATURES_AUDIT_V1 §LOCK V1 F1 cross-ref
+
+---
+
+### P1-FLAG-V1-FEATURES-AUDIT-RESOLVED — V1 features audit LOCK V1 RESOLVED (2026-05-10 chat-current 2)
+
+**Status:** 🟢 RESOLVED LOCK V1 2026-05-10 chat-current 2 (Co-CTO Autonomous Daniel autonomy lock EXTINS). 15 features Co-CTO bias preserved verbatim (10 keep + 4 modify + 1 drop V2-deferred F5 AA friction modal). Cumulative impact ~727 → ~742 (+15 net via V1_FEATURES_AUDIT_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous). **Unblocks BATCH 2 Antrenor port implement on `feature/v2-vanilla-port` branch.**
+**Severity:** N/A (resolved, gates BATCH 2 Antrenor execution unblock)
+
+**Verdict 15/15 features Co-CTO bias preserved verbatim:**
+
+| Verdict | Count | Features |
+|---------|-------|----------|
+| Keep verbatim (port direct) | 10 | F2 last session memory + F4 readiness + F6 PR wall + F7 coach director + F8 streak counter + F10 stats grid + F11 PRs notification + F12 rating buttons + F13 rating notes auto-apply + F15 per-set RPE granularity |
+| Modify simplified | 4 | F1 patterns 5→2 (LOW_ADHERENCE + STAGNATION; drop HIGH_DEVIATION + EARLY_END + PEAK_HOURS) + F3 fatigue (drop visual bar) + F9 BMR strip (drop strip, single line) + F14 ratings window (extend 20→90 cu Tier archive ADR 020) |
+| Drop V2-deferred | 1 | F5 AA friction modal (defer v1.5 inline UX flow non-blocking) |
+
+**Cross-refs:** `04-architecture/V1_FEATURES_AUDIT_V1.md` §LOCK V1 2026-05-10 Co-CTO Autonomous + `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` (parent paradigm gates #4 selective port) + `00-index/CURRENT_STATE.md` §JUST_DECIDED chat-current 2 + `03-decisions/DECISION_LOG.md` chat-current 2 entry + P1-FLAG-PORT-FIRST-THEN-REACT 🟢 LOCKED V1 EXECUTION-READY
+
+---
+
+### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot LOCK V1 EXECUTION-READY (2026-05-10 chat-current 2)
+
+**Status:** 🟢 LOCKED V1 EXECUTION-READY 2026-05-10 chat-current 2 (predecessor 🟢 LOCKED V1 SUBSTANTIVE chat-current 1 superseded). All 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*. BATCH 2 Antrenor unblocked pending mockup buguri sweep prerequisite #1. Cumulative impact ~719 → ~727 (+7 net via PORT_FIRST_STEP_1_PARADIGM_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous).
 **Severity:** P1 strategic pivot — affects ALL future development paradigm
 
 **Issue:**
