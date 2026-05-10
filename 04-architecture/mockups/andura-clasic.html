@@ -894,12 +894,13 @@
           <div class="heatmap" style="margin-bottom:6px;">
             <div class="hm-head">L</div><div class="hm-head">Ma</div><div class="hm-head">Mi</div><div class="hm-head">J</div><div class="hm-head">V</div><div class="hm-head">S</div><div class="hm-head">D</div>
           </div>
-          <div class="heatmap">
-            <div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell l1">1</div><div class="hm-cell">2</div><div class="hm-cell">3</div>
-            <div class="hm-cell l2">4</div><div class="hm-cell l3">5</div><div class="hm-cell">6</div><div class="hm-cell l3">7</div><div class="hm-cell">8</div><div class="hm-cell l2">9</div><div class="hm-cell">10</div>
-            <div class="hm-cell l1">11</div><div class="hm-cell l3">12</div><div class="hm-cell l3">13</div><div class="hm-cell">14</div><div class="hm-cell l2">15</div><div class="hm-cell">16</div><div class="hm-cell">17</div>
-            <div class="hm-cell l3">18</div><div class="hm-cell">19</div><div class="hm-cell l2">20</div><div class="hm-cell l3">21</div><div class="hm-cell">22</div><div class="hm-cell l1">23</div><div class="hm-cell">24</div>
-            <div class="hm-cell l3">25</div><div class="hm-cell l2">26</div><div class="hm-cell">27</div><div class="hm-cell">28</div><div class="hm-cell">29</div><div class="hm-cell">30</div><div class="hm-cell">31</div>
+          <!-- Heatmap zile clickuibile Task G 2026-05-10 chat ACASĂ post-smoke (Cluster #4 deferred fix Istoric calendar) -->
+          <div class="heatmap" id="istoric-heatmap">
+            <div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell"></div><div class="hm-cell l1" onclick="openDayDetail(this, 1)" style="cursor:pointer;">1</div><div class="hm-cell" onclick="openDayDetail(this, 2)" style="cursor:pointer;">2</div><div class="hm-cell" onclick="openDayDetail(this, 3)" style="cursor:pointer;">3</div>
+            <div class="hm-cell l2" onclick="openDayDetail(this, 4)" style="cursor:pointer;">4</div><div class="hm-cell l3" onclick="openDayDetail(this, 5)" style="cursor:pointer;">5</div><div class="hm-cell" onclick="openDayDetail(this, 6)" style="cursor:pointer;">6</div><div class="hm-cell l3" onclick="openDayDetail(this, 7)" style="cursor:pointer;">7</div><div class="hm-cell" onclick="openDayDetail(this, 8)" style="cursor:pointer;">8</div><div class="hm-cell l2" onclick="openDayDetail(this, 9)" style="cursor:pointer;">9</div><div class="hm-cell" onclick="openDayDetail(this, 10)" style="cursor:pointer;">10</div>
+            <div class="hm-cell l1" onclick="openDayDetail(this, 11)" style="cursor:pointer;">11</div><div class="hm-cell l3" onclick="openDayDetail(this, 12)" style="cursor:pointer;">12</div><div class="hm-cell l3" onclick="openDayDetail(this, 13)" style="cursor:pointer;">13</div><div class="hm-cell" onclick="openDayDetail(this, 14)" style="cursor:pointer;">14</div><div class="hm-cell l2" onclick="openDayDetail(this, 15)" style="cursor:pointer;">15</div><div class="hm-cell" onclick="openDayDetail(this, 16)" style="cursor:pointer;">16</div><div class="hm-cell" onclick="openDayDetail(this, 17)" style="cursor:pointer;">17</div>
+            <div class="hm-cell l3" onclick="openDayDetail(this, 18)" style="cursor:pointer;">18</div><div class="hm-cell" onclick="openDayDetail(this, 19)" style="cursor:pointer;">19</div><div class="hm-cell l2" onclick="openDayDetail(this, 20)" style="cursor:pointer;">20</div><div class="hm-cell l3" onclick="openDayDetail(this, 21)" style="cursor:pointer;">21</div><div class="hm-cell" onclick="openDayDetail(this, 22)" style="cursor:pointer;">22</div><div class="hm-cell l1" onclick="openDayDetail(this, 23)" style="cursor:pointer;">23</div><div class="hm-cell" onclick="openDayDetail(this, 24)" style="cursor:pointer;">24</div>
+            <div class="hm-cell l3" onclick="openDayDetail(this, 25)" style="cursor:pointer;">25</div><div class="hm-cell l2" onclick="openDayDetail(this, 26)" style="cursor:pointer;">26</div><div class="hm-cell" onclick="openDayDetail(this, 27)" style="cursor:pointer;">27</div><div class="hm-cell" onclick="openDayDetail(this, 28)" style="cursor:pointer;">28</div><div class="hm-cell" onclick="openDayDetail(this, 29)" style="cursor:pointer;">29</div><div class="hm-cell" onclick="openDayDetail(this, 30)" style="cursor:pointer;">30</div><div class="hm-cell" onclick="openDayDetail(this, 31)" style="cursor:pointer;">31</div>
           </div>
 
           <!-- Recent sessions list -->
@@ -2326,6 +2327,18 @@
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;
+  // ─── Istoric calendar zile clickuibile Task G 2026-05-10 chat ACASĂ post-smoke (Cluster #4 deferred) ──
+  function openDayDetail(cell, day) {
+    const hasActivity = cell.classList.contains('l1') || cell.classList.contains('l2') || cell.classList.contains('l3');
+    if (!hasActivity) {
+      showToast(`${day} mai · nicio activitate înregistrată`);
+      return;
+    }
+    const intensity = cell.classList.contains('l3') ? 'volum mare (~18 200 kg)' : cell.classList.contains('l2') ? 'volum mediu (~12 800 kg)' : 'volum mic (~7 200 kg)';
+    showToast(`${day} mai · sesiune + greutate + kcal · ${intensity}`);
+  }
+  window.openDayDetail = openDayDetail;
+
   // ─── Workflow V1 cap-coadă Task F 2026-05-10 chat ACASĂ post-smoke (port src/pages/coach/* — Phase 5+6+7+8+10) ──
   let _sessionRpe = null;
   function setDoneInline() {
