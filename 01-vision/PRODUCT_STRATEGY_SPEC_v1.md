@@ -168,11 +168,25 @@ Cross-ref [[HANDOVER_GLOBAL_2026-04-30_evening]] §1.2 Distribution + §6 Sprint
 ### 3.4 Progress photos
 **Decizie:** OUT_OF_SCOPE_v1.0. Storage masiv (S3 costs) + complică GDPR la lansare.
 
-### 3.5 Nutrition (logging vs inference) — AMENDED 2026-04-30
+### 3.5 Nutrition (logging vs inference) — AMENDED 2026-04-30 + AMENDED 2026-05-10 V3 (REVERSAL)
+
+> **§AMENDMENT 2026-05-10 V3 (Chat ACASĂ post-noapte continuation) — REVERSAL Nutrition Logging RE-IN-SCOPE V1 + Tab Nutriție UI REMOVED + MFP CSV Generic Wording Legal Cover:**
+>
+> **Nutrition logging RE-IN-SCOPE V1 cu rule auto-fill** SUPERSEDE OUT_OF_SCOPE 2026-04-30 + chat-NEW2 §5 DROP V1. Logica Bugatti elegant articulată Daniel chat post-noapte: auto target engine (de ex 2000 kcal + 180g proteine) → user NU logheaza = istoric default ce-i pe auto / user logheaza manual sau MFP CSV import = istoric calibrat real / edit ziua curentă cu buton dedicat. Rationale REVERSAL: rule auto-fill default elimina friction "nutriție Dacia" preserved spirit (NU obligație manual logging zilnic) + telemetry signal calibration cresc post user opt-in manual override.
+>
+> **Tab "Nutriție" cross-skin = REMOVED complet din UI** (clarificare chat ACASĂ noapte 2026-05-09→2026-05-10 — Theme Parity Invariant V1). NU tab dedicat în root nav. Plasare logging UI: la Greutate/Progres sau Cont/Setări (drill-down pattern V1 zero-modals canonical).
+>
+> **MFP CSV import PRESERVED:** există `src/pages/weight.js` `importMFPNutritionCSV` + dashboard banner periodic 3 zile reminder. Wording GENERIC mandatory cross-skin: *"Importă nutriție CSV"* / *"Import date nutriție"* — NU mention "MFP" / "MyFitnessPal" anywhere UI (legal cover anti-lawsuit per Daniel directive). Engine logic preserved unchanged — UI labels NU referencing third-party brand.
+>
+> **Bayesian inference silent engine (Layer 1-5 below) PRESERVED unchanged.** Auto-fill rule = additional layer pasiv default values when user NU manual logs.
+>
+> **Task mecanic next chat clusters:** *"in productie scoate rahatul ala al meu de 1800 kcal ca mai mult ne incurca"* (test data legacy hardcoded — grep cross-codebase pe `1800`, probabil `src/constants.js` sau similar).
+>
+> **Cross-refs:** Handover NN 282 chat ACASĂ post-noapte continuation (2026-05-10) | DECISION_LOG entry 2026-05-10 chat post-noapte | ONBOARDING_SSOT_V1 §2 V2 amendment 2026-05-10 (Mentenanță rename + Auto template) parallel scope expansion | Theme Parity Invariant V1 LOCK (chat noapte) | Original §3.5 OUT_OF_SCOPE 2026-04-30 preserved below ca audit trail istoric.
 
 **Distincție SSOT (lock chat strategic 2026-04-29 + handover §2):**
 
-- **Nutrition logging (user input direct kcal/protein/macro tracking) = OUT_OF_SCOPE v1.** Original rationale preserved: **"Andura face antrenament Bugatti. NU facem nutriție Dacia."** Voice logging meals, food database, kcal counter UI, MyFitnessPal-style tracking — toate excluse v1.
+- **Nutrition logging (user input direct kcal/protein/macro tracking) = OUT_OF_SCOPE v1.** Original rationale preserved: **"Andura face antrenament Bugatti. NU facem nutriție Dacia."** Voice logging meals, food database, kcal counter UI, MyFitnessPal-style tracking — toate excluse v1. **(SUPERSEDED 2026-05-10 V3 amendment above — RE-IN-SCOPE cu auto-fill rule.)**
 - **Nutrition inference (Bayesian motor pasiv din signals existente) = IN_SCOPE v1.**
 
 **Bayesian Nutrition Inference — 5-layer pattern (spec engine implementation = Sprint 4):**

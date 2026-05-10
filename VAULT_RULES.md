@@ -944,9 +944,51 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 
 ---
 
+### §AR.16 STRICT_OUTPUT_FILE V1 — ANY Structured Output ≥10-15 LOC = File Artefact (Strict Invariant, NU General Guideline)
+
+**Origin slip:** Chat ACASĂ noapte 2026-05-09→2026-05-10 — Co-CTO livrat orchestrator + 4 prompts CC ca markdown chat block ═══ în loc artefact downloadable. Daniel feedback: *"sunt satul sa tot ma rog de tine sa intrii in memories si sa vezi cum trebuie sa imi dai prompturile de cc"*. Cumulative slip count: 2026-05-06 ('puppy' recidivă post §AR.8) + 2026-05-09 (acest chat).
+
+**Trigger pattern:** Memory rule #1 + §AR.8 tratate restrâns la handover/ADR/JSON specific scope, NU strict pentru ANY structured output ≥10-15 LOC. Defaults AI generic "code block în chat OK" infiltrate la velocity pressure.
+
+**Anti-recurrence rule (strict invariant NU general guideline):** ANY structured output ≥10-15 LOC (prompts CC + handover + ADR + JSON + template tehnic + spec + orchestrator wrapper + LATEST raport) → file via present_files DOWNLOADABLE. NU markdown chat block ═══. Default AI generic "code block în chat OK" overridden ALWAYS pentru ≥10-15 LOC scope.
+
+**Verification mechanism:** pre-output re-check — Claude scribe MANDATORY introspect "is this ≥10-15 LOC structured output?" before deliver. If yes → present_files artefact. If no (1-2 line replies, conversational responses) → chat output OK.
+
+**Cross-refs:** Memory rule #1 REPLACED chat noapte | §AR.8 Markdown Chat Block vs Artefact (broader scope generalization) | Handover NN 281 chat ACASĂ noapte slip 1 + cumulative recidivă log | Daniel-ism *"daca imi zici reps in reserve ma supar"* analogous pattern Gigel-friendly format trigger
+
+---
+
+### §AR.17 UNIFIED_INBOX_INPUT V1 — ALL Daniel Inputs → 📥_inbox/ MANDATORY Single Path
+
+**Origin slip:** Chat ACASĂ noapte 2026-05-09→2026-05-10 — Co-CTO livrat orchestrator path "drag la salafull root" în loc 📥_inbox/. Daniel feedback: *"in inbox sper da?"*.
+
+**Trigger pattern:** separare mentală incorrectă "execution input → cwd" vs "vault input → 📥_inbox" — reality unified prin 📥_inbox pentru ALL Daniel inputs (handover + prompts CC + orice fișier nou Daniel). Memory rule #5 EXISTS but scope tratat ca handover-only NU unified ALL inputs.
+
+**Anti-recurrence rule:** ALL Daniel inputs (handover + prompts CC pentru CC execuție + orice fișier nou Daniel paste/drag) → 📥_inbox/ MANDATORY single path. NU cwd, NU salafull root, NU other paths. NU separare mentală "execution input vs vault input" — UNIFIED flow input.
+
+**Verification mechanism:** Claude scribe instrucțiuni Daniel pentru file delivery → ALWAYS specify path `📥_inbox/<filename>.md`. NU `salafull/<filename>` sau `cwd/<filename>` sau alte variante.
+
+**Cross-refs:** Memory rule #5 REPLACED chat noapte | §HANDOVER_PROTOCOL §7 inbox flow strict | Handover NN 281 chat ACASĂ noapte slip 2 | DECISION_LOG chat noapte entry
+
+---
+
+### §AR.18 POST_BULK_REPLACE_VERIFICATION V1 (CC-side) — Mandatory Browser Smoke OR Self-Ref Detection Grep
+
+**Origin slip:** Chat ACASĂ 2026-05-09→2026-05-10 v2 dfa3bbd Clasic :root lift — bulk str_replace replace_all=true a hit-uit pattern în :root declarations înăuși (target hex în declaration LHS + RHS substituire creates circular self-ref `--paper: var(--paper)` x5). Tests Vitest 2731 PASS preserved + grep counts match NU prind circular CSS var refs runtime. Visual integrity check phase a verificat numai logic-level (declaration syntactic OK), NU CSS runtime resolution. Result: Clasic mockup currently visually broken în browser (per CSS Custom Properties Level 1 §3.4 guaranteed-invalid value fallback initial).
+
+**Trigger pattern:** post-bulk-replace verification phase relies pe Vitest tests pass + grep counts match → INSUFFICIENT pentru CSS var resolution browser-side. Vitest NU verifică browser CSS variable resolution în mockups.
+
+**Anti-recurrence rule:** Post-bulk-replace MANDATORY include browser smoke OR CSS var resolution audit (NU doar Vitest tests pass + grep counts match). Visual integrity check phase MUST audit runtime CSS resolution post-bulk-replace, NU doar logic-level checks. Concrete verification options: (a) post-replace_all CSS contexts → browser smoke spot-check Daniel post-deploy OR (b) `grep -nE ':[\s]*var\(--SAME\)'` self-referential detection grep mandatory pre-commit (sequence: bulk replace → :root insert AFTER cu literal hex → self-ref grep verify 0 matches). Validated successfully Task 5 LB :root lift `3cdfed7` via bulk-FIRST :root-LAST sequence.
+
+**Verification mechanism:** prompt CC bulk replace operations section MUST include Phase 3 post-fix verification: self-ref grep zero matches expected + tests gate. Recovery path Task 0 hotfix `0542640` documented as case study (5 surgical str_replace literal hex restore).
+
+**Cross-refs:** §AR.1 pre-flight grep | §AR.5 audit count methodology | Path A Hotfix Task 0 commit `0542640` recovery pattern | LATEST_CONSOLIDATED.md WCAG cross-skin closure 4 themes (commit `18be826`) | Handover NN 281 chat ACASĂ noapte slip 3 + chat ACASĂ post-noapte handover NN 282 reaffirmation | CSS Custom Properties Level 1 §3.4 guaranteed-invalid value fallback
+
+---
+
 ### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
 
-**Authority:** Consolidat din §AR.1-§AR.15. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
+**Authority:** Consolidat din §AR.1-§AR.18. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
 
 1. ☐ Backup tag pre-execution + push origin (rollback safety)
 2. ☐ Pre-flight grep filesystem verbatim — paths/files/tooling cited în spec (per §AR.1) NU presume
@@ -961,6 +1003,9 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 11. ☐ Ground truth git verify ÎNAINTE acuzare hallucination — `git fetch --all && git status` (per §AR.3)
 12. ☐ Format lean — mea culpa rapid 1-2 sentences + immediate action (per §AR.9)
 13. ☐ PK delta check post-execution: ≤10% soft (report LATEST.md) / ≥20% hard escalate force handover §CC.5 (per §AR.13)
+14. ☐ Output ≥10-15 LOC structured = file artefact via present_files DOWNLOADABLE NU markdown chat block (per §AR.16)
+15. ☐ Daniel inputs (handover/prompts CC/files) → 📥_inbox/ MANDATORY single path (per §AR.17)
+16. ☐ Post-bulk-replace verification: self-ref grep `:[\s]*var\(--SAME\)` zero matches + browser smoke spot-check OR sequence bulk-FIRST :root-LAST anti-circular-ref slip (per §AR.18)
 
 **Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
 

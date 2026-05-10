@@ -84,15 +84,32 @@ Acest document este SSOT activ pentru onboarding flow Andura V1. Înlocuiește *
 
 ---
 
-## §2 GOAL TAXONOMY V1 (per §36.92 D4 hybrid C LOCKED)
+## §2 GOAL TAXONOMY V1 (per §36.92 D4 hybrid C LOCKED) — AMENDED 2026-05-10 V2 (6 Templates: Mentenanță Rename + Auto)
+
+> **§AMENDMENT 2026-05-10 V2 (Chat ACASĂ post-noapte continuation) — Goal Taxonomy V2 = 6 Templates User-Facing (Mentenanță SUPERSEDE Sănătate Generală Rename Gigel-Friendly + Auto al 6-lea Production-Aligned):**
+>
+> Daniel articulat clar lista templates V2 user-facing chat post-noapte: *"Forta Tonifiere Slabire Longetivitate mentenanta Auto"*. **6 templates user-facing V2 LOCK V1:**
+>
+> 1. **Forță** = STRENGTH (mapping internal)
+> 2. **Tonifiere** = Recomp (mapping internal)
+> 3. **Slăbire** = CUT (mapping internal)
+> 4. **Longevitate** = maintain conservative (mapping internal)
+> 5. **Mentenanță** = MAINTENANCE (mapping internal) — **rename SUPERSEDE Sănătate Generală** Gigel-friendly (cleaner semantic vs vague "Sănătate Generală" health-buzzword)
+> 6. **Auto** = engine decide (production-aligned existing pattern `src/pages/plan.js` `setPhaseOverride()` + `clearPhaseOverride()` revine la AUTO) — al 6-lea opțiune NEW user-facing surfaceing existing prod pattern
+>
+> **Auto template rationale (production-aligned NU additive arch):** Engine deja decide automatic template when user NU manual override (existing prod). Surfacing "Auto" în UI templates list = explicit user choice "lasă engine să decidă" instead of forced manual selection 5 templates. Co-CTO halucinare push-back fals inițial pe "Auto" fără pre-flight grep `src/pages/plan.js` (slip §AR.1 recidivă) — anti-pattern §0 grep mandatory ratat. Daniel push-back direct: *"stai putin ce pushback pe auto imi dai... pe andura.app deja functioneaza auto cum trebuie nu? de ce nu ne raportam la ce face acum?"*. Mea culpa rapid + verify confirmed pattern existing.
+>
+> **Sănătate Generală (V1 original) → Mentenanță (V2 rename):** Persona target preserved (Ana 55 educatoare + general 18-49). Frecvență/durată/RPE/periodizare preserved (3-4x/săpt / 40-55 min / 5-7 / Balanced + lifestyle integration). DOAR rename label user-facing — engine logic unchanged.
+>
+> **Cross-refs:** Handover NN 282 chat ACASĂ post-noapte continuation (2026-05-10) | DECISION_LOG entry 2026-05-10 chat post-noapte | PRODUCT_STRATEGY §3.5 V3 amendment parallel (nutrition logging RE-IN-SCOPE V1 cu auto-fill) | `src/pages/plan.js` `setPhaseOverride()`/`clearPhaseOverride()` Auto pattern existing production verified | Theme Parity Invariant V1 LOCK (chat noapte) — toate 6 templates apply cross-skin uniform 4 themes per Theme Parity invariant.
 
 ### Distincție tehnică critică (per §36.102 slip clarification)
 
-- **GOAL** = setting strategic user (5 template choice) — schimbat manual via Setări (§36.35 Goal Shift Event Handler)
+- **GOAL** = setting strategic user (6 template choice V2 — Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto) — schimbat manual via Setări (§36.35 Goal Shift Event Handler)
 - **PHASE** = automated CUT/BULK/MAINTAIN sub-state per goal (sys.js calculează BF% + sezon)
 - **MODE** = Estetică ↔ Forță sub-modificator rep ranges/intensity
 
-### 5 Templates V1 LOCKED (per §26)
+### 5 Templates V1 LOCKED (per §26) — SUPERSEDED 2026-05-10 V2 (6 Templates incl Mentenanță rename + Auto, table below preserved istoric)
 
 | Template | Persona target | Frecvență | Durată | RPE | Periodizare |
 |----------|----------------|-----------|--------|-----|-------------|

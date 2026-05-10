@@ -1,5 +1,143 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 chat ACASĂ post-noapte continuation — inventory exercițiu Clasic baseline + Theme Parity Invariant V1 reaffirmation FINAL + 4 net additive LOCK-uri + 2 amendments majore PRODUCT_STRATEGY §3.5 V3 + ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 (cumulative ~714-716 LOCKED V1, +3-4 net additive)
+
+**Status:** Pure decision streak + handover (NU commits chat-current — predecessor chain `cc98b46 → 2a0f8be` din chat noapte preserved). Cumulative LOCKED V1 ~709-711 → **~714-716** (+3-4 net product/architecture additive substantive + 2 amendments majore). Tests 2731 PASS preserved EXACT (NU code changes chat-current).
+
+**Authority:** Daniel directive cumulative chat-current (*"vreau sa imi zici toate butoanele si optiunile pe care un utilizator le vede in situatia ideala intr-o tema... clasic theme"* + Theme Parity Invariant V1 reaffirmation FINAL *"toate cele 4 themes trebuie sa fie IDENTICE in functionalitate, butoane, placements de butoane si tot... singura exceptie e la living body ca apare pe omulet culoarea pe musculatura"*) + format strict NU markdown heavy (*"nu imi fa ma biblia"*) + Gigel test continuă.
+
+### LOCK-uri product/architecture LANDED chat-current cumulative
+
+**Net additive (+3-4 substantive):**
+
+1. **1 buton "Ceva nu merge"** merge Pain+Equipment unified drill cross-skin (+1 net) — replace ADR 023 split Pain text + Equipment text drill secundar la single CTA simplificat. Daniel articulare: *"merită simplificat la 1 buton 'Ceva nu merge'"*. Engine `alternativeEngine.js` existing preserved — UI wiring 1 buton consolidat cross-skin uniform.
+2. **BF auto US Navy + override manual** (+1 net) — waist+neck+înălțime+sex method, fallback Demographic Prior dacă lipsește waist; override manual mereu disponibil. LOCK V1 chat post-noapte.
+3. **Mentenanță SUPERSEDE Sănătate Generală rename + 6 opțiuni templates user-facing** (+1 net) — Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto. Auto = production-aligned existing pattern `src/pages/plan.js` `setPhaseOverride()` + `clearPhaseOverride()`. Mapping Gigel-friendly internal preserved.
+4. **Loghează kcal+proteine PĂSTRĂM cu rule auto-fill** SUPERSEDE chat-NEW2 §5 DROP V1 + PRODUCT_STRATEGY §3.5 OUT_OF_SCOPE 2026-04-30 REVERSAL (+1 net) — auto target engine + user logging optional + MFP CSV import + edit ziua curentă cu buton dedicat.
+
+**Amendments substanțiale (NU cumulative additive, dar major scope changes):**
+
+- **PRODUCT_STRATEGY_SPEC_v1 §3.5 V3 amendment 2026-05-10** — nutrition logging RE-IN-SCOPE V1 cu auto-fill rule (REVERSAL precedent OUT_OF_SCOPE 2026-04-30 "NU facem nutriție Dacia") + tab Nutriție UI REMOVED cross-skin + MFP CSV PRESERVED `src/pages/weight.js` `importMFPNutritionCSV` cu wording GENERIC mandatory ("Importă nutriție CSV" / "Import date nutriție" — NU mention MFP/MyFitnessPal anywhere UI legal cover anti-lawsuit per Daniel directive). Bayesian inference silent engine (Layer 1-5) preserved unchanged.
+- **ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 amendment 2026-05-10** — Sănătate Generală → Mentenanță rename + Auto al 6-lea template (production-aligned `setPhaseOverride()`).
+
+**Scope cuts (NU additive count):**
+- Pain Button idle scos (mid-session only) — Antrenor idle context cleanup
+- "Sport plan supervision" DROP complet (Auto+Antrenor deja arată în background, nu trebuie tab dedicat)
+- saveStepsQuick step counter DROP
+- Antrenament liber DROP confirmat preservat (chat-NEW2 §5 reaffirmed)
+
+**Scope clarifications (recovery 6 features ratate în inventory ideal — toate PĂSTRĂM existing prod transferat spec V2):**
+- "De ce facem ăsta?" (showWhyForExercise) / PR Wall / Photo progress body / Inactivity auto-pause / Wake lock / Schimbă fază manual override (CUT/BULK/MAINTENANCE/STRENGTH/AUTO via `setPhaseOverride()`)
+
+**Theme Parity Invariant V1 reaffirmation FINAL** (NU additive net — clarificare predecessor LOCK noaptea trecută): 1 app 4 skin-uri 1:1 strict, diferă DOAR cosmetic, SINGURĂ excepție omulețul muscular Living Body în Progres (lipsește complet pe Clasic/Luxury/Brain Coach).
+
+### Slip-uri Co-CTO chat-current (3 onest identified)
+
+1. **Drift initial PK cached ~691 vs upload real ~709-711** (handover ingest fix rapid post Daniel furnizat fresh)
+2. **Inventory bibliotecă over-structured artefact 200+ LOC inițial** — refacere conversational scurt post Daniel push-back *"nu imi fa ma biblia"*
+3. **Halucinare push-back fals "Auto" template** fără pre-flight grep `src/pages/plan.js` — anti-pattern §AR.1 grep mandatory ratat, mea culpa direct + verify
+
+**Anti-recurrence reaffirm next chat:** §AR.1 pre-flight grep mandatory MEREU before push-back tehnic / arhitectural pe code-side mecanic. Halucinare = waste Daniel time + erodă credibilitate Co-CTO. Vault SSOT > intuiție.
+
+### Cross-refs
+
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 amendment 2026-05-10 + [[../01-vision/ONBOARDING_SSOT_V1]] §2 GOAL TAXONOMY V2 amendment 2026-05-10 + [[../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1]] preserved (engine `alternativeEngine.js` existing) — UI wiring "Ceva nu merge" 1 buton cross-skin uniform pending clusters next + [[../03-decisions/ADR 023]] Pain text + Equipment text drill secundar — merge unified la 1 buton "Ceva nu merge" V2 + [[../04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT]] preserved (4 taburi V2) + Theme Parity Invariant V1 reaffirmation FINAL = NEW arch rule mandatory cross-skin design + dev decisions going forward + Handover archived NN 282.
+
+### Mid-flight unresolved next chat priority
+
+1. Workflow antrenament V1 LOCK ~5 min decizie (auto-advance pauză → next set + edit manual kg+reps post-set)
+2. Orchestrator clusters CC mecanic 9 sub-batches separate fail-stop sequential cross-skin uniform per Theme Parity Invariant
+3. Big 6 conflict ONBOARDING_SSOT vs ADR_MULTI_TENANT_AUTH (T0 mechanics decide)
+4. 1800 kcal hardcoded production grep+remove (test data legacy Daniel directive)
+
+---
+
+## 2026-05-09→2026-05-10 chat ACASĂ noapte — Path A hotfix v2 dfa3bbd circular refs + Tasks 3+4+5 WCAG orchestrator LANDED 7/7 + Actions cost optimization 5 fixes LANDED + smoke test 4 themes browser cu MOUNTAIN feedback Daniel 9 clusters bugs+jargon+scope + Theme Parity Invariant LOCK V1 + Glossary jargon LOCK V1 (cumulative ~709-711 LOCKED V1, +2 net additive)
+
+**Status:** WCAG remediation cross-skin closure 4/4 themes ACHIEVED + Actions cost optimization production. Cumulative LOCKED V1 ~707-709 → **~709-711** (+2 net additive substantive: Theme Parity Invariant arch rule + Glossary jargon cluster). Tests 2731 PASS preserved EXACT cross all 8 commits chain. Mockup polish + Actions optimization meta-tooling NU additive product/architecture.
+
+**Authority:** Daniel directive cumulative (*"facem toate themes, le verific cand imi zici tu ca sunt gata"* + *"100% compliant or no UX = no Beta"* + Theme Parity Invariant V1 *"toate cele 4 themes trebuie sa fie IDENTICE"*) + Daniel-isms: *"halucinezi"* push-back jucăuș + Gigel test trigger pattern (*"daca imi zici reps in reserve ma supar"* RIR / *"wtf suntem camioane?"* TONAJ TOTAL / *"habar nu am ce e"* Comportament Familie / *"marimea cui?"* Mărime ambigu).
+
+### 8 commits LANDED chronologic chat-current pushed origin
+
+| # | Batch | Commit | Scope |
+|---|-------|--------|-------|
+| 1 | WCAG v1 audit | `cc98b46` | Luxury silver-3 2.94:1→4.69:1 + BC ink-3 3.93:1→4.85:1 + BC ink-4 1.78:1→3.11:1 (HALT identified Clasic #8a8278 137× over 50 blast radius) |
+| 2 | WCAG v3 Luxury line-strong | `b439530` | rgba(201,166,99,0.28)→solid #6e5a2a (1.62:1→3.15:1, 8 borders interactive). 2b-iv miscalc closure proper alpha compositing |
+| 3 | WCAG v2 Path 2a Clasic :root lift | `dfa3bbd` | 385 hex→tokens systematic. **🚨 BUG INTRODUCED:** bulk replace_all hit :root declarations înăuși producing 5 circular var refs |
+| 4 | **🔧 v2-hotfix Path A** | `0542640` | 5 surgical str_replace literal hex restore Clasic. Anti-recurrence grep `:[\s]*var\(--SAME\)` 0 matches post-fix |
+| 5 | WCAG v4 cross-skin --line split | `ddc3396` | Luxury 11 interactive + Clasic 17 → var(--line-strong). New Clasic --line-strong #9a8770 3.23:1 |
+| 6 | WCAG v5 BC ink-4 9px + line audit | `f30507d` | Option A2-modified --ink-3 reuse + new --line-strong-bc #5e6478 3.26:1 |
+| 7 | WCAG v6 LB Path 2b :root lift | `3cdfed7` | ~377 hex→tokens, 6 tokens NEW, anti-recurrence bulk-FIRST :root-LAST sequence |
+| 8 | LATEST_CONSOLIDATED.md | `18be826` | Final aggregation 7-commit chain + Daniel smoke validation checklist |
+| 9 | **chore(ci): Actions cost opt 5 fixes** | `2a0f8be` | paths-ignore + concurrency cancel + combine validate + e2e-smoke if workflow_dispatch+cron + deploy paths-ignore. Estimated 60-80% reducere consumption pre-Beta |
+
+### Cross-skin token parity 4/4 themes ACHIEVED
+
+- Luxury: 13 :root tokens (12 pre-existing + --line-strong #6e5a2a champagne 3.15:1 v3)
+- Clasic: 8 :root tokens NEW (post v2 + Task 0 hotfix + Task 3) — paper/paper-2/ink/ink-2/ink-3/line/line-strong #9a8770 warm taupe/brick
+- Brain Coach: 13 :root tokens (12 pre-existing + --line-strong-bc #5e6478 cool gray-blue 3.26:1 Task 4)
+- Living Body: 6 :root tokens NEW (Task 5) — bg/bg-2/ink/ink-2/ink-3/accent warm dark earthy organic
+
+### LOCK-uri product/architecture LANDED chat-current cumulative (+2 net substantive additive)
+
+**Theme Parity Invariant LOCK V1 (CRITIC ARCHITECTURAL +1 net):** Toate 4 themes au feature set IDENTIC. Theme = PURELY cosmetic. Singură excepție: Living Body omulețul muscular (3D body grupe roșu/galben/verde — visualization unique LB). Decision rule NEW: orice opțiune pe un theme = mandatory pe toate 4 cu wording și placement consistent.
+
+**Glossary jargon LOCK V1 cluster (+1 net):** RPE → *"Cât de greu a fost?"* / RIR → *"Câte mai puteai face?"* / TONAJ TOTAL DROP / bench RM DROP / Pace observată DROP / Mărime DROP / U/L vs PPL display rephrase / Mod Întuneric → *"Temă închisă/sistem/deschisă"* wired / Cifre romane → arabe cross-skin universal.
+
+**Sections DROP cross-skin** (per Theme Parity Invariant invalidates anyway): EXPERIMENTAL BC + Carbon fiber overlay Luxury + Comportament Familie Luxury + Animații reduse.
+
+**Nutriție §3.5 AMENDMENT clarification** (precedent chat noapte): Tab "Nutriție" cross-skin = REMOVED complet din UI. MFP CSV import = PRESERVED cu wording GENERIC mandatory legal cover.
+
+**Abonament wording cross-skin per Clasic baseline** (precedent chat noapte): override Luxury 269 EUR/an display la baseline Clasic *"În curând. Lucrăm la planuri de abonament transparente. Până atunci, totul e gratuit pentru utilizatorii beta."* + CTA *"Beta gratuit"*.
+
+### 3 anti-recurrence rules LANDED §ANTI_RECURRENCE_RULES vault (post-handover NN 281)
+
+- **§AR.16 STRICT_OUTPUT_FILE V1:** ANY structured output ≥10-15 LOC → file via present_files DOWNLOADABLE NU markdown chat block ═══
+- **§AR.17 UNIFIED_INBOX_INPUT V1:** ALL Daniel inputs → 📥_inbox/ MANDATORY single path
+- **§AR.18 POST_BULK_REPLACE_VERIFICATION V1 (CC-side):** Post-bulk-replace MANDATORY browser smoke OR self-ref grep `:[\s]*var\(--SAME\)` zero matches; sequence bulk-FIRST :root-LAST anti-circular-ref slip
+
+### Smoke test 4 themes feedback Daniel — 9 clusters mid-flight unresolved orchestrator next chat
+
+1. Cluster auth wiring (BC email + Google buttons no-op)
+2. Cluster onboarding inputs (sliders/sex/checkboxes/radio LB stuck Tonifiere/buton înapoi+jos scroll Luxury)
+3. Cluster antrenament workflow V1 (timer/butoane Set complet/edit manual kg+reps/auto-flow pauze/MISSING butoane Aparat ocupat/lipsă/Nu vreau exercițiul/Anulează — RESOLVED chat post-noapte prin "Ceva nu merge" 1 buton merge unified)
+4. Cluster istoric/calendar (zile NU selectabile cross-skin / graph perioade lungi NU selectabile / "Loghează greutate" no-nav LB / "Adaugă măsurătoare" no-op BC)
+5. Cluster setări BC TOTAL dead (toate sliders+butoane+teme+FAQ+Suport+Despre+Export+Confidențialitate+Avansate)
+6. Cluster state bugs (buton auto progres stuck ON Clasic+LB / msg "Nu ai logat greutatea" persistă / modal LB **negru pe negru** visual critical text invizibil)
+7. Cluster glossary apply cross-skin (Glossary LOCK V1 strings + cifre romane→arabe)
+8. Cluster scope cuts (REMOVE tab Nutriție + sections DROP 4 + abonament wording uniform)
+9. Cluster text liber re-fix Clasic+LB ("Mă doare ceva" + "Schimbă echipament" + "Refă onboarding" navigate broken Clasic+BC cross-skin)
+
+Daniel: *"overall cea mai solida varianta de pana acum"* despre Clasic — **baseline reference cross-skin** Theme Parity Invariant.
+
+### Slip Co-CTO chat-current (1 onest identified)
+
+1. **Ratat deploy.yml la analiza Actions cost** — am identificat doar ci.yml + qa-report fără să mă uit pe deploy.yml structure. Mea culpa rapid mid-recommend, fix #5 adăugat înainte de artefact. Daniel a confirmat *"astea 4 nu ne influenteaza cu nimic nu?"* — răspuns cinstit cu trade-off real pe #4 (e2e-smoke move la manual+cron) cu mitigation triple-layer (qa-report.yml post-deploy + Daniel local Playwright headed + cron weekly).
+
+### Push-back productiv Daniel
+
+*"merge sa rulez fixul in alt terminal cc cat inca lucraza orchestratorul?"* — eu push-back direct cu 3 risk-uri concrete (git index corruption + outbox race + push reject) → Daniel acceptat sequential. Per memory P3 flag chat unified 2026-05-08 watcher race + paralelism risk articulat.
+
+### Backup tags chronologic chat-current pushed origin (8 tags rollback safety)
+
+```
+pre-themes-batch-wcag-audit-2026-05-09-2335                  (WCAG v1)
+pre-themes-batch-wcag-luxury-line-v3-2026-05-09-2352         (WCAG v3)
+pre-themes-batch-wcag-clasic-path2a-2026-05-10-0000          (WCAG v2 broken)
+pre-hotfix-clasic-circular-refs-v2-2026-05-10-0118           (Task 0 hotfix Path A)
+pre-themes-batch-wcag-line-split-cross-skin-2026-05-10-0127  (Task 3 v4)
+pre-themes-batch-wcag-bc-ink4-line-2026-05-10-0137           (Task 4 v5)
+pre-themes-batch-wcag-lb-root-lift-2026-05-10-0145           (Task 5 v6)
+pre-actions-cost-optimization-2026-05-10-0153                (Actions fix 5 fixes)
+```
+
+### Cross-refs
+
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 amendment (Nutriție tab REMOVED + MFP CSV preserved generic wording) + [[../04-architecture/mockups/andura-clasic]] (baseline reference Theme Parity Invariant cross-skin) + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-brain-coach]] (Theme Parity Invariant V1 cross-skin) + [[../.github/workflows/ci]] + [[../.github/workflows/deploy]] (5 fixes LANDED meta-tooling) + Theme Parity Invariant LOCK V1 = NEW arch rule mandatory cross-skin design + dev decisions going forward + Pattern matured §CC.5 fast handover + WCAG SC 1.4.3 4.5:1 AA text + SC 1.4.11 3:1 non-text + CSS Custom Properties Level 1 §3.4 guaranteed-invalid value (Path A hotfix recovery foundation) + Handover archived NN 281 + LATEST_CONSOLIDATED archived NN 288.
+
+---
+
 ## 2026-05-09 chat ACASĂ — themes Batch 1 AUDIT + Batch 2a mecanic LANDED (Q1-Q7 LOCKED Co-CTO scope, mockup polish ~707-709 PRESERVED)
 
 **Status:** Mockup polish meta-tooling. Cumulative LOCKED V1 ~707-709 PRESERVED unchanged (NU product/architecture additive — Q1-Q7 Co-CTO scope decisions tactical autonomous + mecanic str_replace 4 mockups).
