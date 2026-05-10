@@ -1,7 +1,8 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
+**Updated:** 2026-05-10 chat ACASĂ continuation MCP filesystem — sync drift cleanup post 5 zile (Auth Daniel Prep + Auth Phase 2 stale status corrected; 4 new entries added — prod bugs Bug 1+Bug 2 RESOLVED `05ba372` + auto-watcher race P3 RESOLVED PROBATION `8bd5dbb` + claude_code intermittent P2 monitor). Tests baseline 2734 PASS. Cumulative ~719 PRESERVED unchanged (vault meta-tooling sync, NU additive).
+**Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
@@ -225,8 +226,8 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ### P1-FLAG-AUTH-DANIEL-PREP — Daniel manual prep prerequisites pre-CC Auth Flow §36.80 implementation
 
-**Status:** 🟡 OPEN 2026-05-04 evening (raised post Auth Flow §36.80 chat strategic resolution §56)
-**Severity:** P1 (blocks CC Opus Auth Flow §36.80 implementation Priority 1 ABSOLUT)
+**Status:** 🟢 **RESOLVED 2026-05-04 night** (Daniel manual prep complete: Firebase Auth Console authorized domains + Email Template Magic Link RO + Google OAuth Client ID + Action URL `https://andura.app/auth-callback` + Privacy Policy + ToS V1 Beta validate sprint COMPLETE pre-CC Phase 1 Auth Flow §36.80 LANDED commit `0880641`)
+**Severity:** N/A (resolved)
 
 **Issue:** Auth Flow §36.80 CC Opus implementation Priority 1 ABSOLUT requires Daniel manual prerequisites prep before CC autonomous run can start. 3 manual tasks identified locked in §56.18 + §56.8.2 + §56.8.3.
 
@@ -253,10 +254,11 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 
 ---
 
-### P1-FLAG-AUTH-PHASE2 — Phase 2 Auth Flow upgrade P1 ABSOLUT URGENT (NEW per Auth-Required Pivot 2026-05-05 birou)
+### P1-FLAG-AUTH-PHASE2 — Phase 2 Auth Flow upgrade RESOLVED 2026-05-06 morning (SMTP Magic Link COMPLETE end-to-end)
 
-**Status:** 🔴 **P1 ABSOLUT URGENT 2026-05-05 birou** (era "deferred ~16-22h Daniel decide trigger când e timpul" — ridicat post Auth-Required Pivot LOCKED V1 supersedes auth-banner-soft §AMENDMENT 2026-05-04.1)
-**Severity:** P1 ABSOLUT URGENT (auth-required LOCKED V1 blocks Beta launch fără UI complet — Anonymous-permanent dispare conceptual, fallback indefinit moot)
+**Status:** 🟢 **RESOLVED 2026-05-06 morning** (Phase 2 Auth Flow upgrade complete end-to-end: SMTP Magic Link + Google OAuth + IndexedDB namespace per UID Dexie multi-DB + Settings UI account lifecycle + Anonymous→Auth Merge Fork Decision UI + Logout double-confirm + admin-cleanup.js + Telemetry counters Firestore + Firestore Security Rules publish). Predecessor 2026-05-05 birou status `🔴 P1 ABSOLUT URGENT` superseded.
+**Severity:** N/A (resolved)
+**Historical context preserved (predecessor 2026-05-05 birou):**
 
 **Issue:** Auth-Required Pivot LOCKED V1 chat strategic 2026-05-05 birou (§AMENDMENT 2026-05-05 .1 ADR_MULTI_TENANT_AUTH_v1) face Phase 2 Auth Flow upgrade prerequisite Beta launch. Pattern Anonymous = doar T0 trial 3-5 min DUPĂ care auth obligatoriu hard wall — Anonymous-permanent dispare conceptual. Fără Phase 2 wiring complet (Settings UI account lifecycle + Anonymous→Auth Merge Fork Decision UI + Logout double-confirm + IndexedDB per-UID Dexie multi-DB + Telemetry counters Firestore + Firestore Rules publish) Beta launch IMPOSIBIL.
 
@@ -394,6 +396,53 @@ But `node_modules/fake-indexeddb` and `node_modules/dexie` are **NOT installed i
 ---
 
 ## RESOLVED (audit trail)
+
+### P1-FLAG-PROD-BUGS-2026-05-10 — Bug 1 (AUTO faza hardcoded 2000 kcal) + Bug 2 (BF edit nu recalc kcal phase same weight) RESOLVED `05ba372`
+
+**Status:** 🟢 **LANDED 2026-05-10 chat ACASĂ MCP filesystem direct paradigm** (claude_code agent autonomous, prod bugs Daniel verbalize chat-current verified + fixed atomic single session ~3-4h Daniel-time)
+
+**Bug 1 fix:** `src/engine/sys.js:125-127` drop pilotActive gate AUTO branch → AUTO returns TDEE×phase multiplier always (NU hardcoded `KCAL_TARGET=2000` pre-TARGET_DATE 2026-07-20). Plus `sys.js:77` getPhase pilotActive removal — phase auto-derives BF + sezon always. Propagation `src/pages/weight.js:78` + `src/pages/dashboard.js:193,533-534`.
+
+**Bug 2 fix:** `src/engine/sys.js:54-67` estimateTDEE Mifflin → Katch-McArdle (`bmr = 370 + 21.6 * lbm`) când `getBF()` finite. Mifflin-St Jeor fallback când BF unknown defensive. `getLBM()` finally consumed (existed since launch dar nu wired la estimateTDEE). Math impact: at 100kg same weight, BF 30% (lbm=70) vs BF 5% (lbm=95) → delta ~837 kcal (was 0 kcal pre-fix).
+
+**Tests +3 NEW:** T_AUTO_pre_pilot + T_BF_edit_recalc + T8 phase auto-derive + T4 split T4a Katch / T4b Mifflin. Total tests 2731 → 2734 PASS.
+
+**Layer B deferred:** Energy-balance-path BF-awareness (`estimateTDEE()` energy-balance path ≥4 weights re-baseline pe `phase-change-date` dar nu pe BF override) deferred dedicated session. Needs delta-LBM model + state tracking + phase-change-date trigger pe BF override change.
+
+**Cross-refs:** `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-10 chat ACASĂ + `03-decisions/DECISION_LOG.md` 2026-05-10 entry + commit `05ba372` (auto-watcher captured `chore(auto):` mesaj poor — content correct, narrative loss tracked carry-forward; auto-watcher race P3 RESOLVED PROBATION `8bd5dbb` chat-current continuation).
+
+---
+
+### P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED — Stop hook `git add -A` race înainte agent commit narrative — RESOLVED PROBATION `8bd5dbb`
+
+**Status:** 🟢 **RESOLVED PROBATION 2026-05-10 chat ACASĂ continuation MCP filesystem** (validation = next claude_code session natural monitor; if recurrence → escalate)
+
+**Root cause:** `.claude/settings.json` Stop hook command: `cd <repo> && git add -A && git diff --staged --quiet || (commit chore(auto): + push)` fires la FIECARE Stop CC fără filter timpwise. Race window 31s observed: când claude_code agent pregătește commit cu Bugatti narrative, Stop hook fires în acel window și capturează first cu mesaj poor `chore(auto):`. Manifest 4× today commits `a7e951b` + `0b1d781` + `05ba372` + `dc54c2c`.
+
+**Fix tactical Co-CTO LANDED:** Time gate 90s prepend la Stop hook command — `AGE=$(($(date +%s) - $(git log -1 --format=%ct))) && [ "$AGE" -ge 90 ] && ...`. Dacă HEAD commit < 90s vechi → short-circuit `&&` chain → `|| exit 0` silent (skip auto-commit). 90s = 3× safety margin peste race 31s observed. Subsequent Stops post-90s recapturează eventual work-in-progress = safety net intact.
+
+**Self-validation chat-current:** Commit `8bd5dbb` LANDED + push success `a3d96b5..8bd5dbb main`. Post-Stop hook fired cu config NEW (settings.json deja pe disk la moment hook fire), AGE < 90 → skip silent — ZERO commits `chore(auto):` post-push. HEAD = `8bd5dbb` clean.
+
+**Validation pending:** Next claude_code session natural test — monitor commits subsequent. Dacă recurrence → escalate (glob filter narrow `04-architecture/mockups/` only, sau debounce extend, sau disable hook).
+
+**Anti-recurrence rule potential:** Dacă fix sustains stable >5 sessions → codify §AR.NEW VAULT_RULES (TBD).
+
+**Cross-refs:** `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-10 chat ACASĂ continuation + `03-decisions/DECISION_LOG.md` 2026-05-10 entry + `.claude/settings.json` config-only fix.
+
+---
+
+### P2-FLAG-CLAUDE-CODE-INTERMITTENT-2026-05-10 — claude_code agent timeout/empty intermittent observed today
+
+**Status:** 🟡 **MONITOR 2026-05-10 chat ACASĂ** (§AR.19 LOCK V1 mitigation in place; reaffirmed via 3 verify cycles successful chat-current vault hygiene + §AR.19 + prod bugs fix triple atomic LANDED)
+**Severity:** P2 (process awareness, NU blocker; mitigation = §AR.19 verify ordine MANDATORY: git log origin/main -5 + LATEST.md raport + filesystem file sizes cu cache-stale awareness re-check post-delay)
+
+**Issue:** claude_code agent timeout MCP response delivery NU = agent crash. Vault work cleanup atomic batch was complete + pushed origin BEFORE timeout signal returned. Filesystem:get_file_info returned stale data immediately post-timeout (Windows OS metadata cache lag few seconds post-write) reinforced "no work landed" assumption falsely.
+
+**Action:** Continue monitor. §AR.19 anti-recurrence rule codified VAULT_RULES.md (commit `967460d`). Default = trust completion + verify, NU assume failure + recover.
+
+**Cross-refs:** VAULT_RULES.md §AR.19 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT item 17 + commit `967460d` + `00-index/CURRENT_STATE.md` §ACTIVE_FLAGS.
+
+---
 
 ### P1-FLAG-CAPACITY-A-LANDED — Run 2 Vault Cleanup ✅ LANDED 2026-05-07
 
