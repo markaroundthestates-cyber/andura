@@ -1273,14 +1273,14 @@
             <div style="display:flex; gap:12px; margin-bottom:10px;">
               <div style="flex:1;">
                 <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:4px;">Kcal</label>
-                <input type="number" min="0" max="9999" placeholder="2 640 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid var(--line-strong); border-radius:8px; background:var(--paper-2); color:var(--ink); font-family:'JetBrains Mono', monospace; font-size:14px;"/>
+                <input type="number" id="nutri-kcal-input" min="0" max="9999" placeholder="2 640 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid var(--line-strong); border-radius:8px; background:var(--paper-2); color:var(--ink); font-family:'JetBrains Mono', monospace; font-size:14px;"/>
               </div>
               <div style="flex:1;">
                 <label class="small-text" style="color:var(--ink-2); font-weight:500; display:block; margin-bottom:4px;">Proteine (g)</label>
-                <input type="number" min="0" max="500" placeholder="180 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid var(--line-strong); border-radius:8px; background:var(--paper-2); color:var(--ink); font-family:'JetBrains Mono', monospace; font-size:14px;"/>
+                <input type="number" id="nutri-prot-input" min="0" max="500" placeholder="180 (auto)" inputmode="numeric" style="width:100%; padding:10px 12px; border:1px solid var(--line-strong); border-radius:8px; background:var(--paper-2); color:var(--ink); font-family:'JetBrains Mono', monospace; font-size:14px;"/>
               </div>
             </div>
-            <button class="btn-brick" style="width:100%; margin-bottom:8px;"><i data-lucide="check"></i> Salvează ziua</button>
+            <button class="btn-brick" onclick="saveNutritionDay()" style="width:100%; margin-bottom:8px;"><i data-lucide="check"></i> Salvează ziua</button>
             <button class="settings-row" onclick="showToast('CSV picker — generic nutrition import')" style="width:100%; border:1px solid var(--line-strong); border-radius:8px; padding:10px 14px;"><i data-lucide="upload"></i><span>Importă nutriție CSV</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.4;">Compatibil cu majoritatea aplicațiilor de tracking nutriție (export CSV). Auto target din engine dacă nu loghezi manual.</p>
           </div>
@@ -2345,6 +2345,26 @@
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;
+  // ─── Save nutrition day Task P 2026-05-10 chat ACASĂ post-smoke (Daniel: "salveaza ziua nu se intampla nimic") ──
+  function saveNutritionDay() {
+    const kcalEl = document.getElementById('nutri-kcal-input');
+    const protEl = document.getElementById('nutri-prot-input');
+    const kcal = parseInt(kcalEl?.value || '0', 10);
+    const prot = parseInt(protEl?.value || '0', 10);
+    if (!kcal && !prot) {
+      showToast('Introdu kcal sau proteine');
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      const nutrition = JSON.parse(localStorage.getItem('nutrition-log') || '{}');
+      nutrition[today] = { kcal, prot, ts: Date.now() };
+      localStorage.setItem('nutrition-log', JSON.stringify(nutrition));
+    } catch (e) {}
+    showToast(`✅ Ziua salvată · ${kcal} kcal · ${prot}g proteine`);
+  }
+  window.saveNutritionDay = saveNutritionDay;
+
   // ─── Progres Auto toggle Task H 2026-05-10 chat ACASĂ post-smoke (Cluster #6 Task 21 deferred) ──
   function toggleProgresAuto() {
     const sw = document.getElementById('progres-auto-sw');
