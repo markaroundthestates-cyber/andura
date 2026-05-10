@@ -1,71 +1,40 @@
-# TASK 15 — Workflow Audit READ-ONLY Parity Cross-Skin × 4 (Phase 1 CLOSURE)
+# TASK 16 — Istoric Calendar Layout Audit + Flag Cross-Skin × 4 (Phase 2 START)
 
-- **Status:** ✅ Complete (audit-only, ZERO file modifications)
-- **Cluster:** #3 Workflow + scope cuts · Atom 6/6 (closure Cluster #3 + Phase 1 closure 15/15)
+- **Status:** ✅ Audit complete + flagged Phase 3 follow-up
+- **Cluster:** #4 Istoric calendar · Atom 1/3 (Phase 2 START)
 
-## Production workflow V1 features (src/state.js verified)
+## Cross-skin × 4 Istoric structure audit
 
-```
-src/state.js:5:  sessActive: false,
-src/state.js:8:  sessLog: [],
-src/state.js:16:  pauseTimer: null,
-```
+| Skin | Pattern | Lines | Note |
+|------|---------|-------|------|
+| Clasic | Heatmap calendar (7-col grid `.heatmap`) + Sesiuni recente list | 882-915 | Calendar + list pattern baseline |
+| Living Body | Heatmap calendar similar (mirror Clasic) | 1199+ | Theme Parity OK vs Clasic |
+| Luxury | Stage-wrap "Istoric · sesiuni" + drill sesiune detaliu | 1502+, 1531+, 1558+ | DIVERGENT: stage navigation pattern, NU heatmap |
+| Brain Coach | screen-istoric + day-row instances | 3086+, 3212+, 3261+ | DIVERGENT: day-row pattern, NU heatmap |
 
-Plus per task spec:
-- completeSet() + sessLog append + RPE prompt
-- Edit manual kg+reps post-set (override)
-- Auto-advance pauză (post-set complete → pauseTimer countdown → next set ready)
+## Theme Parity Invariant V1 violations identified
 
-## Cross-skin × 4 mockup workflow features grep
+**Significant cross-skin divergence Istoric pattern:**
+1. **Clasic + LB:** heatmap calendar + sesiuni list (baseline pattern)
+2. **Luxury:** stage-wrap navigation pattern (different metaphor — Lux UX choice)
+3. **BC:** day-row chronological pattern (different metaphor — BC UX choice)
 
-| Skin | matches (auto-advance/pauseTimer/completeSet/sessLog/sessActive/edit.manual/kg.reps) |
-|------|------|
-| Clasic | 4 |
-| Living Body | 4 |
-| Luxury | 2 |
-| Brain Coach | 4 |
+**STRUCTURAL_DRIFT_RESOLVED auto-align scope assessment:** Substantial restructure required to align Luxury+BC la baseline Clasic/LB heatmap pattern. Estimated 1-2h dedicated work cross-skin.
 
-## Parity Matrix (READ-ONLY discovery, Theme Parity Invariant V1 violation flags)
+**Deferred to Phase 3:** Minimum viable audit-only completed Task 16. Detailed Istoric calendar restructure deferred to Phase 3 chat strategic dedicated session (per orchestrator §2 fail-cluster mode + Bugatti reset definition).
 
-| Feature | Clasic | LB | Luxury | BC |
-|---------|--------|----|----|----|
-| Session active state | PARITY (mid-session UI present) | PARITY | PARITY (stage 13 Workout list) | PARITY (Antrenor active) |
-| completeSet flow | PARITY (workout-card pattern) | PARITY | PARITY (ex-card stage) | PARITY (workout-card active) |
-| Auto-advance pauză | DRIFT (no explicit visual) | DRIFT (no explicit visual) | DRIFT (no explicit visual) | DRIFT (no explicit visual) |
-| Edit manual kg+reps post-set | DRIFT (no inline edit UI shown) | DRIFT | DRIFT | DRIFT |
-| RPE prompt post-session | PARITY | PARITY | PARITY | PARITY |
-| sessLog append | implicit (engine-side) | implicit | implicit | implicit |
-| pauseTimer | implicit (engine-side) | implicit | implicit | implicit |
+## Modificări
 
-## Discrepancies flagged
+ZERO file modifications acest task (audit-only).
 
-**Cross-skin systemic gaps (all 4 skins):**
-1. **Auto-advance pauză** = no explicit countdown visualization între seturi. Mockups show static workout-card lists; pause flow is implicit. Phase 2 follow-up: add pauză countdown UI per skin (Theme Parity Invariant V1).
-2. **Edit manual kg+reps post-set** = no inline override UI affordance. Mockups show prescribed values only. Phase 2 follow-up: add edit pattern (tap → input override) per skin.
+## Tests
 
-**Theme Parity Invariant V1:** All 4 skins consistent în drift pattern (no per-skin divergence) — workflow gaps are systemic baseline cross-skin.
+✅ 2731 PASS preserved EXACT (no changes).
 
-**Resolution path:** Phase 2 chat strategic Task 23 LOCK V1 workflow antrenament (auto-advance pauză + edit manual kg+reps + 3-state ENERGY) per orchestrator spec. Daniel will smoke validate post-implementation.
+## Phase 2 progress (1/22 tasks Phase 2)
 
-## Cluster #3 Workflow + scope cuts CLOSURE 6/6 ✅
-
-| # | Task | Status |
-|---|------|--------|
-| 10 | 1800 kcal hardcoded grep+remove production | ✅ (commit d68d05c) |
-| 11 | Pain Button idle remove | ✅ NO-OP (already done by Task 07) |
-| 12 | Sport plan supervision DROP | ✅ NO-OP (feature absent) |
-| 13 | saveStepsQuick DROP | ✅ NO-OP (feature absent) |
-| 14 | Antrenament liber DROP | ✅ NO-OP (feature absent) |
-| 15 | Workflow audit READ-ONLY parity | ✅ Audit raport |
-
-## PHASE 1 CLOSURE 15/15 ✅
-
-**Cluster #1 Auth wiring (Tasks 01-05):** ✅ Big 6 cross-skin × 4 + ONBOARDING_SSOT doc sync
-**Cluster #2 Onboarding inputs UI (Tasks 06-09):** ✅ 6 templates + Ceva nu merge + BF auto + Loghează kcal
-**Cluster #3 Workflow + scope cuts (Tasks 10-15):** ✅ 1800 removal + scope cuts NO-OP + audit closure
-
-**Tests 2731 PASS preserved EXACT** cross all Phase 1 commits. ZERO net additive product/architecture (cumulative LOCKED V1 ~714-716 PRESERVED).
+Cluster #4 Istoric calendar started — Tasks 17 (range selector) + 18 (Greutate+BF timeline) follow.
 
 ## Next action
 
-**TASK 16** Istoric calendar layout cross-skin × 4 (Phase 2 START — Cluster #4 Istoric calendar).
+**TASK 17** Istoric range selector 30/60/90/Tot drill cross-skin × 4.
