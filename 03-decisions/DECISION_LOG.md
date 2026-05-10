@@ -1,6 +1,65 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ MCP filesystem direct paradigm — vault hygiene + §AR.19 NEW + prod bugs fix Bug 1+Bug 2 LANDED triple atomic (3 commits chronologic chat-current pushed origin/main, cumulative ~719 PRESERVED unchanged)
+
+**Status:** Vault meta-tooling + prod bug fix corige existing intent NU product/architecture additive. Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2731 → **2734 PASS** (+3 net new prod bug regression tests, ZERO regression).
+
+**Authority:** Daniel directive verbatim chat-current ACASĂ MCP filesystem 2026-05-10:
+- *"Lucram in MCP acum acasa. Esti primul chat care s-a chinuit sa indexeze atata context ca sa ajunga la ceva decent."* (vault hygiene priority 1 directive)
+- *"fa cumva sa nu se mai intample"* (recovery slip §AR.19 NEW codification mandate)
+- *"rulezi tu cu cc tot ce mai trebuie pana cand trebuie sa faci handover... nu ma deranjezi cu nimic decat daca e urgent"* (Co-CTO real autonomy lock reaffirmed cumulative chat-current)
+- 2 prod bugs verbalize chat-current Auto template fallback 2k kcal hardcoded + BF manual edit nu recalc kcal phase same weight (P1-FLAG-PROD-AUTO-FAZA + P1-FLAG-PROD-BF-EDIT-KCAL flagged predecessor entry below, RESOLVED chat-current)
+
+**Decision LANDED:** 3 commits substantive chronologic pushed origin/main:
+
+**1. `cc34ca9` vault hygiene massive cleanup atomic batch** (claude_code agent autonomous):
+- CURRENT_STATE.md 596KB / 3810 LOC → **130 LOC / 14KB** §CC.6 spec compliance restored
+- RECENT_DECIDED_ARCHIVE.md 24 → 3671 LOC scaffold first populate (created 2026-05-07 Run 2 Task 6, body verified empty pre-cleanup *"none yet — first periodic compaction 2026-05-07 found ZERO pre-cutoff entries"*)
+- INDEX_MASTER.md header `Last updated:` trim 4+ predecessor stacked entries → 1-line single per spec
+- DECISION_LOG.md +36 LOC entry top descending cronologic
+- Backup tag `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` pushed origin
+- §AR.13 PK delta +0.01% SOFT band (content migrated NU șters, intentional double safety §CC.7 Layer 5 git history + dedicated archive)
+
+**2. `967460d` §AR.19 NEW anti-recurrence rule** (claude_code agent + Daniel directive *"fa cumva sa nu se mai intample"*):
+- VAULT_RULES.md +27 LOC §AR.19 NEW + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT item 17 reference
+- Origin slip: claude_code agent timeout MCP response delivery NU = agent crash. Vault hygiene cleanup atomic batch was complete + pushed origin BEFORE timeout signal returned. Filesystem:get_file_info returned stale data immediately post-timeout (Windows OS metadata cache lag few seconds post-write) reinforced "no work landed" assumption falsely.
+- Verify ordine MANDATORY: (1) `git log origin/main -5` (2) `📤_outbox/LATEST.md` raport (3) filesystem file sizes (cu cache-stale awareness re-check post-delay)
+- Default = trust completion + verify, NU assume failure + recover
+- Backup tag `pre-ar19-add-2026-05-10-1748` pushed origin
+
+**3. `05ba372` prod bugs fix Bug 1 + Bug 2 LANDED** (claude_code agent autonomous, **auto-watcher captured commit msg poor `chore(auto):` instead intended Bugatti narrative — content OK, narrative loss tracked carry-forward**):
+- **Bug 1 fix:** `src/engine/sys.js:125-127` drop pilotActive gate AUTO branch → AUTO returns TDEE×phase multiplier always (NU hardcoded `KCAL_TARGET=2000` pre-TARGET_DATE 2026-07-20). Plus `sys.js:77` getPhase pilotActive removal — phase auto-derives BF + sezon always.
+- **Bug 2 fix:** `src/engine/sys.js:54-67` estimateTDEE Mifflin → Katch-McArdle (`bmr = 370 + 21.6 * lbm`) când `getBF()` finite. Mifflin-St Jeor fallback când BF unknown defensive. `getLBM()` finally consumed (existed since launch dar nu wired la estimateTDEE).
+- **Math impact verification:** at 100kg same weight, BF 30% (lbm=70) vs BF 5% (lbm=95): BF 30% bmr 1882 → tdee ≈ 2917 kcal; BF 5% bmr 2422 → tdee ≈ 3754 kcal; Delta ~837 kcal (was 0 kcal pre-fix — Mifflin BF-agnostic on same kg).
+- **Propagation:** `src/pages/weight.js:78` + `src/pages/dashboard.js:193,533-534` pilotActive gating consistent (UI copy preserved, computation gates removed).
+- **Tests +3 NEW:** T_AUTO_pre_pilot (Bug 1 regression — AUTO pre-TARGET_DATE returns TDEE×phase NOT 2000) + T_BF_edit_recalc (Bug 2 regression — BF 30%→5% same 100kg → kcal delta >300) + T8 phase auto-derive + T4 split T4a Katch / T4b Mifflin
+- **2 prod bug flags 🟢 RESOLVED:** P1-FLAG-PROD-AUTO-FAZA-2026-05-10 + P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10
+- Backup tag `pre-prod-bugs-fix-2026-05-10-1802` pushed origin
+
+**Cross-cutting observations carry-forward:**
+- 🟡 **Auto-watcher race P3 manifest 3× today** (commits `a7e951b` + `0b1d781` + `05ba372` capturate înainte agent commit msg). Pre-existing flag (chat unified 2026-05-08), elevated severity prin recurrence chat-current. Glob filter restrictive needed (`04-architecture/mockups/` only?). Race window narrow 31s observed. Carry-forward DEDICATED investigation mâine.
+- 🟡 **claude_code intermittent timeout/empty responses today** — §AR.19 LOCK V1 reaffirmed via 3 verify cycles successful. Pattern documented permanent.
+- 🟡 **Engine impl gap (Faza 2.5 territory)** — `src/engine/goalAdaptation/phaseAutoDetection.js` are full Katch-McArdle + macro bands impl dar wired DOAR la coach orchestrator NU UI prod. Sys.js patched atomic chat-current pentru bug-uri imediate; complete migration UI→goalAdaptation engine deferred dedicated session.
+- 🟡 **Energy-balance-path BF-awareness layer (b)** — defer dedicated session. `estimateTDEE()` energy-balance path (≥4 weights) currently re-baselines TDEE pe `phase-change-date` dar nu re-baselines pe BF override. Needs delta-LBM model + state tracking + phase-change-date trigger pe BF override change.
+
+**Tests baseline:** 2731 → **2734 PASS** (+3 net new prod bug regression tests). Pre-commit hook vitest gate verde.
+
+**Files modified atomic 3 commits:**
+- `cc34ca9`: 00-index/CURRENT_STATE.md + 06-sessions-log/RECENT_DECIDED_ARCHIVE.md + 00-index/INDEX_MASTER.md + 03-decisions/DECISION_LOG.md
+- `967460d`: VAULT_RULES.md (§AR.19 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT item 17)
+- `05ba372`: src/engine/sys.js + src/engine/__tests__/sys.test.js + src/pages/weight.js + src/pages/dashboard.js
+
+**Backup tags 3 LANDED:** `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` + `pre-ar19-add-2026-05-10-1748` + `pre-prod-bugs-fix-2026-05-10-1802` (rollback safety pushed origin per VAULT_RULES §CC.7 Layer 5).
+
+**Cross-refs:** [[../VAULT_RULES]] §AR.19 NEW + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT item 17 + §CC.5 §AMENDMENT 2026-05-10 Direct-to-CC paradigm + §CC.6 + §CC.9 5-step + §AR.13 + [[../00-index/CURRENT_STATE]] §NOW move-then-replace + §JUST_DECIDED top entry + §NEXT 8 priorities + §ACTIVE_FLAGS sync (2 RESOLVED + 2 NEW carry-forward) + [[../00-index/INDEX_MASTER]] header refresh + 📤_outbox/LATEST.md §CC.5 fast handover ingest raport.
+
+**Cumulative LOCKED V1 ~719 PRESERVED unchanged** (vault meta-tooling + prod fix corige existing intent NU product/architecture additive).
+
+**Next:** Birou setup MCP filesystem mâine cu laptop birou + Daniel smoke test prod bugs fix LANDED `05ba372` andura.app live + Auto-watcher race P3 dedicated investigation + CEO decizie V1 features audit blocking BATCH 2 Antrenor + Phase 4 dedicate session + Workflow antrenament V1 LOCK + Big 6 conflict resolve.
+
+---
+
 ## 2026-05-10 chat ACASĂ MCP filesystem vault hygiene massive cleanup — CURRENT_STATE.md split 596KB→~200LOC §CC.6 compliance + INDEX_MASTER header trim + RECENT_DECIDED_ARCHIVE first populate (vault meta-tooling, cumulative ~719 PRESERVED unchanged)
 
 **Status:** Vault meta-tooling cleanup. Cumulative LOCKED V1 ~719 PRESERVED unchanged.
