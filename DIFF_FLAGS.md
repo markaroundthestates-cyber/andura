@@ -7,6 +7,31 @@
 
 ---
 
+## P3 NEW CARRY-FORWARD (mockup sweep deferrals)
+
+**Source:** Mockup buguri sweep #1 PHASE A audit `📤_outbox/_archive/2026-05/366_MOCKUP_BUGURI_SWEEP_AUDIT_V1_CONSUMED.md` 6 P3 carry-forward findings — single-theme Clasic master scope deferred dedicated chat post-Beta. Status `🟡 P3 carry-forward deferred dedicated chat post-Beta single-theme master`.
+
+- **P3-α — Inline `style=""` proliferation** — 661 inline style attributes across 2144 LOC ratio (Bugatti anti-pattern: 4 buttons range-tab + 6 onboarding screens + 17 settings sub-pages + 5 confirm pages duplicate inline shells). Refactor port-time vanilla JS modules natural fix point (CSS class extract). 🟡 P3 deferred dedicated chat post-Beta.
+- **P3-β — Hardcoded hex 385× instead of `var(--ink)`** — original WCAG audit comment line 44 declares intent "systematic single-source-of-truth (385 total occurrences)" never wired up. Token system formalize port-time. 🟡 P3 deferred dedicated chat post-Beta.
+- **P3-γ — F1 LOW_ADHERENCE banner template text** — banner string fără diacritic post-strip "Adherenta scazuta" — cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER (e2e calibration-ui.spec.js:194 SKIP'd post-strip). F1 port unblocks re-enable per V1_FEATURES_AUDIT_V1 LOCK V1. 🟡 P3 deferred BATCH 2 Antrenor port scope.
+- **P3-δ — Workflow V1 LOCK §36.57 edit manual kg+reps post-set MISSING** — gap to port: rest-timer countdown ZERO `setInterval`/`setTimeout` ticker + ZERO auto-resume next set la rest expire + ZERO tap-to-edit affordance pe set value display post-log (set rows static `<div class="set-val">22.5 kg</div>` NU `<input>`). Port mandatory pre-Beta SUFLET ANDURA scope per PORT_FIRST_STEP_1 §LOCK V1 sub-decision #4 conditional clusters. 🟡 P3 deferred BATCH 2 Antrenor port scope.
+- **P3-ε — Theme parity invariant cross-check vs LB/Lux/BC** — `screen-settings-themes` 4 theme cards Clasic/Living Body/Luxury/Brain Coach + `pickTheme()` toggles `.selected` class fără swap actual CSS variables; per STRATEGIC SHIFT 2026-05-10 single-theme Clasic master FIRST = INTENTIONAL placeholder. Wire actual CSS var swap post-Beta when LB/Lux/BC mockups ported. 🟡 P3 deferred post-Beta.
+- **P3-ζ — Dead `mute: '#6e6862'` Tailwind palette entry** — vestigial palette token unused post mockup polish + WCAG cleanup. 🟡 P3 deferred dedicated chat post-Beta single-theme master cleanup.
+
+---
+
+## P2 NEW DEFERRALS (mockup sweep)
+
+**Source:** Mockup buguri sweep #1 PHASE A audit `📤_outbox/_archive/2026-05/366_MOCKUP_BUGURI_SWEEP_AUDIT_V1_CONSUMED.md` 5 P2 defer findings — dedicated chat scope. Status `🟡 P2 defer dedicated chat`.
+
+- **P2-A — Persona switcher dead JS+CSS infrastructure** — Persona switcher REMOVED V1 LOCK per inline comment line 354; body class hard-locked `persona-gigica` permanent (line 352). DAR infrastructure remains: CSS `.marius-only` + `.persona-marius .marius-only { display: flex; }` + `.maria-hide` + `.persona-maria .maria-hide { display: none !important; }` (lines 118-122 + 266-293) + JS `personaBtns` querySelector empty NodeList no-op (lines 2047-2053) + 2 hidden DOM fragments retain RIR/RPE jargon (lines 953 + 1049-1054). 🟡 P2 defer dedicated chat.
+- **P2-B — Dead `.marius-only-inline` class** — CSS lines 296-300 `.marius-only-inline` + `.persona-marius .marius-only-inline { display: inline; }` never apply (no `persona-marius` body class set). 🟡 P2 defer dedicated chat.
+- **P2-C — Dead function `onboardBack`** — JS function defined but ZERO callers (orphan). 🟡 P2 defer dedicated chat (cleanup atomic with persona infrastructure).
+- **P2-D — Vestigial `screen-medical-disclaimer`** — orphan disclaimer page line 1908 ~30 LOC; CTA pointed to dead `screen-home` (resolved P0-3 commit `0930b2a` retargeted to `antrenor`); replaced inline disclaimer step 1 onboarding (lines 508-511 `<label id="onb1-disclaimer-row">`). Screen unreachable from any goto call. 🟡 P2 defer dedicated chat (cleanup post-port confirm zero regressions).
+- **P2-E — Two `<style>` blocks split across file** — single `<style>` consolidation single-source-of-truth Bugatti anti-pattern. 🟡 P2 defer dedicated chat.
+
+---
+
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
 ### P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED — Mockup buguri sweep #1 single-theme Clasic master LANDED (2026-05-10 chat-current 2)
