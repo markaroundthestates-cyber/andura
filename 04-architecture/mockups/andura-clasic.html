@@ -702,49 +702,6 @@
         <button class="btn-brick" onclick="goto('antrenor')">Termina — sub 60 sec ✓</button>
       </div>
 
-      <!-- 5b. SALA (idle state) -->
-      <div class="screen paper-bg" id="screen-sala" data-screen-label="Sala" style="height:100%; flex-direction:column;">
-        <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <div class="small-text" style="color:var(--ink-3); margin-bottom:4px;">Joi, 7 mai · 18:30</div>
-          <h1 style="font-size:26px; font-weight:700; color:var(--ink); margin:0 0 18px; letter-spacing:-0.02em;">Sesiunea de azi</h1>
-
-          <!-- Hero card with today's session -->
-          <div class="hero-card">
-            <div class="meta">Ziua 3 · Sapt 18 · Push</div>
-            <h2>Piept &amp; umeri</h2>
-            <div style="display:flex; gap:16px; font-size:13px; color:#a8a09a; margin-bottom:6px;">
-              <span style="display:flex; align-items:center; gap:6px;"><i data-lucide="clock" style="width:14px; height:14px;"></i> ~ 52 min</span>
-              <span style="display:flex; align-items:center; gap:6px;"><i data-lucide="layers" style="width:14px; height:14px;"></i> 5 exercitii</span>
-              <span style="display:flex; align-items:center; gap:6px;"><i data-lucide="flame" style="width:14px; height:14px;"></i> Mediu</span>
-            </div>
-            <div class="ex-list">
-              <div class="ex-row"><span>Impins din culcat</span><span>4 × 6–8</span></div>
-              <div class="ex-row"><span>Impins inclinat haltera</span><span>3 × 8–10</span></div>
-              <div class="ex-row"><span>Press umeri sezand</span><span>3 × 8–10</span></div>
-              <div class="ex-row"><span>Fluturari laterale</span><span>3 × 12–15</span></div>
-              <div class="ex-row"><span>Triceps cablu</span><span>3 × 10–12</span></div>
-            </div>
-            <button class="start-btn" onclick="goto('workout')"><i data-lucide="play" style="width:16px; height:16px;"></i> Incepe sesiunea</button>
-          </div>
-
-          <!-- Energy check -->
-          <div class="settings-section" style="margin-top:22px;">Cum te simti?</div>
-          <div style="display:flex; gap:10px;">
-            <button class="energy-btn" onclick="showToast('Marcam: Excelent')"><span style="font-size:28px;">🟢</span><span class="small-text">Excelent</span></button>
-            <button class="energy-btn" onclick="showToast('Marcam: Normal · OK')"><span style="font-size:28px;">🟡</span><span class="small-text">Normal · OK</span></button>
-            <button class="energy-btn" onclick="showToast('Adaptam sesiunea')"><span style="font-size:28px;">🔴</span><span class="small-text">Obosit</span></button>
-          </div>
-
-          <!-- Quick links -->
-          <div class="settings-section">Acces rapid</div>
-          <div class="settings-stack">
-            <button class="settings-row" onclick="showToast('Programe')"><i data-lucide="list-todo"></i><span>Programul saptamanii</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Exercitii')"><i data-lucide="book-open"></i><span>Biblioteca exercitii</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Antrenament liber')" style="border-bottom:none;"><i data-lucide="plus-circle"></i><span>Antrenament liber</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-          </div>
-        </div>
-      </div>
-
       <!-- ANTRENOR (sport sesiune — V1 LOCKED home) -->
       <div class="screen paper-bg" id="screen-antrenor" data-screen-label="Antrenor" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
@@ -922,89 +879,6 @@
             <button class="settings-row" onclick="showToast('Nutritie istoric')"><i data-lucide="utensils"></i><span>Nutritie</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Recorduri Personale')"><i data-lucide="award"></i><span>Recorduri Personale</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Programe arhiva')" style="border-bottom:none;"><i data-lucide="archive"></i><span>Programe arhiva</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. HOME / DAILY -->
-      <div class="screen paper-bg" id="screen-home" style="height:100%; flex-direction:column; overflow-y:auto;" >
-        <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <!-- Greeting -->
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
-            <div>
-              <div class="small-text" style="color:var(--ink-3); font-weight:500;">Marti, 6 mai</div>
-              <div style="font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.02em;">Buna, Daniel</div>
-            </div>
-            <button style="width:40px; height:40px; border-radius:50%; background:white; border:1px solid var(--line-strong); cursor:pointer; display:flex; align-items:center; justify-content:center;">
-              <i data-lucide="bell"></i>
-            </button>
-          </div>
-
-          <!-- Coach card (peak craft) -->
-          <div style="background:var(--ink); color:var(--paper); border-radius:20px; padding:22px; position:relative; overflow:hidden;">
-            <div style="position:absolute; top:-30px; right:-30px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, rgba(200,65,46,0.4), transparent 70%);"></div>
-            <div class="small-text" style="color:#c8412e; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Recomandare azi</div>
-            <div class="coach-quote" style="font-size:22px; color:var(--paper); line-height:1.3; margin:10px 0 18px; position:relative;">
-              "Astazi facem impins, mai degajat. Saptamana trecuta ai dus greu. Recuperam puterea, nu o fortam."
-            </div>
-            <div style="display:flex; gap:8px; margin-bottom:18px; position:relative;">
-              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--paper);"><i data-lucide="clock" style="width:14px; height:14px;"></i> 45 min</div>
-              <div class="chip" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--paper);"><i data-lucide="dumbbell" style="width:14px; height:14px;"></i> Sala</div>
-              <div class="chip marius-only" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:var(--paper); display:none;"><span style="font-family:'JetBrains Mono', monospace;">RIR 2</span></div>
-            </div>
-            <button class="btn-brick" onclick="goto('workout')" style="width:100%; position:relative;">Incepe sesiunea →</button>
-          </div>
-
-          <!-- Energy state -->
-          <div style="margin-top:24px;">
-            <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
-              <div class="body-text" style="font-weight:600; color:var(--ink);">Cum te simti azi?</div>
-              <span class="small-text" style="color:var(--ink-3);">Doar tu vezi asta</span>
-            </div>
-            <div style="display:flex; gap:10px;">
-              <button class="energy-btn" data-energy="green" onclick="selectEnergy('green')">
-                <span style="font-size:32px;">🟢</span>
-                <span class="small-text">In forma</span>
-              </button>
-              <button class="energy-btn" data-energy="yellow" onclick="selectEnergy('yellow')">
-                <span style="font-size:32px;">🟡</span>
-                <span class="small-text">Asa si-asa</span>
-              </button>
-              <button class="energy-btn" data-energy="red" onclick="selectEnergy('red')">
-                <span style="font-size:32px;">🔴</span>
-                <span class="small-text">Greu</span>
-              </button>
-            </div>
-
-            <!-- 🔴 drill-down (4 fixed cauze) -->
-            <div id="energy-drill" style="display:none; margin-top:14px; padding:16px; background:white; border:1px solid var(--line); border-radius:14px;">
-              <div class="body-text" style="font-weight:600; margin-bottom:10px; color:var(--ink);">Ce e mai greu azi?</div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <button class="cause-btn" onclick="pickCause('Oboseala')"><i data-lucide="battery-low"></i> Oboseala</button>
-                <button class="cause-btn" onclick="pickCause('Stres')"><i data-lucide="wind"></i> Stres</button>
-                <button class="cause-btn" onclick="pickCause('Somn')"><i data-lucide="moon"></i> Somn slab</button>
-                <button class="cause-btn" onclick="pickCause('Durere')"><i data-lucide="alert-circle"></i> Durere</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick stats strip -->
-          <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-            <div style="background:white; border:1px solid var(--line); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:var(--ink-3);">Saptamana</div>
-              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'JetBrains Mono', monospace;">3<span style="color:var(--ink-3); font-size:14px;">/4</span></div>
-              <div class="small-text" style="color:#3d7a4a; font-weight:500;">pe traseu</div>
-            </div>
-            <div style="background:white; border:1px solid var(--line); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:var(--ink-3);">Volum</div>
-              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'JetBrains Mono', monospace;">+8%</div>
-              <div class="small-text" style="color:var(--ink-3);">vs. sapt. trec.</div>
-            </div>
-            <div style="background:white; border:1px solid var(--line); border-radius:14px; padding:14px;">
-              <div class="small-text" style="color:var(--ink-3);">Streak</div>
-              <div style="font-size:20px; font-weight:700; color:var(--ink); font-family:'JetBrains Mono', monospace;">12<span style="color:var(--ink-3); font-size:14px;">z</span></div>
-              <div class="small-text" style="color:#c8412e; font-weight:500;">consecutive</div>
-            </div>
           </div>
         </div>
       </div>
@@ -1257,66 +1131,6 @@
             <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.4;">Compatibil cu majoritatea aplicatiilor de tracking nutritie (export CSV). Auto target din engine daca nu loghezi manual.</p>
           </div>
           <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center; line-height:1.5;">Auto target engine + manual log optional + CSV batch import. Engine calibreaza din date reale.</p>
-        </div>
-      </div>
-
-      <!-- 8. COACH FEEDBACK / Push-back -->
-      <div class="screen paper-bg" id="screen-coach" style="height:100%; flex-direction:column;">
-        <div class="phone-scroll" style="padding: 16px 20px 24px; overflow-y:auto; flex:1;">
-          <h1 style="font-size:24px; font-weight:700; color:var(--ink); margin:0 0 4px; letter-spacing:-0.02em;">Antrenor</h1>
-          <div class="small-text" style="color:var(--ink-3); margin-bottom:18px;">Cum iti raspunde Andura cand ceva nu se potriveste.</div>
-
-          <!-- Tier 1: silent toast -->
-          <div style="background:white; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;">
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-              <div style="width:24px; height:24px; border-radius:50%; background:#3d7a4a; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">1</div>
-              <div class="body-text" style="font-weight:600;">Nota in jurnal</div>
-              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">tacut</span>
-            </div>
-            <div style="background:var(--ink); color:white; padding:12px 14px; border-radius:10px; display:flex; align-items:center; gap:10px;">
-              <i data-lucide="check-circle-2" style="color:#3d7a4a;"></i>
-              <span class="body-text">Set inregistrat — 22.5 kg × 10</span>
-            </div>
-            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Pentru tot ce e normal: confirmare scurta, apoi dispare. Te lasa in flow.</div>
-          </div>
-
-          <!-- Tier 2: banner soft -->
-          <div style="background:white; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;">
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-              <div style="width:24px; height:24px; border-radius:50%; background:#c89321; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">2</div>
-              <div class="body-text" style="font-weight:600;">Sugestie usoara</div>
-              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">non-blocant</span>
-            </div>
-            <div class="banner-warn">
-              <div style="font-weight:600; margin-bottom:2px;">Ai sarit 3 din 4 sesiuni saptamana asta.</div>
-              <div class="coach-quote" style="font-size:14px;">Vrei sa trecem la 2 zile pentru o saptamana? Mai tarziu o crestem.</div>
-              <div style="display:flex; gap:8px; margin-top:10px;">
-                <button style="padding:6px 12px; background:var(--ink); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Da, schimba</button>
-                <button style="padding:6px 12px; background:transparent; color:var(--ink-2); border:none; font-size:13px; font-weight:600; cursor:pointer;">Nu, las asa</button>
-              </div>
-            </div>
-            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Daca ceva merge prost, sugeram — dar tu decizi.</div>
-          </div>
-
-          <!-- Tier 3: blocking warning card -->
-          <div style="background:white; border:1px solid var(--line); border-radius:16px; padding:16px;">
-            <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-              <div style="width:24px; height:24px; border-radius:50%; background:#c8412e; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700;">3</div>
-              <div class="body-text" style="font-weight:600;">Limita prudenta</div>
-              <span class="small-text" style="color:var(--ink-3); margin-left:auto;">blocant</span>
-            </div>
-            <div style="border:1.5px solid #c8412e; background:#fdeeea; padding:14px; border-radius:12px;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><i data-lucide="alert-triangle" style="color:#c8412e;"></i><span class="body-text" style="font-weight:600; color:var(--ink);">Vrei sa cresti 12 kg dintr-o data</span></div>
-              <div class="body-text" style="color:var(--ink-2); line-height:1.45;">Riscul de accidentare creste mult peste +5 kg per sesiune. Reducem la 87 kg sau preferi sa continui?</div>
-              <div style="display:flex; gap:8px; margin-top:12px;">
-                <button class="btn-brick" style="flex:1; padding:10px;">Mergi la 87 kg</button>
-                <button class="btn-ghost" style="flex:1; padding:10px;">Continuu</button>
-              </div>
-            </div>
-            <div class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5;">Doar pentru siguranta — nu te oprim pentru preferinte.</div>
-          </div>
-
-          <button class="btn-ghost" onclick="showToast()" style="width:100%; margin-top:16px;">Vezi exemplul tier 1 →</button>
         </div>
       </div>
 
@@ -2053,12 +1867,10 @@
   }));
 
   // ─── Screen routing (V1 LOCKED — 4 taburi: Antrenor/Progres/Istoric/Cont) ───
-  const tabbedScreens = ['antrenor', 'progres', 'istoric', 'settings', 'sala', 'home', 'workout', 'progress', 'coach'];
-  // Legacy aliases redirect to new tabs
+  const tabbedScreens = ['antrenor', 'progres', 'istoric', 'settings', 'workout'];
   const tabFor = {
     antrenor:'antrenor', progres:'progres', istoric:'istoric', settings:'settings',
-    sala:'antrenor', home:'antrenor', workout:'antrenor',
-    progress:'progres', coach:'antrenor'
+    workout:'antrenor'
   };
 
   // History stack for drill-down navigation (real back button)
@@ -2191,14 +2003,6 @@
 
   // ─── (Modal helpers removed — V2 LOCKED uses drill-down pages only) ───
 
-  // ─── Energy state ────────────────────────────────────────────────
-  function selectEnergy(state) {
-    document.querySelectorAll('.energy-btn').forEach(b => b.classList.toggle('selected', b.dataset.energy === state));
-    const drill = document.getElementById('energy-drill');
-    drill.style.display = state === 'red' ? 'block' : 'none';
-    if (state !== 'red' && window.lucide) lucide.createIcons();
-    if (state === 'red' && window.lucide) lucide.createIcons();
-  }
   function submitPostRpe(level) {
     const map = { 'usor': 'Notat: usor. Coach urca volumul maine.',
                   'potrivit': 'Notat: potrivit. Continuam pe traiectorie.',
@@ -2217,11 +2021,6 @@
     const el = document.getElementById('weight-range-label');
     if (el) el.textContent = labels[String(days)] || '';
   }
-  function pickCause(c) {
-    showToast('Adaptam sesiunea: ' + c.toLowerCase());
-    document.getElementById('energy-drill').style.display = 'none';
-  }
-
   // ─── Workout interactions ────────────────────────────────────────
   function toggleCue() {
     const body = document.getElementById('cue-body');
