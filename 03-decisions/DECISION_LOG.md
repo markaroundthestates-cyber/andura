@@ -1,5 +1,60 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 chat ACASĂ post Phase 3.5 closure + STRATEGIC SHIFT single-theme Clasic master LOCKED V1 (cumulative ~717 → ~718, +1 net strategic shift substantive)
+
+**Status:** §CC.5 fast handover ingest from `📥_inbox/handover_2026-05-10_chat_acasa_post_phase_3_5_closure_strategic_shift.md`. Pure execution scope handler wiring + workflow critical fixes Phase 3+3.5 + STRATEGIC SHIFT NEW LOCK V1 substantive (single-theme Clasic master FIRST cap-coadă + sequential port mecanic LB→Lux→BC dedicate session ulterior). Cumulative LOCKED V1 ~717 → **~718** (+1 net STRATEGIC SHIFT substantive). Tests 2731 PASS preserved EXACT cross all 16 commits chain `47dcca8 → 3ff5726` LOCAL vitest pe `feature/phase-3-orchestrator-final` branch (NU merged main yet).
+
+**Authority:** Daniel directive verbatim chat-current cap-coadă:
+- *"nu e mai productiv sa facem thema clasic full working 100% si dupa sa facem toate celelalte themes dupa ea?"* (single-theme Clasic master FIRST strategic shift)
+- *"daca dupa asta lucram doar la clasic... de ce mai indexez si celelalte 2 theme in knowladgebase?"* (knowledge base architecture deselect LB+Lux+BC mockups capacity gain)
+- *"vrei sa scapi de mine?"* (Co-CTO slip #1 — premature handover suggestion la 50% bw rejected)
+- *"ma nu inteleg ce vrei de la mine... eu sa te tin de mana? Stii ce trebuie facut la andura... make it happen"* (real CTO autonomy mode REAFFIRMED — Daniel only smoke validation final)
+
+**Phase 3 closure (9/10 LANDED + Task I muscleMap AUDIT NEED_CONTEXT):**
+- 9 commits Phase 3 chain `47dcca8 → 1ebf0ab` pe `feature/phase-3-orchestrator-final`
+- LANDED 9: Task A onboarding default render (REVISITED Task L REAL FIX), Task B 6 templates active state JS toggle, Task C pain modal 4-7 buttons preset ZERO textarea, Task D Plan nutriție coach-quote box REMOVED, Task E free-text universal SCOASĂ NEW LOCK V1 (+1 net cumulative ~717), Task F workflow V1 cap-coadă (Phase 5 inline RPE + Phase 7 skip pause warning + Phase 10 cancel confirm), Task G Istoric calendar zile clickuibile (Clasic+LB heatmap), Task H Progres Auto button toggle, Task J Lux Schimbă fază entry parity
+- AUDIT/Phase 3 deferred 1: Task I muscleMap 19→7 refactor NEED_CONTEXT_DANIEL critical pe 7 grupes exact list (Stabilizatori vs Cardio vs 6 grupe drop)
+
+**Phase 3.5 closure (12/14 LANDED + Tasks T+U+X+Y AUDIT/Phase 4):**
+- 7 commits Phase 3.5 chain `43549ad → 6d1bb28` + closure `3ff5726` pe `feature/phase-3-orchestrator-final`
+- LANDED 12: Task L onboarding REAL FIX (splash setTimeout DROPPED), Task M workflow set advance sequential gate cu toast block, Task N pause timer tickPause real countdown M:SS + circle progress, Task O manual kg input editable + KG_INCREMENTS map per exercise, Task P kcal+proteine save handler localStorage, Task Q greutate sync profil + snapshot 7z, Task R notif handlers + Refă onboarding goto real, Task S chart range visual+label (full re-render Phase 4), Task V pain Altceva ripple Task C, Task W FAQ placeholder feedback toast
+- AUDIT/Phase 4 deferred 4: Task T chart interactive points NEED_CONTEXT chart library (Chart.js vs SVG custom), Task U Loguri recente NEED_CONTEXT spec (possible Cluster #4 Task G heatmap overlap), Task X Lux storyboard → interactive 1:1 refactor ~6-8h substantial, Task Y BC paradigm → 1:1 ~3-4h substantial
+
+**STRATEGIC SHIFT NEW LOCK V1 SUBSTANTIVE (+1 net cumulative ~717 → ~718)**:
+
+Daniel logic chat-current: single-theme Clasic master FIRST = development productivity boost + paradigm divergence Lux+BC fix-once port-mecanic + knowledge base capacity gain. Phase 4 strategy revised — Tasks X+Y substantial refactors + carry-forward backlog (Cluster #4 Istoric + #6 Workflow V1 LOCK + Task I muscleMap + QA calibration banner) → DEFERRED post Clasic master 100% production-ready confirmed Daniel Gates smoke.
+
+Knowledge base architecture deselect plan (~10-12% capacity gain combined):
+- Deselect individual `andura-living-body.html` + `andura-luxury.html` + `andura-brain-coach.html` din `04-architecture/mockups/` (~3-4% gain)
+- Deselect 02-audit + 05-findings-tracker + 06-sessions-log (HANDOVER_GLOBAL archived) + 07-meta + 08-workflows + public + react-test.html + tsconfig.json + tsconfig.node.json + playwright.config.js (~7-8% gain combined)
+- **Total post-cuts ~88-91% capacity headroom rezonabil**
+- Preserve: `andura-clasic.html` + `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md` + alte 04-architecture specs critic + src/ 40% + 03-decisions/ 17% + 00-index/ 10% + 01-vision/ 4% + VAULT_RULES.md 2%
+
+**Slip Co-CTO #2 chat-current acknowledged + anti-recurrence rule LOCKED:**
+
+Quality judgment failure mid-Phase 3 — *"Onest: Clasic + LB solid post Tasks A-H, smoke clean expected (minor edge cases)"* claim BEFORE Daniel smoke = confirmation theater pe raport CC LANDED status, NU smoke prod-ready Daniel Gates. Daniel smoke fugitiv Clasic Phase 3 → 13+ buguri verbatim listate. Mea culpa rapid + Phase 3.5 atomic orchestrator pivot.
+
+**Anti-recurrence rule 3-tier testing distinction LOCKED V1**:
+1. **LOCAL vitest CC autonomous** — 2731 PASS preserved local (CC orchestrator fast feedback)
+2. **e2e Playwright CI/CD GitHub Actions** — full integration tests scope (NU run pre-LANDED claim CC orchestrator)
+3. **Daniel Gates prod smoke andura.app** — final acceptance pe production deploy
+
+**CC orchestrator LANDED status = LOCAL vitest only — NU implies smoke prod-ready Daniel Gates.** CC NU ran e2e suite + NU ran prod smoke pre-LANDED claim. Future LANDED claim format: "LANDED LOCAL vitest 2731 PASS — pending e2e CI/CD + Daniel Gates smoke validation."
+
+**QA report failed (Phase 3.5 raport receipt):** `e2e/scenarios/calibration-ui.spec.js:193 CDL with 5 real entries low adherence shows LOW_ADHERENCE banner` — expect text `/Adherence scăzută/i` în body, actual body afișează default state "DATE INSUFICIENTE Completează 2+ sesiuni". LOW_ADHERENCE banner NU se afișează când CDL 5 entries low adherence threshold met. Flag Phase 4 backlog NU urgent (single-theme Clasic FIRST strategic shift). Investigation: `src/engine/calibration.js` + `src/engine/CDL.js` LOW_ADHERENCE logic + e2e test setup verify.
+
+**GitHub Actions limit hit + extra buget. Anti-recurrence pentru CC ingest handover next chat:** push complete pe `main` branch (NU feature) astfel încât project knowledge sync GitHub main → §CC.2 layered read next chat startup ZERO files paste manual Daniel.
+
+**LOCK-uri product/architecture chat-current — 2 NET ADDITIVE substantive:**
+1. **Phase 3 NEW LOCK V1 SUBSTANTIVE — descriere liberă SCOASĂ universal cross-skin × 4 themes la TOT** (NU pain "Altceva" + NU equipment "Altceva" + NU oriunde, ZERO `<textarea>` mockup files). +1 net cumulative ~717 (already counted predecessor handover NN 349 ingest top entry).
+2. **Phase 3.5 NEW LOCK V1 SUBSTANTIVE STRATEGIC SHIFT — single-theme Clasic master FIRST cap-coadă** (Clasic baseline 100% production-ready, sequential port mecanic LB→Lux→BC dedicate session ulterior, knowledge base capacity gain ~10-12% deselect cuts). +1 net cumulative ~717 → ~718.
+
+**Cumulative LOCKED V1 ~714-716 → ~717 → ~718** (Phase 3 + Phase 3.5 cumulative both substantive).
+
+**Daniel actions next:** smoke DEPTH cap-coadă Clasic FIRST per `LATEST_CONSOLIDATED.md §Smoke Validation Priority` P0 → P1 (NU "fugitiv"); resolve NEED_CONTEXT items aggregate (Task T chart library + Task U spec clarification + Task W FAQ content + Task I muscleMap mapping + QA calibration banner + Phase 4 dedicate session timing); merge `feature/phase-3-orchestrator-final` la main post Clasic master smoke validation OK.
+
+---
+
 ## 2026-05-10 chat ACASĂ orchestrator clusters generation Phase 1 + Phase 2 COMBINED — Tasks 01-38 atomic artefacte ready inbox + 1 mini orchestrator FINAL coordonator (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture)
 
 **Status:** Pure execution scope orchestrator clusters generation (NU commits chat-uri Phase 1+2 — predecessor chain commit `12f1b76` chat vault hygiene closure preserved). Cumulative LOCKED V1 ~714-716 PRESERVED unchanged. Tests 2731 PASS preserved EXACT (NU code changes chat-uri Phase 1+2 — pure prompt artefact generation; Task 31 Q1 engine aggregator V2 refactor → tests count update tracked post-refactor 2731 → N).

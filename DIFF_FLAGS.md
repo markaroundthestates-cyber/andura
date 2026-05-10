@@ -8,6 +8,66 @@
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
+### P1-FLAG-STRATEGIC-SHIFT-CLASIC-MASTER — Single-theme Clasic master FIRST cap-coadă LOCKED V1 (2026-05-10)
+
+**Status:** 🟢 LOCKED V1 SUBSTANTIVE (cumulative ~717 → ~718 +1 net STRATEGIC SHIFT — Daniel directive verbatim post Phase 3.5 closure receipt)
+**Severity:** P1 strategic decision — affects Phase 4 dedicate session scope + knowledge base architecture
+
+**Issue:**
+Phase 4 strategy revised post Daniel directive cap-coadă chat-current verbatim *"nu e mai productiv sa facem thema clasic full working 100% si dupa sa facem toate celelalte themes dupa ea?"* + *"daca dupa asta lucram doar la clasic... de ce mai indexez si celelalte 2 theme in knowladgebase?"*.
+
+**Single-theme Clasic master LOCK V1 implications:**
+- Tasks X (Lux storyboard ~6-8h) + Y (BC paradigm ~3-4h) + carry-forward Phase 3+3.5 backlog (Cluster #4 Istoric + Cluster #6 Workflow V1 LOCK + Task I muscleMap + QA calibration banner) → DEFERRED post Clasic master 100% production-ready confirmed Daniel Gates smoke
+- Knowledge base architecture deselect plan (~10-12% capacity gain combined): deselect LB+Lux+BC mockups + 02-audit + 05-findings-tracker + 06-sessions-log + 07-meta + 08-workflows + public + react-test.html + tsconfig.* + playwright.config.js
+- Total post-cuts ~88-91% capacity headroom rezonabil
+- Preserve: andura-clasic.html + REACT_MIGRATION_STATE_MAPPING_V1 + 04-architecture critic specs + src/ 40% + 03-decisions/ 17% + 00-index/ 10% + 01-vision/ 4% + VAULT_RULES.md 2%
+
+**Action Daniel:**
+1. Smoke DEPTH cap-coadă Clasic FIRST per `LATEST_CONSOLIDATED.md §Smoke Validation Priority` P0 → P1 (NU "fugitiv")
+2. Deselect knowledge base files per plan (capacity gain ~10-12%)
+3. Schedule Phase 4 dedicate session post Clasic master 100% smoke validation OK (~22-30h estimated combined backlog: Tasks X+Y full + T+U + carry-forward Phase 3+3.5 muscleMap + QA calibration + Cluster #4+#6)
+4. Decide merge `feature/phase-3-orchestrator-final` la main timing post Clasic master smoke validation OK (16 commits chain `47dcca8 → 3ff5726`)
+
+**Cross-refs:** `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry 2026-05-10 Phase 3.5 closure + STRATEGIC SHIFT + `03-decisions/DECISION_LOG.md` top entry same date + handover archived NN 349 + LATEST_CONSOLIDATED.md Phase 3+3.5 archived NN 350+362.
+
+---
+
+### P1-FLAG-3-TIER-TESTING-DISTINCTION — LOCAL vitest CC / e2e Playwright CI/CD / Daniel Gates prod (2026-05-10)
+
+**Status:** 🟢 LOCKED V1 ANTI-RECURRENCE RULE (post Slip Co-CTO #2 mid-Phase 3 confirmation theater "solid + minor edge cases" claim BEFORE Daniel smoke → 13+ buguri Daniel smoke fugitiv)
+**Severity:** P1 process discipline — CC orchestrator LANDED claim format MUST distinguish 3 tiers
+
+**Rule LOCKED V1:**
+1. **LOCAL vitest CC autonomous** — 2731 PASS preserved local (CC orchestrator fast feedback)
+2. **e2e Playwright CI/CD GitHub Actions** — full integration tests scope (NU run pre-LANDED claim CC orchestrator)
+3. **Daniel Gates prod smoke andura.app** — final acceptance pe production deploy
+
+**CC orchestrator LANDED status = LOCAL vitest only — NU implies smoke prod-ready Daniel Gates.** CC NU ran e2e suite + NU ran prod smoke pre-LANDED claim. Future LANDED claim format mandatory: "LANDED LOCAL vitest 2731 PASS — pending e2e CI/CD + Daniel Gates smoke validation."
+
+**Action CC orchestrator:** Apply 3-tier distinction în toate raporturile LANDED post-execution. NU promite "smoke clean expected" sau "minor edge cases" pre Daniel Gates smoke.
+
+---
+
+### P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER — e2e test fail Phase 4 backlog (2026-05-10)
+
+**Status:** 🟡 OPEN Phase 4 backlog NU urgent (single-theme Clasic FIRST strategic shift)
+**Severity:** P1 e2e test fail — `e2e/scenarios/calibration-ui.spec.js:193` LOW_ADHERENCE banner NU se afișează
+
+**Issue:**
+- Test: `CDL with 5 real entries low adherence shows LOW_ADHERENCE banner`
+- Expect: text `/Adherence scăzută/i` în body
+- Actual: body afișează default state "DATE INSUFICIENTE Completează 2+ sesiuni"
+- Bug: LOW_ADHERENCE banner NU se afișează când CDL 5 entries low adherence threshold met
+
+**Investigation Phase 4:**
+- `src/engine/calibration.js` LOW_ADHERENCE logic verify
+- `src/engine/CDL.js` adherence calculation + threshold verify
+- `e2e/scenarios/calibration-ui.spec.js:193` test setup verify (5 entries low adherence reproduction conditions)
+
+**Action Daniel:** Schedule Phase 4 dedicate session — bundle cu Tasks X+Y+T+U+muscleMap (~22-30h combined)
+
+---
+
 ### P1-FLAG-1 — ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md SOURCE PENDING UPLOAD
 
 **Status:** 🟡 PARTIALLY MITIGATED 2026-05-03 (chat strategic post-audit) — Faza 3 va integra direct sub-secțiuni A-M ADR 023 din addendum context window în chat strategic original (NU file upload separate). Original raised 2026-05-03 audit total ingest.
