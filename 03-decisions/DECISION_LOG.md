@@ -1,6 +1,79 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ continuation 3 — MOCKUP SWEEP #1 LANDED main + BATCH 2 ANTRENOR PORT SUB-BATCH 1 LANDED feature/v2-vanilla-port — autonomous Co-CTO scope (cumulative ~742 PRESERVED, router scaffold meta-tooling NU additive)
+
+**Status:** Chat ACASĂ continuation 3 LANDED autonomous Co-CTO scope per Daniel autonomy lock EXTINS REAFFIRMED *"esti autonomous pana la launch beta cand fac eu review"*. 17 commits chain end-to-end pe 2 branch (9 mockup sweep main `a9ddfa8..71e6445` + 4 substantive BATCH 2 SUB-BATCH 1 feature `f23453f..be82938` + auto-watcher captures). Tests **2732 → 2736 PASS** (+4 net router cases). Cumulative LOCKED V1 **~742 PRESERVED unchanged** (mockup polish + router scaffold meta-tooling NU additive product/architecture LOCK V1). NEXT P1 chat NEW = **BIROU SETUP MCP** pe laptop birou Daniel mâine.
+
+**Authority:** Daniel autonomy lock EXTINS REAFFIRMED chat-current 3 verbatim *"esti autonomous pana la launch beta cand fac eu review"* (extension chat-current 2 *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi"*) + push-back productive *"de ce sa faci handover la 55%"* (slip handover spontaneous mid-execute corectat instant).
+
+**1. Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED main chain `a9ddfa8..71e6445`:**
+
+Per `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 sub-decision #1 (Bugatti SoT clean port single — fix once mockup, port clean once), executed Phase A audit + Phase B fixes + Phase C vault sync.
+
+**Phase A audit:** `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` 18 findings (3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward DIFF_FLAGS) Bugatti craft 360° narrative.
+
+**Phase B fixes 8 atomic:**
+
+| # | Commit | Severity | Concern |
+|---|--------|----------|---------|
+| 1 | `a9ddfa8` | P0-1 | Cloudflare email-protection injection removal — 7 sites obfuscated `__cf_email__` placeholder + email-decode CDN script tag → restored daniel@andura.ro / support@andura.ro plain |
+| 2 | `37f8a42` | P0-2 | Duplicate ID stub divs removal — 4 vestigial screen-coach/home/sala/progress empty placeholders broke `goto('coach')` routing + HTML5 §3.2.5.1 invalid |
+| 3 | `0930b2a` | P0-3 | Medical disclaimer landing target home → antrenor — V1 LOCK 4-tab nav alignment |
+| 4 | `b2acb11` | P1-1 | Typo intenctie → intentie — Despre Andura body copy Bugatti polish |
+| 5 | `2100eef` | P1-2/3/4 | Remove 3 dead legacy screens (sala/home/coach) + orphan JS callers + tab alias cleanup → -207 LOC |
+| 6 | `55846b3` | P1-5 | pickTheme JS unicode escape — drop ă diacritic NO_DIACRITICS_RULE LOCK V1 violation |
+| 7 | `abcb8fd` | P1-6 | Engine jargon → Coach jargon — 5 sites Glossary V1 LOCK Gigel-friendly |
+| 8 | `8d16361` | P1-7 | RPE numeric jargon → intensitate buckets — 6 sites Glossary V1 LOCK |
+
+**Phase C vault sync:** `699de65` + `4c0becf` + `42c4108` + `71e6445` (CURRENT_STATE + DECISION_LOG + DIFF_FLAGS P2/P3 carry-forward + INDEX_MASTER refresh + LATEST.md cycle NN 365 + audit raport archive NN 366).
+
+**Impact:** File `04-architecture/mockups/andura-clasic.html` 2351 → 2144 LOC (-207 net). Tests 2732 PASS preserved EXACT (mockup-only changes ZERO src/ touched). Sub-decision #1 prerequisite RESOLVED LANDED.
+
+**2. BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port chain `f23453f..a0e8113`:**
+
+Per `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 sub-decision #5 (NEW branch `feature/v2-vanilla-port`) + `04-architecture/V1_FEATURES_AUDIT_V1.md` §LOCK V1 selective port + `📤_outbox/BATCH_1_ANTRENOR_PLAN.md` §3 EXECUTION 10-step Step 1 router scaffold.
+
+**4 substantive commits + 1 auto-watcher:**
+
+| # | Commit | Concern |
+|---|--------|---------|
+| 1 | `f23453f` | Amendment §4 checklist 7/7 RESOLVED post-LOCK V1 reconciliation `📤_outbox/BATCH_2_AMENDMENT_POST_LOCK_V1.md` (5/7 via PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT_V1 LOCKs SSOT + 2/7 Co-CTO autonomous lock) |
+| 2 | `dab7247` | `src/router.js` NEW ~50 LOC minimal intra-coach navigation + `andura:screen-change` event dispatch — replaces mockup `goto()` global pattern |
+| 3 | `ce30efe` | `src/state.js` +2 fields (24→26): `currentScreen: 'antrenor'` default + `cevaNuMergeReason: null` |
+| 4 | `be82938` | `src/__tests__/router.test.js` NEW 4 cases (navigate sets state + event dispatch + sequential preserve + defensive validation) |
+| — | `a0e8113` | chore(auto): outbox/LATEST.md (auto-watcher capture) |
+
+**Tests:** 2732 → **2736 PASS** (+4 net router cases). Branch tracking origin/feature/v2-vanilla-port synced. BATCH 1 docs preserved (`📤_outbox/BATCH_1_ANTRENOR_INVENTORY.md` + `BATCH_1_ANTRENOR_PLAN.md` solid base post-LOCK reconciliation).
+
+**Decisions silent log scribe (chat-current 3 tactical autonomous):**
+- Mockup sweep #1 sub-decisions 8 (audit-driven fixes + 3 extras gestated during exec)
+- BATCH 2 SUB-BATCH 1 §4 checklist 7/7 resolutions (5 via LOCK V1 SSOT + 2 Co-CTO autonomous)
+- Naming preserve `src/pages/coach/` directory (engine cross-file imports stability priority)
+- state.js +2 fields singleton pattern (NU router context object, V1 consistency)
+- Persona conditional = JS render-on-mount + persona-change event listener (NU CSS class direct)
+- Tests target ~2790-2810 adjusted upward from BATCH 1 PLAN ~2780 baseline (F14 + F15 retention)
+
+**Push-backs productive scribe Daniel chat-current 3:**
+- *"de ce sa faci handover la 55%"* → slip handover spontaneous mid-execute corrected. Memory rule reaffirmed handover timing = natural saturation OR Daniel signal explicit. Discipline anti-paternalism.
+- Agent claude_code internal push-back: rebase/destructive ops require explicit permission gate. Switched to merge non-destructive. BATCH 1 docs preserved.
+- Agent claude_code surface "stale BATCH 1 vs main SSOT" finding pre-merge → resolved via amendment file post-LOCK reconciliation.
+
+**Mid-flight NEXT P1 chat NEW = 🔴 BIROU SETUP MCP** pe laptop birou Daniel mâine. Steps pas-cu-pas: clone repo `C:\Users\<userprofile>\Documents\salafull` + `npm install` + Claude Desktop config `claude_desktop_config.json` allowed paths add path local + restart Claude Desktop + test cu chat NEW *"salut birou"* → eu §CC.2 layered read MCP filesystem PRIMARY autonomous self-serve. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope HR Senior preserved.
+
+**Subsequent post-birou:** BATCH 2 SUB-BATCH 2 = Step 2 idle.js implementation (replaces renderIdle.js 465 LOC per V1_FEATURES_AUDIT_V1 LOCK V1). Scope ~30-45 min CC + 1-2 tests + 2 commits atomic pe `feature/v2-vanilla-port`. Subsequent SUB-BATCH 3-6 per BATCH_1_ANTRENOR_PLAN.md §3 Steps 3-10.
+
+**Cross-refs:**
+- `📤_outbox/_archive/2026-05/367_HANDOVER_2026-05-10_chat_acasa_continuation_3_BATCH_2_SUB_BATCH_1_LANDED_BIROU_SETUP_NEXT_CONSUMED.md` (handover NN 367 archived)
+- `📤_outbox/_archive/2026-05/368_LATEST_MOCKUP_SWEEP_BUGURI_RAPORT_CONSUMED.md` (previous LATEST cycled NN 368 sequential)
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED + §NOW move-then-replace + §NEXT update
+- `DIFF_FLAGS.md` P1-FLAG-PORT-FIRST-THEN-REACT status update IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED + NEW P1-FLAG-BIROU-SETUP-MCP P1 priority chat NEW
+- Backup tag pre-§CC.5 ingest pushed origin (rollback safety)
+
+🦫 **Bugatti craft. Mockup sweep #1 + BATCH 2 SUB-BATCH 1 LANDED autonomous Co-CTO scope. Tests 2736 PASS / 1 e2e skip. Cumulative ~742 PRESERVED unchanged. BIROU SETUP MCP P1 chat NEW.**
+
+---
+
 ## 2026-05-10 chat ACASĂ continuation 2 — MOCKUP BURURI SWEEP #1 LANDED — 8 atomic commits autonomous (cumulative ~742 PRESERVED, mockup polish meta-tooling NU additive)
 
 **Status:** Mockup buguri sweep #1 single-theme Clasic master `04-architecture/mockups/andura-clasic.html` LANDED autonomous Co-CTO scope. 8 atomic fix commits a9ddfa8 → 8d16361 (5 primary P0/P1 + 3 supplementary post second-opinion audit). Net file -228 LOC (2351 → 2123). Tests 2732 PASS preserved EXACT through all 8 commits via pre-commit hook. Cumulative LOCKED V1 ~742 PRESERVED unchanged (mockup polish meta-tooling NU additive product/architecture LOCK V1).

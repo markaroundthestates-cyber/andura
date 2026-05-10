@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Mockup buguri sweep #1 LANDED 8 atomic commits autonomous (NEW P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT sub-decision #1 RESOLVED + 6 NEW P3 carry-forward DIFF_FLAGS mockup polish/refactor V2 React port time). Predecessor Updated: 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED. Tests baseline 2732 PASS preserved EXACT through all 8 mockup-fix commits via pre-commit hook. Cumulative ~742 PRESERVED (mockup polish meta-tooling NU additive).
+**Updated:** 2026-05-10 chat ACASĂ continuation 3 — BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port (router.js NEW + state.js +2 fields + router.test.js 4 cases + amendment §4 7/7 RESOLVED) + Mockup sweep #1 main LANDED chain `a9ddfa8..71e6445`. P1-FLAG-PORT-FIRST-THEN-REACT status EXECUTION-READY → IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED + NEW P1-FLAG-BIROU-SETUP-MCP P1 priority chat NEW. Tests 2732 → **2736 PASS** (+4 net router cases). Cumulative ~742 PRESERVED unchanged (router scaffold + mockup polish meta-tooling NU additive). Predecessor Updated: 2026-05-10 chat ACASĂ continuation 2 — Mockup buguri sweep #1 LANDED 8 atomic commits autonomous + 3 LOCK V1 substantive LANDED.
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
@@ -33,6 +33,29 @@
 ---
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
+
+### P1-FLAG-BIROU-SETUP-MCP — Birou laptop MCP filesystem setup chat NEW PRIMARY (2026-05-10 chat-current 3)
+
+**Status:** 🔴 P1 PRIORITY CHAT NEW 2026-05-10 chat-current 3 — Daniel mâine la birou laptop, vrea MCP funcțional NU halucineze chat-uri. Chat NEW deschid cu *"salut birou"* trigger + ghidare pas-cu-pas setup MCP. Daniel zero courier paradigm.
+**Severity:** P1 priority chat NEW (workflow continuity laptop birou parity laptop ACASĂ MCP filesystem direct paradigm)
+
+**Steps pas-cu-pas birou setup:**
+1. Clone repo local laptop birou: `git clone https://github.com/markaroundthestates-cyber/andura.git C:\Users\<userprofile>\Documents\salafull`
+2. `cd salafull` + `npm install` (deps install)
+3. Config Claude Desktop `claude_desktop_config.json`: allowed paths add `C:\Users\<userprofile>\Documents\salafull`
+4. Restart Claude Desktop
+5. Test cu chat NEW *"salut birou"* → eu §CC.2 layered read MCP filesystem PRIMARY autonomous self-serve
+6. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved (NU sync work files acasă pe equipment work).
+
+**Daniel constraint:** NU mai vrea Codespaces (atins limita). Are Claude Desktop deja instalat birou.
+
+**Path consistent recomandat:** `C:\Users\<userprofile>\Documents\salafull` (parity ACASĂ).
+
+**Action Daniel chat NEW:** deschide chat NEW Claude Desktop birou cu *"salut birou"* — eu ghidez pas-cu-pas + verifică fiecare step. Post-setup confirmed → continue autonomous direct BATCH 2 SUB-BATCH 2 idle.js implementation pe `feature/v2-vanilla-port`.
+
+**Cross-refs:** `00-index/CURRENT_STATE.md` §JUST_DECIDED chat-current 3 + §NEXT P1 #1 + `03-decisions/DECISION_LOG.md` chat-current 3 entry top + handover archived NN 367.
+
+---
 
 ### P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED — Mockup buguri sweep #1 single-theme Clasic master LANDED (2026-05-10 chat-current 2)
 
@@ -94,9 +117,9 @@
 
 ---
 
-### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot LOCK V1 EXECUTION-READY (2026-05-10 chat-current 2)
+### P1-FLAG-PORT-FIRST-THEN-REACT — Strategic pivot IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED (2026-05-10 chat-current 3)
 
-**Status:** 🟢 LOCKED V1 EXECUTION-READY 2026-05-10 chat-current 2 — **sub-decision #1 prerequisite RESOLVED LANDED (mockup buguri sweep #1 chain `a9ddfa8 → 8d16361` LANDED, P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED 🟢 RESOLVED top entry)**. Sub-decisions #2 paradigm + #5 NEW branch + selective port `renderIdle.js`/`rating.js` per V1_FEATURES_AUDIT_V1 LOCK V1 = NEXT P1 BATCH 2 Antrenor execution unblocked. Predecessor 🟢 LOCKED V1 SUBSTANTIVE chat-current 1 superseded. All 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*. Cumulative impact ~719 → ~727 (+7 net via PORT_FIRST_STEP_1_PARADIGM_V1 §LOCK V1 2026-05-10 Co-CTO Autonomous).
+**Status:** 🟡 IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED 2026-05-10 chat-current 3 — predecessor 🟢 LOCKED V1 EXECUTION-READY (chat-current 2) → 🟡 IN PROGRESS chat-current 3. SUB-BATCH 1 router scaffold LANDED feature/v2-vanilla-port chain `f23453f..be82938` (4 substantive: amendment §4 7/7 + `src/router.js` NEW ~50 LOC + `src/state.js` +2 fields + `src/__tests__/router.test.js` NEW 4 cases). Tests **2732 → 2736 PASS** (+4 net). NEXT P1 chat NEW = BIROU SETUP MCP (cross-ref P1-FLAG-BIROU-SETUP-MCP top entry); subsequent SUB-BATCH 2 idle.js implementation (replaces renderIdle.js 465 LOC per V1_FEATURES_AUDIT_V1 LOCK V1). All 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS REAFFIRMED chat-current 3 *"esti autonomous pana la launch beta cand fac eu review"*. Cumulative impact ~742 PRESERVED unchanged (router scaffold meta-tooling NU additive product/architecture).
 **Severity:** P1 strategic pivot — affects ALL future development paradigm
 
 **Issue:**
