@@ -32,7 +32,11 @@ Phase 3.6 cluster #1 attempt CC autonomous revealed mockup vs prod distincție F
 - Migration React = mecanic mapping (preserve structure), NU greenfield rewrite
 - Risk-averse: validate vanilla JS port → migration React clean
 
-**Action Daniel (next chat strategic dedicated — Step 1 scope clarification — 7 mid-flight unresolved):**
+**Action Daniel (Co-CTO SPEC DRAFT V1 prep gata 2026-05-10 chat-current continuation — review `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` ~10-15 min CEO scope):**
+
+Co-CTO recommended 5 tactical sub-decisions (#1 mockup clean state întâi + #2 structural restructure cap-coadă + #5 NEW branch `feature/v2-vanilla-port` + #6 vitest 2734 PASS preserved + extend). Daniel CEO LOCK V1 strategic 2 sub-decisions remaining (#3 UI restructure scope A vs B + #4 Phase 3+3.5 selective port + #7 mockup post-port paradigm).
+
+**Original 7 sub-decisions verbatim source:**
 1. Pre-port mockup buguri fix decision: clean state mockup ÎNTÂI sau direct port + fix vanilla forward
 2. Step 1 port paradigm: incremental tab-by-tab sau structural restructure cap-coadă
 3. UI restructure scope: prod V1 6 taburi → V2 4 taburi (rename+merge+drop sau structural rewrite)

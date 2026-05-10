@@ -53,6 +53,9 @@ Root cause identificat `.claude/settings.json` Stop hook: `git add -A` + commit 
 - `.claude/settings.json` modified inline (NU separate ADR — config-level fix, vault meta-tooling)
 - `00-index/CURRENT_STATE.md` §ACTIVE_FLAGS P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED 🟡 → 🟢 RESOLVED PROBATION (next session validates)
 - `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-10 chat ACASĂ continuation auto-watcher race P3 fix
+- `DIFF_FLAGS.md` 5-day drift cleanup commit `0b783b4` (2 stale flags corrected + 4 new entries: prod bugs RESOLVED `05ba372` + auto-watcher RESOLVED PROBATION `8bd5dbb` + claude_code intermittent P2 monitor)
+- `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` SPEC DRAFT V1 NEW (Co-CTO recommendations 5 tactical sub-decisions + 2 flagged Daniel-decide strategic, pending CEO LOCK V1)
+- Hooks audit clean: `.husky/pre-commit` + `.github/workflows/{ci,deploy,qa-report}.yml` NO race patterns. Minor inconsistency flagged: deploy.yml + qa-report.yml folosesc `npm install` + node 20 vs ci.yml `npm ci` + node 22 — defer dedicated chat (NU blocker)
 
 ---
 
@@ -77,14 +80,15 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 ## NEXT — Priority order
 
-1. **Birou setup MCP filesystem mâine cu laptop birou** (Daniel constraint: NU mai vrea Codespaces, atins limita; are Claude Desktop deja instalat birou). Steps: clone repo local laptop birou + `npm install` + config `claude_desktop_config.json` allowed paths cu local path + restart Claude Desktop + test cu chat NEW *"salut birou"*. Path consistent recomandat: `C:\Users\<userprofile>\Documents\salafull`. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved.
-2. **Daniel smoke test prod bugs fix LANDED `05ba372`** — andura.app live validate Bug 1 visual (Auto template auto-faza behavior — phase auto-detect din BF + sezon, kcal NU mai 2000 hardcoded) + Bug 2 visual (BF manual edit pe greutate constantă → kcal phase recalculate Katch-McArdle).
-3. **Auto-watcher race P3 validation natural next claude_code session** — monitor commits post time gate 90s fix LANDED `.claude/settings.json` (chat-current continuation). Dacă recurrence → escalate (glob filter narrow, debounce, sau disable hook).
-4. **CEO decizie V1 features audit blocking BATCH 2 Antrenor** — `renderIdle.js` 465→180 LOC pierde streak counter + BMR strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Daniel decide keep all V1 features sau drop la mockup V2 strict. Strategic UX = CEO scope.
-5. **BATCH 2 Antrenor port implement** post CEO decision — separate prompt CC artefact. Branch `feature/v2-vanilla-port`.
-6. **Phase 4 dedicate session** post Clasic 100% smoke validation OK ~22-30h estimated combined backlog (Tasks X+Y full + T+U + carry-forward Phase 3+3.5 muscleMap + QA calibration + Cluster #4+#6).
-7. **Workflow antrenament V1 LOCK** ~5 min decizie carry-forward (auto-advance pauză → next set + edit manual kg+reps post-set).
-8. **Big 6 conflict resolve** ONBOARDING_SSOT_V1 vs ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 carry-forward.
+1. **Daniel CEO LOCK V1 Port-First Step 1 paradigm SPEC DRAFT V1** — review `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` (Co-CTO recommendations 5 tactical + 2 flagged Daniel-decide #3 UI restructure scope + #4 Phase 3+3.5 selective port + #7 mockup post-port paradigm). ~10-15 min CEO scope. **Blocks Step 1 Port-First execution → BATCH 2 Antrenor → Phase 4 → Beta gate.**
+2. **Birou setup MCP filesystem mâine cu laptop birou** (Daniel constraint: NU mai vrea Codespaces, atins limita; are Claude Desktop deja instalat birou). Steps: clone repo local laptop birou + `npm install` + config `claude_desktop_config.json` allowed paths cu local path + restart Claude Desktop + test cu chat NEW *"salut birou"*. Path consistent recomandat: `C:\Users\<userprofile>\Documents\salafull`. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved.
+3. **Daniel smoke test prod bugs fix LANDED `05ba372`** — andura.app live validate Bug 1 visual (Auto template auto-faza behavior — phase auto-detect din BF + sezon, kcal NU mai 2000 hardcoded) + Bug 2 visual (BF manual edit pe greutate constantă → kcal phase recalculate Katch-McArdle).
+4. **Auto-watcher race P3 validation natural next claude_code session** — monitor commits post time gate 90s fix LANDED `.claude/settings.json` (chat-current continuation). Dacă recurrence → escalate (glob filter narrow, debounce, sau disable hook).
+5. **CEO decizie V1 features audit blocking BATCH 2 Antrenor** — `renderIdle.js` 465→180 LOC pierde streak counter + BMR strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Daniel decide keep all V1 features sau drop la mockup V2 strict. Strategic UX = CEO scope.
+6. **BATCH 2 Antrenor port implement** post CEO decision — separate prompt CC artefact. Branch `feature/v2-vanilla-port`.
+7. **Phase 4 dedicate session** post Clasic 100% smoke validation OK ~22-30h estimated combined backlog (Tasks X+Y full + T+U + carry-forward Phase 3+3.5 muscleMap + QA calibration + Cluster #4+#6).
+8. **Workflow antrenament V1 LOCK** ~5 min decizie carry-forward (auto-advance pauză → next set + edit manual kg+reps post-set).
+9. **Big 6 conflict resolve** ONBOARDING_SSOT_V1 vs ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 carry-forward.
 
 ---
 
