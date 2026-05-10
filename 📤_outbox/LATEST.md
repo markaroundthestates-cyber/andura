@@ -1,30 +1,34 @@
-# TASK N — Pause timer real countdown ✅
+# TASK O — Manual kg input + engine increments per exercise ✅
 
-- **Task:** N — pause timer tickPause real countdown cross-skin × 4
+- **Task:** O — manual kg input + engine increments per exercise cross-skin × 4
 - **Model:** Opus
-- **Status:** ✅ LANDED (Clasic+LB+BC) + Lux Task X scope
+- **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (BC paradigm separate post-rpe + Lux Task X scope)
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB Task F LANDED: rest-timer cu static "1:18" display, NO countdown wired (Daniel verbatim: "timerul e blocat la 1:18")
-- BC: separate screen-rest-timer cu "01:08" static
-- Source-of-truth `src/pages/coach/restTimer.js` startPause/tickPause/stopPause pattern
+- Clasic+LB: kg-input `<div>` static `textContent` (NU input editable) + adjKg(±2.5) hardcoded (Daniel verbatim "manual input sa nu apesi de 300 ori pe +/-")
+- BC: separate screen-post-rpe pentru kg adjustment (different paradigm)
+- Lux: storyboard Task X
 
 ## Modificări
-- `andura-clasic.html`: `startPause(90)` în confirmSetInline → state.pauseLeft=90 + setInterval(tickPause,1000) + `fmtMS(secs)` formatter "M:SS" + tickPause decrement + circle progress dashoffset transition + beep last 3 sec (visual flash color #c8412e) + auto stopPause+toast "⏰ Gata!" la 0
-- `andura-living-body.html`: same pattern, palette divergent var(--accent) auriu
-- `andura-brain-coach.html`: bc-rest-time + bc-rest-progress IDs + startPause(90)+tickPause+stopPause + auto-trigger via document.addEventListener click pe `[onclick*="rest-timer"]` + back() la 0
-- `andura-luxury.html`: NO changes (Task X scope storyboard refactor)
+- `andura-clasic.html`: 
+  - reps-input + kg-input → `<input type="number" inputmode="numeric/decimal" min/max/step value>` editable manual cu numpad mobile
+  - KG_INCREMENTS map per exercise: Împins înclinat 1.25 (dumbbell pair), Squat/Deadlift/Bench Press 2.5 (barbell compound), Lateral Raises/Bicep Curl 1 (isolation), default 2.5
+  - getKgIncrement() reads current ex from #screen-workout h2 + lookup map
+  - adjKg/adjReps read from `el.value` (input) cu fallback `textContent` (legacy compat)
+  - confirmSetInline reads kg/reps from `el.value` (input cast)
+- `andura-living-body.html`: same pattern, palette divergent
+- BC: NO changes (paradigm separate post-rpe screen)
+- Lux: NO changes (Task X scope)
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task N atomic).
+- Pending commit (Task O atomic).
 
 ## Issues
-- Beep last 3 sec = visual color flash NU audio (mockup constraint, prod uses beep audio per src/pages/coach/restTimer.js)
-- skipRestPause stopPause + toast warning preserved (Task F LANDED)
+- Engine kg increments map mockup-only hardcoded (port from src/engine prod source-of-truth pentru full per-exercise lookup deferred Phase 4 — current 6 exemple acoperă cele mai frecvente compound + isolation cazuri)
 
 ## Next action
-Task O — manual kg input + engine increments per exercise cross-skin × 4.
+Task P — kcal+proteine save handler cross-skin × 4.

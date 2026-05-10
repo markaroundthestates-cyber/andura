@@ -1431,15 +1431,16 @@
                 </div>
                 <!-- Edit reps + kg adjust inline (post-set adjSessionReps/adjSessionKg) -->
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                  <!-- Reps + Kg input editable Task O 2026-05-10 chat ACASĂ post-smoke (manual input + numpad mobile) -->
                   <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.2); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
                     <button onclick="adjReps(-1)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">−</button>
-                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">REPS</div><div id="reps-input" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink);">10</div></div>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">REPS</div><input type="number" id="reps-input" inputmode="numeric" min="1" max="30" value="10" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink); width:50px; text-align:center; border:none; background:transparent; font-size:16px;"/></div>
                     <button onclick="adjReps(1)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">+</button>
                   </div>
                   <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.2); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
-                    <button onclick="adjKg(-2.5)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">−</button>
-                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">KG</div><div id="kg-input" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink);">22.5</div></div>
-                    <button onclick="adjKg(2.5)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">+</button>
+                    <button onclick="adjKg(-getKgIncrement())" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">−</button>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">KG</div><input type="number" id="kg-input" inputmode="decimal" min="0" max="500" step="0.5" value="22.5" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink); width:60px; text-align:center; border:none; background:transparent; font-size:16px;"/></div>
+                    <button onclick="adjKg(getKgIncrement())" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">+</button>
                   </div>
                 </div>
                 <button class="btn-brick" onclick="confirmSetInline()" style="width:100%;">Confirmă set</button>
@@ -2685,19 +2686,34 @@
   window.selectInlineRpe = selectInlineRpe;
   function adjReps(delta) {
     const el = document.getElementById('reps-input'); if (!el) return;
-    let v = parseInt(el.textContent || '0', 10) + delta;
-    v = Math.max(1, Math.min(30, v)); el.textContent = v;
+    let v = (parseInt(el.value || el.textContent || '0', 10) || 0) + delta;
+    v = Math.max(1, Math.min(30, v));
+    if ('value' in el) el.value = v; else el.textContent = v;
   }
   window.adjReps = adjReps;
+  // Engine kg increments map per exercise type (Task O)
+  const KG_INCREMENTS = {
+    'Împins înclinat': 1.25, 'Squat': 2.5, 'Deadlift': 2.5, 'Bench Press': 2.5,
+    'Lateral Raises': 1, 'Bicep Curl': 1, 'default': 2.5,
+  };
+  function getKgIncrement() {
+    const exH2 = document.querySelector('#screen-workout h2');
+    const exName = exH2?.textContent?.trim().split(' ').slice(0, 2).join(' ') || 'default';
+    return KG_INCREMENTS[exName] ?? KG_INCREMENTS.default;
+  }
+  window.getKgIncrement = getKgIncrement;
   function adjKg(delta) {
     const el = document.getElementById('kg-input'); if (!el) return;
-    let v = parseFloat(el.textContent || '0') + delta;
-    v = Math.max(0, Math.round(v * 10) / 10); el.textContent = v;
+    let v = (parseFloat(el.value || el.textContent || '0') || 0) + delta;
+    v = Math.max(0, Math.round(v * 10) / 10);
+    if ('value' in el) el.value = v; else el.textContent = v;
   }
   window.adjKg = adjKg;
   function confirmSetInline() {
-    const reps = document.getElementById('reps-input')?.textContent || '?';
-    const kg = document.getElementById('kg-input')?.textContent || '?';
+    const repsEl = document.getElementById('reps-input');
+    const kgEl = document.getElementById('kg-input');
+    const reps = (repsEl && (repsEl.value || repsEl.textContent)) || '?';
+    const kg = (kgEl && (kgEl.value || kgEl.textContent)) || '?';
     const rpeMsg = _sessionRpe != null ? ` · RPE ${_sessionRpe}` : '';
     showToast(`Set logat: ${reps} reps × ${kg}kg${rpeMsg}`);
     document.getElementById('rpe-inline').style.display = 'none';

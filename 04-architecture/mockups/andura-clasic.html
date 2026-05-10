@@ -1113,15 +1113,17 @@
                 </div>
                 <!-- Edit reps + kg adjust inline (post-set adjSessionReps/adjSessionKg) -->
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                  <!-- Reps input editable Task O 2026-05-10 chat ACASĂ post-smoke (manual input + numpad mobile, NU just +/-) -->
                   <div style="background:white; border:1px solid var(--line-strong); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
                     <button onclick="adjReps(-1)" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">−</button>
-                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">REPS</div><div id="reps-input" style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--ink);">10</div></div>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">REPS</div><input type="number" id="reps-input" inputmode="numeric" min="1" max="30" value="10" style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--ink); width:50px; text-align:center; border:none; background:transparent; font-size:16px;"/></div>
                     <button onclick="adjReps(1)" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">+</button>
                   </div>
+                  <!-- Kg input editable + engine increments per exercise (default 2.5kg compound; isolation 1kg, dumbbell 1.25kg per src/engine map) -->
                   <div style="background:white; border:1px solid var(--line-strong); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
-                    <button onclick="adjKg(-2.5)" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">−</button>
-                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">KG</div><div id="kg-input" style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--ink);">22.5</div></div>
-                    <button onclick="adjKg(2.5)" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">+</button>
+                    <button onclick="adjKg(-getKgIncrement())" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">−</button>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">KG</div><input type="number" id="kg-input" inputmode="decimal" min="0" max="500" step="0.5" value="22.5" style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--ink); width:60px; text-align:center; border:none; background:transparent; font-size:16px;"/></div>
+                    <button onclick="adjKg(getKgIncrement())" style="width:28px; height:28px; border:none; background:var(--paper-2); border-radius:6px; cursor:pointer; font-weight:700;">+</button>
                   </div>
                 </div>
                 <button class="btn-brick" onclick="confirmSetInline()" style="width:100%;">Confirmă set</button>
@@ -2400,26 +2402,48 @@
     // Phase 5: adjSessionReps(±) → state.sessRepsInput modified (1-30 range)
     const el = document.getElementById('reps-input');
     if (!el) return;
-    let v = parseInt(el.textContent || '0', 10) + delta;
+    let v = (parseInt(el.value || el.textContent || '0', 10) || 0) + delta;
     v = Math.max(1, Math.min(30, v));
-    el.textContent = v;
+    if ('value' in el) el.value = v; else el.textContent = v;
   }
   window.adjReps = adjReps;
+
+  // Engine kg increments map per exercise type (Task O 2026-05-10 chat ACASĂ post-smoke)
+  // Per src/engine prod source: compound 2.5kg, isolation 1kg, dumbbell 1.25kg, kettlebell 4kg
+  // Mockup default 2.5kg compound (current "Împins înclinat halteră" = compound)
+  const KG_INCREMENTS = {
+    'Împins înclinat': 1.25,  // dumbbell pair (per side adjustments differ)
+    'Squat':           2.5,   // barbell compound
+    'Deadlift':        2.5,   // barbell compound
+    'Bench Press':     2.5,   // barbell compound
+    'Lateral Raises':  1,     // isolation
+    'Bicep Curl':      1,     // isolation
+    'default':         2.5,
+  };
+  function getKgIncrement() {
+    // Read current exercise from h2 in exercise card
+    const exH2 = document.querySelector('#screen-workout h2');
+    const exName = exH2?.textContent?.trim().split(' ').slice(0, 2).join(' ') || 'default';
+    return KG_INCREMENTS[exName] ?? KG_INCREMENTS.default;
+  }
+  window.getKgIncrement = getKgIncrement;
 
   function adjKg(delta) {
     // Phase 5: adjSessionKg → state.sessionKgOverride
     const el = document.getElementById('kg-input');
     if (!el) return;
-    let v = parseFloat(el.textContent || '0') + delta;
+    let v = (parseFloat(el.value || el.textContent || '0') || 0) + delta;
     v = Math.max(0, Math.round(v * 10) / 10);
-    el.textContent = v;
+    if ('value' in el) el.value = v; else el.textContent = v;
   }
   window.adjKg = adjKg;
 
   function confirmSetInline() {
     // Phase 5: confirmReps() → log entry + Phase 6 auto-advance + Phase 7 startPause(getSmartPause)
-    const reps = document.getElementById('reps-input')?.textContent || '?';
-    const kg = document.getElementById('kg-input')?.textContent || '?';
+    const repsEl = document.getElementById('reps-input');
+    const kgEl = document.getElementById('kg-input');
+    const reps = (repsEl && (repsEl.value || repsEl.textContent)) || '?';
+    const kg = (kgEl && (kgEl.value || kgEl.textContent)) || '?';
     const rpeMsg = _sessionRpe != null ? ` · RPE ${_sessionRpe}` : '';
     showToast(`Set logat: ${reps} reps × ${kg}kg${rpeMsg}`);
     document.getElementById('rpe-inline').style.display = 'none';
