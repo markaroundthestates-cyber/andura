@@ -1,6 +1,62 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ continuation MCP filesystem — auto-watcher race P3 RESOLVED Stop hook time gate 90s anti-recurrence (4th commit chat-current `.claude/settings.json` time gate fix, cumulative ~719 PRESERVED unchanged)
+
+**Status:** Vault meta-tooling fix corige existing intent NU product/architecture additive. Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2734 PASS preserved (config-only ZERO src/ touched).
+
+**Authority:** Daniel directive verbatim chat-current ACASĂ continuation 2026-05-10 *"da fa treaba buna si nu ma deranja te rog decat daca e urgent"* (Co-CTO autonomy real lock reaffirmed) + auto-watcher race P3 🟡 ELEVATED `00-index/CURRENT_STATE.md §ACTIVE_FLAGS` chat-current (manifest 4× today commits `a7e951b` + `0b1d781` + `05ba372` + `dc54c2c`).
+
+**Decision tactical Co-CTO LANDED:** Stop hook time gate 90s prepend `.claude/settings.json`.
+
+**Root cause identificat:**
+- `.claude/settings.json` Stop hook command: `cd <repo> && git add -A && git diff --staged --quiet || (commit chore(auto): + push)` fires la FIECARE Stop CC fără filter timpwise
+- Race window 31s observed: când claude_code agent pregătește commit cu Bugatti narrative, Stop hook fires în acel window și capturează first cu mesaj poor `chore(auto):`
+- Manifest 4× today (escalated severity peste 3× initial chat-current `§CC.5` ingest raport)
+
+**Fix:**
+```
+cd "$(git rev-parse --show-toplevel)" || exit 1
+  && AGE=$(($(date +%s) - $(git log -1 --format=%ct)))
+  && [ "$AGE" -ge 90 ]
+  && git add -A
+  && (git diff --staged --quiet || (commit + push))
+  || exit 0
+```
+
+**Mecanic:**
+- Calc HEAD commit age în seconds
+- Dacă < 90s vechi → short-circuit `&&` chain → `|| exit 0` silent (skip auto-commit)
+- Dacă >= 90s → normal flow (stage + check diff + commit + push)
+- 90s = 3× safety margin peste race 31s observed
+
+**Risk assessment:**
+- Primul Stop după CC commit narrative bun → skip auto (good — narrative preserved)
+- Subsequent Stops post-90s cu work-in-progress → capture eventual (safety net intact)
+- Zero loss safety net post fix — doar acoperit race window narrow
+
+**Validation:**
+- Next claude_code session natural test — monitor commits subsequent
+- Dacă recurrence → escalate (glob filter narrow `04-architecture/mockups/` only, sau debounce extend, sau disable hook)
+
+**Files modified atomic 1 commit chat-current continuation:**
+- `.claude/settings.json` — Stop hook command updated cu time gate 90s prepend (config-only)
+- `00-index/CURRENT_STATE.md` — Updated header refresh + §JUST_DECIDED top entry + §NEXT priority list update (item #3 RESOLVED PROBATION) + §ACTIVE_FLAGS line P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED 🟡 → 🟢 RESOLVED PROBATION
+- `03-decisions/DECISION_LOG.md` — entry top descending cronologic (this entry)
+- `00-index/INDEX_MASTER.md` — `Last updated:` line refresh
+
+**Cross-cutting observations carry-forward:**
+- 🟢 P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED RESOLVED PROBATION (validation pending next CC session natural)
+- Anti-recurrence rule potential: dacă fix sustains stable >5 sessions → codify §AR.NEW VAULT_RULES (TBD)
+
+**Cross-refs:**
+- Predecessor entry below 2026-05-10 chat ACASĂ vault hygiene + §AR.19 + prod bugs fix triple atomic LANDED (3 commits chronologic) — chat-current continuation
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry 2026-05-10 chat ACASĂ continuation
+- `00-index/INDEX_MASTER.md` `Last updated:` line refresh chat-current continuation
+
+---
+
+
 ## 2026-05-10 chat ACASĂ MCP filesystem direct paradigm — vault hygiene + §AR.19 NEW + prod bugs fix Bug 1+Bug 2 LANDED triple atomic (3 commits chronologic chat-current pushed origin/main, cumulative ~719 PRESERVED unchanged)
 
 **Status:** Vault meta-tooling + prod bug fix corige existing intent NU product/architecture additive. Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2731 → **2734 PASS** (+3 net new prod bug regression tests, ZERO regression).

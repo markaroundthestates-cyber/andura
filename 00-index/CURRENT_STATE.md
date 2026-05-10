@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-10 chat ACASĂ MCP filesystem direct paradigm — vault hygiene massive cleanup + §AR.19 NEW anti-recurrence + prod bugs fix Bug 1+Bug 2 LANDED triple atomic (3 commits chronologic chat-current pushed origin/main `cc34ca9` + `967460d` + `05ba372`). Tests 2731 → **2734 PASS** (+3 net new prod bug regression tests). Cumulative LOCKED V1 ~719 PRESERVED unchanged (vault meta-tooling + prod fix corige existing intent NU additive).
+**Updated:** 2026-05-10 chat ACASĂ continuation MCP filesystem — auto-watcher race P3 RESOLVED Stop hook time gate 90s anti-recurrence (4th commit chat-current `.claude/settings.json` time gate fix). Cumulative ~719 PRESERVED unchanged (vault meta-tooling fix corige existing intent NU additive).
 **Last LOCKED count (product/architecture):** **~719 LOCKED V1** (chat-current = vault meta-tooling + prod bug fix corige intent existing NU additive — full cumulative narrative preserved în [[../06-sessions-log/RECENT_DECIDED_ARCHIVE]] + [[../03-decisions/DECISION_LOG]]).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -41,6 +41,21 @@ Daniel autonomy lock real respected — accept silent verde 3 batches CC fără 
 
 ## JUST DECIDED
 
+**2026-05-10 chat ACASĂ continuation MCP filesystem — auto-watcher race P3 RESOLVED Stop hook time gate 90s anti-recurrence (cumulative ~719 PRESERVED unchanged):**
+
+Root cause identificat `.claude/settings.json` Stop hook: `git add -A` + commit `chore(auto):` + push fires la FIECARE Stop CC fără filter — capturează agresiv staged work înainte de claude_code agent să comită cu narrative Bugatti. Race window 31s observed. Manifest 4× today commits `a7e951b` + `0b1d781` + `05ba372` + `dc54c2c`.
+
+**Fix tactical Co-CTO LANDED:** Time gate 90s prepend la Stop hook command — `AGE=$(($(date +%s) - $(git log -1 --format=%ct))) && [ "$AGE" -ge 90 ] && ...`. Dacă HEAD commit < 90s vechi → skip auto silent (`|| exit 0`). 90s = 3× safety margin peste race 31s observed. Subsequent Stops post-90s recapturează eventual work-in-progress = safety net intact pentru chestii agent NU comitează singur.
+
+**Risk assessment:** primul Stop după CC commit narrative = skip (good). Subsequent Stops cu work-in-progress = capture eventual after 90s. Zero loss safety net. Validation = next claude_code session natural test, monitor commits.
+
+**Cross-refs:**
+- `.claude/settings.json` modified inline (NU separate ADR — config-level fix, vault meta-tooling)
+- `00-index/CURRENT_STATE.md` §ACTIVE_FLAGS P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED 🟡 → 🟢 RESOLVED PROBATION (next session validates)
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-10 chat ACASĂ continuation auto-watcher race P3 fix
+
+---
+
 **2026-05-10 chat ACASĂ MCP filesystem direct paradigm — vault hygiene + §AR.19 NEW anti-recurrence + prod bugs fix Bug 1+Bug 2 LANDED triple atomic (3 commits chronologic, cumulative ~719 PRESERVED unchanged):**
 
 3 commits LANDED chronologic chat-current pushed origin/main: `cc34ca9` vault hygiene massive cleanup (CURRENT_STATE 596KB→130LOC §CC.6 + RECENT_DECIDED_ARCHIVE first populate 3671 LOC + INDEX_MASTER header trim) + `967460d` §AR.19 NEW VAULT_RULES (claude_code agent timeout MCP delivery ≠ agent crash anti-recurrence rule + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT item 17 reference) + `05ba372` prod bugs Bug 1+Bug 2 fix (sys.js drop pilotActive gate AUTO branch + Katch-McArdle BF-aware BMR cu Mifflin fallback + propagation weight.js + dashboard.js + 3 regression tests NEW T_AUTO_pre_pilot + T_BF_edit_recalc + T8/T4 split).
@@ -64,7 +79,7 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 1. **Birou setup MCP filesystem mâine cu laptop birou** (Daniel constraint: NU mai vrea Codespaces, atins limita; are Claude Desktop deja instalat birou). Steps: clone repo local laptop birou + `npm install` + config `claude_desktop_config.json` allowed paths cu local path + restart Claude Desktop + test cu chat NEW *"salut birou"*. Path consistent recomandat: `C:\Users\<userprofile>\Documents\salafull`. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local (în loc Codespaces). Caveat legal IP RO scope Daniel HR Senior preserved.
 2. **Daniel smoke test prod bugs fix LANDED `05ba372`** — andura.app live validate Bug 1 visual (Auto template auto-faza behavior — phase auto-detect din BF + sezon, kcal NU mai 2000 hardcoded) + Bug 2 visual (BF manual edit pe greutate constantă → kcal phase recalculate Katch-McArdle).
-3. **Auto-watcher race P3 dedicated investigation** — glob filter narrow `04-architecture/mockups/` only? Race window investigation 31s pre-commit hook + commit message disconnect. Documented pattern AR rule potential.
+3. **Auto-watcher race P3 validation natural next claude_code session** — monitor commits post time gate 90s fix LANDED `.claude/settings.json` (chat-current continuation). Dacă recurrence → escalate (glob filter narrow, debounce, sau disable hook).
 4. **CEO decizie V1 features audit blocking BATCH 2 Antrenor** — `renderIdle.js` 465→180 LOC pierde streak counter + BMR strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Daniel decide keep all V1 features sau drop la mockup V2 strict. Strategic UX = CEO scope.
 5. **BATCH 2 Antrenor port implement** post CEO decision — separate prompt CC artefact. Branch `feature/v2-vanilla-port`.
 6. **Phase 4 dedicate session** post Clasic 100% smoke validation OK ~22-30h estimated combined backlog (Tasks X+Y full + T+U + carry-forward Phase 3+3.5 muscleMap + QA calibration + Cluster #4+#6).
@@ -99,7 +114,7 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 - 🟢 **P1-FLAG-PROD-AUTO-FAZA-2026-05-10** RESOLVED `05ba372` (drop pilotActive gate AUTO branch sys.js:125-127 + sys.js:77 getPhase pilotActive removal + propagation weight.js + dashboard.js)
 - 🟢 **P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10** RESOLVED `05ba372` (Katch-McArdle BF-aware sys.js:54-67 când getBF() finite, Mifflin fallback defensive — Bug 2 layer A atomic; layer B energy-balance-path BF-awareness deferred dedicated session)
-- 🟡 **NEW P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED** — manifest 3× today commits `a7e951b` + `0b1d781` + `05ba372`. Glob filter narrow needed + race window 31s investigation + commit msg recovery pattern.
+- 🟢 **P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED** RESOLVED PROBATION 2026-05-10 chat-current — Stop hook time gate 90s prepend `.claude/settings.json` (3× safety margin peste race 31s observed). Validation = next claude_code session natural monitor.
 - 🟡 **NEW P2-FLAG-CLAUDE-CODE-INTERMITTENT-2026-05-10** — claude_code agent timeout/empty intermittent observed today. §AR.19 LOCK V1 mitigation in place. Continue monitor.
 - 🔴 **P1-FLAG-NEW** Codespace `npm install` drift (3 test FILE imports broken: fake-indexeddb + dexie) — OPEN (CI/dev-env only, production unaffected; dedicated chat post Auth Flow)
 - 🔴 **P1-FLAG-SCENARIOS-COVERAGE** — Gap ~990-1490 scenarios decisions remaining post-pipeline V1 closure (preserved unchanged, separate axis from V1 implement). Validation Framework LOCKED V1 + simulator skeleton LANDED. Pre-Beta gate criteria LOCKED V1: Gate 1 ≥95% MATCH on 500-query corpus + Gate 2 DROPPED + Gate 3 selective Daniel review.
