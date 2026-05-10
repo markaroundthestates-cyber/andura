@@ -1,30 +1,36 @@
-# TASK D — Remove tab Nutriție Progres ✅
+# TASK E — Remove free-text universal ✅
 
-- **Task:** D — remove tab Nutriție Progres cross-skin × 4
+- **Task:** E — remove free-text textareas universal cross-skin × 4 (NEW LOCK V1 SUPERSEDE Cluster #9 Task 29)
 - **Model:** Opus
-- **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (Lux+BC already aligned)
+- **Status:** ✅ LANDED
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB: had redundant "Plan nutriție · azi" coach-quote box section în Progres (#fdf3df cream box / rgba(232,200,150) auriu cald box) ABOVE the legitimate §3.5 V3 loghează kcal+proteine UI. Plus "Nutriție istoric" drill row în "Vezi mai mult" Istoric drilldown.
-- Lux+BC: NU au "Plan nutriție · azi" coach-quote redundant box — doar "Nutriție · azi" §3.5 V3 RE-IN-SCOPE loghează kcal+proteine + Importă CSV (legit, preserved).
+- ZERO `<textarea>` matches cross-skin × 4 post Task C cleanup (pain-button + equipment-swap textareas removed în Task C ripple effect)
+- 2 violations remaining DOAR în Lux: chat composer "Scrie antrenorului…" + Energy cause "Adăugați context (opțional) — Ex: m-am trezit la 4..."
 
 ## Modificări
-- `andura-clasic.html` (line ~1224): Plan nutriție coach-quote box REMOVED + comment Task D reference
-- `andura-clasic.html` (line ~926): Nutriție drill row REMOVED din Istoric "Vezi mai mult"
-- `andura-living-body.html` (line ~1540): Plan nutriție coach-quote box REMOVED + comment
-- `andura-living-body.html` (line ~1243): Nutriție drill row REMOVED din Istoric "Vezi mai mult"
-- `andura-luxury.html`: UNCHANGED (already aligned per §3.5 V3 — only Nutriție · azi loghează section)
-- `andura-brain-coach.html`: UNCHANGED (already aligned per §3.5 V3 — only NUTRIȚIE · AZI loghează section)
+- `andura-luxury.html` (line ~1247): chat composer free-text input REMOVED + comment Task E reference (preset chips deasupra suficiente)
+- `andura-luxury.html` (line ~1302): Energy cause "context opțional" free-text input REMOVED + comment (chip selection deasupra suficient)
+- Clasic+LB+BC: NO additional changes needed (Task C ripple cleaned all textareas)
+
+## Verificare post-fix
+- Grep `<textarea` cross-skin × 4: ZERO matches ✅
+- Grep "Descrie/Spune/Comentariu/Notes/Scrie/Ex: m-am" placeholder cross-skin × 4: ZERO matches ✅
+- BC `.composer-input` CSS class: dead code (no usages în HTML), preserved CSS NO functional impact
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task D atomic).
+- Pending commit (Task E atomic).
 
 ## Issues
-- Daniel smoke "tab Nutriție în Progres reziduu" interpretation: redundant "Plan nutriție · azi" coach-quote box (NU literal nav-tab — Clasic+LB+BC have only 4 root nav-tabs Antrenor/Progres/Istoric/Cont, no Nutriție tab existed). Loghează kcal+proteine UI section preserved per §3.5 V3 RE-IN-SCOPE V1.
+- BC line 4599 confirmation input "ȘTERGE" preserved (NOT descriere liberă — confirmation typing pattern destructive action verification, similar GitHub repo delete confirmation)
+- Lux line 1693 BF manual override numeric input preserved (Task 08 BF auto US Navy + override per Phase 1 Task 08 LANDED, NOT free-text)
+
+## Cumulative LOCKED V1 ~717 PRESERVED
+- +1 net descriere liberă scope cut universal substantive (already counted în NEW LOCK V1 chat-current handover ingest top entry CURRENT_STATE+DECISION_LOG)
 
 ## Next action
-Task E — remove free-text universal cross-skin × 4 (NEW LOCK V1 SUPERSEDE Task 29).
+Task F — workflow antrenament V1 capture cap-coadă cross-skin × 4 (CRITICAL).
