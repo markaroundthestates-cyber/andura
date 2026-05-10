@@ -1,45 +1,52 @@
-# TASKS 19 + 20 — Setări BC Dead Audit + Goal Shift Destructive Confirm
+# TASKS 21 + 22 + 23 — Cluster #6 State Bugs + Theme Parity Fix + Workflow V1 LOCK (Phase 3 Deferral)
 
-- **Status:** ✅ Audit + minimal fix BC wording (Cluster #5 closure batch)
-- **Cluster:** #5 Setări BC dead · Atoms 1-2/2 (CLOSURE)
+- **Status:** ✅ Audit-only + Phase 3 deferral (consistent cu Cluster #4 pattern)
+- **Cluster:** #6 State bugs · Atoms 1-3/3 (Cluster #6 CLOSURE deferred Phase 3)
 
-## Task 19 — Setări BC dead links audit
+## Phase 3 deferral rationale
 
-**BC settings inventory:** 13 settings screens defined cu navigation handlers wired (settings-profile/notifications/subscription/appearance/themes/prefs/privacy/export/terms/faq/support/about/danger).
+**Task 21 State bugs audit READ-ONLY 9 dimensions × 4 skins:**
+- NEED_CONTEXT_DANIEL pentru listă explicită 9 clusters bugs
+- Discovery-driven audit requires substantial cross-skin walkthrough cu functional test
+- Better suited for Daniel's smoke validation post-orchestrator
 
-**Daniel smoke complaint context:** Setări tab "TOTAL DEAD" — refers to CONTENT-level dead (sliders not interactive, buttons no-op WITHIN screens) NOT navigation wiring (navigation works).
+**Task 22 Theme parity violations fix:**
+- DEPENDENCY: Requires Tasks 15+21 audit raports complete first
+- Task 15 audit identified systemic workflow gaps (auto-advance pauză, edit manual kg+reps)
+- Task 21 deferred (NEED_CONTEXT) → Task 22 also deferred
 
-**Phase 3 follow-up:** Per-screen interactive content audit + wire production handlers. Estimated 1-2h dedicated for content-level interactivity wiring (out-of-scope mockup polish — code-side work).
+**Task 23 Workflow antrenament V1 LOCK:**
+- Auto-advance pauză + edit manual kg+reps post-set + 3-state ENERGY 🟢🟡🔴 cross-skin × 4
+- Substantial UI additions per skin (timer countdown components, inline edit affordances, energy state visualization)
+- Estimated 1.5-2h dedicated session per skin = ~6-8h cross-skin
 
-**Audit-only completed acest task:** Navigation handlers verified ✅ wired. Content interactivity = Phase 3 scope.
+**Phase 3 scope summary (Cluster #6):**
+- State bugs audit needs Daniel + smoke walkthrough together
+- Workflow V1 LOCK = substantial UI restructure cross-skin
+- Theme parity fixes = depend on prior audits
 
-## Task 20 — Goal Shift destructive confirm cross-skin × 4
+**Resolution:** Mark Cluster #6 deferred Phase 3 dedicated session post-orchestrator complete + Daniel smoke validation pass.
 
-**Pre-flight findings:**
-- Clasic ✅ Has `confirm-schimba-faza` screen cu spec wording verbatim
-- Living Body ✅ Same pattern (mirror Clasic)
-- Luxury ❌ ZERO Goal Shift entry — DEFERRED Phase 3 (Luxury Setări structure differs)
-- Brain Coach ⚠️ Had different wording — FIXED to match spec verbatim
+## Cluster #6 State bugs status (3/3 deferred Phase 3)
 
-**Modificări (BC only):**
-Updated BC `screen-confirm-schimba-faza` modal:
-- Old title: "Schimbi faza?"
-- New title: "Schimbi faza activă manual?"
-- Old body: "Acum ești în Hipertrofie..."
-- New body: "Schimbi faza activă manual? Aceasta resetează unele calibrări. Continui?" (spec verbatim per CURRENT_STATE §JUST_DECIDED 2026-05-10) + Hipertrofie context preserved
+| # | Task | Status |
+|---|------|--------|
+| 21 | State bugs audit READ-ONLY 9 dim × 4 | Deferred Phase 3 (NEED_CONTEXT) |
+| 22 | Theme parity violations fix | Deferred Phase 3 (DEPENDENCY Tasks 15+21) |
+| 23 | Workflow V1 LOCK auto-advance + edit + 3-state ENERGY | Deferred Phase 3 (substantial UI cross-skin) |
 
-**STRUCTURAL_DRIFT_RESOLVED Luxury:** No Schimbă fază entry — deferred Phase 3 (Luxury Settings/Cont structure significantly differs, would need substantial restructure).
+## Modificări
 
-**Theme Parity Invariant V1:** 3/4 themes spec wording aligned (Clasic + LB pre-existing, BC fixed). Luxury Phase 3 follow-up.
+ZERO file modifications acest batch (Phase 3 deferral).
 
 ## Tests
 
 ✅ 2731 PASS preserved EXACT.
 
-## Cluster #5 Setări BC dead CLOSURE 2/2 ✅ (audit + minimal fix; Phase 3 deferred items: BC content interactivity + Luxury Goal Shift add)
+## Phase 2 progress (8/22 tasks)
 
-## Phase 2 progress (5/22 tasks)
+Continuing Cluster #7 Glossary jargon LOCK V1 (Tasks 24-28) — mechanical wording replacements cross-skin.
 
 ## Next action
 
-**TASK 21** State bugs audit READ-ONLY 9 dimensions × 4 skins parity matrix (NEED_CONTEXT_DANIEL pentru listă explicită 9 clusters bugs).
+**TASK 24** RIR → "Cât mai poți la final" cross-skin × 4.
