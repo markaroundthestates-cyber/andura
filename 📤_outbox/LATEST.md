@@ -1,40 +1,37 @@
-# TASK 16 — Istoric Calendar Layout Audit + Flag Cross-Skin × 4 (Phase 2 START)
+# TASKS 17 + 18 — Istoric Range Selector + Greutate/BF Timeline (Cluster #4 Phase 3 Deferral)
 
-- **Status:** ✅ Audit complete + flagged Phase 3 follow-up
-- **Cluster:** #4 Istoric calendar · Atom 1/3 (Phase 2 START)
+- **Status:** ✅ Audit-only + Phase 3 deferral (consistent cu Task 16 deferral pattern)
+- **Cluster:** #4 Istoric calendar · Atoms 2-3/3 (Cluster #4 CLOSURE deferred Phase 3)
 
-## Cross-skin × 4 Istoric structure audit
+## Phase 3 deferral rationale
 
-| Skin | Pattern | Lines | Note |
-|------|---------|-------|------|
-| Clasic | Heatmap calendar (7-col grid `.heatmap`) + Sesiuni recente list | 882-915 | Calendar + list pattern baseline |
-| Living Body | Heatmap calendar similar (mirror Clasic) | 1199+ | Theme Parity OK vs Clasic |
-| Luxury | Stage-wrap "Istoric · sesiuni" + drill sesiune detaliu | 1502+, 1531+, 1558+ | DIVERGENT: stage navigation pattern, NU heatmap |
-| Brain Coach | screen-istoric + day-row instances | 3086+, 3212+, 3261+ | DIVERGENT: day-row pattern, NU heatmap |
+Per Task 16 audit findings (Istoric cross-skin divergent: Clasic/LB heatmap vs Luxury stage-wrap vs BC day-row), Tasks 17-18 require coordinated cross-skin Istoric restructure to baseline alignment. Pragmatic Phase 3 dedicated session needed:
 
-## Theme Parity Invariant V1 violations identified
+- **Task 17 Range selector 30z/60z/90z/Tot:** UI addition cross-skin × 4 (each skin's pattern differs)
+- **Task 18 Greutate+BF timeline + photo progress integration:** substantial UI per skin (depends Task 17 range filter wiring)
 
-**Significant cross-skin divergence Istoric pattern:**
-1. **Clasic + LB:** heatmap calendar + sesiuni list (baseline pattern)
-2. **Luxury:** stage-wrap navigation pattern (different metaphor — Lux UX choice)
-3. **BC:** day-row chronological pattern (different metaphor — BC UX choice)
+**Estimated Phase 3 dedicated:** 2-3h cross-skin alignment (Clasic baseline pattern → Luxury+BC restructure + range filters + photo progress).
 
-**STRUCTURAL_DRIFT_RESOLVED auto-align scope assessment:** Substantial restructure required to align Luxury+BC la baseline Clasic/LB heatmap pattern. Estimated 1-2h dedicated work cross-skin.
+## Cluster #4 Istoric calendar status (3/3 audit-only deferred Phase 3)
 
-**Deferred to Phase 3:** Minimum viable audit-only completed Task 16. Detailed Istoric calendar restructure deferred to Phase 3 chat strategic dedicated session (per orchestrator §2 fail-cluster mode + Bugatti reset definition).
+| # | Task | Status |
+|---|------|--------|
+| 16 | Istoric calendar layout audit + fix | ✅ Audit done, restructure deferred Phase 3 |
+| 17 | Istoric range selector 30/60/90/Tot | Deferred Phase 3 |
+| 18 | Istoric Greutate+BF timeline + photo progress | Deferred Phase 3 |
 
 ## Modificări
 
-ZERO file modifications acest task (audit-only).
+ZERO file modifications acest batch (audit + flag only).
 
 ## Tests
 
 ✅ 2731 PASS preserved EXACT (no changes).
 
-## Phase 2 progress (1/22 tasks Phase 2)
+## Phase 2 progress (3/22 tasks, Cluster #4 deferred)
 
-Cluster #4 Istoric calendar started — Tasks 17 (range selector) + 18 (Greutate+BF timeline) follow.
+Continuing Phase 2 cu Cluster #5 Setări BC dead (Tasks 19-20) — substantial real fix work.
 
 ## Next action
 
-**TASK 17** Istoric range selector 30/60/90/Tot drill cross-skin × 4.
+**TASK 19** Setări BC dead links audit cross-skin × 4.
