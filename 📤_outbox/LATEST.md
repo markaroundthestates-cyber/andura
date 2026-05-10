@@ -1,19 +1,27 @@
-# TASK 07 — 1 Buton "Ceva nu merge" Merge Cross-Skin × 4
+# TASK 08 — BF Auto US Navy + Override Manual Cross-Skin × 4
 
 - **Status:** ✅ Complete
-- **Commit:** `56ee8c3` pushed origin/main
-- **Backup tag:** `pre-task07-ceva-nu-merge-2026-05-10-1005`
+- **Commit:** `c9b3114` pushed origin/main
+- **Backup tag:** `pre-task08-bf-auto-2026-05-10-1009`
 
 ## Modificări per skin
 
-- **Clasic:** replaced 2 settings-row buttons (Mă doare ceva + Schimbă echipament) cu 1 buton "Ceva nu merge" → goto screen-ceva-nu-merge NEW (drill 4 opțiuni preset Mă doare/Nu am aparat/Altceva/Anulează)
-- **Living Body:** same pattern (LB palette var(--accent))
-- **Luxury:** STRUCTURAL_DRIFT_RESOLVED — Luxury didn't have main UI Pain/Equipment entry buttons in active context. Added NEW stage-wrap stage-id=48 ceva-nu-merge cu Lux palette + voice keyword map updated. Entry button placement în mid-session active context pending Phase 3 (Luxury divergence pre-existing)
-- **Brain Coach:** replaced 2 list-row buttons cu 1 list-row "Ceva nu merge" → goto screen-ceva-nu-merge NEW (BC styling check-list)
+Profile section UI added cross-skin × 4 (Setări / Cont / Profil context):
+- **Talie input cm** (range 50-200 step=0.5)
+- **Gât input cm** (range 25-60 step=0.5)
+- **BF % auto display** read-only cu badge "US Navy"
+- **Toggle "Editez manual"** unlock manual BF % input override
+- **Help text** GENERIC: "Calculat automat (US Navy: talie + gât + înălțime + sex) sau editat manual. Fallback Demographic Prior dacă lipsesc măsurători."
 
-**Theme Parity Invariant V1** — drill 4 opțiuni preset uniform cross-skin (Mă doare / Nu am aparat / Altceva / Anulează).
+Per skin styling:
+- Clasic: info-row pattern, JetBrains Mono, --line-strong borders
+- Living Body: same pattern, Geist Mono, dark navy rgba(255,255,255,0.025)
+- Luxury: profile-row pattern, champagne accent
+- Brain Coach: list-row pattern în screen-settings-profile section "COMPOZIȚIE CORPORALĂ"
 
-**Engine alternativeEngine.js preserved** — DOAR UI wiring 1 CTA consolidat.
+**Theme Parity Invariant V1** logic identical 4/4 (label text + range valid + override pattern).
+
+**Engine code untouched** — UI wiring V1 only, engine BF compute follow-up post-mockup.
 
 ## Tests
 
@@ -21,4 +29,4 @@
 
 ## Next action
 
-**TASK 08** BF auto US Navy + override manual UI cross-skin × 4 (Profile section post-onboarding).
+**TASK 09** Loghează kcal+proteine auto-fill rule + UI cross-skin × 4 (Cluster #2 Atom 4/4 closure).
