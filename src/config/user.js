@@ -11,7 +11,7 @@ export const USER_DEFAULTS = {
     targetKg: 101.5,
   },
   targets: {
-    kcal: 1800,
+    kcal: 2000, // Daniel test data 1800 removed 2026-05-10 — 2000 generic adult male baseline; engine derive via BMR/TDEE Mifflin-St Jeor preferred
     protein: 180,
     phaseTargetDate: '2026-07-20',
   },

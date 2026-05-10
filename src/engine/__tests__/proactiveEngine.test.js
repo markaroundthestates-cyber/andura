@@ -76,7 +76,7 @@ describe('checkKcalDeficit', () => {
     expect(checkKcalDeficit(null, 2200)).toBeNull();
   });
 
-  it('alerts when avg kcal < 1800', () => {
+  it('alerts when avg kcal < 2000', () => {
     const kcals = { [today]: 1500, [yesterday]: 1600, [twoDaysAgo]: 1700 };
     const alert = checkKcalDeficit(kcals, 2200);
     expect(alert).not.toBeNull();

@@ -10,7 +10,7 @@ describe('getUserConfig', () => {
     const cfg = getUserConfig();
     expect(cfg).toEqual(USER_DEFAULTS);
     expect(cfg.bio.height).toBe(183);
-    expect(cfg.targets.kcal).toBe(1800);
+    expect(cfg.targets.kcal).toBe(2000);
     expect(cfg.firebase.userPath).toBe('users/daniel');
   });
 
@@ -18,7 +18,7 @@ describe('getUserConfig', () => {
     localStorage.setItem('sf.userConfig', JSON.stringify({ bio: { height: 180 } }));
     const cfg = getUserConfig();
     expect(cfg.bio.height).toBe(180);
-    expect(cfg.targets.kcal).toBe(1800); // default preserved
+    expect(cfg.targets.kcal).toBe(2000); // default preserved
   });
 
   it('falls back to defaults on malformed localStorage JSON', () => {

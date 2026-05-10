@@ -122,7 +122,7 @@ describe('evaluate — integration end-to-end §9.2 ADR 026', () => {
   it('Maria 65 sanatate → Tier 2 banner banner cu age + BF% low signals', async () => {
     const result = await evaluate(buildCtx({
       persona: 'maria', goal: 'sanatate', age: 65, bfPct: 0.20, sex: 'female',
-      kg: 60, trainingWeeks: 50, tdeeKcal: 1800,
+      kg: 60, trainingWeeks: 50, tdeeKcal: 2000,
     }));
     // Score 1: age_60_plus only (sanatate goal NU triggers aggressive_forta cumulative)
     expect(result.signals).toContain('pushback_tier_2_banner');

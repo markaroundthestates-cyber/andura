@@ -157,7 +157,7 @@ export function checkTrainingStreak(logs) {
 }
 
 /**
- * Check 6: Kcal sub 1800 — prea mult deficit.
+ * Check 6: Kcal sub țintă (KCAL_TARGET) — prea mult deficit.
  */
 export function checkKcalDeficit(kcals, currentKcalTarget) {
   if (!kcals || !currentKcalTarget) return null;

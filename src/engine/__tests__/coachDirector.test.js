@@ -43,7 +43,7 @@ describe('CoachDirector — Equipment validation', () => {
     localStorage.clear();
     setupReadiness(75);
     localStorage.setItem('phase-override', 'AUTO');
-    localStorage.setItem('current-kcal', '1800');
+    localStorage.setItem('current-kcal', '2000');
   });
 
   it('should NEVER recommend 26kg for DB Shoulder Press', async () => {
@@ -89,13 +89,13 @@ describe('CoachDirector — CUT phase logic', () => {
     localStorage.clear();
     setupReadiness(75);
     localStorage.setItem('phase-override', 'AUTO');
-    localStorage.setItem('current-kcal', '1800');
+    localStorage.setItem('current-kcal', '2000');
   });
 
   it('should suppress trend messages in AUTO + before July 20', async () => {
     const session = await coachDirector.buildSession('PUSH');
     expect(session.suppressTrendMessages).toBe(true);
-    expect(session.realityMessage).toBe('Menținem 1800 kcal');
+    expect(session.realityMessage).toBe('Menținem 2000 kcal');
   });
 
   it('should cap reps at 10 in CUT phase', async () => {
@@ -212,7 +212,7 @@ describe('CoachDirector — Context building', () => {
     localStorage.clear();
     setupReadiness(75);
     localStorage.setItem('phase-override', 'AUTO');
-    localStorage.setItem('current-kcal', '1800');
+    localStorage.setItem('current-kcal', '2000');
   });
 
   it('should provide phase context in session', async () => {
@@ -405,7 +405,7 @@ describe('CoachDirector — CDL write (ADR 011)', () => {
     const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
     localStorage.setItem('phase-override', 'AUTO');
-    localStorage.setItem('current-kcal', '1800');
+    localStorage.setItem('current-kcal', '2000');
     const cdlModule = await import('../../util/coachDecisionLog.js');
     writeProposedSpy = cdlModule.writeProposed;
     writeProposedSpy.mockClear();

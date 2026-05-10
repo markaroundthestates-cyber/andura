@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 vi.mock('../../config/user.js', () => ({
   getUserConfig: vi.fn(() => ({
     bio: { age: 30, height: 183, startKg: 111.4, startBF: 23, currentKgFallback: 110.4 },
-    targets: { kcal: 1800, protein: 180 },
+    targets: { kcal: 2000, protein: 180 },
   })),
   updateUserConfig: vi.fn(),
 }));
@@ -88,7 +88,7 @@ describe('SYS — estimateTDEE()', () => {
     mockStorage['current-kcal'] = 2000;
     const tdee = SYS.estimateTDEE();
     expect(tdee).toBeLessThanOrEqual(3500);
-    expect(tdee).toBeGreaterThanOrEqual(1800); // KCAL_TARGET
+    expect(tdee).toBeGreaterThanOrEqual(2000); // KCAL_TARGET
   });
 
   it('T6: filters to phase-change-date window when ≥4 post-phase entries exist', () => {
@@ -102,7 +102,7 @@ describe('SYS — estimateTDEE()', () => {
       '2026-04-27': 100,
     };
     mockStorage['phase-change-date'] = '2026-04-15';
-    mockStorage['current-kcal'] = 1800;
+    mockStorage['current-kcal'] = 2000;
     const tdeeFiltered = SYS.estimateTDEE();
 
     delete mockStorage['phase-change-date'];

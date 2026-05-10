@@ -4,7 +4,9 @@ export const SW_KG = 111.4, TW_KG = 101.5;
 export const START_DATE = new Date('2026-04-17');
 export const TARGET_DATE = new Date('2026-07-20');
 export const DTOT = Math.round((TARGET_DATE - START_DATE) / 86400000);
-export const KCAL_TARGET = 1800;
+// Per Daniel directive 2026-05-10 chat ACASĂ post-noapte: removed 1800 hardcoded test data ('scoate rahatul ala al meu de 1800 kcal').
+// Default 2000 = generic adult male maintenance baseline. Engine should compute via BMR/TDEE Mifflin-St Jeor + Big 6 inputs (Tasks 01-04 LANDED).
+export const KCAL_TARGET = 2000;
 export const PROT_TARGET = 180;
 export const PAUSE_COMPOUND = 120, PAUSE_ISO = 75;
 

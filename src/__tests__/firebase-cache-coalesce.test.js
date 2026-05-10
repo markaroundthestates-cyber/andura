@@ -31,7 +31,7 @@ describe('suppressInvalidations — batch mode', () => {
       DB.set('logs', []);
       DB.set('readiness', {});
       DB.set('phase-override', 'AUTO');
-      DB.set('current-kcal', 1800);
+      DB.set('current-kcal', 2000);
       DB.set('weights', {});
       DB.set('unavailable-equipment', []);
       DB.set('equipment-occupied-session', []);

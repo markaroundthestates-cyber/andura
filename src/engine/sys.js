@@ -122,7 +122,7 @@ export const SYS = {
       }
     }
 
-    // AUTO (sau null): înainte de 20 iulie = 1800 fix, după = TDEE-based
+    // AUTO (sau null): înainte de 20 iulie = KCAL_TARGET fix, după = TDEE-based
     const pilotActive = new Date() >= TARGET_DATE;
     if (!pilotActive) return KCAL_TARGET;
 

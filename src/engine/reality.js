@@ -49,7 +49,7 @@ export const realityEngine = {
         }
       }
     }
-    // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează regula 1800 kcal
+    // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează ținta calorică (KCAL_TARGET)
     if (ctx.user.phase === 'AUTO' && ctx.isBeforeJuly20_2026) {
       session.realityMessage = `Menținem ${KCAL_TARGET} kcal`;
       session.suppressTrendMessages = true;
