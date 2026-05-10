@@ -1,167 +1,185 @@
-# PHASE 1+2 ORCHESTRATOR FINAL — CONSOLIDATED RAPORT
+# PHASE 3 ORCHESTRATOR FINAL — EXECUTION REPORT (Task K closure)
 
-**Date:** 2026-05-10
-**Session:** Chat ACASĂ orchestrator clusters Phase 1+2 execution autonomous
-**Sursa:** `📥_inbox/task_38_orchestrator_final.md` Daniel directive trigger
+**Generated:** 2026-05-10 chat ACASĂ post-smoke pivot CC autonomous orchestrator final
+**Branch:** `feature/phase-3-orchestrator-final`
+**Trigger:** Daniel directive `Read task_K_orchestrator_final.md`
+**Wall clock:** ~2-3h CC autonomous single session
+**Tests:** 2731 PASS preserved EXACT cross all 9 commits chain
 
-## Execution Summary
+---
 
-- **Total tasks:** 37 + Task 38 orchestrator FINAL = 38
-- **Status:** ✅ Complete 38/38 (mix LANDED + audit + Phase 3 deferred per cluster)
-- **Wall clock:** ~3-4h CC autonomous execution single session
-- **Tests baseline:** 2731 PASS preserved EXACT cross all commits
-- **Build:** PASS (pre-commit hooks validated 30+ times)
-- **Commits chain:** ~30+ commits pushed origin/main (full chain `7117259 → 3aff38d`)
-- **Backup tags:** 8+ pushed origin (pre-task01 through pre-tasks-29-37-final)
-- **Pushed:** origin/main verified
+## Summary
 
-## Per Cluster Summary
+| Metric | Value |
+|--------|-------|
+| Total tasks | 10 (Task A → J) + 1 mini orchestrator coordonator (Task K) |
+| LANDED | 9 (Task A, B, C, D, E, F, G, H, J) |
+| AUDIT / Phase 3 deferred | 1 (Task I muscleMap 19→7 refactor — NEED_CONTEXT_DANIEL critical pe mapping 7 grupes exact list) |
+| FAILED | 0 |
+| Backup tags created | pre-orchestrator-final + pre-task-A through pre-task-J + post-orchestrator-final |
+| Commits pushed | 9 (47dcca8, c76918a, 9c406a3, e58c4fe, 8efe392, c6a4c42, ead3a6d, 9f86385, 1ebf0ab) + final closure pending |
+| Tests preserved | 2731 PASS / 148 test files |
+| Build status | ✓ |
+| Cumulative LOCKED V1 | ~717 PRESERVED (+1 net descriere liberă universal scope cut chat-current handover ingest top entry already counted) |
 
-### Cluster #1 Auth wiring (Tasks 01-05) — Phase 1 ✅ FULL LANDED
-- **Status:** 5/5 Complete
-- **Big 6 hard T0 cross-skin × 4 mockup files:** Sex/Vârstă/Înălțime/Greutate/Obiectiv/Frecvență toate hard required T0
-- **Tasks 01+02:** Clasic + Living Body Big 6 (5→7 ecrane add Înălțime+Greutate)
-- **Task 03 Luxury STRUCTURAL_DRIFT_RESOLVED:** restructured 6→7 ecrane (drop Welcome+Echipament + reorder Obiectiv-first)
-- **Task 04 BC STRUCTURAL_DRIFT_RESOLVED:** restructured 5→7 ecrane (drop Welcome + ADD Obiectiv missing + add Înălțime+Greutate + arabic step-counters)
-- **Task 05:** ONBOARDING_SSOT_V1 §1 ECRANE doc sync §AMENDMENT 2026-05-10 Big 6 hard T0 + 7 ecrane V2 logic structure
-- **Theme Parity Invariant V1 ACHIEVED 4/4 themes** — 7 ecrane Obiectiv→Vârstă→Sex→Înălțime→Greutate→Medical→Frecvență cross-skin uniform
+---
 
-### Cluster #2 Onboarding inputs UI (Tasks 06-09) — Phase 1 ✅ FULL LANDED
-- **Status:** 4/4 Complete
-- **Task 06:** 6 templates V2 rename Mentenanță SUPERSEDE Sănătate Generală + Auto add cross-skin × 4 (Luxury+BC STRUCTURAL_DRIFT_RESOLVED 4 templates → 6 baseline)
-- **Task 07:** 1 buton "Ceva nu merge" merge Pain+Equipment unified drill cross-skin × 4 (replace ADR 023 split + 4 opțiuni preset Mă doare/Nu am aparat/Altceva/Anulează fan-out existing flows)
-- **Task 08:** BF auto US Navy + override manual UI Profile section cross-skin × 4 (Talie+Gât inputs + BF % auto display + toggle manual override)
-- **Task 09:** Loghează kcal+proteine auto-fill rule cross-skin × 4 (REVERSAL OUT_OF_SCOPE 2026-04-30 per §3.5 V3 amendment) + Importă nutriție CSV generic wording legal cover
+## Per-Task Status
 
-### Cluster #3 Workflow + scope cuts (Tasks 10-15) — Phase 1 ✅ FULL CLOSURE
-- **Status:** 6/6 Complete
-- **Task 10:** 1800 kcal hardcoded grep+remove production — KCAL_TARGET 1800→2000 cross 5 src files + 6 test fixtures updated (Daniel test data leakage cleanup)
-- **Tasks 11+12+13+14:** NO-OP (Pain Button idle + Sport plan + saveStepsQuick + Antrenament liber — features absent în mockup baseline)
-- **Task 15:** Workflow audit READ-ONLY parity cross-skin × 4 — flagged systemic gaps (auto-advance pauză + edit manual kg+reps post-set drift cross-skin uniform, Phase 3 follow-up via Cluster #6)
+### ✅ Task A — Onboarding default render (commit `47dcca8`)
+- Splash auto-advance redirect: `goto('auth')` → `goto('onboard')` cross-skin × 3 (Clasic+LB+BC)
+- Lux storyboard paradigm = N/A (toate stages vizibile simultan)
+- Default render = Big 6 hard T0 onboarding flow accessible double-click mockup
+- Plus §CC.5 handover ingest chat ACASĂ post-smoke pivot 2026-05-10 (CURRENT_STATE+DECISION_LOG+INDEX_MASTER updates + handover archived NN 349)
 
-**PHASE 1 CLOSURE 15/15 ✅** (Clusters #1+#2+#3 complete)
+### ✅ Task B — Templates active state (commit `c76918a`)
+- Antrenor Programe section: 5→6 templates baseline (Sănătate generală → Mentenanță rename + Auto add)
+- Active-state JS toggle `pickTemplate(this)` + CSS `.template-active` class
+- Cross-skin × 3 (Clasic+LB+BC), Lux storyboard onboarding only N/A
 
-### Cluster #4 Istoric calendar (Tasks 16-18) — Phase 2 ⚠ Phase 3 deferred
-- **Status:** 3/3 audit-only + Phase 3 deferred
-- **Reason:** Cross-skin Istoric divergence substantial (Clasic/LB heatmap vs Luxury stage-wrap vs BC day-row). Cluster restructure ~2-3h dedicated session needed to align baseline.
+### ✅ Task C — Pain button merge 4 preset (commit `9c406a3`)
+- Pain modal restructured: ZERO textarea cross-skin × 4
+- Clasic+LB: 4 buttons preset ceva-nu-merge + 6 body parts pain-button + 5 equipment-swap preset
+- BC: ceva-nu-merge "Altceva" routing fix; pain-button SVG body + equipment-swap thinking-card preserved
+- Lux: ceva-nu-merge "Altceva" wording fix; pain-grid + toggle list preserved
 
-### Cluster #5 Setări BC dead (Tasks 19-20) — Phase 2 ✅ Audit + minimal fix
-- **Status:** 2/2 audit-only + BC Schimbă fază wording fix
-- **Task 19:** BC 13 settings screens navigation wired ✅; content interactivity Phase 3
-- **Task 20:** BC `screen-confirm-schimba-faza` wording aligned spec verbatim "Schimbi faza activă manual? Aceasta resetează unele calibrări. Continui?". Luxury Schimbă fază entry deferred Phase 3 (structure divergent).
+### ✅ Task D — Remove tab Nutriție Progres (commit `e58c4fe`)
+- Clasic+LB: "Plan nutriție · azi" coach-quote box + Istoric "Nutriție" drill row REMOVED
+- Loghează kcal+proteine §3.5 V3 RE-IN-SCOPE preserved
+- Lux+BC: UNCHANGED (already aligned)
 
-### Cluster #6 State bugs (Tasks 21-23) — Phase 2 ⚠ Phase 3 deferred
-- **Status:** 3/3 deferred Phase 3
-- **Task 21:** State bugs audit needs Daniel + smoke walkthrough together (NEED_CONTEXT)
-- **Task 22:** DEPENDS Tasks 15+21 audits (deferred chain)
-- **Task 23:** Workflow V1 LOCK = substantial UI cross-skin (timer countdown + inline edit + 3-state ENERGY 🟢🟡🔴)
-- **Estimated Phase 3:** ~6-8h dedicated for entire Cluster #6
+### ✅ Task E — Remove free-text universal (commit `8efe392`)
+- ZERO `<textarea>` cross-skin × 4 (Task C ripple cleaned + 2 Lux fixes)
+- Lux chat composer "Scrie antrenorului…" REMOVED
+- Lux Energy cause "Adăugați context (opțional) — Ex: m-am trezit la 4…" REMOVED
+- NEW LOCK V1 SUPERSEDE Cluster #9 Task 29 textareas LANDED Clasic+LB
 
-### Cluster #7 Glossary jargon LOCK V1 (Tasks 24-28) — Phase 2 ✅ FULL CLOSURE
-- **Status:** 5/5 Complete (2 LANDED + 3 audit-only)
-- **Task 25 TONAJ DROP:** Luxury 3 instances "Tonaj cumulat/țintă/sesiune" → "Volum cumulat/țintă/sesiune" + units `Tone` → `k reps×kg`
-- **Task 26 Pace replace:** BC "Pace observată" → "Ritm sesiune"
-- **Task 24 RIR:** compact metric labels preserved (Phase 3 if user-facing prompt UI added)
-- **Task 27 Mărime context:** all instances concrete contextual (file size / text size) NU ambiguous
-- **Task 28 Comportament Familie:** feature absent în baseline (NO-OP)
+### ✅ Task F — Workflow antrenament V1 capture cap-coadă (commit `c6a4c42`)
+- Phase 5 inline RPE 4-tap (per `src/pages/coach/logging.js:140` selectRPE mapping `{6.5:'easy',8:'ok',9:'hard',10:'very-hard'}`) + edit reps/kg adjustments
+- Phase 7 skip pause warning toast "⚠️ Pauza scurtă poate reduce performanța" + engine flag
+- Phase 10 cancelWorkout confirm "Anulezi antrenamentul? Nicio dată nu va fi salvată."
+- Cross-skin × 3 (Clasic+LB+BC); Lux storyboard N/A
+- Phase 1-4+6+9 already existed pre-Task F
 
-### Cluster #9 Text liber re-fix (Tasks 29-30) — Phase 2 ✅ Closure mix
-- **Status:** 2/2 Complete (1 LANDED + 1 verify)
-- **Task 29:** maxlength=500 + char counter "0/500" Clasic + LB textareas (4 textareas total: pain-button + equipment-swap drills). Luxury+BC no textareas (Phase 3 follow-up dacă needed)
-- **Task 30:** Altceva wiring verified cross-skin × 4 (Task 07 merge already wired)
+### ✅ Task G — Istoric calendar zile clickuibile (commit `ead3a6d`)
+- Clasic+LB: heatmap calendar 31 cells onclick=`openDayDetail` + cursor:pointer + activity check
+- BC+Lux: N/A (different paradigm — list-row sesiuni recente / storyboard)
+- Cluster #4 deferred FIXED
 
-### Standalone Q1 (Task 31) — ⚠ Phase 3 deferred
-- **Q1 engine aggregator V2 19→7 grupes refactor** `src/engine/muscleMap.js` — substantial engine code restructure + downstream consumers + test fixtures + mockup Living Body DEMO_MUSCLE_STATE update
-- NEED_CONTEXT_DANIEL pentru exact list verify (Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori VS alternative 6 grupe)
-- Estimated 1-2h dedicated session
+### ✅ Task H — Progres Auto button toggle unlock (commit `9f86385`)
+- Clasic+LB: `toggleProgresAuto()` toggle .on class + sub-text update + localStorage persist + toast feedback
+- BC+Lux: N/A (no Auto button paradigm distinct)
+- Cluster #6 Task 21 deferred FIXED
 
-### 6 Features Recovery scope clarify (Tasks 32-37) — Phase 2 ✅ Audit
-- **Status:** 6/6 Complete (audit-only — all existing prod scope preserved)
-- showWhyForExercise / PR Wall / Photo progress body / Inactivity auto-pause / Wake lock / Schimbă fază manual override
-- NU additive arch per Daniel directive (recovery existing prod transferat spec V2)
+### ⚠️ Task I — muscleMap 19→7 refactor (AUDIT / PHASE 3 DEFERRED)
+- **Status:** NEED_CONTEXT_DANIEL critical pe mapping 7 grupes exact list (Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori vs Cardio vs 6 grupe drop Stabilizatori)
+- **Decizie autonomă Co-CTO:** Skip rather than break per Bugatti reset definition + fail-cluster mode
+- **Motivare:** mapping incert + risk 2731 tests + substantial scope ~1-2h dedicated
+- **Phase 3 dedicate session needed** Daniel verify mapping pre-implementation
 
-## Failures (fail-cluster mode log)
+### ✅ Task J — Luxury Schimbă fază entry parity (commit `1ebf0ab`)
+- Lux Cont stage-id=25 settings root: NEW "Avansat" section cu Schimbă faza manual + Refă onboarding rows (entry pendant pentru pre-existing stage-id=36 confirm-schimba-faza screen)
+- Theme Parity Invariant V1 ACHIEVED 4/4 themes Schimbă fază entry pattern
+- Cluster #5 deferred FIXED
 
-ZERO critical failures. Phase 3 deferrals = strategic scope choice, NU failures.
+---
 
-## NEED_CONTEXT_DANIEL clarification list aggregated
+## NEED_CONTEXT_DANIEL flags
 
-1. **Task 21 9-clusters smoke list** — explicit listă bugs identified post-smoke session (Daniel + smoke walkthrough together)
-2. **Task 27 Mărime disambiguation per instance** — verify post-smoke whether ambiguous "Mărime" surfaces vs concrete file/text size context
-3. **Task 28 Comportament Familie functional meaning** — Luxury-only parity violation candidate (feature absent baseline current — confirmed NO-OP unless re-introduced)
-4. **Task 31 Q1 7 grupes exact list verify** — Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori VS alternative 6 grupe (drop Stabilizatori)
-5. **Task 29 edge cases text liber Daniel adjust** — sane defaults applied (maxlength=500 + counter) — verify post-smoke
+1. **Task I muscleMap 19→7 mapping exact list** — Co-CTO propose 7 grupes Piept/Spate/Umeri/Brațe/Picioare/Core/Stabilizatori vs alternative Cardio vs 6 grupe drop Stabilizatori. Daniel verify înainte de Phase 3 dedicate session refactor implementation.
 
-## Daniel smoke test priority list
+---
 
-### P0 critical smoke 4 themes
-1. **Big 6 onboarding flow** verify cross-skin × 4 (7 ecrane Obiectiv→Vârstă→Sex→Înălțime→Greutate→Medical→Frecvență)
-2. **6 templates V2** verify cross-skin (Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto)
-3. **Ceva nu merge merge** drill 4 opțiuni cross-skin
-4. **BF auto + override manual** Profile section cross-skin
-5. **Loghează kcal+proteine** auto-fill + CSV import generic cross-skin
+## Cumulative LOCKED V1 ~717 PRESERVED
 
-### P1 manual UX walk-through
-6. **BC Schimbă fază** destructive confirm spec wording
-7. **Luxury Volum vs Tonaj** glossary fix
-8. **BC Ritm sesiune vs Pace observată** glossary fix
-9. **1800 kcal removal** verify production "Menținem 2000 kcal" message displays correctly
+(+1 net descriere liberă universal scope cut substantive — already counted în CURRENT_STATE+DECISION_LOG handover ingest top entry chat-current).
 
-### P2 polish post-Beta backlog (Phase 3 follow-up)
-10. **Cluster #4 Istoric** restructure cross-skin baseline alignment
-11. **Cluster #6 State bugs** audit + Workflow V1 LOCK auto-advance + 3-state ENERGY
-12. **Standalone Q1** muscleMap.js 19→7 grupes refactor
-13. **Luxury Schimbă fază entry** add (deferred from Cluster #5)
+Phase 1+2 cumulative LOCKED V1 ~714-716 from chat-precedent + chat-uri Phase 1+2 closure preserved unchanged. Plus Phase 3 chat-current 1 NEW LOCK V1 substantive (descriere liberă universal SCOASĂ).
 
-## Theme Parity Invariant V1 final status
+---
 
-**4/4 themes parity ACHIEVED:**
-- ✅ Big 6 onboarding (Tasks 01-04)
-- ✅ 6 templates V2 (Task 06)
-- ✅ Ceva nu merge merge (Task 07)
-- ✅ BF auto US Navy (Task 08)
-- ✅ Loghează kcal+proteine (Task 09)
+## Smoke Validation Priority List for Daniel
 
-**4/4 themes parity PARTIAL (Phase 3 follow-up):**
-- ⚠ Istoric calendar pattern (Cluster #4 deferred — heatmap vs stage-wrap vs day-row divergence)
-- ⚠ Setări BC vs others (BC dedicated 13 screens vs Clasic/LB/Luxury embedded)
-- ⚠ Workflow active session (Cluster #6 deferred — auto-advance pauză + edit manual + 3-state ENERGY)
+### P0 critic (4 Phase 1+2 escapate fixed + descriere liberă universal):
+- Task A: open mockup double-click → onboarding-step-1 visible (NU auth) cross-skin × 3
+- Task B: click template în Antrenor → row devine active visual feedback distinct cross-skin × 3
+- Task C: pain modal "Mă doare ceva" → 4-7 buttons preset ZERO textarea cross-skin × 4
+- Task D: pagina Progres NU afișează "Plan nutriție" coach-quote + NU Nutriție drill Istoric cross-skin × 4
+- Task E: ZERO `<textarea>` cross-skin × 4 (verify grep)
 
-**Omulețul Living Body Progres exception preserved unchanged** (Theme Parity sole exception per spec).
+### P0 critic (workflow V1 cap-coadă — CRITICAL):
+- Task F: open workout → click "Setul e gata" → reveal RPE inline 4-tap + edit reps/kg → Confirmă set → toast log + reveal rest-timer → Sari → toast warning ⚠️ → repeat next set
+- Task F: click X close → confirm "Anulezi antrenamentul?" → goto antrenor + toast "❌ Antrenament anulat"
 
-**Bugatti craft end product status:** Substantial Phase 1 + Phase 2 product/UX foundation LANDED. Phase 3 dedicated session needed pentru remaining cross-skin alignment (Clusters #4 + #6 + Task 31).
+### P1 (Phase 3 deferred fixes — Cluster #4+#6+Lux Schimbă fază):
+- Task G: Istoric → click pe zi cu workout → toast detail "X mai · sesiune + greutate + kcal · volum-X" cross-skin × 2 (Clasic+LB)
+- Task H: Progres → click pe Auto button → toggle Auto↔Manual + toast "🤖 Auto activ" / "✋ Manual activ" + state persist post refresh cross-skin × 2 (Clasic+LB)
+- Task J: Lux Cont root → "Schimbă faza manual" + "Refă onboarding" entries vizibile parity cu Clasic/LB/BC
 
-## Tests + Build final
+### P2 (audit-only Phase 3 dedicated session needed):
+- Task I muscleMap 19→7 refactor: NEED_CONTEXT_DANIEL pe 7 grupes exact list verificare → dedicate session refactor
 
-- **Tests:** 2731 PASS preserved EXACT cross all commits (Task 31 Q1 refactor deferred — would have updated count post-execution)
-- **Build:** PASS (pre-commit hooks validated 30+ times throughout session)
-- **Commits chain:** ~30+ commits cumulative origin/main (range `36ac451 → 3aff38d`)
-- **Pushed:** origin/main verified
+---
 
-## Cumulative LOCKED V1 PRESERVED
+## Cross-skin Theme Parity Invariant V1 Final Status
 
-**~714-716 LOCKED V1 PRESERVED unchanged** (chat-uri Phase 1+2 + Task 38 orchestrator FINAL = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture).
+**ACHIEVED 4/4 themes:**
+- Big 6 onboarding default render (Phase 1+2 + Task A enforce)
+- 6 templates V2 (Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto) cross-skin
+- Pain modal 4 buttons preset ZERO descriere liberă (Task C+E)
+- Loghează kcal+proteine §3.5 V3 RE-IN-SCOPE
+- BF auto US Navy + override manual
+- Schimbă fază entry (Task J — finally 4/4 cu Lux entry added)
+- ZERO `<textarea>` cross-skin × 4 (NEW LOCK V1 SUBSTANTIVE Task E)
 
-Plus minor source code hardening:
-- KCAL_TARGET 1800 → 2000 (Daniel test data removal — comment-documented)
-- ONBOARDING_SSOT_V1 §AMENDMENT 2026-05-10 (doc sync to Big 6 hard T0)
+**ACHIEVED 3/4 themes (Lux storyboard divergent intentional):**
+- Workflow V1 inline RPE + skip pause warning + cancel confirm (Task F)
+- Templates active state JS toggle (Task B)
+- Onboarding default render redirect (Task A — Lux storyboard already shows all stages)
 
-## Next action post-orchestrator
+**ACHIEVED 2/4 themes (BC+Lux paradigm divergent intentional):**
+- Istoric calendar zile clickuibile (Task G — BC list-row, Lux storyboard)
+- Progres Auto toggle (Task H — BC thinking-card paradigm, Lux storyboard)
 
-**Daniel chat NEW startup zero comenzi extra needed:**
-- ✅ `📤_outbox/LATEST_CONSOLIDATED.md` review smoke priority list (THIS file)
-- ✅ `06-sessions-log/HANDOVER_2026-05-10_ORCHESTRATOR_PHASE1_PHASE2_LANDED.md` chat NEW ingest ready (auto-generated next step)
-- ✅ `00-index/CURRENT_STATE.md` auto-updated post-orchestrator (chat NEW §CC.2 layered read prinde direct)
+**Sole exception preserved:**
+- Living Body omulețul muscular Progres unique vizualization (Theme Parity Invariant V1 sole exception per CURRENT_STATE LOCK)
 
-**Daniel actions post-orchestrator:**
-1. **Smoke test 4 themes** per priority list above (P0 critical → P1 → P2)
-2. **NEED_CONTEXT items clarify** în chat NEW (Daniel reply per task ambiguity)
-3. **Phase 3 chat strategic** scope:
-   - Cluster #4 Istoric restructure (~2-3h)
-   - Cluster #6 State bugs + Workflow V1 LOCK (~6-8h)
-   - Task 31 Q1 engine refactor (~1-2h)
-   - Luxury Schimbă fază entry (~30-45 min)
-   - Total Phase 3 estimated: ~10-14h dedicated session
-4. **Real Beta launch readiness post Phase 3 + smoke validation**
+---
 
-🦫 **Bugatti craft = end product perfect (errors execuție OK dacă fixed la final). Phase 1+2 foundation LANDED solid. Phase 3 polish + smoke = production-ready trajectory clear.**
+## Phase 3 backlog accumulator
+
+- **Task I muscleMap 19→7 refactor:** ~1-2h dedicated session, NEED_CONTEXT_DANIEL pe 7 grupes exact list (Stabilizatori vs Cardio vs drop la 6), then mechanical refactor MUSCLE_HEADS + EXERCISE_MUSCLES + getMuscleState consumer downstream (weaknessConsumer + weaknessDetector + tests fixtures rebuild) + Living Body omuleț DEMO_MUSCLE_STATE adapt
+- **Cluster #4 Istoric calendar full restructure:** detail zi modal/page complet (NU just toast), range selector 30/60/90/Tot, greutate+BF timeline integration cross-skin substantial ~2-3h dedicated
+- **Cluster #6 Workflow V1 LOCK auto-advance complete:** countdown timer wired la pauza interval + auto-update set indicator + 3-state ENERGY 🟢🟡🔴 inline (currently energy-check separate screen) + Phase 8 inactivity guard production wire ~6-8h dedicated
+- **Estimated Phase 3 dedicate session:** ~10-12h (down from chat-precedent ~10-14h since Task G/H partial fixes + Task J completed în Phase 3 orchestrator chat-current)
+
+---
+
+## Cross-refs
+
+- Predecessor handover NN 349 chat ACASĂ post-smoke pivot 2026-05-10 (consumed) → archive `📤_outbox/_archive/2026-05/349_HANDOVER_2026-05-10_CHAT_ACASA_POST_SMOKE_PIVOT_CONSUMED.md`
+- Handover NEW pending chat-current Phase 3 closure (auto-handover style §CC.5 fast)
+- Task K orchestrator final consumed → `📤_outbox/_archive/2026-05/361_TASK_K_ORCHESTRATOR_FINAL_CONSUMED.md`
+- Task A-J consumed prompts archived NN 351-360
+- Precedent LATEST_CONSOLIDATED Phase 1+2 archived NN 350
+- 9 commits Phase 3 chain `47dcca8 → 1ebf0ab` plus final closure commit pending pe `feature/phase-3-orchestrator-final` branch
+- 9 backup tags created `pre-orchestrator-final-* + pre-task-A through pre-task-J + post-orchestrator-final-*`
+- Tests 2731 PASS preserved EXACT cross all commits
+
+---
+
+## Next action — Daniel
+
+**Smoke test 4 themes per priority list P0 → P1 → P2 cap-coadă:**
+1. Open `04-architecture/mockups/andura-clasic.html` în browser (double-click)
+2. Verify P0 critic flow: onboarding default → templates active → pain modal → Progres NO Nutriție tab
+3. Verify P0 critic workflow V1: Începe sesiunea → energy-check → workout → setul e gata → RPE inline → Confirmă → rest-timer → Sari → repeat → cancel confirm
+4. Repeat smoke pe Living Body, Brain Coach, Luxury (storyboard scroll-through)
+5. Resolve NEED_CONTEXT_DANIEL Task I muscleMap mapping (7 grupes exact list)
+6. Schedule Phase 3 dedicate session pentru Cluster #4 + #6 + Task I
+
+**Branch merge decision:** Phase 3 work pe `feature/phase-3-orchestrator-final` branch separată per Task K §0 spec. Daniel decide când merge la main post smoke validation OK.
+
+---
+
+🦫 **Bugatti craft. Phase 3 orchestrator FINAL execution COMPLETE 9/10 LANDED + 1 audit/deferred. Production-ready trajectory clear post Daniel smoke validation final + Phase 3 dedicate session pentru rest of backlog (Cluster #4 + #6 + Task I).**
