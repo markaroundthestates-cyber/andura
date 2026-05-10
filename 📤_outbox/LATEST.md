@@ -13,7 +13,7 @@
 - File pre-sweep 2351 LOC
 
 ## Modificări
-- `04-architecture/mockups/andura-clasic.html` 2351 → 2123 LOC (-228 net via 8 atomic fix commits)
+- `04-architecture/mockups/andura-clasic.html` 2351 → 2144 LOC (-207 net via 8 atomic fix commits)
 - `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` NEW Bugatti craft 360° narrative ~80-200 LOC (18 findings: 3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward, severity grouping + per-bug recommendation)
 - `00-index/CURRENT_STATE.md` §JUST_DECIDED top descending entry chat-current 2 mockup buguri sweep summary + carry-forward
 - `03-decisions/DECISION_LOG.md` top descending entry chat-current 2 same content commit hash table
