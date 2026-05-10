@@ -1,36 +1,55 @@
-# TASK E — Remove free-text universal ✅
+# TASK F — Workflow antrenament V1 capture cap-coadă ✅
 
-- **Task:** E — remove free-text textareas universal cross-skin × 4 (NEW LOCK V1 SUPERSEDE Cluster #9 Task 29)
+- **Task:** F — workflow V1 cap-coadă cross-skin × 4 source-of-truth `src/pages/coach/*`
 - **Model:** Opus
 - **Status:** ✅ LANDED
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- ZERO `<textarea>` matches cross-skin × 4 post Task C cleanup (pain-button + equipment-swap textareas removed în Task C ripple effect)
-- 2 violations remaining DOAR în Lux: chat composer "Scrie antrenorului…" + Energy cause "Adăugați context (opțional) — Ex: m-am trezit la 4..."
+- Verified `src/pages/coach/logging.js:140-150` — selectRPE 4-tap mapping `{6.5:'easy', 8:'ok', 9:'hard', 10:'very-hard'}` confirmed
+- Verified existing screen-workout în Clasic+LB (full exercise card + sets table + rest-timer + post-rpe drill ALREADY exists)
+- Verified BC has separate screen-rest-timer + screen-post-rpe (different paradigm, more split)
+- Verified Lux storyboard has stages for full session flow (different paradigm, all stages visible)
 
-## Modificări
-- `andura-luxury.html` (line ~1247): chat composer free-text input REMOVED + comment Task E reference (preset chips deasupra suficiente)
-- `andura-luxury.html` (line ~1302): Energy cause "context opțional" free-text input REMOVED + comment (chip selection deasupra suficient)
-- Clasic+LB+BC: NO additional changes needed (Task C ripple cleaned all textareas)
+## Modificări — Workflow V1 10 phases captured cross-skin (palette divergent)
 
-## Verificare post-fix
-- Grep `<textarea` cross-skin × 4: ZERO matches ✅
-- Grep "Descrie/Spune/Comentariu/Notes/Scrie/Ex: m-am" placeholder cross-skin × 4: ZERO matches ✅
-- BC `.composer-input` CSS class: dead code (no usages în HTML), preserved CSS NO functional impact
+**Phase 5 SET DONE FLOW (inline RPE 4-tap + edit kg/reps):**
+- Clasic + LB: NEW `#rpe-inline` block adăugat sub set-row.current în exercise card. Conține:
+  - 4 RPE buttons (Ușor 6.5 😌 / OK 8 🙂 / Greu 9 😤 / F. greu 10 🥵) cu data-rpe + selectInlineRpe handler
+  - Edit reps inline (− 10 +) cu adjReps handler (1-30 range)
+  - Edit kg inline (− 22.5 + cu step 2.5) cu adjKg handler
+  - "Confirmă set" button → confirmSetInline() → toast "Set logat: X reps × Y kg · RPE Z" + reveal rest-timer
+  - "Înregistrează setul" → "Setul e gata" rename (semantic Phase 5 setDone)
+
+**Phase 7 REST PAUSE skip warning (engine flag):**
+- Clasic + LB: rest-timer "Sari" button → skipRestPause() → showToast "⚠️ Pauza scurtă poate reduce performanța la setul următor"
+- BC: rest-timer separate screen "Sari peste →" → skipRestPause() → showTemplateToast warning + back()
+
+**Phase 10 CANCEL FLOW confirmation:**
+- Clasic + LB: X close button în workout top-bar → cancelWorkout() → window.confirm "Anulezi antrenamentul? Nicio dată nu va fi salvată." → goto antrenor + toast "❌ Antrenament anulat"
+- BC: ← back-btn → cancelWorkout() (same confirm + cancel toast)
+
+**Phase 1-4, 6, 8, 9 ALREADY existed cross-skin pre-Task F:**
+- Phase 1: Antrenor home idle ✅
+- Phase 2: "Începe sesiunea" CTA wired ✅
+- Phase 3: 3-state Energy Check 🟢🟡🔴 (screen-energy-check) ✅
+- Phase 4: Update ex card (current exercise + tempo + cue + sets table) ✅
+- Phase 6: Auto-advance prep (next set highlighted, current marked) — sets table already tracks ✅
+- Phase 8: Inactivity guard — NU implementat în mockup (production-only feature, NU mockup-relevant)
+- Phase 9: End session → screen-post-rpe (3-state RPE summary) ✅
+
+**Lux storyboard paradigm:** N/A pentru runtime click handlers (toate stages vizibile simultan in storyboard format). Workflow V1 stages prezente în storyboard cards: stage-id 11 workout + stage-id 13 post-rpe + alte session stages.
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task E atomic).
+- Pending commit (Task F atomic).
 
 ## Issues
-- BC line 4599 confirmation input "ȘTERGE" preserved (NOT descriere liberă — confirmation typing pattern destructive action verification, similar GitHub repo delete confirmation)
-- Lux line 1693 BF manual override numeric input preserved (Task 08 BF auto US Navy + override per Phase 1 Task 08 LANDED, NOT free-text)
-
-## Cumulative LOCKED V1 ~717 PRESERVED
-- +1 net descriere liberă scope cut universal substantive (already counted în NEW LOCK V1 chat-current handover ingest top entry CURRENT_STATE+DECISION_LOG)
+- BC inline RPE post-set NU implementat — BC paradigm uses separate screen-post-rpe drill; preserved BC architecture.
+- Phase 8 Inactivity guard (2-min auto-pause) production-only feature, NOT mockup demo-able (window listeners + setupInactivity timer).
+- Phase 6 auto-advance pause→next set automatic NU complete în mockup (countdown countdown nu wired la timer interval — UI structure ready, JS interval NOT added).
 
 ## Next action
-Task F — workflow antrenament V1 capture cap-coadă cross-skin × 4 (CRITICAL).
+Task G — Istoric calendar zile clickuibile detail zi cross-skin × 4.

@@ -2705,10 +2705,10 @@
       </div>
     </div>
 
-    <!-- ═══ XII · WORKOUT ACTIVE ═══ -->
+    <!-- ═══ XII · WORKOUT ACTIVE (Workflow V1 cap-coadă: cancelWorkout Phase 10 wired Task F 2026-05-10 chat ACASĂ post-smoke) ═══ -->
     <div class="screen" id="screen-workout">
       <div class="head-bar">
-        <button class="back-btn" onclick="back()">←</button>
+        <button class="back-btn" onclick="cancelWorkout()" title="Anulează antrenamentul">×</button>
         <div class="head-title">Bench Press</div>
         <div class="head-tag">1/6 · 87</div>
       </div>
@@ -4644,7 +4644,7 @@
 
         <div class="row" style="margin-top:14px;">
           <button class="btn-secondary grow">+30s</button>
-          <button class="btn-primary grow" onclick="back()">Sari peste →</button>
+          <button class="btn-primary grow" onclick="skipRestPause()">Sari peste →</button>
         </div>
 
         <div class="footnote mt-m text-c">
@@ -4948,6 +4948,20 @@
     clearTimeout(__toastT);
     __toastT = setTimeout(() => t.classList.remove('show'), 2200);
   }
+  // ─── Workflow V1 cap-coadă Task F 2026-05-10 chat ACASĂ post-smoke (port src/pages/coach/* — Phase 7 skip pause + Phase 10 cancel) ──
+  function skipRestPause() {
+    showTemplateToast('⚠️ Pauza scurtă poate reduce performanța la setul următor');
+    setTimeout(() => back(), 250);
+  }
+  window.skipRestPause = skipRestPause;
+  function cancelWorkout() {
+    if (window.confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) {
+      goto('antrenor');
+      showTemplateToast('❌ Antrenament anulat');
+    }
+  }
+  window.cancelWorkout = cancelWorkout;
+
   function pickTemplate(btn) {
     document.querySelectorAll('.template-row').forEach(r => {
       r.classList.remove('template-active');

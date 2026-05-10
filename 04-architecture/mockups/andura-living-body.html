@@ -1330,12 +1330,12 @@
         </div>
       </div>
 
-      <!-- 6. WORKOUT EXECUTION -->
+      <!-- 6. WORKOUT EXECUTION (Workflow V1 cap-coadă: 10 phases per src/pages/coach/* — Task F 2026-05-10 chat ACASĂ post-smoke) -->
       <div class="screen paper-bg" id="screen-workout" style="height:100%; flex-direction:column;">
         <div class="phone-scroll" style="padding: 14px 20px 24px; overflow-y:auto; flex:1;">
-          <!-- Top bar -->
+          <!-- Top bar (cancelWorkout cu confirm dialog Phase 10) -->
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-            <button onclick="goto('antrenor')" style="background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <button onclick="cancelWorkout()" style="background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; gap:6px;" title="Anulează antrenamentul">
               <i data-lucide="x"></i>
             </button>
             <div style="text-align:center;">
@@ -1417,6 +1417,31 @@
                 <div class="set-val" style="color:var(--accent); font-weight:600;">— rep</div>
                 <button class="set-check" onclick="toggleSet(this)"><div style="width:18px; height:18px; border-radius:50%; border:2px solid var(--accent);"></div></button>
               </div>
+
+              <!-- Inline RPE post-set + edit kg/reps Workflow V1 Phase 5 (per src/pages/coach/logging.js selectRPE 4-tap mapping) — toggled via Setul e gata -->
+              <div id="rpe-inline" style="display:none; margin-top:14px; padding:14px; background:rgba(212,165,116,0.06); border-radius:12px;">
+                <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; margin-bottom:8px;">Cum a fost setul?</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; margin-bottom:12px;">
+                  <button class="rpe-btn-inline" data-rpe="6.5" onclick="selectInlineRpe(this, 'easy', 6.5)" style="padding:12px 4px; border:1.5px solid rgba(212,165,116,0.2); background:rgba(255,255,255,0.025); border-radius:10px; font-size:11px; font-weight:600; color:var(--ink-2); cursor:pointer;"><div style="font-size:18px; margin-bottom:2px;">😌</div>Ușor</button>
+                  <button class="rpe-btn-inline" data-rpe="8" onclick="selectInlineRpe(this, 'ok', 8)" style="padding:12px 4px; border:1.5px solid rgba(212,165,116,0.2); background:rgba(255,255,255,0.025); border-radius:10px; font-size:11px; font-weight:600; color:var(--ink-2); cursor:pointer;"><div style="font-size:18px; margin-bottom:2px;">🙂</div>OK</button>
+                  <button class="rpe-btn-inline" data-rpe="9" onclick="selectInlineRpe(this, 'hard', 9)" style="padding:12px 4px; border:1.5px solid rgba(212,165,116,0.2); background:rgba(255,255,255,0.025); border-radius:10px; font-size:11px; font-weight:600; color:var(--ink-2); cursor:pointer;"><div style="font-size:18px; margin-bottom:2px;">😤</div>Greu</button>
+                  <button class="rpe-btn-inline" data-rpe="10" onclick="selectInlineRpe(this, 'very-hard', 10)" style="padding:12px 4px; border:1.5px solid rgba(212,165,116,0.2); background:rgba(255,255,255,0.025); border-radius:10px; font-size:11px; font-weight:600; color:var(--ink-2); cursor:pointer;"><div style="font-size:18px; margin-bottom:2px;">🥵</div>F. greu</button>
+                </div>
+                <!-- Edit reps + kg adjust inline (post-set adjSessionReps/adjSessionKg) -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                  <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.2); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
+                    <button onclick="adjReps(-1)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">−</button>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">REPS</div><div id="reps-input" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink);">10</div></div>
+                    <button onclick="adjReps(1)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">+</button>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.025); border:1px solid rgba(212,165,116,0.2); border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:space-between;">
+                    <button onclick="adjKg(-2.5)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">−</button>
+                    <div style="text-align:center;"><div class="small-text" style="color:var(--ink-3);">KG</div><div id="kg-input" style="font-family:'Geist Mono', monospace; font-weight:600; color:var(--ink);">22.5</div></div>
+                    <button onclick="adjKg(2.5)" style="width:28px; height:28px; border:none; background:rgba(212,165,116,0.06); border-radius:6px; cursor:pointer; font-weight:700; color:var(--ink);">+</button>
+                  </div>
+                </div>
+                <button class="btn-brick" onclick="confirmSetInline()" style="width:100%;">Confirmă set</button>
+              </div>
               <div class="set-row" data-set="4">
                 <div class="set-num">4</div>
                 <div class="set-val" style="color:var(--ink-3);">22.5 kg</div>
@@ -1439,11 +1464,11 @@
               <div class="small-text" style="color:var(--ink-3); text-transform:uppercase; letter-spacing:0.06em;">Pauză</div>
               <div class="body-text" style="font-weight:500;">Următorul: 22.5 kg × 8–10</div>
             </div>
-            <button onclick="document.getElementById('rest-timer').style.display='none'" style="background:var(--accent); color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600;">Sari</button>
+            <button onclick="skipRestPause()" style="background:var(--accent); color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:600;" title="Skip pauza — engine flag">Sari</button>
           </div>
 
-          <button class="btn-brick" style="width:100%; margin-top:16px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="logCurrentSet()">
-            <i data-lucide="check"></i> Înregistrează setul
+          <button class="btn-brick" style="width:100%; margin-top:16px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="setDoneInline()">
+            <i data-lucide="check"></i> Setul e gata
           </button>
 
           <button class="btn-ghost" style="width:100%; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="goto('post-rpe')">
@@ -2349,6 +2374,10 @@
   .template-row.template-active .template-label { font-weight:700; color:var(--ink); }
   .template-row.template-active .template-label::after { content:" · activ"; color:var(--accent); font-weight:500; font-size:13px; }
   .template-row.template-active i[data-lucide]:first-child { color:var(--accent); }
+
+  /* Workflow V1 inline RPE Task F 2026-05-10 chat ACASĂ post-smoke (per src/pages/coach/logging.js selectRPE) */
+  .rpe-btn-inline { transition: border-color .15s, background .15s; }
+  .rpe-btn-inline.sel { border-color:var(--accent) !important; background:rgba(232,200,150,0.12) !important; color:var(--accent) !important; }
 </style>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -2593,6 +2622,57 @@
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;
+  // ─── Workflow V1 cap-coadă Task F 2026-05-10 chat ACASĂ post-smoke (port src/pages/coach/* — Phase 5+6+7+8+10) ──
+  let _sessionRpe = null;
+  function setDoneInline() {
+    const rpeBox = document.getElementById('rpe-inline');
+    if (rpeBox) rpeBox.style.display = 'block';
+  }
+  window.setDoneInline = setDoneInline;
+  function selectInlineRpe(btn, label, rpe) {
+    document.querySelectorAll('.rpe-btn-inline').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    _sessionRpe = rpe;
+  }
+  window.selectInlineRpe = selectInlineRpe;
+  function adjReps(delta) {
+    const el = document.getElementById('reps-input'); if (!el) return;
+    let v = parseInt(el.textContent || '0', 10) + delta;
+    v = Math.max(1, Math.min(30, v)); el.textContent = v;
+  }
+  window.adjReps = adjReps;
+  function adjKg(delta) {
+    const el = document.getElementById('kg-input'); if (!el) return;
+    let v = parseFloat(el.textContent || '0') + delta;
+    v = Math.max(0, Math.round(v * 10) / 10); el.textContent = v;
+  }
+  window.adjKg = adjKg;
+  function confirmSetInline() {
+    const reps = document.getElementById('reps-input')?.textContent || '?';
+    const kg = document.getElementById('kg-input')?.textContent || '?';
+    const rpeMsg = _sessionRpe != null ? ` · RPE ${_sessionRpe}` : '';
+    showToast(`Set logat: ${reps} reps × ${kg}kg${rpeMsg}`);
+    document.getElementById('rpe-inline').style.display = 'none';
+    _sessionRpe = null;
+    document.querySelectorAll('.rpe-btn-inline').forEach(b => b.classList.remove('sel'));
+    const restEl = document.getElementById('rest-timer');
+    if (restEl) restEl.style.display = 'flex';
+  }
+  window.confirmSetInline = confirmSetInline;
+  function skipRestPause() {
+    const restEl = document.getElementById('rest-timer');
+    if (restEl) restEl.style.display = 'none';
+    showToast('⚠️ Pauza scurtă poate reduce performanța la setul următor');
+  }
+  window.skipRestPause = skipRestPause;
+  function cancelWorkout() {
+    if (window.confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) {
+      goto('antrenor');
+      showToast('❌ Antrenament anulat');
+    }
+  }
+  window.cancelWorkout = cancelWorkout;
+
   // ─── Templates active state toggle Task B 2026-05-10 chat ACASĂ post-smoke ──
   function pickTemplate(btn) {
     document.querySelectorAll('.template-row').forEach(r => {
