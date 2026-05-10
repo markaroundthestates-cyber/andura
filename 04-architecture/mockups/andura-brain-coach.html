@@ -1924,7 +1924,7 @@
       </div>
     </div>
 
-    <!-- ═══ III · ONB WELCOME ═══ -->
+    <!-- ═══ III · ONB OBIECTIV (Big 6 Pasul 1 — STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule: Welcome ecran dropped, Obiectiv ADD per Theme Parity Invariant Clasic/LB baseline) ═══ -->
     <div class="screen" id="screen-onboard">
       <div class="scroll">
         <div class="stepper-row">
@@ -1933,40 +1933,57 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
           <div class="step-dot"></div>
-          <span class="step-counter">I/V</span>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">1/7</span>
         </div>
-        <div class="onb-title">Bună. Hai să te cunosc.</div>
-        <div class="onb-sub">Am nevoie de cinci răspunsuri ca să încep să-ți construiesc coach-ul. Două minute, nu mai mult.</div>
+        <div class="onb-title">Ce vrei să obții?</div>
+        <div class="onb-sub">Alegi unul. Modelul calibrează strategia. Poți schimba mai târziu — coach-ul se adaptează.</div>
 
-        <div class="thinking-card">
+        <div class="choice-grid cols-1">
+          <button class="choice selected">
+            <div class="choice-label">Forță &amp; masă</div>
+            <div class="choice-sub">Hipertrofie controlată, performanță în sală</div>
+          </button>
+          <button class="choice">
+            <div class="choice-label">Tonifiere</div>
+            <div class="choice-sub">Definire musculară, recomp echilibrat</div>
+          </button>
+          <button class="choice">
+            <div class="choice-label">Slăbire</div>
+            <div class="choice-sub">Reducere greutate cu păstrare masă</div>
+          </button>
+          <button class="choice">
+            <div class="choice-label">Longevitate</div>
+            <div class="choice-sub">Mobilitate, sănătate articulară</div>
+          </button>
+        </div>
+
+        <div class="thinking-card compact">
           <div class="think-head">
             <span class="pulse-dot"></span>
-            <span class="think-label">De ce întreb</span>
+            <span class="think-label">Asta îmi spune</span>
           </div>
           <div class="thought-step">
             <span class="check">✓</span>
-            <span>Recuperarea variază <span class="data">±36%</span> pe vârstă</span>
-          </div>
-          <div class="thought-step">
-            <span class="check">✓</span>
-            <span>Răspuns la volum diferă <span class="data">2.4×</span> pe sex</span>
-          </div>
-          <div class="thought-step">
-            <span class="check">✓</span>
-            <span>Istoric medical = lock-uri pe <span class="data">347</span> exerciții posibile</span>
-          </div>
-          <div class="thought-step">
-            <span class="pending">◐</span>
-            <span>Calibrez modelul tău neural personal</span>
+            <span>Strategie inițială: <span class="data">Linear Block 4+1</span> — recalibrez în <span class="data">3-4 săpt</span></span>
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-varsta')">Începem →</button>
-        <div class="etched text-c mt-m">Durată estimată — II minute</div>
+        <div class="footnote">
+          <span class="footnote-tag">Disclaimer</span>
+          Andura e instrument de coaching, NU înlocuiește consult medical. Mă consult cu medicul dacă apare durere sau disconfort.
+          <label style="display:flex; gap:8px; align-items:center; margin-top:10px; cursor:pointer;">
+            <input type="checkbox" required style="width:18px; height:18px;"/>
+            <span>Am înțeles</span>
+          </label>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-varsta')">Continuă →</button>
       </div>
     </div>
 
-    <!-- ═══ IV · ONB VÂRSTA ═══ -->
+    <!-- ═══ IV · ONB VÂRSTA (Big 6 Pasul 2 — required hard T0) ═══ -->
     <div class="screen" id="screen-onb-varsta">
       <div class="scroll">
         <div class="stepper-row">
@@ -1975,7 +1992,9 @@
           <div class="step-dot"></div>
           <div class="step-dot"></div>
           <div class="step-dot"></div>
-          <span class="step-counter">2/5</span>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">2/7</span>
         </div>
         <div class="onb-title">Câți ani ai?</div>
         <div class="onb-sub">Recuperarea, capacitatea aerobă și răspunsul la volum se schimbă cu vârsta. Asta îmi setează prima dimensiune.</div>
@@ -1983,6 +2002,7 @@
         <div class="picker-card">
           <div class="picker-big">28</div>
           <div class="picker-unit">ani</div>
+          <input type="hidden" id="onb-age-input" required min="16" max="99" value="28"/>
           <div class="picker-track">
             <div class="fill" style="width:36%;"></div>
             <div class="handle" style="left:36%;"></div>
@@ -2008,7 +2028,7 @@
       </div>
     </div>
 
-    <!-- ═══ V · ONB SEX ═══ -->
+    <!-- ═══ V · ONB SEX (Big 6 Pasul 3 — required hard T0 + Altul option per ONBOARDING_SSOT V1 §1 ECRAN 3 spec M/F/Altul) ═══ -->
     <div class="screen" id="screen-onb-sex">
       <div class="scroll">
         <div class="stepper-row">
@@ -2017,7 +2037,9 @@
           <div class="step-dot active"></div>
           <div class="step-dot"></div>
           <div class="step-dot"></div>
-          <span class="step-counter">III/V</span>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">3/7</span>
         </div>
         <div class="onb-title">Sex biologic?</div>
         <div class="onb-sub">Pentru bias-ul fiziologic al modelului — nu pentru identitate. Influențează masă musculară de bază, testosteron, distribuție grăsime.</div>
@@ -2033,6 +2055,11 @@
             <div class="choice-label">Feminin</div>
             <div class="choice-sub">Bias rezistență + tonus</div>
           </button>
+          <button class="choice">
+            <div class="choice-icon">·</div>
+            <div class="choice-label">Altul</div>
+            <div class="choice-sub">Model neutru, recalibrare adaptivă</div>
+          </button>
         </div>
 
         <div class="thinking-card compact">
@@ -2046,12 +2073,12 @@
           </div>
         </div>
 
-        <button class="btn-primary" onclick="goto('onb-medical')">Continuă →</button>
+        <button class="btn-primary" onclick="goto('onb-inaltime')">Continuă →</button>
       </div>
     </div>
 
-    <!-- ═══ VI · ONB MEDICAL ═══ -->
-    <div class="screen" id="screen-onb-medical">
+    <!-- ═══ VI · ONB ÎNĂLȚIME (Big 6 Pasul 4 NEW per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 — Mifflin-St Jeor BMR/TDEE necesită) ═══ -->
+    <div class="screen" id="screen-onb-inaltime">
       <div class="scroll">
         <div class="stepper-row">
           <div class="step-dot done"></div>
@@ -2059,7 +2086,85 @@
           <div class="step-dot done"></div>
           <div class="step-dot active"></div>
           <div class="step-dot"></div>
-          <span class="step-counter">IV/V</span>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">4/7</span>
+        </div>
+        <div class="onb-title">Cât ești de înalt?</div>
+        <div class="onb-sub">Necesar pentru calculul aportului caloric. Modelul calibrează BMR/TDEE Mifflin-St Jeor — fără asta, predicțiile ratează ±20%.</div>
+
+        <div class="picker-card">
+          <div class="picker-big">175</div>
+          <div class="picker-unit">cm</div>
+          <input type="number" id="onb-height-input" required min="100" max="250" step="1" inputmode="numeric" placeholder="ex. 175"
+                 style="width:100%; padding:12px 16px; margin-top:12px; border:1px solid var(--ink-3); background:transparent; font-size:18px; text-align:center; color:var(--ink); font-family:inherit;"/>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Asta îmi spune</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>BMR estimat <span class="data">≈1700 kcal</span> — input pentru target zilnic</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-greutate')">Continuă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ VII · ONB GREUTATE (Big 6 Pasul 5 NEW per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7) ═══ -->
+    <div class="screen" id="screen-onb-greutate">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">5/7</span>
+        </div>
+        <div class="onb-title">Cât cântărești?</div>
+        <div class="onb-sub">Baseline pentru calibrare. Actualizezi oricând în Profil — modelul se recalibrează în timp real.</div>
+
+        <div class="picker-card">
+          <div class="picker-big">75.5</div>
+          <div class="picker-unit">kg</div>
+          <input type="number" id="onb-weight-input" required min="30" max="300" step="0.1" inputmode="decimal" placeholder="ex. 75.5"
+                 style="width:100%; padding:12px 16px; margin-top:12px; border:1px solid var(--ink-3); background:transparent; font-size:18px; text-align:center; color:var(--ink); font-family:inherit;"/>
+        </div>
+
+        <div class="thinking-card compact">
+          <div class="think-head">
+            <span class="pulse-dot"></span>
+            <span class="think-label">Asta îmi spune</span>
+          </div>
+          <div class="thought-step">
+            <span class="check">✓</span>
+            <span>TDEE estimat <span class="data">≈2400 kcal</span> — calibrare strategie nutriție</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goto('onb-medical')">Continuă →</button>
+      </div>
+    </div>
+
+    <!-- ═══ VIII · ONB MEDICAL (Big 6 Pasul 6 — skippable default per §50.3 D2) ═══ -->
+    <div class="screen" id="screen-onb-medical">
+      <div class="scroll">
+        <div class="stepper-row">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <span class="step-counter">6/7</span>
         </div>
         <div class="onb-title">Ai constrângeri?</div>
         <div class="onb-sub">Bifează tot ce e relevant. Lock-ez exercițiile riscante și-ți construiesc alternative sigure.</div>
@@ -2118,7 +2223,7 @@
       </div>
     </div>
 
-    <!-- ═══ VII · ONB FRECVENȚĂ ═══ -->
+    <!-- ═══ IX · ONB FRECVENȚĂ (Big 6 Pasul 7 — closure 7 ecrane V2 onboarding flow) ═══ -->
     <div class="screen" id="screen-onb-frecventa">
       <div class="scroll">
         <div class="stepper-row">
@@ -2126,8 +2231,10 @@
           <div class="step-dot done"></div>
           <div class="step-dot done"></div>
           <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
           <div class="step-dot active"></div>
-          <span class="step-counter">V/V</span>
+          <span class="step-counter">7/7</span>
         </div>
         <div class="onb-title">Câte sesiuni / săpt?</div>
         <div class="onb-sub">Realist, nu aspirational. Mai bine III consistent decât V planificate și II făcute. Pot ajusta oricând.</div>
