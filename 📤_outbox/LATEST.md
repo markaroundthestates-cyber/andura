@@ -1,45 +1,31 @@
-# TASK 10 — 1800 kcal Hardcoded Removal Production (+ TASK 09 cycle bundled)
+# TASK 11 — Pain Button Idle Remove (NO-OP — already done via Task 07)
 
-- **Status:** ✅ Complete (Task 09 nutrition cross-skin + Task 10 1800 removal both LANDED)
-- **Commit:** `d68d05c` pushed origin/main (bundled Task 09 cycle + Task 10 src fix)
-- **Backup tag:** `pre-task10-1800kcal-2026-05-10-1017`
+- **Status:** ✅ Complete (verification only — no file changes needed)
+- **Commit:** Cycle commit only (no production changes)
 
-## Task 10 Modificări (13 files)
+## Pre-flight findings
 
-Per Daniel directive 2026-05-10: 'in productie scoate rahatul ala al meu de 1800 kcal'
+Cross-skin × 4 grep `goto('pain-button')` entry triggers — ALL Pain Button entries now exclusively inside Ceva nu merge drill ecran (mid-session context preserved per Task 07):
 
-**Production code (5 files):**
-- `src/constants.js`: KCAL_TARGET 1800 → 2000 (+ comment documenting Daniel removal)
-- `src/config/user.js`: targets.kcal 1800 → 2000
-- `src/engine/proactiveEngine.js`: comment 'Kcal sub 1800' → 'Kcal sub țintă (KCAL_TARGET)'
-- `src/engine/reality.js`: comment 'regula 1800 kcal' → 'ținta calorică (KCAL_TARGET)'
-- `src/engine/sys.js`: comment '1800 fix' → 'KCAL_TARGET fix'
+| Skin | Pain Button triggers | Location |
+|------|----------------------|----------|
+| Clasic | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva fan-out) |
+| Living Body | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva fan-out) |
+| Luxury | 0 explicit triggers | Stage 15 pain-button accessible via voice keyword + Ceva nu merge drill (stage 48) |
+| Brain Coach | 2 | screen-ceva-nu-merge drill (Mă doare + Altceva check-items) |
 
-**Test fixtures updated (6 files, mechanical 1800 → 2000):**
-- src/config/__tests__/user.test.js (2)
-- src/engine/__tests__/coachDirector.test.js (5: 4 setItem + 1 expect 'Menținem 2000 kcal')
-- src/engine/__tests__/sys.test.js (3)
-- src/engine/__tests__/proactiveEngine.test.js (1)
-- src/engine/goalAdaptation/tests/index.test.js (1)
-- src/__tests__/firebase-cache-coalesce.test.js (1)
+**Idle context Antrenor homepage / pre-session / post-session:** ZERO standalone Pain Button entries cross-skin × 4 (Task 07 already removed via merge "Mă doare ceva" + "Schimbă echipament" → 1 buton "Ceva nu merge").
 
-**Engine compute logic Mifflin-St Jeor preserved unchanged.** KCAL_TARGET = 2000 = engine fallback when computed value unavailable. Engine should derive via BMR/TDEE + Big 6 inputs (Tasks 01-04 LANDED) preferred path.
+**Pain Button mid-session:** PRESERVED accessible only via Ceva nu merge → Mă doare drill option (per Task 07 spec).
+
+## Modificări
+
+ZERO file changes (Task 07 already accomplished Task 11 scope as side effect).
 
 ## Tests
 
-✅ **2731 PASS preserved EXACT** (mechanical test value updates).
-
-## Cluster #3 Workflow + scope cuts progress (1/6)
-
-| # | Task | Status |
-|---|------|--------|
-| 10 | 1800 kcal hardcoded grep+remove production | ✅ Complete |
-| 11 | Pain Button idle remove | Pending |
-| 12 | Sport plan supervision DROP | Pending |
-| 13 | saveStepsQuick DROP | Pending |
-| 14 | Antrenament liber DROP | Pending |
-| 15 | Workflow audit READ-ONLY parity cross-skin | Pending |
+✅ 2731 PASS preserved EXACT (no changes).
 
 ## Next action
 
-**TASK 11** Pain Button idle remove (Antrenor idle context cleanup mid-session only preserved).
+**TASK 12** Sport plan supervision DROP complet.
