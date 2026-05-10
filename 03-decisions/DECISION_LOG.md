@@ -1,5 +1,27 @@
 # DECISION LOG — Andura
 
+## 2026-05-10 — chat ACASĂ MCP filesystem paradigm shift + ADR 005 §AMENDMENT REVERT SUPERSEDE + §CC.5 Direct-to-CC LOCK V1 (~718→~719 cumulative, +1 net Port-First-Then-React preserved chat-precedent ingest)
+
+**Status:** §CC.5 fast handover ingest from `📥_inbox/HANDOVER_2026-05-10_chat_acasa_mcp_filesystem_paradigm_shift.md` (NN 354 archive). 3 vault meta-tooling commits Step 1+2+3 atomic Bugatti sequence LANDED chat-current pure docs ZERO src/ touched. Direct-to-CC paradigm LIVE TESTED chat-current handover (Claude direct write inbox + invoke claude_code autonomous + signal "e timpul pt noul chat"). Cumulative LOCKED V1 ~718 → **~719** (+1 net Port-First-Then-React preserved chat-precedent ingest, NU duplicate count).
+
+**3 commits Step 1+2+3 LANDED chat-current vault meta-tooling:**
+
+- **Step 1 commit `e54c250`** §CC.2.1 NEW Read Source Priority — PRIMARY MCP filesystem direct (`filesystem:read_text_file` / `read_multiple_files` / `list_directory` / `search_files`) când available real-time zero lag zero capacity limit. FALLBACK `project_knowledge_search` când MCP unavailable. Detection `tool_search filesystem` ÎNAINTE first action. §CC.4 citation enforcement updated cu MCP verify primary. PROMPT_CC_HYGIENE §11 sync.
+- **Step 2 commit `0c052cf`** §CC.5 §AMENDMENT 2026-05-10 inline Direct-to-CC Paradigm LOCK V1 (Daniel zero courier). Trigger reaffirm dual condition: Daniel "fă handover" voluntary OR bandwidth ~25-30% saturat + risc halucinații. Workflow: Claude scrie handover direct `📥_inbox/<HANDOVER>.md` via `filesystem:write_file` → invoke `claude_code` agent §CC.5 ingest autonomous → confirm LANDED → signal explicit "e timpul pt noul chat". Eliminate vechi Daniel drag + comandă. §HANDOVER_PROTOCOL deep cross-ref same paradigm shift compatible.
+- **Step 3 commit `a6e2a0e`** ADR 005 §AMENDMENT 2026-05-10 inline REVERT SUPERSEDE §AMENDMENT 2026-05-08. Vanilla JS preserved active stack pre-React migration. Step 1 ~1-2 săpt port mockup V2 → prod vanilla JS modules `src/` + Step 2 ~1-2 săpt React migration mecanic mapping post Step 1 validation. Tactical scope §AMENDMENT 2026-05-08 preserved compatible Step 2. Branch strategy LOCK V1: vault `main` + `feature/v2-vanilla-port` code + `feature/react-migration` future. `feature/phase-3-orchestrator-final` archived NU merged main.
+
+**BATCH 1 Antrenor INVENTORY+PLAN raport CC verde clean** post `feature/v2-vanilla-port` branch creat. Co-CTO LOCK tacit: PRESERVE `src/pages/coach/` 36+ imports blast radius + state.js +2 fields (currentScreen + cevaNuMergeReason) + persona JS render conditional + test target ~2780. ZERO Antrenor blocker bugs (slip §AR.1 acknowledged eu — preluat lista buguri din handover Phase 3.6 fără pre-flight grep verify mockup/src; CC raport invalidat 4/5 buguri non-Antrenor sau inexistent în mockup, port baseline curat).
+
+**Mid-flight BATCH 2 V1 features keep/drop CEO decision pending next chat:** `renderIdle.js` 465→180 LOC pierde streak counter + BMR calorie strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Keep all V1 features (port + features extra peste mockup V2 minim) sau drop mockup V2 strict?
+
+**Memorii Claude updated** (5 rules): #21 §CC.2 + §CC.2.1 MCP priority, #22 §CC.4 MCP verify, #15 Handover paths Direct-to-CC, #24 §CC.5 Direct-to-CC workflow, #30 Read strategy MCP primary.
+
+**Cross-refs:** Predecessor handover NN 353 chat ACASĂ post Phase 3.6 + Port-First-Then-React pivot (consumed) + Handover NEW MCP filesystem paradigm shift (NN 354 archive) + ADR 005 STATUS UPDATE 2026-05-10 + §CC.5 §AMENDMENT 2026-05-10 inline + §CC.2.1 NEW Read Source Priority MCP filesystem PRIMARY + PROMPT_CC_HYGIENE §11 sync.
+
+🦫 **Bugatti craft. MCP filesystem real-time vault state primary. Direct-to-CC paradigm Daniel zero courier LIVE TESTED validated. Port-first vanilla pre-React preserved active stack. Cumulative LOCKED V1 ~719.**
+
+---
+
 ## 2026-05-10 chat ACASĂ post Phase 3.6 attempt + mockup vs prod distincție + PORT-FIRST-THEN-REACT pivot LOCK V1 (cumulative ~718 → ~719, +1 net strategic pivot substantive)
 
 **Status:** §CC.5 fast handover ingest from `📥_inbox/handover_2026-05-10_chat_acasa_port_first_then_react_pivot.md`. Strategic pivot LOCK V1: mockup `04-architecture/mockups/` = DESIGN MASTER pre-React migration target SEPARATE de prod `src/` current state (layout vechi). Step 1 port mockup V2 design + Phase 3+3.5 fixes → prod vanilla JS modules ~1-2 săpt + Step 2 React migration mecanic mapping ~1-2 săpt. Cumulative LOCKED V1 ~718 → **~719** (+1 net strategic pivot substantive).

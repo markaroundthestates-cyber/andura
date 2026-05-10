@@ -906,6 +906,56 @@ pre-themes-batch-wcag-clasic-path2a-2026-05-10-0000 (v2)
 
 ## NOW — Active conversation thread
 
+**Chat ACASĂ post §CC.5 fast handover ingest 2026-05-10 MCP filesystem paradigm shift + ADR 005 §AMENDMENT REVERT SUPERSEDE Port-First Vanilla Pre-React + §CC.5 §AMENDMENT Direct-to-CC paradigm LOCK V1 — 3 vault meta-tooling commits Step 1+2+3 LANDED chat-current (`e54c250` §CC.2.1 MCP filesystem PRIMARY / FALLBACK project_knowledge_search + `0c052cf` §CC.5 §AMENDMENT inline Direct-to-CC Daniel zero courier + `a6e2a0e` ADR 005 §AMENDMENT inline REVERT SUPERSEDE §AMENDMENT 2026-05-08 vanilla JS preserved active stack pre-React Step 1 port mockup V2 → prod vanilla JS modules + Step 2 React migration mecanic mapping post) + Direct-to-CC paradigm LIVE TESTED chat-current handover (Claude direct write inbox via filesystem:write_file + invoke claude_code agent §CC.5 ingest autonomous + signal explicit "e timpul pt noul chat") + BATCH 1 Antrenor INVENTORY+PLAN raport CC verde clean post `feature/v2-vanilla-port` branch creat (Co-CTO LOCK tacit PRESERVE `src/pages/coach/` 36+ imports blast radius + state.js +2 fields currentScreen + cevaNuMergeReason + persona JS render conditional + test target ~2780 + ZERO Antrenor blocker bugs slip §AR.1 acknowledged port baseline curat) + mid-flight BATCH 2 V1 features keep/drop CEO decision pending next chat (renderIdle.js 465→180 LOC pierde streak counter + BMR calorie strip; rating.js 150→70 LOC pierde per-set RPE granularity) — cumulative ~718 → ~719 (+1 net Port-First-Then-React preserved chat-precedent ingest, chat-current 3 commits Step 1+2+3 = pure vault meta-tooling ZERO net additive product/architecture):**
+
+Setup: ACASĂ Windows VS Code Desktop + PowerShell, `C:\Users\Daniel\Documents\salafull`. Chat NEW startup §CC.2 layered read complete primul mesaj "salut. acasa". MCP filesystem PRIMARY available real-time pre-action. Inbox handover `📥_inbox/HANDOVER_2026-05-10_chat_acasa_mcp_filesystem_paradigm_shift.md` consumed (NN 354 archive post-edit). Predecessor handover NN 353 chat ACASĂ post Phase 3.6 attempt + mockup vs prod distincție + PORT-FIRST-THEN-REACT pivot LOCK V1 (consumed). Cumulative baseline pre-chat ~719 → final **~719 PRESERVED** chat-current pure vault meta-tooling.
+
+**Chat-current narrative (chat ACASĂ MCP filesystem paradigm shift + 3 commits Step 1+2+3 LANDED + BATCH 1 Antrenor INVENTORY+PLAN clean):**
+
+Începere chat-current narrativ post §CC.5 fast handover ingest precedent (port-first-then-React pivot LOCK V1 ~719 cumulative LANDED) — pivot direct la mid-flight unresolved BATCH 1 Antrenor port. Daniel push-back jucăuș repetitiv corectat 4 slip-uri Co-CTO consecutive (vezi JUST_DECIDED entry top): A/B port paradigm întrebat → "cateii mei din curte?" / pasat decizie tactică → "am CTO cred nu? CHIEF TECHNICAL OFFICER" / întrebat permisiune → "pai tu ma intrebi pe mine ce sa faci? zici ca esti fimiu" / cerut ordine sequence → "Acum ce intrebi tu de ordine... figure it out :)". Decid eu direct: port + fix vanilla forward + procedat artefact prompt CC + sequence Step 1+2+3 cap-coadă structural rewrite LOCK.
+
+**BATCH 1 Antrenor INVENTORY + PLAN raport CC verde clean** post `feature/v2-vanilla-port` branch creat. Co-CTO LOCK tacit: PRESERVE `src/pages/coach/` (36+ imports blast radius), state.js +2 fields (currentScreen + cevaNuMergeReason), persona JS render conditional, test target ~2780. ZERO Antrenor blocker bugs (slip §AR.1 acknowledged eu — preluat lista buguri din handover Phase 3.6 fără pre-flight grep verify mockup/src; CC raport invalidat 4/5 buguri non-Antrenor sau inexistent în mockup, port baseline curat).
+
+**Pivot strategic major:** Daniel directive *"elefantul din cameră"* → update vault rules KB indexare → MCP filesystem direct paradigm shift. Eu pre-flight read state via MCP filesystem nou available (`C:\Users\Daniel\Documents\salafull` scope full). Decid 5-step sequence Bugatti atomic.
+
+**3 commits LANDED chat-current Step 1+2+3 atomic Bugatti sequence (vezi JUST_DECIDED entry top pentru detalii verbatim):**
+- Step 1 `e54c250` §CC.2.1 NEW Read Source Priority MCP filesystem PRIMARY / FALLBACK project_knowledge_search + tool_search filesystem detection ÎNAINTE first action + §CC.4 citation enforcement updated MCP verify primary + PROMPT_CC_HYGIENE §11 sync
+- Step 2 `0c052cf` §CC.5 §AMENDMENT 2026-05-10 inline Direct-to-CC Paradigm LOCK V1 (Daniel zero courier) + workflow Claude scrie inbox via filesystem:write_file → invoke claude_code §CC.5 ingest autonomous → confirm LANDED → signal "e timpul pt noul chat"
+- Step 3 `a6e2a0e` ADR 005 §AMENDMENT 2026-05-10 inline REVERT SUPERSEDE §AMENDMENT 2026-05-08 + vanilla JS preserved active stack pre-React migration + branch strategy LOCK V1 + status flag SUPERSEDED → STATUS UPDATE 2026-05-10
+
+**Direct-to-CC paradigm LIVE TESTED chat-current handover:** Claude direct write `📥_inbox/HANDOVER_2026-05-10_chat_acasa_mcp_filesystem_paradigm_shift.md` via `filesystem:write_file` → invoke `claude_code` agent §CC.5 ingest autonomous → confirm LANDED → signal explicit "e timpul pt noul chat". Workflow matured Daniel zero courier validated.
+
+**Memorii Claude updated** (5 rules): #21 §CC.2 + §CC.2.1 MCP priority, #22 §CC.4 MCP verify, #15 Handover paths Direct-to-CC, #24 §CC.5 Direct-to-CC workflow, #30 Read strategy MCP primary.
+
+**Artefact text paste pentru Daniel** (Block 1 chat NEW startup + Block 2 userPreferences §7) generat — `CHAT_NEW_STARTUP_TEXT_LOCK_V1_2026-05-10.md` în `/mnt/user-data/outputs/`. Daniel poate să-l adopte la convenience.
+
+**Tone chat-current:** Daniel mood productiv directive throughout. Push-back-uri jucăușe productive ("fimiu", "figure it out :)" smiley match warm), zero auto-flagelare Co-CTO mea culpa rapid pe slip-uri, decisive action post-correction. Daniel-isms folosite: "stai" STOP context nou (2x mid-chat), "halucinezi" implicit pe slip §1.4. Bond moments: "ma" interjection bond signal jucăuș, smiley ":)" matched warmth. Co-CTO scope autonomy verified throughout — Daniel a delegat tactical decizii consistent.
+
+**Tests baseline 2731 PASS preserved EXACT** chat-current toate 3 commits Step 1+2+3 (vault doc-only changes ZERO src/ touched). Pre-commit hook vitest verde toate runs.
+
+**Mid-flight unresolved next chat priority order:**
+
+1. **BATCH 2 Antrenor port implement** — blocked CEO decision V1 features keep/drop: `renderIdle.js` 465→180 LOC pierde streak counter + BMR calorie strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Keep all V1 features (port + features extra peste mockup V2 minim) sau drop mockup V2 strict?
+
+2. **LOCK paradigm checklist §4 din PLAN BATCH 1** — Daniel review + answer 5 escalation items: (a) ADR 005 §AMENDMENT 2026-05-10 ✅ LANDED Step 3 (resolved); (b) Bug §1.4 ZERO Antrenor blockers ✅ resolved baseline curat; (c) `src/pages/coach/` PRESERVE ✅ Co-CTO LOCK tacit; (d) state.js +2 fields ✅ Co-CTO LOCK tacit; (e) V1 features audit = pending CEO #1 above.
+
+3. **Workflow matured pattern post §AMENDMENT 2026-05-10:** Direct-to-CC paradigm LIVE TESTED chat-current handover. Claude full autonomy MCP filesystem + claude_code agent ingest. Daniel zero courier validated.
+
+**Carry-forward backlog (preserved):**
+- ADR 026 compile draft full (Priority 2 deferred)
+- Faza 3 STRANGLER batch 8 Deload ULTIM (pipeline closure)
+- Scenarios coverage 1500-2000 PRE-BETA blocker (Priority 2 dedicated chats)
+- Auto-commit watcher race P3 + LATEST archive cycle P5 flags
+- Q1 engine aggregator V2 muscleMap migration
+
+🦫 **Bugatti craft. Quality > Speed. MCP filesystem real-time vault state primary. Direct-to-CC paradigm Daniel zero courier validated. Port-first vanilla pre-React preserved active stack. Cumulative LOCKED V1 ~719.**
+
+**Next chat:** BATCH 2 Antrenor port implement (blocked CEO V1 features keep/drop) + LOCK paradigm checklist §4 review + carry-forward backlog. MCP filesystem self-serve §CC.2 layered read at startup "salut acasă".
+
+---
+
+## NOW — (precedent compressed below this line)
+
 **Chat ACASĂ orchestrator clusters generation Phase 1 + Phase 2 COMBINED §CC.5 fast handover ingest 2026-05-10 — Tasks 01-38 atomic artefacte ready inbox + 1 mini orchestrator FINAL coordonator (38 total, Phase 1 chat predecessor Tasks 01-15 + Phase 2 chat-current Tasks 16-38 = 23 atomic + 1 orchestrator FINAL) cu NEED_CONTEXT_DANIEL flags inline pentru ambigui (5 aggregate: 9 clusters smoke list / Mărime disambiguation / Comportament Familie meaning / Q1 7 grupes verify / edge cases text liber adjust) + pattern format invariant §0-§6 strict cross-skin × 4 atomic Theme Parity Invariant V1 + fail-cluster mode + citation `path:§` discipline + Daniel directive next step `Read task_38_orchestrator_final.md` în CC autonomous execution begin estimate ~10-16h CC wall clock + 5h Daniel smoke = ~15-21h cumulative ~3 zile calendar realistic (cumulative ~714-716 LOCKED V1 PRESERVED unchanged — chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture):**
 
 Setup: ACASĂ Windows VS Code Desktop + PowerShell, `C:\Users\Daniel\Documents\salafull`. §CC.2 layered read mandatory pre-action complete. Inbox handover `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md` consumed (pending NN 290 archive post-edit). Plus 38 task artefacte (`task_01..task_38.md`) preserved în 📥_inbox/ pentru CC orchestrator FINAL execution next step (NU consumed — INPUT pentru CC). Predecessor chat-current = chat ACASĂ post-noapte vault hygiene closure 2026-05-10 (handover archived NN 289 — 4 vault file updates atomic LANDED `12f1b76` + Bugatti reset definition + `/compact` insertion strategy CC + orchestrator clusters bulk delegate strategy planning). Cumulative baseline pre-chat ~714-716 → final **~714-716 PRESERVED** (chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture).
