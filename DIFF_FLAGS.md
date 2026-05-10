@@ -1,13 +1,37 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED (P1-FLAG-PORT-FIRST-THEN-REACT 🟢 LOCKED V1 SUBSTANTIVE → 🟢 LOCKED V1 EXECUTION-READY + NEW P1-FLAG-NO-DIACRITICS-RULE 🟢 LOCKED V1 PERMANENT `0841ed4` + NEW P1-FLAG-V1-FEATURES-AUDIT-RESOLVED 🟢 RESOLVED LOCK V1). Tests baseline 2732 PASS preserved EXACT post-strip + 1 e2e skip. Cumulative ~719 → ~742 (+23 net). Predecessor Updated: 2026-05-10 chat ACASĂ continuation MCP filesystem (sync drift cleanup post 5 zile).
+**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Mockup buguri sweep #1 LANDED 8 atomic commits autonomous (NEW P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT sub-decision #1 RESOLVED + 6 NEW P3 carry-forward DIFF_FLAGS mockup polish/refactor V2 React port time). Predecessor Updated: 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED. Tests baseline 2732 PASS preserved EXACT through all 8 mockup-fix commits via pre-commit hook. Cumulative ~742 PRESERVED (mockup polish meta-tooling NU additive).
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
 ---
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
+
+### P1-FLAG-MOCKUP-BURURI-SWEEP-1-RESOLVED — Mockup buguri sweep #1 single-theme Clasic master LANDED (2026-05-10 chat-current 2)
+
+**Status:** 🟢 RESOLVED LANDED 2026-05-10 chat-current 2 (Co-CTO Autonomous Daniel autonomy lock EXTINS scope). 8 atomic fix commits a9ddfa8 → 8d16361 (5 primary P0/P1 + 3 supplementary post second-opinion audit). Net file -228 LOC (2351 → 2123). Tests 2732 PASS preserved EXACT through all 8 commits via pre-commit hook. **Unblocks BATCH 2 Antrenor port execute on `feature/v2-vanilla-port` branch** (sub-decision #1 prerequisite RESOLVED). Cumulative LOCKED V1 ~742 PRESERVED (mockup polish meta-tooling NU additive product/architecture LOCK V1).
+**Severity:** N/A (resolved, gates BATCH 2 Antrenor execution unblock)
+
+**Audit raport SSOT:** `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` — 18 findings (3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward) Bugatti craft 360° narrative ~80-200 LOC.
+
+**8 atomic commits LANDED:**
+
+| # | Commit | Severity | Concern |
+|---|--------|----------|---------|
+| 1 | `a9ddfa8` | P0-1 | Cloudflare email-protection injection removal — 7 sites obfuscated `__cf_email__` + email-decode CDN script |
+| 2 | `37f8a42` | P0-2 | Duplicate ID stub divs removal — 4 vestigial screen-coach/home/sala/progress |
+| 3 | `0930b2a` | P0-3 | Medical disclaimer landing target home → antrenor — V1 LOCK 4-tab nav alignment |
+| 4 | `b2acb11` | P1-1 | Typo intenctie → intentie — Despre Andura body copy polish |
+| 5 | `2100eef` | P1-2/3/4 | Remove 3 dead legacy screens (sala/home/coach) + orphan JS callers + tab alias cleanup → -207 LOC |
+| 6 | `55846b3` | P1-5 | pickTheme JS unicode escape — drop ă diacritic (NO_DIACRITICS_RULE LOCK V1 violation) |
+| 7 | `abcb8fd` | P1-6 | Engine jargon → Coach jargon — 5 sites Glossary V1 LOCK Gigel-friendly |
+| 8 | `8d16361` | P1-7 | RPE numeric jargon → intensitate buckets — 6 sites Glossary V1 LOCK |
+
+**Cross-refs:** `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` SSOT + `00-index/CURRENT_STATE.md` §JUST_DECIDED chat-current 2 mockup buguri sweep entry + `03-decisions/DECISION_LOG.md` chat-current 2 entry top descending + `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 sub-decision #1 RESOLVED LANDED + backup tag `pre-mockup-buguri-sweep-vault-sync-2026-05-10-2218`
+
+---
 
 ### P1-FLAG-NO-DIACRITICS-RULE — Strip global UI/tests/mockups LOCK V1 PERMANENT (2026-05-10 chat-current 2)
 

@@ -1,6 +1,62 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ continuation 2 — MOCKUP BURURI SWEEP #1 LANDED — 8 atomic commits autonomous (cumulative ~742 PRESERVED, mockup polish meta-tooling NU additive)
+
+**Status:** Mockup buguri sweep #1 single-theme Clasic master `04-architecture/mockups/andura-clasic.html` LANDED autonomous Co-CTO scope. 8 atomic fix commits a9ddfa8 → 8d16361 (5 primary P0/P1 + 3 supplementary post second-opinion audit). Net file -228 LOC (2351 → 2123). Tests 2732 PASS preserved EXACT through all 8 commits via pre-commit hook. Cumulative LOCKED V1 ~742 PRESERVED unchanged (mockup polish meta-tooling NU additive product/architecture LOCK V1).
+
+**Authority:** `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 sub-decision #1 (Bugatti SoT clean port single — fix once mockup, port clean once) + Daniel autonomy lock EXTINS chat-current 2 verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*
+
+**Audit raport SSOT:** `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` (Bugatti craft 360° narrative ~80-200 LOC, 18 findings: 3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward, severity grouping + Bugatti recommendation per bug)
+
+**8 atomic commits LANDED:**
+
+| # | Commit | Severity | Concern |
+|---|--------|----------|---------|
+| 1 | `a9ddfa8` | P0-1 | Cloudflare email-protection injection removal — 7 sites obfuscated `__cf_email__` placeholder + email-decode CDN script tag → restored daniel@andura.ro / support@andura.ro plain |
+| 2 | `37f8a42` | P0-2 | Duplicate ID stub divs removal — 4 vestigial screen-coach/home/sala/progress empty placeholders broke `goto('coach')` routing + HTML5 §3.2.5.1 invalid |
+| 3 | `0930b2a` | P0-3 | Medical disclaimer landing target home → antrenor — V1 LOCK 4-tab nav alignment |
+| 4 | `b2acb11` | P1-1 | Typo intenctie → intentie — Despre Andura body copy Bugatti polish |
+| 5 | `2100eef` | P1-2/3/4 | Remove 3 dead legacy screens (sala/home/coach) + orphan JS callers (selectEnergy/pickCause) + tabbedScreens/tabFor legacy alias cleanup → -207 LOC |
+| 6 | `55846b3` | P1-5 | pickTheme JS unicode escape — drop ă diacritic violation NO_DIACRITICS_RULE LOCK V1 |
+| 7 | `abcb8fd` | P1-6 | Engine jargon → Coach jargon — 5 sites Glossary V1 LOCK Gigel-friendly |
+| 8 | `8d16361` | P1-7 | RPE numeric jargon → intensitate buckets — 6 sites (Istoric + post-RPE labels) Glossary V1 LOCK |
+
+**Pre-flight verify:**
+- `git status` clean main + `git pull origin main` no drift
+- 0 tests reference mockup file (`grep -r "andura-clasic" --include="*.spec.*"` empty) → 0 src/ touched 0 test regression risk confirmed
+- Diacritic baseline post commit `0841ed4` strip preserved (0 occurrences `[ăâîșțĂÂÎȘȚ]` + 0 unicode escapes post P1-5 fix)
+
+**Anti-recurrence + cross-validation:**
+- Second-opinion parallel audit by another agent surfaced 3 valid additional findings I missed (JS unicode escape + Engine jargon + RPE jargon) — applied as supplementary commits 6/7/8 per Bugatti craft completion + Daniel autonomy lock figure-it-out scope
+- Backup tag `pre-mockup-buguri-sweep-vault-sync-2026-05-10-2218` pre-vault-sync push origin
+- Pre-commit hook validated 2732 PASS each of 8 commits (148 test files baseline preserved EXACT)
+
+**Carry-forward DIFF_FLAGS P3 (NOT this sweep scope):**
+
+- P3-α inline `style=""` proliferation refactor V2 React port time
+- P3-β hardcoded hex 385× token consolidation V2 React port
+- P3-γ F1 LOW_ADHERENCE banner template text "Adherenta scazuta" — touches prod fix scope cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER
+- P3-δ Workflow V1 LOCK §36.57 edit manual kg+reps post-set MISSING — gap to port (NOT mockup-only)
+- P3-ε Theme parity invariant cross-check vs LB/Lux/BC — out of single-theme master scope STRATEGIC SHIFT 2026-05-10
+- P3-ζ Mute palette dead Tailwind entry self-acknowledged
+
+**Carry-forward P2 (defer dedicated chat):**
+
+- Persona switcher dead JS+CSS infrastructure
+- Dead `.marius-only-inline` class
+- Dead function `onboardBack`
+- Vestigial `screen-medical-disclaimer` (unreachable from any goto call)
+- Two `<style>` blocks split across file
+
+**Sub-decision #1 PORT_FIRST prerequisite RESOLVED LANDED:** mockup clean for BATCH 2 Antrenor port unblock execute on `feature/v2-vanilla-port` branch. Single-theme Clasic master Bugatti SoT verified clean. Path ready next chat.
+
+**Cumulative impact:** ~742 PRESERVED (no V1 LOCK touch — mockup polish meta-tooling)
+
+🦫 **Bugatti craft. Mockup buguri sweep #1 LANDED. 8 atomic commits autonomous Co-CTO scope. Tests 2732 PASS preserved EXACT through chain. BATCH 2 Antrenor port unblock prerequisite RESOLVED.**
+
+---
+
 ## 2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED (NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 + V1_FEATURES_AUDIT_V1 +15, cumulative ~719 → ~742 +23 net product/architecture additive)
 
 **Status:** 3 LOCK V1 substantive product/architecture additive cumulative chat-current 2. Cumulative LOCKED V1 ~719 → ~742 (+23 net). Tests baseline 2732 PASS preserved EXACT post-diacritic strip + 1 e2e skip (calibration-ui.spec.js:194 LOW_ADHERENCE banner F1 cross-ref).

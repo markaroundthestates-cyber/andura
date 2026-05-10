@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-10 chat ACASĂ continuation 2 — autonomy lock EXTINS, NO_DIACRITICS_RULE LANDED + PORT_FIRST_STEP_1 LOCK V1 7/7 + V1_FEATURES_AUDIT_V1 LOCK V1 15/15 (cumulative ~719 → ~742 +23 net). Diacritic strip 263 files / 6034 replacements commit `0841ed4`. Tests 2732 PASS / 1 e2e skip preserved post-strip. Auto-watcher self-validates time gate 90s (commits `1310a01` + `582584f` LATEST.md captures >90s post `0841ed4` = expected behavior NOT race recurrence).
+**Updated:** 2026-05-10 chat ACASĂ continuation 2 — Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED (chain `a9ddfa8 → 8d16361` 8 substantive + 1 auto-watcher; 3 P0 + 4 P1 audit-driven fixes + 1 follow-up + 2 P1 Glossary V1 LOCK jargon strips Engine/RPE; mockup `andura-clasic.html` 2351 → 2144 LOC -207 net; tests 2732 PASS preserved EXACT mockup-only changes ZERO src/ touched; cumulative ~742 PRESERVED unchanged — mockup polish NU additive product/architecture). Sub-decision #1 prerequisite RESOLVED → **BATCH 2 Antrenor port unblocked NEXT P1**. Predecessor: chat-current 2 vault sync 3 LOCK V1 (NO_DIACRITICS_RULE + PORT_FIRST_STEP_1 7/7 + V1_FEATURES_AUDIT_V1 15/15, cumulative ~719 → ~742 +23 net commit `195d031`).
 **Last LOCKED count (product/architecture):** **~742 LOCKED V1** (cumulative ~719 → ~742 +23 net chat-current 2: NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 sub-decisions + V1_FEATURES_AUDIT_V1 +15 features Co-CTO Autonomous Daniel autonomy lock EXTINS scope).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -56,6 +56,46 @@ Daniel autonomy lock real reaffirmed permanent: *"ne oprim cand facem launch la 
 ---
 
 ## JUST DECIDED
+
+**2026-05-10 chat ACASĂ continuation 2 — MOCKUP BURURI SWEEP #1 LANDED — 8 atomic commits autonomous (cumulative ~742 PRESERVED, mockup polish meta-tooling NU additive):**
+
+Per `PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 sub-decision #1 (Bugatti SoT clean port single, fix once mockup, port clean once) + Daniel autonomy lock EXTINS scope Co-CTO Autonomous, executed mockup buguri sweep #1 single-theme Clasic master `04-architecture/mockups/andura-clasic.html` (per STRATEGIC SHIFT 2026-05-10 LB+Lux+BC deferred post-Beta). Audit 18 findings (3 P0 + 4 P1 + 5 P2 defer + 6 P3 carry-forward) → 5 atomic fix commits primary + 3 supplementary post second-opinion audit second-pass = **8 fix commits total** (a9ddfa8 → 8d16361). Net file -228 LOC (2351 → 2123). Tests **2732 PASS preserved EXACT** through all 8 commits (pre-commit hook validates each). Audit raport `📤_outbox/MOCKUP_BUGURI_SWEEP_AUDIT_V1.md` SSOT.
+
+**8 commits LANDED atomic chain:**
+1. `a9ddfa8` P0-1 Cloudflare email-protection injection removal — 7 sites obfuscated `__cf_email__` + email-decode CDN script tag, restored daniel@andura.ro / support@andura.ro plain strings
+2. `37f8a42` P0-2 duplicate ID stub divs removal — 4 vestigial `screen-coach/home/sala/progress` empty placeholders that broke `goto('coach')` routing (returned empty stub) + HTML5 §3.2.5.1 invalid
+3. `0930b2a` P0-3 medical disclaimer landing target home → antrenor — V1 LOCK 4-tab nav alignment (was routing to legacy `screen-home` daily-greeting NOT in V1 nav)
+4. `b2acb11` P1-1 typo intenctie → intentie — Despre Andura body copy Bugatti polish
+5. `2100eef` P1-2/3/4 remove 3 dead legacy screens (sala/home/coach) — V1 superseded ~178 LOC + orphan JS callers selectEnergy/pickCause + tabbedScreens/tabFor legacy alias cleanup (-207 LOC net)
+6. `55846b3` P1-5 pickTheme JS unicode escape — drop ă diacritic (NO_DIACRITICS_RULE LOCK V1 violation `Temă/aplicată` → `Tema/aplicata`)
+7. `abcb8fd` P1-6 Engine jargon → Coach jargon — Glossary V1 LOCK Gigel-friendly (5 sites energy-check + cause: "Engine UP/NONE/DOWN" + "Engine-ul" → "Coach urca/Sesiune normala/Coach reduce" + "Coach-ul")
+8. `8d16361` P1-7 RPE numeric jargon → intensitate buckets — Glossary V1 LOCK (6 sites Istoric session list + post-RPE labels: "RPE 7.2 · X kg volum" → "intensitate medie · X kg total" + drop "RPE ~5–6" prefix from Coach verdict labels)
+
+**Anti-recurrence + cross-validation:**
+- Pre-flight grep before action verified 0 tests reference mockup (`grep -r "andura-clasic" --include="*.spec.*"` → empty) → 0 src/ touched 0 test regression risk confirmed
+- Second-opinion parallel audit by another agent surfaced 3 valid additional findings I missed (JS unicode escape + Engine jargon + RPE jargon) — applied as supplementary commits 6/7/8 per Bugatti craft completion + Daniel autonomy lock figure-it-out scope
+- Backup tag `pre-mockup-buguri-sweep-vault-sync-2026-05-10-2218` pre-vault-sync push origin
+
+**Carry-forward DIFF_FLAGS P3 (NOT this sweep scope):**
+- P3 inline `style=""` proliferation refactor V2 React port time
+- P3 hardcoded hex 385× token consolidation V2 React port
+- P3 F1 LOW_ADHERENCE banner template text "Adherenta scazuta" — touches prod fix scope cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER
+- P3 Workflow V1 LOCK §36.57 edit manual kg+reps post-set MISSING — gap to port (NOT mockup-only)
+- P3 Theme parity invariant cross-check vs LB/Lux/BC — out of single-theme master scope
+- P3 mute palette dead Tailwind entry self-acknowledged
+
+**Carry-forward P2 (defer dedicated chat):**
+- Persona switcher dead JS+CSS infrastructure
+- Dead `.marius-only-inline` class
+- Dead function `onboardBack`
+- Vestigial `screen-medical-disclaimer` (unreachable from any goto call)
+- Two `<style>` blocks split across file
+
+**Sub-decision #1 PORT_FIRST prerequisite RESOLVED LANDED:** mockup clean for BATCH 2 Antrenor port unblock execute on `feature/v2-vanilla-port` branch. Single-theme Clasic master Bugatti SoT verified clean. Path ready.
+
+🦫 **Bugatti craft. Mockup buguri sweep #1 LANDED. 8 atomic commits autonomous Co-CTO scope. Tests 2732 PASS preserved EXACT. BATCH 2 Antrenor port unblock prerequisite RESOLVED.**
+
+---
 
 **2026-05-10 chat ACASĂ continuation 2 — Daniel autonomy lock EXTINS Co-CTO Autonomous + 3 LOCK V1 substantive LANDED autonomous (cumulative ~719 → ~742 +23 net product/architecture additive):**
 
