@@ -2308,20 +2308,36 @@
     if (window.lucide) lucide.createIcons();
   }
 
+  // Workflow set advance sequential gate Task M 2026-05-10 chat ACASĂ post-smoke
+  // Daniel verbatim: "La antrenament cum de te lasa sa dai bifa in advenced? Adica eu sunt la setul 2 si pot bifa setul 4???"
   function toggleSet(btn) {
     const row = btn.closest('.set-row');
     if (!row) return;
-    const wasDone = row.dataset.done === 'true';
-    if (wasDone) {
-      row.dataset.done = 'false';
-      btn.classList.remove('done');
-      btn.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid #c8412e;"></div>';
-    } else {
-      row.dataset.done = 'true';
-      btn.classList.add('done');
-      btn.innerHTML = '<i data-lucide="check"></i>';
-      if (window.lucide) lucide.createIcons();
+    // Sequential gate: NU permite toggle pe set non-current
+    if (!row.classList.contains('current')) {
+      const currentRow = document.querySelector('.set-row.current');
+      const currentSetN = currentRow?.dataset.set || '?';
+      showToast(`Finalizează setul ${currentSetN} întâi`);
+      return;
     }
+    // Set current → mark done + advance current la next set
+    row.dataset.done = 'true';
+    row.classList.remove('current');
+    btn.classList.add('done');
+    btn.innerHTML = '<i data-lucide="check"></i>';
+    // Advance: next set-row în same exercise card becomes .current
+    const nextRow = row.nextElementSibling;
+    if (nextRow && nextRow.classList.contains('set-row')) {
+      nextRow.classList.add('current');
+      // Update visual: remove dimmed style, add active highlights
+      const nextSetN = nextRow.querySelector('.set-num');
+      const nextRepsVal = nextRow.querySelectorAll('.set-val')[1];
+      const nextCheck = nextRow.querySelector('.set-check');
+      if (nextSetN) nextSetN.style.color = '#c8412e';
+      if (nextRepsVal) { nextRepsVal.style.color = '#c8412e'; nextRepsVal.style.fontWeight = '600'; }
+      if (nextCheck) nextCheck.innerHTML = '<div style="width:18px; height:18px; border-radius:50%; border:2px solid #c8412e;"></div>';
+    }
+    if (window.lucide) lucide.createIcons();
   }
   function completeSet(btn) { toggleSet(btn); }
 

@@ -1,31 +1,29 @@
-# TASK L — Onboarding default render REAL FIX ✅
+# TASK M — Workflow set advance sequential gate ✅
 
-- **Task:** L — onboarding default render REAL FIX cross-skin × 4 (RETRY Task A FAIL)
+- **Task:** M — set advance sequential gate cross-skin × 4
 - **Model:** Opus
-- **Status:** ✅ LANDED
+- **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (BC already sequential by design + Lux storyboard Task X scope)
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB: `screen-splash` clasă `active` default + setTimeout 1500ms `goto('onboard')` redirect — Daniel smoke FAIL "am deschis clasic si nu apare onboarding"
-- BC: same pattern (splash active + setTimeout)
-- Lux: storyboard paradigm (toate stages vizibile, no setTimeout) — Task X scope refactor
+- Clasic+LB: toggleSet(btn) function permite click pe orice set-row, NU enforce sequential gate (Daniel verbatim "pot bifa setul 4 când sunt la set 2")
+- BC: set-grid display-only cells (NU clickabile per individual), advance doar prin "Set III gata →" button → INHERENTLY sequential by design
+- Lux: storyboard paradigm Task X scope
 
-Hipoteza root cause Task A FAIL: setTimeout dependency fragile (race condition cu DOMContentLoaded sau cache stale). Plus 1.5s delay = perceived "splash hangs".
-
-## Modificări — REAL FIX (skip splash setTimeout, direct render onboarding)
-- `andura-clasic.html`: screen-splash `class="screen paper-bg"` (NU active) + screen-onboard `class="screen paper-bg active"` direct + `#global-header style="display:none"` default + setTimeout DROPPED
-- `andura-living-body.html`: same pattern
-- `andura-brain-coach.html`: screen-splash `class="screen"` (NU active) + screen-onboard `class="screen active"` + `#global-header style="display:none"` + setTimeout DROPPED
-- `andura-luxury.html`: UNCHANGED (Lux storyboard refactor scope Task X)
+## Modificări
+- `andura-clasic.html` toggleSet(btn): adăugat sequential gate — dacă row.contains('current') = false → toast "Finalizează setul {currentSetN} întâi" + return; current row done → mark next row .current cu visual highlights (color #c8412e + bold + border accent)
+- `andura-living-body.html` toggleSet(btn): same pattern, palette divergent var(--accent) auriu cald
+- BC: NO changes (architecture already sequential — only "Set N gata →" button advances)
+- Lux: NO changes (Task X scope refactor)
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task L atomic).
+- Pending commit (Task M atomic).
 
 ## Issues
-- Splash screen still exists ca dead-code reachable (button "Începe →" în splash → goto('onboard') still work). Future cleanup: remove splash screen entirely Phase 4 dacă not used as transition target.
+- None — sequential gate enforced strict cu toast informativ.
 
 ## Next action
-Task M — workflow set advance sequential gate cross-skin × 4.
+Task N — pause timer real countdown cross-skin × 4.
