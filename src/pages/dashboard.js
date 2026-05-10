@@ -10,7 +10,7 @@ import { getAdherenceScore } from '../engine/adherence.js';
 import { getTodayReadiness, saveReadiness, READINESS_LABELS } from '../engine/readiness.js';
 import { analyzeFromCDL } from '../engine/patternLearning.js';
 
-const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
+const SW = SW_KG, TW = TW_KG, SD2 = START_DATE;
 let _dashWeightChart = null;
 
 function renderFatigueScore(elId) {
@@ -90,7 +90,7 @@ export function renderDash(){
   const todW=ws[today]||null,lastW=dates.length?ws[dates[dates.length-1]]:null,dW=todW||lastW;
   const trend=getTrend();
   const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
-  const now=new Date(),PILOT=TARGET_DATE,pilotActive=now>=PILOT;
+  const now=new Date();
   const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]]||PROG[0];
   const sysKcal=SYS.getKcalTarget(),sysPhase=SYS.getPhase();
   const kcals=DB.get('kcals')||{};
@@ -190,8 +190,9 @@ export function renderDash(){
   }
   const kpib=$('kpi-days-box');
   if(kpib){
-    if(pilotActive){$('kpi-days-label').textContent='TDEE Real';$('kd').textContent=SYS.estimateTDEE();$('kpi-days-sub').textContent='kcal mentenanță';}
-    else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie';}
+    $('kpi-days-label').textContent='TDEE Real';
+    $('kd').textContent=SYS.estimateTDEE();
+    $('kpi-days-sub').textContent='kcal mentenanță';
   }
   const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
   if(dv&&dr&&dec){
@@ -205,8 +206,7 @@ export function renderDash(){
     else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
     else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
     const _phOvr=DB.get('phase-override');
-    const _autoFixed=!pilotActive&&(!_phOvr||_phOvr==='AUTO');
-    if(_autoFixed){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
+    if(!_phOvr||_phOvr==='AUTO'){dr.innerHTML=dr.textContent+`<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Faza auto: ${SYS.getPhase()} • Schimbă manual dacă vrei alt plan</span>`;}
   }
   const filled=Math.min(dates.length,8);
   // Weekly workouts counter
@@ -531,7 +531,7 @@ export function getAlerts(){
     alerts.push({t:'y',i:'⏰',tt:`CHECKPOINT ÎN ${daysToCheckpoint} ZILE`,s:'Pe 20 iulie sistemul preia controlul kcal.'});
   if(today===TARGET_DATE.toISOString().slice(0,10))
     alerts.push({t:'g',i:'🤖',tt:'PILOT AUTOMAT ACTIV',s:`TDEE: ${SYS.estimateTDEE()} kcal · Fază: ${SYS.getPhase()} · Kcal: ${SYS.getKcalTarget()}`});
-  if(pilotActive&&SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15&&!DB.get('phase-override'))
+  if(SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15&&!DB.get('phase-override'))
     alerts.push({t:'y',i:'⚠️',tt:'BF >15% dar faza e mentenanță',s:'Override la CUT din tab Plan'});
   const wb=DB.get('wellbeing')||{},todWell=wb[today]||{};
   if(todWell.sleep&&todWell.sleep<=2) alerts.push({t:'y',i:'😴',tt:'SOMN PROST AZI',s:'RPE artificial ridicat. Nu crești greutatea azi.'});

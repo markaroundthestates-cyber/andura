@@ -1,6 +1,6 @@
 // ══ WEIGHT PAGE ══════════════════════════════════════════════
 import { DB, $, tod, todDate, todTs, fmt } from '../db.js';
-import { KCAL_TARGET, PROT_TARGET, TARGET_DATE } from '../constants.js';
+import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { state } from '../state.js';
@@ -74,8 +74,7 @@ export function unlockWeight(){
 export function initKcal() {
   const kcals = DB.get('kcals') || {};
   const today = getLogDate();
-  const pilotActive = new Date() >= TARGET_DATE;
-  const sysTarget = pilotActive ? SYS.getKcalTarget() : KCAL_TARGET;
+  const sysTarget = SYS.getKcalTarget();
   currentKcal = kcals[today] !== undefined ? kcals[today] : sysTarget;
   // Don't auto-save default to storage — write only when user explicitly saves.
   // Auto-saving 1800 contaminates history and prevents adminPrefill from showing real data.
@@ -83,13 +82,8 @@ export function initKcal() {
   if (state.logDateOffset === 0) lockKcal(); else unlockKcal();
   const noteEl = $('kcal-save-note');
   if (noteEl) {
-    if (!pilotActive) {
-      const daysLeft = Math.max(0, Math.round((TARGET_DATE - new Date()) / 86400000));
-      noteEl.textContent = `Target fix: ${KCAL_TARGET} kcal până pe 20 iulie (${daysLeft} zile)`;
-    } else {
-      noteEl.textContent = `🤖 Pilot activ · TDEE real: ${SYS.estimateTDEE()} kcal · ${SYS.getPhase()}`;
-      noteEl.style.color = 'var(--accent)';
-    }
+    noteEl.textContent = `🤖 Pilot activ · TDEE real: ${SYS.estimateTDEE()} kcal · ${SYS.getPhase()}`;
+    noteEl.style.color = 'var(--accent)';
   }
 }
 

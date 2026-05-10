@@ -52,9 +52,16 @@ export const SYS = {
     }
 
     if (dates.length < 4) {
-      // Mifflin-St Jeor fallback
+      // Katch-McArdle BF-aware preferred when LBM known; Mifflin fallback when BF unknown
       const kg = this.getCurrentKg();
-      const bmr = 10*kg + 6.25*this.HEIGHT - 5*this.AGE + 5;
+      const bf = this.getBF();
+      let bmr;
+      if (Number.isFinite(bf)) {
+        const lbm = this.getLBM();
+        bmr = 370 + 21.6 * lbm;
+      } else {
+        bmr = 10*kg + 6.25*this.HEIGHT - 5*this.AGE + 5;
+      }
       return Math.round(bmr * 1.55);
     }
 
@@ -73,18 +80,12 @@ export const SYS = {
 
     const bf = this.getBF();
     const now = new Date();
-    const PILOT_DATE = TARGET_DATE; // data când sistemul preia controlul
-    const pilotActive = now >= PILOT_DATE;
 
-    // Înainte de 20 iulie: CUT fix, kcal controlate manual
-    if (!pilotActive) return 'CUT';
-
-    // După 20 iulie: pilot automat cu reguli stricte
+    // Auto pilot activ: BF + sezon decid faza (regula de bază: BF >15% = niciodată bulk)
     const summerEnd = new Date(now.getFullYear(), 7, 31); // 31 Aug
     const isSummer = now <= summerEnd;
     const isWinter = now.getMonth() >= 9 || now.getMonth() <= 1; // Oct-Feb
 
-    // Regula de bază: BF >15% = niciodată bulk automat
     if (bf > 18) return 'CUT';
     if (bf > 15) {
       // Vară cu BF 15-18%: mentenanță sau cut ușor
@@ -122,10 +123,7 @@ export const SYS = {
       }
     }
 
-    // AUTO (sau null): înainte de 20 iulie = KCAL_TARGET fix, după = TDEE-based
-    const pilotActive = new Date() >= TARGET_DATE;
-    if (!pilotActive) return KCAL_TARGET;
-
+    // AUTO: derive faza din BF + sezon, apoi aplică multiplicator pe TDEE
     const phase = this.getPhase();
     switch(phase) {
       case 'CUT':         return Math.round(tdee * 0.82);
