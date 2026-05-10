@@ -1848,8 +1848,8 @@
     </div>
   </div>
 
-  <!-- GLOBAL HEADER (hide on splash/auth/onb) -->
-  <div class="global-header" id="global-header">
+  <!-- GLOBAL HEADER (hide on splash/auth/onb) — hidden default Task L 2026-05-10 chat ACASĂ post-smoke (onboard.active default) -->
+  <div class="global-header" id="global-header" style="display:none;">
     <div class="left">
       <svg class="brain-logo" viewBox="0 0 24 24">
         <line class="link" x1="6" y1="8" x2="12" y2="12"/>
@@ -1873,7 +1873,7 @@
 
 
     <!-- ═══ I · SPLASH ═══ -->
-    <div class="screen active" id="screen-splash">
+    <div class="screen" id="screen-splash">
       <div class="splash-stage">
         <svg class="splash-logo" viewBox="0 0 96 96">
           <line class="link" stroke="#8b6dff" stroke-width="1.5" x1="24" y1="32" x2="48" y2="48" opacity="0.6"/>
@@ -1936,7 +1936,8 @@
     </div>
 
     <!-- ═══ III · ONB OBIECTIV (Big 6 Pasul 1 — STRUCTURAL_DRIFT_RESOLVED auto-aligned per fallback rule: Welcome ecran dropped, Obiectiv ADD per Theme Parity Invariant Clasic/LB baseline) ═══ -->
-    <div class="screen" id="screen-onboard">
+    <!-- DEFAULT ACTIVE Task L 2026-05-10 chat ACASĂ post-smoke REAL FIX (Big 6 hard T0 direct render, NO splash setTimeout dependency) -->
+    <div class="screen active" id="screen-onboard">
       <div class="scroll">
         <div class="stepper-row">
           <div class="step-dot active"></div>
@@ -5049,12 +5050,8 @@
     arrow.textContent = isOpen ? '▴' : '▾';
   }
 
-  // ─── Default landing ──────────────────────────────────────────
-  // Splash is active by default; auto-advance to onboard (Big 6 hard T0 default render Task A 2026-05-10 chat ACASĂ post-smoke)
-  setTimeout(() => {
-    const cur = document.querySelector('.screen.active');
-    if (cur && cur.id === 'screen-splash') goto('onboard', {replace: true});
-  }, 1500);
+  // ─── Splash setTimeout DROPPED Task L 2026-05-10 chat ACASĂ post-smoke REAL FIX ──
+  // Splash NU mai este default active (Task L: screen-onboard.active direct, NO setTimeout dependency)
 </script>
 
 </body>

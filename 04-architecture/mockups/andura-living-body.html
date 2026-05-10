@@ -515,7 +515,7 @@
     </div>
 
     <!-- Global header -->
-    <div id="global-header" style="height:48px; display:flex; align-items:center; justify-content:space-between; padding: 0 20px; background:var(--bg-2); border-bottom:1px solid rgba(212,165,116,0.12);">
+    <div id="global-header" style="height:48px; display:none; align-items:center; justify-content:space-between; padding: 0 20px; background:var(--bg-2); border-bottom:1px solid rgba(212,165,116,0.12);">
       <div style="display:flex; align-items:center; gap:8px;">
         <div style="width:24px; height:24px; border-radius:8px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; letter-spacing:-0.02em;">A</div>
         <span style="font-size:16px; font-weight:600; color:var(--ink); letter-spacing:-0.02em;">Andura</span>
@@ -531,7 +531,7 @@
     <div id="screen-container" style="height: calc(100% - 28px - 48px - 72px); position: relative; overflow: hidden;">
 
       <!-- 1. SPLASH -->
-      <div class="screen paper-bg active" id="screen-splash" style="height:100%; flex-direction:column; padding: 48px 28px 32px; align-items:center; justify-content:space-between;">
+      <div class="screen paper-bg" id="screen-splash" style="height:100%; flex-direction:column; padding: 48px 28px 32px; align-items:center; justify-content:space-between;">
         <div></div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center;">
           <div style="width:72px; height:72px; border-radius:22px; background:linear-gradient(180deg,#0f1218,#0a0d14); color:var(--ink); border:1px solid rgba(212,165,116,0.15); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; letter-spacing:-0.04em;">A</div>
@@ -612,7 +612,8 @@
 
       <!-- 3. ONBOARD §63.1 — 7 ecrane V2 Big 6 hard T0 per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 (Obiectiv/Vârstă/Sex/Înălțime/Greutate/Istoric medical/Frecvență) -->
       <!-- Onboarding step 1: Obiectiv + disclaimer integrat -->
-      <div class="screen paper-bg" id="screen-onboard" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
+      <!-- DEFAULT ACTIVE Task L 2026-05-10 chat ACASĂ post-smoke REAL FIX (Big 6 hard T0 direct render, NO splash setTimeout dependency) -->
+      <div class="screen paper-bg active" id="screen-onboard" style="height:100%; flex-direction:column; padding: 20px 24px 24px;">
         <div style="display:flex; align-items:center; gap:10px;">
           <button onclick="goto('auth')" style="background:none; border:none; padding:0; cursor:pointer;"><i data-lucide="arrow-left" style="color:var(--ink-2);"></i></button>
           <div style="flex:1; display:flex; gap:6px;">
@@ -2747,13 +2748,8 @@
   // Render icons immediately too (script after CDN)
   if (window.lucide) lucide.createIcons();
 
-  // ─── Splash auto-advance 1.5s → onboard (Big 6 hard T0 default render Task A 2026-05-10 chat ACASĂ post-smoke) ──
-  setTimeout(() => {
-    const cur = document.querySelector('.screen.active');
-    if (cur && cur.id === 'screen-splash') {
-      goto('onboard', {replace: true});
-    }
-  }, 1500);
+  // ─── Splash setTimeout DROPPED Task L 2026-05-10 chat ACASĂ post-smoke REAL FIX ──
+  // Splash NU mai este default active (Task L: screen-onboard.active direct, NO setTimeout dependency)
 
   // ─── Body fatigue V2 prep wiring (Q1 LOCKED 2026-05-09) ──
   // Plug-and-play React migration ready: replace `DEMO_MUSCLE_STATE` with `useMuscleState()` hook.
