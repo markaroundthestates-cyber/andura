@@ -1,31 +1,33 @@
-# TASK H — Progres Auto button toggle unlock ✅
+# TASK J — Luxury Schimbă fază entry parity ✅
 
-- **Task:** H — Progres Auto button toggle Auto/Manual unlock cross-skin × 4
+- **Task:** J — add Schimbă fază entry în Lux mockup parity Theme Parity Invariant V1
 - **Model:** Opus
-- **Status:** ✅ LANDED (Clasic+LB) + AUDIT N/A (BC+Lux different paradigm)
+- **Status:** ✅ LANDED
 - **Branch:** feature/phase-3-orchestrator-final
 
 ## Pre-flight grep
-- Clasic+LB: Auto button în Progres ("Engine ajustează singur volumul") cu `<span class="sw on">` static + onclick="showToast('Auto — drill setări')" (NU toggle, locked on)
-- Lux: Auto-progression + Auto-rest timer toggles în settings storyboard (visual-only, no JS handler)
-- BC: NU buton Auto distinct în Progres (paradigm diferit — thinking-card + auto-decisions vizualizate)
+- Clasic line 1621: `<button class="settings-row" onclick="goto('confirm-schimba-faza')">...Schimbă faza manual...Resetează unele calibrări...</button>` (în "Avansat" section Cont)
+- LB line 1938: same pattern
+- BC line 3412: `<div class="list-row" onclick="goto('confirm-schimba-faza')">` (în Settings list)
+- Lux: stage-id=36 confirm-schimba-faza screen EXISTS dar **entry pendant lipsea** (NU are buton în Cont/Settings stage-id=25 to navigate to it)
 
 ## Modificări
-- `andura-clasic.html` (line ~1253): button cu id=`progres-auto-row` + onclick=`toggleProgresAuto()` + sub-text id `progres-auto-sub` + sw element id `progres-auto-sw`
-- `andura-clasic.html` JS: `toggleProgresAuto()` function — toggle .on class + update sub-text "Engine ajustează singur volumul" / "Manual — tu controlezi volumul" + persist `localStorage['progres-mode']` + toast feedback "🤖 Auto activ" / "✋ Manual activ" + restore state on DOMContentLoaded
-- `andura-living-body.html` (line ~1570): same pattern, palette divergent
-- `andura-living-body.html` JS: same toggleProgresAuto handler + localStorage restore
-- BC: NO changes (no Auto button paradigm)
-- Lux: NO changes (storyboard, multiple Auto toggles visual-only)
+- `andura-luxury.html` (line ~1653 stage-id=25 settings root): Adăugat NEW section "Avansat" cu 2 rows:
+  - "Schimbă faza manual → " (entry pendant for stage-id=36 confirm-schimba-faza)
+  - "Refă onboarding → " (parity cu Clasic+LB+BC, also pendant pentru re-onboarding flow)
+
+Section plasat ÎNAINTE de "Privacy & legal" pentru parity logic structure cross-skin.
+
+Lux storyboard paradigm: NU JS needed (toate stages vizibile simultan, navigation arrow vizual indicator only).
 
 ## Build + Tests
 - HTML mockup-only edit, ZERO src/ touch → tests preserved 2731 PASS implicit (validated next commit pre-commit hook).
 
 ## Commits pushed
-- Pending commit (Task H atomic).
+- Pending commit (Task J atomic).
 
 ## Issues
-- Theme Parity Invariant V1: Clasic+LB aligned (toggle behavior); BC+Lux paradigm divergent intentional
+- Theme Parity Invariant V1 ACHIEVED 4/4 themes pentru Schimbă fază entry pattern (Clasic settings-row + LB settings-row + BC list-row + Lux row pattern, palette divergent OK)
 
 ## Next action
-Task I — muscleMap 19→7 refactor (engine src/ refactor cu downstream consumers + tests).
+Final closure: aggregate raport LATEST_CONSOLIDATED.md + post-orchestrator backup tag + push origin feature/phase-3-orchestrator-final --tags.
