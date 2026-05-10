@@ -39,5 +39,5 @@ export function goTo(page) {
   }
 }
 
-// sp = shortcut pentru goTo (folosit în onclick-uri HTML)
+// sp = shortcut pentru goTo (folosit in onclick-uri HTML)
 export const sp = goTo;

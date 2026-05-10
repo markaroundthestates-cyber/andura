@@ -3,8 +3,8 @@
 //
 // Israetel 11 grupuri musculare baseline MEV/MAV/MRV ×
 //   persona modifiers (Maria 0.50 / Gigica 0.70 / Marius 1.00 + 10-15% bonus
-//   recovery green) × goal modifiers (Hipertrofie 1.00 / Forță 0.70 /
-//   Recompoziție 0.85 / Longevitate 0.60 / Sănătate 0.50).
+//   recovery green) × goal modifiers (Hipertrofie 1.00 / Forta 0.70 /
+//   Recompozitie 0.85 / Longevitate 0.60 / Sanatate 0.50).
 // Maria 65 Dual-Layer functional → Israetel 6 movement patterns mapping per
 //   §45.3 Q19 LOCKED.
 //
@@ -44,7 +44,7 @@ export function resolvePersonaId(user) {
 
 /**
  * Resolve goal id from user object — case + diacritic insensitive normalization
- * (Forță → forta, Recompoziție → recompozitie, Sănătate → sanatate).
+ * (Forta → forta, Recompozitie → recompozitie, Sanatate → sanatate).
  *
  * @param {{goal?: string}} [user]
  * @returns {'hipertrofie'|'forta'|'recompozitie'|'longevitate'|'sanatate'}
@@ -56,15 +56,15 @@ export function resolveGoalId(user) {
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '');
   if (g.startsWith('hipertrofie') || g.startsWith('hypertrophy')) return 'hipertrofie';
-  if (g.startsWith('forta') || g.startsWith('forța') || g.startsWith('strength')) return 'forta';
+  if (g.startsWith('forta') || g.startsWith('forta') || g.startsWith('strength')) return 'forta';
   if (g.startsWith('recompozit') || g.startsWith('recomp')) return 'recompozitie';
   if (g.startsWith('longevitate') || g.startsWith('longevity')) return 'longevitate';
-  if (g.startsWith('sanatate') || g.startsWith('sănătate') || g.startsWith('health')) return 'sanatate';
+  if (g.startsWith('sanatate') || g.startsWith('sanatate') || g.startsWith('health')) return 'sanatate';
   return 'hipertrofie';
 }
 
 /**
- * Recovery green bonus multiplier per §9.4 ("+10-15% dacă recovery green").
+ * Recovery green bonus multiplier per §9.4 ("+10-15% daca recovery green").
  * V1 conservative pick LOW (1.10) default green; HIGH (1.15) reserved future
  * Vitality Layer maturity calibration (signal strength gradient).
  *

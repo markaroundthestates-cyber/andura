@@ -73,7 +73,7 @@ export function createSafetyBanner(opts) {
     dismissBtn = document.createElement('button');
     dismissBtn.type = 'button';
     dismissBtn.className = 'safety-banner__dismiss';
-    dismissBtn.setAttribute('aria-label', 'Închide');
+    dismissBtn.setAttribute('aria-label', 'Inchide');
     dismissBtn.textContent = '×';
     const onDismiss = () => {
       if (dismissId) _markDismissed(storage, dismissId);

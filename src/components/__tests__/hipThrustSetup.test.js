@@ -26,8 +26,8 @@ describe('Hip Thrust Setup — render', () => {
     expect(rom).not.toBeNull();
     expect(foot).not.toBeNull();
     // Pending image pilot — placeholder text required.
-    expect(rom.textContent).toContain('Imagine în lucru');
-    expect(foot.textContent).toContain('Imagine în lucru');
+    expect(rom.textContent).toContain('Imagine in lucru');
+    expect(foot.textContent).toContain('Imagine in lucru');
   });
 
   it('renders LOCKED form guide wording verbatim', () => {
@@ -37,8 +37,8 @@ describe('Hip Thrust Setup — render', () => {
   });
 
   it('LOCKED guide contains all 4 fix elements per §1.5.2', () => {
-    expect(HIP_THRUST_FORM_GUIDE).toContain('așezat pe sol');
-    expect(HIP_THRUST_FORM_GUIDE).toContain('împingând puternic în călcâie');
+    expect(HIP_THRUST_FORM_GUIDE).toContain('asezat pe sol');
+    expect(HIP_THRUST_FORM_GUIDE).toContain('impingand puternic in calcaie');
     expect(HIP_THRUST_FORM_GUIDE).toContain('Cobori controlat');
     expect(HIP_THRUST_FORM_GUIDE).toContain('nu hiperextinde lombarii');
   });

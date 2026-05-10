@@ -10,7 +10,7 @@ import { getAdherenceScore } from '../engine/adherence.js';
 import { getTodayReadiness, saveReadiness, READINESS_LABELS } from '../engine/readiness.js';
 import { analyzeFromCDL } from '../engine/patternLearning.js';
 
-const SW = SW_KG, TW = TW_KG, SD2 = START_DATE, TD2 = TARGET_DATE;
+const SW = SW_KG, TW = TW_KG, SD2 = START_DATE;
 let _dashWeightChart = null;
 
 function renderFatigueScore(elId) {
@@ -60,11 +60,11 @@ export function showRecoveryModal() {
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       ${[
-        ['🚶', 'Mers 20-30 min', 'Circulație activă fără stres muscular'],
-        ['🧘', 'Stretching / mobilitate', 'Concentrează-te pe grupele lucrate ieri'],
-        ['💧', 'Hidratare', 'Minim 2.5L apă — recuperarea depinde de asta'],
+        ['🚶', 'Mers 20-30 min', 'Circulatie activa fara stres muscular'],
+        ['🧘', 'Stretching / mobilitate', 'Concentreaza-te pe grupele lucrate ieri'],
+        ['💧', 'Hidratare', 'Minim 2.5L apa — recuperarea depinde de asta'],
         ['😴', 'Somn 7-9h', 'Cel mai important anabolizant natural'],
-        ['🥩', 'Proteină', 'Menține minimul de 160g chiar și în zilele OFF'],
+        ['🥩', 'Proteina', 'Mentine minimul de 160g chiar si in zilele OFF'],
       ].map(([emoji, title, desc]) => `
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;gap:12px;align-items:flex-start">
           <div style="font-size:22px;line-height:1">${emoji}</div>
@@ -90,16 +90,16 @@ export function renderDash(){
   const todW=ws[today]||null,lastW=dates.length?ws[dates[dates.length-1]]:null,dW=todW||lastW;
   const trend=getTrend();
   const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
-  const now=new Date(),PILOT=TARGET_DATE,pilotActive=now>=PILOT;
+  const now=new Date();
   const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]]||PROG[0];
   const sysKcal=SYS.getKcalTarget(),sysPhase=SYS.getPhase();
   const kcals=DB.get('kcals')||{};
   const todayKcal=kcals[today]!==undefined?kcals[today]:sysKcal;
   const kcalColor=todayKcal>(sysKcal+200)?'var(--accent2)':todayKcal<(sysKcal-200)?'var(--accent3)':'var(--green)';
-  const workoutToday=tp.t==='off'?'ODIHNĂ':tp.lb.toUpperCase();
-  const statusToday=!dW?'—':dW<=tgt+0.3?'ON TRACK':dW<=tgt+1?'ÎN URMĂ':'OFF TRACK';
+  const workoutToday=tp.t==='off'?'ODIHNA':tp.lb.toUpperCase();
+  const statusToday=!dW?'—':dW<=tgt+0.3?'ON TRACK':dW<=tgt+1?'IN URMA':'OFF TRACK';
   const statusColor=!dW?'var(--text2)':dW<=tgt+0.3?'var(--green)':dW<=tgt+1?'var(--accent2)':'var(--red)';
-  const ctaLabel=tp.t==='off'?'ODIHNĂ AZI':!todW?'LOG GREUTATE ▶':'ANTRENAMENT ▶';
+  const ctaLabel=tp.t==='off'?'ODIHNA AZI':!todW?'LOG GREUTATE ▶':'ANTRENAMENT ▶';
   const ctaAction=tp.t==='off'?null:!todW?`sp('weight',document.querySelectorAll('.nb')[2])`:`sp('coach',document.querySelectorAll('.nb')[0])`;
   const dd=$('dd');if(dd)dd.textContent=now.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long'});
   // Brutal alerts — uses fresh reads to avoid stale closure values
@@ -113,9 +113,9 @@ export function renderDash(){
   const recentRPEs = (DB.get('logs')||[]).filter(l=>!l.baseline&&l.rpe).slice(0,15).map(l=>l.rpe);
   const avgRecentRPE = recentRPEs.length?recentRPEs.reduce((a,b)=>a+b,0)/recentRPEs.length:0;
   let brutAlerts=[];
-  if(protBelowCount>=2) brutAlerts.push({msg:`NU MĂNÂNCI DESTUL PROTEINĂ. PIERZI MASĂ.`,sub:`${protBelowCount}/3 zile sub 160g`,color:'var(--red)'});
-  if(kcalBelowCount>=2) brutAlerts.push({msg:`DEFICIT EXTREM. METABOLISMUL ÎNCETINEȘTE.`,sub:`${kcalBelowCount}/3 zile sub 1500 kcal`,color:'var(--red)'});
-  if(weightStagnant) brutAlerts.push({msg:`TREND STAGNEAZĂ. VERIFICĂ KCAL ȘI SOMN.`,sub:`7 zile fără schimbare reală`,color:'var(--accent2)'});
+  if(protBelowCount>=2) brutAlerts.push({msg:`NU MANANCI DESTUL PROTEINA. PIERZI MASA.`,sub:`${protBelowCount}/3 zile sub 160g`,color:'var(--red)'});
+  if(kcalBelowCount>=2) brutAlerts.push({msg:`DEFICIT EXTREM. METABOLISMUL INCETINESTE.`,sub:`${kcalBelowCount}/3 zile sub 1500 kcal`,color:'var(--red)'});
+  if(weightStagnant) brutAlerts.push({msg:`TREND STAGNEAZA. VERIFICA KCAL SI SOMN.`,sub:`7 zile fara schimbare reala`,color:'var(--accent2)'});
   if(avgRecentRPE>8.5) brutAlerts.push({msg:`RPE MEDIU PREA MARE. SCADE GREUTATEA.`,sub:`Medie ${avgRecentRPE.toFixed(1)} — risc supraantrenament`,color:'var(--accent2)'});
   const _alertHtml = brutAlerts.length ? (()=>{const a=brutAlerts[Math.floor(Date.now()/8000)%brutAlerts.length];return `<div style="padding:14px 16px;background:${a.color}18;border-left:4px solid ${a.color};margin-bottom:8px"><div style="font-size:13px;font-weight:700;color:${a.color};letter-spacing:.5px">⚠ ${a.msg}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${a.sub}</div></div>`;})() : '';
 
@@ -145,8 +145,8 @@ export function renderDash(){
     if(show){
       mfpEl.style.display='block';
       mfpEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);margin-bottom:8px">
-        <div style="font-size:12px;color:var(--text2);flex:1">📲 Importă nutriție din CSV pentru kcal și proteină exacte</div>
-        <button onclick="triggerMFPImport()" style="background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:6px 12px;border:none;border-radius:var(--rs);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Import nutriție CSV</button>
+        <div style="font-size:12px;color:var(--text2);flex:1">📲 Importa nutritie din CSV pentru kcal si proteina exacte</div>
+        <button onclick="triggerMFPImport()" style="background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:6px 12px;border:none;border-radius:var(--rs);cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Import nutritie CSV</button>
         <button onclick="dismissMFPPrompt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 10px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
       </div>`;
     } else {
@@ -156,7 +156,7 @@ export function renderDash(){
 
   const sb=$('dsb');
   if(sb){if(!dW)sb.innerHTML='';else if(dW<=tgt+0.3)sb.innerHTML='<div class="sbadge on">✅ ON TRACK</div>';
-  else if(dW<=tgt+1)sb.innerHTML='<div class="sbadge warn">⚠ ÎN URMĂ</div>';
+  else if(dW<=tgt+1)sb.innerHTML='<div class="sbadge warn">⚠ IN URMA</div>';
   else sb.innerHTML='<div class="sbadge off">❌ OFF TRACK</div>';}
 
   // Close day banner in dashboard
@@ -165,7 +165,7 @@ export function renderDash(){
     const closed=DB.get('closed-days')||{};
     if(!closed[today]){
       cdDash.style.display='flex';
-      cdDash.innerHTML=`<button onclick="closeDayFromDash()" style="background:var(--accent);color:#000;font-weight:700;font-size:12px;padding:8px 16px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">🌙 ÎNCHIDE ZIUA</button>`;
+      cdDash.innerHTML=`<button onclick="closeDayFromDash()" style="background:var(--accent);color:#000;font-weight:700;font-size:12px;padding:8px 16px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">🌙 INCHIDE ZIUA</button>`;
     } else {
       cdDash.style.display='none';
     }
@@ -186,27 +186,27 @@ export function renderDash(){
   } else {
     const need=Math.max(0,4-dates.length);
     const kt=$('kt');if(kt)kt.textContent=need>0?`${need}`:dates.length;
-    const kts=$('kts');if(kts)kts.textContent=need>0?'zile până la trend':'zile date';
+    const kts=$('kts');if(kts)kts.textContent=need>0?'zile pana la trend':'zile date';
   }
   const kpib=$('kpi-days-box');
   if(kpib){
-    if(pilotActive){$('kpi-days-label').textContent='TDEE Real';$('kd').textContent=SYS.estimateTDEE();$('kpi-days-sub').textContent='kcal mentenanță';}
-    else{$('kpi-days-label').textContent='Zile rămase';$('kd').textContent=Math.max(0,Math.round((TD2-now)/86400000));$('kpi-days-sub').textContent='până 20 iulie';}
+    $('kpi-days-label').textContent='TDEE Real';
+    $('kd').textContent=SYS.estimateTDEE();
+    $('kpi-days-sub').textContent='kcal mentenanta';
   }
   const dv=$('dv2'),dr=$('dr2'),dec=$('dec');
   if(dv&&dr&&dec){
-    if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZĂ ${n} ZILE`:`${sysKcal} KCAL`;dr.textContent=n>0?`${n} zile până la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
+    if(trend===null){const n=Math.max(0,4-dates.length);dv.textContent=n>0?`COMPLETEAZA ${n} ZILE`:`${sysKcal} KCAL`;dr.textContent=n>0?`${n} zile pana la decizie`:'Date insuficiente';dec.style.borderColor='var(--text3)';dv.style.color='var(--text2)';}
     else if(trend<-1.2){
       const kcalDiff=todayKcal-sysKcal;
-      if(todayKcal>=sysKcal+100){dv.textContent=`Depășești cu ${kcalDiff} kcal`;dr.textContent=`Azi: ${todayKcal} kcal · Trend prea rapid`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
-      else if(todayKcal>=sysKcal){dv.textContent=`Menții targetul ✓ · ${todayKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
-      else{dv.textContent=`Mărește la ${sysKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+      if(todayKcal>=sysKcal+100){dv.textContent=`Depasesti cu ${kcalDiff} kcal`;dr.textContent=`Azi: ${todayKcal} kcal · Trend prea rapid`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
+      else if(todayKcal>=sysKcal){dv.textContent=`Mentii targetul ✓ · ${todayKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
+      else{dv.textContent=`Mareste la ${sysKcal} kcal`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → prea rapid`;dec.style.borderColor='var(--accent3)';dv.style.color='var(--accent3)';}
     }
     else if(trend>-0.3){dv.textContent=`SCADE LA ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → stagnare`;dec.style.borderColor='var(--accent2)';dv.style.color='var(--accent2)';}
-    else{dv.textContent=`MENȚINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
+    else{dv.textContent=`MENTINE ${sysKcal} KCAL`;dr.textContent=`Trend: −${Math.abs(trend).toFixed(2)} kg/7z → perfect`;dec.style.borderColor='var(--accent)';dv.style.color='var(--accent)';}
     const _phOvr=DB.get('phase-override');
-    const _autoFixed=!pilotActive&&(!_phOvr||_phOvr==='AUTO');
-    if(_autoFixed){dr.innerHTML=dr.textContent+'<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Fix până 20 iulie • Schimbă faza manual dacă vrei alt plan</span>';}
+    if(!_phOvr||_phOvr==='AUTO'){dr.innerHTML=dr.textContent+`<br><span style="font-size:9px;color:var(--text3);opacity:0.75">Faza auto: ${SYS.getPhase()} • Schimba manual daca vrei alt plan</span>`;}
   }
   const filled=Math.min(dates.length,8);
   // Weekly workouts counter
@@ -216,17 +216,17 @@ export function renderDash(){
   const scheduledDays=5; // Mon OFF, Sun OFF → 5 workout days
   const wwEl=$('weekly-workouts');
   if(wwEl)wwEl.innerHTML=`
-    <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Săptămâna asta</div>
+    <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Saptamana asta</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);line-height:1">${workoutDaysThisWeek}<span style="font-size:16px;color:var(--text3)">/${scheduledDays}</span></div>
     <div style="font-size:12px;color:var(--text3);margin-top:2px">antrenamente</div>`;
-  const streakMsgs=['0/8 – începe azi','1/8 – prima zi! Continuă mâine','2/8 – 2 zile, creierul observă','3/8 – încă 5 zile','4/8 – jumătate. NU RATA','5/8 – 3 zile rămase','6/8 – NU RATA. 2 zile','7/8 – O ZI. NU RATA','8/8 – ✅ Trend activ'];
+  const streakMsgs=['0/8 – incepe azi','1/8 – prima zi! Continua maine','2/8 – 2 zile, creierul observa','3/8 – inca 5 zile','4/8 – jumatate. NU RATA','5/8 – 3 zile ramase','6/8 – NU RATA. 2 zile','7/8 – O ZI. NU RATA','8/8 – ✅ Trend activ'];
   const cwl=$('cwl');if(cwl)cwl.textContent=streakMsgs[Math.min(filled,8)];
   const cpf=$('cpf');if(cpf)cpf.style.width=(filled/8*100)+'%';
   const cwd=$('cwd');if(cwd)cwd.innerHTML=Array.from({length:8},(_,i)=>`<div class="dot ${i<filled?'ok':''}">${i<filled?'✓':i+1}</div>`).join('');
   const last14=dates.slice(-14).map(d=>ws[d]);
   const mc=$('mc');
   if(mc){if(last14.length>1){const mn=Math.min(...last14)-.3,mx=Math.max(...last14)+.3;mc.innerHTML=last14.map((w,i)=>`<div class="bar ${i===last14.length-1?'t':'f'}" style="height:${Math.round(((w-mn)/(mx-mn))*55+8)}px"></div>`).join('');}
-  else mc.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:4px;align-self:center;width:100%"><div style="font-size:20px">📊</div><div style="color:var(--text3);font-size:11px;text-align:center">Completează zilnic greutatea</div></div>';}
+  else mc.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:4px;align-self:center;width:100%"><div style="font-size:20px">📊</div><div style="color:var(--text3);font-size:11px;text-align:center">Completeaza zilnic greutatea</div></div>';}
   renderFatigueScore('fatigue-score-dash');
   renderRealityCheck();
   renderAdherenceScore();
@@ -235,7 +235,7 @@ export function renderDash(){
   const dt2=$('dt2');
   if(dt2){const todayProg=tp;
     if(todayProg.t==='off')dt2.innerHTML=`<div class="abox g" style="margin:0 16px 12px"><div class="ai2">😴</div><div><div class="at2">${todayProg.day} – OFF</div><div class="as2">Recuperare: mers, mobilitate</div></div></div>`;
-    else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exerciții</div>`:''}</div></div>`;
+    else dt2.innerHTML=`<div class="db"><div class="dtag ${todayProg.t} td">${todayProg.t==='lim'?'⏰':'✅'} ${todayProg.day} · ${todayProg.tm}</div><div class="el">${todayProg.ex.slice(0,4).map(e=>`<div class="ei${e.ss?' ss':''}"><div class="edot ${e.g}"></div><div class="en">${cleanEx(e.n)}</div><div class="es2">${e.s}</div>${e.ss?'<span class="ssb">SS</span>':''}</div>`).join('')}${todayProg.ex.length>4?`<div style="text-align:center;color:var(--text3);font-size:11px;padding:8px">+${todayProg.ex.length-4} exercitii</div>`:''}</div></div>`;
   }
 
   // Readiness quick input banner
@@ -246,7 +246,7 @@ export function renderDash(){
     if (todayR === null && hour >= 6 && tp.t !== 'off') {
       rdBanner.style.display = 'block';
       rdBanner.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-        <div style="font-size:12px;color:var(--text2);flex:1">Cum te simți azi?</div>
+        <div style="font-size:12px;color:var(--text2);flex:1">Cum te simti azi?</div>
         <div style="display:flex;gap:6px">
           ${[1,2,3,4,5].map(v => `<button onclick="dashSaveReadiness(${v})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:18px">${READINESS_LABELS[v].emoji}</button>`).join('')}
         </div>
@@ -318,7 +318,7 @@ export function renderDash(){
       sessHistEl.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;margin-bottom:8px">
         <div style="font-size:32px;margin-bottom:10px">💪</div>
         <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Nicio sesiune azi</div>
-        <button onclick="goTo('coach')" style="background:var(--accent);color:#000;font-weight:700;font-size:13px;padding:10px 20px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px">ÎNCEPE ANTRENAMENTUL</button>
+        <button onclick="goTo('coach')" style="background:var(--accent);color:#000;font-weight:700;font-size:13px;padding:10px 20px;border:none;border-radius:40px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px">INCEPE ANTRENAMENTUL</button>
       </div>`;
     } else {
       sessHistEl.innerHTML = '';
@@ -381,14 +381,14 @@ function renderProjection4w() {
   let etaHtml = '';
   if (!p.gaining && p.rate < -0.1 && parseFloat(p.kg4w) < TW + 0.5) {
     const daysToTarget = Math.round((lastW - TW) / Math.abs(p.rate) * 7);
-    if (daysToTarget > 0) etaHtml = `<div style="margin-top:8px;font-size:11px;color:var(--green);text-align:center">🎯 Atingi targetul în ~${daysToTarget} zile</div>`;
+    if (daysToTarget > 0) etaHtml = `<div style="margin-top:8px;font-size:11px;color:var(--green);text-align:center">🎯 Atingi targetul in ~${daysToTarget} zile</div>`;
   }
 
   let msg = '';
-  if (p.gaining)              msg = '⚠️ <strong style="color:var(--red)">Trendul actual duce la creștere în greutate.</strong> Verifică kcal.';
-  else if (Math.abs(p.rate) < 0.2) msg = `⚠️ <strong style="color:var(--accent2)">Scădere prea lentă</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — scade 100 kcal.`;
-  else if (Math.abs(p.rate) > 1.2) msg = `⚡ <strong style="color:var(--accent3)">Scădere prea rapidă</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — adaugă 150 kcal.`;
-  else                        msg = `✅ <strong style="color:var(--green)">Ritm perfect</strong> — ${Math.abs(p.rate).toFixed(2)} kg/săpt. Continuă.`;
+  if (p.gaining)              msg = '⚠️ <strong style="color:var(--red)">Trendul actual duce la crestere in greutate.</strong> Verifica kcal.';
+  else if (Math.abs(p.rate) < 0.2) msg = `⚠️ <strong style="color:var(--accent2)">Scadere prea lenta</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — scade 100 kcal.`;
+  else if (Math.abs(p.rate) > 1.2) msg = `⚡ <strong style="color:var(--accent3)">Scadere prea rapida</strong> (${Math.abs(p.rate).toFixed(2)} kg/7z) — adauga 150 kcal.`;
+  else                        msg = `✅ <strong style="color:var(--green)">Ritm perfect</strong> — ${Math.abs(p.rate).toFixed(2)} kg/sapt. Continua.`;
 
   box.style.display = 'block';
   $('proj-2w').textContent = p.kg2w + ' kg';
@@ -445,7 +445,7 @@ function renderWeightChart() {
 
   if (dates.length < 2) {
     canvas.style.display = 'none';
-    if (msgEl) { msgEl.style.display = 'block'; msgEl.textContent = 'Mai ai nevoie de cel puțin 2 cântăriri pentru grafic.'; }
+    if (msgEl) { msgEl.style.display = 'block'; msgEl.textContent = 'Mai ai nevoie de cel putin 2 cantariri pentru grafic.'; }
     return;
   }
 
@@ -528,24 +528,24 @@ export function getAlerts(){
   const now=new Date(),PILOT=TARGET_DATE,pilotActive=now>=PILOT;
   const daysToCheckpoint=Math.round((PILOT-now)/86400000);
   if(!pilotActive&&daysToCheckpoint<=7&&daysToCheckpoint>0)
-    alerts.push({t:'y',i:'⏰',tt:`CHECKPOINT ÎN ${daysToCheckpoint} ZILE`,s:'Pe 20 iulie sistemul preia controlul kcal.'});
+    alerts.push({t:'y',i:'⏰',tt:`CHECKPOINT IN ${daysToCheckpoint} ZILE`,s:'Pe 20 iulie sistemul preia controlul kcal.'});
   if(today===TARGET_DATE.toISOString().slice(0,10))
-    alerts.push({t:'g',i:'🤖',tt:'PILOT AUTOMAT ACTIV',s:`TDEE: ${SYS.estimateTDEE()} kcal · Fază: ${SYS.getPhase()} · Kcal: ${SYS.getKcalTarget()}`});
-  if(pilotActive&&SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15&&!DB.get('phase-override'))
-    alerts.push({t:'y',i:'⚠️',tt:'BF >15% dar faza e mentenanță',s:'Override la CUT din tab Plan'});
+    alerts.push({t:'g',i:'🤖',tt:'PILOT AUTOMAT ACTIV',s:`TDEE: ${SYS.estimateTDEE()} kcal · Faza: ${SYS.getPhase()} · Kcal: ${SYS.getKcalTarget()}`});
+  if(SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15&&!DB.get('phase-override'))
+    alerts.push({t:'y',i:'⚠️',tt:'BF >15% dar faza e mentenanta',s:'Override la CUT din tab Plan'});
   const wb=DB.get('wellbeing')||{},todWell=wb[today]||{};
-  if(todWell.sleep&&todWell.sleep<=2) alerts.push({t:'y',i:'😴',tt:'SOMN PROST AZI',s:'RPE artificial ridicat. Nu crești greutatea azi.'});
+  if(todWell.sleep&&todWell.sleep<=2) alerts.push({t:'y',i:'😴',tt:'SOMN PROST AZI',s:'RPE artificial ridicat. Nu cresti greutatea azi.'});
   const prots=DB.get('prots')||{},todProt=prots[today];
-  if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINĂ: ${todProt}g`,s:`Target ${PROT_TARGET}g · Deficit ${PROT_TARGET-todProt}g`});
-  else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINĂ NELOGATĂ',s:`${PROT_TARGET}g+ esențial · Apasă pentru a loga`,nav:'weight'});
-  if(dates.length>=3&&!ws[today]) alerts.push({t:'r',i:'🚨',tt:'GREUTATE NELOGATĂ AZI',s:'Dimineața pe nemâncat → tab Greutate.'});
+  if(todProt!==undefined&&todProt<150) alerts.push({t:'r',i:'🥩',tt:`PROTEINA: ${todProt}g`,s:`Target ${PROT_TARGET}g · Deficit ${PROT_TARGET-todProt}g`});
+  else if(!todProt&&dates.length>=2) alerts.push({t:'o',i:'🥩',tt:'PROTEINA NELOGATA',s:`${PROT_TARGET}g+ esential · Apasa pentru a loga`,nav:'weight'});
+  if(dates.length>=3&&!ws[today]) alerts.push({t:'r',i:'🚨',tt:'GREUTATE NELOGATA AZI',s:'Dimineata pe nemancat → tab Greutate.'});
   if(dates.length>=7){const l7=dates.slice(-7).map(d=>ws[d]);if(Math.max(...l7)-Math.min(...l7)<0.5) alerts.push({t:'r',i:'🔴',tt:'STAGNARE 7 ZILE',s:'→ scazi 100 kcal AZI'});}
   const rRPE=logs.slice(-9).filter(l=>l.rpe).map(l=>l.rpe);
   const avgRPE=rRPE.length?rRPE.reduce((a,b)=>a+b,0)/rRPE.length:null;
-  if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% săptămâna asta'});
+  if(avgRPE&&avgRPE>=8.5) alerts.push({t:'r',i:'🚨',tt:`DELOAD – RPE ${avgRPE.toFixed(1)}`,s:'Reduce volum 40% saptamana asta'});
   const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
   const todW=ws[today];
-  if(todW&&todW<=tgt+0.2&&!alerts.find(a=>a.t==='r')) alerts.push({t:'g',i:'✅',tt:'PE TRASEU',s:`${todW.toFixed(1)} kg · Ținta azi: ${tgt.toFixed(1)} kg`});
+  if(todW&&todW<=tgt+0.2&&!alerts.find(a=>a.t==='r')) alerts.push({t:'g',i:'✅',tt:'PE TRASEU',s:`${todW.toFixed(1)} kg · Tinta azi: ${tgt.toFixed(1)} kg`});
   return alerts;
 }
 
@@ -559,19 +559,19 @@ export function closeDayFromDash(){
   if(cdDash){
     const pColor=p.gaining?'var(--red)':Math.abs(p.rate)<0.2?'var(--accent2)':Math.abs(p.rate)>1.2?'var(--accent3)':'var(--green)';
     cdDash.innerHTML=`<div style="background:rgba(200,255,0,0.05);border:1px solid var(--accent);border-radius:var(--r);padding:14px 16px">
-      <div style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✅ ZIUA ÎNCHISĂ · PROIECȚIE</div>
+      <div style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✅ ZIUA INCHISA · PROIECTIE</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg2w}kg</div>
-          <div style="font-size:12px;color:var(--text3)">2 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">2 SAPTAMANI</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px;border:1px solid ${pColor}44">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg4w}kg</div>
-          <div style="font-size:12px;color:var(--text3)">4 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">4 SAPTAMANI</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 4px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${pColor}">${p.kg8w}kg</div>
-          <div style="font-size:12px;color:var(--text3)">8 SĂPTĂMÂNI</div>
+          <div style="font-size:12px;color:var(--text3)">8 SAPTAMANI</div>
         </div>
       </div>
       <div id="dash-proj-msg" style="font-size:12px;color:var(--text2);line-height:1.5;padding:10px;background:var(--bg3);border-radius:var(--rs)"></div>
@@ -579,10 +579,10 @@ export function closeDayFromDash(){
     // Fill message
     const el=$('dash-proj-msg');
     if(el){
-      if(p.gaining) el.innerHTML='⚠️ <strong style="color:var(--red)">Trend de creștere</strong> – verifică kcal';
-      else if(Math.abs(p.rate)<0.2) el.innerHTML='⚠️ <strong style="color:var(--accent2)">Scădere prea lentă</strong> – scade 100 kcal';
-      else if(Math.abs(p.rate)>1.2) el.innerHTML='⚡ <strong style="color:var(--accent3)">Scădere prea rapidă</strong> – adaugă 150 kcal';
-      else el.innerHTML=`✅ <strong style="color:var(--green)">Ritm perfect</strong> – ${Math.abs(p.rate).toFixed(2)} kg/săpt · continui`;
+      if(p.gaining) el.innerHTML='⚠️ <strong style="color:var(--red)">Trend de crestere</strong> – verifica kcal';
+      else if(Math.abs(p.rate)<0.2) el.innerHTML='⚠️ <strong style="color:var(--accent2)">Scadere prea lenta</strong> – scade 100 kcal';
+      else if(Math.abs(p.rate)>1.2) el.innerHTML='⚡ <strong style="color:var(--accent3)">Scadere prea rapida</strong> – adauga 150 kcal';
+      else el.innerHTML=`✅ <strong style="color:var(--green)">Ritm perfect</strong> – ${Math.abs(p.rate).toFixed(2)} kg/sapt · continui`;
     }
   }
 }
@@ -591,12 +591,12 @@ export function updateNotifBtn(active) {
   const btn = $('notif-btn');
   if (!btn) return;
   if (active) {
-    btn.innerHTML = '🔔 Notificări ACTIVE';
+    btn.innerHTML = '🔔 Notificari ACTIVE';
     btn.style.background = 'rgba(48,209,88,0.12)';
     btn.style.borderColor = 'var(--green)';
     btn.style.color = 'var(--green)';
   } else {
-    btn.innerHTML = '🔕 Notificări INACTIVE';
+    btn.innerHTML = '🔕 Notificari INACTIVE';
     btn.style.background = 'rgba(255,59,48,0.08)';
     btn.style.borderColor = 'var(--red)';
     btn.style.color = 'var(--red)';
@@ -604,22 +604,22 @@ export function updateNotifBtn(active) {
 }
 
 export async function requestNotifications() {
-  if (!('Notification' in window)) { toast('⚠ Browser-ul nu suportă notificări', 'var(--accent2)'); return; }
+  if (!('Notification' in window)) { toast('⚠ Browser-ul nu suporta notificari', 'var(--accent2)'); return; }
   
-  // Toggle: dacă e activ, dezactivează
+  // Toggle: daca e activ, dezactiveaza
   const isEnabled = DB.get('notif-enabled');
   if (Notification.permission === 'granted' && isEnabled) {
     DB.set('notif-enabled', false);
     updateNotifBtn(false);
-    toast('🔕 Notificări dezactivate', 'var(--accent2)');
+    toast('🔕 Notificari dezactivate', 'var(--accent2)');
     return;
   }
   
   if (Notification.permission === 'granted') { 
     scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); 
-    toast('✅ Notificări active', 'var(--green)'); return; 
+    toast('✅ Notificari active', 'var(--green)'); return; 
   }
   const perm = await Notification.requestPermission();
-  if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificări activate!', 'var(--green)'); }
-  else { updateNotifBtn(false); toast('⚠ Permisiune refuzată', 'var(--accent2)'); }
+  if (perm === 'granted') { scheduleNotifications(); DB.set('notif-enabled', true); updateNotifBtn(true); toast('✅ Notificari activate!', 'var(--green)'); }
+  else { updateNotifBtn(false); toast('⚠ Permisiune refuzata', 'var(--accent2)'); }
 }

@@ -22,7 +22,7 @@ describe('MASTERY_MILESTONES — schema', () => {
 
   it('LOCKED milestone names', () => {
     expect(MASTERY_MILESTONES.map(m => m.name))
-      .toEqual(['Început', 'Constanță', 'Stăpânire', 'Maestru']);
+      .toEqual(['Inceput', 'Constanta', 'Stapanire', 'Maestru']);
   });
 });
 
@@ -45,20 +45,20 @@ describe('incrementCounter', () => {
   it('returns milestone exactly at session 10', () => {
     for (let i = 1; i <= 9; i++) incrementCounter('Squat');
     const m = incrementCounter('Squat');
-    expect(m).toEqual({ count: 10, name: 'Început' });
+    expect(m).toEqual({ count: 10, name: 'Inceput' });
   });
 
   it('returns milestone at session 30', () => {
     for (let i = 1; i <= 29; i++) incrementCounter('Squat');
     const m = incrementCounter('Squat');
-    expect(m).toEqual({ count: 30, name: 'Constanță' });
+    expect(m).toEqual({ count: 30, name: 'Constanta' });
   });
 
   it('returns milestone at session 60', () => {
     // Pre-seed counter to skip the bulk loop in test.
     localStorage.setItem('masteryCounters', JSON.stringify({ Squat: { count: 59, lastSessionTs: 0 } }));
     const m = incrementCounter('Squat');
-    expect(m).toEqual({ count: 60, name: 'Stăpânire' });
+    expect(m).toEqual({ count: 60, name: 'Stapanire' });
   });
 
   it('returns milestone at session 120', () => {
@@ -90,9 +90,9 @@ describe('getCurrentMilestone', () => {
     expect(getCurrentMilestone('Squat')).toBeNull();
   });
 
-  it('returns Început at 10-29', () => {
+  it('returns Inceput at 10-29', () => {
     for (let i = 1; i <= 15; i++) incrementCounter('Squat');
-    expect(getCurrentMilestone('Squat').name).toBe('Început');
+    expect(getCurrentMilestone('Squat').name).toBe('Inceput');
   });
 
   it('returns Maestru at 120+', () => {
@@ -102,16 +102,16 @@ describe('getCurrentMilestone', () => {
 });
 
 describe('getNextMilestone', () => {
-  it('returns Început for fresh exercise', () => {
+  it('returns Inceput for fresh exercise', () => {
     const next = getNextMilestone('Squat');
-    expect(next.name).toBe('Început');
+    expect(next.name).toBe('Inceput');
     expect(next.sessionsToGo).toBe(10);
   });
 
   it('returns sessions-to-go correctly mid-tier', () => {
     for (let i = 1; i <= 15; i++) incrementCounter('Squat');
     const next = getNextMilestone('Squat');
-    expect(next.name).toBe('Constanță');
+    expect(next.name).toBe('Constanta');
     expect(next.sessionsToGo).toBe(15);
   });
 
@@ -122,9 +122,9 @@ describe('getNextMilestone', () => {
 });
 
 describe('formatMilestoneMessage', () => {
-  it('LOCKED wording — Început', () => {
-    const msg = formatMilestoneMessage({ count: 10, name: 'Început' }, 'Squat');
-    expect(msg).toBe('Ai atins Început: 10 sesiuni complete la Squat.');
+  it('LOCKED wording — Inceput', () => {
+    const msg = formatMilestoneMessage({ count: 10, name: 'Inceput' }, 'Squat');
+    expect(msg).toBe('Ai atins Inceput: 10 sesiuni complete la Squat.');
   });
 
   it('LOCKED wording — Maestru', () => {
@@ -134,11 +134,11 @@ describe('formatMilestoneMessage', () => {
 
   it('returns empty on missing data', () => {
     expect(formatMilestoneMessage(null, 'Squat')).toBe('');
-    expect(formatMilestoneMessage({ count: 10, name: 'Început' }, '')).toBe('');
+    expect(formatMilestoneMessage({ count: 10, name: 'Inceput' }, '')).toBe('');
   });
 
   it('Bugatti tone — no exclamation, no emoji', () => {
-    const msg = formatMilestoneMessage({ count: 10, name: 'Început' }, 'Squat');
+    const msg = formatMilestoneMessage({ count: 10, name: 'Inceput' }, 'Squat');
     expect(msg).not.toMatch(/[!]/);
     expect(msg).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
   });
@@ -155,7 +155,7 @@ describe('recordSessionComplete', () => {
     const res = recordSessionComplete('Squat');
     expect(res.crossed).toBe(true);
     expect(res.milestone.count).toBe(10);
-    expect(res.message).toBe('Ai atins Început: 10 sesiuni complete la Squat.');
+    expect(res.message).toBe('Ai atins Inceput: 10 sesiuni complete la Squat.');
   });
 });
 

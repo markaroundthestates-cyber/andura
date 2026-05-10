@@ -53,7 +53,7 @@
       </div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">
         <div id="today-sets-done" style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--green)">—</div>
-        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Seturi/săpt</div>
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Seturi/sapt</div>
       </div>
     </div>
 
@@ -81,11 +81,11 @@
     <div class="session-header" style="position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)">
       <div style="padding:10px 16px;display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">SESIUNE ACTIVĂ</div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">SESIUNE ACTIVA</div>
           <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);line-height:1" id="sess-clock">00:00</div>
         </div>
         <div style="text-align:center">
-          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">EXERCIȚII</div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">EXERCITII</div>
           <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)" id="sess-progress-txt">0/0</div>
         </div>
         <div style="text-align:center">
@@ -95,7 +95,7 @@
         <div style="display:flex;gap:8px;align-items:center">
           <button onclick="toggleMute()" id="mute-btn" title="Toggle sunet" style="background:none;border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:var(--rs);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">🔊</button>
           <div style="display:flex;gap:8px;align-items:center">
-            <button onclick="cancelWorkout()" style="background:none;border:1px solid var(--red);color:var(--red);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">ANULEAZĂ</button>
+            <button onclick="cancelWorkout()" style="background:none;border:1px solid var(--red);color:var(--red);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">ANULEAZA</button>
             <button onclick="finishEarly()" style="background:transparent;border:1px solid var(--accent2);color:var(--accent2);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">FINISH EARLY</button>
             <button onclick="endSession()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600">STOP</button>
           </div>
@@ -107,7 +107,7 @@
 
     <!-- PAUSE SCREEN (fullscreen during rest) -->
     <div id="pause-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:50;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
-      <div style="font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px">⏸ PAUZĂ</div>
+      <div style="font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px">⏸ PAUZA</div>
       <div id="ps-timer" style="font-family:'Bebas Neue',sans-serif;font-size:120px;color:var(--accent2);line-height:1;margin-bottom:8px">120</div>
       <div id="ps-next" style="font-size:14px;color:var(--text2);margin-bottom:6px">—</div>
       <div id="ps-rec-kg" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);margin-bottom:4px">—</div>
@@ -176,7 +176,7 @@
 
       <!-- STEP 1: REPS CONFIRM + RPE INLINE -->
       <div id="rpe-inline" style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:12px;display:none">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:12px">Câte reps ai făcut?</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:12px">Cate reps ai facut?</div>
         <div style="display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:16px">
           <button onclick="adjSessionReps(-1)" style="width:52px;height:52px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:24px;cursor:pointer">−</button>
           <div id="session-reps" style="font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--accent);min-width:60px;text-align:center;line-height:1">10</div>
@@ -201,13 +201,13 @@
             <div style="font-size:11px;margin-top:2px;color:var(--text2)">Very Hard</div>
           </button>
         </div>
-        <button onclick="window.confirmReps()" style="width:100%;padding:16px;background:var(--accent);color:#000;font-weight:700;font-size:18px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">CONFIRMĂ →</button>
+        <button onclick="window.confirmReps()" style="width:100%;padding:16px;background:var(--accent);color:#000;font-weight:700;font-size:18px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">CONFIRMA →</button>
         <button onclick="window.confirmReps(true)" style="width:100%;padding:8px;margin-top:6px;background:transparent;color:var(--text3);font-size:11px;border:none;cursor:pointer">Skip rating</button>
       </div>
 
       <!-- STEP 2: RPE SCREEN -->
       <div id="rpe-screen" style="background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:12px;display:none">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px">Cât de greu?</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px">Cat de greu?</div>
         <div id="rpe-reps-summary" style="font-size:12px;color:var(--text2);margin-bottom:12px"></div>
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
           <button onclick="selectRPE(6)" style="padding:16px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);color:var(--accent3);font-size:20px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">6</button>
@@ -217,7 +217,7 @@
           <button onclick="selectRPE(10)" style="padding:16px 4px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--rs);color:var(--red);font-size:20px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">10</button>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:6px;padding:0 2px">
-          <span style="font-size:9px;color:var(--text3)">UȘOR</span>
+          <span style="font-size:9px;color:var(--text3)">USOR</span>
           <span style="font-size:9px;color:var(--text3)">MAX</span>
         </div>
       </div>
@@ -263,15 +263,15 @@
   <!-- KPI GRID -->
   <div class="kgrid">
     <div class="kp a"><div class="kl">Greutate</div><div class="kv" id="kw">—</div><div class="ksub" id="kws">kg</div></div>
-    <div class="kp" style="border-top:3px solid var(--accent3)"><div class="kl">Scăzut total</div><div class="kv" id="kl2" style="color:var(--accent3)">—</div><div class="ksub">kg vs 111.4</div></div>
+    <div class="kp" style="border-top:3px solid var(--accent3)"><div class="kl">Scazut total</div><div class="kv" id="kl2" style="color:var(--accent3)">—</div><div class="ksub">kg vs 111.4</div></div>
     <div class="kp b"><div class="kl">Trend 7 zile</div><div class="kv" id="kt">—</div><div class="ksub" id="kts">—</div></div>
-    <div class="kp b" id="kpi-days-box"><div class="kl" id="kpi-days-label">Zile rămase</div><div class="kv" id="kd">—</div><div class="ksub" id="kpi-days-sub">până 20 iulie</div></div>
+    <div class="kp b" id="kpi-days-box"><div class="kl" id="kpi-days-label">Zile ramase</div><div class="kv" id="kd">—</div><div class="ksub" id="kpi-days-sub">pana 20 iulie</div></div>
   </div>
 
   <!-- WEEKLY WORKOUTS + AUTO KCAL inline row -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 10px">
     <div id="weekly-workouts" style="padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs)">
-      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Săptămâna asta</div>
+      <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Saptamana asta</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent)">—</div>
     </div>
     <div class="dec" id="dec" style="margin:0;border-radius:var(--rs)">
@@ -283,7 +283,7 @@
 
   <!-- WEIGHT EVOLUTION CHART -->
   <div style="margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-    <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Evoluție greutate</div>
+    <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Evolutie greutate</div>
     <div style="height:250px;width:100%;position:relative">
       <canvas id="dash-weight-chart"></canvas>
     </div>
@@ -323,7 +323,7 @@
 <div id="page-weight" class="page page-content">
   <div class="ph">
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <div><div class="pt">GREUTATE</div><div class="ps">Dimineața, pe nemâncat</div></div>
+      <div><div class="pt">GREUTATE</div><div class="ps">Dimineata, pe nemancat</div></div>
       <div style="display:flex;align-items:center;gap:6px">
         <button onclick="shiftLogDate(-1)" style="width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
         <div id="log-date-display" onclick="toggleDatePicker()" style="font-size:12px;color:var(--accent);font-family:'JetBrains Mono',monospace;min-width:60px;text-align:center;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" title="Selecteaza data">AZI 📅</div>
@@ -348,7 +348,7 @@
         <div style="font-size:13px;color:var(--green);font-weight:600">✅ Salvat azi</div>
         <div id="weight-saved-val" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);line-height:1">—</div>
       </div>
-      <button onclick="unlockWeight()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif">🔓 Editează</button>
+      <button onclick="unlockWeight()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif">🔓 Editeaza</button>
     </div>
 
     <!-- EDIT STATE: shown when not saved or editing -->
@@ -360,7 +360,7 @@
         <button class="bq" onclick="adj(+0.1)">+0.1</button>
         <button class="bq" onclick="adj(+0.5)">+0.5</button>
       </div>
-      <button class="bs" onclick="saveW()">✓ SALVEAZĂ GREUTATEA</button>
+      <button class="bs" onclick="saveW()">✓ SALVEAZA GREUTATEA</button>
     </div>
   </div>
   <!-- KCAL LOGGER -->
@@ -383,32 +383,32 @@
       <input type="number" id="kcal-direct-input" class="wdi" placeholder="1800" inputmode="numeric" style="flex:1;font-size:18px;padding:10px 12px"/>
       <button onclick="setKcalDirect()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:10px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">SET</button>
     </div>
-    <button class="bs" onclick="saveKcal()" style="background:var(--accent)" id="save-kcal-btn">✓ SALVEAZĂ KCAL</button>
+    <button class="bs" onclick="saveKcal()" style="background:var(--accent)" id="save-kcal-btn">✓ SALVEAZA KCAL</button>
     <div id="kcal-saved-state" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.3);border-radius:var(--rs);align-items:center;justify-content:space-between">
       <span style="font-size:13px;color:var(--green)">✅ Kcal salvate azi</span>
-      <button onclick="unlockKcal()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editează</button>
+      <button onclick="unlockKcal()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editeaza</button>
     </div>
     <div style="margin-top:10px;font-size:11px;color:var(--text3);text-align:center" id="kcal-save-note">—</div>
   </div>
 
-  <!-- ÎNCHIDE ZIUA - mutat in Dashboard -->
-  <!-- PROIECȚIE BOX — apare după închidere -->
+  <!-- INCHIDE ZIUA - mutat in Dashboard -->
+  <!-- PROIECTIE BOX — apare dupa inchidere -->
   <div id="projection-box" style="display:none;margin:0 16px 12px;border-radius:var(--r);overflow:hidden;border:2px solid var(--accent)">
     <div id="verdict-slot"></div>
     <div style="background:rgba(200,255,0,0.06);padding:16px 18px">
-      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">📈 DACĂ CONTINUI AȘA</div>
+      <div style="font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">📈 DACA CONTINUI ASA</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 6px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)" id="proj-2w">—</div>
-          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">2 săptămâni</div>
+          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">2 saptamani</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 6px;border:1px solid rgba(200,255,0,0.2)">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)" id="proj-4w">—</div>
-          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">4 săptămâni</div>
+          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">4 saptamani</div>
         </div>
         <div style="text-align:center;background:var(--bg3);border-radius:var(--rs);padding:10px 6px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)" id="proj-8w">—</div>
-          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">8 săptămâni</div>
+          <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">8 saptamani</div>
         </div>
       </div>
       <div id="proj-message" style="font-size:13px;color:var(--text2);line-height:1.6;padding:10px 12px;background:var(--bg3);border-radius:var(--rs)"></div>
@@ -420,10 +420,10 @@
     </div>
   </div>
 
-  <!-- PROTEINĂ TRACKER -->
+  <!-- PROTEINA TRACKER -->
   <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">💪 Proteină azi</div>
+      <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">💪 Proteina azi</div>
       <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace">target: 180g+</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -444,10 +444,10 @@
       <input type="number" id="prot-input" class="wdi" placeholder="180" inputmode="numeric" style="flex:1;font-size:18px;padding:10px 12px"/>
       <button onclick="setProtDirect()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:10px 14px;border-radius:var(--rs);cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">SET</button>
     </div>
-    <button class="bs" onclick="saveProt()" style="background:var(--green)" id="save-prot-btn">✓ SALVEAZĂ PROTEINĂ</button>
+    <button class="bs" onclick="saveProt()" style="background:var(--green)" id="save-prot-btn">✓ SALVEAZA PROTEINA</button>
     <div id="prot-saved-state" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(48,209,88,0.08);border:1px solid rgba(48,209,88,0.3);border-radius:var(--rs);align-items:center;justify-content:space-between">
-      <span style="font-size:13px;color:var(--green)">✅ Proteină salvată azi</span>
-      <button onclick="unlockProt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editează</button>
+      <span style="font-size:13px;color:var(--green)">✅ Proteina salvata azi</span>
+      <button onclick="unlockProt()" style="background:none;border:1px solid var(--border);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;margin-left:10px">🔓 Editeaza</button>
     </div>
   </div>
 
@@ -468,13 +468,13 @@
 
   <!-- FOTO PROGRESS -->
   <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📸 Foto progress săptămânal</div>
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📸 Foto progress saptamanal</div>
     <div id="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
     <label style="display:block;width:100%;padding:13px;background:var(--bg3);border:1px dashed var(--border);border-radius:var(--rs);text-align:center;cursor:pointer;font-size:13px;color:var(--text2)" id="photo-upload-label">
-      📷 Adaugă foto azi
+      📷 Adauga foto azi
       <input type="file" accept="image/*" id="photo-input" style="display:none" onchange="savePhoto(this)"/>
     </label>
-    <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Stocată local pe telefon · Nu se trimite nicăieri</div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text3);text-align:center">Stocata local pe telefon · Nu se trimite nicaieri</div>
   </div>
 
   <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
@@ -501,31 +501,31 @@
   </div>
   <div class="card" style="overflow:hidden"><div id="sessions-dropdown-wrap"></div></div>
 
-  <!-- EXPORT + NOTIFICĂRI + IMPORT -->
+  <!-- EXPORT + NOTIFICARI + IMPORT -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px">
     <button onclick="exportCSV()" style="padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">📊 CSV</button>
     <button onclick="exportJSON()" style="padding:14px;background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.3);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">💾 BACKUP</button>
-    <button onclick="cleanFakeLogs()" style="padding:14px;background:rgba(255,59,48,0.05);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;grid-column:1/-1">🧹 CURĂȚĂ LOGURI FALSE</button>
+    <button onclick="cleanFakeLogs()" style="padding:14px;background:rgba(255,59,48,0.05);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;grid-column:1/-1">🧹 CURATA LOGURI FALSE</button>
     <button onclick="triggerMFPImport()" style="grid-column:1/-1;padding:14px;background:rgba(200,255,0,0.05);border:1px solid rgba(200,255,0,0.2);border-radius:var(--rs);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
-      📲 Import nutriție CSV
+      📲 Import nutritie CSV
     </button>
     <button onclick="requestNotifications()" id="notif-btn" style="grid-column:1/-1;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">
-      🔔 Notificări
+      🔔 Notificari
     </button>
   </div>
   <!-- ZONA DEVELOPER -->
   <div style="margin:0 16px 24px;padding:16px;border:1px dashed rgba(255,107,53,0.5);border-radius:8px">
     <div style="font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:4px">⚠️ Zona Developer</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Utile pentru testare și debugging. Folosește cu atenție.</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Utile pentru testare si debugging. Foloseste cu atentie.</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      <button onclick="window._devResetTest()" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🧹 Reset Test Data (păstrează loguri reale)</button>
-      <button onclick="if(confirm('Soft Reset șterge datele de test dar păstrează logurile tale de la sală și jurnalul zilnic. Continui?')){window.resetButKeepRealLogs&&window.resetButKeepRealLogs()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🎯 Soft Reset (păstrează loguri reale)</button>
-      <button onclick="if(confirm('Declanșează din nou onboarding-ul? Datele tale rămân.')){localStorage.removeItem('onboarding-completed');localStorage.removeItem('onboarding-done');window.location.reload()}" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔄 Re-run Onboarding</button>
-      <button onclick="window.inspectStorage&&(window.inspectStorage(),alert('Verifică consola DevTools'))" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔍 Inspect Storage (console)</button>
-      <button onclick="window._devFullReset()" style="padding:11px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">💥 Full Reset (șterge TOT)</button>
-      <button onclick="(async()=>{if(!confirm('Restaurează antrenamentele reale Apr 21 (PULL) + Apr 22 (PUSH)?'))return;if(typeof window.restoreRealLogs!=='function'){alert('restoreRealLogs indisponibil — reîncarcă pagina și încearcă din nou');return;}window._suppressFirebaseSync=true;const r=window.restoreRealLogs();if(r&&r.restored>0){alert('✅ Restaurat '+r.restored+' intrări.\nTotal logs: '+r.total+'\nReîncărcând...');setTimeout(()=>location.reload(),400);}else if(r){alert('Logurile existau deja (merge=true). Total: '+(r.total||0));}else{alert('Eroare la restaurare — verifică consola');}})();" style="padding:11px;background:rgba(0,200,100,0.06);border:1px solid rgba(0,200,100,0.3);border-radius:var(--rs);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🏋️ Restore Real Logs (Apr 21-22)</button>
-      <button id="btn-admin-prefill" onclick="(async()=>{if(!confirm('Import date owner (nutriție MFP + greutăți + loguri 21-22/04)?'))return;if(typeof window.adminPrefillAll!=='function'){alert('adminPrefillAll indisponibil — reîncarcă pagina');return;}const r=window.adminPrefillAll();alert('Importat! Kcals: '+r.kcalsDays+' zile, Prots: '+r.protsDays+' zile, Weights: '+r.weightsDays+' zile + loguri sală.');setTimeout(()=>location.reload(),500);})();" style="padding:11px;background:rgba(123,44,191,0.08);border:1px solid rgba(123,44,191,0.4);border-radius:var(--rs);color:#b57bee;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">📊 Admin: Import MFP + Loguri Reale (owner only)</button>
-      <button onclick="if(confirm('Restaurează ultimul auto-backup? Datele curente vor fi înlocuite.')){window.restoreLastBackup&&window.restoreLastBackup()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">⏪ Restore Last Auto-Backup</button>
+      <button onclick="window._devResetTest()" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🧹 Reset Test Data (pastreaza loguri reale)</button>
+      <button onclick="if(confirm('Soft Reset sterge datele de test dar pastreaza logurile tale de la sala si jurnalul zilnic. Continui?')){window.resetButKeepRealLogs&&window.resetButKeepRealLogs()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🎯 Soft Reset (pastreaza loguri reale)</button>
+      <button onclick="if(confirm('Declanseaza din nou onboarding-ul? Datele tale raman.')){localStorage.removeItem('onboarding-completed');localStorage.removeItem('onboarding-done');window.location.reload()}" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔄 Re-run Onboarding</button>
+      <button onclick="window.inspectStorage&&(window.inspectStorage(),alert('Verifica consola DevTools'))" style="padding:11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🔍 Inspect Storage (console)</button>
+      <button onclick="window._devFullReset()" style="padding:11px;background:rgba(255,59,48,0.06);border:1px solid rgba(255,59,48,0.3);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">💥 Full Reset (sterge TOT)</button>
+      <button onclick="(async()=>{if(!confirm('Restaureaza antrenamentele reale Apr 21 (PULL) + Apr 22 (PUSH)?'))return;if(typeof window.restoreRealLogs!=='function'){alert('restoreRealLogs indisponibil — reincarca pagina si incearca din nou');return;}window._suppressFirebaseSync=true;const r=window.restoreRealLogs();if(r&&r.restored>0){alert('✅ Restaurat '+r.restored+' intrari.\nTotal logs: '+r.total+'\nReincarcand...');setTimeout(()=>location.reload(),400);}else if(r){alert('Logurile existau deja (merge=true). Total: '+(r.total||0));}else{alert('Eroare la restaurare — verifica consola');}})();" style="padding:11px;background:rgba(0,200,100,0.06);border:1px solid rgba(0,200,100,0.3);border-radius:var(--rs);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">🏋️ Restore Real Logs (Apr 21-22)</button>
+      <button id="btn-admin-prefill" onclick="(async()=>{if(!confirm('Import date owner (nutritie MFP + greutati + loguri 21-22/04)?'))return;if(typeof window.adminPrefillAll!=='function'){alert('adminPrefillAll indisponibil — reincarca pagina');return;}const r=window.adminPrefillAll();alert('Importat! Kcals: '+r.kcalsDays+' zile, Prots: '+r.protsDays+' zile, Weights: '+r.weightsDays+' zile + loguri sala.');setTimeout(()=>location.reload(),500);})();" style="padding:11px;background:rgba(123,44,191,0.08);border:1px solid rgba(123,44,191,0.4);border-radius:var(--rs);color:#b57bee;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">📊 Admin: Import MFP + Loguri Reale (owner only)</button>
+      <button onclick="if(confirm('Restaureaza ultimul auto-backup? Datele curente vor fi inlocuite.')){window.restoreLastBackup&&window.restoreLastBackup()}" style="padding:11px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.3);border-radius:var(--rs);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left">⏪ Restore Last Auto-Backup</button>
       <!-- Granular Restore — quick buttons -->
       <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
         <span style="font-size:11px;color:var(--text3);align-self:center">Restore din:</span>
@@ -533,26 +533,26 @@
         <button onclick="_restoreDaysAgo(3)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">3 zile</button>
         <button onclick="_restoreDaysAgo(7)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">7 zile</button>
         <button onclick="_restoreDaysAgo(30)" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">30 zile</button>
-        <button onclick="_showBackupList()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">📋 Listă</button>
+        <button onclick="_showBackupList()" style="padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">📋 Lista</button>
       </div>
       <label style="display:block;margin-top:8px;font-size:11px;color:var(--text3)">
         Upload backup JSON:
-        <input type="file" accept=".json" onchange="const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(confirm('Restaurează din '+f.name+'?')){window.restoreFromBackup&&window.restoreFromBackup(e.target.result)}};r.readAsText(f)" style="display:block;margin-top:4px;font-size:11px;color:var(--text2)"/>
+        <input type="file" accept=".json" onchange="const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{if(confirm('Restaureaza din '+f.name+'?')){window.restoreFromBackup&&window.restoreFromBackup(e.target.result)}};r.readAsText(f)" style="display:block;margin-top:4px;font-size:11px;color:var(--text2)"/>
       </label>
       <script>
         function _restoreDaysAgo(days){
-          if(!confirm('Restaurează backup din acum '+days+' zi(le)? Datele curente vor fi înlocuite.'))return;
+          if(!confirm('Restaureaza backup din acum '+days+' zi(le)? Datele curente vor fi inlocuite.'))return;
           if(typeof window.restoreFromBackup==='function'){
             const r=window.restoreFromBackup(days);
-            if(r&&r.restored)alert('Restaurat '+r.keysRestored+' chei din '+r.date+'. Se reîncarcă...');
-            else alert('Backup nu a fost găsit pentru '+(r&&r.reason?r.reason:'zile='+days));
+            if(r&&r.restored)alert('Restaurat '+r.keysRestored+' chei din '+r.date+'. Se reincarca...');
+            else alert('Backup nu a fost gasit pentru '+(r&&r.reason?r.reason:'zile='+days));
             if(r&&r.restored)location.reload();
           }else{alert('restoreFromBackup nu este disponibil.');}
         }
         function _showBackupList(){
           if(typeof window.listBackups!=='function'){alert('listBackups nu este disponibil.');return;}
           const list=window.listBackups();
-          if(!list||list.length===0){alert('Nu există backup-uri salvate.');return;}
+          if(!list||list.length===0){alert('Nu exista backup-uri salvate.');return;}
           const lines=list.slice(0,10).map((b,i)=>i+'. '+b.date+' ('+b.key+')').join('\n');
           alert('Backup-uri disponibile (cele mai recente 10):\n'+lines);
         }
@@ -563,7 +563,7 @@
 
 <!-- ══════════════ PROGRAM ══════════════ -->
 <div id="page-prog" class="page page-content">
-  <div class="ph"><div class="pt">PROGRAM</div><div class="ps">5 zile · Umeri › Brațe › Piept › Spate</div></div>
+  <div class="ph"><div class="pt">PROGRAM</div><div class="ps">5 zile · Umeri › Brate › Piept › Spate</div></div>
   <div id="pc"></div>
 </div>
 
@@ -575,7 +575,7 @@
 
   <!-- PHASE BANNER -->
   <div id="phase-banner" style="margin:0 16px 12px;border-radius:var(--r);padding:18px 20px;border:2px solid var(--accent);background:rgba(200,255,0,0.05)">
-    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FAZA CURENTĂ</div>
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">FAZA CURENTA</div>
     <div id="phase-name" style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);letter-spacing:1px">—</div>
     <div id="phase-detail" style="font-size:12px;color:var(--text2);margin-top:4px"></div>
   </div>
@@ -601,10 +601,10 @@
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px">
       <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">TDEE Estimat</div>
       <div id="tdee-display" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent3)">—</div>
-      <div style="font-size:9px;color:var(--text3)">kcal mentenanță</div>
+      <div style="font-size:9px;color:var(--text3)">kcal mentenanta</div>
     </div>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px">
-      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Masă Musculară Est.</div>
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Masa Musculara Est.</div>
       <div id="lbm-display" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green)">—</div>
       <div style="font-size:9px;color:var(--text3)">kg lean mass</div>
     </div>
@@ -612,14 +612,14 @@
 
   <!-- MANUAL BF OVERRIDE -->
   <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
-    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🔧 Corectare manuală BF</div>
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🔧 Corectare manuala BF</div>
     <div style="display:flex;gap:8px;align-items:center">
       <input type="number" id="bf-override-input" placeholder="ex: 22" step="0.5" inputmode="decimal"
         style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none"/>
       <button onclick="setBFOverride()" style="background:var(--accent);color:#000;font-weight:700;font-size:13px;padding:10px 16px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">SET</button>
       <button onclick="clearBFOverride()" style="background:var(--bg3);color:var(--text2);font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif">RESET</button>
     </div>
-    <div id="bf-override-note" style="font-size:11px;color:var(--text3);margin-top:8px">Sistemul estimează automat. Corectează dacă realitatea diferă.</div>
+    <div id="bf-override-note" style="font-size:11px;color:var(--text3);margin-top:8px">Sistemul estimeaza automat. Corecteaza daca realitatea difera.</div>
   </div>
 
   <!-- CHECKPOINTS -->
@@ -635,12 +635,12 @@
 
   <!-- PHASE OVERRIDE -->
   <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
-    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🔧 Override fază manuală</div>
+    <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🔧 Override faza manuala</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button onclick="setPhaseOverride('CUT')" class="phase-btn" data-phase="CUT" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">CUT</button>
       <button onclick="setPhaseOverride('BULK')" class="phase-btn" data-phase="BULK" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">BULK</button>
-      <button onclick="setPhaseOverride('MAINTENANCE')" class="phase-btn" data-phase="MAINTENANCE" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">MENTENANȚĂ</button>
-      <button onclick="setPhaseOverride('STRENGTH')" class="phase-btn" data-phase="STRENGTH" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">FORȚĂ</button>
+      <button onclick="setPhaseOverride('MAINTENANCE')" class="phase-btn" data-phase="MAINTENANCE" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">MENTENANTA</button>
+      <button onclick="setPhaseOverride('STRENGTH')" class="phase-btn" data-phase="STRENGTH" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">FORTA</button>
       <button onclick="clearPhaseOverride()" style="padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);color:var(--red);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">AUTO</button>
     </div>
   </div>
@@ -674,7 +674,7 @@
   </button>
   <button class="nb" onclick="sp('settings',this)" id="nav-settings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Setări
+    Setari
   </button>
 </nav>
 <div class="toast" id="toast"></div>

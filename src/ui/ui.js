@@ -68,9 +68,9 @@ export function showFlashFeedback(rpe, kg, ex, DP) {
   const nextUp = DP.roundToStep(kg + inc, ex);
   const nextDn = DP.roundToStep(Math.max(1, kg - inc), ex);
   let type, title, sub;
-  if (rpe <= 6)      { type='up'; title=`URMĂTOAREA: ${nextUp} KG`; sub='Prea ușor — crește greutatea'; }
-  else if (rpe <= 8) { type='ok'; title='ȚINE GREUTATEA'; sub=`Progres corect · RPE ${rpe}`; }
-  else if (rpe === 9){ type='ok'; title='MAI SCOATE REPS'; sub='La limită — nu crești încă'; }
-  else               { type='dn'; title=`SCADE LA ${nextDn} KG`; sub='Prea greu — calitate înainte de kilograme'; }
+  if (rpe <= 6)      { type='up'; title=`URMATOAREA: ${nextUp} KG`; sub='Prea usor — creste greutatea'; }
+  else if (rpe <= 8) { type='ok'; title='TINE GREUTATEA'; sub=`Progres corect · RPE ${rpe}`; }
+  else if (rpe === 9){ type='ok'; title='MAI SCOATE REPS'; sub='La limita — nu cresti inca'; }
+  else               { type='dn'; title=`SCADE LA ${nextDn} KG`; sub='Prea greu — calitate inainte de kilograme'; }
   showCoachFlash(type, title, sub);
 }

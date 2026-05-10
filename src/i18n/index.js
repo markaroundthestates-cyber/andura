@@ -7,7 +7,7 @@
 //
 // ── Public API ──────────────────────────────────────────────────────────────
 //
-//   t(key, vars?)        → translated string sau key fallback dacă missing
+//   t(key, vars?)        → translated string sau key fallback daca missing
 //   getCurrentLocale()   → 'ro' | 'en' (auto-detect: localStorage → navigator → 'ro')
 //   setLocale(locale)    → persist localStorage 'sf.locale'
 //   _resetI18nCache()    → clear cache (testing only)
@@ -35,11 +35,11 @@ let _cachedLocale = null;
 // ── Public: t(key, vars?) ───────────────────────────────────────────────────
 
 /**
- * Translate function — returnează string pentru locale curent.
+ * Translate function — returneaza string pentru locale curent.
  *
  * @param {string} key - dotted path (e.g., `'modals.readiness.title'`)
  * @param {Record<string, string|number>} [vars] - vars pentru interpolation `{name}`
- * @returns {string} translated string sau key fallback dacă missing
+ * @returns {string} translated string sau key fallback daca missing
  */
 export function t(key, vars = {}) {
   if (typeof key !== 'string' || key.length === 0) return '';
@@ -104,7 +104,7 @@ export function getCurrentLocale() {
  * Set + persist user locale override. Validates against supported bundles.
  *
  * @param {'ro' | 'en'} locale
- * @returns {boolean} true dacă applied, false dacă unsupported
+ * @returns {boolean} true daca applied, false daca unsupported
  */
 export function setLocale(locale) {
   if (!BUNDLES[locale]) return false;

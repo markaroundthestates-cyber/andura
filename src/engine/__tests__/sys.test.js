@@ -69,8 +69,17 @@ describe('SYS — getBF()', () => {
 // ── estimateTDEE() ─────────────────────────────────────────────────────────
 
 describe('SYS — estimateTDEE()', () => {
-  it('T4: uses Mifflin-St Jeor fallback when fewer than 4 weight entries', () => {
+  it('T4a: uses Katch-McArdle (BF-aware) when fewer than 4 weights AND getBF finite', () => {
     mockStorage['weights'] = { '2026-04-27': 100 };
+    mockStorage['bf-override'] = '20';
+    // lbm = 100 × (1 - 0.20) = 80; bmr = 370 + 21.6 × 80 = 2098; TDEE = round(2098 × 1.55) = 3252
+    const tdee = SYS.estimateTDEE();
+    expect(tdee).toBeCloseTo(3252, -1);
+  });
+
+  it('T4b: uses Mifflin-St Jeor fallback when getBF returns NaN (no usable BF)', () => {
+    mockStorage['weights'] = { '2026-04-27': 100 };
+    mockStorage['bf-override'] = 'invalid'; // parseFloat → NaN → !Number.isFinite
     // BMR = 10×100 + 6.25×183 - 5×30 + 5 = 1998.75; TDEE = round(1998.75 × 1.55) = 3098
     const tdee = SYS.estimateTDEE();
     expect(tdee).toBeCloseTo(3098, -1);
@@ -122,24 +131,50 @@ describe('SYS — getPhase()', () => {
     expect(SYS.getPhase()).toBe('BULK');
   });
 
-  it('T8: pilot boundary — CUT before TARGET_DATE, pilot logic fires after (vi.setSystemTime)', () => {
+  it('T8: phase auto-derives from BF + season, no pre-pilot CUT short-circuit (Bug 1 regression)', () => {
     vi.useFakeTimers();
     delete mockStorage['phase-override'];
-    mockStorage['weights'] = { '2026-04-27': 100 };
+    mockStorage['weights'] = { '2026-04-27': 100 }; // auto BF ~17.1 → bf>15 + summer → MAINTENANCE
 
-    vi.setSystemTime(new Date('2026-06-01')); // before 2026-07-20
-    expect(SYS.getPhase()).toBe('CUT');
+    vi.setSystemTime(new Date('2026-06-01')); // before TARGET_DATE 2026-07-20, summer
+    expect(SYS.getPhase()).toBe('MAINTENANCE');
 
-    vi.setSystemTime(new Date('2026-08-01')); // after 2026-07-20
-    const phaseAfter = SYS.getPhase();
-    expect(typeof phaseAfter).toBe('string');
-    expect(phaseAfter.length).toBeGreaterThan(0);
+    vi.setSystemTime(new Date('2026-08-01')); // still summer, post-fix logic same
+    expect(SYS.getPhase()).toBe('MAINTENANCE');
   });
 });
 
 // ── getKcalTarget() ────────────────────────────────────────────────────────
 
 describe('SYS — getKcalTarget()', () => {
+  it('T_AUTO_pre_pilot: AUTO before TARGET_DATE returns TDEE×phase multiplier, NOT hardcoded KCAL_TARGET (Bug 1 regression)', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-01')); // before TARGET_DATE 2026-07-20
+    delete mockStorage['phase-override'];
+    mockStorage['weights'] = { '2026-04-27': 100 }; // auto BF ~17.1 → MAINTENANCE phase
+
+    const kcal = SYS.getKcalTarget();
+    expect(kcal).not.toBe(2000); // pre-fix returned hardcoded KCAL_TARGET=2000
+    expect(kcal).toBe(SYS.estimateTDEE()); // MAINTENANCE multiplier = 1.0 → tdee
+    expect(kcal).toBeGreaterThan(2500); // sanity: BF-derived TDEE much higher than 2000
+  });
+
+  it('T_BF_edit_recalc: BF edit on same weight changes kcal target via Katch-McArdle (Bug 2 regression)', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-01'));
+    mockStorage['weights'] = { '2026-04-27': 100 };
+    mockStorage['phase-override'] = 'MAINTENANCE'; // pin phase to isolate BF→TDEE math
+
+    mockStorage['bf-override'] = '30';
+    const kcalBfHigh = SYS.getKcalTarget(); // lbm=70, bmr=370+21.6×70=1882, tdee≈2917
+
+    mockStorage['bf-override'] = '5';
+    const kcalBfLow = SYS.getKcalTarget(); // lbm=95, bmr=370+21.6×95=2422, tdee≈3754
+
+    expect(kcalBfLow).not.toBe(kcalBfHigh);
+    expect(Math.abs(kcalBfLow - kcalBfHigh)).toBeGreaterThan(300); // pre-fix: identical
+  });
+
   it('T9: applies correct TDEE multipliers per phase (CUT<MAINT<STRENGTH<BULK)', () => {
     mockStorage['weights'] = { '2026-04-27': 100 }; // 1 entry → Mifflin TDEE ≈ 3098
 

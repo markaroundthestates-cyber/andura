@@ -228,7 +228,7 @@ describe('Periodization Adapter — Edge cases (ADR 030 §3.6 + Q-OPEN-2 + Q-OPE
     expect(isOk(results[0])).toBe(true);
     expect(isOk(results[1])).toBe(true);
 
-    // Adapter exposes constraintObject în output (frozen)
+    // Adapter exposes constraintObject in output (frozen)
     const co = results[0].output.constraintObject;
     expect(co).toBeTruthy();
     expect(Object.isFrozen(co)).toBe(true);
@@ -259,7 +259,7 @@ describe('Periodization Adapter — Edge cases (ADR 030 §3.6 + Q-OPEN-2 + Q-OPE
     expect(subSpans[0].durationMs).toBeGreaterThanOrEqual(0);
   });
 
-  it('telemetry sub-span captures err code + severity când adapter fails', async () => {
+  it('telemetry sub-span captures err code + severity cand adapter fails', async () => {
     const userState = fixtureT1();
     const ctx = buildEngineContext(userState);
 

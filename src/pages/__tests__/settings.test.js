@@ -9,9 +9,9 @@ describe('Settings page render — Auth Phase 2 Batch 2', () => {
     document.body.appendChild(root);
   });
 
-  it('renders Setări heading', () => {
+  it('renders Setari heading', () => {
     renderSettingsPage({ root, doc: document });
-    expect(root.querySelector('h1').textContent).toBe('Setări');
+    expect(root.querySelector('h1').textContent).toBe('Setari');
   });
 
   it('renders 4 sections (email change + recovery + delete + logout)', () => {
@@ -47,7 +47,7 @@ describe('Settings page render — Auth Phase 2 Batch 2', () => {
     const section = root.querySelector('.andura-settings-delete-account');
     const btn = section.querySelector('button.andura-button-danger');
     expect(btn).not.toBeNull();
-    expect(btn.textContent).toBe('Șterge cont definitiv');
+    expect(btn.textContent).toBe('Sterge cont definitiv');
   });
 
   it('null root no-throw', () => {
@@ -100,10 +100,10 @@ describe('UX-1 mutual exclusivity — Settings buttons close prev modal first', 
 
   it('clicking another section while modal open closes prev modal first', async () => {
     renderSettingsPage({ root, doc: document });
-    // Simulate: user clicks "Schimbă adresa" → email modal opens
+    // Simulate: user clicks "Schimba adresa" → email modal opens
     const btnEmail = root.querySelector('.andura-settings-email-change button');
     btnEmail.click();
-    // At this point an email-change form overlay should be în doc.body
+    // At this point an email-change form overlay should be in doc.body
     let overlays = document.querySelectorAll('.andura-modal-overlay');
     expect(overlays.length).toBe(1);
     expect(overlays[0].classList.contains('andura-email-change-form')).toBe(true);
@@ -156,7 +156,7 @@ describe('UX-2 post-logout redirect home — onSignedOut callback', () => {
 
     // Click Deconectare → step1 opens
     root.querySelector('.andura-settings-logout button').click();
-    // step 1 confirm via Continuă button (default checkbox OFF wipeLocal=false)
+    // step 1 confirm via Continua button (default checkbox OFF wipeLocal=false)
     let step1Continue = document.querySelector('.andura-logout-step1 .andura-modal-button-primary');
     expect(step1Continue).not.toBeNull();
     step1Continue.click();
@@ -185,11 +185,11 @@ describe('UX-2 post-logout redirect home — onSignedOut callback', () => {
     const scheduler = vi.fn((cb, ms) => { scheduledCb = cb; return 1; });
     renderSettingsPage({ root, doc: document, onSignedOut, scheduler });
 
-    // Click Șterge cont → delete modal opens
+    // Click Sterge cont → delete modal opens
     root.querySelector('.andura-settings-delete-account button').click();
-    // Type ȘTERGE + click Confirmă
+    // Type STERGE + click Confirma
     const input = document.querySelector('.andura-delete-account-modal .andura-modal-input');
-    input.value = 'ȘTERGE';
+    input.value = 'STERGE';
     input.dispatchEvent(new Event('input'));
     const btnConfirm = document.querySelector('.andura-delete-account-modal .andura-modal-button-primary');
     btnConfirm.click();

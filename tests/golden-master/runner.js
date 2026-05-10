@@ -2,7 +2,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 // runner.js — Golden Master Suite test runner (minimal Sprint 2 scaffold)
 //
-// Loads all profiles din profiles/generated/ + profiles/manual/ și asertează
+// Loads all profiles din profiles/generated/ + profiles/manual/ si aserteaza
 // expected_arbitrator_output match cu engine output actual.
 //
 // Sprint 2 = scaffold only. Asserts limited to schema validation + tag sanity.

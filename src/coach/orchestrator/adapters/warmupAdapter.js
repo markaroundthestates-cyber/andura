@@ -19,7 +19,7 @@
 //   **D2 shape mapping concrete (identical pattern batches 2-6):** orchestrator
 //   slot `meta.constraintObject` → engine-specific input
 //   `meta.periodizationConstraint` (per ADR 026 §9.7 Cluster D Hook D1 read-only
-//   convention în engine source `src/engine/warmup/index.js:187`).
+//   convention in engine source `src/engine/warmup/index.js:187`).
 //   Adapter does the rename — engine purity ADR 018 §2 preserved.
 // D3 Context Object Pre-Built Input: orchestrator builds engineContext once;
 //   adapter consumes ready-data including upstream Constraint Object.
@@ -32,19 +32,19 @@
 // Hook 4 explicit re-emission):**
 //   Warm-up engine consumes `meta.periodizationConstraint` read-only per Hook D1
 //   convention (§9.7 Cluster D). Engine NU mutates, NU emits new Constraint
-//   Object în output blueprint. Engine internally invokes
-//   `forwardConstraintObject(periodizationConstraint)` în crossEngineHooks.js
-//   dar stochează doar `trace.forwardedConstraint = boolean` (NU
+//   Object in output blueprint. Engine internally invokes
+//   `forwardConstraintObject(periodizationConstraint)` in crossEngineHooks.js
+//   dar stocheaza doar `trace.forwardedConstraint = boolean` (NU
 //   `meta.forward_constraint_object`). Per pre-flight grep filesystem: Warm-up
 //   engine output blueprint = `{ warmup_state, duration_min, routine_type,
 //   general_sets, general_sets_list, specific_sets, specific_sets_list,
 //   target_muscle_groups, skip_available, cooldown_state, ui_label, signals }`
-//   (12 fields în meta — Hook 4 re-emission divergence vs Energy Adjustment).
+//   (12 fields in meta — Hook 4 re-emission divergence vs Energy Adjustment).
 //
 //   Adapter therefore follows Specialization / Tempo / Bayesian / Goal pattern
 //   (NU surface `output.constraintObject`) — orchestrator's
 //   `currentCtx.meta.constraintObject` was already populated by Energy
-//   Adjustment batch 3 Hook 4 re-emission upstream și rămâne propagated frozen
+//   Adjustment batch 3 Hook 4 re-emission upstream si ramane propagated frozen
 //   pentru downstream batch 8 (Deload) prin orchestrator's existing currentCtx
 //   chain (NU explicit Hook 4 re-emission needed when engine doesn't emit).
 //
@@ -56,7 +56,7 @@
 //   commit `5a16550` reusable) — orchestrator-level concern, NU engine-emitted
 //   metadata. Adapter does NOT propagate convergenceGuard (engine doesn't emit
 //   `meta.convergenceGuard`; reference-only via `getConvergenceGuardReference()`
-//   în engine module, called doar pentru `trace.convergenceGuardRef` NU output
+//   in engine module, called doar pentru `trace.convergenceGuardRef` NU output
 //   blueprint).
 //
 // **Activation gating (Cluster A1) — engine handles internally:**
@@ -66,8 +66,8 @@
 //     3. Periodization phase = DELOAD → DELOAD_LIGHTER (Hook D1)
 //     4. Default → ACTIVE (full hybrid routine)
 //   T0 Instant Skip principle (Cluster E1) = SkipDecision metadata flag
-//   `t0InstantSkipDefault: true` în trace; warmup_state stays ACTIVE pentru T0
-//   user fresh fără explicit `userOptedSkip: true` (anti-paternalism ADR 025
+//   `t0InstantSkipDefault: true` in trace; warmup_state stays ACTIVE pentru T0
+//   user fresh fara explicit `userOptedSkip: true` (anti-paternalism ADR 025
 //   preserved — engine pre-fills, user keeps autonomy).
 //   Adapter NU adds gating logic — engine total function NEVER throws orchestrates.
 //
@@ -78,7 +78,7 @@
 //
 // **Energy DOWN auto-shorten (Cluster D3 anti-cascade):** upper bound clamped
 // to 7 min preserve §1.10 Pipeline Order LOCKED V1 (consistent §9.5 Tempo D13
-// precedent — Energy DOWN modulates duration NU intensity directly în Warm-up).
+// precedent — Energy DOWN modulates duration NU intensity directly in Warm-up).
 //
 // **Missing Constraint Object handling per ADR 030 §3.6 RESOLVED V1 taxonomy
 // (identical pattern batches 2-6):** when
@@ -178,12 +178,12 @@ export const warmupAdapter = Object.freeze({
       const engineResult = await evaluateWarmup(adaptedCtx);
 
       // Warm-up engine consumes Constraint Object read-only per Hook D1
-      // convention (§9.7 Cluster D). Engine NU emits new Constraint Object în
+      // convention (§9.7 Cluster D). Engine NU emits new Constraint Object in
       // output blueprint (`meta.forward_constraint_object` absent in engine
       // output — only trace boolean flag). Constraint Object stays propagated
       // frozen din upstream Energy Adjustment Hook 4 batch 3 prin orchestrator's
       // existing currentCtx chain pentru downstream batch 8 (Deload consume
-      // Floor/Ceiling). NU surface constraintObject din această adapter output
+      // Floor/Ceiling). NU surface constraintObject din aceasta adapter output
       // (Specialization / Tempo / Bayesian Nutrition / Goal Adaptation pattern,
       // NU Energy Adjustment Hook 4 re-emission pattern).
       return ok({ ...engineResult });

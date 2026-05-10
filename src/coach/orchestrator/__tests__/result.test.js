@@ -3,7 +3,7 @@ import { ok, err, isOk, mapOk } from '../result.js';
 
 describe('Result helpers — ADR 030 D4 LOCKED V1', () => {
   describe('ok()', () => {
-    it('wraps a value în ok-discriminated Result', () => {
+    it('wraps a value in ok-discriminated Result', () => {
       const r = ok(42);
       expect(r).toEqual({ ok: true, output: 42 });
     });

@@ -35,7 +35,7 @@ export function updateExCard() {
   const lastPerfEl = $('last-perf');
   if (lastPerfEl) {
     lastPerfEl.style.display = 'block';
-    lastPerfEl.textContent = lastLog ? `Ultima: ${lastLog.w} kg × ${lastLog.reps || '?'} reps` : 'Prima sesiune la acest exercițiu';
+    lastPerfEl.textContent = lastLog ? `Ultima: ${lastLog.w} kg × ${lastLog.reps || '?'} reps` : 'Prima sesiune la acest exercitiu';
   }
 
   let tempoTxt = `Tempo: ${tempo.tempo} · ${tempo.note}`;
@@ -48,7 +48,7 @@ export function updateExCard() {
   if (msg) {
     if (rec.autoAdjusted) {
       msg.style.display = 'block';
-      msg.textContent = rec.autoAdjustMsg.includes('Trecem') ? `Greutatea ajustată automat · −${DP.getIncrement(state.currentEx)} kg` : `Greutatea ajustată automat · +${DP.getIncrement(state.currentEx)} kg`;
+      msg.textContent = rec.autoAdjustMsg.includes('Trecem') ? `Greutatea ajustata automat · −${DP.getIncrement(state.currentEx)} kg` : `Greutatea ajustata automat · +${DP.getIncrement(state.currentEx)} kg`;
       msg.style.background = rec.autoAdjustColor + '15';
       msg.style.color = rec.autoAdjustColor;
       msg.style.border = `2px solid ${rec.autoAdjustColor}44`;
@@ -79,7 +79,7 @@ export function updateExCard() {
 }
 
 export function setDone() {
-  if (!state.currentEx) { toast('⚠ Selectează exercițiu', 'var(--accent2)'); return; }
+  if (!state.currentEx) { toast('⚠ Selecteaza exercitiu', 'var(--accent2)'); return; }
   beepDone();
   const sa = $('set-actions'); if (sa) sa.style.display = 'none';
   const ri = $('rpe-inline'); if (ri) ri.style.display = 'block';
@@ -127,7 +127,7 @@ export function confirmReps(skipped = false) {
       startPause(pauseSec, nextEx);
     } else {
       speak('Antrenament complet! Excelent!');
-      toast('✅ Toate exercițiile completate!', 'var(--green)');
+      toast('✅ Toate exercitiile completate!', 'var(--green)');
       endSession();
     }
   } else {
@@ -161,7 +161,7 @@ export function renderSessLog() {
   if (!state.sessLog.length) { sl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Niciun set</div>'; return; }
   sl.innerHTML = [...state.sessLog].reverse().map(s => {
     const nc = s.rpe >= 9 ? 'var(--red)' : s.rpe <= 6.5 ? 'var(--accent3)' : 'var(--green)';
-    const nx = s.rpe >= 9 ? 'SCADE' : s.rpe <= 6.5 ? 'CREȘTE' : 'MENȚINE';
+    const nx = s.rpe >= 9 ? 'SCADE' : s.rpe <= 6.5 ? 'CRESTE' : 'MENTINE';
     return `<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-size:12px;font-weight:500">${s.ex}</div>
@@ -196,8 +196,8 @@ export function editSessionKg() {
       <button onclick="adjSessionKg(${step * 2})" style="width:58px;height:58px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace">+${step * 2}</button>
     </div>
     <div style="font-size:11px;color:var(--text3);margin-bottom:28px">Recomandat: ${rec.kg} kg</div>
-    <button onclick="confirmSessionKg()" style="width:100%;max-width:320px;padding:18px;background:var(--accent);color:#000;font-weight:700;font-size:20px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">✓ CONFIRMĂ</button>
-    <button onclick="document.getElementById('kg-edit-overlay')?.remove()" style="margin-top:12px;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anulează</button>
+    <button onclick="confirmSessionKg()" style="width:100%;max-width:320px;padding:18px;background:var(--accent);color:#000;font-weight:700;font-size:20px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">✓ CONFIRMA</button>
+    <button onclick="document.getElementById('kg-edit-overlay')?.remove()" style="margin-top:12px;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anuleaza</button>
   `;
   document.body.appendChild(overlay);
 }

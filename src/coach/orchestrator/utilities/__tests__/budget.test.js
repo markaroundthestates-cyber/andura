@@ -7,13 +7,13 @@ describe('withBudget — ADR 030 D5 Layer D ≤50ms (Q-OPEN-2 PENDING)', () => {
     expect(DEFAULT_BUDGET_MS).toBe(50);
   });
 
-  it('returns fn result când settles within budget', async () => {
+  it('returns fn result cand settles within budget', async () => {
     const r = await withBudget(() => ok(42), 100);
     expect(isOk(r)).toBe(true);
     expect(r.output).toBe(42);
   });
 
-  it('returns BUDGET_EXCEEDED când fn slower than budget', async () => {
+  it('returns BUDGET_EXCEEDED cand fn slower than budget', async () => {
     vi.useFakeTimers();
     const slowFn = () => new Promise((resolve) => setTimeout(() => resolve(ok('late')), 200));
     const promise = withBudget(slowFn, 50);
@@ -45,7 +45,7 @@ describe('withBudget — ADR 030 D5 Layer D ≤50ms (Q-OPEN-2 PENDING)', () => {
     expect(r.error.code).toBe('INVALID_FN');
   });
 
-  it('uses DEFAULT_BUDGET_MS când budgetMs invalid', async () => {
+  it('uses DEFAULT_BUDGET_MS cand budgetMs invalid', async () => {
     // Smoke — fn fast enough to settle regardless de default vs custom
     const r = await withBudget(() => ok('fast'), -1);
     expect(isOk(r)).toBe(true);

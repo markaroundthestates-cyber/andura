@@ -145,7 +145,7 @@ describe('evaluate — Cluster A1 6-field blueprint emit verbatim §9.6.1', () =
     expect(v.mrvCapRespected).toBe(true); // V1 invariant
   });
 
-  it('ui_label = "Bloc focus [Grupă]" RO native Q17=C', async () => {
+  it('ui_label = "Bloc focus [Grupa]" RO native Q17=C', async () => {
     const result = await evaluate(buildCtx({
       lifetimeLogs: weakBicepsLogs(),
       recentLogs:   weakBicepsLogs(),

@@ -146,7 +146,7 @@ describe('formatPatternMessage', () => {
   });
 
   it('11. SKIP_DAY pattern throws Error (deprecated assertion)', () => {
-    expect(() => formatPatternMessage({ type: 'SKIP_DAY', day: 'Marți', skipRate: 88 }))
+    expect(() => formatPatternMessage({ type: 'SKIP_DAY', day: 'Marti', skipRate: 88 }))
       .toThrow('SKIP_DAY pattern is deprecated');
   });
 

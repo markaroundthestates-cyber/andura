@@ -167,7 +167,7 @@ export function generateColdStartSession(sessionType, onboardingData = {}) {
     type: sessionType,
     coldStart: true,
     exercises,
-    reason: `Guideline bazat pe experiență (${experience}) și obiectiv (${goal})`,
+    reason: `Guideline bazat pe experienta (${experience}) si obiectiv (${goal})`,
     calibrationLevel: null, // filled by CoachDirector
   };
 }

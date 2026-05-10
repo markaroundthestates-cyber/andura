@@ -188,8 +188,8 @@ describe('deload skip banner', () => {
 describe('getWeekLabel', () => {
   it('formats current week label', () => {
     initCycle({ cycleStartDate: '2026-05-01' });
-    expect(getWeekLabel({ today: new Date(2026, 4, 1) })).toBe('Săptămâna 1/5');
-    expect(getWeekLabel({ today: new Date(2026, 4, 29) })).toBe('Săptămâna 5/5');
+    expect(getWeekLabel({ today: new Date(2026, 4, 1) })).toBe('Saptamana 1/5');
+    expect(getWeekLabel({ today: new Date(2026, 4, 29) })).toBe('Saptamana 5/5');
   });
 });
 

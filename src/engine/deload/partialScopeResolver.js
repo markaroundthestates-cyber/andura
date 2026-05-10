@@ -25,7 +25,7 @@ import {
  * @param {Object} input
  * @param {string} input.primaryTriggerSource              - From TRIGGER_SOURCE enum
  * @param {ReadonlyArray<string>} [input.affectedMuscleGroups]  - Muscle groups exceeded MRV (per-muscle granular)
- * @param {boolean} [input.mrvExceededAlone]               - True dacă single muscle MRV exceeded (NU cross-muscular)
+ * @param {boolean} [input.mrvExceededAlone]               - True daca single muscle MRV exceeded (NU cross-muscular)
  * @returns {import('./types.js').PartialScopeDecision}
  */
 export function resolvePartialScope({

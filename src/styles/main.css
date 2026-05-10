@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
    COACH PAGE
 ═══════════════════════════════════ */
 
-/* SESSION HEADER — sticky cu z-index ridicat să nu fie acoperit de carduri */
+/* SESSION HEADER — sticky cu z-index ridicat sa nu fie acoperit de carduri */
 .session-header,.sess-bar,[data-session-header],.coach-header{position:sticky;top:0;z-index:100;background:var(--bg-primary,#0f0c08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.08);width:100%;box-sizing:border-box}
 .sess-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);margin-bottom:0}
 .sess-timer{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--accent)}

@@ -1,11 +1,11 @@
-// ══ RECOMPILE ENGINE — Restructurare săptămână pe skip/absență/drop readiness ══
-// Când o sesiune e sărită sau readiness-ul scade brusc, motorul recalculează
-// planul săptămânal pentru a distribui volumul rămas.
+// ══ RECOMPILE ENGINE — Restructurare saptamana pe skip/absenta/drop readiness ══
+// Cand o sesiune e sarita sau readiness-ul scade brusc, motorul recalculeaza
+// planul saptamanal pentru a distribui volumul ramas.
 
 /**
- * Calculează zilele rămase în săptămâna curentă (Mon-Sun).
+ * Calculeaza zilele ramase in saptamana curenta (Mon-Sun).
  * @param {Date} now
- * @returns {number[]} - indici zile săptămână (0=Sun, 1=Mon, ...)
+ * @returns {number[]} - indici zile saptamana (0=Sun, 1=Mon, ...)
  */
 function remainingDaysThisWeek(now = new Date()) {
   const dow = now.getDay();
@@ -17,11 +17,11 @@ function remainingDaysThisWeek(now = new Date()) {
 }
 
 /**
- * Distribuie seturile rămase pe zilele disponibile, evitând supraîncărcarea.
- * @param {number} totalSetsLeft - seturi rămase de făcut
- * @param {number} daysLeft - zile rămase în săptămână
- * @param {number} maxSetsPerDay - limita maximă per sesiune (default 20)
- * @returns {number[]} - câte seturi în fiecare zi rămasă
+ * Distribuie seturile ramase pe zilele disponibile, evitand supraincarcarea.
+ * @param {number} totalSetsLeft - seturi ramase de facut
+ * @param {number} daysLeft - zile ramase in saptamana
+ * @param {number} maxSetsPerDay - limita maxima per sesiune (default 20)
+ * @returns {number[]} - cate seturi in fiecare zi ramasa
  */
 export function distributeSets(totalSetsLeft, daysLeft, maxSetsPerDay = 20) {
   if (daysLeft <= 0 || totalSetsLeft <= 0) return [];
@@ -38,7 +38,7 @@ export function distributeSets(totalSetsLeft, daysLeft, maxSetsPerDay = 20) {
 }
 
 /**
- * Calculează câte seturi au fost completate săptămâna curentă.
+ * Calculeaza cate seturi au fost completate saptamana curenta.
  * @param {Array} logs
  * @param {number} targetSetsPerWeek
  * @returns {{ completedSets: number, targetSets: number, deficit: number }}
@@ -65,7 +65,7 @@ export function weeklySetDeficit(logs, targetSetsPerWeek = 45) {
 }
 
 /**
- * Recompilează planul săptămânal după un skip sau drop de readiness.
+ * Recompileaza planul saptamanal dupa un skip sau drop de readiness.
  * @param {object} params
  * @param {Array} params.logs - loguri complete
  * @param {number} params.readinessScore - readiness azi
@@ -80,7 +80,7 @@ export function recompileWeek({ logs = [], readinessScore = 70, targetSetsPerWee
 
   if (deficit === 0) {
     return {
-      recommendation: 'Săptămâna pe track. Nicio restructurare necesară.',
+      recommendation: 'Saptamana pe track. Nicio restructurare necesara.',
       distributedSets: [],
       daysLeft,
       deficit: 0,
@@ -96,8 +96,8 @@ export function recompileWeek({ logs = [], readinessScore = 70, targetSetsPerWee
   const distribution = distributeSets(adjustedDeficit, daysLeft);
 
   const recommendation = daysLeft === 0
-    ? `${deficit} seturi nefinalizate această săptămână. Volumul nu poate fi recuperat.`
-    : `${deficit} seturi rămase, distribuit pe ${daysLeft} zi${daysLeft === 1 ? '' : 'le'}: ${distribution.join(', ')} seturi.`;
+    ? `${deficit} seturi nefinalizate aceasta saptamana. Volumul nu poate fi recuperat.`
+    : `${deficit} seturi ramase, distribuit pe ${daysLeft} zi${daysLeft === 1 ? '' : 'le'}: ${distribution.join(', ')} seturi.`;
 
   return {
     recommendation,

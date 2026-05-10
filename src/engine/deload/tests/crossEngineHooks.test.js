@@ -111,7 +111,7 @@ describe('consumeEnergyReadiness — Hook D3 sustained 3+ consecutive B13', () =
     expect(r.sustainedThresholdMet).toBe(false);
   });
 
-  it('Mixed (DOWN + UP în window) → sustainedThresholdMet false', () => {
+  it('Mixed (DOWN + UP in window) → sustainedThresholdMet false', () => {
     const r = consumeEnergyReadiness({
       energyDirection: 'DOWN',
       recentSessionsForEnergy: [

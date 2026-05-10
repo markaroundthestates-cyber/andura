@@ -88,7 +88,7 @@ export async function migrateAnonymousToAuth({ anonymousUuid, authUid }) {
   const sourceDb = `${DB_NAME_PREFIX}_anonymous_${anonymousUuid}`;
   const targetDb = `${DB_NAME_PREFIX}_${authUid}`;
 
-  // Step 0 — short-circuit dacă source absent (idempotent re-run after success)
+  // Step 0 — short-circuit daca source absent (idempotent re-run after success)
   if (!(await _dbExists(sourceDb))) {
     return {
       stores_migrated: {},

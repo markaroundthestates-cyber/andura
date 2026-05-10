@@ -18,16 +18,16 @@ export const PRUNE_VERDICTS = Object.freeze({
 });
 
 /**
- * Pruning A — Persona × Goal incompatibilitate biologică.
+ * Pruning A — Persona × Goal incompatibilitate biologica.
  * @param {ConstraintObject} c
  * @returns {string|null} verdict tag if pruned, null if passes
  */
 function pruningA(c) {
-  // Maria 65 + Forță Pură (RPE 9-10 implied by template Forta)
+  // Maria 65 + Forta Pura (RPE 9-10 implied by template Forta)
   if (c.persona.age >= 60 && c.goal.template === 'Forta') {
     return PRUNE_VERDICTS.PRUNE_A;
   }
-  // >75 ani + Slăbire deficit aggressive (CUT phase)
+  // >75 ani + Slabire deficit aggressive (CUT phase)
   if (c.persona.age > 75 && c.goal.template === 'Slabire' && c.goal.phase === 'CUT') {
     return PRUNE_VERDICTS.PRUNE_A;
   }
@@ -40,7 +40,7 @@ function pruningA(c) {
 }
 
 /**
- * Pruning B — Equipment × Goal redundanță.
+ * Pruning B — Equipment × Goal redundanta.
  * @param {ConstraintObject} c
  * @returns {string|null}
  */
@@ -50,7 +50,7 @@ function pruningB(c) {
   if (isBodyweightOnly && c.goal.template === 'Forta') {
     return PRUNE_VERDICTS.PRUNE_B;
   }
-  // Sală full + Slăbire + beginner = redundant (overlap with Tonifiere)
+  // Sala full + Slabire + beginner = redundant (overlap with Tonifiere)
   const isFullGym = equipSet.has('barbell') && equipSet.has('dumbbell') && equipSet.has('machines');
   if (isFullGym && c.goal.template === 'Slabire' && c.experience === 'beginner') {
     return PRUNE_VERDICTS.PRUNE_B;

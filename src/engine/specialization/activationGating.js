@@ -90,7 +90,7 @@ export function detectInjuryAutoDisable({
   const affected = Array.isArray(affectedGroups) ? affectedGroups : [];
   const safeTarget = typeof targetGroup === 'string' ? targetGroup.toLowerCase() : null;
 
-  // Disable când injury signal active AND target group affected (or any active when target null)
+  // Disable cand injury signal active AND target group affected (or any active when target null)
   if (safeTarget && affected.map((g) => String(g).toLowerCase()).includes(safeTarget)) {
     return {
       disabled:      true,
@@ -128,7 +128,7 @@ export function detectInjuryAutoDisable({
  *   4. Injury (PainButton) → Q14=A Safety Override §42.9 invariant 5
  *
  * Lagging detection (Cluster B weaknessDetector signal) handled separately
- * by `weaknessConsumer` module — NU în gating scope (Cluster A pre-detection).
+ * by `weaknessConsumer` module — NU in gating scope (Cluster A pre-detection).
  *
  * @param {Object} input
  * @param {string} [input.persona]

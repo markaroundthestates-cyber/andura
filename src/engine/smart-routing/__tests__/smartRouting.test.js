@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { findAlternatives, handleEquipmentBusy } from '../index.js';
 
 describe('Smart Routing §36.37', () => {
-  it('Tier 1 forță (Lat Pulldown) returns alternatives all force_demand: high', () => {
+  it('Tier 1 forta (Lat Pulldown) returns alternatives all force_demand: high', () => {
     const r = findAlternatives('Lat Pulldown');
     expect(r.shouldSkip).toBe(false);
     expect(r.alternatives.length).toBeGreaterThan(0);

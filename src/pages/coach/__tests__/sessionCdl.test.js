@@ -172,7 +172,7 @@ describe('endSession — CDL outcome (ADR 011)', () => {
     state.sessType = 'PUSH';
     state.sessActive = true;
     state.sessStart = Date.now() - 20 * 60 * 1000;
-    state.earlyStopReason = 'Oboseală extremă';
+    state.earlyStopReason = 'Oboseala extrema';
     state.sessLog = [
       { ex: 'Bench Press', w: 80, reps: '8', set: 1 },
     ];
@@ -182,7 +182,7 @@ describe('endSession — CDL outcome (ADR 011)', () => {
     const entry = readActiveForDate(TODAY);
     expect(entry.outcome.executed).toBe('partial');
     expect(entry.outcome.earlyStop).toBe(true);
-    expect(entry.outcome.earlyStopReason).toBe('Oboseală extremă');
+    expect(entry.outcome.earlyStopReason).toBe('Oboseala extrema');
   });
 
   // ── Test 6 ────────────────────────────────────────────────────────────────

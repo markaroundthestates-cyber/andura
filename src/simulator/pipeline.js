@@ -3,10 +3,10 @@
 // LOCKED §42.10 + §9 Engine #2 STUB caveat workaround.
 //
 // IMPORTANT — DEFERRED engine wiring:
-// Existing engines în `src/engine/` are coupled cu app context (CDL,
+// Existing engines in `src/engine/` are coupled cu app context (CDL,
 // localStorage, Firebase). Pure-function refactor for simulator usage is OUT
 // OF SCOPE per A3 prompt §STEP 5 push-back productive rule (spec gap critical
-// detected mid-implementation → flag, NU forța implementation).
+// detected mid-implementation → flag, NU forta implementation).
 //
 // This skeleton:
 // 1. Provides deterministic placeholder outputs per engine (sufficient for

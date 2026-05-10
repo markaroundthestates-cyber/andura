@@ -5,7 +5,7 @@
 //   → Bayesian (§9.4) → Tempo (§9.5) → Specialization (§9.6) → Warm-up (§9.7)
 //   → Deload (§9.8).
 //
-// Legacy "Engine #5" naming în [[027-engine-energy-adjustment|ADR 027]] =
+// Legacy "Engine #5" naming in [[027-engine-energy-adjustment|ADR 027]] =
 // chat strategic spec session ordering NU pipeline canonical position.
 // §9.3 SSOT canonical clarifies position 3rd.
 //
@@ -16,7 +16,7 @@
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.3
-// (commit 2f9aa79 LANDED 2026-05-06 afternoon chat-4 acasă, 26-28 decisions
+// (commit 2f9aa79 LANDED 2026-05-06 afternoon chat-4 acasa, 26-28 decisions
 // Cluster 1-5 verbatim).
 
 import {
@@ -75,7 +75,7 @@ function computeConfidence({ hasEmoji, hasPeriodizationConstraint, hasRecentSess
  * Output blueprint 6 fields verbatim §9.3.1 Cluster 1:
  *   1. energy_state              - emoji 🟢🟡🔴 holistic
  *   2. adjustment_direction      - UP / DOWN / NONE
- *   3. adjustment_magnitude_pct  - Float în [-0.15, +0.15] tier-aware
+ *   3. adjustment_magnitude_pct  - Float in [-0.15, +0.15] tier-aware
  *   4. volume_intensity_scope    - {volume: bool, intensity: bool} selective
  *   5. forward_constraint_object - Periodization corridor pass-through frozen
  *   6. signals                   - mirror DimensionResult.signals

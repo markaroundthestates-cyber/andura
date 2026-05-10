@@ -4,7 +4,7 @@ export const SW_KG = 111.4, TW_KG = 101.5;
 export const START_DATE = new Date('2026-04-17');
 export const TARGET_DATE = new Date('2026-07-20');
 export const DTOT = Math.round((TARGET_DATE - START_DATE) / 86400000);
-// Per Daniel directive 2026-05-10 chat ACASĂ post-noapte: removed 1800 hardcoded test data ('scoate rahatul ala al meu de 1800 kcal').
+// Per Daniel directive 2026-05-10 chat ACASA post-noapte: removed 1800 hardcoded test data ('scoate rahatul ala al meu de 1800 kcal').
 // Default 2000 = generic adult male maintenance baseline. Engine should compute via BMR/TDEE Mifflin-St Jeor + Big 6 inputs (Tasks 01-04 LANDED).
 export const KCAL_TARGET = 2000;
 export const PROT_TARGET = 180;
@@ -38,7 +38,7 @@ export const EX_REPS = {
 
 export const PROG = [
   {day:'Luni',t:'off',lb:'OFF',tm:null,ex:[]},
-  {day:'Marți',t:'free',lb:'PULL · Spate + Biceps',tm:'~75 min',ex:[
+  {day:'Marti',t:'free',lb:'PULL · Spate + Biceps',tm:'~75 min',ex:[
     {n:'Lat Pulldown',s:'4×8–12',g:'spate'},{n:'Cable Row',s:'3×8–12',g:'spate'},
     {n:'Face Pulls',s:'3×15–20',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},
     {n:'Bayesian Curl',s:'3×10–12',g:'brate'}
@@ -48,7 +48,7 @@ export const PROG = [
     {n:'Pec Deck / Cable Fly',s:'3×12–15',g:'piept'},{n:'Lateral Raises (cable)',s:'3×12–15',g:'umeri'},
     {n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'3×12',g:'triceps'}
   ]},
-  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRAȚE',tm:'MAX 65 MIN',ex:[
+  {day:'Joi',t:'lim',lb:'UMERI COMPLET + BRATE',tm:'MAX 65 MIN',ex:[
     {n:'Lateral Raises',s:'4×12–15',g:'umeri'},{n:'Rear Delt Fly',s:'4×12–15',g:'umeri'},
     {n:'Cable Curl',s:'3×10–12',g:'brate'},{n:'Preacher Curl',s:'3×10–12',g:'brate'},
     {n:'Overhead Triceps',s:'3×10–12',g:'triceps'},{n:'Pushdown',s:'2×12',g:'triceps'}
@@ -60,7 +60,7 @@ export const PROG = [
     {n:'Leg Curl',s:'3×15–20',g:'picioare'},{n:'Leg Extension',s:'3×15–20',g:'picioare'},
     {n:'Calf Raises',s:'4×15–20',g:'picioare'}
   ]},
-  {day:'Sâmbătă',t:'free',lb:'FULL UPPER',tm:'~110 min',ex:[
+  {day:'Sambata',t:'free',lb:'FULL UPPER',tm:'~110 min',ex:[
     {n:'DB Shoulder Press',s:'4×6–10',g:'umeri'},{n:'Incline DB Press',s:'3×6–10',g:'piept'},
     {n:'Flat DB Press',s:'3×8–12',g:'piept'},{n:'Pec Deck / Cable Fly',s:'2×12–15',g:'piept'},
     {n:'Lat Pulldown',s:'3×8–12',g:'spate'},{n:'Cable Row',s:'3×8–12',g:'spate'},
@@ -68,5 +68,5 @@ export const PROG = [
     {n:'Rear Delt Fly',s:'3×12–15',g:'umeri'},{n:'Incline DB Curl',s:'3×10–12',g:'brate'},
     {n:'Overhead Triceps',s:'3×10–12',g:'triceps'}
   ]},
-  {day:'Duminică',t:'off',lb:'OFF COMPLET',tm:null,ex:[]}
+  {day:'Duminica',t:'off',lb:'OFF COMPLET',tm:null,ex:[]}
 ];

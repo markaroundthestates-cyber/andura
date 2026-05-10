@@ -13,7 +13,7 @@ describe('Wiring 1 — F-NEW-4 plan-ajustat banner', () => {
   it('returns severity=info with LOCKED wording', () => {
     const b = buildPlanAdjustedBanner({ onUseOriginal: () => {} });
     expect(b.severity).toBe('info');
-    expect(b.message).toBe('Plan ajustat astăzi pentru recovery.');
+    expect(b.message).toBe('Plan ajustat astazi pentru recovery.');
     expect(b.action.label).toBe('Folosesc varianta mea');
     expect(b.dismissId).toBe('fnew4-plan-adjusted');
   });
@@ -43,7 +43,7 @@ describe('Wiring 1 — F-NEW-4 plan-ajustat banner', () => {
     const { element } = createSafetyBanner({ ...payload, storage });
     expect(element).not.toBeNull();
     expect(element.querySelector('.safety-banner__message').textContent)
-      .toBe('Plan ajustat astăzi pentru recovery.');
+      .toBe('Plan ajustat astazi pentru recovery.');
     expect(element.querySelector('.safety-banner__action').textContent)
       .toBe('Folosesc varianta mea');
   });
@@ -82,25 +82,25 @@ describe('Wiring 3 — Plateau §27 two-layer', () => {
   it('Layer 1 — info severity + LOCKED suggestion wording', () => {
     const b = buildPlateauBanner({ layer: 1 });
     expect(b.severity).toBe('info');
-    expect(b.message).toBe('Greutatea s-a oprit. Sesiunea de azi încearcă o variantă diferită.');
+    expect(b.message).toBe('Greutatea s-a oprit. Sesiunea de azi incearca o varianta diferita.');
     expect(b.dismissId).toBe('plateau-layer1');
   });
 
   it('Layer 2 — warning severity with weeks + technique', () => {
     const b = buildPlateauBanner({ layer: 2, weeks: 5, technique: 'Drop Set' });
     expect(b.severity).toBe('warning');
-    expect(b.message).toBe('Săptămâna a 5-a fără progres. Încercăm Drop Set astăzi.');
+    expect(b.message).toBe('Saptamana a 5-a fara progres. Incercam Drop Set astazi.');
     expect(b.dismissId).toBe('plateau-layer2');
   });
 
   it('Layer 2 — gracefully omits weeks part when missing', () => {
     const b = buildPlateauBanner({ layer: 2, technique: 'Tempo 3-1-3' });
-    expect(b.message).toBe('Încercăm Tempo 3-1-3 astăzi.');
+    expect(b.message).toBe('Incercam Tempo 3-1-3 astazi.');
   });
 
   it('Layer 2 — fallback technique when missing', () => {
     const b = buildPlateauBanner({ layer: 2, weeks: 4 });
-    expect(b.message).toContain('o variantă tehnică');
+    expect(b.message).toContain('o varianta tehnica');
   });
 
   it('Layer 2 — Anti-RE: no efficacy % or backend numerics', () => {
@@ -120,7 +120,7 @@ describe('Wiring 3 — Plateau §27 two-layer', () => {
 
 describe('SAFETY_WIRING_COPY exposure', () => {
   it('exposes plan-adjusted + plateau-layer1 wording', () => {
-    expect(SAFETY_WIRING_COPY.planAdjusted.message).toBe('Plan ajustat astăzi pentru recovery.');
+    expect(SAFETY_WIRING_COPY.planAdjusted.message).toBe('Plan ajustat astazi pentru recovery.');
     expect(SAFETY_WIRING_COPY.planAdjusted.actionLabel).toBe('Folosesc varianta mea');
     expect(SAFETY_WIRING_COPY.plateauLayer1).toContain('Greutatea s-a oprit');
   });

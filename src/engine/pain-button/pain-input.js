@@ -1,17 +1,17 @@
 // ══ PAIN BUTTON §36.38 — Pain/Discomfort Reporting ════════════════════════════
 // LOCKED V1 per §36.38 Chat C — anti-paternalism + Gigel test risk.
-// NU "self-diagnostic medical" — opțiuni neutre observabile.
+// NU "self-diagnostic medical" — optiuni neutre observabile.
 
 /** @type {{ key: string, label: string, level: 'general'|'specific'|'technical' }[]} */
 export const PAIN_OPTIONS = [
-  { key: 'discomfort_general',  label: 'Mișcarea mă deranjează',     level: 'general' },
-  { key: 'discomfort_specific', label: 'Simt o tensiune ciudată',    level: 'specific' },
+  { key: 'discomfort_general',  label: 'Miscarea ma deranjeaza',     level: 'general' },
+  { key: 'discomfort_specific', label: 'Simt o tensiune ciudata',    level: 'specific' },
   { key: 'doms_severe',         label: 'DOMS sever',                  level: 'technical' },
 ];
 
 /**
  * Translate a pain input into engine adjustment recommendation.
- * Output: skip / reduce / suggest alternative — FĂRĂ medical claim.
+ * Output: skip / reduce / suggest alternative — FARA medical claim.
  *
  * @param {string} key one of PAIN_OPTIONS keys
  * @returns {{ action: 'skip'|'reduce_volume'|'suggest_alternative', rationale: string }}

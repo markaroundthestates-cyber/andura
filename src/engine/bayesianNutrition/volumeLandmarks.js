@@ -3,7 +3,7 @@
 //
 // Israetel 11 grupuri musculare lookup baseline + regression personalized
 // STRICT compound only (data quality high). Isolation graceful degradation
-// 0.3× când compound observations <3 în window 14 zile (anti-overfit small-N
+// 0.3× cand compound observations <3 in window 14 zile (anti-overfit small-N
 // isolation noise).
 //
 // Cluster B3 — Volume metric weighted compound:isolation 3:2:1 per Cluster B3
@@ -90,7 +90,7 @@ export function computeWeightedVolume(sessionMovements) {
 }
 
 /**
- * Count compound observations în trailing window per Cluster C1 verbatim.
+ * Count compound observations in trailing window per Cluster C1 verbatim.
  *
  * Compound = Lower compound + Upper compound (both count toward N>=3 threshold).
  *
@@ -136,7 +136,7 @@ export function computeIsolationDegradation(recentSessions) {
  * Compute personalized volume landmarks per Cluster C1 Hibrid:
  *   Israetel base lookup (canonical reference)
  *   + regression personalized STRICT compound only (when compound observations >= 3)
- *   + isolation graceful degradation 0.3× când compound observations < 3
+ *   + isolation graceful degradation 0.3× cand compound observations < 3
  *
  * Returns combined landmarks per muscle group cu graceful degradation applied.
  *
@@ -168,7 +168,7 @@ export function computePersonalizedLandmarks({ muscleGroup, movementCategory, re
     };
   }
 
-  // Isolation: graceful degradation 0.3× când compound observations < 3
+  // Isolation: graceful degradation 0.3× cand compound observations < 3
   const { factor } = computeIsolationDegradation(recentSessions);
   return {
     mev:               baseline.MEV * factor,

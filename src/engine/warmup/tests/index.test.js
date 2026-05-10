@@ -213,12 +213,12 @@ describe('evaluate — output blueprint content correctness', () => {
     expect(r.meta.routine_type).toBe('hybrid');
   });
 
-  it('ui_label RO native "Încălzire ~X min" format', async () => {
+  it('ui_label RO native "Incalzire ~X min" format', async () => {
     const r = await evaluate(buildCtx({
       persona:    'maria',
       profileTier: 'T1',
     }));
-    expect(r.meta.ui_label).toMatch(/^Încălzire ~\d+ min$/);
+    expect(r.meta.ui_label).toMatch(/^Incalzire ~\d+ min$/);
   });
 
   it('cooldown_state offered when ACTIVE state + content text-only', async () => {
@@ -241,7 +241,7 @@ describe('evaluate — output blueprint content correctness', () => {
     expect(r.meta.cooldown_state.offered).toBe(false);
   });
 
-  it('confidence high când persona + tier + periodConstraint toate prezente', async () => {
+  it('confidence high cand persona + tier + periodConstraint toate prezente', async () => {
     const r = await evaluate(buildCtx({
       persona:    'marius',
       profileTier: 'T1',

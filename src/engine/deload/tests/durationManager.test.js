@@ -19,28 +19,28 @@ describe('computeDuration — Cluster B6 verbatim', () => {
     expect(r.hardResetLinearApplied).toBe(false);
   });
 
-  it('SCHEDULED_LINEAR → 1 săpt fix calendar', () => {
+  it('SCHEDULED_LINEAR → 1 sapt fix calendar', () => {
     const r = computeDuration({ deloadState: DELOAD_STATE.SCHEDULED_LINEAR });
     expect(r.durationWeeks).toBe(SCHEMA_CONSTANTS.durationScheduledWeeks);
     expect(r.extensionEvaluated).toBe(false);
     expect(r.hardResetLinearApplied).toBe(false);
   });
 
-  it('REACTIVE_COMPOSITE → 1 săpt initial + extension considered + Hard Reset', () => {
+  it('REACTIVE_COMPOSITE → 1 sapt initial + extension considered + Hard Reset', () => {
     const r = computeDuration({ deloadState: DELOAD_STATE.REACTIVE_COMPOSITE });
     expect(r.durationWeeks).toBe(SCHEMA_CONSTANTS.durationReactiveMinWeeks);
     expect(r.extensionEvaluated).toBe(true);
     expect(r.hardResetLinearApplied).toBe(true);
   });
 
-  it('REACTIVE_AA → 1 săpt initial + extension considered + Hard Reset', () => {
+  it('REACTIVE_AA → 1 sapt initial + extension considered + Hard Reset', () => {
     const r = computeDuration({ deloadState: DELOAD_STATE.REACTIVE_AA });
     expect(r.durationWeeks).toBe(1);
     expect(r.extensionEvaluated).toBe(true);
     expect(r.hardResetLinearApplied).toBe(true);
   });
 
-  it('EXTENSION_FLAGGED → 2 săpt total + extension granted dacă flagged still active', () => {
+  it('EXTENSION_FLAGGED → 2 sapt total + extension granted daca flagged still active', () => {
     const r = computeDuration({
       deloadState:        DELOAD_STATE.EXTENSION_FLAGGED,
       flaggedStillActive: true,

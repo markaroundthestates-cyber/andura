@@ -32,7 +32,7 @@ export function startSession() {
   // Feature 2: Check for existing session draft from today
   const draft = DB.get('session-draft');
   if (draft && draft.date === tod() && draft.sessLog && draft.sessLog.length > 0) {
-    if (confirm(`Ai ${draft.sessLog.length} seturi nefinalizate din azi. Continui sesiunea anterioară?`)) {
+    if (confirm(`Ai ${draft.sessLog.length} seturi nefinalizate din azi. Continui sesiunea anterioara?`)) {
       state.sessActive = true; state.sessStart = draft.sessStart; state.sessLog = [...draft.sessLog];
       state.currentEx = draft.currentEx || ''; state.currentSet = draft.currentSet || 1;
       state.dropSetUsedThisSession = false; state.earlyStopReason = null;
@@ -53,7 +53,7 @@ export function startSession() {
       const su2 = $('session-ui'); if (su2) su2.style.display = 'block';
       state.sessTimer = setInterval(tickSess, 1000);
       setupInactivity();
-      toast('🔄 Sesiune restaurată!', 'var(--accent)');
+      toast('🔄 Sesiune restaurata!', 'var(--accent)');
       updateExCard(); renderSessLog(); return;
     } else { clearDraft(); }
   }
@@ -93,14 +93,14 @@ export function skipExercise() {
     state.currentEx = todayExs[idx + 1];
     state.currentSet = 1;
     updateExCard();
-    toast('Exercițiu sărit');
+    toast('Exercitiu sarit');
   } else {
     endSession();
   }
 }
 
 export function cancelWorkout() {
-  if (!confirm('Anulezi antrenamentul? Nicio dată nu va fi salvată.')) return;
+  if (!confirm('Anulezi antrenamentul? Nicio data nu va fi salvata.')) return;
   clearDraft(); teardownInactivity();
   clearInterval(state.sessTimer); state.sessTimer = null;
   stopPause(); state.sessActive = false; state.lastPauseEndedAt = null;
@@ -145,7 +145,7 @@ export function cancelWorkout() {
   const suEl = $('session-ui'); if (suEl) suEl.style.display = 'none';
   hidePauseScreen();
   const tsEl = $('today-screen'); if (tsEl) tsEl.style.display = 'block';
-  toast('❌ Antrenament anulat — nicio dată salvată', 'var(--red)');
+  toast('❌ Antrenament anulat — nicio data salvata', 'var(--red)');
   renderCoachIdle();
 }
 
@@ -168,7 +168,7 @@ export function endSession() {
   burnLog.unshift({ date: tod(), mins, kcal, sets: state.sessLog.length, day: dayKey });
   DB.set('session-burns', burnLog.slice(0, 100));
 
-  // ── Calculează sumar sesiune ──────────────────────────────────────────────
+  // ── Calculeaza sumar sesiune ──────────────────────────────────────────────
   const totalVolume = state.sessLog.reduce((a, s) => a + (s.w * (parseInt(s.reps) || 8)), 0);
   const totalSets = state.sessLog.length;
   const uniqueEx = [...new Set(state.sessLog.map(s => s.ex))];
@@ -176,9 +176,9 @@ export function endSession() {
   const notes = state.sessLog.flatMap(s => s.notes || []);
   const feltStrong = notes.filter(n => n === 'strong').length;
   const feltHeavy = notes.filter(n => n === 'form' || n === 'fatigue').length;
-  const moodLabel = feltStrong > feltHeavy ? '💪 Sesiune puternică' : feltHeavy > feltStrong ? '😓 Sesiune grea' : '⚡ Sesiune ok';
+  const moodLabel = feltStrong > feltHeavy ? '💪 Sesiune puternica' : feltHeavy > feltStrong ? '😓 Sesiune grea' : '⚡ Sesiune ok';
 
-  // ── Detectează recorduri ──────────────────────────────────────────────────
+  // ── Detecteaza recorduri ──────────────────────────────────────────────────
   const allLogs = DB.get('logs') || [];
   const prs = [];
   uniqueEx.forEach(ex => {
@@ -271,7 +271,7 @@ export function endSession() {
     } catch (_) {}
   }
 
-  // ── Întreabă cum a fost sesiunea (un singur tap) ─────────────────────────
+  // ── Intreaba cum a fost sesiunea (un singur tap) ─────────────────────────
   const ratedSets = state.sessLog.filter(s => s.rpe !== undefined && s.rpe !== null).length;
   const noneRated = state.sessLog.length > 0 && ratedSets === 0;
   showSessionRating({ mins, kcal, totalVolume, totalSets, uniqueEx, avgRPE, prs, noneRated });
@@ -298,9 +298,9 @@ export function updateSessionProgress() {
   if (barEl) barEl.style.width = pct + '%';
 }
 
-// ── FIX 2b: Finish Early — funcții ───────────────────────────────────────
+// ── FIX 2b: Finish Early — functii ───────────────────────────────────────
 export function finishEarly() {
-  const reasons = ['Oboseală extremă', 'Am dureri', 'Lipsă timp', 'Alt motiv'];
+  const reasons = ['Oboseala extrema', 'Am dureri', 'Lipsa timp', 'Alt motiv'];
   document.getElementById('early-stop-modal')?.remove();
   const modal = document.createElement('div');
   modal.id = 'early-stop-modal';
@@ -308,23 +308,23 @@ export function finishEarly() {
   modal.innerHTML = `
     <div style="width:100%;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px 20px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent2);margin-bottom:6px;text-align:center">STOP DEVREME</div>
-      <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:20px">De ce oprești antrenamentul?</div>
+      <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:20px">De ce opresti antrenamentul?</div>
       <div style="display:flex;flex-direction:column;gap:10px">
         ${reasons.map(r => `<button onclick="confirmEarlyStop('${r}')"
           style="padding:14px 16px;background:rgba(255,149,0,0.07);border:1px solid rgba(255,149,0,0.25);border-radius:var(--rs);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif">${r}</button>`).join('')}
       </div>
       <button onclick="document.getElementById('early-stop-modal')?.remove()"
-        style="margin-top:16px;width:100%;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anulează</button>
+        style="margin-top:16px;width:100%;padding:12px;background:transparent;color:var(--text3);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Anuleaza</button>
     </div>
   `;
   document.body.appendChild(modal);
 }
 
 export function confirmEarlyStop(reason) {
-  // 1. Salvează în state
+  // 1. Salveaza in state
   state.earlyStopReason = reason;
 
-  // 2. Salvează în log-ul sesiunii
+  // 2. Salveaza in log-ul sesiunii
   const setsCompleted = state.sessLog.length;
   const todayExs = getTodayExercises();
   const avgSets = todayExs.length > 0 ? todayExs.reduce((a, ex) => a + (EX_SETS[ex] || 3), 0) / todayExs.length : 3;
@@ -334,7 +334,7 @@ export function confirmEarlyStop(reason) {
   logs.unshift({ ...earlyLog, ex: '__early_stop__', w: 0, reps: '0', ts: Date.now(), session: state.sessStart, earlyStop: { reason, setsCompleted, totalSets } });
   DB.set('logs', logs.slice(0, 5000));
 
-  // 3. Salvează în 'early-stops' key
+  // 3. Salveaza in 'early-stops' key
   const earlyStops = DB.get('early-stops') || [];
   earlyStops.push({ date: tod(), reason, session: state.sessStart, setsCompleted, totalSets });
   DB.set('early-stops', earlyStops.slice(-50));

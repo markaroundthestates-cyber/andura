@@ -6,7 +6,7 @@
 //   - exposeForceRotationHelper() → window.__forceRotation dev helper
 //
 // All helpers are non-blocking (graceful degradation per ADR 018 §4): boot
-// continues even if migrations or rotation fail. Errors land în Sentry via
+// continues even if migrations or rotation fail. Errors land in Sentry via
 // the underlying modules + console diagnostics for dev visibility.
 
 import { runMigrations } from './migrations/index.js';

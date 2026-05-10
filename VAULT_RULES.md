@@ -248,6 +248,8 @@ Daniel decision-driven, NU automated. Cross-ref `08-workflows/CHAT_MIGRATION_PRO
 
 **Steps:**
 
+**§AMENDMENT 2026-05-10 cross-ref Direct-to-CC Paradigm:** Steps 1-3 below describe Daniel-as-courier legacy flow (preserved fallback). When Claude chat has MCP filesystem + claude_code agent available, same paradigm shift applies as §CC.5 §AMENDMENT 2026-05-10 — Claude chat replaces Daniel courier role: writes handover direct în `📥_inbox/` via `filesystem:write_file`, invokes `claude_code` agent for autonomous ingest (steps 4-10 below), confirms commit+push success, signals explicit Daniel "e timpul pt noul chat". Daniel chat NEW + `salut acasă` = self-serve MCP filesystem layered read. See §CC.5 §AMENDMENT 2026-05-10 detail.
+
 1. **Claude chat strategic** scrie handover comprehensive ca artefact descărcabil (`HANDOVER_INPUT_<topic>.md`)
 2. **Daniel** drag în `📥_inbox/`
 3. **Daniel** rulează prompt CC scurt pentru ingest (vezi §INGEST_PROMPT)
@@ -569,6 +571,33 @@ Continuăm?
    - Backup tag: `pre-handover-<YYYY-MM-DD-HHMM>`
    - Commit + push origin main (hooks normal, NU `--no-verify` decât justificat)
 4. **STOP.** NU touch `HANDOVER_GLOBAL.md` deep, NU sync alte SSOT-uri. §HANDOVER_PROTOCOL existing preserved unchanged.
+
+**§AMENDMENT 2026-05-10 — Direct-to-CC Paradigm LOCK V1 (Daniel zero courier):**
+
+**Trigger reaffirm dual condition (canonical post-LOCK):**
+1. Daniel "fă handover" voluntary checkpoint mid-chat (explicit signal)
+2. Bandwidth ~25-30% saturat + risc halucinații detected by Claude (proactive flag per §HANDOVER_PROTOCOL Self-monitoring)
+
+**Workflow updated când Claude chat has MCP filesystem + claude_code agent available (default acasă):**
+
+1. **Claude chat strategic** scrie handover narrativ ~50-100 LOC direct în `📥_inbox/<HANDOVER>.md` via `filesystem:write_file` (NU Daniel courier drag manual)
+2. **Claude chat** invoke `claude_code` agent cu prompt §CC.5 ingest autonomous workflow: CURRENT_STATE move-then-replace + DECISION_LOG append + archive _CONSUMED + backup tag pre-handover-<YYYY-MM-DD-HHMM> + commit + push origin main + §CC.9 5-step mandatory checklist
+3. **Claude chat** confirm ingest LANDED (verify commit pushed + tag pushed + archive moved) + signal explicit Daniel: **"e timpul pt noul chat"**
+4. **Daniel** deschide chat NEW + `salut acasă` → MCP filesystem direct §CC.2 layered read self-serve (zero paste, zero comandă, zero context loss)
+
+**Eliminate (DEPRECATED 2026-05-10):** Vechiul step 2 "Daniel drag artefact în `📥_inbox/` + 1 comandă `Update CURRENT_STATE per inbox handover`" = deprecated când Claude has MCP filesystem + claude_code agent. Daniel-as-courier paradigm preserved DOAR fallback când Claude chat strategic NU has MCP filesystem tools (rare environments).
+
+**Rationale:** Eliminate Daniel friction (zero drag, zero comandă manual, zero paste) → Claude chat full autonomy ingest direct via MCP filesystem + claude_code agent. Preserves §CC.5 audit trail consistent (commit + tag + archive intact). Chat-to-chat seamless: Claude chat-current ingest LANDED → Daniel chat NEW + "salut acasă" + MCP filesystem self-serve = zero context loss + zero handoff friction.
+
+**Signal post-ingest mandatory:** Claude chat după confirm ingest success **MUST** zice explicit "e timpul pt noul chat" (sau echivalent semantic clar). NU continua chat-current cu work nou post-ingest — chat-current = saturated, work nou în chat NEW. Anti-pattern: Claude continuă chat-current mid-work post-ingest = drift risk + bandwidth waste.
+
+**Constraints preserved:**
+- Inbox = strict input Claude chat OR Daniel (NU CC autonomous random write — inbox e curated input layer)
+- Backup tag git pre-ingest MANDATORY `pre-handover-<YYYY-MM-DD-HHMM>` (preserved §CC.7 Layer 5)
+- Append-only architecture preserved §CC.6 (NU rewrite destructive)
+- §CC.9 5-step mandatory checklist preserved (CURRENT_STATE + DECISION_LOG + INDEX_MASTER stats + ACTIVE_REFS sync + pre-flight grep wikilinks orphane)
+
+**Cross-refs:** §CC.2.1 MCP filesystem priority LOCK V1 2026-05-10 + §CC.7 safety nets + §CC.9 mandatory file updates + chat-current 2026-05-10 ACASĂ Daniel directive verbatim "il dai direct la cc tu" + paradigm shift LOCK V1.
 
 **§CC.9 extension (LOCKED V1 2026-05-07 Run 2 Task 7):** Fast handover workflow §CC.5 minimum steps 1-2 (CURRENT_STATE + DECISION_LOG). §CC.9 Mandatory File Updates Per Handover extends pentru full vault hygiene completeness — see §CC.9 below for 5-step mandatory checklist (3 INDEX_MASTER stats refresh + 4 §ACTIVE_REFS sync + 5 Pre-flight grep wikilinks orphane). Daniel's command "Update CURRENT_STATE per inbox handover" implicitly invokes §CC.9 (NU optional).
 
@@ -996,6 +1025,32 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 
 ---
 
+### §AR.19 claude_code Agent Timeout MCP Response Delivery NU = Agent Crash (LOCK V1 2026-05-10)
+
+**Origin slip:** Chat ACASĂ 2026-05-10 vault hygiene massive cleanup atomic batch — claude_code agent invoked atomic 9-phase prompt (~600 LOC spec). MCP response delivery layer timeout 4 minutes; Claude Desktop returned error *"No result received from the Claude Desktop app after waiting 4 minutes. The local MCP server providing this tool may be unresponsive, crashed, or not running."* Claude scribe assumed agent crashed mid-execution → initiated recovery flow (verify file sizes via filesystem:get_file_info, propose granular retry).
+
+**Trigger pattern:** filesystem:get_file_info returned stale data immediately post-timeout (CURRENT_STATE.md still 596KB, RECENT_DECIDED_ARCHIVE.md still 2KB) — Windows OS metadata cache lag few seconds post-write reinforced "no work landed" assumption falsely. Real ground truth: agent had completed full Phase 0-9 atomic batch INCLUDING git push to origin/main. Commit `cc34ca9` cleanup landed remote BEFORE timeout signal returned. MCP delivery layer hung post-execution, NU agent crash.
+
+**Anti-recurrence rule (default trust + verify, NOT assume failure + recover):** When claude_code agent times out OR MCP response delivery fails after agent invocation, BEFORE assuming work failure or initiating recovery/retry/rollback flow, MANDATORY verify în ordine:
+
+1. `git log --oneline origin/main -5` — verify expected commit landed remote (most reliable signal — push success = work landed)
+2. `📤_outbox/LATEST.md` raport content — agent's structured output file (final phase normally written)
+3. File sizes/state via filesystem MCP — caveat OS metadata cache may lag few seconds post-write Windows. Re-check after ~5-10s if first call suggests no changes; OR cross-verify via `git status` + `git log` (both reflect committed state instantly).
+
+ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust completion + verify, NOT assume failure + recover.
+
+**Verification mechanism:** Claude scribe post-claude_code-timeout response sequence:
+- Step 1: explicit check `git log origin/main -5` (NOT just local file state)
+- Step 2: read `📤_outbox/LATEST.md` if exists post-execution
+- Step 3: filesystem file sizes (with cache-stale awareness — re-check after delay if suspect)
+- Step 4: ONLY post-3-fail → consider rollback/retry
+
+**Anti-pattern documented:** filesystem:get_file_info first → stale data trap → false-positive "no changes" conclusion → unnecessary recovery flow + double-work risk.
+
+**Cross-refs:** §AR.3 Ground Truth Git Verify ÎNAINTE Acuzare Hallucination (related pattern, broader scope) | §AR.4 Anti-Distructive Recommendation Default | Slip origin chat ACASĂ 2026-05-10 vault hygiene massive cleanup successful atomic batch (commit `cc34ca9`) post-completion verify slip (zero damage but wasted verify cycles post-completion before realizing work landed).
+
+---
+
 ### §AR.PRE_FLIGHT_CHECKLIST_INVARIANT — Mandatory Before Any Vault/Code Execution CC
 
 **Authority:** Consolidat din §AR.1-§AR.18. Mandatory invariant pre-flight checklist orice prompt CC execution autonomous.
@@ -1016,6 +1071,7 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 14. ☐ Output ≥10-15 LOC structured = file artefact via present_files DOWNLOADABLE NU markdown chat block (per §AR.16)
 15. ☐ Daniel inputs (handover/prompts CC/files) → 📥_inbox/ MANDATORY single path (per §AR.17)
 16. ☐ Post-bulk-replace verification: self-ref grep `:[\s]*var\(--SAME\)` zero matches + browser smoke spot-check OR sequence bulk-FIRST :root-LAST anti-circular-ref slip (per §AR.18)
+17. ☐ claude_code agent timeout MCP response → verify `git log origin/main -5` + `📤_outbox/LATEST.md` FIRST before assuming crash/retry (per §AR.19) — default trust completion + verify, NOT assume failure + recover
 
 **Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
 

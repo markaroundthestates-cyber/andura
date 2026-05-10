@@ -47,13 +47,13 @@ describe('isSkipAvailable — Cluster B4 Source 1 §65.3 Option A', () => {
 
   it('Anti-paternalism — true regardless context (NU disable after 3+ logged warm-ups)', () => {
     // V1 LOCKED — engine NU has logic to disable skip based on history
-    // (consistent ADR 025 graceful degradation + "Andura gândește pentru user" alignment)
+    // (consistent ADR 025 graceful degradation + "Andura gandeste pentru user" alignment)
     expect(isSkipAvailable()).toBe(true);
     expect(isSkipAvailable()).toBe(true); // idempotent
   });
 
   it('Anti-paternalism — NU NEVER skip (paternalism violation ADR 025)', () => {
-    // V1 LOCKED — engine MUST emit skip_available true (anti "Andura forțează")
+    // V1 LOCKED — engine MUST emit skip_available true (anti "Andura forteaza")
     expect(isSkipAvailable()).toBe(true);
   });
 });

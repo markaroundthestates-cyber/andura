@@ -11,10 +11,10 @@
 //
 // B2 Prioritized hierarchy (Source 1 verbatim, Source 4 line 717):
 //    Composite > AA > Linear (priority order — reactive overrides scheduled)
-//    Multi-signal consolidation escalează severity (NU dilutes — additive)
+//    Multi-signal consolidation escaleaza severity (NU dilutes — additive)
 //
 // B3 Engine Deload SSOT deload domain (Source 1 + Source 3 reconciliation):
-//    Composite -20% reduction §36.41 hard-disabled când Engine Deload active
+//    Composite -20% reduction §36.41 hard-disabled cand Engine Deload active
 //    (anti math collision double-penalty)
 //
 // B13 Engine Energy Adjustment trigger preservation §36.82.3 (Source 1 + Source
@@ -142,10 +142,10 @@ export function detectEarlySafetyTrigger(deloadWindowTrigger) {
  * Resolve trigger hierarchy per Cluster B2 priority order verbatim.
  *
  * Composite > AA > Linear (reactive overrides scheduled). Multi-signal
- * consolidation escalează severity (NU dilutes — additive). Returns primary
+ * consolidation escaleaza severity (NU dilutes — additive). Returns primary
  * source winner + all active sources for severity additive composition.
  *
- * EXTENSION_FLAGGED priority: când already în reactive deload Week 1 cu Flagged
+ * EXTENSION_FLAGGED priority: cand already in reactive deload Week 1 cu Flagged
  * state still active end-of-Week-1 → EXTENSION_FLAGGED takes priority over fresh
  * trigger detection.
  *
@@ -154,7 +154,7 @@ export function detectEarlySafetyTrigger(deloadWindowTrigger) {
  * @param {{triggered: boolean}} input.aa              - From detectAATrigger()
  * @param {{triggered: boolean}} input.linear          - From detectLinearTrigger()
  * @param {{triggered: boolean}} input.earlySafety     - From detectEarlySafetyTrigger()
- * @param {boolean} [input.extensionEvaluating]        - True dacă currently în Week 1 reactive cu Flagged still active
+ * @param {boolean} [input.extensionEvaluating]        - True daca currently in Week 1 reactive cu Flagged still active
  * @returns {import('./types.js').TriggerDecision}
  */
 export function resolveTriggerHierarchy({ composite, aa, linear, earlySafety, extensionEvaluating }) {
@@ -173,7 +173,7 @@ export function resolveTriggerHierarchy({ composite, aa, linear, earlySafety, ex
     };
   }
 
-  // Extension priority — already în reactive deload + Flagged still active
+  // Extension priority — already in reactive deload + Flagged still active
   if (extensionEvaluating === true) {
     return {
       primarySource:  TRIGGER_SOURCE.EXTENSION,

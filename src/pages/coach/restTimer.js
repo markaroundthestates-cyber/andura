@@ -26,7 +26,7 @@ export function startPause(sec, nextEx = '') {
   $('ps-timer').textContent = sec;
   $('ps-progress').style.width = '100%';
   const recNext = nextEx ? DP.recommend(nextEx) : {};
-  $('ps-next').textContent = nextEx ? `URMEAZĂ: ${nextEx}` : '';
+  $('ps-next').textContent = nextEx ? `URMEAZA: ${nextEx}` : '';
   $('ps-rec-kg').textContent = recNext.kg ? `${recNext.kg} kg` : '';
   $('ps-rec-reps').textContent = recNext.repsTarget ? `${recNext.repsTarget} reps · ${DP.getIntensityLabel(SYS.getTempo(nextEx || '').rir || 2)}` : '';
 
@@ -55,7 +55,7 @@ export function skipPause() {
   stopPause();
   hidePauseScreen();
   updateExCard();
-  toast('⚠️ Pauza scurtă poate reduce performanța la setul următor', 'var(--accent2)');
+  toast('⚠️ Pauza scurta poate reduce performanta la setul urmator', 'var(--accent2)');
 }
 
 export function setupInactivity() {
@@ -67,7 +67,7 @@ export function setupInactivity() {
       const sinceLastRest = Date.now() - (state.lastPauseEndedAt || 0);
       if (state.sessActive && !state.pauseTimer && sinceLastRest > 5 * 60 * 1000) {
         startPause(getSmartPause(state.currentEx || ''), state.currentEx || '');
-        toast('⏸ Pauză automată – inactivitate 2 min', 'var(--accent2)');
+        toast('⏸ Pauza automata – inactivitate 2 min', 'var(--accent2)');
       }
     }, INACTIVITY_DELAY);
   };

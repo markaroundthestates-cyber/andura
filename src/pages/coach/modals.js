@@ -15,9 +15,9 @@ export function showReadinessModal() {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:8000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px';
   modal.innerHTML = `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
-      <div style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">ÎNAINTE DE ANTRENAMENT</div>
-      <div style="font-size:20px;font-weight:700;margin-bottom:6px">Cum te simți azi?</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:24px">Răspunsul afectează recomandările de azi</div>
+      <div style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">INAINTE DE ANTRENAMENT</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:6px">Cum te simti azi?</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:24px">Raspunsul afecteaza recomandarile de azi</div>
       <div style="display:flex;justify-content:space-between;gap:8px">
         ${[1,2,3,4,5].map(v => `
           <button onclick="selectReadiness(${v})" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 4px;cursor:pointer;transition:all .15s">
@@ -47,10 +47,10 @@ export function showSkipModal() {
   const tp = PROG ? PROG[dayMap[new Date().getDay()]] : null;
   modal.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:24px 20px 36px">
     <div style="font-size:15px;font-weight:700;margin-bottom:16px">De ce sari azi?</div>
-    ${['Obosit / recuperare insuficientă','Lipsă timp','Durere / accidentare','Alt motiv'].map((reason) =>
+    ${['Obosit / recuperare insuficienta','Lipsa timp','Durere / accidentare','Alt motiv'].map((reason) =>
       `<button onclick="confirmSkip('${reason}')" style="display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:13px 16px;margin-bottom:8px;cursor:pointer;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif">${reason}</button>`
     ).join('')}
-    <button onclick="document.getElementById('skip-modal').remove()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;width:100%;text-align:center;padding:8px">Anulează</button>
+    <button onclick="document.getElementById('skip-modal').remove()" style="margin-top:8px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;width:100%;text-align:center;padding:8px">Anuleaza</button>
   </div>`;
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   document.body.appendChild(modal);
@@ -59,11 +59,11 @@ export function showSkipModal() {
 export function confirmSkip(reason) {
   const modal = document.getElementById('skip-modal');
   if (modal) modal.remove();
-  const days = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+  const days = ['Duminica','Luni','Marti','Miercuri','Joi','Vineri','Sambata'];
   const skips = DB.get('workout-skips') || [];
   skips.push({ date: tod(), dayOfWeek: days[new Date().getDay()], reason, ts: Date.now() });
   DB.set('workout-skips', skips.slice(-100));
-  toast('📌 Skip înregistrat', 'var(--text2)');
+  toast('📌 Skip inregistrat', 'var(--text2)');
   renderCoachIdle();
   if (window.renderDash) window.renderDash();
 }
@@ -75,28 +75,28 @@ export function showAlternativeModal(exerciseName) {
   const ALTERNATIVES = {
     'Lat Pulldown': [
       { name: 'Cable Row', reason: 'Similar lat activation, horizontal pull' },
-      { name: 'Chest-Supported Row', reason: 'Spate complet, fără cablu' },
+      { name: 'Chest-Supported Row', reason: 'Spate complet, fara cablu' },
     ],
     'Cable Row': [
-      { name: 'Chest-Supported Row', reason: 'Identic, pe bancă' },
+      { name: 'Chest-Supported Row', reason: 'Identic, pe banca' },
       { name: 'Lat Pulldown', reason: 'Vertical pull, lat dominant' },
     ],
     'Pec Deck / Cable Fly': [
-      { name: 'Incline DB Press', reason: 'Presă + stretch piept' },
-      { name: 'Cable Fly', reason: 'Aceeași mișcare pe cablu' },
+      { name: 'Incline DB Press', reason: 'Presa + stretch piept' },
+      { name: 'Cable Fly', reason: 'Aceeasi miscare pe cablu' },
     ],
     'Leg Press': [
-      { name: 'Romanian Deadlift', reason: 'Posterior chain, fără aparat' },
+      { name: 'Romanian Deadlift', reason: 'Posterior chain, fara aparat' },
     ],
     'Overhead Triceps': [
-      { name: 'Pushdown', reason: 'Triceps lateral+medial, același cablu' },
+      { name: 'Pushdown', reason: 'Triceps lateral+medial, acelasi cablu' },
     ],
     'Pushdown': [
-      { name: 'Overhead Triceps', reason: 'Triceps lung, aceeași stivă' },
+      { name: 'Overhead Triceps', reason: 'Triceps lung, aceeasi stiva' },
     ],
     'Bayesian Curl': [
       { name: 'Incline DB Curl', reason: 'Biceps lung, unghi similar' },
-      { name: 'Cable Curl', reason: 'Tensiune constantă, cablu' },
+      { name: 'Cable Curl', reason: 'Tensiune constanta, cablu' },
     ],
   };
 
@@ -106,14 +106,14 @@ export function showAlternativeModal(exerciseName) {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:8000;display:flex;align-items:flex-end;justify-content:center';
   modal.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:24px 20px 36px">
     <div style="font-size:15px;font-weight:700;margin-bottom:4px">⚠️ Aparat ocupat</div>
-    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Alege o alternativă pentru <strong style="color:var(--text)">${exerciseName}</strong></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Alege o alternativa pentru <strong style="color:var(--text)">${exerciseName}</strong></div>
     ${alts.length ? alts.map(a => `
       <button onclick="selectAlternative('${exerciseName}','${a.name}')" style="display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:13px 16px;margin-bottom:8px;cursor:pointer">
         <div style="font-size:13px;font-weight:600;color:var(--text)">${a.name}</div>
         <div style="font-size:11px;color:var(--text3);margin-top:2px">${a.reason}</div>
-      </button>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:12px">Nicio alternativă disponibilă — continuă cu exercițiul următor</div>'}
-    <button onclick="markEquipmentUnavailable('${exerciseName}')" style="display:block;width:100%;text-align:left;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2);border-radius:var(--rs);padding:11px 16px;margin-bottom:8px;cursor:pointer;font-size:12px;color:var(--red)">🚫 Nu am acest aparat (elimină permanent)</button>
-    <button onclick="document.getElementById('alt-modal').remove()" style="margin-top:4px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;width:100%;text-align:center;padding:8px">Anulează</button>
+      </button>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:12px">Nicio alternativa disponibila — continua cu exercitiul urmator</div>'}
+    <button onclick="markEquipmentUnavailable('${exerciseName}')" style="display:block;width:100%;text-align:left;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2);border-radius:var(--rs);padding:11px 16px;margin-bottom:8px;cursor:pointer;font-size:12px;color:var(--red)">🚫 Nu am acest aparat (elimina permanent)</button>
+    <button onclick="document.getElementById('alt-modal').remove()" style="margin-top:4px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;width:100%;text-align:center;padding:8px">Anuleaza</button>
   </div>`;
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   document.body.appendChild(modal);

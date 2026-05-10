@@ -31,7 +31,7 @@
 //    specialization extra volume.
 //
 // Convergence Guard reference §9.6 cross-ref ADR 009 §AMENDMENT canonical SSOT.
-// **NU duplicate logic în Specialization module** — reference ONLY (rule =
+// **NU duplicate logic in Specialization module** — reference ONLY (rule =
 // behavioral validation cross-cutting all tier transitions T0→T1→T2, NU
 // Specialization specific). Pattern from §9.4 Bayesian commit `8615ec1` + §9.5
 // Tempo commit `d82d118` precedent.
@@ -155,7 +155,7 @@ export function emitInjuryAutoDisable({
     };
   }
 
-  // Disable când injury active AND target group matches (or any group active when target null)
+  // Disable cand injury active AND target group matches (or any group active when target null)
   if (safeTarget && affected.includes(safeTarget)) {
     return {
       disabled:        true,
@@ -190,7 +190,7 @@ export function emitInjuryAutoDisable({
  *
  * @param {Object} input
  * @param {string} [input.energyDirection]               - 'UP' | 'DOWN' | 'NONE'
- * @param {boolean} [input.energyDownRecurrent]          - True dacă DOWN signal sustained recent
+ * @param {boolean} [input.energyDownRecurrent]          - True daca DOWN signal sustained recent
  * @returns {import('./types.js').LightCouplingSignal}
  */
 export function emitLightCoupling({ energyDirection, energyDownRecurrent }) {
@@ -213,7 +213,7 @@ export function emitLightCoupling({ energyDirection, energyDownRecurrent }) {
  * Convergence Guard reference per §9.6 cross-ref verbatim — ADR 009 §AMENDMENT
  * 2026-05-05 birou after canonical SSOT.
  *
- * **NU duplicate rule logic în Specialization module** — reference ONLY (rule
+ * **NU duplicate rule logic in Specialization module** — reference ONLY (rule
  * = behavioral validation cross-cutting all tier transitions T0→T1→T2, NU
  * Specialization specific).
  *

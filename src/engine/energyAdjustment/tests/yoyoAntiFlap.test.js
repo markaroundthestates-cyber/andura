@@ -89,7 +89,7 @@ describe('applyYoyoSuppression — Q14=D V1 3rd flip suppression chronological',
     expect(r.suppressed).toBe(false);
     expect(r.heldDirection).toBe(ADJUSTMENT_DIRECTION.UP);
   });
-  it('NONE direction în window NU trigger flap', () => {
+  it('NONE direction in window NU trigger flap', () => {
     const r = applyYoyoSuppression({
       incomingDirection: ADJUSTMENT_DIRECTION.UP,
       recentDirections: [ADJUSTMENT_DIRECTION.NONE, ADJUSTMENT_DIRECTION.UP],

@@ -74,10 +74,10 @@ export function enforceHardCapIntensity(corridor) {
 }
 
 /**
- * Compute baseline intensity corridor per goal id. Mapped per Forță 0.70 goal
- * modifier emphasis high intensity vs Sănătate 0.50 emphasis low intensity:
+ * Compute baseline intensity corridor per goal id. Mapped per Forta 0.70 goal
+ * modifier emphasis high intensity vs Sanatate 0.50 emphasis low intensity:
  *
- * - Forța:        floor 0.78, ceiling 0.90 (capped Layer C)
+ * - Forta:        floor 0.78, ceiling 0.90 (capped Layer C)
  * - Hipertrofie:  floor 0.70, ceiling 0.85
  * - Recompozitie: floor 0.65, ceiling 0.80
  * - Longevitate:  floor 0.55, ceiling 0.75

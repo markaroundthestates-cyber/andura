@@ -2,7 +2,7 @@
 // Standardized Dimension Contract.
 //
 // BayesianNutritionResult extends DimensionResult per ADR 018 §2 — adds 6
-// blueprint fields în `meta` per §9.4.4 Cluster D verbatim.
+// blueprint fields in `meta` per §9.4.4 Cluster D verbatim.
 //
 // Pipeline §42.10 position 4th canonical.
 //
@@ -93,7 +93,7 @@
  * @property {number} mu                     - State estimate
  * @property {number} sigma                  - State uncertainty
  * @property {number} r2                     - R² goodness-of-fit (validation gate)
- * @property {boolean} ewmaFallbackActive    - True dacă R²<0.85 → revert EWMA
+ * @property {boolean} ewmaFallbackActive    - True daca R²<0.85 → revert EWMA
  */
 
 /**
@@ -101,7 +101,7 @@
  *
  * @typedef {Object} ProfileTypingState
  * @property {number} threshold                                  - Current threshold value 0.55-0.85
- * @property {boolean} flapSuppressed                            - True dacă Hamming hysteresis 15% prevents flip
+ * @property {boolean} flapSuppressed                            - True daca Hamming hysteresis 15% prevents flip
  * @property {number} consecutiveSessionsAlignedCurrent          - Counter toward 2-sesiuni qualifier
  */
 
@@ -116,7 +116,7 @@
  */
 
 /**
- * Bayesian Nutrition-specific blueprint emit (lives în DimensionResult.meta per
+ * Bayesian Nutrition-specific blueprint emit (lives in DimensionResult.meta per
  * §9.4.4 Cluster D + ADR 018 §2).
  *
  * @typedef {Object} BayesianNutritionBlueprint

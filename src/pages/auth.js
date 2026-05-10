@@ -19,21 +19,21 @@ import {
 // §AMENDMENT 2026-05-04 evening BATCH 1-6 .3 (anti-typo Maria 65).
 // Network resilience wording per §56.13.1.
 const COPY = Object.freeze({
-  title: 'Salvează-ți progresul',
-  description: 'Săptămânile tale de antrenament rămân în siguranță și le poți accesa de pe orice telefon sau tabletă.',
+  title: 'Salveaza-ti progresul',
+  description: 'Saptamanile tale de antrenament raman in siguranta si le poti accesa de pe orice telefon sau tableta.',
   emailLabel: 'Adresa de email',
-  emailHint: 'Verifică cu atenție adresa de e-mail introdusă pentru a te asigura că primești link-ul de acces.',
+  emailHint: 'Verifica cu atentie adresa de e-mail introdusa pentru a te asigura ca primesti link-ul de acces.',
   sendBtn: 'Trimite-mi link de acces pe e-mail',
   sendBtnLoading: 'Se trimite link-ul de acces...',
-  googleBtn: 'Continuă cu Google',
-  pendingTitle: 'Verifică emailul',
-  pendingBody: (email) => `Ți-am trimis un link la ${email}. Deschide-l pe acest dispozitiv ca să te conectezi.`,
+  googleBtn: 'Continua cu Google',
+  pendingTitle: 'Verifica emailul',
+  pendingBody: (email) => `Ti-am trimis un link la ${email}. Deschide-l pe acest dispozitiv ca sa te conectezi.`,
   resendBtn: 'Trimite din nou',
-  changeEmailBtn: 'Schimbă emailul',
-  successWelcome: 'Bine ai venit înapoi!',
-  errorInvalidEmail: 'Adresa de email nu pare validă.',
-  errorSendFailed: 'Nu am putut trimite codul. Verifică conexiunea la internet.',
-  errorRetryBtn: 'Reîncearcă',
+  changeEmailBtn: 'Schimba emailul',
+  successWelcome: 'Bine ai venit inapoi!',
+  errorInvalidEmail: 'Adresa de email nu pare valida.',
+  errorSendFailed: 'Nu am putut trimite codul. Verifica conexiunea la internet.',
+  errorRetryBtn: 'Reincearca',
   errorVerifyFailed: 'Linkul a expirat sau e invalid. Cere unul nou.',
   signedOut: 'Te-ai delogat.',
   signOutBtn: 'Delogare',
@@ -69,7 +69,7 @@ export function createAuthScreen(opts = {}) {
     } else {
       _renderForm(root, {
         // Per §56.13.1: sendMagicLink internal 3x retry. Caller handles
-        // post-retry-fail via "Reîncearcă" button (toast + caller can resubmit).
+        // post-retry-fail via "Reincearca" button (toast + caller can resubmit).
         onSendMagicLink: async (email) => {
           const res = await sendMagicLink(email);
           if (res.ok) { pendingEmail = email; render(); }

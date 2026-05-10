@@ -14,11 +14,11 @@ import { showAAFrictionModal, isAAFrictionDismissedToday } from './aaFrictionMod
 import { modalManager } from '../../components/modalManager.js';
 
 const PATTERN_BANNER_STRINGS = {
-  LOW_ADHERENCE: (p) => `📊 Adherence scăzută ultimele 30 zile: ${p.adherenceRate}%. Reducem volum și verificăm contextul.`,
-  HIGH_DEVIATION: (p) => `📊 Deviation crescut: ${p.deviationRate}% sesiuni diferite de propunere. Coach-ul ajustează propunerile.`,
+  LOW_ADHERENCE: (p) => `📊 Adherence scazuta ultimele 30 zile: ${p.adherenceRate}%. Reducem volum si verificam contextul.`,
+  HIGH_DEVIATION: (p) => `📊 Deviation crescut: ${p.deviationRate}% sesiuni diferite de propunere. Coach-ul ajusteaza propunerile.`,
   EARLY_END: (p) => `📊 ${p.earlyEndRate}% sesiuni terminate devreme — program scurtat 20%`,
-  STAGNATION: (p) => `📊 ${p.exercises?.length || 0} exerciții stagnate 3+ săptămâni`,
-  PEAK_HOURS: (p) => `📊 Peak hours detectat: ${p.hours || 'analiză activă'}`,
+  STAGNATION: (p) => `📊 ${p.exercises?.length || 0} exercitii stagnate 3+ saptamani`,
+  PEAK_HOURS: (p) => `📊 Peak hours detectat: ${p.hours || 'analiza activa'}`,
 };
 
 export function shouldShowPatternBanner(ctx) {
@@ -79,8 +79,8 @@ function renderLastSessionMemory(dayLabel) {
   const top3 = Object.values(exMap).sort((a, b) => (setKg(b) ?? -Infinity) - (setKg(a) ?? -Infinity)).slice(0, 3);
   const validRPE = last.sets.filter(s => s.rpe);
   const avgRPE = validRPE.length ? validRPE.reduce((a, s) => a + s.rpe, 0) / validRPE.length : 0;
-  const ratingLbl = { easy: '⚡ Ușoară', normal: '👍 Normală', hard: '💀 Grea' };
-  const verdict = last.rating ? ratingLbl[last.rating] : (avgRPE > 8.5 ? '💀 Grea' : avgRPE < 7 ? '⚡ Ușoară' : '👍 Normală');
+  const ratingLbl = { easy: '⚡ Usoara', normal: '👍 Normala', hard: '💀 Grea' };
+  const verdict = last.rating ? ratingLbl[last.rating] : (avgRPE > 8.5 ? '💀 Grea' : avgRPE < 7 ? '⚡ Usoara' : '👍 Normala');
   const d = new Date(last.date);
   const dateStr = d.toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' });
   return `<div id="session-memory-card" style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative">
@@ -134,7 +134,7 @@ export async function renderCoachIdle(){
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--purple);line-height:1">${(quest.stepsToday||0).toLocaleString()}</div>
           <div style="text-align:right">
-            <div style="font-size:11px;color:var(--text2)">target: 8.000 pași</div>
+            <div style="font-size:11px;color:var(--text2)">target: 8.000 pasi</div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${qPct>=100?'var(--green)':'var(--text3)'}">${qPct}%</div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export async function renderCoachIdle(){
           <div style="height:100%;width:${qPct}%;background:var(--purple);border-radius:3px;transition:width .5s"></div>
         </div>
         <div style="display:flex;gap:8px">
-          <input type="number" id="steps-quick-input" placeholder="introdu pași" inputmode="numeric"
+          <input type="number" id="steps-quick-input" placeholder="introdu pasi" inputmode="numeric"
             style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none"
             value="${quest.stepsToday||''}"/>
           <button onclick="saveStepsQuick()" style="background:var(--purple);color:#fff;font-weight:700;font-size:13px;padding:10px 16px;border:none;border-radius:var(--rs);cursor:pointer">SAVE</button>
@@ -153,13 +153,13 @@ export async function renderCoachIdle(){
         </div>
       </div>
       <div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:center">
-        <div style="font-size:12px;color:var(--text2)">😴 Recuperare activă · Mobilitate · Stretching</div>
+        <div style="font-size:12px;color:var(--text2)">😴 Recuperare activa · Mobilitate · Stretching</div>
       </div>`;
   } else {
     // WORKOUT day
     const todayR = getTodayReadiness();
 
-    // Construieste sesiunea prin Director — sursă unică de adevăr
+    // Construieste sesiunea prin Director — sursa unica de adevar
     let _dirSession = sessionCache.get();
     if (!_dirSession) {
       try {
@@ -172,13 +172,13 @@ export async function renderCoachIdle(){
     }
     setCachedDirector(_dirSession);
 
-    // Zi de odihnă forțată de Director (readiness < 40)
+    // Zi de odihna fortata de Director (readiness < 40)
     if (_dirSession?.restDay) {
-      cmdEl.textContent = 'ZI DE ODIHNĂ';
+      cmdEl.textContent = 'ZI DE ODIHNA';
       cmdEl.style.color = 'var(--text2)';
       if(startBtn) startBtn.style.display='none';
       const _tplOff=$('today-preview-list');
-      if(_tplOff) _tplOff.innerHTML=`<div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;text-align:center"><div style="font-size:28px;margin-bottom:8px">🛌</div><div style="font-size:14px;font-weight:600;color:var(--text2)">Zi de odihnă recomandată</div><div style="font-size:12px;color:var(--text3);margin-top:6px">${_dirSession.message}</div></div>`;
+      if(_tplOff) _tplOff.innerHTML=`<div style="margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;text-align:center"><div style="font-size:28px;margin-bottom:8px">🛌</div><div style="font-size:14px;font-weight:600;color:var(--text2)">Zi de odihna recomandata</div><div style="font-size:12px;color:var(--text3);margin-top:6px">${_dirSession.message}</div></div>`;
       return;
     }
 
@@ -270,7 +270,7 @@ export async function renderCoachIdle(){
         </div>`;
       })()}
       ${todayR == null ? `<div style="margin:0 16px 10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs)">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Cum te simți azi?</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Cum te simti azi?</div>
         <div style="display:flex;gap:6px">
           ${[1,2,3,4,5].map(v => `<button onclick="selectReadiness(${v})" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 2px;cursor:pointer;transition:border-color .15s">
             <div style="font-size:22px">${READINESS_LABELS[v].emoji}</div>
@@ -301,18 +301,18 @@ export async function renderCoachIdle(){
               <div style="font-size:10px;color:var(--text3);margin-top:1px">${formatSetsReps(e.s||'', cleanEx(e.n||''), _isInCut)}${e.ss?' · <span style="color:var(--accent2)">SS</span>':''}</div>
               <div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap">
                 <button onclick="markOccupied('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,149,0,0.1);border:1px solid rgba(255,149,0,0.3);border-radius:4px;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif">⚠️ Ocupat</button>
-                <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsă</button>
+                <button onclick="markEquipmentUnavailable('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(255,68,68,0.07);border:1px solid rgba(255,68,68,0.2);border-radius:4px;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif">🚫 Lipsa</button>
                 <button onclick="showWhyForExercise('${cleanName.replace(/'/g,'\\\'')}')" style="font-size:9px;padding:2px 7px;background:rgba(100,150,255,0.08);border:1px solid rgba(100,150,255,0.2);border-radius:4px;color:var(--accent);cursor:pointer;font-family:'DM Sans',sans-serif">❓ De ce?</button>
               </div>
             </div>
             <div style="text-align:right;flex-shrink:0">
               <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${hasHistory?rec.statusColor:'var(--text3)'}">${rec.kg}kg</div>
-              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${hasHistory?rec.statusColor+'22':'rgba(255,255,255,0.07)'};color:${hasHistory?rec.statusColor:'var(--text3)'};margin-top:2px">${hasHistory?(rec.status==='INCREASE'?'🟢 Creștem':rec.status==='TOO HEAVY'?'🔴 E prea greu':rec.status==='STAGNANT +SET'?'🟡 Plus un set':rec.status==='SCALE BACK'?'🟡 Scădem un pas':rec.status==='CONSOLIDATE'?'🟡 Consolidăm':'🟢 În țintă'):'🟡 Pornim'}</div>
+              <div style="font-size:9px;padding:2px 6px;border-radius:10px;background:${hasHistory?rec.statusColor+'22':'rgba(255,255,255,0.07)'};color:${hasHistory?rec.statusColor:'var(--text3)'};margin-top:2px">${hasHistory?(rec.status==='INCREASE'?'🟢 Crestem':rec.status==='TOO HEAVY'?'🔴 E prea greu':rec.status==='STAGNANT +SET'?'🟡 Plus un set':rec.status==='SCALE BACK'?'🟡 Scadem un pas':rec.status==='CONSOLIDATE'?'🟡 Consolidam':'🟢 In tinta'):'🟡 Pornim'}</div>
             </div>
           </div>`;
         }).join('')}
         ${exList.length>SHOW_LIMIT?`<div onclick="toggleExList(${todayDayIdx})" style="padding:10px 16px;text-align:center;cursor:pointer;color:var(--accent);font-size:12px;border-top:1px solid var(--border)">
-          ${isExpanded?'▴ Restrânge':`▾ +${hiddenCount} exerciții`}
+          ${isExpanded?'▴ Restrange':`▾ +${hiddenCount} exercitii`}
         </div>`:''}
       </div>`;
 
@@ -420,7 +420,7 @@ export function checkWeightReminder() {
   const lastDate = new Date(dates[0]);
   const daysSince = Math.floor((new Date() - lastDate) / 86400000);
   if (daysSince >= 3) {
-    // Afișăm un banner non-intruziv pe coach screen
+    // Afisam un banner non-intruziv pe coach screen
     const existing = $('weight-reminder-banner');
     if (existing) return;
     const banner = document.createElement('div');
@@ -428,11 +428,11 @@ export function checkWeightReminder() {
     banner.style.cssText = 'position:fixed;bottom:70px;left:16px;right:16px;background:var(--card);border:1px solid var(--accent2);border-radius:var(--rs);padding:12px 16px;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px';
     banner.innerHTML = `
       <div>
-        <div style="font-size:13px;font-weight:700;color:var(--accent2)">AI GRIJĂ — ${daysSince} ZILE FĂRĂ GREUTATE</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Verifică greutatea în ultimele zile</div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent2)">AI GRIJA — ${daysSince} ZILE FARA GREUTATE</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Verifica greutatea in ultimele zile</div>
       </div>
       <button onclick="sp('weight',document.querySelectorAll('.nb')[2]);document.getElementById('weight-reminder-banner').remove()"
-        style="background:var(--accent2);color:#000;font-weight:700;font-size:11px;padding:8px 14px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">LOGHEAZĂ</button>
+        style="background:var(--accent2);color:#000;font-weight:700;font-size:11px;padding:8px 14px;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">LOGHEAZA</button>
     `;
     document.body.appendChild(banner);
     setTimeout(() => { if(banner.parentNode) banner.remove(); }, 15000);
@@ -459,7 +459,7 @@ export function saveStepsQuick(){
     }
     toast('✅ Quest completat! 🔥','var(--purple)');
   } else {
-    toast(`✓ ${steps.toLocaleString()} pași`);
+    toast(`✓ ${steps.toLocaleString()} pasi`);
   }
   renderCoachIdle();
 }

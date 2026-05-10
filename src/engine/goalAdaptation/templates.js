@@ -45,7 +45,7 @@ export function isNewbieEffect(user) {
  */
 export function isDetrainedReturn(recentSessions) {
   if (!Array.isArray(recentSessions) || recentSessions.length === 0) return true;
-  // Detrained = no session în trailing detrainedGapDays window
+  // Detrained = no session in trailing detrainedGapDays window
   const recentInWindow = recentSessions.some((s) => {
     if (!s) return false;
     const days = Number(s.daysAgo);
@@ -73,13 +73,13 @@ export function isFatRichProfile(user) {
 
 /**
  * Detect RECOMP sub-phase auto-detection per §9.2.2 + ADR 024 §2.5 Q5 LOCKED:
- * RECOMP detectat în Tonifiere/Slăbire pentru:
+ * RECOMP detectat in Tonifiere/Slabire pentru:
  *   - Newbie effect (first 12 weeks training)
  *   - Detrained return (>6 weeks gap)
  *   - Fat-rich profile (BF% high baseline)
  *
  * NU template separate — sub-phase auto-detected. UI shows MAINTAIN, distinction
- * CDL only (engine logs phase: 'RECOMP' în trace audit trail).
+ * CDL only (engine logs phase: 'RECOMP' in trace audit trail).
  *
  * @param {Object} input
  * @param {string} input.templateId
@@ -89,7 +89,7 @@ export function isFatRichProfile(user) {
  */
 export function detectRecompSubPhase({ templateId, user, recentSessions }) {
   const reasons = [];
-  // RECOMP only detectable în Tonifiere/Slăbire per §9.2.2 verbatim
+  // RECOMP only detectable in Tonifiere/Slabire per §9.2.2 verbatim
   const eligibleTemplates = [TEMPLATE_IDS.tonifiere_definire, TEMPLATE_IDS.slabire];
   if (!eligibleTemplates.includes(templateId)) {
     return { isRecomp: false, reasons };

@@ -23,7 +23,7 @@ import { handleAuthCallbackRoute, mountAuthBanner, showAuthScreen } from './page
 import { isAuthenticated } from './auth.js';
 import { runAuthPathMigration } from './migrations/2026-05-02-auth-path-migration.js';
 
-// Expune funcții globale pentru onclick="" în HTML
+// Expune functii globale pentru onclick="" in HTML
 import { toast } from './ui/ui.js';
 import { saveW, saveKcal, adjKcal, setKcalDirect,
          saveProt, adjProt, setProtDirect, shiftLogDate, toggleDatePicker,
@@ -45,7 +45,7 @@ import { updateNotifBtn, requestNotifications, closeDayFromDash, dismissMFPPromp
 import { resetTestData, fullReset, inspectStorage, resetButKeepRealLogs, restoreRealLogs, cleanDuplicateLogs } from './util/dataCleanup.js';
 import { adminPrefillAll } from './util/adminPrefill.js';
 
-// Toate funcțiile accesibile din HTML via onclick
+// Toate functiile accesibile din HTML via onclick
 Object.assign(window, {
   applyTheme,
   goTo, toast, DP, AA, cleanEx,
@@ -75,19 +75,19 @@ Object.assign(window, {
   restoreRealLogs,
   adminPrefillAll,
   _devSoftReset: async () => {
-    if (confirm('Soft Reset: șterge datele de test, păstrează loguri reale, greutăți, kcal. Continui?')) {
+    if (confirm('Soft Reset: sterge datele de test, pastreaza loguri reale, greutati, kcal. Continui?')) {
       await resetButKeepRealLogs();
     }
   },
   dashSaveReadiness: (v) => { saveReadiness(v); renderDash(); },
   _devResetTest: async () => {
-    if (confirm('Ștergi date de test (patterns, session drafts, etc.)?\nLogurile reale și greutățile rămân.')) {
+    if (confirm('Stergi date de test (patterns, session drafts, etc.)?\nLogurile reale si greutatile raman.')) {
       await resetTestData();
     }
   },
   _devFullReset: async () => {
-    if (confirm('⚠️ ATENȚIE: Ștergi TOT (loguri, greutăți, tot).\nEști sigur?')) {
-      if (confirm('Ultima confirmare: chiar ștergi TOATE datele?')) {
+    if (confirm('⚠️ ATENTIE: Stergi TOT (loguri, greutati, tot).\nEsti sigur?')) {
+      if (confirm('Ultima confirmare: chiar stergi TOATE datele?')) {
         await fullReset();
       }
     }
@@ -138,20 +138,20 @@ function setupOfflineIndicator() {
 }
 
 // ── Auth wiring per §AMENDMENT 2026-05-04 + §56.1-§56.19 LOCKED V1 ──────────
-// Pre-init step: handle /auth-callback route ÎNAINTE de Firebase sync init.
-// Magic Link verify + Google OAuth id_token exchange fire în handleAuthCallbackRoute.
-// Returns null când URL nu e /auth-callback (no-op majority case).
+// Pre-init step: handle /auth-callback route INAINTE de Firebase sync init.
+// Magic Link verify + Google OAuth id_token exchange fire in handleAuthCallbackRoute.
+// Returns null cand URL nu e /auth-callback (no-op majority case).
 //
 // Post-auth-success per §56.4.1 + §AMENDMENT 2026-05-04.4: trigger Daniel
 // legacy `users/daniel` → `users/{uid}` migration runner (idempotent — does
-// nothing dacă deja migrated sau dacă uid != Daniel's uid).
+// nothing daca deja migrated sau daca uid != Daniel's uid).
 async function processAuthCallbackOnBoot() {
   try {
     const result = await handleAuthCallbackRoute();
     if (!result) return null;
     if (result.ok) {
       // Per §56.4 LOCKED V1: idempotent migration runner. Already-migrated
-      // sau no-source = no-op silent. Sets `_migration` flag în localStorage.
+      // sau no-source = no-op silent. Sets `_migration` flag in localStorage.
       try { await runAuthPathMigration(); }
       catch (err) { console.warn('[Auth] post-auth migration runner threw:', err); }
     } else {
@@ -211,7 +211,7 @@ async function init() {
   initKcal();
   initProt();
 
-  // Populează pr-records din istoricul complet la fiecare init
+  // Populeaza pr-records din istoricul complet la fiecare init
   extractAndSavePRs();
 
   const onboardingDone = DB.get('onboarding-done') || (DB.get('logs') || []).length > 0;
@@ -229,10 +229,10 @@ async function init() {
 
   checkWeightReminder();
 
-  // §56.1.1 auth-banner-soft — non-blocking "Salvează-ți progresul" prompt
+  // §56.1.1 auth-banner-soft — non-blocking "Salveaza-ti progresul" prompt
   // for Anonymous users post-onboarding. Auto-hides on auth success.
-  // Per §56.3.1: shown DUPĂ T0 onboarding (Investment Phase commitment).
-  // Banner self-skips dacă isAuthenticated() already true.
+  // Per §56.3.1: shown DUPA T0 onboarding (Investment Phase commitment).
+  // Banner self-skips daca isAuthenticated() already true.
   if (onboardingDone && !isAuthenticated()) {
     mountAuthBanner({
       googleClientId: window.__GOOGLE_CLIENT_ID,
@@ -247,7 +247,7 @@ async function init() {
   }
 }
 
-// Expose auth helpers globally pentru future onclick="" wiring în Settings UI
+// Expose auth helpers globally pentru future onclick="" wiring in Settings UI
 // (Phase 2 — Account Lifecycle: logout double-confirm, account deletion 2-step).
 window.showAuthScreen = showAuthScreen;
 window.isAuthenticated = isAuthenticated;

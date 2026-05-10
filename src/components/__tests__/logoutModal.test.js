@@ -11,16 +11,16 @@ describe('§56.12 Logout — wording UI LOCKED V1 verbatim', () => {
     expect(LOGOUT_COPY.step1Prompt).toBe('Vei fi deconectat. Continui?');
   });
   it('wipeCheckboxLabel verbatim', () => {
-    expect(LOGOUT_COPY.wipeCheckboxLabel).toBe('Șterge și datele locale de pe acest dispozitiv');
+    expect(LOGOUT_COPY.wipeCheckboxLabel).toBe('Sterge si datele locale de pe acest dispozitiv');
   });
   it('step2Prompt verbatim (anti-tap-accidental Maria 65)', () => {
-    expect(LOGOUT_COPY.step2Prompt).toBe('Sigur vrei să te deconectezi?');
+    expect(LOGOUT_COPY.step2Prompt).toBe('Sigur vrei sa te deconectezi?');
   });
   it('step2Detail verbatim', () => {
-    expect(LOGOUT_COPY.step2Detail).toBe('Va trebui să te autentifici din nou pentru a-ți vedea datele.');
+    expect(LOGOUT_COPY.step2Detail).toBe('Va trebui sa te autentifici din nou pentru a-ti vedea datele.');
   });
   it('splash post-logout verbatim', () => {
-    expect(LOGOUT_COPY.splash).toBe('Te-ai deconectat. Revino oricând.');
+    expect(LOGOUT_COPY.splash).toBe('Te-ai deconectat. Revino oricand.');
   });
   it('LOGOUT_COPY frozen', () => {
     expect(Object.isFrozen(LOGOUT_COPY)).toBe(true);

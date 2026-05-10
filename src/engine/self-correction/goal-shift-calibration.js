@@ -1,6 +1,6 @@
 // ══ SELF-CORRECTION §36.35 — Goal Shift Event Handler ════════════════════════
 // LOCKED V1 per §36.35 + ADR_OUTLIER_FILTER EXT-2 + §36.58 GOAL_SHIFT_CALIBRATION_PLACEHOLDER.
-// User schimbă obiectiv (CUT→BULK / Forță→Tonifiere) → RESET streak counter +
+// User schimba obiectiv (CUT→BULK / Forta→Tonifiere) → RESET streak counter +
 // primele 2 sesiuni = calibration window (NU outlier active, NU bias adjustments).
 
 import { onGoalShift } from '../suflet-andura/outlier-filter.js';
@@ -10,7 +10,7 @@ import { onGoalShift } from '../suflet-andura/outlier-filter.js';
  * @property {string} previousGoal
  * @property {string} newGoal
  * @property {number} sessionsSinceShift 0 = same session as shift, 1 = first post-shift, 2 = second post-shift
- * @property {boolean} calibrationActive true în primele 2 sesiuni post-shift
+ * @property {boolean} calibrationActive true in primele 2 sesiuni post-shift
  */
 
 /**
@@ -51,8 +51,8 @@ export function advancePostShiftSession(state) {
 export function buildCalibrationPlaceholderData(ctx) {
   return {
     id: 'goal_shift_calibration_notice',
-    title: 'Recalibrăm pe noul obiectiv',
-    body: `Primele 2 sesiuni sunt de calibrare · Estimăm ${ctx.minKg}-${ctx.maxKg} kg × ${ctx.reps} reps, ajustăm după ce avem date`,
+    title: 'Recalibram pe noul obiectiv',
+    body: `Primele 2 sesiuni sunt de calibrare · Estimam ${ctx.minKg}-${ctx.maxKg} kg × ${ctx.reps} reps, ajustam dupa ce avem date`,
     subText: `Sesiunea ${ctx.current}/2`,
   };
 }

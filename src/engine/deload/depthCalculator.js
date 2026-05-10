@@ -3,8 +3,8 @@
 //
 // B4 AA-driven mechanic obligatoriu (Source 1 + Source 2 ADR 013 verbatim):
 //    Volume CUT 30% obligatoriu + RIR ↑ obligatoriu + Intensity ↓ obligatoriu
-//    Daniel push-back fundamental: "volum păstrat moderat" reinforces
-//    aggressive pattern → Engine NU pedepsește dorința muncă, REGLEAZĂ
+//    Daniel push-back fundamental: "volum pastrat moderat" reinforces
+//    aggressive pattern → Engine NU pedepseste dorinta munca, REGLEAZA
 //    unsustainable pattern.
 //
 // B5 Final_Depth formula (Source 1 line 16 verbatim):
@@ -12,7 +12,7 @@
 //                  Behavioral_Modifiers
 //    Reactive overrides scheduled (60% > 45%) — confirm priority B2 hierarchy
 //    Behavioral_Modifiers additive (NU multiplicative — anti-cascade preserve)
-//    Multi-signal NU dilutes severity, ADAUGĂ controls peste physiological depth
+//    Multi-signal NU dilutes severity, ADAUGA controls peste physiological depth
 //
 // B9 Extension depth preserve 60% (Source 1 verbatim):
 //    Week 2 reactive deload preserve 60% depth (NU escalate 70%)
@@ -152,10 +152,10 @@ export function applyGoalPhaseModulation({ baseDepthPct, goalPhase, deloadState 
  * RIR ↑ +1 obligatoriu + Intensity ↓ -12.5% obligatoriu (consistent §9.1
  * Cluster 2.1 deload classic Linear).
  *
- * Daniel push-back fundamental: "volum păstrat moderat" reinforces aggressive
- * pattern → Engine NU pedepsește dorința muncă, REGLEAZĂ unsustainable pattern.
- * Volume CUT 30% obligatoriu = primary depth lever (nu inclus în intensity_modifier
- * — separat în depth_pct field).
+ * Daniel push-back fundamental: "volum pastrat moderat" reinforces aggressive
+ * pattern → Engine NU pedepseste dorinta munca, REGLEAZA unsustainable pattern.
+ * Volume CUT 30% obligatoriu = primary depth lever (nu inclus in intensity_modifier
+ * — separat in depth_pct field).
  *
  * @param {string} deloadState
  * @returns {import('./types.js').IntensityModifier}

@@ -175,7 +175,7 @@ describe('detectRirMismatchSilentTelemetry — Q4=A V1 silent only', () => {
   });
 });
 
-describe('getConvergenceGuardReference — NU duplicate logic în Tempo', () => {
+describe('getConvergenceGuardReference — NU duplicate logic in Tempo', () => {
   it('returns frozen metadata describing where Convergence Guard lives', () => {
     const r = getConvergenceGuardReference();
     expect(Object.isFrozen(r)).toBe(true);

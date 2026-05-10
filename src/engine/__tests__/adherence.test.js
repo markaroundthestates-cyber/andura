@@ -61,7 +61,7 @@ describe('getAdherenceScore — workout compliance', () => {
   });
 });
 
-// Tuesday 28 Apr 2026 → JS getDay()=2 → dayMap[2]=1 → PROG[1]=Marți (t:'free') = workout day
+// Tuesday 28 Apr 2026 → JS getDay()=2 → dayMap[2]=1 → PROG[1]=Marti (t:'free') = workout day
 // Monday  27 Apr 2026 → JS getDay()=1 → dayMap[1]=0 → PROG[0]=Luni  (t:'off')  = rest day
 const TUESDAY_APR28 = new Date(2026, 3, 28, 12, 0, 0);
 const MONDAY_APR27  = new Date(2026, 3, 27, 12, 0, 0);

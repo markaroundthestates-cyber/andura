@@ -1,13 +1,13 @@
 // Cluster 4 — Training Modifiers per Template × Phase per ADR 026 §9.2.4 verbatim.
 //
 // Tabel base training modifiers per template × phase tuple (Source 1 line 46):
-//   Forța & Dezvoltare:   RIR 1-3, rep 3-8
+//   Forta & Dezvoltare:   RIR 1-3, rep 3-8
 //   Tonifiere & Definire: RIR 0-2, rep 8-12
-//   Slăbire:              RIR 1-2, rep 10-15
+//   Slabire:              RIR 1-2, rep 10-15
 //   Longevitate:          RIR 2-3, rep 8-12
-//   Sănătate Generală:    RIR 2-3, rep 8-12
+//   Sanatate Generala:    RIR 2-3, rep 8-12
 //
-// Mode overlay Estetică / Forță post-template × phase multiplicativ (NU
+// Mode overlay Estetica / Forta post-template × phase multiplicativ (NU
 // duplicate templates) per §9.2.4 verbatim.
 //
 // Mode + Phase combined ceiling rule per §9.2.6 Reconsideration Trigger 4:
@@ -33,8 +33,8 @@ import {
 export function resolveModeOverlay(user) {
   if (!user || typeof user.mode !== 'string') return 'none';
   const m = user.mode.toLowerCase();
-  if (m === 'estetica' || m === 'estetică') return 'estetica';
-  if (m === 'forta' || m === 'forță' || m === 'forta_dezvoltare') return 'forta';
+  if (m === 'estetica' || m === 'estetica') return 'estetica';
+  if (m === 'forta' || m === 'forta' || m === 'forta_dezvoltare') return 'forta';
   return 'none';
 }
 

@@ -4,7 +4,7 @@
 // SpecializationResult extends DimensionResult per ADR 018 §2 — adds Cluster
 // A1 6-field output blueprint emit fields (activation_state, target_muscle_group,
 // mesocycle_progress, volume_modifier_target, volume_modifier_other_groups,
-// cooldown_state) în `meta` per §9.6.1 verbatim.
+// cooldown_state) in `meta` per §9.6.1 verbatim.
 //
 // Pipeline §42.10 position 6th canonical (NU "Engine #7" naming legacy).
 //
@@ -62,7 +62,7 @@
  * convergent (Q2=C anti-noise volatil).
  *
  * @typedef {Object} WeaknessSignal
- * @property {string|null} targetGroup            - Top-1 weakest muscle group (null dacă insufficient signal)
+ * @property {string|null} targetGroup            - Top-1 weakest muscle group (null daca insufficient signal)
  * @property {number|null} ratio                  - 1RM ratio<0.8 vs group avg (Q1=C)
  * @property {boolean} consensusAligned           - Recent + lifetime aligned (Q2=C anti-flap)
  * @property {string} rationale
@@ -85,8 +85,8 @@
  * tracking per muscle group + hard reject.
  *
  * @typedef {Object} CooldownState
- * @property {boolean} blocked                    - True dacă within N=12 weeks cooldown for target group
- * @property {string|null} group                  - Group în cooldown (null dacă none)
+ * @property {boolean} blocked                    - True daca within N=12 weeks cooldown for target group
+ * @property {string|null} group                  - Group in cooldown (null daca none)
  * @property {number|null} weeksRemaining         - Remaining cooldown duration
  * @property {string|null} reason                 - 'completed_exit' | 'hard_reject' | 'no_cooldown'
  * @property {string} rationale
@@ -102,7 +102,7 @@
  * @property {number} frequencyIncreaseSessions   - +1 session/week V1 default
  * @property {number} otherGroupsReductionPct     - -25% maintenance dose Q8=B
  * @property {string} mode                        - 'hybrid' | 'volume_only' | 'frequency_only' Q7=C
- * @property {boolean} mrvCapRespected            - True dacă target volume sub MRV (always true V1 invariant 1)
+ * @property {boolean} mrvCapRespected            - True daca target volume sub MRV (always true V1 invariant 1)
  * @property {string} rationale
  */
 
@@ -113,12 +113,12 @@
  * @typedef {Object} MesocycleProgress
  * @property {number} currentWeek                 - 1-4 progression
  * @property {number} totalWeeks                  - Always 4 V1 (Q9=A simplicity)
- * @property {boolean} exiting                    - True dacă week >= 4 (entering completed_exit state)
+ * @property {boolean} exiting                    - True daca week >= 4 (entering completed_exit state)
  * @property {string} rationale
  */
 
 /**
- * Specialization-specific blueprint emit (lives în DimensionResult.meta per
+ * Specialization-specific blueprint emit (lives in DimensionResult.meta per
  * §9.6.1 Cluster A1 + ADR 018 §2). 6 fields verbatim spec.
  *
  * @typedef {Object} SpecializationBlueprint
@@ -126,7 +126,7 @@
  * @property {string|null} target_muscle_group                  - Cluster A1 emit 2 (top-1 weak group)
  * @property {MesocycleProgress} mesocycle_progress             - Cluster A1 emit 3 (4-week exit Q9=A)
  * @property {VolumeModifier} volume_modifier                   - Cluster A1 emit 4 (target + other groups)
- * @property {string} ui_label                                  - Cluster C4 Q17=C "Bloc focus [Grupă]"
+ * @property {string} ui_label                                  - Cluster C4 Q17=C "Bloc focus [Grupa]"
  * @property {CooldownState} cooldown_state                     - Cluster A1 emit 5 (N=12 weeks Q10+Q16)
  * @property {string[]} signals                                 - Cluster A1 emit 6 (mirror DimensionResult.signals)
  */
@@ -160,7 +160,7 @@
  * Q12=A non-negotiable.
  *
  * @typedef {Object} DeloadPreservedSignal
- * @property {boolean} suspended                  - True dacă specialization layered OFF (deload phase)
+ * @property {boolean} suspended                  - True daca specialization layered OFF (deload phase)
  * @property {string} rationale
  */
 

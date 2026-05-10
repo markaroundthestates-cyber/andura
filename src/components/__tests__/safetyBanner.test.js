@@ -179,12 +179,12 @@ describe('safetyBanner — integration sample (F-NEW-2 deload skip)', () => {
     const onUseMine = vi.fn();
     const banner = createSafetyBanner({
       severity: 'warning',
-      message: 'Săptămâna de deload a trecut neutilizată. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recuperează în mișcare, nu doar în repaus.',
+      message: 'Saptamana de deload a trecut neutilizata. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recupereaza in miscare, nu doar in repaus.',
       action: { label: 'Folosesc varianta mea', onClick: onUseMine },
       dismissId: 'deload-skip-2026-w19',
       storage: makeStorage(),
     });
-    expect(banner.element.textContent).toContain('corpul recuperează în mișcare');
+    expect(banner.element.textContent).toContain('corpul recupereaza in miscare');
     // Anti-RE: NO procentage leak in the banner copy
     expect(banner.element.textContent).not.toMatch(/\d+%/);
     banner.element.querySelector('.safety-banner__action').click();

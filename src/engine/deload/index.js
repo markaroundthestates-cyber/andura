@@ -14,7 +14,7 @@
 // Pure function `evaluate(ctx) → DeloadResult` total + deterministic +
 // async-capable (DP-2). ZERO side effects per ADR 030 D2 thin scope.
 //
-// Output blueprint per Cluster A1+C1 verbatim emit (lives în DeloadResult.meta):
+// Output blueprint per Cluster A1+C1 verbatim emit (lives in DeloadResult.meta):
 //   1. deload_state         — IDLE / SCHEDULED_LINEAR / REACTIVE_COMPOSITE / REACTIVE_AA / EXTENSION_FLAGGED / RESOLVING
 //   2. depth_pct            — Final_Depth formula MAX(45/60/30) + Behavioral_Modifiers
 //   3. duration_weeks       — 1 scheduled / 1-2 reactive adaptive
@@ -22,7 +22,7 @@
 //   5. partial_scope        — null full-body / muscle group list per-muscle MRV
 //   6. notification_tier    — silent T0 / banner_detailed T1+
 //   7. wording              — RO native per trigger source
-//   8. ui_label             — RO native "Săptămână de recuperare X săpt"
+//   8. ui_label             — RO native "Saptamana de recuperare X sapt"
 //   9. signals              — human-readable IDs + trigger source attribution
 //
 // **Pipeline §42.10 CLOSURE FINAL 8/8 V1 prescriptive engines complete** post
@@ -33,7 +33,7 @@
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.8
-// (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasă, 32 decisions
+// (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasa, 32 decisions
 // Cluster A-E 4-way parity check ✅).
 
 import {

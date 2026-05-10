@@ -4,9 +4,9 @@ export const MUSCLE_HEADS = {
   chest_upper: { recoveryHours: 60, label: 'Piept sus' },
   chest_mid:   { recoveryHours: 60, label: 'Piept mijloc' },
   chest_lower: { recoveryHours: 60, label: 'Piept jos' },
-  delt_front:  { recoveryHours: 48, label: 'Umăr față' },
-  delt_mid:    { recoveryHours: 48, label: 'Umăr lateral' },
-  delt_rear:   { recoveryHours: 48, label: 'Umăr spate' },
+  delt_front:  { recoveryHours: 48, label: 'Umar fata' },
+  delt_mid:    { recoveryHours: 48, label: 'Umar lateral' },
+  delt_rear:   { recoveryHours: 48, label: 'Umar spate' },
   tri_long:    { recoveryHours: 48, label: 'Triceps lung' },
   tri_lateral: { recoveryHours: 48, label: 'Triceps lateral' },
   tri_medial:  { recoveryHours: 48, label: 'Triceps medial' },
@@ -19,7 +19,7 @@ export const MUSCLE_HEADS = {
   quad:        { recoveryHours: 96, label: 'Cvadriceps' },
   hamstring:   { recoveryHours: 96, label: 'Ischiogambieri' },
   glute:       { recoveryHours: 72, label: 'Fese' },
-  calf:        { recoveryHours: 48, label: 'Gambă' },
+  calf:        { recoveryHours: 48, label: 'Gamba' },
 };
 
 export const EXERCISE_MUSCLES = {

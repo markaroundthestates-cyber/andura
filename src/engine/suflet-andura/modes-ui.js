@@ -1,6 +1,6 @@
 // ══ MODES UI — 4 Moduri (Strategic / Executor / Hybrid / Auto) ═══════════════
 // LOCKED V1 per ADR_MODE_DETECTION_UI_v1 + §36.58 wording.
-// Self-declared in onboarding + behavior-tracked în background pentru drift detection.
+// Self-declared in onboarding + behavior-tracked in background pentru drift detection.
 
 /** @type {{ key: string, label: string }[]} */
 export const MODES = [

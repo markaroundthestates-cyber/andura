@@ -57,7 +57,7 @@ describe('translateGroupToRO — Cluster C4 Bugatti craft RO native', () => {
   });
 });
 
-describe('buildUiLabel — Cluster C4 Q17=C "Bloc focus [Grupă]"', () => {
+describe('buildUiLabel — Cluster C4 Q17=C "Bloc focus [Grupa]"', () => {
   it('biceps → "Bloc focus Biceps"', () => {
     expect(buildUiLabel('biceps')).toBe('Bloc focus Biceps');
   });

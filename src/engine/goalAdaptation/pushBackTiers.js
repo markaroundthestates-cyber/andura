@@ -1,13 +1,13 @@
-// Cluster 5 — Push-Back Proporțional 3 Tiers + Re-Prompt Anti-Spam Logic per
+// Cluster 5 — Push-Back Proportional 3 Tiers + Re-Prompt Anti-Spam Logic per
 // ADR 026 §9.2.5 verbatim + ADR 024 §2.7 Q7 + §2.8 Q8 LOCKED V1.
 //
-// 3 tiers proporțional cu risc:
+// 3 tiers proportional cu risc:
 //   Tier 1 silent: no UI signal, engine internal modifier conservative
 //   Tier 2 banner: in-app banner discret 1-2 lines explanation
 //   Tier 3 modal:  full screen warning + opt-in confirmare cu max conservative
 //                  modifiers (volume cap MEV-50% + intensity cap 75% 1RM)
 //
-// Risk-tier mapping example verbatim §9.2.5: "Forță + BF% high + age 60+ +
+// Risk-tier mapping example verbatim §9.2.5: "Forta + BF% high + age 60+ +
 // recent injury → Tier 3 modal".
 //
 // Re-prompt anti-spam:
@@ -71,7 +71,7 @@ export function computeRiskScore({ goalId, user, recentSessions }) {
     }
   }
 
-  // Recent injury check (within 6 săpt window)
+  // Recent injury check (within 6 sapt window)
   if (Array.isArray(recentSessions)) {
     const recentInjury = recentSessions.some((s) => {
       if (!s || s.injury !== true) return false;
@@ -145,7 +145,7 @@ export function computePushBackSignal({ goalId, user, recentSessions }) {
 }
 
 /**
- * Compute days elapsed între two timestamps (ms epoch). Defensive 0 când
+ * Compute days elapsed intre two timestamps (ms epoch). Defensive 0 cand
  * either invalid or `to` < `from`.
  *
  * @param {number} from - earlier timestamp (ms epoch)
@@ -165,8 +165,8 @@ function daysBetween(from, to) {
  * Order of checks (any block → shouldPrompt = false):
  *   1. Cap absolut max 4 re-prompts/an
  *   2. Cooldown 60 zile post Goal Shift
- *   3. Cooldown 21 zile post-confirm (user răspuns "Da, încă X")
- *   4. Trigger 28 zile rolling (rolling window din ultima interacțiune)
+ *   3. Cooldown 21 zile post-confirm (user raspuns "Da, inca X")
+ *   4. Trigger 28 zile rolling (rolling window din ultima interactiune)
  *
  * Caller passes nowMs (timestamp ms epoch) explicit — pure function NU
  * Date.now per ADR 018 §2 deterministic contract.
@@ -174,9 +174,9 @@ function daysBetween(from, to) {
  * @param {Object} input
  * @param {number} input.nowMs                                - Current timestamp (ms epoch)
  * @param {number} [input.lastRepromptMs]                     - Last re-prompt fired timestamp (ms epoch)
- * @param {number} [input.lastConfirmMs]                      - Last "Da, încă X" confirm timestamp
+ * @param {number} [input.lastConfirmMs]                      - Last "Da, inca X" confirm timestamp
  * @param {number} [input.lastGoalShiftMs]                    - Last Goal Shift Event Handler timestamp
- * @param {number} [input.repromptCountThisYear]              - Cumulative count în ultimul an rolling
+ * @param {number} [input.repromptCountThisYear]              - Cumulative count in ultimul an rolling
  * @returns {import('./types.js').RepromptDecision}
  */
 export function evaluateReprompt({

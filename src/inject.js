@@ -184,7 +184,7 @@ export function injectRealSessions() {
   // ── Session burns ─────────────────────────────────────────
   const burns = DB.get('session-burns') || [];
   if (!has21 && !burns.some(b => b.date === '2026-04-21')) {
-    burns.push({ date:'2026-04-21', day:'Marți', mins:62, kcal:320, sets:16, startHour:18 });
+    burns.push({ date:'2026-04-21', day:'Marti', mins:62, kcal:320, sets:16, startHour:18 });
   }
   if (!has22 && !burns.some(b => b.date === '2026-04-22')) {
     burns.push({ date:'2026-04-22', day:'Miercuri', mins:68, kcal:350, sets:19, startHour:18 });

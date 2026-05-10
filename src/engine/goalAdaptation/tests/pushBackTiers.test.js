@@ -75,7 +75,7 @@ describe('computeRiskScore — §9.2.5 Cluster 5 example verbatim mapping', () =
     });
     expect(r.score).toBe(0);
   });
-  it('Forță + BF% high + age 60+ + injury verbatim spec example → score >= 2 (Tier 3)', () => {
+  it('Forta + BF% high + age 60+ + injury verbatim spec example → score >= 2 (Tier 3)', () => {
     const r = computeRiskScore({
       goalId: 'forta',
       user: { age: 65, bfPct: 0.30, sex: 'male' },
@@ -221,7 +221,7 @@ describe('evaluateReprompt — §9.2.5 + ADR 024 §2.8 Q8 anti-spam logic', () =
     });
     expect(r.shouldPrompt).toBe(true);
   });
-  it('multiple blocks accumulate în reasons', () => {
+  it('multiple blocks accumulate in reasons', () => {
     const r = evaluateReprompt({
       nowMs: NOW,
       lastConfirmMs: day(10),

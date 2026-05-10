@@ -2,11 +2,11 @@
 //
 // Pipeline §42.10 position 5th canonical: Periodization → Goal Adaptation →
 // Energy → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload.
-// Engine numbering "Engine #6" în ADR 028 file naming = legacy chat strategic
+// Engine numbering "Engine #6" in ADR 028 file naming = legacy chat strategic
 // spec session ordering NU pipeline canonical position (§9.5 clarifying header).
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.5
-// (commit a9b7cbd LANDED 2026-05-06 afternoon chat-6 acasă, 28-30 decisions
+// (commit a9b7cbd LANDED 2026-05-06 afternoon chat-6 acasa, 28-30 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou late sources).
 //
 // Source 3 NU disponibil: ADR 028 = STUB legacy precedent §9.3 Energy ADR 027
@@ -46,7 +46,7 @@ export const PERSONA = Object.freeze({
  * Cue delivery timing enum per Cluster B8 verbatim — Q8=D pre-set + post-set
  * ONLY (NU intra-set distraction, preserves user concentration during execution).
  *
- *   PRE_SET  = engine surfaces tempo notation + form cue ÎNAINTE of set (intro)
+ *   PRE_SET  = engine surfaces tempo notation + form cue INAINTE of set (intro)
  *   POST_SET = engine surfaces RIR feedback / form check post-set
  *   MID_REST = user-initiated reactive elaboration (tap-to-expand 💡 Q6=D)
  *
@@ -98,7 +98,7 @@ export const TOP_COMPOUND_MOVEMENTS = Object.freeze([
 
 /**
  * Frequency thresholds per Cluster C7 verbatim Q7=D + Q9=D dual signal:
- *   explicit "știu" user toggle (acquired) + implicit N=10 sessions consecutive
+ *   explicit "stiu" user toggle (acquired) + implicit N=10 sessions consecutive
  *   cu form breakdown < threshold.
  *
  * V1 default conservative: N=10 acquisition window. §9.5.6 Reconsideration
@@ -151,7 +151,7 @@ export const CUE_DEPTH_BY_TIER = Object.freeze({
 
 /**
  * Suppression modes per Cluster C17 verbatim Q17=C:
- *   T0/T1 hard suppression = user toggle "știu" Q9 explicit → cue NU surface
+ *   T0/T1 hard suppression = user toggle "stiu" Q9 explicit → cue NU surface
  *                            for movement (binary on/off).
  *   T2+ soft auto-retire = N=10 sessions implicit (Q9 dual signal) → cue
  *                          auto-retire pentru movement (user can re-activate

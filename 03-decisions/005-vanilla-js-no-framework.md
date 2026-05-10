@@ -4,9 +4,11 @@
 **Date:** 2026-04-23
 **See also:** [[DECISION_LOG]] | STACK_CURRENT | [[008-vitest-playwright-testing]]
 
-> **⚠️ SUPERSEDED 2026-05-08 §AMENDMENT — React Migration LOCK V1.**
+> **⚠️ STATUS UPDATE 2026-05-10 §AMENDMENT — Port-First Vanilla Pre-React LOCK V1 (REVERT SUPERSEDE 2026-05-08).**
+> §AMENDMENT 2026-05-08 React Migration SUPERSEDE Vanilla = REVERTED. Vanilla JS preserved active stack pre-React migration: Step 1 port mockup V2 → prod vanilla JS modules ~1-2 săpt + Step 2 React migration mecanic mapping ~1-2 săpt cap-coadă.
+> §AMENDMENT 2026-05-08 tactical scope (Vite + React 19 + Router v6 + Context+useReducer + CSS vars + engines pure imports + PWA/SW/Firebase preserved) = preserved compatible pentru Step 2 execution post Step 1 validation.
 > Original vanilla decision body preserved historical reference below.
-> Active stack canonical: see §AMENDMENT 2026-05-08 final fișier.
+> Active stack canonical: see §AMENDMENT 2026-05-10 final fișier.
 
 ## Context
 
@@ -95,3 +97,67 @@ Plus **CD V2 mockup canonical SSOT** (Andura Clasic + Andura Living Body LANDED 
 - `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-08 chat NEW acasă entry
 - `03-decisions/DECISION_LOG.md` entry top descending cronologic
 - `08-workflows/PRE_LAUNCH_CHECKLIST_V1.md` §CC Opus mecanic autonomous #2 React migration implementation
+
+---
+
+## §AMENDMENT 2026-05-10 — Port-First Vanilla Pre-React LOCK V1 (REVERT SUPERSEDE 2026-05-08)
+
+**Status:** LOCKED V1 (REVERT §AMENDMENT 2026-05-08 SUPERSEDE — port-first vanilla preserved active stack pre-React migration)
+**Date:** 2026-05-10 chat ACASĂ post Phase 3.6 attempt + mockup vs prod distincție revealed
+**Authority:**
+- Daniel directive verbatim chat-current ACASĂ 2026-05-10 *"Facem react migration now ca sa avem pe ce lucra"* → re-evaluat post Daniel push-back *"vezi ca e vanila js da a fost facuta cu intentia de a migra la react"* → port-first-then-React paradigm LOCK V1 cap-coadă
+- Mockup vs prod distincție revealed (15 chat-uri Phase 1+2+3+3.5 = ~70% degeaba pentru prod app live ZERO src/ diff per `git diff origin/main..HEAD -- src/` chat-current Phase 3.6 attempt audit)
+- Memory rule #18 updated permanent (mockup `04-architecture/mockups/` = DESIGN MASTER pre-React migration target, prod `src/` = current state separate layout vechi)
+
+**Cumulative LOCKED V1:** ~718 → ~719 (+1 net Port-First-Then-React substantive)
+
+### Re-evaluare context decision (2026-05-10)
+
+§AMENDMENT 2026-05-08 LOCKED React Migration LOCK V1 SUPERSEDE Vanilla. Re-evaluat 2026-05-10 chat ACASĂ post Phase 3.6 cluster #1 attempt CC autonomous HALT (audit raports ZERO src/ changes, hypothesis "Phase 3+3.5 broke observer pattern în src/" FALSIFIED).
+
+Daniel critical context preserved: prod `src/` = vanilla JS arhitectat React-friendly (state.js single mutable obj + engines pure functions + UI separation = mapping mecanic post-migration). Memory cumulative chat-NEW3 birou ~688 LOCKED reaffirmed.
+
+Daniel push-back fundamental: *"daca toate fixurile pe care le avem pana acum le-am face push in prod... si dupa ce ne asiguram ca functioneaza tot, am face migrarea la react si la noul clasic theme... nu ar fi mai usor?"*. Eu inițial gravitat React migration NOW direct = throwaway mockup paradigm. Daniel push-back corrected paradigm.
+
+### Decision REVERT SUPERSEDE → Port-First-Then-React
+
+**Vanilla JS preserved active stack pre-React migration.** Sequence productiv real:
+
+**Step 1 (~1-2 săpt CC continuous):** Port mockup V2 design + Phase 3+3.5 fixes → prod vanilla JS modules `src/`. UI restructure prod V1 6 taburi → V2 4 taburi cap-coadă mockup design (single-theme Clasic master per STRATEGIC SHIFT 2026-05-10). Phase 3+3.5 HTML inline JS handlers → module ES refactor (NU copy-paste). Daniel obține app funcțional V2 pe andura.app live (prod în development per Daniel verbatim "putem lucra pe ea si testa real time"). Smoke real-time per commit.
+
+**Step 2 (~1-2 săpt CC continuous):** React migration mecanic mapping post-Step 1 validation. state.js → Context+useReducer, src/pages/ → components/, src/engine/ preserved import direct. Clean port post-validation Step 1 functional. Themes restul (LB → Lux → BC) mecanic mapped pe Clasic baseline post 100% functional confirmed Daniel Gates smoke.
+
+### Beneficii vs React migration NOW direct
+
+- App funcțional interim NU 2-3 săpt black hole așteptare (prod în development, niciun user activ — zero downtime cost)
+- Phase 3+3.5 mockup polish = real value (port la prod), NU throwaway
+- Migration React = mecanic mapping (preserve structure), NU greenfield rewrite
+- Risk-averse: validate vanilla JS port → migration React clean
+- Mockup design SoT preserved pentru ambele steps (Clasic single-theme master)
+
+### Tactical scope §AMENDMENT 2026-05-08 preserved compatible
+
+Step 2 React migration tactical scope rămâne preserved unchanged from §AMENDMENT 2026-05-08:
+- Vite preserved + React 19 + JSX + React Router v6 + Context+useReducer + CSS vars preserved + engines pure imports + PWA/SW/Firebase/IndexedDB preserved
+- Migration ordering 8 batches per §AMENDMENT 2026-05-08 §Migration ordering preserved (Step 2 execution post Step 1 validation Daniel Gates smoke)
+- React migration paradigm = CC autonomous mecanic mapping (NU strategic chat dedicat lung) per chat-current 2026-05-10 LOCK V1 clarificare #2
+
+### Branch strategy LOCK V1 (clarificare #1 chat-current 2026-05-10)
+
+- **Vault docs** (CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + ADR-uri + handovers archived + LATEST.md) → push `main` (KB sync visibility, anti-recurrence rule)
+- **Step 1 vanilla port code work** `src/` → `feature/v2-vanilla-port` separat (NU vizibil KB direct, rollback safety). Post Step 1 validation 100% Daniel Gates smoke → merge feature → main → KB sync code state actualizat.
+- **Step 2 React migration code work** → new feature branch (`feature/react-migration` ex) — same pattern.
+- **`feature/phase-3-orchestrator-final`** archived (NU merged main, audit raports preserved).
+
+### Out of scope V1 (preserved §AMENDMENT 2026-05-08)
+
+Toate punctele Out of scope V1 din §AMENDMENT 2026-05-08 preserved exact (TypeScript / Redux / Server components / Tailwind / Web Components / Storybook).
+
+### Cross-refs
+
+- §AMENDMENT 2026-05-08 React Migration LOCK V1 SUPERSEDE Vanilla — REVERTED de §AMENDMENT 2026-05-10, dar tactical scope Step 2 preserved compatible
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-10 chat ACASĂ entry Port-First-Then-React pivot
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic
+- Memory rule #18 updated permanent (mockup vs prod distincție)
+- Phase 3.6 cluster #1 attempt CC autonomous HALT (commit `4b5ba20` pe `feature/phase-3-orchestrator-final` archived raports)
+- Strategic shift single-theme Clasic master 2026-05-10 (preserved valid + compatibil port-first paradigm)

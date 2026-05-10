@@ -13,7 +13,7 @@
 // Pure function `evaluate(ctx) → WarmupResult` total + deterministic +
 // async-capable (DP-2). ZERO side effects per ADR 030 D2 thin scope.
 //
-// Output blueprint per Cluster A1 verbatim emit (lives în WarmupResult.meta):
+// Output blueprint per Cluster A1 verbatim emit (lives in WarmupResult.meta):
 //   1. warmup_state         — ACTIVE / SKIPPED / DELOAD_LIGHTER / INJURY_DISABLED
 //   2. duration_min         — 5-10 adaptive (5-7 cu Energy DOWN auto-shorten D3)
 //   3. routine_type         — 'hybrid' V1 LOCKED Q65.2 Option C
@@ -21,14 +21,14 @@
 //   5. specific_sets        — count 2-3 + target muscle groups + RO labels
 //   6. skip_available       — boolean V1 always true (§65.3 Source 1 Option A)
 //   7. cooldown_state       — { offered, durationMin, content, stretches }
-//   8. ui_label             — RO native "Încălzire ~X min"
+//   8. ui_label             — RO native "Incalzire ~X min"
 //   9. signals              — human-readable IDs
 //
 // Wire-up Faza 3 STRANGLER post engines V1 LANDED — separate task.
 // V1 implementation acest task tactical pure-function module only.
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.7
-// (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasă, 21 decisions
+// (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasa, 21 decisions
 // Cluster A-E verbatim aggregation 2-way parity Sources 1+2 + reconciled
 // override Source 1 §65.4 supersedes Source 2 §45.6 Q-Cooldown defer per
 // Daniel's later decision authority pattern).
@@ -96,7 +96,7 @@ function computeConfidence({
  * §9.7.5 Cluster E1 verbatim.
  *
  * @param {Object} [ctx]
- * @returns {string|null} 'T0' | 'T1' | 'T2' or null dacă unresolvable
+ * @returns {string|null} 'T0' | 'T1' | 'T2' or null daca unresolvable
  */
 function resolveTier(ctx) {
   const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};

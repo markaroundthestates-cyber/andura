@@ -87,7 +87,7 @@ function fixtureT0FreshUser() {
     profileTier: null,
     flags: {},
     meta: {
-      // No demographicMu → tier 'none' resolution în engine
+      // No demographicMu → tier 'none' resolution in engine
       // No observations → posterior = prior (demographic baseline)
     },
   };
@@ -135,7 +135,7 @@ function fixtureT1ActiveUser() {
       engine2Phase: 'CUT',
       engine3InferredPhase: 'CUT',
       nowMs: 1714780800000, // 2026-05-04
-      lastNutritionPromptMs: 1714694400000, // 1 zi în urmă
+      lastNutritionPromptMs: 1714694400000, // 1 zi in urma
       nutritionPromptCountThisYear: 3,
     },
   };
@@ -229,7 +229,7 @@ describe('Bayesian Nutrition Adapter — Golden-master parity legacy↔orchestra
     expect(orchResults[0].output.id).toBe('bayesianNutrition');
     expect(orchResults[0].output.tier).toBe('none'); // no obs + no demographicMu
     // Confidence = 'medium' here: hasPriorSource=true (always — demographic prior baseline)
-    // + hasPeriodizationConstraint=true (CO provided în test). Score 2 → 'medium' per
+    // + hasPeriodizationConstraint=true (CO provided in test). Score 2 → 'medium' per
     // computeConfidence engine helper. 'low' would require absent CO + no obs.
     expect(orchResults[0].output.confidence).toBe('medium');
   });
@@ -411,7 +411,7 @@ describe('Bayesian Nutrition Adapter — Pipeline integration 4-adapter chain (A
     expect(propagatedCO.immutable_snapshot).toBe(true); // anti-cascade preserved
     expect(propagatedCO.phase).toBeTruthy(); // phase preserved post chain
 
-    // Bayesian Nutrition adapter NU expose constraintObject în output (Goal
+    // Bayesian Nutrition adapter NU expose constraintObject in output (Goal
     // Adaptation pattern, NU Energy Adjustment Hook 4 re-emission pattern)
     const bayesianOutput = results[3].output;
     expect(bayesianOutput.constraintObject).toBeUndefined();
@@ -436,7 +436,7 @@ describe('Bayesian Nutrition Adapter — Pipeline integration 4-adapter chain (A
       Object.freeze({ id: 'bayesianNutrition', invoke: bayesianSpy }),
     ]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');
     expect(goalAdSpy).not.toHaveBeenCalled();

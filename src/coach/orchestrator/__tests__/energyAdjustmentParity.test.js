@@ -362,7 +362,7 @@ describe('Energy Adjustment Adapter — Pipeline integration 3-adapter chain (AD
     expect(propagatedCO.immutable_snapshot).toBe(true); // anti-cascade preserved
     expect(propagatedCO.phase).toBeTruthy(); // phase preserved post Energy Adjustment forward
 
-    // Energy Adjustment adapter exposed forwarded CO în output for orchestrator detection
+    // Energy Adjustment adapter exposed forwarded CO in output for orchestrator detection
     const eaOutput = results[2].output;
     expect(eaOutput.constraintObject).toBeTruthy();
     expect(Object.isFrozen(eaOutput.constraintObject)).toBe(true);
@@ -385,7 +385,7 @@ describe('Energy Adjustment Adapter — Pipeline integration 3-adapter chain (AD
       Object.freeze({ id: 'energyAdjustment', invoke: energySpy }),
     ]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');
     expect(goalAdSpy).not.toHaveBeenCalled();

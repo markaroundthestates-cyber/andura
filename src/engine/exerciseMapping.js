@@ -1,4 +1,4 @@
-// ══ EXERCISE MAPPING — Estimare greutate inițială din exerciții similare ══════
+// ══ EXERCISE MAPPING — Estimare greutate initiala din exercitii similare ══════
 
 export const SIMILAR_EXERCISES = {
   'Cable Curl': ['Bayesian Curl', 'Incline DB Curl'],

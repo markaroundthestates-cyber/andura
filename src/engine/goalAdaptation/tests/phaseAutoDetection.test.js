@@ -71,7 +71,7 @@ describe('tdeeMultiplierForPhase — §9.2.3 Cluster 3 TDEE thresholds verbatim'
   it('BULK conservative default → 1.08', () => {
     expect(tdeeMultiplierForPhase({ phase: PHASES.BULK })).toBeCloseTo(1.08, 5);
   });
-  it('BULK aggressive newbie + Forță combo → 1.15', () => {
+  it('BULK aggressive newbie + Forta combo → 1.15', () => {
     const r = tdeeMultiplierForPhase({
       phase: PHASES.BULK,
       isNewbie: true,
@@ -80,7 +80,7 @@ describe('tdeeMultiplierForPhase — §9.2.3 Cluster 3 TDEE thresholds verbatim'
     expect(r).toBe(TDEE_MULTIPLIERS.BULK_AGGRESSIVE);
     expect(r).toBeCloseTo(1.15, 5);
   });
-  it('BULK newbie BUT NU Forță → conservative', () => {
+  it('BULK newbie BUT NU Forta → conservative', () => {
     const r = tdeeMultiplierForPhase({
       phase: PHASES.BULK,
       isNewbie: true,
@@ -114,7 +114,7 @@ describe('applyDeloadKcalOverride — §9.2.3 verbatim "+3-5% even CUT"', () => 
 });
 
 describe('detectPhase — §9.2.3 + RECOMP §9.2.2 + ADR 024 §2.4 Q4 auto-detect', () => {
-  it('Slăbire template → CUT', () => {
+  it('Slabire template → CUT', () => {
     const r = detectPhase({
       goalId: 'sanatate',
       templateId: TEMPLATE_IDS.slabire,
@@ -123,7 +123,7 @@ describe('detectPhase — §9.2.3 + RECOMP §9.2.2 + ADR 024 §2.4 Q4 auto-detec
     });
     expect(r.phase).toBe(PHASES.CUT);
   });
-  it('Forța template → BULK', () => {
+  it('Forta template → BULK', () => {
     const r = detectPhase({
       goalId: 'forta',
       templateId: TEMPLATE_IDS.forta_dezvoltare,
@@ -141,7 +141,7 @@ describe('detectPhase — §9.2.3 + RECOMP §9.2.2 + ADR 024 §2.4 Q4 auto-detec
     expect(r.phase).toBe(PHASES.RECOMP);
     expect(r.signals).toContain('phase_recomp_sub_detected');
   });
-  it('Sănătate experienced lean trained → MAINTAIN', () => {
+  it('Sanatate experienced lean trained → MAINTAIN', () => {
     const r = detectPhase({
       goalId: 'sanatate',
       templateId: TEMPLATE_IDS.sanatate_generala,
@@ -211,7 +211,7 @@ describe('computeMacroSplit — §9.2.3 Cluster 3 verbatim bands', () => {
       kcalDeltaPct: 0.82,
     });
     expect(cut.carb_g).toBeLessThan(maintain.carb_g);
-    // Protein + fat preserved (bands NOT phase-dependent în V1)
+    // Protein + fat preserved (bands NOT phase-dependent in V1)
     expect(cut.protein_g_per_kg_lbm).toBe(maintain.protein_g_per_kg_lbm);
     expect(cut.fat_g_per_kg).toBe(maintain.fat_g_per_kg);
   });

@@ -17,7 +17,7 @@
 //   }
 //
 // Cross-refs:
-//   - HANDOVER §29.2.5 Forță & Dezvoltare V1 LOCKED
+//   - HANDOVER §29.2.5 Forta & Dezvoltare V1 LOCKED
 //   - F-NEW-2 progressionMatrix.getDeloadSkipWarning() (LOCKED wording)
 //   - SafetyBanner consumer (Task 8 wiring)
 
@@ -170,7 +170,7 @@ export function getDeloadSkipBanner(opts = {}) {
  * @returns {string}
  */
 export function getWeekLabel(opts = {}) {
-  return `Săptămâna ${getCycleWeek(opts)}/5`;
+  return `Saptamana ${getCycleWeek(opts)}/5`;
 }
 
 // ── internals ───────────────────────────────────────────────────────────

@@ -8,10 +8,10 @@
  */
 export const LOGOUT_COPY = Object.freeze({
   step1Prompt: 'Vei fi deconectat. Continui?',
-  wipeCheckboxLabel: 'Șterge și datele locale de pe acest dispozitiv',
-  step2Prompt: 'Sigur vrei să te deconectezi?',
-  step2Detail: 'Va trebui să te autentifici din nou pentru a-ți vedea datele.',
-  splash: 'Te-ai deconectat. Revino oricând.',
+  wipeCheckboxLabel: 'Sterge si datele locale de pe acest dispozitiv',
+  step2Prompt: 'Sigur vrei sa te deconectezi?',
+  step2Detail: 'Va trebui sa te autentifici din nou pentru a-ti vedea datele.',
+  splash: 'Te-ai deconectat. Revino oricand.',
 });
 
 /**
@@ -45,11 +45,11 @@ export function openLogoutStep1({ doc = (typeof document !== 'undefined' ? docum
     checkboxLabel.appendChild(checkboxText);
 
     const btnContinue = doc.createElement('button');
-    btnContinue.textContent = 'Continuă';
+    btnContinue.textContent = 'Continua';
     btnContinue.className = 'andura-modal-button-primary';
 
     const btnCancel = doc.createElement('button');
-    btnCancel.textContent = 'Renunță';
+    btnCancel.textContent = 'Renunta';
     btnCancel.className = 'andura-modal-button-secondary';
 
     btnContinue.addEventListener('click', () => {
@@ -94,11 +94,11 @@ export function openLogoutStep2({ doc = (typeof document !== 'undefined' ? docum
     detail.textContent = LOGOUT_COPY.step2Detail;
 
     const btnConfirm = doc.createElement('button');
-    btnConfirm.textContent = 'Da, deconectează-mă';
+    btnConfirm.textContent = 'Da, deconecteaza-ma';
     btnConfirm.className = 'andura-modal-button-primary';
 
     const btnCancel = doc.createElement('button');
-    btnCancel.textContent = 'Renunță';
+    btnCancel.textContent = 'Renunta';
     btnCancel.className = 'andura-modal-button-secondary';
 
     btnConfirm.addEventListener('click', () => {

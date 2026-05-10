@@ -2,7 +2,7 @@
 // Contract.
 //
 // DeloadResult extends DimensionResult per ADR 018 §2 — adds blueprint fields
-// în `meta` per §9.8.1 Cluster A1 + §9.8.3 Cluster C1 verbatim.
+// in `meta` per §9.8.1 Cluster A1 + §9.8.3 Cluster C1 verbatim.
 //
 // Pipeline §42.10 position 8th canonical FINAL prescriptive engine.
 //
@@ -81,7 +81,7 @@
  * @property {number} reactivePct                    - 60% override
  * @property {number} behavioralPct                  - 30% additive baseline
  * @property {number} behavioralModifiersAppliedPct  - Capped per SCHEMA_CONSTANTS.behavioralModifiersCapPct
- * @property {boolean} extensionDepthClamped         - True dacă Week 2 extension preserve 60% atrophy limit
+ * @property {boolean} extensionDepthClamped         - True daca Week 2 extension preserve 60% atrophy limit
  * @property {string} rationale
  */
 
@@ -90,9 +90,9 @@
  *
  * @typedef {Object} DurationDecision
  * @property {number} durationWeeks                  - 1 scheduled fix / 1-2 reactive adaptive
- * @property {boolean} extensionEvaluated            - True dacă extension Week 2 evaluated end-of-Week-1
- * @property {boolean} extensionGranted              - True dacă Flagged state still active
- * @property {boolean} hardResetLinearApplied        - True dacă reactive triggered → Week 1 NEW post-deload (B7)
+ * @property {boolean} extensionEvaluated            - True daca extension Week 2 evaluated end-of-Week-1
+ * @property {boolean} extensionGranted              - True daca Flagged state still active
+ * @property {boolean} hardResetLinearApplied        - True daca reactive triggered → Week 1 NEW post-deload (B7)
  * @property {string} rationale
  */
 
@@ -101,8 +101,8 @@
  *
  * @typedef {Object} PartialScopeDecision
  * @property {ReadonlyArray<string>|null} affectedMuscleGroups  - null = full-body sistemic / list = per-muscle MRV
- * @property {boolean} fullBodySystemic                          - true dacă cross-muscular signal
- * @property {boolean} perMuscleMrvAlone                         - true dacă single muscle MRV exceeded
+ * @property {boolean} fullBodySystemic                          - true daca cross-muscular signal
+ * @property {boolean} perMuscleMrvAlone                         - true daca single muscle MRV exceeded
  * @property {string} rationale
  */
 
@@ -137,7 +137,7 @@
  *
  * @typedef {Object} EnergyReadinessConsume
  * @property {EnergyDirection} energyDirection
- * @property {boolean} sustainedThresholdMet         - True dacă sustained 3+ consecutive (AA Detection candidate)
+ * @property {boolean} sustainedThresholdMet         - True daca sustained 3+ consecutive (AA Detection candidate)
  * @property {string} rationale
  */
 
@@ -145,8 +145,8 @@
  * Cross-engine signal — Bayesian σ + Pain-Aware Hook D4 reference-only.
  *
  * @typedef {Object} BayesianPainAwareReference
- * @property {boolean} sigmaHighFlag                 - True dacă σ variance high (informational)
- * @property {boolean} painAwareSessionsCountFlag    - True dacă Pain-Aware sessions ≥2 last 10 (informational)
+ * @property {boolean} sigmaHighFlag                 - True daca σ variance high (informational)
+ * @property {boolean} painAwareSessionsCountFlag    - True daca Pain-Aware sessions ≥2 last 10 (informational)
  * @property {string} convergenceGuardOwnerSpec      - 'ADR 009 §AMENDMENT 2026-05-05 birou after'
  * @property {string} rationale
  */
@@ -155,7 +155,7 @@
  * Cross-engine signal — Specialization suspended Hook D5.
  *
  * @typedef {Object} SpecializationSuspendSignal
- * @property {boolean} suspended                     - True dacă Specialization ACTIVE + REACTIVE deload triggered
+ * @property {boolean} suspended                     - True daca Specialization ACTIVE + REACTIVE deload triggered
  * @property {string|null} mesoProgressFreezeContext - Specialization mesocycle progress freeze info
  * @property {string} rationale
  */
@@ -164,7 +164,7 @@
  * Cross-engine signal — Warm-up DELOAD_LIGHTER Hook D6 forward (light coupling).
  *
  * @typedef {Object} WarmupLighterForwardSignal
- * @property {boolean} emit                          - True dacă Engine Deload active → emit DELOAD_LIGHTER signal
+ * @property {boolean} emit                          - True daca Engine Deload active → emit DELOAD_LIGHTER signal
  * @property {string} rationale
  */
 
@@ -185,12 +185,12 @@
  *
  * @typedef {Object} SkipPenaltySignal
  * @property {SkipPenalty} marker                    - Skip penalty marker triggered
- * @property {boolean} active                        - True dacă skip penalty applied
+ * @property {boolean} active                        - True daca skip penalty applied
  * @property {string} rationale
  */
 
 /**
- * Deload-specific blueprint emit (lives în DimensionResult.meta per §9.8.1
+ * Deload-specific blueprint emit (lives in DimensionResult.meta per §9.8.1
  * Cluster A1 + §9.8.3 Cluster C1 verbatim — 9 fields).
  *
  * @typedef {Object} DeloadBlueprint
@@ -201,7 +201,7 @@
  * @property {ReadonlyArray<string>|null} partial_scope       - null full-body / muscle group list per-muscle MRV
  * @property {NotificationTier} notification_tier             - silent T0 / banner_detailed T1+ Cluster C2
  * @property {string} wording                                 - RO native per trigger source Cluster C5
- * @property {string} ui_label                                - Synthesized RO native ("Săptămână de recuperare X săpt")
+ * @property {string} ui_label                                - Synthesized RO native ("Saptamana de recuperare X sapt")
  * @property {string[]} signals                               - Mirror DimensionResult.signals
  */
 

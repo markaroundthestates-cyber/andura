@@ -65,7 +65,7 @@ describe('storage/db — namespace resolution', () => {
 });
 
 describe('storage/db — schema definition', () => {
-  it('defines all 4 stores în v1', async () => {
+  it('defines all 4 stores in v1', async () => {
     const db = getDb();
     await db.open();
     const names = db.tables.map(t => t.name).sort();
@@ -101,7 +101,7 @@ describe('storage/db — tier1Add + verify', () => {
 });
 
 describe('storage/db — tier1Bulk', () => {
-  it('writes multiple entries în single transaction', async () => {
+  it('writes multiple entries in single transaction', async () => {
     const entries = Array.from({ length: 50 }, (_, i) => ({
       id: `cd_${i}`,
       ts: 1700000000000 + i,

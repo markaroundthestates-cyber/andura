@@ -7,12 +7,12 @@
  * Wording UI LOCKED V1 — DO NOT modify (anti-drift §56.7 verbatim).
  */
 export const FORK_DECISION_COPY = Object.freeze({
-  prompt: 'Am găsit un istoric în cloud. Ce vrei să păstrezi?',
+  prompt: 'Am gasit un istoric in cloud. Ce vrei sa pastrezi?',
   optionTelefon: '[Telefon] — Datele de pe acest dispozitiv (anonim)',
-  optionCloud: '[Cloud] — Datele din contul tău existent',
-  archiveNote: 'Sursa pe care nu o alegi va fi arhivată 7 zile (recuperabilă din Setări).',
-  toastTelefonChosen: 'Datele din [Cloud] au fost arhivate. Le poți recupera timp de 7 zile din zona de Setări.',
-  toastCloudChosen: 'Datele din [Telefon] au fost arhivate. Le poți recupera timp de 7 zile din zona de Setări.',
+  optionCloud: '[Cloud] — Datele din contul tau existent',
+  archiveNote: 'Sursa pe care nu o alegi va fi arhivata 7 zile (recuperabila din Setari).',
+  toastTelefonChosen: 'Datele din [Cloud] au fost arhivate. Le poti recupera timp de 7 zile din zona de Setari.',
+  toastCloudChosen: 'Datele din [Telefon] au fost arhivate. Le poti recupera timp de 7 zile din zona de Setari.',
 });
 
 /**

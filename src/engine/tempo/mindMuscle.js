@@ -8,11 +8,11 @@
 //    - Cross-ref: ADR 009 §AMENDMENT 2026-05-05 birou after Convergence Guard
 //      "T2 Unlock" — tier transitions cross-cutting NU Tempo specific.
 //      Reference shared utility `src/coach/orchestrator/utilities/convergenceGuard.js`
-//      via crossEngineHooks (NU duplicate logic în Tempo).
+//      via crossEngineHooks (NU duplicate logic in Tempo).
 //
 // C7 Adaptive frequency reduces post-acquisition (Q7=D + Q9=D):
 //    - Q7=D adaptive frequency: cue surface frequency reduces post-acquisition
-//    - Q9=D dual signal: explicit "știu" user toggle + implicit N=10 sessions
+//    - Q9=D dual signal: explicit "stiu" user toggle + implicit N=10 sessions
 //      consecutive cu form breakdown < threshold
 //    - Acquired = engine reduces cue surface (anti-paternalism)
 //
@@ -22,7 +22,7 @@
 //    - T2+ adaptive (persona-aware tone + ML cue selection v1.5+ deferred)
 //
 // C17 Suppression hard T0/T1 + soft auto-retire T2+ (Q17=C):
-//    - T0/T1 hard suppression = user toggle "știu" Q9 explicit → cue NU surface
+//    - T0/T1 hard suppression = user toggle "stiu" Q9 explicit → cue NU surface
 //      for movement (binary on/off)
 //    - T2+ soft auto-retire = N=10 sessions implicit (Q9 dual signal) → cue
 //      auto-retire pentru movement (user can re-activate manual via Settings UI)
@@ -97,12 +97,12 @@ export function detectImplicitAcquisition({ recentSessionsForMovement }) {
 
 /**
  * Detect explicit acquisition per Cluster C7 Q9=D verbatim — user toggle
- * "știu" Q9 explicit binary on/off.
+ * "stiu" Q9 explicit binary on/off.
  *
  * @param {Object} input
  * @param {string} [input.movementId]
  * @param {ReadonlyArray<string>|Array<string>} [input.userKnowToggleMovements]
- *   List of movementIds user has explicitly toggled "știu"
+ *   List of movementIds user has explicitly toggled "stiu"
  * @returns {boolean}
  */
 export function detectExplicitAcquisition({ movementId, userKnowToggleMovements }) {
@@ -126,7 +126,7 @@ export function resolveSuppressionMode(tier) {
 
 /**
  * Determine if cue should be suppressed for movement per Cluster C17 verbatim:
- *   T0/T1 hard: explicit user toggle "știu" → suppress (binary on/off)
+ *   T0/T1 hard: explicit user toggle "stiu" → suppress (binary on/off)
  *   T2+ soft: implicit N=10 acquisition → auto-retire (user can re-activate)
  *
  * Pure logic: caller supplies acquisition signals; this function applies

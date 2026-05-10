@@ -7,23 +7,23 @@
 
   "why": {
     "title": "❓ De ce {exercise}?",
-    "dismiss": "Am înțeles",
-    "unavailable": "Explicația temporar indisponibilă. Recomandarea rămâne validă.",
+    "dismiss": "Am inteles",
+    "unavailable": "Explicatia temporar indisponibila. Recomandarea ramane valida.",
     "categorical": {
-      "progression_up": "Creștem greutatea la {exercise} pentru că ai progresat constant în ultimele săptămâni. Noua țintă e adaptată astfel încât să menținem ritmul, fără să sacrificăm forma.",
-      "progression_down": "Reducem puțin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas în spate e necesar pentru a debloca următorul salt în forță. Rămânem pe poziții!",
-      "hold": "Păstrăm greutatea la {exercise} astăzi. Ești într-o zonă excelentă de consolidare, iar asta ne asigură că baza e solidă înainte de următoarea creștere.",
-      "recovery": "Reducem volumul la {exercise} pentru că semnele de oboseală sunt prezente. E mai inteligent să te refaci azi, ca să revii cu forțe proaspete la antrenamentul următor."
+      "progression_up": "Crestem greutatea la {exercise} pentru ca ai progresat constant in ultimele saptamani. Noua tinta e adaptata astfel incat sa mentinem ritmul, fara sa sacrificam forma.",
+      "progression_down": "Reducem putin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas in spate e necesar pentru a debloca urmatorul salt in forta. Ramanem pe pozitii!",
+      "hold": "Pastram greutatea la {exercise} astazi. Esti intr-o zona excelenta de consolidare, iar asta ne asigura ca baza e solida inainte de urmatoarea crestere.",
+      "recovery": "Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
     }
   },
 
   "modals": {
     "alternative": {
-      "title": "Înlocuiește exercițiul"
+      "title": "Inlocuieste exercitiul"
     },
     "readiness": {
-      "title": "Cum te simți azi?",
-      "subtitle": "Răspunsul afectează recomandările de azi"
+      "title": "Cum te simti azi?",
+      "subtitle": "Raspunsul afecteaza recomandarile de azi"
     },
     "skip": {
       "title": "De ce sari azi?"
@@ -32,9 +32,9 @@
 
   "common": {
     "ok": "OK",
-    "cancel": "Anulează",
-    "close": "Închide",
-    "confirm": "Confirmă",
-    "loading": "Se încarcă..."
+    "cancel": "Anuleaza",
+    "close": "Inchide",
+    "confirm": "Confirma",
+    "loading": "Se incarca..."
   }
 }

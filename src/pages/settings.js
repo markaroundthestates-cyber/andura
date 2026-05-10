@@ -1,6 +1,6 @@
 // ══ SETTINGS PAGE — Auth Phase 2 Batch 2 wiring (§56.5 + §56.7 LOCKED V1) ═══
 // Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5 +
-// §56.7 + §56.12 (Logout — wired în batch 3).
+// §56.7 + §56.12 (Logout — wired in batch 3).
 //
 // NU framework — vanilla JS DOM render per ADR 005 conventions.
 
@@ -14,7 +14,7 @@ import { wipeUserDB } from '../storage/db.js';
 import { trackEvent, EVENTS } from '../util/telemetry.js';
 
 // Splash visibility window before redirect home (UX-2). Long enough Maria 65
-// reads "Te-ai deconectat. Revino oricând." sau delete confirm message.
+// reads "Te-ai deconectat. Revino oricand." sau delete confirm message.
 const SPLASH_VISIBLE_MS = 1500;
 
 /**
@@ -76,17 +76,17 @@ export function renderSettingsPage({
   const _onSignedOut = typeof onSignedOut === 'function' ? onSignedOut : _defaultSignedOutRedirect;
 
   const heading = doc.createElement('h1');
-  heading.textContent = 'Setări';
+  heading.textContent = 'Setari';
   root.appendChild(heading);
 
   // §56.5.4 Email change section
   const sectionEmail = doc.createElement('section');
   sectionEmail.className = 'andura-settings-section andura-settings-email-change';
   const emailHeader = doc.createElement('h2');
-  emailHeader.textContent = 'Schimbă adresa de e-mail';
+  emailHeader.textContent = 'Schimba adresa de e-mail';
   sectionEmail.appendChild(emailHeader);
   const btnEmailChange = doc.createElement('button');
-  btnEmailChange.textContent = 'Schimbă adresa';
+  btnEmailChange.textContent = 'Schimba adresa';
   btnEmailChange.addEventListener('click', async () => {
     _closeAllSettingsModals(doc);
     const result = await openEmailChangeForm({ doc });
@@ -97,7 +97,7 @@ export function renderSettingsPage({
         errModal.className = 'andura-modal-overlay andura-error-modal';
         errModal.textContent = EMAIL_CHANGE_COPY.errorAlreadyUsed;
         const close = doc.createElement('button');
-        close.textContent = 'Închide';
+        close.textContent = 'Inchide';
         close.addEventListener('click', () => { try { errModal.remove(); } catch {} });
         errModal.appendChild(close);
         doc.body.appendChild(errModal);
@@ -129,7 +129,7 @@ export function renderSettingsPage({
   deleteHeader.textContent = 'Cont';
   sectionDelete.appendChild(deleteHeader);
   const btnDelete = doc.createElement('button');
-  btnDelete.textContent = 'Șterge cont definitiv';
+  btnDelete.textContent = 'Sterge cont definitiv';
   btnDelete.className = 'andura-button-danger';
   btnDelete.addEventListener('click', async () => {
     _closeAllSettingsModals(doc);
@@ -190,9 +190,9 @@ export function renderSettingsPage({
 
 /**
  * Convenience wrapper used by the SPA router (`src/ui/nav.js`).
- * Finds `#page-settings` în DOM și render-ează cu defaults.
+ * Finds `#page-settings` in DOM si render-eaza cu defaults.
  *
- * No-op silent dacă DOM/element absent (server-side render compatibility).
+ * No-op silent daca DOM/element absent (server-side render compatibility).
  */
 export function renderSettings() {
   if (typeof document === 'undefined') return;

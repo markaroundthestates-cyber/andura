@@ -28,7 +28,7 @@
  * Thin scope (D2 — pure shape mapping `engineContext → engineInput` + Result-typed
  * passthrough; NU side effects, NU bundled telemetry).
  *
- * Side effects (CDL writes, Firestore Tier 2 sync, telemetry) live în orchestrator
+ * Side effects (CDL writes, Firestore Tier 2 sync, telemetry) live in orchestrator
  * layer separate per D5.
  *
  * @typedef {object} EngineAdapter
@@ -41,7 +41,7 @@
  * in type system. Composable with sequential pipeline §42.10 short-circuit
  * fail-safe (Anti-Cascade Silent precedent ADR_CASCADE_DEFENSE_v1 §EXT-2).
  *
- * Verbosity mitigation: `isOk(result)` helper at call site rezolvă ergonomics.
+ * Verbosity mitigation: `isOk(result)` helper at call site rezolva ergonomics.
  *
  * @typedef {{ ok: true, output: any } | { ok: false, error: AdapterError }} AdapterResult
  */

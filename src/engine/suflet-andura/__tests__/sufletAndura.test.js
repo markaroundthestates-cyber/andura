@@ -11,7 +11,7 @@ import {
 describe('Suflet Andura — RIR Matrix', () => {
   it('maps RIR 0 → LIMIT', () => {
     expect(rirToIntensity(0).key).toBe('LIMIT');
-    expect(rirToIntensity(0).label).toBe('🔴 La limită');
+    expect(rirToIntensity(0).label).toBe('🔴 La limita');
   });
   it('maps RIR 1.5 → HEAVY (🟠 RIR exception per Q26.bis)', () => {
     expect(rirToIntensity(1.5).key).toBe('HEAVY');

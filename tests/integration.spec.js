@@ -28,7 +28,7 @@ const SEED_PR_RECORDS = [
 ];
 
 const SEED_BURNS = [
-  { date: '2026-04-21', day: 'Marți',    mins: 62, kcal: 320, sets: 5,  startHour: 18 },
+  { date: '2026-04-21', day: 'Marti',    mins: 62, kcal: 320, sets: 5,  startHour: 18 },
   { date: '2026-04-22', day: 'Miercuri', mins: 68, kcal: 350, sets: 3,  startHour: 18 },
 ];
 
@@ -53,7 +53,7 @@ function seedStorage(extraOverrides = {}) {
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
 test.describe('Integration — PR Wall', () => {
-  test('PR Wall afișează recorduri (nu empty state)', async ({ page }) => {
+  test('PR Wall afiseaza recorduri (nu empty state)', async ({ page }) => {
     await seedStorage()(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -64,10 +64,10 @@ test.describe('Integration — PR Wall', () => {
     await expect(prWall).not.toContainText('Niciun record personal');
     // Should contain at least one kg value
     const text = await prWall.textContent();
-    expect(text, 'PR Wall nu afișează nicio greutate').toMatch(/\d+ kg/);
+    expect(text, 'PR Wall nu afiseaza nicio greutate').toMatch(/\d+ kg/);
   });
 
-  test('PR Wall afișează cel puțin o greutate numerică', async ({ page }) => {
+  test('PR Wall afiseaza cel putin o greutate numerica', async ({ page }) => {
     await seedStorage()(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -77,12 +77,12 @@ test.describe('Integration — PR Wall', () => {
     const text = await prWall.textContent();
     // Should show at least one weight like "36 kg", "41 kg" etc.
     const kgMatches = text.match(/\d+(?:\.\d+)?\s*kg/g) || [];
-    expect(kgMatches.length, `PR Wall nu conține nicio greutate. Conținut: ${text.slice(0, 200)}`).toBeGreaterThan(0);
+    expect(kgMatches.length, `PR Wall nu contine nicio greutate. Continut: ${text.slice(0, 200)}`).toBeGreaterThan(0);
   });
 });
 
 test.describe('Integration — Readiness Card', () => {
-  test('cardul de readiness apare când nu e setat azi', async ({ page }) => {
+  test('cardul de readiness apare cand nu e setat azi', async ({ page }) => {
     // Inject data WITHOUT readiness for today → card should show emoji selector
     await seedStorage({ readiness: {} })(page);
     await page.goto('/');
@@ -92,13 +92,13 @@ test.describe('Integration — Readiness Card', () => {
     const preview = page.locator('#today-preview-list');
     const text = await preview.textContent();
     // Selector shown when readiness not set, verdict shown when already set (e.g. from Firebase sync)
-    const hasReadiness = text.includes('Cum te simți') || text.includes('simți')
+    const hasReadiness = text.includes('Cum te simti') || text.includes('simti')
       || text.includes('😴') || text.includes('🔥')
       || text.includes('Readiness') || text.includes('🧠');
-    expect(hasReadiness, `Readiness card lipsă. Conținut preview: ${text.slice(0, 200)}`).toBe(true);
+    expect(hasReadiness, `Readiness card lipsa. Continut preview: ${text.slice(0, 200)}`).toBe(true);
   });
 
-  test('selectând readiness îl salvează și ascunde selectorul', async ({ page }) => {
+  test('selectand readiness il salveaza si ascunde selectorul', async ({ page }) => {
     await seedStorage({ readiness: {} })(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -115,7 +115,7 @@ test.describe('Integration — Readiness Card', () => {
       const preview = page.locator('#today-preview-list');
       const text = await preview.textContent();
       const hasVerdict = text.includes('🧠') || text.includes('Readiness') || text.includes('Sesiune');
-      expect(hasVerdict, `Verdict card nu apare după selectarea readiness. Conținut: ${text.slice(0, 200)}`).toBe(true);
+      expect(hasVerdict, `Verdict card nu apare dupa selectarea readiness. Continut: ${text.slice(0, 200)}`).toBe(true);
     } else {
       // If no readiness button visible, skip gracefully (may be OFF day)
       test.skip();
@@ -124,7 +124,7 @@ test.describe('Integration — Readiness Card', () => {
 });
 
 test.describe('Integration — Dashboard Calendar', () => {
-  test('calendarul săptămânal are 7 zile vizibile', async ({ page }) => {
+  test('calendarul saptamanal are 7 zile vizibile', async ({ page }) => {
     await seedStorage()(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -142,10 +142,10 @@ test.describe('Integration — Dashboard Calendar', () => {
     const calText = await calendar.textContent();
     const dayLetters = ['L', 'M', 'J', 'V', 'S', 'D'];
     const foundDays = dayLetters.filter(d => calText.includes(d));
-    expect(foundDays.length, `Calendar găsit doar ${foundDays.length}/6 zile unice. Conținut: ${calText}`).toBeGreaterThanOrEqual(5);
+    expect(foundDays.length, `Calendar gasit doar ${foundDays.length}/6 zile unice. Continut: ${calText}`).toBeGreaterThanOrEqual(5);
   });
 
-  test('secțiunea de sesiune din dashboard are conținut', async ({ page }) => {
+  test('sectiunea de sesiune din dashboard are continut', async ({ page }) => {
     await seedStorage()(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -192,7 +192,7 @@ test.describe('Integration — Skip Workout Modal', () => {
   });
 });
 
-test.describe('Integration — Greutăți per echipament', () => {
+test.describe('Integration — Greutati per echipament', () => {
   test('recomandarea pentru Lat Pulldown e din seria Bailib (multiplu de 5)', async ({ page }) => {
     await seedStorage()(page);
     await page.goto('/');
@@ -230,7 +230,7 @@ test.describe('Integration — Greutăți per echipament', () => {
       // Dumbbell weights: 7,8,9,10,12.5,15,17.5,20,22.5,25,27.5,30...
       // The displayed kg should be a value from this list
       const kgMatches = text.match(/(\d+(?:\.\d+)?)\s*kg/g) || [];
-      expect(kgMatches.length, 'Nicio greutate afișată în preview').toBeGreaterThan(0);
+      expect(kgMatches.length, 'Nicio greutate afisata in preview').toBeGreaterThan(0);
     } else {
       // Not a push day — skip
       expect(true).toBe(true);

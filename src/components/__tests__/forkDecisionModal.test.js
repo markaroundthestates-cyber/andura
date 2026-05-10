@@ -7,22 +7,22 @@ import {
 
 describe('§56.7 Fork Decision UI — wording LOCKED V1 verbatim', () => {
   it('prompt verbatim', () => {
-    expect(FORK_DECISION_COPY.prompt).toBe('Am găsit un istoric în cloud. Ce vrei să păstrezi?');
+    expect(FORK_DECISION_COPY.prompt).toBe('Am gasit un istoric in cloud. Ce vrei sa pastrezi?');
   });
   it('optionTelefon verbatim', () => {
     expect(FORK_DECISION_COPY.optionTelefon).toBe('[Telefon] — Datele de pe acest dispozitiv (anonim)');
   });
   it('optionCloud verbatim', () => {
-    expect(FORK_DECISION_COPY.optionCloud).toBe('[Cloud] — Datele din contul tău existent');
+    expect(FORK_DECISION_COPY.optionCloud).toBe('[Cloud] — Datele din contul tau existent');
   });
   it('archiveNote verbatim', () => {
-    expect(FORK_DECISION_COPY.archiveNote).toBe('Sursa pe care nu o alegi va fi arhivată 7 zile (recuperabilă din Setări).');
+    expect(FORK_DECISION_COPY.archiveNote).toBe('Sursa pe care nu o alegi va fi arhivata 7 zile (recuperabila din Setari).');
   });
   it('toastTelefonChosen verbatim', () => {
-    expect(FORK_DECISION_COPY.toastTelefonChosen).toBe('Datele din [Cloud] au fost arhivate. Le poți recupera timp de 7 zile din zona de Setări.');
+    expect(FORK_DECISION_COPY.toastTelefonChosen).toBe('Datele din [Cloud] au fost arhivate. Le poti recupera timp de 7 zile din zona de Setari.');
   });
   it('toastCloudChosen verbatim', () => {
-    expect(FORK_DECISION_COPY.toastCloudChosen).toBe('Datele din [Telefon] au fost arhivate. Le poți recupera timp de 7 zile din zona de Setări.');
+    expect(FORK_DECISION_COPY.toastCloudChosen).toBe('Datele din [Telefon] au fost arhivate. Le poti recupera timp de 7 zile din zona de Setari.');
   });
   it('FORK_DECISION_COPY frozen', () => {
     expect(Object.isFrozen(FORK_DECISION_COPY)).toBe(true);

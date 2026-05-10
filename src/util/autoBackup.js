@@ -1,6 +1,6 @@
 // ══ AUTO-BACKUP DAILY — Backup automat zilnic ════════════════════════════
-// Creează un backup complet al localStorage o dată pe zi.
-// Stochează ultimele 30 de backup-uri. Permite restaurare granulară.
+// Creeaza un backup complet al localStorage o data pe zi.
+// Stocheaza ultimele 30 de backup-uri. Permite restaurare granulara.
 
 import { DB, tod } from '../db.js';
 import { demoteToTier2, demoteToTier3 } from './coachDecisionLog.js';
@@ -18,7 +18,7 @@ const USER_DATA_KEYS = [
 ];
 
 /**
- * Determina dacă trebuie creat un backup azi.
+ * Determina daca trebuie creat un backup azi.
  * @returns {boolean}
  */
 export function shouldCreateDailyBackup() {
@@ -30,7 +30,7 @@ export function shouldCreateDailyBackup() {
 }
 
 /**
- * Creează un backup zilnic și îl stochează.
+ * Creeaza un backup zilnic si il stocheaza.
  * @returns {{ key: string, date: string, size: number }}
  */
 export function createDailyBackup() {
@@ -64,7 +64,7 @@ export function createDailyBackup() {
 }
 
 /**
- * Elimină backup-urile mai vechi decât MAX_BACKUPS.
+ * Elimina backup-urile mai vechi decat MAX_BACKUPS.
  */
 export function pruneOldBackups() {
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
@@ -79,7 +79,7 @@ export function pruneOldBackups() {
 }
 
 /**
- * Returnează lista backup-urilor disponibile, cronologic DESC.
+ * Returneaza lista backup-urilor disponibile, cronologic DESC.
  * @returns {Array<{ key, date, timestamp }>}
  */
 export function listBackups() {
@@ -88,8 +88,8 @@ export function listBackups() {
 }
 
 /**
- * Restaurează dintr-un backup (după key sau numărul de zile în urmă).
- * @param {string|number} keyOrDaysAgo - key direct sau număr de zile (1=ieri, 3=3 zile, etc.)
+ * Restaureaza dintr-un backup (dupa key sau numarul de zile in urma).
+ * @param {string|number} keyOrDaysAgo - key direct sau numar de zile (1=ieri, 3=3 zile, etc.)
  * @returns {{ restored: boolean, date: string, keysRestored: number }}
  */
 export function restoreFromBackup(keyOrDaysAgo) {
@@ -133,7 +133,7 @@ function shouldDemoteCdlToday() {
 }
 
 /**
- * Inițializare: creează backup dacă nu există azi.
+ * Initializare: creeaza backup daca nu exista azi.
  */
 export function initAutoBackup() {
   if (shouldCreateDailyBackup()) {

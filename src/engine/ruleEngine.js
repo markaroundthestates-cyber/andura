@@ -1,7 +1,7 @@
-// ══ RULE ENGINE — Evaluare reguli cu priorități numerice ══════════════════
-// Fiecare regulă are o prioritate (100=critical, 0=lowest).
-// evaluate(ctx) returnează { action, trace, winner, overridden }
-// Dacă o regulă mai prioritară se activează, cele mai mici sunt înregistrate în `overridden`.
+// ══ RULE ENGINE — Evaluare reguli cu prioritati numerice ══════════════════
+// Fiecare regula are o prioritate (100=critical, 0=lowest).
+// evaluate(ctx) returneaza { action, trace, winner, overridden }
+// Daca o regula mai prioritara se activeaza, cele mai mici sunt inregistrate in `overridden`.
 import { READINESS_PR, READINESS_LOW } from './readiness.js';
 
 export const RULES = {

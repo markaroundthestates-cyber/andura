@@ -1,6 +1,6 @@
-// ══ ALTERNATIVE ENGINE — Exerciții alternative per echipament ════════════
-// Dacă un echipament e indisponibil, returnează alternative filtrate după
-// echipamentul disponibil. ALTERNATIVES mapează exercițiu → [alternative].
+// ══ ALTERNATIVE ENGINE — Exercitii alternative per echipament ════════════
+// Daca un echipament e indisponibil, returneaza alternative filtrate dupa
+// echipamentul disponibil. ALTERNATIVES mapeaza exercitiu → [alternative].
 
 export const ALTERNATIVES = {
   'Incline DB Press':       ['Incline Barbell Press', 'Landmine Press', 'Cable Incline Fly'],
@@ -23,7 +23,7 @@ export const ALTERNATIVES = {
   'Calf Raise':             ['Standing Calf Raise', 'Seated Calf Raise', 'Donkey Calf Raise'],
 };
 
-// Equipment tags: exerciții care necesită echipament specific
+// Equipment tags: exercitii care necesita echipament specific
 const REQUIRES_EQUIPMENT = {
   cable:     ['Cable Fly', 'Cable Row', 'Face Pulls', 'Bayesian Curl', 'Lat Pulldown',
                'Pushdown', 'Cable Lateral Raise', 'Cable Rear Delt', 'Cable Incline Fly',
@@ -39,7 +39,7 @@ const REQUIRES_EQUIPMENT = {
 };
 
 /**
- * Determina ce echipament este necesar pentru un exercițiu.
+ * Determina ce echipament este necesar pentru un exercitiu.
  * @param {string} exerciseName
  * @returns {string|null}
  */
@@ -51,7 +51,7 @@ function equipmentFor(exerciseName) {
 }
 
 /**
- * Returnează alternative disponibile pentru un exercițiu.
+ * Returneaza alternative disponibile pentru un exercitiu.
  * @param {string} exerciseName
  * @param {string[]} unavailableEquipment - lista echipamentelor indisponibile
  * @returns {string[]}
@@ -68,7 +68,7 @@ export function getAlternatives(exerciseName, unavailableEquipment = []) {
 }
 
 /**
- * Dacă exercițiul original necesită echipament indisponibil, returnează prima alternativă.
+ * Daca exercitiul original necesita echipament indisponibil, returneaza prima alternativa.
  * @param {string} exerciseName
  * @param {string[]} unavailableEquipment
  * @returns {{ exercise: string, isAlternative: boolean }}

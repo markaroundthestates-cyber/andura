@@ -2,12 +2,12 @@
 //
 // Pipeline §42.10 position 6th canonical: Periodization → Goal Adaptation →
 // Energy → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload.
-// Engine numbering "Engine #7" în ADR 029 file naming = legacy chat strategic
+// Engine numbering "Engine #7" in ADR 029 file naming = legacy chat strategic
 // spec session ordering ULTIMUL prescriptive engine §36.100 100% milestone,
 // NU pipeline canonical position (§9.6 clarifying header).
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.6
-// (commit 92a69fd LANDED 2026-05-06 afternoon chat-6 acasă, 28 decisions
+// (commit 92a69fd LANDED 2026-05-06 afternoon chat-6 acasa, 28 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou late sources).
 //
 // Source 3 NU disponibil: ADR 029 = STUB legacy precedent §9.3 Energy ADR 027
@@ -201,7 +201,7 @@ export const APPLICATION_MODE = Object.freeze({
 
 /**
  * Bugatti craft RO terminology label per Cluster C4 Q17=C verbatim — UI label
- * "Bloc focus [Grupă musculară]" RO native NU "Specialization Block" calque
+ * "Bloc focus [Grupa musculara]" RO native NU "Specialization Block" calque
  * Englez (anti-friction Maria/Gigica accessibility, Marius Advanced cohort RO
  * native preferred).
  *

@@ -95,7 +95,7 @@ describe('CoachDirector — CUT phase logic', () => {
   it('should suppress trend messages in AUTO + before July 20', async () => {
     const session = await coachDirector.buildSession('PUSH');
     expect(session.suppressTrendMessages).toBe(true);
-    expect(session.realityMessage).toBe('Menținem 2000 kcal');
+    expect(session.realityMessage).toBe('Mentinem 2000 kcal');
   });
 
   it('should cap reps at 10 in CUT phase', async () => {
@@ -326,7 +326,7 @@ describe('Data Cleanup', () => {
     localStorage.setItem('logs', '[]');
     resetTestData();
     expect(localStorage.getItem('auto-recommendations')).toBeNull();
-    expect(localStorage.getItem('logs')).toBe('[]'); // user data — rămâne
+    expect(localStorage.getItem('logs')).toBe('[]'); // user data — ramane
   });
 
   it('fullReset should clear everything', () => {
@@ -379,17 +379,17 @@ describe('Pattern learning credibility threshold', () => {
     localStorage.setItem('phase-override', 'AUTO');
     const today = tod();
     localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
-    // Pattern setat manual fără sesiuni reale
+    // Pattern setat manual fara sesiuni reale
     localStorage.setItem('auto-recommendations', JSON.stringify([
       { type: 'early_end', confidence: 0.75 }
     ]));
     localStorage.setItem('logs', '[]');
     const session = await coachDirector.buildSession('PUSH');
-    // Pattern din auto-recommendations e citit direct — acesta e testul că resetTestData() îl curăță
+    // Pattern din auto-recommendations e citit direct — acesta e testul ca resetTestData() il curata
     if (session.patternApplied) {
       console.warn('Pattern applied — clear cu resetTestData() pentru environment curat');
     }
-    // Ce garantăm: sesiunea e validă indiferent
+    // Ce garantam: sesiunea e valida indiferent
     expect(session.exercises).toBeDefined();
     expect(session.exercises.length).toBeGreaterThan(0);
   });

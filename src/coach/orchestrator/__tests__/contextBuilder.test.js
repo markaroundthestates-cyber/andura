@@ -33,11 +33,11 @@ describe('buildEngineContext — ADR 030 D3 LOCKED V1', () => {
     expect(buildEngineContext({ recentSessions: { 0: 's' } }).recentSessions).toEqual([]);
   });
 
-  it('passes profileTier through când present', () => {
+  it('passes profileTier through cand present', () => {
     expect(buildEngineContext({ profileTier: 'T2' }).profileTier).toBe('T2');
   });
 
-  it('passes weights / flags / meta through când present (cu constraintObject placeholder slot)', () => {
+  it('passes weights / flags / meta through cand present (cu constraintObject placeholder slot)', () => {
     const ctx = buildEngineContext({
       weights: { squat: 100 },
       flags: { foo: true },
@@ -49,7 +49,7 @@ describe('buildEngineContext — ADR 030 D3 LOCKED V1', () => {
     expect(ctx.meta).toEqual({ traceId: 'abc', constraintObject: null });
   });
 
-  it('preserves explicit meta.constraintObject când caller provides it', () => {
+  it('preserves explicit meta.constraintObject cand caller provides it', () => {
     const co = Object.freeze({ phase: 'LOAD', immutable_snapshot: true });
     const ctx = buildEngineContext({ meta: { constraintObject: co } });
     expect(ctx.meta.constraintObject).toBe(co);

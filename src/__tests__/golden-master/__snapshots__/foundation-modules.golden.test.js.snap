@@ -148,10 +148,10 @@ exports[`Golden Master — Goal Shift Calibration (§36.35 + ADR_OUTLIER EXT-2) 
 {
   "label": "goal_shift_placeholder_data",
   "output": {
-    "body": "Primele 2 sesiuni sunt de calibrare · Estimăm 50-60 kg × 8 reps, ajustăm după ce avem date",
+    "body": "Primele 2 sesiuni sunt de calibrare · Estimam 50-60 kg × 8 reps, ajustam dupa ce avem date",
     "id": "goal_shift_calibration_notice",
     "subText": "Sesiunea 1/2",
-    "title": "Recalibrăm pe noul obiectiv",
+    "title": "Recalibram pe noul obiectiv",
   },
 }
 `;
@@ -204,12 +204,12 @@ exports[`Golden Master — Pain Discomfort Button (§36.38 + EXT-1 LOCKED V1) > 
   "output": [
     {
       "key": "discomfort_general",
-      "label": "Mișcarea mă deranjează",
+      "label": "Miscarea ma deranjeaza",
       "level": "general",
     },
     {
       "key": "discomfort_specific",
-      "label": "Simt o tensiune ciudată",
+      "label": "Simt o tensiune ciudata",
       "level": "specific",
     },
     {
@@ -262,7 +262,7 @@ exports[`Golden Master — Pain Discomfort Button (§36.38 + EXT-1 LOCKED V1) > 
 }
 `;
 
-exports[`Golden Master — Smart Routing Equipment (tier-aware filtering) > Tier 1 forță (Lat Pulldown) → strict force_demand: high 1`] = `
+exports[`Golden Master — Smart Routing Equipment (tier-aware filtering) > Tier 1 forta (Lat Pulldown) → strict force_demand: high 1`] = `
 {
   "label": "smart_routing_tier1_lat_pulldown",
   "output": {

@@ -75,7 +75,7 @@ describe('Self-Correction — Goal Shift §36.35', () => {
   it('builds GOAL_SHIFT_CALIBRATION_PLACEHOLDER per §36.58 LOCKED V1', () => {
     const data = buildCalibrationPlaceholderData({ minKg: 50, maxKg: 60, reps: 8, current: 1 });
     expect(data.id).toBe('goal_shift_calibration_notice');
-    expect(data.title).toBe('Recalibrăm pe noul obiectiv');
+    expect(data.title).toBe('Recalibram pe noul obiectiv');
     expect(data.body).toContain('50-60 kg × 8 reps');
     expect(data.subText).toBe('Sesiunea 1/2');
   });

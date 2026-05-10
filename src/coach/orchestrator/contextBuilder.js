@@ -8,7 +8,7 @@
 // scattering pull logic.
 //
 // Q-OPEN-1 RESOLVED V1 2026-05-08 — Migration Runner orchestrator-level
-// pre-pipeline integration point în acest fișier (ADR 018 §4 eager-on-app-load
+// pre-pipeline integration point in acest fisier (ADR 018 §4 eager-on-app-load
 // alignment). Adapter D2 thin scope preserved. Schema version field on
 // EngineContext.meta.schemaVersion tracks running migration generation.
 //
@@ -32,12 +32,12 @@
  * The output is `Object.freeze`-d shallow to surface accidental mutation by
  * adapters during faza 3 wiring (D2 thin scope = NU side effects). `meta` is
  * also frozen (so Constraint Object propagation requires new frozen context
- * per pipeline step — see `runPipeline` în index.js).
+ * per pipeline step — see `runPipeline` in index.js).
  *
  * `meta.constraintObject` placeholder slot per ADR 026 §1.10 + ADR 030 D3:
  * Periodization (ADR 026 §9.1) emits Constraint Object via adapter result
- * `output.constraintObject`; orchestrator (`runPipeline` în index.js) freezes
- * și propagates it via new frozen EngineContext to downstream engines (Goal
+ * `output.constraintObject`; orchestrator (`runPipeline` in index.js) freezes
+ * si propagates it via new frozen EngineContext to downstream engines (Goal
  * Adaptation, Energy Adjustment, Bayesian Nutrition, Tempo, Specialization,
  * Warm-up, Deload — all 7 downstream consume Floor/Ceiling per ADR 030 §3.4
  * sequential strict V1 + §3.6 ENGINE_THREW 'hard' severity halt protect).
@@ -66,7 +66,7 @@ export function buildEngineContext(userState) {
 
 /**
  * Extend a frozen EngineContext with additional meta fields, returning a new
- * frozen context. Used by `runPipeline` în index.js to propagate Constraint
+ * frozen context. Used by `runPipeline` in index.js to propagate Constraint
  * Object emitted by Periodization (ADR 026 §9.1) to downstream engines per
  * ADR 030 D3 + §3.4 sequential strict V1.
  *

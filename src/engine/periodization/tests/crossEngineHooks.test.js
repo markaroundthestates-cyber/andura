@@ -52,7 +52,7 @@ describe('enforceHardCapIntensity — §9.6 Layer C 90% 1RM cap', () => {
 });
 
 describe('intensityCorridorForGoal — goal-derived corridors', () => {
-  it('Forța → highest band (0.78, 0.90)', () => {
+  it('Forta → highest band (0.78, 0.90)', () => {
     expect(intensityCorridorForGoal('forta')).toEqual({ floor: 0.78, ceiling: 0.90 });
   });
   it('Hipertrofie → standard hypertrophy band (0.70, 0.85)', () => {

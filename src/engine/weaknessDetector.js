@@ -1,12 +1,12 @@
 // ══ WEAKNESS DETECTOR — Brzycki 1RM per muscle group ════════════════════
-// Calculează 1RM estimat (formula Brzycki) pentru fiecare grupă musculară
-// și identifică grupele cu 1RM relativ cel mai scăzut față de restul.
+// Calculeaza 1RM estimat (formula Brzycki) pentru fiecare grupa musculara
+// si identifica grupele cu 1RM relativ cel mai scazut fata de restul.
 
 import { EXERCISE_MUSCLES } from './muscleMap.js';
 
 /**
  * Brzycki formula: 1RM = weight × (36 / (37 - reps))
- * Valid pentru reps 1-10. Returneaza null dacă reps > 12.
+ * Valid pentru reps 1-10. Returneaza null daca reps > 12.
  */
 export function brzycki1RM(weight, reps) {
   if (!weight || !reps || reps < 1 || reps > 12) return null;
@@ -26,8 +26,8 @@ function _headToGroup(head) {
 }
 
 /**
- * Găsește ultima intrare per exercițiu din logs.
- * Suportă câmpurile ex/exercise, w/weight, reps.
+ * Gaseste ultima intrare per exercitiu din logs.
+ * Suporta campurile ex/exercise, w/weight, reps.
  */
 function getLastLogPerExercise(logs) {
   const byEx = new Map();
@@ -40,7 +40,7 @@ function getLastLogPerExercise(logs) {
 }
 
 /**
- * Rezolvă grupa musculară pentru un exercițiu.
+ * Rezolva grupa musculara pentru un exercitiu.
  * MUSCLE_MAP: { exerciseName: 'chest' | 'back' | 'shoulders' | 'biceps' | 'triceps' | 'legs' | 'core' }
  */
 function resolveGroup(exerciseName) {
@@ -64,7 +64,7 @@ function resolveGroup(exerciseName) {
 }
 
 /**
- * Calculează 1RM mediu per grupă musculară.
+ * Calculeaza 1RM mediu per grupa musculara.
  * @param {Array} logs
  * @returns {Map<string, number>} group → avg1RM
  */
@@ -91,7 +91,7 @@ export function compute1RMByGroup(logs) {
 }
 
 /**
- * Identifică grupele slabe: cele cu 1RM relativ < 80% din media celorlalte.
+ * Identifica grupele slabe: cele cu 1RM relativ < 80% din media celorlalte.
  * @param {Array} logs
  * @returns {{ weakGroups: string[], byGroup: Object, ratio: Object }}
  */

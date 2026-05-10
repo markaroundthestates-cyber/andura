@@ -2,19 +2,19 @@
 //
 // C2 Cross-engine #2 (Goal Adaptation) — Engine #2 phase output (CUT/BULK/
 //    MAINTAIN/RECOMP) = Engine #3 prior conditioning input. Disagreement flag
-//    CDL când Engine #2 phase ≠ Engine #3 inferred phase (Invariant 5 Medical
+//    CDL cand Engine #2 phase ≠ Engine #3 inferred phase (Invariant 5 Medical
 //    Safety protect — disagreement = Tier 1 silent flag, NU autonomous override)
 //
 // C3 Cross-engine #5 (Energy Adjustment) — Engine #5 readiness output =
 //    pre-processing modulator Engine #3 variance σ. NU linear discount —
-//    readiness scăzut crește σ observații recent semnalând zgomot inflamație/
+//    readiness scazut creste σ observatii recent semnaland zgomot inflamatie/
 //    stres/cortisol. Neutral fallback T0 cold start (sigma_modifier = 1.0).
 //
 // E2 Edge cases Passive Mode tripwire (pregnant/post-bariatric/kidney) +
 //    Special priors (>75 + ED history) + disclaimer onboarding.
 //
 // **Convergence Guard reference §9.4.6 — ADR 009 §AMENDMENT 2026-05-05 birou
-//   after canonical SSOT. NU duplicate logic în Bayesian module — reference
+//   after canonical SSOT. NU duplicate logic in Bayesian module — reference
 //   ONLY (rule = behavioral validation cross-cutting all tier transitions
 //   T0→T1→T2, NU Engine #3 specific).**
 //
@@ -29,7 +29,7 @@ import {
  * Hook Engine #2 Goal Adaptation Disagreement flag CDL per Cluster C2 verbatim.
  *
  * Engine #2 phase output = Engine #3 prior conditioning input. Disagreement
- * flag CDL când Engine #2 phase ≠ Engine #3 inferred phase. Disagreement =
+ * flag CDL cand Engine #2 phase ≠ Engine #3 inferred phase. Disagreement =
  * Tier 1 silent flag, NU autonomous override (Invariant 5 Medical Safety).
  *
  * @param {Object} input
@@ -64,8 +64,8 @@ export function emitGoalAdaptationDisagreement({ engine2Phase, engine3InferredPh
 /**
  * Hook Engine #5 Energy Adjustment σ variance modifier per Cluster C3 verbatim.
  *
- * NU linear discount — readiness scăzut (DOWN) crește σ observații recent
- * (zgomot inflamație/stres/cortisol). Neutral fallback T0 cold start
+ * NU linear discount — readiness scazut (DOWN) creste σ observatii recent
+ * (zgomot inflamatie/stres/cortisol). Neutral fallback T0 cold start
  * (sigma_modifier = 1.0 default until 14 zile observations).
  *
  * V1 conservative pick: readiness DOWN → σ × 1.30 amplify variance dampening.
@@ -142,7 +142,7 @@ export function emitPassiveModeSignal({ specialPriorsResult }) {
  * Convergence Guard reference per §9.4.6 verbatim — ADR 009 §AMENDMENT 2026-05-05
  * birou after canonical SSOT.
  *
- * **NU duplicate rule logic în Bayesian module** — reference ONLY (rule =
+ * **NU duplicate rule logic in Bayesian module** — reference ONLY (rule =
  * behavioral validation cross-cutting all tier transitions T0→T1→T2, NU
  * Engine #3 specific).
  *

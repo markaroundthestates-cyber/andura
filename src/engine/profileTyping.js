@@ -448,7 +448,7 @@ export function inferBehavioralProfile(cdlEntries, hyperfocusData) {
   const restCount = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
   if (restCount > 0) dataPoints.push(`Rest days: ${restCount}`);
   if ((hyperfocusData?.daysWithHyperfocus ?? 0) >= 4) {
-    dataPoints.push(`Hyperfocus: ${hyperfocusData.daysWithHyperfocus} zile/săpt`);
+    dataPoints.push(`Hyperfocus: ${hyperfocusData.daysWithHyperfocus} zile/sapt`);
   }
 
   return { primary, confidence, signature, dataPoints, sessionCount };
@@ -557,7 +557,7 @@ export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previou
     reconciliation: isMatch ? 'match' : 'mismatch',
     riskFlags,
     reasoning: isMatch
-      ? `Pattern observat se aliniază cu ${selfReport.primary} (self-report confirmat). Confidence: ${behavioral.confidence}.`
+      ? `Pattern observat se aliniaza cu ${selfReport.primary} (self-report confirmat). Confidence: ${behavioral.confidence}.`
       : `Pattern observat te apropie de ${behavioral.primary} (confidence: ${behavioral.confidence}). Self-report: ${selfReport.primary}. Mismatch — reconciliation prompt recommended.`,
   };
 }

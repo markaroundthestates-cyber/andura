@@ -1,4 +1,4 @@
-// ══ PR ENGINE — Forță Foundation 1 (§29.2.5 LOCKED) ═════════════════════
+// ══ PR ENGINE — Forta Foundation 1 (§29.2.5 LOCKED) ═════════════════════
 // Detect personal records at set-logging time. Three PR types:
 //   - 'weight'  new max weight at any reps for this exercise
 //   - 'reps'    matched-or-heavier weight, more reps than any prior set
@@ -11,7 +11,7 @@
 //     §29.5.2 dynamic share cards consumer
 //
 // Cross-refs:
-//   - HANDOVER §29.2.5 Forță & Dezvoltare V1 LOCKED
+//   - HANDOVER §29.2.5 Forta & Dezvoltare V1 LOCKED
 //   - src/pages/coach/pr.js (existing aggregate snapshot — different concern)
 //   - F-NEW-2 progression matrix (does NOT block PR detection — both axes
 //     coexist per ADR 009)

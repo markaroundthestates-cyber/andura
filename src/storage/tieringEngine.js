@@ -5,7 +5,7 @@
 //
 // Zero info loss principle absolut:
 //   1. Write Tier 1 first (Dexie put + verify).
-//   2. Only delete from Tier 0 dacă Tier 1 confirm.
+//   2. Only delete from Tier 0 daca Tier 1 confirm.
 //   3. Failure mode: keep Tier 0, retry next tick (3-attempt backoff), Sentry
 //      alert pe persistent fail.
 //
@@ -13,15 +13,15 @@
 //
 //  1. Threshold rotation: localStorage > 4MB OR entry.ts age > 30d.
 //  2. Alert "Storage Full" UX: Sprint 4.1 deferred — Sentry warn only,
-//     NU UI prompt încă (wording user-facing pending Daniel review).
+//     NU UI prompt inca (wording user-facing pending Daniel review).
 //  3. Failure mode IDB write fail: 3-attempt exponential backoff (1s, 2s, 4s),
 //     Sentry critical pe persistent fail. Retain Tier 0 entry intact.
-//  4. Multi-tenant namespacing: handled în `db.js` `getNamespace()`. Pre-Auth
+//  4. Multi-tenant namespacing: handled in `db.js` `getNamespace()`. Pre-Auth
 //     uses `firebase.userPath`, post-Auth migrates to `auth.uid`. Out of scope.
 //  5. Periodic check interval: hourly default (`ROTATION_CHECK_INTERVAL_MS =
 //     3600000`). Configurable via `initAutoBackup({ intervalMs })`.
 //  6. Profile typing v2 footprint: telemetry via `getStorageStats()` —
-//     Sprint 4.1 measure post-deploy, flag dacă Tier 0 > 80% budget.
+//     Sprint 4.1 measure post-deploy, flag daca Tier 0 > 80% budget.
 
 import { DB } from '../db.js';
 import { captureException as sentryCaptureException } from '../util/sentry.js';
@@ -99,11 +99,11 @@ export function estimateTier0Bytes() {
 }
 
 /**
- * Classify entries from a Tier 0 array by age. Hot (recent) stay în Tier 0;
+ * Classify entries from a Tier 0 array by age. Hot (recent) stay in Tier 0;
  * cold (>= AGE limit) move to Tier 1.
  *
  * Entries WITHOUT a recognizable timestamp field (`ts` or `date` parsable as
- * Date) are treated as hot — defensive, NU le mut accidental fără context.
+ * Date) are treated as hot — defensive, NU le mut accidental fara context.
  *
  * @param {Array<{ ts?: number, date?: string }>} entries
  * @param {number} [now=Date.now()]
@@ -127,7 +127,7 @@ export function classifyByAge(entries, now = Date.now(), ageLimitMs = TIER0_AGE_
 /**
  * Resolve canonical timestamp (ms epoch) from an entry. Tries `entry.ts`
  * (numeric ms epoch — CDL convention) first, then `entry.date` (YYYY-MM-DD
- * via Date parser). Returns null dacă neither resolves.
+ * via Date parser). Returns null daca neither resolves.
  *
  * @param {*} entry
  * @returns {number | null}
@@ -317,7 +317,7 @@ export async function initAutoBackup(opts = {}) {
 }
 
 /**
- * Stop the periodic rotation timer. Used în test cleanup or on Auth migration
+ * Stop the periodic rotation timer. Used in test cleanup or on Auth migration
  * (when namespace changes and DB needs swap).
  */
 export function stopAutoBackup() {

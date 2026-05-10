@@ -27,13 +27,13 @@ describe('t() happy path', () => {
   it('returns RO string for known key (default locale)', () => {
     setLocale('ro');
     expect(t('common.ok')).toBe('OK');
-    expect(t('common.cancel')).toBe('Anulează');
+    expect(t('common.cancel')).toBe('Anuleaza');
   });
 
   it('returns nested key value via dotted path', () => {
     setLocale('ro');
     const result = t('why.categorical.hold');
-    expect(result).toContain('Păstrăm greutatea');
+    expect(result).toContain('Pastram greutatea');
     expect(result).toContain('{exercise}');
   });
 
@@ -54,7 +54,7 @@ describe('t() vars interpolation', () => {
     expect(result).not.toContain('{exercise}');
   });
 
-  it('preserves placeholder dacă var lipsește', () => {
+  it('preserves placeholder daca var lipseste', () => {
     setLocale('ro');
     const result = t('why.categorical.hold', {}); // no exercise var
     expect(result).toContain('{exercise}');
@@ -67,7 +67,7 @@ describe('t() vars interpolation', () => {
     expect(result).toContain('Squat');
   });
 
-  it('ignores extra vars not în template', () => {
+  it('ignores extra vars not in template', () => {
     setLocale('ro');
     const result = t('common.ok', { extra: 'ignored' });
     expect(result).toBe('OK');
@@ -77,7 +77,7 @@ describe('t() vars interpolation', () => {
 // ── t() fallback chain ─────────────────────────────────────────────────────
 
 describe('t() fallback chain', () => {
-  it('returns key string when key missing în both bundles', () => {
+  it('returns key string when key missing in both bundles', () => {
     setLocale('ro');
     expect(t('nonexistent.key.path')).toBe('nonexistent.key.path');
   });

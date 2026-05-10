@@ -1,4 +1,4 @@
-// ══ SESSION BUILDER — Construiește lista de exerciții pentru o sesiune ═══
+// ══ SESSION BUILDER — Construieste lista de exercitii pentru o sesiune ═══
 // Pure function: no side effects, no class, no imports from app state.
 
 import { contextSelectionEnabled } from './calibration.js';

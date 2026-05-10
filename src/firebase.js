@@ -13,8 +13,8 @@ export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.
 // in Anonymous mode (was BUG 2 root cause — see §56.1.3 below).
 export const LEGACY_USER_PATH = 'users/daniel';
 
-// Back-compat alias preserved pentru consumers care încă referă explicit
-// the legacy literal pentru migration source. Will be removed când
+// Back-compat alias preserved pentru consumers care inca refera explicit
+// the legacy literal pentru migration source. Will be removed cand
 // Faza 3 Anonymous sunset complete (post-Beta v1.5 per §56.9.1).
 export const USER_PATH = LEGACY_USER_PATH;
 
@@ -25,13 +25,13 @@ export const USER_PATH = LEGACY_USER_PATH;
  *   - Firebase Auth uid present → `users/<uid>`
  *   - Anonymous mode (`getAuthState() === null`) → **null**
  *
- * Anonymous mode = app rulează exclusiv local IndexedDB (per §56.1.2
+ * Anonymous mode = app ruleaza exclusiv local IndexedDB (per §56.1.2
  * Faza 1-2 fallback local-first preserved). Toate apelurile Firebase
- * API blocate când path null → bucla 401 eliminată mecanic per
+ * API blocate cand path null → bucla 401 eliminata mecanic per
  * §36.80 BUG 2 RESOLUTION.
  *
  * Consumers (`fbGet`/`fbSet`/`fbRemove`/`syncToFirebase`/`syncFromFirebase`/
- * `clearFirebaseKeys`) deja short-circuit clean când userPath null —
+ * `clearFirebaseKeys`) deja short-circuit clean cand userPath null —
  * no-op silent, NU error toast (per §AMENDMENT 2026-05-04.1 graceful).
  *
  * @returns {string|null}

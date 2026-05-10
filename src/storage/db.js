@@ -12,7 +12,7 @@
 // Resolution order:
 //   1. Firebase Auth uid present (`getAuthState()?.uid`) → `andura_<uid>`
 //   2. Anonymous mode → `andura_anonymous_<deviceId>` (deviceId from
-//      localStorage 'device-id', generated lazy în firebase.js)
+//      localStorage 'device-id', generated lazy in firebase.js)
 //   3. Legacy fallback (test fixtures + Daniel pre-Beta migration) → derives
 //      from `getUserConfig()?.firebase?.userPath` sanitized.
 //
@@ -24,7 +24,7 @@
 //   'salafull' → 'andura' per brand official + ADR_MULTI_TENANT_AUTH_v1
 //   §56.1.4 spec verbatim. Daniel pre-Beta personal IndexedDB
 //   `salafull_users_daniel` becomes orphan post-rename — harmless given
-//   data also exists în localStorage Tier 0 + Firebase RTDB.
+//   data also exists in localStorage Tier 0 + Firebase RTDB.
 //
 // ── Schema (v1, initial) ────────────────────────────────────────────────────
 //
@@ -60,7 +60,7 @@ export const SCHEMA_VERSION = 1;
 /** DB name prefix — final form: `<PREFIX>_<namespace>` (per §56.1.4 LOCKED V1). */
 export const DB_NAME_PREFIX = 'andura';
 
-/** Stores defined în v1. Keys in this object map directly to Dexie store names. */
+/** Stores defined in v1. Keys in this object map directly to Dexie store names. */
 export const STORES = Object.freeze({
   CDL_TIER1: 'cdl_tier1',
   LOGS_TIER1: 'logs_tier1',
@@ -94,7 +94,7 @@ function _sanitizeNamespace(raw) {
  *
  * Resolution order:
  *   1. Firebase Auth uid present → `<uid>` (sanitized)
- *   2. Anonymous mode (deviceId în localStorage 'device-id') → `anonymous_<deviceId>`
+ *   2. Anonymous mode (deviceId in localStorage 'device-id') → `anonymous_<deviceId>`
  *   3. Legacy fallback (`getUserConfig()?.firebase?.userPath`) → sanitized.
  *
  * Final DB name = `${DB_NAME_PREFIX}_${getNamespace()}` = `andura_<uid>` post-Auth
@@ -206,8 +206,8 @@ export async function tier1Add(storeName, entry) {
 }
 
 /**
- * Bulk write entries în a single transaction. Faster than per-entry `put` for
- * migration runs. Verify by counting added entries în same transaction.
+ * Bulk write entries in a single transaction. Faster than per-entry `put` for
+ * migration runs. Verify by counting added entries in same transaction.
  *
  * @param {string} storeName
  * @param {Array<object>} entries
@@ -285,8 +285,8 @@ export async function wipeUserDB(uid) {
 /**
  * Telemetry snapshot — entry counts per store + estimated total size.
  *
- * NU include localStorage Tier 0 (caller pe lângă combine cu `localStorage`
- * length pentru full picture). Returns 0s dacă DB nu yet initialized.
+ * NU include localStorage Tier 0 (caller pe langa combine cu `localStorage`
+ * length pentru full picture). Returns 0s daca DB nu yet initialized.
  *
  * @returns {Promise<{ counts: Record<string, number>, namespace: string }>}
  */

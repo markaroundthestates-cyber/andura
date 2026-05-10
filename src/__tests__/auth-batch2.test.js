@@ -10,7 +10,7 @@ import {
 
 describe('§56.5.3 USER_DISABLED — wording + detector', () => {
   it('USER_DISABLED_COPY verbatim spec', () => {
-    expect(USER_DISABLED_COPY).toBe('Acest cont este dezactivat și programat pentru ștergere definitivă. Dacă te-ai răzgândit și vrei să îl reactivezi, trimite un e-mail la suport@andura.app în termenul de 30 de zile de la solicitare.');
+    expect(USER_DISABLED_COPY).toBe('Acest cont este dezactivat si programat pentru stergere definitiva. Daca te-ai razgandit si vrei sa il reactivezi, trimite un e-mail la suport@andura.app in termenul de 30 de zile de la solicitare.');
   });
 
   it('isUserDisabledError matches "USER_DISABLED" exact', () => {

@@ -28,23 +28,23 @@ describe('selectVerdict — priority ladder', () => {
       .toBe('recovery');
   });
 
-  it('progression_up când rec.kg > lastWeight', () => {
+  it('progression_up cand rec.kg > lastWeight', () => {
     expect(selectVerdict({ kg: 85, lastWeight: 80 }, makeCtx())).toBe('progression_up');
   });
 
-  it('progression_down când rec.kg < lastWeight', () => {
+  it('progression_down cand rec.kg < lastWeight', () => {
     expect(selectVerdict({ kg: 75, lastWeight: 80 }, makeCtx())).toBe('progression_down');
   });
 
-  it('hold când rec.kg === lastWeight', () => {
+  it('hold cand rec.kg === lastWeight', () => {
     expect(selectVerdict({ kg: 80, lastWeight: 80 }, makeCtx())).toBe('hold');
   });
 
-  it('progression_up via status INCREASE când no lastWeight', () => {
+  it('progression_up via status INCREASE cand no lastWeight', () => {
     expect(selectVerdict({ status: 'INCREASE' }, makeCtx())).toBe('progression_up');
   });
 
-  it('progression_down via status SCALE_BACK când no lastWeight', () => {
+  it('progression_down via status SCALE_BACK cand no lastWeight', () => {
     expect(selectVerdict({ status: 'SCALE_BACK' }, makeCtx())).toBe('progression_down');
   });
 
@@ -52,7 +52,7 @@ describe('selectVerdict — priority ladder', () => {
     expect(selectVerdict({ isInitial: true }, makeCtx())).toBe('hold');
   });
 
-  it('hold default fallback când nimic nu match', () => {
+  it('hold default fallback cand nimic nu match', () => {
     expect(selectVerdict({}, makeCtx())).toBe('hold');
   });
 });
@@ -74,25 +74,25 @@ describe('explainRecommendation', () => {
     expect(result.summary).toContain('Squat');
   });
 
-  it('progression_up summary uses lock-uit wording (creștem greutatea)', () => {
+  it('progression_up summary uses lock-uit wording (crestem greutatea)', () => {
     const ex = { name: 'Bench', recommendation: { kg: 85, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
     expect(result.verdict).toBe('progression_up');
-    expect(result.summary).toContain('Creștem greutatea');
+    expect(result.summary).toContain('Crestem greutatea');
   });
 
-  it('progression_down summary uses lock-uit wording (Reducem puțin greutatea)', () => {
+  it('progression_down summary uses lock-uit wording (Reducem putin greutatea)', () => {
     const ex = { name: 'Bench', recommendation: { kg: 75, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
     expect(result.verdict).toBe('progression_down');
-    expect(result.summary).toContain('Reducem puțin');
+    expect(result.summary).toContain('Reducem putin');
   });
 
-  it('hold summary uses lock-uit wording (Păstrăm greutatea)', () => {
+  it('hold summary uses lock-uit wording (Pastram greutatea)', () => {
     const ex = { name: 'Bench', recommendation: { kg: 80, lastWeight: 80 } };
     const result = explainRecommendation(ex, makeCtx());
     expect(result.verdict).toBe('hold');
-    expect(result.summary).toContain('Păstrăm greutatea');
+    expect(result.summary).toContain('Pastram greutatea');
   });
 
   it('recovery summary uses lock-uit wording (Reducem volumul)', () => {

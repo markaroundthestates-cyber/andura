@@ -2,7 +2,7 @@
 // verbatim.
 //
 // B1 Hibrid pre-set intro + reactive user-initiated cue (Q1=C):
-//    - Pre-set intro = engine surfaces tempo notation + form cue ÎNAINTE of set
+//    - Pre-set intro = engine surfaces tempo notation + form cue INAINTE of set
 //    - Reactive user-initiated cue = user taps 💡 indicator mid-rest pentru
 //      elaboration (NU intra-set distraction Q8=D)
 //    - Hibrid Q1=C: combine both — engine emite pre-set; user opt-in reactive
@@ -116,8 +116,8 @@ export function composePreSetIntro({ notation, cueText, persona }) {
   // Reactive expanded = full elaboration on user tap-to-expand 💡 (Q6=D).
   // V1 minimal: same cue + rationale hint. V1.5+ candidate ML cue selection.
   const reactiveExpanded = isMaria
-    ? `${safeCue} (coboară lent pentru control articular)`
-    : `${safeCue} — tempo ${safeNotation} pentru hipertrofie controlată`;
+    ? `${safeCue} (coboara lent pentru control articular)`
+    : `${safeCue} — tempo ${safeNotation} pentru hipertrofie controlata`;
 
   return { preSetIntro, reactiveExpanded };
 }
@@ -125,7 +125,7 @@ export function composePreSetIntro({ notation, cueText, persona }) {
 /**
  * Resolve cue delivery timing per Cluster B8 Q8=D verbatim.
  *
- * V1 default: PRE_SET (engine surfaces ÎNAINTE of set, intro). POST_SET emit
+ * V1 default: PRE_SET (engine surfaces INAINTE of set, intro). POST_SET emit
  * pentru RIR feedback / form check post-set. MID_REST = user-initiated tap-to-
  * expand reactive elaboration (consistent B1 Hibrid Q1=C).
  *
@@ -133,8 +133,8 @@ export function composePreSetIntro({ notation, cueText, persona }) {
  * execution (anti-distraction).
  *
  * @param {Object} input
- * @param {boolean} [input.userInitiatedTapToExpand]   - True dacă user tapped 💡 mid-rest
- * @param {boolean} [input.postSetFeedbackContext]     - True dacă context = post-set RIR feedback
+ * @param {boolean} [input.userInitiatedTapToExpand]   - True daca user tapped 💡 mid-rest
+ * @param {boolean} [input.postSetFeedbackContext]     - True daca context = post-set RIR feedback
  * @returns {string} CUE_DELIVERY_TIMING value (NEVER intra-set)
  */
 export function resolveCueDeliveryTiming({ userInitiatedTapToExpand, postSetFeedbackContext }) {

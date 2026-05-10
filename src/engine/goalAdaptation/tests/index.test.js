@@ -82,7 +82,7 @@ describe('evaluate — integration end-to-end §9.2 ADR 026', () => {
     expect(JSON.stringify(r1)).toEqual(JSON.stringify(r2));
   });
 
-  it('Forța goal → BULK phase + forta_dezvoltare template', async () => {
+  it('Forta goal → BULK phase + forta_dezvoltare template', async () => {
     const result = await evaluate(buildCtx({
       persona: 'marius', goal: 'forta', age: 25, bfPct: 0.12,
       trainingWeeks: 100, kg: 80, tdeeKcal: 2400,
@@ -91,7 +91,7 @@ describe('evaluate — integration end-to-end §9.2 ADR 026', () => {
     expect(result.trace.templateId).toBe(TEMPLATE_IDS.forta_dezvoltare);
   });
 
-  it('Sănătate goal → MAINTAIN phase + sanatate_generala template', async () => {
+  it('Sanatate goal → MAINTAIN phase + sanatate_generala template', async () => {
     const result = await evaluate(buildCtx({
       persona: 'gigica', goal: 'sanatate', age: 35, bfPct: 0.18,
       trainingWeeks: 100, kg: 75, tdeeKcal: 2200,
@@ -109,7 +109,7 @@ describe('evaluate — integration end-to-end §9.2 ADR 026', () => {
     expect(result.signals).toContain('phase_recomp_sub_detected');
   });
 
-  it('Forța + age 65 + BF% high + injury → Tier 3 push-back applied', async () => {
+  it('Forta + age 65 + BF% high + injury → Tier 3 push-back applied', async () => {
     const result = await evaluate(buildCtx({
       goal: 'forta', age: 65, bfPct: 0.30, sex: 'male',
       kg: 90, trainingWeeks: 100, tdeeKcal: 2200,

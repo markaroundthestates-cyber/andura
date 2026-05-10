@@ -3,7 +3,7 @@
 exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > RIR_MATRIX 4-tier labels 1`] = `
 {
   "label": "rir_matrix_LIMIT",
-  "output": "🔴 La limită",
+  "output": "🔴 La limita",
 }
 `;
 
@@ -66,28 +66,28 @@ exports[`Golden Master — Suflet Andura RIR Matrix (§36.58 + ADR EXT) > rirToI
 exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 1`] = `
 {
   "label": "calib_banner_COLD_START",
-  "output": "Învățăm cum lucrezi · Recomandările se personalizează după primele sesiuni",
+  "output": "Invatam cum lucrezi · Recomandarile se personalizeaza dupa primele sesiuni",
 }
 `;
 
 exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 2`] = `
 {
   "label": "calib_banner_INITIAL",
-  "output": "Învățăm cum lucrezi · Datele se adună cu fiecare sesiune",
+  "output": "Invatam cum lucrezi · Datele se aduna cu fiecare sesiune",
 }
 `;
 
 exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 3`] = `
 {
   "label": "calib_banner_DEVELOPING",
-  "output": "Tiparele prind contur · Recomandările folosesc datele tale",
+  "output": "Tiparele prind contur · Recomandarile folosesc datele tale",
 }
 `;
 
 exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > COLD_START / INITIAL / DEVELOPING / PERSONALIZING bannerText 4`] = `
 {
   "label": "calib_banner_PERSONALIZING",
-  "output": "Recomandările sunt acum în mare parte personalizate · Continuăm să învățăm",
+  "output": "Recomandarile sunt acum in mare parte personalizate · Continuam sa invatam",
 }
 `;
 
@@ -105,12 +105,12 @@ exports[`Golden Master — calibration.js banner texts (§36.58 LOCKED V1) > PER
 }
 `;
 
-exports[`Golden Master — dp.js getInitialRecommendation verdicte > EXACT_MATCH → "🟡 Continuăm" 1`] = `
+exports[`Golden Master — dp.js getInitialRecommendation verdicte > EXACT_MATCH → "🟡 Continuam" 1`] = `
 {
   "label": "dp_initial_exact_match",
   "output": {
     "rationale": "Pornim de la ultima sesiune: 60 kg",
-    "statusLabel": "🟡 Continuăm",
+    "statusLabel": "🟡 Continuam",
   },
 }
 `;
@@ -119,7 +119,7 @@ exports[`Golden Master — dp.js getInitialRecommendation verdicte > FALLBACK (n
 {
   "label": "dp_initial_fallback",
   "output": {
-    "rationale": "Greutate de pornire · Recalibrăm după primul set",
+    "rationale": "Greutate de pornire · Recalibram dupa primul set",
     "statusLabel": "🟡 Pornim conservator",
   },
 }
@@ -128,14 +128,14 @@ exports[`Golden Master — dp.js getInitialRecommendation verdicte > FALLBACK (n
 exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 1`] = `
 {
   "label": "dp_intensityLabel_rir_0",
-  "output": "🔴 La limită",
+  "output": "🔴 La limita",
 }
 `;
 
 exports[`Golden Master — dp.js intensity labels (§36.58 LOCKED V1) > intensity labels — 4 RIR-tier wording 2`] = `
 {
   "label": "dp_intensityLabel_rir_1",
-  "output": "🔴 La limită",
+  "output": "🔴 La limita",
 }
 `;
 
@@ -214,7 +214,7 @@ exports[`Golden Master — fatigue.js verdicte (§36.58 LOCKED V1) > insufficien
 {
   "label": "fatigue_insufficient",
   "output": {
-    "detail": "Completează 2+ sesiuni pentru fatigue score",
+    "detail": "Completeaza 2+ sesiuni pentru fatigue score",
     "label": "DATE INSUFICIENTE",
   },
 }
@@ -223,35 +223,35 @@ exports[`Golden Master — fatigue.js verdicte (§36.58 LOCKED V1) > insufficien
 exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 1`] = `
 {
   "label": "sys_timeline_cut",
-  "output": "Definire până la vară",
+  "output": "Definire pana la vara",
 }
 `;
 
 exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 2`] = `
 {
   "label": "sys_timeline_summer",
-  "output": "Vară peak (menținere)",
+  "output": "Vara peak (mentinere)",
 }
 `;
 
 exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 3`] = `
 {
   "label": "sys_timeline_bulk",
-  "output": "Creștere (toamnă-iarnă)",
+  "output": "Crestere (toamna-iarna)",
 }
 `;
 
 exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 4`] = `
 {
   "label": "sys_timeline_cut",
-  "output": "Definire pre-vară",
+  "output": "Definire pre-vara",
 }
 `;
 
 exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > phase timeline labels RO native 5`] = `
 {
   "label": "sys_timeline_summer",
-  "output": "Vară peak 2027",
+  "output": "Vara peak 2027",
 }
 `;
 
@@ -259,7 +259,7 @@ exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > tempo n
 {
   "label": "sys_tempo_DB Shoulder Press",
   "output": {
-    "note": "În definire menținem, nu împingem",
+    "note": "In definire mentinem, nu impingem",
     "rir": 3,
     "tempo": "3-1-2-0",
   },
@@ -270,7 +270,7 @@ exports[`Golden Master — sys.js timeline + tempo (§36.58 LOCKED V1) > tempo n
 {
   "label": "sys_tempo_Lateral Raises",
   "output": {
-    "note": "Calitatea execuției peste greutate",
+    "note": "Calitatea executiei peste greutate",
     "rir": 3,
     "tempo": "2-1-2-1",
   },

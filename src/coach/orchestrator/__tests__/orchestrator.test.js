@@ -48,7 +48,7 @@ describe('runPipeline — ADR 030 D1+D4 sequential pipeline §42.10', () => {
     expect(b.invoke).toHaveBeenCalledWith(ctx);
   });
 
-  it('preserves err result și tags adapterId când missing', async () => {
+  it('preserves err result si tags adapterId cand missing', async () => {
     const a = errAdapter('engine-a', 'BAD_INPUT', 'shape wrong');
     const results = await runPipeline(ctx, [a]);
     expect(results[0].ok).toBe(false);
@@ -56,7 +56,7 @@ describe('runPipeline — ADR 030 D1+D4 sequential pipeline §42.10', () => {
     expect(results[0].error.adapterId).toBe('engine-a');
   });
 
-  it('does NOT overwrite adapterId când adapter included it explicit', async () => {
+  it('does NOT overwrite adapterId cand adapter included it explicit', async () => {
     const a = {
       id: 'engine-a',
       invoke: async () => err({ code: 'X', message: 'm', adapterId: 'inner-id' }),
@@ -90,16 +90,16 @@ describe('runPipeline — ADR 030 D1+D4 sequential pipeline §42.10', () => {
 });
 
 describe('runPipeline — ADR 030 §3.6 RESOLVED V1 severity-aware policy', () => {
-  it('halts după err with default severity (no severity field → hard fail-safe)', async () => {
+  it('halts dupa err with default severity (no severity field → hard fail-safe)', async () => {
     const a = errAdapter('a', 'BAD_INPUT', 'm'); // no explicit severity → default hard
     const b = okAdapter('b', 'should-not-run');
     const results = await runPipeline(ctx, [a, b]);
-    expect(results.length).toBe(1); // halted după a
+    expect(results.length).toBe(1); // halted dupa a
     expect(results[0].ok).toBe(false);
     expect(b.invoke).not.toHaveBeenCalled();
   });
 
-  it('halts după err with explicit severity hard', async () => {
+  it('halts dupa err with explicit severity hard', async () => {
     const a = errAdapter('a', 'INVALID_INPUT', 'm', 'hard');
     const b = okAdapter('b', 'should-not-run');
     const results = await runPipeline(ctx, [a, b]);
@@ -108,7 +108,7 @@ describe('runPipeline — ADR 030 §3.6 RESOLVED V1 severity-aware policy', () =
     expect(b.invoke).not.toHaveBeenCalled();
   });
 
-  it('continues după err with explicit severity soft (ADR 025 graceful)', async () => {
+  it('continues dupa err with explicit severity soft (ADR 025 graceful)', async () => {
     const a = errAdapter('a', 'CUSTOM_SOFT', 'm', 'soft');
     const b = okAdapter('b', 'continued');
     const results = await runPipeline(ctx, [a, b]);
@@ -128,7 +128,7 @@ describe('runPipeline — ADR 030 §3.6 RESOLVED V1 severity-aware policy', () =
     expect(results[1].output).toBe('continued-after-budget');
   });
 
-  it('halts după ADAPTER_THREW (hard severity, Anti-Cascade Silent default)', async () => {
+  it('halts dupa ADAPTER_THREW (hard severity, Anti-Cascade Silent default)', async () => {
     const t = throwingAdapter('t');
     const o = okAdapter('o', 'should-not-run');
     const results = await runPipeline(ctx, [t, o]);

@@ -1,14 +1,14 @@
 // Result helpers per ADR 030 D4 LOCKED V1.
 //
 // Adapters return `{ ok: true, output } | { ok: false, error }` — never throws.
-// Errors first-class în type system; composable cu sequential pipeline §42.10
+// Errors first-class in type system; composable cu sequential pipeline §42.10
 // short-circuit fail-safe (Anti-Cascade Silent precedent ADR_CASCADE_DEFENSE_v1
 // §EXT-2 Layer D ≤50ms budget).
 //
 // See: 03-decisions/030-adapter-design-pattern.md §2.4 D4
 
 /**
- * Wrap a successful output în an ok-discriminated Result.
+ * Wrap a successful output in an ok-discriminated Result.
  *
  * @template T
  * @param {T} output
@@ -19,7 +19,7 @@ export function ok(output) {
 }
 
 /**
- * Wrap an error în an err-discriminated Result. Accepts an `AdapterError`
+ * Wrap an error in an err-discriminated Result. Accepts an `AdapterError`
  * envelope OR a string shorthand (which becomes `{ code: 'GENERIC', message }`).
  *
  * NEVER throws — errors are first-class data per D4.
@@ -35,7 +35,7 @@ export function err(error) {
 }
 
 /**
- * Type-guard — narrows the union în consumer call sites.
+ * Type-guard — narrows the union in consumer call sites.
  *
  * @param {{ok: boolean}} result
  * @returns {boolean}

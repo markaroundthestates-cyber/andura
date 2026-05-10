@@ -15,7 +15,7 @@ export const CALIBRATION_LEVELS = {
   COLD_START: {
     id: 0,
     name: 'cold_start',
-    displayName: 'Inițializare',
+    displayName: 'Initializare',
     durationDays: 7,
     minSessions: 0,
     maxSessions: 2,
@@ -26,14 +26,14 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Învățăm cum lucrezi · Recomandările se personalizează după primele sesiuni',
+    bannerText: 'Invatam cum lucrezi · Recomandarile se personalizeaza dupa primele sesiuni',
     description: 'Guidelines bazate pe onboarding (beginner/intermediate/advanced, cut/bulk).',
   },
 
   INITIAL: {
     id: 1,
     name: 'initial',
-    displayName: 'Calibrare inițială',
+    displayName: 'Calibrare initiala',
     durationDays: 14,
     minSessions: 3,
     maxSessions: 5,
@@ -45,14 +45,14 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Învățăm cum lucrezi · Datele se adună cu fiecare sesiune',
+    bannerText: 'Invatam cum lucrezi · Datele se aduna cu fiecare sesiune',
     description: '50% user data + 50% population guideline. Pattern detection activ (high confidence only).',
   },
 
   DEVELOPING: {
     id: 2,
     name: 'developing',
-    displayName: 'Dezvoltare activă',
+    displayName: 'Dezvoltare activa',
     durationDays: 28,
     minSessions: 6,
     maxSessions: 11,
@@ -64,14 +64,14 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: false,
     stagnationEnabled: false,
     predictionEnabled: false,
-    bannerText: 'Tiparele prind contur · Recomandările folosesc datele tale',
+    bannerText: 'Tiparele prind contur · Recomandarile folosesc datele tale',
     description: '65% user data + 35% general. Pattern detection activ (high confidence ≥65%). Bridge tier between INITIAL and PERSONALIZING per ADR 009 §AMENDMENT D1.',
   },
 
   PERSONALIZING: {
     id: 3,
     name: 'personalizing',
-    displayName: 'Personalizare activă',
+    displayName: 'Personalizare activa',
     durationDays: 90,
     minSessions: 12,
     maxSessions: 40,
@@ -83,7 +83,7 @@ export const CALIBRATION_LEVELS = {
     weakGroupEnabled: true,
     stagnationEnabled: true,
     predictionEnabled: true,
-    bannerText: 'Recomandările sunt acum în mare parte personalizate · Continuăm să învățăm',
+    bannerText: 'Recomandarile sunt acum in mare parte personalizate · Continuam sa invatam',
     description: '80% user data + 20% general. Toate engines active cu threshold relaxat.',
   },
 
@@ -125,7 +125,7 @@ export const CALIBRATION_LEVELS = {
     responseProfileEnabled: true,
     rollingWindowMonths: 6,
     bannerText: null,
-    description: 'Sistem optimizat. Rolling window 6 luni, recalibrare lunară + trigger events.',
+    description: 'Sistem optimizat. Rolling window 6 luni, recalibrare lunara + trigger events.',
   },
 };
 

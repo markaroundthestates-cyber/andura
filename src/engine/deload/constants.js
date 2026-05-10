@@ -7,7 +7,7 @@
 // §42.10 canonical position 8th FINAL prescriptive engine pipeline closure).
 //
 // Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.8
-// (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasă, 32 decisions
+// (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasa, 32 decisions
 // Cluster A-E verbatim aggregation 4-way parity check ✅).
 //
 // Source 4 NU disponibil: ADR Deload file ABSENT. Recommend NEW ADR
@@ -144,7 +144,7 @@ export const NOTIFICATION_TIER = Object.freeze({
  *   Final_Depth formula MAX(Scheduled 45%, Reactive 60%, Behavioral 30%) + Behavioral_Modifiers additive
  *   Extension depth preserve 60% atrophy literature limit Schoenfeld/Helms
  *   Behavioral_Modifiers cap max threshold (additive, NU multiplicative anti-cascade)
- *   Duration scheduled 1 săpt fix / reactive 1-2 săpt adaptive
+ *   Duration scheduled 1 sapt fix / reactive 1-2 sapt adaptive
  *   Marius 5:1 dual-signal extension max 2 consecutive (anti-abuse §9.1 Cluster 2.3)
  *   Energy DOWN sustained 3+ consecutive AA Detection candidate
  *   Passive Mode trigger 12-week rolling 2 reactive consecutive
@@ -206,24 +206,24 @@ export const COMPOSITE_THRESHOLDS = Object.freeze({
  * (Source 1 line 16 + Source 4 line 735 verbatim).
  *
  * Anti-paternalism graceful degradation ADR 025 — wording explicit factual NU
- * "trebuie să te odihnești" (Bugatti F4 zero forced friction).
+ * "trebuie sa te odihnesti" (Bugatti F4 zero forced friction).
  *
  * @type {Readonly<Object<string, string>>}
  */
 export const WORDING_RO = Object.freeze({
-  linear:    'Săpt 5 — recuperare programată',
-  composite: 'Corpul tău cere recovery',
-  aa:        'Reglăm intensitatea — volumul a urcat agresiv',
-  energy:    'Săpt asta lăsăm motorul să se odihnească',
-  extension: 'Continuăm recuperarea o săpt în plus',
-  resolving: 'Revenim treptat la încărcarea normală',
+  linear:    'Sapt 5 — recuperare programata',
+  composite: 'Corpul tau cere recovery',
+  aa:        'Reglam intensitatea — volumul a urcat agresiv',
+  energy:    'Sapt asta lasam motorul sa se odihneasca',
+  extension: 'Continuam recuperarea o sapt in plus',
+  resolving: 'Revenim treptat la incarcarea normala',
   idle:      '',
 });
 
 /**
  * UI label RO native per Cluster A1 output blueprint emit field 8.
  *
- * Format: "Săptămână de recuperare X săpt" cu duration_weeks adaptive.
+ * Format: "Saptamana de recuperare X sapt" cu duration_weeks adaptive.
  *
  * @param {number} durationWeeks
  * @param {string} state
@@ -234,8 +234,8 @@ export function buildUiLabel(durationWeeks, state) {
   const d = Number.isFinite(durationWeeks) && durationWeeks > 0
     ? Math.round(durationWeeks)
     : SCHEMA_CONSTANTS.durationScheduledWeeks;
-  if (d === 1) return 'Săptămână de recuperare';
-  return `Săptămână de recuperare (${d} săpt)`;
+  if (d === 1) return 'Saptamana de recuperare';
+  return `Saptamana de recuperare (${d} sapt)`;
 }
 
 /**

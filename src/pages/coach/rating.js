@@ -19,7 +19,7 @@ export function showSessionRating(summaryData) {
   modal.id = 'rating-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px';
   modal.innerHTML = `
-    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px">SESIUNE COMPLETĂ</div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px">SESIUNE COMPLETA</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;max-width:340px;margin-bottom:16px">
       <div style="text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:12px 6px">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${summaryData.mins}</div>
@@ -40,15 +40,15 @@ export function showSessionRating(summaryData) {
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px">
       <button onclick="rateSession('easy', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(48,209,88,0.1);border:2px solid var(--green);border-radius:var(--rs);color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
-        ⚡ UȘOARĂ — MAI POT
+        ⚡ USOARA — MAI POT
       </button>
       <button onclick="rateSession('normal', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(200,255,0,0.08);border:2px solid var(--accent);border-radius:var(--rs);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
-        👍 NORMALĂ — OK
+        👍 NORMALA — OK
       </button>
       <button onclick="rateSession('hard', window._pendingRatingSummary)"
         style="padding:18px;background:rgba(255,59,48,0.08);border:2px solid var(--red);border-radius:var(--rs);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">
-        💀 GREA — LA LIMITĂ
+        💀 GREA — LA LIMITA
       </button>
     </div>
   `;
@@ -87,7 +87,7 @@ export function rateSession(rating, summaryData) {
   const modal = document.getElementById('rating-modal');
   if (modal) modal.remove();
 
-  const moodLabel = rating === 'easy' ? '⚡ Sesiune ușoară' : rating === 'hard' ? '💀 Sesiune grea' : '👍 Sesiune normală';
+  const moodLabel = rating === 'easy' ? '⚡ Sesiune usoara' : rating === 'hard' ? '💀 Sesiune grea' : '👍 Sesiune normala';
   showSessionSummary({ ...summaryData, moodLabel });
   } finally {
     window._ratingSessionInFlight = false;
@@ -102,7 +102,7 @@ export function showSessionSummary(data) {
     ? data.prs.map(pr => `<div style="padding:6px 10px;background:rgba(200,255,0,0.06);border:1px solid rgba(200,255,0,0.15);border-radius:var(--rs);font-size:11px;color:var(--accent);margin-bottom:4px">🏆 ${pr.label}</div>`).join('')
     : '';
   modal.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px;text-align:center">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);margin-bottom:4px">SESIUNE COMPLETĂ</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);margin-bottom:4px">SESIUNE COMPLETA</div>
     <div style="font-size:15px;margin-bottom:16px">${data.moodLabel || ''}</div>
     ${data.totalSets ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
       <div style="background:var(--bg3);border-radius:var(--rs);padding:10px 4px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent)">${data.mins || 0}</div><div style="font-size:9px;color:var(--text3)">MIN</div></div>

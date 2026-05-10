@@ -408,7 +408,7 @@ describe('Tempo Adapter — Pipeline integration 5-adapter chain (ADR 026 §1.10
     expect(propagatedCO.immutable_snapshot).toBe(true); // anti-cascade preserved
     expect(propagatedCO.phase).toBeTruthy(); // phase preserved post chain
 
-    // Tempo adapter NU expose constraintObject în output (Bayesian Nutrition /
+    // Tempo adapter NU expose constraintObject in output (Bayesian Nutrition /
     // Goal Adaptation pattern, NU Energy Adjustment Hook 4 re-emission pattern)
     const tempoOutput = results[4].output;
     expect(tempoOutput.constraintObject).toBeUndefined();
@@ -435,7 +435,7 @@ describe('Tempo Adapter — Pipeline integration 5-adapter chain (ADR 026 §1.10
       Object.freeze({ id: 'tempo', invoke: tempoSpy }),
     ]);
 
-    expect(results.length).toBe(1); // halted după Periodization hard fail
+    expect(results.length).toBe(1); // halted dupa Periodization hard fail
     expect(results[0].error.code).toBe('INVALID_INPUT');
     expect(results[0].error.severity).toBe('hard');
     expect(goalAdSpy).not.toHaveBeenCalled();

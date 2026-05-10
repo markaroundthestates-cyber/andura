@@ -36,7 +36,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if(e.request.method !== 'GET') return;
-  // Skip chrome-extension și alte scheme non-http
+  // Skip chrome-extension si alte scheme non-http
   if(!e.request.url.startsWith('http')) return;
 
   if (e.request.mode === 'navigate') {

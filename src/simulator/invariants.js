@@ -53,7 +53,7 @@ function checkI2(out) {
 }
 
 /**
- * I3 — Frequency under 6/săpt cap (recovery floor per persona).
+ * I3 — Frequency under 6/sapt cap (recovery floor per persona).
  * Most personas <=5x. Advanced may go 6x but never 7x autoresolved.
  * @param {ConstraintObject} c
  * @returns {'PASS'|'FAIL'|'SKIP'}

@@ -40,7 +40,7 @@ export const AUTH_STORAGE_KEYS = Object.freeze({
  *
  * Per §56.13.1 LOCKED V1: network failure mid-request → auto-retry **3x**
  * background cu exponential backoff (250/500/1000 ms). Persistent fail
- * surfaces clean error la caller pentru "Reîncearcă" manual fallback UI.
+ * surfaces clean error la caller pentru "Reincearca" manual fallback UI.
  *
  * @param {string} email
  * @param {string} [continueUrl] - default: `${window.location.origin}/auth-callback`
@@ -335,7 +335,7 @@ function _removeItem(k) {
  * Magic Link verify SAU Google OAuth signin.
  */
 export const USER_DISABLED_COPY
-  = 'Acest cont este dezactivat și programat pentru ștergere definitivă. Dacă te-ai răzgândit și vrei să îl reactivezi, trimite un e-mail la suport@andura.app în termenul de 30 de zile de la solicitare.';
+  = 'Acest cont este dezactivat si programat pentru stergere definitiva. Daca te-ai razgandit si vrei sa il reactivezi, trimite un e-mail la suport@andura.app in termenul de 30 de zile de la solicitare.';
 
 /**
  * Returns true if the auth REST error string indicates USER_DISABLED.

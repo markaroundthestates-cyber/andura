@@ -4,7 +4,7 @@ import { SYS } from './sys.js';
 import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../config/weights.js';
 
-// EXERCISE_TO_EQUIPMENT — include alias 'Pec Deck' (fără '/ Cable Fly') pentru compatibilitate
+// EXERCISE_TO_EQUIPMENT — include alias 'Pec Deck' (fara '/ Cable Fly') pentru compatibilitate
 const EXERCISE_TO_EQUIPMENT = {
   ...EXERCISE_EQUIPMENT_MAP,
   'Pec Deck': 'pec_deck',
@@ -40,7 +40,7 @@ export const realityEngine = {
         exercise.recommendation.realityAdjusted = true;
         exercise.recommendation.originalWeight = originalWeight;
       }
-      // Ține greutatea când readiness < 60 — nu crește în zile proaste
+      // Tine greutatea cand readiness < 60 — nu creste in zile proaste
       if (ctx.readiness.score !== null && ctx.readiness.score < 60) {
         const lastLog = findLastLogForExercise(exercise.name, ctx.recentLogs);
         if (lastLog && exercise.recommendation.weight > lastLog.weight) {
@@ -49,9 +49,9 @@ export const realityEngine = {
         }
       }
     }
-    // AUTO + înainte de 20 iulie: suprimă mesajele de trend, afișează ținta calorică (KCAL_TARGET)
+    // AUTO + inainte de 20 iulie: suprima mesajele de trend, afiseaza tinta calorica (KCAL_TARGET)
     if (ctx.user.phase === 'AUTO' && ctx.isBeforeJuly20_2026) {
-      session.realityMessage = `Menținem ${KCAL_TARGET} kcal`;
+      session.realityMessage = `Mentinem ${KCAL_TARGET} kcal`;
       session.suppressTrendMessages = true;
     }
     return session;
@@ -60,7 +60,7 @@ export const realityEngine = {
 
 function findLastLogForExercise(exerciseName, recentLogs) {
   for (const session of recentLogs) {
-    // Suportă format test (exercise/weight) și format real (ex/w)
+    // Suporta format test (exercise/weight) si format real (ex/w)
     const log = session.logs.find(l => l.ex === exerciseName);
     if (log) return { weight: log.w, ...log };
   }
@@ -75,7 +75,7 @@ export function getRealityCheck() {
       type: 'fixed',
       icon: '✅',
       color: 'var(--green)',
-      message: `Menținem ${KCAL_TARGET} kcal fix până la 20 iulie`
+      message: `Mentinem ${KCAL_TARGET} kcal fix pana la 20 iulie`
     };
   }
 
@@ -109,7 +109,7 @@ export function getRealityCheck() {
           type: 'plateau',
           icon: '🔴',
           color: 'var(--red)',
-          message: 'Greutatea nu a scăzut în ultimele 7 zile. Hai să vedem ce putem ajusta în strategie.'
+          message: 'Greutatea nu a scazut in ultimele 7 zile. Hai sa vedem ce putem ajusta in strategie.'
         };
       }
     }
@@ -122,7 +122,7 @@ export function getRealityCheck() {
       type: 'warning',
       icon: '⚡',
       color: 'var(--accent2)',
-      message: `Slăbim un pic prea repede și riscăm să pierdem din masa musculară. Hai să creștem temporar aportul la ${suggestedKcal} kcal pentru a ne proteja progresul.`
+      message: `Slabim un pic prea repede si riscam sa pierdem din masa musculara. Hai sa crestem temporar aportul la ${suggestedKcal} kcal pentru a ne proteja progresul.`
     };
   }
 
@@ -132,7 +132,7 @@ export function getRealityCheck() {
       type: 'slow',
       icon: '🐢',
       color: 'var(--accent)',
-      message: 'Progres mai lent decât țintit · Verificăm aportul sau activitatea'
+      message: 'Progres mai lent decat tintit · Verificam aportul sau activitatea'
     };
   }
 
@@ -142,7 +142,7 @@ export function getRealityCheck() {
       type: 'ok',
       icon: '✅',
       color: 'var(--green)',
-      message: 'Suntem în ritmul țintit · Menținem direcția'
+      message: 'Suntem in ritmul tintit · Mentinem directia'
     };
   }
 
