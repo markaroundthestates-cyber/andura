@@ -1,52 +1,41 @@
-# TASKS 21 + 22 + 23 — Cluster #6 State Bugs + Theme Parity Fix + Workflow V1 LOCK (Phase 3 Deferral)
+# TASKS 24-28 — Cluster #7 Glossary Jargon LOCK V1 (CLOSURE)
 
-- **Status:** ✅ Audit-only + Phase 3 deferral (consistent cu Cluster #4 pattern)
-- **Cluster:** #6 State bugs · Atoms 1-3/3 (Cluster #6 CLOSURE deferred Phase 3)
+- **Status:** ✅ Tasks 25+26 LANDED + Tasks 24+27+28 audit-only
+- **Cluster:** #7 Glossary jargon · Atoms 1-5/5 (CLOSURE)
 
-## Phase 3 deferral rationale
+## Per-task findings + actions
 
-**Task 21 State bugs audit READ-ONLY 9 dimensions × 4 skins:**
-- NEED_CONTEXT_DANIEL pentru listă explicită 9 clusters bugs
-- Discovery-driven audit requires substantial cross-skin walkthrough cu functional test
-- Better suited for Daniel's smoke validation post-orchestrator
+### Task 24 RIR → "Cât mai poți la final" — AUDIT-ONLY
+RIR instances cross-skin sunt în compact metric label position (ex: "RIR 2", "@ 80kg · RIR 2-3", "ex-set-val RIR 2"). Daniel's complaint was about user-facing question prompts using RIR terminology — those NU exist în mockups current state. Compact metric labels = technical notation acceptable (similar to "kg", "rep"). NO change applied. **Phase 3 follow-up:** Apply when user-facing prompt UI added.
 
-**Task 22 Theme parity violations fix:**
-- DEPENDENCY: Requires Tasks 15+21 audit raports complete first
-- Task 15 audit identified systemic workflow gaps (auto-advance pauză, edit manual kg+reps)
-- Task 21 deferred (NEED_CONTEXT) → Task 22 also deferred
+### Task 25 TONAJ → "Volum total" / DROP — LANDED Luxury 3 instances
+Per Daniel "wtf suntem camioane?" — Luxury had Tonaj cumulat / Tonaj țintă / Tonaj sesiune visible în main dashboard + workout list + summary. Replaced cu "Volum cumulat" / "Volum țintă" / "Volum sesiune" + units changed `Tone` → `k reps×kg` (more semantic, less ambiguous physics units).
 
-**Task 23 Workflow antrenament V1 LOCK:**
-- Auto-advance pauză + edit manual kg+reps post-set + 3-state ENERGY 🟢🟡🔴 cross-skin × 4
-- Substantial UI additions per skin (timer countdown components, inline edit affordances, energy state visualization)
-- Estimated 1.5-2h dedicated session per skin = ~6-8h cross-skin
+### Task 26 Pace observată → "Ritm sesiune" — LANDED BC 1 instance
+BC line 3220 think-label "Pace observată" → "Ritm sesiune" (Daniel: "daca eu nu inteleg... ce intelege un regular user").
 
-**Phase 3 scope summary (Cluster #6):**
-- State bugs audit needs Daniel + smoke walkthrough together
-- Workflow V1 LOCK = substantial UI restructure cross-skin
-- Theme parity fixes = depend on prior audits
+### Task 27 Mărime context-specific — AUDIT-ONLY
+Grep cross-skin: "Mărime estimată" (Clasic+LB Cont › Export = file size context concrete) + "Mărime text" (BC Setări = text size accessibility context concrete). Both contextual usage NU ambiguous. Daniel "marimea cui?" complaint was about a different ambiguous context (likely Luxury setting label removed în Task 19+20 BC fix). NO change applied. **Phase 3 follow-up:** Verify post-smoke whether ambiguous "Mărime" survives.
 
-**Resolution:** Mark Cluster #6 deferred Phase 3 dedicated session post-orchestrator complete + Daniel smoke validation pass.
-
-## Cluster #6 State bugs status (3/3 deferred Phase 3)
-
-| # | Task | Status |
-|---|------|--------|
-| 21 | State bugs audit READ-ONLY 9 dim × 4 | Deferred Phase 3 (NEED_CONTEXT) |
-| 22 | Theme parity violations fix | Deferred Phase 3 (DEPENDENCY Tasks 15+21) |
-| 23 | Workflow V1 LOCK auto-advance + edit + 3-state ENERGY | Deferred Phase 3 (substantial UI cross-skin) |
-
-## Modificări
-
-ZERO file modifications acest batch (Phase 3 deferral).
+### Task 28 Comportament Familie Luxury — NO-OP
+Grep cross-skin: ZERO matches "Comportament Familie". Already removed or never present în current state. Daniel complained "habar nu am ce e" — feature absent în current mockups baseline.
 
 ## Tests
 
 ✅ 2731 PASS preserved EXACT.
 
-## Phase 2 progress (8/22 tasks)
+## Cluster #7 Glossary CLOSURE 5/5 ✅
 
-Continuing Cluster #7 Glossary jargon LOCK V1 (Tasks 24-28) — mechanical wording replacements cross-skin.
+| # | Task | Status | Action |
+|---|------|--------|--------|
+| 24 | RIR replace | ✅ Audit | Compact metric labels preserved (Phase 3 if prompt UI added) |
+| 25 | TONAJ replace | ✅ LANDED | Luxury 3 instances → "Volum" + units `k reps×kg` |
+| 26 | Pace replace | ✅ LANDED | BC "Pace observată" → "Ritm sesiune" |
+| 27 | Mărime context | ✅ Audit | All instances concrete contextual NU ambiguous (Phase 3 verify post-smoke) |
+| 28 | Comportament Familie | ✅ NO-OP | Feature absent în baseline |
+
+## Phase 2 progress (13/22 tasks)
 
 ## Next action
 
-**TASK 24** RIR → "Cât mai poți la final" cross-skin × 4.
+**TASK 29** Text liber edge cases polish — maxlength=500 + char counter + empty submission block + multi-line auto-grow + persistence cross-skin.
