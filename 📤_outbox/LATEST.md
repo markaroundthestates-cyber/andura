@@ -1,53 +1,131 @@
-# Vault Hygiene Massive Cleanup — Atomic Batch 2026-05-10
+# P1 Prod Bugs Atomic Fix — Auto Template Phase + BF Edit Recalc Kcal — 2026-05-10
 
+**Task:** FIX 2 prod bugs atomic single batch — both touch src/engine/sys.js. Pre-flight + implement + tests + commit + push.
+**Model:** claude-opus-4-7
 **Status:** Complete ✅
-**Model:** claude-opus-4-7 (Claude Code agent autonomous via MCP delegation chat ACASĂ)
-**Authority:** Daniel chat-current MCP filesystem priority 1 vault cleanup massive scope per VAULT_RULES.md §CC.6 + §CC.9 + §AR.13
 **Branch:** main
 
 ## Pre-flight ✅
 - Working tree clean pre-execution verified
-- Backup tag `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` pushed origin (rollback safety per §CC.7 Layer 5)
-- VAULT_RULES.md §CC.6 + §CC.9 + §AR.13 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT confirmed pre-mod
-- PK baseline captured: 32787 LOC active vault
+- Backup tag `pre-prod-bugs-fix-2026-05-10-1802` pushed origin (rollback safety per VAULT_RULES §CC.7 Layer 5)
+- Read sys.js full + sys.test.js full + dependent callsites (weight.js, dashboard.js)
+- Constants verified verbatim: `KCAL_TARGET=2000`, `TARGET_DATE=new Date('2026-07-20')`
+- Baseline captured: 2731 tests passing pre-fix
 
-## Modificări atomic batch
-- **00-index/CURRENT_STATE.md:** 3810 → 130 LOC (610KB → 15KB) — REWRITE per §CC.6 canonical (## NOW + ## JUST DECIDED + ## NEXT + ## ACTIVE_REFS + ## ACTIVE_ADRS + ## ACTIVE_FLAGS + ## RECENT 50 LOC + ## POINTERS)
-- **06-sessions-log/RECENT_DECIDED_ARCHIVE.md:** 24 → 3671 LOC (2KB → 558KB) — APPEND first populate (scaffold created 2026-05-07 finally activated). Migrated verbatim: §JUST_DECIDED block 1 (underscore variant, entries 2026-05-08 to 2026-05-10) + §NOW precedent threads stacked (30+ compressed §CC.5 fast ingest threads chronologic descending) + §JUST_DECIDED block 2 (space variant duplicate, entries 2026-05-04 to 2026-05-08) + §RECENT older entries
-- **00-index/INDEX_MASTER.md:** 288 → 288 LOC (42KB → 36KB) — `Last updated:` line trim 4+ stacked predecessor entries (~700 words single field) → 1-line single per spec
-- **03-decisions/DECISION_LOG.md:** 3119 → 3155 LOC (+36 LOC entry top descending cronologic 2026-05-10 vault hygiene massive cleanup)
+## Modificări (atomic batch — 4 files)
 
-## Build + Tests
-- `npm run test:run`: **2731 PASS / 0 FAIL** preserved EXACT (doc-only operations ZERO src changes)
-- Pre-commit hook vitest gate ✅ (ran twice — initial gate + commit gate)
+| File | LOC delta | Change |
+|------|-----------|--------|
+| `src/engine/sys.js` | +12 / -10 | Bug 1 + Bug 2 core fix |
+| `src/engine/__tests__/sys.test.js` | +45 / -8 | T4 split + T8 update + 2 regression tests |
+| `src/pages/weight.js` | +3 / -11 | initKcal pilotActive gate dropped + UX text aligned |
+| `src/pages/dashboard.js` | +6 / -8 | renderDash kpib + getAlerts MAINTENANCE warning + UX banner aligned |
+
+## Bug 1 fix — getKcalTarget AUTO + getPhase pre-pilot gate dropped
+
+**Verbatim diff key lines (`src/engine/sys.js`):**
+
+`getPhase()` lines 76-86 (was 76-93):
+```js
+// REMOVED: pilotActive computation + early return 'CUT' pre-TARGET_DATE
+// Now: BF + season decide phase always
+const summerEnd = new Date(now.getFullYear(), 7, 31);
+const isSummer = now <= summerEnd;
+const isWinter = now.getMonth() >= 9 || now.getMonth() <= 1;
+if (bf > 18) return 'CUT';
+// ...continues with existing BF-tiered logic
+```
+
+`getKcalTarget()` lines 124-132 (was 125-136):
+```js
+// REMOVED: const pilotActive = new Date() >= TARGET_DATE;
+// REMOVED: if (!pilotActive) return KCAL_TARGET;
+// AUTO: derive faza din BF + sezon, apoi aplică multiplicator pe TDEE
+const phase = this.getPhase();
+switch(phase) {
+  case 'CUT':         return Math.round(tdee * 0.82);
+  case 'BULK':        return Math.round(tdee * 1.08);
+  case 'MAINTENANCE': return tdee;
+  case 'STRENGTH':    return Math.round(tdee * 1.05);
+  default:            return KCAL_TARGET;
+}
+```
+
+## Bug 2 fix — Katch-McArdle BMR (lean-mass-based) when BF finite
+
+**Verbatim diff key lines (`src/engine/sys.js` lines 54-66):**
+
+```js
+if (dates.length < 4) {
+  // Katch-McArdle BF-aware preferred when LBM known; Mifflin fallback when BF unknown
+  const kg = this.getCurrentKg();
+  const bf = this.getBF();
+  let bmr;
+  if (Number.isFinite(bf)) {
+    const lbm = this.getLBM();
+    bmr = 370 + 21.6 * lbm;
+  } else {
+    bmr = 10*kg + 6.25*this.HEIGHT - 5*this.AGE + 5;
+  }
+  return Math.round(bmr * 1.55);
+}
+```
+
+**Math impact verification:** at 100kg same weight, BF 30% (lbm=70) vs BF 5% (lbm=95):
+- BF 30%: bmr = 370 + 21.6×70 = 1882 → tdee ≈ 2917 kcal
+- BF 5%:  bmr = 370 + 21.6×95 = 2422 → tdee ≈ 3754 kcal
+- Delta: **~837 kcal** (was 0 kcal pre-fix — Mifflin BF-agnostic on same kg)
+
+## Propagation (consistent gate removal)
+
+- **`src/pages/weight.js:74-89` (initKcal):** dropped `pilotActive ? SYS.getKcalTarget() : KCAL_TARGET` ternary → `SYS.getKcalTarget()`. noteEl text always shows pilot active TDEE/phase (was: pre-pilot "Target fix: 2000 kcal" stale copy). `TARGET_DATE` import removed (no longer referenced).
+- **`src/pages/dashboard.js:13` (module-level):** removed unused `TD2 = TARGET_DATE` alias.
+- **`src/pages/dashboard.js:93` (renderDash):** removed unused `pilotActive` declaration.
+- **`src/pages/dashboard.js:191-195` (kpib KPI box):** unconditional "TDEE Real / X / kcal mentenanță" display (was: pre-pilot "Zile rămase / 26 / până 20 iulie", post-pilot "TDEE Real").
+- **`src/pages/dashboard.js:207-208` (decision banner):** dropped `_autoFixed=!pilotActive` gate; now AUTO phase note "Faza auto: X · Schimbă manual" shows whenever no override (was: only pre-pilot).
+- **`src/pages/dashboard.js:533-534` (getAlerts MAINTENANCE warning):** dropped `pilotActive&&` gate so BF >15% mentenanță warning fires now (was: dormant pre-pilot).
+- **Kept (pure UX countdown copy):** `dashboard.js:528-531` "CHECKPOINT ÎN X ZILE" alert + `dashboard.js:532-533` "PILOT AUTOMAT ACTIV" milestone — informational only, no computation gate.
+
+## Build + Tests ✅
+
+- `npm run test:run`: **2734 PASS / 0 FAIL** (baseline 2731 → +3 new = 2734 exact)
+- Pre-commit hook vitest gate ran (visible in commit output)
+- ZERO regression on existing tests
+
+**New tests (`src/engine/__tests__/sys.test.js`):**
+
+| Test | Assertion |
+|------|-----------|
+| `T4a: Katch-McArdle BF-aware` | weights={1 entry 100kg} + bf-override=20% → tdee≈3252 (lbm=80, bmr=2098×1.55) |
+| `T4b: Mifflin fallback when getBF NaN` | bf-override='invalid' → parseFloat→NaN → !isFinite → Mifflin path tdee≈3098 |
+| `T_AUTO_pre_pilot` (Bug 1 regression) | 2026-06-01 (before TARGET_DATE) + auto BF 17.1 + summer → kcal === estimateTDEE() (MAINT mult 1.0), NOT hardcoded 2000 |
+| `T_BF_edit_recalc` (Bug 2 regression) | same 100kg, bf-override 30% vs 5%, MAINTENANCE pinned → kcal delta >300 (~837 actual) |
+
+**Tests modified:**
+- `T4` → split into `T4a` (Katch) + `T4b` (Mifflin)
+- `T8` → asserts MAINTENANCE auto-derive (BF 17 + summer) instead of pre-pilot CUT short-circuit (Bug 1 reflected)
 
 ## Commits
-- `cc34ca9` chore(vault): massive hygiene cleanup CURRENT_STATE 596KB→~200LOC §CC.6 compliance + INDEX_MASTER header trim + RECENT_DECIDED_ARCHIVE first populate
 
-**Atomic commit caveat:** Auto-watcher race intercepted 3 of 4 file modifications mid-execution and pushed 2 chore commits (`a7e951b` chore(auto): CURRENT_STATE+RECENT_DECIDED_ARCHIVE + `0b1d781` chore(auto): INDEX_MASTER) to origin/main BEFORE my atomic commit could land. Rebased local atomic commit on top → resulted in `cc34ca9` containing only DECISION_LOG.md as net new (other 3 files content matched remote post-rebase). All 4 file changes preserved in git history (just split across 3 commits instead of 1). This is the existing `Auto-commit watcher race P3` flag manifesting.
+- `05ba372` (effective net commit) — files: sys.js + sys.test.js + weight.js + dashboard.js (4 files, +66/-39 LOC)
 
-## Pushed
-- origin/main ✅ (`0b1d781..cc34ca9`)
-- backup tag `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` ✅
+**Atomic commit caveat:** Auto-watcher race intercepted my staged batch and pushed `chore(auto): src/engine/__tests__/sys.test.js src/engine/sys.js src/pages/dashboard.js src/pages/weight.js` BEFORE my crafted `fix(prod): ...` commit message could land. The 4 file changes are preserved verbatim in `05ba372`. Net result: correct content delivered, but commit message format = generic auto-watcher format instead of structured fix message with `Resolves: P1-FLAG-PROD-...` tags. This is the existing `Auto-commit watcher race P3` flag manifesting AGAIN (third instance documented — chat 2026-05-07 vault hygiene + chat 2026-05-10 vault cleanup + this chat). Body of intended fix message preserved in this raport for traceability.
 
-## §AR.13 PK Delta
-- **Pre-baseline:** 32787 LOC active vault
-- **Post-execution:** 32790 LOC active vault
-- **Delta:** +3 LOC / +0.01% **SOFT band ≤10% PASS** (essentially flat)
-- **Rationale flat delta:** content migrated NOT deleted — CURRENT_STATE.md -3680 LOC offset by RECENT_DECIDED_ARCHIVE.md +3647 LOC + DECISION_LOG.md +36 LOC = +3 LOC net. Zero info loss preserved (per §CC.7 Layer 5 git history + dedicated archive double safety). Cleanup achieves §CC.6 spec compliance (CURRENT_STATE.md ~200 LOC) without total LOC reduction (intentional).
+## Pushed ✅
 
-## Issues / Ambiguities
-- **2 prod bugs flagged §NEXT P1+P2 + §ACTIVE_FLAGS** for post-cleanup follow-up (NU urgent acest run, separate scope):
-  - 🔴 **P1-FLAG-PROD-AUTO-FAZA-2026-05-10:** Auto template fallback 2000 kcal hardcoded vs auto-detect phase per goal+calibrations
-  - 🔴 **P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10:** Manual BF edit nu recalc kcal phase (BMR formula audit Katch-McArdle vs Mifflin + recalc trigger)
-- **Pragmatic deviation prompt's literal "<2026-05-04 only migrate" cutoff:** ALL pre-cleanup §JUST_DECIDED entries are 2026-05-04+ (no entries before exist). Applying literal cutoff = ZERO migration + leave file violating ~200 LOC goal. Migrated entire pre-cleanup body verbatim instead — zero info loss preserved via git history + RECENT_DECIDED_ARCHIVE = double safety per §CC.7 Layer 5. Documented în DECISION_LOG entry rationale.
-- **Auto-watcher race observation:** P3 flag manifested mid-execution (commits `a7e951b` + `0b1d781` pushed remote before atomic intent). Resolved cleanly via rebase. Worth dedicated investigation post-cleanup (carry-forward).
+- origin/main ✅ (`05ba372` synced via auto-hook)
+- backup tag `pre-prod-bugs-fix-2026-05-10-1802` pushed pre-fix
 
-## Next action Daniel
-- Confirm visual integrity post-cleanup (Daniel deschide CURRENT_STATE.md + INDEX_MASTER.md + RECENT_DECIDED_ARCHIVE.md + DECISION_LOG.md verify content preservation + structure clean)
-- Decide priority post-cleanup:
-  - 🔴 P1 prod bugs investigation (Auto template auto-faza + BF→kcal recalc)
-  - sau Phase 4 smoke 4 themes carry-forward
-  - sau CEO decizie V1 features audit blocking BATCH 2 Antrenor implement
+## Issues
 
-🦫 **Bugatti craft. Vault hygiene massive cleanup atomic batch — chat ACASĂ MCP filesystem direct paradigm Daniel zero courier validated. CURRENT_STATE.md spec §CC.6 compliance restored 3810→130 LOC. RECENT_DECIDED_ARCHIVE.md rolling pattern first populate active 24→3671 LOC. INDEX_MASTER.md header trim 1-line single. Tests 2731 PASS preserved EXACT. Cumulative LOCKED V1 ~719 PRESERVED unchanged.**
+- ⚠️ **Auto-commit watcher race P3 flag** recurred — generic `chore(auto):` commit message instead of `fix(prod):` structured message with Resolves tags. Content correct, message format suboptimal. Recommend Daniel review/escalate auto-watcher hook config to defer when CC has `git commit -m "fix(...)` in flight (or whitelist by stage timing).
+
+## Next action
+
+- ✅ Bug 1 + Bug 2 prod bugs RESOLVED. AUTO template now produces TDEE-based kcal phase NOW (no longer waits TARGET_DATE 2026-07-20). BF edit on same weight produces real kcal delta via Katch-McArdle.
+- 🔍 **User validation recommended:** open weight tab + verify kcal display reflects phase + estimateTDEE; toggle bf-override 25% → 18% on same weight, verify kcal target shifts visibly.
+- 📋 **Defer scope (per audit, NOT this batch):**
+  - Energy-balance-path BF-awareness (estimateTDEE 4+ entries branch — needs delta-LBM model + state tracking, layer b complex)
+  - goalAdaptation→UI migration (Faza 2.5 scope — engine impl gap "vizor fără ușă" 0/8 engines în src/)
+- 🏷️ **Suggested flag close:** P1-FLAG-PROD-AUTO-FAZA-2026-05-10 + P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10 (subject to user validation success)
+- 🧊 Cumulative LOCKED V1 ~659 PRESERVED (this fix corriges existing intent — NOT product/architecture additive).
