@@ -1798,6 +1798,17 @@
   .warm-text { color: var(--warm); }
   .signal-text-c { color: var(--signal); }
 
+  /* Templates active state Task B 2026-05-10 chat ACASĂ post-smoke */
+  .template-row { transition: background 0.2s; cursor: pointer; }
+  .template-row.template-active { background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02)) !important; border-left: 3px solid var(--think-soft); }
+  .template-row.template-active .template-icon { background: rgba(139,109,255,0.22); color: var(--think); border-radius: 8px; padding: 4px 8px; }
+  .template-row.template-active .template-label { font-weight: 700; color: var(--think); }
+  .template-row.template-active .template-label::after { content: " · activ"; color: var(--think-soft); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; }
+
+  /* Templates toast (BC-specific minimal) */
+  #templates-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--think); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999; opacity: 0; transition: transform 0.25s, opacity 0.25s; pointer-events: none; }
+  #templates-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -2554,34 +2565,45 @@
           </div>
         </div>
 
-        <!-- 3. Programe (5 templates) -->
+        <!-- 3. Programe (6 templates V2 baseline Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto + active-state JS toggle Task B 2026-05-10 chat ACASĂ post-smoke) -->
         <div class="section">
-          <div class="section-title">📋 PROGRAME <span class="count">5 templates</span></div>
-          <div class="row-list">
-            <div class="list-row">
-              <div class="list-icon">💪</div>
-              <div><div class="ex-name">Forță</div><div class="ex-meta">Greutăți mari, repetări puține</div></div>
-              <div class="ex-meta">›</div>
+          <div class="section-title">📋 PROGRAME <span class="count">6 templates</span></div>
+          <div class="row-list" id="templates-list">
+            <div class="list-row template-row" data-tpl="forta" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">💪</div>
+              <div><div class="ex-name template-label">Forță</div><div class="ex-meta">Greutăți mari, repetări puține</div></div>
+              <div class="ex-meta template-chevron">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em; display:none;">ALES</div>
             </div>
-            <div class="list-row" style="background: linear-gradient(135deg, rgba(139,109,255,0.10), rgba(139,109,255,0.02));">
-              <div class="list-icon" style="background: rgba(139,109,255,0.22); color: var(--think);">✓</div>
-              <div><div class="ex-name">Tonifiere · activ</div><div class="ex-meta">Definire musculară</div></div>
-              <div class="ex-meta" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em;">ALES</div>
+            <div class="list-row template-row template-active" data-tpl="tonifiere" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">💪</div>
+              <div><div class="ex-name template-label">Tonifiere</div><div class="ex-meta">Definire musculară</div></div>
+              <div class="ex-meta template-chevron" style="display:none;">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em;">ALES</div>
             </div>
-            <div class="list-row">
-              <div class="list-icon">⬇</div>
-              <div><div class="ex-name">Slăbire</div><div class="ex-meta">Deficit caloric structurat</div></div>
-              <div class="ex-meta">›</div>
+            <div class="list-row template-row" data-tpl="slabire" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">⬇</div>
+              <div><div class="ex-name template-label">Slăbire</div><div class="ex-meta">Deficit caloric structurat</div></div>
+              <div class="ex-meta template-chevron">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em; display:none;">ALES</div>
             </div>
-            <div class="list-row">
-              <div class="list-icon">❤</div>
-              <div><div class="ex-name">Longevitate</div><div class="ex-meta">Mobility + low-impact</div></div>
-              <div class="ex-meta">›</div>
+            <div class="list-row template-row" data-tpl="longevitate" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">❤</div>
+              <div><div class="ex-name template-label">Longevitate</div><div class="ex-meta">Mobility + low-impact</div></div>
+              <div class="ex-meta template-chevron">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em; display:none;">ALES</div>
             </div>
-            <div class="list-row">
-              <div class="list-icon">⚡</div>
-              <div><div class="ex-name">Sănătate generală</div><div class="ex-meta">Echilibru complet</div></div>
-              <div class="ex-meta">›</div>
+            <div class="list-row template-row" data-tpl="mentenanta" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">⚡</div>
+              <div><div class="ex-name template-label">Mentenanță</div><div class="ex-meta">Lifestyle activ echilibrat</div></div>
+              <div class="ex-meta template-chevron">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em; display:none;">ALES</div>
+            </div>
+            <div class="list-row template-row" data-tpl="auto" onclick="pickTemplate(this)" style="cursor:pointer;">
+              <div class="list-icon template-icon">✨</div>
+              <div><div class="ex-name template-label">Auto</div><div class="ex-meta">Coach-ul decide după context</div></div>
+              <div class="ex-meta template-chevron">›</div>
+              <div class="ex-meta template-badge" style="color: var(--think-soft); font-weight:600; letter-spacing:0.08em; display:none;">ALES</div>
             </div>
           </div>
         </div>
@@ -4914,7 +4936,36 @@
   </div>
 </div>
 
+<div id="templates-toast"></div>
 <script>
+  // ─── Templates active state toggle Task B 2026-05-10 chat ACASĂ post-smoke ──
+  let __toastT = null;
+  function showTemplateToast(msg) {
+    const t = document.getElementById('templates-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(__toastT);
+    __toastT = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function pickTemplate(btn) {
+    document.querySelectorAll('.template-row').forEach(r => {
+      r.classList.remove('template-active');
+      const badge = r.querySelector('.template-badge');
+      const chev = r.querySelector('.template-chevron');
+      if (badge) badge.style.display = 'none';
+      if (chev) chev.style.display = '';
+    });
+    btn.classList.add('template-active');
+    const badge = btn.querySelector('.template-badge');
+    const chev = btn.querySelector('.template-chevron');
+    if (badge) badge.style.display = '';
+    if (chev) chev.style.display = 'none';
+    const name = btn.querySelector('.template-label')?.textContent || '';
+    showTemplateToast('Programul: ' + name);
+  }
+  window.pickTemplate = pickTemplate;
+
   // ─── Navigation ───────────────────────────────────────────────
   const tabbedScreens = ['antrenor','progres','istoric','settings','sala','home','workout','coach'];
   const tabFor = {

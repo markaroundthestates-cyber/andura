@@ -765,14 +765,15 @@
             <button class="btn-brick" onclick="goto('energy-check')" style="margin-top:14px; width:100%; position:relative;">Începe sesiunea →</button>
           </div>
 
-          <!-- Programe (5 templates) -->
+          <!-- Programe (6 templates V2 baseline Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto + active-state JS toggle Task B 2026-05-10 chat ACASĂ post-smoke) -->
           <div class="settings-section">📋 Program</div>
-          <div class="settings-stack">
-            <button class="settings-row" onclick="showToast('Forță — drill confirm')"><i data-lucide="dumbbell"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span>Forță</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Greutăți mari, repetări puține</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" style="background:#fdf3df;"><i data-lucide="check-circle-2" style="color:#c8412e;"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span><b>Tonifiere</b> · activ</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Definire musculară</span></span><span class="small-text" style="color:#c8412e; font-weight:600; margin-left:auto;">ALES</span></button>
-            <button class="settings-row" onclick="showToast('Slăbire — drill confirm')"><i data-lucide="trending-down"></i><span>Slăbire</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Longevitate — drill confirm')"><i data-lucide="heart-pulse"></i><span>Longevitate</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Sănătate — drill confirm')" style="border-bottom:none;"><i data-lucide="activity"></i><span>Sănătate generală</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+          <div class="settings-stack" id="templates-list">
+            <button class="settings-row template-row" data-tpl="forta" onclick="pickTemplate(this)"><i data-lucide="dumbbell"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Forță</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Greutăți mari, repetări puține</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto; display:none;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron"></i></button>
+            <button class="settings-row template-row template-active" data-tpl="tonifiere" onclick="pickTemplate(this)"><i data-lucide="dumbbell"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Tonifiere</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Definire musculară</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron" style="display:none;"></i></button>
+            <button class="settings-row template-row" data-tpl="slabire" onclick="pickTemplate(this)"><i data-lucide="trending-down"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Slăbire</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Reducere greutate &amp; grăsime</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto; display:none;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron"></i></button>
+            <button class="settings-row template-row" data-tpl="longevitate" onclick="pickTemplate(this)"><i data-lucide="heart-pulse"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Longevitate</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Mobilitate &amp; sănătate articulară</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto; display:none;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron"></i></button>
+            <button class="settings-row template-row" data-tpl="mentenanta" onclick="pickTemplate(this)"><i data-lucide="activity"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Mentenanță</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Lifestyle activ echilibrat</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto; display:none;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron"></i></button>
+            <button class="settings-row template-row" data-tpl="auto" onclick="pickTemplate(this)" style="border-bottom:none;"><i data-lucide="sparkles"></i><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;"><span class="template-label">Auto</span><span class="small-text" style="color:var(--ink-3); font-weight:400;">Coach-ul decide după context</span></span><span class="template-badge small-text" style="color:#c8412e; font-weight:600; margin-left:auto; display:none;">ALES</span><i data-lucide="chevron-right" class="ml-auto template-chevron"></i></button>
           </div>
 
           <!-- Drill 2° -->
@@ -2046,6 +2047,13 @@
   .tl-step.done .tl-dot { background:#c8412e; box-shadow: 0 0 0 2px #c8412e; }
   .tl-dot.danger { background:#c8412e; box-shadow: 0 0 0 2px #c8412e; }
   .tl-body b { font-size:14px; color:var(--ink); display:block; margin-bottom:2px; }
+
+  /* Templates active state Task B 2026-05-10 chat ACASĂ post-smoke */
+  .template-row { transition: background-color .15s, border-left-color .15s; border-left: 3px solid transparent; }
+  .template-row.template-active { background:#fdf3df; border-left: 3px solid #c8412e; }
+  .template-row.template-active .template-label { font-weight:700; color:var(--ink); }
+  .template-row.template-active .template-label::after { content:" · activ"; color:#c8412e; font-weight:500; font-size:13px; }
+  .template-row.template-active i[data-lucide]:first-child { color:#c8412e; }
 </style>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -2290,6 +2298,26 @@
 
   // ─── Toast ───────────────────────────────────────────────────────
   let toastT;
+  // ─── Templates active state toggle Task B 2026-05-10 chat ACASĂ post-smoke ──
+  function pickTemplate(btn) {
+    document.querySelectorAll('.template-row').forEach(r => {
+      r.classList.remove('template-active');
+      const badge = r.querySelector('.template-badge');
+      const chev = r.querySelector('.template-chevron');
+      if (badge) badge.style.display = 'none';
+      if (chev) chev.style.display = '';
+    });
+    btn.classList.add('template-active');
+    const badge = btn.querySelector('.template-badge');
+    const chev = btn.querySelector('.template-chevron');
+    if (badge) badge.style.display = '';
+    if (chev) chev.style.display = 'none';
+    const name = btn.querySelector('.template-label')?.textContent || '';
+    showToast('Programul: ' + name);
+    if (window.lucide) lucide.createIcons();
+  }
+  window.pickTemplate = pickTemplate;
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     if (msg) document.getElementById('toast-msg').textContent = msg;
