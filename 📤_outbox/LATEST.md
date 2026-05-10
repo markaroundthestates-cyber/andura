@@ -1,126 +1,59 @@
-# LATEST — §CC.5 Fast Handover Ingest COMBINED (Vault Hygiene Closure NN 289 + Orchestrator Phase 1+2 NN 290)
+# TASK 01 — Big 6 Hard T0 Clasic Mockup
 
-**Task:** §CC.5 fast handover ingest — process 2 inbox handovers atomic per Daniel directive *"ai 2 handoveruri in inbox. te rog sa le procesezi cum trebuie"* (full §CC.5 + §CC.9 5-step protocol per VAULT_RULES)
-**Model:** Opus 4.7
-**Status:** ✅ LANDED (CURRENT_STATE updated + DECISION_LOG appended top + INDEX_MASTER stats refresh + 2 handovers archived NN 289+290 + LATEST cycled NN 291 + 38 task artefacte preserved în 📥_inbox/ INPUT pentru CC orchestrator FINAL execution next step)
-**Date:** 2026-05-10
-**Authority:** Daniel directive + VAULT_RULES §CC.5 Fast Handover Workflow + §CC.6 Append-Only Architecture + §CC.9 Mandatory File Updates Per Handover (5-step) + §AR.13 PK Growth Control
+- **Model:** Opus 4.7
+- **Status:** ✅ Complete
+- **Date:** 2026-05-10 0625
+- **Backup tag:** `pre-task01-big6-clasic-2026-05-10-0621` (pushed origin)
+- **Commit:** `c6b1204` pushed origin/main
 
----
+## Pre-flight findings
 
-## Handovers ingested
+- Mockup path verified: `04-architecture/mockups/andura-clasic.html` (160169 bytes)
+- Onboarding section current state = **5 ecrane** (Obiectiv / Vârstă / Sex / Istoric medical / Frecvență) — NU 7 cum ar fi spec Big 6
+- **Înălțime + Greutate fields MISSING from onboarding flow** (existau doar în Settings → Profile section per stale §AMENDMENT 2026-05-04 evening "move post-onboarding" SUPERSEDED de §AMENDMENT 2026-05-05.7 Big 6 hard T0)
+- ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-05.7 verified authoritative: Big 6 = Sex / Vârstă / Înălțime / Greutate / Obiectiv / Frecvență toate hard required T0
+- Skip flag found: `data-action="skip-auth"` (line 437) = auth skip "Continuă fără cont" per Q6 LOCK (NU Big 6 skip — preserved)
+- Sex current state = M/F only (NU M/F/Altul cum ar fi spec ONBOARDING_SSOT_V1 §1 ECRAN 3)
 
-### #1 — Vault hygiene closure (NN 289)
+## Modificări (8 edits + scope expansion documented)
 
-**Source:** `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_VAULT_HYGIENE_CLOSURE_BUGATTI_RESET.md`
-**Archive:** `📤_outbox/_archive/2026-05/289_HANDOVER_2026-05-10_CHAT_ACASA_VAULT_HYGIENE_CLOSURE_BUGATTI_RESET_CONSUMED.md`
+| Edit | Line | Change |
+|------|------|--------|
+| Comment | 463 | "5 ecrane <45 sec" → "7 ecrane V2 Big 6 hard T0 per ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7" |
+| Ecran 1 Obiectiv | 468-477 | Progress dots 5→7 + "1 din 5" → "1 din 7" |
+| Ecran 2 Vârstă | 517-528 | Progress dots 5→7 + "2 din 5" → "2 din 7" + add `required` attr la age input |
+| Ecran 3 Sex | 542-568 | Progress dots 5→7 + "3 din 5" → "3 din 7" + ADD Altul 3rd option (M/F/Altul per spec) + change goto `onb-medical` → `onb-inaltime` |
+| **NEW Înălțime ecran** | 571-596 | Insert ecran 4 of 7 — input cm range 100-250 step=1 + `required` + Mifflin-St Jeor BMR rationale + goto `onb-greutate` |
+| **NEW Greutate ecran** | 598-623 | Insert ecran 5 of 7 — input kg range 30-300 step=0.1 + `required` + baseline calibrare wording + goto `onb-medical` |
+| Ecran (was 4) Istoric medical | 626-641 | Progress dots 5→7 + "4 din 5" → "6 din 7" + Pasul 4 → Pasul 6 + comment update "skippable default Niciuna per §50.3 D2" |
+| Ecran (was 5) Frecvență | 663-680 | Progress dots 5→7 + "5 din 5" → "7 din 7" + Pasul 5 → Pasul 7 + final button "sub 45 sec" → "sub 60 sec" |
+| JS comment | 2110 | "5 ecrane §63.1" → "7 ecrane V2 §63.1 + Big 6 hard T0" |
 
-**Scope:**
-- 4 vault file updates atomic LANDED commit `12f1b76` (DECISION_LOG 2 entries appended + PRODUCT_STRATEGY §3.5 V3 amendment + ONBOARDING_SSOT_V1 §2 GOAL TAXONOMY V2 amendment + VAULT_RULES §AR.16 STRICT_OUTPUT_FILE V1 + §AR.17 UNIFIED_INBOX_INPUT V1 + §AR.18 POST_BULK_REPLACE_VERIFICATION V1 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT items 14-16)
-- Inbox archive cleanup commits `df3acdd` 5 prompts CC NN 283-287 + `8a73994` LATEST_CONSOLIDATED.md NN 288
-- Big 6 drift documentar resolved sync ONBOARDING_SSOT cu ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-05.7 hard T0 (NU additive, tag-uit Cluster #2 onboarding inputs next chat clusters mecanic)
-- Bugatti reset definition critical (= end product perfect, NU process zero-error)
-- `/compact` insertion strategy CC built-in command (next chat orchestrator)
-- Orchestrator clusters bulk delegate strategy planning
+**Scope expansion (DECISION ApprovedDaniel mid-flight):** Task spec assumed skip removal + required attr on existing fields. Pre-flight found fields don't exist in onboarding. Daniel approved Option A: add 2 new ecrane between Sex and Istoric medical per Task 05 spec ("7 ecrane V2 logic structure"). Realistic Task 01 scope = ~30-45 min not 10-15 min.
 
-**Cumulative impact:** ~714-716 LOCKED V1 PRESERVED unchanged (vault meta-tooling only, ZERO net additive product/architecture).
-
-### #2 — Orchestrator clusters Phase 1 + Phase 2 COMBINED (NN 290)
-
-**Source:** `📥_inbox/HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md`
-**Archive:** `📤_outbox/_archive/2026-05/290_HANDOVER_2026-05-10_CHAT_ACASA_ORCHESTRATOR_PHASE1_PHASE2_COMBINED_CONSUMED.md`
-
-**Scope:**
-- **Phase 1 chat predecessor (Tasks 01-15 generated):** Cluster #1 Auth wiring (5) + Cluster #2 Onboarding inputs UI (4) + Cluster #3 Workflow + scope cuts (6)
-- **Phase 2 chat-current (Tasks 16-38 generated):** Cluster #4 Istoric calendar (3) + Cluster #5 Setări BC dead (2) + Cluster #6 State bugs (3) + Cluster #7 Glossary jargon (5) + Cluster #9 Text liber re-fix (2) + Standalone Q1 (1) + 6 features recovery scope (6) + Mini orchestrator FINAL coordonator (1)
-- **Total:** 38 task artefacte atomic separate ready inbox + 1 mini orchestrator FINAL coordonator (Task 38)
-- **Pattern format invariant §0-§6 strict** cross-skin × 4 atomic Theme Parity Invariant V1 + fail-cluster mode + citation `path:§` discipline + NEED_CONTEXT_DANIEL flags inline pentru ambigui (5 aggregate)
-- **Daniel directive next step:** `Read task_38_orchestrator_final.md` în CC autonomous execution begin
-- **Estimate:** ~10-16h CC wall clock + 5h Daniel smoke = ~15-21h cumulative ~3 zile calendar realistic
-
-**Cumulative impact:** ~714-716 LOCKED V1 PRESERVED unchanged (chat-uri Phase 1+2 = pure execution scope orchestrator clusters generation, ZERO net additive product/architecture).
-
----
-
-## §CC.9 5-step Mandatory File Updates Checklist
-
-| # | Step | Status | Details |
-|---|------|--------|---------|
-| 1 | CURRENT_STATE.md §JUST_DECIDED top entry append + §NOW move-then-replace | ✅ | New JUST_DECIDED entry orchestrator combined top + Updated header refresh + Active NOW = orchestrator combined + Precedent compressed = vault hygiene closure (then existing chain) |
-| 2 | DECISION_LOG.md entry append top descending cronologic | ✅ | 2 entries appended top (orchestrator combined + vault hygiene closure) preserving descending chronologic order |
-| 3 | INDEX_MASTER.md stats line refresh | ✅ | Last updated timestamp refreshed + cumulative ~714-716 LOCKED V1 PRESERVED + tests 2731 PASS preserved + 96 active vault files preserved (38 task artefacte în 📥_inbox/ NU active vault count, INPUT pentru CC) + 42 ADRs (33 numbered + 9 named) preserved |
-| 4 | CURRENT_STATE §ACTIVE_REFS / §ACTIVE_ADRS / §ACTIVE_FLAGS sync | ⏭ | Skipped — handovers ingest NU touch ACTIVE_REFS/ACTIVE_ADRS/ACTIVE_FLAGS sections (no archived files needing REDIRECT, no new SSOT files needing ADD; 2 archived handovers + 1 cycled LATEST = transient, NU referenced în ACTIVE_* sections) |
-| 5 | Pre-flight grep wikilinks orphane | ✅ | Grep verified zero actual orphan wikilinks pointing to archived handovers (only filename string mentions in CURRENT_STATE narrative + LATEST tabular description = documentation refs, NU broken `[[ ]]` links) |
-
----
-
-## Modifications
-
-| File | Change | Notes |
-|------|--------|-------|
-| `00-index/CURRENT_STATE.md` | Updated header + new JUST_DECIDED entry top + NOW move-then-replace | Active NOW = orchestrator combined; Precedent compressed = vault hygiene closure (then chain) |
-| `03-decisions/DECISION_LOG.md` | 2 entries appended top descending cronologic | Orchestrator combined entry + vault hygiene closure entry |
-| `00-index/INDEX_MASTER.md` | Last updated timestamp + stats refresh | 96 active vault files preserved, ADRs 42 preserved, cumulative ~714-716 LOCKED V1 preserved, tests 2731 PASS preserved |
-| `📥_inbox/HANDOVER_2026-05-10_..._VAULT_HYGIENE_CLOSURE_BUGATTI_RESET.md` | git mv → archive NN 289 | Vault hygiene closure handover consumed |
-| `📥_inbox/HANDOVER_2026-05-10_..._ORCHESTRATOR_PHASE1_PHASE2_COMBINED.md` | mv → archive NN 290 | Orchestrator combined handover consumed (untracked file → mv plain, NU git mv) |
-| `📤_outbox/LATEST.md` | git mv → archive NN 291 | Actions cost optimization prior LATEST cycled |
-| `📤_outbox/LATEST.md` | NEW (this file) | §CC.5 fast ingest combined raport |
-| `📥_inbox/task_01..task_38.md` | PRESERVED unchanged | 38 task artefacte ready CC orchestrator FINAL execution next step (NU consumed — INPUT pentru CC) |
-
----
-
-## Build + Tests
+## Tests + Build
 
 ```
 $ npm run test:run
-(NU executed acest §CC.5 ingest — pure docs vault changes, ZERO src impact)
+Test Files  148 passed (148)
+     Tests  2731 passed (2731)
+  Duration  ~26-27s
 ```
 
-**Tests baseline 2731 PASS preserved EXACT** per cumulative status (vault docs only, ZERO src changes acest ingest).
-
----
+✅ **2731 PASS preserved EXACT** (mockup-only edit, ZERO src impact). Pre-commit hook validated.
 
 ## Commits + push
 
-| Commit | Files | Notes |
-|--------|-------|-------|
-| `<TBD>` | CURRENT_STATE + DECISION_LOG + INDEX_MASTER + LATEST + 2 handovers archived (rename + new) | §CC.5 fast handover ingest combined: vault hygiene closure NN 289 + orchestrator combined NN 290 + LATEST cycle NN 291; cumulative ~714-716 LOCKED V1 PRESERVED |
+- Backup tag: `pre-task01-big6-clasic-2026-05-10-0621` pushed origin
+- Commit: `c6b1204` pushed origin/main
+- LATEST cycle commit + task_01 archive: pending
 
-**Backup tag:** `pre-cc5-fast-ingest-orchestrator-combined-2026-05-10-HHMM` pushed origin (rollback safety, pre-commit).
+## Issues
 
----
+None functional. **Open for Tasks 02-04 cross-skin same pattern:** Living Body / Luxury / Brain Coach mockups need same Big 6 ecrane addition (insert Înălțime + Greutate between Sex and Istoric medical, progress dots 5→7, navigation chain rewire, skin-specific styling preserved per Theme Parity Invariant V1).
 
-## Issues / Halt conditions
-
-None. §CC.5 + §CC.9 5-step protocol followed clean (step 4 ACTIVE_REFS sync skipped per analysis — no archived files needing REDIRECT, no new SSOT files needing ADD; transient handovers + LATEST = NU referenced în ACTIVE_* sections). Pre-flight grep wikilinks orphane verify pending pre-commit.
-
----
+**Theme Parity Invariant V1 implication:** Visual character (palette/fonts/spacing) per skin will differ, but ecrane structure + count + order + field types must match cross-skin × 4.
 
 ## Next action
 
-**Daniel directive next step (post-ingest):** `Read task_38_orchestrator_final.md` în CC → autonomous execution begin (1 terminal continuous beginning→end + `/compact` insertion 4× între Phase A/B/C/D + fail-cluster mode + raport `LATEST_CONSOLIDATED.md` aggregate end ~200-300 LOC summary).
-
-**Estimate:** ~10-16h CC wall clock execution + 5h Daniel smoke validation final = ~15-21h cumulative; pattern overnight 8-10h × 2 nopți + 1 zi smoke = ~3 zile calendar realistic.
-
-**Post-orchestrator complete:**
-1. Daniel smoke test 4 themes per priority list `LATEST_CONSOLIDATED.md`
-2. NEED_CONTEXT items resolve (5 aggregate: 9 clusters smoke list / Mărime disambiguation / Comportament Familie meaning / Q1 7 grupes verify / edge cases text liber adjust)
-3. Theme parity violations follow-up dacă Task 22 raport identifies HARD remaining
-4. Phase 3 chat strategic dacă missing scope identified post smoke (probabil 5-10 tasks targeted fix)
-
----
-
-## Cumulative state
-
-- **LOCKED V1 ~714-716 PRESERVED** unchanged (chat-uri Phase 1+2 + chat vault hygiene closure = pure execution + meta-tooling, ZERO net additive product/architecture)
-- **Tests 2731 PASS preserved** (Task 31 Q1 engine aggregator V2 refactor pending count update post-execution)
-- **Active vault files 96 preserved** (38 task artefacte în 📥_inbox/ NU active vault count, INPUT pentru CC orchestrator FINAL execution)
-- **ADRs 42 preserved** (33 numbered 001-033 + 9 named ADR_*)
-- **Inbox archive sequence cronologic continuous:** NN 280-291 (chat-uri current + predecessor closure mix prompts CC + LATEST + handovers)
-- **38 task artefacte ready CC orchestrator FINAL execution** (preserved în 📥_inbox/, NU archived — INPUT pentru CC)
-
----
-
-## PK Delta
-
-**Estimated PK growth this ingest:** ~0% absolute additional content (vault docs only, ZERO src changes; combined handovers content moved from inbox → archive = neutral cumulative; CURRENT_STATE/DECISION_LOG/INDEX_MASTER append top entries + this LATEST = +small per §AR.13 P3 soft threshold). Pure §CC.5 fast handover ingest meta-tooling.
+**TASK 02** (Big 6 Hard T0 Living Body mockup) — same pattern as Task 01 cu Living Body design tokens (dark navy + auriu cald palette).
