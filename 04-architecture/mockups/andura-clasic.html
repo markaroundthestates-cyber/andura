@@ -778,8 +778,8 @@
           <!-- Drill 2° -->
           <div class="settings-section">Acces rapid</div>
           <div class="settings-stack">
-            <button class="settings-row" onclick="goto('pain-button')"><i data-lucide="alert-circle"></i><span>Mă doare ceva</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
-            <button class="settings-row" onclick="goto('equipment-swap')"><i data-lucide="repeat"></i><span>Schimbă echipament</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
+            <!-- 1 buton "Ceva nu merge" merged Pain+Equipment per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (SUPERSEDE ADR 023 split — drill secundar 4 opțiuni preset) -->
+            <button class="settings-row" onclick="goto('ceva-nu-merge')"><i data-lucide="alert-octagon"></i><span>Ceva nu merge</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
             <button class="settings-row" onclick="showToast('Bibliotecă exerciții')" style="border-bottom:none;"><i data-lucide="book-open"></i><span>Bibliotecă exerciții</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
         </div>
@@ -818,6 +818,18 @@
             <button class="onb-opt stack-row" onclick="goto('workout')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="alert-circle"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Durere musculară / articulație</div></div></button>
             <button class="onb-opt stack-row" onclick="goto('workout')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="more-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altul</div></div></button>
           </div>
+        </div>
+      </div>
+
+      <!-- CEVA NU MERGE drill unified (Pain+Equipment merged per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 SUPERSEDE ADR 023 split — 4 opțiuni preset fan-out la flow-uri existing) -->
+      <div class="screen paper-bg sub-page" id="screen-ceva-nu-merge" data-screen-label="Antrenor › Ceva nu merge" style="height:100%; flex-direction:column;">
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Ce nu merge?</h2></div>
+        <div class="phone-scroll" style="padding: 16px 24px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
+          <p class="body-text" style="color:var(--ink-2); margin:0 0 12px;">Alege opțiunea care se potrivește. Coach-ul ajustează imediat.</p>
+          <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="alert-circle" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Mă doare</div><div class="small-text" style="color:var(--ink-3);">Durere acută, articulară sau musculară</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="goto('equipment-swap')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="repeat"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Nu am aparat</div><div class="small-text" style="color:var(--ink-3);">Aparat ocupat sau lipsă — propunem alternative</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="message-square"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Altceva</div><div class="small-text" style="color:var(--ink-3);">Descrii liber — coach-ul interpretează</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <button class="onb-opt stack-row" onclick="back()" style="cursor:pointer; text-align:left; width:100%; margin-top:8px;"><i data-lucide="x"></i><div style="flex:1;"><div class="body-text" style="font-weight:600; color:var(--ink-3);">Anulează</div></div></button>
         </div>
       </div>
 

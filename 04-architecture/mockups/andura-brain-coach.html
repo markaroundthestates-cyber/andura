@@ -2515,14 +2515,10 @@
               <div><div class="ex-name">Cum te simți astăzi</div><div class="ex-meta">3 stări simple</div></div>
               <div class="ex-meta">drill ›</div>
             </div>
-            <div class="list-row" onclick="goto('pain-button')">
+            <!-- 1 buton "Ceva nu merge" merged Pain+Equipment per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (SUPERSEDE ADR 023 split — drill secundar 4 opțiuni preset) -->
+            <div class="list-row" onclick="goto('ceva-nu-merge')">
               <div class="list-icon">⚠</div>
-              <div><div class="ex-name">Mă doare ceva</div><div class="ex-meta">siguranța întâi</div></div>
-              <div class="ex-meta">drill ›</div>
-            </div>
-            <div class="list-row" onclick="goto('equipment-swap')">
-              <div class="list-icon">⇄</div>
-              <div><div class="ex-name">Schimbă echipament</div><div class="ex-meta">3 alternative</div></div>
+              <div><div class="ex-name">Ceva nu merge</div><div class="ex-meta">siguranța sau alternativă</div></div>
               <div class="ex-meta">drill ›</div>
             </div>
             <div class="list-row" onclick="goto('post-rpe')">
@@ -2882,6 +2878,47 @@
       </div>
     </div>
 
+
+    <!-- ═══ XVI-PRE · CEVA NU MERGE drill unified (Pain+Equipment merged per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 SUPERSEDE ADR 023 split — 4 opțiuni preset fan-out la flow-uri existing) ═══ -->
+    <div class="screen" id="screen-ceva-nu-merge">
+      <div class="head-bar">
+        <button class="back-btn" onclick="back()">←</button>
+        <div class="head-title">Ce nu merge?</div>
+        <div class="head-tag">drill</div>
+      </div>
+      <div class="scroll-tight">
+        <div class="onb-sub">Alege opțiunea care se potrivește. Coach-ul ajustează imediat.</div>
+        <div class="check-list">
+          <div class="check-item" onclick="goto('pain-button')">
+            <div class="check-box">⚠</div>
+            <div>
+              <div class="check-label">Mă doare</div>
+              <div class="check-sub">Durere acută, articulară sau musculară</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="goto('equipment-swap')">
+            <div class="check-box">⇄</div>
+            <div>
+              <div class="check-label">Nu am aparat</div>
+              <div class="check-sub">Aparat ocupat sau lipsă — propunem alternative</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="goto('pain-button')">
+            <div class="check-box">✎</div>
+            <div>
+              <div class="check-label">Altceva</div>
+              <div class="check-sub">Descrii liber — coach-ul interpretează</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="back()">
+            <div class="check-box">×</div>
+            <div>
+              <div class="check-label">Anulează</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ═══ XVI · PAIN BUTTON ═══ -->
     <div class="screen" id="screen-pain-button">
