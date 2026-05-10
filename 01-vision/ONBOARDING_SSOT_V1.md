@@ -82,6 +82,50 @@ Acest document este SSOT activ pentru onboarding flow Andura V1. Înlocuiește *
 
 **Cross-ref:** HANDOVER §63.1 + §63.9 + §67.5 + §68.1 + ADR 014 + ADR 017 + ADR 025 + §50.3 D2 preset list condiții.
 
+### §AMENDMENT 2026-05-10 — Big 6 Hard T0 Sync (post-§AMENDMENT 2026-05-05.7)
+
+**SUPERSEDES** §AMENDMENT 2026-05-04 evening "Greutate & Înălțime move post-onboarding (Profile section)" (preserved istoric supra, NU rewritten — flag SUPERSEDED).
+
+**Authority:** [[../03-decisions/ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-05.7 Big 5 → Big 6 Amendment (posterior OVERRIDE — Înălțimea devine Hard Required T0 pentru Mifflin-St Jeor BMR/TDEE valid). Daniel decisive: *"Extindem oficial Big 5 → Big 6. Înălțimea devine Hard Required în T0"*.
+
+**Big 6 hard required T0 (toate obligatoriu, ZERO skip):**
+1. **Sex** (M/F/Altul radio required pentru Volume Landmarks Israetel calibration §45.3 Q19)
+2. **Vârstă** (16-99 boundary required pentru recovery rate calibration)
+3. **Înălțime** (100-250 cm range required pentru Mifflin-St Jeor BMR/TDEE)
+4. **Greutate** (30-300 kg range step=0.1 required pentru baseline calibration)
+5. **Obiectiv** (6 templates V2 user-facing per §2 GOAL TAXONOMY V2 — Forță/Tonifiere/Slăbire/Longevitate/Mentenanță/Auto)
+6. **Frecvență** (2-6x/săpt slider required pentru session planning)
+
+**Logic ecrane V2 structure (7 ecrane = Big 6 + Istoric medical skippable):**
+
+| # | Ecran | Required | Notes |
+|---|-------|----------|-------|
+| 1 | Obiectiv + disclaimer integrat | ✅ Hard | 6 templates V2 + checkbox medical disclaimer mandatory disabled-until-checked |
+| 2 | Vârstă | ✅ Hard | 16-99 boundary checks preserved |
+| 3 | Sex | ✅ Hard | M/F/Altul (Altul NEW post §AMENDMENT 2026-05-10) |
+| 4 | **Înălțime (NEW)** | ✅ Hard | 100-250 cm input — Mifflin-St Jeor BMR rationale |
+| 5 | **Greutate (NEW)** | ✅ Hard | 30-300 kg step=0.1 input — baseline calibrare |
+| 6 | Istoric medical | 🟡 Skippable | Default "Niciuna" preserved per §50.3 D2 (preset list ~15-20 condiții comune) |
+| 7 | Frecvență | ✅ Hard | 2-6x/săpt slider, auto-derived smart default + manual override |
+
+**Skip path V2 (post-Big 6 amendment):**
+- Ecran 1-5 (Obiectiv + Vârstă + Sex + Înălțime + Greutate) — mandatory (zero skip)
+- Ecran 6 (Istoric medical) — skippable default "Niciuna" (preserved §50.3 D2)
+- Ecran 7 (Frecvență) — required (slider implicit value preserved)
+- ADR 017 Demographic Prior K-NN K=10 fallback STILL applicable pentru Înălțime/Greutate scenarios edge (e.g. user input invalid sau missing — synthetic prior consume)
+
+**Total timp target updated:** <60 sec post-Big 6 amendment (was <45 sec pre-amendment, +2 ecrane realistic).
+
+**Cross-skin × 4 implementation LANDED 2026-05-10 (Cluster #1 Auth wiring orchestrator Tasks 01-04):**
+- Andura Clasic — commit `c6b1204` (5→7 ecrane)
+- Andura Living Body — commit `5bd66c2` (5→7 ecrane)
+- Andura Luxury — commit `8862827` (6→7 STRUCTURAL_DRIFT_RESOLVED: drop Welcome+Echipament + reorder Obiectiv-first per Theme Parity)
+- Andura Brain Coach — commit `21f9360` (5→7 STRUCTURAL_DRIFT_RESOLVED: drop Welcome + ADD Obiectiv missing + add Înălțime+Greutate + arabic step-counters universal)
+
+**Theme Parity Invariant V1 ACHIEVED 4/4 themes** — 7 ecrane Obiectiv→Vârstă→Sex→Înălțime→Greutate→Medical→Frecvență cross-skin uniform (visual character per skin preserved: Clasic cremos / LB dark navy + auriu / Luxury champagne + Cormorant / BC thinking-card neural).
+
+**Cross-ref:** [[../03-decisions/ADR_MULTI_TENANT_AUTH_v1]] §AMENDMENT 2026-05-05.7 (authoritative) + [[../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-10 chat ACASĂ post-noapte vault hygiene closure + Cluster #1 orchestrator chat-current Phase 1+2 LANDED 4/4 cross-skin.
+
 ---
 
 ## §2 GOAL TAXONOMY V1 (per §36.92 D4 hybrid C LOCKED) — AMENDED 2026-05-10 V2 (6 Templates: Mentenanță Rename + Auto)
