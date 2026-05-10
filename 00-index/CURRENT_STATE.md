@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-10 chat ACASĂ continuation MCP filesystem — 6 commits substantive LANDED clean atomic chain `8bd5dbb..6a76808` (auto-watcher P3 fix `8bd5dbb` + DIFF_FLAGS sync `0b783b4` + 2 SPEC DRAFTs PORT_FIRST `da1510c` + V1_FEATURES_AUDIT `2c84ca1` + REACT_MIGRATION status `01392c2` + FAZA_2 sync `6a76808`). Tests 2734 PASS preserved EXACT (doc/config-only ZERO src/ touched). Cumulative ~719 PRESERVED unchanged (vault meta-tooling + 2 SPEC DRAFTs pre-LOCK V1 NU additive product/architecture).
+**Updated:** 2026-05-10 chat ACASĂ continuation MCP filesystem — §CC.5 fast handover ingest LANDED post 6 commits substantive atomic chain `8bd5dbb..6a76808` (auto-watcher P3 fix + DIFF_FLAGS sync + 2 SPEC DRAFTs PORT_FIRST + V1_FEATURES_AUDIT + REACT_MIGRATION status + FAZA_2 sync). §CC.5 ingest commits `0e303bc` (git mv archive NN 360+361 _CONSUMED) + final TBD (CURRENT_STATE/DECISION_LOG/INDEX_MASTER edits + new LATEST.md). Tests 2734 PASS preserved EXACT (doc/config-only). Cumulative ~719 PRESERVED unchanged.
 **Last LOCKED count (product/architecture):** **~719 LOCKED V1** (chat-current = vault meta-tooling + prod bug fix corige intent existing NU additive — full cumulative narrative preserved în [[../06-sessions-log/RECENT_DECIDED_ARCHIVE]] + [[../03-decisions/DECISION_LOG]]).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -177,6 +177,8 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 ---
 
 ## RECENT — Older context preserved (truncate >50 LOC per §CC.6)
+
+- 2026-05-10 chat ACASĂ continuation MCP filesystem §CC.5 fast handover ingest LANDED — 6 commits substantive atomic chain `8bd5dbb..6a76808` (auto-watcher race P3 fix Stop hook time gate 90s + DIFF_FLAGS 5-day drift cleanup + 2 SPEC DRAFTs pre-LOCK V1: PORT_FIRST_STEP_1_PARADIGM_V1 + V1_FEATURES_AUDIT_V1 + REACT_MIGRATION status update + FAZA_2 §7 stale gates sync) + §CC.5 ingest commits 7-8 (handover archive NN 360 _CONSUMED + LATEST cycle NN 361 _CONSUMED + vault file edits final). Cumulative ~719 PRESERVED, tests 2734 PASS, Co-CTO real autonomy lock reaffirmed permanent.
 
 - 2026-05-10 chat ACASĂ continuation MCP filesystem (precedent §NOW thread) — 6 commits substantive LANDED clean atomic chain `8bd5dbb..6a76808`: auto-watcher race P3 fix Stop hook time gate 90s + DIFF_FLAGS sync 5-day drift + 2 SPEC DRAFTs PORT_FIRST_STEP_1_PARADIGM_V1 + V1_FEATURES_AUDIT_V1 + REACT_MIGRATION status amendment + FAZA_2 §7 stale gates sync. Co-CTO real autonomy lock reaffirmed permanent (cumulative ~719 PRESERVED, vault meta-tooling + 2 SPEC DRAFTs pre-LOCK V1).
 - 2026-05-10 chat ACASĂ MCP filesystem direct paradigm — vault hygiene + §AR.19 NEW + prod bugs fix Bug 1+Bug 2 LANDED triple atomic 3 commits chronologic (`cc34ca9` vault hygiene massive cleanup + `967460d` §AR.19 NEW VAULT_RULES + `05ba372` prod bugs Bug 1+Bug 2 sys.js Katch-McArdle BF-aware + 3 regression tests T_AUTO_pre_pilot + T_BF_edit_recalc + T8/T4 split). Tests 2731→2734 PASS chat-current. Cumulative ~719 PRESERVED unchanged (vault meta-tooling + prod fix corige existing intent).
