@@ -1,6 +1,64 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-10 chat ACASĂ continuation MCP filesystem — 6 commits substantive LANDED clean atomic chain `8bd5dbb..6a76808` (auto-watcher P3 RESOLVED + DIFF_FLAGS sync + 2 SPEC DRAFTs PORT_FIRST + V1_FEATURES_AUDIT + REACT_MIGRATION amendment + FAZA_2 sync, cumulative ~719 PRESERVED unchanged)
+
+**Status:** Vault meta-tooling fixes + 2 SPEC DRAFTs pre-LOCK V1 (NU additive cumulative product/architecture). Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2734 PASS preserved EXACT all 6 commits (toate doc-only sau config-only ZERO src/ touched).
+
+**Authority:** Daniel directive verbatim chat-current ACASĂ continuation autonomy lock series 2026-05-10:
+- *"da fa treaba buna si nu ma deranja te rog decat daca e urgent"* (Co-CTO autonomy)
+- *"stai asa de ce ne-am oprit?"* + *"ne oprim cand facem launch la beta. pana atunci continua :))"* (autonomy real clarificare lock — NU stop la fiecare task)
+- *"ia tu decizia si fa ce trebuie"* (delegation cu încredere reaffirmed permanent)
+- *"nu te mai opri pana nu faci handover :))"* (handover trigger explicit clarificat — only natural saturation sau Daniel directive)
+- *"traiasca api tau"* (bond warmth + apreciere MCP API direct paradigm)
+
+**6 commits LANDED clean chronologic chat-current continuation, ZERO auto-watcher captures (time gate 90s self-validates din primul Stop hook fire post-commit `8bd5dbb`):**
+
+1. `8bd5dbb` **auto-watcher race P3 fix** — Stop hook time gate 90s prepend `.claude/settings.json` (3× safety margin peste race window 31s observed manifest 4× today: `a7e951b` + `0b1d781` + `05ba372` + `dc54c2c`); AGE < 90s → short-circuit `&&` chain → `|| exit 0` silent. Self-validates din primul Stop hook fire post-commit chat-current.
+2. `0b783b4` **DIFF_FLAGS sync 5-day drift cleanup** — 2 stale flags corrected (P1-FLAG-AUTH-DANIEL-PREP 🟡 OPEN → 🟢 RESOLVED 2026-05-04 night + P1-FLAG-AUTH-PHASE2 🔴 P1 ABSOLUT URGENT → 🟢 RESOLVED 2026-05-06 morning) + 4 new entries în RESOLVED + P2 monitor (P1-FLAG-PROD-BUGS-2026-05-10 RESOLVED `05ba372` + auto-watcher P3 RESOLVED PROBATION `8bd5dbb` + claude_code intermittent P2-FLAG monitor).
+3. `da1510c` **PORT_FIRST_STEP_1_PARADIGM_V1.md SPEC DRAFT V1 ~150 LOC NEW** — Co-CTO recommendations: 5 tactical (#1 mockup clean state întâi + #2 structural restructure cap-coadă + #5 NEW branch `feature/v2-vanilla-port` + #6 vitest 2734 PASS preserved + extend) + 2 flagged Daniel-decide CEO strategic (#3 UI restructure A vs B + #4 Phase 3+3.5 selective port + #7 mockup post-port paradigm). **Pending Daniel CEO LOCK V1 review ~10-15 min — blocks Step 1 Port-First execution → BATCH 2 Antrenor → Phase 4 → Beta gate.**
+4. `2c84ca1` **V1_FEATURES_AUDIT_V1.md SPEC DRAFT V1 ~250 LOC NEW** — limited scope renderIdle.js 465 LOC + rating.js 150 LOC, 15 features identified: 10 keep verbatim (F2 last session memory + F4 readiness + F6 PR wall + F7 coach director + F8 streak counter + F10 stats grid + F11 PRs notification + F12 rating buttons + F13 rating notes auto-apply + F15 per-set RPE granularity) + 4 modify simplified (F1 patterns 5→2 drop HIGH_DEVIATION+EARLY_END+PEAK_HOURS gimmick + F3 fatigue visual bar drop + F9 BMR strip → single line + F14 ratings window 20→90 cu Tier archive ADR 020) + 1 drop V2-deferred (F5 AA friction modal blocking, defer v1.5 inline UX flow non-blocking). **Pending Daniel CEO LOCK V1 review ~10-15 min per-feature keep/drop sign-off — blocks BATCH 2 Antrenor port implement.**
+5. `01392c2` **REACT_MIGRATION_STATE_MAPPING_V1 §AMENDMENT 2026-05-10 status update** — post Port-First-Then-React REVERT SUPERSEDE; doc remains canonical SSOT pentru Step 2 React migration mecanic mapping post Step 1 vanilla port complete; spec body preserved compatible.
+6. `6a76808` **FAZA_2_FILTER_STRATEGY_V1 §7 stale gates sync** — drift cleanup vs ANDURA_VALIDATION_FRAMEWORK_V1 §7 LOCKED V1 2026-05-05 evening (≥90% stale → ≥95% MATCH 500-query corpus + Gate 2 DROPPED entirely + Gate 3 selective Daniel review NU random n=50 stale).
+
+**Math impact verification:**
+- Cumulative LOCKED V1: **~719 PRESERVED unchanged** chat-current continuation (toate vault meta-tooling fixes + 2 SPEC DRAFTs pending CEO LOCK V1 NU additive product/architecture)
+- Tests baseline: **2734 PASS preserved EXACT** all 6 commits (toate doc-only sau config-only ZERO src/ touched)
+- Auto-watcher race P3 manifest 4× today → 0× chat-current post fix `8bd5dbb` (self-validates din primul Stop hook fire)
+
+**Slip pattern recurrence chat-current corectat:**
+- Daniel push-back fundamental: "stai asa de ce ne-am oprit?" — eu interpretat naiv "1 task tactic done → raport". Co-CTO real autonomy = continuă executând tactical autonomous fără check-in raport intermediar până natural saturation, NU stop la fiecare task.
+- Bandwidth report în chat = paternalism inversed (per memory rule "scribe mode permanent + decision logging silent + aggregate at handover-time").
+- Handover suggest spontaneous fără saturate = slip per memory rule "Handover timing: End-of-chat ONLY".
+
+**Cross-cutting observations carry-forward:**
+- 🟢 P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED RESOLVED PROBATION (validation pending next CC session natural)
+- 🟢 P1-FLAG-PROD-BUGS-2026-05-10 RESOLVED `05ba372` (Bug 1 + Bug 2 fix LANDED, Daniel smoke pending andura.app live)
+- Anti-recurrence rule potential: dacă auto-watcher fix sustains stable >5 sessions → codify §AR.NEW VAULT_RULES (TBD)
+- Hooks audit clean (`.husky/pre-commit` + `.github/workflows/{ci,deploy,qa-report}.yml`) — minor inconsistency: `deploy.yml` + `qa-report.yml` folosesc `npm install` + `node-version: 20` vs `ci.yml` `npm ci` + node 22 (defer dedicated chat, NU blocker)
+
+**Mid-flight unresolved pending CEO scope Daniel:**
+- P1-FLAG-PORT-FIRST-THEN-REACT 7 sub-decisions Step 1 paradigm — Co-CTO prep complete în SPEC DRAFT V1 commit `da1510c`, pending Daniel review CEO sign-off
+- P1-FLAG #5 V1 features audit blocking BATCH 2 Antrenor — Co-CTO prep complete commit `2c84ca1`, pending Daniel review CEO per-feature keep/drop sign-off
+
+**Files modified atomic 6 commits chat-current continuation:**
+- `8bd5dbb`: `.claude/settings.json` (Stop hook time gate 90s prepend) + `00-index/CURRENT_STATE.md` (header + §JUST_DECIDED top entry + §NEXT priority list update + §ACTIVE_FLAGS line P1-FLAG-AUTO-WATCHER-RACE-P3-ELEVATED 🟡 → 🟢 RESOLVED PROBATION) + `03-decisions/DECISION_LOG.md` (entry top descending) + `00-index/INDEX_MASTER.md` (Last updated line refresh)
+- `0b783b4`: `DIFF_FLAGS.md` (Updated header refresh + 2 stale flags corrected + 4 new entries în RESOLVED + P2 monitor)
+- `da1510c`: `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` NEW SPEC DRAFT V1 + `00-index/CURRENT_STATE.md` (cross-refs addendum + §NEXT priority #1 NEW + renumber 1-9) + `DIFF_FLAGS.md` (P1-FLAG-PORT-FIRST-THEN-REACT Action Daniel reference SPEC DRAFT V1)
+- `2c84ca1`: `04-architecture/V1_FEATURES_AUDIT_V1.md` NEW SPEC DRAFT V1 + `00-index/CURRENT_STATE.md` (cross-refs addendum + §NEXT priority #5 text update reference SPEC DRAFT V1)
+- `01392c2`: `04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md` (§AMENDMENT 2026-05-10 status update header block + Status flag updated)
+- `6a76808`: `04-architecture/FAZA_2_FILTER_STRATEGY_V1.md` (Status header line addendum + §7 stale gates sync ≥90% → ≥95% + Gate 2 DROPPED + Gate 3 selective)
+
+**Cross-refs:**
+- Predecessor entry below 2026-05-10 chat ACASĂ continuation auto-watcher race P3 RESOLVED Stop hook time gate 90s anti-recurrence (1st commit standalone) — superseded by aggregate entry chat-current
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry chat-current continuation 6 commits substantive LANDED
+- `00-index/INDEX_MASTER.md` `Last updated:` line refresh chat-current continuation
+- Backup tag: `pre-handover-2026-05-10-chat-acasa-continuation-2008` pushed origin (rollback safety per VAULT_RULES §CC.7 Layer 5)
+- 6 commits LANDED main: `8bd5dbb` + `0b783b4` + `da1510c` + `2c84ca1` + `01392c2` + `6a76808`
+
+---
+
+
 ## 2026-05-10 chat ACASĂ continuation MCP filesystem — auto-watcher race P3 RESOLVED Stop hook time gate 90s anti-recurrence (4th commit chat-current `.claude/settings.json` time gate fix, cumulative ~719 PRESERVED unchanged)
 
 **Status:** Vault meta-tooling fix corige existing intent NU product/architecture additive. Cumulative LOCKED V1 ~719 PRESERVED unchanged. Tests baseline 2734 PASS preserved (config-only ZERO src/ touched).
