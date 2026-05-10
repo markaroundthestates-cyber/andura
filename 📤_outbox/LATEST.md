@@ -1,70 +1,53 @@
-# §CC.5 fast handover ingest 2026-05-10 — Direct-to-CC paradigm + MCP filesystem PRIMARY LOCK V1 reaffirmation secondary handover consume ✅
+# Vault Hygiene Massive Cleanup — Atomic Batch 2026-05-10
 
-- **Task:** §CC.5 fast handover ingest autonomous per VAULT_RULES.md §CC.5 §AMENDMENT 2026-05-10 Direct-to-CC paradigm LOCK V1
-- **Model:** claude-opus-4-7 (Claude Code CLI agent autonomous)
-- **Status:** ✅ Complete (vault meta-tooling cumulative ~719 PRESERVED unchanged, secondary handover consume)
-- **Source handover:** `📥_inbox/HANDOVER_2026-05-10_chat_acasa_direct_to_cc_paradigm_mcp_filesystem_lock.md` (~70 LOC)
-- **Branch:** main (vault docs only — feature/v2-vanilla-port preserved separate code work)
+**Status:** Complete ✅
+**Model:** claude-opus-4-7 (Claude Code agent autonomous via MCP delegation chat ACASĂ)
+**Authority:** Daniel chat-current MCP filesystem priority 1 vault cleanup massive scope per VAULT_RULES.md §CC.6 + §CC.9 + §AR.13
+**Branch:** main
 
-## Pre-flight
+## Pre-flight ✅
+- Working tree clean pre-execution verified
+- Backup tag `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` pushed origin (rollback safety per §CC.7 Layer 5)
+- VAULT_RULES.md §CC.6 + §CC.9 + §AR.13 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT confirmed pre-mod
+- PK baseline captured: 32787 LOC active vault
 
-- ✅ `git status` clean baseline (1 untracked = handover artefact target)
-- ✅ `git checkout main` (already on main)
-- ✅ `git pull origin main` (Already up to date)
-- ✅ Backup tag: `pre-handover-2026-05-10-direct-to-cc-paradigm-1642` (pushed origin)
-- ✅ MCP filesystem PRIMARY available (`C:\Users\Daniel\Documents\salafull` scope full)
-
-## Modificări
-
-### 00-index/CURRENT_STATE.md (vault SSOT chat-state)
-- Header `Updated:` timestamp reflectă chat-current secondary handover consume + reference precedent ingest
-- §JUST_DECIDED top entry NEW prepended (~50 LOC) — secondary handover consume reaffirmation; cumulative ~719 PRESERVED unchanged; cross-refs predecessor entry below; Direct-to-CC paradigm LIVE TESTED end-to-end + 5 escalations CC raport + 4 slip-uri Co-CTO + Co-CTO LOCK tacit + mid-flight CEO V1 features blocking BATCH 2 + workflow matured pattern reaffirm
-- §NOW move-then-replace per §CC.6 — precedent §NOW heading demoted to "(precedent compressed below this line)" verbatim preserved; new §NOW chat-current narrative extract integral handover artefact (~95 LOC) — ACASĂ post Port-First-Then-React pivot continuation + Daniel uploadat 4 SSOT files + clarificări 5 LOCK V1 + push-back-uri jucăușe Daniel + Co-CTO scope reaffirm + BATCH 1 Antrenor INVENTORY+PLAN raport CC verde + 5 escalations + Co-CTO LOCK tacit + Daniel directive MCP filesystem paradigm + §CC.2.1 + §CC.5 §AMENDMENT 2026-05-10 + ADR 005 §AMENDMENT inline + Daniel-isms + tone shifts + slip-uri 3 + workflow matured + Direct-to-CC LIVE TESTED + carry-forward backlog + next chat priority order
-
-### 03-decisions/DECISION_LOG.md (cronologic descending master)
-- Entry top NEW prepended (~50 LOC) — vault meta-tooling decision (NU product/architecture additive); §CC.5 fast handover ingest from `HANDOVER_2026-05-10_chat_acasa_direct_to_cc_paradigm_mcp_filesystem_lock.md` (NN 355 archive _CONSUMED); chat-current = same strategic chat ACASĂ post Port-First-Then-React pivot continuation; CC autonomous ingest workflow §CC.5 §AMENDMENT 2026-05-10 LIVE end-to-end validated; cumulative LOCKED V1 ~719 PRESERVED unchanged; 2 LOCK V1 NEW substantive vault meta-tooling reaffirmed (§CC.2.1 + §CC.5 §AMENDMENT) cu authority Daniel directive verbatim chat-current; cross-refs comprehensive (predecessor entry + handover archive + 3 commits Step 1+2+3 + BATCH 1 Antrenor + VAULT_RULES + memorii + backup tag)
-
-### 00-index/INDEX_MASTER.md (stats line refresh §CC.9.1)
-- Last updated description NEW (chat-current secondary handover consume + cumulative ~719 PRESERVED + handover archived NN 355)
-- Stats line: 99 → 100 fișiere active vault (+1 handover archived consume reflected diff in count); cumulative LOCKED V1 ~719 PRESERVED unchanged secondary handover consume vault meta-tooling
-
-### Archive handover consumed
-- `📥_inbox/HANDOVER_2026-05-10_chat_acasa_direct_to_cc_paradigm_mcp_filesystem_lock.md` → `📤_outbox/_archive/2026-05/355_HANDOVER_2026-05-10_DIRECT_TO_CC_PARADIGM_MCP_FILESYSTEM_LOCK_CONSUMED.md`
-
-### LATEST.md cycle
-- Precedent `📤_outbox/LATEST.md` (Task 38 Orchestrator FINAL Phase E Closure stale) → `📤_outbox/_archive/2026-05/356_LATEST_TASK_38_ORCHESTRATOR_FINAL_PHASE_E_CLOSURE_CONSUMED.md`
-- New `📤_outbox/LATEST.md` raport ingest §CC.5 fast handover ingest (this file)
-
-### Pre-flight grep wikilinks orphane (§CC.9.3)
-- ✅ `grep -rEn '\[\[HANDOVER_2026-05-10_chat_acasa_direct_to_cc' --include="*.md"` = **0 matches** (handover archived consumed, NU referenced direct)
+## Modificări atomic batch
+- **00-index/CURRENT_STATE.md:** 3810 → 130 LOC (610KB → 15KB) — REWRITE per §CC.6 canonical (## NOW + ## JUST DECIDED + ## NEXT + ## ACTIVE_REFS + ## ACTIVE_ADRS + ## ACTIVE_FLAGS + ## RECENT 50 LOC + ## POINTERS)
+- **06-sessions-log/RECENT_DECIDED_ARCHIVE.md:** 24 → 3671 LOC (2KB → 558KB) — APPEND first populate (scaffold created 2026-05-07 finally activated). Migrated verbatim: §JUST_DECIDED block 1 (underscore variant, entries 2026-05-08 to 2026-05-10) + §NOW precedent threads stacked (30+ compressed §CC.5 fast ingest threads chronologic descending) + §JUST_DECIDED block 2 (space variant duplicate, entries 2026-05-04 to 2026-05-08) + §RECENT older entries
+- **00-index/INDEX_MASTER.md:** 288 → 288 LOC (42KB → 36KB) — `Last updated:` line trim 4+ stacked predecessor entries (~700 words single field) → 1-line single per spec
+- **03-decisions/DECISION_LOG.md:** 3119 → 3155 LOC (+36 LOC entry top descending cronologic 2026-05-10 vault hygiene massive cleanup)
 
 ## Build + Tests
-
-- N/A vault doc-only changes ZERO src/ touched. Tests baseline 2731 PASS preserved EXACT (last run pre-commit hook precedent ingest commits Step 1+2+3 LANDED main).
+- `npm run test:run`: **2731 PASS / 0 FAIL** preserved EXACT (doc-only operations ZERO src changes)
+- Pre-commit hook vitest gate ✅ (ran twice — initial gate + commit gate)
 
 ## Commits
+- `cc34ca9` chore(vault): massive hygiene cleanup CURRENT_STATE 596KB→~200LOC §CC.6 compliance + INDEX_MASTER header trim + RECENT_DECIDED_ARCHIVE first populate
 
-- 1 commit pending push origin main: `docs(vault): chat ACASĂ 2026-05-10 §CC.5 §AMENDMENT Direct-to-CC + §CC.2.1 MCP filesystem PRIMARY LOCK V1 ingest secondary handover consume`
+**Atomic commit caveat:** Auto-watcher race intercepted 3 of 4 file modifications mid-execution and pushed 2 chore commits (`a7e951b` chore(auto): CURRENT_STATE+RECENT_DECIDED_ARCHIVE + `0b1d781` chore(auto): INDEX_MASTER) to origin/main BEFORE my atomic commit could land. Rebased local atomic commit on top → resulted in `cc34ca9` containing only DECISION_LOG.md as net new (other 3 files content matched remote post-rebase). All 4 file changes preserved in git history (just split across 3 commits instead of 1). This is the existing `Auto-commit watcher race P3` flag manifesting.
 
 ## Pushed
+- origin/main ✅ (`0b1d781..cc34ca9`)
+- backup tag `pre-vault-hygiene-massive-cleanup-2026-05-10-1724` ✅
 
-- ✅ Backup tag `pre-handover-2026-05-10-direct-to-cc-paradigm-1642` pushed origin
-- 🔄 Commit pending push origin main (next step workflow §10)
+## §AR.13 PK Delta
+- **Pre-baseline:** 32787 LOC active vault
+- **Post-execution:** 32790 LOC active vault
+- **Delta:** +3 LOC / +0.01% **SOFT band ≤10% PASS** (essentially flat)
+- **Rationale flat delta:** content migrated NOT deleted — CURRENT_STATE.md -3680 LOC offset by RECENT_DECIDED_ARCHIVE.md +3647 LOC + DECISION_LOG.md +36 LOC = +3 LOC net. Zero info loss preserved (per §CC.7 Layer 5 git history + dedicated archive double safety). Cleanup achieves §CC.6 spec compliance (CURRENT_STATE.md ~200 LOC) without total LOC reduction (intentional).
 
-## Issues
+## Issues / Ambiguities
+- **2 prod bugs flagged §NEXT P1+P2 + §ACTIVE_FLAGS** for post-cleanup follow-up (NU urgent acest run, separate scope):
+  - 🔴 **P1-FLAG-PROD-AUTO-FAZA-2026-05-10:** Auto template fallback 2000 kcal hardcoded vs auto-detect phase per goal+calibrations
+  - 🔴 **P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10:** Manual BF edit nu recalc kcal phase (BMR formula audit Katch-McArdle vs Mifflin + recalc trigger)
+- **Pragmatic deviation prompt's literal "<2026-05-04 only migrate" cutoff:** ALL pre-cleanup §JUST_DECIDED entries are 2026-05-04+ (no entries before exist). Applying literal cutoff = ZERO migration + leave file violating ~200 LOC goal. Migrated entire pre-cleanup body verbatim instead — zero info loss preserved via git history + RECENT_DECIDED_ARCHIVE = double safety per §CC.7 Layer 5. Documented în DECISION_LOG entry rationale.
+- **Auto-watcher race observation:** P3 flag manifested mid-execution (commits `a7e951b` + `0b1d781` pushed remote before atomic intent). Resolved cleanly via rebase. Worth dedicated investigation post-cleanup (carry-forward).
 
-- ⚠️ `git mv` failed initial move handover (file not in git index — untracked) → fallback regular `mv` succeeded clean. NU blocking.
-- ✅ ZERO other issues. ZERO src/ touched. ZERO test impact. Pre-flight grep orphane verde 0 matches expected.
+## Next action Daniel
+- Confirm visual integrity post-cleanup (Daniel deschide CURRENT_STATE.md + INDEX_MASTER.md + RECENT_DECIDED_ARCHIVE.md + DECISION_LOG.md verify content preservation + structure clean)
+- Decide priority post-cleanup:
+  - 🔴 P1 prod bugs investigation (Auto template auto-faza + BF→kcal recalc)
+  - sau Phase 4 smoke 4 themes carry-forward
+  - sau CEO decizie V1 features audit blocking BATCH 2 Antrenor implement
 
-## Next action
-
-1. **CEO decizie V1 features audit blocking BATCH 2 Antrenor implement** (highest priority) — `renderIdle.js` 465→180 LOC pierde streak counter + BMR strip; `rating.js` 150→70 LOC pierde per-set RPE granularity. Decizie strategic UX = CEO scope NU Co-CTO.
-2. **BATCH 2 Antrenor port implement** post Daniel CEO decision V1 features. Sequence per BATCH_1_ANTRENOR_PLAN.md §3. Branch `feature/v2-vanilla-port`.
-3. **Order port post-Antrenor:** Onboarding → Progres → Istoric → Settings.
-4. **Step 2 React migration paradigm** post Step 1 validation 100% Daniel Gates smoke andura.app — CC autonomous mecanic mapping.
-
-## Backup tag
-
-`pre-handover-2026-05-10-direct-to-cc-paradigm-1642` (rollback safety preserved origin).
-
-🦫 **Bugatti craft. Direct-to-CC paradigm LIVE TESTED end-to-end secondary ingest. MCP filesystem real-time + claude_code §CC.5 autonomous ingest validated. Cumulative LOCKED V1 ~719 PRESERVED.**
+🦫 **Bugatti craft. Vault hygiene massive cleanup atomic batch — chat ACASĂ MCP filesystem direct paradigm Daniel zero courier validated. CURRENT_STATE.md spec §CC.6 compliance restored 3810→130 LOC. RECENT_DECIDED_ARCHIVE.md rolling pattern first populate active 24→3671 LOC. INDEX_MASTER.md header trim 1-line single. Tests 2731 PASS preserved EXACT. Cumulative LOCKED V1 ~719 PRESERVED unchanged.**
