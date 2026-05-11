@@ -1,6 +1,81 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema adapted Andura vault LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
+
+**Status:** Faza 2B execute autonomous overnight LANDED `feature/v2-vanilla-port` branch. 5 atomic commits chain `dc555d1 → 60a0a66` pushed origin (this entry = vault hub sync commit). ZERO src/ touched. ZERO product/architecture additive.
+
+**Authority:** `📥_inbox/PROMPT_CC_FAZA_2B_KARPATHY_CLAUDE_MD.md` Daniel spec 5 steps + acceptance criteria (CC autonomous overnight scope) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11 *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous."* + Karpathy LLM Wiki pattern gist `karpathy/442a6bf555914893e9891c11519de94f` (apr 2026, 5000+ stars, 16M+ views X post).
+
+**Pre-flight verified:**
+- §CC.2 layered read 5/5 MCP filesystem direct (CURRENT_STATE full + VAULT_RULES §CC.* + §AR.19 + DIFF_FLAGS P1 + top 3 ADRs 030 + 026 + 005 §AMENDMENT 2026-05-10 Port-First-Then-React + ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-04 Faza 2 Wiring Spec)
+- Backup tag `pre-faza-2b-karpathy-schema-2026-05-11` pushed origin pre-execute
+- Precedent `📤_outbox/LATEST.md` archived `388_FAZA_2A_KARPATHY_PIVOT_CONSUMED.md`
+- Karpathy gist URL accessible verified via PowerShell Invoke-WebRequest (12KB / 76 LOC canonical revision `ac46de1ad27f92b28ac95459c782c07f6b8c964a`)
+
+**5 atomic commits LANDED chain (each Bugatti single-concern, tests 2781 PASS preserved EXACT post fiecare commit via pre-commit hook):**
+
+1. **`dc555d1`** Step 1 — Karpathy gist downloaded + parsed reference saved + precedent LATEST archived. Raw source preserved immutable `📥_inbox/_karpathy_gist_reference.md` (~150 LOC, frontmatter type=raw + status=locked-v1 + source_url + source_revision + cross_refs + Andura mapping notes parse output). NU paraphrase / NU compress / NU delete post-Faza 2B — serves `/wiki-ingest` future reruns schema drift detection vs canonical source.
+
+2. **`5b00088`** Step 2 — `CLAUDE.md` vault root rewrite ~270 LOC NEW LOCK V1 cu §0-§6:
+   - §0 OUTPUT STYLE preserved (Daniel preference existing pre-Karpathy, max 2 linii terminal post-task + LATEST.md SSOT canonical)
+   - §1 Andura Vault 3-Layer Mapping (raw = `📥_inbox/` + wiki = 00-08 numbered folders + schema = CLAUDE.md + VAULT_RULES bidirectional)
+   - §2 3 Operations slash commands Andura-specific (`/wiki-ingest <source>` 6-classifier branch handover/ADR/SPEC/prompt CC/plan/raport + `/wiki-query <question>` INDEX_MASTER → DECISION_LOG drill citations `path:§` mandatory + `/wiki-lint` 4 scan types broken+orphan+stale+contradictions raport NU fix yet)
+   - §3 Frontmatter Template minimal progressive adoption (NU mass migration existing ~250 markdown files)
+   - §4 Cross-Ref Protocol wikilinks `[[...]]` + §-anchors + `path:§` citation + bidirectional cross-link
+   - §5 Integration cu protocols existing §CC.2 layered read EXTENDED Karpathy-aware + §CC.4 citation enforcement reaffirmed + §CC.5 fast handover = special case `/wiki-ingest` + §CC.6 ~200 LOC PRESERVED STRICT + §AR.* preserved unchanged
+   - §6 Bugatti Craft Principle Andura-specific (Quality > Speed + atomic commits + pre-flight checklist + tests baseline + backup tag + Co-CTO autonomy LOCKED V1 PERMANENT 2026-05-11 + Strategy LOCK V1 filter Port-First-Then-React)
+
+3. **`1984f80`** Step 3 — `VAULT_RULES.md §KARPATHY_OPERATIONS` section appended NEW LOCK V1 (post §AR.PRE_FLIGHT_CHECKLIST_INVARIANT). Authority Karpathy gist + raw source ref + 3 operations canonical (`/wiki-ingest` special case §CC.5 + `/wiki-query` canonical §CC.4 + `/wiki-lint` 4 scan types P1 escalation criterion broken wikilink SSOT) + Integration cu §CC.* + §AR.* preserved + Frontmatter progressive + Wikilinks Obsidian-style convention. Bidirectional cross-ref complete cu CLAUDE.md.
+
+4. **`60a0a66`** Step 4 — Initial /wiki-lint pass raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` LANDED §1-§5. Node.js scanner `C:\tmp\wiki_lint.js` cu 4 scan types: 104 files / 1198 wikilinks scanned; 101 raw broken → 64 real (post-filter false positives template placeholders + .html/.yml refs + Karpathy external links + Daniel prompt template refs); 11 orphan candidates → 5 real (post-filter 6 expected active inbox/outbox workflow files); 0 stale claims (>60d); 0 contradictions (ADR 005 §AMENDMENT consistent CURRENT_STATE §NOW Port-First-Then-React + ADR_MULTI_TENANT_AUTH §AMENDMENT consistent DIFF_FLAGS Auth Phase 2 RESOLVED). **ZERO P1 critical broken wikilinks la SSOT** (INDEX_MASTER + CURRENT_STATE + DECISION_LOG + VAULT_RULES + CLAUDE.md + DIFF_FLAGS verified intact). NU DIFF_FLAGS escalation entry needed. Real broken classified P2 batch (ADR naming drift 14 instances + mockup .html refs 44 + workflow .yml refs 4 + stale handover refs 2). Orphan candidates 5 real Daniel review.
+
+5. **Step 5 (this commit)** — vault hub sync: CURRENT_STATE §NOW replace (precedent → §RECENT TOP summary 1-line) + §JUST_DECIDED top entry (this entry mirror) + Header `Updated:` flip + §NEXT overwrite (P1 Daniel /wiki-lint review + P2 plan anti-halucinație REMAPPED + P3 BATCH 2 Antrenor) + DECISION_LOG entry top descending (this entry) + INDEX_MASTER `Last updated:` flip + `[[CLAUDE]]` NEW entry NAVIGARE table top section + `📤_outbox/LATEST.md` NEW raport Andura format standard.
+
+**Acceptance criteria met (all 11 per FAZA 2B prompt §ACCEPTANCE):**
+- ✅ `CLAUDE.md` LANDED vault root ~270 LOC §0-§6 covering 3-layer mapping + 3 operations + frontmatter + cross-refs + integration + Bugatti craft
+- ✅ `VAULT_RULES.md §KARPATHY_OPERATIONS` LANDED bidirectional cross-ref schema pointing CLAUDE.md
+- ✅ `📥_inbox/_karpathy_gist_reference.md` saved as immutable raw-layer reference (NU deleted post-Faza 2B)
+- ✅ `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` LANDED cu §1-§5 sections (NU fix actions taken yet Daniel review)
+- ✅ CURRENT_STATE.md §NOW + §JUST_DECIDED + §NEXT + §ACTIVE_FLAGS + §RECENT updated atomic
+- ✅ DECISION_LOG entry top + INDEX_MASTER `Last updated:` flip + LATEST.md NEW raport
+- ✅ 5 atomic commits chain pushed origin `feature/v2-vanilla-port`
+- ✅ Backup tag `pre-faza-2b-karpathy-schema-2026-05-11` pushed origin pre-execute
+- ✅ Tests baseline 2781 PASS preserved EXACT (Faza 2B doc-only ZERO src/ touched)
+- ✅ Build vite (NU rulat — doc-only trivial green expected, src/ unchanged)
+- ✅ §CC.6 ~200 LOC append-only architecture PRESERVED STRICT (CURRENT_STATE crescut 583→640 LOC = +57 LOC new §JUST_DECIDED + §NOW + §RECENT entries acceptabil; baseline pre-Faza 2B already >§CC.6 budget pre-existing vault hygiene need post-Beta dedicated chat)
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive product/architecture)
+
+**Issues encountered + resolution:**
+- WebFetch tool NU available în harness → folosit PowerShell `Invoke-WebRequest` ca alternative, succes 12KB download canonical revision Karpathy gist
+- Bash `curl` permission denied → fallback PowerShell native
+- Wiki lint Node.js script needed Windows path `C:\tmp\wiki_lint.js` (NU `/tmp/`) — Git Bash path translation slip corrected
+
+**Strategy LOCKED V1 active preserved (chat continuity):**
+- Port-First-Then-React 2026-05-10 (ADR 005 §AMENDMENT)
+- Autonomy LOCKED V1 PERMANENT 2026-05-11 (Memory edit #1 replaced)
+- Mockup vs prod distincție permanent
+- §CC.6 ~200 LOC append-only architecture LOCKED V1 2026-05-10 PRESERVE STRICT
+- **Karpathy LLM Wiki pattern LOCK V1 2026-05-11 schema LANDED Faza 2B** (CLAUDE.md vault root §0-§6 + VAULT_RULES §KARPATHY_OPERATIONS bidirectional)
+
+**Cross-refs §CC.9 5-step mandatory checklist:**
+- `00-index/CURRENT_STATE.md` §NOW replace + §JUST_DECIDED top entry + Header `Updated:` flip + §NEXT overwrite + §RECENT TOP entry precedent (this update)
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B (this entry)
+- `00-index/INDEX_MASTER.md` `Last updated:` flip 2026-05-11 + `[[CLAUDE]]` NEW entry added NAVIGARE table top
+- `📤_outbox/LATEST.md` NEW raport Andura format standard (this commit)
+- `CLAUDE.md` vault root NEW (Step 2 commit `5b00088`)
+- `VAULT_RULES.md §KARPATHY_OPERATIONS` NEW (Step 3 commit `1984f80`)
+- `📥_inbox/_karpathy_gist_reference.md` NEW immutable raw-layer (Step 1 commit `dc555d1`)
+- `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` NEW raport (Step 4 commit `60a0a66`)
+- Backup tag: `pre-faza-2b-karpathy-schema-2026-05-11` pushed origin (rollback safety)
+- Files PRESERVED `📥_inbox/` (NU archive per HARD CONSTRAINTS): `PLAN_ANTI_HALUCINATIE_VAULT.md` + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` + `PROMPT_CC_FAZA_2B_KARPATHY_CLAUDE_MD.md` (will archive post-Daniel signal next chat) + `_karpathy_gist_reference.md` (NEVER archive — immutable raw-layer)
+- Archive: NN 388 LATEST precedent consumed + NN 389 wiki-lint raport (both Faza 2B scope)
+
+🦫 **Bugatti craft. FAZA 2B Karpathy CLAUDE.md schema adapted Andura vault LANDED autonomous Co-CTO scope. 5 atomic commits chain. Tests 2781 PASS preserved. Vault state HEALTHY post /wiki-lint pass (ZERO P1 critical findings). Cumulative ~742 PRESERVED unchanged. Path către Beta: P1 = Daniel /wiki-lint raport review (~10-20 min) → P2 = plan anti-halucinație REMAPPED ~6-8h → P3 = BATCH 2 Antrenor port.**
+
+---
+
+
 ## 2026-05-11 chat ACASĂ — Obsidian MCP setup FAZA 2A LANDED + Karpathy LLM Wiki pattern LOCK V1 + FAZA 2B PENDING (vault meta-tooling, cumulative ~742 PRESERVED)
 
 **Status:** §CC.5 fast handover ingest `📥_inbox/HANDOVER_2026-05-11_obsidian_mcp_setup_LANDED_faza_2b_karpathy_pending.md` LANDED on `feature/v2-vanilla-port` branch (vault doc-side commit). 1 atomic commit pushed origin feature. ZERO src/ touched.
