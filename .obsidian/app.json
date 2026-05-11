@@ -1,0 +1,14 @@
+{
+  "livePreview": false,
+  "userIgnoreFilters": [
+    "📤_outbox/",
+    "node_modules/",
+    "dist/",
+    "coverage/",
+    "test-results/",
+    ".git",
+    "📥_inbox/"
+  ],
+  "alwaysUpdateLinks": true,
+  "showUnsupportedFiles": true
+}
