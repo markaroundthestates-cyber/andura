@@ -364,31 +364,33 @@ Phase 4 strategy revised post Daniel directive cap-coadă chat-current verbatim 
 
 ### P1-FLAG-1 — ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md SOURCE PENDING UPLOAD
 
-**Status:** 🟡 PARTIALLY MITIGATED 2026-05-03 (chat strategic post-audit) — Faza 3 va integra direct sub-secțiuni A-M ADR 023 din addendum context window în chat strategic original (NU file upload separate). Original raised 2026-05-03 audit total ingest.
-**Severity:** P1 BLOCKER (impedes ADR 023 implementation full sub-sections A-M, but Faza 3 cleanup integrates from chat context)
+**Status:** 🟢 **RESOLVED 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — ADR 023 V1 SUPERSEDED Anti-RE rule, ADDENDUM body preserved historical reference appendix**
+**Severity:** N/A resolved (ADR 023 V1 scope obsolet per Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 — NU mai blocker implementation; ADDENDUM body PRESERVED §APPENDIX HISTORICAL REFERENCE V1 ADR 023 future v1.5+ reactivation candidate dacă apar trigger points UX noi text input)
 
-**Issue:**
-Audit total ingest 2026-05-03 (3 fișiere ingestate: HANDOVER_AUDIT_TOTAL + AUDIT_VERIFICATION_REPORT + AUDIT_IDEATION_REPORT) referă al 4-lea fișier `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` ca sursă pentru ADR 023 LLM Intent Interpretation §2 sub-secțiuni A-M complete. **Acest fișier NU e în inbox la momentul ingest.**
+**Resolution 2026-05-11 chat ACASĂ continuation:**
+ADR 023 V1 scope era 2 trigger points text input (§36.38 Pain text + §36.55.2 Equipment text). Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 chat ACASĂ continuation = ZERO text liber user în UX scope universal — Pain free text REMOVED + Equipment free text REMOVED + F13 rating notes drop V1. ADR 023 V1 scope OBSOLET fundamental. ADDENDUM 2026-05-03 sub-secțiuni A-M PRESERVED verbatim ca §APPENDIX HISTORICAL REFERENCE V1 în file `03-decisions/023-llm-intent-interpretation.md` (future v1.5+ candidate dacă apar trigger points UX noi care acceptă text input). Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional preserved valid (LLM runtime delock conditional = decision intacta, NU revertită — doar V1 implementation dropped fundament missing trigger points).
+
+**Issue (HISTORICAL — RESOLVED):**
+Audit total ingest 2026-05-03 (3 fișiere ingestate: HANDOVER_AUDIT_TOTAL + AUDIT_VERIFICATION_REPORT + AUDIT_IDEATION_REPORT) referă al 4-lea fișier `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` ca sursă pentru ADR 023 LLM Intent Interpretation §2 sub-secțiuni A-M complete. **Acest fișier NU era în inbox la momentul ingest.** Uploaded chat ACASĂ continuation 2026-05-11 + consumed + ADR 023 V1 supersede per Anti-RE rule LOCKED V1 PERMANENT.
 
 **Per memory rule SUFLET ANDURA precedent (2026-05-02):** partial ingest procedat — fabricarea conținutului lipsă INTERZISĂ per zero-info-loss principle.
 
-**Impact:**
-- ADR 023 status `LOCKED V1 — partial spec` (file `03-decisions/023-llm-intent-interpretation.md` cu summary verifiable din 3 fișiere ingestate)
-- Sub-sections A-M full spec (provider chain detail + sandbox detail + sanitizer whitelist exhaustive + async lifecycle + cache invalidation policy + cost cap enforcement detail + CDL llm_metadata schema + Gigel test scenarios + ToS impact + privacy impact + audit trail format + reconsideration triggers detail + implementation guidance) NU disponibile
-- Implementation Tier 1 (Pain) + Tier 2 (Equipment) cannot start până full spec disponibil
-
-**Action Daniel:**
-1. Upload `ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` în `📥_inbox/`
-2. Comandă CC Opus: `Ingest handover from inbox per VAULT_RULES §HANDOVER_PROTOCOL`
-3. CC Opus va ingesta full sub-sections A-M și update `03-decisions/023-llm-intent-interpretation.md` din partial → complete
-4. Update DIFF_FLAGS.md: P1-FLAG-1 status `🟢 RESOLVED` cu cross-ref commit hash ingest
+**Impact (HISTORICAL — RESOLVED):**
+- ADR 023 status flip `LOCKED V1 — partial spec` → 🟡 **SUPERSEDED V1** cu §AMENDMENT 2026-05-11 + body preserved historical reference + ADDENDUM §APPENDIX HISTORICAL REFERENCE V1
+- Sub-sections A-M full spec PRESERVED verbatim §APPENDIX (future v1.5+ reactivation candidate)
+- Implementation Tier 1 (Pain) + Tier 2 (Equipment) **DROP V1** — fundament trigger points text input REMOVED chat-current 2026-05-11
 
 **Cross-refs:**
-- HANDOVER_GLOBAL §36.86 ADR 023 partial spec
-- HANDOVER_GLOBAL §36.87 Cognitive Q4 DELOCK §AMENDMENT
-- HANDOVER_GLOBAL §36.91 T2 RESOLVED via ADR 023
-- `03-decisions/023-llm-intent-interpretation.md` partial stub
-- Memory rule SUFLET ANDURA precedent 2026-05-02 (Procesul de gândire 12k cuvinte — partial ingest cu STUB pending source upload)
+- `03-decisions/023-llm-intent-interpretation.md` §AMENDMENT 2026-05-11 + §HISTORICAL REFERENCE V1 SUPERSEDED + §APPENDIX HISTORICAL REFERENCE V1
+- ADDENDUM archived `📤_outbox/_archive/2026-05/376_ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03_CONSUMED_SUPERSEDED_ANTI_RE.md`
+- DIFF_FLAGS §P1-FLAG-ANTI-RE-RULE-LOCKED-V1-PERMANENT (rule fundament supersede driver)
+- DECISION_LOG 2026-05-11 chat ACASĂ continuation Co-CTO autonomous entry (ADR 023 supersede)
+- Commit hash (atomic push origin/main 2026-05-11): see DECISION_LOG entry top
+- Backup tag pushed origin: `pre-adr-023-supersede-anti-re-2026-05-11`
+- HANDOVER_GLOBAL §36.86 ADR 023 partial spec (HISTORICAL)
+- HANDOVER_GLOBAL §36.87 Cognitive Q4 DELOCK §AMENDMENT (preserved valid)
+- HANDOVER_GLOBAL §36.91 T2 RESOLVED (stands separately — Anti-RE rule eliminates text input entirely, NU prin LLM intent layer)
+- Memory rule SUFLET ANDURA precedent 2026-05-02 (partial ingest STUB pending source upload)
 
 ---
 

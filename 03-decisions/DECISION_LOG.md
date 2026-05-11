@@ -1,6 +1,46 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — ADR 023 V1 SUPERSEDED Anti-RE rule LOCKED V1 PERMANENT + ADDENDUM 2026-05-03 archived consumed + P1-FLAG-1 flip 🟢 RESOLVED + Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional preserved valid (cumulative ~722-724 PRESERVED — supersede + reclassification only, NU substantive NEW)
+
+**Status:** ADR 023 V1 SUPERSEDED Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 — V1 implementation Tier 1 Pain + Tier 2 Equipment **DROP** fundament (trigger points text input REMOVED chat-current 2026-05-11 per Anti-RE rule scope universal). ADDENDUM 2026-05-03 body sub-secțiuni A-M **preserved historical reference appendix** în ADR 023 file §APPENDIX HISTORICAL REFERENCE V1 (future v1.5+ reactivation candidate dacă apar trigger points UX noi care acceptă text input). Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional **preserved valid** (decision LLM runtime permis conditional rămâne intacta, NU revertită — doar V1 execution path no longer invoked fundament missing). P1-FLAG-1 flip 🟢 **RESOLVED**. Cumulative LOCKED V1 **~722-724 PRESERVED** — supersede + reclassification only, NU substantive NEW.
+
+**Authority:** Daniel directive verbatim chat ACASĂ continuation Co-CTO autonomous + Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 precedent (Pain free text REMOVED + Equipment free text REMOVED + F13 rating notes drop V1) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11.
+
+**1. ADR 023 file update (`03-decisions/023-llm-intent-interpretation.md`):**
+- Status flip: `✅ LOCKED V1 — partial spec ingest` → `🟡 SUPERSEDED V1 — Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 chat ACASĂ continuation drops ALL text input trigger points`
+- §AMENDMENT 2026-05-11 top: rationale verbatim "ADR 023 V1 scope era 2 trigger points text input (§36.38 Pain text + §36.55.2 Equipment text). Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 chat ACASĂ continuation = ZERO text liber user în UX scope universal — Pain free text REMOVED + Equipment free text REMOVED + F13 rating notes drop V1. ADR 023 V1 scope OBSOLET fundamental. ADDENDUM 2026-05-03 sub-secțiuni A-M PRESERVED ca historical reference + future v1.5+ candidate dacă apar trigger points UX noi care acceptă text input. Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional preserved valid (LLM runtime delock conditional = decision intacta, NU revertită — doar V1 implementation dropped fundament missing trigger points)."
+- Body partial spec preserved sub §HISTORICAL REFERENCE V1 SUPERSEDED (V1 historical context + decision + consequences + risks + effort estimate + reconsideration triggers, cu annotations supersede per Anti-RE rule)
+- §APPENDIX HISTORICAL REFERENCE V1 NEW = ADDENDUM 2026-05-03 body sub-secțiuni §2.A-§2.M verbatim preserved future v1.5+ reactivation candidate
+- Cross-refs: DIFF_FLAGS §P1-FLAG-1 🟢 RESOLVED + §P1-FLAG-ANTI-RE-RULE-LOCKED-V1-PERMANENT + ADDENDUM archived path
+
+**2. DIFF_FLAGS §P1-FLAG-1 update:**
+- Status: 🟡 PARTIALLY MITIGATED → 🟢 **RESOLVED 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — ADR 023 V1 SUPERSEDED Anti-RE rule, ADDENDUM body preserved historical reference appendix**
+- Severity update: N/A resolved (ADR 023 V1 scope obsolet, NU mai blocker implementation)
+- Cross-refs: commit hash atomic push + ADR 023 §AMENDMENT 2026-05-11 path + ADDENDUM archived path + backup tag
+
+**3. ADDENDUM archived:**
+`📥_inbox/ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03.md` → `📤_outbox/_archive/2026-05/376_ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03_CONSUMED_SUPERSEDED_ANTI_RE.md`
+
+**4. CURRENT_STATE §JUST_DECIDED top entry + §ACTIVE_FLAGS update P1-FLAG-1 → 🟢 RESOLVED.**
+
+**5. Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional preserved valid:** decision LLM runtime permis condiționat rămâne intacta, NU revertită. V1 implementation path simply has no trigger points to invoke. Future v1.5+ reactivation candidate dacă UX scope re-introduce text input acceptance + Anti-RE rule delocked separately.
+
+**6. Cumulative LOCKED PRESERVED ~722-724 unchanged** — supersede + reclassification only, NU substantive NEW additive.
+
+**Cross-refs:**
+- `03-decisions/023-llm-intent-interpretation.md` 🟡 SUPERSEDED V1 + §AMENDMENT 2026-05-11 + §HISTORICAL REFERENCE V1 + §APPENDIX HISTORICAL REFERENCE V1
+- `DIFF_FLAGS.md` §P1-FLAG-1 🟢 RESOLVED
+- `📤_outbox/_archive/2026-05/376_ADDENDUM_CHAT_STRATEGIC_RECONSIDERARI_2026-05-03_CONSUMED_SUPERSEDED_ANTI_RE.md`
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry + §ACTIVE_FLAGS P1-FLAG-1 → 🟢
+- Backup tag pushed origin: `pre-adr-023-supersede-anti-re-2026-05-11`
+- Predecessor entry below: 2026-05-11 chat ACASĂ POST chat birou ingest CONTINUATION (Anti-RE rule LOCKED V1 PERMANENT fundament driver supersede)
+
+🦫 **Bugatti craft. ADR 023 V1 SUPERSEDED Anti-RE rule LOCKED V1 PERMANENT. ADDENDUM preserved historical reference appendix future v1.5+ candidate. Cognitive Q4 DELOCK conditional preserved valid. P1-FLAG-1 flip 🟢 RESOLVED. Cumulative ~722-724 PRESERVED unchanged.**
+
+---
+
+
 ## 2026-05-11 chat ACASĂ POST chat birou ingest CONTINUATION — AUDIT 22 ENGINES MOCKUP CLASIC + 6 FIXES LOCKED-IN + RULE ANTI-RE NEW LOCKED V1 PERMANENT + F13 DROP V1 SUPERSEDE + AUDIT COMPLIANCE REVIZUIT ~80% + SLIP §AR.1 CAVEMAN DOCUMENTED (cumulative ~722-724 PRESERVED scope products/architecture unchanged)
 
 **Status:** Chat ACASĂ 2026-05-11 POST chat birou ingest CONTINUATION LANDED scribe-mode aggregate. Daniel + Claude (eu) audit real engine-by-engine 22 engines mockup `andura-clasic.html` vs narrativ checklist ingest 373 (~98% claim). Audit compliance revizuit ~80% — 5 gaps pipeline §42.10 prescriptive (Warmup ❌ ZERO + Deload ❌ ZERO + Tempo ⚠️ HIDDEN + weaknessDetector lagging ⚠️ + prEngine PR wall ⚠️ placeholder) + 2 gaps spec V1 (Mini-player §29.5.7 ❌ ZERO + F13 drop V1 per Anti-RE). **6 FIXES LOCKED-IN** cu wording Co-CTO tactical (Warmup + Deload + Tempo Marius render + weaknessDetector lagging + PR drill + Mini-player). **Rule NEW LOCKED V1 PERMANENT: Anti-RE = ZERO text liber user în UX** scope universal NU edge case (paralel Pain/Equipment free text REMOVED 2026-05-11). **F13 V1_FEATURES_AUDIT verdict suprascris drop V1** per Anti-RE rule (NU keep verbatim). **Slip §AR.1 caveman documented permanent**: ADR 011 path stale CURRENT_STATE §ACTIVE_REFS `011-cdl-coach-decision-logic` → file real `011-coach-decision-log-architecture.md` (fixed). Cumulative LOCKED V1 **~722-724 PRESERVED** scope products/architecture unchanged (rule capture + sub-decisions additive NEW ~3-5 substantive net vs ~719 baseline predecessor entry below §POST ingest).
