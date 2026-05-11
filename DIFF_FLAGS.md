@@ -34,6 +34,92 @@
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
+### P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED — Mockup andura-clasic.html FINAL design master pre-port LOCKED (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 2026-05-11 chat-current — `andura-clasic.html` FINAL 4212 LOC, 702KB cu lucide UMD v1.14.0 embedded inline. ~98% compliant spec V2 LOCKED V1. Self-contained zero CDN dependency (never-network-issue-again). Bază solidă port-first vanilla JS Step 1 + React migration Step 2. Pending Daniel drag inbox next chat → `04-architecture/mockups/andura-clasic.html` (backup tag git pre-replace existing 2144 LOC).
+**Severity:** Design master pre-port (gates Step 1 vanilla port execution)
+
+**Cross-refs:** handover archived NN 369 + `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-11 + `03-decisions/DECISION_LOG.md` 2026-05-11 entry top descending + backup tag `pre-cc5-ingest-handover-mockup-clasic-final-2026-05-11`.
+
+---
+
+### P1-FLAG-DECISIONS-10-13-LOCKED — Auth Google primary + Termina mai devreme confirm + 2x DEFER pre-Beta sumar/mesaj zilnic archive (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 2026-05-11 chat-current. #10 Auth Google primary (brick top + Email ghost middle + Skip ultimul cu risk-note). #11 Termina mai devreme confirm extra (`screen-confirm-finish-early` body "NU pierzi progresul" anti-panic Maria 65). #12 DEFER pre-Beta Sumar săptămânal archive (push only). #13 DEFER pre-Beta Mesaj zilnic archive (push only, ephemeral by design).
+**Severity:** UX flow LOCKED (mockup design refinement, zero impact arhitectură)
+
+**Cross-refs:** handover archived NN 369 + `00-index/CURRENT_STATE.md` §JUST_DECIDED 2026-05-11 + DECISION_LOG 2026-05-11 entry top descending §2.
+
+---
+
+### P1-FLAG-PARADIGM-ADAPTIVE-RECONFIRMAT — CDL "follows the body, not the calendar" reconfirmat fundament (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 RECONFIRMAT 2026-05-11 chat-current. NU paradigm nou — reconfirmat fundament PROJECT_VISION + ADR 011 CDL. CD ratat în prima versiune mockup (template săptămânal rigid "Joi · Push · Sapt 3 Ziua 3/4"). Refactor mockup cap-coadă aplicat: Antrenor home *"Coach-ul recomandă AZI"* + WHY line italic + REST-DAY variant + Schedule override 4 opțiuni adaptive (Vreau alt tip / Sesiune ușoară / Sar ziua / Vreau antrenez când era pauză contextual) + Heatmap Istoric legenda nouă (Greu/Normal/Ușor/Zi liberă NU "missed/skipped" compliance shame).
+**Severity:** Fundament product paradigm (gates ALL future scheduling UX decisions)
+
+**Cross-refs:** ADR `03-decisions/011-cdl-coach-decision-logic.md` + PROJECT_VISION reference + DECISION_LOG 2026-05-11 §3 + Daniel "halucinezi" 1x chat-current corrected.
+
+---
+
+### P1-FLAG-L6-DUAL-FEATURE-SEMANTIC — screen-auth-reactivate NEW + card "Bun venit înapoi" preserved separat (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 2026-05-11 chat-current. L6 dual-feature distinct semantic: `screen-auth-reactivate` NEW (post-delete-grace 30 zile flow) + card "Bun venit înapoi" preserved separat (win-back inactive user 14+ zile). Comentarii clarificate ambele HTML+JS. CD a interpretat L6 greșit runda 2 (win-back inactive user în loc de reactivation post-delete-grace) — Claude (eu) tail fix aplicat.
+**Severity:** Auth/reactivation flow distinct semantic (drop merge confusion)
+
+**Cross-refs:** mockup `andura-clasic.html` FINAL screen-auth-reactivate + DECISION_LOG 2026-05-11 §5.
+
+---
+
+### P1-FLAG-VREI-ALTCEVA-TEXT-LINK — text link sub butonul Începe sesiunea NU chevron-row separat (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 2026-05-11 chat-current. *"Vrei altceva azi?"* text link LOCKED sub butonul Începe sesiunea (NU chevron-row separat — Daniel preferință explicită). Drop complet *"Schimbă planul săptămânii"* row vechi (redundancy Hick's law).
+**Severity:** UX micro-pattern LOCKED
+
+**Cross-refs:** mockup `andura-clasic.html` FINAL home screen + DECISION_LOG 2026-05-11 §4.
+
+---
+
+### P1-FLAG-ENGINE-3-GAPS-PRE-PORT — muscleRecovery.js + coachDirector methods noi + US Navy BF calc identified pre-port (2026-05-11 chat-current)
+
+**Status:** 🔴 BLOCKING PRE-PORT 2026-05-11 chat-current — 3 gap-uri engine identified pre-port-first vanilla JS Step 1. Grep verified `src/engine/` 0 references existing. Probabil extensions NU complete rebuild.
+**Severity:** Pre-port mandatory (gates BATCH 2 SUB-BATCH 2 idle.js + subsequent steps)
+
+**3 gap-uri reale:**
+1. `muscleRecovery.js` helper — "Pectoralii recuperează din marți · spatele e gata" WHY line + Step 2 schedule override alt-type generation cu rationale recovery state. Probabil extension la `patternLearning`/`weaknessDetector`, NU complet nou.
+2. `coachDirector` methods noi pentru 4 opțiuni schedule override: `buildLightMobility()` + `rebalanceWeekAfterSkip()` + `generateSafeSessionForRestDay()`.
+3. US Navy BF calculation + greutate țintă projection — verifică `src/` existence sau e new helper.
+
+**Cross-refs:** DECISION_LOG 2026-05-11 §6 + mockup `andura-clasic.html` FINAL Antrenor home + Schedule override + Setări BF section.
+
+---
+
+### P1-FLAG-3-THEMES-PORT-MECANIC-PENDING — Living Body / Luxury / Brain Coach port mecanic pending Daniel signal go (2026-05-11 chat-current)
+
+**Status:** 🟢 LOCKED V1 PLAN 2026-05-11 chat-current — port mecanic 3 themes per Theme Parity Invariant LOCK V1 post-finisaj Clasic. Daniel decision: Claude (eu) port mecanic, NU CD (token quota limit). **Pending Daniel signal go.**
+**Severity:** Theme parity gate post-Beta Clasic stable
+
+**Cross-refs:** DECISION_LOG 2026-05-11 carry-forward + Theme Parity Invariant LOCK V1 chat-current 3 precedent.
+
+---
+
+### P1-FLAG-PROD-AUTO-FAZA-2026-05-10 — ⚠️ DISCREPANCY status reopen Daniel handover (2026-05-11 chat-current)
+
+**Status:** 🔴 **DISPUTED 2026-05-11 chat-current** — Daniel handover *"Neinvestigat"*. **⚠️ Discrepancy vs precedent DIFF_FLAGS P1-FLAG-PROD-BUGS-2026-05-10 🟢 RESOLVED `05ba372`** (chat ACASĂ MCP filesystem 2026-05-10 + 3 regression tests T_AUTO_pre_pilot LANDED). Daniel handover override states still unresolved. **Reconcile mandatory pre-port** — verify actual prod behavior andura.app live + audit `src/sys.js` getPhase pilotActive removal effectiveness.
+**Severity:** P1 prod bug (Auto template fallback 2000 kcal hardcoded vs auto-detect goal+calibrations)
+
+**Cross-refs:** Daniel handover 2026-05-11 archived NN 369 + DIFF_FLAGS P1-FLAG-PROD-BUGS-2026-05-10 (precedent claim resolved) + `05ba372` (commit precedent fix) + `00-index/CURRENT_STATE.md` §ACTIVE_FLAGS 2026-05-11 reconcile.
+
+---
+
+### P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10 — ⚠️ DISCREPANCY status reopen Daniel handover (2026-05-11 chat-current)
+
+**Status:** 🔴 **DISPUTED 2026-05-11 chat-current** — Daniel handover *"Neinvestigat"*. **⚠️ Same discrepancy as P1-FLAG-PROD-AUTO-FAZA-2026-05-10** — precedent DIFF_FLAGS claim 🟢 RESOLVED `05ba372` (Katch-McArdle BF-aware sys.js:54-67 + Mifflin fallback). Reconcile mandatory pre-port.
+**Severity:** P1 prod bug (BF manual edit nu recalc kcal phase + BMR formula audit Katch-McArdle vs Mifflin)
+
+**Cross-refs:** Daniel handover 2026-05-11 archived NN 369 + DIFF_FLAGS P1-FLAG-PROD-BUGS-2026-05-10 + `05ba372` + `00-index/CURRENT_STATE.md` §ACTIVE_FLAGS 2026-05-11 reconcile.
+
+---
+
 ### P1-FLAG-BIROU-SETUP-MCP — Birou laptop MCP filesystem setup chat NEW PRIMARY (2026-05-10 chat-current 3)
 
 **Status:** 🔴 P1 PRIORITY CHAT NEW 2026-05-10 chat-current 3 — Daniel mâine la birou laptop, vrea MCP funcțional NU halucineze chat-uri. Chat NEW deschid cu *"salut birou"* trigger + ghidare pas-cu-pas setup MCP. Daniel zero courier paradigm.

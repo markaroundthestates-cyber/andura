@@ -1,6 +1,70 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ — MOCKUP ANDURA-CLASIC.HTML FINAL DESIGN MASTER + 4 DECISIONS LOCKED (#10-13) + PARADIGM ADAPTIVE SCHEDULING RECONFIRMAT FUNDAMENT + L6 DUAL-FEATURE DISTINCT SEMANTIC + 3 GAP-URI ENGINE PRE-PORT (cumulative ~719 PRESERVED, mockup design refinement zero impact arhitectură)
+
+**Status:** Chat ACASĂ 2026-05-11 LANDED scribe-mode narrativ. Mockup `andura-clasic.html` FINAL (4212 LOC, 702KB cu lucide UMD v1.14.0 embedded inline) ~98% compliant spec V2 LOCKED V1 — bază solidă port-first vanilla JS Step 1 + React migration Step 2. Birou MSIX → Acasă Windows VS Code+PowerShell. Cumulative LOCKED V1 **~719 PRESERVED** (mockup design refinement zero impact arhitectură/spec V2; reconciliation pending vs precedent ~742 chat-current 2 +23 — flagged LATEST.md). **NEXT P1 chat NEW = BIROU SETUP MCP** still pending laptop birou Daniel mâine + Daniel drag mockup file inbox.
+
+**Authority:** Daniel handover `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL.md` + 2 CD iterations + Claude (eu) tail (L6 fix + dead code cleanup + lucide CDN deprecation soluție UMD inline).
+
+**1. Mockup andura-clasic.html FINAL design master pre-port LANDED:**
+
+Daniel + Claude Design 2 iterații pe mockup `andura-clasic.html` master pre-React migration. Pass 1: 2 critice + 7 lipsuri features + 4 clarificări decisions identificate vs spec V2 LOCKED V1. CD a livrat 2 iterații, ajuns versiune solidă (~98% compliant), dar prima rundă a sărit 8 din 11 items, runda 2 a făcut majoritatea dar a interpretat L6 greșit (win-back inactive user în loc de reactivation post-delete-grace). CD quota săptămânală saturated (token boundary x20 plan separat). Claude (eu) preluat tail: L6 fix + dead code cleanup + lucide CDN URL deprecation bug.
+
+**Mockup self-contained lucide UMD inline 702KB zero CDN dependency:** Lucide CDN URL `unpkg.com/lucide@latest/dist/umd/lucide.min.js` întoarce JS valid jsdom (245 icons rendered 100%), dar Daniel local NU vedea iconițele post-modificările mele. Diagnostic deterministic jsdom: library funcționează, problema = cache local / network browser Daniel. Soluția robustă: lucide UMD v1.14.0 embedded INLINE în mockup (+400KB la 702KB, self-contained never-network-issue-again). Daniel confirmat post-embed: merge bine. Daniel "halucinezi" 2x chat-current (paradigm adaptive shift fals atribuit ca nou + URL lucide deprecat) → mea culpa rapidă fără auto-flagelare, acțiune imediată.
+
+**2. Decisions 4 LOCKED chat-current cap-coadă:**
+
+| # | Decision | Verdict | Reasoning |
+|---|----------|---------|-----------|
+| #10 | Auth Google primary | **LOCKED** | Brick top + Email ghost middle + Skip ultimul cu risk-note. Friction one-tap >> email 30s+ round-trip + Magic Link 1h expiration risk Phase 2 |
+| #11 | Termina mai devreme confirm extra | **LOCKED** | Drill-down `screen-confirm-finish-early` cu body explicit "NU pierzi progresul" (anti-panic Maria 65) |
+| #12 | Sumar săptămânal archive | **DEFER pre-Beta** | Push only. Istoric deja dens; add v1.5 dacă feedback users cere |
+| #13 | Mesaj zilnic archive | **DEFER pre-Beta** | Push only, ephemeral by design |
+
+**3. Paradigm adaptive scheduling reconfirmat fundament** (NU paradigm nou):
+
+PROJECT_VISION + ADR 011 CDL *"follows the body, not the calendar"*. CD ratat în prima versiune (template săptămânal rigid "Joi · Push · Sapt 3 Ziua 3/4"). Refactor mockup cap-coadă aplicat: Antrenor home *"Coach-ul recomandă AZI"* + WHY line italic + REST-DAY variant + Schedule override 4 opțiuni adaptive (Vreau alt tip / Sesiune ușoară / Sar ziua / Vreau antrenez când era pauză contextual). Heatmap Istoric legenda nouă (Greu/Normal/Ușor/Zi liberă, NU "missed/skipped" compliance shame).
+
+**4. "Vrei altceva azi?" text link LOCKED:** sub butonul Începe sesiunea (NU chevron-row separat — Daniel preferință explicită). Drop complet "Schimbă planul săptămânii" row vechi (redundancy Hick's law).
+
+**5. L6 dual-feature distinct semantic LOCKED:**
+- `screen-auth-reactivate` NEW (post-delete-grace 30 zile flow)
+- card "Bun venit înapoi" preserved separat (win-back inactive user 14+ zile)
+- Comentarii clarificate ambele HTML+JS
+
+**6. Engine mapping cap-coadă pentru port-first vanilla JS:**
+
+- ~85-90% UI elements ✅ map 1:1 cu engines existing în `src/engine/` (coachDirector / CDL / ruleEngine / dp / patternLearning / adherence / calibration / stagnationDetector / predictionEngine / whyEngine / weaknessDetector / energyAdjustment / bayesianNutrition / proactiveEngine / alternativeEngine).
+- **3 gap-uri reale** (extension/new needed, NU complete rebuild) — **grep verified 0 references existing `src/engine/`:**
+  1. `muscleRecovery.js` helper — "Pectoralii recuperează din marți · spatele e gata" WHY line + Step 2 schedule override alt-type generation cu rationale recovery state. Probabil extension la `patternLearning`/`weaknessDetector`, NU complet nou.
+  2. `coachDirector` methods noi pentru 4 opțiuni schedule override: `buildLightMobility()` + `rebalanceWeekAfterSkip()` + `generateSafeSessionForRestDay()`.
+  3. US Navy BF calculation + greutate țintă projection — verifică `src/` existence sau e new helper.
+
+**7. Mid-flight unresolved BLOCKING pre-port (carry-forward):**
+
+- 🔴 **P1-FLAG-PROD-AUTO-FAZA-2026-05-10** — Auto template fallback 2000 kcal hardcoded vs auto-detect goal+calibrations. Daniel handover "Neinvestigat". **⚠️ Discrepancy:** DIFF_FLAGS.md + precedent CURRENT_STATE §JUST_DECIDED claim 🟢 RESOLVED `05ba372` (chat ACASĂ MCP filesystem 2026-05-10). Reconcile mandatory pre-port (LATEST.md raport flag).
+- 🔴 **P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10** — BF manual edit nu recalc kcal phase + BMR formula audit Katch-McArdle vs Mifflin. Same discrepancy.
+- 🟡 CEO decizie V1 features keep/drop BATCH 2 Antrenor (streak counter + BMR strip + per-set RPE granularity) — pending BATCH 2 SUB-BATCH 2 idle.js.
+- 🟢 **NEW: Port mecanic 3 themes** (Living Body / Luxury / Brain Coach) per Theme Parity Invariant — Daniel decision: Claude (eu) port mecanic post-finisaj Clasic, NU CD (token quota limit). Pending Daniel signal go.
+
+**8. Mockup file delivery pending Daniel next chat:** `andura-clasic.html` FINAL (4212 LOC, 702KB lucide inline) va fi adăugat manual de Daniel în `📥_inbox/` la următoarea sesiune. Destinație finală sugerată `04-architecture/mockups/andura-clasic.html` (backup tag git pre-replace existing 2144 LOC post mockup sweep #1 chat-current 3 precedent).
+
+**Cross-refs:**
+- `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL.md` archived → `📤_outbox/_archive/2026-05/369_HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_CONSUMED.md`
+- `📤_outbox/_archive/2026-05/370_LATEST_CC5_INGEST_MOCKUP_CLASIC_FINAL_CONSUMED.md` (previous LATEST cycled)
+- `00-index/CURRENT_STATE.md` §NOW move-then-replace + §JUST_DECIDED top descending + §NEW_FLAGS
+- `DIFF_FLAGS.md` NEW entries chat-current 2026-05-11 (mockup CLASIC FINAL LOCKED + 4 decisions #10-13 + paradigm adaptive reconfirm + L6 dual semantic + 3 gap-uri engine + 2 discrepancy P1 prod bugs)
+- `04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1.md` §LOCK V1 (parent paradigm V1 gates #4 selective port)
+- `04-architecture/V1_FEATURES_AUDIT_V1.md` §LOCK V1 (15 features Co-CTO bias preserved)
+- ADR 011 CDL `📁 03-decisions/011-cdl-coach-decision-logic.md` — paradigm adaptive scheduling "follows the body, not the calendar" reconfirmat fundament 2026-05-11
+- Backup tag pushed origin: `pre-cc5-ingest-handover-mockup-clasic-final-2026-05-11`
+
+🦫 **Bugatti craft. Mockup CLASIC FINAL design master LANDED. 4 decisions LOCKED + L6 dual semantic + paradigm adaptive reconfirm + "Vrei altceva azi?" text link + 3 gap-uri engine identified pre-port. Cumulative ~719 PRESERVED.**
+
+---
+
+
 ## 2026-05-10 chat ACASĂ continuation 3 — MOCKUP SWEEP #1 LANDED main + BATCH 2 ANTRENOR PORT SUB-BATCH 1 LANDED feature/v2-vanilla-port — autonomous Co-CTO scope (cumulative ~742 PRESERVED, router scaffold meta-tooling NU additive)
 
 **Status:** Chat ACASĂ continuation 3 LANDED autonomous Co-CTO scope per Daniel autonomy lock EXTINS REAFFIRMED *"esti autonomous pana la launch beta cand fac eu review"*. 17 commits chain end-to-end pe 2 branch (9 mockup sweep main `a9ddfa8..71e6445` + 4 substantive BATCH 2 SUB-BATCH 1 feature `f23453f..be82938` + auto-watcher captures). Tests **2732 → 2736 PASS** (+4 net router cases). Cumulative LOCKED V1 **~742 PRESERVED unchanged** (mockup polish + router scaffold meta-tooling NU additive product/architecture LOCK V1). NEXT P1 chat NEW = **BIROU SETUP MCP** pe laptop birou Daniel mâine.
