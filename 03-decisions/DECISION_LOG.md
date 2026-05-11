@@ -1140,7 +1140,7 @@ pre-actions-cost-optimization-2026-05-10-0153                (Actions fix 5 fixe
 
 ### Cross-refs
 
-[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 amendment (Nutriție tab REMOVED + MFP CSV preserved generic wording) + [[../04-architecture/mockups/andura-clasic]] (baseline reference Theme Parity Invariant cross-skin) + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-brain-coach]] (Theme Parity Invariant V1 cross-skin) + [[../.github/workflows/ci]] + [[../.github/workflows/deploy]] (5 fixes LANDED meta-tooling) + Theme Parity Invariant LOCK V1 = NEW arch rule mandatory cross-skin design + dev decisions going forward + Pattern matured §CC.5 fast handover + WCAG SC 1.4.3 4.5:1 AA text + SC 1.4.11 3:1 non-text + CSS Custom Properties Level 1 §3.4 guaranteed-invalid value (Path A hotfix recovery foundation) + Handover archived NN 281 + LATEST_CONSOLIDATED archived NN 288.
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 amendment (Nutriție tab REMOVED + MFP CSV preserved generic wording) + [mockups/andura-clasic.html](../04-architecture/mockups/andura-clasic.html) (baseline reference Theme Parity Invariant cross-skin) + [mockups/andura-luxury.html](../04-architecture/mockups/andura-luxury.html) + [mockups/andura-living-body.html](../04-architecture/mockups/andura-living-body.html) + [mockups/andura-brain-coach.html](../04-architecture/mockups/andura-brain-coach.html) (Theme Parity Invariant V1 cross-skin) + [[../.github/workflows/ci]] + [[../.github/workflows/deploy]] (5 fixes LANDED meta-tooling) + Theme Parity Invariant LOCK V1 = NEW arch rule mandatory cross-skin design + dev decisions going forward + Pattern matured §CC.5 fast handover + WCAG SC 1.4.3 4.5:1 AA text + SC 1.4.11 3:1 non-text + CSS Custom Properties Level 1 §3.4 guaranteed-invalid value (Path A hotfix recovery foundation) + Handover archived NN 281 + LATEST_CONSOLIDATED archived NN 288.
 
 ---
 
@@ -1220,7 +1220,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 ### Cross-refs
 
-- [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-brain-coach]] design tokens cross-skin V2 SSOT compliant
+- [mockups/andura-clasic.html](../04-architecture/mockups/andura-clasic.html) + [mockups/andura-living-body.html](../04-architecture/mockups/andura-living-body.html) + [mockups/andura-luxury.html](../04-architecture/mockups/andura-luxury.html) + [mockups/andura-brain-coach.html](../04-architecture/mockups/andura-brain-coach.html) design tokens cross-skin V2 SSOT compliant
 - [[ADR_BIAS_DETECTION_OBSERVABLE_v1]] anti-RE wording (zero numeric values + zero Roman user-facing per Gigel test)
 - [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] preset 12-zone body grid + 3-tier severity
 - `src/engine/alternativeEngine.js` ALTERNATIVES map fixed list per exercise
@@ -1320,7 +1320,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 - [[026-offline-coaching-decision-tree-exhaustive]] §42.10 pipeline order + §9.3 Energy Adjustment SSOT
 - [[030-adapter-design-pattern]] D2 thin + Q-OPEN 7/7 RESOLVED V1 + D4 severity field
-- [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-brain-coach]] design tokens cross-skin V2 SSOT compliant
+- [mockups/andura-clasic.html](../04-architecture/mockups/andura-clasic.html) + [mockups/andura-living-body.html](../04-architecture/mockups/andura-living-body.html) + [mockups/andura-luxury.html](../04-architecture/mockups/andura-luxury.html) + [mockups/andura-brain-coach.html](../04-architecture/mockups/andura-brain-coach.html) design tokens cross-skin V2 SSOT compliant
 - [[ADR_BIAS_DETECTION_OBSERVABLE_v1]] zero numeric values user-facing categorical ✓/OK/⚠ only
 - [[../00-index/CURRENT_STATE]] §JUST_DECIDED entry top descending cronologic + §NOW active
 
@@ -1408,7 +1408,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 **Migration ordering 8 batches:** Vite+React scaffold → Router skeleton → state.js→Context → page shells → Onboarding → Coach session → Settings+auth → Theme picker. Per-batch prompts CC tactical urmează.
 
-**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[030-adapter-design-pattern]] D2 orchestrator preserved.
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [mockups/andura-clasic.html](../04-architecture/mockups/andura-clasic.html) + [mockups/andura-living-body.html](../04-architecture/mockups/andura-living-body.html) + [[030-adapter-design-pattern]] D2 orchestrator preserved.
 
 **Backup tag:** `pre-adr005-amendment-react-migration-2026-05-08-2051` pushed origin.
 
