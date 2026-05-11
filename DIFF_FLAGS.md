@@ -1,7 +1,8 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-11 chat ACASĂ POST chat birou ingest — Mockup CLASIC FINAL v2 **LANDED on disk** `04-architecture/mockups/andura-clasic.html` (3867 LOC / 305431 bytes / SHA256 `065893BF…E3344`, lucide CDN ref NU inline UMD — Daniel cleaned export). Backup tag pushed origin `pre-mockup-clasic-final-v2-replace-2026-05-11`. Audit narrativ Co-CTO chat birou ingested. Strategic insight NEW INSIGHTS_BACKLOG = training schedule override paradigm P1 prebeta dedicated discussion. P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED status flip → 🟢 LANDED on disk. Cumulative ~719 PRESERVED unchanged. Predecessor Updated: 2026-05-10 chat ACASĂ continuation 3 — BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port (router.js NEW + state.js +2 fields + router.test.js 4 cases + amendment §4 7/7 RESOLVED) + Mockup sweep #1 main LANDED chain `a9ddfa8..71e6445`. P1-FLAG-PORT-FIRST-THEN-REACT status EXECUTION-READY → IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED + NEW P1-FLAG-BIROU-SETUP-MCP P1 priority chat NEW. Tests 2732 → **2736 PASS** (+4 net router cases).
+**Updated:** 2026-05-11 chat ACASĂ POST chat birou ingest CONTINUATION — AUDIT real engine-by-engine 22 engines mockup CLASIC + 6 FIXES LOCKED-IN scope (Warmup + Deload + Tempo Marius render + weaknessDetector lagging + PR drill + Mini-player) + RULE NEW LOCKED V1 PERMANENT Anti-RE = ZERO text liber user în UX (scope universal NU edge case — paralel Pain/Equipment free text REMOVED 2026-05-11) + F13 V1_FEATURES_AUDIT verdict suprascris drop V1 (per Anti-RE rule). Audit compliance revizuit ~80% (NU 98% claim 373) — 5 gaps pipeline §42.10 prescriptive + 2 gaps spec V1. 3 engine gap-uri pre-port (P1-FLAG-ENGINE-3-GAPS-PRE-PORT) confirmate convergente cu mockup `chooseScheduleOverride`. Slip §AR.1 caveman documented (CURRENT_STATE §ACTIVE_REFS ADR 011 path stale fixed `011-cdl-coach-decision-logic` → `011-coach-decision-log-architecture.md`). Backup tag pushed origin `pre-cc5-ingest-audit-mockup-22-engines-2026-05-11`. Cumulative ~722-724 PRESERVED scope products/architecture unchanged (rule capture + sub-decisions additive NEW ~3-5 substantive net).
+**Predecessor Updated:** 2026-05-11 chat ACASĂ POST chat birou ingest — Mockup CLASIC FINAL v2 **LANDED on disk** `04-architecture/mockups/andura-clasic.html` (3867 LOC / 305431 bytes / SHA256 `065893BF…E3344`, lucide CDN ref NU inline UMD — Daniel cleaned export). Backup tag pushed origin `pre-mockup-clasic-final-v2-replace-2026-05-11`. Audit narrativ Co-CTO chat birou ingested. Strategic insight NEW INSIGHTS_BACKLOG = training schedule override paradigm P1 prebeta dedicated discussion. P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED status flip → 🟢 LANDED on disk. Cumulative ~719 PRESERVED unchanged. Predecessor Updated: 2026-05-10 chat ACASĂ continuation 3 — BATCH 2 Antrenor port SUB-BATCH 1 LANDED feature/v2-vanilla-port (router.js NEW + state.js +2 fields + router.test.js 4 cases + amendment §4 7/7 RESOLVED) + Mockup sweep #1 main LANDED chain `a9ddfa8..71e6445`. P1-FLAG-PORT-FIRST-THEN-REACT status EXECUTION-READY → IN PROGRESS BATCH 2 SUB-BATCH 1 LANDED + NEW P1-FLAG-BIROU-SETUP-MCP P1 priority chat NEW. Tests 2732 → **2736 PASS** (+4 net router cases).
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
@@ -33,6 +34,52 @@
 ---
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
+
+### P1-FLAG-ANTI-RE-RULE-LOCKED-V1-PERMANENT — ZERO text liber user în UX scope universal NU edge case (2026-05-11 chat ACASĂ continuation)
+
+**Status:** 🟢 **LOCKED V1 PERMANENT 2026-05-11 chat ACASĂ continuation** — Rule NEW Anti-RE = ZERO text liber user în UX. **Scope universal**, NU edge case Pain/Equipment. Daniel directive verbatim chat-current *"nu o sa existe text liber pt user ca nu facem nimic cu el e doar noise"*. Paralel direct precedent: Pain free text REMOVED 2026-05-11 + Equipment free text REMOVED 2026-05-11. F13 V1_FEATURES_AUDIT verdict (keep verbatim) **suprascris drop V1** per Anti-RE rule. Rating F12 (Ușor/Potrivit/Greu) + Pain button "Ceva nu merge" 3 predefined acoperă deja signal granular consumabil engine.
+**Severity:** Fundament Anti-RE rule (gates ALL future UX decisions text input vs predefined buttons)
+
+**Cross-refs:** Daniel directive verbatim chat-current preserved CURRENT_STATE §NOW + DECISION_LOG 2026-05-11 POST-INGEST continuation entry + V1_FEATURES_AUDIT F13 verdict superseded note + Pain/Equipment free text REMOVED precedent 2026-05-11.
+
+---
+
+### P1-FLAG-MOCKUP-6-FIXES-LOCKED-V1 — 6 fixes mockup edit LOCKED scope wording Co-CTO tactical (2026-05-11 chat ACASĂ continuation)
+
+**Status:** 🟡 **LOCKED V1 SCOPE 2026-05-11 chat ACASĂ continuation** — 6 fixes mockup edit LOCKED-IN cu wording Co-CTO tactical preserved CURRENT_STATE §NOW + DECISION_LOG. Sequencing pending Daniel signal go: Option A (sweep dedicat → BATCH 2 port) / Option B (prioritizat 3 critice → smoke → rundă 2 → port) / Option C (BATCH 2 port direct cu 6 fixes integrate inline).
+**Severity:** Mockup design refinement pre-port (gates BATCH 2 SUB-BATCH 2 idle.js sequencing decision)
+
+**6 fixes scope LOCKED:**
+1. **Warmup** — Pasul 2 Workout Preview extension, bloc subtle 1-line *"Începem cu 5 min încălzire piept & umeri — band pull-apart × 2 · activare scapulă"* + help-circle L1 bottom sheet *"De ce această încălzire?"*. Adaptive per main lift + recovery state.
+2. **Deload** — Antrenor home variant 3rd: card cream warm *"Săptămâna asta = recuperare"* + WHY line italic *"Oboseală cumulată 3 săpt · scădem volumul -40% pe toate sesiunile · revenim luna viitoare mai puternic"* + buton brick *"OK, înțeleg"*. Plus Heatmap legenda Istoric +1 tier color "Recuperare" (NU "Deload" jargon).
+3. **Tempo / form cues** — Strip element `wv2-cue-body` complet (pre-existent legacy CD V1 dead code per audit 373). Adăug NEW post-set rating row Marius-only conditional render `applyPersonaState`, 1 line italic Lora *"Cobori 3 sec · pauza 1 sec jos · explozie sus"* (tempo prescription engine output). Gigel persona NU vede deloc.
+4. **weaknessDetector lagging signal** — WHY line Antrenor home extension: *"Pectoralii recuperează · spatele sub-volum 2 săpt — focus azi pe rânduri"*. Plus pattern banner Progres NEW 3rd: *"Umerii rămași în urmă"* + sub-line *"Coach-ul adaugă +2 seturi laterale săptămâna asta"*.
+5. **prEngine PR wall drill-down** — Istoric tab, buton "Recorduri Personale" line 1099 — replace `showToast` cu `goto('pr-wall')` drill-down screen NEW: list cronologic PR-uri + badge award icon + tap → detail per exercitiu graf timeline. F11 banner post-session link "Vezi toate" → același drill.
+6. **Mini-player sesiune persistentă** — Sticky pill bottom (deasupra nav root), apare doar când `_dirSession.active === true`. Tap → return la session execution Pasul actual. Persistent cross-screen. Date persist via localStorage `wv2-active-session` (parity L7 mecanic, reverse direction).
+
+**Cross-refs:** CURRENT_STATE §NOW 2026-05-11 continuation + DECISION_LOG 2026-05-11 POST-INGEST continuation entry + handover archived NN 374.
+
+---
+
+### P1-FLAG-AUDIT-COMPLIANCE-REVIZUIT-80 — Audit real engine-by-engine 22 engines mockup CLASIC ~80% NU 98% claim 373 (2026-05-11 chat ACASĂ continuation)
+
+**Status:** 🟡 **AUDIT FINDING 2026-05-11 chat ACASĂ continuation** — Compliance ~80% (NU 98% claim audit 373 narrativ Co-CTO chat birou). Engine-by-engine real vs narrativ checklist 373. **5 gaps pipeline §42.10 prescriptive + 2 gaps spec V1.** 373 a făcut 4 decisions + L1-L7 + paradigm adaptive checklist, NU engine pipeline §42.10 map.
+**Severity:** Audit methodology gap (predecessor claim ~98% revizuit) — NU blocking, finding documented permanent
+
+**5 gaps pipeline §42.10 prescriptive:**
+- ❌ **Warmup #7** — ZERO surface mockup (engine LANDED V1 `20999fb`)
+- ❌ **Deload #8** ULTIMUL — ZERO surface mockup (engine LANDED V1 `a6a0c87`)
+- ⚠️ **Tempo #5 form cues** — `wv2-cue-body` HIDDEN `display:none` line 2334 + JS toggle missing
+- ⚠️ **weaknessDetector lagging signal** — explicit lipsește, fold-in parțial WHY line
+- ⚠️ **prEngine PR wall drill** — toast placeholder line 1099 `showToast('Recorduri Personale')`
+
+**2 gaps spec V1:**
+- ❌ **Mini-player sesiune persistentă §29.5.7** — ZERO surface mockup (L7 Resume card ≠ mini-player; L7 = post-close resume, mini-player = sticky pill cross-screen in-app navigate-while-active)
+- ❌ **F13 rating notes input** — drop V1 per Anti-RE rule LOCKED V1 PERMANENT (NU keep verbatim V1_FEATURES_AUDIT verdict superseded)
+
+**Cross-refs:** Audit 373 narrativ Co-CTO archived NN 373 + 6 fixes scope LOCKED V1 (P1-FLAG-MOCKUP-6-FIXES-LOCKED-V1 above) + Anti-RE rule LOCKED V1 PERMANENT (P1-FLAG-ANTI-RE-RULE-LOCKED-V1-PERMANENT above) + 3 engine gap-uri pre-port (P1-FLAG-ENGINE-3-GAPS-PRE-PORT preserved below).
+
+---
 
 ### P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED — Mockup andura-clasic.html FINAL v2 LANDED on disk (2026-05-11 chat ACASĂ POST chat birou ingest)
 
