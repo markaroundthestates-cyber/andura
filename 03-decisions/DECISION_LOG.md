@@ -1,6 +1,72 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ — Anti-halucinație plan scope 95% LOCKED V1 P1 ABSOLUTE + vault meta-tooling 4 surfaces aligned (vault meta-tooling, cumulative ~719 PRESERVED unchanged)
+
+**Status:** §CC.5 fast handover ingest `📥_inbox/HANDOVER_2026-05-11_anti_halucinatie_plan_p1_absolute.md` LANDED on `feature/v2-vanilla-port` branch (vault doc-side commit alongside in-progress STAGE 4 src/ work preserved). 1 atomic commit pushed origin feature.
+
+**Authority:** Daniel mandate verbatim chat-current end-of-chat: *"chiar ma scoate din sarite. In loc sa dam inainte ne uitam la ce e deja rezolvat si mai rezolvam o data... e de rasul curcilor"* + *"nu mai vreau sa te aud pana la smoke de beta"* + *"acoperis inainte de pereti"* + *"ce dracu e nevoie sa plang in fiecare chat sa nu mai inventezi informatii false?"* + *"NU MA MAI INTREBI NIMIC FARA SA VERIFICI DACA DEJA AI INFORMATIA DE ACUM INAINTE"* + STOP signal *"bun. ne oprim din orice"*. Confirmare paradigm: vault are answer pe 95% întrebări (*"Daca cauti o sa vezi ca toate 'Deciziile pending cu daniel deja am raspuns de 5 ori la ele'"*).
+
+**Trigger:** Chat 2026-05-11 — Claude repetat slip-uri pe info deja decis în vault. 6 slip-uri majore consolidate audit verbatim:
+
+1. P1-FLAG-PROD-AUTO-FAZA descrieri stale ("2000 kcal hardcoded" vs Daniel: *"in prod nu mai e nimic hardcoded"*)
+2. Întrebat V1 features keep/drop deja LOCKED vault (*"PĂSTRĂM existing prod transferat spec V2"*)
+3. Sărit la P1 prod bug fix pe layer înlocuit Step 1 port (Port-First-Then-React LOCKED — acoperiș-pereți)
+4. SETUP memorie stale (acasă VS Code+PowerShell vs Daniel verbatim "Claude Desktop+MCP+full autonomy")
+5. §CC.3 "Continuăm?" final inutil când §NEXT priority order clar
+6. Artefact CC paste-able BATCH 2 = Autonomy LOCKED V1 PERMANENT 2026-05-11 violation
+
+**5 root causes (C1-C5) identificate:**
+
+| # | Cauză | Impact concret |
+|---|-------|----------------|
+| C1 | Vault descriptions stale (paraphrase Claude vs verbatim Daniel) | P1-FLAG-PROD-AUTO-FAZA "2000 kcal hardcoded" |
+| C2 | Decision answers dispersed multi-file (DECISION_LOG + HANDOVER + JUST_DECIDED + RECENT_DECIDED_ARCHIVE) | V1 features keep/drop pattern în 4 locuri |
+| C3 | Strategy LOCK V1 nu e filtru pre-decision (acoperiș-pereți) | Port-First-Then-React ignorat |
+| C4 | Memorie Claude vs vault arbitraj absent | SETUP acasă stale |
+| C5 | §NEXT priority order ignorat (săritură P1→P3) | "Continuăm V1 features?" când P1 era auto-faza |
+
+**Plan 5 PHASES × 15 items LANDED `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` (scope 95% LOCKED V1 P1 ABSOLUTE):**
+
+- **PHASE 1 — Vault structure hygiene (fix C1+C2):** Item 1.1 `00-index/DECISIONS_ANSWERED.md` NEW SSOT (append-only Q&A flat searchable, format strict per entry: Q topic-keyword + A Daniel verbatim quote + cross-ref) + Item 1.2 DIFF_FLAGS verbatim regen (paraphrase Claude → Daniel verbatim quote per flag) + Item 1.3 VERBATIM_QUOTES.md compile + Item 1.4 cleanup duplicates
+- **PHASE 2 — Strategy LOCK filter (fix C3):** Item 2.1 `04-architecture/STRATEGY_LOCK_V1.md` NEW (acoperiș-pereți rule + Port-First-Then-React filter pre-decision pre-action) + Item 2.2 §CC.5 amendment cross-ref
+- **PHASE 3 — Hallucination log (fix C1):** Item 3.1 `07-meta/HALUCINATION_LOG.md` NEW (cataloga slip-uri istorice + verbatim Daniel push-back + root cause attribution C1-C5) + Item 3.2 anti-recurrence rule + Item 3.3 cross-refs index
+- **PHASE 4 — Quick answers (fix C2):** Item 4.1 `00-index/QUICK_ANSWERS.md` NEW (lookup pattern fast Q→A common questions deja LOCKED vault) + Item 4.2 lookup pattern documented + Item 4.3 amendments protocol
+- **PHASE 5 — VAULT_RULES extensions (fix C4+C5):** Item 5.1 §AR.20 "vault SSOT primat over Claude memory stale" + §AR.21 "§NEXT priority order STRICT respect" + Item 5.2 §CC.6 amendment quick answers integration + Item 5.3 §CC.2 amendment layered read STRICT 5/5
+
+**Acceptance:** ~95% mecanic codificabil (5% inherent uncertainty behavioral compliance Claude). Sequence P0 critical path ~4-6h (Item 1.1 + 2.1 + 5.1) + P1 parallel ~3-4h (Items 1.2 + 1.3 + 3.1 + 4.1) + sequential rest ~2-3h (Items 1.4 + 2.2 + 3.2 + 3.3 + 4.2 + 4.3 + 5.2 + 5.3) = ~9-13h CC autonomous overnight.
+
+**4 surfaces vault meta-tooling aligned chat-current:**
+
+1. **userPreferences UI Daniel** — text raw paste UI: §2 PRE-ACTION VAULT SEARCH mandatory + §3 EXECUȚIE DIRECTĂ via MCP+claude_code (NO Cowork — Daniel correction explicit chat-current) + §5 STRATEGY-LOCK FILTER (acoperiș-pereți) + §10 STOP recognition expanded + §CC.3 NO "Continuăm?" final + memorie internă stale → vault SSOT primat
+2. **Memory file Claude** — Cumulative ~719 LOCKED V1 (era 243+ stale) + 2731 tests baseline (era 1200+ stale) + Port-First-Then-React strategy LOCK V1 + Autonomy LOCKED V1 PERMANENT 2026-05-11 + Environments fix ACASĂ Claude Desktop+MCP+full autonomy + Artifact output rule REVIZUIT post-Autonomy + Slip history 2026-05-11 documentat
+3. **Memory edits Claude** — 6 replace-uri critice: #3 daniel-isms (STOP recognition expanded + "continua autonom" nou) + #4 tests 2731+ baseline + #5 SETUP fix Claude Desktop+MCP+full autonomy + #18 pre-action vault search + strategy-lock filter + #21 §CC.3 NO "Continuăm?" + #22 §CC.4 memorie stale → vault SSOT primat. Restul 24 edits compatibile preserved as-is.
+4. **System prompt project UI Daniel** — text raw în chat (filesystem error pe diacritice prima încercare). Format compact ~1500 chars
+
+**2 files landed `📥_inbox/` (P1+P2 input next chat execute, NU handover content — preserve NU archive):**
+
+- `PLAN_ANTI_HALUCINATIE_VAULT.md` — P1 ABSOLUTE next chat
+- `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` — P2 deferred next chat post P1 LANDED. Branch `feature/v2-vanilla-port` (BATCH 1 LANDED `2deba60`). Constraints CEO LOCKED (derived vault, NU întreba): V1 features audit = KEEP ALL + Workflow antrenament V1 + state.js +2 fields + PRESERVE `src/pages/coach/` (36+ imports blast radius) + Engines + storage UNTOUCHED + Tests target ~2780.
+
+**§CC.6 ~200 LOC append-only architecture LOCKED V1 2026-05-10 PRESERVE STRICT:** ZERO inflate 596KB CURRENT_STATE re-introduced.
+
+**Anti-recurrence rule implicit chat-current:** Plan vault structural enforce anti-halucinație + anti-repetare. Sequence next chat execute → vault structural primat → Claude reduce friction surface area Daniel side ~95%.
+
+**Cross-refs:**
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry chat ACASĂ + Header `Updated:` field flip
+- `00-index/INDEX_MASTER.md` `Last updated:` field flip 2026-05-11
+- `📤_outbox/LATEST.md` NEW §CC.5 fast ingest raport (this commit)
+- Archive moves: NN 384 handover consumed + NN 385 LATEST cycle precedent
+- Backup tag: `pre-handover-2026-05-11-anti-halucinatie-plan-2034` pushed origin (rollback safety)
+- Files PRESERVED `📥_inbox/` (NU archive): `PLAN_ANTI_HALUCINATIE_VAULT.md` + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`
+- Handover archived: `📤_outbox/_archive/2026-05/384_HANDOVER_2026-05-11_anti_halucinatie_plan_p1_absolute_CONSUMED.md`
+
+**Cumulative impact:** ~719 PRESERVED unchanged (vault meta-tooling chat-current ZERO net additive product/architecture decisions — plan + memory + UI surfaces alignment).
+
+🦫 **Bugatti craft. §CC.5 fast handover ingest anti-halucinație plan P1 ABSOLUTE LANDED. Scope 95% LOCKED V1 5 PHASES × 15 items ~13h CC autonomous overnight ready execute. Vault meta-tooling 4 surfaces aligned. Cumulative ~719 PRESERVED. Path către Beta clear via P1 plan landed → P2 BATCH 2 Antrenor.**
+
+---
+
 ## 2026-05-11 chat NEW startup §CC.5 FAST HANDOVER INGEST end-of-chat-current STAGES 1-4 + AUTONOMY PARADIGM SHIFT LOCKED V1 PERMANENT 2026-05-11 (cumulative ~722-724 PRESERVED unchanged, execution + paradigm + reconcile only NU substantive NEW decisions)
 
 **Status:** Handover input `📥_inbox/HANDOVER_2026-05-11_CHAT_ACASA_CONTINUATION_AUTONOMY_PARADIGM_SHIFT_STAGES_1-4.md` (scribe-mode aggregate end-of-chat-current BW ~15-20% threshold) ingested §CC.5 fast on `feature/v2-vanilla-port` branch (vault doc-side commit lands here alongside in-progress STAGE 4 src/ work; main has STAGES 1-3 §CC.5 commits already via earlier chat-current-3 ingest). 1 atomic commit pushed origin feature.
