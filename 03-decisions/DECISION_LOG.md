@@ -2583,7 +2583,7 @@ CLAUDE.md project-level presupus exist înainte create — recidivă pattern doc
 - 5 risks documented (atomicity, cross-section ambiguity, older §1-§35 context, wikilinks form variability, performance)
 - Backup tag `pre-handover-split-2026-05-05-overnight` pushed pre-execution
 
-**Cross-refs:** [[../06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05]] | VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13 | DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT (status preserved 🟡 OPEN).
+**Cross-refs:** [[221_HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05_DEPRECATED]] (split plan source archived `📤_outbox/_archive/2026-05/221_HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05_DEPRECATED.md` post P1-FLAG-HANDOVER-SPLIT 🟢 RESOLVED 2026-05-05 overnight) | VAULT_RULES.md §VAULT_HYGIENE_PASS STEP 13 | DIFF_FLAGS P1-FLAG-HANDOVER-SPLIT (status preserved 🟢 RESOLVED).
 
 **Files created:** 1 plan file `06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05.md`. ZERO source files modified.
 

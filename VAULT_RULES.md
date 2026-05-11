@@ -825,7 +825,7 @@ Chat NEW startup compară `CURRENT_STATE.md` header `Updated:` vs `DECISION_LOG.
 **Trigger pattern:** Spec instructs REPLACE `[[<archived>]]` references în CURRENT_STATE §ACTIVE_REFS. CC verifies pre-edit: §ACTIVE_REFS NU contains direct wikilinks → archived files (pointers reference HANDOVER_GLOBAL INDEX cu internal § anchors instead). REPLACE instruction MOOT, ADD instruction relevant.
 
 **Source examples:**
-- Run 2 Task 2 CC raport — spec line 86-87 REPLACE `[[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] §41-§49` în §ACTIVE_REFS. Pre-verify: §ACTIVE_REFS lines 1737-1752 reference `HANDOVER_GLOBAL_2026-04-30_evening.md §41-§45` (GLOBAL INDEX cu internal anchors NOT archived files directly). REPLACE moot. ADD 4 NEW Task 1 split file pointers relevant (preserved în execution).
+- Run 2 Task 2 CC raport — spec line 86-87 REPLACE `[[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]] §41-§49` în §ACTIVE_REFS. Pre-verify: §ACTIVE_REFS lines 1737-1752 reference `HANDOVER_GLOBAL_2026-04-30_evening.md §41-§45` (GLOBAL INDEX cu internal anchors NOT archived files directly). REPLACE moot. ADD 4 NEW Task 1 split file pointers relevant (preserved în execution). (Note: file `HANDOVER_VAULT_HYGIENE_2026-04-30_evening.md` archived deprecated `📤_outbox/_archive/2026-05/222_HANDOVER_VAULT_HYGIENE_2026-04-30_evening_CAPACITY_A_DEPRECATED.md` post Run 2 Task 3 LANDED — verbatim historical example preserved within backticks per §CC.9.5 spec.)
 
 **Anti-recurrence rule:** spec REPLACE/ADD/REDIRECT instructions MUST verify pre-edit target state actual exists VERBATIM, NU presume from spec narrative. Bugatti CC craft = surface MOOT vs execute mock-replace producing zero-effect commit.
 
