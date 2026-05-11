@@ -100,6 +100,13 @@ andura/
 | **MOAT strategy** | [[MOAT_STRATEGY]] |
 | **Daniel profile + cognitive mode** | [[DANIEL_COMPLETE_PROFILE]] |
 | **Parametric programs (FAZA 4+ design)** | [[PARAMETRIC_PROGRAMS_DESIGN]] |
+| 🆕 **Port-First Step 1 paradigm LOCK V1 (2026-05-10 chat ACASĂ — vanilla port mockup→src/ Step 1 pre-React Step 2)** | [[PORT_FIRST_STEP_1_PARADIGM_V1]] |
+| 🆕 **V1 features audit 15/15 (CEO LOCK V1 keep/drop verdict mockup vs prod)** | [[V1_FEATURES_AUDIT_V1]] |
+| 🆕 **React migration state mapping V1 (Step 2 post-port plan)** | [[REACT_MIGRATION_STATE_MAPPING_V1]] |
+| 🆕 **Andura validation framework V1 (testing strategy spec port + React phases)** | [[ANDURA_VALIDATION_FRAMEWORK_V1]] |
+| 🆕 **Faza 2 filter strategy V1 (pre-Beta scope filter Co-CTO autonomous)** | [[FAZA_2_FILTER_STRATEGY_V1]] |
+| 🆕 **Root navigation V2 §2.9.5.7 amendment (Antrenor router mapping)** | [[ROOT_NAV_V2_29_5_7_AMENDMENT]] |
+| 🆕 **Scenarios simulator design V1 (pre-Beta scenarios coverage tooling)** | [[SCENARIOS_SIMULATOR_DESIGN_V1]] |
 | **Findings tracker (135+ unique post Sprint 4.x)** | [[FINDINGS_MASTER]] |
 | **Insights backlog (deferred + future)** | [[INSIGHTS_BACKLOG]] |
 | **Coaching textbook synthesis (research)** | [[COACHING_TEXTBOOK_SYNTHESIS]] |
@@ -117,6 +124,9 @@ andura/
 | **AUDIT 5000Q corpus + report** | `📤_outbox/_archive/2026-04/06_AUDIT_5000Q.md` + `07_AUDIT_5000Q_REPORT.md` |
 | **VAULT_HYGIENE_PHASE_1_AUDIT (read-only inventory)** | `📤_outbox/_archive/2026-05/110_VAULT_AUDIT_INVENTORY.md` |
 | **AUDIT 30.9 blocked state (Daniel sign-off needed)** | [[AUDIT_30_9_BLOCKED_STATE]] |
+| 🆕 **BATCH 1 Antrenor port inventory (`📤_outbox/` active artefact — V1 module read-only inventory pre-port)** | [[BATCH_1_ANTRENOR_INVENTORY]] |
+| 🆕 **BATCH 1 Antrenor port plan (`📤_outbox/` active artefact — V2 mockup → src/ vanilla port plan)** | [[BATCH_1_ANTRENOR_PLAN]] |
+| 🆕 **BATCH 2 amendment post-LOCK V1 (`📤_outbox/` active artefact — §4 checklist 7/7 resolved post-LOCK)** | [[BATCH_2_AMENDMENT_POST_LOCK_V1]] |
 
 ---
 
