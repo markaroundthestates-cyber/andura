@@ -60,14 +60,16 @@ DOM smoke implicit: existing `goto()` routing + `openGenericSheet()` + persona C
 
 ## Commits
 
-1 atomic commit (pending post LATEST write):
-- `<hash>` — *feat(mockup): 6 fixes sweep LANDED — Warmup + Deload + Tempo Marius + weaknessDetector lagging + PR drill + Mini-player*
+1 atomic commit:
+- `6785ab6` — *feat(mockup): 6 fixes sweep LANDED — Warmup + Deload + Tempo Marius + weaknessDetector lagging + PR drill + Mini-player* (6 files changed, 563 insertions(+), 85 deletions(-))
+
+Pre-commit hook: full test suite ran — **148/148 test files / 2732/2732 tests PASS** (26.73s).
 
 ---
 
 ## Pushed
 
-✅ origin/main (pending push)
+✅ origin/main `72d3b09..6785ab6`
 
 Backup tag pushed pre-execute: `pre-mockup-6-fixes-sweep-2026-05-11` (rollback safety) ✅.
 
