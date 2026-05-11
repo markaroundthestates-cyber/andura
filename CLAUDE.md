@@ -186,7 +186,7 @@ amendments:
 **Format:**
 - Same-folder: `[[FileName]]` (e.g. `[[DECISION_LOG]]` din 03-decisions context)
 - Cross-folder: `[[path/to/file]]` (e.g. `[[../03-decisions/030-adapter-design-pattern]]`)
-- Anchor drill-down: `[[file#section-anchor]]` (e.g. `[[CURRENT_STATE#NOW]]`, `[[ADR_005#AMENDMENT_2026-05-10]]`)
+- Anchor drill-down: `[[file#section-anchor]]` (e.g. `[[CURRENT_STATE#NOW]]`, `[[005-vanilla-js-no-framework#AMENDMENT 2026-05-10]]` — section anchors use space NU underscore per Obsidian canonical)
 
 **Resolution:** Obsidian "Shortest path" mode enabled (settings) → wikilinks resolve to nearest match by filename, supports renaming without breaking refs.
 

@@ -275,7 +275,7 @@ Faza 3 multi-batch CC wiring = 4-6 batches sequential per pipeline ADR 026 §42.
 - Tier 2 pipeline blocking = anti-Bugatti UX (Firestore network round-trip ≥200ms typical >> Layer D ≤50ms budget) — never block
 - Concrete fallback semantics needs scenario-driven testing in Faza 3 batch 1 — V1 stub `userState` already-aggregated currently sufficient
 
-**Cross-refs:** [[020-storage-tiering-strategy|ADR 020]] alignment confirm (no amendment needed); [[025-andura-gandeste-pentru-user|ADR 025]] silent degradation default; [[006-tier-storage-for-logs|ADR 006]] Tier Storage for Logs; [[012-tier-decay|ADR 012]] Tier Decay.
+**Cross-refs:** [[020-storage-tiering-strategy|ADR 020]] alignment confirm (no amendment needed); [[025-andura-gandeste-pentru-user|ADR 025]] silent degradation default; [[006-tier-storage-for-logs|ADR 006]] Tier Storage for Logs; [[012-tier-decay-on-inactivity|ADR 012]] Tier Decay.
 
 ### Q-OPEN-6 RESOLVED V1 — Error recovery semantics
 

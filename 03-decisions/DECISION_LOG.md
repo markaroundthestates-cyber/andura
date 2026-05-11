@@ -1047,7 +1047,7 @@ Orchestrator clusters CC generation 30-50 tasks artefacte separate + 1 mini orch
 
 ### Cross-refs
 
-[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 amendment 2026-05-10 + [[../01-vision/ONBOARDING_SSOT_V1]] §2 GOAL TAXONOMY V2 amendment 2026-05-10 + [[../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1]] preserved (engine `alternativeEngine.js` existing) — UI wiring "Ceva nu merge" 1 buton cross-skin uniform pending clusters next + [[../03-decisions/ADR 023]] Pain text + Equipment text drill secundar — merge unified la 1 buton "Ceva nu merge" V2 + [[../04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT]] preserved (4 taburi V2) + Theme Parity Invariant V1 reaffirmation FINAL = NEW arch rule mandatory cross-skin design + dev decisions going forward + Handover archived NN 282.
+[[../00-index/CURRENT_STATE]] §JUST_DECIDED + §NOW updated post-ingest + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 amendment 2026-05-10 + [[../01-vision/ONBOARDING_SSOT_V1]] §2 GOAL TAXONOMY V2 amendment 2026-05-10 + [[../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1]] preserved (engine `alternativeEngine.js` existing) — UI wiring "Ceva nu merge" 1 buton cross-skin uniform pending clusters next + [[../03-decisions/023-llm-intent-interpretation]] Pain text + Equipment text drill secundar — merge unified la 1 buton "Ceva nu merge" V2 + [[../04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT]] preserved (4 taburi V2) + Theme Parity Invariant V1 reaffirmation FINAL = NEW arch rule mandatory cross-skin design + dev decisions going forward + Handover archived NN 282.
 
 ### Mid-flight unresolved next chat priority
 
@@ -1380,7 +1380,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 **Migration 8 batches estimative 7-10 zile CC continuous (~1-2 săpt per Daniel chat-NEW3 LOCK):** Vite+React scaffold → Router skeleton → state→Context → page shells → Onboarding → Coach session → Settings+auth → Theme picker.
 
-**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] + [[018-engine-extensibility-architecture]] §2 pure invariant + [[030-decision-cluster-strangler]] D2 preserved.
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] + [[018-engine-extensibility-architecture]] §2 pure invariant + [[030-adapter-design-pattern]] D2 preserved.
 
 **Backup tag:** `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin.
 
@@ -1408,7 +1408,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 **Migration ordering 8 batches:** Vite+React scaffold → Router skeleton → state.js→Context → page shells → Onboarding → Coach session → Settings+auth → Theme picker. Per-batch prompts CC tactical urmează.
 
-**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[030-decision-cluster-strangler]] D2 orchestrator preserved.
+**Cross-refs:** [[005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../00-index/CURRENT_STATE]] §JUST_DECIDED + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] + [[030-adapter-design-pattern]] D2 orchestrator preserved.
 
 **Backup tag:** `pre-adr005-amendment-react-migration-2026-05-08-2051` pushed origin.
 
@@ -1755,7 +1755,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 2. **CD V2 mockup canonical SSOT path LANDED** — Daniel paste prompt CD V2 generated chat (full re-aliniere spec V1 LOCKED ~685 cumulative; 10 categorii A-J: root nav 4 taburi + Antrenor restructure + Progres/Istoric scope-cuts + Cont V2 inventar + Onboarding §63.1 + 3 stări energy + selector limbă RO/EN + persona switcher remove + vestigial cleanup). CD livrat `04-architecture/mockups/andura-v2-2026-05-07.html` 2126 LOC ~98-99% spec match near-complete. 1 push-back productive substantial: "Pilot Automat" preserved literal (slip prompt drafting). Daniel a redenumit manual "Pilot Automat" → "Auto" post-CD. 2 commits CC LANDED: `03b9456` mockup canonical path + README index folder cu coverage scope V2 enumerated + cross-refs vault SSOT + `34bd52a` archive cleanup post §CC.5 fast cycle LATEST 213 + handover 214.
 3. **Capacity Opțiunea A early trigger LOCK pre-saturation** — Daniel question strategic *"vaultul nostru nu e prea mare? indexăm prea multe în PK acum că totul stabilit?"* = early signal valid pre-saturation (era DEFERRED ~95% saturation OR pre-Faza 3 carry-over chat-9). Confirm concret: la startup §CC.2 search `project_knowledge` NU a surface `CURRENT_STATE.md` în 4 query-uri — tokens diluted. Plan 3 acțiuni priority: (a) Capacity A LANDED archive `HANDOVER_VAULT_HYGIENE` + `HANDOVER_MISC` + REMOVE/REDIRECT pointers orphane CURRENT_STATE §ACTIVE_REFS + pre-flight grep wikilinks orphane mandatory + (b) NU index tests în PK (`src/engine/*/__tests__/` ~150+ files mare consumer tokens) + (c) archive selective HANDOVER_GLOBAL split 7 themes superseded SSOT (long-term post-Faza 3).
 
-**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW3 narrative + `Andura-V2.html` mockup + Capacity A spec preserved | [[../03-decisions/005-vanilla-js-stack]] amendment scope draft pending Co-CTO tactical chat dedicat | Run 2 LANDED Capacity A archive `28598a9` (post chat-NEW3 deploy) | handover archive source `📤_outbox/_archive/2026-05/216_HANDOVER_CHATNEW3_BIROU_INGESTED.md` verbatim.
+**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW3 narrative + `Andura-V2.html` mockup + Capacity A spec preserved | [[../03-decisions/005-vanilla-js-no-framework]] amendment scope draft pending Co-CTO tactical chat dedicat | Run 2 LANDED Capacity A archive `28598a9` (post chat-NEW3 deploy) | handover archive source `📤_outbox/_archive/2026-05/216_HANDOVER_CHATNEW3_BIROU_INGESTED.md` verbatim.
 
 ---
 
@@ -1795,7 +1795,7 @@ Clean Luxury 5 user-facing/code-level + preserve README 2 motto (developer-facin
 
 14. **Footer "Andura v1.0.0" text gri ADD** — confirm chat-NEW1 spec, Daniel "o sa punem aia".
 
-**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW2 narrative summary | handover archive source `📤_outbox/_archive/2026-05/214_HANDOVER_CHATNEW2_BIROU_INGESTED.md` verbatim | [[ADR_023]] §36.38 Pain text + §36.55.2/§36.81.2 Equipment text intent classification | ADR 026 §9.3 + ADR 027 Engine Energy 3-state aggregation | PRODUCT_STRATEGY §3.5 Nutrition OUT_OF_SCOPE | §29.5.1 Themes V1 + §29.5.9 Istoric minimalist | ONBOARDING_SSOT_V1 §63.1 Order + post-onboarding fields.
+**Cross-refs:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED chat-NEW2 narrative summary | handover archive source `📤_outbox/_archive/2026-05/214_HANDOVER_CHATNEW2_BIROU_INGESTED.md` verbatim | [[023-llm-intent-interpretation]] §36.38 Pain text + §36.55.2/§36.81.2 Equipment text intent classification | ADR 026 §9.3 + ADR 027 Engine Energy 3-state aggregation | PRODUCT_STRATEGY §3.5 Nutrition OUT_OF_SCOPE | §29.5.1 Themes V1 + §29.5.9 Istoric minimalist | ONBOARDING_SSOT_V1 §63.1 Order + post-onboarding fields.
 
 ---
 
@@ -2882,7 +2882,7 @@ CLAUDE.md project-level presupus exist înainte create — recidivă pattern doc
 - [[026-offline-coaching-decision-tree-exhaustive]] cross-ref engines specs cumulative (~90 decisions consumate)
 - [[ADR_PAIN_DISCOMFORT_BUTTON_v1]] Pain-Aware definition (a)+(i) binary V1 + forward-compat v1.5 vector
 - [[ADR_COMPOSITE_SIGNAL_LAYER_v1]] §36.41 hard-disabled când Engine #4 active
-- [[013-ADR-aa-detection]] AA-driven deload mechanic Volume CUT obligatoriu cross-ref
+- [[013-auto-aggression-detection]] AA-driven deload mechanic Volume CUT obligatoriu cross-ref
 - [[ADR_RIR_MATRIX_ADAPTIVE_v1]] §36.16 absolute Floor 2 sets immutable cross-ref
 - [[HANDOVER_GLOBAL_2026-04-30_evening]] §36.41 + §36.82.3 + §42.9 + §3.5.1 + §36.100 cross-cutting refs (engine specs reference acestea, materialele detaliat în CURRENT_STATE.md JUST_DECIDED summary; full spec inline va fi în next deep ingest §HANDOVER_PROTOCOL)
 - Backup tag: `pre-handover-2026-05-05-birou-after-engines3-4-5`

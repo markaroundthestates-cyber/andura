@@ -366,7 +366,7 @@ Each engine consumes ConstraintObject + previous engines outputs (read-only). NU
 - [[023-llm-intent-interpretation]] (LLM scope strict preserved — NU contradicție)
 - [[024-goal-driven-program-templates]] (Engine #2 STUB cross-engine integration)
 - [[025-andura-gandeste-pentru-user]] (graceful degradation per branch + Instant Skip principle reuse Engine #8)
-- [[027-engine-deload]] (Engine #5 Deload — STUB created post 2026-05-05 overnight)
+- [[027-engine-energy-adjustment]] (Engine #5 Energy Adjustment — STUB created post 2026-05-05 overnight)
 - [[028-engine-tempo-form-cues]] (Engine #6 Tempo/Form Cues — STUB created post 2026-05-05 overnight)
 - [[029-engine-specialization]] (Engine #7 Specialization — STUB created post 2026-05-05 overnight)
 - [[../04-architecture/ANDURA_VALIDATION_FRAMEWORK_V1]] (Validation Framework LOCKED V1 — north star ≥95% strict reflected în decision wording above)

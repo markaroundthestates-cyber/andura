@@ -556,7 +556,7 @@ Plus push-back colateral pe Pain + Equipment overlap → Daniel: *"merită simpl
 
 **Anti-recurrence reaffirm next chat:** §0 pre-flight grep mandatory MEREU before push-back tehnic / arhitectural pe code-side mecanic. Halucinare = waste Daniel time + erodă credibilitate Co-CTO. Vault SSOT > intuiție.
 
-**Cross-refs:** [[../03-decisions/DECISION_LOG]] entry append top descending cronologic (pending) + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 amendment 2026-05-10 (nutrition logging RE-IN-SCOPE V1 cu auto-fill rule) + [[../01-vision/ONBOARDING_SSOT_V1]] §2 GOAL TAXONOMY V2 amendment 2026-05-10 (Mentenanță rename + Auto template) + [[../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1]] preserved (engine `alternativeEngine.js` existing) — UI wiring "Ceva nu merge" 1 buton cross-skin uniform pending clusters next + [[../03-decisions/ADR 023]] Pain text + Equipment text drill secundar — merge unified la 1 buton "Ceva nu merge" V2 + [[../04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT]] preserved (4 taburi V2) + [[../04-architecture/mockups/andura-clasic]] (baseline reference Theme Parity Invariant cross-skin) + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-brain-coach]] (Theme Parity Invariant V1 cross-skin reaffirmation final) + Theme Parity Invariant V1 = NEW arch rule mandatory cross-skin design + dev decisions going forward (predecessor LOCK noaptea 2026-05-09→2026-05-10 reaffirmed final chat-current) + `src/pages/plan.js` setPhaseOverride()/clearPhaseOverride() Auto pattern existing production verified.
+**Cross-refs:** [[../03-decisions/DECISION_LOG]] entry append top descending cronologic (pending) + [[../01-vision/PRODUCT_STRATEGY_SPEC_v1]] §3.5 V3 amendment 2026-05-10 (nutrition logging RE-IN-SCOPE V1 cu auto-fill rule) + [[../01-vision/ONBOARDING_SSOT_V1]] §2 GOAL TAXONOMY V2 amendment 2026-05-10 (Mentenanță rename + Auto template) + [[../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1]] preserved (engine `alternativeEngine.js` existing) — UI wiring "Ceva nu merge" 1 buton cross-skin uniform pending clusters next + [[../03-decisions/023-llm-intent-interpretation]] Pain text + Equipment text drill secundar — merge unified la 1 buton "Ceva nu merge" V2 + [[../04-architecture/ROOT_NAV_V2_29_5_7_AMENDMENT]] preserved (4 taburi V2) + [[../04-architecture/mockups/andura-clasic]] (baseline reference Theme Parity Invariant cross-skin) + [[../04-architecture/mockups/andura-luxury]] + [[../04-architecture/mockups/andura-living-body]] + [[../04-architecture/mockups/andura-brain-coach]] (Theme Parity Invariant V1 cross-skin reaffirmation final) + Theme Parity Invariant V1 = NEW arch rule mandatory cross-skin design + dev decisions going forward (predecessor LOCK noaptea 2026-05-09→2026-05-10 reaffirmed final chat-current) + `src/pages/plan.js` setPhaseOverride()/clearPhaseOverride() Auto pattern existing production verified.
 
 **Mid-flight unresolved next chat priority order:**
 
@@ -927,7 +927,7 @@ pre-themes-batch-wcag-clasic-path2a-2026-05-10-0000 (v2)
 
 **Backup tag:** `pre-state-mapping-v1-doc-2026-05-08-2117` pushed origin.
 
-**Cross-refs:** [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] canonical SSOT + [[../03-decisions/030-decision-cluster-strangler]] D2 preserved + [[../03-decisions/018-engine-extensibility-architecture]] §2 pure invariant + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] design tokens.
+**Cross-refs:** [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../04-architecture/REACT_MIGRATION_STATE_MAPPING_V1]] canonical SSOT + [[../03-decisions/030-adapter-design-pattern]] D2 preserved + [[../03-decisions/018-engine-extensibility-architecture]] §2 pure invariant + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] design tokens.
 
 **Next chat:** per-batch prompts CC tactical 8 batches sequential — Batch 1 Vite+React 19 scaffold next artefact (chat-current continuation OR next chat dedicat per Daniel decide).
 
@@ -948,7 +948,7 @@ pre-themes-batch-wcag-clasic-path2a-2026-05-10-0000 (v2)
 
 **Backup tag:** `pre-adr005-amendment-react-migration-2026-05-08-2051` pushed origin.
 
-**Cross-refs:** [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../03-decisions/030-decision-cluster-strangler]] D2 orchestrator preserved + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] design tokens canonical + [[../08-workflows/PRE_LAUNCH_CHECKLIST_V1]] §CC Opus #2 React migration implementation.
+**Cross-refs:** [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 + [[../03-decisions/030-adapter-design-pattern]] D2 orchestrator preserved + [[../04-architecture/mockups/andura-clasic]] + [[../04-architecture/mockups/andura-living-body]] design tokens canonical + [[../08-workflows/PRE_LAUNCH_CHECKLIST_V1]] §CC Opus #2 React migration implementation.
 
 **Next chat:** state.js componentizare mapping artefact (chat-current continuation) — Context provider scope draft + per-batch prompts CC tactical 8 batches sequential.
 
