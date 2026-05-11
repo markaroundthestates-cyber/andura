@@ -585,6 +585,7 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 ## ACTIVE_FLAGS — DIFF_FLAGS.md P1 status
 
+- 🟡 **NEW P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN** PENDING_DANIEL_REVIEW 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B — initial Karpathy `/wiki-lint` pass raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` §1-§5 (104 files / 1198 wikilinks scanned; 64 real broken classified P2 batch ADR naming drift + .html/.yml refs + 2 stale handover; 5 orphan candidates real Daniel review; 0 stale; 0 contradictions; ZERO P1 critical SSOT broken — NU urgent NU blocker; fix sweep ~30-60 min CC autonomous dacă Daniel approves per case basis)
 - 🟢 **P1-FLAG-PORT-FIRST-THEN-REACT** LOCKED V1 EXECUTION-READY 2026-05-10 chat-current 2 (predecessor 🟢 LOCKED V1 SUBSTANTIVE → 🟢 LOCKED V1 EXECUTION-READY; all 7 sub-decisions LOCK V1 autonomous Co-CTO bias preserved per Daniel autonomy lock EXTINS; BATCH 2 Antrenor unblocked pending mockup buguri sweep prerequisite #1)
 - 🟢 **NEW P1-FLAG-NO-DIACRITICS-RULE** LOCKED V1 PERMANENT 2026-05-10 chat-current 2 — strip global UI/tests/mockups landed `0841ed4` (263 files / 6034 replacements). Vault docs preserved. E2e calibration-ui.spec.js:194 SKIP'd post-strip (cross-ref P1-FLAG-QA-CALIBRATION-LOW-ADHERENCE-BANNER — banner F1 port unblocks re-enable).
 - 🟢 **NEW P1-FLAG-V1-FEATURES-AUDIT-RESOLVED** RESOLVED LOCK V1 2026-05-10 chat-current 2 — 15 features Co-CTO bias preserved verbatim (10 keep + 4 modify + 1 drop V2-deferred F5). Unblocks BATCH 2 Antrenor port implement.
