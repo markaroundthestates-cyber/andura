@@ -2,7 +2,7 @@
 title: Wiki Log — Andura Wiki Chronological Append-Only
 type: log
 status: live
-last_updated: 2026-05-11
+last_updated: 2026-05-12
 ---
 
 # Wiki Log — Andura Wiki Chronological (Karpathy Append-Only Signature)
@@ -12,6 +12,10 @@ last_updated: 2026-05-11
 **Convention:** Each entry consistent prefix `## [YYYY-MM-DD] ingest|query|lint|queued | <title>` parseable cu unix tools (`grep "^## \[" log.md | tail -5` gives last 5 entries chronologically).
 
 ---
+
+## [2026-05-12] lint | FAZA 3 Phase 5 cleanup LANDED post-Daniel-approve checkpoint
+
+Daniel review 9 wiki pages sample voice fidelity validation PASS verdict 2026-05-11→12. Archive `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` → `📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED.md` + precedent `📤_outbox/LATEST.md` cycled → `407_FAZA_3_PHASE_4_LATEST_CONSUMED.md` + vault hub sync atomic (CURRENT_STATE §NOW final Phase 1-5 + §JUST_DECIDED top + §NEXT clear post-Karpathy + §ACTIVE_FLAGS 3 flags update + DECISION_LOG entry top + INDEX_MASTER flip + DIFF_FLAGS 3 entries). 2 minor flags non-blocker defer (voice-preservation-policy.md quote 2 + adr-005-vanilla-js.md quote 3 possible reconstructed paraphrase Daniel suspect). Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched). 1 atomic commit on `feature/v2-vanilla-port`. Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute.
 
 ## [2026-05-11] ingest | FAZA 3 Phase 3 SUB-BATCH 1 — Cluster A ADR entity pages (10 critical)
 
