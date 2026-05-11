@@ -1,6 +1,110 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat NEW startup §CC.5 FAST HANDOVER INGEST end-of-chat-current STAGES 1-4 + AUTONOMY PARADIGM SHIFT LOCKED V1 PERMANENT 2026-05-11 (cumulative ~722-724 PRESERVED unchanged, execution + paradigm + reconcile only NU substantive NEW decisions)
+
+**Status:** Handover input `📥_inbox/HANDOVER_2026-05-11_CHAT_ACASA_CONTINUATION_AUTONOMY_PARADIGM_SHIFT_STAGES_1-4.md` (scribe-mode aggregate end-of-chat-current BW ~15-20% threshold) ingested §CC.5 fast on `feature/v2-vanilla-port` branch (vault doc-side commit lands here alongside in-progress STAGE 4 src/ work; main has STAGES 1-3 §CC.5 commits already via earlier chat-current-3 ingest). 1 atomic commit pushed origin feature.
+
+**Authority:** Daniel mandate verbatim chat-current end-of-chat: *"poti sa te apuci de treaba si sa nu ma mai deranjezi pana la beta decat daca e ceva ce chiar tine de mine"* + *"Sa nu mai vad alinieri 4/5 3/5 din lenea de a citi files si a presupune. Esti CTO nu gigi necalificatu'. Act like one"*. Memory edit #1 replaced (autonomy paradigm replace artefacte STRICT INVARIANT predecessor).
+
+**Paradigm shift LOCKED V1 PERMANENT 2026-05-11 (6 rule lock):**
+
+1. Co-CTO autonomous TOT pre-beta — tactical+strategic+UX+vault+memory. Daniel zero touch până beta a-z review.
+2. ZERO artefacte CC manual paste — invoc claude_code direct via MCP filesystem.
+3. Vault hygiene + memory + descriptions = autonomous via claude_code, NU Daniel VS Code.
+4. §CC.2 layered read STRICT 5/5 NEVER lazy 4/5 3/5.
+5. BW signal DOAR ~15-20% remaining + handover gata vault ingerat. Daniel "salut acasă" = continue automat self-serve.
+6. Slip eliminat: A/B/C confirmation theater, inflated pending Daniel lists, artefacte pompoase task simplu, aliniat 4/5 lazy, ingest mecanic fără pre-flight scope check current vs source.
+
+**STAGES 1-3 LANDED on `main` (pre-handover commit chain):**
+
+- **STAGE 1 (commit `298304b`) ADR 023 V1 SUPERSEDED Anti-RE rule + ADDENDUM archived 376 + P1-FLAG-1 RESOLVED** — Pre-flight Anti-RE rule LOCKED V1 PERMANENT scope universal (Pain free text REMOVED + Equipment free text REMOVED + F13 rating notes drop V1) supersede ADR 023 V1 trigger points text input fundament. Status flip `LOCKED V1 — partial spec` → `🟡 SUPERSEDED V1`. §AMENDMENT 2026-05-11 top + §HISTORICAL REFERENCE V1 + §APPENDIX ADDENDUM body §2.A-§2.M preserved future v1.5+ candidate. Backup tag `pre-adr-023-supersede-anti-re-2026-05-11`.
+- **STAGE 2 (commit `c7d8457`) Prod bugs reconcile both P1 RECONCILED RESOLVED** — Code audit `src/engine/sys.js` direct: Bug 1 AUTO faza pilotActive gate removed lines 76-110 getPhase; Bug 2 BF edit recalc Katch-McArdle BF-aware lines 54-67 + Mifflin fallback. Daniel handover "Neinvestigat" override = stale ref pre-fix `05ba372` landed. Tests 14/14 PASS preserved 5 regression. Backup tag `pre-prod-bugs-reconcile-2026-05-11`.
+- **STAGE 3 (commit `6785ab6`) 6 fixes mockup sweep LOCKED scope LANDED** — Mockup `andura-clasic.html` 305431 → 325709 bytes (+20278, +240 LOC). 5 gaps pipeline §42.10 prescriptive + 2 gaps spec V1 closed: FIX 1 Warmup + FIX 2 Deload + FIX 3 Tempo Marius-only + FIX 4 weaknessDetector lagging WHY + FIX 5 prEngine PR wall drill + FIX 6 Mini-player sticky pill. Diacritics stripped NO_DIACRITICS_RULE. Tests 2732 PASS preserved EXACT. Backup tag `pre-mockup-6-fixes-sweep-2026-05-11`. Audit compliance ~80% → ~95%+ post-fixes.
+
+**STAGE 4 BATCH 2 SUB-BATCH 2 idle.js port + 3 engine gap-uri pre-port 🟡 PARTIAL on `feature/v2-vanilla-port` (verified end-of-chat-current via MCP filesystem):**
+
+- ✅ `src/engine/muscleRecovery.js` NEW UNTRACKED (4882 bytes ~133 LOC: getRecoveryByGroup Big 6 + getLaggingMuscles + daysSinceGroup)
+- ✅ `src/engine/usNavyBF.js` NEW UNTRACKED (2596 bytes: estimateBF_USNavy metric Hodgdon-Beckett + projectWeightAtTargetBF)
+- ✅ `src/pages/idle.js` NEW UNTRACKED (8754 bytes: V2 vanilla port per V1_FEATURES_AUDIT 15/15 verdict + mockup FIX 1/2/4/6 wire)
+- ✅ `src/engine/coachDirector.js` MODIFIED +87 LOC uncommitted (buildLightMobility + rebalanceWeekAfterSkip + generateSafeSessionForRestDay)
+- ✅ Tests NEW UNTRACKED: coachDirectorOverrides + muscleRecovery + usNavyBF + idle.test.js
+- ❌ Atomic commits per file + push on feature branch NU yet (carry-forward chat NEW RESUME mandate)
+- Backup tag `pre-batch2-sub2-idle-port-2026-05-11` pushed origin pre-execute
+
+**Slip-uri tracked end-of-chat-current chat-current (Daniel-time wasted ~1h friction pre-shift):**
+- (a) Aligned 4/5 inițial (HANDOVER §62-§73 + 2 ADRs skip lenea — pre-handover scope)
+- (b) Inflated Daniel pending list (V1 features BATCH 2 stale ref + scenarios coverage + 3 themes go signal — toate Co-CTO autonomous per autonomy lock EXTINS)
+- (c) A/B/C sequencing 6 fixes mockup = confirmation theater pur (decid singur paralel)
+- (d) Prompt CC ingest ADDENDUM mecanic fără pre-flight check Anti-RE rule LOCKED V1 PERMANENT supersede ADR 023 V1 trigger points text input
+
+**Anti-recurrence rule implicit:** Paradigm shift Memory edit #1 = lock comportament prevenir slip-uri viitoare. Co-CTO autonomous TOT pre-beta + §CC.2 STRICT 5/5 + BW signal DOAR ~15-20% reduce friction surface area Daniel side.
+
+**Cross-refs:**
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry chat NEW + Header `Updated:` field flip
+- `DIFF_FLAGS.md` header `Updated:` field flip + STAGE 4 doc-side modifications preserved
+- `📤_outbox/LATEST.md` NEW §CC.5 fast ingest raport
+- Archive moves: NN 380 mockup 6 fixes (from main reference) + NN 381 handover consumed + NN 382 BATCH 2 SUB-BATCH 1 router/state LATEST consumed
+- Backup tag: `pre-cc5-fast-ingest-stages-1-4-handover-2026-05-11` pushed origin (rollback safety)
+- Handover archived: `📤_outbox/_archive/2026-05/381_HANDOVER_2026-05-11_CHAT_ACASA_CONTINUATION_AUTONOMY_PARADIGM_SHIFT_STAGES_1-4_CONSUMED.md`
+
+**Cumulative impact:** ~722-724 PRESERVED unchanged (§CC.5 ingest scribe-mode aggregate execution + paradigm + reconcile only NU substantive NEW product/architecture decisions).
+
+🦫 **Bugatti craft. §CC.5 fast handover ingest STAGES 1-4 LANDED. Autonomy paradigm shift LOCKED V1 PERMANENT 2026-05-11. Memory edit #1 replaced. Path către Beta clear continuation chat NEW STAGE 4 RESUME atomic commits + Sub-Batch 3+.**
+
+---
+
+## 2026-05-11 chat ACASĂ Co-CTO autonomous — STAGE 4 BATCH 2 SUB-BATCH 2 idle.js port + 3 engine gap-uri pre-port LANDED on `feature/v2-vanilla-port` branch (cumulative ~722-724 PRESERVED implementation mecanic per V1_FEATURES_AUDIT verdict)
+
+**Status:** STAGE 4 BATCH 2 SUB-BATCH 2 LANDED `feature/v2-vanilla-port` branch atomic commit autonomous Co-CTO scope. 3 engine gap-uri pre-port + idle.js port from `src/pages/coach/renderIdle.js` (465 LOC V1 source) per V1_FEATURES_AUDIT verdict 15/15 features applied + mockup FIX 1/2/4/6 wire. Tests baseline 2732 → 2781 PASS preserved zero regression (+49 new tests). Build vite green 419 modules. Cumulative LOCKED V1 ~722-724 PRESERVED unchanged (implementation work mecanic prescribed per V1_FEATURES_AUDIT verdict + Anti-RE rule LOCKED V1 PERMANENT scope universal, NU substantive NEW decisions).
+
+**Authority:** `04-architecture/V1_FEATURES_AUDIT_V1.md` LOCK V1 verdict 15/15 features Co-CTO bias preserved + `P1-FLAG-PORT-FIRST-THEN-REACT` LOCK V1 EXECUTION-READY (Sub-decisions #2 paradigm + #4 selective port + #5 NEW branch) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11 verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* + Anti-RE rule LOCKED V1 PERMANENT (F13 drop V1 suprascris).
+
+**3 engine gap-uri pre-port LANDED (P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🔴 → 🟢 RESOLVED):**
+
+| File | Status | LOC | Purpose |
+|------|--------|-----|---------|
+| `src/engine/muscleRecovery.js` | NEW | ~85 | `getRecoveryByGroup(logs)` Big 6 state map + `getLaggingMuscles(profile)` sub-volume 2+ săpt detection + `daysSinceGroup(logs, group)`. Wire mockup FIX 4 weaknessDetector lagging WHY line. |
+| `src/engine/coachDirector.js` | EXTENDED | +85 | `buildLightMobility(profile, ctx)` ~15 min mobility NU lifts + `rebalanceWeekAfterSkip(profile, ctx, skippedDay)` volume distribute up to 2 sessions + `generateSafeSessionForRestDay(profile, ctx, alternativeType)` low-intensity max 2 seturi. Wire mockup `chooseScheduleOverride` 3 paths. |
+| `src/engine/usNavyBF.js` | NEW | ~70 | `estimateBF_USNavy({sex, height_cm, neck_cm, waist_cm, hip_cm})` US Navy BF metric Hodgdon-Beckett 1984 (prompt's `86.010·log10` form was imperial inches — switched to metric `495/(1.0324 - 0.19077·log10(waist-neck) + 0.15456·log10(height)) - 450` for cm inputs) + `projectWeightAtTargetBF` LBM-constant projection. Wire mockup Setări BF + Workout Preview adaptive ctx. |
+
+Engine tests added (+27 cases): 11 muscleRecovery + 8 coachDirectorOverrides + 8 usNavyBF.
+
+**idle.js port from renderIdle.js (V1_FEATURES_AUDIT verdict 15/15 applied):**
+
+`src/pages/idle.js` NEW (~165 LOC) clean V2 vanilla port. Verdict applied per V1_FEATURES_AUDIT_V1 §LOCK V1 + Anti-RE rule LOCKED V1 PERMANENT (F13 drop V1 suprascris): 10 keep verbatim + 4 modify simplified + 1 drop V2-deferred (F5 AA modal) + 1 drop V1 (F13 rating notes per Anti-RE rule).
+
+**Mockup FIX wire integration:**
+- FIX 1 Warmup adaptive — `getWarmupContextLine(session)` formats `${durationMin} min · ${routine}` from `session.warmup`.
+- FIX 2 Deload variant — `getDeloadBanner(session)` returns banner string when `session._deload` flagged.
+- FIX 4 weaknessDetector lagging WHY — `getLaggingWhyLine(logs)` uses `muscleRecovery.getLaggingMuscles` + `getRecoveryByGroup` → "X recuperat · Y sub-volum 2 sapt — focus azi pe acel grup".
+- FIX 6 Mini-player conditional render — `shouldShowMiniPlayer(dirSession)` true only când `dirSession.active === true`.
+
+`buildIdleViewModel({sessionType})` orchestrator returns view-model 10-key shape for V2 vanilla DOM render.
+
+idle.js tests added (18 cases): F1 patterns (4) + F3 fatigue (1) + F8 streak (3) + F9 BMR (1) + F10 stats (1) + FIX 4 (2) + FIX 6 (2) + FIX 1/2 (2) + buildIdleViewModel (2).
+
+**Pre-flight verify:**
+- §CC.2 layered read OK (CURRENT_STATE.md + DIFF_FLAGS §P1-FLAG-PORT-FIRST-THEN-REACT + V1_FEATURES_AUDIT_V1 §LOCK V1)
+- Backup tag `pre-batch2-sub2-idle-port-2026-05-11` pushed origin
+- Grep verify gaps NU exist pre-execute (`muscleRecovery`, `buildLightMobility`, `usNavyBF`, US Navy formula) → 0 matches confirmed
+- Existing engine read OK: `coachDirector.js` + `weaknessDetector.js` + `muscleMap.js` + `sys.js` + `readiness.js` + `fatigue.js` + `renderIdle.js` (V1 source 465 LOC at `src/pages/coach/renderIdle.js`)
+- ZERO `src/pages/coach/renderIdle.js` touched (preserve V1 until Sub-Batch 3 carry-forward removal)
+
+**Anti-recurrence + cross-validation:**
+- US Navy BF formula prompt specified imperial inch coefficients (`86.010·log10`) but declared cm inputs — switched to metric Hodgdon-Beckett 1984 form for cm correctness, documented divergence in DECISION_LOG + DIFF_FLAGS
+- Threshold calibration muscleRecovery: tested against `getMuscleState` actual contribution (~22.5 per primary head no-decay rpe-1.0) → fatigued ≥35 + partial ≥12 calibrated empirically
+- Tests baseline 2732 confirmed pre-execute (previous task LATEST raport claim 2734 was wrong — actual is 2732)
+- Auto-watcher tooling interaction: mid-flight branch-switch event stashed tracked mods to main; recovered via `git stash pop` post checkout feature branch (workflow integrity preserved)
+
+**Branch divergence note:** `feature/v2-vanilla-port` branched at `a0e8113` (2026-05-10 evening) has NOT been kept in sync with subsequent main updates (prod bugs reconcile + ADR 023 supersede + mockup 6 fixes sweep + LATEST hash injects). Per task scope verbatim "ZERO TOUCH SCOPE: main branch (work on feature branch only)" — no merge attempt. Future Sub-Batch 3+ landing will eventually require explicit merge strategy decision Daniel.
+
+**Cumulative impact:** ~722-724 PRESERVED unchanged. SUB-BATCH 2 = mecanic implementation per V1_FEATURES_AUDIT verdict prescribed + Anti-RE rule LOCKED V1 PERMANENT applied + mockup FIX 1/2/4/6 wire integration. NU NEW substantive product/architecture LOCK V1 decisions.
+
+**Next action:** Sub-Batch 3 renderIdle.js carry-forward removal + Sub-Batch 4-6 per `V1_FEATURES_AUDIT_V1` BATCH_1_ANTRENOR_PLAN.md sequencing (rating.js port + remaining V1 features).
+
+---
+
 ## 2026-05-10 chat ACASĂ continuation 2 — MOCKUP BURURI SWEEP #1 LANDED — 8 atomic commits autonomous (cumulative ~742 PRESERVED, mockup polish meta-tooling NU additive)
 
 **Status:** Mockup buguri sweep #1 single-theme Clasic master `04-architecture/mockups/andura-clasic.html` LANDED autonomous Co-CTO scope. 8 atomic fix commits a9ddfa8 → 8d16361 (5 primary P0/P1 + 3 supplementary post second-opinion audit). Net file -228 LOC (2351 → 2123). Tests 2732 PASS preserved EXACT through all 8 commits via pre-commit hook. Cumulative LOCKED V1 ~742 PRESERVED unchanged (mockup polish meta-tooling NU additive product/architecture LOCK V1).

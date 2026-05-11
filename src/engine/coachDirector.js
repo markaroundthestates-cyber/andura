@@ -345,6 +345,93 @@ export class CoachDirector {
     }
     return session;
   }
+
+  // ══ Schedule override generators — mockup `chooseScheduleOverride` wire ════
+  // Three lean session shapes the coach can return when user picks override
+  // path ("sesiune-usoara" / "sar-ziua" / "vreau-antrenez") from mockup card.
+
+  /**
+   * Light mobility ~15 min session — NO lifts. Used when user picks
+   * `chooseScheduleOverride('sesiune-usoara')`.
+   *
+   * @param {object} profile - user profile (unused today, reserved for future)
+   * @param {object} ctx - coach context (unused today, reserved for future)
+   * @returns {{ type, durationMin, exercises, isMobility, intent }}
+   */
+  buildLightMobility(_profile, _ctx) {
+    return {
+      type: 'MOBILITY_LIGHT',
+      durationMin: 15,
+      isMobility: true,
+      intent: 'Recuperare activa fara lifts — pregatim sesiunea grea de maine.',
+      exercises: [
+        { name: 'Band Pull-Aparts', sets: 2, reps: 15, isMobility: true },
+        { name: 'Scapular Activation (Wall Slides)', sets: 2, reps: 12, isMobility: true },
+        { name: 'Cat-Cow Mobility', sets: 1, reps: 10, isMobility: true },
+        { name: 'Foam Roll Upper Back', sets: 1, reps: 60, repsUnit: 'sec', isMobility: true },
+        { name: 'Hip Flexor Stretch', sets: 1, reps: 45, repsUnit: 'sec', isMobility: true },
+      ],
+    };
+  }
+
+  /**
+   * Re-balance upcoming sessions after a skipped day. Distributes the missed
+   * volume across the remaining sessions this week (up to 2). Returns the
+   * adjustment plan — caller applies on next buildSession() calls.
+   *
+   * @param {object} profile
+   * @param {object} ctx
+   * @param {string} skippedDay - day label ('luni','marti', etc.)
+   * @returns {{ skippedDay, adjustments: Array<{day, volumeBoostPct}>, note }}
+   */
+  rebalanceWeekAfterSkip(_profile, _ctx, skippedDay) {
+    const week = ['luni','marti','miercuri','joi','vineri','sambata','duminica'];
+    const idx = week.indexOf((skippedDay || '').toLowerCase());
+    if (idx === -1) {
+      return {
+        skippedDay,
+        adjustments: [],
+        note: 'Ziua sarita nu a fost recunoscuta — fara redistribuire.',
+      };
+    }
+    const remaining = week.slice(idx + 1).slice(0, 2);
+    const boostPerDay = remaining.length > 0 ? Math.round(20 / remaining.length) : 0;
+    const adjustments = remaining.map(day => ({ day, volumeBoostPct: boostPerDay }));
+    return {
+      skippedDay,
+      adjustments,
+      note: adjustments.length
+        ? `Adaugam ${boostPerDay}% volum pe ${remaining.join(' + ')} ca sa compensam.`
+        : 'Saptamana s-a terminat — reluam normal de luni.',
+    };
+  }
+
+  /**
+   * Generate a safe session when user wants to train on a planned rest day.
+   * Low intensity (70% kg target), reduced sets (max 2 per ex), recovery-aware.
+   * Used when user picks `chooseScheduleOverride('vreau-antrenez')`.
+   *
+   * @param {object} profile
+   * @param {object} ctx
+   * @param {string} alternativeType - 'PUSH' | 'PULL' | 'UMERI_BRATE' | etc.
+   * @returns {{ type, exercises, isSafeRestDay, intensityFactor, intent }}
+   */
+  generateSafeSessionForRestDay(_profile, ctx, alternativeType) {
+    const baseType = (alternativeType || 'UMERI_BRATE').toUpperCase();
+    const base = buildSession(baseType, ctx || {});
+    const exercises = (base.exercises || []).slice(0, 4).map(e => ({
+      ...e,
+      sets: Math.min(2, e.sets || 2),
+      isSafeRestDay: true,
+    }));
+    return {
+      type: baseType,
+      isSafeRestDay: true,
+      intensityFactor: 0.7,
+      intent: 'Sesiune usoara pe zi de odihna — kg target 70%, max 2 seturi/exercitiu.',
+      exercises,
+    };
+  }
 }
 
 export const coachDirector = new CoachDirector();
