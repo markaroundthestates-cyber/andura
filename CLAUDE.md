@@ -1,32 +1,33 @@
 ---
-title: CLAUDE.md — Andura Vault Schema (Karpathy LLM Wiki Pattern Adapted)
+title: CLAUDE.md — Andura Vault Schema (Karpathy LLM Wiki Real, Option B)
 type: schema
 status: locked-v1
 locked_date: 2026-05-11
-authority: Karpathy LLM Wiki pattern gist `karpathy/442a6bf555914893e9891c11519de94f` (apr 2026, 5000+ stars) adapted Andura vault context — co-evolved with VAULT_RULES.md existing protocols
+authority: Daniel CEO Option B 2026-05-11 chat ACASĂ post Karpathy gist re-read + graph view orphan screenshot — vault existing FREEZE raw layer immutable + NEW wiki/ pure LLM-generated + voice preservation policy §1 mandatory
+supersedes: CLAUDE.md FAZA 2B 2026-05-11 (Karpathy adaptare superficială — entire folders treated as wiki layer fără actual wiki/ folder)
 cross_refs:
-  - "[[VAULT_RULES#KARPATHY_OPERATIONS]] §LOCK V1 2026-05-11 (bidirectional cross-ref schema pointer)"
-  - "[[VAULT_RULES#CHAT_CONTINUITY_PROTOCOL]] §CC.2 + §CC.4 + §CC.5 + §CC.6 (integration §5)"
-  - "[[VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.1 + §AR.19 (anti-recurrence preserved)"
-  - "[[📥_inbox/_karpathy_gist_reference]] (immutable raw-layer source preserved)"
-  - "[[00-index/CURRENT_STATE]] §NOW (live SSOT navigation hub)"
-  - "[[00-index/INDEX_MASTER]] (wiki master index Karpathy equivalent)"
+  - "[[wiki/_design/WIKI_DESIGN_SPEC_V1]] schema design authority Phase 1 LANDED"
+  - "[[VAULT_RULES#KARPATHY_OPERATIONS]] LOCK V1 2026-05-11 Faza 2B (will redesign Phase 2)"
+  - "[[VAULT_RULES#CHAT_CONTINUITY_PROTOCOL]] §CC.* redesigned Phase 2 no-layered-read"
+  - "[[VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.1-§AR.19 preserved unchanged"
+  - "[[📥_inbox/_karpathy_gist_reference]] immutable raw source"
+  - "[[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §1-§7 Daniel execute spec"
 amendments:
   - date: 2026-05-11
-    note: Initial LOCK V1 schema generation FAZA 2B — 3-layer mapping + 3 operations + frontmatter + cross-refs + integration + Bugatti craft
+    note: FAZA 3 Phase 2 — Karpathy real rewrite Option B + voice preservation policy §1 MANDATORY per wiki page + 3 operations adapted Andura cu wiki/ pure folder authority
 ---
 
-# CLAUDE.md — Andura Vault Schema
+# CLAUDE.md — Andura Vault Schema (Karpathy Option B Real)
 
 **Owner:** Daniel (CEO + Product) + Claude (Co-CTO autonomous chat strategic + claude_code agent via MCP filesystem direct).
-**Purpose:** Schema operating rules vault Andura — Karpathy LLM Wiki pattern adapted Andura context, co-evolved cu `VAULT_RULES.md` existing protocols.
-**Authority:** Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars în zile, 16M+ views X post) + Andura accumulated vault conventions 2026-04-30 → 2026-05-11.
+**Purpose:** Schema operating rules vault Andura — Karpathy LLM Wiki pattern REAL (NU adaptare superficială Faza 2B). Vault existing entire FREEZE raw layer immutable. NEW `wiki/` folder pure LLM-generated. Voice preservation policy §1 mandatory — identity Andura prezervat prin daniel-isms verbatim catalog.
+**Authority:** Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post) preserved [[📥_inbox/_karpathy_gist_reference]] immutable + Daniel Option B select 2026-05-11 chat ACASĂ post graph view orphan screenshot scope realignment.
 
 ---
 
-## §0 — OUTPUT STYLE (existing preserved)
+## §0 — OUTPUT STYLE (preserved verbatim from Faza 2B)
 
-**Authority:** Daniel preference + VAULT_RULES.md §10.8 raport schema canonical (pre-Karpathy, preserved as-is).
+**Authority:** Daniel preference + VAULT_RULES.md §10.8 raport schema canonical.
 
 - Post-task CC terminal output: **max 2 linii**: `Task complete. Report: 📤_outbox/LATEST.md`
 - ZERO duplicate raport în terminal stdout — `📤_outbox/LATEST.md` e SSOT canonical (Task + Model + Status + Branch + Date + Pre-flight + Modificări + Build+Tests + Commits + Pushed + Issues + Next action)
@@ -36,235 +37,399 @@ amendments:
 
 ---
 
-## §1 — Andura Vault 3-Layer Mapping (Karpathy adapted)
+## §1 — Andura Vault 3-Layer Architecture (Karpathy Real)
 
-Karpathy's 3-layer architecture (`raw/` + `wiki/` + `CLAUDE.md` schema) mapped onto Andura existing folder structure. NU mass migration — existing folders devin "wiki layer" LLM-maintained:
+**Paradigm shift Option B vs Faza 2B:** Faza 2B mapped existing folders → "wiki layer" conceptual fără folder NEW. Option B real = vault existing entire devine **raw layer immutable historical**, NEW `wiki/` folder = pure LLM-generated entity/concept/summary pages cu voice preservation policy §1.
 
-### Layer 1 — Raw sources (immutable inputs)
+### §1.1 — Layer 1: Raw Sources (Immutable Inputs)
 
-**Andura mapping:** `📥_inbox/` existing (Daniel inputs + handover narratives + Karpathy gist reference + future Web Clipper articles).
+**Andura mapping vault existing entire = raw layer post-Faza 3 LANDED:**
 
-- Files: `HANDOVER_*.md` (Daniel scribe narratives end-of-chat), `PROMPT_CC_*.md` (Daniel input prompts for autonomous CC execution), `PLAN_*.md` (strategic plans Daniel-curated), `_karpathy_gist_reference.md` (immutable Karpathy source preserved), future `📥_inbox/_raw/` subfolder for Web Clipper external articles.
-- Convention: NEVER edit body of raw files post-landing — they're immutable. NEVER delete pre-archive — instead move to `📤_outbox/_archive/<YYYY-MM>/<NN>_<TASK>_CONSUMED.md` post `/wiki-ingest` processing.
-- Dropzone protocol existing: VAULT_RULES.md §3.5 preserved unchanged (curated input layer, NU CC autonomous random write).
+| Folder/File | Raw layer role |
+|-------------|----------------|
+| `📥_inbox/` | Daniel curated inputs (HANDOVER narratives + PROMPT_CC + PLAN + Karpathy gist reference + future Web Clipper articles) |
+| `📤_outbox/` + `_archive/` | CC autonomous output raports (immutable historical, 400+ archived `_CONSUMED.md` files) |
+| `00-index/` | CURRENT_STATE.md + INDEX_MASTER.md (live SSOT precedent threads stacked — frozen post-Faza 3 cap, citable raw) |
+| `01-vision/` | PROJECT_VISION + DANIEL_COMPLETE_PROFILE + SUFLET_ANDURA + MOAT_STRATEGY + ONBOARDING_SSOT_V1 + 4 more (Daniel-curated vision raw layer) |
+| `02-audit/` | COACHING_TEXTBOOK_SYNTHESIS (research reference raw) |
+| `03-decisions/` | 42 ADR files (33 numbered 001-033 + 9 named) + DECISION_LOG.md cumulative ~742 LOCKED V1 chronological descending |
+| `04-architecture/` | 11 SPEC DRAFTs/LOCK V1 paradigms (COGNITIVE_ARCHITECTURE + MULTI_TENANT_AUTH + TOMBSTONE + DATA_REGISTRY + PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT + REACT_MIGRATION + ANDURA_VALIDATION + SCENARIOS_SIMULATOR + FAZA_2 + ROOT_NAV) + mockups/ HTML 4 themes |
+| `05-findings-tracker/` | FINDINGS_MASTER + INSIGHTS_BACKLOG + AUDIT_30_9_BLOCKED_STATE |
+| `06-sessions-log/` | HANDOVER_GLOBAL deep + 4 theme files (AUTH + ENGINES + ONBOARDING + SCENARIOS + DECISION_CLUSTER) + RECENT_DECIDED_ARCHIVE rolling |
+| `07-meta/` | CLAUDE_CODE_RULES |
+| `08-workflows/` | CHAT_MIGRATION_PROTOCOL + PRE_LAUNCH_CHECKLIST_V1 + HANDOVER_TEMPLATE + 4 more workflow specs |
+| `VAULT_RULES.md` | Schema co-layer (deep §HANDOVER_PROTOCOL + §CHAT_CONTINUITY §CC.* + §ANTI_RECURRENCE §AR.* + §KARPATHY_OPERATIONS) |
+| `DIFF_FLAGS.md` | Outstanding P1/P2 issues raw layer |
+| `README.md` | Repo intro |
 
-### Layer 2 — Wiki (LLM-generated pages cu cross-refs)
+**Hard rule raw layer immutable post-Faza 3 2026-05-11:**
+- ZERO edit body of raw files (entire vault existing). Append-only architecture deprecated în favor wiki/ chronological log.
+- ZERO append CURRENT_STATE §JUST_DECIDED / §NOW / §RECENT post-Faza 3 freeze. CURRENT_STATE = frozen snapshot raw layer, citable but NU live updated.
+- ZERO new ADR/SPEC files în raw layer post-Faza 3 (instead: distribute via `/wiki-ingest` la `wiki/entities/`). Exception: ADR rare cazuri când Daniel decides explicit, raw layer additive cu accompanying `wiki/entities/adrs/adr-<NNN>.md` page generated.
+- HANDOVER narratives noi → `/wiki-ingest` distribute la wiki layer + `wiki/log.md` chronological + archive raw la `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
 
-**Andura mapping:** ALL existing 00-08 numbered folders + VAULT_RULES.md + DIFF_FLAGS.md + README.md.
+### §1.2 — Layer 2: Wiki (Pure LLM-Generated)
 
-| Andura folder | Wiki role |
-|---------------|-----------|
-| `00-index/` | INDEX_MASTER = wiki master index Karpathy equivalent + CURRENT_STATE.md = live SSOT navigation hub (§NOW + §JUST_DECIDED + §NEXT + §ACTIVE_REFS + §ACTIVE_ADRS + §ACTIVE_FLAGS + §RECENT + §POINTERS) |
-| `01-vision/` | Product vision wiki pages (Daniel's verbatim quotes, strategic LOCK V1 decisions, brand soul, Beta scope) |
-| `02-audit/` | Audit raport wiki pages (vault hygiene audits, Run 2/3 codification, drift detection) |
-| `03-decisions/` | DECISION_LOG.md = chronological descending append-only (Karpathy `log.md` equivalent) + 42 ADR files numbered (001-033) + named (ADR_MULTI_TENANT_AUTH_v1 etc) = entity/concept pages Karpathy equivalent |
-| `04-architecture/` | Architecture spec wiki pages (mockups + SPEC DRAFTs + LOCK V1 paradigms: PORT_FIRST_STEP_1, V1_FEATURES_AUDIT, REACT_MIGRATION_STATE_MAPPING, ANDURA_VALIDATION_FRAMEWORK) |
-| `05-findings-tracker/` | Findings + bugs tracker pages |
-| `06-sessions-log/` | HANDOVER_GLOBAL deep archive + RECENT_DECIDED_ARCHIVE rolling >7 days (§CC.6 truncate target) |
-| `07-meta/` | Meta wiki pages (process docs, retrospectives, slip patterns analysis) |
-| `08-workflows/` | Workflow spec pages (PRE_LAUNCH_CHECKLIST_V1 etc) |
+**Andura mapping NEW `wiki/` folder LANDED Faza 3 Phase 1 LOCK V1 2026-05-11:**
 
-### Layer 3 — Schema (operating rules co-evolved)
+```
+wiki/
+├── _design/
+│   └── WIKI_DESIGN_SPEC_V1.md          (this schema design authority)
+├── index.md                             (Karpathy catalog — all pages by category + 1-line summary)
+├── log.md                               (Karpathy chronological — ingest|query|lint entries append-only)
+├── entities/
+│   ├── adrs/                            (42 ADR entity pages)
+│   ├── engines/                         (~10 coach engine entity pages)
+│   ├── features/                        (~20 V1 + Auth + Onboarding feature pages)
+│   └── specs/                           (11 architecture SPEC entity pages)
+├── concepts/                            (~15-20 cross-cutting concept pages: paradigms + strategies + principles)
+├── summaries/                           (~10-15 topic synthesis pages)
+└── sources/                             (6 raw layer pointer catalogs)
+```
 
-**Andura mapping:** `CLAUDE.md` (this file, vault root, NEW Faza 2B 2026-05-11) + `VAULT_RULES.md` (existing pre-Karpathy, ~1078 LOC, deep protocols §HANDOVER_PROTOCOL + §CHAT_CONTINUITY_PROTOCOL §CC.* + §ANTI_RECURRENCE_RULES §AR.* + §VAULT_HYGIENE_PASS + §KARPATHY_OPERATIONS NEW Step 3).
+**Total wiki pages estimate:** ~120-200 LLM-generated post-Phase 3 Cluster A-H execute.
 
-**Bidirectional cross-ref:**
-- `CLAUDE.md` (this file) §5 Integration points back to VAULT_RULES.md §CC.2 + §CC.4 + §CC.5 + §CC.6 + §AR.19 protocols
-- `VAULT_RULES.md` §KARPATHY_OPERATIONS NEW points to CLAUDE.md §1-§6 schema authority
+**Wiki ownership LLM-only:** Daniel reads wiki, NU writes. Claude (chat strategic + claude_code agent) writes + maintains via `/wiki-ingest` + `/wiki-lint` operations.
 
-**Co-evolution principle:** Schema evolves cu Andura domain maturity. NU rigid frozen. Daniel + Claude (chat + claude_code) update together when patterns emerge. Slip patterns codify în VAULT_RULES.md §AR.* anti-recurrence rules.
+### §1.3 — Layer 3: Schema (Operating Rules Co-Evolved)
 
----
+**Andura mapping schema co-layer:**
+- `CLAUDE.md` (this file, vault root) — schema primary authority Karpathy real Option B
+- `VAULT_RULES.md` (existing, redesigned §CC.* Phase 2 — Karpathy flow no-layered-read; §AR.* preserved; §HANDOVER_PROTOCOL deprecat → /wiki-ingest classifier)
+- `wiki/_design/WIKI_DESIGN_SPEC_V1.md` (design spec Phase 1 LANDED — folder structure + voice preservation policy §1 + frontmatter templates + 3 operations + cross-ref convention + generation strategy)
 
-## §2 — 3 Operations Slash Commands Andura-Specific
-
-### `/wiki-ingest <source-path>` — Process raw input → distribute wiki layer
-
-**Trigger:** Daniel adds new file la `📥_inbox/` + signals process (or autonomous CC detects post-handover scribe ingest per §CC.5).
-
-**Workflow:**
-1. **Read raw source** via MCP filesystem direct (`📥_inbox/<file>.md` typically).
-2. **Classify content** — branch logic:
-   - **Handover narrative** (scribe end-of-chat aggregate) → §CC.5 fast handover ingest path canonical: CURRENT_STATE §NOW replace (move precedent → §RECENT) + §JUST_DECIDED top entry append + DECISION_LOG entry top descending cronologic + INDEX_MASTER `Last updated:` flip + §ACTIVE_REFS sync + LATEST.md raport + archive consumed
-   - **ADR draft** (architectural decision proposal) → place `03-decisions/<NNN-name>.md` cu YAML frontmatter (status=draft initially, locked-v1 post Daniel review) + update INDEX_MASTER entry + DECISION_LOG cross-ref entry
-   - **SPEC DRAFT** (architecture spec proposal) → place `04-architecture/<name>.md` cu YAML frontmatter + update INDEX_MASTER + cross-refs bidirectional
-   - **Prompt CC** (Daniel input for autonomous CC execution) → preserve `📥_inbox/` pending CC execute (NU archive yet) + Daniel signals when consumed
-   - **Plan** (strategic plan) → preserve `📥_inbox/` pending execute + cross-ref în CURRENT_STATE §NEXT priority order
-   - **Raport CC** (CC autonomous execution raport) → place `📤_outbox/_archive/<YYYY-MM>/<NN>_*_CONSUMED.md` (post LATEST.md cycle) + cross-ref în relevant DECISION_LOG entry
-3. **Update INDEX_MASTER** `Last updated:` field flip (per §CC.9.3 mandatory)
-4. **Pre-flight grep wikilinks orphane** mandatory pre-commit (per §CC.9.5)
-5. **Backup tag pre-execute:** `pre-handover-<YYYY-MM-DD-HHMM>` pushed origin (§CC.5 / §CC.7 Layer 5 safety net)
-6. **Atomic commit single-concern** Bugatti craft + push origin (NU bulk multi-purpose)
-7. **Signal Daniel post-ingest:** "e timpul pt noul chat" per §CC.5 §AMENDMENT 2026-05-10 Direct-to-CC paradigm
-
-**Cross-ref:** §CC.5 fast handover ingest existing canonical (`/wiki-ingest` is super-set including non-handover classifiers).
-
-### `/wiki-query <question>` — Answer questions citing wiki
-
-**Trigger:** Daniel asks question în chat OR Claude needs to verify claim pre-action.
-
-**Workflow:**
-1. **Search INDEX_MASTER first** for topic anchor (Karpathy native: index-driven navigation, NU embedding RAG).
-2. **Drill DECISION_LOG + ADR-uri active** for LOCKED V1 entries cronologic descending (most recent precedence on conflict).
-3. **Scan wiki sub-indexes:**
-   - `CURRENT_STATE.md` §NOW (active conversation thread)
-   - `CURRENT_STATE.md` §JUST_DECIDED (last 24-72h LOCKED entries)
-   - `CURRENT_STATE.md` §RECENT (last 3-7 days)
-   - `06-sessions-log/RECENT_DECIDED_ARCHIVE.md` (older >7 days rolling)
-   - `DIFF_FLAGS.md` active P1/P2 flags
-4. **Synthesize answer cu citations `path:§` mandatory** per §CC.4 citation enforcement. Format: `Per CURRENT_STATE §NOW: ...` sau `Per HANDOVER_GLOBAL §X: ...` sau `Per ADR-<NNN> §Y: ...`.
-5. **Flag explicit if no wiki answer found** — NU invent. Options:
-   - "verific cu MCP filesystem direct read" (acasă PRIMARY per §CC.2.1)
-   - "verific cu KB search" (fallback environments)
-   - "necesită Daniel decizie reală (NU vault answer)" — escalate Daniel scope
-   - "invoke web search separat la Daniel cerere" (external knowledge needed)
-6. **File answers back as wiki pages când valoros** (Karpathy native insight): comparison tables + analysis + connections discovered ≠ disappear into chat history. Place în relevant `04-architecture/` sau `07-meta/` cu YAML frontmatter + cross-refs.
-
-**Cross-ref:** §CC.4 citation enforcement canonical (`/wiki-query` is structured invocation of §CC.4 principles).
-
-### `/wiki-lint` — Health check vault
-
-**Trigger:** Periodic Daniel-invoked OR autonomous CC schedule (e.g. post major LOCK V1 batch, post handover, monthly maintenance).
-
-**Workflow (4 scan types):**
-1. **Broken wikilinks scan:** Grep all `[[...]]` references across vault markdown files (exclude `node_modules/`, `src/`, `tests/`, `.git/`, `dist/`, `coverage/`, `📤_outbox/_archive/`, `.obsidian/`). For each, verify target file exists (case-insensitive match Obsidian default). Flag missing targets.
-2. **Orphan pages scan:** For each markdown file în wiki layer, check:
-   - No inbound `[[file]]` references from other vault files AND
-   - No INDEX_MASTER entry pointing la file AND
-   - Not protected (CLAUDE.md / VAULT_RULES.md / README.md / DIFF_FLAGS.md root + numbered ADR files + LICENSE)
-   - = ORPHAN candidate (NOT necessarily wrong — Daniel decides if intentionally standalone or missing cross-refs to add)
-3. **Stale claims scan:** Check files with `Updated: YYYY-MM-DD` headers > 60 days old vs current chat-current state. Flag candidates (Daniel decides if substantively stale or merely calendar-old — many ADR-uri permanently LOCKED V1 fără need refresh).
-4. **Contradictions scan:** Cross-check dated entries across wiki layer for conflict. Examples Andura-relevant:
-   - ADR <X> §AMENDMENT date Y vs CURRENT_STATE §NOW date Z claiming opposite
-   - DECISION_LOG entry verbatim vs Daniel quote în 01-vision contradicting
-   - DIFF_FLAGS active P1 status vs CURRENT_STATE §ACTIVE_FLAGS mirror drift
-
-**Output raport:** `📤_outbox/_archive/<YYYY-MM>/<NN>_WIKI_LINT_RAPORT_<date>.md` cu sections §1 Broken wikilinks (count + list path:§) + §2 Orphan pages (count + list path) + §3 Stale candidates (count + list path:Updated_field) + §4 Contradiction candidates (count + cross-file pair) + §5 Summary + recommendations Daniel review.
-
-**Fix policy:** NU fix automat în `/wiki-lint` pass — Daniel review prima. Each finding decided per case (some orphans intentional, some stale claims permanent LOCK V1, some contradictions historical record valuable).
-
-**P1 escalation:** If finding critical (broken wikilink la SSOT files: INDEX_MASTER / CURRENT_STATE / DECISION_LOG / VAULT_RULES) → add DIFF_FLAGS entry `P1-FLAG-WIKI-LINT-<finding>` 🟡 P1 pending Daniel review.
+**Bidirectional cross-ref:** schema files co-evolve cu Andura domain maturity. Slip patterns codify în VAULT_RULES §AR.* anti-recurrence rules.
 
 ---
 
-## §3 — Frontmatter Template Minimal
+## §2 — Voice Preservation Policy §1 (MANDATORY Per Wiki Page)
 
-**Adoption policy:** Apply progressive new files NEW post-Faza 2B. NU mass migration existing files (~250+ markdown files vault, mass edit risk > value, churn deferred to future bulk pass dacă Daniel decides).
+**Risk Option B Karpathy real:** LLM summary impersonal → identity loss Andura. Mitigation policy MANDATORY enforce per wiki page (`/wiki-ingest` + `/wiki-lint` voice fidelity scan §4.3.5).
 
-**Template canonical:**
+### §2.1 — Required 4-Section Structure Per Wiki Page
+
+```markdown
+---
+<frontmatter §3>
+---
+
+# <Page Title>
+
+## Synthesis
+
+<LLM-written summary concept — concise max 2-3 paragrafe>
+<Focus pe ce ESTE entitatea/concept/feature, ce face, cum se conectează cu altele>
+
+## Verbatim quotes Daniel
+
+<Push-backs key + mea culpa moments + daniel-isms preserved EXACT verbatim cu context>
+<Format: Daniel verbatim chat <DATE> *"<quote-exact>"* (context)>
+
+## Bugatti framing notes
+
+<Gigel test rationale dacă aplicabil>
+<Quality > Speed rationale>
+<Anti-RE (anti-recurrence) considerations>
+<Anti-paternalism notes>
+<Voice tone notes — Bugatti craft framing>
+
+## Cross-refs raw layer
+
+<Citation source specific path:§ verbatim — MANDATORY raw layer pointers minim 2-3>
+- [[../../03-decisions/<file>]] §<section>
+- [[../../04-architecture/<file>]] §<section>
+- [[../../06-sessions-log/HANDOVER_*]] §<section>
+- [[../../00-index/CURRENT_STATE]] §<section> (precedent thread snapshot)
+- [[../../📤_outbox/_archive/2026-05/<NN>_*]] (consumed archive specific raport)
+```
+
+### §2.2 — Hard Rules Voice Preservation Policy
+
+**HARD RULE 1:** NU rezuma push-backs Daniel impersonal "user pushed back" → preserve EXACT verbatim `Daniel verbatim chat <DATE> *"<quote>"*` cu context.
+
+**HARD RULE 2:** NU lobotomy daniel-isms care formează identity Andura. Daniel-isms catalog minimum lista:
+- "tataie" / "halucinezi" / "stai" / "ia bate-te" / "se bate sonnet" / "ups am dat"
+- "salut acasă" / "ce dracu faci" / "ba ce dracu" / "deranjezi" / "ma intrerupi inutil"
+- "puppy" (cum-tu-esti-cto-sau-puppy parodie) / "Gigel test" / "Bugatti craft"
+- "acoperiș-pereți" / "in inbox sper da?" / "ia cauta pe net"
+- "traiasca api tau" / "il dai direct la cc tu" / "Coach urca/reduce"
+- "fa treaba si nu ma deranja" / "esti cto figure it out" / "NU MA MAI INTREBI NIMIC FARA SA VERIFICI"
+- "Pe bune exact stilul hai sa punem acoperisul inainte sa punem peretii"
+- "daca imi zici reps in reserve ma supar"
+- Lista extensibilă chat-to-chat — append catalog când daniel-ism nou apare verbatim chat.
+
+**HARD RULE 3:** Synthesis section concise max 2-3 paragrafe — wikis goal = LLM bookkeeping NU narrative repetition. Detailed narrative preserved în Verbatim quotes + Cross-refs raw layer.
+
+**HARD RULE 4:** Cross-refs raw layer MANDATORY minim 2-3 specific pointers `path:§` per page. Page fără cross-refs raw = orphan din wiki perspective + voice fidelity broken (NU citation lineage).
+
+**HARD RULE 5:** Bugatti framing notes section poate fi minimal pentru entități neutre (e.g. tehnologie pură ADR), dar voice tone notes prezent acolo unde aplicabil. NU skip section header — keep gol cu `<!-- N/A pentru această entitate -->` marker dacă conținut zero.
+
+**HARD RULE 6:** Verbatim quotes Daniel section MUST contain minim 1 push-back/mea culpa/daniel-ism dacă entitatea/concept este produs de iterație chat cu Daniel pivot (majoritatea wiki pages). Excepție: entități pur tehnice fără chat history (e.g. specs externe importate).
+
+---
+
+## §3 — Frontmatter Templates Per Wiki Page Type
+
+**Adoption policy wiki/ pure:** ALL wiki pages MUST have YAML frontmatter conform template. Raw layer existing NU mass-migrate (mass edit risk > value).
+
+### §3.1 — Entity Page
+
 ```yaml
 ---
-title: <File Name>
-type: <wiki|raw|schema>
-status: <draft|locked-v1|superseded|amended>
-locked_date: <YYYY-MM-DD>
+title: <Entity Name>
+type: entity
+subtype: adr | engine | feature | spec
+status: draft | locked-v1 | superseded | amended | deprecated
+locked_date: YYYY-MM-DD
+authority: <raw layer source primary path:§>
+voice_preservation: synthesis + verbatim + bugatti + crossrefs
 cross_refs:
-  - "[[path/to/file]]"
-  - "[[other/file]]"
+  - "[[entities/<other>]]"
+  - "[[concepts/<concept>]]"
+  - "[[summaries/<summary>]]"
 amendments:
-  - date: <YYYY-MM-DD>
+  - date: YYYY-MM-DD
     note: <brief>
 ---
 ```
 
-**Field semantics:**
-- `title` — human-readable file name (NOT necessarily matching filesystem path basename)
-- `type` — Karpathy 3-layer position: `wiki` (LLM-maintained), `raw` (immutable source), `schema` (operating rules)
-- `status` — lifecycle: `draft` (pre-LOCK V1, evolving), `locked-v1` (LOCK V1 stable, NU edit body fără §AMENDMENT), `superseded` (replaced by newer ADR/SPEC, preserved historical reference), `amended` (LOCK V1 cu §AMENDMENT date post-LOCK adjustments)
-- `locked_date` — first LOCK V1 date if applicable (NU update post-amendments, separate `amendments` field)
-- `cross_refs` — bidirectional cross-refs `[[wikilinks]]` Obsidian-style (drill-down navigation)
-- `amendments` — append-only list dates + brief notes for post-LOCK V1 §AMENDMENT entries (preserves history)
+### §3.2 — Concept Page
 
-**Dataview integration future:** Obsidian Dataview plugin can query YAML frontmatter pentru dynamic tables (e.g. all `status=locked-v1` ADRs sorted by `locked_date` descending). NEW Andura adoption post-Faza 2B optional enhancement.
+```yaml
+---
+title: <Concept Name>
+type: concept
+status: draft | locked-v1 | superseded | amended
+locked_date: YYYY-MM-DD
+authority: <raw layer source primary path:§>
+voice_preservation: synthesis + verbatim + bugatti + crossrefs
+cross_refs: [...]
+amendments: [...]
+---
+```
+
+### §3.3 — Summary Page
+
+```yaml
+---
+title: <Topic> Overview
+type: summary
+status: draft | locked-v1
+locked_date: YYYY-MM-DD
+authority: synthesis of [<entity1>, <entity2>, <concept1>, ...]
+voice_preservation: synthesis + verbatim + bugatti + crossrefs
+covers_entities: [...]
+covers_concepts: [...]
+amendments: [...]
+---
+```
+
+### §3.4 — Source Pointer Page
+
+```yaml
+---
+title: <Source File> Pointers
+type: source
+status: locked-v1
+locked_date: YYYY-MM-DD
+authority: raw layer immutable reference
+covers_raw_file: <absolute path raw layer file>
+last_synced: YYYY-MM-DD
+---
+```
+
+### §3.5 — Index + Log Pages
+
+```yaml
+---
+title: Wiki Index | Wiki Log
+type: index | log
+status: live
+last_updated: YYYY-MM-DD
+---
+```
 
 ---
 
-## §4 — Cross-Ref Protocol Andura
+## §4 — 3 Operations Canonical (Karpathy Real Adapted Andura)
 
-### Wikilinks `[[...]]` Obsidian-style mandatory for inter-file references
+### §4.1 — `/wiki-ingest <source>` (Process Raw Input → Distribute Wiki Layer)
 
-**Format:**
-- Same-folder: `[[FileName]]` (e.g. `[[DECISION_LOG]]` din 03-decisions context)
-- Cross-folder: `[[path/to/file]]` (e.g. `[[../03-decisions/030-adapter-design-pattern]]`)
-- Anchor drill-down: `[[file#section-anchor]]` (e.g. `[[CURRENT_STATE#NOW]]`, `[[005-vanilla-js-no-framework#AMENDMENT 2026-05-10]]` — section anchors use space NU underscore per Obsidian canonical)
+**Trigger:** Daniel adds new file la `📥_inbox/` + signals process, OR autonomous Claude detects post-handover scribe, OR autonomous claude_code agent invoked direct via MCP.
 
-**Resolution:** Obsidian "Shortest path" mode enabled (settings) → wikilinks resolve to nearest match by filename, supports renaming without breaking refs.
+**Workflow:**
+1. **Read raw source** via MCP filesystem direct (`📥_inbox/<file>.md` typically).
+2. **Classify content branch logic:**
+   - **Handover narrative** (scribe end-of-chat aggregate) → distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing notes append + Cross-refs raw layer cite specific. `wiki/log.md` entry append `## [YYYY-MM-DD] ingest | <handover topic>`. Archive raw HANDOVER → `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
+   - **ADR draft** → 1 entity page `wiki/entities/adrs/adr-<NNN>-<slug>.md` cu voice preservation policy §1 + concept page dacă cross-cutting + cross-refs bidirectional. Raw ADR file (dacă created în `03-decisions/` per Daniel decision) is supplementary raw source for wiki entity page.
+   - **SPEC DRAFT** → 1 entity page `wiki/entities/specs/spec-<name>.md` + summary dacă synthesizing multi-spec. Raw SPEC file supplementary.
+   - **Prompt CC / Plan** → preserve `📥_inbox/` (NU process — Daniel-curated input pending execute, NU wiki summary yet). Update `wiki/log.md` entry `## [YYYY-MM-DD] queued | <prompt CC name>`.
+   - **Raport CC** (autonomous execution raport) → update relevant `wiki/entities/` + `wiki/summaries/` pages cu narrative slice + Cross-refs la `📤_outbox/_archive/`.
+   - **External article** (Web Clipper future) → entity page `wiki/entities/external/<name>.md` + concept tag cross-cutting.
+3. **Update `wiki/index.md`** entry append (1-line cu cross-ref raw layer source).
+4. **Append `wiki/log.md`** entry `## [YYYY-MM-DD] ingest | <source name>` + brief description what distributed.
+5. **Pre-flight grep wikilinks orphan** mandatory pre-commit.
+6. **Backup tag pre-execute:** `pre-wiki-ingest-<source>-<YYYY-MM-DD-HHMM>` pushed origin.
+7. **Atomic commit single-concern** Bugatti craft + push origin.
+8. **Signal Daniel post-ingest if handover context:** "e timpul pt noul chat" per Direct-to-CC paradigm.
 
-### `path:§` citation format mandatory în chat answers (per §CC.4)
+**Voice preservation enforcement:** ANY wiki page edit/create via `/wiki-ingest` MUST preserve §2.1 4-section structure + §2.2 hard rules. NU shortcut.
 
-**Format:** `path/to/file:§SECTION_NAME` (e.g. `00-index/CURRENT_STATE.md:§NOW`, `VAULT_RULES.md:§CC.2`, `📥_inbox/PROMPT_CC_FAZA_2B_KARPATHY_CLAUDE_MD.md:§Step 2`).
+### §4.2 — `/wiki-query <question>` (Answer Cu Citations Wiki)
 
-**Use:** Citation în chat strategic responses + commit messages + raport LATEST.md + claude_code agent prompts.
+**Trigger:** Daniel asks question în chat OR Claude needs verify claim pre-action.
 
-### Bidirectional cross-link both sides când nontrivial
+**Workflow:**
+1. **Read `wiki/index.md` first** for topic anchor (Karpathy native: index-driven navigation, NU embedding RAG).
+2. **Drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` pages** relevant per index.
+3. **Cite citations `path:§` mandatory** per §CC.4. Format primary: `Per [[wiki/entities/<file>]] §<section>: ...` OR `Per [[wiki/concepts/<file>]] §<section>: ...`. Fallback: drill raw layer specific dacă wiki Synthesis ambiguă: `Per [[../../03-decisions/<file>]] §<section>: ...`.
+4. **Synthesize answer** cu citations multi-source dacă necesar.
+5. **Flag explicit if no wiki answer:**
+   - "verific cu MCP filesystem raw layer read"
+   - "necesită Daniel decizie reală (NU vault answer)"
+   - "invoke web search Daniel cerere"
+   NU invent — escalate.
+6. **File answers back as wiki pages când valoros** (Karpathy native insight): comparison tables + analysis + connections discovered ≠ disappear into chat history. Place în `wiki/summaries/<topic>.md` cu YAML frontmatter + voice preservation policy §1.
 
-**Examples:**
-- ADR 005 §AMENDMENT 2026-05-10 ↔ DECISION_LOG entry 2026-05-10 chat ACASĂ Port-First-Then-React ↔ CURRENT_STATE §NOW Faza 2B strategic context
-- ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-04 ↔ HANDOVER_GLOBAL §56.13.1 auto-retry 3x ↔ Auth Phase 2 RESOLVED P1 flag
+**Optional `wiki/log.md` entry:** `## [YYYY-MM-DD] query | <question topic>` (only when novel synthesis produced and filed back).
 
-**Anti-pattern:** unidirectional refs orphan source (target NU knows about reference) → graph view shows disconnected components → discovery friction.
+### §4.3 — `/wiki-lint` (Health Check Wiki)
+
+**Trigger:** Periodic Daniel-invoked OR autonomous CC schedule (post major LOCK V1 batch, post handover, monthly maintenance).
+
+**Workflow 5 scan types:**
+
+1. **Broken wikilinks scan:** Grep all `[[...]]` references across `wiki/` markdown files. For each, verify target file exists. Flag missing targets.
+2. **Orphan pages scan:** For each markdown file în `wiki/`, check no inbound `[[file]]` references AND no `wiki/index.md` entry. Flag candidates.
+3. **Stale claims scan:** Check files with `last_updated: YYYY-MM-DD` headers > 60 days old vs current chat-current state. Flag candidates Daniel review.
+4. **Contradictions scan:** Cross-check dated entries across wiki layer for conflict. Examples: ADR amendment date Y vs concept page narrative claiming opposite; entity status `locked-v1` vs amendment status `superseded` în different pages.
+5. **Voice fidelity scan (NEW — mandatory):** For each wiki page cu Verbatim quotes Daniel section, verify:
+   - Quotes preserved EXACT cu daniel-isms catalog (§2.2 minimum list)
+   - Synthesis section NU dominant peste Verbatim section (identity loss risk)
+   - Cross-refs raw layer minim 2-3 specific pointers prezenti
+   - Bugatti framing notes prezent acolo unde aplicabil (NU skip pure entities)
+   Flag pages cu Synthesis dominant + Verbatim empty/minimal/paraphrased + cross-refs absent.
+
+**Output raport:** `📤_outbox/_archive/<YYYY-MM>/<NN>_WIKI_LINT_RAPORT_<date>.md` cu §1-§6 sections (5 scans + §6 summary recommendations).
+
+**Append `wiki/log.md`** entry `## [YYYY-MM-DD] lint | <findings count summary>`.
+
+**Fix policy:** NU fix automat — Daniel review prima. Each finding decided per case.
+
+**P1 escalation:** If finding critical (broken wikilink la `wiki/index.md` OR voice fidelity broken high-value pages) → add `DIFF_FLAGS.md` entry `P1-FLAG-WIKI-LINT-<finding>` 🟡 P1 pending Daniel review.
 
 ---
 
-## §5 — Integration cu Protocols Existing
+## §5 — Cross-Ref Convention
 
-### §CC.2 layered read EXTENDED (Karpathy-aware)
+### §5.1 — Wiki-Internal Wikilinks
 
-Pre-existing §CC.2 mandatory layered read chat NEW startup:
-1. `00-index/CURRENT_STATE.md` (full ~200 LOC live SSOT)
-2. HANDOVER_GLOBAL sections referenced în §ACTIVE_REFS
-3. Top 3 ADRs în §ACTIVE_ADRS
-4. `DIFF_FLAGS.md` P1 active
+- Same-folder: `[[file]]` (e.g. `[[adr-005-vanilla-js]]` din `entities/adrs/`)
+- Cross-folder wiki: `[[../concepts/port-first-then-react]]` (relative path)
+- Anchor drill-down wiki: `[[entities/adrs/adr-005-vanilla-js#AMENDMENT 2026-05-10]]`
 
-**Karpathy extension (post-Faza 2B):** Pre §CC.2 step 1 (CURRENT_STATE read), check if `/wiki-query` slash command applies — Karpathy pattern primary anti-halucinație mechanism. If user question maps la wiki topic → `/wiki-query` first (INDEX_MASTER → DECISION_LOG → ADR drill) before layered read.
+### §5.2 — Wiki → Raw Layer Citations (Lineage Mandatory)
 
-### §CC.4 citation enforcement REAFFIRMED
+- ADR raw: `[[../../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10`
+- SPEC raw: `[[../../04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1]] §LOCK V1`
+- HANDOVER raw: `[[../../06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening]] §X`
+- CURRENT_STATE precedent: `[[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-10` (snapshot citation, raw layer immutable post-Faza 3)
+- DECISION_LOG entry: `[[../../03-decisions/DECISION_LOG]] §<date> entry`
+- Archive consumed: `[[../../📤_outbox/_archive/2026-05/<NN>_*_CONSUMED]]`
 
-Every factual claim post-startup = citation `path:§` obligatoriu. Memory recall fără citation verifiabilă = re-verify cu MCP filesystem direct read (PRIMARY) sau project_knowledge_search (FALLBACK) per §CC.2.1. Karpathy `/wiki-query` operation is structured invocation of §CC.4 principles — formalize existing.
+### §5.3 — `path:§` Citation Format Chat (Per VAULT_RULES §CC.4)
 
-### §CC.5 fast handover ingest = special case `/wiki-ingest`
+**Format:** `path/to/file:§SECTION_NAME` (e.g. `wiki/entities/adrs/adr-005-vanilla-js.md:§Synthesis`).
+**Use:** Chat strategic responses + commit messages + LATEST.md raports + claude_code agent prompts.
 
-§CC.5 fast handover ingest existing canonical mecanic (CURRENT_STATE move-then-replace + DECISION_LOG entry append + archive consumed + backup tag + commit + push) is special case `/wiki-ingest` operation cu handover-narrative classifier branch. Karpathy generalizes la multi-classifier (handover + ADR draft + SPEC DRAFT + prompt CC + plan + raport CC). §CC.5 mecanic preserved exact — Karpathy adaugă classification taxonomy.
+### §5.4 — Bidirectional Cross-Link Mandatory Nontrivial
 
-### §CC.6 ~200 LOC append-only architecture PRESERVED STRICT
+ADR entity page ↔ concept page paradigm citing it ↔ summary page synthesizing topic. Unidirectional refs orphan source → graph view shows disconnected → discovery friction.
 
-CURRENT_STATE.md ~200 LOC append-only architecture LOCKED V1 2026-05-10 NU inflate. Karpathy schema operations adăugare NU inflate CURRENT_STATE — toate §1-§6 here în CLAUDE.md vault root (separate file, separate ~200 LOC budget). Anti-recurrence rule: 596KB CURRENT_STATE inflate pre-2026-05-10 hygiene cleanup NEVER recurrence.
+---
 
-### §AR.19 + alte AR-uri preserved
+## §6 — Integration cu VAULT_RULES Protocols (Phase 2 Redesign)
 
-Anti-recurrence rules §AR.1-§AR.19 LOCKED V1 preserved unchanged:
-- §AR.1 pre-flight grep filesystem ÎNAINTE reference paths (memory rule `feedback_grep_before_prompt_cc.md`)
+### §6.1 — §CC.2 Chat NEW Startup REDESIGNED (Karpathy Flow)
+
+**OLD (Faza 2B and earlier):** Mandatory sequential layered read CURRENT_STATE + HANDOVER refs + Top 3 ADRs + DIFF_FLAGS. Heavy upfront cost.
+
+**NEW (Faza 3 Karpathy real):**
+1. Chat NEW startup → read `wiki/index.md` + `wiki/log.md` last 5-10 entries (live navigation hub).
+2. Drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` per question/topic via `/wiki-query`.
+3. CURRENT_STATE preserved raw layer immutable, citable via wiki summaries cross-refs (NU mandatory full read).
+4. HANDOVER themes preserved raw layer, citable via wiki entities cross-refs.
+
+**Rationale:** Wiki layer is compounding artifact — citește direct knowledge graph navigabil (NU re-derive each chat). Anti-halucinație primary mechanism.
+
+### §6.2 — §CC.4 Citation Enforcement REAFFIRMED
+
+Every factual claim post-startup = citation `path:§` obligatoriu. Memory recall fără citation verifiabilă = re-verify cu wiki/ read direct OR raw layer fallback.
+
+`/wiki-query` operation is structured invocation of §CC.4 principles existing — formalized via wiki/ pure layer.
+
+### §6.3 — §CC.5 Fast Handover Ingest → `/wiki-ingest` (Handover Classifier)
+
+**Faza 2B+ mecanic:** CURRENT_STATE move-then-replace + DECISION_LOG entry append + archive consumed + backup tag + commit + push.
+
+**Faza 3 Karpathy real:** Replaced by `/wiki-ingest <handover-source>` (handover-narrative classifier branch §4.1) — distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing + Cross-refs raw layer. `wiki/log.md` chronological entry. Archive raw la `📤_outbox/_archive/`.
+
+**CURRENT_STATE update post-Faza 3:** NU touch (raw layer immutable freeze). CURRENT_STATE = frozen snapshot citable.
+
+**DECISION_LOG append post-Faza 3:** NU touch (raw layer immutable freeze). DECISION_LOG = frozen snapshot citable. Replace by `wiki/log.md` chronological.
+
+**Direct-to-CC paradigm preserved:** Claude chat strategic writes handover narrative direct `📥_inbox/<HANDOVER>.md` via MCP filesystem → invoke claude_code agent autonomous `/wiki-ingest` → confirm LANDED → signal Daniel "e timpul pt noul chat". Daniel chat NEW + "salut acasă" = wiki/ self-serve.
+
+### §6.4 — §CC.6 Append-Only Architecture DEPRECATED Post-Faza 3
+
+CURRENT_STATE.md ~200 LOC append-only architecture LOCKED V1 2026-05-10 DEPRECATED post-Faza 3 LANDED — CURRENT_STATE freeze raw layer immutable. `wiki/index.md` + `wiki/log.md` replace ca live navigation hub. NU re-introduce 596KB inflate (anti-recurrence preserved invariant).
+
+### §6.5 — §HANDOVER_PROTOCOL DEPRECATED Post-Faza 3
+
+§HANDOVER_PROTOCOL deep + §CC.5 fast both DEPRECATED post-Faza 3 LANDED — replaced de unified `/wiki-ingest <handover-source>` operation cu handover-narrative classifier branch §4.1. Steps 1-15 §HANDOVER_PROTOCOL preserved doar ca historical reference în VAULT_RULES raw layer.
+
+### §6.6 — §AR.* Anti-Recurrence Rules PRESERVED UNCHANGED
+
+§AR.1-§AR.19 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT preserved unchanged:
+- §AR.1 pre-flight grep filesystem ÎNAINTE reference paths
 - §AR.3 ground truth git verify ÎNAINTE acuzare CC hallucination
 - §AR.4 anti-distructive recommendation default
-- §AR.19 claude_code agent timeout MCP delivery ≠ agent crash (CC autonomous workflow safety)
-- ... (toate §AR.* preserved în VAULT_RULES.md unchanged)
+- §AR.19 claude_code agent timeout MCP delivery ≠ agent crash
+- ... (toate §AR.* preserved unchanged)
 
-Karpathy schema NU supersede AR-uri — Karpathy adaugă vault-level structure, AR-uri rămân claude_code agent execution discipline.
+Karpathy schema NU supersede §AR.* — claude_code agent execution discipline rules invariant.
 
 ---
 
-## §6 — Bugatti Craft Principle (Andura-specific, NU Karpathy native)
+## §7 — Bugatti Craft Principle (Andura-Specific)
 
 **Authority:** Daniel preference accumulated 2026-04-30 → 2026-05-11 + commits cu "🦫 Bugatti craft" trailer + raport LATEST.md format standard.
 
 **Principle:** Quality > Speed default. Iterare cheap, regression OUT. Single-concern atomic commits. NU bulk multi-purpose.
 
 **Tactical rules:**
-- **Pre-flight checklist mandatory** (grep verbatim + strategy LOCK V1 filter + memory check + verify remote state) — §AR.1 + §AR.3 + §AR.4 + §AR.18 pre-action vault search invariant
-- **Atomic commits single-concern** (NU bulk multi-purpose) — each commit one fix, one feature, one doc update; revertable safely
-- **Tests baseline preserved EXACT** — vitest 2781 PASS baseline 2026-05-11 (zero regression default; new feature commits add tests, NU subtract)
-- **Backup tag pre-execute MANDATORY** — `pre-<task-name>-<YYYY-MM-DD>` pushed origin before any modification batch (rollback safety net)
-- **Citation `path:§` mandatory** — §CC.4 anti-hallucination discipline
-- **Slip recurrence track în VAULT_RULES §AR.*** — anti-recurrence codified after pattern observed 2× (NU 1×)
-- **Memory updates Claude side post-major paradigm shifts** — out of CC autonomous scope (Daniel/Claude chat side ritual post-handover ingest)
+- Pre-flight checklist mandatory (grep verbatim + strategy LOCK V1 filter + memory check + verify remote state) — §AR.1 + §AR.3 + §AR.4 + §AR.18 invariant
+- Atomic commits single-concern (NU bulk multi-purpose) — each commit one fix/feature/doc update; revertable safely
+- Tests baseline preserved EXACT — vitest 2781 PASS baseline 2026-05-11 (zero regression default)
+- Backup tag pre-execute MANDATORY — `pre-<task>-<YYYY-MM-DD>` pushed origin (rollback safety net)
+- Citation `path:§` mandatory — anti-hallucination discipline
+- Slip recurrence track în VAULT_RULES §AR.* — anti-recurrence codified after 2× pattern
 
 **Strategic rules:**
-- **Strategy LOCK V1 filter pre-decision** — acoperiș-pereți avoidance: NU plan acoperiș înainte de pereți. Port-First-Then-React (ADR 005 §AMENDMENT 2026-05-10) LOCKED V1 ordering: Step 1 vanilla port → Step 2 React migration mecanic.
-- **Co-CTO autonomy LOCKED V1 PERMANENT 2026-05-11** — Daniel zero touch pre-Beta a-z review. CC autonomous decides tactical + strategic + UX + vault + memory în Co-CTO scope. NU artefacte CC manual paste — invoc claude_code direct via MCP filesystem. §CC.2 layered read STRICT 5/5 NEVER lazy 4/5 3/5. Cumulative ~742 LOCKED V1 cum bază.
-- **Bugatti SoT clean port single** — mockup-first paradigm: clean state mockup întâi (PORT_FIRST_STEP_1 §LOCK V1 sub-decision #1), port-once Daniel-only env, structural rewrite acceptable pre-Beta (post-Beta react migration).
+- Strategy LOCK V1 filter pre-decision — acoperiș-pereți avoidance. Port-First-Then-React LOCK V1 ordering: Step 1 vanilla port → Step 2 React migration.
+- Co-CTO autonomy LOCKED V1 PERMANENT 2026-05-11 — Daniel zero touch pre-Beta a-z review. NU artefacte CC manual paste — invoc claude_code direct via MCP filesystem.
+- Bugatti SoT clean port single — mockup-first paradigm.
 
-**Cross-refs:** [[VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.1-§AR.19 + [[03-decisions/005-vanilla-js-no-framework#AMENDMENT_2026-05-10]] + [[04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1]] + [[04-architecture/V1_FEATURES_AUDIT_V1]] + Daniel autonomy lock EXTINS verbatim *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* (chat-current 2 2026-05-10).
+**Voice preservation policy §1 = Bugatti craft enforcement în wiki layer:** identity Andura prezervat prin daniel-isms verbatim catalog. NU lobotomy LLM summary impersonal.
+
+**Cross-refs raw layer:**
+- [[VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.1-§AR.19
+- [[03-decisions/005-vanilla-js-no-framework#AMENDMENT 2026-05-10]]
+- [[04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1]]
+- [[04-architecture/V1_FEATURES_AUDIT_V1]]
+- Daniel autonomy lock EXTINS verbatim chat-current 2 2026-05-10: *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*
 
 ---
 
-🦫 **Bugatti craft. CLAUDE.md schema Karpathy LLM Wiki pattern adapted Andura vault LOCK V1 2026-05-11 Faza 2B Co-CTO autonomous. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive product/architecture). Co-evolved cu VAULT_RULES.md §KARPATHY_OPERATIONS bidirectional.**
+🦫 **Bugatti craft. CLAUDE.md schema Karpathy Real Option B LOCK V1 2026-05-11 Faza 3 Phase 2. Vault existing FREEZE raw layer immutable. NEW wiki/ pure LLM-generated 3-layer Karpathy compliant. Voice preservation policy §1 MANDATORY per wiki page (Synthesis + Verbatim quotes Daniel + Bugatti framing + Cross-refs raw layer). Identity Andura prezervat prin daniel-isms verbatim catalog. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive product/architecture).**
