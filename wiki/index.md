@@ -2,7 +2,7 @@
 title: Wiki Index — Andura Wiki Catalog
 type: index
 status: live
-last_updated: 2026-05-11
+last_updated: 2026-05-12
 ---
 
 # Wiki Index — Andura Wiki Catalog (Karpathy Real Option B)
@@ -11,7 +11,7 @@ last_updated: 2026-05-11
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post Phase 3 SUB-BATCH 1 (2026-05-11):** 25 pages LANDED across concepts (15) + entities/adrs (10). Carry-forward SUB-BATCH 2-3 documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight".
+**Catalog status post Phase 3 SUB-BATCH 2 (2026-05-12):** 41 pages LANDED across concepts (15) + entities/adrs (26). Carry-forward SUB-BATCH 3 documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight".
 
 ---
 
@@ -33,7 +33,9 @@ last_updated: 2026-05-11
 - [[concepts/moat-strategy]] — engines auxiliare ascunse + cumulative ~742 LOCKED V1
 - [[concepts/append-only-architecture]] — §CC.6 LOCK V1 2026-05-10 DEPRECATED post-Faza 3
 
-## Entities — ADRs (10 LANDED / 42 total)
+## Entities — ADRs (26 LANDED / 42 total)
+
+### SUB-BATCH 1 (10 LANDED 2026-05-11)
 
 - [[entities/adrs/adr-001-local-first-storage]] — IndexedDB primary + Firebase backup tier foundational
 - [[entities/adrs/adr-005-vanilla-js]] — vanilla JS LOCK V1 + §AMENDMENT 2026-05-10 Port-First-Then-React REVERT SUPERSEDE
@@ -45,6 +47,25 @@ last_updated: 2026-05-11
 - [[entities/adrs/adr-030-adapter-design-pattern]] — D1-D5 LOCKED V1 + Q-OPEN-1→7 RESOLVED V1 Hexagonal foundation
 - [[entities/adrs/adr-032-engine-deload-protocol]] — Engine 2 pipeline §42.10 + Mockup FIX 2 Deload variant
 - [[entities/adrs/adr-multi-tenant-auth]] — §AMENDMENT 2026-05-04 BATCH 1-6 + Auth Phase 2 RESOLVED 2026-05-06 Magic Link SMTP
+
+### SUB-BATCH 2 (16 LANDED 2026-05-12)
+
+- [[entities/adrs/adr-002-firebase-rest-not-sdk]] — REST API direct NU SDK bundle 50KB vs 200KB + §AMENDMENT 2026-05-02 Auth migration prerequisite
+- [[entities/adrs/adr-003-double-progression-engine]] — 5-stage DP core weight recommendation foundation
+- [[entities/adrs/adr-004-rule-engine-numeric-priorities]] — deterministic conflict resolution priority scale 0-100 + RULES const stable IDs contract
+- [[entities/adrs/adr-006-tier-storage-for-logs]] — 3-tier logs Live+Aggregate+Archive (generalized ADR 020 universal PWA)
+- [[entities/adrs/adr-007-firebase-open-rules]] — single-user personal rules + §AMENDMENT 2026-05-02 database.rules.json LANDED gated Auth migration
+- [[entities/adrs/adr-009-calibration-tiers]] — 5-tier active + §AMENDMENT 2026-04-30 orthogonal axes 6-tier D1 + §AMENDMENT 2026-05-05 birou after Convergence Guard T2 Unlock Behavioral Validation
+- [[entities/adrs/adr-010-no-anthropic-trademark-public]] — Andura standalone brand vendor independence + Coca-Cola/Stripe analogy
+- [[entities/adrs/adr-011-coach-decision-log-architecture]] — CDL append-only persistent + §AMENDMENT 2026-04-30 LWW deprecated T&B mandatory + §AMENDMENT 2026-05-08 pipeline_event schema
+- [[entities/adrs/adr-012-tier-decay-on-inactivity]] — linear 60-day decay floor INITIAL invisible UI anti-paternalism
+- [[entities/adrs/adr-013-auto-aggression-detection]] — 5 signals + 4 profiles + 3 severity + §AMENDED 2026-04-30 force-typing ELIMINATED PERMANENT Anti-paternalism ABSOLUTE
+- [[entities/adrs/adr-015-getbf-calibration-only]] — Option B Formula B preserved single path Anti-Recommendation NU hybrid Option C fudge factors
+- [[entities/adrs/adr-016-vitality-layer]] — behavioral proxy 6 questions Gigel-friendly opt-in NU bloodwork
+- [[entities/adrs/adr-017-demographic-prior-database]] — 500 synthetic profile (50 crafted Romanian-first + 450 algorithmic) × 90 zile lifecycle build phase only
+- [[entities/adrs/adr-018-engine-extensibility-architecture]] — 5 componente Dimension Registry + Contract + Decision Cluster + Schema Versioning + Feature Flags foundation
+- [[entities/adrs/adr-019-gdpr-k-anonymity-validation]] — k=5 minim obligatorie + 5 quasi-identifiers SSOT + §AMENDMENT 2026-05-02 community channel-agnostic
+- [[entities/adrs/adr-020-storage-tiering-strategy]] — Tier 0/1/2 + Dexie.js Gemini Q10 BLIND SPOT #1 BLOCKER pre-launch resolved
 
 ## Schema + Design (LANDED Phase 1-2)
 
@@ -62,16 +83,10 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 - TBD `sources/spec-source-pointers.md` — 11 SPEC files → wiki entity map (TBD)
 - TBD `sources/vision-source-pointers.md` — 9 vision files → wiki concept/summary map
 
-## Carry-forward TBD (Phase 3 SUB-BATCH 2-3 per Prompt §6 "Phase 3 split în 2-3 sessions overnight")
+## Carry-forward TBD (Phase 3 SUB-BATCH 3 per Prompt §6 "Phase 3 split în 2-3 sessions overnight")
 
-**Cluster A — ADRs SUB-BATCH 2-3 (32 remaining):**
-- adr-002-firebase-rest-not-sdk + adr-003-double-progression-engine + adr-004-rule-engine-numeric-priorities
-- adr-006-tier-storage-for-logs + adr-007-firebase-open-rules
-- adr-009-calibration-tiers + adr-010-no-anthropic-trademark-public + adr-011-coach-decision-log-architecture
-- adr-012-tier-decay-on-inactivity + adr-013-auto-aggression-detection
-- adr-015-getbf-calibration-only + adr-016-vitality-layer + adr-017-demographic-prior-database
-- adr-018-engine-extensibility-architecture + adr-019-gdpr-k-anonymity-validation
-- adr-020-storage-tiering-strategy + adr-021-calibration-drift-reconciliation
+**Cluster A — ADRs SUB-BATCH 3 (16 remaining):**
+- adr-021-calibration-drift-reconciliation
 - adr-024-goal-driven-program-templates + adr-025-andura-gandeste-pentru-user
 - adr-027-engine-energy-adjustment + adr-028-engine-tempo-form-cues + adr-029-engine-specialization
 - adr-031-engine-warmup-mobility + adr-033-muscle-memory-index
@@ -106,7 +121,7 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 
 **Cluster G — Source pointers (6 TBD):** see above `## Sources` section
 
-**Total carry-forward TBD:** ~95-120 pages remaining post SUB-BATCH 1 (25 LANDED / ~120-200 projected).
+**Total carry-forward TBD:** ~79-104 pages remaining post SUB-BATCH 2 (41 LANDED / ~120-200 projected).
 
 ---
 
@@ -128,4 +143,4 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 
 ---
 
-🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-11 Phase 3 SUB-BATCH 1 LANDED (25 pages). Carry-forward TBD ~95-120 pages SUB-BATCH 2-3 per Phase 3 multi-session execution model. Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**
+🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 Phase 3 SUB-BATCH 2 LANDED (41 pages cumulative). Carry-forward TBD ~79-104 pages SUB-BATCH 3 per Phase 3 multi-session execution model. Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**

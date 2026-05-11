@@ -13,6 +13,27 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | FAZA 3 Phase 3 SUB-BATCH 2 — Cluster A ADRs second half (16 pages voice preservation policy §1 enforced)
+
+Generated 16 ADR entity pages cu voice preservation policy §1 enforced 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer):
+- adr-002-firebase-rest-not-sdk + adr-003-double-progression-engine + adr-004-rule-engine-numeric-priorities
+- adr-006-tier-storage-for-logs + adr-007-firebase-open-rules
+- adr-009-calibration-tiers + adr-010-no-anthropic-trademark-public + adr-011-coach-decision-log-architecture
+- adr-012-tier-decay-on-inactivity + adr-013-auto-aggression-detection
+- adr-015-getbf-calibration-only + adr-016-vitality-layer + adr-017-demographic-prior-database
+- adr-018-engine-extensibility-architecture + adr-019-gdpr-k-anonymity-validation
+- adr-020-storage-tiering-strategy
+
+Bidirectional cross-refs landed cu existing concept pages: adr-013 ↔ [[concepts/anti-recurrence-rules]] + [[concepts/gigel-test]] + [[concepts/andura-suflet]]; adr-020 ↔ [[concepts/append-only-architecture]]; adr-017 ↔ [[concepts/moat-strategy]]; adr-018 ↔ [[concepts/moat-strategy]]; adr-011 ↔ [[concepts/append-only-architecture]]; adr-010 ↔ [[concepts/moat-strategy]] + [[concepts/product-vision]] + [[concepts/andura-suflet]]; adr-015 ↔ [[concepts/bugatti-craft]]; adr-016 ↔ [[concepts/gigel-test]].
+
+Voice preservation policy §1 enforced per page: Synthesis concise max 2-3 paragrafe + Verbatim quotes Daniel (push-backs key seminal — "T2 = Behavioral Validation NOT just statistical convergence" 2026-05-05 birou after, "ma rog cu mine in el" 2026-04-27, "follows the body not the calendar" PROJECT_VISION recurring, "orice idee viitoare devine layer adăugabil NU rewrite" 2026-04-27 INSIGHTS_BACKLOG, "Storage Exhaustion PWA Limit ~5MB Showstopper tehnic" 2026-04-30 evening Gemini cross-check, "AI patron care mă forțează să bat la tastatură = brand damage > intervention benefit" 2026-04-30 anti-paternalism ABSOLUTE) + Bugatti framing notes (Gigel test + Quality > Speed + Anti-RE + Anti-paternalism + Voice tone) + Cross-refs raw layer minim 2-3 path:§ specific pointers per page.
+
+Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched). 1 atomic commit on `feature/v2-vanilla-port`. Backup tag `pre-faza-3-phase-3-sub-batch-2-cluster-a-second-half-2026-05-12` pushed origin pre-execute. wiki/index.md count flip 25→41 + SUB-BATCH 3 carry-forward 16 remaining ADRs documented.
+
+Cumulative wiki: 41 pages LANDED (15 concepts + 26 ADR entities + schema/design refs).
+
+5 ADRs cu Verbatim quotes Daniel: catalog pending raw-layer text limited footnote 6 exception (synthesis-only entities — pure technical decisions early phase 2026-04-23 pre daniel-isms density catalog accumulation): adr-002-firebase-rest-not-sdk + adr-003-double-progression-engine + adr-004-rule-engine-numeric-priorities + adr-006-tier-storage-for-logs + adr-015-getbf-calibration-only. Synthesis paraphrase + universal scope cross-ref daniel-isms inserted where applicable preserving identity.
+
 ## [2026-05-12] lint | FAZA 3 Phase 5 cleanup LANDED post-Daniel-approve checkpoint
 
 Daniel review 9 wiki pages sample voice fidelity validation PASS verdict 2026-05-11→12. Archive `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` → `📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED.md` + precedent `📤_outbox/LATEST.md` cycled → `407_FAZA_3_PHASE_4_LATEST_CONSUMED.md` + vault hub sync atomic (CURRENT_STATE §NOW final Phase 1-5 + §JUST_DECIDED top + §NEXT clear post-Karpathy + §ACTIVE_FLAGS 3 flags update + DECISION_LOG entry top + INDEX_MASTER flip + DIFF_FLAGS 3 entries). 2 minor flags non-blocker defer (voice-preservation-policy.md quote 2 + adr-005-vanilla-js.md quote 3 possible reconstructed paraphrase Daniel suspect). Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched). 1 atomic commit on `feature/v2-vanilla-port`. Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute.
@@ -69,16 +90,16 @@ Commit `ec8b3b2`. Tests 2781 PASS preserved.
 
 ---
 
-## Carry-forward TBD — Phase 3 SUB-BATCH 2-3 (multi-session overnight per prompt §6)
+## Carry-forward TBD — Phase 3 SUB-BATCH 3 (multi-session overnight per prompt §6)
 
-- Cluster A — 32 remaining ADRs entity pages
+- Cluster A — 16 remaining ADRs entity pages (8 numbered + 8 named ADRs)
 - Cluster B — ~10 engine entity pages
 - Cluster C — ~20 feature entity pages
 - Cluster D — 11 spec entity pages
 - Cluster F — ~10-15 summary pages
 - Cluster G — 6 source pointer pages
 
-Total carry-forward: ~95-120 pages projected.
+Total carry-forward: ~79-104 pages projected post SUB-BATCH 2 (41 LANDED cumulative).
 
 ---
 
@@ -93,4 +114,4 @@ Voice fidelity validation prima înainte Phase 5 workflow transition per [[../VA
 
 ---
 
-🦫 **Wiki Log Karpathy chronological signature LOCK V1 2026-05-11 Phase 3 SUB-BATCH 1 LANDED. 25 pages generated cu voice preservation policy §1 enforced. Carry-forward documented Phase 3 SUB-BATCH 2-3 + Phase 4 HARD STOP pending Daniel review.**
+🦫 **Wiki Log Karpathy chronological signature LOCK V1 2026-05-12 Phase 3 SUB-BATCH 2 LANDED. 41 pages cumulative generated cu voice preservation policy §1 enforced. Carry-forward documented Phase 3 SUB-BATCH 3 + Phase 4 LANDED Daniel review post-approve checkpoint 2026-05-11→12.**
