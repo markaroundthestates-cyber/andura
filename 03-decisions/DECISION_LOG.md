@@ -1,6 +1,33 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ POST chat birou ingest — MOCKUP CLASIC FINAL v2 LANDED ON DISK + CHAT BIROU INGEST COMPLETE + STRATEGIC INSIGHT INSIGHTS_BACKLOG TRAINING SCHEDULE OVERRIDE PARADIGM (cumulative ~719 PRESERVED, mockup file delivery NU additive)
+
+**Status:** Chat ACASĂ 2026-05-11 POST chat birou ingest LANDED. Mockup `andura-clasic.html` FINAL v2 REPLACE on disk `04-architecture/mockups/andura-clasic.html` post §CC.5 fast handover ingest. Source PowerShell-discovered `C:\Users\Daniel\Downloads\andura-clasic.html` Daniel uploaded chat acasă → **305431 bytes / 3867 LOC / SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344`** (SHA source↔dst MATCH ✅). Backup tag pushed origin `pre-mockup-clasic-final-v2-replace-2026-05-11`. Audit narrativ Co-CTO chat birou 11.05 (~98% compliant V2 spec LOCKED V1) ingested separat. Cumulative LOCKED V1 **~719 PRESERVED** unchanged (mockup file delivery NU additive product/architecture — design refinement only).
+
+**Authority:** Daniel handover `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2.md` + `AUDIT_FINAL_ANDURA_CLASIC.md` (Co-CTO chat birou) + Daniel directive verbatim *"fă handover cu tot ce trebuie și ingerează-l în CC. Pune CC să bage și ultimul mockup la locul lui în 04 mockups în locul versiunii vechi"*.
+
+**Lucide reconcile finding (raport raw):** source uses **lucide CDN** ref line 8 `<script src="https://unpkg.com/lucide@latest" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js';"></script>` — NU inline UMD as audit claimed for 702KB v. Delta -397KB explained = Daniel exported cleaned version preferință maintainability (CDN refs preserved, acceptable port React va elimina oricum). NU blocking, flagged CURRENT_STATE §JUST_DECIDED + LATEST.md.
+
+**Strategic insight NEW captured INSIGHTS_BACKLOG.md** (chat birou 11.05 endpoint) = **training schedule override paradigm** — user wants ability override preset training schedule (e.g., trains pe rest day, coach adaptation needed real-time). Captured ca P1 strategic prebeta scope **dedicated discussion Daniel CEO + Claude chat strategic** — NU autonomous Co-CTO execution per autonomy lock EXTINS (strategic UX scope core = Bugatti craft path). Cross-ref ADR 011 CDL paradigm adaptive scheduling reconfirmat fundament chat-current precedent §5.
+
+**Decisions LOCKED preserved verbatim chat-current precedent** (§1-§8 entry below): #10 Auth Google primary + #11 Termina mai devreme confirm + #12/#13 DEFER pre-Beta + Paradigm adaptive reconfirm + "Vrei altceva azi?" text link + L6 dual semantic + 3 gap-uri engine pre-port + Mid-flight unresolved carry-forward.
+
+**Cross-refs:**
+- `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2.md` → `📤_outbox/_archive/2026-05/372_HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2_CONSUMED.md`
+- `📥_inbox/AUDIT_FINAL_ANDURA_CLASIC.md` → `📤_outbox/_archive/2026-05/373_AUDIT_FINAL_ANDURA_CLASIC_CONSUMED.md`
+- `📤_outbox/_archive/2026-05/371_LATEST_CC5_INGEST_MOCKUP_CLASIC_FINAL_CONSUMED.md` (previous LATEST cycled)
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top descending POST ingest + §NOW move-then-replace + §NEXT item 1 LANDED + §ACTIVE_FLAGS P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED status flip
+- `DIFF_FLAGS.md` P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED 🟢 LANDED on disk (status flip)
+- `05-findings-tracker/INSIGHTS_BACKLOG.md` P1 strategic prebeta NEW = training schedule override paradigm
+- Backup tag pushed origin: `pre-mockup-clasic-final-v2-replace-2026-05-11`
+- ADR `03-decisions/011-cdl-coach-decision-logic.md` — paradigm adaptive scheduling "follows the body, not the calendar" reconfirmat fundament
+
+🦫 **Bugatti craft. Mockup CLASIC FINAL v2 LANDED on disk. Chat birou ingest complete. Strategic insight captured dedicated discussion P1 prebeta. ~719 PRESERVED.**
+
+---
+
+
 ## 2026-05-11 chat ACASĂ — MOCKUP ANDURA-CLASIC.HTML FINAL DESIGN MASTER + 4 DECISIONS LOCKED (#10-13) + PARADIGM ADAPTIVE SCHEDULING RECONFIRMAT FUNDAMENT + L6 DUAL-FEATURE DISTINCT SEMANTIC + 3 GAP-URI ENGINE PRE-PORT (cumulative ~719 PRESERVED, mockup design refinement zero impact arhitectură)
 
 **Status:** Chat ACASĂ 2026-05-11 LANDED scribe-mode narrativ. Mockup `andura-clasic.html` FINAL (4212 LOC, 702KB cu lucide UMD v1.14.0 embedded inline) ~98% compliant spec V2 LOCKED V1 — bază solidă port-first vanilla JS Step 1 + React migration Step 2. Birou MSIX → Acasă Windows VS Code+PowerShell. Cumulative LOCKED V1 **~719 PRESERVED** (mockup design refinement zero impact arhitectură/spec V2; reconciliation pending vs precedent ~742 chat-current 2 +23 — flagged LATEST.md). **NEXT P1 chat NEW = BIROU SETUP MCP** still pending laptop birou Daniel mâine + Daniel drag mockup file inbox.

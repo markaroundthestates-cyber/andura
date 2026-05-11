@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-11 chat ACASĂ — Mockup `andura-clasic.html` FINAL design master pre-port (4212 LOC, 702KB cu lucide UMD v1.14.0 embedded inline, ~98% compliant spec V2 LOCKED V1). 4 decisions LOCKED (#10 Auth Google primary + #11 Termina mai devreme confirm + #12/#13 DEFER pre-Beta sumar/mesaj zilnic archive). Paradigm adaptive scheduling reconfirmat fundament (PROJECT_VISION + ADR 011 CDL "follows the body, not the calendar"). L6 dual-feature distinct semantic LOCKED. "Vrei altceva azi?" text link LOCKED. 3 gap-uri engine identified pre-port (muscleRecovery.js + coachDirector methods noi + US Navy BF calc). Cumulative LOCKED V1 ~719 PRESERVED (mockup design refinement, ZERO impact arhitectură/spec V2).
+**Updated:** 2026-05-11 chat ACASĂ POST chat birou ingest — Mockup `andura-clasic.html` FINAL v2 **LANDED on disk** `04-architecture/mockups/andura-clasic.html` (3867 LOC, 305431 bytes, SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344`, lucide CDN ref `unpkg.com/lucide@latest` + jsdelivr fallback — NU inline UMD as audit claimed for 702KB v; -397KB delta = Daniel exported cleaned version preferință maintainability, acceptable port React va elimina oricum). Audit narrativ chat birou 11.05 ~98% compliant V2 spec LOCKED V1 ingested. Strategic insight NEW captured `05-findings-tracker/INSIGHTS_BACKLOG.md` P1 prebeta strategic = training schedule override paradigm user overrides preset (chat birou endpoint). 4 decisions LOCKED (#10 Auth Google primary + #11 Termina mai devreme confirm + #12/#13 DEFER pre-Beta sumar/mesaj zilnic archive). Paradigm adaptive scheduling reconfirmat fundament (PROJECT_VISION + ADR 011 CDL "follows the body, not the calendar"). L6 dual-feature distinct semantic LOCKED. "Vrei altceva azi?" text link LOCKED. 3 gap-uri engine identified pre-port (muscleRecovery.js + coachDirector methods noi + US Navy BF calc). Cumulative LOCKED V1 ~719 PRESERVED (mockup file delivery landing on disk NU additive product/architecture — design refinement only).
 **Last LOCKED count (product/architecture):** **~719 LOCKED V1** PRESERVED (per Daniel handover 2026-05-11; reconciliation pending vs precedent ~742 from chat-current 2 +23 NO_DIACRITICS_RULE + PORT_FIRST_STEP_1 + V1_FEATURES_AUDIT_V1 — flagged LATEST.md for Daniel resolution).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -44,13 +44,37 @@ Birou MSIX → Acasă Windows VS Code+PowerShell. Scribe-mode narrativ. Daniel +
 - 🟡 CEO decizie V1 features keep/drop BATCH 2 Antrenor (streak counter + BMR strip + per-set RPE granularity) — pending BATCH 2 review.
 - 🟢 **NEW: Port mecanic 3 themes** (Living Body / Luxury / Brain Coach) per Theme Parity Invariant — Daniel decision: Claude (eu) port mecanic post-finisaj Clasic, NU CD (token quota limit). Pending Daniel signal go.
 
-**Mockup file delivery pending Daniel next chat:** `andura-clasic.html` FINAL (4212 LOC, 702KB lucide inline) va fi adăugat manual de Daniel în `📥_inbox/` la următoarea sesiune. Destinație finală sugerată `04-architecture/mockups/andura-clasic.html` (backup tag git pre-replace existing 2144 LOC post mockup sweep #1 chat-current 3 precedent). Bandwidth chat-current ~8% la handover (scribe mode active permanent, lean format păstrat cap-coadă).
+**Mockup CLASIC FINAL v2 LANDED on disk** `04-architecture/mockups/andura-clasic.html` (3867 LOC, 305431 bytes, SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344`). Source PowerShell-discovered `C:\Users\Daniel\Downloads\andura-clasic.html` (Daniel uploaded chat acasă, LastWrite 2026-05-11 15:39:55), Copy-Item -Force REPLACE existing 154987 bytes (sweep #1 baseline 2026-05-10 22:36). Lucide reconcile finding: source uses **lucide CDN** ref line 8 `unpkg.com/lucide@latest` + jsdelivr fallback `onerror` — NU inline UMD as audit claimed for 702KB v. Delta -397KB explained = Daniel exported cleaned version (CDN refs preserved, acceptable mockup design master, port React va elimina oricum). Backup tag pushed origin: `pre-mockup-clasic-final-v2-replace-2026-05-11`. Audit narrativ chat birou ingested separat (`AUDIT_FINAL_ANDURA_CLASIC.md` → archive). Bandwidth chat-current ~8% la handover (scribe mode active permanent, lean format păstrat cap-coadă).
 
 🦫 **Bugatti craft. Mockup andura-clasic.html FINAL design master pre-port LOCKED. 4 decisions + L6 dual semantic + paradigm adaptive reconfirm + "Vrei altceva azi?" text link + 3 gap-uri engine identified. Cumulative ~719 PRESERVED. NEXT P1 chat NEW = BIROU SETUP MCP (still pending laptop birou Daniel). Subsequent = mockup file drop + port mecanic 3 themes signal go + BATCH 2 SUB-BATCH 2 idle.js.**
 
 ---
 
 ## JUST DECIDED
+
+**2026-05-11 chat ACASĂ POST chat birou ingest — MOCKUP CLASIC FINAL v2 LANDED ON DISK + CHAT BIROU INGEST COMPLETE + STRATEGIC INSIGHT INSIGHTS_BACKLOG (cumulative ~719 PRESERVED, mockup file delivery NU additive):**
+
+Mockup `andura-clasic.html` FINAL v2 **LANDED on disk** `04-architecture/mockups/andura-clasic.html` post §CC.5 fast handover ingest 2026-05-11 chat ACASĂ. Source PowerShell-discovered `C:\Users\Daniel\Downloads\andura-clasic.html` (Daniel uploaded chat acasă, LastWrite 2026-05-11 15:39:55), Copy-Item -Force REPLACE existing 154987 bytes sweep #1 baseline 2026-05-10 22:36 → **305431 bytes, 3867 LOC, SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344`** (SHA source ↔ dst MATCH ✅).
+
+**Lucide reconcile finding (raport raw):** source uses **lucide CDN** ref line 8 `<script src="https://unpkg.com/lucide@latest" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js';"></script>` — NU inline UMD as audit claimed for 702KB v. Delta -397KB explained = Daniel exported cleaned version preferință maintainability (CDN refs preserved). NU blocking — acceptable mockup design master, port React va elimina oricum.
+
+**Audit chat birou ingest complete:** `AUDIT_FINAL_ANDURA_CLASIC.md` (~10KB Co-CTO narrativ chat birou 11.05 ~98% compliant V2 spec LOCKED V1, 2 violations FIXED + 7 features L1-L7 + 4 decisions clarificări + 8 paradigm adaptive items + 3 dead code cleanup) → `📤_outbox/_archive/2026-05/373_AUDIT_FINAL_ANDURA_CLASIC_CONSUMED.md`. Handover narrativ continuation post chat birou saturation → `372_HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2_CONSUMED.md`. Previous LATEST cycled → `371_LATEST_CC5_INGEST_MOCKUP_CLASIC_FINAL_CONSUMED.md`.
+
+**Strategic insight NEW captured INSIGHTS_BACKLOG.md** = **training schedule override paradigm** (chat birou 11.05 endpoint) — user wants ability override preset training schedule (e.g., trains pe rest day, coach adaptation needed real-time). Captured ca P1 strategic prebeta scope **dedicated discussion Daniel CEO + Claude chat strategic** — NU autonomous Co-CTO execution per autonomy lock EXTINS (strategic UX scope core = Bugatti craft path). Cross-ref ADR 011 CDL paradigm adaptive scheduling reconfirmat fundament chat-current (#5 LOCKED).
+
+**Cross-refs:**
+- Backup tag pushed origin: `pre-mockup-clasic-final-v2-replace-2026-05-11`
+- `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2.md` → `📤_outbox/_archive/2026-05/372_HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2_CONSUMED.md`
+- `📥_inbox/AUDIT_FINAL_ANDURA_CLASIC.md` → `📤_outbox/_archive/2026-05/373_AUDIT_FINAL_ANDURA_CLASIC_CONSUMED.md`
+- `📤_outbox/_archive/2026-05/371_LATEST_CC5_INGEST_MOCKUP_CLASIC_FINAL_CONSUMED.md` (previous LATEST cycled)
+- `03-decisions/DECISION_LOG.md` top entry 2026-05-11 POST ingest (descending condensed)
+- `DIFF_FLAGS.md` P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED status flip 🟢 LANDED on disk
+- `05-findings-tracker/INSIGHTS_BACKLOG.md` P1 strategic prebeta NEW = training schedule override paradigm
+- 2 commits atomic chain (mockup replace + vault sync) pushed origin/main
+
+🦫 **Bugatti craft. Mockup CLASIC FINAL v2 LANDED. Chat birou ingest complete. Strategic insight captured INSIGHTS_BACKLOG dedicated discussion P1 prebeta. ~719 PRESERVED unchanged.**
+
+---
 
 **2026-05-11 chat ACASĂ — MOCKUP ANDURA-CLASIC.HTML FINAL DESIGN MASTER + 4 DECISIONS LOCKED + PARADIGM ADAPTIVE RECONFIRMAT + L6 DUAL-FEATURE DISTINCT SEMANTIC + 3 GAP-URI ENGINE PRE-PORT (cumulative ~719 PRESERVED, mockup design refinement zero impact arhitectură):**
 
@@ -92,7 +116,7 @@ Daniel autonomy lock EXTINS REAFFIRMED verbatim *"esti autonomous pana la launch
 
 ## NEXT — Priority order
 
-1. **🟢 Mockup `andura-clasic.html` drop next chat** — Daniel drag manual din chat în `📥_inbox/` la următoarea sesiune. Destinație finală sugerată `04-architecture/mockups/andura-clasic.html` (backup tag git pre-replace existing 2144 LOC).
+1. **🟢 Mockup `andura-clasic.html` v2 LANDED on disk 2026-05-11 chat ACASĂ POST chat birou ingest** — `04-architecture/mockups/andura-clasic.html` 3867 LOC / 305431 bytes / SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344`. Backup tag pushed origin `pre-mockup-clasic-final-v2-replace-2026-05-11`. Lucide CDN ref preserved (NU inline UMD — audit discrepancy explained Daniel exported cleaned version). Bază solidă port-first vanilla JS Step 1.
 2. **🔴 BIROU SETUP MCP filesystem chat NEW PRIMARY** (Daniel mâine la birou laptop, vrea MCP funcțional NU halucineze chat-uri). Steps: clone repo `git clone https://github.com/markaroundthestates-cyber/andura.git C:\Users\<userprofile>\Documents\salafull` + `npm install` + Claude Desktop config `claude_desktop_config.json` allowed paths + restart + test chat NEW *"salut birou"*. Memory rule update post-confirm: paradigm BIROU = Windows Claude Desktop + VS Code Desktop + PowerShell + path local. Caveat legal IP RO scope Daniel HR Senior preserved.
 3. **🔴 P1-FLAG-PROD-AUTO-FAZA-2026-05-10 + P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10 reconcile** — Daniel handover "Neinvestigat" vs vault claim 🟢 RESOLVED `05ba372`. Verify actual prod behavior andura.app live + reconcile DIFF_FLAGS status. Pre-port mandatory.
 4. **🟡 CEO decizie V1 features keep/drop BATCH 2 Antrenor** — streak counter + BMR strip + per-set RPE granularity. Pending pre BATCH 2 SUB-BATCH 2 idle.js implementation.
@@ -130,7 +154,7 @@ Daniel autonomy lock EXTINS REAFFIRMED verbatim *"esti autonomous pana la launch
 
 ## ACTIVE_FLAGS — DIFF_FLAGS.md P1 status
 
-- 🟢 **NEW P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED** 2026-05-11 chat-current — `andura-clasic.html` 4212 LOC FINAL design master ~98% compliant V2 spec LOCKED V1. Lucide UMD v1.14.0 embedded inline self-contained. Pending Daniel drag inbox next chat.
+- 🟢 **P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED LANDED on disk** 2026-05-11 chat ACASĂ POST chat birou ingest — `04-architecture/mockups/andura-clasic.html` 3867 LOC / 305431 bytes / SHA256 `065893BF…E3344`. Lucide CDN ref preserved (NU inline UMD — Daniel cleaned export). Backup tag `pre-mockup-clasic-final-v2-replace-2026-05-11`.
 - 🟢 **NEW P1-FLAG-DECISIONS-10-13-LOCKED** 2026-05-11 chat-current — Auth Google primary + Termina mai devreme confirm + 2x DEFER pre-Beta (Sumar săptămânal + Mesaj zilnic archive push only).
 - 🟢 **NEW P1-FLAG-PARADIGM-ADAPTIVE-RECONFIRMAT** 2026-05-11 chat-current — CDL "follows the body, not the calendar" reconfirmat fundament. Mockup refactor schedule override 4 opțiuni adaptive + heatmap legenda non-shame.
 - 🟢 **NEW P1-FLAG-L6-DUAL-FEATURE-SEMANTIC** 2026-05-11 chat-current — `screen-auth-reactivate` (post-delete-grace 30 zile) + card "Bun venit înapoi" (win-back 14+ zile inactive) preserved distinct.

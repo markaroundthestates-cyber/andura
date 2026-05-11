@@ -4,6 +4,40 @@ Entries care NU intră în v1 dar trebuie documentate pentru future design.
 
 ---
 
+## P1 strategic prebeta — Training schedule override paradigm (user overrides preset schedule, coach adaptation needed real-time) NEW 2026-05-11 chat ACASĂ POST chat birou ingest
+
+**Status:** 🟢 **P1 strategic prebeta scope dedicated discussion** — NU autonomous Co-CTO execution per autonomy lock EXTINS (strategic UX scope core = Daniel CEO + Claude chat strategic together pe Bugatti craft path).
+**Priority:** P1 strategic prebeta scope (gates final UX paradigm reconfirm pre-Beta launch)
+**Source:** Chat birou 11.05.2026 endpoint (Co-CTO + Daniel design session) + chat acasă handover `📥_inbox/HANDOVER_2026-05-11_MOCKUP_CLASIC_FINAL_v2.md` §Strategic insight NEW
+**Cross-refs:** ADR `03-decisions/011-cdl-coach-decision-logic.md` paradigm adaptive scheduling reconfirmat fundament chat-current 2026-05-11 #5 LOCKED + `00-index/CURRENT_STATE.md` §NEXT (Daniel decision strategic discussion)
+
+### Capture verbatim (chat birou endpoint)
+
+**Training schedule override paradigm** — user wants ability to override preset training schedule:
+
+- **Example:** trains pe rest day (preset = REST, user decide to train anyway).
+- **Coach adaptation needed real-time** — NU rigid template "Joi · Push · Sapt 3 Ziua 3/4". Coach must respond contextual: dacă user choose train pe rest day, what session? recovery state check (muscleRecovery.js)? safe alternative? Or accept user decision + adapt subsequent days?
+- **Cross-reference paradigm adaptive scheduling reconfirmat fundament** (NU paradigm nou) — PROJECT_VISION + ADR 011 CDL *"follows the body, not the calendar"*. Schedule override 4 opțiuni already mockup-locked chat-current precedent (Vreau alt tip / Sesiune ușoară / Sar ziua / Vreau antrenez când era pauză contextual). **Training schedule override = additional 5th dimension: user overrides preset training day choice itself, NU just intensitate/volum adjustment within day.**
+
+### Why deferred (NU autonomous Co-CTO execution)
+
+Strategic UX scope core = paradigm fundament product, NU mockup polish / engine extension scope. Requires:
+1. Daniel CEO strategic alignment chat dedicated (NU executive autonomous).
+2. Claude chat strategic together (deep think + spec drift cu Daniel input verbatim).
+3. Possible ADR 011 §AMENDMENT NEW post-discussion (paradigm extension formalize).
+4. Possible mockup additional override CTA design (post-ADR amendment LOCKED).
+5. Possible engine extension (coachDirector method NEW handle user-day-override + muscleRecovery state check + alt-session generation).
+
+### Action items (post-Beta launch retrospective candidate)
+
+- Daniel signal go chat strategic dedicated discussion.
+- Verbatim verbatim input capture (Daniel directive verbatim → ADR 011 §AMENDMENT proposal).
+- Mockup design proposal (4 opțiuni current + 5th NEW override-day-itself CTA?).
+- Engine gap-uri reassessment (3 gap-uri identified chat-current pre-port + possible 4th gap NEW user-day-override handler).
+- INSIGHTS_BACKLOG entry update post-decision (status flip → LOCKED → ADR amendment cross-ref).
+
+---
+
 ## Auth Flow §AMENDMENT 2026-05-04 BATCH 1-6 spec deviations (CC implementation 2026-05-04 evening late)
 
 **Status:** Deferred post-Beta v1.5. Daniel directive path (a) confirm 2026-05-04 evening late + commit `0880641` Faza 2 wiring Phase 1 LANDED. Spec §AMENDMENT 2026-05-04 BATCH 1-6 .1 + .2 SKIPPED implementation due to Firebase Console capability limitations identified post-spec-LOCK. Investigate REST/SMTP custom v1.5.
