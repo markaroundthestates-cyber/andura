@@ -34,7 +34,7 @@
 
 ## Commits
 
-5 atomic commits chain pushed origin `feature/v2-vanilla-port`:
+6 atomic commits chain pushed origin `feature/v2-vanilla-port` (Step 5 split into 5 + 5b atomic after watcher auto-commit before DIFF_FLAGS edit could land in same commit):
 
 | # | SHA | Subject | Concern |
 |---|-----|---------|---------|
@@ -42,14 +42,16 @@
 | 2 | `5b00088` | feat(vault): faza 2b step 2 — CLAUDE.md Karpathy schema adapted Andura vault root | Step 2 schema generation |
 | 3 | `1984f80` | feat(vault): faza 2b step 3 — VAULT_RULES §KARPATHY_OPERATIONS section LOCK V1 pointing CLAUDE.md schema | Step 3 bidirectional cross-ref |
 | 4 | `60a0a66` | feat(vault): faza 2b step 4 — initial /wiki-lint pass raport vault Andura (Daniel review pre-fix) | Step 4 lint raport |
-| 5 | (this commit) | feat(vault): faza 2b step 5 — CURRENT_STATE + DECISION_LOG + INDEX_MASTER + LATEST raport + cross-refs sync | Step 5 vault hub sync |
+| 5 | `d108a56` | feat(vault): faza 2b step 5 — CURRENT_STATE + DECISION_LOG + INDEX_MASTER + LATEST raport + cross-refs sync | Step 5 vault hub sync |
+| 5b | `8cfccf2` | feat(vault): faza 2b step 5b — DIFF_FLAGS + CURRENT_STATE §ACTIVE_FLAGS P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN entry | Step 5b P1 flag administrative tracking entry |
 
 **Cross-refs commit-uri:** [[CLAUDE]] §0-§6 + [[VAULT_RULES#KARPATHY_OPERATIONS]] + [[📥_inbox/_karpathy_gist_reference]] + [[../📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11]] + [[00-index/CURRENT_STATE#NOW]] + [[00-index/CURRENT_STATE#JUST DECIDED]] + [[03-decisions/DECISION_LOG]] entry top 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B + [[00-index/INDEX_MASTER]] `Last updated:` flip + NEW [[CLAUDE]] entry NAVIGARE table.
 
 ## Pushed origin
 
-✅ All 5 commits pushed origin `feature/v2-vanilla-port` end-of-execute (combined push final post Step 5 commit).
+✅ All 6 commits (5 + 5b) pushed origin `feature/v2-vanilla-port` end-of-execute.
 ✅ Backup tag `pre-faza-2b-karpathy-schema-2026-05-11` pushed origin pre-execute.
+✅ Tests 2781 PASS preserved EXACT verified by pre-commit hook on Step 5b commit (153 test files / 41.78s duration / ZERO regression).
 
 ## Issues
 
