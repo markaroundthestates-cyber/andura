@@ -26,12 +26,12 @@
 ## Build+Tests
 N/A — vault docs ZERO src/ touched. `git diff origin/main..HEAD -- src/` = ZERO LINES (verified pre-commit each commit).
 
-## Commits (atomic chain pre-push, hashes injected post-push accuracy)
-- **Commit 1** `chore(vault): §CC.5 ingest handover AUDIT_MOCKUP_22_ENGINES_6_FIXES + Anti-RE rule LOCKED V1 PERMANENT + F13 drop V1 + slip §AR.1 fix` — CURRENT_STATE + DECISION_LOG + DIFF_FLAGS + 2 archive moves (374 HANDOVER + 375 LATEST cycle) — pre-commit vitest 2732 PASS expected
-- **Commit 2** `chore(vault): LATEST.md raport §CC.5 ingest audit 22 engines 6 fixes Anti-RE rule` — new LATEST.md (this file)
+## Commits (atomic chain pushed origin/main `6b5f5b2..fc40d66`)
+- **Commit 1 `b143519`** `chore(vault): §CC.5 ingest handover AUDIT_MOCKUP_22_ENGINES_6_FIXES + Anti-RE rule LOCKED V1 PERMANENT + F13 drop V1 + slip §AR.1 fix` — CURRENT_STATE + DECISION_LOG + DIFF_FLAGS + 2 archive moves (374 HANDOVER + 375 LATEST cycle) — pre-commit vitest 2732 PASS verified
+- **Commit 2 `fc40d66`** `chore(vault): LATEST.md raport §CC.5 ingest audit 22 engines + 6 fixes + Anti-RE rule LOCKED V1 PERMANENT` — new LATEST.md (this file) — pre-commit vitest 2732 PASS verified
 
 ## Pushed
-✅ Origin/main both commits chain + backup tag `pre-cc5-ingest-audit-mockup-22-engines-2026-05-11`
+✅ Origin/main both commits chain `6b5f5b2..fc40d66` + backup tag `pre-cc5-ingest-audit-mockup-22-engines-2026-05-11`
 
 ## Issues (findings discovered runtime)
 1. **Slip §AR.1 caveman documented permanent (fix landed)** — CURRENT_STATE §ACTIVE_REFS ADR 011 path stale `011-cdl-coach-decision-logic` în timp ce file real `011-coach-decision-log-architecture.md`. Slip §AR.1 (Pre-Flight Grep Filesystem ÎNAINTE Reference Paths/Files/Tooling). Daniel aligned 4/5 verified initial — *"de ce suntem 4/5"*. Mea culpa rapidă + fix grep + ADR 011 read. **Fix landed** CURRENT_STATE §ACTIVE_REFS path corrected + annotation slip recidivă §AR.1 documented permanent. NU codify §AR.20 NEW separat — §AR.1 deja covers scope, slip = recidivă §AR.1 documented permanent CURRENT_STATE + DECISION_LOG (NU VAULT_RULES.md update needed).
