@@ -1,6 +1,54 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 3 Karpathy Option B real implementation Phase 1-4 LANDED + HARD STOP Daniel review checkpoint pending pre Phase 5 (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
+
+**Status:** Faza 3 execute autonomous Co-CTO scope Phase 1-4 LANDED `feature/v2-vanilla-port` branch. 6 atomic commits chain `ec8b3b2 → 3ba21d2` pushed origin per-Phase. ZERO src/ touched. ZERO product/architecture additive. HARD STOP Daniel review checkpoint MANDATORY pre Phase 5 voice fidelity validation.
+
+**Authority:** `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` Daniel CEO spec 5 phases (Phase 1 design + Phase 2 schema rewrite + Phase 3 SUB-BATCH 1 wiki generation + Phase 4 /wiki-lint + Phase 5 cleanup post-Daniel-review) + Acceptance Criteria + HARD CONSTRAINTS §5 + Daniel autonomy lock EXTINS PERMANENT 2026-05-11 + Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post) preserved `📥_inbox/_karpathy_gist_reference.md` immutable raw-layer.
+
+**Paradigm shift Option B real (NU adaptare superficială Faza 2B):** Vault existing entire devine **raw layer immutable historical**, NEW `wiki/` folder = **pure LLM-generated** entity/concept/summary pages cu Voice preservation policy §1 MANDATORY 4-section (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer min 2-3 specific path:§ per page; daniel-isms catalog NU lobotomy).
+
+**Pre-flight verified:**
+- §CC.2 layered read MCP filesystem direct (`PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` Daniel spec + CURRENT_STATE post Faza 2D LANDED + `_karpathy_gist_reference.md` raw Karpathy spec + `CLAUDE.md` Faza 2B current schema + `VAULT_RULES.md` §CC.* + §AR.* + §KARPATHY_OPERATIONS + `389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` + `393_FAZA_2D_ORPHAN_INVENTORY_RAPORT.md` lessons learned)
+- `git status` clean (acceptable untracked: Obsidian junk + inbox files preserved per HARD CONSTRAINTS)
+- `git branch --show-current` verified `feature/v2-vanilla-port`
+- 4 backup tags per Phase pushed origin pre-execute rollback safety: `pre-faza-3-phase-1-research-design-2026-05-11` + `pre-faza-3-phase-2-schema-rewrite-2026-05-11` + `pre-faza-3-phase-3-wiki-generation-2026-05-11` + `pre-faza-3-phase-4-wiki-lint-2026-05-11`
+- Handover ingest backup tag `pre-handover-2026-05-11-karpathy-option-b-phase-1-4-landed-2305` pushed origin pre-execute §CC.5 fast handover ingest commit
+
+**6 atomic commits LANDED chain Phase 1-4 (Bugatti craft single-concern per Phase, tests 2781 PASS preserved EXACT post fiecare via pre-commit hook):**
+
+1. **`ec8b3b2`** Phase 1 — `wiki/_design/WIKI_DESIGN_SPEC_V1.md` §1-§8 schema design LANDED + `wiki/` folder skeleton (entities/adrs+engines+features+specs + concepts + summaries + sources + _design). Voice preservation policy §1 MANDATORY 4-section + 6 hard rules + daniel-isms catalog minimum list extensible defined. Frontmatter template 5 variants. 3 operations spec Andura-adapted. Cross-ref convention 4 forms. Phase 3 generation strategy 8 clusters A-H + 4-batch plan.
+
+2. **`d94ea81`** Phase 2 — `CLAUDE.md` vault root REWRITE Karpathy Real Option B (NU adaptare superficială Faza 2B) §0-§7: §0 OUTPUT STYLE preserved verbatim + §1 Andura Vault 3-Layer Architecture Karpathy Real + §2 Voice preservation policy §1 MANDATORY 4-section + 6 hard rules + §3 Frontmatter templates 5 variants + §4 3 operations canonical (`/wiki-ingest` 6-classifier + `/wiki-query` INDEX-first + `/wiki-lint` 5 scans NEW voice fidelity) + §5 Cross-ref convention + §6 Integration cu VAULT_RULES protocols REDESIGNED (§CC.2 + §CC.4 + §CC.5 + §CC.6 + §HANDOVER_PROTOCOL + §AR.*) + §7 Bugatti craft. `VAULT_RULES.md` redesign: §HANDOVER_PROTOCOL + §CHAT_CONTINUITY_PROTOCOL §CC.* + §KARPATHY_OPERATIONS DEPRECATED/SUPERSEDED notices + NEW §FAZA_3_KARPATHY_REAL §F3.1-§F3.12 LOCK V1.
+
+3. **`9142d55`** Phase 3 Cluster E — 15 concept pages LANDED voice preservation policy §1 enforced: bugatti-craft + gigel-test + voice-preservation-policy + port-first-then-react + autonomy-paradigm-v1 + no-diacritics-rule + karpathy-llm-wiki-pattern + direct-to-cc-paradigm + mockup-vs-prod-distinction + anti-recurrence-rules + strategy-lock-v1 + andura-suflet + product-vision + moat-strategy + append-only-architecture.
+
+4. **`90d9dde`** Phase 3 Cluster A SUB-BATCH 1 — 10 critical ADR entity pages LANDED voice preservation policy §1 enforced: adr-001-local-first-storage + adr-005-vanilla-js (§AMENDMENT 2026-05-10 Port-First-Then-React) + adr-008-vitest-playwright-testing + adr-014-onboarding-profile-typing + adr-022-bayesian-nutrition-inference + adr-023-llm-intent-superseded + adr-026-offline-coaching-tree (compile FULL V1 129 decisions) + adr-030-adapter-design-pattern + adr-032-engine-deload-protocol + adr-multi-tenant-auth (§AMENDMENT 2026-05-04 BATCH 1-6).
+
+5. **`526f796`** Phase 3 Cluster H — Navigation hub LANDED: `wiki/index.md` Karpathy catalog organized prin category cu 1-line summary + carry-forward TBD documented + `wiki/log.md` Karpathy chronological signature `## [YYYY-MM-DD] ingest|query|lint | <title>` 4 entries Phase 1-3 SUB-BATCH 1 chronological descending append-only.
+
+6. **`3ba21d2`** Phase 4 — `/wiki-lint` initial pass via `scripts/faza3_wiki_lint.cjs` Node.js scanner 5 scan types per CLAUDE.md §4.3 + raw output JSON preserved Bugatti reproducibility. Raport `📤_outbox/_archive/2026-05/402_FAZA_3_PHASE_4_WIKI_LINT_INITIAL_RAPORT.md` §1-§6 LANDED: §1 Broken wikilinks 330 scanned → 42 real (26 forward refs SUB-BATCH 2-3 TBD + 4 wildcard archive + 12 raw layer refs acceptable per CLAUDE.md §5.2) + §2 Orphan pages **0** + §3 Stale claims **0** + §4 Contradictions **0** + §5 Voice fidelity NEW **0 issues / 25 pages PERFECT voice preservation policy §1 enforcement** + §6 Summary recommendations 9 wiki pages high-value Daniel sample read. Precedent LATEST.md Faza 2D archived `403_FAZA_2D_LATEST_CONSUMED.md`.
+
+**Acceptance criteria met (all 11 per `PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` §7):**
+- ✅ Phase 1 design spec WIKI_DESIGN_SPEC_V1.md §1-§8 LANDED + folder skeleton complete
+- ✅ Phase 2 CLAUDE.md REWRITE §0-§7 + VAULT_RULES §F3.* LOCK V1 + §CC.* DEPRECATED + §HANDOVER_PROTOCOL DEPRECATED + §AR.* preserved unchanged
+- ✅ Phase 3 SUB-BATCH 1 27 wiki pages voice preservation policy §1 enforce (15 concepts + 10 critical ADRs + wiki/index.md + wiki/log.md)
+- ✅ Phase 4 /wiki-lint initial pass raport 402 §1-§6 + ZERO orphans + ZERO stale + ZERO contradictions + PERFECT voice fidelity ZERO issues / 25 pages
+- ✅ 6 atomic commits chain + push origin all phases (Bugatti craft single-concern NU bulk multi-purpose)
+- ✅ 4 backup tags per Phase pushed origin pre-execute rollback safety
+- ✅ Tests 2781 PASS preserved EXACT all commits (doc-only ZERO src/ touched per HARD CONSTRAINTS §5)
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive product/architecture)
+- ✅ Wiki pages voice preservation policy §1 4-section MANDATORY enforce 25/25 pages
+- ✅ HARD CONSTRAINTS preserved: ZERO touch src/ + tests/ + main branch + .obsidian/ config + raw layer existing pre-Faza 3 ADRs/specs/HANDOVER narratives + Memory edits/userPreferences/system prompt project OUT OF SCOPE
+- 🟡 Phase 5 cleanup HARD STOP Daniel review checkpoint MANDATORY pending (voice fidelity validation sample 9 pages high-value cross-section recommended raport 402 §6)
+
+**Strategy LOCKED V1 active preserved:** Port-First-Then-React 2026-05-10 + Autonomy LOCKED V1 PERMANENT 2026-05-11 + Mockup vs prod distincție permanent + Karpathy LLM Wiki pattern LOCK V1 2026-05-11 schema Faza 2B initial → Faza 3 Option B REAL implementation Phase 1-4 LANDED + Voice preservation policy §1 MANDATORY (NEW Faza 3 LOCK V1 2026-05-11 — Bugatti craft enforcement în wiki layer; identity Andura prezervat prin daniel-isms verbatim catalog extensible).
+
+🦫 **Bugatti craft. FAZA 3 Karpathy Option B real implementation Phase 1-4 LANDED autonomous Co-CTO scope. Vault existing FREEZE raw layer immutable + NEW wiki/ pure LLM-generated 27 pages voice preservation policy §1 MANDATORY enforce + PERFECT voice fidelity Phase 4 wiki-lint validation. Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT. HARD STOP Daniel review checkpoint pending pre Phase 5 + carry-forward Phase 3 SUB-BATCH 2-3 ~95-120 pages multi-session post-approve.**
+
+---
+
 ## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2D extensive orphan resolution + markdown→wikilink scan LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
 
 **Status:** Faza 2D execute autonomous Co-CTO scope LANDED `feature/v2-vanilla-port` branch. 4 actionable atomic commits chain `e5c4067 → 4079b1c` pre Step 5 vault hub sync (this entry = Step 5 commit). ZERO src/ touched. ZERO product/architecture additive. Vault graph view orphan nodes ~99% reduction expected post Daniel UI Option A manual configure.
