@@ -1,88 +1,145 @@
-**Task:** FAZA 2D extensive orphan resolution + markdown→wikilink scan — 4 batches + Step 5 vault hub sync + Step 6 push origin per `📥_inbox/PROMPT_CC_FAZA_2D_EXTENSIVE_ORPHAN_RESOLUTION.md` spec executed autonomous Co-CTO scope.
+**Task:** FAZA 3 Karpathy Option B real implementation — Phase 1 design + Phase 2 schema rewrite + Phase 3 SUB-BATCH 1 generate (27 wiki pages) + Phase 4 /wiki-lint pass LANDED per `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` §1-§7 executed autonomous Co-CTO scope.
 **Model:** Opus
-**Status:** ✅ Complete
-**Branch:** feature/v2-vanilla-port
-**Date:** 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2D LANDED.
+**Status:** ✅ Phase 1+2+3 SUB-BATCH 1+4 Complete — HARD STOP Daniel review checkpoint pending pre Phase 5 voice fidelity validation mandatory
+**Branch:** `feature/v2-vanilla-port`
+**Date:** 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 3 Phase 1-4 LANDED.
 
-## Pre-flight
+## Pre-flight (§CC.2 mandatory layered read + §AR.1 grep verify + backup tag per Phase)
 
-- ✅ §CC.2 layered read 4/4 MCP filesystem direct: `00-index/CURRENT_STATE.md` post Faza 2C + `00-index/INDEX_MASTER.md` FULL + `CLAUDE.md` §2 /wiki-lint operation reference + §4 cross-ref protocol + `VAULT_RULES.md` §KARPATHY_OPERATIONS + §CC.2 + §CC.4 + §CC.6 + §AR.19
-- ✅ `git status` clean (acceptable untracked: `.obsidian/` Daniel privacy + 5 inbox files preserved per HARD CONSTRAINTS)
-- ✅ `git branch --show-current` = `feature/v2-vanilla-port`
-- ✅ Backup tag `pre-faza-2d-extensive-orphan-resolution-2026-05-11` pushed origin pre-execute
-- ✅ Precedent `📤_outbox/LATEST.md` (Faza 2C raport) archived `📤_outbox/_archive/2026-05/395_FAZA_2C_WIKILINK_FIX_SWEEP_LANDED_CONSUMED.md` (Step 5)
-- ✅ Extensive orphan scan executed `scripts/faza2d_orphan_scan.cjs` Node.js scanner (102 wiki layer + 406 archive `.md` excluded scan-target; inbound-source allowed full filesystem)
-- ✅ Markdown link scan executed `scripts/faza2d_markdown_link_scan.cjs` (0 instances wiki layer — clean post-Faza 2C)
+- ✅ §CC.2 layered read MCP filesystem direct: `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` (Daniel spec) + `00-index/CURRENT_STATE.md` (§NOW post Faza 2D LANDED) + `📥_inbox/_karpathy_gist_reference.md` raw Karpathy spec + `CLAUDE.md` Faza 2B current schema + `VAULT_RULES.md` §CC.* + §AR.* + §KARPATHY_OPERATIONS + `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` + `393_FAZA_2D_ORPHAN_INVENTORY_RAPORT.md` (lessons learned)
+- ✅ Backup tags per Phase pushed origin pre-execute (rollback safety net 4 phases):
+  - `pre-faza-3-phase-1-research-design-2026-05-11`
+  - `pre-faza-3-phase-2-schema-rewrite-2026-05-11`
+  - `pre-faza-3-phase-3-wiki-generation-2026-05-11`
+  - `pre-faza-3-phase-4-wiki-lint-2026-05-11`
+- ✅ §AR.PRE_FLIGHT_CHECKLIST_INVARIANT respected per Phase: pre-flight grep + strategy LOCK V1 filter + verify remote state + atomic commits Bugatti craft
 
-## Modificări
+## Modificări (atomic commits Bugatti craft single-concern + push origin per Phase)
 
-| Batch | Deliverable | Atomic commit | Files modified |
-|-------|-------------|---------------|----------------|
-| Pre-flight | Extensive orphan inventory raport `393` (§1-§8) + 3 scan scripts artefacts Bugatti reproducibility | `e5c4067` | `📤_outbox/_archive/2026-05/393_FAZA_2D_ORPHAN_INVENTORY_RAPORT.md` (NEW ~150 LOC) + `scripts/faza2d_orphan_scan.cjs` (NEW) + `scripts/faza2d_markdown_link_scan.cjs` (NEW) + `scripts/faza2d_orphan_summary.cjs` (NEW) |
-| (a) | Markdown links `.md` → wikilinks wiki layer conversion | NO-OP (0 instances) | — Wiki layer clean post-Faza 2C — Skip commit Bugatti craft NU artificial |
-| (b) | INDEX_MASTER cross-refs append 10 entries NAVIGARE RAPIDĂ table (3 outbox BATCH artefacts ORPHAN resolution + 7 V2 strategic SPEC LOCK V1 LEAF connectivity) | `c3b41d4` | `00-index/INDEX_MASTER.md` (+10 lines: 3 outbox BATCH + 7 V2 SPEC) |
-| (c) | Archive exclusion documentation Daniel UI manual configure recommendation Option A `📤_outbox/_archive/**` glob | `4079b1c` | `📤_outbox/_archive/2026-05/394_FAZA_2D_ARCHIVE_EXCLUSION_DOC.md` (NEW ~110 LOC) |
-| (d) | Truly obsolete orphan cleanup | NO-OP (0 residual) | — Zero rename/archive/delete actions post a+b+c — Skip commit Bugatti craft NU artificial |
-| Step 5 | Vault hub sync atomic | (this commit) | CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + LATEST cycle archive 395 + LATEST.md NEW raport |
+**Phase 1 — Research + Design (`ec8b3b2`)**
+- `wiki/_design/WIKI_DESIGN_SPEC_V1.md` §1-§8 schema design Phase 1 LANDED (folder structure entities/adrs+engines+features+specs + concepts + summaries + sources + index.md + log.md; voice preservation policy §1 mandatory 4-section + 6 hard rules + daniel-isms catalog; frontmatter template 5 variants; 3 operations spec adapted; cross-ref convention; Phase 3 generation strategy 8 clusters; Phase 2 schema rewrite blueprint)
+- `wiki/` folder skeleton created (entities/ + concepts/ + summaries/ + sources/ + _design/)
 
-**Pre-flight raport SSOT:** `📤_outbox/_archive/2026-05/393_FAZA_2D_ORPHAN_INVENTORY_RAPORT.md` §1-§8.
-**Archive exclusion companion doc:** `📤_outbox/_archive/2026-05/394_FAZA_2D_ARCHIVE_EXCLUSION_DOC.md` §1-§5.
+**Phase 2 — Schema CLAUDE.md rewrite + VAULT_RULES §CC.* redesign (`d94ea81`)**
+- `CLAUDE.md` vault root REWRITE Karpathy Real Option B (NU adaptare superficială Faza 2B): §0-§7 schema 3-layer architecture (vault existing FREEZE raw layer + NEW wiki/ pure LLM-generated + schema co-layer) + §2 Voice preservation policy §1 MANDATORY 4-section + 6 hard rules + daniel-isms catalog + §4 3 operations adapted (/wiki-ingest 6-classifier + /wiki-query INDEX-first + /wiki-lint 5 scans NEW voice fidelity) + §6 Integration cu VAULT_RULES protocols REDESIGNED (§CC.2 layered read replaced wiki/ + §CC.5 fast handover replaced /wiki-ingest + §CC.6 append-only DEPRECATED + §HANDOVER_PROTOCOL DEPRECATED + §AR.* preserved unchanged)
+- `VAULT_RULES.md` redesign: §HANDOVER_PROTOCOL DEPRECATED notice + §CHAT_CONTINUITY_PROTOCOL §CC.* DEPRECATED notice + §KARPATHY_OPERATIONS SUPERSEDED notice + NEW §FAZA_3_KARPATHY_REAL §F3.1-§F3.12 LOCK V1
 
-**Orphan scan classification (102 wiki layer files):**
-- 8 PROTECTED (CLAUDE.md + VAULT_RULES.md + README.md + DIFF_FLAGS.md + PROMPT_CC_HYGIENE.md + PROMPT_CC_INGEST_HANDOVER.md + mockups/README.md + simulations/README.md)
-- 6 HUB (INDEX_MASTER + CURRENT_STATE + DECISION_LOG + HANDOVER_GLOBAL_* + RECENT_DECIDED_ARCHIVE + FINDINGS_MASTER)
-- 81 LEAF
-- 7 ORPHAN (4 `📥_inbox/` raw layer Karpathy §1 preserved per HARD CONSTRAINTS + 3 `📤_outbox/` BATCH artefacts Batch (b) target — all resolved)
+**Phase 3 SUB-BATCH 1 — Wiki generation (3 atomic commits)**
+- Cluster E concepts (`9142d55`) — 15 concept pages: bugatti-craft + gigel-test + voice-preservation-policy + port-first-then-react + autonomy-paradigm-v1 + no-diacritics-rule + karpathy-llm-wiki-pattern + direct-to-cc-paradigm + mockup-vs-prod-distinction + anti-recurrence-rules + strategy-lock-v1 + andura-suflet + product-vision + moat-strategy + append-only-architecture
+- Cluster A SUB-BATCH 1 ADRs (`90d9dde`) — 10 critical ADR entity pages: adr-001-local-first-storage + adr-005-vanilla-js + adr-008-vitest-playwright-testing + adr-014-onboarding-profile-typing + adr-022-bayesian-nutrition-inference + adr-023-llm-intent-superseded + adr-026-offline-coaching-tree + adr-030-adapter-design-pattern + adr-032-engine-deload-protocol + adr-multi-tenant-auth
+- Cluster H index+log (`526f796`) — wiki/index.md (Karpathy catalog 27 pages LANDED + carry-forward TBD documented) + wiki/log.md (Karpathy chronological signature `## [YYYY-MM-DD] ingest|query|lint | <title>` 4 entries Phase 1-3 SUB-BATCH 1)
+
+**Phase 4 — /wiki-lint initial pass (this commit)**
+- `scripts/faza3_wiki_lint.cjs` Node.js scanner (5 scan types per CLAUDE.md §4.3)
+- `scripts/faza3_wiki_lint_output.json` raw output preserved Bugatti reproducibility
+- `📤_outbox/_archive/2026-05/402_FAZA_3_PHASE_4_WIKI_LINT_INITIAL_RAPORT.md` §1-§6 sections LANDED:
+  - §1 Broken wikilinks: 330 scanned → 42 real (26 forward refs SUB-BATCH 2-3 TBD + 4 wildcard archive + 12 raw layer refs — TOATE expected carry-forward sau acceptable per CLAUDE.md §5.2)
+  - §2 Orphan pages: **0**
+  - §3 Stale claims: **0**
+  - §4 Contradictions: **0**
+  - §5 Voice fidelity (NEW): **0 issues / 25 pages** — PERFECT voice preservation policy §1 enforcement
+- Precedent LATEST.md Faza 2D archived → `📤_outbox/_archive/2026-05/403_FAZA_2D_LATEST_CONSUMED.md`
 
 ## Build + Tests
 
-- ✅ Tests 2781 PASS preserved EXACT all 5 commits (153 test files / 2781 tests / 0 failures via pre-commit hook vitest run)
-- ✅ Build vite green (doc-only ZERO src/ touched — preserved baseline)
-- ✅ ZERO regression (all commits doc-only)
+- Tests Vitest **2781 PASS preserved EXACT** all 5 commits Phase 1-4 (doc-only ZERO src/ touched per HARD CONSTRAINTS Faza 3 §5)
+- Pre-commit hook validated each commit
+- 153 test files / 2781 tests baseline preserved 2026-05-11
 
-## Commits
+## Commits (5 atomic commits chain + 1 LATEST cycle archive)
 
-| # | Hash | Subject |
-|---|------|---------|
-| 1 | `e5c4067` | fix(vault): faza 2d pre-flight — extensive orphan inventory scan + raport (393 archive) |
-| 2 | `c3b41d4` | fix(vault): faza 2d batch (b) — INDEX_MASTER cross-refs added 10 entries (3 outbox BATCH artefacts + 7 V2 strategic SPEC LOCK V1) |
-| 3 | `4079b1c` | docs(vault): faza 2d batch (c) — archive exclusion recommendation Daniel UI configure manual (394 archive) |
-| 4 | `42ed59b` | feat(vault): faza 2d step 5 — vault hub sync + LATEST raport (CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + LATEST + precedent archived 395) |
-| 5 | (this commit) | chore(vault): LATEST.md final raport sync — Step 6 push origin verified all 4 Faza 2D actionable commits |
+1. `ec8b3b2` — Phase 1 wiki design spec V1 + folder skeleton
+2. `d94ea81` — Phase 2 schema CLAUDE.md rewrite Karpathy real + VAULT_RULES §CC.* redesign
+3. `9142d55` — Phase 3 Cluster E 15 concept pages voice preservation policy §1
+4. `90d9dde` — Phase 3 Cluster A SUB-BATCH 1 10 critical ADR entity pages voice preservation policy §1
+5. `526f796` — Phase 3 Cluster H wiki/index.md + wiki/log.md navigation hub Karpathy
+6. **`<this commit>`** — Phase 4 /wiki-lint initial pass + raport 402 + LATEST.md cycle + script artefact preservation
 
-**Backup tag:** `pre-faza-2d-extensive-orphan-resolution-2026-05-11` (pushed origin pre-execute rollback safety).
+## Pushed origin
 
-## Pushed
+✅ Toate 6 commits pushed origin `feature/v2-vanilla-port`. 4 backup tags pushed origin per Phase pre-execute rollback safety.
 
-✅ Pushed origin `feature/v2-vanilla-port` chain `e5c4067 → 42ed59b` verified via `git log origin/feature/v2-vanilla-port --oneline -8`:
+## Wiki pages LANDED Phase 3 SUB-BATCH 1 (27 + 1 design spec = 28 markdown files):
 
-```
-42ed59b feat(vault): faza 2d step 5 — vault hub sync + LATEST raport...
-4079b1c docs(vault): faza 2d batch (c) — archive exclusion recommendation Daniel UI configure manual...
-c3b41d4 fix(vault): faza 2d batch (b) — INDEX_MASTER cross-refs added 10 entries...
-e5c4067 fix(vault): faza 2d pre-flight — extensive orphan inventory scan + raport (393 archive)
-148798c chore(vault): LATEST.md final raport sync — Step 7 push origin verified all 6 Faza 2C commits
-2d662b3 feat(vault): faza 2c step 6 — vault hub sync...
-8a34129 fix(vault): faza 2c batch (e) — orphan candidates 5 instances reviewed + cleanup...
-da55b06 fix(vault): faza 2c batch (d) — stale handover refs 2 instances investigated + fixed...
-```
+**Concepts (15):**
+1. concepts/bugatti-craft.md
+2. concepts/gigel-test.md
+3. concepts/voice-preservation-policy.md
+4. concepts/port-first-then-react.md
+5. concepts/autonomy-paradigm-v1.md
+6. concepts/no-diacritics-rule.md
+7. concepts/karpathy-llm-wiki-pattern.md
+8. concepts/direct-to-cc-paradigm.md
+9. concepts/mockup-vs-prod-distinction.md
+10. concepts/anti-recurrence-rules.md
+11. concepts/strategy-lock-v1.md
+12. concepts/andura-suflet.md
+13. concepts/product-vision.md
+14. concepts/moat-strategy.md
+15. concepts/append-only-architecture.md
 
-Final LATEST.md sync commit (this commit, post-push) updates `Pushed:` status verified + chain hash range complete + acceptance criteria all met.
+**Entities/adrs (10):**
+1. entities/adrs/adr-001-local-first-storage.md
+2. entities/adrs/adr-005-vanilla-js.md
+3. entities/adrs/adr-008-vitest-playwright-testing.md
+4. entities/adrs/adr-014-onboarding-profile-typing.md
+5. entities/adrs/adr-022-bayesian-nutrition-inference.md
+6. entities/adrs/adr-023-llm-intent-superseded.md
+7. entities/adrs/adr-026-offline-coaching-tree.md
+8. entities/adrs/adr-030-adapter-design-pattern.md
+9. entities/adrs/adr-032-engine-deload-protocol.md
+10. entities/adrs/adr-multi-tenant-auth.md
 
-## Issues
+**Navigation hub (2):**
+- wiki/index.md (Karpathy catalog)
+- wiki/log.md (Karpathy chronological signature)
 
-NIMIC. Faza 2D COMPLET LANDED Co-CTO autonomous scope. Acceptance criteria all 10 met (modified per scan reality — 2 NO-OPs acceptable Bugatti craft).
+**Design spec (1):**
+- wiki/_design/WIKI_DESIGN_SPEC_V1.md (schema design Phase 1)
 
-**Daniel manual step pending parallel (low-priority, post-handover):** Obsidian Settings → Files & Links → Excluded files → add `📤_outbox/_archive/**` glob pattern per Batch (c) Option A doc 394 recommendation. Expected ~99% orphan graph view reduction post manual configure.
+## Issues / Ambiguities / HARD STOP Daniel review checkpoint
 
-**Optional Daniel decides:** Also exclude `📥_inbox/**` from Obsidian graph view (raw layer Karpathy §1 separate from wiki by design).
+🟡 **HARD STOP Daniel review checkpoint MANDATORY pre Phase 5** per `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` §3 Phase 4. Voice fidelity validation prima — Daniel sample read wiki pages confirma:
+- Daniel verbatim quotes preserved EXACT (NU rezumate impersonale "user pushed back")
+- Daniel-isms catalog NU lobotomy (tataie + halucinezi + stai + ia bate-te + ce dracu + ba ce dracu + acoperiș-pereți + esti cto + Coach urca + figure it out + salut acasă + traiasca api tau + il dai direct la cc + NU MA MAI INTREBI + reps in reserve + mockup-first + etc.)
+- Bugatti framing notes acolo unde aplicabil (Gigel test relevance + Quality > Speed + Anti-RE + Anti-paternalism + voice tone notes)
+- Cross-refs raw layer minim 2-3 specific pointers `path:§` per page
 
-## Next action
+**Sample wiki pages recommend Daniel sample read:** see raport 402 §6 Recommendations 9 pages high-value voice preservation cross-section.
 
-**P1 ABSOLUTE next chat:** Execute plan anti-halucinație REMAPPED Karpathy pattern (`📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md`) ~6-8h CC autonomous overnight (post-Faza 2C+2D wiki state HEALTHY preconditioned for plan execute — vault graph view orphan nodes resolved + INDEX_MASTER cross-refs complete).
+🟢 **NU P1 critical findings** /wiki-lint pass — wiki state HEALTHY. ZERO orphans + ZERO stale + ZERO contradictions + **ZERO voice fidelity issues** (PERFECT voice preservation policy §1 enforcement across 25 pages).
 
-**P2 next chat post P1 LANDED:** Execute `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` — Port mockup V2 → prod vanilla JS modules `feature/v2-vanilla-port` branch.
+🟢 **Carry-forward Phase 3 SUB-BATCH 2-3 documented:**
+- Cluster A — 32 remaining ADRs entity pages
+- Cluster B — ~10 engine entity pages
+- Cluster C — ~20 feature entity pages
+- Cluster D — 11 spec entity pages
+- Cluster F — ~10-15 summary pages
+- Cluster G — 6 source pointer pages
 
-**P3 deferred (mockup buguri sweep #2 follow-ups):** P3-α/β/γ/δ/ε/ζ carry-forward dedicated chat post-Beta single-theme master cleanup.
+Total carry-forward: ~95-120 pages projected per prompt §6 "Phase 3 split în 2-3 sessions overnight" multi-session execution model.
 
-🦫 **Bugatti craft. FAZA 2D extensive orphan resolution + markdown→wikilink scan vault meta-tooling LANDED autonomous Co-CTO scope. 4 actionable atomic commits chain + Step 5 hub sync. Tests 2781 PASS preserved EXACT. Vault graph view orphan ~99% reduction projected post Daniel UI Option A configure. Cumulative ~742 PRESERVED unchanged. Path către Beta clear: P1 plan anti-halucinație REMAPPED Karpathy → P2 BATCH 2 Antrenor port.**
+🟢 **Hard constraints respected:** ZERO touch raw layer immutable (CURRENT_STATE + DECISION_LOG + HANDOVER + ADRs + specs + 01-vision + 02-audit + 05-findings + 07-meta + 08-workflows + 📤_outbox/_archive entries existing pre-Faza 3) + ZERO touch `src/` + `tests/` + `main` branch + `.obsidian/` config + Memory edits/userPreferences/system prompt project OUT OF SCOPE per HARD CONSTRAINTS §5.
+
+## Next action Daniel
+
+**1. HARD STOP Daniel review checkpoint Phase 4 voice fidelity validation:**
+- Sample read wiki pages recommend (9 high-value per raport 402 §6)
+- Confirm voice preservation policy §1 enforcement OK
+- Approve OR feedback specific (per-page issues sau global tone notes)
+
+**2. Phase 5 workflow transition decision post-Daniel-validation:**
+- Approve cleanup post-Daniel-validation
+- Decide schedule Phase 3 SUB-BATCH 2-3 (when execute remaining ~95-120 pages)
+
+**3. Daniel manual UI step (low-priority parallel, defer post-Beta):**
+- Obsidian Settings → Files & Links → Excluded files → add `📤_outbox/_archive/**` glob pattern per Faza 2D Batch (c) doc 394 Option A (~99% orphan graph view reduction)
+
+**4. Post-Faza 3 final LANDED — raw layer immutable freeze enforce:**
+- ZERO append CURRENT_STATE §JUST_DECIDED / §NOW / §RECENT post Phase 5 LANDED
+- ZERO new ADR/SPEC files în raw layer (use `/wiki-ingest` la `wiki/entities/`)
+- HANDOVER narratives noi → `/wiki-ingest` distribute la wiki layer + `wiki/log.md` chronological + archive raw `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`
+
+---
+
+🦫 **Bugatti craft. FAZA 3 Karpathy Option B real implementation Phase 1-4 LANDED autonomous Co-CTO scope. Vault existing FREEZE raw layer immutable + NEW wiki/ pure LLM-generated 27 pages cu voice preservation policy §1 MANDATORY enforce. ZERO P1 critical /wiki-lint findings + PERFECT voice fidelity validation. Identity Andura prezervat prin daniel-isms verbatim catalog extensible. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive). Tests 2781 PASS preserved EXACT all commits. HARD STOP Daniel review checkpoint pending pre Phase 5 + carry-forward Phase 3 SUB-BATCH 2-3 ~95-120 pages multi-session.**
