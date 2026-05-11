@@ -1,6 +1,110 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ — Obsidian MCP setup FAZA 2A LANDED + Karpathy LLM Wiki pattern LOCK V1 + FAZA 2B PENDING (vault meta-tooling, cumulative ~742 PRESERVED)
+
+**Status:** §CC.5 fast handover ingest `📥_inbox/HANDOVER_2026-05-11_obsidian_mcp_setup_LANDED_faza_2b_karpathy_pending.md` LANDED on `feature/v2-vanilla-port` branch (vault doc-side commit). 1 atomic commit pushed origin feature. ZERO src/ touched.
+
+**Authority — Daniel verbatim chat-current:**
+- *"am downloadat obsidian"* (decision tool tactical)
+- *"tot internetul e hype dupa el"* (signal de re-investigare)
+- *"zice ca rezolva complet problema ta de halucinatii"* (claim to validate)
+- *"ia cauta pe net inainte sa presupui"* + *"ia cauta pe net de obsidian inainte sa presupui"* (push-back direct anti-presupunere)
+- *"lasa-ma ma cu tokenu tau. imi asum"* (security item GitHub PAT leak Daniel asumat risc)
+
+**Trigger:** Chat 2026-05-11 — discutie pivot către Obsidian + Karpathy LLM Wiki pattern. Eu push-back inițial defensive (wikilinks doar markdown, graph view doar ochii tăi, "rezolvă halucinații" marketing fals, plan-ul meu sufficient). Daniel verbatim push-back forțat web research → realitate diferită semnificativ confirmed.
+
+**Slip-uri Claude consolidate chat-current:**
+
+1. **Push-back defensive presupus** — fără web research prima dată (wikilinks/graph view/anti-halucinație claims dismissed prematur). Daniel correction direct *"ia cauta pe net inainte sa presupui"*. Mea culpa: push-back-urile mele = parțial corecte tehnic dar prea defensive. Pattern Karpathy = real, validated, mature, mai elaborated decât plan-ul meu anti-halucinație naive.
+2. **Config path SLIP** — Claude Desktop instalat MSIX (Microsoft Store sandboxed), config la `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` NU `%APPDATA%\Claude\` cum credeam noi inițial. Memory edit #5 SETUP path update mandatory.
+3. **Faza 2B trăia DOAR în memorie chat** — fără handover landed înainte de signal chat nou (Daniel verbatim trigger *"chatul nou nu gaseste 2b"*). Slip recurrence: paradigm violation §CHAT_CONTINUITY_PROTOCOL §CC.5 (handover MUST land vault SSOT pre-chat-signal new).
+4. **Update important istoric: Obsidian dropped istoric pentru că Claude NU știa Karpathy LLM Wiki pattern** — slip-ul meu istoric a costat Daniel tooling churn. Acum revine pe baza pattern Karpathy validated post research forced by Daniel.
+
+**Web research confirmat realitate semnificativ diferită:**
+
+- **Karpathy LLM Wiki pattern** publicat 3 aprilie 2026 (gist `karpathy/442a6bf555914893e9891c11519de94f`, 5000+ stars în zile, 16M+ views X post) = pattern care REZOLVĂ EXACT problema halucinației prin LLM-maintained wiki structurat (NU re-derive knowledge each chat, citește direct knowledge graph navigabil)
+- **Obsidian Skills (Steph Ango / Obsidian CEO)** publicate = teach Claude folosit nativ wikilinks, callouts, frontmatter, Obsidian CLI, Bases (database views), Canvas
+- **3 operations**: `/wiki-ingest` (process raw sources) + `/wiki-query` (ask questions) + `/wiki-lint` (health checks broken links, orphan pages, contradictions)
+- **Three-layer architecture**: raw/ (immutable sources) + wiki/ (LLM-generated pages) + CLAUDE.md (schema)
+- **Existing implementations validation**: NicholasSpisak/second-brain, eugeniughelbur/obsidian-second-brain (31 commands), AgriciDaniel/claude-obsidian (11 skills), Ar9av/obsidian-wiki framework, AaronFulkerson Exo (26 skills + 14 MCP servers + 8 hooks production)
+- **Vault-first approach** (eugeniughelbur): *"You make the same decision twice because you forgot you made it six months ago"* = exact pain point Daniel verbatim recurring
+- **Karpathy claim direct**: *"LLM has to work around that gap, which introduces retrieval noise and hallucination risk. Karpathy approach sidesteps chunking entirely. The wiki articles are already human-readable summaries written by an LLM that has read the full context"*
+
+**FAZA 2A — Obsidian MCP Tools setup ✅ COMPLET LANDED (10 steps verified):**
+
+1. Vault `C:\Users\Daniel\Documents\salafull` deschis Obsidian
+2. Plugins core installed + enabled: Local REST API + Dataview
+3. Vault config: Wikilinks ON, Shortest path, Source mode default
+4. Plugin **MCP Tools by Jack Steam v0.2.31** (88K downloads, updated 16 zile) installed + enabled din Community plugins
+5. MCP Server v0.2.31 binary installed via plugin UI button "Install server" → la `.obsidian/plugins/mcp-tools/bin/mcp-server.exe`
+6. Config path SLIP descoperit & fixed (MSIX details above)
+7. Config corect aplicat MSIX path cu entry `obsidian-mcp-tools` (binary path + `OBSIDIAN_API_KEY` env var)
+8. Restart Claude Desktop COMPLET (Quit din system tray)
+9. Verify end-to-end: `tool_search "obsidian vault search notes wiki"` returnează 5+ tools: `search_vault_simple`, `search_vault`, `search_vault_smart` (semantic), `append_to_active_file`, `delete_vault_file`
+10. Test search REAL: `search_vault_simple "Port-First-Then-React"` → 23+ documente returnate cu context bogat din vault Andura
+
+**Status setup curent:** Claude Desktop conectat la vault prin obsidian-mcp-tools server (running). Plus filesystem MCP existing (running). Plus claude-code MCP existing (running).
+
+**Security item open (Daniel asumat risc, NU revocat):** GitHub PAT leaked în chat history. Entry github SCOS intenționat din config curent. Reconfigure github MCP cu fresh PAT post-Faza 2B dacă Daniel decide.
+
+**Plugins optional pending (skipped intenționat Faza 2A):** Smart Connections (search_vault_smart semantic full functionality), Templater (Karpathy schema future), Web Clipper browser extension.
+
+**FAZA 2B — Karpathy CLAUDE.md schema adapted Andura ⏳ PENDING next chat (~2-3h CC autonomous overnight, 5 steps):**
+
+**Mapping conceptual (NU migration fizică):**
+- Karpathy `raw/` → `📥_inbox/` + opțional `_raw/` subfolder Web Clipper externe
+- Karpathy `wiki/` → `00-index/` + `01-vision/` + `02-audit/` + `03-decisions/` + `04-architecture/` + `06-sessions-log/` + `07-meta/` + `08-workflows/` = TOATE existing devin "wiki layer"
+- Karpathy `CLAUDE.md` → adaptare nouă vault root + merge cu `VAULT_RULES.md` existing. Cele 3 operations Karpathy `/wiki-ingest`, `/wiki-query`, `/wiki-lint` codified.
+
+**Plan execution Faza 2B (5 steps ~2-3h):**
+- Step 1 (~30 min): Download Karpathy gist + parse 3-layer + 3 operations
+- Step 2 (~30 min): Generate `CLAUDE.md` adapted Andura (layer mapping + 3 operations slash commands custom + frontmatter template minimal)
+- Step 3 (~30 min): Update VAULT_RULES.md cu §KARPATHY_OPERATIONS section pointing CLAUDE.md schema
+- Step 4 (~60 min): Initial `/wiki-lint` pass pe vault Andura existing — detect orphans + missing cross-refs + contradictions (NU fix yet, Daniel review)
+- Step 5 (~30 min): Update memory edits Claude + userPreferences + system prompt project sync cu Karpathy pattern active
+
+**Acceptance criteria FAZA 2B:**
+- Vault structural NU se schimbă (zero migration)
+- CLAUDE.md schema LANDED vault root + cross-ref bidirectional cu VAULT_RULES
+- 3 operations codified + testable
+- Initial /wiki-lint pass output raport → Daniel review → decide ce fix-uri să facă claude_code autonomous
+
+**Integration cu plan anti-halucinație existing inbox (`PLAN_ANTI_HALUCINATIE_VAULT.md` 5 PHASES × 15 items):** plan-ul NU devine standalone — **remappat în Karpathy pattern**:
+- DECISIONS_ANSWERED.md (Item 1.1) → wiki sub-folder `00-index/decisions-answered/` cu Karpathy entries linked via wikilinks
+- STRATEGY_LOCK_V1.md (Item 2.1) → wiki page anchor în `04-architecture/`
+- VERBATIM_QUOTES.md (Item 1.3) → wiki page în `01-vision/`
+- HALUCINATION_LOG.md (Item 3.1) → wiki page în `07-meta/`
+- QUICK_ANSWERS.md (Item 4.1) → INDEX_MASTER.md existing extended cu top topics
+- Plan-ul atinge același 95% anti-halucinație, dar **mai mature pattern** (Karpathy validated) + **mai puțin work** (~6-8h vs 9-13h, /wiki-ingest + /wiki-lint automatizează DECISIONS_ANSWERED + cross-refs)
+
+**Memory updates required post acest handover (CRITICAL — next chat startup mandatory pre-§CC.2):**
+
+1. **Memory edit #5 SETUP path** — adaugă MSIX detail Claude Desktop config path corect
+2. **Memory edit NEW** — Obsidian MCP setup LANDED + Karpathy pattern NEW LOCK V1 strategic vault organization
+3. **Memory edit NEW** — Karpathy pattern context: gist + 3-layer + 3 operations + plan remap
+
+**Strategy LOCKED V1 active preserved (critical context):**
+- Port-First-Then-React 2026-05-10 preserved
+- Autonomy LOCKED V1 PERMANENT 2026-05-11 preserved
+- Mockup vs prod distincție permanent preserved (Memory rule #18)
+- §CC.6 ~200 LOC append-only CURRENT_STATE.md preserved
+- **Karpathy LLM Wiki pattern NEW LOCK V1 2026-05-11** — strategic pivot vault organization (impacts toate vault operations going forward)
+
+**Cumulative LOCKED V1 PRESERVED ~742** (chat-current = vault meta-tooling pivot strategic, ZERO net additive product/architecture).
+
+**Tests baseline PRESERVED EXACT 2731+** (ZERO src/ touched chat-current — handover ingest pure vault docs).
+
+**Cross-refs §CC.5 ingest commit:**
+- `00-index/CURRENT_STATE.md` §NOW replaced + §JUST_DECIDED top entry + Header `Updated:` field flip
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-11 chat ACASĂ Obsidian MCP + Karpathy (this entry)
+- `00-index/INDEX_MASTER.md` `Last updated:` field flip 2026-05-11
+- `📤_outbox/LATEST.md` NEW raport §CC.5 fast ingest format standard
+- Archive moves: NN 386 handover consumed + NN 387 LATEST cycle precedent
+- Backup tag: `pre-handover-2026-05-11-obsidian-mcp-faza-2b-pending-2143` pushed origin
+- Files PRESERVED `📥_inbox/` (NU archive): `PLAN_ANTI_HALUCINATIE_VAULT.md` + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`
+
+
 ## 2026-05-11 chat ACASĂ — Anti-halucinație plan scope 95% LOCKED V1 P1 ABSOLUTE + vault meta-tooling 4 surfaces aligned (vault meta-tooling, cumulative ~719 PRESERVED unchanged)
 
 **Status:** §CC.5 fast handover ingest `📥_inbox/HANDOVER_2026-05-11_anti_halucinatie_plan_p1_absolute.md` LANDED on `feature/v2-vanilla-port` branch (vault doc-side commit alongside in-progress STAGE 4 src/ work preserved). 1 atomic commit pushed origin feature.

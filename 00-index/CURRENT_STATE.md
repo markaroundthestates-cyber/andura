@@ -2,7 +2,7 @@
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.
-**Updated:** 2026-05-11 chat ACASĂ §CC.5 fast handover ingest anti-halucinație plan P1 ABSOLUTE — scope 95% LOCKED V1 + slip-uri 6 majore consolidate + vault meta-tooling 4 surfaces aligned (userPreferences UI + Memory file + 6 memory edits Claude + system prompt project) + 2 files landed `📥_inbox/`: `PLAN_ANTI_HALUCINATIE_VAULT.md` (P1 ABSOLUTE next chat — 5 PHASES × 15 items ~13h CC autonomous overnight) + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` (P2 deferred post P1 LANDED). Handover archived 384_CONSUMED. Previous LATEST.md cycled 385_CONSUMED. Cumulative ~719 PRESERVED unchanged (vault meta-tooling chat-current ZERO net additive product/architecture). §CC.6 ~200 LOC append-only architecture LOCKED V1 2026-05-10 PRESERVE STRICT (NU re-introduce 596KB inflate). **Predecessor Updated:** 2026-05-11 chat NEW startup §CC.5 fast handover ingest end-of-chat-current STAGES 1-4 + autonomy paradigm shift LOCKED V1 PERMANENT — Memory edit #1 replaced autonomy paradigm. STAGES 1-3 LANDED on `main` (commits `298304b` ADR 023 V1 SUPERSEDED + `c7d8457` prod bugs reconcile + `6785ab6` mockup 6 fixes sweep). STAGE 4 BATCH 2 SUB-BATCH 2 idle.js port + 3 engine gap-uri LANDED on `feature/v2-vanilla-port` branch (NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED). 3 engine gap-uri: `src/engine/muscleRecovery.js` NEW (~85 LOC pure function recovery state per Big 6 + lagging detection) + `src/engine/coachDirector.js` +3 methods (~85 LOC: `buildLightMobility` + `rebalanceWeekAfterSkip` + `generateSafeSessionForRestDay`) + `src/engine/usNavyBF.js` NEW (~70 LOC US Navy BF metric Hodgdon-Beckett 1984 + projectWeightAtTargetBF). idle.js port per V1_FEATURES_AUDIT verdict 15/15 features (10 keep verbatim + 4 modify simplified + 1 drop F5 AA modal V2-deferred + F13 rating notes DROP V1 per Anti-RE rule LOCKED V1 PERMANENT). Mockup FIX 1 Warmup adaptive ctx + FIX 2 Deload variant + FIX 4 weaknessDetector lagging WHY + FIX 6 Mini-player conditional render wire. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirectorOverrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. `src/pages/coach/renderIdle.js` V1 preserved (Sub-Batch 3 carry-forward removal pending). Cumulative ~722-724 PRESERVED (implementation work mecanic prescribed per V1_FEATURES_AUDIT verdict, NU substantive NEW). Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED chain `a9ddfa8 → 8d16361` 8 substantive (NOTE: branch divergence with main where main has subsequent prod bugs reconcile + ADR 023 supersede + mockup 6 fixes sweep LANDED — feature branch scope work-on-feature-only directive).
+**Updated:** 2026-05-11 chat ACASĂ §CC.5 fast handover ingest Obsidian MCP setup FAZA 2A LANDED + Karpathy LLM Wiki pattern strategic pivot LOCK V1 + FAZA 2B Karpathy CLAUDE.md schema PENDING next chat (vault meta-tooling, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture). Plugin MCP Tools by Jack Steam v0.2.31 installed + functional la `.obsidian/plugins/mcp-tools/`; config MSIX path SLIP descoperit + fixed `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` (NU `%APPDATA%\Claude\`); Karpathy LLM Wiki pattern (gist karpathy/442a6bf, apr 2026) LOCK V1 ca anti-halucinație primary mechanism — 3-layer architecture (raw=📥_inbox, wiki=00-index+01-vision+etc, schema=CLAUDE.md) + 3 operations (/wiki-ingest, /wiki-query, /wiki-lint); plan anti-halucinație existing REMAPPED în Karpathy pattern (mai mature ~6-8h vs 9-13h naive). Handover archived 386_CONSUMED. Previous LATEST.md cycled 387_CONSUMED. §CC.6 ~200 LOC append-only architecture LOCKED V1 2026-05-10 PRESERVE STRICT (NU re-introduce 596KB inflate). **Predecessor Updated:** 2026-05-11 chat ACASĂ §CC.5 fast handover ingest anti-halucinație plan P1 ABSOLUTE — scope 95% LOCKED V1 + slip-uri 6 majore consolidate + vault meta-tooling 4 surfaces aligned (userPreferences UI + Memory file + 6 memory edits Claude + system prompt project) + 2 files landed `📥_inbox/`: `PLAN_ANTI_HALUCINATIE_VAULT.md` (P1 ABSOLUTE next chat — 5 PHASES × 15 items ~13h CC autonomous overnight) + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` (P2 deferred post P1 LANDED). Handover archived 384_CONSUMED. Previous LATEST.md cycled 385_CONSUMED. Cumulative ~719 PRESERVED unchanged (vault meta-tooling chat-current ZERO net additive product/architecture). §CC.6 ~200 LOC append-only architecture LOCKED V1 2026-05-10 PRESERVE STRICT (NU re-introduce 596KB inflate). **Pre-predecessor Updated:** 2026-05-11 chat NEW startup §CC.5 fast handover ingest end-of-chat-current STAGES 1-4 + autonomy paradigm shift LOCKED V1 PERMANENT — Memory edit #1 replaced autonomy paradigm. STAGES 1-3 LANDED on `main` (commits `298304b` ADR 023 V1 SUPERSEDED + `c7d8457` prod bugs reconcile + `6785ab6` mockup 6 fixes sweep). STAGE 4 BATCH 2 SUB-BATCH 2 idle.js port + 3 engine gap-uri LANDED on `feature/v2-vanilla-port` branch (NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED). 3 engine gap-uri: `src/engine/muscleRecovery.js` NEW (~85 LOC pure function recovery state per Big 6 + lagging detection) + `src/engine/coachDirector.js` +3 methods (~85 LOC: `buildLightMobility` + `rebalanceWeekAfterSkip` + `generateSafeSessionForRestDay`) + `src/engine/usNavyBF.js` NEW (~70 LOC US Navy BF metric Hodgdon-Beckett 1984 + projectWeightAtTargetBF). idle.js port per V1_FEATURES_AUDIT verdict 15/15 features (10 keep verbatim + 4 modify simplified + 1 drop F5 AA modal V2-deferred + F13 rating notes DROP V1 per Anti-RE rule LOCKED V1 PERMANENT). Mockup FIX 1 Warmup adaptive ctx + FIX 2 Deload variant + FIX 4 weaknessDetector lagging WHY + FIX 6 Mini-player conditional render wire. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirectorOverrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. `src/pages/coach/renderIdle.js` V1 preserved (Sub-Batch 3 carry-forward removal pending). Cumulative ~722-724 PRESERVED (implementation work mecanic prescribed per V1_FEATURES_AUDIT verdict, NU substantive NEW). Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 PORT_FIRST prerequisite LANDED chain `a9ddfa8 → 8d16361` 8 substantive (NOTE: branch divergence with main where main has subsequent prod bugs reconcile + ADR 023 supersede + mockup 6 fixes sweep LANDED — feature branch scope work-on-feature-only directive).
 **Last LOCKED count (product/architecture):** **~742 LOCKED V1** (cumulative ~719 → ~742 +23 net chat-current 2: NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 sub-decisions + V1_FEATURES_AUDIT_V1 +15 features Co-CTO Autonomous Daniel autonomy lock EXTINS scope).
 
 > **CHAT NEW STARTUP — READ THIS ENTIRE FILE FIRST.**
@@ -16,27 +16,116 @@
 
 ## NOW — Active conversation thread
 
-**Chat ACASĂ 2026-05-11 — Anti-halucinație plan scope 95% LOCKED V1 P1 ABSOLUTE + slip-uri 6 majore consolidate + vault meta-tooling 4 surfaces aligned (vault meta-tooling, cumulative ~719 PRESERVED unchanged, ZERO net additive):**
+**Chat ACASĂ 2026-05-11 — Obsidian MCP setup FAZA 2A LANDED + Karpathy LLM Wiki pattern strategic pivot LOCK V1 + FAZA 2B Karpathy CLAUDE.md schema PENDING next chat (vault meta-tooling, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture):**
 
-Chat-current = thread vault meta-tooling pure post slip recurrence chat 2026-05-11 (BATCH 2 Antrenor implement attempt → multiple slips: P1-FLAG-PROD-AUTO-FAZA stale "2000 kcal hardcoded" vs Daniel verbatim *"in prod nu mai e nimic hardcoded"* + V1 features keep/drop deja LOCKED vault re-întrebat + STRATEGY LOCK V1 Port-First-Then-React ignorat (acoperiș-pereți) + artefact CC paste-able generat = Autonomy LOCKED V1 PERMANENT 2026-05-11 violation). Daniel push-back fundamental verbatim: *"chiar ma scoate din sarite. In loc sa dam inainte ne uitam la ce e deja rezolvat si mai rezolvam o data... e de rasul curcilor"* + *"nu mai vreau sa te aud pana la smoke de beta"* + *"acoperis inainte de pereti"* + STOP signal *"bun. ne oprim din orice"* → pivot meta-tooling.
+Chat-current = pivot strategic vault organization post Obsidian re-evaluation triggered by Daniel întrebare second brain → productivitate. Eu push-back inițial defensive (wikilinks doar markdown, graph view doar ochii tăi, "rezolvă halucinații" marketing fals, plan-ul meu sufficient). Daniel verbatim: *"ia cauta pe net de obsidian inainte sa presupui"*. Web research post-slip = realitate diferită semnificativ: **Karpathy LLM Wiki pattern** publicat 3 apr 2026 (gist karpathy/442a6bf555914893e9891c11519de94f, 5000+ stars zile, 16M+ views X post) = pattern care REZOLVĂ EXACT halucinație prin LLM-maintained wiki structurat (NU re-derive knowledge each chat, citește direct knowledge graph). **3 operations** /wiki-ingest + /wiki-query + /wiki-lint. **Three-layer**: raw/ (immutable) + wiki/ (LLM-generated) + CLAUDE.md (schema). **Existing implementations**: NicholasSpisak/second-brain, eugeniughelbur/obsidian-second-brain (31 commands), AgriciDaniel/claude-obsidian (11 skills), AaronFulkerson Exo (26 skills + 14 MCP + 8 hooks production). **Karpathy claim direct**: *"LLM has to work around that gap... Karpathy approach sidesteps chunking entirely. The wiki articles are already human-readable summaries"*. Mea culpa: push-back-urile mele defensive. Pattern Karpathy real, validated, mature, mai elaborated decât plan-ul meu anti-halucinație naive. Update important: **Obsidian a fost dropped istoric pentru că Claude (eu chat-uri trecute) NU știa de Karpathy LLM Wiki pattern**. Slip-ul meu istoric a costat Daniel tooling churn. Acum revine validated.
 
-**4 surfaces vault meta-tooling aligned chat-current:**
-1. **userPreferences UI Daniel** — text raw paste UI: §2 PRE-ACTION VAULT SEARCH mandatory + §3 EXECUȚIE DIRECTĂ via MCP+claude_code (NO Cowork — Daniel correction explicit) + §5 STRATEGY-LOCK FILTER (acoperiș-pereți) + §10 STOP recognition expanded + §CC.3 NO "Continuăm?" final + memorie internă stale → vault SSOT primat
-2. **Memory file Claude** — Cumulative ~719 LOCKED V1 (era 243+ stale) + 2731 tests baseline (era 1200+ stale) + Port-First-Then-React strategy LOCK V1 + Autonomy LOCKED V1 PERMANENT 2026-05-11 + Environments fix ACASĂ Claude Desktop+MCP+full autonomy + Slip history 2026-05-11 documentat
-3. **Memory edits Claude** — 6 replace-uri critice (#3 daniel-isms STOP recognition expanded + "continua autonom" nou + #4 tests 2731+ baseline + #5 SETUP fix + #18 pre-action vault search + strategy-lock filter + #21 §CC.3 NO "Continuăm?" + #22 §CC.4 memorie stale → vault SSOT primat)
-4. **System prompt project UI Daniel** — text raw în chat (filesystem error pe diacritice prima încercare). Format compact ~1500 chars
+**FAZA 2A — Obsidian MCP Tools setup ✅ COMPLET LANDED:**
+1. ✅ Vault `C:\Users\Daniel\Documents\salafull` deschis Obsidian
+2. ✅ Plugins core: Local REST API + Dataview enabled; Wikilinks ON + Shortest path + Source mode default
+3. ✅ Plugin **MCP Tools by Jack Steam v0.2.31** (88K downloads) installed + enabled
+4. ✅ MCP Server binary installed via plugin UI button → `.obsidian/plugins/mcp-tools/bin/mcp-server.exe`
+5. ✅ **Config path SLIP descoperit & fixed** — Claude Desktop instalat MSIX (Microsoft Store sandboxed). Config real la `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` NU `%APPDATA%\Claude\`. **Memory update mandatory post-handover.**
+6. ✅ Config corect MSIX path entry `obsidian-mcp-tools` (binary + OBSIDIAN_API_KEY env)
+7. ✅ Restart Claude Desktop COMPLET (Quit system tray)
+8. ✅ Verify end-to-end: `tool_search "obsidian"` returnează 5+ tools (search_vault_simple, search_vault, search_vault_smart semantic, append_to_active_file, delete_vault_file)
+9. ✅ Test search REAL: `search_vault_simple "Port-First-Then-React"` → 23+ documente returnate context bogat vault Andura
 
-**2 files landed `📥_inbox/` (P1+P2 input next chat execute, NU handover content — preserve NU archive):**
-- `PLAN_ANTI_HALUCINATIE_VAULT.md` — scope 95% LOCKED V1, 5 PHASES × 15 items: PHASE 1 vault structure hygiene (DECISIONS_ANSWERED + DIFF_FLAGS verbatim regen + VERBATIM_QUOTES + cleanup) + PHASE 2 strategy LOCK filter + PHASE 3 hallucination log + PHASE 4 quick answers + PHASE 5 VAULT_RULES extensions. Sequence P0 critical path ~4-6h + P1 parallel ~3-4h + sequential rest ~2-3h = ~9-13h CC autonomous overnight. Acceptance ~95% mecanic codificabil.
-- `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` — P2 deferred next chat post P1 LANDED. Port mockup V2 → prod vanilla JS modules, branch `feature/v2-vanilla-port`.
+**Security item open (Daniel asumat risc):** GitHub PAT leaked în chat history (verbatim *"lasa-ma ma cu tokenu tau. imi asum"*). Entry github SCOS din config curent. Reconfigure post-Faza 2B dacă Daniel decide.
 
-**Mid-flight pending NEXT P1 ABSOLUTE:** Execute PLAN_ANTI_HALUCINATIE_VAULT.md per §3 sequence on `feature/v2-vanilla-port` branch.
+**FAZA 2B — Karpathy CLAUDE.md schema adapted Andura ⏳ PENDING (~2-3h CC autonomous overnight, 5 steps):**
+- Step 1: Download Karpathy gist content + parse 3-layer + 3 operations
+- Step 2: Generate `CLAUDE.md` vault root adapted: Andura-specific layer mapping (raw=📥_inbox, wiki=00-index+01-vision+etc, schema=CLAUDE.md+VAULT_RULES merge) + 3 operations slash commands custom Andura + frontmatter template minimal
+- Step 3: Update VAULT_RULES.md §KARPATHY_OPERATIONS section pointing CLAUDE.md schema
+- Step 4: Initial /wiki-lint pass detect orphans + missing cross-refs + contradictions (NU fix yet — Daniel review)
+- Step 5: Memory edits Claude + userPreferences + system prompt project sync cu Karpathy pattern active
 
-🦫 **Bugatti craft. Anti-halucinație plan scope 95% LOCKED V1 P1 ABSOLUTE. BATCH 2 Antrenor P2 deferred. Vault meta-tooling preserve strict §CC.6 ~200 LOC. Cumulative ~719 LOCKED V1 PRESERVED.**
+**Integration plan anti-halucinație existing:** Plan-ul NU standalone — **REMAPPED Karpathy pattern**: DECISIONS_ANSWERED → wiki sub-folder `00-index/decisions-answered/`; STRATEGY_LOCK_V1 → wiki page `04-architecture/`; VERBATIM_QUOTES → wiki page `01-vision/`; HALUCINATION_LOG → wiki page `07-meta/`; QUICK_ANSWERS → INDEX_MASTER extended. Atinge același 95% anti-halucinație, mai mature pattern + mai puțin work (~6-8h vs 9-13h, /wiki-ingest + /wiki-lint automatizează cross-refs).
+
+**Mid-flight pending NEXT P1 ABSOLUTE:** Execute FAZA 2B Karpathy CLAUDE.md schema per acest handover §FAZA 2B section on `feature/v2-vanilla-port` branch.
+
+**Strategy LOCKED V1 active preserved (critical context):** Port-First-Then-React 2026-05-10 + Autonomy LOCKED V1 PERMANENT 2026-05-11 + Mockup vs prod distincție permanent + §CC.6 ~200 LOC append-only + **Karpathy LLM Wiki pattern NEW LOCK V1 2026-05-11** (strategic pivot vault organization, impacts toate vault operations going forward).
+
+🦫 **Bugatti craft. Obsidian MCP Faza 2A LANDED functional. Faza 2B Karpathy schema PENDING next chat overnight. Pattern Karpathy LOCK V1 ca anti-halucinație primary mechanism. Memory updates 3 items mandatory next chat pre-§CC.2. Cumulative ~742 LOCKED V1 PRESERVED.**
 
 ---
 
 ## JUST DECIDED
+
+**2026-05-11 chat ACASĂ — Obsidian MCP setup FAZA 2A LANDED + Karpathy LLM Wiki pattern strategic pivot LOCK V1 + FAZA 2B Karpathy CLAUDE.md schema PENDING next chat (vault meta-tooling, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture):**
+
+Pornit ca chat normal, post anti-halucinație plan + BATCH 2 Antrenor landed inbox. Discutia pivot către **Obsidian + Karpathy LLM Wiki pattern** după ce Daniel a întrebat dacă second brain mapat = productivitate mai bună. Eu push-back inițial defensive (wikilinks doar markdown, graph view doar ochii tăi, "rezolvă halucinații" marketing fals, plan-ul meu sufficient). Daniel push-back direct verbatim: *"ia cauta pe net de obsidian inainte sa presupui"* + *"am downloadat obsidian"* + *"tot internetul e hype dupa el"* + *"zice ca rezolva complet problema ta de halucinatii"*.
+
+**Web research post-slip confirmat realitate diferită semnificativ:**
+- **Karpathy LLM Wiki pattern** publicat 3 aprilie 2026 (gist `karpathy/442a6bf555914893e9891c11519de94f`, 5000+ stars în zile, 16M+ views X post) = pattern care REZOLVĂ EXACT problema halucinației prin LLM-maintained wiki structurat (NU re-derive knowledge each chat, citește direct knowledge graph navigabil)
+- **Obsidian Skills (Steph Ango / Obsidian CEO)** publicate = teach Claude folosit nativ wikilinks, callouts, frontmatter, Obsidian CLI, Bases (database views), Canvas
+- **3 operations**: `/wiki-ingest` (process raw sources) + `/wiki-query` (ask questions) + `/wiki-lint` (health checks broken links, orphan pages, contradictions)
+- **Three-layer architecture**: raw/ (immutable sources) + wiki/ (LLM-generated pages) + CLAUDE.md (schema)
+- **Existing implementations validation**: NicholasSpisak/second-brain, eugeniughelbur/obsidian-second-brain (31 commands), AgriciDaniel/claude-obsidian (11 skills), Ar9av/obsidian-wiki framework, AaronFulkerson Exo (26 skills + 14 MCP servers + 8 hooks production)
+- **Vault-first approach** (eugeniughelbur): *"You make the same decision twice because you forgot you made it six months ago"* = exact pain point Daniel verbatim recurring
+- **Karpathy claim direct**: *"LLM has to work around that gap, which introduces retrieval noise and hallucination risk. Karpathy approach sidesteps chunking entirely. The wiki articles are already human-readable summaries written by an LLM that has read the full context"*
+
+**Mea culpa direct:** push-back-urile mele anterioare = parțial corecte tehnic dar prea defensive. Pattern Karpathy = real, validated, mature, mai elaborated decât plan-ul meu anti-halucinație naive. **Update important istoric**: Obsidian a fost dropped istoric pentru că Claude (eu, în chat-uri trecute) NU știa de Karpathy LLM Wiki pattern. Slip-ul meu istoric a costat Daniel tooling churn. Acum revine pe baza pattern Karpathy validated.
+
+**FAZA 2A — Obsidian MCP Tools setup ✅ COMPLET LANDED (10 steps):**
+1. Vault Andura deschis Obsidian
+2. Plugins core enabled: Local REST API + Dataview
+3. Vault config: Wikilinks ON, Shortest path, Source mode default
+4. Plugin **MCP Tools by Jack Steam v0.2.31** (88K downloads, 16 zile updated) installed + enabled din Community plugins
+5. MCP Server v0.2.31 binary installed via plugin UI button "Install server" → `.obsidian/plugins/mcp-tools/bin/mcp-server.exe`
+6. **Config path SLIP descoperit & fixed** — Claude Desktop instalat **MSIX package** (Microsoft Store sandboxed). Config real la `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` NU `%APPDATA%\Claude\` cum credeam noi inițial. **Memory update mandatory.**
+7. Config corect aplicat MSIX path cu entry `obsidian-mcp-tools` (binary path + `OBSIDIAN_API_KEY` env var)
+8. Restart Claude Desktop COMPLET (Quit din system tray)
+9. Verify end-to-end: `tool_search "obsidian vault search notes wiki"` returnează 5+ tools: `search_vault_simple`, `search_vault`, `search_vault_smart` (semantic), `append_to_active_file`, `delete_vault_file`
+10. Test search REAL: `search_vault_simple "Port-First-Then-React"` → 23+ documente returnate cu context bogat din vault Andura
+
+**Status setup curent:** Claude Desktop conectat la vault prin obsidian-mcp-tools server (running). Plus filesystem MCP existing (running). Plus claude-code MCP existing (running).
+
+**Security item open (Daniel asumat risc, NU revocat):** GitHub PAT `github_pat_11CCFDG...` leaked în chat history (cu reverse structure key/value invers, github MCP probabil broken oricum). Daniel verbatim: *"lasa-ma ma cu tokenu tau. imi asum"*. Entry github SCOS intenționat din config curent. Reconfigurăm github MCP cu fresh PAT post-Faza 2B dacă Daniel decide.
+
+**Plugins optional pending (skipped intenționat Faza 2A):** Smart Connections (search_vault_smart semantic full functionality), Templater (Karpathy schema future), Web Clipper browser extension (capture articole external în raw/).
+
+**FAZA 2B — Karpathy CLAUDE.md schema adapted Andura ⏳ PENDING next chat (~2-3h CC autonomous overnight, 5 steps):**
+
+**Mapping conceptual (NU migration fizică):**
+- **Karpathy `raw/`** (immutable sources) → `📥_inbox/` existing (raw inputs Daniel + handover-uri future) + opțional `_raw/` subfolder pentru articole externe Web Clipper
+- **Karpathy `wiki/`** (LLM-generated pages cu cross-refs) → `00-index/` (INDEX_MASTER = wiki index Karpathy) + `01-vision/` + `02-audit/` + `03-decisions/` (DECISION_LOG + ADRs) + `04-architecture/` + `06-sessions-log/` + `07-meta/` + `08-workflows/` = TOATE existing devin "wiki layer"
+- **Karpathy `CLAUDE.md`** (schema operating rules) → adaptare nouă vault root + merge cu `VAULT_RULES.md` existing (deja are §CC.2 / §CC.4 / §CC.5 / §AR.* protocols). Cele 3 operations Karpathy: `/wiki-ingest`, `/wiki-query`, `/wiki-lint` codified.
+
+**Plan execution Faza 2B:**
+- **Step 1 (~30 min):** Download Karpathy gist content from `https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f`. Parse 3-layer architecture + 3 operations.
+- **Step 2 (~30 min):** Generate `CLAUDE.md` adapted la Andura context: Andura-specific layer mapping + 3 operations slash commands custom Andura (`/wiki-ingest <source>` process raw input + classify + distribute wiki layer + update INDEX_MASTER + append DECISION_LOG + archive _CONSUMED; `/wiki-query <question>` search INDEX_MASTER first + drill DECISIONS_ANSWERED + scan wiki sub-indexes + synthesize answer cu citations path:§; `/wiki-lint` health check broken wikilinks + orphan pages + stale claims + contradictions across wiki layer — asta atacă orfanele graph view Daniel observed) + frontmatter template minimal per file.
+- **Step 3 (~30 min):** Update VAULT_RULES.md cu §KARPATHY_OPERATIONS section pointing la CLAUDE.md schema.
+- **Step 4 (~60 min):** Initial `/wiki-lint` pass pe vault Andura existing — detect orphans (sute observed în graph view) + missing cross-refs + contradictions. Output raport (NU fix yet — necesită Daniel review prima).
+- **Step 5 (~30 min):** Update memory edits Claude + userPreferences + system prompt project sync cu Karpathy pattern active (CLAUDE.md schema as primary SSOT, §CC.2 layered read amended cu wiki/index + DECISIONS_ANSWERED check first).
+
+**Acceptance criteria FAZA 2B:**
+- Vault structural NU se schimbă (zero migration)
+- CLAUDE.md schema LANDED vault root + cross-ref bidirectional cu VAULT_RULES
+- 3 operations codified + testable
+- Initial /wiki-lint pass output raport → Daniel review → decide ce fix-uri să facă claude_code autonomous
+
+**Integration cu plan anti-halucinație existing landed inbox (`PLAN_ANTI_HALUCINATIE_VAULT.md`, 5 PHASES × 15 items):** plan-ul NU devine standalone — **remappat în Karpathy pattern**: DECISIONS_ANSWERED.md (Item 1.1) → wiki sub-folder `00-index/decisions-answered/` cu Karpathy entries linked via wikilinks; STRATEGY_LOCK_V1.md (Item 2.1) → wiki page anchor în `04-architecture/`; VERBATIM_QUOTES.md (Item 1.3) → wiki page în `01-vision/`; HALUCINATION_LOG.md (Item 3.1) → wiki page în `07-meta/`; QUICK_ANSWERS.md (Item 4.1) → INDEX_MASTER.md existing extended cu top topics. Plan-ul atinge același 95% anti-halucinație, dar **mai mature pattern** (Karpathy validated) + **mai puțin work** (~6-8h vs 9-13h, pentru că Karpathy operations /wiki-ingest + /wiki-lint automatizează generare DECISIONS_ANSWERED + cross-refs).
+
+**Memory updates required post acest handover (CRITICAL — actualizare memorie Claude next chat startup mandatory pre-§CC.2):**
+1. **Memory edit #5 SETUP path** — adaugă MSIX detail: ACASĂ Claude Desktop instalat MSIX (Microsoft Store) → config la `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` NU `%APPDATA%\Claude\` cum credeam noi. Slip 2026-05-11 corectat.
+2. **Memory edit NEW** — Obsidian MCP setup LANDED: plugin MCP Tools by Jack Steam v0.2.31 installed + functional. tool_search "obsidian" returnează 5+ tools. API key Local REST API regenerate periodic post-leak. Karpathy LLM Wiki pattern NEW LOCK V1 2026-05-11 strategic vault organization.
+3. **Memory edit NEW** — Karpathy pattern context: gist karpathy/442a6bf, apr 2026, LOCK V1 anti-halucinație primary mechanism: 3-layer (raw + wiki + schema) + 3 operations (/wiki-ingest, /wiki-query, /wiki-lint). Plan anti-halucinație existing REMAPPED pattern (mai mature, mai puțin work). Faza 2B = CLAUDE.md schema adapted la Andura vault root, ~2-3h CC autonomous.
+
+**Mid-flight unresolved la handover:** NIMIC mid-flight. Faza 2A COMPLET LANDED + functional. Faza 2B clear scope pentru next chat execute.
+
+**Cross-refs §CC.5 ingest commit:**
+- `00-index/CURRENT_STATE.md` §NOW replaced + §JUST_DECIDED top entry chat ACASĂ + Header `Updated:` field flip (this entry)
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-11 chat ACASĂ Obsidian MCP + Karpathy pattern
+- `00-index/INDEX_MASTER.md` `Last updated:` field flip 2026-05-11
+- `📤_outbox/LATEST.md` NEW raport §CC.5 fast ingest format standard
+- Archive moves: NN 386 handover consumed + NN 387 LATEST cycle precedent
+- Backup tag: `pre-handover-2026-05-11-obsidian-mcp-faza-2b-pending-2143` pushed origin (rollback safety)
+- Files PRESERVED `📥_inbox/` (NU archive): `PLAN_ANTI_HALUCINATIE_VAULT.md` + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`
+
+🦫 **Bugatti craft. §CC.5 fast handover ingest Obsidian MCP setup LANDED + Karpathy LLM Wiki pattern strategic pivot LOCK V1 + FAZA 2B PENDING next chat. Cumulative ~742 PRESERVED unchanged. Path către Beta: P1 = Faza 2B Karpathy schema ~2-3h overnight → P2 = plan anti-halucinație REMAPPED ~6-8h → P3 = BATCH 2 Antrenor port.**
+
+---
 
 **2026-05-11 chat ACASĂ — Anti-halucinație plan scope 95% LOCKED V1 P1 ABSOLUTE + slip-uri 6 majore consolidate + vault meta-tooling 4 surfaces aligned (vault meta-tooling, cumulative ~719 PRESERVED unchanged, ZERO net additive):**
 
@@ -408,10 +497,11 @@ claude_code intermittent timeout/empty responses today — §AR.19 LOCK V1 reaff
 
 ## NEXT — Priority order
 
-1. **🔴 P1 ABSOLUTE: Execute PLAN_ANTI_HALUCINATIE_VAULT.md scope 95%** per §3 sequence (P0 critical path ~4-6h + P1 parallel ~3-4h + sequential rest ~2-3h = ~9-13h CC autonomous overnight). Acceptance ~95% mecanic codificabil. Vault structural enforce anti-halucinație + anti-repetare via 5 PHASES × 15 items (DECISIONS_ANSWERED + DIFF_FLAGS verbatim regen + STRATEGY_LOCK_V1 + HALUCINATION_LOG + QUICK_ANSWERS + VAULT_RULES extensions §AR.20+§AR.21).
-2. **P2: Execute PROMPT_CC_BATCH_2_ANTRENOR_PORT.md** post P1 LANDED — Port mockup V2 → prod vanilla JS modules, branch `feature/v2-vanilla-port`.
-3. Order port post-Antrenor: **Onboarding → Progres → Istoric → Cont**.
-4. **Step 2 React migration mecanic mapping** post Step 1 validation Daniel Gates smoke andura.app.
+1. **🔴 P1 ABSOLUTE: Execute FAZA 2B Karpathy CLAUDE.md schema adapted la Andura vault** per handover §FAZA 2B section (~2-3h CC autonomous overnight, 5 steps): Step 1 download Karpathy gist `https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f` + parse 3-layer + 3 operations → Step 2 generate `CLAUDE.md` vault root adapted Andura mapping + 3 operations slash commands + frontmatter template → Step 3 update VAULT_RULES.md §KARPATHY_OPERATIONS → Step 4 initial /wiki-lint pass detect orphans + missing cross-refs + contradictions (NU fix yet, Daniel review prima) → Step 5 memory edits Claude + userPreferences + system prompt project sync cu Karpathy pattern active. Acceptance: CLAUDE.md schema LANDED vault root + 3 operations codified + /wiki-lint raport pentru Daniel review.
+2. **P2: Execute plan anti-halucinație REMAPPED în Karpathy pattern** post Faza 2B LANDED (~6-8h CC autonomous, scăzut de la 9-13h prin Karpathy automation). Plan-ul `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` existing reorganizat: DECISIONS_ANSWERED → wiki `00-index/decisions-answered/`; STRATEGY_LOCK_V1 → wiki `04-architecture/`; VERBATIM_QUOTES → wiki `01-vision/`; HALUCINATION_LOG → wiki `07-meta/`; QUICK_ANSWERS → INDEX_MASTER extended.
+3. **P3: Execute PROMPT_CC_BATCH_2_ANTRENOR_PORT.md** post P1+P2 LANDED — Port mockup V2 → prod vanilla JS modules, branch `feature/v2-vanilla-port`.
+4. Order port post-Antrenor: **Onboarding → Progres → Istoric → Cont**.
+5. **Step 2 React migration mecanic mapping** post Step 1 validation Daniel Gates smoke andura.app.
 
 ---
 
