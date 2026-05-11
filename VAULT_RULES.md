@@ -199,6 +199,7 @@ Update direct (NU creez `VAULT_RULES_v2.md`).
 
 **Status:** Locked (introdus 2026-04-30, post-saturation incident chat strategic).
 **Authority:** SSOT pentru handover flow Daniel ↔ Claude chat ↔ CC Opus.
+**Operational prompt:** [[../PROMPT_CC_INGEST_HANDOVER]] vault root reusable Opus prompt for Daniel-triggered handover ingestion per this protocol (handover NEW landed `📥_inbox/` → CC Opus ingest auto STEP 1-9 + STEP 10-15 §HANDOVER_PROTOCOL).
 
 ### Why this protocol exists
 
