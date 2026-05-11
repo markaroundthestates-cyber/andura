@@ -24,10 +24,11 @@
 N/A — vault docs only ingest, ZERO src/ touched
 
 ## Commits
-Pending atomic ingest commit (single squash): `docs(vault): §CC.5 fast handover ingest chat ACASĂ 2026-05-11 — mockup andura-clasic.html FINAL + 4 decisions LOCKED (#10-13) + paradigm adaptive reconfirmat + 3 gap-uri engine pre-port`
+- `9f73754` `chore(vault): update CURRENT_STATE per handover 2026-05-11 mockup clasic final + paradigm adaptive reconfirm` (atomic ingest: CURRENT_STATE + DECISION_LOG + DIFF_FLAGS + LATEST.md + 2 archive moves NN 369/370) ✅
+- Pre-commit hook 2732 PASS preserved (vitest run full suite, vault docs only ZERO src/ touched)
 
 ## Pushed
-Pending — will push post-commit origin/main
+✅ Pushed origin/main `220c95f..9f73754`
 
 ## Issues / Discrepancies flagged
 1. **⚠️ Cumulative LOCKED V1 count reconciliation** — handover + user prompt claim ~719 PRESERVED. Precedent vault (CURRENT_STATE.md + DIFF_FLAGS) shows ~742 from chat-current 2 +23 (NO_DIACRITICS_RULE +1 + PORT_FIRST_STEP_1 +7 + V1_FEATURES_AUDIT_V1 +15). Used ~719 per user direction; ~742 entries preserved in §RECENT for traceability. **Daniel reconcile**.
