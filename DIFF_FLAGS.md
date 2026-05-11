@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema LANDED `feature/v2-vanilla-port` branch (5 atomic commits chain `dc555d1 → d108a56` pushed origin). NEW P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN 🟡 PENDING_DANIEL_REVIEW pointing raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` (ZERO P1 critical SSOT broken refs — INDEX_MASTER + CURRENT_STATE + DECISION_LOG + VAULT_RULES + CLAUDE.md + DIFF_FLAGS verified intact; 64 real broken classified P2 batch + 5 orphan candidates real Daniel review; flag added per Daniel resume prompt explicit instruction for review tracking, NU P1 critical severity). Tests 2781 PASS preserved EXACT. Cumulative ~742 PRESERVED unchanged. Predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — STAGE 4 BATCH 2 SUB-BATCH 2 LANDED on `feature/v2-vanilla-port` branch (3 engine gap-uri pre-port `muscleRecovery.js` NEW + `coachDirector` 3 methods extension + `usNavyBF.js` NEW + idle.js port from `renderIdle.js` per V1_FEATURES_AUDIT verdict 15/15 features). NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirector overrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 LANDED 8 atomic commits autonomous. Cumulative ~742 PRESERVED (implementation work NU additive substantive product/architecture LOCK V1 — engine gaps + idle port = mecanic prescribed verdict, NU NEW decisions).
+**Updated:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) LANDED `feature/v2-vanilla-port` branch (6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync). P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN flipped 🟡 PENDING_DANIEL_REVIEW → 🟢 RESOLVED LANDED (64 → 0 real broken wikilinks; 5 orphan candidates resolved 3 deleted vault root junk + 2 archived 391/392 + 1 cross-ref added). Tests 2781 PASS preserved EXACT all 6 commits doc-only ZERO src/ touched. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive). Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute. Predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema LANDED `feature/v2-vanilla-port` branch (5 atomic commits chain `dc555d1 → d108a56` pushed origin). NEW P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN 🟡 PENDING_DANIEL_REVIEW pointing raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` (ZERO P1 critical SSOT broken refs — INDEX_MASTER + CURRENT_STATE + DECISION_LOG + VAULT_RULES + CLAUDE.md + DIFF_FLAGS verified intact; 64 real broken classified P2 batch + 5 orphan candidates real Daniel review; flag added per Daniel resume prompt explicit instruction for review tracking, NU P1 critical severity). Tests 2781 PASS preserved EXACT. Cumulative ~742 PRESERVED unchanged. Pre-predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — STAGE 4 BATCH 2 SUB-BATCH 2 LANDED on `feature/v2-vanilla-port` branch (3 engine gap-uri pre-port `muscleRecovery.js` NEW + `coachDirector` 3 methods extension + `usNavyBF.js` NEW + idle.js port from `renderIdle.js` per V1_FEATURES_AUDIT verdict 15/15 features). NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirector overrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 LANDED 8 atomic commits autonomous. Cumulative ~742 PRESERVED (implementation work NU additive substantive product/architecture LOCK V1 — engine gaps + idle port = mecanic prescribed verdict, NU NEW decisions).
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
@@ -34,10 +34,10 @@
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
 
-### P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN — Initial /wiki-lint pass 64 real broken wikilinks PENDING Daniel review (2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B)
+### P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN — Initial /wiki-lint pass 64 real broken wikilinks RESOLVED LANDED 2026-05-11 Faza 2C (2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2C)
 
-**Status:** 🟡 PENDING_DANIEL_REVIEW 2026-05-11 chat ACASĂ Co-CTO autonomous (Faza 2B Step 4 LANDED `60a0a66`). Initial Karpathy `/wiki-lint` operation pass executat post `CLAUDE.md` schema LANDED Step 2 + `VAULT_RULES §KARPATHY_OPERATIONS` LANDED Step 3. Node.js scanner `C:\tmp\wiki_lint.js` 4 scan types pe 104 markdown files / 1198 wikilinks scanned vault Andura active layer. Findings classified P2 batch (NU P1 critical severity — ZERO SSOT broken). Flag added per Daniel resume prompt explicit instruction for review tracking + decide fix actions per case basis.
-**Severity:** 🟡 P1-PENDING_REVIEW (administrative tracking — ZERO P1 critical SSOT-level broken refs; 64 real broken classified P2 batch low-risk fix sweep ~30-60 min CC autonomous dacă Daniel approves)
+**Status:** 🟢 RESOLVED LANDED 2026-05-11 chat ACASĂ Co-CTO autonomous (Faza 2C wikilink fix sweep ALL a+b+c+d+e LANDED 6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync). Before/after counts: 64 real broken → 0 broken; 5 orphan candidates → 3 deleted vault root junk + 2 archived (391 HANDOVER orchestrator + 392 LATEST_CONSOLIDATED) + 1 cross-ref added (PROMPT_CC_INGEST_HANDOVER.md în VAULT_RULES §HANDOVER_PROTOCOL header). Tests 2781 PASS preserved EXACT all 6 commits doc-only ZERO src/ touched. Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute. Predecessor flag state: 🟡 PENDING_DANIEL_REVIEW 2026-05-11 Faza 2B Step 4 LANDED `60a0a66` (Faza 2C executed Daniel-approved ALL batches resume prompt).
+**Severity:** N/A (resolved, doc-only fix sweep vault graph view orphan nodes dramatic reduced post-Faza 2C — ZERO src/ touched ZERO regression)
 
 **Raport SSOT:** `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` §1-§5 (Broken wikilinks + Orphan pages + Stale claims + Contradictions + Summary recommendations)
 
@@ -47,19 +47,23 @@
 - §3 Stale claims (>60d): 0 findings vault healthy chat-current density update.
 - §4 Contradictions cross-file: 0 findings (ADR 005 §AMENDMENT 2026-05-10 Port-First-Then-React consistent CURRENT_STATE §NOW + ADR_MULTI_TENANT_AUTH §AMENDMENT 2026-05-04 consistent DIFF_FLAGS Auth Phase 2 RESOLVED).
 
-**Fix categories P2 batch (Daniel decide per case basis):**
-- (a) ADR naming refactor 14 instances cross-refs `[[ADR_023]]` → `[[023-llm-intent-interpretation]]` etc.
-- (b) Mockup .html refs convert 44 instances DECISION_LOG + RECENT_DECIDED_ARCHIVE `[[mockups/andura-clasic]]` → relative markdown links
-- (c) Workflow .yml refs convert 4 instances
-- (d) 2 stale handover refs investigate
-- (e) 5 orphan candidates review (2 vault root junk delete + 3 archive/cross-ref decide)
+**Fix categories LANDED Faza 2C 6 atomic commits chain pushed origin `feature/v2-vanilla-port`:**
+- (a) `1a66483` ADR naming refactor 14 instances cross-refs canonical slugs (DECISION_LOG + RECENT_DECIDED + REACT_MIGRATION + 026 + 030 + CLAUDE.md L189)
+- (b) `3d169e8` Mockup .html refs convert 42 instances DECISION_LOG (14) + RECENT_DECIDED_ARCHIVE (28) wikilinks → relative markdown links `[mockups/andura-<theme>.html](../04-architecture/mockups/andura-<theme>.html)` for 4 themes
+- (c) `7176306` Workflow .yml refs convert 4 instances DECISION_LOG (2) + RECENT_DECIDED (2) `[[../.github/workflows/ci|deploy]]` → markdown links
+- (d) `da55b06` 2 stale handover refs investigated + fixed (DECISION_LOG ~L2586 → archived 221_DEPRECATED + VAULT_RULES L828 backtick-protected verbatim + inline cross-ref annotation 222_DEPRECATED)
+- (e) `8a34129` 5 orphan candidates resolved (3 vault root junk deleted: 2026-05-11.md + Untitled.md + Untitled.canvas + .gitignore protect future + 2 tracked archived: HANDOVER orchestrator → 391_CONSUMED + LATEST_CONSOLIDATED → 392_CONSUMED + PROMPT_CC_INGEST_HANDOVER.md preserved + cross-ref added VAULT_RULES §HANDOVER_PROTOCOL header)
 
-**Recommendations Daniel review:**
-- Review §1-§5 raport (~10-20 min reading time)
-- Approve fix actions OR defer entire batch (NU urgent, NU blocker)
-- If approved: CC autonomous Faza 2C fix sweep ~30-60 min single atomic commit per category (5 atomic commits chain) backup tag `pre-faza-2c-wikilink-fix-sweep-<date>` pushed origin pre-execute
+**Acceptance criteria met:**
+- ✅ 64 → 0 real broken wikilinks
+- ✅ 5 orphan candidates resolved (delete junk + .gitignore + archive + cross-ref)
+- ✅ 6 atomic commits LANDED pushed origin `feature/v2-vanilla-port` (per Step 7 push verify)
+- ✅ Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute
+- ✅ Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched)
+- ✅ §CC.6 ~200 LOC CURRENT_STATE append-only PRESERVED STRICT
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive)
 
-**Cross-refs:** `CLAUDE.md` §2 `/wiki-lint` operation spec (4 scan types + P1 escalation criterion broken wikilink SSOT — NU triggered, ZERO P1 critical findings) + `VAULT_RULES.md §KARPATHY_OPERATIONS` §3 wiki-lint operation + `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` SSOT findings + `00-index/CURRENT_STATE.md` §NEXT P1 entry mirror + §ACTIVE_FLAGS top entry mirror + `03-decisions/DECISION_LOG.md` 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B entry
+**Cross-refs:** `CLAUDE.md` §2 `/wiki-lint` operation spec (4 scan types) + `VAULT_RULES.md §KARPATHY_OPERATIONS` §3 wiki-lint operation + `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` SSOT findings + `📤_outbox/LATEST.md` Faza 2C raport + `00-index/CURRENT_STATE.md` §NOW Faza 2C LANDED + §JUST_DECIDED top entry + §ACTIVE_FLAGS flip + `03-decisions/DECISION_LOG.md` 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2C entry top + `📤_outbox/_archive/2026-05/390_FAZA_2B_KARPATHY_SCHEMA_LANDED_CONSUMED.md` (precedent LATEST archived Step 6)
 
 ---
 

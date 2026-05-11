@@ -1,6 +1,62 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
+
+**Status:** Faza 2C execute autonomous Co-CTO scope LANDED `feature/v2-vanilla-port` branch. 6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync (this entry = Step 6 commit). ZERO src/ touched. ZERO product/architecture additive. Vault graph view orphan nodes dramatic reduced post fix sweep.
+
+**Authority:** `📥_inbox/PROMPT_CC_FAZA_2C_WIKILINK_FIX_SWEEP.md` Daniel resume prompt ALL 5 batches (a+b+c+d+e) + Step 6 vault hub sync + Step 7 push origin + Acceptance Criteria + HARD CONSTRAINTS (CC autonomous scope) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11. Source of truth verbatim mapping: `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` §1.2 P2 tables + §3 orphan list.
+
+**Pre-flight verified:**
+- §CC.2 layered read 4/4 MCP filesystem direct (CURRENT_STATE full + raport 389 FULL §1-§5 source of truth + CLAUDE.md §2 /wiki-lint operation reference + VAULT_RULES.md §KARPATHY_OPERATIONS + §CC.2 + §CC.4 + §CC.6 + §AR.19)
+- `git status` clean (acceptable untracked: Obsidian junk + inbox files)
+- `git branch --show-current` verified `feature/v2-vanilla-port`
+- Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute
+- File existence verified for all "actual file" targets via filesystem grep pre-execute (defensive ensure NU broken-by-fix)
+
+**6 atomic commits LANDED chain (each Bugatti single-concern, tests 2781 PASS preserved EXACT post fiecare commit via pre-commit hook):**
+
+1. **`1a66483`** Batch (a) — ADR naming refactor 14 instances cross-refs canonical slugs (broken wikilinks raport 389 §1.2 P2 "Old ADR naming" table).
+   - DECISION_LOG.md (5 distinct + replace_all 2): `[[../03-decisions/ADR 023]]` + `[[ADR_023]]` → `[[023-llm-intent-interpretation]]` + `[[../03-decisions/005-vanilla-js-stack]]` → `[[../03-decisions/005-vanilla-js-no-framework]]` + `[[013-ADR-aa-detection]]` → `[[013-auto-aggression-detection]]` + replace_all `[[030-decision-cluster-strangler]]` → `[[030-adapter-design-pattern]]`
+   - RECENT_DECIDED_ARCHIVE.md (1 + replace_all 2): `[[../03-decisions/ADR 023]]` + replace_all `[[../03-decisions/030-decision-cluster-strangler]]`
+   - REACT_MIGRATION_STATE_MAPPING_V1.md (replace_all 2): `[[../03-decisions/030-decision-cluster-strangler]]`
+   - 026-offline-coaching: `[[027-engine-deload]]` → `[[027-engine-energy-adjustment]]`
+   - 030-adapter-design-pattern: `[[012-tier-decay|ADR 012]]` → `[[012-tier-decay-on-inactivity|ADR 012]]` (pipe display preserved)
+   - CLAUDE.md L189 section anchor example: `[[ADR_005#AMENDMENT_2026-05-10]]` → `[[005-vanilla-js-no-framework#AMENDMENT 2026-05-10]]` cu note Obsidian section anchors use space NU underscore
+
+2. **`3d169e8`** Batch (b) — Mockup .html refs convert 42 instances DECISION_LOG (14 wikilinks across 4 lines) + RECENT_DECIDED_ARCHIVE (28 wikilinks across 8 lines). Form: `[[../04-architecture/mockups/andura-<theme>]]` → `[mockups/andura-<theme>.html](../04-architecture/mockups/andura-<theme>.html)` for 4 themes (clasic + luxury + living-body + brain-coach). Per raport count 44 — actual count 42 verified by grep filesystem (line drift în raport count, ZERO real broken in target files post-fix).
+
+3. **`7176306`** Batch (c) — Workflow .yml refs convert 4 instances DECISION_LOG (2 ci+deploy) + RECENT_DECIDED_ARCHIVE (2 ci+deploy). Form: `[[../.github/workflows/<name>]]` → `[<name> workflow](../.github/workflows/<name>.yml)`. Raport listed qa-report ref but grep filesystem 0 instances in scope files (false positive count în raport) — 4 real LANDED.
+
+4. **`da55b06`** Batch (d) — 2 stale handover refs investigated + fixed. DECISION_LOG ~L2586 `[[../06-sessions-log/HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05]]` (file NU exists at original path, archived deprecated 221_DEPRECATED.md per Run 2 Task 3) → `[[221_HANDOVER_GLOBAL_SPLIT_PLAN_2026-05-05_DEPRECATED]]` + inline cross-ref archive path + P1-FLAG-HANDOVER-SPLIT status corrected 🟢 RESOLVED. VAULT_RULES L828 `[[HANDOVER_VAULT_HYGIENE_2026-04-30_evening]]` INSIDE backticks = code-quoted historical example NOT live wikilink (per past audit 247_LATEST_RUN6_ELEVATED_COMPLETE_CONSUMED §CC.9.5 spec acceptable) — preserved verbatim + added inline cross-ref note 222_DEPRECATED archive path.
+
+5. **`8a34129`** Batch (e) — 5 orphan candidates resolved (raport 389 §3).
+   - 3 vault root junk DELETED (untracked, never committed): `2026-05-11.md` (Obsidian Daily Notes empty) + `Untitled.md` (Cmd+N scratch empty) + `Untitled.canvas` (empty `{}`)
+   - `.gitignore` rules ADDED protect future accidents: `/YYYY-MM-DD.md` root-anchored daily notes + `/Untitled*.md` + `/Untitled*.canvas`
+   - 2 tracked orphans ARCHIVED via `git mv`: `06-sessions-log/HANDOVER_2026-05-10_ORCHESTRATOR_PHASE1_PHASE2_LANDED.md` → `📤_outbox/_archive/2026-05/391_HANDOVER_2026-05-10_ORCHESTRATOR_PHASE1_PHASE2_LANDED_CONSUMED.md` + `📤_outbox/LATEST_CONSOLIDATED.md` → `📤_outbox/_archive/2026-05/392_LATEST_CONSOLIDATED_2026-05-10_CONSUMED.md`
+   - 1 standalone prompt PRESERVED + cross-ref added: `PROMPT_CC_INGEST_HANDOVER.md` vault root → cross-ref în VAULT_RULES §HANDOVER_PROTOCOL header "Operational prompt: [[../PROMPT_CC_INGEST_HANDOVER]] vault root reusable Opus prompt"
+
+6. **Step 6 (this commit)** — vault hub sync: CURRENT_STATE §NOW replace (precedent Faza 2B → §JUST_DECIDED cascade + §RECENT summary line) + §JUST_DECIDED top entry NEW Faza 2C + Header `Updated:` flip + §NEXT overwrite (P1 Daniel /wiki-lint review DONE → P1 plan anti-halucinație REMAPPED + P2 BATCH 2 Antrenor) + §ACTIVE_FLAGS flip P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN 🟡 → 🟢 RESOLVED + §RECENT shift older content + DECISION_LOG entry top (this) + INDEX_MASTER `Last updated:` flip + DIFF_FLAGS entry status flip + LATEST.md NEW raport Andura format standard + precedent LATEST archive NN 390.
+
+**Acceptance criteria met (all 9 per FAZA 2C prompt §ACCEPTANCE CRITERIA):**
+- ✅ 64 → 0 real broken wikilinks (residual: only documented prose mentions + backtick-protected historical examples NOT live wikilinks)
+- ✅ 5 orphan candidates resolved (3 delete junk + 2 archive + 1 cross-ref)
+- ✅ 6 atomic commits LANDED chain `feature/v2-vanilla-port` (Step 7 push verify)
+- ✅ Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute
+- ✅ Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched all 6 commits)
+- ✅ DIFF_FLAGS P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN flip 🟢 RESOLVED LANDED
+- ✅ §CC.6 ~200 LOC CURRENT_STATE append-only PRESERVED STRICT
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive)
+- ✅ HARD CONSTRAINTS preserved: ZERO touch `src/` + `tests/` + `main` branch + `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` + `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` + `📥_inbox/_karpathy_gist_reference.md`
+
+**Mid-flight unresolved:** NIMIC mid-flight. Faza 2C COMPLET LANDED. Path clear pentru P1 next: execute plan anti-halucinație REMAPPED Karpathy pattern + P2 BATCH 2 Antrenor port.
+
+**Cross-refs:** [[../CLAUDE]] §2 /wiki-lint operation spec + [[../VAULT_RULES#KARPATHY_OPERATIONS]] §3 wiki-lint + [[../📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11|raport 389 SSOT findings]] + [[../00-index/CURRENT_STATE#NOW]] Faza 2C narrative + [[../00-index/CURRENT_STATE#JUST DECIDED]] top entry + [[../00-index/INDEX_MASTER]] Last updated flip + [[../DIFF_FLAGS#P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN]] status flip 🟢 RESOLVED + [[../📤_outbox/LATEST|LATEST.md NEW raport Faza 2C]] + precedent [[../📤_outbox/_archive/2026-05/390_FAZA_2B_KARPATHY_SCHEMA_LANDED_CONSUMED|LATEST Faza 2B archived NN 390]].
+
+🦫 **Bugatti craft. FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) vault meta-tooling LANDED Co-CTO autonomous scope. 6 atomic commits chain. Tests 2781 PASS preserved EXACT. Vault graph view orphan nodes dramatic reduced. Cumulative ~742 PRESERVED unchanged.**
+
+---
+
 ## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema adapted Andura vault LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
 
 **Status:** Faza 2B execute autonomous overnight LANDED `feature/v2-vanilla-port` branch. 5 atomic commits chain `dc555d1 → 60a0a66` pushed origin (this entry = vault hub sync commit). ZERO src/ touched. ZERO product/architecture additive.
