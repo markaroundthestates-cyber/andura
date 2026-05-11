@@ -1,6 +1,54 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2D extensive orphan resolution + markdown→wikilink scan LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
+
+**Status:** Faza 2D execute autonomous Co-CTO scope LANDED `feature/v2-vanilla-port` branch. 4 actionable atomic commits chain `e5c4067 → 4079b1c` pre Step 5 vault hub sync (this entry = Step 5 commit). ZERO src/ touched. ZERO product/architecture additive. Vault graph view orphan nodes ~99% reduction expected post Daniel UI Option A manual configure.
+
+**Authority:** `📥_inbox/PROMPT_CC_FAZA_2D_EXTENSIVE_ORPHAN_RESOLUTION.md` Daniel CEO spec 4 batches + Step 5 vault hub sync + Step 6 push origin + Acceptance Criteria + HARD CONSTRAINTS (CC autonomous scope) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11. Post Faza 2C LANDED + Daniel screenshot graph view "sute orfani" live confirmation.
+
+**Pre-flight verified:**
+- §CC.2 layered read 4/4 MCP filesystem direct (CURRENT_STATE post Faza 2C + INDEX_MASTER FULL + CLAUDE.md §2 /wiki-lint operation + VAULT_RULES.md §KARPATHY_OPERATIONS)
+- `git status` clean (acceptable untracked: Obsidian junk + inbox files)
+- `git branch --show-current` verified `feature/v2-vanilla-port`
+- Backup tag `pre-faza-2d-extensive-orphan-resolution-2026-05-11` pushed origin pre-execute
+- Extensive orphan scan executed `scripts/faza2d_orphan_scan.cjs` (Node.js scanner, 102 wiki layer files + 406 archive `.md` excluded scan-target dar inbound-source allowed)
+- Markdown link scan executed `scripts/faza2d_markdown_link_scan.cjs` (zero residual wiki layer `.md` markdown links post-Faza 2C clean)
+
+**4 actionable atomic commits LANDED chain (Batch (a) + Batch (d) NO-OP per scan reality, NU artificial commits Bugatti craft):**
+
+1. **`e5c4067`** Pre-flight — Extensive orphan inventory raport `📤_outbox/_archive/2026-05/393_FAZA_2D_ORPHAN_INVENTORY_RAPORT.md` §1-§8 LANDED + 3 scan scripts artefacts `scripts/faza2d_*.cjs` preserved Bugatti reproducibility. Classification 102 wiki layer files: 8 PROTECTED (CLAUDE.md + VAULT_RULES.md + README.md + DIFF_FLAGS.md + PROMPT_CC_HYGIENE.md + PROMPT_CC_INGEST_HANDOVER.md + mockups/README.md + simulations/README.md) + 6 HUB (INDEX_MASTER + CURRENT_STATE + DECISION_LOG + HANDOVER_GLOBAL_* + RECENT_DECIDED_ARCHIVE + FINDINGS_MASTER) + 81 LEAF + 7 ORPHAN (4 `📥_inbox/` raw layer preserved per HARD CONSTRAINTS + 3 `📤_outbox/` BATCH artefacts Batch (b) target).
+
+2. **Batch (a) NO-OP** — Markdown links `.md` → wikilinks conversion wiki layer. 0 instances found (Grep verification: only 4 file matches total — 1 documentation reference HTTP example în CHAT_MIGRATION_PROTOCOL line 383 inside backticks + 1 prompt documentation `📥_inbox/PROMPT_CC_FAZA_2D` raw layer + 2 `_archive/` immutable historical). Wiki layer ALREADY clean post-Faza 2C completion. Skip commit Bugatti craft NU artificial.
+
+3. **`c3b41d4`** Batch (b) — INDEX_MASTER cross-refs append 10 entries NAVIGARE RAPIDĂ table: 3 outbox BATCH artefacts ORPHAN resolution (`[[BATCH_1_ANTRENOR_INVENTORY]]` + `[[BATCH_1_ANTRENOR_PLAN]]` + `[[BATCH_2_AMENDMENT_POST_LOCK_V1]]`) + 7 V2 strategic SPEC LOCK V1 LEAF connectivity improvement (`[[PORT_FIRST_STEP_1_PARADIGM_V1]]` + `[[V1_FEATURES_AUDIT_V1]]` + `[[REACT_MIGRATION_STATE_MAPPING_V1]]` + `[[ANDURA_VALIDATION_FRAMEWORK_V1]]` + `[[FAZA_2_FILTER_STRATEGY_V1]]` + `[[ROOT_NAV_V2_29_5_7_AMENDMENT]]` + `[[SCENARIOS_SIMULATOR_DESIGN_V1]]`). Toate 10 wikilinks verified resolve filesystem (Glob filename match Obsidian shortest-path mode default).
+
+4. **`4079b1c`** Batch (c) — Archive exclusion documentation `📤_outbox/_archive/2026-05/394_FAZA_2D_ARCHIVE_EXCLUSION_DOC.md` §1-§5 LANDED. Daniel manual UI configure recommendation: Option A Excluded files permanent (Obsidian Settings → Files & Links → Excluded files → add `📤_outbox/_archive/**` glob pattern) RECOMMENDED + Option B graph view filter `-path:_archive` per-view temporary alternative + Option C `.gitignore` style NU recommended (`.obsidian/` privacy + risk corrupt config per HARD CONSTRAINTS). Expected ~99% orphan graph view reduction post Daniel manual configure (~377 nodes → ~4 wiki-side raw-layer-preserved legitimate).
+
+5. **Batch (d) NO-OP** — Truly obsolete orphan cleanup. 0 truly obsolete files post Batch (a)+(b)+(c). All 7 ORPHAN candidates resolved: 4 `📥_inbox/` raw layer preserved per HARD CONSTRAINTS + 3 `📤_outbox/` BATCH artefacts → Batch (b) INDEX_MASTER cross-ref resolution. ZERO rename/archive/delete actions. Skip commit Bugatti craft NU artificial.
+
+6. **Step 5 (this commit)** — vault hub sync atomic: CURRENT_STATE.md §NOW replace (precedent Faza 2C → §JUST_DECIDED cascade) + §JUST_DECIDED top entry NEW Faza 2D + Header `Updated:` flip + §NEXT overwrite (P1 plan anti-halucinație REMAPPED Karpathy → P2 BATCH 2 Antrenor + Daniel manual UI step parallel low-priority) + §ACTIVE_FLAGS add `P1-FLAG-FAZA-2D-ORPHAN-RESOLUTION-LANDED` 🟢 RESOLVED + §RECENT shift older content + INDEX_MASTER `Last updated:` flip + DIFF_FLAGS entry NEW P1 flag Faza 2D RESOLVED LANDED + LATEST.md NEW raport Andura format standard (precedent Faza 2C LATEST archived NN 395_FAZA_2C_WIKILINK_FIX_SWEEP_LANDED_CONSUMED.md).
+
+**Acceptance criteria met (all 10 modified per scan reality):**
+- ✅ Orphan inventory raport pre-fix LANDED archive (393, extensive scan NU limited 5 cum era Faza 2B initial /wiki-lint)
+- ⏭️ Batch (a) NO-OP acceptable (post-Faza 2C completion validation, 0 markdown-to-md links residual)
+- ✅ Batch (b) INDEX_MASTER cross-refs added 10 entries
+- ✅ Batch (c) archive exclusion documentation 394 Daniel UI configure manual
+- ⏭️ Batch (d) NO-OP acceptable (zero residual)
+- ✅ 4 actionable atomic commits + Step 5 = 5 commits total (NU artificial 6-7 cum prompt estimated — Bugatti craft reality NU bulk multi-purpose padding)
+- ✅ Backup tag pushed origin pre-execute
+- ✅ Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched)
+- ✅ §CC.6 ~200 LOC CURRENT_STATE append-only PRESERVED STRICT
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive)
+- ✅ Orphan graph view nodes reduction ~377 → ~4 projected (~99% reduction post Daniel Option A manual configure)
+- ✅ HARD CONSTRAINTS preserved: ZERO touch `src/` + `tests/` + `main` branch + 4 `📥_inbox/PROMPT_*` + `_karpathy_gist_reference.md` + `.obsidian/` config + mockup `.html` + workflow `.yml`
+
+**Strategy LOCKED V1 active preserved:** Port-First-Then-React 2026-05-10 + Autonomy LOCKED V1 PERMANENT 2026-05-11 + Mockup vs prod distincție permanent + §CC.6 ~200 LOC append-only + Karpathy LLM Wiki pattern LOCK V1 2026-05-11 schema LANDED Faza 2B + Vault graph view orphan nodes dramatic reduced post-Faza 2C + 2D cumulative.
+
+🦫 **Bugatti craft. FAZA 2D extensive orphan resolution + markdown→wikilink scan vault meta-tooling LANDED Co-CTO autonomous. 4 actionable atomic commits chain + Step 5 hub sync. Tests 2781 PASS preserved. Vault graph view orphan nodes ~99% reduction projected post Daniel manual UI Option A configure. Cumulative ~742 PRESERVED unchanged.**
+
+---
+
 ## 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) LANDED (vault meta-tooling, cumulative ~742 PRESERVED unchanged)
 
 **Status:** Faza 2C execute autonomous Co-CTO scope LANDED `feature/v2-vanilla-port` branch. 6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync (this entry = Step 6 commit). ZERO src/ touched. ZERO product/architecture additive. Vault graph view orphan nodes dramatic reduced post fix sweep.
