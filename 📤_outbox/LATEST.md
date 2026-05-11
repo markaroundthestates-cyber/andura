@@ -47,13 +47,27 @@
 | 1 | `e5c4067` | fix(vault): faza 2d pre-flight — extensive orphan inventory scan + raport (393 archive) |
 | 2 | `c3b41d4` | fix(vault): faza 2d batch (b) — INDEX_MASTER cross-refs added 10 entries (3 outbox BATCH artefacts + 7 V2 strategic SPEC LOCK V1) |
 | 3 | `4079b1c` | docs(vault): faza 2d batch (c) — archive exclusion recommendation Daniel UI configure manual (394 archive) |
-| 4 | (this commit) | feat(vault): faza 2d step 5 — vault hub sync + LATEST raport (CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + LATEST + precedent archived 395) |
+| 4 | `42ed59b` | feat(vault): faza 2d step 5 — vault hub sync + LATEST raport (CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + LATEST + precedent archived 395) |
+| 5 | (this commit) | chore(vault): LATEST.md final raport sync — Step 6 push origin verified all 4 Faza 2D actionable commits |
 
 **Backup tag:** `pre-faza-2d-extensive-orphan-resolution-2026-05-11` (pushed origin pre-execute rollback safety).
 
 ## Pushed
 
-⏳ Pending Step 6 — push origin chain `e5c4067 → <Step 5 hash>` + verify via `git log origin/feature/v2-vanilla-port --oneline -10`.
+✅ Pushed origin `feature/v2-vanilla-port` chain `e5c4067 → 42ed59b` verified via `git log origin/feature/v2-vanilla-port --oneline -8`:
+
+```
+42ed59b feat(vault): faza 2d step 5 — vault hub sync + LATEST raport...
+4079b1c docs(vault): faza 2d batch (c) — archive exclusion recommendation Daniel UI configure manual...
+c3b41d4 fix(vault): faza 2d batch (b) — INDEX_MASTER cross-refs added 10 entries...
+e5c4067 fix(vault): faza 2d pre-flight — extensive orphan inventory scan + raport (393 archive)
+148798c chore(vault): LATEST.md final raport sync — Step 7 push origin verified all 6 Faza 2C commits
+2d662b3 feat(vault): faza 2c step 6 — vault hub sync...
+8a34129 fix(vault): faza 2c batch (e) — orphan candidates 5 instances reviewed + cleanup...
+da55b06 fix(vault): faza 2c batch (d) — stale handover refs 2 instances investigated + fixed...
+```
+
+Final LATEST.md sync commit (this commit, post-push) updates `Pushed:` status verified + chain hash range complete + acceptance criteria all met.
 
 ## Issues
 
