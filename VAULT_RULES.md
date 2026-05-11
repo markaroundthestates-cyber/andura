@@ -1076,3 +1076,48 @@ ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust
 **Failure mode any check:** STOP, escalate Daniel raport partial, NU forțezi past spec. Pattern Bugatti = peak craft anti-recurrence invariant nenegociabil.
 
 ---
+
+## §KARPATHY_OPERATIONS — LLM Wiki Pattern (LOCK V1 2026-05-11)
+
+**Status:** LOCKED V1 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B (vault meta-tooling, NU product/architecture additive).
+**Authority:** Karpathy LLM Wiki pattern gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post). Adapted Andura vault per `CLAUDE.md` schema vault root. Raw source preserved immutable `📥_inbox/_karpathy_gist_reference.md`.
+
+**Primary anti-halucinație mechanism:** LLM-maintained wiki structurat (NU re-derive knowledge each chat) + 3 operations codified + 3-layer architecture (raw = `📥_inbox/` + wiki = `00-index/` + `01-vision/` + `02-audit/` + `03-decisions/` + `04-architecture/` + `05-findings-tracker/` + `06-sessions-log/` + `07-meta/` + `08-workflows/` + schema = `CLAUDE.md` + `VAULT_RULES.md` bidirectional).
+
+**3 Operations canonical:**
+
+- **`/wiki-ingest <source>`** — process raw input → distribute wiki layer + archive consumed. **Canonical:** §CC.5 fast handover ingest existing este special case (handover-narrative classifier branch). Karpathy generalizează la multi-classifier:
+  - Handover narrative → §CC.5 mecanic existing
+  - ADR draft → `03-decisions/<NNN-name>.md` + INDEX_MASTER + DECISION_LOG cross-ref
+  - SPEC DRAFT → `04-architecture/<name>.md` + INDEX_MASTER + cross-refs
+  - Prompt CC / Plan → preserve `📥_inbox/` pending execute (NU archive yet)
+  - Raport CC → `📤_outbox/_archive/<YYYY-MM>/<NN>_*_CONSUMED.md`
+  - Toate: backup tag pre-execute + atomic commit Bugatti + push origin
+
+- **`/wiki-query <question>`** — answer cu citations `path:§` mandatory. **Canonical:** §CC.4 citation enforcement existing. Workflow: INDEX_MASTER first → DECISION_LOG + ADR-uri descending → CURRENT_STATE sub-sections → RECENT_DECIDED_ARCHIVE → DIFF_FLAGS active. Format `Per <file>:§<section>: ...`. Flag explicit if no wiki answer found (NU invent — escalate Daniel decizie sau verify web search separat).
+
+- **`/wiki-lint`** — health check vault (NU fix, raport Daniel review). 4 scan types: broken wikilinks (grep `[[...]]` orphan targets) + orphan pages (no inbound `[[file]]` AND no INDEX_MASTER entry AND not protected SSOT) + stale claims (`Updated: YYYY-MM-DD` >60 days Daniel decides) + contradictions (cross-file dated entries conflict detection). Output raport `📤_outbox/_archive/<YYYY-MM>/<NN>_WIKI_LINT_RAPORT_<date>.md` cu §1-§5 sections. **P1 escalation:** finding critical (broken wikilink la SSOT) → DIFF_FLAGS entry `P1-FLAG-WIKI-LINT-<finding>` 🟡 P1 pending Daniel review.
+
+**Schema reference primary:** [[CLAUDE]] vault root §1-§6 (3-layer mapping + 3 operations + frontmatter + cross-refs + integration + Bugatti craft).
+
+**Integration cu protocols existing:**
+- **§CC.2 layered read EXTENDED:** Pre step 1 (CURRENT_STATE read), check if `/wiki-query` applies — Karpathy pattern primary anti-halucinație mechanism. If question maps wiki topic → `/wiki-query` first (INDEX_MASTER → DECISION_LOG drill) before mandatory layered read.
+- **§CC.4 citation enforcement REAFFIRMED:** `/wiki-query` is structured invocation of §CC.4 principles existing — formalize via Karpathy operation name.
+- **§CC.5 fast handover ingest = special case `/wiki-ingest`:** §CC.5 mecanic preserved exact (CURRENT_STATE move-then-replace + DECISION_LOG entry + archive + backup tag + commit + push). Karpathy adaugă classification taxonomy.
+- **§CC.6 ~200 LOC append-only PRESERVED STRICT:** Karpathy schema NU inflate CURRENT_STATE — toate §1-§6 în CLAUDE.md vault root separate.
+- **§AR.19 + alte §AR.* preserved unchanged:** Karpathy schema is vault-level structure, NU supersede claude_code agent execution discipline AR-uri.
+
+**Frontmatter pattern progressive adoption:**
+- New files post-Faza 2B 2026-05-11 — apply YAML frontmatter template per [[CLAUDE]] §3 (title + type + status + locked_date + cross_refs + amendments)
+- NU mass migration existing ~250+ markdown files vault (mass edit risk > value, churn deferred future bulk pass)
+- Dataview future integration optional enhancement (Obsidian plugin queries frontmatter)
+
+**Wikilinks Obsidian-style convention:**
+- Same-folder: `[[FileName]]`
+- Cross-folder: `[[path/to/file]]`
+- Anchor drill-down: `[[file#section-anchor]]`
+- Obsidian "Shortest path" mode enabled supports rename without breaking refs
+
+**Cross-refs:** [[CLAUDE]] §1-§6 + §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.4 + §CC.5 + §CC.6 + §ANTI_RECURRENCE_RULES §AR.19 + [[📥_inbox/_karpathy_gist_reference]] (immutable raw source) + [[00-index/CURRENT_STATE#NOW]] FAZA 2B context.
+
+---
