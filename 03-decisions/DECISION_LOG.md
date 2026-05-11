@@ -1,6 +1,62 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — PROD BUGS RECONCILE VERIFY ATOMIC — P1-FLAG-PROD-AUTO-FAZA + P1-FLAG-PROD-BF-EDIT-KCAL status flip 🔴 DISPUTED → 🟢 RECONCILED RESOLVED via code audit verify + test execution all green (cumulative ~722-724 PRESERVED — reconcile verify only, NU substantive NEW)
+
+**Status:** Both P1-FLAG-PROD-AUTO-FAZA-2026-05-10 + P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10 status flip 🔴 DISPUTED → 🟢 **RECONCILED RESOLVED 2026-05-11 chat ACASĂ continuation Co-CTO autonomous** via code audit verify `src/engine/sys.js` + propagation `src/pages/weight.js` + `src/pages/dashboard.js` + test execution `src/engine/__tests__/sys.test.js` 14/14 PASS + total suite 148 files / 2732 tests PASS. Daniel handover 2026-05-11 "Neinvestigat" override **invalid** — predecessor RESOLVED `05ba372` (chat ACASĂ MCP filesystem 2026-05-10) confirmed code state actual via filesystem read + git log/show/diff verification.
+
+**Authority:** Daniel autonomy lock EXTINS PERMANENT 2026-05-11 chat ACASĂ continuation Co-CTO autonomous + DIFF_FLAGS §RESOLVED P1-FLAG-PROD-BUGS-2026-05-10 precedent CONFIRMED.
+
+**1. Code audit verify Bug 1 (AUTO faza hardcoded 2000 kcal — DROP pilotActive gate):**
+- `src/engine/sys.js` getPhase lines 76-110: pilotActive gate REMOVED, AUTO branch derives phase din BF + sezon always (BF >18 → CUT; BF >15 + summer → MAINTENANCE; BF >12 + summer → MAINTENANCE; BF >10 + winter → BULK; BF ≤10 → MAINTENANCE/BULK seasonal)
+- `src/engine/sys.js` getKcalTarget lines 112-135: pilotActive gate REMOVED, AUTO returns TDEE × phase multiplier always (CUT=0.82 / BULK=1.08 / MAINTENANCE=1.0 / STRENGTH=1.05); NU hardcoded `KCAL_TARGET=2000`
+- Propagation `src/pages/weight.js:77`: `const sysTarget = SYS.getKcalTarget();` (pilotActive ternary REMOVED)
+- Propagation `src/pages/dashboard.js:93`: `const now=new Date();` (pilotActive declaration REMOVED)
+- Propagation `src/pages/dashboard.js:193-195`: TDEE Real always (pilotActive branch dropped)
+- Propagation `src/pages/dashboard.js:534`: `if(SYS.getPhase()==='MAINTENANCE'&&SYS.getBF()>15...)` (pilotActive removed from alert condition)
+- Grep verify: only orphan `pilotActive` declaration line 528 + reference line 530 (cosmetic checkpoint countdown alert "CHECKPOINT ÎN N ZILE" pre-pilot UX flavor — NOT affecting Bug 1 kcal path; cosmetic alert preserved)
+- Grep verify: `KCAL_TARGET = 2000` only in `src/constants.js:9` as constant export (used as safety floor `Math.max(KCAL_TARGET, ...)` + final default fallback `default: return KCAL_TARGET;` when phase unknown — NOT primary kcal path)
+
+**2. Code audit verify Bug 2 (BF edit nu recalc kcal — Katch-McArdle BF-aware):**
+- `src/engine/sys.js` estimateTDEE lines 54-66: Katch-McArdle preferred când `Number.isFinite(bf)` (`bmr = 370 + 21.6 * lbm`); Mifflin-St Jeor fallback când BF unknown defensive
+- `getLBM()` consumed at estimateTDEE call site (`const lbm = this.getLBM();` line 60)
+- Math impact verified per DIFF_FLAGS §RESOLVED: at 100kg same weight, BF 30% (lbm=70) vs BF 5% (lbm=95) → delta ~837 kcal (was 0 kcal pre-fix)
+
+**3. Test execution verify (5 regression tests targeted + full suite):**
+- `npx vitest run src/engine/__tests__/sys.test.js --reporter=verbose`: **14/14 PASS**
+- T4a (Katch-McArdle BF-aware when fewer than 4 weights AND getBF finite): ✅ PASS
+- T4b (Mifflin-St Jeor fallback when getBF returns NaN): ✅ PASS
+- T8 (phase auto-derives from BF + season, no pre-pilot CUT short-circuit Bug 1 regression): ✅ PASS
+- T_AUTO_pre_pilot (AUTO before TARGET_DATE returns TDEE×phase multiplier NOT hardcoded KCAL_TARGET Bug 1 regression): ✅ PASS
+- T_BF_edit_recalc (BF edit on same weight changes kcal target via Katch-McArdle Bug 2 regression): ✅ PASS
+- Total suite: **148 test files / 2732 tests PASS** (`npx vitest run`)
+
+**4. DIFF_FLAGS update (both P1 flags status flip):**
+- §P1-FLAG-PROD-AUTO-FAZA-2026-05-10: 🔴 DISPUTED → 🟢 RECONCILED RESOLVED 2026-05-11
+- §P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10: 🔴 DISPUTED → 🟢 RECONCILED RESOLVED 2026-05-11
+- §RESOLVED P1-FLAG-PROD-BUGS-2026-05-10: reconcile cross-ref added (Daniel "Neinvestigat" override RECONCILED via code audit + test execution all green)
+- Header `Updated:` field flip to RECONCILE COMPLETE narrativ
+
+**5. CURRENT_STATE §JUST_DECIDED top entry + §ACTIVE_FLAGS update:**
+- §JUST_DECIDED new top entry descending: 2026-05-11 chat ACASĂ continuation Co-CTO AUTONOMOUS — PROD BUGS RECONCILE COMPLETE
+- §ACTIVE_FLAGS: P1-FLAG-PROD-AUTO-FAZA + P1-FLAG-PROD-BF-EDIT-KCAL both status update 🔴 DISCREPANCY → 🟢 RECONCILED RESOLVED
+
+**6. Cumulative LOCKED PRESERVED ~722-724 unchanged** — reconcile verify only, NU substantive NEW additive.
+
+**Cross-refs:**
+- `src/engine/sys.js` (code state confirmed: lines 54-66 estimateTDEE + 76-110 getPhase + 112-135 getKcalTarget)
+- `src/pages/weight.js:77` + `src/pages/dashboard.js:93,193-195,534` (propagation confirmed)
+- `src/engine/__tests__/sys.test.js` 14/14 PASS (5 regression: T4a + T4b + T8 + T_AUTO_pre_pilot + T_BF_edit_recalc)
+- `DIFF_FLAGS.md` both P1 flags 🟢 RECONCILED RESOLVED + §RESOLVED cross-ref reconcile
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry + §ACTIVE_FLAGS update
+- Backup tag pushed origin: `pre-prod-bugs-reconcile-2026-05-11`
+- Predecessor entry below: 2026-05-11 chat ACASĂ continuation Co-CTO autonomous ADR 023 V1 SUPERSEDED Anti-RE rule
+
+🦫 **Bugatti craft. Prod bugs reconcile verify atomic. Code audit + tests all green. Both P1 flags 🟢 RECONCILED RESOLVED. Daniel handover Neinvestigat override resolved via code state actual. ~722-724 PRESERVED unchanged.**
+
+---
+
+
 ## 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — ADR 023 V1 SUPERSEDED Anti-RE rule LOCKED V1 PERMANENT + ADDENDUM 2026-05-03 archived consumed + P1-FLAG-1 flip 🟢 RESOLVED + Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional preserved valid (cumulative ~722-724 PRESERVED — supersede + reclassification only, NU substantive NEW)
 
 **Status:** ADR 023 V1 SUPERSEDED Anti-RE rule LOCKED V1 PERMANENT 2026-05-11 — V1 implementation Tier 1 Pain + Tier 2 Equipment **DROP** fundament (trigger points text input REMOVED chat-current 2026-05-11 per Anti-RE rule scope universal). ADDENDUM 2026-05-03 body sub-secțiuni A-M **preserved historical reference appendix** în ADR 023 file §APPENDIX HISTORICAL REFERENCE V1 (future v1.5+ reactivation candidate dacă apar trigger points UX noi care acceptă text input). Cognitive Q4 §AMENDMENT 2026-05-03 DELOCK conditional **preserved valid** (decision LLM runtime permis conditional rămâne intacta, NU revertită — doar V1 execution path no longer invoked fundament missing). P1-FLAG-1 flip 🟢 **RESOLVED**. Cumulative LOCKED V1 **~722-724 PRESERVED** — supersede + reclassification only, NU substantive NEW.
