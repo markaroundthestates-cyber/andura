@@ -102,6 +102,30 @@
       radial-gradient(circle at 80% 70%, rgba(107,113,66,0.015) 0%, transparent 50%);
   }
 
+  /* FIX 6 (2026-05-11) Mini-player session-pill — sticky bottom, above bottom-nav, brick background */
+  .session-pill {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 80px; /* nav 72px + 8px gap */
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #c8412e;
+    color: white;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    box-shadow: 0 6px 18px rgba(200,65,46,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+  .session-pill:active { background: #a8351f; }
+
   /* (Modal backdrop removed — V1 LOCKED zero-modals rule.) */
 
   /* Drill-down slide animation (used by toast + sub-page enter) */
@@ -719,6 +743,8 @@
             <div class="small-text" style="color:#c8412e; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; position:relative;">Coach-ul recomanda azi</div>
             <div id="coach-today-title" style="font-size:22px; font-weight:700; margin-top:4px; letter-spacing:-0.01em; position:relative;">Pull (spate &amp; biceps)</div>
             <div id="coach-today-why" style="font-family:'Lora', Georgia, serif; font-style:italic; color:#e8d9b8; margin-top:6px; line-height:1.45; position:relative; font-size:14px;">&bdquo;Pectoralii recupereaza din marti &middot; spatele e gata.&rdquo;</div>
+            <!-- FIX 4 (2026-05-11) weaknessDetector lagging signal WHY extension. Hidden by default; engine populeaza cand grupa sub-volum detectata. -->
+            <div id="coach-today-lagging" style="display:none; font-family:'Lora', Georgia, serif; font-style:italic; color:#f6c89a; margin-top:6px; line-height:1.45; position:relative; font-size:13px; border-top:1px dashed rgba(246,200,154,0.3); padding-top:6px;">&bdquo;Pectoralii recupereaza &middot; spatele sub-volum 2 sapt &mdash; focus azi pe randuri.&rdquo;</div>
             <div style="display:flex; gap:14px; margin-top:14px; position:relative;">
               <span style="display:flex; align-items:center; gap:6px; font-size:13px; color:#a8a09a;"><i data-lucide="clock" style="width:14px; height:14px;"></i> <span id="coach-today-dur">~ 48 min</span></span>
               <span style="display:flex; align-items:center; gap:6px; font-size:13px; color:#a8a09a;"><i data-lucide="layers" style="width:14px; height:14px;"></i> <span id="coach-today-ex">5 exercitii</span></span>
@@ -741,6 +767,14 @@
             <div style="text-align:center; margin-top:10px;">
               <a href="javascript:void(0)" onclick="openScheduleOverride('rest')" style="color:var(--ink-3); font-size:13px; text-decoration:underline; text-underline-offset:3px;">Vreau totusi antrenament &rarr;</a>
             </div>
+          </div>
+
+          <!-- FIX 2 Deload (2026-05-11) — 3rd Antrenor home variant. Trigger: fatigueIndex 3-week cumulative > threshold sau Israetel mesocycle wave deload week. Cream warm card, sub workout/rest cards. -->
+          <div id="coach-deload-card" style="display:none; background:#f5ebd0; color:var(--ink); border:1.5px solid #e6d49a; border-radius:18px; padding:18px; margin-bottom:10px; position:relative;">
+            <div class="small-text" style="color:#8a6d1f; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;">Coach-ul recomanda azi</div>
+            <div style="font-size:22px; font-weight:700; margin-top:4px; letter-spacing:-0.01em; display:flex; align-items:center; gap:10px;"><i data-lucide="leaf" style="width:20px; height:20px; color:#8a6d1f;"></i> Saptamana asta = recuperare</div>
+            <div style="font-family:'Lora', Georgia, serif; font-style:italic; color:var(--ink-2); margin-top:6px; line-height:1.5; font-size:14px;">&bdquo;Oboseala cumulata 3 sapt &middot; scadem volumul -40% pe toate sesiunile &middot; revenim luna viitoare mai puternic.&rdquo;</div>
+            <button class="btn-brick" onclick="acknowledgeDeload()" style="margin-top:14px; width:100%;">OK, inteleg</button>
           </div>
 
           <!-- Chevron-row removed per Daniel feedback 2026-05-12: utilizatorul vrea link mic sub buton, NU row separat. Restored in coach-today-card. -->
@@ -866,6 +900,13 @@
               <span style="display:flex; align-items:center; gap:6px; font-size:13px; color:#a8a09a;"><i data-lucide="layers" style="width:14px; height:14px;"></i> <span id="preview-exercise-count">5 exercitii</span></span>
               <span style="display:flex; align-items:center; gap:6px; font-size:13px; color:#a8a09a;"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> <span id="preview-volume">12 800 kg</span></span>
             </div>
+          </div>
+
+          <!-- FIX 1 Warmup (2026-05-11) — adaptive per main lift + recovery state. Placeholder values pentru port-time wire engine real. -->
+          <div class="warmup-row" style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; margin-bottom:14px;">
+            <i data-lucide="flame" style="color:#c8412e; width:16px; height:16px; flex-shrink:0;"></i>
+            <span class="small-text" id="warmup-line" style="color:var(--ink-2); flex:1; line-height:1.4; font-style:italic; font-family:'Lora', serif;">Incepem cu 5 min incalzire piept &amp; umeri &mdash; band pull-apart &times; 2 &middot; activare scapula</span>
+            <button onclick="openWhyWarmup()" aria-label="De ce aceasta incalzire?" style="background:white; border:1px solid var(--line); border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; flex-shrink:0;"><i data-lucide="help-circle" style="width:14px; height:14px; color:var(--ink-2);"></i></button>
           </div>
 
           <!-- Exercise list -->
@@ -1051,11 +1092,12 @@
             <div class="hm-head">L</div><div class="hm-head">Ma</div><div class="hm-head">Mi</div><div class="hm-head">J</div><div class="hm-head">V</div><div class="hm-head">S</div><div class="hm-head">D</div>
           </div>
           <div class="heatmap" id="cal-grid"></div>
-          <!-- Legend: history real, NU compliance vs template -->
+          <!-- Legend: history real, NU compliance vs template. FIX 2 (2026-05-11): added Recuperare tier (cream warm) — anti-jargon NU "Deload". -->
           <div style="display:flex; align-items:center; gap:14px; margin-top:10px; flex-wrap:wrap;">
             <span style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3);"><span style="width:12px; height:12px; border-radius:3px; background:#3d7a4a;"></span>Greu</span>
             <span style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3);"><span style="width:12px; height:12px; border-radius:3px; background:#7fb185;"></span>Normal</span>
             <span style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3);"><span style="width:12px; height:12px; border-radius:3px; background:#d4e6cb;"></span>Usor</span>
+            <span style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3);"><span style="width:12px; height:12px; border-radius:3px; background:#f5ebd0; border:1px solid #e6d49a;"></span>Recuperare</span>
             <span style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3);"><span style="width:12px; height:12px; border-radius:3px; background:var(--paper-2);"></span>Zi libera</span>
           </div>
 
@@ -1096,7 +1138,104 @@
           <div class="settings-stack">
             <button class="settings-row" onclick="goto('weight-timeline')"><i data-lucide="line-chart"></i><span>Greutate &amp; BF</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="showToast('Import Nutritie (JSON)')"><i data-lucide="file-json"></i><span>Import Nutritie (JSON)</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
-            <button class="settings-row" onclick="showToast('Recorduri Personale')" style="border-bottom:none;"><i data-lucide="award"></i><span>Recorduri Personale</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('pr-wall')" style="border-bottom:none;"><i data-lucide="award"></i><span>Recorduri Personale</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIX 5 (2026-05-11) prEngine PR wall drill-down — list cronologic PR-uri + badge award icon + tap detail per exercise timeline. Static placeholder data port-ready (real data wire post-port). -->
+      <div class="screen paper-bg sub-page" id="screen-pr-wall" data-screen-label="Istoric &rsaquo; Recorduri Personale" style="height:100%; flex-direction:column;">
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Recorduri Personale</h2></div>
+        <div class="phone-scroll" style="padding: 8px 20px 24px; overflow-y:auto; flex:1;">
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 16px; line-height:1.5;">Cronologic descrescator. Tap un record &rarr; vezi evolutia exercitiului in timp.</p>
+
+          <!-- Summary stats -->
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:18px;">
+            <div class="stat-card"><div class="num">14</div><div class="lbl">Total PR</div></div>
+            <div class="stat-card"><div class="num">3</div><div class="lbl">Luna asta</div></div>
+            <div class="stat-card"><div class="num">8</div><div class="lbl">Exercitii</div></div>
+          </div>
+
+          <!-- PR list cronologic descending -->
+          <div class="settings-section" style="margin-top:0;">Recorduri recente</div>
+          <div class="settings-stack" id="pr-list">
+            <button class="settings-row" onclick="openPrDetail('Impins inclinat')" style="padding:14px 16px;">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #fdf3df 0%, #f6e0a8 100%); border:1px solid #e8d59a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i data-lucide="award" style="color:#c8412e; width:18px; height:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Impins inclinat</div>
+                <div class="small-text" style="color:var(--ink-3); font-family:'JetBrains Mono', monospace; margin-top:2px;">25 kg &times; 10 reps &middot; 7 mai 2026</div>
+              </div>
+              <i data-lucide="chevron-right" style="color:var(--ink-3);"></i>
+            </button>
+            <button class="settings-row" onclick="openPrDetail('Genuflexiuni')" style="padding:14px 16px;">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #fdf3df 0%, #f6e0a8 100%); border:1px solid #e8d59a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i data-lucide="award" style="color:#c8412e; width:18px; height:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Genuflexiuni</div>
+                <div class="small-text" style="color:var(--ink-3); font-family:'JetBrains Mono', monospace; margin-top:2px;">80 kg &times; 8 reps &middot; 4 mai 2026</div>
+              </div>
+              <i data-lucide="chevron-right" style="color:var(--ink-3);"></i>
+            </button>
+            <button class="settings-row" onclick="openPrDetail('Indreptari')" style="padding:14px 16px;">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #fdf3df 0%, #f6e0a8 100%); border:1px solid #e8d59a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i data-lucide="award" style="color:#c8412e; width:18px; height:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Indreptari</div>
+                <div class="small-text" style="color:var(--ink-3); font-family:'JetBrains Mono', monospace; margin-top:2px;">100 kg &times; 5 reps &middot; 28 apr 2026</div>
+              </div>
+              <i data-lucide="chevron-right" style="color:var(--ink-3);"></i>
+            </button>
+            <button class="settings-row" onclick="openPrDetail('Trageri orizontale')" style="padding:14px 16px;">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #fdf3df 0%, #f6e0a8 100%); border:1px solid #e8d59a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i data-lucide="award" style="color:#c8412e; width:18px; height:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Trageri orizontale</div>
+                <div class="small-text" style="color:var(--ink-3); font-family:'JetBrains Mono', monospace; margin-top:2px;">65 kg &times; 10 reps &middot; 21 apr 2026</div>
+              </div>
+              <i data-lucide="chevron-right" style="color:var(--ink-3);"></i>
+            </button>
+            <button class="settings-row" onclick="openPrDetail('Impins militar')" style="padding:14px 16px; border-bottom:none;">
+              <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #fdf3df 0%, #f6e0a8 100%); border:1px solid #e8d59a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i data-lucide="award" style="color:#c8412e; width:18px; height:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div class="body-text" style="font-weight:600; color:var(--ink);">Impins militar</div>
+                <div class="small-text" style="color:var(--ink-3); font-family:'JetBrains Mono', monospace; margin-top:2px;">50 kg &times; 6 reps &middot; 14 apr 2026</div>
+              </div>
+              <i data-lucide="chevron-right" style="color:var(--ink-3);"></i>
+            </button>
+          </div>
+
+          <!-- PR detail (per exercise) — populated by openPrDetail() -->
+          <div id="pr-detail-pane" style="display:none; margin-top:18px;">
+            <div class="settings-section" style="margin-top:0;"><span id="pr-detail-name">Exercitiu</span> &middot; evolutie</div>
+            <div style="background:white; border:1px solid var(--line); border-radius:14px; padding:16px;">
+              <!-- Mini chart timeline (placeholder bars — port-time va wire real data) -->
+              <div class="mini-chart" style="height:80px; display:flex; align-items:flex-end; gap:6px; margin-bottom:14px;">
+                <div class="bar" style="height:38%;"></div>
+                <div class="bar" style="height:46%;"></div>
+                <div class="bar" style="height:52%;"></div>
+                <div class="bar" style="height:60%;"></div>
+                <div class="bar" style="height:68%;"></div>
+                <div class="bar" style="height:74%;"></div>
+                <div class="bar" style="height:82%;"></div>
+                <div class="bar" style="height:88%;"></div>
+                <div class="bar" style="height:95%;"></div>
+                <div class="bar" style="height:100%; background:#c8412e;"></div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-family:'JetBrains Mono', monospace; font-size:13px;">
+                <div><div class="small-text" style="color:var(--ink-3);">Prim record</div><div style="font-weight:700; color:var(--ink); margin-top:2px;" id="pr-detail-first">12 kg &times; 8</div></div>
+                <div><div class="small-text" style="color:var(--ink-3);">Ultim record</div><div style="font-weight:700; color:#c8412e; margin-top:2px;" id="pr-detail-last">25 kg &times; 10</div></div>
+                <div><div class="small-text" style="color:var(--ink-3);">Progres total</div><div style="font-weight:700; color:#3d7a4a; margin-top:2px;" id="pr-detail-progress">+108%</div></div>
+                <div><div class="small-text" style="color:var(--ink-3);">PR count</div><div style="font-weight:700; color:var(--ink); margin-top:2px;" id="pr-detail-count">10</div></div>
+              </div>
+              <p class="small-text" style="color:var(--ink-3); margin-top:10px; line-height:1.5; font-style:italic;">Coach-ul foloseste curba ta de progres pentru a estima incarcari sigure si sa cronometreze deload-uri.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1155,6 +1294,8 @@
               <button class="wv2-postlog-edit" onclick="openPostlogEdit()" aria-label="Editeaza"><i data-lucide="pencil"></i></button>
             </div>
             <div class="kicker" style="margin-top:18px;">Cum a fost?</div>
+            <!-- FIX 3 (2026-05-11) Marius-only tempo prescription cue. Gigel persona NU vede (anti-jargon). Maria nu vede (simplify). Engine output placeholder pentru port-time wire. -->
+            <div class="wv2-marius-only" style="margin:8px 0 10px; padding:8px 12px; background:var(--paper-2); border-left:3px solid #c8412e; border-radius:6px; font-family:'Lora', serif; font-style:italic; font-size:13px; color:var(--ink-2); line-height:1.4;">Cobori 3 sec &middot; pauza 1 sec jos &middot; explozie sus</div>
             <div class="wv2-rating-row">
               <button class="wv2-rating-btn" data-rating="usor" onclick="pickRating('usor')"><span class="dot">🟢</span><span class="lbl">Usor</span></button>
               <button class="wv2-rating-btn" data-rating="potrivit" onclick="pickRating('potrivit')"><span class="dot">🟡</span><span class="lbl">Potrivit</span></button>
@@ -1170,9 +1311,7 @@
             <span style="font-size:13px; font-weight:600; color:var(--ink); flex:1;">Pont de executie</span>
             <i data-lucide="chevron-down" id="cue-chev" style="width:16px; height:16px; color:var(--ink-3);"></i>
           </div>
-          <div id="cue-body" class="wv2-cue-body">
-            "Coatele la 45°, nu prea larg. Strangi pieptul sus, fara sa blochezi cotul complet. Respira adanc inainte sa cobori."
-          </div>
+          <!-- FIX 3 (2026-05-11): wv2-cue-body element stripped (legacy CD V1 dead code per audit 373). -->
 
           <!-- Pasul 5 SUS: Coach recomanda (predictie editabila pre-set, ✎) -->
           <!-- Daniel review 2026-05-11 C2: inline edit per row (modal eliminat). Tap pen ✎ → row devine editable + check/x. -->
@@ -1398,12 +1537,13 @@
           <!-- Coach felicitare (persona-aware) -->
           <div class="coach-quote" id="summary-coach-line" style="font-family:'Lora', serif; font-size:18px; line-height:1.5; color:var(--ink-2); margin: 8px 0 20px; font-style:italic;">„Mergi bine, te astept joi!“</div>
 
-          <!-- PR banner (F11 — conditional, shown if PR detected) -->
+          <!-- PR banner (F11 — conditional, shown if PR detected). FIX 5 (2026-05-11): "Vezi toate" link drill to pr-wall. -->
           <div class="wv2-pr-banner" id="summary-pr-banner" style="margin-bottom:14px;">
             <div class="trophy"><i data-lucide="trophy"></i></div>
             <div style="flex:1; min-width:0;">
               <div class="title">Record nou!</div>
-              <div class="body" id="summary-pr-text">Impins inclinat 25 kg × 10</div>
+              <div class="body" id="summary-pr-text">Impins inclinat 25 kg &times; 10</div>
+              <a href="javascript:void(0)" onclick="goto('pr-wall')" style="display:inline-block; margin-top:4px; color:#7a6938; font-size:12px; font-weight:600; text-decoration:underline; text-underline-offset:2px;">Vezi toate &rarr;</a>
             </div>
           </div>
 
@@ -1530,11 +1670,12 @@
 
           <!-- Auto toggle REMOVED 2026-05-11 — Auto = al 6-lea obiectiv in Antrenor tab (NU toggle separat). Engine semantics: dynamic goal selection based on profile + adapts over time. Marius override explicit pick obiectiv specific anytime. -->
 
-          <!-- Alerte azi — F1 V1: doar LOW_ADHERENCE + STAGNATION (Gigel-tone, intrebare NU comanda). Drop HIGH_DEVIATION + EARLY_END + PEAK_HOURS pre-Beta. -->
+          <!-- Alerte azi — F1 V1: doar LOW_ADHERENCE + STAGNATION (Gigel-tone, intrebare NU comanda). Drop HIGH_DEVIATION + EARLY_END + PEAK_HOURS pre-Beta. FIX 4 (2026-05-11): weaknessDetector lagging signal banner 3rd added. -->
           <div class="settings-section">Alerte azi</div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <div class="alert-row warn"><i data-lucide="calendar-x"></i><div style="flex:1;"><b style="color:var(--ink); font-size:14px;">Saptamana asta ai sarit 2 antrenamente</b><div class="small-text" style="color:var(--ink-2);">Vrei sa discutam de ce? Coach-ul poate ajusta programul.</div></div></div>
             <div class="alert-row"><i data-lucide="minus"></i><div style="flex:1;"><b style="color:var(--ink); font-size:14px;">Greutatile stau pe loc de 3 saptamani</b><div class="small-text" style="color:var(--ink-2);">E momentul sa schimbam putin programul. Vrei sa-ti propun ceva?</div></div></div>
+            <div class="alert-row"><i data-lucide="trending-down"></i><div style="flex:1;"><b style="color:var(--ink); font-size:14px;">Umerii ramasi in urma</b><div class="small-text" style="color:var(--ink-2);">Coach-ul adauga +2 seturi laterale saptamana asta.</div></div></div>
           </div>
 
           <!-- Logheaza greutate · Daniel review 2026-05-11: state machine "unlogged" (CTA brick) ↔ "logged" (read-only card cu Edit). Tap Edit → goto('log-weight') pre-populat. -->
@@ -2268,6 +2409,13 @@
       </div>
     </div>
 
+    <!-- FIX 6 (2026-05-11) Mini-player sesiune persistenta — sticky pill brick deasupra nav root, sub orice screen. Apare doar cand _dirSession.active === true (localStorage wv2-active-session). Hidden cand screen-workout active. Tap → return la session execution Pasul actual. Parity L7 reverse direction (L7 = post-close resume; mini-player = in-app navigate-while-active). -->
+    <div id="session-mini-player" class="session-pill" onclick="returnToActiveSession()" style="display:none;" role="button" aria-label="Reia sesiunea curenta">
+      <i data-lucide="play" style="width:14px; height:14px; flex-shrink:0;"></i>
+      <span id="session-pill-text" style="flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Push &middot; piept &middot; ex 2/5 &middot; 18 min</span>
+      <i data-lucide="chevron-right" style="width:14px; height:14px; flex-shrink:0; opacity:0.7;"></i>
+    </div>
+
     <!-- Bottom nav (V1 LOCKED — 4 taburi) -->
     <div id="bottom-nav" style="height: 72px; border-top: 1px solid #ece5d3; background: white; display:flex; align-items:stretch; padding-bottom: 8px;">
       <button class="nav-tab tab-active" data-tab="antrenor" onclick="goto('antrenor')">
@@ -2331,7 +2479,7 @@
   /* Cue (collapsible 💡) */
   .wv2-cue { margin: 10px 20px 0; padding:10px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; display:flex; align-items:center; gap:10px; cursor:pointer; }
   .wv2-cue:hover { background:var(--line); }
-  .wv2-cue-body { margin: 6px 20px 0; padding:12px; background:#fdf9ee; border:1px solid #e8d59a; border-radius:10px; font-family:'Lora', serif; font-size:14px; color:var(--ink-2); line-height:1.5; font-style:italic; display:none; }
+  /* FIX 3 (2026-05-11): .wv2-cue-body rule stripped (legacy CD V1 dead code per audit 373). */
 
   /* Coach recomanda card (SUS — predictie editabila) */
   .wv2-coach-card { margin: 14px 20px 0; background:var(--ink); color:var(--paper); border-radius:14px; padding:14px 16px; position:relative; overflow:hidden; }
@@ -3845,6 +3993,48 @@
     'Extensii triceps cablu': 'Tricepsul = <b>2/3 din volumul bratului</b>. Cablul mentine tensiune pe tot rangeul, mai eficient ca ganterele pentru izolare. Coach a pus prinderea stransa ca sa lucreze toate cele 3 capete.',
     'Plansa abdominala': 'Core stabil = <b>scuteste spatele in toate compoundurile</b>. 45 sec static la final cand esti obosit = adaptare reala, nu doar volum gol.'
   };
+  // FIX 5 prEngine PR wall (2026-05-11) — open detail pane for exercise
+  const PR_DETAIL = {
+    'Impins inclinat':     { first: '12 kg × 8',  last: '25 kg × 10', progress: '+108%', count: 10 },
+    'Genuflexiuni':        { first: '40 kg × 5',  last: '80 kg × 8',  progress: '+100%', count: 8 },
+    'Indreptari':          { first: '60 kg × 5',  last: '100 kg × 5', progress: '+67%',  count: 7 },
+    'Trageri orizontale':  { first: '35 kg × 10', last: '65 kg × 10', progress: '+86%',  count: 9 },
+    'Impins militar':      { first: '25 kg × 6',  last: '50 kg × 6',  progress: '+100%', count: 6 }
+  };
+  function openPrDetail(name) {
+    const d = PR_DETAIL[name] || { first: '—', last: '—', progress: '—', count: 0 };
+    document.getElementById('pr-detail-name').textContent = name;
+    document.getElementById('pr-detail-first').innerHTML = d.first;
+    document.getElementById('pr-detail-last').innerHTML = d.last;
+    document.getElementById('pr-detail-progress').textContent = d.progress;
+    document.getElementById('pr-detail-count').textContent = d.count;
+    document.getElementById('pr-detail-pane').style.display = 'block';
+    if (window.lucide) lucide.createIcons();
+    document.getElementById('pr-detail-pane').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // FIX 2 Deload (2026-05-11) — acknowledge deload card from Antrenor home
+  function acknowledgeDeload() {
+    const card = document.getElementById('coach-deload-card');
+    if (card) card.style.display = 'none';
+    localStorage.setItem('wv2-deload-ack', String(Date.now()));
+    showToast('OK. Saptamana de recuperare activa.');
+  }
+
+  // FIX 1 Warmup (2026-05-11) — L1 bottom sheet "De ce aceasta incalzire?"
+  function openWhyWarmup() {
+    const html = '<div class="small-text" style="color:#c8412e; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; font-size:11px; margin-bottom:4px;">De ce aceasta incalzire</div>' +
+                 '<div style="font-size:20px; font-weight:700; color:var(--ink); margin-bottom:14px; letter-spacing:-0.01em;">5 min incalzire piept &amp; umeri</div>' +
+                 '<p class="body-text" style="color:var(--ink-2); line-height:1.55; margin:0 0 14px;">Inainte de lifting greu pe piept, <b>activam scapula si rotatorii umarului</b>. Band pull-apart pregateste lantul posterior, iar mobilitatea scapulei reduce riscul la impins inclinat. 5 min e suficient cand corpul e odihnit — coach-ul mareste warmup daca readiness scade.</p>' +
+                 '<div style="background:var(--paper-2); border-radius:10px; padding:10px 12px; display:flex; gap:14px; font-size:13px; color:var(--ink-2); margin-bottom:16px; flex-wrap:wrap;">' +
+                 '<span><b style="color:var(--ink);">2</b> seturi band pull-apart</span>' +
+                 '<span><b style="color:var(--ink);">~5</b> min total</span>' +
+                 '<span><b style="color:var(--ink);">Adaptiv</b> per main lift</span>' +
+                 '</div>' +
+                 '<button onclick="closeGenericSheet()" style="width:100%; background:var(--ink); color:#f6f0df; border:none; border-radius:10px; padding:12px; font-size:14px; font-weight:600; cursor:pointer;">Am inteles</button>';
+    openGenericSheet(html);
+  }
+
   function openWhyExercise() {
     const ex = WV2_EXERCISES[wv2.exIdx];
     const why = WHY_EXERCISE[ex.name] || 'Acest exercitiu face parte din planul echilibrat al sesiunii — combina volumul, intensitatea si recuperarea.';
@@ -3987,8 +4177,58 @@
       // L6: show reactivate if last session > 14 days
       checkReactivate();
     }
+    // FIX 6 (2026-05-11) Mini-player: entering workout = mark active; refresh pill on every nav
+    if (name === 'workout') markActiveSession();
+    refreshSessionPill(name);
     if (window.lucide) lucide.createIcons();
   };
+
+  // FIX 6 (2026-05-11) Mini-player sesiune persistenta — _dirSession.active = true while in-app navigate-while-active
+  function markActiveSession() {
+    const ex = (typeof WV2_EXERCISES !== 'undefined') ? WV2_EXERCISES[wv2.exIdx] : null;
+    const elapsed = Math.floor((Date.now() - (wv2.sessionStart || Date.now())) / 60000);
+    const payload = {
+      title: 'Push',
+      group: ex && ex.name ? ex.name.split(' ')[0].toLowerCase() : 'piept',
+      exIdx: (wv2 && typeof wv2.exIdx === 'number') ? wv2.exIdx : 0,
+      exTotal: (typeof WV2_EXERCISES !== 'undefined') ? WV2_EXERCISES.length : 5,
+      elapsedMin: elapsed || 0,
+      startedAt: wv2.sessionStart || Date.now()
+    };
+    localStorage.setItem('wv2-active-session', JSON.stringify(payload));
+  }
+  function clearActiveSession() {
+    localStorage.removeItem('wv2-active-session');
+    const pill = document.getElementById('session-mini-player');
+    if (pill) pill.style.display = 'none';
+  }
+  function refreshSessionPill(currentName) {
+    const pill = document.getElementById('session-mini-player');
+    if (!pill) return;
+    const raw = localStorage.getItem('wv2-active-session');
+    if (!raw || currentName === 'workout') { pill.style.display = 'none'; return; }
+    try {
+      const s = JSON.parse(raw);
+      const elapsed = Math.floor((Date.now() - (s.startedAt || Date.now())) / 60000);
+      const txt = (s.title || 'Sesiune') + ' · ' + (s.group || '') + ' · ex ' + ((s.exIdx || 0) + 1) + '/' + (s.exTotal || 5) + ' · ' + elapsed + ' min';
+      document.getElementById('session-pill-text').textContent = txt;
+      pill.style.display = 'flex';
+    } catch (e) { pill.style.display = 'none'; }
+  }
+  function returnToActiveSession() {
+    const pill = document.getElementById('session-mini-player');
+    if (pill) pill.style.display = 'none';
+    goto('workout');
+  }
+  // Hook session lifecycle terminators (pause / discard / finish) to clear active session
+  const _origPauseWS = window.pauseWorkoutSession;
+  window.pauseWorkoutSession = function() { clearActiveSession(); return _origPauseWS.apply(this, arguments); };
+  const _origDiscardWS = window.discardWorkoutSession;
+  window.discardWorkoutSession = function() { clearActiveSession(); return _origDiscardWS.apply(this, arguments); };
+  const _origConfirmCancel = window.confirmCancelSession;
+  window.confirmCancelSession = function() { const r = _origConfirmCancel.apply(this, arguments); clearActiveSession(); return r; };
+  const _origFinishFlow = window.finishWorkoutFlow;
+  window.finishWorkoutFlow = function() { clearActiveSession(); return _origFinishFlow.apply(this, arguments); };
 
   // ─── Win-back inactive user (last_session > 14 zile) — Co-CTO clarification 2026-05-11: distinct from post-delete reactivation (screen-auth-reactivate). Acest card e gentle prompt pentru users inactivi cont activ. ──────────────
   // ─── Daniel review 2026-05-11 §L6 (winback): Reactivate — afisat daca last_session > 14 zile ──────────────

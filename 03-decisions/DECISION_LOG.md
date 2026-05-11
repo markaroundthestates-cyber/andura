@@ -1,6 +1,82 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — MOCKUP 6 FIXES SWEEP COMPLETE — Warmup + Deload + Tempo Marius render + weaknessDetector lagging + PR drill + Mini-player applied verbatim wording per scope LOCKED. SHA256 post-edit `B4D26351…D3A8B4` (delta +20278 bytes, +240 LOC). Diacritics stripped per NO_DIACRITICS_RULE LOCKED V1 PERMANENT. Cumulative ~722-724 PRESERVED
+
+**Status:** P1-FLAG-MOCKUP-6-FIXES-LOCKED-V1 status flip 🟡 LOCKED V1 SCOPE → 🟢 **LANDED 2026-05-11 chat ACASĂ continuation Co-CTO autonomous** via 6 fixes mockup edit verbatim per scope wording Co-CTO tactical preserved. P1-FLAG-AUDIT-COMPLIANCE-REVIZUIT-80 RECOMPUTED ~80% → ~95%+ post-fixes (5 gaps pipeline §42.10 prescriptive CLOSED + 2 gaps spec V1 CLOSED). Mockup `04-architecture/mockups/andura-clasic.html` post-edit SHA256 `B4D26351578C5DB1564EE47D99048868C4A6519AE79CDFDEE460E3FB75D3A8B4` (size 325709 bytes, was 305431, delta +20278 bytes, LOC 4197 → 4437, +240 lines). Option A executed (sweep dedicat per Daniel signal go chat-current).
+
+**Authority:** Daniel autonomy lock EXTINS PERMANENT 2026-05-11 chat ACASĂ continuation Co-CTO autonomous + P1-FLAG-MOCKUP-6-FIXES-LOCKED-V1 scope wording Co-CTO tactical preserved verbatim.
+
+**1. FIX 1 Warmup — Pasul 2 Workout Preview extension + help-circle L1 bottom sheet:**
+- Insert NEW `.warmup-row` HTML block above `<div class="settings-section">Exercitii</div>` in `screen-workout-preview`
+- Content: `<i data-lucide="flame">` + 1-line Lora italic *"Incepem cu 5 min incalzire piept & umeri — band pull-apart × 2 · activare scapula"* + help-circle button `openWhyWarmup()`
+- NEW JS handler `openWhyWarmup()` opens generic bottom sheet (pattern reuse openGenericSheet) cu *"De ce aceasta incalzire"* title + body explanation activare scapula + retatori umar + 5 min adaptive per main lift + recovery state
+- Adaptive per main lift + recovery state (placeholder values pentru port-time wire engine real)
+
+**2. FIX 2 Deload — Antrenor home variant 3rd + Heatmap legenda Recuperare tier:**
+- Insert NEW `#coach-deload-card` HTML in `screen-antrenor` dupa `#coach-rest-card` (3rd variant dupa workout/rest)
+- Card cream warm `#f5ebd0 + 1.5px solid #e6d49a` cu icon `leaf` color `#8a6d1f` + title *"Saptamana asta = recuperare"* + WHY italic Lora *"Oboseala cumulata 3 sapt · scadem volumul -40% pe toate sesiunile · revenim luna viitoare mai puternic"* + buton brick *"OK, inteleg"* (`acknowledgeDeload()` handler)
+- Heatmap legenda Istoric tier added 5th: cream warm `#f5ebd0` border `#e6d49a` swatch + label "Recuperare" between "Usor" and "Zi libera" (NU "Deload" jargon)
+- `acknowledgeDeload()` handler: hide card + localStorage `wv2-deload-ack` timestamp + toast confirm "Saptamana de recuperare activa"
+
+**3. FIX 3 Tempo — strip wv2-cue-body + post-set rating Marius-only tempo cue:**
+- `.wv2-cue-body` CSS rule line 2334 stripped (legacy CD V1 dead code per audit 373)
+- `<div id="cue-body" class="wv2-cue-body">` element instance stripped from `wv2-legacy-hidden` parent
+- NEW post-set rating row Marius-only `wv2-marius-only` class in `#wv2-postlog` between "Cum a fost?" kicker and rating row: Lora italic 1-line *"Cobori 3 sec · pauza 1 sec jos · explozie sus"* tempo prescription cue
+- Existing CSS rules `body[data-persona="maria"] .wv2-marius-only { display:none }` + `body[data-persona="gigel"] .wv2-marius-only { display:none }` handle persona-detect (Gigel + Maria NU vad, Marius DA)
+
+**4. FIX 4 weaknessDetector lagging signal — Antrenor home WHY line + Progres pattern banner 3rd:**
+- Insert NEW `#coach-today-lagging` HTML below `#coach-today-why` in `#coach-today-card`: Lora italic line `#f6c89a` color (warmer accent vs primary why `#e8d9b8`) cu border-top dashed *"Pectoralii recupereaza · spatele sub-volum 2 sapt — focus azi pe randuri"*
+- Hidden by default `display:none` — engine populates trigger
+- Progres pattern banner NEW 3rd added in `screen-progres` Alerte azi section dupa LOW_ADHERENCE + STAGNATION: icon `trending-down` + title *"Umerii ramasi in urma"* + sub *"Coach-ul adauga +2 seturi laterale saptamana asta"*
+
+**5. FIX 5 prEngine PR wall — drill-down screen NEW + F11 banner link:**
+- Replace `onclick="showToast('Recorduri Personale')"` line 1099 with `onclick="goto('pr-wall')"`
+- NEW `#screen-pr-wall` sub-page after `screen-istoric`: `data-screen-label="Istoric › Recorduri Personale"` + sub-header + content (3 stat cards: Total PR 14 / Luna asta 3 / Exercitii 8 + list 5 PR cronologic descending button rows cu badge `award` lucide icon + tap → `openPrDetail(name)` + detail pane mini-chart timeline placeholder bars cu last bar `#c8412e` accent + 4 stat cells first/last/progress%/count + Lora italic disclaimer)
+- 5 PR seed data: Impins inclinat 25kg×10 (7 mai) / Genuflexiuni 80kg×8 (4 mai) / Indreptari 100kg×5 (28 apr) / Trageri orizontale 65kg×10 (21 apr) / Impins militar 50kg×6 (14 apr)
+- `PR_DETAIL` JS data map keyed by exercise name with first/last/progress/count
+- `openPrDetail(name)` populates detail pane + scrollIntoView
+- F11 banner post-summary: added "Vezi toate →" link `onclick="goto('pr-wall')"` color `#7a6938` underline below body text
+
+**6. FIX 6 Mini-player sesiune persistenta — sticky pill brick + localStorage parity L7 reverse:**
+- Insert NEW `#session-mini-player.session-pill` element before `#bottom-nav` (sibling at phone shell level, sub orice screen)
+- Content: `<i data-lucide="play">` + text span (populated runtime) + `<i data-lucide="chevron-right">`. Default `display:none`.
+- NEW CSS `.session-pill`: absolute positioned `bottom:80px` (nav 72px + 8px gap), brick background `#c8412e`, color white, border-radius 999px, box-shadow `0 6px 18px rgba(200,65,46,0.35)`, font-weight 600 size 13px
+- Apare doar cand `localStorage.wv2-active-session` exists AND current screen != workout
+- Hide cand screen-workout active
+- `markActiveSession()`: set localStorage with title/group/exIdx/exTotal/elapsedMin/startedAt — invoked entering 'workout' via goto override
+- `clearActiveSession()`: remove localStorage + hide pill — chained on pauseWorkoutSession + discardWorkoutSession + confirmCancelSession + finishWorkoutFlow (preserves original functions via `_orig*` capture)
+- `refreshSessionPill(currentName)`: reads localStorage + computes elapsed min + renders text "Push · group · ex N/M · X min", invoked on every goto navigation
+- `returnToActiveSession()`: tap handler — hide pill + goto('workout')
+- Parity L7 mecanic reverse direction (L7 paused = post-close resume card on home; mini-player = in-app navigate-while-active sticky pill cross-screen)
+
+**7. Diacritics strip per NO_DIACRITICS_RULE LOCKED V1 PERMANENT:**
+- Source 6 fixes wording în prompt preserved diacritics (Pasul 2 *"Începem..."* etc.) ca SOURCE wording
+- Aplicare strip post-insert: ă→a, â→a, î→i, ș→s, ț→t — verified grep `[ăâîșțĂÂÎȘȚ]` empty post-edit
+- Lucide CDN ref line 8 preserved verbatim (NO_DIACRITICS strip NU atinge URL)
+
+**8. Audit compliance recomputed ~80% → ~95%+ post-fixes:**
+- 5 gaps pipeline §42.10 prescriptive CLOSED: Warmup ✅ (FIX 1) + Deload ✅ (FIX 2) + Tempo ✅ (FIX 3 strip+Marius render) + weaknessDetector ✅ (FIX 4) + prEngine PR wall ✅ (FIX 5)
+- 2 gaps spec V1 CLOSED: Mini-player §29.5.7 ✅ (FIX 6) + F13 resolved-by-decision drop V1 per Anti-RE rule LOCKED V1 PERMANENT (V1_FEATURES_AUDIT verdict superseded)
+
+**9. SHA256 post-edit + size delta + LOC delta:**
+- Pre-edit baseline: SHA256 `065893BFBD92B0F0AC4AE71444FBC7365DC46610157A240E2ED9CFF2A40E3344` / 305431 bytes / 4197 LOC
+- Post-edit: SHA256 `B4D26351578C5DB1564EE47D99048868C4A6519AE79CDFDEE460E3FB75D3A8B4` / 325709 bytes / 4437 LOC
+- Delta: +20278 bytes (+19.8 KB) / +240 LOC
+
+**10. Cumulative LOCKED PRESERVED ~722-724 unchanged** — mockup design refinement pre-port additive, NU substantive product/architecture scope change.
+
+**Cross-refs:**
+- `04-architecture/mockups/andura-clasic.html` (post-edit SHA256 + size + LOC verified)
+- `DIFF_FLAGS.md` P1-FLAG-MOCKUP-6-FIXES-LOCKED-V1 🟢 LANDED + P1-FLAG-AUDIT-COMPLIANCE-REVIZUIT-80 🟢 RECOMPUTED ~95%+ + Header `Updated:` field flip MOCKUP 6 FIXES SWEEP LANDED narrativ
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry descending + §ACTIVE_FLAGS update + §NEXT priority #1 RESOLVED-LANDED
+- Backup tag pushed origin: `pre-mockup-6-fixes-sweep-2026-05-11`
+- Previous LATEST `📤_outbox/_archive/2026-05/379_LATEST_PROD_BUGS_RECONCILE_CONSUMED.md` cycled
+- 1 commit atomic pushed origin/main
+
+---
+
+
 ## 2026-05-11 chat ACASĂ continuation Co-CTO autonomous — PROD BUGS RECONCILE VERIFY ATOMIC — P1-FLAG-PROD-AUTO-FAZA + P1-FLAG-PROD-BF-EDIT-KCAL status flip 🔴 DISPUTED → 🟢 RECONCILED RESOLVED via code audit verify + test execution all green (cumulative ~722-724 PRESERVED — reconcile verify only, NU substantive NEW)
 
 **Status:** Both P1-FLAG-PROD-AUTO-FAZA-2026-05-10 + P1-FLAG-PROD-BF-EDIT-KCAL-2026-05-10 status flip 🔴 DISPUTED → 🟢 **RECONCILED RESOLVED 2026-05-11 chat ACASĂ continuation Co-CTO autonomous** via code audit verify `src/engine/sys.js` + propagation `src/pages/weight.js` + `src/pages/dashboard.js` + test execution `src/engine/__tests__/sys.test.js` 14/14 PASS + total suite 148 files / 2732 tests PASS. Daniel handover 2026-05-11 "Neinvestigat" override **invalid** — predecessor RESOLVED `05ba372` (chat ACASĂ MCP filesystem 2026-05-10) confirmed code state actual via filesystem read + git log/show/diff verification.
