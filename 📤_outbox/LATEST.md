@@ -29,11 +29,11 @@
 N/A — mockup-only replace + vault docs ZERO src/ touched. `git diff origin/main..HEAD -- src/` = ZERO LINES (verified pre-commit each commit).
 
 ## Commits (2 atomic chain — granular recovery NU monolith)
-- **Commit 1:** `chore(mockup): replace andura-clasic.html with v2 (Co-CTO 2026-05-11 ~98% compliant V2 spec) + backup tag pre-replace` — single file change `04-architecture/mockups/andura-clasic.html`
-- **Commit 2:** `chore(vault): §CC.5 ingest handover MOCKUP_CLASIC_FINAL_v2 + audit + INSIGHTS_BACKLOG strategic insight training schedule override paradigm` — CURRENT_STATE + DECISION_LOG + DIFF_FLAGS + INSIGHTS_BACKLOG + 3 archive moves (371 LATEST cycle + 372 HANDOVER + 373 AUDIT) + new LATEST.md
+- **Commit 1 `7498fd6`** `chore(mockup): replace andura-clasic.html with v2 (Co-CTO 2026-05-11 ~98% compliant V2 spec) + backup tag pre-replace` — mockup file `04-architecture/mockups/andura-clasic.html` REPLACE (2 files: mockup + LATEST.md cycle co-staged 371 NN, +2371 / -318 lines) — pre-commit vitest 2732 PASS
+- **Commit 2 `8b7728e`** `chore(vault): §CC.5 ingest handover MOCKUP_CLASIC_FINAL_v2 + audit + INSIGHTS_BACKLOG strategic insight training schedule override` — CURRENT_STATE + DECISION_LOG + DIFF_FLAGS + INSIGHTS_BACKLOG + new LATEST.md + 2 archive moves (372 HANDOVER + 373 AUDIT) (7 files, +442 / -9 lines) — pre-commit vitest 2732 PASS
 
 ## Pushed
-✅ Origin/main both commits + backup tag `pre-mockup-clasic-final-v2-replace-2026-05-11`
+✅ Origin/main both commits chain `4d7923e..8b7728e` + backup tag `pre-mockup-clasic-final-v2-replace-2026-05-11`
 
 ## Issues (findings discovered runtime)
 1. **Lucide reconcile finding raport raw (NU blocking):** source mockup uses **lucide CDN** ref line 8 `<script src="https://unpkg.com/lucide@latest" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js';"></script>` — NU inline UMD as audit claimed for 702KB v. Delta -397KB (305KB source vs 702KB audit claim) explained = Daniel exported cleaned version preferință maintainability (CDN refs preserved, acceptable mockup design master, port React va elimina oricum). 14+ `window.lucide` + `lucide.createIcons()` calls preserved across mockup JS modules. Flagged CURRENT_STATE §JUST_DECIDED + DECISION_LOG 2026-05-11 entry + DIFF_FLAGS P1-FLAG-MOCKUP-CLASIC-FINAL-LOCKED status.
