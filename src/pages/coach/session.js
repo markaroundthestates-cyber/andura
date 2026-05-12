@@ -169,14 +169,13 @@ export function endSession() {
   DB.set('session-burns', burnLog.slice(0, 100));
 
   // ── Calculeaza sumar sesiune ──────────────────────────────────────────────
+  // F13 rating notes DROP V1 Anti-RE rule downstream cleanup: notes/feltStrong/feltHeavy/moodLabel
+  // dead-code (never passed to showSessionRating consumer) removed. moodLabel sourced from
+  // rating.js rateSession() per F12 buttons (3-state easy/normal/hard).
   const totalVolume = state.sessLog.reduce((a, s) => a + (s.w * (parseInt(s.reps) || 8)), 0);
   const totalSets = state.sessLog.length;
   const uniqueEx = [...new Set(state.sessLog.map(s => s.ex))];
   const avgRPE = state.sessLog.filter(s => s.rpe).reduce((a, s, _, arr) => a + s.rpe / arr.length, 0);
-  const notes = state.sessLog.flatMap(s => s.notes || []);
-  const feltStrong = notes.filter(n => n === 'strong').length;
-  const feltHeavy = notes.filter(n => n === 'form' || n === 'fatigue').length;
-  const moodLabel = feltStrong > feltHeavy ? '💪 Sesiune puternica' : feltHeavy > feltStrong ? '😓 Sesiune grea' : '⚡ Sesiune ok';
 
   // ── Detecteaza recorduri ──────────────────────────────────────────────────
   const allLogs = DB.get('logs') || [];
