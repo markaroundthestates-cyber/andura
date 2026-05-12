@@ -1,7 +1,7 @@
 # DIFF FLAGS — Outstanding Issues Requiring Daniel Action
 
 **Owner:** Daniel (CEO + Product). Used by CC Opus / Claude chat to surface pending issues.
-**Updated:** 2026-05-12 chat ACASĂ Co-CTO autonomous — FAZA 3 Karpathy Option B Phase 5 cleanup LANDED post-Daniel-approve voice fidelity checkpoint `feature/v2-vanilla-port` branch (vault meta-tooling, cumulative ~742 PRESERVED unchanged). 3 flags update atomic: P1-FLAG-FAZA-3-PHASE-5-DANIEL-REVIEW-CHECKPOINT-PENDING flip 🟡 OPEN → 🟢 RESOLVED LANDED 2026-05-12 (Daniel review 9 wiki pages sample voice fidelity validation PASS verdict; 2 minor flags non-blocker defer) + NEW 🟢 P1-FLAG-FAZA-3-PHASE-5-LANDED RESOLVED 2026-05-12 (1 atomic commit single-concern: 2 archive moves 406 PROMPT_CC_FAZA_3 + 407 LATEST cycle precedent + vault hub sync atomic; cumulative ~742 PRESERVED) + NEW 🟢 P1-FLAG-OBSIDIAN-GRAPH-VIEW-COLORS-LANDED RESOLVED 2026-05-12 (.obsidian/graph.json + CSS snippet andura-graph.css LANDED chat-side; plugin config TBD optional polish defer post-Beta acceptable). Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute rollback safety. Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). **Predecessor Updated:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2D extensive orphan resolution + markdown→wikilink scan LANDED `feature/v2-vanilla-port` branch (4 actionable atomic commits chain `e5c4067 → 4079b1c` pre Step 5 vault hub sync). NEW P1-FLAG-FAZA-2D-ORPHAN-RESOLUTION-LANDED 🟢 RESOLVED LANDED (pre-flight raport 393 extensive scan 102 wiki layer files / 406 archive excluded scan-target; classification 8 PROTECTED + 6 HUB + 81 LEAF + 7 ORPHAN; Batch (a) NO-OP wiki clean post-Faza 2C + Batch (b) `c3b41d4` INDEX_MASTER 10 cross-refs append + Batch (c) `4079b1c` archive exclusion doc 394 Daniel UI manual configure Option A `📤_outbox/_archive/**` glob + Batch (d) NO-OP zero residual). Daniel manual step pending: Obsidian Settings → Files & Links → Excluded files → add glob (per Batch (c) Option A recommendation ~99% orphan graph view reduction expected). Tests 2781 PASS preserved EXACT all commits doc-only ZERO src/ touched. Cumulative ~742 PRESERVED unchanged. Backup tag `pre-faza-2d-extensive-orphan-resolution-2026-05-11` pushed origin pre-execute. **Predecessor:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) LANDED `feature/v2-vanilla-port` branch (6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync). P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN flipped 🟡 PENDING_DANIEL_REVIEW → 🟢 RESOLVED LANDED (64 → 0 real broken wikilinks; 5 orphan candidates resolved 3 deleted vault root junk + 2 archived 391/392 + 1 cross-ref added). Tests 2781 PASS preserved EXACT all 6 commits doc-only ZERO src/ touched. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive). Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute. Predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema LANDED `feature/v2-vanilla-port` branch (5 atomic commits chain `dc555d1 → d108a56` pushed origin). NEW P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN 🟡 PENDING_DANIEL_REVIEW pointing raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` (ZERO P1 critical SSOT broken refs — INDEX_MASTER + CURRENT_STATE + DECISION_LOG + VAULT_RULES + CLAUDE.md + DIFF_FLAGS verified intact; 64 real broken classified P2 batch + 5 orphan candidates real Daniel review; flag added per Daniel resume prompt explicit instruction for review tracking, NU P1 critical severity). Tests 2781 PASS preserved EXACT. Cumulative ~742 PRESERVED unchanged. Pre-predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — STAGE 4 BATCH 2 SUB-BATCH 2 LANDED on `feature/v2-vanilla-port` branch (3 engine gap-uri pre-port `muscleRecovery.js` NEW + `coachDirector` 3 methods extension + `usNavyBF.js` NEW + idle.js port from `renderIdle.js` per V1_FEATURES_AUDIT verdict 15/15 features). NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirector overrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 LANDED 8 atomic commits autonomous. Cumulative ~742 PRESERVED (implementation work NU additive substantive product/architecture LOCK V1 — engine gaps + idle port = mecanic prescribed verdict, NU NEW decisions).
+**Updated:** 2026-05-12 chat ACASĂ Co-CTO autonomous extended session aggregate — FAZA 3 Karpathy Option B Phase 1-5 LANDED FULL + Phase 3 SUB-BATCH 2 Cluster A 16 ADRs LANDED + Obsidian + plugins eval LOCK + calendar feature STRATEGIC LOCK + τ ML LOCK + meta-pattern Daniel + MCP timeout 2h + 3 surfaces sync chat-side `feature/v2-vanilla-port` branch (vault meta-tooling + strategic decisions, cumulative ~742 PRESERVED unchanged). 9 flags total update atomic (3 🟢 RESOLVED 2026-05-12 + 6 🟡 OPEN 2026-05-12): NEW 🟢 P1-FLAG-FAZA-3-PHASE-5-LANDED RESOLVED 2026-05-12 (commit `069e5976` archive 406+407 + vault hub sync) + NEW 🟢 P1-FLAG-FAZA-3-PHASE-3-SUB-BATCH-2-LANDED RESOLVED 2026-05-12 (commit `66574a7` 16 ADRs Cluster A second half voice preservation policy §1 4-section enforced; wiki/index.md count 25 → 41 pages) + NEW 🟢 P1-FLAG-OBSIDIAN-GRAPH-VIEW-COLORS-LANDED RESOLVED 2026-05-12 (.obsidian/graph.json 10 color groups path-based + andura-graph.css snippet ~200 LOC Style Settings @settings YAML inline LANDED chat-side; auto chore Stop hook commit `efe518f`) + NEW 🟡 P1-FLAG-CALENDAR-FEATURE-ADAPTIVE-STRATEGIC-LOCK-V1 OPEN 2026-05-12 (MAJOR feature multi-session ~1000-1500 LOC + 80+ tests; scheduleAdapter.js + deviationMemory.js + UX vanilla 7-day strip; engine spine Coach Director + Muscle Recovery + Decision Log ADR 011 + Storage Tiering ADR 020) + NEW 🟡 P1-FLAG-DEVIATION-MEMORY-TAU-ML-ADAPTIVE-LOCK-V1 OPEN 2026-05-12 (Bayesian update decay rate per user response signals + Demographic Prior Database ADR 017 baseline cold-start cross-ref) + NEW 🟡 P1-FLAG-INSTALL-PACK-12-LOCKED-V1 OPEN 2026-05-12 (gstack + GSD + Impeccable + Emil Kowalski + Taste + UI/UX Pro Max + 21st.dev + Context 7 + Obsidian skills + Tavily + Firebase MCP eval + Sequential Thinking — install autonomous mâine post-trigger via claude_code; plugins per-mașină local NU sync cloud Daniel ACASĂ ≠ BIROU) + NEW 🟡 P1-FLAG-BATCH-2-ANTRENOR-PORT-INTERRUPTED-RELUARE OPEN 2026-05-12 (rating.js + session.js + tests + smoke; Daniel Stop interrupt mid-prompt write azi; reluare mâine fresh cu benefit GSD subagent + gstack /qa + /review) + NEW 🟡 P1-FLAG-MCP-TIMEOUT-EXTEND-2H OPEN 2026-05-12 (Daniel manual edit `claude_desktop_config.json` claude_code entry `"timeout": 7200000` dimineața) + NEW 🟡 P1-FLAG-DANIEL-TIME-ESTIMATES-RHETORICAL-PATTERN-CAPTURE OPEN 2026-05-12 (meta-pattern Daniel time estimates rhetorical/directional NOT literal numeric anchors; memory cap 30/30 atins → capture mental scribe mode permanent activ; replace candidate identificat dimineața dacă vrea persistent). Backup tag `pre-handover-2026-05-12-faza-3-sub-batch-2-landed-plugins-eval-locked` pushed origin pre-execute rollback safety. Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). **Predecessor Updated:** 2026-05-12 chat ACASĂ Co-CTO autonomous — FAZA 3 Karpathy Option B Phase 5 cleanup LANDED post-Daniel-approve voice fidelity checkpoint `feature/v2-vanilla-port` branch (vault meta-tooling, cumulative ~742 PRESERVED unchanged). 3 flags update atomic: P1-FLAG-FAZA-3-PHASE-5-DANIEL-REVIEW-CHECKPOINT-PENDING flip 🟡 OPEN → 🟢 RESOLVED LANDED 2026-05-12 (Daniel review 9 wiki pages sample voice fidelity validation PASS verdict; 2 minor flags non-blocker defer) + NEW 🟢 P1-FLAG-FAZA-3-PHASE-5-LANDED RESOLVED 2026-05-12 (1 atomic commit single-concern: 2 archive moves 406 PROMPT_CC_FAZA_3 + 407 LATEST cycle precedent + vault hub sync atomic; cumulative ~742 PRESERVED) + NEW 🟢 P1-FLAG-OBSIDIAN-GRAPH-VIEW-COLORS-LANDED RESOLVED 2026-05-12 (.obsidian/graph.json + CSS snippet andura-graph.css LANDED chat-side; plugin config TBD optional polish defer post-Beta acceptable). Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute rollback safety. Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). **Predecessor Updated:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2D extensive orphan resolution + markdown→wikilink scan LANDED `feature/v2-vanilla-port` branch (4 actionable atomic commits chain `e5c4067 → 4079b1c` pre Step 5 vault hub sync). NEW P1-FLAG-FAZA-2D-ORPHAN-RESOLUTION-LANDED 🟢 RESOLVED LANDED (pre-flight raport 393 extensive scan 102 wiki layer files / 406 archive excluded scan-target; classification 8 PROTECTED + 6 HUB + 81 LEAF + 7 ORPHAN; Batch (a) NO-OP wiki clean post-Faza 2C + Batch (b) `c3b41d4` INDEX_MASTER 10 cross-refs append + Batch (c) `4079b1c` archive exclusion doc 394 Daniel UI manual configure Option A `📤_outbox/_archive/**` glob + Batch (d) NO-OP zero residual). Daniel manual step pending: Obsidian Settings → Files & Links → Excluded files → add glob (per Batch (c) Option A recommendation ~99% orphan graph view reduction expected). Tests 2781 PASS preserved EXACT all commits doc-only ZERO src/ touched. Cumulative ~742 PRESERVED unchanged. Backup tag `pre-faza-2d-extensive-orphan-resolution-2026-05-11` pushed origin pre-execute. **Predecessor:** 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2C wikilink fix sweep ALL (a+b+c+d+e) LANDED `feature/v2-vanilla-port` branch (6 atomic commits chain `1a66483 → 8a34129` pre Step 6 vault hub sync). P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN flipped 🟡 PENDING_DANIEL_REVIEW → 🟢 RESOLVED LANDED (64 → 0 real broken wikilinks; 5 orphan candidates resolved 3 deleted vault root junk + 2 archived 391/392 + 1 cross-ref added). Tests 2781 PASS preserved EXACT all 6 commits doc-only ZERO src/ touched. Cumulative ~742 PRESERVED unchanged (vault meta-tooling NU additive). Backup tag `pre-faza-2c-wikilink-fix-sweep-2026-05-11` pushed origin pre-execute. Predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — FAZA 2B Karpathy CLAUDE.md schema LANDED `feature/v2-vanilla-port` branch (5 atomic commits chain `dc555d1 → d108a56` pushed origin). NEW P1-FLAG-WIKI-LINT-INITIAL-64-BROKEN 🟡 PENDING_DANIEL_REVIEW pointing raport `📤_outbox/_archive/2026-05/389_WIKI_LINT_RAPORT_INITIAL_2026-05-11.md` (ZERO P1 critical SSOT broken refs — INDEX_MASTER + CURRENT_STATE + DECISION_LOG + VAULT_RULES + CLAUDE.md + DIFF_FLAGS verified intact; 64 real broken classified P2 batch + 5 orphan candidates real Daniel review; flag added per Daniel resume prompt explicit instruction for review tracking, NU P1 critical severity). Tests 2781 PASS preserved EXACT. Cumulative ~742 PRESERVED unchanged. Pre-predecessor: 2026-05-11 chat ACASĂ Co-CTO autonomous — STAGE 4 BATCH 2 SUB-BATCH 2 LANDED on `feature/v2-vanilla-port` branch (3 engine gap-uri pre-port `muscleRecovery.js` NEW + `coachDirector` 3 methods extension + `usNavyBF.js` NEW + idle.js port from `renderIdle.js` per V1_FEATURES_AUDIT verdict 15/15 features). NEW P1-FLAG-ENGINE-3-GAPS-PRE-PORT 🟢 RESOLVED LANDED + P1-FLAG-PORT-FIRST-THEN-REACT progress SUB-BATCH 1 → SUB-BATCH 2 LANDED. Tests 2732 → 2781 PASS preserved zero regression (+49 new tests: 11 muscleRecovery + 8 coachDirector overrides + 8 usNavyBF + 18 idle + alte minor). Build vite green 419 modules. Predecessor: 2026-05-10 chat ACASĂ continuation 2 Mockup buguri sweep #1 LANDED 8 atomic commits autonomous. Cumulative ~742 PRESERVED (implementation work NU additive substantive product/architecture LOCK V1 — engine gaps + idle port = mecanic prescribed verdict, NU NEW decisions).
 **Predecessor Updated:** 2026-05-05 overnight (post HANDOVER_GLOBAL thematic split atomic execution per §62.2 LOCKED V1 — P1-FLAG-HANDOVER-SPLIT 🟡 OPEN → 🟢 RESOLVED. Source 7673 LOC split into 7 theme files + master = INDEX. ZERO data loss. ZERO wikilinks rewire (master = navigation hub, 1-hop drill-down). Backup tag `pre-handover-split-2026-05-05-overnight` rollback safety. Precedent same overnight: batch overnight 5 tasks complete + Validation Framework LOCK V1 + Cumulative LOCKED ~653 preserved.)
 **See also:** [[VAULT_RULES]] §HANDOVER_PROTOCOL §5 (Safety Net) §VAULT_HYGIENE_PASS STEP 13 | [[06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening|HANDOVER_GLOBAL]] | [[05-findings-tracker/FINDINGS_MASTER]]
 
@@ -33,6 +33,123 @@
 ---
 
 ## P1 BLOCKERS (require Daniel action before proceeding)
+
+### P1-FLAG-FAZA-3-PHASE-3-SUB-BATCH-2-LANDED — Phase 3 SUB-BATCH 2 Cluster A 16 ADRs second half RESOLVED LANDED 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟢 RESOLVED LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous Phase 3 SUB-BATCH 2 voice preservation policy §1 4-section enforced. Commit `66574a7` on `feature/v2-vanilla-port` branch.
+**Severity:** N/A (LANDED doc-only wiki/ generation — ZERO src/ touched ZERO regression test impact)
+
+**LANDED actions:**
+- 16 ADR entity pages second half voice preservation policy §1 4-section enforced: adr-002 firebase-rest-not-sdk + adr-003 double-progression-engine + adr-004 rule-engine-numeric-priorities + adr-006 tier-storage-for-logs + adr-007 firebase-open-rules + adr-009 calibration-tiers + adr-010 no-anthropic-trademark-public + adr-011 coach-decision-log-architecture + adr-012 tier-decay-on-inactivity + adr-013 auto-aggression-detection + adr-015 getbf-calibration-only + adr-016 vitality-layer + adr-017 demographic-prior-database + adr-018 engine-extensibility-architecture + adr-019 gdpr-k-anonymity-validation + adr-020 storage-tiering-strategy
+- `wiki/index.md` count 25 → 41 pages
+- `wiki/log.md` SUB-BATCH 2 entry appended chronological
+- LATEST_TERMINAL_A_SUB_BATCH_2.md raport ~152 LOC scris (archived → 409_CONSUMED via handover ingest)
+
+**Tests preserved:** 2781 PASS preserved EXACT (doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12).
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + [[../wiki/log.md]] + commit `66574a7` + auto chore .obsidian/ commit `efe518f` Stop hook.
+
+---
+
+### P1-FLAG-CALENDAR-FEATURE-ADAPTIVE-STRATEGIC-LOCK-V1 — Calendar feature adaptive MAJOR multi-session STRATEGIC LOCK V1 OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — MAJOR feature multi-session implement post-BATCH 2 + SUB-BATCH 3 done (~1000-1500 LOC + 80+ tests).
+**Severity:** P5 priority (post-BATCH 2 + SUB-BATCH 3 done, NU pre-port când layer below se schimbă încă; anti-acoperiș-înainte-pereți).
+
+**Feature spec STRATEGIC LOCK V1:**
+- **UX:** linie L Ma Mi J V S D între `idleText` și `objectiveSection` din Antrenor tab primul. Zilele de antrenament programate săpt asta colorate. Locked dar editabile. User adaugă/scoate zile click → Andura ajustează săpt asta optim recovery-aware muscle groups + program rebalanseaza. Săpt 2+ revine la programul clasic original cu exerciții/greutăți optimizate carry-forward deviații istorice.
+- **Exemplu Gigel:** program 3 zile L J S → vrea 5 zile săpt asta M Mi J S D → Andura schimbă antrenamentul săpt aia optim + memorează deviația → săpt 2 revine 3 zile dar cu adjustments. Direct expresie "Andura gândește pentru user" ADR 025.
+- **Mapping cu existing arch:** Engine spine Coach Director (LANDED) + Muscle Recovery (LANDED chat-current 3) + Decision Log ADR 011 + Storage Tiering ADR 020 + Adaptabilitate concept core (SUB-BATCH 1). New engines necesare: `scheduleAdapter.js` (compress/expand weekly plan) + `deviationMemory.js` (time-decayed history + diminishing returns detection). UX: vanilla JS calendar 7-day strip ~150 LOC.
+- **Total estimare:** ~1000-1500 LOC + 80-120 tests = MAJOR feature multi-session CC autonomous.
+- **Gigel test:** PASS instant (visual intuitive + zero gândire user). **Bugatti:** PASS dacă engine intelligence (deviation memory + diminishing returns + recovery-aware rebalance) impecabilă — asta diferențiază Andura de planner static.
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future wiki/entities/features/calendar-adaptive.md (Phase 3 SUB-BATCH 3 Cluster C features cluster TBD) + P1-FLAG-DEVIATION-MEMORY-TAU-ML-ADAPTIVE-LOCK-V1 cross-ref.
+
+---
+
+### P1-FLAG-DEVIATION-MEMORY-TAU-ML-ADAPTIVE-LOCK-V1 — Deviation Memory τ ML adaptive Bayesian per user response signals LOCK V1 OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — Bayesian update decay rate per user response signals; part of calendar feature implementation P5.
+**Severity:** P5 priority (component of calendar feature P5 dependency).
+
+**LOCK V1 spec:**
+- NOT fixed value (anti-magic-number).
+- Bayesian update decay rate per user pe baza response signals (când user performance corelează cu deviation weight high → continue weighting; când no longer correlates → decay accelerated).
+- Cross-ref **Demographic Prior Database ADR 017** = users similar Tier post deviații similare = baseline pattern cold-start (user fresh fără personal history).
+
+**Verbatim Daniel captured pentru wiki future page `deviation-memory-decay` (Phase 3 SUB-BATCH 3 Cluster B engines cluster):** *"daca saptamana asta gigel are 5 antrenamente in loc de 3... sau 2 in loc de 4... e importanta info... dar peste 5 luni nu o sa mai fie relevanta."* NOTĂ: "5 luni" = rhetorical/directional NOT literal anchor.
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + [[../03-decisions/017-demographic-prior-database]] + future wiki/entities/engines/deviation-memory-decay.md.
+
+---
+
+### P1-FLAG-INSTALL-PACK-12-LOCKED-V1 — Install pack 12 items LOCKED V1 mâine post-trigger autonomous via claude_code OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — install pack 12 items autonomous via claude_code mâine post-trigger ACASĂ (post Daniel manual edit `claude_desktop_config.json` `"timeout": 7200000` + Claude Desktop restart).
+**Severity:** P1 ABSOLUTE next chat tomorrow first action.
+
+**Pack 12 items LOCKED V1 (complementare, NU overlap):**
+- **Methodology stack:** gstack (92k stars, Garry Tan YC President, 23 tools role-based virtual team CEO+Designer+Eng Mgr+QA+Release+Security+Doc; install `git clone --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`) + GSD (61.5k stars, TÂCHES, context engineering anti-context-rot via subagent orchestration fresh 200k context per executor; 6 commands loop /gsd-new-project + /gsd-discuss-phase + /gsd-plan-phase + /gsd-execute-phase + /gsd-verify-work + /gsd-ship; convergent cu Karpathy wiki layer; install `npx get-shit-done-cc@latest`)
+- **Frontend design Bugatti craft quality:** Impeccable (19k stars, Paul Bakaus, 18 commands /audit /critique /polish /distill /animate /bolder /quieter /delight /typeset /layout /overdrive /normalize etc + anti-patterns no-Inter+no-purple-gradients+no-bounce; install `cp -r dist/claude-code/.claude/* ~/.claude/`) + Emil Kowalski (UI stil Vercel/Linear autor vaul/sonner/cmdk) + Taste skill (design curator quality) + UI/UX Pro Max (broad UI/UX skills) + 21st.dev (component library inspiration + snippets)
+- **MCP servers:** Context 7 Upstash (real-time docs lookup libs vite/vitest/lucide/firebase, anti-stale-knowledge) + Obsidian skills (vault automation direct Karpathy/Andura relevance) + Tavily (web search MCP > default research quality) + Firebase MCP (eval research dimineața Andura Firestore + Auth direct ops) + Sequential Thinking Anthropic oficial (structured complex reasoning; calendar feature mapping use case)
+
+**DROP din pack:** Superpowers (reversal #1 → #2 overlap masiv gstack+GSD) + Plaid + Container-use + WebGPU + Claude-squad + Canvas-design + Stitch-skills + GitHub MCP + CodeRabbit + Sentry + Cloudflare.
+**Skip install:** Frontend design built-in Anthropic skill (`~/.claude/skills/frontend-design/`).
+
+**Plugins per-mașină local:** stocate `C:\Users\<user>\.claude\plugins\` per profile NU sync cloud — Daniel ACASĂ (`Daniel`) ≠ BIROU (`DanielMazilu`) instalare separat per mașină. Mâine ACASĂ install single complete.
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + §NEXT P1 priority + P1-FLAG-MCP-TIMEOUT-EXTEND-2H cross-ref (Daniel manual edit prerequisite).
+
+---
+
+### P1-FLAG-BATCH-2-ANTRENOR-PORT-INTERRUPTED-RELUARE — BATCH 2 Antrenor port interrupted Daniel Stop signal RELUARE mâine fresh OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — rating.js + session.js + tests + smoke. Daniel Stop interrupt mid-prompt write azi. Reluare mâine fresh.
+**Severity:** P2 next chat tomorrow post pack 12 install.
+
+**Reluare scope:**
+- Spec preserved `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`
+- Apply F11 PRs keep + F12 rating buttons keep + F13 rating notes DROP V1 Anti-RE + F14 ratings window extend 20→90 Tier archive ADR 020 + F15 per-set RPE keep
+- ~4-6h CC autonomous estimate (rhetorical, NOT literal anchor per meta-pattern Daniel captured 2026-05-12)
+- Benefit nou GSD subagent orchestration + gstack /qa post-LANDED + gstack /review pre-PR (dacă install pack 12 P1 LANDED prior)
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` preserved carry-forward.
+
+---
+
+### P1-FLAG-MCP-TIMEOUT-EXTEND-2H — MCP timeout Claude Desktop extend 2h LOCK V1 Daniel manual edit pending OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — Daniel manual edit `claude_desktop_config.json` claude_code entry `"timeout": 7200000` (2h ms) dimineața înainte primul invoc claude_code heavy.
+**Severity:** P1 prerequisite for P1-FLAG-INSTALL-PACK-12-LOCKED-V1 + heavy tasks SUB-BATCH 3 + BATCH 2 long-horizon.
+
+**Rationale:** Sweet spot pragmatic (NU 4h+ — dacă agent crash silent la min 5, eu aștept tot timeout-ul crezând că rulează în loc de detectez rapid). 2h ACOPERĂ pack install + heavy tasks SUB-BATCH 3 + BATCH 2 long-horizon.
+
+**Config path:** `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` (MSIX path memory edit #5 update LANDED 2026-05-11).
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + P1-FLAG-INSTALL-PACK-12-LOCKED-V1 prerequisite cross-ref + [[../VAULT_RULES]] §AR.19 claude_code agent timeout MCP delivery ≠ agent crash anti-recurrence rule.
+
+---
+
+### P1-FLAG-DANIEL-TIME-ESTIMATES-RHETORICAL-PATTERN-CAPTURE — Meta-pattern Daniel time estimates rhetorical/directional NOT literal numeric anchors capture OPEN 2026-05-12 (2026-05-12 chat ACASĂ Co-CTO autonomous)
+
+**Status:** 🟡 OPEN 2026-05-12 — meta-pattern Daniel time estimates rhetorical/directional NOT literal numeric anchors. Memory cap 30/30 atins → capture mental scribe mode permanent activ. Replace candidate identificat dimineața dacă vrea persistent (recomand replace #6 covered prin userPreferences §1).
+**Severity:** Pattern capture pentru anti-drift Co-CTO recommendations + ADR LOCK + post-Beta numeric thresholds.
+
+**Pattern spec:**
+- Daniel exagerează cifră timp pentru emphasis prove point — verbatim *"ca să prove a point :)"*.
+- Pattern similar 'halucinezi' push-back style.
+- Inference Co-CTO: când Daniel zice cifră time, treat order-of-magnitude direction, NOT LOCK numeric values din verbatim estimates.
+- Anti-drift recommendations + ADR LOCK + post-Beta numeric thresholds.
+
+**Examples chat-current:**
+- *"daca saptamana asta gigel are 5 antrenamente in loc de 3... sau 2 in loc de 4... e importanta info... dar peste 5 luni nu o sa mai fie relevanta."* — "5 luni" = rhetorical/directional, NU literal anchor.
+- *"~4-6h CC autonomous"* BATCH 2 estimate — order-of-magnitude direction, NU LOCK.
+
+**Memory edit cap:** 30/30 atins. Capture mental scribe mode permanent activ. Replace candidate identificat dimineața dacă vrea persistent (recomand replace #6 "Format chat default 1 întrebare" — covered explicit prin userPreferences §1).
+
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future wiki/concepts/daniel-time-estimates-rhetorical-pattern.md (Phase 3 SUB-BATCH 3 Cluster E concepts cluster TBD).
+
+---
 
 ### P1-FLAG-FAZA-3-PHASE-5-LANDED — Faza 3 Karpathy Option B Phase 5 cleanup RESOLVED LANDED 2026-05-12 post-Daniel-approve voice fidelity checkpoint (2026-05-12 chat ACASĂ Co-CTO autonomous)
 
