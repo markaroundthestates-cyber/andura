@@ -9,6 +9,8 @@ cross_refs:
   - "[[../concepts/andura-suflet]]"
   - "[[../concepts/bugatti-craft]]"
   - "[[../concepts/anti-recurrence-rules]]"
+  - "[[../concepts/calendar-feature-v1-spec]]"
+  - "[[sub-batch-3-closure-milestone-2026-05-12]]"
 ---
 
 # Daniel-isms Glossary
@@ -115,3 +117,50 @@ Daniel verbatim memory rule #26 NICIODATĂ argumente quality:
 - [[../concepts/anti-recurrence-rules]] (§AR.* codified slip patterns 2× minimum source)
 
 🦫 **Daniel-isms Glossary catalog extensible cross-cluster verbatim quotes identity Andura preserved 8 categories (Bugatti craft + Anti-recurrence + Autonomy + Gigel test cultural RO + Anti-paternalism SUFLET + Recurring chat triggers + Strategic memory rules + Engineering paradigm technical). Voice preservation policy §1 HARD RULE 2 invariant preserved cross-paradigm evolution.**
+
+---
+
+## Chat ACASĂ 2026-05-12 SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (APPEND-only — NEW daniel-isms surfaced cross-cluster)
+
+**Catalog NEW append cross-cluster chat ACASĂ 2026-05-12 — extensible NU lobotomy existing entries:**
+
+**Category A — Chat triggers + flow daniel:**
+- *"Salut. Acasă."* / *"salut acasă"* — chat NEW startup §CC.2 layered read Karpathy Real wiki/index + wiki/log last 5 + drill (reaffirm SUB-BATCH 1+2+3 cross-chat)
+- *"latest"* — Metoda Hibridă post-LANDED Daniel trigger CC raport read (reaffirm cross-cluster slice)
+- *"ok"* — approve concise post-strategic-input acknowledgement Daniel
+- *"pivot cat astept cc sa termine"* — parallel work pattern Daniel Co-CTO autonomous discipline metoda hibridă slice spawn parallel
+
+**Category B — Push-back productive Daniel scribe-side slip corrections chat-current:**
+- *"iar incepem cu ce e pt mine?"* — push-back paternalism scribe-side Daniel Gates surface fork option mea culpa (slip 1 anti-recurrence reaffirm)
+- *"exclus"* — definitive no Daniel pauză inclusion fork (slip 2 anti-recurrence reaffirm)
+- *"CTO job?"* — delegate tactical Migration plan + Beta consolidation = CTO scope (slip 3 anti-recurrence reaffirm)
+- *"de ce te comporti ca gpt?... daca voiam gpt sa imi scrie nonesence ma duceam la el"* — push-back format slip GPT-style heavy formatting (slip 4 anti-recurrence reaffirm)
+- *"ai ratat ceva"* — push-back înțelegere incompletă Daniel cere test multidimensional complete (slip 5 catalysator pattern test invariant)
+- *"ce review sa fac? nu avem prod... validez beta si modificam atunci"* — push-back productive anti-Daniel-Gates intermediate ZERO pre-Beta single comprehensive gate doar
+- *"Migration plan e treaba ta. CTO job"* — push-back tactical CTO scope vs CEO scope categorizare ex-ante
+- *"pai cu ce ne ajuta sa implementam calendarul daca vanilla are cum un antrenament hardcoded in ea?"* — push-back productive timing Calendar feature B reframed prerequisite Engine #2 + Templates V1 live
+
+**Category C — Calendar V1 spec strategic lock chat-current:**
+- *"nu ai full picture? ce anume vrei de la mine?"* — push-back productive request scribe full picture surface strategic UX/product calls
+- *"PPL 3 zile, omul pune 4 zile sau invers, 5 zile, omul pune 3 zile... ce face coach?"* — Calendar compositional pivot critical Daniel test multidimensional (slip 5 catalysator)
+- *"acum da e ideea buna"* — confirmation lock post compositional re-framing scribe-side (Calendar V1 spec funcțional locked)
+- *"coatch nu e medicul lui si nici partenerul de vacanta. Coach vede ce antrenamente a sarit si se calibreaza cat sa recupereze"* — Coach role anti-paternalism Calendar LOCK absolute SUFLET ANDURA preserve
+- *"mi se rupe..."* — anti-paternalism vacation/sickness Coach intervention disengagement Daniel scope clear
+- *"da exemplu"* / *"exemplu"* — Daniel cere eu draft NU explică (build don't describe pattern, Bugatti craft acțiune > teorie)
+- *"de acord cu tine pe toate dar..."* — approve + curiozitate tactical follow-up Daniel CEO scope strategic preserve scribe tactical autonomy
+- *"am i missing something?"* — open scan request post strategic synthesis scribe verify completeness
+- *"ti-am dat eu mockupul. fa replace. e mai nou"* — Daniel manual mockup paste & replace signal sync slip identified vault behind newer version
+
+**Category D — Identity check + warmth + delegate:**
+- *"claude GPT sau claude OPUS?"* — identity check Daniel verify scribe model post-format-slip-pattern (catalysator slip 4 GPT-style format heavy)
+- *"make it work :)"* — warmth + delegate cu încredere post-strategic-spec-lock Daniel autonomy paradigm
+- *"CTO pick order. Eu am viziunea you make it happen, and adjust to it."* — Daniel CTO call ordering autonomy delegation pattern (A1→A2→A3→A4 chronological dependency cluster sequencing)
+
+**Pattern NEW chat-current:** Daniel push-back productive cu fork strategic = scribe-side slip detection signal (5 slip patterns surfaced chat-current). Daniel scope discriminat ex-ante CEO (product vision + UX/UI + brand soul) vs CTO (infrastructure + tooling + migration + Beta logistics) preserved invariant cross-chat. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1).
+
+**Cross-refs raw layer adițional chat-current 2026-05-12:**
+- [[../../📥_inbox/HANDOVER_2026-05-12_chat_acasa_sub_batch_3_closure_plus_calendar_v1_spec_locked]] §"Daniel-isms surfaced chat-current pentru catalog wiki extensible" (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-12 (APPEND-only — 5 NEW reaffirm)" (5 slip patterns codification candidate §AR.20-§AR.24 cross-link daniel-isms catalysator verbatim quotes)
+- [[../concepts/calendar-feature-v1-spec]] §"Verbatim quotes Daniel" Calendar V1 strategic LOCKED daniel-isms catalysator compositional pivot identity preserve
+- [[sub-batch-3-closure-milestone-2026-05-12]] §"Verbatim quotes Daniel" 5 cluster ingest milestone cross-cluster verbatim aggregate
+

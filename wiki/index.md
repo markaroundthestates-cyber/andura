@@ -3,6 +3,7 @@ title: Wiki Index — Andura Wiki Catalog
 type: index
 status: live
 last_updated: 2026-05-12
+total_pages: 119
 ---
 
 # Wiki Index — Andura Wiki Catalog (Karpathy Real Option B)
@@ -11,13 +12,14 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post SUB-BATCH 3 Cluster G source pointers FINAL CLOSURE MILESTONE (2026-05-12):** **115 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (13) + sources (6 NEW Cluster G). **SUB-BATCH 3 CLOSURE MILESTONE achieved** — Karpathy Real Option B 100% wiki coverage post Cluster A+B+C+D+F+G LANDED 2026-05-11 → 2026-05-12 cumulative.
+**Catalog status post `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (2026-05-12):** **119 pages LANDED** across concepts (17 — +1 Calendar V1 spec NEW) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (14 — +1 SUB-BATCH 3 closure milestone NEW) + sources (6 Cluster G FINAL). **+4 NEW pages distributed** via `/wiki-ingest handover-narrative` classifier per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 + voice preservation §1 enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate.
 
 ---
 
-## Concepts (16 LANDED) — Cross-Cutting Paradigms + Strategies + Principles
+## Concepts (17 LANDED) — Cross-Cutting Paradigms + Strategies + Principles
 
-- [[concepts/metoda-hibrida-chat-cc]] — LOCK V1 2026-05-12 partial supersede Autonomy V1 + MCP cap-coadă singular handover-only + validation 2/2 clean
+- [[concepts/metoda-hibrida-chat-cc]] — LOCK V1 2026-05-12 partial supersede Autonomy V1 + MCP cap-coadă singular handover-only + validation 5/5 slices SUB-BATCH 3 closure milestone
+- [[concepts/calendar-feature-v1-spec]] — LOCKED V1 2026-05-12 NEW strategic spec post-CLOSURE Calendar feature B reframed (funcțional + UX 4 states + wireframe + Coach anti-paternalism)
 - [[concepts/bugatti-craft]] — Quality > Speed default discipline + Daniel autonomy lock EXTINS verbatim
 - [[concepts/gigel-test]] — UX validation filter Marius la sala Gigel-friendly + jargon refactor
 - [[concepts/voice-preservation-policy]] — 4-section structure mandatory + 6 hard rules + daniel-isms catalog
@@ -27,7 +29,7 @@ last_updated: 2026-05-12
 - [[concepts/karpathy-llm-wiki-pattern]] — anti-halucinație primary mechanism 3-layer + 3 operations
 - [[concepts/direct-to-cc-paradigm]] — Daniel zero courier MCP filesystem + claude_code autonomous
 - [[concepts/mockup-vs-prod-distinction]] — permanent rule screenshot verify ÎNAINTE strategic
-- [[concepts/anti-recurrence-rules]] — §AR.1-§AR.19 codified slip patterns 2× minimum
+- [[concepts/anti-recurrence-rules]] — §AR.1-§AR.19 codified slip patterns 2× minimum + APPEND 5 NEW chat-current 2026-05-12 (§AR.20-§AR.24 codification candidate pending Daniel approval)
 - [[concepts/strategy-lock-v1]] — anti acoperiș-pereți filter active LOCKED V1 catalog
 - [[concepts/andura-suflet]] — brand soul Gigel-friendly anti-surveillance Romanian-first
 - [[concepts/product-vision]] — Beta V1 4-tab scope LOCK + competitive moat structural
@@ -137,8 +139,9 @@ last_updated: 2026-05-12
 - [[entities/specs/spec-v1-features-audit]] — V1 Features Audit V1 LOCKED 2026-05-10 Co-CTO bias 10 keep + 4 modify + 1 drop F5 audit primat universal rule
 - [[entities/specs/spec-root-nav-v2]] — Root Nav V2 §29.5.7 AMENDMENT LOCKED V1 2026-05-07 SUPERSEDE V1 trio → V2 quad Antrenor/Progres/Istoric/Cont
 
-## Summaries (13 LANDED — 1 pre-existing + 12 NEW Cluster F SUB-BATCH 3 2026-05-12)
+## Summaries (14 LANDED — 1 pre-existing + 12 Cluster F SUB-BATCH 3 + 1 NEW SUB-BATCH 3 closure milestone 2026-05-12)
 
+- [[summaries/sub-batch-3-closure-milestone-2026-05-12]] — LOCKED V1 NEW SUB-BATCH 3 CLOSURE MILESTONE synthesis 5 clusters Karpathy Real Option B 100% wiki coverage 115 pages cumulative + Calendar V1 LOCKED + 5 slip patterns anti-recurrence reaffirm
 - [[summaries/consolidare-2026-05-12-metoda-hibrida-plus-sub-batch-3]] — Consolidation milestone validation 2/2 metoda hibridă + SUB-BATCH 3 Cluster A LANDED + 2 push-backs productive
 - [[summaries/auth-flow-overview]] — Magic Link Phase 1+2 SMTP RESOLVED + OAuth Phase 3 PENDING Sprint 3 ZERO password V1 anti-password-fatigue
 - [[summaries/coach-engines-overview]] — Pipeline §42.10 8 prescriptive engines holistic + auxiliary + Cognitive Architecture 5-engine + Arbitrator + Bugatti paradigm anti-monolit
@@ -183,6 +186,8 @@ last_updated: 2026-05-12
 **Cluster G — Source Pointers SUB-BATCH 3 ✅ LANDED FINAL CLOSURE MILESTONE 2026-05-12 (6/6 mandatory complete)** — see `## Sources (6 LANDED)` section above. 6 NEW source pointer pages raw layer 1:1 + cross-cluster coverage map: adr-source-pointers (42 ADRs 100%) + spec-source-pointers (11 specs 100% + 1 pre-existing) + vision-source-pointers (10 vision files cross-distribuit 8 LANDED + 2 GAP) + handover-themes-pointers (5 themes + archive) + current-state-pointers (§RECENT precedent threads) + decision-log-pointers (chronological master log ~742 LOCKED V1).
 
 **🦫 SUB-BATCH 3 CLOSURE MILESTONE ACHIEVED 2026-05-12** — 65 NEW wiki pages SUB-BATCH 3 (16 ADRs Cluster A + 7 engines Cluster B + 19 features Cluster C + 11 specs Cluster D + 12 summaries Cluster F + 6 source pointers Cluster G) + cumulative 115 wiki pages total post Karpathy Faza 3 Phase 1-5 LANDED FULL.
+
+**📥 `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED ✅ LANDED 2026-05-12 (4 NEW wiki pages distributed)** — chat ACASĂ 2026-05-12 voluntary handover trigger Daniel *"fă handover"* post Calendar V1 spec strategic complete. 4 NEW pages distributed: 1 NEW concept [[concepts/calendar-feature-v1-spec]] + 1 NEW summary [[summaries/sub-batch-3-closure-milestone-2026-05-12]] + 2 APPEND-only updates ([[concepts/anti-recurrence-rules]] §Chat-Current Slip Patterns 2026-05-12 + [[summaries/daniel-isms-glossary]] §Chat ACASĂ 2026-05-12 SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED). Cumulative count: 115 → 119 wiki pages total. Voice preservation §1 enforced 4/4 NEW/UPDATE pages + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate verified PASS.
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**
@@ -229,4 +234,4 @@ last_updated: 2026-05-12
 
 ---
 
-🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 post `/wiki-ingest` handover consolidare metoda hibridă (60 pages cumulative: 16 concepts + 42 ADRs + 1 spec + 1 summary). Carry-forward TBD Cluster B engines + C features + D specs (10 remaining) + F summaries + G source pointers. Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**
+🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 post `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (119 pages cumulative: 17 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 14 summaries + 6 sources + 2 schema/design). SUB-BATCH 3 CLOSURE MILESTONE achieved 2026-05-12 — Karpathy Real Option B 100% wiki coverage post Cluster A+B+C+D+F+G LANDED. Calendar V1 spec strategic LOCKED post-CLOSURE — implementation defer chat NEW dedicated post 3 strategic clarifications pending Daniel input. 5 slip patterns chat-current anti-recurrence reaffirm (§AR.20-§AR.24 codification candidate). Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**

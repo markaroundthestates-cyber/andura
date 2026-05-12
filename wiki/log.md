@@ -13,6 +13,28 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Chat ACASĂ SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED handover narrative distributed — 4 NEW wiki pages voice §1 enforced
+
+`/wiki-ingest` handover narrative LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12. Per `📥_inbox/HANDOVER_2026-05-12_chat_acasa_sub_batch_3_closure_plus_calendar_v1_spec_locked.md` source narrative distribute la wiki layer per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 handover-narrative classifier branch + voice preservation policy §1 4-section structure enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate mandatory. Daniel CEO directive verbatim *"fă handover"* voluntary trigger post Calendar V1 spec strategic complete. Cumulative count: 115 → 119 wiki pages (+4 net new handover ingest distribution).
+
+**4 NEW wiki pages distributed:**
+1. NEW concept [[../concepts/calendar-feature-v1-spec]] — Calendar Feature V1 Spec strategic LOCKED 2026-05-12 funcțional + UX states 4 + wireframe placement + Coach role anti-paternalism LOCKED Daniel verbatim. Implementation defer chat NEW dedicated post 3 strategic clarifications pending Daniel (day-cell content + mid-week semantics + validation extreme).
+2. NEW summary [[../summaries/sub-batch-3-closure-milestone-2026-05-12]] — SUB-BATCH 3 CLOSURE MILESTONE 2026-05-12 synthesis 5 clusters Karpathy Real Option B 100% wiki coverage 115 pages cumulative.
+3. UPDATE APPEND-only [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-12 (APPEND-only — 5 NEW reaffirm)" — 5 slip patterns chat-current (C Daniel Gates inclusion fork RECURRENCE + E pauză inclusion fork paternalism + F+D tactical-as-CEO-fork scope discriminat + GPT-style heavy formatting + Calendar compositional ratat). §AR.1-§AR.19 invariant preserved unchanged. §AR.20-§AR.24 codification candidate pending Daniel approval explicit chat NEW.
+4. UPDATE APPEND-only [[../summaries/daniel-isms-glossary]] §"Chat ACASĂ 2026-05-12 SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (APPEND-only — NEW daniel-isms surfaced cross-cluster)" — NEW daniel-isms 4 categories (Chat triggers + Push-back productive scribe-side slip corrections + Calendar V1 spec strategic lock + Identity check warmth delegate). Catalog 8 existing categories preserved invariant cross-paradigm evolution.
+
+**Voice preservation §1 enforcement 100% (4/4 NEW/UPDATE pages):** Synthesis section 2-3 paragrafe concise + Verbatim quotes Daniel min 2-9 EXACT cu daniel-isms preserved per page + Bugatti framing notes 5 sub-sections complete + Cross-refs raw layer min 5-11 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Bidirectional cross-links policy forward-only preserved** per HARD CONSTRAINT §F3.12 — NEW pages forward-link existing entity + concept + summary pages. Retroactive back-ref edits frozen wiki Cluster A+B+C+D+F+G pages NU performed. Exception explicit: 2 APPEND-only updates ([[../concepts/anti-recurrence-rules]] + [[../summaries/daniel-isms-glossary]]) per HARD CONSTRAINT relaxation chat-current authorized Daniel CEO directive *"APPEND-only NU overwrite preserve existing invariant"* — append section NEW NU touch existing §AR.* invariant sau existing 8 categories catalog.
+
+**HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS:** §0 backup tag pushed origin + §1 pre-flight grep verify references filesystem-side (all paths resolve) + §2 voice §1 enforcement 4/4 pages + §3 cross-refs bidirectional forward-only policy + §4 archive raw HANDOVER → `📤_outbox/_archive/2026-05/440_*_CONSUMED.md` + §5 LATEST.md cycle → `441_LATEST_CLUSTER_G_SOURCE_POINTERS_FINAL_CONSUMED.md` + §6 atomic commit single-concern + push origin + §7 tests 2914 PASS preserved EXACT + §8 HARD CONSTRAINTS §F3.12 verified (ZERO src/ + ZERO main branch + ZERO React/JSX + ZERO --no-verify + ZERO frozen pages mods).
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-handover-ingest-2026-05-12-sub-batch-3-closure-plus-calendar-v1` pushed origin pre-execute.
+
+**Path forward post handover ingest (Daniel choice next chat trigger "Salut Acasă"):** Calendar feature implementation chat NEW dedicated tactical CTO draft design master `andura-clasic.html` Calendar L-D Antrenor section (sub *"Vrei altceva azi?"* placement) + scheduleAdapter.js engine layer + state.js wiring + tests baseline + raport pe 3 strategic clarifications pending pentru Daniel review pre-implementation final.
+
+---
+
 ## [2026-05-12] ingest | Cluster G source pointers SUB-BATCH 3 FINAL CLOSURE MILESTONE — 6 source pointer pages voice preservation §1 + SUB-BATCH 3 100% COMPLETE
 
 Cluster G source pointers SUB-BATCH 3 FINAL CLOSURE MILESTONE LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_G_SOURCE_POINTERS.md` §1-§8 execute (prompt inline chat trigger, self-archived `439_*_CONSUMED.md` per §7). 6 NEW source pointer pages voice preservation policy §1 4-section structure enforced + coverage validation 1:1 mapping mandatory. Cumulative count: 109 → 115 wiki pages (+6 net new SUB-BATCH 3 Cluster G FINAL). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 13 summaries + 6 sources = 115 total.
