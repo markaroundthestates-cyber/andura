@@ -10,7 +10,7 @@ cross_refs:
   - "[[VAULT_RULES#KARPATHY_OPERATIONS]] LOCK V1 2026-05-11 Faza 2B (will redesign Phase 2)"
   - "[[VAULT_RULES#CHAT_CONTINUITY_PROTOCOL]] §CC.* redesigned Phase 2 no-layered-read"
   - "[[VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.1-§AR.19 preserved unchanged"
-  - "[[📥_inbox/_karpathy_gist_reference]] immutable raw source"
+  - "[[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] immutable raw source"
   - "[[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §1-§7 Daniel execute spec"
 amendments:
   - date: 2026-05-11
@@ -21,7 +21,7 @@ amendments:
 
 **Owner:** Daniel (CEO + Product) + Claude (Co-CTO autonomous chat strategic + claude_code agent via MCP filesystem direct).
 **Purpose:** Schema operating rules vault Andura — Karpathy LLM Wiki pattern REAL (NU adaptare superficială Faza 2B). Vault existing entire FREEZE raw layer immutable. NEW `wiki/` folder pure LLM-generated. Voice preservation policy §1 mandatory — identity Andura prezervat prin daniel-isms verbatim catalog.
-**Authority:** Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post) preserved [[📥_inbox/_karpathy_gist_reference]] immutable + Daniel Option B select 2026-05-11 chat ACASĂ post graph view orphan screenshot scope realignment.
+**Authority:** Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post) preserved [[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] immutable + Daniel Option B select 2026-05-11 chat ACASĂ post graph view orphan screenshot scope realignment.
 
 ---
 

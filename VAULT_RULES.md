@@ -1087,7 +1087,7 @@ ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust
 ## §KARPATHY_OPERATIONS — LLM Wiki Pattern (LOCK V1 2026-05-11)
 
 **Status:** LOCKED V1 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 2B (vault meta-tooling, NU product/architecture additive).
-**Authority:** Karpathy LLM Wiki pattern gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post). Adapted Andura vault per `CLAUDE.md` schema vault root. Raw source preserved immutable `📥_inbox/_karpathy_gist_reference.md`.
+**Authority:** Karpathy LLM Wiki pattern gist `karpathy/442a6bf555914893e9891c11519de94f` (3 apr 2026, 5000+ stars, 16M+ views X post). Adapted Andura vault per `CLAUDE.md` schema vault root. Raw source preserved immutable `04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026.md` (relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference.md` per vault hygiene post BATCH 2 closure milestone).
 
 **Primary anti-halucinație mechanism:** LLM-maintained wiki structurat (NU re-derive knowledge each chat) + 3 operations codified + 3-layer architecture (raw = `📥_inbox/` + wiki = `00-index/` + `01-vision/` + `02-audit/` + `03-decisions/` + `04-architecture/` + `05-findings-tracker/` + `06-sessions-log/` + `07-meta/` + `08-workflows/` + schema = `CLAUDE.md` + `VAULT_RULES.md` bidirectional).
 
@@ -1125,7 +1125,7 @@ ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust
 - Anchor drill-down: `[[file#section-anchor]]`
 - Obsidian "Shortest path" mode enabled supports rename without breaking refs
 
-**Cross-refs:** [[CLAUDE]] §1-§6 + §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.4 + §CC.5 + §CC.6 + §ANTI_RECURRENCE_RULES §AR.19 + [[📥_inbox/_karpathy_gist_reference]] (immutable raw source) + [[00-index/CURRENT_STATE#NOW]] FAZA 2B context.
+**Cross-refs:** [[CLAUDE]] §1-§6 + §CHAT_CONTINUITY_PROTOCOL §CC.2 + §CC.4 + §CC.5 + §CC.6 + §ANTI_RECURRENCE_RULES §AR.19 + [[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] (immutable raw source — relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference`) + [[00-index/CURRENT_STATE#NOW]] FAZA 2B context.
 
 > **🟡 §KARPATHY_OPERATIONS SUPERSEDED 2026-05-11 Faza 3 LANDED.** Faza 2B adaptare superficială (folders existing treated as wiki layer fără actual wiki/ folder) → Faza 3 Karpathy Real Option B (vault existing FREEZE raw layer immutable + NEW `wiki/` folder pure LLM-generated + voice preservation policy §1 mandatory). See §FAZA_3_KARPATHY_REAL below + [[CLAUDE]] §1-§7 rewrite. §KARPATHY_OPERATIONS preserved historical reference doar.
 
@@ -1246,7 +1246,7 @@ Per [[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §3 Phase 4 + §4 Acceptan
 
 🚫 Vault existing entire = FREEZE raw layer immutable post-Faza 3 LANDED. NU mai modify CURRENT_STATE / DECISION_LOG / HANDOVER themes / ADRs / specs / 01-vision / 02-audit / 05-findings / 07-meta / 08-workflows / 📤_outbox/_archive. Even append-only DEPRECATED.
 
-🚫 `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` + `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` + `📥_inbox/_karpathy_gist_reference.md` (P2+P3+raw layer preserved).
+🚫 `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` + `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` + `📥_inbox/_karpathy_gist_reference.md` (P2+P3+raw layer preserved). **Post-cleanup 2026-05-12 vault hygiene:** PLAN_ANTI_HALUCINATIE archived `📤_outbox/_archive/2026-05/419_PLAN_ANTI_HALUCINATIE_VAULT_SUPERSEDED.md` (SUPERSEDED by Karpathy Option B Faza 3 Phase 1-5 LANDED) + PROMPT_CC_BATCH_2_ANTRENOR_PORT archived `415_*_CONSUMED.md` + karpathy gist relocated `04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026.md`. Historical Faza 3 hard constraint preserved as-was for audit trail.
 
 🚫 `src/` + `tests/` (zero touch — Faza 3 doc-only vault meta-tooling).
 
@@ -1256,7 +1256,7 @@ Per [[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §3 Phase 4 + §4 Acceptan
 
 🚫 Memory edits Claude chat + userPreferences UI + system prompt project (OUT OF SCOPE CC, Daniel post-LANDED).
 
-**Cross-refs schema authority:** [[CLAUDE]] §1-§7 vault root rewrite Phase 2 LANDED + [[wiki/_design/WIKI_DESIGN_SPEC_V1]] Phase 1 LANDED + [[📥_inbox/_karpathy_gist_reference]] immutable raw source + [[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] Daniel execute spec §1-§7.
+**Cross-refs schema authority:** [[CLAUDE]] §1-§7 vault root rewrite Phase 2 LANDED + [[wiki/_design/WIKI_DESIGN_SPEC_V1]] Phase 1 LANDED + [[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] immutable raw source (relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference`) + [[📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED]] Daniel execute spec §1-§7.
 
 🦫 **Bugatti craft. §FAZA_3_KARPATHY_REAL LOCK V1 2026-05-11 Phase 2 schema redesign LANDED. Vault existing FREEZE raw layer immutable. NEW wiki/ pure LLM-generated 3-layer Karpathy compliant. Voice preservation policy §1 MANDATORY identity Andura prezervat prin daniel-isms verbatim catalog. §AR.* anti-recurrence rules preserved unchanged. Cumulative ~742 PRESERVED unchanged.**
 

@@ -13,6 +13,14 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] vault inbox cleanup | post BATCH 2 closure milestone LANDED
+
+4 file moves clean `📥_inbox/` post BATCH 2 closure milestone LANDED 2026-05-12 Co-CTO autonomous: `_karpathy_gist_reference.md` → `04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026.md` (RAW layer canonical filename) + `PLAN_ANTI_HALUCINATIE_VAULT.md` → archive 419_*_SUPERSEDED.md (SUPERSEDED 2026-05-11 by Karpathy Option B Faza 3 Phase 1-5 LANDED) + `PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL.md` → archive 420_*_CONSUMED.md (consumed BATCH 2 closure milestone) + `claude_desktop_config.json.backup-2026-05-12` → `07-meta/_backups/` env personal backups layer. Wikilinks integrity preserved 5 instances live raw layer updated (CLAUDE.md L13+L24 + VAULT_RULES.md L1090+L1128+L1249+L1259 + wiki/_design/WIKI_DESIGN_SPEC_V1.md L10 + L11 stale ref fix). Folder structure NEW: `04-architecture/_sources/` + `07-meta/_backups/`. `📥_inbox/` final state: `.gitkeep` ONLY (clean input layer). Wiki/ Cluster A SUB-BATCH 1 27 pages frozen NOT touched (stale wikilinks accepted per CLAUDE.md §5.2 forward-ref tolerance preserved invariant). Vault hygiene rule reaffirmed inbox = active input ONLY. Tests 2914 PASS preserved EXACT.
+
+**Cross-refs raw layer:** [[../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 BATCH 2 closure milestone + [[../03-decisions/DECISION_LOG]] 2026-05-12 chat ACASĂ entry top vault inbox cleanup + [[../📤_outbox/LATEST]] vault inbox cleanup raport §0-§8 + [[../📤_outbox/_archive/2026-05/418_LATEST_BATCH_2_CLOSURE_SLICE_2_CONSUMED]] precedent BATCH 2 closure milestone + [[../04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] relocated immutable raw source.
+
+---
+
 ## [2026-05-12] BATCH 2 closure | Antrenor port FULL milestone LANDED
 
 11 atomic commits cumulative `feature/v2-vanilla-port`: rating.js + session.js carry-forward (`041e7f2 + 324d198`) + 5 NEW modules SLICE 1+2 (energyCheck.js + painButton.js + cevaNuMerge.js + equipmentSwap.js + workout.js) + SLICE 3 restTimer.js SVG ring extend per mockup §rest-timer + smoke E2E playwright 4 taburi V2 + vault hub sync §CC.5 FULL atomic this commit. Tests 2781 → 2914 PASS preserved EXACT (+133 net new BATCH 2 cumulative; 153 → 159 test files +6 NEW). 8 src/pages/coach/ modules touched cumulative. Smoke E2E 5/5 PASS vs live andura.app deploy 8.9s.

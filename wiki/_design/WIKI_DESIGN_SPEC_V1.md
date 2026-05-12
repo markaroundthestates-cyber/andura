@@ -7,8 +7,8 @@ authority: Daniel CEO Option B 2026-05-11 chat ACASĂ post Karpathy gist re-read
 phase: FAZA 3 Phase 1 Research+Design output (pre Phase 2 schema rewrite + Phase 3 generate)
 voice_preservation: synthesis + bugatti + crossrefs
 cross_refs:
-  - "[[../../📥_inbox/_karpathy_gist_reference]] raw immutable source"
-  - "[[../../📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §1-§7 Daniel spec"
+  - "[[../../04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] raw immutable source (relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference`)"
+  - "[[../../📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED]] §1-§7 Daniel spec (consumed Phase 5 cleanup 2026-05-12)"
   - "[[../../CLAUDE]] vault root current schema Faza 2B (rewrite Phase 2)"
   - "[[../../VAULT_RULES#KARPATHY_OPERATIONS]] LOCK V1 2026-05-11 Faza 2B"
   - "[[../../00-index/CURRENT_STATE#NOW]] Faza 2D LANDED + Faza 3 pending"

@@ -1,6 +1,47 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-12 chat ACASĂ Co-CTO autonomous vault inbox cleanup post BATCH 2 closure milestone LANDED `feature/v2-vanilla-port`
+
+**Status:** ✅ LANDED — 4 file moves + audit trail entries + wikilinks integrity preserved + folder structure setup.
+
+**Authority:** Daniel directive vault hygiene post-BATCH-2-closure-LANDED + vault hygiene rule Bugatti craft inbox = active input layer NU repository. Per prompt CC §1+§4 spec moves canonical destinations.
+
+**Actions:**
+- `📥_inbox/_karpathy_gist_reference.md` (Faza 2A immutable reference saved 2026-05-11 per `00-index/CURRENT_STATE.md §RECENT 2026-05-11 Pre-predecessor`) → `04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026.md` (RAW layer canonical kebab-case filename + date suffix; preserved immutable reference cross-ref via `CLAUDE.md §0` + `VAULT_RULES.md §KARPATHY_OPERATIONS` + `wiki/_design/WIKI_DESIGN_SPEC_V1.md` updated wikilinks live)
+- `📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT.md` (P1 ABSOLUTE 5 PHASES × 15 items ~13h CC autonomous LOCK V1 2026-05-11 night per `00-index/CURRENT_STATE.md §RECENT 2026-05-11 §CC.5 fast handover ingest`; SUPERSEDED 2026-05-11 by Karpathy Option B Faza 3 Phase 1-5 LANDED per `CLAUDE.md §6.4 DEPRECATED notice` + `wiki/log.md` chronological Phase 1-5 entries) → `📤_outbox/_archive/2026-05/419_PLAN_ANTI_HALUCINATIE_VAULT_SUPERSEDED.md`
+- `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL.md` (consumed BATCH 2 closure milestone LANDED per `📤_outbox/LATEST.md §4 commit chain summary` + `00-index/CURRENT_STATE.md §JUST_DECIDED 2026-05-12 BATCH 2 closure milestone`) → `📤_outbox/_archive/2026-05/420_PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL_CONSUMED.md`
+- `📥_inbox/claude_desktop_config.json.backup-2026-05-12` (pre Pack 12 modify rollback safety; Pack 12 LANDED verified 7 mcpServers active per `00-index/CURRENT_STATE.md §NOW 2026-05-12 Install Pack 12 LANDED 100% useful capacity`) → `07-meta/_backups/claude_desktop_config.json.backup-2026-05-12` (env personal backups layer; rollback availability preserved)
+
+**Wikilinks live raw layer updated (5 instances + 1 stale ref fix):**
+- `CLAUDE.md` L13 frontmatter cross_refs + L24 Authority line — `[[📥_inbox/_karpathy_gist_reference]]` → `[[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]]`
+- `VAULT_RULES.md` L1090 Authority + L1128 §KARPATHY_OPERATIONS cross-refs + L1249 §F3.12 Hard Constraints Faza 3 historical annotation + L1259 §FAZA_3_KARPATHY_REAL cross-refs schema authority — updated paths + relocation annotation 2026-05-12 + replaced `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B` (already archived `406_*_CONSUMED.md`) → `📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED`
+- `wiki/_design/WIKI_DESIGN_SPEC_V1.md` L10 frontmatter cross_refs — `[[../../📥_inbox/_karpathy_gist_reference]]` → `[[../../04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]]` + L11 fixed pre-existing stale `[[../../📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]]` → archive consumed path
+
+**Wikilinks frozen wiki/ Cluster A SUB-BATCH 1 27 pages NOT touched** per HARD CONSTRAINT preserved (concepts: karpathy-llm-wiki-pattern + voice-preservation-policy + bugatti-craft + strategy-lock-v1 — stale wikilinks accepted state per CLAUDE.md §5.2 forward-ref tolerance preserved invariant).
+
+**Folder structure setup:** `04-architecture/_sources/` NEW (RAW immutable reference layer canonical) + `07-meta/_backups/` NEW (env personal backups layer canonical).
+
+**NN archive counters incremented:** 418 (LATEST SLICE 2 CONSUMED prior) → 419 PLAN_ANTI_HALUCINATIE_VAULT_SUPERSEDED → 420 PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL_CONSUMED → 421 LATEST_BATCH_2_CLOSURE_MILESTONE_CONSUMED (next via §9 raport cycle).
+
+**Acceptance criteria all pass:**
+- ✅ `git mv` preserve history rename detection 2/2 tracked files + shell mv 2/2 untracked files
+- ✅ Wikilinks refs scan + update 5 instances live raw layer + 1 stale ref pre-existing fixed
+- ✅ Folder structure created `04-architecture/_sources/` + `07-meta/_backups/`
+- ✅ `📥_inbox/` final state: `.gitkeep` ONLY (clean input layer ready for next P1 fork artefacte)
+- ✅ §CC.6 ~200 LOC append-only preserved STRICT (raw layer freeze policy per CLAUDE.md §1.1+§6.4+§6.5)
+- ✅ ZERO src/ touch + ZERO tests/ touch + ZERO .obsidian/ touch + ZERO wiki/ Cluster A SUB-BATCH 1 27 pages touched + ZERO main + ZERO React/JSX + ZERO --no-verify
+- ✅ Tests ≥2914 PASS preserved EXACT (vault hygiene NU touch src/tests/)
+- ✅ 1 atomic commit chore(vault) + push origin
+
+**Vault hygiene rule reaffirmed:** `📥_inbox/` = active input layer for CC procesare ONLY (artefacte pending execute + handover narratives pending ingest + Daniel session triggers). NU reference docs (→ `04-architecture/_sources/`), NU env backups (→ `07-meta/_backups/`), NU SUPERSEDED plans (→ `📤_outbox/_archive/`), NU consumed prompts (→ `📤_outbox/_archive/` cu `_CONSUMED.md` suffix). Pattern preserved anti-recurrence for future inbox triage cycles.
+
+**Cross-refs slice-level:** `00-index/CURRENT_STATE.md §JUST_DECIDED 2026-05-12 BATCH 2 closure milestone` + `📤_outbox/LATEST.md §4 commit chain summary` + `📤_outbox/_archive/2026-05/418_LATEST_BATCH_2_CLOSURE_SLICE_2_CONSUMED.md` + `wiki/log.md` chronological signature `## [2026-05-12] vault inbox cleanup | post BATCH 2 closure milestone LANDED`.
+
+🦫 **Bugatti craft. 2026-05-12 chat ACASĂ Co-CTO autonomous vault inbox cleanup post BATCH 2 closure milestone LANDED. 4 file moves canonical destinations + 5 wikilinks live raw layer updates + 1 stale ref fixed + 2 folder structure setup + audit trail entries + LATEST.md cycle. Inbox final state .gitkeep ONLY clean input layer ready for next P1 fork artefacte. Tests 2914 PASS preserved EXACT.**
+
+---
+
 ## 2026-05-12 chat ACASĂ Co-CTO autonomous — BATCH 2 Antrenor Port CLOSURE FULL milestone LANDED — SLICE 3 final `feature/v2-vanilla-port` branch (mockup-prescribed feature implementation + audit-driven port, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture)
 
 **Status:** BATCH 2 Antrenor Port CLOSURE FULL milestone LANDED chat ACASĂ 2026-05-12 Co-CTO autonomous post SLICE 2 LANDED commit chain `e3724f7` (vault hub sync brief slice-level SLICE 2). 3 atomic commits Bugatti single-concern pushed origin `feature/v2-vanilla-port` SLICE 3 final: `81694e5` restTimer.js SVG ring countdown visual extend per mockup §rest-timer V2 design + `9f01007` smoke E2E playwright 4 taburi V2 per ADR 008 + `[this commit]` vault hub sync §CC.5 FULL atomic this commit (BATCH 2 closure milestone). Tests 2891 → 2914 PASS preserved EXACT (zero regression; +23 net new tests SLICE 3; 158 → 159 test files) + E2E smoke 5/5 green vs live andura.app deploy 8.9s. Build vite 3.82s 419 modules clean. Backup tag `pre-batch-2-closure-slice-3-FINAL-2026-05-12-1722` pushed origin pre-execute. Cumulative ~742 LOCKED V1 PRESERVED unchanged.
