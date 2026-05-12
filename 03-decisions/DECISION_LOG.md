@@ -1,6 +1,66 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-12 chat ACASĂ Co-CTO autonomous Install Pack 12 strategic eval ecosystem LANDED 100% useful capacity + env.MCP_TIMEOUT pattern canonical CORRECTED (vault LOCK V1 anterior inexact — field `timeout` la entry-level NU citit Claude Desktop client per docs steipete claude-code-mcp pattern) + bun runtime 1.3.13 installed Daniel ACASĂ profile + Git for Windows installed Daniel ACASĂ (bash @ `C:\Program Files\Git\bin\bash.exe`) + 7 mcpServers verified active post-restart (filesystem + claude-code + obsidian-mcp-tools + context7 + tavily + sequential-thinking + 21st-dev-magic) + 5 anti-recurrence rules NEW captured chat-current `feature/v2-vanilla-port` branch (vault meta-tooling + plugins ecosystem install + strategic decisions, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture)
+
+**Status:** Install Pack 12 LANDED 100% useful capacity chat ACASĂ 2026-05-12 Co-CTO autonomous (continuation post-aggregate session Phase 5 + SUB-BATCH 2 LANDED). Subprocess Opus autonomous LANDED commit `94d98f1` chat-side (Install Pack 12 + claude_desktop_config.json MCP entries context7 + tavily + sequential-thinking + 21st-dev-magic + raport LATEST cycle) post Daniel manual prereqs (config edit timeout + Claude Desktop restart + bun install via PowerShell `irm bun.sh/install.ps1 | iex` + Git for Windows install via `winget install --id Git.Git -e --source winget` + API keys Tavily + 21st-dev-magic filled). Backup tag this handover ingest `pre-handover-2026-05-12-install-pack-12-landed-fast-cc5` pushed origin pre-execute rollback safety. Tests 2781 PASS preserved EXACT (doc-only meta-tooling install + vault hub sync ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 PRESERVED unchanged.
+
+**Authority:** `📥_inbox/HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED.md` Co-CTO chat Opus ACASĂ 2026-05-12 (UI lag Claude Desktop observed ~300 keystrokes input latency + bandwidth ~28% remaining → preventive handover fresh chat) + docs steipete claude-code-mcp pattern canonical `env.MCP_TIMEOUT` (NU field `timeout` la entry-level — vault LOCK V1 memorial era inexact) + Daniel autonomy lock EXTINS PERMANENT 2026-05-11 + Karpathy gist `karpathy/442a6bf555914893e9891c11519de94f` preserved `📥_inbox/_karpathy_gist_reference.md` immutable raw-layer.
+
+**Chat-current specific actions:**
+
+1. **Install Pack 12 LANDED commit `94d98f1`** subprocess Opus autonomous post Daniel manual prereqs. 11/12 installed/configured + 1/12 eval raport-only (Firebase MCP DEFER post-V1 Beta conflict ADR 002 firebase-rest-not-sdk LOCK V1 paradigm). gstack FULLY BUILT post bun+Git fix (browse.exe + design.exe + pdf.exe + find-browse.exe + gstack-global-discover.exe binaries + Skills 47/host × 11 host targets ≈ 517 SKILL.md + Node server bundle `server-node.mjs`; 4 erori final cosmetic post-build Git Bash MSYS Windows shell handling NON-BLOCKING toate artefactele compiled înainte). GSD installed via `npx get-shit-done-cc@latest --claude --global` 66 `gsd-*` skills + agents + hooks/ + GSD SDK linked `gsd-sdk` cmd; hooks DEFER PS-style `& "node.exe"...` incompatible bash POSIX `/usr/bin/bash`, restored `settings.json` din `.claude.backup-2026-05-12-pre-pack-12`. Impeccable installed @ `C:\Users\Daniel\.claude\skills\impeccable\` (58 files). Emil Kowalski + Taste primary variant + UI/UX Pro Max + Obsidian skills 5 variants (defuddle + json-canvas + obsidian-bases + obsidian-cli + obsidian-markdown). 21st-dev-magic reclassified Group B→C MCP server entry + Context 7 + Tavily + Sequential Thinking MCP entries added. **mcpServers count: 7** post-restart verified tool_search Claude Desktop side (tavily search/crawl/research/extract + context7 resolve-library-id/query-docs + sequential-thinking sequentialthinking + 21st-dev-magic component_refiner).
+
+2. **env.MCP_TIMEOUT pattern canonical CORRECTED LOCK V1** — vault LOCK V1 anterior inexact (field `timeout` la entry-level NU citit Claude Desktop client per docs steipete claude-code-mcp pattern). **Anti-recurrence rule NEW LOCK V1:** NU presupun vault SSOT corect pe configurare technical fără verification docs source canonical PRIMUL.
+
+3. **bun runtime 1.3.13** installed Daniel ACASĂ profile via `irm bun.sh/install.ps1 | iex` PowerShell direct. Unblocks gstack `./setup` script + browse binary build.
+
+4. **Git for Windows** installed Daniel ACASĂ profile via `winget install --id Git.Git -e --source winget` → bash @ `C:\Program Files\Git\bin\bash.exe`. **NOTĂ + anti-recurrence rule NEW:** Git for Windows installer adaugă doar `\cmd\` în PATH default NU `\bin\` → bash necesită full path SAU manual PATH extension.
+
+5. **5 anti-recurrence rules NEW captured chat-current scribe-mode permanent LOCK V1:** (1) Field `timeout` la entry-level NU citit Claude Desktop client → corect pattern `env.MCP_TIMEOUT`; verify docs canonical source primul pe configurare technical. (2) Config over-write slip parallel workflow — Daniel save env.MCP_TIMEOUT version AFTER subprocess scrise 4 MCP entries → over-written; AVOID parallel config edits când subprocess scrie config; sequential workflow safer (wait subprocess LANDED → THEN merge user edits). (3) Tool_result timeout 4min ≠ subprocess crash — Claude Desktop client tool_result connection ceiling timeout chiar dacă subprocess intern continuă rula independent; verify subprocess status via filesystem checks (backup-uri create + LATEST.md update + archive cycle) NU presupun crash. (4) PowerShell 5.1 (default Windows) NU suportă `&&` operator — introdus în PS 7+; folosesc `;` (sequential ignore exit code) SAU comanduri separate; pentru Daniel pe Windows default, NU dau commands cu `&&`. (5) Git for Windows `\cmd\` PATH NU `\bin\` — bash needs full path `C:\Program Files\Git\bin\bash.exe` OR PATH manual extension.
+
+6. **Pack 12 effectively LANDED 100% useful capacity LOCK V1** — toate items necessary pre-V1 functional. Defer items (gstack browse alternative bun runtime acum installed + GSD hooks NOT needed pre-V1 + Firebase MCP not needed pre-V1) NU block P2 BATCH 2 reluare.
+
+**Daniel-isms verbatim surfaced chat-current (preserve pentru wiki future page daniel-isms-catalog Phase 3 SUB-BATCH 3 Cluster E concepts):**
+- *"hai sa facem claude_desktop_config.json"* — initiation manual edit config trigger
+- *"stai ma. il am deja deschis in notepad"* — STOP redundant instructions when Daniel ahead-of-action
+- *"da-mi totul copy paste ready"* — preference complete artifact NU patch instructions
+- *"am restartat"* — milestone confirm minimal verbosity
+- *"hai sa rezolvam si ce nu merge"* — direct mandate fix remaining issues
+- *"vad ca lucreaza... nu putem in pararel sa rezolvam timeout si sa restartam dupa ce termina?"* — paralelizare smart insight Daniel
+- *"am rulat deja ala"* — minimal verbosity confirm
+- *"ba uite care e problema. Incerc sa scriu aici pe claude desktop... apas 300 taste si abia dupa aia incepe sa scrie propriu zis"* — UI lag report → preventive handover trigger
+
+**Acceptance criteria all met chat-current 2026-05-12:**
+- ✅ Install Pack 12 LANDED 100% useful capacity (11/12 installed/configured + 1/12 eval raport-only Firebase DEFER)
+- ✅ env.MCP_TIMEOUT pattern canonical CORRECTED (vault LOCK V1 anterior inexact captured anti-recurrence)
+- ✅ bun runtime 1.3.13 + Git for Windows installed Daniel ACASĂ
+- ✅ 7 mcpServers active post-restart verified tool_search Claude Desktop side
+- ✅ 5 anti-recurrence rules NEW captured chat-current scribe-mode permanent LOCK V1
+- ✅ Tests 2781 PASS preserved EXACT (doc-only meta-tooling install ZERO src/ touched per HARD CONSTRAINTS §F3.12)
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling + plugins ecosystem install NU additive product/architecture)
+- ✅ HARD CONSTRAINTS preserved: ZERO src/ + ZERO tests/ + ZERO main branch + ZERO .obsidian/ + ZERO wiki/ entity pages + existing PRESERVED inbox files NU touched
+- ✅ §CC.6 ~200 LOC append-only PRESERVED STRICT (raw layer freeze policy post-Faza 3 per CLAUDE.md §1.1 + §6.4 + §6.5)
+
+**Path forward post-chat-current trigger "salut acasă" fresh chat NEW:**
+- **P1 ABSOLUTE** = Reluare BATCH 2 Antrenor port (`📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`) cu benefit Pack 12 LANDED (GSD `/gsd-execute-phase` subagent orchestration + gstack `/qa` + `/review` + Impeccable `/audit` / `/critique` + Sequential Thinking + Tavily + Context7).
+- **P2** = Phase 3 SUB-BATCH 3 wiki populate ~95-120 pages multi-session overnight via GSD subagent orchestration.
+- **P3** = Phase 5b vault hub sync atomic post BATCH 2 + SUB-BATCH 3 done.
+- **P4** = Calendar feature implement post-BATCH 2 stable + SUB-BATCH 3 complete.
+
+**Cross-refs §CC.5 ingest commit (this entry):**
+- `00-index/CURRENT_STATE.md` §JUST_DECIDED top entry NEW Install Pack 12 + §NOW REPLACE chat-current + Header `Updated:` flip + §NEXT REPLACE P1-P4 + §ACTIVE_FLAGS 6 flags update (3 RESOLVED + 2 NEW RESOLVED + 1 PROMOTED P1 ABSOLUTE) + §RECENT shift
+- `03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-12 chat ACASĂ Install Pack 12 LANDED (this)
+- `00-index/INDEX_MASTER.md` `Last updated:` flip 2026-05-12
+- `📤_outbox/LATEST.md` NEW raport §CC.5 handover ingest format Andura standard
+- `DIFF_FLAGS.md` 6 entries update (3 🟢 RESOLVED 2026-05-12 + 2 NEW 🟢 + 1 NEW 🟡 PROMOTED P1 ABSOLUTE)
+- Archive moves: HANDOVER → 412_CONSUMED + LATEST_INSTALL_PACK_12 → 413_CONSUMED
+- Backup tag: `pre-handover-2026-05-12-install-pack-12-landed-fast-cc5` pushed origin
+
+🦫 **Bugatti craft. 2026-05-12 chat ACASĂ Install Pack 12 strategic eval ecosystem LANDED 100% useful capacity + env.MCP_TIMEOUT pattern canonical CORRECTED + bun + Git for Windows + 7 mcpServers verified active + 5 anti-recurrence rules captured. Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT.**
+
+---
+
 ## 2026-05-12 chat ACASĂ Co-CTO autonomous extended session aggregate — FAZA 3 Karpathy Option B Phase 1-5 LANDED FULL post-Daniel-approve voice fidelity checkpoint PASS verdict 9 wiki pages sample + Phase 3 SUB-BATCH 2 Cluster A 16 ADRs second half LANDED voice preservation policy §1 enforced + Obsidian graph view 10 color groups path-based + andura-graph.css snippet ~200 LOC Style Settings + Plugins ecosystem strategic eval pack 12 items LOCKED V1 (gstack + GSD + Impeccable + Emil Kowalski + Taste + UI/UX Pro Max + 21st.dev + Context 7 + Obsidian skills + Tavily + Firebase MCP eval + Sequential Thinking) + Calendar feature adaptive STRATEGIC LOCK V1 MAJOR multi-session (scheduleAdapter + deviationMemory + UX vanilla 7-day strip + ~1000-1500 LOC + 80+ tests + τ ML adaptive Bayesian per user response signals + Demographic Prior ADR 017 baseline) + Verbatim Daniel deviation-memory-decay captured pentru wiki future page + Meta-pattern Daniel time estimates rhetorical/directional NOT literal anchors + MCP timeout extend 2h LOCK + 3 surfaces sync DONE chat-side (memory edits 2 replaces + userPreferences raw + system prompt project raw) `feature/v2-vanilla-port` branch (vault meta-tooling + strategic decisions, cumulative ~742 PRESERVED unchanged, ZERO net additive product/architecture)
 
 **Status:** Aggregate session 2026-05-12 chat ACASĂ Co-CTO autonomous — Phase 5 cleanup LANDED post-Daniel-approve + SUB-BATCH 2 16 ADRs LANDED + Obsidian + plugins eval LOCK + calendar feature STRATEGIC LOCK + τ ML LOCK + meta-pattern + MCP timeout 2h + 3 surfaces sync chat-side. Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT. 2 atomic commits chat-current on `feature/v2-vanilla-port` (Phase 5 cleanup `069e5976` + SUB-BATCH 2 wiki `66574a7` + auto chore .obsidian/ `efe518f` Stop hook). Backup tags pushed origin pre-execute fiecare + this handover ingest backup tag `pre-handover-2026-05-12-faza-3-sub-batch-2-landed-plugins-eval-locked` pre-execute.
