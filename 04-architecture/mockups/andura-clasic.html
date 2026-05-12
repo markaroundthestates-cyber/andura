@@ -824,6 +824,38 @@
           <!-- Coach reflectie (post-session, persona-aware). Hidden by default; populated by JS post finishSession. -->
           <div id="coach-reflectie" class="wv2-coach-reflect" style="display:none;"></div>
 
+          <!-- Calendar V1 Slice 1 design master (2026-05-12). Saptamana ta L-D 7 cells heatmap + 4 UX states (locked/edit/editing/save).
+               Color-only L-D (Gigel scan-ability filter — NU label workout type Push/Pull/Legs per wiki/concepts/calendar-feature-v1-spec §clarification 1 LOCKED).
+               Default state LOCKED — preset template Engine #2 Goal Adaptation currentTemplate (S2 wiring).
+               Tap lacat → EDIT reset all neutru + hint inline + Salveaza vizibil. Tap cell EDITING toggle verde deschis. Tap Save → fade transition la verde inchis final + LOCKED reactivat.
+               Mid-week edit: zile trecute preserve verde inchis invariant (clarification 2 LOCKED). ZERO warning extreme (1 zi min ok + 7/7 ok per daniel-ism "coatch nu e medicul lui").
+               Slice 1 = static markup ONLY. S2-S4 wiring functional (scheduleAdapter.js engine layer + Coach Engine #2 trigger compositional + Engine #1 Periodization multi-week propagate). -->
+          <section class="calendar-week" data-state="locked" aria-label="Saptamana ta de antrenament">
+            <header class="calendar-week-header">
+              <h3 class="calendar-week-title">Saptamana ta</h3>
+              <button
+                type="button"
+                class="calendar-lock-toggle"
+                aria-label="Deblocheaza editare calendar"
+                data-action="toggle-lock"
+              >🔒</button>
+            </header>
+
+            <div class="calendar-days" role="group" aria-label="Zile saptamana">
+              <button type="button" class="calendar-day" data-day="L" data-selected="true" disabled aria-label="Luni — zi antrenament">L</button>
+              <button type="button" class="calendar-day" data-day="Ma" data-selected="false" disabled aria-label="Marti — zi libera">M</button>
+              <button type="button" class="calendar-day" data-day="Mi" data-selected="true" disabled aria-label="Miercuri — zi antrenament">M</button>
+              <button type="button" class="calendar-day" data-day="J" data-selected="false" disabled aria-label="Joi — zi libera">J</button>
+              <button type="button" class="calendar-day" data-day="V" data-selected="true" disabled aria-label="Vineri — zi antrenament">V</button>
+              <button type="button" class="calendar-day" data-day="S" data-selected="false" disabled aria-label="Sambata — zi libera">S</button>
+              <button type="button" class="calendar-day" data-day="D" data-selected="false" disabled aria-label="Duminica — zi libera">D</button>
+            </div>
+
+            <p class="calendar-edit-hint" hidden>Modifica zilele de antrenament in care esti disponibil.</p>
+
+            <button type="button" class="calendar-save" hidden data-action="save-calendar">Salveaza</button>
+          </section>
+
           <!-- Programe (6 obiective V1 LOCK — Auto + 5 specific. Auto = default. Restructure post-Gigel-test 2026-05-11: 'Tonifiere' → 'Masa musculara' (jargon → clar), added 'Mentenanta' (was missing for eutrophic stable), Longevitate+Sanatate generala consolidate → 'Longevitate / Sanatate'. -->
           <div class="settings-section">📋 Obiectiv</div>
           <div class="settings-stack" id="program-stack">
@@ -2674,6 +2706,63 @@
   .set-edit-row.hidden { display:none; }
   .set-edit-input { width:100%; padding:8px 10px; border:1px solid var(--line-strong); border-radius:8px; background:white; font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:600; color:var(--ink); text-align:center; }
   .set-edit-input:focus { outline:2px solid #c8412e; outline-offset:1px; }
+
+  /* Calendar V1 Slice 1 (2026-05-12) — Saptamana ta L-D heatmap + 4 UX states.
+     Tokens: --paper (cream bg) + --paper-2 (neutru cell) + --ink/--ink-3 (text) + --line (decorative border).
+     Heatmap colors SSOT existing palette: #3d7a4a (greu LOCKED/SAVE final) + #d4e6cb (usor EDITING pending Save) — verify mockup L1097/1099 legend already preserved.
+     WCAG AA: #3d7a4a vs white text 4.56:1 PASS SC 1.4.3 normal text 4.5:1 minimum.
+     Touch target WCAG 2.2 SC 2.5.8 AA (24×24 min): on 380px phone frame, content area ~340px, calendar-week inner ~308px, 7 cells × ~39px + 6 × 6px gaps ≈ 308px → cells ~39×39px PASS AA (24 min). aspect-ratio:1 keeps square scaling. */
+  .calendar-week { background:white; border:1px solid var(--line); border-radius:14px; padding:16px; margin:0 0 16px; }
+  .calendar-week-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .calendar-week-title { font-size:15px; font-weight:600; color:var(--ink); margin:0; letter-spacing:-0.01em; }
+  .calendar-lock-toggle { background:transparent; border:none; font-size:18px; line-height:1; cursor:pointer; padding:6px 8px; border-radius:8px; color:var(--ink); }
+  .calendar-lock-toggle:hover { background:var(--paper-2); }
+  .calendar-lock-toggle:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
+
+  .calendar-days { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-bottom:0; }
+  .calendar-day {
+    aspect-ratio:1;
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    background:var(--paper-2);
+    color:var(--ink);
+    font-weight:600;
+    font-size:14px;
+    font-family:'JetBrains Mono', monospace;
+    cursor:default;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 300ms ease-out, color 200ms, border-color 200ms;
+  }
+  .calendar-day[data-selected="true"] { background:#3d7a4a; color:#ffffff; border-color:#3d7a4a; }
+  .calendar-day:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
+
+  /* EDIT state — reset toate cells, enable tap-toggle, show hint + Save */
+  .calendar-week[data-state="edit"] .calendar-day,
+  .calendar-week[data-state="editing"] .calendar-day { cursor:pointer; background:var(--paper-2); color:var(--ink); border-color:var(--line-strong); }
+  .calendar-week[data-state="editing"] .calendar-day[data-selected="true"] { background:#d4e6cb; color:var(--ink); border-color:#3d7a4a; }
+  .calendar-week[data-state="edit"]:not([data-state="editing"]) .calendar-day[data-selected="true"] { background:var(--paper-2); color:var(--ink); border-color:var(--line-strong); }
+
+  .calendar-edit-hint { font-size:13px; color:var(--ink-3); margin:12px 0 10px; line-height:1.4; }
+  .calendar-week[data-state="edit"] .calendar-edit-hint,
+  .calendar-week[data-state="editing"] .calendar-edit-hint { display:block; }
+
+  .calendar-save {
+    width:100%;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:12px;
+    padding:12px 16px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s, transform .08s;
+  }
+  .calendar-save:hover { background:#0e0d0a; }
+  .calendar-save:active { transform:scale(0.97); }
+  .calendar-save:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
 
   .settings-section { font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin: 16px 4px 8px; }
   .settings-stack { background:white; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
