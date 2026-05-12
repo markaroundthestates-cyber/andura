@@ -13,6 +13,37 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster D specs SUB-BATCH 3 — 11 spec entity pages voice preservation §1 4-section enforced
+
+Cluster D specs SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_D_SPECS.md` §1-§8 execute (prompt inline chat trigger, self-archived `435_*_CONSUMED.md` per §7). 11 NEW spec entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 86 → 97 wiki pages (+11 net new SUB-BATCH 3 Cluster D). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs (1 pre-existing + 11 NEW) + 1 summary = 97 total.
+
+**11 spec entity pages LANDED per 04-architecture/*_SPEC*.md paradigm files:**
+1. [[../entities/specs/spec-cognitive-architecture]] — DRAFT 5-engine + Arbitrator central + dimensions plugins ortogonale 75 puncte arhitecturale stress test 2026-04-28 NIGHT anti-monolit
+2. [[../entities/specs/spec-multi-tenant-auth]] — DRAFT Anonymous → Firebase Auth Magic Link + OAuth Sprint 3 ZERO password V1 + REST not SDK ADR 002 preserved
+3. [[../entities/specs/spec-tombstone-branching]] — DRAFT replace LWW + append-only event log invariant + 90-day retention + multi-device safe + conflict UI prompt user agency
+4. [[../entities/specs/spec-data-registry]] — LANDED Task #27 SSOT localStorage keys USER_DATA_KEYS + TEST_RESIDUE_KEYS whitelist categories fixes H31c + C11c + H32c
+5. [[../entities/specs/spec-port-first-step-1]] — LOCKED V1 2026-05-10 7/7 sub-decisions Co-CTO bias preserved Daniel autonomy lock EXTINS
+6. [[../entities/specs/spec-react-migration-state-mapping]] — ACTIVE_SSOT Step 2 reference §AMENDMENT 2026-05-10 SUPERSEDE Port-First-Then-React paradigm
+7. [[../entities/specs/spec-andura-validation-framework]] — LOCKED V1 2026-05-05 evening north star ≥95% strict + Safety-dominant + Gate 2 DROPPED + corpus 500
+8. [[../entities/specs/spec-scenarios-simulator]] — DRAFT pure functions pipeline + 85% AUTO_RESOLVED + 15% FLAGGED Claude reasoning fill + 3-5% strategic edge cases
+9. [[../entities/specs/spec-faza-2-filter-strategy]] — DRAFT consume flagged_only.json + Claude reasoning fill + 3-instance Claude→Gemini→Claude→Daniel workflow
+10. [[../entities/specs/spec-v1-features-audit]] — LOCKED V1 2026-05-10 Co-CTO bias 10 keep + 4 modify + 1 drop F5 + audit primat universal rule
+11. [[../entities/specs/spec-root-nav-v2]] — §29.5.7 AMENDMENT LOCKED V1 2026-05-07 SUPERSEDE V1 trio → V2 quad Antrenor/Progres/Istoric/Cont RO pure naming
+
+**Voice preservation §1 enforcement 100% (11/11 pages):** Synthesis concise 2-3 paragrafe + Verbatim quotes Daniel min 2-4 EXACT cu daniel-isms preserved per page + Bugatti framing notes 5 sub-sections (Gigel/Quality>Speed/Anti-RE/Anti-paternalism/Voice tone) + Cross-refs raw layer min 5-7 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2. Audit primat reconciliation pattern preserved consistent cu BATCH 2 SLICE 0+1+2+3 + Cluster A+B+C precedent.
+
+**Bidirectional cross-links policy preserved forward-only** (per precedent §5 deliberate exception 2026-05-12 documented `427/428/430/432/434_*_CONSUMED.md` + Cluster B+C precedent): NEW spec pages forward-link existing ADR + engine + feature + concept pages. Retroactive back-ref edits frozen pages NU performed per HARD CONSTRAINT §F3.12 frozen pages NU touch invariant.
+
+**Cumulative SUB-BATCH 3 carry-forward TBD post Cluster A+B+C+D:** ~16-21 pages remaining (Cluster F summaries ~10-15 + Cluster G source pointers 6). Metoda hibridă LOCK V1 2026-05-12 turn-based pattern — next trigger "execute next cluster" Daniel chat NEW invocation.
+
+**Daniel-isms surfaced acest cluster:** *"Bugatti paradigm NU Volvo NU Dacia"* + *"monolit gigant"* + *"vizor fără ușă"* + *"Bugatti coverage breadth peak craft"* + *"100000 branches... 10000000000000 branches for all I care"* + *"time/effort/durată NICIODATĂ argumente quality decisions"* + *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous"* + *"Quality > Speed default"* + *"anti-Bugatti debt"* + *"audit primat universal rule"* + *"RO pure drop Anglicisms inconsistent"* + *"sesiune persistentă... date NU se pierd niciodată"* + *"preserve all writes zero data loss principle"* + *"memory paradox bug"* + *"anti-password-fatigue"* + *"registry gap"* + *"content production engine NU testing"*.
+
+**Cross-refs raw layer:** [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCK V1 + [[../../03-decisions/DECISION_LOG]] §2026-05-12 §CC.5 fast handover ingest entry top + [[../../📤_outbox/LATEST]] Cluster D specs raport §0-§8 + [[../../04-architecture/]] 11 spec source files + [[../entities/adrs/]] 42 ADR pages + [[../entities/engines/]] 7 engine pages + [[../entities/features/]] 19 feature pages + [[../concepts/]] 16 concept pages cross-refs.
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-d-specs-2026-05-12-2006` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] ingest | Cluster C features SUB-BATCH 3 — 19 feature entity pages voice preservation §1 4-section enforced
 
 Cluster C features SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_C_FEATURES.md` §1-§8 execute (prompt inline chat trigger, self-archived `433_*_CONSUMED.md` per §7). 19 NEW feature entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 67 → 86 wiki pages (+19 net new SUB-BATCH 3 Cluster C). 16 concepts + 42 ADRs + 7 engines + 19 features + 1 spec + 1 summary = 86 total.

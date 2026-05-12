@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post SUB-BATCH 3 Cluster C features (2026-05-12):** **86 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster D/F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post SUB-BATCH 3 Cluster D specs (2026-05-12):** **97 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12, 11 NEW Cluster D + 1 pre-existing Cluster A) + summaries (1). Carry-forward SUB-BATCH 3 Cluster F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
@@ -122,9 +122,20 @@ last_updated: 2026-05-12
 - [[entities/features/feature-mode-detection]] — 5 moduri pure event listeners + Mode hierarchy + reset per session ZERO ML/NLP runtime
 - [[entities/features/feature-tier-storage]] — Tier 0/1/2 active rolling 90 + aggregate + Firebase archive Q10 BLIND SPOT #1 RESOLVED
 
-## Entities — Specs (1 LANDED)
+## Entities — Specs (12 LANDED — 1 pre-existing + 11 NEW Cluster D SUB-BATCH 3 2026-05-12)
 
 - [[entities/specs/spec-handover-verification-checklist]] — Bugatti gate §0-§11 per /wiki-ingest LOCK V1 2026-05-12 (CEO directive verbatim 217 LOC raw layer)
+- [[entities/specs/spec-cognitive-architecture]] — Cognitive Architecture DRAFT 5-engine + Arbitrator central + dimensions plugins ortogonale 75 puncte arhitecturale anti-monolit
+- [[entities/specs/spec-multi-tenant-auth]] — Multi-Tenant Auth Migration DRAFT Anonymous → Firebase Auth Magic Link + OAuth Sprint 3 ZERO password V1
+- [[entities/specs/spec-tombstone-branching]] — Tombstone & Branching DRAFT replace LWW + append-only event log + 90-day retention zero data loss
+- [[entities/specs/spec-data-registry]] — Data Registry LANDED Task #27 SSOT localStorage keys + whitelist-based fullReset (USER_DATA_KEYS + TEST_RESIDUE_KEYS)
+- [[entities/specs/spec-port-first-step-1]] — Port-First Step 1 Paradigm V1 LOCKED 2026-05-10 7/7 sub-decisions Co-CTO bias preserved
+- [[entities/specs/spec-react-migration-state-mapping]] — React Migration State Mapping V1 ACTIVE_SSOT Step 2 reference state.js → Context+useReducer
+- [[entities/specs/spec-andura-validation-framework]] — Validation Framework V1 LOCKED 2026-05-05 evening north star ≥95% strict + Safety-dominant + corpus 500
+- [[entities/specs/spec-scenarios-simulator]] — Scenarios Simulator Design V1 DRAFT pure functions pipeline + ~85% AUTO_RESOLVED + ~15% FLAGGED Claude reasoning fill
+- [[entities/specs/spec-faza-2-filter-strategy]] — Faza 2 Filter Strategy V1 DRAFT consume flagged_only.json + Claude reasoning fill + 3-instance workflow
+- [[entities/specs/spec-v1-features-audit]] — V1 Features Audit V1 LOCKED 2026-05-10 Co-CTO bias 10 keep + 4 modify + 1 drop F5 audit primat universal rule
+- [[entities/specs/spec-root-nav-v2]] — Root Nav V2 §29.5.7 AMENDMENT LOCKED V1 2026-05-07 SUPERSEDE V1 trio → V2 quad Antrenor/Progres/Istoric/Cont
 
 ## Summaries (1 LANDED)
 
@@ -153,6 +164,8 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 **Cluster B — Engines SUB-BATCH 3 ✅ LANDED 2026-05-12 (7/7 mandatory complete)** — see `## Entities — Engines (7 LANDED 2026-05-12)` section above. Optional `engine-goal-adaptation` SKIPPED per Karpathy-real eval (ADR 024 entity coverage suficient; document SKIP rationale `wiki/log.md`). engine-deload/energy-adjustment/tempo-form-cues/warmup-mobility/specialization/bayesian-nutrition coverage suficient via ADR entities cross-refs (NU stand-alone engine pages required).
 
 **Cluster C — Features SUB-BATCH 3 ✅ LANDED 2026-05-12 (19/19 mandatory complete)** — see `## Entities — Features (19 LANDED 2026-05-12)` section above. V1 Features F1-F15 audit-driven 15 + 4 auxiliary (auth-magic-link + onboarding-t0 + mode-detection + tier-storage) per V1_FEATURES_AUDIT_V1.md §F1-§F15 verdicts (10 keep verbatim + 4 modify simplified + 1 drop V1 F5 + DROP V1 F13 Anti-RE rule + MODIFY F14 EXTEND 20→90 Tier 0 rolling).
+
+**Cluster D — Specs SUB-BATCH 3 ✅ LANDED 2026-05-12 (11/11 mandatory complete)** — see `## Entities — Specs (12 LANDED)` section above. 11 NEW spec entity pages per `04-architecture/*_SPEC*.md` paradigm files: cognitive-architecture + multi-tenant-auth + tombstone-branching + data-registry + port-first-step-1 + react-migration-state-mapping + andura-validation-framework + scenarios-simulator + faza-2-filter-strategy + v1-features-audit + root-nav-v2.
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**
