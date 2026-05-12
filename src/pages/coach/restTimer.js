@@ -9,6 +9,55 @@ import { updateExCard } from './logging.js';
 const INACTIVITY_DELAY = 2 * 60 * 1000;
 let inactivityTimer = null;
 
+// SVG ring geometry — matches mockup §rest-timer (r=30 → 2π·30 ≈ 188.5)
+export const REST_RING_CIRCUMFERENCE = 188.5;
+
+// Color states — mockup §rest-timer normal stroke #c8412e accent rust
+export const REST_RING_COLORS = Object.freeze({
+  normal:  '#c8412e',
+  warning: '#f5b942',
+  urgent:  '#ff4757',
+});
+
+const URGENT_PULSE_CLASS = 'rest-urgent-pulse';
+
+/**
+ * Render countdown ring + label per mockup §rest-timer V2 design.
+ * No-op when SVG scaffolding absent (V1 prod path uses #ps-progress linear bar).
+ *
+ * @param {number} left — seconds remaining (>= 0)
+ * @param {number} total — total pause duration in seconds (> 0)
+ * @returns {void}
+ */
+export function updateRestRing(left, total) {
+  if (typeof document === 'undefined' || !total || total <= 0) return;
+  const circle = document.getElementById('rest-circle');
+  const label = document.getElementById('rest-time');
+  if (!circle && !label) return;
+
+  const safeLeft = Math.max(0, Math.min(total, left));
+  const pct = safeLeft / total;
+
+  if (circle) {
+    const offset = REST_RING_CIRCUMFERENCE * (1 - pct);
+    circle.setAttribute('stroke-dashoffset', String(offset));
+
+    let color = REST_RING_COLORS.normal;
+    if (pct < 0.10) color = REST_RING_COLORS.urgent;
+    else if (pct < 0.30) color = REST_RING_COLORS.warning;
+    circle.setAttribute('stroke', color);
+
+    if (pct < 0.10) circle.classList.add(URGENT_PULSE_CLASS);
+    else circle.classList.remove(URGENT_PULSE_CLASS);
+  }
+
+  if (label) {
+    const m = Math.floor(safeLeft / 60);
+    const s = safeLeft % 60;
+    label.textContent = `${m}:${String(s).padStart(2, '0')}`;
+  }
+}
+
 export function getSmartPause(ex) {
   const base = COMPOUND_EX.includes(ex) ? PAUSE_COMPOUND : PAUSE_ISO;
   const rir = SYS.getTempo(ex)?.rir ?? 2;
@@ -33,10 +82,13 @@ export function startPause(sec, nextEx = '') {
   showPauseScreen();
   speak(`Pauza de ${sec} secunde.`);
 
+  updateRestRing(state.pauseLeft, state.pauseTotal);
+
   state.pauseTimer = setInterval(() => {
     state.pauseLeft--;
     $('ps-timer').textContent = state.pauseLeft;
     $('ps-progress').style.width = (state.pauseLeft / state.pauseTotal * 100) + '%';
+    updateRestRing(state.pauseLeft, state.pauseTotal);
     if (state.pauseLeft === 10) { beep(660, .1); speak('10 secunde.'); }
     if (state.pauseLeft <= 3 && state.pauseLeft > 0) beep(880, .08);
     if (state.pauseLeft <= 0) {

@@ -52,6 +52,7 @@ vi.mock('../session.js', () => ({
 vi.mock('../restTimer.js', () => ({
   getSmartPause: vi.fn(() => 90),
   startPause: vi.fn(),
+  skipPause: vi.fn(),
 }));
 
 import {
@@ -219,15 +220,21 @@ describe('Rest timer panel — visibility from state.pauseTimer', () => {
     expect(rest.style.display).toBe('none');
   });
 
-  it('visible when state.pauseTimer active + pauseLeft > 0', () => {
+  it('visible when state.pauseTimer active + pauseLeft > 0 + renders SVG ring per mockup §rest-timer', () => {
     state.pauseTimer = 1; // truthy
     state.pauseLeft = 45;
     state.pauseTotal = 90;
     showWorkoutScreen();
     const rest = document.querySelector('.workout-rest');
     expect(rest.style.display).toBe('flex');
-    expect(rest.textContent).toContain('45s');
+    // V2 mockup §rest-timer center label MM:SS format (NU V1 "Ns" linear)
+    expect(rest.textContent).toContain('0:45');
+    // % remaining preserved in label sub-line
     expect(rest.textContent).toContain('50%');
+    // SVG ring scaffolding present per mockup line 985-988
+    expect(rest.querySelector('#rest-circle')).toBeTruthy();
+    expect(rest.querySelector('#rest-time')).toBeTruthy();
+    expect(rest.querySelector('.workout-rest-skip')).toBeTruthy();
   });
 });
 

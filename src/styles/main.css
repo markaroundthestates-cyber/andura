@@ -253,3 +253,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 
 #pause-screen{display:none}
 #pause-screen.active{display:flex!important}
+
+@keyframes rest-urgent-pulse{
+  0%,100%{opacity:1;filter:drop-shadow(0 0 0 rgba(255,71,87,0))}
+  50%{opacity:0.85;filter:drop-shadow(0 0 6px rgba(255,71,87,0.85))}
+}
+.rest-urgent-pulse{animation:rest-urgent-pulse .8s ease-in-out infinite}
+#rest-circle{transition:stroke-dashoffset .35s linear,stroke .25s ease}

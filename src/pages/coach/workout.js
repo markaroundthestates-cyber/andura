@@ -29,6 +29,7 @@ import { SYS } from '../../engine/sys.js';
 import { getExGroup } from './util.js';
 import { setDone } from './logging.js';
 import { finishEarly } from './session.js';
+import { skipPause } from './restTimer.js';
 
 const escapeHtml = (s) => String(s || '').replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -156,12 +157,19 @@ export function renderWorkoutScreen(opts = {}) {
         </div>
       </div>
 
-      <div class="workout-rest" style="display:${showRest ? 'flex' : 'none'};margin-top:14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;align-items:center;gap:14px">
-        <div class="workout-rest-progress" style="width:60px;height:60px;border-radius:50%;border:4px solid var(--bg3);border-top-color:var(--accent);transform:rotate(${Math.round((1 - restLeft / restTotal) * 360)}deg);transition:transform .25s"></div>
-        <div style="flex:1">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em">Pauza</div>
-          <div class="workout-rest-time" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--text)">${restLeft}s · ${restPct}%</div>
+      <div id="rest-timer" class="workout-rest" style="display:${showRest ? 'flex' : 'none'};margin-top:14px;background:var(--ink, #1a1815);color:var(--paper, #fff);border-radius:18px;padding:18px;align-items:center;gap:16px">
+        <div style="position:relative;width:72px;height:72px;flex-shrink:0">
+          <svg width="72" height="72" style="transform:rotate(-90deg)">
+            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"></circle>
+            <circle id="rest-circle" cx="36" cy="36" r="30" fill="none" stroke="#c8412e" stroke-width="5" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="${(188.5 * (1 - restLeft / restTotal)).toFixed(1)}"></circle>
+          </svg>
+          <div id="rest-time" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600">${Math.floor(restLeft / 60)}:${String(restLeft % 60).padStart(2, '0')}</div>
         </div>
+        <div style="flex:1;min-width:0">
+          <div class="small-text" style="color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;font-size:10px">Pauza</div>
+          <div class="workout-rest-time" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500">${restPct}% ramas</div>
+        </div>
+        <button class="workout-rest-skip" aria-label="Sari pauza" style="background:#c8412e;color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600;font-size:13px">Sari</button>
       </div>
 
       <button class="workout-log-set" style="width:100%;margin-top:16px;padding:14px;background:var(--accent);color:#000;border:none;border-radius:var(--rs);cursor:pointer;font-size:14px;font-weight:600">
@@ -184,6 +192,13 @@ export function renderWorkoutScreen(opts = {}) {
     if (typeof opts.onFinish === 'function') opts.onFinish();
     closeWorkoutScreen(opts);
   });
+  const skipBtn = overlay.querySelector('.workout-rest-skip');
+  if (skipBtn) {
+    skipBtn.addEventListener('click', () => {
+      try { skipPause(); } catch { /* DOM-dependent in V1 prod; swallow */ }
+      renderWorkoutScreen(opts);
+    });
+  }
 }
 
 export function closeWorkoutScreen(opts = {}) {
