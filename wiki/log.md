@@ -13,6 +13,38 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster G source pointers SUB-BATCH 3 FINAL CLOSURE MILESTONE — 6 source pointer pages voice preservation §1 + SUB-BATCH 3 100% COMPLETE
+
+Cluster G source pointers SUB-BATCH 3 FINAL CLOSURE MILESTONE LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_G_SOURCE_POINTERS.md` §1-§8 execute (prompt inline chat trigger, self-archived `439_*_CONSUMED.md` per §7). 6 NEW source pointer pages voice preservation policy §1 4-section structure enforced + coverage validation 1:1 mapping mandatory. Cumulative count: 109 → 115 wiki pages (+6 net new SUB-BATCH 3 Cluster G FINAL). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 13 summaries + 6 sources = 115 total.
+
+**🦫 SUB-BATCH 3 CLOSURE MILESTONE ACHIEVED 2026-05-12** — Karpathy Real Option B 100% wiki coverage post Cluster A+B+C+D+F+G cumulative:
+- Cluster A: 42/42 ADRs LANDED (SUB-BATCH 1+2+3 cumulative 2026-05-11 → 2026-05-12) — 100% Karpathy real coverage
+- Cluster B: 7/7 engines LANDED + 1 optional engine-goal-adaptation SKIPPED rationale (ADR 024 entity coverage suficient)
+- Cluster C: 19/19 features LANDED (15 V1 audit-driven F1-F15 + 4 auxiliary)
+- Cluster D: 11/11 specs LANDED + 1 pre-existing spec entity
+- Cluster F: 12/12 summaries LANDED cross-cluster synthesis + 1 pre-existing consolidare metoda hibridă
+- Cluster G: 6/6 source pointers LANDED FINAL raw layer 1:1 + cross-cluster coverage map
+
+**6 source pointer pages LANDED Cluster G FINAL:**
+1. [[../sources/adr-source-pointers]] — 42 ADR files → wiki/entities/adrs/ 1:1 coverage map 100% post Cluster A
+2. [[../sources/spec-source-pointers]] — 11 spec paradigm files → wiki/entities/specs/ 1:1 coverage map 100% post Cluster D + 1 pre-existing
+3. [[../sources/vision-source-pointers]] — 10 vision files → cross-distribuit wiki/concepts/ + wiki/summaries/ + ADRs (8 LANDED + 2 GAP intentional private/legal)
+4. [[../sources/handover-themes-pointers]] — 5 HANDOVER theme files + RECENT_DECIDED_ARCHIVE → wiki summaries cross-cluster distribuit
+5. [[../sources/current-state-pointers]] — CURRENT_STATE §RECENT precedent threads chronological → wiki narrative cross-cluster
+6. [[../sources/decision-log-pointers]] — DECISION_LOG chronological master log ~4245 LOC + ~742 LOCKED V1 → wiki coverage cross-cluster
+
+**Voice preservation §1 enforcement 100% (6/6 pages):** Synthesis concise 2-3 paragrafe (source pointer nature mai sec decât entity/summary) + Verbatim quotes Daniel min 1-2 EXACT per page + Bugatti framing notes 5 sub-sections + Cross-refs raw layer min 5-8 specific `path:§` pointers per page + **Coverage Map mandatory table** (HARD RULE 6 invariant). 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Bidirectional cross-links policy preserved forward-only** per precedent §5 deliberate exception 2026-05-12 documented (`427/428/430/432/434/436/438_*_CONSUMED.md` precedent): NEW source pointer pages forward-link existing entity ADR + engine + feature + spec + concept + summary pages cross-cluster comprehensive (density HIGHEST 10-50+ cross-refs per page typical — entire entity catalog distribuit map).
+
+**Cumulative target ~120-200 wiki pages per CLAUDE.md §1.2 estimate achieved within range (115 cumulative).** Post Karpathy Faza 3 Phase 1-5 LANDED FULL + 5 clusters SUB-BATCH 3 + concepts + Schema/Design + pre-existing entities = comprehensive knowledge graph foundation.
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-g-source-pointers-FINAL-2026-05-12-2029` pushed origin pre-execute.
+
+**Path forward post SUB-BATCH 3 CLOSURE (Daniel choice next chat trigger):** Calendar feature implement LOCK V1 STRATEGIC ~1000-1500 LOC / Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` pre-Beta a-z review / Beta launch readiness consolidation / Strategic pauză planning / React Migration Step 2 planning post-Step-1 Daniel Gates LANDED.
+
+---
+
 ## [2026-05-12] ingest | Cluster F summaries SUB-BATCH 3 — 12 summary pages voice preservation §1 4-section enforced cross-cluster synthesis
 
 Cluster F summaries SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_F_SUMMARIES.md` §1-§8 execute (prompt inline chat trigger, self-archived `437_*_CONSUMED.md` per §7). 12 NEW summary pages voice preservation policy §1 4-section structure enforced + cross-cluster synthesis dense forward-only cross-links. Cumulative count: 97 → 109 wiki pages (+12 net new SUB-BATCH 3 Cluster F). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 13 summaries (1 pre-existing + 12 NEW) = 109 total.
