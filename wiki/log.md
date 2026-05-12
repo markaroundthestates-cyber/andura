@@ -13,6 +13,38 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster A SUB-BATCH 3 — 16 remaining ADRs entity pages voice preservation §1 enforced (42/42 ADRs Karpathy real coverage 100%)
+
+Cluster A SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 — 16 remaining ADR entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 41 → 57 wiki pages (+16 net new SUB-BATCH 3 Cluster A). ADRs Karpathy real coverage **100% (42/42)** post Cluster A LANDED.
+
+**16 ADR entity pages LANDED:**
+1. [[../entities/adrs/adr-021-calibration-drift-reconciliation]] — Multi-device sync Version Vector + Max-Merge + Monotonic Clock
+2. [[../entities/adrs/adr-024-goal-driven-program-templates]] — Engine #2 Goal Adaptation pipeline §42.10 2nd + 5 templates + Q1-Q8 LOCKED + Q6 D Hybrid
+3. [[../entities/adrs/adr-025-andura-gandeste-pentru-user]] — CANDIDATE STUB principiu fondator graceful degradation universal
+4. [[../entities/adrs/adr-027-engine-energy-adjustment]] — SPEC REFERENCE ADR 026 §9.3 pipeline §42.10 3rd
+5. [[../entities/adrs/adr-028-engine-tempo-form-cues]] — SPEC REFERENCE ADR 026 §9.5 pipeline §42.10 5th
+6. [[../entities/adrs/adr-029-engine-specialization]] — SPEC REFERENCE ADR 026 §9.6 pipeline §42.10 6th
+7. [[../entities/adrs/adr-031-engine-warmup-mobility]] — SPEC REFERENCE ADR 026 §9.7 pipeline §42.10 7th
+8. [[../entities/adrs/adr-033-muscle-memory-index]] — STUB Engine #9 MMI candidate post-Beta v1.5
+9. [[../entities/adrs/adr-bias-detection-observable]] — Volume Creep + Auto-pedeapsă observable UI events
+10. [[../entities/adrs/adr-cascade-defense]] — 4 layers runtime defense (Schema + Confidence + Sanity + Composite Signal)
+11. [[../entities/adrs/adr-composite-signal-layer]] — 3/3 simultaneous threshold arbitration lifecycle cooldown
+12. [[../entities/adrs/adr-mode-detection-ui]] — 5 moduri pure event listeners ZERO ML/NLP runtime
+13. [[../entities/adrs/adr-outlier-filter]] — Profile-Aware + ASK don't IGNORE + §EXT-1 + §EXT-2 amendment 2026-05-04
+14. [[../entities/adrs/adr-pain-discomfort-button]] — 3-tier observable + Override CDL F2 respect + Gigel PASS
+15. [[../entities/adrs/adr-rir-matrix-adaptive]] — Profile × Exercise Category matrix Verbal → RIR numeric translation
+16. [[../entities/adrs/adr-smart-routing-equipment]] — Tier-aware filtering + similarity ranking + anti-paternalism skip
+
+**Voice preservation §1 enforcement 100% (16/16 pages):** Synthesis concise 2-3 paragrafe + Verbatim quotes Daniel min 1-3 EXACT cu daniel-isms preserved + Bugatti framing notes (Gigel/Quality>Speed/Anti-RE/Anti-paternalism/Voice tone) + Cross-refs raw layer min 2-3 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Cumulative SUB-BATCH 3 carry-forward TBD post Cluster A:** ~57-88 pages remaining (Cluster B engines ~10-13 + Cluster C features ~20 + Cluster D specs 11 + Cluster F summaries ~10-15 + Cluster G source pointers 6). Metoda hibridă LOCK V1 2026-05-12 turn-based pattern — next trigger "execute next cluster" Daniel chat NEW invocation.
+
+**Cross-refs raw layer:** [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCK V1 + [[../../03-decisions/DECISION_LOG]] §2026-05-12 §CC.5 fast handover ingest entry top + [[../../📤_outbox/LATEST]] vault hygiene next pass cleanup + this commit SUB-BATCH 3 Cluster A raport § + [[../entities/adrs/]] 16 NEW pages.
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-a-2026-05-12-1902` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] hygiene | vault hygiene next pass cleanup post BATCH 2 + Karpathy Phase 1-5 LANDED
 
 Vault hygiene next pass cleanup atomic single-concern LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12. Per `📥_inbox/PROMPT_CC_VAULT_HYGIENE_NEXT_PASS.md` §1-§9 execute autonomous; archived `📤_outbox/_archive/2026-05/424_PROMPT_CC_VAULT_HYGIENE_NEXT_PASS_CONSUMED.md`. Previous LATEST §CC.5 handover ingest cycled `425_LATEST_BATCH_2_CLOSURE_MILESTONE_PLUS_METODA_HIBRIDA_CONSUMED.md`. Chat-current actions atomic: (1) Inbox final sweep verified `.gitkeep` + `PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3.md` preserved P1 next chat Option A active + acest prompt archived; (2) wiki/ audit cumulative 41 pages LANDED verified vs index claim (26 ADRs Phase 3 SUB-BATCH 1+2 + 15 concepts SUB-BATCH 1) — 0 drift; (3) /wiki-lint 5 scans run pass: 48 broken wikilinks delta +6 vs Phase 4 baseline 42 acceptable (3 stale ref-moves frozen Cluster A HARD CONSTRAINT NU touch + 11 forward refs SUB-BATCH 3 TBD + 4 archive bare historical + 30 other forward refs spec/summary TBD per CLAUDE.md §5.2 forward-ref tolerance) + 0 orphan + 0 stale + 0 contradiction + 0 voice fidelity issues PERFECT preserved invariant; (4) Raw layer wikilinks orphan scan 0 broken post FAZA 2C+2D+cleanup cumulative (CLAUDE.md + VAULT_RULES.md + wiki/_design/WIKI_DESIGN_SPEC_V1.md L13/L24/L1090/L1128/L1249/L1259/L10/L11 already updated commit `5d97429`); (5) Skills CC ecosystem verified: 7 MCP servers active filesystem-side per Install Pack 12 LANDED claim + 81 skills global inventory (66 GSD + Impeccable + Emil Kowalski + Taste + UI/UX Pro Max + Obsidian 5 variants + utility) + bun 1.3.13 + bash 5.3.9 Git for Windows; (6) Chat-side artefacts swept atomic în this commit: `VAULT_RULES.md` modifications (Daniel §F3.13 metoda hibridă context) + `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` NEW 217 LOC Daniel CEO directive 2026-05-12 Bugatti gate workflow LOCKED V1 per directive verbatim *"Faci si un mandatory file la fiecare handover in care cc sa treaca prin tot ce adauga in handover si sa verifice ca e indexat si plasat cum trebuie"*. Tests 2914 PASS preserved EXACT (vault hygiene doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-vault-hygiene-next-pass-2026-05-12-1854` pushed origin pre-execute.

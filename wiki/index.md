@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post Phase 3 SUB-BATCH 2 (2026-05-12):** 41 pages LANDED across concepts (15) + entities/adrs (26). Carry-forward SUB-BATCH 3 documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight".
+**Catalog status post Phase 3 SUB-BATCH 3 Cluster A (2026-05-12):** **57 pages LANDED** across concepts (15) + entities/adrs (42, 100% Karpathy real coverage). Carry-forward SUB-BATCH 3 Cluster B/C/D/F/G documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight" + metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
@@ -33,7 +33,7 @@ last_updated: 2026-05-12
 - [[concepts/moat-strategy]] — engines auxiliare ascunse + cumulative ~742 LOCKED V1
 - [[concepts/append-only-architecture]] — §CC.6 LOCK V1 2026-05-10 DEPRECATED post-Faza 3
 
-## Entities — ADRs (26 LANDED / 42 total)
+## Entities — ADRs (42 LANDED / 42 total — 100% Karpathy real coverage)
 
 ### SUB-BATCH 1 (10 LANDED 2026-05-11)
 
@@ -67,6 +67,25 @@ last_updated: 2026-05-12
 - [[entities/adrs/adr-019-gdpr-k-anonymity-validation]] — k=5 minim obligatorie + 5 quasi-identifiers SSOT + §AMENDMENT 2026-05-02 community channel-agnostic
 - [[entities/adrs/adr-020-storage-tiering-strategy]] — Tier 0/1/2 + Dexie.js Gemini Q10 BLIND SPOT #1 BLOCKER pre-launch resolved
 
+### SUB-BATCH 3 (16 LANDED 2026-05-12 — Cluster A complete 42/42 ADRs Karpathy real coverage 100%)
+
+- [[entities/adrs/adr-021-calibration-drift-reconciliation]] — Multi-device sync Version Vector + Max-Merge + Monotonic Clock observații negative preservate
+- [[entities/adrs/adr-024-goal-driven-program-templates]] — Engine #2 Goal Adaptation pipeline §42.10 2nd + 5 templates V1 + Q1-Q8 LOCKED + Q6 D Hybrid 2026-05-06
+- [[entities/adrs/adr-025-andura-gandeste-pentru-user]] — CANDIDATE STUB principiu fondator retroactiv graceful degradation universal V1+V1.5+V2+ permanent
+- [[entities/adrs/adr-027-engine-energy-adjustment]] — SPEC REFERENCE ADR 026 §9.3 pipeline §42.10 3rd + bidirectional ±15% tier-aware + asymmetric trigger anti-Sarcastic UP
+- [[entities/adrs/adr-028-engine-tempo-form-cues]] — SPEC REFERENCE ADR 026 §9.5 pipeline §42.10 5th + persona-aware notation Maria verbal/Gigica hibrid/Marius numeric
+- [[entities/adrs/adr-029-engine-specialization]] — SPEC REFERENCE ADR 026 §9.6 pipeline §42.10 6th + PARALLEL modifier 4-gate strict Marius Advanced + wires weaknessDetector orfan
+- [[entities/adrs/adr-031-engine-warmup-mobility]] — SPEC REFERENCE ADR 026 §9.7 pipeline §42.10 7th + persona-aware thresholds + Instant Skip T0 default anti-Maria-friction
+- [[entities/adrs/adr-033-muscle-memory-index]] — STUB SPEC PLACEHOLDER Engine #9 MMI candidate post-Beta v1.5 + Algorithm Hibrid Lookup + Boost
+- [[entities/adrs/adr-bias-detection-observable]] — Volume Creep + Auto-pedeapsă observable UI events + Catastrofizare SCRAP V1 defer V2
+- [[entities/adrs/adr-cascade-defense]] — 4 layers runtime defense (Schema + Confidence + Sanity + Composite Signal) + safe default per profile
+- [[entities/adrs/adr-composite-signal-layer]] — 3/3 simultaneous threshold arbitration (Performance Drop + Rest Time + RIR Mismatch) + lifecycle cooldown
+- [[entities/adrs/adr-mode-detection-ui]] — 5 moduri pure event listeners + ZERO ML/NLP runtime + Mode hierarchy + reset per session
+- [[entities/adrs/adr-outlier-filter]] — Profile-Aware + ASK don't IGNORE + §EXT-1 Streak Counter + §EXT-2 Goal Shift Event Handler foundation ADR 024 Q6
+- [[entities/adrs/adr-pain-discomfort-button]] — 3-tier observable + ZERO medical claims + Override CDL F2 respect audit trail + Gigel test PASS
+- [[entities/adrs/adr-rir-matrix-adaptive]] — Profile × Exercise Category matrix Verbal→RIR + Maria reduce reps NU sets + Marius 3 consecutive micro-deload
+- [[entities/adrs/adr-smart-routing-equipment]] — Tier-aware filtering + similarity ranking + anti-paternalism skip + equipmentSwap.js V1 LANDED BATCH 2
+
 ## Schema + Design (LANDED Phase 1-2)
 
 - [[../CLAUDE]] — vault root schema Karpathy Real Option B LOCK V1 2026-05-11 §0-§7
@@ -79,18 +98,13 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 - TBD `sources/decision-log-pointers.md` — DECISION_LOG entries → wiki coverage map
 - TBD `sources/handover-themes-pointers.md` — 5 HANDOVER theme files → wiki coverage map
 - TBD `sources/current-state-pointers.md` — CURRENT_STATE precedent threads → wiki narrative map
-- TBD `sources/adr-source-pointers.md` — 42 ADR files → wiki entity 1:1 map (10 LANDED + 32 TBD)
+- TBD `sources/adr-source-pointers.md` — 42 ADR files → wiki entity 1:1 map (42 LANDED 100% post SUB-BATCH 3 Cluster A LANDED 2026-05-12)
 - TBD `sources/spec-source-pointers.md` — 11 SPEC files → wiki entity map (TBD)
 - TBD `sources/vision-source-pointers.md` — 9 vision files → wiki concept/summary map
 
 ## Carry-forward TBD (Phase 3 SUB-BATCH 3 per Prompt §6 "Phase 3 split în 2-3 sessions overnight")
 
-**Cluster A — ADRs SUB-BATCH 3 (16 remaining):**
-- adr-021-calibration-drift-reconciliation
-- adr-024-goal-driven-program-templates + adr-025-andura-gandeste-pentru-user
-- adr-027-engine-energy-adjustment + adr-028-engine-tempo-form-cues + adr-029-engine-specialization
-- adr-031-engine-warmup-mobility + adr-033-muscle-memory-index
-- 8 named ADRs: ADR_BIAS_DETECTION_OBSERVABLE + ADR_CASCADE_DEFENSE + ADR_COMPOSITE_SIGNAL_LAYER + ADR_MODE_DETECTION_UI + ADR_OUTLIER_FILTER + ADR_PAIN_DISCOMFORT_BUTTON + ADR_RIR_MATRIX_ADAPTIVE + ADR_SMART_ROUTING_EQUIPMENT
+**Cluster A — ADRs SUB-BATCH 3 ✅ LANDED 2026-05-12 (16/16 complete; 42/42 ADRs Karpathy real coverage 100%)** — see `### SUB-BATCH 3 (16 LANDED 2026-05-12)` section above
 
 **Cluster B — Engines (~10 TBD):**
 - engine-deload (covered indirect via ADR 032 entity)
@@ -121,7 +135,7 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 
 **Cluster G — Source pointers (6 TBD):** see above `## Sources` section
 
-**Total carry-forward TBD:** ~79-104 pages remaining post SUB-BATCH 2 (41 LANDED / ~120-200 projected).
+**Total carry-forward TBD:** ~57-88 pages remaining post SUB-BATCH 3 Cluster A LANDED (57 LANDED cumulative / ~120-200 projected). Cluster B (~10-13) + C (~20) + D (11) + F (~10-15) + G (6) chronological cluster execution post Cluster A LANDED.
 
 ---
 
