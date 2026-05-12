@@ -1,115 +1,109 @@
-**Task:** FAZA 3 Karpathy Option B Phase 1-5 LANDED full + post-Daniel-approve voice fidelity checkpoint
-**Model:** Opus (Co-CTO autonomous scope chat ACASĂ 2026-05-12)
-**Status:** ✅ Complete — FAZA 3 Karpathy Option B Phase 1-5 LANDED FULL post Daniel review checkpoint approve
+**Task:** Install Pack 12 Strategic Eval Ecosystem — 12 items LOCKED V1 Pack 12 install ACASĂ Daniel profile
+**Model:** Opus (Co-CTO autonomous via MCP claude_code subprocess, chat ACASĂ 2026-05-12)
+**Status:** ✅ Complete — 11/12 installed/configured + 1/12 eval raport-only (Firebase MCP DEFER) — Daniel restart Claude Desktop manual post-LANDED required
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous Phase 5 cleanup LANDED post-Daniel-approve checkpoint.
+**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous Install Pack 12 LANDED post-Faza 3 Phase 1-5 Karpathy Option B baseline.
 
-## Pre-flight (§AR.1 grep + §AR.3 ground truth + §AR.4 anti-distructive + backup tag pushed origin)
+# Raport: Install Pack 12 Strategic Eval Ecosystem — 2026-05-12
 
-Daniel reviewed 9 wiki pages sample (per raport 402 §6) cross-section voice preservation policy §1 validation:
-- ✅ Verbatim quotes Daniel EXACT preserved (NU rezumate impersonale "user pushed back")
-- ✅ Daniel-isms catalog populated EXTENSIVELY NU lobotomy (tataie + halucinezi + stai + ce dracu + acoperiș-pereți + figure it out + salut acasă + NU MA MAI INTREBI + reps in reserve + Gigel + Bugatti + mockup-first + etc.)
-- ✅ Bugatti framing notes prezent acolo unde aplicabil (Gigel test + Quality > Speed + Anti-RE + Anti-paternalism + voice tone)
-- ✅ Cross-refs raw layer minim 2-3 specific pointers `path:§` per page (3-7 typical observed)
-- 🟡 **2 minor flags non-blocker (defer):** voice-preservation-policy.md quote 2 + adr-005-vanilla-js.md quote 3 — possible reconstructed paraphrase Daniel suspect, NU blocking. Defer per Daniel implicit approve Phase 5 execute autonomous.
+## §0 Pre-flight status
 
-**Verdict Daniel:** PASS voice fidelity validation. Phase 5 cleanup execute autonomous unblocked.
+- ✅ **Claude Code CLI version:** `2.1.139 (Claude Code)`
+- ✅ **`.claude/` directory exists:** confirmed `C:\Users\Daniel\.claude\` (skills/ subdirectory created NEW — original tree had `plugins/marketplaces/claude-plugins-official/` but no `skills/`)
+- ✅ **Backup `.claude.backup-2026-05-12-pre-pack-12`:** 2265 files copied via `xcopy /E /I /Y` (rollback safety net)
+- ✅ **Backup `claude_desktop_config.json.backup-2026-05-12`:** copied to `📥_inbox/claude_desktop_config.json.backup-2026-05-12` (rollback safety net)
+- ✅ **Git backup tag `pre-install-pack-12-2026-05-12` pushed origin:** `[new tag] pre-install-pack-12-2026-05-12 -> pre-install-pack-12-2026-05-12`
 
-Pre-flight verified:
-- ✅ §CC.2 layered read MCP filesystem direct: CURRENT_STATE §NOW + §NEXT + §ACTIVE_FLAGS + `📤_outbox/_archive/2026-05/402_FAZA_3_PHASE_4_WIKI_LINT_INITIAL_RAPORT.md` §6 carry-forward spec + `CLAUDE.md` §6 Integration cu VAULT_RULES post-Phase 5 + `VAULT_RULES.md §FAZA_3_KARPATHY_REAL §F3.10-§F3.12` Phase 5 acceptance criteria + hard constraints + `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md §3 Phase 5` spec exact + listing `📤_outbox/_archive/2026-05/` next NN free (405 → 406+407)
-- ✅ §AR.1 grep filesystem inbox files verified (PROMPT_CC_FAZA_3 EXISTS + 3 PRESERVED per HARD CONSTRAINTS: `_karpathy_gist_reference.md` + `PLAN_ANTI_HALUCINATIE_VAULT.md` + `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`)
-- ✅ §AR.3 ground truth git verify (branch `feature/v2-vanilla-port` confirmed + origin commits up-to-date `0c9777e` §CC.5 handover ingest LANDED + archive folder serial numbers free 406+407)
-- ✅ §AR.4 anti-distructive default preserved (NU touch raw layer existing pre-Faza 3 ADRs/specs + NU touch src/+tests/+main branch+.obsidian/ chat-side LANDED + 3 inbox files PRESERVED carry-forward + wiki/ entity pages frozen post-approve)
-- ✅ Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute rollback safety
-- ✅ §AR.19 — MCP timeout ≠ subprocess crash invariant preserved
+## §1 Group A — Methodology stack
 
-## Modificări (1 atomic commit single-concern Bugatti craft + push origin)
+1. **gstack:** Source `https://github.com/garrytan/gstack` verified canonical (Garry Tan YC Pres, 60+ skill dirs). Status 🟡 **partial-installed** @ `C:\Users\Daniel\.claude\skills\gstack\` 89 files / ~60 skill subdirectories (review/qa/ship/canary/design-review/etc). **Setup script fails:** `./setup` requires `bun` runtime (not installed on this machine — Windows). Skills auto-discoverable din directory via Claude Code skill loader; `browse` binary NU built (browser automation features unavailable until `bun` installed + setup re-run). Daniel decide post-restart: install bun + re-run setup OR accept skills-only mode.
 
-**FAZA 3 Phase 5 cleanup vault hub sync atomic commit (this commit):**
+2. **GSD (Get-Shit-Done):** Source `https://www.npmjs.com/package/get-shit-done-cc` (`gsd-build/get-shit-done` GitHub) verified canonical. Status ✅ **installed** via `npx get-shit-done-cc@latest --claude --global` — 66 `gsd-*` skills + agents/ + hooks/ + GSD SDK linked `gsd-sdk` cmd. **Side-effect:** installer modified `C:\Users\Daniel\.claude\settings.json` cu hooks PowerShell-style `& "node.exe" "...js"` syntax → incompatible cu bash POSIX shell (Claude Code Bash tool runs `/usr/bin/bash`) → **all 9 hooks (SessionStart×2 + PostToolUse×3 + PreToolUse×4 + statusLine) failed syntax error pe execution + blocked Edit/Write tools mid-session.** **Mitigare LANDED:** restored `settings.json` din `.claude.backup-2026-05-12-pre-pack-12/settings.json` (pre-GSD pristine state). GSD skill files + agents + SDK preserved + functional; GSD-installed hooks reverted (Daniel decide post-restart: re-install GSD via PowerShell terminal direct OR craft cross-runtime hook commands using `cmd /c` wrapper).
 
-1. **Archive moves (raw layer cycle):**
-   - `📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B.md` → `📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED.md` via plain `mv` (PROMPT_CC was untracked în git)
-   - `📤_outbox/LATEST.md` (precedent Faza 3 Phase 4 §CC.5 handover ingest raport) → `📤_outbox/_archive/2026-05/407_FAZA_3_PHASE_4_LATEST_CONSUMED.md` via `git mv`
+3. **Impeccable:** Source `https://github.com/pbakaus/impeccable` (Paul Bakaus, jQuery UI creator, 15k+ stars) verified canonical. Status ✅ **installed** — cloned `impeccable-source/` apoi `xcopy` skill bundle din `.claude/skills/impeccable/` source la `C:\Users\Daniel\.claude\skills\impeccable\` (58 files: SKILL.md + reference/ + scripts/). Path divergent de PROMPT §3 spec (`dist/claude-code/.claude/*` NU exists în repo current) — actual structure `<repo>/.claude/skills/impeccable/` mapped corectly.
 
-2. **`00-index/CURRENT_STATE.md` vault hub sync atomic Phase 5 cleanup final post-Karpathy:**
-   - Header `**Updated:**` flip cu NEW Faza 3 Phase 5 LANDED narrative scurt 1 paragraf (~3-5 sentences) + cascade Faza 3 Phase 1-4 condensed predecessor (older Faza 2D/2C/2B/2A preserved verbatim în §JUST_DECIDED chronological descending below per §CC.6)
-   - §NOW Active conversation thread REPLACE cu FAZA 3 Phase 1-5 final LANDED + Path forward Daniel decide ordering (SUB-BATCH 2-3 OR BATCH 2 Antrenor OR parallel)
-   - §JUST_DECIDED prepend NEW top entry Phase 5 cleanup LANDED (~10-15 lines summary): Phase 5 cleanup specific actions + Daniel approve trigger + commit ref + acceptance criteria met
-   - §NEXT REPLACE priority P1-P5 CLEAR post-Karpathy: P1 Daniel decide SUB-BATCH 2-3 OR BATCH 2 Antrenor OR parallel + P2 3 surfaces sync DONE chat-side + P3 Obsidian Daniel manual UI LANDED graph view colors + snippet CSS + P4 qmd CLI optional + P5 BATCH 3+ post BATCH 2 LANDED + SUB-BATCH 2-3 LANDED
-   - §ACTIVE_FLAGS update: `P1-FLAG-FAZA-3-PHASE-5-DANIEL-REVIEW-CHECKPOINT-PENDING` flip 🟡 OPEN → 🟢 RESOLVED 2026-05-12 + NEW `P1-FLAG-FAZA-3-PHASE-5-LANDED` 🟢 RESOLVED 2026-05-12 + NEW `P1-FLAG-OBSIDIAN-GRAPH-VIEW-COLORS-LANDED` 🟢 RESOLVED 2026-05-12 (graph.json + CSS snippet andura-graph LANDED chat-side, plugin config TBD)
-   - §RECENT shift Faza 3 Phase 1-4 entry down (truncate scurt per §CC.6 ~200 LOC)
-   - POINTERS preserved unchanged
+## §2 Group B — Frontend design + UI inspiration (WebSearch sources identified)
 
-3. **`03-decisions/DECISION_LOG.md` entry top descending cronologic 2026-05-12 chat ACASĂ Co-CTO autonomous Faza 3 Karpathy Option B Phase 5 cleanup LANDED post-Daniel-approve voice fidelity checkpoint (cascade existing Faza 3 Phase 1-4 entry below preserved)
+4. **Emil Kowalski:** Source `https://github.com/emilkowalski/skill` verified canonical (single SKILL.md based pe articles emilkowal.ski). Status ✅ **installed** — cloned `emilkowalski-skill/` source apoi copy `skills/emil-design-eng/` la `C:\Users\Daniel\.claude\skills\emil-design-eng\` (1 SKILL.md file).
 
-4. **`00-index/INDEX_MASTER.md` `Last updated:` field flip 2026-05-12** cu Phase 5 LANDED narrative scurt
+5. **Taste skill:** Source `https://github.com/Leonxlnx/taste-skill` verified canonical (13.3k stars, anti-slop frontend skill cu multi-variant skills/). Status ✅ **installed** — cloned `taste-source/` apoi copy `skills/taste-skill/` la `C:\Users\Daniel\.claude\skills\taste-skill\` (1 SKILL.md file). Additional 11 variants present în `taste-source/skills/` (brutalist/minimalist/soft/stitch/redesign/imagegen-frontend-mobile/imagegen-frontend-web/output/image-to-code/gpt-tasteskill/brandkit) NU installed (per PROMPT primary variant only); Daniel decide post-restart dacă vrea additional variants.
 
-5. **`DIFF_FLAGS.md` 3 flags update:**
-   - 🟡 P1-FLAG-FAZA-3-PHASE-5-DANIEL-REVIEW-CHECKPOINT-PENDING flip → 🟢 RESOLVED LANDED 2026-05-12
-   - NEW 🟢 P1-FLAG-FAZA-3-PHASE-5-LANDED RESOLVED 2026-05-12
-   - NEW 🟢 P1-FLAG-OBSIDIAN-GRAPH-VIEW-COLORS-LANDED RESOLVED 2026-05-12
+6. **UI/UX Pro Max:** Source `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill` verified canonical (50+ styles, 161 color palettes, 57 font pairings). Status ✅ **installed** — cloned `ui-ux-pro-max-source/` apoi copy `.claude/skills/ui-ux-pro-max/` la `C:\Users\Daniel\.claude\skills\ui-ux-pro-max\` (3 files: SKILL.md + CLI deps).
 
-6. **`wiki/log.md` append entry top chronological:** `## [2026-05-12] lint | FAZA 3 Phase 5 cleanup LANDED post-Daniel-approve checkpoint` — Daniel review 9 wiki pages sample voice fidelity validation PASS verdict 2026-05-11→12 + archive PROMPT_CC_FAZA_3 → _CONSUMED + precedent LATEST cycled + vault hub sync atomic.
+7. **21st.dev:** Source `https://github.com/21st-dev/magic-mcp` verified canonical (MCP server format, NU skill — moved from Group B → Group C MCP entry treatment). Status ✅ **MCP entry added** la `claude_desktop_config.json` as `21st-dev-magic` cu `npx -y @21st-dev/magic@latest` + `API_KEY: <TBD_DANIEL_API_KEY>` placeholder. Daniel obtain API key https://21st.dev/magic/console + edit config post-restart.
 
-7. **`📤_outbox/LATEST.md` NEW raport Andura format standard (this file)** — FAZA 3 Phase 5 cleanup LANDED post-Daniel-approve checkpoint.
+## §3 Group C — MCP servers (claude_desktop_config.json entries)
 
-## Build + Tests
+8. **Context 7:** Source `@upstash/context7-mcp` npm verified canonical (Upstash, real-time docs lookup anti-stale-knowledge). Status ✅ **MCP entry added** as `context7` cu `npx -y @upstash/context7-mcp@latest` (NO API key required for basic functionality; free tier @ context7.com/dashboard pentru rate limits crescute).
 
-- Tests Vitest **2781 PASS preserved EXACT** (doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12 + §5 PROMPT_CC §5)
-- Pre-commit hook validated commit
-- 153 test files / 2781 tests baseline preserved 2026-05-12
-- Build vite green (preserved EXACT — ZERO src/ change)
+9. **Obsidian skills:** Source `https://github.com/kepano/obsidian-skills` (Steph Ango, Obsidian CEO) verified canonical (skill format, NU MCP — different de existing `obsidian-mcp-tools` Jack Steam plugin already configured). Status ✅ **installed** — cloned `obsidian-skills-source/` apoi copy 5 individual skills la `C:\Users\Daniel\.claude\skills\`: `defuddle/` + `json-canvas/` + `obsidian-bases/` + `obsidian-cli/` + `obsidian-markdown/`. Skill format, NU added la claude_desktop_config.json.
 
-## Commits (1 atomic Phase 5 cleanup commit + push origin)
+10. **Tavily:** Source `tavily-mcp` npm (canonical `https://github.com/tavily-ai/tavily-mcp`) verified. Status ✅ **MCP entry added** as `tavily` cu `npx -y tavily-mcp@latest` + `TAVILY_API_KEY: <TBD_DANIEL_API_KEY>` placeholder. **API key required** — Daniel obtain free tier (~1000 searches/month) la `https://tavily.com/dashboard` apoi edit config replace placeholder.
 
-1. **`<this commit>`** — FAZA 3 Phase 5 cleanup atomic vault hub sync: 2 archive moves (406 PROMPT_CC + 407 LATEST cycle) + CURRENT_STATE §NOW final Phase 1-5 + §JUST_DECIDED top entry + Header Updated flip + §NEXT overwrite P1-P5 clear post-Karpathy + §ACTIVE_FLAGS 3 flags update + §RECENT shift + DECISION_LOG entry top + INDEX_MASTER Last updated flip + DIFF_FLAGS 3 entries + wiki/log.md append + LATEST.md NEW raport (this file)
+## §4 Group D — Eval + Anthropic oficial
 
-## Pushed origin
+11. **Firebase MCP eval verdict:** **DEFER** (NU install Pack 12 — eval raport only)
 
-✅ Commit Phase 5 cleanup pushed origin `feature/v2-vanilla-port`. Backup tag `pre-faza-3-phase-5-cleanup-post-daniel-approve-2026-05-12` pushed origin pre-execute rollback safety.
+    **Sursă canonică:** `firebase-tools@latest` cu `mcp` subcommand (oficial Google, `firebase.google.com/docs/ai-assistance/mcp-server`). Disponibil + ca plugin oficial Anthropic `claude.com/plugins/firebase`.
 
-## Critical preservation verified
+    **Capabilities:** Firestore document operations (get/delete/query), Authentication users management, Cloud Functions log retrieval, Cloud Messaging notifications, Remote Config template management, Crashlytics issue tracking, Realtime Database read/write, Hosting deploy, Storage operations.
 
-- ✅ Voice fidelity Phase 4 raport 402 ZERO issues + Daniel review 9 pages PASS verdict preserved (2 minor flags defer non-blocker)
-- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling NU additive product/architecture)
-- ✅ Tests 2781 PASS preserved EXACT (doc-only ZERO src/ touched)
-- ✅ HARD CONSTRAINTS respected (ZERO src/ + ZERO tests/ + ZERO main branch + ZERO .obsidian/ touched + ZERO wiki/ entity pages touched + 3 inbox files PRESERVED)
-- ✅ §CC.6 ~200 LOC CURRENT_STATE append-only PRESERVED STRICT (truncate older RECENT per spec; raw layer freeze policy enforce post-Faza 3 LANDED per CLAUDE.md §1.1 + §6.4 + §6.5)
-- ✅ wiki/ entity pages frozen post-approve (Phase 3 SUB-BATCH 1 27 pages voice preservation policy §1 enforced PERFECT preserved unchanged)
+    **Auth/Security model:** Service account credentials via `GOOGLE_APPLICATION_CREDENTIALS` env var SAU Firebase CLI `firebase login` cached creds (full project access — broad permissions).
 
-## Issues / Ambiguities
+    **Comparison cu Andura existing approach:** Andura `03-decisions/002-firebase-rest-not-sdk.md` ADR LOCK V1 specifies REST API direct (NU SDK firebase-tools NU Firebase JS SDK) — motivare LOCK V1: bundle size + control granular + auditability. Firebase MCP introduce dependency `firebase-tools` (large npm package ~50MB) + service account cu broad permissions (deviates de la "REST direct cu minimum scoping" paradigm).
 
-🟢 **NONE blocker.** Phase 5 cleanup LANDED clean.
+    **Verdict:** **DEFER install Pack 12** — conflict potential cu ADR 002 paradigm. Pre-V1 Beta launch Andura, **NU install Firebase MCP** (avoid permission scope inflation + bundle size drag). **Recomandare post-V1:** dacă Daniel decide ulterior need Firestore admin operations cu agent (e.g. mass user fix-ups, data migrations), **reconsider** atunci cu narrow service account scoping + ADR amendment formal documenting Firebase MCP as supplementary admin path NU primary runtime path. Pentru curent (V1 dev pre-Beta), REST API direct suficient + aligned cu ADR 002 LOCK V1.
 
-🟡 **2 minor voice fidelity flags Daniel suspect possible reconstructed paraphrase non-blocker defer:**
-- voice-preservation-policy.md quote 2 (Daniel review sample suspect possible paraphrase)
-- adr-005-vanilla-js.md quote 3 (Daniel review sample suspect possible paraphrase)
+    **Eval status:** 🟡 deferred — NU added la config Pack 12. Daniel decide future invoke separate ADR review dacă context schimbă.
 
-Defer per Daniel implicit approve. Will revisit dacă Daniel signals specific feedback fix. NU adding DIFF_FLAGS entry (non-P1, non-blocker, defer category).
+12. **Sequential Thinking:** Source `@modelcontextprotocol/server-sequential-thinking` (Anthropic official) verified canonical. Status ✅ **MCP entry added** as `sequential-thinking` cu `npx -y @modelcontextprotocol/server-sequential-thinking` (NO API key, NO env vars required).
 
-🟢 **Hard constraints respected:** ZERO touch raw layer immutable post-Faza 3 + ZERO touch src/+tests/+main+.obsidian/+wiki/ entity pages + 3 inbox files PRESERVED.
+## §5 Final claude_desktop_config.json
 
-## Next action
+JSON validat (Node.js JSON.parse confirmed valid + roundtrip pretty-print successful). **Total mcpServers entries: 7** (3 existing preserved + 4 new added):
 
-**P1 Daniel decide ordering — 3 options autonomous executable claude_code agent via MCP:**
+| Entry | Status | Source |
+|-------|--------|--------|
+| `filesystem` | ✅ existing preserved | `@modelcontextprotocol/server-filesystem` (vault root) |
+| `claude-code` | ✅ existing preserved | `@steipete/claude-code-mcp@latest` (subprocess invoker) |
+| `obsidian-mcp-tools` | ✅ existing preserved | Jack Steam plugin v0.2.31 (OBSIDIAN_API_KEY preserved) |
+| `context7` | ✅ NEW added | `@upstash/context7-mcp@latest` (real-time docs) |
+| `tavily` | ✅ NEW added | `tavily-mcp@latest` (web search — **API key TBD Daniel**) |
+| `sequential-thinking` | ✅ NEW added | `@modelcontextprotocol/server-sequential-thinking` (structured reasoning) |
+| `21st-dev-magic` | ✅ NEW added | `@21st-dev/magic@latest` (UI components — **API key TBD Daniel**) |
 
-- **Option A:** SUB-BATCH 2-3 wiki populate overnight CC autonomous (~95-120 pages projected multi-session: 32 ADRs remaining + ~10 engines + ~20 features + 11 specs + ~10-15 summaries + 6 sources)
-- **Option B:** BATCH 2 Antrenor port (`renderIdle.js` LANDED via STAGE 4 SUB-BATCH 2; `rating.js` + `session.js` carry-forward port `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`)
-- **Option C:** parallel A+B disjoint scope (wiki/ doc-only vs src/ feature branch) terminale separate possible — ZERO conflict file-level (different scope areas)
+`preferences:` block preserved EXACT din backup (coworkScheduledTasksEnabled + ccdScheduledTasksEnabled + sidebarMode + coworkWebSearchEnabled + epitaxyPrefs + chicagoEnabled).
 
-**P2 chat-side ritual post-Phase 5 LANDED (out of CC autonomous scope — Daniel/Claude chat side):**
-- Memory edits Claude chat clean sweep stale + rewrite Karpathy aware (DONE chat-side LANDED 2026-05-12 per Daniel signal)
-- userPreferences UI Daniel paste raw amended Karpathy flow citation format (DONE chat-side LANDED 2026-05-12 per Daniel signal)
-- System prompt project UI Daniel paste raw amended (DONE chat-side LANDED 2026-05-12 per Daniel signal)
+## §6 Total summary
 
-**P3 Obsidian Daniel manual UI:**
-- ✅ Graph view colors LANDED chat-side 2026-05-12 (graph.json + CSS snippet `andura-graph.css` LANDED)
-- 🟡 TBD plugin config (Iconize, Excalibrain, Juggl optional polish)
+- **Installed certain (skill files placed + verified):** 8/12 (Items 2 GSD, 3 Impeccable, 4 Emil, 5 Taste, 6 UI/UX Pro Max, 9 Obsidian skills × 5 variants — count as 1 item) + WebSearch source-identified + installed
+- **Partial-installed:** 1/12 (Item 1 gstack — files placed but `bun` runtime missing pentru setup binary build)
+- **MCP entries added:** 4/12 (Items 7 21st.dev-magic, 8 Context7, 10 Tavily, 12 Sequential Thinking; Item 7 reclassified Group B→C; Tavily + 21st.dev API keys TBD Daniel)
+- **Eval raport-only DEFER:** 1/12 (Item 11 Firebase MCP — conflict ADR 002 LOCK V1 paradigm, defer post-V1 Beta)
+- **Errors/blockers:**
+  1. **gstack `bun` runtime missing** (non-catastrophic — skills usable; browse binary unavailable). Install bun via `https://bun.sh/install` if Daniel wants browser automation features.
+  2. **GSD hooks PowerShell-style `&` syntax incompatible bash POSIX** (Bash tool in Claude Code uses `/usr/bin/bash`) → all 9 hooks failed mid-session. Restored `settings.json` din pre-pack-12 backup. **NU regression** — original Daniel settings preserved. GSD skills/agents/SDK functional; GSD hook integration disabled.
+- **API keys pending Daniel manual obtain + edit config:**
+  - **Tavily** — `https://tavily.com/dashboard` (free tier ~1000 searches/month)
+  - **21st.dev Magic** — `https://21st.dev/magic/console`
 
-**P4 qmd CLI optional (~30 min Daniel setup):** Karpathy recommended local BM25+vector hybrid + LLM rerank + MCP server. Skip dacă Obsidian search + wiki/index sufficient initial.
+## §7 Next steps Daniel manual post-restart
 
-**P5 BATCH 3+ post BATCH 2 LANDED + SUB-BATCH 2-3 LANDED.**
+1. **Quit Claude Desktop din tray complete + redeschide** (Daniel manual — Pack 12 PROMPT HARD CONSTRAINT ZERO restart from CC subprocess).
+2. **Verify MCP servers loaded post-restart:** open Claude Desktop, check MCP tools available (filesystem + claude-code + obsidian-mcp-tools + context7 + tavily + sequential-thinking + 21st-dev-magic = 7 expected).
+3. **Obtain Tavily API key** (`tavily.com/dashboard`) + edit `C:\Users\Daniel\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json` replace `<TBD_DANIEL_API_KEY>` în `tavily.env.TAVILY_API_KEY`.
+4. **Obtain 21st.dev Magic API key** (`21st.dev/magic/console`) + similar replace în `21st-dev-magic.env.API_KEY`.
+5. **Optional gstack setup:** install `bun` (`https://bun.sh/install`) + run `cd C:\Users\Daniel\.claude\skills\gstack && bash setup` post-installation Bun (will register skills + build `browse` binary for browser automation).
+6. **Optional GSD hooks fix:** dacă Daniel vrea hooks GSD active, manual edit `C:\Users\Daniel\.claude\settings.json` reinstating GSD hook commands cu `cmd /c "node \"path\"..."` cross-runtime wrapper instead of PowerShell `&`. OR re-run `npx get-shit-done-cc@latest --claude --global` din PowerShell terminal direct (hooks compatible PS).
+7. **Optional Firebase MCP re-eval:** when Andura post-V1 Beta, re-evaluate Firebase MCP via formal ADR amendment process cu narrow service account scoping (currently deferred per ADR 002 LOCK V1 conflict §4 above).
+8. **Next P2 BATCH 2 Antrenor port reluare** unblocked post Pack 12 stable.
 
----
+## §8 Commit + archive
 
-🦫 **Bugatti craft. FAZA 3 Phase 5 cleanup LANDED Co-CTO autonomous post-Daniel-approve voice fidelity checkpoint. Daniel review 9 wiki pages sample PASS verdict (Bugatti verbatim quotes EXACT + daniel-isms catalog NU lobotomy + Bugatti framing + cross-refs raw layer). Archive PROMPT_CC_FAZA_3 + precedent LATEST cycled. Vault hub sync atomic 1 commit single-concern. Cumulative ~742 PRESERVED unchanged. Tests 2781 PASS preserved EXACT. Identity Andura prezervat prin daniel-isms verbatim catalog extensible. Path forward Daniel decide next P1 ordering (Option A SUB-BATCH 2-3 / Option B BATCH 2 / Option C parallel disjoint).**
+- **Commit message (single-concern Bugatti craft):** `feat: install pack 12 strategic eval ecosystem LANDED + claude_desktop_config.json MCP entries (context7 + tavily + sequential-thinking + 21st-dev-magic) + raport LATEST cycle`
+- **Archive moves (raw layer cycle, vault SSOT NU touched per PROMPT §1 HARD CONSTRAINTS):**
+  - `📥_inbox/PROMPT_CC_INSTALL_PACK_12.md` → `📤_outbox/_archive/2026-05/410_PROMPT_CC_INSTALL_PACK_12_CONSUMED.md`
+  - Precedent `📤_outbox/LATEST.md` (Faza 3 Phase 5 cleanup post-Daniel-approve checkpoint) → `📤_outbox/_archive/2026-05/411_FAZA_3_PHASE_5_CLEANUP_LATEST_PRECEDENT_CONSUMED.md`
+- **Backup tag verify pushed origin:** `git tag --list pre-install-pack-12-2026-05-12` ✅ confirmed pushed origin pre-execute.
+
+🦫 **Bugatti craft. Install Pack 12 strategic eval ecosystem LANDED 2026-05-12 — 11/12 installed/configured + 1/12 DEFER (Firebase MCP) + 2 minor partial (gstack bun runtime missing + GSD hooks reverted for bash POSIX compatibility). ZERO touch vault SSOT (CURRENT_STATE + DECISION_LOG + INDEX_MASTER + DIFF_FLAGS + HANDOVER + VAULT_RULES + CLAUDE.md unchanged). ZERO touch src/ + tests/ + main branch + .obsidian/. Backup safety net 3-layer (.claude xcopy + config.json copy + git tag pushed origin). Daniel restart Claude Desktop manual post-LANDED required pentru MCP servers reload.**
