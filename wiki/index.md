@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post SUB-BATCH 3 Cluster B engines (2026-05-12):** **67 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster C/D/F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post SUB-BATCH 3 Cluster C features (2026-05-12):** **86 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster D/F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
@@ -97,6 +97,31 @@ last_updated: 2026-05-12
 - [[entities/engines/engine-readiness]] — 5-state emoji pre-session gauge + score mapping kcal/protein delta + BATCH 2 SLICE 1 energyCheck.js port V2 mockup simplified
 - [[entities/engines/engine-streak-counter]] — §EXT-1 same direction + §EXT-2 Goal Shift reset anti-recurrence foundation ADR 024 Q6 D Hybrid
 
+## Entities — Features (19 LANDED 2026-05-12 — Cluster C SUB-BATCH 3)
+
+**V1 Features F1-F15 audit-driven (15 mandatory):**
+- [[entities/features/feature-f1-patterns-banner]] — MODIFY simplified 2 keep (LOW_ADHERENCE + STAGNATION) / 3 drop V2 paranoid surveillance Gigel trust breach
+- [[entities/features/feature-f2-last-session-memory]] — KEEP verbatim top 3 exercises same dayLabel previous session + RPE + verdict (idle.js port commit `ebd656e`)
+- [[entities/features/feature-f3-fatigue-score]] — MODIFY simplified single number + culoare drop bar/multi-component visual elaborate
+- [[entities/features/feature-f4-readiness-verdict]] — KEEP verbatim core coach value pre-session Engine pure functions readiness.js + UI emoji + label
+- [[entities/features/feature-f5-aa-friction-modal-deferred]] — DROP V1 defer v1.5 UX flow inline ADR 013 §AMENDED Anti-paternalism ABSOLUTE
+- [[entities/features/feature-f6-pr-wall]] — KEEP verbatim PR badges Antrenor idle gym pride cultural RO
+- [[entities/features/feature-f7-coach-director]] — KEEP verbatim engine pipeline §42.10 8 engines output cached + UI toggle flags
+- [[entities/features/feature-f8-streak-counter]] — KEEP verbatim motivation gamification Duolingo pattern §EXT-1 + §EXT-2 anti-recurrence
+- [[entities/features/feature-f9-bmr-strip]] — MODIFY simplified single line drop strip multi-component info dump
+- [[entities/features/feature-f10-stats-grid]] — KEEP verbatim 3-cell post-session universal proven pattern share-ready
+- [[entities/features/feature-f11-prs-notification]] — KEEP verbatim per-PR badges post-session peak emoțional moment (commit `041e7f2`)
+- [[entities/features/feature-f12-rating-buttons]] — KEEP verbatim 3-button modal USOARA/NORMALA/GREA big-touch + RO culture
+- [[entities/features/feature-f13-rating-notes-dropped]] — DROP V1 Anti-RE rule LOCKED V1 PERMANENT scope universal (commit `041e7f2` applied)
+- [[entities/features/feature-f14-ratings-window]] — MODIFY extend 20 → 90 sessions Tier 0 active rolling ADR 020 (commit `041e7f2` applied)
+- [[entities/features/feature-f15-per-set-rpe]] — KEEP verbatim per-set RPE granularity logging.js untouched + session.js setsRPE preserved
+
+**Auxiliary features (4 mandatory):**
+- [[entities/features/feature-auth-magic-link]] — Auth Magic Link SMTP Phase 2 RESOLVED 2026-05-06 + ZERO password V1 + auto-retry 3x
+- [[entities/features/feature-onboarding-t0]] — Big 6 hard typing + §AMENDMENT 2026-05-10 setPhaseOverride + demographic prior fallback
+- [[entities/features/feature-mode-detection]] — 5 moduri pure event listeners + Mode hierarchy + reset per session ZERO ML/NLP runtime
+- [[entities/features/feature-tier-storage]] — Tier 0/1/2 active rolling 90 + aggregate + Firebase archive Q10 BLIND SPOT #1 RESOLVED
+
 ## Entities — Specs (1 LANDED)
 
 - [[entities/specs/spec-handover-verification-checklist]] — Bugatti gate §0-§11 per /wiki-ingest LOCK V1 2026-05-12 (CEO directive verbatim 217 LOC raw layer)
@@ -126,6 +151,8 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 **Cluster A — ADRs SUB-BATCH 3 ✅ LANDED 2026-05-12 (16/16 complete; 42/42 ADRs Karpathy real coverage 100%)** — see `### SUB-BATCH 3 (16 LANDED 2026-05-12)` section above
 
 **Cluster B — Engines SUB-BATCH 3 ✅ LANDED 2026-05-12 (7/7 mandatory complete)** — see `## Entities — Engines (7 LANDED 2026-05-12)` section above. Optional `engine-goal-adaptation` SKIPPED per Karpathy-real eval (ADR 024 entity coverage suficient; document SKIP rationale `wiki/log.md`). engine-deload/energy-adjustment/tempo-form-cues/warmup-mobility/specialization/bayesian-nutrition coverage suficient via ADR entities cross-refs (NU stand-alone engine pages required).
+
+**Cluster C — Features SUB-BATCH 3 ✅ LANDED 2026-05-12 (19/19 mandatory complete)** — see `## Entities — Features (19 LANDED 2026-05-12)` section above. V1 Features F1-F15 audit-driven 15 + 4 auxiliary (auth-magic-link + onboarding-t0 + mode-detection + tier-storage) per V1_FEATURES_AUDIT_V1.md §F1-§F15 verdicts (10 keep verbatim + 4 modify simplified + 1 drop V1 F5 + DROP V1 F13 Anti-RE rule + MODIFY F14 EXTEND 20→90 Tier 0 rolling).
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**

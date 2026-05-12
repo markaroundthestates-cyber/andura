@@ -1,70 +1,85 @@
-# LATEST — Cluster B Engines SUB-BATCH 3 COMPLETE (7/7 mandatory pages)
+# LATEST — Cluster C Features SUB-BATCH 3 COMPLETE (19/19 mandatory pages)
 
-**Task:** Karpathy Wiki SUB-BATCH 3 Cluster B Engines — 7 engine entity pages voice preservation §1 4-section enforced per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_B_ENGINES.md` §1-§8
+**Task:** Karpathy Wiki SUB-BATCH 3 Cluster C Features — 19 feature entity pages voice preservation §1 4-section enforced per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_C_FEATURES.md` §1-§8
 **Model:** Opus EXCLUSIVELY per memory rule #9 + prompt §0
-**Status:** ✅ Complete — 7/7 mandatory engine entity pages LANDED + 1 optional SKIPPED with rationale + wiki/index.md 60 → 67 + wiki/log.md chronological entry + LATEST cycled 430 + prompt archived 431 + atomic commit + push origin
+**Status:** ✅ Complete — 19/19 mandatory feature entity pages LANDED + wiki/index.md 67 → 86 + wiki/log.md chronological entry + LATEST cycled 432 + prompt archived 433 + atomic commit + push origin
 **Branch:** `feature/v2-vanilla-port`
 **Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12
 
-# Raport: Cluster B Engines SUB-BATCH 3 COMPLETE — 2026-05-12
+# Raport: Cluster C Features SUB-BATCH 3 COMPLETE — 2026-05-12
 
 ## §0 — Status + Summary 1-Line
 
-✅ **COMPLETE** — 7/7 mandatory engine entity pages LANDED voice preservation §1 4-section enforced + cumulative wiki 60 → 67 pages + tests 2914 PASS preserved EXACT + atomic commit pushed origin.
+✅ **COMPLETE** — 19/19 mandatory feature entity pages LANDED voice preservation §1 4-section enforced + cumulative wiki 67 → 86 pages + tests 2914 PASS preserved EXACT + atomic commit pushed origin.
 
-## §1 — Pages LANDED List
+## §1 — Pages LANDED List (19/19)
 
-**7 mandatory engine entity pages LANDED `wiki/entities/engines/`:**
+**V1 Features F1-F15 audit-driven (15 mandatory) per V1_FEATURES_AUDIT_V1.md §F1-§F15:**
 
-| # | Page | Status | Cross-engine integration |
-|---|------|--------|--------------------------|
-| 1 | engine-coach-director.md | LANDED | orchestrator central pipeline §42.10 dispatch + 3 methods NEW STAGE 4 SUB-BATCH 2 (`buildLightMobility` + `rebalanceWeekAfterSkip` + `generateSafeSessionForRestDay`) commit `ebd656e` |
-| 2 | engine-muscle-recovery.md | LANDED | per-group recovery state Big 6 + lagging detection 2+ săpt + state thresholds calibrated peak hit ~22.5 + GROUP_LABELS_RO Romanian-first + cross-engine Specialization (ADR 029) + Deload (ADR 032) |
-| 3 | engine-weakness-detector.md | LANDED | Brzycki 1RM per muscle group lagging + wires orfan §36.84 Gap #1 Specialization Engine reuse pattern + Q1=C Hybrid 1RM ratio<0.8 + visual override |
-| 4 | engine-periodization.md | LANDED | pipeline §42.10 1st foundational + Israetel framework persona-aware Maria/Gigica/Marius + Volume Landmarks Q19 §45.3 LOCKED + Constraint Object immutable propagated downstream |
-| 5 | engine-pr-wall.md | LANDED | personal records detection 3 types (weight/reps/volume) + Forta Foundation 1 §29.2.5 LOCKED + BATCH 2 SLICE 0 F11 preserved commit `041e7f2` + UX contract discrete badge Bugatti factual |
-| 6 | engine-readiness.md | LANDED | 5-state emoji pre-session gauge + score mapping kcal/protein delta + READINESS_PR/HIGH/MED/LOW thresholds + BATCH 2 SLICE 1 energyCheck.js port commit `8a4c39e` |
-| 7 | engine-streak-counter.md | LANDED | §EXT-1 same direction + §EXT-2 Goal Shift reset amendment ADR_OUTLIER_FILTER 2026-05-04 + ADR 024 Q6 D Hybrid foundation + N≥3 sessions signal consistency pattern |
+| # | Feature | Verdict | Highlight |
+|---|---------|---------|-----------|
+| F1 | patterns-banner | MODIFY simplified | 2 keep (LOW_ADHERENCE + STAGNATION) / 3 drop V2 paranoid surveillance Gigel trust breach |
+| F2 | last-session-memory | KEEP verbatim | top 3 exercises same dayLabel previous session + RPE + verdict |
+| F3 | fatigue-score | MODIFY simplified | single number + culoare drop bar/multi-component visual elaborate |
+| F4 | readiness-verdict | KEEP verbatim | core coach value pre-session Engine pure functions readiness.js |
+| F5 | aa-friction-modal-deferred | DROP V1 | defer v1.5 UX flow inline ADR 013 §AMENDED Anti-paternalism ABSOLUTE |
+| F6 | pr-wall | KEEP verbatim | PR badges Antrenor idle cultural RO gym pride |
+| F7 | coach-director | KEEP verbatim | engine pipeline §42.10 8 engines output cached + UI toggle flags |
+| F8 | streak-counter | KEEP verbatim | motivation gamification Duolingo pattern §EXT-1 + §EXT-2 anti-recurrence |
+| F9 | bmr-strip | MODIFY simplified | single line drop strip multi-component info dump |
+| F10 | stats-grid | KEEP verbatim | 3-cell post-session universal proven pattern share-ready |
+| F11 | prs-notification | KEEP verbatim | per-PR badges post-session peak emoțional commit `041e7f2` |
+| F12 | rating-buttons | KEEP verbatim | 3-button modal USOARA/NORMALA/GREA big-touch RO culture |
+| F13 | rating-notes-dropped | DROP V1 | Anti-RE rule LOCKED V1 PERMANENT scope universal commit `041e7f2` |
+| F14 | ratings-window | MODIFY extend | 20 → 90 sessions Tier 0 active rolling ADR 020 commit `041e7f2` |
+| F15 | per-set-rpe | KEEP verbatim | per-set RPE granularity orthogonal F13 DROP commit `324d198` |
 
-**1 optional SKIPPED with rationale:**
-- §3.5 `engine-goal-adaptation.md` — SKIPPED per Karpathy-real eval (ADR 024 entity coverage suficient: Engine #2 Goal Adaptation pipeline §42.10 2nd + Q1-Q8 LOCKED + Q6 D Hybrid + Phase auto-detection thresholds + 5 templates V1 + Mode overlay). Stand-alone engine page would duplicate without substantive new content. Documented `wiki/log.md` per prompt §1 explicit allowance.
+**Auxiliary features (4 mandatory):**
+| # | Feature | Highlight |
+|---|---------|-----------|
+| 16 | auth-magic-link | Auth Magic Link SMTP Phase 2 RESOLVED 2026-05-06 + ZERO password V1 + auto-retry 3x §56.13.1 |
+| 17 | onboarding-t0 | Big 6 hard typing + §AMENDMENT 2026-05-10 setPhaseOverride + demographic prior fallback Maria/Gigica/Marius |
+| 18 | mode-detection | 5 moduri pure event listeners ZERO ML/NLP + Mode hierarchy + reset per session |
+| 19 | tier-storage | Tier 0/1/2 active rolling 90 + aggregate + Firebase archive Q10 BLIND SPOT #1 RESOLVED |
 
 ## §2 — Voice Preservation §1 Enforcement Count
 
-**7/7 PASS 4-section structure enforced per [[../CLAUDE]] §2.1 + §2.2 6 hard rules:**
+**19/19 PASS 4-section structure enforced per [[../CLAUDE]] §2.1 + §2.2 6 hard rules:**
 
 - **Synthesis section** 2-3 paragrafe concise per page (CLAUDE.md §2.2 HARD RULE 3 max preserved)
-- **Verbatim quotes Daniel section** min 2-3 quotes EXACT per page cu daniel-isms preserved (NU lobotomy, NU paraphrase). Daniel-isms surfaced acest cluster: *"vizor fără ușă"* + *"weaknessDetector.js orfan reuse Specialization"* + *"engine spine Big 6"* + *"Maria 65 Dual-Layer functional → Israetel mapping"* + *"Constraint Object immutable propagated"* + *"Bugatti factual wording NU hype"* + *"context fizic schimbat = signal nou independent"* + *"orfan reuse"* + *"1 sesiune up + 1 down + 1 up = yo-yo flag"* + *"Hybrid 1RM ratio<0.8 + visual/photo subjective override"* + *"3 engine gap-uri pre-port: muscleRecovery.js NEW + coachDirector 3 methods + usNavyBF.js NEW"* + *"F11 PRs (extractAndSavePRs + cleanFakeLogs) preserved verbatim"* + *"Q15=C drill-down strict 🔴 only anti-Maria-friction default"*.
+- **Verbatim quotes Daniel section** min 2-3 quotes EXACT per page cu daniel-isms preserved (NU lobotomy, NU paraphrase)
 - **Bugatti framing notes section** 5 sub-sections complete per page (Gigel test relevance + Quality>Speed + Anti-RE + Anti-paternalism + Voice tone notes)
 - **Cross-refs raw layer section** min 5-7 specific `path:§` pointers per page (Bidirectional cross-link convention per CLAUDE.md §5.4)
 
-**Bidirectional cross-links policy forward-only preserved** per precedent §5 deliberate exception 2026-05-12 documented (`427_LATEST_VAULT_HYGIENE_NEXT_PASS_CONSUMED.md` + `428_HANDOVER_CONSOLIDARE_*`): NEW engine pages forward-link existing ADR pages (adr-026 + adr-024 + adr-029 + adr-027 + adr-016 + adr-013 + adr-009 + adr-020 + adr-032 + adr-017 + adr-outlier-filter). Retroactive back-ref edits ADR pages NU performed — preserved HARD CONSTRAINT §F3.12 frozen pages NU touch invariant.
+**Daniel-isms surfaced acest cluster:** *"Anti-RE rule LOCKED V1 PERMANENT scope universal"* + *"Gigel suspect trust breach risk"* + *"info dump Gigel ignores"* + *"peak emoțional moment"* + *"fast-fast RO culture cuvinte"* + *"vizor fără ușă"* + *"consistency = pride cultural RO"* + *"Gigel scroll-stop screenshot WhatsApp friend"* + *"big-touch buttons"* + *"in prod nu mai e nimic hardcoded"* + *"BLIND SPOT #1 BLOCKER pre-launch"* + *"Drumul continuă. Reluăm [ziua]."* + *"Folosesc varianta mea"* + *"Stagnarea pe cântar nu înseamnă stagnare reală"* + *"set greu / set ușor"* + *"audit primat universal rule"* + *"Quality continuity"*.
+
+**Bidirectional cross-links policy forward-only preserved** per precedent §5 deliberate exception 2026-05-12 documented (`427/428/430/432_*_CONSUMED.md` precedent): NEW feature pages forward-link existing ADR + engine pages (adr-011 + adr-013 + adr-014 + adr-015 + adr-017 + adr-018 + adr-020 + adr-021 + adr-022 + adr-024 + adr-025 + adr-026 + adr-bias-detection-observable + adr-mode-detection-ui + adr-rir-matrix-adaptive + adr-multi-tenant-auth + adr-007-firebase-open-rules + adr-002-firebase-rest-not-sdk + adr-019-gdpr + engine-pr-wall + engine-readiness + engine-streak-counter + engine-muscle-recovery + engine-coach-director). Retroactive back-ref edits ADR + engine frozen pages NU performed — preserved HARD CONSTRAINT §F3.12 frozen pages NU touch invariant.
 
 ## §3 — wiki/index.md Count Flip Evidence
 
 **wiki/index.md updates:**
-- Catalog status: `60 pages LANDED` → `67 pages LANDED` (16 concepts + 42 ADRs + 7 engines + 1 spec + 1 summary)
-- NEW section "## Entities — Engines (7 LANDED 2026-05-12 — Cluster B SUB-BATCH 3)" inserted post ADR section + cu 7 entries cu 1-line description each
-- Carry-forward TBD updated: "**Cluster B — Engines SUB-BATCH 3 ✅ LANDED 2026-05-12 (7/7 mandatory complete)**" + SKIP rationale documented + cluster C/D/F/G remaining
+- Catalog status: `67 pages LANDED` → `86 pages LANDED` (16 concepts + 42 ADRs + 7 engines + 19 features + 1 spec + 1 summary)
+- NEW section "## Entities — Features (19 LANDED 2026-05-12 — Cluster C SUB-BATCH 3)" inserted post Engines section + cu 15 V1 Features + 4 auxiliary entries cu verdict + 1-line description each
+- Carry-forward TBD updated: "**Cluster C — Features SUB-BATCH 3 ✅ LANDED 2026-05-12 (19/19 mandatory complete)**" + remaining Cluster D/F/G
 
 **wiki/log.md update:**
-- NEW entry top descending chronological: `## [2026-05-12] ingest | Cluster B engines SUB-BATCH 3 — 7 engine entity pages voice preservation §1 4-section enforced` ~50 LOC narrative cu 7 pages enumerate + SKIP rationale + voice preservation enforcement detail + bidirectional cross-links policy forward-only preserved + carry-forward TBD + cross-refs raw layer
+- NEW entry top descending chronological: `## [2026-05-12] ingest | Cluster C features SUB-BATCH 3 — 19 feature entity pages voice preservation §1 4-section enforced` ~60 LOC narrative cu 19 pages enumerate (15 V1 Features F1-F15 audit-driven + 4 auxiliary) + voice preservation enforcement detail + bidirectional cross-links policy forward-only preserved + carry-forward TBD + cross-refs raw layer
 
 ## §4 — Atomic Commit + Push Origin + Backup Tag
 
-**Backup tag pre-execute:** `pre-wiki-sub-batch-3-cluster-b-engines-2026-05-12-1941` pushed origin (rollback safety net per VAULT_RULES §CC.7 + §AR.PRE_FLIGHT item 1).
+**Backup tag pre-execute:** `pre-wiki-sub-batch-3-cluster-c-features-2026-05-12-1952` pushed origin (rollback safety net per VAULT_RULES §CC.7 + §AR.PRE_FLIGHT item 1).
 
 **Atomic commit (in-progress):**
 ```
-feat(wiki): Cluster B engines SUB-BATCH 3 7 entity pages voice preservation §1 enforced
+feat(wiki): Cluster C features SUB-BATCH 3 19 entity pages voice preservation §1 enforced
 ```
 
 **Files in commit:**
-- 7 NEW `wiki/entities/engines/*.md` pages voice preservation §1 4-section structure enforced
-- `wiki/index.md` updated cumulative count 60 → 67 + NEW Engines section + Carry-forward TBD revised
-- `wiki/log.md` append entry chronological 2026-05-12 Cluster B engines LANDED
-- `📤_outbox/LATEST.md` cycle → `📤_outbox/_archive/2026-05/430_LATEST_WIKI_INGEST_CONSOLIDARE_METODA_HIBRIDA_CONSUMED.md` (precedent /wiki-ingest consolidare)
-- `📤_outbox/_archive/2026-05/431_PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_B_ENGINES_CONSUMED.md` NEW (self-archive per §7 cu CONSUMED metadata + scope outcome)
+- 19 NEW `wiki/entities/features/*.md` pages voice preservation §1 4-section structure enforced
+- `wiki/index.md` updated cumulative count 67 → 86 + NEW Features section 19 entries + Carry-forward TBD revised
+- `wiki/log.md` append entry chronological 2026-05-12 Cluster C features LANDED
+- `📤_outbox/LATEST.md` cycle → `📤_outbox/_archive/2026-05/432_LATEST_CLUSTER_B_ENGINES_CONSUMED.md` (precedent Cluster B engines)
+- `📤_outbox/_archive/2026-05/433_PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_C_FEATURES_CONSUMED.md` NEW (self-archive per §7 cu CONSUMED metadata + scope outcome)
 - NEW `📤_outbox/LATEST.md` this raport §0-§8 structured
 
 ## §5 — Tests Baseline Preserved Evidence
@@ -78,39 +93,39 @@ feat(wiki): Cluster B engines SUB-BATCH 3 7 entity pages voice preservation §1 
 - ✅ ZERO React/JSX
 - ✅ ZERO `--no-verify` flag (pre-commit hook gate verde mandatory)
 - ✅ ZERO `📥_inbox/` writes (prompt provided inline chat message; self-archive via direct outbox create + CONSUMED metadata reference)
-- ✅ ZERO `.obsidian/` modifications intentional (auto chore .obsidian/ pickup Stop hook acceptable post-commit, NU intentional)
-- ✅ ZERO wiki Cluster A SUB-BATCH 1 27 pages + SUB-BATCH 2-3 42 ADR pages modifications (excepție policy preserved forward-only per precedent §5 deliberate exception 2026-05-12; NEW engine pages forward-link existing ADR pages NU back-refs retroactive)
+- ✅ ZERO `.obsidian/` modifications intentional
+- ✅ ZERO wiki Cluster A SUB-BATCH 1+2+3 (42 ADRs) + Cluster B (7 engines) frozen pages modifications (forward-only cross-link policy preserved §4)
 - ✅ ZERO regression tests (2914 PASS preserved EXACT)
 - ✅ ZERO ~742 LOCKED V1 modifications (vault meta-tooling NU substantive NEW additive product/architecture)
 
 ## §7 — Anti-Recurrence Rules NEW Captured Chat-Current
 
 **No NEW §AR.* anti-recurrence rules captured chat-current.** All pre-existing patterns preserved invariant:
-- §AR.1 pre-flight grep verify ✅ applied (16/16 ADR sources + 7/7 engine sources verified filesystem-side pre-write)
-- §AR.3 ground truth git verify ✅ applied (HEAD `ac95773` verified pre-execute)
+- §AR.1 pre-flight grep verify ✅ applied
+- §AR.3 ground truth git verify ✅ applied
 - §AR.PRE_FLIGHT item 1 backup tag pre-execute pushed origin ✅ applied
-- §AR.19 claude_code agent timeout MCP delivery ≠ agent crash invariant ✅ N/A (no MCP invocation acest cluster, direct CC execute)
+- §AR.19 claude_code agent timeout MCP delivery ≠ agent crash invariant ✅ N/A (no MCP invocation acest cluster)
 
-**Pattern preserved precedent §5 deliberate exception bidirectional cross-links forward-only (2026-05-12 documented `427/428_*_CONSUMED.md` precedent):** Cluster B engines forward-link existing ADR pages; retroactive back-ref edits frozen pages NU performed per HARD CONSTRAINT §F3.12.
+**Pattern preserved precedent §5 deliberate exception bidirectional cross-links forward-only (2026-05-12 documented `427/428/430/432_*_CONSUMED.md` precedent):** Cluster C features forward-link existing ADR + engine pages; retroactive back-ref edits frozen pages NU performed per HARD CONSTRAINT §F3.12.
+
+**Pattern preserved audit primat reconciliation:** V1_FEATURES_AUDIT_V1.md §F1-§F15 verdicts (10 keep verbatim + 4 modify simplified + 1 drop V1 F5 + DROP V1 F13 Anti-RE rule + MODIFY F14 EXTEND) applied consistent cu BATCH 2 SLICE 0+1+2+3 + Cluster A+B precedent.
 
 ## §8 — Path Forward Suggestion
 
 **Recommended next cluster fork (Daniel choice next chat trigger metoda hibridă):**
 
-1. **Option A1 — Cluster C features SUB-BATCH 3 (~20 TBD)** — RECOMMENDED post Cluster B momentum + voice §1 fresh context. Source: `04-architecture/V1_FEATURES_AUDIT_V1.md` §F1-§F15 + Auth/Onboarding specs + mockup V2 SoT. Auto-resolves ~15+ forward refs SUB-BATCH 1+2 frozen Cluster A concept pages broken wikilinks pointing la `entities/features/feature-f<NN>-*` paths.
+1. **Option A2 — Cluster D specs SUB-BATCH 3 (11 TBD)** — RECOMMENDED post Cluster C momentum + voice §1 fresh context per CTO call A1→A2→A3→A4 chronological dependency. Source: `04-architecture/*_SPEC*.md` paradigm files. Unlocks ~10+ forward refs feature + engine + ADR pages pointing la `entities/specs/spec-*` paths.
 
-2. **Option A2 — Cluster D specs (11 TBD)** — alternative path. Source: `04-architecture/*_SPEC*.md` paradigm files. Unlocks ~10+ forward refs ADR pages pointing la `entities/specs/spec-*` paths.
+2. **Option A3 — Cluster F summaries (~10-15 TBD)** — synthesizing din Cluster A 42 ADRs + Cluster B 7 engines + Cluster C 19 features + 16 concepts foundation knowledge graph. Risk: forward refs la Cluster D specs entities pending.
 
-3. **Option A3 — Cluster F summaries (~10-15 TBD)** — synthesizing din Cluster A 42 ADRs + Cluster B 7 engines + 16 concepts foundation knowledge graph. Risk: forward refs la Cluster C+D entities pending.
+3. **Option A4 — Cluster G source pointers (6 TBD)** — final cluster post Cluster A-F LANDED 100% coverage map raw layer.
 
-4. **Option A4 — Cluster G source pointers (6 TBD)** — final cluster post Cluster A-F LANDED 100% coverage map raw layer.
+4. **Alternative paths** — Calendar feature implement LOCK V1 STRATEGIC ~1000-1500 LOC / Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` / Strategic pauză planning.
 
-5. **Alternative paths** — Calendar feature implement LOCK V1 STRATEGIC ~1000-1500 LOC / Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` / Strategic pauză planning.
+**Recommended order post-Cluster-C:** A2 (Cluster D specs) > A3 (Cluster F summaries) > A4 (Cluster G source pointers) > alternative paths. Pattern: cluster execute chronological per dependency (entities first → summaries synthesize → source pointers final map).
 
-**Recommended order post-Cluster-B:** A1 (Cluster C features) > A2 (Cluster D specs) > A3 (Cluster F summaries) > A4 (Cluster G source pointers) > alternative paths. Pattern: cluster execute chronological per dependency (entities first → summaries synthesize → source pointers final map).
-
-**Cumulative SUB-BATCH 3 progress post Cluster A+B:** 23/74 pages LANDED (16 ADRs Cluster A + 7 engines Cluster B = 23 net new SUB-BATCH 3; ~47-67 pages remaining Cluster C/D/F/G + optional engines NU mandatory). Cumulative projected post Cluster G LANDED: 67 + ~47-67 = ~114-134 wiki pages (target ~120-200 per CLAUDE.md §1.2 estimate).
+**Cumulative SUB-BATCH 3 progress post Cluster A+B+C:** 42/74 pages LANDED (16 ADRs Cluster A + 7 engines Cluster B + 19 features Cluster C = 42 net new SUB-BATCH 3; ~27-32 pages remaining Cluster D/F/G). Cumulative projected post Cluster G LANDED: 86 + ~27-32 = ~113-118 wiki pages (target ~120-200 per CLAUDE.md §1.2 estimate).
 
 ---
 
-🦫 **Bugatti craft. Cluster B engines SUB-BATCH 3 COMPLETE 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă. 7/7 mandatory engine entity pages voice preservation §1 4-section structure enforced + 1 optional SKIPPED with Karpathy-real eval rationale documented. Cumulative wiki 60 → 67 pages. Tests 2914 PASS preserved EXACT. Cumulative ~742 LOCKED V1 PRESERVED unchanged. Bidirectional cross-links forward-only policy preserved per precedent §5 deliberate exception. Cluster C/D/F/G carry-forward ~47-67 pages remaining next chat trigger.**
+🦫 **Bugatti craft. Cluster C features SUB-BATCH 3 COMPLETE 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă. 19/19 mandatory feature entity pages voice preservation §1 4-section structure enforced (15 V1 Features F1-F15 audit-driven + 4 auxiliary). Cumulative wiki 67 → 86 pages. Tests 2914 PASS preserved EXACT. Cumulative ~742 LOCKED V1 PRESERVED unchanged. Bidirectional cross-links forward-only policy preserved per precedent §5 deliberate exception. Audit primat reconciliation pattern preserved consistent cu BATCH 2 + Cluster A+B. Cluster D/F/G carry-forward ~27-32 pages remaining next chat trigger.**

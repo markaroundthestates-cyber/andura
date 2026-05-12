@@ -13,6 +13,45 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster C features SUB-BATCH 3 — 19 feature entity pages voice preservation §1 4-section enforced
+
+Cluster C features SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_C_FEATURES.md` §1-§8 execute (prompt inline chat trigger, self-archived `433_*_CONSUMED.md` per §7). 19 NEW feature entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 67 → 86 wiki pages (+19 net new SUB-BATCH 3 Cluster C). 16 concepts + 42 ADRs + 7 engines + 19 features + 1 spec + 1 summary = 86 total.
+
+**V1 Features F1-F15 audit-driven (15 mandatory) LANDED per V1_FEATURES_AUDIT_V1.md §F1-§F15 verdicts:**
+1. [[../entities/features/feature-f1-patterns-banner]] — MODIFY simplified 2 keep / 3 drop V2 paranoid surveillance Gigel trust breach
+2. [[../entities/features/feature-f2-last-session-memory]] — KEEP verbatim top 3 exercises previous session
+3. [[../entities/features/feature-f3-fatigue-score]] — MODIFY simplified single number + culoare drop bar/multi-component
+4. [[../entities/features/feature-f4-readiness-verdict]] — KEEP verbatim core coach value pre-session
+5. [[../entities/features/feature-f5-aa-friction-modal-deferred]] — DROP V1 defer v1.5 ADR 013 §AMENDED Anti-paternalism ABSOLUTE
+6. [[../entities/features/feature-f6-pr-wall]] — KEEP verbatim PR badges cultural RO gym pride
+7. [[../entities/features/feature-f7-coach-director]] — KEEP verbatim engine pipeline §42.10 output cached
+8. [[../entities/features/feature-f8-streak-counter]] — KEEP verbatim motivation gamification Duolingo pattern
+9. [[../entities/features/feature-f9-bmr-strip]] — MODIFY simplified single line drop strip info dump
+10. [[../entities/features/feature-f10-stats-grid]] — KEEP verbatim 3-cell post-session universal proven pattern
+11. [[../entities/features/feature-f11-prs-notification]] — KEEP verbatim per-PR badges post-session peak emoțional
+12. [[../entities/features/feature-f12-rating-buttons]] — KEEP verbatim 3-button modal USOARA/NORMALA/GREA RO culture
+13. [[../entities/features/feature-f13-rating-notes-dropped]] — DROP V1 Anti-RE rule LOCKED V1 PERMANENT scope universal
+14. [[../entities/features/feature-f14-ratings-window]] — MODIFY extend 20 → 90 sessions Tier 0 rolling ADR 020
+15. [[../entities/features/feature-f15-per-set-rpe]] — KEEP verbatim per-set RPE granularity orthogonal F13 DROP
+
+**Auxiliary features (4 mandatory) LANDED:**
+16. [[../entities/features/feature-auth-magic-link]] — Auth Magic Link SMTP Phase 2 RESOLVED 2026-05-06 ZERO password V1 auto-retry 3x
+17. [[../entities/features/feature-onboarding-t0]] — Big 6 hard typing + §AMENDMENT setPhaseOverride + demographic prior fallback
+18. [[../entities/features/feature-mode-detection]] — 5 moduri pure event listeners ZERO ML/NLP Mode hierarchy reset per session
+19. [[../entities/features/feature-tier-storage]] — Tier 0/1/2 active rolling 90 + aggregate + Firebase archive Q10 BLIND SPOT #1 RESOLVED
+
+**Voice preservation §1 enforcement 100% (19/19 pages):** Synthesis concise 2-3 paragrafe + Verbatim quotes Daniel min 2-3 EXACT cu daniel-isms preserved per page + Bugatti framing notes 5 sub-sections (Gigel/Quality>Speed/Anti-RE/Anti-paternalism/Voice tone) + Cross-refs raw layer min 5-7 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2. Audit primat reconciliation pattern preserved consistent cu BATCH 2 SLICE 0+1+2+3 + Cluster A+B precedent.
+
+**Bidirectional cross-links policy preserved forward-only** (per precedent §5 deliberate exception 2026-05-12 documented `427/428/430_*_CONSUMED.md` + Cluster B precedent `431_*`): NEW feature pages forward-link existing ADR + engine pages. Retroactive back-ref edits ADR + engine frozen pages **NU performed** — preserved invariant frozen pages NU touch (HARD CONSTRAINT §F3.12). Graph view discoverability preserved via forward-links feature → ADR/engine; ADR + engine pages frozen NU receives reciprocal back-link (acceptable per CLAUDE.md §5.2 forward-ref tolerance).
+
+**Cumulative SUB-BATCH 3 carry-forward TBD post Cluster A+B+C:** ~27-32 pages remaining (Cluster D specs 11 + Cluster F summaries ~10-15 + Cluster G source pointers 6). Metoda hibridă LOCK V1 2026-05-12 turn-based pattern — next trigger "execute next cluster" Daniel chat NEW invocation.
+
+**Cross-refs raw layer:** [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCK V1 + [[../../03-decisions/DECISION_LOG]] §2026-05-12 §CC.5 fast handover ingest entry top + [[../../📤_outbox/LATEST]] Cluster C features raport §0-§8 + [[../../04-architecture/V1_FEATURES_AUDIT_V1]] §F1-§F15 audit verdicts source + [[../entities/adrs/]] 42 ADR pages + [[../entities/engines/]] 7 engine pages cross-refs + [[../../../src/pages/coach/]] BATCH 2 LANDED implementation sources (rating + session + workout + energyCheck + painButton + cevaNuMerge + equipmentSwap + restTimer + idle).
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-c-features-2026-05-12-1952` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] ingest | Cluster B engines SUB-BATCH 3 — 7 engine entity pages voice preservation §1 4-section enforced
 
 Cluster B engines SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_B_ENGINES.md` §1-§8 execute. 7 NEW engine entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 60 → 67 wiki pages (+7 net new SUB-BATCH 3 Cluster B). 16 concepts + 42 ADRs + 7 engines + 1 spec + 1 summary = 67 total.
