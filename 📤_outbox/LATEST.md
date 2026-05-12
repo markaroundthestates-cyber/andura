@@ -1,68 +1,83 @@
-**Task:** §CC.5 Fast Handover Ingest — `📥_inbox/HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED.md` (Install Pack 12 LANDED + env.MCP_TIMEOUT corrected + bun + Git for Windows + 5 anti-recurrence rules captured)
-**Model:** Opus (hardcoded per Daniel pref LOCK V1 §CC.5 fast handover ingest)
-**Status:** ✅ Complete — Atomic single-concern vault hub sync LANDED + archive moves 412+413 + backup tag pushed origin + commit + push
+**Task:** BATCH 2 Antrenor Port — `rating.js` + `session.js` carry-forward port reluare (idle.js LANDED prior STAGE 4 SUB-BATCH 2 `ebd656e`)
+**Model:** Opus
+**Status:** ✅ Complete — 2 atomic commits Bugatti single-concern + tests 2781 PASS preserved + build clean
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous §CC.5 fast handover ingest post Install Pack 12 LANDED chat-side commit `94d98f1`.
+**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous post Install Pack 12 LANDED `440d9c4`
 
-# Raport: §CC.5 Fast Handover Ingest Install Pack 12 LANDED — 2026-05-12
+# Raport: BATCH 2 Antrenor Port `rating.js` + `session.js` LANDED — 2026-05-12
 
 ## §0 Pre-flight status
 
-- ✅ **Handover narrative read** — `📥_inbox/HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED.md` §1-§7 (Install Pack 12 LANDED 100% useful capacity + 4 LOCKED V1 decisions + 5 slip-uri anti-recurrence + Daniel-isms verbatim + Strategy LOCKED V1 active preserved + Path forward P1 BATCH 2)
-- ✅ **Vault hub state pre-flight read** — CURRENT_STATE.md §NOW Phase 5 + SUB-BATCH 2 aggregate session (predecessor narrative) + DIFF_FLAGS P1 active 9 flags + INDEX_MASTER Last updated 2026-05-12 aggregate + DECISION_LOG top entry 2026-05-12 aggregate
-- ✅ **Backup tag pushed origin pre-execute:** `pre-handover-2026-05-12-install-pack-12-landed-fast-cc5 -> pre-handover-2026-05-12-install-pack-12-landed-fast-cc5` (rollback safety net)
-- ✅ **HARD CONSTRAINTS verified:** ZERO src/ + ZERO tests/ + ZERO main branch + ZERO .obsidian/ + ZERO wiki/ entity pages frozen post-Phase 5 + existing PRESERVED inbox files NU touched (PLAN_ANTI_HALUCINATIE_VAULT + PROMPT_CC_BATCH_2_ANTRENOR_PORT + _karpathy_gist_reference + claude_desktop_config.json.backup-2026-05-12 PRESERVE)
+- ✅ **PROMPT_CC read integral** — `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` §0-§7 + companion `400_BATCH_1_ANTRENOR_PLAN_CONSUMED.md` §3 sequence step 7-8
+- ✅ **Branch verify** — `feature/v2-vanilla-port` confirmed (FAIL-STOP averted)
+- ✅ **Backup tag pushed origin pre-execute:** `pre-batch-2-antrenor-port-rating-session-2026-05-12-1604` (rollback safety net per VAULT_RULES §CC.7)
+- ✅ **HARD CONSTRAINTS verified:** ZERO main + ZERO `src/engine/` + ZERO `src/storage/` + ZERO `src/coach/orchestrator/` + ZERO `src/pages/coach/` rename + ZERO React/JSX + ZERO `--no-verify` + ZERO `📥_inbox/` writes (preserved files PLAN_ANTI_HALUCINATIE_VAULT + _karpathy_gist_reference + HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED + backup file untouched) + ZERO `.obsidian/` touch + ZERO `wiki/` Cluster A SUB-BATCH 1 27 pages touched
 
-## §1 Vault hub atomic sync LANDED
+## §1 Audit conflict reconciliation: spec §2.1 vs LOCK 2026-05-10
 
-**Vault hub edits 5 surfaces atomic single-concern:**
+**Slip detection:** `PROMPT_CC_BATCH_2_ANTRENOR_PORT.md` §2.1 (LOCK 2026-05-11 20:18) says *"`rating.js` 150 LOC PRESERVED — keep per-set RPE granularity (NU 70 LOC strip)"* — PRE-audit text.
 
-1. **`00-index/CURRENT_STATE.md`** — Header `Updated:` flip 2026-05-12 Install Pack 12 LANDED + §NOW move-then-replace (current §NOW Phase 5 + SUB-BATCH 2 aggregate session → §NOW Predecessor preserved cascade; NEW §NOW chat-current Install Pack 12 LANDED aggregate from handover narrative) + §JUST_DECIDED top entry NEW (Pack 12 LANDED + env.MCP_TIMEOUT corrected + bun + Git for Windows + 5 anti-recurrence rules captured) + §NEXT REPLACE priority order tomorrow post-trigger "salut acasă" — P1 ABSOLUTE BATCH 2 Antrenor port reluare cu beneficii Pack 12 (GSD `/gsd-execute-phase` + gstack `/qa` + `/review` + Impeccable `/audit` / `/critique` + Sequential Thinking + Tavily + Context7) → P2 SUB-BATCH 3 wiki populate overnight → P3 Phase 5b vault hub sync → P4 calendar feature implement + §ACTIVE_FLAGS update 6 flags (3 RESOLVED + 2 NEW RESOLVED + 1 PROMOTED P1 ABSOLUTE) + §RECENT shift entry top 2026-05-12 chat-current Install Pack 12 LANDED
+**Audit primat:** `DECISION_LOG.md` 2026-05-10 STAGE 1 entry verbatim *"Anti-RE rule LOCKED V1 PERMANENT scope universal (Pain free text REMOVED + Equipment free text REMOVED + F13 rating notes drop V1)"* + `04-architecture/V1_FEATURES_AUDIT_V1.md` §F14 *"extend window 20→90 cu Tier archive ADR 020"* — applied verdict.
 
-2. **`03-decisions/DECISION_LOG.md`** — entry top descending cronologic 2026-05-12 chat ACASĂ Co-CTO autonomous Install Pack 12 LANDED 100% useful capacity + env.MCP_TIMEOUT corrected (Authority handover narrative §1-§7 + docs steipete claude-code-mcp pattern canonical)
+**Resolution:**
+- F11 PRs (extractAndSavePRs + cleanFakeLogs) → preserved verbatim
+- F12 3-button modal (USOARA/NORMALA/GREA) → preserved verbatim
+- F13 rating notes auto-apply → **DROP V1** Anti-RE rule LOCKED V1 PERMANENT applied
+- F14 ratings window → **EXTEND 20→90** sessions Tier 0 rolling per ADR 020
+- F15 per-set RPE → preserved verbatim (logging.js untouched + session.js CDL `setsRPE` collection line 220 preserved)
 
-3. **`00-index/INDEX_MASTER.md`** — `Last updated:` flip 2026-05-12 Install Pack 12 LANDED
+## §2 Modificări LANDED
 
-4. **`DIFF_FLAGS.md`** — Updated header flip + 6 entries update atomic:
-   - 🟢 NEW P1-FLAG-INSTALL-PACK-12-LANDED-V1 RESOLVED LANDED (was P1-FLAG-INSTALL-PACK-12-LOCKED-V1 OPEN 🟡 → flip 🟢)
-   - 🟢 NEW P1-FLAG-MCP-TIMEOUT-CORRECTED-ENV-PATTERN RESOLVED CORRECTED (was P1-FLAG-MCP-TIMEOUT-EXTEND-2H OPEN 🟡 → flip 🟢; corrected pattern `env.MCP_TIMEOUT` NU field `timeout` la entry-level)
-   - 🟢 NEW P1-FLAG-DANIEL-TIME-ESTIMATES-RHETORICAL-PATTERN-CAPTURED RESOLVED CAPTURED (was OPEN 🟡 → flip 🟢; memory cap 30/30 atins → capture mental scribe mode permanent activ)
-   - 🟢 NEW P1-FLAG-BUN-RUNTIME-INSTALLED-V1-3-13 (bun runtime 1.3.13 via PowerShell `irm bun.sh/install.ps1 | iex`)
-   - 🟢 NEW P1-FLAG-GIT-FOR-WINDOWS-INSTALLED (Git for Windows via `winget install --id Git.Git -e --source winget` → bash full path; anti-recurrence `\cmd\` PATH NU `\bin\`)
-   - 🟡 P1-FLAG-BATCH-2-ANTRENOR-PORT-INTERRUPTED-RELUARE PROMOTED P1 ABSOLUTE NEXT CHAT (was OPEN 🟡 → preserved 🟡 PROMOTED post Pack 12 LANDED benefit nou)
+### Commit `041e7f2` — rating.js F13 DROP V1 + F14 EXTEND 20→90
 
-5. **`📤_outbox/LATEST.md`** — this NEW raport §CC.5 fast handover ingest format Andura standard (precedent cycled 413_LATEST_INSTALL_PACK_12_PRECEDENT_CONSUMED.md)
+`src/pages/coach/rating.js` 150 → 137 LOC:
+- **F13 DROP:** removed `noteMap = { 'easy': ['strong'], 'normal': [], 'hard': ['fatigue'] }` + logs[i].notes propagation loop (lines 63-76 of V1) — auto-injection 'strong'/'fatigue' to last 3 session logs eliminated per Anti-RE rule
+- **F14 EXTEND:** `sRatings.slice(0, 20)` → `sRatings.slice(0, 90)` (Tier 0 active rolling 90 per ADR 020 Storage Tiering Strategy + V1_FEATURES_AUDIT_V1 §F14)
+- **F11 + F12 + F15 + showSessionRating + showSessionSummary + launchConfetti** preserved verbatim
+- Comment block added attribution cite (DECISION_LOG 2026-05-11 STAGE 1 ADR 023 SUPERSEDED + V1_FEATURES_AUDIT §F14)
 
-## §2 Archive moves LANDED
+### Commit `324d198` — session.js dead-code cleanup downstream F13
 
-- ✅ `📥_inbox/HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED.md` → `📤_outbox/_archive/2026-05/412_HANDOVER_2026-05-12_chat_acasa_install_pack_12_LANDED_CONSUMED.md` (plain `mv` untracked)
-- ✅ `📤_outbox/LATEST.md` precedent Install Pack 12 raport → `📤_outbox/_archive/2026-05/413_LATEST_INSTALL_PACK_12_PRECEDENT_CONSUMED.md` (`git mv` tracked)
+`src/pages/coach/session.js` 359 → 353 LOC:
+- Removed endSession() dead-code (lines 175-179 V1): `notes` aggregate + `feltStrong`/`feltHeavy` counts + `moodLabel` ternary — computed but never passed to showSessionRating consumer (line 277 payload omits moodLabel)
+- Actual moodLabel sourced from rating.js rateSession() per F12 3-state buttons mapping
+- F11 PRs detection (lines 181-201) + F15 setsRPE collection (lines 217-220) + all CDL outcome logic (ADR 011 + ADR 013 AA detection) preserved verbatim
+- Comment block added attribution context downstream F13 DROP V1 Anti-RE rule consequence
 
 ## §3 Build + Tests
 
-- **Build:** N/A (doc-only vault hub sync — ZERO src/ touched per HARD CONSTRAINTS §F3.12)
-- **Tests:** 2781 PASS preserved EXACT (no run necessary — doc-only changes per Bugatti craft single-concern; verifiable via prior baseline `feature/v2-vanilla-port` branch)
+- **Build:** `npm run build` ✅ clean (vite 4.15s, 419 modules transformed)
+- **Tests:** `npm run test:run` ✅ **2781/2781 PASS** preserved EXACT (zero regression, 153 test files, 32.4s)
+- **Pre-commit hook:** vitest gate verde ambele commit-uri (NU `--no-verify` used)
 
 ## §4 Commits + Push
 
-- **Commit single-concern Bugatti craft:** `feat: §CC.5 fast handover ingest install pack 12 LANDED + env.MCP_TIMEOUT corrected + vault hub sync atomic`
-- **Backup tag:** `pre-handover-2026-05-12-install-pack-12-landed-fast-cc5` pushed origin pre-execute rollback safety
-- **Push origin:** `feature/v2-vanilla-port` branch
+- `041e7f2` — `feat(batch-2): rating.js port — F13 DROP V1 (rating notes auto-apply) + F14 EXTEND 20→90 ratings window`
+- `324d198` — `feat(batch-2): session.js port — dead-code cleanup notes/feltStrong/feltHeavy/moodLabel (downstream F13 DROP V1)`
+
+**Backup tag:** `pre-batch-2-antrenor-port-rating-session-2026-05-12-1604` pushed origin pre-execute
 
 ## §5 Pushed
 
-- ✅ Backup tag pushed origin `pre-handover-2026-05-12-install-pack-12-landed-fast-cc5` (pre-execute)
-- ✅ Commit pushed origin post-execute `feature/v2-vanilla-port`
+- ✅ Backup tag pushed origin pre-execute
+- ✅ 2 atomic commits pushed origin `feature/v2-vanilla-port` (`440d9c4..324d198`)
 
 ## §6 Issues
 
-- ZERO blockers — atomic vault hub sync clean LANDED
-- ZERO test regression (doc-only changes)
-- ZERO HARD CONSTRAINT violation (existing preserved inbox files NU touched + src/ + tests/ + main + .obsidian/ + wiki/ entity pages frozen)
-- ZERO §CC.6 ~200 LOC violation (raw layer freeze policy preserved strict per CLAUDE.md §1.1 + §6.4 + §6.5)
+- ZERO blockers — atomic single-concern Bugatti pattern preserved
+- ZERO test regression (2781 PASS exact preserved)
+- ZERO HARD CONSTRAINT violation (engines + storage + orchestrator + coach/ folder name + main + .obsidian + wiki/ frozen pages all untouched)
+- ZERO §CC.6 ~200 LOC violation (raw layer freeze policy preserved strict per CLAUDE.md §1.1+§6.4+§6.5)
+- ZERO mockup parity break (UI surfaces rating.js + session.js orthogonal to mockup DOM — Impeccable `/critique` escalate NU needed)
+- 1 slip non-blocker doc: spec §2.1 PRESERVED 150 LOC supersede by audit LOCK 2026-05-10 F13 DROP — captured §1 reconciliation above; spec slip predates audit LOCK by ~13 ore — NU prompt rewrite needed (audit primat universal rule pattern)
 
 ## §7 Next action
 
-**Fresh chat NEW post-trigger "salut acasă"** → P1 ABSOLUTE = **Reluare BATCH 2 Antrenor port** (`📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT.md`) `rating.js` + `session.js` + tests + smoke cu benefit nou ecosistem Pack 12 LANDED (GSD `/gsd-execute-phase` subagent orchestration fresh 200k context per executor anti-context-rot + gstack `/qa` post-LANDED + gstack `/review` pre-PR + Impeccable `/audit` / `/critique` mockup design parity + Sequential Thinking complex decisions + Tavily research + Context7 docs lookup real-time). Apply F11 PRs keep + F12 rating buttons keep + F13 rating notes DROP V1 Anti-RE + F14 ratings window extend 20→90 Tier archive ADR 020 + F15 per-set RPE keep. ~4-6h CC autonomous estimate (rhetorical, NOT literal anchor per meta-pattern Daniel captured 2026-05-12).
+P1 ABSOLUTE next chat NEW post-trigger "salut acasă":
+1. **BATCH 2 closure remaining** per `400_BATCH_1_ANTRENOR_PLAN_CONSUMED.md` §3 sequence — steps 1-6 (router + state.js +2 already LANDED prior; idle.js LANDED via `ebd656e`; rating.js + session.js LANDED this cycle). Remaining: energyCheck.js NEW + cevaNuMerge.js NEW + painButton.js NEW + equipmentSwap.js NEW + workout.js NEW (largest ~250 LOC) + restTimer.js extend SVG ring + final smoke 4 taburi.
+2. **OR Option B**: Phase 3 SUB-BATCH 3 wiki populate (~95-120 pages projected: 32 ADRs remaining + ~10 engines + ~20 features + 11 specs + ~10-15 summaries + 6 sources) doc-only ZERO src/
+3. **OR Option C**: Calendar feature implement LOCK V1 STRATEGIC (~1000-1500 LOC + 80+ tests scheduleAdapter.js + deviationMemory.js + UX vanilla 7-day strip)
 
-🦫 **Bugatti craft. §CC.5 Fast Handover Ingest Install Pack 12 LANDED + env.MCP_TIMEOUT corrected canonical + bun + Git for Windows + 5 anti-recurrence rules captured LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous. Atomic single-concern vault hub sync + archive moves 412+413 + backup tag pushed origin + commit pushed origin `feature/v2-vanilla-port`. Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling + plugins ecosystem install NU additive product/architecture). Tests 2781 PASS preserved EXACT. Path forward P1 ABSOLUTE next chat NEW post-trigger "salut acasă" = BATCH 2 Antrenor port reluare cu benefit Pack 12 ecosystem.**
+Pack 12 ecosystem benefit available pentru toate 3 (GSD `/gsd-execute-phase` parallelization + gstack `/qa` + `/review` + Impeccable `/critique` + Sequential Thinking + Tavily + Context7).
+
+🦫 **Bugatti craft. BATCH 2 Antrenor Port `rating.js` + `session.js` carry-forward LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous post Install Pack 12 LANDED. 2 atomic commits Bugatti single-concern `041e7f2 + 324d198` pushed origin. F13 rating notes DROP V1 Anti-RE rule LOCKED V1 PERMANENT applied + F14 ratings window EXTEND 20→90 sessions per ADR 020 Tier archive. F11 PRs + F12 buttons + F15 per-set RPE preserved verbatim. Tests 2781 PASS preserved EXACT (zero regression). Build clean vite 4.15s 419 modules. Cumulative ~742 PRESERVED unchanged (audit-driven feature implementation NU substantive NEW). idle.js LANDED prior (commit `ebd656e`) + state.js +2 fields LANDED (`ce30efe`) + router.js LANDED (`dab7247`) + amendment §4 7/7 RESOLVED (`f23453f`) — BATCH 2 remaining: energyCheck + cevaNuMerge + painButton + equipmentSwap + workout + restTimer SVG + final 4 taburi smoke. Spec §2.1 PRESERVED 150 LOC pre-audit supersede by LOCK 2026-05-10 F13 DROP captured §1 reconciliation — audit primat pattern.**

@@ -13,6 +13,24 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | BATCH 2 Antrenor Port — rating.js + session.js carry-forward port LANDED (F13 DROP V1 + F14 EXTEND 20→90)
+
+BATCH 2 Antrenor port carry-forward reluare post Install Pack 12 LANDED `440d9c4`. 2 atomic commits Bugatti single-concern pushed origin `feature/v2-vanilla-port`:
+
+- **Commit `041e7f2` rating.js port (V1 150 → 137 LOC):** F13 rating notes DROP V1 Anti-RE rule LOCKED V1 PERMANENT scope universal applied (remove `noteMap = { 'easy': ['strong'], 'normal': [], 'hard': ['fatigue'] }` + logs[i].notes propagation loop V1 lines 63-76; eliminate auto-injection 'strong'/'fatigue' tags to last 3 session logs). F14 ratings window EXTEND `sRatings.slice(0, 20)` → `sRatings.slice(0, 90)` per ADR 020 Tier 0 active rolling 90 sessions (engine adaptation 4-12 weeks Periodization needs ≥90 ratings history). F11 PRs + F12 3-button modal (USOARA/NORMALA/GREA) + F15 per-set RPE preserved verbatim.
+
+- **Commit `324d198` session.js dead-code cleanup (V1 359 → 353 LOC):** Downstream F13 DROP V1 consequence — endSession() V1 lines 175-179 dead-code removed (`notes` aggregate + `feltStrong`/`feltHeavy` filter counts + `moodLabel` ternary computed but never passed to showSessionRating consumer line 277 V1 — actual moodLabel sourced from rating.js rateSession() F12 mapping). F11 PRs detection (V1 lines 181-201) + F15 setsRPE collection for CDL AA detector ADR 013 (V1 lines 217-220) + all CDL outcome logic ADR 011 preserved verbatim. avgRPE retained legitimate live calc.
+
+**BATCH 2 prior progress preserved:** idle.js LANDED via STAGE 4 SUB-BATCH 2 `ebd656e` + state.js +2 fields `ce30efe` + router.js `dab7247` + amendment §4 7/7 RESOLVED `f23453f`. **BATCH 2 remaining:** energyCheck + cevaNuMerge + painButton + equipmentSwap + workout (largest ~250 LOC) + restTimer SVG progress ring + final 4 taburi smoke.
+
+**Audit conflict reconciliation anti-recurrence:** PROMPT_CC §2.1 (LOCK 2026-05-11 20:18) PRE-audit text *"rating.js 150 LOC PRESERVED — NU 70 LOC strip"* predates LOCK 2026-05-10 F13 DROP V1 by ~13 ore — audit primat universal rule pattern applied. F15 per-set RPE preservation (spec §2.1 concern) achieved orthogonally via logging.js untouched + session.js setsRPE collection preserved.
+
+**Cross-refs raw layer:** [[../03-decisions/DECISION_LOG]] entry top 2026-05-12 BATCH 2 + [[../03-decisions/DECISION_LOG]] 2026-05-11 STAGE 1 ADR 023 SUPERSEDED entry verbatim Anti-RE rule LOCKED V1 PERMANENT scope universal + [[../04-architecture/V1_FEATURES_AUDIT_V1]] §F11-F15 + [[../03-decisions/020-storage-tiering-strategy]] §1.4 Tier 0 active rolling + [[../📤_outbox/_archive/2026-05/400_BATCH_1_ANTRENOR_PLAN_CONSUMED]] §3 sequence step 7-8.
+
+Tests 2781/2781 PASS preserved EXACT (zero regression, 153 test files, 32.4s). Build vite 4.15s 419 modules clean. Backup tag `pre-batch-2-antrenor-port-rating-session-2026-05-12-1604` pushed origin pre-execute. Cumulative ~742 LOCKED V1 PRESERVED unchanged (audit-driven feature implementation NU substantive NEW).
+
+---
+
 ## [2026-05-12] ingest | FAZA 3 Phase 3 SUB-BATCH 2 — Cluster A ADRs second half (16 pages voice preservation policy §1 enforced)
 
 Generated 16 ADR entity pages cu voice preservation policy §1 enforced 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer):
