@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post SUB-BATCH 3 Cluster F summaries (2026-05-12):** **109 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (13, 12 NEW Cluster F + 1 pre-existing consolidare metoda hibridă). Carry-forward SUB-BATCH 3 Cluster G (6 source pointers) FINAL remaining per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post SUB-BATCH 3 Cluster G source pointers FINAL CLOSURE MILESTONE (2026-05-12):** **115 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (13) + sources (6 NEW Cluster G). **SUB-BATCH 3 CLOSURE MILESTONE achieved** — Karpathy Real Option B 100% wiki coverage post Cluster A+B+C+D+F+G LANDED 2026-05-11 → 2026-05-12 cumulative.
 
 ---
 
@@ -159,15 +159,14 @@ last_updated: 2026-05-12
 - [[../VAULT_RULES]] — schema co-layer §HANDOVER_PROTOCOL (DEPRECATED) + §CC.* (DEPRECATED) + §AR.* (preserved) + §KARPATHY_OPERATIONS (SUPERSEDED) + §FAZA_3_KARPATHY_REAL (LOCK V1)
 - [[_design/WIKI_DESIGN_SPEC_V1]] — design spec Phase 1 §1-§8 LANDED
 
-## Sources (carry-forward Cluster G)
+## Sources (6 LANDED 2026-05-12 — Cluster G SUB-BATCH 3 FINAL CLOSURE)
 
-Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
-- TBD `sources/decision-log-pointers.md` — DECISION_LOG entries → wiki coverage map
-- TBD `sources/handover-themes-pointers.md` — 5 HANDOVER theme files → wiki coverage map
-- TBD `sources/current-state-pointers.md` — CURRENT_STATE precedent threads → wiki narrative map
-- TBD `sources/adr-source-pointers.md` — 42 ADR files → wiki entity 1:1 map (42 LANDED 100% post SUB-BATCH 3 Cluster A LANDED 2026-05-12)
-- TBD `sources/spec-source-pointers.md` — 11 SPEC files → wiki entity map (TBD)
-- TBD `sources/vision-source-pointers.md` — 9 vision files → wiki concept/summary map
+- [[sources/adr-source-pointers]] — 42 ADR files → wiki/entities/adrs/ 1:1 coverage map 100% post Cluster A SUB-BATCH 1+2+3 LANDED
+- [[sources/spec-source-pointers]] — 11 spec paradigm files → wiki/entities/specs/ 1:1 coverage map 100% post Cluster D + 1 pre-existing spec entity
+- [[sources/vision-source-pointers]] — 10 vision files → wiki/concepts/ + wiki/summaries/ + ADRs cross-distribuit pattern (8 LANDED + 2 GAP intentional private/legal)
+- [[sources/handover-themes-pointers]] — 5 HANDOVER theme files + RECENT_DECIDED_ARCHIVE → wiki summaries cross-cluster distribuit
+- [[sources/current-state-pointers]] — CURRENT_STATE §RECENT precedent threads chronological → wiki narrative cross-cluster
+- [[sources/decision-log-pointers]] — DECISION_LOG chronological master log entries → wiki coverage map cross-cluster ~4245 LOC + ~742 LOCKED V1
 
 ## Carry-forward TBD (Phase 3 SUB-BATCH 3 per Prompt §6 "Phase 3 split în 2-3 sessions overnight")
 
@@ -180,6 +179,10 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 **Cluster D — Specs SUB-BATCH 3 ✅ LANDED 2026-05-12 (11/11 mandatory complete)** — see `## Entities — Specs (12 LANDED)` section above. 11 NEW spec entity pages per `04-architecture/*_SPEC*.md` paradigm files: cognitive-architecture + multi-tenant-auth + tombstone-branching + data-registry + port-first-step-1 + react-migration-state-mapping + andura-validation-framework + scenarios-simulator + faza-2-filter-strategy + v1-features-audit + root-nav-v2.
 
 **Cluster F — Summaries SUB-BATCH 3 ✅ LANDED 2026-05-12 (12/12 mandatory complete)** — see `## Summaries (13 LANDED)` section above. 12 NEW summary pages synthesize Cluster A 42 ADRs + Cluster B 7 engines + Cluster C 19 features + Cluster D 11 specs + 16 concepts foundation knowledge graph: auth-flow + coach-engines + v1-features + onboarding + mockup-themes + vault-meta-tooling + port-first-execution + react-migration-roadmap + beta-launch-readiness + decision-clusters + daniel-isms-glossary + slip-patterns-history.
+
+**Cluster G — Source Pointers SUB-BATCH 3 ✅ LANDED FINAL CLOSURE MILESTONE 2026-05-12 (6/6 mandatory complete)** — see `## Sources (6 LANDED)` section above. 6 NEW source pointer pages raw layer 1:1 + cross-cluster coverage map: adr-source-pointers (42 ADRs 100%) + spec-source-pointers (11 specs 100% + 1 pre-existing) + vision-source-pointers (10 vision files cross-distribuit 8 LANDED + 2 GAP) + handover-themes-pointers (5 themes + archive) + current-state-pointers (§RECENT precedent threads) + decision-log-pointers (chronological master log ~742 LOCKED V1).
+
+**🦫 SUB-BATCH 3 CLOSURE MILESTONE ACHIEVED 2026-05-12** — 65 NEW wiki pages SUB-BATCH 3 (16 ADRs Cluster A + 7 engines Cluster B + 19 features Cluster C + 11 specs Cluster D + 12 summaries Cluster F + 6 source pointers Cluster G) + cumulative 115 wiki pages total post Karpathy Faza 3 Phase 1-5 LANDED FULL.
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**
