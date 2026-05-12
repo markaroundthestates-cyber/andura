@@ -1,6 +1,62 @@
 # DECISION LOG — Andura
 
 
+## 2026-05-12 chat ACASĂ Co-CTO autonomous §CC.5 fast handover ingest — BATCH 2 Antrenor port closure milestone LANDED + Vault inbox cleanup LANDED + Metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12 `feature/v2-vanilla-port`
+
+**Status:** ✅ LANDED — §CC.5 fast handover ingest atomic single-concern this commit. Handover narrative `📥_inbox/HANDOVER_2026-05-12_chat_acasa_batch_2_closure_milestone_LANDED_plus_metoda_hibrida_NEW.md` consumed → `📤_outbox/_archive/2026-05/423_HANDOVER_2026-05-12_chat_acasa_batch_2_closure_milestone_LANDED_plus_metoda_hibrida_NEW_CONSUMED.md`. Previous LATEST.md cleanup post BATCH 2 cycled → `📤_outbox/_archive/2026-05/422_LATEST_VAULT_INBOX_CLEANUP_POST_BATCH_2_CONSUMED.md`.
+
+**Authority:** Daniel handover narrative §1-§7 (BATCH 2 closure milestone LANDED FULL + vault inbox cleanup LANDED + metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12 critical decision capture §3) + VAULT_RULES §CHAT_CONTINUITY_PROTOCOL §CC.5 fast handover ingest protocol invariant (NO alignment questions; verification via §CC.2 layered read + §CC.7 drift detection) + memory rule "§47 LOCKED V1 = DEEP §HANDOVER_PROTOCOL 14-step only; Fast §CC.5 = NO alignment questions".
+
+**Chat-current scope-aggregate decizii consolidate:**
+
+1. **BATCH 2 Antrenor port closure milestone LANDED FULL** — 15 atomic commits chain `feature/v2-vanilla-port` (11 substantive `041e7f2 → 81694e5` + 4 vault sync interlinked + 1 inbox cleanup `5d97429`). 4 stages atomic: SLICE 0 carry-forward rating + session `041e7f2 + 324d198` + SLICE 1 energyCheck + painButton + cevaNuMerge `8a4c39e + f941fd7 + a17b0a3 + 01686c7` + SLICE 2 equipmentSwap + workout `c5e7288 + 8baa1ed + e3724f7` + SLICE 3 FINAL restTimer SVG ring + smoke E2E + vault hub sync `81694e5 + 9f01007 + b79a277`. Tests 2781 → 2914 PASS preserved EXACT (+133 net new cumulative; 153 → 159 test files +6 NEW: energyCheck + painButton + cevaNuMerge + equipmentSwap + workout + restTimer). 8 src/pages/coach/ modules touched cumulative. Smoke E2E playwright 4 taburi V2 5/5 PASS vs live andura.app deploy 8.9s. Build vite 3.82s 419 modules clean. Audit primat reconciliation pattern preserved consistent 3 slices (V1_FEATURES_AUDIT scope LIMITED renderIdle + rating only — alternate authority chain mockup V2 SoT + state.js:29 pre-stubbed enums + engine ADRs orthogonal).
+
+2. **Vault inbox cleanup post BATCH 2 closure milestone LANDED** — 1 atomic commit chore(vault) `5d97429` + 4 file moves canonical destinations + 5 wikilinks live raw layer updates + 1 bonus stale ref fixed + 2 folder structure setup (`04-architecture/_sources/` RAW immutable reference layer canonical + `07-meta/_backups/` env personal backups layer canonical) + audit trail entries. `📥_inbox/` final state: `.gitkeep` ONLY clean input layer ready P1 fork artefacte.
+
+3. **CRITICAL — Metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12** — Daniel propunere mid-session verbatim captured: *"daca eu deschid VS, in terminal folosesc CC, tu imi dai artefacte, eu le bag in inbox ca si procesul vechi, dupa ce termina cc treaba (si sa scrii artefactele si cu ce skills sa foloseasca cc), eu ti-as scrie in chat latest, tu citesti latest facut de cc, si treci la next artefact. (bine presupunand ca tii cont si de vault hygiene, si de wiki si de tot). Si ca singur proces pe care l-ai face tu cap coada e cand as scrie eu handover, tu sa rulezi complet prin mcp handover, si eu doar sa merg in next chat. Nu ar fi mai eficient?"*
+
+   Pattern operational mecanic LOCKED V1 2026-05-12:
+   - **Claude chat** = decision layer + artefacte generation (`.md` via `create_file/present_files` claude.ai/desktop UI) + handover via MCP cap-coadă singular use
+   - **Daniel** = courier artefact paste `📥_inbox/` SAU paste direct CC terminal + CC execution `claude --dangerously-skip-permissions` standard + intervene Ctrl+C oricând agency live + scrie "latest" în chat trigger Claude read
+   - **CC autonomous** = execute artefact spec autonomous + scrie `📤_outbox/LATEST.md` final raport structured §0-§N
+   - **Skills CC specific inline în artefact** per task fit (GSD `/gsd-execute-phase` subagent orchestration fresh 200k context per executor anti-context-rot + gstack `/qa` post-LANDED + gstack `/review` pre-PR + Impeccable `/critique` UI parity vs mockup + Sequential Thinking decizii complex + Context7 docs lookup real-time + Tavily web research rare)
+   - **MCP cap-coadă singular use** = ONLY §CC.5 fast handover ingest (write-atomic <1min total): Claude scrie HANDOVER narrative direct `📥_inbox/HANDOVER_*.md` via `filesystem:write_file` + invoc claude_code via MCP cu §CC.5 prompt + verify LANDED filesystem direct + signal "e timpul pt noul chat"
+
+   **Autonomy LOCKED V1 PERMANENT 2026-05-11 "ZERO Daniel courier paradigm" partial SUPERSEDE 2026-05-12** — courier acceptable pentru artefact paste (Daniel agency live + observabilitate > zero-courier idealist). Reality turn-based + MCP transport 4min cap = iluzie autonomy fără observabilitate. Daniel choice: control + transparency > theoretical zero-friction.
+
+   **Validation evidence:** 2/2 slices LANDED clean via metoda hibridă (SLICE 3 BATCH 2 final `81694e5 + 9f01007 + b79a277` + vault inbox cleanup post-BATCH-2 `5d97429`). Eficient demonstrably ~3 tool calls/slice vs ~30 MCP loop monitor pasiv anterior. Daniel verbatim post-cleanup: *"latest"* + pattern preserved.
+
+4. **Slip-uri Direct-to-CC via MCP captured rationale shift chat-current:** (1) tool_result timeout 4min × N pierdere time + bandwidth budget (~24min pierduți chat curent pe MCP timeout-uri 4min × 3 + sleep loops 2min × 6 + ~30 tool calls budget monitor pasiv) + (2) Daniel observabilitate zero pe MCP autonomous subprocess (Daniel verbatim *"ma stii care e chestia ca tu nu esti autonom daca eu iti tot dau comanda sa verifici din timp in timp"* + *"ce sa vad eu pe andura.app acum ca e vanila nu react... eu nu am cum sa imi dau seama ce merge si ce nu"*) + (3) Daniel agency Ctrl+C reduced (only file edit per backup-tag rollback post-LANDED) + (4) slip antropomorphic "te ping" turn-based NU loop background fundamental.
+
+5. **3 surfaces sync TBD Daniel manual post-handover noaptea sau mâine:** Memory edits update ~/.claude/CLAUDE.md (replace edit "ZERO Daniel courier" Autonomy V1 + add metoda hibridă LOCKED V1 2026-05-12 cu validation evidence + skills CC list) + userPreferences UI raw paste (Settings → Profile → Custom instructions) update sections EXECUȚIE DIRECTĂ VIA MCP + adăugat secțiune METODA HIBRIDĂ + system prompt project UI raw paste analog update.
+
+**Daniel-isms verbatim surfaced chat-current (preserve pentru future wiki concepts/daniel-isms-catalog page Phase 3 SUB-BATCH 3):** *"ma stii care e chestia ca tu nu esti autonom daca eu iti tot dau comanda sa verifici din timp in timp"* (anti-paternalism autonomy iluzie fără observabilitate) + *"ce sa vad eu pe andura.app acum ca e vanila nu react... eu nu am cum sa imi dau seama ce merge si ce nu"* (anti-paternalism intermediate manual smoke slip) + *"continue si verific totul inainte de beta"* (Pre-Beta single comprehensive gate Bugatti reaffirm) + *"latest"* (chat-current pattern NOU trigger Claude read `📤_outbox/LATEST.md` raport CC autonomous LANDED) + *"daca eu deschid VS, in terminal folosesc CC, tu imi dai artefacte..."* (metoda hibridă propunere verbatim full LOCK V1).
+
+**Acceptance criteria all met:**
+- ✅ Branch `feature/v2-vanilla-port` confirmed (FAIL-STOP averted §0)
+- ✅ Backup tag pushed origin pre-execute `pre-handover-ingest-2026-05-12-batch-2-closure-milestone-plus-metoda-hibrida-NEW-1812`
+- ✅ Tests ≥2914 PASS preserved EXACT (vault hygiene NU touch src/tests/)
+- ✅ HARD CONSTRAINTS preserved: ZERO src/ + ZERO tests/ + ZERO .obsidian/ + ZERO wiki/ Cluster A SUB-BATCH 1 27 pages + ZERO main + ZERO React/JSX + ZERO --no-verify
+- ✅ §CC.6 ~200 LOC append-only PRESERVED STRICT (raw layer freeze policy post-Faza 3 per CLAUDE.md §1.1+§6.4+§6.5; future updates → `wiki/log.md` only via `/wiki-ingest`)
+- ✅ Cumulative ~742 LOCKED V1 PRESERVED unchanged (vault meta-tooling + paradigm capture chat-current ZERO net additive product/architecture)
+
+**Strategy LOCKED V1 active preserved post-chat-current:** Port-First-Then-React 2026-05-10 + Autonomy LOCKED V1 PERMANENT 2026-05-11 (cu metoda hibridă chat ↔ CC terminal NEW partial supersede courier paradigm 2026-05-12) + Mockup vs prod distincție permanent + Karpathy LLM Wiki pattern LOCK V1 Phase 1-5 LANDED + Voice preservation policy §1 MANDATORY + Calendar feature adaptive STRATEGIC LOCK V1 + Deviation Memory τ ML adaptive LOCK V1 + Plugins eval pack 12 LANDED 2026-05-12 + Meta-pattern Daniel time estimates rhetorical + MCP timeout 2h CORRECTED `env.MCP_TIMEOUT` pattern + **Metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12 partial supersede Autonomy "ZERO Daniel courier"**.
+
+**Path forward fresh chat NEW post-trigger "salut acasă" P1 fork (4 options Daniel decide):** Option A Phase 3 SUB-BATCH 3 wiki populate via GSD `/gsd-execute-phase` multi-session ~95-120 pages / Option B Calendar feature implement LOCK V1 STRATEGIC MAJOR ~1000-1500 LOC + 80-120 tests / Option C Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` pre-production decision / Option D Pauză strategic / wiki SUB-BATCH 3 noaptea + Calendar mâine planning.
+
+**Cross-refs §CC.5-equivalent ingest commit chat-current narrative this entry:**
+- `00-index/CURRENT_STATE.md` Header `Updated:` flip + §NOW REPLACE chat-current handover ingest + §JUST_DECIDED top entry NEW (this commit) + §NEXT REPLACE P1-P4 fork options + §ACTIVE_FLAGS 3 NEW entries + §RECENT shift
+- `00-index/INDEX_MASTER.md` `Last updated:` flip 2026-05-12 handover ingest
+- `00-index/DIFF_FLAGS.md` Header Updated flip + 3 NEW flag entries section
+- `wiki/log.md` append chronological signature `## [2026-05-12] handover | chat ACASĂ BATCH 2 closure milestone + cleanup + Metoda hibridă chat ↔ CC terminal NEW LOCKED V1` cu narrative cross-refs raw layer
+- `📤_outbox/LATEST.md` NEW raport handover ingest LANDED §0-§9 structured (precedent cycled `📤_outbox/_archive/2026-05/422_LATEST_VAULT_INBOX_CLEANUP_POST_BATCH_2_CONSUMED.md`)
+- Archive HANDOVER: `📥_inbox/HANDOVER_2026-05-12_chat_acasa_batch_2_closure_milestone_LANDED_plus_metoda_hibrida_NEW.md` → `📤_outbox/_archive/2026-05/423_HANDOVER_2026-05-12_chat_acasa_batch_2_closure_milestone_LANDED_plus_metoda_hibrida_NEW_CONSUMED.md`
+- Backup tag: `pre-handover-ingest-2026-05-12-batch-2-closure-milestone-plus-metoda-hibrida-NEW-1812` pushed origin pre-execute
+
+🦫 **Bugatti craft. 2026-05-12 chat ACASĂ Co-CTO autonomous §CC.5 fast handover ingest LANDED. BATCH 2 Antrenor port closure milestone LANDED FULL + Vault inbox cleanup LANDED + Metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12 critical decision capture. Pattern operational mecanic (chat artefact + Daniel paste CC terminal + autonomous LANDED + "latest" trigger; MCP cap-coadă singular use = §CC.5 handover only). Autonomy V1 "ZERO Daniel courier" partial SUPERSEDE 2026-05-12. Validated 2/2 slices clean. Eficient demonstrably ~3 tool calls/slice vs ~30 MCP loop monitor pasiv anterior. Tests 2914 PASS preserved EXACT. Cumulative ~742 PRESERVED unchanged.**
+
+---
+
 ## 2026-05-12 chat ACASĂ Co-CTO autonomous vault inbox cleanup post BATCH 2 closure milestone LANDED `feature/v2-vanilla-port`
 
 **Status:** ✅ LANDED — 4 file moves + audit trail entries + wikilinks integrity preserved + folder structure setup.
