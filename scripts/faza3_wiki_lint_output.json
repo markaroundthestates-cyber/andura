@@ -3,13 +3,13 @@
     "scan_date": "2026-05-11",
     "phase": "FAZA 3 Phase 4 /wiki-lint initial pass post Phase 3 SUB-BATCH 1 LANDED",
     "scope": "wiki/ folder pure LLM-generated 27 pages",
-    "total_files": 28,
-    "total_wikilinks": 330
+    "total_files": 44,
+    "total_wikilinks": 588
   },
   "scan_1_broken_wikilinks": {
-    "total_scanned": 330,
+    "total_scanned": 588,
     "false_positives": 19,
-    "raw_broken": 42,
+    "raw_broken": 48,
     "real_broken_list": [
       {
         "source": "concepts/autonomy-paradigm-v1.md",
@@ -22,6 +22,12 @@
         "target": "../concepts/quality-over-speed",
         "line": 9,
         "raw": "[[../concepts/quality-over-speed]]"
+      },
+      {
+        "source": "concepts/bugatti-craft.md",
+        "target": "../../📥_inbox/_karpathy_gist_reference",
+        "line": 74,
+        "raw": "[[../../📥_inbox/_karpathy_gist_reference]]"
       },
       {
         "source": "concepts/gigel-test.md",
@@ -48,6 +54,12 @@
         "raw": "[[../entities/specs/spec-wiki-design]]"
       },
       {
+        "source": "concepts/karpathy-llm-wiki-pattern.md",
+        "target": "../../📥_inbox/_karpathy_gist_reference",
+        "line": 54,
+        "raw": "[[../../📥_inbox/_karpathy_gist_reference]]"
+      },
+      {
         "source": "concepts/no-diacritics-rule.md",
         "target": "../entities/features/feature-f1-patterns-banner",
         "line": 10,
@@ -72,22 +84,34 @@
         "raw": "[[../entities/specs/spec-v1-features-audit]]"
       },
       {
+        "source": "concepts/strategy-lock-v1.md",
+        "target": "../../📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT",
+        "line": 64,
+        "raw": "[[../../📥_inbox/PLAN_ANTI_HALUCINATIE_VAULT]]"
+      },
+      {
         "source": "concepts/voice-preservation-policy.md",
         "target": "../summaries/daniel-isms-glossary",
         "line": 12,
         "raw": "[[../summaries/daniel-isms-glossary]]"
       },
       {
-        "source": "entities/adrs/adr-001-local-first-storage.md",
-        "target": "adr-020-storage-tiering-strategy",
-        "line": 10,
-        "raw": "[[adr-020-storage-tiering-strategy]]"
+        "source": "concepts/voice-preservation-policy.md",
+        "target": "../../📥_inbox/_karpathy_gist_reference",
+        "line": 70,
+        "raw": "[[../../📥_inbox/_karpathy_gist_reference]]"
       },
       {
-        "source": "entities/adrs/adr-001-local-first-storage.md",
-        "target": "adr-002-firebase-rest-not-sdk",
-        "line": 11,
-        "raw": "[[adr-002-firebase-rest-not-sdk]]"
+        "source": "concepts/voice-preservation-policy.md",
+        "target": "../../📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B",
+        "line": 71,
+        "raw": "[[../../📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]]"
+      },
+      {
+        "source": "entities/adrs/adr-003-double-progression-engine.md",
+        "target": "../specs/spec-cognitive-architecture",
+        "line": 13,
+        "raw": "[[../specs/spec-cognitive-architecture]]"
       },
       {
         "source": "entities/adrs/adr-005-vanilla-js.md",
@@ -102,16 +126,28 @@
         "raw": "[[../specs/spec-react-migration-state-mapping]]"
       },
       {
+        "source": "entities/adrs/adr-009-calibration-tiers.md",
+        "target": "../specs/spec-cognitive-architecture",
+        "line": 15,
+        "raw": "[[../specs/spec-cognitive-architecture]]"
+      },
+      {
+        "source": "entities/adrs/adr-013-auto-aggression-detection.md",
+        "target": "../../../06-sessions-log/HANDOVER_GLOBAL_2026-04-29",
+        "line": 66,
+        "raw": "[[../../../06-sessions-log/HANDOVER_GLOBAL_2026-04-29]]"
+      },
+      {
         "source": "entities/adrs/adr-014-onboarding-profile-typing.md",
         "target": "../specs/spec-port-first-step-1",
         "line": 11,
         "raw": "[[../specs/spec-port-first-step-1]]"
       },
       {
-        "source": "entities/adrs/adr-022-bayesian-nutrition-inference.md",
-        "target": "adr-015-getbf-calibration-only",
+        "source": "entities/adrs/adr-019-gdpr-k-anonymity-validation.md",
+        "target": "../specs/spec-cognitive-architecture",
         "line": 11,
-        "raw": "[[adr-015-getbf-calibration-only]]"
+        "raw": "[[../specs/spec-cognitive-architecture]]"
       },
       {
         "source": "entities/adrs/adr-023-llm-intent-superseded.md",

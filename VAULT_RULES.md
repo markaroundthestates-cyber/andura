@@ -1256,8 +1256,58 @@ Per [[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §3 Phase 4 + §4 Acceptan
 
 🚫 Memory edits Claude chat + userPreferences UI + system prompt project (OUT OF SCOPE CC, Daniel post-LANDED).
 
-**Cross-refs schema authority:** [[CLAUDE]] §1-§7 vault root rewrite Phase 2 LANDED + [[wiki/_design/WIKI_DESIGN_SPEC_V1]] Phase 1 LANDED + [[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] immutable raw source (relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference`) + [[📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED]] Daniel execute spec §1-§7.
+**Exception 2026-05-12 explicit Daniel amend:** `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` added 2026-05-12 ca operational workflow rule schema-adjacent (Bugatti gate per /wiki-ingest handover) per Daniel CEO directive verbatim chat ACASĂ 2026-05-12 (*"Faci si un mandatory file la fiecare handover in care cc sa treaca prin tot ce adauga in handover si sa verifice ca e indexat si plasat cum trebuie"*). NU historical content additive — operational rule file co-evolved cu §F3.13 enforcement schema layer. §F3.12 freeze rule preserved invariant pentru historical content; schema layer evolution operational allowed cu Daniel directive explicit.
+
+**Cross-refs schema authority:** [[CLAUDE]] §1-§7 vault root rewrite Phase 2 LANDED + [[wiki/_design/WIKI_DESIGN_SPEC_V1]] Phase 1 LANDED + [[04-architecture/_sources/karpathy-llm-wiki-gist-apr-2026]] immutable raw source (relocated 2026-05-12 from `📥_inbox/_karpathy_gist_reference`) + [[📤_outbox/_archive/2026-05/406_PROMPT_CC_FAZA_3_KARPATHY_OPTION_B_CONSUMED]] Daniel execute spec §1-§7 + [[08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §F3.13 invocation mandatory.
 
 🦫 **Bugatti craft. §FAZA_3_KARPATHY_REAL LOCK V1 2026-05-11 Phase 2 schema redesign LANDED. Vault existing FREEZE raw layer immutable. NEW wiki/ pure LLM-generated 3-layer Karpathy compliant. Voice preservation policy §1 MANDATORY identity Andura prezervat prin daniel-isms verbatim catalog. §AR.* anti-recurrence rules preserved unchanged. Cumulative ~742 PRESERVED unchanged.**
+
+---
+
+## §F3.13 — Metoda Hibridă Chat ↔ CC Terminal LOCKED V1 2026-05-12 (Partial Supersede Autonomy V1 "ZERO Daniel Courier")
+
+**Status:** LOCKED V1 2026-05-12 chat ACASĂ Co-CTO autonomous post BATCH 2 Antrenor port closure milestone LANDED (vault meta-tooling + paradigm capture, NU product/architecture additive). Cumulative ~742 PRESERVED unchanged.
+
+**Authority:** Daniel CEO propunere mid-session verbatim chat ACASĂ 2026-05-12: *"daca eu deschid VS, in terminal folosesc CC, tu imi dai artefacte, eu le bag in inbox ca si procesul vechi, dupa ce termina cc treaba (si sa scrii artefactele si cu ce skills sa foloseasca cc), eu ti-as scrie in chat latest, tu citesti latest facut de cc, si treci la next artefact. (bine presupunand ca tii cont si de vault hygiene, si de wiki si de tot). Si ca singur proces pe care l-ai face tu cap coada e cand as scrie eu handover, tu sa rulezi complet prin mcp handover, si eu doar sa merg in next chat. Nu ar fi mai eficient?"*
+
+**Validation evidence:** 2/2 slices LANDED clean via metoda hibridă chat-current 2026-05-12 (SLICE 3 BATCH 2 final `81694e5 + 9f01007 + b79a277` + vault inbox cleanup post-BATCH-2 `5d97429`). Eficient demonstrably ~3 tool calls/slice vs ~30 MCP loop monitor pasiv anterior. Daniel verbatim post-cleanup: *"latest"* + pattern preserved.
+
+### §F3.13.1 — Pattern Operational Mecanic
+
+- **Claude chat** = decision layer + artefacte generation (`.md` via `create_file`/`present_files` claude.ai/Desktop UI sau `filesystem:write_file` direct vault when applicable) + handover via MCP cap-coadă singular use §F3.8 only
+- **Daniel** = courier artefact paste în `📥_inbox/` SAU paste direct în CC terminal + CC terminal execution (`claude --dangerously-skip-permissions` standard per [[03-decisions/008-vitest-playwright-testing]]) + intervene Ctrl+C oricând agency live + scrie `"latest"` în chat trigger Claude read `📤_outbox/LATEST.md`
+- **CC autonomous** = execute artefact spec autonomous + scrie `📤_outbox/LATEST.md` final raport structured §0-§N per [[VAULT_RULES]] §10.8 raport schema canonical + HANDOVER_VERIFICATION_CHECKLIST §0 (when /wiki-ingest)
+- **Skills CC specific inline în artefact** per task fit (Install Pack 12 LANDED 2026-05-12): GSD `/gsd-execute-phase` subagent orchestration fresh 200k context anti-context-rot + gstack `/qa` post-LANDED full suite verification + gstack `/review` pre-PR / pre-final commit review + Impeccable `/critique` UI parity check vs mockup + Sequential Thinking decizii complex + Context7 docs lookup real-time + Tavily web research când needed rare + 21st-dev-magic frontend UI gen + Obsidian skills 5 variants
+- **MCP cap-coadă singular use** = ONLY §F3.8 fast handover ingest (write-atomic <1min total per pattern): Claude scrie HANDOVER narrative direct `📥_inbox/HANDOVER_*.md` via `filesystem:write_file` + invoc `claude_code` agent via MCP cu /wiki-ingest prompt + verify LANDED filesystem direct + signal `"e timpul pt noul chat"` + HANDOVER_VERIFICATION_CHECKLIST §0-§9 invocate atomic post /wiki-ingest pre atomic commit final
+
+### §F3.13.2 — Slip-uri Direct-to-CC via MCP Captured (Rationale Shift)
+
+1. **Tool_result timeout 4min × N** = pierdere time + bandwidth budget pe sleep loops 2min × N. Chat curent 2026-05-12 demonstrat: ~24min pierduți pe MCP timeout-uri 4min × 3 + sleep loops 2min × 6 + ~30 tool calls budget monitor pasiv.
+2. **Daniel observabilitate zero pe MCP autonomous subprocess** = anxiety + nu poate intervene live + nu vede progres în timp real. Daniel verbatim push-back: *"ma stii care e chestia ca tu nu esti autonom daca eu iti tot dau comanda sa verifici din timp in timp"* + *"ce sa vad eu pe andura.app acum ca e vanila nu react... eu nu am cum sa imi dau seama ce merge si ce nu"*.
+3. **Daniel agency Ctrl+C reduced** (only file edit per backup-tag rollback post-LANDED, NU intervene mid-flight subprocess).
+4. **Eu turn-based NU loop background** — "te ping când LANDED" = slip antropomorphic fundamental. Acțiune doar când Daniel scrie. Pattern corect = Daniel ping = check.
+
+### §F3.13.3 — Autonomy LOCKED V1 PERMANENT 2026-05-11 Partial Supersede
+
+"ZERO Daniel courier paradigm" partial SUPERSEDE 2026-05-12: courier acceptable pentru artefact paste (Daniel agency live + observabilitate > zero-courier idealist). Reality turn-based + MCP transport 4min cap = iluzie autonomy fără observabilitate. Daniel choice: control + transparency > theoretical zero-friction.
+
+**Preserved invariant:** Autonomy tactical Co-CTO decizii cod/path/test names/model selection/sequence ordering = Claude singur via wiki search → execute (NU Daniel review tactical). Strategic CEO decisions (UX core / coach intelligence / pricing / positioning / SUFLET) = Daniel discutăm înainte implement per [[03-decisions/DECISION_LOG]] strategic boundary preserved.
+
+### §F3.13.4 — HANDOVER_VERIFICATION_CHECKLIST Invocation Mandatory
+
+Post `/wiki-ingest` atomic batch ÎNAINTE atomic commit final + push origin, CC autonomous MUST execute end-to-end checklist [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§9 + scrie output în `📤_outbox/LATEST.md` §0 cu ✅/❌ per item. ANY ❌ → ROLLBACK backup tag §1 + raport failure în LATEST.md §Issues + escalate Daniel review NU partial commit silent.
+
+**Bugatti gate enforcement:** zero handover incomplete + zero info loss + voice preservation §1 enforced + cross-refs lineage preserved + audit trail intact. Quality > Speed absolute.
+
+### §F3.13.5 — Cross-Refs Authority
+
+- [[CLAUDE]] §1-§7 schema Karpathy Real Option B
+- [[VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.12 paradigm shift LANDED
+- [[08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate per handover
+- [[03-decisions/008-vitest-playwright-testing]] `--dangerously-skip-permissions` CC standard
+- [[01-vision/DANIEL_COMPLETE_PROFILE]] hyperfocus + ADHD 2e + endurance limită somn NU burnout context
+- Memory edits #1 Autonomy + Metoda hibridă + #24 Skills CC ecosystem + #25 Faza 3 Karpathy + #30 HANDOVER_VERIFICATION_CHECKLIST LOCK 2026-05-12
+
+🦫 **Bugatti craft. §F3.13 Metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12. Partial supersede Autonomy V1 "ZERO Daniel courier paradigm". HANDOVER_VERIFICATION_CHECKLIST §0-§11 invocation mandatory per /wiki-ingest. Validation 2/2 clean. Eficient demonstrably. Cumulative ~742 PRESERVED unchanged (paradigm capture, ZERO net product/architecture additive).**
 
 ---
