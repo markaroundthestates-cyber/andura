@@ -13,6 +13,25 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] BATCH 2 closure | Antrenor port FULL milestone LANDED
+
+11 atomic commits cumulative `feature/v2-vanilla-port`: rating.js + session.js carry-forward (`041e7f2 + 324d198`) + 5 NEW modules SLICE 1+2 (energyCheck.js + painButton.js + cevaNuMerge.js + equipmentSwap.js + workout.js) + SLICE 3 restTimer.js SVG ring extend per mockup §rest-timer + smoke E2E playwright 4 taburi V2 + vault hub sync §CC.5 FULL atomic this commit. Tests 2781 → 2914 PASS preserved EXACT (+133 net new BATCH 2 cumulative; 153 → 159 test files +6 NEW). 8 src/pages/coach/ modules touched cumulative. Smoke E2E 5/5 PASS vs live andura.app deploy 8.9s.
+
+**Audit primat reconciliation pattern preserved consistent 3 slices** — V1_FEATURES_AUDIT scope LIMITED renderIdle + rating; alternate authority chain applied via [[../04-architecture/mockups/andura-clasic.html]] §energy-check + §pain-button + §ceva-nu-merge + §equipment-swap + §workout + §rest-timer + §bottom-nav V2 SoT + [[../src/state.js]]:29 pre-stubbed router enums + existing engine ADRs preserved orthogonal (DP/AA/SYS/smart-routing/pain-button engine contracts).
+
+**SLICE 3 final commits:**
+- **`81694e5` restTimer.js SVG ring countdown visual extend per mockup §rest-timer V2 design** — NEW `updateRestRing(left, total)` exported function (stroke-dashoffset inverse-fill animation circumference 188.5 = 2π·30 per mockup line 985-988 + 3 color states `#c8412e` normal >=30% / `#f5b942` warning 10-30% / `#ff4757` urgent <10% + `rest-urgent-pulse` CSS class toggle + MM:SS center label). startPause() interval callback extended with updateRestRing per-tick alongside V1 ps-timer + ps-progress preserved verbatim (`extend NU rewrite`). workout.js rest panel template replaced mockup-spec SVG 72×72 scaffolding (`#rest-timer + #rest-circle + #rest-time`) + Sari skip button wired skipPause(). main.css `@keyframes rest-urgent-pulse` + smooth #rest-circle transitions. NEW `restTimer.test.js` 23 tests covering dashoffset inverse calc + 3 color states + pulse class toggle + MM:SS format + defensive no-op + startPause integration.
+- **`9f01007` smoke E2E playwright 4 taburi V2 per ADR 008** — NEW `tests/e2e/v2-4-taburi-smoke.spec.js` 5 tests (Antrenor + Progres + Istoric + Cont + cross-tab persistence) cu forward-compat selector chain V2 [data-tab=...] first + V1 prod `.nb:nth-of-type(N)` fallback. ZERO arbitrary waitForTimeout per ADR 008 §1 NO flaky waits. Graceful test.skip() fallback per critical-paths.spec.js pattern invariant. 5/5 PASS vs live andura.app 8.9s.
+- **`[this commit]` vault hub sync §CC.5 FULL atomic** — CURRENT_STATE move-then-replace + DECISION_LOG entry top + INDEX_MASTER flip + DIFF_FLAGS flag flip + new milestone landed flag + wiki/log.md this entry + LATEST.md cycled.
+
+**Cross-refs raw layer:** [[../00-index/CURRENT_STATE]] §NOW + §JUST_DECIDED top entry BATCH 2 closure FULL milestone + [[../03-decisions/DECISION_LOG]] 2026-05-12 chat ACASĂ entry top BATCH 2 closure milestone narrative + [[../DIFF_FLAGS]] P1-FLAG-BATCH-2-CLOSURE-MILESTONE-LANDED RESOLVED 🟢 + [[../📤_outbox/LATEST]] BATCH 2 closure FULL raport §0-§7 + [[../📤_outbox/_archive/2026-05/418_LATEST_BATCH_2_CLOSURE_SLICE_2_CONSUMED]] precedent cycled + [[../04-architecture/mockups/andura-clasic.html]]:§rest-timer + [[../03-decisions/008-vitest-playwright-testing]] LOCK V1 + [[../src/state.js]]:29 router enums.
+
+**Path forward P1 fork (Daniel decide):** Option A Phase 3 SUB-BATCH 3 wiki populate ~95-120 pages multi-session overnight / Option B Calendar feature implement LOCK V1 STRATEGIC ~1000-1500 LOC + 80-120 tests / Option C Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` pre-production decision. Recommended A > B > C (A unlocks wiki self-serve knowledge graph for B Calendar context).
+
+Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-batch-2-closure-slice-3-FINAL-2026-05-12-1722` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] ingest | BATCH 2 Antrenor Port — rating.js + session.js carry-forward port LANDED (F13 DROP V1 + F14 EXTEND 20→90)
 
 BATCH 2 Antrenor port carry-forward reluare post Install Pack 12 LANDED `440d9c4`. 2 atomic commits Bugatti single-concern pushed origin `feature/v2-vanilla-port`:

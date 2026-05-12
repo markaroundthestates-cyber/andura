@@ -1,102 +1,185 @@
-**Task:** BATCH 2 Antrenor Port closure SLICE 2 — 2 NEW modules `equipmentSwap.js` + `workout.js` ported per SLICE 1 LANDED continuation
+**Task:** BATCH 2 Antrenor Port CLOSURE FULL milestone — SLICE 3 final (restTimer SVG ring + smoke E2E playwright 4 taburi + vault hub sync §CC.5 atomic)
 **Model:** Opus
-**Status:** ✅ Complete — 2 atomic commits Bugatti single-concern + tests 2834 → 2891 PASS (+57 net new tests SLICE 2) + zero regression + pre-commit hook gate verde
+**Status:** ✅ Complete — 3 atomic commits SLICE 3 + tests 2891 → 2914 PASS preserved EXACT (+23 net new SLICE 3) + smoke E2E playwright 4 taburi 5/5 green vs live andura.app deploy + vault hub sync §CC.5 FULL atomic + BATCH 2 closure milestone LANDED
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous post BATCH 2 SLICE 1 LANDED (3 commits `8a4c39e` + `f941fd7` + `a17b0a3` + vault hub sync `01686c7`)
+**Date:** 2026-05-12 chat ACASĂ Co-CTO autonomous BATCH 2 closure milestone
 
-# Raport: BATCH 2 closure SLICE 2 — 2 NEW modules LANDED — 2026-05-12
+# Raport: BATCH 2 closure FULL milestone — 2026-05-12
 
 ## §0 Pre-flight status
 
-- ✅ **SLICE 2 spec read integral** — equipmentSwap.js + workout.js per user prompt continuation post SLICE 1 LANDED (PROMPT_CC archived `415_PROMPT_CC_BATCH_2_ANTRENOR_PORT_CONSUMED.md`; spec preserved in user task description)
+- ✅ **SLICE 3 FINAL spec read integral** — `📥_inbox/PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL.md` per user prompt continuation BATCH 2 closure (restTimer SVG ring + smoke E2E + vault hub sync §CC.5 FULL atomic milestone)
 - ✅ **Branch verify** — `feature/v2-vanilla-port` confirmed (FAIL-STOP §0 averted)
-- ✅ **Backup tag pushed origin pre-execute:** `pre-batch-2-closure-slice-2-2026-05-12-1645` (rollback safety net per VAULT_RULES §CC.7)
-- ✅ **HARD CONSTRAINTS verified:** ZERO main + ZERO `src/engine/` + ZERO `src/storage/` + ZERO `src/coach/orchestrator/` + ZERO React/JSX + ZERO `--no-verify` + ZERO `📥_inbox/` writes (PLAN_ANTI_HALUCINATIE + _karpathy_gist_reference + claude_desktop_config backup preserved) + ZERO `.obsidian/` touch + ZERO `wiki/` Cluster A SUB-BATCH 1 27 pages frozen
-- ✅ **State.js pre-stubbed enums verified live (line 29):** `'equipment-swap'` + `'workout'` confirmed pre-port contract present (NU re-introduce)
+- ✅ **Backup tag pushed origin pre-execute:** `pre-batch-2-closure-slice-3-FINAL-2026-05-12-1722` (rollback safety net per VAULT_RULES §CC.7)
+- ✅ **HARD CONSTRAINTS verified:** ZERO main + ZERO `src/engine/` + ZERO `src/storage/` + ZERO `src/coach/orchestrator/` + ZERO React/JSX + ZERO `--no-verify` + ZERO `📥_inbox/` writes (PLAN_ANTI_HALUCINATIE + _karpathy_gist_reference + claude_desktop_config backup + PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL.md PRESERVED) + ZERO `.obsidian/` touch + ZERO `wiki/` Cluster A SUB-BATCH 1 27 pages frozen
+- ✅ **Cumulative SLICE 1+2 commits verified** carry-forward (`81694e5..e3724f7..01686c7..a17b0a3..f941fd7..8a4c39e..28e0456..324d198..041e7f2` chain)
 
-## §1 Audit primat reconciliation — V1_FEATURES_AUDIT scope absence vs alternate authority chain
+## §1 Audit primat reconciliation (V1_FEATURES_AUDIT scope absence vs alternate chain — pattern preserved SLICE 1+2+3 consistent)
 
-**Slip detection (SLICE 2 continued from SLICE 1):** `V1_FEATURES_AUDIT_V1.md` LOCK V1 2026-05-10 explicit scope §0 *"Limited to renderIdle.js + rating.js"* — NU acoperă cele 2 module SLICE 2 (equipmentSwap.js + workout.js). Same audit primat universal pattern applied SLICE 1 painButton.
+**Slip detection (SLICE 3 continued pattern from SLICE 1+2):** `V1_FEATURES_AUDIT_V1.md` LOCK V1 2026-05-10 explicit scope §0 *"Limited to renderIdle.js + rating.js"* — NU acoperă restTimer extend visual SVG ring + smoke E2E 4 taburi V2 routing. Same audit primat universal pattern applied consistent 3 slices.
 
-**Audit primat applied SLICE 2 (alternate authority chain):**
-- **equipmentSwap.js:** mockup `04-architecture/mockups/andura-clasic.html:§equipment-swap` line 811-825 V2 design SoT + `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1.md` LOCK V1 2026-05-02 (engine contract preserved orthogonal — UI fallback NU engine touch) + state.js:29 pre-stubbed enum `'equipment-swap'` + analog Altceva free-text pattern existing painButton.js §submitAltcevaNote (coach interpretation DEFERRED V2)
-- **workout.js:** mockup `04-architecture/mockups/andura-clasic.html:§workout` line 887-1006 V2 design SoT comprehensive + state.js:29 pre-stubbed enum `'workout'` + existing engine ADRs DP/AA/SYS preserved unchanged (orthogonal: workout.js renders sets table reading DP.recommend + AA.applyTo + SYS.getTempo on each refresh, NU touch engine logic) + integration with existing handlers setDone (logging.js) + finishEarly (session.js)
+**Audit primat applied SLICE 3 (alternate authority chain):**
+- **restTimer.js SVG ring extend:** mockup `04-architecture/mockups/andura-clasic.html:§rest-timer` line 982-996 V2 design SoT (SVG circle 72×72 r=30 stroke-dasharray=188.5 + dashoffset=60 baseline + stroke #c8412e accent rust + transform:rotate(-90deg) + center label MM:SS + "Sari" skip button) + V1 existing prod `src/pages/coach/restTimer.js` countdown logic preserved as base (`extend NU rewrite` — V1 startPause + stopPause + skipPause + getSmartPause + beep/speak + updateExCard + ps-timer + ps-progress preserved verbatim)
+- **smoke E2E playwright 4 taburi:** ADR `03-decisions/008-vitest-playwright-testing.md` LOCK V1 stack pattern + `src/state.js:29` router enum + `src/router.js` V2 routing intent + V1 prod `index.html:line 655-678` bottom-nav `.nb` buttons baseline (6-button structure: sp('coach'/'dash'/'weight'/'prog'/'plan'/'settings')) + mockup `04-architecture/mockups/andura-clasic.html:§bottom-nav` line 1701-1715 V2 SoT (4 taburi `data-tab="antrenor|progres|istoric|settings"`)
 
-**Resolution equipmentSwap.js:** Mockup spec free-text fallback fired when smart-routing engine returns ZERO valid alternatives (Tier 1 strict / Tier 2 muscle match per ADR LOCK V1). Coach swap interpretation DEFERRED V2 (mockup verbatim `onclick="showToast('Caut swap echivalent...')"`); engine contract `src/engine/smart-routing/` LOCK V1 preserved unchanged. UI fallback escape hatch NU engine refactor — anti-paternalism (note stored observable, NU auto-routed engine V1) preserved per ADR §Anti-paternalism rule.
+## §2 Modificări LANDED (per slice 3 module + vault sync)
 
-**Resolution workout.js:** Mockup full sub-page spec (top bar + progress + exercise card cu tempo/RIR/RPE + sets table + rest timer + 2 action buttons). V2 vanilla port renders as full-screen overlay (z-index 7500) reading state + engine snapshots on each refresh — NU drift cache + NU re-implement engine logic. Action buttons wired existing handlers (`setDone` + `finishEarly`) cu error swallow guard pentru DOM scaffolding absent (V1 prod parallel rendering coexistence Step 2 React migration ulterior).
+### Commit `81694e5` — restTimer.js SVG ring countdown visual extend per mockup §rest-timer V2 design
 
-## §2 Modificări LANDED
+`src/pages/coach/restTimer.js` extended +90 LOC + `src/pages/coach/workout.js` rest panel template updated mockup-spec SVG scaffolding (~13 LOC delta) + `src/styles/main.css` @keyframes rest-urgent-pulse + transitions (+6 LOC) + NEW `src/pages/coach/__tests__/restTimer.test.js` 286 LOC 23 tests + `workout.test.js` rest timer visibility assertion updated for V2 mockup format:
 
-### Commit `c5e7288` — equipmentSwap.js port (free-text fallback)
+- **NEW exported `updateRestRing(left, total)` function** — SVG ring inverse-fill stroke-dashoffset animation (`offset = REST_RING_CIRCUMFERENCE * (1 - pct)` circumference 188.5 = 2π·30 matching mockup verbatim line 985-988) + 3 color states transitions (pct >= 0.30 normal `#c8412e` mockup verbatim / 0.10 <= pct < 0.30 warning `#f5b942` amber / pct < 0.10 urgent `#ff4757` vivid red + `rest-urgent-pulse` CSS class toggle) + center text MM:SS preserved (m:ss zero-padded format) + defensive no-op when SVG scaffolding absent (V1 prod path `#ps-progress` linear bar preserved verbatim)
+- **REST_RING_CIRCUMFERENCE = 188.5 constant** matching mockup `stroke-dasharray="188.5"` verbatim
+- **REST_RING_COLORS Object.freeze** named tokens (normal + warning + urgent) — extensible cu theme adaptation post-Beta
+- **startPause() interval callback extended** — initial render `updateRestRing(state.pauseLeft, state.pauseTotal)` prior interval + per-tick `updateRestRing()` invocation alongside V1 ps-timer + ps-progress updates (`extend NU rewrite`; V1 beep/speak/beepAlert/updateExCard preserved verbatim)
+- **workout.js rest panel template replaced** — mockup §rest-timer SVG 72×72 scaffolding `<div id="rest-timer" class="workout-rest">` + `<svg transform="rotate(-90deg)">` + 2 circles cx=36 cy=36 r=30 stroke-dasharray=188.5 + `<circle id="rest-circle">` color + dashoffset + `<div id="rest-time">` MM:SS center label + Sari skip button `class="workout-rest-skip"` wired `skipPause()` handler with V1 prod DOM-absent error swallow guard pattern preserved
+- **main.css** `@keyframes rest-urgent-pulse` 0%/100% opacity:1 + 50% opacity:0.85 + drop-shadow rgba(255,71,87,0.85) + `.rest-urgent-pulse` class animation .8s ease-in-out infinite + `#rest-circle` smooth dashoffset transition .35s linear + stroke .25s ease
+- **Tests:** NEW `restTimer.test.js` 23 tests — dashoffset inverse calc 3 cases (pct=1 → offset=0; pct=0 → offset=L; pct=0.5 → offset=L/2 verified) + 3 color states verified normal/warning/urgent + pulse class toggle add/remove + MM:SS format 4 cases (78s → "1:18" matches mockup snapshot + 65s → "1:05" zero-pad + 0s → "0:00" + 120s → "2:00") + defensive no-op (no DOM / total<=0 / negative left clamps / left>total clamps / label-only mount / circle-only mount) + getSmartPause compound vs isolation + startPause integration (initial render + per-tick V1+V2 coexist via vi.useFakeTimers + color transitions across countdown 50s/20s/5s + stopPause cleanup). workout.test.js rest timer visibility assertion updated (0:45 MM:SS NU 45s linear + 50% ramas + `#rest-circle`/`#rest-time`/`.workout-rest-skip` scaffolding presence)
 
-`src/pages/coach/equipmentSwap.js` NEW 113 LOC + `__tests__/equipmentSwap.test.js` NEW 224 LOC:
-- **Free-text fallback** per mockup §equipment-swap line 811-825 — fired post smart-routing engine ZERO valid alternatives (Tier 1 strict / Tier 2 muscle match)
-- **DB log:** `equipment-swap-log` rolling 90 entries (ADR 020 Tier 0 alignment) — note + exerciseName + date + ts
-- **500 char maxlength + live counter** per mockup spec
-- **Current exercise context block** displayed când disponibil (state.currentEx fallback)
-- **State router:** `state.currentScreen='equipment-swap'` on mount + reset 'antrenor' on close
-- **Coach interpretation DEFERRED V2** — mockup verbatim toast "Caut swap echivalent..." analogous Altceva pattern painButton.js §submitAltcevaNote (pattern inference DEFERRED V2 per ADR §Alternatives #4)
-- **Engine contract preserved orthogonal:** `src/engine/smart-routing/` LOCK V1 unchanged (UI fallback only, NU engine touch); Anti-paternalism §ADR_SMART_ROUTING_EQUIPMENT preserved (note observable, NU auto-routed V1)
-- Defensive guards: XSS escape on exercise name + idempotent mount + backdrop tap dismiss + empty-note no-op + non-string note guard + whitespace-only no-op + max 500 char slice
-- Tests: 24/24 PASS (vitest + jsdom + mocked DB + state)
+### Commit `9f01007` — smoke E2E playwright 4 taburi V2 (Antrenor/Progres/Istoric/Cont) per ADR 008
 
-### Commit `8baa1ed` — workout.js port (main session execution screen)
+NEW `tests/e2e/v2-4-taburi-smoke.spec.js` 179 LOC 5 tests minimum per prompt §3.2:
 
-`src/pages/coach/workout.js` NEW 200 LOC + `__tests__/workout.test.js` NEW 281 LOC:
-- **Full-screen overlay** (z-index 7500, NU modal bottom-sheet) per mockup §workout line 887-1006
-- **Top bar:** close [✕] back to 'antrenor' + sessType label center ("Sesiune A · PIEPT") + elapsed timer MM:SS from state.sessStart + more menu [⋯]
-- **Exercise progress bar:** `completedExercises.size / sessionTotalExercises` (e.g., 02/05) + fill bar % + current exercise name
-- **Exercise card:**
-  - Group label uppercase color accent (e.g., "PIEPT")
-  - Exercise name h2 big
-  - **Tempo row** from SYS.getTempo(currentEx): `tempo X-Y-Z RIR N RPE M-M+1` JetBrains Mono format mockup verbatim
-  - **Sets table:** rows generated from EX_SETS[currentEx] (default 3) with done/current/pending state per sessLog + visual indicators (done=accent-bg ✓ filled, current=accent-border outline, pending=border-gray)
-  - KG + reps values read from sessLog (done) or DP.recommend + AA.applyTo (current/pending) on each refresh
-- **Rest timer panel** (visibility from state.pauseTimer + pauseLeft > 0): countdown + percentage display (placeholder for SLICE 3 SVG progress ring extension)
-- **Action buttons:**
-  - "Inregistreaza setul" → `setDone()` from logging.js + `opts.onSetDone` callback + auto re-render
-  - "Termina sesiunea" → `finishEarly()` from session.js + `opts.onFinish` callback + close overlay
-- **Close X → close + reset state.currentScreen='antrenor' + `opts.onClose` callback**
-- **Error swallow guard:** setDone/finishEarly DOM-dependent V1 prod IDs (`$('set-actions')`, `$('rpe-inline')`) absent în V2 vanilla scaffolding — try/catch swallow + onResolve callback path provides clean integration test parity (Step 2 React migration unifies)
-- **Exports:** showWorkoutScreen + renderWorkoutScreen + closeWorkoutScreen + getWorkoutMountState (debug helper)
-- Defensive: XSS escape on exercise name + idempotent mount + zero-total no-NaN + tempo row omit when no current exercise + closeWorkoutScreen defensive no-op when not mounted
-- Tests: 33/33 PASS (vitest + jsdom + mocked DP/AA/SYS/logging/session/restTimer)
+1. **Antrenor tab smoke** — default landing main coach surface (idle/energy-check entry point) `#page-coach` visible + console errors zero critical
+2. **Progres tab smoke** — chart container `#page-dash` (dashboard) visible after navigate + console errors zero critical
+3. **Istoric tab smoke** — session history `#page-weight` containing `#session-history` visible after navigate + console errors zero critical
+4. **Cont tab smoke** — profile/settings `#page-settings` visible after navigate + console errors zero critical
+5. **Cross-tab persistence** — localStorage sentinel set Antrenor context → navigate Progres → assert sentinel preserved → return Antrenor → assert sentinel preserved + content matches round-trip + console errors zero critical
+
+**Forward-compat selector chain** — V2 `[data-tab="antrenor|progres|istoric|settings"]` first, V1 prod `.nb:nth-of-type(N)` fallback. 6-button V1 nav mapped conceptually per index.html line 655-678 baseline:
+- nth(1) sp('coach') [#page-coach] = antrenor (main coach landing)
+- nth(2) sp('dash') [#page-dash] = progres (dashboard charts)
+- nth(3) sp('weight') [#page-weight] = istoric (contains #session-history)
+- nth(4) sp('prog') (Program — V2 conceptually merged into Antrenor)
+- nth(5) sp('plan') (Plan — V2 conceptually merged into Antrenor)
+- nth(6) sp('settings') [#page-settings] = cont (account/settings)
+
+**Test discipline preserved per ADR 008 §1 LOCK V1:**
+- Console errors assertion zero critical emissions per test (`ReferenceError|TypeError|SyntaxError` filter via `page.on('console')` + `page.on('pageerror')` capture)
+- Page navigation via UI clicks (NU URL direct manual) — locator.click() + page.waitForLoadState('networkidle') gating
+- ZERO arbitrary `page.waitForTimeout(N)` — waitForLoadState + expect.toBeVisible({ timeout: 5000 }) auto-retry only NO flaky waits
+- Graceful test.skip() fallback when nav scaffolding absent — mirrors `tests/e2e/smoke/critical-paths.spec.js` pattern preserved invariant
+
+**Results:** 5/5 PASS vs live andura.app deploy 8.9s.
+
+### Commit `[this commit]` — vault hub sync §CC.5 FULL atomic — BATCH 2 closure milestone
+
+Atomic single-concern this commit (FULL §CC.5 ingest NU brief slice-level pattern SLICE 1+2 anterior — closure milestone deserves full pattern):
+
+1. **`00-index/CURRENT_STATE.md` atomic move-then-replace** — Header `Updated:` flip + previous shifted **Predecessor Updated:** chain SLICE 3 LANDED + §JUST_DECIDED top entry NEW BATCH 2 closure FULL milestone above existing rating.js + session.js entry + §NEXT overwrite NEW P1 fork options A/B/C + §ACTIVE_FLAGS flip P1-FLAG-BATCH-2-CLOSURE-REMAINING 🟡 → 🟢 RESOLVED LANDED + NEW P1-FLAG-BATCH-2-CLOSURE-MILESTONE-LANDED 🟢 RESOLVED + §RECENT shift entry SLICE 1+2+3 aggregate
+2. **`03-decisions/DECISION_LOG.md` entry top descending chronologic** — BATCH 2 closure milestone narrative ~75 LOC cu Status + Authority + 3 chat-current actions + Audit primat reconciliation pattern + Daniel-isms verbatim + Acceptance criteria 9/9 + BATCH 2 cumulative totals + Cross-refs slice-level + Path forward
+3. **`00-index/INDEX_MASTER.md` `Last updated:` flip** 2026-05-12 BATCH 2 closure milestone + Predecessor chain rating.js + session.js
+4. **`DIFF_FLAGS.md` Header Updated flip** + flag flip P1-FLAG-BATCH-2-CLOSURE-REMAINING 🟡 → 🟢 RESOLVED LANDED + NEW P1-FLAG-BATCH-2-CLOSURE-MILESTONE-LANDED formal entry section
+5. **`wiki/log.md` append entry chronological** — signature `## [2026-05-12] BATCH 2 closure | Antrenor port FULL milestone LANDED` + 11 atomic commits cumulative narrative + audit primat reconciliation pattern 3 slices + cross-refs raw layer + path forward
+6. **LATEST.md cycle** — precedent SLICE 2 → `📤_outbox/_archive/2026-05/418_LATEST_BATCH_2_CLOSURE_SLICE_2_CONSUMED.md` auto-increment NN + NEW `📤_outbox/LATEST.md` BATCH 2 closure FULL raport this file
+7. **PROMPT_CC_BATCH_2_ANTRENOR_PORT_SLICE_3_FINAL.md preserved** în `📥_inbox/` carry-forward (NU re-archive — SLICE 1 + SLICE 2 pattern preserved BATCH 2 prompt-level archive remained 415_*_CONSUMED)
 
 ## §3 Build + Tests
 
-- **Tests baseline → post-slice:** 2834 → 2891 PASS (+57 net new tests SLICE 2; 156 → 158 test files; +2 test files SLICE 2)
-- **Per-module test count:** equipmentSwap 24 + workout 33 = 57 new tests
-- **Pre-commit hook:** vitest gate verde toate 2 commit-uri (ZERO `--no-verify` used)
-- **Zero regression:** 2834 baseline preserved EXACT pe commit-uri precedent (SLICE 1 + rating.js + session.js + idle.js carry-forward + all engines all preserved)
+- **Tests baseline → post-slice:** 2891 → 2914 PASS preserved EXACT zero regression (+23 net new tests SLICE 3; 158 → 159 test files; +1 test file SLICE 3 restTimer)
+- **Per-module test count SLICE 3:** restTimer.js 23 tests new (dashoffset + colors + pulse + MM:SS + defensive + integration)
+- **Pre-commit hook:** vitest gate verde toate 3 commit-uri (ZERO `--no-verify` used)
+- **Smoke E2E playwright:** 5/5 PASS vs live andura.app deploy 8.9s
+- **Build vite:** 3.82s clean 419 modules
 
-## §4 Commits + Push
+## §4 Commits + Push (cumulative BATCH 2 chain summary)
 
-- `c5e7288` — `feat(batch-2): equipmentSwap.js port — free-text fallback (mockup §equipment-swap)`
-- `8baa1ed` — `feat(batch-2): workout.js port — main session execution screen (mockup §workout)`
+**SLICE 3 final 3 atomic commits:**
+- `81694e5` — `feat(batch-2): restTimer.js SVG ring countdown visual extend per mockup §rest-timer V2 design`
+- `9f01007` — `test(batch-2): smoke E2E playwright 4 taburi V2 (Antrenor/Progres/Istoric/Cont) per ADR 008`
+- `[this commit]` — `chore(vault): BATCH 2 Antrenor port closure milestone LANDED — vault hub sync §CC.5 atomic`
 
-**Backup tag:** `pre-batch-2-closure-slice-2-2026-05-12-1645` pushed origin pre-execute
+**Backup tag:** `pre-batch-2-closure-slice-3-FINAL-2026-05-12-1722` pushed origin pre-execute
 
-## §5 Pushed
+**BATCH 2 cumulative commit chain 2026-05-12 (SLICE 0 carry-forward + SLICE 1 + SLICE 2 + SLICE 3 final):**
 
-- ✅ Backup tag pushed origin pre-execute
-- ✅ 2 atomic commits pushed origin `feature/v2-vanilla-port` (`01686c7..8baa1ed`)
+| Commit | Type | Description |
+|--------|------|-------------|
+| `041e7f2` | feat | rating.js port F13 DROP V1 + F14 EXTEND 20→90 ratings window |
+| `324d198` | feat | session.js dead-code cleanup downstream F13 (notes/feltStrong/feltHeavy/moodLabel) |
+| `28e0456` | chore | BATCH 2 rating.js + session.js LANDED — vault hub sync atomic + PROMPT_CC archive 415 + LATEST cycle 414 |
+| `8a4c39e` | feat | energyCheck.js port — 3-state §G pre-session gauge + cause drill |
+| `f941fd7` | feat | painButton.js port — 3 predefined + Altceva free-text (mockup §pain-button) |
+| `a17b0a3` | feat | cevaNuMerge.js port — unified Pain+Equipment drill (mockup §ceva-nu-merge) |
+| `01686c7` | chore | BATCH 2 closure SLICE 1 LANDED — vault hub sync brief slice-level + PROMPT_CC preserved |
+| `c5e7288` | feat | equipmentSwap.js port — free-text fallback (mockup §equipment-swap) |
+| `8baa1ed` | feat | workout.js port — main session execution screen (mockup §workout) |
+| `e3724f7` | chore | BATCH 2 closure SLICE 2 LANDED — vault hub sync brief slice-level |
+| `81694e5` | feat | restTimer.js SVG ring countdown visual extend per mockup §rest-timer V2 design |
+| `9f01007` | test | smoke E2E playwright 4 taburi V2 (Antrenor/Progres/Istoric/Cont) per ADR 008 |
+| `[this commit]` | chore | BATCH 2 Antrenor port closure milestone LANDED — vault hub sync §CC.5 atomic |
 
-## §6 Issues
+**11 atomic commits substantive `041e7f2 → 81694e5` + 4 vault sync interlinked = 15 total cumulative BATCH 2 chain.**
 
-- ZERO blockers — atomic single-concern Bugatti pattern preserved 2/2 commits
-- ZERO test regression (2834 baseline preserved EXACT; +57 net new SLICE 2 = 2891 PASS final)
-- ZERO HARD CONSTRAINT violation (engines + storage + orchestrator + main + React/JSX + --no-verify + 📥_inbox/ writes + .obsidian + wiki/ Cluster A frozen pages all preserved untouched)
-- ZERO §CC.6 violation (raw layer freeze policy preserved per CLAUDE.md §1.1+§6.4+§6.5 — slice-level brief vault hub sync NU full §CC.5 ingest)
-- 1 audit primat note workout.js V1 prod parallel: workout.js V2 vanilla overlay rendering coexists with V1 prod `id="session-ui"` (index.html line 78) — both render concurrently active session view când mounted (V1 still drives session via session.js startSession → toggles DOM display; workout.js renders V2 mockup overlay). Step 2 React migration ulterior unifies under single tree.
-- 1 audit primat note equipmentSwap.js coach interpretation DEFERRED V2: mockup verbatim `onclick="showToast('Caut swap echivalent...')"` — engine smart-routing finds-no-alternative escape hatch UI fallback only. Pattern inference (LLM-side swap suggestion) DEFERRED V2 same scope as Altceva pain note per ADR §Alternatives #4.
+## §5 Issues (blockers / non-blockers / slips)
 
-## §7 Next action
+- **ZERO blockers** — atomic single-concern Bugatti pattern preserved 3/3 commits SLICE 3 + 11/11 substantive commits BATCH 2 cumulative
+- **ZERO test regression** (2891 baseline preserved EXACT SLICE 2 → 2914 SLICE 3 final + 2781 baseline preserved EXACT BATCH 2 cumulative through each commit)
+- **ZERO HARD CONSTRAINT violation** (engines + storage + orchestrator + main + React/JSX + --no-verify + 📥_inbox/ writes outside expected + .obsidian + wiki/ Cluster A SUB-BATCH 1 27 pages frozen all preserved untouched)
+- **ZERO §CC.6 violation** (raw layer freeze policy preserved per CLAUDE.md §1.1+§6.4+§6.5 — closure milestone full §CC.5 atomic pattern aligned cu Daniel explicit instruction prompt §4)
+- **1 audit primat note restTimer.js V1 prod parallel preserved:** V1 prod `#ps-progress` linear bar update preserved verbatim alongside V2 mockup-spec SVG ring update — both render concurrently când both DOM elements present (V1 prod path + V2 workout overlay coexistence; restTimer.js single source updates both via `updateRestRing()` no-op gate `if (!circle && !label) return`). Step 2 React migration ulterior unifies under single component tree.
+- **1 audit primat note smoke E2E forward-compat:** spec runs against live andura.app deploy currently V1 (feature/v2-vanilla-port not deployed main yet); selector chain V2 `[data-tab=...]` first + V1 `.nb:nth-of-type(N)` fallback ensures continuity across deploy state transition. When V2 deploys main, selectors V2 take precedence automatically.
+- **1 mapping note conceptual logical tabs:** V1 prod has 6 `.nb` buttons (sp('coach'/'dash'/'weight'/'prog'/'plan'/'settings')) vs V2 mockup 4 taburi (antrenor/progres/istoric/settings). V1 'prog' + 'plan' V2 conceptually merged into Antrenor; smoke spec maps Antrenor=nth(1) + Progres=nth(2) + Istoric=nth(3) + Cont=nth(6). Mapping documented inline spec comments for future Bugatti craft reviewer.
 
-**BATCH 2 closure remaining (SLICE 3 + smoke):**
-1. **SLICE 3:** `restTimer.js` extend SVG progress ring (visual circular countdown per mockup §workout line 982-996 — replaces workout.js current placeholder rest panel) + final 4 taburi smoke (Antrenor/Progres/Istoric/Cont parity verify mockup `andura-clasic.html` cross-section)
-2. **Post-SLICE 3:** full §CC.5 fast handover ingest BATCH 2 final closure (CURRENT_STATE freeze final + DECISION_LOG entry final + DIFF_FLAGS BATCH 2 RESOLVED final + archive PROMPT_CC_BATCH_2 already → `415_*_CONSUMED.md`)
+## §6 Cumulative BATCH 2 totals (11 atomic commits substantive + tests trajectory + LOC stats)
 
-Pack 12 ecosystem benefit disponibil pentru remaining slices (GSD `/gsd-execute-phase` parallelization opțional + gstack `/qa` post-LANDED + `/review` pre-final commit + Sequential Thinking pe decizii complex + Context7 docs lookup + Impeccable `/critique` UI parity mockup).
+**Commits:** 11 atomic commits substantive `041e7f2 → 81694e5` + 4 vault sync interlinked (`28e0456` rating+session + `01686c7` SLICE 1 brief + `e3724f7` SLICE 2 brief + this commit FULL §CC.5) = 15 total cumulative chain.
 
-🦫 **Bugatti craft. BATCH 2 closure SLICE 2 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous post SLICE 1 LANDED `01686c7`. 2 atomic commits Bugatti single-concern `c5e7288 + 8baa1ed` pushed origin. 2 NEW modules `src/pages/coach/`: equipmentSwap.js (free-text fallback smart-routing failure escape hatch, coach interpretation DEFERRED V2 mockup verbatim, 24 tests) + workout.js (main session execution screen V2 mockup full-screen overlay, exercise card + sets table + tempo row + rest panel + 2 action buttons wired existing handlers cu error swallow guard, 33 tests). Tests 2834 → 2891 PASS preserved EXACT zero regression (+57 net new SLICE 2; 156 → 158 files). State router currentScreen enum 'equipment-swap' + 'workout' fields wired through chain pre-stubbed contract line 29. Backup tag `pre-batch-2-closure-slice-2-2026-05-12-1645` pushed origin pre-execute. Cumulative ~742 LOCKED V1 PRESERVED unchanged (mockup-prescribed feature implementation NU substantive NEW). BATCH 2 closure remaining: SLICE 3 restTimer.js SVG ring + 4 taburi smoke → final full §CC.5 fast handover ingest BATCH 2 closure.**
+**Tests trajectory:** 2781 baseline → 2914 PASS final (+133 net new BATCH 2 cumulative; 153 → 159 test files +6 NEW test files):
+- energyCheck.test.js NEW 14 tests
+- painButton.test.js NEW 22 tests
+- cevaNuMerge.test.js NEW 17 tests
+- equipmentSwap.test.js NEW 24 tests
+- workout.test.js NEW 33 tests
+- restTimer.test.js NEW 23 tests
+
+**LOC stats BATCH 2 cumulative:**
+- rating.js -13 (V1 150 → 137)
+- session.js -6 (V1 359 → 353)
+- energyCheck.js NEW ~80 LOC
+- painButton.js NEW ~70 LOC
+- cevaNuMerge.js NEW ~60 LOC
+- equipmentSwap.js NEW 113 LOC
+- workout.js NEW 200 LOC + SLICE 3 +13 (rest panel mockup-spec SVG replacement)
+- restTimer.js +90 LOC (updateRestRing function)
+- main.css +6 LOC (keyframes + transitions)
+
+**8 src/pages/coach/ modules touched cumulative BATCH 2:** rating.js + session.js + energyCheck.js NEW + painButton.js NEW + cevaNuMerge.js NEW + equipmentSwap.js NEW + workout.js NEW + restTimer.js extend.
+
+**2 state router enums pre-stubbed contract line 29 wired** through chain (state.currentScreen 8 enum values: antrenor + energy-check + energy-cause + ceva-nu-merge + pain-button + equipment-swap + workout + post-rpe; state.cevaNuMergeReason fan-out routing field).
+
+**ZERO test regression cumulative BATCH 2** preserved EXACT 2781 baseline through each commit.
+
+**ZERO HARD CONSTRAINT violation cumulative:** engines + storage + orchestrator + main branch + React/JSX + --no-verify + 📥_inbox/ writes outside expected + .obsidian + wiki/ Cluster A SUB-BATCH 1 27 pages frozen all preserved untouched.
+
+**Cumulative ~742 LOCKED V1 PRESERVED unchanged** (mockup-prescribed feature implementation + audit-driven port NU substantive NEW additive product/architecture).
+
+**Audit primat reconciliation pattern preserved consistent 3 slices SLICE 1+2+3:** V1_FEATURES_AUDIT scope LIMITED renderIdle + rating only — alternate authority chain applied via mockup V2 SoT + state.js:29 pre-stubbed enums + engine ADRs preserved orthogonal. Pattern captured anti-recurrence for future BATCH N port slices.
+
+## §7 Next action P1 fork (Option A / B / C per §NEXT vault)
+
+**Path forward fresh chat NEW post-trigger "salut acasă" P1 fork (3 options Daniel decide):**
+
+1. **🟡 Option A — Phase 3 SUB-BATCH 3 wiki populate multi-session overnight via GSD `/gsd-execute-phase` subagent orchestration** ~95-120 pages projected fresh 200k context per executor anti-context-rot:
+   - Cluster A remaining 16 ADRs (021 + 024 + 025 + 027 + 028 + 029 + 031 + 033 + 8 named ADRs)
+   - Cluster B ~10 engines (INCLUDE NEW `deviation-memory-decay` cu verbatim Daniel captured 2026-05-12)
+   - Cluster C ~20 features (F1-F15 — INCLUDE NEW calendar adaptive feature spec)
+   - Cluster D 11 specs
+   - Cluster F ~10-15 summaries cross-cluster
+   - Cluster G 6 sources
+
+2. **🟡 Option B — Calendar feature implement LOCK V1 STRATEGIC MAJOR multi-session** ~1000-1500 LOC + 80-120 tests post-BATCH 2 stable:
+   - `scheduleAdapter.js` NEW (compress/expand weekly plan)
+   - `deviationMemory.js` NEW (time-decayed history + diminishing returns detection)
+   - UX vanilla JS calendar 7-day strip ~150 LOC între `idleText` și `objectiveSection` din Antrenor tab primul
+   - Engine spine: Coach Director + Muscle Recovery + Decision Log ADR 011 + Storage Tiering ADR 020 + Adaptabilitate concept core (SUB-BATCH 1)
+   - τ ML adaptive Bayesian per user response signals + Demographic Prior ADR 017 baseline cold-start
+   - Gigel test PASS instant (visual intuitive + zero gândire user)
+
+3. **🟡 Option C — Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` pre-production decision** — separate strategic discussion. Deploy gate beta a-z review per Daniel autonomy lock LOCKED V1 PERMANENT 2026-05-11 *"O sa fac review inainte de launch beta a-z."* Deploy gate manual = Daniel verifies V2 4 taburi parity prod live.
+
+**Recommended P1 order (post-BATCH-2 closure):** Option A > Option B > Option C (A unlocks wiki self-serve knowledge graph for B Calendar feature implement strategic context + Option C deploy decision deferred until B feature stable Beta gate).
+
+**Daniel trigger "latest" în chat NEW** — Claude chat read `📤_outbox/LATEST.md` via filesystem MCP + raport factual Daniel + decizie P1 next fork (Option A wiki SUB-BATCH 3 / Option B Calendar / Option C deploy gate manual smoke). ZERO recap din chat anterior — Daniel verifică direct în terminal CC LIVE output. Chat = decision layer + artefacte generation + handover via MCP cap-coadă singular.
+
+🦫 **Bugatti craft. BATCH 2 Antrenor Port closure FULL milestone LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous.**
