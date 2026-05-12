@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post `/wiki-ingest` handover consolidare metoda hibridă + SUB-BATCH 3 Cluster A (2026-05-12):** **60 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster B/C/D/F/G documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight" + metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post SUB-BATCH 3 Cluster B engines (2026-05-12):** **67 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster C/D/F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
@@ -87,6 +87,16 @@ last_updated: 2026-05-12
 - [[entities/adrs/adr-rir-matrix-adaptive]] — Profile × Exercise Category matrix Verbal→RIR + Maria reduce reps NU sets + Marius 3 consecutive micro-deload
 - [[entities/adrs/adr-smart-routing-equipment]] — Tier-aware filtering + similarity ranking + anti-paternalism skip + equipmentSwap.js V1 LANDED BATCH 2
 
+## Entities — Engines (7 LANDED 2026-05-12 — Cluster B SUB-BATCH 3)
+
+- [[entities/engines/engine-coach-director]] — orchestrator central pipeline §42.10 + 3 methods NEW STAGE 4 SUB-BATCH 2 (`buildLightMobility` + `rebalanceWeekAfterSkip` + `generateSafeSessionForRestDay`)
+- [[entities/engines/engine-muscle-recovery]] — per-group recovery state Big 6 + lagging detection 2+ săpt + GROUP_LABELS_RO Romanian-first
+- [[entities/engines/engine-weakness-detector]] — Brzycki 1RM per muscle group lagging + wires orfan §36.84 Gap #1 Specialization Engine reuse anti-duplication
+- [[entities/engines/engine-periodization]] — pipeline §42.10 1st foundational long-term schedule + Israetel framework persona-aware Maria/Gigica/Marius + Constraint Object immutable
+- [[entities/engines/engine-pr-wall]] — personal records detection 3 types (weight/reps/volume) + Forta Foundation 1 LOCKED + BATCH 2 F11 preserved verbatim
+- [[entities/engines/engine-readiness]] — 5-state emoji pre-session gauge + score mapping kcal/protein delta + BATCH 2 SLICE 1 energyCheck.js port V2 mockup simplified
+- [[entities/engines/engine-streak-counter]] — §EXT-1 same direction + §EXT-2 Goal Shift reset anti-recurrence foundation ADR 024 Q6 D Hybrid
+
 ## Entities — Specs (1 LANDED)
 
 - [[entities/specs/spec-handover-verification-checklist]] — Bugatti gate §0-§11 per /wiki-ingest LOCK V1 2026-05-12 (CEO directive verbatim 217 LOC raw layer)
@@ -115,11 +125,7 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 
 **Cluster A — ADRs SUB-BATCH 3 ✅ LANDED 2026-05-12 (16/16 complete; 42/42 ADRs Karpathy real coverage 100%)** — see `### SUB-BATCH 3 (16 LANDED 2026-05-12)` section above
 
-**Cluster B — Engines (~10 TBD):**
-- engine-deload (covered indirect via ADR 032 entity)
-- engine-tempo-form-cues + engine-warmup-mobility + engine-specialization
-- engine-energy-adjustment + engine-goal-adaptation + engine-periodization + engine-bayesian-nutrition (covered indirect via ADR 022)
-- engine-muscle-recovery + engine-coach-director + engine-weakness-detector
+**Cluster B — Engines SUB-BATCH 3 ✅ LANDED 2026-05-12 (7/7 mandatory complete)** — see `## Entities — Engines (7 LANDED 2026-05-12)` section above. Optional `engine-goal-adaptation` SKIPPED per Karpathy-real eval (ADR 024 entity coverage suficient; document SKIP rationale `wiki/log.md`). engine-deload/energy-adjustment/tempo-form-cues/warmup-mobility/specialization/bayesian-nutrition coverage suficient via ADR entities cross-refs (NU stand-alone engine pages required).
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**

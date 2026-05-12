@@ -13,6 +13,33 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster B engines SUB-BATCH 3 — 7 engine entity pages voice preservation §1 4-section enforced
+
+Cluster B engines SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_B_ENGINES.md` §1-§8 execute. 7 NEW engine entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 60 → 67 wiki pages (+7 net new SUB-BATCH 3 Cluster B). 16 concepts + 42 ADRs + 7 engines + 1 spec + 1 summary = 67 total.
+
+**7 engine entity pages LANDED:**
+1. [[../entities/engines/engine-coach-director]] — orchestrator central pipeline §42.10 + 3 methods NEW STAGE 4 SUB-BATCH 2 buildLightMobility + rebalanceWeekAfterSkip + generateSafeSessionForRestDay
+2. [[../entities/engines/engine-muscle-recovery]] — per-group recovery state Big 6 + lagging detection 2+ săpt + GROUP_LABELS_RO Romanian-first + state thresholds calibrated peak hit ~22.5
+3. [[../entities/engines/engine-weakness-detector]] — Brzycki 1RM per muscle group lagging + wires orfan §36.84 Gap #1 Specialization Engine reuse pattern anti-duplication
+4. [[../entities/engines/engine-periodization]] — pipeline §42.10 1st foundational long-term schedule + Israetel framework persona-aware Maria/Gigica/Marius + Constraint Object immutable propagated downstream
+5. [[../entities/engines/engine-pr-wall]] — personal records detection 3 types (weight/reps/volume) + Forta Foundation 1 LOCKED + BATCH 2 SLICE 0 F11 preserved verbatim commit `041e7f2`
+6. [[../entities/engines/engine-readiness]] — 5-state emoji pre-session gauge + score mapping kcal/protein delta integrated + BATCH 2 SLICE 1 energyCheck.js port V2 mockup commit `8a4c39e`
+7. [[../entities/engines/engine-streak-counter]] — §EXT-1 same direction + §EXT-2 Goal Shift reset anti-recurrence foundation ADR 024 Q6 D Hybrid
+
+**SKIP rationale optional §3.5 engine-goal-adaptation per Karpathy-real eval:** ADR 024 entity coverage suficient (Engine #2 Goal Adaptation pipeline §42.10 2nd + Q1-Q8 + Q6 D Hybrid + Phase auto-detection thresholds + 5 templates V1 + Mode overlay) — stand-alone engine page would duplicate without substantive new content. Documented SKIP per prompt §1 explicit allowance "dacă ADR 024 entity coverage suficient → SKIP page, document SKIP rationale wiki/log.md".
+
+**Voice preservation §1 enforcement 100% (7/7 pages):** Synthesis concise 2-3 paragrafe + Verbatim quotes Daniel min 2-3 EXACT cu daniel-isms preserved per page + Bugatti framing notes 5 sub-sections (Gigel/Quality>Speed/Anti-RE/Anti-paternalism/Voice tone) + Cross-refs raw layer min 5-7 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Bidirectional cross-links policy preserved forward-only** (per precedent §5 deliberate exception 2026-05-12 documented `427_LATEST_VAULT_HYGIENE_NEXT_PASS_CONSUMED.md` + `428_HANDOVER_CONSOLIDARE_*`): NEW engine pages forward-link existing ADR pages (adr-026 + adr-024 + adr-029 + adr-027 + adr-016 + adr-013 + adr-outlier-filter + adr-009 + adr-020). Retroactive back-ref edits ADR pages **NU performed** — preserved invariant frozen pages NU touch (acceptable per HARD CONSTRAINT §F3.12). Graph view discoverability preserved via forward-links engine → ADR; ADR pages frozen invariant NU receives reciprocal back-link (acceptable per CLAUDE.md §5.2 forward-ref tolerance).
+
+**Cumulative SUB-BATCH 3 carry-forward TBD post Cluster A+B:** ~47-67 pages remaining (Cluster C features ~20 + Cluster D specs 11 + Cluster F summaries ~10-15 + Cluster G source pointers 6). Metoda hibridă LOCK V1 2026-05-12 turn-based pattern — next trigger "execute next cluster" Daniel chat NEW invocation.
+
+**Cross-refs raw layer:** [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCK V1 + [[../../03-decisions/DECISION_LOG]] §2026-05-12 §CC.5 fast handover ingest entry top + [[../../📤_outbox/LATEST]] Cluster B engines raport §0-§8 + [[../entities/adrs/]] 42 ADR pages cross-refs + [[../../../src/engine/]] implementation sources (coachDirector + muscleRecovery + weaknessDetector + prEngine + readiness + autoAggressionDetection + periodization/).
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-b-engines-2026-05-12-1941` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] ingest | Handover consolidare metoda hibridă chat ↔ CC + SUB-BATCH 3 Cluster A LANDED milestone synthesis
 
 `/wiki-ingest` autonomous CC LANDED 2026-05-12 chat ACASĂ via HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate per `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` LANDED 2026-05-12 217 LOC. Handover narrative `📥_inbox/HANDOVER_2026-05-12_consolidare_metoda_hibrida_plus_sub_batch_3_cluster_a.md` distributed wiki layer cu **3 NEW pages** voice preservation policy §1 4-section structure enforced:
