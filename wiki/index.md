@@ -11,7 +11,7 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post SUB-BATCH 3 Cluster D specs (2026-05-12):** **97 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12, 11 NEW Cluster D + 1 pre-existing Cluster A) + summaries (1). Carry-forward SUB-BATCH 3 Cluster F/G documented `## Carry-forward TBD` section below per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post SUB-BATCH 3 Cluster F summaries (2026-05-12):** **109 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (13, 12 NEW Cluster F + 1 pre-existing consolidare metoda hibridă). Carry-forward SUB-BATCH 3 Cluster G (6 source pointers) FINAL remaining per metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
@@ -137,9 +137,21 @@ last_updated: 2026-05-12
 - [[entities/specs/spec-v1-features-audit]] — V1 Features Audit V1 LOCKED 2026-05-10 Co-CTO bias 10 keep + 4 modify + 1 drop F5 audit primat universal rule
 - [[entities/specs/spec-root-nav-v2]] — Root Nav V2 §29.5.7 AMENDMENT LOCKED V1 2026-05-07 SUPERSEDE V1 trio → V2 quad Antrenor/Progres/Istoric/Cont
 
-## Summaries (1 LANDED)
+## Summaries (13 LANDED — 1 pre-existing + 12 NEW Cluster F SUB-BATCH 3 2026-05-12)
 
 - [[summaries/consolidare-2026-05-12-metoda-hibrida-plus-sub-batch-3]] — Consolidation milestone validation 2/2 metoda hibridă + SUB-BATCH 3 Cluster A LANDED + 2 push-backs productive
+- [[summaries/auth-flow-overview]] — Magic Link Phase 1+2 SMTP RESOLVED + OAuth Phase 3 PENDING Sprint 3 ZERO password V1 anti-password-fatigue
+- [[summaries/coach-engines-overview]] — Pipeline §42.10 8 prescriptive engines holistic + auxiliary + Cognitive Architecture 5-engine + Arbitrator + Bugatti paradigm anti-monolit
+- [[summaries/v1-features-overview]] — 15 audit-driven F1-F15 (10 keep + 4 modify + 1 drop F5 + 1 DROP F13 Anti-RE) + 4 auxiliary + BATCH 2 closure milestone
+- [[summaries/onboarding-flow-overview]] — Big 6 hard typing T0 + demographic prior fallback Maria/Gigica/Marius + graceful degradation ADR 025
+- [[summaries/mockup-themes-overview]] — Clasic master SoT FIRST + 4 themes parity invariant + mockup vs prod distinction + Root Nav V2 4 taburi
+- [[summaries/vault-meta-tooling-overview]] — Karpathy Wiki LOCK V1 + Direct-to-CC + Metoda Hibridă LOCK V1 + HANDOVER_VERIFICATION_CHECKLIST Bugatti gate
+- [[summaries/port-first-execution-overview]] — Step 1 vanilla port BATCH 2 closure milestone LANDED 11 atomic commits + audit primat universal rule 3 slices
+- [[summaries/react-migration-roadmap]] — Step 2 PENDING Step 1 LANDED + Daniel Gates smoke + Calendar feature STRATEGIC LOCK V1 MAJOR multi-session
+- [[summaries/beta-launch-readiness]] — 4 axes parallel V1 Features + Auth + Validation Framework + Port-First Step 1 + Daniel Gates manual smoke trigger
+- [[summaries/decision-clusters-overview]] — Cumulative ~742 LOCKED V1 + 42 ADRs (33 numbered + 9 named) chronological cross-chat evolution key milestones
+- [[summaries/daniel-isms-glossary]] — Catalog extensible cross-cluster verbatim quotes 8 categories identity Andura preserved
+- [[summaries/slip-patterns-history]] — §AR.1-§AR.19 codified anti-recurrence rules + push-back productive moments + tone shifts framing changes chronological
 
 ## Schema + Design (LANDED Phase 1-2)
 
@@ -166,6 +178,8 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 **Cluster C — Features SUB-BATCH 3 ✅ LANDED 2026-05-12 (19/19 mandatory complete)** — see `## Entities — Features (19 LANDED 2026-05-12)` section above. V1 Features F1-F15 audit-driven 15 + 4 auxiliary (auth-magic-link + onboarding-t0 + mode-detection + tier-storage) per V1_FEATURES_AUDIT_V1.md §F1-§F15 verdicts (10 keep verbatim + 4 modify simplified + 1 drop V1 F5 + DROP V1 F13 Anti-RE rule + MODIFY F14 EXTEND 20→90 Tier 0 rolling).
 
 **Cluster D — Specs SUB-BATCH 3 ✅ LANDED 2026-05-12 (11/11 mandatory complete)** — see `## Entities — Specs (12 LANDED)` section above. 11 NEW spec entity pages per `04-architecture/*_SPEC*.md` paradigm files: cognitive-architecture + multi-tenant-auth + tombstone-branching + data-registry + port-first-step-1 + react-migration-state-mapping + andura-validation-framework + scenarios-simulator + faza-2-filter-strategy + v1-features-audit + root-nav-v2.
+
+**Cluster F — Summaries SUB-BATCH 3 ✅ LANDED 2026-05-12 (12/12 mandatory complete)** — see `## Summaries (13 LANDED)` section above. 12 NEW summary pages synthesize Cluster A 42 ADRs + Cluster B 7 engines + Cluster C 19 features + Cluster D 11 specs + 16 concepts foundation knowledge graph: auth-flow + coach-engines + v1-features + onboarding + mockup-themes + vault-meta-tooling + port-first-execution + react-migration-roadmap + beta-launch-readiness + decision-clusters + daniel-isms-glossary + slip-patterns-history.
 - engine-prengine-pr-wall + engine-readiness + engine-streak-counter
 
 **Cluster C — Features (~20 TBD):**

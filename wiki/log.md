@@ -13,6 +13,20 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Cluster F summaries SUB-BATCH 3 — 12 summary pages voice preservation §1 4-section enforced cross-cluster synthesis
+
+Cluster F summaries SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_F_SUMMARIES.md` §1-§8 execute (prompt inline chat trigger, self-archived `437_*_CONSUMED.md` per §7). 12 NEW summary pages voice preservation policy §1 4-section structure enforced + cross-cluster synthesis dense forward-only cross-links. Cumulative count: 97 → 109 wiki pages (+12 net new SUB-BATCH 3 Cluster F). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 13 summaries (1 pre-existing + 12 NEW) = 109 total.
+
+**12 summary pages LANDED cross-cluster synthesis:** auth-flow-overview + coach-engines-overview + v1-features-overview + onboarding-flow-overview + mockup-themes-overview + vault-meta-tooling-overview + port-first-execution-overview + react-migration-roadmap + beta-launch-readiness + decision-clusters-overview + daniel-isms-glossary + slip-patterns-history.
+
+**Voice preservation §1 enforcement 100% (12/12 pages):** Synthesis concise 3-4 paragrafe (summary nature mai bogat synthesis cross-entities decât entity) + Verbatim quotes Daniel min 3-6 EXACT cu daniel-isms preserved per page (summary nature aggregat cross-cluster) + Bugatti framing notes 5 sub-sections + Cross-refs raw layer min 7-10 specific `path:§` pointers per page (summary cross-link density mai bogată).
+
+**Bidirectional cross-links policy preserved forward-only** per precedent §5 deliberate exception 2026-05-12. Cumulative SUB-BATCH 3 carry-forward post Cluster A+B+C+D+F: ~6 pages remaining (Cluster G source pointers 6 FINAL cluster).
+
+Tests 2914 PASS preserved EXACT. Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-sub-batch-3-cluster-f-summaries-2026-05-12-2015` pushed origin pre-execute.
+
+---
+
 ## [2026-05-12] ingest | Cluster D specs SUB-BATCH 3 — 11 spec entity pages voice preservation §1 4-section enforced
 
 Cluster D specs SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 turn-based slicing pattern. Per `📥_inbox/PROMPT_CC_KARPATHY_WIKI_SUB_BATCH_3_CLUSTER_D_SPECS.md` §1-§8 execute (prompt inline chat trigger, self-archived `435_*_CONSUMED.md` per §7). 11 NEW spec entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 86 → 97 wiki pages (+11 net new SUB-BATCH 3 Cluster D). 16 concepts + 42 ADRs + 7 engines + 19 features + 12 specs (1 pre-existing + 11 NEW) + 1 summary = 97 total.
