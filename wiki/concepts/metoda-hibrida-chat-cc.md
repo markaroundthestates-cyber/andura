@@ -1,0 +1,69 @@
+---
+title: Metoda Hibridă Chat ↔ CC Terminal (Partial Supersede Autonomy V1)
+type: concept
+status: locked-v1
+locked_date: 2026-05-12
+authority: Daniel verbatim chat ACASĂ 2026-05-12 *"latest landed"* + *"ce comanda dau la cc penru astea 2 din inbox"* + validation 2/2 clean (vault hygiene + SUB-BATCH 3 Cluster A both CC autonomous LANDED via Claude chat MCP cap-coadă singular handover) + [[../../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.13 LOCK V1 2026-05-12 5 sub-sections
+voice_preservation: synthesis + verbatim + bugatti + crossrefs
+cross_refs:
+  - "[[autonomy-paradigm-v1]]"
+  - "[[direct-to-cc-paradigm]]"
+  - "[[bugatti-craft]]"
+  - "[[../entities/specs/spec-handover-verification-checklist]]"
+amendments: []
+---
+
+# Metoda Hibridă Chat ↔ CC Terminal LOCKED V1 2026-05-12
+
+## Synthesis
+
+Metoda hibridă chat ↔ CC terminal = pattern operational mecanic clarificat post BATCH 2 Antrenor port closure milestone LANDED 2026-05-12, partial supersede Autonomy V1 PERMANENT 2026-05-11 "ZERO Daniel courier paradigm". Roluri tri-partite: **Claude chat strategic** = decision layer + artefacte generation (`.md` via `create_file`/`present_files` claude.ai/Desktop UI sau `filesystem:write_file` direct vault when applicable) + handover via MCP cap-coadă singular use §F3.8 ONLY; **Daniel** = courier artefact paste `📥_inbox/` SAU CC terminal direct invocation + intervene Ctrl+C oricând agency live + scrie `"latest"` trigger Claude read; **CC autonomous (terminal `claude --dangerously-skip-permissions`)** = execute artefact spec + scrie `📤_outbox/LATEST.md` final raport structured §0-§N. MCP cap-coadă singular use = **ONLY** §F3.8 fast handover ingest (write-atomic <1min total). Skills CC specific inline în artefact per task fit (GSD `/gsd-execute-phase` + gstack `/qa` + `/review` + Impeccable `/critique` + Sequential Thinking + Context7 + Tavily).
+
+Eficient demonstrably ~3 tool calls/slice vs ~30 MCP loop monitor pasiv anterior. Validation 2/2 clean (BATCH 2 SLICE 3 + cleanup post-BATCH-2 + consolidation chat 2026-05-12: vault hygiene + SUB-BATCH 3 Cluster A 16/16 ADRs Karpathy real coverage 100%). HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate invocation mandatory per `/wiki-ingest` autonomous CC LANDED 2026-05-12 217 LOC pe directiva Daniel verbatim *"Faci si un mandatory file la fiecare handover in care cc sa treaca prin tot ce adauga in handover si sa verifice ca e indexat si plasat cum trebuie"*.
+
+## Verbatim quotes Daniel
+
+Daniel verbatim chat ACASĂ 2026-05-12 BATCH 2 closure milestone scope-aggregate handover pattern surfaced post-execute multi-slice:
+> *"Salut. Acasa."*  (chat trigger §CC.2 AUTOMAT layered read MCP filesystem direct PRIMARY)
+
+Daniel verbatim chat ACASĂ 2026-05-12 consolidation chat operational practical trigger CC ecosystem:
+> *"ce comanda dau la cc penru astea 2 din inbox"*  (screenshot inbox + screenshot terminal — practical NOT abstract)
+
+Daniel verbatim chat ACASĂ 2026-05-12 trigger Claude read LATEST.md raport autonomous:
+> *"latest landed"*  (post CC autonomous executa hygiene + SUB-BATCH 3 Cluster A — semnal Claude consume `📤_outbox/LATEST.md` structured)
+
+Daniel verbatim chat ACASĂ 2026-05-12 productive push-back contra Claude initial response paste paradigm fix wikilinks:
+> *"fa prompt pt cc sa le fix"*  (testing Claude strategy-lock filter reflex — Claude REJECT cu rationale forward refs Cluster B/C/D/F/G TBD auto-resolve + frozen pages HARD CONSTRAINT §F3.12 NU touch; Daniel accepted)
+
+Daniel verbatim chat ACASĂ 2026-05-12 second productive probe option C benefit comparison:
+> *"C nu e mai benefic?"*  (instinct probe testing Claude rationale — Claude verified scanner JSON `scripts/faza3_wiki_lint_output.json` cele 4 archive bare refs + 4 stale ref-moves = sursa în concepts/* + _design/* + ADRs SUB-BATCH 1 FROZEN per HARD CONSTRAINT §F3.12; REJECT cu cifre concrete; Daniel accepted)
+
+Daniel verbatim chat ACASĂ 2026-05-12 turn-based slicing decision broken wikilinks scope:
+> *"fa handover si discut asta cu next chat"*  (carry-forward broken wikilinks fix scope pending next chat strategic discussion — metoda hibridă turn-based pattern explicit)
+
+Daniel verbatim chat ACASĂ 2026-05-12 CEO directive HANDOVER_VERIFICATION_CHECKLIST workflow file creation mandatory:
+> *"Faci si un mandatory file la fiecare handover in care cc sa treaca prin tot ce adauga in handover si sa verifice ca e indexat si plasat cum trebuie"*  (Bugatti gate workflow LANDED 217 LOC 08-workflows/ NEW file)
+
+## Bugatti framing notes
+
+**Gigel test relevance:** Metoda hibridă elimina friction Daniel = ZERO Daniel courier role pentru `/wiki-ingest` handover (preserves direct-to-cc-paradigm core invariant), DAR adăugă Daniel agency live pentru CC terminal direct invocation cu skills specific. Daniel = signal-recipient ("e timpul pt noul chat") + chat NEW initiator ("Salut. Acasa.") + courier artefact paste CC terminal where applicable + intervene Ctrl+C oricând. NU paternalism "consultă Daniel pe fiecare action".
+
+**Quality > Speed via roluri distincte:** Decision layer chat strategic separat de execution layer CC autonomous — chat strategic poate face audit critic + push-back reflex + strategy-lock filter (acoperiș-pereți avoidance) fără bandwidth burn execution; CC autonomous executează spec atomic single-concern fără overhead strategic. Eficient demonstrably ~3 tool calls/slice vs ~30 MCP loop monitor pasiv anterior.
+
+**Anti-RE considerations (§AR.* preserved invariant):** Metoda hibridă orthogonal cu §AR.1-§AR.19 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT. HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate invocation mandatory per `/wiki-ingest` codifies anti-recurrence pre-commit checklist (pre-flight grep + backup tag + voice §1 enforce + bidirectional cross-links + tests preserve + atomic commit single-concern). Slip patterns Direct-to-CC via MCP captured §F3.13.2: MCP cap-coadă singular use = ONLY handover, NU full execution proxy (anti-pattern: MCP loop monitor pasiv anterior 2026-05-11 evening — eliminated).
+
+**Anti-paternalism notes:** Daniel autonomy lock EXTINS verbatim chat-current 2 2026-05-10 *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."* preserved invariant. Metoda hibridă partial supersede LOCKED V1 PERMANENT 2026-05-11 "ZERO Daniel courier paradigm" — Daniel courier role partial preserved DOAR pentru CC terminal direct artefact paste cu agency live (Ctrl+C interruption + "latest" trigger consumption). Handover ingest via MCP filesystem singular use preserved Direct-to-CC paradigm core.
+
+**Voice tone notes:** Daniel-isms metoda hibridă cradle moments: "ce comanda dau la cc" + "latest landed" + "C nu e mai benefic?" + "fa handover si discut asta cu next chat" + "Faci si un mandatory file la fiecare handover" CEO directive. Pattern operational mecanic captured = paradigm shift, NU LOCK nou substantive (cumulative ~742 PRESERVED unchanged per HARD CONSTRAINT §F3.12).
+
+## Cross-refs raw layer
+
+- [[../../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.13 metoda hibridă LOCK V1 2026-05-12 5 sub-sections (pattern operational + slip-uri captured + autonomy partial supersede + checklist invocation + cross-refs)
+- [[../../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 chat-to-chat handover Karpathy real workflow (MCP cap-coadă singular use)
+- [[../../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate invocation mandatory per /wiki-ingest
+- [[../../03-decisions/DECISION_LOG]] §2026-05-12 entry top §CC.5 handover ingest + BATCH 2 closure milestone narrative
+- [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCKED V1 + BATCH 2 closure milestone (snapshot frozen raw layer per §F3.12)
+- [[../../📤_outbox/_archive/2026-05/423_HANDOVER_2026-05-12_chat_acasa_batch_2_closure_milestone_LANDED_plus_metoda_hibrida_NEW_CONSUMED]] origin paradigm cradle handover
+- [[../../📤_outbox/_archive/2026-05/428_HANDOVER_2026-05-12_CONSOLIDARE_METODA_HIBRIDA_PLUS_SUB_BATCH_3_CLUSTER_A_CONSUMED]] validation 2/2 chat ACASĂ consolidation
+
+🦫 **Metoda hibridă chat ↔ CC terminal LOCK V1 2026-05-12. Partial supersede Autonomy V1 "ZERO Daniel courier paradigm". MCP cap-coadă singular use ONLY §F3.8 handover. CC terminal direct artefact paste cu Daniel agency live. HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate mandatory per /wiki-ingest. Validation 2/2 clean. Cumulative ~742 PRESERVED unchanged.**

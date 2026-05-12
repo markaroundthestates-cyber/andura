@@ -11,12 +11,13 @@ last_updated: 2026-05-12
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post Phase 3 SUB-BATCH 3 Cluster A (2026-05-12):** **57 pages LANDED** across concepts (15) + entities/adrs (42, 100% Karpathy real coverage). Carry-forward SUB-BATCH 3 Cluster B/C/D/F/G documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight" + metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
+**Catalog status post `/wiki-ingest` handover consolidare metoda hibridă + SUB-BATCH 3 Cluster A (2026-05-12):** **60 pages LANDED** across concepts (16) + entities/adrs (42, 100% Karpathy real coverage) + entities/specs (1) + summaries (1). Carry-forward SUB-BATCH 3 Cluster B/C/D/F/G documented `## Carry-forward TBD` section below per prompt §6 "Phase 3 split în 2-3 sessions overnight" + metoda hibridă LOCK V1 2026-05-12 turn-based slicing pattern.
 
 ---
 
-## Concepts (15 LANDED) — Cross-Cutting Paradigms + Strategies + Principles
+## Concepts (16 LANDED) — Cross-Cutting Paradigms + Strategies + Principles
 
+- [[concepts/metoda-hibrida-chat-cc]] — LOCK V1 2026-05-12 partial supersede Autonomy V1 + MCP cap-coadă singular handover-only + validation 2/2 clean
 - [[concepts/bugatti-craft]] — Quality > Speed default discipline + Daniel autonomy lock EXTINS verbatim
 - [[concepts/gigel-test]] — UX validation filter Marius la sala Gigel-friendly + jargon refactor
 - [[concepts/voice-preservation-policy]] — 4-section structure mandatory + 6 hard rules + daniel-isms catalog
@@ -85,6 +86,14 @@ last_updated: 2026-05-12
 - [[entities/adrs/adr-pain-discomfort-button]] — 3-tier observable + ZERO medical claims + Override CDL F2 respect audit trail + Gigel test PASS
 - [[entities/adrs/adr-rir-matrix-adaptive]] — Profile × Exercise Category matrix Verbal→RIR + Maria reduce reps NU sets + Marius 3 consecutive micro-deload
 - [[entities/adrs/adr-smart-routing-equipment]] — Tier-aware filtering + similarity ranking + anti-paternalism skip + equipmentSwap.js V1 LANDED BATCH 2
+
+## Entities — Specs (1 LANDED)
+
+- [[entities/specs/spec-handover-verification-checklist]] — Bugatti gate §0-§11 per /wiki-ingest LOCK V1 2026-05-12 (CEO directive verbatim 217 LOC raw layer)
+
+## Summaries (1 LANDED)
+
+- [[summaries/consolidare-2026-05-12-metoda-hibrida-plus-sub-batch-3]] — Consolidation milestone validation 2/2 metoda hibridă + SUB-BATCH 3 Cluster A LANDED + 2 push-backs productive
 
 ## Schema + Design (LANDED Phase 1-2)
 
@@ -157,4 +166,4 @@ Raw layer pointers map — wiki coverage tracking. Carry-forward SUB-BATCH 2-3:
 
 ---
 
-🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 Phase 3 SUB-BATCH 2 LANDED (41 pages cumulative). Carry-forward TBD ~79-104 pages SUB-BATCH 3 per Phase 3 multi-session execution model. Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**
+🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 post `/wiki-ingest` handover consolidare metoda hibridă (60 pages cumulative: 16 concepts + 42 ADRs + 1 spec + 1 summary). Carry-forward TBD Cluster B engines + C features + D specs (10 remaining) + F summaries + G source pointers. Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**

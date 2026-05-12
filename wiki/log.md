@@ -13,6 +13,24 @@ last_updated: 2026-05-12
 
 ---
 
+## [2026-05-12] ingest | Handover consolidare metoda hibridă chat ↔ CC + SUB-BATCH 3 Cluster A LANDED milestone synthesis
+
+`/wiki-ingest` autonomous CC LANDED 2026-05-12 chat ACASĂ via HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate per `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` LANDED 2026-05-12 217 LOC. Handover narrative `📥_inbox/HANDOVER_2026-05-12_consolidare_metoda_hibrida_plus_sub_batch_3_cluster_a.md` distributed wiki layer cu **3 NEW pages** voice preservation policy §1 4-section structure enforced:
+
+1. [[../concepts/metoda-hibrida-chat-cc]] — Metoda hibridă chat ↔ CC terminal LOCK V1 2026-05-12 partial supersede Autonomy V1 + MCP cap-coadă singular use ONLY §F3.8 handover + validation 2/2 clean cradle (BATCH 2 SLICE 3 + cleanup post-BATCH-2 + consolidation chat 2026-05-12 hygiene + SUB-BATCH 3 Cluster A) + Daniel verbatim cradle moments ("ce comanda dau la cc" + "latest landed" + "C nu e mai benefic?" + "fa handover si discut asta cu next chat" + "Faci si un mandatory file la fiecare handover" CEO directive)
+2. [[../entities/specs/spec-handover-verification-checklist]] — Spec entity HANDOVER_VERIFICATION_CHECKLIST 217 LOC §0-§11 Bugatti gate per /wiki-ingest invocation mandatory per VAULT_RULES §F3.13.4 + co-evolved metoda hibridă LOCKED V1 + Daniel CEO directive verbatim cradle ("Faci si un mandatory file la fiecare handover in care cc sa treaca prin tot ce adauga in handover si sa verifice ca e indexat si plasat cum trebuie")
+3. [[../summaries/consolidare-2026-05-12-metoda-hibrida-plus-sub-batch-3]] — Consolidation milestone synthesis: 8 memory edits + 4 vault writes via MCP + 2 V3 artifacts UI paste manual + 2 CC autonomous executes both LANDED clean (vault hygiene + SUB-BATCH 3 Cluster A 16/16 ADRs Karpathy real coverage 100%) + 2 push-backs productive (fix wikilinks REJECT strategy-lock + C option REJECT HARD CONSTRAINT §F3.12) + tone Daniel agreement mood cooperative zero halucinezi trigger acest chat
+
+**Voice preservation §1 enforcement 100% (3/3 NEW pages):** Synthesis concise + Verbatim quotes Daniel min 2-8 EXACT cu daniel-isms preserved per page + Bugatti framing notes (Gigel/Quality>Speed/Anti-RE/Anti-paternalism/Voice tone) + Cross-refs raw layer min 2-3 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Cumulative count post-ingest:** 57 → 60 wiki pages (+3 net new). 16 concepts + 42 ADRs + 1 spec + 1 summary. Cluster B/C/D/F/G ⏸ carry-forward turn-based per metoda hibridă pattern.
+
+**Tests baseline preserved EXACT:** 2914 PASS preserved (vault meta-tooling `/wiki-ingest` doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-wiki-ingest-handover-2026-05-12-consolidare-metoda-hibrida-1922` pushed origin pre-execute (rollback safety net per §AR.PRE_FLIGHT item 1).
+
+**Cross-refs raw layer:** [[../../00-index/CURRENT_STATE]] §JUST_DECIDED 2026-05-12 metoda hibridă LOCKED V1 + BATCH 2 closure milestone (snapshot frozen raw layer per §F3.12) + [[../../03-decisions/DECISION_LOG]] §2026-05-12 chat ACASĂ entry top §CC.5 fast handover ingest + [[../../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.13 metoda hibridă + §F3.8 handover + §F3.12 hard constraints + [[../../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] 217 LOC §0-§11 Bugatti gate + [[../../📤_outbox/_archive/2026-05/427_LATEST_VAULT_HYGIENE_NEXT_PASS_CONSUMED]] + [[../../📤_outbox/_archive/2026-05/428_HANDOVER_2026-05-12_CONSOLIDARE_METODA_HIBRIDA_PLUS_SUB_BATCH_3_CLUSTER_A_CONSUMED]] this handover archived + [[../../📤_outbox/_archive/2026-05/429_LATEST_SUB_BATCH_3_CLUSTER_A_CONSUMED]] precedent cycled.
+
+---
+
 ## [2026-05-12] ingest | Cluster A SUB-BATCH 3 — 16 remaining ADRs entity pages voice preservation §1 enforced (42/42 ADRs Karpathy real coverage 100%)
 
 Cluster A SUB-BATCH 3 LANDED 2026-05-12 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 — 16 remaining ADR entity pages voice preservation policy §1 4-section structure enforced. Cumulative count: 41 → 57 wiki pages (+16 net new SUB-BATCH 3 Cluster A). ADRs Karpathy real coverage **100% (42/42)** post Cluster A LANDED.
@@ -207,4 +225,4 @@ Voice fidelity validation prima înainte Phase 5 workflow transition per [[../VA
 
 ---
 
-🦫 **Wiki Log Karpathy chronological signature LOCK V1 2026-05-12 Phase 3 SUB-BATCH 2 LANDED. 41 pages cumulative generated cu voice preservation policy §1 enforced. Carry-forward documented Phase 3 SUB-BATCH 3 + Phase 4 LANDED Daniel review post-approve checkpoint 2026-05-11→12.**
+🦫 **Wiki Log Karpathy chronological signature LOCK V1 2026-05-12 post `/wiki-ingest` handover consolidare metoda hibridă LANDED. 60 pages cumulative generated cu voice preservation policy §1 enforced (16 concepts + 42 ADRs + 1 spec + 1 summary). Carry-forward documented Phase 3 SUB-BATCH 3 Cluster B/C/D/F/G + Phase 4 LANDED Daniel review post-approve checkpoint 2026-05-11→12 + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate mandatory per /wiki-ingest invocation.**
