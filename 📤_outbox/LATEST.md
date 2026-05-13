@@ -71,8 +71,9 @@
 
 ## §Commits
 
-- atomic single-concern: `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips`
-- pushed origin `feature/v2-vanilla-port`
+- atomic single-concern: `f4c7004` `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips`
+- pushed origin `feature/v2-vanilla-port` (verified `aa89602..f4c7004` LANDED remote)
+- 12 files changed, 701 insertions(+), 149 deletions(-)
 
 ## §Pushed
 
