@@ -7,6 +7,17 @@
 
 import { DB, tod } from '../../db.js';
 import { saveReadiness } from '../../engine/readiness.js';
+import { navigate } from '../../router.js';
+
+// Bundle 4 — energy state → workout-preview energyMod mapping.
+// 'excellent' → 'plus' (Coach intensitate +15%)
+// 'normal'    → 'normal' (baseline)
+// 'tired'     → 'minus' (recovery focus reduce)
+const ENERGY_MOD_FROM_STATE = {
+  excellent: 'plus',
+  normal:    'normal',
+  tired:     'minus',
+};
 
 export const ENERGY_STATES = {
   EXCELLENT: 'excellent',
@@ -77,6 +88,9 @@ export function selectEnergyState(state, onProceed) {
     showEnergyCause(onProceed);
     return;
   }
+  // Bundle 4 — route to workout-preview screen with energyMod context (backwards-compatible).
+  const energyMod = ENERGY_MOD_FROM_STATE[state] || 'normal';
+  try { navigate('workout-preview', { energyMod }); } catch { /* router may not be wired in test envs */ }
   if (typeof onProceed === 'function') onProceed({ state, readiness, skipped: false });
 }
 
@@ -114,6 +128,9 @@ export function selectEnergyCause(cause, onProceed) {
 
   const modal = document.getElementById('energy-cause-modal');
   if (modal) modal.remove();
+
+  // Bundle 4 — tired path routes to workout-preview with energyMod='minus' + cause context.
+  try { navigate('workout-preview', { energyMod: 'minus', cause }); } catch { /* router may not be wired in test envs */ }
 
   if (typeof onProceed === 'function') onProceed({
     state: ENERGY_STATES.TIRED,

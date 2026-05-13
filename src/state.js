@@ -26,8 +26,10 @@ export const state = {
   cdlEntryId: null,
   sessType: null,
   lastSetRPE: null,
-  currentScreen: 'antrenor', // Router state — intra-Antrenor sub-page id (antrenor | energy-check | energy-cause | ceva-nu-merge | pain-button | equipment-swap | aparate-lipsa | workout | post-rpe)
+  currentScreen: 'antrenor', // Router state — intra-Antrenor sub-page id (antrenor | energy-check | energy-cause | workout-preview | ceva-nu-merge | pain-button | equipment-swap | aparate-lipsa | workout | post-rpe)
   cevaNuMergeReason: null,   // Fan-out routing context — null | 'pain' | 'equipment' | 'altceva'
+  previewRefusalsByExercise: {},     // Bundle 4 NEW — ephemeral preview cascade tracking, Map<exerciseName, string[]> reset on workout-preview enter
+  midSessionRefusalsByExercise: {},  // Bundle 4 NEW — ephemeral mid-session cascade tracking, Map<exerciseName, string[]> reset on workout enter
 };
 
 // Convenience destructure helpers (read-only snapshots)

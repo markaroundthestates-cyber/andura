@@ -164,3 +164,87 @@ describe('aparateLipsa — close behavior', () => {
     expect(resolved && resolved.action).toBe('cancel');
   });
 });
+
+// ══ Bundle 4 — 2 grupuri (Aparate + Exerciții refuzate permanent) ═══════════
+
+describe('aparateLipsa — Bundle 4 2-grupuri display', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    state.currentScreen = 'antrenor';
+  });
+  afterEach(() => {
+    closeAparateLipsaModal();
+  });
+
+  it('renders Grupul 1 "Aparate" section header', () => {
+    showAparateLipsa();
+    const modal = document.getElementById('aparate-lipsa-modal');
+    expect(modal.textContent).toContain('Aparate');
+  });
+
+  it('renders Grupul 2 "Exerciții refuzate permanent" section header', () => {
+    showAparateLipsa();
+    const modal = document.getElementById('aparate-lipsa-modal');
+    expect(modal.textContent).toContain('Exerciții refuzate permanent');
+  });
+
+  it('Grupul 2 empty state shows Gigel-friendly message when no skipped exercises', () => {
+    showAparateLipsa();
+    const stack = document.getElementById('exercitii-refuzate-stack');
+    expect(stack).not.toBeNull();
+    const emptyMarker = stack.querySelector('[data-exercise-empty="true"]');
+    expect(emptyMarker).not.toBeNull();
+    expect(emptyMarker.textContent).toContain('Nu ai eliminat niciun exercițiu permanent');
+  });
+
+  it('Grupul 2 renders dynamic checkbox row per skipped exercise', () => {
+    localStorage.setItem('wv2-skipped-exercises', JSON.stringify(['Cable Curl', 'Lateral Raises']));
+    showAparateLipsa();
+    const stack = document.getElementById('exercitii-refuzate-stack');
+    const rows = stack.querySelectorAll('[data-exercise-row]');
+    expect(rows.length).toBe(2);
+    expect(stack.textContent).toContain('Cable Curl');
+    expect(stack.textContent).toContain('Lateral Raises');
+  });
+
+  it('Grupul 2 checkboxes are checked by default (debifare-only mode)', () => {
+    localStorage.setItem('wv2-skipped-exercises', JSON.stringify(['Cable Curl']));
+    showAparateLipsa();
+    const cb = document.querySelector('input[type="checkbox"][data-exercise="Cable Curl"]');
+    expect(cb).not.toBeNull();
+    expect(cb.checked).toBe(true);
+  });
+
+  it('Grupul 2 checkbox uncheck → toggleSkippedExercise removes from list', () => {
+    localStorage.setItem('wv2-skipped-exercises', JSON.stringify(['Cable Curl']));
+    showAparateLipsa();
+    const cb = document.querySelector('input[type="checkbox"][data-exercise="Cable Curl"]');
+    cb.checked = false;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+    const stored = JSON.parse(localStorage.getItem('wv2-skipped-exercises'));
+    expect(stored).not.toContain('Cable Curl');
+  });
+
+  it('Grupul 1 + Grupul 2 stacks coexist (separate sections)', () => {
+    localStorage.setItem('wv2-skipped-exercises', JSON.stringify(['Cable Curl']));
+    showAparateLipsa();
+    expect(document.getElementById('aparate-lipsa-stack')).not.toBeNull();
+    expect(document.getElementById('exercitii-refuzate-stack')).not.toBeNull();
+  });
+
+  it('Grupul 2 escapes HTML in exercise names (XSS guard)', () => {
+    localStorage.setItem('wv2-skipped-exercises', JSON.stringify(['<script>alert(1)</script>']));
+    showAparateLipsa();
+    const stack = document.getElementById('exercitii-refuzate-stack');
+    // Real XSS protection check: no actual <script> element parsed in DOM (even though
+    // the raw string appears in attribute-value serialization, that's not executable).
+    expect(stack.querySelector('script')).toBeNull();
+    // Visible text inside <span> must be escaped (entities preserved as text, not parsed).
+    const spans = stack.querySelectorAll('span');
+    let foundEscaped = false;
+    for (const span of spans) {
+      if (span.textContent.includes('<script>alert')) foundEscaped = true;  // textContent decodes entities — original raw string visible as text
+    }
+    expect(foundEscaped).toBe(true);
+  });
+});

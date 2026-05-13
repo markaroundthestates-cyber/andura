@@ -6,16 +6,17 @@ import { state } from './state.js';
  * Navigate to a named screen.
  * Mutates state.currentScreen and dispatches `andura:screen-change` event on `document`.
  *
- * @param {string} screenName — Target screen identifier (e.g. 'antrenor', 'workout', 'energy-check').
+ * @param {string} screenName — Target screen identifier (e.g. 'antrenor', 'workout', 'energy-check', 'workout-preview').
+ * @param {object} [opts={}] — Optional context (e.g. {energyMod, cause}) merged into the CustomEvent detail. Bundle 4 backwards-compatible extension.
  * @returns {void}
  * @throws {TypeError} If screenName is not a non-empty string.
  */
-export function navigate(screenName) {
+export function navigate(screenName, opts = {}) {
   if (typeof screenName !== 'string' || screenName.length === 0) {
     throw new TypeError('navigate(screenName): screenName must be a non-empty string');
   }
   state.currentScreen = screenName;
-  document.dispatchEvent(new CustomEvent('andura:screen-change', { detail: { screen: screenName } }));
+  document.dispatchEvent(new CustomEvent('andura:screen-change', { detail: { screen: screenName, ...opts } }));
 }
 
 /**

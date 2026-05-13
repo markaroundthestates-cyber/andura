@@ -30,6 +30,10 @@ import { getExGroup } from './util.js';
 import { setDone } from './logging.js';
 import { finishEarly } from './session.js';
 import { skipPause } from './restTimer.js';
+import { findAlternatives } from '../../engine/smart-routing/alternative-finder.js';
+import { getExerciseMetadata } from '../../schema/exerciseMetadata.js';
+import { incrementRefusal, REFUSAL_COUNTER_THRESHOLD } from '../../engine/schedule/scheduleAdapter.js';
+import { showRefusalCounterModal } from './refusalCounterModal.js';
 
 const escapeHtml = (s) => String(s || '').replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -157,6 +161,17 @@ export function renderWorkoutScreen(opts = {}) {
         </div>
       </div>
 
+      <div class="workout-ex-actions" style="display:flex;gap:8px;margin-top:12px">
+        <button class="workout-ex-action-ocupat" aria-label="Aparat ocupat" style="flex:1;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px;justify-content:center">
+          <i data-lucide="users" style="width:14px;height:14px"></i>
+          <span>Aparat ocupat</span>
+        </button>
+        <button class="workout-ex-action-nuvreau" aria-label="Nu vreau" style="flex:1;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px;justify-content:center">
+          <i data-lucide="hand" style="width:14px;height:14px"></i>
+          <span>Nu vreau</span>
+        </button>
+      </div>
+
       <div id="rest-timer" class="workout-rest" style="display:${showRest ? 'flex' : 'none'};margin-top:14px;background:var(--ink, #1a1815);color:var(--paper, #fff);border-radius:18px;padding:18px;align-items:center;gap:16px">
         <div style="position:relative;width:72px;height:72px;flex-shrink:0">
           <svg width="72" height="72" style="transform:rotate(-90deg)">
@@ -198,6 +213,108 @@ export function renderWorkoutScreen(opts = {}) {
       try { skipPause(); } catch { /* DOM-dependent in V1 prod; swallow */ }
       renderWorkoutScreen(opts);
     });
+  }
+
+  // ── Bundle 4 — Mid-session 2 action buttons (Aparat ocupat / Nu vreau) ──
+  const ocupatBtn = overlay.querySelector('.workout-ex-action-ocupat');
+  if (ocupatBtn) {
+    ocupatBtn.addEventListener('click', () => onOcupatClick(opts));
+  }
+  const nuvreauBtn = overlay.querySelector('.workout-ex-action-nuvreau');
+  if (nuvreauBtn) {
+    nuvreauBtn.addEventListener('click', () => onNuVreauClick(opts));
+  }
+}
+
+// ══ Bundle 4 — Mid-session cascade helpers ═════════════════════════════════
+// "Aparat ocupat" = pure ephemeral cascade (NO global storage mutation per
+// Co-CTO bias §0.2). Pure cascade in-place on current session.
+// "Nu vreau"      = cascade + SHARED counter via incrementRefusal cross-flow
+// (preview + mid-session share counter for same exerciseName).
+//
+// pickNextAlternativeMidSession adds peek-next-exercise filter (basic
+// downstream awareness anti-fatigue next big lift).
+
+function getTrackedMidSessionRefusals(exerciseName) {
+  if (!state.midSessionRefusalsByExercise) state.midSessionRefusalsByExercise = {};
+  if (!state.midSessionRefusalsByExercise[exerciseName]) {
+    state.midSessionRefusalsByExercise[exerciseName] = [];
+  }
+  return state.midSessionRefusalsByExercise[exerciseName];
+}
+
+/**
+ * Pick next alternative for mid-session use, applying peek-next-exercise filter
+ * to avoid alternatives sharing muscle_target_primary with the next exercise
+ * (anti-fatigue heuristic). Fallback: if all alternatives filtered, returns
+ * first non-excluded anyway (better than nothing).
+ *
+ * @param {string} currentEx — currently visible exercise on session
+ * @returns {string|null}
+ */
+export function pickNextAlternativeMidSession(currentEx) {
+  if (typeof currentEx !== 'string' || !currentEx) return null;
+  const { alternatives, shouldSkip } = findAlternatives(currentEx);
+  if (shouldSkip || !alternatives.length) return null;
+
+  const excludeList = getTrackedMidSessionRefusals(currentEx);
+  const excludeSet = new Set([currentEx, ...excludeList]);
+
+  // Peek next exercise from session plan if available (best-effort — degrades
+  // gracefully when no plan structure exists in state).
+  let protectedMuscle = null;
+  const plan = Array.isArray(state.sessionPlan) ? state.sessionPlan : null;
+  if (plan) {
+    const currentIdx = plan.indexOf(currentEx);
+    if (currentIdx >= 0 && currentIdx < plan.length - 1) {
+      const nextEx = plan[currentIdx + 1];
+      const nextMeta = getExerciseMetadata(nextEx);
+      protectedMuscle = nextMeta ? nextMeta.muscle_target_primary : null;
+    }
+  }
+
+  // Pass 1: respect peek-next muscle filter.
+  if (protectedMuscle) {
+    for (const alt of alternatives) {
+      if (excludeSet.has(alt.name)) continue;
+      const altMeta = getExerciseMetadata(alt.name);
+      if (altMeta.muscle_target_primary === protectedMuscle) continue;
+      return alt.name;
+    }
+  }
+
+  // Pass 2: fallback first non-excluded (anti-fatigue filter relaxed).
+  for (const alt of alternatives) {
+    if (!excludeSet.has(alt.name)) return alt.name;
+  }
+  return null;
+}
+
+function onOcupatClick(opts) {
+  const currentEx = state.currentEx;
+  if (!currentEx) return;
+  const refusals = getTrackedMidSessionRefusals(currentEx);
+  const next = pickNextAlternativeMidSession(currentEx);
+  if (next) {
+    refusals.push(currentEx);
+    state.currentEx = next;
+    renderWorkoutScreen(opts);
+  }
+}
+
+function onNuVreauClick(opts) {
+  const currentEx = state.currentEx;
+  if (!currentEx) return;
+  const count = incrementRefusal(currentEx);
+  const refusals = getTrackedMidSessionRefusals(currentEx);
+  const next = pickNextAlternativeMidSession(currentEx);
+  if (next) {
+    refusals.push(currentEx);
+    state.currentEx = next;
+    renderWorkoutScreen(opts);
+  }
+  if (count >= REFUSAL_COUNTER_THRESHOLD) {
+    showRefusalCounterModal(currentEx, count);
   }
 }
 
