@@ -1,100 +1,170 @@
-# LATEST — /wiki-ingest Handover 2026-05-13b Post Calendar V1 S2 LANDED + 4 Strategic LOCKs + 3 Slips ✅ 🦫
+# LATEST — Calendar V1 S3 HALT + Handover for Prompt Redo (§AR.20 Quadruple Violation) 🦫
 
-**Task:** `/wiki-ingest` autonomous Bugatti gate per VAULT_RULES.md §F3.8 + HANDOVER_VERIFICATION_CHECKLIST.md §0-§11 mandatory pre-commit pe handover narrative chat ACASĂ post Calendar V1 Slice 2 Production Wiring LANDED + 4 strategic LOCKs chat-current findings backlog + 3 slips §AR.20-§AR.22 codification candidate + 9 daniel-isms verbatim catalog extensible cross-cluster.
-**Model:** Opus EXCLUSIVELY per CEO directive verbatim (Sonnet concediat permanent).
-**Status:** ✅ **COMPLETE** — 1 NEW summary distributed + 6 UPDATE existing pages voice §1 enforced + cumulative 119 → 120 wiki pages + archive raw HANDOVER 449 CONSUMED + LATEST.md cycle 450 CONSUMED + tests 2984 PASS preserved EXACT + atomic commit single-concern pushed origin.
-**Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-13b Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 §F3.13.
-**Pre-flight tag pushed origin:** `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings`
-
----
-
-## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]])
-
-- ✅ **§0 Pre-conditions scribe-side (8 items)** — handover narrative present `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` ~140 LOC conversational flow + voice §1 4-section structure detectabil + Verbatim quotes Daniel preserved EXACT 19 quotes incluse + cross-refs raw layer enumerate min 8 specific path:§ pointers + Daniel CEO directive trigger voluntary verbatim *"daca nu mai avem de discutat nimic poti face handover"* + bandwidth ~40% healthy.
-- ✅ **§1 Backup tag `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings` pushed origin** — verified remote `git push origin <tag>` LANDED rollback safety net invariant.
-- ✅ **§2 Pre-flight grep verify (paths + wikilinks + daniel-isms + strategy LOCKED)** — commits S2.A `7c2f520` + S2.B `fce846a` + S2.C `a77587c` verified git log filesystem-side; ADRs (026 §9 pure-function + 030 D2 thin scope + 020 §1.4 Tier 0) verified grep raw layer; 8 wiki target pages exist filesystem (calendar-feature-v1-spec + engine-coach-director + adr-020 + adr-026 + adr-030 + anti-recurrence-rules + daniel-isms-glossary + slip-patterns-history); 9 daniel-isms verbatim preserved exact per handover narrative §3-§11; strategy LOCK V1 cap-coadă preserved invariant (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă + Karpathy Real + voice preservation §1).
-- ✅ **§3 Wiki distribution voice §1 4-section enforced — 7 pages affected** (1 NEW + 6 UPDATE):
-  - **NEW** [[../wiki/summaries/calendar-v1-s2-production-wiring-milestone-2026-05-13]] LOCKED V1 synthesis chain 3 atomic commits + 4 strategic LOCKs + 3 slips + 9 daniel-isms — Synthesis 4 paragrafe + Verbatim quotes Daniel 10 EXACT + Bugatti framing notes 5 sub-sections + Cross-refs raw layer 18 specific path:§ pointers
-  - **UPDATE** [[../wiki/concepts/calendar-feature-v1-spec]] APPEND amendments[2026-05-13b] S2 LANDED chain 3 commits + §Synthesis S2 Production Wiring section + §Verbatim 9 NEW chat-current + §Bugatti S2 Adapt + execute anti-RE additional notes + §Cross-refs S2 commits src/ + handover narrative ref
-  - **UPDATE** [[../wiki/entities/engines/engine-coach-director]] APPEND amendments[2026-05-13b] S2 LANDED 3 commits chain + §Synthesis S2 Production Wiring LANDED replace path forward → actual + §Verbatim *"asta e decizia ta nu a mea"* + §Bugatti S2 Anti-RE slip §AR.20 candidate strong + §Cross-refs 3 commits src/
-  - **UPDATE** [[../wiki/entities/adrs/adr-020-storage-tiering-strategy]] APPEND amendments[2026-05-13b] Tier 0 parity preserved S2 LANDED + §Cross-refs 3 commits src/ + handover narrative ref
-  - **UPDATE** [[../wiki/concepts/anti-recurrence-rules]] APPEND new section "Chat-Current Slip Patterns 2026-05-13b" cu 3 NEW slip patterns §AR.20-§AR.22 codification candidate + frontmatter amendments[2026-05-13b]
-  - **UPDATE** [[../wiki/summaries/daniel-isms-glossary]] APPEND new section "Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED + 4 strategic LOCKs" cu 9 NEW daniel-isms categorii Skills CC + Push-back productive + Calendar V1 S2 spec + Mockup test + Casual mood
-  - **UPDATE** [[../wiki/summaries/slip-patterns-history]] APPEND new section "Chat-Current Slip Patterns 2026-05-13b" cu 3 NEW slip patterns chronological + push-back productive moments + tone shifts framing changes
-- ✅ **§4 wiki/index.md + wiki/log.md updated cumulative count match** — wiki/index.md `total_pages: 119 → 120` + Catalog status section updated post `/wiki-ingest handover 2026-05-13b` + Summaries section +1 NEW page entry first item; wiki/log.md APPEND new entry top `## [2026-05-13b] ingest | Chat ACASĂ post Calendar V1 S2 LANDED + 4 strategic LOCKs chat-current + 3 slips findings` cu narrative summary distribution + cumulative count + verification checklist §0-§11.
-- ✅ **§5 Bidirectional cross-links verified** — cluster triangle Calendar V1 ↔ Coach Director ↔ ADR 020 ↔ calendar-v1-s2-production-wiring-milestone-2026-05-13 preserved + cluster triangle anti-recurrence-rules ↔ slip-patterns-history ↔ daniel-isms-glossary slip catalog preserved + frontmatter cross_refs section per NEW/UPDATE page lists forward-link existing entities; retroactive back-ref edits frozen pages NU performed per HARD CONSTRAINT §F3.12 forward-only policy.
-- ✅ **§6 Raw layer archived _CONSUMED** — `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` → `📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED.md` (chronological continuous post 448 LATEST_PREVIOUS_WIKI_INGEST archived) + LATEST.md cycle → `📤_outbox/_archive/2026-05/450_LATEST_PREVIOUS_CALENDAR_V1_S2_PRODUCTION_WIRING_CONSUMED.md` (Calendar V1 S2 raport precedessor archive) + NEW LATEST.md structured §0-§11 raport (acest file).
-- ✅ **§7 Atomic commit single-concern pushed origin** — staged only files modificate în acest /wiki-ingest atomic batch (NU bulk multi-purpose) + commit message `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips` + push origin `feature/v2-vanilla-port` per active branch policy + verify commit landed remote post-push.
-- ✅ **§8 Tests baseline 2984 PASS preserved EXACT** — vault meta-tooling doc-only operation /wiki-ingest ZERO src/ touched per HARD CONSTRAINTS §F3.12 → tests preserved invariant 2914 → 2984 PASS (+70 net new) baseline post S2 LANDED chain 3 commits chat-current; pre-commit hook gate verde.
-- ✅ **§9 LATEST.md §0 HANDOVER_VERIFICATION_CHECKLIST structured raport** — acest file `📤_outbox/LATEST.md` §0 (top) block structured ✅/❌ per item §0-§8 + §10 anti-recurrence + §11 cross-refs authority.
-- ✅ **§10 Anti-recurrence cross-ref §AR.* invariant preserved** — §AR.1 pre-flight grep ✅ + §AR.3 ground truth git verify ✅ + §AR.4 anti-distructive default ✅ + §AR.13 PK growth control N/A (vault meta-tooling) + §AR.16 STRICT_OUTPUT_FILE acest LATEST.md ≥10-15 LOC artefact ✅ + §AR.17 UNIFIED_INBOX_INPUT handover scris la `📥_inbox/` ✅ + §AR.19 claude_code timeout MCP delivery verify post-execute `git log origin -5` ✅. **§AR.20-§AR.22 codification candidate chat-current 2026-05-13b** captured în handover narrative §12 + distributed via wiki layer [[../wiki/concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b" pending Daniel approval explicit chat NEW post-handover read.
-- ✅ **§11 Cross-refs authority** — [[../CLAUDE]] §0-§7 schema Karpathy Real Option B + [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.13 paradigm + [[../wiki/_design/WIKI_DESIGN_SPEC_V1]] design spec Phase 1 LANDED + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate verified PASS.
+**Task:** Calendar V1 Slice 3 Production Wiring (S3.A → S3.E spec) — HALTED pre-edit per §AR.20 RECURRENCE STRONG pre-flight grep mandatory rule (codified in this chat's `/wiki-ingest` handover §31 ~hours ago). PROMPT CC S3 contains **4 simultaneous spec/reality mismatches** across all slices.
+**Model:** Opus EXCLUSIVELY per CEO directive verbatim.
+**Status:** ⏸️ **HALTED CLEAN** — backup tag pushed pre-execute, **ZERO `src/` touched**, tests 2984 PASS preserved EXACT, no commits to revert. Recommended next: Daniel rewrite PROMPT CC S3 with grep evidence per slice.
+**Branch:** `feature/v2-vanilla-port` (no advancement post commit `aa89602` S2 raport).
+**Date:** 2026-05-13 10:50 Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 §F3.13.
+**Pre-flight tag pushed origin:** `pre-calendar-v1-s3-production-wiring-2026-05-13`
 
 ---
 
-## §Pre-flight
+## §0 — Why halt (§AR.20 STRONG cited explicitly by S3 prompt itself)
 
-- ✅ Backup tag `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings` pushed origin (rollback safety net invariant)
-- ✅ Grep filesystem verify references in handover narrative (commits S2.A/B/C exist + ADRs 026/030/020 exist + wiki target pages exist + Daniel-isms verbatim preserved exact)
-- ✅ Branch `feature/v2-vanilla-port` (NU main per HARD CONSTRAINTS §F3.12)
-- ✅ Model Opus EXCLUSIVELY (Sonnet concediat permanent per CEO directive)
-- ✅ Strategy LOCKED V1 cap-coadă preserved invariant
+PROMPT CC S3 §0 step 7 declares: *"Citation `mockups/andura-clasic.html §<section>` MANDATORY"* and step 5: *"Fail oricare → STOP, raport finding-ul exact, NU continue."* §4 (S3.C) explicit STOP: *"`state.activeSession` field already exists per `src/state.js` (verify line — pre-stubbed contract). Dacă NU există = STOP, raport spec gap."*
 
-## §Modificări (filesystem changes)
+Pre-flight grep across all 4 slice premises caught **5 distinct gaps simultaneously** before any edit. Per prompt's own halt-conditions, execution stops here.
 
-**1 NEW page distributed:**
-- `wiki/summaries/calendar-v1-s2-production-wiring-milestone-2026-05-13.md` (NEW)
-
-**6 UPDATE existing pages distributed:**
-- `wiki/concepts/calendar-feature-v1-spec.md` (§Synthesis + §Verbatim + §Bugatti + §Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
-- `wiki/entities/engines/engine-coach-director.md` (§Synthesis + §Verbatim + §Bugatti + §Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
-- `wiki/entities/adrs/adr-020-storage-tiering-strategy.md` (§Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
-- `wiki/concepts/anti-recurrence-rules.md` (APPEND new section "Chat-Current Slip Patterns 2026-05-13b" + frontmatter amendments[2026-05-13b] APPEND)
-- `wiki/summaries/daniel-isms-glossary.md` (APPEND new section "Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED")
-- `wiki/summaries/slip-patterns-history.md` (APPEND new section "Chat-Current Slip Patterns 2026-05-13b")
-
-**Index + log updates:**
-- `wiki/index.md` (total_pages 119 → 120 + Catalog status section + Summaries section +1 NEW entry + LOCK V1 trailer updated)
-- `wiki/log.md` (APPEND new entry top `## [2026-05-13b] ingest` cu narrative summary distribution + verification checklist §0-§11)
-
-**Archive moves:**
-- `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` → `📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED.md`
-- `📤_outbox/LATEST.md` (Calendar V1 S2 raport precedessor) → `📤_outbox/_archive/2026-05/450_LATEST_PREVIOUS_CALENDAR_V1_S2_PRODUCTION_WIRING_CONSUMED.md`
-- NEW `📤_outbox/LATEST.md` (acest file structured §0-§11 raport)
-
-## §Build+Tests
-
-- ✅ Tests 2984 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
-- ✅ Pre-commit hook gate verde
-- ✅ No regression (baseline 2914 → 2984 PASS post S2 LANDED chat-current 2026-05-13b preserved)
-
-## §Commits
-
-- atomic single-concern: `f4c7004` `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips`
-- pushed origin `feature/v2-vanilla-port` (verified `aa89602..f4c7004` LANDED remote)
-- 12 files changed, 701 insertions(+), 149 deletions(-)
-
-## §Pushed
-
-- ✅ Backup tag pushed origin pre-execute: `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings`
-- ✅ Atomic commit pushed origin: `feature/v2-vanilla-port`
-
-## §Issues
-
-- NONE — all §0-§11 HANDOVER_VERIFICATION_CHECKLIST items PASS.
-- 3 slip patterns §AR.20-§AR.22 codification candidate captured chat-current 2026-05-13b pending Daniel approval explicit chat NEW post-handover read (NU blocker — anti-recurrence catalog wiki layer distributed pending eligible codification §AR.* invariant rule formal LOCKED V1).
-
-## §Next action
-
-🦫 **e timpul pt noul chat** (Direct-to-CC paradigm preserved per [[../wiki/concepts/direct-to-cc-paradigm]] + [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 step 8). Daniel chat NEW + "salut acasă" trigger §CC.2 layered read Karpathy Real (wiki/index.md + wiki/log.md last 5 entries + drill wiki entities/concepts/summaries per topic) per §F3.7. Read post-handover this LATEST.md §0-§11 verification raport prima + handover narrative archived [[../📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED]] pentru context complet chat-current.
-
-**Path forward chat NEW recommended (per handover narrative §10):**
-1. **P1 S3 production wiring spec** atomic split candidate 4 LOCKs strategic chat-current aligned: drill destinations wiring + Calendar UI commit handler + Session guard + Bottom-nav hide (4 LOCKs LOCKED V1 chat-current)
-2. **P2 alternative exhaustion + freeweight fallback** smart-routing ADR amendment strategic engine pivot
-3. **P3 Identity palette consolidare** UX polish pre-Beta draft alternative side-by-side
-4. **§AR.20-§AR.22 codification approval** explicit Daniel chat NEW (spec PROMPT_CC violated ADR 026 §9 RECURRENCE STRONG + false dichotomy A/B + bandwidth proactiv missed)
+This is the recurrence pattern Daniel codified §AR.20 (`wiki/concepts/anti-recurrence-rules.md` §"Chat-Current Slip Patterns 2026-05-13b") in the very `/wiki-ingest` operation that ran ~hours before this S3 prompt was drafted. **§AR.20 was specifically designed to prevent THIS scenario.**
 
 ---
 
-🦫 **Bugatti craft. /wiki-ingest handover 2026-05-13b LANDED clean — 1 NEW summary + 6 UPDATE existing pages voice §1 enforced + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate PASS + archive raw HANDOVER 449 CONSUMED + LATEST.md cycle 450 CONSUMED + tests 2984 PASS preserved EXACT + ZERO src/ touched + ZERO main branch + ZERO React/JSX + ZERO --no-verify + ZERO frozen wiki pages mods beyond scope + ZERO Sonnet model. Cumulative ~742 LOCKED V1 PRESERVED unchanged + 4 NEW strategic LOCKs chat-current = ~746 cumulative chat-current. Voice preservation policy §1 4-section MANDATORY enforced 7/7 NEW/UPDATE pages. Identity Andura prezervat prin daniel-isms verbatim catalog extensible cross-cluster 9 NEW chat-current. Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCK V1 2026-05-12 §F3.13 validation extended 3+5 atomic commits chat-current Calendar V1 cumulative drift + 1 atomic commit wiki-ingest distribution.**
+## §1 — Spec/reality matrix per slice (verbatim path:reality grep evidence)
+
+### S3.A — Bar chart "CUM AU FOST SESIUNILE" Propunere A
+
+| Prompt assumption | Grep reality | Severity |
+|-------------------|--------------|----------|
+| Source data `getAllRatings()` din `src/storage.js` | `src/storage.js` **does not exist** as a file. `wc -l src/storage.js` returns "No such file or directory" | HIGH |
+| `getSessionsForMonth(year, month)` query helper for calendar | Function name appears **0× in `src/`** (grep `Found 3 files` all in wiki + archive docs, none in code) | HIGH |
+| Mockup section §progress | Section title "CUM AU FOST SESIUNILE" found **only in wiki summaries + archived raports**, never in `04-architecture/mockups/andura-clasic.html` itself | MEDIUM |
+| Existing 2-row 90-day grid markup to replace | Grep for "90-day grid" / "CUM AU" against mockup returned 0 hits — markup may exist under different name or may not exist | MEDIUM |
+
+**Verdict:** Entire S3.A premise built on imaginary file (`src/storage.js`) + imaginary helpers (`getAllRatings`, `getSessionsForMonth`) + uncertainty whether mockup section even exists. Cannot proceed without Daniel clarifying:
+- Where does session rating data actually live? (probably `DB.get('logs')` based on `db.js:3-6` pattern + session.js:108-110 `DB.set('logs', ...)`)
+- Is "CUM AU FOST SESIUNILE" a NEW section to design, or a rename of an existing chart? Which mockup section actually hosts it?
+
+### S3.B — Missing equipment combo refactor
+
+| Prompt assumption | Grep reality | Severity |
+|-------------------|--------------|----------|
+| `src/storage.js` extend `addMissingEquipment / removeMissingEquipment / getMissingEquipmentRegistry()` utils | File `src/storage.js` doesn't exist. Equivalent utils **already implemented in S2.A** at `src/engine/schedule/scheduleAdapter.js`: `toggleMissingEquipment`, `setMissingEquipment`, `getMissingEquipment` | HIGH (creates conflict — would duplicate S2.A) |
+| `smartRouting.findAlternative(exerciseId, ctx.meta.missingEquipment)` API | Actual API at `src/engine/smart-routing/alternative-finder.js:14` is `findAlternatives(exerciseName)` — **plural name, single arg, no missingEquipment param.** Test file confirms signature: `findAlternatives('Lat Pulldown')` | HIGH (signature mismatch) |
+| `ctx.meta.missingEquipment` field | S2.B integration writes `ctx.equipment.{available,unavailable}` (engine-domain IDs) + `ctx.meta.calendarOverride`. NO `ctx.meta.missingEquipment` field. User-driven list flows via `ctx.equipment.unavailable` post-translation. | MEDIUM (data model misaligned) |
+| REMOVE S1.7 single button preview + Cont picker default-checked | Mockup S1.7 single-button + Cont picker exist in `04-architecture/mockups/andura-clasic.html` (verified my own S1.7 commit `de761f5`). But `src/` parity for these UI surfaces is **not yet wired** (S2.C ported only the aparateLipsa modal; drill destinations Cont/General + workout-preview deferred to S3 per S2 raport §10 path forward #1) | MEDIUM (would need NEW src/ wiring before refactor) |
+
+**Verdict:** S3.B partially REVOKES S1.7 + S2.C work, partially extends with new wiring. Coherent intent but spec references wrong file paths + wrong API signature. Cannot proceed without:
+- Reusing S2.A scheduleAdapter utils (not creating new src/storage.js)
+- Correcting smart-routing API contract or extending it deliberately
+- Deciding whether to wire Cont/General + workout-preview drill destinations FIRST (deferred path forward S2 §10 #1) before refactoring the picker pattern
+
+### S3.C — Session guard double-start
+
+| Prompt assumption | Grep reality | Severity |
+|-------------------|--------------|----------|
+| `state.activeSession` object with `.finishedAt`/`.abandonedAt`/`.id` fields | `src/state.js:5-8` has scalars: `sessActive: false` (boolean) + `sessStart: null` (timestamp) + `sessTimer: null` + `sessLog: []`. NO `activeSession` object | HIGH (data model misaligned) |
+| `showWorkoutOverlay(state.activeSession.id)` function | Grep `showWorkoutOverlay` returns **0 matches anywhere in repo**. Session UI shown imperatively via `$('today-screen').style.display='none'; $('session-ui').style.display='block'` (`src/pages/coach/session.js:52-53,70-71`) | HIGH (function doesn't exist) |
+| `state.activeSession.finishedAt` / `.abandonedAt` discriminator fields | Actual end signal: `state.sessActive=false` set in `endSession()` line 106. Field `state.earlyStopReason` for abandon reason (line 26 state.js + line 61 session.js). No finishedAt/abandonedAt | MEDIUM (semantically reachable via real fields but rename required) |
+
+**Verdict:** S3.C intent is sound and adaptable, but the prompt code samples would fail to compile against real state shape. Adapt path: guard `if (state.sessActive && state.sessStart)` → ensure DOM session-ui visible + toast feedback.
+
+### S3.D — Bottom-nav HIDE in-session
+
+| Prompt assumption | Grep reality | Severity |
+|-------------------|--------------|----------|
+| `bottom-nav` CSS class | Grep across `src/` returned 0 matches for `bottom-nav` (only 4 hits, all in `src/engine/warmup/*` for unrelated logic). Bottom-nav exists in mockup HTML but has no `src/` parity yet | HIGH (no src/ infra to toggle) |
+| `body.in-session` class toggle pattern | 0 matches in `src/`. New class would need to be introduced | MEDIUM (greenfield addition fine, but spec implies existing surface) |
+| `workout overlay z-index 7500` | Pattern matches existing modals (painButton/equipmentSwap/cevaNuMerge use z-index:8000), but specific `workout overlay` element not located by name | MEDIUM (need to identify actual DOM element) |
+
+**Verdict:** S3.D depends on bottom-nav existing in `src/`. Investigation needed: does `index.html` host a bottom-nav element, or is it mockup-only? If mockup-only, the prerequisite (NEW bottom-nav port to `src/`) is much larger than the slice scope describes.
+
+### S3.E — Tactical polish bundle
+
+Not investigated — scope contingent on S3.A-D. Mockup polish references which would need to be located and verified independently.
+
+---
+
+## §2 — Why this matters more than usual
+
+§AR.20 ("PROMPT CC src/ reference verify ADR primary citation MANDATORY ÎNAINTE write") was codified in this very chat session's `/wiki-ingest` handover (`wiki/concepts/anti-recurrence-rules.md` §"Chat-Current Slip Patterns 2026-05-13b"). The S3 prompt drafted **after** that codification still violates the rule on **4 simultaneous fronts**. This is the recurrence-of-the-recurrence-rule scenario the catalog exists to surface.
+
+Memory `feedback_grep_before_prompt_cc.md` already tracks this pattern as a multi-chat recidiva. Each prior occurrence saved us from broken implementation. This one would have been worse: multi-slice cumulative scope means a broken foundation slice cascades into 3+ downstream commits with rework.
+
+---
+
+## §3 — What was preserved (rollback safety net intact)
+
+- ✅ Backup tag `pre-calendar-v1-s3-production-wiring-2026-05-13` **pushed origin**. Rollback target identical to current state (no commits past S2 raport `aa89602`).
+- ✅ **ZERO `src/` touched.** No partial implementation to clean up.
+- ✅ Tests baseline **2984 PASS preserved EXACT** (verified post-pre-flight via `npm run test:run` — `Test Files 162 passed (162) · Tests 2984 passed (2984)`).
+- ✅ No `wiki/` modifications. No `.obsidian/` touched. No `📥_inbox/` writes.
+- ✅ Branch `feature/v2-vanilla-port` advanced only via this raport commit (doc-only).
+
+---
+
+## §4 — Recommendation for prompt redo (path forward)
+
+When Daniel drafts PROMPT CC S3 v2, recommended grep evidence per slice **before** writing the spec:
+
+```bash
+# S3.A — confirm rating data source + mockup section
+grep -rn "DB\.get('logs')\|getLastN\|getAllLogs" src/        # actual rating data
+grep -n "CUM AU FOST\|cum-au-fost\|hist-grid" 04-architecture/mockups/andura-clasic.html  # mockup section name
+
+# S3.B — confirm equipment registry already exists via S2.A
+grep -n "wv2-missing-equipment\|toggleMissingEquipment" src/engine/schedule/scheduleAdapter.js  # reuse, don't recreate
+grep -n "^export function find" src/engine/smart-routing/*.js  # actual API signatures
+
+# S3.C — confirm session state shape
+grep -n "sess\|active" src/state.js     # real field names
+grep -rn "function startSession\|export.*startSession" src/  # actual entry point
+grep -rn "session-ui\|today-screen" src/  # actual DOM toggle pattern
+
+# S3.D — confirm bottom-nav exists in src/
+grep -rn "bottom-nav\|bottomNav\|nav-bottom" src/ index.html  # likely NEW infra needed first
+```
+
+**Atomic split recommendation per slice after grep-redo:**
+- **S3.A bar chart:** likely a single 30-60 LOC change in `src/pages/dashboard.js` or `src/pages/coach.js` + ~10-15 tests. Source data via existing `DB.get('logs')` aggregation (no new src/storage.js needed).
+- **S3.B equipment refactor:** EXTEND existing S2.A `scheduleAdapter.js` utils (don't recreate). REUSE S2.B coachContext integration. NEW: per-exercise inline button in workout-preview + Cont picker default-checked state. ADAPT not REPLACE.
+- **S3.C session guard:** small surface — 5-line guard at top of `src/pages/coach/session.js:31 startSession()` using real `sessActive` + `sessStart` fields. ~5-8 tests.
+- **S3.D bottom-nav hide:** requires PREREQUISITE — confirm whether bottom-nav exists in `index.html` and which class name. If exists, simple `body.in-session` toggle. If not, this is a NEW infra slice (probably larger than described).
+- **S3.E polish:** mockup-only or minimal `src/` parity. Defer to last.
+
+**Bandwidth note:** Even with correct specs, S3.A + S3.B + S3.C + S3.D + S3.E is realistically 2-3 chats of CC autonomous work. Splitting into 2-3 prompt batches (e.g., S3.C+S3.D bundle, then S3.A solo, then S3.B refactor) reduces context risk per chat.
+
+---
+
+## §5 — Anti-recurrence slip captured chat-current (potential §AR.21+ candidate)
+
+**Pattern observation:** §AR.20 was codified ~hours before this S3 prompt was drafted. The prompt itself **cites §AR.20** in its §0 pre-flight as MANDATORY. Yet the prompt violates §AR.20 on 4 fronts. This isn't a failure of the rule — it's a meta-pattern about **rule-citation vs rule-enforcement during prompt drafting**.
+
+**Possible §AR.21 codification candidate (deferred for Daniel decision in fresh chat):**
+
+> "PROMPT CC self-cites §AR.20 mandatory grep but spec body still contains non-existent file/function references. Codify: prompts that cite §AR.20 MUST embed `grep` output snippets verbatim as inline evidence per file/function referenced. Mockup-side mental model + wiki narrative ≠ source-of-truth for src/ implementation specs."
+
+This isn't a new pattern — it's §AR.20 unchanged. But the **citation-without-enforcement** is the meta-slip worth surfacing.
+
+---
+
+## §6 — Daniel-isms preserved (verbatim catalog extensible)
+
+No new daniel-isms surfaced this slice (no chat interaction during this halt — Daniel single-message authorized "Halt + handover" via AskUserQuestion). Catalog from S2 + prior handovers unchanged.
+
+---
+
+## §7 — Cross-refs
+
+- [[../wiki/concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b" §AR.20 RECURRENCE STRONG (rule cited by S3 prompt + violated 4× by same prompt)
+- [[../wiki/summaries/slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13b" (this halt is a §AR.20 catch event — add chronological entry next `/wiki-ingest`)
+- [[../wiki/summaries/calendar-v1-s2-production-wiring-milestone-2026-05-13]] §Synthesis path forward S3 (current state: HALTED post-pre-flight, no commits past S2 raport)
+- [[../wiki/concepts/calendar-feature-v1-spec]] §S2 LANDED 2026-05-13b (S3 deferred pending prompt redo)
+- [[../03-decisions/026-offline-coaching-decision-tree-exhaustive]] §9 pure-function engines (S2 invariant preserved — would have been respected in S3 too via adapt pattern if spec corrected)
+- [[../03-decisions/030-adapter-design-pattern]] §D2 thin scope adapters (S2.A pattern reusable for S3.B if spec corrected)
+- [[../03-decisions/020-storage-tiering-strategy]] §1.4 Tier 0 active rolling (already wired via S2.A scheduleAdapter — S3.B should reuse not recreate)
+- [[../VAULT_RULES]] §F3.12 HARD CONSTRAINTS + §F3.13 metoda hibridă + §AR.PRE_FLIGHT + §AR.20
+- [[../📤_outbox/_archive/2026-05/451_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13b_POST_S2_LANDED_CONSUMED]] (precedent imediat wiki-ingest raport archived pre-S3 halt)
+- [[../📤_outbox/_archive/2026-05/450_LATEST_PREVIOUS_CALENDAR_V1_S2_PRODUCTION_WIRING_CONSUMED]] (S2 LANDED raport precedent)
+
+---
+
+## §8 — Next action options (Daniel decides fresh chat)
+
+1. **Rewrite PROMPT CC S3 v2** with grep evidence per slice (§4 recommended grep batch) — split into 2-3 smaller prompts if scope large.
+2. **Refocus on S3.C + S3.D bundle** as adapted-execute slice (smallest, most isolated) — written with correct field names. Skip S3.A/S3.B/S3.E until separate prompts.
+3. **Pivot to different priority:** P2 alternative exhaustion ADR amendment, P3 Identity palette consolidation, Daniel Gates smoke prod `andura.app` post-deploy, Beta launch readiness consolidation (per S2 raport §10 path forward).
+4. **Codify §AR.21 meta-pattern** before drafting any next CC prompt — "citation without enforcement" rule strengthens §AR.20 self-evidence requirement.
+
+---
+
+🦫 **Bugatti craft. S3 HALTED CLEAN per §AR.20 quadruple violation. ZERO `src/` touched, tests 2984 preserved EXACT, backup tag pushed pre-execute, no rollback needed. Pattern recognition: rule-citation vs rule-enforcement during prompt drafting = §AR.21 candidate. Path forward awaits Daniel decision in fresh chat — bandwidth conserved by halting before partial implementation cascade.**
