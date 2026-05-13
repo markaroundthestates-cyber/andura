@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-13d
+last_updated: 2026-05-13e
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -260,3 +260,62 @@ Daniel verbatim memory rule #26 NICIODATĂ argumente quality:
 - [[../concepts/calendar-feature-v1-spec]] frontmatter `amendments[]` 2026-05-13d Bundle 3 V1 narrow + Bundle 3 follow-up LANDED + DISCRETE-BLOCKS DISCIPLINE §AR.22 candidat 1× threshold met cross-link daniel-isms catalysator chat-current
 - [[bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13]] §"Verbatim quotes Daniel" Bundle 3 V1 narrow + follow-up LANDED milestone synthesis ultra-scurt agreement mode + cooperative push-back smiley 5 daniel-isms aggregate
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — slip 10 chronological §AR.22 candidat 1× threshold met DISCRETE-BLOCKS DISCIPLINE)" slip pattern chronological cross-link push-back productive moments tone shifts framing changes chat-current
+
+---
+
+## Chat ACASĂ 2026-05-13e Bundle 4 LANDED (APPEND-only — NEW daniel-isms cooperative push-back smiley pattern catalyser + Gigel-test reframe paradigm reset + cascade exhaustion mechanism verbatim)
+
+**Catalog NEW append cross-cluster chat ACASĂ 2026-05-13e — extensible NU lobotomy existing entries:**
+
+**Category A — Co-CTO autonomy reaffirm cross-flow chat-current 2026-05-13e:**
+- *"facem cum vrei tu dar go"* — Co-CTO tactical full delegation autonomous reaffirm cross-chat (preserved invariant chat-current 2026-05-13d "facem cum vrei tu dar go" + cross-ref Category A existing 2026-05-13b "asta e decizia ta nu a mea" + 2026-05-13c "esti cto figure it out" Co-CTO autonomy paradigm consistent)
+- *"fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :)"* — anti-confirmation theater push-back cooperative cu smiley jucauș `:)` (preserved invariant chat-current 2026-05-13d cooperative push-back smiley pattern reaffirm Co-CTO autonomy paradigm)
+- *"ok"* — approve concise post-strategic-input acknowledgement Daniel (preserved invariant cross-chat Category A existing)
+
+**Category B — Cooperative push-back smiley `:))` NEW pattern catalyser chat-current 2026-05-13e (cooperative push-back NU dur, jucauș cu smiley dublu `:))`):**
+- *"ce am eu de discutat? ca vad ca fiecare chat mai imi adauga cate ceva de clarificat cu daniel :))"* — push-back productive cooperative smiley DUBLU `:))` jucauș anti-Co-CTO accumulation tactical-as-strategic safety prompts slip catalysator chat-current. NEW pattern: smiley DUBLU `:))` mai jucauș/cooperative decât smiley single `:)` 2026-05-13d. Mea culpa rapid scribe-side pattern aplicat: ambele tactical NU strategic (mockup DESIGN MASTER LOCKED pentru placement + anti-paternalism toast undo standard Gigel-friendly pentru debifare). NU "tu ce zici?" confirmation theater.
+- *"ai ceva sa ma intrebi pe mine?"* — challenge real anti-confirmation theater (preserved invariant cross-chat scope CEO vs CTO discriminat ex-ante)
+
+**Category C — Stop recognition discipline chat-current 2026-05-13e:**
+- *"stop"* — immediate STOP discipline zero continuation (preserved invariant cross-chat Daniel scope clear)
+
+**Category D — Gigel-test reframe paradigm reset NEW chat-current 2026-05-13e (critical Bundle 4 design final catalysator):**
+- *"Tu esti Gigel. Ajungi in sala, deschizi andura, si realizezi ca nu ai un aparat din antrenament. Ce faci?"* — Gigel-test reframe paradigm reset critical chat-current — forțează simplificare UX-first. Bundle 4 final design = cascade in-place pe row, 2 butoane Gigel-discoverable, ZERO friction modal/picker pre-tap. Gigel POV: ajung sală, văd exercițiu, tap "schimbă, nu am", app pune alt exercițiu pe loc, repeat până găsesc combinație bună, NU vreau picker 25 aparate, NU întrebări modal, NU navigez Cont mid-sesiune.
+- *"hai sa iti explic asa..."* — cascade exhaustion mechanism full description verbatim invariant
+- *"explica ca la prosti ca nu inteleg"* — jargon-free request anti-tech-jargon (Daniel-ism reaffirm Gigel-friendly cross-cluster Category D existing)
+
+**Category E — Cascade exhaustion mechanism verbatim full description NEW chat-current 2026-05-13e (Bundle 4 core mechanism specification authority preserved verbatim):**
+- *"User nu are Pec deck, App ii sugereaza cable fly, user nu are nici cable machine, App ii sugereaza bench incline fly, user nu are nici incline bench, app sugereaza flat bench fly, user nu are nici bench, app ii sugereaza fly pe jos, user nu are nici db, app ii sugereaza un exercitiu care suplineste muscle development pe grupa aia, user nu are nici aia, app ii sugereaza un bodyweight exercise, user pune ca nu poate, app ii sugereaza varianta light de exercitiu etc"* — Bundle 4 cascade exhaustion mechanism full description specification authority verbatim preserved invariant (NU paraphrase, NU lobotomy — Bundle 5 ADR amendment SMART_ROUTING_v2 strategic chat dedicat consume verbatim)
+
+**Category F — Semantic distinction permanent vs ephemeral NEW chat-current 2026-05-13e (Bundle 4 core distinction):**
+- *"Daca refuza azi un exercitiu poate il face alta data. Daca nu are echipament sigur nu il face"* — semantic distinction permanent vs ephemeral core Bundle 4 distinction (cascade alternative exhaustion mechanism + 2 layere ortogonale preview permanent global + mid-session ephemeral cross-flow shared refusal counter)
+- *"cand user pune aparat lipsa in antrenor la preview, selectia se duce in cont la aparat lipsa. App tine cont mereu ca e aparat lipsa. Selectia din cont poate fi debifata, in cazul in care user are acum aparatul"* — Cont 2 grupuri vizibilitate + reversibilitate preserved invariant
+
+**Category G — Counter threshold modal trigger Co-CTO bias 3 NEW chat-current 2026-05-13e:**
+- *"Daca vede ca de 3-4-5 ori am dat nu vreau sa ma intrebe daca e permanent sau nu"* — counter threshold modal trigger Daniel verbatim Co-CTO bias 3 LOCK V1 (NU 5 paternalism Gigel-frustrat / NU 2 agresiv Gigica-anxioasă)
+
+**Category H — Cont reversibilitate verbatim NEW chat-current 2026-05-13e (Bundle 4 Cont 2 grupuri lock):**
+- *"la final pe sesiunea de cont la aparate lipsa, sa am si vizibilitate la aparatele excluse, in asa fel incat daca fac ceva nasol si bag un aparat sau exercitiu acolo din antrenor, sa fie reversibil procesul"* — Cont 2 grupuri vizibilitate (aparate-lipsa + aparate-excluse-din-antrenor) + reversibilitate Daniel verbatim Bundle 4 LOCK V1
+
+**Category I — Mid-session augmentation engine intelligent NEW chat-current 2026-05-13e (Bundle 4 scope add cross-flow shared):**
+- *"vezi ca acum exista si un buton de nu vreau in mijlocul setului langa un buton de aparat ocupat. Butonul de aparat ocupat trebuie sa faca si el cascade cat sa optimizeze ordinea exercitiilor logic si sa nu creeze muscle fatigue inainte de big lift"* — mid-session augmentation engine intelligent Daniel verbatim Bundle 4 scope add cross-flow shared (scaffolding deja LANDED slice 1.7 mockup L1369-1374 2 butoane mid-session existente, Bundle 4 = behavior augmentation orchestrator-level NU engine mutation ADR 026 §9 pure-function engines invariant preserved)
+- *"botonul de nu vreau acolo trebuie sa se mapeze cumva cu botonul din preview, si sa schimbe sesiunea live"* — mid-session mapped cu preview cross-flow shared refusal counter `wv2-refusal-counter` Tier 0 parity pattern
+- *"gigica vede ca trebuie sa faca squats, e de acord... dar cand ajunge la squat machine vede 4-5 dubiosi ca abia asteapta sa se uite la ea... asa ca ii trebuie optiunea de nu vreau si mid training, fara sa afecteze muscle development sau sa renunte la exercitiu"* — Gigica social discomfort scenario realist Bundle 4 mid-session "Nu vreau" rationale + cascade alternative exhaustion preserve muscle development invariant
+
+**Category J — Engine intelligence semantic NEW chat-current 2026-05-13e (Bundle 4 muscle-target priority preserve):**
+- *"din spatele aplicatiei, aplicatia trebuie sa selecteze inteligent alternative atat pentru nu vreau cat si pentru nu am aparat. Sa tina cont de ce muschi lucreaza exercitiul si sa selecteze inteligent"* — engine intelligence semantic Daniel verbatim Bundle 4 muscle-target priority preserved invariant cascade alternative exhaustion mechanism specification authority
+
+**Category K — Design approval + handover trigger chat-current 2026-05-13e (preserved invariant cross-chat ultra-scurt agreement mode):**
+- *"suna bine"* — design approval Daniel verbatim Bundle 4 final design lock V1 (combo cascade mid-tier scope LOCK + Bundle 5 ADR amendment SMART_ROUTING_v2 deferred strategic chat dedicat)
+- *"latest"* — Metoda Hibridă post-LANDED Daniel trigger Claude read raport (preserved invariant cross-chat Category F existing)
+- *"cat ai bw?"* — bandwidth check pattern (preserved invariant cross-chat 2026-05-13b Category B existing)
+- *"handover"* — §F3.8 fast handover ingest ultra-scurt agreement mode trigger lean (preserved invariant cross-chat 2026-05-13d Category A existing)
+
+**Pattern NEW chat-current 2026-05-13e:** Daniel chat-current 11+1 daniel-isms surfaced cross-chat consistent + cooperative push-back smiley DUBLU `:))` NEW pattern jucauș (mai cooperativ decât smiley single `:)` 2026-05-13d) anti-Co-CTO accumulation tactical-as-strategic safety prompts slip catalysator + Gigel-test reframe paradigm reset critical (Bundle 4 final design cascade in-place pe row) + cascade exhaustion mechanism verbatim full description specification authority Bundle 4 core mechanism preserved verbatim invariant NU paraphrase NU lobotomy (Bundle 5 ADR amendment SMART_ROUTING_v2 strategic chat dedicat consume verbatim) + semantic distinction permanent vs ephemeral core Bundle 4 distinction (cascade alternative exhaustion + 2 layere ortogonale preview permanent global + mid-session ephemeral cross-flow shared refusal counter) + counter threshold modal trigger Co-CTO bias 3 LOCK V1 + Cont 2 grupuri vizibilitate + reversibilitate Daniel verbatim Bundle 4 LOCK V1 + mid-session augmentation engine intelligent Daniel verbatim Bundle 4 scope add cross-flow shared + engine intelligence semantic muscle-target priority preserve. Tone consistent single-message Daniel preserved cross-chat 2026-05-13b → 2026-05-13c → 2026-05-13d → 2026-05-13e. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1). ZERO halucinezi triggered acest chat.
+
+**Cross-refs raw layer adițional chat-current 2026-05-13e:**
+- [[../../📥_inbox/HANDOVER_2026-05-13e_chat_acasa_post_bundle_4_workout_preview_plus_midsession_refusal_flow_landed]] §1-§5 handover narrative chat-current Bundle 4 LANDED + 11+1 daniel-isms cooperative push-back smiley DUBLU `:))` NEW pattern + Gigel-test reframe paradigm reset + cascade exhaustion mechanism verbatim + semantic distinction permanent vs ephemeral + counter threshold modal trigger Co-CTO bias 3 + Cont 2 grupuri vizibilitate + reversibilitate + mid-session augmentation engine intelligent + engine intelligence semantic muscle-target priority preserve (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13e (APPEND-only — §AR.21 4th consecutive validation effective + §AR.22 candidat 2× threshold cumulative potential)" §AR.21 4th consecutive validation effective + §AR.22 candidat potentially 2× threshold cumulative + Co-CTO accumulation tactical-as-strategic safety prompts slip cooperative push-back smiley NEW pattern catalysator cross-link daniel-isms catalysator verbatim quotes
+- [[../concepts/calendar-feature-v1-spec]] frontmatter `amendments[]` 2026-05-13e Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED cross-link daniel-isms catalysator chat-current
+- [[bundle-4-workout-preview-plus-midsession-refusal-flow-landed-milestone-2026-05-13]] §"Verbatim quotes Daniel" Bundle 4 LANDED milestone synthesis 11+1 daniel-isms cooperative push-back smiley DUBLU `:))` NEW pattern + Gigel-test reframe paradigm reset + cascade exhaustion mechanism verbatim aggregate
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13e (APPEND-only — slip 11 chronological §AR.21 4th consecutive validation effective + §AR.22 candidat 2× threshold cumulative potential)" slip pattern chronological cross-link push-back productive moments tone shifts framing changes chat-current
