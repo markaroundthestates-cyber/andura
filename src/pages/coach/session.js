@@ -29,6 +29,18 @@ export function clearDraft() { localStorage.removeItem('session-draft'); }
 export function tickSess() {}
 
 export function startSession() {
+  // ── S3.C Session guard double-start (Daniel verbatim 2026-05-13b "q1 - a") ──
+  // Already mid-session (active + started timestamp set) → redirect direct la
+  // session-ui zero prompt Gigel-smooth. Anti-paternalism: NU confirm "Inchei sesiunea
+  // curenta?" forced friction. Session-pill safety net preserved (STOP/FINISH EARLY/
+  // ANULEAZA buttons unchanged user manual end path).
+  if (state.sessActive && state.sessStart) {
+    const tsR = $('today-screen'); if (tsR) tsR.style.display = 'none';
+    const suR = $('session-ui'); if (suR) suR.style.display = 'block';
+    toast('🔄 Sesiune deja activa');
+    return;
+  }
+
   // Feature 2: Check for existing session draft from today
   const draft = DB.get('session-draft');
   if (draft && draft.date === tod() && draft.sessLog && draft.sessLog.length > 0) {
