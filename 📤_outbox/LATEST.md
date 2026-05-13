@@ -134,7 +134,11 @@ Test additions:
 
 ## §13 Commit hash + push origin verify
 
-Pending §6 atomic commit + push origin step. Will append commit hash post-execute below.
+- Commit hash: `ddb2d53` (atomic single-concern Bundle 6.0.2)
+- Branch: `feature/v2-vanilla-port`
+- Push: `30c015c..ddb2d53 feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3161 passed (3161)` verified pre-commit ✓
+- Files changed: 5 (src/schema/exerciseMetadata.js, src/schema/__tests__/exerciseMetadata.test.js, 📤_outbox/LATEST.md, +1256 −138; rename 📥_inbox/PROMPT_CC_BUNDLE_6_0_1 → 📤_outbox/_archive/2026-05/467; new 📤_outbox/_archive/2026-05/468)
 
 ## §14 ZERO src/ outside scope verify
 
