@@ -1,117 +1,190 @@
-# LATEST — `/wiki-ingest` handover 2026-05-13g Chat ACASĂ post ADR v2 LOCKED V2 drift fix LANDED + §AR.24 candidat scribe-mode
+# LATEST — Bundle 6.0.1 Chest Library Extension +90 chest exerciții cu fallback_cascade per ADR v2 LOCK V2 LANDED 2026-05-13h
 
-## §0 HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS
+## §0 Pre-flight grep evidence verbatim inline §AR.20 + §AR.21 LOCKED V1
 
-- §0 narrative present în inbox ✅ (sursă pre-archive `📥_inbox/HANDOVER_2026-05-13g_chat_acasa_post_adr_v2_locked_v2_drift_fix_landed.md`)
-- §1 backup tag pushed origin pre-execute: `pre-handover-ingest-2026-05-13g-chat-acasa-post-adr-v2-locked-v2-drift-fix-landed` ✅
-- §2 pre-flight grep verbatim cod/path evidence inline (commit `ac632fd` exists git log + raw layer `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md` exists + archives `463_*_SUPERSEDED.md` + `464_LATEST_PREVIOUS_*_CONSUMED.md` exist + Daniel-isms 9 NEW verbatim preserved exact per narrative §4) ✅
-- §3 voice §1 enforcement 4-section per pagină wiki distribuită (Synthesis 2-3 paragrafe + Verbatim quotes Daniel min 9-12 EXACT + Bugatti framing notes 5 sub-sections + Cross-refs raw layer min 8-12 specific `path:§` pointers) — 6/6 NEW/UPDATE pages ✅
-- §4 wiki/index.md + wiki/log.md updates cumulative count match (124 → 125 +1 NEW summary + 5 UPDATE existing pages) ✅
-- §5 bidirectional cross-links cluster triangle preserved forward-only policy (adr-smart-routing-equipment ↔ anti-recurrence-rules ↔ metoda-hibrida-chat-cc ↔ calendar-feature-v1-spec ↔ bugatti-craft ↔ daniel-isms-glossary ↔ slip-patterns-history ↔ handover-2026-05-13f cluster) ✅
-- §6 archive raw HANDOVER → `📤_outbox/_archive/2026-05/466_HANDOVER_2026-05-13g_*_CONSUMED.md` + archive precedent LATEST → `📤_outbox/_archive/2026-05/465_LATEST_VAULT_DRIFT_FIX_*_CONSUMED.md` ✅
-- §7 atomic commit single-concern + push origin `feature/v2-vanilla-port` ✅
-- §8 tests 3111 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12) ✅
-- §9 LATEST.md §0 HANDOVER_VERIFICATION_CHECKLIST structured raport ✅ (acest file)
-- §10 anti-recurrence cross-ref §AR.* invariant + §AR.24 candidat scribe-mode marked 1× threshold distribute concepts/anti-recurrence-rules.md APPEND-only section (NU codify yet, 2× rule minimum invariant) ✅
-- §11 cross-refs authority CLAUDE.md §0-§7 + VAULT_RULES §F3.1-§F3.13 + wiki/_design/ schema + HANDOVER_VERIFICATION_CHECKLIST.md §0-§11 ✅
-
-## §1 Task
-
-`/wiki-ingest` autonomous Bugatti per Daniel CEO directive verbatim chat-current *"handover"* voluntary trigger post LATEST `ac632fd` drift fix LANDED clean — bandwidth ~38-40% remaining preventiv pre-saturare scribe fresh + valoare cross-chat anti-recurrence. Distribute handover narrative `📥_inbox/HANDOVER_2026-05-13g_chat_acasa_post_adr_v2_locked_v2_drift_fix_landed.md` la wiki layer per `CLAUDE.md` §4.1 + `VAULT_RULES.md` §F3.8 + voice preservation policy §1 4-section structure MANDATORY + `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` §0-§11 Bugatti gate.
-
-## §2 Model + Status + Branch + Date
-
-- **Model:** Claude Opus 4.7 EXCLUSIVELY (hardcoded, ZERO Sonnet)
-- **Status:** ✅ LANDED clean atomic commit single-concern Bugatti
-- **Branch:** `feature/v2-vanilla-port` (NU main per HARD CONSTRAINTS §F3.12)
-- **Date:** 2026-05-13g
-
-## §3 Pre-flight
-
-- Backup tag pushed origin pre-execute: `pre-handover-ingest-2026-05-13g-chat-acasa-post-adr-v2-locked-v2-drift-fix-landed` ✅
-- Pre-flight grep §AR.20+§AR.21 verify references filesystem-side: commit `ac632fd` exists git log ✅ + raw layer `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md` exists ✅ + archives `463_BUNDLE_6_0_PROMPT_CC_LIBRARY_EXTENSION_2026-05-13e_SUPERSEDED.md` ✅ + `464_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13f_BUNDLE_5_STRATEGIC_CONSUMED.md` ✅ + Daniel-isms verbatim 9 NEW preserved exact per narrative §4 ✅
-- Strategy LOCK V1 filter pre-decision: Karpathy Real Option B + voice preservation §1 + HARD CONSTRAINTS §F3.12 + §AR.24 candidat 1× threshold (NU codify yet)
-- Memory check: BATCH 2 carry-forward state flip to Bundle 6.0.1 Chest extension P1 absolut next + tests baseline 3111 + cumulative 125 wiki pages
-- Verify remote state: feature/v2-vanilla-port branch active + origin/main NOT touched
-
-## §4 Modificări
-
-**1 NEW summary distribuit:**
-- `wiki/summaries/handover-2026-05-13g-post-adr-v2-locked-v2-drift-fix-landed-plus-ar24-candidate-milestone-2026-05-13.md` (NEW LOCKED V1 milestone synthesis — voice §1 4-section structure enforced)
-
-**5 UPDATE existing pages (frontmatter `amendments[]` APPEND-only + APPEND-only sections):**
-- `wiki/entities/adrs/adr-smart-routing-equipment.md` — APPEND `amendments[]` entry 2026-05-13g + last_updated flip + cross_refs APPEND NEW summary
-- `wiki/concepts/anti-recurrence-rules.md` — APPEND `amendments[]` entry 2026-05-13g + APPEND §"Chat-Current Slip Patterns 2026-05-13g" §AR.24 candidat scribe-mode marked 1× threshold + drift fix `ac632fd` success milestone validation effective + §AR.20+§AR.21 grep evidence inline applied this commit (preserves §AR.1-§AR.23 invariant unchanged) + Cross-refs raw layer adițional chat-current 2026-05-13g
-- `wiki/concepts/metoda-hibrida-chat-cc.md` — APPEND `amendments[]` entry 2026-05-13g 6th consecutive validation effective continuat
-- `wiki/summaries/daniel-isms-glossary.md` — APPEND §"Chat ACASĂ 2026-05-13g post drift fix + handover trigger" cu 9 NEW daniel-isms push-back productive moments Categorii Q-X cumulative + Cross-refs raw layer adițional chat-current + last_updated flip
-- `wiki/summaries/slip-patterns-history.md` — APPEND §"Chat-Current Slip Patterns 2026-05-13g" slip 13 chronological 3 patterns chat-current (13A initial PK over MCP slip + 13B drift wiki text halucinație DRAFT REV2 pre Daniel CLARIFY + 13C burn 60% bw signal §AR.24 candidat scribe origin) + Cross-refs raw layer adițional chat-current + last_updated flip
-
-**Index/log updates:**
-- `wiki/index.md` — total_pages 124 → 125 + last_updated 2026-05-13f → 2026-05-13g + Status post `/wiki-ingest` 2026-05-13g entry + NEW summary entry 20 in `## Summaries` list + Footer trailer 13g + Predecessor trailer 13f moved down
-- `wiki/log.md` — last_updated 2026-05-13f → 2026-05-13g + APPEND NEW entry top `## [2026-05-13g] ingest | Chat ACASĂ post ADR v2 LOCKED V2 drift fix ac632fd LANDED + §AR.24 candidat scribe-mode + memory state drift lessons cross-chat handover narrative distributed — 1 NEW summary + 5 UPDATE existing pages voice §1 enforced` cu body comprehensive ~80-120 LOC + ADDENDUM 2026-05-13g memory state drift lessons cross-chat
-
-**Archive operations:**
-- `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/465_LATEST_VAULT_DRIFT_FIX_ADR_V2_LOCKED_V2_2026-05-13f_CONSUMED.md` (precedent `ac632fd` drift fix raport cycle)
-- `📥_inbox/HANDOVER_2026-05-13g_*.md` → `📤_outbox/_archive/2026-05/466_HANDOVER_2026-05-13g_chat_acasa_post_adr_v2_locked_v2_drift_fix_landed_CONSUMED.md`
-- Write NEW `📤_outbox/LATEST.md` §0-§N structured raport (acest file)
-
-## §5 Build + Tests
-
-- **Tests baseline:** 3111 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
-- **Build:** N/A (doc-only changes)
-- **Pre-commit hook:** vitest verde full gate mandatory (NU --no-verify per HARD CONSTRAINTS §F3.12)
-
-## §6 Commits
-
-Single atomic commit single-concern Bugatti craft `8a244a9`:
+PRE first edit grep evidence verbatim (per §2 spec mandatory inline §0 raport):
 
 ```
-8a244a9 feat(wiki): /wiki-ingest handover 2026-05-13g post ADR v2 LOCKED V2 drift fix + §AR.24 candidat scribe-mode
+$ wc -l src/schema/exerciseMetadata.js
+129 src/schema/exerciseMetadata.js
+# OBSERVATION: 129 LOC actual (spec expected ~80-100; spec slightly stale, not a fail — file has more comments than spec assumed)
 
-11 files changed, 677 insertions(+), 146 deletions(-)
-- create mode wiki/summaries/handover-2026-05-13g-*.md (NEW summary)
-- create mode 📤_outbox/_archive/2026-05/465_LATEST_VAULT_DRIFT_FIX_*.md
-- create mode 📤_outbox/_archive/2026-05/466_HANDOVER_2026-05-13g_*.md
-- modify wiki/concepts/anti-recurrence-rules.md
-- modify wiki/concepts/metoda-hibrida-chat-cc.md
-- modify wiki/entities/adrs/adr-smart-routing-equipment.md
-- modify wiki/index.md
-- modify wiki/log.md
-- modify wiki/summaries/daniel-isms-glossary.md
-- modify wiki/summaries/slip-patterns-history.md
-- modify 📤_outbox/LATEST.md (NEW raport overwrite + precedent archived)
+$ grep -c "^  '" src/schema/exerciseMetadata.js
+26
+# OBSERVATION: 26 entries baseline (spec expected 27; file comment line 16 confirms "all 26 entries reviewed" — spec off-by-1, NOT halt-blocking;
+# all NEW additions are safe zero-mutation, tests adjusted §1 from 117 → 116 to reflect baseline 26 + 90 NEW)
+
+$ grep -n "muscle_target_primary: 'piept'" src/schema/exerciseMetadata.js
+37:  'Incline DB Press':        ...muscle_target_primary: 'piept'...
+39:  'Flat DB Press':           ...muscle_target_primary: 'piept'...
+41:  'Flat Barbell Bench':      ...muscle_target_primary: 'piept'...
+63:  'Pec Deck / Cable Fly':    ...muscle_target_primary: 'piept'...
+65:  'Cable Fly':               ...muscle_target_primary: 'piept'...
+# ✅ 5 existing chest entries baseline preserved invariant (zero mutation Bundle 6.0.1)
+
+$ grep -i "^  'Bench Press\|^  'Smith Machine Bench\|^  'Incline Barbell Bench\|^  'Decline\|^  'Push-up\|^  'Dip\|^  'Chest Press\|^  'Cable Crossover\|^  'DB Fly\|^  'Cable Fly Incline\|^  'Hammer Strength" src/schema/exerciseMetadata.js
+(no matches)
+# ✅ ZERO overlap candidate Bundle 6.0.1 NEW additions = all safe zero-mutation
+
+$ grep -o "muscle_target_primary: '[a-z]*'" src/schema/exerciseMetadata.js | sort -u
+muscle_target_primary: 'brate'
+muscle_target_primary: 'picioare'
+muscle_target_primary: 'piept'
+muscle_target_primary: 'spate'
+muscle_target_primary: 'triceps'
+muscle_target_primary: 'umeri'
+muscle_target_primary: 'unknown'
+# ✅ 6 V1 canonical (brate, piept, picioare, spate, triceps, umeri); 'unknown' = fallback default getExerciseMetadata() line 103, NOT a stored entry
+# Bundle 6.0.1 NEW additions use existing canonical strings ('piept' + 'triceps' close-grip variants + 'umeri' pike variants)
+
+$ grep -o "equipment_type: '[a-z]*'" src/schema/exerciseMetadata.js | sort -u
+equipment_type: 'barbell'
+equipment_type: 'cable'
+equipment_type: 'dumbbell'
+equipment_type: 'machine'
+# OBSERVATION: 4 canonical V1 actual (spec expected 5 incl bodyweight); 'bodyweight' introduced by Bundle 6.0.1 push-up + dip cluster — confirmed via typedef + valid
+
+$ grep -c "fallback_cascade" src/schema/exerciseMetadata.js
+0
+$ grep -c "fallback_cascade" src/schema/__tests__/exerciseMetadata.test.js
+0
+# ✅ ZERO fallback_cascade pre-existing — Bundle 6.0.1 introduces field additive
+
+$ cat 03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md | grep -A 2 "^locked_date:"
+locked_date: 2026-05-13f
+supersedes: 03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1.md LOCK V1 2026-05-02
+author: Claude chat Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 §F3.13
+# ✅ ADR v2 LOCK V2 raw layer truth-source confirmed real-time
+
+$ npx vitest run --reporter=basic 2>&1 | tail -5
+Test Files  169 passed (169)
+     Tests  3111 passed (3111)
+# ✅ Baseline 3111 PASS confirmed pre-edit
 ```
 
-## §7 Pushed
+**Pre-flight verdict:** 2 spec discrepancies surfaced (baseline 26 not 27; equipment_type missing 'bodyweight' which Bundle 6.0.1 introduces) — both informational, NOT halt-blocking. All NEW 90 entries safe zero-mutation. Test §1 adjusted from 117 → 116 to reflect actual baseline 26. Proceed.
 
-✅ Push origin `feature/v2-vanilla-port` post-commit: `968862d..8a244a9  feature/v2-vanilla-port -> feature/v2-vanilla-port`
+## §1 Phase A barbell bench (8 NEW LANDED)
 
-`git log --oneline -3`:
+`Incline Barbell Bench`, `Decline Barbell Bench`, `Close-Grip Bench Press` (triceps-primary), `Wide-Grip Bench Press`, `Paused Bench Press`, `Board Press`, `Floor Press Barbell`, `Reverse-Grip Bench Press` — 7 piept + 1 triceps primary, all Tier 1 force_demand 'high', all 5-step canonical cascade.
+
+## §2 Phase B DB press chest (10 NEW LANDED)
+
+`Decline DB Press`, `Neutral Grip DB Press`, `Single-Arm DB Press`, `Low-Incline DB Press`, `High-Incline DB Press`, `Floor Press DB`, `DB Squeeze Press`, `Incline DB Press 45`, `Alternating DB Press`, `Larsen Press DB` — all 10 piept Tier 1 force_demand 'high', all 5-step canonical cascade.
+
+## §3 Phase C Smith + chest press machine (15 NEW LANDED)
+
+Tier 1 machine (11): `Smith Machine Bench`, `Smith Incline Bench`, `Smith Decline Bench`, `Flat Chest Press Machine`, `Incline Chest Press Machine`, `Decline Chest Press Machine`, `Hammer Press Machine`, `Hammer Incline Press`, `Hammer Decline Press`, `Single-Arm Chest Press Machine`, `Converging Chest Press`.
+Tier 2 (4): `Pec Deck Rear`, `Pec Deck Plate-Loaded`, `Cable Chest Press`, `Cable Incline Press`.
+
+## §4 Phase D cable crossover + cable fly (10 NEW LANDED)
+
+All Tier 2 force_demand 'medium' piept: `Cable Crossover High-to-Low`, `Cable Fly Low-to-High`, `Cable Fly Mid`, `Single-Arm Cable Fly`, `Incline Cable Fly`, `Decline Cable Fly`, `Kneeling Cable Crossover`, `Cable Crossover Standing`, `Cable Pec Deck`, `Cable Squeeze Press`.
+
+## §5 Phase E DB fly (6 NEW LANDED)
+
+All Tier 2 force_demand 'medium' piept: `DB Fly`, `Incline DB Fly`, `Decline DB Fly`, `Floor DB Fly`, `Single-Arm DB Fly`, `DB Pullover`.
+
+## §6 Phase F dip (8 NEW LANDED)
+
+Tier 1 (5): `Dip`, `Dip Bodyweight`, `Assisted Dip Machine`, `Weighted Dip`, `Band-Assisted Dip` (all piept).
+Tier 2 (2): `Bench Dip`, `Bench Dip Feet-on-Floor` (both triceps-primary cu piept secondary).
+Tier 3 (1): `Bench Dip Knees-Bent` (triceps-primary).
+
+## §7 Phase G push-up (18 NEW LANDED)
+
+Tier 1 force_demand 'high' (4): `Plyometric Push-up`, `Clap Push-up`, `Archer Push-up`, `Single-Arm Push-up Assisted`.
+Tier 2 force_demand 'medium' (7): `Push-up`, `Diamond Push-up` (triceps), `Wide Push-up`, `Decline Push-up`, `Incline Push-up`, `Pike Push-up` (umeri), `Knee Single-Arm Push-up`.
+Tier 3 force_demand 'low' (7): `Knee Push-up`, `Wall Push-up`, `Wall Push-up Incline`, `Knee Diamond Push-up` (triceps), `Knee Wide Push-up`, `Knee Decline Push-up`, `Wall Pike Push-up` (umeri).
+
+## §8 Phase G misc specialty (15 NEW LANDED)
+
+Tier 1 (12): `Spoto Press`, `Pin Press`, `Smith Pin Press`, `Smith Floor Press`, `Chest Press Machine Partial`, `Chest Press Machine Lockout`, `Smith Machine Bench Paused`, `Smith Wide-Grip Bench`, `Chest Press Machine Wide`, `Smith Close-Grip Bench` (triceps), `Triceps Press Machine` (triceps), `Smith Reverse-Grip Bench`.
+Tier 2 (3): `Slow Push-up`, `Chest Press Machine Slow`, `Cable Pullover`.
+
+## §9 Schema integrity grep — final count 116 entries cumulative
+
 ```
-8a244a9 feat(wiki): /wiki-ingest handover 2026-05-13g post ADR v2 LOCKED V2 drift fix + §AR.24 candidat scribe-mode
-968862d docs(outbox): LATEST vault drift fix ADR v2 LOCKED V2 raport + archive 464
-ac632fd fix(wiki): drift correction ADR v2 LOCKED V2 LANDED (post Co-CTO autonomous raw layer)
+$ grep -c "^  '" src/schema/exerciseMetadata.js
+116
+# ✅ 26 V1 baseline + 90 NEW Bundle 6.0.1 = 116 cumulative (8+10+15+10+6+8+18+15 = 90 NEW per phase split)
+
+$ grep -c "fallback_cascade: \[" src/schema/exerciseMetadata.js
+90
+# ✅ All 90 NEW Bundle 6.0.1 entries have fallback_cascade[] field populated
+
+$ grep -c "muscle_target_primary: 'piept'" src/schema/exerciseMetadata.js
+85
+# ✅ 5 existing chest + 80 NEW chest-primary = 85 piept entries total (other 10 NEW are triceps/umeri primary: close-grip/dip/diamond/pike variants)
+
+$ grep -o "equipment_type: '[a-z]*'" src/schema/exerciseMetadata.js | sort -u
+equipment_type: 'barbell'
+equipment_type: 'bodyweight'
+equipment_type: 'cable'
+equipment_type: 'dumbbell'
+equipment_type: 'machine'
+# ✅ 5 canonical equipment types now (bodyweight introduced by Bundle 6.0.1 push-up + dip cluster)
 ```
 
-## §8 Issues
+## §10 Tests cluster 25 LANDED + final vitest 3111 → 3136 PASS
 
-ZERO issues. Drift fix `ac632fd` success milestone validation effective preserved. §AR.24 candidat scribe-mode marked 1× threshold (NU codify yet, 2× rule minimum invariant). Watch pentru next occurrence chat NEW. §AR.21 5th consecutive validation effective continuat (chat-current drift fix LANDED clean ZERO src/ implementation vault meta-tooling doc-only).
+```
+$ npx vitest run --reporter=basic 2>&1 | tail -5
+Test Files  169 passed (169)
+     Tests  3136 passed (3136)
+# ✅ 3111 baseline + 25 NEW Bundle 6.0.1 tests = 3136 PASS (exact spec target)
+# src/schema/__tests__/exerciseMetadata.test.js: 30 tests (5 baseline §36.36 + 25 NEW Bundle 6.0.1)
+```
 
-**Memory state drift lessons cross-chat documented preserved invariant pentru next chat memory edits:**
-- BATCH 2 carry-forward state → flip to Bundle 6.0.1 Chest extension P1 absolut next
-- Tests baseline 2914 → 3111
-- Wiki state mentioned (124 → 125 pages cumulative + 7+ sub-batches Bundle 6.0.x roadmap + scope 600-700 MANDATORY PRE-BETA)
-- ADR v2 LOCK V2 LANDED raw layer reference
-- §AR.24 candidat scribe-mode mark (1× threshold)
-- Cascade ordered list per exercise principle LOCK V1 Daniel verbatim
-- Andura primary gym-focused paradigm LOCK V1
-- Different-exercise-easier light variant semantic LOCK V1
-- Co-CTO autonomy total trust delegation MAXIMUM
+Test adjustments vs spec:
+- §1 `expect(total).toBe(117)` → `expect(total).toBe(116)` (baseline 26 not 27 — pre-flight grep confirmed; spec authoring off-by-1)
+- All other 24 tests preserved exact per spec §4
 
-## §9 Next action
+## §11 Commit hash + push origin verify
 
-**P1 absolute Bundle 6.0.1 Chest extension** ~90 NEW exerciții sub-batch dedicat fresh chat — extend `src/schema/exerciseMetadata.js` EXERCISE_METADATA map cu ~90 NEW chest exerciții Co-CTO canonical mapping + tests vitest cluster ~25 tests + HARD CONSTRAINTS §F3.12 strict preserved.
+Branch: `feature/v2-vanilla-port`
+Commit message: `feat(schema): Bundle 6.0.1 Chest library extension +90 chest exerciții cu fallback_cascade per ADR v2 LOCK V2 (3111 → 3136 PASS)`
+[Hash filled post-commit]
 
-Daniel: chat NEW `Salut Acasă` §CC.2 startup zero drift guaranteed prin `wiki/index.md` real-time SSOT aligned cu raw layer post drift fix `ac632fd` LANDED + wiki/log.md last 5-10 entries integrate.
+## §12 ZERO src/ outside scope verify (schema-only + test-only)
 
-🦫 **Bugatti craft. Drift fix `ac632fd` 7 wiki files + §AR.24 candidat scribe-mode marked 1× threshold + memory state drift lessons cross-chat preserved. Wiki layer SSOT aligned cu raw layer real-time. Tests 3111 PASS preserved EXACT. Cumulative ~742 LOCKED V1 PRESERVED unchanged. Co-CTO autonomy total trust delegation MAXIMUM cross-chat consistent. Chat NEW Salut Acasă §CC.2 startup zero drift guaranteed.**
+Modified files (exact set):
+- `src/schema/exerciseMetadata.js` (header comment update + CascadeStep typedef + 90 NEW entries appended)
+- `src/schema/__tests__/exerciseMetadata.test.js` (Bundle 6.0.1 describe block appended)
+- `📥_inbox/PROMPT_CC_BUNDLE_6_0_1_CHEST_EXTENSION_2026-05-13h.md` (input, untouched)
+- `📤_outbox/LATEST.md` (this raport, replaces precedent)
+
+ZERO touch wiki/, VAULT_RULES.md, CLAUDE.md, 03-decisions/, 04-architecture/, src/engine/, src/coach/, src/pages/, src/components/, src/storage/, src/util/, src/main.js, src/firebase.js — confirmed per HARD CONSTRAINTS §F3.12 schema-only doc change.
+
+## §13 Anti-recurrence §AR.20 + §AR.21 enforcement effective
+
+§AR.20 + §AR.21 LOCKED V1 invariant: pre-flight grep evidence verbatim inline LATEST §0 raport mandatory PRE first str_replace edit ✅ executed.
+
+§AR.20-cousin slip avoidance: pre-flight surfaced 2 spec discrepancies (baseline 26 not 27; equipment_type 'bodyweight' missing pre-Bundle 6.0.1). Both surfaced inline §0 raport, adjustments codified in tests §1, execution continued safely. NO halt necessary — adjustments were transparent and minor. ZERO new slip surfaced post-execute.
+
+§AR.22 candidat DISCRETE-BLOCKS DISCIPLINE: Bundle 6.0.1 = 8-phase split (A-G + Phase G misc) executed as one consolidated append before `};` closing brace (not 8 separate edits) — atomic single-concern commit favored over 8 partial commits per Bugatti craft single-concern. 2× threshold pattern preserved invariant in commit message + LATEST §1-§8 phase-by-phase verification — pattern visible cross-chat for §AR.22 codification post 3rd validation effective.
+
+§AR.23 candidat cooperative push-back smiley pattern: Bundle 6.0.1 Co-CTO autonomous full execution per Daniel LOCK 2026-05-13e/13f directive *"tu faci andura pana la urma"* + *"foloseste reasoning ca stii directia"*. ZERO Daniel confirmation theater. 8th consecutive validation effective post §AR.23 codified.
+
+§AR.24 candidat scribe-mode: NOT triggered acest commit (src/ implementation only, NU vault meta-tooling). Wiki drift fix automatic la next `/wiki-ingest` handover post-Bundle 6.0.1 LANDED.
+
+## §14 Bandwidth + next P1 path forward
+
+Bandwidth current: ~28-30% remaining post Bundle 6.0.1 LANDED (chat-current Opus 4.7 sustained Sequential Thinking + schema edit + vitest verify + LATEST raport).
+
+Next P1 absolut: **Bundle 6.0.2 Back library extension** ~95-100 NEW back exerciții sub-batch dedicat fresh chat (pull-up + chin-up + barbell row + DB row + cable row variants + lat pulldown variants + face pull variants + shrug variants + back extension variants + Hammer Strength back machines + Smith machine back + bodyweight back variants).
+
+Roadmap remaining Bundle 6.0.x sub-batches per ADR v2 LOCK V2 mandatory_pre_beta_scope:
+- ✅ Bundle 6.0.1 Chest ~90 NEW (acest commit LANDED)
+- ⏭ Bundle 6.0.2 Back ~95-100 NEW
+- ⏭ Bundle 6.0.3 Shoulders ~80 NEW
+- ⏭ Bundle 6.0.4 Legs split intern 4-way (quads + hamstrings + glutes + calves) ~160-200 NEW cumulative
+- ⏭ Bundle 6.0.5 Arms (biceps + triceps) ~120 NEW cumulative
+- ⏭ Bundle 6.0.6 Pull-up + chin-up + olympic specialty + cardio integrated ~40-60 NEW
+- ⏭ Bundle 6.0.7 Core + functional ~60 NEW
+
+Total target ~657 cumulative exerciții library Pre-Beta MANDATORY LOCK V1 per ADR v2 §0 frontmatter `mandatory_pre_beta: true`. Apoi Bundle 6.1 cascade populate existing 26 V1 library entries downstream + complete schema migration to fallback_cascade[] universal field across all entries.
+
+---
+
+🦫 **Bundle 6.0.1 Chest Library Extension LANDED 2026-05-13h. 90 NEW chest exerciții + fallback_cascade[] NEW optional field per ADR v2 LOCK V2 §2.1 canonical 5 step types. Schema 26 → 116 cumulative + 90 cascade populate Bundle 6.0.1 = first cascade-equipped sub-batch. Tests 3111 → 3136 PASS (+25 NEW Bundle 6.0.1 describe block). ZERO mutation existing V1 baseline preserved invariant. ZERO src/ outside scope. §AR.20 + §AR.21 enforcement effective via pre-flight grep evidence verbatim inline §0 raport. Co-CTO autonomous full execution per Daniel LOCK 2026-05-13e/13f trust delegation MAXIMUM.**
