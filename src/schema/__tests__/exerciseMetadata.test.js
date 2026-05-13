@@ -1174,9 +1174,13 @@ describe('§22 ADR ANATOMICAL_CLASSIFICATION_V1 fese canonical migration', () =>
   ]);
 
   it('all muscle_target_primary values in canonical V1 11 categorii', () => {
+    const violators = [];
     Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
-      expect(CANONICAL_V1.has(meta.muscle_target_primary)).toBe(true);
+      if (!CANONICAL_V1.has(meta.muscle_target_primary)) {
+        violators.push(`${name} → ${meta.muscle_target_primary}`);
+      }
     });
+    expect(violators, `Non-canonical V1 primary values: ${violators.join(', ')}`).toEqual([]);
   });
 
   it('ZERO entries muscle_target_primary === abdomen (legacy reconciled)', () => {
@@ -1255,5 +1259,14 @@ describe('§22 ADR ANATOMICAL_CLASSIFICATION_V1 fese canonical migration', () =>
     const bicepsEntries = Object.entries(EXERCISE_METADATA)
       .filter(([_, meta]) => meta.muscle_target_primary === 'biceps');
     expect(bicepsEntries.length).toBeGreaterThanOrEqual(5);
+  });
+
+  // §22.13 ZERO entries muscle_target_primary === 'unknown' (post-C2.5 final state)
+  // The 'unknown' value is the getExerciseMetadata() FALLBACK sentinel for "exercise not found" —
+  // NOT a canonical V1 value. Real entries in EXERCISE_METADATA must NEVER use 'unknown'.
+  it('ZERO entries muscle_target_primary === unknown (fallback sentinel guarantee)', () => {
+    const unknownEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'unknown');
+    expect(unknownEntries, `Found ${unknownEntries.length} entries cu unknown primary: ${unknownEntries.map(([n]) => n).join(', ')}`).toHaveLength(0);
   });
 });

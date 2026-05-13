@@ -2752,7 +2752,11 @@ export const EXERCISE_METADATA = {
 };
 
 /**
- * Get metadata for an exercise. Returns conservative default if exercise unknown.
+ * Get metadata for an exercise. Returns conservative default if exercise not in library.
+ * The 'unknown' muscle_target_primary value is the FALLBACK signal for "exercise not found" —
+ * NOT a canonical V1 11 categorii value. Real entries in EXERCISE_METADATA all use canonical V1
+ * (piept/spate/umeri/biceps/triceps/antebrate/core/picioare-quads/picioare-hamstrings/fese/gambe)
+ * per ADR_ANATOMICAL_CLASSIFICATION_V1 LOCK V1. Caller code should handle 'unknown' as "not found" sentinel.
  * @param {string} exerciseName
  * @returns {ExerciseMetadata}
  */
@@ -2762,7 +2766,7 @@ export function getExerciseMetadata(exerciseName) {
     equipment_alternatives: [],
     force_demand: 'medium',
     tier: 2,
-    muscle_target_primary: 'unknown',
+    muscle_target_primary: 'unknown', // NOT canonical V1 — fallback sentinel for "not found"
     muscle_target_secondary: [],
   };
 }
