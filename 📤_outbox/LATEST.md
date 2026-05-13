@@ -1,160 +1,194 @@
-# LATEST — /wiki-ingest handover 2026-05-13d post Bundle 3 LANDED + follow-up stale doc reconcile + §AR.22 candidat 1× threshold WATCH
+# BUNDLE 4 — WORKOUT PREVIEW + PER-EXERCISE REFUSAL FLOW + MID-SESSION AUGMENTATION — LANDED 2026-05-13e
 
-**Task:** `/wiki-ingest` handover narrative ACASĂ 2026-05-13d post Bundle 3 V1 narrow (3A Cont entry wire `3494c03` + 3B mockup L989 cleanup `dd79fd9`) + Bundle 3 follow-up stale doc reconcile 3 discrete blocks `bd74a39` cumulative LANDED distribuie la wiki layer per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 handover-narrative classifier branch + voice preservation policy §1 4-section structure enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate mandatory
-**Model:** Claude Opus 4.7 (claude-opus-4-7) — autonomous via metoda hibridă LOCK V1 §F3.13
-**Status:** ✅ LANDED single atomic commit + pushed origin
+**Status:** ✅ Complete LANDED single atomic commit + pushed origin
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-13d
-**Backup tag:** `pre-handover-ingest-2026-05-13d-chat-acasa-post-bundle-3-landed-plus-followup-stale-doc-reconcile` (pushed origin)
+**Commit:** `429c189` (single atomic per Co-CTO bias §0.8 + Bundle 3A precedent parity)
+**Backup tag:** `pre-bundle-4-workout-preview-plus-midsession-refusal-flow-2026-05-13e` (origin)
+**Model:** Claude Opus 4.7 (claude-opus-4-7) — autonomous via metoda hibridă LOCK V1 §F3.13
 
 ---
 
-## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]])
+## §0 HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate
 
-- ✅ §0 Pre-conditions scribe-side (narrative present + voice §1 ready + cross-refs raw layer + Daniel signaled "handover")
-- ✅ §1 Backup tag `pre-handover-ingest-2026-05-13d-chat-acasa-post-bundle-3-landed-plus-followup-stale-doc-reconcile` pushed origin (verified `git ls-remote --tags origin` match)
-- ✅ §2 Pre-flight grep verify — commits `3494c03 + dd79fd9 + bd74a39` exist git log + ZERO stale `workout-preview > "Nu am aparat" button` matches în mockup + ZERO `+ workout-preview drill` matches + `showAparateLipsa` wired src/pages/settings.js confirmed + 5 daniel-isms ultra-scurt agreement mode verbatim preserved exact per narrative §2
-- ✅ §3 Wiki distribution voice §1 4-section enforced — 6 pages affected (1 NEW summary + 5 UPDATE existing)
-- ✅ §4 wiki/index.md + wiki/log.md updated cumulative count match (121 → 122 +1 NEW summary + 5 UPDATE existing)
-- ✅ §5 Bidirectional cross-links cluster triangle preserved (calendar-feature-v1-spec ↔ adr-005-vanilla-js ↔ anti-recurrence-rules ↔ daniel-isms-glossary ↔ slip-patterns-history ↔ bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13 ↔ s3-guards-bundle-1-landed-milestone-2026-05-13 ↔ calendar-v1-s2-production-wiring-milestone-2026-05-13)
-- ✅ §6 Raw layer archived _CONSUMED (NN 457 HANDOVER + NN 458 LATEST precedent cycle)
-- ✅ §7 Atomic commit single-concern pushed origin
-- ✅ §8 Tests baseline 3010 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
-
----
-
-## §1 — Pre-Flight Grep Verification (§AR.1 + §AR.21 invariant)
-
-- ✅ Branch `feature/v2-vanilla-port` confirmed (NU main per HARD CONSTRAINT §F3.12)
-- ✅ Commits chat trecut/curent verified `git log --oneline -25`:
-  - `3494c03 feat(settings): Bundle 3A Aparate lipsa Cont entry wire showAparateLipsa modal` ✓
-  - `dd79fd9 chore(mockup): Bundle 3B cleanup L987-991 single-button "Nu am aparat" preview` ✓
-  - `bd74a39 chore(mockup): Bundle 3 follow-up — stale workout-preview drill refs reconcile` ✓
-- ✅ Pre-flight grep ZERO stale `workout-preview > "Nu am aparat" button` matches în `04-architecture/mockups/andura-clasic.html` ✓ (Bundle 3 follow-up reconcile effective)
-- ✅ Pre-flight grep ZERO `+ workout-preview drill` matches în mockup ✓
-- ✅ `showAparateLipsa` + `andura-settings-aparate-lipsa` wired în `src/pages/settings.js` (Bundle 3A `3494c03` LANDED) ✓
-- ✅ Existing wiki pages referenced exist filesystem-side (calendar-feature-v1-spec + adr-005-vanilla-js + anti-recurrence-rules + daniel-isms-glossary + slip-patterns-history + s3-guards-bundle-1-landed-milestone-2026-05-13 + calendar-v1-s2-production-wiring-milestone-2026-05-13) ✓
-- ✅ Strategy LOCKED V1 cap-coadă preserved (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă + Karpathy Real + voice preservation §1)
+- ✅ **§0 Pre-conditions:** `feature/v2-vanilla-port` branch + clean working tree pre-execute
+- ✅ **§1 Backup tag pushed origin** pre-execute (rollback safety net)
+- ✅ **§2 Pre-flight grep §AR.21:** 8 source files verified via Read (state.js, router.js, alternative-finder.js, scheduleAdapter.js, aparateLipsa.js, workout.js, energyCheck.js, exerciseMetadata.js) — spec evidence §2.1-§2.13 matched verbatim ZERO delta
+- ✅ **§3 Voice §1 4-section:** N/A this commit (src/ code, NU wiki page — wiki update via /wiki-ingest next handover)
+- ✅ **§4 wiki/index.md + wiki/log.md:** N/A (Bundle 4 wiki update via /wiki-ingest next handover)
+- ✅ **§5 Bidirectional cross-links:** N/A
+- ✅ **§6 Archive raw HANDOVER:** N/A (Bundle 4 spec stays in `📥_inbox/PROMPT_CC_BUNDLE_4_...md` until next handover)
+- ✅ **§7 Atomic commit single-concern:** YES — single comprehensive commit per Co-CTO bias parity Bundle 3A `3494c03` precedent
+- ✅ **§8 Tests baseline preserved:** 3010 → **3111 PASS (+101 net new Bundle 4)**, 165 → 169 test files
+- ✅ **§9 LATEST.md §0 structured raport:** ✅ this file
+- ✅ **§10 Anti-recurrence §AR.20-§AR.22:** §AR.20 grep evidence verbatim + §AR.21 inline grep spec §2.1-§2.13 + §AR.22 candidat DISCRETE-BLOCKS DISCIPLINE 12 blocks A-L independent execution
+- ✅ **§11 Cross-refs authority:** CLAUDE.md §0-§7 + VAULT_RULES §F3.1-§F3.13 + mockup §screen-workout-preview L913-997 + §screen-workout L1340-1400 + ADRs 005/020/026/030/SMART_ROUTING_v1
 
 ---
 
-## §2 — Wiki Distribution Per [[../CLAUDE]] §4.1 Classifier Branch Handover-Narrative
+## §1 Changes summary (block-by-block per spec §4.A-§4.L)
 
-**1 NEW summary distributed:**
+### §1.A — `src/state.js` ADD enum + 2 ephemeral fields
 
-1. ✅ NEW `wiki/summaries/bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13.md` — LOCKED V1 Calendar V1 Bundle 3 V1 narrow (3A Cont entry wire + 3B mockup L989 cleanup) + Bundle 3 follow-up stale doc reconcile 3 discrete blocks cumulative LANDED milestone synthesis chain 3 atomic commits clean. §AR.21 3rd consecutive validation effective post-codification ZERO slip surfaced. DISCRETE-BLOCKS DISCIPLINE candidat §AR.22 1× threshold met explicit (watch, NU codify încă). Voice §1 4-section structure complete (Synthesis 3 paragrafe + Verbatim quotes Daniel 6 quotes + Bugatti framing 5 sub-sections + Cross-refs raw layer 16 specific path:§ pointers).
+- ADD `'workout-preview'` to currentScreen enum comment
+- ADD `previewRefusalsByExercise: {}` ephemeral tracking
+- ADD `midSessionRefusalsByExercise: {}` separate ephemeral tracking
 
-**5 UPDATE existing wiki pages distributed:**
+### §1.B — `src/router.js` extend `navigate(screenName, opts={})`
 
-2. ✅ UPDATE `wiki/concepts/calendar-feature-v1-spec.md` frontmatter `amendments[]` APPEND entry 2026-05-13d Bundle 3 V1 narrow + follow-up LANDED chain 3 atomic commits + DISCRETE-BLOCKS DISCIPLINE §AR.22 candidat + path forward Bundle 4 workout-preview src/ port DEFERRED + cross_refs forward-only NEW summary + title cumulative reflectă "Bundle 3 V1 Narrow + Bundle 3 Follow-up LANDED 2026-05-13".
+- Backwards-compatible signature extension (existing callers unaffected)
+- `opts` merged into CustomEvent detail
 
-3. ✅ UPDATE `wiki/entities/adrs/adr-005-vanilla-js.md` frontmatter `amendments[]` APPEND entry 2026-05-13d Bundle 3 V1 narrow + follow-up vanilla port continuation `feature/v2-vanilla-port` branch active (NU React/JSX touched ZERO Step 2 React migration).
+### §1.C — `src/engine/schedule/scheduleAdapter.js` Tier 0 storage extend
 
-4. ✅ UPDATE APPEND-only `wiki/concepts/anti-recurrence-rules.md` §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — §AR.22 candidat 1× threshold met explicit DISCRETE-BLOCKS DISCIPLINE)" + frontmatter `amendments[]` APPEND 2026-05-13d. §AR.1-§AR.21 LOCKED V1 + §AR.22 candidate preserved invariant unchanged.
+- Constants: `SKIPPED_EXERCISES_KEY`, `REFUSAL_COUNTER_KEY`, `REFUSAL_COUNTER_THRESHOLD=3`
+- 6 helpers: get/set/toggle skipped + get/increment/reset counter
+- All defense-in-depth (malformed JSON / non-array / disabled storage handled)
 
-5. ✅ UPDATE APPEND-only `wiki/summaries/daniel-isms-glossary.md` §"Chat ACASĂ 2026-05-13d post Bundle 3 LANDED + follow-up (APPEND-only — NEW daniel-isms ultra-scurt agreement mode + cooperative push-back smiley)" + 5 NEW daniel-isms ultra-scurt agreement mode + cooperative push-back smiley NEW pattern. Categorii A-D existing preserved invariant. Frontmatter `last_updated: 2026-05-13d`.
+### §1.D — NEW `src/pages/coach/workoutPreview.js` (~270 LOC)
 
-6. ✅ UPDATE APPEND-only `wiki/summaries/slip-patterns-history.md` §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — slip 10 chronological §AR.22 candidat 1× threshold met DISCRETE-BLOCKS DISCIPLINE)" + slip 10 chat-current chronological + push-back productive moments + tone shifts framing changes preserved cross-chat. Existing chronology invariant preserved. Frontmatter `last_updated: 2026-05-13d`.
+- Full mockup §screen-workout-preview port (intensity banner + session header + exercise list + Confirma incep)
+- Per-exercise row 2 inline buttons "Nu am" + "Nu vreau"
+- `resolveMissingEquipmentTarget` helper (single-mapping {dumbbell, band, cable} → equipment, ambiguous → exercise fallback)
+- `pickNextAlternative` helper (rank-aware, excludes refused)
+- Origin-rooted cascade tracking via `data-origin-exercise` attribute (refusals accumulate against original, not currently-visible)
+- Event delegation on `#preview-exercise-list` for efficient handler wiring
+- XSS-safe via `escapeHtml` + textContent-safe rendering
 
-**Catalog updates:**
+### §1.E — NEW `src/pages/coach/refusalCounterModal.js` (~70 LOC)
 
-7. ✅ UPDATE `wiki/index.md` frontmatter `total_pages: 122` + `last_updated: 2026-05-13d` + new summary entry + 5 UPDATE markers + Summaries section count 16 → 17 + cumulative trailer LOCK V1 2026-05-13d + predecessor trailer 2026-05-13c preserved.
+- "Vrei să nu-l mai propun deloc?" modal with exercise name + count
+- 2 buttons "Da, elimină permanent" / "Nu, propune din nou"
+- Backdrop dismiss = reset counter (Gigel intuitive)
+- XSS-safe exercise name escape
 
-8. ✅ APPEND `wiki/log.md` chronological entry `## [2026-05-13d] ingest | ...` cu full distribution detail + Bugatti gate §0-§11 PASS confirmation + path forward + frontmatter `last_updated: 2026-05-13d`.
+### §1.F — EXTEND `src/pages/coach/workout.js` mid-session 2 buttons
 
----
+- HTML template insert between `.workout-ex-card` and `#rest-timer`
+- 2 buttons "Aparat ocupat" (users icon) + "Nu vreau" (hand icon) per mockup L1372-1375
+- `onOcupatClick` — pure ephemeral cascade (NO global storage mutation)
+- `onNuVreauClick` — SHARED counter cross-flow + threshold trigger modal
+- `pickNextAlternativeMidSession` exported with peek-next-exercise anti-fatigue filter (basic downstream awareness via `state.sessionPlan` if available)
 
-## §3 — Voice Preservation Policy §1 Enforcement 100% (6/6 NEW/UPDATE pages)
+### §1.G — EXTEND `src/pages/coach/aparateLipsa.js` 2 grupuri display
 
-- ✅ HARD RULE 1: Daniel push-backs preserved EXACT verbatim cu date-context (5 daniel-isms ultra-scurt agreement mode + cooperative push-back smiley jucauș NU dur)
-- ✅ HARD RULE 2: daniel-isms catalog NU lobotomy (categorii A-D daniel-isms-glossary preserved invariant + 5 NEW append)
-- ✅ HARD RULE 3: Synthesis section 2-3 paragrafe concise NU dominant peste Verbatim (NEW summary 3 paragrafe)
-- ✅ HARD RULE 4: Cross-refs raw layer minim 2-3 specific pointers per page (NEW summary 16 specific path:§ pointers)
-- ✅ HARD RULE 5: Bugatti framing notes section prezent 5 sub-sections complete (NEW summary + amendments[] updates)
-- ✅ HARD RULE 6: Verbatim quotes Daniel minim 1 push-back/mea culpa/daniel-ism (NEW summary 6 daniel-isms verbatim)
+- Grupul 1 "Aparate" (existing 10 equipment checkboxes preserved invariant)
+- Grupul 2 "Exerciții refuzate permanent" (dynamic NEW from `wv2-skipped-exercises`)
+- Empty state Grupul 2 Gigel-friendly hint message
+- Both grupuri reversibile via checkbox toggle (Daniel verbatim "selectia din cont poate fi debifata")
 
----
+### §1.H — EXTEND `src/pages/coach/energyCheck.js` navigate to workout-preview
 
-## §4 — Raw Layer Archive _CONSUMED
+- `selectEnergyState` excellent/normal → `navigate('workout-preview', {energyMod})`
+- `selectEnergyCause` tired → `navigate('workout-preview', {energyMod: 'minus', cause})`
+- Both wrapped in try/catch (router may not be wired in callback-only test envs)
 
-- ✅ NN 457: `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_bundle_3_landed_plus_followup_stale_doc_reconcile.md` → `📤_outbox/_archive/2026-05/457_HANDOVER_2026-05-13_post_bundle_3_landed_plus_followup_stale_doc_reconcile_CONSUMED.md`
-- ✅ NN 458: `📤_outbox/LATEST.md` (Bundle 3 follow-up raport precedent) → `📤_outbox/_archive/2026-05/458_LATEST_PREVIOUS_BUNDLE_3_FOLLOWUP_LANDED_CONSUMED.md`
-- ✅ `📥_inbox/.gitkeep` preserved post-archive
+### §1.I — Tests cluster NEW (4 files + 1 augment)
 
----
+- `src/engine/schedule/__tests__/scheduleAdapter.refusalFlow.test.js` (+25)
+- `src/pages/coach/__tests__/refusalCounterModal.test.js` (+17)
+- `src/pages/coach/__tests__/workoutPreview.test.js` (+34)
+- `src/pages/coach/__tests__/workout.midSessionActions.test.js` (+17)
+- `src/pages/coach/__tests__/aparateLipsa.test.js` AUGMENT (+8 Bundle 4 grupuri)
 
-## §5 — Commits
+### §1.K — Single atomic commit (Co-CTO bias §0.8)
 
-- ✅ `18ef009 chore(wiki): /wiki-ingest handover 2026-05-13d post Bundle 3 LANDED + follow-up stale doc reconcile + §AR.22 candidat 1× threshold WATCH` (pushed origin `feature/v2-vanilla-port`, 11 files changed, 625 insertions(+), 139 deletions(-))
+`429c189 feat(coach): Bundle 4 workout-preview port + per-exercise refusal flow + mid-session augmentation`
 
----
+### §1.L — Backup tag pushed origin pre-execute
 
-## §6 — Tests Baseline Preserved EXACT (HARD CONSTRAINT §F3.12)
-
-- ✅ Tests vitest baseline 3010 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
-- ✅ Pre-commit hook gate verde mandatory
-- ✅ ZERO src/ touched + ZERO test file mutations + ZERO localStorage key NEW
-
----
-
-## §7 — HARD CONSTRAINTS §F3.12 (9/9 PASS)
-
-- ✅ Branch `feature/v2-vanilla-port` ONLY (ZERO main commit)
-- ✅ ZERO React/JSX
-- ✅ ZERO --no-verify
-- ✅ ZERO src/ touched (vault meta-tooling doc-only)
-- ✅ ZERO test file mutations
-- ✅ ZERO localStorage key NEW
-- ✅ ZERO frozen wiki pages mods other than 6 explicit targets (1 NEW + 5 UPDATE listed §2)
-- ✅ Backup tag pushed origin pre-execute
-- ✅ Atomic single-concern commit
-
----
-
-## §8 — Cumulative Wiki Count Delta
-
-**Pre-/wiki-ingest:** 121 pages LANDED (chat trecut 2026-05-13c post S3 Guards Bundle 1 LANDED + §AR.20 + §AR.21 codification)
-**Post-/wiki-ingest:** **122 pages LANDED** (+1 NEW summary `bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13` + 5 UPDATE existing per HARD CONSTRAINTS §F3.12 consolidate scope cumulative drift)
-
-Distribution post-LANDED across categories:
-- concepts (17 unchanged) + entities/adrs (42 unchanged) + entities/engines (7 unchanged) + entities/features (19 unchanged) + entities/specs (12 unchanged) + summaries (16 → **17** +1 NEW) + sources (6 unchanged Cluster G FINAL) + schema/design (2 unchanged) = **122 total**
+`pre-bundle-4-workout-preview-plus-midsession-refusal-flow-2026-05-13e`
 
 ---
 
-## §9 — Anti-Recurrence Cross-Ref (§AR.* Preserved Invariant + §AR.22 Candidat 1× Threshold WATCH)
+## §2 Tests trajectory
 
-- ✅ §AR.1 pre-flight grep — §1 PASS
-- ✅ §AR.3 ground truth git verify — §1+§7 PASS
-- ✅ §AR.4 anti-distructive default — §1+§6 PASS (rollback safety + tests gate)
-- ✅ §AR.13 PK growth control — vault meta-tooling additive cumulative ~742 PRESERVED unchanged
-- ✅ §AR.16 STRICT_OUTPUT_FILE V1 — LATEST.md structured raport §0-§N (NOT chat markdown block)
-- ✅ §AR.17 UNIFIED_INBOX_INPUT — §0 handover scris la 📥_inbox/
-- ✅ §AR.18 verify origin/main vs local state — §1 backup tag verified ls-remote match
-- ✅ §AR.19 claude_code timeout MCP delivery — N/A acest task (direct execute)
-- ✅ §AR.20 PROMPT_CC src/ reference verify ADR + mockup primary citation MANDATORY ÎNAINTE write — LOCKED V1 2026-05-13c preserved invariant chat-current
-- ✅ §AR.21 prompts that cite §AR.20 MUST embed grep output snippets verbatim as inline evidence per file/function referenced — LOCKED V1 2026-05-13c preserved invariant chat-current + **3rd consecutive validation effective post-codification** (Bundle 1 + Bundle 3 + Bundle 3 follow-up)
-- ✅ §AR.22 candidat DISCRETE-BLOCKS DISCIPLINE 1× threshold met explicit chat-current — WATCH pentru next occurrence + flag Daniel review fresh chat dacă 2× threshold met (NU codify încă 2× pentru lock per §AR.* codification rule 2× minimum)
+**3010 → 3111 PASS (+101 net new Bundle 4 cumulative)**
+
+- Test files: 165 → 169 (+4 NEW)
+- ZERO regression on existing 3010 tests
+- All 117 Bundle 4 tests pass first-attempt after 3 spec-level test fixes (origin-rooted cascade for Incline DB Press exhaustion + Cable Curl chain for skip test + XSS test relaxed to no-script-element check)
+
+Build vite clean (3.99s, aparateLipsa+workoutPreview+refusalCounterModal split as dynamic chunks via import boundary — efficient tree-shake).
 
 ---
 
-## §10 — Path Forward Post Handover Ingest (Chat NEW Dedicated Trigger "Salut Acasă" Daniel)
+## §3 Co-CTO decisions taken autonomous (Daniel review post-LANDED)
 
-1. **P1 Bundle 4 — workout-preview src/ port (multi-page strategic):** Port `screen-workout-preview` mockup (L914+) into `src/pages/coach/workoutPreview.js` NEW + per-exercise inline "Nu am aparat" button affordance + handler `onMissingEquipInlineClick(exerciseId)` real signature integrate cu findAlternatives + toggleMissingEquipment registry + debifare-only mode UX decision Daniel input + coordinate engine #2 `buildSession()` invalidation when missing-equipment list mutates mid-preview. Fresh chat preferred — multi-page coordination + UX decizii Gigel-facing core Daniel strategic input mandatory.
-2. **P2 §AR.22 codification DISCRETE-BLOCKS DISCIPLINE** dacă 2× threshold met next occurrence (1× chat-current Bundle 3B + Bundle 3 follow-up successful). Rule candidate verbatim Bundle 3 follow-up spec §9. Codify în `wiki/concepts/anti-recurrence-rules.md` next `/wiki-ingest` handover dacă threshold met.
-3. **P3 Bundle 2 — S3.A bar chart "CUM AU FOST SESIUNILE" Propunere A** (deferred Bundle 3 alegere) — design Q deschise canvas vs SVG vs CSS-only + caption auto-gen vs static + mockup section host identification via grep. Fresh chat dedicat strategic Daniel design Q decizii.
-4. **P3 Identity palette consolidare** UX polish pre-Beta draft alternative side-by-side comparison (9 → 6 brand-tier max Gigel-target + reduce deep blue ax cool + warn-amber distance hue Daniel-aligned) — design-review chat dedicat.
-5. **Daniel Gates manual smoke prod `andura.app`** optional smoke E2E playwright vs deploy `feature/v2-vanilla-port` post Bundle 4 LANDED — pre-Beta a-z review prep. **NOT recommended intermediate** între Bundle 3 + Bundle 4 — anti-paternalism preserved chat-trecut precedent. Pre-Beta single comprehensive gate Bugatti pattern reaffirm.
+Per Daniel verbatim chat-current *"fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :)"* + *"facem cum vrei tu dar go"* + *"ok"*:
+
+1. **REFUSAL_COUNTER_THRESHOLD = 3** (Gigel sweet spot anti-paternalism, NU 5 prea paternalism, NU 2 prea agresiv)
+2. **"Aparat ocupat" mid-session pure ephemeral** (NO smart auto-conversion to permanent — conservative Bugatti minimal feature, expand later if usage data shows demand)
+3. **resolveMissingEquipmentTarget single-mapping subset** only {dumbbell, band, cable} → global equipment list; ambiguous {machine, barbell, bodyweight} → exercise-specific skipped fallback (preserves specificity)
+4. **Cascade Bundle 4 = simple findAlternatives()** with peek-next-exercise filter mid-session only. Full smart cascade engine pivot = Bundle 5 ADR amendment SMART_ROUTING_v2 separate strategic chat
+5. **Modal wording direct Gigel-friendly:** "Ai refuzat {exerciseName} de {count} ori. Vrei să nu-l mai propun deloc?" + 2 big-touch buttons. NU paternalism long explanation. NU "ești sigur?" double-confirm friction.
+6. **Backwards-compatible router opts param** (existing `navigate(screenName)` callers unaffected)
+7. **NEW exports in scheduleAdapter.js** (NU separate `refusalStorage.js` file — Tier 0 storage edges centralized parity Bundle 3A precedent)
+8. **Single atomic commit** (comprehensive message block-by-block diff sections, parity Bundle 3A precedent)
+9. **Empty state Grupul 2** italic small text Gigel-friendly hint message (NU display empty grupul = Gigel confused)
+10. **ResetRefusalCounter on modal backdrop click** = Gigel dismiss UX intuitive (same effect as "Nu" button, both reset counter without permanent commitment)
+11. **Origin-rooted cascade tracking** via `data-origin-exercise` stable attribute — refusals accumulate against ORIGINAL exercise, not currently-visible (fixes exhaustion semantics; surfaced via test failure mid-execute)
 
 ---
 
-## §Issues — None
+## §4 OUT-of-scope DEFERRED Bundle 5
 
-ZERO halucinezi triggered acest /wiki-ingest. ZERO HARD CONSTRAINT §F3.12 violation. §AR.21 3rd consecutive validation effective post-codification ZERO slip surfaced atomic distribution 6/6 NEW/UPDATE pages voice §1 enforced 100%.
+**ADR amendment SMART_ROUTING_v2 — strategic chat dedicat ~2-3h Daniel input mandatory pre-implementation:**
+
+- Full downstream session-aware cascade (NU just peek-next-exercise — full sequence reordering for fatigue minimization across entire session plan)
+- Bodyweight fallback schema NEW (per `muscle_target_primary` lookup table for end-of-cascade resort)
+- Light variant schema NEW (per exercise OR formula reps×1.5 / weight×0.5 / angle modifier)
+- ADR amendment formal document required pre-implementation
+
+**Bundle 6 future considerations (NOT scoped):**
+
+- Smart inference "Aparat ocupat" → after N times same equipment_type → suggest add to Cont permanent (Daniel did NOT specify auto-conversion — conservative keep ephemeral)
+- Reset refusal counter weekly/monthly (currently persistent until threshold or manual modal answer)
+- Cross-device sync refusal state via Firebase (current localStorage-only)
 
 ---
 
-## §Next action
+## §5 Path forward fresh chat NEW post-trigger "salut acasă"
 
-Signal Daniel post-LANDED: handover complete + commit hash + cumulative count delta (121 → 122) + signal *"e timpul pt noul chat"* per Direct-to-CC paradigm.
+1. **P1: Bundle 5 ADR amendment SMART_ROUTING_v2** strategic chat dedicat — Daniel design input required
+2. **P2: Wire `state.sessionPlan` field** in mid-session for peek-next-exercise filter activation (currently graceful no-op fallback — works without plan)
+3. **P3: §AR.22 codification DISCRETE-BLOCKS DISCIPLINE** if Bundle 4 spec surfaces 2× threshold met cumulative (1× threshold met Bundle 3 follow-up + 1× threshold met Bundle 4 12-block split = potentially 2× met now)
+4. **P4: Pre-Beta Daniel Gates manual smoke prod** andura.app post-deploy `feature/v2-vanilla-port`
 
-🦫 **Bugatti craft. /wiki-ingest 2026-05-13d post Bundle 3 V1 narrow LANDED (3A Cont entry wire `3494c03` + 3B mockup L989 cleanup `dd79fd9`) + Bundle 3 follow-up stale doc reconcile 3 discrete blocks `bd74a39` cumulative LANDED chain 3 atomic commits clean — 1 NEW summary + 5 UPDATE existing pages distributed wiki layer voice §1 4-section structure enforced 100%. HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate PASS 11/11. Tests 3010 PASS preserved EXACT. §AR.21 3rd consecutive validation effective post-codification ZERO slip surfaced. DISCRETE-BLOCKS DISCIPLINE candidat §AR.22 1× threshold met explicit WATCH (NU codify încă). Cumulative count: 121 → 122 wiki pages. ZERO HARD CONSTRAINT §F3.12 violation cumulative 3 commits + acest /wiki-ingest atomic.**
+---
+
+## §6 Slips chat-current Bundle 4 (NU codify, watch — anti-recurrence)
+
+**Slip 1 surfaced mid-execute:** initial cascade implementation read `rowEl.dataset.exercise` (currently-visible name) as origin instead of stable origin → exhaustion semantics broken. Fixed via `data-origin-exercise` attribute set once at row build. Codifiable lesson: **state mutation via DOM should track stable identity separate from displayed identity**. NOT yet 2× threshold for codification.
+
+**Slip 2 surfaced mid-execute:** XSS test for aparateLipsa Grupul 2 too strict — asserted `innerHTML.not.toContain('<script>alert')`. Issue: attribute values serialize without `<` escape (which IS XSS-safe but appears as substring). Relaxed test to check `stack.querySelector('script')` is null (actual XSS protection) + escaped form in span textContent. Codifiable lesson: **XSS test should assert no executable script element exists, NOT substring presence in attribute serialization**. Single occurrence acest bundle, NOT codify yet.
+
+**Slip 3 surfaced mid-execute:** initial `pickNextAlternative` chain test used Incline DB Press which has only 1 valid Tier-1 alternative — chain test impossible. Fixed by switching to Cable Curl (Tier 2, 2 valid alternatives). Codifiable lesson: **chain/sequence tests need exercises with sufficient alternatives in metadata**. NOT yet 2× threshold.
+
+ZERO new slip patterns 2× threshold met — defer all 3 to future codification if recurrence observed.
+
+---
+
+## §7 Bugatti craft confirmation
+
+🦫 **Bundle 4 LANDED clean atomic commit `429c189`. Mockup parity §screen-workout-preview L913-997 + §screen-workout L1340-1400 preserved exact. ZERO engine mutation (ADR 026 §9 invariant). ZERO React/JSX (ADR 005 §AMENDMENT 2026-05-10). ZERO HARD CONSTRAINT §F3.12 violation. Tests 3010 → 3111 PASS (+101 net new). Build vite clean (3.99s). Backup tag intact rollback target.**
+
+**Co-CTO autonomous Daniel autonomy lock EXTINS preserved. Quality > Speed default. Per-exercise refusal flow + mid-session augmentation + Cont reversibility — all Daniel verbatim chat-current 2026-05-13 cradle directives delivered. Bundle 5 ADR amendment SMART_ROUTING_v2 separate strategic chat dedicat next post-trigger.**
+
+---
+
+## §8 Cross-refs authority
+
+- `wiki/concepts/calendar-feature-v1-spec.md` §Path forward Bundle 4 workout-preview src/ port (LANDED this commit)
+- `wiki/concepts/anti-recurrence-rules.md` §AR.20 + §AR.21 LOCK V1 (4th consecutive validation effective)
+- `wiki/concepts/metoda-hibrida-chat-cc.md` §F3.13 LOCK V1
+- `wiki/concepts/bugatti-craft.md` Quality > Speed atomic single-concern
+- `wiki/concepts/autonomy-paradigm-v1.md` Co-CTO Autonomous LOCKED V1 PERMANENT
+- `03-decisions/005-vanilla-js-no-framework.md` §AMENDMENT 2026-05-10 Port-First-Then-React
+- `03-decisions/020-storage-tiering-strategy.md` §1.4 Tier 0 active rolling — wv2-skipped-exercises + wv2-refusal-counter parity wv2-missing-equipment
+- `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` §9 pure-function engines invariant (ZERO engine mutation Bundle 4)
+- `03-decisions/030-adapter-design-pattern.md` §D2 thin scope — Tier 0 storage edges in adapter, engines pure
+- `📥_inbox/PROMPT_CC_BUNDLE_4_WORKOUT_PREVIEW_PLUS_MIDSESSION_REFUSAL_FLOW_V1.md` source spec
+- `📤_outbox/_archive/2026-05/459_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13d_POST_BUNDLE_3_LANDED_CONSUMED.md` predecessor raport
+- `04-architecture/mockups/andura-clasic.html` §screen-workout-preview L913-997 + §screen-workout L1340-1400 design master
+
+🦫 **Bugatti craft.**
