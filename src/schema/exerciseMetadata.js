@@ -1529,7 +1529,15 @@ export const EXERCISE_METADATA = {
 
   // ══ Bundle 6.0.3 Shoulders Library Extension — 80 NEW shoulder exerciții 2026-05-13i ══
 
-  // ── Phase A — Tier 1 OHP Barbell Compound Shoulder Variants (8 NEW) ────────
+  // ── Phase A — Tier 1 OHP Barbell Compound Shoulder Variants (8 NEW + OHP foundational micro-fix) ────────
+  // AUDIT 2026-05-13i: OHP canonical foundational standing strict overhead press — micro-fix post Bundle 6.0.3 §13 inline observation (referenced 11× cross-refs in Bundle 6.0.3 cascades, ZERO entry definition existed pre-fix).
+  'OHP':                           { equipment_type: 'barbell', equipment_alternatives: ['Smith OHP', 'DB Shoulder Press', 'Push Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'umeri', muscle_target_secondary: ['triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith OHP' },
+    { type: 'assisted_variant', exercise_id: 'Machine Shoulder Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Shoulder Press', 'DB Lateral Raise'] },
+    { type: 'bodyweight', exercise_id: 'Pike Push-up' },
+    { type: 'light_variant', exercise_id: 'Wall Pike Push-up' },
+  ] },
   'Push Press':                    { equipment_type: 'barbell', equipment_alternatives: ['OHP', 'Smith OHP'],                       force_demand: 'high', tier: 1, muscle_target_primary: 'umeri', muscle_target_secondary: ['triceps', 'picioare'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Smith OHP' },
     { type: 'assisted_variant', exercise_id: 'Machine Shoulder Press' },

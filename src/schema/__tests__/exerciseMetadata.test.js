@@ -735,3 +735,50 @@ describe('Bundle 6.0.3 Shoulders Library Extension §ADR v2 LOCK V2', () => {
     expect(EXERCISE_METADATA['Band Pull-Apart'].force_demand).toBe('low');
   });
 });
+
+// ── OHP Entry Baseline Foundational Fix Tests (Bundle 6.0.3 §13 micro-fix 2026-05-13i) ────────
+describe('OHP Entry Baseline Foundational §Bundle 6.0.3 §13 Inline Observation Fix', () => {
+  // §1 OHP entry exists post-fix
+  it('OHP entry exists in EXERCISE_METADATA post-fix', () => {
+    expect(EXERCISE_METADATA['OHP']).toBeDefined();
+  });
+
+  // §2 OHP canonical fields Tier 1 compound barbell shoulder
+  it('OHP canonical: Tier 1 force_demand high barbell umeri+triceps', () => {
+    const ohp = EXERCISE_METADATA['OHP'];
+    expect(ohp.equipment_type).toBe('barbell');
+    expect(ohp.tier).toBe(1);
+    expect(ohp.force_demand).toBe('high');
+    expect(ohp.muscle_target_primary).toBe('umeri');
+    expect(ohp.muscle_target_secondary).toContain('triceps');
+  });
+
+  // §3 OHP fallback_cascade 5-step canonical ordering
+  it('OHP has 5-step canonical cascade easier_machine → light_variant', () => {
+    const cascade = EXERCISE_METADATA['OHP'].fallback_cascade;
+    expect(cascade).toBeDefined();
+    expect(cascade.length).toBe(5);
+    expect(cascade[0].type).toBe('easier_machine');
+    expect(cascade[4].type).toBe('light_variant');
+    const composeStep = cascade.find(s => s.type === 'muscle_group_compose');
+    expect(composeStep.exercise_ids).toBeDefined();
+    expect(Array.isArray(composeStep.exercise_ids)).toBe(true);
+  });
+
+  // §4 OHP cascade references all resolve in library post-fix
+  it('OHP cascade references all resolve in library post-fix', () => {
+    const cascade = EXERCISE_METADATA['OHP'].fallback_cascade;
+    cascade.forEach(step => {
+      const refs = step.exercise_ids || [step.exercise_id];
+      refs.forEach(ref => {
+        expect(EXERCISE_METADATA[ref]).toBeDefined();
+      });
+    });
+  });
+
+  // §5 Library count post-fix ≥ 295 cumulative
+  it('library count post-fix ≥ 295 cumulative', () => {
+    const total = Object.keys(EXERCISE_METADATA).length;
+    expect(total).toBeGreaterThanOrEqual(295);
+  });
+});
