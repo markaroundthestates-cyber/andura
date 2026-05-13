@@ -143,8 +143,15 @@ Test adjustments vs spec:
 ## §11 Commit hash + push origin verify
 
 Branch: `feature/v2-vanilla-port`
+Commit hash: **`3781da9`**
 Commit message: `feat(schema): Bundle 6.0.1 Chest library extension +90 chest exerciții cu fallback_cascade per ADR v2 LOCK V2 (3111 → 3136 PASS)`
-[Hash filled post-commit]
+Push origin: `6a43513..3781da9  feature/v2-vanilla-port -> feature/v2-vanilla-port` ✅
+Files changed: 4 (2359 insertions, 90 deletions)
+- `src/schema/exerciseMetadata.js` (M, 90 NEW entries + CascadeStep typedef + header update)
+- `src/schema/__tests__/exerciseMetadata.test.js` (M, +25 NEW tests Bundle 6.0.1 describe block)
+- `📤_outbox/LATEST.md` (M, this raport replaces precedent)
+- `📥_inbox/PROMPT_CC_BUNDLE_6_0_1_CHEST_EXTENSION_2026-05-13h.md` (A, input prompt preserved per workflow)
+Pre-commit hook full vitest suite re-run: 3136 PASS confirmed second time pre-push.
 
 ## §12 ZERO src/ outside scope verify (schema-only + test-only)
 
