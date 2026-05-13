@@ -68,9 +68,11 @@ Bundle 6.0.3 cascades referencing 'OHP' as easier_machine/assisted_variant/equip
 
 ## §4 Commit hash + push origin verify
 
-- Commit hash: `c0b8c1f` (atomic single-concern OHP micro-fix) — pending §6 step below.
-- Branch: `feature/v2-vanilla-port`.
-- Pre-commit hook re-ran vitest: `Tests 3191 passed (3191)` verified.
+- Commit hash: `fb88af4` (atomic single-concern OHP micro-fix)
+- Branch: `feature/v2-vanilla-port`
+- Push: `fa7e416..fb88af4 feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3191 passed (3191)` verified pre-commit ✓
+- Files changed: 4 (src/schema/exerciseMetadata.js, src/schema/__tests__/exerciseMetadata.test.js, 📤_outbox/LATEST.md, +276 −125; new 📤_outbox/_archive/2026-05/472_LATEST_PREVIOUS_BUNDLE_6_0_3_SHOULDERS_EXTENSION_LANDED_CONSUMED.md)
 
 ## §5 ZERO src/ outside scope verify
 
