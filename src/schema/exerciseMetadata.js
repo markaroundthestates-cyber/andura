@@ -4,6 +4,7 @@
 // EXTENDED Bundle 6.0.2 2026-05-13h: ~98 NEW back exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 + 'band' equipment_type introduced (Band Face Pull, Band-Assisted Pull-up, Banded Good Morning).
 // EXTENDED Bundle 6.0.3 2026-05-13i: ~80 NEW shoulder exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 (OHP/Push Press/Smith/Hammer/Landmine/Lateral/Front/Rear delt isolation variants).
 // EXTENDED Bundle 6.0.4.1 2026-05-13j: ~45 NEW quads exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 (squat barbell/smith/DB/hack variants + leg press variants + lunge compound variants + leg extension isolation + sissy/step-up accessory).
+// EXTENDED Bundle 6.0.4.2 2026-05-13j: ~41 NEW hamstring exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 + §2.2 RDL representative (RDL barbell/smith/DB + leg curl + good morning + Nordic/GHR + posterior chain accessory). 4 spec candidates skipped (Single-Leg RDL, Seated Good Morning, Banded Good Morning, Single-Leg RDL Bodyweight) — already defined Bundle 6.0.2 Phase I as spate primary (RDL/Good Morning anatomically dual-cluster posterior chain). ZERO mutation existing preserved invariant.
 //
 // Foundation pentru Smart-Routing v1 (§36.37 ranking-based) + Smart-Routing v2 (cascade ordered list per ADR v2 LOCK V2)
 // + Cascade Defense + Outlier Filter.
@@ -2443,6 +2444,310 @@ export const EXERCISE_METADATA = {
     { type: 'muscle_group_compose', exercise_ids: ['Sissy Squat Bodyweight', 'Wall Sit Static'] },
     { type: 'bodyweight', exercise_id: 'Box Squat Smaller ROM' },
     { type: 'light_variant', exercise_id: 'Wall Squat Partial Range' },
+  ] },
+
+  // ══ Bundle 6.0.4.2 Hamstrings Library Extension — 41 NEW hams exerciții 2026-05-13j ══
+  // ══ (Spec called for 45; 4 collisions skipped: Single-Leg RDL, Seated Good Morning, Banded Good Morning, Single-Leg RDL Bodyweight defined Bundle 6.0.2 Phase I)
+
+  // ── Phase A — Tier 1 RDL Barbell Variants (7 NEW — skipped Single-Leg RDL collision Bundle 6.0.2 Phase I) ────────
+  'Stiff-Leg Deadlift':            { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'DB Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Stiff-Leg Deadlift' },
+    { type: 'assisted_variant', exercise_id: 'DB Stiff-Leg Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Snatch-Grip RDL':               { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith RDL Wide-Grip' },
+    { type: 'assisted_variant', exercise_id: 'DB RDL Wide-Grip' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Deficit RDL':                   { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Deficit RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB Deficit RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Sumo RDL':                      { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Sumo Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Sumo RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB Sumo RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Adduction Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Sumo Hip Hinge' },
+    { type: 'light_variant', exercise_id: 'Wall Sumo Hip Hinge' },
+  ] },
+  'Block RDL':                     { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Block RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB Block RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Pause RDL':                     { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Tempo RDL'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Pause RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB Pause RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Slow', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight Slow' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'B-Stance RDL':                  { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Single-Leg RDL'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith B-Stance RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB B-Stance RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Single-Leg', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Assisted Single-Leg RDL Wall' },
+  ] },
+
+  // ── Phase B — Tier 1 Smith + Specialty Machine Hamstring (6 NEW) ────────
+  'Smith RDL':                     { equipment_type: 'machine', equipment_alternatives: ['Romanian Deadlift', 'Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Hyperextension Machine':        { equipment_type: 'machine', equipment_alternatives: ['Reverse Hyper', 'Glute-Ham Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Hyper' },
+    { type: 'assisted_variant', exercise_id: 'Glute-Ham Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Hyperextension Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Reverse Hyper':                 { equipment_type: 'machine', equipment_alternatives: ['Hyperextension Machine', 'Glute-Ham Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'Glute-Ham Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Hyper Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Glute-Ham Raise':               { equipment_type: 'machine', equipment_alternatives: ['Nordic Hamstring Curl', 'Hyperextension Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'light_variant', exercise_id: 'Slider Hamstring Curl' },
+  ] },
+  'Natural Glute-Ham Raise':       { equipment_type: 'bodyweight', equipment_alternatives: ['Glute-Ham Raise', 'Nordic Hamstring Curl'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Glute-Ham Raise' },
+    { type: 'assisted_variant', exercise_id: 'Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'light_variant', exercise_id: 'Slider Hamstring Curl' },
+  ] },
+  'Trap Bar Deadlift':             { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Conventional Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Trap Bar Deadlift' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+
+  // ── Phase C — Tier 1-2 DB Hamstring Compound Variants (6 NEW) ────────
+  'DB Romanian Deadlift':          { equipment_type: 'dumbbell', equipment_alternatives: ['Romanian Deadlift', 'DB Stiff-Leg Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith RDL' },
+    { type: 'assisted_variant', exercise_id: 'Hyperextension Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'DB Single-Leg RDL':             { equipment_type: 'dumbbell', equipment_alternatives: ['Single-Leg RDL', 'B-Stance RDL'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Single-Leg RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB B-Stance RDL' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Single-Leg', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Assisted Single-Leg RDL Wall' },
+  ] },
+  'DB B-Stance RDL':               { equipment_type: 'dumbbell', equipment_alternatives: ['DB Single-Leg RDL', 'B-Stance RDL'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith B-Stance RDL' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Assisted Single-Leg RDL Wall' },
+  ] },
+  'DB Stiff-Leg Deadlift':         { equipment_type: 'dumbbell', equipment_alternatives: ['Stiff-Leg Deadlift', 'DB Romanian Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Stiff-Leg Deadlift' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Kettlebell Swing':              { equipment_type: 'dumbbell', equipment_alternatives: ['DB Romanian Deadlift', 'DB Single-Leg RDL'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Pull-Through' },
+    { type: 'assisted_variant', exercise_id: 'DB Swing Light' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Hip Hinge' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Tempo DB Romanian Deadlift':    { equipment_type: 'dumbbell', equipment_alternatives: ['DB Romanian Deadlift', 'Pause RDL'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith RDL Slow' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Slow', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight Slow' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+
+  // ── Phase D — Tier 2 Leg Curl Variants (6 NEW) ────────
+  'Seated Leg Curl':               { equipment_type: 'machine', equipment_alternatives: ['Leg Curl', 'Cable Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Machine', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Standing Leg Curl':             { equipment_type: 'machine', equipment_alternatives: ['Leg Curl', 'Seated Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Machine', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl Single-Leg' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight Single-Leg' },
+  ] },
+  'Leg Curl Single-Leg':           { equipment_type: 'machine', equipment_alternatives: ['Leg Curl', 'Standing Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Leg Curl Single-Leg' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Machine', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl Single-Leg' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight Single-Leg' },
+  ] },
+  'Tempo Leg Curl':                { equipment_type: 'machine', equipment_alternatives: ['Leg Curl', 'Seated Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Machine', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Cable Leg Curl':                { equipment_type: 'cable', equipment_alternatives: ['Leg Curl', 'Seated Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Seated Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Machine', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Band Leg Curl':                 { equipment_type: 'band', equipment_alternatives: ['Leg Curl', 'Cable Leg Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Leg Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hyperextension Bodyweight', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+
+  // ── Phase E — Tier 1-2 Good Morning Variants (3 NEW — skipped Seated/Banded Good Morning Bundle 6.0.2 Phase I collisions) ────────
+  'Barbell Good Morning':          { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Smith Good Morning'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Good Morning' },
+    { type: 'assisted_variant', exercise_id: 'Hyperextension Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Good Morning' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Smith Good Morning':            { equipment_type: 'machine', equipment_alternatives: ['Barbell Good Morning', 'Romanian Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Good Morning' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Zercher Good Morning':          { equipment_type: 'barbell', equipment_alternatives: ['Barbell Good Morning', 'Smith Good Morning'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Good Morning' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Hyperextension Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Good Morning' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+
+  // ── Phase F — Tier 2-3 Nordic + Razor + Slider Hamstring Curl (6 NEW) ────────
+  'Nordic Hamstring Curl':         { equipment_type: 'bodyweight', equipment_alternatives: ['Glute-Ham Raise', 'Nordic Hamstring Curl Assisted'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Glute-Ham Raise' },
+    { type: 'assisted_variant', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Slider Hamstring Curl'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Nordic Hamstring Curl Assisted': { equipment_type: 'band', equipment_alternatives: ['Nordic Hamstring Curl', 'Slider Hamstring Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Eccentric Nordic Curl':         { equipment_type: 'bodyweight', equipment_alternatives: ['Nordic Hamstring Curl', 'Nordic Hamstring Curl Assisted'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Slider Hamstring Curl'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Slider Hamstring Curl':         { equipment_type: 'bodyweight', equipment_alternatives: ['Nordic Hamstring Curl', 'Leg Curl'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
+  ] },
+  'Razor Curl':                    { equipment_type: 'bodyweight', equipment_alternatives: ['Nordic Hamstring Curl', 'Slider Hamstring Curl'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Inverse Curl':                  { equipment_type: 'bodyweight', equipment_alternatives: ['Nordic Hamstring Curl', 'Glute-Ham Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Nordic Hamstring Curl Assisted' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Slider Hamstring Curl'] },
+    { type: 'bodyweight', exercise_id: 'Slider Hamstring Curl' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+
+  // ── Phase G — Tier 1-3 Posterior Chain Compound Accessory (7 NEW — skipped Single-Leg RDL Bodyweight Bundle 6.0.2 Phase I collision) ────────
+  'Hip Thrust':                    { equipment_type: 'barbell', equipment_alternatives: ['DB Hip Thrust', 'Glute Bridge'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Hip Thrust' },
+    { type: 'assisted_variant', exercise_id: 'DB Hip Thrust' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge'] },
+    { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
+  ] },
+  'Single-Leg Hip Thrust':         { equipment_type: 'barbell', equipment_alternatives: ['Hip Thrust', 'DB Hip Thrust'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Hip Thrust' },
+    { type: 'assisted_variant', exercise_id: 'DB Hip Thrust' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Single-Leg', 'Glute Bridge Bodyweight Single-Leg'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg Glute Bridge' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
+  ] },
+  'Hyperextension Bodyweight':     { equipment_type: 'bodyweight', equipment_alternatives: ['Hyperextension Machine', 'Reverse Hyper Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Hyper' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Bridge Hold'] },
+    { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
+  ] },
+  'Reverse Hyper Bodyweight':      { equipment_type: 'bodyweight', equipment_alternatives: ['Reverse Hyper', 'Hyperextension Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Hyper' },
+    { type: 'assisted_variant', exercise_id: 'Hyperextension Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge'] },
+    { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
+  ] },
+  'Cable Pull-Through':            { equipment_type: 'cable', equipment_alternatives: ['Kettlebell Swing', 'Romanian Deadlift'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Hip Hinge' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Banded Pull-Through':           { equipment_type: 'band', equipment_alternatives: ['Cable Pull-Through', 'Kettlebell Swing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'Cable Pull-Through' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Hip Hinge' },
+    { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
+  ] },
+  'Wall Hip Hinge':                { equipment_type: 'bodyweight', equipment_alternatives: ['Bodyweight Hip Hinge', 'Single-Leg RDL Bodyweight'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Hip Hinge' },
+    { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight' },
   ] },
 };
 

@@ -1,105 +1,99 @@
 ---
-title: LATEST — Bundle 6.0.4.1 Quads Library Extension LANDED 2026-05-13j
+title: LATEST — Bundle 6.0.4.2 Hamstrings Library Extension LANDED 2026-05-13j
 status: landed
 date: 2026-05-13j
-task: Bundle 6.0.4.1 Quads library extension +45 NEW quads exerciții cu fallback_cascade[] per ADR v2 LOCK V2 (3191 → 3209 PASS)
+task: Bundle 6.0.4.2 Hamstrings library extension +41 NEW hams exerciții cu fallback_cascade[] per ADR v2 LOCK V2 §2.1 §2.2 RDL representative (3209 → 3227 PASS). 4 spec candidates skipped (Single-Leg RDL, Seated Good Morning, Banded Good Morning, Single-Leg RDL Bodyweight) — Bundle 6.0.2 Phase I collisions, preserved as spate primary anatomically defensible posterior chain.
 model: Opus EXCLUSIVELY (claude-opus-4-7)
 branch: feature/v2-vanilla-port
-tests: 3191 → 3209 PASS (+18 NEW Bundle 6.0.4.1 describe block, ZERO regression)
-backup_tag: pre-bundle-6-0-4-1-quads-extension-2026-05-13j
+tests: 3209 → 3227 PASS (+18 NEW Bundle 6.0.4.2 describe block, ZERO regression)
+backup_tag: pre-bundle-6-0-4-2-hams-extension-2026-05-13j
 ---
 
-# Bundle 6.0.4.1 Quads Library Extension LANDED 2026-05-13j
+# Bundle 6.0.4.2 Hamstrings Library Extension LANDED 2026-05-13j
 
-**Task:** +45 NEW quads exerciții cu `fallback_cascade[]` per ADR v2 §2.1 — Phases A-G discrete-blocks discipline §AR.22 4th validation cumulative codify candidate.
+**Task:** +41 NEW hamstring exerciții cu `fallback_cascade[]` per ADR v2 §2.1 + §2.2 RDL representative authority — Phases A-G discrete-blocks discipline §AR.22 5th validation cumulative.
 **Model:** Opus EXCLUSIVELY.
 **Status:** LANDED.
 **Branch:** `feature/v2-vanilla-port`.
 
 ## §-1 Inbox + LATEST cleanup precedent
 
-- §-1.1 Inbox state pre-execute: empty (delivery pattern shift Bundle 6.0.2 LANDED precedent invariant 11th consecutive). §-1.1 = no-op.
-- §-1.2 `git mv 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/475_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13i_BUNDLE_6_0_3_SHOULDERS_PLUS_OHP_MICROFIX_CONSUMED.md`. NN sequence: 475 post 474 ✓.
+- §-1.1 Inbox state pre-execute: empty (delivery pattern shift 12th consecutive). No-op.
+- §-1.2 `git mv 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/476_LATEST_PREVIOUS_BUNDLE_6_0_4_1_QUADS_EXTENSION_LANDED_CONSUMED.md`. NN sequence: 476 post 475 ✓.
 
-## §0 Pre-flight grep evidence verbatim inline §AR.20 + §AR.21 LOCKED V1
+## §0 Pre-flight grep evidence verbatim inline §AR.20 + §AR.21
 
 ```
-$ wc -l src/schema/exerciseMetadata.js
-2154                                             # baseline post Bundle 6.0.3 + OHP micro-fix ✓
 $ grep -c "^  '" src/schema/exerciseMetadata.js
-295                                              # baseline cumulative ✓
-$ grep -c "muscle_target_primary: 'picioare'" src/schema/exerciseMetadata.js
-6                                                # V1 baseline (Leg Press, Leg Curl, Leg Extension, Calf Raises, Romanian Deadlift) + Bundle 6.0.2 Phase J Conventional Deadlift = 6 ✓
-$ grep -i "^  'Barbell Back Squat\|^  'Front Squat\|^  'Smith Machine Squat\|^  'Hack Squat\|^  'Goblet Squat\|^  'Bulgarian Split\|^  'DB Lunge\|^  'Walking Lunge\|..." src/schema/exerciseMetadata.js
-(no output)                                      # ZERO Bundle 6.0.4.1 candidate overlap ✓
-$ grep -o "muscle_target_primary: '[a-z]*'" src/schema/exerciseMetadata.js | sort -u
-brate / picioare / piept / spate / triceps / umeri / unknown   # 6 canonical preserved ✓
-$ grep -o "equipment_type: '[a-z]*'" src/schema/exerciseMetadata.js | sort -u
-band / barbell / bodyweight / cable / dumbbell / machine   # 6 canonical preserved ✓
-$ grep -c "fallback_cascade" src/schema/exerciseMetadata.js
-274                                              # post Bundle 6.0.3 + OHP ✓
-$ cat 03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md | grep -A 2 "^locked_date:"
-locked_date: 2026-05-13f / status: locked-v2     # raw layer truth-source ✓
-$ npx vitest run --reporter=basic 2>&1 | tail
-Tests  3191 passed (3191)                        # baseline pre-Bundle 6.0.4.1 ✓
-$ git log --oneline -1
-c574aef docs(wiki): /wiki-ingest handover 2026-05-13i ... # latest pre-Bundle 6.0.4.1 ✓
+340                                              # baseline post Bundle 6.0.4.1 ✓
+$ grep -i "^  'Stiff-Leg Deadlift\|^  'Snatch-Grip RDL\|^  'Smith RDL\|^  'Nordic Hamstring Curl\|^  'Hip Thrust" src/schema/exerciseMetadata.js
+(no output)                                      # ZERO overlap with Bundle 6.0.4.2 candidates ✓
+$ grep -n "^  'Banded Good Morning':\|^  'Seated Good Morning':\|^  'Single-Leg RDL':\|^  'Single-Leg RDL Bodyweight':" src/schema/exerciseMetadata.js
+1402:'Banded Good Morning' (spate primary)        # COLLISION Bundle 6.0.2 Phase I ⚠
+1409:'Seated Good Morning' (spate primary)        # COLLISION Bundle 6.0.2 Phase I ⚠
+1416:'Single-Leg RDL' (spate primary)             # COLLISION Bundle 6.0.2 Phase I ⚠
+1423:'Single-Leg RDL Bodyweight' (spate primary)  # COLLISION Bundle 6.0.2 Phase I ⚠
+$ npx vitest run --reporter=basic | tail
+Tests  3209 passed (3209)                        # baseline pre-Bundle 6.0.4.2 ✓
 $ git branch --show-current
 feature/v2-vanilla-port                          # ✓
 ```
 
-## §1 Phase A squat barbell — 10 NEW LANDED
+**Co-CTO autonomous decision: SKIP 4 collisions, add 41 NEW (not 45)** preserving HARD CONSTRAINT "ZERO existing 340 entries mutation". Anatomically defensible: RDL/Good Morning are posterior chain compound (back + hams dual-cluster) — Bundle 6.0.2 Phase I spate-primary classification valid.
 
-`Barbell Back Squat (High Bar)`, `Barbell Back Squat (Low Bar)`, `Front Squat`, `Pause Squat`, `Tempo Squat`, `Box Squat`, `Zercher Squat`, `Overhead Squat`, `Pin Squat`, `Safety Bar Squat`. All Tier 1 force_demand 'high' picioare primary.
+## §1 Phase A RDL barbell — 7 NEW LANDED (Single-Leg RDL skipped)
 
-## §2 Phase B smith/hack squat — 6 NEW LANDED
+`Stiff-Leg Deadlift`, `Snatch-Grip RDL`, `Deficit RDL`, `Sumo RDL`, `Block RDL`, `Pause RDL`, `B-Stance RDL`. All Tier 1 force_demand 'high' picioare primary spate secondary.
 
-`Smith Machine Squat`, `Smith Front Squat`, `Hack Squat Machine`, `Reverse Hack Squat`, `Belt Squat`, `Pendulum Squat`. All Tier 1 machine equipment_type per Andura primary gym-focused paradigm.
+## §2 Phase B Smith/machine hamstring — 6 NEW LANDED
 
-## §3 Phase C DB/goblet squat — 5 NEW LANDED
+`Smith RDL`, `Hyperextension Machine`, `Reverse Hyper`, `Glute-Ham Raise`, `Natural Glute-Ham Raise`, `Trap Bar Deadlift`. All Tier 1 per Andura primary gym-focused paradigm.
 
-`Goblet Squat`, `DB Squat`, `DB Sumo Squat` (Tier 2), `Bulgarian Split Squat`, `DB Pistol Squat Assisted` (Tier 2).
+## §3 Phase C DB hamstring compound — 6 NEW LANDED
 
-## §4 Phase D leg press — 5 NEW LANDED
+`DB Romanian Deadlift`, `DB Single-Leg RDL`, `DB B-Stance RDL`, `DB Stiff-Leg Deadlift`, `Kettlebell Swing`, `Tempo DB Romanian Deadlift` (Tier 2).
 
-`45-Degree Leg Press`, `Horizontal Leg Press`, `Leg Press Single-Leg`, `Narrow-Stance Leg Press` (Tier 2), `Wide-Stance Leg Press` (Tier 2).
+## §4 Phase D leg curl variants — 6 NEW LANDED
 
-## §5 Phase E lunge compound — 7 NEW LANDED
+`Seated Leg Curl`, `Standing Leg Curl`, `Leg Curl Single-Leg`, `Tempo Leg Curl`, `Cable Leg Curl`, `Band Leg Curl`. All Tier 2 medium picioare primary isolation.
 
-`DB Lunge`, `Walking Lunge`, `Reverse Lunge`, `Lateral Lunge` (Tier 2), `Curtsy Lunge` (Tier 2), `Barbell Lunge`, `Deficit Reverse Lunge` (Tier 2).
+## §5 Phase E good morning — 3 NEW LANDED (Seated/Banded Good Morning skipped)
 
-## §6 Phase F leg extension isolation — 6 NEW LANDED
+`Barbell Good Morning`, `Smith Good Morning`, `Zercher Good Morning`.
 
-`Leg Extension Single-Leg`, `Tempo Leg Extension`, `Cable Leg Extension`, `Sissy Squat Machine`, `Band Leg Extension`, `Leg Extension Drop Set`. All Tier 2 medium picioare primary.
+## §6 Phase F Nordic/razor/slider — 6 NEW LANDED
 
-## §7 Phase G sissy/step-up/pistol/wall accessory — 6 NEW LANDED
+`Nordic Hamstring Curl`, `Nordic Hamstring Curl Assisted`, `Eccentric Nordic Curl`, `Slider Hamstring Curl`, `Razor Curl`, `Inverse Curl`.
 
-`Sissy Squat Bodyweight` (Tier 2), `DB Step-up` (Tier 2), `Barbell Step-up` (Tier 2), `Pistol Squat` (Tier 3), `Wall Sit Static` (Tier 3), `Bodyweight Squat` (Tier 3).
+## §7 Phase G posterior chain accessory — 7 NEW LANDED (Single-Leg RDL Bodyweight skipped)
+
+`Hip Thrust`, `Single-Leg Hip Thrust`, `Hyperextension Bodyweight`, `Reverse Hyper Bodyweight`, `Cable Pull-Through`, `Banded Pull-Through`, `Wall Hip Hinge`.
 
 ## §8 Cumulative stats
 
 ```
 $ grep -c "^  '" src/schema/exerciseMetadata.js
-340                                              # 295 + 45 NEW Bundle 6.0.4.1 ✓
-$ grep -c "muscle_target_primary: 'picioare'" src/schema/exerciseMetadata.js
-51                                               # 6 baseline + 45 NEW Bundle 6.0.4.1 ✓
+381                                              # 340 + 41 NEW Bundle 6.0.4.2 ✓
 ```
 
-Total cumulative: 340 entries. Pre-Beta progress: 269 + 45 = **314/657 = ~47.8%** spre target MANDATORY ~657 ex.
+Total cumulative: **381 entries** (target was 385 with 45 NEW; 41 NEW landed due to 4 collisions skipped).
 
-Tests: 3191 → 3209 PASS (+18 NEW Bundle 6.0.4.1 describe block). ZERO regression existing baseline preserved invariant.
+Pre-Beta progress: **310/657 = ~47.2% cumulative** (Bundle 6.0.1 90 + 6.0.2 98 + 6.0.3 80 + OHP 1 + 6.0.4.1 45 + 6.0.4.2 41 = 355 NEW post V1 26 → 381 total).
+
+Tests: 3209 → **3227 PASS** (+18 NEW Bundle 6.0.4.2 describe block).
 
 ## §9 Commit + push origin + backup tag
 
-- Backup tag pre-execute: `pre-bundle-6-0-4-1-quads-extension-2026-05-13j` pushed origin ✓
-- Commit hash: `885fe9a` (atomic single-concern Bundle 6.0.4.1 Quads)
-- Branch: `feature/v2-vanilla-port`
-- Push: `c574aef..885fe9a feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
-- Pre-commit hook re-ran vitest: `Tests 3209 passed (3209)` verified ✓
-- Files changed: 4 (+804 −177)
+- Backup tag pre-execute: `pre-bundle-6-0-4-2-hams-extension-2026-05-13j` pushed origin ✓
+- Commit hash: pending atomic commit.
+- Branch: `feature/v2-vanilla-port`.
 
-🦫 Bugatti craft. Bundle 6.0.4.1 LOCK V1 2026-05-13j. Co-CTO autonomous full execution. ZERO Daniel confirmation theater per spec.
+## §10 §AR.* cross-reference + path forward
 
-## §10 Path forward Bundle 6.0.4.2 Hamstrings
+**Effective:** §AR.20+§AR.21 inline grep evidence. §AR.22 5th validation cumulative reinforce. §AR.23 12th consecutive validation effective continuat. §AR.* 2× threshold "Stale toBe(X) brittle" preserved invariant — all Bundle 6.0.4.2 tests use forward-compat `toBeGreaterThanOrEqual`.
 
-Post Bundle 6.0.4.1 LANDED → next P1 absolut Bundle 6.0.4.2 Hamstrings ~45 NEW fresh chat dedicat. Roadmap remaining: 6.0.4.2 Hamstrings + 6.0.4.3 Glutes + 6.0.4.4 Calves + 6.0.5 Arms + 6.0.6 Specialty + 6.0.7 Core.
+**§AR.* NEW candidat 1× threshold "Name collision between bundles":** Bundle 6.0.4.2 surfaced 4 collisions cu Bundle 6.0.2 Phase I (same exercise names for spate-primary vs picioare-primary classification). Co-CTO autonomous resolution: skip duplicates + document in LATEST raport. Codify next /wiki-ingest dacă pattern repeats Bundle 6.0.4.3 Glutes (likely — Glute Bridge, Hip Thrust, posterior chain overlap).
+
+**Path forward Bundle 6.0.4.3 Glutes ~45 NEW** fresh chat dedicat. Likely additional collisions (Glute Bridge variants Bundle 6.0.2 referenced — verify pre-flight grep §2 mandatory).
+
+🦫 Bugatti craft. Bundle 6.0.4.2 LOCK V1 2026-05-13j. Co-CTO autonomous full execution. ZERO regression. ZERO Daniel confirmation theater per spec.

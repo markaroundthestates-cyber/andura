@@ -975,3 +975,189 @@ describe('Bundle 6.0.4.1 Quads Library Extension §ADR v2 LOCK V2', () => {
     expect(resolved / total).toBeGreaterThanOrEqual(0.7);
   });
 });
+
+// ── Bundle 6.0.4.2 Hamstrings Library Extension Tests (Bundle 6.0.4.2 NEW 2026-05-13j) ────────
+describe('Bundle 6.0.4.2 Hamstrings Library Extension §ADR v2 LOCK V2', () => {
+  // §1 cumulative count grows ≥381 post Bundle 6.0.4.2 (41 NEW; 4 spec candidates skipped due to Bundle 6.0.2 Phase I collisions)
+  it('cumulative count grows ≥ 381 post Bundle 6.0.4.2 Hamstrings (+41 NEW; 4 collisions skipped)', () => {
+    const count = Object.keys(EXERCISE_METADATA).length;
+    expect(count).toBeGreaterThanOrEqual(381);
+  });
+
+  // §2 Phase A — RDL barbell variants all 7 entries present (skipped Single-Leg RDL collision)
+  it('Phase A RDL barbell variants 7 entries present cu cascade populated', () => {
+    const phaseAEntries = ['Stiff-Leg Deadlift', 'Snatch-Grip RDL', 'Deficit RDL', 'Sumo RDL', 'Block RDL', 'Pause RDL', 'B-Stance RDL'];
+    phaseAEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §3 Phase B — Smith/machine hamstring 6 entries present
+  it('Phase B Smith/machine hamstring variants 6 entries present', () => {
+    const phaseBEntries = ['Smith RDL', 'Hyperextension Machine', 'Reverse Hyper', 'Glute-Ham Raise', 'Natural Glute-Ham Raise', 'Trap Bar Deadlift'];
+    phaseBEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §4 Phase C — DB hamstring compound 6 entries present
+  it('Phase C DB hamstring compound 6 entries present', () => {
+    const phaseCEntries = ['DB Romanian Deadlift', 'DB Single-Leg RDL', 'DB B-Stance RDL', 'DB Stiff-Leg Deadlift', 'Kettlebell Swing', 'Tempo DB Romanian Deadlift'];
+    phaseCEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §5 Phase D — leg curl variants 6 entries present
+  it('Phase D leg curl variants 6 entries present', () => {
+    const phaseDEntries = ['Seated Leg Curl', 'Standing Leg Curl', 'Leg Curl Single-Leg', 'Tempo Leg Curl', 'Cable Leg Curl', 'Band Leg Curl'];
+    phaseDEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §6 Phase E — good morning variants 3 entries present (skipped Seated/Banded GM collisions)
+  it('Phase E good morning variants 3 entries present (Seated/Banded GM Bundle 6.0.2 Phase I collisions skipped)', () => {
+    const phaseEEntries = ['Barbell Good Morning', 'Smith Good Morning', 'Zercher Good Morning'];
+    phaseEEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §7 Phase F — Nordic + razor + slider 6 entries present
+  it('Phase F Nordic + razor + slider 6 entries present', () => {
+    const phaseFEntries = ['Nordic Hamstring Curl', 'Nordic Hamstring Curl Assisted', 'Eccentric Nordic Curl', 'Slider Hamstring Curl', 'Razor Curl', 'Inverse Curl'];
+    phaseFEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §8 Phase G — posterior chain accessory 7 entries present (skipped Single-Leg RDL Bodyweight collision)
+  it('Phase G posterior chain accessory 7 entries present (Single-Leg RDL Bodyweight Bundle 6.0.2 Phase I collision skipped)', () => {
+    const phaseGEntries = ['Hip Thrust', 'Single-Leg Hip Thrust', 'Hyperextension Bodyweight', 'Reverse Hyper Bodyweight', 'Cable Pull-Through', 'Banded Pull-Through', 'Wall Hip Hinge'];
+    phaseGEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §9 all 41 NEW hamstring entries muscle_target_primary = 'picioare' canonical
+  it('all 41 NEW hamstring entries muscle_target_primary = picioare canonical Romanian', () => {
+    const allNewHams = [
+      'Stiff-Leg Deadlift', 'Snatch-Grip RDL', 'Deficit RDL', 'Sumo RDL', 'Block RDL', 'Pause RDL', 'B-Stance RDL',
+      'Smith RDL', 'Hyperextension Machine', 'Reverse Hyper', 'Glute-Ham Raise', 'Natural Glute-Ham Raise', 'Trap Bar Deadlift',
+      'DB Romanian Deadlift', 'DB Single-Leg RDL', 'DB B-Stance RDL', 'DB Stiff-Leg Deadlift', 'Kettlebell Swing', 'Tempo DB Romanian Deadlift',
+      'Seated Leg Curl', 'Standing Leg Curl', 'Leg Curl Single-Leg', 'Tempo Leg Curl', 'Cable Leg Curl', 'Band Leg Curl',
+      'Barbell Good Morning', 'Smith Good Morning', 'Zercher Good Morning',
+      'Nordic Hamstring Curl', 'Nordic Hamstring Curl Assisted', 'Eccentric Nordic Curl', 'Slider Hamstring Curl', 'Razor Curl', 'Inverse Curl',
+      'Hip Thrust', 'Single-Leg Hip Thrust', 'Hyperextension Bodyweight', 'Reverse Hyper Bodyweight', 'Cable Pull-Through', 'Banded Pull-Through', 'Wall Hip Hinge',
+    ];
+    expect(allNewHams.length).toBe(41);
+    allNewHams.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare');
+    });
+  });
+
+  // §10 fallback_cascade step types canonical 5 types
+  it('fallback_cascade step types canonical 5 types Bundle 6.0.4.2', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    const sample = ['Stiff-Leg Deadlift', 'Smith RDL', 'DB Romanian Deadlift', 'Seated Leg Curl', 'Barbell Good Morning', 'Nordic Hamstring Curl', 'Hip Thrust'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  // §11 muscle_group_compose 1-2 exercise_ids
+  it('muscle_group_compose 1-2 exercise_ids Bundle 6.0.4.2', () => {
+    const sample = ['Smith RDL', 'Glute-Ham Raise', 'Cable Pull-Through', 'Nordic Hamstring Curl', 'Hip Thrust'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.type === 'muscle_group_compose') {
+          expect(s.exercise_ids.length).toBeGreaterThanOrEqual(1);
+          expect(s.exercise_ids.length).toBeLessThanOrEqual(2);
+        }
+      });
+    });
+  });
+
+  // §12 cascade depth ≥5 Tier 1-2 hamstring compound
+  it('Tier 1-2 hamstring compound 5-step cascade', () => {
+    const tier1Sample = ['Stiff-Leg Deadlift', 'Smith RDL', 'DB Romanian Deadlift', 'Hyperextension Machine', 'Glute-Ham Raise', 'Hip Thrust'];
+    tier1Sample.forEach(name => {
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §13 tier distribution
+  it('Bundle 6.0.4.2 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    expect(EXERCISE_METADATA['Stiff-Leg Deadlift'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Seated Leg Curl'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Slider Hamstring Curl'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Wall Hip Hinge'].tier).toBe(3);
+  });
+
+  // §14 force_demand distribution
+  it('Bundle 6.0.4.2 force_demand: high + medium + low all present', () => {
+    expect(EXERCISE_METADATA['Stiff-Leg Deadlift'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['Seated Leg Curl'].force_demand).toBe('medium');
+    expect(EXERCISE_METADATA['Slider Hamstring Curl'].force_demand).toBe('low');
+  });
+
+  // §15 equipment_type distribution 6 canonical
+  it('Bundle 6.0.4.2 equipment_type 6 canonical all present', () => {
+    const seen = new Set();
+    const sample = ['Stiff-Leg Deadlift', 'DB Romanian Deadlift', 'Smith RDL', 'Cable Leg Curl', 'Band Leg Curl', 'Nordic Hamstring Curl'];
+    sample.forEach(name => seen.add(EXERCISE_METADATA[name].equipment_type));
+    expect(seen.has('barbell')).toBe(true);
+    expect(seen.has('dumbbell')).toBe(true);
+    expect(seen.has('machine')).toBe(true);
+    expect(seen.has('cable')).toBe(true);
+    expect(seen.has('band')).toBe(true);
+    expect(seen.has('bodyweight')).toBe(true);
+  });
+
+  // §16 existing baseline preserved invariant
+  it('existing V1 + Bundle 6.0.1-4.1 preserved invariant ZERO mutation Bundle 6.0.4.2', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['Romanian Deadlift']).toBeDefined();
+    expect(EXERCISE_METADATA['Leg Curl']).toBeDefined();
+    expect(EXERCISE_METADATA['OHP']).toBeDefined();
+    expect(EXERCISE_METADATA['Barbell Back Squat (High Bar)']).toBeDefined();
+    // Bundle 6.0.2 Phase I collisions remained spate primary (not mutated by Bundle 6.0.4.2)
+    expect(EXERCISE_METADATA['Single-Leg RDL'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Seated Good Morning'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Banded Good Morning'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Single-Leg RDL Bodyweight'].muscle_target_primary).toBe('spate');
+  });
+
+  // §17 cascade self-reference rejection invariant Bundle 6.0.4.2
+  it('Bundle 6.0.4.2 NEW entries NEVER self-reference parent name', () => {
+    const sample = ['Stiff-Leg Deadlift', 'Smith RDL', 'DB Romanian Deadlift', 'Seated Leg Curl', 'Nordic Hamstring Curl', 'Hip Thrust'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(name);
+        if (s.exercise_ids) expect(s.exercise_ids).not.toContain(name);
+      });
+    });
+  });
+
+  // §18 cascade references resolve ≥70% Bundle 6.0.4.2 (lenient — Bundle 6.0.4.3+ forward refs OK)
+  it('cascade references resolve ≥70% Bundle 6.0.4.2 lenient', () => {
+    const sample = ['Stiff-Leg Deadlift', 'Smith RDL', 'DB Romanian Deadlift', 'Nordic Hamstring Curl', 'Hip Thrust'];
+    let total = 0, resolved = 0;
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        const refs = s.exercise_ids || [s.exercise_id];
+        refs.forEach(r => { total++; if (EXERCISE_METADATA[r]) resolved++; });
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+});
