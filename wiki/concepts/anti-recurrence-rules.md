@@ -13,6 +13,8 @@ cross_refs:
 amendments:
   - date: 2026-05-12
     note: APPEND 5 NEW slip patterns chat-current chat ACASĂ (C Daniel Gates inclusion fork / E pauză inclusion fork / F+D tactical-as-CEO-fork / GPT-style heavy formatting / Calendar compositional ratat) — §AR.1-§AR.19 invariant preserved unchanged
+  - date: 2026-05-13b
+    note: APPEND 3 NEW slip patterns chat-current chat ACASĂ post Calendar V1 S2 LANDED (spec PROMPT_CC src/ reference violated ADR 026 §9 pure-function engines invariant / false dichotomy A/B missing equipment when Daniel proposed combo nuanced / bandwidth proactiv missed report 5-7 mesaje grele cumulative threshold) — §AR.20 codification candidate strong RECURRENCE (slip 1 chat-current 2× chat trecut + chat-current = invariant codification trigger) + §AR.21-§AR.22 codification candidate pending Daniel approval explicit chat NEW. §AR.1-§AR.19 invariant preserved unchanged
 ---
 
 # Anti-Recurrence Rules §AR.*
@@ -123,4 +125,36 @@ Daniel-isms recurring slip pattern correction:
 - [[../../📥_inbox/HANDOVER_2026-05-12_chat_acasa_sub_batch_3_closure_plus_calendar_v1_spec_locked]] §"Slip-uri productive chat-current 5 anti-recurrence reaffirm" (handover narrative source verbatim 5 slip patterns chat-current)
 - [[../summaries/sub-batch-3-closure-milestone-2026-05-12]] §"5 slip patterns anti-recurrence reaffirm" (synthesis chat-current cross-cluster 5 cluster ingest milestone)
 - [[calendar-feature-v1-spec]] §"Anti-RE considerations" slip 5 Calendar compositional ratat catalysator pattern test înțelegere completă NEW invariant
+
+---
+
+## Chat-Current Slip Patterns 2026-05-13b (APPEND-only — 3 NEW post Calendar V1 S2 LANDED)
+
+**Source:** Chat ACASĂ 2026-05-13 post Calendar V1 Slice 2 Production Wiring LANDED (3 atomic commits chain S2.A `7c2f520` + S2.B `fce846a` + S2.C `a77587c`) + 4 strategic LOCKs chat-current findings backlog + mockup test 7 observations Daniel paralel cu CC running + handover trigger voluntary Daniel verbatim *"daca nu mai avem de discutat nimic poti face handover"* bandwidth ~40% healthy. 3 NEW slip patterns surfaced chat-current cu Daniel push-back productive + spec PROMPT_CC src/ reference catch saved 70 tests + ZERO engine module mutation.
+
+**Slip 6 — Spec PROMPT_CC violated ADR 026 §9 pure-function engines invariant (RECURRENCE post §AR.* codification 2× minimum trigger §AR.20 candidate STRONG):**
+- **Pattern:** Eu am generat spec artefact `PROMPT_CC_CALENDAR_V1_SLICE_2_PRODUCTION_WIRING.md` referenced `goalAdaptation.recomputeWeekSchedule()` method to be added + procedural multi-week constraint propagate via engine method calls = **violation ADR 026 §9 pure-function engines invariant** (Pure: NO side effects, ZERO Date.now / Math.random, engines absorb context defensive-read pattern via `safeCtx.meta`). CC autonomous pre-flight grep filesystem detected divergence pe spec vs filesystem reality → escalate AskUserQuestion 3 options (Adapt + execute Recommended reinterpret UI-side adapter + buildCoachContext extend + engines UNCHANGED / Halt + new chat handover / Execute verbatim violating ADR 026).
+- **Daniel verbatim chat ACASĂ 2026-05-13b tactical Co-CTO call:** *"asta e decizia ta nu a mea"* = Option 1 LOCKED Adapt + execute. Recunosc slip *"ai dreptate — eu trebuia să caut ADR 026 în vault înainte să scriu spec-ul pe engines (paradigm pure functions, NU method-uri procedurale). Am sărit peste = slip §AR candidate captured"*.
+- **Anti-recurrence permanent:** PROMPT CC src/ reference verify ADR primary citation MANDATORY ÎNAINTE spec generation touching engines. Pattern grep filesystem direct ADR 026 §9 + §1.10 Constraint Object immutable + ADR 030 D2 thin scope ÎNAINTE write spec referenced engine methods/procedural calls. §AR.1 pre-flight grep filesystem invariant ÎNAINTE reference paths extends scope spec generation pre-write phase (NU doar reference verify post-write).
+- **Codification candidate §AR.20 NEW STRONG RECURRENCE** (slip §AR.* 2× minimum threshold met: chat-current 2026-05-12 *"PROMPT CC src/ violation Anti-RE rule"* + chat-current 2026-05-13b spec procedural method add violation = invariant codification trigger). Pending Daniel approval explicit chat NEW post-handover read.
+
+**Slip 7 — False dichotomy A/B presented missing equipment when Daniel proposed combo nuanced (push-back productive pattern detection):**
+- **Pattern:** Eu am propus #3 missing equipment foundational decision: A) keep picker management view SAU B) elimin picker complet. Daniel push-back instant: *"Stai ma ca sa inteleg. Eu am propus 1 buton de nu am echipament in preview care il da coach cand incepi antrenamentul. Daca apesi pe el coach automat iti da alt exercitiu ca sa se adapteze. In cont sa existe aia cu aparate lipsa, sa se centralizeze complet cu ce a apasat gigel in preview ala de workout, dar sa existe optiunea sa debifere ze e deja selectat."*. Eu am pivotat clarificat setup combo nuanced: workout-preview = locație buton per-exercise (PRE-start, NU mid-session); tap → 2 efecte simultan coach auto-swap + auto-add `wv2-missing-equipment` registrul global; picker Cont/General = vedere centralizată read-only + **debifare-only** (NU bulk-add); S1.7 single button full-width preview = REMOVE replace per-exercise. Daniel verbatim confirmation: *"corect"* = LOCKED V1 missing equipment combo chat-current.
+- **Anti-recurrence permanent:** NU presupun foundational dichotomy bare-XOR fără re-read verbatim original Daniel attent. Pattern: când Daniel propune un setup nuanced multi-component, surface synthesis clarification cu sub-components explicit Daniel pick (NU forced binary). Re-read verbatim original integral ÎNAINTE propose foundational decision fork.
+- **Codification candidate §AR.21 NEW** false dichotomy A/B bare-XOR pre-decision foundational invariant pending Daniel approval explicit chat NEW (1× chat-current observed, watch list pattern detection chat NEW pentru 2× confirmation codification trigger).
+
+**Slip 8 — Bandwidth proactiv missed report 5-7 mesaje grele cumulative threshold (slip RECURRENCE pattern monitor):**
+- **Pattern:** Daniel verbatim *"cat ai bw?"* — Slip eu nu am raportat proactiv la 5-7 mesaje grele cumulative per protocol Bandwidth proactiv MANDATORY userPreferences. Am scăpat raportare cumulative ~5-6 mesaje grele post-startup (read multi-file + spec generation + read_me visualizer + LATEST read + findings backlog report). Bandwidth ~45-50% remaining raport honest + anti-recurrence flag surfaced.
+- **Anti-recurrence permanent:** Monitor mesaje grele cumulative + report 1-line in current response when 5-7 threshold hit fără Daniel ask. Heavy = multi-file read + artefact generation + visualizer + cross-cluster aggregate (count each). Light = scurt clarification / confirm / 1-2 LOC artefact (NU count).
+- **Codification candidate §AR.22 NEW** bandwidth proactiv MANDATORY auto-report 5-7 threshold cumulative invariant pending Daniel approval explicit chat NEW (slip recurrence pattern chat anterior similar slip + chat-current = monitor 2× confirmation post chat NEW).
+
+**3 slip patterns 2026-05-13b chat-current anti-recurrence captured invariant** — codification §AR.20-§AR.22 candidate pending Daniel approval explicit chat NEW (per §AR.* codification rule slip 2× minimum observed). Slip 6 (§AR.20) RECURRENCE 2× minim chat trecut + chat-current = codification §AR.* invariant candidate STRONG. Slips 7+8 1× chat-current observed = note watch list pattern detection chat NEW pentru 2× confirmation codification trigger.
+
+## Cross-refs raw layer adițional chat-current 2026-05-13b
+
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings]] §2 spec violated ADR 026 §9 + Decision Co-CTO Adapt + execute + §6 false dichotomy A/B missing equipment + §8 bandwidth proactiv missed + §12 anti-recurrence slips captured chat-current 3 NEW (handover narrative source verbatim 3 slip patterns chat-current)
+- [[calendar-feature-v1-spec]] §"Bugatti framing notes" S2 Adapt + execute anti-RE additional notes slip §AR.20 candidate strong + §AR.21 false dichotomy + §AR.22 bandwidth proactiv (3 slips chat-current cross-link)
+- [[../entities/engines/engine-coach-director]] §"Anti-RE considerations" S2 Production Wiring 2026-05-13b slip §AR.20 candidate strong RECURRENCE (cross-link engine pure-function preserved invariant)
+- [[../entities/adrs/adr-026-offline-coaching-tree]] §9 pure-function engines invariant authority (Pure: NO side effects, ZERO Date.now / Math.random, engines absorb context defensive-read pattern via `safeCtx.meta`)
+- [[../entities/adrs/adr-030-adapter-design-pattern]] D2 thin scope adapter pattern scheduleAdapter parity (UI-side pure-function adapter NU engine module mutation)
 

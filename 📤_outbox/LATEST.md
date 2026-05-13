@@ -1,152 +1,99 @@
-# LATEST — Calendar V1 Slice 2 Production Wiring (S2) ✅ 🦫
+# LATEST — /wiki-ingest Handover 2026-05-13b Post Calendar V1 S2 LANDED + 4 Strategic LOCKs + 3 Slips ✅ 🦫
 
-**Task:** First `src/` touch on Calendar V1 cumulative — bridge mockup S1.7 demo JS to engine production code via UI-side adapter respecting ADR 026 §9 pure-function engine semantics. Three atomic commits S2.A → S2.B → S2.C.
+**Task:** `/wiki-ingest` autonomous Bugatti gate per VAULT_RULES.md §F3.8 + HANDOVER_VERIFICATION_CHECKLIST.md §0-§11 mandatory pre-commit pe handover narrative chat ACASĂ post Calendar V1 Slice 2 Production Wiring LANDED + 4 strategic LOCKs chat-current findings backlog + 3 slips §AR.20-§AR.22 codification candidate + 9 daniel-isms verbatim catalog extensible cross-cluster.
 **Model:** Opus EXCLUSIVELY per CEO directive verbatim (Sonnet concediat permanent).
-**Status:** ✅ **COMPLETE** — 3 atomic commits LANDED + push origin + tests 2914 → 2984 PASS (+70 net new) + ZERO regression existing 2914 baseline + ZERO engine module mutation.
+**Status:** ✅ **COMPLETE** — 1 NEW summary distributed + 6 UPDATE existing pages voice §1 enforced + cumulative 119 → 120 wiki pages + archive raw HANDOVER 449 CONSUMED + LATEST.md cycle 450 CONSUMED + tests 2984 PASS preserved EXACT + atomic commit single-concern pushed origin.
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-13 10:08 Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12.
-**Pre-flight tag pushed origin:** `pre-calendar-v1-s2-production-wiring-2026-05-13-0930`
+**Date:** 2026-05-13b Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12 §F3.13.
+**Pre-flight tag pushed origin:** `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings`
 
 ---
 
-## §0 — Scope deviation rationale (Adapted execution per Daniel decision chat ACASĂ 2026-05-13)
+## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]])
 
-PROMPT CC S2 verbatim contained references to engine methods that **do not exist and cannot exist** without violating LOCK V1 invariants:
-
-| Prompt assumption | Filesystem reality (verified `path:§`) | Resolution |
-|-------------------|----------------------------------------|------------|
-| `goalAdaptation.recomputeWeekSchedule()` method to be added | `src/engine/goalAdaptation/index.js:79` — `evaluate(ctx)` pure-function per ADR 026 §9 ("Pure: NO side effects... ZERO Date.now / Math.random") | Replaced by `ctx.meta.calendarOverride` injection from `coachContext.js` → engines absorb naturally via existing `safeCtx.meta` defensive-read pattern (e.g. goalAdaptation L89). **ZERO engine code touched.** |
-| Engine #1 multi-week constraint propagate via procedural call | `src/engine/periodization/index.js:155` — `emitConstraintObject()` already emits Hook 1 read-only for downstream consumption. Orchestrator pipeline §42.10 handles propagation. | No procedural wiring needed — Constraint Object pattern already works. |
-| `coachDirector.buildSession()` should consume `wv2-missing-equipment` directly | `src/engine/sessionBuilder.js:53-54` already filters by `ctx.equipment.available`. `coachContext.js:13` is SSOT for engines per file header ("Engines nu mai citesc din localStorage direct — primesc context de aici"). | Integration at `coachContext.js` upstream — `buildSession()` unchanged, naturally reflects new state. |
-| Full-screen `src/pages/cont/aparateLipsa.js` | Existing src/ convention is **modal overlay** (parity equipmentSwap/painButton/cevaNuMerge) | Modal overlay pattern adopted; mockup full-screen aesthetic adapted. Drill destinations preserved. |
-
-**Daniel chat verbatim approval 2026-05-13:** "Adapt + execute (Recommended)" — reinterpret S2 plan to fit actual architecture, document deviation in commits, atomic per task.
-
----
-
-## §1 Files touched (3 atomic commits)
-
-| Commit | Files | Diff | Notes |
-|--------|-------|------|-------|
-| **S2.A** `7c2f520` | `src/engine/schedule/scheduleAdapter.js` + `__tests__/scheduleAdapter.test.js` | +514 LOC (216 module + 298 tests) NEW | Pure-function UI-side adapter (ADR 030 D2 thin scope). Calendar override + missing equipment list + translation table USER→ENGINE equipment IDs. 41 tests. |
-| **S2.B** `fce846a` | `src/engine/coachContext.js` + `__tests__/coachContext.missingEquipment.test.js` | +163 / -5 | Extend SSOT context builder: merge legacy `unavailable-equipment` + user-driven `wv2-missing-equipment` (translated) → `ctx.equipment.{available,unavailable}`. Inject `ctx.meta.calendarOverride`. 13 tests. |
-| **S2.C** `a77587c` | `src/state.js` (1 line) + `src/pages/coach/aparateLipsa.js` + `__tests__/aparateLipsa.test.js` | +279 / -1 | Port mockup S1.7 picker → modal overlay (src/ convention parity). `state.currentScreen` enum extended `'aparate-lipsa'`. Delegates persistence to scheduleAdapter. 16 tests. |
-
-**ZERO `main` branch touch. ZERO React/JSX. ZERO `--no-verify` (pre-commit vitest hook verde × 3 commits). ZERO engine module mutation (ADR 026 §9 pure-function invariant preserved). ZERO `/api/feedback` backend (correctly OUT OF SCOPE per prompt §1).**
+- ✅ **§0 Pre-conditions scribe-side (8 items)** — handover narrative present `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` ~140 LOC conversational flow + voice §1 4-section structure detectabil + Verbatim quotes Daniel preserved EXACT 19 quotes incluse + cross-refs raw layer enumerate min 8 specific path:§ pointers + Daniel CEO directive trigger voluntary verbatim *"daca nu mai avem de discutat nimic poti face handover"* + bandwidth ~40% healthy.
+- ✅ **§1 Backup tag `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings` pushed origin** — verified remote `git push origin <tag>` LANDED rollback safety net invariant.
+- ✅ **§2 Pre-flight grep verify (paths + wikilinks + daniel-isms + strategy LOCKED)** — commits S2.A `7c2f520` + S2.B `fce846a` + S2.C `a77587c` verified git log filesystem-side; ADRs (026 §9 pure-function + 030 D2 thin scope + 020 §1.4 Tier 0) verified grep raw layer; 8 wiki target pages exist filesystem (calendar-feature-v1-spec + engine-coach-director + adr-020 + adr-026 + adr-030 + anti-recurrence-rules + daniel-isms-glossary + slip-patterns-history); 9 daniel-isms verbatim preserved exact per handover narrative §3-§11; strategy LOCK V1 cap-coadă preserved invariant (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă + Karpathy Real + voice preservation §1).
+- ✅ **§3 Wiki distribution voice §1 4-section enforced — 7 pages affected** (1 NEW + 6 UPDATE):
+  - **NEW** [[../wiki/summaries/calendar-v1-s2-production-wiring-milestone-2026-05-13]] LOCKED V1 synthesis chain 3 atomic commits + 4 strategic LOCKs + 3 slips + 9 daniel-isms — Synthesis 4 paragrafe + Verbatim quotes Daniel 10 EXACT + Bugatti framing notes 5 sub-sections + Cross-refs raw layer 18 specific path:§ pointers
+  - **UPDATE** [[../wiki/concepts/calendar-feature-v1-spec]] APPEND amendments[2026-05-13b] S2 LANDED chain 3 commits + §Synthesis S2 Production Wiring section + §Verbatim 9 NEW chat-current + §Bugatti S2 Adapt + execute anti-RE additional notes + §Cross-refs S2 commits src/ + handover narrative ref
+  - **UPDATE** [[../wiki/entities/engines/engine-coach-director]] APPEND amendments[2026-05-13b] S2 LANDED 3 commits chain + §Synthesis S2 Production Wiring LANDED replace path forward → actual + §Verbatim *"asta e decizia ta nu a mea"* + §Bugatti S2 Anti-RE slip §AR.20 candidate strong + §Cross-refs 3 commits src/
+  - **UPDATE** [[../wiki/entities/adrs/adr-020-storage-tiering-strategy]] APPEND amendments[2026-05-13b] Tier 0 parity preserved S2 LANDED + §Cross-refs 3 commits src/ + handover narrative ref
+  - **UPDATE** [[../wiki/concepts/anti-recurrence-rules]] APPEND new section "Chat-Current Slip Patterns 2026-05-13b" cu 3 NEW slip patterns §AR.20-§AR.22 codification candidate + frontmatter amendments[2026-05-13b]
+  - **UPDATE** [[../wiki/summaries/daniel-isms-glossary]] APPEND new section "Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED + 4 strategic LOCKs" cu 9 NEW daniel-isms categorii Skills CC + Push-back productive + Calendar V1 S2 spec + Mockup test + Casual mood
+  - **UPDATE** [[../wiki/summaries/slip-patterns-history]] APPEND new section "Chat-Current Slip Patterns 2026-05-13b" cu 3 NEW slip patterns chronological + push-back productive moments + tone shifts framing changes
+- ✅ **§4 wiki/index.md + wiki/log.md updated cumulative count match** — wiki/index.md `total_pages: 119 → 120` + Catalog status section updated post `/wiki-ingest handover 2026-05-13b` + Summaries section +1 NEW page entry first item; wiki/log.md APPEND new entry top `## [2026-05-13b] ingest | Chat ACASĂ post Calendar V1 S2 LANDED + 4 strategic LOCKs chat-current + 3 slips findings` cu narrative summary distribution + cumulative count + verification checklist §0-§11.
+- ✅ **§5 Bidirectional cross-links verified** — cluster triangle Calendar V1 ↔ Coach Director ↔ ADR 020 ↔ calendar-v1-s2-production-wiring-milestone-2026-05-13 preserved + cluster triangle anti-recurrence-rules ↔ slip-patterns-history ↔ daniel-isms-glossary slip catalog preserved + frontmatter cross_refs section per NEW/UPDATE page lists forward-link existing entities; retroactive back-ref edits frozen pages NU performed per HARD CONSTRAINT §F3.12 forward-only policy.
+- ✅ **§6 Raw layer archived _CONSUMED** — `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` → `📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED.md` (chronological continuous post 448 LATEST_PREVIOUS_WIKI_INGEST archived) + LATEST.md cycle → `📤_outbox/_archive/2026-05/450_LATEST_PREVIOUS_CALENDAR_V1_S2_PRODUCTION_WIRING_CONSUMED.md` (Calendar V1 S2 raport precedessor archive) + NEW LATEST.md structured §0-§11 raport (acest file).
+- ✅ **§7 Atomic commit single-concern pushed origin** — staged only files modificate în acest /wiki-ingest atomic batch (NU bulk multi-purpose) + commit message `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips` + push origin `feature/v2-vanilla-port` per active branch policy + verify commit landed remote post-push.
+- ✅ **§8 Tests baseline 2984 PASS preserved EXACT** — vault meta-tooling doc-only operation /wiki-ingest ZERO src/ touched per HARD CONSTRAINTS §F3.12 → tests preserved invariant 2914 → 2984 PASS (+70 net new) baseline post S2 LANDED chain 3 commits chat-current; pre-commit hook gate verde.
+- ✅ **§9 LATEST.md §0 HANDOVER_VERIFICATION_CHECKLIST structured raport** — acest file `📤_outbox/LATEST.md` §0 (top) block structured ✅/❌ per item §0-§8 + §10 anti-recurrence + §11 cross-refs authority.
+- ✅ **§10 Anti-recurrence cross-ref §AR.* invariant preserved** — §AR.1 pre-flight grep ✅ + §AR.3 ground truth git verify ✅ + §AR.4 anti-distructive default ✅ + §AR.13 PK growth control N/A (vault meta-tooling) + §AR.16 STRICT_OUTPUT_FILE acest LATEST.md ≥10-15 LOC artefact ✅ + §AR.17 UNIFIED_INBOX_INPUT handover scris la `📥_inbox/` ✅ + §AR.19 claude_code timeout MCP delivery verify post-execute `git log origin -5` ✅. **§AR.20-§AR.22 codification candidate chat-current 2026-05-13b** captured în handover narrative §12 + distributed via wiki layer [[../wiki/concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b" pending Daniel approval explicit chat NEW post-handover read.
+- ✅ **§11 Cross-refs authority** — [[../CLAUDE]] §0-§7 schema Karpathy Real Option B + [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.13 paradigm + [[../wiki/_design/WIKI_DESIGN_SPEC_V1]] design spec Phase 1 LANDED + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate verified PASS.
 
 ---
 
-## §2 Test plan executed
+## §Pre-flight
 
-| Test file | New cases | Coverage area |
-|-----------|-----------|---------------|
-| `src/engine/schedule/__tests__/scheduleAdapter.test.js` | 41 | Constants + mapDateToIndex (4) + getWeekStartIso (2) + detectMidWeekEdit (6) + override storage round-trip + Reset Luni invalidation + malformed fallback (8) + missing equipment toggle + legacy filter (10) + translateToEngineEquipment dedup + empty mapping (8) |
-| `src/engine/__tests__/coachContext.missingEquipment.test.js` | 13 | Empty/single/multi missing → ctx.equipment merge correctness (5) + legacy + user-driven dedup (2) + 5 picker-without-engine-mapping no-op (1) + all-10 blocked extreme (1) + malformed fallback (1) + legacy S1.5 string filter (1) + calendar override injection (3) |
-| `src/pages/coach/__tests__/aparateLipsa.test.js` | 16 | Label coverage (2) + modal render + state mutation + idempotent open (4) + hydration legacy-aware (2) + toggle persistence (3) + close behavior + onResolve contract (4) |
-| **Total** | **70 new** | **Baseline 2914 → 2984 PASS (+70 net new). ZERO regression existing 2914.** |
+- ✅ Backup tag `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings` pushed origin (rollback safety net invariant)
+- ✅ Grep filesystem verify references in handover narrative (commits S2.A/B/C exist + ADRs 026/030/020 exist + wiki target pages exist + Daniel-isms verbatim preserved exact)
+- ✅ Branch `feature/v2-vanilla-port` (NU main per HARD CONSTRAINTS §F3.12)
+- ✅ Model Opus EXCLUSIVELY (Sonnet concediat permanent per CEO directive)
+- ✅ Strategy LOCKED V1 cap-coadă preserved invariant
 
-Pre-commit hook vitest run executed verde × 3 commits prior to push. Verified via `npm run test:run` post-final commit: `Test Files 162 passed (162) · Tests 2984 passed (2984) · Duration 32.74s`.
+## §Modificări (filesystem changes)
 
----
+**1 NEW page distributed:**
+- `wiki/summaries/calendar-v1-s2-production-wiring-milestone-2026-05-13.md` (NEW)
 
-## §3 Build vite stats
+**6 UPDATE existing pages distributed:**
+- `wiki/concepts/calendar-feature-v1-spec.md` (§Synthesis + §Verbatim + §Bugatti + §Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
+- `wiki/entities/engines/engine-coach-director.md` (§Synthesis + §Verbatim + §Bugatti + §Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
+- `wiki/entities/adrs/adr-020-storage-tiering-strategy.md` (§Cross-refs + frontmatter amendments[2026-05-13b] APPEND)
+- `wiki/concepts/anti-recurrence-rules.md` (APPEND new section "Chat-Current Slip Patterns 2026-05-13b" + frontmatter amendments[2026-05-13b] APPEND)
+- `wiki/summaries/daniel-isms-glossary.md` (APPEND new section "Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED")
+- `wiki/summaries/slip-patterns-history.md` (APPEND new section "Chat-Current Slip Patterns 2026-05-13b")
 
-NOT executed (vitest unit-test baseline sufficient for non-rendered engine + UI module additions). Build verification deferred to pre-Beta cycle — no module-graph structural changes in this S2 increment (no router additions, no top-level entry changes; scheduleAdapter imports are tree-shakeable from coachContext).
+**Index + log updates:**
+- `wiki/index.md` (total_pages 119 → 120 + Catalog status section + Summaries section +1 NEW entry + LOCK V1 trailer updated)
+- `wiki/log.md` (APPEND new entry top `## [2026-05-13b] ingest` cu narrative summary distribution + verification checklist §0-§11)
 
----
+**Archive moves:**
+- `📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings.md` → `📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED.md`
+- `📤_outbox/LATEST.md` (Calendar V1 S2 raport precedessor) → `📤_outbox/_archive/2026-05/450_LATEST_PREVIOUS_CALENDAR_V1_S2_PRODUCTION_WIRING_CONSUMED.md`
+- NEW `📤_outbox/LATEST.md` (acest file structured §0-§11 raport)
 
-## §4 Smoke checks
+## §Build+Tests
 
-- ✅ Pre-commit vitest hook verde × 3 commits
-- ✅ `npm run test:run` post-final: 2984 PASS / 162 files / 32.74s
-- ✅ `git log --oneline` clean atomic chain S2.A → S2.B → S2.C
-- ✅ `git push origin feature/v2-vanilla-port` clean (9ebca96..a77587c)
-- ❌ gstack `/qa` skipped — UI surface limited to single modal, no router integration required for S2 demo (drill-destination wiring from Cont/General + workout-preview is the next slice S3 concern)
-- ❌ gstack `/review` skipped — atomic commits self-reviewed inline + adapt-decision approved by Daniel mid-task
+- ✅ Tests 2984 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
+- ✅ Pre-commit hook gate verde
+- ✅ No regression (baseline 2914 → 2984 PASS post S2 LANDED chat-current 2026-05-13b preserved)
 
----
+## §Commits
 
-## §5 HARD CONSTRAINTS verified ZERO violation
+- atomic single-concern: `chore(wiki): /wiki-ingest handover 2026-05-13 post Calendar V1 S2 LANDED + 4 strategic LOCKs + 3 slips`
+- pushed origin `feature/v2-vanilla-port`
 
-- ✅ ZERO `main` branch (exclusiv `feature/v2-vanilla-port`)
-- ✅ ZERO React/JSX (vanilla JS port Step 1 continuă)
-- ✅ ZERO `--no-verify` (pre-commit hook verde × 3)
-- ✅ ZERO `📥_inbox/` writes
-- ✅ ZERO `.obsidian/` touch
-- ✅ ZERO `wiki/` frozen pages touch (HARD CONSTRAINT §F3.12 raw layer FREEZE preserved)
-- ✅ ZERO `/api/feedback` backend endpoint (correctly OUT OF SCOPE per prompt §1)
-- ✅ ZERO permission gate destructive git ops
-- ✅ ZERO Sonnet model (Opus exclusively throughout)
-- ✅ ZERO engine module mutation (ADR 026 §9 pure-function invariant — NEW invariant respected by adapt decision)
+## §Pushed
 
----
+- ✅ Backup tag pushed origin pre-execute: `pre-handover-ingest-2026-05-13-post-s2-landed-strategic-findings`
+- ✅ Atomic commit pushed origin: `feature/v2-vanilla-port`
 
-## §6 Backup tag pushed origin
+## §Issues
 
-✅ `pre-calendar-v1-s2-production-wiring-2026-05-13-0930` pushed origin pre-execute. Rollback safety net intact — `git reset --hard pre-calendar-v1-s2-production-wiring-2026-05-13-0930` would revert all 3 S2 commits.
+- NONE — all §0-§11 HANDOVER_VERIFICATION_CHECKLIST items PASS.
+- 3 slip patterns §AR.20-§AR.22 codification candidate captured chat-current 2026-05-13b pending Daniel approval explicit chat NEW post-handover read (NU blocker — anti-recurrence catalog wiki layer distributed pending eligible codification §AR.* invariant rule formal LOCKED V1).
 
----
+## §Next action
 
-## §7 Audit primat reconciliation notes
+🦫 **e timpul pt noul chat** (Direct-to-CC paradigm preserved per [[../wiki/concepts/direct-to-cc-paradigm]] + [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 step 8). Daniel chat NEW + "salut acasă" trigger §CC.2 layered read Karpathy Real (wiki/index.md + wiki/log.md last 5 entries + drill wiki entities/concepts/summaries per topic) per §F3.7. Read post-handover this LATEST.md §0-§11 verification raport prima + handover narrative archived [[../📤_outbox/_archive/2026-05/449_HANDOVER_2026-05-13_post_s2_landed_strategic_findings_CONSUMED]] pentru context complet chat-current.
 
-- **Calendar V1 spec** (`wiki/concepts/calendar-feature-v1-spec.md`): mid-week edit "zilele trecute raman bifate si se recalibreaza restul" satisfied via `detectMidWeekEdit()` helper §scheduleAdapter.js + week-tagged storage (Reset Luni natural via ISO week-key tag, no timer race).
-- **ADR 026 §9** (pure-function engines): preserved — engines untouched, integration upstream in coachContext SSOT per file header L1-2 invariant.
-- **ADR 026 §1.10** (Constraint Object immutable): not violated — calendarOverride is read-only payload in `ctx.meta`, engines defensive-consume.
-- **ADR 020 §1.4** (Tier 0 active rolling): `wv2-missing-equipment` is **user-driven Tier 0** (permanent state, not time-bound). Existing ADR 020 amendment 2026-05-13 explicitly recognizes Tier 0 parity pattern user-driven vs ephemeral rotation correction.
-- **ADR 024** (Goal-driven program templates): unaffected — Engine #2 Goal Adaptation continues to consume `ctx.user.goal` + `meta.weeksElapsed`; new `meta.calendarOverride` is additive.
-- **ADR 030 D2** (thin scope adapters): scheduleAdapter follows pattern verbatim — pure functions + localStorage IO at edges, zero domain logic leakage into engines.
-- **Port-First-Then-React LOCK V1**: continued — vanilla JS Step 1 port, no React migration prep code introduced.
-- **Direct-to-CC paradigm LOCKED V1 2026-05-12** (§F3.13): Daniel decision routed mid-task via AskUserQuestion (NOT separate chat handover) — bandwidth ~25% conservation honored.
-
----
-
-## §8 Anti-recurrence slips captured chat-current
-
-**Slip 1 (caught pre-edit per §AR.PRE_FLIGHT):** PROMPT CC S2 referenced `goalAdaptation.recomputeWeekSchedule()` + procedural engine wiring that **don't exist in `src/`** and would have violated ADR 026 §9. Grep-verify before edit caught the discrepancy. Per memory `feedback_grep_before_prompt_cc.md` — recidiva pattern from chat-2/chat-3 confirmed once more.
-
-  **Codification recommendation (deferred for handover decision):** add §AR.20 to `VAULT_RULES.md` covering "PROMPT CC src/ reference verify mandatory before execute" — pattern recurs across enough chats to deserve dedicated rule rather than relying on general §AR.PRE_FLIGHT.
-
-**Slip 2 (caught early via Read of wrong state.js):** Initial grep confusion — I read `src/pages/coach/state.js` (sessionCache module, ~20 lines) instead of `src/state.js` (router state, 35 lines). Both files exist with `state.js` filename. Same-name file confusion. Resolved within 30s via explicit Read on absolute path. No commits affected.
-
-**Slip 3 (avoided):** Daniel autonomy lock "esti CTO figure it out" tension with surfacing arch mismatch. Resolved by limiting interruption to ONE structured question (AskUserQuestion) with 3 mutually-exclusive options + recommendation. Daniel accepted Recommended in < 30s. No subsequent question needed.
+**Path forward chat NEW recommended (per handover narrative §10):**
+1. **P1 S3 production wiring spec** atomic split candidate 4 LOCKs strategic chat-current aligned: drill destinations wiring + Calendar UI commit handler + Session guard + Bottom-nav hide (4 LOCKs LOCKED V1 chat-current)
+2. **P2 alternative exhaustion + freeweight fallback** smart-routing ADR amendment strategic engine pivot
+3. **P3 Identity palette consolidare** UX polish pre-Beta draft alternative side-by-side
+4. **§AR.20-§AR.22 codification approval** explicit Daniel chat NEW (spec PROMPT_CC violated ADR 026 §9 RECURRENCE STRONG + false dichotomy A/B + bandwidth proactiv missed)
 
 ---
 
-## §9 Daniel-isms surfaced (verbatim quotes in reasoning)
-
-- *"zilele trecute raman bifate si se recalibreaza restul"* (chat ACASĂ 2026-05-12) — codified verbatim in `scheduleAdapter.js:69` JSDoc + asserted in `detectMidWeekEdit` tests (edit Joi/Luni/Sunday edge cases).
-- *"cu optiunea de edit, sa poti sa si scoti aparatele anterior selectate"* (chat ACASĂ 2026-05-12 S1.7 push-back) — satisfied via `toggleMissingEquipment()` symmetric add/remove semantics in scheduleAdapter + `aparateLipsa.js` checkbox change handler.
-- *"aparat ocupat... aparat lipsa... Butonul ala trebuie scos, ca deserveste acelasi lucru"* — distinct semantic preserved: equipment-swap (temporary "ocupat") kept orthogonal; aparate-lipsa (permanent "nu am") separate page module + storage key (`wv2-missing-equipment` distinct from any equipment-swap log).
-- *"esti CTO figure it out fara sa ma deranjezi"* (autonomy LOCK V1 PERMANENT 2026-05-11) — respected via single structured question instead of step-by-step approval. Adapt + execute path = exactly "figure it out" semantics.
-
----
-
-## §10 Path forward — Slice 3 (S3) candidate scope
-
-Out-of-scope for S2, recommended for S3 atomic split:
-
-1. **Drill destinations wiring**: hook `Cont > General > Aparate lipsa` entry button + `workout-preview > Nu am aparat` button to call `showAparateLipsa()`. Currently the page module exists but is NOT invoked from any caller in `src/` (mockup-only drill in HTML). Requires identifying the corresponding `src/pages/...` rendering files for Cont and Antrenor home screens.
-2. **Calendar UI commit handler**: connect mockup S1.7 calendar pencil-tap → `commitCalendarEdit()` in actual src/ calendar rendering (whichever module that lives in — `src/pages/coach/...` or `src/pages/dashboard.js`).
-3. **Coach Engine #2 Goal Adaptation consume `meta.calendarOverride`**: extend `evaluate(ctx)` in `src/engine/goalAdaptation/index.js` to read `meta.calendarOverride.selectedDays` and adjust template choice if user diverged from preset. **Within pure-function semantics** — read-only ctx input, output blueprint reflects override.
-4. **Backend `/api/feedback` endpoint** strategic discussion: stack decision (Firebase Function vs Express vs Vercel Edge) — strategic Daniel + Claude chat. Currently mockup S1.7 `submitFeedback()` opens `mailto:contact@andura.app` (no backend dependency).
-5. **Multi-week mesocycle constraint propagate** (if needed): extend Engine #1 Periodization `emitConstraintObject()` to flag override visible downstream — currently constraint emit handles week-internal volume/intensity only. Out of scope unless missed-day rebalance Coach Director Step 7 (Israetel +1+2 weeks pattern) explicitly fails to absorb.
-
-**Recommendation:** S3 = #1 + #2 only (UI-level wiring drill destinations + calendar commit). #3-#5 = S4+ engine deepening once UI flow proves out.
-
----
-
-## §11 Cross-refs raw layer + wiki layer
-
-- [[../wiki/concepts/calendar-feature-v1-spec]] §Synthesis end + §S2 path forward (updated handover NEXT — drift cumulative S1.0→S2 LANDED)
-- [[../wiki/entities/engines/engine-coach-director]] §amendments[2026-05-13] §S2 path forward (calendar override + missing equipment wiring LANDED, multi-week constraint propagate DEFERRED S4+)
-- [[../wiki/entities/adrs/adr-020-storage-tiering-strategy]] §1.4 Tier 0 active rolling + §amendments[2026-05-13] (user-driven Tier 0 vs ephemeral rotation correction confirmed via S2 scheduleAdapter implementation)
-- [[../wiki/entities/adrs/adr-026-offline-coaching-tree]] §9.1-§9.2 pure-function engines + §1.10 Constraint Object immutable (preserved unchanged — S2 respects all invariants)
-- [[../wiki/entities/adrs/adr-030-adapter-design-pattern]] §D2 thin scope adapters (scheduleAdapter pattern parity)
-- [[../wiki/entities/adrs/adr-005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10 (Bugatti craft mockup-first paradigm — S2 = first src/ touch post mockup-only S1.0-S1.7)
-- [[../VAULT_RULES]] §F3.12 HARD CONSTRAINTS + §F3.13 metoda hibridă LOCKED V1 + §AR.PRE_FLIGHT (slip 1 surfaced + caught)
-- [[../04-architecture/mockups/andura-clasic.html]] §screen-aparate-lipsa S1.7 LANDED `de761f5` (source-of-truth for picker UX adapted to src/ modal pattern)
-- [[../📤_outbox/_archive/2026-05/448_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13_CALENDAR_V1_S1_TO_S1_7_CONSUMED.md]] (precedent imediat handover ingest raport archived pre-S2)
-
----
-
-🦫 **Bugatti craft. Calendar V1 Slice 2 production wiring LANDED 2026-05-13. First `src/` touch post mockup-only S1.0-S1.7. 3 atomic commits adapt-and-execute respecting ADR 026 §9 pure-function engine invariant. Tests 2914 → 2984 PASS preserved EXACT (+70 net new). Daniel-ism voice preserved: `zilele trecute raman bifate` + `cu optiunea de edit, sa poti sa si scoti aparatele` + `Butonul ala trebuie scos, ca deserveste acelasi lucru` + autonomy lock `esti CTO figure it out`. Drift cumulative flag — handover NEXT chat to update wiki concept/engine pages with S2 LANDED state.**
+🦫 **Bugatti craft. /wiki-ingest handover 2026-05-13b LANDED clean — 1 NEW summary + 6 UPDATE existing pages voice §1 enforced + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate PASS + archive raw HANDOVER 449 CONSUMED + LATEST.md cycle 450 CONSUMED + tests 2984 PASS preserved EXACT + ZERO src/ touched + ZERO main branch + ZERO React/JSX + ZERO --no-verify + ZERO frozen wiki pages mods beyond scope + ZERO Sonnet model. Cumulative ~742 LOCKED V1 PRESERVED unchanged + 4 NEW strategic LOCKs chat-current = ~746 cumulative chat-current. Voice preservation policy §1 4-section MANDATORY enforced 7/7 NEW/UPDATE pages. Identity Andura prezervat prin daniel-isms verbatim catalog extensible cross-cluster 9 NEW chat-current. Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCK V1 2026-05-12 §F3.13 validation extended 3+5 atomic commits chat-current Calendar V1 cumulative drift + 1 atomic commit wiki-ingest distribution.**

@@ -164,3 +164,42 @@ Daniel verbatim memory rule #26 NICIODATĂ argumente quality:
 - [[../concepts/calendar-feature-v1-spec]] §"Verbatim quotes Daniel" Calendar V1 strategic LOCKED daniel-isms catalysator compositional pivot identity preserve
 - [[sub-batch-3-closure-milestone-2026-05-12]] §"Verbatim quotes Daniel" 5 cluster ingest milestone cross-cluster verbatim aggregate
 
+---
+
+## Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED + 4 strategic LOCKs (APPEND-only — NEW daniel-isms surfaced cross-cluster)
+
+**Catalog NEW append cross-cluster chat ACASĂ 2026-05-13b — extensible NU lobotomy existing entries:**
+
+**Category A — Skills CC challenge Co-CTO tactical chat-current 2026-05-13b:**
+- *"asta e decizia ta nu a mea"* — Skills CC challenge tactical Co-CTO call Daniel reaffirm autonomy paradigm (S2 spec PROMPT_CC violated ADR 026 §9 pure-function engines invariant slip §AR.20 candidate strong catalysator — Daniel tactical Co-CTO call Adapt + execute Option 1 reinterpret UI-side adapter LOCKED)
+- *"esti cto figure it out"* — Daniel autonomy lock EXTINS 2026-05-10 reaffirm cross-chat (cross-ref Category C 2026-05-10 LOCK EXTINS)
+- *"hai sa discutam, dar nu stiu exact ce e de discutat"* — Co-CTO must surface decision points concrete sequential NU backlog dump (slip 7 false dichotomy A/B catalysator pattern detection)
+
+**Category B — Push-back productive Daniel scribe-side slip corrections chat-current 2026-05-13b:**
+- *"Stai ma ca sa inteleg"* — push-back productive false dichotomy A/B missing equipment chat-current (slip 7 catalysator pattern detection NEW)
+- *"ma ca la prosti"* — jargon-free request anti-tech-jargon (Daniel-ism reaffirm Gigel-friendly cross-cluster)
+- *"cat ai bw?"* — bandwidth proactiv missed report 5-7 mesaje grele cumulative threshold (slip 8 §AR.22 candidate catalysator pattern monitor invariant)
+
+**Category C — Calendar V1 S2 spec strategic LOCKED + mockup test 7 observations chat-current 2026-05-13b:**
+- *"daca nu mai avem de discutat nimic poti face handover"* — handover trigger §F3.8 voluntary Daniel directive bandwidth healthy ~40% post 4 LOCKs strategic
+- *"q1 - a q2 a"* — ultra-scurt LOCK V1 multi-decision lean mode response Daniel (Sub-Q1 session guard double-start Block + redirect Gigel-smooth + Sub-Q2 bottom-nav HIDE cap-coadă workout overlay LOCKED simultaneous single message)
+- *"corect"* — missing equipment combo LOCKED V1 single-message confirmation chat-current (combo nuanced inline per-exercise + auto-centralize + picker debifare-only + REMOVE S1.7 single button preview)
+- *"perfect cum ai facut"* — bar chart Propunere A approval visual mock side-by-side comparison Visualize:show_widget HTML iframe paletă cream + brick + olive vs 3 bars verticale colorate Usor/Potrivit/Greu 12/38/7 (UX polish pre-Beta findings backlog LOCKED V1)
+- *"imi place cum ai gandit tu"* — palette consolidare findings UX polish pre-Beta agreement push-back productive cycle (9 → 6 brand-tier max Gigel-target + 3 verzi → 1 principal + reduce deep blue ax cool + warn-amber distance hue Daniel-aligned)
+- *"complet unintuitive. Gigel nu are nici o sansa"* — 2-row 90-day patrate grid Gigel-FAIL findings UX polish pre-Beta replace bar chart Propunere A
+- *"vreau alternative pana la epuizare... si daca continui sa iti dea un freeweight ceva"* — alternative exhaustion + freeweight fallback smart-routing ADR amendment pending P2 chat NEW (anti-paternalism NU limit smart-routing exhaust pool + final freeweight fallback Daniel verbatim)
+- *"as fi vrut sa apara aia cu nu am aparat, micut cumva, estetic, in care cand apesi pe el sa stie ca doar aparatul de la exercitiul ala nu il ai"* — REVOKE partial S1.7 single button preview → per-exercise inline LOCKED V1 combo missing equipment chat-current
+- *"asta o sa aduca multe probleme daca sesiunea nu ramane activa cand gigel da missclick"* — bottom-nav HIDE cap-coadă în workout overlay LOCKED V1 focus full-screen pur anti-missclick by design
+
+**Category D — Casual mood + delegate + warmth chat-current 2026-05-13b:**
+- *"fara sa te obosesti"* — mock comparison casual mood efficient request Daniel (visualizer mock side-by-side bar chart Propunere A vs current paletă mockup authentic)
+- *"latest landed"* — Metoda Hibridă post-LANDED Daniel trigger CC raport read (reaffirm cross-cluster S2 LANDED 3 commits chain)
+- *"handover dupa read... intre timp eu validez mockup"* — handover trigger post-LATEST-read Daniel voluntary parallel work mockup validate (Calendar S1.7 LANDED commit `de761f5`)
+
+**Pattern NEW chat-current 2026-05-13b:** Daniel push-back productive cu false dichotomy A/B + tactical Co-CTO challenge "decizia ta nu a mea" = scribe-side slip detection signal (3 slip patterns surfaced chat-current §AR.20-§AR.22 candidate). 4 strategic LOCKs single-message ultra-scurt response Daniel lean mode post format fatigue threshold (Bar chart + Missing equipment combo + Session guard + Bottom-nav hide). 9 daniel-isms surfaced chat-current preserved verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1).
+
+**Cross-refs raw layer adițional chat-current 2026-05-13b:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings]] §1-§13 handover narrative chat-current S2 LANDED + 4 strategic LOCKs + 3 slips + 9 daniel-isms (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b (APPEND-only — 3 NEW post Calendar V1 S2 LANDED)" (3 slip patterns codification candidate §AR.20-§AR.22 cross-link daniel-isms catalysator verbatim quotes)
+- [[../concepts/calendar-feature-v1-spec]] §"Verbatim quotes Daniel" Calendar V1 S2 Production Wiring LANDED + 4 strategic LOCKs chat-current 9 NEW daniel-isms identity preserve
+- [[calendar-v1-s2-production-wiring-milestone-2026-05-13]] §"Verbatim quotes Daniel" S2 LANDED milestone synthesis 4 LOCKs + 3 slips + 9 daniel-isms aggregate

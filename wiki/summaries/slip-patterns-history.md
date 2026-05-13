@@ -90,3 +90,46 @@ Daniel verbatim "fa prompt pt cc sa le fix" REJECT strategy-lock 2026-05-12:
 - [[daniel-isms-glossary]] (sibling summary verbatim catalog cross-cluster)
 
 🦫 **Slip Patterns History §AR.1-§AR.19 codified anti-recurrence rules cross-chat + push-back productive moments + tone shifts framing changes chronological. Anti-RE rule LOCKED V1 PERMANENT scope universal + audit primat universal rule cross-feature + tool_result timeout 4min ≠ subprocess crash §AR.19. Living catalog cross-chat extensible NU frozen snapshot.**
+
+---
+
+## Chat-Current Slip Patterns 2026-05-13b (APPEND-only — 3 NEW post Calendar V1 S2 LANDED chronological)
+
+**Source:** Chat ACASĂ 2026-05-13 post Calendar V1 Slice 2 Production Wiring LANDED (3 atomic commits chain S2.A `7c2f520` + S2.B `fce846a` + S2.C `a77587c`) + 4 strategic LOCKs chat-current findings backlog + 7 mockup test observations Daniel paralel + handover trigger voluntary bandwidth ~40% healthy. Cumulative APPEND slip patterns post 5-slip-chat-2026-05-12 section → 8 total chat-current cumulative.
+
+**Slip 6 chat-current 2026-05-13b — Spec PROMPT_CC violated ADR 026 §9 pure-function engines invariant (§AR.20 candidate STRONG RECURRENCE):**
+- **Trigger:** Eu am generat spec artefact `PROMPT_CC_CALENDAR_V1_SLICE_2_PRODUCTION_WIRING.md` referenced `goalAdaptation.recomputeWeekSchedule()` method to be added + procedural multi-week constraint propagate via engine method calls = violation ADR 026 §9 pure-function engines invariant.
+- **Daniel verbatim chat ACASĂ 2026-05-13b tactical Co-CTO call:** *"asta e decizia ta nu a mea"* (push-back productive Skills CC challenge Co-CTO autonomy reaffirm).
+- **Catch mechanism:** CC autonomous pre-flight grep filesystem detected divergence pe spec vs filesystem reality `safeCtx.meta` defensive-read pattern → escalate AskUserQuestion 3 options → Option 1 LOCKED Adapt + execute reinterpret S2 plan UI-side adapter + buildCoachContext extend + engines UNCHANGED.
+- **Anti-recurrence permanent:** PROMPT CC src/ reference verify ADR primary citation MANDATORY ÎNAINTE spec generation touching engines. §AR.20 codification candidate STRONG RECURRENCE (slip 2× minimum threshold met: chat-current 2026-05-12 *"PROMPT CC src/ violation Anti-RE rule"* + chat-current 2026-05-13b spec procedural method add violation = invariant codification trigger pending Daniel approval explicit chat NEW).
+- **Impact saved:** 70 tests + ZERO engine module mutation + ZERO HARD CONSTRAINT violation.
+
+**Slip 7 chat-current 2026-05-13b — False dichotomy A/B presented missing equipment when Daniel proposed combo nuanced (§AR.21 candidate):**
+- **Trigger:** Eu am propus #3 missing equipment foundational decision: A) keep picker management view SAU B) elimin picker complet. Daniel push-back instant Stai ma ca sa inteleg + clarification combo nuanced multi-component.
+- **Daniel verbatim chat ACASĂ 2026-05-13b push-back productive:** *"Stai ma ca sa inteleg. Eu am propus 1 buton de nu am echipament in preview... In cont sa existe aia cu aparate lipsa, sa se centralizeze complet cu ce a apasat gigel in preview ala de workout, dar sa existe optiunea sa debifere ze e deja selectat."*
+- **Anti-recurrence permanent:** NU presupun foundational dichotomy bare-XOR fără re-read verbatim original Daniel attent. Pattern: când Daniel propune setup nuanced multi-component, surface synthesis clarification cu sub-components explicit Daniel pick (NU forced binary). §AR.21 codification candidate (1× chat-current observed, watch list pattern detection chat NEW pentru 2× confirmation codification trigger).
+- **Recovery:** Daniel verbatim *"corect"* = missing equipment combo LOCKED V1 (workout-preview per-exercise inline + auto-centralize + picker debifare-only + REMOVE S1.7 single button preview).
+
+**Slip 8 chat-current 2026-05-13b — Bandwidth proactiv missed report 5-7 mesaje grele cumulative threshold (§AR.22 candidate RECURRENCE pattern monitor):**
+- **Trigger:** Daniel verbatim *"cat ai bw?"* — Slip eu nu am raportat proactiv la 5-7 mesaje grele cumulative per protocol Bandwidth proactiv MANDATORY userPreferences. Am scăpat raportare cumulative ~5-6 mesaje grele post-startup (read multi-file + spec generation + read_me visualizer + LATEST read + findings backlog report).
+- **Anti-recurrence permanent:** Monitor mesaje grele cumulative + report 1-line in current response when 5-7 threshold hit fără Daniel ask. Heavy = multi-file read + artefact generation + visualizer + cross-cluster aggregate (count each). Light = scurt clarification / confirm / 1-2 LOC artefact (NU count). §AR.22 codification candidate (slip recurrence pattern monitor pending Daniel approval explicit chat NEW post 2× confirmation).
+
+**Push-back productive moments chat-current 2026-05-13b cross-link:**
+- Daniel push-back productive *"asta e decizia ta nu a mea"* — Skills CC challenge tactical Co-CTO autonomy reaffirm (slip 6 §AR.20 catalysator pattern detection)
+- Daniel push-back productive *"Stai ma ca sa inteleg"* — false dichotomy A/B foundational decision missing equipment combo nuanced multi-component (slip 7 §AR.21 catalysator pattern detection)
+- Daniel push-back productive *"cat ai bw?"* — bandwidth proactiv missed report threshold cumulative monitor pattern detection (slip 8 §AR.22 catalysator pattern monitor)
+- Daniel push-back productive *"complet unintuitive. Gigel nu are nici o sansa"* — 2-row 90-day patrate grid Gigel-FAIL UX polish pre-Beta findings backlog (Bar chart Propunere A LOCKED V1 chat-current 2026-05-13b)
+- Daniel push-back productive *"as fi vrut sa apara aia cu nu am aparat, micut cumva"* — REVOKE partial S1.7 single button preview → per-exercise inline LOCKED V1 combo (slip 7 catalysator pattern detection)
+
+**Tone shifts framing changes chronological chat-current 2026-05-13b:**
+- 2026-05-13b S2 Adapt + execute Co-CTO tactical decision Daniel verbatim *"asta e decizia ta nu a mea"* — Co-CTO autonomy paradigm reaffirm cross-chat (post anti-recurrence chat trecut similar slip + chat-current = §AR.20 codification candidate strong)
+- 2026-05-13b 4 strategic LOCKs chat-current single-message ultra-scurt response Daniel lean mode (Bar chart + Missing equipment combo + Session guard + Bottom-nav hide) — format fatigue threshold preserved cross-cluster post 4+ LOCK fără push-back switch instant lean mode (memory rule)
+- 2026-05-13b handover trigger voluntary Daniel verbatim *"daca nu mai avem de discutat nimic poti face handover"* — bandwidth ~40% healthy preventiv pre-saturare scribe fresh + slip detection optim post-3-slips-chat-current
+
+**Cross-refs raw layer adițional chat-current 2026-05-13b:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s2_landed_strategic_findings]] §2 spec violated ADR 026 §9 + Decision Co-CTO Adapt + execute + §6 false dichotomy A/B missing equipment + §8 bandwidth proactiv missed + §12 anti-recurrence slips captured chat-current 3 NEW (handover narrative source verbatim 3 slip patterns chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b (APPEND-only — 3 NEW post Calendar V1 S2 LANDED)" (3 slip patterns codification candidate §AR.20-§AR.22 cross-link)
+- [[../concepts/calendar-feature-v1-spec]] §"Bugatti framing notes" S2 Adapt + execute anti-RE additional notes slip §AR.20 candidate strong + §AR.21 false dichotomy + §AR.22 bandwidth proactiv (3 slips chat-current cross-link)
+- [[../entities/engines/engine-coach-director]] §"Anti-RE considerations" S2 Production Wiring 2026-05-13b slip §AR.20 candidate strong RECURRENCE (cross-link engine pure-function preserved invariant)
+- [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED + 4 strategic LOCKs" 9 NEW daniel-isms chat-current verbatim catalog extensible identity preserved
+- [[calendar-v1-s2-production-wiring-milestone-2026-05-13]] §"Bugatti framing notes" S2 LANDED milestone synthesis 4 LOCKs + 3 slips + 9 daniel-isms aggregate
