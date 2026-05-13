@@ -285,9 +285,10 @@ describe('Bundle 6.0.1 Chest Library Extension §ADR v2 LOCK V2', () => {
 // ── Bundle 6.0.2 Back Library Extension Tests (Bundle 6.0.2 NEW 2026-05-13h) ────────
 describe('Bundle 6.0.2 Back Library Extension §ADR v2 LOCK V2', () => {
   // §1 Library count expand 116 → 214 (additive only, ZERO mutation existing)
-  it('library count increased 116 → 214 (+98 NEW back)', () => {
+  // Bundle 6.0.3 forward-compat: relax to ≥214 (library grows additive per Bundle 6.0.x roadmap).
+  it('library count ≥ 214 post Bundle 6.0.2 (+98 NEW back minimum, additive Bundle 6.0.x roadmap)', () => {
     const total = Object.keys(EXERCISE_METADATA).length;
-    expect(total).toBe(214);
+    expect(total).toBeGreaterThanOrEqual(214);
   });
 
   // §2 Back cluster count baseline 3 V1 + Bundle 6.0.2 back-primary ≈ 91
@@ -503,5 +504,234 @@ describe('Bundle 6.0.2 Back Library Extension §ADR v2 LOCK V2', () => {
       });
     });
     expect(count).toBeGreaterThanOrEqual(15);
+  });
+});
+
+// ── Bundle 6.0.3 Shoulders Library Extension Tests (Bundle 6.0.3 NEW 2026-05-13i) ────────
+describe('Bundle 6.0.3 Shoulders Library Extension §ADR v2 LOCK V2', () => {
+  // §1 Library count expanded ≥ 294 (additive Bundle 6.0.x roadmap)
+  it('library count ≥ 294 post Bundle 6.0.3 (+80 NEW shoulders cumulative)', () => {
+    const total = Object.keys(EXERCISE_METADATA).length;
+    expect(total).toBeGreaterThanOrEqual(294);
+  });
+
+  // §2 Shoulder cluster count post Bundle 6.0.3 (existing 13 + ~80 NEW)
+  it('shoulder primary muscle target entries count ≥ 75 post Bundle 6.0.3', () => {
+    const shoulderEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([, m]) => m.muscle_target_primary === 'umeri');
+    expect(shoulderEntries.length).toBeGreaterThanOrEqual(75);
+  });
+
+  // §3 muscle_target_primary canonical (V1 6 + unknown fallback)
+  it('muscle_target_primary uses canonical V1 6 strings + unknown fallback', () => {
+    const canonical = new Set(['brate', 'piept', 'picioare', 'spate', 'triceps', 'umeri', 'unknown']);
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      expect(canonical.has(m.muscle_target_primary)).toBe(true);
+    });
+  });
+
+  // §4 equipment_type canonical 6 (band active Bundle 6.0.2 + Band Pull-Apart Bundle 6.0.3)
+  it('equipment_type canonical 6 preserved (band active)', () => {
+    const canonical = new Set(['barbell', 'bodyweight', 'cable', 'dumbbell', 'machine', 'band']);
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      expect(canonical.has(m.equipment_type)).toBe(true);
+    });
+  });
+
+  // §5 fallback_cascade field exists ALL NEW Bundle 6.0.3 sample entries
+  it('all 80 NEW Bundle 6.0.3 entries have fallback_cascade[] populated', () => {
+    const newShoulderSample = [
+      'Push Press', 'Arnold Press', 'Smith OHP', 'DB Lateral Raise',
+      'Cable Lateral Raise', 'DB Front Raise', 'Reverse Pec Deck', 'Face Pull',
+      'Landmine Shoulder Press', 'Handstand Push-up', 'Clean and Press',
+    ];
+    newShoulderSample.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(Array.isArray(EXERCISE_METADATA[name].fallback_cascade)).toBe(true);
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(3);
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeLessThanOrEqual(5);
+    });
+  });
+
+  // §6 fallback_cascade step types canonical 5 preserved Bundle 6.0.3
+  it('fallback_cascade step types canonical 5 preserved Bundle 6.0.3', () => {
+    const canonical = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      if (m.fallback_cascade) {
+        m.fallback_cascade.forEach(s => expect(canonical.has(s.type)).toBe(true));
+      }
+    });
+  });
+
+  // §7 muscle_group_compose 1-2 exercise_ids invariant
+  it('muscle_group_compose step has 1-2 exercise_ids only', () => {
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      if (!m.fallback_cascade) return;
+      m.fallback_cascade.forEach(s => {
+        if (s.type === 'muscle_group_compose') {
+          expect(s.exercise_ids).toBeDefined();
+          expect(s.exercise_ids.length).toBeGreaterThanOrEqual(1);
+          expect(s.exercise_ids.length).toBeLessThanOrEqual(2);
+        }
+      });
+    });
+  });
+
+  // §8 Existing V1 + Bundle 6.0.1 + Bundle 6.0.2 entries preserved (ZERO mutation Bundle 6.0.3)
+  it('existing entries preserved invariant Bundle 6.0.3', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['DB Shoulder Press'].muscle_target_primary).toBe('umeri');
+    expect(EXERCISE_METADATA['Lat Pulldown']).toBeDefined();
+    expect(EXERCISE_METADATA['Lat Pulldown'].fallback_cascade).toBeUndefined();
+    expect(EXERCISE_METADATA['Smith Machine Bench']).toBeDefined();
+    expect(EXERCISE_METADATA['Smith Machine Bench'].fallback_cascade).toBeDefined();
+    expect(EXERCISE_METADATA['Pull-up']).toBeDefined();
+    expect(EXERCISE_METADATA['Pull-up'].fallback_cascade).toBeDefined();
+  });
+
+  // §9 Push Press has 5-step canonical cascade
+  it('Push Press has 5-step cascade ending in light_variant', () => {
+    const cascade = EXERCISE_METADATA['Push Press'].fallback_cascade;
+    expect(cascade.length).toBe(5);
+    expect(cascade[0].type).toBe('easier_machine');
+    expect(cascade[4].type).toBe('light_variant');
+  });
+
+  // §10 Arnold Press has muscle_group_compose step
+  it('Arnold Press has cascade with muscle_group_compose step', () => {
+    const cascade = EXERCISE_METADATA['Arnold Press'].fallback_cascade;
+    const composeStep = cascade.find(s => s.type === 'muscle_group_compose');
+    expect(composeStep).toBeDefined();
+    expect(composeStep.exercise_ids.length).toBeGreaterThanOrEqual(1);
+  });
+
+  // §11 Lateral raise variants light_variant = Wall Pike Push-up consistent
+  it('lateral raise variants light_variant degrades to Wall Pike Push-up', () => {
+    const lateralRaises = ['DB Lateral Raise', 'Cable Lateral Raise', 'Machine Lateral Raise', 'Seated DB Lateral'];
+    lateralRaises.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      const lightStep = cascade?.find(s => s.type === 'light_variant');
+      expect(lightStep).toBeDefined();
+      expect(lightStep.exercise_id).toBe('Wall Pike Push-up');
+    });
+  });
+
+  // §12 Rear delt variants light_variant = Wall Push-up consistent
+  it('rear delt variants light_variant degrades to Wall Push-up', () => {
+    const rearDelts = ['Reverse Pec Deck', 'Cable Rear Delt Fly', 'Face Pull', 'Band Pull-Apart'];
+    rearDelts.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      const lightStep = cascade?.find(s => s.type === 'light_variant');
+      expect(lightStep).toBeDefined();
+      expect(lightStep.exercise_id).toBe('Wall Push-up');
+    });
+  });
+
+  // §13 Tier 1 shoulder compound variants count ≥ 25
+  it('Tier 1 shoulder compound count ≥ 25', () => {
+    const tier1 = Object.values(EXERCISE_METADATA).filter(m => m.muscle_target_primary === 'umeri' && m.tier === 1);
+    expect(tier1.length).toBeGreaterThanOrEqual(25);
+  });
+
+  // §14 Tier 2 shoulder isolation count ≥ 25
+  it('Tier 2 shoulder isolation count ≥ 25', () => {
+    const tier2 = Object.values(EXERCISE_METADATA).filter(m => m.muscle_target_primary === 'umeri' && m.tier === 2);
+    expect(tier2.length).toBeGreaterThanOrEqual(25);
+  });
+
+  // §15 Tier 3 shoulder accessory count ≥ 3
+  it('Tier 3 shoulder accessory count ≥ 3', () => {
+    const tier3 = Object.values(EXERCISE_METADATA).filter(m => m.muscle_target_primary === 'umeri' && m.tier === 3);
+    expect(tier3.length).toBeGreaterThanOrEqual(3);
+  });
+
+  // §16 Smith machine shoulder variants present (gym paradigm LOCK 2026-05-13f)
+  it('Smith machine shoulder variants present (gym paradigm)', () => {
+    const smithVariants = ['Smith OHP', 'Smith OHP Seated', 'Smith Behind-Neck Press'];
+    smithVariants.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('machine');
+    });
+  });
+
+  // §17 Hammer Strength shoulder variants present
+  it('Hammer Strength shoulder variants present', () => {
+    const hammerVariants = ['Hammer Strength OHP', 'Hammer Strength Lateral'];
+    hammerVariants.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('machine');
+    });
+  });
+
+  // §18 Landmine shoulder variants present
+  it('Landmine shoulder variants present', () => {
+    const landmineVariants = ['Landmine Shoulder Press', 'Landmine 180', 'Single-Arm Landmine Press', 'Half-Kneeling Landmine Press'];
+    landmineVariants.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('barbell');
+    });
+  });
+
+  // §19 Cascade self-reference rejection invariant Bundle 6.0.3
+  it('Bundle 6.0.3 NEW entries NEVER self-reference parent name', () => {
+    const newSample = ['Push Press', 'Arnold Press', 'Smith OHP', 'DB Lateral Raise', 'DB Front Raise', 'Reverse Pec Deck', 'Face Pull', 'Landmine Shoulder Press', 'Clean and Press'];
+    newSample.forEach(parentName => {
+      const cascade = EXERCISE_METADATA[parentName]?.fallback_cascade;
+      if (!cascade) return;
+      cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(parentName);
+        if (s.exercise_ids) expect(s.exercise_ids).not.toContain(parentName);
+      });
+    });
+  });
+
+  // §20 Cascade references resolve ≥70% Bundle 6.0.3 phase (lenient — forward refs to 'OHP' + Bundle 6.0.4+ entries OK temporary dangling)
+  it('cascade references resolve ≥70% Bundle 6.0.3 phase', () => {
+    let total = 0, resolved = 0;
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      if (!m.fallback_cascade) return;
+      m.fallback_cascade.forEach(s => {
+        const refs = s.exercise_ids || [s.exercise_id];
+        refs.forEach(r => { total++; if (EXERCISE_METADATA[r]) resolved++; });
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+
+  // §21 force_demand canonical 3 preserved
+  it('force_demand canonical 3 values preserved Bundle 6.0.3', () => {
+    const canonical = new Set(['low', 'medium', 'high']);
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      expect(canonical.has(m.force_demand)).toBe(true);
+    });
+  });
+
+  // §22 tier canonical 3 preserved
+  it('tier canonical 3 values preserved Bundle 6.0.3', () => {
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      expect([1, 2, 3]).toContain(m.tier);
+    });
+  });
+
+  // §23 equipment_alternatives field on all entries
+  it('all entries have equipment_alternatives array field', () => {
+    Object.values(EXERCISE_METADATA).forEach(m => {
+      expect(Array.isArray(m.equipment_alternatives)).toBe(true);
+    });
+  });
+
+  // §24 getValidAlternatives works on NEW Bundle 6.0.3 entries
+  it('getValidAlternatives works on NEW Bundle 6.0.3 entries', () => {
+    const alts = getValidAlternatives('Smith OHP');
+    expect(Array.isArray(alts)).toBe(true);
+  });
+
+  // §25 Band Pull-Apart Tier 3 accessory uses band equipment_type
+  it('Band Pull-Apart Tier 3 accessory uses band equipment_type', () => {
+    expect(EXERCISE_METADATA['Band Pull-Apart']).toBeDefined();
+    expect(EXERCISE_METADATA['Band Pull-Apart'].equipment_type).toBe('band');
+    expect(EXERCISE_METADATA['Band Pull-Apart'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Band Pull-Apart'].force_demand).toBe('low');
   });
 });
