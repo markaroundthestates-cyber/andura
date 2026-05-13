@@ -5,12 +5,16 @@ status: locked-v1
 locked_date: 2026-04-30
 authority: Daniel preference accumulated 2026-04-30 → 2026-05-11 + commits cu "🦫 Bugatti craft" trailer + raport LATEST.md format standard
 voice_preservation: synthesis + verbatim + bugatti + crossrefs
+last_updated: 2026-05-13f
 cross_refs:
   - "[[../concepts/quality-over-speed]]"
   - "[[../concepts/anti-recurrence-rules]]"
   - "[[../concepts/voice-preservation-policy]]"
   - "[[../entities/adrs/adr-005-vanilla-js]]"
-amendments: []
+  - "[[../summaries/handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]]"
+amendments:
+  - date: 2026-05-13f
+    note: 600-700 ex peak craft NU compromise timid LOCK V1 chat-current Daniel CEO directive verbatim *"si nu crezi ca o sa facem 600-700?"* + *"faci handover dar vreau sa prinzi asta obligatoriu. E mandatory pre beta"* — scope library Bugatti peak craft full Fitbod parity (700+ ex industry top) + cascade routing sophistication + Romanian-first + tier-aware filtering preserved invariant = differentiation Andura real. Eu Co-CTO acknowledge instant *"101 timid sub-spec compromise. 600-700 ex peak craft Bugatti."* + scope target revised ~630 cumulative (Chest 90 + Back 110 + Shoulders 90 + Biceps 55 + Triceps 45 + Legs 180 + Core 60). Compromise timid NU acceptable Bugatti paradigm — propose full industry parity scope upfront. Slip 12C scope sub-spec timid pre-Daniel CEO push-back chat-current scribe-mode marked anti-recurrence (Bundle 6.0 V1 31 NEW propose + Beta-ready target 101 propose initial timid → Daniel push-back catalysator scope under-projection reframe). Anti-acoperiș-pereți filter strategy LOCK V1 preserved (NU build advanced cascade routing înainte de library complete 600+ ex foundation). Bugatti peak craft scope ambition explicit invariant cross-chat preserved.
 ---
 
 # Bugatti Craft Principle

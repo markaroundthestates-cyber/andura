@@ -1,107 +1,113 @@
-# LATEST.md — `/wiki-ingest` Handover 2026-05-13e Bundle 4 LANDED Distribuit Wiki Layer
+# LATEST.md — `/wiki-ingest` Handover 2026-05-13f Bundle 5 ADR v2 SMART_ROUTING_EQUIPMENT Strategic + Bundle 6.0 V1 SCRAP + Scope Library 600-700 MANDATORY PRE-BETA LOCK V1 Distribuit Wiki Layer
 
-## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]])
+## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate)
 
-- ✅ §0 Pre-conditions scribe-side (8 items) — handover narrative ready în `📥_inbox/HANDOVER_2026-05-13e_*.md` cu voice §1 verbatim Daniel preserved + cross-refs raw layer + Daniel signal "fă handover" voluntary
-- ✅ §1 Backup tag `pre-handover-ingest-2026-05-13e-chat-acasa-post-bundle-4-landed` pushed origin verified `git ls-remote --tags origin`
-- ✅ §2 Pre-flight grep verify — Bundle 4 commit `429c189` exists git log + daniel-isms 11+1 verbatim preserved exact per HANDOVER §2 (cooperative push-back smiley DUBLU `:))` NEW pattern + Gigel-test reframe + cascade exhaustion mechanism verbatim full + semantic distinction permanent vs ephemeral + counter threshold modal Co-CTO bias 3 + Cont reversibilitate + mid-session augmentation engine intelligent + engine intelligence semantic muscle-target priority preserve) + cross-refs paths resolve + strategy LOCKED V1 cap-coadă preserved (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă 5/5 + Karpathy Real + voice preservation §1)
+- ✅ §0 narrative present în `📥_inbox/HANDOVER_2026-05-13f_chat_acasa_bundle_5_adr_v2_smart_routing_strategic_plus_bundle_6_0_v1_scrap_plus_scope_library_600_700_mandatory_pre_beta_LOCK.md` (~220 LOC scribe flow conversational §1-§8) cu voice §1 verbatim Daniel preserved + cross-refs raw layer + Daniel handover trigger natural
+- ✅ §1 Backup tag `pre-handover-ingest-2026-05-13f-chat-acasa-bundle-5-adr-v2-plus-scope-library-600-700-mandatory-pre-beta` pushed origin
+- ✅ §2 Pre-flight grep verify (verbatim output):
+  ```
+  📥_inbox/HANDOVER_2026-05-13f_*.md  → 1 file 27057 bytes (May 13 14:39)
+  📥_inbox/ADR_SMART_ROUTING_EQUIPMENT_v2_DRAFT_2026-05-13e.md  → 1 file 29978 bytes (May 13 13:59)
+  📥_inbox/BUNDLE_6_0_PROMPT_CC_LIBRARY_EXTENSION_2026-05-13e.md  → 1 file 24744 bytes (May 13 14:20)
+  wiki/index.md:6  total_pages: 123
+  wiki/log.md head 3 entries: 2026-05-13e | 2026-05-13d | 2026-05-13c
+  wiki pages 8 targets all exist (adr-smart-routing-equipment + calendar-feature-v1-spec + bugatti-craft + gigel-test + strategy-lock-v1 + anti-recurrence-rules + daniel-isms-glossary + slip-patterns-history)
+  📤_outbox/_archive/2026-05/ tail → 461_LATEST_BUNDLE_4_WORKOUT_PREVIEW_LANDED_CONSUMED.md (next available NN=462)
+  ```
+  Daniel verbatim quotes 11 NEW preserved EXACT per HANDOVER §4 (Co-CTO autonomy total + Cam ce vrea andura coach intelligence universal + cooperative push-back smiley single `:)` + cascade ordered list per exercise principle LOCKED V1 full description verbatim + trust delegation MAXIMUM + cooperative push-back scope reframe domain check + Bugatti peak craft scope ambition explicit + strategic LOCK V1 mandatory pre-Beta blocker + Daniel agreement minimal ultra-scurt mode preserved cross-chat)
 - ✅ §3 Wiki distribution voice §1 4-section enforced — 9 pages affected (1 NEW summary + 8 UPDATE existing)
-- ✅ §4 wiki/index.md (count 122 → 123 +1 NEW summary) + wiki/log.md (chronological entry append 2026-05-13e) cumulative count match filesystem
-- ✅ §5 Bidirectional cross-links verified forward-only policy preserved (calendar-feature-v1-spec ↔ anti-recurrence-rules ↔ metoda-hibrida-chat-cc ↔ adr-005-vanilla-js ↔ adr-020-storage-tiering-strategy ↔ engine-coach-director ↔ daniel-isms-glossary ↔ slip-patterns-history ↔ bundle-3 ↔ bundle-1 ↔ s2 cluster triangle preserved)
-- ✅ §6 Raw layer archived `_CONSUMED` (NN 460 HANDOVER + NN 461 LATEST cycle) per audit trail
+- ✅ §4 wiki/index.md (count 123 → 124 +1 NEW summary + Summaries section count 18→19 + frontmatter total_pages 124) + wiki/log.md (chronological entry prepend 2026-05-13f + frontmatter last_updated 2026-05-13f) cumulative count match filesystem
+- ✅ §5 Bidirectional cross-links verified forward-only policy preserved (HARD CONSTRAINT §F3.12: adr-smart-routing-equipment ↔ calendar-feature-v1-spec ↔ bugatti-craft ↔ gigel-test ↔ strategy-lock-v1 ↔ anti-recurrence-rules ↔ daniel-isms-glossary ↔ slip-patterns-history ↔ handover-2026-05-13f cluster triangle preserved; NEW summary cross_refs 15 specific pointers raw+wiki)
+- ✅ §6 Raw HANDOVER archived `📤_outbox/_archive/2026-05/462_HANDOVER_2026-05-13f_*_CONSUMED.md` per audit trail (NN 462 next available 460s range)
 - ✅ §7 Atomic commit single-concern + push origin `feature/v2-vanilla-port` (commit hash below post-push)
-- ✅ §8 Tests baseline 3111 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12)
+- ✅ §8 Tests baseline 3111 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12) — verified `npm run test:run` 169 test files / 3111 tests passed 37.04s duration
+- ✅ §9 LATEST.md §0 HANDOVER_VERIFICATION_CHECKLIST structured raport (this file §0-§7)
+- ✅ §10 anti-recurrence cross-ref §AR.* invariant preserved + 3 NEW slip patterns chat-current §AR.20-cousin RECURRENCE distribute concepts/anti-recurrence-rules.md APPEND-only section "Chat-Current Slip Patterns 2026-05-13f"
+- ✅ §11 cross-refs authority CLAUDE.md §0-§7 + VAULT_RULES §F3.1-§F3.13 + wiki/_design/WIKI_DESIGN_SPEC_V1 + HANDOVER_VERIFICATION_CHECKLIST.md §0-§11
 
 ## §1 — Task
 
-`/wiki-ingest` handover narrative LANDED distribute la wiki layer:
-- Source: `📥_inbox/HANDOVER_2026-05-13e_chat_acasa_post_bundle_4_workout_preview_plus_midsession_refusal_flow_landed.md` (~185 LOC scribe flow conversational)
-- Classification: handover-narrative classifier branch per `/wiki-ingest` per [[../CLAUDE]] §4.1 + voice preservation policy §1 4-section MANDATORY per page + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS
-- Trigger: Daniel ultra-scurt agreement mode *"handover"* post Bundle 4 LANDED clean atomic + 3 slips chat-current scribe-mode marked + §AR.22 candidat potential 2× threshold met cumulative + Co-CTO autonomous direct delegation pattern reaffirm cross-flow bandwidth ~25-30% remaining preventiv pre-saturare scribe fresh
+`/wiki-ingest` handover narrative Chat ACASĂ 2026-05-13f Bundle 5 ADR v2 SMART_ROUTING_EQUIPMENT strategic chat dedicat complet + Bundle 6.0 V1 PROMPT_CC SCRAP (31 NEW propose subspec) + Scope Library 600-700 ex MANDATORY PRE-BETA LOCK V1 Daniel CEO directive verbatim → distribute wiki layer per VAULT_RULES §F3.8 handover-narrative classifier + voice preservation policy §1 4-section enforced per pagină wiki + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate mandatory.
 
-## §2 — Model
+**Task complete. Report: 📤_outbox/LATEST.md** (per CLAUDE.md §0 output style — terminal 2 linii max post-task).
 
-Opus EXCLUSIVELY (hardcoded). Velocity ~30-45 min total autonomous achieved.
-
-## §3 — Status
-
-✅ **LANDED** — atomic commit single-concern Bugatti craft + push origin `feature/v2-vanilla-port` clean.
-
-## §4 — Branch
-
-`feature/v2-vanilla-port` (per memory rule active branch + HARD CONSTRAINT §F3.12 ZERO main branch). Vault meta-tooling doc-only ZERO src/ touched.
-
-## §5 — Date
-
-2026-05-13e — chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 §F3.13 5th consecutive validation effective.
-
-## §6 — Pre-flight
-
-- Backup tag `pre-handover-ingest-2026-05-13e-chat-acasa-post-bundle-4-landed` pushed origin pre-execute ✅
-- Pre-flight grep verify: commit `429c189` exists git log + backup tag `pre-bundle-4-workout-preview-plus-midsession-refusal-flow-2026-05-13e` exists origin ✅
-- Daniel-isms verbatim catalog 11+1 preserved exact per HANDOVER §2 + cooperative push-back smiley DUBLU `:))` NEW pattern catalysator chat-current ✅
-- Strategy LOCKED V1 cap-coadă preserved (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă 5/5 consecutive validation effective + Karpathy Real + voice preservation §1) ✅
-- HARD CONSTRAINTS §F3.12 invariant verified: ZERO main branch + ZERO src/ touched + ZERO --no-verify + ZERO wiki/ frozen pages mutation beyond 9 explicit targets + Tests baseline 3111 PASS preserved EXACT + Voice §1 4-section MANDATORY 100% per NEW/UPDATE page + Bidirectional cross-links forward-only policy preserved ✅
-
-## §7 — Modificări
+## §2 — Wiki Distribution Summary
 
 **1 NEW summary distributed:**
-1. `wiki/summaries/bundle-4-workout-preview-plus-midsession-refusal-flow-landed-milestone-2026-05-13.md` — LOCKED V1 Bundle 4 milestone synthesis voice §1 4-section MANDATORY (Synthesis 2-3 paragrafe + Verbatim quotes Daniel 11+1 preserved verbatim cu cooperative push-back smiley DUBLU `:))` NEW pattern + Gigel-test reframe paradigm reset + cascade exhaustion mechanism verbatim full + semantic distinction permanent vs ephemeral + counter threshold modal Co-CTO bias 3 + Cont reversibilitate + mid-session augmentation engine intelligent + engine intelligence semantic muscle-target priority preserve + Bugatti framing notes 5 sub-sections complete + Cross-refs raw layer 12 specific path:§ pointers)
+1. NEW [[../wiki/summaries/handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]] LOCKED V1 — Bundle 5 ADR v2 SMART_ROUTING_EQUIPMENT strategic chat dedicat complet + Bundle 6.0 V1 PROMPT_CC SCRAP + Scope Library 600-700 ex MANDATORY PRE-BETA LOCK V1 milestone synthesis voice §1 4-section (Synthesis + Verbatim quotes Daniel 11 EXACT + Bugatti framing notes 5 sub-sections + Cross-refs raw+wiki 24 pointers). Cascade ordered list pattern unified 5 step types canonical absorbe ex-Pillar 1 + ex-Pillar 2 separate flat fields. ADR v2 DRAFT REV2 pending Daniel review approve LANDED commit precedent Bundle 6.0.x execute. 7+ sub-batches per muscle group roadmap (Bundle 6.0.1 Chest ~90 → 6.0.7 Core ~60, Legs split intern 4-way → efectiv ~10 sub-batches). Cascade populate Bundle 6.1 downstream mass ~2000-3000 cascade entries projected.
 
-**8 UPDATE existing wiki pages distributed:**
-1. `wiki/concepts/calendar-feature-v1-spec.md` — title cumulative + frontmatter `amendments[]` APPEND entry 2026-05-13e Bundle 4 LANDED + path forward Bundle 5 ADR amendment SMART_ROUTING_v2 strategic chat dedicat + cross_refs forward-only NEW summary
-2. `wiki/entities/adrs/adr-005-vanilla-js.md` — frontmatter `amendments[]` APPEND entry 2026-05-13e Bundle 4 vanilla port continuation Port-First-Then-React paradigm preserved invariant
-3. `wiki/entities/adrs/adr-020-storage-tiering-strategy.md` — frontmatter `amendments[]` APPEND entry 2026-05-13e Tier 0 parity 2 NEW localStorage keys `wv2-skipped-exercises` + `wv2-refusal-counter` parity pattern `wv2-missing-equipment` existing
-4. `wiki/entities/engines/engine-coach-director.md` — frontmatter `last_updated: 2026-05-13e` + `amendments[]` APPEND entry 2026-05-13e Bundle 4 mid-session augmentation orchestrator behavior augmentation ONLY (NU engine mutation)
-5. `wiki/concepts/anti-recurrence-rules.md` — frontmatter `amendments[]` APPEND entry 2026-05-13e §AR.21 4th + §AR.22 candidat 2× threshold cumulative potential + NEW section §"Chat-Current Slip Patterns 2026-05-13e" cu 3 slip patterns 11A/B/C
-6. `wiki/concepts/metoda-hibrida-chat-cc.md` — frontmatter `amendments[]` APPEND entry 2026-05-13e 5th consecutive validation effective cumulative cross-bundle
-7. `wiki/summaries/daniel-isms-glossary.md` — frontmatter `last_updated: 2026-05-13e` + NEW section §"Chat ACASĂ 2026-05-13e Bundle 4 LANDED" cu 11+1 daniel-isms cooperative push-back smiley DUBLU `:))` NEW pattern catalysator
-8. `wiki/summaries/slip-patterns-history.md` — frontmatter `last_updated: 2026-05-13e` + NEW section §"Chat-Current Slip Patterns 2026-05-13e" slip 11 chronological
+**8 UPDATE existing wiki pages distributed (APPEND-only per HARD CONSTRAINT §F3.12 relaxation):**
+1. UPDATE [[../wiki/entities/adrs/adr-smart-routing-equipment]] frontmatter `amendments[]` APPEND 2026-05-13f Bundle 5 v2 strategic chat dedicat LOCKED + ADR v2 DRAFT REV2 cascade ordered list pattern + 5 step types canonical + cross_refs APPEND NEW summary + last_updated 2026-05-13f
+2. UPDATE [[../wiki/concepts/calendar-feature-v1-spec]] frontmatter `amendments[]` APPEND 2026-05-13f Bundle 5 ADR amendment SMART_ROUTING_v2 strategic + Bundle 6.0 V1 SCRAP + scope library 600-700 MANDATORY PRE-BETA + cross_refs APPEND NEW summary + title cumulative reflect Bundle 5 strategic + scope library 600-700 mandatory pre-Beta LANDED
+3. UPDATE [[../wiki/concepts/bugatti-craft]] frontmatter `amendments[]` APPEND 2026-05-13f 600-700 ex peak craft NU compromise timid LOCK V1 + cross_refs APPEND NEW summary + last_updated 2026-05-13f
+4. UPDATE [[../wiki/concepts/gigel-test]] frontmatter `amendments[]` APPEND 2026-05-13f Andura primary gym-focused paradigm LOCK V1 + cross_refs APPEND NEW summary + last_updated 2026-05-13f
+5. UPDATE [[../wiki/concepts/strategy-lock-v1]] frontmatter `amendments[]` APPEND 2026-05-13f NEW strategic LOCK V1 catalog scope library 600-700 ex MANDATORY PRE-BETA + cross_refs APPEND NEW summary + last_updated 2026-05-13f
+6. UPDATE [[../wiki/concepts/anti-recurrence-rules]] frontmatter `amendments[]` APPEND 2026-05-13f + APPEND-only section "## Chat-Current Slip Patterns 2026-05-13f (APPEND-only — 3 NEW §AR.20-cousin RECURRENCE)" cu slip 12A tactical-as-strategic confirmation cousin + slip 12B schema example fictive RECURRENCE + slip 12C scope sub-spec timid + Cross-refs raw layer adițional chat-current 2026-05-13f
+7. UPDATE [[../wiki/summaries/daniel-isms-glossary]] frontmatter `last_updated: 2026-05-13f` + APPEND-only section "## Chat ACASĂ 2026-05-13f Bundle 5 strategic + scope 600-700 mandatory pre-Beta (APPEND-only — 11 NEW daniel-isms verbatim catalog extensible)" cu Categorii L-P NEW (Co-CTO autonomy total + Cascade ordered list per exercise principle LOCKED V1 + Cooperative push-back scope reframe + Strategic LOCK V1 mandatory pre-Beta blocker + Daniel agreement minimal ultra-scurt mode)
+8. UPDATE [[../wiki/summaries/slip-patterns-history]] frontmatter `last_updated: 2026-05-13f` + APPEND-only section "## Chat-Current Slip Patterns 2026-05-13f (APPEND-only — slip 12 chronological 3 NEW §AR.20-cousin RECURRENCE)" cu slip 12A + 12B + 12C chronological + 5 push-back productive moments + 6 tone shifts chronological + Cross-refs raw layer adițional chat-current 2026-05-13f
 
-**Wiki catalog updates:**
-- `wiki/index.md` — frontmatter `last_updated: 2026-05-13e` + `total_pages: 123` + Catalog status post 2026-05-13e NEW section + Summaries 17 → 18 LANDED + NEW summary bundle-4 entry + trailer 2026-05-13e
-- `wiki/log.md` — frontmatter `last_updated: 2026-05-13e` + NEW chronological entry top `## [2026-05-13e] ingest | Chat ACASĂ post Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED handover narrative distributed`
+## §3 — Cumulative Count Verify
 
-**Raw layer archive cycle:**
-- `📥_inbox/HANDOVER_2026-05-13e_*.md` → `📤_outbox/_archive/2026-05/460_HANDOVER_2026-05-13e_chat_acasa_post_bundle_4_workout_preview_plus_midsession_refusal_flow_landed_CONSUMED.md`
-- `📤_outbox/LATEST.md` (Bundle 4 raport) → `📤_outbox/_archive/2026-05/461_LATEST_BUNDLE_4_WORKOUT_PREVIEW_LANDED_CONSUMED.md`
+**Pre-ingest:** 123 wiki pages
+**Post-ingest:** **124 wiki pages** (+1 NEW summary `handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock`)
+**Breakdown:** 17 concepts + 42 ADRs (100% Karpathy real coverage) + 7 engines + 19 features + 12 specs + **19 summaries** (+1 NEW) + 6 sources + 2 schema/design = 124 total
 
-## §8 — Build + Tests
+**Index trailer update:** new trailer 2026-05-13f added + predecessor 2026-05-13e preserved invariant.
+**Summaries section header:** 18 → 19 LANDED (1 NEW entry appended at top of summaries list chronological).
+**Log entry:** prepended above 2026-05-13e entry (chronological reverse signature most recent first).
 
-- Build: NU rulat (vault meta-tooling doc-only ZERO src/ touched).
-- Tests `npm test -- --run` post-commit: **3111 PASS** (baseline preserved EXACT per HARD CONSTRAINTS §F3.12 ZERO src/ touched).
+## §4 — Archive Raw HANDOVER Path Moved
 
-## §9 — Commits
+**Raw HANDOVER archived:** `📤_outbox/_archive/2026-05/462_HANDOVER_2026-05-13f_chat_acasa_bundle_5_adr_v2_smart_routing_strategic_plus_bundle_6_0_v1_scrap_plus_scope_library_600_700_mandatory_pre_beta_LOCK_CONSUMED.md`
 
-Single atomic commit single-concern Bugatti craft + push origin `feature/v2-vanilla-port`:
-- `3fda932` chore(wiki): /wiki-ingest handover 2026-05-13e Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED — 1 NEW summary + 8 UPDATE existing
+NN 462 = next available slot after 461 (Bundle 4 LATEST CONSUMED predecessor). Audit trail chronological continuous.
 
-## §10 — Pushed
+**Inbox preserved precedent referenced:**
+- `📥_inbox/ADR_SMART_ROUTING_EQUIPMENT_v2_DRAFT_2026-05-13e.md` — ADR v2 DRAFT REV2 pending Daniel review approve LANDED commit (~570 LOC, cascade ordered list pattern + 5 step types canonical + 9 Co-CTO decisions motivate inline + revision_history rev1→rev2 documented)
+- `📥_inbox/BUNDLE_6_0_PROMPT_CC_LIBRARY_EXTENSION_2026-05-13e.md` — Bundle 6.0 V1 PROMPT_CC SCRAP (~640 LOC, 31 NEW propose subspec preserved precedent referenced — SUPERSEDED de Bundle 6.0.x sub-batches mass)
 
-✅ `feature/v2-vanilla-port` pushed origin via single atomic commit single-concern.
+## §5 — Tests Preserved 3111 PASS Verify Output
 
-## §11 — Issues
+```
+ Test Files  169 passed (169)
+      Tests  3111 passed (3111)
+   Start at  14:51:41
+   Duration  37.04s (transform 3.49s, setup 0ms, collect 13.86s, tests 13.12s, environment 254.62s, prepare 41.57s)
+```
 
-ZERO issues. ZERO regression. ZERO HARD CONSTRAINT §F3.12 violation. Voice preservation policy §1 enforced 100% per NEW/UPDATE page. Bidirectional cross-links forward-only policy preserved.
+Vitest unit tests 3111 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). ZERO regression. Build vite unaffected (NU executat chat-current strategic discussion only — no src/ change).
 
-## §12 — Next Action
+## §6 — Backup Tag Pushed Origin Verify
 
-**Path forward post handover ingest (chat NEW dedicated trigger "Salut Acasă" Daniel):**
+```
+Tag: pre-handover-ingest-2026-05-13f-chat-acasa-bundle-5-adr-v2-plus-scope-library-600-700-mandatory-pre-beta
+Push output: To https://github.com/markaroundthestates-cyber/andura.git
+              * [new tag] pre-handover-ingest-2026-05-13f-chat-acasa-bundle-5-adr-v2-plus-scope-library-600-700-mandatory-pre-beta -> pre-handover-ingest-2026-05-13f-chat-acasa-bundle-5-adr-v2-plus-scope-library-600-700-mandatory-pre-beta
+```
 
-1. **P1 absolute — Bundle 5 ADR amendment SMART_ROUTING_v2** strategic chat dedicat Daniel input mandatory ~2-3h. Scope:
-   - Full downstream session-aware cascade sequence reordering for fatigue minimization (NU just peek-next-exercise — full sequence reordering)
-   - Bodyweight fallback schema NEW per `muscle_target_primary` lookup table end-of-cascade resort
-   - Light variant schema NEW per exercise OR formula reps×1.5 / weight×0.5 / angle modifier
-   - ADR amendment formal document SMART_ROUTING_v1 → v2 pre-implementation
+Backup safety net pushed origin pre-execute per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §1 Bugatti gate mandatory.
 
-2. **P2** — Wire `state.sessionPlan` field în mid-session pentru peek-next-exercise filter activation (currently graceful no-op fallback — works without plan).
+## §7 — Path Forward Fresh Chat NEW Trigger "Salut Acasă"
 
-3. **P3** — §AR.22 codification DISCRETE-BLOCKS DISCIPLINE dacă 2× threshold met cumulative + pattern persists chat NEW post Daniel review explicit fresh chat decizie strategic Bundle 5 dedicat. Rule candidate verbatim Bundle 3 follow-up spec §9 + Bundle 4 12-block split A-L explicit per file/funcție.
+**P1 absolut Bundle 6.0.1 Chest extension ~90 NEW exerciții sub-batch dedicat fresh chat:**
+- Extend `src/schema/exerciseMetadata.js` EXERCISE_METADATA map cu ~90 NEW chest exerciții Co-CTO canonical mapping
+- Chest variants: bench press all variants (flat/incline/decline × barbell/DB/Smith/Hammer Strength/machine) + chest press machine + pec deck variants + cable crossover variants (high/mid/low) + cable fly variants + DB fly variants (flat/incline) + dip variants (bar/bench/ring/weighted/chest-emphasis lean forward) + push-up variants (standard/incline/decline/diamond/wide-grip/spider/plyometric/archer/pseudo-planche)
+- Tests vitest cluster ~25 tests + HARD CONSTRAINTS §F3.12 strict preserved + Bugatti single-concern atomic commit clean
 
-4. **P4** — Pre-Beta Daniel Gates manual smoke prod andura.app post-deploy `feature/v2-vanilla-port` → `main` strategic discussion separat.
+**Precedent execute Bundle 6.0.x sub-batches mass cumulative ~630 ex target Pre-Beta MANDATORY:**
+- Bundle 6.0.2 Back ~110 NEW + Bundle 6.0.3 Shoulders ~90 NEW + Bundle 6.0.4 Biceps ~55 NEW + Bundle 6.0.5 Triceps ~45 NEW + Bundle 6.0.6 Legs ~180 NEW (4-way split intern Quads/Hamstrings/Glutes/Calves) + Bundle 6.0.7 Core ~60 NEW
+- Parallel execution posibil CC autonomous Opus terminale separate disjoint file scope sau sequential dedicat per sub-batch
+- Bundle 6.1 cascade populate spec consume library expanded complet ~630 ex × cascade per exercise = ~2000-3000 cascade entries projected mass artefact CC autonomous Opus execute fresh chat dedicat ~3-4h
 
-**NOT recommended intermediate Daniel Gates smoke prod `andura.app`** între Bundle 4 + Bundle 5 — anti-paternalism preserved Daniel verbatim chat-trecut *"continue si verific totul inainte de beta"*. Pre-Beta single comprehensive gate Bugatti pattern reaffirm cross-flow.
+**P3 ADR v2 SMART_ROUTING_EQUIPMENT LANDED commit raw layer + wiki distribution:**
+- ADR v2 DRAFT REV2 pending Daniel review approve → LANDED commit `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md` formal raw layer + `wiki/entities/adrs/adr-smart-routing-equipment.md` UPDATE amendments[] entry post-LANDED commit
+- Precedent execute mandatory Bundle 6.0.x implementation sub-batches
+
+**P4 Pre-Beta Daniel Gates manual smoke prod andura.app:**
+- Post all Bundle 6.0.x + Bundle 6.1 LANDED + scope library 600-700 ex mandatory pre-Beta gate verified PASS
+- Single comprehensive Daniel Gates manual smoke prod `andura.app` post-deploy `feature/v2-vanilla-port` → `main`
+- Bugatti single comprehensive gate pattern reaffirm preserved invariant cross-chat (NU intermediate slices Daniel Gates)
 
 ---
 
-🦫 **Bugatti craft. `/wiki-ingest` handover 2026-05-13e Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED single atomic commit clean Bugatti single-concern distribuit la wiki layer (123 pages cumulative: 17 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 18 summaries + 6 sources + 2 schema/design). +1 NEW summary + 8 UPDATE existing pages voice §1 enforced 100%. Tests 3111 PASS preserved EXACT. ZERO HARD CONSTRAINT §F3.12 violation. §AR.21 4th consecutive validation effective post-codification ZERO slip surfaced (Bundle 1 + Bundle 3 + Bundle 3 follow-up + Bundle 4). §AR.22 candidat DISCRETE-BLOCKS DISCIPLINE potentially 2× threshold met cumulative now codify next handover dacă pattern persists. Ready noul chat post-trigger "Salut Acasă" P1 Bundle 5 ADR amendment SMART_ROUTING_v2 strategic chat dedicat Daniel input mandatory ~2-3h.**
+🦫 **`/wiki-ingest` handover 2026-05-13f Bundle 5 ADR v2 SMART_ROUTING_EQUIPMENT strategic chat dedicat complet + Bundle 6.0 V1 PROMPT_CC SCRAP + Scope Library 600-700 ex MANDATORY PRE-BETA LOCK V1 LANDED. 1 NEW summary distributed + 8 UPDATE existing pages voice §1 enforced 100%. Cumulative 124 wiki pages. Tests 3111 PASS preserved EXACT. ZERO src/ touched. ZERO main branch (feature/v2-vanilla-port active). HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS. Path forward Bundle 6.0.1 Chest fresh chat dedicat P1 absolut + ADR v2 DRAFT REV2 pending Daniel review approve LANDED commit precedent Bundle 6.0.x execute.**

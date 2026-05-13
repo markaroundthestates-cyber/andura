@@ -6,12 +6,16 @@ status: locked-v1
 locked_date: 2026-05-02
 authority: 03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v1.md LOCKED V1 per ALIGNMENT_QUESTIONS Q3 Daniel response BATCH_05 final Sprint 4.x cluster
 voice_preservation: synthesis + verbatim + bugatti + crossrefs
+last_updated: 2026-05-13f
 cross_refs:
   - "[[adr-018-engine-extensibility-architecture]]"
   - "[[adr-025-andura-gandeste-pentru-user]]"
   - "[[adr-pain-discomfort-button]]"
   - "[[adr-011-coach-decision-log-architecture]]"
-amendments: []
+  - "[[../../summaries/handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]]"
+amendments:
+  - date: 2026-05-13f
+    note: Bundle 5 ADR amendment SMART_ROUTING_EQUIPMENT v2 strategic chat dedicat complet — ADR v2 DRAFT REV2 pending Daniel review approve LANDED commit precedent Bundle 6.0.x execute. **Cascade ordered list pattern unified LOCKED V1 Daniel principle** verbatim *"Daca am tractiuni si nu pot -> helcometru. Daca nu am helcometru -> assisted pullup machine. Daca nu am -> variatie de exercitii fie 1 exercitiu sau 2"* = 5 step types canonical absorbe ex-Pillar 1 + ex-Pillar 2 separate flat fields (`easier_machine` + `assisted_variant` + `muscle_group_compose 1-2 ex` + `bodyweight` + `light_variant` → implicit step 6 `skip` anti-paternalism v1 preserved). Pre-defined ordered list cascade per exercise în schema, engine traverses cascade până găsește step matching user equipment ownership + capability state real-time. Apply universal toate exerciții library (Co-CTO bias apply singur NU ask N times per *"sper sa nu o mai repet de 1000 ori"*). ADR v2 REV2 ~570 LOC + ~25 exemple mapping Co-CTO draft per category (pull/push horizontal/push vertical/legs compound/isolation/core) + 9 Co-CTO decisions motivate inline + revision_history frontmatter rev1→rev2 documented. Pre-flight grep `src/schema/exerciseMetadata.js` surfaced slip §AR.20-cousin RECURRENCE chat-current — V1 library actual 27 exerciții (NU ~60 assumed implicit ADR v2 §2.2 exemple) — Bundle 6.0.x sub-batches mass extension necesar pre-cascade populate. **Andura primary gym-focused paradigm LOCK V1** Daniel verbatim *"daca gigel locuieste in canal sa iasa sa mearga la sala. Andura e primary gym focused"* — bar = standard equipment expected primă treaptă cascade NU substitute artificial Gigel-ridiculous în sală. **Different-exercise-easier light variant semantic LOCK V1** Daniel verbatim *"push-up înlocuit cu kneeling push-up etc"* — NU same-exercise weight-reduced (preserve identity exercise tracking accuracy CDL). ZERO engine module mutation per ADR 026 §9 invariant preserved + ZERO breaking change additive schema. Marius advanced tier PARALLEL modifier 4-gate strict existing carve-out preserved Bundle 5 ADR v2.
 ---
 
 # ADR Smart Routing Equipment v1

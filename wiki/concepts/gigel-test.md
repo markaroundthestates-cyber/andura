@@ -5,12 +5,16 @@ status: locked-v1
 locked_date: 2026-04-30
 authority: Daniel-ism recurring chat-uri 2026-04-30 → 2026-05-11 (Marius variant Gigel friendly user UX validation)
 voice_preservation: synthesis + verbatim + bugatti + crossrefs
+last_updated: 2026-05-13f
 cross_refs:
   - "[[../concepts/bugatti-craft]]"
   - "[[../concepts/andura-suflet]]"
   - "[[../entities/features/feature-f1-patterns-banner]]"
   - "[[../entities/features/feature-f12-rating-buttons]]"
-amendments: []
+  - "[[../summaries/handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]]"
+amendments:
+  - date: 2026-05-13f
+    note: **Andura primary gym-focused paradigm LOCK V1** chat-current Daniel CEO directive verbatim *"daca gigel locuieste in canal sa iasa sa mearga la sala. Andura e primary gym focused... home focus e doar cand gymul e extrem de poor sau chiar nu se duce"* — bar = standard equipment expected primă treaptă cascade NU substitute artificial Gigel-ridiculous în sală (towel curl pe ușă, band-only). Home-only/poor-gym edge case degrade graceful via Cont/Aparate lipsa existing mechanism Bundle 4 preserved invariant. Gigel-target gym-primary paradigm LOCKED V1 (NU home gym focus). Pattern reaffirm cross-chat: Gigel = persona representativ user mediu Andura care merge la sală (NU "Gigel locuiește în canal"). Bundle 5 ADR v2 SMART_ROUTING_EQUIPMENT REV2 cascade ordered list pattern Daniel principle 5 step types canonical absorbe ex-Pillar 1 + ex-Pillar 2 separate flat fields apply universal toate exerciții library cu bar = standard equipment expected în cascade primary path.
 ---
 
 # Gigel Test

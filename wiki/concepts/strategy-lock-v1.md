@@ -5,11 +5,15 @@ status: locked-v1
 locked_date: 2026-05-11
 authority: Daniel directive chat ACASĂ 2026-05-11 anti-halucinație plan + Port-First-Then-React paradigm LOCK V1 2026-05-10 catalysator
 voice_preservation: synthesis + verbatim + bugatti + crossrefs
+last_updated: 2026-05-13f
 cross_refs:
   - "[[port-first-then-react]]"
   - "[[bugatti-craft]]"
   - "[[anti-recurrence-rules]]"
-amendments: []
+  - "[[../summaries/handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]]"
+amendments:
+  - date: 2026-05-13f
+    note: NEW strategic LOCK V1 catalog: **scope library 600-700 ex MANDATORY PRE-BETA precedent Bundle 6.1 cascade populate** (NU pre-Beta launch sub-600 ex library). Daniel CEO directive verbatim *"si nu crezi ca o sa facem 600-700?"* + *"faci handover dar vreau sa prinzi asta obligatoriu. E mandatory pre beta"* = Bugatti peak craft full Fitbod parity (700+ ex industry top) + cascade routing sophistication + Romanian-first + tier-aware filtering preserved invariant = differentiation Andura real. Anti-acoperiș-pereți filter preserved invariant: NU build advanced cascade routing (Bundle 6.1 ~2000-3000 cascade entries) înainte de library complete 600+ ex foundation (Bundle 6.0.x sub-batches mass cumulative ~630 ex target). Scope target revised: Chest 90 + Back 110 + Shoulders 90 + Biceps 55 + Triceps 45 + Legs 180 (4-way split intern quad/ham/glute/calf) + Core 60. 7+ sub-batches per muscle group roadmap precedence ordered Bundle 6.0.1 Chest → 6.0.7 Core, Legs split intern 4-way → efectiv ~10 sub-batches total. Co-CTO autonomy total LOCKED permanent + trust delegation MAXIMUM Daniel CEO directive verbatim *"foloseste reasoning ca stii directia... le propui mai bine ca mine"* — pattern preserved invariant cross-chat (preserved invariant 2026-05-11 Daniel autonomy lock EXTINS PERMANENT).
 ---
 
 # Strategy LOCK V1 Filter
