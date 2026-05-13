@@ -88,9 +88,11 @@ ZERO regression. Vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAI
 
 ## §7 Commit + push origin
 
-- Commit hash: pending atomic commit step.
-- Branch: `feature/v2-vanilla-port`.
-- Commit type: `docs(adr):` single-concern atomic ADR creation.
+- Commit hash: `1127f14` (atomic single-concern C1 ADR_ANATOMICAL_CLASSIFICATION_V1 LOCK V1)
+- Branch: `feature/v2-vanilla-port`
+- Push: `268c979..1127f14 feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3227 passed (3227)` preserved EXACT ✓
+- Files changed: 3 (+561 −115; NEW ADR + NEW LATEST + LATEST precedent archive 479_CONSUMED)
 
 ## §8 Path forward C2 next
 
