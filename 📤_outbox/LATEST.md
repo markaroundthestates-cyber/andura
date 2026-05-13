@@ -100,7 +100,7 @@ Pre-commit vitest hook executed pre-push (Status §10 confirm post-commit).
 
 ## §4 Atomic commit hash
 
-`<HASH>` — `feat(wiki): ingest handover 2026-05-13 Calendar V1 S1.0-S1.7 + statusline CC pack`
+`39a248a` — `feat(wiki): ingest handover 2026-05-13 Calendar V1 S1.0-S1.7 + statusline CC pack` (8 files changed, 540 insertions(+), 150 deletions(-))
 
 **Single-concern atomic** consolidate cumulative Calendar V1 spec drift via /wiki-ingest distribution + 2 cross-cluster amendments (engine-coach-director + adr-020) + index + log + archive precedent. Revertable safely via backup tag.
 
