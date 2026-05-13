@@ -2,7 +2,7 @@
 title: Slip Patterns History — §AR.1-§AR.19 Codified Anti-Recurrence Rules Cross-Chat + Push-Back Productive Moments
 type: summary
 status: live
-last_updated: 2026-05-12
+last_updated: 2026-05-13c
 synthesis_scope: slip-patterns
 cross_refs:
   - "[[../concepts/anti-recurrence-rules]]"
@@ -133,3 +133,48 @@ Daniel verbatim "fa prompt pt cc sa le fix" REJECT strategy-lock 2026-05-12:
 - [[../entities/engines/engine-coach-director]] §"Anti-RE considerations" S2 Production Wiring 2026-05-13b slip §AR.20 candidate strong RECURRENCE (cross-link engine pure-function preserved invariant)
 - [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-13b post Calendar V1 S2 LANDED + 4 strategic LOCKs" 9 NEW daniel-isms chat-current verbatim catalog extensible identity preserved
 - [[calendar-v1-s2-production-wiring-milestone-2026-05-13]] §"Bugatti framing notes" S2 LANDED milestone synthesis 4 LOCKs + 3 slips + 9 daniel-isms aggregate
+
+---
+
+## Chat-Current Slip Patterns 2026-05-13c (APPEND-only — §AR.20 quadruple violation halt + §AR.21 codification origin + Bundle 1 success milestone validation effective)
+
+**Source:** Chat ACASĂ 2026-05-13 post S3 Guards Bundle 1 LANDED (S3.C session guard double-start `d41e111` + S3.D bottom-nav HIDE in-session `47729ed` 2/2 atomic chain clean) + §AR.20 quadruple violation halt v1 PROMPT_CC + §AR.21 codification origin CC autonomous Opus + redo spec v2 grep evidence verbatim inline per file/function referenced + Bundle 1 LANDED first-attempt validation effective §AR.21 enforcement post-codification ZERO slip surfaced. Cumulative APPEND slip patterns post 3-slip-chat-2026-05-13b section → S3 chronological narrative LOCK V1 codification milestone.
+
+**Slip 9 chat-current 2026-05-13c — Eu (Claude chat) Co-CTO tactical spec v1 quadruple violation invented files/functions/state fields RECURRENCE §AR.20 2× threshold met explicit codification LOCK V1:**
+- **Trigger:** Eu am generat spec v1 PROMPT_CC artefact pentru S3 production wiring cu confidence (mockup-mental-model paste pattern) cu 4 atomic slices S3.A/B/C/D + optional S3.E polish. Citat §AR.20 ca MANDATORY în §0 pre-flight ("Citation mockups/andura-clasic.html §<section> MANDATORY" + "Fail oricare → STOP, raport finding-ul exact"), DAR n-am făcut grep-ul EU însumi pre-write. Spec body referenced 4 fronts QUADRUPLE invented:
+  - `src/storage.js` (NU există ca file — utils equipment în `src/engine/schedule/scheduleAdapter.js` LANDED S2.A)
+  - `getAllRatings()` + `getSessionsForMonth()` (NU există ca functions anywhere)
+  - `state.activeSession.id/.finishedAt/.abandonedAt` (real = `state.sessActive` boolean + `state.sessStart` timestamp + `state.earlyStopReason` string)
+  - `showWorkoutOverlay()` function (NU există — real = imperativ DOM toggle `$('session-ui').style.display='block'`)
+  - `bottom-nav` CSS class (NU există în `src/` — real = `<nav class="nav">` în `index.html`)
+  - `smartRouting.findAlternative(exerciseId, ctx.meta.missingEquipment)` (real signature = `findAlternatives(exerciseName)` single arg)
+  - `ctx.meta.missingEquipment` field (real = `ctx.equipment.{available, unavailable}` merge legacy + user-driven post-translate)
+- **Catch mechanism (CC autonomous Opus QUADRUPLE push-back saved):** Daniel paste manual în `📥_inbox/` SAU drag direct CC terminal — CC Opus autonomous executed §0 step 4 pre-flight grep filesystem extensive PRE-edit + detected 5 distinct gaps simultaneously across 4 slices + AskUserQuestion 5 options surface: (1) Halt + handover for prompt redo Recommended, (2) Adapt + execute S3.C + S3.D only smallest, (3) Adapt + execute all 4 slices best-effort high context risk, (4) Type something, (5) Chat about this. CC raport zero-friction Bugatti impeccable — TEEMING with grep evidence inline per slice + grep commands ready Daniel-side rerun + atomic split recommendation per slice corrected + bandwidth note ("Even with correct specs, S3.A + S3.B + S3.C + S3.D + S3.E is realistically 2-3 chats of CC autonomous work"). Pattern recognition flag: §AR.20 codified ~hours before în same chat session's `/wiki-ingest` handover, yet the prompt itself cites §AR.20 + still violates §AR.20 on 4 fronts. *"This is the recurrence-of-the-recurrence-rule scenario the catalog exists to surface."*
+- **Daniel verbatim chat ACASĂ 2026-05-13c Option 1 Halt confirmation single-message:** *"dam dat 1. a iesit latest"* — ultra-scurt agreement mode lean.
+- **Eu (Claude chat) Co-CTO tactical mea culpa exhaustive instant recognize fără defensive:** *"ai dreptate — §AR.20 RECURRENCE STRONG, exact slip chat trecut din nou"* + recommend Option 1 Halt direct (anti-bandage Opt 2/3 anti-Bugatti foundation defective). NU "tu ce zici?" confirmation theater.
+- **Anti-recurrence permanent §AR.20 LOCKED V1 2026-05-13c:** "PROMPT_CC src/ reference verify ADR + mockup primary citation MANDATORY ÎNAINTE write." 2× threshold met explicit chat trecut 2026-05-13b S2 spec procedural ADR 026 §9 violation + chat-current 2026-05-13c S3 v1 quadruple violation invented files/functions/state fields = invariant codification trigger LOCK V1 confirmed explicit Daniel acord.
+- **§AR.21 codification origin CC autonomous Opus rule:** CC raport §5 propose §AR.21 codification meta-pattern verbatim *"PROMPT CC self-cites §AR.20 mandatory grep but spec body still contains non-existent file/function references. Codify: prompts that cite §AR.20 MUST embed grep output snippets verbatim as inline evidence per file/function referenced. Mockup-side mental model + wiki narrative ≠ source-of-truth for src/ implementation specs."* CC clarification crucial: *"This isn't a new pattern — it's §AR.20 unchanged. But the citation-without-enforcement is the meta-slip worth surfacing."* §AR.21 = §AR.20 strengthen, NU rule nouă orthogonală — citation MUST embed enforcement evidence inline NU referință goală. LOCK V1 confirmed explicit Daniel via chat-current acord.
+
+**Bundle 1 redo spec v2 grep evidence verbatim inline approach + LANDED clean validation 2/2 atomic — §AR.21 effective first execution post-codification:**
+- **Co-CTO tactical decision Daniel verbatim cross-chat preserved invariant:** *"asta e decizia ta nu a mea"* pattern preserved cross-chat 2026-05-13b S2 → chat-current 2026-05-13c S3 reaffirm Co-CTO autonomy paradigm. Eu redo spec v2 direct via MCP filesystem. Scope strict **Bundle 1 NUMAI** (S3.C + S3.D smallest most isolated 2 atomic commits), NU monolith 4 slices riscă context-rot + repeat slip. Bundle 2 S3.A + Bundle 3 S3.B = separate prompts fresh chat post Bundle 1 LANDED.
+- **Read verbatim via MCP `filesystem:read_text_file` real path-uri inline evidence §2 + §3:** `src/state.js:5-26` field shape + `src/pages/coach/session.js:30-72` startSession entry point + `src/pages/coach/session.js` DOM toggle pattern via `$()` + `index.html` `<nav class="nav">` markup + `src/styles/main.css` `.nav` base rule + `src/db.js:9` `$` helper.
+- **Pre-flight §0 step 4 paranoid re-grep matched ZERO delta inline evidence §2 + §3 → atomic first-attempt 2/2 LANDED:** Rule effective as designed validating §AR.21 enforcement post-codification ZERO slip surfaced.
+
+**Push-back productive moments chat-current 2026-05-13c cross-link:**
+- CC autonomous Opus QUADRUPLE push-back §AR.20 violation pre-flight grep saved 2984 → 0 regression + ZERO `src/` touched + AskUserQuestion 5 options surface (NU continue best-effort default). Daniel cu un single-message confirm Option 1 Halt direct *"dam dat 1. a iesit latest"*.
+- CC autonomous Opus origin §AR.21 codification candidate — recognized "citation-without-enforcement" meta-pattern (rule citation alone insufficient, evidence inline mandatory), suggested codification deferred Daniel approval explicit chat-current. Daniel verbatim acord LOCK V1.
+- Eu (Claude chat) Co-CTO tactical mea culpa exhaustive — "am inventat 4 fronts mockup-mental-model NU src/ verified" instant recognize slip + recommend Option 1 direct (anti-bandage Opt 2/3 anti-Bugatti foundation defective) + redo spec v2 via MCP direct grep evidence inline NU "asistez Daniel rewrite" + scope strict Bundle 1 NU monolith.
+
+**Tone shifts framing changes chronological chat-current 2026-05-13c:**
+- 2026-05-13c §AR.20 + §AR.21 codification LOCKED V1 2× threshold met explicit Daniel acord — meta-pattern citation-without-enforcement strengthen NU rule nouă orthogonală (§AR.21 = §AR.20 strengthen reaffirm CC autonomous Opus origin)
+- 2026-05-13c ultra-scurt single-message Daniel mode preserved (3-4 cuvinte max per message Daniel-side cross-chat); 4 ping-uri Daniel total chat (salut + screenshot + dam dat + latest + ok handover); lean response Claude-side matched (max 1-3 propoziții + max 1-2 bullets + 1 întrebare max conform user preferences) — format fatigue threshold cross-cluster preserved post 4+ LOCK pattern existing memory rule
+- 2026-05-13c Co-CTO tactical Adapt + execute paradigm reaffirm cross-chat (preserved invariant 2026-05-13b S2 → 2026-05-13c S3 → ...) — Daniel autonomy lock EXTINS 2026-05-10 preserved invariant cross-chat
+- 2026-05-13c Bundle 1 LANDED first-attempt validation §AR.21 effective enforcement ZERO slip surfaced — atomic split bundle strategy LOCKED V1 chat-current (S3 = 4 separate prompts NU monolith, response to v1 quadruple violation = scope strict per bundle, fresh chat preferred per bundle bandwidth + strategic Daniel input + grep evidence inline mandatory per §AR.21)
+
+**Cross-refs raw layer adițional chat-current 2026-05-13c:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s3_guards_bundle_1_landed_plus_ar20_ar21_codification]] §2 SLIP §AR.20 RECURRENCE STRONG spec v1 quadruple violation halt + §3 §AR.21 codification candidate origin CC autonomous Opus + §4 Bundle 1 redo spec v2 grep evidence verbatim inline approach + §5 Bundle 1 LANDED clean validation 2/2 atomic + §AR.21 effective evidence + §7 Push-backs productive scribe-side + §9 decizii LOCKED V1 chat-current scope-aggregate
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13c (APPEND-only — §AR.20 + §AR.21 codification LOCKED V1 2× threshold met explicit)" (§AR.20 + §AR.21 LOCK V1 codification 2× threshold met cross-link)
+- [[s3-guards-bundle-1-landed-milestone-2026-05-13]] §Synthesis Bundle 1 LANDED milestone synthesis + §Bugatti framing notes §AR.21 effective enforcement first execution
+- [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-13c post S3 Guards Bundle 1 LANDED + §AR.20/§AR.21 codification" ultra-scurt agreement mode daniel-isms catalog cross-link
+- [[../../📤_outbox/_archive/2026-05/452_LATEST_PREVIOUS_CALENDAR_V1_S3_HALT_QUADRUPLE_VIOLATION_CONSUMED]] §0 v1 PROMPT CC §AR.20 quadruple violation 4 invented files/functions/state fields raport precedent
+- [[../../📤_outbox/_archive/2026-05/453_LATEST_PREVIOUS_CALENDAR_V1_S3_GUARDS_BUNDLE_1_LANDED_CONSUMED]] §0-§7 Bundle 1 LANDED raport `d41e111 + 47729ed` chain 2/2 atomic clean + §AR.21 effective validation

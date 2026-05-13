@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-12
+last_updated: 2026-05-13c
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -203,3 +203,33 @@ Daniel verbatim memory rule #26 NICIODATĂ argumente quality:
 - [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13b (APPEND-only — 3 NEW post Calendar V1 S2 LANDED)" (3 slip patterns codification candidate §AR.20-§AR.22 cross-link daniel-isms catalysator verbatim quotes)
 - [[../concepts/calendar-feature-v1-spec]] §"Verbatim quotes Daniel" Calendar V1 S2 Production Wiring LANDED + 4 strategic LOCKs chat-current 9 NEW daniel-isms identity preserve
 - [[calendar-v1-s2-production-wiring-milestone-2026-05-13]] §"Verbatim quotes Daniel" S2 LANDED milestone synthesis 4 LOCKs + 3 slips + 9 daniel-isms aggregate
+
+---
+
+## Chat ACASĂ 2026-05-13c post S3 Guards Bundle 1 LANDED + §AR.20/§AR.21 codification (APPEND-only — NEW daniel-isms ultra-scurt agreement mode surfaced)
+
+**Catalog NEW append cross-cluster chat ACASĂ 2026-05-13c — extensible NU lobotomy existing entries:**
+
+**Category A — Ultra-scurt agreement mode chat-current 2026-05-13c (3-4 cuvinte max per message Daniel-side):**
+- *"salut. acasa"* — chat NEW startup §CC.2 trigger ACASĂ AUTOMAT ultra-scurt (Daniel-isms minimal mode, cross-ref Category F existing reaffirm 2026-05-12)
+- *"dam dat 1. a iesit latest"* — confirm Option 1 picked în CC terminal post quadruple push-back §AR.20 violation surface + LATEST.md ready Claude read (ultra-scurt single-message agreement mode NEW chat-current pattern)
+- *"latest"* — Metoda Hibridă post-LANDED Daniel trigger Claude read `📤_outbox/LATEST.md` ultimul raport CC autonomous LANDED (preserved invariant cross-chat 2026-05-13b + 2026-05-13c reaffirm Category F existing)
+- *"ok handover"* — §F3.8 handover trigger ultra-scurt agreement mode lean post Bundle 1 success milestone bandwidth ~30% remaining preventiv pre-saturare scribe fresh (NEW chat-current pattern preserved cross-chat)
+- *"q1 - a q2 a"* — ultra-scurt LOCK V1 multi-decision lean mode response Daniel single-message (Sub-Q1 session guard double-start Block + redirect Gigel-smooth + Sub-Q2 bottom-nav HIDE cap-coadă workout overlay LOCKED simultaneous, cross-ref pattern 2026-05-13b "q1 - a q2 a" preserved invariant)
+
+**Category B — Co-CTO tactical reaffirm cross-chat preserved invariant 2026-05-13c:**
+- *"asta e decizia ta nu a mea"* — Co-CTO tactical Adapt + execute paradigm reaffirm cross-chat (preserved invariant chat-current 2026-05-13c S3 redo spec v2 via MCP direct context NU "asistez Daniel rewrite" + scope strict Bundle 1 NU monolith; cross-ref Category A existing 2026-05-13b S2 catalysator LOCK V1)
+- *"esti cto figure it out"* — Daniel autonomy lock EXTINS 2026-05-10 reaffirm cross-chat (preserved invariant chat-current Category C existing 2026-05-10 LOCK EXTINS)
+- *"ai dreptate — §AR.20 RECURRENCE STRONG, exact slip chat trecut din nou"* — Daniel-style instant mea culpa exhaustive scribe-side recognize slip fără defensive (cross-ref pattern instant exhaustive recognition acord Option 1 direct anti-bandage Opt 2/3 Bugatti foundation defective avoid)
+
+**Category C — Anti-paternalism preserve invariant chat-current 2026-05-13c:**
+- *"asta o sa aduca multe probleme daca sesiunea nu ramane activa cand gigel da missclick"* — bottom-nav HIDE rationale anti-missclick by design Daniel verbatim cross-chat 2026-05-13b preserved invariant chat-current S3.D LOCK rationale (Gigel test PASS focus full-screen pur)
+- *"vreau alternative pana la epuizare... si daca continui sa iti dea un freeweight ceva"* — anti-paternalism NU limit smart-routing exhaust pool + final freeweight fallback ADR amendment pending P2 chat NEW (preserved invariant cross-chat 2026-05-13b Category C reaffirm chat-current path forward backlog)
+
+**Pattern NEW chat-current 2026-05-13c:** 4 ping-uri Daniel total chat (salut + screenshot + dam dat + latest + ok handover) — ultra-scurt single-message agreement mode preserved lean. CC autonomous Opus QUADRUPLE push-back §AR.20 violation pre-flight grep detected saved 2984 → 0 regression + ZERO src/ touched + AskUserQuestion 5 options surface (NU continue best-effort default). Daniel cu un single-message confirm Option 1 Halt direct *"dam dat 1. a iesit latest"*. Mea culpa eu scribe-side exhaustive ("am inventat 4 fronts mockup-mental-model NU src/ verified" instant recognize slip + recommend Option 1 direct + redo spec v2 via MCP direct grep evidence inline NU "asistez Daniel rewrite"). Bundle 1 LANDED first-attempt validation §AR.21 effective enforcement ZERO slip surfaced.
+
+**Cross-refs raw layer adițional chat-current 2026-05-13c:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_s3_guards_bundle_1_landed_plus_ar20_ar21_codification]] §1-§10 handover narrative chat-current S3 Bundle 1 LANDED + §AR.20/§AR.21 codification LOCK V1 + ultra-scurt agreement mode daniel-isms (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13c (APPEND-only — §AR.20 + §AR.21 codification LOCKED V1 2× threshold met explicit)" (§AR.20 + §AR.21 LOCK V1 codification cross-link daniel-isms catalysator verbatim quotes)
+- [[s3-guards-bundle-1-landed-milestone-2026-05-13]] §"Verbatim quotes Daniel" Bundle 1 LANDED milestone synthesis ultra-scurt agreement mode daniel-isms aggregate
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13c" 3 slip patterns chronological cross-link push-back productive moments tone shifts framing changes chat-current

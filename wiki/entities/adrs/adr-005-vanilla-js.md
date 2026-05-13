@@ -16,6 +16,8 @@ amendments:
     note: React Migration LOCK V1 — Phase 1+2+3+3.5 React scaffold work (~70% degeaba post screenshot)
   - date: 2026-05-10
     note: REVERT SUPERSEDE — Port-First-Then-React paradigm LOCK V1 post mockup vs prod distincție Daniel screenshot
+  - date: 2026-05-13c
+    note: S3 Guards Bundle 1 LANDED chain 2 atomic commits clean (S3.C `d41e111` session guard double-start + S3.D `47729ed` bottom-nav HIDE in-session) — `feature/v2-vanilla-port` branch active vanilla port continuation Port-First-Then-React paradigm preserved invariant (NU React/JSX touched ZERO Step 2 React migration). Bundle 1 vanilla DOM toggle imperativ pattern via `$()` helper + CSS class toggle `body.in-session` + appended CSS rule `body.in-session .nav { display: none; }` în `src/styles/main.css` — all pure vanilla JS + native DOM API consistent ADR 005 original LOCK V1 stack discipline. Tests 2984 → 3006 PASS (+22 net new). ZERO HARD CONSTRAINT violation (ZERO main branch + ZERO React/JSX + ZERO --no-verify + ZERO engine module mutation + ZERO src/storage.js creation + ZERO localStorage key NEW + ZERO .obsidian/ modifications + ZERO mockup andura-clasic.html modification + ZERO index.html markup change CSS+JS class toggle only + ZERO `confirm()` prompt added anti-paternalism preserved)
 ---
 
 # ADR 005 — Vanilla JS No Framework (Port-First-Then-React §AMENDMENT 2026-05-10)
