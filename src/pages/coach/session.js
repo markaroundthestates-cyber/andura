@@ -37,6 +37,7 @@ export function startSession() {
   if (state.sessActive && state.sessStart) {
     const tsR = $('today-screen'); if (tsR) tsR.style.display = 'none';
     const suR = $('session-ui'); if (suR) suR.style.display = 'block';
+    document.body.classList.add('in-session');
     toast('🔄 Sesiune deja activa');
     return;
   }
@@ -63,6 +64,7 @@ export function startSession() {
       state.sessionTotalExercises = getTodayExercises().length;
       const ts2 = $('today-screen'); if (ts2) ts2.style.display = 'none';
       const su2 = $('session-ui'); if (su2) su2.style.display = 'block';
+      document.body.classList.add('in-session');
       state.sessTimer = setInterval(tickSess, 1000);
       setupInactivity();
       toast('🔄 Sesiune restaurata!', 'var(--accent)');
@@ -81,6 +83,7 @@ export function startSession() {
   state.sessionTotalExercises = todayExsForCount.length;
   const ts = $('today-screen'); if (ts) ts.style.display = 'none';
   const su = $('session-ui'); if (su) su.style.display = 'block';
+  document.body.classList.add('in-session');
   state.sessTimer = setInterval(tickSess, 1000);
   beepStart(); speak('Antrenament pornit.');
   toast('🔥 START!');
@@ -155,6 +158,7 @@ export function cancelWorkout() {
   state.activeNotes = new Set();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   const suEl = $('session-ui'); if (suEl) suEl.style.display = 'none';
+  document.body.classList.remove('in-session');
   hidePauseScreen();
   const tsEl = $('today-screen'); if (tsEl) tsEl.style.display = 'block';
   toast('❌ Antrenament anulat — nicio data salvata', 'var(--red)');
@@ -292,6 +296,7 @@ export function closeSummary() {
   const m = document.getElementById('summary-modal');
   if (m) m.remove();
   const ts = $('today-screen'); if (ts) ts.style.display = 'block';
+  document.body.classList.remove('in-session');
   renderCoachIdle();
   if (window.renderDash) window.renderDash();
   // Auto close day if it's evening (22:00–23:59)
