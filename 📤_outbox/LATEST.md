@@ -85,7 +85,7 @@
 
 ## §5 — Commits
 
-(Single atomic commit § cumulative changes — pending commit hash post-push)
+- ✅ `18ef009 chore(wiki): /wiki-ingest handover 2026-05-13d post Bundle 3 LANDED + follow-up stale doc reconcile + §AR.22 candidat 1× threshold WATCH` (pushed origin `feature/v2-vanilla-port`, 11 files changed, 625 insertions(+), 139 deletions(-))
 
 ---
 
