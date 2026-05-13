@@ -56,8 +56,8 @@ describe('Bundle 6.0.1 Chest Library Extension §ADR v2 LOCK V2', () => {
   });
 
   // §3 New canonical strings preserved (NO new muscle_target_primary added beyond V1 6 canonical)
-  it('muscle_target_primary uses only V1 canonical 6 strings (brate, piept, picioare, spate, triceps, umeri)', () => {
-    const canonical = new Set(['brate', 'piept', 'picioare', 'spate', 'triceps', 'umeri']);
+  it('muscle_target_primary uses only canonical V1 11 categorii per ADR_ANATOMICAL_CLASSIFICATION_V1 (post C2 migration)', () => {
+    const canonical = new Set(['piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate', 'core', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']);
     Object.values(EXERCISE_METADATA).forEach(meta => {
       expect(canonical.has(meta.muscle_target_primary)).toBe(true);
     });
@@ -299,8 +299,8 @@ describe('Bundle 6.0.2 Back Library Extension §ADR v2 LOCK V2', () => {
   });
 
   // §3 muscle_target_primary canonical (preserved 6 + unknown fallback)
-  it('muscle_target_primary uses only canonical V1 6 strings + unknown fallback', () => {
-    const canonical = new Set(['brate', 'piept', 'picioare', 'spate', 'triceps', 'umeri', 'unknown']);
+  it('muscle_target_primary uses canonical V1 11 categorii per ADR_ANATOMICAL_CLASSIFICATION_V1 (post C2 migration)', () => {
+    const canonical = new Set(['piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate', 'core', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']);
     Object.values(EXERCISE_METADATA).forEach(m => {
       expect(canonical.has(m.muscle_target_primary)).toBe(true);
     });
@@ -394,16 +394,16 @@ describe('Bundle 6.0.2 Back Library Extension §ADR v2 LOCK V2', () => {
     expect(cascade[4].type).toBe('light_variant');
   });
 
-  // §12 Conventional Deadlift muscle_target_primary 'picioare' (compound posterior chain legs primary)
-  it('Conventional Deadlift classified picioare primary (compound legs cu spate secondary)', () => {
-    expect(EXERCISE_METADATA['Conventional Deadlift'].muscle_target_primary).toBe('picioare');
+  // §12 Conventional Deadlift muscle_target_primary 'picioare-hamstrings' (post C2 migration — hip-hinge dominant)
+  it('Conventional Deadlift classified picioare-hamstrings primary post C2 (cu spate secondary)', () => {
+    expect(EXERCISE_METADATA['Conventional Deadlift'].muscle_target_primary).toBe('picioare-hamstrings');
     expect(EXERCISE_METADATA['Conventional Deadlift'].muscle_target_secondary).toContain('spate');
   });
 
-  // §13 Rack Pull muscle_target_primary 'spate' (partial ROM upper back emphasis)
-  it('Rack Pull classified spate primary (partial ROM upper back emphasis)', () => {
+  // §13 Rack Pull muscle_target_primary 'spate' (partial ROM upper back emphasis); secondary picioare migrated to picioare-hamstrings
+  it('Rack Pull classified spate primary (partial ROM) cu picioare-hamstrings secondary post C2', () => {
     expect(EXERCISE_METADATA['Rack Pull'].muscle_target_primary).toBe('spate');
-    expect(EXERCISE_METADATA['Rack Pull'].muscle_target_secondary).toContain('picioare');
+    expect(EXERCISE_METADATA['Rack Pull'].muscle_target_secondary).toContain('picioare-hamstrings');
   });
 
   // §14 Tier 1 back compound count ≥ 35 (pull-up + chin-up + row + heavy compound)
@@ -523,8 +523,8 @@ describe('Bundle 6.0.3 Shoulders Library Extension §ADR v2 LOCK V2', () => {
   });
 
   // §3 muscle_target_primary canonical (V1 6 + unknown fallback)
-  it('muscle_target_primary uses canonical V1 6 strings + unknown fallback', () => {
-    const canonical = new Set(['brate', 'piept', 'picioare', 'spate', 'triceps', 'umeri', 'unknown']);
+  it('muscle_target_primary uses canonical V1 11 categorii per ADR_ANATOMICAL_CLASSIFICATION_V1 (post C2 migration)', () => {
+    const canonical = new Set(['piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate', 'core', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']);
     Object.values(EXERCISE_METADATA).forEach(m => {
       expect(canonical.has(m.muscle_target_primary)).toBe(true);
     });
@@ -859,8 +859,8 @@ describe('Bundle 6.0.4.1 Quads Library Extension §ADR v2 LOCK V2', () => {
     });
   });
 
-  // §9 all 45 NEW quads entries muscle_target_primary = 'picioare' canonical Romanian
-  it('all 45 NEW quads entries muscle_target_primary = picioare canonical Romanian', () => {
+  // §9 all 45 NEW quads entries muscle_target_primary = 'picioare-quads' canonical V1 (post C2 migration per ADR_ANATOMICAL_CLASSIFICATION_V1)
+  it('all 45 NEW quads entries muscle_target_primary = picioare-quads canonical V1 post C2 migration', () => {
     const allNewQuads = [
       'Barbell Back Squat (High Bar)', 'Barbell Back Squat (Low Bar)', 'Front Squat', 'Pause Squat', 'Tempo Squat',
       'Box Squat', 'Zercher Squat', 'Overhead Squat', 'Pin Squat', 'Safety Bar Squat',
@@ -873,7 +873,7 @@ describe('Bundle 6.0.4.1 Quads Library Extension §ADR v2 LOCK V2', () => {
     ];
     expect(allNewQuads.length).toBe(45);
     allNewQuads.forEach(name => {
-      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare');
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare-quads');
     });
   });
 
@@ -1048,20 +1048,24 @@ describe('Bundle 6.0.4.2 Hamstrings Library Extension §ADR v2 LOCK V2', () => {
     });
   });
 
-  // §9 all 41 NEW hamstring entries muscle_target_primary = 'picioare' canonical
-  it('all 41 NEW hamstring entries muscle_target_primary = picioare canonical Romanian', () => {
-    const allNewHams = [
+  // §9 all 41 NEW hamstring entries muscle_target_primary = 'picioare-hamstrings' canonical V1 post C2 migration (4 Hip Thrust variants → 'fese' primary)
+  it('all 41 NEW hamstring entries muscle_target_primary canonical V1 post C2 (37 picioare-hamstrings + 4 fese Hip Thrust)', () => {
+    const hamsPicioareHams = [
       'Stiff-Leg Deadlift', 'Snatch-Grip RDL', 'Deficit RDL', 'Sumo RDL', 'Block RDL', 'Pause RDL', 'B-Stance RDL',
       'Smith RDL', 'Hyperextension Machine', 'Reverse Hyper', 'Glute-Ham Raise', 'Natural Glute-Ham Raise', 'Trap Bar Deadlift',
       'DB Romanian Deadlift', 'DB Single-Leg RDL', 'DB B-Stance RDL', 'DB Stiff-Leg Deadlift', 'Kettlebell Swing', 'Tempo DB Romanian Deadlift',
       'Seated Leg Curl', 'Standing Leg Curl', 'Leg Curl Single-Leg', 'Tempo Leg Curl', 'Cable Leg Curl', 'Band Leg Curl',
       'Barbell Good Morning', 'Smith Good Morning', 'Zercher Good Morning',
       'Nordic Hamstring Curl', 'Nordic Hamstring Curl Assisted', 'Eccentric Nordic Curl', 'Slider Hamstring Curl', 'Razor Curl', 'Inverse Curl',
-      'Hip Thrust', 'Single-Leg Hip Thrust', 'Hyperextension Bodyweight', 'Reverse Hyper Bodyweight', 'Cable Pull-Through', 'Banded Pull-Through', 'Wall Hip Hinge',
+      'Hyperextension Bodyweight', 'Reverse Hyper Bodyweight', 'Wall Hip Hinge',
     ];
-    expect(allNewHams.length).toBe(41);
-    allNewHams.forEach(name => {
-      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare');
+    const hamsFese = ['Hip Thrust', 'Single-Leg Hip Thrust', 'Cable Pull-Through', 'Banded Pull-Through'];
+    expect(hamsPicioareHams.length + hamsFese.length).toBe(41);
+    hamsPicioareHams.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare-hamstrings');
+    });
+    hamsFese.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('fese');
     });
   });
 
@@ -1159,5 +1163,97 @@ describe('Bundle 6.0.4.2 Hamstrings Library Extension §ADR v2 LOCK V2', () => {
       });
     });
     expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+});
+
+// ── §22 ADR_ANATOMICAL_CLASSIFICATION_V1 'fese' Canonical Migration Validation (C2 NEW 2026-05-13k) ────────
+describe('§22 ADR ANATOMICAL_CLASSIFICATION_V1 fese canonical migration', () => {
+  const CANONICAL_V1 = new Set([
+    'piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate',
+    'core', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe',
+  ]);
+
+  it('all muscle_target_primary values in canonical V1 11 categorii', () => {
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      expect(CANONICAL_V1.has(meta.muscle_target_primary)).toBe(true);
+    });
+  });
+
+  it('ZERO entries muscle_target_primary === abdomen (legacy reconciled)', () => {
+    const abdomenEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'abdomen');
+    expect(abdomenEntries).toHaveLength(0);
+  });
+
+  it('ZERO entries muscle_target_primary === brate (legacy reconciled → biceps)', () => {
+    const brateEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'brate');
+    expect(brateEntries).toHaveLength(0);
+  });
+
+  it('ZERO entries muscle_target_primary === picioare standalone (legacy reconciled)', () => {
+    const picioareEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'picioare');
+    expect(picioareEntries).toHaveLength(0);
+  });
+
+  it('Hip Thrust + variants muscle_target_primary === fese canonical V1', () => {
+    const hipThrustVariants = ['Hip Thrust', 'Single-Leg Hip Thrust', 'Cable Pull-Through', 'Banded Pull-Through'];
+    hipThrustVariants.forEach(name => {
+      const entry = EXERCISE_METADATA[name];
+      expect(entry).toBeDefined();
+      expect(entry.muscle_target_primary).toBe('fese');
+      expect(entry.muscle_target_secondary).toContain('picioare-hamstrings');
+    });
+  });
+
+  it('Bundle 6.0.2 Phase I posterior chain 4 entries spate primary preserved + fese secondary added', () => {
+    const phaseIPosterior = ['Single-Leg RDL', 'Seated Good Morning', 'Banded Good Morning', 'Single-Leg RDL Bodyweight'];
+    phaseIPosterior.forEach(name => {
+      const entry = EXERCISE_METADATA[name];
+      expect(entry.muscle_target_primary).toBe('spate');
+      expect(entry.muscle_target_secondary).toContain('picioare-hamstrings');
+      expect(entry.muscle_target_secondary).toContain('fese');
+    });
+  });
+
+  it('fese canonical V1 entries count baseline post-C2 ≥ 4', () => {
+    const feseEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'fese');
+    expect(feseEntries.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('secondary tags array values all canonical V1', () => {
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      if (Array.isArray(meta.muscle_target_secondary)) {
+        meta.muscle_target_secondary.forEach(tag => {
+          expect(CANONICAL_V1.has(tag)).toBe(true);
+        });
+      }
+    });
+  });
+
+  it('picioare-quads canonical V1 entries count post-C2 (Bundle 6.0.4.1 + V1 baseline)', () => {
+    const quadEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'picioare-quads');
+    expect(quadEntries.length).toBeGreaterThanOrEqual(45);
+  });
+
+  it('picioare-hamstrings canonical V1 entries count post-C2 (Bundle 6.0.4.2 partial + V1 baseline)', () => {
+    const hamEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'picioare-hamstrings');
+    expect(hamEntries.length).toBeGreaterThanOrEqual(35);
+  });
+
+  it('gambe canonical V1 entries count post-C2 (V1 baseline Calf Raises minimum)', () => {
+    const gambeEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'gambe');
+    expect(gambeEntries.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('biceps canonical V1 entries count post-C2 (legacy brate reconciled minimum 5)', () => {
+    const bicepsEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'biceps');
+    expect(bicepsEntries.length).toBeGreaterThanOrEqual(5);
   });
 });
