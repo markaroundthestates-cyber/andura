@@ -14,10 +14,10 @@ describe('Settings page render — Auth Phase 2 Batch 2', () => {
     expect(root.querySelector('h1').textContent).toBe('Setari');
   });
 
-  it('renders 4 sections (email change + recovery + delete + logout)', () => {
+  it('renders 5 sections (email change + aparate lipsa + recovery + delete + logout)', () => {
     renderSettingsPage({ root, doc: document });
     const sections = root.querySelectorAll('section');
-    expect(sections.length).toBe(4);
+    expect(sections.length).toBe(5);
   });
 
   it('logout section has button cu wording "Deconectare"', () => {

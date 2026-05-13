@@ -107,6 +107,25 @@ export function renderSettingsPage({
   sectionEmail.appendChild(btnEmailChange);
   root.appendChild(sectionEmail);
 
+  // Bundle 3 V1 2026-05-13: Aparate lipsa section — permanent missing-equipment picker
+  // entry button. Mirrors mockup §settings-row L1865 parity. Coach engine #2
+  // buildSession() consumes wv2-missing-equipment registry post-S2.B coachContext.js
+  // (commit fce846a). Anti-paternalism: user opt-in via Cont permanent list.
+  const sectionAparate = doc.createElement('section');
+  sectionAparate.className = 'andura-settings-section andura-settings-aparate-lipsa';
+  const aparateHeader = doc.createElement('h2');
+  aparateHeader.textContent = 'Aparate lipsa';
+  sectionAparate.appendChild(aparateHeader);
+  const btnAparate = doc.createElement('button');
+  btnAparate.textContent = 'Aparate lipsa';
+  btnAparate.addEventListener('click', async () => {
+    _closeAllSettingsModals(doc);
+    const m = await import('./coach/aparateLipsa.js');
+    if (typeof m.showAparateLipsa === 'function') m.showAparateLipsa();
+  });
+  sectionAparate.appendChild(btnAparate);
+  root.appendChild(sectionAparate);
+
   // §56.5.1 Recovery email lost section
   const sectionRecovery = doc.createElement('section');
   sectionRecovery.className = 'andura-settings-section andura-settings-recovery-email';
