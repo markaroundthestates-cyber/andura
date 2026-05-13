@@ -1270,3 +1270,237 @@ describe('§22 ADR ANATOMICAL_CLASSIFICATION_V1 fese canonical migration', () =>
     expect(unknownEntries, `Found ${unknownEntries.length} entries cu unknown primary: ${unknownEntries.map(([n]) => n).join(', ')}`).toHaveLength(0);
   });
 });
+
+describe('Bundle 6.0.4.3 Glutes Library Extension §ADR v2 LOCK V2', () => {
+  // §1 cumulative count grows ≥ 426 post Bundle 6.0.4.3 (47 NEW; ZERO collisions skipped)
+  it('cumulative count grows ≥ 426 post Bundle 6.0.4.3 Glutes (+47 NEW)', () => {
+    const count = Object.keys(EXERCISE_METADATA).length;
+    expect(count).toBeGreaterThanOrEqual(426);
+  });
+
+  // §2 Phase A — Tier 1 Hip Thrust barbell extended variants 8 entries present cu cascade populated
+  it('Phase A Hip Thrust barbell extended variants 8 entries present cu cascade populated', () => {
+    const phaseAEntries = ['Pause Hip Thrust', 'Tempo Hip Thrust', 'Deficit Hip Thrust', 'Banded Hip Thrust', 'Hip Thrust Foot-Elevated', 'B-Stance Hip Thrust', 'Pin Hip Thrust', 'Block Hip Thrust'];
+    phaseAEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §3 Phase B — Smith + Machine Hip Thrust variants 6 entries present
+  it('Phase B Smith + Machine Hip Thrust variants 6 entries present cu cascade populated', () => {
+    const phaseBEntries = ['Smith Hip Thrust', 'Glute Drive Machine', 'Belt Squat Hip Thrust', 'Single-Leg Smith Hip Thrust', 'Smith B-Stance Hip Thrust', 'Plate-Loaded Hip Thrust Machine'];
+    phaseBEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §4 Phase C — DB Hip Thrust + Glute Bridge variants 7 entries present
+  it('Phase C DB Hip Thrust + Glute Bridge variants 7 entries present cu cascade populated', () => {
+    const phaseCEntries = ['DB Hip Thrust', 'Barbell Glute Bridge', 'DB Glute Bridge', 'Plate Glute Bridge', 'Frog Pump', 'Banded Glute Bridge', 'Frog Pump DB'];
+    phaseCEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §5 Phase D — Cable glute isolation 6 entries present
+  it('Phase D Cable glute isolation 6 entries present cu cascade populated', () => {
+    const phaseDEntries = ['Cable Glute Kickback', 'Glute Kickback Machine', 'Standing Cable Hip Abduction', 'Hip Abduction Machine', 'Cable Hip Extension', 'Single-Arm Cable Glute Kickback'];
+    phaseDEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §6 Phase E — Sumo Deadlift glute-bias 5 entries present (Sumo Deadlift = 'fese' primary Bret Contreras glute-dominant variant)
+  it('Phase E Sumo Deadlift glute-bias 5 entries present cu cascade populated', () => {
+    const phaseEEntries = ['Sumo Deadlift', 'DB Sumo Deadlift', 'Romanian Sumo Deadlift', 'Smith Sumo Deadlift', 'Banded Sumo Deadlift'];
+    phaseEEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §7 Phase F — Step-up + Lunge glute-focus + Bodyweight glute 8 entries present
+  it('Phase F Step-up + Lunge glute-focus + Bodyweight glute 8 entries present cu cascade populated', () => {
+    const phaseFEntries = ['Glute-Focus Step-up', 'Glute Walking Lunge', 'Reverse Lunge Glute-Focus', 'Cossack Squat', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight', 'Single-Leg Glute Bridge Foot-Elevated', 'Glute Bridge Bodyweight Single-Leg'];
+    phaseFEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §8 Phase G — Specialty glute 7 entries present
+  it('Phase G Specialty glute 7 entries present cu cascade populated', () => {
+    const phaseGEntries = ['Glute Bridge March', 'Quadruped Hip Extension', 'Donkey Kick', 'Fire Hydrant', 'Hip Thrust 1.5 Rep', 'Marching Glute Bridge', 'Banded Clamshell'];
+    phaseGEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §9 all 47 NEW glute entries muscle_target_primary === 'fese' canonical V1
+  it('all 47 NEW glute entries muscle_target_primary === fese canonical V1', () => {
+    const NEW_ENTRIES = [
+      'Pause Hip Thrust', 'Tempo Hip Thrust', 'Deficit Hip Thrust', 'Banded Hip Thrust', 'Hip Thrust Foot-Elevated', 'B-Stance Hip Thrust', 'Pin Hip Thrust', 'Block Hip Thrust',
+      'Smith Hip Thrust', 'Glute Drive Machine', 'Belt Squat Hip Thrust', 'Single-Leg Smith Hip Thrust', 'Smith B-Stance Hip Thrust', 'Plate-Loaded Hip Thrust Machine',
+      'DB Hip Thrust', 'Barbell Glute Bridge', 'DB Glute Bridge', 'Plate Glute Bridge', 'Frog Pump', 'Banded Glute Bridge', 'Frog Pump DB',
+      'Cable Glute Kickback', 'Glute Kickback Machine', 'Standing Cable Hip Abduction', 'Hip Abduction Machine', 'Cable Hip Extension', 'Single-Arm Cable Glute Kickback',
+      'Sumo Deadlift', 'DB Sumo Deadlift', 'Romanian Sumo Deadlift', 'Smith Sumo Deadlift', 'Banded Sumo Deadlift',
+      'Glute-Focus Step-up', 'Glute Walking Lunge', 'Reverse Lunge Glute-Focus', 'Cossack Squat', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight', 'Single-Leg Glute Bridge Foot-Elevated', 'Glute Bridge Bodyweight Single-Leg',
+      'Glute Bridge March', 'Quadruped Hip Extension', 'Donkey Kick', 'Fire Hydrant', 'Hip Thrust 1.5 Rep', 'Marching Glute Bridge', 'Banded Clamshell',
+    ];
+    expect(NEW_ENTRIES.length).toBe(47);
+    NEW_ENTRIES.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('fese');
+    });
+  });
+
+  // §10 fallback_cascade step types canonical 5 types Bundle 6.0.4.3
+  it('fallback_cascade step types canonical 5 types Bundle 6.0.4.3', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    const sample = ['Pause Hip Thrust', 'Smith Hip Thrust', 'DB Hip Thrust', 'Cable Glute Kickback', 'Sumo Deadlift', 'Glute-Focus Step-up', 'Donkey Kick', 'Banded Clamshell'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  // §11 muscle_group_compose 1-2 exercise_ids per ADR v2 §2.1 LOCK "fie 1 exercitiu sau 2"
+  it('muscle_group_compose 1-2 exercise_ids Bundle 6.0.4.3', () => {
+    const sample = ['Pause Hip Thrust', 'Smith Hip Thrust', 'Barbell Glute Bridge', 'Cable Glute Kickback', 'Sumo Deadlift', 'Cossack Squat', 'Donkey Kick'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.type === 'muscle_group_compose') {
+          expect(s.exercise_ids.length).toBeGreaterThanOrEqual(1);
+          expect(s.exercise_ids.length).toBeLessThanOrEqual(2);
+        }
+      });
+    });
+  });
+
+  // §12 cascade depth ≥5 Tier 1 glute compound
+  it('Tier 1 glute compound 5-step cascade Bundle 6.0.4.3', () => {
+    const tier1Sample = ['Pause Hip Thrust', 'Smith Hip Thrust', 'Barbell Glute Bridge', 'Sumo Deadlift', 'Plate-Loaded Hip Thrust Machine'];
+    tier1Sample.forEach(name => {
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §13 tier distribution Bundle 6.0.4.3
+  it('Bundle 6.0.4.3 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    expect(EXERCISE_METADATA['Pause Hip Thrust'].tier).toBe(1);
+    expect(EXERCISE_METADATA['DB Hip Thrust'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Donkey Kick'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Banded Clamshell'].tier).toBe(3);
+  });
+
+  // §14 force_demand distribution Bundle 6.0.4.3
+  it('Bundle 6.0.4.3 force_demand: high + medium + low all present', () => {
+    expect(EXERCISE_METADATA['Pause Hip Thrust'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['DB Hip Thrust'].force_demand).toBe('medium');
+    expect(EXERCISE_METADATA['Donkey Kick'].force_demand).toBe('low');
+  });
+
+  // §15 equipment_type distribution 6 canonical all present
+  it('Bundle 6.0.4.3 equipment_type 6 canonical all present', () => {
+    const seen = new Set();
+    const sample = ['Pause Hip Thrust', 'Smith Hip Thrust', 'DB Hip Thrust', 'Cable Glute Kickback', 'Banded Clamshell', 'Donkey Kick'];
+    sample.forEach(name => seen.add(EXERCISE_METADATA[name].equipment_type));
+    expect(seen.has('barbell')).toBe(true);
+    expect(seen.has('dumbbell')).toBe(true);
+    expect(seen.has('machine')).toBe(true);
+    expect(seen.has('cable')).toBe(true);
+    expect(seen.has('band')).toBe(true);
+    expect(seen.has('bodyweight')).toBe(true);
+  });
+
+  // §16 ZERO mutation existing 4 'fese' primary entries (HARD CONSTRAINT §F3.12 strict)
+  it('existing 4 fese primary entries preserved invariant ZERO mutation Bundle 6.0.4.3', () => {
+    expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Hip Thrust'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Hip Thrust'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['Hip Thrust'].equipment_type).toBe('barbell');
+    expect(EXERCISE_METADATA['Single-Leg Hip Thrust'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Single-Leg Hip Thrust'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Cable Pull-Through'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Cable Pull-Through'].equipment_type).toBe('cable');
+    expect(EXERCISE_METADATA['Banded Pull-Through'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Banded Pull-Through'].equipment_type).toBe('band');
+  });
+
+  // §17 existing baseline V1 + Bundle 6.0.1-4.2 preserved invariant ZERO mutation Bundle 6.0.4.3
+  it('existing V1 + Bundle 6.0.1-4.2 preserved invariant ZERO mutation Bundle 6.0.4.3', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['Romanian Deadlift']).toBeDefined();
+    expect(EXERCISE_METADATA['Leg Curl']).toBeDefined();
+    expect(EXERCISE_METADATA['OHP']).toBeDefined();
+    expect(EXERCISE_METADATA['Barbell Back Squat (High Bar)']).toBeDefined();
+    // Bundle 6.0.2 Phase I collisions remained spate primary
+    expect(EXERCISE_METADATA['Single-Leg RDL'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Seated Good Morning'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Banded Good Morning'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Single-Leg RDL Bodyweight'].muscle_target_primary).toBe('spate');
+    // Bundle 6.0.4.2 Sumo RDL preserved 'picioare-hamstrings' (different from Sumo Deadlift 'fese' Bret Contreras)
+    expect(EXERCISE_METADATA['Sumo RDL'].muscle_target_primary).toBe('picioare-hamstrings');
+  });
+
+  // §18 cascade self-reference rejection invariant Bundle 6.0.4.3
+  it('Bundle 6.0.4.3 NEW entries NEVER self-reference parent name', () => {
+    const NEW_ENTRIES = [
+      'Pause Hip Thrust', 'Tempo Hip Thrust', 'Deficit Hip Thrust', 'Banded Hip Thrust', 'Hip Thrust Foot-Elevated', 'B-Stance Hip Thrust', 'Pin Hip Thrust', 'Block Hip Thrust',
+      'Smith Hip Thrust', 'Glute Drive Machine', 'Belt Squat Hip Thrust', 'Single-Leg Smith Hip Thrust', 'Smith B-Stance Hip Thrust', 'Plate-Loaded Hip Thrust Machine',
+      'DB Hip Thrust', 'Barbell Glute Bridge', 'DB Glute Bridge', 'Plate Glute Bridge', 'Frog Pump', 'Banded Glute Bridge', 'Frog Pump DB',
+      'Cable Glute Kickback', 'Glute Kickback Machine', 'Standing Cable Hip Abduction', 'Hip Abduction Machine', 'Cable Hip Extension', 'Single-Arm Cable Glute Kickback',
+      'Sumo Deadlift', 'DB Sumo Deadlift', 'Romanian Sumo Deadlift', 'Smith Sumo Deadlift', 'Banded Sumo Deadlift',
+      'Glute-Focus Step-up', 'Glute Walking Lunge', 'Reverse Lunge Glute-Focus', 'Cossack Squat', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight', 'Single-Leg Glute Bridge Foot-Elevated', 'Glute Bridge Bodyweight Single-Leg',
+      'Glute Bridge March', 'Quadruped Hip Extension', 'Donkey Kick', 'Fire Hydrant', 'Hip Thrust 1.5 Rep', 'Marching Glute Bridge', 'Banded Clamshell',
+    ];
+    NEW_ENTRIES.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(name);
+        if (s.exercise_ids) s.exercise_ids.forEach(id => expect(id).not.toBe(name));
+      });
+    });
+  });
+
+  // §19 cascade references resolve ≥70% Bundle 6.0.4.3 lenient (forward refs OK per ADR v2)
+  it('cascade references resolve ≥70% Bundle 6.0.4.3 lenient', () => {
+    const NEW_ENTRIES = [
+      'Pause Hip Thrust', 'Tempo Hip Thrust', 'Deficit Hip Thrust', 'Banded Hip Thrust', 'Hip Thrust Foot-Elevated', 'B-Stance Hip Thrust', 'Pin Hip Thrust', 'Block Hip Thrust',
+      'Smith Hip Thrust', 'Glute Drive Machine', 'Belt Squat Hip Thrust', 'Single-Leg Smith Hip Thrust', 'Smith B-Stance Hip Thrust', 'Plate-Loaded Hip Thrust Machine',
+      'DB Hip Thrust', 'Barbell Glute Bridge', 'DB Glute Bridge', 'Plate Glute Bridge', 'Frog Pump', 'Banded Glute Bridge', 'Frog Pump DB',
+      'Cable Glute Kickback', 'Glute Kickback Machine', 'Standing Cable Hip Abduction', 'Hip Abduction Machine', 'Cable Hip Extension', 'Single-Arm Cable Glute Kickback',
+      'Sumo Deadlift', 'DB Sumo Deadlift', 'Romanian Sumo Deadlift', 'Smith Sumo Deadlift', 'Banded Sumo Deadlift',
+      'Glute-Focus Step-up', 'Glute Walking Lunge', 'Reverse Lunge Glute-Focus', 'Cossack Squat', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight', 'Single-Leg Glute Bridge Foot-Elevated', 'Glute Bridge Bodyweight Single-Leg',
+      'Glute Bridge March', 'Quadruped Hip Extension', 'Donkey Kick', 'Fire Hydrant', 'Hip Thrust 1.5 Rep', 'Marching Glute Bridge', 'Banded Clamshell',
+    ];
+    const allKeys = new Set(Object.keys(EXERCISE_METADATA));
+    let total = 0, resolved = 0;
+    NEW_ENTRIES.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) {
+          total++;
+          if (allKeys.has(s.exercise_id)) resolved++;
+        }
+        if (s.exercise_ids) {
+          s.exercise_ids.forEach(id => {
+            total++;
+            if (allKeys.has(id)) resolved++;
+          });
+        }
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+
+  // §20 fese canonical V1 entries count post Bundle 6.0.4.3 (4 existing + 47 NEW = 51 minimum)
+  it('fese canonical V1 entries count post Bundle 6.0.4.3 ≥ 51 (4 existing + 47 NEW)', () => {
+    const feseEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'fese');
+    expect(feseEntries.length).toBeGreaterThanOrEqual(51);
+  });
+});
