@@ -85,8 +85,11 @@ Tests: 3209 → **3227 PASS** (+18 NEW Bundle 6.0.4.2 describe block).
 ## §9 Commit + push origin + backup tag
 
 - Backup tag pre-execute: `pre-bundle-6-0-4-2-hams-extension-2026-05-13j` pushed origin ✓
-- Commit hash: pending atomic commit.
-- Branch: `feature/v2-vanilla-port`.
+- Commit hash: `22ba9e8` (atomic single-concern Bundle 6.0.4.2 Hamstrings)
+- Branch: `feature/v2-vanilla-port`
+- Push: `87be92a..22ba9e8 feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3227 passed (3227)` verified ✓
+- Files changed: 4 (+646 −56)
 
 ## §10 §AR.* cross-reference + path forward
 
