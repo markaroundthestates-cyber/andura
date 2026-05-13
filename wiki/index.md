@@ -2,7 +2,7 @@
 title: Wiki Index — Andura Wiki Catalog
 type: index
 status: live
-last_updated: 2026-05-12
+last_updated: 2026-05-13
 total_pages: 119
 ---
 
@@ -12,14 +12,16 @@ total_pages: 119
 
 **Voice preservation policy §1 MANDATORY:** Per [[concepts/voice-preservation-policy]] — every wiki page 4-section structure (Synthesis + Verbatim quotes Daniel + Bugatti framing notes + Cross-refs raw layer). Daniel-isms verbatim catalog extensible preserves identity Andura.
 
-**Catalog status post `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (2026-05-12):** **119 pages LANDED** across concepts (17 — +1 Calendar V1 spec NEW) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (14 — +1 SUB-BATCH 3 closure milestone NEW) + sources (6 Cluster G FINAL). **+4 NEW pages distributed** via `/wiki-ingest handover-narrative` classifier per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 + voice preservation §1 enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate.
+**Catalog status post `/wiki-ingest` handover Calendar V1 Slices 1.0→1.7 cumulative drift + statusline CC pack (2026-05-13):** **119 pages LANDED** unchanged net (0 NEW pages — 3 UPDATE existing per HARD CONSTRAINTS §F3.12 cumulative drift consolidate scope: concept Calendar V1 spec major rewrite cu amendments[] 5 entries + engine-coach-director.md buildSession() S2 path forward + adr-020 Tier 0 wv2-missing-equipment parity pattern amendment). Across concepts (17) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (14) + sources (6 Cluster G FINAL). **+3 UPDATE existing pages** distributed via `/wiki-ingest handover-narrative` classifier per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 + voice preservation §1 enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate.
+
+**Previous status post `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (2026-05-12):** 119 pages LANDED across concepts (17 — +1 Calendar V1 spec NEW) + entities/adrs (42, 100% Karpathy real coverage) + entities/engines (7) + entities/features (19) + entities/specs (12) + summaries (14 — +1 SUB-BATCH 3 closure milestone NEW) + sources (6 Cluster G FINAL). +4 NEW pages distributed 2026-05-12 predecessor.
 
 ---
 
 ## Concepts (17 LANDED) — Cross-Cutting Paradigms + Strategies + Principles
 
 - [[concepts/metoda-hibrida-chat-cc]] — LOCK V1 2026-05-12 partial supersede Autonomy V1 + MCP cap-coadă singular handover-only + validation 5/5 slices SUB-BATCH 3 closure milestone
-- [[concepts/calendar-feature-v1-spec]] — LOCKED V1 2026-05-12 NEW strategic spec post-CLOSURE Calendar feature B reframed (funcțional + UX 4 states + wireframe + Coach anti-paternalism)
+- [[concepts/calendar-feature-v1-spec]] — LOCKED V1 2026-05-12 strategic + cumulative drift S1.0→S1.7 LANDED 2026-05-13 mockup-only (UX states 3 LOCKED post-S1.6 simplification + lucide pencil edit affordance + title "Program de antrenament" CENTRAT + NEW User Feedback Channel S1.7 + NEW Missing Equipment Lifecycle S1.7 + 4-strategic LOCK augmentat Coach multi-week bigger picture)
 - [[concepts/bugatti-craft]] — Quality > Speed default discipline + Daniel autonomy lock EXTINS verbatim
 - [[concepts/gigel-test]] — UX validation filter Marius la sala Gigel-friendly + jargon refactor
 - [[concepts/voice-preservation-policy]] — 4-section structure mandatory + 6 hard rules + daniel-isms catalog
@@ -234,4 +236,4 @@ total_pages: 119
 
 ---
 
-🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-12 post `/wiki-ingest` handover SUB-BATCH 3 CLOSURE + Calendar V1 LOCKED (119 pages cumulative: 17 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 14 summaries + 6 sources + 2 schema/design). SUB-BATCH 3 CLOSURE MILESTONE achieved 2026-05-12 — Karpathy Real Option B 100% wiki coverage post Cluster A+B+C+D+F+G LANDED. Calendar V1 spec strategic LOCKED post-CLOSURE — implementation defer chat NEW dedicated post 3 strategic clarifications pending Daniel input. 5 slip patterns chat-current anti-recurrence reaffirm (§AR.20-§AR.24 codification candidate). Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible.**
+🦫 **Wiki Index Karpathy Real Option B LOCK V1 2026-05-13 post `/wiki-ingest` handover Calendar V1 Slices S1.0→S1.7 cumulative drift + statusline CC pack interlude (119 pages cumulative unchanged net: 17 concepts + 42 ADRs + 7 engines + 19 features + 12 specs + 14 summaries + 6 sources + 2 schema/design). +3 UPDATE existing pages distributed 2026-05-13 (calendar-feature-v1-spec major rewrite cu amendments[] 5 entries + engine-coach-director.md buildSession() S2 path forward consume `wv2-missing-equipment` filter + multi-week mesocycle constraint propagate + adr-020 Tier 0 parity pattern user-driven amendment). Voice preservation policy §1 MANDATORY enforce per page. Identity Andura prezervat prin daniel-isms verbatim catalog extensible cross 5 slices. Path forward Slice 2 chat NEW dedicated: scheduleAdapter.js engine + Coach Engine #2 buildSession() consume wv2-missing-equipment filter + Engine #1 Periodization multi-week constraint propagate + backend /api/feedback endpoint + workout sesiune integration auto-swap. Previous LOCK V1 2026-05-12 SUB-BATCH 3 CLOSURE preserved invariant.**

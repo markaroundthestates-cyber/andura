@@ -2,7 +2,7 @@
 title: Wiki Log — Andura Wiki Chronological Append-Only
 type: log
 status: live
-last_updated: 2026-05-12
+last_updated: 2026-05-13
 ---
 
 # Wiki Log — Andura Wiki Chronological (Karpathy Append-Only Signature)
@@ -10,6 +10,36 @@ last_updated: 2026-05-12
 **Authority:** [[../CLAUDE]] §4 3 operations canonical + [[_design/WIKI_DESIGN_SPEC_V1]] §5.4 chronological signature format `## [YYYY-MM-DD] <type> | <title>`.
 
 **Convention:** Each entry consistent prefix `## [YYYY-MM-DD] ingest|query|lint|queued | <title>` parseable cu unix tools (`grep "^## \[" log.md | tail -5` gives last 5 entries chronologically).
+
+---
+
+## [2026-05-13] ingest | Chat ACASĂ Calendar V1 Slices S1.0→S1.7 cumulative drift + statusline CC pack interlude handover narrative distributed — 3 UPDATE existing pages voice §1 enforced
+
+`/wiki-ingest` handover narrative LANDED 2026-05-13 chat ACASĂ Co-CTO autonomous via metoda hibridă chat ↔ CC terminal LOCKED V1 2026-05-12. Per `📥_inbox/HANDOVER_2026-05-13_CALENDAR_V1_S1_TO_S1_7_PLUS_STATUSLINE.md` source narrative ~150 LOC scribe flow conversational distribute la wiki layer per [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 handover-narrative classifier branch + voice preservation policy §1 4-section structure enforced + [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 Bugatti gate mandatory. Daniel CEO directive verbatim trigger natural conversational *"handover dupa read... intre timp eu validez mockup"* post S1.7 LANDED `de761f5` (bandwidth ~25% remaining preventiv pre-iteration next chat). Cumulative count: 119 unchanged net (0 NEW pages — consolidate scope cumulative drift per HARD CONSTRAINTS §F3.12 freeze raw layer + wiki UPDATE existing concept Calendar V1 spec scope only).
+
+**3 UPDATE existing wiki pages distributed:**
+1. UPDATE major rewrite [[../concepts/calendar-feature-v1-spec]] §Synthesis + §Verbatim quotes Daniel + §Bugatti framing + §Cross-refs raw layer + frontmatter `amendments[]` append 5 entries cumulative S1.0-S1.7 (4-strategic LOCK V1 2026-05-12 + S1.0 design master `6ec01e8` + S1.5 fix bundle `afc74a5` + S1.6 CSS bug fix `bc5be41` + S1.7 UX reframe `de761f5`). UX states 4 → 3 LOCKED simplification post-S1.6 (LOCKED/EDIT/SAVE; `editing` redundant) + show current selection EDIT state immediate verde deschis `#d4e6cb` + lucide pencil edit affordance parity `.nutri-edit-btn` proteine (NU 🔒 emoji) + header title "Program de antrenament" CENTRAT + compact metrics post-S1.5 + NEW User Feedback Channel Cont/Suport mailto:contact@andura.app demo + path forward backend `/api/feedback` + NEW Missing Equipment Lifecycle dedicated picker permanent Cont/General 10 echipamente standard gym + `wv2-missing-equipment` localStorage Tier 0 parity ADR 020 + path forward Coach Engine #2 `buildSession()` consume filter. Workout sesiune chips 2 (Ocupat + Nu vreau) NU 3. "Ceva nu merge" 1 option (Ma doare) NU 2.
+2. UPDATE [[../entities/engines/engine-coach-director]] §Synthesis + §Verbatim quotes Daniel + §Bugatti framing + §Cross-refs raw layer + frontmatter `amendments[]` entry 2026-05-13 — S2 path forward Calendar V1 wiring `buildSession()` MUST consume `wv2-missing-equipment` localStorage Tier 0 filter pre-build alternative parity equipment-swap logic fără user input + `goalAdaptation.recomputeWeekSchedule()` invocation post Save commit + multi-week mesocycle constraint propagate downstream Engine #1 Periodization (clarification augmentat #4 LOCK 2026-05-12 Coach NU săptămâna izolată).
+3. UPDATE [[../entities/adrs/adr-020-storage-tiering-strategy]] §Verbatim quotes Daniel + §Bugatti framing + §Cross-refs raw layer + frontmatter `amendments[]` entry 2026-05-13 — Tier 0 active rolling parity pattern user-driven `wv2-missing-equipment` localStorage Calendar V1 S1.7 distinct semantic vs ephemeral rotation 30d auto-expire (permanent user-driven edit oricând opt-in/opt-out NU time-based rotation). Anti-recurrence pattern Tier 0 = always ephemeral CORRECTED: Tier 0 = active rolling allows BOTH ephemeral time-bound AND permanent user-driven state.
+
+**Voice preservation §1 enforcement 100% (3/3 UPDATE pages):** Synthesis section 2-3 paragrafe concise + Verbatim quotes Daniel min 4-15 EXACT cu daniel-isms preserved per page (Calendar concept cumulative 16 verbatim quotes catalog extensible cross 5 slices) + Bugatti framing notes 5 sub-sections complete + Cross-refs raw layer min 8-14 specific `path:§` pointers per page. 6 hard rules invariant preserved per [[../../CLAUDE]] §2.2.
+
+**Statusline CC pack interlude (NU separate wiki page):** mid-S1.7 execution Daniel *"cat asteptam latest, vreau asta https://code.claude.com/docs/en/statusline"* — bash script `~/.claude/statusline.sh` Bugatti minimal 2 lines dense (L1 identity `[Opus]` brick `#c8412e` + `📁 <dir-basename>` + `🌿 <branch> +<staged> ~<modified>` / L2 state 10-char █/░ progress bar threshold-colored verde<70% / yellow 70-89% / roșu ≥90% + `<pct>%` + `$<cost>` + `⏱️ <m>m <s>s` + rate-limit `5h: <pct>%` conditional ≥50% only) + settings.json snippet + install steps Windows Git Bash + mock input test. Andura signature color preserved. Path forward V2 optional add Andura test count + backup tag last + current task slice. NU separate wiki page (interlude scope tooling, NU core feature) — preserved în handover narrative §5 + acest log entry only.
+
+**Bidirectional cross-links policy forward-only preserved** per HARD CONSTRAINT §F3.12 — UPDATE pages forward-link existing entity + concept relationships preserved (engine-coach-director ↔ calendar-feature-v1-spec ↔ adr-020 cross-link bidirectional cluster). Path forward grep verify wikilinks orphan post-LANDED `/wiki-lint` scan future scheduled. Retroactive back-ref edits frozen wiki pages NU performed beyond 3 updated targets per scope.
+
+**HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS:** §0 narrative present în `📥_inbox/` ✅ + §1 backup tag `pre-handover-ingest-2026-05-13-calendar-v1-s1-to-s1-7-plus-statusline` pushed origin ✅ + §2 pre-flight grep verify commits exist git log (`52be5f6` + `6ec01e8` + `afc74a5` + `bc5be41` + `de761f5` all 5 verified) ✅ + §3 voice §1 enforcement 3/3 UPDATE pages ✅ + §4 wiki/index.md + wiki/log.md updated cumulative count match (119 unchanged net) ✅ + §5 bidirectional cross-links cluster triangle Calendar V1 ↔ Coach Director ↔ ADR 020 ✅ + §6 archive raw HANDOVER → `📤_outbox/_archive/2026-05/447_HANDOVER_2026-05-13_*_CONSUMED.md` (precedent S1.7 LATEST archive 446) ✅ + §7 atomic commit single-concern + push origin ✅ + §8 tests 2914 PASS preserved EXACT (vault meta-tooling ZERO src/ touched per HARD CONSTRAINTS §F3.12) ✅ + §9 LATEST.md §0 HANDOVER_VERIFICATION_CHECKLIST structured raport ✅ + §10 anti-recurrence cross-ref §AR.* invariant ✅ + §11 cross-refs authority CLAUDE.md §0-§7 + VAULT_RULES §F3.1-§F3.13 + wiki/_design/ schema ✅.
+
+Tests 2914 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12). Cumulative ~742 LOCKED V1 PRESERVED unchanged. Backup tag `pre-handover-ingest-2026-05-13-calendar-v1-s1-to-s1-7-plus-statusline` pushed origin pre-execute.
+
+**Path forward post handover ingest (chat NEW dedicated trigger "Salut Acasă" Daniel):** Slice 2 production wiring (touch `src/` first time pe Calendar V1):
+1. `src/engine/schedule/scheduleAdapter.js` NEW — bridge Calendar `data-state` ↔ Coach Engine #2 Goal Adaptation `currentTemplate` ↔ Engine #1 Periodization mesocycle phase
+2. Coach Engine #2 `goalAdaptation.recomputeWeekSchedule(selectedDays, currentMesocyclePhase, big6Priorities)` invocation post Save commit
+3. Engine #1 Periodization multi-week constraint propagate (clarification augmentat #4 LOCKED 2026-05-12)
+4. Mid-week edge case preserve trecut invariant + recompute rest J-D
+5. Backend `/api/feedback` endpoint replace mailto: demo
+6. Workout sesiune integration query `wv2-missing-equipment` pre-build + auto-swap parity equipment-swap fără user input
+7. Tests new vitest cluster scheduleAdapter + feedback POST + missing equipment filter (80-120 estimated)
 
 ---
 

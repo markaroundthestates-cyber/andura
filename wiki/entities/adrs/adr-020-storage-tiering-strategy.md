@@ -13,7 +13,11 @@ cross_refs:
   - "[[adr-011-coach-decision-log-architecture]]"
   - "[[adr-018-engine-extensibility-architecture]]"
   - "[[../../concepts/append-only-architecture]]"
-amendments: []
+  - "[[../../concepts/calendar-feature-v1-spec]]"
+  - "[[../engines/engine-coach-director]]"
+amendments:
+  - date: 2026-05-13
+    note: Tier 0 active rolling parity pattern S1.7 — `wv2-missing-equipment` localStorage key Calendar V1 missing equipment lifecycle dedicated picker permanent (10 echipamente standard gym toggle + `toggleEquipmentMissing()` + `hydrateAparateLipsa()` legacy RO normalize via `validIds` filter). Distinct semantic vs ephemeral Tier 0 rotation 30d auto-expire — user-driven edit oricând opt-out aparate selectate anterior ("scoate aparatele care anterior selectate ca lipsa în caz că acum le ai"). Path forward Coach Engine #2 `buildSession()` consume filter pre-build alternative parity equipment-swap logic fără user input. Calendar S1.7 LANDED mockup-only commit `de761f5`
 ---
 
 # ADR 020 — Storage Tiering Strategy
@@ -42,11 +46,15 @@ Daniel articulation chat strategic cost discipline (cross-ref [[../../concepts/m
 
 > *"$125/lună 100 users Firestore. $1500/lună 1000 users. Cost real. Tier 2 lazy fetch on-demand NU eager prefetch all-time history."*
 
+Daniel verbatim chat ACASĂ 2026-05-12 S1.7 missing equipment lifecycle Tier 0 parity pattern (Calendar V1 dedicated picker permanent localStorage `wv2-missing-equipment` user-driven edit oricând):
+
+> *"La cont trebuie o sectiune de aparate lipsa, unde sa apara tot ce ai selectat in trecut ca nu ai, si cu optiunea de edit, sa poti sa si scoti aparatele pe care anterior le-ai selectat ca nu e ai, in cazul in care acum le ai."*
+
 ## Bugatti framing notes
 
 **Quality > Speed via zero info loss absolut:** Rotation = move-only verify-then-delete + idempotent retry. VAULT_RULES §5 zero info loss principle. Bugatti craft = NU silent failure migration runner.
 
-**Anti-RE considerations:** Tier boundaries internal (30d / 180d / 365d cutoffs), Dexie.js implementation detail. User vede seamless data continuity (engines query appropriate tier transparent fallback).
+**Anti-RE considerations:** Tier boundaries internal (30d / 180d / 365d cutoffs), Dexie.js implementation detail. User vede seamless data continuity (engines query appropriate tier transparent fallback). **Tier 0 parity pattern user-driven NU time-based** — `wv2-missing-equipment` Calendar V1 S1.7 distinct semantic: user-driven edit oricând opt-in/opt-out NU 30d auto-expire rotation (anti-recurrence pattern "Tier 0 = always ephemeral" → corrected: Tier 0 = active rolling allows BOTH ephemeral time-bound AND permanent user-driven state). Calendar week edit ephemeral (Luni next preset reset) vs missing equipment permanent (user toggles când acquires/loses equipment).
 
 **Anti-paternalism notes:** Cost discipline Firestore $125/lună 100 users / $1500/lună 1000 users = transparent user cost reality NU paternalism "use storage freely". Pro tier post-launch context user agency expanded retention.
 
@@ -64,5 +72,8 @@ Daniel articulation chat strategic cost discipline (cross-ref [[../../concepts/m
 - [[../../../03-decisions/018-engine-extensibility-architecture]] §4 Schema Versioning Migration Runner pattern aligned ADR 020 Dexie migration runner
 - [[../../../VAULT_RULES]] §5 zero info loss principle absolut universal
 - [[../../../03-decisions/DECISION_LOG]] §2026-04-30 evening Gemini 3 Pro cross-check Q10 + §2026-04-27 Decision 5 Firestore cost estimates
+- [[../../../04-architecture/mockups/andura-clasic.html]] §screen-aparate-lipsa NEW S1.7 LANDED + `wv2-missing-equipment` localStorage Tier 0 parity pattern user-driven permanent (Calendar V1 dedicated picker 10 echipamente standard gym `toggleEquipmentMissing()` + `hydrateAparateLipsa()` `validIds` filter legacy RO normalize)
+- [[../../../📥_inbox/HANDOVER_2026-05-13_CALENDAR_V1_S1_TO_S1_7_PLUS_STATUSLINE]] §4 S1.7 missing equipment lifecycle + §7 path forward S2 Coach Engine #2 `buildSession()` consume filter
+- [[../../concepts/calendar-feature-v1-spec]] §missing-equipment-lifecycle S1.7 LANDED (consumer raw layer pattern reuse Tier 0 active rolling parity)
 
-🦫 **ADR 020 Storage Tiering Strategy LOCK V1 2026-04-30 evening. Tier 0 localStorage 30d Hot + Tier 1 IndexedDB Dexie.js Warm 30-180d + Tier 2 Firebase Cold archive >180d. Gemini 3 Pro Q10 BLIND SPOT #1 BLOCKER pre-launch resolved. Zero info loss absolut VAULT_RULES §5. Migration runner one-time idempotent retry-able verify-then-delete. Generalizes ADR 006 specific case logs → universal PWA storage arhitectură.**
+🦫 **ADR 020 Storage Tiering Strategy LOCK V1 2026-04-30 evening. Tier 0 localStorage 30d Hot + Tier 1 IndexedDB Dexie.js Warm 30-180d + Tier 2 Firebase Cold archive >180d. Gemini 3 Pro Q10 BLIND SPOT #1 BLOCKER pre-launch resolved. Zero info loss absolut VAULT_RULES §5. Migration runner one-time idempotent retry-able verify-then-delete. Generalizes ADR 006 specific case logs → universal PWA storage arhitectură. §AMENDMENT 2026-05-13 Tier 0 parity pattern user-driven `wv2-missing-equipment` Calendar V1 S1.7 — distinct semantic vs ephemeral rotation (permanent user-driven NU 30d auto-expire). Coach Engine #2 `buildSession()` consume filter path forward S2.**
