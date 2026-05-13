@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-13f
+last_updated: 2026-05-13g
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -353,4 +353,47 @@ Categorii NEW chat-current cooperative push-back smiley + scope reframe Bugatti 
 - [[../concepts/calendar-feature-v1-spec]] frontmatter `amendments[]` 2026-05-13f Bundle 5 ADR v2 strategic + Bundle 6.0 V1 SCRAP + scope library 600-700 MANDATORY PRE-BETA LOCK V1 cross-link daniel-isms catalysator chat-current
 - [[handover-2026-05-13f-bundle-5-adr-v2-strategic-plus-scope-library-600-700-mandatory-pre-beta-lock]] §"Verbatim quotes Daniel" Bundle 5 strategic milestone synthesis 11 NEW daniel-isms cooperative push-back smiley + scope ambition Bugatti peak craft + Co-CTO autonomy total + mandatory pre-Beta blocker explicit + cascade ordered list per exercise principle LOCKED V1 Daniel verbatim aggregate
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13f (APPEND-only — slip 12 chronological 3 NEW §AR.20-cousin RECURRENCE)" slip pattern chronological cross-link push-back productive moments tone shifts framing changes chat-current
+
+## Chat ACASĂ 2026-05-13g post drift fix + handover trigger (APPEND-only — 9 NEW daniel-isms push-back productive moments + alignment-quality check pre-handover)
+
+Categorii NEW chat-current 4 consecutive push-back productive cooperative moments catalysator §AR.24 candidat scribe-mode marked + bandwidth check + alignment-quality check pre-handover + handover trigger voluntary:
+
+**Category Q — Corrective trigger access MCP/Obsidian primary reaffirm NEW chat-current 2026-05-13g (push-back productive moment #1 catalysator §CC.2 startup slip critical PK fallback):**
+- *"ai si obsidian. Please be aligned"* — Corrective trigger access MCP/Obsidian primary reaffirm Daniel verbatim push-back productive moment #1 chat-current — Claude chat strategic startup §CC.2 slip critical PK fallback caught instant (PK results pre-2026-05-12 state stale dramatic BATCH 2 SUB-BATCH 1 tests 2914 PASS Auth Flow §36.80 cumulative ~243 → reality cumulative 124 wiki pages + 3111 PASS + Bundle 5 ADR v2 LOCK V2 + 6 handover-uri 13a→13f). Recovery instant fără defensiveness aux Co-CTO standard.
+
+**Category R — Binary direct question NU ambiguous answer accepted NEW chat-current 2026-05-13g (push-back productive moment #2):**
+- *"esti full alligned da sau nu?"* — Binary direct question NU ambiguous answer accepted Daniel verbatim push-back productive moment #2 chat-current — răspuns onest "Nu", lipsea `wiki/log.md` last 5-10 entries + drill Bundle 5 substantive + verify ADR v2 DRAFT location. Anti-bullshit anti-confirmation theater binary check.
+
+**Category S — Delegate command direct Co-CTO tactical full autonomy NEW chat-current 2026-05-13g (push-back productive moment #3):**
+- *"ia aliniaza-te"* — Delegate command direct Co-CTO tactical full autonomy Daniel verbatim push-back productive moment #3 chat-current — citit `wiki/log.md` head 300 → full context 13a→13f real-time. Co-CTO autonomy paradigm preserved invariant cross-chat 2026-05-13b → 2026-05-13g consistent crescente trust delegation MAXIMUM.
+
+**Category T — Frustrare access MCP/Obsidian NU exploited + CLARIFY drift halucinație NEW chat-current 2026-05-13g (push-back productive moment #4 — CLARIFY major drift halucinație "DRAFT" din wiki text):**
+- *"ma da ai access la MCP la obsidian si la tot ce vri tu. Ce mai e de draft ca aveam impresia ca e deja locked"* — Frustrare access MCP/Obsidian NU exploited + CLARIFY drift halucinație Daniel verbatim push-back productive moment #4 chat-current — drill ADR `wiki/entities/adrs/adr-smart-routing-equipment.md` frontmatter `status: locked-v1` + amendments[] 13f text "DRAFT REV2 pending" identified, am crezut că asta-i state real. Catalysator §AR.24 candidat scribe-mode marked origin.
+
+**Category U — Daniel CLARIFY definitivă raw layer reality real-time NEW chat-current 2026-05-13g (raw layer SSOT truth-source authoritative real-time):**
+- *"Nu mai e nimic DRAFT. ADR v2 LOCKED V2 LANDED raw layer `03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2.md` Co-CTO autonomous chat-current 2026-05-13f (acum ~10 min): frontmatter status: locked-v2 + locked_date: 2026-05-13f + mandatory_pre_beta: true + mandatory_pre_beta_scope Daniel verbatim. Inbox clean. Bundle 6.0 V1 PROMPT_CC SCRAP archived 463_*_SUPERSEDED.md"* — Daniel CLARIFY definitivă raw layer reality real-time Daniel verbatim — raw layer SSOT truth-source real-time → wiki Phase post `/wiki-ingest` 13f stale drift markers "DRAFT REV2 pending" → flipped LOCK V2 LANDED reality post drift fix `ac632fd`.
+
+**Category V — Co-CTO directive immediate fix + anti-recurrence cross-chat NEW chat-current 2026-05-13g (catalysator §AR.24 candidat scribe-mode marked + artefact request via filesystem MCP):**
+- *"Corecteaza tot ce e in vault prin MCP ca ai ars 60% bw inutil. Nu vreau sa se mai intample la next chat"* — Co-CTO directive immediate fix + anti-recurrence cross-chat Daniel verbatim — burn bandwidth chat-current ~60% pe PK fallback + drift halucinație = signal serios MCP filesystem PRIMARY de la primul mesaj invariant. Catalysator §AR.24 candidat scribe-mode marked.
+- *"Verifica prin MCP si da-mi prompt ca artefact"* — Artefact request via filesystem MCP Daniel verbatim — Generated `PROMPT_CC_VAULT_DRIFT_FIX_ADR_V2_LOCKED_V2_2026-05-13f.md` artefact via `create_file` + `present_files` chat strategic decision-making layer + Daniel courier paste manual CC terminal direct + CC autonomous Opus execute spec atomic single-concern (metoda hibridă 6th consecutive validation effective continuat).
+
+**Category W — Bandwidth check direct + bandwidth planning proactiv + alignment-quality check pre-handover NEW chat-current 2026-05-13g (preserved invariant cross-chat bandwidth management pattern):**
+- *"cat ai bw?"* — Bandwidth check direct Daniel verbatim (preserved invariant cross-chat 2026-05-13b Category B existing + 2026-05-13e Category K existing).
+- *"dupa ce land latest o sa ai handover?"* — Bandwidth planning proactiv post-LANDED Daniel verbatim — alignment-quality check pre-handover commit Daniel CEO planning ahead next chat continuity.
+- *"daca faci acum handover, chatul nou se aliniaza bine?"* — Alignment-quality check pre-handover commit Daniel verbatim — verify wiki layer truly aligned post drift fix `ac632fd` ÎNAINTE handover trigger (cooperative scope discriminat ex-ante CEO check Co-CTO confidence).
+
+**Category X — Trigger CC terminal read raport ultimul + handover trigger voluntary NEW chat-current 2026-05-13g (preserved invariant cross-chat ultra-scurt agreement mode):**
+- *"latest"* — Trigger CC terminal read raport ultimul `📤_outbox/LATEST.md` `ac632fd` drift fix structured §0-§N (preserved invariant cross-chat Category F existing).
+- *"handover"* — Handover trigger voluntary post LATEST `ac632fd` drift fix LANDED clean, bandwidth ~38-40% remaining preventiv pre-saturare scribe fresh + valoare cross-chat anti-recurrence (preserved invariant cross-chat ultra-scurt agreement mode Category K existing).
+
+**Pattern NEW chat-current 2026-05-13g:** Daniel chat-current 9 NEW daniel-isms surfaced 4 push-back productive moments consecutive cooperative cross-chat consistent — corrective trigger access MCP/Obsidian primary reaffirm + binary direct question NU ambiguous answer accepted + delegate command direct Co-CTO tactical full autonomy + frustrare access MCP/Obsidian NU exploited + CLARIFY drift halucinație + Daniel CLARIFY definitivă raw layer reality real-time + Co-CTO directive immediate fix + anti-recurrence cross-chat + artefact request via filesystem MCP + bandwidth check direct + bandwidth planning proactiv + alignment-quality check pre-handover commit + trigger CC terminal read raport ultimul + handover trigger voluntary. Categorii A-X cumulative chat-current. Tone cooperative push-back productive direct NU dur, recovery instant fără defensiveness aux Co-CTO standard preserved invariant cross-chat 2026-05-13b → 2026-05-13c → 2026-05-13d → 2026-05-13e → 2026-05-13f → 2026-05-13g consistent crescente trust delegation MAXIMUM. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1). ZERO halucinezi triggered acest chat (drift halucinație recovered post Daniel CLARIFY definitivă raw layer reality real-time → drift fix `ac632fd` LANDED clean).
+
+**Cross-refs raw layer adițional chat-current 2026-05-13g:**
+- [[../../📥_inbox/HANDOVER_2026-05-13g_chat_acasa_post_adr_v2_locked_v2_drift_fix_landed]] §1-§6 handover narrative chat-current post drift fix `ac632fd` LANDED + §AR.24 candidat scribe-mode marked 1× threshold + memory state drift lessons cross-chat documented + 9 NEW daniel-isms push-back productive moments + path forward Bundle 6.0.1 Chest extension P1 absolut next (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../../📤_outbox/LATEST]] `ac632fd` vault drift fix raport §0-§N structured atomic single-concern 7 wiki files modified (pending archive cycle next handover commit — acest /wiki-ingest 13g archive cycle 465)
+- [[../../03-decisions/ADR_SMART_ROUTING_EQUIPMENT_v2]] LOCK V2 2026-05-13f Co-CTO autonomous raw layer SSOT truth-source (catalysator §AR.24 candidat scribe-mode marked drift fix `ac632fd`)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13g (APPEND-only — §AR.24 candidat 1× threshold)" §AR.24 candidat scribe-mode marked 1× threshold + drift fix `ac632fd` success milestone validation effective + 4 push-back productive moments cross-link
+- [[../concepts/metoda-hibrida-chat-cc]] frontmatter `amendments[]` 2026-05-13g 6th consecutive validation effective continuat cross-link daniel-isms catalysator chat-current
+- [[handover-2026-05-13g-post-adr-v2-locked-v2-drift-fix-landed-plus-ar24-candidate-milestone-2026-05-13]] §"Verbatim quotes Daniel" milestone synthesis 9 NEW daniel-isms push-back productive moments cooperative cross-cluster aggregate
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13g (APPEND-only — slip 13 chronological 3 patterns chat-current PK fallback + drift halucinație + §AR.24 candidat scribe origin)" slip 13 chronological cross-link push-back productive moments tone shifts framing changes chat-current
 
