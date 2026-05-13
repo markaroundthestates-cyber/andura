@@ -139,8 +139,11 @@ Updates (NU breaking change — anatomical migration alignment):
 
 ## §8 Atomic commit + push
 
-- Commit hash: pending atomic commit step.
-- Branch: `feature/v2-vanilla-port`.
+- Commit hash: `3b0849e` (atomic single-concern C2 'fese' canonical migration + audit legacy reconcile)
+- Branch: `feature/v2-vanilla-port`
+- Push: `b9b5da8..3b0849e feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3239 passed (3239)` verified ✓
+- Files changed: 4 (+449 −200; src/schema/exerciseMetadata.js mass migration + tests update + NEW LATEST + 480 archive)
 - HARD CONSTRAINT §F3.12 excepție 1× explicit invoked documented.
 
 ## §9 Path forward C3 next
