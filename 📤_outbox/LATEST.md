@@ -116,8 +116,11 @@ Inline comment added next to `muscle_target_primary: 'unknown'` line: `// NOT ca
 
 ## §6 Atomic commit + push
 
-- Commit hash: pending atomic commit step.
-- Branch: `feature/v2-vanilla-port`.
+- Commit hash: `f57384e` (C2.5 verification + §22.13 sentinel)
+- Branch: `feature/v2-vanilla-port`
+- Push: `586f139..f57384e feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3240 passed (3240)` verified ✓
+- Files changed: 4 (+261 −107; src/schema/exerciseMetadata.js JSDoc + tests update + NEW LATEST + 481 archive)
 
 ## §7 Path forward C3 next
 
