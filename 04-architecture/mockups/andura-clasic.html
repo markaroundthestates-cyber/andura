@@ -1041,7 +1041,8 @@
       </div>
 
       <!-- APARATE LIPSA picker (NEW 2026-05-12 Slice 1.7) — permanent state list per Daniel push-back.
-           Drill destination: Cont/General > Aparate lipsa entry + workout-preview > "Nu am aparat" button.
+           Drill destination: Cont/General > Aparate lipsa entry (Bundle 3A 2026-05-13 LANDED commit 3494c03).
+           Per-exercise inline button DEFERRED post workout-preview src/ port (Port-First strategy invariant).
            Toggle pattern parity onb-medical (checkbox + label). Persist localStorage wv2-missing-equipment.
            Coach Engine #2 buildSession() S2 wiring path forward: consume list, filter exercitii cu aparate marcate,
            propune alternative parity equipment-swap logic. Equipment-swap screen PĂSTRAT (temporary "Aparat ocupat") —
@@ -1367,7 +1368,7 @@
 
           <!-- Daniel 2026-05-12 Slice 1.7: 2 actions SUS pe exercitiu start — Aparat ocupat / Nu vreau.
                "Aparat lipsa" chip REMOVED per Daniel push-back — moved to dedicated screen-aparate-lipsa permanent picker
-               (Cont/General + workout-preview drill). "deserveste acelasi lucru. Butonul ala trebuie scos". -->
+               (Cont/General drill, Bundle 3A 2026-05-13 LANDED). "deserveste acelasi lucru. Butonul ala trebuie scos". -->
           <div class="wv2-ex-actions">
             <button class="wv2-ex-action" onclick="openExAction('ocupat')"><i data-lucide="users"></i><span>Aparat ocupat</span></button>
             <button class="wv2-ex-action" onclick="openExAction('nuvreau')"><i data-lucide="hand"></i><span>Nu vreau</span></button>
@@ -3986,7 +3987,7 @@
 
   // Daniel 2026-05-12 Slice 1.7: 2 actions on exercise start — ocupat / nuvreau.
   // "lipsa" branch REMOVED — permanent missing-equipment state managed via screen-aparate-lipsa picker
-  // (Cont/General + workout-preview drill). Per Daniel push-back "Butonul ala trebuie scos, ca deserveste acelasi lucru".
+  // (Cont/General drill, Bundle 3A 2026-05-13 LANDED commit 3494c03). Per Daniel push-back "Butonul ala trebuie scos, ca deserveste acelasi lucru".
   function openExAction(kind) {
     const ex = WV2_EXERCISES[wv2.exIdx];
     const alts = {
