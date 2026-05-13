@@ -1,25 +1,25 @@
 ---
-title: LATEST — C2.5 'unknown' Audit Verification + §22.13 Sentinel Test LANDED 2026-05-13k
+title: LATEST — C3 ADR_SESSION_SEQUENCE_ORDERING_V1 LOCK V1 LANDED 2026-05-13k
 status: landed
 date: 2026-05-13k
-task: Audit 'unknown' muscle_target_primary value surfaced post-C2 §5 grep. FINDING: 'unknown' is getExerciseMetadata() FALLBACK sentinel (line 2765) NOT actual entry. ZERO entries reconcile needed. Verification + §22.13 ZERO unknown invariant test added + fallback function semantic clarified.
+task: NEW ADR document 03-decisions/ADR_SESSION_SEQUENCE_ORDERING_V1.md codify engine session exercise ordering logic 5-step deterministic algorithm (Goal Templates + Persona driven, Isolation-first hypertrofie default Compound-first Forța override Maria conservative warm-up extended). ATOMIC SINGLE-CONCERN vault meta-tooling doc-only.
 model: Opus EXCLUSIVELY (claude-opus-4-7)
 branch: feature/v2-vanilla-port
-tests: 3239 → 3240 PASS (+1 NEW §22.13 sentinel guarantee; ZERO regression; ZERO reconcile needed in real entries)
-backup_tag: pre-c2-5-unknown-reconcile-2026-05-13k
+tests: 3240 PASS preserved EXACT (vault meta-tooling doc-only ZERO src/ touched)
+backup_tag: pre-c3-adr-session-sequence-ordering-v1-2026-05-13k
 ---
 
-# C2.5 'unknown' Audit Verification + §22.13 Sentinel Test LANDED 2026-05-13k
+# C3 ADR_SESSION_SEQUENCE_ORDERING_V1 LOCK V1 LANDED 2026-05-13k
 
-**Task:** Audit `'unknown'` muscle_target_primary surfaced post-C2 grep output.
+**Task:** NEW ADR codify engine session exercise ordering logic 5-step deterministic algorithm.
 **Model:** Opus EXCLUSIVELY.
 **Status:** LANDED.
 **Branch:** `feature/v2-vanilla-port`.
 
 ## §-1 Inbox + LATEST cleanup pre-execute
 
-- Inbox state: empty (delivery pattern shift 15th consecutive).
-- `git mv 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/481_LATEST_PREVIOUS_C2_FESE_MIGRATION_LANDED_CONSUMED.md` ✓
+- Inbox state: empty (delivery pattern shift 16th consecutive).
+- `git mv 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/482_LATEST_PREVIOUS_C2_5_UNKNOWN_AUDIT_VERIFICATION_LANDED_CONSUMED.md` ✓ (NN 482 post 481).
 
 ## §0 Pre-flight grep evidence verbatim inline §AR.20+§AR.21
 
@@ -27,114 +27,84 @@ backup_tag: pre-c2-5-unknown-reconcile-2026-05-13k
 $ git branch --show-current
 feature/v2-vanilla-port ✓
 $ git log --oneline | head -3
+2002d05 docs(outbox): LATEST §6 patch commit hash f57384e post C2.5 'unknown' audit verification LANDED ✓
+f57384e docs(schema): C2.5 'unknown' audit verification — fallback sentinel clarified + §22.13 NEW invariant test ✓
 586f139 docs(outbox): LATEST §8 patch commit hash 3b0849e post C2 'fese' canonical migration LANDED ✓
-3b0849e feat(schema): C2 'fese' canonical migration Bundle 6.0.4.2 4 entries + audit legacy ... ✓
 
-$ grep -c "muscle_target_primary: 'unknown'" src/schema/exerciseMetadata.js
-1                                                # ONE occurrence — investigation needed ✓
-
-$ grep -n "muscle_target_primary: 'unknown'" src/schema/exerciseMetadata.js
-2765:    muscle_target_primary: 'unknown',         # ⚠ LINE 2765 — inside getExerciseMetadata() fallback function NOT entry in EXERCISE_METADATA map
-
-$ grep -o "muscle_target_primary: '[a-z-]*'" src/schema/exerciseMetadata.js | sort -u
-biceps / fese / gambe / picioare-hamstrings / picioare-quads / piept / spate / triceps / umeri / unknown
-                                                # grep -o matches ALL string literals including fallback function
-                                                # NOT an enumeration of actual entry values
+$ ls 03-decisions/ | grep "ADR_SESSION_SEQUENCE_ORDERING"
+(no output)                                      # NEW ADR doesn't exist yet ✓
+$ ls 03-decisions/ | grep "ADR_ANATOMICAL_CLASSIFICATION_V1"
+ADR_ANATOMICAL_CLASSIFICATION_V1.md              # LOCK V1 cross-ref exists ✓
+$ ls 03-decisions/ | grep -E "024|026|029|031|032"
+024-goal-driven-program-templates.md             # ✓
+026-offline-coaching-decision-tree-exhaustive.md # ✓
+029-engine-specialization.md                     # ✓
+031-engine-warmup-mobility.md                    # ✓
+032-engine-deload-protocol.md                    # ✓
 
 $ npx vitest run | tail
-Tests 3239 passed (3239)                        # baseline pre-execute ✓
+Tests 3240 passed (3240)                         # baseline pre-execute ✓
 ```
 
-## §1 Backup tag pushed origin
+ALL 7 pre-flight checks PASS ✓.
 
-- Tag: `pre-c2-5-unknown-reconcile-2026-05-13k` pushed origin ✓
+## §1 Backup tag pushed origin verify
 
-## §2 Scope CONSTRAIN HARD CONSTRAINT §F3.12
+- Tag: `pre-c3-adr-session-sequence-ordering-v1-2026-05-13k` pushed origin ✓
+- Rollback safety net ready.
 
-ALLOWED: src/schema/exerciseMetadata.js (comment clarification line 2755-2768 fallback function semantic) + src/schema/__tests__/exerciseMetadata.test.js (UPDATE §22.1 error message + NEW §22.13 sentinel test) + 📤_outbox/LATEST.md (NEW raport).
+## §2 Scope CONSTRAIN HARD CONSTRAINTS §F3.12
 
-ZERO touch: 03-decisions/ + CLAUDE.md + VAULT_RULES.md + wiki/ + 00-index/ + 08-workflows/ ✓
+ALLOWED scope (2 files):
+- `03-decisions/ADR_SESSION_SEQUENCE_ORDERING_V1.md` (NEW file 347 LOC)
+- `📤_outbox/LATEST.md` (NEW raport)
 
-HARD CONSTRAINT §F3.12 excepție 1× re-invoked NOT triggered: ZERO real entries mutated. Documentation/test enhancements only.
+ZERO touch: src/ + 03-decisions/ existing files + CLAUDE.md + VAULT_RULES.md + wiki/ + 00-index/ + 08-workflows/ — preserved invariant ✓
 
-## §3 Investigation finding: 'unknown' is FALLBACK sentinel NOT entry
+## §3 ADR NEW file created
 
-**Root cause analysis:**
+- Path: `03-decisions/ADR_SESSION_SEQUENCE_ORDERING_V1.md`
+- LOC: 347 lines
+- Convention: ALL_CAPS underscore + V1 suffix (mirrors ADR_ANATOMICAL_CLASSIFICATION_V1 + ADR_SMART_ROUTING_EQUIPMENT_v2 pattern)
 
-Line 2765 is inside `getExerciseMetadata()` function FALLBACK return object (when caller passes an exercise name not present in `EXERCISE_METADATA` map):
+## §4 Frontmatter YAML valid
 
-```js
-export function getExerciseMetadata(exerciseName) {
-  return EXERCISE_METADATA[exerciseName] || {
-    equipment_type: 'machine',
-    equipment_alternatives: [],
-    force_demand: 'medium',
-    tier: 2,
-    muscle_target_primary: 'unknown',  // ← fallback sentinel for "not found"
-    muscle_target_secondary: [],
-  };
-}
+YAML frontmatter parseable per §4 spec EXACT:
+- title + status (locked-v1) + locked_date (2026-05-13k) + authors + related_adrs (8 cross-refs) + mandatory_pre_beta: true + scope_change_estimate + supersedes/superseded_by + amendments: [] ✓
+
+## §5 Sections §1-§7 complete
+
+- §1 Context (~120 LOC): Pre-2026-05-13k engine pipeline §42.10 gap + Daniel CEO chat-current question/clarification/final directive verbatim + industry context (powerlifter vs hypertrofie school) + Andura paradigm decision (4/5 templates hypertrofie focus) + Gigel-test correction + Bugatti FULL QUALITY directive + catalysator strategic cluster
+- §2 Decision LOCK V1 (~80 LOC): 5-step algorithm enumerated (Goal Template → Persona override → Specialization PARALLEL → Warm-up prepend → Deload override) + schema field NEW `session_sequence_priority` integer
+- §3 Rationale per pattern (~80 LOC): §3.1 Isolation-first hypertrofie default + §3.2 Compound-first Forța + §3.3 Hybrid sandwich + §3.4 Deload override + §3.5 Specialization PARALLEL bump — toate cu industry references + example tables 4-col (priority/exercise/sets/reps/RIR)
+- §4 Anti-decisions explicit (~30 LOC): §4.1 NU toggle UX + §4.2 NU NLP/LLM runtime + §4.3 NU user override mid-session reorder + §4.4 NU multi-session prediction
+- §5 Engine impact mapping (~80 LOC): §5.1 Coach Director MODIFY buildSession (with pseudocode) + §5.2-§5.6 signal inputs per engine + §5.7-§5.9 orthogonal engines preserved invariant
+- §6 Consequences (~30 LOC): tests baseline impact estimate + Pre-Beta progress + wiki layer impact
+- §7 Cross-refs raw layer (10 specific path:§ pointers)
+
+## §6 Tests baseline preserved EXACT post-ADR-create
+
+```
+$ npx vitest run --reporter=basic | tail
+Tests  3240 passed (3240)                        # baseline preserved EXACT ✓
 ```
 
-**The `grep -o "muscle_target_primary: '[a-z-]*'" | sort -u` command shown in C2 §5 included this fallback string literal alongside real entry values** — the spec author misinterpreted this output as "10 values including unknown as primary in real entries".
+ZERO regression. Vault meta-tooling doc-only ZERO src/ touched per HARD CONSTRAINT §F3.12.
 
-**Actual state post-C2:** ZERO real entries in `EXERCISE_METADATA` use `'unknown'` primary. The §22.1 test (`all muscle_target_primary values in canonical V1 11 categorii`) iterates `Object.entries(EXERCISE_METADATA)` — only real entries — and passed all 381 entries post-C2 ✓.
+## §7 Commit + push origin
 
-**0 entries reconciled** (Co-CTO audit verification finding: no work needed).
+- Commit hash: pending atomic commit step.
+- Branch: `feature/v2-vanilla-port`.
+- Commit type: `docs(adr):` single-concern atomic ADR creation.
 
-## §4 §22.1 enhanced error message + §22.13 NEW sentinel test
+## §8 Path forward C4 next
 
-§22.1 enhancement: error message now lists specific non-canonical violators (improves debugging signal):
+C4 commit (separate fresh chat): engine refactor cluster Big 8 expansion sub-batches:
+- Muscle Recovery Engine Big 8 expansion (`GROUP_LABELS_RO_V1` 11-keys)
+- Periodization Engine phase config per Big 8
+- Weakness Detector Engine Big 7 force foundation Brzycki 1RM
+- Specialization Engine PARALLEL Big 8 candidates
 
-```js
-const violators = [];
-Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
-  if (!CANONICAL_V1.has(meta.muscle_target_primary)) {
-    violators.push(`${name} → ${meta.muscle_target_primary}`);
-  }
-});
-expect(violators, `Non-canonical V1 primary values: ${violators.join(', ')}`).toEqual([]);
-```
+Subsequent: C5 session sequence ordering implementation engine-side Coach Director `buildSession()` + tests +30-50 NEW. C6 Bundle 6.0.4.3 Glutes ~40-50 NEW canonical `fese`. C7 `/wiki-ingest` cumulative cluster strategic 'fese' canonical + session sequence ordering complete.
 
-§22.13 NEW test (ZERO unknown sentinel guarantee):
-
-```js
-it('ZERO entries muscle_target_primary === unknown (fallback sentinel guarantee)', () => {
-  const unknownEntries = Object.entries(EXERCISE_METADATA)
-    .filter(([_, meta]) => meta.muscle_target_primary === 'unknown');
-  expect(unknownEntries, `Found ${unknownEntries.length} entries cu unknown primary: ${unknownEntries.map(([n]) => n).join(', ')}`).toHaveLength(0);
-});
-```
-
-Tests: 3239 → 3240 PASS (+1 NEW §22.13). ZERO regression.
-
-## §5 Fallback function semantic clarified
-
-Added JSDoc comment to `getExerciseMetadata()` clarifying `'unknown'` is fallback sentinel for "exercise not found" — NOT canonical V1. Future readers + caller code reading the file understands intent without needing to trace the value through tests.
-
-Inline comment added next to `muscle_target_primary: 'unknown'` line: `// NOT canonical V1 — fallback sentinel for "not found"`.
-
-## §6 Atomic commit + push
-
-- Commit hash: `f57384e` (C2.5 verification + §22.13 sentinel)
-- Branch: `feature/v2-vanilla-port`
-- Push: `586f139..f57384e feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
-- Pre-commit hook re-ran vitest: `Tests 3240 passed (3240)` verified ✓
-- Files changed: 4 (+261 −107; src/schema/exerciseMetadata.js JSDoc + tests update + NEW LATEST + 481 archive)
-
-## §7 Path forward C3 next
-
-C3 commit (separate fresh chat): ADR_SESSION_SEQUENCE_ORDERING_V1 NEW (vault meta-tooling doc-only).
-Derive rules din Goal Templates + persona: izolare-first hypertrofie default, compound-first Forță override, Maria conservative warm-up extended.
-
-Subsequent: C4 engine refactor cluster Big 8 expansion. C5 Bundle 6.0.4.3 Glutes ~40-50 NEW `fese`. C6 Bundle 6.0.4.4 Calves ~35 NEW `gambe`. C7 `/wiki-ingest` cumulative cluster.
-
-## §8 Anti-recurrence finding §AR.* candidate scribe-mode marked 1× threshold
-
-**Slip surfaced:** `grep -o "muscle_target_primary: '[a-z-]*'" | sort -u` includes ALL string literals (real entries + fallback function defaults + any other matching pattern). Interpreting this as "all entry primary values" is incorrect. C2 §5 raport listed `unknown` in final sorted output triggering C2.5 false alarm.
-
-**Codify next /wiki-ingest:** "When auditing canonical schema field values, use programmatic enumeration of real entries (`Object.entries(EXERCISE_METADATA)`) NOT grep -o sort -u on file string literals. Tests using `.forEach` over Object.entries are the authoritative invariant check (§22.1 + §22.13 cumulative)."
-
-1× threshold scribe-mode marked. Codify §AR.* anti-recurrence rule next handover dacă pattern repeats (post C3-C7 audits).
-
-🦫 Bugatti craft. C2.5 verification LANDED 2026-05-13k. ZERO real entries mutated. Documentation + test enhancement only. Per Daniel CEO directive trust delegation MAXIMUM Co-CTO autonomous tactical audit. ZERO Daniel confirmation theater.
+🦫 Bugatti craft. C3 ADR_SESSION_SEQUENCE_ORDERING_V1 LOCK V1 2026-05-13k. Vault meta-tooling doc-only. ZERO src/ touched. 3240 PASS preserved EXACT. Co-CTO autonomous full execution per Daniel LOCK trust delegation MAXIMUM *"make it happen ca e core function. Si la fese la fel"*. ZERO Daniel confirmation theater per spec.
