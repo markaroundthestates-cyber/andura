@@ -3097,6 +3097,243 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Donkey Kick' },
   ] },
 
+  // ══ BUNDLE 6.0.4.4 CALVES LIBRARY EXTENSION — 32 NEW 'gambe' canonical V1 per ADR_ANATOMICAL_CLASSIFICATION_V1 §3.11 + ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 LOCK V2 ════════
+  // Bret Contreras + Mike Israetel hypertrophy school reference — calf training high-frequency sustainable. Anatomical scope gastrocnemius + soleus + tibialis anterior. Phase A-E discrete-blocks atomic single-concern Bugatti single commit.
+
+  // ── Phase A — Tier 1 Standing Calf Raise Compound (7 NEW) ──────────────────
+  'Standing Calf Raise Machine':   { equipment_type: 'machine', equipment_alternatives: ['Smith Standing Calf Raise', 'Standing Barbell Calf Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Smith Standing Calf Raise':     { equipment_type: 'machine', equipment_alternatives: ['Standing Calf Raise Machine', 'Standing Barbell Calf Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Leg Press Calf Raise':          { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Calf Raise', 'Standing Calf Raise Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Single-Leg Calf Raise Bodyweight' },
+  ] },
+  'Hack Squat Calf Raise':         { equipment_type: 'machine', equipment_alternatives: ['Leg Press Calf Raise', 'Standing Calf Raise Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Standing Single-Leg Calf Raise': { equipment_type: 'machine', equipment_alternatives: ['Standing Calf Raise Machine', 'Smith Standing Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Single-Leg Calf Raise', 'Cable Calf Raise'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Standing DB Calf Raise':        { equipment_type: 'dumbbell', equipment_alternatives: ['Standing Calf Raise Machine', 'Standing Barbell Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated DB Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Standing Barbell Calf Raise':   { equipment_type: 'barbell', equipment_alternatives: ['Standing Calf Raise Machine', 'Smith Standing Calf Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated BB Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+
+  // ── Phase B — Tier 2 Seated Calf Raise Soleus Isolation (6 NEW) ────────────
+  'Seated Calf Raise Machine':     { equipment_type: 'machine', equipment_alternatives: ['Seated DB Calf Raise', 'Smith Seated Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Seated Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Seated DB Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Seated DB Calf Raise':          { equipment_type: 'dumbbell', equipment_alternatives: ['Seated Calf Raise Machine', 'Seated Plate Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Seated Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Seated Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing DB Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Seated BB Calf Raise':          { equipment_type: 'barbell', equipment_alternatives: ['Seated Calf Raise Machine', 'Smith Seated Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Seated Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Seated Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing Barbell Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Seated Plate Calf Raise':       { equipment_type: 'dumbbell', equipment_alternatives: ['Seated DB Calf Raise', 'Seated Calf Raise Machine'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Seated Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Seated DB Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing DB Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Seated Single-Leg Calf Raise':  { equipment_type: 'machine', equipment_alternatives: ['Seated Calf Raise Machine', 'Smith Seated Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Seated Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Seated Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing Single-Leg Calf Raise', 'Cable Calf Raise'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Smith Seated Calf Raise':       { equipment_type: 'machine', equipment_alternatives: ['Seated Calf Raise Machine', 'Seated BB Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Seated Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Seated DB Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith Standing Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+
+  // ── Phase C — Tier 1-2 Donkey Calf + Specialty (6 NEW) ─────────────────────
+  'Donkey Calf Raise':             { equipment_type: 'machine', equipment_alternatives: ['Smith Donkey Calf Raise', 'Standing Calf Raise Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Donkey Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Donkey Calf Raise' },
+    { type: 'light_variant', exercise_id: 'Calf Raise Bodyweight' },
+  ] },
+  'Smith Donkey Calf Raise':       { equipment_type: 'machine', equipment_alternatives: ['Donkey Calf Raise', 'Smith Standing Calf Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Donkey Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Donkey Calf Raise' },
+    { type: 'light_variant', exercise_id: 'Calf Raise Bodyweight' },
+  ] },
+  'Banded Donkey Calf Raise':      { equipment_type: 'band', equipment_alternatives: ['Donkey Calf Raise', 'Bodyweight Donkey Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Donkey Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Smith Donkey Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bodyweight Donkey Calf Raise', 'Calf Raise Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Donkey Calf Raise' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Single-Leg Donkey Calf Raise':  { equipment_type: 'machine', equipment_alternatives: ['Donkey Calf Raise', 'Smith Donkey Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Donkey Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Smith Donkey Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Bodyweight Donkey Calf Raise':  { equipment_type: 'bodyweight', equipment_alternatives: ['Donkey Calf Raise', 'Calf Raise Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Donkey Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Smith Donkey Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Calf Raise Bodyweight', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Eccentric Slow Calf Raise':     { equipment_type: 'machine', equipment_alternatives: ['Standing Calf Raise Machine', 'Smith Standing Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+
+  // ── Phase D — Tier 2-3 Tibialis Anterior Reverse (6 NEW) ───────────────────
+  'Tibialis Raise':                { equipment_type: 'bodyweight', equipment_alternatives: ['Standing Tibialis Raise', 'Reverse Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'DB Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Standing Tibialis Raise', 'Reverse Calf Raise'] },
+    { type: 'bodyweight', exercise_id: 'Standing Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Banded Tibialis Raise' },
+  ] },
+  'Standing Tibialis Raise':       { equipment_type: 'bodyweight', equipment_alternatives: ['Tibialis Raise', 'Reverse Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'DB Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Tibialis Raise', 'Reverse Calf Raise'] },
+    { type: 'bodyweight', exercise_id: 'Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Banded Tibialis Raise' },
+  ] },
+  'Reverse Calf Raise':            { equipment_type: 'bodyweight', equipment_alternatives: ['Tibialis Raise', 'Standing Tibialis Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'DB Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Tibialis Raise', 'Standing Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Banded Tibialis Raise' },
+  ] },
+  'Cable Tibialis Raise':          { equipment_type: 'cable', equipment_alternatives: ['DB Tibialis Raise', 'Tibialis Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'DB Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'Banded Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Tibialis Raise', 'Standing Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Reverse Calf Raise' },
+  ] },
+  'Banded Tibialis Raise':         { equipment_type: 'band', equipment_alternatives: ['Tibialis Raise', 'Cable Tibialis Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'DB Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Tibialis Raise', 'Standing Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Reverse Calf Raise' },
+  ] },
+  'DB Tibialis Raise':             { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Tibialis Raise', 'Tibialis Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Tibialis Raise' },
+    { type: 'assisted_variant', exercise_id: 'Banded Tibialis Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Tibialis Raise', 'Standing Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Tibialis Raise' },
+    { type: 'light_variant', exercise_id: 'Reverse Calf Raise' },
+  ] },
+
+  // ── Phase E — Tier 1-3 Bodyweight + Cable + Specialty (7 NEW) ──────────────
+  'Calf Raise Bodyweight':         { equipment_type: 'bodyweight', equipment_alternatives: ['Single-Leg Calf Raise Bodyweight', 'Stair Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Stair Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Wall Calf Raise' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Single-Leg Calf Raise Bodyweight': { equipment_type: 'bodyweight', equipment_alternatives: ['Calf Raise Bodyweight', 'Stair Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Single-Leg Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'muscle_group_compose', exercise_ids: ['Single-Leg Stair Calf Raise', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Stair Calf Raise':              { equipment_type: 'bodyweight', equipment_alternatives: ['Calf Raise Bodyweight', 'Single-Leg Stair Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Calf Raise Bodyweight', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Single-Leg Stair Calf Raise':   { equipment_type: 'bodyweight', equipment_alternatives: ['Stair Calf Raise', 'Single-Leg Calf Raise Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Single-Leg Calf Raise' },
+    { type: 'assisted_variant', exercise_id: 'Stair Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Single-Leg Calf Raise Bodyweight', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Stair Calf Raise' },
+    { type: 'light_variant', exercise_id: 'Calf Raise Bodyweight' },
+  ] },
+  'Cable Calf Raise':              { equipment_type: 'cable', equipment_alternatives: ['Standing Calf Raise Machine', 'Plate-Loaded Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Calf Raise' },
+  ] },
+  'Plate-Loaded Calf Raise':       { equipment_type: 'machine', equipment_alternatives: ['Standing Calf Raise Machine', 'Hack Squat Calf Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Seated Calf Raise Machine', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+  'Wall Calf Raise':               { equipment_type: 'bodyweight', equipment_alternatives: ['Calf Raise Bodyweight', 'Stair Calf Raise'], force_demand: 'low', tier: 3, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Standing Calf Raise Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Standing Calf Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Calf Raise Bodyweight', 'Tibialis Raise'] },
+    { type: 'bodyweight', exercise_id: 'Calf Raise Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
+  ] },
+
 };
 
 /**

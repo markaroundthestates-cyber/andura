@@ -1504,3 +1504,217 @@ describe('Bundle 6.0.4.3 Glutes Library Extension §ADR v2 LOCK V2', () => {
     expect(feseEntries.length).toBeGreaterThanOrEqual(51);
   });
 });
+
+describe('Bundle 6.0.4.4 Calves Library Extension §ADR v2 LOCK V2', () => {
+  // Bundle 6.0.4.4 NEW entries canonical list (32 NEW; Phase A 7 + Phase B 6 + Phase C 6 + Phase D 6 + Phase E 7)
+  const NEW_ENTRIES_6_0_4_4 = [
+    // Phase A — Tier 1 Standing Calf Raise Compound (7 NEW)
+    'Standing Calf Raise Machine', 'Smith Standing Calf Raise', 'Leg Press Calf Raise', 'Hack Squat Calf Raise', 'Standing Single-Leg Calf Raise', 'Standing DB Calf Raise', 'Standing Barbell Calf Raise',
+    // Phase B — Tier 2 Seated Calf Raise Soleus Isolation (6 NEW)
+    'Seated Calf Raise Machine', 'Seated DB Calf Raise', 'Seated BB Calf Raise', 'Seated Plate Calf Raise', 'Seated Single-Leg Calf Raise', 'Smith Seated Calf Raise',
+    // Phase C — Tier 1-2 Donkey Calf + Specialty (6 NEW)
+    'Donkey Calf Raise', 'Smith Donkey Calf Raise', 'Banded Donkey Calf Raise', 'Single-Leg Donkey Calf Raise', 'Bodyweight Donkey Calf Raise', 'Eccentric Slow Calf Raise',
+    // Phase D — Tier 2-3 Tibialis Anterior Reverse (6 NEW)
+    'Tibialis Raise', 'Standing Tibialis Raise', 'Reverse Calf Raise', 'Cable Tibialis Raise', 'Banded Tibialis Raise', 'DB Tibialis Raise',
+    // Phase E — Tier 1-3 Bodyweight + Cable + Specialty (7 NEW)
+    'Calf Raise Bodyweight', 'Single-Leg Calf Raise Bodyweight', 'Stair Calf Raise', 'Single-Leg Stair Calf Raise', 'Cable Calf Raise', 'Plate-Loaded Calf Raise', 'Wall Calf Raise',
+  ];
+
+  // §1 cumulative count grows ≥ 458 post Bundle 6.0.4.4 (430 baseline + 32 NEW = 462)
+  it('cumulative count grows ≥ 458 post Bundle 6.0.4.4 Calves (+32 NEW)', () => {
+    const count = Object.keys(EXERCISE_METADATA).length;
+    expect(count).toBeGreaterThanOrEqual(458);
+  });
+
+  // §2 Phase A — Tier 1 Standing Calf Raise compound 7 entries present cu cascade populated
+  it('Phase A Standing Calf Raise compound 7 entries present cu cascade populated', () => {
+    const phaseA = ['Standing Calf Raise Machine', 'Smith Standing Calf Raise', 'Leg Press Calf Raise', 'Hack Squat Calf Raise', 'Standing Single-Leg Calf Raise', 'Standing DB Calf Raise', 'Standing Barbell Calf Raise'];
+    phaseA.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §3 Phase B — Seated Calf Raise soleus isolation 6 entries present
+  it('Phase B Seated Calf Raise soleus isolation 6 entries present cu cascade populated', () => {
+    const phaseB = ['Seated Calf Raise Machine', 'Seated DB Calf Raise', 'Seated BB Calf Raise', 'Seated Plate Calf Raise', 'Seated Single-Leg Calf Raise', 'Smith Seated Calf Raise'];
+    phaseB.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §4 Phase C — Donkey Calf + Specialty 6 entries present
+  it('Phase C Donkey Calf + Specialty 6 entries present cu cascade populated', () => {
+    const phaseC = ['Donkey Calf Raise', 'Smith Donkey Calf Raise', 'Banded Donkey Calf Raise', 'Single-Leg Donkey Calf Raise', 'Bodyweight Donkey Calf Raise', 'Eccentric Slow Calf Raise'];
+    phaseC.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §5 Phase D — Tibialis Anterior reverse 6 entries present
+  it('Phase D Tibialis Anterior reverse 6 entries present cu cascade populated', () => {
+    const phaseD = ['Tibialis Raise', 'Standing Tibialis Raise', 'Reverse Calf Raise', 'Cable Tibialis Raise', 'Banded Tibialis Raise', 'DB Tibialis Raise'];
+    phaseD.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §6 Phase E — Bodyweight + Cable + Specialty 7 entries present
+  it('Phase E Bodyweight + Cable + Specialty 7 entries present cu cascade populated', () => {
+    const phaseE = ['Calf Raise Bodyweight', 'Single-Leg Calf Raise Bodyweight', 'Stair Calf Raise', 'Single-Leg Stair Calf Raise', 'Cable Calf Raise', 'Plate-Loaded Calf Raise', 'Wall Calf Raise'];
+    phaseE.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §7 all 32 NEW calf entries muscle_target_primary === 'gambe' canonical V1
+  it('all 32 NEW calf entries muscle_target_primary === gambe canonical V1', () => {
+    expect(NEW_ENTRIES_6_0_4_4.length).toBe(32);
+    NEW_ENTRIES_6_0_4_4.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('gambe');
+    });
+  });
+
+  // §8 fallback_cascade step types canonical 5 types Bundle 6.0.4.4
+  it('fallback_cascade step types canonical 5 types Bundle 6.0.4.4', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    const sample = ['Standing Calf Raise Machine', 'Seated Calf Raise Machine', 'Donkey Calf Raise', 'Tibialis Raise', 'Calf Raise Bodyweight', 'Cable Calf Raise', 'Wall Calf Raise', 'Banded Tibialis Raise'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  // §9 muscle_group_compose 1-2 exercise_ids per ADR v2 §2.1 LOCK "fie 1 exercitiu sau 2"
+  it('muscle_group_compose 1-2 exercise_ids Bundle 6.0.4.4', () => {
+    const sample = ['Standing Calf Raise Machine', 'Seated Calf Raise Machine', 'Donkey Calf Raise', 'Tibialis Raise', 'Calf Raise Bodyweight', 'Stair Calf Raise'];
+    sample.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.type === 'muscle_group_compose') {
+          expect(s.exercise_ids.length).toBeGreaterThanOrEqual(1);
+          expect(s.exercise_ids.length).toBeLessThanOrEqual(2);
+        }
+      });
+    });
+  });
+
+  // §10 cascade depth ≥5 Tier 1 calf compound
+  it('Tier 1 calf compound 5-step cascade Bundle 6.0.4.4', () => {
+    const tier1Sample = ['Standing Calf Raise Machine', 'Smith Standing Calf Raise', 'Leg Press Calf Raise', 'Hack Squat Calf Raise', 'Standing Barbell Calf Raise', 'Donkey Calf Raise', 'Smith Donkey Calf Raise'];
+    tier1Sample.forEach(name => {
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §11 tier distribution Bundle 6.0.4.4
+  it('Bundle 6.0.4.4 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Donkey Calf Raise'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Seated Calf Raise Machine'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Cable Calf Raise'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Calf Raise Bodyweight'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Tibialis Raise'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Wall Calf Raise'].tier).toBe(3);
+  });
+
+  // §12 force_demand distribution Bundle 6.0.4.4
+  it('Bundle 6.0.4.4 force_demand: high + medium + low all present', () => {
+    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['Donkey Calf Raise'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['Seated Calf Raise Machine'].force_demand).toBe('medium');
+    expect(EXERCISE_METADATA['Cable Calf Raise'].force_demand).toBe('medium');
+    expect(EXERCISE_METADATA['Calf Raise Bodyweight'].force_demand).toBe('low');
+    expect(EXERCISE_METADATA['Tibialis Raise'].force_demand).toBe('low');
+  });
+
+  // §13 equipment_type distribution 6 canonical all present
+  it('Bundle 6.0.4.4 equipment_type 6 canonical all present', () => {
+    const seen = new Set();
+    const sample = ['Standing Calf Raise Machine', 'Standing Barbell Calf Raise', 'Standing DB Calf Raise', 'Cable Calf Raise', 'Banded Tibialis Raise', 'Calf Raise Bodyweight'];
+    sample.forEach(name => seen.add(EXERCISE_METADATA[name].equipment_type));
+    expect(seen.has('barbell')).toBe(true);
+    expect(seen.has('dumbbell')).toBe(true);
+    expect(seen.has('machine')).toBe(true);
+    expect(seen.has('cable')).toBe(true);
+    expect(seen.has('band')).toBe(true);
+    expect(seen.has('bodyweight')).toBe(true);
+  });
+
+  // §14 ZERO mutation existing 1 'gambe' primary entry (Calf Raises legacy V1) HARD CONSTRAINT §F3.12 strict
+  it('existing 1 gambe primary entry Calf Raises preserved invariant ZERO mutation Bundle 6.0.4.4', () => {
+    expect(EXERCISE_METADATA['Calf Raises'].muscle_target_primary).toBe('gambe');
+    expect(EXERCISE_METADATA['Calf Raises'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Calf Raises'].force_demand).toBe('low');
+    expect(EXERCISE_METADATA['Calf Raises'].equipment_type).toBe('machine');
+  });
+
+  // §15 existing baseline V1 + Bundle 6.0.1-4.3 preserved invariant ZERO mutation Bundle 6.0.4.4
+  it('existing V1 + Bundle 6.0.1-4.3 preserved invariant ZERO mutation Bundle 6.0.4.4', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['Romanian Deadlift']).toBeDefined();
+    expect(EXERCISE_METADATA['Leg Curl']).toBeDefined();
+    expect(EXERCISE_METADATA['OHP']).toBeDefined();
+    expect(EXERCISE_METADATA['Barbell Back Squat (High Bar)']).toBeDefined();
+    expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Sumo Deadlift'].muscle_target_primary).toBe('fese');
+    expect(EXERCISE_METADATA['Sumo RDL'].muscle_target_primary).toBe('picioare-hamstrings');
+  });
+
+  // §16 cascade self-reference rejection invariant Bundle 6.0.4.4
+  it('Bundle 6.0.4.4 NEW entries NEVER self-reference parent name', () => {
+    NEW_ENTRIES_6_0_4_4.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(name);
+        if (s.exercise_ids) s.exercise_ids.forEach(id => expect(id).not.toBe(name));
+      });
+    });
+  });
+
+  // §17 cascade references resolve ≥70% Bundle 6.0.4.4 lenient (forward refs OK per ADR v2)
+  it('cascade references resolve ≥70% Bundle 6.0.4.4 lenient', () => {
+    const allKeys = new Set(Object.keys(EXERCISE_METADATA));
+    let total = 0, resolved = 0;
+    NEW_ENTRIES_6_0_4_4.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) {
+          total++;
+          if (allKeys.has(s.exercise_id)) resolved++;
+        }
+        if (s.exercise_ids) {
+          s.exercise_ids.forEach(id => {
+            total++;
+            if (allKeys.has(id)) resolved++;
+          });
+        }
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+
+  // §18 gambe canonical V1 entries count post Bundle 6.0.4.4 (1 existing + 32 NEW = 33 minimum)
+  it('gambe canonical V1 entries count post Bundle 6.0.4.4 ≥ 33 (1 existing + 32 NEW)', () => {
+    const gambeEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'gambe');
+    expect(gambeEntries.length).toBeGreaterThanOrEqual(33);
+  });
+
+  // §19 ZERO 'core' secondary tag Bundle 6.0.4.4 (Bundle 6.0.7 Core reserved invariant preserved)
+  it('Bundle 6.0.4.4 ZERO core in muscle_target_secondary (Bundle 6.0.7 Core reserved)', () => {
+    NEW_ENTRIES_6_0_4_4.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).not.toBe('core');
+      expect(EXERCISE_METADATA[name].muscle_target_secondary).not.toContain('core');
+    });
+  });
+
+  // §20 muscle_target_secondary typically empty Bundle 6.0.4.4 (calves rarely have anatomically defensible secondary tags)
+  it('Bundle 6.0.4.4 muscle_target_secondary typically empty array', () => {
+    NEW_ENTRIES_6_0_4_4.forEach(name => {
+      expect(Array.isArray(EXERCISE_METADATA[name].muscle_target_secondary)).toBe(true);
+    });
+  });
+});
