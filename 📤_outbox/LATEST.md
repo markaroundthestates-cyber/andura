@@ -74,7 +74,7 @@ Opus EXCLUSIVELY (hardcoded). Velocity ~30-45 min total autonomous achieved.
 ## §9 — Commits
 
 Single atomic commit single-concern Bugatti craft + push origin `feature/v2-vanilla-port`:
-- `<hash>` chore(wiki): /wiki-ingest handover 2026-05-13e Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED — 1 NEW summary + 8 UPDATE existing
+- `3fda932` chore(wiki): /wiki-ingest handover 2026-05-13e Bundle 4 workout-preview + per-exercise refusal flow + mid-session augmentation LANDED — 1 NEW summary + 8 UPDATE existing
 
 ## §10 — Pushed
 
