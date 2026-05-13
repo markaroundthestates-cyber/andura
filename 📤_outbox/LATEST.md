@@ -1,180 +1,196 @@
-# LATEST — Calendar V1 Bundle 3 (Aparate lipsa Cont entry + mockup cleanup) LANDED 2026-05-13
+# LATEST — Calendar V1 Bundle 3 follow-up (Stale workout-preview drill refs reconcile) LANDED 2026-05-13
 
-**Task:** Bundle 3 V1 atomic 2-commit chain — 3A `src/pages/settings.js` Cont entry wire + 3B `04-architecture/mockups/andura-clasic.html` preview button cleanup
-**Model:** Claude Opus 4.7 (claude-opus-4-7) — autonomous via metoda hibridă LOCK V1 §F3.13 EXCLUSIVELY hardcoded (ZERO Sonnet per §AR.5 + §AR.18)
-**Status:** ✅ LANDED both slices atomic + pushed origin
+**Task:** Bundle 3 follow-up — atomic single-concern mockup doc-only stale `workout-preview > "Nu am aparat" button` + `+ workout-preview drill` references reconcile post Bundle 3B LANDED `dd79fd9`
+**Model:** Claude Opus 4.7 (claude-opus-4-7) — autonomous via metoda hibridă LOCK V1 §F3.13
+**Status:** ✅ LANDED single atomic commit + pushed origin
 **Branch:** `feature/v2-vanilla-port`
 **Date:** 2026-05-13
-**Backup tag:** `pre-bundle-3-aparate-lipsa-cont-entry-2026-05-13-1110` (pushed origin)
+**Backup tag:** `pre-bundle-3-followup-stale-doc-reconcile-2026-05-13-1150` (pushed origin)
 
 ---
 
-## §0 Pre-flight executed (§AR.21 inline grep evidence verified)
+## §0 Bundle 3 follow-up summary
 
-- ✅ Branch `feature/v2-vanilla-port` confirmed (NU main, hard constraint §F3.12)
-- ✅ Base commit `9f0135d` + auto smart-env `2923c62` ground state verified via `git log`
-- ✅ Backup tag `pre-bundle-3-aparate-lipsa-cont-entry-2026-05-13-1110` created + pushed origin
-- ✅ Tests baseline **3006 PASS** verified pre-execute (`npm run test:run`)
-- ✅ Re-grep paranoid sanity-check matched spec §1.1-§1.6 verbatim:
-  - `04-architecture/mockups/andura-clasic.html:987-991` — preview "Nu am aparat" btn-ghost button ✓
-  - `04-architecture/mockups/andura-clasic.html:1051` — `screen-aparate-lipsa` picker target ✓
-  - `04-architecture/mockups/andura-clasic.html:1865` — settings-row Cont entry parity ✓
-  - `src/pages/coach/aparateLipsa.js:40-42` — `showAparateLipsa()` export confirmed ✓
-  - `src/pages/settings.js:82-108` — Email change section pattern parity ✓
+**Commit:** `bd74a39 chore(mockup): Bundle 3 follow-up — stale workout-preview drill refs reconcile`
 
-ZERO delta evidence vs spec, NO halt triggered.
+Atomic single-concern post-3B doc parity reset. 3 discrete `str_replace` mutations applied independently per spec §2.1-§2.3 + paranoid post-grep verification per §3 ZERO stale patterns remain. Tests 3010 PASS preserved EXACT (mockup doc-only, NU src/ touched).
 
 ---
 
-## §1 Bundle 3A — Cont entry wire LANDED commit `3494c03`
+## §1 Pre-flight grep evidence verbatim (§AR.21)
 
-**Pattern:** NEW Aparate lipsa section inserted in `src/pages/settings.js` between existing Email change (L108) and Recovery email lost (L110) sections. Button click `async () => { _closeAllSettingsModals(doc); const m = await import('./coach/aparateLipsa.js'); if (typeof m.showAparateLipsa === 'function') m.showAparateLipsa(); }`.
-
-**Dynamic-import rationale:**
-- Mirrors existing `_defaultSignedOutRedirect` precedent (`src/pages/settings.js:71-75` imports `../ui/nav.js` lazily)
-- Test environment doesn't burden import graph with `showAparateLipsa` static binding
-- Tree-shake friendly: aparateLipsa.js now splits as 3.81 kB dynamic chunk per import boundary (vite build confirmed)
-
-**Test maintenance (NO regression mask):**
-- `src/pages/__tests__/settings.test.js` L17-21: assertion `sections.length === 4` updated to `=== 5` (legitimate count update for NEW section, not a deletion of failing test)
-- `src/pages/__tests__/settings.aparateLipsa.test.js` (+4 tests NEW): section render + h2 header + button label + ordering between Email + Recovery
-
-**Files touched:**
-- `src/pages/settings.js` (+19 LOC NEW section)
-- `src/pages/__tests__/settings.test.js` (1 LOC: 4 → 5 section count)
-- `src/pages/__tests__/settings.aparateLipsa.test.js` (+4 tests NEW)
-
-**Tests:** 3006 → **3010 PASS** (+4) preserved EXACT zero regression.
-**Build:** vite clean — aparateLipsa now split as 3.81 kB dynamic chunk.
+- ✅ Branch `feature/v2-vanilla-port` confirmed (NU main)
+- ✅ Base commit `4c9e0aa` + auto smart-env `2e36c7b` ground state verified
+- ✅ Pre-edit grep matched spec §1.1-§1.3 verbatim ZERO delta:
+  - `L1043-1048` APARATE LIPSA metadata block — "Drill destination: Cont/General > Aparate lipsa entry + workout-preview > 'Nu am aparat' button" ✓
+  - `L1369-1370` "Aparat lipsa" chip REMOVED comment — "(Cont/General + workout-preview drill). 'deserveste acelasi lucru. Butonul ala trebuie scos'" ✓
+  - `L3987-3989` JS-side "lipsa" branch REMOVED comment — "(Cont/General + workout-preview drill). Per Daniel push-back 'Butonul ala trebuie scos, ca deserveste acelasi lucru'" ✓
+- ✅ Spec §1.4 invariant preserved confirmed: 12 navigation/markup/router workout-preview references untouched (L883, L887, L891, L905-908, L914, L3520, L4567, L4595)
 
 ---
 
-## §2 Bundle 3B — Mockup preview button cleanup LANDED commit `dd79fd9`
+## §2 Backup tag pushed origin pre-execute
 
-**Pattern:** Removed L987-991 single full-width "Nu am aparat" preview button + its preceding HTML comment block. Replaced with 3-line cleanup comment chronological traceability documenting Bundle 3A LANDED commit hash + per-exercise inline button DEFERRED rationale (Port-First-Then-React strategy invariant).
-
-**Spec §4 interpretation note (CC autonomous judgment call):**
-
-The spec §4 narrative referenced "REMOVE entire HTML comment block + button element + closing comment block at L987-1008" — but L987-991 (the actual preview button + its comment) and L1007-1008 (a SEPARATE tombstone comment in CEVA NU MERGE drill explaining why "Nu am aparat" option absent from "ce nu merge" drill) are at different positions in the file separated by ~16 lines of unrelated screen content (small-text + "Confirma incep" button + screen-ceva-nu-merge opening + body-text + "Ma doare" button).
-
-**Decision:** Conservative — removed ONLY L987-991 (the actual preview button + preceding comment) and PRESERVED L1005-1006 (formerly L1007-1008) tombstone in CEVA NU MERGE drill since:
-1. Different screen, different concern (CEVA NU MERGE drill, not preview)
-2. Tombstone documents valid historical decision still relevant in that context
-3. Spec §6 acceptance says "ZERO touch other mockup sections" — strict discipline
-4. Spec §4 cite "verbatim Daniel push-back" from L1007-1008 used as JUSTIFICATION authority for cleanup, not as removal target
-
-**Stale documentation flagged (NOT fixed acest commit per scope discipline):**
-- `04-architecture/mockups/andura-clasic.html:1044` — APARATE LIPSA picker metadata block mentions "workout-preview > 'Nu am aparat' button" as drill destination, now stale after Bundle 3B removal. Preserved per scope strict — fix in fresh chat if Daniel wants metadata reconcile.
-
-**Files touched:**
-- `04-architecture/mockups/andura-clasic.html` (−5 LOC button + comment, +3 LOC cleanup comment, net −2 LOC)
-
-**Tests:** **3010 PASS** preserved EXACT (mockup doc-only, NU src/ touched).
+`pre-bundle-3-followup-stale-doc-reconcile-2026-05-13-1150` pushed to origin successfully — rollback safety net intact.
 
 ---
 
-## §3 Cumulative metrics
+## §3 3 str_replace mutations executed
 
-| Metric | Pre | Post | Delta |
-|--------|-----|------|-------|
-| Tests | 3006 | **3010** | +4 (S3A new) |
-| Test files | 164 | 165 | +1 |
-| Build vite | clean | clean | ZERO error |
-| Bundle output | base | +3.81 kB aparateLipsa chunk | dynamic split per import |
-| LOC settings.js | base | +19 | NEW section |
-| LOC mockup | base | −2 | preview button + comment cleanup |
+### §3.1 Block 1 — L1044 metadata reconcile ✅
 
-**Commit chain (push origin LANDED):**
-- `3494c03` feat(settings): Bundle 3A Aparate lipsa Cont entry wire showAparateLipsa modal
-- `dd79fd9` chore(mockup): Bundle 3B cleanup L987-991 single-button "Nu am aparat" preview
+**OLD:**
+```
+Drill destination: Cont/General > Aparate lipsa entry + workout-preview > "Nu am aparat" button.
+```
 
-**Backup tag intact rollback target:** `pre-bundle-3-aparate-lipsa-cont-entry-2026-05-13-1110` (origin)
+**NEW (2 lines):**
+```
+Drill destination: Cont/General > Aparate lipsa entry (Bundle 3A 2026-05-13 LANDED commit 3494c03).
+Per-exercise inline button DEFERRED post workout-preview src/ port (Port-First strategy invariant).
+```
 
-**HARD CONSTRAINTS verified ZERO violation §F3.12:**
-- ✅ Branch `feature/v2-vanilla-port` ONLY (ZERO main commit)
-- ✅ ZERO React/JSX (vanilla port phase, ADR 005 §AMENDMENT 2026-05-10)
-- ✅ ZERO `--no-verify` flag (pre-commit hook ran full vitest both commits)
-- ✅ ZERO `src/engine/` mutation (pure functions invariant ADR 026 §9)
-- ✅ ZERO `src/storage.js` creation
-- ✅ ZERO localStorage key NEW (wv2-missing-equipment registry pre-existing S2.B)
-- ✅ ZERO `.obsidian/` modifications
-- ✅ ZERO `wiki/` modifications (frozen post-handover this chat)
-- ✅ ZERO `📥_inbox/` write
-- ✅ Tests 3006 → 3010 PASS preserved EXACT
+Net: **+1 LOC**.
+
+### §3.2 Block 2 — L1370 chip REMOVED comment reconcile ✅
+
+**OLD:**
+```
+(Cont/General + workout-preview drill). "deserveste acelasi lucru. Butonul ala trebuie scos". -->
+```
+
+**NEW:**
+```
+(Cont/General drill, Bundle 3A 2026-05-13 LANDED). "deserveste acelasi lucru. Butonul ala trebuie scos". -->
+```
+
+Net: **0 LOC** (in-place replace).
+
+### §3.3 Block 3 — L3989 JS-side comment reconcile ✅
+
+**OLD:**
+```
+// (Cont/General + workout-preview drill). Per Daniel push-back "Butonul ala trebuie scos, ca deserveste acelasi lucru".
+```
+
+**NEW:**
+```
+// (Cont/General drill, Bundle 3A 2026-05-13 LANDED commit 3494c03). Per Daniel push-back "Butonul ala trebuie scos, ca deserveste acelasi lucru".
+```
+
+Net: **0 LOC** (in-place replace).
+
+---
+
+## §4 Post-edit paranoid grep verification
+
+```
+grep "workout-preview > \"Nu am aparat\" button|\+ workout-preview drill" mockup
+→ No matches found ✅
+```
+
+```
+grep "workout-preview" mockup → 13 matches (count)
+```
+
+**Delta:** pre-edit 15 → post-edit 13 (net −2). Decomposition:
+- L1044 Block 1: 1 OLD match removed + 1 NEW "post workout-preview src/ port" deferral marker added = net **0**
+- L1370 Block 2: 1 OLD match removed = net **−1**
+- L3989 Block 3: 1 OLD match removed = net **−1**
+
+**Total: −2 stale references purged, +1 strategic deferral marker preserved.** ZERO false matches.
+
+**13 PRESERVED INVARIANT matches:** all are navigation goto-calls (L883/887/891/905-908/3520/4567), `id="screen-workout-preview"` DOM markup (L914), router branch `name === 'workout-preview'` (L4595), and the NEW deferral marker in L1044.
+
+---
+
+## §5 Tests + Build
+
+- ✅ **Tests:** 3010 PASS preserved EXACT (pre-commit hook ran full vitest, 165 test files / 3010 tests)
+- ✅ **Pre-commit hook:** verde (mockup doc-only, NU src/ touched)
+- ✅ Spec §4 confirmed: NO new tests required, ZERO behavior delta
+
+---
+
+## §6 Acceptance criteria 100% PASS
+
+- ✅ Block 1 L1044 str_replace LANDED — drill destination reconciled Cont/General only + DEFERRED rationale per-exercise inline button
+- ✅ Block 2 L1370 str_replace LANDED — workout-preview drill ref removed + Bundle 3A LANDED stamp
+- ✅ Block 3 L3989 str_replace LANDED — workout-preview drill ref removed + Bundle 3A commit hash stamp
+- ✅ Post-grep verify ZERO stale `workout-preview > "Nu am aparat" button` OR `+ workout-preview drill` references
+- ✅ Tests 3010 PASS preserved EXACT
+- ✅ Pre-commit hook verde
+- ✅ 1 atomic commit single-concern (3 discrete str_replace combined as ONE concern: stale doc reconcile post-3B)
 - ✅ Backup tag pushed origin pre-execute
-- ✅ Atomic single-concern commits (3A + 3B separated atomic)
 
 ---
 
-## §4 Acceptance criteria checklist (§6 of spec)
+## §7 Anti-recurrence findings chat-current
 
-- ✅ **3A** `src/pages/settings.js` modified — NEW Aparate lipsa section inserted at L108→L110 boundary preserving all existing sections invariant
-- ✅ **3A** Section className `andura-settings-aparate-lipsa` matches grep evidence pattern §1.5
-- ✅ **3A** Button dynamic-imports `./coach/aparateLipsa.js` + calls `showAparateLipsa()`
-- ✅ **3B** Mockup L987-991 single-button "Nu am aparat" block REMOVED + replaced with cleanup comment chronological traceability
-- ⚠️ **3B** Post-edit grep `"Nu am aparat"` mockup → returns 3 references: NEW cleanup comment L987 + preserved CEVA NU MERGE drill tombstone L1005 + APARATE LIPSA metadata block L1044 (the latter is stale after Bundle 3B — flagged §2 not fixed per scope discipline). Per-screen analysis: ONLY the preview screen button is gone, other refs are unrelated documentation
-- ✅ **Tests** 3010 PASS (3006 baseline + 4 new) — ZERO regression
-- ✅ **Build** `npm run build` clean (vite ~3.75s 419+ modules)
-- ✅ **Pre-commit hook** verde mandatory both commits
-- ✅ **2 atomic commits** Bugatti single-concern (3A separate from 3B)
-- ✅ **Backup tag** `pre-bundle-3-aparate-lipsa-cont-entry-2026-05-13-1110` pushed origin pre-execute
+**§AR.21 enforcement effective (3rd consecutive bundle post-codification):** Pre-flight grep paranoid re-verify matched spec evidence ZERO delta on all 3 discrete blocks. No CC autonomous judgment call required this time (spec explicitly enumerated discrete blocks per §2.1-§2.3 — learning applied from Bundle 3B spec §4 ambiguity).
+
+**DISCRETE-BLOCKS DISCIPLINE validated:** Spec §9 explicitly noted "learning from Bundle 3B spec §4 slip 1× threshold: when targeting non-contiguous code blocks, this spec explicitly enumerates each block separately with independent str_replace per block + independent view pre-edit verify. NO line-range span across non-contiguous content." This discipline executed cleanly — 3 independent `Edit` operations, each with own `old_string` capturing exact context, ZERO conflation, ZERO ambiguity. Could codify as §AR.22 candidate (1× threshold met) — defer for Daniel review fresh chat.
+
+**ZERO NEW slip patterns surfaced acest bundle.** Atomic single-concern commit clean first attempt.
 
 ---
 
-## §5 Anti-recurrence findings chat-current
+## §8 Path forward fresh chat recommended
 
-**§AR.21 enforcement effective (2nd consecutive bundle post-codification):** Pre-flight §0 step 5 paranoid re-grep matched spec §1.1-§1.6 verbatim ZERO delta. Bundle 1 (S3.C+S3.D) was first execution post-codification, Bundle 3 is second consecutive validation.
-
-**NEW slip pattern surfaced acest bundle (P2 candidate for Daniel review):**
-- Spec §4 ambiguity: "REMOVE entire HTML comment block + button element + closing comment block at L987-1008" — the line range was contiguous in spec narrative but actual file structure has L987-991 (button) and L1007-1008 (CEVA NU MERGE drill tombstone) separated by ~16 lines of unrelated screen content. CC autonomous judgment call required (preserved tombstone). Could surface as candidate slip pattern: "PROMPT_CC line range spans MUST be contiguous OR explicitly list multiple discrete blocks" — defer codification for Daniel review fresh chat.
-
-**Stale documentation deferred (P2 not fixed per scope strict):**
-- Mockup `L1044` APARATE LIPSA picker metadata mentions "workout-preview > 'Nu am aparat' button" as drill destination — now stale after Bundle 3B removal. Fix candidate fresh chat.
-
----
-
-## §6 Path forward fresh chat recommended
-
-**Bundle 4 candidates (workout-preview src/ port):**
-- Port `screen-workout-preview` mockup (current L900-985) into src/ as new page
+**P1 Bundle 4 — workout-preview src/ port:**
+- Port `screen-workout-preview` mockup (L914+) into src/ as new page
 - Add per-exercise inline "Nu am aparat" button (multi-button per exercise card)
 - Add debifare-only mode UX (preview shows currently-marked equipment + per-exercise opt-out)
 - Coordinate with engine #2 `buildSession()` invalidation when missing-equipment list mutates mid-preview
+- Fresh chat preferred — multi-page coordination + UX decisions Daniel input
 
-**Stale documentation reconcile (cheap quick win):**
-- `andura-clasic.html:1044` APARATE LIPSA picker metadata block update — remove "workout-preview > 'Nu am aparat' button" reference (now-removed), add "Cont/General > Aparate lipsa" as canonical entry
-- Single atomic commit, mockup doc-only, ~3 LOC delta
+**P2 §AR.22 codification — DISCRETE-BLOCKS DISCIPLINE:**
+- 1× threshold met (Bundle 3B spec §4 slip + Bundle 3 follow-up successful application)
+- Rule candidate verbatim: "When PROMPT_CC targets non-contiguous code blocks, spec MUST enumerate each block as DISCRETE section (Block N at L<line>) with independent str_replace per block + independent grep evidence + independent view pre-edit verify. NO line-range span across non-contiguous content."
+- Codify §AR.22 in `wiki/concepts/anti-recurrence-rules.md` next `/wiki-ingest` handover
 
-**Identity palette consolidare:**
-- Draft alternative side-by-side comparison (deferred P3 per Bundle 1 raport)
+**P3 Bundle 2 — S3.A bar chart Propunere A:**
+- Investigate mockup `04-architecture/mockups/andura-clasic.html` §progress/§istoric host
+- Bar chart rendering approach (canvas vs SVG vs CSS-only)
+- Fresh chat — design Q decisions
+
+**P3 Identity palette consolidare:**
+- Draft alternative side-by-side comparison
 
 **Daniel Gates manual smoke prod `andura.app`:**
 - Optional smoke E2E playwright against deploy `feature/v2-vanilla-port`
-- Visual confirm Cont/General > Aparate lipsa entry button + modal flow
 - Pre-Beta a-z review preparation
 
 ---
 
-## §7 Skills used per slice fit (metoda hibridă LOCK V1 §F3.13)
+## §9 HARD CONSTRAINTS verified ZERO violation
 
-- **3A + 3B:** No skills invoked acest bundle — scope simple (vanilla port settings.js section + mockup HTML comment swap), source-text test pattern + manual grep sufficient.
-- **gstack `/qa`, Impeccable `/critique`, Sequential Thinking:** NOT invoked — pre-commit hook full vitest + vite build + grep evidence verbatim was primary verification. Skills reserved for Bundle 4 workout-preview src/ port (multi-page coordination + per-exercise inline button UX complexity).
+- ✅ Branch `feature/v2-vanilla-port` ONLY (ZERO main commit)
+- ✅ ZERO React/JSX
+- ✅ ZERO `--no-verify` (pre-commit hook ran full vitest)
+- ✅ ZERO `src/` touched (mockup doc-only)
+- ✅ ZERO `src/engine/` mutation
+- ✅ ZERO test file mutation
+- ✅ ZERO localStorage key NEW
+- ✅ ZERO `wiki/` modifications
+- ✅ ZERO `📥_inbox/` write
+- ✅ Atomic single-concern commit
+- ✅ Tests 3010 PASS preserved EXACT
+- ✅ Backup tag pushed origin pre-execute
 
 ---
 
-## §8 Cross-refs authority
+## §10 Cross-refs authority
 
-- `wiki/concepts/calendar-feature-v1-spec.md` §Missing Equipment Lifecycle S1.7 LOCKED V1
-- `wiki/concepts/anti-recurrence-rules.md` §AR.20 + §AR.21 codification LOCK V1 (validated effective 2nd consecutive bundle)
+- `wiki/concepts/calendar-feature-v1-spec.md` §Missing Equipment Lifecycle S1.7
+- `wiki/concepts/anti-recurrence-rules.md` §AR.20 + §AR.21 codification LOCK V1 (3rd validation effective)
 - `wiki/concepts/metoda-hibrida-chat-cc.md` §F3.13 LOCK V1
-- `wiki/concepts/bugatti-craft.md` Quality > Speed atomic single-concern + scope strict
-- `wiki/summaries/s3-guards-bundle-1-landed-milestone-2026-05-13.md` (Bundle 1 prior LANDED)
-- `03-decisions/020-storage-tiering-strategy.md` §1.4 Tier 0 active rolling wv2-missing-equipment
-- `03-decisions/026-offline-coaching-decision-tree-exhaustive.md` §9 pure-function engines invariant
-- `03-decisions/005-vanilla-js-no-framework.md` §AMENDMENT 2026-05-10 Port-First-Then-React
-- `04-architecture/mockups/andura-clasic.html` L1865 settings-row parity + L1051 screen-aparate-lipsa
-- `📥_inbox/PROMPT_CC_BUNDLE_3_APARATE_LIPSA.md` (source spec, supersede Bundle 1 raport)
+- `wiki/concepts/bugatti-craft.md` Quality > Speed atomic single-concern
+- `wiki/summaries/s3-guards-bundle-1-landed-milestone-2026-05-13.md` Bundle 1 LANDED
+- `📤_outbox/_archive/2026-05/456_LATEST_PREVIOUS_CALENDAR_V1_BUNDLE_3_LANDED_CONSUMED.md` Bundle 3 main raport
+- `📥_inbox/PROMPT_CC_BUNDLE_3_FOLLOWUP_STALE_DOC_RECONCILE.md` source spec acest bundle
+- `04-architecture/mockups/andura-clasic.html` L1044 + L1370 + L3989 reconciled blocks
 
 ---
 
-🦫 **Bundle 3 V1 atomic 2-commit chain LANDED (3A Cont entry wire `3494c03` + 3B mockup cleanup `dd79fd9`) metoda hibridă LOCK V1 §F3.13. §AR.21 codification 2nd consecutive validation effective — pre-flight grep paranoid re-verify ZERO delta vs spec §1.1-§1.6 evidence. Tests 3006 → 3010 PASS preserved EXACT. ZERO HARD CONSTRAINT violation. Backup tag intact rollback target. Bundle 4 (workout-preview src/ port + per-exercise inline button + debifare-only mode UX) = separate fresh chat strategic Daniel input.**
+🦫 **Bundle 3 follow-up LANDED atomic single-concern mockup doc-only stale workout-preview drill refs reconcile commit `bd74a39`. 3 discrete str_replace mutations independent per spec §2.1-§2.3 + paranoid post-grep verification ZERO stale pattern matches. §AR.21 3rd consecutive validation effective. DISCRETE-BLOCKS DISCIPLINE §AR.22 codification candidate 1× threshold met — defer Daniel review fresh chat. Tests 3010 PASS preserved EXACT. Bundle 4 workout-preview src/ port = separate fresh chat strategic Daniel input.**
