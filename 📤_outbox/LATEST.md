@@ -63,21 +63,35 @@
 
 ## §6 Commits
 
-Single atomic commit single-concern Bugatti craft:
+Single atomic commit single-concern Bugatti craft `8a244a9`:
 
 ```
-feat(wiki): /wiki-ingest handover 2026-05-13g post ADR v2 LOCKED V2 drift fix + §AR.24 candidat scribe-mode
+8a244a9 feat(wiki): /wiki-ingest handover 2026-05-13g post ADR v2 LOCKED V2 drift fix + §AR.24 candidat scribe-mode
 
-Handover narrative distributed: 1 NEW summary handover-2026-05-13g-post-adr-v2-locked-v2-drift-fix-landed-plus-ar24-candidate-milestone-2026-05-13 + 5 UPDATE existing pages. Cumulative 124→125 wiki pages.
-
-[full body per directive — see commit message]
-
-🦫 Bugatti craft. Chat NEW Salut Acasă §CC.2 startup zero drift guaranteed. Path forward Bundle 6.0.1 Chest extension P1 absolut next.
+11 files changed, 677 insertions(+), 146 deletions(-)
+- create mode wiki/summaries/handover-2026-05-13g-*.md (NEW summary)
+- create mode 📤_outbox/_archive/2026-05/465_LATEST_VAULT_DRIFT_FIX_*.md
+- create mode 📤_outbox/_archive/2026-05/466_HANDOVER_2026-05-13g_*.md
+- modify wiki/concepts/anti-recurrence-rules.md
+- modify wiki/concepts/metoda-hibrida-chat-cc.md
+- modify wiki/entities/adrs/adr-smart-routing-equipment.md
+- modify wiki/index.md
+- modify wiki/log.md
+- modify wiki/summaries/daniel-isms-glossary.md
+- modify wiki/summaries/slip-patterns-history.md
+- modify 📤_outbox/LATEST.md (NEW raport overwrite + precedent archived)
 ```
 
 ## §7 Pushed
 
-✅ Push origin `feature/v2-vanilla-port` post-commit. Verify via `git log --oneline -3`.
+✅ Push origin `feature/v2-vanilla-port` post-commit: `968862d..8a244a9  feature/v2-vanilla-port -> feature/v2-vanilla-port`
+
+`git log --oneline -3`:
+```
+8a244a9 feat(wiki): /wiki-ingest handover 2026-05-13g post ADR v2 LOCKED V2 drift fix + §AR.24 candidat scribe-mode
+968862d docs(outbox): LATEST vault drift fix ADR v2 LOCKED V2 raport + archive 464
+ac632fd fix(wiki): drift correction ADR v2 LOCKED V2 LANDED (post Co-CTO autonomous raw layer)
+```
 
 ## §8 Issues
 
