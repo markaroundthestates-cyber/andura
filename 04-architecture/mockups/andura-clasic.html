@@ -2764,11 +2764,12 @@
   .calendar-day[data-selected="true"] { background:#3d7a4a; color:#ffffff; border-color:#3d7a4a; }
   .calendar-day:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
 
-  /* EDIT state — reset toate cells, enable tap-toggle, show hint + Save */
+  /* EDIT state (S1.6 simplify 4→3 states post Daniel bug report 2026-05-12) — cells tappable + current selection verde deschis IMEDIAT (pending Save signal).
+     Pre-S1.6 bug: [data-state="edit"]:not([data-state="editing"]) forța cells preset la neutru → tranziția edit→editing colora retroactiv la primul tap (calendar gol → populare bruscă "din spate"). Fix: merge selectors, NU mai trecem prin editing state intermediar. */
   .calendar-week[data-state="edit"] .calendar-day,
   .calendar-week[data-state="editing"] .calendar-day { cursor:pointer; background:var(--paper-2); color:var(--ink); border-color:var(--line-strong); }
+  .calendar-week[data-state="edit"] .calendar-day[data-selected="true"],
   .calendar-week[data-state="editing"] .calendar-day[data-selected="true"] { background:#d4e6cb; color:var(--ink); border-color:#3d7a4a; }
-  .calendar-week[data-state="edit"]:not([data-state="editing"]) .calendar-day[data-selected="true"] { background:var(--paper-2); color:var(--ink); border-color:var(--line-strong); }
 
   .calendar-edit-hint { font-size:12px; color:var(--ink-3); margin:10px 0 8px; line-height:1.4; }
   .calendar-week[data-state="edit"] .calendar-edit-hint,
@@ -3670,7 +3671,7 @@
     if (!section) return;
     const state = section.getAttribute('data-state');
     if (state === 'locked') return; // guard: NO-OP locked state
-    if (state === 'edit') section.setAttribute('data-state', 'editing');
+    // S1.6 simplify (Daniel bug fix 2026-05-12): NU mai trecem edit → editing — EDIT state arată current selection verde deschis imediat.
     btn.dataset.selected = btn.dataset.selected === 'true' ? 'false' : 'true';
   }
 
