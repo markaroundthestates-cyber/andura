@@ -1,4 +1,4 @@
-# LATEST — Bundle 6.0.4.4 Calves Library Extension LANDED — `<pending-commit-hash>`
+# LATEST — Bundle 6.0.4.4 Calves Library Extension LANDED — `b9b7fba`
 
 **Task:** Bundle 6.0.4.4 Calves library extension 32 NEW 'gambe' canonical V1 + fallback_cascade[] universal apply 5 step types canonical per ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 LOCK V2 + ADR_ANATOMICAL_CLASSIFICATION_V1 §3.11 'gambe' canonical V1 LOCK V1.
 **Model:** claude-opus-4-7 (CC autonomous Co-CTO)
