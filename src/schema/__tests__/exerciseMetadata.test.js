@@ -782,3 +782,196 @@ describe('OHP Entry Baseline Foundational §Bundle 6.0.3 §13 Inline Observation
     expect(total).toBeGreaterThanOrEqual(295);
   });
 });
+
+// ── Bundle 6.0.4.1 Quads Library Extension Tests (Bundle 6.0.4.1 NEW 2026-05-13j) ────────
+describe('Bundle 6.0.4.1 Quads Library Extension §ADR v2 LOCK V2', () => {
+  // §1 cumulative count grows ≥340 post Bundle 6.0.4.1 Quads (forward-compat per §AR.* NEW 2× threshold candidat)
+  it('cumulative count grows ≥ 340 post Bundle 6.0.4.1 Quads (+45 NEW)', () => {
+    const count = Object.keys(EXERCISE_METADATA).length;
+    expect(count).toBeGreaterThanOrEqual(340);
+  });
+
+  // §2 Phase A — squat barbell variants 10 entries present cu cascade populated
+  it('Phase A squat barbell variants all 10 entries present cu cascade populated', () => {
+    const phaseAEntries = [
+      'Barbell Back Squat (High Bar)', 'Barbell Back Squat (Low Bar)', 'Front Squat',
+      'Pause Squat', 'Tempo Squat', 'Box Squat', 'Zercher Squat',
+      'Overhead Squat', 'Pin Squat', 'Safety Bar Squat',
+    ];
+    phaseAEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §3 Phase B — smith/hack squat variants 6 entries present
+  it('Phase B smith/hack squat variants all 6 entries present cu cascade populated', () => {
+    const phaseBEntries = ['Smith Machine Squat', 'Smith Front Squat', 'Hack Squat Machine', 'Reverse Hack Squat', 'Belt Squat', 'Pendulum Squat'];
+    phaseBEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §4 Phase C — DB/goblet variants 5 entries present
+  it('Phase C DB/goblet variants all 5 entries present cu cascade populated', () => {
+    const phaseCEntries = ['Goblet Squat', 'DB Squat', 'DB Sumo Squat', 'Bulgarian Split Squat', 'DB Pistol Squat Assisted'];
+    phaseCEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §5 Phase D — leg press variants 5 entries present
+  it('Phase D leg press variants all 5 entries present cu cascade populated', () => {
+    const phaseDEntries = ['45-Degree Leg Press', 'Horizontal Leg Press', 'Leg Press Single-Leg', 'Narrow-Stance Leg Press', 'Wide-Stance Leg Press'];
+    phaseDEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §6 Phase E — lunge compound variants 7 entries present
+  it('Phase E lunge compound variants all 7 entries present cu cascade populated', () => {
+    const phaseEEntries = ['DB Lunge', 'Walking Lunge', 'Reverse Lunge', 'Lateral Lunge', 'Curtsy Lunge', 'Barbell Lunge', 'Deficit Reverse Lunge'];
+    phaseEEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §7 Phase F — leg extension isolation variants 6 entries present
+  it('Phase F leg extension isolation variants all 6 entries present cu cascade populated', () => {
+    const phaseFEntries = ['Leg Extension Single-Leg', 'Tempo Leg Extension', 'Cable Leg Extension', 'Sissy Squat Machine', 'Band Leg Extension', 'Leg Extension Drop Set'];
+    phaseFEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §8 Phase G — sissy/step-up/pistol/wall accessory 6 entries present
+  it('Phase G sissy/step-up/pistol/wall accessory all 6 entries present cu cascade populated', () => {
+    const phaseGEntries = ['Sissy Squat Bodyweight', 'DB Step-up', 'Barbell Step-up', 'Pistol Squat', 'Wall Sit Static', 'Bodyweight Squat'];
+    phaseGEntries.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+    });
+  });
+
+  // §9 all 45 NEW quads entries muscle_target_primary = 'picioare' canonical Romanian
+  it('all 45 NEW quads entries muscle_target_primary = picioare canonical Romanian', () => {
+    const allNewQuads = [
+      'Barbell Back Squat (High Bar)', 'Barbell Back Squat (Low Bar)', 'Front Squat', 'Pause Squat', 'Tempo Squat',
+      'Box Squat', 'Zercher Squat', 'Overhead Squat', 'Pin Squat', 'Safety Bar Squat',
+      'Smith Machine Squat', 'Smith Front Squat', 'Hack Squat Machine', 'Reverse Hack Squat', 'Belt Squat', 'Pendulum Squat',
+      'Goblet Squat', 'DB Squat', 'DB Sumo Squat', 'Bulgarian Split Squat', 'DB Pistol Squat Assisted',
+      '45-Degree Leg Press', 'Horizontal Leg Press', 'Leg Press Single-Leg', 'Narrow-Stance Leg Press', 'Wide-Stance Leg Press',
+      'DB Lunge', 'Walking Lunge', 'Reverse Lunge', 'Lateral Lunge', 'Curtsy Lunge', 'Barbell Lunge', 'Deficit Reverse Lunge',
+      'Leg Extension Single-Leg', 'Tempo Leg Extension', 'Cable Leg Extension', 'Sissy Squat Machine', 'Band Leg Extension', 'Leg Extension Drop Set',
+      'Sissy Squat Bodyweight', 'DB Step-up', 'Barbell Step-up', 'Pistol Squat', 'Wall Sit Static', 'Bodyweight Squat',
+    ];
+    expect(allNewQuads.length).toBe(45);
+    allNewQuads.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('picioare');
+    });
+  });
+
+  // §10 fallback_cascade step types canonical 5 types per ADR v2 §2.1
+  it('fallback_cascade step types canonical 5 types Bundle 6.0.4.1 sample', () => {
+    const VALID_STEP_TYPES = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    const newQuadsSample = ['Barbell Back Squat (High Bar)', 'Smith Machine Squat', 'Goblet Squat', '45-Degree Leg Press', 'DB Lunge', 'Leg Extension Single-Leg', 'Wall Sit Static'];
+    newQuadsSample.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        expect(VALID_STEP_TYPES.has(step.type)).toBe(true);
+      });
+    });
+  });
+
+  // §11 muscle_group_compose steps have 1-2 exercise_ids per Daniel LOCK
+  it('muscle_group_compose has 1-2 exercise_ids Bundle 6.0.4.1', () => {
+    const newQuadsSample = ['Barbell Back Squat (High Bar)', 'Smith Machine Squat', '45-Degree Leg Press', 'DB Lunge', 'Sissy Squat Bodyweight'];
+    newQuadsSample.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        if (step.type === 'muscle_group_compose') {
+          expect(step.exercise_ids).toBeDefined();
+          expect(step.exercise_ids.length).toBeGreaterThanOrEqual(1);
+          expect(step.exercise_ids.length).toBeLessThanOrEqual(2);
+        }
+      });
+    });
+  });
+
+  // §12 cascade depth ≥5 for Tier 1 compound quads
+  it('Tier 1 compound quads have 5-step cascade', () => {
+    const tier1QuadsSample = ['Barbell Back Squat (High Bar)', 'Front Squat', 'Smith Machine Squat', 'Hack Squat Machine', 'DB Lunge', 'Walking Lunge'];
+    tier1QuadsSample.forEach(name => {
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §13 tier distribution Bundle 6.0.4.1 quads
+  it('Bundle 6.0.4.1 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    expect(EXERCISE_METADATA['Barbell Back Squat (High Bar)'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Sissy Squat Machine'].tier).toBe(2);
+    expect(EXERCISE_METADATA['Pistol Squat'].tier).toBe(3);
+    expect(EXERCISE_METADATA['Wall Sit Static'].tier).toBe(3);
+  });
+
+  // §14 force_demand distribution
+  it('Bundle 6.0.4.1 force_demand distribution: high + medium + low all present', () => {
+    expect(EXERCISE_METADATA['Barbell Back Squat (High Bar)'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['DB Sumo Squat'].force_demand).toBe('medium');
+    expect(EXERCISE_METADATA['Pistol Squat'].force_demand).toBe('low');
+  });
+
+  // §15 equipment_type distribution Bundle 6.0.4.1
+  it('Bundle 6.0.4.1 equipment_type 6 canonical all present', () => {
+    const equipmentSeen = new Set();
+    const allNewQuadsList = ['Barbell Back Squat (High Bar)', 'Goblet Squat', 'Smith Machine Squat', 'Cable Leg Extension', 'Band Leg Extension', 'Bodyweight Squat'];
+    allNewQuadsList.forEach(name => equipmentSeen.add(EXERCISE_METADATA[name].equipment_type));
+    expect(equipmentSeen.has('barbell')).toBe(true);
+    expect(equipmentSeen.has('dumbbell')).toBe(true);
+    expect(equipmentSeen.has('machine')).toBe(true);
+    expect(equipmentSeen.has('cable')).toBe(true);
+    expect(equipmentSeen.has('band')).toBe(true);
+    expect(equipmentSeen.has('bodyweight')).toBe(true);
+  });
+
+  // §16 existing V1 + Bundle 6.0.1-3 + OHP baseline preserved
+  it('existing baseline entries preserved invariant ZERO mutation Bundle 6.0.4.1', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['Flat Barbell Bench']).toBeDefined();
+    expect(EXERCISE_METADATA['Cable Row']).toBeDefined();
+    expect(EXERCISE_METADATA['Leg Press']).toBeDefined();
+    expect(EXERCISE_METADATA['OHP']).toBeDefined();
+  });
+
+  // §17 cascade self-reference rejection invariant Bundle 6.0.4.1
+  it('Bundle 6.0.4.1 NEW entries NEVER self-reference parent name', () => {
+    const newQuadsList = ['Barbell Back Squat (High Bar)', 'Smith Machine Squat', 'Hack Squat Machine', 'Goblet Squat', 'DB Lunge', 'Leg Extension Single-Leg', 'Pistol Squat'];
+    newQuadsList.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        if (step.exercise_id) expect(step.exercise_id).not.toBe(name);
+        if (step.exercise_ids) expect(step.exercise_ids).not.toContain(name);
+      });
+    });
+  });
+
+  // §18 cascade references resolve ≥70% Bundle 6.0.4.1 phase (lenient — Bundle 6.0.4.2-4 future refs OK)
+  it('cascade references resolve ≥70% Bundle 6.0.4.1 lenient', () => {
+    const newQuadsList = ['Barbell Back Squat (High Bar)', 'Smith Machine Squat', 'Goblet Squat', 'DB Lunge', 'Sissy Squat Bodyweight'];
+    let total = 0, resolved = 0;
+    newQuadsList.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        const refs = step.exercise_ids || [step.exercise_id];
+        refs.forEach(r => { total++; if (EXERCISE_METADATA[r]) resolved++; });
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.7);
+  });
+});

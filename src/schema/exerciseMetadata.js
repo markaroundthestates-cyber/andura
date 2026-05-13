@@ -3,6 +3,7 @@
 // EXTENDED Bundle 6.0.1 2026-05-13h: ~90 NEW chest exerciții + fallback_cascade[] NEW optional field per ADR v2 LOCK V2 §2.1.
 // EXTENDED Bundle 6.0.2 2026-05-13h: ~98 NEW back exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 + 'band' equipment_type introduced (Band Face Pull, Band-Assisted Pull-up, Banded Good Morning).
 // EXTENDED Bundle 6.0.3 2026-05-13i: ~80 NEW shoulder exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 (OHP/Push Press/Smith/Hammer/Landmine/Lateral/Front/Rear delt isolation variants).
+// EXTENDED Bundle 6.0.4.1 2026-05-13j: ~45 NEW quads exerciții + fallback_cascade[] per ADR v2 LOCK V2 §2.1 (squat barbell/smith/DB/hack variants + leg press variants + lunge compound variants + leg extension isolation + sissy/step-up accessory).
 //
 // Foundation pentru Smart-Routing v1 (§36.37 ranking-based) + Smart-Routing v2 (cascade ordered list per ADR v2 LOCK V2)
 // + Cascade Defense + Outlier Filter.
@@ -2111,6 +2112,337 @@ export const EXERCISE_METADATA = {
     { type: 'muscle_group_compose', exercise_ids: ['Push Press', 'Barbell Row'] },
     { type: 'bodyweight', exercise_id: 'Pike Push-up' },
     { type: 'light_variant', exercise_id: 'Wall Pike Push-up' },
+  ] },
+
+  // ══ Bundle 6.0.4.1 Quads Library Extension — 45 NEW quads exerciții 2026-05-13j ══
+
+  // ── Phase A — Tier 1 Compound Squat Barbell Variants (10 NEW) ────────
+  'Barbell Back Squat (High Bar)': { equipment_type: 'barbell', equipment_alternatives: ['Smith Machine Squat', 'Front Squat'],     force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Barbell Back Squat (Low Bar)':  { equipment_type: 'barbell', equipment_alternatives: ['Barbell Back Squat (High Bar)', 'Smith Machine Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Romanian Deadlift'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Front Squat':                   { equipment_type: 'barbell', equipment_alternatives: ['Goblet Squat', 'Smith Machine Squat'],    force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Pause Squat':                   { equipment_type: 'barbell', equipment_alternatives: ['Barbell Back Squat (High Bar)', 'Tempo Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Pause Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Slow' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat Slow' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Tempo Squat':                   { equipment_type: 'barbell', equipment_alternatives: ['Pause Squat', 'Barbell Back Squat (High Bar)'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Tempo Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Slow' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat Slow' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Box Squat':                     { equipment_type: 'barbell', equipment_alternatives: ['Barbell Back Squat (Low Bar)', 'Smith Box Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Box Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Romanian Deadlift'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Box Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Zercher Squat':                 { equipment_type: 'barbell', equipment_alternatives: ['Front Squat', 'Goblet Squat'],            force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat Front' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Overhead Squat':                { equipment_type: 'barbell', equipment_alternatives: ['Front Squat', 'Goblet Squat Overhead'],   force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Front Squat', 'DB Shoulder Press'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat Arms Overhead' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Arms Up' },
+  ] },
+  'Pin Squat':                     { equipment_type: 'barbell', equipment_alternatives: ['Box Squat', 'Pause Squat'],               force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Pin Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Partial' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Partial Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Safety Bar Squat':              { equipment_type: 'barbell', equipment_alternatives: ['Barbell Back Squat (High Bar)', 'Smith Machine Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+
+  // ── Phase B — Tier 1-2 Smith Machine + Hack Squat Variants (6 NEW) ────────
+  'Smith Machine Squat':           { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Machine', 'Leg Press'],        force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Smith Front Squat':             { equipment_type: 'machine', equipment_alternatives: ['Smith Machine Squat', 'Hack Squat Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Hack Squat Machine':            { equipment_type: 'machine', equipment_alternatives: ['Smith Machine Squat', 'Leg Press'],       force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Single-Leg' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Reverse Hack Squat':            { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Machine', 'Leg Press'],        force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Romanian Deadlift', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Belt Squat':                    { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Machine', 'Leg Press'],        force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Pendulum Squat':                { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Machine', 'Belt Squat'],       force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+
+  // ── Phase C — Tier 1-2 DB + Goblet Squat Variants (5 NEW) ────────
+  'Goblet Squat':                  { equipment_type: 'dumbbell', equipment_alternatives: ['DB Squat', 'Front Squat'],               force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'DB Squat':                      { equipment_type: 'dumbbell', equipment_alternatives: ['Goblet Squat', 'Barbell Back Squat (High Bar)'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'DB Sumo Squat':                 { equipment_type: 'dumbbell', equipment_alternatives: ['Goblet Squat', 'DB Squat'],              force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Squat Wide' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Wide' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press Wide', 'Adduction Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Sumo Squat' },
+    { type: 'light_variant', exercise_id: 'Wall Sumo Squat' },
+  ] },
+  'Bulgarian Split Squat':         { equipment_type: 'dumbbell', equipment_alternatives: ['Reverse Lunge', 'DB Lunge'],             force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Bulgarian Split Squat' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Bulgarian Split Squat' },
+    { type: 'light_variant', exercise_id: 'Assisted Bulgarian Wall Touch' },
+  ] },
+  'DB Pistol Squat Assisted':      { equipment_type: 'dumbbell', equipment_alternatives: ['Bulgarian Split Squat', 'Pistol Squat'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Single-Leg Squat' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Single-Leg' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Pistol Squat' },
+    { type: 'light_variant', exercise_id: 'Assisted Pistol Wall Touch' },
+  ] },
+
+  // ── Phase D — Tier 1-2 Leg Press Variants (5 NEW) ────────
+  '45-Degree Leg Press':           { equipment_type: 'machine', equipment_alternatives: ['Leg Press', 'Hack Squat Machine'],        force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Horizontal Leg Press':          { equipment_type: 'machine', equipment_alternatives: ['Leg Press', '45-Degree Leg Press'],       force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Leg Press Single-Leg':          { equipment_type: 'machine', equipment_alternatives: ['Leg Press', 'Bulgarian Split Squat'],     force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Single-Leg' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension Single-Leg', 'Leg Curl Single-Leg'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Single-Leg Squat' },
+    { type: 'light_variant', exercise_id: 'Assisted Single-Leg Wall' },
+  ] },
+  'Narrow-Stance Leg Press':       { equipment_type: 'machine', equipment_alternatives: ['Leg Press', '45-Degree Leg Press'],       force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Narrow Squat' },
+    { type: 'light_variant', exercise_id: 'Box Squat Smaller ROM' },
+  ] },
+  'Wide-Stance Leg Press':         { equipment_type: 'machine', equipment_alternatives: ['Leg Press', '45-Degree Leg Press'],       force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine Wide' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Adduction Machine'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Sumo Squat' },
+    { type: 'light_variant', exercise_id: 'Wall Sumo Squat' },
+  ] },
+
+  // ── Phase E — Tier 1-2 Lunge Compound Variants (7 NEW) ────────
+  'DB Lunge':                      { equipment_type: 'dumbbell', equipment_alternatives: ['Walking Lunge', 'Bulgarian Split Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith DB Lunge' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Lunge Wall' },
+  ] },
+  'Walking Lunge':                 { equipment_type: 'dumbbell', equipment_alternatives: ['DB Lunge', 'Reverse Lunge'],             force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Walking Lunge' },
+    { type: 'assisted_variant', exercise_id: 'DB Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Walking Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Lunge Wall' },
+  ] },
+  'Reverse Lunge':                 { equipment_type: 'dumbbell', equipment_alternatives: ['DB Lunge', 'Bulgarian Split Squat'],     force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Reverse Lunge' },
+    { type: 'assisted_variant', exercise_id: 'DB Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Reverse Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Reverse Lunge Wall' },
+  ] },
+  'Lateral Lunge':                 { equipment_type: 'dumbbell', equipment_alternatives: ['DB Sumo Squat', 'Curtsy Lunge'],         force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Lateral Lunge' },
+    { type: 'assisted_variant', exercise_id: 'DB Sumo Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Adduction Machine', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Lateral Lunge' },
+    { type: 'light_variant', exercise_id: 'Wall Lateral Squat' },
+  ] },
+  'Curtsy Lunge':                  { equipment_type: 'dumbbell', equipment_alternatives: ['Lateral Lunge', 'Reverse Lunge'],        force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Curtsy Lunge' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Glute Kickback'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Curtsy Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Curtsy Wall' },
+  ] },
+  'Barbell Lunge':                 { equipment_type: 'barbell', equipment_alternatives: ['DB Lunge', 'Smith Lunge'],                force_demand: 'high', tier: 1, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Machine Lunge' },
+    { type: 'assisted_variant', exercise_id: 'DB Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Lunge Wall' },
+  ] },
+  'Deficit Reverse Lunge':         { equipment_type: 'dumbbell', equipment_alternatives: ['Reverse Lunge', 'Bulgarian Split Squat'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Reverse Lunge' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Reverse Lunge' },
+    { type: 'light_variant', exercise_id: 'Assisted Reverse Lunge Wall' },
+  ] },
+
+  // ── Phase F — Tier 2 Leg Extension Isolation Variants (6 NEW) ────────
+  'Leg Extension Single-Leg':      { equipment_type: 'machine', equipment_alternatives: ['Leg Extension', 'Reverse Hack Squat'],    force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Single-Leg' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bulgarian Split Squat', 'Leg Curl'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Single-Leg Squat' },
+    { type: 'light_variant', exercise_id: 'Wall Single-Leg Squat' },
+  ] },
+  'Tempo Leg Extension':           { equipment_type: 'machine', equipment_alternatives: ['Leg Extension', 'Sissy Squat'],           force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Quad-Bias' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Sissy Squat'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Static' },
+  ] },
+  'Cable Leg Extension':           { equipment_type: 'cable', equipment_alternatives: ['Leg Extension', 'Reverse Hack Squat'],      force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Quad-Bias' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Sissy Squat'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Static' },
+  ] },
+  'Sissy Squat Machine':           { equipment_type: 'machine', equipment_alternatives: ['Leg Extension', 'Hack Squat Machine'],    force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Hack Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Goblet Squat'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Static' },
+  ] },
+  'Band Leg Extension':            { equipment_type: 'band', equipment_alternatives: ['Leg Extension', 'Sissy Squat Bodyweight'],   force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Sissy Squat Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Static' },
+  ] },
+  'Leg Extension Drop Set':        { equipment_type: 'machine', equipment_alternatives: ['Leg Extension', 'Sissy Squat Machine'],   force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press Quad-Bias' },
+    { type: 'muscle_group_compose', exercise_ids: ['Goblet Squat', 'Sissy Squat Machine'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Static' },
+  ] },
+
+  // ── Phase G — Tier 2-3 Sissy + Step-up + Pistol + Wall Sit Accessory (6 NEW) ────────
+  'Sissy Squat Bodyweight':        { equipment_type: 'bodyweight', equipment_alternatives: ['Sissy Squat Machine', 'Wall Squat Static'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Sissy Squat Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wall Squat Static', 'Goblet Squat'] },
+    { type: 'bodyweight', exercise_id: 'Wall Squat Static' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Partial Range' },
+  ] },
+  'DB Step-up':                    { equipment_type: 'dumbbell', equipment_alternatives: ['Bulgarian Split Squat', 'Reverse Lunge'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Step-up' },
+    { type: 'assisted_variant', exercise_id: 'Bulgarian Split Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Glute Kickback'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Step-up' },
+    { type: 'light_variant', exercise_id: 'Low Box Step-up' },
+  ] },
+  'Barbell Step-up':               { equipment_type: 'barbell', equipment_alternatives: ['DB Step-up', 'Bulgarian Split Squat'],    force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith Step-up' },
+    { type: 'assisted_variant', exercise_id: 'DB Step-up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Extension', 'Glute Kickback'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Step-up' },
+    { type: 'light_variant', exercise_id: 'Low Box Step-up' },
+  ] },
+  'Pistol Squat':                  { equipment_type: 'bodyweight', equipment_alternatives: ['DB Pistol Squat Assisted', 'Bulgarian Split Squat'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press Single-Leg' },
+    { type: 'assisted_variant', exercise_id: 'DB Pistol Squat Assisted' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bulgarian Split Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Assisted Pistol Wall Touch' },
+    { type: 'light_variant', exercise_id: 'Box Squat Single-Leg' },
+  ] },
+  'Wall Sit Static':               { equipment_type: 'bodyweight', equipment_alternatives: ['Sissy Squat Bodyweight', 'Bodyweight Squat'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bodyweight Squat', 'Sissy Squat Bodyweight'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Partial Range' },
+  ] },
+  'Bodyweight Squat':              { equipment_type: 'bodyweight', equipment_alternatives: ['Wall Sit Static', 'Box Squat Smaller ROM'], force_demand: 'low', tier: 3, muscle_target_primary: 'picioare', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Extension' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Sissy Squat Bodyweight', 'Wall Sit Static'] },
+    { type: 'bodyweight', exercise_id: 'Box Squat Smaller ROM' },
+    { type: 'light_variant', exercise_id: 'Wall Squat Partial Range' },
   ] },
 };
 
