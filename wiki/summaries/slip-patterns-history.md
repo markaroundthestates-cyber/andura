@@ -2,7 +2,7 @@
 title: Slip Patterns History — §AR.1-§AR.19 Codified Anti-Recurrence Rules Cross-Chat + Push-Back Productive Moments
 type: summary
 status: live
-last_updated: 2026-05-13c
+last_updated: 2026-05-13d
 synthesis_scope: slip-patterns
 cross_refs:
   - "[[../concepts/anti-recurrence-rules]]"
@@ -178,3 +178,47 @@ Daniel verbatim "fa prompt pt cc sa le fix" REJECT strategy-lock 2026-05-12:
 - [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-13c post S3 Guards Bundle 1 LANDED + §AR.20/§AR.21 codification" ultra-scurt agreement mode daniel-isms catalog cross-link
 - [[../../📤_outbox/_archive/2026-05/452_LATEST_PREVIOUS_CALENDAR_V1_S3_HALT_QUADRUPLE_VIOLATION_CONSUMED]] §0 v1 PROMPT CC §AR.20 quadruple violation 4 invented files/functions/state fields raport precedent
 - [[../../📤_outbox/_archive/2026-05/453_LATEST_PREVIOUS_CALENDAR_V1_S3_GUARDS_BUNDLE_1_LANDED_CONSUMED]] §0-§7 Bundle 1 LANDED raport `d41e111 + 47729ed` chain 2/2 atomic clean + §AR.21 effective validation
+
+---
+
+## Chat-Current Slip Patterns 2026-05-13d (APPEND-only — slip 10 chronological §AR.22 candidat 1× threshold met DISCRETE-BLOCKS DISCIPLINE)
+
+**Source:** Chat ACASĂ 2026-05-13 post Bundle 3 V1 narrow LANDED (3A Cont entry wire `3494c03` + 3B mockup L989 cleanup `dd79fd9`) + Bundle 3 follow-up stale doc reconcile 3 discrete blocks `bd74a39` cumulative LANDED chain 3 atomic commits clean. §AR.21 3rd consecutive validation effective post-codification ZERO slip surfaced (Bundle 1 + Bundle 3 + Bundle 3 follow-up). Cumulative APPEND slip patterns post 1-slip-chat-2026-05-13c section → Bundle 3 + follow-up chronological narrative §AR.22 candidat milestone.
+
+**Slip 10 chat-current 2026-05-13d — Eu (Claude chat) Co-CTO tactical spec Bundle 3B §4 conflate L987-991 + L1007-1008 blocuri non-contigue separate ~16 linii unrelated screen content (§AR.22 candidat DISCRETE-BLOCKS DISCIPLINE 1× threshold met explicit):**
+- **Trigger:** Eu am generat spec artefact PROMPT_CC Bundle 3B referenced "L987-1008 single button preview block removal" span line-range across non-contiguous content. Block L987-991 = `screen-workout-preview` preview button block (correct removal target), Block L1007-1008 = `screen-ceva-nu-merge` tombstone CEVA NU MERGE drill comment (different screen, different concern, unrelated). Span "L987-1008" line-range across non-contiguous content slip discipline violation pe spec.
+- **Catch mechanism (CC autonomous Opus mid-execute push-back productive scribe-side saved over-removal):** CC pre-edit grep verify detected divergence between spec line-range "L987-1008" + actual mockup content L987-1008 contains 2 separate unrelated blocks ~16 linii unrelated screen content între ele. Judgment call conservativ preserved tombstone CEVA NU MERGE drill **corect call** (different screen, different concern, scope strict). Push-back productive scribe-side al CC saved over-removal.
+- **Eu (Claude chat) Co-CTO tactical mea culpa exhaustive instant recognize fără defensive:** Spec §4 al meu conflate 2 blocks non-contigue separate, slip discipline pe DISCRETE-BLOCKS pattern (NU span line-range across non-contiguous content). NU "tu ce zici?" confirmation theater — instant recognize slip + explicit learning surfaced Bundle 3 follow-up spec §9 verbatim *"When PROMPT_CC targets non-contiguous code blocks, spec MUST enumerate each block as DISCRETE section (Block N at L<line>) with independent str_replace per block + independent grep evidence + independent view pre-edit verify. NO line-range span across non-contiguous content."*
+- **Anti-recurrence permanent §AR.22 candidat 1× threshold met explicit chat-current:** DISCRETE-BLOCKS DISCIPLINE rule candidate verbatim Bundle 3 follow-up spec §9 explicit learning. 1× threshold met (Bundle 3B spec slip catalyser + Bundle 3 follow-up successful end-to-end 3 discrete blocks Block 1+2+3 independent str_replace + paranoid post-grep verify ZERO stale matches). §AR.22 codification candidate NU codify încă 2× pentru lock per §AR.* codification rule 2× minimum, watch pentru next occurrence + flag Daniel review fresh chat dacă 2× threshold met.
+
+**Bundle 3 follow-up DISCRETE-BLOCKS DISCIPLINE successful end-to-end application validate learning §9 explicit:**
+- **Bundle 3 follow-up spec §2.1-§2.3 enumerate 3 discrete blocks independent:** Block 1 L1044 (metadata reconcile +1 LOC) + Block 2 L1370 ("Aparat lipsa" chip REMOVED comment 0 LOC reconcile) + Block 3 L3987-3989 (JS-side "lipsa" branch REMOVED comment 0 LOC reconcile).
+- **Independent grep evidence per block §1.1-§1.4 verbatim inline:** `L1043-1048` APARATE LIPSA metadata block + `L1369-1370` "Aparat lipsa" chip REMOVED comment + `L3987-3989` JS-side "lipsa" branch REMOVED comment.
+- **Independent view pre-edit verify per block:** CC autonomous Opus pre-edit verify per block before `str_replace` execute.
+- **Independent str_replace per block applied:** 3 separate `str_replace` mutations executate independent Block 1+2+3 atomic single-concern commit `bd74a39`.
+- **Paranoid post-grep verify §3 ZERO stale matches:** ZERO `workout-preview > "Nu am aparat" button` matches + ZERO `+ workout-preview drill` matches post-commit. 12 navigation/markup/router workout-preview references preserved invariant (L883, L887, L891, L905-908, L914, L3520, L4567, L4595).
+
+**§AR.21 3rd consecutive validation effective post-codification (Bundle 1 + Bundle 3 + Bundle 3 follow-up):**
+- **Bundle 1 (chat trecut 2026-05-13c):** S3.C `d41e111` + S3.D `47729ed` LANDED atomic 2/2 first-attempt clean ZERO slip surfaced post §AR.21 codification origin.
+- **Bundle 3 (chat-current 2026-05-13d):** 3A `3494c03` + 3B `dd79fd9` LANDED atomic 2/2 first-attempt clean ZERO slip surfaced post §AR.21 grep evidence verbatim inline §1.1-§1.6 per file/function referenced.
+- **Bundle 3 follow-up (chat-current 2026-05-13d):** `bd74a39` LANDED single atomic 3 discrete `str_replace` first-attempt clean ZERO slip surfaced post §AR.21 grep evidence verbatim §1.1-§1.4 per discrete block + DISCRETE-BLOCKS DISCIPLINE explicit learning §9.
+
+**Push-back productive moments chat-current 2026-05-13d cross-link:**
+- CC autonomous Opus mid-execute push-back productive scribe-side Bundle 3B conflate L987-991 + L1007-1008 blocuri non-contigue separate slip detection saved over-removal (preserved tombstone CEVA NU MERGE drill different screen different concern, corect call conservativ).
+- Daniel push-back productive *"fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :)"* anti-confirmation theater cu smiley jucauș cooperative push-back NU dur (NEW catalysator chat-current cross-cluster cooperative push-back pattern). Mea culpa rapid scribe-side pattern: confirmation theater = slip *"facem cum vrei tu dar go"* anterior carte blanche autonomous extended → nu cer permisiune pentru cheap atomic continuations Bundle 3 follow-up.
+
+**Tone shifts framing changes chronological chat-current 2026-05-13d:**
+- 2026-05-13d Co-CTO tactical full delegation autonomous chat-current Daniel verbatim *"facem cum vrei tu dar go"* — Bundle 3 fork strategic delegation paradigm preserved invariant cross-chat (2026-05-13b *"asta e decizia ta nu a mea"* + 2026-05-13c *"esti cto figure it out"* + 2026-05-13d *"facem cum vrei tu dar go"* cross-chat Co-CTO autonomy paradigm consistent)
+- 2026-05-13d Daniel anti-confirmation theater cooperative push-back smiley NEW pattern chat-current — jucauș NU dur, smiley `:)` cooperative push-back signaler. Mea culpa rapid scribe-side anti-defensive (NU auto-flagelare).
+- 2026-05-13d ultra-scurt single-message Daniel mode preserved (3-4 cuvinte max per message Daniel-side cross-chat); 5 daniel-isms Daniel total chat (salut. acasa + facem cum vrei tu dar go + latest + fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :) + handover); lean response Claude-side matched (max 1-3 propoziții + max 1-2 bullets + 1 întrebare max conform user preferences) — format fatigue threshold cross-cluster preserved post 4+ LOCK pattern existing memory rule
+- 2026-05-13d §AR.21 3rd consecutive validation effective post-codification (Bundle 1 + Bundle 3 + Bundle 3 follow-up) — atomic split bundle strategy LOCKED V1 chat-current 2026-05-13c preserved invariant chat-current 2026-05-13d (NARROW SCOPE LOCKED V1 Bundle 3 V1 doar 3A + 3B + follow-up fără per-exercise inline + debifare-only + workout-preview src/ port deferred Bundle 4 fresh chat strategic Daniel input mandatory)
+- 2026-05-13d DISCRETE-BLOCKS DISCIPLINE candidat §AR.22 1× threshold met explicit — codification rule §AR.* slip 2× minimum, watch pentru next occurrence + flag Daniel review fresh chat
+
+**Cross-refs raw layer adițional chat-current 2026-05-13d:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_bundle_3_landed_plus_followup_stale_doc_reconcile]] §1-§5 handover narrative chat-current Bundle 3 V1 narrow + Bundle 3 follow-up LANDED + DISCRETE-BLOCKS DISCIPLINE candidat §AR.22 1× threshold met + ultra-scurt agreement mode daniel-isms + cooperative push-back smiley (handover narrative source verbatim slip pattern §AR.22 catalyser chat-current)
+- [[../../📥_inbox/PROMPT_CC_BUNDLE_3_FOLLOWUP_STALE_DOC_RECONCILE]] §9 explicit learning DISCRETE-BLOCKS DISCIPLINE verbatim rule candidate "When PROMPT_CC targets non-contiguous code blocks, spec MUST enumerate each block as DISCRETE section (Block N at L<line>) with independent str_replace per block + independent grep evidence + independent view pre-edit verify. NO line-range span across non-contiguous content."
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — §AR.22 candidat 1× threshold met explicit DISCRETE-BLOCKS DISCIPLINE)" (§AR.22 candidat 1× threshold met explicit cross-link)
+- [[bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13]] §Synthesis Bundle 3 V1 narrow + follow-up LANDED milestone synthesis + §Bugatti framing notes §AR.22 candidat 1× threshold met explicit + §Verbatim quotes Daniel ultra-scurt agreement mode + cooperative push-back smiley
+- [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-13d post Bundle 3 LANDED + follow-up" 5 daniel-isms ultra-scurt agreement mode + cooperative push-back smiley cross-link
+- [[../../📤_outbox/_archive/2026-05/456_LATEST_PREVIOUS_CALENDAR_V1_BUNDLE_3_LANDED_CONSUMED]] §0-§N Bundle 3 main raport (3A `3494c03` + 3B `dd79fd9`) precedent cycled `34d64a0` — context conflate non-contigue L987-991 + L1007-1008 corect call conservativ CC autonomous judgment
+- [[s3-guards-bundle-1-landed-milestone-2026-05-13]] Bundle 1 precedent §AR.21 first-attempt validation effective post-codification (3rd consecutive validation chain link cross-chat 2026-05-13c → 2026-05-13d Bundle 3 + Bundle 3 follow-up)

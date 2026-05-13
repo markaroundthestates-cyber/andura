@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-13c
+last_updated: 2026-05-13d
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -233,3 +233,30 @@ Daniel verbatim memory rule #26 NICIODATĂ argumente quality:
 - [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13c (APPEND-only — §AR.20 + §AR.21 codification LOCKED V1 2× threshold met explicit)" (§AR.20 + §AR.21 LOCK V1 codification cross-link daniel-isms catalysator verbatim quotes)
 - [[s3-guards-bundle-1-landed-milestone-2026-05-13]] §"Verbatim quotes Daniel" Bundle 1 LANDED milestone synthesis ultra-scurt agreement mode daniel-isms aggregate
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13c" 3 slip patterns chronological cross-link push-back productive moments tone shifts framing changes chat-current
+
+---
+
+## Chat ACASĂ 2026-05-13d post Bundle 3 LANDED + follow-up (APPEND-only — NEW daniel-isms ultra-scurt agreement mode + cooperative push-back smiley)
+
+**Catalog NEW append cross-cluster chat ACASĂ 2026-05-13d — extensible NU lobotomy existing entries:**
+
+**Category A — Ultra-scurt agreement mode chat-current 2026-05-13d (3-4 cuvinte max per message Daniel-side preserved cross-chat):**
+- *"salut. acasa"* — chat NEW startup §CC.2 trigger ACASĂ AUTOMAT ultra-scurt (preserved invariant cross-chat 2026-05-13b + 2026-05-13c + 2026-05-13d reaffirm Category F existing)
+- *"latest"* — Metoda Hibridă post-LANDED Daniel trigger Claude read `📤_outbox/LATEST.md` ultimul raport CC autonomous LANDED (preserved invariant cross-chat 2026-05-13b + 2026-05-13c + 2026-05-13d reaffirm Category F existing)
+- *"handover"* — §F3.8 fast handover ingest ultra-scurt agreement mode trigger lean post Bundle 3 follow-up success milestone bandwidth ~25-30% remaining preventiv pre-saturare scribe fresh (NEW chat-current pattern preserved cross-chat 2026-05-13c "ok handover" reaffirm minimal mode)
+
+**Category B — Co-CTO tactical full delegation autonomous chat-current 2026-05-13d (Bundle 3 fork strategic):**
+- *"facem cum vrei tu dar go"* — Co-CTO tactical full delegation autonomous LOCK V1 Bundle 3 fork strategic Daniel decision NEW chat-current (cross-ref cross-chat 2026-05-13b *"asta e decizia ta nu a mea"* + 2026-05-13c *"esti cto figure it out"* preserved invariant Co-CTO autonomy paradigm)
+
+**Category C — Anti-confirmation theater cooperative push-back smiley chat-current 2026-05-13d (NEW pattern cooperative push-back NU dur):**
+- *"fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :)"* — anti-confirmation theater push-back chat-current jucauș cu smiley cooperative push-back NU dur (catalysator NEW chat-current cross-cluster cooperative push-back pattern). Mea culpa rapid scribe-side pattern aplicat: confirmation theater = slip *"facem cum vrei tu dar go"* anterior carte blanche autonomous extended → nu cer permisiune pentru cheap atomic continuations Bundle 3 follow-up
+- *"esti cto figure it out"* — Daniel autonomy lock EXTINS 2026-05-10 reaffirm cross-chat (preserved invariant chat-current Category C existing 2026-05-10 LOCK EXTINS + 2026-05-13b S2 reaffirm + 2026-05-13c S3 reaffirm + 2026-05-13d Bundle 3 reaffirm)
+
+**Pattern NEW chat-current 2026-05-13d:** Daniel chat-current 5 daniel-isms surfaced cross-chat consistent ultra-scurt agreement mode + delegation cooperative (salut. acasa + facem cum vrei tu dar go + latest + fa promptul. Si nu ma intreba la fiecare chestie daca vreau sau nu :) + handover). Tone consistent single-message Daniel preserved cross-chat 2026-05-13b + 2026-05-13c + 2026-05-13d. Anti-confirmation theater warning Daniel cu smiley jucauș (NU dur) NEW catalysator chat-current cooperative push-back pattern — aplicat instant mea culpa rapid scribe-side (NU defensive, NU auto-flagelare): *"facem cum vrei tu dar go"* anterior carte blanche autonomous extended → nu cer permisiune pentru cheap atomic continuations. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1). ZERO halucinezi triggered acest chat.
+
+**Cross-refs raw layer adițional chat-current 2026-05-13d:**
+- [[../../📥_inbox/HANDOVER_2026-05-13_chat_acasa_post_bundle_3_landed_plus_followup_stale_doc_reconcile]] §1-§5 handover narrative chat-current Bundle 3 V1 narrow + Bundle 3 follow-up LANDED + 5 daniel-isms ultra-scurt agreement mode + Co-CTO tactical full delegation + cooperative push-back smiley (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — §AR.22 candidat 1× threshold met explicit DISCRETE-BLOCKS DISCIPLINE)" (§AR.22 candidat 1× threshold met explicit cross-link daniel-isms catalysator verbatim quotes cooperative push-back smiley)
+- [[../concepts/calendar-feature-v1-spec]] frontmatter `amendments[]` 2026-05-13d Bundle 3 V1 narrow + Bundle 3 follow-up LANDED + DISCRETE-BLOCKS DISCIPLINE §AR.22 candidat 1× threshold met cross-link daniel-isms catalysator chat-current
+- [[bundle-3-cont-entry-plus-followup-landed-milestone-2026-05-13]] §"Verbatim quotes Daniel" Bundle 3 V1 narrow + follow-up LANDED milestone synthesis ultra-scurt agreement mode + cooperative push-back smiley 5 daniel-isms aggregate
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13d (APPEND-only — slip 10 chronological §AR.22 candidat 1× threshold met DISCRETE-BLOCKS DISCIPLINE)" slip pattern chronological cross-link push-back productive moments tone shifts framing changes chat-current
