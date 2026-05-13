@@ -124,7 +124,11 @@ Test additions:
 
 ## §11 Commit hash + push origin verify
 
-Pending §12 atomic commit + push origin step. Will append commit hash post-execute below.
+- Commit hash: `3ccc77a` (atomic single-concern Bundle 6.0.3)
+- Branch: `feature/v2-vanilla-port`
+- Push: `ef22eb2..3ccc77a feature/v2-vanilla-port -> feature/v2-vanilla-port` ✓
+- Pre-commit hook re-ran vitest: `Tests 3186 passed (3186)` verified pre-commit ✓
+- Files changed: 4 (src/schema/exerciseMetadata.js, src/schema/__tests__/exerciseMetadata.test.js, 📤_outbox/LATEST.md, +1112 −133; new 📤_outbox/_archive/2026-05/471_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13h_BUNDLE_6_0_1_PLUS_6_0_2_LANDED_CONSUMED.md)
 
 ## §12 ZERO src/ outside scope verify
 
