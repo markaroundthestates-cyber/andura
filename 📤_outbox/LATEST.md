@@ -1,118 +1,258 @@
-# LATEST — C4.1 Muscle Recovery Refactor Big 6 → Big 11 Canonical V1 LANDED
+# LATEST RAPORT — Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C
 
-## §0 Summary
+**Task:** PROMPT_CC 3 — Bundle 6.0.6 Specialty schema extension tactical CTO autonomous (Option C scope expand selected post Phase A audit)
+**Model:** Opus 4.7
+**Status:** ✅ **LANDED** (commit + push origin + LATEST archive cycle complete)
+**Branch:** `feature/v2-vanilla-port`
+**Date:** 2026-05-14 chat-current ACASĂ
+**Commit:** `c7cd26c` (feat(schema): Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C scope expand)
 
-**Task:** C4.1 Muscle Recovery refactor Big 6 → Big 11 canonical V1 anatomical taxonomy per ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1.md §4.1 LOCK V1 — tactical CTO autonomous CC Opus per §AR.26 LOCKED V1 + memory edit #17 LOCK invariant anti-RE rule
-**Model:** claude-opus-4-7 (Opus EXCLUSIVELY)
-**Status:** ✅ Complete
-**Branch:** feature/v2-vanilla-port
-**Commit:** `35a7a8d`
-**Date:** 2026-05-14 chat-current ACASĂ Co-CTO autonomous (P2 fork Option A tactical autonomous)
+---
 
-**Authority:** ADR_ENGINE_REFACTOR §1 frontmatter "Co-CTO autonomous tactical scope per project instructions §F3.12 (engine routing INTERNAL NU UX user-facing per Daniel verbatim 2026-05-13j Gigel-test correction)" + §AR.26 LOCKED V1 NEW 2026-05-14 + memory edit #17.
+## §1 Pre-flight (§AR.20 + §AR.21 grep evidence inline)
 
-## §1 Pre-flight
+### §1.1 Backup tag pre-execute MANDATORY ✓
 
-- ✅ Backup tag `pre-c4-1-muscle-recovery-big6-to-big11-refactor-2026-05-14` pushed origin
-- ✅ Branch verify `feature/v2-vanilla-port` HEAD `a7d6c6f` → `35a7a8d`
-- ✅ Pre-flight grep evidence §AR.20+§AR.21 inline:
-  - `DECAY_RATE_HOURS_BIG11` in ADR = **3 hits** (spec §3.2 table confirmed)
-  - `GROUP_HEAD_MAP` in ADR = **4 hits** (spec §2/§4.1 target confirmed)
-  - `muscleRecovery.js` = **132 LOC** baseline pre-refactor
-  - `muscle_target_primary` in ADR_ANATOMICAL_CLASSIFICATION_V1 = **7 hits** (canonical V1 taxonomy confirmed)
-  - Pre-existing test file = `src/engine/__tests__/muscleRecovery.test.js` exists
-- ✅ Baseline 3318 PASS / 169 test files verified pre-execute
-- ✅ HALT condition NU triggered
+```
+Tag: pre-bundle-6-0-6-specialty-2026-05-14
+Push: origin SUCCESS — rollback safety net ready
+```
 
-**⚠ Audit divergences PROMPT_CC vs actual code flagged inline (per §AR.20+§AR.21 anti-recurrence rules — followed ADR §4.1 acceptance criteria verbatim, NOT prompt template):**
-- PROMPT_CC §3 example template: `getRecoveryByGroup(group, lastSession)` returning number 0-100 via time-decay formula — **does NOT match actual code**
-- Actual signature: `getRecoveryByGroup(logs)` returns `{[group]: 'recovered'|'partial'|'fatigued'}` map
-- Actual algorithm: aggregate `getMuscleState(logs)` per-head + threshold (FATIGUED_THRESHOLD=35 / PARTIAL_THRESHOLD=12). Decay logic lives in `muscleMap.js getMuscleState()` per-head, NOT in muscleRecovery.js
-- PROMPT_CC §1 template `GROUP_HEAD_MAP_BIG11 = { piept: 'piept', ... }` (1:1 string identity) — incompatible with actual `GROUP_HEAD_MAP[group] = [muscle_head_id, ...]` shape
-- Adapted to ADR §4.1 acceptance criteria verbatim: taxonomy expansion only, ZERO algorithm mutation, muscle_heads arrays preserved per-group (split per arms→biceps+triceps+antebrate; legs→4 sub-clusters)
+### §1.2 Schema baseline pre-edit verified
 
-## §2 Vault distribution 3 src/ files
+```
+Object.keys(EXERCISE_METADATA).length = 567 (canonical authority NU grep -c sentinel slip per §AR.* slip 13l)
 
-1. ✅ **NEW** `src/engine/muscleRecoveryConstants.js` (~85 LOC) — Big 11 canonical V1 exports:
-   - `GROUP_HEAD_MAP_BIG11` — 11 canonical V1 → muscle_head IDs from muscleMap.js
-     - piept: `['chest_upper', 'chest_mid', 'chest_lower']`
-     - spate: `['lat', 'mid_trap', 'lower_back']`
-     - umeri: `['delt_front', 'delt_mid', 'delt_rear', 'rear_delt_trap']`
-     - biceps: `['bi_long', 'bi_short']` (split from arms)
-     - triceps: `['tri_long', 'tri_lateral', 'tri_medial']` (split from arms)
-     - antebrate: `[]` (no forearm heads in muscleMap V1 — placeholder)
-     - core: `[]` (preserved invariant)
-     - picioare-quads: `['quad']` (split from legs)
-     - picioare-hamstrings: `['hamstring']` (split from legs)
-     - fese: `['glute']` (split from legs)
-     - gambe: `['calf']` (split from legs)
-   - `GROUP_LABELS_RO_BIG11` — Romanian-first display labels per §4.1 (Pieptul, Spatele, Umerii, Bicepsul, Tricepsul, Antebratele, Core-ul, Quadricepsul, Hamstringii, Fesele, Gambele)
-   - `DECAY_RATE_HOURS_BIG11` — differential decay table per §3.2 research-backed (Schoenfeld 2016/2017 + Helms 2018 RP framework): antebrate 12h / biceps/triceps/gambe/core 24h / umeri 36h / piept/fese 48h / spate/picioare-quads/picioare-hamstrings 60h
-   - `BIG11_GROUPS` — ordered canonical V1 list for iteration
+Big 11 distribution baseline:
+  spate=104, umeri=94, piept=86, fese=51, picioare-quads=47, biceps=45,
+  triceps=41, picioare-hamstrings=40, gambe=33, antebrate=26, core=0 ✓
 
-2. ✅ **REFACTOR** `src/engine/muscleRecovery.js` (132 → 138 LOC):
-   - Replace inline `GROUP_HEAD_MAP` definition Big 6 → import alias from constants Big 11 (`export const GROUP_HEAD_MAP = GROUP_HEAD_MAP_BIG11`)
-   - Replace inline `GROUP_LABELS_RO` definition → re-export from constants
-   - Re-export Big 11 constants for downstream cross-engine consumption
-   - **ZERO mutation algorithm semantics** per §4.1: `FATIGUED_THRESHOLD=35`, `PARTIAL_THRESHOLD=12`, `getRecoveryByGroup(logs)` aggregate logic, `daysSinceGroup(logs, group)` algorithm, `getLaggingMuscles(profile)` ratio-based detection — all preserved invariant pure-function discipline ADR-026 §9
-   - Header comment updated Big 6 → Big 11 canonical V1 + cross-link ADR §4.1
+Cascade ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 fallback_cascade refs: 13 (≥3 expected) ✓
 
-3. ✅ **UPDATE TESTS** `src/engine/__tests__/muscleRecovery.test.js` (130 → 251 LOC):
-   - Existing 11 tests migrated Big 6 keys → Big 11 keys (chest → piept; shoulders → umeri)
-   - **+15 NEW Big 11 tests** in new `describe('Big 11 canonical V1 anatomical taxonomy')` block:
-     - GROUP_HEAD_MAP_BIG11 11 canonical V1 entries
-     - GROUP_HEAD_MAP_BIG11 all 11 categories present
-     - GROUP_LABELS_RO_BIG11 Romanian label per group
-     - DECAY_RATE_HOURS_BIG11 differential per cluster research-backed §3.2 (11 assertions)
-     - BIG11_GROUPS ordered iteration (piept→gambe)
-     - GROUP_HEAD_MAP backwards-compat alias = Big 11 forward
-     - arms cluster split into biceps + triceps + antebrate per §4.1
-     - legs cluster split into picioare-quads + picioare-hamstrings + fese + gambe per §4.1
-     - piept/spate/umeri preserved muscle heads identical from Big 6
-     - antebrate + core empty-heads behave as recovered
-     - antebrate daysSinceGroup returns null (empty heads V1)
-     - split: arms heavy session marks biceps OR triceps fatigued not both
-     - split: legs heavy session distinguishes picioare-quads vs picioare-hamstrings
-     - lagging detection considers Big 11 active groups (not Big 6 aggregation)
-     - lagging detection emits Romanian Big 11 label
+Tests baseline: 3333 PASS / 169 test files
+Branch: feature/v2-vanilla-port — synced origin + clean working tree (src/ scope)
+```
 
-## §3 Build + Tests
+### §1.3 Phase A grep audit findings → Daniel decision
 
-- vitest final: **3333 PASS / 0 FAIL / 169 test files** (3318 baseline + 15 NEW Big 11 tests = +15 net delta)
-- Test suite duration: ~27.87s
-- Cross-cluster integrity: ZERO regression all 169 test files (pre-existing 11 muscleRecovery tests migrated + 18 idle.test.js tests pass without modification)
-- Pre-commit vitest hook: PASS ✓ (no `--no-verify` bypass used)
-- HARD CONSTRAINTS §F3.12 strict scope: src/engine/ only (3 files); ZERO other src/ touched
+PROMPT_CC §1.1 estimate ~35-50 NEW reduced post-grep to **~14-15 truly missing genuine** (rest duplicate existing 567 entries OR §10 core BLOCKED Bundle 6.0.7 reserved). Anti-recurrence rule per memory `feedback_grep_before_prompt_cc.md` triggered HALT pre-Phase B execute + Daniel scope decision.
 
-## §4 Commits
+**Daniel chose Option C scope expand:** combine 14 §1.1 themes + 19 NEW themes research-backed (Trap Bar + Kettlebell + SSB + Cambered Bar + Olympic derivatives + Forearms specialty) = **33 NEW total**.
 
-- `35a7a8d` feat(engine): C4.1 Muscle Recovery refactor Big 6 → Big 11 canonical V1 anatomical taxonomy per ADR_ENGINE_REFACTOR §4.1 LOCK V1 (3 files changed, 264 insertions, 42 deletions; +85 LOC constants new file + +6 LOC muscleRecovery refactor + +121 LOC tests Big 11)
+**Phase A spec discovery:** archived `📤_outbox/_archive/2026-05/500_BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A_CONSUMED.md`.
 
-## §5 Pushed
+---
 
-✅ origin feature/v2-vanilla-port (`a7d6c6f..35a7a8d`)
+## §2 Modificări (src/ scope strict)
 
-## §6 Cumulative count
+### §2.1 Files modificate
 
-- **C4.1 Muscle Recovery refactor Big 6 → Big 11 LANDED** — first C4 phase complete per ADR §4 roadmap cap-coadă (8 phases C4.1 → C4.8 sequential)
-- Tests cumulative **3318 → 3333 PASS** preserved EXACT (+15 NEW Big 11 tests; ZERO regression)
-- Big 11 canonical V1 taxonomy LANDED engine-side cross-link ADR_ANATOMICAL_CLASSIFICATION_V1 §2 (schema field `muscle_target_primary` taxonomy now matches engine taxonomy invariant)
-- Big 6 backwards-compat alias preserved (`GROUP_HEAD_MAP = GROUP_HEAD_MAP_BIG11`) — import path unchanged for downstream consumers
-- Cumulative ~745 LOCKED V1 preserved invariant (NU additive — refactor implementation NU NEW LOCK V1)
-- Schema library 567/657 = 86.3% preserved invariant cumulative (Bundle 6.0.5 Arms Phase A-G LANDED earlier)
+```
+M  src/schema/exerciseMetadata.js        (+265 LOC: Bundle 6.0.6 block 33 NEW + 8 sub-batch comments)
+M  src/schema/__tests__/exerciseMetadata.test.js  (+248 LOC: Bundle 6.0.6 explicit invariant tests)
 
-## §7 Next Action
+Total diff: 2 files, 513 insertions(+), 0 deletions(-)
+HARD CONSTRAINT §F3.12 strict ZERO mutation existing 567 entries → preserved invariant ✓
+```
 
-**P3 deferred fork tactical (Co-CTO autonomy MAXIMUM per §AR.26 LOCKED V1):**
+### §2.2 Sub-batch breakdown 33 NEW entries
 
-- **Option A — C4.2 Weakness Detector refactor PROMPT_CC** tactical CTO autonomous CC Opus (orthogonal foundational parallel-safe vs C4.1 dependency — per ADR §4.2 acceptance criteria: `src/engine/weaknessDetector.js` muscle inference regex expand: biceps/triceps preserved, NEW antebrate inference `/wrist|forearm|grip|farmer/i` + NEW fese inference `/hip thrust|glute|sumo|bulgarian/i`)
+| Sub-batch | Theme | NEW count | Distribution |
+|---|---|---|---|
+| 1 | Hammer Strength Plate-Loaded Chest Press | 4 | piept (4) |
+| 2 | Smith Machine Specialty | 5 | picioare-quads (3) + spate (2) |
+| 3 | Plate-Loaded + Cable Kickback | 2 | picioare-quads (1) + triceps (1) |
+| 4 | Specialty Isolation | 3 | biceps (2) + antebrate (1) |
+| 5 | Trap Bar + Kettlebell | 7 | spate (2) + picioare-hamstrings (2) + picioare-quads (1) + umeri (1) + antebrate (1) |
+| 6 | SSB + Cambered Bar Specialty Barbells | 5 | picioare-quads (3) + picioare-hamstrings (2) |
+| 7 | Olympic Lift Derivatives | 3 | spate (2) + umeri (1) |
+| 8 | Forearms Specialty | 4 | antebrate (4) |
+| **TOTAL** | | **33** | |
 
-- **Option B — C4.3 Periodization refactor** dep C4.1 (per ADR §4.3 — Hybrid Big 6 cluster phase + Big 11 weight allocation per session within cluster — backwards compatible templates preserved)
+### §2.3 NEW entries roster authoritative (33 entries cataloged în test file §2)
 
-- **Option C — Bundle 6.0.6 Specialty / next library extension** autonomous CC Opus (567/657 → ~600-617/657 cumulative; orthogonal scope safe — engine src/ vs schema src/ separate file edits)
+```
+Sub-batch 1 (4): Hammer Strength Incline Press, Hammer Strength Decline Press, Hammer Strength Flat Press, Hammer Strength Iso-Lateral Bench Press
+Sub-batch 2 (5): Smith Split Squat, Smith Bulgarian Split Squat, Smith Bent-Over Row, Smith Reverse Lunge, Smith Inverted Row
+Sub-batch 3 (2): Vertical Hack Squat, Cable Triceps Kickback Single-Arm
+Sub-batch 4 (3): Cable Preacher Curl, Reverse-Grip Preacher Curl, Spider Curl Cable
+Sub-batch 5 (7): Trap Bar Row, Trap Bar RDL, Kettlebell Goblet Squat, Kettlebell Single-Arm Press, Kettlebell Single-Arm Row, Kettlebell Romanian Deadlift, Kettlebell Front Rack Carry
+Sub-batch 6 (5): SSB Squat, SSB Good Morning, SSB Lunge, Cambered Bar Squat, Cambered Bar RDL
+Sub-batch 7 (3): Power Clean, Hang Clean, Push Jerk
+Sub-batch 8 (4): Fat Grip Hold, Fat Grip Barbell Curl, Hammer Holds, Wrist Extension Cable Standing
+```
 
-- **Recommended:** C4.2 next (orthogonal foundational independent of C4.1 algorithm — can parallel-safe alongside Bundle 6.0.6 in separate CC terminals disjoint scope per §AR.26 LOCKED V1 tactical CTO autonomous default)
+---
 
-**Daniel Awareness:** ARTEFACT 3 Bundle 6.0.6 Specialty NU LANDED yet — if Daniel parallel-launched in second CC terminal disjoint scope, that commit independent; current ARTEFACT 2 commits standalone clean.
+## §3 Build + Tests (zero regression)
 
-🦫 **Bugatti single-concern atomic clean C4.1 Muscle Recovery refactor Big 6 → Big 11 tactical CTO autonomous per §AR.26 LOCKED V1 + memory edit #17 LOCK invariant anti-RE rule. ZERO mutation algorithm semantics per §4.1 acceptance criteria. Pure-function discipline ADR-026 §9 invariant preserved. Tests baseline 3318 → 3333 PASS preserved EXACT cross-bundle ZERO regression. PROMPT_CC template divergence flagged inline §1 — followed ADR §4.1 verbatim per §AR.20+§AR.21 anti-recurrence rules.**
+### §3.1 Vite production build ✓
+
+```
+> npm run build
+✓ 421 modules transformed
+✓ built in 3.61s
+Note: Pre-existing dynamic import warning (src/ui/nav.js — NU regression introduced de Bundle 6.0.6)
+```
+
+### §3.2 Vitest full test suite ✓
+
+```
+> npm run test:run
+Test Files  169 passed (169)
+     Tests  3356 passed (3356)
+  Duration  27.64s
+
+Delta: 3333 → 3356 (+23 NEW Bundle 6.0.6 explicit invariant tests). ZERO regression.
+```
+
+### §3.3 Bundle 6.0.6 tests added (15 explicit `it(...)` + 8 sub-batch verifications)
+
+- §1 cumulative count ≥ 600 (lenient anti-brittle 2× threshold preserved per §AR.* slip 13i)
+- §2 NEW 33 entries roster + cascade populated
+- §3 muscle_target_primary canonical V1 11 categorii enforce
+- §4 Bundle 6.0.7 Core reserved invariant (HARD CONSTRAINT §10) — ZERO core primary + ZERO core secondary
+- §5 fallback_cascade step types canonical 5 types valid
+- §6 muscle_group_compose 1-2 exercise_ids LOCK invariant
+- §7 cascade self-reference rejection invariant
+- §8 cascade refs resolve ≥70% lenient threshold (§20 ADR v2 LOCK V2)
+- §9 tier distribution Tier 1+2+3 all present
+- §10 force_demand high+medium+low all present
+- §11 equipment_type canonical 6 valid
+- §12 existing entries preserved invariant ZERO mutation (HARD CONSTRAINT §F3.12 strict — sentinel checks 8 entries cross-bundle)
+- §13 Sub-batch 1-8 cluster verifications muscle_target_primary distribution
+- §14 cumulative invariants Pre-Beta scope library 600 floor achieved
+- §15 cumulative core canonical V1 = 0 invariant preserved
+
+### §3.4 Bundle 6.0.6 cascade verification
+
+```
+198/198 cascade refs resolved = 100% ✓ (≥70% lenient §20 threshold exceeded by 30pp)
+ZERO unresolved refs across all 33 NEW entries × 6 cascade steps each
+```
+
+---
+
+## §4 Distribution growth Big 11 post Bundle 6.0.6
+
+| Categorie | Pre Bundle 6.0.6 | Post Bundle 6.0.6 | Delta |
+|---|---|---|---|
+| spate | 104 | 110 | +6 |
+| umeri | 94 | 96 | +2 |
+| piept | 86 | 90 | +4 |
+| fese | 51 | 51 | 0 |
+| picioare-quads | 47 | 55 | +8 |
+| biceps | 45 | 47 | +2 |
+| triceps | 41 | 42 | +1 |
+| picioare-hamstrings | 40 | 44 | +4 |
+| gambe | 33 | 33 | 0 |
+| antebrate | 26 | 32 | +6 |
+| **core** | **0** | **0** | **0 (Bundle 6.0.7 reserved invariant ✓)** |
+| **TOTAL** | **567** | **600** | **+33** |
+
+---
+
+## §5 Commit + Pushed
+
+### §5.1 Commit atomic single-concern ✓
+
+```
+Commit: c7cd26c
+Title:  feat(schema): Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C scope expand
+Body:   ~50 LOC structured (sub-batch breakdown + cascade resolution + tests delta + HARD CONSTRAINTS preserved)
+Stats:  2 files changed, 513 insertions(+), 0 deletions(-)
+Husky pre-commit: vitest 3356 PASS / 169 files ZERO regression ✓
+```
+
+### §5.2 Pushed origin ✓
+
+```
+> git push origin feature/v2-vanilla-port
+   15822a7..c7cd26c  feature/v2-vanilla-port -> feature/v2-vanilla-port
+```
+
+### §5.3 LATEST archive cycle ✓
+
+```
+ARCHIVED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/499_LATEST_PREVIOUS_AR26_AR27_DRIFT_FIX_APPLY_CONSUMED.md
+ARCHIVED: 📥_inbox/BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A.md → 📤_outbox/_archive/2026-05/500_BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A_CONSUMED.md (per §AR.17 unified inbox cleanup workflow)
+NEW LATEST: this file (📤_outbox/LATEST.md)
+```
+
+---
+
+## §6 Cumulative schema state + Pre-Beta progress
+
+### §6.1 Schema cumulative count
+
+```
+567 → 600 (+33 NEW Bundle 6.0.6)
+Pre-Beta scope library 600-700 floor minim ACHIEVED ✓ (per Daniel CEO directive 2026-05-13f LOCK V1 preserved invariant)
+```
+
+### §6.2 Pre-Beta progress
+
+```
+86.3% → ~89.0% (+2.7pp single Bundle)
+Bundle 6.0.7 Core reserved (~60 NEW estimate) → cumulative ~660 = 700 cap headroom +40 buffer
+```
+
+### §6.3 Cascade ADR_SMART_ROUTING_EQUIPMENT_v2 LOCK V2 §2.1 status
+
+```
+Bundle 6.0.6: 198/198 = 100% resolved
+Cumulative cross-bundle: ≥70% lenient threshold preserved per §20 ADR v2 LOCK V2
+Engine algorithm v2 §3 traversal ready (undefined → fallback v1 graceful degradation per ADR 025 principle)
+```
+
+---
+
+## §7 Issues / observations (Bugatti craft transparency)
+
+### §7.1 PROMPT_CC §1.1 spec stale grep (slip pattern recidivă chat-current 4th cumulative)
+
+PROMPT_CC §1.1 estimated ~35-50 NEW. Real grep audit găsit ~14-15 NEW genuine. Reason: bundles 6.0.1-6.0.5 already include extensive specialty coverage (8× Hammer Strength + 25× Smith Machine + 17× Hip Thrust + 11× Lat Pulldown + 9× Inverted Row + 4× Preacher Curl + 3× Spider Curl + 4× Concentration Curl + 17× Triceps Extension + 6× Cable Triceps Pushdown + 7× Face Pull + 5× Tibialis Raise variants). Author PROMPT_CC likely viewed pre-6.0.5 schema state.
+
+**Resolution:** Co-CTO Phase A audit-first peste blind-execute discipline triggered HALT + Daniel decision. memory `feedback_grep_before_prompt_cc.md` invariant preserved (anti-recurrence saved 198 cascade refs from unresolved + ZERO duplicate entries from §F3.12 strict violation).
+
+### §7.2 Inbox state pre-execute observation
+
+`📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` present (NU planted by Bundle 6.0.6 task — likely preexisting from prior wiki-ingest session or parallel CC processing). NU touched (disjoint scope).
+
+### §7.3 ZERO regression confirmed
+
+```
+Tests: 3333 → 3356 (+23 NEW, 100% PASS)
+Build: vite production clean 3.61s
+Cascade refs: 198/198 = 100% resolved Bundle 6.0.6
+Existing 567 entries: ZERO mutation per HARD CONSTRAINT §F3.12 strict (sentinel test §12)
+Core entries: ZERO across all bundles (HARD CONSTRAINT §10 Bundle 6.0.7 reserved preserved)
+```
+
+---
+
+## §8 Next action (per Path Forward §5)
+
+### §8.1 Bundle 6.0.7 Core (~60 NEW reserved)
+
+Schema 600 → ~660 cumulative target. Cluster expected:
+- Plank variants (front/side/RKC plank)
+- Anti-rotation (Pallof Press standing/kneeling, Cable Woodchop high-low/low-high)
+- Anti-extension (Dead Bug, Bird Dog, Hollow Hold)
+- Loaded carries (already partially în antebrate — KB Front Rack Carry)
+- Direct rotational (Cable Russian Twist, Med Ball Slam)
+- Hanging core (Hanging Leg Raise, Toes-to-Bar, Knee Raise)
+- Decline + Roman chair sit-up (legacy direct flexion)
+- Stir the Pot (Swiss ball anti-rotation)
+
+### §8.2 Bundle 6.1 Cascade Populate Downstream
+
+ADR v2 §3 algorithm traversal cu cascade populated all 600 entries → engine smart-routing v2 LOCK V2 production ready.
+
+### §8.3 Daniel Path Forward §5 alignment per /wiki-ingest summary handover most-recent
+
+Per §AR.27 LOCKED V1 pre-action drift detection: cross-check cumulative invariants vs Path Forward §5 wording. Drift status: **ZERO** (Bundle 6.0.6 tactical scope schema additive aligned cu §AR.26 LOCKED V1 Co-CTO autonomy MAXIMUM tactical + scope library 600-700 LOCK V1 strategy + memory edit #17 invariant anti-RE rule).
+
+---
+
+🦫 **Bugatti craft. Bundle 6.0.6 Specialty +33 NEW LANDED. Schema 600 floor minim achieved exact. Co-CTO autonomous Option C scope expand. Phase A audit-first peste blind-execute. Grep-before-PROMPT discipline preserved. ZERO regression / ZERO mutation / ZERO core / 100% cascade resolution. Tactical CTO §AR.26 LOCKED V1 + §AR.27 LOCKED V1 drift detection ZERO + memory edit #17 invariant anti-RE rule preserved.**
