@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-14-chat-current-post-evening
+last_updated: 2026-05-15
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -692,3 +692,39 @@ Categorii NEW chat-current 1 push-back productive moment cooperative anti-haluci
 - [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-14-chat-current-post-evening §F3.8 metoda hibridă FULL paradigm preserved 2× threshold MET EXPLICIT cross-chat
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-14 chat-current post-evening" 2 NEW slip patterns chat-current ACASĂ post-evening (slip 22A C4.1 strategic-as-tactical Co-CTO inherited din wiki text stale + slip 22B Handover via courier metoda hibridă FULL §F3.8 supersede partial 2× threshold cross-chat)
 - [[handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] amendments[] 2026-05-14-chat-current-post-evening 3 body drift hits §3a retro-scan auto-patched inline same atomic /wiki-ingest commit per §AR.27 LOCKED V1 NEW mechanism activate
+
+## §"Chat ACASĂ 2026-05-15 chat-current post-midnight Bundle 6.0.7 + C4.2 + C4.3 Triple-LANDED"
+
+**7 NEW daniel-isms Categorii CF-CL chat-current ACASĂ post-midnight cumulative cross-chat preserved EXACT (Categorii extends BY-CE cumulative chat ACASĂ post-evening + extends BS-BX cumulative cross-chat 14 evening + extends BD-BR cumulative cross-chat 14 birou):**
+
+**Category CF — Trigger §CC.2 startup automatic recovery #0:**
+- *"salut. acasa"* — chat NEW startup §CC.2 trigger automatic chat-current 2026-05-15 ACASĂ post-midnight (ultra-scurt direct + Co-CTO autonomy MAX directive implicit + §CC.2 sequence layered read mandatory MCP/Obsidian filesystem PRIMARY trigger)
+
+**Category CG — Co-CTO lead delegation post-LATEST upload review:**
+- *"ce urmeaza?"* — Co-CTO lead delegation post-LATEST upload review chat-current 2026-05-15 ACASĂ post-midnight (autonomy MAX cooperative + Daniel cere lead crisp tactical decision NU lista de options)
+
+**Category CH — Cooperative veto exercice paradigm shift handover trigger timing CEO authority:**
+- *"Altceva — îți zic eu"* — cooperative veto exercice chat-current 2026-05-15 ACASĂ post-midnight (Daniel exercised explicit veto on Co-CTO recommended pacing options A/B/C parallel/single cooperative firm + autonomy MAX paradigm shift handover trigger pe Daniel timing CEO authority NU autonomous Claude chat)
+
+**Category CI — Autonomy reaffirm post-veto signal acknowledgment:**
+- *"te ascult"* — autonomy reaffirm post-veto chat-current 2026-05-15 ACASĂ post-midnight (short signal acknowledgment + waiting pentru direcție explicită Daniel post veto exercised)
+
+**Category CJ — Efficiency directive override Claude default 2-PROMPT_CC pattern:**
+- *"genereaza 1 prompt pt amandoua"* — efficiency directive override Claude default pattern chat-current 2026-05-15 ACASĂ post-midnight (Daniel-stil cooperative pragmatic override Claude chat default 2-PROMPT_CC pattern per memory edit "Separate artefacts per task task_1.md…task_N.md" — efficiency directive accepted Co-CTO instant standard fără defensiveness aux + slip 23B scribe-mode marked re-evaluate per task complexity)
+
+**Category CK — Autonomy MAX + handover timing CEO authority directive verbatim 10th consecutive:**
+- *"iti zic eu cand e handover de facut. continua"* — Co-CTO autonomy MAXIMUM 10th consecutive cross-chat directive verbatim reinforce pattern + handover timing decision CEO authority preserved invariant chat-current 2026-05-15 ACASĂ post-midnight (Daniel decide signal trigger NU autonomous Claude chat suggest handover spontan mid-chat)
+
+**Category CL — Handover trigger §F3.8 variant explicit metoda hibridă FULL §AR.28 candidate 3× threshold:**
+- *"handover ca artefact cu comanda cc separat te rog"* — paradigm shift handover delivery NEW pattern explicit variant chat-current 2026-05-15 ACASĂ post-midnight (3× consecutive cross-chat 14-evening single wrapper PART 1+PART 2 + chat ACASĂ post-evening single wrapper PART 1+PART 2 + chat-current ACASĂ post-midnight 2 artefacte separate handover narrative + comandă CC distincte = §AR.28 codify formal LOCKED V1 justified next /wiki-ingest Daniel review explicit chat NEW per §AR.27 LOCKED V1 NEW structural preventive mechanism)
+
+**Pattern NEW chat-current 2026-05-15 ACASĂ post-midnight:** Daniel chat-current ACASĂ post-midnight 7 NEW daniel-isms surfaced triple-LANDED Bundle 6.0.7 Core +57 NEW LANDED `739a753` + C4.2 Weakness Detector LANDED `a35d362` + C4.3 Periodization LANDED `4ed3c2f` + library 657/657 = 100% gate ACHIEVED + Big 11 engine layer 3/8 phases cap-coadă cumulative cross-chat post-evening + post-midnight + §AR.28 candidate 3× threshold MET EXPLICIT cross-chat scribe-mode marked codify formal LOCKED V1 justified next /wiki-ingest Daniel review explicit chat NEW + Co-CTO autonomy MAXIMUM 10th consecutive cross-chat directive verbatim trust delegation MAXIMUM. Categorii CF-CL chat-current ACASĂ post-midnight cumulative (extends Categorii BY-CE chat ACASĂ post-evening cumulative + extends Categorii BS-BX evening cumulative cross-chat + extends Categorii BD-BR cumulative 14 birou + extends Categorii AU-BC cumulative 13k cumulative cross-chat). Tone cooperative push-back productive direct NU dur, recovery instant fără defensiveness aux Co-CTO standard preserved invariant cross-chat 2026-05-13b → 2026-05-15 ACASĂ post-midnight consistent crescente trust delegation MAXIMUM 10th consecutive. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1).
+
+**Cross-refs raw layer adițional chat-current 2026-05-15 ACASĂ post-midnight:**
+- [[../../📥_inbox/HANDOVER_2026-05-15_TRIPLE_LANDED_BUNDLE_6_0_7_PLUS_C4_2_PLUS_C4_3]] narrative source artefact separate Daniel courier metoda hibridă FULL paradigm 3× threshold chat-current ACASĂ post-midnight — handover narrative source verbatim daniel-isms catalog cross-cluster chat-current ACASĂ post-midnight ~110 LOC scribe flow conversational
+- [[handover-2026-05-15-chat-acasa-post-midnight-triple-landed-bundle-6-0-7-plus-c4-2-plus-c4-3]] §2 Verbatim Quotes Daniel Chat-Current ACASĂ Post-Midnight milestone synthesis 7 NEW daniel-isms preserved EXACT Romanian chat-current ACASĂ post-midnight cross-link
+- [[../concepts/anti-recurrence-rules]] amendments[] 2026-05-15 §AR.28 candidate 3× threshold MET EXPLICIT cross-chat codify formal LOCKED V1 justified Daniel review explicit chat NEW
+- [[../concepts/autonomy-paradigm-v1]] amendments[] 2026-05-15 Co-CTO autonomy MAXIMUM 10th consecutive cross-chat directive verbatim trust delegation MAXIMUM
+- [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-15 §F3.13 23rd + 24th + 25th consecutive validation effective + §F3.8 metoda hibridă FULL paradigm 3× threshold MET EXPLICIT cross-chat
+- [[../concepts/pre-beta-full-scope-lock-v2]] amendments[] 2026-05-15 library 657/657 = 100% gate ACHIEVED + Big 11 engine layer 3/8 phases cap-coadă
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-15 chat ACASĂ post-midnight" 2 NEW slip patterns chat-current ACASĂ post-midnight (slip 23A C4.2 regex word order discipline + slip 23B 1 vs N PROMPT_CC default bias)
