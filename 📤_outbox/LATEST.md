@@ -1,103 +1,103 @@
-# LATEST — /wiki-ingest handover 2026-05-14 evening Bugatti Full Audit LOCK V1 NEW LANDED
+# LATEST — PROMOTE §AR.26 + §AR.27 formal LOCKED V1 + Structural Preventive Mechanism LANDED
 
 ## §0 Summary
 
-**Task:** /wiki-ingest handover narrative chat ACASĂ 2026-05-14 evening — Bugatti Full Audit pre-Launch LOCK V1 NEW + 2 Co-CTO halucinații recovery (Catastrofizare §OPEN fabricated debunked + C4 strategic-as-tactical 4× cross-chat) + procent library-only reframe + 2 artefacte mega LANDED
-**Model:** claude-opus-4-7 (Opus EXCLUSIVELY per Daniel directive)
+**Task:** PROMOTE §AR.26 + §AR.27 formal LOCKED V1 + amend HANDOVER_VERIFICATION_CHECKLIST §3a retro-scan + VAULT_RULES §F3.8 amendment + CLAUDE.md §CC.2 step 6 pre-action drift detection (structural preventive mechanism per Daniel CEO directive)
+**Model:** claude-opus-4-7 (Opus EXCLUSIVELY per Daniel directive cumulative cross-chat)
 **Status:** ✅ Complete
 **Branch:** feature/v2-vanilla-port
-**Commit:** `453d155`
-**Date:** 2026-05-14 evening Co-CTO autonomous via metoda hibridă FULL paradigm (single wrapper file Daniel courier)
+**Commit:** `e6a941a`
+**Date:** 2026-05-14 chat-current ACASĂ Co-CTO autonomous
+
+**Authority:** Daniel CEO directive verbatim chat-current ACASĂ *"vreau sa modifici si tot ce trebuie sa nu se mai intample cand iau o decizie sa o mai iau de 10 ori pt ca nu o vezi tu real time. Auto update la ce trebuie la fiecare handover te rog"* — structural fix mechanism preventive permanent NU specific instance.
 
 ## §1 Pre-flight
 
-- ✅ Backup tag `pre-wiki-ingest-handover-2026-05-14-evening-bugatti-full-audit-lock` pushed origin (rollback safety net §AR.* + §CC.7 invariant)
-- ✅ Branch verify `feature/v2-vanilla-port` HEAD matches origin pre-execute
-- ✅ Precedent LATEST.md archived to `📤_outbox/_archive/2026-05/494_LATEST_PREVIOUS_BUNDLE_6_0_5_ARMS_PLUS_ADR_ENGINE_REFACTOR_CONSUMED.md`
+- ✅ Backup tag `pre-ar26-ar27-promote-formal-locked-v1-2026-05-14-chat-current` pushed origin (rollback safety net §AR.PRE_FLIGHT item 1)
+- ✅ Branch verify `feature/v2-vanilla-port` HEAD matches origin pre-execute (`7ef411c` → `e6a941a`)
+- ✅ Precedent `LATEST.md` archived `📤_outbox/_archive/2026-05/496_LATEST_PREVIOUS_WIKI_INGEST_2026_05_14_EVENING_CONSUMED.md`
 - ✅ Pre-flight grep evidence §AR.20+§AR.21 inline:
-  - `grep -c "Catastrofizare SCRAP V1" 03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1.md` = **2** (≥1 expected — LOCK V1 zero amendments status confirmed)
-  - `grep -c "muscle_target_primary" 03-decisions/ADR_ANATOMICAL_CLASSIFICATION_V1.md` = **7** (≥5 expected — 11 categorii canonical V1 taxonomy confirmed)
-  - `ls wiki/concepts/bugatti-craft.md` = exists confirmed
-- ✅ Baseline tests 3318 PASS / 169 test files verified pre-execute (Bundle 6.0.5 Arms +38 NEW LANDED earlier chat-current evening commit chain `281bfe2` → `ef678c2` 8 atomic single-concern Bugatti)
-- ✅ Inbox handover source identified: `📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_EVENING.md` (single wrapper PART 1 narrative + PART 2 prompt CC — metoda hibridă FULL paradigm shift chat-current evening explicit variant Daniel directive)
+  - `grep -E "^- §AR\.[0-9]+" wiki/concepts/anti-recurrence-rules.md | wc -l` = **19** (expected 19 — pre-update Synthesis listing static §AR.1-§AR.19 confirmed)
+  - `grep -c "§AR.24 LOCKED V1" wiki/concepts/anti-recurrence-rules.md` = **9** (≥3 expected — multiple amendment cross-refs confirmed)
+  - `grep -c "§AR.25 candidate" wiki/concepts/anti-recurrence-rules.md` = **2** (≥1 expected — scribe-mode marked Pre-handover triage pending Daniel review confirmed)
+  - `grep -n "§F3.8" VAULT_RULES.md` = line **1198** §F3.8 — Chat-to-Chat Handover Workflow Karpathy Real section confirmed
+  - `grep -n "§CC.2" CLAUDE.md` = line **354** §6.1 — §CC.2 Chat NEW Startup REDESIGNED section confirmed
+  - `grep -c "tactical CTO autonomous|Co-CTO autonomous tactical" 03-decisions/ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1.md` = **4** (≥1 expected — cross-ref §AR.26 context tactical CTO autonomous scope explicit confirmed)
+- ✅ HALT condition NU triggered (toate expected counts match)
 
-## §2 Wiki distribution 11 pages (1 NEW concept + 1 NEW summary + 7 UPDATE existing + 2 NEW outbox archives)
+## §2 Vault distribution 4 files modified
 
-**1 NEW concept (voice §1 4-section enforced PASS):**
-1. ✅ `wiki/concepts/bugatti-audit-nuclear-pre-launch.md` — LOCK V1 chat-current evening Bugatti Full Audit pre-Launch directive Daniel CEO verbatim ultra-explicit acceptance criteria peak craft. Voice §1: §1 Synthesis sequencing P5 final pre-Launch + acceptance criteria peak craft no time-bound *"Poate sa dureze 20000 ore, I don't care"* + §2 Verbatim quotes Daniel 2 EXACT (initiation cooperative + clarify scope re-LOCK ultra-explicit) + §3 Bugatti framing notes 5 sub-sections (Quality > Speed + Anti-acoperiș-pereți GATE FINAL NU intermediar + Anti-RE latest commit + Anti-paternalism Daniel decide + Voice tone peak ambition) + §4 Cross-refs raw layer 13 specific path:§ pointers.
+1. ✅ `wiki/concepts/anti-recurrence-rules.md` — frontmatter `amendments[]` APPEND NEW entry `2026-05-14-chat-current` cu §AR.26 + §AR.27 PROMOTE formal LOCKED V1 codify justification + cross-link memory edit #17 invariant + Daniel verbatim catalysator + verification mechanism + extension cap-coadă §AR.24 candidate generalize cross-chat scope. Synthesis section `**§AR.* current rules (19):**` → `**§AR.* current rules (27 + §AR.25 candidate pending):**` + APPEND list §AR.20-§AR.27 expand:
+   - §AR.20 PROMPT_CC src/ reference verify ADR + mockup primary citation MANDATORY ÎNAINTE write
+   - §AR.21 Prompts citing §AR.20 mandatory grep MUST embed grep output snippets verbatim as inline evidence
+   - §AR.22 DISCRETE-BLOCKS DISCIPLINE LOCKED V1 fully validated 7× threshold
+   - §AR.23 Cooperative push-back smiley `:)` / `:))` pattern catalysator
+   - §AR.24 Post-handover raw layer LOCK Co-CTO autonomous follow-up wiki drift fix patch
+   - §AR.25 candidate scribe-mode marked Pre-handover triage YES/MAYBE/NO inventory cooperative pattern (Daniel review pending)
+   - **§AR.26 NEW LOCKED V1** Strategic-as-Tactical confusion (engine routing INTERNAL = tactical CTO autonomous NU strategic CEO chat dedicat)
+   - **§AR.27 NEW LOCKED V1** Auto-update wiki layer cumulative la fiecare handover preventive drift fix mechanism
 
-**1 NEW summary (voice §1 4-section + §5 Path Forward + §6 Bandwidth enforced PASS):**
-2. ✅ `wiki/summaries/handover-2026-05-14-evening-bugatti-full-audit-lock-plus-2-co-cto-halucinatii-recovery.md` — LOCKED V1 NEW handover Chat ACASĂ 2026-05-14 evening synthesis chat-current evening LOCK V1 NEW + 2 Co-CTO halucinații recovery + procent reframe + 2 artefacte mega. Voice §1: §1 Synthesis cu §CC.2 startup + 2 drift recovery + LOCK V1 NEW majoră + procent reframe + 2 artefacte LANDED + §2 Verbatim Quotes Daniel 6 EXACT preserved + cross-chat preserved + §3 Bugatti framing notes 5 sub-sections complete + §4 Cross-refs raw layer 15 specific path:§ pointers + §5 Path Forward P1-P5 cumulative + §6 Bandwidth + Co-CTO autonomy MAXIMUM 8th consecutive cross-chat directive.
+2. ✅ `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` — NEW §3a section inserted between §3 Wiki Distribution + §4 Wiki Index + Log Updates. 6-step retro-scan drift fix cumulative cross-chat mechanism mandatory per §AR.27:
+   - Step 1: Identify last 3 handover summaries chronological via wiki/log.md head 50 filter `^## \[` entries
+   - Step 2: Retro-scan Path Forward §5 + analog forward-looking sections (§C4 / §C5 / §OPEN / §NEXT / §PENDING / §DEFERRED) vs cumulative memory edits + wiki/log.md last 5 entries + NEW §AR.* PROMOTE + NEW ADR raw layer
+   - Step 3: Drift detection patterns (strategic-chat-dedicat pe engine routing INTERNAL = §AR.26 violation; §OPEN pending pe LOCKED V1 zero amendments = §AR.27 violation; post-Beta v1.5 defer pe LOCK 1 = drift invalidated; DRAFT pending pe LOCK V1 LANDED Co-CTO autonomous = §AR.24→§AR.27 extension; forward-looking sequencing tactical CTO scope mistagged)
+   - Step 4: Auto-patch drift inline SAME atomic commit (str_replace verbatim + frontmatter amendments[] APPEND retro-fix entry)
+   - Step 5: Output drift hits count + paths + before→after wording verbatim in LATEST.md §3a section
+   - Step 6: HALT condition drift hits >10 = flag escalate Daniel review explicit (NU partial auto-patch silent)
+   - Cross-link §AR.24 candidate cap-coadă extension permanent
 
-**7 UPDATE existing pages (amendments[] APPEND entry 2026-05-14-evening):**
-3. ✅ `wiki/concepts/bugatti-craft.md` — Bugatti Full Audit pre-Launch LOCK V1 NEW cumulative cu LOCK 1 + LOCK 2 + Bugatti FULL QUALITY no EXCUSES 13j preserved invariant cross-chat 2026-05-13j → 14 birou → 14 evening crescente + last_updated 2026-05-14
-4. ✅ `wiki/concepts/pre-beta-full-scope-lock-v2.md` — cumulative cu Bugatti Full Audit GATE FINAL pre-Beta integration cross-link sequencing P5 final
-5. ✅ `wiki/concepts/anti-recurrence-rules.md` — 3 NEW §AR.* candidates scribe-mode marked + 1 BONUS §F3.8 supersede partial (Co-CTO fabricated §OPEN flag formal cleanup-pass halucinație 1× + Strategic-as-Tactical confusion 4× cross-chat repeat §AR.* candidat 2× threshold MET EXPLICIT codify justified next /wiki-ingest Daniel review + Procent metric singular library-only launch-irrelevant 1× + BONUS Handover via courier metoda hibridă FULL §F3.8 partial supersede 1×)
-6. ✅ `wiki/concepts/metoda-hibrida-chat-cc.md` — §F3.8 original LOCK V1 metoda hibridă singular MCP cap-coadă use handover ONLY supersede partial = metoda hibridă FULL inclusiv handover Daniel courier paradigm chat-current evening + 17th + 18th consecutive validation effective continuat
-7. ✅ `wiki/summaries/daniel-isms-glossary.md` — APPEND §"Chat ACASĂ 2026-05-14 evening Bugatti Full Audit LOCK V1 NEW + 2 Co-CTO Halucinații Recovery" 6 NEW daniel-isms Categorii BS-BX evening cumulative cross-chat verbatim catalog extensible (BS push-back productive direct cooperative + BT role clarification request + BU pre-action question clarification scope + BV smiley dublu `:))` metric utility challenge + BW Daniel-side action inventory request + BX Bugatti directive ULTRA-explicit acceptance criteria peak craft initiation + clarify scope re-LOCK + BONUS BX-courier handover trigger §F3.8 variant explicit)
-8. ✅ `wiki/summaries/slip-patterns-history.md` — APPEND §"Chat-Current Slip Patterns 2026-05-14 evening" 3 NEW slip patterns chat-current evening + 1 BONUS §F3.8 supersede partial (slip 21A §OPEN flag formal cleanup-pass halucinație 1× + slip 21B Strategic-as-Tactical confusion §AR.* candidat 2× threshold MET EXPLICIT + slip 21C Procent metric singular library-only launch-irrelevant push-back catalysator 1× + BONUS §F3.8 supersede partial 1×) + 6 push-back productive moments cooperative chat-current evening documented chronological
-9. ✅ `wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked.md` — §OPEN Catastrofizare V1 status update CLOSED debunked chat-current evening recovery #1 + status update §OPEN → CLOSED LOCKED V1 2026-05-02 invariant preserved unchanged + recovery #2 C4 strategic-as-tactical confusion 4× cross-chat repeat acknowledged + C4 scope status update tactical CTO autonomous = NU strategic CEO chat dedicat necesar preserved invariant
+3. ✅ `VAULT_RULES.md` — §F3.8 closing paragraph APPEND `§F3.8 amendment 2026-05-14 chat-current per §AR.27 LOCKED V1 NEW` mandatory retro-scan post-distribute NEW handover summary classifier branch + auto-patch drift inline SAME atomic commit + output drift hits §3a section + cross-link §AR.24 cap-coadă + Daniel CEO directive verbatim catalysator chat-current.
 
-**Plus wiki/index.md + wiki/log.md updates:**
-10. ✅ `wiki/index.md` — `last_updated: 2026-05-14-evening` + `total_pages: 137 → 139` + NEW status block top + entries listed Concepts (22 → 23 +1 NEW) + Summaries (26 → 27 +1 NEW)
-11. ✅ `wiki/log.md` — chronological APPEND entry `## [2026-05-14-evening] ingest | Chat ACASĂ Bugatti Full Audit pre-Launch LOCK V1 NEW + 2 Co-CTO Halucinații Recovery + Procent Reframe + 2 Artefacte Mega LANDED + Co-CTO Autonomy MAXIMUM 8th Consecutive Cross-Chat` + `last_updated: 2026-05-14-evening` frontmatter
-
-**2 NEW outbox archives (raw layer archive cycle):**
-- ✅ `📤_outbox/_archive/2026-05/494_LATEST_PREVIOUS_BUNDLE_6_0_5_ARMS_PLUS_ADR_ENGINE_REFACTOR_CONSUMED.md` (precedent LATEST archived pre-execute)
-- ✅ `📤_outbox/_archive/2026-05/495_HANDOVER_2026-05-14_evening_bugatti_audit_pre_beta_lock_CONSUMED.md` (inbox handover narrative source archived `_CONSUMED.md` post-distribute)
-
-**Bidirectional cross-link cluster triangle minimum verified:**
-`bugatti-audit-nuclear-pre-launch ↔ handover-2026-05-14-evening ↔ bugatti-craft ↔ pre-beta-full-scope-lock-v2 ↔ anti-recurrence-rules ↔ metoda-hibrida-chat-cc ↔ daniel-isms-glossary ↔ slip-patterns-history ↔ ADR_BIAS_DETECTION_OBSERVABLE_v1 (Catastrofizare LOCK V1 recovery #1) ↔ ADR_ANATOMICAL_CLASSIFICATION_V1 (C4 tactical CTO recovery #2)` = 10+ pages bidirectional cluster cross-link verified PASS.
+4. ✅ `CLAUDE.md` §6.1 — §CC.2 startup step sequence expanded 4 → 6 steps:
+   - Step 5: §CC.3 output startup format aligned wiki/index.md cumulative count + last LOCKED references + drift status default `Drift zero` + next P1 fork
+   - **Step 6 NEW per §AR.27 LOCKED V1**: Pre-action drift detection cross-check Path Forward §5 al summary most-recent /wiki-ingest LANDED vs cumulative memory edits invariant + last 5 wiki/log.md entries chronological + NEW §AR.* PROMOTE formal recent. Drift detected → flag `Drift [paths + before→after]` instead of `Drift ZERO`; resolve via /wiki-ingest auto-patch drift fix ÎNAINTE flag P2 fork choices sau autonomous tactical decisions.
 
 ## §3 HANDOVER_VERIFICATION_CHECKLIST §0-§11
 
-All 12 points PASS Bugatti gate ✓:
-- §0 Pre-conditions scribe-side ✓
-- §1 Backup tag git pushed `pre-wiki-ingest-handover-2026-05-14-evening-bugatti-full-audit-lock` ✓
-- §2 Pre-flight grep verbatim §AR.20+§AR.21 evidence inline ✓ (Catastrofizare 2 ≥1 + muscle_target_primary 7 ≥5 + ls bugatti-craft exists)
-- §3 Wiki distribution + voice §1 4-section verified per page ✓ (11 pages all 4-section structure enforced)
-- §4 wiki/index.md + wiki/log.md updates ✓
-- §5 Bidirectional cross-links min 2-3 path:§ per page ✓ (cluster triangle 10+ pages)
-- §6 Raw layer archive `_CONSUMED` ✓ (495_HANDOVER inbox + 494_LATEST precedent)
-- §7 Atomic commit single-concern ✓ (commit `453d155` 13 files Bugatti single-concern)
-- §8 Tests baseline 3318 PASS preserved EXACT ✓ (vault meta-tooling doc-only `/wiki-ingest` evening ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict; pre-commit vitest hook ran full 3318 PASS / 169 test files / ~28.94s)
+NU applicable acest commit (doc-only meta-tooling NOT handover-narrative classifier branch). Standard atomic single-concern Bugatti commit + pre-flight grep evidence §AR.20+§AR.21 + backup tag pushed + tests preserved + atomic single-concern commit pushed origin applied:
+- §0 Pre-conditions doc-only scope ✓
+- §1 Backup tag git pushed `pre-ar26-ar27-promote-formal-locked-v1-2026-05-14-chat-current` ✓
+- §2 Pre-flight grep verbatim §AR.20+§AR.21 evidence inline ✓ (5 grep counts all match expected)
+- §3 Wiki distribution NOT applicable (doc-only meta-tooling — wiki/concepts/anti-recurrence-rules.md modify amendments[] only, NU handover distribution)
+- §3a Retro-scan drift fix NOT applicable acest commit (first commit codifying mechanism — retro-scan applies starting next /wiki-ingest handover-narrative classifier branch)
+- §4 wiki/index.md + wiki/log.md updates NOT applicable (doc-only meta-tooling — page count unchanged 139 invariant + log entry append NOT applicable acest commit)
+- §5 Bidirectional cross-links applied ✓ (§AR.26 ↔ memory edit #17 + Daniel verbatim 2026-05-13j Gigel-test correction; §AR.27 ↔ §AR.24 candidate ↔ §3a HANDOVER_VERIFICATION ↔ §F3.8 amendment ↔ §CC.2 step 6)
+- §6 Raw layer archive NOT applicable (NU handover ingest)
+- §7 Atomic commit single-concern Bugatti ✓ (`e6a941a` 4 files 56 insertions 2 deletions)
+- §8 Tests baseline 3318 PASS preserved EXACT ✓ (pre-commit vitest hook ran full 3318 PASS / 169 test files / ~27.68s; ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict)
 - §9 Output raport `📤_outbox/LATEST.md` §0-§N ✓ (this file)
-- §10 Anti-recurrence cross-ref §AR.* ✓ (3 NEW §AR.* candidates + 1 BONUS §F3.8 supersede partial codified [[../concepts/anti-recurrence-rules]] amendments 2026-05-14-evening)
+- §10 Anti-recurrence cross-ref §AR.* ✓ (§AR.26 + §AR.27 NEW LOCKED V1 codified formal)
 - §11 Cross-refs authority CLAUDE.md + VAULT_RULES + HANDOVER_VERIFICATION_CHECKLIST ✓
 
 ## §4 Commits
 
-- `453d155` feat(wiki): /wiki-ingest handover 2026-05-14 evening Bugatti Full Audit LOCK V1 NEW + 2 Co-CTO halucinatii recovery + procent reframe + Catastrofizare debunked (13 files changed, 761 insertions, 8 deletions; 2 NEW concept + summary + 2 NEW outbox archives + 9 UPDATE wiki existing)
+- `e6a941a` feat(vault): PROMOTE §AR.26 + §AR.27 formal LOCKED V1 + amend HANDOVER_VERIFICATION §3a retro-scan + VAULT_RULES §F3.8 amendment + CLAUDE.md §CC.2 step 6 pre-action drift detection (structural preventive mechanism Daniel CEO directive) — 4 files changed, 56 insertions, 2 deletions
 
 ## §5 Pushed
 
-✅ origin feature/v2-vanilla-port (`d3a5296..453d155`)
+✅ origin feature/v2-vanilla-port (`7ef411c..e6a941a`)
 
 ## §6 Cumulative count
 
-- Wiki pages **137 → 139** (+1 NEW concept [[wiki/concepts/bugatti-audit-nuclear-pre-launch]] + 1 NEW summary [[wiki/summaries/handover-2026-05-14-evening-bugatti-full-audit-lock-plus-2-co-cto-halucinatii-recovery]])
-- Tests **3318 PASS** preserved EXACT (Bundle 6.0.5 Arms +38 NEW LANDED earlier chat-current evening commit chain `281bfe2` → `ef678c2` 8 atomic Bugatti pushed origin; acest `/wiki-ingest` evening ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict)
-- Pre-Beta library **460/657 → 567/657 = ~86.3%** cumulative milestone +20.2pp single chat post Bundle 6.0.5 Phase G antebrate FIRST POPULATION 26 entries `1ed1acf` LANDED earlier chat-current evening
-- Cumulative ~742 LOCKED V1 PRESERVED unchanged + **1 NEW LOCK V1 Bugatti Full Audit pre-Launch evening = ~743 LOCKED V1 cumulative**
-- 3 NEW §AR.* candidates scribe-mode marked + 1 BONUS §F3.8 supersede partial chat-current evening
-- 6 NEW daniel-isms Categorii BS-BX evening cumulative cross-chat verbatim catalog extensible
-- Co-CTO autonomy MAXIMUM **8th consecutive cross-chat directive verbatim** (2026-05-13g + 13h + 13i + 13j + 13k + 13l + 14 birou + chat-current evening = 8× consecutive trigger pattern)
+- §AR.* current rules **19 → 27 LOCKED V1** + §AR.25 candidate pending Daniel review preserved invariant
+  - §AR.20-§AR.24 prior LOCKED V1 cumulative cross-chat reaffirmed (preserved invariant unchanged)
+  - **§AR.26 NEW LOCKED V1** Strategic-as-Tactical confusion (5× threshold massively over 2× minimum: 13j+13k+13l+14-birou + 14-evening + chat-current)
+  - **§AR.27 NEW LOCKED V1** Auto-update wiki layer cumulative preventive drift fix mechanism (5+ instances + Daniel CEO directive verbatim catalysator chat-current)
+- Cumulative ~743 → **~745 LOCKED V1 cumulative** (+§AR.26 + §AR.27 vault meta-tooling structural preventive mechanism)
+- Tests **3318 PASS** preserved EXACT (pre-commit vitest hook ran 169 test files / ~27.68s ZERO regression; doc-only meta-tooling acest commit ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict)
+- Wiki pages **139 invariant** (acest commit doc-only meta-tooling — §AR.* PROMOTE existing concept page amend + 3 vault meta-tooling files NU wiki page additions)
+- 4 vault files modified single-concern atomic Bugatti commit:
+  - `wiki/concepts/anti-recurrence-rules.md` (frontmatter amendments[] + Synthesis listing expand)
+  - `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` (NEW §3a retro-scan section)
+  - `VAULT_RULES.md` (§F3.8 amendment closing paragraph)
+  - `CLAUDE.md` (§6.1 §CC.2 step 6 NEW pre-action drift detection)
 
 ## §7 Next Action
 
-Daniel verifică `LATEST.md` raport `/wiki-ingest` LANDED + decide P2 fork strategic next session acasă (Co-CTO MCP filesystem search verify ZERO Daniel decision real pending — Catastrofizare confirmed SCRAP permanent V1+post-Beta rationale existing rămâne valid independent paradigm shift "totul pre-Beta" chat birou).
+**P2 run ARTEFACT 1A pe acelasi terminal** pentru wiki instance fix apply mechanism codified acest commit — retroactive drift fix cumulative cross-chat decision LOCKED V1 (§AR.26 Strategic-as-Tactical confusion cleanup pe wiki summaries handover Path Forward §5 + analog forward-looking sections) per §AR.27 mechanism NEW codify + §3a HANDOVER_VERIFICATION extension applied retroactive baseline cleanup.
 
-**P2 fork strategic options (next chat startup post-trigger "Salut Acasă"):**
-- **Option A — C4.1 Muscle Recovery refactor first engine implementation** (per ADR_ENGINE_REFACTOR §4 roadmap cap-coadă C4.1 first foundational blocking dependency; GROUP_HEAD_MAP Big 6 → Big 11 + GROUP_LABELS_RO_BIG11 expand + DECAY_RATE_HOURS_BIG11 constant new file consume + ZERO mutation algorithm semantics + ~15-20 NEW tests; estimated LOC delta: +60-80; backup tag pre-execute `pre-c4-1-muscle-recovery-refactor-<YYYY-MM-DD>`)
-- **Option B — Bundle 6.0.6 Specialty / next library extension** (Pre-Beta progress 86.3% → 92-95%; candidate areas piept specialty entries + spate specialty rear delt/rotator cuff + specialty equipment band/bodyweight gaps)
-- **Option C — C4.1 + Bundle 6.0.6 parallel** (disjoint scope safe — engine src/ vs schema src/ separate file edits, atomic commits non-conflicting; C4.1 strategic Claude chat + Bundle 6.0.6 autonomous CC Opus)
+Acest commit `e6a941a` = mechanism codify formal LOCKED V1. Next commit /wiki-ingest 1A = first execution mechanism per §3a HANDOVER_VERIFICATION retro-scan drift fix cumulative cross-chat applied retroactive baseline cleanup (mechanism activate cap-coadă cu §AR.26 + §AR.27 LOCKED V1 NEW). Cumulative count post-1A baseline cleanup TBD per drift hits surfaced (HALT condition >10 drift hits = escalate Daniel review explicit).
 
-**P3 post C4.1-C4.X LANDED cumulative:** Implementation safety conditions cluster cumulative (Medical Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading + ADR 033 MMI + F5 AA-Friction Modal UX iteration) per chat birou 2026-05-14 LOCK 4+8+9+10+11.
+**Daniel awareness automatic NU surprize re-litigation slip cumulative cross-chat** — paradigm shift fix root cause "Daniel ia decizie 1× → wiki text stale next chat startup → slip re-litigation 5+ instances cross-chat" pattern eliminated permanent via structural preventive mechanism §AR.26 + §AR.27 codified formal LOCKED V1 + §3a + §F3.8 amendment + §CC.2 step 6 integration cascading.
 
-**P4 post tot tracks 100% LANDED:** Daniel Gates 100% strict smoke production manual test andura.app cu Firebase + PWA + telefon (LOCK 2 chat birou 2026-05-14).
-
-**P5 FINAL pre-Launch:** **Bugatti Full Audit Co-CTO** every line cod + every virgulă + TOT pe latest commit LANDED app state (LOCK V1 NEW chat-current evening directive Daniel CEO ultra-explicit acceptance criteria peak craft per NEW concept page [[wiki/concepts/bugatti-audit-nuclear-pre-launch]]). Fix ALL issues surfaced → Beta launch post-fix.
-
-🦫 **Bugatti single-concern atomic clean wiki ingest handover narrative chat ACASĂ 2026-05-14 evening. Bugatti Full Audit pre-Launch LOCK V1 NEW + 2 Co-CTO halucinații recovery + procent reframe + 2 artefacte mega LANDED. Cumulative count 137 → 139 wiki pages. Tests 3318 PASS preserved EXACT (ZERO src/ touched acest /wiki-ingest evening per HARD CONSTRAINTS §F3.12 strict). Cumulative ~743 LOCKED V1 (~742 preserved + 1 NEW LOCK V1 Bugatti Full Audit pre-Launch evening). Co-CTO autonomy MAXIMUM 8th consecutive cross-chat directive verbatim trust delegation MAXIMUM preserved invariant.**
-
-**E timpul pt noul chat.**
+🦫 **Bugatti single-concern atomic clean PROMOTE §AR.26 + §AR.27 formal LOCKED V1 + amend HANDOVER_VERIFICATION + VAULT_RULES + CLAUDE.md structural preventive mechanism Daniel CEO directive chat-current ACASĂ. ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict. Cumulative ~743 → ~745 LOCKED V1 (+§AR.26 + §AR.27). Tests 3318 PASS preserved EXACT.**
