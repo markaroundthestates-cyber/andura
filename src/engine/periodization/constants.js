@@ -191,3 +191,84 @@ export const PERSONA_AGE_BOUNDARIES = Object.freeze({
  * @type {string}
  */
 export const ENERGY_RED_FLAG = 'red';
+
+// ══ ADR_ENGINE_REFACTOR §4.3 LOCK V1 2026-05-14 — Hybrid template Decision §3.3
+// Big 6 cluster phase (UX surface backwards-compatible) + Big 11 RO canonical V1
+// weight allocation (engine internal routing). ZERO mutation phase cycle
+// algorithm semantics — pure additive layer + translator export downstream.
+
+/**
+ * Big 6 cluster phase definition per ADR_ENGINE_REFACTOR §4.3 Decision §3.3
+ * Hybrid. UX surface backwards-compatible — mockup-prescribed session templates
+ * consume push/pull/legs/upper/lower/full unchanged.
+ *
+ * Internal engine routing maps each cluster → Big 11 RO weight distribution
+ * via CLUSTER_BIG6_TO_BIG11_WEIGHT below.
+ *
+ * @type {Readonly<ReadonlyArray<string>>}
+ */
+export const PHASE_CLUSTERS_BIG6 = Object.freeze(['push', 'pull', 'legs', 'upper', 'lower', 'full']);
+
+/**
+ * Cluster Big 6 → Big 11 RO weight allocation per Decision §3.3 + §3.5
+ * (primary-only consume policy Periodization). Default weight distribution
+ * per session within cluster (engine internal routing). Values sum ≈1.0 per
+ * cluster (floating point tolerance ±0.01).
+ *
+ * Bias rationale (research-backed):
+ *   - push:  piept 0.40 + umeri 0.30 + triceps 0.30 (mid push session)
+ *     Schoenfeld 2017 — chest primary stimulus drives session
+ *   - pull:  spate 0.50 + biceps 0.30 + antebrate 0.20 (back-focus grip secondary)
+ *     Helms RP 2018 — back primary stimulus + grip antebrate secondary
+ *   - legs:  quads 0.30 + hamstrings 0.25 + fese 0.25 + gambe 0.15 + core 0.05
+ *   - upper: piept 0.20 + spate 0.25 + umeri 0.20 + biceps 0.15 + triceps 0.15 + antebrate 0.05
+ *   - lower: alias semantic equivalent legs cluster
+ *   - full:  balanced ~9-10% per group (11 groups summing ≈1.0)
+ *
+ * Cross-ref: ADR_ENGINE_REFACTOR §4.3 LOCK V1 + Decision §3.3 Hybrid.
+ *
+ * @type {Readonly<Object<string, Readonly<Object<string, number>>>>}
+ */
+export const CLUSTER_BIG6_TO_BIG11_WEIGHT = Object.freeze({
+  push:  Object.freeze({ piept: 0.40, umeri: 0.30, triceps: 0.30 }),
+  pull:  Object.freeze({ spate: 0.50, biceps: 0.30, antebrate: 0.20 }),
+  legs:  Object.freeze({ 'picioare-quads': 0.30, 'picioare-hamstrings': 0.25, fese: 0.25, gambe: 0.15, core: 0.05 }),
+  upper: Object.freeze({ piept: 0.20, spate: 0.25, umeri: 0.20, biceps: 0.15, triceps: 0.15, antebrate: 0.05 }),
+  lower: Object.freeze({ 'picioare-quads': 0.30, 'picioare-hamstrings': 0.25, fese: 0.25, gambe: 0.15, core: 0.05 }),
+  full:  Object.freeze({
+    piept: 0.10, spate: 0.10, umeri: 0.10, biceps: 0.10, triceps: 0.10,
+    antebrate: 0.05, core: 0.05,
+    'picioare-quads': 0.10, 'picioare-hamstrings': 0.10, fese: 0.10, gambe: 0.10,
+  }),
+});
+
+/**
+ * Translator Big 11 EN (ISRAETEL_BASELINES literature reference) → Big 11 RO
+ * canonical V1 anatomical taxonomy per ADR_ENGINE_REFACTOR §4.1.
+ *
+ * Internal Periodization engine keeps ISRAETEL_BASELINES EN keys (Schoenfeld/
+ * Helms academic literature invariant). Downstream consumers requesting
+ * canonical V1 RO keys translate via toCanonicalRO() helper.
+ *
+ * Mapping per ADR_ENGINE_REFACTOR §2 + §3.2:
+ *   chest → piept; back → spate; shoulders → umeri
+ *   quads → picioare-quads; hamstrings → picioare-hamstrings
+ *   glutes → fese; calves → gambe
+ *   biceps → biceps; triceps → triceps; forearms → antebrate
+ *   abs → core
+ *
+ * @type {Readonly<Object<string, string>>}
+ */
+export const BIG11_EN_TO_RO_MAP = Object.freeze({
+  chest:      'piept',
+  back:       'spate',
+  shoulders:  'umeri',
+  quads:      'picioare-quads',
+  hamstrings: 'picioare-hamstrings',
+  glutes:     'fese',
+  calves:     'gambe',
+  biceps:     'biceps',
+  triceps:    'triceps',
+  forearms:   'antebrate',
+  abs:        'core',
+});
