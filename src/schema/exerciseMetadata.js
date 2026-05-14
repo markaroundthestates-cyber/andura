@@ -3334,6 +3334,126 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
   ] },
 
+  // ══════════════════════════════════════════════════════════════════════════════
+  // ══ Bundle 6.0.5 Arms Library Extension — ~120 NEW arms exerciții 2026-05-14 ══
+  // ══ Per ADR_ANATOMICAL_CLASSIFICATION_V1 §2.4/§2.5/§2.6 LOCK V1 (biceps + triceps + antebrate canonical V1) ══
+  // ══ Per ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 LOCK V2 (5-step canonical fallback_cascade) ══
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  // ── Phase A — Biceps Barbell + EZ-bar Variants (14 NEW) ──────────────────────
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase A): NEW Tier 2 isolation barbell — biceps strict canonical anchor
+  'Barbell Curl Standing':        { equipment_type: 'barbell', equipment_alternatives: ['EZ-bar Curl Standing', 'DB Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — wide grip biceps short head emphasis
+  'Barbell Curl Wide Grip':       { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'EZ-bar Curl Wide'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Curl Wide' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — narrow grip biceps long head emphasis
+  'Barbell Curl Narrow Grip':     { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'EZ-bar Curl Narrow'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Curl Narrow' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Close Grip' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — drag curl peak biceps long head
+  'Drag Curl Barbell':            { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'Drag Curl DB'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'Drag Curl DB' },
+    { type: 'muscle_group_compose', exercise_ids: ['Barbell Curl Standing', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar (treated as barbell equipment_type) — wrist-friendly biceps anchor
+  'EZ-bar Curl Standing':         { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'DB Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Standing', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — wide grip biceps short head emphasis
+  'EZ-bar Curl Wide':             { equipment_type: 'barbell', equipment_alternatives: ['EZ-bar Curl Standing', 'Barbell Curl Wide Grip'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['EZ-bar Curl Standing', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — narrow grip biceps long head emphasis
+  'EZ-bar Curl Narrow':           { equipment_type: 'barbell', equipment_alternatives: ['EZ-bar Curl Standing', 'Barbell Curl Narrow Grip'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['EZ-bar Curl Standing', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Close Grip' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar preacher — strict biceps stretched position
+  'EZ-bar Preacher Curl':         { equipment_type: 'barbell', equipment_alternatives: ['Preacher Curl', 'Barbell Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Preacher Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Spider Curl Barbell'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell spider — strict biceps short head peak
+  'Spider Curl Barbell':          { equipment_type: 'barbell', equipment_alternatives: ['Spider Curl EZ-bar', 'Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Spider Curl EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Spider Curl', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar spider — wrist-friendly variant Spider Curl
+  'Spider Curl EZ-bar':           { equipment_type: 'barbell', equipment_alternatives: ['Spider Curl Barbell', 'Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Spider Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Spider Curl', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — 21s ROM partial+full hypertrophy density
+  '21s Curl Barbell':             { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', '21s Curl EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Barbell Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound advanced — cheat curl heavier load momentum-assisted advanced trainee
+  'Cheat Curl Barbell':           { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'Cheat Curl DB'], force_demand: 'high', tier: 1, muscle_target_primary: 'biceps', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Barbell Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['EZ-bar Curl Standing', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Weighted' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — concentration seated barbell strict biceps short head
+  'Barbell Concentration Curl Seated': { equipment_type: 'barbell', equipment_alternatives: ['DB Concentration Curl Standing', 'Spider Curl Barbell'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Concentration Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — strict wall-support biceps zero-momentum form
+  'Barbell Curl Strict Wall Support': { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Preacher Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+
 };
 
 /**

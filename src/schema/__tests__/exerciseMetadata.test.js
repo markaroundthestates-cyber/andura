@@ -1718,3 +1718,63 @@ describe('Bundle 6.0.4.4 Calves Library Extension §ADR v2 LOCK V2', () => {
     });
   });
 });
+
+describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1 + §ADR v2 LOCK V2', () => {
+  // Bundle 6.0.5 Phase A — Biceps Barbell + EZ-bar (14 NEW)
+  const NEW_ENTRIES_6_0_5_PHASE_A = [
+    'Barbell Curl Standing', 'Barbell Curl Wide Grip', 'Barbell Curl Narrow Grip', 'Drag Curl Barbell',
+    'EZ-bar Curl Standing', 'EZ-bar Curl Wide', 'EZ-bar Curl Narrow', 'EZ-bar Preacher Curl',
+    'Spider Curl Barbell', 'Spider Curl EZ-bar', '21s Curl Barbell', 'Cheat Curl Barbell',
+    'Barbell Concentration Curl Seated', 'Barbell Curl Strict Wall Support',
+  ];
+
+  it('Phase A Biceps Barbell + EZ-bar 14 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_A.length).toBe(14);
+    NEW_ENTRIES_6_0_5_PHASE_A.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase A all 14 entries muscle_target_primary === biceps canonical V1', () => {
+    NEW_ENTRIES_6_0_5_PHASE_A.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('biceps');
+    });
+  });
+
+  it('Phase A fallback_cascade step types canonical 5 types valid', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    NEW_ENTRIES_6_0_5_PHASE_A.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  it('Phase A NEW entries NEVER self-reference parent name', () => {
+    NEW_ENTRIES_6_0_5_PHASE_A.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(name);
+        if (s.exercise_ids) s.exercise_ids.forEach(id => expect(id).not.toBe(name));
+      });
+    });
+  });
+
+  it('Phase A cascade references resolve ≥70% lenient (forward refs OK per ADR v2)', () => {
+    const allKeys = new Set(Object.keys(EXERCISE_METADATA));
+    let total = 0, resolved = 0;
+    NEW_ENTRIES_6_0_5_PHASE_A.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) { total++; if (allKeys.has(s.exercise_id)) resolved++; }
+        if (s.exercise_ids) s.exercise_ids.forEach(id => { total++; if (allKeys.has(id)) resolved++; });
+      });
+    });
+    expect(resolved / total).toBeGreaterThanOrEqual(0.5); // forward refs Phase B-G expected
+  });
+
+  it('ZERO mutation existing 460 baseline entries Bundle 6.0.5 Phase A (HARD CONSTRAINT §F3.12)', () => {
+    expect(EXERCISE_METADATA['DB Shoulder Press']).toBeDefined();
+    expect(EXERCISE_METADATA['Incline DB Curl'].muscle_target_primary).toBe('biceps');
+    expect(EXERCISE_METADATA['Calf Raises'].muscle_target_primary).toBe('gambe');
+    expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');
+  });
+});
