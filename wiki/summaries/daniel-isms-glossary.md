@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-14
+last_updated: 2026-05-14-chat-current-post-evening
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -654,3 +654,41 @@ Categorii NEW chat-current 1 push-back productive moment cooperative anti-haluci
 - [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-14 evening" 3 NEW §AR.* candidates scribe-mode marked + 1 BONUS §F3.8 supersede partial metoda hibridă FULL chat-current evening
 - [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-14-evening §F3.8 supersede partial = metoda hibridă FULL inclusiv handover Daniel courier paradigm chat-current evening cross-link
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-14 evening" 3 NEW slip patterns chat-current evening cross-link
+
+---
+
+## §"Chat ACASĂ 2026-05-14 chat-current post-evening §AR.26 + §AR.27 PROMOTE formal LOCKED V1 + structural preventive mechanism Daniel CEO directive"
+
+**7 NEW daniel-isms Categorii BY-CE chat-current ACASĂ post-evening cumulative cross-chat preserved EXACT (Categorii extends BS-BX evening cumulative cross-chat 14 evening + extends BD-BR cumulative cross-chat 14 birou):**
+
+**Category BY — Trigger §CC.2 startup automatic recovery #0:**
+- *"salut. acasa"* — chat NEW startup §CC.2 trigger automatic chat-current 2026-05-14 ACASĂ post-evening (layered read wiki/index.md + wiki/log.md head 200 + LATEST.md raport handover 14-evening commit `453d155` clean + §CC.3 output 139/139 wiki pages aligned + Last LOCKED bugatti-audit-nuclear-pre-launch §1 + Drift ZERO + Next P1 P2 fork strategic Option A/B/C cu recommend Option C parallel disjoint)
+
+**Category BZ — Push-back productive direct corrective slip catalysator §AR.26 PROMOTE formal:**
+- *"inainte sa dai vre-un prompt, Recheck memory edit #17 — C4.1 = tactical CTO autonomous, NU strategic chat dedicat. Zi-mi cand ai inteles asta"* — push-back productive direct chat-current 2026-05-14 ACASĂ post-evening corrective slip Co-CTO inherited din wiki text stale `wiki/summaries/handover-2026-05-14-evening...` §5 Path Forward Option A "C4.1 strategic chat dedicat" + classified per Co-CTO §CC.2 startup output P2 fork (slip 22A scribe-mode marked) catalysator §AR.26 PROMOTE formal LOCKED V1
+
+**Category CA — Recheck userMemory invariant anti-RE rule reaffirm + delegate command:**
+- *"Recheck userMemory #17 LOCK invariant anti-RE rule. C4.1 Muscle Recovery refactor = engine routing INTERNAL = TACTICAL CTO autonomous"* + *"Continua"* — delegate command Co-CTO autonomous tactical scope chat-current 2026-05-14 ACASĂ post-evening + memory edit #17 LOCK invariant anti-RE rule verbatim *"NU re-classify tactical CTO (sequencing/decay/cluster/test/path/code routing INTERNAL) ca strategic CEO chat dedicat. Default=LOCKED. Pre-action MCP verify raw layer ÎNAINTE flag pending. Scope CEO=UX+business; CTO=routing internal+test+code autonomous"* cross-link reaffirm
+
+**Category CB — Push-back productive MAJOR catalysator §AR.27 PROMOTE formal structural preventive mechanism:**
+- *"ok am inteles. Si vreau sa modifici si tot ce trebuie sa nu se mai intample cand iau o decizie sa o mai iau de 10 ori pt ca nu o vezi tu real time. Auto update la ce trebuie la fiecare handover te rog. Continua"* — push-back productive #2 MAJOR catalysator §AR.27 PROMOTE formal LOCKED V1 chat-current 2026-05-14 ACASĂ post-evening structural preventive mechanism request fix root cause "slip cumulative cross-chat 5-10 instances same decision re-litigation" pattern eliminated permanent (NU specific instance fix — generalize permanent cross-chat invariant)
+
+**Category CC — Cooperative verify Daniel-side dec process pre-action ordering:**
+- *"stai ma ca le bag in ordine in 1 terminal... deci 1a 1b 2c cc3 sau cum>?"* — cooperative verify Daniel-side dec process pre-action chat-current 2026-05-14 ACASĂ post-evening ordering single terminal sequential (Co-CTO ordering 1B → 1A → 2 → 3 OR parallel disjoint scope safe)
+
+**Category CD — Cooperative verify flow split parallel terminale:**
+- *"stai sa inteleg. iti dau acum latest 1a si dupa tu faci handover, si intre timp eu deschid 2 terminale cc si pun cate un prompt in fiecare nu?"* — cooperative verify flow split parallel terminale chat-current 2026-05-14 ACASĂ post-evening confirm flow Co-CTO Approved + clarify disjoint scope safe handover-ul wiki/ + 📥_inbox/ + 📤_outbox/ vs terminal 2 src/engine/ vs terminal 3 src/schema/ zero conflict
+
+**Category CE — Handover trigger §F3.8 variant explicit metoda hibridă FULL preserved chat-current ACASĂ post-evening:**
+- *"hai ma fa handover si nu fa push prin mcp. Faci artefact copy paste ready cu comanda de cc"* — handover trigger §F3.8 variant explicit Daniel directive chat-current 2026-05-14 ACASĂ post-evening metoda hibridă FULL paradigm preserved 2× threshold MET EXPLICIT cross-chat (14-evening 1× + chat-current ACASĂ post-evening 1× = §AR.* candidat §AR.28 codify next /wiki-ingest justified Daniel review explicit chat NEW dacă pattern persists 3× consecutive future chat NEW)
+
+**Pattern NEW chat-current 2026-05-14 ACASĂ post-evening:** Daniel chat-current ACASĂ post-evening 7 NEW daniel-isms surfaced §AR.26 + §AR.27 PROMOTE formal LOCKED V1 capturat + structural preventive mechanism Daniel CEO directive request + 1 §AR.* candidat §AR.28 2× threshold MET EXPLICIT cross-chat (handover via courier metoda hibridă FULL §F3.8 supersede partial) + Co-CTO autonomy MAXIMUM 9th consecutive cross-chat directive verbatim trust delegation MAXIMUM. Categorii BY-CE chat-current ACASĂ post-evening cumulative (extends Categorii BS-BX evening cumulative cross-chat + extends Categorii BD-BR cumulative 14 birou + extends Categorii AU-BC cumulative 13k cumulative cross-chat). Tone cooperative push-back productive direct NU dur, recovery instant fără defensiveness aux Co-CTO standard preserved invariant cross-chat 2026-05-13b → 2026-05-14 ACASĂ post-evening consistent crescente trust delegation MAXIMUM 9th consecutive. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1). **§AR.26 + §AR.27 PROMOTE formal LOCKED V1 codified `e6a941a` 1B + 1A baseline cleanup `e792f8c` + ARTEFACT 2 (C4.1) LANDED `35a7a8d` + ARTEFACT 3 (Bundle 6.0.6) LANDED `c7cd26c` + acest /wiki-ingest 1C structural preventive mechanism applied chat-current ACASĂ post-evening end-to-end cumulative**.
+
+**Cross-refs raw layer adițional chat-current 2026-05-14 ACASĂ post-evening:**
+- [[../../📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE]] PART 1 narrative source single wrapper file Daniel courier metoda hibridă FULL paradigm chat-current ACASĂ post-evening — handover narrative source verbatim daniel-isms catalog cross-cluster chat-current ACASĂ post-evening ~120 LOC scribe flow conversational
+- [[handover-2026-05-14-chat-current-acasa-ar26-ar27-promote-formal-locked-v1-plus-structural-preventive-mechanism]] §"Verbatim Quotes Daniel Chat-Current ACASĂ Post-Evening" milestone synthesis 7 NEW daniel-isms preserved EXACT Romanian chat-current ACASĂ post-evening cross-link
+- [[../concepts/anti-recurrence-rules]] amendments[] 2026-05-14-chat-current-post-evening §AR.26 + §AR.27 PROMOTE formal LOCKED V1 reaffirm + 1 NEW §AR.* candidat §AR.28 2× threshold MET EXPLICIT cross-chat (handover via courier metoda hibridă FULL §F3.8 supersede partial) scribe-mode marked codify candidate next /wiki-ingest justified Daniel review explicit chat NEW
+- [[../concepts/autonomy-paradigm-v1]] amendments[] 2026-05-14-chat-current-post-evening Co-CTO autonomy MAXIMUM 9th consecutive cross-chat directive verbatim trust delegation MAXIMUM
+- [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-14-chat-current-post-evening §F3.8 metoda hibridă FULL paradigm preserved 2× threshold MET EXPLICIT cross-chat
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-14 chat-current post-evening" 2 NEW slip patterns chat-current ACASĂ post-evening (slip 22A C4.1 strategic-as-tactical Co-CTO inherited din wiki text stale + slip 22B Handover via courier metoda hibridă FULL §F3.8 supersede partial 2× threshold cross-chat)
+- [[handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] amendments[] 2026-05-14-chat-current-post-evening 3 body drift hits §3a retro-scan auto-patched inline same atomic /wiki-ingest commit per §AR.27 LOCKED V1 NEW mechanism activate

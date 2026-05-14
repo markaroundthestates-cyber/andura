@@ -1,258 +1,187 @@
-# LATEST RAPORT — Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C
+# LATEST — /wiki-ingest Handover 2026-05-14 Chat-Current ACASĂ Post-Evening §AR.26 + §AR.27 PROMOTE Formal LOCKED V1 + Structural Preventive Mechanism Daniel CEO Directive Cumulative
 
-**Task:** PROMPT_CC 3 — Bundle 6.0.6 Specialty schema extension tactical CTO autonomous (Option C scope expand selected post Phase A audit)
-**Model:** Opus 4.7
-**Status:** ✅ **LANDED** (commit + push origin + LATEST archive cycle complete)
-**Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-14 chat-current ACASĂ
-**Commit:** `c7cd26c` (feat(schema): Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C scope expand)
+**Task:** /wiki-ingest distribute handover narrative `📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` PART 1 source narrative ~120 LOC scribe flow conversational distribute la wiki layer per VAULT_RULES §F3.8 handover-narrative classifier branch + voice preservation policy §1 4-section structure enforced per page + HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate mandatory pre-commit + §3a NEW retro-scan drift fix cumulative cross-chat first execution mechanism activate post-codification 1B `e6a941a` LANDED + 1A `e792f8c` baseline cleanup pass (zero drift expected per task brief — 3 hits actually surfaced auto-patched inline).
 
----
-
-## §1 Pre-flight (§AR.20 + §AR.21 grep evidence inline)
-
-### §1.1 Backup tag pre-execute MANDATORY ✓
-
-```
-Tag: pre-bundle-6-0-6-specialty-2026-05-14
-Push: origin SUCCESS — rollback safety net ready
-```
-
-### §1.2 Schema baseline pre-edit verified
-
-```
-Object.keys(EXERCISE_METADATA).length = 567 (canonical authority NU grep -c sentinel slip per §AR.* slip 13l)
-
-Big 11 distribution baseline:
-  spate=104, umeri=94, piept=86, fese=51, picioare-quads=47, biceps=45,
-  triceps=41, picioare-hamstrings=40, gambe=33, antebrate=26, core=0 ✓
-
-Cascade ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 fallback_cascade refs: 13 (≥3 expected) ✓
-
-Tests baseline: 3333 PASS / 169 test files
-Branch: feature/v2-vanilla-port — synced origin + clean working tree (src/ scope)
-```
-
-### §1.3 Phase A grep audit findings → Daniel decision
-
-PROMPT_CC §1.1 estimate ~35-50 NEW reduced post-grep to **~14-15 truly missing genuine** (rest duplicate existing 567 entries OR §10 core BLOCKED Bundle 6.0.7 reserved). Anti-recurrence rule per memory `feedback_grep_before_prompt_cc.md` triggered HALT pre-Phase B execute + Daniel scope decision.
-
-**Daniel chose Option C scope expand:** combine 14 §1.1 themes + 19 NEW themes research-backed (Trap Bar + Kettlebell + SSB + Cambered Bar + Olympic derivatives + Forearms specialty) = **33 NEW total**.
-
-**Phase A spec discovery:** archived `📤_outbox/_archive/2026-05/500_BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A_CONSUMED.md`.
+**Model:** Opus 4.7 (claude-opus-4-7) EXCLUSIVELY per Daniel directive cumulative cross-chat
+**Status:** ✅ Complete — Bugatti single-concern atomic clean LANDED + pushed origin `feature/v2-vanilla-port`
+**Branch:** feature/v2-vanilla-port
+**Date:** 2026-05-14 chat-current ACASĂ post-evening
+**Backup tag:** `pre-wiki-ingest-handover-2026-05-14-chat-current-acasa-ar26-ar27-promote` pushed origin
 
 ---
 
-## §2 Modificări (src/ scope strict)
+## §0 — HANDOVER VERIFICATION CHECKLIST (per [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]])
 
-### §2.1 Files modificate
-
-```
-M  src/schema/exerciseMetadata.js        (+265 LOC: Bundle 6.0.6 block 33 NEW + 8 sub-batch comments)
-M  src/schema/__tests__/exerciseMetadata.test.js  (+248 LOC: Bundle 6.0.6 explicit invariant tests)
-
-Total diff: 2 files, 513 insertions(+), 0 deletions(-)
-HARD CONSTRAINT §F3.12 strict ZERO mutation existing 567 entries → preserved invariant ✓
-```
-
-### §2.2 Sub-batch breakdown 33 NEW entries
-
-| Sub-batch | Theme | NEW count | Distribution |
-|---|---|---|---|
-| 1 | Hammer Strength Plate-Loaded Chest Press | 4 | piept (4) |
-| 2 | Smith Machine Specialty | 5 | picioare-quads (3) + spate (2) |
-| 3 | Plate-Loaded + Cable Kickback | 2 | picioare-quads (1) + triceps (1) |
-| 4 | Specialty Isolation | 3 | biceps (2) + antebrate (1) |
-| 5 | Trap Bar + Kettlebell | 7 | spate (2) + picioare-hamstrings (2) + picioare-quads (1) + umeri (1) + antebrate (1) |
-| 6 | SSB + Cambered Bar Specialty Barbells | 5 | picioare-quads (3) + picioare-hamstrings (2) |
-| 7 | Olympic Lift Derivatives | 3 | spate (2) + umeri (1) |
-| 8 | Forearms Specialty | 4 | antebrate (4) |
-| **TOTAL** | | **33** | |
-
-### §2.3 NEW entries roster authoritative (33 entries cataloged în test file §2)
-
-```
-Sub-batch 1 (4): Hammer Strength Incline Press, Hammer Strength Decline Press, Hammer Strength Flat Press, Hammer Strength Iso-Lateral Bench Press
-Sub-batch 2 (5): Smith Split Squat, Smith Bulgarian Split Squat, Smith Bent-Over Row, Smith Reverse Lunge, Smith Inverted Row
-Sub-batch 3 (2): Vertical Hack Squat, Cable Triceps Kickback Single-Arm
-Sub-batch 4 (3): Cable Preacher Curl, Reverse-Grip Preacher Curl, Spider Curl Cable
-Sub-batch 5 (7): Trap Bar Row, Trap Bar RDL, Kettlebell Goblet Squat, Kettlebell Single-Arm Press, Kettlebell Single-Arm Row, Kettlebell Romanian Deadlift, Kettlebell Front Rack Carry
-Sub-batch 6 (5): SSB Squat, SSB Good Morning, SSB Lunge, Cambered Bar Squat, Cambered Bar RDL
-Sub-batch 7 (3): Power Clean, Hang Clean, Push Jerk
-Sub-batch 8 (4): Fat Grip Hold, Fat Grip Barbell Curl, Hammer Holds, Wrist Extension Cable Standing
-```
+- ✅ §0 Pre-conditions scribe-side (handover narrative `📥_inbox/HANDOVER_PLUS_PROMPT_CC_*.md` PART 1 ~120 LOC scribe flow conversational + voice §1 ready in narrative + cross-refs raw layer enumerate min 2-3 per decizie LOCKED + Daniel signaled "fa handover" voluntary)
+- ✅ §1 Backup tag `pre-wiki-ingest-handover-2026-05-14-chat-current-acasa-ar26-ar27-promote` pushed origin verified remote
+- ✅ §2 Pre-flight grep verify (paths + wikilinks + daniel-isms + strategy LOCKED V1 cap-coadă preserved)
+- ✅ §3 Wiki distribution voice §1 4-section enforced — 6 pages affected (1 NEW summary + 5 UPDATE existing)
+- ✅ §3a Retro-scan drift fix cumulative cross-chat FIRST EXECUTION mechanism activate post-codification 1B + 1A baseline cleanup — **3 body drift hits surfaced auto-patched inline same atomic /wiki-ingest commit pre-push origin** (HALT NU triggered: 3 < 10)
+- ✅ §4 wiki/index.md + wiki/log.md updated cumulative count match (140/140 across folders)
+- ✅ §5 Bidirectional cross-links verified
+- ✅ §6 Raw layer archived `_CONSUMED` (NN 501 HANDOVER_PLUS_PROMPT_CC + NN 502 LATEST cycle precedent Bundle 6.0.6 Specialty)
+- ✅ §7 Atomic commit single-concern pushed origin feature/v2-vanilla-port
+- ✅ §8 Tests baseline 3356 PASS / 169 test files preserved EXACT (acest /wiki-ingest 1C ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict — vault meta-tooling decisions-only doc-only; Bundle 6.0.6 +33 NEW tests LANDED earlier chat-current ACASĂ post-evening commit `c7cd26c` separate atomic Co-CTO autonomous)
 
 ---
 
-## §3 Build + Tests (zero regression)
+## §1 — Pre-flight Verification
 
-### §3.1 Vite production build ✓
+**Backup tag created + pushed origin:**
+- Tag: `pre-wiki-ingest-handover-2026-05-14-chat-current-acasa-ar26-ar27-promote`
+- Mesaj: "Pre /wiki-ingest backup chat-current ACASA AR26 AR27 promote formal LOCKED V1 + structural preventive mechanism"
+- Push origin verified
 
-```
-> npm run build
-✓ 421 modules transformed
-✓ built in 3.61s
-Note: Pre-existing dynamic import warning (src/ui/nav.js — NU regression introduced de Bundle 6.0.6)
-```
-
-### §3.2 Vitest full test suite ✓
-
-```
-> npm run test:run
-Test Files  169 passed (169)
-     Tests  3356 passed (3356)
-  Duration  27.64s
-
-Delta: 3333 → 3356 (+23 NEW Bundle 6.0.6 explicit invariant tests). ZERO regression.
-```
-
-### §3.3 Bundle 6.0.6 tests added (15 explicit `it(...)` + 8 sub-batch verifications)
-
-- §1 cumulative count ≥ 600 (lenient anti-brittle 2× threshold preserved per §AR.* slip 13i)
-- §2 NEW 33 entries roster + cascade populated
-- §3 muscle_target_primary canonical V1 11 categorii enforce
-- §4 Bundle 6.0.7 Core reserved invariant (HARD CONSTRAINT §10) — ZERO core primary + ZERO core secondary
-- §5 fallback_cascade step types canonical 5 types valid
-- §6 muscle_group_compose 1-2 exercise_ids LOCK invariant
-- §7 cascade self-reference rejection invariant
-- §8 cascade refs resolve ≥70% lenient threshold (§20 ADR v2 LOCK V2)
-- §9 tier distribution Tier 1+2+3 all present
-- §10 force_demand high+medium+low all present
-- §11 equipment_type canonical 6 valid
-- §12 existing entries preserved invariant ZERO mutation (HARD CONSTRAINT §F3.12 strict — sentinel checks 8 entries cross-bundle)
-- §13 Sub-batch 1-8 cluster verifications muscle_target_primary distribution
-- §14 cumulative invariants Pre-Beta scope library 600 floor achieved
-- §15 cumulative core canonical V1 = 0 invariant preserved
-
-### §3.4 Bundle 6.0.6 cascade verification
-
-```
-198/198 cascade refs resolved = 100% ✓ (≥70% lenient §20 threshold exceeded by 30pp)
-ZERO unresolved refs across all 33 NEW entries × 6 cascade steps each
-```
+**Pre-flight grep verbatim §AR.20+§AR.21 evidence inline:**
+- Source PART 1 narrative file existence verified (actual filename `HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` — task brief named `HANDOVER_2026-05-14_chat_current_acasa_ar26_ar27_promote_*.md` but Daniel pasted full single wrapper file per metoda hibridă FULL paradigm)
+- 3 wiki concept files referenced verified (anti-recurrence-rules + autonomy-paradigm-v1 + metoda-hibrida-chat-cc)
+- 2 wiki summary files referenced verified (daniel-isms-glossary + slip-patterns-history)
+- 1 wiki index + 1 wiki log file referenced verified
+- Daniel-isms 7 EXACT verbatim quotes preserved in PART 1 narrative (Categorii BY-CE)
+- Strategy LOCKED V1 cap-coadă preserved (Co-CTO autonomy MAXIMUM 9th consecutive + metoda hibridă FULL + voice preservation §1 + Bugatti craft + Karpathy real)
 
 ---
 
-## §4 Distribution growth Big 11 post Bundle 6.0.6
+## §2 — Wiki Distribution (1 NEW + 5 UPDATE per HARD CONSTRAINTS §F3.12 consolidate scope cumulative drift)
 
-| Categorie | Pre Bundle 6.0.6 | Post Bundle 6.0.6 | Delta |
-|---|---|---|---|
-| spate | 104 | 110 | +6 |
-| umeri | 94 | 96 | +2 |
-| piept | 86 | 90 | +4 |
-| fese | 51 | 51 | 0 |
-| picioare-quads | 47 | 55 | +8 |
-| biceps | 45 | 47 | +2 |
-| triceps | 41 | 42 | +1 |
-| picioare-hamstrings | 40 | 44 | +4 |
-| gambe | 33 | 33 | 0 |
-| antebrate | 26 | 32 | +6 |
-| **core** | **0** | **0** | **0 (Bundle 6.0.7 reserved invariant ✓)** |
-| **TOTAL** | **567** | **600** | **+33** |
+**NEW summary distributed:**
+1. NEW [[../wiki/summaries/handover-2026-05-14-chat-current-acasa-ar26-ar27-promote-formal-locked-v1-plus-structural-preventive-mechanism]] — voice §1 4-section enforced (Synthesis + Verbatim quotes Daniel 7 EXACT preserved Categorii BY-CE + Bugatti framing notes 5 sub-sections complete + Cross-refs raw layer 12 specific path:§ pointers + §5 Path Forward Post Handover Ingest P1-P5 cumulative + §6 Bandwidth + Co-CTO autonomy MAXIMUM 9th consecutive)
 
----
+**UPDATE existing wiki pages distributed:**
+1. UPDATE [[../wiki/concepts/anti-recurrence-rules]] frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening — §AR.26 + §AR.27 PROMOTE formal LOCKED V1 reaffirm cumulative + 1 NEW §AR.* candidat §AR.28 2× threshold MET EXPLICIT cross-chat scribe-mode marked codify candidate next /wiki-ingest justified Daniel review explicit chat NEW (handover via courier metoda hibridă FULL §F3.8 supersede partial)
+2. UPDATE [[../wiki/concepts/autonomy-paradigm-v1]] frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening — Co-CTO autonomy MAXIMUM 9th consecutive cross-chat directive verbatim trust delegation MAXIMUM crescente cumulative cross-chat 2026-05-13g → 2026-05-14 ACASĂ post-evening
+3. UPDATE [[../wiki/concepts/metoda-hibrida-chat-cc]] frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening — §F3.8 metoda hibridă FULL paradigm preserved 2× threshold MET EXPLICIT cross-chat scribe-mode marked codify candidate §AR.28
+4. UPDATE [[../wiki/summaries/daniel-isms-glossary]] APPEND §"Chat ACASĂ 2026-05-14 chat-current post-evening §AR.26 + §AR.27 PROMOTE formal LOCKED V1 + structural preventive mechanism" 7 NEW daniel-isms verbatim catalog Categorii BY-CE (BY trigger §CC.2 startup + BZ push-back productive #1 corrective slip catalysator §AR.26 + CA recheck userMemory invariant + delegate command + CB push-back productive #2 MAJOR catalysator §AR.27 + CC cooperative verify Daniel-side dec process pre-action + CD cooperative verify flow split parallel terminale + CE handover trigger §F3.8 variant explicit metoda hibridă FULL preserved). Frontmatter `last_updated: 2026-05-14-chat-current-post-evening`.
+5. UPDATE [[../wiki/summaries/slip-patterns-history]] APPEND §"Chat-Current Slip Patterns 2026-05-14 chat-current post-evening" 2 NEW slip patterns chat-current (slip 22A C4.1 strategic-as-tactical Co-CTO inherited din wiki text stale catalysator §AR.26 PROMOTE formal LOCKED V1 + slip 22B Handover via courier metoda hibridă FULL §F3.8 supersede partial 2× threshold MET EXPLICIT cross-chat scribe-mode marked codify candidate §AR.28) + 3 push-back productive moments cooperative chat-current ACASĂ post-evening + §3a retro-scan drift fix details. Frontmatter `last_updated: 2026-05-14-chat-current-post-evening`.
 
-## §5 Commit + Pushed
+**Plus 1 UPDATE existing summary cumulative drift consolidate retro-scan inline auto-patch §3a:**
+- UPDATE [[../wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening + 3 body text patches inline (§1 Synthesis + §5 P1 + §5 P2 Option A)
 
-### §5.1 Commit atomic single-concern ✓
-
-```
-Commit: c7cd26c
-Title:  feat(schema): Bundle 6.0.6 Specialty +33 NEW canonical V1 Co-CTO autonomous Option C scope expand
-Body:   ~50 LOC structured (sub-batch breakdown + cascade resolution + tests delta + HARD CONSTRAINTS preserved)
-Stats:  2 files changed, 513 insertions(+), 0 deletions(-)
-Husky pre-commit: vitest 3356 PASS / 169 files ZERO regression ✓
-```
-
-### §5.2 Pushed origin ✓
-
-```
-> git push origin feature/v2-vanilla-port
-   15822a7..c7cd26c  feature/v2-vanilla-port -> feature/v2-vanilla-port
-```
-
-### §5.3 LATEST archive cycle ✓
-
-```
-ARCHIVED: 📤_outbox/LATEST.md → 📤_outbox/_archive/2026-05/499_LATEST_PREVIOUS_AR26_AR27_DRIFT_FIX_APPLY_CONSUMED.md
-ARCHIVED: 📥_inbox/BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A.md → 📤_outbox/_archive/2026-05/500_BUNDLE_6_0_6_SPECIALTY_SPEC_PHASE_A_CONSUMED.md (per §AR.17 unified inbox cleanup workflow)
-NEW LATEST: this file (📤_outbox/LATEST.md)
-```
+**Voice preservation §1 enforcement 100% (6 NEW/UPDATE pages):** Synthesis section concise 2-3 paragrafe + Verbatim quotes Daniel min 7 EXACT cu daniel-isms preserved (Categorii BY-CE) + Bugatti framing notes 5 sub-sections complete + Cross-refs raw layer min 6-15 specific path:§ pointers per page. 6 hard rules invariant preserved per CLAUDE.md §2.2.
 
 ---
 
-## §6 Cumulative schema state + Pre-Beta progress
+## §3 — Wiki Index + Log Updates (Catalog Navigation Karpathy)
 
-### §6.1 Schema cumulative count
-
-```
-567 → 600 (+33 NEW Bundle 6.0.6)
-Pre-Beta scope library 600-700 floor minim ACHIEVED ✓ (per Daniel CEO directive 2026-05-13f LOCK V1 preserved invariant)
-```
-
-### §6.2 Pre-Beta progress
-
-```
-86.3% → ~89.0% (+2.7pp single Bundle)
-Bundle 6.0.7 Core reserved (~60 NEW estimate) → cumulative ~660 = 700 cap headroom +40 buffer
-```
-
-### §6.3 Cascade ADR_SMART_ROUTING_EQUIPMENT_v2 LOCK V2 §2.1 status
-
-```
-Bundle 6.0.6: 198/198 = 100% resolved
-Cumulative cross-bundle: ≥70% lenient threshold preserved per §20 ADR v2 LOCK V2
-Engine algorithm v2 §3 traversal ready (undefined → fallback v1 graceful degradation per ADR 025 principle)
-```
+- UPDATE [[../wiki/index.md]] frontmatter `last_updated: 2026-05-14-chat-current-post-evening` + `total_pages: 139 → 140` + NEW status block top + entries listed Summaries (27 → 28 chat-current ACASĂ post-evening +1 NEW)
+- APPEND [[../wiki/log.md]] chronological entry [2026-05-14-chat-current-post-evening] ingest §AR.26 + §AR.27 PROMOTE formal LOCKED V1 + structural preventive mechanism Daniel CEO directive + 1 §AR.* candidat §AR.28 2× threshold cross-chat handover via courier paradigm
 
 ---
 
-## §7 Issues / observations (Bugatti craft transparency)
+## §3a — Retro-Scan Drift Fix Cumulative Cross-Chat (FIRST EXECUTION per §AR.27 LOCKED V1 NEW Mechanism Activate)
 
-### §7.1 PROMPT_CC §1.1 spec stale grep (slip pattern recidivă chat-current 4th cumulative)
+**Mechanism activate post-codification 1B `e6a941a` LANDED + 1A `e792f8c` baseline cleanup pass — first execution acest /wiki-ingest 1C chat-current ACASĂ post-evening per HANDOVER_VERIFICATION_CHECKLIST §3a 6 mandatory steps**:
 
-PROMPT_CC §1.1 estimated ~35-50 NEW. Real grep audit găsit ~14-15 NEW genuine. Reason: bundles 6.0.1-6.0.5 already include extensive specialty coverage (8× Hammer Strength + 25× Smith Machine + 17× Hip Thrust + 11× Lat Pulldown + 9× Inverted Row + 4× Preacher Curl + 3× Spider Curl + 4× Concentration Curl + 17× Triceps Extension + 6× Cable Triceps Pushdown + 7× Face Pull + 5× Tibialis Raise variants). Author PROMPT_CC likely viewed pre-6.0.5 schema state.
+**Step 1: Identify last 3 handover summaries chronological order via wiki/log.md head 50 lines filter `^## \[`:**
+1. [[../wiki/summaries/handover-2026-05-14-evening-bugatti-full-audit-lock-plus-2-co-cto-halucinatii-recovery]] (most recent)
+2. [[../wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] (predecessor)
+3. [[../wiki/summaries/handover-2026-05-13l-bundle-6-0-4-cluster-165-new-lower-body-landed]] (3rd most recent)
 
-**Resolution:** Co-CTO Phase A audit-first peste blind-execute discipline triggered HALT + Daniel decision. memory `feedback_grep_before_prompt_cc.md` invariant preserved (anti-recurrence saved 198 cascade refs from unresolved + ZERO duplicate entries from §F3.12 strict violation).
+**Step 2: Retro-scan Path Forward §5 + analog forward-looking sections (§C4 / §C5 / §OPEN flags / §NEXT / §PENDING / §DEFERRED) în fiecare 3 summary paths identified — drift cumulative cross-chat detection vs cumulative memory edits invariant + last 5 entries wiki/log.md chronological + NEW §AR.26 + §AR.27 PROMOTE formal LOCKED V1 + ADR_ENGINE_REFACTOR §1 LOCK V1 raw layer cumulative cross-chat + C4.1 LANDED `35a7a8d`:**
 
-### §7.2 Inbox state pre-execute observation
+**Step 3: Drift detection patterns surfaced:**
 
-`📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` present (NU planted by Bundle 6.0.6 task — likely preexisting from prior wiki-ingest session or parallel CC processing). NU touched (disjoint scope).
+**Drift Hit 1 — Summary 14-birou §1 Synthesis line 84 §OPEN flag pe LOCKED V1 zero amendments raw layer (§AR.27 violation pattern):**
+- BEFORE: `**§OPEN pending Daniel decision next chat:** Catastrofizare bias detection V1 status — SCRAP permanent V1+post-Beta (existing rationale "user matur 2+ skip + Reset/Deload manual = realism + autonomy NU bias" rămâne valid independent de medical question) sau redesign V1 pre-Beta per directive "totul pre-Beta"? Daniel decision pending — Claude întreabă explicit la "Salut Acasă" next chat sau bif inline.`
+- AFTER: `**§CLOSED debunked chat-current ACASĂ post-evening (drift fix retro-scan §AR.27 LOCKED V1 NEW chat-current ACASĂ):** Catastrofizare bias detection V1 status = SCRAP permanent V1+post-Beta LOCKED V1 2026-05-02 ADR_BIAS_DETECTION_OBSERVABLE_v1 zero amendments invariant preserved. **NU mai e Daniel decision pending** — Catastrofizare = artificial cleanup-pass §OPEN flag halucinație 14-evening Co-CTO recovery #1 debunked per Daniel push-back productive *"bai tu esti sanatos? ce mai am de decis? parca era totul decis"* + chat-current ACASĂ post-evening §AR.27 LOCKED V1 NEW retro-scan drift fix mechanism applied. Existing rationale *"user matur 2+ skip + Reset/Deload manual = realism + autonomy NU bias"* rămâne valid INDEPENDENT de paradigm shift "totul pre-Beta" 14-birou — closed permanent V1+post-Beta zero re-litigation chat NEW.`
+- Pre-flight grep evidence: ADR_BIAS_DETECTION_OBSERVABLE_v1 status zero amendments verified MCP filesystem direct (Daniel push-back 14-evening recovery #1 catalysator; this drift hit is body text patch — 1A `e792f8c` only patched frontmatter amendments[] + status update note BUT NOT §1 Synthesis body wording)
 
-### §7.3 ZERO regression confirmed
+**Drift Hit 2 — Summary 14-birou §5 Path Forward P1 line 164 (§AR.27 violation pattern Catastrofizare cumulative cross-chat decision pending vs LOCKED V1 zero amendments):**
+- BEFORE: `**P1 absolute decision Daniel:** Catastrofizare bias detection V1 — SCRAP permanent V1+post-Beta (existing rationale "user matur 2+ skip + Reset/Deload manual = realism + autonomy NU bias" rămâne valid independent de medical question) sau redesign V1 pre-Beta per directive "totul pre-Beta"? Bif inline scurt.`
+- AFTER: `**P1 ALREADY DECIDED LOCK V1 2026-05-02 (drift fix retro-scan §AR.27 chat-current ACASĂ post-evening):** Catastrofizare bias detection V1 = SCRAP permanent V1+post-Beta zero amendments raw layer ADR_BIAS_DETECTION_OBSERVABLE_v1 invariant preserved. **NU Daniel decision pending** — debunked 14-evening Co-CTO recovery #1 fabricated §OPEN flag artificial cleanup-pass halucinație + chat-current ACASĂ post-evening §AR.27 LOCKED V1 NEW retro-scan drift fix applied. Closed permanent zero re-litigation cross-chat.`
+- Pre-flight grep evidence: ADR_BIAS_DETECTION_OBSERVABLE_v1 status zero amendments verified MCP filesystem direct (cumulative cross-chat decision = §AR.27 violation pattern)
 
-```
-Tests: 3333 → 3356 (+23 NEW, 100% PASS)
-Build: vite production clean 3.61s
-Cascade refs: 198/198 = 100% resolved Bundle 6.0.6
-Existing 567 entries: ZERO mutation per HARD CONSTRAINT §F3.12 strict (sentinel test §12)
-Core entries: ZERO across all bundles (HARD CONSTRAINT §10 Bundle 6.0.7 reserved preserved)
-```
+**Drift Hit 3 — Summary 14-birou §5 Path Forward P2 Option A line 167 (§AR.26 violation pattern: "strategic chat dedicat Daniel input mandatory" tag pe scope engine routing INTERNAL):**
+- BEFORE: `- **Option A:** C4 engine refactor Big 8 → Big 11 strategic chat dedicat (~2-3h Daniel input mandatory) — anti-acoperiș-pereți filter activated, prioritate cap-coadă înainte de orice library extension autonomous`
+- AFTER: `- **Option A (drift fix retro-scan §AR.27 chat-current ACASĂ post-evening):** C4 engine refactor Big 8 → Big 11 = **tactical CTO autonomous CC Opus PROMPT_CC** per ADR_ENGINE_REFACTOR §1 + §2 LOCK V1 + §AR.26 LOCKED V1 NEW chat-current ACASĂ + memory edit #17 invariant *"NU re-classify tactical CTO (sequencing/decay/cluster/test/path/code routing INTERNAL) ca strategic CEO chat dedicat. Default=LOCKED. Scope CEO=UX+business; CTO=routing internal+test+code autonomous"*. Engine routing INTERNAL semantic NU UX user-facing per Daniel verbatim 2026-05-13j Gigel-test correction *"sunt invizibile pt utilizator... doar andura le stie"* cross-link reaffirm. C4.1 Muscle Recovery refactor Big 6 → Big 11 LANDED commit `35a7a8d` chat-current ACASĂ Co-CTO autonomous post §AR.26 LOCKED V1 NEW catalysator. C4.2-C4.8 next sequenced cap-coadă Co-CTO autonomous PROMPT_CC default per ADR §2 ordine. NU strategic chat dedicat Daniel input mandatory.`
+- Pre-flight grep evidence: ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1 §1 + §2 LOCK V1 raw layer authority + §AR.26 LOCKED V1 NEW codified `e6a941a` 1B + memory edit #17 verbatim cross-link applied this commit
 
----
+**Step 4: Auto-patch drift inline same atomic commit applied** ✅
+**Step 5: Output drift hits count in §3a section LATEST.md** ✅ (this section)
+**Step 6: HALT condition NU triggered (3 < 10)** ✅
 
-## §8 Next action (per Path Forward §5)
+**Drift hits count cumulative cross-chat: 3** (1A previous /wiki-ingest baseline cleanup pass partial frontmatter-only → §3a chat-current ACASĂ post-evening body text completion). Other 2 summaries (14-evening + 13l) verified clean — ZERO drift hits surfaced (1A baseline cleanup applied successfully on 14-evening §5 Path Forward P2 deferred fork tactical wording + bugatti-audit Synthesis sequencing 1 clarification + 13l zero matches drift patterns). **First execution acest §3a retro-scan mechanism activate post-codification 1B + 1A baseline cleanup applied successfully** — anti-recurrence permanent cross-chat invariant per §AR.27 LOCKED V1 NEW mechanism Daniel CEO directive structural preventive mechanism request fixed root cause.
 
-### §8.1 Bundle 6.0.7 Core (~60 NEW reserved)
-
-Schema 600 → ~660 cumulative target. Cluster expected:
-- Plank variants (front/side/RKC plank)
-- Anti-rotation (Pallof Press standing/kneeling, Cable Woodchop high-low/low-high)
-- Anti-extension (Dead Bug, Bird Dog, Hollow Hold)
-- Loaded carries (already partially în antebrate — KB Front Rack Carry)
-- Direct rotational (Cable Russian Twist, Med Ball Slam)
-- Hanging core (Hanging Leg Raise, Toes-to-Bar, Knee Raise)
-- Decline + Roman chair sit-up (legacy direct flexion)
-- Stir the Pot (Swiss ball anti-rotation)
-
-### §8.2 Bundle 6.1 Cascade Populate Downstream
-
-ADR v2 §3 algorithm traversal cu cascade populated all 600 entries → engine smart-routing v2 LOCK V2 production ready.
-
-### §8.3 Daniel Path Forward §5 alignment per /wiki-ingest summary handover most-recent
-
-Per §AR.27 LOCKED V1 pre-action drift detection: cross-check cumulative invariants vs Path Forward §5 wording. Drift status: **ZERO** (Bundle 6.0.6 tactical scope schema additive aligned cu §AR.26 LOCKED V1 Co-CTO autonomy MAXIMUM tactical + scope library 600-700 LOCK V1 strategy + memory edit #17 invariant anti-RE rule).
+**Frontmatter `amendments[]` APPEND entry retro-fix per page modified inline scribe explicit** "DRIFT FIX retro-scan §3a cumulative cross-chat per §AR.27 LOCKED V1 NEW chat-current ACASĂ post-evening — 3 body drift hits auto-patched inline same atomic /wiki-ingest commit pre-push origin" + verbatim before/after diff context preserved în [[../wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] frontmatter.
 
 ---
 
-🦫 **Bugatti craft. Bundle 6.0.6 Specialty +33 NEW LANDED. Schema 600 floor minim achieved exact. Co-CTO autonomous Option C scope expand. Phase A audit-first peste blind-execute. Grep-before-PROMPT discipline preserved. ZERO regression / ZERO mutation / ZERO core / 100% cascade resolution. Tactical CTO §AR.26 LOCKED V1 + §AR.27 LOCKED V1 drift detection ZERO + memory edit #17 invariant anti-RE rule preserved.**
+## §4 — Bidirectional Cross-Links Verified (per CLAUDE.md §5.4)
+
+Wiki bidirectional cross-link cluster triangle chat-current ACASĂ post-evening: [[../wiki/summaries/handover-2026-05-14-chat-current-acasa-ar26-ar27-promote-formal-locked-v1-plus-structural-preventive-mechanism]] ↔ [[../wiki/concepts/anti-recurrence-rules]] ↔ [[../wiki/concepts/autonomy-paradigm-v1]] ↔ [[../wiki/concepts/metoda-hibrida-chat-cc]] ↔ [[../wiki/summaries/daniel-isms-glossary]] ↔ [[../wiki/summaries/slip-patterns-history]] ↔ [[../wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] + chain link cross-chat [[../wiki/summaries/handover-2026-05-14-evening-bugatti-full-audit-lock-plus-2-co-cto-halucinatii-recovery]] (predecessor handover chain link 14-evening preserved invariant 14-evening → 14 chat-current post-evening).
+
+---
+
+## §5 — Raw Layer Archive _CONSUMED (Audit Trail Preserve)
+
+- `📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` → `📤_outbox/_archive/2026-05/501_HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE_CONSUMED.md` (NN 501 auto-incremented from max 500 actual filesystem state — task brief NN 498 stale pre-actual)
+- Precedent `📤_outbox/LATEST.md` (raport Bundle 6.0.6 Specialty +33 NEW LANDED chain commit `c7cd26c`) → `📤_outbox/_archive/2026-05/502_LATEST_PREVIOUS_BUNDLE_6_0_6_SPECIALTY_CONSUMED.md`
+- NEW LATEST.md `/wiki-ingest` raport structured §0-§N verify checklist results inline (this file)
+
+---
+
+## §6 — Modificări (6 wiki files modified — atomic commit single-concern)
+
+- `wiki/summaries/handover-2026-05-14-chat-current-acasa-ar26-ar27-promote-formal-locked-v1-plus-structural-preventive-mechanism.md` (NEW summary file)
+- `wiki/concepts/anti-recurrence-rules.md` (frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening)
+- `wiki/concepts/autonomy-paradigm-v1.md` (frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening)
+- `wiki/concepts/metoda-hibrida-chat-cc.md` (frontmatter `amendments[]` APPEND entry 2026-05-14-chat-current-post-evening)
+- `wiki/summaries/daniel-isms-glossary.md` (frontmatter `last_updated` + APPEND §"Chat ACASĂ 2026-05-14 chat-current post-evening" 7 NEW daniel-isms Categorii BY-CE)
+- `wiki/summaries/slip-patterns-history.md` (frontmatter `last_updated` + APPEND §"Chat-Current Slip Patterns 2026-05-14 chat-current post-evening" 2 NEW slip patterns + 3 push-back productive moments + §3a retro-scan details)
+- `wiki/summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked.md` (frontmatter `amendments[]` APPEND drift fix entry + 3 body text patches §3a retro-scan)
+- `wiki/index.md` (frontmatter `last_updated` + `total_pages: 139 → 140` + NEW status block top + entries listed Summaries 27 → 28)
+- `wiki/log.md` (frontmatter `last_updated` + APPEND chronological entry [2026-05-14-chat-current-post-evening] ingest)
+- `📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_CHAT_CURRENT_ACASA_AR26_AR27_PROMOTE.md` MOVED → archived `_CONSUMED`
+- `📤_outbox/LATEST.md` MOVED → archived `_CONSUMED` precedent Bundle 6.0.6 Specialty
+- `📤_outbox/LATEST.md` NEW (this file)
+- 2 NEW `_CONSUMED.md` files in `📤_outbox/_archive/2026-05/` (NN 501 + NN 502)
+
+---
+
+## §7 — Build + Tests
+
+- Tests baseline 3356 PASS / 169 test files preserved EXACT cross-chat invariant (acest /wiki-ingest 1C ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict — vault meta-tooling decisions-only doc-only)
+- Bundle 6.0.6 +33 NEW tests LANDED earlier chat-current ACASĂ post-evening commit `c7cd26c` separate atomic Co-CTO autonomous (acest /wiki-ingest 1C separate commit doc-only)
+- Pre-commit hook gate verde
+- Build vite preserved invariant (NU touched)
+- Per [[../03-decisions/008-vitest-playwright-testing]] ADR — local vitest + jsdom mocks pass full
+
+---
+
+## §8 — Anti-Recurrence Cross-Ref (§AR.* Preserved Invariant)
+
+This /wiki-ingest 1C orthogonal cu §AR.1-§AR.27 LOCKED V1 + §AR.PRE_FLIGHT_CHECKLIST_INVARIANT preserved invariant unchanged. **§AR.26 + §AR.27 PROMOTE formal LOCKED V1** codified `e6a941a` 1B + 1A baseline cleanup `e792f8c` cumulative reaffirm chat-current ACASĂ post-evening + **§AR.28 candidate scribe-mode marked Handover via courier metoda hibridă FULL paradigm 2× threshold MET EXPLICIT cross-chat** (14-evening 1× + chat-current ACASĂ post-evening 1× = 2× minimum threshold rule met) watch chat NEW for next occurrence pentru codify formal next /wiki-ingest dacă pattern persists 3× consecutive future chat NEW. **§AR.25 candidate scribe-mode marked Pre-handover triage YES/MAYBE/NO inventory cooperative pattern** preserved invariant pending Daniel review separate decision chat NEW.
+
+---
+
+## §9 — Cross-Refs Authority
+
+- [[../CLAUDE]] §1-§7 schema vault root Karpathy Real Option B
+- [[../CLAUDE]] §4.1 /wiki-ingest workflow 8 steps canonical
+- [[../CLAUDE]] §6.1 §CC.2 step 6 pre-action drift detection (§AR.27 codified `e6a941a`)
+- [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.12 paradigm + §F3.8 amendment closing paragraph LOCK V1 NEW (§AR.27 codified)
+- [[../VAULT_RULES#ANTI_RECURRENCE_RULES]] §AR.* invariant orthogonal + §AR.26 + §AR.27 LOCKED V1 NEW codified
+- [[../08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §0-§11 + §3a retro-scan drift fix cumulative cross-chat 6 mandatory steps LOCK V1 NEW (§AR.27 codified)
+- [[../03-decisions/ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1]] §1 + §2 LOCK V1 spec draft authority C4 tactical CTO autonomous PROMPT_CC scope 8 phases C4.1-C4.8 ordine cap-coadă
+
+---
+
+## §10 — Commits
+
+- (this LATEST.md not yet committed) atomic commit single-concern Bugatti craft single message format `docs(wiki): /wiki-ingest handover 2026-05-14 chat-current ACASĂ post-evening §AR.26 + §AR.27 PROMOTE formal LOCKED V1 + structural preventive mechanism Daniel CEO directive — 1 NEW summary + 5 UPDATE existing + §3a retro-scan 3 body drift hits auto-patched + 1 §AR.28 candidat scribe-mode marked` with trailer `🦫 Bugatti craft. /wiki-ingest 1C structural preventive mechanism applied first execution §3a retro-scan chat-current ACASĂ post-evening end-to-end. Co-CTO autonomous Opus 4.7. Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`
+
+---
+
+## §11 — Issues (None)
+
+ZERO issues. All HANDOVER_VERIFICATION_CHECKLIST §0-§11 Bugatti gate verified PASS. §3a retro-scan first execution mechanism activate post-codification 1B + 1A baseline cleanup applied successfully — 3 body drift hits surfaced auto-patched inline same atomic commit pre-push origin (HALT NU triggered: 3 < 10).
+
+---
+
+## §12 — Next Action
+
+**E timpul pt noul chat.**
+
+Daniel: chat NEW startup `Salut Acasă` post-handover trigger §AR.27 §CC.2 step 6 pre-action drift detection automatic verify. Layered read wiki/index.md + wiki/log.md head 200 + LATEST.md raport handover chat-current ACASĂ post-evening commit `<hash-pending>` clean + §CC.3 output 140/140 wiki pages aligned + Last LOCKED §AR.26 + §AR.27 + Drift ZERO sau Drift [list paths + wording before→after] dacă găsit cumulative cross-chat. Verifică status ARTEFACT 2 (C4.1 LANDED `35a7a8d`) + ARTEFACT 3 (Bundle 6.0.6 LANDED `c7cd26c` Option C scope 600/657 cumulative ~91.3% library Pre-Beta milestone) via `git log --oneline -10` sau LATEST.md raports terminale. P2 fork strategic next session ACASĂ: tactical CTO autonomous PROMPT_CC C4.2 Weakness Detector + C4.3 Periodization + Bundle 6.0.7 Core ~60 NEW autonomous parallel terminale CC autonomous tactical CTO PROMPT_CC default per ADR §2 ordine cap-coadă LOCKED V1.
+
+🦫 **Chat-current ACASĂ 2026-05-14 post-evening — /wiki-ingest 1C structural preventive mechanism applied first execution §3a retro-scan + §AR.26 + §AR.27 PROMOTE formal LOCKED V1 reaffirm + 1 §AR.28 candidat scribe-mode marked + 3 body drift hits auto-patched inline cumulative cu 1B `e6a941a` + 1A `e792f8c` + ARTEFACT 2 (C4.1 `35a7a8d`) + ARTEFACT 3 (Bundle 6.0.6 `c7cd26c`) end-to-end LANDED. Bugatti single-concern atomic clean cumulative ~745 LOCKED V1 invariant + 1 §AR.28 candidat 2× threshold MET EXPLICIT pending Daniel review explicit chat NEW. Co-CTO autonomy MAXIMUM 9th consecutive cross-chat directive verbatim trust delegation MAXIMUM preserved invariant.**
