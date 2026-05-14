@@ -1896,4 +1896,40 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
       expect(EXERCISE_METADATA[name].muscle_target_secondary).not.toContain('core');
     });
   });
+
+  // ── Phase E — Triceps Barbell + EZ-bar + Cable Extension (16 NEW) ────────────
+  const NEW_ENTRIES_6_0_5_PHASE_E = [
+    'Lying Triceps Extension Barbell', 'Lying Triceps Extension EZ-bar', 'Decline Triceps Extension Barbell',
+    'Seated Overhead Triceps Extension Barbell', 'Seated Overhead Triceps Extension EZ-bar', 'Standing Overhead Triceps Extension EZ-bar',
+    'JM Press', 'Cable Triceps Pushdown Straight Bar', 'Cable Triceps Pushdown V-bar', 'Cable Triceps Pushdown Rope',
+    'Cable Triceps Pushdown Reverse Grip', 'Cable Overhead Triceps Extension Rope', 'Cable Overhead Triceps Extension EZ-bar',
+    'Cable Triceps Kickback Rope', 'Cable Crossover Triceps Extension', 'Cable Triceps Pushdown Single-Arm',
+  ];
+
+  it('Phase E Triceps Barbell + EZ + Cable 16 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_E.length).toBe(16);
+    NEW_ENTRIES_6_0_5_PHASE_E.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase E all 16 entries muscle_target_primary === triceps canonical V1', () => {
+    NEW_ENTRIES_6_0_5_PHASE_E.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('triceps');
+    });
+  });
+
+  it('Phase E JM Press is Tier 1 compound force_demand high (mass builder hybrid)', () => {
+    expect(EXERCISE_METADATA['JM Press'].tier).toBe(1);
+    expect(EXERCISE_METADATA['JM Press'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['JM Press'].muscle_target_secondary).toContain('piept');
+  });
+
+  it('Phase E equipment types valid (barbell + cable for all 16)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_E.forEach(name => {
+      expect(['barbell', 'cable']).toContain(EXERCISE_METADATA[name].equipment_type);
+    });
+  });
 });

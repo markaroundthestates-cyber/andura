@@ -3749,6 +3749,136 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Chin-Up Negatives Eccentric Only' },
   ] },
 
+  // ── Phase E — Triceps Barbell + EZ-bar + Cable Extension Variants (16 NEW) ───
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase E): NEW Tier 2 isolation barbell — skull crusher lying triceps long head emphasis
+  'Lying Triceps Extension Barbell': { equipment_type: 'barbell', equipment_alternatives: ['Lying Triceps Extension EZ-bar', 'Close-Grip Bench Press'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Lying Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — wrist-friendly skull crusher
+  'Lying Triceps Extension EZ-bar': { equipment_type: 'barbell', equipment_alternatives: ['Lying Triceps Extension Barbell', 'Close-Grip Bench Press'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Lying Triceps Extension Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — decline skull crusher long head deeper stretch
+  'Decline Triceps Extension Barbell': { equipment_type: 'barbell', equipment_alternatives: ['Lying Triceps Extension Barbell', 'Lying Triceps Extension EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Lying Triceps Extension Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — seated overhead triceps long head stretched maximum
+  'Seated Overhead Triceps Extension Barbell': { equipment_type: 'barbell', equipment_alternatives: ['Seated Overhead Triceps Extension EZ-bar', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Seated Overhead Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Lying Triceps Extension Barbell'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — seated overhead wrist-friendly variant
+  'Seated Overhead Triceps Extension EZ-bar': { equipment_type: 'barbell', equipment_alternatives: ['Seated Overhead Triceps Extension Barbell', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Seated Overhead Triceps Extension Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Lying Triceps Extension EZ-bar'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — standing overhead triceps long head wrist-friendly
+  'Standing Overhead Triceps Extension EZ-bar': { equipment_type: 'barbell', equipment_alternatives: ['Seated Overhead Triceps Extension EZ-bar', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Seated Overhead Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Lying Triceps Extension EZ-bar'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound barbell — JM Press hybrid skull crusher + close-grip press triceps mass builder
+  'JM Press':                     { equipment_type: 'barbell', equipment_alternatives: ['Close-Grip Bench Press', 'Lying Triceps Extension Barbell'], force_demand: 'high', tier: 1, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Close-Grip Bench' },
+    { type: 'muscle_group_compose', exercise_ids: ['Close-Grip Bench Press', 'Pushdown'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Lying Triceps Extension EZ-bar' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — pushdown straight bar lateral head emphasis
+  'Cable Triceps Pushdown Straight Bar': { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown V-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown V-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown Rope', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — V-bar pushdown standard mass builder
+  'Cable Triceps Pushdown V-bar': { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown Straight Bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown Straight Bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown Rope', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — rope pushdown lateral head + spread fingers peak contraction
+  'Cable Triceps Pushdown Rope':  { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown V-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown V-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown Straight Bar', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — reverse grip pushdown medial head emphasis
+  'Cable Triceps Pushdown Reverse Grip': { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown Straight Bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown Straight Bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown Rope', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — overhead extension rope long head stretch maximum
+  'Cable Overhead Triceps Extension Rope': { equipment_type: 'cable', equipment_alternatives: ['Overhead Triceps', 'Seated Overhead Triceps Extension EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Cable Overhead Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Lying Triceps Extension EZ-bar'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — overhead extension EZ-bar attachment long head wrist-friendly
+  'Cable Overhead Triceps Extension EZ-bar': { equipment_type: 'cable', equipment_alternatives: ['Overhead Triceps', 'Cable Overhead Triceps Extension Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Cable Overhead Triceps Extension Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Lying Triceps Extension EZ-bar'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — kickback rope unilateral lateral head peak contraction
+  'Cable Triceps Kickback Rope':  { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown Straight Bar', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — crossover triceps extension dual cable peak contraction
+  'Cable Crossover Triceps Extension': { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Pushdown V-bar', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — single-arm pushdown unilateral lateral head emphasis
+  'Cable Triceps Pushdown Single-Arm': { equipment_type: 'cable', equipment_alternatives: ['Pushdown', 'Cable Triceps Pushdown Straight Bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Pushdown V-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Triceps Kickback Rope', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+
 };
 
 /**
