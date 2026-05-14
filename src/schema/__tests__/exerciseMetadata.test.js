@@ -1932,4 +1932,41 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
       expect(['barbell', 'cable']).toContain(EXERCISE_METADATA[name].equipment_type);
     });
   });
+
+  // ── Phase F — Triceps Dumbbell + Skull + Kickbacks + Dips (15 NEW) ───────────
+  const NEW_ENTRIES_6_0_5_PHASE_F = [
+    'DB Lying Triceps Extension', 'DB Lying Triceps Extension Cross-Body',
+    'DB Overhead Triceps Extension Two-Hand', 'DB Overhead Triceps Extension Single-Arm Seated', 'DB Overhead Triceps Extension Single-Arm Standing',
+    'DB Kickback Standing', 'DB Kickback Bench Support', 'DB Tate Press', 'DB Floor Press Close-Grip',
+    'DB Single-Arm Overhead Triceps Extension Kneeling', 'DB Triceps Extension Lying Cross-Body Single-Arm',
+    'Triceps Dip Parallel Bars', 'Triceps Dip Weighted', 'Triceps Dip Machine', 'Cable Single-Arm Overhead Triceps Extension',
+  ];
+
+  it('Phase F Triceps DB + Dips 15 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_F.length).toBe(15);
+    NEW_ENTRIES_6_0_5_PHASE_F.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase F all 15 entries muscle_target_primary === triceps canonical V1', () => {
+    NEW_ENTRIES_6_0_5_PHASE_F.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('triceps');
+    });
+  });
+
+  it('Phase F Dip variants are Tier 1 high (Parallel Bars + Weighted) compound chest-engage', () => {
+    expect(EXERCISE_METADATA['Triceps Dip Parallel Bars'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Triceps Dip Parallel Bars'].force_demand).toBe('high');
+    expect(EXERCISE_METADATA['Triceps Dip Weighted'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Triceps Dip Parallel Bars'].muscle_target_secondary).toContain('piept');
+  });
+
+  it('Phase F equipment types valid (dumbbell + bodyweight + machine + cable)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_F.forEach(name => {
+      expect(['dumbbell', 'bodyweight', 'machine', 'cable']).toContain(EXERCISE_METADATA[name].equipment_type);
+    });
+  });
 });

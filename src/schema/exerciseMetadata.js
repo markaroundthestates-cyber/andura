@@ -3879,6 +3879,128 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip' },
   ] },
 
+  // ── Phase F — Triceps Dumbbell + Skull + Kickbacks + Dips (15 NEW) ───────────
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase F): NEW Tier 2 isolation DB — DB skull crusher long head emphasis
+  'DB Lying Triceps Extension':   { equipment_type: 'dumbbell', equipment_alternatives: ['Lying Triceps Extension Barbell', 'Lying Triceps Extension EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Lying Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — cross-body skull crusher unilateral peak
+  'DB Lying Triceps Extension Cross-Body': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Lying Triceps Extension', 'Lying Triceps Extension Barbell'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Lying Triceps Extension' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Cable Triceps Kickback Rope'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — overhead two-hand long head stretched maximum
+  'DB Overhead Triceps Extension Two-Hand': { equipment_type: 'dumbbell', equipment_alternatives: ['Seated Overhead Triceps Extension Barbell', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Seated Overhead Triceps Extension EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Lying Triceps Extension'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — single-arm seated overhead unilateral long head
+  'DB Overhead Triceps Extension Single-Arm Seated': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Two-Hand', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'DB Overhead Triceps Extension Two-Hand' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Kickback Standing'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — single-arm standing overhead unilateral long head
+  'DB Overhead Triceps Extension Single-Arm Standing': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Single-Arm Seated', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'DB Overhead Triceps Extension Single-Arm Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Kickback Standing'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — kickback standing unilateral lateral head
+  'DB Kickback Standing':         { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Triceps Kickback Rope', 'DB Kickback Bench Support'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Kickback Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — kickback bench-supported strict back-flat form
+  'DB Kickback Bench Support':    { equipment_type: 'dumbbell', equipment_alternatives: ['DB Kickback Standing', 'Cable Triceps Kickback Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pushdown' },
+    { type: 'assisted_variant', exercise_id: 'DB Kickback Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Overhead Triceps'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — Tate press triceps + piept secondary mass builder
+  'DB Tate Press':                { equipment_type: 'dumbbell', equipment_alternatives: ['JM Press', 'DB Lying Triceps Extension'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Lying Triceps Extension' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Close-Grip Bench Press'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — floor press close-grip triceps + piept secondary
+  'DB Floor Press Close-Grip':    { equipment_type: 'dumbbell', equipment_alternatives: ['Close-Grip Bench Press', 'DB Tate Press'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Tate Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Lying Triceps Extension'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — single-arm overhead triceps extension kneeling alternative position
+  'DB Single-Arm Overhead Triceps Extension Kneeling': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Single-Arm Seated', 'DB Overhead Triceps Extension Single-Arm Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'DB Overhead Triceps Extension Single-Arm Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Kickback Standing'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — lying cross-body single-arm peak triceps
+  'DB Triceps Extension Lying Cross-Body Single-Arm': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Lying Triceps Extension Cross-Body', 'DB Lying Triceps Extension'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'DB Lying Triceps Extension Cross-Body' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Cable Triceps Kickback Rope'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — parallel bars dip triceps-emphasized vertical lean
+  'Triceps Dip Parallel Bars':    { equipment_type: 'bodyweight', equipment_alternatives: ['Bench Dip', 'Triceps Dip Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Dip Machine' },
+    { type: 'assisted_variant', exercise_id: 'Bench Dip' },
+    { type: 'muscle_group_compose', exercise_ids: ['Close-Grip Bench Press', 'Pushdown'] },
+    { type: 'bodyweight', exercise_id: 'Bench Dip' },
+    { type: 'light_variant', exercise_id: 'Bench Dip Feet-on-Floor' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — weighted dip advanced triceps mass builder
+  'Triceps Dip Weighted':         { equipment_type: 'bodyweight', equipment_alternatives: ['Triceps Dip Parallel Bars', 'Close-Grip Bench Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Dip Machine' },
+    { type: 'assisted_variant', exercise_id: 'Triceps Dip Parallel Bars' },
+    { type: 'muscle_group_compose', exercise_ids: ['Close-Grip Bench Press', 'Pushdown'] },
+    { type: 'bodyweight', exercise_id: 'Triceps Dip Parallel Bars' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation machine — dip machine assisted strict triceps
+  'Triceps Dip Machine':          { equipment_type: 'machine', equipment_alternatives: ['Triceps Press Machine', 'Triceps Dip Parallel Bars'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: ['piept'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Bench Dip' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Close-Grip Bench Press'] },
+    { type: 'bodyweight', exercise_id: 'Bench Dip' },
+    { type: 'light_variant', exercise_id: 'Bench Dip Feet-on-Floor' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — single-arm overhead extension cable unilateral long head
+  'Cable Single-Arm Overhead Triceps Extension': { equipment_type: 'cable', equipment_alternatives: ['Cable Overhead Triceps Extension Rope', 'DB Overhead Triceps Extension Single-Arm Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
+    { type: 'assisted_variant', exercise_id: 'Cable Overhead Triceps Extension Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Cable Triceps Kickback Rope'] },
+    { type: 'bodyweight', exercise_id: 'Diamond Push-up' },
+    { type: 'light_variant', exercise_id: 'Bench Dip' },
+  ] },
+
 };
 
 /**
