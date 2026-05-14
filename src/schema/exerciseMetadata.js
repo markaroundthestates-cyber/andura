@@ -3666,6 +3666,89 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'DB Spider Curl' },
   ] },
 
+  // ── Phase D — Bodyweight + Chin-Up Variants (10 NEW) ─────────────────────────
+  // NOTE: Per ADR_ANATOMICAL_CLASSIFICATION_V1 §3.4 Edge cases — Chin-Up = `spate` primary + `biceps` secondary (back-dominant compound), NU `biceps` primary even biceps-emphasized form. Phase D adds spate-primary entries cu biceps secondary tag for routing PARALLEL specialization bump biceps day per ADR_SESSION_SEQUENCE_v1 §3.5 weighted secondary consume.
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase D): NEW Tier 1 compound bodyweight — strict underhand chin-up biceps-emphasized form
+  'Chin-Up Underhand Strict':     { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-up', 'Chin-Up Underhand Close Grip'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Row'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — close grip underhand biceps emphasis
+  'Chin-Up Underhand Close Grip': { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-up', 'Close-Grip Chin-up'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Row'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — neutral grip parallel hammer-style brachialis + brachioradialis
+  'Chin-Up Neutral Grip':         { equipment_type: 'bodyweight', equipment_alternatives: ['Neutral-Grip Pull-up', 'Chin-Up Underhand Strict'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps', 'antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Neutral-Grip Lat Pulldown' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Row'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Underhand' },
+    { type: 'light_variant', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation bodyweight — eccentric-only negatives strength build phase
+  'Chin-Up Negatives Eccentric Only': { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-Up Assisted Band', 'Chin-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown Underhand', 'Cable Row'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Underhand' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 assisted band — beginner-friendly chin-up progression
+  'Chin-Up Assisted Band':        { equipment_type: 'band', equipment_alternatives: ['Chin-Up Assisted Machine', 'Chin-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Chin-Up Assisted Machine' },
+    { type: 'assisted_variant', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Underhand' },
+    { type: 'light_variant', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 assisted machine — beginner-friendly chin-up machine progression
+  'Chin-Up Assisted Machine':     { equipment_type: 'machine', equipment_alternatives: ['Chin-Up Assisted Band', 'Chin-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Underhand' },
+    { type: 'light_variant', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation bodyweight — inverted row underhand biceps-emphasized horizontal pull
+  'Inverted Row Underhand':       { equipment_type: 'bodyweight', equipment_alternatives: ['Cable Row', 'Inverted Row'], force_demand: 'medium', tier: 2, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+    { type: 'light_variant', exercise_id: 'Cable Row' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — towel chin-up grip-emphasized antebrate engage advanced
+  'Towel Chin-Up':                { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-Up Underhand Strict', 'Weighted Chin-up'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps', 'antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Hammer Curl Rope'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — L-sit chin-up advanced bodyweight strict (core engage abdominal-stabilizer NU sec tag — Bundle 6.0.7 Core reserved invariant)
+  'L-sit Chin-Up':                { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-Up Underhand Strict', 'Weighted Chin-up'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Lat Pulldown Underhand' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — commando pull-up alternating side-to-side biceps emphasis advanced
+  'Commando Pull-Up':             { equipment_type: 'bodyweight', equipment_alternatives: ['Chin-Up Neutral Grip', 'Mixed Grip Chin-Up'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Neutral-Grip Lat Pulldown' },
+    { type: 'assisted_variant', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Chin-Up Negatives Eccentric Only' },
+  ] },
+
 };
 
 /**

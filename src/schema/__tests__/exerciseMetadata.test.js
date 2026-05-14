@@ -1857,4 +1857,43 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
       expect(['cable', 'machine']).toContain(EXERCISE_METADATA[name].equipment_type);
     });
   });
+
+  // ── Phase D — Bodyweight + Chin-Up Variants (10 NEW spate primary + biceps secondary per ADR §3.4 edge case) ──
+  const NEW_ENTRIES_6_0_5_PHASE_D = [
+    'Chin-Up Underhand Strict', 'Chin-Up Underhand Close Grip', 'Chin-Up Neutral Grip',
+    'Chin-Up Negatives Eccentric Only', 'Chin-Up Assisted Band', 'Chin-Up Assisted Machine',
+    'Inverted Row Underhand', 'Towel Chin-Up', 'L-sit Chin-Up', 'Commando Pull-Up',
+  ];
+
+  it('Phase D Bodyweight + Chin-Up 10 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_D.length).toBe(10);
+    NEW_ENTRIES_6_0_5_PHASE_D.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase D all 10 entries muscle_target_primary === spate (per ADR §3.4 chin-up = back-dominant compound)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_D.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('spate');
+    });
+  });
+
+  it('Phase D all 10 entries have biceps in muscle_target_secondary (biceps-emphasized form routing PARALLEL bump)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_D.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_secondary).toContain('biceps');
+    });
+  });
+
+  it('Phase D Towel + Chin-Up Neutral Grip have antebrate secondary tag (grip + brachioradialis engage)', () => {
+    expect(EXERCISE_METADATA['Towel Chin-Up'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['Chin-Up Neutral Grip'].muscle_target_secondary).toContain('antebrate');
+  });
+
+  it('Phase D ZERO core in muscle_target_secondary (Bundle 6.0.7 Core reserved invariant preserved)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_D.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_secondary).not.toContain('core');
+    });
+  });
 });
