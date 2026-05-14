@@ -1777,4 +1777,50 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
     expect(EXERCISE_METADATA['Calf Raises'].muscle_target_primary).toBe('gambe');
     expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');
   });
+
+  // ── Phase B — Biceps Dumbbell (14 NEW) ───────────────────────────────────────
+  const NEW_ENTRIES_6_0_5_PHASE_B = [
+    'DB Curl Standing', 'DB Curl Standing Alternate', 'DB Curl Seated Alternate',
+    'DB Hammer Curl Standing', 'DB Hammer Curl Seated', 'DB Cross-Body Hammer',
+    'DB Incline Curl Alternate', 'DB Spider Curl', 'DB Preacher Curl', 'DB Zottman Curl',
+    'Drag Curl DB', 'DB Concentration Curl Standing', 'DB Concentration Curl Kneeling', 'DB 21s Alternate',
+  ];
+
+  it('Phase B Biceps Dumbbell 14 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_B.length).toBe(14);
+    NEW_ENTRIES_6_0_5_PHASE_B.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase B all 14 entries muscle_target_primary === biceps canonical V1', () => {
+    NEW_ENTRIES_6_0_5_PHASE_B.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('biceps');
+    });
+  });
+
+  it('Phase B Hammer + Cross-Body + Zottman variants have antebrate secondary tag (brachioradialis engage)', () => {
+    expect(EXERCISE_METADATA['DB Hammer Curl Standing'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['DB Hammer Curl Seated'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['DB Cross-Body Hammer'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['DB Zottman Curl'].muscle_target_secondary).toContain('antebrate');
+  });
+
+  it('Phase B fallback_cascade step types canonical 5 types valid', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    NEW_ENTRIES_6_0_5_PHASE_B.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  it('Phase B NEW entries NEVER self-reference parent name', () => {
+    NEW_ENTRIES_6_0_5_PHASE_B.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => {
+        if (s.exercise_id) expect(s.exercise_id).not.toBe(name);
+        if (s.exercise_ids) s.exercise_ids.forEach(id => expect(id).not.toBe(name));
+      });
+    });
+  });
 });

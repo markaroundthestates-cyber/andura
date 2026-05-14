@@ -3454,6 +3454,120 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Incline DB Curl' },
   ] },
 
+  // ── Phase B — Biceps Dumbbell Variants (14 NEW) ──────────────────────────────
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase B): NEW Tier 2 isolation DB — both-arms simultaneous canonical anchor
+  'DB Curl Standing':             { equipment_type: 'dumbbell', equipment_alternatives: ['DB Curl Standing Alternate', 'Barbell Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Curl Standing Alternate' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — alternate arms tempo control biceps
+  'DB Curl Standing Alternate':   { equipment_type: 'dumbbell', equipment_alternatives: ['DB Curl Standing', 'Barbell Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — seated alternate biceps strict back-supported
+  'DB Curl Seated Alternate':     { equipment_type: 'dumbbell', equipment_alternatives: ['DB Curl Standing Alternate', 'Incline DB Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Incline DB Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — hammer standing biceps brachialis + antebrate brachioradialis secondary
+  'DB Hammer Curl Standing':      { equipment_type: 'dumbbell', equipment_alternatives: ['Hammer Curl', 'DB Hammer Curl Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Hammer Curl Rope' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Standing', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Cross-Body Hammer' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — hammer seated biceps brachialis dominant
+  'DB Hammer Curl Seated':        { equipment_type: 'dumbbell', equipment_alternatives: ['DB Hammer Curl Standing', 'Hammer Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Hammer Curl Rope' },
+    { type: 'assisted_variant', exercise_id: 'DB Hammer Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Seated Alternate', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Cross-Body Hammer' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — cross-body hammer brachialis peak isolation
+  'DB Cross-Body Hammer':         { equipment_type: 'dumbbell', equipment_alternatives: ['DB Hammer Curl Standing', 'Hammer Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Hammer Curl Rope' },
+    { type: 'assisted_variant', exercise_id: 'DB Hammer Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'DB Concentration Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — incline alternate biceps stretched position long head
+  'DB Incline Curl Alternate':    { equipment_type: 'dumbbell', equipment_alternatives: ['Incline DB Curl', 'DB Curl Seated Alternate'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Incline DB Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Seated Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — spider bench inverse 45° peak biceps short head
+  'DB Spider Curl':               { equipment_type: 'dumbbell', equipment_alternatives: ['Spider Curl Barbell', 'Spider Curl EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Spider Curl EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Concentration Curl Standing', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — preacher strict biceps stretched position
+  'DB Preacher Curl':             { equipment_type: 'dumbbell', equipment_alternatives: ['Preacher Curl', 'EZ-bar Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Preacher Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Seated Alternate'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — Zottman rotation curl biceps up phase + reverse curl forearm down phase
+  'DB Zottman Curl':              { equipment_type: 'dumbbell', equipment_alternatives: ['DB Curl Standing', 'Hammer Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Reverse Curl Barbell'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — drag DB peak biceps long head
+  'Drag Curl DB':                 { equipment_type: 'dumbbell', equipment_alternatives: ['Drag Curl Barbell', 'DB Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Drag Curl Barbell', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — concentration standing strict biceps short head peak
+  'DB Concentration Curl Standing': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Concentration Curl Kneeling', 'Spider Curl Barbell'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Spider Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — concentration kneeling alternative position biceps strict
+  'DB Concentration Curl Kneeling': { equipment_type: 'dumbbell', equipment_alternatives: ['DB Concentration Curl Standing', 'Spider Curl Barbell'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Concentration Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Standing Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — 21s alternate ROM partial+full hypertrophy density DB variant
+  'DB 21s Alternate':             { equipment_type: 'dumbbell', equipment_alternatives: ['21s Curl Barbell', 'DB Curl Standing Alternate'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Curl Standing Alternate' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Standing', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Seated Alternate' },
+  ] },
+
 };
 
 /**
