@@ -1,31 +1,31 @@
 // ══ MUSCLE RECOVERY — Per-group recovery state + lagging detection ═══════
 // Aggregate per-muscle-head recovery (MUSCLE_HEADS recoveryHours) into broad
-// groups Big 6 (chest / back / shoulders / legs / arms / core). Plus lagging
-// detection: muscles sub-volume 2+ saptamani vs equal Big 6 distribution.
+// groups Big 11 canonical V1 anatomical taxonomy per ADR_ENGINE_REFACTOR §4.1
+// LOCK V1 2026-05-14 (piept/spate/umeri/biceps/triceps/antebrate/core/
+// picioare-quads/picioare-hamstrings/fese/gambe). Plus lagging detection:
+// muscles sub-volume 2+ saptamani vs equal Big 11 active-group distribution.
 //
 // Pure functions — no DB / DOM deps. Inputs: logs array. Testable in vacuum.
+// ZERO mutation algorithm semantics per §4.1 (FATIGUED/PARTIAL thresholds
+// preserved; aggregation preserved; refactor = taxonomy expansion only).
 
 import { EXERCISE_MUSCLES, MUSCLE_HEADS, getMuscleState } from './muscleMap.js';
 import { MS_PER_DAY } from '../constants.js';
+import {
+  GROUP_HEAD_MAP_BIG11,
+  GROUP_LABELS_RO_BIG11,
+  DECAY_RATE_HOURS_BIG11,
+  BIG11_GROUPS,
+} from './muscleRecoveryConstants.js';
 
-// Big 6 group taxonomy — maps muscle heads → broad group for UI.
-export const GROUP_HEAD_MAP = {
-  chest:     ['chest_upper', 'chest_mid', 'chest_lower'],
-  back:      ['lat', 'mid_trap', 'lower_back'],
-  shoulders: ['delt_front', 'delt_mid', 'delt_rear', 'rear_delt_trap'],
-  legs:      ['quad', 'hamstring', 'glute', 'calf'],
-  arms:      ['bi_long', 'bi_short', 'tri_long', 'tri_lateral', 'tri_medial'],
-  core:      [],
-};
+// Big 11 canonical V1 group taxonomy — maps muscle heads → broad group for UI.
+// Re-export from constants for backwards-compatible import path.
+export const GROUP_HEAD_MAP = GROUP_HEAD_MAP_BIG11;
 
-const GROUP_LABELS_RO = {
-  chest:     'Pieptul',
-  back:      'Spatele',
-  shoulders: 'Umerii',
-  legs:      'Picioarele',
-  arms:      'Bratele',
-  core:      'Core-ul',
-};
+const GROUP_LABELS_RO = GROUP_LABELS_RO_BIG11;
+
+// Re-export Big 11 constants for downstream cross-engine consumption.
+export { GROUP_HEAD_MAP_BIG11, GROUP_LABELS_RO_BIG11, DECAY_RATE_HOURS_BIG11, BIG11_GROUPS };
 
 // State thresholds — getMuscleState returns 0-100 (higher = more recent stress).
 // Calibrated against typical session contribution: ~22.5 per primary muscle head
