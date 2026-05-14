@@ -4215,6 +4215,294 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Towel Hang' },
   ] },
 
+  // ══ Bundle 6.0.6 Specialty Library Extension — 33 NEW canonical V1 specialty exerciții 2026-05-14 ══
+  // Co-CTO autonomous Phase A audit grep-validated per memory `feedback_grep_before_prompt_cc.md`. PROMPT_CC §1.1 estimate ~35-50 NEW
+  // reduced post-grep to 14-15 truly missing genuine; Daniel Option C scope expand selected — 14 §1.1 themes + 19 NEW themes
+  // research-backed (Trap Bar + Kettlebell + SSB + Cambered Bar + Olympic derivatives + Forearms specialty) = 33 NEW total.
+  // Cumulative target 567 → 600 (Pre-Beta scope library 600-700 floor minim achieved per Daniel CEO directive 2026-05-13f LOCK V1).
+  // ZERO core primary entries — Bundle 6.0.7 Core reserved invariant preserved per HARD CONSTRAINT §10.
+  // ZERO mutation existing 567 entries — HARD CONSTRAINT §F3.12 strict preserved.
+
+  // ── Sub-batch 1 — Hammer Strength Plate-Loaded Chest Press (4 NEW) ──────────
+  // AUDIT 2026-05-14 (Bundle 6.0.6 Sub-batch 1): NEW Tier 1 plate-loaded chest press incline machine — chest+upper chest emphasis
+  'Hammer Strength Incline Press': { equipment_type: 'machine', equipment_alternatives: ['Hammer Press Machine', 'Pec Deck Plate-Loaded', 'Incline DB Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pec Deck Plate-Loaded' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Press Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Incline DB Press', 'Cable Triceps Pushdown Rope'] },
+    { type: 'bodyweight', exercise_id: 'Incline Push-up' },
+    { type: 'light_variant', exercise_id: 'Pec Deck / Cable Fly' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 plate-loaded chest press decline machine — lower chest emphasis
+  'Hammer Strength Decline Press': { equipment_type: 'machine', equipment_alternatives: ['Hammer Press Machine', 'Pec Deck Plate-Loaded', 'Flat DB Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pec Deck Plate-Loaded' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Press Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Flat DB Press', 'Cable Triceps Pushdown Rope'] },
+    { type: 'bodyweight', exercise_id: 'Decline Push-up' },
+    { type: 'light_variant', exercise_id: 'Cable Fly' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 plate-loaded chest press flat machine — chest mid-fiber emphasis
+  'Hammer Strength Flat Press': { equipment_type: 'machine', equipment_alternatives: ['Hammer Press Machine', 'Pec Deck Plate-Loaded', 'Flat DB Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Pec Deck Plate-Loaded' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Press Machine' },
+    { type: 'muscle_group_compose', exercise_ids: ['Flat DB Press', 'Cable Triceps Pushdown Rope'] },
+    { type: 'bodyweight', exercise_id: 'Push-up' },
+    { type: 'light_variant', exercise_id: 'Pec Deck / Cable Fly' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 plate-loaded iso-lateral chest press — unilateral chest plate-loaded asymmetry correction
+  'Hammer Strength Iso-Lateral Bench Press': { equipment_type: 'machine', equipment_alternatives: ['Hammer Strength Flat Press', 'Hammer Press Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hammer Press Machine' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Strength Flat Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Flat DB Press', 'Cable Fly'] },
+    { type: 'bodyweight', exercise_id: 'Single-Arm Push-up Assisted' },
+    { type: 'light_variant', exercise_id: 'Pec Deck / Cable Fly' },
+  ] },
+
+  // ── Sub-batch 2 — Smith Machine Specialty (5 NEW) ───────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 unilateral quads — Smith fixed bar path split squat stationary unilateral
+  'Smith Split Squat': { equipment_type: 'machine', equipment_alternatives: ['Bulgarian Split Squat', 'Smith Machine Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Machine Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bulgarian Split Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Lunge' },
+    { type: 'light_variant', exercise_id: 'Reverse Lunge' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 unilateral quads — Smith Bulgarian split squat rear foot elevated unilateral
+  'Smith Bulgarian Split Squat': { equipment_type: 'machine', equipment_alternatives: ['Bulgarian Split Squat', 'Smith Split Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Bulgarian Split Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith Machine Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bulgarian Split Squat' },
+    { type: 'light_variant', exercise_id: 'Reverse Lunge' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 horizontal pull spate — Smith bent-over row hip-hinge fixed bar path
+  'Smith Bent-Over Row': { equipment_type: 'machine', equipment_alternatives: ['Smith Machine Row', 'T-Bar Row'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Smith Machine Row' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Bayesian Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Cable Row' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 unilateral quads — Smith reverse lunge stepping back fixed bar path
+  'Smith Reverse Lunge': { equipment_type: 'machine', equipment_alternatives: ['Reverse Lunge', 'Smith Machine Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Lunge' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith Machine Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Lunge' },
+    { type: 'light_variant', exercise_id: 'Deficit Reverse Lunge' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 horizontal pull spate — Smith inverted row supine row underneath bar
+  'Smith Inverted Row': { equipment_type: 'machine', equipment_alternatives: ['Inverted Row Bar', 'Smith Machine Row'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Inverted Row Bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Inverted Row Table Low' },
+  ] },
+
+  // ── Sub-batch 3 — Plate-Loaded Specialty + Cable Kickback Single-Arm (2 NEW) ─
+  // AUDIT 2026-05-14: NEW Tier 1 quads — vertical hack squat machine (90° trunk angle distinct from 45° hack squat)
+  'Vertical Hack Squat': { equipment_type: 'machine', equipment_alternatives: ['Hack Squat Machine', 'Reverse Hack Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Leg Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith Machine Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Sissy Squat Bodyweight' },
+    { type: 'light_variant', exercise_id: '45-Degree Leg Press' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — single-arm triceps kickback unilateral cable distinct from rope bilateral
+  'Cable Triceps Kickback Single-Arm': { equipment_type: 'cable', equipment_alternatives: ['Cable Triceps Kickback Rope', 'DB Kickback Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Triceps Pushdown Rope' },
+    { type: 'assisted_variant', exercise_id: 'Cable Triceps Kickback Rope' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Kickback Standing', 'Cable Triceps Pushdown V-bar'] },
+    { type: 'bodyweight', exercise_id: 'Bench Dip' },
+    { type: 'light_variant', exercise_id: 'DB Kickback Bench Support' },
+  ] },
+
+  // ── Sub-batch 4 — Specialty Isolation (3 NEW) ───────────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — preacher curl cable constant tension distinct from EZ-bar/DB/machine variants
+  'Cable Preacher Curl': { equipment_type: 'cable', equipment_alternatives: ['Preacher Curl', 'EZ-bar Preacher Curl', 'Machine Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Machine Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Bayesian Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Cable Concentration Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Close Grip' },
+    { type: 'light_variant', exercise_id: 'Cable Curl Standing Straight Bar' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — reverse-grip preacher curl antebrate primary brachioradialis dominant + biceps secondary brachialis
+  'Reverse-Grip Preacher Curl': { equipment_type: 'barbell', equipment_alternatives: ['Reverse Curl EZ-bar', 'Reverse Curl Barbell', 'Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Curl Barbell', 'Wrist Curl DB Seated Palms-Down'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Reverse Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — spider curl cable variant distinct from barbell/EZ-bar/DB spider variants
+  'Spider Curl Cable': { equipment_type: 'cable', equipment_alternatives: ['Spider Curl Barbell', 'Spider Curl EZ-bar', 'DB Spider Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Spider Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Drag Curl', 'Bayesian Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Close Grip' },
+    { type: 'light_variant', exercise_id: 'Cable Curl Lying on Bench' },
+  ] },
+
+  // ── Sub-batch 5 — Trap Bar + Kettlebell Specialty (7 NEW) ───────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 horizontal pull spate — trap bar bent-over row neutral grip handles
+  'Trap Bar Row': { equipment_type: 'barbell', equipment_alternatives: ['T-Bar Row', 'Smith Bent-Over Row'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'T-Bar Row' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Cable Row' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 hip-hinge hamstrings — trap bar RDL neutral grip handles posterior chain
+  'Trap Bar RDL': { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'Trap Bar Deadlift', 'DB Romanian Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith RDL', 'Hip Thrust'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'DB Romanian Deadlift' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 quads — kettlebell goblet squat anterior load front-rack distinct from DB Goblet Squat (handle position center mass changes)
+  'Kettlebell Goblet Squat': { equipment_type: 'machine', equipment_alternatives: ['Goblet Squat', 'DB Sumo Squat', 'Bulgarian Split Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Goblet Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Bulgarian Split Squat'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Goblet Squat' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 vertical press umeri — kettlebell single-arm overhead press unilateral
+  'Kettlebell Single-Arm Press': { equipment_type: 'machine', equipment_alternatives: ['DB Shoulder Press', 'Single-Arm Landmine Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'umeri', muscle_target_secondary: ['triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith OHP' },
+    { type: 'assisted_variant', exercise_id: 'DB Shoulder Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lateral Raises', 'Cable Triceps Pushdown Rope'] },
+    { type: 'bodyweight', exercise_id: 'Pike Push-up' },
+    { type: 'light_variant', exercise_id: 'Lateral Raises' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 horizontal pull spate — kettlebell single-arm row unilateral hinge support
+  'Kettlebell Single-Arm Row': { equipment_type: 'machine', equipment_alternatives: ['Chest-Supported DB Row', 'T-Bar Row'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Chest-Supported DB Row' },
+    { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Cable Row' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 hip-hinge hamstrings — kettlebell RDL bilateral handle hold posterior chain
+  'Kettlebell Romanian Deadlift': { equipment_type: 'machine', equipment_alternatives: ['Romanian Deadlift', 'DB Romanian Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith RDL', 'Hip Thrust'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'DB Romanian Deadlift' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 carry antebrate — kettlebell front rack carry bilateral grip + spate trap stabilizer secondary
+  'Kettlebell Front Rack Carry': { equipment_type: 'machine', equipment_alternatives: ["Farmer's Walk Kettlebell", 'Suitcase Carry DB'], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'assisted_variant', exercise_id: "Farmer's Walk Kettlebell" },
+    { type: 'muscle_group_compose', exercise_ids: ["Farmer's Walk DB", 'Suitcase Carry DB'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+
+  // ── Sub-batch 6 — SSB (Safety Squat Bar) + Cambered Bar Specialty (5 NEW) ───
+  // AUDIT 2026-05-14: NEW Tier 1 quads — SSB squat specialty barbell anterior load shoulder spare
+  'SSB Squat': { equipment_type: 'barbell', equipment_alternatives: ['Smith Machine Squat', 'Hack Squat Machine'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Machine Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Goblet Squat' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 hip-hinge hamstrings — SSB good morning specialty barbell shoulder spare hip-hinge
+  'SSB Good Morning': { equipment_type: 'barbell', equipment_alternatives: ['Smith Good Morning', 'Romanian Deadlift'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Smith Good Morning' },
+    { type: 'muscle_group_compose', exercise_ids: ['Romanian Deadlift', 'Hip Thrust'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'DB Romanian Deadlift' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 unilateral quads — SSB lunge specialty barbell shoulder spare unilateral
+  'SSB Lunge': { equipment_type: 'barbell', equipment_alternatives: ['Smith Reverse Lunge', 'Bulgarian Split Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Press' },
+    { type: 'assisted_variant', exercise_id: 'Bulgarian Split Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith Machine Squat', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Lunge' },
+    { type: 'light_variant', exercise_id: 'Reverse Lunge' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 quads — cambered bar squat specialty barbell low cambered weight distribution
+  'Cambered Bar Squat': { equipment_type: 'barbell', equipment_alternatives: ['SSB Squat', 'Smith Machine Squat'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-quads', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Hack Squat Machine' },
+    { type: 'assisted_variant', exercise_id: 'Smith Machine Squat' },
+    { type: 'muscle_group_compose', exercise_ids: ['Leg Press', 'Leg Extension'] },
+    { type: 'bodyweight', exercise_id: 'Bodyweight Squat' },
+    { type: 'light_variant', exercise_id: 'Goblet Squat' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 hip-hinge hamstrings — cambered bar RDL specialty barbell low cambered weight distribution
+  'Cambered Bar RDL': { equipment_type: 'barbell', equipment_alternatives: ['Romanian Deadlift', 'SSB Good Morning'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Leg Curl' },
+    { type: 'assisted_variant', exercise_id: 'Romanian Deadlift' },
+    { type: 'muscle_group_compose', exercise_ids: ['Smith RDL', 'Hip Thrust'] },
+    { type: 'bodyweight', exercise_id: 'Single-Leg RDL Bodyweight' },
+    { type: 'light_variant', exercise_id: 'DB Romanian Deadlift' },
+  ] },
+
+  // ── Sub-batch 7 — Olympic Lift Derivatives (3 NEW) ──────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 power compound — power clean explosive triple extension spate primary + fese secondary
+  'Power Clean': { equipment_type: 'barbell', equipment_alternatives: ['Hang Clean', 'Clean and Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['fese', 'picioare-quads'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Hang Clean' },
+    { type: 'muscle_group_compose', exercise_ids: ['Romanian Deadlift', 'Push Press'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Hang Clean' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 power compound — hang clean shorter ROM start above knee distinct from power clean floor start
+  'Hang Clean': { equipment_type: 'barbell', equipment_alternatives: ['Power Clean', 'Clean and Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['fese', 'picioare-quads'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Row' },
+    { type: 'assisted_variant', exercise_id: 'Snatch-Grip Push Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['Romanian Deadlift', 'Push Press'] },
+    { type: 'bodyweight', exercise_id: 'Inverted Row Bar' },
+    { type: 'light_variant', exercise_id: 'Push Press' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 vertical press power umeri — push jerk dip+drive overhead split-stance assisted
+  'Push Jerk': { equipment_type: 'barbell', equipment_alternatives: ['Push Press', 'Behind-the-Neck Push Press'], force_demand: 'high', tier: 1, muscle_target_primary: 'umeri', muscle_target_secondary: ['triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Smith OHP' },
+    { type: 'assisted_variant', exercise_id: 'Push Press' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Shoulder Press', 'Lateral Raises'] },
+    { type: 'bodyweight', exercise_id: 'Pike Push-up' },
+    { type: 'light_variant', exercise_id: 'Push Press' },
+  ] },
+
+  // ── Sub-batch 8 — Forearms Specialty (4 NEW) ────────────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 isometric antebrate — fat grip hold thick bar grip strength specialty
+  'Fat Grip Hold': { equipment_type: 'barbell', equipment_alternatives: ['Plate Pinch Hold', 'Dead Hang'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains of Crush Gripper' },
+    { type: 'assisted_variant', exercise_id: 'Plate Pinch Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ["Farmer's Walk DB", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — fat grip barbell curl thick bar grip + biceps secondary brachii
+  'Fat Grip Barbell Curl': { equipment_type: 'barbell', equipment_alternatives: ['Barbell Curl Standing', 'Reverse Curl Barbell'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Wrist Curl Barbell Seated Palms-Up'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Reverse Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 isometric antebrate — hammer holds thick handle isometric specialty
+  'Hammer Holds': { equipment_type: 'dumbbell', equipment_alternatives: ['Plate Pinch Hold', 'Dead Hang'], force_demand: 'low', tier: 3, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains of Crush Gripper' },
+    { type: 'assisted_variant', exercise_id: 'Plate Pinch Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ["Farmer's Walk Kettlebell", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — wrist extension cable standing extensor specific (distinct from seated reverse wrist curl)
+  'Wrist Extension Cable Standing': { equipment_type: 'cable', equipment_alternatives: ['Reverse Wrist Curl Cable', 'Reverse Wrist Curl Barbell Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl Barbell Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Wrist Curl DB Seated', 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Cable Wrist Curl' },
+  ] },
+
 };
 
 /**

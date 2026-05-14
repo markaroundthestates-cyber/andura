@@ -2050,3 +2050,228 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
     expect(triceps.length).toBeGreaterThanOrEqual(40);
   });
 });
+
+// ── Bundle 6.0.6 Specialty Library Extension Tests (Bundle 6.0.6 NEW 2026-05-14) ────────
+// Co-CTO autonomous Phase A audit grep-validated + Daniel Option C scope expand 33 NEW 2026-05-14 chat-current.
+// 14 §1.1 themes (Hammer chest 4 + Smith specialty 5 + Vertical Hack 1 + Specialty isolation 3 + Cable kickback 1)
+// + 19 NEW themes research-backed (Trap Bar 2 + Kettlebell 5 + SSB+Cambered Bar 5 + Olympic derivatives 3 + Forearms specialty 4)
+// = 33 NEW total. Schema 567 → 600 cumulative (Pre-Beta scope library 600-700 floor minim achieved).
+describe('Bundle 6.0.6 Specialty Library Extension §ADR v2 LOCK V2 + Co-CTO autonomous Option C', () => {
+  // §1 cumulative count grows ≥ 600 post Bundle 6.0.6 Specialty (lenient ≥ per §AR.* anti-brittle 2× threshold)
+  it('cumulative count grows ≥ 600 post Bundle 6.0.6 Specialty (+33 NEW)', () => {
+    const total = Object.keys(EXERCISE_METADATA).length;
+    expect(total).toBeGreaterThanOrEqual(600);
+  });
+
+  // §2 Bundle 6.0.6 NEW entries roster authoritative (33 total)
+  const NEW_ENTRIES_6_0_6 = [
+    // Sub-batch 1 — Hammer Strength Plate-Loaded Chest Press (4 NEW)
+    'Hammer Strength Incline Press', 'Hammer Strength Decline Press', 'Hammer Strength Flat Press', 'Hammer Strength Iso-Lateral Bench Press',
+    // Sub-batch 2 — Smith Machine Specialty (5 NEW)
+    'Smith Split Squat', 'Smith Bulgarian Split Squat', 'Smith Bent-Over Row', 'Smith Reverse Lunge', 'Smith Inverted Row',
+    // Sub-batch 3 — Plate-Loaded + Cable Kickback (2 NEW)
+    'Vertical Hack Squat', 'Cable Triceps Kickback Single-Arm',
+    // Sub-batch 4 — Specialty Isolation (3 NEW)
+    'Cable Preacher Curl', 'Reverse-Grip Preacher Curl', 'Spider Curl Cable',
+    // Sub-batch 5 — Trap Bar + Kettlebell (7 NEW)
+    'Trap Bar Row', 'Trap Bar RDL',
+    'Kettlebell Goblet Squat', 'Kettlebell Single-Arm Press', 'Kettlebell Single-Arm Row', 'Kettlebell Romanian Deadlift', 'Kettlebell Front Rack Carry',
+    // Sub-batch 6 — SSB + Cambered Bar (5 NEW)
+    'SSB Squat', 'SSB Good Morning', 'SSB Lunge', 'Cambered Bar Squat', 'Cambered Bar RDL',
+    // Sub-batch 7 — Olympic Lift Derivatives (3 NEW)
+    'Power Clean', 'Hang Clean', 'Push Jerk',
+    // Sub-batch 8 — Forearms Specialty (4 NEW)
+    'Fat Grip Hold', 'Fat Grip Barbell Curl', 'Hammer Holds', 'Wrist Extension Cable Standing',
+  ];
+
+  it('Bundle 6.0.6 NEW 33 entries all present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_6.length).toBe(33);
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  // §3 muscle_target_primary canonical V1 11 categorii enforce
+  it('Bundle 6.0.6 muscle_target_primary canonical V1 11 categorii valid', () => {
+    const canonical = new Set(['piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate', 'core', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']);
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      expect(canonical.has(EXERCISE_METADATA[name].muscle_target_primary)).toBe(true);
+    });
+  });
+
+  // §4 Bundle 6.0.7 Core reserved invariant — ZERO core primary entries acest Bundle (HARD CONSTRAINT §10)
+  it('Bundle 6.0.6 ZERO core primary entries (Bundle 6.0.7 reserved invariant preserved)', () => {
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).not.toBe('core');
+      expect(EXERCISE_METADATA[name].muscle_target_secondary).not.toContain('core');
+    });
+  });
+
+  // §5 fallback_cascade step types canonical 5 types valid (per ADR v2 LOCK V2 §2.1)
+  it('Bundle 6.0.6 fallback_cascade step types canonical 5 types valid', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  // §6 muscle_group_compose has 1-2 exercise_ids per Daniel LOCK invariant
+  it('Bundle 6.0.6 muscle_group_compose has 1-2 exercise_ids per LOCK', () => {
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      const compose = EXERCISE_METADATA[name].fallback_cascade.find(s => s.type === 'muscle_group_compose');
+      if (compose) {
+        expect(compose.exercise_ids).toBeDefined();
+        expect(compose.exercise_ids.length).toBeGreaterThanOrEqual(1);
+        expect(compose.exercise_ids.length).toBeLessThanOrEqual(2);
+      }
+    });
+  });
+
+  // §7 cascade self-reference rejection invariant
+  it('Bundle 6.0.6 NEW entries NEVER self-reference parent name', () => {
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(step => {
+        if (step.exercise_id) expect(step.exercise_id).not.toBe(name);
+        if (step.exercise_ids) step.exercise_ids.forEach(id => expect(id).not.toBe(name));
+      });
+    });
+  });
+
+  // §8 cascade references resolve ≥70% lenient threshold per §20 ADR v2 LOCK V2
+  it('cascade references resolve ≥70% Bundle 6.0.6 lenient', () => {
+    let totalRefs = 0, resolvedRefs = 0;
+    const allNames = new Set(Object.keys(EXERCISE_METADATA));
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(step => {
+        if (step.exercise_id) {
+          totalRefs++;
+          if (allNames.has(step.exercise_id)) resolvedRefs++;
+        }
+        if (step.exercise_ids) {
+          step.exercise_ids.forEach(id => {
+            totalRefs++;
+            if (allNames.has(id)) resolvedRefs++;
+          });
+        }
+      });
+    });
+    expect(resolvedRefs / totalRefs).toBeGreaterThanOrEqual(0.70);
+  });
+
+  // §9 tier distribution Bundle 6.0.6 specialty
+  it('Bundle 6.0.6 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    const tiers = new Set(NEW_ENTRIES_6_0_6.map(n => EXERCISE_METADATA[n].tier));
+    expect(tiers.has(1)).toBe(true);
+    expect(tiers.has(2)).toBe(true);
+    expect(tiers.has(3)).toBe(true);
+  });
+
+  // §10 force_demand distribution Bundle 6.0.6
+  it('Bundle 6.0.6 force_demand: high + medium + low all present', () => {
+    const forces = new Set(NEW_ENTRIES_6_0_6.map(n => EXERCISE_METADATA[n].force_demand));
+    expect(forces.has('high')).toBe(true);
+    expect(forces.has('medium')).toBe(true);
+    expect(forces.has('low')).toBe(true);
+  });
+
+  // §11 equipment_type distribution Bundle 6.0.6
+  it('Bundle 6.0.6 equipment_type valid (barbell + machine + cable + dumbbell)', () => {
+    const valid = new Set(['barbell', 'dumbbell', 'machine', 'cable', 'bodyweight', 'band']);
+    NEW_ENTRIES_6_0_6.forEach(name => {
+      expect(valid.has(EXERCISE_METADATA[name].equipment_type)).toBe(true);
+    });
+  });
+
+  // §12 existing entries preserved invariant ZERO mutation Bundle 6.0.6 (HARD CONSTRAINT §F3.12 strict)
+  it('existing V1 + Bundle 6.0.1-6.0.5 567 entries preserved invariant ZERO mutation Bundle 6.0.6', () => {
+    // Spot-check sentinel entries from each prior bundle baseline — NU mutated by Bundle 6.0.6
+    expect(EXERCISE_METADATA['Flat Barbell Bench'].muscle_target_primary).toBe('piept');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Lat Pulldown'].muscle_target_primary).toBe('spate');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Hammer Strength Lat Pulldown'].muscle_target_primary).toBe('spate');  // Bundle 6.0.2 Back
+    expect(EXERCISE_METADATA['Hammer Strength OHP'].muscle_target_primary).toBe('umeri');  // Bundle 6.0.3 Shoulders
+    expect(EXERCISE_METADATA['Hack Squat Machine'].muscle_target_primary).toBe('picioare-quads');  // Bundle 6.0.4.1 Quads
+    expect(EXERCISE_METADATA['Romanian Deadlift'].muscle_target_primary).toBe('picioare-hamstrings');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');  // Bundle 6.0.4.3 Glutes
+    expect(EXERCISE_METADATA['Sledgehammer Levering'].muscle_target_primary).toBe('antebrate');  // Bundle 6.0.5 Phase G last
+  });
+
+  // §13 Sub-batch verifications cluster-specific
+  it('Bundle 6.0.6 Sub-batch 1 — 4 Hammer Strength chest entries piept primary', () => {
+    ['Hammer Strength Incline Press', 'Hammer Strength Decline Press', 'Hammer Strength Flat Press', 'Hammer Strength Iso-Lateral Bench Press'].forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('piept');
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('machine');
+    });
+  });
+
+  it('Bundle 6.0.6 Sub-batch 2 — 5 Smith Machine specialty (3 quads + 2 spate)', () => {
+    expect(EXERCISE_METADATA['Smith Split Squat'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['Smith Bulgarian Split Squat'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['Smith Reverse Lunge'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['Smith Bent-Over Row'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Smith Inverted Row'].muscle_target_primary).toBe('spate');
+  });
+
+  it('Bundle 6.0.6 Sub-batch 5 — Trap Bar + Kettlebell distribution correct', () => {
+    expect(EXERCISE_METADATA['Trap Bar Row'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Trap Bar RDL'].muscle_target_primary).toBe('picioare-hamstrings');
+    expect(EXERCISE_METADATA['Kettlebell Goblet Squat'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['Kettlebell Single-Arm Press'].muscle_target_primary).toBe('umeri');
+    expect(EXERCISE_METADATA['Kettlebell Single-Arm Row'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Kettlebell Romanian Deadlift'].muscle_target_primary).toBe('picioare-hamstrings');
+    expect(EXERCISE_METADATA['Kettlebell Front Rack Carry'].muscle_target_primary).toBe('antebrate');
+  });
+
+  it('Bundle 6.0.6 Sub-batch 6 — SSB + Cambered Bar specialty barbells (3 quads + 2 hamstrings)', () => {
+    expect(EXERCISE_METADATA['SSB Squat'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['SSB Lunge'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['Cambered Bar Squat'].muscle_target_primary).toBe('picioare-quads');
+    expect(EXERCISE_METADATA['SSB Good Morning'].muscle_target_primary).toBe('picioare-hamstrings');
+    expect(EXERCISE_METADATA['Cambered Bar RDL'].muscle_target_primary).toBe('picioare-hamstrings');
+    NEW_ENTRIES_6_0_6.filter(n => n.startsWith('SSB') || n.startsWith('Cambered Bar')).forEach(name => {
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('barbell');
+    });
+  });
+
+  it('Bundle 6.0.6 Sub-batch 7 — Olympic derivatives (Power Clean + Hang Clean spate, Push Jerk umeri)', () => {
+    expect(EXERCISE_METADATA['Power Clean'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Hang Clean'].muscle_target_primary).toBe('spate');
+    expect(EXERCISE_METADATA['Push Jerk'].muscle_target_primary).toBe('umeri');
+    expect(EXERCISE_METADATA['Power Clean'].muscle_target_secondary).toContain('fese');
+    expect(EXERCISE_METADATA['Hang Clean'].muscle_target_secondary).toContain('fese');
+    expect(EXERCISE_METADATA['Push Jerk'].muscle_target_secondary).toContain('triceps');
+  });
+
+  it('Bundle 6.0.6 Sub-batch 8 — Forearms specialty 4 antebrate primary', () => {
+    ['Fat Grip Hold', 'Fat Grip Barbell Curl', 'Hammer Holds', 'Wrist Extension Cable Standing'].forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('antebrate');
+    });
+  });
+
+  // §14 Bundle 6.0.6 cumulative invariants final — Pre-Beta scope library 600-700 floor minim achieved
+  it('Bundle 6.0.6 cumulative count = 600 exact (Pre-Beta scope floor 600 minim achieved per Daniel CEO directive 2026-05-13f)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(600);
+  });
+
+  it('Bundle 6.0.6 cumulative quads canonical V1 ≥ 55 (47 baseline Bundle 6.0.4.1 + 8 NEW Bundle 6.0.6)', () => {
+    const quads = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'picioare-quads');
+    expect(quads.length).toBeGreaterThanOrEqual(55);
+  });
+
+  it('Bundle 6.0.6 cumulative spate canonical V1 ≥ 110 (104 baseline + 6 NEW Bundle 6.0.6)', () => {
+    const spate = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'spate');
+    expect(spate.length).toBeGreaterThanOrEqual(110);
+  });
+
+  it('Bundle 6.0.6 cumulative antebrate canonical V1 ≥ 32 (26 baseline Bundle 6.0.5 Phase G + 6 NEW Bundle 6.0.6)', () => {
+    const ant = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'antebrate');
+    expect(ant.length).toBeGreaterThanOrEqual(32);
+  });
+
+  // §15 cumulative core invariant preserved Bundle 6.0.7 reserved
+  it('Bundle 6.0.6 cumulative core canonical V1 = 0 (Bundle 6.0.7 reserved invariant preserved)', () => {
+    const core = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'core');
+    expect(core.length).toBe(0);
+  });
+});
