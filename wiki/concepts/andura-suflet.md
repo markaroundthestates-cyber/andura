@@ -10,7 +10,9 @@ cross_refs:
   - "[[moat-strategy]]"
   - "[[gigel-test]]"
   - "[[voice-preservation-policy]]"
-amendments: []
+amendments:
+  - date: 2026-05-14
+    note: APPEND chat-current chat birou → acasă 2026-05-14 sesiune strategic pură fără execution code (vault meta-tooling decisions only) — F2 "AI-ul informează NU impune" invariant preserved cross-13 LOCKs catalysator paradigm shift Medical Safety Disclaimer + T&C Mandatory (LOCK 4). Daniel CEO paradigm verbatim *"utilizatorul face ce vrea, dar aplicatia nu recomanda accidentari"* aliniat 100% existing F2 invariant + ADR 013 §Force-typing ELIMINATED PERMANENT anti-paternalism ABSOLUTE + ADR 015 Anti-Recommendation principle + Anti-paternalism ABSOLUTE strategy preserved cross-cluster. Distincția critică paradigm Andura: app NU recomandă accidentări (engine intelligence conservative defaults via Periodization + Calibration Tiers + RIR Matrix + Demographic Prior cold-start) **vs** app NU restricționează autonomy user (anti-paternalism ABSOLUTE — dacă Maria 70 insistă manual Forță, engine routes Forță template cu wording adapt + starting conservative NU passive mode tripwire block). Hard medical tripwire Passive Mode RELAXED (LOCK 5 cascade) preserved F2 invariant. NEW concept pages chat-current cross-link F2 invariant: [[medical-safety-disclaimer-t-c-mandatory]] + [[kcal-floor-1200-engine-filter]] + [[aggressive-loading-warning-tier-aware]] + [[pre-beta-full-scope-lock-v2]] + [[handover-protocol-f3-8-amendment-no-verify-post-timeout]]. SUFLET Andura brand soul Gigel-friendly default + Romanian-first + behavioral intelligence pure (NU medical knowledge layer) preserved invariant unchanged cross-13 LOCKs.
 ---
 
 # SUFLET ANDURA

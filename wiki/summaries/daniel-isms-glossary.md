@@ -2,7 +2,7 @@
 title: Daniel-isms Glossary — Catalog Extensible Cross-Cluster Verbatim Quotes Identity Andura Preserved
 type: summary
 status: live
-last_updated: 2026-05-13k
+last_updated: 2026-05-14
 synthesis_scope: daniel-isms
 cross_refs:
   - "[[../concepts/voice-preservation-policy]]"
@@ -550,3 +550,64 @@ Categorii NEW chat-current 1 push-back productive moment cooperative anti-haluci
 - [[handover-2026-05-13k-strategic-fese-canonical-cluster-plus-session-sequence-ordering-v1-landed]] §"Verbatim Quotes Daniel" milestone synthesis 9 NEW daniel-isms 5 push-back productive moments + handover trigger directive 5th consecutive cross-chat trust delegation MAXIMUM cross-cluster aggregate
 - [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-13k" slip 17 chronological 1 slip pattern chat-current (17A grep -o output mis-interpret as enumeration real entries C2.5 recovery instant scribe-mode marked) cross-link 5 push-backs productive cooperative moments tone shifts framing changes chat-current
 
+---
+
+## §"Chat Birou → Acasă 2026-05-14 Pre-Beta FULL Scope LOCK V2 + Medical Safety Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading Tier-Aware Warning + §F3.8 Protocol Amendment + ADR 033 MMI Promote Pre-Beta + 13 LOCKs Strategic Cumulative Captured" — 15 NEW daniel-isms Categorii BD-BR cumulative cross-chat verbatim catalog extensible
+
+**Category BD — Bandwidth journey planning anticipator startup ACASĂ:**
+- *"Salut. Acasa. Indexeaza tot ce poti. cand iti dau urmatorul mesaj o sa fiu la birou si nu o sa ai decat access limitat"* — startup ACASĂ + planning bandwidth anticipator NEW pattern Daniel CEO chat birou → acasă 2026-05-14 sesiune strategic pură fără execution code
+
+**Category BE — Pivot direct cooperative după triage abandoned:**
+- *"mda bine. lasa ca nu am chef de el acum. Ia zi avem ceva de discutat pe proiect? sau e full execution acasa?"* — pivot direct după Obsidian Sync triage abandoned (vault virtual sincronizat 1286 vs 18000 files, `.git/objects/` excluded HARD-CODED) chat-current 2026-05-14
+
+**Category BF — Daniel-stil cooperative direct "tu propui, eu bifez" reaffirm cross-chat:**
+- *"las-o drq ca tu esti fresh chat. Zi-mi pe scurt ce vrei sa decid punctual"* — Daniel-stil cooperative direct "tu propui, eu bifez" pattern reaffirm chat-current 2026-05-14
+
+**Category BG — Pre-Beta FULL scope LOCK V2 directive triple-decision catalysator:**
+- *"1. asap cu ordine clara. Nu exista nimic de discutat pe structura post beta... totul e inclus pre-beta 2. explica te rog ca la prosti. 3. what?"* — Pre-Beta FULL scope LOCK V2 directive triple-decision (LOCK 1 catalysator chat-current 2026-05-14)
+- *"deci sa ne intelegem. Aplicatia pre-beta o sa fie FULL cu tot. Post beta facem doar bug fixes daca exista, si eventual alte noi features daca constatam ca trebuie"* — Pre-Beta scope explanation explicit ultra-clear (LOCK 1 directive verbatim chat-current 2026-05-14)
+
+**Category BH — Daniel Gates strict ultra-scurt agreement mode:**
+- *"100%"* — Daniel Gates strict threshold ultra-scurt agreement mode (LOCK 2 catalysator chat-current 2026-05-14)
+
+**Category BI — §F3.8 protocol amendment LOCK V1 directive verbatim:**
+- *"handoverul trebuoe mereu pushed prin MCP, dar nu verificat daca landed dupa timeout. Revin eu mereu cand vad ca dispare din inbox si intreb daca e landed"* — §F3.8 protocol amendment LOCK V1 directive verbatim (LOCK 3 catalysator paradigm shift chat-current 2026-05-14)
+
+**Category BJ — Inventory request cooperative pre-LOCK directive:**
+- *"ce am ca defered pana acum la post beta?"* — inventory request cooperative pre-LOCK directive chat-current 2026-05-14
+
+**Category BK — Cooperative provide raw layer pattern NEW Daniel-stil source-of-truth direct:**
+- *"ce iti mai dau sa poti sa stii exact ce e?"* — cooperative provide raw layer pattern NEW (Daniel-stil cooperative source-of-truth direct când Claude PK fallback uncertain — 8 uploads provided context ADR 033 MMI + ADR 002 + ADR 013 + DECISION_LOG + CURRENT_STATE + ADR_BIAS_DETECTION_OBSERVABLE + SCENARIOS_SIMULATOR + COGNITIVE_ARCHITECTURE) chat-current 2026-05-14
+
+**Category BL — Medical Disclaimer LOCK V1 directive ultra-clear catalysator paradigm shift majoră:**
+- *"Mi se rupe ca maria a facut sau nu operatie. Disclaimer la inceput ca nu suntem medici, sa consulte un specialist, antrenamentele sunt pe riscurile proprii etc... si atat conteaza"* — Medical Disclaimer LOCK V1 directive ultra-clear (LOCK 4 catalysator paradigm shift majoră chat-current 2026-05-14)
+
+**Category BM — Daniel paradigm explanation extensivă self-check cooperative pattern ultra-major:**
+- *"Disclaimer ca nu suntem medici, si nu ne asumam responsabilitatea, ca programele sunt informative, cu un t&C mandatory accept. Dupa daca maria de 70 ani cu displazie de sold vrea sa faca forta... e binevenita... nu ii dam recomandari de 200 kg... dar fizic nu o poti oprii sa nu faca... (sau daca ea minte aplicatia tu cum o verifici?). Ideea e simpla, utilizatorul face ce vrea, dar aplicatia nu recomanda accidentari. Ex 2. Un copil de 14 ani minte si zice ca are 18 ca sa intre pe aplicatie. Poti sa il opresti sa nu faca asta? Realist nu. Ex 3: Marius e cardiac, si nu selecteaza ca e cardiac... se uita si face antrenamentul, si moare pe banda... e andura responsabila? Ideea e simpla, nu suntem medici, ne protejam legal si informam oamenii ca inainte sa inceapa sa consulte un medic, le zicem ca programele sunt informative si au nevoie de indicatii medicale precise inainte sa inceapa... si drum bun. Sau gandesc gresit?"* — paradigm explanation extensivă self-check cooperative pattern ultra-major (LOCK 4 + 5 + 6 + 7 cascade — gândire PERFECT corectă confirmation Co-CTO 100% aligned existing Andura LOCKED principles)
+
+**Category BN — Initiation 2 safety conditions LOCK V1:**
+- *"Bun mai e ceva. Punem simplu si urmatoarele conditii"* — initiation 2 safety conditions LOCK V1 (LOCK 8 + LOCK 9 catalysator chat-current 2026-05-14)
+
+**Category BO — Push-back productive MAJOR catalysator tier-aware threshold design Aggressive Loading:**
+- *"vezi ca exista posibilitatea si ca chiar sa fie cu 20% mai mult real... poate engine nu s-a adaptat ok la onboarding"* — push-back productive MAJOR catalysator tier-aware threshold design Aggressive Loading (LOCK 9 catalysator design chat-current 2026-05-14)
+
+**Category BP — Handover scheduling cooperative bandwidth ~25% trigger Co-CTO recommend handover preventiv:**
+- *"confirm recomandarea ta. Faci handover cand ajung acasa ca acum nu poti"* — handover scheduling cooperative bandwidth ~25% trigger Co-CTO recommend handover preventiv chat-current 2026-05-14
+
+**Category BQ — Verify Daniel-side question cu STOP signal pattern:**
+- *"sunt acasa. stai ma... deja ai facut push prin mcp la handover?"* — verify Daniel-side question cu STOP signal "stai ma" pattern observed chat-current 2026-05-14 variant 1
+
+**Category BR — Trigger directly post confirm acasă MCP available:**
+- *"da sunt acasa. fa push mcp la handover"* — handover trigger directive directly post confirm acasă MCP available chat-current 2026-05-14 variant 2
+
+**Daniel-isms additional Daniel-ism cross-chat preserved Bugatti FULL QUALITY no EXCUSES 13j reinforced 2026-05-14:**
+- *"muscle recovery are legatura atat cu 24-48 ore, cu cand a fost antrenat si cu cum a raspuns omul la antrenament si cum se simte. Iar noi aici facem FULL QUALITY no EXCUSES."* (LOCK reinforced preserved invariant chat-current — paradigm "totul pre-Beta" = manifestation directă "Refactor later NEVER happens")
+
+**Pattern NEW chat-current 2026-05-14:** Daniel chat-current 15 NEW daniel-isms surfaced 13 LOCKs majore strategic captured cumulative + 1 OPEN pending + C4 ordine clară pentru next strategic chat dedicat. Categorii BD-BR cumulative chat-current (extends Categorii AU-BC cumulative chat 13k cumulative). Tone cooperative push-back productive direct NU dur, recovery instant fără defensiveness aux Co-CTO standard preserved invariant cross-chat 2026-05-13b → 2026-05-14 consistent crescente trust delegation MAXIMUM. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1). ZERO halucinezi triggered acest chat (vault meta-tooling decisions-only paradigm shifts + deferrals INVALIDATED + safety conditions LOCK V1 — ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict). **Co-CTO autonomy MAXIMUM 7th consecutive cross-chat directive reinforce pattern verbatim** (2026-05-13g + 13h + 13i + 13j + 13k + 13l + chat-current 14 = 7× consecutive trigger pattern). **§F3.8 Handover Protocol Amendment LOCK V1 NEW 2026-05-14 codify chat-current** — Daniel directive verbatim slip pattern surfaced cross-chat 13j + 13l 2× threshold met explicit codify amendment LOCK V1 chat-current. Cross-link 5 NEW concept pages chat-current ([[../concepts/pre-beta-full-scope-lock-v2]] + [[../concepts/medical-safety-disclaimer-t-c-mandatory]] + [[../concepts/kcal-floor-1200-engine-filter]] + [[../concepts/aggressive-loading-warning-tier-aware]] + [[../concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout]]) + 1 NEW summary [[handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] preserved invariant chat-current.
+
+**Cross-refs raw layer adițional chat-current 2026-05-14:**
+- [[../../📥_inbox/HANDOVER_2026-05-14_pre_beta_full_scope_safety_locks]] §1 narrative chat-current Pre-Beta FULL scope LOCK V2 + Medical Safety Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading Tier-Aware Warning + §F3.8 Protocol Amendment + ADR 033 MMI Promote Pre-Beta + 13 LOCKs strategic cumulative captured (handover narrative source verbatim daniel-isms catalog cross-cluster chat-current ~181 LOC scribe flow conversational)
+- [[handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]] §"Verbatim Quotes Daniel Chat-Current" milestone synthesis 15 NEW daniel-isms preserved EXACT Romanian chat-current
+- [[../concepts/pre-beta-full-scope-lock-v2]] + [[../concepts/medical-safety-disclaimer-t-c-mandatory]] + [[../concepts/kcal-floor-1200-engine-filter]] + [[../concepts/aggressive-loading-warning-tier-aware]] + [[../concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout]] (5 NEW concept pages chat-current cross-link daniel-isms catalog)
+- [[../concepts/anti-recurrence-rules]] §"Chat-Current Slip Patterns 2026-05-14" §F3.8 amendment LOCK V1 NEW codify + §AR.25 candidate scribe-mode marked codification justified Daniel review next /wiki-ingest + 2 NEW §AR.* candidates 1× threshold scribe-mode marked
+- [[slip-patterns-history]] §"Chat-Current Slip Patterns 2026-05-14" push-back productive moments chronological + §F3.8 protocol amendment + Daniel paradigm shift medical disclaimer + tier-aware threshold catalysator cross-link

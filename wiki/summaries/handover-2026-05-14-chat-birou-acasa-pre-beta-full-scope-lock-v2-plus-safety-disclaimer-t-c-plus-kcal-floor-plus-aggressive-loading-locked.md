@@ -1,0 +1,182 @@
+---
+title: Handover 2026-05-14 Chat Birou → Acasă Pre-Beta FULL Scope LOCK V2 + Medical Safety Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading Tier-Aware Warning + §F3.8 Protocol Amendment + ADR 033 MMI Promote Pre-Beta + 13 LOCKs Strategic Cumulative Captured Birou Session
+type: summary
+status: locked-v1
+date: 2026-05-14
+source: 📥_inbox/HANDOVER_2026-05-14_pre_beta_full_scope_safety_locks.md (archived 490_CONSUMED)
+amendments: []
+cross_refs:
+  - 03-decisions/033-muscle-memory-index.md §STATUS rationale defer INVALIDATED post directive 2026-05-14, promote SPEC READY V1 pre-Beta scope
+  - 03-decisions/002-firebase-rest-not-sdk.md — Firebase Andura functional preserved invariant, defer was only Firebase MCP server tool meta
+  - 03-decisions/013-auto-aggression-detection.md §AMENDMENT 2026-04-30 — Force-typing ELIMINATED PERMANENT anti-paternalism ABSOLUTE preserved invariant + behavioral safety AA Detection KEEP CORE pre-Beta
+  - 03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1.md §EXT-2 NEW Aggressive Loading append — tier-aware threshold dynamic + behavior pre-set modal observable + CDL log + engine learning accelerated T0/T1
+  - 03-decisions/009-calibration-tiers.md §AMENDMENT 2026-05-05 Convergence Guard T2 Unlock — integration accelerated T0/T1 trigger Aggressive Loading override
+  - 03-decisions/003-double-progression-engine.md — integration weight increment per session signals Aggressive Loading override CDL feed
+  - 03-decisions/017-demographic-prior-database.md — baseline cold-start age-aware/experience-aware Anti-recommendation invariant cross-cluster
+  - 03-decisions/022-bayesian-nutrition-inference.md Engine #3 — integration Kcal Floor 1200 filter logic engine-side
+  - 03-decisions/015-getbf-calibration-only.md — Anti-Recommendation principle invariant păstrăm
+  - 04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1.md §3.2 Pruning A — RELAX medical hard tripwire Passive Mode → soft engine conservative defaults
+  - 04-architecture/COGNITIVE_ARCHITECTURE_SPEC_v1.md — status reconsidered post directive "totul pre-Beta"
+  - 04-architecture/FAZA_2_FILTER_STRATEGY_v1.md + SCENARIOS_SIMULATOR_DESIGN_V1.md — Karpathy LLM Wiki SUPERSEDE primary anti-halucinație, decision pending SCRAP/preserve
+  - 01-vision/SUFLET_ANDURA.md §1.1 F2 "AI-ul informează, NU impune" — invariant preserved cross-13 LOCKs anti-paternalism ABSOLUTE
+  - wiki/concepts/pre-beta-full-scope-lock-v2.md (NEW concept chat-current LOCK V1 directive Daniel CEO supersede all post-Beta v1.5 deferrals)
+  - wiki/concepts/medical-safety-disclaimer-t-c-mandatory.md (NEW concept chat-current LOCK V1 first-launch onboarding gate + paradigm shift Daniel verbatim)
+  - wiki/concepts/kcal-floor-1200-engine-filter.md (NEW concept chat-current LOCK V1 informativ + Engine #3 Bayesian Nutrition filter logic)
+  - wiki/concepts/aggressive-loading-warning-tier-aware.md (NEW concept chat-current LOCK V1 tier-aware threshold dynamic + behavior pre-set modal + CDL log + engine learning accelerated)
+  - wiki/concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout.md (NEW concept chat-current LOCK V1 §F3.8 amendment Claude push MCP NU verify post-timeout)
+  - wiki/concepts/anti-recurrence-rules.md §AR.1-§AR.24 + chat-current §F3.8 protocol amendment cross-link + §AR.25 candidate Pre-handover triage codify justified Daniel review
+  - wiki/concepts/autonomy-paradigm-v1.md amendments[] APPEND — handover §F3.8 protocol amendment cross-link + 6 LOCKs tactical Co-CTO autonomous decision continuat
+  - wiki/concepts/bugatti-craft.md amendments[] APPEND — Pre-Beta FULL scope LOCK V2 directive + Daniel Gates 100% strict + "Refactor later NEVER happens" preserved invariant
+  - wiki/concepts/gigel-test.md amendments[] APPEND — Medical Safety Disclaimer + T&C Mandatory + paradigm "user face ce vrea, app NU recomandă accidentări"
+  - wiki/concepts/andura-suflet.md amendments[] APPEND — F2 "AI-ul informează NU impune" invariant preserved cross-13 LOCKs
+  - wiki/entities/adrs/adr-013-auto-aggression-detection.md amendments[] APPEND — F5 interpretation clarified UX iteration NU friction-typing + behavioral safety KEEP CORE pre-Beta
+  - wiki/entities/adrs/adr-033-muscle-memory-index.md amendments[] APPEND — promote SPEC READY V1 pre-Beta scope post directive 2026-05-14 INVALIDATED defer rationale
+  - wiki/summaries/daniel-isms-glossary.md APPEND §"Chat Birou→Acasă 2026-05-14" — 15 NEW daniel-isms Categorii BD-BR cumulative cross-chat verbatim catalog extensible
+  - wiki/summaries/slip-patterns-history.md APPEND §"Chat-Current Slip Patterns 2026-05-14" — push-back productive moments chronological + §F3.8 protocol amendment + Daniel paradigm shift medical disclaimer + tier-aware threshold catalysator
+  - wiki/summaries/handover-2026-05-13l-bundle-6-0-4-cluster-165-new-lower-body-landed.md (predecessor handover chain link Bundle 6.0.4 Lower-Body Cluster 165 NEW LANDED chat 13l preserved invariant)
+  - 📤_outbox/_archive/2026-05/491_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13l_BUNDLE_6_0_4_CLUSTER_CONSUMED.md (precedent /wiki-ingest 13l LATEST cycled)
+  - CLAUDE.md §0-§7 + VAULT_RULES.md §F3.1-§F3.13 schema authority
+  - 08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md §0-§11 Bugatti gate mandatory pre-commit
+---
+
+# Handover 2026-05-14 — Chat Birou → Acasă Pre-Beta FULL Scope LOCK V2 + 13 LOCKs Strategic
+
+## §1 Synthesis
+
+Chat-current 2026-05-14 = sesiune strategic pură fără execution code (vault meta-tooling + product decisions only) plecat acasă §CC.2 deep index ~70% remaining bandwidth, tranziție birou MCP fallback PK best-effort, end chat ~20% remaining trigger handover voluntary Daniel `*"fa push mcp la handover"*`. **13 LOCKs majore strategic captured cumulative** + 1 OPEN pending decision (Catastrofizare V1) + C4 Engine Refactor Big 8 → Big 11 ordine clară pentru next strategic chat dedicat. ZERO net additive product/architecture code acest chat — decisions only paradigm shifts + deferrals INVALIDATED + safety conditions LOCK V1.
+
+**LOCK 1 majoră — Pre-Beta = FULL app strict LOCK V2 NEW 2026-05-14:** Daniel directive directe-of-truth verbatim *"Aplicatia pre-beta o sa fie FULL cu tot. Post beta facem doar bug fixes daca exista, si eventual alte noi features daca constatam ca trebuie"*. Asta SUPERSEDE toate "post-Beta v1.5" deferrals existing wiki: ADR 033 MMI STUB v1.5 + F5 AA-Friction defer v1.5 + Catastrofizare SCRAP V1 defer V2 + Firebase MCP defer post-V1 + Cognitive Architecture DRAFT + Scenarios Simulator + Faza 2 Filter DRAFT. Beta = single release strict Bugatti complete. Post-Beta = doar bug fixes reactive + new features dacă constatăm needed organic. Predecessor "v1.5 priority window" / "V2 reconsider" rationales INVALIDATED across all ADRs.
+
+**LOCK 2 majoră — Daniel Gates 100% strict LOCK V1 NEW 2026-05-14:** Threshold = 100% complete (library 657 ex + C4 engine refactor + C5 implementation + Calendar engine-side + tot pending) ÎNAINTE deploy production `feature/v2-vanilla-port` → `main` + smoke real andura.app Daniel manual test cu Firebase + PWA + telefon. NU intermediate gates 95% / 90% / smoke parțial. Single comprehensive gate Bugatti pur — *"Refactor later NEVER happens"* preserved invariant cross-link Bugatti FULL QUALITY no EXCUSES Daniel CEO directive 13j LOCK reinforced.
+
+**LOCK 3 protocol majoră — §F3.8 Handover Amendment NEW 2026-05-14:** Daniel directive verbatim *"handoverul trebuoe mereu pushed prin MCP, dar nu verificat daca landed dupa timeout. Revin eu mereu cand vad ca dispare din inbox si intreb daca e landed"*. Claude push MCP cap-coadă singular use mandatory invariant preserved, DAR ZERO verify post-timeout autonomous (anti-pattern waste pe timeout 4min × N + bandwidth burn anterior cumulative). Daniel observes `📥_inbox/` file disappear (CC autonomous archive `_CONSUMED.md` visual signal) → ping *"e landed?"* → Claude verify filesystem-side în turn-ul curent + raport factual. Pattern simplu, anti-anxiety Daniel + anti-burn Claude turn-based reality NU loop background. Supersedes anti-recurrence rule veche "verify filesystem-side via git log/ls before assume crash".
+
+**LOCK 4 majoră product — Medical Safety Disclaimer + T&C Mandatory Accept Onboarding Gate LOCK V1 NEW 2026-05-14:** Daniel catalysator verbatim *"Mi se rupe ca maria a facut sau nu operatie. Disclaimer la inceput ca nu suntem medici, sa consulte un specialist, antrenamentele sunt pe riscurile proprii etc... si atat conteaza"*. Apoi clarificare extensivă paradigm self-check cooperative *"Disclaimer ca nu suntem medici, si nu ne asumam responsabilitatea, ca programele sunt informative, cu un t&C mandatory accept... daca maria de 70 ani cu displazie de sold vrea sa faca forta... e binevenita... nu ii dam recomandari de 200 kg... dar fizic nu o poti oprii sa nu faca... Sau gandesc gresit?"*. Confirmation Co-CTO: gândire PERFECT corectă + aliniat 100% paradigm Andura LOCKED V1 existing (ADR 013 §Force-typing ELIMINATED PERMANENT anti-paternalism + ADR 015 Anti-Recommendation principle + Sufletul Andura F2 "AI-ul informează NU impune" + Anti-paternalism ABSOLUTE strategy). Distincția critică: app NU recomandă accidentări (invariant păstrăm via engine intelligence conservative — Periodization + Calibration Tiers + RIR Matrix conservative defaults age-aware/experience-aware via Demographic Prior ADR 017) vs app NU restricționează autonomy user (anti-paternalism — dacă Maria 70 insistă manual Forță, engine routes Forță template cu wording adapt + starting conservative NU "passive mode tripwire" block). Legal protection via Disclaimer + T&C mandatory accept = liability shift informed consent standard industry (toate apps fitness fac asta — MyFitnessPal, Strava, Hevy etc). Implementation gate first-launch onboarding screen disclaimer + T&C checkbox mandatory accept, cannot proceed onboarding without accept. Wording strict legal: "Andura informativă NU medical advisory + antrenamente risc propriu + consultă medic înainte program + ZERO responsabilitate accidentări sau probleme medicale". Re-prompt periodic post major updates TBD.
+
+**LOCK 5 cascade — Hard medical tripwire Passive Mode = RELAXED 2026-05-14:** SCENARIOS_SIMULATOR_DESIGN_V1 §3.2 Pruning A (Maria 65 + Forță = invalid joint risk, >75 + Cut deficit >500 kcal sarcopenia risk, Pregnant Cut/BULK Passive Mode) → soft engine conservative defaults NU hard block. Combinațiile rămân valid scenarios, engine route correct template cu wording adapt vârstă + context + conservative starting weights, NU passive mode tripwire automatic. Trade-off ADR 013 §5 "HIGH tier behavioral-only lipsește signals fizice RHR/HRV/sleep" = NU mai e problem (NU implementăm health export integration — medical territory disclaimer covers).
+
+**LOCK 6 invariant păstrăm — Anti-recommendation 2026-05-14:** engine NU produce output care provoacă accidentări = core Bugatti differentiator vs apps care reward volume orbește. Implementarea via Periodization + Calibration Tiers ADR 009 + RIR Matrix conservative + Demographic Prior ADR 017 baseline cold-start. NU medical knowledge layer, behavioral intelligence pure.
+
+**LOCK 7 keep core — Behavioral Safety AA Detection ADR 013 2026-05-14:** Volume Creep + Auto-pedeapsă observable + warning intervention 1-tap "Continui" + CDL log silent forensic = NU medical, e behavioral pattern recognition core Bugatti differentiator pre-Beta core feature. Friction-typing rămâne ELIMINATED PERMANENT 2026-04-30 amendment invariant preserved.
+
+**LOCK 8 product — Kcal Floor 1200 LOCK V1 NEW 2026-05-14:** User logează <1200 kcal/zi → mesaj informativ *"Minimul recomandat de [WHO/instituții] e 1200 kcal/zi. Andura NU include loguri sub acest prag pentru calcul obiective + preconizări viitoare"*. Log rămâne istoric CDL (transparency), Engine #3 Bayesian Nutrition ADR 022 filtrează din input pentru kcal_target inference + Engine #2 Goal Adaptation projection. Anti-paternalism: NU blocăm log, exclude engine learning + informează scientific anchored. Daniel verbatim *"Daca user vrea sa puna sub 1200 kcal logate, mesaj ca minimul recomandat de institutil bla bla bla este de 1200 si ca andura nu o sa includa loguri mai mici pentru calculul obiectivelor si preconizari viitoare"*. TBD wording exact instituție citată (WHO vs ESPEN vs INS România) la implementation.
+
+**LOCK 9 majoră product — Aggressive Loading Warning ADR_BIAS_DETECTION_OBSERVABLE_v1 §EXT-2 NEW LOCK V1 2026-05-14:** Push-back productive Daniel catalysator design *"vezi ca exista posibilitatea si ca chiar sa fie cu 20% mai mult real... poate engine nu s-a adaptat ok la onboarding"* — point excellent că engine T0 calibration poate fi OFF (user intermediate declared beginner, Demographic Prior cold-start atipic, etc). Tier-aware threshold dynamic per exercise type:
+- T0 (0-30 zile calibrare): Compound +50% / Isolation +100% — engine confidence low, tolerate deviații mari
+- T1 (30-90 zile active): Compound +30% / Isolation +75% — engine still learning
+- T2/T3 (90+ zile mature): Compound +20% / Isolation +50% — engine confident, flag aggressive justified
+
+Behavior pre-set (la edit greutate ÎNAINTE confirmare set): Modal observable + wording adapt pe tier — T0/T1 *"Suntem încă în calibrare — recomandarea poate fi conservativă vs realitatea ta. Ai introdus X kg. Confirmă greutatea cu care te simți pregătit"*, T2/T3 *"Ai introdus X kg. Recomandarea pentru azi era Y kg (+Z%). Confirmă dacă te simți pregătit sau revino la baseline"*. Override 1-tap [Continui cu greutatea introdusă] / [Revin la baseline] — NO forced typing per ADR 013 §AMENDMENT 2026-04-30 invariant preserved. CDL log silent type `user_override_weight_high` payload `{exerciseId, recommended, actual, deviation_pct, tier, repsAchieved, RPE, timestamp}` — pattern identic cu ADR 013 EXT-1 Pain Button Override CDL log infrastructure. Engine learning accelerated T0/T1: Pattern user override aggressive + reps achieved 100% + RPE acceptable ≤8 + **2 sesiuni consecutive same exercise** = engine UPGRADE baseline recommendation cu deviation magnitude observed + trigger T0→T1 calibration tier advance accelerated dacă pattern persists peste 3 exerciții diferite. Integrare ADR 009 Calibration Tiers §AMENDMENT 2026-05-05 Convergence Guard "T2 Unlock" mechanism + ADR 003 Double Progression Engine increment per session — Aggressive Loading override CDL log = INPUT signal nou pentru această infrastructură existing, NU engine separat. So engine "I'm wrong" se vindecă în 2-3 sesiuni, NU user paternal stuck pe recomandare conservativă greșită. Cross-link 3 patterns observable behavioral safety V1 = Volume Creep (§36.18 ADR_BIAS_DETECTION) + Auto-pedeapsă (§36.19) + AGGRESSIVE_LOADING §EXT-2 NEW. Per directive "totul pre-Beta" — implementation pre-Beta core scope.
+
+**LOCK 10 cascade — ADR 033 MMI promote SPEC READY V1 pre-Beta 2026-05-14:** Rationale defer "Maria post-operație șold gap reputational v1.5 risk" = INVALIDATED post Daniel medical disclaimer paradigm + directive "totul pre-Beta". Promote SPEC READY V1 simple, ~3-4h implementare per ADR §STATUS "post-Beta v1.5 priority window" overruled. Engine #9 MMI Algorithm Hibrid Lookup + Boost (table multiplicatori 6-12/12-24/24+ luni × 0.80/0.70/0.60 + boost 1.25/1.10/1.00) + threshold trigger 6+ luni user-controlled + UI wording re-engagement *"Pauza face parte din drum. Începem treptat — corpul tău își amintește"* = pre-Beta core scope.
+
+**LOCK 11 clarification — F5 AA-Friction Modal interpretation 2026-05-14:** "deferred v1.5" wiki = UX iteration intervention layer design (banner wording + override modal design + reconciliation prompt UI per ADR 013 §Notes on Production Readiness) NU friction-typing (already eliminated PERMANENT 2026-04-30 amendment). Per directive "totul pre-Beta" — UX iteration acum, NU defer.
+
+**LOCK 12 cascade — Cognitive Architecture spec status reconsidered 2026-05-14:** Per uploaded `COGNITIVE_ARCHITECTURE_SPEC_v1.md` = meta-architectural spec 75 puncte 5-engine + Arbitrator central + dimensions plugins ortogonale anti-monolit. Per directive "totul pre-Beta" — vision document trebuie decision strategic implement vs preserve reference. NU yet implemented. Strategic chat dedicat eventual sau integrate cu C4 engine refactor session.
+
+**LOCK 13 cascade — Scenarios Simulator + Faza 2 Filter Strategy status reconsidered 2026-05-14:** Parte din planul anti-halucinație ORIGINAL (synthetic 500 scenarios + ~85% AUTO_RESOLVED + ~15% FLAGGED Claude reasoning fill + 3-instance workflow). Karpathy LLM Wiki pattern LOCK V1 2026-05-11 Phase 1-5 LANDED SUPERSEDE ca primary anti-halucinație mechanism. Legacy DRAFT — Co-CTO decision pending: SCRAP formal sau preserve ca complementary backup. Per directive "totul pre-Beta" — clear up status formal.
+
+**§OPEN pending Daniel decision next chat:** Catastrofizare bias detection V1 status — SCRAP permanent V1+post-Beta (existing rationale "user matur 2+ skip + Reset/Deload manual = realism + autonomy NU bias" rămâne valid independent de medical question) sau redesign V1 pre-Beta per directive "totul pre-Beta"? Daniel decision pending — Claude întreabă explicit la "Salut Acasă" next chat sau bif inline.
+
+**§C4 Engine Refactor Big 8 → Big 11 ordine clară:** Daniel directive verbatim *"asap cu ordine clara"*. Strategic chat dedicat ~2-3h Daniel input mandatory similar Bundle 5 ADR v2 strategic 2026-05-13f pattern (anti-acoperiș-pereți filter activated — engine refactor scope cascading 5+ engines justified strategic chat dedicat). Ordine clară: C4.1 ADR_ENGINE_REFACTOR_BIG_11_V1 LOCK V1 schema + mapping → C4.2 Muscle Recovery Big 6 → Big 11 + GROUP_LABELS_RO → C4.3 Weakness Detector Brzycki 1RM per 11 grupuri → C4.4 Specialization PARALLEL modifier → C4.5 Periodization persona-aware phases → C4.6 Cascade Defense composite signal → C4.7 Vitality Layer 6 questions mapping. Plus C5 session sequence ordering implementation engine-side post ADR_SESSION_SEQUENCE_ORDERING_V1 13k LOCK raw layer (depinde parțial de C4).
+
+Cumulative chat-current ZERO src/ touched (vault meta-tooling decisions-only) — tests cumulative 3280 PASS preserved EXACT cross-chat per HARD CONSTRAINTS §F3.12 strict. Cumulative ~742 LOCKED V1 PRESERVED unchanged invariant. Pre-Beta progress 434/657 = 66.1% baseline cumulative chat 13l preserved invariant chat-current (NU library work acest chat).
+
+## §2 Verbatim quotes Daniel Chat-Current (15 NEW preserved EXACT Romanian)
+
+1. *"Salut. Acasa. Indexeaza tot ce poti. cand iti dau urmatorul mesaj o sa fiu la birou si nu o sa ai decat access limitat"* — startup ACASĂ + planning bandwidth anticipator NEW pattern Daniel CEO
+
+2. *"mda bine. lasa ca nu am chef de el acum. Ia zi avem ceva de discutat pe proiect? sau e full execution acasa?"* — pivot direct după Obsidian Sync triage abandoned (vault virtual sincronizat 1286 vs 18000 files, `.git/objects/` excluded HARD-CODED)
+
+3. *"las-o drq ca tu esti fresh chat. Zi-mi pe scurt ce vrei sa decid punctual"* — Daniel-stil cooperative direct "tu propui, eu bifez" pattern reaffirm
+
+4. *"1. asap cu ordine clara. Nu exista nimic de discutat pe structura post beta... totul e inclus pre-beta 2. explica te rog ca la prosti. 3. what?"* — Pre-Beta FULL scope LOCK V2 directive triple-decision (LOCK 1 catalysator)
+
+5. *"deci sa ne intelegem. Aplicatia pre-beta o sa fie FULL cu tot. Post beta facem doar bug fixes daca exista, si eventual alte noi features daca constatam ca trebuie"* — Pre-Beta scope explanation explicit (LOCK 1 directive verbatim ultra-clear)
+
+6. *"100%"* — Daniel Gates strict threshold ultra-scurt agreement mode (LOCK 2 catalysator)
+
+7. *"handoverul trebuoe mereu pushed prin MCP, dar nu verificat daca landed dupa timeout. Revin eu mereu cand vad ca dispare din inbox si intreb daca e landed"* — §F3.8 protocol amendment LOCK V1 directive verbatim (LOCK 3 catalysator paradigm shift)
+
+8. *"ce am ca defered pana acum la post beta?"* — inventory request cooperative pre-LOCK directive
+
+9. *"ce iti mai dau sa poti sa stii exact ce e?"* — cooperative provide raw layer pattern NEW (Daniel-stil cooperative source-of-truth direct când Claude PK fallback uncertain — 8 uploads provided context)
+
+10. *"Mi se rupe ca maria a facut sau nu operatie. Disclaimer la inceput ca nu suntem medici, sa consulte un specialist, antrenamentele sunt pe riscurile proprii etc... si atat conteaza"* — Medical Disclaimer LOCK V1 directive ultra-clear (LOCK 4 catalysator paradigm shift majoră)
+
+11. *"Disclaimer ca nu suntem medici, si nu ne asumam responsabilitatea, ca programele sunt informative, cu un t&C mandatory accept. Dupa daca maria de 70 ani cu displazie de sold vrea sa faca forta... e binevenita... nu ii dam recomandari de 200 kg... dar fizic nu o poti oprii sa nu faca... (sau daca ea minte aplicatia tu cum o verifici?). Ideea e simpla, utilizatorul face ce vrea, dar aplicatia nu recomanda accidentari. Ex 2. Un copil de 14 ani minte si zice ca are 18 ca sa intre pe aplicatie. Poti sa il opresti sa nu faca asta? Realist nu. Ex 3: Marius e cardiac, si nu selecteaza ca e cardiac... se uita si face antrenamentul, si moare pe banda... e andura responsabila? Ideea e simpla, nu suntem medici, ne protejam legal si informam oamenii ca inainte sa inceapa sa consulte un medic, le zicem ca programele sunt informative si au nevoie de indicatii medicale precise inainte sa inceapa... si drum bun. Sau gandesc gresit?"* — paradigm explanation extensivă self-check cooperative pattern ultra-major (LOCK 4 + 5 + 6 + 7 cascade, gândire PERFECT corectă confirmation Co-CTO 100% aligned existing Andura LOCKED principles)
+
+12. *"Bun mai e ceva. Punem simplu si urmatoarele conditii"* — initiation 2 safety conditions LOCK V1 (LOCK 8 + LOCK 9 catalysator)
+
+13. *"vezi ca exista posibilitatea si ca chiar sa fie cu 20% mai mult real... poate engine nu s-a adaptat ok la onboarding"* — push-back productive MAJOR catalysator tier-aware threshold design Aggressive Loading (LOCK 9 catalysator design)
+
+14. *"confirm recomandarea ta. Faci handover cand ajung acasa ca acum nu poti"* — handover scheduling directive cooperative bandwidth ~25% trigger Co-CTO recommend handover preventiv
+
+15. *"sunt acasa. stai ma... deja ai facut push prin mcp la handover?"* — verify Daniel-side question cu STOP signal "stai ma" pattern observed (chat-current 2× variant: prima check verify + second *"da sunt acasa. fa push mcp la handover"* trigger directly post confirm acasă MCP available)
+
+## §3 Bugatti Framing Notes (5 sub-sections complete)
+
+### §3.1 Quality > Speed (FULL QUALITY no EXCUSES preserved cross-13 LOCKs)
+
+13 LOCKs majore strategic captured cumulative ZERO compromise tactical interim pre-Beta shortcut "Refactor later NEVER happens" preserved invariant cross-link Bugatti FULL QUALITY no EXCUSES Daniel CEO directive 13j LOCK reinforced. Pre-Beta = FULL app strict LOCK V2 (LOCK 1) directive directe-of-truth: TOATE deferrals "v1.5" / "V2" rationales INVALIDATED post 2026-05-14. Single comprehensive Bugatti gate = beta release standards fără mid-tier compromise. Daniel Gates 100% strict (LOCK 2) threshold = NU intermediate gates 95% / 90% / smoke parțial — single comprehensive gate Bugatti pur. Medical Safety Disclaimer + T&C Mandatory (LOCK 4) = legal protection liability shift informed consent standard industry + paradigm Andura "user face ce vrea, app NU recomandă accidentări" preserved invariant. Aggressive Loading Warning §EXT-2 (LOCK 9) = tier-aware threshold dynamic design Bugatti craft NU naive static +20%/+50% which would false positive rate mare T0 users underestimated la onboarding. ADR 033 MMI promote SPEC READY V1 pre-Beta (LOCK 10) = Engine #9 Hibrid Lookup + Boost ~3-4h implementation pre-Beta scope. Bugatti craft = FULL scope ambition explicit invariant cross-chat preserved 6th consecutive cross-chat directive verbatim Daniel CEO post Bundle 5 ADR v2 strategic 2026-05-13f.
+
+### §3.2 Anti-Acoperiș-Pereți Filter (Strategic Chat Dedicat C4 ASAP Cu Ordine Clară)
+
+Daniel directive verbatim *"asap cu ordine clara"* C4 Engine Refactor Big 8 → Big 11 multi-engine cascade — strategic chat dedicat ~2-3h Daniel input mandatory similar Bundle 5 ADR v2 strategic 2026-05-13f pattern justified anti-acoperiș-pereți filter activated chat-current. Engine refactor scope cascading 5+ engines (Muscle Recovery + Periodization + Weakness Detector + Specialization + Cascade Defense + Vitality Layer) = strategic chat dedicat înainte de orice autonomous implementation. Ordine clară Co-CTO autonomous: C4.1 ADR_ENGINE_REFACTOR_BIG_11_V1 LOCK V1 raw layer NEW schema + mapping table 11 categorii canonical → C4.2 Muscle Recovery Big 6 → Big 11 refactor + GROUP_LABELS_RO Romanian-first extension → C4.3 Weakness Detector Brzycki 1RM per 11 grupuri → C4.4 Specialization PARALLEL modifier → C4.5 Periodization persona-aware phases → C4.6 Cascade Defense composite signal → C4.7 Vitality Layer 6 questions mapping. C5 session sequence ordering implementation engine-side post ADR_SESSION_SEQUENCE_ORDERING_V1 13k LOCK raw layer (depinde parțial de C4 — engines refactor afectează ordering). C6 Bundle 6.0.5 Arms ~120 NEW autonomous (HARD CONSTRAINT §F3.12 ZERO engines touched = orthogonal vs C4) — close Pre-Beta library gate progress 66.1% → ~84%. **Recommended Co-CTO:** C4 + C6 parallel în terminale separate (C4 strategic Claude chat + Bundle 6.0.5 autonomous CC Opus) — disjoint scope file-level, C4 unlocks engine intelligence pentru Bundle 6.0.5+ context strategic, Bundle 6.0.5+ autonomous lui Daniel zero idle time.
+
+### §3.3 Co-CTO Autonomy MAXIMUM 7th Consecutive Cross-Chat Directive Reinforce Pattern Verbatim
+
+7th consecutive cross-chat directive trust delegation MAXIMUM pattern verbatim post 6th 13l (2026-05-13g + 13h + 13i + 13j + 13k + 13l + chat-current 14 = 7× consecutive trigger pattern). Daniel CEO chat-current verbatim push-back productive cooperative #1 (LOCK 4 paradigm shift): *"Sau gandesc gresit?"* self-check pattern cu paradigm explanation extensivă (Maria displazie + copil 14 mint vârsta + Marius cardiac neselectat) — Co-CTO confirmation 100% aligned existing Andura LOCKED principles (ADR 013 Force-typing eliminated + ADR 015 Anti-Recommendation + Sufletul Andura F2 + Anti-paternalism ABSOLUTE strategy). NU push-back contra, Daniel paradigm CORRECT. Pattern Daniel-stil "tu propui, eu bifez" cooperative direct preserved invariant cross-chat cu cooperative provide raw layer pattern NEW *"ce iti mai dau sa poti sa stii exact ce e?"* (8 uploads context source-of-truth direct când Claude PK fallback uncertain). Handover trigger §F3.8 cross-chat directive pattern verbatim Daniel CEO *"confirm recomandarea ta. Faci handover cand ajung acasa ca acum nu poti"* + *"da sunt acasa. fa push mcp la handover"* trust delegation MAXIMUM consistent crescente. Co-CTO autonomy LOCK V1 PERMANENT preserved invariant unchanged.
+
+### §3.4 §F3.8 Handover Protocol Amendment (LOCK 3 Paradigm Shift Anti-Burn + Anti-Anxiety)
+
+Anterior §F3.8: Claude push MCP cap-coadă singular use mandatory + verify post-timeout via filesystem checks (`git log` / `ls _CONSUMED archive`) ÎNAINTE assume agent crash per §AR.19 invariant. Slip surfaced chat-current cross-chat 13j + 13l pattern: post-push timeout 4min Claude Desktop client ceiling NU subprocess crash intern — Claude consume bandwidth waste pe verify autonomous loop background simulation. Daniel verbatim corrective LOCK V1 *"handoverul trebuoe mereu pushed prin MCP, dar nu verificat daca landed dupa timeout. Revin eu mereu cand vad ca dispare din inbox si intreb daca e landed"* — paradigm shift turn-based reality NU loop background. Daniel observes `📥_inbox/` file disappear (CC autonomous archive `_CONSUMED.md` visual signal) → ping *"e landed?"* → Claude verify filesystem-side în turn-ul curent + raport factual. Pattern simplu, anti-anxiety Daniel + anti-burn Claude. Cross-link §AR.19 invariant preserved (claude_code agent timeout MCP delivery ≠ agent crash) DAR scope verification = on-Daniel-trigger NU autonomous loop. NEW concept page [[../concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout]] codify chat-current.
+
+### §3.5 Medical Paradigm Shift = Bugatti Differentiator Confirmation Anti-Paternalism ABSOLUTE Cross-Cluster
+
+LOCK 4 + 5 + 6 + 7 cascade Medical Safety Disclaimer + T&C Mandatory + Hard tripwire RELAXED + Anti-recommendation invariant + Behavioral safety AA Detection KEEP CORE = paradigm shift Daniel verbatim *"utilizatorul face ce vrea, dar aplicatia nu recomanda accidentari"* aliniat 100% existing Andura LOCKED principles. Distincția critică: app NU recomandă accidentări (engine intelligence conservative defaults via Periodization + Calibration Tiers + RIR Matrix + Demographic Prior cold-start age-aware/experience-aware) vs app NU restricționează autonomy user (anti-paternalism ABSOLUTE — dacă Maria 70 insistă manual Forță, engine routes Forță template cu wording adapt + starting conservative NU passive mode tripwire block). Legal protection via Disclaimer + T&C mandatory accept = liability shift informed consent standard industry (toate apps fitness fac asta). NU medical knowledge layer, behavioral intelligence pure preserved Bugatti differentiator cross-cluster. F2 Sufletul Andura "AI-ul informează NU impune" invariant preserved cross-13 LOCKs catalysator.
+
+## §4 Cross-Refs Raw Layer (15 specific path:§ pointers)
+
+1. [[../../03-decisions/033-muscle-memory-index]] §STATUS rationale defer "Maria post-operație șold gap reputational v1.5 risk" INVALIDATED post directive 2026-05-14, promote SPEC READY V1 pre-Beta scope (LOCK 10 cascade)
+2. [[../../03-decisions/002-firebase-rest-not-sdk]] — Firebase Andura functional preserved invariant via REST API direct, defer was only Firebase MCP server tool meta (Install Pack 12 13b conflict cu paradigm REST direct, NU Firebase Andura)
+3. [[../../03-decisions/013-auto-aggression-detection]] §AMENDMENT 2026-04-30 — Force-typing ELIMINATED PERMANENT anti-paternalism ABSOLUTE preserved invariant + behavioral safety AA Detection KEEP CORE pre-Beta (LOCK 7) + F5 UX iteration intervention layer NU friction-typing (LOCK 11)
+4. [[../../03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1]] §EXT-2 NEW Aggressive Loading append — tier-aware threshold dynamic + behavior pre-set modal observable + CDL log + engine learning accelerated (LOCK 9 implementation pre-Beta core scope)
+5. [[../../03-decisions/009-calibration-tiers]] §AMENDMENT 2026-05-05 Convergence Guard T2 Unlock — integration accelerated T0/T1 trigger Aggressive Loading override CDL feed
+6. [[../../03-decisions/003-double-progression-engine]] — integration weight increment per session signals Aggressive Loading override CDL feed cross-link existing infrastructure
+7. [[../../03-decisions/017-demographic-prior-database]] — baseline cold-start age-aware/experience-aware Anti-recommendation invariant preserved cross-13 LOCKs (LOCK 6)
+8. [[../../03-decisions/022-bayesian-nutrition-inference]] Engine #3 — integration Kcal Floor 1200 filter logic engine-side (LOCK 8 implementation pre-Beta core scope)
+9. [[../../03-decisions/015-getbf-calibration-only]] — Anti-Recommendation principle invariant păstrăm (Option B Formula B preserved single path NU hybrid Option C fudge factors)
+10. [[../../04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1]] §3.2 Pruning A — RELAX medical hard tripwire Passive Mode → soft engine conservative defaults (LOCK 5 cascade)
+11. [[../../04-architecture/COGNITIVE_ARCHITECTURE_SPEC_v1]] — status reconsidered post directive "totul pre-Beta" (LOCK 12 cascade — vision document decision strategic implement vs preserve reference pending)
+12. [[../../04-architecture/FAZA_2_FILTER_STRATEGY_v1]] + [[../../04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1]] — Karpathy LLM Wiki SUPERSEDE primary anti-halucinație, decision pending SCRAP/preserve complementary backup (LOCK 13 cascade)
+13. [[../../01-vision/SUFLET_ANDURA]] §1.1 F2 "AI-ul informează, NU impune" — invariant preserved cross-13 LOCKs anti-paternalism ABSOLUTE catalysator
+14. [[../../📤_outbox/_archive/2026-05/490_HANDOVER_2026-05-14_pre_beta_full_scope_safety_locks_CONSUMED]] handover source archived per [[../../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.8 handover-narrative classifier branch
+15. [[../../📤_outbox/_archive/2026-05/491_LATEST_PREVIOUS_WIKI_INGEST_2026_05_13l_BUNDLE_6_0_4_CLUSTER_CONSUMED]] precedent /wiki-ingest 13l LATEST cycled
+
+## §5 Path Forward Post Handover Ingest (Next Chat NEW Dedicated Trigger "Salut Acasă" Daniel)
+
+**P1 absolute decision Daniel:** Catastrofizare bias detection V1 — SCRAP permanent V1+post-Beta (existing rationale "user matur 2+ skip + Reset/Deload manual = realism + autonomy NU bias" rămâne valid independent de medical question) sau redesign V1 pre-Beta per directive "totul pre-Beta"? Bif inline scurt.
+
+**P2 fork strategic next session acasă:**
+- **Option A:** C4 engine refactor Big 8 → Big 11 strategic chat dedicat (~2-3h Daniel input mandatory) — anti-acoperiș-pereți filter activated, prioritate cap-coadă înainte de orice library extension autonomous
+- **Option B:** Bundle 6.0.5 Arms ~120 NEW autonomous (HARD CONSTRAINT §F3.12 ZERO engines touched = orthogonal vs C4) — close Pre-Beta library gate progress 66.1% → ~84%
+- **Option C:** Parallel A + B în terminale separate (C4 strategic Claude chat + Bundle 6.0.5 autonomous CC Opus) — disjoint scope file-level
+- **Recommended Co-CTO:** C parallel — C4 unlocks engine intelligence pentru Bundle 6.0.5+ context strategic, Bundle 6.0.5+ autonomous lui Daniel zero idle time
+
+**P3 immediate post next chat startup:**
+- Implementation Medical Safety Disclaimer + T&C Mandatory Accept Onboarding Gate first-launch screen (UX iteration + legal wording)
+- Implementation Kcal Floor 1200 integrate Engine #3 ADR 022 spec
+- Implementation Aggressive Loading Warning §EXT-2 ADR_BIAS_DETECTION append + tier-aware threshold + accelerated learning T0/T1
+- ADR 033 MMI promote SPEC READY V1 + implementation Engine #9 (~3-4h) — pre-Beta scope
+- F5 AA-Friction Modal UX iteration design pre-Beta (banner wording + override modal + reconciliation prompt)
+
+**P4 deferred post P2 + P3:**
+- C5 session sequence ordering implementation engine-side post ADR_SESSION_SEQUENCE_ORDERING_V1 13k schema LOCK
+- Calendar feature engine-side scheduleAdapter + deviationMemory ~1000-1500 LOC
+- Cognitive Architecture spec status decision (implement vs preserve reference)
+- Scenarios Simulator + Faza 2 Filter Strategy status decision (SCRAP vs preserve complementary)
+- ADR amendments cascade across all "post-Beta v1.5" rationales = INVALIDATED per directive 2026-05-14 (formal cleanup pass when Daniel availability)
+- Daniel Gates manual smoke production andura.app deploy `feature/v2-vanilla-port` → `main` (100% strict threshold)
+
+🦫 **Bugatti craft. Chat birou → acasă 2026-05-14 Pre-Beta FULL scope LOCK V2 + Medical Safety Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading Tier-Aware Warning + §F3.8 Protocol Amendment + ADR 033 MMI Promote Pre-Beta + 13 LOCKs Strategic Cumulative Captured. Cumulative ~742 LOCKED V1 PRESERVED unchanged. Tests 3280 PASS preserved EXACT (vault meta-tooling NU additive product/architecture). Co-CTO autonomy MAXIMUM 7th consecutive cross-chat directive reinforce pattern verbatim. Handover ready noul chat post-trigger "Salut Acasă" P1 fork decizie Daniel Catastrofizare + P2 strategic C4 / Bundle 6.0.5 / parallel.**

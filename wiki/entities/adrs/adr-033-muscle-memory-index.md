@@ -10,7 +10,9 @@ cross_refs:
   - "[[adr-018-engine-extensibility-architecture]]"
   - "[[adr-026-offline-coaching-tree]]"
   - "[[adr-009-calibration-tiers]]"
-amendments: []
+amendments:
+  - date: 2026-05-14
+    note: APPEND chat-current chat birou → acasă 2026-05-14 sesiune strategic pură fără execution code (vault meta-tooling decisions only) — **ADR 033 MMI promote SPEC READY V1 pre-Beta scope (LOCK 10 cascade chat-current)** rationale defer "Maria post-operație șold gap reputational v1.5 risk" = INVALIDATED post Daniel CEO directive verbatim *"Mi se rupe ca maria a facut sau nu operatie"* + paradigm Medical Safety Disclaimer + T&C Mandatory (LOCK 4 chat-current) + LOCK 1 Pre-Beta = FULL app strict directive verbatim *"Aplicatia pre-beta o sa fie FULL cu tot. Post beta facem doar bug fixes daca exista, si eventual alte noi features daca constatam ca trebuie"*. Promote SPEC READY V1 simple, ~3-4h implementare per ADR §STATUS "post-Beta v1.5 priority window" overruled. Engine #9 MMI Algorithm Hibrid Lookup + Boost (table multiplicatori 6-12/12-24/24+ luni × 0.80/0.70/0.60 + boost 1.25/1.10/1.00) + threshold trigger 6+ luni user-controlled + UI wording re-engagement *"Pauza face parte din drum. Începem treptat — corpul tău își amintește"* = pre-Beta core scope. NEW concept page [[../../concepts/pre-beta-full-scope-lock-v2]] + [[../../concepts/medical-safety-disclaimer-t-c-mandatory]] codify chat-current cross-link rationale defer INVALIDATED. Status field trebuie update raw layer ADR 033 §STATUS "stub-placeholder" → "spec-ready-v1" la cleanup pass formal post Daniel availability (cascade ADR amendments cross all "post-Beta v1.5" rationales = INVALIDATED per directive 2026-05-14 — formal cleanup pass deferred P4 path forward post P2 + P3).
 ---
 
 # ADR 033 — Engine Muscle Memory Index (MMI)
