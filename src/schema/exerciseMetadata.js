@@ -4001,6 +4001,220 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip' },
   ] },
 
+  // ──────────────────────────────────────────────────────────────────────────────
+  // ── Phase G — Antebrate (Forearms) NEW V1 Canonical FIRST POPULATION (25 NEW) ─
+  // ── Per ADR_ANATOMICAL_CLASSIFICATION_V1 §2.6 + §3.6 'antebrate' canonical V1 NEW
+  // ── (forearms separate from biceps/triceps secondary — Bret Contreras + Mike Israetel reference)
+  // ──────────────────────────────────────────────────────────────────────────────
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase G): NEW Tier 2 isolation barbell — wrist curl seated palms-up flexor
+  'Wrist Curl Barbell Seated Palms-Up': { equipment_type: 'barbell', equipment_alternatives: ['Wrist Curl DB Seated Palms-Up', 'Wrist Curl Barbell Standing Behind Back'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Wrist Curl Barbell Seated', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — wrist curl reverse seated palms-down extensor
+  'Wrist Curl Barbell Seated Palms-Down': { equipment_type: 'barbell', equipment_alternatives: ['Reverse Wrist Curl Barbell Seated', 'Reverse Wrist Curl DB Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl DB Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl Barbell Seated Palms-Up', 'Reverse Curl Barbell'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — wrist curl seated palms-up DB variant flexor
+  'Wrist Curl DB Seated Palms-Up': { equipment_type: 'dumbbell', equipment_alternatives: ['Wrist Curl Barbell Seated Palms-Up', 'Wrist Curl DB Seated Palms-Down'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl Barbell Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Wrist Curl DB Seated', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — wrist curl seated palms-down DB extensor
+  'Wrist Curl DB Seated Palms-Down': { equipment_type: 'dumbbell', equipment_alternatives: ['Reverse Wrist Curl DB Seated', 'Wrist Curl Barbell Seated Palms-Down'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl Barbell Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl DB Seated Palms-Up', 'Reverse Curl DB'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — wrist curl standing behind back palms-up flexor
+  'Wrist Curl Barbell Standing Behind Back': { equipment_type: 'barbell', equipment_alternatives: ['Wrist Curl Barbell Seated Palms-Up', 'Wrist Curl DB Seated Palms-Up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl Barbell Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl DB Seated Palms-Up', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — reverse wrist curl seated extensor
+  'Reverse Wrist Curl Barbell Seated': { equipment_type: 'barbell', equipment_alternatives: ['Reverse Wrist Curl DB Seated', 'Wrist Curl Barbell Seated Palms-Down'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl DB Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl Barbell Seated Palms-Up', 'Reverse Curl Barbell'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — reverse wrist curl DB seated extensor
+  'Reverse Wrist Curl DB Seated': { equipment_type: 'dumbbell', equipment_alternatives: ['Reverse Wrist Curl Barbell Seated', 'Wrist Curl DB Seated Palms-Down'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl Barbell Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl DB Seated Palms-Up', 'Reverse Curl DB'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — reverse wrist curl cable extensor
+  'Reverse Wrist Curl Cable': { equipment_type: 'cable', equipment_alternatives: ['Reverse Wrist Curl Barbell Seated', 'Reverse Wrist Curl DB Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Wrist Curl Barbell Seated' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl Barbell Seated Palms-Up', 'Reverse Curl Cable'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — wrist curl cable flexor
+  'Cable Wrist Curl': { equipment_type: 'cable', equipment_alternatives: ['Wrist Curl Barbell Seated Palms-Up', 'Wrist Curl DB Seated Palms-Up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Wrist Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl Barbell Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl DB Seated Palms-Up', 'Reverse Curl Cable'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Roller' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation machine specialty — wrist roller suspended weight rotation grip + flexor
+  'Wrist Roller': { equipment_type: 'machine', equipment_alternatives: ['Wrist Curl Barbell Seated Palms-Up', 'Cable Wrist Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl Barbell Seated Palms-Up', 'Reverse Wrist Curl Barbell Seated'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 accessory machine — plate pinch hold grip strength specific
+  'Plate Pinch Hold': { equipment_type: 'machine', equipment_alternatives: ['Captains of Crush Gripper', 'Dead Hang'], force_demand: 'low', tier: 3, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains of Crush Gripper' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Hang', 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound DB — farmer's walk DB grip + spate secondary trap engage stabilizer
+  "Farmer's Walk DB": { equipment_type: 'dumbbell', equipment_alternatives: ["Farmer's Walk Trap Bar", "Farmer's Walk Kettlebell"], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'assisted_variant', exercise_id: "Farmer's Walk Kettlebell" },
+    { type: 'muscle_group_compose', exercise_ids: ["Suitcase Carry DB", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound barbell trap-bar — farmer's walk trap bar grip + spate secondary
+  "Farmer's Walk Trap Bar": { equipment_type: 'barbell', equipment_alternatives: ["Farmer's Walk DB", "Farmer's Walk Kettlebell"], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Wrist Curl Barbell Seated Palms-Up' },
+    { type: 'assisted_variant', exercise_id: "Farmer's Walk DB" },
+    { type: 'muscle_group_compose', exercise_ids: ["Suitcase Carry DB", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound DB-equiv (kettlebell) — farmer's walk kettlebell grip + spate secondary (kettlebell mapped to dumbbell — schema lacks kettlebell enum)
+  "Farmer's Walk Kettlebell": { equipment_type: 'dumbbell', equipment_alternatives: ["Farmer's Walk DB", "Farmer's Walk Trap Bar"], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'assisted_variant', exercise_id: "Farmer's Walk DB" },
+    { type: 'muscle_group_compose', exercise_ids: ["Suitcase Carry DB", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation bodyweight — towel hang grip endurance + flexor static
+  'Towel Hang': { equipment_type: 'bodyweight', equipment_alternatives: ['Dead Hang', 'Bar Hang Single-Arm'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Dead Hang' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Roller', 'Plate Pinch Hold'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation bodyweight — dead hang grip endurance + flexor static foundational
+  'Dead Hang': { equipment_type: 'bodyweight', equipment_alternatives: ['Towel Hang', 'Bar Hang Single-Arm'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Towel Hang' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Roller', 'Plate Pinch Hold'] },
+    { type: 'bodyweight', exercise_id: 'Towel Hang' },
+    { type: 'light_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight advanced — single-arm bar hang grip strength specific advanced
+  'Bar Hang Single-Arm': { equipment_type: 'bodyweight', equipment_alternatives: ['Dead Hang', 'Towel Hang'], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Dead Hang' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Roller', 'Plate Pinch Hold'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 accessory machine specialty — Captains of Crush gripper grip strength specific
+  'Captains of Crush Gripper': { equipment_type: 'machine', equipment_alternatives: ['Plate Pinch Hold', 'Dead Hang'], force_demand: 'low', tier: 3, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Plate Pinch Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Curl DB Seated Palms-Up', 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation barbell — reverse curl barbell antebrate primary brachioradialis + biceps secondary brachii
+  'Reverse Curl Barbell': { equipment_type: 'barbell', equipment_alternatives: ['Reverse Curl EZ-bar', 'Reverse Curl DB'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl EZ-bar' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Wrist Curl Barbell Seated Palms-Down'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Reverse Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation EZ-bar — reverse curl wrist-friendly antebrate brachioradialis
+  'Reverse Curl EZ-bar': { equipment_type: 'barbell', equipment_alternatives: ['Reverse Curl Barbell', 'Reverse Curl DB'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Wrist Curl Barbell Seated Palms-Down'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Reverse Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable — reverse curl cable antebrate constant tension
+  'Reverse Curl Cable': { equipment_type: 'cable', equipment_alternatives: ['Reverse Curl Barbell', 'Reverse Curl DB'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Hammer Curl Rope', 'Reverse Wrist Curl Cable'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Reverse Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — reverse curl DB antebrate brachioradialis unilateral option
+  'Reverse Curl DB': { equipment_type: 'dumbbell', equipment_alternatives: ['Reverse Curl Barbell', 'Reverse Curl EZ-bar'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Curl Cable' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hammer Curl', 'Wrist Curl DB Seated Palms-Down'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation DB — pinwheel curl antebrate primary brachioradialis dominant + biceps secondary brachialis
+  'Pinwheel Curl DB': { equipment_type: 'dumbbell', equipment_alternatives: ['Hammer Curl', 'DB Cross-Body Hammer'], force_demand: 'medium', tier: 2, muscle_target_primary: 'antebrate', muscle_target_secondary: ['biceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Hammer Curl Rope' },
+    { type: 'assisted_variant', exercise_id: 'Hammer Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Hammer Curl Standing', 'Reverse Curl DB'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Cross-Body Hammer' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 compound DB — suitcase carry unilateral grip + spate secondary trap stabilizer
+  'Suitcase Carry DB': { equipment_type: 'dumbbell', equipment_alternatives: ["Farmer's Walk DB", "Farmer's Walk Kettlebell"], force_demand: 'high', tier: 1, muscle_target_primary: 'antebrate', muscle_target_secondary: ['spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'assisted_variant', exercise_id: "Farmer's Walk DB" },
+    { type: 'muscle_group_compose', exercise_ids: ["Farmer's Walk Kettlebell", 'Wrist Roller'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 accessory machine — plate curl grip + flexor static rotation
+  'Plate Curl': { equipment_type: 'machine', equipment_alternatives: ['Wrist Curl DB Seated Palms-Up', 'Plate Pinch Hold'], force_demand: 'low', tier: 3, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Curl DB Seated Palms-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Wrist Roller', 'Plate Pinch Hold'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 accessory machine specialty — sledgehammer levering rotational forearm specific
+  'Sledgehammer Levering': { equipment_type: 'machine', equipment_alternatives: ['Wrist Roller', 'Plate Curl'], force_demand: 'low', tier: 3, muscle_target_primary: 'antebrate', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Wrist Curl' },
+    { type: 'assisted_variant', exercise_id: 'Wrist Roller' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plate Curl', 'Plate Pinch Hold'] },
+    { type: 'bodyweight', exercise_id: 'Dead Hang' },
+    { type: 'light_variant', exercise_id: 'Towel Hang' },
+  ] },
+
 };
 
 /**

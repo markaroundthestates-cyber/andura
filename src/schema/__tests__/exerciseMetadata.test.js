@@ -1969,4 +1969,84 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
       expect(['dumbbell', 'bodyweight', 'machine', 'cable']).toContain(EXERCISE_METADATA[name].equipment_type);
     });
   });
+
+  // ── Phase G — Antebrate (Forearms) NEW V1 Canonical FIRST POPULATION (25 NEW) ──
+  // Per ADR_ANATOMICAL_CLASSIFICATION_V1 §2.6 + §3.6 'antebrate' canonical V1 NEW (forearms separate from biceps/triceps secondary)
+  const NEW_ENTRIES_6_0_5_PHASE_G = [
+    'Wrist Curl Barbell Seated Palms-Up', 'Wrist Curl Barbell Seated Palms-Down',
+    'Wrist Curl DB Seated Palms-Up', 'Wrist Curl DB Seated Palms-Down', 'Wrist Curl Barbell Standing Behind Back',
+    'Reverse Wrist Curl Barbell Seated', 'Reverse Wrist Curl DB Seated', 'Reverse Wrist Curl Cable',
+    'Cable Wrist Curl', 'Wrist Roller', 'Plate Pinch Hold',
+    "Farmer's Walk DB", "Farmer's Walk Trap Bar", "Farmer's Walk Kettlebell",
+    'Towel Hang', 'Dead Hang', 'Bar Hang Single-Arm', 'Captains of Crush Gripper',
+    'Reverse Curl Barbell', 'Reverse Curl EZ-bar', 'Reverse Curl Cable', 'Reverse Curl DB',
+    'Pinwheel Curl DB', 'Suitcase Carry DB', 'Plate Curl', 'Sledgehammer Levering',
+  ];
+
+  it('Phase G Antebrate FIRST POPULATION 26 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_G.length).toBe(26);
+    NEW_ENTRIES_6_0_5_PHASE_G.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase G all 26 entries muscle_target_primary === antebrate canonical V1 (FIRST POPULATION baseline)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_G.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('antebrate');
+    });
+  });
+
+  it('Phase G antebrate canonical V1 baseline established (≥25 entries primary post first population)', () => {
+    const antebrateEntries = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'antebrate');
+    expect(antebrateEntries.length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('Phase G Reverse Curl + Pinwheel variants have biceps secondary tag (brachii brachialis co-engage)', () => {
+    expect(EXERCISE_METADATA['Reverse Curl Barbell'].muscle_target_secondary).toContain('biceps');
+    expect(EXERCISE_METADATA['Reverse Curl EZ-bar'].muscle_target_secondary).toContain('biceps');
+    expect(EXERCISE_METADATA['Reverse Curl Cable'].muscle_target_secondary).toContain('biceps');
+    expect(EXERCISE_METADATA['Reverse Curl DB'].muscle_target_secondary).toContain('biceps');
+    expect(EXERCISE_METADATA['Pinwheel Curl DB'].muscle_target_secondary).toContain('biceps');
+  });
+
+  it('Phase G Carries (Farmer\'s Walk + Suitcase) have spate secondary tag (trap stabilizer engage)', () => {
+    expect(EXERCISE_METADATA["Farmer's Walk DB"].muscle_target_secondary).toContain('spate');
+    expect(EXERCISE_METADATA["Farmer's Walk Trap Bar"].muscle_target_secondary).toContain('spate');
+    expect(EXERCISE_METADATA["Farmer's Walk Kettlebell"].muscle_target_secondary).toContain('spate');
+    expect(EXERCISE_METADATA['Suitcase Carry DB'].muscle_target_secondary).toContain('spate');
+  });
+
+  it('Phase G ZERO core in muscle_target_secondary (Bundle 6.0.7 Core reserved invariant preserved)', () => {
+    NEW_ENTRIES_6_0_5_PHASE_G.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_secondary).not.toContain('core');
+    });
+  });
+
+  it('Phase G fallback_cascade step types canonical 5 types valid', () => {
+    const VALID = new Set(['easier_machine', 'assisted_variant', 'muscle_group_compose', 'bodyweight', 'light_variant']);
+    NEW_ENTRIES_6_0_5_PHASE_G.forEach(name => {
+      EXERCISE_METADATA[name].fallback_cascade.forEach(s => expect(VALID.has(s.type)).toBe(true));
+    });
+  });
+
+  // ── Bundle 6.0.5 cumulative invariants post Phase A-G LANDED ────────────────
+  it('Bundle 6.0.5 cumulative count grows ≥ 565 post Phase A-G (460 baseline + 107 NEW Phase A-G actual)', () => {
+    const count = Object.keys(EXERCISE_METADATA).length;
+    expect(count).toBeGreaterThanOrEqual(565);
+  });
+
+  it('Bundle 6.0.5 cumulative biceps canonical V1 ≥ 45 post Phase A+B+C (5 baseline + 40 NEW)', () => {
+    const biceps = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'biceps');
+    expect(biceps.length).toBeGreaterThanOrEqual(45);
+  });
+
+  it('Bundle 6.0.5 cumulative triceps canonical V1 ≥ 40 post Phase E+F (10 baseline + 31 NEW)', () => {
+    const triceps = Object.entries(EXERCISE_METADATA)
+      .filter(([_, meta]) => meta.muscle_target_primary === 'triceps');
+    expect(triceps.length).toBeGreaterThanOrEqual(40);
+  });
 });
