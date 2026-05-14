@@ -27,6 +27,8 @@ import {
   CONSENSUS_WINDOW_SESSIONS,
   TOP_N_DISCIPLINE,
   WEAKNESS_THRESHOLD_RATIO,
+  ELIGIBLE_GROUPS_SPECIALIZATION_BIG11,
+  SECONDARY_TAG_WEIGHT_DEFAULT,
 } from './constants.js';
 
 /**
@@ -72,17 +74,61 @@ export function consumeWeaknessDetectorSignal(logs) {
     };
   }
 
-  // Top-1 V1 (Q3=A simplicity — top-N parallel defer v1.5)
-  const topGroup = weak[0];
+  // C4.4 Big 11 specialization scope filter per ADR_ENGINE_REFACTOR §3.4 LOCK V1:
+  // 8 of 11 eligible — exclude picioare-quads / picioare-hamstrings / gambe
+  // (anatomical conflict V1 — compound shared CNS + isolation trivial impact).
+  const eligibleWeak = weak.filter(g => ELIGIBLE_GROUPS_SPECIALIZATION_BIG11.includes(g));
+
+  if (eligibleWeak.length === 0) {
+    return {
+      topWeakGroup:  null,
+      topRatio:      null,
+      weakGroupsAll: [],
+      ratios,
+      rationale: `detector_signal_excluded_category_${weak[0]}_not_in_eligible_specialization_big11_anatomical_conflict_v1_§9_6_6_trigger_8_post_beta`,
+    };
+  }
+
+  // Top-1 V1 (Q3=A simplicity — top-N parallel defer v1.5) from eligible scope
+  const topGroup = eligibleWeak[0];
   const topRatio = Number.isFinite(ratios[topGroup]) ? ratios[topGroup] : null;
 
   return {
     topWeakGroup:  topGroup,
     topRatio,
-    weakGroupsAll: weak.slice(0, TOP_N_DISCIPLINE),
+    weakGroupsAll: eligibleWeak.slice(0, TOP_N_DISCIPLINE),
     ratios,
-    rationale: `top_1_weak_group_${topGroup}_ratio_${topRatio}_threshold_${WEAKNESS_THRESHOLD_RATIO}_q1_c_q3_a`,
+    rationale: `top_1_weak_group_${topGroup}_ratio_${topRatio}_threshold_${WEAKNESS_THRESHOLD_RATIO}_q1_c_q3_a_eligible_big11_filter_applied`,
   };
+}
+
+/**
+ * Compute weighted muscle group score per exercise per ADR_ENGINE_REFACTOR
+ * §3.5 LOCK V1 weighted secondary consume policy — primary 1.0 + secondary
+ * 0.3 weight (30% co-engage threshold).
+ *
+ * Used by Specialization PARALLEL modifier bump policy compatible Bundle
+ * 6.0.4.2 RDL/Good Morning posterior chain dual-cluster (spate primary +
+ * picioare-hamstrings secondary anatomically defensible compound contribution).
+ *
+ * Pure function — ADR-026 §9 invariant preserved (no Date.now / Math.random /
+ * side effects).
+ *
+ * @param {Object} exerciseMeta            - EXERCISE_METADATA entry
+ * @param {string} exerciseMeta.muscle_target_primary
+ * @param {string[]} [exerciseMeta.muscle_target_secondary]
+ * @param {string} targetGroup             - Big 11 canonical V1 group ID
+ * @returns {number} Weight: 1.0 primary match | 0.3 secondary match | 0 neither
+ */
+export function computeWeightedGroupScore(exerciseMeta, targetGroup) {
+  if (!exerciseMeta || typeof exerciseMeta !== 'object') return 0;
+  if (typeof targetGroup !== 'string' || targetGroup.length === 0) return 0;
+  if (exerciseMeta.muscle_target_primary === targetGroup) return 1.0;
+  const secondary = Array.isArray(exerciseMeta.muscle_target_secondary)
+    ? exerciseMeta.muscle_target_secondary
+    : [];
+  if (secondary.includes(targetGroup)) return SECONDARY_TAG_WEIGHT_DEFAULT;
+  return 0;
 }
 
 /**

@@ -14,21 +14,21 @@ import {
   APPLICATION_MODE,
 } from '../constants.js';
 
-describe('translateGroupToRO — Cluster C4 Bugatti craft RO native', () => {
-  it('chest → Piept', () => {
-    expect(translateGroupToRO('chest')).toBe('Piept');
+describe('translateGroupToRO — Cluster C4 Bugatti craft RO native (Big 11 RO canonical V1 post-C4.4)', () => {
+  it('piept → Piept', () => {
+    expect(translateGroupToRO('piept')).toBe('Piept');
   });
 
-  it('back → Spate', () => {
-    expect(translateGroupToRO('back')).toBe('Spate');
+  it('spate → Spate', () => {
+    expect(translateGroupToRO('spate')).toBe('Spate');
   });
 
-  it('shoulders → Umeri', () => {
-    expect(translateGroupToRO('shoulders')).toBe('Umeri');
+  it('umeri → Umeri', () => {
+    expect(translateGroupToRO('umeri')).toBe('Umeri');
   });
 
-  it('legs → Picioare', () => {
-    expect(translateGroupToRO('legs')).toBe('Picioare');
+  it('picioare-quads → Cvadriceps (Big 11 RO native split)', () => {
+    expect(translateGroupToRO('picioare-quads')).toBe('Cvadriceps');
   });
 
   it('biceps → Biceps', () => {
@@ -44,11 +44,11 @@ describe('translateGroupToRO — Cluster C4 Bugatti craft RO native', () => {
   });
 
   it('unknown group → capitalized fallback', () => {
-    expect(translateGroupToRO('forearms')).toBe('Forearms');
+    expect(translateGroupToRO('xenogroup')).toBe('Xenogroup');
   });
 
   it('case-insensitive normalized', () => {
-    expect(translateGroupToRO('CHEST')).toBe('Piept');
+    expect(translateGroupToRO('PIEPT')).toBe('Piept');
   });
 
   it('null/undefined → empty string', () => {
@@ -57,13 +57,13 @@ describe('translateGroupToRO — Cluster C4 Bugatti craft RO native', () => {
   });
 });
 
-describe('buildUiLabel — Cluster C4 Q17=C "Bloc focus [Grupa]"', () => {
+describe('buildUiLabel — Cluster C4 Q17=C "Bloc focus [Grupa]" (Big 11 RO canonical V1 post-C4.4)', () => {
   it('biceps → "Bloc focus Biceps"', () => {
     expect(buildUiLabel('biceps')).toBe('Bloc focus Biceps');
   });
 
-  it('legs → "Bloc focus Picioare"', () => {
-    expect(buildUiLabel('legs')).toBe('Bloc focus Picioare');
+  it('picioare-quads → "Bloc focus Cvadriceps"', () => {
+    expect(buildUiLabel('picioare-quads')).toBe('Bloc focus Cvadriceps');
   });
 
   it('null group → "Bloc focus" prefix only', () => {
@@ -71,7 +71,7 @@ describe('buildUiLabel — Cluster C4 Q17=C "Bloc focus [Grupa]"', () => {
   });
 
   it('Bugatti craft RO native NU calque Englez', () => {
-    const r = buildUiLabel('back');
+    const r = buildUiLabel('spate');
     expect(r).not.toContain('Specialization');
     expect(r).not.toContain('Block');
     expect(r).toBe('Bloc focus Spate');
@@ -123,7 +123,7 @@ describe('computeVolumeModifier — Cluster C1+C2+C5 Hybrid V+F + -25% other gro
 
   it('active + LOAD → hybrid modifier emit', () => {
     const r = computeVolumeModifier({
-      targetGroup:           'back',
+      targetGroup:           'spate',
       periodizationPhase:    'LOAD',
       specializationActive:  true,
     });

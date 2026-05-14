@@ -96,11 +96,11 @@ describe('detectInjuryAutoDisable — Q14=A Safety Override §42.9 invariant 5',
   it('PainButton active + target group affected → disabled', () => {
     const r = detectInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['legs'],
-      targetGroup:      'legs',
+      affectedGroups:   ['picioare-quads'],
+      targetGroup:      'picioare-quads',
     });
     expect(r.disabled).toBe(true);
-    expect(r.affectedGroup).toBe('legs');
+    expect(r.affectedGroup).toBe('picioare-quads');
     expect(r.rationale).toContain('q14_a');
     expect(r.rationale).toContain('invariant_5');
   });
@@ -108,8 +108,8 @@ describe('detectInjuryAutoDisable — Q14=A Safety Override §42.9 invariant 5',
   it('PainButton active + target group NOT in affected → conservative disable any active', () => {
     const r = detectInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['back', 'shoulders'],
-      targetGroup:      'legs',
+      affectedGroups:   ['spate', 'umeri'],
+      targetGroup:      'picioare-quads',
     });
     expect(r.disabled).toBe(true);
     expect(r.rationale).toContain('conservative');
@@ -126,8 +126,8 @@ describe('detectInjuryAutoDisable — Q14=A Safety Override §42.9 invariant 5',
   it('case-insensitive group matching', () => {
     const r = detectInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['LEGS'],
-      targetGroup:      'legs',
+      affectedGroups:   ['PICIOARE-QUADS'],
+      targetGroup:      'picioare-quads',
     });
     expect(r.disabled).toBe(true);
   });
@@ -191,8 +191,8 @@ describe('evaluateEligibility — composite gating priority order', () => {
       tier:                     'T1',
       goalPhase:                'RECOMP',
       painButtonActive:         true,
-      painAffectedGroups:       ['legs'],
-      candidateTargetGroup:     'legs',
+      painAffectedGroups:       ['picioare-quads'],
+      candidateTargetGroup:     'picioare-quads',
     });
     expect(r.eligible).toBe(false);
     expect(r.state).toBe(ACTIVATION_STATE.INELIGIBLE_INJURY_OVERRIDE);
@@ -223,7 +223,7 @@ describe('evaluateEligibility — composite gating priority order', () => {
       tier:                   'T2',
       goalPhase:              'BULK',
       painButtonActive:       false,
-      candidateTargetGroup:   'chest',
+      candidateTargetGroup:   'piept',
     });
     expect(r.eligible).toBe(true);
   });
@@ -234,8 +234,8 @@ describe('evaluateEligibility — composite gating priority order', () => {
       tier:                   'T1',
       goalPhase:              'BULK',
       painButtonActive:       true,
-      painAffectedGroups:     ['shoulders'],
-      candidateTargetGroup:   'legs',
+      painAffectedGroups:     ['umeri'],
+      candidateTargetGroup:   'picioare-quads',
     });
     // Conservative pattern: any pain active disables (per detectInjuryAutoDisable)
     expect(r.eligible).toBe(false);

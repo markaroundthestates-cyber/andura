@@ -273,10 +273,10 @@ describe('evaluate — Cluster B weakness signal consume + proposal Q15=B', () =
     const result = await evaluate(buildCtx({
       lifetimeLogs:           weakBicepsLogs(),
       recentLogs:             weakBicepsLogs(),
-      userOverrideWeakGroup:  'back',
+      userOverrideWeakGroup:  'spate',
       userProposalAccepted:   true,
     }));
-    expect(result.meta.target_muscle_group).toBe('back');
+    expect(result.meta.target_muscle_group).toBe('spate');
   });
 });
 
