@@ -13,7 +13,10 @@ cross_refs:
   - "[[metoda-hibrida-chat-cc]]"
   - "[[../summaries/handover-2026-05-14-evening-bugatti-full-audit-lock-plus-2-co-cto-halucinatii-recovery]]"
   - "[[../summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]]"
-amendments: []
+amendments:
+  - date: 2026-05-14-chat-current
+    note: |
+      DRIFT FIX cumulative cross-chat per §AR.27 LOCKED V1 NEW — Synthesis sequencing 1 clarification "C4 engine refactor Big 8 → Big 11 = tactical CTO autonomous PROMPT_CC scope per §AR.26 LOCKED V1 + ADR_ENGINE_REFACTOR §1 authority" + Cross-refs raw layer APPEND §AR.26 + §AR.27 NEW LOCKED V1 cross-link + memory edit #17 LOCK invariant anti-RE rule verbatim. Engine routing INTERNAL semantic NU UX user-facing per Daniel verbatim 2026-05-13j Gigel-test correction.
 ---
 
 # Bugatti Full Audit pre-Launch (Nuclear Every Line Cod + Every Virgulă)
@@ -24,7 +27,7 @@ amendments: []
 
 **Sequencing post-update final pre-Launch (cascade integration cu LOCK 1 Pre-Beta FULL strict + LOCK 2 Daniel Gates 100% strict 2026-05-14 birou):**
 
-1. **Tot tracks 100% LANDED** (library 657 ex + C4 engine refactor Big 8 → Big 11 + safety conditions Medical Disclaimer/T&C/Kcal Floor/Aggressive Loading + Calendar engine-side + F5 UX iteration + ADR 033 MMI + tot pending)
+1. **Tot tracks 100% LANDED** (library 657 ex + **C4 engine refactor Big 8 → Big 11 = tactical CTO autonomous PROMPT_CC scope per §AR.26 LOCKED V1 + ADR_ENGINE_REFACTOR §1 authority "Co-CTO autonomous tactical scope per project instructions §F3.12"** + safety conditions Medical Disclaimer/T&C/Kcal Floor/Aggressive Loading + Calendar engine-side + F5 UX iteration + ADR 033 MMI + tot pending) — engine routing INTERNAL semantic NU UX user-facing per Daniel verbatim 2026-05-13j Gigel-test correction cross-link
 2. **Daniel Gates smoke production manual** test andura.app cu Firebase + PWA + telefon (LOCK 2 cascade 100% strict threshold)
 3. **Bugatti Full Audit Co-CTO** = every line cod + every virgulă + TOT pe latest commit LANDED app state (acest concept page directive)
 4. **Fix ALL issues surfaced** (zero dead code + zero broken paths + all systems running)
@@ -69,6 +72,9 @@ Daniel directive verbatim *"FULL AUDIT. Fiecare linie de cod citita, fiecare vir
 - [[../../📤_outbox/_archive/2026-05/494_LATEST_PREVIOUS_BUNDLE_6_0_5_ARMS_PLUS_ADR_ENGINE_REFACTOR_CONSUMED]] Bundle 6.0.5 Arms 107 NEW + ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1 spec draft archived (cascade tracks 100% LANDED progress sequencing P1 next)
 - [[../../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-10 Port-First-Then-React LOCK V1 REVERT SUPERSEDE — vanilla port phase 1 in-progress baseline audit scope eventually post-tracks-100%
 - [[../../03-decisions/ADR_ENGINE_REFACTOR_BIG8_TO_BIG11_V1]] §1-§10 LOCK V1 2026-05-14 spec draft C4 cascade — track engine refactor must LAND ÎNAINTE Bugatti Full Audit gate FINAL pre-Launch
+- [[../concepts/anti-recurrence-rules]] §AR.26 LOCKED V1 NEW 2026-05-14 chat-current Strategic-as-Tactical confusion codify formal — engine routing INTERNAL = tactical CTO autonomous NU strategic CEO chat dedicat cumulative 5× threshold met cross-chat 13j+13k+13l+14-birou+14-evening recovery cross-link
+- [[../concepts/anti-recurrence-rules]] §AR.27 LOCKED V1 NEW 2026-05-14 chat-current Auto-update wiki layer cumulative la fiecare handover preventive drift fix mechanism codify formal — Daniel CEO directive *"Auto update la ce trebuie la fiecare handover te rog"* structural preventive permanent
+- memory edit #17 LOCK invariant anti-RE rule verbatim *"NU re-classify tactical CTO (sequencing/decay/cluster/test/path/code routing INTERNAL) ca strategic CEO chat dedicat. Default=LOCKED. Pre-action MCP verify raw layer ÎNAINTE flag pending. Scope CEO=UX+business; CTO=routing internal+test+code autonomous. Alignment §47 DEPRECATED post §F3.8"* — Daniel CEO directive verbatim chat-current ACASĂ catalysator §AR.26 PROMOTE formal LOCKED V1
 - [[../../03-decisions/ADR_ANATOMICAL_CLASSIFICATION_V1]] §2 LOCK V1 2026-05-13k 11 categorii canonical V1 muscle_target_primary — C4 tactical CTO scope confirmed engine routing INTERNAL NU UX user-facing per Daniel CEO correction 2026-05-13j recovery #2 catalysator chat-current evening
 - [[../../03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1]] §Decision Catastrofizare SCRAP V1 LOCK V1 2026-05-02 zero amendments — chat-current evening recovery #1 catalysator §OPEN flag halucinație fabricated debunked (Co-CTO mea culpa instant standard)
 - [[../../04-architecture/PORT_FIRST_STEP_1_PARADIGM_V1]] §LOCK V1 — Step 1 vanilla port → Step 2 React migration ordering cumulative track scope FULL app audit

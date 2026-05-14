@@ -4,7 +4,10 @@ type: summary
 status: locked-v1
 date: 2026-05-14
 source: 📥_inbox/HANDOVER_PLUS_PROMPT_CC_2026-05-14_EVENING.md PART 1 (archived 495_CONSUMED)
-amendments: []
+amendments:
+  - date: 2026-05-14-chat-current
+    note: |
+      DRIFT FIX cumulative cross-chat per §AR.27 LOCKED V1 NEW 2026-05-14 chat-current ACASĂ — §5 Path Forward P2 deferred fork re-classified "strategic fork" → "tactical fork" Co-CTO autonomy MAXIMUM per §AR.26 LOCKED V1 NEW + memory edit #17 LOCK invariant anti-RE rule cross-link. Engine routing INTERNAL semantic (GROUP_HEAD_MAP Big 6 → Big 11 + decay rates + cluster definitions + sequence priority + cascade routing) = tactical CTO autonomous PROMPT_CC default. Daniel CEO directive verbatim chat-current ACASĂ catalysator *"Recheck userMemory #17 LOCK invariant anti-RE rule. C4.1 Muscle Recovery refactor = engine routing INTERNAL = TACTICAL CTO autonomous, NU strategic CEO chat dedicat 2-3h Daniel input mandatory"* + push-back productive recovery instant Co-CTO standard fără defensiveness aux. Cumulative 5× threshold §AR.26 confusion cross-chat 13j+13k+13l+14-birou+14-evening recovery codified §AR.26 LOCKED V1 ARTEFACT 1B chat-current ACASĂ.
 cross_refs:
   - "[[../concepts/bugatti-audit-nuclear-pre-launch]]"
   - "[[../concepts/bugatti-craft]]"
@@ -110,7 +113,7 @@ Daniel directive verbatim ultra-clear ultimate manifestation evening *"FULL AUDI
 
 **P1 absolute next chat startup:** Daniel verifică LATEST raport `/wiki-ingest` LANDED + decide P2 fork (Catastrofizare V1 status confirm SCRAP permanent V1+post-Beta vs redesign V1 pre-Beta + alte LOCKs pending dacă mai sunt — Co-CTO MCP filesystem search verify ZERO pending real).
 
-**P2 deferred fork strategic:** C4.1 Muscle Recovery refactor first engine implementation (per ADR_ENGINE_REFACTOR §4 roadmap cap-coadă C4.1 first foundational blocking dependency) PROMPT_CC autonomous Co-CTO scribe chat-side — OR Bundle 6.0.6 Specialty / next library extension Pre-Beta progress 86% → 92-95% — OR Parallel A+B în terminale separate (C4.1 strategic Claude chat + Bundle 6.0.6 autonomous CC Opus disjoint scope).
+**P2 deferred fork tactical (Co-CTO autonomy MAXIMUM per §AR.26 LOCKED V1 + memory edit #17 LOCK invariant anti-RE rule):** C4.1 Muscle Recovery refactor first engine implementation = **tactical CTO autonomous CC Opus PROMPT_CC** (per ADR_ENGINE_REFACTOR §1 + §2 scope "Co-CTO autonomous tactical scope per project instructions §F3.12 engine routing INTERNAL NU UX user-facing per Daniel verbatim 2026-05-13j Gigel-test correction"; C4.1 foundational blocking dependency per §3.1 ordine cap-coadă; +60-80 LOC per §2 estimate). OR Bundle 6.0.6 Specialty autonomous CC Opus PROMPT_CC next library extension (567/657 → ~600-617/657 cumulative). OR Parallel A+B în terminale CC separate disjoint scope safe (C4.1 engine src/ vs Bundle 6.0.6 schema src/ separate file edits atomic commits non-conflicting — Co-CTO autonomous PROMPT_CC ambele NU strategic chat dedicat). Engine routing INTERNAL semantic (GROUP_HEAD_MAP Big 6 → Big 11 + decay rates + cluster definitions + sequence priority + cascade routing) = tactical CTO autonomous scope per memory edit #17 invariant *"NU re-classify tactical CTO ca strategic CEO chat dedicat. Default=LOCKED. Scope CEO=UX+business; CTO=routing internal+test+code autonomous"*. Strategic CEO chat dedicat NU justified pentru engine routing INTERNAL refactor — cumulative 5× threshold §AR.26 confusion repeat cross-chat 13j+13k+13l+14-birou+14-evening recovery codified §AR.26 LOCKED V1 chat-current ACASĂ pentru anti-recurrence permanent.
 
 **P3 post C4.1-C4.X LANDED cumulative:** Implementation safety conditions cluster cumulative (Medical Disclaimer + T&C Mandatory + Kcal Floor 1200 + Aggressive Loading + ADR 033 MMI + F5 AA-Friction Modal UX iteration) per chat birou 2026-05-14 4 LOCKs majore product (LOCK 4 + 8 + 9 + 10 + 11 cascade).
 
