@@ -223,8 +223,8 @@ describe('Specialization Adapter — Golden-master parity legacy↔orchestrated 
     expect(orchResults[0].output).toEqual(legacyOutput);
     expect(orchResults[0].output.id).toBe('specialization');
     expect(orchResults[0].output.meta.activation_state).toBe(ACTIVATION_STATE.PROPOSAL_PENDING);
-    expect(orchResults[0].output.meta.target_muscle_group).toBe('shoulders');
-    // ui_label RO native "Bloc focus Umeri" Q17=C
+    expect(orchResults[0].output.meta.target_muscle_group).toBe('umeri');  // C4.2 Big 11 canonical V1 (was 'shoulders' Big 6)
+    // ui_label RO native "Bloc focus Umeri" Q17=C — translateGroupToRO('umeri') → capitalizeGroup → 'Umeri' preserved
     expect(orchResults[0].output.meta.ui_label).toBe('Bloc focus Umeri');
     // Pre-acceptance: NU active → modifier zero
     expect(orchResults[0].output.meta.volume_modifier.volumeIncreasePct).toBe(0);

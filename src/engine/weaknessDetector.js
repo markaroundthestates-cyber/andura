@@ -13,15 +13,21 @@ export function brzycki1RM(weight, reps) {
   return weight * (36 / (37 - reps));
 }
 
+// Big 11 canonical V1 per ADR_ENGINE_REFACTOR §4.2 LOCK V1 + ADR_ANATOMICAL_CLASSIFICATION_V1 §2 LOCK V1.
+// Returns one of: piept|spate|umeri|biceps|triceps|antebrate|core|picioare-quads|picioare-hamstrings|fese|gambe.
 function _headToGroup(head) {
   if (!head) return null;
-  if (/chest/.test(head)) return 'chest';
-  if (/delt/.test(head)) return 'shoulders';
-  if (/tri/.test(head)) return 'triceps';
-  if (/bi_/.test(head)) return 'biceps';
-  if (/lat|trap|rear_delt/.test(head)) return 'back';
-  if (/quad|hamstring|glute|calf/.test(head)) return 'legs';
-  if (/lower_back|core/.test(head)) return 'core';
+  if (/chest/.test(head)) return 'piept';
+  if (/delt|rear_delt_trap/.test(head)) return 'umeri';
+  if (/^tri/.test(head)) return 'triceps';
+  if (/^bi_/.test(head)) return 'biceps';
+  if (/lat|mid_trap|lower_back/.test(head)) return 'spate';
+  if (/quad/.test(head)) return 'picioare-quads';
+  if (/hamstring/.test(head)) return 'picioare-hamstrings';
+  if (/glute/.test(head)) return 'fese';
+  if (/calf/.test(head)) return 'gambe';
+  if (/forearm|wrist|grip/.test(head)) return 'antebrate';
+  if (/core/.test(head)) return 'core';
   return null;
 }
 
@@ -40,26 +46,31 @@ function getLastLogPerExercise(logs) {
 }
 
 /**
- * Rezolva grupa musculara pentru un exercitiu.
- * MUSCLE_MAP: { exerciseName: 'chest' | 'back' | 'shoulders' | 'biceps' | 'triceps' | 'legs' | 'core' }
+ * Rezolva grupa musculara pentru un exercitiu (Big 11 canonical V1).
+ * Output: piept|spate|umeri|biceps|triceps|antebrate|core|picioare-quads|picioare-hamstrings|fese|gambe.
+ * Per ADR_ENGINE_REFACTOR §4.2 LOCK V1 + ADR_ANATOMICAL_CLASSIFICATION_V1 §2 LOCK V1.
  */
 function resolveGroup(exerciseName) {
   if (!exerciseName) return null;
   const lower = exerciseName.toLowerCase();
-  // Check EXERCISE_MUSCLES for primary muscle head → map to broad group
+  // Check EXERCISE_MUSCLES for primary muscle head → map to Big 11 group
   for (const [exName, muscles] of Object.entries(EXERCISE_MUSCLES ?? {})) {
     if (lower === exName.toLowerCase() && muscles.primary?.length > 0) {
       return _headToGroup(muscles.primary[0]);
     }
   }
-  // Fallback: keyword heuristics
-  if (/bench|chest|pec|fly/i.test(lower)) return 'chest';
-  if (/row|pull|lat|cable/i.test(lower)) return 'back';
-  if (/shoulder|press.*overhead|ohp|lateral|delt/i.test(lower)) return 'shoulders';
+  // Fallback keyword heuristics Big 11 — PRIORITY ORDER mandatory (antebrate + fese ÎNAINTE biceps/legs broad to avoid mis-classification)
+  if (/wrist|forearm|grip|farmer|fat grip|hammer hold/i.test(lower)) return 'antebrate';
+  if (/hip thrust|glute|sumo|bulgarian|kickback|hip abduction/i.test(lower)) return 'fese';
+  if (/calf|heel raise|tibialis/i.test(lower)) return 'gambe';
+  if (/leg curl|nordic|good morning|rdl|romanian deadlift|hamstring/i.test(lower)) return 'picioare-hamstrings';
+  if (/squat|leg extension|leg press|lunge|sissy|step-up|pistol|wall sit/i.test(lower)) return 'picioare-quads';
+  if (/bench|chest|pec|fly/i.test(lower)) return 'piept';
+  if (/row|pull|lat|chin-up|pulldown/i.test(lower)) return 'spate';
+  if (/shoulder|overhead.*press|press.*overhead|\bohp\b|lateral raise|front raise|rear delt|arnold/i.test(lower)) return 'umeri';
   if (/curl|bicep/i.test(lower)) return 'biceps';
-  if (/tricep|pushdown|extension|dip/i.test(lower)) return 'triceps';
-  if (/squat|leg|lunge|rdl|deadlift|glute/i.test(lower)) return 'legs';
-  if (/plank|crunch|ab|core/i.test(lower)) return 'core';
+  if (/tricep|pushdown|skull|extension overhead|dip|french press/i.test(lower)) return 'triceps';
+  if (/plank|crunch|\bab\b|core|dead bug|bird dog|hollow|wood ?chop|pallof|sit-up|russian twist|leg raise|toes-to-bar|l-sit/i.test(lower)) return 'core';
   return null;
 }
 
