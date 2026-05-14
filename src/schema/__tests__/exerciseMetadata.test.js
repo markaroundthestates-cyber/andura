@@ -186,9 +186,17 @@ describe('Bundle 6.0.1 Chest Library Extension §ADR v2 LOCK V2', () => {
     });
   });
 
-  // §15 muscle_target_secondary 'core' NOT used (Bundle 6.0.1 chest doesn't add core; reserved post-Bundle 6.0.7)
-  it('Bundle 6.0.1 does NOT introduce core as muscle_target (reserved Bundle 6.0.7 Core sub-batch)', () => {
-    Object.values(EXERCISE_METADATA).forEach(meta => {
+  // §15 Bundle 6.0.1 chest entries do NOT introduce core (Bundle 6.0.7 Core unlock LANDED — invariant scoped Bundle 6.0.1 NEW entries only)
+  it('Bundle 6.0.1 NEW chest entries do NOT introduce core as muscle_target (scoped post-Bundle 6.0.7 unlock)', () => {
+    const NEW_BUNDLE_6_0_1_CHEST = [
+      'Incline Barbell Bench Press', 'Decline Barbell Bench Press', 'Incline Dumbbell Press', 'Decline Dumbbell Press',
+      'Flat Dumbbell Press', 'Hammer Press Machine', 'Pec Deck / Cable Fly', 'Cable Fly High-to-Low', 'Cable Fly Low-to-High',
+      'Cable Crossover', 'Plyometric Push-up', 'Push-up', 'Diamond Push-up', 'Wide Push-up', 'Decline Push-up',
+      'Incline Push-up', 'Knee Push-up', 'Wall Push-up',
+    ];
+    NEW_BUNDLE_6_0_1_CHEST.forEach(name => {
+      const meta = EXERCISE_METADATA[name];
+      if (!meta) return;
       expect(meta.muscle_target_primary).not.toBe('core');
       expect(meta.muscle_target_secondary).not.toContain('core');
     });
@@ -2249,9 +2257,9 @@ describe('Bundle 6.0.6 Specialty Library Extension §ADR v2 LOCK V2 + Co-CTO aut
     });
   });
 
-  // §14 Bundle 6.0.6 cumulative invariants final — Pre-Beta scope library 600-700 floor minim achieved
-  it('Bundle 6.0.6 cumulative count = 600 exact (Pre-Beta scope floor 600 minim achieved per Daniel CEO directive 2026-05-13f)', () => {
-    expect(Object.keys(EXERCISE_METADATA).length).toBe(600);
+  // §14 Bundle 6.0.6 cumulative invariants final — Pre-Beta scope library 600-700 floor minim achieved (superseded by Bundle 6.0.7 657/657 100% gate)
+  it('Bundle 6.0.6 cumulative count ≥ 600 (Pre-Beta scope floor 600 minim achieved per Daniel CEO directive 2026-05-13f; Bundle 6.0.7 LANDED 657 = 100% gate)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBeGreaterThanOrEqual(600);
   });
 
   it('Bundle 6.0.6 cumulative quads canonical V1 ≥ 55 (47 baseline Bundle 6.0.4.1 + 8 NEW Bundle 6.0.6)', () => {
@@ -2269,9 +2277,221 @@ describe('Bundle 6.0.6 Specialty Library Extension §ADR v2 LOCK V2 + Co-CTO aut
     expect(ant.length).toBeGreaterThanOrEqual(32);
   });
 
-  // §15 cumulative core invariant preserved Bundle 6.0.7 reserved
-  it('Bundle 6.0.6 cumulative core canonical V1 = 0 (Bundle 6.0.7 reserved invariant preserved)', () => {
+  // §15 cumulative core invariant — Bundle 6.0.7 Core unlock LANDED (was =0 reserved Bundle 6.0.6, ≥57 post-Bundle 6.0.7 LANDED)
+  it('Bundle 6.0.6+6.0.7 cumulative core canonical V1 ≥ 57 (Bundle 6.0.7 Core unlock LANDED — invariant superseded)', () => {
     const core = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'core');
-    expect(core.length).toBe(0);
+    expect(core.length).toBeGreaterThanOrEqual(57);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + ADR_ANATOMICAL_CLASSIFICATION_V1 §2 LOCK V1
+// 57 NEW canonical V1 core exerciții — Pre-Beta library 100% gate achieved 657/657
+// Co-CTO autonomous Phase A audit grep-validated per memory feedback_grep_before_prompt_cc.md
+// ══════════════════════════════════════════════════════════════════════
+const NEW_ENTRIES_6_0_7 = [
+  // Sub-batch 1 Plank family (8)
+  'Plank', 'Side Plank', 'Plank with Shoulder Tap', 'Plank to Push-up', 'Side Plank Dip',
+  'Plank with Reach', 'Copenhagen Plank', 'Scapular Plank',
+  // Sub-batch 2 Pallof Press family (3)
+  'Pallof Press Cable Standing', 'Pallof Press Half-Kneeling', 'Pallof Press Band',
+  // Sub-batch 3 Woodchop family (3)
+  'Cable Woodchop High-to-Low', 'Cable Woodchop Low-to-High', 'Med Ball Woodchop',
+  // Sub-batch 4 Dead Bug + Bird Dog family (4)
+  'Dead Bug', 'Dead Bug with Resistance Band', 'Bird Dog', 'Bird Dog with Resistance Band',
+  // Sub-batch 5 Hollow + Reverse Crunch + Stir the Pot (5)
+  'Hollow Body Hold', 'Hollow Body Rock', 'Reverse Crunch', 'Reverse Crunch Decline Bench', 'Stability Ball Stir the Pot',
+  // Sub-batch 6 Rollout family (3)
+  'Ab Wheel Rollout', 'Barbell Rollout', 'Stability Ball Rollout',
+  // Sub-batch 7 Hanging family + Captains Chair + L-Sit (5)
+  'Hanging Leg Raise', 'Hanging Knee Raise', 'Captains Chair Knee Raise', 'Captains Chair Leg Raise', 'Toes-to-Bar',
+  // Sub-batch 8 L-Sit + Cable rotation + Cable side bend (4)
+  'L-Sit Hold Parallel Bars', 'L-Sit Hold Floor', 'Cable Russian Twist', 'Cable Side Bend',
+  // Sub-batch 9 Med Ball + Sit-up family (5)
+  'Med Ball Slam', 'Med Ball Russian Twist', 'Decline Sit-up', 'Bench Sit-up', 'Weighted Sit-up',
+  // Sub-batch 10 Roman Chair + Cable Crunch (3)
+  'Roman Chair Sit-up', 'Cable Crunch Kneeling', 'Cable Crunch Standing',
+  // Sub-batch 11 V-up + Heel Tap + Bicycle (3)
+  'V-Up', 'Heel Tap', 'Bicycle Crunch',
+  // Sub-batch 12 Stability Ball + Plate (5)
+  'Stability Ball Crunch', 'Stability Ball Pike', 'Plate Crunch', 'Plate Russian Twist', 'Plate Side Bend',
+  // Sub-batch 13 Garhammer + Carries + Dragon Flag (4)
+  'Garhammer Raise', 'Front Rack Carry Barbell', 'Overhead Carry DB', 'Dragon Flag',
+  // Sub-batch 14 Advanced (2 Option C marginal scope-round 57)
+  'Windshield Wiper', 'Body Saw Plank',
+];
+
+describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomous Phase A audit', () => {
+  // §1 cumulative count ≥ 657 (lenient toBeGreaterThanOrEqual per §AR.* anti-brittle slip 13i)
+  it('Bundle 6.0.7 cumulative library count ≥ 657 (Pre-Beta 100% gate achieved per LOCK 2 Daniel Gates strict)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBeGreaterThanOrEqual(657);
+  });
+
+  // §2 NEW 57 entries roster cataloged + cascade populated
+  it('Bundle 6.0.7 — 57 NEW entries roster cataloged + cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_7.length).toBe(57);
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(4);
+    });
+  });
+
+  // §3 ALL 57 NEW entries muscle_target_primary === 'core'
+  it('Bundle 6.0.7 — ALL 57 NEW entries muscle_target_primary === core canonical V1', () => {
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('core');
+    });
+  });
+
+  // §4 §10 invariant DEACTIVATED — Bundle 6.0.7 Core unlock pre-Beta
+  it('Bundle 6.0.7 — cumulative_core ≥ 57 (was =0 invariant Bundle 6.0.1-6.0.6 reserved; superseded LANDED)', () => {
+    const cumulativeCore = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'core').length;
+    expect(cumulativeCore).toBeGreaterThanOrEqual(57);
+  });
+
+  // §5 fallback_cascade step types canonical 5 valid per entry (ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1)
+  it('Bundle 6.0.7 — fallback_cascade step types canonical 5 valid', () => {
+    const validSteps = new Set(['bodyweight', 'easier_machine', 'assisted_variant', 'muscle_group_compose', 'light_variant']);
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        expect(validSteps.has(step.type)).toBe(true);
+      });
+    });
+  });
+
+  // §6 muscle_group_compose 1-2 exercise_ids LOCK invariant (ADR v2 §2.1)
+  it('Bundle 6.0.7 — muscle_group_compose step has 1-2 exercise_ids per LOCK invariant', () => {
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      const composeStep = cascade.find(s => s.type === 'muscle_group_compose');
+      expect(composeStep).toBeDefined();
+      expect(composeStep.exercise_ids.length).toBeGreaterThanOrEqual(1);
+      expect(composeStep.exercise_ids.length).toBeLessThanOrEqual(2);
+    });
+  });
+
+  // §7 cascade self-reference rejection invariant preserved
+  it('Bundle 6.0.7 — cascade self-reference rejection (no exercise cascade includes itself)', () => {
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        const ids = step.exercise_id ? [step.exercise_id] : (step.exercise_ids || []);
+        ids.forEach(id => {
+          expect(id).not.toBe(name);
+        });
+      });
+    });
+  });
+
+  // §8 cascade refs resolve ≥70% lenient threshold (§20 ADR v2 LOCK V2)
+  it('Bundle 6.0.7 — cascade refs resolve ≥70% lenient threshold (§20 ADR v2 LOCK V2)', () => {
+    let totalRefs = 0, resolvedRefs = 0;
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      const cascade = EXERCISE_METADATA[name].fallback_cascade;
+      cascade.forEach(step => {
+        const ids = step.exercise_id ? [step.exercise_id] : (step.exercise_ids || []);
+        ids.forEach(id => {
+          totalRefs++;
+          if (EXERCISE_METADATA[id]) resolvedRefs++;
+        });
+      });
+    });
+    expect(resolvedRefs / totalRefs).toBeGreaterThanOrEqual(0.70);
+  });
+
+  // §9 tier distribution Bundle 6.0.7 Tier 1 + Tier 2 + Tier 3 all present (mixed)
+  it('Bundle 6.0.7 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
+    const tiers = new Set(NEW_ENTRIES_6_0_7.map(n => EXERCISE_METADATA[n].tier));
+    expect(tiers.has(1)).toBe(true);
+    expect(tiers.has(2)).toBe(true);
+    expect(tiers.has(3)).toBe(true);
+  });
+
+  // §10 force_demand distribution Bundle 6.0.7 mixed
+  it('Bundle 6.0.7 force_demand: high + medium + low all present', () => {
+    const forces = new Set(NEW_ENTRIES_6_0_7.map(n => EXERCISE_METADATA[n].force_demand));
+    expect(forces.has('high')).toBe(true);
+    expect(forces.has('medium')).toBe(true);
+    expect(forces.has('low')).toBe(true);
+  });
+
+  // §11 equipment_type canonical 6 valid Bundle 6.0.7
+  it('Bundle 6.0.7 equipment_type valid (canonical 6: bodyweight + dumbbell + barbell + cable + machine + band)', () => {
+    const valid = new Set(['barbell', 'dumbbell', 'machine', 'cable', 'bodyweight', 'band']);
+    NEW_ENTRIES_6_0_7.forEach(name => {
+      expect(valid.has(EXERCISE_METADATA[name].equipment_type)).toBe(true);
+    });
+  });
+
+  // §12 ZERO mutation existing 600 entries Bundle 6.0.7 (HARD CONSTRAINT §F3.12 strict)
+  it('Bundle 6.0.7 — ZERO mutation existing 600 entries preserved invariant (sentinel cross-bundle)', () => {
+    // Spot-check sentinel entries from each prior bundle baseline — NU mutated by Bundle 6.0.7
+    expect(EXERCISE_METADATA['Flat Barbell Bench'].muscle_target_primary).toBe('piept');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Lat Pulldown'].muscle_target_primary).toBe('spate');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Hammer Strength Lat Pulldown'].muscle_target_primary).toBe('spate');  // Bundle 6.0.2 Back
+    expect(EXERCISE_METADATA['Hammer Strength OHP'].muscle_target_primary).toBe('umeri');  // Bundle 6.0.3 Shoulders
+    expect(EXERCISE_METADATA['Hack Squat Machine'].muscle_target_primary).toBe('picioare-quads');  // Bundle 6.0.4.1 Quads
+    expect(EXERCISE_METADATA['Romanian Deadlift'].muscle_target_primary).toBe('picioare-hamstrings');  // V1 baseline 26
+    expect(EXERCISE_METADATA['Hip Thrust'].muscle_target_primary).toBe('fese');  // Bundle 6.0.4.3 Glutes
+    expect(EXERCISE_METADATA['Sledgehammer Levering'].muscle_target_primary).toBe('antebrate');  // Bundle 6.0.5 Phase G last
+    expect(EXERCISE_METADATA['Hammer Strength Flat Press'].muscle_target_primary).toBe('piept');  // Bundle 6.0.6 Specialty Sub-batch 1
+    expect(EXERCISE_METADATA['Kettlebell Front Rack Carry'].muscle_target_primary).toBe('antebrate');  // Bundle 6.0.6 Sub-batch 5
+  });
+
+  // §13 Sub-batch verifications cluster-specific
+  it('Bundle 6.0.7 Sub-batch 1 — 8 Plank family bodyweight core', () => {
+    ['Plank', 'Side Plank', 'Plank with Shoulder Tap', 'Plank to Push-up', 'Side Plank Dip', 'Plank with Reach', 'Copenhagen Plank', 'Scapular Plank'].forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('core');
+      expect(EXERCISE_METADATA[name].equipment_type).toBe('bodyweight');
+    });
+  });
+
+  it('Bundle 6.0.7 Sub-batch 2 — 3 Pallof Press family (cable + band anti-rotation)', () => {
+    expect(EXERCISE_METADATA['Pallof Press Cable Standing'].equipment_type).toBe('cable');
+    expect(EXERCISE_METADATA['Pallof Press Half-Kneeling'].equipment_type).toBe('cable');
+    expect(EXERCISE_METADATA['Pallof Press Band'].equipment_type).toBe('band');
+    ['Pallof Press Cable Standing', 'Pallof Press Half-Kneeling', 'Pallof Press Band'].forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('core');
+    });
+  });
+
+  it('Bundle 6.0.7 Sub-batch 6 — 3 Rollout family Tier 1-2 anti-extension', () => {
+    expect(EXERCISE_METADATA['Ab Wheel Rollout'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Barbell Rollout'].tier).toBe(1);
+    expect(EXERCISE_METADATA['Stability Ball Rollout'].tier).toBe(2);
+    ['Ab Wheel Rollout', 'Barbell Rollout', 'Stability Ball Rollout'].forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('core');
+    });
+  });
+
+  it('Bundle 6.0.7 Sub-batch 7-8 — Hanging + L-Sit gymnastic Tier 1 force_demand high', () => {
+    ['Hanging Leg Raise', 'Toes-to-Bar', 'L-Sit Hold Parallel Bars', 'Captains Chair Leg Raise', 'Dragon Flag', 'Windshield Wiper'].forEach(name => {
+      expect(EXERCISE_METADATA[name].tier).toBe(1);
+      expect(EXERCISE_METADATA[name].force_demand).toBe('high');
+    });
+  });
+
+  it('Bundle 6.0.7 Sub-batch 13 — Carries Front Rack Barbell + Overhead DB Tier 1 core+antebrate', () => {
+    expect(EXERCISE_METADATA['Front Rack Carry Barbell'].muscle_target_primary).toBe('core');
+    expect(EXERCISE_METADATA['Front Rack Carry Barbell'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['Overhead Carry DB'].muscle_target_primary).toBe('core');
+    expect(EXERCISE_METADATA['Overhead Carry DB'].muscle_target_secondary).toContain('umeri');
+  });
+
+  // §14 Bundle 6.0.7 cumulative invariants final — Pre-Beta scope library 100% gate achieved
+  it('Bundle 6.0.7 cumulative count = 657 exact (Pre-Beta scope library 100% gate achieved per LOCK 2 Daniel Gates strict)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
+  });
+
+  it('Bundle 6.0.7 cumulative core canonical V1 ≥ 57 (was 0 baseline Bundle 6.0.6, 57 NEW Bundle 6.0.7)', () => {
+    const core = Object.entries(EXERCISE_METADATA).filter(([_, m]) => m.muscle_target_primary === 'core');
+    expect(core.length).toBeGreaterThanOrEqual(57);
+  });
+
+  // §15 §1.4 Pre-Beta library 100% gate achieved (cumulative ≥ 657 floor LOCK V1)
+  it('Bundle 6.0.7 — Pre-Beta library 100% gate achieved (cumulative ≥ 657 floor LOCK V1 per LOCK 2 Daniel Gates strict)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBeGreaterThanOrEqual(657);
   });
 });

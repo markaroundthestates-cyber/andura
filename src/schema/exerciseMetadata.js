@@ -4503,6 +4503,497 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Cable Wrist Curl' },
   ] },
 
+  // ══ Bundle 6.0.7 Core Library Extension — 57 NEW canonical V1 core exerciții 2026-05-14 ══
+  // Co-CTO autonomous Phase A audit grep-validated per memory `feedback_grep_before_prompt_cc.md` — 28/30 themes ZERO matches schema = genuine gaps.
+  // Reserved core invariant unlocked Bundle 6.0.7 per ADR_ANATOMICAL_CLASSIFICATION_V1 §2 LOCK V1 (Bundle 6.0.1-6.0.6 ZERO core primary entries).
+  // Pre-Beta library scope 600 → 657 = 100% gate achieved per LOCK 2 Daniel Gates strict (CEO directive 2026-05-13f).
+  // Fallback cascade canonical V1 5 step types per ADR_SMART_ROUTING_EQUIPMENT_v2 §2.1 (easier_machine + assisted_variant + muscle_group_compose 1-2 ids + bodyweight + light_variant; implicit step 6 = skip).
+  // HARD CONSTRAINT §F3.12 strict ZERO mutation existing 600 entries preserved invariant.
+
+  // ── Sub-batch 1 — Plank family (8 NEW bodyweight isometric anti-extension core) ─────────────
+  // AUDIT 2026-05-14 (Bundle 6.0.7 Sub-batch 1): NEW Tier 3 plank standard forearm isometric anti-extension hold
+  'Plank': { equipment_type: 'bodyweight', equipment_alternatives: ['Side Plank', 'Dead Bug'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Roman Chair Back Extension' },
+    { type: 'assisted_variant', exercise_id: 'Side Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'Bird Dog'] },
+    { type: 'bodyweight', exercise_id: 'Scapular Plank' },
+    { type: 'light_variant', exercise_id: 'Scapular Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 side plank lateral isometric anti-lateral-flexion (obliques)
+  'Side Plank': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank', 'Copenhagen Plank'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Side Bend' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Cable Standing', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Side Plank Dip' },
+    { type: 'light_variant', exercise_id: 'Side Plank Dip' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 plank shoulder tap dynamic anti-rotation + shoulder stability
+  'Plank with Shoulder Tap': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank', 'Plank to Push-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Cable Standing', 'Bird Dog'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 plank to push-up transition dynamic core + tricep stability
+  'Plank to Push-up': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank with Shoulder Tap', 'Plank'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['triceps', 'umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank with Shoulder Tap' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Side Plank'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 side plank dip dynamic oblique flexion-extension
+  'Side Plank Dip': { equipment_type: 'bodyweight', equipment_alternatives: ['Side Plank', 'Cable Side Bend'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Side Bend' },
+    { type: 'assisted_variant', exercise_id: 'Side Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plate Side Bend', 'Pallof Press Cable Standing'] },
+    { type: 'bodyweight', exercise_id: 'Side Plank' },
+    { type: 'light_variant', exercise_id: 'Side Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 plank with reach dynamic anti-rotation + balance
+  'Plank with Reach': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank with Shoulder Tap', 'Bird Dog'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bird Dog', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 Copenhagen plank adductor + lateral core isometric
+  'Copenhagen Plank': { equipment_type: 'bodyweight', equipment_alternatives: ['Side Plank', 'Plank'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['fese', 'picioare-hamstrings'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Side Bend' },
+    { type: 'assisted_variant', exercise_id: 'Side Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Side Plank', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Side Plank' },
+    { type: 'light_variant', exercise_id: 'Side Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 scapular plank scapular protraction-retraction + core engagement
+  'Scapular Plank': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank', 'Plank with Shoulder Tap'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+
+  // ── Sub-batch 2 — Pallof Press family (3 NEW anti-rotation isolation) ───────────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 pallof press cable standing anti-rotation isolation strength
+  'Pallof Press Cable Standing': { equipment_type: 'cable', equipment_alternatives: ['Pallof Press Half-Kneeling', 'Pallof Press Band'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Pallof Press Half-Kneeling' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Band', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Pallof Press Band' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 pallof press half-kneeling anti-rotation + hip stability
+  'Pallof Press Half-Kneeling': { equipment_type: 'cable', equipment_alternatives: ['Pallof Press Cable Standing', 'Pallof Press Band'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['fese'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Pallof Press Cable Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Band', 'Bird Dog'] },
+    { type: 'bodyweight', exercise_id: 'Bird Dog' },
+    { type: 'light_variant', exercise_id: 'Pallof Press Band' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 pallof press band light home variant anti-rotation
+  'Pallof Press Band': { equipment_type: 'band', equipment_alternatives: ['Pallof Press Cable Standing', 'Pallof Press Half-Kneeling'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Bird Dog' },
+  ] },
+
+  // ── Sub-batch 3 — Woodchop family (3 NEW rotational power core) ─────────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 cable woodchop high-to-low rotational power oblique
+  'Cable Woodchop High-to-Low': { equipment_type: 'cable', equipment_alternatives: ['Cable Woodchop Low-to-High', 'Cable Russian Twist'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Cable Woodchop Low-to-High' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Cable Standing', 'Plate Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'Plank with Reach' },
+    { type: 'light_variant', exercise_id: 'Med Ball Woodchop' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 cable woodchop low-to-high reverse rotational power oblique
+  'Cable Woodchop Low-to-High': { equipment_type: 'cable', equipment_alternatives: ['Cable Woodchop High-to-Low', 'Cable Russian Twist'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Cable Woodchop High-to-Low' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Cable Standing', 'Plate Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'Plank with Reach' },
+    { type: 'light_variant', exercise_id: 'Med Ball Woodchop' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 med ball woodchop rotational power explosive home variant
+  'Med Ball Woodchop': { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Woodchop High-to-Low', 'Med Ball Russian Twist'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Woodchop High-to-Low' },
+    { type: 'assisted_variant', exercise_id: 'Med Ball Russian Twist' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plate Russian Twist', 'Cable Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'Plank with Reach' },
+    { type: 'light_variant', exercise_id: 'Plate Russian Twist' },
+  ] },
+
+  // ── Sub-batch 4 — Dead Bug + Bird Dog family (4 NEW anti-extension contralateral) ──────────
+  // AUDIT 2026-05-14: NEW Tier 3 dead bug supine anti-extension contralateral coordination
+  'Dead Bug': { equipment_type: 'bodyweight', equipment_alternatives: ['Bird Dog', 'Plank'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bird Dog', 'Hollow Body Hold'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Bird Dog' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 dead bug with band band-resisted progression
+  'Dead Bug with Resistance Band': { equipment_type: 'band', equipment_alternatives: ['Dead Bug', 'Bird Dog with Resistance Band'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Dead Bug' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Dead Bug' },
+    { type: 'light_variant', exercise_id: 'Dead Bug' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 bird dog quadruped contralateral anti-extension + balance
+  'Bird Dog': { equipment_type: 'bodyweight', equipment_alternatives: ['Dead Bug', 'Plank'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['fese', 'umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Dead Bug' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'Plank with Reach'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Dead Bug' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 bird dog with band band-resisted contralateral progression
+  'Bird Dog with Resistance Band': { equipment_type: 'band', equipment_alternatives: ['Bird Dog', 'Dead Bug with Resistance Band'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: ['fese', 'umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Bird Dog' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bird Dog', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Bird Dog' },
+    { type: 'light_variant', exercise_id: 'Bird Dog' },
+  ] },
+
+  // ── Sub-batch 5 — Hollow + Reverse Crunch + Stir the Pot (5 NEW gymnastic-style) ───────────
+  // AUDIT 2026-05-14: NEW Tier 2 hollow body hold gymnastic isometric anti-extension
+  'Hollow Body Hold': { equipment_type: 'bodyweight', equipment_alternatives: ['Hollow Body Rock', 'Dead Bug'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Dead Bug' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'V-Up'] },
+    { type: 'bodyweight', exercise_id: 'Dead Bug' },
+    { type: 'light_variant', exercise_id: 'Dead Bug' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 hollow body rock gymnastic dynamic anti-extension momentum
+  'Hollow Body Rock': { equipment_type: 'bodyweight', equipment_alternatives: ['Hollow Body Hold', 'V-Up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Hollow Body Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hollow Body Hold', 'V-Up'] },
+    { type: 'bodyweight', exercise_id: 'Hollow Body Hold' },
+    { type: 'light_variant', exercise_id: 'Dead Bug' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 reverse crunch supine hip-flexor + lower abdominal
+  'Reverse Crunch': { equipment_type: 'bodyweight', equipment_alternatives: ['Reverse Crunch Decline Bench', 'Hanging Knee Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Knee Raise' },
+    { type: 'assisted_variant', exercise_id: 'Dead Bug' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hanging Knee Raise', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'Bicycle Crunch' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 reverse crunch decline bench loaded hip-flexor + abdominal
+  'Reverse Crunch Decline Bench': { equipment_type: 'machine', equipment_alternatives: ['Reverse Crunch', 'Hanging Leg Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Leg Raise' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Crunch' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hanging Leg Raise', 'Decline Sit-up'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Crunch' },
+    { type: 'light_variant', exercise_id: 'Reverse Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 stir the pot stability ball rotational anti-extension circular
+  'Stability Ball Stir the Pot': { equipment_type: 'machine', equipment_alternatives: ['Stability Ball Rollout', 'Ab Wheel Rollout'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Stability Ball Rollout', 'Plank with Shoulder Tap'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+
+  // ── Sub-batch 6 — Rollout family (3 NEW anti-extension dynamic) ─────────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 ab wheel rollout dynamic anti-extension full ROM
+  'Ab Wheel Rollout': { equipment_type: 'machine', equipment_alternatives: ['Barbell Rollout', 'Stability Ball Rollout'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Stability Ball Rollout' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Hollow Body Hold'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Stability Ball Rollout' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 barbell rollout dynamic anti-extension loaded variant
+  'Barbell Rollout': { equipment_type: 'barbell', equipment_alternatives: ['Ab Wheel Rollout', 'Stability Ball Rollout'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Ab Wheel Rollout' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Hollow Body Hold'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Stability Ball Rollout' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 stability ball rollout regression rollout variant
+  'Stability Ball Rollout': { equipment_type: 'machine', equipment_alternatives: ['Ab Wheel Rollout', 'Stability Ball Stir the Pot'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+
+  // ── Sub-batch 7 — Hanging family + L-Sit (5 NEW gymnastic vertical hang) ────────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 hanging leg raise straight-leg full ROM bottom-up anti-flexion
+  'Hanging Leg Raise': { equipment_type: 'bodyweight', equipment_alternatives: ['Hanging Knee Raise', 'Toes-to-Bar'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['antebrate', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Leg Raise' },
+    { type: 'assisted_variant', exercise_id: 'Hanging Knee Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Crunch Decline Bench', 'Cable Crunch Kneeling'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Crunch' },
+    { type: 'light_variant', exercise_id: 'Reverse Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 hanging knee raise bent-knee progression bottom-up anti-flexion
+  'Hanging Knee Raise': { equipment_type: 'bodyweight', equipment_alternatives: ['Hanging Leg Raise', 'Captains Chair Knee Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Knee Raise' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Crunch' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Crunch', 'Cable Crunch Kneeling'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Crunch' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 captains chair knee raise apparatus-supported bottom-up
+  'Captains Chair Knee Raise': { equipment_type: 'machine', equipment_alternatives: ['Captains Chair Leg Raise', 'Hanging Knee Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Reverse Crunch' },
+    { type: 'assisted_variant', exercise_id: 'Hanging Knee Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Crunch', 'Cable Crunch Kneeling'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Crunch' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 captains chair leg raise apparatus-supported straight-leg
+  'Captains Chair Leg Raise': { equipment_type: 'machine', equipment_alternatives: ['Captains Chair Knee Raise', 'Hanging Leg Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Knee Raise' },
+    { type: 'assisted_variant', exercise_id: 'Reverse Crunch Decline Bench' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Crunch Decline Bench', 'Hanging Leg Raise'] },
+    { type: 'bodyweight', exercise_id: 'Reverse Crunch' },
+    { type: 'light_variant', exercise_id: 'Reverse Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 toes-to-bar gymnastic CrossFit full ROM hanging vertical
+  'Toes-to-Bar': { equipment_type: 'bodyweight', equipment_alternatives: ['Hanging Leg Raise', 'L-Sit Hold Parallel Bars'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['antebrate', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Leg Raise' },
+    { type: 'assisted_variant', exercise_id: 'Hanging Leg Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hanging Leg Raise', 'L-Sit Hold Parallel Bars'] },
+    { type: 'bodyweight', exercise_id: 'Hanging Knee Raise' },
+    { type: 'light_variant', exercise_id: 'Hanging Knee Raise' },
+  ] },
+
+  // ── Sub-batch 8 — L-Sit + Cable rotation + Cable side bend (4 NEW isometric+rotation) ──────
+  // AUDIT 2026-05-14: NEW Tier 1 L-sit hold parallel bars gymnastic isometric anti-extension
+  'L-Sit Hold Parallel Bars': { equipment_type: 'bodyweight', equipment_alternatives: ['L-Sit Hold Floor', 'Hollow Body Hold'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'L-Sit Hold Floor' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hollow Body Hold', 'Dip'] },
+    { type: 'bodyweight', exercise_id: 'Hollow Body Hold' },
+    { type: 'light_variant', exercise_id: 'Hollow Body Hold' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 L-sit hold floor regression knees-tucked progression
+  'L-Sit Hold Floor': { equipment_type: 'bodyweight', equipment_alternatives: ['L-Sit Hold Parallel Bars', 'Hollow Body Hold'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['triceps'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Hollow Body Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hollow Body Hold', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Hollow Body Hold' },
+    { type: 'light_variant', exercise_id: 'Hollow Body Hold' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 cable russian twist standing rotational core power loaded
+  'Cable Russian Twist': { equipment_type: 'cable', equipment_alternatives: ['Pallof Press Cable Standing', 'Plate Russian Twist'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plate Russian Twist' },
+    { type: 'muscle_group_compose', exercise_ids: ['Pallof Press Cable Standing', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'Bicycle Crunch' },
+    { type: 'light_variant', exercise_id: 'Med Ball Russian Twist' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 cable side bend cable-loaded anti-lateral-flexion oblique
+  'Cable Side Bend': { equipment_type: 'cable', equipment_alternatives: ['Plate Side Bend', 'Side Plank'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Plate Side Bend' },
+    { type: 'muscle_group_compose', exercise_ids: ['Side Plank', 'Pallof Press Cable Standing'] },
+    { type: 'bodyweight', exercise_id: 'Side Plank' },
+    { type: 'light_variant', exercise_id: 'Side Plank Dip' },
+  ] },
+
+  // ── Sub-batch 9 — Med Ball + Sit-up family (5 NEW dynamic flexion-rotation) ─────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 med ball slam explosive power core full-body
+  'Med Ball Slam': { equipment_type: 'dumbbell', equipment_alternatives: ['Med Ball Woodchop', 'Med Ball Russian Twist'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'spate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Woodchop High-to-Low' },
+    { type: 'assisted_variant', exercise_id: 'Med Ball Woodchop' },
+    { type: 'muscle_group_compose', exercise_ids: ['Med Ball Russian Twist', 'Plate Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Med Ball Russian Twist' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 med ball russian twist seated rotational light variant
+  'Med Ball Russian Twist': { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Russian Twist', 'Plate Russian Twist'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Plate Russian Twist' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bicycle Crunch', 'Plate Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'Bicycle Crunch' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 decline sit-up bench-supported full ROM trunk flexion
+  'Decline Sit-up': { equipment_type: 'machine', equipment_alternatives: ['Bench Sit-up', 'Weighted Sit-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Bench Sit-up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Reverse Crunch Decline Bench', 'V-Up'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 bench sit-up bench-supported abdominal flexion
+  'Bench Sit-up': { equipment_type: 'machine', equipment_alternatives: ['Decline Sit-up', 'V-Up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'V-Up' },
+    { type: 'muscle_group_compose', exercise_ids: ['V-Up', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 weighted sit-up plate-loaded trunk flexion loaded variant
+  'Weighted Sit-up': { equipment_type: 'dumbbell', equipment_alternatives: ['Decline Sit-up', 'Plate Crunch'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Decline Sit-up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Decline Sit-up', 'Plate Crunch'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'V-Up' },
+  ] },
+
+  // ── Sub-batch 10 — Roman Chair + Cable Crunch (3 NEW) ──────────────────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 roman chair sit-up apparatus-supported abdominal flexion
+  'Roman Chair Sit-up': { equipment_type: 'machine', equipment_alternatives: ['Decline Sit-up', 'Bench Sit-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Bench Sit-up' },
+    { type: 'muscle_group_compose', exercise_ids: ['Decline Sit-up', 'V-Up'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 cable crunch kneeling cable-loaded trunk flexion isolation
+  'Cable Crunch Kneeling': { equipment_type: 'cable', equipment_alternatives: ['Cable Crunch Standing', 'Plate Crunch'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Standing' },
+    { type: 'assisted_variant', exercise_id: 'Plate Crunch' },
+    { type: 'muscle_group_compose', exercise_ids: ['Decline Sit-up', 'V-Up'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 cable crunch standing cable-loaded trunk flexion alternative
+  'Cable Crunch Standing': { equipment_type: 'cable', equipment_alternatives: ['Cable Crunch Kneeling', 'Plate Crunch'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plate Crunch' },
+    { type: 'muscle_group_compose', exercise_ids: ['V-Up', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+
+  // ── Sub-batch 11 — V-up + Heel Tap + Bicycle (3 NEW dynamic bodyweight flexion) ────────────
+  // AUDIT 2026-05-14: NEW Tier 2 V-up dynamic full trunk flexion bodyweight
+  'V-Up': { equipment_type: 'bodyweight', equipment_alternatives: ['Hollow Body Rock', 'Bicycle Crunch'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Hollow Body Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bicycle Crunch', 'Reverse Crunch'] },
+    { type: 'bodyweight', exercise_id: 'Bicycle Crunch' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 heel tap supine light lower abdominal regression
+  'Heel Tap': { equipment_type: 'bodyweight', equipment_alternatives: ['Reverse Crunch', 'Bicycle Crunch'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Dead Bug' },
+    { type: 'muscle_group_compose', exercise_ids: ['Dead Bug', 'Reverse Crunch'] },
+    { type: 'bodyweight', exercise_id: 'Dead Bug' },
+    { type: 'light_variant', exercise_id: 'Dead Bug' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 bicycle crunch alternating cross-body oblique dynamic
+  'Bicycle Crunch': { equipment_type: 'bodyweight', equipment_alternatives: ['V-Up', 'Heel Tap'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Heel Tap' },
+    { type: 'muscle_group_compose', exercise_ids: ['Heel Tap', 'Dead Bug'] },
+    { type: 'bodyweight', exercise_id: 'Heel Tap' },
+    { type: 'light_variant', exercise_id: 'Heel Tap' },
+  ] },
+
+  // ── Sub-batch 12 — Stability Ball + Plate (5 NEW apparatus + plate-loaded) ─────────────────
+  // AUDIT 2026-05-14: NEW Tier 2 stability ball crunch ball-supported abdominal flexion ROM
+  'Stability Ball Crunch': { equipment_type: 'machine', equipment_alternatives: ['Stability Ball Pike', 'Decline Sit-up'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Decline Sit-up' },
+    { type: 'muscle_group_compose', exercise_ids: ['V-Up', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 stability ball pike feet-on-ball pike position anti-extension
+  'Stability Ball Pike': { equipment_type: 'machine', equipment_alternatives: ['Stability Ball Rollout', 'Stability Ball Stir the Pot'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Stability Ball Rollout' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank with Shoulder Tap', 'Plank to Push-up'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 plate crunch supine plate-loaded trunk flexion light variant
+  'Plate Crunch': { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Crunch Kneeling', 'Weighted Sit-up'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Cable Crunch Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['V-Up', 'Bicycle Crunch'] },
+    { type: 'bodyweight', exercise_id: 'V-Up' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 plate russian twist seated plate-loaded rotational
+  'Plate Russian Twist': { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Russian Twist', 'Med Ball Russian Twist'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Med Ball Russian Twist' },
+    { type: 'muscle_group_compose', exercise_ids: ['Bicycle Crunch', 'Cable Russian Twist'] },
+    { type: 'bodyweight', exercise_id: 'Bicycle Crunch' },
+    { type: 'light_variant', exercise_id: 'Bicycle Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 3 plate side bend plate-loaded anti-lateral-flexion light
+  'Plate Side Bend': { equipment_type: 'dumbbell', equipment_alternatives: ['Cable Side Bend', 'Side Plank'], force_demand: 'low', tier: 3, muscle_target_primary: 'core', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Side Bend' },
+    { type: 'assisted_variant', exercise_id: 'Side Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Side Plank', 'Side Plank Dip'] },
+    { type: 'bodyweight', exercise_id: 'Side Plank' },
+    { type: 'light_variant', exercise_id: 'Side Plank Dip' },
+  ] },
+
+  // ── Sub-batch 13 — Garhammer + Carries + Advanced (4 NEW specialty) ────────────────────────
+  // AUDIT 2026-05-14: NEW Tier 1 garhammer raise hanging hip-raise gymnastic anti-flexion
+  'Garhammer Raise': { equipment_type: 'bodyweight', equipment_alternatives: ['Hanging Leg Raise', 'Toes-to-Bar'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Captains Chair Leg Raise' },
+    { type: 'assisted_variant', exercise_id: 'Hanging Leg Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hanging Leg Raise', 'Reverse Crunch Decline Bench'] },
+    { type: 'bodyweight', exercise_id: 'Hanging Knee Raise' },
+    { type: 'light_variant', exercise_id: 'Reverse Crunch' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 front rack carry barbell loaded carry anti-flexion + grip
+  'Front Rack Carry Barbell': { equipment_type: 'barbell', equipment_alternatives: ['Overhead Carry DB', 'Kettlebell Front Rack Carry'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['antebrate', 'umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: "Farmer's Walk Kettlebell" },
+    { type: 'assisted_variant', exercise_id: 'Kettlebell Front Rack Carry' },
+    { type: 'muscle_group_compose', exercise_ids: ['Overhead Carry DB', 'Plank'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 overhead carry DB loaded carry anti-extension + shoulder
+  'Overhead Carry DB': { equipment_type: 'dumbbell', equipment_alternatives: ['Front Rack Carry Barbell', 'Kettlebell Front Rack Carry'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['umeri', 'antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: "Farmer's Walk Kettlebell" },
+    { type: 'assisted_variant', exercise_id: 'Front Rack Carry Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Front Rack Carry Barbell', 'Plank with Shoulder Tap'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 1 dragon flag advanced full-body anti-extension gymnastic
+  'Dragon Flag': { equipment_type: 'bodyweight', equipment_alternatives: ['Hollow Body Hold', 'L-Sit Hold Parallel Bars'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['fese', 'umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Hollow Body Hold' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hollow Body Hold', 'Hanging Leg Raise'] },
+    { type: 'bodyweight', exercise_id: 'Hollow Body Hold' },
+    { type: 'light_variant', exercise_id: 'Hollow Body Hold' },
+  ] },
+
+  // ── Sub-batch 14 — Final advanced gymnastic (2 NEW) Option C marginal scope-round 57 target ─
+  // AUDIT 2026-05-14: NEW Tier 1 windshield wiper hanging rotational advanced anti-extension
+  'Windshield Wiper': { equipment_type: 'bodyweight', equipment_alternatives: ['Toes-to-Bar', 'Hanging Leg Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'core', muscle_target_secondary: ['spate', 'antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Russian Twist' },
+    { type: 'assisted_variant', exercise_id: 'Hanging Leg Raise' },
+    { type: 'muscle_group_compose', exercise_ids: ['Hanging Leg Raise', 'Cable Woodchop High-to-Low'] },
+    { type: 'bodyweight', exercise_id: 'Hanging Knee Raise' },
+    { type: 'light_variant', exercise_id: 'Hanging Knee Raise' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 body saw plank dynamic forward-back plank anti-extension
+  'Body Saw Plank': { equipment_type: 'bodyweight', equipment_alternatives: ['Plank', 'Stability Ball Stir the Pot'], force_demand: 'medium', tier: 2, muscle_target_primary: 'core', muscle_target_secondary: ['umeri'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Crunch Kneeling' },
+    { type: 'assisted_variant', exercise_id: 'Plank' },
+    { type: 'muscle_group_compose', exercise_ids: ['Plank', 'Stability Ball Stir the Pot'] },
+    { type: 'bodyweight', exercise_id: 'Plank' },
+    { type: 'light_variant', exercise_id: 'Plank' },
+  ] },
+
 };
 
 /**
