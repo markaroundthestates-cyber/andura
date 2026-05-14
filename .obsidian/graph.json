@@ -8,73 +8,80 @@
   "collapse-color-groups": true,
   "colorGroups": [
     {
-      "query": "path:\"wiki/concepts\"",
+      "query": "path:\"wiki/summaries/handover-2026-05-14\" OR path:\"wiki/concepts/pre-beta-full-scope-lock-v2\" OR path:\"wiki/concepts/medical-safety-disclaimer-t-c-mandatory\" OR path:\"wiki/concepts/kcal-floor-1200-engine-filter\" OR path:\"wiki/concepts/aggressive-loading-warning-tier-aware\" OR path:\"wiki/concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout\"",
       "color": {
         "a": 1,
-        "rgb": 1096065
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/adrs\"",
-      "color": {
-        "a": 1,
-        "rgb": 3900150
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/engines\"",
-      "color": {
-        "a": 1,
-        "rgb": 16347926
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/features\"",
-      "color": {
-        "a": 1,
-        "rgb": 16436245
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/specs\"",
-      "color": {
-        "a": 1,
-        "rgb": 11032055
-      }
-    },
-    {
-      "query": "path:\"wiki/summaries\"",
-      "color": {
-        "a": 1,
-        "rgb": 440020
-      }
-    },
-    {
-      "query": "path:\"wiki/sources\"",
-      "color": {
-        "a": 1,
-        "rgb": 15485081
-      }
-    },
-    {
-      "query": "path:\"📥_inbox\"",
-      "color": {
-        "a": 1,
-        "rgb": 10265519
-      }
-    },
-    {
-      "query": "path:\"📤_outbox/_archive\"",
-      "color": {
-        "a": 1,
-        "rgb": 4937059
+        "rgb": 13072639
       }
     },
     {
       "query": "path:\"00-index\" OR path:\"03-decisions\"",
       "color": {
         "a": 1,
-        "rgb": 15680580
+        "rgb": 13696981
+      }
+    },
+    {
+      "query": "path:\"wiki/entities/adrs\"",
+      "color": {
+        "a": 1,
+        "rgb": 8453008
+      }
+    },
+    {
+      "query": "path:\"wiki/entities/features\"",
+      "color": {
+        "a": 1,
+        "rgb": 6291312
+      }
+    },
+    {
+      "query": "path:\"wiki/concepts\"",
+      "color": {
+        "a": 1,
+        "rgb": 4194639
+      }
+    },
+    {
+      "query": "path:\"wiki/entities/engines\"",
+      "color": {
+        "a": 1,
+        "rgb": 4194639
+      }
+    },
+    {
+      "query": "path:\"wiki/entities/specs\"",
+      "color": {
+        "a": 1,
+        "rgb": 4194639
+      }
+    },
+    {
+      "query": "path:\"wiki/summaries\"",
+      "color": {
+        "a": 1,
+        "rgb": 2083381
+      }
+    },
+    {
+      "query": "path:\"wiki/sources\"",
+      "color": {
+        "a": 1,
+        "rgb": 2070575
+      }
+    },
+    {
+      "query": "path:\"📥_inbox\"",
+      "color": {
+        "a": 1,
+        "rgb": 16737971
+      }
+    },
+    {
+      "query": "path:\"📤_outbox/_archive\"",
+      "color": {
+        "a": 1,
+        "rgb": 999445
       }
     }
   ],
@@ -88,6 +95,6 @@
   "repelStrength": 20,
   "linkStrength": 0.234375,
   "linkDistance": 500,
-  "scale": 0.030182895067324085,
+  "scale": 0.03018289506732405,
   "close": true
 }
