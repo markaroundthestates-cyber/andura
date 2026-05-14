@@ -360,8 +360,10 @@ ADR entity page ↔ concept page paradigm citing it ↔ summary page synthesizin
 2. Drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` per question/topic via `/wiki-query`.
 3. CURRENT_STATE preserved raw layer immutable, citable via wiki summaries cross-refs (NU mandatory full read).
 4. HANDOVER themes preserved raw layer, citable via wiki entities cross-refs.
+5. §CC.3 output startup format aligned `wiki/index.md` cumulative count + last LOCKED references + drift status (default `Drift zero`) + next P1 fork (per scribe end-of-chat aggregate predecessor handover summary §5 Path Forward).
+6. **NEW per §AR.27 LOCKED V1 2026-05-14 chat-current: Pre-action drift detection cross-check Path Forward §5** al summary most-recent /wiki-ingest LANDED vs cumulative memory edits invariant + last 5 wiki/log.md entries chronological + NEW §AR.* PROMOTE formal recent. Dacă drift detected → flag in §CC.3 output format `Drift [list paths + wording before→after]` instead of `Drift ZERO`; resolve via /wiki-ingest auto-patch drift fix ÎNAINTE flag P2 fork choices sau autonomous tactical decisions. Mecanism: identify last 3 handover summaries paths via wiki/log.md grep + retro-scan §5 wording vs invariants per §AR.27. Daniel awareness automatic NU surprize re-litigation slip cumulative cross-chat.
 
-**Rationale:** Wiki layer is compounding artifact — citește direct knowledge graph navigabil (NU re-derive each chat). Anti-halucinație primary mechanism.
+**Rationale:** Wiki layer is compounding artifact — citește direct knowledge graph navigabil (NU re-derive each chat). Anti-halucinație primary mechanism. Step 6 NEW per §AR.27 auto-detect drift cumulative cross-chat decision pre-action eliminate re-litigation slip.
 
 ### §6.2 — §CC.4 Citation Enforcement REAFFIRMED
 

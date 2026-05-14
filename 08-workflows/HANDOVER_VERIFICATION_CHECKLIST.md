@@ -101,6 +101,39 @@ CC autonomous MUST correct-classify content per handover narrative:
 
 ---
 
+## §3a — Retro-Scan Drift Fix Cumulative Cross-Chat (LOCKED V1 NEW 2026-05-14 per §AR.27)
+
+**MANDATORY post-§3 Wiki distribution + pre-§4 wiki/index.md + wiki/log.md updates per §AR.27 LOCKED V1 NEW 2026-05-14 chat-current** Daniel CEO directive verbatim structural preventive mechanism *"vreau sa modifici si tot ce trebuie sa nu se mai intample cand iau o decizie sa o mai iau de 10 ori pt ca nu o vezi tu real time. Auto update la ce trebuie la fiecare handover te rog"*. Mecanism preventive permanent cross-chat invariant — fix root cause "Daniel ia decizie 1× → wiki text stale next chat startup → slip re-litigation 5+ instances cross-chat" pattern.
+
+CC autonomous MUST execute:
+
+1. **☐ Identify last 3 handover summaries chronological order** via `wiki/log.md head 50 lines` filter `^## \[` entries → extract paths most recent 3 summaries.
+2. **☐ Retro-scan Path Forward §5 + analog forward-looking sections** (§C4 / §C5 / §OPEN flags / §NEXT / §PENDING / §DEFERRED) în fiecare 3 summary paths identified — drift cumulative cross-chat detection vs:
+   - Cumulative memory edits invariant (verify via Claude memory_user_edits view)
+   - Last 5 entries `wiki/log.md` chronological (cumulative LOCK V1 references)
+   - NEW §AR.* PROMOTE formal acest /wiki-ingest (auto-codified)
+   - NEW ADR raw layer LOCK V1 cumulative cross-chat
+3. **☐ Drift detection patterns:**
+   - "strategic chat dedicat Daniel input mandatory" tag pe scope engine routing INTERNAL = §AR.26 LOCKED V1 violation
+   - "§OPEN pending Daniel decision" pe LOCKED V1 zero amendments raw layer = §AR.27 violation (artificial cleanup-pass halucinație §AR.* candidat chat-current 14-evening 1× threshold context)
+   - "post-Beta v1.5 defer" pe LOCK 1 Pre-Beta = FULL strict LOCK V2 2026-05-14 paradigm = drift invalidated
+   - "DRAFT pending Daniel review approve" pe raw layer LOCK V1 LANDED Co-CTO autonomous follow-up = §AR.24 candidate scribe-mode → §AR.27 cumulative cross-chat extension
+   - Forward-looking sequencing referencing "C4.1 strategic chat dedicat" sau analog tactical CTO scope mistagged
+4. **☐ Auto-patch drift inline same atomic commit:**
+   - `str_replace` drift wording verbatim → corrected wording per current LOCK V1 truth-source
+   - `frontmatter amendments[]` APPEND entry retro-fix per page modified inline scribe explicit "DRIFT FIX cumulative cross-chat 2026-05-14 chat-current per §AR.27 LOCKED V1" + verbatim before/after diff context preserved
+5. **☐ Output drift hits count in §3a section LATEST.md** per /wiki-ingest:
+   - Total drift hits surfaced cumulative
+   - Paths modified per drift hit (file + section + before→after wording verbatim)
+   - Pre-flight grep evidence per drift hit applied this commit
+6. **☐ HALT condition** dacă drift hits >10 in single retro-scan → flag escalate Daniel review explicit chat-current "MAJOR drift cumulative cross-chat surfaced — recommend manual review ÎNAINTE atomic commit". NU partial auto-patch.
+
+**Cross-link §AR.24 candidate cap-coadă** post-handover raw layer LOCK Co-CTO autonomous follow-up wiki drift fix patch precedent — §AR.27 generalize §AR.24 candidate scope cumulative cross-chat decisions NU singular post-handover Co-CTO follow-up + extension permanent mechanism preventive cross-chat invariant.
+
+**Fail §3a →** drift cumulative cross-chat persists → next chat NEW Salut Acasă startup re-alignment burn + Daniel re-litigation slip risk. NU partial auto-patch silent — escalate Daniel review explicit chat-current dacă HALT condition met.
+
+---
+
 ## §4 — Wiki Index + Log Updates (Catalog Navigation Karpathy)
 
 CC autonomous MUST:

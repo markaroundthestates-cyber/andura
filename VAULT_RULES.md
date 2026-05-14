@@ -1211,6 +1211,8 @@ See [[CLAUDE]] §3.1-§3.5 (entity + concept + summary + source + index/log).
 
 **ZERO touch CURRENT_STATE.md + DECISION_LOG.md** post-Faza 3 LANDED (raw layer immutable freeze).
 
+**§F3.8 amendment 2026-05-14 chat-current per §AR.27 LOCKED V1 NEW:** Post-distribute NEW handover summary classifier branch, MANDATORY retro-scan previous 3 handover summaries Path Forward §5 + cross-refs analog cross-cluster forward-looking sections pentru drift cumulative cross-chat decision LOCKED V1 (memory edits + ADR raw layer + paradigm shifts + §AR.* PROMOTE formal + cumulative wiki/log.md). Auto-patch drift inline SAME atomic commit per /wiki-ingest pre-push origin — NU separat secondary commit. Output drift hits count + paths in LATEST.md §3a section per [[08-workflows/HANDOVER_VERIFICATION_CHECKLIST]] §3a extension. Cross-link §AR.24 candidate cap-coadă (post-handover raw layer LOCK Co-CTO autonomous follow-up wiki drift fix patch precedent) — §AR.27 generalize §AR.24 candidate scope cumulative cross-chat decisions. Daniel CEO directive verbatim catalysator chat-current ACASĂ *"Auto update la ce trebuie la fiecare handover te rog"* — autonomy MAXIMUM trust delegation Co-CTO tactical autonomous structural fix mechanism preventive permanent.
+
 ### §F3.9 — Wiki Lint Voice Fidelity Scan NEW Phase 4 Mandatory
 
 See [[CLAUDE]] §4.3 scan type 5. For each wiki page cu `## Verbatim quotes Daniel` section:
