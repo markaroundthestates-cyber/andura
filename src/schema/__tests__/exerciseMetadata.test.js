@@ -1823,4 +1823,38 @@ describe('Bundle 6.0.5 Arms Library Extension §ADR_ANATOMICAL_CLASSIFICATION_V1
       });
     });
   });
+
+  // ── Phase C — Biceps Cable + Machine (12 NEW) ────────────────────────────────
+  const NEW_ENTRIES_6_0_5_PHASE_C = [
+    'Cable Curl Standing Straight Bar', 'Cable Curl Standing Rope', 'Cable Curl Standing EZ-bar Attachment',
+    'Cable Curl Single-Arm', 'Cable Curl Seated Behind Body', 'Cable Hammer Curl Rope',
+    'Cable Drag Curl', 'Cable Curl Lying on Bench', 'Machine Preacher Curl', 'Machine Seated Curl',
+    'Cable Curl Cross-Body Single', 'Cable Concentration Curl',
+  ];
+
+  it('Phase C Biceps Cable + Machine 12 NEW entries present cu cascade populated', () => {
+    expect(NEW_ENTRIES_6_0_5_PHASE_C.length).toBe(12);
+    NEW_ENTRIES_6_0_5_PHASE_C.forEach(name => {
+      expect(EXERCISE_METADATA[name]).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade).toBeDefined();
+      expect(EXERCISE_METADATA[name].fallback_cascade.length).toBeGreaterThanOrEqual(5);
+    });
+  });
+
+  it('Phase C all 12 entries muscle_target_primary === biceps canonical V1', () => {
+    NEW_ENTRIES_6_0_5_PHASE_C.forEach(name => {
+      expect(EXERCISE_METADATA[name].muscle_target_primary).toBe('biceps');
+    });
+  });
+
+  it('Phase C Cable Hammer + Cable Curl Standing Rope have antebrate secondary tag (rope neutral grip brachioradialis engage)', () => {
+    expect(EXERCISE_METADATA['Cable Hammer Curl Rope'].muscle_target_secondary).toContain('antebrate');
+    expect(EXERCISE_METADATA['Cable Curl Standing Rope'].muscle_target_secondary).toContain('antebrate');
+  });
+
+  it('Phase C cable + machine equipment types valid', () => {
+    NEW_ENTRIES_6_0_5_PHASE_C.forEach(name => {
+      expect(['cable', 'machine']).toContain(EXERCISE_METADATA[name].equipment_type);
+    });
+  });
 });

@@ -3568,6 +3568,104 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'DB Curl Seated Alternate' },
   ] },
 
+  // ── Phase C — Biceps Cable + Machine Variants (12 NEW) ───────────────────────
+  // AUDIT 2026-05-14 (Bundle 6.0.5 Phase C): NEW Tier 2 isolation cable straight bar — biceps constant tension throughout ROM
+  'Cable Curl Standing Straight Bar': { equipment_type: 'cable', equipment_alternatives: ['Cable Curl', 'Cable Curl Standing Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Standing', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable rope — wrist-friendly biceps + brachialis mix
+  'Cable Curl Standing Rope':     { equipment_type: 'cable', equipment_alternatives: ['Cable Curl Standing Straight Bar', 'Cable Hammer Curl Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Curl Standing', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Hammer Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable EZ-bar attachment — wrist-friendly biceps cable
+  'Cable Curl Standing EZ-bar Attachment': { equipment_type: 'cable', equipment_alternatives: ['Cable Curl Standing Straight Bar', 'EZ-bar Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['EZ-bar Curl Standing', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable single-arm — unilateral biceps strict
+  'Cable Curl Single-Arm':        { equipment_type: 'cable', equipment_alternatives: ['Cable Curl', 'DB Concentration Curl Standing'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Concentration Curl Standing', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Seated Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable seated behind body — biceps stretched position long head emphasis
+  'Cable Curl Seated Behind Body': { equipment_type: 'cable', equipment_alternatives: ['Bayesian Curl', 'Cable Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Bayesian Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'Incline DB Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Curl Seated Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable rope hammer — neutral grip biceps + antebrate
+  'Cable Hammer Curl Rope':       { equipment_type: 'cable', equipment_alternatives: ['DB Hammer Curl Standing', 'Cable Curl Standing Rope'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: ['antebrate'], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Hammer Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl Standing Rope', 'Hammer Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Neutral Grip' },
+    { type: 'light_variant', exercise_id: 'DB Cross-Body Hammer' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable drag — peak biceps long head cable variant
+  'Cable Drag Curl':              { equipment_type: 'cable', equipment_alternatives: ['Drag Curl Barbell', 'Cable Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'Drag Curl Barbell' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl Standing Straight Bar', 'DB Curl Standing'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Drag Curl DB' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable lying on bench — supine biceps stretched cable
+  'Cable Curl Lying on Bench':    { equipment_type: 'cable', equipment_alternatives: ['Cable Curl', 'Incline DB Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Cable Curl' },
+    { type: 'assisted_variant', exercise_id: 'Incline DB Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl Standing Straight Bar', 'DB Curl Seated Alternate'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Incline Curl Alternate' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation machine preacher — strict biceps stretched position machine variant
+  'Machine Preacher Curl':        { equipment_type: 'machine', equipment_alternatives: ['Preacher Curl', 'EZ-bar Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'EZ-bar Preacher Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Preacher Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation machine seated curl — standard machine variant biceps
+  'Machine Seated Curl':          { equipment_type: 'machine', equipment_alternatives: ['Preacher Curl', 'Machine Preacher Curl'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Machine Preacher Curl' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl', 'DB Curl Seated Alternate'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'Incline DB Curl' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable cross-body single-arm — biceps short head peak
+  'Cable Curl Cross-Body Single': { equipment_type: 'cable', equipment_alternatives: ['DB Cross-Body Hammer', 'Cable Curl Single-Arm'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'Cable Curl Single-Arm' },
+    { type: 'muscle_group_compose', exercise_ids: ['DB Cross-Body Hammer', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Concentration Curl Standing' },
+  ] },
+  // AUDIT 2026-05-14: NEW Tier 2 isolation cable concentration — strict single-arm cable biceps short head peak
+  'Cable Concentration Curl':     { equipment_type: 'cable', equipment_alternatives: ['DB Concentration Curl Standing', 'Cable Curl Single-Arm'], force_demand: 'medium', tier: 2, muscle_target_primary: 'biceps', muscle_target_secondary: [], fallback_cascade: [
+    { type: 'easier_machine', exercise_id: 'Preacher Curl' },
+    { type: 'assisted_variant', exercise_id: 'DB Concentration Curl Standing' },
+    { type: 'muscle_group_compose', exercise_ids: ['Cable Curl Single-Arm', 'Cable Curl'] },
+    { type: 'bodyweight', exercise_id: 'Chin-Up Underhand Strict' },
+    { type: 'light_variant', exercise_id: 'DB Spider Curl' },
+  ] },
+
 };
 
 /**
