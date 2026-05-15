@@ -1,15 +1,31 @@
 ---
-title: Wiki Log — Andura Wiki Chronological Append-Only
+title: Wiki Log — Andura Wiki Chronological Append-Only (FROZEN 2026-05-15)
 type: log
-status: live
-last_updated: 2026-05-15-chat-current-followup
+status: FROZEN
+frozen_date: 2026-05-15
+ssot_post_freeze: ../DECISIONS.md
+last_updated: 2026-05-15-FREEZE
 ---
 
-# Wiki Log — Andura Wiki Chronological (Karpathy Append-Only Signature)
+# Wiki Log — Andura Wiki Chronological (Karpathy Append-Only Signature) — FROZEN 2026-05-15
 
-**Authority:** [[../CLAUDE]] §4 3 operations canonical + [[_design/WIKI_DESIGN_SPEC_V1]] §5.4 chronological signature format `## [YYYY-MM-DD] <type> | <title>`.
+**Authority:** [[../CLAUDE]] §4 3 operations canonical + [[_design/WIKI_DESIGN_SPEC_V1]] §5.4 chronological signature format `## [YYYY-MM-DD] <type> | <title>` — **HISTORICAL ONLY post 2026-05-15 FREEZE. SSOT current = [[../DECISIONS]] §D001.**
 
 **Convention:** Each entry consistent prefix `## [YYYY-MM-DD] ingest|query|lint|queued | <title>` parseable cu unix tools (`grep "^## \[" log.md | tail -5` gives last 5 entries chronologically).
+
+---
+
+## [2026-05-15-FREEZE] | Wiki Layer FROZEN — SSOT Migrated to DECISIONS.md
+
+**Authority:** Daniel CEO directive 2026-05-15 chat reglare *"Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"*.
+
+**Action:** Wiki layer FROZEN imutabilă post 2026-05-15. Toate decizii noi append la `DECISIONS.md` root SSOT singular. Wiki/ + 03-decisions/ ADRs + CLAUDE.md root schema = arhivă read-only reference doar context istoric.
+
+**Migration:** D-LEGACY-NNN entries în DECISIONS.md §"LEGACY DECISIONS" capturează ~98 unique decisions deduplicated din ~745 LOCKED V1 cumulative cross-source (33 numbered ADRs + 13 named ADRs + 24 wiki concepts + 12 wiki specs + 7 wiki engines + 22 wiki features + 32 summaries).
+
+**Karpathy guidelines applied per [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4:** Surgical Changes (ZERO touch wiki content existing) + Simplicity First (single SSOT vs 6-source duplicate) + Think Before Coding (schema authority concern surfaced + Daniel chose Update CLAUDE.md cu FREEZE notice) + Goal-Driven Execution (verifiable §6 grep counts + tests preserved + commit hash + tag pushed).
+
+**Cross-refs:** [[../DECISIONS]] root SSOT singular | [[../07-meta/karpathy-skills-ref/CLAUDE.md]] 4 principii core philosophy | [[../CLAUDE]] (SUPERSEDED 2026-05-15 historical reference) | [[../USER_PREFERENCES_V4]] Claude.ai UI custom instructions | [[../PROJECT_INSTRUCTIONS_V5]] Claude.ai project custom instructions
 
 ---
 

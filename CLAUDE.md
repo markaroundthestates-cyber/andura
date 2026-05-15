@@ -1,9 +1,16 @@
 ---
-title: CLAUDE.md — Andura Vault Schema (Karpathy LLM Wiki Real, Option B)
+title: CLAUDE.md — Andura Vault Schema (Karpathy LLM Wiki Real, Option B) — SUPERSEDED 2026-05-15
 type: schema
-status: locked-v1
+status: SUPERSEDED
 locked_date: 2026-05-11
-authority: Daniel CEO Option B 2026-05-11 chat ACASĂ post Karpathy gist re-read + graph view orphan screenshot — vault existing FREEZE raw layer immutable + NEW wiki/ pure LLM-generated + voice preservation policy §1 mandatory
+superseded_date: 2026-05-15
+superseded_by: DECISIONS.md §D001 SSOT singular reglaj
+note: |
+  Schema SUPERSEDED 2026-05-15 — current SSOT este DECISIONS.md root §D001 per Daniel CEO directive reglaj 2026-05-15
+  *"Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite."*
+  CLAUDE.md preserved as historical Faza 3 Karpathy Real Option B reference only. Wiki/ FROZEN imutabilă post 2026-05-15.
+  Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4 (Think Before Coding + Simplicity First + Surgical Changes + Goal-Driven Execution).
+authority: Daniel CEO Option B 2026-05-11 chat ACASĂ post Karpathy gist re-read + graph view orphan screenshot — vault existing FREEZE raw layer immutable + NEW wiki/ pure LLM-generated + voice preservation policy §1 mandatory (HISTORICAL — superseded 2026-05-15)
 supersedes: CLAUDE.md FAZA 2B 2026-05-11 (Karpathy adaptare superficială — entire folders treated as wiki layer fără actual wiki/ folder)
 cross_refs:
   - "[[wiki/_design/WIKI_DESIGN_SPEC_V1]] schema design authority Phase 1 LANDED"

@@ -1,8 +1,16 @@
 ---
-title: Wiki Index — Andura Wiki Catalog
+title: Wiki Index — Andura Wiki Catalog (FROZEN 2026-05-15)
 type: index
-status: live
-last_updated: 2026-05-15-chat-current-followup
+status: FROZEN
+frozen_date: 2026-05-15
+ssot_post_freeze: ../DECISIONS.md
+reglaj_authority: Daniel CEO directive 2026-05-15 chat reglare — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
+note: |
+  Wiki layer FROZEN post 2026-05-15 — read-only arhivă imutabilă context istoric.
+  Toate decizii noi → DECISIONS.md root append-only SSOT.
+  Wiki references valid pentru lookup istoric, NU pentru citation current claims.
+  Karpathy 4 principii core philosophy: [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+last_updated: 2026-05-15-FREEZE
 total_pages: 146
 ---
 
