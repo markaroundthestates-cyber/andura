@@ -25,7 +25,7 @@ last_updated: 2026-05-15-FREEZE
 
 **Karpathy guidelines applied per [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4:** Surgical Changes (ZERO touch wiki content existing) + Simplicity First (single SSOT vs 6-source duplicate) + Think Before Coding (schema authority concern surfaced + Daniel chose Update CLAUDE.md cu FREEZE notice) + Goal-Driven Execution (verifiable §6 grep counts + tests preserved + commit hash + tag pushed).
 
-**Cross-refs:** [[../DECISIONS]] root SSOT singular | [[../07-meta/karpathy-skills-ref/CLAUDE.md]] 4 principii core philosophy | [[../CLAUDE]] (SUPERSEDED 2026-05-15 historical reference) | [[../USER_PREFERENCES_V4]] Claude.ai UI custom instructions | [[../PROJECT_INSTRUCTIONS_V5]] Claude.ai project custom instructions
+**Cross-refs:** [[../DECISIONS]] root SSOT singular | [[../07-meta/karpathy-skills-ref/CLAUDE.md]] 4 principii core philosophy | [[../CLAUDE]] (SUPERSEDED 2026-05-15 historical reference) | USER_PREFERENCES V4 + PROJECT_INSTRUCTIONS V5 = Claude.ai UI Settings paste content (NU vault files — see DECISIONS.md §D002 + §D003)
 
 ---
 

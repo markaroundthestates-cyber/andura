@@ -1,3 +1,9 @@
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. Historical Faza 3 reference only.**
+>
+> Operational schema below SUPERSEDED 2026-05-15 — current SSOT is `DECISIONS.md` root §D001. §F3.1-§F3.13 DEPRECATED post-reglaj (wiki/ workflow). Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Body preserved as historical reference only.
+
+---
+
 # VAULT RULES — Andura
 
 **Owner:** Daniel (CEO + Product). Claude chat = generator. Opus = igienizator.
@@ -1131,9 +1137,12 @@ ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust
 
 ---
 
-## §FAZA_3_KARPATHY_REAL — Karpathy Option B Real Implementation (LOCK V1 2026-05-11)
+## §FAZA_3_KARPATHY_REAL — Karpathy Option B Real Implementation (LOCK V1 2026-05-11) — DEPRECATED 2026-05-15
 
-**Status:** LOCKED V1 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 3 (vault meta-tooling, NU product/architecture additive).
+> **🟡 §F3.1-§F3.13 DEPRECATED 2026-05-15 post-reglaj DECISIONS.md SSOT migration.**
+> Wiki/ workflow superseded by `DECISIONS.md` root SSOT singular append-only per Daniel CEO directive 2026-05-15 reglaj — *"Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover"*. §F3.* operational protocols preserved historical reference doar. Active workflow post-2026-05-15: append entries la `DECISIONS.md` root. Wiki/ FROZEN imutabilă. Cross-link [[../DECISIONS#D001]] + [[../07-meta/karpathy-skills-ref/CLAUDE]] §1-§4 Karpathy 4 principii core philosophy.
+
+**Status:** LOCKED V1 2026-05-11 chat ACASĂ Co-CTO autonomous Faza 3 (vault meta-tooling, NU product/architecture additive). **DEPRECATED 2026-05-15 post-reglaj DECISIONS.md SSOT — historical reference only.**
 **Authority:** Daniel CEO Option B select 2026-05-11 post Karpathy gist re-read + graph view orphan screenshot scope realignment. Schema primary authority [[CLAUDE]] §1-§7 vault root LANDED Phase 2. Wiki design spec [[wiki/_design/WIKI_DESIGN_SPEC_V1]] Phase 1.
 **Supersedes:** §HANDOVER_PROTOCOL + §CHAT_CONTINUITY_PROTOCOL §CC.2-§CC.6 + §KARPATHY_OPERATIONS Faza 2B (all marked DEPRECATED/SUPERSEDED above).
 
@@ -1266,7 +1275,10 @@ Per [[📥_inbox/PROMPT_CC_FAZA_3_KARPATHY_OPTION_B]] §3 Phase 4 + §4 Acceptan
 
 ---
 
-## §F3.13 — Metoda Hibridă Chat ↔ CC Terminal LOCKED V1 2026-05-12 (Partial Supersede Autonomy V1 "ZERO Daniel Courier")
+## §F3.13 — Metoda Hibridă Chat ↔ CC Terminal LOCKED V1 2026-05-12 (Partial Supersede Autonomy V1 "ZERO Daniel Courier") — DEPRECATED 2026-05-15
+
+> **🟡 §F3.13 DEPRECATED 2026-05-15 post-reglaj DECISIONS.md SSOT migration.**
+> Metoda hibridă operational pattern preserved as historical reference. Active workflow post-2026-05-15 = DECISIONS.md append-only per Daniel CEO directive reglaj. Cross-link [[../DECISIONS#D006]] handover format compact + [[../DECISIONS#D001]] SSOT singular.
 
 **Status:** LOCKED V1 2026-05-12 chat ACASĂ Co-CTO autonomous post BATCH 2 Antrenor port closure milestone LANDED (vault meta-tooling + paradigm capture, NU product/architecture additive). Cumulative ~742 PRESERVED unchanged.
 

@@ -24,6 +24,12 @@ amendments:
     note: FAZA 3 Phase 2 — Karpathy real rewrite Option B + voice preservation policy §1 MANDATORY per wiki page + 3 operations adapted Andura cu wiki/ pure folder authority
 ---
 
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. Historical Faza 3 reference only.**
+>
+> Schema body below SUPERSEDED 2026-05-15 — current SSOT is `DECISIONS.md` root §D001. Wiki/ FROZEN imutabilă. Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Body preserved as historical reference only.
+
+---
+
 # CLAUDE.md — Andura Vault Schema (Karpathy Option B Real)
 
 **Owner:** Daniel (CEO + Product) + Claude (Co-CTO autonomous chat strategic + claude_code agent via MCP filesystem direct).
