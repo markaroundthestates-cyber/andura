@@ -9,9 +9,20 @@ import { getTodayExercises, getExGroup, resetNotes } from './util.js';
 import { state } from '../../state.js';
 import { saveDraft, endSession, updateSessionProgress } from './session.js';
 import { evaluateAggressiveLoading, categorizeExercise } from '../../engine/aggressiveLoadingThreshold.js';
-import { computeEngineTier } from '../../engine/calibrationReconciliation.js';
+import { computeEngineTier, computeEngineTierWithAccelerated } from '../../engine/calibrationReconciliation.js';
 import { getExerciseMetadata } from '../../schema/exerciseMetadata.js';
 import { showAggressiveLoadingModal } from './aggressiveLoadingModal.js';
+import { applyAcceleratedLearningUpgrade, readAggressiveLoadingLog } from '../../engine/acceleratedLearningAdapter.js';
+
+// Compose pipeline: DP.recommend → AA.applyTo → applyAcceleratedLearningUpgrade.
+// Wraps the user-facing recommendation surface (updateExCard, confirmReps,
+// editSessionKg, adjSessionKg, confirmSessionKg). Pure-function chain — side
+// effects (DB read) encapsulated at the I/O boundary helper.
+function _recommendForUser(exerciseName) {
+  const rec = AA.applyTo(DP.recommend(exerciseName), exerciseName);
+  const cdlEntries = readAggressiveLoadingLog(DB);
+  return applyAcceleratedLearningUpgrade(rec, exerciseName, cdlEntries, DP);
+}
 
 const AGGRESSIVE_LOADING_LOG_KEY = 'aggressive-loading-log';
 const AGGRESSIVE_LOADING_LOG_WINDOW = 200;
@@ -65,7 +76,7 @@ function _enrichAggressiveLoadingEntry(exerciseName, { repsAchieved, targetReps,
 
 export function updateExCard() {
   if (!state.currentEx) return;
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const totalSets = EX_SETS[state.currentEx] || 3;
   const tempo = SYS.getTempo(state.currentEx);
   const techniques = SYS.getTechniques(state.currentEx, state.currentSet, totalSets);
@@ -143,7 +154,7 @@ export function confirmReps(skipped = false) {
   state.lastPauseEndedAt = null;
   const ri = $('rpe-inline'); if (ri) ri.style.display = 'none';
 
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const totalSets = EX_SETS[state.currentEx] || 3;
 
   const rpe = skipped ? undefined : state.lastSetRPE;
@@ -240,7 +251,7 @@ export function renderSessLog() {
 }
 
 export function editSessionKg() {
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const startKg = state.sessionKgOverride !== null ? state.sessionKgOverride : (rec.kg || 20);
   const step = DP.getIncrement(state.currentEx);
   window._kgOvVal = startKg;
@@ -276,10 +287,11 @@ export async function confirmSessionKg() {
   const kg = window._kgOvVal;
   if (!kg || kg <= 0) return;
   const rounded = DP.roundToStep(kg, state.currentEx);
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const recommendedKg = rec?.kg ?? 0;
 
-  const tier = computeEngineTier(_countDistinctSessionDates());
+  const cdlEntries = readAggressiveLoadingLog(DB);
+  const tier = computeEngineTierWithAccelerated(_countDistinctSessionDates(), cdlEntries);
   const meta = getExerciseMetadata(state.currentEx);
   const category = categorizeExercise(meta);
   const evalResult = evaluateAggressiveLoading(recommendedKg, rounded, tier, category);

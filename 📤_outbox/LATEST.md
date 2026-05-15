@@ -1,242 +1,231 @@
-# LATEST — LOCK 9 Aggressive Loading Tier-Aware Warning LANDED
+# LATEST — LOCK 9 LOOP CLOSE: Accelerated Learning Wired Into Engine
 
-**Task:** LOCK 9 Aggressive Loading Tier-Aware Warning Implementation Co-CTO autonomous (ADR_BIAS_DETECTION_OBSERVABLE §EXT-2)
+**Task:** Close LOCK 9 loop — wire `detectAcceleratedLearningTrigger` + `detectT0ToT1AdvanceTrigger` into engine recommendation baseline + tier advance
 **Model:** 🔴 Opus (zero Sonnet exceptions)
 **Status:** Complete
 **Branch:** `feature/v2-vanilla-port`
 **Date:** 2026-05-15
-**Backup tag:** `pre-lock-9-aggressive-loading-tier-aware-warning-2026-05-15` pushed origin
+**Backup tag:** `pre-lock-9-loop-close-accelerated-learning-engine-wire-2026-05-15` pushed origin
 
 ---
 
-## §0 Pre-flight grep evidence inline (§AR.20 + §AR.21 mandatory)
+## §0 Pre-flight grep evidence inline
 
 ```
-=== §AR.20 verify daniel-isms LOCK V1 source authority concept page ===
-4  (≥3 expected — PASS)
+=== Predecessor LOCK 9 detection files (all exist — PASS) ===
+src/engine/aggressiveLoadingThreshold.js
+src/engine/acceleratedLearning.js
+src/engine/__tests__/aggressiveLoadingThreshold.test.js
+src/engine/__tests__/acceleratedLearning.test.js
+src/pages/coach/aggressiveLoadingModal.js
+src/pages/coach/__tests__/aggressiveLoadingModal.test.js
+src/pages/coach/__tests__/confirmSessionKg.aggressiveLoading.test.js
 
-=== §AR.21 verify cross-links ADR 013 + ADR 009 + ADR 003 + ADR 011 + ADR 017 raw layer ===
-03-decisions/003-double-progression-engine.md         (exists)
-03-decisions/009-calibration-tiers.md                  (exists)
-03-decisions/011-coach-decision-log-architecture.md    (exists)
-03-decisions/013-auto-aggression-detection.md          (exists)
-03-decisions/017-demographic-prior-database.md         (exists)
-ALL 5 files exist — PASS
+=== CDL log key wired in logging.js ===
+1 const reference (AGGRESSIVE_LOADING_LOG_KEY) — write at confirmSessionKg + enrichment at confirmReps
 
-=== Force-typing ELIMINATED PERMANENT ADR 013 §AMENDMENT 2026-04-30 ===
-4  (≥2 expected — PASS, invariant preserved)
+=== DP.recommend definition ===
+src/engine/dp.js:141  recommend(ex) { ... }
+src/engine/dp.js:329  const base = this.recommend(ex);  (internal use in microload)
 
-=== Convergence Guard T2 Unlock ADR 009 §AMENDMENT 2026-05-05 ===
-8  (≥2 expected — PASS, invariant preserved)
+=== AA.applyTo location ===
+src/engine/aa.js:150  applyTo(rec, ex) { ... }
 
-=== Existing infrastructure files (all exist) ===
-src/engine/autoAggressionDetection.js
-src/engine/calibration.js
-src/engine/calibrationReconciliation.js
-src/pages/coach/aaFrictionModal.js
-src/pages/coach/logging.js
-src/pages/coach/painButton.js
-src/pages/coach/session.js
+=== computeEngineTier exports ===
+src/engine/calibrationReconciliation.js:98  export function computeEngineTier(sessionCount)
+src/engine/calibrationReconciliation.js:204  (internal use in reconcile)
 
-=== Schema 657 entries baseline ===
-657 (via regex `^  ['"]\w` — accurate count; prompt's grep pattern returned 654
-    due to slight regex mismatch, NOT a regression)
+=== Schema 657 entries baseline (LOCK 2 Daniel Gates) ===
+657 ✅
 
-=== CDL infrastructure (resolved actual path) ===
-src/util/coachDecisionLog.js          (NOT src/engine/ as prompt assumed)
-
-=== Tests baseline ===
-3525 PASS (176 files) — preserved EXACT pre-execute per LOCK 2 Daniel Gates
+=== Tests baseline pre-execute ===
+3594 PASS (180 files) ✅
 ```
 
 ---
 
-## §A Audit findings (existing surface mapped)
+## §A Audit findings + architectural choice rationale
 
-**Weight edit UI surface — `src/pages/coach/logging.js`:**
-- `editSessionKg()` (line 186) opens overlay with +/- buttons
-- `adjSessionKg(delta)` (line 213) adjusts displayed value
-- **`confirmSessionKg()` (line 219)** — interception point. Reads `window._kgOvVal`, stores to `state.sessionKgOverride` via `DP.roundToStep`. This is where modal triggers.
-- `confirmReps()` (line 116) reads `state.sessionKgOverride` to log final set entry
+**DP.recommend(ex):** `src/engine/dp.js:141`. Returns shape `{kg, repsTarget, rir, status, statusColor, statusLabel, progressionNote, progressionStage}`. Calls `_recommendRaw()` then rounds kg via `roundToStep`.
 
-**Recommendation source:** `AA.applyTo(DP.recommend(state.currentEx), state.currentEx).kg`
+**AA.applyTo(rec, ex):** `src/engine/aa.js:150`. Wraps DP output with auto-adjust (HOLD/DECREASE/INCREASE/REDUCE_VOLUME). Compose pattern preserved everywhere: `AA.applyTo(DP.recommend(ex), ex)`.
 
-**Tier read:** `computeEngineTier(sessionCount)` at `src/engine/calibrationReconciliation.js:98` — returns `'T0' | 'T1' | 'T2'`. Engine model has 3 tiers (T0=0-4, T1=5-20, T2=21+ sessions). Spec's T3 collapses to T2 (same threshold per spec).
+**DP.recommend + AA.applyTo call sites (6 total):**
+- `src/pages/coach/logging.js:79, 157, 254, 290` — user-facing (4×): updateExCard, confirmReps, editSessionKg, confirmSessionKg
+- `src/pages/coach/renderIdle.js:292` — Today screen preview (display-only)
+- `src/pages/coach/workout.js:53` — workout summary (display-only)
+- `src/pages/coach/restTimer.js:77` — next-exercise preview (DP only, no AA)
 
-**Session count:** distinct dates in `DB.get('logs')` (per `getAllLogs` pattern in `coachContext.js:149`).
+**computeEngineTier callers:** `logging.js:282` (user-facing in confirmSessionKg) + internal `reconcile()` at `calibrationReconciliation.js:204`.
 
-**Exercise category:** `EXERCISE_METADATA[ex].tier` (1=forta/compound, 2=hipertrofie, 3=accesoriu/isolation). Mapping: tier 1 → compound; tier 2/3 → isolation.
+**Architectural choice (Option B compose preserved):**
+- NEW pure-function adapter `applyAcceleratedLearningUpgrade` as **third layer wrapper** in the compose pipeline: `DP.recommend → AA.applyTo → applyAcceleratedLearningUpgrade`.
+- Wire only the **4 user-facing logging.js sites** via NEW local helper `_recommendForUser(ex)` (single import + replace). Leave renderIdle/workout/restTimer untouched (display-only, baseline acceptable, reduces blast radius).
+- Pure-function `computeEngineTierWithAccelerated` added to `calibrationReconciliation.js` (alongside baseline). Wire at `confirmSessionKg` tier read; leave internal `reconcile()` on baseline (deterministic sync algorithm needs unconditional tier).
 
-**CDL log infrastructure:** `src/util/coachDecisionLog.js` uses per-day `writeProposed` + `populateOutcome` (NOT generic `appendCDLEntry`). Pain Button precedent at `painButton.js:131` uses dedicated DB key `'pain-button-log'` pattern — chosen as cleaner architectural fit for set-level events than CDL `ext` extension.
-
-**Modal pattern reference:** `aaFrictionModal.js` + `painButton.js` — overlay full-screen + 1-tap button override (NO forced typing, ADR 013 §AMENDMENT invariant preserved).
+**Rationale:**
+- Preserves AA.applyTo signature unchanged (no breaking change to 6 callers).
+- DP.recommend stays a "pure" engine layer — does NOT become CDL-coupled.
+- Forensic flags `_acceleratedLearningApplied / _originalKg / _upgradePct / _samplesUsed` ride on the recommendation object — ADR 011 §append-only audit trail invariant.
+- Display-only sites unaffected — minimum-surface Bugatti craft.
 
 ---
 
-## §B `src/engine/aggressiveLoadingThreshold.js` NEW + tests
+## §B `acceleratedLearningAdapter.js` NEW + tests + DP pipeline wiring
 
-**Pure-function module — ADR 026 §9 invariant (NO Date.now / Math.random / mutation).**
+**Module:** `src/engine/acceleratedLearningAdapter.js` (NEW, 64 LOC)
 
 Exports:
-- `AGGRESSIVE_LOADING_THRESHOLDS` (frozen) — matrix T0/T1/T2/T3 × compound/isolation
-  - T0: compound +50% / isolation +100%
-  - T1: compound +30% / isolation +75%
-  - T2: compound +20% / isolation +50%
-  - T3: collapses to T2 thresholds (alias)
-- `getThresholdForTierAndCategory(tier, category)` — unknown tier → T2 conservative fallback; unknown category → compound conservative fallback
-- `categorizeExercise(metadata)` — schema tier 1 → compound; tier 2/3 → isolation; orphan/null → isolation fallback
-- `evaluateAggressiveLoading(recommendedKg, actualKg, tier, category)` — returns `{isAggressive, deviationPct, threshold}`; edge cases (≤0, NaN) safe
+- `applyAcceleratedLearningUpgrade(recommendation, exerciseName, cdlEntries, dpEngine)` — pure wrapper, returns recommendation unchanged when no trigger; upgraded with forensic flags when 2+ legitimate overrides detected for `exerciseName`. Idempotent (ADR 018 §2). NO mutation (immutability via `{...recommendation, ...overrides}`).
+- `readAggressiveLoadingLog(db)` — I/O boundary helper; defensive against null db, missing `.get`, throws, non-array, null returns.
 
-**Tests:** `src/engine/__tests__/aggressiveLoadingThreshold.test.js` — **26 tests PASS**.
-
----
-
-## §C `src/pages/coach/aggressiveLoadingModal.js` NEW + tests
-
-**Modal pre-set tier-aware wording + override 1-tap. Romanian no-diacritics.**
-
-Exports:
-- `getWordingForTier(tier, {actualKg, recommendedKg, deviationPct})` — placeholder substitution
-- `showAggressiveLoadingModal({...})` — returns Promise<{action, source}>; action ∈ `'continue' | 'revert'`
-
-Wording per spec wiki:
-- **T0/T1:** "Suntem inca in calibrare — recomandarea poate fi conservativa vs realitatea ta. Ai introdus {actualKg} kg. Confirma greutatea cu care te simti pregatit."
-- **T2/T3:** "Ai introdus {actualKg} kg. Recomandarea pentru azi era {recommendedKg} kg (+{deviationPct}%). Confirma daca te simti pregatit sau revino la baseline."
-
-**Hard rules verified by tests:**
-- ZERO diacritics ș/ț/ă/â/î (Romanian-first LOCK V1 PERMANENT 2026-05-10)
-- ZERO input fields / textareas in DOM (force-typing ELIMINATED PERMANENT ADR 013 §AMENDMENT)
-- XSS escape on exerciseName
-- Single in-flight modal (second invocation removes prior)
-
-**Tests:** `src/pages/coach/__tests__/aggressiveLoadingModal.test.js` — **14 tests PASS**.
-
----
-
-## §D CDL log integration `src/pages/coach/logging.js` + tests
-
-**Modified `confirmSessionKg()` to async** — evaluates aggressive loading, shows modal, logs to dedicated DB key `'aggressive-loading-log'` (window 200 entries).
-
-CDL payload at edit-time (pre-set):
-```json
-{
-  "type": "user_override_weight_high" | "user_override_weight_high_reverted",
-  "date": "YYYY-MM-DD",
-  "ts": <number>,
-  "exerciseName": "<name>",
-  "recommended": <kg>,
-  "actual": <kg>,
-  "deviation_pct": <number>,
-  "tier": "T0|T1|T2",
-  "category": "compound|isolation"
+**Wired into:** `src/pages/coach/logging.js` via local helper `_recommendForUser(exerciseName)`:
+```javascript
+function _recommendForUser(exerciseName) {
+  const rec = AA.applyTo(DP.recommend(exerciseName), exerciseName);
+  const cdlEntries = readAggressiveLoadingLog(DB);
+  return applyAcceleratedLearningUpgrade(rec, exerciseName, cdlEntries, DP);
 }
 ```
 
-**Enrichment at confirmReps end-of-set** — `_enrichAggressiveLoadingEntry` patches the most recent unmarked entry for `currentEx` from this session with `{repsAchieved, targetReps, RPE}`. This pairs override moment (edit-time) with outcome (post-set) for accelerated learning consumption.
+Applied at 4 user-facing sites: `updateExCard`, `confirmReps`, `editSessionKg`, `confirmSessionKg`.
 
-**Tests:** `src/pages/coach/__tests__/confirmSessionKg.aggressiveLoading.test.js` — **13 tests PASS** (non-aggressive path no-modal/no-log; aggressive path continue/revert/CDL; tier T0/T1/T2 verified; enrichment verified).
-
----
-
-## §E `src/engine/acceleratedLearning.js` NEW + tests
-
-**Pure-function module — consumes enriched CDL entries.**
-
-Exports:
-- `detectAcceleratedLearningTrigger(entries, exerciseName)` — returns `{shouldUpgradeBaseline, upgradedDeviationPct, samplesUsed}`. Engine upgrades baseline by avg deviation when 2 consecutive legitimate overrides (repsAchieved===targetReps AND RPE≤8) for same exercise.
-- `detectT0ToT1AdvanceTrigger(entries)` — returns `{shouldAdvance, distinctExercisesWithPattern}`. Calibration tier advance accelerated when pattern persists across 3+ distinct exercises.
-
-Filtering criteria:
-- `type === 'user_override_weight_high'` (reverted excluded)
-- `repsAchieved === targetReps` (full target hit)
-- `RPE <= 8` (acceptable effort, not grind)
-
-Integration anchor: cross-link ADR 009 Convergence Guard T2 Unlock §AMENDMENT 2026-05-05 + ADR 003 Double Progression increment-per-session — Aggressive Loading override is INPUT signal for existing infrastructure, NU engine separat.
-
-**Tests:** `src/engine/__tests__/acceleratedLearning.test.js` — **16 tests PASS** (upgrade trigger 2-session pattern; reps/RPE filter; exercise isolation; reverted-entries excluded; T0→T1 advance 3-distinct-exercise threshold; null-safety; purity verified).
+**Tests:**
+- `src/engine/__tests__/acceleratedLearningAdapter.test.js` — **23 tests PASS**
+  - No-trigger paths (null rec, kg=0, empty CDL, 1-entry only, different exercise)
+  - Upgrade-applied paths (2 legit overrides → upgraded by avg deviation; forensic flags; roundToStep; null dpEngine fallback; shape passthrough; immutability; idempotency)
+  - I/O boundary helper (null db, throws, non-array, null, correct key)
+- `src/engine/__tests__/dp.recommend.acceleratedLearning.test.js` — **8 end-to-end PASS**
+  - Real DP + AA + adapter against real schema (Flat Barbell Bench)
+  - No-CDL → baseline unchanged
+  - 1-entry only → no upgrade
+  - Different exercise → no upgrade
+  - 2 legit → upgrade with correct deviation% + roundToStep
+  - Idempotency end-to-end
+  - Reverted entries excluded
+  - High-RPE (>8) excluded (anti-paternalism preserved)
 
 ---
 
-## §F Tests baseline 3525 → 3594 PASS evidence + ZERO regression
+## §C `computeEngineTierWithAccelerated` NEW + tests
 
-```
-Test Files  180 passed (180)
-     Tests  3594 passed (3594)
-   Start at  17:37:35
-   Duration  32.13s
+**Modified:** `src/engine/calibrationReconciliation.js` — added pure-function export alongside baseline `computeEngineTier`:
+
+```javascript
+export function computeEngineTierWithAccelerated(sessionCount, cdlEntries) {
+  const baselineTier = computeEngineTier(sessionCount);
+  if (baselineTier !== 'T0') return baselineTier;
+  const advance = _detectT0ToT1AdvanceFromLog(cdlEntries);
+  return advance ? 'T1' : 'T0';
+}
 ```
 
-Delta: **+69 NEW tests** (26 threshold + 14 modal + 13 session-integration + 16 accelerated-learning). All pre-existing 3525 tests preserved EXACT — ZERO regression.
+Scope: T0→T1 only (per spec). T1→T2 governed by ADR 009 §AMENDMENT 2026-05-05 Convergence Guard "T2 Unlock" mechanism — separate concern, not bumped here.
 
-**HARD CONSTRAINTS §F3.12 verified:**
-- ✅ Schema 657 entries preserved invariant (657 via accurate regex `^  ['"]\w`)
-- ✅ ZERO src/ touched outside scope (only files listed §B-§E + handler modification §D)
-- ✅ Force-typing ELIMINATED PERMANENT preserved (4 matches in ADR 013, modal tests verify zero input/textarea in DOM)
-- ✅ Pure-function paradigm ADR 026 §9 — engine modules NO Date.now / Math.random / mutation
-- ✅ Romanian-first no-diacritics LOCK V1 PERMANENT — modal test regex `/[șțăâîȘȚĂÂÎ]/` zero matches
-- ✅ Voice preservation policy §1 wiki concept page unchanged (zero edits)
-- ✅ ADR 013 / 009 cross-link invariants preserved (force-typing + Convergence Guard counts preserved)
+**Wired into:** `confirmSessionKg` at `logging.js` — tier read for aggressive loading evaluation:
+```javascript
+const cdlEntries = readAggressiveLoadingLog(DB);
+const tier = computeEngineTierWithAccelerated(_countDistinctSessionDates(), cdlEntries);
+```
 
----
+Leaves internal `reconcile()` on baseline `computeEngineTier` (sync algorithm must be deterministic + monotonic — accelerated logic doesn't apply there).
 
-## §G Files added/modified (atomic scope §F3.12 strict)
-
-**NEW (5 files):**
-- `src/engine/aggressiveLoadingThreshold.js`
-- `src/engine/__tests__/aggressiveLoadingThreshold.test.js`
-- `src/engine/acceleratedLearning.js`
-- `src/engine/__tests__/acceleratedLearning.test.js`
-- `src/pages/coach/aggressiveLoadingModal.js`
-- `src/pages/coach/__tests__/aggressiveLoadingModal.test.js`
-- `src/pages/coach/__tests__/confirmSessionKg.aggressiveLoading.test.js`
-
-**MODIFIED (1 file):**
-- `src/pages/coach/logging.js` — imports + `confirmSessionKg` async aggressive-loading flow + `confirmReps` enrichment hook
+**Tests:** `src/engine/__tests__/calibrationReconciliation.acceleratedTier.test.js` — **14 tests PASS**
+- Baseline pass-through (sessionCount 0/5/21/1000 + null/undefined/NaN handling)
+- Accelerated T0→T1 trigger (3+ distinct exercises with legitimate pattern)
+- Below-threshold trigger (2 distinct exercises only → stays T0)
+- Pre-natural-advance threshold (sessionCount=4 + trigger → T1 accelerated)
+- T1+ NEVER accelerated to T2 (spec scope)
+- T2 NEVER downgraded (monotonic invariant)
+- Purity (idempotency, no mutation, baseline unchanged behavior)
 
 ---
 
-## §H Backup tag pre-execute pushed origin verify
+## §D Tests baseline 3594 → 3639 PASS + ZERO regression evidence
 
 ```
-git tag pre-lock-9-aggressive-loading-tier-aware-warning-2026-05-15
-git push origin pre-lock-9-aggressive-loading-tier-aware-warning-2026-05-15
+Test Files  183 passed (183)
+     Tests  3639 passed (3639)
+   Start at  17:55:05
+   Duration  33.13s
+```
+
+Delta: **+45 NEW tests** (23 adapter + 14 tier + 8 end-to-end). All pre-existing 3594 tests preserved EXACT — ZERO regression.
+
+---
+
+## §E Commits + push origin
+
+**Atomic commit single-concern (pre-commit hook gate green, NO `--no-verify` bypass).**
+
+Files staged:
+- NEW: `src/engine/acceleratedLearningAdapter.js`
+- NEW: `src/engine/__tests__/acceleratedLearningAdapter.test.js`
+- NEW: `src/engine/__tests__/dp.recommend.acceleratedLearning.test.js`
+- NEW: `src/engine/__tests__/calibrationReconciliation.acceleratedTier.test.js`
+- MODIFIED: `src/engine/calibrationReconciliation.js` (added `computeEngineTierWithAccelerated` + import)
+- MODIFIED: `src/pages/coach/logging.js` (added `_recommendForUser` helper + 4 site replacements + accelerated tier read in confirmSessionKg)
+- MOVE: `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/516_LATEST_PREVIOUS_LOCK_9_AGGRESSIVE_LOADING_DETECTION_LANDED_CONSUMED.md`
+- NEW: `📤_outbox/LATEST.md` (this file)
+
+---
+
+## §F Backup tag pre-execute verify
+
+```
+git tag pre-lock-9-loop-close-accelerated-learning-engine-wire-2026-05-15
+git push origin pre-lock-9-loop-close-accelerated-learning-engine-wire-2026-05-15
 → [new tag] pushed
 ```
 
-Rollback insurance ready: `git reset --hard pre-lock-9-aggressive-loading-tier-aware-warning-2026-05-15`.
+Rollback: `git reset --hard pre-lock-9-loop-close-accelerated-learning-engine-wire-2026-05-15`.
 
 ---
 
-## §I Issues encountered + recovery actions
+## §G HARD CONSTRAINTS §F3.12 verification
 
-**Issue 1: Schema entry count discrepancy.** Pre-flight grep `^  '` returned 654, expected 657. Investigation: regex pattern mismatch (single-quote-only vs single-or-double-quote). Accurate count via `^  ['\"]\w` regex = 657 — preserved invariant. NO regression, prompt's grep pattern was slightly off.
-
-**Issue 2: CDL infrastructure path different from prompt.** Prompt expected `src/engine/coachDecisionLog.js`. Actual: `src/util/coachDecisionLog.js`. Resolution: located via find + Pain Button precedent — chose dedicated DB key pattern (`'aggressive-loading-log'`) consistent with `painButton.js` `'pain-button-log'` model, cleaner than CDL `ext` extension.
-
-**Issue 3: Engine tier model has T0/T1/T2 (not T0/T1/T2/T3).** Wiki concept spec describes T0/T1/T2/T3 conceptually but `calibrationReconciliation.js` engine uses 3-tier model. Resolution: implemented matrix with T3 as alias collapsing to T2 thresholds (same per spec "T2/T3 mature 90+ zile mature"). Modal wording accepts both T2 and T3.
-
-**Issue 4: CDL payload spec includes `repsAchieved` + `RPE` not known at weight-edit time.** Override moment is BEFORE set execution; reps/RPE come AFTER. Resolution: two-stage logging — partial entry written at `confirmSessionKg` (pre-set), enriched at `confirmReps` (post-set) via `_enrichAggressiveLoadingEntry`. Accelerated learning module filters only fully-enriched entries.
-
-**Issue 5: First categorizeExercise test failure.** Initial implementation collapsed threshold-fallback and categorization-fallback to same constant ('compound'). Test expected 'isolation' fallback for null metadata. Resolution: separated `FALLBACK_CATEGORY` (compound — stricter threshold safer) from `CATEGORIZE_FALLBACK` (isolation — orphan/free-text exercises are typically accessories). Cleaner semantics, tests green.
-
----
-
-## §J Next action recommendation
-
-**P2 LOCK 10 candidate options:**
-
-1. **ADR 033 MMI promote** — extract behavioral pattern signals to unified MMI (Multi-Modal Intelligence) infrastructure; cross-link Volume Creep + Auto-pedeapsă + Aggressive Loading 3 patterns observable behavioral safety V1.
-
-2. **F5 AA-Friction Modal UX iteration** — review aaFrictionModal copy + visual hierarchy per Bugatti craft + Gigel test paradigm (currently uses `🟠` + signal-count copy; possible iteration to neutral observable pattern per ADR 013 §AMENDMENT 2026-04-30 anti-RE design).
-
-3. **Wire `detectAcceleratedLearningTrigger` into `dp.js` / `aa.js` engines** — currently the accelerated learning module is pure-function ready, but no engine reads its signals yet. Next phase: integrate into `DP.recommend()` baseline computation to actually upgrade kg recommendation when pattern detected.
-
-4. **Pre-Beta core scope LOCK 1 directive next item** — per [[wiki/concepts/pre-beta-full-scope-lock-v2]] check remaining locks ahead of beta launch a-z review.
-
-Recommendation: **#3 (wire accelerated learning into engine)** — completes the LOCK 9 loop end-to-end ("engine I'm wrong se vindeca in 2-3 sesiuni NU user paternal stuck"). Pure-function module already exists + tested; integration is single-edit at `DP.recommend()` baseline computation path. Per anti-paternalism Bugatti craft principle — without engine consumption, user override never propagates back into recommendation, so the "self-healing engine" promise stays paper.
-
-Alternatively, return to Daniel for explicit chat-dedicated strategic decision per §AR.26 strategic-vs-tactical (engine baseline mutation is borderline strategic — touches recommendation contract).
+- ✅ **Schema 657 entries preserved invariant** (LOCK 2 Daniel Gates 100% gate)
+- ✅ **ZERO src/ touched outside scope** — only `src/engine/calibrationReconciliation.js` (added function, no break) + `src/pages/coach/logging.js` (4 site swap + 1 tier read + 1 helper added)
+- ✅ **ZERO `--no-verify` bypass** — pre-commit hook ran 3639 tests green
+- ✅ **ZERO Big 11 engine layer mutation** (C4.1-C4.8 preserved invariant)
+- ✅ **Pure-function paradigm ADR 026 §9** — adapter NO Date.now / Math.random / mutation; DB read encapsulated at I/O boundary helper `readAggressiveLoadingLog`
+- ✅ **Forensic transparency ADR 011 §append-only** — `_acceleratedLearningApplied` + `_originalKg` + `_upgradePct` + `_samplesUsed` preserve audit trail on every upgrade
+- ✅ **Anti-paternalism ABSOLUTE preserved** — engine "I'm wrong" self-heals when user pattern proves baseline conservative; user override never blocked; reverted entries + high-RPE (>8) excluded from upgrade (prevents reinforcing grind/injury patterns)
+- ✅ **Idempotency invariant ADR 018 §2** — verified by test: same (rec, ex, cdlEntries) → same (kg, _upgradePct)
+- ✅ **Force-typing ELIMINATED PERMANENT (ADR 013 §AMENDMENT 2026-04-30)** — preserved invariant (4 matches)
+- ✅ **Voice preservation policy §1 wiki concept page** — zero edits
 
 ---
 
-🦫 **Bugatti craft. LOCK 9 Aggressive Loading Tier-Aware Warning LANDED. Anti-paternalism preserved invariant ABSOLUTE. Force-typing ELIMINATED PERMANENT invariant ADR 013. Pure-function paradigm ADR 026 §9 invariant. Tests baseline 3525 → 3594 PASS (+69 NEW), ZERO regression. Schema 657 entries preserved invariant. Romanian no-diacritics LOCK V1 PERMANENT verified. Voice preservation policy §1 source wiki concept unchanged. Daniel CEO autonomy MAXIMUM 13th consecutive cross-chat trust delegation preserved.**
+## §H Issues encountered + recovery actions
+
+**Issue 1: Static import vs lazy import for accelerated detector in calibrationReconciliation.js.**
+Initial concern about circular dependency between `calibrationReconciliation.js` (depended on by many) and `acceleratedLearning.js`. Investigation: `acceleratedLearning.js` is a pure leaf module (no DB read, no other engine imports). Static import safe. Internal helper `_detectT0ToT1AdvanceFromLog` isolates the import for testability/clarity. NO recovery action needed — clean wiring.
+
+**Issue 2: Test ordering — confirmSessionKg integration tests failed mid-flight.**
+After wiring `_recommendForUser` + accelerated tier read into `confirmSessionKg` but BEFORE adding `computeEngineTierWithAccelerated` export, the existing integration tests failed with `computeEngineTierWithAccelerated is not a function`. Expected — fixed by completing §C immediately. Tests went 12-failed → 13-pass once export landed. Verified before commit.
+
+**Issue 3: Compose pattern preservation — chose Option B over A.**
+Option A (modify DP.recommend internally to read CDL) would have required all 6 sites get the upgrade automatically, but couples DP to CDL log storage (breaking layer boundary). Option B (third wrapper layer) keeps DP pure + allows surgical opt-in at user-facing sites only. Display-only sites (`renderIdle`, `workout`, `restTimer`) stay on baseline — reduces unnecessary risk and surface.
+
+---
+
+## §I Next action recommendation
+
+**LOCK 9 LOOP NOW END-TO-END COMPLETE pre-Beta scope.** Engine reads user-override pattern → upgrades baseline recommendation → upgraded baseline shown in UI → user sees stronger kg without re-overriding manually. "Engine I'm wrong se vindeca in 2-3 sesiuni" promise FULFILLED.
+
+**P3 LOCK 10 candidate options (in priority order Co-CTO autonomous read):**
+
+1. **LOCK 10 ADR 033 MMI promote** — unify 3 patterns observable behavioral safety V1 (Volume Creep §36.18 + Auto-pedeapsă §36.19 + Aggressive Loading §EXT-2) into Multi-Modal Intelligence infrastructure. Strategic value high but borderline §AR.26 — recommend chat-dedicated CEO decision NOT tactical CTO autonomous.
+
+2. **LOCK 11 F5 AA-Friction Modal UX iteration** — review `aaFrictionModal.js` copy + visual hierarchy. Currently uses `🟠` + "signal counts" copy from older design; possible iteration to neutral observable per ADR 013 §AMENDMENT 2026-04-30 anti-RE invariant. Pure UX polish, tactical scope.
+
+3. **Sketch wire accelerated learning to remaining display sites** — `renderIdle.js:292`, `workout.js:53` could also use `_recommendForUser` for consistency. Currently on baseline (display-only, acceptable per §A audit). Optional Bugatti craft polish — flag for chat NEW decision dacă Daniel vrea uniformity.
+
+4. **Pre-Beta LOCK directive next item** — per `[[wiki/concepts/pre-beta-full-scope-lock-v2]]` consult remaining locks pre-Beta launch a-z review.
+
+**Recommendation Co-CTO:** **#2 LOCK 11 F5 AA-Friction Modal UX iteration** — purely tactical, anti-RE compliance check, minimum risk, low surface. Sets stage for clean pre-Beta UX audit. Alternatively, signal Daniel chat dedicated explicit decision for LOCK 10 MMI promote (strategic scope §AR.26).
+
+---
+
+🦫 **Bugatti craft. LOCK 9 LOOP END-TO-END COMPLETE. Engine "I'm wrong se vindeca in 2-3 sesiuni" promise FULFILLED — pattern user-override → upgrade baseline → UI surfaces stronger kg → CDL forensic trail preserved (ADR 011 §append-only). Pure-function paradigm ADR 026 §9 invariant. Idempotency ADR 018 §2 invariant. Anti-paternalism ABSOLUTE preserved (reverted/high-RPE entries excluded — no reinforcement of grind/injury patterns). Tests baseline 3594 → 3639 PASS (+45 NEW), ZERO regression. Schema 657 entries preserved invariant. Voice preservation policy §1 source wiki concept unchanged. Daniel CEO autonomy MAXIMUM 14th consecutive cross-chat trust delegation preserved.**
