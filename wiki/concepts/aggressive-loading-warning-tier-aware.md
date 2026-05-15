@@ -14,7 +14,17 @@ cross_refs:
   - "[[../entities/adrs/adr-003-double-progression-engine]]"
   - "[[../entities/adrs/adr-017-demographic-prior-database]]"
   - "[[../summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]]"
-amendments: []
+amendments:
+  - date: 2026-05-15-chat-current-followup
+    type: implementation-landed
+    note: |
+      LOCK 9 implementation LANDED chat-current 2026-05-15 followup double-commit cumulative pre-Beta:
+      - **LOCK 9 Aggressive Loading Tier-Aware Warning DETECTION LANDED** commit `e44137f` — 4 modules NEW pure-function (`src/engine/aggressiveLoadingThreshold.js` + `src/pages/coach/aggressiveLoadingModal.js` + `src/pages/coach/session.js` handler wiring + CDL log `'aggressive-loading-log'` dedicated key Pain Button precedent pattern). Tests 3525 → 3594 PASS (+69 NEW). Architectural choice: Option B compose layer wrap preserve DP pure; ZERO mutation engine detection algorithm; user-override forensic flags 2-stage logging (edit-time + enrichment post-set).
+      - **LOCK 9 LOOP CLOSE Accelerated Learning Wired Into Engine LANDED** commit `892ebca` — closed end-to-end loop "engine I'm wrong se vindeca in 2-3 sesiuni" promise FULFILLED. `src/engine/acceleratedLearningAdapter.js` NEW + `computeEngineTierWithAccelerated` NEW + wired into `_recommendForUser` 4 user-facing sites in `src/pages/coach/logging.js`. Tests 3594 → 3639 PASS (+45 NEW). Compose pipeline: DP → AA → AcceleratedLearning → (MMI later via LOCK 10 LAST chat-current followup).
+      - **Forensic flags catalog `_acceleratedLearningApplied` + `_originalKg` + `_upgradePct` + `_samplesUsed` emit per recommendation object** — audit trail visible pre-execute set per ADR 011 §append-only invariant.
+      - **Compose pipeline order chat-current followup cumulative cross-LOCK:** `DP.recommend → AA.applyTo → applyAcceleratedLearningUpgrade (LOCK 9 LOOP CLOSE) → applyMuscleMemoryUpgrade (LOCK 10 LAST per chat-current followup)`.
+      - **Display-only sites left baseline minimum surface Bugatti:** `renderIdle/workout/restTimer` NU touched — minimum surface principle preserved invariant.
+      - **Backlog wording post-smoke potential review:** `aggressiveLoadingModal.js` wording Romanian no-diacritics pending tactical audit cross-link [[wording-backlog-post-smoke]] entry B4 potential.
 ---
 
 # Aggressive Loading Warning Tier-Aware

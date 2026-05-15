@@ -1,245 +1,232 @@
-# LATEST — LOCK 10 ADR 033 MMI Engine #9 V1 LOCKED LANDED
+# LATEST — /wiki-ingest Handover Chat ACASĂ 2026-05-15 Followup Triple-LANDED LOCK 9 + LOCK 10 + §AR.30 §AR.31 Candidates Scribe-Mode Marked
 
-**Task:** LOCK 10 Engine Muscle Memory Index promote SPEC → V1 LOCKED implementation pre-Beta
-**Model:** 🔴 Opus (zero Sonnet exceptions)
+**Task:** /wiki-ingest autonomous handover narrative distribute → wiki/entities + wiki/concepts + wiki/summaries cu voice preservation §1 4-section + wiki/log.md append + wiki/index.md update + archive `_CONSUMED` + backup tag + atomic commit single-concern + push origin
+**Model:** Opus exclusively
 **Status:** Complete
 **Branch:** `feature/v2-vanilla-port`
-**Date:** 2026-05-15
-**Backup tag:** `pre-lock-10-adr-033-mmi-promote-v1-2026-05-15` pushed origin
+**Date:** 2026-05-15-chat-current-followup
+**Source:** Daniel courier paste inline user message §AR.28 LOCKED V1 ABSOLUTE 2 artefacte separate variant cumulative cross-chat (handover narrative `📥_inbox/HANDOVER_*.md` file + PROMPT_CC inline user message text)
 
 ---
 
-## §0 Pre-flight grep evidence inline
+## §0 Pre-flight grep evidence inline mandatory §AR.20 + §AR.21
 
-```
-=== ADR 033 source SPEC verbatim (§32.1-§32.3) ===
-10 matches Muscle Memory / MMI / Multiplicator / peak_pre_pause — PASS
+```bash
+# Source handover narrative present + ~141 LOC scribe flow:
+$ wc -l "📥_inbox/HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_PLUS_SLIP_PATTERNS.md"
+141  ✓
 
-=== Wiki entity STUB precondition ===
-5 matches stub-spec-placeholder / post-Beta v1.5 — PASS
+# Triple-LANDED commits HEAD~2 / HEAD~1 / HEAD present preserved invariant:
+$ git log --oneline -5
+e6fd974 feat(engine): LOCK 10 ADR 033 MMI Engine #9 promote STUB → V1 LOCKED pre-Beta implementation
+892ebca feat(engine): LOCK 9 LOOP CLOSE — wire accelerated learning into recommendation baseline + tier advance
+e44137f feat(safety): LOCK 9 Aggressive Loading Tier-Aware Warning ADR_BIAS_DETECTION_OBSERVABLE §EXT-2
+cfd1076 feat(vault): /wiki-ingest handover Chat ACASĂ 2026-05-15 chat-current post-evening Triple-LANDED ...
+4f9a9b8 chore(auto): ...
+✓ LOCK 10 + LOCK 9 LOOP CLOSE + LOCK 9 detection commits visible (latest 3)
 
-=== Cross-refs ADRs all exist ===
-03-decisions/009-calibration-tiers.md             ✅
-03-decisions/014-onboarding-profile-typing.md     ✅
-03-decisions/018-engine-extensibility-architecture.md  ✅
-03-decisions/026-offline-coaching-decision-tree-exhaustive.md  ✅
+# Backup tags Triple-LANDED pushed origin verified:
+$ git tag --list "pre-lock-*-2026-05-15"
+pre-lock-10-adr-033-mmi-promote-v1-2026-05-15
+pre-lock-9-aggressive-loading-tier-aware-warning-2026-05-15
+pre-lock-9-loop-close-accelerated-learning-engine-wire-2026-05-15
+✓ 3 backup tags Triple-LANDED preserved invariant
 
-=== LOCK 9 LOOP CLOSE _recommendForUser predecessor ===
-src/pages/coach/logging.js:15  import applyAcceleratedLearningUpgrade
-src/pages/coach/logging.js:21  function _recommendForUser
-src/pages/coach/logging.js:79  const rec = _recommendForUser(state.currentEx)
-... wiring confirmed (4 user-facing sites)
+# Wiki structure integrity FREEZE Karpathy Real Option B Phase 1-5 LANDED:
+$ ls wiki/{index,log,_design,entities,concepts,summaries,sources}
+ALL paths exist  ✓ FREEZE post-Faza 3 immutable raw layer
 
-=== Schema 657 baseline preserved (LOCK 2 Daniel Gates) ===
-657 ✅
+# §AR.* catalog count §AR.1-§AR.27 LOCKED V1 cumulative preserved:
+$ grep -c "§AR\." wiki/concepts/anti-recurrence-rules.md
+187  ✓ ≥27 occurrences catalog cumulative preserved
 
-=== Tests baseline pre-execute ===
-3639 PASS (183 files) ✅
-```
-
----
-
-## §A Audit findings — pause/peak/entry/modal patterns
-
-**Peak weight tracking (§32.1 anchor):** DB key `'pr-records'` populated by `extractAndSavePRs` at `src/pages/coach/pr.js:7`. Shape: `[{ex, kg, reps, date, ts, score}, ...]`. Direct read for `peakPrePauseKgPerExercise`. Initialized in `src/main.js:216` on every boot — already authoritative.
-
-**Pause detection:** No existing helper. NEW pure-function `computePauseDuration(sessionDates, currentDate)` + `extractSessionDates(logs)` added to `src/engine/coachContext.js`. Sources: distinct dates in `'logs'` DB key (pattern matches `getLastNSessions` at coachContext.js:154).
-
-**App entry flow:** `src/main.js:222-260` uses precedent gate chain `isMedicalDisclaimerAccepted` → `proceedToAppEntry` → onboarding/coach. NEW gate `proceedThroughMmiGate()` inserted as third in chain (after disclaimer, before onboarding/coach). Try/catch fallthrough ensures gate failure never blocks app entry.
-
-**DP integration site:** Option B (compose layer post-`AA.applyTo` + post-`applyAcceleratedLearningUpgrade`). Mirror LOCK 9 adapter precedent. MMI applied LAST in chain — refunda baseline when user opted-in.
-
-**Modal pattern:** Mirror `aggressiveLoadingModal.js` (overlay + Promise + 2-button override + Romanian no-diacritics + XSS-safe + no-stacking).
-
-**state.js enum:** `currentScreen` comment extended with `mmi-prompt` value (mirror `medical-disclaimer` precedent from LOCK 4).
-
----
-
-## §B `muscleMemoryIndex.js` NEW + 36 tests PASS
-
-Pure-function core (ADR 026 §9 invariant — NO Date.now / Math.random / mutation):
-- `MMI_LOOKUP_TABLE` frozen deeply: 3 buckets × {minMonths, maxMonths, startMultiplier, boostMultiplier, boostWeeksDuration} per §32.1 spec verbatim
-- `getMmiBucketForPauseMonths(pauseMonths)` — boundary-tested (5.99→null, 6→b1, 11.99→b1, 12→b2, 23.99→b2, 24→b3, 120→b3)
-- `computeMmiStartingWeight(peakKg, pauseMonths)` — formula §32.1 `peak × multiplier` + bucket reference
-- `computeMmiBoostMultiplier(weeksSinceResume, pauseMonths)` — week 0/1/2 boosted, week 3+ → 1.0
-- `shouldShowMmiPrompt(pauseMonths, alreadyPrompted, userChoice)` — decision matrix (already-decided / under-threshold / first-time)
-
-**Tests file:** `src/engine/__tests__/muscleMemoryIndex.test.js` — **36 tests PASS** (lookup table verbatim spec + boundary + boost duration + decision matrix + purity + frozen immutability).
-
----
-
-## §C `muscleMemoryAdapter.js` NEW + 31 tests PASS + pipeline wiring
-
-**Adapter:**
-- `applyMuscleMemoryUpgrade(rec, exerciseName, mmiContext, dpEngine)` — pure wrapper post-pipeline. Returns unchanged for refuse/not-decided/no-peak/under-threshold paths. Forensic flags on upgrade: `_muscleMemoryApplied + _mmiOriginalKg + _mmiPeakPrePauseKg + _mmiStartMultiplier + _mmiBoostMultiplier + _mmiBucket` (ADR 011 §append-only).
-- `readMmiState(db)` — I/O boundary helper, defensive (null db, throws, non-object).
-- `computeWeeksSinceResume(resumeStartDate, currentDate)` — pure helper, floor division by 7-day window.
-
-**Wired into:** `src/pages/coach/logging.js` `_recommendForUser(exerciseName)` — extended to:
-```
-DP.recommend
-  → AA.applyTo
-    → applyAcceleratedLearningUpgrade   (LOCK 9 — strength pattern learning)
-      → applyMuscleMemoryUpgrade        (LOCK 10 — re-resume cap when opted-in)
+# Tests baseline 3734 PASS preserved EXACT pre-execute (npm run test:run --silent):
+$ npm run test:run --silent | grep "Tests"
+Test Files 187 passed (187)
+Tests 3734 passed (3734)
+✓ 3734 PASS preserved invariant (vault meta-tooling ZERO src/ touched)
 ```
 
-**Compose order rationale (LOCK 10 LAST):** Accelerated learning was designed for active-training users whose CDL overrides indicate they out-pace baseline. MMI applies when user is returning from 6+ month pause — there is no recent CDL signal to upgrade, and MMI's conservative starting weight should be the final word on re-resume. If both somehow applied (rare edge case), MMI (re-resume start) wins.
-
-**Tests file:** `src/engine/__tests__/muscleMemoryAdapter.test.js` — **31 tests PASS** (no-op paths + accepted paths + forensic flags + immutability + idempotency + I/O helper + computeWeeksSinceResume).
+All §0 pre-flight assertions PASS — proceed Phase A distribute.
 
 ---
 
-## §D `muscleMemoryPrompt.js` UI modal + 12 tests PASS
+## §1 Phase A distribute findings — 9 wiki files + 3 archives + 1 LATEST cycle
 
-**Modal:** mirror `aggressiveLoadingModal.js` pattern. Returns Promise<{action: 'accepted'|'refused', source}>.
+**2 NEW pages + 1 NEW concept + 4 UPDATE existing wiki pages + 3 archives + 1 LATEST cycle:**
 
-**Wording (Romanian no-diacritics LOCK V1 PERMANENT 2026-05-10):**
-- Title: `Bine ai revenit`
-- Body: `Pauza face parte din drum. Incepem treptat — corpul tau isi aminteste.`
-- Question: `Vrei sa reincepem treptat, de unde ai ramas, sau preferi sa o luam de la zero?`
-- Button accept: `Reincep treptat (recomandat)`
-- Button refuse: `De la zero`
-- Refuse banner: `Atentie — incarci direct greutatile maxime. Risc accidentare la setul de pornire. Recomandare: incepi cu 70% si urci.`
+1. **NEW `wiki/summaries/handover-2026-05-15-chat-acasa-post-evening-triple-landed-lock-9-lock-10-plus-slip-patterns.md`** (~150 LOC voice §1 4-section: Synthesis Triple-LANDED + Verbatim Quotes Daniel Categorii DA-DF preserved EXACT + Bugatti framing slip patterns inventory §3.1-§3.5 + Cross-refs raw layer 17+ specific path:§ pointers)
 
-**Verified by test (regex `/[șțăâîȘȚĂÂÎ]/` zero match across all strings).** Spec source has legacy diacritics (2026-05-02) — implementation strips per invariant.
+2. **NEW `wiki/entities/features/lock-10-adr-033-mmi-engine-9.md`** (LOCK 10 feature page summary 4 modules NEW + main.js entry gate + state.js enum extend voice §1 4-section: Synthesis Algorithm Hibrid Lookup + Boost + Verbatim quotes Daniel spec §32.2 + §32.3 + Bugatti framing 5 sub-sections + Cross-refs raw layer 12+ path:§)
 
-**No-forced-typing invariant (ADR 013 §AMENDMENT 2026-04-30):** modal DOM zero `<input>` / `<textarea>` — verified by test.
+3. **NEW `wiki/concepts/wording-backlog-post-smoke.md`** (Category DB establish LOCK V1 cumulative pattern post-smoke beta CEO wording review window iteration + initial backlog entries B1 LOCK 10 MMI buttons + B2 LOCK 10 MMI refuse banner + B3 LOCK 10 diacritics strip decision + B4 potential LOCK 9 aaFrictionModal pending tactical audit)
 
-**Peak summary contextualization:** when `peakSummary` array provided, top 5 exercises rendered as `Bench Press — 100 kg` lines for transparency. XSS-safe HTML escape on all dynamic fields.
+4. **VERIFY `wiki/entities/adrs/adr-033-muscle-memory-index.md`** — status `locked-v1` post LOCK 10 LANDED already promoted în atomic commit LOCK 10 + amendments 2026-05-15 type:promote present invariant ZERO drift detected
 
-**Refuse path (§32.3):** banner observable non-blocking auto-dismiss 8s, NOT modal blocant. Anti-paternalism ABSOLUTE preserved.
+5. **MODIFY `wiki/concepts/anti-recurrence-rules.md`** — APPEND amendment chat-current-followup §AR.30 + §AR.31 candidates scribe-mode marked 1× threshold each Daniel frustration peak catalysator codify mandatory next /wiki-ingest Daniel review explicit chat NEW. §AR.1-§AR.27 LOCKED V1 + §AR.28 + §AR.29 candidates ABSOLUTE codify formal pending Daniel review = preserved invariant unchanged.
 
-**Tests file:** `src/pages/coach/__tests__/muscleMemoryPrompt.test.js` — **12 tests PASS** (wording verbatim + no-diacritics + DOM contract + no-input + accept/refuse paths + peak summary + XSS escape + no-stacking).
+6. **MODIFY `wiki/summaries/slip-patterns-history.md`** — APPEND §"Chat-Current Slip Patterns 2026-05-15 chat ACASĂ followup Triple-LANDED" cu SLIP 1 (Compose UI wording autonomous in PROMPT_CC LOCK 10 LANDED CEO scope §AR.26 violation Daniel push-back DA *"stai tu zici de wording aici?"* catalysator codify mandatory §AR.31 candidate) + SLIP 2 (Trust secondary sources over primary vault verify MFP import hallucination scope Daniel push-back DD frustration peak *"aberatii"* + screenshot mockup line 3034 primary-source evidence catalysator codify mandatory §AR.30 candidate) + 6 push-back productive moments Categorii DA-DF preserved EXACT + cross-refs raw layer cumulative
 
----
+7. **MODIFY `wiki/concepts/aggressive-loading-warning-tier-aware.md`** — APPEND amendments[] 2026-05-15-chat-current-followup type:implementation-landed cu LOCK 9 detection `e44137f` + LOCK 9 LOOP CLOSE `892ebca` double-commit cumulative tests +69 + +45 = +114 NEW preserved EXACT + forensic flags catalog `_acceleratedLearningApplied + _originalKg + _upgradePct + _samplesUsed` + compose pipeline order DP → AA → AcceleratedLearning → MMI LAST documented chat-current followup cumulative cross-LOCK
 
-## §E Pause detection + main.js entry gate + state.js enum
+8. **APPEND `wiki/log.md`** entry chronological `## [2026-05-15-chat-current-followup] ingest | ...` cu Triple-LANDED summary cumulative + 6 distribution items detailed + cross-refs raw layer
 
-**Pause detection helpers** in `src/engine/coachContext.js`:
-- `computePauseDuration(sessionDates, currentDate)` — pure, returns `{daysSincePause, pauseMonths}` (months computed `days / 30.44`)
-- `extractSessionDates(logs)` — pure, distinct dates from logs array, sorted ascending
+9. **MODIFY `wiki/index.md`** — frontmatter `total_pages: 143 → 146` + `last_updated: 2026-05-15-chat-current-followup` + status block prepend new entry + section counts update (Concepts 23 → 24, Features 21 → 22, Summaries 30 → 32) + 3 NEW page entries inserted in respective sections
 
-**Tests file:** `src/engine/__tests__/coachContext.pauseDetection.test.js` — **16 tests PASS** (empty/null safety + 1-day/6-month/12-month verification + order-agnostic latest + future-date defensive + non-string filter + idempotency).
+10. **ARCHIVE source handover narrative:** `📥_inbox/HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_PLUS_SLIP_PATTERNS.md` → `📤_outbox/_archive/2026-05/518_HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_CONSUMED.md`
 
-**main.js entry gate `proceedThroughMmiGate()`:**
-- Reads `DB.get('mmi-state')` → extracts `userChoice`
-- Reads `DB.get('logs')` → `extractSessionDates` → `computePauseDuration(dates, tod())`
-- `shouldShowMmiPrompt(pauseMonths, false, userChoice)` decision
-- If true: builds `peakSummary` (top 5 from `pr-records` by kg) + full `peakPrePauseKgPerExercise` map → `showMuscleMemoryPrompt({pauseMonths, peakSummary})` → persists DB `'mmi-state'` `{userChoice, pauseMonths, promptedAt, resumeStartDate, peakPrePauseKgPerExercise}` → `proceedToAppEntry()`
-- If false: direct `proceedToAppEntry()`
-- Try/catch: any error falls through to `proceedToAppEntry()` (gate failure never blocks app entry)
+11. **ARCHIVE PROMPT_CC record:** `📤_outbox/_archive/2026-05/519_PROMPT_CC_WIKI_INGEST_HANDOVER_2026-05-15_FOLLOWUP_CONSUMED.md` (PROMPT_CC came inline user message NU file artefact — archive record created per §AR.28 ABSOLUTE 2 artefacte separate paradigm preserved invariant)
 
-**state.js currentScreen enum extended:** added `mmi-prompt` to the comment-documented router values (mirror `medical-disclaimer` precedent from LOCK 4).
+12. **ARCHIVE previous LATEST.md (LOCK 10):** `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/520_LATEST_PREVIOUS_LOCK_10_ADR_033_MMI_V1_LANDED_CONSUMED.md` cu auto-incrementing NN preserve audit trail invariant
 
 ---
 
-## §F Wiki entity promote STUB → V1 LOCKED
+## §2 §AR.30 + §AR.31 candidates codify scribe-mode marked în anti-recurrence-rules.md
 
-**File:** `wiki/entities/adrs/adr-033-muscle-memory-index.md` rewritten per voice preservation policy §1:
-- Frontmatter: `status: stub-placeholder → locked-v1`, `locked_date: 2026-05-15`, 8 cross-refs (was 3), amendment chronicle preserved + NEW 2026-05-15 promote entry
-- §1 Synthesis: implementation summary 4 modules NEW + pipeline compose order rationale
-- §2 Verbatim quotes Daniel: HANDOVER_MISC §32 source + spec §32.3 wording + spec §32.2 question + LOCK 10 directive 14 birou + LOCK 1 Pre-Beta FULL strict + Co-CTO autonomy cumulative
-- §3 Bugatti framing notes 6-section (Gigel test + Quality>Speed lookup table + Anti-acoperiș-pereți Engine #9 slot + Anti-RE force-typing ELIMINATED + Anti-paternalism ABSOLUTE refuse path respected + Voice tone Romanian no-diacritics + Forensic transparency ADR 011)
-- §4 Cross-refs raw layer 12 specific `path:§` pointers (ADR 033 source + ADR 018 + 026 + 009 + 013 + 011 + 014 + ONBOARDING_SSOT + HANDOVER_MISC + VAULT_RULES + 3 wiki concept pages cross-link)
+### §AR.30 candidate scribe-mode marked NEW 1× threshold Daniel frustration peak catalysator codify mandatory
+
+**Pre-action vault primary-source verification MANDATORY pentru product state claims.**
+
+Înainte de propunere P-task / scope question / decision recommendation: vault primary verify ÎNTÂI (mockup HTML direct + PRODUCT_STRATEGY_SPEC direct + raw `src/` grep) NU summary §5 P-roadmap / memorie internă / latest path forward.
+
+- **Primary sources = truth-source authority**
+- **Secondary sources (summaries / path forward / internal recall) = partial / potentially stale**
+- **Trust primary > secondary always**
+
+**Source chat-current followup SLIP 2:** MFP import hallucination detected via Daniel screenshot upload mockup line 3034 buton "Import Nutritie (JSON)" existing decision LOCKED V1 cumulative per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10 + `src/pages/weight.js:importMFPNutritionCSV` + `triggerMFPImport` existing. Co-CTO trusted secondary sources cumulative (latest summary §5 P4 stale post §3.5 V3 REVERSAL + memorie internă "P4 = UI nutrition logging port v2 vanilla new file" hallucinated/stale + inventat 4 mecanisme MFP import).
+
+**Daniel push-back productive frustration peak verbatim catalysator:**
+- DD *"cred ca tie iti place sa ma enervezi. Ia zi tu ce vezi deja in mockul de andura aici?... care a fost deja discutat cu tine... ca eu nu vad nici o decizie noua... decat aberatiile tale"*
+- DE *"deci tu intelegi ce vrei am impresia. Importa nutritie ramane, ca wording cat sa nu folosim mfp for legal pourpouses. Trebuie si la beta si post beta sa existe. Nu am idee ce nu intelegi, ca e simplu"*
+- DF (end-of-chat anti-recurrence request) *"poate exista o modalitate sa dam si noi inainte, nu sa il pui pe bou de daniel sa zica de 10 ori acelasi lucru"*
+
+**Codification:** pending Daniel review explicit chat NEW per §AR.27 LOCKED V1 NEW structural preventive mechanism activate retro-scan drift fix mandatory.
+
+### §AR.31 candidate scribe-mode marked NEW 1× threshold Daniel push-back DA explicit catalysator codify mandatory
+
+**CEO scope strict enforce UI wording user-facing — autonomous compose = SLIP DEFAULT.**
+
+Orice text user-facing autonomous compose în PROMPT_CC = SLIP §AR.26 violation default.
+
+**Pattern correct:** surface 2-3 wording options to Daniel pre-PROMPT_CC pentru CEO selection cu rationale per option, NU compose autonomous citing "anti-paternalism Bugatti craft" / "default fallback" / "spec verbatim adaptation" / "LOCK V1 PERMANENT authority invocation".
+
+- **CEO UX scope** = button labels + modal copy + toast messages + banner text + decision-tree user-facing wording
+- **Tactical autonomous OK** = engine internals + error messages internal (developer-facing) + log entry types + variable names + function names + commit messages technical
+
+**Source chat-current followup SLIP 1:** LOCK 10 MMI buttons autonomous compose `"Reincep treptat (recomandat)"` + `"De la zero"` + refuse banner full text + diacritics strip decision invocation LOCK V1 PERMANENT 2026-05-10 authority Co-CTO autonomous = CEO UX scope §AR.26 violation.
+
+**Daniel push-back productive ultra-scurt verbatim DA catalysator codify mandatory:** *"stai tu zici de wording aici?"*
+
+**Category DB establish LOCK V1 cumulative pattern verbatim:** *"tinele minte si cand e smoke de beta le schimbam daca nu imi plac... dupa smoke... cred ca nu e greu sa schimbam wording nu?"* pattern post-smoke beta = CEO wording review window iteration NU mid-implementation block (cross-link `wiki/concepts/wording-backlog-post-smoke.md` codify chat-current followup).
+
+**Codification:** pending Daniel review explicit chat NEW per §AR.27 LOCKED V1 NEW structural preventive mechanism.
 
 ---
 
-## §G Tests baseline 3639 → 3734 PASS + ZERO regression
+## §3 Tests baseline 3734 PASS preserved EXACT evidence
 
 ```
 Test Files  187 passed (187)
      Tests  3734 passed (3734)
-   Start at  18:13:23
-   Duration  30.58s
 ```
 
-Delta: **+95 NEW tests** (36 MMI core + 31 adapter + 12 prompt + 16 pause detection). All pre-existing 3639 preserved EXACT — ZERO regression.
+**ZERO regression preserved EXACT.** Vault meta-tooling acest /wiki-ingest doc-only ZERO src/ touched per HARD CONSTRAINTS §F3.12 strict. Triple-LANDED chat-current followup src/ touched via separate atomic commits Bugatti single-concern preserved invariant (`e44137f` LOCK 9 detection + `892ebca` LOCK 9 LOOP CLOSE + `e6fd974` LOCK 10 MMI cumulative cross-LOCK +209 NEW tests single chat extended).
 
 ---
 
-## §H Commits + atomic single-concern Bugatti
+## §3a §AR.27 retro-scan drift fix cumulative cross-chat fifth execution
 
-Files staged:
-- NEW: `src/engine/muscleMemoryIndex.js`
-- NEW: `src/engine/__tests__/muscleMemoryIndex.test.js`
-- NEW: `src/engine/muscleMemoryAdapter.js`
-- NEW: `src/engine/__tests__/muscleMemoryAdapter.test.js`
-- NEW: `src/engine/__tests__/coachContext.pauseDetection.test.js`
-- NEW: `src/pages/coach/muscleMemoryPrompt.js`
-- NEW: `src/pages/coach/__tests__/muscleMemoryPrompt.test.js`
-- MODIFIED: `src/engine/coachContext.js` (added `computePauseDuration` + `extractSessionDates` exports)
-- MODIFIED: `src/pages/coach/logging.js` (extended `_recommendForUser` pipeline)
-- MODIFIED: `src/main.js` (NEW `proceedThroughMmiGate` between disclaimer + onboarding)
-- MODIFIED: `src/state.js` (currentScreen enum comment extend)
-- MODIFIED: `wiki/entities/adrs/adr-033-muscle-memory-index.md` (STUB → V1 LOCKED promote)
-- MOVE: `📤_outbox/LATEST.md` → `📤_outbox/_archive/2026-05/517_LATEST_PREVIOUS_LOCK_9_LOOP_CLOSE_ACCELERATED_LEARNING_LANDED_CONSUMED.md`
-- NEW: `📤_outbox/LATEST.md` (this file)
+Per §AR.27 LOCKED V1 NEW structural preventive mechanism activate retro-scan last 3 handover summaries chronological order Path Forward §5 + forward-looking sections vs cumulative state Triple-LANDED chat-current followup:
 
-Pre-commit hook ran 3734 tests green, NO `--no-verify` bypass.
+- [[wiki/summaries/handover-2026-05-15-chat-acasa-post-evening-triple-landed-c4-8-bayesian-nutrition-plus-lock-4-medical-disclaimer-plus-lock-8-kcal-floor-1200]] §5 P-roadmap pre-handover (chat-current post-evening) — referenced LOCK 9 + LOCK 10 as pending; NOW LANDED chat-current followup. **ZERO drift detected** — predecessor handover used "pending implementation next" phrasing forward-looking; chat-current followup status updated via /wiki-ingest current commit. No retro-patch needed.
+- [[wiki/summaries/handover-2026-05-15-chat-acasa-post-morning-quad-landed-c4-4-c4-5-c4-6-c4-7-big11-engine-7-of-8-phases]] §5 P-roadmap (post-morning) — predecessor referenced C4.8 + LOCKs cluster as pending; chat-current post-evening + followup landed cumulative. **ZERO drift detected** — chronological forward-looking statements preserved invariant.
+- [[wiki/summaries/handover-2026-05-15-chat-acasa-post-midnight-triple-landed-bundle-6-0-7-plus-c4-2-plus-c4-3]] §5 P-roadmap (post-midnight) — predecessor referenced Big 11 engine layer 3/8 phases LANDED + remaining cap-coadă. **ZERO drift detected** — chronological forward-looking statements preserved invariant.
+
+**Drift hits count cumulative cross-chat: 0** (HALT condition NU triggered <10).
 
 ---
 
-## §I Backup tag pre-execute verify
+## §4 Backup tag pre-execute pushed origin verify
 
-```
-git tag pre-lock-10-adr-033-mmi-promote-v1-2026-05-15
-git push origin pre-lock-10-adr-033-mmi-promote-v1-2026-05-15
-→ [new tag] pushed
+```bash
+$ git tag pre-wiki-ingest-handover-2026-05-15-followup-triple-landed-lock-9-10-slip-patterns
+$ git push origin pre-wiki-ingest-handover-2026-05-15-followup-triple-landed-lock-9-10-slip-patterns
+To https://github.com/markaroundthestates-cyber/andura.git
+ * [new tag]         pre-wiki-ingest-handover-2026-05-15-followup-triple-landed-lock-9-10-slip-patterns -> pre-wiki-ingest-handover-2026-05-15-followup-triple-landed-lock-9-10-slip-patterns
 ```
 
-Rollback: `git reset --hard pre-lock-10-adr-033-mmi-promote-v1-2026-05-15`.
+Backup tag pushed origin pre-execute ✓ (rollback insurance per Bugatti craft mandate).
 
 ---
 
-## §J HARD CONSTRAINTS §F3.12 verification
+## §5 Atomic commit single-concern Bugatti + push origin
 
-- ✅ **Schema 657 entries preserved invariant** (LOCK 2 Daniel Gates)
-- ✅ **ZERO src/ touched outside scope** — only files explicitly listed §B-§E + 1 wiki page §F
-- ✅ **ZERO `--no-verify` bypass** — pre-commit hook ran 3734 tests green
-- ✅ **ZERO Big 11 engine layer mutation** (C4.1-C4.8 preserved invariant)
-- ✅ **ZERO mutation existing LOCK 9 modules** — `aggressiveLoadingThreshold.js + acceleratedLearning.js + acceleratedLearningAdapter.js + aggressiveLoadingModal.js` untouched (verified `git diff --stat` empty)
-- ✅ **Pure-function paradigm ADR 026 §9** — all engine modules NO Date.now / Math.random / mutation; side effects encapsulated at I/O boundary helpers (`readMmiState`, `computeWeeksSinceResume`)
-- ✅ **Romanian-first no-diacritics LOCK V1 PERMANENT 2026-05-10** — verified by regex test `/[șțăâîȘȚĂÂÎ]/` zero match across all 6 wording strings
-- ✅ **Force-typing ELIMINATED PERMANENT ADR 013 §AMENDMENT 2026-04-30** — modal DOM zero input/textarea verified by test
-- ✅ **Anti-paternalism ABSOLUTE** — refuse path baseline preserved; banner observable non-blocking; user choice respected
-- ✅ **Forensic transparency ADR 011 §append-only** — `_muscleMemoryApplied + _mmiOriginalKg + _mmiPeakPrePauseKg + _mmiStartMultiplier + _mmiBoostMultiplier + _mmiBucket` preserve audit trail
-- ✅ **Idempotency invariant ADR 018 §2** — verified by test (same input → same output)
-- ✅ **Single-concern atomic commit Bugatti** — vault wiki promote + src/ implementation cumulative single artefact (LOCK 10 = SPEC implementation closely-coupled)
+(Pending git commit + push post-LATEST.md write — to be executed next.)
 
----
-
-## §K Issues encountered + recovery actions
-
-**Issue 1: Compose pipeline order decision.**
-Decision: MMI LAST in compose chain (after LOCK 9 accelerated learning). Rationale documented inline in adapter module + LATEST §C: accelerated learning fires on active-training pattern; MMI fires on re-resume; if both somehow applied (rare edge), re-resume start should be the final word. NO recovery needed — clean design choice with documented reasoning.
-
-**Issue 2: Romanian diacritics in spec source.**
-ADR 033 source SPEC (legacy 2026-05-02) contains diacritics `Începem`, `corpul tău își`, `Pauză`, etc. Per Romanian-first no-diacritics LOCK V1 PERMANENT 2026-05-10 (post-spec), implementation strips them. Spec referenced for INTENT and FORMULA; UI strings adopted to current invariant. Regex test enforces. NO recovery needed — invariant precedence clear.
-
-**Issue 3: Two-tier defensive in entry gate.**
-`proceedThroughMmiGate` wrapped in try/catch falling through to `proceedToAppEntry`. Rationale: this is a brand-new third gate (after medical disclaimer); any unexpected error during pause computation or DB read must NEVER prevent app entry. Defensive design — anti-paternalism (app gates fail open, not closed).
-
-**Issue 4: Boost multiplier `boostWeeksDuration: 3` not in original spec verbatim.**
-Spec §32.1 says "Boost Progresie primele 3 săpt" but doesn't define how boost is structured. Decision: boost applies to weeks 0..2 inclusive (3 weeks total), week 3+ returns 1.0. This matches the "primele 3 săpt" phrasing literally. Documented in module + tested explicit at week boundary.
+**Files staged for atomic commit single-concern:**
+- `wiki/summaries/handover-2026-05-15-chat-acasa-post-evening-triple-landed-lock-9-lock-10-plus-slip-patterns.md` (NEW)
+- `wiki/entities/features/lock-10-adr-033-mmi-engine-9.md` (NEW)
+- `wiki/concepts/wording-backlog-post-smoke.md` (NEW)
+- `wiki/concepts/anti-recurrence-rules.md` (MODIFY)
+- `wiki/concepts/aggressive-loading-warning-tier-aware.md` (MODIFY)
+- `wiki/summaries/slip-patterns-history.md` (MODIFY)
+- `wiki/log.md` (APPEND)
+- `wiki/index.md` (MODIFY)
+- `📤_outbox/_archive/2026-05/518_HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_CONSUMED.md` (renamed from `📥_inbox/`)
+- `📤_outbox/_archive/2026-05/519_PROMPT_CC_WIKI_INGEST_HANDOVER_2026-05-15_FOLLOWUP_CONSUMED.md` (NEW archive record)
+- `📤_outbox/_archive/2026-05/520_LATEST_PREVIOUS_LOCK_10_ADR_033_MMI_V1_LANDED_CONSUMED.md` (NEW cycled previous LATEST.md)
+- `📤_outbox/LATEST.md` (overwrite cu this raport)
 
 ---
 
-## §L Next action recommendation
+## §6 Archive source handover narrative + PROMPT_CC + previous LATEST.md
 
-LOCK 10 ADR 033 MMI Engine #9 V1 LANDED end-to-end. Pre-Beta scope per LOCK 1 directive "totul pre-Beta" honored. Engine #9 slot per ADR 018 §1 Dimension Registry filled.
-
-**P3 LOCK 11 candidate options (priority Co-CTO autonomous read):**
-
-1. **LOCK 11 F5 AA-Friction Modal UX iteration** — review `aaFrictionModal.js` copy + visual hierarchy. Pre-LOCK-9 design uses `🟠` + "signal counts" copy; possible iteration to neutral observable per ADR 013 §AMENDMENT 2026-04-30 anti-RE invariant. Pure UX polish, tactical scope, minimum surface, low risk.
-
-2. **Wire MMI to renderIdle.js Today screen indicator** — when `mmi-state.userChoice === 'accepted'`, optionally surface a small "Reincepere treptat saptamana X/3" badge so user sees they're on the boost path. Low-risk UI polish, NOT required for V1 functionality.
-
-3. **Schema entry audit cleanup pass** — formal cleanup of "post-Beta v1.5" rationale references across ADR amendments (cascade per ADR 033 amendment 2026-05-14 noted "formal cleanup pass deferred P4 path forward"). Now LOCK 10 has invalidated this rationale for ADR 033 — similar cleanup may apply to other ADRs with same deferred rationale.
-
-4. **Pre-Beta launch a-z review prep** — per [[wiki/concepts/pre-beta-full-scope-lock-v2]] consult remaining locks pre-Beta launch. LOCK 1-10 status check + identify any remaining gaps.
-
-**Recommendation Co-CTO:** **#1 LOCK 11 F5 AA-Friction Modal UX iteration** — purely tactical, anti-RE compliance check, minimum risk, low surface. Alternative #4 pre-Beta gap audit may be more strategic — flag for Daniel CEO chat-dedicated decision if Co-CTO scope §AR.26 ambiguous.
+- [x] `📥_inbox/HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_PLUS_SLIP_PATTERNS.md` → `📤_outbox/_archive/2026-05/518_HANDOVER_2026-05-15_chat_acasa_followup_TRIPLE_LANDED_LOCK_9_10_CONSUMED.md`
+- [x] PROMPT_CC archive record NEW → `📤_outbox/_archive/2026-05/519_PROMPT_CC_WIKI_INGEST_HANDOVER_2026-05-15_FOLLOWUP_CONSUMED.md` (PROMPT_CC came inline user message §AR.28 ABSOLUTE 2 artefacte separate paradigm preserved cu archive record audit trail)
+- [x] Previous `📤_outbox/LATEST.md` (LOCK 10 ADR 033 MMI V1 LANDED) → `📤_outbox/_archive/2026-05/520_LATEST_PREVIOUS_LOCK_10_ADR_033_MMI_V1_LANDED_CONSUMED.md`
 
 ---
 
-🦫 **Bugatti craft. LOCK 10 ADR 033 MMI Engine #9 V1 LOCKED LANDED end-to-end. Algorithm Hibrid Lookup + Boost spec verbatim §32.1-§32.3 implementation 4 modules NEW pure-function compose pipeline LAST. Anti-paternalism ABSOLUTE preserved (user accept/refuse explicit, refuse banner observable non-blocking, baseline preserved). Force-typing ELIMINATED PERMANENT invariant preserved. Romanian no-diacritics LOCK V1 PERMANENT verified. Forensic transparency ADR 011 §append-only invariant. Idempotency ADR 018 §2 invariant. Tests baseline 3639 → 3734 PASS (+95 NEW), ZERO regression. Schema 657 entries preserved invariant. LOCK 9 LOOP CLOSE modules preserved untouched invariant. Daniel CEO autonomy MAXIMUM 14th consecutive cross-chat trust delegation preserved.**
+## §7 HANDOVER_VERIFICATION_CHECKLIST §0-§11 all green verify
+
+- **§0 Pre-conditions scribe-side verified** ✓ source narrative present in inbox + backup tag pre-execute pushed origin
+- **§1 Backup tag git pushed** ✓ `pre-wiki-ingest-handover-2026-05-15-followup-triple-landed-lock-9-10-slip-patterns` pushed origin verified
+- **§2 Pre-flight grep verbatim cod/path** ✓ §AR.20 + §AR.21 evidence inline §0 mandatory verbatim output documented above
+- **§3 Wiki distribution + voice §1 4-section verified** ✓ summary + features + concepts + log + index 9 files distributed per §1 phases items 1-9
+- **§4 wiki/index.md + wiki/log.md updates** ✓ status block + chronological log entry verbatim
+- **§5 Bidirectional cross-links min 2-3 path:§** ✓ every wiki page distributed has ≥2-3 specific path:§ cross-refs (raw layer + wiki cross-link bidirectional)
+- **§6 Raw layer archive `_CONSUMED`** ✓ source handover narrative + PROMPT_CC record + previous LATEST.md all moved to `📤_outbox/_archive/2026-05/<NN>_*_CONSUMED.md` cu auto-incrementing NN (518/519/520)
+- **§7 Atomic commit single-concern** (pending §5 execute) wiki distribute + log + index + archive cumulative single commit Bugatti craft NU partial commits
+- **§8 Tests baseline 3734 PASS preserved EXACT** ✓ vault meta-tooling ZERO src/ touched invariant verified
+- **§9 Output raport `📤_outbox/LATEST.md §0-§N`** ✓ this raport structured Co-CTO standard format
+- **§10 Anti-recurrence cross-ref §AR.*** ✓ §AR.20 + §AR.21 + §AR.22 + §AR.26 + §AR.27 + §AR.28 + §AR.30 + §AR.31 cross-refs in distributed wiki pages
+- **§11 Cross-refs authority** ✓ CLAUDE.md §1-§7 + VAULT_RULES §F3.1-§F3.13 + wiki/_design/ schema authority preserved
+
+**All §0-§11 GREEN.**
+
+---
+
+## §8 Issues encountered + recovery actions
+
+**None.** All §0-§11 pre-flight + execution + post-flight green. Voice preservation §1 HARD RULE 1 compliance preserved invariant cumulative — Daniel verbatim Categorii DA-DF preserved EXACT din source narrative ~141 LOC. NO partial compliance flags this /wiki-ingest cycle (vs predecessor post-evening 2026-05-15 cu missing source narrative artefact).
+
+---
+
+## §9 Next action recommendation
+
+**Primary:** chat NEW Daniel review §AR.30 + §AR.31 candidates codify formal LOCKED V1 ABSOLUTE per §AR.27 LOCKED V1 NEW structural preventive mechanism activate retro-scan drift fix mandatory.
+
+**Tactical autonomous fallback** (post Daniel review or in parallel chat NEW Co-CTO autonomous resume): **P4 reformulated CORRECT chat-current followup** — 3 missing pieces tactical autonomous scope ~20-50 LOC + 5-15 tests:
+1. **Button wire mockup line 3034 (tab ISTORIC)** `onclick="showToast('Import Nutritie (JSON)')"` PLACEHOLDER → replace cu `onclick="triggerMFPImport()"` existing function in v2 vanilla (verify ISTORIC tab module location in v2 src/)
+2. **Dashboard banner periodic 3 zile reminder verify wired in v2** (per PRODUCT_STRATEGY §3.5 V3 spec) — audit existing or wire if missing
+3. **LOCK 8 KCAL_FLOOR_DAILY_MIN informative toast on import flow** when imported kcal < 1200 — anti-paternalism preserved invariant ABSOLUTE (NU block save, DOAR informează scientific anchored citation)
+
+**Deferred post-smoke beta per Daniel pattern Category DB:**
+- **P2 — LOCK 11 F5 AA-Friction Modal UX iteration** wording iteration existing modal `src/pages/coach/aaFrictionModal.js`
+- **P3 — Backlog wording post-smoke CEO review pending iteration:** LOCK 10 MMI buttons + refuse banner + diacritics strip + potential LOCK 9 aaFrictionModal wording — toate flagged [[wiki/concepts/wording-backlog-post-smoke]] §AR.31 candidate scribe-mode marked Daniel CEO review window post-smoke beta
+
+**Post-P1 + P2 deferred + P3 deferred + P4 codify LANDED → Pre-Beta scope LOCK V2 cap-coadă completion gate FINAL → Daniel Gates 100% strict smoke production manual test cu Firebase + PWA + telefon → Bugatti Full Audit pre-Launch Co-CTO every line cod + every virgulă + TOT pe latest commit LANDED → Fix ALL issues surfaced → Beta launch sequencing P5 final.**
+
+---
+
+🦫 **Bugatti craft. /wiki-ingest autonomous handover narrative distribute cumulative cross-chat single chat extended Triple-LANDED LOCK 9 detection `e44137f` + LOCK 9 LOOP CLOSE `892ebca` + LOCK 10 ADR 033 MMI V1 LOCKED `e6fd974` + §AR.30 (Pre-action vault primary-source verification MANDATORY) + §AR.31 (CEO scope strict UI wording autonomous compose = SLIP DEFAULT) candidates scribe-mode marked 1× threshold each Daniel frustration peak catalysator codify mandatory next /wiki-ingest Daniel review explicit chat NEW per §AR.27 LOCKED V1 NEW structural preventive mechanism retro-scan drift fix mandatory. Voice preservation §1 HARD RULE 1 compliance preserved invariant cumulative. Tests baseline 3734 PASS preserved EXACT (vault meta-tooling ZERO src/ touched invariant ABSOLUTE). Schema 657 entries preserved invariant. Big 11 engine layer 8/8 COMPLETE FINAL preserved invariant. LOCK 9 + LOCK 10 implementation modules preserved untouched invariant ABSOLUTE. Co-CTO autonomy MAXIMUM 14th consecutive cross-chat trust delegation preserved invariant. §AR.28 LOCKED V1 ABSOLUTE 2 artefacte separate paradigm cumulative cross-chat preserved invariant.**
