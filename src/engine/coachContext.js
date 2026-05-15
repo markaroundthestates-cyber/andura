@@ -151,6 +151,58 @@ function getAllLogs() {
   catch { return []; }
 }
 
+/**
+ * Compute pause duration from a list of session dates and the current date.
+ * Pure function — date inputs explicit at the I/O boundary for determinism
+ * (ADR 026 §9 + ADR 018 §2 invariants).
+ *
+ * Used by LOCK 10 MMI (Engine #9) entry gate per ADR 033 §32.2 trigger
+ * threshold "6+ luni pauza → prompt user prima deschidere app".
+ *
+ * @pure
+ * @param {Array<string>} sessionDates - ISO YYYY-MM-DD strings; order
+ *        irrelevant (max is taken)
+ * @param {string} currentDate - 'YYYY-MM-DD'
+ * @returns {{daysSincePause: number, pauseMonths: number}}
+ */
+export function computePauseDuration(sessionDates, currentDate) {
+  if (!Array.isArray(sessionDates) || sessionDates.length === 0) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  if (typeof currentDate !== 'string' || !currentDate) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  // Take latest date deterministically (ISO strings are lexicographic-sortable).
+  let latest = '';
+  for (const d of sessionDates) {
+    if (typeof d === 'string' && d > latest) latest = d;
+  }
+  if (!latest) return { daysSincePause: 0, pauseMonths: 0 };
+  const lastTime = new Date(latest).getTime();
+  const currentTime = new Date(currentDate).getTime();
+  if (!Number.isFinite(lastTime) || !Number.isFinite(currentTime)) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  if (currentTime <= lastTime) return { daysSincePause: 0, pauseMonths: 0 };
+  const days = Math.floor((currentTime - lastTime) / (1000 * 60 * 60 * 24));
+  return { daysSincePause: days, pauseMonths: days / 30.44 };
+}
+
+/**
+ * Extract distinct session dates from a logs array. Pure helper.
+ * @pure
+ * @param {Array<{date: string}>} logs
+ * @returns {Array<string>} sorted ascending
+ */
+export function extractSessionDates(logs) {
+  if (!Array.isArray(logs)) return [];
+  const set = new Set();
+  for (const l of logs) {
+    if (l && typeof l.date === 'string') set.add(l.date);
+  }
+  return Array.from(set).sort();
+}
+
 function getLastNSessions(n) {
   const logs = getAllLogs();
   const byDate = {};

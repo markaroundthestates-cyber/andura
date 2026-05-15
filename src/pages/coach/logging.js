@@ -13,15 +13,37 @@ import { computeEngineTier, computeEngineTierWithAccelerated } from '../../engin
 import { getExerciseMetadata } from '../../schema/exerciseMetadata.js';
 import { showAggressiveLoadingModal } from './aggressiveLoadingModal.js';
 import { applyAcceleratedLearningUpgrade, readAggressiveLoadingLog } from '../../engine/acceleratedLearningAdapter.js';
+import { applyMuscleMemoryUpgrade, readMmiState, computeWeeksSinceResume } from '../../engine/muscleMemoryAdapter.js';
 
-// Compose pipeline: DP.recommend → AA.applyTo → applyAcceleratedLearningUpgrade.
-// Wraps the user-facing recommendation surface (updateExCard, confirmReps,
-// editSessionKg, adjSessionKg, confirmSessionKg). Pure-function chain — side
-// effects (DB read) encapsulated at the I/O boundary helper.
+// Compose pipeline (LOCK 10 LAST):
+//   DP.recommend
+//     → AA.applyTo
+//       → applyAcceleratedLearningUpgrade  (LOCK 9 — pattern-based strength upgrade)
+//         → applyMuscleMemoryUpgrade       (LOCK 10 — re-resume start cap when opted-in)
+//
+// MMI applied last so the re-resume starting weight wins on opt-in. When user
+// refused or hasn't decided, MMI is a no-op and the upstream pipeline wins.
 function _recommendForUser(exerciseName) {
-  const rec = AA.applyTo(DP.recommend(exerciseName), exerciseName);
+  let rec = AA.applyTo(DP.recommend(exerciseName), exerciseName);
+
   const cdlEntries = readAggressiveLoadingLog(DB);
-  return applyAcceleratedLearningUpgrade(rec, exerciseName, cdlEntries, DP);
+  rec = applyAcceleratedLearningUpgrade(rec, exerciseName, cdlEntries, DP);
+
+  const mmiState = readMmiState(DB);
+  if (mmiState && mmiState.userChoice === 'accepted') {
+    const weeksSinceResume = computeWeeksSinceResume(
+      mmiState.resumeStartDate,
+      new Date().toISOString().slice(0, 10)
+    );
+    rec = applyMuscleMemoryUpgrade(
+      rec,
+      exerciseName,
+      { ...mmiState, weeksSinceResume },
+      DP
+    );
+  }
+
+  return rec;
 }
 
 const AGGRESSIVE_LOADING_LOG_KEY = 'aggressive-loading-log';

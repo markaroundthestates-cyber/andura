@@ -16,7 +16,10 @@ import { renderProg } from './pages/plan.js';
 import { goTo } from './ui/nav.js';
 import { checkOnboarding, setObRPE, saveOnboarding, skipOnboarding } from './onboarding.js';
 import { showMedicalDisclaimerGate, isMedicalDisclaimerAccepted } from './pages/disclaimer/index.js';
-import { DB, cleanEx } from './db.js';
+import { showMuscleMemoryPrompt } from './pages/coach/muscleMemoryPrompt.js';
+import { computePauseDuration, extractSessionDates } from './engine/coachContext.js';
+import { shouldShowMmiPrompt } from './engine/muscleMemoryIndex.js';
+import { DB, cleanEx, tod } from './db.js';
 import './util/cdlBackfill.js';
 import { migrateLogsUtcToLocal } from './util/logsMigration.js';
 import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from './bootstrap.js';
@@ -253,10 +256,58 @@ async function init() {
     }
   };
 
+  // LOCK 10 ADR 033 MMI gate per wiki/concepts/aggressive-loading...
+  // and 03-decisions/033-muscle-memory-index §32.2 LOCKED V1 2026-05-02
+  // (promoted LOCK 10 pre-Beta 2026-05-15). Sits between medical disclaimer
+  // and onboarding/coach entry. Triggers only when user has logged sessions,
+  // last session is 6+ months old, and no MMI decision has been recorded yet.
+  const proceedThroughMmiGate = () => {
+    try {
+      const mmiState = DB.get('mmi-state');
+      const userChoice = mmiState?.userChoice || null;
+      const logs = DB.get('logs') || [];
+      const sessionDates = extractSessionDates(logs);
+      const { pauseMonths } = computePauseDuration(sessionDates, tod());
+
+      if (!shouldShowMmiPrompt(pauseMonths, false, userChoice)) {
+        proceedToAppEntry();
+        return;
+      }
+
+      // Build peakSummary from pr-records for prompt body context (top 5).
+      const prRecords = DB.get('pr-records') || [];
+      const peakSummary = prRecords
+        .slice()
+        .sort((a, b) => (b.kg ?? 0) - (a.kg ?? 0))
+        .slice(0, 5)
+        .map(r => ({ ex: r.ex, kg: r.kg }));
+      const peakPrePauseKgPerExercise = {};
+      for (const r of prRecords) {
+        if (r && typeof r.ex === 'string' && typeof r.kg === 'number') {
+          peakPrePauseKgPerExercise[r.ex] = r.kg;
+        }
+      }
+
+      showMuscleMemoryPrompt({ pauseMonths, peakSummary }).then(result => {
+        DB.set('mmi-state', {
+          userChoice: result.action,
+          pauseMonths,
+          promptedAt: new Date().toISOString(),
+          resumeStartDate: tod(),
+          peakPrePauseKgPerExercise,
+        });
+        proceedToAppEntry();
+      });
+    } catch (err) {
+      console.warn('[MMI] gate failed, falling through to app entry:', err);
+      proceedToAppEntry();
+    }
+  };
+
   if (isMedicalDisclaimerAccepted()) {
-    proceedToAppEntry();
+    proceedThroughMmiGate();
   } else {
-    showMedicalDisclaimerGate({ onAccept: proceedToAppEntry });
+    showMedicalDisclaimerGate({ onAccept: proceedThroughMmiGate });
   }
 }
 
