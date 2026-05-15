@@ -13,7 +13,26 @@ cross_refs:
   - "[[../entities/adrs/adr-024-goal-driven-program-templates]]"
   - "[[../entities/engines/engine-coach-director]]"
   - "[[../summaries/handover-2026-05-14-chat-birou-acasa-pre-beta-full-scope-lock-v2-plus-safety-disclaimer-t-c-plus-kcal-floor-plus-aggressive-loading-locked]]"
-amendments: []
+amendments:
+  - date: 2026-05-15-chat-current-post-evening
+    note: |
+      APPEND chat ACASĂ 2026-05-15 chat-current post-evening — **LOCK 8 Kcal Floor 1200 Engine #3 Bayesian Nutrition filter LANDED commit `51728bc` engine-side forward-going infrastructure pre-emptive Co-CTO autonomous PROMPT_CC** per wiki/concepts/kcal-floor-1200-engine-filter LOCK V1 2026-05-14 + pre-beta-full-scope-lock-v2 LOCK 8 cumulative cu LOCK 1 Pre-Beta FULL strict + LOCK 4 Medical Disclaimer cascade.
+
+      **Branch B decided per §0.2 PROMPT_CC** (V1 vanilla port `src/pages/nutrition.js` NU exista yet — mockup design SoT linii 1801-1832 Edit ✎ pencil pattern existing dar NU yet ported v2). Forward-going filter pre-emptive infrastructure ready: pass-through obs fara `kcalDaily` field preserves invariant V1 production weightDelta-only schema; obs cu `kcalDaily<1200` excluded când eventually schema extends post UI nutrition logging port.
+
+      **Implementation 4 files single module `src/engine/bayesianNutrition/`:**
+      - MODIFY `src/engine/bayesianNutrition/constants.js` (+37 LOC additive append) — NEW export `KCAL_FLOOR_DAILY_MIN = 1200` constant + NEW export `KCAL_FLOOR_CITATION_SOURCE = 'WHO (Organizatia Mondiala a Sanatatii)'` (no-diacritics rule LOCK V1 PERMANENT verified test regex). JSDoc V2 Bugatti craft anti-paternalism invariant ABSOLUTE preserved.
+      - NEW `src/engine/bayesianNutrition/observationFilter.js` (~100 LOC pure-function module) — `filterKcalFloorObservations(observations)` defensive Array.isArray check + filter logic (kcalDaily<1200 excluded, fara kcalDaily field OR non-finite pass-through forward-compatible V1 weightDelta-only schema preserved invariant) returns `{filtered, excludedCount, citationSource, floorMin}` + `getKcalFloorInformativeMessage()` Romanian-first no-diacritics scientific anchored wording exact pattern Bugatti craft. Pure function ZERO mutation input + NEW array reference returned + deterministic same input→same output per ADR 026 §9 + ADR 018 §2 contract.
+      - MODIFY `src/engine/bayesianNutrition/index.js` (+13 LOC import + filter integration) — În `evaluate(ctx)` line ~261 Cluster A1 Conjugate Normal-Normal section: apply filter pre sample mean/variance computation. Trace inline `trace.kcalFloorFilter = {excludedCount, citationSource, floorMin}` for CDL audit transparency. ZERO mutation Gaussian Conjugate Prior Normal-Normal closed-form algorithm semantics (ADR 026 §9.4.1 A1 LOCKED V1 preserved invariant) + ZERO touch existing weightDelta extraction logic.
+      - NEW `src/engine/bayesianNutrition/tests/observationFilter.test.js` (~200 LOC, 21 tests) — Defensive input handling (4) + kcal floor threshold semantics 800/1200/1199/1500 (4) + forward compatibility 5 tests + constants verify (3) + getKcalFloorInformativeMessage (3) + pure function discipline ADR 026 §9 invariant (3).
+
+      **Tests baseline 3504 → 3525 PASS preserved EXACT (+21 NEW observationFilter.test.js)** ZERO regression cross-engine.
+
+      **Anti-paternalism preserved invariant ABSOLUTE:** NU blocăm log user (autonomy preserved per F2 Sufletul Andura "AI-ul informează NU impune"). CDL log original append-only persists transparency (ADR 011). Engine doar exclude din invatare Cluster A1 sample mean/variance.
+
+      **§6 flag legitim UI nutrition logging implementation Daniel review explicit chat NEW RECOMMENDED** — LOCK 8 LANDED = engine-side filter forward-going infrastructure pre-emptive ready. UI consumer TRIGGER threshold detect <1200 + render `getKcalFloorInformativeMessage()` toast/banner informativ scientific anchored = pending implementation pre-Beta finalize. Status forward-going integration ready (engine layer + constant + function exported) BUT UI consumer pending (`src/pages/nutrition.js` NU exista yet — mockup design SoT 04-architecture/mockups/andura-clasic.html linii 1801-1832 pattern Edit ✎ pencil + manual log min=0 max=9999 inputmode=numeric). Daniel signal pending chat NEW: confirm UI nutrition logging port v2 vanilla scope tactical PROMPT_CC NEW (similar LOCK 4 pattern) ÎNAINTE Beta launch finalize OR defer post-Beta (engine filter already protect calcul obiective + preconizari viitoare per Daniel verbatim — UI trigger informativ doar additional layer transparency).
+
+      Cross-link [[pre-beta-full-scope-lock-v2]] amendments 2026-05-15-chat-current-post-evening + [[medical-safety-disclaimer-t-c-mandatory]] amendments 2026-05-15-chat-current-post-evening + [[../summaries/handover-2026-05-15-chat-acasa-post-evening-triple-landed-c4-8-bayesian-nutrition-plus-lock-4-medical-disclaimer-plus-lock-8-kcal-floor-1200]] §1 NEW summary codify chat-current ACASĂ post-evening cumulative.
 ---
 
 # Kcal Floor 1200 Engine Filter

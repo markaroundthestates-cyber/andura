@@ -2,7 +2,7 @@
 title: Slip Patterns History — §AR.1-§AR.19 Codified Anti-Recurrence Rules Cross-Chat + Push-Back Productive Moments
 type: summary
 status: live
-last_updated: 2026-05-15
+last_updated: 2026-05-15-chat-current-post-evening
 synthesis_scope: slip-patterns
 cross_refs:
   - "[[../concepts/anti-recurrence-rules]]"
@@ -728,4 +728,43 @@ Daniel verbatim "fa prompt pt cc sa le fix" REJECT strategy-lock 2026-05-12:
 - [[../concepts/anti-recurrence-rules]] amendments[] 2026-05-15-chat-current-post-morning §AR.28 candidate 4× threshold ABSOLUTE cross-chat scribe-mode marked codify formal LOCKED V1 justified + §AR.29 candidate 3× threshold MET cross-bundle scope-refinement pattern codify formal LOCKED V1 justified Daniel review explicit chat NEW + 2 NEW §AR.* candidates scribe-mode marked 1× threshold (Slip 24A noapte bună verify + Slip 24D auto-fix Rule 1 inline C4.6 lifecycle config constants)
 - [[../concepts/autonomy-paradigm-v1]] amendments[] 2026-05-15-chat-current-post-morning Co-CTO autonomy MAXIMUM 11th consecutive cross-chat directive verbatim trust delegation MAXIMUM
 - [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-15-chat-current-post-morning §F3.13 26th-29th consecutive validation effective + §F3.8 metoda hibridă FULL paradigm 4× threshold ABSOLUTE cross-chat + §AR.29 candidate 3× threshold MET cross-bundle
+
+## §"Chat-Current Slip Patterns 2026-05-15 chat ACASĂ post-evening Triple-LANDED — C4.8 Bayesian Nutrition + LOCK 4 Medical Disclaimer + LOCK 8 Kcal Floor 1200 BN Filter + Big 11 Engine 8/8 COMPLETE FINAL"
+
+**2 NEW slip patterns chat-current ACASĂ post-evening scribe-mode marked (extends slip 24A-24D chat post-morning + 23A-23B chat post-midnight + 22A-22B chat post-evening + 21A-21D evening cumulative cross-chat 2026-05-14):**
+
+**Slip 25A — Hypocrisy CEO decizii pivot after autonomy MAX declared cumulative 4× cross-chat patterns recovery §AR.27 mechanism activate explicit** (chat-current 2026-05-15 ACASĂ post-evening, 1× threshold scribe-mode marked):
+- **Trigger:** Cumulative cross-chat 4× occurrences detected via §AR.27 LOCKED V1 NEW mechanism — chat 13j C4-strategic + chat 14-evening Catastrofizare §OPEN fabricated + chat post-morning §AR.28+§AR.29 codify "tu decid" + chat-current post-evening C4.8 P1 fork = pattern hypocrisy CEO decizii pivot after autonomy MAX declared. Co-CTO Strategic-vs-Tactical confusion despite autonomy MAX 11× consecutive directive verbatim cumulative cross-chat.
+- **Catalysator:** Daniel push-back productive cooperative pattern variants cumulative cross-chat 4× occurrences detected via §AR.27 mechanism activate explicit (auto-update wiki layer + retro-scan drift fix). Verbatim quote chat-current post-evening source narrative artefact missing — pattern descriptor only scribe-mode marked.
+- **Recovery:** Co-CTO mea culpa standard fără defensiveness aux preserved invariant identity Andura. §AR.27 mechanism activate explicit retro-scan + tactical CTO autonomous decide P1 fork ÎNAINTE asks Daniel re-confirm.
+- **Rule candidate scribe-mode marked:** "Post autonomy MAX declared cumulative cross-chat Co-CTO Strategic-vs-Tactical confusion = §AR.27 mechanism activate explicit retro-scan + Co-CTO mea culpa standard fără defensiveness aux + tactical CTO autonomous decide P1 fork ÎNAINTE asks Daniel re-confirm". Watch chat NEW pentru next occurrence, codify dacă 2× threshold met.
+
+**Slip 25B — Anunț acțiune în loc execută acțiunea Daniel push-back ultra-scurt** (chat-current 2026-05-15 ACASĂ post-evening, 1× threshold scribe-mode marked):
+- **Trigger:** Co-CTO announced "I'll execute LOCK X next" instead of executing direct + reporting LANDED. Pre-execute announce intent waste Daniel bandwidth = anti-pattern Bugatti craft autonomy MAX directive.
+- **Catalysator:** Daniel push-back productive ultra-scurt verbatim *"ce vrei de la mine de te-ai oprit?"* — catalysator slip recovery instant Co-CTO standard.
+- **Recovery:** Co-CTO mea culpa standard fără defensiveness aux *"ai dreptate, /caveman pe mine. Execut direct."* preserved invariant identity Andura. Pattern recovery alignat cu autonomy MAX directive cumulative cross-chat 11× consecutive.
+- **Rule candidate scribe-mode marked:** "Co-CTO autonomous execute direct + raport LANDED post-LANDED, NU pre-execute announce intent waste Daniel bandwidth. Pattern recovery alignat cu autonomy MAX directive cumulative cross-chat 12× consecutive". Watch chat NEW pentru next occurrence, codify dacă 2× threshold met.
+
+**Pattern NEW chat-current 2026-05-15 ACASĂ post-evening:**
+2 NEW slip patterns scribe-mode marked extends 24A-24D chat post-morning + 23A-23B chat post-midnight + 22A-22B chat post-evening + 21A-21D evening cumulative cross-chat 14 evening cumulative crescente. **Slip 25A = §AR.27 mechanism activate explicit retro-scan + tactical CTO autonomous decide P1 fork** (cumulative 4× cross-chat patterns recovery hypocrisy CEO decizii pivot after autonomy MAX declared) + **Slip 25B = anunț acțiune în loc execută acțiunea** (Daniel push-back ultra-scurt catalysator). Co-CTO recovery instant fără defensiveness aux preserved invariant cross-chat consistent crescente trust delegation MAXIMUM 12th consecutive cross-chat directive. Identity Andura prezervat verbatim catalog NU lobotomy LLM summary impersonal (HARD RULE 2 voice preservation policy §1).
+
+**5 push-back productive moments cooperative chat-current ACASĂ post-evening documented chronological Categorii CS-CW:**
+1. **CS slip catalysator §AR.27 mechanism activate explicit** — pattern descriptor cumulative cross-chat 4× occurrences hypocrisy CEO decizii pivot after autonomy MAX declared (verbatim source narrative artefact missing, pattern descriptor only scribe-mode marked pending Daniel review chat NEW)
+2. **CT anunț vs execute Daniel push-back ultra-scurt** — *"ce vrei de la mine de te-ai oprit?"* catalysator slip 25B recovery instant Co-CTO mea culpa standard
+3. **CU hypocrisy MAJOR cumulative cross-chat 4× detected via §AR.27 mechanism** — pattern descriptor auto-update wiki layer + retro-scan drift fix mechanism activate explicit
+4. **CV ultra-explicit autonomy MAX cooperative smiley single `:)` pattern reinforce 12th consecutive** — pattern descriptor reaffirm precedent cumulative cross-chat catalog
+5. **CW handover paradigm 2 artefacte separate variant 5× cumulative cross-chat ABSOLUTE codification §AR.28** — *"ok handover artefact cu prompt cc in alt artefact"* Daniel CEO directive verbatim chat-current post-evening preserved EXACT source [[../../📥_inbox/PROMPT_CC_WIKI_INGEST_HANDOVER_2026-05-15_POST_EVENING]] line 33
+
+**⚠️ Voice preservation §1 HARD RULE 1 partial compliance flag pending Daniel chat NEW review:** Source narrative artefact `📥_inbox/HANDOVER_2026-05-15_chat_acasa_post_evening_C4_8_PLUS_LOCK_4_PLUS_LOCK_8_LANDED.md` (~190 LOC scribe flow conversational) referenced by PROMPT_CC line 7 was missing from inbox at /wiki-ingest execution time. Slip 25A + 25B catalysator verbatim Daniel chat-current ACASĂ post-evening = recovered partially din PROMPT_CC source line references (25B verbatim *"ce vrei de la mine de te-ai oprit?"* + CW verbatim *"ok handover artefact cu prompt cc in alt artefact"*); restul Categorii CS + CU + CV = pattern descriptors only NU EXACT verbatim quote text recovered. Daniel review chat NEW recommended to backfill verbatim quotes EXACT per voice preservation policy §1 HARD RULE 1 full compliance — flag §6 LATEST.md.
+
+**Cross-refs raw layer adițional chat-current 2026-05-15 ACASĂ post-evening:**
+- [[../../📥_inbox/PROMPT_CC_WIKI_INGEST_HANDOVER_2026-05-15_POST_EVENING]] line 33 verbatim *"ok handover artefact cu prompt cc in alt artefact"* preserved EXACT chat-current ACASĂ post-evening — PROMPT_CC source artefact (handover narrative source artefact missing from inbox at /wiki-ingest execution time)
+- [[handover-2026-05-15-chat-acasa-post-evening-triple-landed-c4-8-bayesian-nutrition-plus-lock-4-medical-disclaimer-plus-lock-8-kcal-floor-1200]] §1 Synthesis Triple-LANDED + §2 Verbatim Quotes Daniel Categorii CS-CW + §3 Bugatti framing notes 5 sub-sections + §4 Cross-refs raw layer + §5 Path Forward P1-P5 cumulative + §6 Bandwidth + Co-CTO autonomy MAXIMUM 12th consecutive cross-link
+- [[../concepts/anti-recurrence-rules]] amendments[] 2026-05-15-chat-current-post-evening §AR.28 candidate 5× threshold ABSOLUTE cross-chat scribe-mode marked codify formal LOCKED V1 ABSOLUTE justified + §AR.29 candidate 4× threshold ABSOLUTE cross-bundle scope-refinement pattern codify formal LOCKED V1 ABSOLUTE justified Daniel review explicit chat NEW + 2 NEW §AR.* candidates scribe-mode marked 1× threshold (Slip 25A hypocrisy CEO decizii pivot recovery + Slip 25B anunț vs execute)
+- [[../concepts/autonomy-paradigm-v1]] amendments[] 2026-05-15-chat-current-post-evening Co-CTO autonomy MAXIMUM 12th consecutive cross-chat directive verbatim trust delegation MAXIMUM
+- [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-15-chat-current-post-evening §F3.13 30-32 consecutive validation effective + §F3.8 metoda hibridă FULL paradigm 5× threshold ABSOLUTE cross-chat
+- [[../concepts/medical-safety-disclaimer-t-c-mandatory]] amendments[] 2026-05-15-chat-current-post-evening LOCK 4 LANDED `ecd71a7` implementation
+- [[../concepts/kcal-floor-1200-engine-filter]] amendments[] 2026-05-15-chat-current-post-evening LOCK 8 LANDED `51728bc` Branch B forward-going infrastructure
+- [[../concepts/pre-beta-full-scope-lock-v2]] amendments[] 2026-05-15-chat-current-post-evening Big 11 engine 8/8 COMPLETE FINAL + safety conditions LOCK 4 + LOCK 8 LANDED
+- [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-15 chat-current post-evening Triple-LANDED C4.8 Bayesian Nutrition + LOCK 4 Medical Disclaimer + LOCK 8 Kcal Floor 1200" 5 NEW daniel-isms Categorii CS-CW (CT + CW verbatim preserved EXACT; CS + CU + CV pattern descriptors pending Daniel chat NEW verbatim backfill)
 - [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-15 chat-current post-morning Quad-LANDED C4.4 + C4.5 + C4.6 + C4.7 Big 11 Engine 7/8 Phases" 6 NEW daniel-isms Categorii CM-CR chat-current ACASĂ post-morning cumulative cross-chat verbatim catalog extensible cross-link
