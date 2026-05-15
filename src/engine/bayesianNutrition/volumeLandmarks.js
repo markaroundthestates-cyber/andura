@@ -17,18 +17,57 @@ import {
   VOLUME_METRIC_WEIGHTS,
   MOVEMENT_CATEGORY,
 } from './constants.js';
-import { ISRAETEL_BASELINES } from '../periodization/constants.js';
+import {
+  ISRAETEL_BASELINES,
+  BIG11_RO_TO_EN_MAP,
+} from '../periodization/constants.js';
 
 /**
  * Get Israetel volume landmarks lookup for muscle group per Cluster C1.
  * Defensive null when unknown muscle group.
  *
- * @param {string} muscleGroup
+ * Accepts EN keys (chest/back/shoulders/quads/hamstrings/glutes/calves/biceps/
+ * triceps/forearms/abs) per ISRAETEL_BASELINES literature reference invariant
+ * (Schoenfeld/Helms academic, ADR 026 §9.4). Big 11 RO canonical V1 consumers
+ * use lookupIsraetelLandmarksRO() helper which translates RO → EN via
+ * BIG11_RO_TO_EN_MAP inverse translator.
+ *
+ * @param {string} muscleGroup - EN key (chest, back, shoulders, etc.)
  * @returns {{MEV: number, MAV: number, MRV: number}|null}
  */
 export function lookupIsraetelLandmarks(muscleGroup) {
   if (typeof muscleGroup !== 'string') return null;
   return ISRAETEL_BASELINES[muscleGroup.toLowerCase()] ?? null;
+}
+
+/**
+ * Get Israetel volume landmarks lookup for Big 11 RO canonical V1 group key
+ * per ADR_ENGINE_REFACTOR §4.8 LOCK V1 (C4.8 Bayesian Nutrition Big 11 RO
+ * migration via translator inverse pattern Option B precedent C4.3).
+ *
+ * Accepts Big 11 RO group (piept/spate/umeri/biceps/triceps/antebrate/core/
+ * picioare-quads/picioare-hamstrings/fese/gambe), translates RO → EN via
+ * BIG11_RO_TO_EN_MAP, then calls lookupIsraetelLandmarks(EN) which looks up
+ * ISRAETEL_BASELINES preserved EN-keyed Israetel literature reference invariant
+ * (ZERO mutation Schoenfeld/Helms academic literature reference per ADR 026
+ * §9.4).
+ *
+ * Used by Coach Director aggregate post C4.5 LANDED which passes Big 11 RO
+ * canonical V1 keys downstream to Bayesian Nutrition (pipeline §42.10 dispatch).
+ *
+ * Defensive null when unknown RO group (NOT in BIG11_RO_TO_EN_MAP).
+ *
+ * Pure function — ADR-026 §9 invariant preserved (ZERO Date.now / Math.random /
+ * side effects).
+ *
+ * @param {string} big11Group - Big 11 RO canonical V1 key (piept, spate, etc.)
+ * @returns {{MEV: number, MAV: number, MRV: number}|null}
+ */
+export function lookupIsraetelLandmarksRO(big11Group) {
+  if (typeof big11Group !== 'string') return null;
+  const enKey = BIG11_RO_TO_EN_MAP[big11Group];
+  if (!enKey) return null;
+  return lookupIsraetelLandmarks(enKey);
 }
 
 /**

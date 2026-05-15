@@ -272,3 +272,30 @@ export const BIG11_EN_TO_RO_MAP = Object.freeze({
   forearms:   'antebrate',
   abs:        'core',
 });
+
+/**
+ * Inverse translator Big 11 RO canonical V1 → Big 11 EN (ISRAETEL_BASELINES
+ * literature reference) per ADR_ENGINE_REFACTOR §4.8.
+ *
+ * Used by downstream engines (e.g. Bayesian Nutrition C4.8) that receive Big 11
+ * RO canonical V1 keys from Coach Director aggregate (post C4.5 LANDED) but
+ * need to lookup ISRAETEL_BASELINES which preserves EN keys per Israetel
+ * literature reference invariant (Schoenfeld/Helms academic, ADR 026 §9.4).
+ *
+ * Co-located with BIG11_EN_TO_RO_MAP cap-coadă single SSOT translator pair.
+ *
+ * @type {Readonly<Object<string, string>>}
+ */
+export const BIG11_RO_TO_EN_MAP = Object.freeze({
+  piept:                  'chest',
+  spate:                  'back',
+  umeri:                  'shoulders',
+  'picioare-quads':       'quads',
+  'picioare-hamstrings':  'hamstrings',
+  fese:                   'glutes',
+  gambe:                  'calves',
+  biceps:                 'biceps',
+  triceps:                'triceps',
+  antebrate:              'forearms',
+  core:                   'abs',
+});
