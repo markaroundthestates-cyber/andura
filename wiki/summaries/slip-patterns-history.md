@@ -689,3 +689,43 @@ Daniel verbatim "fa prompt pt cc sa le fix" REJECT strategy-lock 2026-05-12:
 - [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-15 §F3.13 23rd + 24th + 25th consecutive validation effective + §F3.8 metoda hibridă FULL paradigm 3× threshold MET EXPLICIT cross-chat
 - [[../concepts/pre-beta-full-scope-lock-v2]] amendments[] 2026-05-15 library 657/657 = 100% gate ACHIEVED + Big 11 engine layer 3/8 phases cap-coadă
 - [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-15 chat-current post-midnight Bundle 6.0.7 + C4.2 + C4.3 Triple-LANDED" 7 NEW daniel-isms Categorii CF-CL chat-current ACASĂ post-midnight cumulative cross-chat verbatim catalog extensible cross-link
+
+---
+
+## §"Chat-Current Slip Patterns 2026-05-15 chat ACASĂ post-morning — Quad-LANDED C4.4 + C4.5 + C4.6 + C4.7 Big 11 Engine 7/8 Phases"
+
+**4 NEW slip patterns chat-current ACASĂ post-morning scribe-mode marked (extends slip 23A-23B chat post-midnight + slip 22A-22B chat post-evening + slip 21A-21D evening cumulative cross-chat 2026-05-14):**
+
+**Slip 24A — "noapte bună" fără verify LATEST first** (chat-current 2026-05-15 ACASĂ post-morning, 1× threshold scribe-mode marked):
+- **Trigger:** Co-CTO chat-side after C4.5 PROMPT_CC delivered, when Daniel said *"latest landed"*, replied "noapte bună" autonomous assume LANDED fără verify LATEST.md + git refs.
+- **Catalysator:** Daniel push-back productive direct cu nuance frustrate ușoară verbatim *"tu si citeste latest inainte sa zici noapte buna"*.
+- **Recovery:** Co-CTO mea culpa standard fără defensiveness aux *"Ai dreptate, /caveman pe mine. Verific."* preserved invariant identity Andura.
+- **Rule candidate scribe-mode marked:** "Daniel zice 'latest landed' ≠ autonomous assume — ALWAYS read LATEST.md + git refs ÎNAINTE confirm sau salute final. Anti-pattern recurrence avoidance future trust verify ÎNAINTE confirm."
+
+**Slip 24B — PROMPT_CC §0 HALT condition asumat Big 6 EN hardcoded refs în coachDirector + coachContext + sessionBuilder** (chat-current 2026-05-15 ACASĂ post-morning, 1× threshold scribe-mode marked):
+- **Trigger:** PROMPT_CC C4.5 §0 grep #2 HALT condition presupus "scope mismatch — coachDirector may already be Big 11" requires HALT.
+- **Reality (pre-flight grep evidence):** engines C4.1-4.4 refactor deja taxonomy-agnostic eliminate refs upstream — coachDirector + coachContext + sessionBuilder ZERO Big 6 EN hardcoded group keys; orchestrator consumes Big 11 RO output direct.
+- **Recovery:** CC autonomous refused HALT + executed scope refined intelligent (helper `aggregateGroupScoresPerEngine` NEW pure-function + Phase D cleanup `applicationStrategy.translateGroupToRO` Big 6 EN fallback removed + tests +14 NEW orchestrator integration).
+- **§AR.29 candidate 1× threshold:** "engines downstream anatomical refactor are taxonomy-agnostic by default" (cumulative ulterior cu slip 24C §AR.29 candidate 3× threshold MET cross-bundle).
+
+**Slip 24C — §AR.29 candidate 3× threshold MET cross-bundle C4.5 + C4.6 + C4.7** (chat-current 2026-05-15 ACASĂ post-morning, 3× threshold MET cross-bundle, codify candidate next /wiki-ingest):
+- **Trigger:** Same pattern repeat cross-bundle 3×: C4.5 Coach Director scope mismatch surface + C4.6 Cascade Defense pre-flight grep ZERO refs + C4.7 Vitality Layer pre-flight grep ZERO refs (false positives "chestionar" Romanian + "priority" typedef + "reps in reserve" docstring NU Big 6 group refs).
+- **Pattern:** engines downstream from C4.1-4.4 anatomical refactor are taxonomy-independent — orchestrator/cross-cutting layers consume engine outputs without hardcoding Big 6 EN or Big 11 RO group keys directly; pre-flight grep evidence repeats 3× ZERO hardcoded refs surface.
+- **§AR.29 codify formal LOCKED V1 justified next /wiki-ingest Daniel review explicit chat NEW:** "engines downstream anatomical refactor are taxonomy-agnostic by default unless explicit group key dispatch logic surfaces — pre-flight grep first refined scope intelligent per Co-CTO tactical autonomous §AR.26 + §AR.27 LOCKED V1 + memory edit #17 invariant. Anti-pattern future C4.* prompts NU assume hardcoded Big 6 EN refs require migration — pre-flight grep first, refined scope intelligent (doc-only / invariant test / NO-OP)".
+- **Distinct candidate concurrent cu §AR.28** (§AR.28 = handover via courier metoda hibridă FULL §F3.8 4× threshold ABSOLUTE cross-chat; §AR.29 = engines downstream taxonomy-agnostic 3× threshold cross-bundle scope-refinement).
+
+**Slip 24D — Auto-fix Rule 1 inline applied 1× C4.6** (chat-current 2026-05-15 ACASĂ post-morning, 1× threshold scribe-mode marked):
+- **Trigger:** Initial NEW test `composite-signal/__tests__/big11AnatomicalAgnostic.test.js` assumed `COMPOSITE_SIGNAL_LIFECYCLE.IDLE` state enum dar lifecycle.js exports config constants `{ COOLDOWN_SESSIONS, RESOLUTION_CLEAN_SESSIONS }`.
+- **Recovery:** Fixed inline pre-commit verify FSM source string + config constants typeof number; recovery instant fără defensiveness Co-CTO standard preserved invariant. ZERO `--no-verify` bypass.
+- **Rule candidate scribe-mode marked:** "Pre-NEW test discipline: verify actual exports `grep -n 'export' <module.js>` before referencing constants în test assertions — assumption-driven typing pe API surface = slip risk auto-fix Rule 1 trigger".
+
+**Pattern NEW chat-current 2026-05-15 ACASĂ post-morning:**
+4 NEW slip patterns scribe-mode marked extends 23A-23B chat post-midnight + 22A-22B chat post-evening + 21A-21D evening cumulative cross-chat 14 evening cumulative crescente. **Slip 24C = §AR.29 candidate 3× threshold MET cross-bundle distinct candidate concurrent cu §AR.28 4× threshold ABSOLUTE cross-chat** — codify formal LOCKED V1 ambele justified next /wiki-ingest Daniel review explicit chat NEW per §AR.27 LOCKED V1 NEW structural preventive mechanism activate. Co-CTO recovery instant fără defensiveness aux preserved invariant cross-chat consistent crescente trust delegation MAXIMUM 11th consecutive cross-chat directive.
+
+**Cross-refs raw layer adițional chat-current 2026-05-15 ACASĂ post-morning:**
+- [[../../📥_inbox/HANDOVER_2026-05-15_QUAD_LANDED_C4_4_PLUS_C4_5_PLUS_C4_6_PLUS_C4_7_BIG11_ENGINE_7_OF_8_PHASES]] narrative source artefact separate Daniel courier metoda hibridă FULL paradigm 4× threshold ABSOLUTE chat-current ACASĂ post-morning (~146 LOC scribe flow conversational)
+- [[handover-2026-05-15-chat-acasa-post-morning-quad-landed-c4-4-c4-5-c4-6-c4-7-big11-engine-7-of-8-phases]] §1 Synthesis Quad-LANDED + §2 Verbatim Quotes Daniel Categorii CM-CR + §3 Bugatti framing notes 5 sub-sections + §4 Cross-refs raw layer + §5 Path Forward P1-P5 cumulative + §6 Bandwidth + Co-CTO autonomy MAXIMUM 11th consecutive cross-link
+- [[../concepts/anti-recurrence-rules]] amendments[] 2026-05-15-chat-current-post-morning §AR.28 candidate 4× threshold ABSOLUTE cross-chat scribe-mode marked codify formal LOCKED V1 justified + §AR.29 candidate 3× threshold MET cross-bundle scope-refinement pattern codify formal LOCKED V1 justified Daniel review explicit chat NEW + 2 NEW §AR.* candidates scribe-mode marked 1× threshold (Slip 24A noapte bună verify + Slip 24D auto-fix Rule 1 inline C4.6 lifecycle config constants)
+- [[../concepts/autonomy-paradigm-v1]] amendments[] 2026-05-15-chat-current-post-morning Co-CTO autonomy MAXIMUM 11th consecutive cross-chat directive verbatim trust delegation MAXIMUM
+- [[../concepts/metoda-hibrida-chat-cc]] amendments[] 2026-05-15-chat-current-post-morning §F3.13 26th-29th consecutive validation effective + §F3.8 metoda hibridă FULL paradigm 4× threshold ABSOLUTE cross-chat + §AR.29 candidate 3× threshold MET cross-bundle
+- [[daniel-isms-glossary]] §"Chat ACASĂ 2026-05-15 chat-current post-morning Quad-LANDED C4.4 + C4.5 + C4.6 + C4.7 Big 11 Engine 7/8 Phases" 6 NEW daniel-isms Categorii CM-CR chat-current ACASĂ post-morning cumulative cross-chat verbatim catalog extensible cross-link
