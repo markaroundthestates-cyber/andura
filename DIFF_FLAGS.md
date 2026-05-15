@@ -208,7 +208,7 @@
 - **Total estimare:** ~1000-1500 LOC + 80-120 tests = MAJOR feature multi-session CC autonomous.
 - **Gigel test:** PASS instant (visual intuitive + zero gândire user). **Bugatti:** PASS dacă engine intelligence (deviation memory + diminishing returns + recovery-aware rebalance) impecabilă — asta diferențiază Andura de planner static.
 
-**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future wiki/entities/features/calendar-adaptive.md (Phase 3 SUB-BATCH 3 Cluster C features cluster TBD) + P1-FLAG-DEVIATION-MEMORY-TAU-ML-ADAPTIVE-LOCK-V1 cross-ref.
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future 99-archive/wiki-pre-2026-05-15/entities/features/calendar-adaptive.md (Phase 3 SUB-BATCH 3 Cluster C features cluster TBD) + P1-FLAG-DEVIATION-MEMORY-TAU-ML-ADAPTIVE-LOCK-V1 cross-ref.
 
 ---
 
@@ -224,7 +224,7 @@
 
 **Verbatim Daniel captured pentru wiki future page `deviation-memory-decay` (Phase 3 SUB-BATCH 3 Cluster B engines cluster):** *"daca saptamana asta gigel are 5 antrenamente in loc de 3... sau 2 in loc de 4... e importanta info... dar peste 5 luni nu o sa mai fie relevanta."* NOTĂ: "5 luni" = rhetorical/directional NOT literal anchor.
 
-**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + [[../03-decisions/017-demographic-prior-database]] + future wiki/entities/engines/deviation-memory-decay.md.
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + [[../03-decisions/017-demographic-prior-database]] + future 99-archive/wiki-pre-2026-05-15/entities/engines/deviation-memory-decay.md.
 
 ---
 
@@ -312,7 +312,7 @@
 
 **Memory edit cap:** 30/30 atins. Capture mental scribe mode permanent activ. Replace candidate identificat dimineața dacă vrea persistent (recomand replace #6 "Format chat default 1 întrebare" — covered explicit prin userPreferences §1).
 
-**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future wiki/concepts/daniel-time-estimates-rhetorical-pattern.md (Phase 3 SUB-BATCH 3 Cluster E concepts cluster TBD).
+**Cross-refs:** [[../CURRENT_STATE]] §JUST_DECIDED top entry 2026-05-12 + future 99-archive/wiki-pre-2026-05-15/concepts/daniel-time-estimates-rhetorical-pattern.md (Phase 3 SUB-BATCH 3 Cluster E concepts cluster TBD).
 
 ---
 

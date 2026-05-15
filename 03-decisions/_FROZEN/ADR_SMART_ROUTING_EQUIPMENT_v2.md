@@ -161,7 +161,7 @@ NEW table `src/engine/smart-routing/preFatigueRules.js` (orchestrator-level reor
 
 **Default tier behavior (Maria 65 + Gigica + Gigel):** hard block — orchestrator silent reorder isolation/accessory swap-uri to position post-compound.
 
-**Marius advanced tier override:** intentional pre-fatigue allowed via existing engine-specialization PARALLEL modifier 4-gate strict (per [[wiki/entities/engines/engine-specialization]] §AMENDMENT BATCH 2 + ADR 029). Marius hypertrophy specialization patterns (e.g., front raise pre-OHP pentru rear-delt bias trick) preserved invariant.
+**Marius advanced tier override:** intentional pre-fatigue allowed via existing engine-specialization PARALLEL modifier 4-gate strict (per [[99-archive/wiki-pre-2026-05-15/entities/engines/engine-specialization]] §AMENDMENT BATCH 2 + ADR 029). Marius hypertrophy specialization patterns (e.g., front raise pre-OHP pentru rear-delt bias trick) preserved invariant.
 
 ## §3 Cascade Traversal Algorithm
 
@@ -285,13 +285,13 @@ function reorderSessionPostSwap(sessionPlan, swappedSlot, newExercise):
 
 **Decision:** Silent reorder, NU warn modal pentru reorder action.
 
-**Rationale:** Gigel-friendly anti-paternalism engine intelligence ascunsă (per [[wiki/concepts/andura-suflet]] + [[wiki/concepts/gigel-test]]). User vede session plan actualizat în UI direct post-swap — NU friction modal "exercise X was moved because Y" cognitive load. CDL audit trail preserved (debug visibility post-hoc) fără UI friction. User curious why exercise moved → CDL inspection available via Progres tab future enhancement.
+**Rationale:** Gigel-friendly anti-paternalism engine intelligence ascunsă (per [[99-archive/wiki-pre-2026-05-15/concepts/andura-suflet]] + [[99-archive/wiki-pre-2026-05-15/concepts/gigel-test]]). User vede session plan actualizat în UI direct post-swap — NU friction modal "exercise X was moved because Y" cognitive load. CDL audit trail preserved (debug visibility post-hoc) fără UI friction. User curious why exercise moved → CDL inspection available via Progres tab future enhancement.
 
 ### §5.8 Marius Edge Case via Existing Specialization PARALLEL Modifier
 
 **Decision:** Marius intentional pre-fatigue allowed via engine-specialization PARALLEL modifier 4-gate strict existing (NU NEW carve-out v2).
 
-**Rationale:** Consistency cu existing engine-specialization architecture (ADR 029 + [[wiki/entities/engines/engine-specialization]]). NU duplicate carve-out logic v2. Default tier (Maria/Gigica/Gigel) hard block silent reorder; Marius advanced opt-in via specialization toggle. Reuse existing gate logic + invariant single source of truth for advanced tier behavior.
+**Rationale:** Consistency cu existing engine-specialization architecture (ADR 029 + [[99-archive/wiki-pre-2026-05-15/entities/engines/engine-specialization]]). NU duplicate carve-out logic v2. Default tier (Maria/Gigica/Gigel) hard block silent reorder; Marius advanced opt-in via specialization toggle. Reuse existing gate logic + invariant single source of truth for advanced tier behavior.
 
 ### §5.9 Pre-Fatigue Pairs Hard-Coded Canonical Table
 
@@ -354,14 +354,14 @@ function reorderSessionPostSwap(sessionPlan, swappedSlot, newExercise):
 
 ### §8.3 Cross-Refs Wiki Layer
 
-- [[../wiki/entities/adrs/adr-smart-routing-equipment.md]] v1 entity page LOCK 2026-05-02 (supersede chain v2 amendment)
-- [[../wiki/summaries/bundle-4-workout-preview-plus-midsession-refusal-flow-landed-milestone-2026-05-13.md]] Bundle 4 LANDED milestone synthesis chain (cascade exhaustion mechanism verbatim Daniel full description)
-- [[../wiki/concepts/calendar-feature-v1-spec.md]] §amendments 2026-05-13e Bundle 5 ADR amendment SMART_ROUTING_v2 deferred path forward strategic chat dedicat
-- [[../wiki/concepts/bugatti-craft.md]] Quality > Speed dev iteration discipline preserve invariant
-- [[../wiki/concepts/gigel-test.md]] anti-paternalism Gigel-friendly engine intelligence ascunsă preserve invariant
-- [[../wiki/concepts/andura-suflet.md]] brand soul Gigel-friendly anti-paternalism preserve invariant
-- [[../wiki/entities/engines/engine-coach-director.md]] orchestrator pipeline §42.10 + Bundle 4 augmentation preserved invariant
-- [[../wiki/entities/engines/engine-specialization.md]] Marius advanced tier PARALLEL modifier 4-gate strict existing carve-out
+- [[../99-archive/wiki-pre-2026-05-15/entities/adrs/adr-smart-routing-equipment.md]] v1 entity page LOCK 2026-05-02 (supersede chain v2 amendment)
+- [[../99-archive/wiki-pre-2026-05-15/summaries/bundle-4-workout-preview-plus-midsession-refusal-flow-landed-milestone-2026-05-13.md]] Bundle 4 LANDED milestone synthesis chain (cascade exhaustion mechanism verbatim Daniel full description)
+- [[../99-archive/wiki-pre-2026-05-15/concepts/calendar-feature-v1-spec.md]] §amendments 2026-05-13e Bundle 5 ADR amendment SMART_ROUTING_v2 deferred path forward strategic chat dedicat
+- [[../99-archive/wiki-pre-2026-05-15/concepts/bugatti-craft.md]] Quality > Speed dev iteration discipline preserve invariant
+- [[../99-archive/wiki-pre-2026-05-15/concepts/gigel-test.md]] anti-paternalism Gigel-friendly engine intelligence ascunsă preserve invariant
+- [[../99-archive/wiki-pre-2026-05-15/concepts/andura-suflet.md]] brand soul Gigel-friendly anti-paternalism preserve invariant
+- [[../99-archive/wiki-pre-2026-05-15/entities/engines/engine-coach-director.md]] orchestrator pipeline §42.10 + Bundle 4 augmentation preserved invariant
+- [[../99-archive/wiki-pre-2026-05-15/entities/engines/engine-specialization.md]] Marius advanced tier PARALLEL modifier 4-gate strict existing carve-out
 
 ---
 

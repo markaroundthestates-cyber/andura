@@ -60,7 +60,7 @@ CC autonomous MUST first:
 CC autonomous MUST verify VERBATIM (NU presume from spec):
 
 - ☐ All `path:§` references în handover narrative exist filesystem-side via `grep -rEn '<pattern>' --include='*.md' --exclude-dir=node_modules --exclude-dir=_archive`
-- ☐ Pre-existing wiki pages referenced (e.g. `[[wiki/concepts/<concept>]]`) exist via `filesystem:get_file_info`
+- ☐ Pre-existing wiki pages referenced (e.g. `[[99-archive/wiki-pre-2026-05-15/concepts/<concept>]]`) exist via `filesystem:get_file_info`
 - ☐ Daniel-isms quoted în Verbatim section presente în source chat (cross-verify cu chat-current sau handover narrative integral)
 - ☐ Strategy LOCKED V1 cap-coadă preserved (Port-First-Then-React + Autonomy LOCKED V1 + Metoda hibridă + Karpathy Real + voice preservation §1)
 
@@ -96,12 +96,12 @@ Each affected wiki page MUST contain EXACT 4-section structure per [[../CLAUDE]]
 
 CC autonomous MUST correct-classify content per handover narrative:
 
-- ☐ **Handover narrative slice** (decizie LOCKED + iterație + slip patterns) → distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant
-- ☐ **ADR draft / amendment** → entity page `wiki/entities/adrs/adr-<NNN>-<slug>.md`
-- ☐ **SPEC DRAFT / paradigm shift** → entity page `wiki/entities/specs/spec-<name>.md` + concept page dacă cross-cutting
-- ☐ **Slip pattern / anti-recurrence rule** → concept page `wiki/concepts/anti-recurrence-<NN>.md` cu daniel-ism trigger + origin chat date
-- ☐ **Cross-cutting paradigm** (e.g. metoda hibridă, Bugatti craft, voice preservation) → concept page `wiki/concepts/<paradigm-slug>.md`
-- ☐ **Topic synthesis multi-source** (e.g. "calendar feature overview", "BATCH 2 closure overview") → summary page `wiki/summaries/<topic>-overview.md`
+- ☐ **Handover narrative slice** (decizie LOCKED + iterație + slip patterns) → distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` relevant
+- ☐ **ADR draft / amendment** → entity page `99-archive/wiki-pre-2026-05-15/entities/adrs/adr-<NNN>-<slug>.md`
+- ☐ **SPEC DRAFT / paradigm shift** → entity page `99-archive/wiki-pre-2026-05-15/entities/specs/spec-<name>.md` + concept page dacă cross-cutting
+- ☐ **Slip pattern / anti-recurrence rule** → concept page `99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-<NN>.md` cu daniel-ism trigger + origin chat date
+- ☐ **Cross-cutting paradigm** (e.g. metoda hibridă, Bugatti craft, voice preservation) → concept page `99-archive/wiki-pre-2026-05-15/concepts/<paradigm-slug>.md`
+- ☐ **Topic synthesis multi-source** (e.g. "calendar feature overview", "BATCH 2 closure overview") → summary page `99-archive/wiki-pre-2026-05-15/summaries/<topic>-overview.md`
 
 **Classification wrong** = page misplaced → discoverability broken + cross-refs lineage broken. Re-classify before commit.
 
@@ -146,7 +146,7 @@ CC autonomous MUST:
 
 - ☐ Update `wiki/index.md` entry append cross-ref raw source HANDOVER file path + brief 1-line summary per new/updated page
 - ☐ Update `wiki/log.md` chronological entry `## [YYYY-MM-DD] ingest | <handover topic>` cu brief description what distributed (5-15 LOC)
-- ☐ Verify `wiki/index.md` cumulative page count matches actual filesystem count (`ls wiki/entities/adrs/ | wc -l` + `ls wiki/concepts/ | wc -l` etc) — discrepancy = index drift, flag
+- ☐ Verify `wiki/index.md` cumulative page count matches actual filesystem count (`ls 99-archive/wiki-pre-2026-05-15/entities/adrs/ | wc -l` + `ls 99-archive/wiki-pre-2026-05-15/concepts/ | wc -l` etc) — discrepancy = index drift, flag
 - ☐ Voice fidelity preserved în wiki/log.md entry (NU just "ingested X file" — include Daniel pivot context dacă major)
 
 **Fail oricare §4 →** wiki navigation broken Karpathy. Re-sync before commit.

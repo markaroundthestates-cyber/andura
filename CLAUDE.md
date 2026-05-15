@@ -78,7 +78,7 @@ amendments:
 **Hard rule raw layer immutable post-Faza 3 2026-05-11:**
 - ZERO edit body of raw files (entire vault existing). Append-only architecture deprecated în favor wiki/ chronological log.
 - ZERO append CURRENT_STATE §JUST_DECIDED / §NOW / §RECENT post-Faza 3 freeze. CURRENT_STATE = frozen snapshot raw layer, citable but NU live updated.
-- ZERO new ADR/SPEC files în raw layer post-Faza 3 (instead: distribute via `/wiki-ingest` la `wiki/entities/`). Exception: ADR rare cazuri când Daniel decides explicit, raw layer additive cu accompanying `wiki/entities/adrs/adr-<NNN>.md` page generated.
+- ZERO new ADR/SPEC files în raw layer post-Faza 3 (instead: distribute via `/wiki-ingest` la `99-archive/wiki-pre-2026-05-15/entities/`). Exception: ADR rare cazuri când Daniel decides explicit, raw layer additive cu accompanying `99-archive/wiki-pre-2026-05-15/entities/adrs/adr-<NNN>.md` page generated.
 - HANDOVER narratives noi → `/wiki-ingest` distribute la wiki layer + `wiki/log.md` chronological + archive raw la `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
 
 ### §1.2 — Layer 2: Wiki (Pure LLM-Generated)
@@ -274,12 +274,12 @@ last_updated: YYYY-MM-DD
 **Workflow:**
 1. **Read raw source** via MCP filesystem direct (`📥_inbox/<file>.md` typically).
 2. **Classify content branch logic:**
-   - **Handover narrative** (scribe end-of-chat aggregate) → distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing notes append + Cross-refs raw layer cite specific. `wiki/log.md` entry append `## [YYYY-MM-DD] ingest | <handover topic>`. Archive raw HANDOVER → `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
-   - **ADR draft** → 1 entity page `wiki/entities/adrs/adr-<NNN>-<slug>.md` cu voice preservation policy §1 + concept page dacă cross-cutting + cross-refs bidirectional. Raw ADR file (dacă created în `03-decisions/` per Daniel decision) is supplementary raw source for wiki entity page.
-   - **SPEC DRAFT** → 1 entity page `wiki/entities/specs/spec-<name>.md` + summary dacă synthesizing multi-spec. Raw SPEC file supplementary.
+   - **Handover narrative** (scribe end-of-chat aggregate) → distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing notes append + Cross-refs raw layer cite specific. `wiki/log.md` entry append `## [YYYY-MM-DD] ingest | <handover topic>`. Archive raw HANDOVER → `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
+   - **ADR draft** → 1 entity page `99-archive/wiki-pre-2026-05-15/entities/adrs/adr-<NNN>-<slug>.md` cu voice preservation policy §1 + concept page dacă cross-cutting + cross-refs bidirectional. Raw ADR file (dacă created în `03-decisions/` per Daniel decision) is supplementary raw source for wiki entity page.
+   - **SPEC DRAFT** → 1 entity page `99-archive/wiki-pre-2026-05-15/entities/specs/spec-<name>.md` + summary dacă synthesizing multi-spec. Raw SPEC file supplementary.
    - **Prompt CC / Plan** → preserve `📥_inbox/` (NU process — Daniel-curated input pending execute, NU wiki summary yet). Update `wiki/log.md` entry `## [YYYY-MM-DD] queued | <prompt CC name>`.
-   - **Raport CC** (autonomous execution raport) → update relevant `wiki/entities/` + `wiki/summaries/` pages cu narrative slice + Cross-refs la `📤_outbox/_archive/`.
-   - **External article** (Web Clipper future) → entity page `wiki/entities/external/<name>.md` + concept tag cross-cutting.
+   - **Raport CC** (autonomous execution raport) → update relevant `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/summaries/` pages cu narrative slice + Cross-refs la `📤_outbox/_archive/`.
+   - **External article** (Web Clipper future) → entity page `99-archive/wiki-pre-2026-05-15/entities/external/<name>.md` + concept tag cross-cutting.
 3. **Update `wiki/index.md`** entry append (1-line cu cross-ref raw layer source).
 4. **Append `wiki/log.md`** entry `## [YYYY-MM-DD] ingest | <source name>` + brief description what distributed.
 5. **Pre-flight grep wikilinks orphan** mandatory pre-commit.
@@ -295,15 +295,15 @@ last_updated: YYYY-MM-DD
 
 **Workflow:**
 1. **Read `wiki/index.md` first** for topic anchor (Karpathy native: index-driven navigation, NU embedding RAG).
-2. **Drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` pages** relevant per index.
-3. **Cite citations `path:§` mandatory** per §CC.4. Format primary: `Per [[wiki/entities/<file>]] §<section>: ...` OR `Per [[wiki/concepts/<file>]] §<section>: ...`. Fallback: drill raw layer specific dacă wiki Synthesis ambiguă: `Per [[../../03-decisions/<file>]] §<section>: ...`.
+2. **Drill `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` pages** relevant per index.
+3. **Cite citations `path:§` mandatory** per §CC.4. Format primary: `Per [[99-archive/wiki-pre-2026-05-15/entities/<file>]] §<section>: ...` OR `Per [[99-archive/wiki-pre-2026-05-15/concepts/<file>]] §<section>: ...`. Fallback: drill raw layer specific dacă wiki Synthesis ambiguă: `Per [[../../03-decisions/<file>]] §<section>: ...`.
 4. **Synthesize answer** cu citations multi-source dacă necesar.
 5. **Flag explicit if no wiki answer:**
    - "verific cu MCP filesystem raw layer read"
    - "necesită Daniel decizie reală (NU vault answer)"
    - "invoke web search Daniel cerere"
    NU invent — escalate.
-6. **File answers back as wiki pages când valoros** (Karpathy native insight): comparison tables + analysis + connections discovered ≠ disappear into chat history. Place în `wiki/summaries/<topic>.md` cu YAML frontmatter + voice preservation policy §1.
+6. **File answers back as wiki pages când valoros** (Karpathy native insight): comparison tables + analysis + connections discovered ≠ disappear into chat history. Place în `99-archive/wiki-pre-2026-05-15/summaries/<topic>.md` cu YAML frontmatter + voice preservation policy §1.
 
 **Optional `wiki/log.md` entry:** `## [YYYY-MM-DD] query | <question topic>` (only when novel synthesis produced and filed back).
 
@@ -353,7 +353,7 @@ last_updated: YYYY-MM-DD
 
 ### §5.3 — `path:§` Citation Format Chat (Per VAULT_RULES §CC.4)
 
-**Format:** `path/to/file:§SECTION_NAME` (e.g. `wiki/entities/adrs/adr-005-vanilla-js.md:§Synthesis`).
+**Format:** `path/to/file:§SECTION_NAME` (e.g. `99-archive/wiki-pre-2026-05-15/entities/adrs/adr-005-vanilla-js.md:§Synthesis`).
 **Use:** Chat strategic responses + commit messages + LATEST.md raports + claude_code agent prompts.
 
 ### §5.4 — Bidirectional Cross-Link Mandatory Nontrivial
@@ -370,7 +370,7 @@ ADR entity page ↔ concept page paradigm citing it ↔ summary page synthesizin
 
 **NEW (Faza 3 Karpathy real):**
 1. Chat NEW startup → read `wiki/index.md` + `wiki/log.md` last 5-10 entries (live navigation hub).
-2. Drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` per question/topic via `/wiki-query`.
+2. Drill `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` per question/topic via `/wiki-query`.
 3. CURRENT_STATE preserved raw layer immutable, citable via wiki summaries cross-refs (NU mandatory full read).
 4. HANDOVER themes preserved raw layer, citable via wiki entities cross-refs.
 5. §CC.3 output startup format aligned `wiki/index.md` cumulative count + last LOCKED references + drift status (default `Drift zero`) + next P1 fork (per scribe end-of-chat aggregate predecessor handover summary §5 Path Forward).
@@ -388,7 +388,7 @@ Every factual claim post-startup = citation `path:§` obligatoriu. Memory recall
 
 **Faza 2B+ mecanic:** CURRENT_STATE move-then-replace + DECISION_LOG entry append + archive consumed + backup tag + commit + push.
 
-**Faza 3 Karpathy real:** Replaced by `/wiki-ingest <handover-source>` (handover-narrative classifier branch §4.1) — distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing + Cross-refs raw layer. `wiki/log.md` chronological entry. Archive raw la `📤_outbox/_archive/`.
+**Faza 3 Karpathy real:** Replaced by `/wiki-ingest <handover-source>` (handover-narrative classifier branch §4.1) — distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` relevant pages cu narrative slice + Verbatim quotes Daniel append + Bugatti framing + Cross-refs raw layer. `wiki/log.md` chronological entry. Archive raw la `📤_outbox/_archive/`.
 
 **CURRENT_STATE update post-Faza 3:** NU touch (raw layer immutable freeze). CURRENT_STATE = frozen snapshot citable.
 

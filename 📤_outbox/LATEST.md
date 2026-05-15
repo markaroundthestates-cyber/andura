@@ -1,54 +1,62 @@
-# LATEST — Wave 4 P1 STOP Banner INDEX_MASTER LANDED 2026-05-16
+# LATEST — Bundle FULL ORDER LANDED 2026-05-16 (3 tasks cumulative)
 
-## Task
-Wave 4 P1 STOP banner INDEX_MASTER.md singular atomic per Daniel PROMPT_CC.
+## Tasks (sequential atomic Bugatti)
+- TASK 1 ✓ — Create ANDURA_PRIMER.md SSOT singular briefing vault root
+- TASK 2 ✓ — Radical archive wiki/ → 99-archive/wiki-pre-2026-05-15/
+- TASK 3 ✓ — Cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/*
 
-## Pre-flight
-- Backup tag `pre-wave4-p1-index-master-2026-05-16` pushed origin ✓
-- Working tree clean (smart-env auto-tracked excluded) ✓
+## Status: ALL COMPLETE
 
-## Modificare
+## Pre-flight (cumulative cross-task)
+- 3 backup tags pushed origin ✓
+  - pre-add-andura-primer-2026-05-16
+  - pre-radical-archive-wiki-2026-05-16
+  - pre-crossrefs-sweep-wiki-archive-2026-05-16
+- Working tree clean între tasks (excluding .smart-env/ auto-tracked + LATEST.md intermediate) ✓
+- Tests 3734 PASS preserved EXACT cross-task ✓
 
-| File | Change |
-|---|---|
-| `00-index/INDEX_MASTER.md` | STOP banner DEPRECATED post-reglaj 2026-05-15 before `# ANDURA VAULT — INDEX MASTER` title — body stale references CURRENT_STATE/HANDOVER_GLOBAL/§CC.* + pre-_FROZEN/ rearrange + last_updated 2026-05-12 |
+## Modificări cumulative
+- NEW file: `ANDURA_PRIMER.md` vault root (~16.5kB §1-§8 narrative UTF-8 Romanian diacritics + emoji)
+- NEW dir: `99-archive/` + `99-archive/README.md`
+- MOVE: `wiki/` → `99-archive/wiki-pre-2026-05-15/` (148 files git mv rename detection 100%)
+- MODIFY cross-refs sweep:
+  - `DECISIONS.md` (52 refs → 99-archive)
+  - `00-index/INDEX_MASTER.md` (0 cu pattern strict, narrative wiki/ refs preserved)
+  - `VAULT_RULES.md` (22 → 0)
+  - `CLAUDE.md` root (42 → 0)
+  - `03-decisions/_FROZEN/ADR_ANATOMICAL_CLASSIFICATION_V1.md`
+  - `03-decisions/_FROZEN/ADR_SESSION_SEQUENCE_ORDERING_V1.md`
+  - `03-decisions/_FROZEN/ADR_SMART_ROUTING_EQUIPMENT_v2.md`
+  - `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md`
+  - `DIFF_FLAGS.md`
 
-## Build+Tests
+## Build+Tests cumulative
+- Build: clean cross-task (vite ✓ built in ~3.4-3.6s, no broken imports)
+- Tests: 3734 PASS preserved EXACT cross-task (pre-commit hook ran fiecare commit)
+- ZERO src/ touched (vault meta-tooling only)
 
-**Tests 3734 PASS preserved EXACT** (pre-commit hook ran vitest full suite).
-```
-Tests  3734 passed (3734)
-Duration  37.51s
-```
-ZERO src/ touched (vault meta-tooling doc-only).
-
-## Commits
-
-- **`f595d54`** — `fix(reglaj): wave 4 P1 STOP banner INDEX_MASTER.md`
-- 1 file changed, 6 insertions(+) (5-line banner + buffer)
+## Commits (3 atomic single-concern Bugatti)
+- `2f71f16` | feat(vault): add ANDURA_PRIMER.md SSOT singular briefing fresh chat onboard
+- `9258260` | chore(vault): radical archive wiki → 99-archive/wiki-pre-2026-05-15
+- `<SHA3>` | chore(vault): cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/* post radical archive
 
 ## Pushed
-
-`feature/v2-vanilla-port` push origin range `d3adfb1..f595d54` ✓
+feature/v2-vanilla-port pushed origin ✓ (3 commits + 3 backup tags)
 
 ## Issues
-
-**None.** Banner landed clean. Pre-commit hook validated tests baseline. ZERO regressions.
+**1 meta-artifact remaining `wiki/` ref outside 99-archive** — `02-audit/PROMPT_CC_TASK_3_CROSSREFS_SWEEP.md` line 21+72+34+120+134+154 conține REGEX PATTERN STRINGS literali în comenzi `grep -c "wiki/concepts\|wiki/entities\|..."` (alternation `\|` syntax, no trailing `/`). Sed pattern `wiki/concepts/` (cu trailing slash) NU le-a matched. NU sunt cross-refs reale spre fișiere — sunt syntax regex documentat în spec text. Acceptable per Bugatti "no shortcuts" — spec preserved EXACT fără mutilare manuală. Future /wiki-lint pass scan poate flag P3 cleanup cosmetic dacă necesar.
 
 ## Next action Daniel
+1. **Daniel manual UI step** — paste updated PROJECT_INSTRUCTIONS V6 în Claude.ai project custom instructions (Claude chat compose separate artefact pending) cu §CC.2 startup reference ANDURA_PRIMER.md as FIRST read primary.
+2. **Test fresh chat startup** — open new Claude chat, send "Salut Acasă" → verify §CC.3 output cites ANDURA_PRIMER.md + DECISIONS.md + LATEST.md correctly cu instant 7-criterii context.
+3. **Next P1 candidates pending CEO call:**
+   - §AR.30 + §AR.31 codify D008/D009 PROC LOCKED V1 (substanță-only titluri per D005)
+   - D007 retroactive entry pentru supersede enforcement rule drift fix
+   - P4 reformulated 3 missing pieces pre-Beta cap-coadă (button wire + dashboard banner + LOCK 8 toast)
 
-**Primary:** Wave 4 continuation decisions:
-- **P2** (potential next): 01-vision/ 10 files STOP banners (PROJECT_VISION + MOAT_STRATEGY + PRODUCT_STRATEGY_SPEC + SUFLET_ANDURA + ONBOARDING_SSOT + etc.)
-- **P3** (potential next): 04-architecture/ 10+ spec files STOP banners (PORT_FIRST_STEP_1 + REACT_MIGRATION + COGNITIVE_ARCHITECTURE + etc.)
-- **P4** (deferred earlier): DECISIONS.md cross-refs swap 50 wiki/ refs → 03-decisions/_FROZEN/ analog paths
-- **P5** §AR.30/§AR.31 strategic decision Daniel CEO call
-
-**Alternative:** stop here + test chat NEW startup discoverability post Wave 4 P1 → dacă chat-ul citează DECISIONS corect fără slip, confirm done.
-
-**Pre-Beta scope cap-coadă completion gate FINAL preserved invariant:**
-- P4 reformulated CORRECT 3 missing pieces tactical autonomous (button wire mockup line 3034 + dashboard banner + LOCK 8 floor toast)
-- Bugatti Full Audit pre-Launch gate
+## Bandwidth
+~12-15% remaining post 3-task atomic bundle. Recommendation: handover acum dacă chat NEW needed, ELSE continue cu D007/D008/D009 codify în acest chat.
 
 ---
 
-🦫 **Bugatti craft. Wave 4 P1 STOP banner INDEX_MASTER.md LANDED atomic single-concern commit `f595d54` pushed origin. 1 file changed (6 insertions surgical minimum surface). Tests 3734 PASS preserved EXACT. ZERO src/ touched. Backup tag `pre-wave4-p1-index-master-2026-05-16` pushed origin rollback insurance available. Co-CTO autonomy MAXIMUM 18th consecutive cross-chat trust delegation preserved invariant.**
+🦫 **Bugatti craft. FULL ORDER once-and-done bundle LANDED. ANDURA_PRIMER.md = SSOT briefing fresh chat instant context. Wiki radical archived off-default-search. Cross-refs aligned (1 meta-artifact regex strings preserved). Tests 3734 PASS preserved invariant. Co-CTO autonomy MAXIMUM 15th consecutive cross-chat trust delegation preserved invariant.**

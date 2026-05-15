@@ -317,7 +317,7 @@ Tier-aware per persona unchanged (Gigel-test cascade routing orthogonal anatomic
 - Bundle 6.0.7 Core ~60 NEW (`core` primary canonical)
 - Total cumulative ~302+ NEW remaining post C4 to reach 657+ target floor minim Pre-Beta MANDATORY scope library.
 
-**Wiki layer impact:** NEW concept page `wiki/concepts/anatomical-classification-v1.md` + UPDATE existing `wiki/entities/adrs/adr-smart-routing-equipment.md` frontmatter `amendments[]` (cross-ref ADR ANATOMICAL_CLASSIFICATION_V1) distributed via `/wiki-ingest` C3/C4 sequence later (NU acest C1 commit — vault meta-tooling doc-only ADR creation).
+**Wiki layer impact:** NEW concept page `99-archive/wiki-pre-2026-05-15/concepts/anatomical-classification-v1.md` + UPDATE existing `99-archive/wiki-pre-2026-05-15/entities/adrs/adr-smart-routing-equipment.md` frontmatter `amendments[]` (cross-ref ADR ANATOMICAL_CLASSIFICATION_V1) distributed via `/wiki-ingest` C3/C4 sequence later (NU acest C1 commit — vault meta-tooling doc-only ADR creation).
 
 ## §7 Cross-refs raw layer
 
@@ -327,8 +327,8 @@ Tier-aware per persona unchanged (Gigel-test cascade routing orthogonal anatomic
 - [[03-decisions/ADR-024-goal-driven-program-templates.md]] Q6 D Hybrid streak counter §EXT-1 §EXT-2
 - [[03-decisions/ADR-032-engine-deload-protocol.md]] Engine 2 pipeline §42.10
 - [[03-decisions/ADR-031-engine-warmup-mobility.md]] Engine 7 pipeline §42.10
-- [[wiki/concepts/cascade-engines-overview.md]] cumulative pipeline summary
-- [[wiki/summaries/handover-2026-05-13j-bundle-6-0-4-1-quads-plus-6-0-4-2-hams-landed-plus-fese-canonical-strategic-pending.md]] strategic chat dedicat catalysator chat-current 13j
+- [[99-archive/wiki-pre-2026-05-15/concepts/cascade-engines-overview.md]] cumulative pipeline summary
+- [[99-archive/wiki-pre-2026-05-15/summaries/handover-2026-05-13j-bundle-6-0-4-1-quads-plus-6-0-4-2-hams-landed-plus-fese-canonical-strategic-pending.md]] strategic chat dedicat catalysator chat-current 13j
 - [[src/schema/exerciseMetadata.js]] schema field `muscle_target_primary` semantic INTERNAL engine routing (post-C2 migration target)
 - [[src/schema/__tests__/exerciseMetadata.test.js]] §20 self-reference test invariant cross-bundle + §1 lenient threshold (post-C2 migration impact)
 

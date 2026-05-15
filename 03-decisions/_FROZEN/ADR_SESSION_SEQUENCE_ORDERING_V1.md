@@ -327,7 +327,7 @@ Orthogonal — persona-aware notation Maria verbal/Gigica hibrid/Marius numeric 
 
 **Pre-Beta progress impact:** scope library 600-700 ex MANDATORY PRE-BETA preserved invariant. Session sequence ordering V1 implementation C5 = engine-side logic only (NO library extension). C6 Bundle 6.0.4.3 Glutes + C7 cumulative `/wiki-ingest` complete strategic cluster 'fese' canonical + session sequence ordering.
 
-**Wiki layer impact:** NEW concept page `wiki/concepts/session-sequence-ordering-v1.md` distributed via `/wiki-ingest` C7 cumulative cluster (NU acest C3 commit) + UPDATE existing engine pages (engine-coach-director + engine-goal-adaptation + engine-specialization + engine-warmup-mobility + engine-deload-protocol frontmatter `amendments[]` APPEND 2026-05-13k C5 implementation reference).
+**Wiki layer impact:** NEW concept page `99-archive/wiki-pre-2026-05-15/concepts/session-sequence-ordering-v1.md` distributed via `/wiki-ingest` C7 cumulative cluster (NU acest C3 commit) + UPDATE existing engine pages (engine-coach-director + engine-goal-adaptation + engine-specialization + engine-warmup-mobility + engine-deload-protocol frontmatter `amendments[]` APPEND 2026-05-13k C5 implementation reference).
 
 ## §7 Cross-refs raw layer
 
@@ -338,8 +338,8 @@ Orthogonal — persona-aware notation Maria verbal/Gigica hibrid/Marius numeric 
 - [[03-decisions/029-engine-specialization.md]] PARALLEL modifier Big N candidates + 4-gate strict Marius Advanced + weakness detector orfan reuse
 - [[03-decisions/031-engine-warmup-mobility.md]] persona-aware thresholds + Instant Skip T0 default anti-Maria-friction
 - [[03-decisions/032-engine-deload-protocol.md]] §pipeline 8th cross-engine deload week MRV invariant
-- [[wiki/entities/engines/engine-coach-director.md]] §Synthesis orchestrator central pipeline §42.10 (post C5 update amendments)
-- [[wiki/entities/engines/engine-periodization.md]] §Synthesis pipeline §42.10 1st position foundational (post C5 update amendments)
+- [[99-archive/wiki-pre-2026-05-15/entities/engines/engine-coach-director.md]] §Synthesis orchestrator central pipeline §42.10 (post C5 update amendments)
+- [[99-archive/wiki-pre-2026-05-15/entities/engines/engine-periodization.md]] §Synthesis pipeline §42.10 1st position foundational (post C5 update amendments)
 - [[src/engine/coachDirector.js]] CoachDirector class `buildSession()` (post C5 implementation target)
 
 ---

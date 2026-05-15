@@ -204,7 +204,7 @@ Update direct (NU creez `VAULT_RULES_v2.md`).
 ## §HANDOVER_PROTOCOL — Cross-session continuity & saturation prevention
 
 > **🟡 DEPRECATED 2026-05-11 Faza 3 Karpathy Real Option B LANDED.**
-> Replaced by [[CLAUDE]] §4.1 `/wiki-ingest <handover-source>` operation (handover-narrative classifier branch). §HANDOVER_PROTOCOL deep + STEP 1-15 mecanic preserved historical reference doar (raw layer audit trail). Active workflow: handover → `/wiki-ingest` distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` cu voice preservation policy §1 mandatory + `wiki/log.md` chronological append + archive raw `📤_outbox/_archive/`. See [[VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.6 redesign authority.
+> Replaced by [[CLAUDE]] §4.1 `/wiki-ingest <handover-source>` operation (handover-narrative classifier branch). §HANDOVER_PROTOCOL deep + STEP 1-15 mecanic preserved historical reference doar (raw layer audit trail). Active workflow: handover → `/wiki-ingest` distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` cu voice preservation policy §1 mandatory + `wiki/log.md` chronological append + archive raw `📤_outbox/_archive/`. See [[VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.6 redesign authority.
 
 **Status:** Locked (introdus 2026-04-30, post-saturation incident chat strategic). **DEPRECATED 2026-05-11 Faza 3 LANDED — historical reference only.**
 **Authority:** SSOT pentru handover flow Daniel ↔ Claude chat ↔ CC Opus (pre-Faza 3 paradigm).
@@ -512,7 +512,7 @@ Save with **UTF-8 no BOM, LF line endings** (`newline='\n'` în Python). Validat
 ## §CHAT_CONTINUITY_PROTOCOL — Live SSOT Layer Over §HANDOVER_PROTOCOL
 
 > **🟡 DEPRECATED 2026-05-11 Faza 3 Karpathy Real Option B LANDED.**
-> §CC.2 layered read replaced by `wiki/index.md` + `wiki/log.md` last 5-10 entries + `/wiki-query` drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` per topic. §CC.5 fast handover replaced by `/wiki-ingest <handover-source>` (handover-narrative classifier branch). §CC.6 ~200 LOC append-only DEPRECATED — CURRENT_STATE raw layer immutable freeze post-Faza 3, `wiki/index.md` + `wiki/log.md` new live navigation hub. §CC.4 citation enforcement REAFFIRMED via `/wiki-query` structured invocation. §CC.7 backup tag safety net preserved. See [[VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.6 + [[CLAUDE]] §6.1-§6.5 redesign authority.
+> §CC.2 layered read replaced by `wiki/index.md` + `wiki/log.md` last 5-10 entries + `/wiki-query` drill `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` per topic. §CC.5 fast handover replaced by `/wiki-ingest <handover-source>` (handover-narrative classifier branch). §CC.6 ~200 LOC append-only DEPRECATED — CURRENT_STATE raw layer immutable freeze post-Faza 3, `wiki/index.md` + `wiki/log.md` new live navigation hub. §CC.4 citation enforcement REAFFIRMED via `/wiki-query` structured invocation. §CC.7 backup tag safety net preserved. See [[VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.6 + [[CLAUDE]] §6.1-§6.5 redesign authority.
 
 **Status:** LOCKED V1 (codified 2026-05-04 evening — extends §HANDOVER_PROTOCOL existing, NU înlocuiește). **DEPRECATED 2026-05-11 Faza 3 LANDED — historical reference only; §AR.* anti-recurrence rules preserved separate §ANTI_RECURRENCE_RULES section unchanged.**
 **Authority:** SSOT pentru chat NEW startup fast layered read + chat-to-chat fast handover (~5-10 min CC) între deep merges (pre-Faza 3 paradigm).
@@ -1162,7 +1162,7 @@ ONLY IF all 3 confirm zero work landed → assume crash + retry. Default = trust
 
 ### §F3.3 — 3 Operations Canonical Cross-Ref [[CLAUDE]] §4
 
-- **`/wiki-ingest <source>`** — see [[CLAUDE]] §4.1. Workflow distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` cu voice preservation policy §1 + `wiki/index.md` entry + `wiki/log.md` chronological + backup tag + atomic commit + push origin. Replaces §HANDOVER_PROTOCOL STEP 1-15 + §CC.5 fast handover.
+- **`/wiki-ingest <source>`** — see [[CLAUDE]] §4.1. Workflow distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` cu voice preservation policy §1 + `wiki/index.md` entry + `wiki/log.md` chronological + backup tag + atomic commit + push origin. Replaces §HANDOVER_PROTOCOL STEP 1-15 + §CC.5 fast handover.
 - **`/wiki-query <question>`** — see [[CLAUDE]] §4.2. Workflow read `wiki/index.md` first → drill entities/concepts/summaries → cite `path:§` mandatory. Replaces §CC.2 layered read mandatory + §CC.4 citation enforcement structured invocation.
 - **`/wiki-lint`** — see [[CLAUDE]] §4.3. Workflow 5 scan types (broken wikilinks + orphan pages + stale claims + contradictions + NEW voice fidelity scan) + raport `📤_outbox/_archive/<YYYY-MM>/<NN>_WIKI_LINT_RAPORT_<date>.md`.
 
@@ -1197,8 +1197,8 @@ See [[CLAUDE]] §3.1-§3.5 (entity + concept + summary + source + index/log).
 **Replaces §CC.2 mandatory layered read:**
 
 1. Chat NEW startup → read `wiki/index.md` catalog + `wiki/log.md` last 5-10 entries (live navigation hub Karpathy).
-2. Per user question/topic → invoke `/wiki-query` (see [[CLAUDE]] §4.2) → INDEX_MASTER-equivalent navigation via `wiki/index.md` → drill `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant.
-3. Cite `path:§` mandatory format `Per [[wiki/entities/<file>]] §<section>: ...` primary + fallback raw layer `Per [[../03-decisions/<file>]] §<section>: ...` când wiki Synthesis ambiguă.
+2. Per user question/topic → invoke `/wiki-query` (see [[CLAUDE]] §4.2) → INDEX_MASTER-equivalent navigation via `wiki/index.md` → drill `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` relevant.
+3. Cite `path:§` mandatory format `Per [[99-archive/wiki-pre-2026-05-15/entities/<file>]] §<section>: ...` primary + fallback raw layer `Per [[../03-decisions/<file>]] §<section>: ...` când wiki Synthesis ambiguă.
 4. CURRENT_STATE.md + DECISION_LOG.md + HANDOVER themes preserved raw layer immutable — citable via wiki summaries cross-refs (NU mandatory full read upfront).
 5. DIFF_FLAGS.md P1 active checking optional — auto-detected via `wiki/index.md` `## Active flags` section dacă wiki schema include.
 
@@ -1209,7 +1209,7 @@ See [[CLAUDE]] §3.1-§3.5 (entity + concept + summary + source + index/log).
 **Replaces §HANDOVER_PROTOCOL deep + §CC.5 fast:**
 
 1. Claude chat strategic detects saturation/voluntary checkpoint → writes handover narrative direct `📥_inbox/<HANDOVER>.md` via MCP filesystem (Direct-to-CC paradigm preserved).
-2. Invoke claude_code agent autonomous `/wiki-ingest <handover-source>` → distribute la `wiki/entities/` + `wiki/concepts/` + `wiki/summaries/` relevant pages cu voice preservation policy §1 + Verbatim quotes Daniel append + Bugatti framing + Cross-refs raw layer cite specific.
+2. Invoke claude_code agent autonomous `/wiki-ingest <handover-source>` → distribute la `99-archive/wiki-pre-2026-05-15/entities/` + `99-archive/wiki-pre-2026-05-15/concepts/` + `99-archive/wiki-pre-2026-05-15/summaries/` relevant pages cu voice preservation policy §1 + Verbatim quotes Daniel append + Bugatti framing + Cross-refs raw layer cite specific.
 3. `wiki/index.md` entry append (cross-ref raw source HANDOVER file path).
 4. `wiki/log.md` chronological entry `## [YYYY-MM-DD] ingest | <handover topic>`.
 5. Archive raw HANDOVER → `📤_outbox/_archive/<YYYY-MM>/<NN>_HANDOVER_*_CONSUMED.md`.
