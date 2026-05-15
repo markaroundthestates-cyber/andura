@@ -1,6 +1,6 @@
 // ══ AGGRESSIVE LOADING THRESHOLD — TIER-AWARE ══════════════════════════════
 // Per [[wiki/concepts/aggressive-loading-warning-tier-aware]] LOCK V1 2026-05-14
-// + [[03-decisions/ADR_BIAS_DETECTION_OBSERVABLE_v1]] §EXT-2 NEW
+// + [[03-decisions/_FROZEN/ADR_BIAS_DETECTION_OBSERVABLE_v1]] §EXT-2 NEW
 //
 // Engine confidence-aware threshold dynamic per exercise category:
 //   - Low confidence (T0): tolerate deviații mari — recommendation poate fi

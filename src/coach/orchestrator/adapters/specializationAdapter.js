@@ -84,10 +84,10 @@
 // D4 violation insurance preserved cu try/catch ENGINE_THREW pattern (per ADR
 // 030 §3.6 ENGINE_THREW 'hard' severity halt-strict default).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.6 + §1.10
-//      03-decisions/029-engine-specialization-block.md SPEC REFERENCE redirect canonical
-//      03-decisions/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.6 + §1.10
+//      03-decisions/_FROZEN/029-engine-specialization-block.md SPEC REFERENCE redirect canonical
+//      03-decisions/_FROZEN/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
 //      src/engine/specialization/index.js (engine V1 LANDED commit `4cf50ab`)
 //      src/engine/specialization/activationGating.js (4-gate priority order)
 //      src/engine/specialization/weaknessConsumer.js (§36.84 Gap #1 weaknessDetector orfan reuse)

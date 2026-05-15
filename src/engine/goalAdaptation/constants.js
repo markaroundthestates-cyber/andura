@@ -1,6 +1,6 @@
 // Engine #2 Goal Adaptation V1 constants per ADR 026 §9.2 Cluster 1-5 verbatim.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.2
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.2
 // (Cluster 2 5 templates + Mode overlay) +
 // §9.2.3 (Cluster 3 Phase auto-detection thresholds verbatim TDEE multipliers) +
 // §9.2.4 (Cluster 4 Training modifiers per template × phase tabel verbatim) +

@@ -1,5 +1,5 @@
 // ══ FORK DECISION MODAL — Anonymous→Auth Merge UI (§56.7 LOCKED V1) ══════════
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.7 +
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.7 +
 // §63.7 (ZERO default highlight, force conscious choice anti-mistake Maria 65).
 // Wording UI LOCKED V1 verbatim — ZERO drift.
 

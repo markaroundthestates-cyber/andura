@@ -1,3 +1,9 @@
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. PROMPT_CC_HYGIENE.md DEPRECATED 2026-05-15 — operational prompt pre-reglaj historical reference only.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001. §F3.1-§F3.13 workflow DEPRECATED ([[VAULT_RULES]] §FAZA_3_KARPATHY_REAL). Karpathy 4 principii: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
 # PROMPT CC HYGIENE — Opus Autonomous
 
 **Cum folosești:**

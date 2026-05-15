@@ -18,8 +18,8 @@
 //   - warmupAdapter ✅ LANDED batch 7 — sixth downstream consumer (read-only Hook D1, NU re-emit; persona-aware 5-10 min Hybrid + T0 Instant Skip default)
 //   - 1 remaining adapter PENDING — Faza 3 batch 8 Deload ULTIM per pipeline order
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.1 D1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §42.10 + §1.10
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.1 D1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §42.10 + §1.10
 
 export { periodizationAdapter } from './periodizationAdapter.js';
 export { goalAdaptationAdapter } from './goalAdaptationAdapter.js';

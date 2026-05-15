@@ -4,9 +4,9 @@
 // Pipeline §42.10 position 4th canonical: Periodization → Goal Adaptation →
 // Energy → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.4
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.4
 // (Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou after).
-// Complementary: 03-decisions/022-bayesian-nutrition-inference.md SPEC READY V1.
+// Complementary: 03-decisions/_FROZEN/022-bayesian-nutrition-inference.md SPEC READY V1.
 //
 // ZERO fabrication beyond §9.4 spec. ZERO Date.now / Math.random — all values
 // static per ADR 018 §2 deterministic contract.

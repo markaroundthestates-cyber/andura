@@ -27,7 +27,7 @@
 // Wire-up Faza 3 STRANGLER post engines V1 LANDED — separate task.
 // V1 implementation acest task tactical pure-function module only.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.7
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.7
 // (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasa, 21 decisions
 // Cluster A-E verbatim aggregation 2-way parity Sources 1+2 + reconciled
 // override Source 1 §65.4 supersedes Source 2 §45.6 Q-Cooldown defer per

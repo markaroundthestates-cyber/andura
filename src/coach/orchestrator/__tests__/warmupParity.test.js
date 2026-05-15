@@ -72,7 +72,7 @@
 //   - Periodization fails hard → cascade halt: ALL 6 downstream skipped
 //   - Specialization fails hard → Warm-up skipped (downstream halt cascade)
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/warmupAdapter.js
 //      src/coach/orchestrator/adapters/specializationAdapter.js (batch 6 precedent)
 //      src/engine/warmup/constants.js (WARMUP_STATE enum SSOT)

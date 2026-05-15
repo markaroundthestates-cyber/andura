@@ -6,7 +6,7 @@
 // 2026-05-05 birou after 3-engine cluster #3+#4+#5 spec session — pipeline
 // §42.10 canonical position 8th FINAL prescriptive engine pipeline closure).
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.8
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.8
 // (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasa, 32 decisions
 // Cluster A-E verbatim aggregation 4-way parity check ✅).
 //

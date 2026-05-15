@@ -1,4 +1,10 @@
-# CURRENT STATE — Andura
+> 🛑 **STOP. Read [[../DECISIONS.md]] instead. CURRENT_STATE.md FROZEN 2026-05-11 (Faza 3 raw layer freeze) + 2026-05-15 reglaj — historical SSOT reference only.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001. CURRENT_STATE pre-Faza 3 SSOT preserved as historical chronicle. §CC.6 append-only architecture DEPRECATED. Karpathy 4 principii: [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
+# CURRENT STATE — Andura (FROZEN 2026-05-11 + reglaj 2026-05-15)
 
 **Owner:** Daniel + Claude chat (live thread, append-only architecture per [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.6).
 **Purpose:** Single SSOT chat-to-chat continuity. Chat NEW startup MANDATORY full read per §CHAT_CONTINUITY_PROTOCOL §CC.2.

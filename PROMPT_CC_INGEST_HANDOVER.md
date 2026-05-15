@@ -1,3 +1,9 @@
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. PROMPT_CC_INGEST_HANDOVER.md DEPRECATED 2026-05-15 — §HANDOVER_PROTOCOL workflow superseded.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001 (append-only delta per handover). §HANDOVER_PROTOCOL DEPRECATED Faza 3 + §F3.8 wiki/ DEPRECATED 2026-05-15 post-reglaj. Karpathy 4 principii: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
 # PROMPT CC — INGEST HANDOVER
 
 **Use:** Daniel rulează când a pus handover NEW în `📥_inbox/`. CC Opus ingest per VAULT_RULES §HANDOVER_PROTOCOL automat.

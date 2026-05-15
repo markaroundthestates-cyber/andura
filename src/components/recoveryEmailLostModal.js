@@ -1,5 +1,5 @@
 // ══ RECOVERY EMAIL LOST MODAL — refusal pattern explicit (§56.5.1 LOCKED V1) ══
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5.1.
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5.1.
 // Wording UI LOCKED V1 verbatim — ZERO drift even minor punctuation, RO diacritics.
 //
 // Pre-Beta refusal pattern: NU SMS verify, NU email secundar. Explicit modal

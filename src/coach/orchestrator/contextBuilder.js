@@ -21,9 +21,9 @@
 // V1 defensive — accepts a `userState` already-aggregated from `coachContext`
 // callers. Faza 3 batch 1 Periodization wiring will exercise concrete fallback.
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.3 D3 + §3.1 + §3.5 RESOLVED V1
-//      03-decisions/018-engine-extensibility-architecture.md §4 Migration Runner
-//      03-decisions/020-storage-tiering-strategy.md (Tier 1 primary local-first)
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.3 D3 + §3.1 + §3.5 RESOLVED V1
+//      03-decisions/_FROZEN/018-engine-extensibility-architecture.md §4 Migration Runner
+//      03-decisions/_FROZEN/020-storage-tiering-strategy.md (Tier 1 primary local-first)
 
 /**
  * Build a frozen EngineContext from a userState aggregate. Defensive on

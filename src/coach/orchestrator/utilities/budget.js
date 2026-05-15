@@ -11,8 +11,8 @@
 // Per ADR_CASCADE_DEFENSE_v1 §EXT-2 Composite Signal Layer Layer D Budget
 // Reaffirmation (§36.41): ≤50ms hard ceiling per engine pipeline step.
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.5 D5 + §3.2 RESOLVED V1
-//      03-decisions/ADR_CASCADE_DEFENSE_v1.md §EXT-2
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.5 D5 + §3.2 RESOLVED V1
+//      03-decisions/_FROZEN/ADR_CASCADE_DEFENSE_v1.md §EXT-2
 
 import { err, isOk } from '../result.js';
 

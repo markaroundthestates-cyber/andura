@@ -1,5 +1,5 @@
 // ══ MUSCLE MEMORY INDEX (MMI) — Engine #9 ══════════════════════════════════
-// Per [[03-decisions/033-muscle-memory-index]] §32.1-§32.3 SPEC verbatim
+// Per [[03-decisions/_FROZEN/033-muscle-memory-index]] §32.1-§32.3 SPEC verbatim
 // LOCKED V1 2026-05-02 + LOCK 10 pre-Beta scope directive cross-chat 14 birou
 // 2026-05-14 Daniel CEO "totul pre-Beta" supersede defer v1.5 rationale.
 //

@@ -1,6 +1,6 @@
 // Periodization Engine #1 V1 constants per ADR 026 §9.1 Cluster 3-5 verbatim.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.4
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.4
 // (Cluster 3 Volume Landmarks Israetel × Persona × Goal Modifiers) +
 // §9.5 (Cluster 4 Macrocycle Linear Block V1) + §9.6 (Cluster 5 Cross-Engine
 // Hooks anti-cascade safeguards).

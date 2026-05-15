@@ -55,7 +55,7 @@
 //   - Periodization fails hard → cascade halt: ALL 5 downstream skipped
 //   - Tempo fails hard → Specialization skipped (downstream halt cascade)
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/specializationAdapter.js
 //      src/coach/orchestrator/adapters/tempoAdapter.js (batch 5 precedent)
 //      src/engine/specialization/constants.js (ACTIVATION_STATE enum SSOT)

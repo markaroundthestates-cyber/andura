@@ -31,9 +31,9 @@
 // violation insurance preserved cu try/catch ADAPTER_THREW pattern (per ADR
 // 030 §3.6 ADAPTER_THREW 'hard' severity halt-strict default).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.2 + §1.10
-//      03-decisions/024-goal-driven-program-templates.md Q1-Q8 LOCKED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.2 + §1.10
+//      03-decisions/_FROZEN/024-goal-driven-program-templates.md Q1-Q8 LOCKED V1
 //      src/engine/goalAdaptation/index.js (engine V1 LANDED commit `bf9814e`)
 //      src/coach/orchestrator/adapters/periodizationAdapter.js (batch 1 precedent `de4222b`)
 

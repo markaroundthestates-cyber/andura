@@ -1,5 +1,5 @@
 // ══ MUSCLE MEMORY ADAPTER — Engine Consumer Layer ══════════════════════════
-// Per [[03-decisions/033-muscle-memory-index]] §32.1-§32.3 SPEC LOCKED V1
+// Per [[03-decisions/_FROZEN/033-muscle-memory-index]] §32.1-§32.3 SPEC LOCKED V1
 // 2026-05-02 + LOCK 10 pre-Beta promote 2026-05-15.
 //
 // Compose pipeline order (LOCK 10 LAST in chain — refunda baseline when user

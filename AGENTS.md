@@ -1,3 +1,9 @@
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. AGENTS.md = GitNexus/Claude Code config — NU SSOT decisions.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001. Wiki/ + 03-decisions/ + 06-sessions-log/ = FROZEN historical reference only. Karpathy 4 principii: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Body below = GitNexus tooling config.
+
+---
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

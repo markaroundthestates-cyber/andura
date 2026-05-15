@@ -1,5 +1,5 @@
 // ══ SETTINGS PAGE — Auth Phase 2 Batch 2 wiring (§56.5 + §56.7 LOCKED V1) ═══
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5 +
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5 +
 // §56.7 + §56.12 (Logout — wired in batch 3).
 //
 // NU framework — vanilla JS DOM render per ADR 005 conventions.

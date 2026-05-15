@@ -93,11 +93,11 @@
 // D4 violation insurance preserved cu try/catch ENGINE_THREW pattern (per ADR
 // 030 §3.6 ENGINE_THREW 'hard' severity halt-strict default).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.7 + §1.10
-//      03-decisions/031-engine-warmup-mobility.md SPEC REFERENCE direct (reverse
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.7 + §1.10
+//      03-decisions/_FROZEN/031-engine-warmup-mobility.md SPEC REFERENCE direct (reverse
 //        pattern vs ADR 027/028/029 stub flip)
-//      03-decisions/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
+//      03-decisions/_FROZEN/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
 //      src/engine/warmup/index.js (engine V1 LANDED commit `20999fb` Faza 2.5 batch 7)
 //      src/engine/warmup/crossEngineHooks.js (Hook D1-D5 read-only consume)
 //      src/engine/warmup/durationCalculator.js (persona thresholds + Energy DOWN)

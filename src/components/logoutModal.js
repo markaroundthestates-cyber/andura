@@ -1,5 +1,5 @@
 // ══ LOGOUT MODAL — double-confirm anti-tap-accidental (§56.12 LOCKED V1) ═══
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.12 +
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.12 +
 // §62.8 anti-tap-accidental Maria 65.
 // Wording UI LOCKED V1 verbatim — ZERO drift.
 

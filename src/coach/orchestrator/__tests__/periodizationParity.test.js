@@ -20,7 +20,7 @@
 //   - BUDGET_EXCEEDED simulated → 'soft' continue (Q-OPEN-2 + §3.6 alignment)
 //   - Constraint Object frozen post-orchestrated path (immutability assertion)
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/engine/periodization/index.js (engine V1 LANDED commit `1303b62`)
 
 import { describe, it, expect, vi } from 'vitest';

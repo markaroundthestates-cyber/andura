@@ -35,7 +35,7 @@
 //   - Periodization fails hard → Goal Adaptation + Energy Adjustment skipped (downstream halt cascade)
 //   - Goal Adaptation fails hard → Energy Adjustment skipped
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/energyAdjustmentAdapter.js
 //      src/coach/orchestrator/adapters/goalAdaptationAdapter.js (batch 2 precedent `905946c`)
 //      src/coach/orchestrator/adapters/periodizationAdapter.js (batch 1 precedent `de4222b`)

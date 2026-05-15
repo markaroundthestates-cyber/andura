@@ -1,4 +1,10 @@
-# DECISION LOG — Andura
+> 🛑 **STOP. Read [[../DECISIONS.md]] instead. DECISION_LOG.md FROZEN 2026-05-15 — chronological pre-reglaj historical reference only.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001 (append-only). DECISION_LOG entries below = pre-2026-05-15 chronicle, NU active SSOT. Folder `03-decisions/_FROZEN/` contains 47 ADR files pre-reglaj historical reference. Karpathy 4 principii: [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
+# DECISION LOG — Andura (FROZEN 2026-05-15)
 
 
 ## 2026-05-12 chat ACASĂ Co-CTO autonomous §CC.5 fast handover ingest — BATCH 2 Antrenor port closure milestone LANDED + Vault inbox cleanup LANDED + Metoda hibridă chat ↔ CC terminal NEW LOCKED V1 2026-05-12 `feature/v2-vanilla-port`

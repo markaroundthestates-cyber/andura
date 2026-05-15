@@ -5,7 +5,7 @@
 // Engine numbering "Engine #6" in ADR 028 file naming = legacy chat strategic
 // spec session ordering NU pipeline canonical position (§9.5 clarifying header).
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.5
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.5
 // (commit a9b7cbd LANDED 2026-05-06 afternoon chat-6 acasa, 28-30 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou late sources).
 //

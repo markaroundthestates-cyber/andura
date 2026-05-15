@@ -64,10 +64,10 @@
 // D4 violation insurance preserved cu try/catch ENGINE_THREW pattern (per ADR
 // 030 §3.6 ENGINE_THREW 'hard' severity halt-strict default).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.5 + §1.10
-//      03-decisions/028-engine-tempo-form-cues.md SPEC REFERENCE redirect canonical
-//      03-decisions/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.5 + §1.10
+//      03-decisions/_FROZEN/028-engine-tempo-form-cues.md SPEC REFERENCE redirect canonical
+//      03-decisions/_FROZEN/009-auto-aggression-readiness.md §AMENDMENT Convergence Guard
 //      src/engine/tempo/index.js (engine V1 LANDED commit `d82d118`)
 //      src/coach/orchestrator/adapters/bayesianNutritionAdapter.js (batch 4 precedent)
 //      src/coach/orchestrator/adapters/goalAdaptationAdapter.js (batch 2 precedent — read-only consume pattern)

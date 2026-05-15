@@ -1,5 +1,5 @@
 // ══ MUSCLE MEMORY PROMPT — Re-resume Welcome Modal ═════════════════════════
-// Per [[03-decisions/033-muscle-memory-index]] §32.2-§32.3 SPEC LOCKED V1
+// Per [[03-decisions/_FROZEN/033-muscle-memory-index]] §32.2-§32.3 SPEC LOCKED V1
 // 2026-05-02 + LOCK 10 pre-Beta promote 2026-05-15.
 //
 // Pattern: pre-onboarding gate modal + 2-tap override (anti-RE force-typing

@@ -50,7 +50,7 @@
 //     Bayesian + Tempo skipped
 //   - Bayesian Nutrition fails hard → Tempo skipped (downstream halt cascade)
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/tempoAdapter.js
 //      src/coach/orchestrator/adapters/bayesianNutritionAdapter.js (batch 4 precedent)
 //      src/coach/orchestrator/adapters/energyAdjustmentAdapter.js (batch 3 precedent)

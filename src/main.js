@@ -257,7 +257,7 @@ async function init() {
   };
 
   // LOCK 10 ADR 033 MMI gate per wiki/concepts/aggressive-loading...
-  // and 03-decisions/033-muscle-memory-index §32.2 LOCKED V1 2026-05-02
+  // and 03-decisions/_FROZEN/033-muscle-memory-index §32.2 LOCKED V1 2026-05-02
   // (promoted LOCK 10 pre-Beta 2026-05-15). Sits between medical disclaimer
   // and onboarding/coach entry. Triggers only when user has logged sessions,
   // last session is 6+ months old, and no MMI decision has been recorded yet.

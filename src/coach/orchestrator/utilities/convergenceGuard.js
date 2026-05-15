@@ -13,8 +13,8 @@
 //
 // Engagement-modulated cooldown: DEFER post-Beta concrete signal.
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.5 D5 + §3.7 RESOLVED V1
-//      03-decisions/009-calibration-tiers.md §AMENDMENT 2026-05-05 birou after
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.5 D5 + §3.7 RESOLVED V1
+//      03-decisions/_FROZEN/009-calibration-tiers.md §AMENDMENT 2026-05-05 birou after
 
 /**
  * Resolve the calibration tier for a user state.
