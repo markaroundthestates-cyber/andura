@@ -47,21 +47,20 @@ function capitalizeGroup(group) {
 /**
  * Translate muscle group ID to RO native label per Cluster C4 Bugatti craft.
  *
- * V1 expanded post-C4.4: Big 11 RO canonical V1 input (post C4.2 Weakness
- * Detector `a35d362` _headToGroup() output — piept/spate/umeri/biceps/triceps/
- * antebrate/core/picioare-quads/picioare-hamstrings/fese/gambe). RO native
- * labels per Cluster C4 Q17=C anti-friction.
- *
- * Backwards-compat Big 6 EN fallback preserved cap-coadă cleanup C4.5 Coach
- * Director (downstream consumers migration window).
+ * V3 SSOT post-C4.5 (cap-coadă cleanup `657b7175` Big 6 EN fallback deprecated):
+ * Big 11 RO canonical V1 input only — piept/spate/umeri/biceps/triceps/
+ * antebrate/core/picioare-quads/picioare-hamstrings/fese/gambe (post C4.2
+ * Weakness Detector `a35d362` _headToGroup() + C4.4 Specialization `657b7175`
+ * downstream consumers wire). Unknown group → capitalized fallback string
+ * (NU map entry — Big 6 EN deprecated post-C4.5 Coach Director LANDED).
  *
  * @param {string|null|undefined} group
- * @returns {string} RO native group label
+ * @returns {string} RO native group label or capitalized fallback
  */
 export function translateGroupToRO(group) {
   if (typeof group !== 'string') return '';
   const map = {
-    // Big 11 RO canonical V1 (C4.2 Weakness Detector output post-`a35d362`)
+    // Big 11 RO canonical V1 — single SSOT post-C4.5 cap-coadă cleanup
     piept:                 'Piept',
     spate:                 'Spate',
     umeri:                 'Umeri',
@@ -73,13 +72,6 @@ export function translateGroupToRO(group) {
     'picioare-hamstrings': 'Ischiogambieri',
     fese:                  'Fese',
     gambe:                 'Gambe',
-
-    // Backwards-compat Big 6 EN fallback (cap-coadă cleanup C4.5 Coach Director
-    // downstream consumers migration window)
-    chest:     'Piept',
-    back:      'Spate',
-    shoulders: 'Umeri',
-    legs:      'Picioare',
   };
   const lower = group.toLowerCase();
   return map[lower] ?? capitalizeGroup(group);

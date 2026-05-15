@@ -1,4 +1,12 @@
 // ══ COACH DIRECTOR — Orchestrare sesiune cu context unificat ══════════════
+// V2 post-C4.5 wire Big 11 RO canonical V1 — engines C4.1-4.4 LANDED return
+// Big 11 RO output direct (NU Big 6 EN mapping intermediate). Orchestrator
+// dispatch consume rules differential per engine per ADR_ENGINE_REFACTOR §3.5
+// LOCK V1: muscleRecovery + periodization + weaknessDetector = primary-only;
+// specialization = primary + weighted secondary 0.3 (via
+// computeWeightedGroupScore C4.4 LANDED `657b7175`). Pipeline §42.10 dispatch
+// order Periodization → Goal Adaptation → Energy → Bayesian Nutrition → Tempo
+// → Specialization → Warm-up → Deload preserved invariant ADR-026 §9.
 import { buildCoachContext } from './coachContext.js';
 import { realityEngine } from './reality.js';
 import { evaluate } from './ruleEngine.js';
@@ -22,9 +30,88 @@ import { DecisionCluster, clusterTraceToRationale } from './decisionCluster.js';
 import { getActiveDimensions } from './dimensionRegistry.js';
 import { aaClusterOutputToLegacyShape } from './dimensions/autoAggressionAdapter.js';
 import { DIMENSION_ID as AA_DIMENSION_ID } from './dimensions/autoAggressionDimension.js';
+import { computeWeightedGroupScore } from './specialization/weaknessConsumer.js';
 import * as dpModule from './dp.js';
 
+// Engine consume policy per ADR_ENGINE_REFACTOR §3.5 LOCK V1 — differential
+// primary-only vs primary + weighted secondary 0.3 per engine.
+const ENGINE_CONSUME_PRIMARY_ONLY = Object.freeze([
+  'muscleRecovery',
+  'periodization',
+  'weaknessDetector',
+]);
+const ENGINE_CONSUME_WEIGHTED_SECONDARY = Object.freeze(['specialization']);
+
+/**
+ * Aggregate Big 11 RO group score per session — primary 1.0 + secondary 0.3
+ * consume policy per ADR_ENGINE_REFACTOR §3.5 LOCK V1 differential per engine.
+ *
+ * Consume rules:
+ *   - muscleRecovery: primary-only (anatomical fiber stress drives MPS)
+ *   - periodization: primary-only (cluster phase cycle per primary)
+ *   - weaknessDetector: primary-only (Brzycki 1RM per primary)
+ *   - specialization: primary + weighted secondary 0.3 (Bundle 6.0.4.2 RDL/
+ *     Good Morning posterior chain dual-cluster compatible via
+ *     computeWeightedGroupScore helper C4.4 LANDED `657b7175`)
+ *
+ * Pure function — ADR-026 §9 invariant (no Date.now / Math.random / side
+ * effects). Unknown engineId returns frozen empty map (NU throw — defensive
+ * fallback per ADR_ENGINE_REFACTOR Co-CTO discipline).
+ *
+ * @param {Array<Object>} exercises - Session exercises (each with
+ *   muscle_target_primary string + optional muscle_target_secondary string[])
+ * @param {string} engineId - 'muscleRecovery' | 'periodization' |
+ *   'weaknessDetector' | 'specialization'
+ * @returns {Object<string, number>} Big 11 group → weighted score map (frozen)
+ */
+export function aggregateGroupScoresPerEngine(exercises, engineId) {
+  if (!Array.isArray(exercises)) return Object.freeze({});
+  if (typeof engineId !== 'string' || engineId.length === 0) return Object.freeze({});
+
+  const scores = {};
+
+  if (ENGINE_CONSUME_PRIMARY_ONLY.includes(engineId)) {
+    for (const ex of exercises) {
+      if (!ex || typeof ex !== 'object') continue;
+      const primary = ex.muscle_target_primary;
+      if (typeof primary !== 'string' || primary.length === 0) continue;
+      scores[primary] = (scores[primary] || 0) + 1.0;
+    }
+  } else if (ENGINE_CONSUME_WEIGHTED_SECONDARY.includes(engineId)) {
+    const targetGroups = new Set();
+    for (const ex of exercises) {
+      if (!ex || typeof ex !== 'object') continue;
+      if (typeof ex.muscle_target_primary === 'string' && ex.muscle_target_primary.length > 0) {
+        targetGroups.add(ex.muscle_target_primary);
+      }
+      if (Array.isArray(ex.muscle_target_secondary)) {
+        for (const g of ex.muscle_target_secondary) {
+          if (typeof g === 'string' && g.length > 0) targetGroups.add(g);
+        }
+      }
+    }
+    for (const group of targetGroups) {
+      let total = 0;
+      for (const ex of exercises) {
+        if (!ex || typeof ex !== 'object') continue;
+        total += computeWeightedGroupScore(ex, group);
+      }
+      if (total > 0) scores[group] = total;
+    }
+  }
+
+  return Object.freeze(scores);
+}
+
 export class CoachDirector {
+  /**
+   * V2 post-C4.5: orchestrator wire Big 11 RO canonical V1 — engines
+   * C4.1-4.4 LANDED return Big 11 RO output direct via `detectWeakGroups`,
+   * `detectGlobalStagnation`, `recompileWeek`, etc. (NU Big 6 EN intermediate).
+   * Aggregate primary + weighted secondary per Decision §3.5 (Specialization
+   * weighted via `aggregateGroupScoresPerEngine(exercises, 'specialization')`).
+   * Pipeline §42.10 dispatch order preserved invariant ADR-026 §9.
+   */
   async buildSession(sessionType) {
     const ctx = buildCoachContext();
 
