@@ -1,62 +1,54 @@
-# LATEST — Wave 3 STOP Banners LANDED 2026-05-16
+# LATEST — Wave 4 P1 STOP Banner INDEX_MASTER LANDED 2026-05-16
 
 ## Task
-Wave 3 cleanup STOP banners + caveat — 5 files lean atomic per Daniel PROMPT_CC.
+Wave 4 P1 STOP banner INDEX_MASTER.md singular atomic per Daniel PROMPT_CC.
 
 ## Pre-flight
-- Backup tag `pre-wave3-stop-banners-2026-05-16` pushed origin ✓
+- Backup tag `pre-wave4-p1-index-master-2026-05-16` pushed origin ✓
 - Working tree clean (smart-env auto-tracked excluded) ✓
 
-## Modificări per file
+## Modificare
 
 | File | Change |
 |---|---|
-| `wiki/index.md` | STOP banner top of body (post frontmatter `---` close) — FROZEN signal explicit alongside existing frontmatter `status: FROZEN` |
-| `08-workflows/CHAT_MIGRATION_PROTOCOL.md` | STOP banner DEPRECATED post-reglaj (§CC.2 layered read + §CC.3 startup format + §9 handover superseded by D003+D006) |
-| `08-workflows/HANDOVER_TEMPLATE.md` | STOP banner DEPRECATED post-reglaj (PowerShell handover ritual + CHAT_MIGRATION_PROTOCOL update superseded by D006 paragraf scurt) |
-| `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md` | STOP banner DEPRECATED post-reglaj (wiki-specific 8-point checklist obsolete post D001 wiki FREEZE + D006+D007) — banner BEFORE frontmatter top |
-| `07-meta/CLAUDE_CODE_RULES.md` | Caveat 🟡 banner BEFORE `## Self-discipline rules` section header (§36.77 + §36.83 + §HANDOVER_PROTOCOL refs superseded; body sections above auto-push/commit/branch alive) |
+| `00-index/INDEX_MASTER.md` | STOP banner DEPRECATED post-reglaj 2026-05-15 before `# ANDURA VAULT — INDEX MASTER` title — body stale references CURRENT_STATE/HANDOVER_GLOBAL/§CC.* + pre-_FROZEN/ rearrange + last_updated 2026-05-12 |
 
 ## Build+Tests
 
 **Tests 3734 PASS preserved EXACT** (pre-commit hook ran vitest full suite).
 ```
-Test Files  187 passed (187)
-     Tests  3734 passed (3734)
-   Duration  36.52s
+Tests  3734 passed (3734)
+Duration  37.51s
 ```
 ZERO src/ touched (vault meta-tooling doc-only).
 
 ## Commits
 
-- **`8955dd6`** — `fix(reglaj): wave 3 STOP banners workflow files + wiki/index FROZEN signal`
-- 5 files changed, 30 insertions(+) (surgical 5-line banners + 5-line buffer)
+- **`f595d54`** — `fix(reglaj): wave 4 P1 STOP banner INDEX_MASTER.md`
+- 1 file changed, 6 insertions(+) (5-line banner + buffer)
 
 ## Pushed
 
-`feature/v2-vanilla-port` push origin range `5fd1ef3..8955dd6` ✓
+`feature/v2-vanilla-port` push origin range `d3adfb1..f595d54` ✓
 
 ## Issues
 
-**None.** All 5 banners landed clean. Pre-commit hook validated tests baseline. ZERO regressions.
+**None.** Banner landed clean. Pre-commit hook validated tests baseline. ZERO regressions.
 
 ## Next action Daniel
 
-**Primary:** chat NEW startup test post Wave 3 — verifică:
-1. Chat `ls 08-workflows/` → vede DEPRECATED banner immediate la deschidere oricare workflow file
-2. Chat `ls wiki/index.md` → vede STOP banner before catalog body content
-3. Chat care citește 07-meta/CLAUDE_CODE_RULES.md → vede caveat banner before Self-discipline rules section (body operational rules above still alive)
-4. Chat citation behavior → cite `DECISIONS.md §<ID>` în loc de wiki/concepts/ sau 08-workflows/
+**Primary:** Wave 4 continuation decisions:
+- **P2** (potential next): 01-vision/ 10 files STOP banners (PROJECT_VISION + MOAT_STRATEGY + PRODUCT_STRATEGY_SPEC + SUFLET_ANDURA + ONBOARDING_SSOT + etc.)
+- **P3** (potential next): 04-architecture/ 10+ spec files STOP banners (PORT_FIRST_STEP_1 + REACT_MIGRATION + COGNITIVE_ARCHITECTURE + etc.)
+- **P4** (deferred earlier): DECISIONS.md cross-refs swap 50 wiki/ refs → 03-decisions/_FROZEN/ analog paths
+- **P5** §AR.30/§AR.31 strategic decision Daniel CEO call
 
-**Tactical autonomous fallback** (post Daniel validation):
-- Dacă chat-ul tot dă slip → T4 cleanup wave 4: 01-vision/ + 04-architecture/ STOP banners (10 + 10 files)
-- DECISIONS.md cross-refs swap: 50 wiki/ refs → 03-decisions/_FROZEN/ analog paths (T4c din audit precedent)
-- P5 §AR.30/§AR.31 strategic decision Daniel CEO call
+**Alternative:** stop here + test chat NEW startup discoverability post Wave 4 P1 → dacă chat-ul citează DECISIONS corect fără slip, confirm done.
 
 **Pre-Beta scope cap-coadă completion gate FINAL preserved invariant:**
-- P4 reformulated CORRECT 3 missing pieces tactical autonomous (button wire mockup line 3034 + dashboard banner periodic + LOCK 8 floor toast)
-- Bugatti Full Audit pre-Launch Co-CTO every line cod + every virgulă + TOT pe latest commit LANDED gate
+- P4 reformulated CORRECT 3 missing pieces tactical autonomous (button wire mockup line 3034 + dashboard banner + LOCK 8 floor toast)
+- Bugatti Full Audit pre-Launch gate
 
 ---
 
-🦫 **Bugatti craft. Wave 3 STOP banners LANDED atomic single-concern commit `8955dd6` pushed origin. 5 files changed (30 insertions surgical minimum surface). Karpathy 4 principii: Surgical Changes (body content untouched 100% files), Simplicity First (5-line banner pattern reused from wave 1+2), Think Before Coding (read each file pre-edit to know exact match), Goal-Driven Execution (tests 3734 PASS preserved + push origin verified). Backup tag `pre-wave3-stop-banners-2026-05-16` pushed origin rollback insurance available. ZERO src/ touched. Co-CTO autonomy MAXIMUM 17th consecutive cross-chat trust delegation preserved invariant.**
+🦫 **Bugatti craft. Wave 4 P1 STOP banner INDEX_MASTER.md LANDED atomic single-concern commit `f595d54` pushed origin. 1 file changed (6 insertions surgical minimum surface). Tests 3734 PASS preserved EXACT. ZERO src/ touched. Backup tag `pre-wave4-p1-index-master-2026-05-16` pushed origin rollback insurance available. Co-CTO autonomy MAXIMUM 18th consecutive cross-chat trust delegation preserved invariant.**
