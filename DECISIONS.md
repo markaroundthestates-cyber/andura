@@ -2,7 +2,7 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 schema_version: 1
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
@@ -35,6 +35,9 @@ authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne 
 ## Citation rule
 Orice claim Claude/CC → cite `DECISIONS.md §<ID>` verbatim. ZERO recall din memorie. Uncertain → search file primul.
 
+## Supersede enforcement rule
+Pe orice /handover ingest: după append D-NEW în CURRENT DECISIONS, CC scanează entries D-* existente. Dacă D-NEW contradice/înlocuiește D-OLD semantic → CC schimbă D-OLD status `LOCKED V1` → `SUPERSEDED-BY-<D-NEW>` în SAME atomic commit cu append D-NEW. ZERO partial commits, ZERO stale `LOCKED V1` parallel cu superseder activ. Authority: D007.
+
 ---
 
 ## CURRENT DECISIONS (post 2026-05-15 reglaj)
@@ -45,6 +48,7 @@ D003 | 2026-05-15 | REGLAJ | PROJECT_INSTRUCTIONS V5 compact ~800 cuvinte (Claud
 D004 | 2026-05-15 | REGLAJ | Karpathy 4 principii = core philosophy reference (Think Before Coding + Simplicity First + Surgical Changes + Goal-Driven Execution) | LOCKED V1 | 07-meta/karpathy-skills-ref/CLAUDE.md §1-§4
 D005 | 2026-05-15 | REGLAJ | Eliminate §AR.* meta-framework future (preserve §AR.28-§AR.31 candidate cumulative as historical reference) | LOCKED V1 | DECISIONS.md §D005
 D006 | 2026-05-15 | REGLAJ | Handover format = paragraf scurt + DECISIONS.md delta append, NU 150 LOC scribe flow | LOCKED V1 | DECISIONS.md §D006
+D007 | 2026-05-16 | REGLAJ | Supersede enforcement: /handover D-NEW contradicq D-OLD → CC mark SUPERSEDED-BY-<D-NEW> same atomic commit | LOCKED V1 | DECISIONS.md §D007
 
 ---
 
