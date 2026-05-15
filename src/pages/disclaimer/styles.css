@@ -1,0 +1,164 @@
+/* ══ MEDICAL DISCLAIMER + T&C GATE STYLES ════════════════════════════════════
+ * Aligned mockup andura-clasic.html V2 design tokens — primary color #c8412e,
+ * Romanian-first Gigel-friendly, anti-paternalism wording, no-diacritics.
+ * Pre-onboarding-T0 overlay first-launch.
+ * ════════════════════════════════════════════════════════════════════════ */
+
+.medical-disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.72);
+  overflow-y: auto;
+}
+
+.medical-disclaimer-card {
+  max-width: 600px;
+  width: 100%;
+  padding: 32px 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.medical-disclaimer-header {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.medical-disclaimer-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333333;
+}
+
+.medical-disclaimer-tc-link {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: #c8412e;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.medical-disclaimer-tc-link:hover {
+  color: #a8351f;
+}
+
+.medical-disclaimer-checkbox-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  background: #fdf3df;
+  border: 1px solid #e8d59a;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.medical-disclaimer-checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: #c8412e;
+  cursor: pointer;
+}
+
+.medical-disclaimer-checkbox-label {
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+.medical-disclaimer-continue {
+  padding: 14px 24px;
+  background: #c8412e;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.medical-disclaimer-continue:hover:not(:disabled) {
+  background: #a8351f;
+}
+
+.medical-disclaimer-continue:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── T&C Modal (secondary) ─────────────────────────────────────────────── */
+
+.medical-disclaimer-tc-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.medical-disclaimer-tc-modal-card {
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.medical-disclaimer-tc-modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.medical-disclaimer-tc-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333333;
+  white-space: pre-wrap;
+}
+
+.medical-disclaimer-tc-modal-close {
+  align-self: flex-end;
+  padding: 10px 20px;
+  background: #c8412e;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.medical-disclaimer-tc-modal-close:hover {
+  background: #a8351f;
+}

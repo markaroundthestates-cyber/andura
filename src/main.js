@@ -15,6 +15,7 @@ import { renderDash } from './pages/dashboard.js';
 import { renderProg } from './pages/plan.js';
 import { goTo } from './ui/nav.js';
 import { checkOnboarding, setObRPE, saveOnboarding, skipOnboarding } from './onboarding.js';
+import { showMedicalDisclaimerGate, isMedicalDisclaimerAccepted } from './pages/disclaimer/index.js';
 import { DB, cleanEx } from './db.js';
 import './util/cdlBackfill.js';
 import { migrateLogsUtcToLocal } from './util/logsMigration.js';
@@ -214,36 +215,48 @@ async function init() {
   // Populeaza pr-records din istoricul complet la fiecare init
   extractAndSavePRs();
 
-  const onboardingDone = DB.get('onboarding-done') || (DB.get('logs') || []).length > 0;
-  if (!onboardingDone) {
-    checkOnboarding();
+  // LOCK 4 Medical Safety Disclaimer + T&C Mandatory Accept gate per
+  // wiki/concepts/medical-safety-disclaimer-t-c-mandatory LOCK V1 2026-05-14.
+  // Pre-onboarding-T0 first-launch — blocks app entry until accepted. Idempotent:
+  // post-accept localStorage flag set, subsequent boots skip render synchronous.
+  const proceedToAppEntry = () => {
+    const onboardingDone = DB.get('onboarding-done') || (DB.get('logs') || []).length > 0;
+    if (!onboardingDone) {
+      checkOnboarding();
+    } else {
+      renderCoachIdle();
+      renderDash();
+      renderProg();
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    checkWeightReminder();
+
+    // §56.1.1 auth-banner-soft — non-blocking "Salveaza-ti progresul" prompt
+    // for Anonymous users post-onboarding. Auto-hides on auth success.
+    // Per §56.3.1: shown DUPA T0 onboarding (Investment Phase commitment).
+    // Banner self-skips daca isAuthenticated() already true.
+    if (onboardingDone && !isAuthenticated()) {
+      mountAuthBanner({
+        googleClientId: window.__GOOGLE_CLIENT_ID,
+        onAuthSuccess: ({ uid }) => {
+          // Post-auth success — trigger Daniel legacy path migration.
+          // Idempotent: no-op for non-Daniel users sau already-migrated.
+          runAuthPathMigration().catch(err => {
+            console.warn('[Auth] post-banner-auth migration threw:', err);
+          });
+        },
+      });
+    }
+  };
+
+  if (isMedicalDisclaimerAccepted()) {
+    proceedToAppEntry();
   } else {
-    renderCoachIdle();
-    renderDash();
-    renderProg();
-  }
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
-
-  checkWeightReminder();
-
-  // §56.1.1 auth-banner-soft — non-blocking "Salveaza-ti progresul" prompt
-  // for Anonymous users post-onboarding. Auto-hides on auth success.
-  // Per §56.3.1: shown DUPA T0 onboarding (Investment Phase commitment).
-  // Banner self-skips daca isAuthenticated() already true.
-  if (onboardingDone && !isAuthenticated()) {
-    mountAuthBanner({
-      googleClientId: window.__GOOGLE_CLIENT_ID,
-      onAuthSuccess: ({ uid }) => {
-        // Post-auth success — trigger Daniel legacy path migration.
-        // Idempotent: no-op for non-Daniel users sau already-migrated.
-        runAuthPathMigration().catch(err => {
-          console.warn('[Auth] post-banner-auth migration threw:', err);
-        });
-      },
-    });
+    showMedicalDisclaimerGate({ onAccept: proceedToAppEntry });
   }
 }
 
