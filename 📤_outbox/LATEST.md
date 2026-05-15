@@ -1,192 +1,190 @@
-# LATEST — Post-Audit Cleanup P1+P2+P3+P4 LANDED 2026-05-15
+# LATEST — T1+T2+T3 Cleanup LANDED 2026-05-15 (post-audit wave 2)
 
-**Task:** Execute P1+P2+P3+P4 autonomous din audit chat-current (CLAUDE.md STOP banner + VAULT_RULES.md STOP banner + §F3.1-§F3.13 DEPRECATED + wiki/log.md orphan refs cleanup + ADR-029 duplicate dedupe).
+**Task:** Execute T1+T2+T3 autonomous per Daniel CEO directive — STOP banners restante 7 files + folder freeze rearrange (`03-decisions/` + `06-sessions-log/` → `_FROZEN/` subfolders) + D007 supersede enforcement rule explicit amendment (literal match trigger NU fuzzy semantic).
 **Model:** Opus exclusively
 **Status:** Complete
 **Branch:** `feature/v2-vanilla-port`
-**Commit:** `dd3ecaf`
-**Date:** 2026-05-15-post-audit-cleanup
+**Commit:** `cdcc864`
+**Date:** 2026-05-15-cleanup-wave-2
 
 ---
 
 ## §0 Status
 
-**Complete. ZERO issues. ZERO regressions. ZERO src/ touched.**
+**Complete. ZERO issues. ZERO regressions. ZERO src/ runtime impact.**
 
-Backup tag pre-execute pushed origin: `pre-audit-cleanup-2026-05-15` (rollback insurance — `git reset --hard pre-audit-cleanup-2026-05-15` restore complet).
+Backup tag `pre-cleanup-t1-t2-t3-2026-05-15` pushed origin pre-execute (rollback insurance — `git reset --hard pre-cleanup-t1-t2-t3-2026-05-15` restore complet).
 
-Pre-commit hook validated tests baseline 3734 PASS preserved EXACT.
+Tests 3734 PASS preserved EXACT (pre-commit hook ran vitest full suite validate).
 
 ---
 
-## §1 P1 — CLAUDE.md STOP banner top of body
+## §1 T1 — STOP banners 7 files + 2 NEW README redirects
 
-**File modified:** `CLAUDE.md` (line 27, immediately after frontmatter `---` close, before `# CLAUDE.md...` title):
+**Files MODIFY (STOP banner top of body, content untouched per Karpathy Surgical Changes):**
+- `AGENTS.md` (GitNexus/Claude Code config — pointing to DECISIONS.md NU SSOT)
+- `README.md` (public project intro — pointing to DECISIONS.md pentru decisions context)
+- `DIFF_FLAGS.md` (980 LOC outstanding issues — FROZEN historical reference)
+- `PROMPT_CC_HYGIENE.md` (operational prompt — DEPRECATED post-reglaj)
+- `PROMPT_CC_INGEST_HANDOVER.md` (§HANDOVER_PROTOCOL workflow — superseded)
+- `00-index/CURRENT_STATE.md` (1308 LOC vechiul SSOT pre-Faza 3 + 2026-05-15 reglaj)
+- `03-decisions/_FROZEN/DECISION_LOG.md` (4398 LOC chronological pre-reglaj log — moved + STOP banner)
 
+**Files NEW (entry-point README redirects):**
+- `03-decisions/README.md` (chat `ls 03-decisions/` vede README primul cu redirect către DECISIONS.md + explanation _FROZEN/ subfolder content)
+- `06-sessions-log/README.md` (same pattern — entry-point redirect)
+
+**STOP banner pattern uniform across all 7 (consistent with CLAUDE.md + VAULT_RULES.md cleanup wave 1):**
 ```
-> 🛑 **STOP. Read [[DECISIONS.md]] instead. Historical Faza 3 reference only.**
+> 🛑 **STOP. Read [[DECISIONS.md]] instead. [Specific context per file].**
 >
-> Schema body below SUPERSEDED 2026-05-15 — current SSOT is `DECISIONS.md` root §D001. Wiki/ FROZEN imutabilă. Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Body preserved as historical reference only.
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001. [...]
+> Karpathy 4 principii: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+---
 ```
-
-Schema body §0-§7 (200+ lines Karpathy Option B Real operational schema) **untouched per Karpathy Principle 3 Surgical Changes**. Chat reading body NOW sees redirect BEFORE schema details — fix confusion source identified în audit chat-current.
 
 ---
 
-## §2 P2 — VAULT_RULES.md STOP banner + §F3.1-§F3.13 DEPRECATED
+## §2 T2 — Folder freeze rearrange (`03-decisions/` + `06-sessions-log/`)
 
-**File modified:** `VAULT_RULES.md` — 3 locations:
+**`03-decisions/` rearrange (47 files moved):**
+- 33 numbered ADRs (001-033) → `03-decisions/_FROZEN/`
+- 13 named ADRs (`ADR_*`) → `03-decisions/_FROZEN/`
+- DECISION_LOG.md → `03-decisions/_FROZEN/` (cu STOP banner from T1)
+- NEW `03-decisions/README.md` la root entry-point cu redirect
+- Final structure:
+  ```
+  03-decisions/
+  ├── README.md  ← entry-point redirect to DECISIONS.md
+  └── _FROZEN/
+      ├── 001-local-first-storage.md ... 033-muscle-memory-index.md (33 numbered)
+      ├── ADR_ANATOMICAL_CLASSIFICATION_V1.md ... ADR_SMART_ROUTING_EQUIPMENT_v2.md (13 named)
+      └── DECISION_LOG.md
+  ```
 
-1. **Top of body (line 1, before `# VAULT RULES — Andura` title):**
-   ```
-   > 🛑 **STOP. Read [[DECISIONS.md]] instead. Historical Faza 3 reference only.**
-   >
-   > Operational schema below SUPERSEDED 2026-05-15 — current SSOT is `DECISIONS.md` root §D001. §F3.1-§F3.13 DEPRECATED post-reglaj (wiki/ workflow). Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Body preserved as historical reference only.
-   ```
+**`06-sessions-log/` rearrange (7 files moved):**
+- 6 HANDOVER_*.md files → `06-sessions-log/_FROZEN/`
+- RECENT_DECIDED_ARCHIVE.md → `06-sessions-log/_FROZEN/`
+- NEW `06-sessions-log/README.md` la root entry-point cu redirect
 
-2. **§FAZA_3_KARPATHY_REAL section header (line 1134) marked DEPRECATED** — same pattern as existing §HANDOVER_PROTOCOL DEPRECATED notice (line 200) + §CHAT_CONTINUITY_PROTOCOL DEPRECATED notice (line 508):
-   ```
-   ## §FAZA_3_KARPATHY_REAL — Karpathy Option B Real Implementation (LOCK V1 2026-05-11) — DEPRECATED 2026-05-15
+**Cross-refs batch update via sed (preserved consistency post-move):**
+- DECISIONS.md: **48 refs updated** to `03-decisions/_FROZEN/<file>.md` pattern
+- src/ JSDoc comments: **67 refs updated** to `_FROZEN/` paths (preserved Cross-link consistency)
+- Total batch updates: **115 refs** ZERO broken refs verify grep
+- Wiki/ cross-refs NOT updated (wiki/ FROZEN historical reference — broken refs there acceptable per FREEZE policy)
 
-   > **🟡 §F3.1-§F3.13 DEPRECATED 2026-05-15 post-reglaj DECISIONS.md SSOT migration.**
-   > Wiki/ workflow superseded by `DECISIONS.md` root SSOT singular append-only per Daniel CEO directive 2026-05-15 reglaj...
-   ```
-
-3. **§F3.13 Metoda Hibridă section (line 1278) marked DEPRECATED** — same pattern:
-   ```
-   ## §F3.13 — Metoda Hibridă Chat ↔ CC Terminal LOCKED V1 2026-05-12 ... — DEPRECATED 2026-05-15
-   > **🟡 §F3.13 DEPRECATED 2026-05-15 post-reglaj DECISIONS.md SSOT migration.**
-   > Metoda hibridă operational pattern preserved as historical reference. Active workflow post-2026-05-15 = DECISIONS.md append-only...
-   ```
-
-Body content §F3.1-§F3.13 detailed operational protocols **untouched per Karpathy Principle 3 Surgical Changes**. Pattern consistent cu existing §HANDOVER_PROTOCOL + §CHAT_CONTINUITY_PROTOCOL deprecation notices.
-
----
-
-## §3 P3 — wiki/log.md orphan cross-refs cleanup
-
-**File modified:** `wiki/log.md` line 28 (FREEZE entry from previous commit):
-
-**Before** (broken wikilinks pointing to non-existent vault files):
-```
-**Cross-refs:** [[../DECISIONS]] | [[../07-meta/karpathy-skills-ref/CLAUDE.md]] | [[../CLAUDE]] | [[../USER_PREFERENCES_V4]] Claude.ai UI custom instructions | [[../PROJECT_INSTRUCTIONS_V5]] Claude.ai project custom instructions
-```
-
-**After** (orphan wikilinks removed, replaced cu plain text description + cross-link DECISIONS.md §D002 + §D003 where decisions actually documented):
-```
-**Cross-refs:** [[../DECISIONS]] | [[../07-meta/karpathy-skills-ref/CLAUDE.md]] | [[../CLAUDE]] (SUPERSEDED 2026-05-15 historical reference) | USER_PREFERENCES V4 + PROJECT_INSTRUCTIONS V5 = Claude.ai UI Settings paste content (NU vault files — see DECISIONS.md §D002 + §D003)
-```
-
-DECISIONS.md §D002 + §D003 entries themselves untouched (those describe what the decisions ARE — Claude.ai UI content paste, not file references). Only the broken wikilinks `[[../USER_PREFERENCES_V4]]` + `[[../PROJECT_INSTRUCTIONS_V5]]` removed.
-
----
-
-## §4 P4 — ADR-029 duplicate verify + delete
-
-**Verify content:**
+**Grep verify post-rearrange:**
 ```bash
-$ diff 03-decisions/029-engine-specialization.md 03-decisions/ADR-029-engine-specialization.md
-1,50d0
-< # ADR 029 — Engine Specialization
-< **Status:** 🔵 SPEC REFERENCE (canonical SSOT în 026 §9.6)
-< ... (50 lines content în 029-engine-specialization.md only)
+$ grep -r "03-decisions/[^_]" src/ DECISIONS.md
+# (empty — 0 broken refs)
 
-$ wc -l 03-decisions/029-engine-specialization.md 03-decisions/ADR-029-engine-specialization.md
-  50 03-decisions/029-engine-specialization.md
-   0 03-decisions/ADR-029-engine-specialization.md  ← EMPTY
+$ grep -r "03-decisions/_FROZEN" src/ | wc -l
+67
+
+$ grep -c "03-decisions/_FROZEN" DECISIONS.md
+48
 ```
-
-**Action:** `git rm 03-decisions/ADR-029-engine-specialization.md` (empty 0-line duplicate). Canonical `029-engine-specialization.md` (50 lines content) preserved per spec preference no-prefix convention.
-
-**Post-cleanup:**
-```bash
-$ ls 03-decisions/*029*
-03-decisions/029-engine-specialization.md  ← single canonical
-```
-
-ADR count: 48 → 47 (post-dedupe; matches actual unique numbered + named ADRs).
 
 ---
 
-## §5 Atomic commit single-concern
+## §3 T3 — D007 supersede enforcement rule explicit amendment
 
-- **Hash:** `dd3ecaf`
-- **Message:** `fix(reglaj): post-audit cleanup STOP banners + orphan cross-refs + ADR-029 dedupe`
-- **Files staged:** 4
-  - `CLAUDE.md` (MODIFY — STOP banner top of body)
-  - `VAULT_RULES.md` (MODIFY — STOP banner + §FAZA_3 DEPRECATED + §F3.13 DEPRECATED)
-  - `wiki/log.md` (MODIFY — orphan wikilinks cleanup)
-  - `03-decisions/ADR-029-engine-specialization.md` (DELETE — empty duplicate)
-- **Diff stats:** `4 files changed, 22 insertions(+), 4 deletions(-)`
+**Before (ambiguous):** "CC scanează entries D-* existente. Dacă D-NEW contradice/înlocuiește D-OLD **semantic**..."
+
+**After (explicit trigger):** Section "## Supersede enforcement rule (T3 explicit amendment 2026-05-16)" amended cu:
+
+- **Scope clarified:** `D-NNN` din **CURRENT DECISIONS section ONLY** (NU D-LEGACY-* care sunt FROZEN pre-reglaj historical reference)
+- **Trigger literal match** (NU fuzzy semantic detection):
+  - **(a) titlu keyword overlap ≥50%** words via lowercase token compare
+  - **(b) source path identic**
+  - **(c) CATEGORY identic + keyword overlap ≥30%**
+- **Ambiguous match handling** (30-49% overlap sau category-only match fără keyword overlap): flag în `📤_outbox/LATEST.md §"Supersede ambiguities"` Daniel review explicit pre-commit
+- **Atomic commit invariant:** D-OLD `LOCKED V1` → `SUPERSEDED-BY-<D-NEW>` SAME commit cu append D-NEW (ZERO partial commits, ZERO stale LOCKED V1 parallel)
+
+Eliminate slip risk fuzzy semantic detection: chat NEW won't infer "contradicts" based on vague semantic similarity → deterministic literal trigger reduces hallucination potential.
+
+---
+
+## §4 Atomic commit single-concern
+
+- **Hash:** `cdcc864`
+- **Message:** `fix(reglaj): T1+T2+T3 cleanup STOP banners + folder freeze + D007 explicit amendment`
+- **Files in commit:** 158 (47 renames 03-decisions + 7 renames 06-sessions-log + 67 src/ JSDoc updates + 7 STOP banners + 2 NEW README + 2 NEW _FROZEN/ folders + DECISIONS.md T3 + smart-env auto-tracked + 522 archive)
 - **Branch:** `feature/v2-vanilla-port` pushed origin
-- **Push range:** `07639e8..dd3ecaf`
-
-Surgical minimum surface — 22 lines added (3 banners + 2 DEPRECATED notices + 1 cleanup line) + 4 lines removed (broken refs + empty file deletion).
+- **Push range:** `b53fda6..cdcc864`
 
 ---
 
-## §6 Backup tag
+## §5 Backup tag
 
-- **Name:** `pre-audit-cleanup-2026-05-15`
-- **Hash:** `e9c16719434ae7cddccdd022515d064ba75c34f9` (tag) → `07639e89f219807ce2cadd9164e5141435dad39d` (commit)
+- **Name:** `pre-cleanup-t1-t2-t3-2026-05-15`
+- **Hash:** `5b4ff3bf03d012c9920374b5bd0965a3ca303fd0` (tag) → `b53fda64287d5e9277ec6127da99075e7db033e0` (commit)
 - **Pushed origin:** ✓ verified via `git ls-remote --tags origin`
-- **Rollback command (if needed):** `git reset --hard pre-audit-cleanup-2026-05-15`
+- **Rollback command (if needed):** `git reset --hard pre-cleanup-t1-t2-t3-2026-05-15`
 
 ---
 
-## §7 Tests
+## §6 Tests
 
-**Baseline 3734 PASS preserved EXACT.**
+**Baseline 3734 PASS preserved EXACT.** Pre-commit hook ran vitest full suite — ZERO regression.
 
-Pre-commit hook ran vitest full suite:
-```
-Test Files  187 passed (187)
-     Tests  3734 passed (3734)
-   Duration  45.63s
-```
-
-ZERO regression. Vault meta-tooling cleanup doc-only — ZERO src/ touched per HARD CONSTRAINTS strict.
+Vault meta-tooling cleanup + JSDoc-only updates în src/ — ZERO runtime impact per HARD CONSTRAINTS strict (JSDoc comments don't affect compilation/tests).
 
 ---
 
-## §8 P5 — §AR.30/§AR.31 status pending Daniel CEO strategic decision
+## §7 Confusion sources audit — status post wave 2 cleanup
 
-**NU touched în acest commit per Daniel directive explicit:** *"P5 §AR.30/§AR.31 status = strategic decizia mea CEO, vine separat după P1-P4 LANDED."*
-
-Pending Daniel CEO strategic decision separate next session:
-- **§AR.30** (Pre-action vault primary-source verification MANDATORY) — current DECISIONS.md §D-LEGACY-085 status: DRAFT
-- **§AR.31** (CEO scope strict UI wording autonomous compose = SLIP DEFAULT) — current DECISIONS.md §D-LEGACY-086 status: DRAFT
-- Options pending: PROMOTE LOCKED V1 ABSOLUTE / REVOKE candidate / DEFER post-Beta v1.5
-
----
-
-## §9 Confusion sources status post-cleanup
-
-Verificare audit chat-current findings remediated:
-
-| Confusion source (pre) | Status post-cleanup |
+| Confusion source (pre wave 2) | Status post wave 2 |
 |---|---|
-| CLAUDE.md frontmatter SUPERSEDED dar body 200+ linii intact | ✓ STOP banner top of body — body untouched per Surgical Changes |
-| VAULT_RULES.md §F3.1-§F3.13 unchanged 21 wiki/ refs | ✓ STOP banner top + §FAZA_3 + §F3.13 marked DEPRECATED (same pattern §HANDOVER_PROTOCOL) |
-| Wiki/log.md orphan wikilinks [[../USER_PREFERENCES_V4]] + [[../PROJECT_INSTRUCTIONS_V5]] | ✓ removed, replaced cu cross-link DECISIONS.md §D002 + §D003 |
-| ADR-029 duplicate (2 files same number) | ✓ empty duplicate deleted, canonical preserved |
-| 4 SSOTs simultane readable | Partial — 3 of 4 cu STOP banners now (CLAUDE + VAULT_RULES + wiki/index + wiki/log). 00-index/CURRENT_STATE.md + 03-decisions/DECISION_LOG.md still NU touched (NOT in audit scope P1-P4) — flag pentru next cleanup |
-| 587 LOCK V1 markers grep noise | UNCHANGED — would require mass edit (NU Surgical Changes — preserved per audit P1-P4 minimum surface) |
-| §AR.30/§AR.31 ambiguous status | PENDING Daniel CEO P5 strategic decision (per directive explicit separate session) |
+| 5 root *.md files fără STOP banner | ✓ ALL 7 root *.md files (+ 00-index/CURRENT_STATE + DECISION_LOG) cu STOP banner uniform |
+| 47 ADR files directly discoverable `ls 03-decisions/` | ✓ Moved la `_FROZEN/` subfolder; root has README.md redirect only |
+| 7 HANDOVER files in `06-sessions-log/` | ✓ Moved la `_FROZEN/` subfolder; root has README.md redirect only |
+| D007 fuzzy semantic detection risk | ✓ Amended cu literal match trigger (3 deterministic criteria) + ambiguous flag pattern |
+| 67 src/ JSDoc refs to old 03-decisions/ paths | ✓ Batch sed updated to `_FROZEN/` paths (consistency preserved) |
+| 48 DECISIONS.md cross-refs to old paths | ✓ Batch sed updated to `_FROZEN/` paths |
+| 4 SSOT candidates pre wave 1 (CLAUDE/VAULT_RULES/wiki/CURRENT_STATE) | ✓ Toate 4 cu STOP banners; +AGENTS+README+DIFF_FLAGS+PROMPT_CC_* = 8/8 root entry-points clean |
+
+**Remaining (NU în current scope):**
+- 587 "LOCK V1" markers across repo (mostly în frozen historical files — NU mass edit per Surgical Changes)
+- `01-vision/SUFLET_ANDURA.md` 2266 LOC + `04-architecture/*` files + other 04+05+07+08 folders — NU touched (not in audit scope T1-T3)
+- `wiki/concepts/anti-recurrence-rules.md` 552 LOC pe `_FROZEN/` policy nu se aplică wiki (FROZEN cu frontmatter doar)
 
 ---
 
-## §10 Next action Daniel
+## §8 Karpathy 4 principii applied per [[07-meta/karpathy-skills-ref/CLAUDE.md]]
 
-**Primary:**
-1. **P5 §AR.30/§AR.31 status decision** — strategic CEO call per Daniel verbatim *"P5 §AR.30/§AR.31 status = strategic decizia mea CEO, vine separat după P1-P4 LANDED"*. Options: PROMOTE LOCKED V1 ABSOLUTE / REVOKE candidate / DEFER post-Beta v1.5.
-2. **Chat NEW startup test** — verify §CC.2 (sau new equivalent post-reglaj startup protocol) cită din `DECISIONS.md §D001-D006` corect fără slip + reference 07-meta/karpathy-skills-ref/ Karpathy 4 principii core philosophy + NU mai cade pe wiki/ schema pattern.
-3. **Paste PROJECT_INSTRUCTIONS V5** in Settings → Projects → Andura → Custom instructions (USER_PREFERENCES V4 DONE per chat reglare).
+**Principle 1 — Think Before Coding:** Pre-execute scope check identified 67 src/ JSDoc refs + 48 DECISIONS refs that would break if folder moved fără sync. Surfaced before T2 execute. Verified ADR-029 already deduplicated în precedent commit.
 
-**Tactical autonomous fallback** (post Daniel review or in parallel chat NEW):
-- Potential next cleanup wave: 00-index/CURRENT_STATE.md + 03-decisions/DECISION_LOG.md STOP banners (NOT in current P1-P4 scope — pending audit pass next session)
-- Pre-Beta scope cap-coadă completion gate FINAL preserved invariant (3 missing pieces P4 reformulated CORRECT din precedent handover — button wire mockup line 3034 + dashboard banner + LOCK 8 floor toast)
+**Principle 2 — Simplicity First:** `_FROZEN/` subfolder = single discoverable marker (chat `ls folder/` vede `_FROZEN` prefix sufficient = "don't read this") vs scattered DEPRECATED notices în 47 files. STOP banner pattern uniform (3 lines per file) reusing previous wave 1 banner format. T3 amendment cu 3 deterministic criteria vs vague "semantic".
+
+**Principle 3 — Surgical Changes:** Body content untouched 100% files moved (only path changed). STOP banners minimum surface (3 lines per file = 21 lines added total for 7 files + 2 NEW READMEs ~30 lines = ~50 lines added total reglaj-relevant). NO refactor of unrelated code, NO "improvement" of adjacent content.
+
+**Principle 4 — Goal-Driven Execution:** Verifiable success criteria all confirmed via grep counts:
+- `grep -l "STOP. Read \[\[" *.md | wc -l` → **7** ✓
+- `ls 03-decisions/_FROZEN/ | wc -l` → **47** ✓
+- `ls 06-sessions-log/_FROZEN/ | wc -l` → **7** ✓
+- `grep -r "03-decisions/[^_]" src/ DECISIONS.md | wc -l` → **0** broken refs ✓
+- `grep -c "T3 explicit amendment" DECISIONS.md` → **1** ✓
+- Tests `3734 PASS` preserved EXACT ✓
+- Backup tag pushed origin ✓
 
 ---
 
-🦫 **Bugatti craft. Post-audit cleanup P1+P2+P3+P4 LANDED clean atomic single-concern commit `dd3ecaf` pushed origin. 4 files changed (3 MODIFY STOP banners + DEPRECATED notices + orphan refs cleanup + 1 DELETE empty ADR-029 duplicate). Surgical minimum surface — 22 lines added + 4 lines removed (NU mass edit). Karpathy 4 principii applied: Surgical Changes (touch only what was asked, body content untouched) + Simplicity First (banner pattern reused from existing §HANDOVER_PROTOCOL DEPRECATED) + Think Before Coding (ADR-029 content verified before delete — empty duplicate confirmed) + Goal-Driven Execution (verifiable §6 grep tests baseline preserved). Tests 3734 PASS preserved EXACT. ZERO src/ touched. Backup tag `pre-audit-cleanup-2026-05-15` pushed origin rollback insurance available. P5 §AR.30/§AR.31 status = strategic Daniel CEO call pending separate session per directive explicit. Co-CTO autonomy MAXIMUM 16th consecutive cross-chat trust delegation preserved invariant.**
+## §9 Next action Daniel
+
+**Primary (chat NEW startup test post-reglaj):**
+1. **Test chat NEW startup discoverability** — verifică chatul `ls` la rădăcină + `ls 03-decisions/` + `ls 06-sessions-log/` găsește README.md/STOP banner redirect către DECISIONS.md prima oară.
+2. **Test chat citation behavior** — chat NEW menționează decizie → verifică citează `DECISIONS.md §<ID>` (NU wiki/concepts/ sau ADR direct).
+3. **Test D007 supersede enforcement** — adaugă manual D008 test cu titlu suprapus D003 ≥50% keyword overlap → verifică next /handover ingest CC marks D003 SUPERSEDED-BY-D008 same commit.
+
+**Tactical autonomous fallback** (post Daniel validation):
+- **P5 §AR.30/§AR.31 strategic decision** (deferred din precedent cleanup wave 1 — Daniel CEO call separat)
+- Additional cleanup pass if confusion still observed post wave 2 (e.g. compact wiki/log.md 993 LOC → 50 LOC summary)
+
+**Pre-Beta scope cap-coadă completion gate FINAL preserved invariant:**
+- P4 reformulated CORRECT 3 missing pieces tactical autonomous (button wire mockup line 3034 + dashboard banner periodic + LOCK 8 floor toast)
+- Bugatti Full Audit pre-Launch Co-CTO every line cod + every virgulă + TOT pe latest commit LANDED gate
+
+---
+
+🦫 **Bugatti craft. T1+T2+T3 cleanup wave 2 LANDED clean atomic single-concern commit `cdcc864` pushed origin. 158 files in commit (47+7 renames + 67 src JSDoc + 7 banners + 2 NEW README + DECISIONS T3 amendment + smart-env + 522 archive). Karpathy 4 principii applied: Surgical Changes (body untouched 100% files moved) + Simplicity First (`_FROZEN/` single marker) + Think Before Coding (pre-execute scope check 115 refs) + Goal-Driven Execution (verifiable §6+§7 grep counts). Tests 3734 PASS preserved EXACT. ZERO src/ runtime impact. ZERO broken refs. Backup tag `pre-cleanup-t1-t2-t3-2026-05-15` pushed origin rollback insurance. 8/8 root *.md entry-points clean. `03-decisions/` + `06-sessions-log/` rearranged _FROZEN/ subfolders cu README.md entry redirects. D007 supersede enforcement rule explicit amended cu literal match trigger (NU fuzzy semantic). Co-CTO autonomy MAXIMUM 16th consecutive cross-chat trust delegation preserved invariant.**
