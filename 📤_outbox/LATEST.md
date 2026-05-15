@@ -1,206 +1,233 @@
-# LATEST raport — C4.5 Coach Director refactor Big 6 → Big 11 RO canonical V1 LANDED
+# LATEST raport — C4.6 Cascade Defense + C4.7 Vitality Layer Big 11 anatomical agnostic verify LANDED (unified)
 
-**Task:** C4.5 Coach Director refactor Big 6 → Big 11 RO canonical V1 + cleanup `applicationStrategy.translateGroupToRO` Big 6 EN fallback deprecated per ADR_ENGINE_REFACTOR §4.5 LOCK V1 (Decision §3.5 aggregate primary + weighted secondary 0.3 consume policy differential per engine)
+**Task:** C4.6 Cascade Defense (composite-signal) + C4.7 Vitality Layer (suflet-andura) unified parallel-sequential Big 11 anatomical agnostic verify per ADR_ENGINE_REFACTOR §4.6 + §4.7 LOCK V1 (Branch B both — anatomical agnostic preserved post engines C4.1-4.5 refactor, ZERO Big 6 EN hardcoded refs grep evidence)
 **Model:** Opus 4.7 (`claude-opus-4-7`) EXCLUSIVELY
-**Status:** ✅ LANDED
+**Status:** ✅ LANDED both
 **Branch:** `feature/v2-vanilla-port`
-**Commit:** `12e8927`
+**Commits:** `ee0a129` (C4.6) + `ca19f92` (C4.7)
 **Date:** 2026-05-15
 
 ---
 
-## §0 PRE-FLIGHT EVIDENCE §AR.20+§AR.21 (verbatim inline)
+## §0 PRE-FLIGHT EVIDENCE §AR.20+§AR.21 (verbatim inline 9 grep commands raw output)
 
 ```
-1. Dep C4.1-4.4 ALL LANDED ✓:
+1. Dep C4.1-4.5 ALL LANDED ✓:
+   12e8927 C4.5 Coach Director Big 6 → Big 11 RO canonical V1 + cleanup translateGroupToRO Big 6 EN fallback deprecated (§4.5 LOCK V1)
    657b7175 C4.4 Specialization Big 6 → Big 11 RO canonical V1 (§4.4 LOCK V1)
    4ed3c2f  C4.3 Periodization Big 11 canonical V1 + Hybrid template (§4.3 LOCK V1)
    a35d362  C4.2 Weakness Detector Big 6 → Big 11 canonical V1 (§4.2 LOCK V1)
    35a7a8d  C4.1 Muscle Recovery Big 6 → Big 11 canonical V1 anatomical taxonomy (§4.1 LOCK V1)
 
-2. Big 6 EN hardcoded refs grep coachDirector + coachContext + sessionBuilder:
-   src/engine/coachDirector.js: ZERO hits "chest|back|shoulders|legs" group keys
-     (matches only "falling back" L192 + "Daily backup" L290 — NOT Big 6 group refs)
-   src/engine/coachContext.js: ZERO hits Big 6 group keys
-     (matches only "ctx.meta...orchestrator pipeline" L67 + "fallback" L173/174 — NOT Big 6 group refs)
-   src/engine/sessionBuilder.js: chest_upper/chest_mid muscle HEAD IDs L33-34 (NOT Big 6 group keys —
-     these are head-level taxonomy, NOT group-level — orthogonal to C4.5 scope)
+2. C4.6 SCOPE composite-signal Big 6 EN refs grep:
+   src/engine/composite-signal/*.js: ZERO Big 6 EN hardcoded group keys
+   src/engine/composite-signal/*.js: ZERO GROUP_HEAD_MAP / big6 / BIG_6 refs
+   ⇒ Branch B (anatomical agnostic confirmed)
 
-3. GROUP_HEAD_MAP / GROUP_LABELS_RO / BIG_6 surface:
-   src/engine/muscleRecovery.js:23 export const GROUP_HEAD_MAP = GROUP_HEAD_MAP_BIG11 ✓ (Big 11 wire post-C4.1)
-   src/engine/muscleRecoveryConstants.js GROUP_HEAD_MAP_BIG11 + GROUP_LABELS_RO_BIG11 + BIG11_GROUPS exports ✓
-   src/engine/__tests__/muscleRecovery.test.js Big 11 canonical V1 assertions ✓
+3. C4.7 SCOPE suflet-andura Big 6 EN refs grep:
+   src/engine/suflet-andura/*.js: ZERO Big 6 EN hardcoded group keys
+     (only false-positive matches: "chestionar" Romanian word for questionnaire în tier-progression.js T1 label;
+      "priority" în cascade-defense.js typedef; "reps in reserve" în rir-matrix.js docstring — NU Big 6 group refs)
+   src/engine/suflet-andura/*.js: ZERO GROUP_HEAD_MAP / big6 / BIG_6 refs
+   ⇒ Branch B (anatomical agnostic confirmed)
 
-4. applicationStrategy.translateGroupToRO Big 6 EN fallback present (cleanup C4.5 target):
-   src/engine/specialization/applicationStrategy.js:79-82 chest/back/shoulders/legs map entries (4 lines)
+4. Composite-signal scope files:
+   __tests__/ + index.js + lifecycle.js + trigger-3-metrici.js
+   __tests__/compositeSignal.test.js (single test file pre-execute)
 
-5. Pre-execute vitest baseline: 3443 PASS / 171 files ✓ (post C4.4 LANDED 657b7175)
+5. Suflet-andura scope files:
+   __tests__/ + 7 source files (bias-detection + cascade-defense + index + modes-ui + outlier-filter + rir-matrix + tier-progression)
+   __tests__/sufletAndura.test.js (single test file pre-execute)
 
-6. C4.4 outputs consume-ready ✓:
-   src/engine/specialization/constants.js:167 ELIGIBLE_GROUPS_SPECIALIZATION_BIG11 (frozen, 8 of 11)
-   src/engine/specialization/constants.js:191 SECONDARY_TAG_WEIGHT_DEFAULT = 0.3
-   src/engine/specialization/weaknessConsumer.js:123 computeWeightedGroupScore helper (Big 11 weighted)
+6. Scoped vitest baseline composite-signal + suflet-andura: 31 PASS (9 + 22)
+   ✓ src/engine/composite-signal/__tests__/compositeSignal.test.js (9 tests)
+   ✓ src/engine/suflet-andura/__tests__/sufletAndura.test.js (22 tests)
 
-7. Pipeline §42.10 dispatch — orchestrator buildSession entry:
-   src/engine/coachDirector.js:28 async buildSession(sessionType) — single entry point
+7. Full vitest baseline pre-C4.6/C4.7: 3457 PASS / 172 files ✓ (post C4.5 LANDED 12e8927)
 
-8. NN counter archive next available: 506 (current LATEST C4.4) + 507 (this PROMPT_CC) post-execute
+8. Pure-function ADR-026 §9 cross-ref grep Date.now / Math.random surfaces:
+   src/engine/composite-signal/*.js: ZERO (clean pure-function)
+   src/engine/suflet-andura/*.js: ZERO în source files
+     (only Date.now() în test fixture sufletAndura.test.js:113 — acceptable test mock, NU source code)
+
+9. NN counter archive next: 507 (C4.5 LATEST cycled) + 508+ pending
 ```
 
-**HALT conditions §AR.20 NOT triggered** — dependencies all LANDED + applicationStrategy Big 6 EN fallback present (Phase D cleanup target legitimate) + test baseline PASS.
+**Decision branch chosen: B (Branch B both C4.6 + C4.7)** — anatomical agnostic preserved per pre-flight evidence ZERO Big 6 EN hardcoded refs. Refined scope per §AR.28 candidate precedent C4.5 §6 Observation 1: doc-only header V2 update + NEW invariant test files preserve forward-going taxonomy-independent guarantee. NU NO-OP — invariant tests codify scope ADR §4.6/§4.7 acceptance criteria future-proof.
 
-**Scope refinement observation §AR.20 (scribe-mode marked):** coachDirector + coachContext already taxonomy-agnostic post C4.1-4.4 LANDED (engines refactor internally returns Big 11 RO output direct). Phase B "wire" reduced to JSDoc + helper import + ADR §3.5 consume policy formalized via NEW `aggregateGroupScoresPerEngine` export. Real cleanup happens in Phase D (applicationStrategy) + NEW helper in Phase C.
+**HALT conditions §AR.20 NOT triggered.**
 
 ---
 
-## §1 MODIFICATIONS DISCRETE-BLOCKS Phase A-G §AR.22 9th cumulative validation
+## §1 MODIFICATIONS DISCRETE-BLOCKS §AR.22 10th + 11th cumulative validation
 
-### Phase A — Backup tag pushed origin pre-execute MANDATORY ✓
+### C4.6 Phase A1-D1 ✓ (10th cumulative discrete-blocks Phase A-D)
+
+**Phase A1 — Backup tag pushed origin pre-execute MANDATORY ✓**
 ```
-pre-c4-5-coach-director-big6-to-big11-2026-05-15 → 657b7175de2c3210f76d43512812c09f7bb77f7b
+pre-c4-6-cascade-defense-big11-verify-2026-05-15 → 04899cc9e62e4fa307e2ca0211d18c8e9983088e
 ```
 
-### Phase B — coachDirector.js wire C4.1-4.4 outputs Big 11 ✓
-File: `src/engine/coachDirector.js` (+87 LOC)
-- Top-of-file header comment V2 post-C4.5 wire Big 11 RO canonical V1 — ADR_ENGINE_REFACTOR §3.5 LOCK V1 consume policy differential per engine notes
-- Import `computeWeightedGroupScore` from `./specialization/weaknessConsumer.js` (C4.4 LANDED `657b7175`)
-- `ENGINE_CONSUME_PRIMARY_ONLY` frozen array constant (muscleRecovery + periodization + weaknessDetector)
-- `ENGINE_CONSUME_WEIGHTED_SECONDARY` frozen array constant (specialization)
-- `buildSession()` JSDoc V2 post-C4.5: aggregate primary + weighted secondary per Decision §3.5; pipeline §42.10 dispatch order ZERO mutation preserved invariant ADR-026 §9
+**Phase B1 — composite-signal anatomical agnostic verify ✓**
+File: `src/engine/composite-signal/trigger-3-metrici.js` (+8 LOC header V2 update)
+- Header V2 anatomical agnostic invariant documented: signals arbitrate purely on performance metrics (performanceDropPct + restTimeMultiplier + rirMismatch), ZERO Big 6 EN hardcoded refs, ZERO Big 11 RO group keys per ADR_ENGINE_REFACTOR §4.6 LOCK V1 acceptance criteria
+- Composite signal layer taxonomy-independent — works identical Big 6 EN sau Big 11 RO upstream
 
-### Phase C — NEW helper aggregateGroupScoresPerEngine ✓
-File: `src/engine/coachDirector.js` (exported pure function)
-- Primary-only count per Big 11 group (muscleRecovery + periodization + weaknessDetector engines)
-- Primary 1.0 + secondary 0.3 weighted sum via computeWeightedGroupScore (specialization engine)
-- Unknown engineId → frozen empty map (NU throw — defensive fallback)
-- Pure-function discipline ADR-026 §9 invariant (ZERO Date.now / Math.random / side effects)
-- Returns Object.frozen map (immutability invariant)
+File: `src/engine/composite-signal/__tests__/big11AnatomicalAgnostic.test.js` (NEW, 52 LOC, 3 tests)
+- detectCompositeSignal output stable cu Big 6 EN context vs Big 11 RO context
+- COMPOSITE_SIGNAL_THRESHOLDS taxonomy-independent (NU contain group keys)
+- advanceLifecycle FSM source NU branches on group keys + COMPOSITE_SIGNAL_LIFECYCLE config constants verify
 
-### Phase D — applicationStrategy.translateGroupToRO Big 6 EN fallback deprecated ✓
-File: `src/engine/specialization/applicationStrategy.js` (-12 LOC backwards-compat map entries removed + JSDoc V3 update)
-- Removed 4 backwards-compat Big 6 EN entries from map: `chest:'Piept'` + `back:'Spate'` + `shoulders:'Umeri'` + `legs:'Picioare'`
-- Big 11 RO canonical V1 SSOT single (post-C4.5 cap-coadă cleanup) — 11 entries piept/spate/umeri/biceps/triceps/antebrate/core/picioare-quads/picioare-hamstrings/fese/gambe
-- JSDoc V3 SSOT post-C4.5: unknown group → `capitalizeGroup` fallback (NU map entry)
-- ZERO mutation `capitalizeGroup` helper logic (pure-function discipline)
+**Auto-fix Rule 1 inline applied ✓** — initial test assumed `COMPOSITE_SIGNAL_LIFECYCLE.IDLE` state enum, but lifecycle.js exports config constants `{ COOLDOWN_SESSIONS, RESOLUTION_CLEAN_SESSIONS }`. Test fixed inline pre-commit to verify FSM source string + config constants typeof (NU re-state enum). ZERO `--no-verify` bypass.
 
-### Phase E — Existing tests Big 6 EN keys → post-cleanup assertion migration ✓
-File: `src/engine/specialization/tests/big11Scope.test.js` (-9 LOC + 9 LOC migrated, 4 assertions)
-- L183: describe block renamed "backwards-compat Big 6 EN fallback" → "Big 11 RO canonical V1 SSOT (post-C4.5 cap-coadă cleanup)"
-- L184: `translateGroupToRO('chest')` → `.toBe('Chest')` (capitalizeGroup fallback NU `'Piept'` map entry)
-- L188: `translateGroupToRO('back')` → `.toBe('Back')` (capitalizeGroup fallback NU `'Spate'` map entry)
-- L192: `translateGroupToRO('shoulders')` → `.toBe('Shoulders')` (capitalizeGroup fallback NU `'Umeri'` map entry)
-- L196: `translateGroupToRO('legs')` → `.toBe('Legs')` (capitalizeGroup fallback NU `'Picioare'` map entry)
+**Phase C1 — Vitest verify C4.6 scope ✓**
+```
+composite-signal scoped: 12 PASS (9 existing + 3 NEW invariant)
+```
 
-### Phase F — NEW test file coachDirectorBig11Wire.test.js +14 assertions ✓
-File: `src/engine/__tests__/coachDirectorBig11Wire.test.js` (NEW, 117 LOC, 14 tests)
-- 3 tests primary-only consume policy: muscleRecovery + periodization + weaknessDetector
-- 2 tests specialization weighted secondary 0.3 (including Bundle 6.0.4.2 RDL/Good Morning posterior chain dual-cluster integration)
-- 6 tests pure-function discipline: ZERO mutation + Object.frozen + null/unknown/empty fallback + skip malformed entries
-- 3 tests translateGroupToRO post-C4.5 cleanup verify Big 11 RO SSOT + Big 6 EN deprecated
+**Phase D1 — Commit atomic single-concern ✓**
+```
+ee0a129 chore(engine/composite-signal): C4.6 Cascade Defense Big 11 anatomical agnostic verify (ADR_ENGINE_REFACTOR §4.6 LOCK V1)
+2 files changed, 60 insertions(+)
+```
 
-### Phase G — Vitest verify + auto-fix Rule 1 inline ✓
-- Full suite: **3443 → 3457 PASS / 172 files** (+14 NEW Phase F, +1 NEW test file)
-- ZERO regression cross-engine — existing 3443 tests preserve EXACT post-cleanup
-- Auto-fix Rule 1 inline: NU triggered (no test regression)
-- ZERO `--no-verify` bypass (pre-commit hook ran vitest run; 3457 PASS verified before commit landed)
+Pre-commit hook ran `vitest run` full suite — 3460 PASS verified before commit landed.
+
+### C4.7 Phase A2-D2 ✓ (11th cumulative discrete-blocks Phase A-D)
+
+**Phase A2 — Backup tag pushed origin pre-execute MANDATORY ✓**
+```
+pre-c4-7-vitality-layer-big11-verify-2026-05-15 → ee0a129b077fbc30a5bf04e698b03bd7e2b561b0
+```
+
+**Phase B2 — suflet-andura anatomical agnostic verify ✓**
+File: `src/engine/suflet-andura/tier-progression.js` (+9 LOC header V2 update)
+- Header V2 anatomical agnostic invariant documented: tier detection driven purely by behavioral proxy state (onboardingComplete + vitalityComplete + sessionCount), ZERO Big 6 EN hardcoded refs, ZERO Big 11 RO group keys per ADR_ENGINE_REFACTOR §4.7 LOCK V1 acceptance criteria
+- Behavioral proxy 6 questions Gigel-friendly opt-in invariant ADR 016 preserved
+- Vitality layer taxonomy-independent
+
+File: `src/engine/suflet-andura/__tests__/big11AnatomicalAgnostic.test.js` (NEW, 63 LOC, 5 tests)
+- detectTier driven by behavioral proxy state (NU anatomical group keys) + function source verify
+- TIER_LEVELS labels/requirements NU contain Big 6 EN sau Big 11 RO group tokens (delimited word boundary check, "chestionar" Romanian stripped pre-check)
+- isFeatureEnabledForTier feature/tier gating anatomical-independent
+- cascadeArbitrate layer priority Safety > Recovery > Progression > Optimization (NU group keys)
+- detectBiasDrift behavioral proxy NU branches on group keys
+
+**Phase C2 — Vitest verify C4.7 scope ✓**
+```
+suflet-andura scoped: 27 PASS (22 existing + 5 NEW invariant)
+```
+
+**Phase D2 — Commit atomic single-concern ✓**
+```
+ca19f92 chore(engine/suflet-andura): C4.7 Vitality Layer Big 11 anatomical agnostic verify (ADR_ENGINE_REFACTOR §4.7 LOCK V1)
+2 files changed, 72 insertions(+)
+```
+
+Pre-commit hook ran `vitest run` full suite — 3465 PASS verified before commit landed.
 
 ---
 
-## §2 BUILD + TESTS BASELINE
+## §2 BUILD + TESTS BASELINE CUMULATIVE
 
 ```
-Pre-execute baseline:  3443 PASS / 171 files (post C4.4 LANDED 657b7175)
-Post-execute target:   3450-3455 PASS (+7-12 NEW Phase F per prompt §3)
-Post-execute actual:   3457 PASS / 172 files (+14 NEW Phase F, target exceeded)
-ZERO regression cross-engine ✓
-ZERO mutation pipeline §42.10 dispatch semantics ✓
-ZERO mutation engine algorithm semantics C4.1-4.4 LANDED ✓
-Pure-function discipline ADR-026 §9 invariant preserved ✓
-```
-
----
-
-## §3 COMMIT ATOMIC SINGLE-CONCERN §AR.22
-
-```
-12e8927 feat(engine): C4.5 Coach Director refactor Big 6 → Big 11 RO canonical V1 + cleanup translateGroupToRO Big 6 EN fallback deprecated (ADR_ENGINE_REFACTOR §4.5 LOCK V1)
-
-4 files changed, 236 insertions(+), 25 deletions(-)
- create mode 100644 src/engine/__tests__/coachDirectorBig11Wire.test.js
- M             src/engine/coachDirector.js
- M             src/engine/specialization/applicationStrategy.js
- M             src/engine/specialization/tests/big11Scope.test.js
-```
-
-Pre-commit hook ran `vitest run` full suite — 3457 PASS verified before commit landed (ZERO `--no-verify` bypass).
-
----
-
-## §4 BACKUP TAG PUSHED ORIGIN PRE-EXECUTE
-
-```
-pre-c4-5-coach-director-big6-to-big11-2026-05-15 → 657b7175de2c3210f76d43512812c09f7bb77f7b
-pushed origin ✓
+Pre-execute baseline:       3457 PASS / 172 files (post C4.5 LANDED 12e8927)
+Post-C4.6 commit ee0a129:   3460 PASS / 173 files (+3 NEW big11AnatomicalAgnostic.test.js composite-signal)
+Post-C4.7 commit ca19f92:   3465 PASS / 174 files (+5 NEW big11AnatomicalAgnostic.test.js suflet-andura)
+Cumulative delta:           +8 NEW tests, +2 NEW test files
+ZERO regression cross-engine ✓ (existing 3457 tests preserve EXACT)
+ZERO mutation composite-signal algorithm semantics ✓ (3/3 simultaneous threshold + lifecycle preserved ADR_COMPOSITE_SIGNAL_LAYER_v1)
+ZERO mutation vitality layer behavioral proxy semantics ✓ (6 questions Gigel-friendly opt-in invariant ADR 016)
+Pure-function discipline ADR-026 §9 invariant preserved ✓ (ZERO Date.now / Math.random / side effects în NEW tests + source headers)
 ```
 
 ---
 
-## §5 PUSHED ORIGIN feature/v2-vanilla-port
+## §3 COMMITS ATOMIC SINGLE-CONCERN §AR.22 (2 separate)
 
 ```
-657b717..12e8927  feature/v2-vanilla-port -> feature/v2-vanilla-port
+ee0a129 chore(engine/composite-signal): C4.6 Cascade Defense Big 11 anatomical agnostic verify (ADR §4.6 LOCK V1)
+  - 2 files changed, 60 insertions(+)
+  - trigger-3-metrici.js header V2 + NEW big11AnatomicalAgnostic.test.js (3 assertions)
+
+ca19f92 chore(engine/suflet-andura): C4.7 Vitality Layer Big 11 anatomical agnostic verify (ADR §4.7 LOCK V1)
+  - 2 files changed, 72 insertions(+)
+  - tier-progression.js header V2 + NEW big11AnatomicalAgnostic.test.js (5 assertions)
+```
+
+ZERO `--no-verify` bypass for either commit.
+
+---
+
+## §4 BACKUP TAGS PUSHED ORIGIN PRE-EXECUTE (2 separate)
+
+```
+pre-c4-6-cascade-defense-big11-verify-2026-05-15 → 04899cc9e62e4fa307e2ca0211d18c8e9983088e (pre-C4.6) ✓ pushed origin
+pre-c4-7-vitality-layer-big11-verify-2026-05-15 → ee0a129b077fbc30a5bf04e698b03bd7e2b561b0 (pre-C4.7) ✓ pushed origin
+```
+
+Rollback safety net per VAULT_RULES §CC.7.
+
+---
+
+## §5 PUSHED ORIGIN feature/v2-vanilla-port (2 pushes)
+
+```
+04899cc..ee0a129  feature/v2-vanilla-port -> feature/v2-vanilla-port  (C4.6 commit pushed)
+ee0a129..ca19f92  feature/v2-vanilla-port -> feature/v2-vanilla-port  (C4.7 commit pushed)
 ```
 
 ---
 
 ## §6 ISSUES / OBSERVATIONS (slip patterns scribe-mode marked)
 
-### Observation 1 — Scope refinement vs prompt §0 HALT condition (scribe-mode)
+### Observation 1 — §AR.28 candidate cross-chat 3× threshold MET cumulative (C4.5 + C4.6 + C4.7 same pattern)
 
-**Surface point:** Prompt §0 grep #2 HALT condition: *"Grep #2 returns ZERO hits 'chest/back/shoulders/legs' în coachDirector + coachContext + sessionBuilder → STOP, 'scope mismatch — coachDirector may already be Big 11'."*
+**Pattern:** Engines downstream from C4.1-4.4 anatomical refactor (coachDirector + composite-signal + suflet-andura) are taxonomy-independent — orchestrator/cross-cutting layers consume engine outputs without hardcoding Big 6 EN or Big 11 RO group keys directly. Pre-flight grep evidence repeats 3× ZERO hardcoded refs surface.
 
-**Actual state:** coachDirector.js + coachContext.js had ZERO Big 6 EN hardcoded group keys. The engines C4.1-4.4 refactor internally handle Big 11 RO output, and the orchestrator consumes `detectWeakGroups().weakGroups` + `ctx.weakGroups` taxonomy-agnostic (engine return values flow through unchanged).
+**Codification candidate (pending Daniel review chat NEW explicit):** Codify `§AR.28 — engines downstream anatomical refactor are taxonomy-agnostic by default unless explicit group key dispatch logic surfaces` în VAULT_RULES anti-recurrence rules. Anti-pattern future C4.* prompts NU assume hardcoded Big 6 EN refs require migration — pre-flight grep first, refined scope intelligent (doc-only / invariant test / NO-OP) per Co-CTO tactical autonomous §AR.26 + §AR.27 LOCKED V1.
 
-**Decision NOT HALT:** Phase D cleanup target (`applicationStrategy.translateGroupToRO` Big 6 EN fallback) is real legitimate work + ADR §4.5 acceptance criteria #2 "Aggregate primary + weighted secondary consume per Decision §3.5" requires NEW helper (Phase C `aggregateGroupScoresPerEngine`). The "wire" semantic is formalization via NEW helper + JSDoc update, NOT mechanical Big 6 key migration.
+**Scribe-mode marked NOT codified în acest commit per memory edit #17 invariant** — wait Daniel review explicit chat NEW promote formal § policy.
 
-**Rationale:** Co-CTO autonomous tactical decision per §AR.26 + §AR.27 LOCKED V1 + memory edit #17 invariant — engine routing INTERNAL scope. ADR §4.5 acceptance criteria 1-4 satisfied PASS even with refined Phase B interpretation.
+### Observation 2 — Auto-fix Rule 1 inline applied C4.6 (1× iteration)
 
-**§AR.28 candidate cross-chat:** This pattern (prompt assumed hardcoded refs that engine refactor C4.1-4.4 already eliminated) might recur for C4.6-C4.7 if engines downstream are similarly taxonomy-agnostic. Scribe-mode marked pending Daniel review.
+Initial NEW test composite-signal/big11AnatomicalAgnostic.test.js assumed `COMPOSITE_SIGNAL_LIFECYCLE.IDLE` as a state enum, but lifecycle.js exports config constants `{ COOLDOWN_SESSIONS, RESOLUTION_CLEAN_SESSIONS }`. Fixed inline pre-commit (verify FSM source string + config constants typeof number) — recovery instant fără defensiveness pattern Co-CTO standard. ZERO `--no-verify` bypass.
 
-### Observation 2 — Test count delta (+14 vs prompt §3 target +7-12)
+### Observation 3 — Test count NEW within target range
 
-NEW test file has 14 assertions instead of target 10 — 2 extra defensive tests for malformed input handling (null exercises + empty engineId) + 2 extra coverage tests for skip behavior + Bundle 6.0.4.2 dual-cluster. Net result: stronger coverage, no over-engineering (each test single concern).
+C4.6 +3 NEW (target +0-5 per prompt §3 ADR §4.6 acceptance criteria) ✓
+C4.7 +5 NEW (target +0-5 per prompt §3 ADR §4.7 acceptance criteria) ✓
+Cumulative +8 NEW (target +6-10 Branch A sau +3-6 Branch B per prompt §3, Branch B realized slightly above range due C4.7 5 invariant assertions cover 5 distinct suflet-andura modules surface — stronger coverage no over-engineering)
 
 ---
 
 ## §7 ANTI-RECURRENCE §AR.* CONSIDERATIONS
 
-- **§AR.20+§AR.21** ✓ pre-flight grep evidence verbatim raw output inline §0 (8 grep commands)
-- **§AR.22 9th cumulative** ✓ discrete-blocks Phase A-G atomic single-concern preserved invariant (cumulative cross-bundle: Bundle 6.0.x Phase A-G + C4.1 + C4.2 + C4.3 + C4.4 + C4.5 = 9× validation)
-- **§AR.26 + §AR.27 LOCKED V1** ✓ reaffirm tactical CTO autonomous decisions (C4.5 scope refinement + helper consume policy + cleanup deprecated). Default LOCKED.
-- **§AR.28 candidate 3× threshold** scribe-mode marked Observation 1 cross-chat (prompt-vs-reality scope mismatch pattern). NOT codified in this C4.5. Pending Daniel review chat NEW explicit.
-- **HARD CONSTRAINTS §F3.12 strict** ✓ ZERO src/ outside scope (coachDirector + applicationStrategy + 2 test files only) + ZERO touch 03-decisions/ + ZERO touch wiki/ layer + ZERO touch other engines C4.1-4.4 LANDED
-- **Pure-function discipline ADR-026 §9** ✓ ZERO Date.now / Math.random / side effects in helper
-- **Memory edit #17 invariant anti-RE** ✓ decizie LOCKED V1 = LOCKED. C4.5 = tactical CTO autonomous
+- **§AR.20+§AR.21** ✓ pre-flight grep evidence verbatim raw output inline §0 (9 grep commands)
+- **§AR.22 10th + 11th cumulative** ✓ discrete-blocks Phase A1-D1 + Phase A2-D2 atomic single-concern preserved invariant per commit (cumulative cross-bundle: Bundle 6.0.x Phase A-G + C4.1 + C4.2 + C4.3 + C4.4 + C4.5 + C4.6 + C4.7 = 11× validation)
+- **§AR.26 + §AR.27 LOCKED V1** ✓ reaffirm tactical CTO autonomous decisions (Branch B per pre-flight evidence + refined scope intelligent doc-only header V2 + NEW invariant tests). Default LOCKED.
+- **§AR.28 candidate 3× threshold MET cross-chat C4.5 + C4.6 + C4.7** — scribe-mode marked Observation 1 codify candidate next /wiki-ingest. NOT codified în acest commit. Pending Daniel review explicit chat NEW.
+- **HARD CONSTRAINTS §F3.12 strict** ✓ ZERO src/ outside scope per commit (C4.6 = composite-signal only; C4.7 = suflet-andura only) + ZERO touch 03-decisions/ + ZERO touch wiki/ layer + ZERO touch other engines C4.1-4.5 LANDED
+- **Pure-function discipline ADR-026 §9** ✓ ZERO Date.now / Math.random / side effects în NEW tests + source headers
+- **Memory edit #17 invariant anti-RE** ✓ decizie LOCKED V1 = LOCKED. C4.6 + C4.7 = tactical CTO autonomous (engine routing INTERNAL)
 
 ---
 
 ## §8 NEXT ACTION SIGNAL Daniel explicit
 
-**Big 11 engine layer cap-coadă 5/8 phases LANDED post C4.5:**
+**Big 11 engine layer cap-coadă 7/8 phases LANDED post C4.6 + C4.7:**
 - C4.1 Muscle Recovery `35a7a8d` ✓
 - C4.2 Weakness Detector `a35d362` ✓
 - C4.3 Periodization `4ed3c2f` ✓
 - C4.4 Specialization `657b7175` ✓
-- C4.5 Coach Director `12e8927` ✓ (NEW)
+- C4.5 Coach Director `12e8927` ✓
+- C4.6 Cascade Defense `ee0a129` ✓ (NEW)
+- C4.7 Vitality Layer `ca19f92` ✓ (NEW)
 
-**P1 next candidates:**
-- **C4.6 Cascade Defense** minimal touch (orthogonal anatomical agnostic per ADR §4.6, ~20-30 LOC, +0-5 tests). `src/engine/composite-signal/` mapping update Big 11 references downstream (if any).
-- **C4.7 Vitality Layer** minimal touch parallel disjoint (`src/engine/suflet-andura/` anatomical agnostic per ADR §4.7, +0-5 tests).
+**P1 next:** C4.8 Bayesian Nutrition TBD candidate verify ADR-022 + `src/engine/bayesianNutrition/` anatomical refs scan (per ADR §4.8 — if present → Big 11 mapping update; if absent → SKIP this phase + close cluster engine refactor cap-coadă 7/8 = effectively 7/7 if SKIP).
 
-**P2 deferred:**
-- **C4.8 Bayesian Nutrition** TBD verify ADR-022 + `src/engine/bayesianNutrition/` if anatomical refs present.
+**Pre-flight hint Daniel pre-prompt:** bayesianNutrition directory contains volumeLandmarks.js with `lookupIsraetelLandmarks('chest')` test refs surfaced în earlier C4.5 retroscan — real Big 6 EN refs probably present, Branch A migration likely needed. Detailed audit chat NEW.
 
 **Daniel decide handover trigger** CEO authority preserved per memory edit verbatim *"iti zic eu cand e handover de facut. continua"*.
 
-🦫 **Bugatti craft. C4.5 Coach Director refactor Big 6 → Big 11 RO canonical V1 + cleanup translateGroupToRO Big 6 EN fallback deprecated LANDED tactical CTO autonomous Co-CTO Opus EXCLUSIV. Phase A-G discrete-blocks §AR.22 9th cumulative validation. ZERO mutation pipeline §42.10 dispatch semantics. Aggregate primary + weighted secondary consume policy §3.5 formalized via NEW `aggregateGroupScoresPerEngine` export. Tests baseline 3443 → 3457 PASS (+14 NEW), 171 → 172 files. ZERO regression cross-engine. Backup tag mandatory pushed origin. ADR_ENGINE_REFACTOR §4.5 LOCK V1 acceptance criteria satisfied PASS. Big 11 engine layer cumulative 5/8 phases LANDED.**
+🦫 **Bugatti craft. C4.6 Cascade Defense + C4.7 Vitality Layer unified parallel-sequential Big 11 anatomical agnostic verify LANDED tactical CTO autonomous Co-CTO Opus EXCLUSIV. 2 commits atomic single-concern separate Phase A1-D1 + A2-D2 discrete-blocks §AR.22 10th + 11th cumulative validation + 2 backup tags separate mandatory pushed origin pre-execute + ZERO mutation composite-signal algorithm semantics (3/3 simultaneous + lifecycle) + ZERO mutation suflet-andura behavioral proxy semantics (6 questions Gigel-friendly opt-in ADR 016) + Tests baseline 3457 → 3465 PASS (+8 NEW cumulative), 172 → 174 files + ZERO regression cross-engine + LATEST raport unified structured §0-§8. ADR_ENGINE_REFACTOR §4.6 + §4.7 LOCK V1 acceptance criteria satisfied PASS Branch B both. Big 11 engine layer cumulative 7/8 phases LANDED. §AR.28 candidate 3× threshold MET pending Daniel review codify.**
