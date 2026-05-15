@@ -38,7 +38,7 @@
 ## Commits (3 atomic single-concern Bugatti)
 - `2f71f16` | feat(vault): add ANDURA_PRIMER.md SSOT singular briefing fresh chat onboard
 - `9258260` | chore(vault): radical archive wiki → 99-archive/wiki-pre-2026-05-15
-- `<SHA3>` | chore(vault): cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/* post radical archive
+- `7f0a14d` | chore(vault): cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/* post radical archive
 
 ## Pushed
 feature/v2-vanilla-port pushed origin ✓ (3 commits + 3 backup tags)
