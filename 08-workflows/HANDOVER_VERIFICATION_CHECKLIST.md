@@ -1,3 +1,9 @@
+> 🛑 **STOP. DEPRECATED post-reglaj 2026-05-15. Read [[../DECISIONS.md]] instead.**
+>
+> Wiki-specific 8-point checklist (voice §1 + cross-refs ≥2 + wiki/index entry + wiki/log append + archive _CONSUMED) obsolete post DECISIONS.md §D001 wiki FREEZE + §D006 handover paragraf scurt + §D007 supersede enforcement literal match 3 criterii. Current handover verify = D006+D007 pattern în DECISIONS.md SSOT.
+
+---
+
 ---
 title: HANDOVER VERIFICATION CHECKLIST — Mandatory Per Handover Bugatti Gate
 type: workflow

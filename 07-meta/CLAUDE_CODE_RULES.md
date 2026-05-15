@@ -61,6 +61,12 @@ Reguli:
 | `.claude/settings.json` | Hooks de proiect (auto-push, reguli) — comis în repo |
 | `.claude/settings.local.json` | Permisiuni locale (tool allow-list) — nu se comite |
 
+> 🟡 **Self-discipline rules section DEPRECATED post-reglaj 2026-05-15.**
+>
+> §36.77 + §36.83 + §HANDOVER_PROTOCOL refs superseded by DECISIONS.md SSOT + USER_PREFERENCES V4 (7 reguli binary) + PROJECT_INSTRUCTIONS V5. Body sections above (auto-push, commit convention, branch strategy, Claude Code files) alive operational.
+
+---
+
 ## Self-discipline rules (cross-ref vault SSOT)
 
 Reguli de comportament Claude Code aplicabile în toate sesiunile, codificate în `06-sessions-log/HANDOVER_GLOBAL_*.md`:

@@ -1,3 +1,9 @@
+> 🛑 **STOP. DEPRECATED post-reglaj 2026-05-15. Read [[../DECISIONS.md]] instead.**
+>
+> Old PowerShell handover workflow + CHAT_MIGRATION_PROTOCOL update routine superseded by DECISIONS.md §D006 (handover paragraf scurt + DECISIONS.md delta append, NU 150 LOC scribe flow + NU PowerShell copy ritual).
+
+---
+
 # PROMPT START CHAT NOU + HANDOVER TEMPLATE
 
 **Use case:** copy-paste când deschizi chat Opus nou pentru Andura.

@@ -14,6 +14,12 @@ last_updated: 2026-05-15-FREEZE
 total_pages: 146
 ---
 
+> 🛑 **STOP. Read [[../DECISIONS.md]] instead. Wiki/ FROZEN imutabilă post 2026-05-15.**
+>
+> Wiki layer = historical Faza 3 reference only. Current SSOT singular = `DECISIONS.md` root §D001. Karpathy 4 principii core philosophy: [[../07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
 # Wiki Index — Andura Wiki Catalog (Karpathy Real Option B)
 
 **Authority:** [[../CLAUDE]] §1-§7 schema vault root LOCK V1 2026-05-11 Faza 3 Phase 2 + [[_design/WIKI_DESIGN_SPEC_V1]] §1-§8 design Phase 1 + [[../VAULT_RULES#FAZA_3_KARPATHY_REAL]] §F3.1-§F3.12 LOCK V1 2026-05-11
