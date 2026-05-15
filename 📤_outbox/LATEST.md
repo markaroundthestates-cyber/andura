@@ -85,7 +85,12 @@ Rollback safety net per VAULT_RULES §CC.7.
 
 ## §5 — Pushed origin feature/v2-vanilla-port (post-commit verify)
 
-(pending below post-commit landed)
+```
+3a7de26..760b706  feature/v2-vanilla-port -> feature/v2-vanilla-port  (commit 760b706 LANDED + pushed)
+14 files changed, 779 insertions(+), 174 deletions(-)
+```
+
+Pre-commit hook ran `vitest run` full suite — 3465 PASS verified before commit landed (ZERO `--no-verify` bypass).
 
 ---
 
