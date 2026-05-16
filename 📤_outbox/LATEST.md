@@ -1,23 +1,24 @@
-# LATEST CC — task_01 Routing Extend Phase 3
+# LATEST CC — task_02 Zustand Stores Phase 3
 
 **Date:** 2026-05-16
-**Task:** task_01 Routing Extend (GotoScreen union + router sub-routes + 11 stubs)
+**Task:** task_02 Zustand Stores (workoutStore + coachStore + persist middleware)
 **Model:** Opus
 **Branch:** feature/v3-react-clasic
-**Status:** Complete | 3 commits | +25 tests | Push origin DONE
+**Status:** Complete | 2 commits | +42 tests | Push origin DONE
 
 ---
 
 ## §0 Bugatti checklist
 
-- [✓] Pre-flight verde — 3769 PASS baseline @ `48b0b37` post CLAUDE.md gut
-- [✓] Backup tag `pre-phase3-task-01-2026-05-16` pushed origin
-- [✓] Atomic commits 3x single-concern (Karpathy §3 surgical)
-- [✓] Pre-commit hook verde per commit (vitest 3794 PASS x3 runs)
-- [✓] TS exhaustive check passes (`_exhaustive: never` fallback preserved)
-- [✓] Romanian no-diacritics rule preserved (UI strings + tests + commits)
-- [✓] Surgical touch — ZERO refactor adjacent routes Progres/Istoric/Cont
-- [✓] Acceptance criteria §5 task_01 ALL ✓
+- [✓] task_01 LANDED verified (`📤_outbox/LATEST.md` prior Status=Complete + 3794 PASS baseline @ `fecc7ed`)
+- [✓] Backup tag `pre-phase3-task-02-2026-05-16` pushed origin
+- [✓] Atomic commits 2x single-concern (Karpathy §3 surgical)
+- [✓] Pre-commit hook verde per commit (vitest 3823 + 3836 PASS)
+- [✓] TS strict compile clean
+- [✓] Pure-function actions (set callback, NU mutation) — ADR 026 §9 paradigm
+- [✓] Persist middleware functional (localStorage sync verified prin tests)
+- [✓] Anti-paternalism (D-LEGACY-061) — ZERO motivational copy în stores, doar state
+- [✓] Acceptance criteria §5 task_02 ALL ✓
 
 ---
 
@@ -25,86 +26,92 @@
 
 | SHA | Subject |
 |-----|---------|
-| `ac1e0b1` | feat(routing): extend GotoScreen union + gotoPath cu Phase 3 Antrenor sub-screens |
-| `62c8dc2` | feat(routing): nested sub-routes /app/antrenor/* + 11 placeholder stubs |
-| `fecc7ed` | test(routing): cover Phase 3 sub-routes navigation + stub render |
+| `636ac48` | feat(stores): workoutStore Zustand state machine V2 + persist middleware |
+| `3d7a329` | feat(stores): coachStore Zustand schedContext + persona + reactivateDismissed |
 
 ---
 
 ## §2 Tests
 
-- **Baseline:** 3769 PASS @ `48b0b37`
-- **Final:** 3794 PASS (+25 new tests) — upper bound spec estimate `+15-25`
+- **Baseline:** 3794 PASS @ `fecc7ed` (post task_01)
+- **Final:** 3836 PASS (+42 new tests) — within spec range `+30-50`
 - **Breakdown delta:**
-  - `navigation.test.ts`: 9 → 21 tests (+12: 11 sub-screen path mappings + 1 runtime throw fallback)
-  - `routing.test.tsx`: 10 → 23 tests (+13: 11 parameterized `it.each` stub renders + 2 nested integration tests via Layout/ProtectedRoute)
-- **Paradigm:** D020 MemoryRouter jsdom (NU createBrowserRouter în tests)
-- **All test files:** 191 PASS / 191 (zero regression cross-suite)
+  - `workoutStore.test.ts`: 29 NEW tests (5 describe groups — initial state 3 + lifecycle 10 + state machine 7 + streak 3 + reset 1 + persist partialize 4)
+  - `coachStore.test.ts`: 13 NEW tests (5 describe groups — defaults 3 + setSchedContext 2 + setPersona 3 + reactivateDismissed 2 + persist 3)
+- **All test files:** 193 PASS / 193 (zero regression cross-suite)
 
 ---
 
 ## §3 Modificări
 
-### Touched files (4 modified + 11 created)
+### Created (4 NEW files)
 
-**Modified:**
-- `src/react/lib/navigation.ts` — GotoScreen union +11 sub-screens, gotoPath nested mapping `/app/antrenor/<screen>`
-- `src/react/routes/router.tsx` — `/app/antrenor` flat path → parent route cu 11 children + 11 stub imports
-- `src/react/__tests__/navigation.test.ts` — +12 tests (sub-screens paths + throw fallback)
-- `src/react/__tests__/routing.test.tsx` — +13 tests (parameterized stub renders + nested integration)
+**Stores:**
+- `src/react/stores/workoutStore.ts` (~170 LOC) — Zustand state machine V2 cu persist middleware partialize selectiv (pausedSnapshot + lastSession + streak)
+- `src/react/stores/coachStore.ts` (~50 LOC) — Zustand coach context (schedContext + persona + reactivateDismissed) cu persist middleware full state
 
-**Created (11 stubs `src/react/routes/screens/antrenor/`):**
-- `EnergyCheck.tsx`, `EnergyCause.tsx`, `WorkoutPreview.tsx` — task_05 replace
-- `CevaNuMerge.tsx`, `PainButton.tsx` — task_06 replace
-- `EquipmentSwap.tsx`, `AparateLipsa.tsx`, `ScheduleOverride.tsx` — task_07 replace
-- `Workout.tsx` — task_08 replace
-- `PostRpe.tsx`, `PostSummary.tsx` — task_09 replace
+**Tests:**
+- `src/react/__tests__/stores/workoutStore.test.ts` (~230 LOC) — 29 tests
+- `src/react/__tests__/stores/coachStore.test.ts` (~95 LOC) — 13 tests
 
-Toate stubs minimal: `<section className="p-6"><h1>...</h1><p>Phase 3 task_NN placeholder.</p></section>`.
+### workoutStore.ts state shape
+
+- `exIdx` + `setIdx` (current exercise/set indexes)
+- `phase`: `'logging' | 'rating' | 'rest' | 'transition' | 'idle'`
+- `prHit` + `lastRating` (`'usoara' | 'normala' | 'grea'`)
+- `history`: `Record<exIdx, ExerciseHistoryEntry[]>` (kg + reps + rating `'usor' | 'potrivit' | 'greu'`)
+- `sessionStart` (runtime-only timestamp) + `pausedSnapshot` + `lastSession`
+- `streak` counter (F8 feature)
+
+**Actions:** Lifecycle (start/pause/resume/discard/finish) + state machine (setPhase/logSet/advanceExercise/markPRHit/setLastRating) + streak (increment/reset) + reset.
+
+**Persist partialize SELECTIVE:** `pausedSnapshot` + `lastSession` + `streak`. NU `sessionStart` (runtime-only, fresh fiecare reload). NU `history` (runtime-only, paused snapshot = single recovery path).
+
+### coachStore.ts state shape
+
+- `schedContext`: `'workout' | 'rest'` (Phase 3 placeholder hardcoded `'workout'`, prod va veni din `coachDirector.buildSession()` result)
+- `persona`: `'maria' | 'gigel' | 'marius'`
+- `reactivateDismissed`: boolean (win-back banner flag)
+
+**Persist:** full state (NU partialize — toate 3 user preference / coach state).
 
 ---
 
 ## §4 Issues
 
-**P3 nota — mockup goto() grep gap:**
+**P3 — Persona type discrepancy `appStore.ts` vs `coachStore.ts`:**
 
-Mockup `04-architecture/mockups/andura-clasic.html` grep `goto\('[a-z-]+'` arată 9/11 sub-screens prezente:
-- ✓ energy-check, workout-preview, workout, ceva-nu-merge, pain-button, aparate-lipsa, schedule-override, post-rpe, post-summary
-- ✗ `energy-cause` + `equipment-swap` — NU prezent în mockup goto() calls
+- `src/react/stores/appStore.ts:12` declares `Persona = 'maria' | 'gigica' | 'marius'` (note: `'gigica'`)
+- `src/react/stores/coachStore.ts:17` per spec declares `Persona = 'maria' | 'gigel' | 'marius'` (per ANDURA_PRIMER §1 + DECISIONS.md §D-LEGACY-065 Gigel Test)
 
-Posibil:
-1. NEW additions Phase 3 design refinement post-mockup-V1 (probabilă — energy-cause = sub-flow energy-check; equipment-swap = sub-flow aparate-lipsa)
-2. Mockup grep incomplete (e.g. dynamic strings, switch statements)
+PRIMER §1 authoritative: "Gigel = user mediu non-tech RO". `'gigel'` correct. `'gigica'` în appStore = slip Phase 1 Foundation. Stored ca P3 audit finding pentru future cleanup (e.g. align appStore la `'gigel'` SAU consolidate ambele stores la same Persona union exported din shared location). NU bloochează task_02 — stores independent slices.
 
-Stubs created per spec task_01 §2 D ANYWAY (spec authoritative). Task_05 (energy flow) + task_07 (constraint flow) vor verifica mockup design real pe wave implementation + adjust dacă screen-uri reale sunt diferite. NU bloochează Phase B/C.
+**Outside task_02 §5 scope** (acceptance criteria explicit task_02 — verified ✓). Defer la Phase 8 Bugatti audit nuclear sau task_03 cleanup parteneră dacă engineWrappers/coachVoice ating Persona type.
 
 ---
 
-## §5 Acceptance criteria task_01 §5
+## §5 Acceptance criteria task_02 §5
 
-- [✓] `GotoScreen` union extends cu 11 sub-screens NEW
-- [✓] `gotoPath()` exhaustive maps toate sub-screens la `/app/antrenor/<name>`
-- [✓] `router.tsx` sub-routes nested sub `/app/antrenor` children (parent route fără element, children render direct)
-- [✓] 11 stub files NEW în `src/react/routes/screens/antrenor/`
-- [✓] vitest count: 3769 → 3794 (+25 new tests) ✓ upper bound `+15-25`
-- [✓] TS compile clean (exhaustive check passes)
-- [✓] Pre-commit hook verde per commit (ZERO `--no-verify`)
-- [✓] Romanian no-diacritics rule preserved
+- [✓] `workoutStore.ts` exports `useWorkoutStore` cu state + actions + persist middleware
+- [✓] `coachStore.ts` exports `useCoachStore` cu schedContext + persona + reactivateDismissed
+- [✓] Persist middleware functional (localStorage sync verified prin 7 persist tests)
+- [✓] vitest count: +42 new tests (within spec `+30-50` range)
+- [✓] TS strict compile clean
+- [✓] Pre-commit hook verde per commit
 
 ---
 
 ## §6 Next action
 
-**Phase B (2 paralel ready, blocks Phase C):**
-- `task_02_stores` — workoutStore + coachStore Zustand slices
-- `task_03_adapters` — engineWrappers + coachVoice (backend `src/engine/*` integration adapters)
+**Phase B still in progress (task_02 LANDED, task_03 pending):**
+- `task_03_adapters` — engineWrappers + coachVoice (backend `src/engine/*` integration adapters). Paralel cu task_02 LANDED dacă Daniel rulează multi-terminal acum, sau sequential next single-terminal.
 
-Daniel poate deschide:
-- **Single terminal sequential safe default:** `task_02 → task_03 → Phase C batches`
-- **Multi-terminal paralel max throughput:** terminal_1 → task_02, terminal_2 → task_03 (concurrent capacity 2-3)
+**Phase B → Phase C unblock când AMBELE task_02 + task_03 LANDED:**
+- Batch 1 Phase C (3 paralel): task_04 antrenor_home + task_05 energy_flow + task_06 problem_flow
+- Batch 2 Phase C (3 paralel): task_07 constraint_flow + task_08 workout_state_machine + task_09 post_rpe_summary
 
-Phase A LANDED. Blocks lifted. Phase B unblocked.
+task_02 LANDED unblocks: stores consumate de task_04+05+06+07+08+09 sub-screens viitor (Antrenor home pause/resume card via `pausedSnapshot` + workout state machine via `phase` transitions + post-summary via `lastSession`).
 
 ---
 
-🦫 **Bugatti craft. task_01 Routing Extend LANDED. Quality > Speed. Surgical touch. Pure-function paradigm preserved. Co-CTO autonomous Phase A complete cu zero Daniel review.**
+🦫 **Bugatti craft. task_02 Stores Phase B (50%) LANDED. Pure-function paradigm preserved (ADR 026 §9). Persist selective + anti-paternalism + Co-CTO autonomous task_02 complete cu zero Daniel review.**
