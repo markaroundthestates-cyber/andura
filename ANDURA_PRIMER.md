@@ -96,6 +96,7 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - **MCP filesystem + Obsidian PRIMARY ACASĂ** (PK = fallback doar birou explicit)
 - **CC model: Opus EXCLUSIVELY** — hardcode "Model: Opus" în orice PROMPT_CC. Sonnet concediat permanent 2026-05-03.
 - Daniel CC startup: `claude --dangerously-skip-permissions` standard, zero reminder
+- **Deploy:** on-demand Co-CTO manual trigger (NU auto on push origin). GitHub Actions buget suplimentar costuri Daniel — Playwright on every commit dezactivat post 1000 deploys/5z explozie 2026-05-? historical. Codified `DECISIONS.md §D010`.
 
 ---
 
@@ -118,7 +119,7 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 ## §5 Unde am rămas (Current State)
 
-**Branch:** `feature/v2-vanilla-port`. **Tests baseline:** 3734 PASS (vitest local + jsdom). **Smoke E2E:** 4 taburi V2 5/5 PASS vs live andura.app. **Pre-commit hook verde mandatory**, ZERO `--no-verify` bypass.
+**Branch:** `feature/v2-vanilla-port`. **Tests baseline:** 3734 PASS (vitest local + jsdom). **Smoke E2E:** Playwright local 4 taburi V2 5/5 PASS scenarios paradigm vanilla-port mockup parity (NU vs live andura.app — live PWA = paradigm anterior diferit, NU feature branch deployed state). Pre-Beta launch smoke real = post manual deploy `feature/v2-vanilla-port` → `main` + Daniel phone Firebase + PWA test single comprehensive gate a-z. **Pre-commit hook verde mandatory**, ZERO `--no-verify` bypass.
 
 **Triple LANDED 2026-05-15 chat ACASĂ post-evening followup (cumulative +209 NEW tests cross-LOCK):**
 - LOCK 9 Aggressive Loading detection `e44137f` (+69 tests, 4 module NEW pure-function)
