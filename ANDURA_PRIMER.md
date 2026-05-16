@@ -145,7 +145,7 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - **D007 retroactive entry** pentru supersede enforcement rule (currently "Authority: D007" reference fără entry concret în CURRENT DECISIONS — drift fix).
 
 **Track 2 — Tactical pre-Beta cap-coadă (P4 reformulated 3 missing pieces):**
-1. Button wire mockup line 3034 (tab ISTORIC): `onclick="showToast('Import Nutritie (JSON)')"` PLACEHOLDER → `onclick="triggerMFPImport()"` existing function `src/pages/weight.js`
+1. ✓ LANDED 2026-05-16 (commit n/a — already-LANDED-no-op verify per batch 2026-05-16) — button "Import Nutritie (JSON)" mockup line 1234 (NU 3034 — drift fix) wired prod `index.html:509` + `dashboard.js:149` la `triggerMFPImport()`.
 2. Dashboard banner periodic 3 zile reminder verify wired în v2 (per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10)
 3. LOCK 8 KCAL_FLOOR informative toast on import flow când imported kcal < 1200 (anti-paternalism preserved: informează, NU block save)
 

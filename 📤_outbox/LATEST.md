@@ -96,3 +96,8 @@ Orchestrator pre-flight required "Smoke 4 taburi V2 5/5 PASS vs live andura.app 
 ---
 
 🦫 **Pre-Beta cap-coadă closure batch LANDED. Bugatti craft peak strict. Quality > Speed invariant preserved. Tests 3743 PASS (+9 delta vs baseline 3734). 5 atomic commits Bugatti separate + 2 no-op verify per spec decision trees. Co-CTO autonomy MAXIMUM 18th consecutive cross-chat trust delegation preserved invariant. Triple LANDED 2026-05-15 parity confirmed, wording flagged D009 CEO scope, diacritice stripped NO_DIACRITICS_RULE LOCK V1. Path forward: Daniel CEO review session → Bugatti Audit Nuclear FINAL → Beta launch.**
+
+## Cleanup post-batch (2026-05-16)
+- Inbox archive: 8 files → `📤_outbox/_archive/2026-05/531-538_*_CONSUMED.md` ✓ (shifted +1 vs prompt because 530 already taken — engineering normalization D009)
+- PRIMER §6 drift fix: line 3034 → 1234 + status LANDED stamp ✓
+- Commit: `chore(vault): cleanup post pre-beta cap-coada batch 2026-05-16 + PRIMER drift fix`
