@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-16
 schema_version: 1
-latest_entry: D016
-total_entries: 16
+latest_entry: D020
+total_entries: 20
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -67,6 +67,10 @@ D013 | 2026-05-16 | REGLAJ | Pre-Beta LOCK 1 100% complete + deploy main 2026-05
 D014 | 2026-05-16 | PROC | Branch divergence reconcile main ↔ feature/v2-vanilla-port strategy: merge feature → main -X theirs (prefer feature on conflicts) post 3 possibly-orphan items verified absorbed. History preserved via merge graph; feature content canonical post-merge. Investigation: INVESTIGATION_2026-05-16_main_vs_feature.md | LOCKED V1 | DECISIONS.md §D014
 D015 | 2026-05-16 | STRATEGY | STRAT PIVOT Pre-Beta NU vanilla port — lansăm Andura Clasic pe React mockup andura-clasic.html DESIGN MASTER direct. Supersedes part of D-LEGACY-049 Port-First-Then-React Step 1 vanilla port closure (păstrăm Step 2 React migration). Backend LOCK 1 100% (lib 657, Big 11 8/8, Calendar engine, kcal floor, BATCH 2 Antrenor, auth, tests 3743 PASS) reusable React migration. Vanilla index.html 6 taburi = LEGACY până React LANDED | LOCKED V1 | DECISIONS.md §D015
 D016 | 2026-05-16 | PROC | Bottom nav 6→4 (Antrenor/Progres/Istoric/Cont) + screen architecture 50+ screens goto()-based restructure se face EXCLUSIV în React build pe spec mockup, NU în vanilla index.html + src/pages/*.js legacy. Eliminăm double-work non-Bugatti. Implementation path next chat (React stack + state mgmt + routing + backend reuse) | LOCKED V1 | DECISIONS.md §D016
+D017 | 2026-05-16 | STRATEGY | Phase 1 React Foundation LANDED Vite+React19+TS+Zustand+Tailwind extend Batch 1 scaffold | LOCKED V1 | DECISIONS.md §D017
+D018 | 2026-05-16 | STRATEGY | Phase 2 Routing Skeleton LANDED C hybrid + slice mic + Layout+BottomNav+ProtectedRoute+nav helper | LOCKED V1 | DECISIONS.md §D018
+D019 | 2026-05-16 | PROC | Track 5 NEW E2E Playwright disclaimer dismiss helper backlog (23 fails LOCK 4 Medical Disclaimer pre-test) | LOCKED V1 | DECISIONS.md §D019
+D020 | 2026-05-16 | ARCH | Test paradigm split Phase 2+ MemoryRouter jsdom tests + createBrowserRouter prod (Node 25 AbortSignal mismatch) | LOCKED V1 | DECISIONS.md §D020
 
 ---
 
