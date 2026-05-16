@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-16
 schema_version: 1
-latest_entry: D012
-total_entries: 12
+latest_entry: D014
+total_entries: 14
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -63,6 +63,8 @@ D009 | 2026-05-16 | PROC | CEO scope strict UI wording autonomous compose = SLIP
 D010 | 2026-05-16 | PROC | Deploy on-demand Co-CTO trigger (NU auto on push GitHub Actions) + Playwright disabled docs commits + buget GitHub Actions suplimentar invariant | LOCKED V1 | DECISIONS.md §D010
 D011 | 2026-05-16 | REGLAJ | PRIMER §5 smoke claim correcție + §6 drift cleanup cluster engineering normalization (live state vs feature branch gap awareness) | LOCKED V1 | DECISIONS.md §D011
 D012 | 2026-05-16 | PROC | Co-CTO autonomy boundary clarification zero intermediate verification proposals user-facing pre-Beta launch a-z single gate (§AR.31 D009 extension reinforcement) | LOCKED V1 | DECISIONS.md §D012
+D013 | 2026-05-16 | REGLAJ | Pre-Beta LOCK 1 100% complete + deploy main 2026-05-16 + PRIMER §6 cleanup post Track 1+2 audit close | LOCKED V1 | DECISIONS.md §D013
+D014 | 2026-05-16 | PROC | Branch divergence reconcile main ↔ feature/v2-vanilla-port strategy: merge feature → main -X theirs (prefer feature on conflicts) post 3 possibly-orphan items verified absorbed. History preserved via merge graph; feature content canonical post-merge. Investigation: INVESTIGATION_2026-05-16_main_vs_feature.md | LOCKED V1 | DECISIONS.md §D014
 
 ---
 
