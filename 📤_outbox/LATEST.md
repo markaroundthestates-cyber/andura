@@ -1,40 +1,39 @@
-# LATEST CC AUTONOMOUS REPORT — PHASE 1 FOUNDATION REACT ANDURA CLASIC
+# LATEST CC AUTONOMOUS REPORT — PHASE 2 ROUTING SKELETON REACT ANDURA CLASIC
 
 **Date:** 2026-05-16
-**Task:** Phase 1 Foundation React Andura Clasic build (per DECISIONS.md §D015 STRAT PIVOT + §D016 PROC)
+**Task:** Phase 2 Routing Skeleton (per DECISIONS.md §D015 + §D016 + Co-CTO LOCK 2026-05-16 routing C hybrid + slice mic)
 **Model:** Opus EXCLUSIVELY (Bugatti craft non-negotiable)
-**Branch:** feature/v3-react-clasic (NEW from main HEAD `0156d3c`)
-**Status:** Complete | Tests 3750 PASS (3743 vanilla preserved + 7 new React foundation) | Push origin DONE | Backup + milestone tags pushed
+**Branch:** feature/v3-react-clasic (Phase 1 LANDED preserved)
+**Status:** Complete | Tests 3769 PASS (3750 Phase 1 baseline preserved + 19 new Phase 2 routing) | Push origin DONE | Backup + milestone tags pushed
 
 ---
 
 ## §0 — Bugatti Verification Checklist
 
-- [✓] Pre-flight verde (3743 PASS baseline, main HEAD `0156d3c` cu drift flag §4.1, .smart-env idle drift acceptable)
-- [✓] Backup tag `pre-phase-1-react-foundation-2026-05-16` pushed origin (@ main HEAD `0156d3c`)
-- [✓] Branch `feature/v3-react-clasic` created + pushed origin (from main `0156d3c`)
-- [✓] npm install deps clean (zustand 5.0.13 + tailwindcss 3.4.19 + postcss 8.5.14 + autoprefixer 10.5.0 + @testing-library/react 16.3.2 + jest-dom 6.9.1 + user-event 14.6.1)
-- [✓] git mv .jsx → .tsx preserved history (src/main + src/App)
-- [✓] react-test.html script src updated `/src/main.tsx` + title `Andura — Clasic (React build Phase 1)`
-- [✓] src/main.tsx + src/App.tsx content updated DECISIONS.md cross-refs + JSX.Element return type + `import type { JSX } from 'react'`
-- [✓] src/vite-env.d.ts NEW (Vite client types — fix TS2882 side-effect CSS import declaration)
-- [✓] tailwind.config.js color tokens identical mockup inline config (paper #faf7f1, paper2, ink, ink2, line, brick, brickdark, olive, deep, succ, warn, danger)
-- [✓] postcss.config.js standard ESM
-- [✓] src/styles/global.css CSS variables verbatim mockup `:root` (--paper, --paper-2, --ink, --ink-2, --ink-3, --line, --line-strong, --brick) + WCAG audit comments preserved + persona text scaling .persona-maria/gigica/marius
-- [✓] src/react/{components,stores,routes,lib,__tests__}/ subfolder created
-- [✓] src/react/stores/appStore.ts Zustand typed skeleton (persona + initialized + setters)
-- [✓] vitest.config.js include `.tsx` + setupFiles `./src/react/__tests__/setup.ts`
-- [✓] src/react/__tests__/foundation.test.tsx 6 tests PASS
-- [✓] src/react/__tests__/backendIntegration.test.ts 1 test PASS (imported `getInitialRecommendation` + `DP` from `src/engine/dp.js`)
-- [✓] npm run test:run 3750 PASS total (3743 vanilla preserved + 7 new)
-- [✓] npm run typecheck 0 errors
-- [✓] npm run build 0 errors (dist/ generated cu Tailwind CSS bundled — react-test.css 0.00 kB → 8.45 kB confirm utilities inclus)
-- [✓] Atomic commits 5 single-concern Bugatti (deps+TS migration, Tailwind+CSS vars, structure+tests, archive, LATEST raport)
-- [✓] Pre-commit hook verde × 4 commits care touch src/ (Husky `npm run test:run` ran fiecare commit, 3750 PASS preserved invariant)
+- [✓] Pre-flight verde (3750 PASS baseline, branch feature/v3-react-clasic, .smart-env idle drift acceptable)
+- [✓] Backup tag `pre-phase-2-routing-skeleton-2026-05-16` pushed origin @ Phase 1 closure `f5ee373`
+- [✓] `lucide-react@1.16.0` installed (4 icons: Activity/BarChart3/Clock/User verified)
+- [✓] Zustand `appStore.ts` extended cu `isAuthenticated` + `setAuthenticated` slice stub (Phase 3+ wire real Firebase Magic Link)
+- [✓] `ProtectedRoute.tsx` Navigate redirect /auth daca !isAuthenticated
+- [✓] `navigation.ts` `gotoPath()` exhaustive type-safe mapping (splash/auth/onb-N top-level + tab roots /app/<tab>) — TypeScript narrow fix `onb-N` literal enumeration
+- [✓] `BottomNav.tsx` 4 taburi LOCKED V1 (Antrenor/Progres/Istoric/Cont) cu active tab derivat path prefix, lucide-react icons, Tailwind brick/ink2 colors parity mockup
+- [✓] `Layout.tsx` Outlet + BottomNav persistent shell pentru /app/* parent
+- [✓] 4 placeholder tab screens (`Antrenor/Progres/Istoric/Cont`) cu titlu + Phase 3+ messaging
+- [✓] 3 top-level stubs (`Splash/Auth/Onboarding`) cu mock login + navigation flow
+- [✓] `router.tsx` `createBrowserRouter` C hybrid config (top-level + nested /app/* cu ProtectedRoute wrap)
+- [✓] `main.tsx` RouterProvider replace App direct render (App.tsx Phase 1 placeholder preserved baseline reference)
+- [✓] `vitest.config.js` unchanged Phase 2 (deja .tsx + setupFiles configured Phase 1)
+- [✓] `routing.test.tsx` 10 RTL tests PASS (Splash/Auth/Onboarding render + ProtectedRoute redirect + Antrenor authenticated + 4 tabs active state + Auth mock login)
+- [✓] `navigation.test.ts` 9 gotoPath() exhaustive tests PASS
+- [✓] `npm run test:run` 3769 PASS total (3750 Phase 1 baseline + 19 new Phase 2)
+- [✓] `npm run typecheck` 0 errors
+- [✓] `npm run build` 0 errors (react-test.css 9.60 kB, react-test.js 264 kB)
+- [✓] Atomic commits 5 single-concern (Zustand+Protected+Nav+Helper, Layout+Screens+Router+Wire, Tests, Archive, LATEST raport)
+- [✓] Pre-commit hook verde × 3 commits care touch src/ (Husky `npm run test:run` ran fiecare, 3769 PASS preserved invariant)
 - [✓] ZERO `--no-verify` bypass
 - [✓] Vanilla legacy invariant — ZERO modificări la `src/main.js`, `src/pages/*.js`, `src/engine/*.js`, `src/coach/*.js`, `index.html`, `src/styles/main.css`
 - [✓] Push origin branch + backup tag + milestone tag DONE
-- [✓] Archive 5 artefactele CONSUMED `📥_inbox/` → `📤_outbox/_archive/2026-05/548-552`
+- [✓] Archive 4 artefactele CONSUMED `📥_inbox/` → `📤_outbox/_archive/2026-05/553-556` + LATEST predecessor 557
 
 ---
 
@@ -42,18 +41,18 @@
 
 | SHA | Subject |
 |-----|---------|
-| `183b288` | feat(react): deps install zustand+tailwind+RTL + .jsx->.tsx migration Batch 1 scaffold |
-| `fe480d2` | feat(react): Tailwind PostCSS + CSS variables verbatim parity mockup |
-| `08333ea` | feat(react): src/react/ subfolder + Zustand appStore skeleton + foundation tests |
-| `f447b07` | Archive: Phase 1 Foundation orchestrator + 4 tasks CONSUMED |
-| `<this>`  | LATEST: Phase 1 Foundation React Andura Clasic raport finalize |
+| `b5b872e` | feat(react): Zustand auth slice + ProtectedRoute + BottomNav + nav helper |
+| `bdb3ddf` | feat(react): Layout shell + 4 tab placeholders + top-level stubs + Router wire |
+| `70798ab` | test(react): routing flow + ProtectedRoute + BottomNav active + nav helper |
+| `<archive>` | Archive: Phase 2 Routing Skeleton orchestrator + 3 tasks CONSUMED |
+| `<this>`    | LATEST: Phase 2 Routing Skeleton React Andura Clasic raport finalize |
 
 ---
 
 ## §2 — Tags pushed origin
 
-- **Backup tag:** `pre-phase-1-react-foundation-2026-05-16` @ main HEAD `0156d3c` (restore point pre-Phase-1)
-- **Milestone tag:** `phase-1-foundation-landed-2026-05-16` @ Phase 1 closure commit `08333ea` (strategic milestone marker, pre-archive + LATEST commits)
+- **Backup tag:** `pre-phase-2-routing-skeleton-2026-05-16` @ `f5ee373` (Phase 1 closure restore point)
+- **Milestone tag:** `phase-2-routing-skeleton-landed-2026-05-16` @ `70798ab` (Phase 2 closure cu tests verde)
 
 ---
 
@@ -61,60 +60,55 @@
 
 | Path | Change |
 |------|--------|
-| `package.json` | M: +zustand dep, +tailwindcss/postcss/autoprefixer/@testing-library×3 devDeps |
+| `package.json` | M: +lucide-react dep |
 | `package-lock.json` | M: lock entries updated |
-| `react-test.html` | M: script src `/src/main.jsx` → `/src/main.tsx` + title updated |
-| `src/main.jsx` → `src/main.tsx` | R+M (D+A semantic per git): content updated DECISIONS.md cross-refs + global.css import |
-| `src/App.jsx` → `src/App.tsx` | R+M (D+A semantic per git): content updated Tailwind classes + `JSX.Element` return type + import type JSX |
-| `src/vite-env.d.ts` | NEW: `/// <reference types="vite/client" />` (TS2882 fix CSS side-effect import) |
-| `tailwind.config.js` | NEW: content scan + theme.extend.colors mockup parity (12 color tokens) + 3 font families |
-| `postcss.config.js` | NEW: tailwindcss + autoprefixer ESM |
-| `src/styles/global.css` | NEW: CSS variables verbatim mockup `:root` (8 tokens) + persona text scaling (.persona-maria/gigica/marius) + base resets adaptat react app shell (NU phone dark scaffold mockup) |
-| `src/react/components/.gitkeep` | NEW: empty dir marker |
-| `src/react/routes/.gitkeep` | NEW: empty dir marker |
-| `src/react/lib/.gitkeep` | NEW: empty dir marker |
-| `src/react/stores/appStore.ts` | NEW: Zustand typed skeleton (persona + initialized) |
-| `src/react/__tests__/setup.ts` | NEW: jest-dom matchers import |
-| `src/react/__tests__/foundation.test.tsx` | NEW: 6 smoke tests App render + Tailwind + Zustand |
-| `src/react/__tests__/backendIntegration.test.ts` | NEW: 1 test pure function reuse `dp.js` |
-| `vitest.config.js` | M: include `.tsx` + setupFiles path |
-| `📤_outbox/_archive/2026-05/548-552_*_CONSUMED.md` × 5 | NEW: artefactele CONSUMED from `📥_inbox/` |
-| `📤_outbox/LATEST.md` | M: overwrite cu Phase 1 Foundation raport (acest file) |
+| `src/react/stores/appStore.ts` | M: +isAuthenticated + setAuthenticated slice |
+| `src/react/routes/ProtectedRoute.tsx` | NEW: Navigate redirect auth gate stub |
+| `src/react/lib/navigation.ts` | NEW: gotoPath() type-safe mockup convention LOCK |
+| `src/react/components/BottomNav.tsx` | NEW: 4 taburi cu active state + lucide-react icons + Tailwind |
+| `src/react/routes/Layout.tsx` | NEW: Outlet + BottomNav persistent shell |
+| `src/react/routes/screens/antrenor/Antrenor.tsx` | NEW: placeholder |
+| `src/react/routes/screens/progres/Progres.tsx` | NEW: placeholder |
+| `src/react/routes/screens/istoric/Istoric.tsx` | NEW: placeholder |
+| `src/react/routes/screens/cont/Cont.tsx` | NEW: placeholder |
+| `src/react/routes/screens/Splash.tsx` | NEW: top-level stub cu navigate splash → auth/app |
+| `src/react/routes/screens/Auth.tsx` | NEW: top-level stub mock login button |
+| `src/react/routes/screens/Onboarding.tsx` | NEW: top-level stub 7-step navigate flow |
+| `src/react/routes/router.tsx` | NEW: createBrowserRouter C hybrid config |
+| `src/main.tsx` | M: RouterProvider replace App direct render |
+| `src/react/__tests__/routing.test.tsx` | NEW: 10 RTL tests routing |
+| `src/react/__tests__/navigation.test.ts` | NEW: 9 gotoPath() tests |
+| `📤_outbox/_archive/2026-05/553-556_*_CONSUMED.md` × 4 | NEW: Phase 2 artefacte CONSUMED |
+| `📤_outbox/_archive/2026-05/557_LATEST_PREVIOUS_PHASE_1_FOUNDATION_CONSUMED.md` | NEW: predecessor archive |
+| `📤_outbox/LATEST.md` | M: overwrite cu Phase 2 raport (acest file) |
 
 ---
 
 ## §4 — Issues / caveats / observations
 
-**1. Pre-flight HEAD drift detected (anti-hallucination per memory feedback_grep_before_prompt_cc.md).** ORCHESTRATOR specifies `main HEAD e8772c9 LATEST: React pivot codify raport finalize`. Real state: `git log -1 main` returns `0156d3c LATEST: patch SHAs final (e8772c9 + tag refs)` — 1 commit ahead. Cause: predecessor session patched LATEST.md cu SHA fix post-orchestrator-drafting. Branch creation FROM current `0156d3c` (correct semantic — same `src/`, `package.json`, `react-test.html` as `e8772c9`; only vault doc LATEST.md SHA differ). Backup tag `pre-phase-1-react-foundation-2026-05-16` pinned `0156d3c` (current state restore point precise). Engineering normalization per D011 boundary respected — flagged here pentru Daniel awareness, NU autonomous corecție prompt.
+**1. TypeScript narrow fix navigation.ts.** Initial implementation cu `screen.startsWith('onb-')` didn't narrow union type — `_exhaustive: never` failed compile cu `Type '"onb-1" | ... | "onb-7"' is not assignable to type 'never'`. Fixed prin explicit literal equality enumeration `screen === 'onb-1' || ... || screen === 'onb-7'` care narrows correctly. Engineering polish caught at compile not runtime — Bugatti craft TS strict mode invariant preserved.
 
-**2. Tailwind version mismatch caught + corrected inline.** Default `npm install --save-dev tailwindcss` installed v4.3.0 (CSS-first config paradigm cu `@tailwindcss/postcss` plugin). ORCHESTRATOR spec assumes v3 paradigm (`@tailwind base/components/utilities` directives + `tailwind.config.js` + plain `postcss`+`autoprefixer`). Downgrade `tailwindcss@^3.4.0` → 3.4.19 final for spec parity. Bugatti craft: peak fidelity orchestrator intent preserved invariant, NU autonomous adapt to v4.
+**2. Routing test paradigm switch — legacy MemoryRouter vs createMemoryRouter.** Initial test using `createMemoryRouter` data router failed cu Node 25 undici `RequestInit: Expected signal ("AbortSignal {}") to be an instance of AbortSignal` mismatch în react-router v6.28 data router fetch lifecycle. The `<Navigate>` redirect triggers fetch internally for data routes — incompatible cu jsdom AbortSignal polyfill on Node 25. Fixed prin switching tests to legacy `MemoryRouter` + `Routes/Route` JSX pattern (still exported v6.28 fără data router fetch overhead). Prod în `router.tsx` keeps `createBrowserRouter` (data routing modern paradigm). Same router config logic both — only test infrastructure differs.
 
-**3. TypeScript errors detected post .jsx→.tsx migration + fixed.** `npm run typecheck` raised: (a) `TS2503 Cannot find namespace 'JSX'` în App.tsx (React 19 + new JSX transform requires explicit `import type { JSX } from 'react'`) — fixed; (b) `TS2882 Cannot find module or type declarations for side-effect import of './styles/global.css'` în main.tsx — fixed via NEW `src/vite-env.d.ts` cu `/// <reference types="vite/client" />` standard Vite paradigm.
+**3. lucide-react@1.16.0 version verified despite unusual numbering.** Default `npm install --save lucide-react` selected v1.16.0 (NU modern v0.460+ family). All 4 required icons (Activity, BarChart3, Clock, User) verified exported via `grep dist/lucide-react.d.ts`. Works correctly. NU autonomous downgrade — accept default install.
 
-**4. Build verify global.css placeholder pre-TASK-2.** main.tsx import `./styles/global.css` introduced în TASK 1, but global.css created în TASK 2 — sequence gap. Mitigation: placeholder global.css cu single comment created în TASK 1 (so import works + build pass), overwritten cu full Tailwind+CSS vars în TASK 2. Build 0 errors verified each TASK boundary.
+**4. App.tsx preserved Phase 1 baseline.** Per TASK 2.6 spec, App.tsx rămâne intact ca baseline reference, NU folosit în Phase 2 router (replaced cu Splash). Phase 3+ may delete dacă confirm NU used.
 
-**5. Backend pure function pick rationale: `getInitialRecommendation` from `src/engine/dp.js` selected.** Rationale: `dp.js` = D-LEGACY-003 ARCH Double Progression core weight recommendation engine. Exports `getInitialRecommendation` named pure function (NO Date.now / Math.random / mutation per ADR 026 §9 pure-function paradigm) + `DP` const object — both verified. Single import covers function + const both `expect.toBeDefined()` validation.
-
-**6. Mockup CSS variables extras count: 8 tokens verbatim `:root` block.** Variables: --paper, --paper-2, --ink, --ink-2, --ink-3, --line, --line-strong, --brick. WCAG v2 Path 2a audit comments preserved verbatim (mockup architectural lift documentation valuable). Persona text scaling 3 blocks (.persona-maria/gigica/marius) verbatim. Base html/body resets adapted react app shell context (NU phone dark scaffold cu radial-gradient mockup body — that's phone frame mockup, NU production paradigm).
-
-**7. .smart-env/ idle drift acceptable throughout session.** Indexer auto-tracking `.smart-env/multi/*.ajson` modified continuous — NOT committed (separate `chore(auto)` sweep pattern). Filtered out via grep în pre-commit state verify.
-
-**8. Push origin warning lf→crlf benign Windows.** Repeated warnings during commits `LF will be replaced by CRLF the next time Git touches it` — autoCRLF config Windows working tree normalization. No file content corruption. Standard Windows dev environment behavior.
+**5. .smart-env/ idle drift acceptable throughout session.** Indexer auto-tracking, NOT committed.
 
 ---
 
 ## §5 — Next action
 
-1. **Daniel signal NEW chat post task complete** pentru Phase 2 routing skeleton tactical planning:
-   - React Router DOM v6.28 setup (deja installed în deps root pre-Phase-1)
-   - 50+ screens mockup `goto()` → routes mapping strategy (per-tab nested OR flat list per-screen)
-   - Layout shell + bottom nav 4 taburi (Antrenor/Progres/Istoric/Cont) LOCKED V1 per D-LEGACY-066 spec-root-nav-v2
-   - Phase 2 PROMPT_CC artefacte sequenced aceeași paradigm orchestrator + N tasks fail-stop atomic
+1. **Daniel signal NEW chat post task complete** pentru Phase 3 tactical planning:
+   - Phase 3 = Antrenor tab full screens (workout state machine + 8 sub-screens: energy-check, energy-cause, workout-preview, ceva-nu-merge, pain-button, equipment-swap, aparate-lipsa, schedule-override, post-rpe, post-summary)
+   - Extends `GotoScreen` union type cu sub-screens convention LOCK
+   - Phase 3 PROMPT_CC artefacte sequenced same paradigm orchestrator + N tasks fail-stop atomic
 
-2. **Backup restore point disponibil:** `git checkout pre-phase-1-react-foundation-2026-05-16` (restore main HEAD `0156d3c` pre-Phase-1) — note: drift cu spec'd `e8772c9`, real state `0156d3c` per §4.1.
+2. **Backup restore point disponibil:** `git checkout pre-phase-2-routing-skeleton-2026-05-16` (restore Phase 1 closure `f5ee373` pre-Phase-2).
 
 3. **Vanilla legacy preserved invariant** — live `andura.app` NU afectat (NU deploy main schimbat — feature branch only, manual deploy on-demand per D010).
 
 ---
 
-🦫 **Phase 1 Foundation LANDED 2026-05-16. React Andura Clasic build infrastructure ready peste Batch 1 scaffold existing. Vite + React 19 + TypeScript + Zustand + Tailwind PostCSS + RTL + jest-dom matchers. Backend `src/engine/*` reusable verified (LOCK 1 100% preserved). Atomic commits 5× Bugatti. Pre-commit hook strict 4×. Tests 3750 PASS (3743 vanilla + 7 new React foundation). Phase 2 routing skeleton awaiting Daniel signal NEW chat. Zero intermediate verification proposals (D009+D012 invariant).**
+🦫 **Phase 2 Routing Skeleton LANDED 2026-05-16. C hybrid routing wired end-to-end. Layout shell + BottomNav 4 taburi LOCKED V1 + ProtectedRoute + 4 placeholder tabs + 3 top-level stubs + navigation helper exhaustive type-safe. Foundation reusable Phase 3+ tab content migrations. Atomic commits 5× Bugatti. Pre-commit hook strict 3×. Tests 3769 PASS (3750 baseline + 19 new). Zero intermediate verification proposals (D009+D012 invariant). Phase 3 Antrenor full screens awaiting Daniel signal NEW chat.**
