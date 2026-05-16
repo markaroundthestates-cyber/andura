@@ -72,7 +72,7 @@ export function showAparateLipsa(onResolve) {
         <span style="font-size:13px;font-weight:600;color:var(--text);flex:1">${safeName}</span>
       </label>`;
       }).join('')
-    : `<div data-exercise-empty="true" style="font-size:11px;color:var(--text3);line-height:1.5;font-style:italic;padding:8px 4px">Nu ai eliminat niciun exercițiu permanent yet. Poți marca din Antrenor &gt; Preview cu &quot;Nu am&quot; sau &quot;Nu vreau&quot; repetat.</div>`;
+    : `<div data-exercise-empty="true" style="font-size:11px;color:var(--text3);line-height:1.5;font-style:italic;padding:8px 4px">Nu ai eliminat niciun exercitiu permanent yet. Poti marca din Antrenor &gt; Preview cu &quot;Nu am&quot; sau &quot;Nu vreau&quot; repetat.</div>`;
 
   modal.innerHTML = `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:22px 20px 32px;max-height:85vh;overflow-y:auto">
@@ -85,7 +85,7 @@ export function showAparateLipsa(onResolve) {
         ${rowsHtml}
       </div>
 
-      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:8px;margin-top:18px">Exerciții refuzate permanent</div>
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:8px;margin-top:18px">Exercitii refuzate permanent</div>
       <div id="exercitii-refuzate-stack" style="display:flex;flex-direction:column;gap:8px">
         ${exercisesHtml}
       </div>
@@ -110,7 +110,7 @@ export function showAparateLipsa(onResolve) {
     cb.addEventListener('change', () => {
       const exerciseName = cb.dataset.exercise;
       toggleSkippedExercise(exerciseName);
-      showAparateToast(cb.checked ? 'Adaugat la exerciții refuzate' : 'Scos din exerciții refuzate');
+      showAparateToast(cb.checked ? 'Adaugat la exercitii refuzate' : 'Scos din exercitii refuzate');
     });
   });
 

@@ -28,17 +28,17 @@ describe('refusalCounterModal — render', () => {
     const modal = document.getElementById('refusal-counter-modal');
     expect(modal.textContent).toContain('Cable Curl');
     expect(modal.textContent).toContain('3');
-    expect(modal.textContent).toContain('Vrei să nu-l mai propun deloc?');
+    expect(modal.textContent).toContain('Vrei sa nu-l mai propun deloc?');
   });
 
-  it('renders 2 buttons "Da, elimină permanent" + "Nu, propune din nou"', () => {
+  it('renders 2 buttons "Da, elimina permanent" + "Nu, propune din nou"', () => {
     showRefusalCounterModal('Cable Curl', 3);
     const modal = document.getElementById('refusal-counter-modal');
     const permBtn = modal.querySelector('.refusal-permanent');
     const keepBtn = modal.querySelector('.refusal-keep');
     expect(permBtn).not.toBeNull();
     expect(keepBtn).not.toBeNull();
-    expect(permBtn.textContent).toContain('Da, elimină permanent');
+    expect(permBtn.textContent).toContain('Da, elimina permanent');
     expect(keepBtn.textContent).toContain('Nu, propune din nou');
   });
 

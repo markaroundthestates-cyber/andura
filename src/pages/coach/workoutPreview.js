@@ -108,7 +108,7 @@ function markRowExhausted(rowEl, exerciseName) {
   const nameEl = rowEl.querySelector('.preview-ex-name');
   if (nameEl) nameEl.style.textDecoration = 'line-through';
   const metaEl = rowEl.querySelector('.preview-ex-meta');
-  if (metaEl) metaEl.textContent = 'Nu mai am alternative pentru această sesiune';
+  if (metaEl) metaEl.textContent = 'Nu mai am alternative pentru aceasta sesiune';
   const missBtn = rowEl.querySelector('.preview-ex-missing');
   if (missBtn) missBtn.disabled = true;
   const dwBtn = rowEl.querySelector('.preview-ex-dontwant');

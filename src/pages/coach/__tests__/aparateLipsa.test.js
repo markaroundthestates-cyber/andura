@@ -182,10 +182,10 @@ describe('aparateLipsa — Bundle 4 2-grupuri display', () => {
     expect(modal.textContent).toContain('Aparate');
   });
 
-  it('renders Grupul 2 "Exerciții refuzate permanent" section header', () => {
+  it('renders Grupul 2 "Exercitii refuzate permanent" section header', () => {
     showAparateLipsa();
     const modal = document.getElementById('aparate-lipsa-modal');
-    expect(modal.textContent).toContain('Exerciții refuzate permanent');
+    expect(modal.textContent).toContain('Exercitii refuzate permanent');
   });
 
   it('Grupul 2 empty state shows Gigel-friendly message when no skipped exercises', () => {
@@ -194,7 +194,7 @@ describe('aparateLipsa — Bundle 4 2-grupuri display', () => {
     expect(stack).not.toBeNull();
     const emptyMarker = stack.querySelector('[data-exercise-empty="true"]');
     expect(emptyMarker).not.toBeNull();
-    expect(emptyMarker.textContent).toContain('Nu ai eliminat niciun exercițiu permanent');
+    expect(emptyMarker.textContent).toContain('Nu ai eliminat niciun exercitiu permanent');
   });
 
   it('Grupul 2 renders dynamic checkbox row per skipped exercise', () => {

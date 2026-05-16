@@ -34,8 +34,8 @@ export function showRefusalCounterModal(exerciseName, count, onResolve) {
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px 20px;width:100%;max-width:380px">
       <div style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;text-align:center">PERMANENT?</div>
       <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;text-align:center;line-height:1.45">Ai refuzat <strong>${safeName}</strong> de ${safeCount} ori.</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.5">Vrei să nu-l mai propun deloc?</div>
-      <button class="refusal-permanent" style="width:100%;padding:14px;background:#c8412e;color:#fff;border:none;border-radius:var(--rs);cursor:pointer;font-size:14px;font-weight:600;margin-bottom:10px">Da, elimină permanent</button>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.5">Vrei sa nu-l mai propun deloc?</div>
+      <button class="refusal-permanent" style="width:100%;padding:14px;background:#c8412e;color:#fff;border:none;border-radius:var(--rs);cursor:pointer;font-size:14px;font-weight:600;margin-bottom:10px">Da, elimina permanent</button>
       <button class="refusal-keep" style="width:100%;padding:14px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:14px">Nu, propune din nou</button>
     </div>`;
 
