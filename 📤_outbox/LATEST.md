@@ -37,14 +37,14 @@
 | `8d83dbc` | DECISIONS: codify D015 STRAT PIVOT + D016 PROC React Andura Clasic |
 | `7bffa7f` | PRIMER: update §3+§5+§6 reflect D015 React pivot strategic LOCK |
 | `4f0020c` | Archive: 546+547 React pivot handover + PROMPT_CC CONSUMED |
-| `<latest-sha>` | LATEST: React pivot codify raport finalize |
+| `e8772c9` | LATEST: React pivot codify raport finalize |
 
 ---
 
 ## §2 — Tags pushed origin
 
 - **Backup tag:** `pre-react-pivot-codify-2026-05-16` @ `975e671` (HEAD post deploy reconcile, pre-codify restore point)
-- **Milestone tag:** `react-pivot-locked-2026-05-16` @ `<final-sha>` (strategic LOCK milestone marker)
+- **Milestone tag:** `react-pivot-locked-2026-05-16` @ `e8772c9` (strategic LOCK milestone marker, push remote `f01e556` tag object → `e8772c9` commit)
 
 ---
 
