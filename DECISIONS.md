@@ -2,8 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-15
+last_updated: 2026-05-16
 schema_version: 1
+latest_entry: D009
+total_entries: 9
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -55,6 +57,9 @@ D003 | 2026-05-15 | REGLAJ | PROJECT_INSTRUCTIONS V5 compact ~800 cuvinte (Claud
 D004 | 2026-05-15 | REGLAJ | Karpathy 4 principii = core philosophy reference (Think Before Coding + Simplicity First + Surgical Changes + Goal-Driven Execution) | LOCKED V1 | 07-meta/karpathy-skills-ref/CLAUDE.md §1-§4
 D005 | 2026-05-15 | REGLAJ | Eliminate §AR.* meta-framework future (preserve §AR.28-§AR.31 candidate cumulative as historical reference) | LOCKED V1 | DECISIONS.md §D005
 D006 | 2026-05-15 | REGLAJ | Handover format = paragraf scurt + DECISIONS.md delta append, NU 150 LOC scribe flow | LOCKED V1 | DECISIONS.md §D006
+D007 | 2026-05-16 | PROC | Supersede enforcement rule schema D-NNN scan CURRENT only D-LEGACY-* EXCLUDED | LOCKED V1 | DECISIONS.md §schema supersede rule
+D008 | 2026-05-16 | PROC | Pre-action vault primary-source verification MANDATORY pentru product state claims | LOCKED V1 | DECISIONS.md §D008
+D009 | 2026-05-16 | PROC | CEO scope strict UI wording autonomous compose = SLIP DEFAULT surface options | LOCKED V1 | DECISIONS.md §D009
 
 ---
 
@@ -161,8 +166,8 @@ D-LEGACY-081 | 2026-05-12 | PROC | Metoda hibridă chat ↔ CC terminal LOCKED V
 D-LEGACY-082 | 2026-05-14 | PROC | §F3.8 Handover Protocol Amendment NO verify post-timeout Daniel observes inbox disappear ping check | LOCKED V1 | 99-archive/wiki-pre-2026-05-15/concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout.md
 D-LEGACY-083 | 2026-05-15 | PROC | §AR.28 Handover via courier metoda hibridă FULL 5× threshold ABSOLUTE 2 artefacte separate paradigm | LOCKED V1 ABSOLUTE | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
 D-LEGACY-084 | 2026-05-15 | PROC | §AR.29 Engines downstream taxonomy-agnostic by default 4× threshold cross-bundle scope-refinement | LOCKED V1 ABSOLUTE | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
-D-LEGACY-085 | 2026-05-15 | PROC | §AR.30 candidate Pre-action vault primary-source verification MANDATORY (1× threshold scribe-mode marked) | DRAFT | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
-D-LEGACY-086 | 2026-05-15 | PROC | §AR.31 candidate CEO scope strict UI wording autonomous compose = SLIP DEFAULT (1× threshold scribe-mode marked) | DRAFT | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
+D-LEGACY-085 | 2026-05-15 | PROC | §AR.30 candidate Pre-action vault primary-source verification MANDATORY (1× threshold scribe-mode marked) | DEPRECATED-superseded-by-D008 | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
+D-LEGACY-086 | 2026-05-15 | PROC | §AR.31 candidate CEO scope strict UI wording autonomous compose = SLIP DEFAULT (1× threshold scribe-mode marked) | DEPRECATED-superseded-by-D009 | 99-archive/wiki-pre-2026-05-15/concepts/anti-recurrence-rules.md
 
 ### REGLAJ — System Reglare Meta (Pre-2026-05-15)
 
