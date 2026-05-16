@@ -13,6 +13,17 @@ import { Splash } from '../routes/screens/Splash';
 import { Auth } from '../routes/screens/Auth';
 import { Onboarding } from '../routes/screens/Onboarding';
 import { Antrenor } from '../routes/screens/antrenor/Antrenor';
+import { EnergyCheck } from '../routes/screens/antrenor/EnergyCheck';
+import { EnergyCause } from '../routes/screens/antrenor/EnergyCause';
+import { WorkoutPreview } from '../routes/screens/antrenor/WorkoutPreview';
+import { Workout } from '../routes/screens/antrenor/Workout';
+import { CevaNuMerge } from '../routes/screens/antrenor/CevaNuMerge';
+import { PainButton } from '../routes/screens/antrenor/PainButton';
+import { EquipmentSwap } from '../routes/screens/antrenor/EquipmentSwap';
+import { AparateLipsa } from '../routes/screens/antrenor/AparateLipsa';
+import { ScheduleOverride } from '../routes/screens/antrenor/ScheduleOverride';
+import { PostRpe } from '../routes/screens/antrenor/PostRpe';
+import { PostSummary } from '../routes/screens/antrenor/PostSummary';
 import { Progres } from '../routes/screens/progres/Progres';
 import { Istoric } from '../routes/screens/istoric/Istoric';
 import { Cont } from '../routes/screens/cont/Cont';
@@ -124,6 +135,80 @@ describe('Routing — Auth flow stub', () => {
     const loginButton = screen.getByRole('button', { name: /Mock login/i });
     await user.click(loginButton);
     expect(useAppStore.getState().isAuthenticated).toBe(true);
+    useAppStore.getState().setAuthenticated(false);
+  });
+});
+
+describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
+  const stubs = [
+    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: 'Energy Check' },
+    { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: 'Energy Cause' },
+    { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: 'Workout Preview' },
+    { path: '/app/antrenor/workout', Component: Workout, heading: 'Workout' },
+    { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: 'Ceva Nu Merge' },
+    { path: '/app/antrenor/pain-button', Component: PainButton, heading: 'Pain Button' },
+    { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: 'Equipment Swap' },
+    { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: 'Aparate Lipsa' },
+    { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: 'Schedule Override' },
+    { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: 'Post RPE' },
+    { path: '/app/antrenor/post-summary', Component: PostSummary, heading: 'Post Summary' },
+  ];
+
+  it.each(stubs)('renders $heading stub la $path', ({ path, Component, heading }) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path={path} element={<Component />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe('Routing — Phase 3 Antrenor nested routes integration', () => {
+  beforeEach(() => {
+    useAppStore.getState().setAuthenticated(true);
+  });
+
+  function renderNested(initialPath: string) {
+    return render(
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Antrenor />} />
+            <Route path="antrenor">
+              <Route index element={<Antrenor />} />
+              <Route path="energy-check" element={<EnergyCheck />} />
+              <Route path="workout-preview" element={<WorkoutPreview />} />
+              <Route path="post-summary" element={<PostSummary />} />
+            </Route>
+            <Route path="progres" element={<Progres />} />
+            <Route path="istoric" element={<Istoric />} />
+            <Route path="cont" element={<Cont />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it('renders EnergyCheck cu Layout (bottom nav) la /app/antrenor/energy-check', () => {
+    renderNested('/app/antrenor/energy-check');
+    expect(screen.getByRole('heading', { name: 'Energy Check', level: 1 })).toBeInTheDocument();
+    const antrenorButton = screen.getByRole('button', { name: /Antrenor/i });
+    expect(antrenorButton).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('Antrenor index render la /app/antrenor preserved post-nested', () => {
+    renderNested('/app/antrenor');
+    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
     useAppStore.getState().setAuthenticated(false);
   });
 });

@@ -40,3 +40,56 @@ describe('Navigation helper — mockup goto() convention LOCK', () => {
     expect(gotoPath('cont')).toBe('/app/cont');
   });
 });
+
+describe('Navigation helper — Phase 3 Antrenor sub-screens nested', () => {
+  it('energy-check → /app/antrenor/energy-check', () => {
+    expect(gotoPath('energy-check')).toBe('/app/antrenor/energy-check');
+  });
+
+  it('energy-cause → /app/antrenor/energy-cause', () => {
+    expect(gotoPath('energy-cause')).toBe('/app/antrenor/energy-cause');
+  });
+
+  it('workout-preview → /app/antrenor/workout-preview', () => {
+    expect(gotoPath('workout-preview')).toBe('/app/antrenor/workout-preview');
+  });
+
+  it('workout → /app/antrenor/workout', () => {
+    expect(gotoPath('workout')).toBe('/app/antrenor/workout');
+  });
+
+  it('ceva-nu-merge → /app/antrenor/ceva-nu-merge', () => {
+    expect(gotoPath('ceva-nu-merge')).toBe('/app/antrenor/ceva-nu-merge');
+  });
+
+  it('pain-button → /app/antrenor/pain-button', () => {
+    expect(gotoPath('pain-button')).toBe('/app/antrenor/pain-button');
+  });
+
+  it('equipment-swap → /app/antrenor/equipment-swap', () => {
+    expect(gotoPath('equipment-swap')).toBe('/app/antrenor/equipment-swap');
+  });
+
+  it('aparate-lipsa → /app/antrenor/aparate-lipsa', () => {
+    expect(gotoPath('aparate-lipsa')).toBe('/app/antrenor/aparate-lipsa');
+  });
+
+  it('schedule-override → /app/antrenor/schedule-override', () => {
+    expect(gotoPath('schedule-override')).toBe('/app/antrenor/schedule-override');
+  });
+
+  it('post-rpe → /app/antrenor/post-rpe', () => {
+    expect(gotoPath('post-rpe')).toBe('/app/antrenor/post-rpe');
+  });
+
+  it('post-summary → /app/antrenor/post-summary', () => {
+    expect(gotoPath('post-summary')).toBe('/app/antrenor/post-summary');
+  });
+
+  it('throws pentru unknown screen (runtime fallback)', () => {
+    expect(() =>
+      // @ts-expect-error testing runtime fallback la unknown screen
+      gotoPath('unknown-fake-screen')
+    ).toThrow(/Unknown screen/);
+  });
+});
