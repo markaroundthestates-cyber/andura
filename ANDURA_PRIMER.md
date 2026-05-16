@@ -141,26 +141,28 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 ## §6 Ce e de făcut (Backlog Ordered)
 
-**Track 1 — CEO strategic (highest leverage anti-slip):**
-- **§AR.30 + §AR.31 codify formal D008/D009 PROC LOCKED V1** în DECISIONS.md (substanță-only titluri per D005 "Eliminate §AR.* meta-framework future"). D-LEGACY-085/086 status DRAFT → DEPRECATED.
-- **D007 retroactive entry** pentru supersede enforcement rule (currently "Authority: D007" reference fără entry concret în CURRENT DECISIONS — drift fix).
+**Pre-Beta LOCK 1 100% complete ✅ (verified chat 2026-05-16 ACASĂ + deploy main same day post branch reconcile):**
+- library 657 ex ✅ LANDED
+- Big 11 engine 8/8 phases ✅ LANDED FINAL
+- Calendar engine-side ✅ LANDED (`src/engine/schedule/scheduleAdapter.js` Calendar V1 S2 production wiring per ADR 030 D2 thin scope)
+- Cap-coadă pre-Beta tactical ✅ ALL LANDED:
+  - Track 2 fix 1 button "Import Nutritie (JSON)" wired prod (`index.html:509` + `dashboard.js:149` → `triggerMFPImport()`) — commit `e82edb5`
+  - Track 2 fix 2 dashboard banner periodic 3 zile reminder (`dashboard.js:128-145` threshold `3*86400000` + slot `index.html:392` + wording GENERIC V3 compliant "Importa nutritie din CSV")
+  - Track 2 fix 3 LOCK 8 KCAL_FLOOR informative toast on MFP CSV import (`weight.js:6-7` imports + `importMFPNutritionCSV` body counts `v < KCAL_FLOOR_DAILY_MIN` + setTimeout 2.8s post-success toast, engine SoT wording, anti-paternalism preserved ZERO block save)
 
-**Track 2 — Tactical pre-Beta cap-coadă (P4 reformulated 3 missing pieces):**
-1. ✓ LANDED 2026-05-16 (commit n/a — already-LANDED-no-op verify per batch 2026-05-16) — button "Import Nutritie (JSON)" mockup line 1234 (NU 3034 — drift fix) wired prod `index.html:509` + `dashboard.js:149` la `triggerMFPImport()`.
-2. Dashboard banner periodic 3 zile reminder verify wired în v2 (per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10)
-3. LOCK 8 KCAL_FLOOR informative toast on import flow când imported kcal < 1200 (anti-paternalism preserved: informează, NU block save)
-
-**Track 3 — Wording backlog post-smoke CEO review:**
-- LOCK 10 MMI buttons "Reincep treptat (recomandat)" / "De la zero" — Daniel review iteration post-smoke
-- LOCK 10 MMI refuse banner wording — Daniel review iteration post-smoke
-- LOCK 10 diacritics strip decision — Daniel review iteration
+**Track 3 — Wording backlog post-smoke CEO review (wait-Daniel, D009 boundary, NU autonomous compose):**
+- LOCK 10 MMI buttons "Reincep treptat (recomandat)" / "De la zero"
+- LOCK 10 MMI refuse banner wording
+- LOCK 10 diacritics strip decision
 - LOCK 9 aaFrictionModal wording potential review
 
-**End-state final gate:**
-- Pre-Beta scope cap-coadă completion LOCK V2
-- Daniel Gates 100% strict smoke production manual (Firebase + PWA + telefon)
-- **Bugatti Full Audit pre-Launch GATE FINAL** — every line cod + every virgulă pe latest commit
-- Fix ALL surfaced → Beta launch
+**End-state final gate sequencing (Daniel CEO directive verbatim):**
+1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16)
+2. ✅ Deploy `feature/v2-vanilla-port` → `main` (achieved 2026-05-16 via CC autonomous reconcile batch — backup tags `pre-merge-main-reconcile-2026-05-16` + `pre-merge-feature-reconcile-2026-05-16` + previous `pre-deploy-main-2026-05-16`)
+3. Daniel Gates smoke production manual (Firebase + PWA + telefon, single comprehensive gate a-z) — pending Daniel timing
+4. Bugatti Full Audit pre-Launch nuclear gate (fiecare linie cod + fiecare virgulă pe latest commit LANDED) — CC autonomous candidate post smoke
+5. Fix ALL issues surfaced (combined smoke + Bugatti audit backlog)
+6. Beta launch
 
 ---
 
