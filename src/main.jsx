@@ -3,7 +3,7 @@
 // `src/main.js` preserved unchanged. Migration progresses Batch 2-8 sequential.
 //
 // Cross-refs:
-//   - 03-decisions/005-vanilla-js-no-framework.md §AMENDMENT 2026-05-08 React Migration LOCK
+//   - 03-decisions/_FROZEN/005-vanilla-js-no-framework.md §AMENDMENT 2026-05-08 React Migration LOCK
 //   - 04-architecture/REACT_MIGRATION_STATE_MAPPING_V1.md §7 8-batch strategy
 
 import { StrictMode } from 'react';

@@ -824,6 +824,40 @@
           <!-- Coach reflectie (post-session, persona-aware). Hidden by default; populated by JS post finishSession. -->
           <div id="coach-reflectie" class="wv2-coach-reflect" style="display:none;"></div>
 
+          <!-- Calendar V1 Slice 1.5 fix bundle (2026-05-12). Daniel push-back vizual post S1 LANDED 6ec01e8:
+               1. Lacat 🔒 emoji → lucide pencil parity .nutri-edit-btn proteine ("creionasul ala de edit cum e la proteine")
+               2. Compact sizing — padding/radius/font-sizes smaller ("o idee mai mic gen chenatul cam mare")
+               3. Title "Saptamana ta" → "Program de antrenament" CENTRAT ("pune si tu ceva gen Program de antrenament. Si centreaza textul")
+               4. Demo JS toggle interactive — pattern parity editNutri/saveNutri mockup-only ("lacatul acum nu merge")
+               Color-only L-D (Gigel scan-ability) + mid-week trecut preserve invariant + ZERO warning extreme — invariant LOCKED 3/3 + 4 augmentat.
+               Slice 1.5 = mockup HTML+CSS+demo JS. S2 path forward: scheduleAdapter.js engine layer NEW + Coach Engine #2 trigger compositional + Engine #1 multi-week constraint propagate. -->
+          <section class="calendar-week" data-state="locked" aria-label="Program de antrenament saptamanal">
+            <header class="calendar-week-header">
+              <h3 class="calendar-week-title">Program de antrenament</h3>
+              <button
+                type="button"
+                class="calendar-edit-toggle"
+                aria-label="Editeaza zilele de antrenament"
+                data-action="toggle-edit"
+                onclick="toggleCalendarEdit()"
+              ><i data-lucide="pencil"></i></button>
+            </header>
+
+            <div class="calendar-days" role="group" aria-label="Zile saptamana">
+              <button type="button" class="calendar-day" data-day="L" data-selected="true" disabled aria-label="Luni — zi antrenament" onclick="toggleCalendarDay(this)">L</button>
+              <button type="button" class="calendar-day" data-day="Ma" data-selected="false" disabled aria-label="Marti — zi libera" onclick="toggleCalendarDay(this)">M</button>
+              <button type="button" class="calendar-day" data-day="Mi" data-selected="true" disabled aria-label="Miercuri — zi antrenament" onclick="toggleCalendarDay(this)">M</button>
+              <button type="button" class="calendar-day" data-day="J" data-selected="false" disabled aria-label="Joi — zi libera" onclick="toggleCalendarDay(this)">J</button>
+              <button type="button" class="calendar-day" data-day="V" data-selected="true" disabled aria-label="Vineri — zi antrenament" onclick="toggleCalendarDay(this)">V</button>
+              <button type="button" class="calendar-day" data-day="S" data-selected="false" disabled aria-label="Sambata — zi libera" onclick="toggleCalendarDay(this)">S</button>
+              <button type="button" class="calendar-day" data-day="D" data-selected="false" disabled aria-label="Duminica — zi libera" onclick="toggleCalendarDay(this)">D</button>
+            </div>
+
+            <p class="calendar-edit-hint" hidden>Modifica zilele de antrenament in care esti disponibil.</p>
+
+            <button type="button" class="calendar-save" hidden data-action="save-calendar" onclick="saveCalendarEdit()">Salveaza</button>
+          </section>
+
           <!-- Programe (6 obiective V1 LOCK — Auto + 5 specific. Auto = default. Restructure post-Gigel-test 2026-05-11: 'Tonifiere' → 'Masa musculara' (jargon → clar), added 'Mentenanta' (was missing for eutrophic stable), Longevitate+Sanatate generala consolidate → 'Longevitate / Sanatate'. -->
           <div class="settings-section">📋 Obiectiv</div>
           <div class="settings-stack" id="program-stack">
@@ -835,13 +869,8 @@
             <button class="settings-row program-row" data-program="longevitate" onclick="pickProgram(this)" style="border-bottom:none;"><i data-lucide="heart-pulse" class="program-icon"></i><span class="program-label"><span class="program-title">Longevitate / Sanatate</span><span class="small-text program-sub" style="color:var(--ink-3); font-weight:400;">Fit pe termen lung, fara efort extrem</span></span><span class="program-trail"><i data-lucide="chevron-right"></i></span></button>
           </div>
 
-          <!-- Drill 2° -->
-          <div class="settings-section">Acces rapid</div>
-          <div class="settings-stack">
-            <!-- 1 buton "Ceva nu merge" merged Pain+Equipment per CURRENT_STATE §JUST_DECIDED 2026-05-10 LOCK V1 (SUPERSEDE ADR 023 split — drill secundar 4 optiuni preset) -->
-            <button class="settings-row" onclick="goto('ceva-nu-merge')"><i data-lucide="alert-octagon"></i><span>Ceva nu merge</span><span class="small-text" style="color:var(--ink-3); margin-left:auto; margin-right:8px;">drill</span><i data-lucide="chevron-right"></i></button>
-            <!-- (REMOVED 2026-05-11) Biblioteca exercitii — out of scope V1 per directive Daniel CEO. -->
-          </div>
+          <!-- (REMOVED 2026-05-12 Slice 1.7) "Acces rapid" section + "Ceva nu merge" button relocated to Cont/Ajutor per Daniel push-back —
+               "rubrica de ceva nu merge trebuie mutata la Cont sub ajutor". Section became empty after relocate → DELETE complete. -->
         </div>
       </div>
 
@@ -955,6 +984,10 @@
             </div>
           </div>
 
+          <!-- (REMOVED 2026-05-13 Bundle 3) "Nu am aparat" single-button preview removed per S1.7 path forward.
+               Permanent picker entry: Cont/General > Aparate lipsa (settings.js Bundle 3 LANDED commit 3494c03).
+               Per-exercise inline button DEFERRED post workout-preview src/ port (Port-First strategy). -->
+
           <p class="small-text" style="color:var(--ink-3); margin-top:14px; line-height:1.5; font-style:italic;">Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere, oboseala, set greu. Nu trebuie sa stii dinainte tot.</p>
 
           <button class="btn-brick" onclick="startWorkoutFromPreview()" style="width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;">
@@ -969,7 +1002,8 @@
         <div class="phone-scroll" style="padding: 16px 24px 24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
           <p class="body-text" style="color:var(--ink-2); margin:0 0 12px;">Alege optiunea care se potriveste. Coach-ul ajusteaza imediat.</p>
           <button class="onb-opt stack-row" onclick="goto('pain-button')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="alert-circle" style="color:#c8412e;"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Ma doare</div><div class="small-text" style="color:var(--ink-3);">Durere acuta, articulara sau musculara</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
-          <button class="onb-opt stack-row" onclick="goto('equipment-swap')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="repeat"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Nu am aparat</div><div class="small-text" style="color:var(--ink-3);">Aparat ocupat sau lipsa — propunem alternative</div></div><i data-lucide="chevron-right" style="color:var(--ink-3);"></i></button>
+          <!-- (REMOVED 2026-05-12 Slice 1.7) "Nu am aparat" option moved to dedicated screen-aparate-lipsa picker per Daniel push-back —
+               "aparat lipsa direct in exercitiu. Butonul ala trebuie scos, ca deserveste acelasi lucru. La cont trebuie o sectiune de aparate lipsa". -->
           <button class="onb-opt stack-row" onclick="back()" style="cursor:pointer; text-align:left; width:100%; margin-top:8px;"><i data-lucide="x"></i><div style="flex:1;"><div class="body-text" style="font-weight:600; color:var(--ink-3);">Anuleaza</div></div></button>
         </div>
       </div>
@@ -1003,6 +1037,66 @@
             <button class="onb-opt stack-row" onclick="showToast('Swap gasit: extensii cu banda elastica.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="git-commit-horizontal"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Banda elastica</div><div class="small-text" style="color:var(--ink-3);">Extensii piept cu banda</div></div></button>
             <button class="onb-opt stack-row" onclick="showToast('Swap gasit: flotari la inclinatie.')" style="cursor:pointer; text-align:left; width:100%;"><i data-lucide="user"></i><div style="flex:1;"><div class="body-text" style="font-weight:600;">Doar greutate corp</div><div class="small-text" style="color:var(--ink-3);">Flotari la inclinatie</div></div></button>
           </div>
+        </div>
+      </div>
+
+      <!-- APARATE LIPSA picker (NEW 2026-05-12 Slice 1.7) — permanent state list per Daniel push-back.
+           Drill destination: Cont/General > Aparate lipsa entry (Bundle 3A 2026-05-13 LANDED commit 3494c03).
+           Per-exercise inline button DEFERRED post workout-preview src/ port (Port-First strategy invariant).
+           Toggle pattern parity onb-medical (checkbox + label). Persist localStorage wv2-missing-equipment.
+           Coach Engine #2 buildSession() S2 wiring path forward: consume list, filter exercitii cu aparate marcate,
+           propune alternative parity equipment-swap logic. Equipment-swap screen PĂSTRAT (temporary "Aparat ocupat") —
+           NU rename, NU mutare; aparate-lipsa = state permanent semantic distinct. -->
+      <div class="screen paper-bg sub-page" id="screen-aparate-lipsa" data-screen-label="Aparate lipsa" style="height:100%; flex-direction:column;">
+        <div class="sub-header"><button class="back-btn" onclick="back()"><i data-lucide="arrow-left"></i></button><h2>Aparate lipsa</h2></div>
+        <div class="phone-scroll" style="padding: 8px 24px 24px; overflow-y:auto; flex:1;">
+          <p class="body-text" style="color:var(--ink-2); margin: 4px 0 16px; line-height:1.5;">Bifeaza aparatele pe care <b>nu le ai</b>. Coach-ul va alege exercitii alternative si nu le va propune in viitor.</p>
+          <p class="small-text" style="color:var(--ink-3); margin: 0 0 16px; line-height:1.5;">Poti reveni oricand sa scoti din lista daca ai acum aparatul.</p>
+
+          <div class="settings-stack" id="aparate-lipsa-stack">
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="banca-inclinata" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Banca inclinata</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="banca-plana" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Banca plana</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="bara-halterelor" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Bara halterelor</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="gantere" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Gantere</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="aparat-cablu" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Aparat cablu / scripete</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="power-rack" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Power rack / Smith machine</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="leg-press" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Leg press</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="aparat-extensii" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Aparat extensii / curls picioare</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%;">
+              <input type="checkbox" data-equipment="aparat-tractiuni" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Aparat tractiuni / bara fixa</div></div>
+            </label>
+            <label class="onb-opt stack-row" style="cursor:pointer; text-align:left; width:100%; border-bottom:none;">
+              <input type="checkbox" data-equipment="banda-elastica" onchange="toggleEquipmentMissing(this)" style="width:20px; height:20px; accent-color:#c8412e;"/>
+              <div style="flex:1;"><div class="body-text" style="font-weight:600;">Banda elastica</div></div>
+            </label>
+          </div>
+
+          <p class="small-text" style="color:var(--ink-3); margin-top:16px; line-height:1.5; font-style:italic;">Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate, propune sesiuni bodyweight sau cu alternative.</p>
         </div>
       </div>
 
@@ -1272,10 +1366,11 @@
           </div>
           <div class="wv2-setline">Set <b id="wv2-set-current">3</b> din <b id="wv2-set-total">4</b></div>
 
-          <!-- Daniel 2026-05-12: 3 actions SUS pe exercitiu start — Aparat ocupat / lipsa / Nu vreau -->
+          <!-- Daniel 2026-05-12 Slice 1.7: 2 actions SUS pe exercitiu start — Aparat ocupat / Nu vreau.
+               "Aparat lipsa" chip REMOVED per Daniel push-back — moved to dedicated screen-aparate-lipsa permanent picker
+               (Cont/General drill, Bundle 3A 2026-05-13 LANDED). "deserveste acelasi lucru. Butonul ala trebuie scos". -->
           <div class="wv2-ex-actions">
             <button class="wv2-ex-action" onclick="openExAction('ocupat')"><i data-lucide="users"></i><span>Aparat ocupat</span></button>
-            <button class="wv2-ex-action" onclick="openExAction('lipsa')"><i data-lucide="x-octagon"></i><span>Aparat lipsa</span></button>
             <button class="wv2-ex-action" onclick="openExAction('nuvreau')"><i data-lucide="hand"></i><span>Nu vreau</span></button>
           </div>
 
@@ -1766,6 +1861,7 @@
           <div class="settings-section">General</div>
           <div class="settings-stack">
             <button class="settings-row" onclick="goto('settings-appearance')"><i data-lucide="palette"></i><span>Aspect</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('aparate-lipsa')"><i data-lucide="x-octagon"></i><span>Aparate lipsa</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="goto('settings-prefs')"><i data-lucide="sliders-horizontal"></i><span>Setari</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
@@ -1783,10 +1879,11 @@
             <button class="settings-row" onclick="goto('settings-danger')" style="color:#c8412e;"><i data-lucide="alert-triangle" style="color:#c8412e;"></i><span>Deconectare/Stergere</span><i data-lucide="chevron-right" class="ml-auto" style="color:#c8412e;"></i></button>
           </div>
 
-          <!-- Footer: Suport / Despre / FAQ -->
+          <!-- Footer: Suport / Ceva nu merge / Despre / FAQ. "Ceva nu merge" relocated here 2026-05-12 Slice 1.7 per Daniel push-back. -->
           <div class="settings-section">Ajutor</div>
           <div class="settings-stack">
             <button class="settings-row" onclick="goto('settings-support')"><i data-lucide="life-buoy"></i><span>Suport</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
+            <button class="settings-row" onclick="goto('ceva-nu-merge')"><i data-lucide="alert-octagon"></i><span>Ceva nu merge</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="goto('settings-about')"><i data-lucide="info"></i><span>Despre Andura</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
             <button class="settings-row" onclick="goto('settings-faq')" style="border-bottom:none;"><i data-lucide="help-circle"></i><span>FAQ</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
@@ -2347,6 +2444,18 @@
             <button class="settings-row" onclick="showToast('Deschidem WhatsApp')" style="border-bottom:none;"><i data-lucide="message-square"></i><span style="display:flex; flex-direction:column; align-items:flex-start;"><span>WhatsApp</span><span class="small-text" style="color:var(--ink-3);">L–V · 09:00–18:00</span></span><i data-lucide="chevron-right" class="ml-auto"></i></button>
           </div>
 
+          <!-- Submit bug section (NEW 2026-05-12 Slice 1.7) per Daniel push-back —
+               "Baga o sectiune de Submit bug sau ceva cu text liber, care cand da submit, sa vina pe mailul andura".
+               Mockup demo: mailto: opens email client pre-completat. Production path forward: backend POST /api/feedback. -->
+          <div class="settings-section">Trimite-ne un mesaj</div>
+          <div style="background:white; border:1px solid var(--line); border-radius:14px; padding:14px;">
+            <p class="small-text" style="color:var(--ink-2); margin:0 0 10px; line-height:1.5;">Bug, idee, feedback — scrie liber. Ajunge direct la noi.</p>
+            <textarea id="feedback-textarea" placeholder="Descrie problema sau ideea ta..." rows="4" style="width:100%; padding:12px 14px; border:1px solid var(--line-strong); border-radius:10px; background:var(--paper-2); color:var(--ink); font-family:inherit; font-size:14px; resize:vertical; box-sizing:border-box; min-height:90px;"></textarea>
+            <button class="btn-brick" onclick="submitFeedback()" style="width:100%; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i data-lucide="send"></i> Trimite
+            </button>
+          </div>
+
           <div class="settings-section">Intrebari frecvente</div>
           <div class="settings-stack">
             <button class="settings-row"><i data-lucide="help-circle"></i><span>Cum schimb programul?</span><i data-lucide="chevron-right" class="ml-auto"></i></button>
@@ -2675,6 +2784,89 @@
   .set-edit-input { width:100%; padding:8px 10px; border:1px solid var(--line-strong); border-radius:8px; background:white; font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:600; color:var(--ink); text-align:center; }
   .set-edit-input:focus { outline:2px solid #c8412e; outline-offset:1px; }
 
+  /* Calendar V1 Slice 1.5 fix bundle (2026-05-12) — Daniel push-back vizual post S1 LANDED 6ec01e8:
+     pencil edit parity .nutri-edit-btn proteine + compact sizing + title "Program de antrenament" centered + demo JS toggle.
+     Title centered via position:relative header + absolute right pencil (NU shift when pencil absent in alt context).
+     Pencil button parity .nutri-edit-btn pattern existing mockup (28×28, border-radius 8, transparent → white hover, lucide 14×14).
+     Heatmap colors SSOT existing palette PRESERVED: #3d7a4a (greu LOCKED/SAVE) + #d4e6cb (usor EDITING).
+     WCAG AA: #3d7a4a vs white text 4.56:1 PASS SC 1.4.3. Touch target WCAG 2.2 SC 2.5.8 AA (24×24 min):
+     compact sizing 380px phone frame, calendar-week inner ~308px → cells ~37×37px PASS AA (24 min). */
+  .calendar-week { background:white; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:0 0 12px; }
+  .calendar-week-header { position:relative; display:flex; justify-content:center; align-items:center; margin-bottom:10px; min-height:28px; }
+  .calendar-week-title { font-size:13px; font-weight:600; color:var(--ink); margin:0; letter-spacing:-0.01em; text-align:center; }
+  .calendar-edit-toggle {
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:28px;
+    height:28px;
+    border-radius:8px;
+    background:transparent;
+    border:1px solid transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+    color:var(--ink-3);
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .calendar-edit-toggle:hover { background:white; border-color:var(--line); color:var(--ink); }
+  .calendar-edit-toggle:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
+  .calendar-edit-toggle [data-lucide] { width:14px; height:14px; }
+  /* EDIT state — pencil active visual cue */
+  .calendar-week[data-state="edit"] .calendar-edit-toggle,
+  .calendar-week[data-state="editing"] .calendar-edit-toggle { background:var(--paper-2); border-color:var(--line); color:#c8412e; }
+
+  .calendar-days { display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; margin-bottom:0; }
+  .calendar-day {
+    aspect-ratio:1;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--paper-2);
+    color:var(--ink);
+    font-weight:600;
+    font-size:13px;
+    font-family:'JetBrains Mono', monospace;
+    cursor:default;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 300ms ease-out, color 200ms, border-color 200ms;
+    padding:0;
+  }
+  .calendar-day[data-selected="true"] { background:#3d7a4a; color:#ffffff; border-color:#3d7a4a; }
+  .calendar-day:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
+
+  /* EDIT state (S1.6 simplify 4→3 states post Daniel bug report 2026-05-12) — cells tappable + current selection verde deschis IMEDIAT (pending Save signal).
+     Pre-S1.6 bug: [data-state="edit"]:not([data-state="editing"]) forța cells preset la neutru → tranziția edit→editing colora retroactiv la primul tap (calendar gol → populare bruscă "din spate"). Fix: merge selectors, NU mai trecem prin editing state intermediar. */
+  .calendar-week[data-state="edit"] .calendar-day,
+  .calendar-week[data-state="editing"] .calendar-day { cursor:pointer; background:var(--paper-2); color:var(--ink); border-color:var(--line-strong); }
+  .calendar-week[data-state="edit"] .calendar-day[data-selected="true"],
+  .calendar-week[data-state="editing"] .calendar-day[data-selected="true"] { background:#d4e6cb; color:var(--ink); border-color:#3d7a4a; }
+
+  .calendar-edit-hint { font-size:12px; color:var(--ink-3); margin:10px 0 8px; line-height:1.4; }
+  .calendar-week[data-state="edit"] .calendar-edit-hint,
+  .calendar-week[data-state="editing"] .calendar-edit-hint { display:block; }
+
+  .calendar-save {
+    width:100%;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s, transform .08s;
+    font-family:inherit;
+  }
+  .calendar-save:hover { background:#0e0d0a; }
+  .calendar-save:active { transform:scale(0.97); }
+  .calendar-save:focus-visible { outline:2px solid #c8412e; outline-offset:2px; }
+
   .settings-section { font-size:11px; color:var(--ink-3); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; margin: 16px 4px 8px; }
   .settings-stack { background:white; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
   .settings-row { width:100%; padding:14px 16px; background:transparent; border:none; display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px; color:var(--ink); border-bottom:1px solid var(--paper-2); text-align:left; }
@@ -2871,6 +3063,9 @@
     // Scroll sub-page to top
     const scroller = el && el.querySelector('.phone-scroll');
     if (scroller) scroller.scrollTop = 0;
+
+    // Slice 1.7 2026-05-12: hydrate aparate-lipsa checkboxes from localStorage on enter screen.
+    if (name === 'aparate-lipsa' && typeof hydrateAparateLipsa === 'function') hydrateAparateLipsa();
 
     if (window.lucide) lucide.createIcons();
   }
@@ -3513,6 +3708,76 @@
   window.editNutri = editNutri;
   window.saveNutri = saveNutri;
 
+  // ─── Calendar V1 Slice 1.5 mockup demo behavior 2026-05-12 ──────────────────
+  // Pattern parity editNutri/saveNutri inline mockup demo. NU production src/ wiring.
+  // S2 path forward separat: scheduleAdapter.js + Coach Engine #2 trigger compositional.
+  // Mockup-only state machine: locked ↔ edit/editing → save → locked.
+  // Per Daniel verbatim chat 2026-05-12: "lacatul acum nu merge... apas pe el si nu se intampla nimic"
+  function toggleCalendarEdit() {
+    const section = document.querySelector('.calendar-week');
+    if (!section) return;
+    const currentState = section.getAttribute('data-state');
+    const days = section.querySelectorAll('.calendar-day');
+    const hint = section.querySelector('.calendar-edit-hint');
+    const save = section.querySelector('.calendar-save');
+
+    if (currentState === 'locked') {
+      // Enter EDIT — remember initial selection (for cancel revert), enable cells, show hint + Save
+      section.setAttribute('data-state', 'edit');
+      days.forEach(d => {
+        d.dataset.priorSelected = d.dataset.selected;
+        d.disabled = false;
+      });
+      if (hint) hint.hidden = false;
+      if (save) save.hidden = false;
+    } else {
+      // EDIT / EDITING → cancel back to LOCKED (revert prior state)
+      section.setAttribute('data-state', 'locked');
+      days.forEach(d => {
+        if (d.dataset.priorSelected) d.dataset.selected = d.dataset.priorSelected;
+        d.disabled = true;
+        delete d.dataset.priorSelected;
+      });
+      if (hint) hint.hidden = true;
+      if (save) save.hidden = true;
+    }
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function toggleCalendarDay(btn) {
+    const section = btn.closest('.calendar-week');
+    if (!section) return;
+    const state = section.getAttribute('data-state');
+    if (state === 'locked') return; // guard: NO-OP locked state
+    // S1.6 simplify (Daniel bug fix 2026-05-12): NU mai trecem edit → editing — EDIT state arată current selection verde deschis imediat.
+    btn.dataset.selected = btn.dataset.selected === 'true' ? 'false' : 'true';
+  }
+
+  function saveCalendarEdit() {
+    const section = document.querySelector('.calendar-week');
+    if (!section) return;
+    const days = section.querySelectorAll('.calendar-day');
+    section.setAttribute('data-state', 'locked');
+    days.forEach(d => {
+      d.disabled = true;
+      delete d.dataset.priorSelected;
+    });
+    const hint = section.querySelector('.calendar-edit-hint');
+    const save = section.querySelector('.calendar-save');
+    if (hint) hint.hidden = true;
+    if (save) save.hidden = true;
+    if (typeof showToast === 'function') {
+      const selected = section.querySelectorAll('.calendar-day[data-selected="true"]').length;
+      showToast('Program salvat: ' + selected + ' zile/saptamana');
+    }
+    // S2 wiring path forward: scheduleAdapter.invokeCoachEngineGoalAdaptation(selectedDays, mesocyclePhase, big6Priorities)
+    // Mid-week edge case (clarification 2 LOCKED): zile trecute preserve verde inchis invariant — recalibrate doar restul saptamanii.
+    if (window.lucide) lucide.createIcons();
+  }
+  window.toggleCalendarEdit = toggleCalendarEdit;
+  window.toggleCalendarDay = toggleCalendarDay;
+  window.saveCalendarEdit = saveCalendarEdit;
+
   // Auto-fill weight-date-input default = today (so user only types kg)
   window.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById('weight-date-input');
@@ -3720,7 +3985,9 @@
     localStorage.setItem('wv2-auth-status', method);
   }
 
-  // Daniel 2026-05-12: 3 actions on exercise start — ocupat / lipsa / nuvreau
+  // Daniel 2026-05-12 Slice 1.7: 2 actions on exercise start — ocupat / nuvreau.
+  // "lipsa" branch REMOVED — permanent missing-equipment state managed via screen-aparate-lipsa picker
+  // (Cont/General drill, Bundle 3A 2026-05-13 LANDED commit 3494c03). Per Daniel push-back "Butonul ala trebuie scos, ca deserveste acelasi lucru".
   function openExAction(kind) {
     const ex = WV2_EXERCISES[wv2.exIdx];
     const alts = {
@@ -3731,13 +3998,12 @@
       'Plansa abdominala': { name: 'Plansa pe genunchi', sub: 'Static 30 sec', reason: 'Mai usor, fara presiune lombara.' }
     };
     const alt = alts[ex.name] || { name: 'Alt exercitiu propus', sub: '—', reason: 'Coach iti propune o varianta.' };
-    const titles = { ocupat: 'Aparat ocupat', lipsa: 'Aparat lipsa', nuvreau: 'Nu vreau / Nu pot' };
+    const titles = { ocupat: 'Aparat ocupat', nuvreau: 'Nu vreau / Nu pot' };
     const subs = {
       ocupat: 'Coach iti propune o alternativa pentru acest set. Cand se elibereaza aparatul, revii la exercitiul original.',
-      lipsa: 'Coach va elimina permanent acest aparat din viitoare recomandari. Toate sesiunile urmatoare folosesc alternativa.',
       nuvreau: 'Coach iti propune un exercitiu cu acelasi efect, fara presiunea de a-l face pe asta. Fara penalizare.'
     };
-    const primary = { ocupat: 'Schimba pentru acest set', lipsa: 'Elimina aparat permanent', nuvreau: 'Schimba exercitiul' };
+    const primary = { ocupat: 'Schimba pentru acest set', nuvreau: 'Schimba exercitiul' };
     document.getElementById('exact-title').textContent = titles[kind];
     document.getElementById('exact-sub').textContent = subs[kind];
     document.getElementById('exact-alt-name').textContent = alt.name;
@@ -3755,12 +4021,8 @@
   }
   function applyExAction(kind, alt) {
     const ex = WV2_EXERCISES[wv2.exIdx];
-    if (kind === 'lipsa') {
-      const missing = JSON.parse(localStorage.getItem('wv2-missing-equipment') || '[]');
-      if (!missing.includes(ex.name)) missing.push(ex.name);
-      localStorage.setItem('wv2-missing-equipment', JSON.stringify(missing));
-      showToast('Coach nu va mai propune „' + ex.name + '".');
-    } else if (kind === 'ocupat') {
+    // Slice 1.7 2026-05-12: "lipsa" branch removed — permanent missing-equipment state managed via screen-aparate-lipsa picker.
+    if (kind === 'ocupat') {
       showToast('Schimbat temporar. Revii la „' + ex.name + '" cand se elibereaza.');
     } else {
       showToast('Schimbat fara penalizare.');
@@ -3768,6 +4030,60 @@
     WV2_EXERCISES[wv2.exIdx] = Object.assign({}, ex, { name: alt.name, sub: alt.sub });
     closeExAction();
     wv2Render();
+  }
+
+  // ─── Aparate lipsa picker (NEW Slice 1.7 2026-05-12) ─────────────────────
+  // Daniel push-back: extract "nu am aparat" din ceva-nu-merge container → permanent state list separat.
+  // Persist localStorage wv2-missing-equipment (reuse existing key — list-based extension a single-add pattern S1.5).
+  // S2 wiring path forward: Coach Engine #2 buildSession() consume wv2-missing-equipment list,
+  // filtreaza exerciții care folosesc aparatele marcate, propune alternative (parity equipment-swap logic).
+  const APARATE_LIPSA_VALID_IDS = [
+    'banca-inclinata', 'banca-plana', 'bara-halterelor', 'gantere', 'aparat-cablu',
+    'power-rack', 'leg-press', 'aparat-extensii', 'aparat-tractiuni', 'banda-elastica'
+  ];
+
+  function toggleEquipmentMissing(cb) {
+    const equipment = cb && cb.dataset && cb.dataset.equipment;
+    if (!equipment) return;
+    let missing = [];
+    try { missing = JSON.parse(localStorage.getItem('wv2-missing-equipment') || '[]'); } catch (e) { missing = []; }
+    if (cb.checked) {
+      if (!missing.includes(equipment)) missing.push(equipment);
+      showToast('Adaugat la aparate lipsa');
+    } else {
+      missing = missing.filter(e => e !== equipment);
+      showToast('Scos din aparate lipsa');
+    }
+    localStorage.setItem('wv2-missing-equipment', JSON.stringify(missing));
+  }
+
+  function hydrateAparateLipsa() {
+    let missing = [];
+    try { missing = JSON.parse(localStorage.getItem('wv2-missing-equipment') || '[]'); } catch (e) { missing = []; }
+    // Strip legacy non-id entries (S1.5 era pushed RO exercise names; Slice 1.7 normalizes la ID standard).
+    missing = missing.filter(e => APARATE_LIPSA_VALID_IDS.includes(e));
+    localStorage.setItem('wv2-missing-equipment', JSON.stringify(missing));
+    document.querySelectorAll('#aparate-lipsa-stack input[type="checkbox"]').forEach(cb => {
+      cb.checked = missing.includes(cb.dataset.equipment);
+    });
+  }
+
+  // ─── Submit bug feedback (NEW Slice 1.7 2026-05-12) ──────────────────────
+  // Daniel push-back: "Baga o sectiune de Submit bug sau ceva cu text liber, care cand da submit, sa vina pe mailul andura".
+  // Mockup demo: mailto: opens email client cu subject + body pre-completat. Production path forward: backend POST /api/feedback.
+  function submitFeedback() {
+    const ta = document.getElementById('feedback-textarea');
+    const text = ta && ta.value && ta.value.trim();
+    if (!text) {
+      showToast('Scrie ceva inainte de a trimite');
+      if (ta) ta.focus();
+      return;
+    }
+    const subject = encodeURIComponent('[Feedback Andura] Mesaj utilizator');
+    const body = encodeURIComponent(text);
+    window.location.href = 'mailto:contact@andura.app?subject=' + subject + '&body=' + body;
+    ta.value = '';
+    showToast('Ti-am deschis emailul cu mesajul pre-completat.');
   }
 
   function continueToRest() {

@@ -25,7 +25,7 @@
 //   - Periodization → Goal Adaptation propagation Constraint Object frozen
 //   - Periodization fails hard → Goal Adaptation skipped (downstream halt per §3.6)
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/periodizationAdapter.js (batch 1 precedent `de4222b`)
 //      src/coach/orchestrator/__tests__/periodizationParity.test.js (parity test pattern)
 

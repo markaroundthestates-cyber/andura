@@ -1,6 +1,14 @@
 // ══ COMPOSITE SIGNAL §36.41 — 3-metric AND trigger ════════════════════════════
 // LOCKED V1 per §36.41 Chat C — 3/3 simultaneous threshold (NU cumulative).
 // False positive prevention: triggered DOAR cand TOATE 3 metrici simultan abnormal.
+//
+// Anatomical agnostic preserved post-C4.6 verify Big 11 wire compatible — signals
+// arbitrate purely on performance metrics (performanceDropPct + restTimeMultiplier
+// + rirMismatch), ZERO Big 6 EN hardcoded refs, ZERO Big 11 RO group keys per
+// ADR_ENGINE_REFACTOR §4.6 LOCK V1 acceptance criteria. Composite signal layer is
+// taxonomy-independent — works identical whether upstream engines emit Big 6 EN
+// or Big 11 RO group keys (engines C4.1-4.5 LANDED return Big 11 RO post-refactor;
+// composite-signal NU consumes group keys directly).
 
 /**
  * @typedef {Object} CompositeSignalInput

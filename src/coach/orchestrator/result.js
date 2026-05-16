@@ -5,7 +5,7 @@
 // short-circuit fail-safe (Anti-Cascade Silent precedent ADR_CASCADE_DEFENSE_v1
 // §EXT-2 Layer D ≤50ms budget).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.4 D4
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.4 D4
 
 /**
  * Wrap a successful output in an ok-discriminated Result.

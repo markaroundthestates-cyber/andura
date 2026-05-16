@@ -9,6 +9,11 @@ import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { CALIBRATION_LEVELS } from './calibration.js';
 import { aggregateAutoAggression } from './autoAggressionDetection.js';
 import { READINESS_PR, READINESS_HIGH, READINESS_MED, READINESS_LOW } from './readiness.js';
+import {
+  getMissingEquipment,
+  translateToEngineEquipment,
+  getCalendarOverride,
+} from './schedule/scheduleAdapter.js';
 
 export function buildCoachContext() {
   const now = new Date();
@@ -57,7 +62,13 @@ export function buildCoachContext() {
     currentDate: now,
     isBeforeJuly20_2026: now < july20_2026,
     isDeficit: kcalTarget < 2200,
-    isInCut: phase === 'CUT' || (phase === 'AUTO' && now < july20_2026)
+    isInCut: phase === 'CUT' || (phase === 'AUTO' && now < july20_2026),
+    // Calendar V1 S2 wiring — UI-side scheduleAdapter exposes override via
+    // ctx.meta for engine orchestrator pipeline §42.10 consumption per
+    // ADR 026 §9 (engines remain pure-function; meta carries scheduling hints).
+    meta: {
+      calendarOverride: getCalendarOverride(now),
+    }
   };
 }
 
@@ -140,6 +151,58 @@ function getAllLogs() {
   catch { return []; }
 }
 
+/**
+ * Compute pause duration from a list of session dates and the current date.
+ * Pure function — date inputs explicit at the I/O boundary for determinism
+ * (ADR 026 §9 + ADR 018 §2 invariants).
+ *
+ * Used by LOCK 10 MMI (Engine #9) entry gate per ADR 033 §32.2 trigger
+ * threshold "6+ luni pauza → prompt user prima deschidere app".
+ *
+ * @pure
+ * @param {Array<string>} sessionDates - ISO YYYY-MM-DD strings; order
+ *        irrelevant (max is taken)
+ * @param {string} currentDate - 'YYYY-MM-DD'
+ * @returns {{daysSincePause: number, pauseMonths: number}}
+ */
+export function computePauseDuration(sessionDates, currentDate) {
+  if (!Array.isArray(sessionDates) || sessionDates.length === 0) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  if (typeof currentDate !== 'string' || !currentDate) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  // Take latest date deterministically (ISO strings are lexicographic-sortable).
+  let latest = '';
+  for (const d of sessionDates) {
+    if (typeof d === 'string' && d > latest) latest = d;
+  }
+  if (!latest) return { daysSincePause: 0, pauseMonths: 0 };
+  const lastTime = new Date(latest).getTime();
+  const currentTime = new Date(currentDate).getTime();
+  if (!Number.isFinite(lastTime) || !Number.isFinite(currentTime)) {
+    return { daysSincePause: 0, pauseMonths: 0 };
+  }
+  if (currentTime <= lastTime) return { daysSincePause: 0, pauseMonths: 0 };
+  const days = Math.floor((currentTime - lastTime) / (1000 * 60 * 60 * 24));
+  return { daysSincePause: days, pauseMonths: days / 30.44 };
+}
+
+/**
+ * Extract distinct session dates from a logs array. Pure helper.
+ * @pure
+ * @param {Array<{date: string}>} logs
+ * @returns {Array<string>} sorted ascending
+ */
+export function extractSessionDates(logs) {
+  if (!Array.isArray(logs)) return [];
+  const set = new Set();
+  for (const l of logs) {
+    if (l && typeof l.date === 'string') set.add(l.date);
+  }
+  return Array.from(set).sort();
+}
+
 function getLastNSessions(n) {
   const logs = getAllLogs();
   const byDate = {};
@@ -178,17 +241,27 @@ function getBodyweightTrend7d() {
 
 function getAvailableEquipment() {
   try {
-    const unavailable = JSON.parse(localStorage.getItem('unavailable-equipment') || '[]');
+    const legacy = JSON.parse(localStorage.getItem('unavailable-equipment') || '[]');
+    // Calendar V1 S2 2026-05-13: also merge user-driven aparate-lipsa picker
+    // (wv2-missing-equipment) translated to engine equipment domain. Tier 0
+    // active rolling per ADR 020 §1.4 — both legacy + user-driven blockers
+    // contribute. Set dedup ensures no double-count.
+    const userDriven = translateToEngineEquipment(getMissingEquipment());
+    const unavailable = new Set([...legacy, ...userDriven]);
     const all = ['matrix_cable', 'bailib_stack', 'pec_deck', 'leg_machine', 'leg_press_plates', 'dumbbell'];
-    return all.filter(e => !unavailable.includes(e));
+    return all.filter(e => !unavailable.has(e));
   } catch {
     return ['matrix_cable', 'bailib_stack', 'pec_deck', 'leg_machine', 'leg_press_plates', 'dumbbell'];
   }
 }
 
 function getUnavailableEquipment() {
-  try { return JSON.parse(localStorage.getItem('unavailable-equipment') || '[]'); }
-  catch { return []; }
+  let legacy = [];
+  try { legacy = JSON.parse(localStorage.getItem('unavailable-equipment') || '[]'); }
+  catch { legacy = []; }
+  // Calendar V1 S2 2026-05-13: merge with aparate-lipsa user-driven list.
+  const userDriven = translateToEngineEquipment(getMissingEquipment());
+  return [...new Set([...legacy, ...userDriven])];
 }
 
 // ── CDL pattern helpers (ADR 011) ─────────────────────────────────────────

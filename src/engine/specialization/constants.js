@@ -6,7 +6,7 @@
 // spec session ordering ULTIMUL prescriptive engine §36.100 100% milestone,
 // NU pipeline canonical position (§9.6 clarifying header).
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.6
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.6
 // (commit 92a69fd LANDED 2026-05-06 afternoon chat-6 acasa, 28 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou late sources).
 //
@@ -141,6 +141,54 @@ export const CONSENSUS_WINDOW_SESSIONS = 12;
  * @type {number}
  */
 export const TOP_N_DISCIPLINE = 1;
+
+/**
+ * Big 11 specialization scope per ADR_ENGINE_REFACTOR §3.4 Decision LOCK V1:
+ * 8 of 11 candidates eligible PARALLEL modifier bump (post-C4.2 Weakness
+ * Detector `a35d362` Big 11 RO canonical output).
+ *
+ * Eligible (8 of 11):
+ *   piept, spate, umeri, biceps, triceps, antebrate (NEW Big 11), core,
+ *   fese (NEW Big 11)
+ *
+ * Excluded 3 of 11 (anatomical conflict V1):
+ *   - picioare-quads: compound shared CNS conflict (squat + RDL + leg press
+ *     already high frequency tolerance)
+ *   - picioare-hamstrings: compound shared CNS conflict (RDL + leg curl
+ *     dual-loaded with quads in same session typical)
+ *   - gambe: small isolation already high frequency tolerance, 4-week
+ *     specialization bump trivial impact on hypertrophy outcome
+ *
+ * §9.6.6 Reconsideration Trigger 8 candidate post-Beta: lower-body cluster
+ * unified specialization bump policy (NU primary cluster split).
+ *
+ * @type {ReadonlyArray<string>}
+ */
+export const ELIGIBLE_GROUPS_SPECIALIZATION_BIG11 = Object.freeze([
+  'piept',
+  'spate',
+  'umeri',
+  'biceps',
+  'triceps',
+  'antebrate',
+  'core',
+  'fese',
+]);
+
+/**
+ * Secondary tag weight default 0.3 per ADR_ENGINE_REFACTOR §3.5 Decision LOCK V1.
+ * 30% co-engage threshold for Specialization weighted secondary consume policy.
+ * Justified per Schoenfeld 2017 — secondary co-engage typically 20-40% MPS
+ * contribution vs primary stress (compound exercises dual-cluster).
+ *
+ * Bundle 6.0.4.2 RDL/Good Morning posterior chain dual-cluster:
+ *   spate primary + picioare-hamstrings secondary anatomically defensible
+ *   → specialization phase-Hams bumps weighted secondary 0.3 weight per
+ *   compound exercise contribution.
+ *
+ * @type {number}
+ */
+export const SECONDARY_TAG_WEIGHT_DEFAULT = 0.3;
 
 /**
  * Cooldown duration per Cluster B5 Q10=B + B6 Q16=A match Q10 verbatim:

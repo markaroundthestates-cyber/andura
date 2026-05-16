@@ -32,7 +32,7 @@
 // `<engine>_via_orchestrator` rollout 0% default OFF + Golden-master parity tests).
 // V1 implementation acest task tactical pure-function module only.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.8
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.8
 // (commit d7594e7 LANDED 2026-05-06 evening chat-8 acasa, 32 decisions
 // Cluster A-E 4-way parity check ✅).
 

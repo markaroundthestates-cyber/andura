@@ -1,3 +1,9 @@
+> 🛑 **STOP. DEPRECATED post-reglaj 2026-05-15. Read [[../DECISIONS.md]] instead.**
+>
+> §CC.2 layered read + §CC.3 startup format + §9 handover protocol superseded by DECISIONS.md §D003 PROJECT_INSTRUCTIONS V5 (current §CC.2) + §D006 handover paragraf scurt + DECISIONS delta append. Bonding/style §3-§7 partially preserved în USER_PREFERENCES V4 + memory.
+
+---
+
 # CHAT MIGRATION PROTOCOL — v5
 
 **See also:** [[INDEX_MASTER]] | [[DANIEL_COMPLETE_PROFILE]] | [[CLAUDE_CHAT_INFRASTRUCTURE]] | [[VAULT_RULES]] §CHAT_CONTINUITY_PROTOCOL §CC.1-§CC.8 (chat-state SSOT layered read) | ASYNC_EXECUTION_PROTOCOL (workflow obsolete post-cleanup 2026-04-30)

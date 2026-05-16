@@ -1,5 +1,5 @@
 // ══ TELEMETRY — aggregate anonymous counters Firestore (§56.15 LOCKED V1) ══
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.15 +
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.15 +
 // §64.8 (ZERO opt-out toggle, GDPR-safe by design FieldValue.increment counters,
 // ZERO PII).
 //

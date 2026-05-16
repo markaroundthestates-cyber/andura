@@ -4,7 +4,7 @@
 // Energy Adjustment → Bayesian → Tempo → Specialization → Warm-up → Deload.
 // (NU position 5 legacy ADR 027 "Engine #5" naming — eclipsed by §9.3 SSOT).
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.3
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.3
 // (Cluster 2 input strategy + Cluster 3 bidirectional ±15% asymmetric +
 //  Cluster 4 invariants + Cluster 5 safety/compliance verbatim).
 //

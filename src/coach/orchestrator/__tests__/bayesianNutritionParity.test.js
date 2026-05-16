@@ -45,7 +45,7 @@
 //     Bayesian skipped (downstream halt cascade)
 //   - Energy Adjustment fails hard mid-pipeline → Bayesian Nutrition skipped
 //
-// See: 03-decisions/030-adapter-design-pattern.md §3 RESOLVED V1
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §3 RESOLVED V1
 //      src/coach/orchestrator/adapters/bayesianNutritionAdapter.js
 //      src/coach/orchestrator/adapters/energyAdjustmentAdapter.js (batch 3 precedent)
 //      src/coach/orchestrator/adapters/goalAdaptationAdapter.js (batch 2 read-only consume precedent)

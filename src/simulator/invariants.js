@@ -1,5 +1,5 @@
 // ══ INVARIANTS VALIDATOR (4-Invariant Safety Stack + 5th Medical Safety) ═══
-// Per `06-sessions-log/HANDOVER_GLOBAL_2026-04-30_evening.md` §42.9 LOCKED V1
+// Per `06-sessions-log/_FROZEN/HANDOVER_GLOBAL_2026-04-30_evening.md` §42.9 LOCKED V1
 // + §50.3.10 (Medical Safety 5th invariant).
 //
 // Per `04-architecture/SCENARIOS_SIMULATOR_DESIGN_V1.md` §5: each branch

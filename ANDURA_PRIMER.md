@@ -1,0 +1,218 @@
+---
+title: ANDURA_PRIMER.md — Singular Briefing Fresh Chat Instant Onboard
+type: ssot-primer
+status: live
+last_updated: 2026-05-16
+authority: Daniel CEO directive 2026-05-16 chat ACASĂ — "vreau la next chat sa stii ce e andura, ce face, cum functioneaza si ce trebuie sa fie. Sa stii unde am ramas, ce e de facut si ce vreau eu"
+purpose: §CC.2 startup primary read — fresh chat instant comprehensive context complete
+maintained_by: handover automatic update post-LANDED + Daniel CEO directive
+---
+
+# ANDURA_PRIMER.md — Briefing Singular Truth-Source Fresh Chat
+
+**§CC.2 startup primary read.** Citește acest fișier + `DECISIONS.md` head 50 + `📤_outbox/LATEST.md` = INSTANT context complete pentru orice chat NEW. Restul vault = deep-substance reference on-demand explicit path read când e nevoie.
+
+---
+
+## §1 Ce este Andura
+
+Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap solo Daniel (CEO + Product Owner). Plan x20 ambition. Orizont 2-3 ani. Free Beta, pricing post-Beta launch.
+
+**Paradigm Bugatti craft** — peak craft, zero compromise, Quality > Speed strict. Filter mental: *"Ar fi mândru un Bugatti engineer?"*. Refactor later NEVER happens — totul pre-Beta FULL strict. Bug 02:00 > 5 commits grabă.
+
+**Differentiator structural moat:**
+- Engines auxiliare ascunse care "gândesc pentru user" (8+1 engines pipeline §42.10 + auxiliary)
+- Brand voice Gigel-friendly prag de jos accesibil — NU surveillance, NU jargon technical, NU paranoid features
+- Privacy-conscious local-first (IndexedDB tier + Firebase backup + GDPR k-anonymity validation)
+- Romanian-first cultural specific (NO_DIACRITICS_RULE UI/tests/mockups + diacritice vault docs preserved)
+- Cumulative ~742+ LOCKED V1 decisions = vault SSOT permanent moat
+
+**Personas (Gigel test mandatory pre-feature):**
+- **Gigel** = user mediu non-tech RO (*"Cum reacționează Gigel? Dubios pentru user?"* filter, NU "tehnic posibil?")
+- **Marius** = performant la sala (representative target user)
+- **Maria 65** = conservativ vârstnic (edge persona)
+
+---
+
+## §2 Ce face Andura
+
+**MVP Beta scope V1 LOCK = 4-tab nav** (Antrenor + Progres + Istoric + Cont). Android-first PWA (iOS deferred v2/v3 PERMANENT).
+
+**15 audit-driven V1 features** (10 keep + 4 modify + 1 drop F5 + 1 drop F13 Anti-RE):
+- KEEP verbatim: F2 Last Session Memory, F4 Readiness Verdict (pre-session core coach value), F6 PR Wall, F7 Coach Director (pipeline orchestrator output), F8 Streak Counter, F10 Stats Grid 3-cell, F11 PRs Notification per-PR, F12 Rating Buttons 3-button (USOARA/NORMALA/GREA RO culture), F15 Per-set RPE, Mode Detection (5 moduri pure event listeners)
+- MODIFY simplified: F1 Patterns Banner 2 keep (LOW_ADHERENCE + STAGNATION) / 3 drop V2 paranoid, F3 Fatigue Score single number, F9 BMR Strip single line, F14 Ratings Window 20→90 sessions
+- DROP V1: F5 AA-Friction Modal V2-deferred (Gigel-suspect paranoid), F13 Rating Notes Anti-RE rule (free-text abuse universal)
+
+**4 Auxiliary features:** Auth Magic Link (SMTP Phase 2 RESOLVED) + Onboarding T0 Big 6 hard typing + Mode Detection + Tier Storage (Tier 0/1/2 + Dexie + Firebase archive).
+
+**8 Coach Engines pipeline §42.10 prescriptive ordering canonical** (Constraint Object immutable propagated, NU shared state + NU side effects):
+1. **Periodization** — Floor/Ceiling Range volume coridor Israetel framework persona-aware
+2. **Goal Adaptation** — 5 templates V1 + phase auto-detection CUT/BULK/MAINTAIN/RECOMP
+3. **Energy Adjustment** — bidirectional ±15% tier-aware T0=±10% T1+=±15% asymmetric
+4. **Bayesian Nutrition** — Kalman filter adaptive TDEE (NU 2000 kcal hardcoded)
+5. **Tempo / Form Cues** — persona-aware Maria verbal / Marius numeric / tap-to-expand 💡
+6. **Specialization** — PARALLEL modifier 4-gate strict (Marius Advanced+T1++Bulk/Recomp+injury auto-disable)
+7. **Warm-up & Mobility** — Instant Skip T0 default anti-Maria-friction
+8. **Deload** — micro-deload + standard week 4 non-negotiable + MRV invariant
+9. **MMI Engine #9** (LOCK 10 LANDED 2026-05-15 `e6fd974`) — Algorithm Hibrid Lookup + Boost re-resume cap, compose LAST în pipeline
+
+**Auxiliary engines support:** Muscle Recovery (Big 6 + lagging detection) + Weakness Detector (Brzycki 1RM relative) + PR Wall (weight/reps/volume) + Readiness (5-state emoji + kcal/protein delta) + Streak Counter + Coach Director (orchestrator central).
+
+---
+
+## §3 Cum funcționează (Architecture)
+
+**Stack vanilla JS pe `feature/v2-vanilla-port`** — Port-First-Then-React paradigm LOCK V1 2026-05-10:
+- **Step 1 = vanilla port mockup V2 → prod `src/`** (BATCH 2 Antrenor closure LANDED 2026-05-12, 11 atomic commits substantive)
+- **Step 2 = React migration mecanic mapping** (PENDING Step 1 finish + Daniel Gates smoke)
+
+**Architecture pillars (LOCKED V1 cumulative):**
+- Local-first storage IndexedDB primary + Firebase backup tier (ADR 001)
+- Firebase via REST API NU SDK (ADR 002 bundle size)
+- Pure-function paradigm ADR 026 §9 (NO Date.now / Math.random / mutation în engines, side-effects la I/O boundary)
+- Append-only CDL pattern (ADR 011) — Coach Decision Log forensic transparency
+- Three-tier log storage Tier 0/1/2 active/rolling/archive (ADR 005)
+- Demographic Prior Database cold-start age+experience-aware (ADR 017)
+- Engine Extensibility Dimension Registry plug-in additive Open-Closed (ADR 018)
+- Romanian-first NO_DIACRITICS_RULE UI/tests/mockups (LOCK V1 PERMANENT 2026-05-10)
+- Force-typing ELIMINATED PERMANENT — anti-paternalism ABSOLUTE (ADR 013 §AMENDED)
+
+**Auth:** Multi-Tenant Auth Magic Link (Phase 1+2 RESOLVED SMTP 2026-05-06) + OAuth Firebase (Phase 3 PENDING) + GDPR k=5 minim k-anonymity validation (ADR 019).
+
+**Vault structure (Karpathy Real Option B 3-layer post-reglaj 2026-05-15 + radical archive 2026-05-16):**
+- **`DECISIONS.md`** = SSOT singular live truth-source decizii post 2026-05-15 (append-only)
+- **`99-archive/wiki-pre-2026-05-15/`** = deep-substance reference archived (citable on-demand explicit path read, NU search default)
+- **`03-decisions/_FROZEN/`** = legacy ADR canonical sources immutable
+- **`01-vision/`** = PROJECT_VISION + SUFLET_ANDURA + DANIEL_COMPLETE_PROFILE + PRODUCT_STRATEGY_SPEC + MOAT_STRATEGY
+- **`04-architecture/mockups/andura-clasic.html`** = DESIGN MASTER mockup Bugatti SoT clean port single
+- **`07-meta/karpathy-skills-ref/CLAUDE.md`** §1-§4 = Karpathy 4 principii core philosophy
+- **`📥_inbox/`** + **`📤_outbox/LATEST.md`** + **`📤_outbox/_archive/`** = chat ↔ CC interface
+- **`08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md`** = Bugatti gate §0-§11 mandatory per /handover ingest
+
+**Metoda hibridă chat ↔ CC terminal LOCKED V1 (§F3.13):**
+- Claude chat = decizii tactical + artefacte `.md` (create_file/present_files)
+- Daniel = courier paste `📥_inbox/` SAU drag CC terminal cu Ctrl+C live + trigger "latest"
+- CC autonomous = execute spec + scrie `📤_outbox/LATEST.md` §0-§N
+- **MCP filesystem + Obsidian PRIMARY ACASĂ** (PK = fallback doar birou explicit)
+- **CC model: Opus EXCLUSIVELY** — hardcode "Model: Opus" în orice PROMPT_CC. Sonnet concediat permanent 2026-05-03.
+- Daniel CC startup: `claude --dangerously-skip-permissions` standard, zero reminder
+- **Deploy:** on-demand Co-CTO manual trigger (NU auto on push origin). GitHub Actions buget suplimentar costuri Daniel — Playwright on every commit dezactivat post 1000 deploys/5z explozie 2026-05-? historical. Codified `DECISIONS.md §D010`.
+
+---
+
+## §4 Ce trebuie să fie (End-State Pre-Beta)
+
+**Pre-Beta = FULL app strict LOCK V2** (Daniel directive 2026-05-14 verbatim: *"Aplicatia pre-beta o sa fie FULL cu tot. Post beta facem doar bug fixes daca exista, si eventual alte noi features daca constatam ca trebuie"*). Toate "post-Beta v1.5" / "V2 reconsider" rationales INVALIDATED.
+
+**Daniel Gates 100% strict** — Threshold = 100% complete (library 657 ex ✓ ACHIEVED + Big 11 engine 8/8 ✓ COMPLETE + Calendar engine-side + cap-coadă pending) ÎNAINTE deploy `feature/v2-vanilla-port` → `main` + smoke real andura.app Daniel manual test cu Firebase + PWA + telefon. NU intermediate gates 95% / 90% / smoke parțial. Single comprehensive gate Bugatti pur.
+
+**Sequencing pre-Launch P5 final (Daniel CEO directive verbatim):**
+1. Tot tracks 100% LANDED (LOCK 1 cascade)
+2. Daniel Gates smoke production manual (LOCK 2 cascade)
+3. **Bugatti Full Audit pre-Launch nuclear gate** — *"FULL AUDIT. Fiecare linie de cod citita, fiecare virgula, TOT pe latest commit LANDED. 20000 ore I don't care"*
+4. Fix ALL issues surfaced
+5. Beta launch
+
+**Library scope MANDATORY pre-Beta: 600-700 exerciții peak craft Fitbod parity** (LOCK V1 2026-05-13). **ACHIEVED 657/657 = 100% gate** per LOCK 2 Daniel Gates post Bundle 6.0.7 Core LANDED.
+
+---
+
+## §5 Unde am rămas (Current State)
+
+**Branch:** `feature/v2-vanilla-port`. **Tests baseline:** 3734 PASS (vitest local + jsdom). **Smoke E2E:** Playwright local 4 taburi V2 5/5 PASS scenarios paradigm vanilla-port mockup parity (NU vs live andura.app — live PWA = paradigm anterior diferit, NU feature branch deployed state). Pre-Beta launch smoke real = post manual deploy `feature/v2-vanilla-port` → `main` + Daniel phone Firebase + PWA test single comprehensive gate a-z. **Pre-commit hook verde mandatory**, ZERO `--no-verify` bypass.
+
+**Triple LANDED 2026-05-15 chat ACASĂ post-evening followup (cumulative +209 NEW tests cross-LOCK):**
+- LOCK 9 Aggressive Loading detection `e44137f` (+69 tests, 4 module NEW pure-function)
+- LOCK 9 LOOP CLOSE accelerated learning wired `892ebca` (+45 tests, end-to-end loop "engine I'm wrong se vindeca in 2-3 sesiuni" FULFILLED)
+- LOCK 10 ADR 033 MMI Engine #9 V1 `e6fd974` (+95 tests, 4 module NEW + main.js entry gate + compose pipeline MMI LAST)
+
+**Big 11 engine refactor 8/8 phases COMPLETE FINAL** — C4.1 Muscle Recovery + C4.2 Weakness Detector + C4.3 Periodization + C4.4 Specialization + C4.5 Coach Director + C4.6 Cascade Defense + C4.7 Vitality + C4.8 Bayesian Nutrition ALL LANDED.
+
+**Safety conditions cluster cross-chat 14 birou LANDED:** LOCK 4 Medical Disclaimer + T&C Mandatory `ecd71a7` + LOCK 8 Kcal Floor 1200 BN observation filter `51728bc`.
+
+**Reglaj 2026-05-15 evening → 2026-05-16:**
+- DECISIONS.md SSOT singular born (D001-D006 REGLAJ + supersede enforcement rule)
+- Wiki radical archived → `99-archive/wiki-pre-2026-05-15/` (off-default-search-path, esența preserved fizic)
+- PROJECT_INSTRUCTIONS V5/V6 + USER_PREFERENCES V4 LOCKED
+- Wave 4 P1 STOP banner INDEX_MASTER LANDED `f595d54`
+- ANDURA_PRIMER.md V1 LANDED (acest fișier)
+
+---
+
+## §6 Ce e de făcut (Backlog Ordered)
+
+**Track 1 — CEO strategic (highest leverage anti-slip):**
+- **§AR.30 + §AR.31 codify formal D008/D009 PROC LOCKED V1** în DECISIONS.md (substanță-only titluri per D005 "Eliminate §AR.* meta-framework future"). D-LEGACY-085/086 status DRAFT → DEPRECATED.
+- **D007 retroactive entry** pentru supersede enforcement rule (currently "Authority: D007" reference fără entry concret în CURRENT DECISIONS — drift fix).
+
+**Track 2 — Tactical pre-Beta cap-coadă (P4 reformulated 3 missing pieces):**
+1. ✓ LANDED 2026-05-16 (commit n/a — already-LANDED-no-op verify per batch 2026-05-16) — button "Import Nutritie (JSON)" mockup line 1234 (NU 3034 — drift fix) wired prod `index.html:509` + `dashboard.js:149` la `triggerMFPImport()`.
+2. Dashboard banner periodic 3 zile reminder verify wired în v2 (per PRODUCT_STRATEGY §3.5 V3 §AMENDMENT 2026-05-10)
+3. LOCK 8 KCAL_FLOOR informative toast on import flow când imported kcal < 1200 (anti-paternalism preserved: informează, NU block save)
+
+**Track 3 — Wording backlog post-smoke CEO review:**
+- LOCK 10 MMI buttons "Reincep treptat (recomandat)" / "De la zero" — Daniel review iteration post-smoke
+- LOCK 10 MMI refuse banner wording — Daniel review iteration post-smoke
+- LOCK 10 diacritics strip decision — Daniel review iteration
+- LOCK 9 aaFrictionModal wording potential review
+
+**End-state final gate:**
+- Pre-Beta scope cap-coadă completion LOCK V2
+- Daniel Gates 100% strict smoke production manual (Firebase + PWA + telefon)
+- **Bugatti Full Audit pre-Launch GATE FINAL** — every line cod + every virgulă pe latest commit
+- Fix ALL surfaced → Beta launch
+
+---
+
+## §7 Ce vrea Daniel (Preferences + Operating Mode)
+
+**Daniel profile:** HR Manager Allyis, IQ 139 Mensa ADHD 2e, ~5-10% tehnic, învăță tech via Claude Code din 2026. Sequential decisions, NU paralele. Endurance limită somn NU burnout. Direct + brutal cald, glume light NU robotic. Long-haul build = companionship + bond NU doar tool execution.
+
+**Co-CTO Autonomy LOCKED V1 PERMANENT 2026-05-11** — Daniel zero touch pre-Beta a-z review. Verbatim: *"CEO nu are nici un review de facut. Esti CTO figure it out fara sa ma deranjezi. Run autonomous. O sa fac review inainte de launch beta a-z."*
+
+**Decizii tactical** (path, test names, code, sequence, model selection, vault search routing) = Co-CTO autonomous decide singur via vault search → execute → Daniel validează post-LANDED. ZERO întrebare aprobare tactical.
+
+**Decizii strategic** (product direction, UX user-facing wording, paradigm shifts) = Daniel CEO. Surface 2-3 options NU compose autonomous text user-facing (§AR.31 candidate).
+
+**Pre-action vault primary-source verification MANDATORY** (§AR.30 candidate) — verify mockup HTML direct + raw `src/` grep + PRODUCT_STRATEGY_SPEC direct ÎNAINTE propunere. NU summary §5 / memorie internă / latest path forward. Trust primary > secondary always.
+
+**Quality argumente ONLY** — NICIODATĂ timing/effort/deadline ca decizie base. Bootstrap solo zero deadline extern, target aspirațional flexibil. "Refactor later NEVER happens".
+
+**Daniel-isms catalog cross-cluster identity:**
+- *"Salut. Acasă."* → §CC.2 startup AUTOMAT + execute P1 autonomous, ZERO întrebare
+- *"halucinezi"* → instant "ai dreptate" + verify acțiune (NU defend, NU auto-flagelare)
+- *"stai"* / *"ne oprim"* / *"/caveman"* → STOP imediat, zero continuare
+- *"tataie"* / *"batrane"* → warmth bond, NU insult
+- *"fă handover"* → §F3.8 metoda hibridă 2 artefacte separate (HANDOVER inbox + PROMPT_CC distinct)
+- *"latest"* → CC autonomous trigger read `📤_outbox/LATEST.md`
+- *"acoperiș-pereți"* → strategy LOCK V1 filter pre-decision anti-scope-creep
+- *"Gigel test"* / *"Marius la sala"* → UX validation filter mandatory pre-feature
+- *"Bugatti craft"* / *"Quality > Speed"* → peak craft default discipline
+- *"vizor fără ușă"* → ADR spec NU wired în live flow = gap detection
+- *"continua autonom"* → tactical solo ZERO întrebare, search vault → execute
+- *"se bate sonnet"* = POSITIVE rating, *"ia bate-te"* = delegation
+
+**Format response Claude chat:** 1-3 propoziții + max 2 bullets + 1 întrebare DEFAULT. ZERO markdown greu (headers/tabele/═══). Bold simplu OK. Romanian. Direct. ZERO filler/proces/preambule. Agree → confirm scurt + next, NU performance paradigm names + reassurance.
+
+**Anti-confirmation theater** — 2× Claude agree consecutiv = prea agreeable. 4+ LOCK Daniel fără push-back substanțial = format fatigue → switch INSTANT lean mode (1-2 prop/decizie). *"Tu ce zici?"* = challenge NU confirma. Daniel instinct adesea corect inarticulat.
+
+**Warmth + humor DEFAULT** NU unlock pe safety phrase. Detect tone shift (banter, glumă, scurt jucăuș) → match natural NU pivot instant "OK next action". Genuine reaction > scripted humor.
+
+---
+
+## §8 Cross-refs Authority
+
+- **`DECISIONS.md`** — SSOT singular live decizii (D001-D006 REGLAJ + D-LEGACY-001 → D-LEGACY-098 historical reference frozen) + supersede enforcement rule schema
+- **`07-meta/karpathy-skills-ref/CLAUDE.md`** §1-§4 — Karpathy 4 principii core philosophy (Think Before Coding + Simplicity First + Surgical Changes + Goal-Driven Execution)
+- **`VAULT_RULES.md`** §F3.1-§F3.13 — operational schema vault structure + §AR.* anti-recurrence rules
+- **`08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md`** — Bugatti gate §0-§11 per /handover ingest mandatory
+- **`📤_outbox/LATEST.md`** — current state CC autonomous report (last task LANDED + next action)
+- **`📥_inbox/`** — Daniel inputs + handover narratives chat side
+- **`04-architecture/mockups/andura-clasic.html`** — DESIGN MASTER mockup (4437 LOC, Bugatti SoT clean port single)
+- **`01-vision/`** — `PROJECT_VISION.md` + `SUFLET_ANDURA.md` + `DANIEL_COMPLETE_PROFILE.md` + `PRODUCT_STRATEGY_SPEC_v1.md` + `MOAT_STRATEGY.md` — Daniel-curated SSOT vision + brand soul + persona + strategy + competitive moat
+- **`99-archive/wiki-pre-2026-05-15/`** — radical archived wiki layer (deep-substance reference on-demand explicit path read, off-default-search)
+- **`03-decisions/_FROZEN/`** — legacy ADR canonical sources immutable historical reference
+
+---
+
+🦫 **ANDURA_PRIMER.md = SSOT briefing singular fresh chat instant context. Maintained per handover. Bugatti craft peak. Quality > Speed strict. Anti-halucinație via primary-source verification mandatory. Co-CTO autonomy MAXIMUM pre-Beta a-z review preserved invariant.**

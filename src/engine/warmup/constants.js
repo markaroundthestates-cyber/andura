@@ -6,7 +6,7 @@
 // prescriptive engines chat strategic 2026-04-30 evening — pipeline §42.10
 // canonical position 7th penultimate prescriptive engine).
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.7
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.7
 // (commit c15ad0f LANDED 2026-05-06 evening chat-5 acasa, 21 decisions
 // Cluster A-E verbatim aggregation chat strategic 2026-04-30 evening §45.6 +
 // 2026-05-04 evening BATCH 4 §65.1-§65.4).

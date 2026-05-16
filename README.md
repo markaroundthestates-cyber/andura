@@ -1,3 +1,9 @@
+> 🛑 **STOP. Read [[DECISIONS.md]] instead pentru decisions context. README.md = public project intro doar.**
+>
+> Current SSOT (post 2026-05-15 reglaj) = `DECISIONS.md` root §D001. Wiki/ + 03-decisions/ + 06-sessions-log/ = FROZEN historical reference only. Karpathy 4 principii: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4.
+
+---
+
 # Andura — Personal AI Coach
 
 A personal AI coach with real contextual reasoning, persistent memory, and adaptive decisions.

@@ -1,4 +1,12 @@
 // ══ COACH DIRECTOR — Orchestrare sesiune cu context unificat ══════════════
+// V2 post-C4.5 wire Big 11 RO canonical V1 — engines C4.1-4.4 LANDED return
+// Big 11 RO output direct (NU Big 6 EN mapping intermediate). Orchestrator
+// dispatch consume rules differential per engine per ADR_ENGINE_REFACTOR §3.5
+// LOCK V1: muscleRecovery + periodization + weaknessDetector = primary-only;
+// specialization = primary + weighted secondary 0.3 (via
+// computeWeightedGroupScore C4.4 LANDED `657b7175`). Pipeline §42.10 dispatch
+// order Periodization → Goal Adaptation → Energy → Bayesian Nutrition → Tempo
+// → Specialization → Warm-up → Deload preserved invariant ADR-026 §9.
 import { buildCoachContext } from './coachContext.js';
 import { realityEngine } from './reality.js';
 import { evaluate } from './ruleEngine.js';
@@ -22,9 +30,88 @@ import { DecisionCluster, clusterTraceToRationale } from './decisionCluster.js';
 import { getActiveDimensions } from './dimensionRegistry.js';
 import { aaClusterOutputToLegacyShape } from './dimensions/autoAggressionAdapter.js';
 import { DIMENSION_ID as AA_DIMENSION_ID } from './dimensions/autoAggressionDimension.js';
+import { computeWeightedGroupScore } from './specialization/weaknessConsumer.js';
 import * as dpModule from './dp.js';
 
+// Engine consume policy per ADR_ENGINE_REFACTOR §3.5 LOCK V1 — differential
+// primary-only vs primary + weighted secondary 0.3 per engine.
+const ENGINE_CONSUME_PRIMARY_ONLY = Object.freeze([
+  'muscleRecovery',
+  'periodization',
+  'weaknessDetector',
+]);
+const ENGINE_CONSUME_WEIGHTED_SECONDARY = Object.freeze(['specialization']);
+
+/**
+ * Aggregate Big 11 RO group score per session — primary 1.0 + secondary 0.3
+ * consume policy per ADR_ENGINE_REFACTOR §3.5 LOCK V1 differential per engine.
+ *
+ * Consume rules:
+ *   - muscleRecovery: primary-only (anatomical fiber stress drives MPS)
+ *   - periodization: primary-only (cluster phase cycle per primary)
+ *   - weaknessDetector: primary-only (Brzycki 1RM per primary)
+ *   - specialization: primary + weighted secondary 0.3 (Bundle 6.0.4.2 RDL/
+ *     Good Morning posterior chain dual-cluster compatible via
+ *     computeWeightedGroupScore helper C4.4 LANDED `657b7175`)
+ *
+ * Pure function — ADR-026 §9 invariant (no Date.now / Math.random / side
+ * effects). Unknown engineId returns frozen empty map (NU throw — defensive
+ * fallback per ADR_ENGINE_REFACTOR Co-CTO discipline).
+ *
+ * @param {Array<Object>} exercises - Session exercises (each with
+ *   muscle_target_primary string + optional muscle_target_secondary string[])
+ * @param {string} engineId - 'muscleRecovery' | 'periodization' |
+ *   'weaknessDetector' | 'specialization'
+ * @returns {Object<string, number>} Big 11 group → weighted score map (frozen)
+ */
+export function aggregateGroupScoresPerEngine(exercises, engineId) {
+  if (!Array.isArray(exercises)) return Object.freeze({});
+  if (typeof engineId !== 'string' || engineId.length === 0) return Object.freeze({});
+
+  const scores = {};
+
+  if (ENGINE_CONSUME_PRIMARY_ONLY.includes(engineId)) {
+    for (const ex of exercises) {
+      if (!ex || typeof ex !== 'object') continue;
+      const primary = ex.muscle_target_primary;
+      if (typeof primary !== 'string' || primary.length === 0) continue;
+      scores[primary] = (scores[primary] || 0) + 1.0;
+    }
+  } else if (ENGINE_CONSUME_WEIGHTED_SECONDARY.includes(engineId)) {
+    const targetGroups = new Set();
+    for (const ex of exercises) {
+      if (!ex || typeof ex !== 'object') continue;
+      if (typeof ex.muscle_target_primary === 'string' && ex.muscle_target_primary.length > 0) {
+        targetGroups.add(ex.muscle_target_primary);
+      }
+      if (Array.isArray(ex.muscle_target_secondary)) {
+        for (const g of ex.muscle_target_secondary) {
+          if (typeof g === 'string' && g.length > 0) targetGroups.add(g);
+        }
+      }
+    }
+    for (const group of targetGroups) {
+      let total = 0;
+      for (const ex of exercises) {
+        if (!ex || typeof ex !== 'object') continue;
+        total += computeWeightedGroupScore(ex, group);
+      }
+      if (total > 0) scores[group] = total;
+    }
+  }
+
+  return Object.freeze(scores);
+}
+
 export class CoachDirector {
+  /**
+   * V2 post-C4.5: orchestrator wire Big 11 RO canonical V1 — engines
+   * C4.1-4.4 LANDED return Big 11 RO output direct via `detectWeakGroups`,
+   * `detectGlobalStagnation`, `recompileWeek`, etc. (NU Big 6 EN intermediate).
+   * Aggregate primary + weighted secondary per Decision §3.5 (Specialization
+   * weighted via `aggregateGroupScoresPerEngine(exercises, 'specialization')`).
+   * Pipeline §42.10 dispatch order preserved invariant ADR-026 §9.
+   */
   async buildSession(sessionType) {
     const ctx = buildCoachContext();
 
@@ -344,6 +431,93 @@ export class CoachDirector {
       }
     }
     return session;
+  }
+
+  // ══ Schedule override generators — mockup `chooseScheduleOverride` wire ════
+  // Three lean session shapes the coach can return when user picks override
+  // path ("sesiune-usoara" / "sar-ziua" / "vreau-antrenez") from mockup card.
+
+  /**
+   * Light mobility ~15 min session — NO lifts. Used when user picks
+   * `chooseScheduleOverride('sesiune-usoara')`.
+   *
+   * @param {object} profile - user profile (unused today, reserved for future)
+   * @param {object} ctx - coach context (unused today, reserved for future)
+   * @returns {{ type, durationMin, exercises, isMobility, intent }}
+   */
+  buildLightMobility(_profile, _ctx) {
+    return {
+      type: 'MOBILITY_LIGHT',
+      durationMin: 15,
+      isMobility: true,
+      intent: 'Recuperare activa fara lifts — pregatim sesiunea grea de maine.',
+      exercises: [
+        { name: 'Band Pull-Aparts', sets: 2, reps: 15, isMobility: true },
+        { name: 'Scapular Activation (Wall Slides)', sets: 2, reps: 12, isMobility: true },
+        { name: 'Cat-Cow Mobility', sets: 1, reps: 10, isMobility: true },
+        { name: 'Foam Roll Upper Back', sets: 1, reps: 60, repsUnit: 'sec', isMobility: true },
+        { name: 'Hip Flexor Stretch', sets: 1, reps: 45, repsUnit: 'sec', isMobility: true },
+      ],
+    };
+  }
+
+  /**
+   * Re-balance upcoming sessions after a skipped day. Distributes the missed
+   * volume across the remaining sessions this week (up to 2). Returns the
+   * adjustment plan — caller applies on next buildSession() calls.
+   *
+   * @param {object} profile
+   * @param {object} ctx
+   * @param {string} skippedDay - day label ('luni','marti', etc.)
+   * @returns {{ skippedDay, adjustments: Array<{day, volumeBoostPct}>, note }}
+   */
+  rebalanceWeekAfterSkip(_profile, _ctx, skippedDay) {
+    const week = ['luni','marti','miercuri','joi','vineri','sambata','duminica'];
+    const idx = week.indexOf((skippedDay || '').toLowerCase());
+    if (idx === -1) {
+      return {
+        skippedDay,
+        adjustments: [],
+        note: 'Ziua sarita nu a fost recunoscuta — fara redistribuire.',
+      };
+    }
+    const remaining = week.slice(idx + 1).slice(0, 2);
+    const boostPerDay = remaining.length > 0 ? Math.round(20 / remaining.length) : 0;
+    const adjustments = remaining.map(day => ({ day, volumeBoostPct: boostPerDay }));
+    return {
+      skippedDay,
+      adjustments,
+      note: adjustments.length
+        ? `Adaugam ${boostPerDay}% volum pe ${remaining.join(' + ')} ca sa compensam.`
+        : 'Saptamana s-a terminat — reluam normal de luni.',
+    };
+  }
+
+  /**
+   * Generate a safe session when user wants to train on a planned rest day.
+   * Low intensity (70% kg target), reduced sets (max 2 per ex), recovery-aware.
+   * Used when user picks `chooseScheduleOverride('vreau-antrenez')`.
+   *
+   * @param {object} profile
+   * @param {object} ctx
+   * @param {string} alternativeType - 'PUSH' | 'PULL' | 'UMERI_BRATE' | etc.
+   * @returns {{ type, exercises, isSafeRestDay, intensityFactor, intent }}
+   */
+  generateSafeSessionForRestDay(_profile, ctx, alternativeType) {
+    const baseType = (alternativeType || 'UMERI_BRATE').toUpperCase();
+    const base = buildSession(baseType, ctx || {});
+    const exercises = (base.exercises || []).slice(0, 4).map(e => ({
+      ...e,
+      sets: Math.min(2, e.sets || 2),
+      isSafeRestDay: true,
+    }));
+    return {
+      type: baseType,
+      isSafeRestDay: true,
+      intensityFactor: 0.7,
+      intent: 'Sesiune usoara pe zi de odihna — kg target 70%, max 2 seturi/exercitiu.',
+      exercises,
+    };
   }
 }
 

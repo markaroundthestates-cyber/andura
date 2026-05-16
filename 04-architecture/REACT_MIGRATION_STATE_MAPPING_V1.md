@@ -11,7 +11,7 @@
 
 **Cross-refs:**
 - [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 (foundation lock)
-- [[../03-decisions/030-decision-cluster-strangler]] D2 orchestrator preserved compatible
+- [[../03-decisions/030-adapter-design-pattern]] D2 orchestrator preserved compatible
 - [[../03-decisions/018-engine-extensibility-architecture]] §2 Standardized Dimension Contract pure functions
 - [[mockups/andura-clasic.html]] + [[mockups/andura-living-body.html]] design tokens canonical SSOT
 - [[ROOT_NAV_V2_29_5_7_AMENDMENT]] root nav 4 tabs LOCKED final
@@ -622,7 +622,7 @@ useEffect(() => {
 ## §9 — Cross-refs
 
 - [[../03-decisions/005-vanilla-js-no-framework]] §AMENDMENT 2026-05-08 — foundation lock
-- [[../03-decisions/030-decision-cluster-strangler]] D2 — orchestrator preserved compatible
+- [[../03-decisions/030-adapter-design-pattern]] D2 — orchestrator preserved compatible
 - [[../03-decisions/018-engine-extensibility-architecture]] §2 — engines pure functions invariant
 - [[../03-decisions/011-coach-decision-log-architecture]] — CDL Tier 0/1/2 preserved
 - [[../03-decisions/020-storage-tiering-strategy]] — IndexedDB rotation preserved

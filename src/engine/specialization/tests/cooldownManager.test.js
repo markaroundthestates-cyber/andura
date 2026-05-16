@@ -121,7 +121,7 @@ describe('evaluateCooldown — Cluster B5 Q10=B + B6 Q16=A N=12 weeks', () => {
       biceps: { endTimestampMs: NOW_MS - 4 * MS_PER_WEEK, reason: 'completed_exit' },
     };
     const r = evaluateCooldown({
-      targetGroup: 'back',  // different group
+      targetGroup: 'spate',  // different group
       history,
       nowMs:       NOW_MS,
     });
@@ -181,7 +181,7 @@ describe('buildCooldownEntry — orchestrator persistence helper', () => {
 
   it('hard_reject reason preserved', () => {
     const r = buildCooldownEntry({
-      group:  'back',
+      group:  'spate',
       nowMs:  NOW_MS,
       reason: 'hard_reject',
     });
@@ -190,7 +190,7 @@ describe('buildCooldownEntry — orchestrator persistence helper', () => {
 
   it('invalid reason → defaults to completed_exit (safety)', () => {
     const r = buildCooldownEntry({
-      group:  'back',
+      group:  'spate',
       nowMs:  NOW_MS,
       reason: 'random_xyz',
     });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   lookupIsraetelLandmarks,
+  lookupIsraetelLandmarksRO,
   resolveMovementCategory,
   volumeMetricWeight,
   computeWeightedVolume,
@@ -13,6 +14,10 @@ import {
   VOLUME_LANDMARKS,
   MOVEMENT_CATEGORY,
 } from '../constants.js';
+import {
+  ISRAETEL_BASELINES,
+  BIG11_RO_TO_EN_MAP,
+} from '../../periodization/constants.js';
 
 describe('lookupIsraetelLandmarks — Cluster C1 base', () => {
   it('chest → MEV/MAV/MRV from Israetel', () => {
@@ -27,6 +32,88 @@ describe('lookupIsraetelLandmarks — Cluster C1 base', () => {
   it('unknown muscle → null defensive', () => {
     expect(lookupIsraetelLandmarks('foo')).toBe(null);
     expect(lookupIsraetelLandmarks(null)).toBe(null);
+  });
+});
+
+describe('lookupIsraetelLandmarksRO — C4.8 Big 11 RO migration via translator inverse (ADR §4.8 LOCK V1)', () => {
+  it('piept → returns chest baseline (Israetel literature reference invariant preserved)', () => {
+    const r = lookupIsraetelLandmarksRO('piept');
+    expect(r).not.toBeNull();
+    expect(r).toEqual(ISRAETEL_BASELINES.chest);
+    expect(r).toHaveProperty('MEV');
+    expect(r).toHaveProperty('MAV');
+    expect(r).toHaveProperty('MRV');
+  });
+
+  it('spate → returns back baseline', () => {
+    expect(lookupIsraetelLandmarksRO('spate')).toEqual(ISRAETEL_BASELINES.back);
+  });
+
+  it('umeri → returns shoulders baseline', () => {
+    expect(lookupIsraetelLandmarksRO('umeri')).toEqual(ISRAETEL_BASELINES.shoulders);
+  });
+
+  it('picioare-quads → returns quads baseline (RO native split)', () => {
+    expect(lookupIsraetelLandmarksRO('picioare-quads')).toEqual(ISRAETEL_BASELINES.quads);
+  });
+
+  it('picioare-hamstrings → returns hamstrings baseline (RO native NU calque)', () => {
+    expect(lookupIsraetelLandmarksRO('picioare-hamstrings')).toEqual(ISRAETEL_BASELINES.hamstrings);
+  });
+
+  it('fese → returns glutes baseline (Big 11 RO canonical V1 NEW)', () => {
+    expect(lookupIsraetelLandmarksRO('fese')).toEqual(ISRAETEL_BASELINES.glutes);
+  });
+
+  it('gambe → returns calves baseline', () => {
+    expect(lookupIsraetelLandmarksRO('gambe')).toEqual(ISRAETEL_BASELINES.calves);
+  });
+
+  it('biceps → returns biceps baseline (RO ≡ EN)', () => {
+    expect(lookupIsraetelLandmarksRO('biceps')).toEqual(ISRAETEL_BASELINES.biceps);
+  });
+
+  it('triceps → returns triceps baseline (RO ≡ EN)', () => {
+    expect(lookupIsraetelLandmarksRO('triceps')).toEqual(ISRAETEL_BASELINES.triceps);
+  });
+
+  it('antebrate → returns forearms baseline', () => {
+    expect(lookupIsraetelLandmarksRO('antebrate')).toEqual(ISRAETEL_BASELINES.forearms);
+  });
+
+  it('core → returns abs baseline', () => {
+    expect(lookupIsraetelLandmarksRO('core')).toEqual(ISRAETEL_BASELINES.abs);
+  });
+
+  it('unknown RO group → null defensive (NU translator fallback)', () => {
+    expect(lookupIsraetelLandmarksRO('unknown_ro_group')).toBeNull();
+    expect(lookupIsraetelLandmarksRO('chest')).toBeNull(); // Big 6 EN NU în RO_TO_EN map
+    expect(lookupIsraetelLandmarksRO(null)).toBeNull();
+    expect(lookupIsraetelLandmarksRO(undefined)).toBeNull();
+    expect(lookupIsraetelLandmarksRO('')).toBeNull();
+  });
+
+  it('Israetel literature reference invariant preserved — lookupIsraetelLandmarks(EN) returns same value pre/post C4.8 (ZERO mutation existing function)', () => {
+    expect(lookupIsraetelLandmarks('chest')).toEqual(ISRAETEL_BASELINES.chest);
+    expect(lookupIsraetelLandmarks('glutes')).toEqual(ISRAETEL_BASELINES.glutes);
+    expect(lookupIsraetelLandmarks('forearms')).toEqual(ISRAETEL_BASELINES.forearms);
+  });
+
+  it('BIG11_RO_TO_EN_MAP inverse translator complete 11 entries Big 11 canonical V1', () => {
+    expect(Object.keys(BIG11_RO_TO_EN_MAP).length).toBe(11);
+    expect(BIG11_RO_TO_EN_MAP.piept).toBe('chest');
+    expect(BIG11_RO_TO_EN_MAP.spate).toBe('back');
+    expect(BIG11_RO_TO_EN_MAP.umeri).toBe('shoulders');
+    expect(BIG11_RO_TO_EN_MAP['picioare-quads']).toBe('quads');
+    expect(BIG11_RO_TO_EN_MAP['picioare-hamstrings']).toBe('hamstrings');
+    expect(BIG11_RO_TO_EN_MAP.fese).toBe('glutes');
+    expect(BIG11_RO_TO_EN_MAP.gambe).toBe('calves');
+    expect(BIG11_RO_TO_EN_MAP.antebrate).toBe('forearms');
+    expect(BIG11_RO_TO_EN_MAP.core).toBe('abs');
+  });
+
+  it('BIG11_RO_TO_EN_MAP frozen immutable (Object.freeze invariant)', () => {
+    expect(Object.isFrozen(BIG11_RO_TO_EN_MAP)).toBe(true);
   });
 });
 

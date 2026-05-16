@@ -1,5 +1,5 @@
 // Orchestrator types — JSDoc typedefs per ADR 030 D1-D5 LOCKED V1.
-// See: 03-decisions/030-adapter-design-pattern.md
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md
 
 /**
  * Pre-built input shape for engines per ADR 030 D3.

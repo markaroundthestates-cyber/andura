@@ -21,6 +21,13 @@
 // **Faza 3 (post-launch v1):** decommission LWW. Cross-ref ADR 011 §Firebase
 // sync amendment + ADR 021 §Implementation phasing §Faza 3.
 
+import { detectT0ToT1AdvanceTrigger } from './acceleratedLearning.js';
+
+// Internal helper isolates the static import from computeEngineTierWithAccelerated.
+function _detectT0ToT1AdvanceFromLog(cdlEntries) {
+  return detectT0ToT1AdvanceTrigger(cdlEntries).shouldAdvance;
+}
+
 // ── Schema constants ────────────────────────────────────────────────────────
 
 /**
@@ -100,6 +107,36 @@ export function computeEngineTier(sessionCount) {
   if (n <= ENGINE_TIER_THRESHOLDS.T0.max) return 'T0';
   if (n <= ENGINE_TIER_THRESHOLDS.T1.max) return 'T1';
   return 'T2';
+}
+
+/**
+ * Compute engine tier with accelerated learning advance trigger.
+ *
+ * Per [[wiki/concepts/aggressive-loading-warning-tier-aware]] §Engine learning
+ * accelerated T0/T1 LOCK V1 2026-05-14: when user-override pattern persists
+ * across 3+ distinct exercises (each with 2+ legitimate overrides), advance
+ * T0 → T1 even when session count is below the natural threshold.
+ *
+ * T1 → T2 accelerated NOT implemented (spec only mandates T0 → T1; T1 → T2
+ * advance is governed by ADR 009 §AMENDMENT 2026-05-05 Convergence Guard
+ * "T2 Unlock" mechanism, separate concern).
+ *
+ * Pure function (ADR 026 §9): consumes accelerated-learning detector output,
+ * no internal state. Idempotent (ADR 018 §2): same input → same output.
+ *
+ * @pure
+ * @param {number} sessionCount
+ * @param {Array} cdlEntries - 'aggressive-loading-log' entries (enriched)
+ * @returns {'T0' | 'T1' | 'T2'}
+ */
+export function computeEngineTierWithAccelerated(sessionCount, cdlEntries) {
+  const baselineTier = computeEngineTier(sessionCount);
+  if (baselineTier !== 'T0') return baselineTier;
+  // Lazy import would normally avoid circular concerns, but the accelerated
+  // learning module is a pure leaf (no DB read); static import is safe and
+  // keeps the tree-shake friendly.
+  const advance = _detectT0ToT1AdvanceFromLog(cdlEntries);
+  return advance ? 'T1' : 'T0';
 }
 
 /**

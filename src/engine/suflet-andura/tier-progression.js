@@ -2,6 +2,14 @@
 // LOCKED V1 per §36.16-§36.26 SUFLET ANDURA + §36.44 (T0 hard minimum) + §36.45 (T2 wording functional).
 // Self-selection = FEATURE NOT bug — user can skip onboarding (T0) and engine
 // uses synthetic demographic prior (50+ profile × 90 zile) as fallback.
+//
+// Anatomical agnostic preserved post-C4.7 verify Big 11 wire compatible — tier
+// detection driven purely by behavioral proxy state (onboardingComplete +
+// vitalityComplete + sessionCount), ZERO Big 6 EN hardcoded refs, ZERO Big 11 RO
+// group keys per ADR_ENGINE_REFACTOR §4.7 LOCK V1 acceptance criteria.
+// Behavioral proxy 6 questions Gigel-friendly opt-in invariant ADR 016 preserved.
+// Vitality layer is taxonomy-independent — works identical whether upstream
+// engines emit Big 6 EN or Big 11 RO group keys.
 
 /** @type {Record<string, { id: number, label: string, requirements: string }>} */
 export const TIER_LEVELS = {

@@ -21,7 +21,7 @@
 // Wire-up Faza 3 STRANGLER post engines V1 LANDED — separate task.
 // V1 implementation acest task tactical pure-function module only.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.4
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.4
 // (commit 685fdd4 LANDED 2026-05-06 afternoon chat-5 acasa, 32-35 decisions
 // Cluster A-E verbatim).
 
@@ -57,6 +57,7 @@ import {
   UI_TIER,
   CALIBRATION_TIERS,
 } from './constants.js';
+import { filterKcalFloorObservations } from './observationFilter.js';
 
 export const ENGINE_ID = 'bayesianNutrition';
 
@@ -258,7 +259,20 @@ export async function evaluate(ctx) {
   if (phaseResetEval.shouldReset) signals.push('phase_reset_layer_1_and_2');
 
   // Cluster A1 — Conjugate Normal-Normal posterior update (closed-form)
-  const observations = Array.isArray(meta.observations) ? meta.observations : [];
+  // LOCK 8 Kcal Floor 1200 filter per wiki/concepts/kcal-floor-1200-engine-filter
+  // LOCK V1 2026-05-14 — exclude observations cu kcalDaily sub floor minim
+  // pre sample mean/variance computation. Forward-compatible: observations
+  // fara kcalDaily field pass-through unchanged (V1 weightDelta-only schema
+  // preserved invariant). CDL log original append-only persists transparency
+  // (ADR 011) — engine doar exclude din invatare. Anti-paternalism preserved.
+  const rawObservations = Array.isArray(meta.observations) ? meta.observations : [];
+  const kcalFloorFilterResult = filterKcalFloorObservations(rawObservations);
+  trace.kcalFloorFilter = {
+    excludedCount:  kcalFloorFilterResult.excludedCount,
+    citationSource: kcalFloorFilterResult.citationSource,
+    floorMin:       kcalFloorFilterResult.floorMin,
+  };
+  const observations = kcalFloorFilterResult.filtered;
   const obsCount = observations.length;
   let sampleMean = prior.mu;
   let sampleVariance = prior.sigma * prior.sigma;

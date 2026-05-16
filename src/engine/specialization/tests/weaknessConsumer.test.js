@@ -118,8 +118,8 @@ describe('reconcileWeaknessTarget — Cluster B4 Q4=C user agency F4 wins', () =
   });
 
   it('user override only → user agency F4 wins', () => {
-    const r = reconcileWeaknessTarget({ engineObjective: null, userOverride: 'shoulders' });
-    expect(r.resolvedGroup).toBe('shoulders');
+    const r = reconcileWeaknessTarget({ engineObjective: null, userOverride: 'umeri' });
+    expect(r.resolvedGroup).toBe('umeri');
     expect(r.source).toBe('user_override');
   });
 
@@ -130,8 +130,8 @@ describe('reconcileWeaknessTarget — Cluster B4 Q4=C user agency F4 wins', () =
   });
 
   it('conflict engine vs user → user override wins F4 agency', () => {
-    const r = reconcileWeaknessTarget({ engineObjective: 'biceps', userOverride: 'back' });
-    expect(r.resolvedGroup).toBe('back'); // user wins
+    const r = reconcileWeaknessTarget({ engineObjective: 'biceps', userOverride: 'spate' });
+    expect(r.resolvedGroup).toBe('spate'); // user wins
     expect(r.source).toBe('user_override');
     expect(r.engineObjective).toBe('biceps'); // preserved CDL Bugatti craft
   });
@@ -142,8 +142,8 @@ describe('reconcileWeaknessTarget — Cluster B4 Q4=C user agency F4 wins', () =
   });
 
   it('case-insensitive normalization', () => {
-    const r = reconcileWeaknessTarget({ engineObjective: 'BICEPS', userOverride: 'BACK' });
-    expect(r.resolvedGroup).toBe('back');
+    const r = reconcileWeaknessTarget({ engineObjective: 'BICEPS', userOverride: 'SPATE' });
+    expect(r.resolvedGroup).toBe('spate');
     expect(r.engineObjective).toBe('biceps');
   });
 });
@@ -174,9 +174,9 @@ describe('buildWeaknessSignal — bundle integration Cluster B1+B2+B3+B4', () =>
     const r = buildWeaknessSignal({
       lifetimeLogs:      [],
       recentLogs:        [],
-      userOverrideGroup: 'shoulders',
+      userOverrideGroup: 'umeri',
     });
-    expect(r.targetGroup).toBe('shoulders');
+    expect(r.targetGroup).toBe('umeri');
   });
 
   it('consensus NOT aligned + no user override → null (defer detection)', () => {
@@ -227,7 +227,7 @@ describe('evaluateProposal — Cluster B7 Q15=B propose user accept/reject', () 
 
   it('Q15=B Marius decision retained — engine NU auto-activates silent', () => {
     // Verify even cu eligibility passed, engine never auto-activates
-    const r = evaluateProposal({ userAccepted: undefined, targetGroup: 'back' });
+    const r = evaluateProposal({ userAccepted: undefined, targetGroup: 'spate' });
     expect(r.activationApproved).toBe(false);
   });
 });

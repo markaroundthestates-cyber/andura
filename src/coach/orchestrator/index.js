@@ -23,9 +23,9 @@
 //   durationMs, ok, errorCode?, severity? }`. ADR 011 §X Changelog 2026-05-08
 //   `pipeline_event` payload schema. Sentry per-error capture = separate scope.
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2.4 D4 §AMENDMENT 2026-05-08
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.4 D4 §AMENDMENT 2026-05-08
 //      + §3.3 + §3.4 + §3.6 RESOLVED V1
-//      03-decisions/011-coach-decision-log-architecture.md Changelog 2026-05-08
+//      03-decisions/_FROZEN/011-coach-decision-log-architecture.md Changelog 2026-05-08
 
 import { err } from './result.js';
 import { extendEngineContext } from './contextBuilder.js';

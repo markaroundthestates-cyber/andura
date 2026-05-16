@@ -47,22 +47,31 @@ function capitalizeGroup(group) {
 /**
  * Translate muscle group ID to RO native label per Cluster C4 Bugatti craft.
  *
- * V1 conservative pick: 7 canonical muscle groups (chest/back/shoulders/legs/
- * biceps/triceps/core) match weaknessDetector.js group enum. RO native labels.
+ * V3 SSOT post-C4.5 (cap-coadă cleanup `657b7175` Big 6 EN fallback deprecated):
+ * Big 11 RO canonical V1 input only — piept/spate/umeri/biceps/triceps/
+ * antebrate/core/picioare-quads/picioare-hamstrings/fese/gambe (post C4.2
+ * Weakness Detector `a35d362` _headToGroup() + C4.4 Specialization `657b7175`
+ * downstream consumers wire). Unknown group → capitalized fallback string
+ * (NU map entry — Big 6 EN deprecated post-C4.5 Coach Director LANDED).
  *
  * @param {string|null|undefined} group
- * @returns {string} RO native group label
+ * @returns {string} RO native group label or capitalized fallback
  */
 export function translateGroupToRO(group) {
   if (typeof group !== 'string') return '';
   const map = {
-    chest:     'Piept',
-    back:      'Spate',
-    shoulders: 'Umeri',
-    legs:      'Picioare',
-    biceps:    'Biceps',
-    triceps:   'Triceps',
-    core:      'Core',
+    // Big 11 RO canonical V1 — single SSOT post-C4.5 cap-coadă cleanup
+    piept:                 'Piept',
+    spate:                 'Spate',
+    umeri:                 'Umeri',
+    biceps:                'Biceps',
+    triceps:               'Triceps',
+    antebrate:             'Antebrate',
+    core:                  'Core',
+    'picioare-quads':      'Cvadriceps',
+    'picioare-hamstrings': 'Ischiogambieri',
+    fese:                  'Fese',
+    gambe:                 'Gambe',
   };
   const lower = group.toLowerCase();
   return map[lower] ?? capitalizeGroup(group);

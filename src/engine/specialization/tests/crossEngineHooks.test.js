@@ -139,11 +139,11 @@ describe('emitInjuryAutoDisable — Cluster D4 Q14=A Safety Override invariant 5
   it('PainButton active + target affected → disabled', () => {
     const r = emitInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['legs'],
-      targetGroup:      'legs',
+      affectedGroups:   ['picioare-quads'],
+      targetGroup:      'picioare-quads',
     });
     expect(r.disabled).toBe(true);
-    expect(r.affectedGroup).toBe('legs');
+    expect(r.affectedGroup).toBe('picioare-quads');
     expect(r.rationale).toContain('q14_a');
     expect(r.rationale).toContain('invariant_5');
     expect(r.rationale).toContain('layer_5_medical_safety');
@@ -152,7 +152,7 @@ describe('emitInjuryAutoDisable — Cluster D4 Q14=A Safety Override invariant 5
   it('PainButton active + any group affected (NOT target) → conservative disable', () => {
     const r = emitInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['back'],
+      affectedGroups:   ['spate'],
       targetGroup:      'biceps',
     });
     expect(r.disabled).toBe(true);
@@ -170,8 +170,8 @@ describe('emitInjuryAutoDisable — Cluster D4 Q14=A Safety Override invariant 5
   it('case-insensitive group matching', () => {
     const r = emitInjuryAutoDisable({
       painButtonActive: true,
-      affectedGroups:   ['LEGS'],
-      targetGroup:      'legs',
+      affectedGroups:   ['PICIOARE-QUADS'],
+      targetGroup:      'picioare-quads',
     });
     expect(r.disabled).toBe(true);
   });

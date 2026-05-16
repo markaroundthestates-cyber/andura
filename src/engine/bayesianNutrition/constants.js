@@ -4,9 +4,9 @@
 // Pipeline §42.10 position 4th canonical: Periodization → Goal Adaptation →
 // Energy → Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload.
 //
-// Source: 03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.4
+// Source: 03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.4
 // (Cluster A-E verbatim aggregation chat strategic 2026-05-05 birou after).
-// Complementary: 03-decisions/022-bayesian-nutrition-inference.md SPEC READY V1.
+// Complementary: 03-decisions/_FROZEN/022-bayesian-nutrition-inference.md SPEC READY V1.
 //
 // ZERO fabrication beyond §9.4 spec. ZERO Date.now / Math.random — all values
 // static per ADR 018 §2 deterministic contract.
@@ -249,3 +249,37 @@ export const ENERGY_VARIANCE_MODIFIER = Object.freeze({
 export const PERFORMANCE_BUDGET = Object.freeze({
   maxLatencyMs: 50, // <50ms median Gaussian Conjugate Prior closed-form local-first JS tractable
 });
+
+/**
+ * Kcal floor minim per LOCK 8 LOCK V1 2026-05-14 Daniel CEO directive verbatim
+ * chat birou 2026-05-14:
+ *   "Daca user vrea sa puna sub 1200 kcal logate, mesaj ca minimul recomandat
+ *    de institutil bla bla bla este de 1200 si ca andura nu o sa includa
+ *    loguri mai mici pentru calculul obiectivelor si preconizari viitoare"
+ *
+ * WHO/ESPEN/INS Romania scientific anchored reference universal applicable
+ * (1200 kcal/zi minim survival baseline female lower bound conservative).
+ *
+ * Observations cu kcalDaily sub acest prag sunt filtered din sample mean +
+ * variance computation Cluster A1 Conjugate Normal-Normal pre-update, NU
+ * blocate la log (user autonomy preserved invariant per F2 Sufletul Andura
+ * "AI-ul informeaza NU impune" cross-13 LOCKs catalysator).
+ *
+ * Anti-paternalism preserved invariant ABSOLUTE: CDL append-only persists
+ * log original transparency NU mutate; engine exclude din invatare + UI
+ * informeaza scientific anchored citation source citable.
+ *
+ * @type {number}
+ */
+export const KCAL_FLOOR_DAILY_MIN = 1200;
+
+/**
+ * Citation source kcal floor — WHO scientific anchored universal applicable.
+ * Romanian-first no-diacritics rule LOCK V1 PERMANENT 2026-05-10 strict.
+ *
+ * Forward-going UI trigger consumer wording reference (getKcalFloorInformative-
+ * Message in observationFilter.js).
+ *
+ * @type {string}
+ */
+export const KCAL_FLOOR_CITATION_SOURCE = 'WHO (Organizatia Mondiala a Sanatatii)';

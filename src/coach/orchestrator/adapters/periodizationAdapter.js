@@ -17,8 +17,8 @@
 //   Adaptation, Energy Adjustment, Bayesian Nutrition, Tempo, Specialization,
 //   Warm-up, Deload — all 7 downstream consume Constraint Object floor/ceiling).
 //
-// See: 03-decisions/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
-//      03-decisions/026-offline-coaching-decision-tree-exhaustive.md §9.1 + §1.10
+// See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2 + §3 RESOLVED V1
+//      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §9.1 + §1.10
 //      src/engine/periodization/index.js (engine V1 LANDED commit `1303b62`)
 
 import { ok, err } from '../result.js';

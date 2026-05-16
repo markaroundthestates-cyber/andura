@@ -8,10 +8,97 @@ import { getSmartPause, startPause } from './restTimer.js';
 import { getTodayExercises, getExGroup, resetNotes } from './util.js';
 import { state } from '../../state.js';
 import { saveDraft, endSession, updateSessionProgress } from './session.js';
+import { evaluateAggressiveLoading, categorizeExercise } from '../../engine/aggressiveLoadingThreshold.js';
+import { computeEngineTier, computeEngineTierWithAccelerated } from '../../engine/calibrationReconciliation.js';
+import { getExerciseMetadata } from '../../schema/exerciseMetadata.js';
+import { showAggressiveLoadingModal } from './aggressiveLoadingModal.js';
+import { applyAcceleratedLearningUpgrade, readAggressiveLoadingLog } from '../../engine/acceleratedLearningAdapter.js';
+import { applyMuscleMemoryUpgrade, readMmiState, computeWeeksSinceResume } from '../../engine/muscleMemoryAdapter.js';
+
+// Compose pipeline (LOCK 10 LAST):
+//   DP.recommend
+//     → AA.applyTo
+//       → applyAcceleratedLearningUpgrade  (LOCK 9 — pattern-based strength upgrade)
+//         → applyMuscleMemoryUpgrade       (LOCK 10 — re-resume start cap when opted-in)
+//
+// MMI applied last so the re-resume starting weight wins on opt-in. When user
+// refused or hasn't decided, MMI is a no-op and the upstream pipeline wins.
+function _recommendForUser(exerciseName) {
+  let rec = AA.applyTo(DP.recommend(exerciseName), exerciseName);
+
+  const cdlEntries = readAggressiveLoadingLog(DB);
+  rec = applyAcceleratedLearningUpgrade(rec, exerciseName, cdlEntries, DP);
+
+  const mmiState = readMmiState(DB);
+  if (mmiState && mmiState.userChoice === 'accepted') {
+    const weeksSinceResume = computeWeeksSinceResume(
+      mmiState.resumeStartDate,
+      new Date().toISOString().slice(0, 10)
+    );
+    rec = applyMuscleMemoryUpgrade(
+      rec,
+      exerciseName,
+      { ...mmiState, weeksSinceResume },
+      DP
+    );
+  }
+
+  return rec;
+}
+
+const AGGRESSIVE_LOADING_LOG_KEY = 'aggressive-loading-log';
+const AGGRESSIVE_LOADING_LOG_WINDOW = 200;
+
+function _countDistinctSessionDates() {
+  try {
+    const logs = DB.get('logs') || [];
+    const dates = new Set();
+    for (const l of logs) {
+      if (l && typeof l.date === 'string') dates.add(l.date);
+    }
+    return dates.size;
+  } catch {
+    return 0;
+  }
+}
+
+function _appendAggressiveLoadingCdlEntry(entry) {
+  try {
+    const log = DB.get(AGGRESSIVE_LOADING_LOG_KEY) || [];
+    log.unshift(entry);
+    DB.set(AGGRESSIVE_LOADING_LOG_KEY, log.slice(0, AGGRESSIVE_LOADING_LOG_WINDOW));
+  } catch { /* storage full — soft fail */ }
+}
+
+// Enrich the most recent un-enriched 'user_override_weight_high' entry for an
+// exercise with reps/RPE outcome. Called from confirmReps end-of-set.
+// Only enriches entries from the current session (matched by sessionStart).
+function _enrichAggressiveLoadingEntry(exerciseName, { repsAchieved, targetReps, RPE, sessionStart }) {
+  try {
+    const log = DB.get(AGGRESSIVE_LOADING_LOG_KEY) || [];
+    if (log.length === 0) return;
+    // Newest first — find first matching unmarked entry from this session.
+    for (let i = 0; i < log.length; i++) {
+      const e = log[i];
+      if (!e || e.exerciseName !== exerciseName) continue;
+      if (e.type !== 'user_override_weight_high') continue;
+      if (typeof e.repsAchieved === 'number') continue;  // already enriched
+      if (sessionStart && e.ts != null && e.ts < sessionStart) break;  // older than session, stop
+      log[i] = {
+        ...e,
+        repsAchieved,
+        targetReps,
+        ...(typeof RPE === 'number' ? { RPE } : {}),
+      };
+      DB.set(AGGRESSIVE_LOADING_LOG_KEY, log);
+      return;
+    }
+  } catch { /* soft fail */ }
+}
 
 export function updateExCard() {
   if (!state.currentEx) return;
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const totalSets = EX_SETS[state.currentEx] || 3;
   const tempo = SYS.getTempo(state.currentEx);
   const techniques = SYS.getTechniques(state.currentEx, state.currentSet, totalSets);
@@ -89,7 +176,7 @@ export function confirmReps(skipped = false) {
   state.lastPauseEndedAt = null;
   const ri = $('rpe-inline'); if (ri) ri.style.display = 'none';
 
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const totalSets = EX_SETS[state.currentEx] || 3;
 
   const rpe = skipped ? undefined : state.lastSetRPE;
@@ -103,11 +190,21 @@ export function confirmReps(skipped = false) {
   const logs = DB.get('logs') || [];
   const noteArr = [...state.activeNotes]; resetNotes();
   const logKg = state.sessionKgOverride !== null ? state.sessionKgOverride : rec.kg;
+  const overrideWasActive = state.sessionKgOverride !== null;
   state.sessionKgOverride = null;
   const logEntry = { date: tod(), ex: state.currentEx, w: logKg, kg: logKg, set: state.currentSet, sets: 1, reps: String(state.sessRepsInput), notes: noteArr, ts: Date.now(), session: state.sessStart };
   if (rpe !== undefined && rpe !== null) logEntry.rpe = rpe;
   logs.unshift(logEntry);
   DB.set('logs', logs.slice(0, 5000));
+
+  if (overrideWasActive) {
+    _enrichAggressiveLoadingEntry(state.currentEx, {
+      repsAchieved: Number(state.sessRepsInput) || 0,
+      targetReps: Number(rec?.repsTarget) || 0,
+      RPE: rpe,
+      sessionStart: state.sessStart,
+    });
+  }
   const sessEntry = { ex: state.currentEx, w: logKg, set: state.currentSet, reps: String(state.sessRepsInput) };
   if (rpe !== undefined && rpe !== null) sessEntry.rpe = rpe;
   state.sessLog.push(sessEntry);
@@ -176,7 +273,7 @@ export function renderSessLog() {
 }
 
 export function editSessionKg() {
-  const rec = AA.applyTo(DP.recommend(state.currentEx), state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
   const startKg = state.sessionKgOverride !== null ? state.sessionKgOverride : (rec.kg || 20);
   const step = DP.getIncrement(state.currentEx);
   window._kgOvVal = startKg;
@@ -208,13 +305,60 @@ export function adjSessionKg(delta) {
   if (el) el.textContent = window._kgOvVal;
 }
 
-export function confirmSessionKg() {
+export async function confirmSessionKg() {
   const kg = window._kgOvVal;
   if (!kg || kg <= 0) return;
-  state.sessionKgOverride = DP.roundToStep(kg, state.currentEx);
+  const rounded = DP.roundToStep(kg, state.currentEx);
+  const rec = _recommendForUser(state.currentEx);
+  const recommendedKg = rec?.kg ?? 0;
+
+  const cdlEntries = readAggressiveLoadingLog(DB);
+  const tier = computeEngineTierWithAccelerated(_countDistinctSessionDates(), cdlEntries);
+  const meta = getExerciseMetadata(state.currentEx);
+  const category = categorizeExercise(meta);
+  const evalResult = evaluateAggressiveLoading(recommendedKg, rounded, tier, category);
+
+  document.getElementById('kg-edit-overlay')?.remove();
+
+  if (evalResult.isAggressive) {
+    const result = await showAggressiveLoadingModal({
+      tier,
+      actualKg: rounded,
+      recommendedKg,
+      deviationPct: evalResult.deviationPct,
+      exerciseName: state.currentEx,
+    });
+
+    const baseEntry = {
+      date: tod(),
+      ts: Date.now(),
+      exerciseName: state.currentEx,
+      recommended: recommendedKg,
+      actual: rounded,
+      deviation_pct: evalResult.deviationPct,
+      tier,
+      category,
+    };
+
+    if (result.action === 'continue') {
+      state.sessionKgOverride = rounded;
+      _appendAggressiveLoadingCdlEntry({ ...baseEntry, type: 'user_override_weight_high' });
+      const big = $('rec-kg-big');
+      if (big) { big.textContent = state.sessionKgOverride; big.style.color = 'var(--accent2)'; }
+      toast(`${state.sessionKgOverride} kg ✓`, 'var(--accent)');
+    } else {
+      state.sessionKgOverride = null;
+      _appendAggressiveLoadingCdlEntry({ ...baseEntry, type: 'user_override_weight_high_reverted' });
+      const big = $('rec-kg-big');
+      if (big) { big.textContent = recommendedKg; big.style.color = ''; }
+      toast(`Baseline ${recommendedKg} kg`, 'var(--accent)');
+    }
+    return;
+  }
+
+  state.sessionKgOverride = rounded;
   const big = $('rec-kg-big');
   if (big) { big.textContent = state.sessionKgOverride; big.style.color = 'var(--accent2)'; }
-  document.getElementById('kg-edit-overlay')?.remove();
   toast(`${state.sessionKgOverride} kg ✓`, 'var(--accent)');
 }
 

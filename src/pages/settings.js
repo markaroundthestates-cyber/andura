@@ -1,5 +1,5 @@
 // ══ SETTINGS PAGE — Auth Phase 2 Batch 2 wiring (§56.5 + §56.7 LOCKED V1) ═══
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5 +
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.5 +
 // §56.7 + §56.12 (Logout — wired in batch 3).
 //
 // NU framework — vanilla JS DOM render per ADR 005 conventions.
@@ -106,6 +106,25 @@ export function renderSettingsPage({
   });
   sectionEmail.appendChild(btnEmailChange);
   root.appendChild(sectionEmail);
+
+  // Bundle 3 V1 2026-05-13: Aparate lipsa section — permanent missing-equipment picker
+  // entry button. Mirrors mockup §settings-row L1865 parity. Coach engine #2
+  // buildSession() consumes wv2-missing-equipment registry post-S2.B coachContext.js
+  // (commit fce846a). Anti-paternalism: user opt-in via Cont permanent list.
+  const sectionAparate = doc.createElement('section');
+  sectionAparate.className = 'andura-settings-section andura-settings-aparate-lipsa';
+  const aparateHeader = doc.createElement('h2');
+  aparateHeader.textContent = 'Aparate lipsa';
+  sectionAparate.appendChild(aparateHeader);
+  const btnAparate = doc.createElement('button');
+  btnAparate.textContent = 'Aparate lipsa';
+  btnAparate.addEventListener('click', async () => {
+    _closeAllSettingsModals(doc);
+    const m = await import('./coach/aparateLipsa.js');
+    if (typeof m.showAparateLipsa === 'function') m.showAparateLipsa();
+  });
+  sectionAparate.appendChild(btnAparate);
+  root.appendChild(sectionAparate);
 
   // §56.5.1 Recovery email lost section
   const sectionRecovery = doc.createElement('section');

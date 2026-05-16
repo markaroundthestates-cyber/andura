@@ -1,5 +1,5 @@
 // ══ ADMIN CLEANUP HELPERS — pure functions for unit testing (§56.14.A) ═════
-// Per `06-sessions-log/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.14.A.
+// Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.14.A.
 // Pure helpers extracted from `scripts/admin-cleanup.js` for vitest coverage.
 
 export const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;

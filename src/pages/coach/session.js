@@ -29,6 +29,19 @@ export function clearDraft() { localStorage.removeItem('session-draft'); }
 export function tickSess() {}
 
 export function startSession() {
+  // ── S3.C Session guard double-start (Daniel verbatim 2026-05-13b "q1 - a") ──
+  // Already mid-session (active + started timestamp set) → redirect direct la
+  // session-ui zero prompt Gigel-smooth. Anti-paternalism: NU confirm "Inchei sesiunea
+  // curenta?" forced friction. Session-pill safety net preserved (STOP/FINISH EARLY/
+  // ANULEAZA buttons unchanged user manual end path).
+  if (state.sessActive && state.sessStart) {
+    const tsR = $('today-screen'); if (tsR) tsR.style.display = 'none';
+    const suR = $('session-ui'); if (suR) suR.style.display = 'block';
+    document.body.classList.add('in-session');
+    toast('🔄 Sesiune deja activa');
+    return;
+  }
+
   // Feature 2: Check for existing session draft from today
   const draft = DB.get('session-draft');
   if (draft && draft.date === tod() && draft.sessLog && draft.sessLog.length > 0) {
@@ -51,6 +64,7 @@ export function startSession() {
       state.sessionTotalExercises = getTodayExercises().length;
       const ts2 = $('today-screen'); if (ts2) ts2.style.display = 'none';
       const su2 = $('session-ui'); if (su2) su2.style.display = 'block';
+      document.body.classList.add('in-session');
       state.sessTimer = setInterval(tickSess, 1000);
       setupInactivity();
       toast('🔄 Sesiune restaurata!', 'var(--accent)');
@@ -69,6 +83,7 @@ export function startSession() {
   state.sessionTotalExercises = todayExsForCount.length;
   const ts = $('today-screen'); if (ts) ts.style.display = 'none';
   const su = $('session-ui'); if (su) su.style.display = 'block';
+  document.body.classList.add('in-session');
   state.sessTimer = setInterval(tickSess, 1000);
   beepStart(); speak('Antrenament pornit.');
   toast('🔥 START!');
@@ -143,6 +158,7 @@ export function cancelWorkout() {
   state.activeNotes = new Set();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   const suEl = $('session-ui'); if (suEl) suEl.style.display = 'none';
+  document.body.classList.remove('in-session');
   hidePauseScreen();
   const tsEl = $('today-screen'); if (tsEl) tsEl.style.display = 'block';
   toast('❌ Antrenament anulat — nicio data salvata', 'var(--red)');
@@ -169,14 +185,13 @@ export function endSession() {
   DB.set('session-burns', burnLog.slice(0, 100));
 
   // ── Calculeaza sumar sesiune ──────────────────────────────────────────────
+  // F13 rating notes DROP V1 Anti-RE rule downstream cleanup: notes/feltStrong/feltHeavy/moodLabel
+  // dead-code (never passed to showSessionRating consumer) removed. moodLabel sourced from
+  // rating.js rateSession() per F12 buttons (3-state easy/normal/hard).
   const totalVolume = state.sessLog.reduce((a, s) => a + (s.w * (parseInt(s.reps) || 8)), 0);
   const totalSets = state.sessLog.length;
   const uniqueEx = [...new Set(state.sessLog.map(s => s.ex))];
   const avgRPE = state.sessLog.filter(s => s.rpe).reduce((a, s, _, arr) => a + s.rpe / arr.length, 0);
-  const notes = state.sessLog.flatMap(s => s.notes || []);
-  const feltStrong = notes.filter(n => n === 'strong').length;
-  const feltHeavy = notes.filter(n => n === 'form' || n === 'fatigue').length;
-  const moodLabel = feltStrong > feltHeavy ? '💪 Sesiune puternica' : feltHeavy > feltStrong ? '😓 Sesiune grea' : '⚡ Sesiune ok';
 
   // ── Detecteaza recorduri ──────────────────────────────────────────────────
   const allLogs = DB.get('logs') || [];
@@ -281,6 +296,7 @@ export function closeSummary() {
   const m = document.getElementById('summary-modal');
   if (m) m.remove();
   const ts = $('today-screen'); if (ts) ts.style.display = 'block';
+  document.body.classList.remove('in-session');
   renderCoachIdle();
   if (window.renderDash) window.renderDash();
   // Auto close day if it's evening (22:00–23:59)

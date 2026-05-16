@@ -60,24 +60,14 @@ export function rateSession(rating, summaryData) {
   window._ratingSessionInFlight = true;
   try {
   clearDraft();
-  const noteMap = { 'easy': ['strong'], 'normal': [], 'hard': ['fatigue'] };
-  const notes = noteMap[rating] || [];
+  // F13 rating notes auto-apply DROP V1 — Anti-RE rule LOCKED V1 PERMANENT (DECISION_LOG 2026-05-11 STAGE 1 ADR 023 SUPERSEDED).
+  // Rationale: free-text/note-injection patterns universally REMOVED V1 (Pain + Equipment + rating notes).
+  // Engine adaptation reads from per-set RPE + activeNotes per-set (F15 preserved) — NU rating-time strong/fatigue injection.
 
-  if (notes.length) {
-    const logs = DB.get('logs') || [];
-    let count = 0;
-    for (let i = 0; i < logs.length && count < 3; i++) {
-      if (logs[i].session === state.sessStart) {
-        logs[i].notes = [...(logs[i].notes || []), ...notes];
-        count++;
-      }
-    }
-    DB.set('logs', logs);
-  }
-
+  // F14 ratings window EXTEND 20→90 sessions per V1_FEATURES_AUDIT §F14 + ADR 020 Storage Tiering (Tier 0 rolling 90).
   const sRatings = DB.get('session-ratings') || [];
   sRatings.unshift({ session: state.sessStart, rating, date: tod() });
-  DB.set('session-ratings', sRatings.slice(0, 20));
+  DB.set('session-ratings', sRatings.slice(0, 90));
 
   extractAndSavePRs();
   cleanFakeLogs();

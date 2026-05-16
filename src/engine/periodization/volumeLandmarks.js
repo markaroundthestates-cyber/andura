@@ -17,7 +17,10 @@ import {
   GOAL_MODIFIERS,
   MARIA_FUNCTIONAL_MAPPING,
   PERSONA_AGE_BOUNDARIES,
+  CLUSTER_BIG6_TO_BIG11_WEIGHT,
+  BIG11_EN_TO_RO_MAP,
 } from './constants.js';
+import { getRecoveryByGroup } from '../muscleRecovery.js';
 
 /**
  * Resolve persona id from user object. Priority:
@@ -154,4 +157,77 @@ export function mariaFunctionalToIsraetel(pattern) {
   if (typeof pattern !== 'string') return [];
   const key = pattern.toLowerCase();
   return MARIA_FUNCTIONAL_MAPPING[key] ?? [];
+}
+
+// ══ ADR_ENGINE_REFACTOR §4.3 LOCK V1 helpers — Hybrid template Decision §3.3
+// + translator EN→RO + Muscle Recovery state consume layer. Pure additive.
+
+/**
+ * Resolve weight allocation for a Big 11 RO group within a Big 6 cluster
+ * per ADR_ENGINE_REFACTOR §4.3 Decision §3.3 Hybrid. Returns 0 dacă cluster
+ * unknown OR group absent în cluster weight map.
+ *
+ * @param {string} cluster - 'push'|'pull'|'legs'|'upper'|'lower'|'full'
+ * @param {string} big11Group - Big 11 RO canonical V1 (piept/spate/umeri/etc.)
+ * @returns {number} weight 0.0-1.0
+ */
+export function clusterWeightForGroup(cluster, big11Group) {
+  const weights = CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster];
+  if (!weights) return 0;
+  return weights[big11Group] ?? 0;
+}
+
+/**
+ * Translate a volume map keyed Big 11 EN (ISRAETEL_BASELINES literature
+ * reference) → Big 11 RO canonical V1 keys per ADR_ENGINE_REFACTOR §4.1.
+ *
+ * Keys absent în BIG11_EN_TO_RO_MAP pass through unchanged (defensive: already
+ * RO or unknown group → preserved). Used by downstream consumers (C4.4
+ * Specialization + C4.5 Coach Director phases ulterioare cap-coadă ADR §4)
+ * to migrate to canonical V1 keys without breaking Periodization internal
+ * literature reference.
+ *
+ * @param {Object<string, number>} volumeMap - Big 11 EN keys → sets/week
+ * @returns {Object<string, number>} - Big 11 RO keys → sets/week
+ */
+export function toCanonicalRO(volumeMap) {
+  if (!volumeMap || typeof volumeMap !== 'object') return {};
+  const result = {};
+  for (const [key, value] of Object.entries(volumeMap)) {
+    const roKey = BIG11_EN_TO_RO_MAP[key] ?? key;
+    result[roKey] = value;
+  }
+  return result;
+}
+
+/**
+ * Phase calibration: redistribute volume per Big 11 group based on Muscle
+ * Recovery state per ADR_ENGINE_REFACTOR §4.3 acceptance criteria. Recovered
+ * groups → normal weight; partial → −20%; fatigued → −40%.
+ *
+ * Input volumeMap MUST be keyed cu Big 11 RO canonical V1 keys (translate via
+ * toCanonicalRO() upstream dacă origin is ISRAETEL_BASELINES EN). Muscle
+ * Recovery state per getRecoveryByGroup() returns RO keys per ADR_ENGINE_REFACTOR
+ * §4.1 LOCK V1 muscleRecovery.js post-C4.1 migration.
+ *
+ * Pure modifier layer applied post-volumeMap compute. NU mutate algorithm
+ * phase cycle semantics (LOAD/LOAD+/PEAK/DELOAD untouched).
+ *
+ * @param {Object<string, number>} volumeMap - Big 11 RO keyed → sets/week
+ * @param {Array} logs - session logs for Recovery state input
+ * @returns {Object<string, number>} adjusted volumeMap (RO keyed)
+ */
+export function applyRecoveryStateRedistribution(volumeMap, logs) {
+  const safeMap = volumeMap && typeof volumeMap === 'object' ? volumeMap : {};
+  if (!Array.isArray(logs) || logs.length === 0) return { ...safeMap };
+  const recoveryState = getRecoveryByGroup(logs);
+  const adjusted = {};
+  for (const [group, sets] of Object.entries(safeMap)) {
+    const state = recoveryState[group];
+    let multiplier = 1.0;
+    if (state === 'partial') multiplier = 0.80;
+    else if (state === 'fatigued') multiplier = 0.60;
+    adjusted[group] = Math.max(0, (Number(sets) || 0) * multiplier);
+  }
+  return adjusted;
 }
