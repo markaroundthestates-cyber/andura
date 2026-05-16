@@ -1,32 +1,40 @@
-# LATEST CC AUTONOMOUS REPORT — REACT PIVOT CODIFY
+# LATEST CC AUTONOMOUS REPORT — PHASE 1 FOUNDATION REACT ANDURA CLASIC
 
 **Date:** 2026-05-16
-**Task:** D015 STRAT PIVOT + D016 PROC codify + PRIMER §3+§5+§6 update + archive 546+547 + push origin main + milestone tag
-**Model:** Opus EXCLUSIVELY (Bugatti craft non-negotiable, NU Sonnet)
-**Branch:** main
-**Status:** Complete | Tests 3743 PASS preserved | Push origin main DONE | Milestone tag DONE
+**Task:** Phase 1 Foundation React Andura Clasic build (per DECISIONS.md §D015 STRAT PIVOT + §D016 PROC)
+**Model:** Opus EXCLUSIVELY (Bugatti craft non-negotiable)
+**Branch:** feature/v3-react-clasic (NEW from main HEAD `0156d3c`)
+**Status:** Complete | Tests 3750 PASS (3743 vanilla preserved + 7 new React foundation) | Push origin DONE | Backup + milestone tags pushed
 
 ---
 
 ## §0 — Bugatti Verification Checklist
 
-- [✓] Pre-flight verde (3743 PASS / 187 files baseline, typecheck clean, branch=main, HEAD=975e671)
-- [✓] Backup tag `pre-react-pivot-codify-2026-05-16` pushed origin (@975e671 HEAD post deploy reconcile)
-- [✓] DECISIONS.md frontmatter `total_entries: 14 → 16`, `latest_entry: D014 → D016`
-- [✓] D015 + D016 appended CURRENT DECISIONS section (single-line table format parity D013/D014 strict)
-- [✓] D015 + D016 detailed multi-section content appended STRAT-IMPACT section before footer (extended context preservation per PROMPT template)
-- [✓] PRIMER §3 STRATEGY: Port-First-Then-React Step 1 marked SUPERSEDED-BY-D015, Step 2 React = ACTIVE Pre-Beta LOCK 2
-- [✓] PRIMER §5 Status: append 2026-05-16 React pivot entry (D013 LOCK 1 complete, D014 reconcile, D015+D016 codified)
-- [✓] PRIMER §6 Backlog: Track 1+2 vanilla port closure marked SUPERSEDED-BY-D015, Track 4 React Andura Clasic build added NEW, end-state gates renumbered 8 steps
-- [✓] Cross-refs validate: D-LEGACY-049 (Port-First-Then-React canonical, NOT current D003)
-- [✓] Cross-ref slip fix: PROMPT_CC template citation `D003 Port-First-Then-React` corrected to `D-LEGACY-049` (current D003 = PROJECT_INSTRUCTIONS V5, NOT Port-First-Then-React)
-- [✓] Atomic commits single-concern Bugatti (3 separate: DECISIONS, PRIMER, archive)
-- [✓] Pre-commit hook ran tests on EACH commit — 3743 PASS preserved invariant 3× verified
-- [✓] Inbox files moved to archive 546+547 (untracked previously → mv + git add new location, no rename detection needed)
-- [✓] ZERO src/ touched (vault meta-tooling pure)
-- [✓] ZERO --no-verify bypass
-- [✓] Push origin main DONE (TASK 12)
-- [✓] Milestone tag `react-pivot-locked-2026-05-16` pushed origin (TASK 13)
+- [✓] Pre-flight verde (3743 PASS baseline, main HEAD `0156d3c` cu drift flag §4.1, .smart-env idle drift acceptable)
+- [✓] Backup tag `pre-phase-1-react-foundation-2026-05-16` pushed origin (@ main HEAD `0156d3c`)
+- [✓] Branch `feature/v3-react-clasic` created + pushed origin (from main `0156d3c`)
+- [✓] npm install deps clean (zustand 5.0.13 + tailwindcss 3.4.19 + postcss 8.5.14 + autoprefixer 10.5.0 + @testing-library/react 16.3.2 + jest-dom 6.9.1 + user-event 14.6.1)
+- [✓] git mv .jsx → .tsx preserved history (src/main + src/App)
+- [✓] react-test.html script src updated `/src/main.tsx` + title `Andura — Clasic (React build Phase 1)`
+- [✓] src/main.tsx + src/App.tsx content updated DECISIONS.md cross-refs + JSX.Element return type + `import type { JSX } from 'react'`
+- [✓] src/vite-env.d.ts NEW (Vite client types — fix TS2882 side-effect CSS import declaration)
+- [✓] tailwind.config.js color tokens identical mockup inline config (paper #faf7f1, paper2, ink, ink2, line, brick, brickdark, olive, deep, succ, warn, danger)
+- [✓] postcss.config.js standard ESM
+- [✓] src/styles/global.css CSS variables verbatim mockup `:root` (--paper, --paper-2, --ink, --ink-2, --ink-3, --line, --line-strong, --brick) + WCAG audit comments preserved + persona text scaling .persona-maria/gigica/marius
+- [✓] src/react/{components,stores,routes,lib,__tests__}/ subfolder created
+- [✓] src/react/stores/appStore.ts Zustand typed skeleton (persona + initialized + setters)
+- [✓] vitest.config.js include `.tsx` + setupFiles `./src/react/__tests__/setup.ts`
+- [✓] src/react/__tests__/foundation.test.tsx 6 tests PASS
+- [✓] src/react/__tests__/backendIntegration.test.ts 1 test PASS (imported `getInitialRecommendation` + `DP` from `src/engine/dp.js`)
+- [✓] npm run test:run 3750 PASS total (3743 vanilla preserved + 7 new)
+- [✓] npm run typecheck 0 errors
+- [✓] npm run build 0 errors (dist/ generated cu Tailwind CSS bundled — react-test.css 0.00 kB → 8.45 kB confirm utilities inclus)
+- [✓] Atomic commits 5 single-concern Bugatti (deps+TS migration, Tailwind+CSS vars, structure+tests, archive, LATEST raport)
+- [✓] Pre-commit hook verde × 4 commits care touch src/ (Husky `npm run test:run` ran fiecare commit, 3750 PASS preserved invariant)
+- [✓] ZERO `--no-verify` bypass
+- [✓] Vanilla legacy invariant — ZERO modificări la `src/main.js`, `src/pages/*.js`, `src/engine/*.js`, `src/coach/*.js`, `index.html`, `src/styles/main.css`
+- [✓] Push origin branch + backup tag + milestone tag DONE
+- [✓] Archive 5 artefactele CONSUMED `📥_inbox/` → `📤_outbox/_archive/2026-05/548-552`
 
 ---
 
@@ -34,61 +42,79 @@
 
 | SHA | Subject |
 |-----|---------|
-| `8d83dbc` | DECISIONS: codify D015 STRAT PIVOT + D016 PROC React Andura Clasic |
-| `7bffa7f` | PRIMER: update §3+§5+§6 reflect D015 React pivot strategic LOCK |
-| `4f0020c` | Archive: 546+547 React pivot handover + PROMPT_CC CONSUMED |
-| `e8772c9` | LATEST: React pivot codify raport finalize |
+| `183b288` | feat(react): deps install zustand+tailwind+RTL + .jsx->.tsx migration Batch 1 scaffold |
+| `fe480d2` | feat(react): Tailwind PostCSS + CSS variables verbatim parity mockup |
+| `08333ea` | feat(react): src/react/ subfolder + Zustand appStore skeleton + foundation tests |
+| `f447b07` | Archive: Phase 1 Foundation orchestrator + 4 tasks CONSUMED |
+| `<this>`  | LATEST: Phase 1 Foundation React Andura Clasic raport finalize |
 
 ---
 
 ## §2 — Tags pushed origin
 
-- **Backup tag:** `pre-react-pivot-codify-2026-05-16` @ `975e671` (HEAD post deploy reconcile, pre-codify restore point)
-- **Milestone tag:** `react-pivot-locked-2026-05-16` @ `e8772c9` (strategic LOCK milestone marker, push remote `f01e556` tag object → `e8772c9` commit)
+- **Backup tag:** `pre-phase-1-react-foundation-2026-05-16` @ main HEAD `0156d3c` (restore point pre-Phase-1)
+- **Milestone tag:** `phase-1-foundation-landed-2026-05-16` @ Phase 1 closure commit `08333ea` (strategic milestone marker, pre-archive + LATEST commits)
 
 ---
 
-## §3 — Files modified
+## §3 — Files created/modified
 
 | Path | Change |
 |------|--------|
-| `DECISIONS.md` | Frontmatter total 14→16, last_id D014→D016. Append D015+D016 single-line entries to CURRENT DECISIONS section. Append D015+D016 STRAT-IMPACT detailed multi-section content before final footer. 83 insertions, 2 deletions. |
-| `ANDURA_PRIMER.md` | §3 STRATEGY rewrite Port-First-Then-React SPLIT (Step 1 SUPERSEDED, Step 2 ACTIVE Pre-Beta LOCK 2). §5 append 2026-05-16 React pivot entry. §6 Track 1+2 SUPERSEDED-BY-D015, Track 4 NEW React Andura Clasic build, end-state gates renumbered 8 steps. 31 insertions, 8 deletions. |
-| `📤_outbox/_archive/2026-05/546_HANDOVER_2026-05-16_react-pivot-strat_CONSUMED.md` | NEW from `📥_inbox/` |
-| `📤_outbox/_archive/2026-05/547_PROMPT_CC_REACT_PIVOT_2026-05-16_CONSUMED.md` | NEW from `📥_inbox/` |
-| `📤_outbox/LATEST.md` | This raport (overwrite previous) |
+| `package.json` | M: +zustand dep, +tailwindcss/postcss/autoprefixer/@testing-library×3 devDeps |
+| `package-lock.json` | M: lock entries updated |
+| `react-test.html` | M: script src `/src/main.jsx` → `/src/main.tsx` + title updated |
+| `src/main.jsx` → `src/main.tsx` | R+M (D+A semantic per git): content updated DECISIONS.md cross-refs + global.css import |
+| `src/App.jsx` → `src/App.tsx` | R+M (D+A semantic per git): content updated Tailwind classes + `JSX.Element` return type + import type JSX |
+| `src/vite-env.d.ts` | NEW: `/// <reference types="vite/client" />` (TS2882 fix CSS side-effect import) |
+| `tailwind.config.js` | NEW: content scan + theme.extend.colors mockup parity (12 color tokens) + 3 font families |
+| `postcss.config.js` | NEW: tailwindcss + autoprefixer ESM |
+| `src/styles/global.css` | NEW: CSS variables verbatim mockup `:root` (8 tokens) + persona text scaling (.persona-maria/gigica/marius) + base resets adaptat react app shell (NU phone dark scaffold mockup) |
+| `src/react/components/.gitkeep` | NEW: empty dir marker |
+| `src/react/routes/.gitkeep` | NEW: empty dir marker |
+| `src/react/lib/.gitkeep` | NEW: empty dir marker |
+| `src/react/stores/appStore.ts` | NEW: Zustand typed skeleton (persona + initialized) |
+| `src/react/__tests__/setup.ts` | NEW: jest-dom matchers import |
+| `src/react/__tests__/foundation.test.tsx` | NEW: 6 smoke tests App render + Tailwind + Zustand |
+| `src/react/__tests__/backendIntegration.test.ts` | NEW: 1 test pure function reuse `dp.js` |
+| `vitest.config.js` | M: include `.tsx` + setupFiles path |
+| `📤_outbox/_archive/2026-05/548-552_*_CONSUMED.md` × 5 | NEW: artefactele CONSUMED from `📥_inbox/` |
+| `📤_outbox/LATEST.md` | M: overwrite cu Phase 1 Foundation raport (acest file) |
 
 ---
 
 ## §4 — Issues / caveats / observations
 
-**1. Cross-ref slip detected în PROMPT_CC template (anti-hallucination saved the day).** PROMPT cited `D003 Port-First-Then-React` în 3 locuri (D015 cross-ref + supersede statement). Verified current D003 in DECISIONS.md = `REGLAJ | PROJECT_INSTRUCTIONS V5 compact ~800 cuvinte` (NU Port-First-Then-React). Actual Port-First-Then-React = `D-LEGACY-049`. Fixed în toate referencerile (D015 entry, D016 cross-refs, PRIMER §3 status, LATEST.md). Slip pattern: PROMPT author rapid drafted without grep verify. Per memorie `feedback_grep_before_prompt_cc.md` — recidivă reconfirmată, pre-flight grep filesystem verify ÎNAINTE construct prompts CC saves the day.
+**1. Pre-flight HEAD drift detected (anti-hallucination per memory feedback_grep_before_prompt_cc.md).** ORCHESTRATOR specifies `main HEAD e8772c9 LATEST: React pivot codify raport finalize`. Real state: `git log -1 main` returns `0156d3c LATEST: patch SHAs final (e8772c9 + tag refs)` — 1 commit ahead. Cause: predecessor session patched LATEST.md cu SHA fix post-orchestrator-drafting. Branch creation FROM current `0156d3c` (correct semantic — same `src/`, `package.json`, `react-test.html` as `e8772c9`; only vault doc LATEST.md SHA differ). Backup tag `pre-phase-1-react-foundation-2026-05-16` pinned `0156d3c` (current state restore point precise). Engineering normalization per D011 boundary respected — flagged here pentru Daniel awareness, NU autonomous corecție prompt.
 
-**2. Inbox files untracked → `git mv` impossible.** Both HANDOVER + PROMPT_CC files were never staged/committed in `📥_inbox/`. `git mv` failed `error: source is not under version control`. Switched to shell `mv` + `git add` new location. No history loss because files had no prior commits. Same end-state archive 546+547 LANDED.
+**2. Tailwind version mismatch caught + corrected inline.** Default `npm install --save-dev tailwindcss` installed v4.3.0 (CSS-first config paradigm cu `@tailwindcss/postcss` plugin). ORCHESTRATOR spec assumes v3 paradigm (`@tailwind base/components/utilities` directives + `tailwind.config.js` + plain `postcss`+`autoprefixer`). Downgrade `tailwindcss@^3.4.0` → 3.4.19 final for spec parity. Bugatti craft: peak fidelity orchestrator intent preserved invariant, NU autonomous adapt to v4.
 
-**3. DECISIONS.md format duality preserved.** PROMPT template provided detailed multi-section content (~80 LOC) which contradicted file's format strict `[ID] | [DATA] | [CATEGORY] | [TITLE ≤80 char] | [STATUS] | [SOURCE]`. Resolved via hybrid: single-line table entries in CURRENT DECISIONS (lookup integrity + frontmatter count) + detailed multi-section content în NEW `STRAT-IMPACT DETAILED ENTRIES` section before final footer (extended context preservation). Both wins.
+**3. TypeScript errors detected post .jsx→.tsx migration + fixed.** `npm run typecheck` raised: (a) `TS2503 Cannot find namespace 'JSX'` în App.tsx (React 19 + new JSX transform requires explicit `import type { JSX } from 'react'`) — fixed; (b) `TS2882 Cannot find module or type declarations for side-effect import of './styles/global.css'` în main.tsx — fixed via NEW `src/vite-env.d.ts` cu `/// <reference types="vite/client" />` standard Vite paradigm.
 
-**4. Pre-commit hook fired tests 3× (one per atomic commit).** Each commit verified 3743 PASS preserved invariant. Vault meta-tooling ZERO src/ touched, so tests should never regress — verified empirically. Tests baseline ZERO change.
+**4. Build verify global.css placeholder pre-TASK-2.** main.tsx import `./styles/global.css` introduced în TASK 1, but global.css created în TASK 2 — sequence gap. Mitigation: placeholder global.css cu single comment created în TASK 1 (so import works + build pass), overwritten cu full Tailwind+CSS vars în TASK 2. Build 0 errors verified each TASK boundary.
 
-**5. .smart-env/ indexer state drift dirty tree.** `.smart-env/multi/*.ajson` modified throughout session (indexer auto-tracking) — normal idle state per recent `chore(auto)` commit pattern (commit `70f2384`). NU committed în această sesiune (rămâne dirty post final push). Daniel periodic `chore(auto)` sweep handles. NU blocking pentru această sesiune codify pure.
+**5. Backend pure function pick rationale: `getInitialRecommendation` from `src/engine/dp.js` selected.** Rationale: `dp.js` = D-LEGACY-003 ARCH Double Progression core weight recommendation engine. Exports `getInitialRecommendation` named pure function (NO Date.now / Math.random / mutation per ADR 026 §9 pure-function paradigm) + `DP` const object — both verified. Single import covers function + const both `expect.toBeDefined()` validation.
+
+**6. Mockup CSS variables extras count: 8 tokens verbatim `:root` block.** Variables: --paper, --paper-2, --ink, --ink-2, --ink-3, --line, --line-strong, --brick. WCAG v2 Path 2a audit comments preserved verbatim (mockup architectural lift documentation valuable). Persona text scaling 3 blocks (.persona-maria/gigica/marius) verbatim. Base html/body resets adapted react app shell context (NU phone dark scaffold cu radial-gradient mockup body — that's phone frame mockup, NU production paradigm).
+
+**7. .smart-env/ idle drift acceptable throughout session.** Indexer auto-tracking `.smart-env/multi/*.ajson` modified continuous — NOT committed (separate `chore(auto)` sweep pattern). Filtered out via grep în pre-commit state verify.
+
+**8. Push origin warning lf→crlf benign Windows.** Repeated warnings during commits `LF will be replaced by CRLF the next time Git touches it` — autoCRLF config Windows working tree normalization. No file content corruption. Standard Windows dev environment behavior.
 
 ---
 
 ## §5 — Next action
 
-1. **Daniel signal NEW chat post task complete** (per Direct-to-CC paradigm Bugatti) — strategic React migration tactical planning:
-   - React stack discussion: Vite (lightweight, mockup currently Tailwind CDN) vs Next.js (heavier, app router SSR benefits)
-   - State management: Zustand vs React Context + custom hooks vs alternative
-   - Routing: React Router DOM v6+ screen-based `goto()` 50+ → routes mapping
-   - Backend layer reuse plan: `src/engine/*` import direct preserve test coverage 3743 PASS
-   - UI components extraction mockup → React + Tailwind PostCSS build pipeline
-   - Test strategy migration: vitest jsdom React Testing Library + Playwright E2E live andura.app smoke
-   - Pre-Beta LOCK 2 = React Andura Clasic full build pe spec mockup, Bugatti craft
+1. **Daniel signal NEW chat post task complete** pentru Phase 2 routing skeleton tactical planning:
+   - React Router DOM v6.28 setup (deja installed în deps root pre-Phase-1)
+   - 50+ screens mockup `goto()` → routes mapping strategy (per-tab nested OR flat list per-screen)
+   - Layout shell + bottom nav 4 taburi (Antrenor/Progres/Istoric/Cont) LOCKED V1 per D-LEGACY-066 spec-root-nav-v2
+   - Phase 2 PROMPT_CC artefacte sequenced aceeași paradigm orchestrator + N tasks fail-stop atomic
 
-2. **Backup restore point disponibil** dacă necesar rollback: `git reset --hard pre-react-pivot-codify-2026-05-16` (D015 + D016 codify undo, restore HEAD `975e671` post deploy reconcile state).
+2. **Backup restore point disponibil:** `git checkout pre-phase-1-react-foundation-2026-05-16` (restore main HEAD `0156d3c` pre-Phase-1) — note: drift cu spec'd `e8772c9`, real state `0156d3c` per §4.1.
 
-3. **Daniel Gates + Bugatti audit nuclear pre-launch invariant** păstrate (D013 + D015 + D016 alignment).
+3. **Vanilla legacy preserved invariant** — live `andura.app` NU afectat (NU deploy main schimbat — feature branch only, manual deploy on-demand per D010).
 
 ---
 
-🦫 **Strategic React pivot LOCKED V1 2026-05-16. D015 STRAT PIVOT + D016 PROC codified DECISIONS.md SSOT. PRIMER §3+§5+§6 reflect pivot. Vanilla port SUPERSEDED, mockup → React direct path forward. Backend LOCK 1 100% reusable. Tests 3743 PASS invariant. Push origin main + milestone tag DONE.**
+🦫 **Phase 1 Foundation LANDED 2026-05-16. React Andura Clasic build infrastructure ready peste Batch 1 scaffold existing. Vite + React 19 + TypeScript + Zustand + Tailwind PostCSS + RTL + jest-dom matchers. Backend `src/engine/*` reusable verified (LOCK 1 100% preserved). Atomic commits 5× Bugatti. Pre-commit hook strict 4×. Tests 3750 PASS (3743 vanilla + 7 new React foundation). Phase 2 routing skeleton awaiting Daniel signal NEW chat. Zero intermediate verification proposals (D009+D012 invariant).**
