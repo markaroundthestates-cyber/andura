@@ -1,16 +1,12 @@
-// ══ REACT ENTRY POINT — Andura Clasic Build (Phase 1 Foundation LANDED) ═══
-// Per DECISIONS.md §D015 STRAT PIVOT + §D016 PROC: lansăm Andura Clasic pe
-// React folosind mockup 04-architecture/mockups/andura-clasic.html DESIGN
-// MASTER direct. Vanilla src/main.js + index.html = LEGACY preserved live
-// andura.app până React LANDED.
-//
-// Cross-refs:
-//   - DECISIONS.md §D015 STRAT PIVOT Pre-Beta React Andura Clasic
-//   - DECISIONS.md §D016 PROC nav 6→4 + screens 50+ în React build only
+// ══ REACT ENTRY POINT — Andura Clasic Build Phase 2 Routing Wire ══════════
+// Per DECISIONS.md §D015 + §D016 + Co-CTO LOCK Phase 2 routing C hybrid.
+// Phase 1 App.tsx placeholder = preserved (used as splash content reuse
+// option future). Router config în src/react/routes/router.tsx.
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './App';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './react/routes/router';
 import './styles/global.css';
 
 const rootEl = document.getElementById('root');
@@ -20,6 +16,6 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </StrictMode>
 );
