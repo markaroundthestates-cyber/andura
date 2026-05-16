@@ -1,62 +1,58 @@
-# LATEST — Bundle FULL ORDER LANDED 2026-05-16 (3 tasks cumulative)
+# LATEST — Handover Follow-up D007+D008+D009 Codify + V6 Compose + Inbox Archive LANDED 2026-05-16
 
-## Tasks (sequential atomic Bugatti)
-- TASK 1 ✓ — Create ANDURA_PRIMER.md SSOT singular briefing vault root
-- TASK 2 ✓ — Radical archive wiki/ → 99-archive/wiki-pre-2026-05-15/
-- TASK 3 ✓ — Cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/*
+## Tasks (3 atomic commits Bugatti separate)
+- COMMIT 1 ✓ — D007+D008+D009 codify CURRENT DECISIONS + D-LEGACY-085/086 DEPRECATED
+- COMMIT 2 ✓ — PROJECT_INSTRUCTIONS_V6.md compose 01-vision/ reference
+- COMMIT 3 ✓ — Archive handover narrative inbox → outbox archive 529
 
 ## Status: ALL COMPLETE
 
-## Pre-flight (cumulative cross-task)
-- 3 backup tags pushed origin ✓
-  - pre-add-andura-primer-2026-05-16
-  - pre-radical-archive-wiki-2026-05-16
-  - pre-crossrefs-sweep-wiki-archive-2026-05-16
-- Working tree clean între tasks (excluding .smart-env/ auto-tracked + LATEST.md intermediate) ✓
-- Tests 3734 PASS preserved EXACT cross-task ✓
+## Pre-flight
+- Backup tag pre-d007-d008-d009-codify-2026-05-16 pushed origin ✓
+- Working tree clean pre-execute (smart-env auto-tracked excluded) ✓
+- Tests 3734 PASS pre-execute baseline preserved through pre-commit hooks ✓
+- D007 phantom verified (grep 0) ✓
+- D008 + D009 NU exist (grep 0) ✓
+- D-LEGACY-085/086 status DRAFT verified pre-update ✓
+- Handover narrative present în 📥_inbox/ ✓
 
 ## Modificări cumulative
-- NEW file: `ANDURA_PRIMER.md` vault root (~16.5kB §1-§8 narrative UTF-8 Romanian diacritics + emoji)
-- NEW dir: `99-archive/` + `99-archive/README.md`
-- MOVE: `wiki/` → `99-archive/wiki-pre-2026-05-15/` (148 files git mv rename detection 100%)
-- MODIFY cross-refs sweep:
-  - `DECISIONS.md` (52 refs → 99-archive)
-  - `00-index/INDEX_MASTER.md` (0 cu pattern strict, narrative wiki/ refs preserved)
-  - `VAULT_RULES.md` (22 → 0)
-  - `CLAUDE.md` root (42 → 0)
-  - `03-decisions/_FROZEN/ADR_ANATOMICAL_CLASSIFICATION_V1.md`
-  - `03-decisions/_FROZEN/ADR_SESSION_SEQUENCE_ORDERING_V1.md`
-  - `03-decisions/_FROZEN/ADR_SMART_ROUTING_EQUIPMENT_v2.md`
-  - `08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md`
-  - `DIFF_FLAGS.md`
+- MODIFY: DECISIONS.md
+  - +3 entries CURRENT DECISIONS (D007 + D008 + D009)
+  - D-LEGACY-085 DRAFT → DEPRECATED-superseded-by-D008
+  - D-LEGACY-086 DRAFT → DEPRECATED-superseded-by-D009
+  - Frontmatter NEW: latest_entry: D009, total_entries: 9, last_updated: 2026-05-16
+- NEW: 01-vision/PROJECT_INSTRUCTIONS_V6.md (reference vault + Daniel UI paste source)
+- MOVE: 📥_inbox/HANDOVER_2026-05-16_full_order_andura_primer.md → 📤_outbox/_archive/2026-05/529_HANDOVER_2026-05-16_full_order_andura_primer_CONSUMED.md
 
 ## Build+Tests cumulative
-- Build: clean cross-task (vite ✓ built in ~3.4-3.6s, no broken imports)
-- Tests: 3734 PASS preserved EXACT cross-task (pre-commit hook ran fiecare commit)
+- Tests: 3734 PASS preserved EXACT cross-task (pre-commit hook ran fiecare commit) ✓
+- Build: clean cross-task (Vite ~3.5s)
 - ZERO src/ touched (vault meta-tooling only)
 
 ## Commits (3 atomic single-concern Bugatti)
-- `2f71f16` | feat(vault): add ANDURA_PRIMER.md SSOT singular briefing fresh chat onboard
-- `9258260` | chore(vault): radical archive wiki → 99-archive/wiki-pre-2026-05-15
-- `7f0a14d` | chore(vault): cross-refs sweep wiki/* → 99-archive/wiki-pre-2026-05-15/* post radical archive
+- `35e3e16` | feat(decisions): D007 + D008 + D009 codify PROC LOCKED V1 + D-LEGACY-085/086 DEPRECATED
+- `fbed6a7` | docs(vision): add PROJECT_INSTRUCTIONS_V6.md reference post radical archive
+- `<SHA3>` | chore(vault): archive consumed inbox handover narrative 2026-05-16
 
 ## Pushed
-feature/v2-vanilla-port pushed origin ✓ (3 commits + 3 backup tags)
+feature/v2-vanilla-port pushed origin ✓ (commits + 1 backup tag pre-execute)
 
 ## Issues
-**1 meta-artifact remaining `wiki/` ref outside 99-archive** — `02-audit/PROMPT_CC_TASK_3_CROSSREFS_SWEEP.md` line 21+72+34+120+134+154 conține REGEX PATTERN STRINGS literali în comenzi `grep -c "wiki/concepts\|wiki/entities\|..."` (alternation `\|` syntax, no trailing `/`). Sed pattern `wiki/concepts/` (cu trailing slash) NU le-a matched. NU sunt cross-refs reale spre fișiere — sunt syntax regex documentat în spec text. Acceptable per Bugatti "no shortcuts" — spec preserved EXACT fără mutilare manuală. Future /wiki-lint pass scan poate flag P3 cleanup cosmetic dacă necesar.
+**Spec deviation note 1:** Previous Bundle FULL ORDER already archived 4 PROMPT_CC files (orchestrator + tasks 1/2/3) la NN 525-528. This commit handles only the remaining handover narrative inbox file (529). Spec §3 listed 6 git mv but `2>/dev/null` pattern explicitly graceful-fails for already-moved files.
+
+**Spec deviation note 2:** This PROMPT_CC_HANDOVER_FOLLOWUP_2026-05-16 was delivered as direct slash-command paste NU saved as inbox file. NU exists pe filesystem → no archive needed.
+
+**Spec deviation note 3:** DECISIONS.md frontmatter fields `latest_entry:` + `total_entries:` did NOT exist pre-execute (only `last_updated:` + `schema_version:` existed). Spec sed pattern would no-op. Per Bugatti intent fulfillment: ADDED both fields after schema_version (Edit tool, NU sed). Captured în COMMIT 1 message + frontmatter audit trail visible.
 
 ## Next action Daniel
-1. **Daniel manual UI step** — paste updated PROJECT_INSTRUCTIONS V6 în Claude.ai project custom instructions (Claude chat compose separate artefact pending) cu §CC.2 startup reference ANDURA_PRIMER.md as FIRST read primary.
-2. **Test fresh chat startup** — open new Claude chat, send "Salut Acasă" → verify §CC.3 output cites ANDURA_PRIMER.md + DECISIONS.md + LATEST.md correctly cu instant 7-criterii context.
-3. **Next P1 candidates pending CEO call:**
-   - §AR.30 + §AR.31 codify D008/D009 PROC LOCKED V1 (substanță-only titluri per D005)
-   - D007 retroactive entry pentru supersede enforcement rule drift fix
-   - P4 reformulated 3 missing pieces pre-Beta cap-coadă (button wire + dashboard banner + LOCK 8 toast)
-
-## Bandwidth
-~12-15% remaining post 3-task atomic bundle. Recommendation: handover acum dacă chat NEW needed, ELSE continue cu D007/D008/D009 codify în acest chat.
+1. **Daniel manual UI paste PROJECT_INSTRUCTIONS V6** în Claude.ai project custom instructions — source: `01-vision/PROJECT_INSTRUCTIONS_V6.md`. Replace V5 actual.
+2. **Test fresh chat startup "Salut Acasă"** — open new Claude chat, verify §CC.3 output cites ANDURA_PRIMER.md + DECISIONS.md + LATEST.md correctly cu instant 7-criterii context.
+3. **Next P1 candidates pending:**
+   - P4 reformulated 3 missing pieces pre-Beta cap-coadă (button wire mockup 3034 + dashboard banner verify + LOCK 8 floor toast)
+   - Wording backlog post-smoke (LOCK 10 MMI + diacritics + LOCK 9 aaFrictionModal)
+   - Bugatti Full Audit pre-Launch GATE FINAL (post tot tracks 100% LANDED + Daniel Gates smoke)
 
 ---
 
-🦫 **Bugatti craft. FULL ORDER once-and-done bundle LANDED. ANDURA_PRIMER.md = SSOT briefing fresh chat instant context. Wiki radical archived off-default-search. Cross-refs aligned (1 meta-artifact regex strings preserved). Tests 3734 PASS preserved invariant. Co-CTO autonomy MAXIMUM 15th consecutive cross-chat trust delegation preserved invariant.**
+🦫 **Handover follow-up cumulative LANDED. D007 drift fixed + D008 + D009 codify PROC LOCKED V1 substanță-only titluri per D005. V6 PROJECT_INSTRUCTIONS reference vault + UI paste source. Inbox clean. Tests 3734 PASS preserved invariant. Co-CTO autonomy MAXIMUM 17th consecutive cross-chat trust delegation preserved invariant. Bugatti craft.**
