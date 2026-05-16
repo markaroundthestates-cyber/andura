@@ -26,9 +26,16 @@ export type GotoScreen =
   // Top-level
   | 'splash' | 'auth' | 'auth-reactivate'
   | 'onb-1' | 'onb-2' | 'onb-3' | 'onb-4' | 'onb-5' | 'onb-6' | 'onb-7'
-  // Tab roots Phase 2 placeholder
-  | 'antrenor' | 'progres' | 'istoric' | 'cont';
-// Phase 3+ extends union cu sub-screens
+  // Tab roots
+  | 'antrenor' | 'progres' | 'istoric' | 'cont'
+  // Phase 3 Antrenor sub-screens
+  | 'energy-check' | 'energy-cause'
+  | 'workout-preview' | 'workout'
+  | 'ceva-nu-merge' | 'pain-button'
+  | 'equipment-swap' | 'aparate-lipsa'
+  | 'schedule-override'
+  | 'post-rpe' | 'post-summary';
+// Phase 4+ extends union cu sub-screens Progres/Istoric/Cont
 
 /**
  * Map mockup screen name la React Router path.
@@ -54,6 +61,18 @@ export function gotoPath(screen: GotoScreen): string {
   if (screen === 'progres') return '/app/progres';
   if (screen === 'istoric') return '/app/istoric';
   if (screen === 'cont') return '/app/cont';
+
+  // Phase 3 Antrenor sub-screens (bottom nav vizibil, nested sub /app/antrenor)
+  if (
+    screen === 'energy-check' || screen === 'energy-cause' ||
+    screen === 'workout-preview' || screen === 'workout' ||
+    screen === 'ceva-nu-merge' || screen === 'pain-button' ||
+    screen === 'equipment-swap' || screen === 'aparate-lipsa' ||
+    screen === 'schedule-override' ||
+    screen === 'post-rpe' || screen === 'post-summary'
+  ) {
+    return `/app/antrenor/${screen}`;
+  }
 
   // Exhaustive fallback (TS catches missing cases at compile)
   const _exhaustive: never = screen;
