@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-16
 schema_version: 1
-latest_entry: D009
-total_entries: 9
+latest_entry: D012
+total_entries: 12
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -60,6 +60,9 @@ D006 | 2026-05-15 | REGLAJ | Handover format = paragraf scurt + DECISIONS.md del
 D007 | 2026-05-16 | PROC | Supersede enforcement rule schema D-NNN scan CURRENT only D-LEGACY-* EXCLUDED | LOCKED V1 | DECISIONS.md §schema supersede rule
 D008 | 2026-05-16 | PROC | Pre-action vault primary-source verification MANDATORY pentru product state claims | LOCKED V1 | DECISIONS.md §D008
 D009 | 2026-05-16 | PROC | CEO scope strict UI wording autonomous compose = SLIP DEFAULT surface options | LOCKED V1 | DECISIONS.md §D009
+D010 | 2026-05-16 | PROC | Deploy on-demand Co-CTO trigger (NU auto on push GitHub Actions) + Playwright disabled docs commits + buget GitHub Actions suplimentar invariant | LOCKED V1 | DECISIONS.md §D010
+D011 | 2026-05-16 | REGLAJ | PRIMER §5 smoke claim correcție + §6 drift cleanup cluster engineering normalization (live state vs feature branch gap awareness) | LOCKED V1 | DECISIONS.md §D011
+D012 | 2026-05-16 | PROC | Co-CTO autonomy boundary clarification zero intermediate verification proposals user-facing pre-Beta launch a-z single gate (§AR.31 D009 extension reinforcement) | LOCKED V1 | DECISIONS.md §D012
 
 ---
 
