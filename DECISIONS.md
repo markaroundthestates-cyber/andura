@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-16
 schema_version: 1
-latest_entry: D014
-total_entries: 14
+latest_entry: D016
+total_entries: 16
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -65,6 +65,8 @@ D011 | 2026-05-16 | REGLAJ | PRIMER §5 smoke claim correcție + §6 drift clean
 D012 | 2026-05-16 | PROC | Co-CTO autonomy boundary clarification zero intermediate verification proposals user-facing pre-Beta launch a-z single gate (§AR.31 D009 extension reinforcement) | LOCKED V1 | DECISIONS.md §D012
 D013 | 2026-05-16 | REGLAJ | Pre-Beta LOCK 1 100% complete + deploy main 2026-05-16 + PRIMER §6 cleanup post Track 1+2 audit close | LOCKED V1 | DECISIONS.md §D013
 D014 | 2026-05-16 | PROC | Branch divergence reconcile main ↔ feature/v2-vanilla-port strategy: merge feature → main -X theirs (prefer feature on conflicts) post 3 possibly-orphan items verified absorbed. History preserved via merge graph; feature content canonical post-merge. Investigation: INVESTIGATION_2026-05-16_main_vs_feature.md | LOCKED V1 | DECISIONS.md §D014
+D015 | 2026-05-16 | STRATEGY | STRAT PIVOT Pre-Beta NU vanilla port — lansăm Andura Clasic pe React mockup andura-clasic.html DESIGN MASTER direct. Supersedes part of D-LEGACY-049 Port-First-Then-React Step 1 vanilla port closure (păstrăm Step 2 React migration). Backend LOCK 1 100% (lib 657, Big 11 8/8, Calendar engine, kcal floor, BATCH 2 Antrenor, auth, tests 3743 PASS) reusable React migration. Vanilla index.html 6 taburi = LEGACY până React LANDED | LOCKED V1 | DECISIONS.md §D015
+D016 | 2026-05-16 | PROC | Bottom nav 6→4 (Antrenor/Progres/Istoric/Cont) + screen architecture 50+ screens goto()-based restructure se face EXCLUSIV în React build pe spec mockup, NU în vanilla index.html + src/pages/*.js legacy. Eliminăm double-work non-Bugatti. Implementation path next chat (React stack + state mgmt + routing + backend reuse) | LOCKED V1 | DECISIONS.md §D016
 
 ---
 
@@ -191,6 +193,85 @@ D-LEGACY-095 | 2026-05-10 | UX | F4 Readiness Verdict KEEP verbatim core coach v
 D-LEGACY-096 | 2026-05-06 | UX | Auth Magic Link Phase 2 RESOLVED ZERO password V1 + auto-retry 3x + SMTP | LOCKED V1 | 99-archive/wiki-pre-2026-05-15/entities/features/feature-auth-magic-link.md
 D-LEGACY-097 | 2026-05-10 | UX | Onboarding T0 Big 6 hard typing + setPhaseOverride + demographic prior fallback | LOCKED V1 | 99-archive/wiki-pre-2026-05-15/entities/features/feature-onboarding-t0.md
 D-LEGACY-098 | 2026-05-15 | ARCH | LOCK 10 ADR 033 MMI Engine #9 V1 LANDED Algorithm Hibrid Lookup + Boost + compose pipeline MMI LAST | LOCKED V1 | 99-archive/wiki-pre-2026-05-15/entities/features/lock-10-adr-033-mmi-engine-9.md
+
+---
+
+## STRAT-IMPACT DETAILED ENTRIES (post 2026-05-16 React pivot)
+
+### D015 — STRAT PIVOT — Pre-Beta React Andura Clasic, NU vanilla port
+
+**Date:** 2026-05-16
+**Category:** STRATEGY (strategic CEO-level supersede)
+**Status:** LOCKED V1
+**Source:** Daniel CEO chat verbatim 2026-05-16: "deci noi nu lansam vanilla la betta... lansam andura clasic pe react"
+**Cross-refs:** [[ANDURA_PRIMER.md §3 STRATEGY LOCKED V1]], [[DECISIONS.md §D-LEGACY-049 Port-First-Then-React]] (supersede partial Step 1)
+**Backup tag:** pre-react-pivot-codify-2026-05-16 @ HEAD post deploy reconcile
+
+#### Context
+
+Post deploy main reconcile 2026-05-16 (D013 LOCK 1 100% + D014 branch reconcile -X theirs), Daniel browser-check andura.app: medical disclaimer ✅ LANDED, dar 6 taburi prod ≠ 4 taburi mockup LOCKED V1. Investigation revealed Port-First-Then-React Step 1 vanilla port bottom nav layer + screen architecture restructure NU făcut. Mockup `andura-clasic.html` `<div id="bottom-nav">` cu comentariu literal "V1 LOCKED — 4 taburi" (Antrenor/Progres/Istoric/Cont, screen-based `goto()` routing 50+ screens) ≠ prod `index.html` `<nav class="nav">` 6 buttons paradigma veche (Coach/Dashboard/Greutate/Program/Plan/Setari, page-based `sp()`).
+
+Tactical decision presented: port nav now (scope mare atinge majoritatea LOCK 1 features) vs slice mai mic vs defer post-Beta.
+
+#### Decizia Daniel
+
+Skip Step 1 vanilla port closure complet. Lansăm Andura Clasic pe React folosind mockup-ul ca DESIGN MASTER direct. Vanilla `index.html` 6 taburi rămâne legacy live andura.app până React migration LANDED.
+
+#### Implicații
+
+- **Supersedes part of D-LEGACY-049 Port-First-Then-React:** păstrăm Step 2 React, abandonăm Step 1 vanilla port closure
+- **Vanilla branch `feature/v2-vanilla-port` status:** archive-quality, NU mai primește vanilla port additions post-D015. Backend/engine code în `src/engine/*` + tests 3743 PASS = reusable React migration
+- **LOCK 1 100% complete (D013) preserved:** library 657, Big 11 8/8, Calendar V1 engine `scheduleAdapter.js`, LOCK 8 kcal floor, BATCH 2 Antrenor closure, auth Firebase + IndexedDB per UID — ALL reusable backend layer React build
+- **UI layer 6 taburi `index.html` + `src/pages/*.js`:** LEGACY, NU port closure, NU refactor pentru parity mockup 4 taburi
+- **Mockup `andura-clasic.html` 4753 LOC:** DESIGN MASTER source-of-truth React migration — 4 taburi + 50+ screens + state machine workout V2 + Calendar V1 + auth flow Big 6 hard T0
+- **Pre-Beta LOCK 2 redefined:** React Andura Clasic full build pe mockup spec, Bugatti craft, ZERO timing argumente decizie
+- **Daniel Gates + Bugatti audit nuclear pre-launch invariant** păstrate
+
+#### Rationale Bugatti
+
+Vanilla port intermediate step = double-work non-Bugatti. Mockup → React direct = peak craft minimal duplicated effort. Backend LOCK 1 = reusable Bugatti infrastructure preserved. NU timing argumente — quality > speed strict orizont 2-3 ani.
+
+---
+
+### D016 — PROC — Bottom nav + screen architecture restructure în React build, NU vanilla port
+
+**Date:** 2026-05-16
+**Category:** PROC (procedural implementation)
+**Status:** LOCKED V1
+**Source:** Implicație directă D015 (acelash chat 2026-05-16)
+**Cross-refs:** [[DECISIONS.md §D015]], [[04-architecture/mockups/andura-clasic.html]]
+
+#### Context
+
+6 taburi prod `index.html` (Coach/Dashboard/Greutate/Program/Plan/Setari, `sp()`-based) ≠ 4 taburi mockup LOCKED V1 (Antrenor/Progres/Istoric/Cont, `goto()`-based 50+ screens). Semantic mapping nontrivial:
+- Antrenor (mockup V1 LOCKED home workout session) ≈ Coach + Program absorbed
+- Progres (body comp display + nutritie + alerte) ≈ Dashboard + Plan absorbed
+- Istoric (timeline calendar heatmap + 90-day ratings + drill-downs) = NEW screen, NU există prod
+- Cont (settings drill 9+ sub-screens) ≈ Setari parity
+
+Plus mockup uses screen-based routing (`goto()` 50+ ecrane: splash, auth, onb-1..7, antrenor, energy-check, energy-cause, workout-preview, ceva-nu-merge, pain-button, equipment-swap, aparate-lipsa, schedule-override, istoric, pr-wall, workout V2 state machine, post-rpe, post-summary, progres, settings, settings-* 8+ sub, confirm-* 6+ destructive, log-weight, sesiuni-recente, loguri-greutate, weight-timeline, auth-reactivate, confirm-program-change, confirm-finish-early).
+
+#### Decizia
+
+Restructure 6→4 + screen architecture full migration = se face EXCLUSIV în React build pe spec mockup, NU se mai face în vanilla `index.html` + `src/pages/*.js` legacy. Eliminăm double-work non-Bugatti.
+
+#### Implementation path forward (next chat)
+
+1. Strategic React stack discussion: React + Vite (lightweight, mockup currently Tailwind CDN) vs Next.js (heavier, app router benefits SSR for SEO landing) — Daniel preference
+2. State management: Zustand (lightweight, parity localStorage patterns mockup) vs React Context + custom hooks vs alternative — Daniel preference
+3. Routing: React Router DOM v6+ screen-based mapping `goto()` 50+ screens → routes
+4. Backend layer reuse: import direct from `src/engine/*` modules (scheduleAdapter, bayesianNutrition, weaknessDetector, fatigueIndex, prEngine, deviationMemory, coachDirector, etc) — preserve test coverage vitest 3743 PASS
+5. UI components migration: extract reusable from mockup HTML+CSS+demo JS → React components + Tailwind classes (current Tailwind CDN config → Tailwind PostCSS build)
+6. Test strategy: vitest + jsdom React Testing Library local fast + Playwright E2E live andura.app smoke 4 taburi + Daniel Gates production manual Firebase + PWA + telefon
+7. Pre-Beta LOCK 2 React Andura Clasic build scope Bugatti — ZERO timing argumente decizie
+
+#### Constraints invariante
+
+- Mockup `andura-clasic.html` 4753 LOC = DESIGN MASTER literal — NO design changes în React build fără Daniel CEO LOCK explicit
+- Backend `src/engine/*` test coverage = preserved invariant (3743 PASS local)
+- Bugatti craft peak — refactor later NEVER happens, ZERO compromise
+- Gigel Test mandatory pre-feature decisions React build (orice paradigm shift verificat mockup spec compliance)
+- Daniel Gates production + Bugatti audit nuclear pre-launch invariant
 
 ---
 
