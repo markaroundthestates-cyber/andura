@@ -33,7 +33,7 @@
 ## Commits (3 atomic single-concern Bugatti)
 - `35e3e16` | feat(decisions): D007 + D008 + D009 codify PROC LOCKED V1 + D-LEGACY-085/086 DEPRECATED
 - `fbed6a7` | docs(vision): add PROJECT_INSTRUCTIONS_V6.md reference post radical archive
-- `<SHA3>` | chore(vault): archive consumed inbox handover narrative 2026-05-16
+- `dadcf3f` | chore(vault): archive consumed inbox handover narrative 2026-05-16
 
 ## Pushed
 feature/v2-vanilla-port pushed origin ✓ (commits + 1 backup tag pre-execute)
