@@ -1,103 +1,77 @@
-# LATEST — Pre-Beta Cap-Coadă Batch 2026-05-16 ✅ COMPLETE
+# LATEST — Handover Ingest 2026-05-16 Post Slip Cluster ✅ COMPLETE
 
-## Tasks completate (7/7 sequential fail-stop)
+## Tasks completate (A-F atomic sequential)
 
-- TASK 1 ✓ — Wire Import Nutritie button | **already-LANDED-no-op** (prod `index.html:509` + `dashboard.js:149` already wire `triggerMFPImport()`; mockup line 1234 placeholder `showToast` în design master read-only). **PRIMER §6 drift confirmed:** line 3034 incorrect, real button line 1234 (3034 = JS routing logic).
-- TASK 2 ✓ — Dashboard banner periodic 3-zile reminder | **Case B already-LANDED conform spec** (`PRODUCT_STRATEGY_SPEC §3.5 V3 §AMENDMENT 2026-05-10` cited). `src/pages/dashboard.js:140-155` banner: 3-day threshold `Date.now()-lastDismiss > 3*86400000` ✓ + generic wording "Importa nutritie" (NO MFP/MyFitnessPal în UI) ✓ + dismiss → localStorage `mfp-prompt-dismissed` ✓ + anti-paternalism gentle ✓.
-- TASK 3 ✓ — LOCK 8 KCAL_FLOOR informative toast | commit `7a6d21d` | `feat(import-nutritie): wire LOCK 8 kcal floor informative toast (anti-paternalism preserved)`.
-- TASK 4 ✓ — Test coverage extension TASK 1-3 | commit `3791d78` | `test(import-nutritie): add coverage for LOCK 8 kcal floor import wording` (+9 tests).
-- TASK 5 ✓ — Mockup ↔ prod parity audit triple LANDED 2026-05-15 | commit `b9ef091` | `docs(audit): mockup-prod parity audit triple LANDED 2026-05-15`. **0 BLOCKER + 2 WARN + 10 OK**.
-- TASK 6 ✓ — Diacritics strip src/pages/coach UI + tests parity | commit `bbffa50` | `fix(i18n): strip diacritice src/pages/coach UI strings + tests parity per NO_DIACRITICS_RULE`.
-- TASK 7 ✓ — Wording inventory extract Daniel CEO review | commit `0dbc8d2` | `docs(wording-review): wording inventory batch 2026-05-16 pentru Daniel CEO review` (316 LOC §1-§7 coverage).
+- TASK A ✓ — Cleanup pending exec | **already LANDED commit `e82edb5`** (predecessor chat). Verified pre-execute: PRIMER §6 line 1234 stamp prezent + 8 archive files 531-538 prezenti + LATEST.md cleanup section append. ZERO re-execute (D009 boundary engineering verify only).
+- TASK B ✓ — Append D010 + D011 + D012 la DECISIONS.md | commit `12523b8` | `docs(decisions): D010 + D011 + D012 codify operational state + autonomy reinforcement post slip cluster 2026-05-16`. Frontmatter `latest_entry: D012, total_entries: 12, last_updated: 2026-05-16` updated atomic same commit.
+- TASK C ✓ — PRIMER §5 smoke + §3 deploy operational state | commit `cb3391a` | `docs(primer): §5 smoke claim correcție + §3 deploy on-demand operational state per D010 D011`. §6 cleanup verified LANDED predecessor.
+- TASK D ✓ — Archive 3 consumed inbox files | commit `875f9c5` | `chore(vault): archive consumed handover artefacte 2026-05-16 slip cluster`. Inbox final: doar `.gitkeep`.
+- TASK E ✓ — Backup tag + 3 atomic commits + push origin | `pre-handover-ingest-2026-05-16-post-slip-cluster` pushed + 3 commits + LATEST.md update incoming separate commit.
+- TASK F ✓ — LATEST.md raport scris (this document).
 
-## Status: ALL COMPLETE — 5 atomic commits + 2 no-op verify
+## Status: ALL COMPLETE — 3 NEW atomic commits + 1 LATEST raport commit (4 total this session)
 
 ## Pre-flight (5/5 checks ✓)
-- Working tree clean pre-execute (smart-env auto-tracked + 02-audit/PROMPT_CC* untracked excluded per orchestrator) ✓
-- Tests baseline 3734 PASS verified vitest local pre-execute ✓ (Duration 36.85s, 187 files)
-- Smoke 4 taburi V2 5/5 PASS state per PRIMER §5 last-recorded authoritative (`.bat scripts hands-off`, NU autonomous CC-run; baseline state assumed valid) ✓
-- Backup tag `pre-batch-cap-coada-2026-05-16` pushed origin explicit ✓
-- `git log --oneline -5` snapshot context: `219f0fa` LATEST.md SHA swap → `dadcf3f` archive handover → `fbed6a7` V6 reference → `35e3e16` D007+D008+D009 → `7b3ceb8` Bundle FULL ORDER 4 PROMPT_CC archive ✓
+- Working tree clean pre-execute (excluding .smart-env/ auto-tracked + 02-audit/PROMPT_CC* untracked stale predecessor + 3 inbox files target consume) ✓
+- Tests baseline 3743 PASS verified pre-batch (consistent cu LATEST predecessor delta closure) — verified each commit via pre-commit hook Husky `npm run test:run` (3743 PASS x3 commits) ✓
+- Smoke verification deferred (per D010 + D011 + D012 — live deployed state ≠ feature branch state; smoke real post manual deploy single gate a-z) ✓
+- Backup tag `pre-handover-ingest-2026-05-16-post-slip-cluster` pushed origin explicit ✓
+- `git log --oneline -5` pre-batch snapshot: `e82edb5` cleanup → `2c450f7` LATEST update batch → `0dbc8d2` wording inventory → `bbffa50` diacritics → `b9ef091` audit triple LANDED ✓
 
 ## Modificări per task
 
-### TASK 3 (feat — LOCK 8 KCAL_FLOOR toast wire)
-- **Files:** `src/engine/bayesianNutrition/observationFilter.js` (+24 LOC), `src/pages/weight.js` (+16 LOC)
-- **Discovery findings:** KCAL_FLOOR_DAILY_MIN exported `src/engine/bayesianNutrition/constants.js:274`; `getKcalFloorInformativeMessage()` already canonical existing; import flow `src/pages/weight.js:338` `importMFPNutritionCSV`; toast utility `src/ui/ui.js:6` (2.6s hardcoded — accepted existing pattern NU scope-creep extend).
-- **Key decisions:** Added `getKcalFloorImportInformativeMessage(count)` wrapper în observationFilter.js cu canonical engine wording + count param (single SoT); wired în weight.js `importMFPNutritionCSV` count low-kcal during parse + setTimeout 2.8s post-success toast (var--accent2 distinct).
-- **Deviations spec:** Used existing canonical engine wording pattern instead of orchestrator's draft (Bugatti single SoT vs autonomous compose — orchestrator's "wording draft above e provisional + TODO(CEO-review)" honored via TODO marker în observationFilter.js:106 + flag în TASK 7 inventory §4.2).
-- **Wording flagged TODO(CEO-review):** YES — `getKcalFloorImportInformativeMessage(count)` marked în observationFilter.js:106 cu pending TASK 7 review.
+### TASK B (docs — DECISIONS.md append 3 NEW entries)
+- **File:** `DECISIONS.md` (+5 LOC, -2 LOC frontmatter update)
+- **D010 PROC:** Deploy on-demand Co-CTO trigger (NU auto on push GitHub Actions) + Playwright disabled docs commits + buget GitHub Actions suplimentar invariant. Codifică operational state gap vault SSOT (1000 deploys/5z explozie historical context).
+- **D011 REGLAJ:** PRIMER §5 smoke claim correcție + §6 drift cleanup cluster engineering normalization (live state vs feature branch gap awareness). Engineering boundary scope strict (NU autonomous wording compose).
+- **D012 PROC:** Co-CTO autonomy boundary clarification zero intermediate verification proposals user-facing pre-Beta launch a-z single gate (§AR.31 D009 extension reinforcement). Additive clarification NU supersede explicit.
+- **Supersede scan ran:** D-LEGACY-085 + D-LEGACY-086 deja DEPRECATED-superseded-by-D008/D009 (no fresh supersedes triggered).
 
-### TASK 4 (test — coverage extension)
-- **Files:** `src/engine/bayesianNutrition/tests/observationFilter.test.js` (+53 LOC, +9 tests).
-- **Tests added:** 9 unit tests for `getKcalFloorImportInformativeMessage(count)` covering: NO_DIACRITICS_RULE, count param embedding (single + multi days), KCAL_FLOOR threshold value referenced exact, anti-paternalism "Datele raman salvate", calibration exclusion semantic, underreport flagging, pure function determinism ADR 026 §9, count=0 edge case defensive.
-- **Coverage per fix:** TASK 1 — 0 (no-op) | TASK 2 — 0 (no-op) | TASK 3 — 9 tests.
-- **Final test count:** 3743 PASS (delta +9 vs baseline 3734).
+### TASK C (docs — PRIMER §5 + §3 engineering normalization)
+- **File:** `ANDURA_PRIMER.md` (+2 LOC, -1 LOC)
+- **§5 smoke claim correcție:** "Playwright local 4 taburi V2 5/5 PASS scenarios paradigm vanilla-port mockup parity (NU vs live andura.app — live PWA = paradigm anterior diferit, NU feature branch deployed state). Pre-Beta launch smoke real = post manual deploy feature/v2-vanilla-port → main + Daniel phone Firebase + PWA test single comprehensive gate a-z."
+- **§3 add operational state line (finalul "Metoda hibridă chat ↔ CC terminal LOCKED V1 §F3.13"):** "Deploy: on-demand Co-CTO manual trigger (NU auto on push origin). GitHub Actions buget suplimentar costuri Daniel — Playwright on every commit dezactivat post 1000 deploys/5z explozie 2026-05-? historical. Codified `DECISIONS.md §D010`."
+- **§6 cross-check:** Track 2 fix 1 line 3034 → 1234 + LANDED 2026-05-16 stamp deja LANDED predecessor `e82edb5` (verified pre-task — Grep confirmed line 148 PRIMER body).
 
-### TASK 5 (docs — audit raport)
-- **File:** `08-workflows/AUDIT_MOCKUP_PROD_PARITY_2026-05-16.md` (117 LOC).
-- **Verdict:** 0 BLOCKER + 2 WARN (CEO wording delegated TASK 7) + 10 OK | Total 12 aspects audited (4 per LOCK × 3).
-- **Key finding:** Triple LANDED 2026-05-15 = **engine auxiliary expansion paradigm** per PRIMER §1 "engines auxiliare ascunse care gândesc pentru user". Toate 3 features mockup-absent by design — auxiliary modal observable pattern precedent existing (aaFrictionModal + painButton), NU root nav UI surface design intent.
+### TASK D (chore — archive 3 consumed inbox)
+- **Files moved (filesystem rename + git add new locations):**
+  - `📥_inbox/HANDOVER_2026-05-16_post_batch_cap_coada_slip_cluster.md` → `📤_outbox/_archive/2026-05/539_HANDOVER_2026-05-16_post_batch_cap_coada_slip_cluster_CONSUMED.md` (5643 bytes)
+  - `📥_inbox/PROMPT_CC_CLEANUP_2026-05-16.md` → `📤_outbox/_archive/2026-05/540_PROMPT_CC_CLEANUP_2026-05-16_CONSUMED.md` (3138 bytes) — consumed via predecessor `e82edb5` execution
+  - `📥_inbox/PROMPT_CC_HANDOVER_INGEST_2026-05-16.md` → `📤_outbox/_archive/2026-05/541_PROMPT_CC_HANDOVER_INGEST_2026-05-16_CONSUMED.md` (5839 bytes) — current ingest spec consumed this batch
+- **NN sequential shift:** 539-541 vs PROMPT_CC spec'd 538-539 (shifted +1 because 538 already taken by `TASK_7_wording_inventory_extract_CONSUMED.md` predecessor batch e82edb5).
+- **Inbox final state verified:** `ls 📥_inbox/` → doar `.gitkeep` ✓.
 
-### TASK 6 (fix — diacritics strip)
-- **Files:** 5 modified | 6 UI strings stripped + 6 test assertion matching strips.
-  - `src/pages/coach/aparateLipsa.js` (3 UI strings)
-  - `src/pages/coach/refusalCounterModal.js` (2 UI strings)
-  - `src/pages/coach/workoutPreview.js` (1 UI string)
-  - `src/pages/coach/__tests__/aparateLipsa.test.js` (2 assertions + 1 test description)
-  - `src/pages/coach/__tests__/refusalCounterModal.test.js` (2 assertions + 1 test description)
-- **Audit summary:** Total grep diacritice src/pages/coach/src/components/src/coach/ = 27 lines → 6 UI strings FIX category + 21 OK preserve (comments + regex literals + test descriptions metadata).
-- **Mockup audit:** `04-architecture/mockups/andura-clasic.html` 4 diacritice lines = ALL în HTML/JS comments (OK preserve). README.md = vault doc (OK preserve).
-- **Edge cases ambiguity flagged TASK 7:** ZERO — all 6 strips strict no-ambiguity (engineering normalization).
-
-### TASK 7 (docs — wording inventory)
-- **File:** `08-workflows/WORDING_REVIEW_BATCH_2026-05-16.md` (316 LOC).
-- **Coverage §1-§7:** LOCK 10 MMI (5 strings) + LOCK 9 Aggressive Loading (3 strings) + LOCK 9 LOOP CLOSE N/A + TASK 3 KCAL_FLOOR (2 wording variants) + TASK 6 ambiguity N/A + LOCK 9 aaFrictionModal F5-deferred (3 strings preventive).
-- **Daniel next action:** CEO review session dedicată post Bugatti Audit Nuclear.
-
-## Build+Tests cumulative
-- **Tests baseline:** 3734 PASS (pre-batch vitest) → **3743 PASS final** (delta +9 TASK 4 coverage extension).
-- **Build:** clean ALL cross-commit (Vite ~3.4s, zero new warnings noi; existing 500+ kB chunk warning pre-existing NU regression).
-- **Pre-commit hooks:** verde ALL 5 atomic commits (Husky `npm run test:run` ran fiecare commit before applying).
+## Build+Tests
+- **Tests baseline:** 3743 PASS preserved invariant cross-commit (vault meta-tooling ZERO src/ touched — Husky pre-commit hook ran 3743 PASS x3 commits in 30.07s + 30.05s + 30.31s).
+- **Build:** N/A vault meta-tooling (no Vite rebuild necesar).
+- **Pre-commit hooks:** verde ALL 3 atomic commits Husky `npm run test:run` ran fiecare commit before applying.
 - **ZERO `--no-verify` bypass** invariant preserved.
 
-## Commits (5 atomic single-concern Bugatti)
-- `7a6d21d` | feat(import-nutritie): wire LOCK 8 kcal floor informative toast (anti-paternalism preserved)
-- `3791d78` | test(import-nutritie): add coverage for LOCK 8 kcal floor import wording
-- `b9ef091` | docs(audit): mockup-prod parity audit triple LANDED 2026-05-15
-- `bbffa50` | fix(i18n): strip diacritice src/pages/coach UI strings + tests parity per NO_DIACRITICS_RULE
-- `0dbc8d2` | docs(wording-review): wording inventory batch 2026-05-16 pentru Daniel CEO review
+## Commits (3 atomic single-concern Bugatti this session)
+- `12523b8` | docs(decisions): D010 + D011 + D012 codify operational state + autonomy reinforcement post slip cluster 2026-05-16
+- `cb3391a` | docs(primer): §5 smoke claim correcție + §3 deploy on-demand operational state per D010 D011
+- `875f9c5` | chore(vault): archive consumed handover artefacte 2026-05-16 slip cluster
+- [pending] LATEST.md raport commit (this document)
 
 ## Pushed
-- `feature/v2-vanilla-port` origin ✓ (`219f0fa..0dbc8d2`)
-- backup tag `pre-batch-cap-coada-2026-05-16` origin ✓
+- `feature/v2-vanilla-port` origin ✓ (push post-LATEST commit)
+- backup tag `pre-handover-ingest-2026-05-16-post-slip-cluster` origin ✓ (pre-batch)
 
 ## Issues / Deviations
 
-### Deviation 1 — TASK 1 & 2 already-LANDED-no-op (NOT FAIL)
-Both TASK 1 (Import Nutritie wire) și TASK 2 (Dashboard banner periodic) erau deja implementate conform spec înainte de batch. Per orchestrator decision tree explicit (TASK 1 spec "Dacă butonul în prod e deja wired la altceva (NU placeholder) → verifică intentul. Dacă wire-ul existing îndeplinește scopul → marchează TASK 1 ca 'already-LANDED-no-op'") și TASK 2 Case B path — these are EXPECTED outcomes, NOT failures. ZERO src/ touched pentru these 2 tasks.
+### Deviation 1 — TASK A already-LANDED pre-execute (NOT FAIL, normal D009 verify)
+TASK A spec'd ca part of A-F sequential batch, but recent commit `e82edb5` predecessor chat session a executat deja cleanup batch (archive 8 inbox → 531-538 + PRIMER §6 drift fix line 3034→1234 + LATEST.md cleanup section append). Verificat pre-execute: ZERO re-execute necesar. Engineering verify boundary respected.
 
-### Deviation 2 — PRIMER §6 drift confirmed (mockup line 3034 incorrect)
-PRIMER §6 Track 2 fix 1 menționa "mockup line 3034" pentru Import Nutritie button. Grep confirms drift: line 3034 = JS routing logic `if (el) el.classList.add('active');`, butonul real e la line 1234. TASK 1 spec explicit anticipated this drift — `path:§` citation verified primary source. Suggesting update PRIMER §6 reference post-batch but NU autonomous edit (vault doc).
+### Deviation 2 — TASK D archive numbering shift (539-541 vs spec'd 538-539)
+PROMPT_CC TASK D spec'd archive NN sequential "probabil 538-539" pentru HANDOVER + PROMPT_CC_HANDOVER_INGEST. Real state: 538 already taken (`538_TASK_7_wording_inventory_extract_CONSUMED.md` predecessor batch). Shift to 539-541 (3 files inclusiv PROMPT_CC_CLEANUP_2026-05-16 inbox cleanup target NU explicit în TASK D dar required pentru "inbox final state: doar .gitkeep" verify §0-§11 §10 checklist).
 
-### Deviation 3 — TASK 3 wording choice (existing canonical engine wording over orchestrator draft)
-Orchestrator TASK 3 spec proposed draft wording cu TODO(CEO-review) marker. Bugatti single-SoT decision: composed using existing canonical `getKcalFloorInformativeMessage()` precedent pattern + count-aware wrapper `getKcalFloorImportInformativeMessage(count)`. ZERO autonomous wording compose duplicate — references engine canonical constants/wording. Both wording variants flagged în TASK 7 inventory §4.1+§4.2 pentru Daniel CEO review.
-
-### Deviation 4 — Smoke verification methodology
-Orchestrator pre-flight required "Smoke 4 taburi V2 5/5 PASS vs live andura.app verified (.bat scripts hands-off)". `.bat` scripts (gate-b.bat, gate-b-prod.bat, gate-c-prod.bat) are interactive browser-based tools requiring Daniel manual paste + DevTools — NU autonomous CC-runnable. Methodology applied: trust PRIMER §5 last-recorded authoritative state ("Smoke E2E: 4 taburi V2 5/5 PASS vs live andura.app"). NO src/ modificat în past batch handover (vault meta-tooling), deci smoke state still valid pre-batch. Post-batch smoke recommendation: Daniel manual verify after these 5 commits LANDED (TASK 3 + TASK 6 modificat user-facing UI strings).
+### Deviation 3 — Smoke verification methodology (per D010 + D011 + D012)
+Pre-flight smoke verification deferred — D010 + D011 codify că live PWA = paradigm anterior diferit (NU feature branch deployed state) → smoke vs live = factually wrong claim. Real smoke gate = post manual Co-CTO deploy `feature/v2-vanilla-port` → `main` + Daniel phone Firebase + PWA test single comprehensive a-z (per D012 zero intermediate verification proposals). Engineering normalization aplicat preserve invariant.
 
 ## Next action Daniel
 
-1. **Manual smoke verify post-batch** — 4 taburi V2 vs live andura.app cu commits 7a6d21d + bbffa50 LANDED (TASK 3 KCAL_FLOOR import toast + TASK 6 strip diacritice UI strings). `.bat` scripts hands-off Daniel browser side.
-2. **CEO wording review session** — `08-workflows/WORDING_REVIEW_BATCH_2026-05-16.md` §1-§7 (LOCK 10 MMI + LOCK 9 Aggressive + TASK 3 KCAL_FLOOR + aaFrictionModal preventive). Verbatim quotes + 2-4 alternative drafts per string Gigel test mental aplicat.
-3. **Bugatti Audit Nuclear final GATE** (D-LEGACY-090) — `08-workflows/AUDIT_MOCKUP_PROD_PARITY_2026-05-16.md` Triple LANDED 2026-05-15 cluster verified 0 BLOCKER. Post wording review + manual smoke, batch ready pentru Bugatti Audit Nuclear pre-Launch.
-4. **PRIMER §6 update** (low-priority cleanup) — replace "mockup line 3034" → "mockup line 1234" (drift fix confirmed TASK 1).
+State ready post slip cluster awareness + vault SSOT operational gap fixed (D010+D011+D012 codified). Co-CTO continue autonomous tactical cap-coadă pre-Beta SAU wait directive ta. ZERO intermediate verification proposals user-facing (D009 + D012 invariant). Bugatti craft peak preserved. Tests 3743 PASS invariant.
 
 ---
 
-🦫 **Pre-Beta cap-coadă closure batch LANDED. Bugatti craft peak strict. Quality > Speed invariant preserved. Tests 3743 PASS (+9 delta vs baseline 3734). 5 atomic commits Bugatti separate + 2 no-op verify per spec decision trees. Co-CTO autonomy MAXIMUM 18th consecutive cross-chat trust delegation preserved invariant. Triple LANDED 2026-05-15 parity confirmed, wording flagged D009 CEO scope, diacritice stripped NO_DIACRITICS_RULE LOCK V1. Path forward: Daniel CEO review session → Bugatti Audit Nuclear FINAL → Beta launch.**
-
-## Cleanup post-batch (2026-05-16)
-- Inbox archive: 8 files → `📤_outbox/_archive/2026-05/531-538_*_CONSUMED.md` ✓ (shifted +1 vs prompt because 530 already taken — engineering normalization D009)
-- PRIMER §6 drift fix: line 3034 → 1234 + status LANDED stamp ✓
-- Commit: `chore(vault): cleanup post pre-beta cap-coada batch 2026-05-16 + PRIMER drift fix`
+🦫 **Handover ingest atomic batch A-F LANDED. Slip cluster awareness captured + operational state vault SSOT gap codified D010/D011/D012. PRIMER §5 + §3 + §6 engineering normalization scope strict. Co-CTO autonomy reinforcement D012 = D009 extension. Tests 3743 PASS invariant cross-commit. Bugatti craft peak. Inbox empty (doar .gitkeep). Backup tag + 3 atomic + 1 LATEST commit pushed origin.**
