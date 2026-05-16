@@ -20,6 +20,7 @@ import { describe, it, expect } from 'vitest';
 import {
   filterKcalFloorObservations,
   getKcalFloorInformativeMessage,
+  getKcalFloorImportInformativeMessage,
 } from '../observationFilter.js';
 import {
   KCAL_FLOOR_DAILY_MIN,
@@ -169,6 +170,58 @@ describe('getKcalFloorInformativeMessage — forward-going UI consumer wording',
     const a = getKcalFloorInformativeMessage();
     const b = getKcalFloorInformativeMessage();
     expect(a).toBe(b);
+  });
+});
+
+describe('getKcalFloorImportInformativeMessage — count-aware import context wording', () => {
+  it('returns Romanian-first no-diacritics wording (NO_DIACRITICS_RULE)', () => {
+    const msg = getKcalFloorImportInformativeMessage(3);
+    expect(msg).not.toMatch(/[șțăâîȘȚĂÂÎ]/);
+  });
+
+  it('embeds count param in wording (single day)', () => {
+    const msg = getKcalFloorImportInformativeMessage(1);
+    expect(msg).toMatch(/Am detectat 1 zile/);
+  });
+
+  it('embeds count param in wording (multiple days)', () => {
+    const msg = getKcalFloorImportInformativeMessage(7);
+    expect(msg).toMatch(/Am detectat 7 zile/);
+  });
+
+  it('references KCAL_FLOOR_DAILY_MIN threshold value exact', () => {
+    const msg = getKcalFloorImportInformativeMessage(2);
+    expect(msg.includes(String(KCAL_FLOOR_DAILY_MIN))).toBe(true);
+    expect(msg).toMatch(/sub 1200 kcal/);
+  });
+
+  it('anti-paternalism preserved: wording confirms "Datele raman salvate"', () => {
+    const msg = getKcalFloorImportInformativeMessage(5);
+    expect(msg).toMatch(/Datele raman salvate/);
+  });
+
+  it('mentions calibration exclusion semantic for engine transparency', () => {
+    const msg = getKcalFloorImportInformativeMessage(2);
+    expect(msg).toMatch(/exclude/);
+    expect(msg).toMatch(/calibrare/);
+  });
+
+  it('flags underreport possibility for user transparency (anti-paternalism)', () => {
+    const msg = getKcalFloorImportInformativeMessage(4);
+    expect(msg).toMatch(/underreport/);
+  });
+
+  it('pure function determinism: same count → identical output', () => {
+    const a = getKcalFloorImportInformativeMessage(3);
+    const b = getKcalFloorImportInformativeMessage(3);
+    expect(a).toBe(b);
+  });
+
+  it('count = 0 edge case still produces valid wording (defensive)', () => {
+    const msg = getKcalFloorImportInformativeMessage(0);
+    expect(typeof msg).toBe('string');
+    expect(msg.length).toBeGreaterThan(0);
+    expect(msg).toMatch(/Am detectat 0 zile/);
   });
 });
 
