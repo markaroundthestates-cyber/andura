@@ -4,6 +4,8 @@ import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { state } from '../state.js';
+import { KCAL_FLOOR_DAILY_MIN } from '../engine/bayesianNutrition/constants.js';
+import { getKcalFloorImportInformativeMessage } from '../engine/bayesianNutrition/observationFilter.js';
 
 export let historyShowAll = false;
 export let currentKcal = KCAL_TARGET;
@@ -347,7 +349,7 @@ async function importMFPNutritionCSV(text) {
 
   const kcals = DB.get('kcals') || {};
   const prots = DB.get('prots') || {};
-  let countK = 0, countP = 0;
+  let countK = 0, countP = 0, lowKcalCount = 0;
 
   lines.slice(1).forEach(line => {
     const parts = line.split(',').map(p => p.trim().replace(/"/g,''));
@@ -364,7 +366,11 @@ async function importMFPNutritionCSV(text) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return;
     if (kcalIdx !== -1) {
       const v = parseInt(parts[kcalIdx]);
-      if (!isNaN(v) && v > 0) { kcals[dateStr] = v; countK++; }
+      if (!isNaN(v) && v > 0) {
+        kcals[dateStr] = v;
+        countK++;
+        if (v < KCAL_FLOOR_DAILY_MIN) lowKcalCount++;
+      }
     }
     if (protIdx !== -1) {
       const v = parseInt(parts[protIdx]);
@@ -375,6 +381,14 @@ async function importMFPNutritionCSV(text) {
   if (kcalIdx !== -1) DB.set('kcals', kcals);
   if (protIdx !== -1) DB.set('prots', prots);
   toast(`✓ Import nutritie: ${countK} kcal + ${countP} prot`, 'var(--green)');
+  // LOCK 8 KCAL_FLOOR informative toast — anti-paternalism preserved
+  // (ZERO block save; toast informează după success). Wording canonical engine
+  // source single SoT (src/engine/bayesianNutrition/observationFilter.js).
+  if (lowKcalCount > 0) {
+    setTimeout(() => {
+      toast(getKcalFloorImportInformativeMessage(lowKcalCount), 'var(--accent2)');
+    }, 2800);
+  }
   renderWeight();
   if (window.renderDash) window.renderDash();
 }

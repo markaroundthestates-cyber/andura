@@ -102,3 +102,27 @@ export function getKcalFloorInformativeMessage() {
     'obiective + preconizari viitoare.'
   );
 }
+
+// TODO(CEO-review): wording draft batch 2026-05-16 TASK 7 pending Daniel review.
+/**
+ * Count-aware UI trigger wording for CSV/JSON IMPORT context — detecting N
+ * zile sub kcal floor in batch import operation.
+ *
+ * Anti-paternalism preserved invariant ABSOLUTE per F2 Sufletul Andura
+ * "AI-ul informeaza NU impune": data sub floor RAMAS saved (CDL append-only
+ * persists transparency invariant); engine exclude doar din invatare Cluster
+ * A1 Conjugate Normal-Normal sample mean/variance. User decide.
+ *
+ * Pure function: same input → same output deterministic ADR 018 §2 contract.
+ *
+ * @param {number} count Days count with kcalDaily sub KCAL_FLOOR_DAILY_MIN.
+ * @returns {string} Romanian-first no-diacritics scientific anchored wording.
+ */
+export function getKcalFloorImportInformativeMessage(count) {
+  return (
+    'Am detectat ' + count + ' zile cu sub ' +
+    KCAL_FLOOR_DAILY_MIN + ' kcal. ' +
+    'Coach exclude acele zile din calibrare (posibil underreport). ' +
+    'Datele raman salvate.'
+  );
+}
