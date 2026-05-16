@@ -62,9 +62,9 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 ## §3 Cum funcționează (Architecture)
 
-**Stack vanilla JS pe `feature/v2-vanilla-port`** — Port-First-Then-React paradigm LOCK V1 2026-05-10:
-- **Step 1 = vanilla port mockup V2 → prod `src/`** (BATCH 2 Antrenor closure LANDED 2026-05-12, 11 atomic commits substantive)
-- **Step 2 = React migration mecanic mapping** (PENDING Step 1 finish + Daniel Gates smoke)
+**Stack vanilla JS legacy + React migration ACTIVE Pre-Beta LOCK 2** — Port-First-Then-React paradigm LOCK V1 2026-05-10 **SPLIT post D015 STRAT PIVOT 2026-05-16:**
+- ~~**Step 1 = vanilla port mockup V2 → prod `src/`**~~ **SUPERSEDED-BY-D015** (vanilla `index.html` 6 taburi = LEGACY live `andura.app`, NU port closure, mockup → React direct). Backend portions LANDED reusable (BATCH 2 Antrenor closure `src/engine/*` + tests 3743 PASS).
+- **Step 2 = React Andura Clasic build direct pe mockup `andura-clasic.html` (DESIGN MASTER 4 taburi V1 LOCKED + 50+ screens `goto()`-based)** = ACTIVE Pre-Beta LOCK 2 path forward. Implementation tactical planning next chat (React stack, state mgmt, routing, backend reuse). Per `DECISIONS.md §D015` + `§D016`.
 
 **Architecture pillars (LOCKED V1 cumulative):**
 - Local-first storage IndexedDB primary + Firebase backup tier (ADR 001)
@@ -137,6 +137,15 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Wave 4 P1 STOP banner INDEX_MASTER LANDED `f595d54`
 - ANDURA_PRIMER.md V1 LANDED (acest fișier)
 
+**2026-05-16 React pivot strategic LOCKED V1 (post deploy main reconcile session):**
+- Pre-Beta LOCK 1 = 100% complete (D013) — backend reusable React migration
+- Deploy main reconcile LANDED `975e6711` (D014 branch reconcile -X theirs)
+- Daniel browser-check andura.app: medical disclaimer ✅, but 6 taburi prod ≠ 4 taburi mockup LOCKED V1 → Port-First Step 1 vanilla port nav layer NU făcut
+- **D015 STRAT PIVOT:** vanilla port skipped, lansăm Andura Clasic pe React folosind mockup `andura-clasic.html` ca DESIGN MASTER direct. Vanilla `index.html` 6 taburi = legacy live andura.app până React LANDED
+- **D016 PROC:** nav 6→4 + screens 50+ în React build only, NU în vanilla legacy
+- Backup tag pushed: `pre-react-pivot-codify-2026-05-16` @ HEAD post deploy reconcile
+- Next chat: React stack tactical (Vite vs Next.js, state mgmt Zustand vs Context, routing migration, backend reuse plan)
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -150,19 +159,33 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
   - Track 2 fix 2 dashboard banner periodic 3 zile reminder (`dashboard.js:128-145` threshold `3*86400000` + slot `index.html:392` + wording GENERIC V3 compliant "Importa nutritie din CSV")
   - Track 2 fix 3 LOCK 8 KCAL_FLOOR informative toast on MFP CSV import (`weight.js:6-7` imports + `importMFPNutritionCSV` body counts `v < KCAL_FLOOR_DAILY_MIN` + setTimeout 2.8s post-success toast, engine SoT wording, anti-paternalism preserved ZERO block save)
 
+**Track 1 + Track 2 vanilla port closure (bottom nav 6→4 + screen architecture restructure) — SUPERSEDED-BY-D015 (2026-05-16):** NU se mai face în vanilla `index.html` + `src/pages/*.js` legacy. Restructure exclusiv în React build pe spec mockup. Eliminăm double-work non-Bugatti. Per `DECISIONS.md §D016`.
+
 **Track 3 — Wording backlog post-smoke CEO review (wait-Daniel, D009 boundary, NU autonomous compose):**
 - LOCK 10 MMI buttons "Reincep treptat (recomandat)" / "De la zero"
 - LOCK 10 MMI refuse banner wording
 - LOCK 10 diacritics strip decision
 - LOCK 9 aaFrictionModal wording potential review
 
+**Track 4 — React Andura Clasic build (NEW post D015 2026-05-16) — Pre-Beta LOCK 2 path:**
+- Strategic stack discussion (React + Vite vs Next.js — Daniel preference, mockup currently Tailwind CDN → PostCSS build)
+- State management: Zustand (lightweight) vs React Context + custom hooks vs alternative — Daniel preference
+- Routing migration screen-based mockup `goto()` 50+ screens → React Router DOM v6+ routes
+- Backend layer reuse plan: import direct din `src/engine/*` (scheduleAdapter + bayesianNutrition + weaknessDetector + fatigueIndex + prEngine + deviationMemory + coachDirector etc.) — preserve test coverage vitest 3743 PASS
+- UI components extraction mockup HTML+CSS+demo JS → React components + Tailwind classes (Tailwind PostCSS build)
+- Test strategy: vitest + jsdom React Testing Library local + Playwright E2E live andura.app smoke + Daniel Gates production manual
+- Pre-Beta LOCK 2 = React Andura Clasic full build pe mockup spec, Bugatti craft, ZERO timing argumente decizie
+- Daniel Gates + Bugatti audit nuclear pre-launch invariant păstrate
+
 **End-state final gate sequencing (Daniel CEO directive verbatim):**
-1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16)
+1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16) — backend layer reusable React
 2. ✅ Deploy `feature/v2-vanilla-port` → `main` (achieved 2026-05-16 via CC autonomous reconcile batch — backup tags `pre-merge-main-reconcile-2026-05-16` + `pre-merge-feature-reconcile-2026-05-16` + previous `pre-deploy-main-2026-05-16`)
-3. Daniel Gates smoke production manual (Firebase + PWA + telefon, single comprehensive gate a-z) — pending Daniel timing
-4. Bugatti Full Audit pre-Launch nuclear gate (fiecare linie cod + fiecare virgulă pe latest commit LANDED) — CC autonomous candidate post smoke
-5. Fix ALL issues surfaced (combined smoke + Bugatti audit backlog)
-6. Beta launch
+3. ✅ Strategic React pivot LOCK V1 (D015 + D016 codified 2026-05-16, backup tag `pre-react-pivot-codify-2026-05-16`)
+4. Pre-Beta LOCK 2 React Andura Clasic build (Track 4 tactical planning + execution) — NEXT
+5. Daniel Gates smoke production manual (Firebase + PWA + telefon, single comprehensive gate a-z) — post LOCK 2
+6. Bugatti Full Audit pre-Launch nuclear gate (fiecare linie cod + fiecare virgulă pe latest commit LANDED) — CC autonomous candidate post smoke
+7. Fix ALL issues surfaced (combined smoke + Bugatti audit backlog)
+8. Beta launch
 
 ---
 
