@@ -3,11 +3,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Calendar7Day } from '../../components/Calendar7Day';
-import { useScheduleStore } from '../../stores/scheduleStore';
+import { useScheduleStore, weekStartIso } from '../../stores/scheduleStore';
 
 beforeEach(() => {
+  // Phase 5 task_01 fix: seed cu current Monday (mount effect auto-resets
+  // editMode false dacă weekStartISO stale). Pre-fix hardcoded date broke
+  // post wall-clock drift.
   useScheduleStore.setState({
-    weekStartISO: '2026-05-11', // arbitrary Monday
+    weekStartISO: weekStartIso(),
     days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'],
     editMode: false,
   });
