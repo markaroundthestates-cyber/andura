@@ -68,6 +68,9 @@ export interface WorkoutState {
   lastRating: 'usoara' | 'normala' | 'grea' | null;
   pausedSnapshot: PausedSession | null;
   lastSession: LastSessionSummary | null;
+  // Phase 4 task_21: persisted past sessions cumulative list pentru Istoric
+  // tab list view + detail navigation. Reverse-chrono append (newest tail).
+  sessionsHistory: LastSessionSummary[];
   streak: number;
 }
 
@@ -100,6 +103,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       lastRating: null,
       pausedSnapshot: null,
       lastSession: null,
+      sessionsHistory: [],
       streak: 0,
 
       startSession: (sessionStart) =>
@@ -157,14 +161,17 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         }),
 
       finishSession: (summary) =>
-        set({
+        set((s) => ({
           phase: 'idle',
           sessionStart: null,
           lastSession: summary,
+          // Phase 4 task_21: append la sessionsHistory cumulative list
+          // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
+          sessionsHistory: [...s.sessionsHistory, summary],
           exIdx: 0,
           setIdx: 0,
           history: {},
-        }),
+        })),
 
       setPhase: (phase) => set({ phase }),
 
@@ -209,10 +216,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
     {
       name: 'wv2-workout-store',
       storage: createJSONStorage(() => localStorage),
-      // Persist selective: pausedSnapshot + lastSession + streak (NU sessionStart runtime-only)
+      // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
+      // streak (NU sessionStart runtime-only). Phase 4 task_21 adds history
+      // pentru Istoric tab persistent browse.
       partialize: (state) => ({
         pausedSnapshot: state.pausedSnapshot,
         lastSession: state.lastSession,
+        sessionsHistory: state.sessionsHistory,
         streak: state.streak,
       }) as Partial<WorkoutState & WorkoutActions>,
     }

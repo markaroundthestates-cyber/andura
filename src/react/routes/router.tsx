@@ -25,6 +25,7 @@ import { Progres } from './screens/progres/Progres';
 import { LogWeight } from './screens/progres/LogWeight';
 import { BodyData } from './screens/progres/BodyData';
 import { Istoric } from './screens/istoric/Istoric';
+import { IstoricDetail } from './screens/istoric/IstoricDetail';
 import { Cont } from './screens/cont/Cont';
 
 export const router = createBrowserRouter([
@@ -66,7 +67,13 @@ export const router = createBrowserRouter([
           { path: 'body-data', element: <BodyData /> },
         ],
       },
-      { path: 'istoric', element: <Istoric /> },
+      {
+        path: 'istoric',
+        children: [
+          { index: true, element: <Istoric /> },
+          { path: ':sessionId', element: <IstoricDetail /> },
+        ],
+      },
       { path: 'cont', element: <Cont /> },
     ],
   },
