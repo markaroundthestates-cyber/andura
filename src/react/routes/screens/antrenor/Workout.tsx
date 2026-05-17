@@ -32,6 +32,7 @@ import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
+import { formatMMSS } from '../../../lib/format';
 import { gotoPath } from '../../../lib/navigation';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
@@ -46,12 +47,6 @@ const WV2_FALLBACK: readonly PlannedExercise[] = [
 ];
 
 type SetRating = ExerciseHistoryEntry['rating'];
-
-function formatMMSS(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
 
 export function Workout(): JSX.Element {
   const navigate = useNavigate();
