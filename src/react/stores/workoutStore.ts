@@ -23,11 +23,16 @@ export interface ExerciseHistoryEntry {
   timestamp?: number;
 }
 
-// Phase 4 task_10: PR detection payload (engineWrappers.getPRDelta result).
+// Phase 4 task_10/18: PR detection payload (engineWrappers.getPRDelta result).
 export interface PRData {
   exercise: string;
   deltaKg: number;
   type: 'weight' | 'reps' | 'volume';
+  // Phase 4 task_18: enriched fields optional pentru backward compat (zero
+  // legacy default cand absent). PostSummary banner Phase 5+ task_22
+  // visual extension uses these.
+  deltaPct?: number;
+  oneRMEstimate?: number;
 }
 
 export interface PausedSession {

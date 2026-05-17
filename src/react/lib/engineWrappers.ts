@@ -60,6 +60,11 @@ export interface PRDelta {
   kg: number;
   reps: number;
   prevBest: PRHistoryEntry | null;
+  // Phase 4 task_18: enriched fields pentru PostSummary banner visual
+  // extension Phase 5+ (task_22 dependency).
+  deltaKg: number; // newKg - prevBest.w (0 cand prevBest null = first ever set)
+  deltaPct: number; // (newKg - prev) / prev * 100 (0 cand prevBest null)
+  oneRMEstimate: number; // Epley estimate: kg * (1 + reps/30)
 }
 
 export interface PlannedExercise {
@@ -147,13 +152,42 @@ export function getFatigue(): FatigueOutput | null {
  *
  * Engine dep: src/engine/prEngine.js#detectPR.
  */
+/**
+ * Phase 4 task_18: enrich engine detectPR output cu 1RM estimate (Epley
+ * formula `kg * (1 + reps/30)`) + deltaKg + deltaPct fields. Pure function
+ * augment — engine logic unchanged. Backward compat consumers that read only
+ * type/kg/reps/prevBest (existing fields preserved).
+ *
+ * Epley chosen vs Brzycki: Epley simpler closed-form, well-known în
+ * fitness apps, accurate la 1-15 rep range typical training context.
+ * Brzycki alternative `kg * 36 / (37 - reps)` deferred Phase 5+ daca
+ * needed cross-formula calibration.
+ */
+function estimateOneRM(kg: number, reps: number): number {
+  if (kg <= 0 || reps <= 0) return 0;
+  return Math.round(kg * (1 + reps / 30) * 10) / 10; // 1 decimal precision
+}
+
 export function getPRDelta(
   exercise: string,
   set: PRSet,
   history: PRHistoryEntry[]
 ): PRDelta | null {
   try {
-    return detectPR(exercise, set, history) ?? null;
+    const raw = detectPR(exercise, set, history);
+    if (!raw) return null;
+    const prevKg = raw.prevBest?.w ?? 0;
+    const deltaKg = raw.kg - prevKg;
+    const deltaPct = prevKg > 0 ? (deltaKg / prevKg) * 100 : 0;
+    return {
+      type: raw.type,
+      kg: raw.kg,
+      reps: raw.reps,
+      prevBest: raw.prevBest,
+      deltaKg: Math.round(deltaKg * 10) / 10,
+      deltaPct: Math.round(deltaPct * 10) / 10,
+      oneRMEstimate: estimateOneRM(raw.kg, raw.reps),
+    };
   } catch (e) {
     console.warn('[engineWrappers] getPRDelta failed:', e);
     return null;

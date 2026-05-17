@@ -141,7 +141,7 @@ describe('engineWrappers — getPRDelta', () => {
     vi.clearAllMocks();
   });
 
-  it('returns weight PR daca engine detects', () => {
+  it('returns weight PR daca engine detects + enriched fields', () => {
     vi.mocked(detectPR).mockReturnValue({
       type: 'weight',
       kg: 100,
@@ -151,6 +151,10 @@ describe('engineWrappers — getPRDelta', () => {
     const r = getPRDelta('Bench', { w: 100, reps: 5 }, []);
     expect(r?.type).toBe('weight');
     expect(r?.kg).toBe(100);
+    // task_18 §A enriched fields
+    expect(r?.deltaKg).toBe(5);
+    expect(r?.deltaPct).toBeCloseTo(5.3, 0); // 5/95 * 100 ≈ 5.26
+    expect(r?.oneRMEstimate).toBeCloseTo(116.7, 0); // 100 * (1 + 5/30) = 116.67
   });
 
   it('returns null daca engine returns null (no PR)', () => {
@@ -172,6 +176,54 @@ describe('engineWrappers — getPRDelta', () => {
     const hist = [{ ex: 'Squat', w: 100, reps: 5 }];
     getPRDelta('Squat', { w: 105, reps: 5 }, hist);
     expect(detectPR).toHaveBeenCalledWith('Squat', { w: 105, reps: 5 }, hist);
+  });
+
+  it('task_18: oneRMEstimate Epley formula correct', () => {
+    vi.mocked(detectPR).mockReturnValue({
+      type: 'weight',
+      kg: 60,
+      reps: 10,
+      prevBest: null,
+    });
+    const r = getPRDelta('Bench', { w: 60, reps: 10 }, []);
+    // Epley: 60 * (1 + 10/30) = 60 * 1.333 = 80
+    expect(r?.oneRMEstimate).toBe(80);
+  });
+
+  it('task_18: deltaKg + deltaPct = 0 cand prevBest null (first ever PR)', () => {
+    vi.mocked(detectPR).mockReturnValue({
+      type: 'weight',
+      kg: 60,
+      reps: 10,
+      prevBest: null,
+    });
+    const r = getPRDelta('Bench', { w: 60, reps: 10 }, []);
+    expect(r?.deltaKg).toBe(60); // 60 - 0 = 60 (first ever, baseline 0)
+    expect(r?.deltaPct).toBe(0); // 0 cand prevKg=0 (avoid divide by zero)
+  });
+
+  it('task_18: oneRMEstimate=0 cand kg sau reps zero', () => {
+    vi.mocked(detectPR).mockReturnValue({
+      type: 'volume',
+      kg: 0,
+      reps: 10,
+      prevBest: null,
+    });
+    const r = getPRDelta('Bench', { w: 0, reps: 10 }, []);
+    expect(r?.oneRMEstimate).toBe(0);
+  });
+
+  it('task_18: volume PR cu enriched fields', () => {
+    vi.mocked(detectPR).mockReturnValue({
+      type: 'volume',
+      kg: 50,
+      reps: 15,
+      prevBest: { ex: 'Squat', w: 50, reps: 10 },
+    });
+    const r = getPRDelta('Squat', { w: 50, reps: 15 }, []);
+    expect(r?.type).toBe('volume');
+    expect(r?.deltaKg).toBe(0); // same weight, NU kg increase
+    expect(r?.oneRMEstimate).toBe(75); // 50 * (1 + 15/30) = 75
   });
 });
 

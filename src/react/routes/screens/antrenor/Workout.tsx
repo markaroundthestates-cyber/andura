@@ -229,8 +229,10 @@ export function Workout(): JSX.Element {
     if (delta) {
       markPRHit({
         exercise: exerciseName,
-        deltaKg: delta.kg - (delta.prevBest?.w ?? 0),
+        deltaKg: delta.deltaKg,
         type: delta.type,
+        deltaPct: delta.deltaPct,
+        oneRMEstimate: delta.oneRMEstimate,
       });
     }
 

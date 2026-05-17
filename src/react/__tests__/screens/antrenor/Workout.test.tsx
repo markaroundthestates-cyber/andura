@@ -465,6 +465,10 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
       kg: 25,
       reps: 10,
       prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+      // task_18 enriched fields propagated direct (NU re-derive în handleLogSet)
+      deltaKg: 2.5,
+      deltaPct: 11.1,
+      oneRMEstimate: 33.3,
     });
     renderWorkout();
     const kgInput = screen.getByTestId('kg-input');
@@ -472,23 +476,30 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
     fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
     const state = useWorkoutStore.getState();
     expect(state.prHit).toBe(true);
-    expect(state.prData).toEqual({
+    expect(state.prData).toMatchObject({
       exercise: 'Bench Press',
-      deltaKg: 2.5, // 25 - 22.5
+      deltaKg: 2.5,
       type: 'weight',
+      deltaPct: 11.1,
+      oneRMEstimate: 33.3,
     });
   });
 
-  it('markPRHit deltaKg = 0 cand prevBest null (first ever set)', () => {
+  it('markPRHit deltaKg propagated din delta payload (NU re-derive)', () => {
     vi.mocked(getPRDelta).mockReturnValue({
       type: 'weight',
       kg: 22.5,
       reps: 10,
       prevBest: null,
+      // task_18 first ever set: deltaKg = kg full baseline 0, deltaPct = 0
+      deltaKg: 22.5,
+      deltaPct: 0,
+      oneRMEstimate: 30,
     });
     renderWorkout();
     fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
     expect(useWorkoutStore.getState().prData?.deltaKg).toBe(22.5);
+    expect(useWorkoutStore.getState().prData?.oneRMEstimate).toBe(30);
   });
 
   it('volume PR type propagated correctly', () => {
@@ -497,6 +508,9 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
       kg: 22.5,
       reps: 12,
       prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+      deltaKg: 0,
+      deltaPct: 0,
+      oneRMEstimate: 31.5,
     });
     renderWorkout();
     fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
@@ -509,6 +523,9 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
       kg: 22.5,
       reps: 12,
       prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+      deltaKg: 0,
+      deltaPct: 0,
+      oneRMEstimate: 31.5,
     });
     renderWorkout();
     fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
