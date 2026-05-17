@@ -24,7 +24,7 @@
 //   - mockup andura-clasic.html screen-workout wv2 reference
 
 import type { JSX } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -128,6 +128,10 @@ export function Workout(): JSX.Element {
   }, [phase, setPhase]);
 
   // Wake lock acquire on mount + release on unmount — fail silent.
+  // Phase 4 task_15 §B: visibilitychange re-acquire pattern. Browser tab
+  // background → OS auto-releases wake lock. Foreground re-acquires dacă lock
+  // null. lockRef shared mutable reference cu event handler.
+  const lockRef = useRef<{ release: () => Promise<void> } | null>(null);
   useEffect(() => {
     interface WakeLockSentinel {
       release: () => Promise<void>;
@@ -135,23 +139,35 @@ export function Workout(): JSX.Element {
     interface NavigatorWithWakeLock {
       wakeLock?: { request: (type: 'screen') => Promise<WakeLockSentinel> };
     }
-    let lock: WakeLockSentinel | null = null;
     const nav = navigator as unknown as NavigatorWithWakeLock;
-    if (nav.wakeLock) {
+    const acquire = (): void => {
+      if (!nav.wakeLock || lockRef.current) return;
       nav.wakeLock
         .request('screen')
         .then((sentinel) => {
-          lock = sentinel;
+          lockRef.current = sentinel;
         })
         .catch(() => {
           /* fail silent */
         });
+    };
+    acquire();
+    function handleVisibilityChange(): void {
+      if (document.visibilityState === 'visible' && !lockRef.current) {
+        acquire();
+      } else if (document.visibilityState === 'hidden') {
+        // OS auto-releases; clear ref so foreground re-acquires fresh.
+        lockRef.current = null;
+      }
     }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
-      if (lock) {
-        lock.release().catch(() => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (lockRef.current) {
+        lockRef.current.release().catch(() => {
           /* fail silent */
         });
+        lockRef.current = null;
       }
     };
   }, []);
