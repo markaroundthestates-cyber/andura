@@ -26,7 +26,6 @@
 import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
@@ -34,6 +33,7 @@ import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { formatMMSS } from '../../../lib/format';
 import { gotoPath } from '../../../lib/navigation';
+import { SessionTimer } from '../../../components/Workout/SessionTimer';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -219,27 +219,13 @@ export function Workout(): JSX.Element {
       data-testid="workout"
       data-phase={phase}
     >
-      {/* Header */}
-      <header className="sticky top-0 bg-paper border-b border-line p-4 flex items-center justify-between z-10">
-        <div>
-          <h1 className="text-base font-semibold text-ink" data-testid="workout-title">
-            {currentExercise.name}
-          </h1>
-          <p className="text-sm text-ink2" data-testid="workout-progress">
-            Ex {safeExIdx + 1}/{exercises.length}{' '}
-            <span data-testid="workout-elapsed">· {formatMMSS(elapsed)}</span>
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setExitSheetOpen(true)}
-          aria-label="Iesi din sesiune"
-          data-testid="workout-exit-trigger"
-          className="p-2 rounded-full text-ink2"
-        >
-          <X className="w-5 h-5" aria-hidden="true" />
-        </button>
-      </header>
+      <SessionTimer
+        exerciseName={currentExercise.name}
+        exIdx={safeExIdx}
+        totalExercises={exercises.length}
+        elapsedSec={elapsed}
+        onExit={() => setExitSheetOpen(true)}
+      />
 
       {/* Log zone */}
       {(phase === 'logging' || phase === 'idle' || phase === 'rating') && (
