@@ -136,9 +136,15 @@ describe('F9 verdict: BMR single line', () => {
 
 describe('F10: stats grid', () => {
   it('returns streak + lastWeekSets + kcalBurn', () => {
+    // Use relative dates inside the 7-day window to avoid drift when wall-clock
+    // crosses the hard-coded date boundary (computeStatsGrid filters
+    // via new Date() - 7 days, NU mockable tod). Date drift fix 2026-05-17.
+    const oneDay = 86400000;
+    const now = Date.now();
+    const fmt = (ms) => new Date(ms).toISOString().slice(0, 10);
     const logs = [
-      { date: '2026-05-11', baseline: false },
-      { date: '2026-05-10', baseline: false },
+      { date: fmt(now - 2 * oneDay), baseline: false },
+      { date: fmt(now - 3 * oneDay), baseline: false },
     ];
     const grid = computeStatsGrid(logs);
     expect(grid.streak).toBeGreaterThanOrEqual(0);
