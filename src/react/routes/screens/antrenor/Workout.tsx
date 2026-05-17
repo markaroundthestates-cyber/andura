@@ -46,16 +46,10 @@ import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
 const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
 
-// Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
-// null (engine throw / DB unavailable). Mockup wv2 reference Push session
-// preserved verbatim pentru consistency.
-const WV2_FALLBACK: readonly PlannedExercise[] = [
-  { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
-  { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
-  { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
-  { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
-  { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
-];
+// Phase 4 task_17: WV2_FALLBACK retired. Workout consumer of
+// engineWrappers.getTodayWorkout direct — empty state cand null (engine
+// throw / DB unavailable / no planned workout today). Phase 5+ scheduleAdapter
+// real aggregate replaces PHASE_4_DEMO_PUSH în engineWrappers.
 
 type SetRating = ExerciseHistoryEntry['rating'];
 
@@ -73,21 +67,29 @@ export function Workout(): JSX.Element {
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
 
-  // Phase 4 task_10: wire engineWrappers.getTodayWorkout planned aggregate;
-  // fallback la WV2_FALLBACK cand null (engine throw / DB unavailable).
+  // Phase 4 task_17: wire engineWrappers.getTodayWorkout planned aggregate;
+  // empty array cand null (no planned workout today / engine throw).
   // useMemo stable reference pe re-render (planned changes doar la session
   // start, NU per-frame).
   const exercises = useMemo<readonly PlannedExercise[]>(() => {
     const planned = getTodayWorkout();
-    return planned?.exercises ?? WV2_FALLBACK;
+    return planned?.exercises ?? [];
   }, []);
 
+  const hasWorkout = exercises.length > 0;
+
   // Bound exIdx în caz session state contamination (NU index past array).
-  const safeExIdx = Math.min(exIdx, exercises.length - 1);
-  const currentExercise = exercises[safeExIdx];
-  const currentSetIdx = history[safeExIdx]?.length ?? 0;
-  const isLastSetOfExercise = currentSetIdx + 1 >= currentExercise.sets;
-  const isLastExercise = safeExIdx + 1 >= exercises.length;
+  // Cand hasWorkout=false (empty exercises array), safeExIdx + currentExercise
+  // remain undefined-guarded la render time (empty state branch); body of
+  // component preserves invariants for both states.
+  const safeExIdx = hasWorkout ? Math.min(exIdx, exercises.length - 1) : 0;
+  const currentExercise = hasWorkout
+    ? exercises[safeExIdx]
+    : { id: '', name: '', sets: 0, targetReps: 0, targetKg: 0, restSec: 0 };
+  const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
+  const isLastSetOfExercise =
+    hasWorkout && currentSetIdx + 1 >= currentExercise.sets;
+  const isLastExercise = hasWorkout && safeExIdx + 1 >= exercises.length;
 
   const [kgInput, setKgInput] = useState<number>(currentExercise.targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
@@ -316,6 +318,35 @@ export function Workout(): JSX.Element {
   }
 
   const nextExercise = exercises[safeExIdx + 1];
+
+  // Phase 4 task_17: empty state cand getTodayWorkout returns null (engine
+  // throw / DB unavailable / no planned workout today). Render simple
+  // anchor + back-to-antrenor CTA — Phase 5+ wire la calendar override la
+  // pick alt workout sau showInactivityPrompt-style soft re-engage.
+  if (!hasWorkout) {
+    return (
+      <section
+        className="bg-paper min-h-screen p-6 flex flex-col items-center justify-center text-center"
+        data-testid="workout"
+        data-phase="empty"
+      >
+        <h1 className="text-2xl font-semibold text-ink mb-2">
+          Nu ai antrenament programat azi
+        </h1>
+        <p className="text-sm text-ink2 mb-6" data-testid="workout-empty-body">
+          PLACEHOLDER_RO_TEXT_TASK17_EMPTY_BODY_TBD
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate(gotoPath('antrenor'))}
+          data-testid="workout-empty-back"
+          className="px-6 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
+        >
+          Inapoi la Antrenor
+        </button>
+      </section>
+    );
+  }
 
   return (
     <section

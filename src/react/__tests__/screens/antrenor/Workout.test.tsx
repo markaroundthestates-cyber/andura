@@ -15,12 +15,13 @@ vi.mock('../../../lib/engineWrappers', async () => {
   return {
     ...actual,
     getPRDelta: vi.fn(() => null), // default no PR; per-test override
+    getTodayWorkout: vi.fn(() => actual.getTodayWorkout()), // default real demo
   };
 });
 
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
-import { getPRDelta } from '../../../lib/engineWrappers';
+import { getPRDelta, getTodayWorkout } from '../../../lib/engineWrappers';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -375,6 +376,37 @@ describe('Workout — session elapsed timer (fake timers)', () => {
       vi.advanceTimersByTime(61000);
     });
     expect(screen.getByTestId('workout-elapsed')).toHaveTextContent('1:01');
+  });
+});
+
+describe('Workout — empty state (task_17 §B WV2_FALLBACK retired)', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('renders empty state cand getTodayWorkout returns null', () => {
+    vi.mocked(getTodayWorkout).mockReturnValueOnce(null);
+    renderWorkout();
+    expect(screen.getByTestId('workout')).toHaveAttribute('data-phase', 'empty');
+    expect(
+      screen.getByRole('heading', { name: /Nu ai antrenament programat azi/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('workout-empty-back')).toBeInTheDocument();
+  });
+
+  it('empty back button navigates antrenor', () => {
+    vi.mocked(getTodayWorkout).mockReturnValueOnce(null);
+    renderWorkout();
+    fireEvent.click(screen.getByTestId('workout-empty-back'));
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+  });
+
+  it('NU renders log zone / header / rating cand empty state', () => {
+    vi.mocked(getTodayWorkout).mockReturnValueOnce(null);
+    renderWorkout();
+    expect(screen.queryByTestId('log-zone')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('workout-title')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('workout-exit-trigger')).not.toBeInTheDocument();
   });
 });
 
