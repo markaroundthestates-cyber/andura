@@ -296,6 +296,97 @@ describe('PostSummary — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   });
 });
 
+describe('PostSummary — F11 PR banner enrichment (task_22)', () => {
+  beforeEach(() => {
+    seedNormalSession();
+  });
+
+  it('renders PR type label "PR greutate" cand type=weight', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: {
+        exercise: 'Bench Press',
+        deltaKg: 2.5,
+        type: 'weight',
+        deltaPct: 11.1,
+        oneRMEstimate: 33.3,
+      },
+    });
+    renderSummary();
+    const label = screen.getByTestId('summary-pr-type-label');
+    expect(label).toHaveAttribute('data-pr-type', 'weight');
+    expect(label.textContent).toMatch(/PR greutate/);
+  });
+
+  it('renders PR type label "PR volum" cand type=volume', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Squat', deltaKg: 0, type: 'volume', deltaPct: 0, oneRMEstimate: 75 },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR volum/);
+  });
+
+  it('renders PR type label "PR repetari" cand type=reps', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Pullup', deltaKg: 0, type: 'reps', deltaPct: 0, oneRMEstimate: 25 },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR repetari/);
+  });
+
+  it('renders deltaPct cand non-zero', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight', deltaPct: 11.1, oneRMEstimate: 33.3 },
+    });
+    renderSummary();
+    const pct = screen.getByTestId('summary-pr-delta-pct');
+    expect(pct.textContent).toMatch(/\+11\.1%/);
+  });
+
+  it('NU renders deltaPct cand 0 (first ever PR no baseline)', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Bench Press', deltaKg: 22.5, type: 'weight', deltaPct: 0, oneRMEstimate: 30 },
+    });
+    renderSummary();
+    expect(screen.queryByTestId('summary-pr-delta-pct')).not.toBeInTheDocument();
+  });
+
+  it('renders 1RM estimate cand > 0', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight', deltaPct: 11.1, oneRMEstimate: 116.7 },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-pr-1rm').textContent).toMatch(/1RM estimat: 116\.7kg/);
+  });
+
+  it('NU renders 1RM cand zero', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Bench Press', deltaKg: 0, type: 'volume', deltaPct: 0, oneRMEstimate: 0 },
+    });
+    renderSummary();
+    expect(screen.queryByTestId('summary-pr-1rm')).not.toBeInTheDocument();
+  });
+
+  it('enrichment hidden cand prData=null (backward compat task_10 baseline)', () => {
+    useWorkoutStore.setState({ prHit: true, prData: null });
+    renderSummary();
+    expect(screen.queryByTestId('summary-pr-enrichment')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('summary-pr-type-label')).not.toBeInTheDocument();
+  });
+
+  it('banner hidden cand prHit=false (preserve task_10 behavior)', () => {
+    useWorkoutStore.setState({ prHit: false });
+    renderSummary();
+    expect(screen.queryByTestId('summary-pr-banner')).not.toBeInTheDocument();
+  });
+});
+
 describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
   beforeEach(() => {
     seedNormalSession();
@@ -309,7 +400,7 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     expect(detail.textContent).toMatch(/Push \(piept si umeri\)/);
   });
 
-  it('banner shows prData exercise + deltaKg + type cand prData present', () => {
+  it('banner shows prData exercise + deltaKg cand prData present', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight' },
@@ -318,7 +409,8 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     const detail = screen.getByTestId('summary-pr-detail');
     expect(detail.textContent).toMatch(/Bench Press/);
     expect(detail.textContent).toMatch(/\+2\.5 kg/);
-    expect(detail.textContent).toMatch(/weight/);
+    // task_22: type now displayed în separate enrichment label badge
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR greutate/);
   });
 
   it('banner shows negative deltaKg fără double-sign', () => {
@@ -332,13 +424,14 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     expect(detail.textContent).not.toMatch(/\+-5/);
   });
 
-  it('volume PR type rendered în banner', () => {
+  it('volume PR type rendered în banner enrichment label', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Deadlift', deltaKg: 10, type: 'volume' },
     });
     renderSummary();
-    expect(screen.getByTestId('summary-pr-detail').textContent).toMatch(/volume/);
+    // task_22: type label în enrichment badge cu RO copy "PR volum"
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR volum/);
   });
 
   it('detail testid absent cand prHit=false (whole banner hidden)', () => {

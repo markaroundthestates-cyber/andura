@@ -118,26 +118,60 @@ export function PostSummary(): JSX.Element {
         </p>
       )}
 
-      {/* F11 PR banner conditional. Phase 4 task_10: prData details expand
-         banner copy cu exercise + deltaKg (cand disponibil din getPRDelta
-         pipeline în Workout.handleLogSet). Fallback la lastSession.title
-         scope cand prData null (legacy prHit-only flag). */}
+      {/* F11 PR banner. Phase 4 task_22: enriched display PR type label +
+         deltaPct + 1RM estimate. Phase 4 task_10 baseline (exercise +
+         deltaKg) preserved backward compat cand prData minimal.
+         WORDING BACKLOG: PR_TYPE_LABEL placeholders (mockup verbatim
+         absent) — Daniel CEO review pre-Beta. */}
       {prHit && (
         <div
-          className="flex items-center gap-3 p-4 mb-4 rounded-xl bg-succ/10 border border-succ"
+          className="flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ"
           data-testid="summary-pr-banner"
           role="status"
           aria-label="PR nou detectat"
         >
-          <Trophy className="w-6 h-6 text-succ" aria-hidden="true" />
-          <div>
-            <p className="text-base font-semibold text-succ">PR nou!</p>
-            <p className="text-sm text-ink2" data-testid="summary-pr-detail">
-              {prData
-                ? `${prData.exercise} - ${prData.deltaKg > 0 ? '+' : ''}${prData.deltaKg} kg (${prData.type})`
-                : `Cel mai bun set la ${lastSession?.title ?? 'sesiune'}`}
-            </p>
+          <div className="flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-succ flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-semibold text-succ">PR nou!</p>
+              <p className="text-sm text-ink2" data-testid="summary-pr-detail">
+                {prData
+                  ? `${prData.exercise} - ${prData.deltaKg > 0 ? '+' : ''}${prData.deltaKg} kg`
+                  : `Cel mai bun set la ${lastSession?.title ?? 'sesiune'}`}
+              </p>
+            </div>
           </div>
+          {prData && (
+            <div className="flex flex-wrap gap-2 mt-1" data-testid="summary-pr-enrichment">
+              <span
+                className="text-xs px-2 py-1 bg-succ/20 text-succ rounded-md font-semibold"
+                data-testid="summary-pr-type-label"
+                data-pr-type={prData.type}
+              >
+                {prData.type === 'weight'
+                  ? 'PR greutate'
+                  : prData.type === 'volume'
+                  ? 'PR volum'
+                  : 'PR repetari'}
+              </span>
+              {prData.deltaPct !== undefined && prData.deltaPct !== 0 && (
+                <span
+                  className="text-xs px-2 py-1 bg-paper2 text-ink rounded-md font-semibold"
+                  data-testid="summary-pr-delta-pct"
+                >
+                  {prData.deltaPct > 0 ? '+' : ''}{prData.deltaPct}%
+                </span>
+              )}
+              {prData.oneRMEstimate !== undefined && prData.oneRMEstimate > 0 && (
+                <span
+                  className="text-xs px-2 py-1 bg-paper2 text-ink rounded-md font-semibold"
+                  data-testid="summary-pr-1rm"
+                >
+                  1RM estimat: {prData.oneRMEstimate}kg
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
 
