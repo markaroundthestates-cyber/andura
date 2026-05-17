@@ -146,7 +146,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /Cum te simti azi/i },
     { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /De ce te simti asa/i },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
-    { path: '/app/antrenor/workout', Component: Workout, heading: 'Workout' },
+    { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
     { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /Ceva nu merge azi/i },
     { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Unde te doare/i },
     { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Aparate ocupate/i },
