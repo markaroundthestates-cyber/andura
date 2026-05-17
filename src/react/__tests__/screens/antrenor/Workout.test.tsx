@@ -211,12 +211,23 @@ describe('Workout — state machine transition + advance exercise', () => {
     vi.useRealTimers();
   });
 
+  // Phase 4 task_14 LOCK 9: advance fake timers > 30s between sets to bypass
+  // aaFrictionDetect fast_sets pattern trigger (insufficient recovery).
+  const advanceBeyondFastSetsWindow = (): void => {
+    act(() => {
+      vi.advanceTimersByTime(31000);
+    });
+  };
+
   it('logging last set of exercise (4 of 4 Bench Press) → transition phase', () => {
     renderWorkout();
-    // Log 4 sets: rest skips between
+    // Log 4 sets: rest skips between + > 30s gap pentru aaFriction bypass.
     for (let i = 0; i < 4; i++) {
       fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
-      if (i < 3) fireEvent.click(screen.getByTestId('rest-skip'));
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
     }
     expect(useWorkoutStore.getState().phase).toBe('transition');
     expect(screen.getByTestId('transition-screen')).toBeInTheDocument();
@@ -226,7 +237,10 @@ describe('Workout — state machine transition + advance exercise', () => {
     renderWorkout();
     for (let i = 0; i < 4; i++) {
       fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
-      if (i < 3) fireEvent.click(screen.getByTestId('rest-skip'));
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
     }
     expect(screen.getByTestId('transition-next-name')).toHaveTextContent('Overhead Press');
   });
@@ -235,7 +249,10 @@ describe('Workout — state machine transition + advance exercise', () => {
     renderWorkout();
     for (let i = 0; i < 4; i++) {
       fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
-      if (i < 3) fireEvent.click(screen.getByTestId('rest-skip'));
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
     }
     expect(useWorkoutStore.getState().exIdx).toBe(0);
     act(() => {
@@ -472,10 +489,98 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
     fireEvent.click(screen.getByTestId('rest-skip'));
     vi.mocked(getPRDelta).mockClear();
     fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    // Phase 4 task_14 LOCK 9: rapid set click triggers aaFriction fast_sets
+    // (consecutive < 30s real time). Dismiss via "Continui oricum" override
+    // → performLogSet proceeds → getPRDelta invocat cu accumulated history.
+    const continueBtn = screen.queryByTestId('aa-friction-continue');
+    if (continueBtn) fireEvent.click(continueBtn);
     expect(getPRDelta).toHaveBeenCalledWith(
       'Bench Press',
       { w: 22.5, reps: 10 },
       [{ ex: 'Bench Press', w: 22.5, reps: 10 }] // 1st set in history
+    );
+  });
+});
+
+describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('NU trigger modal cand first set (history empty)', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
+    // logSet did proceed → phase=rest (not last set of 4)
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+  });
+
+  it('triggers modal pe fast_sets pattern (2nd set rapid)', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    // 2nd set fires immediately = < 30s gap = fast_sets trigger
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('aa-friction-reason')).toHaveAttribute(
+      'data-reason',
+      'fast_sets'
+    );
+  });
+
+  it('suspend state machine — phase NU advance la rest cand modal open', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    // Modal open — phase still logging, NU advanced la rest yet.
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+    expect(useWorkoutStore.getState().history[0]?.length ?? 0).toBe(1); // only 1st set logged
+  });
+
+  it('Continui oricum → performLogSet proceeds + state machine advance', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+  });
+
+  it('Pauza 30s → performLogSet + override restCountdown la 30', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    fireEvent.click(screen.getByTestId('aa-friction-pause'));
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+    // Override rest countdown la 30s (vs 90s default Bench Press restSec)
+    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('0:30');
+  });
+
+  it('triggers modal pe kg_jump pattern (> 20% increase)', () => {
+    renderWorkout();
+    // Set 1: 22.5 kg default
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    // Wait > 30s simulated via store manipulation — set sample timestamp far past
+    useWorkoutStore.setState({
+      history: {
+        0: [{ kg: 22.5, reps: 10, rating: 'usor', timestamp: Date.now() - 60_000 }],
+      },
+    });
+    // Set 2: bump kg la 30 = +33% kg
+    const kgInput = screen.getByTestId('kg-input');
+    fireEvent.change(kgInput, { target: { value: '30' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('aa-friction-reason')).toHaveAttribute(
+      'data-reason',
+      'kg_jump'
     );
   });
 });

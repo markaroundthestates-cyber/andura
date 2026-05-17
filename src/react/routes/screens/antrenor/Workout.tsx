@@ -38,6 +38,9 @@ import { RestOverlay } from '../../../components/Workout/RestOverlay';
 import { SetLogInput } from '../../../components/Workout/SetLogInput';
 import { SetRatingButtons } from '../../../components/Workout/SetRatingButtons';
 import { ExitConfirmSheet } from '../../../components/Workout/ExitConfirmSheet';
+import { AaFrictionModal } from '../../../components/AaFrictionModal';
+import { detectAggressiveLoad } from '../../../lib/aaFrictionDetect';
+import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -87,6 +90,11 @@ export function Workout(): JSX.Element {
   const [elapsed, setElapsed] = useState(0);
   const [restCountdown, setRestCountdown] = useState(0);
   const [exitSheetOpen, setExitSheetOpen] = useState(false);
+  // Phase 4 task_14: LOCK 9 aaFrictionModal state — pending rating cand
+  // triggered + reason pentru REASON_LABEL display în modal.
+  const [aaModalOpen, setAaModalOpen] = useState(false);
+  const [aaReason, setAaReason] = useState<AggressiveReason | null>(null);
+  const [aaPendingRating, setAaPendingRating] = useState<SetRating | null>(null);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   useEffect(() => {
@@ -154,7 +162,7 @@ export function Workout(): JSX.Element {
     setRepsInput(currentExercise.targetReps);
   }, [safeExIdx, currentExercise.targetKg, currentExercise.targetReps]);
 
-  function handleLogSet(rating: SetRating): void {
+  function performLogSet(rating: SetRating): void {
     logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
 
     // Phase 4 task_10: PR detection wire — call engineWrappers.getPRDelta
@@ -194,6 +202,53 @@ export function Workout(): JSX.Element {
     }
     setRestCountdown(currentExercise.restSec);
     setPhase('rest');
+  }
+
+  function handleLogSet(rating: SetRating): void {
+    // Phase 4 task_14: LOCK 9 aaFrictionDetect pre-check. Compose set sample
+    // history din current exercise + new set candidate. Cand trigger →
+    // suspend state machine (NU logSet/rest/transition), show modal.
+    const samples = (history[safeExIdx] ?? []).map((h) => ({
+      kg: h.kg,
+      reps: h.reps,
+      timestamp: h.timestamp ?? 0,
+    }));
+    const check = detectAggressiveLoad(samples, {
+      kg: kgInput,
+      reps: repsInput,
+      timestamp: Date.now(),
+    });
+    if (check.trigger && check.reason) {
+      setAaReason(check.reason);
+      setAaPendingRating(rating);
+      setAaModalOpen(true);
+      return;
+    }
+    performLogSet(rating);
+  }
+
+  function handleAaForceContinue(): void {
+    setAaModalOpen(false);
+    if (aaPendingRating !== null) {
+      performLogSet(aaPendingRating);
+      setAaPendingRating(null);
+      setAaReason(null);
+    }
+  }
+
+  function handleAaAcknowledge(): void {
+    setAaModalOpen(false);
+    if (aaPendingRating !== null) {
+      performLogSet(aaPendingRating);
+      setAaPendingRating(null);
+      setAaReason(null);
+      // Phase 4 task_14 §C: Pauza 30s override = post-logSet force rest
+      // countdown 30s (NU normal restSec din exercise). State machine
+      // performLogSet deja a setat phase=rest pentru intermediate sets;
+      // override countdown la 30s here. Last set of exercise scenarios
+      // (transition / post-rpe navigate) NU touch rest — no-op.
+      setRestCountdown(30);
+    }
   }
 
   function handleSkipRest(): void {
@@ -292,6 +347,13 @@ export function Workout(): JSX.Element {
         exIdx={safeExIdx}
         totalExercises={exercises.length}
         onChoose={handleExit}
+      />
+
+      <AaFrictionModal
+        open={aaModalOpen}
+        reason={aaReason}
+        onAcknowledge={handleAaAcknowledge}
+        onForceContinue={handleAaForceContinue}
       />
     </section>
   );
