@@ -24,25 +24,20 @@
 //   - mockup andura-clasic.html screen-workout wv2 reference
 
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
+import { getTodayWorkout } from '../../../lib/engineWrappers';
+import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 
-interface WV2Exercise {
-  id: string;
-  name: string;
-  sets: number;
-  targetReps: number;
-  targetKg: number;
-  restSec: number;
-}
-
-// Phase 3 demo seed — Phase 4+ wire engineWrappers.getTodayWorkout().
-const WV2_EXERCISES: readonly WV2Exercise[] = [
+// Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
+// null (engine throw / DB unavailable). Mockup wv2 reference Push session
+// preserved verbatim pentru consistency.
+const WV2_FALLBACK: readonly PlannedExercise[] = [
   { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
   { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
   { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
@@ -71,12 +66,21 @@ export function Workout(): JSX.Element {
   const pauseSession = useWorkoutStore((s) => s.pauseSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
 
+  // Phase 4 task_10: wire engineWrappers.getTodayWorkout planned aggregate;
+  // fallback la WV2_FALLBACK cand null (engine throw / DB unavailable).
+  // useMemo stable reference pe re-render (planned changes doar la session
+  // start, NU per-frame).
+  const exercises = useMemo<readonly PlannedExercise[]>(() => {
+    const planned = getTodayWorkout();
+    return planned?.exercises ?? WV2_FALLBACK;
+  }, []);
+
   // Bound exIdx în caz session state contamination (NU index past array).
-  const safeExIdx = Math.min(exIdx, WV2_EXERCISES.length - 1);
-  const currentExercise = WV2_EXERCISES[safeExIdx];
+  const safeExIdx = Math.min(exIdx, exercises.length - 1);
+  const currentExercise = exercises[safeExIdx];
   const currentSetIdx = history[safeExIdx]?.length ?? 0;
   const isLastSetOfExercise = currentSetIdx + 1 >= currentExercise.sets;
-  const isLastExercise = safeExIdx + 1 >= WV2_EXERCISES.length;
+  const isLastExercise = safeExIdx + 1 >= exercises.length;
 
   const [kgInput, setKgInput] = useState<number>(currentExercise.targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
@@ -186,7 +190,7 @@ export function Workout(): JSX.Element {
     navigate(gotoPath('antrenor'));
   }
 
-  const nextExercise = WV2_EXERCISES[safeExIdx + 1];
+  const nextExercise = exercises[safeExIdx + 1];
 
   return (
     <section
@@ -201,7 +205,7 @@ export function Workout(): JSX.Element {
             {currentExercise.name}
           </h1>
           <p className="text-sm text-ink2" data-testid="workout-progress">
-            Ex {safeExIdx + 1}/{WV2_EXERCISES.length}{' '}
+            Ex {safeExIdx + 1}/{exercises.length}{' '}
             <span data-testid="workout-elapsed">· {formatMMSS(elapsed)}</span>
           </p>
         </div>
@@ -358,7 +362,7 @@ export function Workout(): JSX.Element {
           >
             <h2 className="text-base font-bold text-ink mb-2">Iesi din sesiune?</h2>
             <p className="text-sm text-ink2 mb-4">
-              Ai facut {safeExIdx}/{WV2_EXERCISES.length} exercitii. Cum continui?
+              Ai facut {safeExIdx}/{exercises.length} exercitii. Cum continui?
             </p>
             <button
               type="button"

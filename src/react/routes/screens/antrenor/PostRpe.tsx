@@ -21,6 +21,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
@@ -60,8 +61,10 @@ export function PostRpe(): JSX.Element {
         ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
         : 0;
 
-    // Phase 4+ derive title din engineWrappers.getTodayWorkout aggregate.
-    const title = 'Push (piept si umeri)';
+    // Phase 4 task_10: derive title din planned workout aggregate; fallback
+    // hardcoded cand engineWrappers returns null.
+    const planned = getTodayWorkout();
+    const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
     finishSession({ title, meta, ts: Date.now() });

@@ -61,11 +61,22 @@ export interface PRDelta {
   prevBest: PRHistoryEntry | null;
 }
 
+export interface PlannedExercise {
+  id: string;
+  name: string;
+  sets: number;
+  targetReps: number;
+  targetKg: number;
+  restSec: number;
+}
+
 export interface PlannedWorkoutOutput {
   workoutTitle: string;
   exerciseCount: number;
   estimatedDuration: number; // minutes
   intensityMod: 'plus' | 'normal' | 'minus';
+  exercises: PlannedExercise[]; // Phase 4 task_10 — rich aggregate Workout/WorkoutPreview consume
+  volumeKg: number; // Phase 4 task_10 — estimated total tonnage planned
 }
 
 // ── Wrappers cu try/catch fallback safe ──────────────────────────────────
@@ -144,16 +155,39 @@ export function getPRDelta(
   }
 }
 
+// Phase 4 task_10 demo seed — Push session matching mockup wv2 reference.
+// Phase 5+ replaces cu real scheduleAdapter aggregate (getTodayPlannedWorkout
+// or sessionBuilder layer) când scheduleAdapter exposes planned-workout
+// aggregate api (currently exposes override + missing equipment + skip only).
+const PHASE_4_DEMO_PUSH: PlannedWorkoutOutput = {
+  workoutTitle: 'Push (piept si umeri)',
+  exerciseCount: 5,
+  estimatedDuration: 50,
+  intensityMod: 'normal',
+  volumeKg: 12450,
+  exercises: [
+    { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
+    { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
+    { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
+    { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
+    { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
+  ],
+};
+
 /**
- * Today planned workout fetch — TODO Phase 5+ wire real scheduleAdapter
- * output once `getTodayPlannedWorkout` exists. Currently scheduleAdapter.js
- * exposes calendar override + missing equipment + skip helpers, NU
- * planned-workout aggregate. Aggregate logic poate sit în coachDirector or
- * sessionBuilder — Phase 5 task_05 tactical decide locul wire.
+ * Today planned workout fetch — Phase 4 task_10 returns demo Push session;
+ * Phase 5+ wires real scheduleAdapter aggregate când exposes planned-workout
+ * api. Phase 4 consumers (Workout / WorkoutPreview / PostRpe / PostSummary)
+ * derive title + exercises + duration + volume direct din result.
  *
- * Returns null pentru Phase 3 stub. Sub-screens vor consuma via store sau
- * direct engine import dacă urgent.
+ * Returns null doar daca explicit error (caller pattern matches existing
+ * fail-silent wrappers like getReadiness). Phase 4 stub never null.
  */
 export function getTodayWorkout(): PlannedWorkoutOutput | null {
-  return null;
+  try {
+    return PHASE_4_DEMO_PUSH;
+  } catch (e) {
+    console.warn('[engineWrappers] getTodayWorkout failed:', e);
+    return null;
+  }
 }

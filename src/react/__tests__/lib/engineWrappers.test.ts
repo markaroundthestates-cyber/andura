@@ -175,8 +175,50 @@ describe('engineWrappers — getPRDelta', () => {
   });
 });
 
-describe('engineWrappers — getTodayWorkout', () => {
-  it('returns null pentru Phase 3 stub (TODO Phase 5 wire scheduleAdapter)', () => {
-    expect(getTodayWorkout()).toBeNull();
+describe('engineWrappers — getTodayWorkout (Phase 4 task_10 wire)', () => {
+  it('returns planned workout aggregate (Phase 4 demo Push session)', () => {
+    const w = getTodayWorkout();
+    expect(w).not.toBeNull();
+    expect(w?.workoutTitle).toBe('Push (piept si umeri)');
+    expect(w?.exerciseCount).toBe(5);
+    expect(w?.estimatedDuration).toBe(50);
+    expect(w?.intensityMod).toBe('normal');
+    expect(w?.volumeKg).toBe(12450);
+  });
+
+  it('returns exercises array cu PlannedExercise shape (5 items)', () => {
+    const w = getTodayWorkout();
+    expect(w?.exercises).toHaveLength(5);
+    expect(w?.exercises[0]).toEqual({
+      id: 'bench-press',
+      name: 'Bench Press',
+      sets: 4,
+      targetReps: 10,
+      targetKg: 22.5,
+      restSec: 90,
+    });
+  });
+
+  it('exerciseCount matches exercises.length', () => {
+    const w = getTodayWorkout();
+    expect(w?.exerciseCount).toBe(w?.exercises.length);
+  });
+
+  it('all exercises have required PlannedExercise fields', () => {
+    const w = getTodayWorkout();
+    w?.exercises.forEach((ex) => {
+      expect(typeof ex.id).toBe('string');
+      expect(typeof ex.name).toBe('string');
+      expect(typeof ex.sets).toBe('number');
+      expect(typeof ex.targetReps).toBe('number');
+      expect(typeof ex.targetKg).toBe('number');
+      expect(typeof ex.restSec).toBe('number');
+    });
+  });
+
+  it('volumeKg is sum of approximation sets * reps * kg (Phase 4 estimate)', () => {
+    const w = getTodayWorkout();
+    expect(w?.volumeKg).toBeGreaterThan(0);
+    expect(typeof w?.volumeKg).toBe('number');
   });
 });

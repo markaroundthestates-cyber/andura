@@ -80,11 +80,26 @@ export function WorkoutPreview(): JSX.Element {
   const { intensityMod = 'normal' } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
 
+  // Phase 4 task_10: wire planned workout aggregate cand disponibil; duration
+  // + volume estimates scaled per intensityMod (baseline din planned, scaled
+  // -20% pe minus / +15% pe plus consistent cu D-LEGACY-021 Energy Adjustment).
   const workout = getTodayWorkout();
-  const title = workout?.workoutTitle ?? 'Push (piept & umeri)';
+  const title = workout?.workoutTitle ?? 'Push (piept si umeri)';
   const banner = bannerFor(intensityMod);
-  const duration = workout?.estimatedDuration ?? durationFor(intensityMod);
-  const volume = volumeFor(intensityMod);
+  const baseDuration = workout?.estimatedDuration ?? durationFor('normal');
+  const baseVolume = workout?.volumeKg ?? volumeFor('normal');
+  const duration =
+    intensityMod === 'minus'
+      ? Math.round(baseDuration * 0.7)
+      : intensityMod === 'plus'
+      ? Math.round(baseDuration * 1.2)
+      : baseDuration;
+  const volume =
+    intensityMod === 'minus'
+      ? Math.round(baseVolume * 0.82)
+      : intensityMod === 'plus'
+      ? Math.round(baseVolume * 1.16)
+      : baseVolume;
   const coachLine = coachPick('preview', undefined, 0);
 
   function handleStart(): void {
