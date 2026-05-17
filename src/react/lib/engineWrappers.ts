@@ -15,11 +15,12 @@
 //   - DECISIONS.md §D-LEGACY-076 Calendar Feature V1 scheduleAdapter
 //   - DECISIONS.md §D-LEGACY-098 LOCK 10 MMI Engine #9
 
-// @ts-expect-error — JS engine modules NU au .d.ts (implicit any acceptable la boundary)
+// Phase 4 task_11 §A — JS engine modules acum tipate via sibling .d.ts files
+// (src/engine/readiness.d.ts / fatigue.d.ts / prEngine.d.ts). TS rezolva
+// .d.ts înainte de .js inference; @ts-expect-error directives no longer
+// needed.
 import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/readiness.js';
-// @ts-expect-error — JS engine module
 import { calculateFatigueScore } from '../../engine/fatigue.js';
-// @ts-expect-error — JS engine module
 import { detectPR } from '../../engine/prEngine.js';
 
 // ── Output types simplified pentru React consumption ─────────────────────
@@ -120,11 +121,15 @@ export function getFatigue(): FatigueOutput | null {
   try {
     const raw = calculateFatigueScore();
     if (!raw) return null;
+    // Phase 4 task_11 §A: ?? '' fallback pentru raw.key/icon undefined în
+    // early-return shape (DATE INSUFICIENTE path în src/engine/fatigue.js
+    // line 20 returns 5-field shape without key/icon). FatigueOutput.key/
+    // icon contract = string non-optional; fallback defends invariant.
     return {
       score: raw.score,
-      key: raw.key,
+      key: raw.key ?? '',
       label: raw.label,
-      icon: raw.icon,
+      icon: raw.icon ?? '',
       color: raw.color,
       recommend: raw.recommend,
       detail: raw.detail,
