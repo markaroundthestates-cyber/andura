@@ -38,8 +38,14 @@ export interface PausedSession {
 
 export interface LastSessionSummary {
   title: string;
-  meta: string; // "5 seturi · 52 min · 12 450 kg"
+  meta: string; // "5 seturi · 52 min · 12 450 kg" — display string (legacy + UI)
   ts: number; // Date.now() la finish
+  // Phase 4 task_10: numeric fields preserved separat de display string
+  // pentru clean consumption (eliminate PostSummary parseMeta regex stub).
+  // Optional pentru backward compat cand persisted pre-migration.
+  sets?: number;
+  durationMin?: number;
+  volumeKg?: number;
 }
 
 export interface WorkoutState {

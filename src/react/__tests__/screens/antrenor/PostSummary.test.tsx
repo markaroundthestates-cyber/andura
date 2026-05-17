@@ -118,6 +118,66 @@ describe('PostSummary — stats parsing', () => {
   });
 });
 
+describe('PostSummary — numeric fields direct consumption (task_10 §D)', () => {
+  it('prefers numeric fields over parseMeta regex', () => {
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Push (piept si umeri)',
+        meta: 'STALE_META', // intentionally bad regex match
+        ts: Date.now(),
+        sets: 7,
+        durationMin: 45,
+        volumeKg: 11000,
+      },
+      lastRating: 'normala',
+      streak: 1,
+      prHit: false,
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-sets')).toHaveTextContent('7');
+    expect(screen.getByTestId('summary-duration')).toHaveTextContent('45 min');
+    expect(screen.getByTestId('summary-volume')).toHaveTextContent('11 000 kg');
+    expect(screen.getByTestId('summary-kcal')).toHaveTextContent('330'); // 11000*0.03=330
+  });
+
+  it('falls back la parseMeta cand numeric fields absent (legacy persisted)', () => {
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Legacy Session',
+        meta: '5 seturi · 52 min · 12 450 kg',
+        ts: Date.now(),
+        // sets / durationMin / volumeKg deliberately omitted (legacy schema)
+      },
+      lastRating: 'normala',
+      streak: 1,
+      prHit: false,
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-sets')).toHaveTextContent('5');
+    expect(screen.getByTestId('summary-duration')).toHaveTextContent('52 min');
+    expect(screen.getByTestId('summary-volume')).toHaveTextContent('12 450 kg');
+  });
+
+  it('partial numeric fields fall back per-field la parseMeta', () => {
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Partial',
+        meta: '5 seturi · 52 min · 12 450 kg',
+        ts: Date.now(),
+        sets: 8, // numeric override
+        // durationMin + volumeKg omitted → parseMeta fallback per field
+      },
+      lastRating: 'normala',
+      streak: 1,
+      prHit: false,
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-sets')).toHaveTextContent('8'); // override
+    expect(screen.getByTestId('summary-duration')).toHaveTextContent('52 min'); // parsed
+    expect(screen.getByTestId('summary-volume')).toHaveTextContent('12 450 kg'); // parsed
+  });
+});
+
 describe('PostSummary — F8 streak counter', () => {
   beforeEach(() => {
     seedNormalSession();

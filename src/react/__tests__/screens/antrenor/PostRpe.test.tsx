@@ -154,6 +154,24 @@ describe('PostRpe — submit pipeline', () => {
     expect(meta).toMatch(/30 min/);
   });
 
+  it('finishSession payload populates numeric sets field (task_10 §D)', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    expect(useWorkoutStore.getState().lastSession?.sets).toBe(5);
+  });
+
+  it('finishSession payload populates numeric durationMin field', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    expect(useWorkoutStore.getState().lastSession?.durationMin).toBe(30);
+  });
+
+  it('finishSession payload populates numeric volumeKg field', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    expect(useWorkoutStore.getState().lastSession?.volumeKg).toBe(910);
+  });
+
   it('navigates la /app/antrenor/post-summary after submit', () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));

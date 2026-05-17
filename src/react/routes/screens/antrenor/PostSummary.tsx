@@ -9,9 +9,10 @@
 //   3. F8 stats grid 4-cell (Seturi / Durata / Tonaj / Kcal estimate)
 //   4. Streak counter F8 + Terminat CTA → reset store + navigate antrenor
 //
-// Phase 3 parses lastSession.meta string back ("5 seturi · 30 min · 910 kg")
-// for stats grid display. Phase 4+ store separate numeric fields în
-// LastSessionSummary structure (cleaner avoid regex parse).
+// Phase 4 task_10: prefer numeric fields LastSessionSummary.sets /
+// durationMin / volumeKg (populated explicit de PostRpe.finishSession).
+// parseMeta retained as fallback pentru sesiuni persisted pre-migration
+// (cand only display meta string present, NU numeric fields).
 //
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-052 Andura Suflet (coach felicitare)
@@ -81,9 +82,15 @@ export function PostSummary(): JSX.Element {
   const prData = useWorkoutStore((s) => s.prData);
   const reset = useWorkoutStore((s) => s.reset);
 
-  const { sets, dur, volume } = parseMeta(lastSession?.meta);
-  // Phase 3 kcal estimate: volume * 0.03 (rough empirical formula).
-  // Phase 4+ wire la BMR + duration based calculation.
+  // Phase 4 task_10: prefer numeric fields cand present (avoid parseMeta
+  // regex); fallback la parseMeta(meta) pentru sesiuni persisted pre-
+  // migration backward compat.
+  const parsed = parseMeta(lastSession?.meta);
+  const sets = lastSession?.sets ?? parsed.sets;
+  const dur = lastSession?.durationMin ?? parsed.dur;
+  const volume = lastSession?.volumeKg ?? parsed.volume;
+  // Phase 4 kcal estimate: volume * 0.03 (rough empirical formula).
+  // Phase 5+ wire la BMR + duration based calculation.
   const kcal = Math.round(volume * 0.03);
 
   const coachKey = lastRating ? mapRatingToCoachKey(lastRating as SessionRating) : null;

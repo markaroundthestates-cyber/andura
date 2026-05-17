@@ -62,12 +62,20 @@ export function PostRpe(): JSX.Element {
         : 0;
 
     // Phase 4 task_10: derive title din planned workout aggregate; fallback
-    // hardcoded cand engineWrappers returns null.
+    // hardcoded cand engineWrappers returns null. Numeric fields populated
+    // explicit pentru PostSummary direct consume (eliminate parseMeta regex).
     const planned = getTodayWorkout();
     const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
-    finishSession({ title, meta, ts: Date.now() });
+    finishSession({
+      title,
+      meta,
+      ts: Date.now(),
+      sets: setsDone,
+      durationMin: dur,
+      volumeKg: volume,
+    });
     incrementStreak();
 
     navigate(gotoPath('post-summary'));
