@@ -150,7 +150,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /Ceva nu merge azi/i },
     { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Unde te doare/i },
     { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Aparate ocupate/i },
-    { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: 'Aparate Lipsa' },
+    { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: /Ce aparate lipsesc/i },
     { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: 'Schedule Override' },
     { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: 'Post RPE' },
     { path: '/app/antrenor/post-summary', Component: PostSummary, heading: 'Post Summary' },
