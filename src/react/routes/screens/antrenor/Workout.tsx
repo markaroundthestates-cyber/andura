@@ -37,6 +37,7 @@ import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
 import { SetLogInput } from '../../../components/Workout/SetLogInput';
 import { SetRatingButtons } from '../../../components/Workout/SetRatingButtons';
+import { ExitConfirmSheet } from '../../../components/Workout/ExitConfirmSheet';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -286,49 +287,12 @@ export function Workout(): JSX.Element {
         </div>
       )}
 
-      {/* Exit confirm bottom sheet */}
-      {exitSheetOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 flex items-end justify-center z-50"
-          data-testid="exit-sheet-backdrop"
-        >
-          <div
-            className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
-            data-testid="exit-sheet"
-            role="dialog"
-            aria-label="Iesi din sesiune"
-          >
-            <h2 className="text-base font-bold text-ink mb-2">Iesi din sesiune?</h2>
-            <p className="text-sm text-ink2 mb-4">
-              Ai facut {safeExIdx}/{exercises.length} exercitii. Cum continui?
-            </p>
-            <button
-              type="button"
-              onClick={() => handleExit('continue')}
-              data-testid="exit-continue"
-              className="w-full py-3 bg-ink text-paper rounded-xl text-base font-semibold mb-2"
-            >
-              Continui sesiunea
-            </button>
-            <button
-              type="button"
-              onClick={() => handleExit('pause')}
-              data-testid="exit-pause"
-              className="w-full py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink text-base font-semibold mb-2"
-            >
-              Salveaza si reia mai tarziu
-            </button>
-            <button
-              type="button"
-              onClick={() => handleExit('discard')}
-              data-testid="exit-discard"
-              className="w-full py-2 text-brick text-sm"
-            >
-              Renunt la sesiune
-            </button>
-          </div>
-        </div>
-      )}
+      <ExitConfirmSheet
+        open={exitSheetOpen}
+        exIdx={safeExIdx}
+        totalExercises={exercises.length}
+        onChoose={handleExit}
+      />
     </section>
   );
 }
