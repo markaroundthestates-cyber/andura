@@ -34,6 +34,7 @@ import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { formatMMSS } from '../../../lib/format';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
+import { RestOverlay } from '../../../components/Workout/RestOverlay';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -311,30 +312,8 @@ export function Workout(): JSX.Element {
         </div>
       )}
 
-      {/* Rest overlay */}
       {phase === 'rest' && (
-        <div
-          className="fixed inset-0 bg-paper/95 flex flex-col items-center justify-center z-50"
-          data-testid="rest-overlay"
-          role="dialog"
-          aria-label="Pauza activa"
-        >
-          <p className="text-sm text-ink2 mb-2">Pauza</p>
-          <p
-            className="text-6xl font-bold text-ink font-mono"
-            data-testid="rest-countdown"
-          >
-            {formatMMSS(restCountdown)}
-          </p>
-          <button
-            type="button"
-            onClick={handleSkipRest}
-            data-testid="rest-skip"
-            className="mt-6 px-6 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
-          >
-            Sari pauza
-          </button>
-        </div>
+        <RestOverlay countdownSec={restCountdown} onSkip={handleSkipRest} />
       )}
 
       {/* Transition phase */}
