@@ -41,8 +41,11 @@ describe('AaFrictionModal — conditional render', () => {
         onForceContinue={vi.fn()}
       />
     );
-    expect(screen.getByTestId('aa-friction-title').textContent).toMatch(/PLACEHOLDER_RO_TEXT_LOCK9/);
-    expect(screen.getByTestId('aa-friction-body').textContent).toMatch(/PLACEHOLDER_RO_TEXT_LOCK9/);
+    // task_02 wording sweep: D024 autonomous compose final RO copy
+    expect(screen.getByTestId('aa-friction-title').textContent).toMatch(/Stai un pic/);
+    expect(screen.getByTestId('aa-friction-body').textContent).toMatch(/Ai marit ritmul/);
+    expect(screen.getByTestId('aa-friction-pause').textContent).toMatch(/Pauza 30 sec/);
+    expect(screen.getByTestId('aa-friction-continue').textContent).toMatch(/Continui oricum/);
   });
 
   it('reason data-reason attribute reflects prop', () => {

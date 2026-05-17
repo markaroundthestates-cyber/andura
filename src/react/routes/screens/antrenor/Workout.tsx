@@ -333,10 +333,10 @@ export function Workout(): JSX.Element {
         data-phase="empty"
       >
         <h1 className="text-2xl font-semibold text-ink mb-2">
-          Nu ai antrenament programat azi
+          Astazi e zi de odihna
         </h1>
         <p className="text-sm text-ink2 mb-6" data-testid="workout-empty-body">
-          PLACEHOLDER_RO_TEXT_TASK17_EMPTY_BODY_TBD
+          Nu ai antrenament programat azi. Foloseste calendarul de mai sus daca vrei sa schimbi programul.
         </p>
         <button
           type="button"
@@ -344,7 +344,7 @@ export function Workout(): JSX.Element {
           data-testid="workout-empty-back"
           className="px-6 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
         >
-          Inapoi la Antrenor
+          Inapoi
         </button>
       </section>
     );

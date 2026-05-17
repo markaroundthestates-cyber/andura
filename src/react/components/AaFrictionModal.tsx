@@ -26,21 +26,21 @@ interface AaFrictionModalProps {
   onForceContinue: () => void; // Continui oricum — override
 }
 
-// Phase 4 PLACEHOLDER RO copy — Daniel CEO wording review pre-Beta gate.
-// Mockup verbatim absent per-set context (mockup aaFrictionModal.js =
-// session-level scope). DACĂ Daniel propose final copy → replace inline +
-// drop placeholder marker.
-const PLACEHOLDER = {
-  title: 'PLACEHOLDER_RO_TEXT_LOCK9_TITLE_TBD',
-  body: 'PLACEHOLDER_RO_TEXT_LOCK9_BODY_TBD',
-  buttonPause: 'PLACEHOLDER_RO_TEXT_LOCK9_PAUSE_TBD',
-  buttonContinue: 'PLACEHOLDER_RO_TEXT_LOCK9_CONTINUE_TBD',
+// Phase 5 task_02 wording autonomous compose per D024 LOCKED V1. Daniel CEO
+// review post-Beta a-z. Anti-paternalism strict: observe pattern + verify
+// form (NU "esti obosit/te doare/te oprim" forced framing). Pauza concret
+// time-bounded; Continui = user agency override preserved.
+const COPY = {
+  title: 'Stai un pic',
+  body: 'Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.',
+  buttonPause: 'Pauza 30 sec',
+  buttonContinue: 'Continui oricum',
 } as const;
 
 const REASON_LABEL: Record<AggressiveReason, string> = {
-  fast_sets: 'PLACEHOLDER_RO_TEXT_LOCK9_REASON_FAST_TBD',
-  kg_jump: 'PLACEHOLDER_RO_TEXT_LOCK9_REASON_KG_TBD',
-  rep_spike: 'PLACEHOLDER_RO_TEXT_LOCK9_REASON_REPS_TBD',
+  fast_sets: 'Set-uri prea rapide',
+  kg_jump: 'Greutate marita brusc',
+  rep_spike: 'Repetari peste obisnuit',
 };
 
 export function AaFrictionModal({
@@ -70,11 +70,11 @@ export function AaFrictionModal({
             className="text-base font-bold text-ink"
             data-testid="aa-friction-title"
           >
-            {PLACEHOLDER.title}
+            {COPY.title}
           </h2>
         </div>
         <p className="text-sm text-ink2 mb-4" data-testid="aa-friction-body">
-          {PLACEHOLDER.body}
+          {COPY.body}
         </p>
         {reason && (
           <p
@@ -91,7 +91,7 @@ export function AaFrictionModal({
           data-testid="aa-friction-pause"
           className="w-full py-3 bg-ink text-paper rounded-xl text-base font-semibold mb-2"
         >
-          {PLACEHOLDER.buttonPause}
+          {COPY.buttonPause}
         </button>
         <button
           type="button"
@@ -99,7 +99,7 @@ export function AaFrictionModal({
           data-testid="aa-friction-continue"
           className="w-full py-2 text-brick text-sm"
         >
-          {PLACEHOLDER.buttonContinue}
+          {COPY.buttonContinue}
         </button>
       </div>
     </div>

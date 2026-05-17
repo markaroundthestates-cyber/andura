@@ -389,7 +389,7 @@ describe('Workout — empty state (task_17 §B WV2_FALLBACK retired)', () => {
     renderWorkout();
     expect(screen.getByTestId('workout')).toHaveAttribute('data-phase', 'empty');
     expect(
-      screen.getByRole('heading', { name: /Nu ai antrenament programat azi/i, level: 1 })
+      screen.getByRole('heading', { name: /Astazi e zi de odihna/i, level: 1 })
     ).toBeInTheDocument();
     expect(screen.getByTestId('workout-empty-back')).toBeInTheDocument();
   });

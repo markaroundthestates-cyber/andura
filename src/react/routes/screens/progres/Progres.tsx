@@ -27,7 +27,7 @@ export function Progres(): JSX.Element {
       data-testid="progres-home"
     >
       <h1 className="text-2xl font-semibold text-ink mb-1">Progres</h1>
-      <p className="text-sm text-ink2 mb-6">Body composition - estimari calibrate.</p>
+      <p className="text-sm text-ink2 mb-6">Logheaza periodic - estimari calibrate.</p>
 
       {/* Log weight CTA */}
       <button

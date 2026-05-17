@@ -36,7 +36,9 @@ export function Istoric(): JSX.Element {
           data-testid="istoric-empty"
         >
           <History className="w-12 h-12 text-ink2 mb-3" aria-hidden="true" />
-          <p className="text-base text-ink2">Nu ai antrenamente inca</p>
+          <p className="text-base text-ink2">
+            Nu ai antrenamente inca. Prima sesiune apare aici dupa ce o termini.
+          </p>
         </div>
       ) : (
         <ul className="flex flex-col gap-2" role="list" data-testid="istoric-list">
