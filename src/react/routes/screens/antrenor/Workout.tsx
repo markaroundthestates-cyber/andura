@@ -36,6 +36,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
 import { SetLogInput } from '../../../components/Workout/SetLogInput';
+import { SetRatingButtons } from '../../../components/Workout/SetRatingButtons';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -259,34 +260,7 @@ export function Workout(): JSX.Element {
             onRepsChange={setRepsInput}
           />
 
-          {/* Rating 3-button RO */}
-          <p className="text-base text-ink mb-3">Cum a fost setul?</p>
-          <div className="flex gap-3" role="list" aria-label="Rating set">
-            <button
-              type="button"
-              onClick={() => handleLogSet('usor')}
-              data-rating="usor"
-              className="flex-1 py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink"
-            >
-              Usor
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLogSet('potrivit')}
-              data-rating="potrivit"
-              className="flex-1 py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink"
-            >
-              Potrivit
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLogSet('greu')}
-              data-rating="greu"
-              className="flex-1 py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink"
-            >
-              Greu
-            </button>
-          </div>
+          <SetRatingButtons onRate={handleLogSet} />
         </div>
       )}
 
