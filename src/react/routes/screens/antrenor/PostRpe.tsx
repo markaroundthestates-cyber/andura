@@ -21,6 +21,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import type { SessionExerciseBreakdown } from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 
@@ -68,6 +69,38 @@ export function PostRpe(): JSX.Element {
     const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
+    // Phase 5 task_03: compute per-exercise breakdown din history Record
+    // keyed by exIdx → planned.exercises[idx] name lookup. SessionsHistory
+    // archive granular pentru IstoricDetail render breakdown table.
+    const exercises: SessionExerciseBreakdown[] = Object.entries(history)
+      .map(([exIdxStr, sets]) => {
+        const exIdx = Number(exIdxStr);
+        const planEx = planned?.exercises[exIdx];
+        const exerciseId = planEx?.id ?? `ex-${exIdx}`;
+        const exerciseName = planEx?.name ?? `Exercitiu ${exIdx + 1}`;
+        let totalVolume = 0;
+        let peakOneRM = 0;
+        const breakdownSets = sets.map((s) => {
+          totalVolume += s.kg * s.reps;
+          const oneRM = s.kg * (1 + s.reps / 30);
+          if (oneRM > peakOneRM) peakOneRM = oneRM;
+          return {
+            kg: s.kg,
+            reps: s.reps,
+            rating: s.rating,
+            timestamp: s.timestamp ?? Date.now(),
+          };
+        });
+        return {
+          exerciseId,
+          exerciseName,
+          sets: breakdownSets,
+          totalVolume,
+          peakOneRM: Math.round(peakOneRM * 10) / 10,
+        };
+      })
+      .filter((bd) => bd.sets.length > 0);
+
     finishSession({
       title,
       meta,
@@ -75,6 +108,7 @@ export function PostRpe(): JSX.Element {
       sets: setsDone,
       durationMin: dur,
       volumeKg: volume,
+      exercises,
     });
     incrementStreak();
 

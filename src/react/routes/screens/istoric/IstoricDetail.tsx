@@ -119,9 +119,64 @@ export function IstoricDetail(): JSX.Element {
         </div>
       )}
 
-      <p className="text-xs text-ink2 italic text-center">
-        Detaliu per exercitiu: Phase 6+ când history persisted complet.
-      </p>
+      {/* Phase 5 task_03: per-exercise breakdown table cand exercises field
+         persisted (sesiuni post-task_03). Backward compat — sesiuni legacy
+         fără exercises field render fallback message. */}
+      {session.exercises && session.exercises.length > 0 ? (
+        <div data-testid="istoric-detail-breakdown">
+          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
+            Exercitii
+          </p>
+          {session.exercises.map((ex) => (
+            <div
+              key={ex.exerciseId}
+              data-testid={`detail-ex-${ex.exerciseId}`}
+              className="bg-paper2 border border-line rounded-xl p-4 mb-3"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>
+                <span className="text-xs text-ink2 font-mono" data-testid="detail-ex-1rm">
+                  1RM est: {ex.peakOneRM}kg
+                </span>
+              </div>
+              <div className="text-xs text-ink2 mb-2" data-testid="detail-ex-volume">
+                Volum: {ex.totalVolume}kg - {ex.sets.length} seturi
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-xs text-ink2 border-b border-line">
+                    <th className="text-left py-1">Set</th>
+                    <th className="text-left py-1">Kg</th>
+                    <th className="text-left py-1">Reps</th>
+                    <th className="text-left py-1">Cum a fost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ex.sets.map((s, idx) => (
+                    <tr
+                      key={idx}
+                      data-testid={`detail-set-${ex.exerciseId}-${idx}`}
+                      className={s.isPR ? 'text-succ font-semibold' : 'text-ink'}
+                    >
+                      <td className="py-1">{idx + 1}{s.isPR ? ' PR' : ''}</td>
+                      <td className="py-1">{s.kg}</td>
+                      <td className="py-1">{s.reps}</td>
+                      <td className="py-1 capitalize">{s.rating}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p
+          className="text-xs text-ink2 italic text-center"
+          data-testid="istoric-detail-legacy"
+        >
+          Detaliu per exercitiu indisponibil pentru sesiuni inregistrate inainte de actualizare.
+        </p>
+      )}
     </section>
   );
 }

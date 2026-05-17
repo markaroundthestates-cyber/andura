@@ -45,6 +45,23 @@ export interface PausedSession {
   sessionStart: number;
 }
 
+// Phase 5 task_03: per-exercise breakdown saved cu sessionsHistory pentru
+// IstoricDetail granular render. Optional field — backward compat pentru
+// sesiuni persisted Phase 4 fără breakdown.
+export interface SessionExerciseBreakdown {
+  exerciseId: string;
+  exerciseName: string;
+  sets: Array<{
+    kg: number;
+    reps: number;
+    rating: 'usor' | 'potrivit' | 'greu';
+    timestamp: number;
+    isPR?: boolean;
+  }>;
+  totalVolume: number; // sum(kg*reps)
+  peakOneRM: number; // max Epley estimate across sets, 1 decimal
+}
+
 export interface LastSessionSummary {
   title: string;
   meta: string; // "5 seturi · 52 min · 12 450 kg" — display string (legacy + UI)
@@ -55,6 +72,8 @@ export interface LastSessionSummary {
   sets?: number;
   durationMin?: number;
   volumeKg?: number;
+  // Phase 5 task_03: per-exercise breakdown pentru IstoricDetail.
+  exercises?: SessionExerciseBreakdown[];
 }
 
 export interface WorkoutState {

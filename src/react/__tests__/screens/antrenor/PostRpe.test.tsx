@@ -172,6 +172,32 @@ describe('PostRpe — submit pipeline', () => {
     expect(useWorkoutStore.getState().lastSession?.volumeKg).toBe(910);
   });
 
+  it('task_03: finishSession payload populates exercises breakdown', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    const exercises = useWorkoutStore.getState().lastSession?.exercises;
+    expect(exercises).toBeDefined();
+    expect(exercises?.length).toBe(2); // exIdx 0 + 1 din seeded history
+  });
+
+  it('task_03: exercises breakdown computes totalVolume per exercise', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    const exercises = useWorkoutStore.getState().lastSession?.exercises;
+    // exIdx 0: 22.5*10 + 22.5*10 + 22.5*8 = 450 + 180 = 630
+    expect(exercises?.[0].totalVolume).toBe(630);
+    // exIdx 1: 17.5*8 + 17.5*8 = 280
+    expect(exercises?.[1].totalVolume).toBe(280);
+  });
+
+  it('task_03: peakOneRM uses Epley max across sets', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    const exercises = useWorkoutStore.getState().lastSession?.exercises;
+    // Bench Press peak: 22.5kg × 10 reps = 22.5 * (1+10/30) = 30 kg 1RM
+    expect(exercises?.[0].peakOneRM).toBe(30);
+  });
+
   it('navigates la /app/antrenor/post-summary after submit', () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
