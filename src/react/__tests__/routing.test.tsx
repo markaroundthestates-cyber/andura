@@ -72,7 +72,9 @@ describe('Routing — top-level screens', () => {
 
   it('renders Onboarding step la /onboarding/3', () => {
     renderAt('/onboarding/3');
-    expect(screen.getByText(/Onboarding pasul 3\/7/i)).toBeInTheDocument();
+    // Phase 5 task_14: Onboarding refactored with Big 6 hard typing — step 3
+    // renders goal selection cu "Ce vrei sa obtii?" heading.
+    expect(screen.getByText(/Pasul 3 din 7/i)).toBeInTheDocument();
   });
 });
 
