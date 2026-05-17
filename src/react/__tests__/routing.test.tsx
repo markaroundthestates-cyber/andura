@@ -145,7 +145,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     // still placeholder until subsequent task_05 commits.
     { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /Cum te simti azi/i },
     { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /De ce te simti asa/i },
-    { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: 'Workout Preview' },
+    { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: 'Workout' },
     { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: 'Ceva Nu Merge' },
     { path: '/app/antrenor/pain-button', Component: PainButton, heading: 'Pain Button' },

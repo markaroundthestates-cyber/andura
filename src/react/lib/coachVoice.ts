@@ -77,11 +77,17 @@ export const COACH_VOICE = {
     '12 zile consecutive. Constanta bate intensitatea.',
     'Bun ritm. Maine pauza, joi revenim.',
   ],
+  // shown on workout-preview pre-session (task_05 §C)
+  preview: [
+    'Stim ce avem azi - hai sa o facem curat.',
+    'Asculta-ti corpul; ajustam pe parcurs daca apare ceva.',
+    'Forma intai, greutatea dupa.',
+  ],
 } as const;
 
 export type CoachVoiceFlatCategory =
   | 'preset' | 'postUsor' | 'postPotrivit' | 'postGreu'
-  | 'rest' | 'endExercise' | 'reflectie';
+  | 'rest' | 'endExercise' | 'reflectie' | 'preview';
 
 export type CoachVoiceEndSessionRating = 'usor' | 'potrivit' | 'greu';
 
@@ -111,7 +117,7 @@ export function coachPick(
     category === 'preset' || category === 'postUsor' ||
     category === 'postPotrivit' || category === 'postGreu' ||
     category === 'rest' || category === 'endExercise' ||
-    category === 'reflectie'
+    category === 'reflectie' || category === 'preview'
   ) {
     pool = COACH_VOICE[category];
   }
