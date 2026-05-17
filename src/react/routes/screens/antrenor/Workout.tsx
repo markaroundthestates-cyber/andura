@@ -35,6 +35,7 @@ import { formatMMSS } from '../../../lib/format';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
+import { SetLogInput } from '../../../components/Workout/SetLogInput';
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -251,35 +252,12 @@ export function Workout(): JSX.Element {
             ))}
           </div>
 
-          {/* Input current set */}
-          <div className="flex gap-3 mb-6">
-            <div className="flex-1">
-              <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-                Kg
-              </label>
-              <input
-                id="kg-input"
-                type="number"
-                value={kgInput}
-                onChange={(e) => setKgInput(Number(e.target.value))}
-                data-testid="kg-input"
-                className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="text-sm text-ink2 block mb-1" htmlFor="reps-input">
-                Reps
-              </label>
-              <input
-                id="reps-input"
-                type="number"
-                value={repsInput}
-                onChange={(e) => setRepsInput(Number(e.target.value))}
-                data-testid="reps-input"
-                className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2"
-              />
-            </div>
-          </div>
+          <SetLogInput
+            kg={kgInput}
+            reps={repsInput}
+            onKgChange={setKgInput}
+            onRepsChange={setRepsInput}
+          />
 
           {/* Rating 3-button RO */}
           <p className="text-base text-ink mb-3">Cum a fost setul?</p>
