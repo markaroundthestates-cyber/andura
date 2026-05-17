@@ -16,7 +16,7 @@ interface TabConfig {
   Icon: typeof Activity;
 }
 
-const TABS: TabConfig[] = [
+const TABS: readonly TabConfig[] = [
   { id: 'antrenor', label: 'Antrenor', Icon: Activity },
   { id: 'progres', label: 'Progres', Icon: BarChart3 },
   { id: 'istoric', label: 'Istoric', Icon: Clock },
