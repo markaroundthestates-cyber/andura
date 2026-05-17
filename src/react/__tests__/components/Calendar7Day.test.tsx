@@ -47,6 +47,30 @@ describe('Calendar7Day — render', () => {
     expect(dayMa.style.background).toContain('var(--paper-2)');
   });
 
+  // task_01: wiki spec dual-state color SSOT (LOCKED vs EDIT)
+  it('LOCKED state training day uses #3d7a4a verde inchis + white text', () => {
+    render(<Calendar7Day />); // editMode false default
+    const dayL = screen.getByTestId('calendar-day-0'); // training
+    expect(dayL.style.background).toContain('rgb(61, 122, 74)'); // #3d7a4a
+    expect(dayL.style.color).toBe('rgb(255, 255, 255)'); // #ffffff white
+  });
+
+  it('EDIT state training day uses #d4e6cb verde deschis + var(--ink) text', () => {
+    useScheduleStore.setState({ editMode: true });
+    render(<Calendar7Day />);
+    const dayL = screen.getByTestId('calendar-day-0'); // training
+    expect(dayL.style.background).toContain('rgb(212, 230, 203)'); // #d4e6cb
+    expect(dayL.style.color).toBe('var(--ink)');
+  });
+
+  it('rest day color invariant cross-states (var(--paper-2) LOCKED + EDIT)', () => {
+    const { rerender } = render(<Calendar7Day />); // editMode false
+    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--paper-2)');
+    useScheduleStore.setState({ editMode: true });
+    rerender(<Calendar7Day />);
+    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--paper-2)');
+  });
+
   it('locked default state — day buttons disabled', () => {
     render(<Calendar7Day />);
     expect(screen.getByTestId('calendar-7day')).toHaveAttribute('data-edit-mode', 'false');
