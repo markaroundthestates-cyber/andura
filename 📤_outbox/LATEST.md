@@ -349,3 +349,77 @@ Rollback safe net per-task granular (NU needed — all 10 LANDED clean).
 ---
 
 🦫 **Bugatti craft. BATCH task_13 → task_22 LANDED 2026-05-17 — 10-task sequential autonomous fail-stop policy honored ZERO failure encountered. 14 commits atomic granular recovery. 4072→4209 PASS (+137 tests). TS strict 0 errors. Karpathy §3 surgical per-task + §4 simplicity Phase 4 MVP scope. WORDING DISCIPLINE strict CEO pre-Beta (~22 items + 5 Calendar V1 decisions §6 WORDING BACKLOG aggregate). LOCK 9 safety + LOCK 11 nutrition + Calendar V1 ephemeral all wired Phase 4 stub + Phase 5+ engine pipeline carry-forward explicit. Co-CTO autonomous batch complete cu zero Daniel intermediate review per §AR.31 D012 pre-Beta launch a-z gate. Phase 4 closure milestone gate: Daniel CEO wording review + Calendar V1 clarifications + scheduleAdapter engine pipeline Phase 5+. Branch feature/v3-react-clasic clean foundation pentru Phase 5+ engine wire + Phase 6+ Tab 4 Cont + advanced features.**
+
+---
+
+# LATEST CC — Handover Distribute 2026-05-17 Phase 4 BATCH LANDED
+
+**Date:** 2026-05-17
+**Trigger:** end-of-session handover ingest post Phase 4 batch closure
+**Model:** Opus
+**Branch:** feature/v3-react-clasic
+**Status:** Complete | 1 commit | Phase 4 batch archive verified | D022 + D023 appended
+
+## §A Verify state alignment (5 invariants Phase 4 batch closure)
+
+- [✓] DECISIONS.md frontmatter total_entries=21 baseline pre-append + last_updated=2026-05-17 + latest_entry=D021
+- [✓] D021 Phase 3 STRATEGY LOCKED V1 entry intact CURRENT DECISIONS section (line 73 pre-append)
+- [✓] Branch HEAD `376e3f6` feature/v3-react-clasic verde — 4209 PASS local vitest (verified 2026-05-17 22:08) + TS strict 0 errors
+- [✓] 10 batch sketches consumed → `📥_inbox/_CONSUMED/phase-4-tasks/` (task_13 → task_22 + ORCHESTRATOR + task_10/11/12 standalone executed prior, total 14 files în _CONSUMED)
+- [✓] 10 backup tags `pre-phase4-task-{13..22}-2026-05-17` present local + origin (verified `pre-phase4-task-22-2026-05-17` → origin commit `677e8b9`)
+
+ZERO invariant fail — proceed safe append + archive.
+
+## §B DECISIONS.md append D022 + D023
+
+Per spec §B + project schema (single-line `|` format consistent D001-D021, ≤80 char title; body detail în HANDOVER narrative archived):
+
+```
+D022 | 2026-05-17 | STRATEGY | Phase 4 BATCH task_13-22 LANDED 10-task atomic 14 commits 4209 PASS WORDING backlog 22 items | LOCKED V1 | DECISIONS.md §D022
+D023 | 2026-05-17 | PROC | MCP filesystem write_file MANDATORY vault Windows emoji paths verify list_directory | LOCKED V1 | DECISIONS.md §D023
+```
+
+Frontmatter: `total_entries: 21 → 23`, `last_updated: 2026-05-17`, `latest_entry: D021 → D023`.
+
+D007 supersede check (§C) — ZERO overlap verified:
+- D022 STRATEGY Phase 4 BATCH = unique milestone (no precedent D-ID)
+- D023 PROC MCP filesystem Windows = unique tooling rule (no precedent)
+- Sub-D009 §AR.31 intermediate review surface pattern = NOT separate D-ID per HANDOVER scribe (>50% category+keyword overlap cu D009)
+
+## §C Archive actions
+
+- [✓] `📥_inbox/HANDOVER_2026-05-17_phase4-batch-13-22-landed.md` → `_CONSUMED/HANDOVER_2026-05-17_phase4-batch-13-22-landed.md` (git rename R100 100% similarity preserved)
+- [✓] Phase 4 batch sketches 10x verified `_CONSUMED/phase-4-tasks/` (task_13_sessionpill.md + task_14_lock9_aafriction.md + task_15_inactivity_wakelock.md + task_16_progres_tab.md + task_17_schedule_adapter.md + task_18_getpr_engine_signal.md + task_19_calendar_v1.md + task_20_nutrition_logging.md + task_21_istoric_tab.md + task_22_postsummary_banner.md)
+- [✓] Old PROMPT_CC Phase 3 (`PROMPT_CC_handover_distribute_2026-05-17_phase3.md`) already archived prior session (rename suffix `_phase3`)
+- [✓] Phase 4 sketches dir `📥_inbox/phase-4-tasks/` empty post batch — preserved as folder placeholder pentru Phase 5+ sketches viitoare per spec §E directive
+
+## §D Commit + push
+
+| SHA | Subject |
+|-----|---------|
+| `f3cb7dc` | docs(handover): Phase 4 BATCH task_13→22 LANDED 2026-05-17 archive + D022 + D023 |
+
+Pushed `feature/v3-react-clasic` → origin (`6d493a5..f3cb7dc`). 2 files changed (DECISIONS.md +4/-2; HANDOVER R100 rename _CONSUMED/).
+
+NU `git add -A` per project memory `feedback_vault_workflow.md` (smart-env cache noise). Explicit staging: DECISIONS.md + HANDOVER rename. Distribute prompt artefact NOT committed per existing pattern (`PROMPT_CC_handover_distribute_*` precedent untracked).
+
+## §E Issues
+
+None expected; Phase 4 batch closed clean prior turn (HEAD `376e3f6` verified). Smart-env state diverged orphans noted but out-of-scope distribute commit (auto-tooling housekeeping).
+
+## §F V6 update + DECISIONS.md NEW entry summary
+
+- **V6 PROJECT_INSTRUCTIONS:** NO update needed per HANDOVER §V6 default decision (vault structure + protocol §F3.8 + §CC.2 + §CC.3 + skills ecosystem + MCP precedence + testing baseline rămân valide post Phase 4 batch closure)
+- **DECISIONS.md:** 2 NEW entries (D022 STRATEGY + D023 PROC). Scribe item §AR.31 intermediate review surface SUB-D009 pattern — NO separate D-ID (D007 supersede overlap >50%)
+
+## §G Next session
+
+Fresh chat → "Salut Acasă" → §CC.2 startup → 3 options ranked Phase 5+/6 frontier:
+
+1. **Phase 5+ engine pipeline real wire** — scheduleAdapter aggregate getDailyWorkout (Adherence + Energy + Vitality compose) + Bayesian Nutrition Inference real auto target + Engine #2 Calendar V1 silent dispatch + aaFriction dynamic thresholds
+2. **Phase 6 Cont Tab 4 of 4** — settings + auth + theme + data export per mockup `#screen-settings` L1839+ (ultim tab major)
+3. **Daniel CEO wording review session pre-Beta sweep** — ~22 WORDING BACKLOG items + 5 Calendar V1 §D design decisions (locked cells labels / mid-week scope / 0-7 validation / DEFAULT_WEEK pattern / wording)
+
+---
+
+🦫 **Handover Phase 4 batch closure milestone LANDED. Vault state clean (5 invariants verified, 1 commit `f3cb7dc` docs trace pushed origin, D022 + D023 appended LOCKED V1, total_entries 21 → 23). ~22 WORDING BACKLOG aggregate items + 5 Calendar V1 design decisions Daniel CEO pre-Beta review pending. Branch feature/v3-react-clasic clean foundation Phase 5+/6 frontier.**
