@@ -141,7 +141,9 @@ describe('Routing — Auth flow stub', () => {
 
 describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
   const stubs = [
-    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: 'Energy Check' },
+    // task_05 rewrite: EnergyCheck real heading; EnergyCause + WorkoutPreview
+    // still placeholder until subsequent task_05 commits.
+    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /Cum te simti azi/i },
     { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: 'Energy Cause' },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: 'Workout Preview' },
     { path: '/app/antrenor/workout', Component: Workout, heading: 'Workout' },
@@ -201,7 +203,7 @@ describe('Routing — Phase 3 Antrenor nested routes integration', () => {
 
   it('renders EnergyCheck cu Layout (bottom nav) la /app/antrenor/energy-check', () => {
     renderNested('/app/antrenor/energy-check');
-    expect(screen.getByRole('heading', { name: 'Energy Check', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Cum te simti azi/i, level: 1 })).toBeInTheDocument();
     const antrenorButton = screen.getByRole('button', { name: /Antrenor/i });
     expect(antrenorButton).toHaveAttribute('aria-current', 'page');
   });
