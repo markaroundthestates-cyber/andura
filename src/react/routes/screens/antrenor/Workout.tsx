@@ -41,6 +41,10 @@ import { ExitConfirmSheet } from '../../../components/Workout/ExitConfirmSheet';
 import { AaFrictionModal } from '../../../components/AaFrictionModal';
 import { detectAggressiveLoad } from '../../../lib/aaFrictionDetect';
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
+import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
+
+const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
+const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
 
 // Phase 4 task_10 fallback — used cand engineWrappers.getTodayWorkout returns
 // null (engine throw / DB unavailable). Mockup wv2 reference Push session
@@ -95,6 +99,11 @@ export function Workout(): JSX.Element {
   const [aaModalOpen, setAaModalOpen] = useState(false);
   const [aaReason, setAaReason] = useState<AggressiveReason | null>(null);
   const [aaPendingRating, setAaPendingRating] = useState<SetRating | null>(null);
+  // Phase 4 task_15 §A: inactivity watch state. lastActivityAt updates on
+  // input change + rating click + skip rest click. Interval 30s checks
+  // delta > 7 min → show prompt.
+  const [lastActivityAt, setLastActivityAt] = useState<number>(Date.now());
+  const [inactivityPromptOpen, setInactivityPromptOpen] = useState(false);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   useEffect(() => {
@@ -178,6 +187,24 @@ export function Workout(): JSX.Element {
     setRepsInput(currentExercise.targetReps);
   }, [safeExIdx, currentExercise.targetKg, currentExercise.targetReps]);
 
+  // Phase 4 task_15 §A: inactivity watch — interval 30s checks idle minutes
+  // vs lastActivityAt; > 7 min triggers prompt overlay. Reset triggers
+  // (input/rating/skip) bumpActivity() inline.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const idleMin = (Date.now() - lastActivityAt) / 60_000;
+      if (idleMin > INACTIVITY_THRESHOLD_MIN) {
+        setInactivityPromptOpen(true);
+      }
+    }, INACTIVITY_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [lastActivityAt]);
+
+  const bumpActivity = (): void => {
+    setLastActivityAt(Date.now());
+    setInactivityPromptOpen(false);
+  };
+
   function performLogSet(rating: SetRating): void {
     logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
 
@@ -221,6 +248,7 @@ export function Workout(): JSX.Element {
   }
 
   function handleLogSet(rating: SetRating): void {
+    bumpActivity();
     // Phase 4 task_14: LOCK 9 aaFrictionDetect pre-check. Compose set sample
     // history din current exercise + new set candidate. Cand trigger →
     // suspend state machine (NU logSet/rest/transition), show modal.
@@ -268,6 +296,7 @@ export function Workout(): JSX.Element {
   }
 
   function handleSkipRest(): void {
+    bumpActivity();
     setRestCountdown(0);
     setPhase('logging');
   }
@@ -328,8 +357,14 @@ export function Workout(): JSX.Element {
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
-            onKgChange={setKgInput}
-            onRepsChange={setRepsInput}
+            onKgChange={(n) => {
+              bumpActivity();
+              setKgInput(n);
+            }}
+            onRepsChange={(n) => {
+              bumpActivity();
+              setRepsInput(n);
+            }}
           />
 
           <SetRatingButtons onRate={handleLogSet} />
@@ -370,6 +405,15 @@ export function Workout(): JSX.Element {
         reason={aaReason}
         onAcknowledge={handleAaAcknowledge}
         onForceContinue={handleAaForceContinue}
+      />
+
+      <InactivityPrompt
+        open={inactivityPromptOpen}
+        onContinue={bumpActivity}
+        onSaveExit={() => {
+          pauseSession();
+          navigate(gotoPath('antrenor'));
+        }}
       />
     </section>
   );

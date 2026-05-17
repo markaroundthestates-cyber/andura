@@ -502,6 +502,73 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () =
   });
 });
 
+describe('Workout — inactivity watch (task_15 §A)', () => {
+  beforeEach(() => {
+    resetStore();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('NU prompt initial (mount fresh activity)', () => {
+    renderWorkout();
+    expect(screen.queryByTestId('inactivity-prompt')).not.toBeInTheDocument();
+  });
+
+  it('prompt apare cand idle > 7 min', () => {
+    renderWorkout();
+    act(() => {
+      vi.advanceTimersByTime(8 * 60 * 1000); // 8 min > 7 threshold
+    });
+    expect(screen.getByTestId('inactivity-prompt')).toBeInTheDocument();
+    expect(screen.getByTestId('inactivity-prompt-title')).toHaveTextContent('Esti acolo?');
+  });
+
+  it('Continui click bumps activity + hides prompt', () => {
+    renderWorkout();
+    act(() => {
+      vi.advanceTimersByTime(8 * 60 * 1000);
+    });
+    expect(screen.getByTestId('inactivity-prompt')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('inactivity-continue'));
+    expect(screen.queryByTestId('inactivity-prompt')).not.toBeInTheDocument();
+  });
+
+  it('Salveaza si iesi click pauses session + navigates antrenor', () => {
+    renderWorkout();
+    act(() => {
+      vi.advanceTimersByTime(8 * 60 * 1000);
+    });
+    fireEvent.click(screen.getByTestId('inactivity-save-exit'));
+    expect(useWorkoutStore.getState().pausedSnapshot).not.toBeNull();
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor'
+    );
+  });
+
+  it('rating click resets activity (prompt dismissed)', () => {
+    renderWorkout();
+    act(() => {
+      vi.advanceTimersByTime(8 * 60 * 1000);
+    });
+    expect(screen.getByTestId('inactivity-prompt')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(screen.queryByTestId('inactivity-prompt')).not.toBeInTheDocument();
+  });
+
+  it('mockup verbatim body copy preserved (no diacritics)', () => {
+    renderWorkout();
+    act(() => {
+      vi.advanceTimersByTime(8 * 60 * 1000);
+    });
+    const body = screen.getByTestId('inactivity-prompt-body');
+    expect(body.textContent).toMatch(/N-am vazut activitate de 7 min/);
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(body.textContent ?? '')).toBe(false);
+  });
+});
+
 describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', () => {
   beforeEach(() => {
     resetStore();
