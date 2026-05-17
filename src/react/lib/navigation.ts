@@ -34,8 +34,9 @@ export type GotoScreen =
   | 'ceva-nu-merge' | 'pain-button'
   | 'equipment-swap' | 'aparate-lipsa'
   | 'schedule-override'
-  | 'post-rpe' | 'post-summary';
-// Phase 4+ extends union cu sub-screens Progres/Istoric/Cont
+  | 'post-rpe' | 'post-summary'
+  // Phase 4 Progres sub-screens (task_16)
+  | 'log-weight' | 'body-data';
 
 /**
  * Map mockup screen name la React Router path.
@@ -72,6 +73,11 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'post-rpe' || screen === 'post-summary'
   ) {
     return `/app/antrenor/${screen}`;
+  }
+
+  // Phase 4 Progres sub-screens (task_16, nested sub /app/progres)
+  if (screen === 'log-weight' || screen === 'body-data') {
+    return `/app/progres/${screen}`;
   }
 
   // Exhaustive fallback (TS catches missing cases at compile)

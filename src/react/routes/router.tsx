@@ -22,6 +22,8 @@ import { ScheduleOverride } from './screens/antrenor/ScheduleOverride';
 import { PostRpe } from './screens/antrenor/PostRpe';
 import { PostSummary } from './screens/antrenor/PostSummary';
 import { Progres } from './screens/progres/Progres';
+import { LogWeight } from './screens/progres/LogWeight';
+import { BodyData } from './screens/progres/BodyData';
 import { Istoric } from './screens/istoric/Istoric';
 import { Cont } from './screens/cont/Cont';
 
@@ -56,7 +58,14 @@ export const router = createBrowserRouter([
           { path: 'post-summary', element: <PostSummary /> },
         ],
       },
-      { path: 'progres', element: <Progres /> },
+      {
+        path: 'progres',
+        children: [
+          { index: true, element: <Progres /> },
+          { path: 'log-weight', element: <LogWeight /> },
+          { path: 'body-data', element: <BodyData /> },
+        ],
+      },
       { path: 'istoric', element: <Istoric /> },
       { path: 'cont', element: <Cont /> },
     ],
