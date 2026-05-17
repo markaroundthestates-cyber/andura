@@ -6,8 +6,21 @@ import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+// Mock engineWrappers BEFORE Workout import (hoisted vi.mock).
+vi.mock('../../../lib/engineWrappers', async () => {
+  const actual = await vi.importActual<typeof import('../../../lib/engineWrappers')>(
+    '../../../lib/engineWrappers'
+  );
+  return {
+    ...actual,
+    getPRDelta: vi.fn(() => null), // default no PR; per-test override
+  };
+});
+
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { getPRDelta } from '../../../lib/engineWrappers';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -32,6 +45,7 @@ function resetStore(): void {
     setIdx: 0,
     phase: 'idle',
     prHit: false,
+    prData: null,
     history: {},
     sessionStart: null,
     lastRating: null,
@@ -40,6 +54,7 @@ function resetStore(): void {
     streak: 0,
   });
   localStorage.clear();
+  vi.mocked(getPRDelta).mockReturnValue(null);
 }
 
 describe('Workout — base render (phase=idle init → logging)', () => {
@@ -366,5 +381,98 @@ describe('Workout — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
     const overlay = screen.getByTestId('rest-overlay');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(overlay.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('logSet calls getPRDelta cu exercise + set + history', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(getPRDelta).toHaveBeenCalledWith(
+      'Bench Press',
+      { w: 22.5, reps: 10 },
+      [] // initial history empty
+    );
+  });
+
+  it('NU markPRHit cand getPRDelta returns null (no PR)', () => {
+    vi.mocked(getPRDelta).mockReturnValue(null);
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    expect(useWorkoutStore.getState().prHit).toBe(false);
+    expect(useWorkoutStore.getState().prData).toBeNull();
+  });
+
+  it('markPRHit cu prData cand getPRDelta returns weight PR', () => {
+    vi.mocked(getPRDelta).mockReturnValue({
+      type: 'weight',
+      kg: 25,
+      reps: 10,
+      prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+    });
+    renderWorkout();
+    const kgInput = screen.getByTestId('kg-input');
+    fireEvent.change(kgInput, { target: { value: '25' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
+    const state = useWorkoutStore.getState();
+    expect(state.prHit).toBe(true);
+    expect(state.prData).toEqual({
+      exercise: 'Bench Press',
+      deltaKg: 2.5, // 25 - 22.5
+      type: 'weight',
+    });
+  });
+
+  it('markPRHit deltaKg = 0 cand prevBest null (first ever set)', () => {
+    vi.mocked(getPRDelta).mockReturnValue({
+      type: 'weight',
+      kg: 22.5,
+      reps: 10,
+      prevBest: null,
+    });
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(useWorkoutStore.getState().prData?.deltaKg).toBe(22.5);
+  });
+
+  it('volume PR type propagated correctly', () => {
+    vi.mocked(getPRDelta).mockReturnValue({
+      type: 'volume',
+      kg: 22.5,
+      reps: 12,
+      prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+    });
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(useWorkoutStore.getState().prData?.type).toBe('volume');
+  });
+
+  it('reps PR type propagated correctly', () => {
+    vi.mocked(getPRDelta).mockReturnValue({
+      type: 'reps',
+      kg: 22.5,
+      reps: 12,
+      prevBest: { ex: 'Bench Press', w: 22.5, reps: 10 },
+    });
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(useWorkoutStore.getState().prData?.type).toBe('reps');
+  });
+
+  it('history passed la getPRDelta accumulates set 2+ correctly', () => {
+    renderWorkout();
+    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    vi.mocked(getPRDelta).mockClear();
+    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    expect(getPRDelta).toHaveBeenCalledWith(
+      'Bench Press',
+      { w: 22.5, reps: 10 },
+      [{ ex: 'Bench Press', w: 22.5, reps: 10 }] // 1st set in history
+    );
   });
 });

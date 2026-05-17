@@ -78,6 +78,7 @@ export function PostSummary(): JSX.Element {
   const lastRating = useWorkoutStore((s) => s.lastRating);
   const streak = useWorkoutStore((s) => s.streak);
   const prHit = useWorkoutStore((s) => s.prHit);
+  const prData = useWorkoutStore((s) => s.prData);
   const reset = useWorkoutStore((s) => s.reset);
 
   const { sets, dur, volume } = parseMeta(lastSession?.meta);
@@ -110,7 +111,10 @@ export function PostSummary(): JSX.Element {
         </p>
       )}
 
-      {/* F11 PR banner conditional */}
+      {/* F11 PR banner conditional. Phase 4 task_10: prData details expand
+         banner copy cu exercise + deltaKg (cand disponibil din getPRDelta
+         pipeline în Workout.handleLogSet). Fallback la lastSession.title
+         scope cand prData null (legacy prHit-only flag). */}
       {prHit && (
         <div
           className="flex items-center gap-3 p-4 mb-4 rounded-xl bg-succ/10 border border-succ"
@@ -121,8 +125,10 @@ export function PostSummary(): JSX.Element {
           <Trophy className="w-6 h-6 text-succ" aria-hidden="true" />
           <div>
             <p className="text-base font-semibold text-succ">PR nou!</p>
-            <p className="text-sm text-ink2">
-              Cel mai bun set la {lastSession?.title}
+            <p className="text-sm text-ink2" data-testid="summary-pr-detail">
+              {prData
+                ? `${prData.exercise} - ${prData.deltaKg > 0 ? '+' : ''}${prData.deltaKg} kg (${prData.type})`
+                : `Cel mai bun set la ${lastSession?.title ?? 'sesiune'}`}
             </p>
           </div>
         </div>

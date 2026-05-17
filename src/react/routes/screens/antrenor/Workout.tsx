@@ -30,7 +30,7 @@ import { X } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
-import { getTodayWorkout } from '../../../lib/engineWrappers';
+import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 
@@ -65,6 +65,7 @@ export function Workout(): JSX.Element {
   const advanceExercise = useWorkoutStore((s) => s.advanceExercise);
   const pauseSession = useWorkoutStore((s) => s.pauseSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
+  const markPRHit = useWorkoutStore((s) => s.markPRHit);
 
   // Phase 4 task_10: wire engineWrappers.getTodayWorkout planned aggregate;
   // fallback la WV2_FALLBACK cand null (engine throw / DB unavailable).
@@ -156,6 +157,31 @@ export function Workout(): JSX.Element {
 
   function handleLogSet(rating: SetRating): void {
     logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
+
+    // Phase 4 task_10: PR detection wire — call engineWrappers.getPRDelta
+    // post logSet. Compose history for engine (per-exercise flat list cu
+    // baseline + previous sets). markPRHit propagates flag + prData la
+    // PostSummary F11 banner (Trophy lucide + exercise name + deltaKg).
+    const exerciseName = currentExercise.name;
+    const exerciseHistory =
+      history[safeExIdx]?.map((h) => ({
+        ex: exerciseName,
+        w: h.kg,
+        reps: h.reps,
+      })) ?? [];
+    const delta = getPRDelta(
+      exerciseName,
+      { w: kgInput, reps: repsInput },
+      exerciseHistory
+    );
+    if (delta) {
+      markPRHit({
+        exercise: exerciseName,
+        deltaKg: delta.kg - (delta.prevBest?.w ?? 0),
+        type: delta.type,
+      });
+    }
+
     if (isLastSetOfExercise) {
       if (isLastExercise) {
         navigate(gotoPath('post-rpe'));

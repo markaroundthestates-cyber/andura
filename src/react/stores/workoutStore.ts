@@ -19,6 +19,13 @@ export interface ExerciseHistoryEntry {
   rating: 'usor' | 'potrivit' | 'greu';
 }
 
+// Phase 4 task_10: PR detection payload (engineWrappers.getPRDelta result).
+export interface PRData {
+  exercise: string;
+  deltaKg: number;
+  type: 'weight' | 'reps' | 'volume';
+}
+
 export interface PausedSession {
   title: string;
   meta: string;
@@ -40,6 +47,7 @@ export interface WorkoutState {
   setIdx: number;
   phase: WorkoutPhase;
   prHit: boolean;
+  prData: PRData | null; // Phase 4 task_10: details despre PR detected (NU just flag)
   history: Record<number, ExerciseHistoryEntry[]>;
   sessionStart: number | null;
   lastRating: 'usoara' | 'normala' | 'grea' | null;
@@ -57,7 +65,7 @@ export interface WorkoutActions {
   setPhase: (phase: WorkoutPhase) => void;
   logSet: (exIdx: number, entry: ExerciseHistoryEntry) => void;
   advanceExercise: () => void;
-  markPRHit: () => void;
+  markPRHit: (data?: PRData) => void;
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   incrementStreak: () => void;
   resetStreak: () => void;
@@ -71,6 +79,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       setIdx: 0,
       phase: 'idle',
       prHit: false,
+      prData: null,
       history: {},
       sessionStart: null,
       lastRating: null,
@@ -85,6 +94,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           exIdx: 0,
           setIdx: 0,
           prHit: false,
+          prData: null,
           history: {},
         }),
 
@@ -127,6 +137,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           history: {},
           sessionStart: null,
           prHit: false,
+          prData: null,
           pausedSnapshot: null,
         }),
 
@@ -150,7 +161,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       advanceExercise: () =>
         set((s) => ({ exIdx: s.exIdx + 1, setIdx: 0, phase: 'logging' })),
 
-      markPRHit: () => set({ prHit: true }),
+      markPRHit: (data) => set({ prHit: true, prData: data ?? null }),
 
       setLastRating: (rating) => set({ lastRating: rating }),
 
@@ -164,6 +175,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           setIdx: 0,
           phase: 'idle',
           prHit: false,
+          prData: null,
           history: {},
           sessionStart: null,
           lastRating: null,

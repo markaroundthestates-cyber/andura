@@ -30,6 +30,7 @@ function seedNormalSession(): void {
     setIdx: 0,
     phase: 'idle',
     prHit: false,
+    prData: null,
     history: {},
     sessionStart: null,
     lastRating: 'normala',
@@ -232,5 +233,57 @@ describe('PostSummary — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     useWorkoutStore.setState({ prHit: true });
     const { container } = renderSummary();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
+  beforeEach(() => {
+    seedNormalSession();
+  });
+
+  it('banner shows fallback copy cand prHit=true + prData=null', () => {
+    useWorkoutStore.setState({ prHit: true, prData: null });
+    renderSummary();
+    const detail = screen.getByTestId('summary-pr-detail');
+    expect(detail.textContent).toMatch(/Cel mai bun set la/);
+    expect(detail.textContent).toMatch(/Push \(piept si umeri\)/);
+  });
+
+  it('banner shows prData exercise + deltaKg + type cand prData present', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight' },
+    });
+    renderSummary();
+    const detail = screen.getByTestId('summary-pr-detail');
+    expect(detail.textContent).toMatch(/Bench Press/);
+    expect(detail.textContent).toMatch(/\+2\.5 kg/);
+    expect(detail.textContent).toMatch(/weight/);
+  });
+
+  it('banner shows negative deltaKg fără double-sign', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Squat', deltaKg: -5, type: 'reps' },
+    });
+    renderSummary();
+    const detail = screen.getByTestId('summary-pr-detail');
+    expect(detail.textContent).toMatch(/-5 kg/);
+    expect(detail.textContent).not.toMatch(/\+-5/);
+  });
+
+  it('volume PR type rendered în banner', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Deadlift', deltaKg: 10, type: 'volume' },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-pr-detail').textContent).toMatch(/volume/);
+  });
+
+  it('detail testid absent cand prHit=false (whole banner hidden)', () => {
+    useWorkoutStore.setState({ prHit: false });
+    renderSummary();
+    expect(screen.queryByTestId('summary-pr-detail')).not.toBeInTheDocument();
   });
 });
