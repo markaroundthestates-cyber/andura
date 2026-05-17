@@ -29,6 +29,7 @@ import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
 import { StatsGrid } from '../../../components/Antrenor/StatsGrid';
 import { ReadinessVerdict } from '../../../components/Antrenor/ReadinessVerdict';
 import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificationBanner';
+import { Calendar7Day } from '../../../components/Calendar7Day';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
 
@@ -91,6 +92,8 @@ export function Antrenor(): JSX.Element {
       ) : (
         <CoachRestCard onLightSession={handleStart} onOverride={handleStart} />
       )}
+
+      <Calendar7Day />
 
       <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
       <ReadinessVerdict readiness={readiness} />
