@@ -144,7 +144,10 @@ describe('Workout — state machine logging → rest', () => {
     fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
     const hist = useWorkoutStore.getState().history[0];
     expect(hist).toHaveLength(1);
-    expect(hist[0]).toEqual({ kg: 25, reps: 8, rating: 'greu' });
+    // Phase 4 task_14: timestamp auto-stamped by logSet — match partial
+    // pentru backward compat assertion intent (kg/reps/rating).
+    expect(hist[0]).toMatchObject({ kg: 25, reps: 8, rating: 'greu' });
+    expect(typeof hist[0].timestamp).toBe('number');
   });
 
   it('skip rest button transitions phase back la logging', () => {

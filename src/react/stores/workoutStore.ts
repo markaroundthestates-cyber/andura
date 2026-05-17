@@ -17,6 +17,10 @@ export interface ExerciseHistoryEntry {
   kg: number;
   reps: number;
   rating: 'usor' | 'potrivit' | 'greu';
+  // Phase 4 task_14: timestamp pentru aaFrictionDetect fast_sets pattern.
+  // Optional pentru backward compat — logSet action auto-set Date.now()
+  // dacă call site nu provides.
+  timestamp?: number;
 }
 
 // Phase 4 task_10: PR detection payload (engineWrappers.getPRDelta result).
@@ -161,7 +165,16 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
 
       logSet: (exIdx, entry) =>
         set((s) => ({
-          history: { ...s.history, [exIdx]: [...(s.history[exIdx] || []), entry] },
+          history: {
+            ...s.history,
+            // Phase 4 task_14: auto-stamp timestamp dacă nu provided pentru
+            // aaFrictionDetect fast_sets interval calculation. Backward compat
+            // existing test call sites care nu specifica timestamp.
+            [exIdx]: [
+              ...(s.history[exIdx] || []),
+              { ...entry, timestamp: entry.timestamp ?? Date.now() },
+            ],
+          },
         })),
 
       advanceExercise: () =>
