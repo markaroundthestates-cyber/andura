@@ -63,12 +63,29 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
           return { days: next as unknown as WeekDays };
         }),
       saveWeekly: () => {
-        // Phase 4 task_19 §A: silent dispatch Engine #2 stub. Real wire
-        // Phase 5+ — Adherence/Schedule engine consume scheduleStore.days.
-        // NU show toast (silent per memory spec).
-        const _state = get();
-        // Side-effect placeholder: engine.dispatchSchedule(_state.days);
-        void _state;
+        // Phase 5 task_08: dispatch Engine #2 Goal Adaptation via real
+        // scheduleAdapter.commitCalendarEdit pentru localStorage persist
+        // (Tier 1 storage) — engine pick up override on next pipeline run.
+        // ZERO src/engine/* mutation per orchestrator §7; uses existing
+        // scheduleAdapter.commitCalendarEdit export.
+        const state = get();
+        try {
+          // Dynamic import sync via require pattern to avoid circular
+          // dep risk + keep adapter module-level lazy.
+          import('../../engine/schedule/scheduleAdapter.js').then((mod) => {
+            const commitFn = (mod as { commitCalendarEdit?: (days: readonly DayKind[]) => unknown }).commitCalendarEdit;
+            if (typeof commitFn === 'function') {
+              try {
+                commitFn(state.days);
+              } catch {
+                /* fail silent — Engine #2 consumes localStorage; daca
+                   write fails state.days remains în memory store. */
+              }
+            }
+          }).catch(() => { /* fail silent */ });
+        } catch {
+          /* fail silent invariant per orchestrator §7 wrapper guard */
+        }
         set({ editMode: false });
       },
       resetWeekly: (newWeekStartISO) =>
