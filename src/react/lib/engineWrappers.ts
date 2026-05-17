@@ -22,6 +22,7 @@
 import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/readiness.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
+import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 
 // ── Output types simplified pentru React consumption ─────────────────────
 
@@ -194,37 +195,20 @@ export function getPRDelta(
   }
 }
 
-// Phase 4 task_10 demo seed — Push session matching mockup wv2 reference.
-// Phase 5+ replaces cu real scheduleAdapter aggregate (getTodayPlannedWorkout
-// or sessionBuilder layer) când scheduleAdapter exposes planned-workout
-// aggregate api (currently exposes override + missing equipment + skip only).
-const PHASE_4_DEMO_PUSH: PlannedWorkoutOutput = {
-  workoutTitle: 'Push (piept si umeri)',
-  exerciseCount: 5,
-  estimatedDuration: 50,
-  intensityMod: 'normal',
-  volumeKg: 12450,
-  exercises: [
-    { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
-    { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
-    { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
-    { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
-    { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
-  ],
-};
-
 /**
- * Today planned workout fetch — Phase 4 task_10 returns demo Push session;
- * Phase 5+ wires real scheduleAdapter aggregate când exposes planned-workout
- * api. Phase 4 consumers (Workout / WorkoutPreview / PostRpe / PostSummary)
- * derive title + exercises + duration + volume direct din result.
+ * Today planned workout fetch — Phase 5 task_05 delegates la
+ * scheduleAdapterAggregate.composePlannedWorkoutToday() pentru real
+ * engine integration (calendar rest day check + missing equipment filter
+ * applied via src/engine/schedule/scheduleAdapter exports). Exercise
+ * template Phase 5 stub PHASE_5_BASELINE_PUSH în adapter; Phase 6+ wires
+ * Periodization + Goal Template + Specialization + Warmup + Deload
+ * compose pipeline.
  *
- * Returns null doar daca explicit error (caller pattern matches existing
- * fail-silent wrappers like getReadiness). Phase 4 stub never null.
+ * Returns null cand calendar rest day sau engine throws (fail-silent).
  */
 export function getTodayWorkout(): PlannedWorkoutOutput | null {
   try {
-    return PHASE_4_DEMO_PUSH;
+    return composePlannedWorkoutToday();
   } catch (e) {
     console.warn('[engineWrappers] getTodayWorkout failed:', e);
     return null;
