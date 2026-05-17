@@ -1,6 +1,7 @@
 // ══ WORKOUT PREVIEW TESTS — task_05 §C banner + duration/volume + start ═══
 // MemoryRouter jsdom paradigm per D020.
 
+import type { JSX } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';

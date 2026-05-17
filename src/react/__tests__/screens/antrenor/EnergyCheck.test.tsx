@@ -1,6 +1,7 @@
 // ══ ENERGY CHECK TESTS — task_05 §A 5-option flow ════════════════════════
 // MemoryRouter jsdom paradigm per D020.
 
+import type { JSX } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
