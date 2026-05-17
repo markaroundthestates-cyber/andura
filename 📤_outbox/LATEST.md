@@ -221,3 +221,63 @@ Rollback safe net daca state contaminat (NU needed — task complete green).
 🦫 **Bugatti craft. task_09 PostRpe + PostSummary LANDED Phase 3 sixth and capstone sub-flow. Taxonomy bridge mapRatingToCoachKey honored task_04 LATEST.md §6 footer flag (workoutStore lastRating 'usoara/normala/grea' → COACH_VOICE.endSession 'usor/potrivit/greu' via pure-function alias). F8 streak inc în PostRpe NU PostSummary (avoid double-inc). F11 PR banner conditional + role=status + Trophy lucide icon. Pure-function paradigm + Karpathy §3 surgical touch preserved (parseMeta + formatKg + mapRatingToCoachKey + StatCell sub-component DRY). 2-commit feat spec §6 #1+#2 verbatim + 1 docs D021 Phase 3 closure commit + milestone tag pushed origin.
 
 **🦫 PHASE 3 ANTRENOR LANDED 2026-05-17.** 9-task atomic React tab implementation complete (task_01 → task_09), 14 sub-screens mockup parity, +305 vitest growth (3743 baseline → 4048 final), TS strict compile delta zero (8 pre-existing preserved, zero new), Romanian no-diacritics rule + anti-force-typing + anti-paternalism + CDL stub + Calendar V1 ephemeral + Smart Routing v2 cascade + wake lock fail-silent + state machine 5-phase + bottom sheet exit + taxonomy bridge ALL preserved/implemented. Co-CTO autonomous Phase 3 complete cu zero Daniel intermediate review per §AR.31 D012 pre-Beta launch a-z gate. Branch feature/v3-react-clasic LANDED unblocked ready Daniel walkthrough sau Phase 4 plan creation.**
+
+---
+
+# LATEST CC — Handover Distribute 2026-05-17 Phase 3 Antrenor LANDED
+
+**Date:** 2026-05-17
+**Trigger:** end-of-session handover ingest post Phase 3 closure
+**Model:** Opus
+**Branch:** feature/v3-react-clasic
+**Status:** Complete | 1 commit | Phase 3 archive verified | Phase 4 sketches seeded
+
+## §A Verify state alignment (4 invariants Phase 3 closure)
+
+- [✓] DECISIONS.md frontmatter aligned: `total_entries: 21`, `last_updated: 2026-05-17`, `latest_entry: D021`
+- [✓] D021 entry visible în CURRENT DECISIONS section (LOCKED V1 STRATEGY category, line 74 — verified via grep)
+- [✓] Milestone tag `phase-3-antrenor-landed-2026-05-17` present local + origin (commit `513e9a1` annotated marker)
+- [✓] Branch HEAD `efc2f74` feature/v3-react-clasic verde (4048 PASS local vitest @ task_09 closure)
+
+ZERO invariant fail — proceed safe archive.
+
+## §B Archive actions
+
+- [✓] Move `📥_inbox/HANDOVER_2026-05-17_phase3-antrenor-landed-9-tasks.md` → `📥_inbox/_CONSUMED/HANDOVER_2026-05-17_phase3-antrenor-landed-9-tasks.md`
+- [✓] Cleanup empty `📥_inbox/phase-3-tasks/` folder (rmdir succeeded — folder was untracked + empty post-distribute, no .gitkeep convention violation)
+- [✓] Verify `📥_inbox/phase-4-tasks/` sketches present:
+  - `task_10_engine_wire.md` ✓
+  - `task_11_tech_debt_cleanup.md` ✓
+
+## §C Commit + push
+
+| SHA | Subject |
+|-----|---------|
+| `6c34b10` | docs(handover): Phase 3 Antrenor LANDED 2026-05-17 archive + Phase 4 sketches seed |
+
+Pushed `feature/v3-react-clasic` → origin (`2006d67..6c34b10`). All earlier task_05..task_09 commits also propagated (pre-distribute branch sync pushed 23 commits — task_05 envelope + 18 task atomic commits + 4 report commits).
+
+NU `git add -A` per project memory `feedback_vault_workflow.md` (smart-env cache noise). 3 explicit files staged: HANDOVER moved + task_10 + task_11.
+
+PROMPT_CC artifacts NOT committed per existing pattern (`PROMPT_CC_handover_distribute_2026-05-16.md` precedent în _CONSUMED untracked).
+
+## §D Issues
+
+None. Phase 3 closure verified clean prior — 4 invariants pass, Phase 4 sketches present, no scribe items requiring D-ID promotion.
+
+## §E V6 update + DECISIONS.md NEW entry
+
+- **V6 PROJECT_INSTRUCTIONS:** NO update needed (verified file present `01-vision/PROJECT_INSTRUCTIONS_V6.md`; default decision per spec §F applied — vault structure references rămân valide post Phase 3 closure)
+- **DECISIONS.md:** NO NEW D-ID. Scribe items handover (Tailwind utility alignment, Lucide React-component imports, IntensityMod re-import, safeExIdx defensive bound, wake lock typed interface, coachVoice semantic aliases endExercise+preview, taxonomy bridge mapRatingToCoachKey, kcal placeholder formula, parseMeta regex stub, F8 streak placement) toate sub-D021 tactical patterns. Documented în handover narrative + per-task LATEST.md envelopes pentru carry-forward Phase 4 reference. NU pattern repetat ≥2 task-uri care merită promote la D-ID nou.
+
+## §F Next session
+
+Fresh chat → "Salut Acasă" → §CC.2 startup. Phase 4 task_10 paste autonomous opțiune A, sau review sketch + adjust pre-paste opțiune B.
+
+Phase 4 sketches seed location: `📥_inbox/phase-4-tasks/`:
+- `task_10_engine_wire.md` — engineWrappers.getTodayWorkout aggregate + getPRDelta pipeline wire + coachVoice 'transition' category resolution
+- `task_11_tech_debt_cleanup.md` — 8 pre-existing engineWrappers TS errors fix + persona gigel/gigica reconcile + LastSessionSummary numeric fields refactor (avoid PostSummary regex parse)
+
+---
+
+🦫 **Handover Phase 3 → Phase 4 transition LANDED. Vault state clean (4 invariants verified, 1 commit docs trace, 0 scribe items D-NEW). Phase 4 sketches seeded ready paste. ZERO src/ touched per spec §0 minimal CC automation.**
