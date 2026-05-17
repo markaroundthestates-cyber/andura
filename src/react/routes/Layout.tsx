@@ -5,6 +5,7 @@
 import type { JSX } from 'react';
 import { Outlet } from 'react-router-dom';
 import { BottomNav } from '../components/BottomNav';
+import { SessionPill } from '../components/SessionPill';
 
 export function Layout(): JSX.Element {
   return (
@@ -12,6 +13,7 @@ export function Layout(): JSX.Element {
       <main className="flex-1 pb-16">
         <Outlet />
       </main>
+      <SessionPill />
       <BottomNav />
     </div>
   );
