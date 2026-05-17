@@ -21,10 +21,19 @@ describe('COACH_VOICE library shape', () => {
     expect(COACH_VOICE.endSession.greu.length).toBeGreaterThan(0);
   });
 
-  it('rest + endExercise + reflectie present', () => {
+  it('rest + transition + reflectie + preview present (task_10 rename endExercise→transition)', () => {
     expect(COACH_VOICE.rest.length).toBeGreaterThan(0);
-    expect(COACH_VOICE.endExercise.length).toBeGreaterThan(0);
+    expect(COACH_VOICE.transition.length).toBeGreaterThan(0);
     expect(COACH_VOICE.reflectie.length).toBeGreaterThan(0);
+    expect(COACH_VOICE.preview.length).toBeGreaterThan(0);
+  });
+
+  it('endExercise category removed (task_10 rename → transition)', () => {
+    expect('endExercise' in COACH_VOICE).toBe(false);
+  });
+
+  it('transition category coachPick deterministic seed=0', () => {
+    expect(coachPick('transition', undefined, 0)).toBe(COACH_VOICE.transition[0]);
   });
 });
 

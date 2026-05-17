@@ -369,7 +369,7 @@ export function Workout(): JSX.Element {
             {nextExercise?.name ?? '—'}
           </p>
           <p className="text-sm text-ink2 mt-4 italic font-serif">
-            „{coachPick('endExercise', undefined, 0)}"
+            „{coachPick('transition', undefined, 0)}"
           </p>
         </div>
       )}

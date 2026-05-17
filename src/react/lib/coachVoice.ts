@@ -49,8 +49,12 @@ export const COACH_VOICE = {
     'Pauza scurta, e suficient.',
     'Nu te grabi, recuperarea conteaza.',
   ],
-  // exercise complete, transition
-  endExercise: [
+  // transition phase între exerciții — exercise complete, urmatorul incoming.
+  // Phase 4 task_10 §C: rename endExercise → transition (LOCKED Opțiune 1)
+  // pentru semantic clarity. Mockup comment line 52 confirma intent verbatim
+  // "exercise complete, transition". Smallest blast radius (2 consumers
+  // updated: Workout.tsx + coachVoice.test.ts).
+  transition: [
     'Piept gata, hai pe umeri!',
     'Bun - primul check.',
     'Curat. Trecem mai departe.',
@@ -87,7 +91,7 @@ export const COACH_VOICE = {
 
 export type CoachVoiceFlatCategory =
   | 'preset' | 'postUsor' | 'postPotrivit' | 'postGreu'
-  | 'rest' | 'endExercise' | 'reflectie' | 'preview';
+  | 'rest' | 'transition' | 'reflectie' | 'preview';
 
 export type CoachVoiceEndSessionRating = 'usor' | 'potrivit' | 'greu';
 
@@ -116,7 +120,7 @@ export function coachPick(
   } else if (
     category === 'preset' || category === 'postUsor' ||
     category === 'postPotrivit' || category === 'postGreu' ||
-    category === 'rest' || category === 'endExercise' ||
+    category === 'rest' || category === 'transition' ||
     category === 'reflectie' || category === 'preview'
   ) {
     pool = COACH_VOICE[category];
