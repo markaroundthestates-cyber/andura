@@ -1,7 +1,7 @@
 // ══ AGGRESSIVE LOAD DETECTOR TESTS — task_14 §A pure helper ══════════════
 
 import { describe, it, expect } from 'vitest';
-import { detectAggressiveLoad } from '../../lib/aaFrictionDetect';
+import { detectAggressiveLoad, deriveThresholds, DEFAULT_THRESHOLDS } from '../../lib/aaFrictionDetect';
 import type { SetSample } from '../../lib/aaFrictionDetect';
 
 const T0 = 1_700_000_000_000; // arbitrary epoch ms anchor
@@ -111,5 +111,49 @@ describe('detectAggressiveLoad — priority order (fast_sets > kg_jump > rep_spi
     const history: SetSample[] = [{ kg: 20, reps: 8, timestamp: T0 }];
     const newSet: SetSample = { kg: 30, reps: 15, timestamp: T0 + 90_000 }; // safe interval + 50% kg + 87% reps
     expect(detectAggressiveLoad(history, newSet).reason).toBe('kg_jump');
+  });
+});
+
+describe('deriveThresholds — task_09 Vitality/Adherence dynamic', () => {
+  it('returns DEFAULT_THRESHOLDS when no opts', () => {
+    const t = deriveThresholds();
+    expect(t.kgJumpThreshold).toBe(DEFAULT_THRESHOLDS.kgJumpThreshold);
+    expect(t.repSpikeThreshold).toBe(DEFAULT_THRESHOLDS.repSpikeThreshold);
+  });
+
+  it('high vitality + adherence → laxer thresholds', () => {
+    const t = deriveThresholds({ vitalityScore: 90, adherenceScore: 90 });
+    expect(t.kgJumpThreshold).toBeGreaterThan(DEFAULT_THRESHOLDS.kgJumpThreshold);
+    expect(t.repSpikeThreshold).toBeGreaterThan(DEFAULT_THRESHOLDS.repSpikeThreshold);
+  });
+
+  it('low vitality + adherence → stricter thresholds', () => {
+    const t = deriveThresholds({ vitalityScore: 10, adherenceScore: 10 });
+    expect(t.kgJumpThreshold).toBeLessThan(DEFAULT_THRESHOLDS.kgJumpThreshold);
+    expect(t.repSpikeThreshold).toBeLessThan(DEFAULT_THRESHOLDS.repSpikeThreshold);
+  });
+
+  it('thresholds clamped in safe range [0.15, 0.25] kg + [0.40, 0.60] reps', () => {
+    const t = deriveThresholds({ vitalityScore: 100, adherenceScore: 100 });
+    expect(t.kgJumpThreshold).toBeLessThanOrEqual(0.25);
+    expect(t.repSpikeThreshold).toBeLessThanOrEqual(0.60);
+    const t2 = deriveThresholds({ vitalityScore: 0, adherenceScore: 0 });
+    expect(t2.kgJumpThreshold).toBeGreaterThanOrEqual(0.15);
+    expect(t2.repSpikeThreshold).toBeGreaterThanOrEqual(0.40);
+  });
+
+  it('detectAggressiveLoad respects custom thresholds', () => {
+    const history: SetSample[] = [{ kg: 20, reps: 10, timestamp: 0 }];
+    const newSet: SetSample = { kg: 24, reps: 10, timestamp: 60_000 }; // +20%
+    // Default 20% strict: NU trigger
+    expect(detectAggressiveLoad(history, newSet).trigger).toBe(false);
+    // Stricter 15%: trigger
+    expect(
+      detectAggressiveLoad(history, newSet, {
+        fastSetsIntervalMs: 30_000,
+        kgJumpThreshold: 0.15,
+        repSpikeThreshold: 0.50,
+      }).trigger,
+    ).toBe(true);
   });
 });

@@ -11,9 +11,56 @@
 //   - src/pages/coach/aaFrictionModal.js — session-level pattern precedent
 //     (different scope: this helper = per-set timing/jump detection)
 
-const FAST_SETS_INTERVAL_MS = 30_000; // 2 sets < 30s = insufficient recovery
-const KG_JUMP_THRESHOLD = 0.20; // > 20% increase same exercise
-const REP_SPIKE_THRESHOLD = 0.50; // > 50% increase same exercise
+// Phase 5 task_09: dynamic thresholds Vitality/Adherence-driven.
+// Defaults remain Phase 4 task_14 baseline — caller poate pass thresholds
+// custom (Vitality high → laxer; Adherence low → stricter). Engine real
+// wire Phase 6+ via buildCoachContext output.
+const DEFAULT_FAST_SETS_INTERVAL_MS = 30_000;
+const DEFAULT_KG_JUMP_THRESHOLD = 0.20;
+const DEFAULT_REP_SPIKE_THRESHOLD = 0.50;
+
+export interface AaFrictionThresholds {
+  fastSetsIntervalMs: number;
+  kgJumpThreshold: number; // decimal (0.20 = 20%)
+  repSpikeThreshold: number; // decimal (0.50 = 50%)
+}
+
+export const DEFAULT_THRESHOLDS: Readonly<AaFrictionThresholds> = {
+  fastSetsIntervalMs: DEFAULT_FAST_SETS_INTERVAL_MS,
+  kgJumpThreshold: DEFAULT_KG_JUMP_THRESHOLD,
+  repSpikeThreshold: DEFAULT_REP_SPIKE_THRESHOLD,
+};
+
+/**
+ * Phase 5 task_09: derive thresholds din Vitality/Adherence engine signals.
+ * High Vitality (recovery markers strong) → laxer thresholds (user
+ * sustained higher load OK). Low Adherence (skipped sessions) → stricter
+ * (avoid push too hard after gap). NU mutate engines per orchestrator §7.
+ */
+export function deriveThresholds(opts: {
+  vitalityScore?: number; // 0-100 (higher = better recovery)
+  adherenceScore?: number; // 0-100 (higher = more consistent)
+} = {}): AaFrictionThresholds {
+  const vitality = opts.vitalityScore ?? 50;
+  const adherence = opts.adherenceScore ?? 50;
+  // Scale kg jump threshold: high vitality + high adherence → 25% (laxer);
+  // low signals → 15% (stricter). Range [0.15, 0.25].
+  const vitalityMod = (vitality - 50) / 100; // [-0.5, 0.5]
+  const adherenceMod = (adherence - 50) / 100;
+  const kgJumpThreshold = Math.max(
+    0.15,
+    Math.min(0.25, DEFAULT_KG_JUMP_THRESHOLD + (vitalityMod + adherenceMod) * 0.05),
+  );
+  const repSpikeThreshold = Math.max(
+    0.40,
+    Math.min(0.60, DEFAULT_REP_SPIKE_THRESHOLD + (vitalityMod + adherenceMod) * 0.10),
+  );
+  return {
+    fastSetsIntervalMs: DEFAULT_FAST_SETS_INTERVAL_MS,
+    kgJumpThreshold: Math.round(kgJumpThreshold * 100) / 100,
+    repSpikeThreshold: Math.round(repSpikeThreshold * 100) / 100,
+  };
+}
 
 export type AggressiveReason = 'fast_sets' | 'kg_jump' | 'rep_spike';
 
@@ -42,29 +89,30 @@ export interface SetSample {
  */
 export function detectAggressiveLoad(
   setHistory: readonly SetSample[],
-  newSet: SetSample
+  newSet: SetSample,
+  thresholds: AaFrictionThresholds = DEFAULT_THRESHOLDS,
 ): AggressiveLoadCheck {
   if (setHistory.length === 0) return { trigger: false };
 
   const last = setHistory[setHistory.length - 1];
 
   // 1. fast_sets — insufficient recovery between sets
-  if (newSet.timestamp - last.timestamp < FAST_SETS_INTERVAL_MS) {
+  if (newSet.timestamp - last.timestamp < thresholds.fastSetsIntervalMs) {
     return { trigger: true, reason: 'fast_sets' };
   }
 
-  // 2. kg_jump — > 20% weight increase same exercise
+  // 2. kg_jump — > threshold weight increase same exercise
   if (last.kg > 0) {
     const kgRatio = (newSet.kg - last.kg) / last.kg;
-    if (kgRatio > KG_JUMP_THRESHOLD) {
+    if (kgRatio > thresholds.kgJumpThreshold) {
       return { trigger: true, reason: 'kg_jump' };
     }
   }
 
-  // 3. rep_spike — > 50% reps increase same exercise
+  // 3. rep_spike — > threshold reps increase same exercise
   if (last.reps > 0) {
     const repRatio = (newSet.reps - last.reps) / last.reps;
-    if (repRatio > REP_SPIKE_THRESHOLD) {
+    if (repRatio > thresholds.repSpikeThreshold) {
       return { trigger: true, reason: 'rep_spike' };
     }
   }
