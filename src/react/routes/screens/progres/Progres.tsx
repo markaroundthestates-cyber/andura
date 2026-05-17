@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Scale, Ruler } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
+import { NutritionInline } from '../../../components/NutritionInline';
 
 export function Progres(): JSX.Element {
   const navigate = useNavigate();
@@ -83,6 +84,8 @@ export function Progres(): JSX.Element {
           </div>
         </div>
       )}
+
+      <NutritionInline />
     </section>
   );
 }
