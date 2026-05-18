@@ -39,8 +39,9 @@ import { SetLogInput } from '../../../components/Workout/SetLogInput';
 import { SetRatingButtons } from '../../../components/Workout/SetRatingButtons';
 import { ExitConfirmSheet } from '../../../components/Workout/ExitConfirmSheet';
 import { AaFrictionModal } from '../../../components/AaFrictionModal';
-import { detectAggressiveLoad } from '../../../lib/aaFrictionDetect';
+import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionDetect';
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
+import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
@@ -258,16 +259,28 @@ export function Workout(): JSX.Element {
     // Phase 4 task_14: LOCK 9 aaFrictionDetect pre-check. Compose set sample
     // history din current exercise + new set candidate. Cand trigger →
     // suspend state machine (NU logSet/rest/transition), show modal.
+    //
+    // Phase 6 task_07: wire engine signals → derive thresholds dynamic per
+    // vitality/adherence state. Replaces implicit Phase 5 DEFAULT_THRESHOLDS
+    // fallback cu engine-derived thresholds (laxer pe high signals, stricter
+    // pe low signals). Per DECISIONS.md §D027 anti-recurrence: stores actual
+    // slice = `streak` + `sessionsHistory` (NU streakDays/sessionsLast30Days
+    // sketch v1 fabricated).
     const samples = (history[safeExIdx] ?? []).map((h) => ({
       kg: h.kg,
       reps: h.reps,
       timestamp: h.timestamp ?? 0,
     }));
+    const signals = getEngineSignals();
+    const thresholds = deriveThresholds({
+      vitalityScore: signals.vitalityScore,
+      adherenceScore: signals.adherenceScore,
+    });
     const check = detectAggressiveLoad(samples, {
       kg: kgInput,
       reps: repsInput,
       timestamp: Date.now(),
-    });
+    }, thresholds);
     if (check.trigger && check.reason) {
       setAaReason(check.reason);
       setAaPendingRating(rating);
