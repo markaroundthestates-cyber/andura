@@ -23,6 +23,10 @@ import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/rea
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
+import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
+import { getAdherenceScore } from '../../engine/adherence.js';
+import { runProactiveChecks } from '../../engine/proactiveEngine.js';
+import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 
 // ── Output types simplified pentru React consumption ─────────────────────
@@ -294,5 +298,125 @@ export async function getNutritionTargetsToday(
   } catch (e) {
     console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
     return BASELINE_NUTRITION;
+  }
+}
+
+// ── Patterns Banner + Proactive Alerts composers (Phase 6 task_05) ──────
+//
+// Option B Bugatti per Daniel "quality over speed" 2026-05-18 — composer
+// React-side pure-function engines direct (stagnationDetector + adherence
+// + proactiveEngine) NU CoachDirector.buildSession heavyweight side-effects
+// (CDL write + Sentry capture + Auto-backup). Anti-recurrence task_05 §1:
+// CoachDirector class method este `.buildSession(sessionType)` NU `.run`,
+// return shape NU emite top-level `{patternsBanner, prWallRecent, alerts}`.
+
+export interface PatternBanner {
+  id: 'LOW_ADHERENCE' | 'STAGNATION';
+  severity: 'info' | 'warn';
+  text: string; // RO wording NO_DIACRITICS_RULE
+}
+
+const STAGNATION_WEEKS_THRESHOLD = 2; // 2+ consecutive weeks → banner
+const LOW_ADHERENCE_THRESHOLD = 50;   // adherence < 50 → banner
+
+/**
+ * Composer Option B Bugatti — patterns banner via pure-function engines
+ * direct (stagnationDetector.detectGlobalStagnation + adherence.
+ * getAdherenceScore). ZERO side-effects.
+ *
+ * 2 patterns V1 LOCK per PRIMER §2 MODIFY simplified: LOW_ADHERENCE +
+ * STAGNATION (3 V2-deferred paranoid drop).
+ *
+ * Defensive: engine throws → empty array fallback graceful.
+ */
+export function getPatternsBanner(): PatternBanner[] {
+  const banners: PatternBanner[] = [];
+
+  // Pattern 1: STAGNATION via stagnationDetector
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    // Flatten sessions.exercises.sets → logs shape {ex, ts, w, reps}
+    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
+    for (const session of sessions) {
+      if (!session.exercises) continue;
+      for (const ex of session.exercises) {
+        for (const set of ex.sets) {
+          logs.push({
+            ex: ex.exerciseName,
+            ts: set.timestamp,
+            w: set.kg,
+            reps: set.reps,
+          });
+        }
+      }
+    }
+    const stag = detectGlobalStagnation(logs);
+    if (stag && stag.maxStagnationWeeks >= STAGNATION_WEEKS_THRESHOLD) {
+      banners.push({
+        id: 'STAGNATION',
+        severity: 'warn',
+        text: `Stagnare ${stag.maxStagnationWeeks} saptamani. Coach ajusteaza intensitatea.`,
+      });
+    }
+  } catch (e) {
+    console.warn('[engineWrappers] getPatternsBanner STAGNATION failed:', e);
+  }
+
+  // Pattern 2: LOW_ADHERENCE via adherence engine
+  try {
+    const adherence = getAdherenceScore();
+    // Engine returns {score, color, label}; defensive number-only legacy fallback
+    const score = typeof adherence === 'object' && adherence !== null
+      ? (adherence as { score?: number }).score
+      : (typeof adherence === 'number' ? adherence : null);
+    if (typeof score === 'number' && score < LOW_ADHERENCE_THRESHOLD) {
+      banners.push({
+        id: 'LOW_ADHERENCE',
+        severity: 'info',
+        text: 'Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta.',
+      });
+    }
+  } catch (e) {
+    console.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
+  }
+
+  return banners;
+}
+
+// ── Proactive Alerts wrapper ────────────────────────────────────────────
+
+export interface ProactiveAlert {
+  id: string;
+  text: string;
+  severity: 'info' | 'warn' | 'urgent';
+}
+
+const SEVERITY_MAP: Record<string, ProactiveAlert['severity']> = {
+  warning: 'warn',
+  info: 'info',
+  success: 'info', // success collapses to info în UI (NU urgent)
+};
+
+/**
+ * Wraps runProactiveChecks. Reads ctx din DB-backed localStorage direct
+ * (engine internal uses DB.get pattern). Phase 6 V1: pass empty {} → engine
+ * reads DB defensive via tod()/todDate() internals OR caller passes
+ * pre-built ctx (e.g. coach context aggregate).
+ *
+ * Returns mapped UI shape (severity normalize 3-tier). Defensive try/catch
+ * graceful empty array fallback per orchestrator §7.
+ */
+export function getProactiveAlerts(ctx: object = {}): ProactiveAlert[] {
+  try {
+    const raw = runProactiveChecks(ctx);
+    if (!Array.isArray(raw)) return [];
+    return raw.map((alert, idx) => ({
+      id: `${alert?.type ?? 'unknown'}_${idx}`,
+      text: alert?.message ?? '',
+      severity: SEVERITY_MAP[alert?.severity] ?? 'info',
+    }));
+  } catch (e) {
+    console.warn('[engineWrappers] getProactiveAlerts failed:', e);
+    return [];
   }
 }
