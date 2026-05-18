@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-18
+last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D027
-total_entries: 27
+latest_entry: D026
+total_entries: 28
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -77,6 +77,7 @@ D023 | 2026-05-17 | PROC | MCP filesystem write_file MANDATORY vault Windows emo
 D024 | 2026-05-17 | UX | Pre-Beta wording RO Co-CTO autonomous compose OK Daniel review post-Beta a-z | LOCKED V1 | DECISIONS.md §D024
 D025 | 2026-05-18 | STRATEGY | Phase 5 BATCH 20-task LANDED 22 commits 4290 PASS engine adapters Phase 6 foundations polish | LOCKED V1 | DECISIONS.md §D025
 D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027
+D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4303→4522 PASS (+219) + TS strict maximal | LOCKED V1 | DECISIONS.md §D026
 
 ---
 
@@ -320,6 +321,82 @@ Option C big-bang async migration React consumers. NU Option A split (atomizatio
 #### §5 Anti-recurrence
 
 Co-CTO sketch §A grep primary-source mandatory pre-spec. Specific: stores Zustand exports (slice names + field shapes) verify ÎNAINTE de a scrie buildXState helpers. Slip 2026-05-18 task_02: am scris `workoutStore.userProfile / exerciseWeights / profileTier / weeksElapsed` — NU există. CC corectat dry-run la `useOnboardingStore.data` actual. Cause: skip grep sub autonomy pressure BATCH drafting fast. PROC future: §AR.21 grep evidence inline reiterated mandatory.
+
+---
+
+### D026 — STRATEGY — Phase 6 BATCH 24-task LANDED end-to-end
+
+**Date:** 2026-05-19
+**Category:** STRATEGY (BATCH closure milestone)
+**Status:** LOCKED V1
+**Source:** Phase 6 BATCH autonomous execution per ORCHESTRATOR.md (D027 LOCKED V1 Option C cascade + Option B composer parallel)
+**Cross-refs:** [[DECISIONS.md §D025 Phase 5 BATCH closure]], [[DECISIONS.md §D027 task_02 Option C STRATEGY]], [[📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md]]
+**Backup tags:** `pre-phase6-task-01-2026-05-18` → `pre-phase6-task-24-2026-05-19` (24 incremental + milestone `phase-6-batch-landed-2026-05-19`)
+
+#### §1 Scope
+
+Phase 6 BATCH 24-task autonomous run LANDED end-to-end. Closes Pre-Beta LOCK 2 React Andura Clasic build (per D015 strategic pivot 2026-05-16). Pipeline §42.10 engine real wire 8/8 + Cont Tab 9 sub-screens + polish pre-Beta 7-task cluster.
+
+#### §2 Sub-totals (24-task split)
+
+**Engine pipeline real wire 8/8 (task_01-08):**
+1. task_01 `scheduleAdapter.getDailyWorkout` backend consumer runPipeline 8 adapters + sessionBuilder delegate (`c64e692`)
+2. task_02 `scheduleAdapterAggregate` Option C async cascade — sync→async signature propagation 5 React consumers (`31cc523`) per D027 STRATEGY
+3. task_03 `engineWrappers.getNutritionTargetsToday` async BN engine wrapper Kalman posterior.mu + LOCK 8 floor 1200 (`f5424a2`)
+4. task_04 `bayesianNutritionAggregate` async real wire BN engine (`d7b04c7`)
+5. task_05 `engineWrappers.getPatternsBanner` + `getProactiveAlerts` Option B composer pure-function engines (`85fb559`)
+6. task_06 `coachDirectorAggregate` 8-field enrich + 3 NEW Antrenor components (PatternsBanner + PRWallRecent + AlertsBanner) (`ba3fa93`)
+7. task_07 Workout.tsx aaFriction engine signals end-to-end wire (`db100d9`)
+8. task_08 Adherence Engine real wire `getAdherenceOutput` + `engineSignalsAggregate` BASELINE_ADHERENCE eliminated (`9914735`)
+
+**Cont sub-screens 9/9 (task_09-17):**
+9. task_09 SettingsProfile Big 6 edit (`2432d90`)
+10. task_10 SettingsNotifications toggle + frequency + days + time (`f47f851`)
+11. task_11 SettingsSubscription Beta gratuit info (`3ea0af9`)
+12. task_12 SettingsAppearance theme + nav style (`ba3d0aa`)
+13. task_13 SettingsPrefs units + week start + locale (`c764b9c`)
+14. task_14 SettingsPrivacy data export + telemetry opt-in (`03878ce`)
+15. task_15 SettingsTerms T&C + Medical Disclaimer 2-tab (`19b65a5`)
+16. task_16 SettingsExport local JSON download user data (`ad26465`)
+17. task_17 SettingsDanger logout + reset + delete cont confirm modals (`bd31e1f`)
+
+**Polish pre-Beta 7/7 (task_18-24):**
+18. task_18 TS `noUncheckedIndexedAccess` strict flag enable + 83 errors fixed granular (`6f44207`)
+19. task_19 TS `exactOptionalPropertyTypes` strict flag enable — surprise 0 errors (codebase already explicit) (`8b64369`)
+20. task_20 ErrorBoundary + Suspense wrap Outlet Layout root (`f47a170`)
+21. task_21 vite-plugin-pwa service worker offline + UpdatePrompt component (`e4ca6eb`)
+22. task_22 Progres full dashboard TDEEStrip + FatigueStrip + HeatMapWeekly (`c5aef59`)
+23. task_23 Istoric enrich streak stats grid + PR Wall full list (`c493445`)
+24. task_24 D026 STRATEGY closure + milestone tag (this commit)
+
+#### §3 Tests delta cumulative
+
+- Phase 5 baseline: 4290 PASS
+- Phase 6 task #1.A precedent (`810c783`): 4303 PASS (+13)
+- Phase 6 BATCH start: 4303 PASS
+- Phase 6 task_01: 4318 (+15)
+- Phase 6 task_02: 4332 (+14)
+- Phase 6 task_03: 4343 (+11)
+- Phase 6 task_04: 4348 (+5)
+- Phase 6 task_05: 4370 (+22)
+- Phase 6 task_06: 4396 (+26)
+- Phase 6 task_07: 4404 (+8)
+- Phase 6 task_08: 4417 (+13)
+- Phase 6 task_09-17 (Cont sub-screens): cumulative +~80 tests
+- Phase 6 task_18-23 (polish): cumulative +~25 tests
+- **Phase 6 final: 4522 PASS (+219 vs Phase 5 baseline 4303, +232 vs Phase 5 close 4290)**
+- TS strict 0 errors invariant (both `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes` enabled)
+
+#### §4 Carry-forward Phase 7
+
+- **Daniel Gates smoke production manual** (Firebase + PWA + telefon Android primary, single comprehensive gate a-z per PRIMER §4 sequencing)
+- **Bugatti Full Audit pre-Launch nuclear gate** (CC autonomous candidate post smoke findings — fiecare linie cod + fiecare virgula latest commit LANDED)
+- **Fix ALL issues surfaced** (combined smoke + Bugatti audit backlog)
+- **Beta launch**
+
+#### §5 Anti-recurrence carry-forward
+
+D027 §5 engine API grep primary-source mandatory invariant. Task_05/06/07/08 sketches v1 fabricated APIs (CoachDirector.run / computeAdherenceScore / store fields invented) — corectate inline §1 fiecare task. Future BATCH drafting: §AR.21 grep evidence ÎNAINTE de a scrie spec §B implementation references.
 
 ---
 
