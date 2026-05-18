@@ -1,12 +1,14 @@
-// ══ ISTORIC — Tab 3 of 4 Phase 5 task_21 Landing List ════════════════════
-// Phase 5 MVP scope: list past sessions reverse chrono + empty state.
-// ZERO charts/heat-maps/trends (Phase 6+ adds full mockup
-// andura-clasic.html#L1155+ Istoric tab dashboard).
+// ══ ISTORIC — Tab 3 of 4 Phase 5 task_21 + Phase 6 task_23 Enrich ════════
+// Phase 5 MVP: list past sessions reverse chrono + empty state.
+// Phase 6 task_23: streak stats summary card + PR Wall full list +
+// existing list preserved. Drill-down navigate /app/istoric/:sessionId
+// (IstoricDetail Phase 5 task_03 LANDED).
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History, ChevronRight } from 'lucide-react';
+import { History, ChevronRight, Flame, Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -19,9 +21,15 @@ function formatDate(ts: number): string {
 export function Istoric(): JSX.Element {
   const navigate = useNavigate();
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  // Subscribe to streak prin selector pentru re-render on change
+  useWorkoutStore((s) => s.streak);
 
   // Reverse-chrono UI iteration (newest first).
   const sorted = [...sessionsHistory].sort((a, b) => b.ts - a.ts);
+
+  // Phase 6 task_23 enrich aggregates
+  const stats = getStreakStats();
+  const prHistory = getPRHistoryAll();
 
   return (
     <section
@@ -30,6 +38,59 @@ export function Istoric(): JSX.Element {
     >
       <h1 className="text-2xl font-semibold text-ink mb-6">Istoric</h1>
 
+      {/* Phase 6 task_23: streak stats summary */}
+      <div
+        className="grid grid-cols-3 gap-2 mb-4"
+        data-testid="istoric-stats-grid"
+      >
+        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <Flame className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-streak">
+            {stats.currentStreak}
+          </p>
+          <p className="text-xs text-ink2">Streak</p>
+        </div>
+        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <History className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-total">
+            {stats.totalSessions}
+          </p>
+          <p className="text-xs text-ink2">Sesiuni</p>
+        </div>
+        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <Trophy className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-pr">
+            {stats.prCount}
+          </p>
+          <p className="text-xs text-ink2">PR-uri</p>
+        </div>
+      </div>
+
+      {/* Phase 6 task_23: PR Wall full list */}
+      {prHistory.length > 0 && (
+        <section className="mb-6" data-testid="istoric-pr-wall">
+          <h2 className="text-base font-semibold text-ink mb-2 flex items-center gap-2">
+            <Trophy className="w-4 h-4" aria-hidden="true" />
+            Recorduri ({prHistory.length})
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {prHistory.map((pr, idx) => (
+              <li
+                key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
+                data-testid={`pr-row-${idx}`}
+                className="flex justify-between items-center p-3 rounded-xl bg-paper2 border border-line"
+              >
+                <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
+                <span className="text-sm text-ink2">
+                  {pr.kg} kg x {pr.reps} (~{pr.oneRMEstimate} kg 1RM)
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <h2 className="text-base font-semibold text-ink mb-2">Sesiuni</h2>
       {sorted.length === 0 ? (
         <div
           className="flex flex-col items-center justify-center py-12 text-center"
