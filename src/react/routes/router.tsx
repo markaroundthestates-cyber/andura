@@ -28,6 +28,7 @@ import { Istoric } from './screens/istoric/Istoric';
 import { IstoricDetail } from './screens/istoric/IstoricDetail';
 import { Cont } from './screens/cont/Cont';
 import { SettingsProfile } from './screens/cont/SettingsProfile';
+import { SettingsNotifications } from './screens/cont/SettingsNotifications';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -80,6 +81,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Cont /> },
           { path: 'settings-profile', element: <SettingsProfile /> },
+          { path: 'settings-notifications', element: <SettingsNotifications /> },
         ],
       },
     ],
