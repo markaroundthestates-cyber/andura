@@ -22,6 +22,7 @@
 import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/readiness.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
+import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 
 // ── Output types simplified pentru React consumption ─────────────────────
@@ -214,5 +215,84 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
   } catch (e) {
     console.warn('[engineWrappers] getTodayWorkout failed:', e);
     return null;
+  }
+}
+
+// ── Bayesian Nutrition wrapper (Phase 6 task_03) ────────────────────────
+//
+// Anti-recurrence engine API verify (sketch corrected inline per Daniel
+// 2026-05-18 directive): BN engine emits `meta.nutrition_inference_metadata.
+// posterior.mu` as TDEE kcal point estimate (Kalman filter posterior mean) +
+// `confidence` enum ('low'|'medium'|'high'). NU emite macros (protein/fat/
+// carbs) — those derive în React-side aggregate task_04 din kcal + standard
+// macro split heuristic (e.g. 30/30/40). Sketch §B `kcal_target` /
+// `protein_target_g` / `fat_g` / `carbs_g` fields = inventate. Corecție:
+// kcalTarget din posterior.mu cu LOCK 8 floor 1200, macros = baseline V1.
+
+export interface NutritionTargetsEngine {
+  kcalTarget: number;
+  proteinTargetG: number;
+  fatG: number;
+  carbsG: number;
+  source: 'engine' | 'baseline';
+  confidence: number; // 0-1
+}
+
+const BASELINE_NUTRITION: NutritionTargetsEngine = {
+  kcalTarget: 2640,    // mockup verbatim L1812
+  proteinTargetG: 180, // mockup verbatim L1825
+  fatG: 70,
+  carbsG: 280,
+  source: 'baseline',
+  confidence: 0,
+};
+
+const KCAL_FLOOR_DAILY_MIN = 1200; // LOCK 8 D-LEGACY-041 floor invariant
+
+function mapBNConfidence(c: unknown): number {
+  if (c === 'high') return 1;
+  if (c === 'medium') return 0.5;
+  return 0.2;
+}
+
+/**
+ * Real wire Bayesian Nutrition Engine adaptive TDEE per Kalman posterior.
+ * LOCK 8 floor 1200 invariant preserved (Math.max guard) per DECISIONS
+ * §D-LEGACY-041 observation filter NU adjustment.
+ *
+ * Engine emits doar kcal estimate (posterior.mu); protein/fat/carbs targets
+ * V1 = baseline preserved (engine domain NU acoperă macro split).
+ *
+ * Returns baseline fallback dacă engine throws sau tier 'none' (T0 fresh
+ * user pre-observation).
+ */
+export async function getNutritionTargetsToday(
+  userState?: object,
+): Promise<NutritionTargetsEngine> {
+  try {
+    const ctx = (userState ?? {}) as object;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await evaluateBN(ctx as any) as {
+      tier?: string;
+      confidence?: string;
+      meta?: {
+        nutrition_inference_metadata?: { posterior?: { mu?: number } };
+      };
+    };
+    if (!result || result.tier === 'none') return BASELINE_NUTRITION;
+    const mu = result.meta?.nutrition_inference_metadata?.posterior?.mu;
+    if (!Number.isFinite(mu)) return BASELINE_NUTRITION;
+    const safeKcal = Math.max(mu as number, KCAL_FLOOR_DAILY_MIN);
+    return {
+      kcalTarget: Math.round(safeKcal),
+      proteinTargetG: BASELINE_NUTRITION.proteinTargetG,
+      fatG: BASELINE_NUTRITION.fatG,
+      carbsG: BASELINE_NUTRITION.carbsG,
+      source: 'engine',
+      confidence: mapBNConfidence(result.confidence),
+    };
+  } catch (e) {
+    console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
+    return BASELINE_NUTRITION;
   }
 }
