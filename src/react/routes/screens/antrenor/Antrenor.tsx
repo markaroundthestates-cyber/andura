@@ -1,26 +1,37 @@
 // ══ ANTRENOR HOME — Phase 3 Rewrite F2/F4/F6/F8/F10/F11 Parity ════════════
 // Per mockup andura-clasic.html#L741-825 + task_04 spec orchestrator §2 A.
 //
+// Phase 6 task_06 Option B Bugatti enrich — consume coachDirectorAggregate
+// async (single source aggregate: readiness + fatigue + plannedWorkout +
+// patternsBanner + prWallRecent + alerts + source). 3 NEW UI components
+// wired: PatternsBanner + AlertsBanner + PRWallRecent.
+//
 // Single screen vertical stack:
 //   1. ResumeSessionCard (conditional pausedSnapshot)
 //   2. ReactivateCard (conditional lastSession > 14 zile + NOT dismissed)
-//   3. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
-//   4. StatsGrid 3-cell (streak + fatigue + readiness)
-//   5. ReadinessVerdict (F4 inline)
-//   6. PRNotificationBanner (F11 conditional prHit)
-//   7. "Incepe antrenament" CTA → /app/antrenor/energy-check
+//   3. PatternsBanner (Phase 6 task_06 — STAGNATION + LOW_ADHERENCE)
+//   4. AlertsBanner (Phase 6 task_06 — proactiveEngine wrap)
+//   5. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
+//   6. Calendar7Day
+//   7. StatsGrid 3-cell (streak + fatigue + readiness)
+//   8. ReadinessVerdict (F4 inline)
+//   9. PRNotificationBanner (F11 conditional prHit)
+//  10. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
+//  11. "Incepe antrenament" CTA → /app/antrenor/energy-check
 //
 // Persona-aware CSS class wrapper per coachStore.persona.
 //
 // Cross-refs:
-//   - DECISIONS.md §D015 §D016 React migration + §D018 routing
+//   - DECISIONS.md §D015 §D016 React migration + §D018 routing + §D027
 //   - mockup andura-clasic.html lines 735-825
 
 import type { JSX } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
-import { getReadiness, getFatigue } from '../../../lib/engineWrappers';
+import { getCoachToday } from '../../../lib/coachDirectorAggregate';
+import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { gotoPath } from '../../../lib/navigation';
 import { ResumeSessionCard } from '../../../components/Antrenor/ResumeSessionCard';
 import { ReactivateCard } from '../../../components/Antrenor/ReactivateCard';
@@ -29,6 +40,9 @@ import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
 import { StatsGrid } from '../../../components/Antrenor/StatsGrid';
 import { ReadinessVerdict } from '../../../components/Antrenor/ReadinessVerdict';
 import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificationBanner';
+import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
+import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
+import { PRWallRecent } from '../../../components/Antrenor/PRWallRecent';
 import { Calendar7Day } from '../../../components/Calendar7Day';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
@@ -46,8 +60,20 @@ export function Antrenor(): JSX.Element {
   const reactivateDismissed = useCoachStore((s) => s.reactivateDismissed);
   const dismissReactivate = useCoachStore((s) => s.dismissReactivate);
 
-  const readiness = getReadiness();
-  const fatigue = getFatigue();
+  // Phase 6 task_06: single source coach aggregate consume async pipeline.
+  // Per DECISIONS.md §D027 Option C cascade + Option B composer pure-function
+  // engines (NU CoachDirector.buildSession side-effects pollution).
+  const [coach, setCoach] = useState<CoachTodayOutput | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getCoachToday().then((c) => {
+      if (!cancelled) setCoach(c);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const readiness = coach?.readiness ?? null;
+  const fatigue = coach?.fatigue ?? null;
 
   const showReactivate =
     lastSession !== null &&
@@ -87,6 +113,9 @@ export function Antrenor(): JSX.Element {
         />
       )}
 
+      <PatternsBanner banners={coach?.patternsBanner ?? []} />
+      <AlertsBanner alerts={coach?.alerts ?? []} />
+
       {schedContext === 'workout' ? (
         <CoachTodayCard onStart={handleStart} />
       ) : (
@@ -98,6 +127,7 @@ export function Antrenor(): JSX.Element {
       <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
       <ReadinessVerdict readiness={readiness} />
       <PRNotificationBanner prHit={prHit} />
+      <PRWallRecent records={coach?.prWallRecent ?? []} />
 
       {!pausedSnapshot && (
         <button

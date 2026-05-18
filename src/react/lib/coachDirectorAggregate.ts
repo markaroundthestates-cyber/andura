@@ -1,44 +1,87 @@
-// ══ COACH DIRECTOR AGGREGATE — React-side Pipeline Composer ══════════════
-// Phase 5 task_06 — bundle readiness + fatigue + planned workout + PR data
-// + streak în single CoachTodayOutput pentru consumer (Antrenor home).
-// ZERO src/engine/* mutation per orchestrator §7. Composes existing engine
-// wrapper exports (getReadiness + getFatigue + getTodayWorkout) cu state
-// from workoutStore (streak + prHit).
+// ══ COACH DIRECTOR AGGREGATE — Phase 6 Option B Composer Enrich ═══════════
+// Per Daniel CEO "quality over speed" 2026-05-18 → Option B Bugatti composer
+// React-side pure-function engines direct (stagnationDetector + adherence +
+// proactiveEngine + prHistoryAggregate) NU CoachDirector.buildSession
+// heavyweight side-effects (CDL write + Sentry capture + Auto-backup).
 //
-// Phase 6+ wires real coachDirector instance (src/engine/coachDirector.js
-// has CoachDirector class) + buildCoachContext (src/engine/coachContext.js)
-// pentru engine-driven recommendations beyond simple data bundle.
+// Phase 5 task_06 thin 4-field bundle (readiness + fatigue + plannedWorkout +
+// isRestDay) enriched cu 4 NEW fields composer:
+//   - patternsBanner V1 LOCK 2 patterns (STAGNATION + LOW_ADHERENCE)
+//   - prWallRecent slice top 3 sorted desc din getPRHistoryAll
+//   - alerts via getProactiveAlerts severity 3-tier
+//   - source 'engine'|'baseline' aggregate flag
+//
+// Async signature ALIGNED cu task_02 D027 Option C cascade (await
+// getTodayWorkout).
 
 import type {
   ReadinessOutput,
   FatigueOutput,
   PlannedWorkoutOutput,
+  PatternBanner,
+  ProactiveAlert,
 } from './engineWrappers';
 import {
   getReadiness,
   getFatigue,
   getTodayWorkout,
+  getPatternsBanner,
+  getProactiveAlerts,
 } from './engineWrappers';
+import { getPRHistoryAll } from './prHistoryAggregate';
+import type { PRRecord } from './prHistoryAggregate';
+
+const PR_WALL_RECENT_LIMIT = 3; // top 3 most recent PRs per Antrenor home
 
 export interface CoachTodayOutput {
   readiness: ReadinessOutput | null;
   fatigue: FatigueOutput | null;
   plannedWorkout: PlannedWorkoutOutput | null;
   isRestDay: boolean;
+  patternsBanner: PatternBanner[];
+  prWallRecent: PRRecord[];
+  alerts: ProactiveAlert[];
+  source: 'engine' | 'baseline';
 }
 
 /**
- * Aggregate today's coach output. Phase 6 task_02 Option C async signature
- * per DECISIONS.md §D027 (await getTodayWorkout pipeline). Phase 6 task_06
- * Option B composer wires patterns banner (LOW_ADHERENCE / STAGNATION) +
- * PR Wall recent + alerts via dedicated pure-function engine exports
- * (stagnationDetector + adherence + prHistoryAggregate + proactiveEngine),
- * NU CoachDirector.buildSession heavyweight cu side-effects pollution.
+ * Phase 6 Option B enrich aggregate per DECISIONS.md §D027. Composes
+ * task_02 async planned workout + task_05 sync composer outputs (patterns +
+ * alerts) + Phase 5 task_11 PR history slice top 3.
+ *
+ * `source` flag: 'engine' cand orice composer returns non-empty signal;
+ * 'baseline' cand all composers empty (T0 fresh user pre-data).
  */
-export async function getCoachToday(opts: { isInCut?: boolean } = {}): Promise<CoachTodayOutput> {
+export async function getCoachToday(
+  opts: { isInCut?: boolean } = {},
+): Promise<CoachTodayOutput> {
   const readiness = getReadiness(opts);
   const fatigue = getFatigue();
   const plannedWorkout = await getTodayWorkout();
   const isRestDay = plannedWorkout === null;
-  return { readiness, fatigue, plannedWorkout, isRestDay };
+  const patternsBanner = getPatternsBanner();
+  const allPRs = getPRHistoryAll();
+  // getPRHistoryAll already sorts reverse-chrono — defensive re-sort + slice
+  const prWallRecent = allPRs
+    .slice()
+    .sort((a, b) => b.sessionTs - a.sessionTs)
+    .slice(0, PR_WALL_RECENT_LIMIT);
+  const alerts = getProactiveAlerts({});
+  const hasEngineData =
+    readiness !== null ||
+    fatigue !== null ||
+    plannedWorkout !== null ||
+    patternsBanner.length > 0 ||
+    prWallRecent.length > 0 ||
+    alerts.length > 0;
+  return {
+    readiness,
+    fatigue,
+    plannedWorkout,
+    isRestDay,
+    patternsBanner,
+    prWallRecent,
+    alerts,
+    source: hasEngineData ? 'engine' : 'baseline',
+  };
 }

@@ -6,7 +6,23 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
-// Mock engineWrappers BEFORE importing Antrenor (vi.mock hoisted)
+// Phase 6 task_06 Option B: Antrenor now consumes coachDirectorAggregate
+// async (8-field aggregate). Mock the aggregate directly — return CoachToday
+// shape preserving existing test assertions (readiness/fatigue null defaults).
+vi.mock('../../../lib/coachDirectorAggregate', () => ({
+  getCoachToday: vi.fn(async () => ({
+    readiness: null,
+    fatigue: null,
+    plannedWorkout: null,
+    isRestDay: true,
+    patternsBanner: [],
+    prWallRecent: [],
+    alerts: [],
+    source: 'baseline' as const,
+  })),
+}));
+
+// engineWrappers mock kept for legacy direct imports (other tests may rely).
 vi.mock('../../../lib/engineWrappers', () => ({
   getReadiness: vi.fn(),
   getFatigue: vi.fn(),
@@ -17,6 +33,7 @@ vi.mock('../../../lib/engineWrappers', () => ({
 import { Antrenor } from '../../../routes/screens/antrenor/Antrenor';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
+import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import { getReadiness, getFatigue } from '../../../lib/engineWrappers';
 
 function resetStores(): void {
@@ -237,37 +254,59 @@ describe('Antrenor home — F4 readiness verdict', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('renders verdict label + score cand readiness present', () => {
-    vi.mocked(getReadiness).mockReturnValue({
-      score: 85,
-      label: 'Zi de PR',
-      color: 'var(--green)',
-      volumeMultiplier: 1.1,
-      canPR: true,
+  // Phase 6 task_06: readiness vine via getCoachToday aggregate, NU direct
+  // getReadiness call. Mock the aggregate cu readiness field set.
+
+  it('renders verdict label + score cand readiness present', async () => {
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: {
+        score: 85,
+        label: 'Zi de PR',
+        color: 'var(--green)',
+        volumeMultiplier: 1.1,
+        canPR: true,
+      },
+      fatigue: null,
+      plannedWorkout: null,
+      isRestDay: true,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      source: 'engine',
     });
     renderAntrenor();
-    const verdict = screen.getByRole('status', { name: /Verdict readiness/i });
+    const verdict = await screen.findByRole('status', { name: /Verdict readiness/i });
     expect(verdict).toBeInTheDocument();
     expect(verdict).toHaveTextContent('Zi de PR');
     expect(verdict).toHaveTextContent('85/100');
   });
 
-  it('hides verdict cand readiness null', () => {
-    vi.mocked(getReadiness).mockReturnValue(null);
+  it('hides verdict cand readiness null', async () => {
     renderAntrenor();
+    // Default mock returns readiness=null; loading state renders empty stats
+    await new Promise(resolve => setTimeout(resolve, 0));
     expect(screen.queryByRole('status', { name: /Verdict readiness/i })).not.toBeInTheDocument();
   });
 
-  it('shows poti incerca PR hint cand canPR=true', () => {
-    vi.mocked(getReadiness).mockReturnValue({
-      score: 90,
-      label: 'Zi de PR',
-      color: 'var(--green)',
-      volumeMultiplier: 1.1,
-      canPR: true,
+  it('shows poti incerca PR hint cand canPR=true', async () => {
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: {
+        score: 90,
+        label: 'Zi de PR',
+        color: 'var(--green)',
+        volumeMultiplier: 1.1,
+        canPR: true,
+      },
+      fatigue: null,
+      plannedWorkout: null,
+      isRestDay: true,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      source: 'engine',
     });
     renderAntrenor();
-    expect(screen.getByText(/poti incerca PR/i)).toBeInTheDocument();
+    expect(await screen.findByText(/poti incerca PR/i)).toBeInTheDocument();
   });
 });
 
