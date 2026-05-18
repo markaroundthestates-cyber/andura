@@ -14,10 +14,12 @@ import { BottomNav } from '../components/BottomNav';
 import { SessionPill } from '../components/SessionPill';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { UpdatePrompt } from '../components/UpdatePrompt';
 
 export function Layout(): JSX.Element {
   return (
     <div className="min-h-screen bg-paper text-ink flex flex-col">
+      <UpdatePrompt />
       <main className="flex-1 pb-16">
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
