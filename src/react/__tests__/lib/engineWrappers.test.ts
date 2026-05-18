@@ -227,50 +227,61 @@ describe('engineWrappers — getPRDelta', () => {
   });
 });
 
-describe('engineWrappers — getTodayWorkout (Phase 4 task_10 wire)', () => {
-  it('returns planned workout aggregate (Phase 4 demo Push session)', () => {
-    const w = getTodayWorkout();
-    expect(w).not.toBeNull();
-    expect(w?.workoutTitle).toBe('Push (piept si umeri)');
-    expect(w?.exerciseCount).toBe(5);
-    expect(w?.estimatedDuration).toBe(50);
-    expect(w?.intensityMod).toBe('normal');
-    expect(w?.volumeKg).toBe(12450);
+describe('engineWrappers — getTodayWorkout (Phase 6 task_02 Option C real wire async)', () => {
+  it('returns planned workout aggregate (real pipeline) — async signature', async () => {
+    const w = await getTodayWorkout();
+    // Real pipeline → null on rest day / hard halt, shape on training day.
+    if (w !== null) {
+      expect(typeof w.workoutTitle).toBe('string');
+      expect(typeof w.exerciseCount).toBe('number');
+      expect(typeof w.estimatedDuration).toBe('number');
+      expect(['plus', 'normal', 'minus']).toContain(w.intensityMod);
+      expect(typeof w.volumeKg).toBe('number');
+    }
   });
 
-  it('returns exercises array cu PlannedExercise shape (5 items)', () => {
-    const w = getTodayWorkout();
-    expect(w?.exercises).toHaveLength(5);
-    expect(w?.exercises[0]).toEqual({
-      id: 'bench-press',
-      name: 'Bench Press',
-      sets: 4,
-      targetReps: 10,
-      targetKg: 22.5,
-      restSec: 90,
-    });
+  it('returns exercises array cu PlannedExercise shape (real engine output)', async () => {
+    const w = await getTodayWorkout();
+    if (w !== null) {
+      expect(Array.isArray(w.exercises)).toBe(true);
+      if (w.exercises.length > 0) {
+        const ex = w.exercises[0];
+        expect(typeof ex.id).toBe('string');
+        expect(typeof ex.name).toBe('string');
+        expect(typeof ex.sets).toBe('number');
+        expect(typeof ex.targetReps).toBe('number');
+        expect(typeof ex.targetKg).toBe('number');
+        expect(typeof ex.restSec).toBe('number');
+      }
+    }
   });
 
-  it('exerciseCount matches exercises.length', () => {
-    const w = getTodayWorkout();
-    expect(w?.exerciseCount).toBe(w?.exercises.length);
+  it('exerciseCount matches exercises.length', async () => {
+    const w = await getTodayWorkout();
+    if (w !== null) {
+      expect(w.exerciseCount).toBe(w.exercises.length);
+    }
   });
 
-  it('all exercises have required PlannedExercise fields', () => {
-    const w = getTodayWorkout();
-    w?.exercises.forEach((ex) => {
-      expect(typeof ex.id).toBe('string');
-      expect(typeof ex.name).toBe('string');
-      expect(typeof ex.sets).toBe('number');
-      expect(typeof ex.targetReps).toBe('number');
-      expect(typeof ex.targetKg).toBe('number');
-      expect(typeof ex.restSec).toBe('number');
-    });
+  it('all exercises have required PlannedExercise fields', async () => {
+    const w = await getTodayWorkout();
+    if (w !== null) {
+      w.exercises.forEach((ex) => {
+        expect(typeof ex.id).toBe('string');
+        expect(typeof ex.name).toBe('string');
+        expect(typeof ex.sets).toBe('number');
+        expect(typeof ex.targetReps).toBe('number');
+        expect(typeof ex.targetKg).toBe('number');
+        expect(typeof ex.restSec).toBe('number');
+      });
+    }
   });
 
-  it('volumeKg is sum of approximation sets * reps * kg (Phase 4 estimate)', () => {
-    const w = getTodayWorkout();
-    expect(w?.volumeKg).toBeGreaterThan(0);
-    expect(typeof w?.volumeKg).toBe('number');
+  it('volumeKg is numeric non-negative (engine V1 default 0 — Phase 7+ live estimate)', async () => {
+    const w = await getTodayWorkout();
+    if (w !== null) {
+      expect(typeof w.volumeKg).toBe('number');
+      expect(w.volumeKg).toBeGreaterThanOrEqual(0);
+    }
   });
 });

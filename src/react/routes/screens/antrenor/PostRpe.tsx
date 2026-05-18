@@ -51,7 +51,7 @@ export function PostRpe(): JSX.Element {
   const finishSession = useWorkoutStore((s) => s.finishSession);
   const incrementStreak = useWorkoutStore((s) => s.incrementStreak);
 
-  function handleSubmit(rating: SessionRating): void {
+  async function handleSubmit(rating: SessionRating): Promise<void> {
     setLastRating(rating);
 
     const entries = Object.values(history).flat();
@@ -62,10 +62,10 @@ export function PostRpe(): JSX.Element {
         ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
         : 0;
 
-    // Phase 4 task_10: derive title din planned workout aggregate; fallback
-    // hardcoded cand engineWrappers returns null. Numeric fields populated
-    // explicit pentru PostSummary direct consume (eliminate parseMeta regex).
-    const planned = getTodayWorkout();
+    // Phase 6 task_02 Option C: async getTodayWorkout awaited mid-handler.
+    // Fallback hardcoded cand engineWrappers returns null (rest day or halt).
+    // Per DECISIONS.md §D027.
+    const planned = await getTodayWorkout();
     const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
@@ -126,7 +126,7 @@ export function PostRpe(): JSX.Element {
           <button
             key={opt.rating}
             type="button"
-            onClick={() => handleSubmit(opt.rating)}
+            onClick={() => { void handleSubmit(opt.rating); }}
             data-rating={opt.rating}
             className="flex flex-col items-start gap-1 p-4 rounded-xl border border-[var(--line-strong)] bg-paper2 hover:bg-paper transition text-left"
           >

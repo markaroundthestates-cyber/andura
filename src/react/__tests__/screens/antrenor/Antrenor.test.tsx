@@ -11,7 +11,7 @@ vi.mock('../../../lib/engineWrappers', () => ({
   getReadiness: vi.fn(),
   getFatigue: vi.fn(),
   getPRDelta: vi.fn(() => null),
-  getTodayWorkout: vi.fn(() => null),
+  getTodayWorkout: vi.fn(async () => null),
 }));
 
 import { Antrenor } from '../../../routes/screens/antrenor/Antrenor';

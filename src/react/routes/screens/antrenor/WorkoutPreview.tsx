@@ -18,10 +18,12 @@
 //   - mockup andura-clasic.html#L913-985 screen-workout-preview
 
 import type { JSX } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
+import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import type { IntensityMod } from './EnergyCheck';
 
 interface WorkoutPreviewLocationState {
@@ -80,10 +82,18 @@ export function WorkoutPreview(): JSX.Element {
   const { intensityMod = 'normal' } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
 
-  // Phase 4 task_10: wire planned workout aggregate cand disponibil; duration
-  // + volume estimates scaled per intensityMod (baseline din planned, scaled
-  // -20% pe minus / +15% pe plus consistent cu D-LEGACY-021 Energy Adjustment).
-  const workout = getTodayWorkout();
+  // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
+  // while pipeline pending; preview still renders cu hardcoded fallback values
+  // (durationFor/volumeFor/'Push (piept si umeri)') pana resolve. Per
+  // DECISIONS.md §D027.
+  const [workout, setWorkout] = useState<PlannedWorkoutOutput | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getTodayWorkout().then((w) => {
+      if (!cancelled) setWorkout(w);
+    });
+    return () => { cancelled = true; };
+  }, []);
   const title = workout?.workoutTitle ?? 'Push (piept si umeri)';
   const banner = bannerFor(intensityMod);
   const baseDuration = workout?.estimatedDuration ?? durationFor('normal');

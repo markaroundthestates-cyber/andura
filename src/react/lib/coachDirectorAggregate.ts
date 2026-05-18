@@ -28,14 +28,17 @@ export interface CoachTodayOutput {
 }
 
 /**
- * Aggregate today's coach output. Phase 5 task_06 thin React-side
- * composer; Phase 6+ replaces cu real CoachDirector.run(ctx) pipeline cu
- * patterns banner (LOW_ADHERENCE / STAGNATION) + PR Wall recent + alerts.
+ * Aggregate today's coach output. Phase 6 task_02 Option C async signature
+ * per DECISIONS.md §D027 (await getTodayWorkout pipeline). Phase 6 task_06
+ * Option B composer wires patterns banner (LOW_ADHERENCE / STAGNATION) +
+ * PR Wall recent + alerts via dedicated pure-function engine exports
+ * (stagnationDetector + adherence + prHistoryAggregate + proactiveEngine),
+ * NU CoachDirector.buildSession heavyweight cu side-effects pollution.
  */
-export function getCoachToday(opts: { isInCut?: boolean } = {}): CoachTodayOutput {
+export async function getCoachToday(opts: { isInCut?: boolean } = {}): Promise<CoachTodayOutput> {
   const readiness = getReadiness(opts);
   const fatigue = getFatigue();
-  const plannedWorkout = getTodayWorkout();
+  const plannedWorkout = await getTodayWorkout();
   const isRestDay = plannedWorkout === null;
   return { readiness, fatigue, plannedWorkout, isRestDay };
 }

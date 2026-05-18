@@ -196,19 +196,21 @@ export function getPRDelta(
 }
 
 /**
- * Today planned workout fetch — Phase 5 task_05 delegates la
- * scheduleAdapterAggregate.composePlannedWorkoutToday() pentru real
- * engine integration (calendar rest day check + missing equipment filter
- * applied via src/engine/schedule/scheduleAdapter exports). Exercise
- * template Phase 5 stub PHASE_5_BASELINE_PUSH în adapter; Phase 6+ wires
- * Periodization + Goal Template + Specialization + Warmup + Deload
- * compose pipeline.
+ * Today planned workout fetch — Phase 6 task_02 Option C async signature
+ * per DECISIONS.md §D027. Delegates la scheduleAdapterAggregate.
+ * composePlannedWorkoutToday() async care invoca getDailyWorkout(userState,
+ * now) real pipeline (runPipeline 8-adapter chain + sessionBuilder delegate).
  *
- * Returns null cand calendar rest day sau engine throws (fail-silent).
+ * Consumers (SessionPill / Workout / WorkoutPreview / PostRpe /
+ * coachDirectorAggregate) MUST use useState + useEffect loading pattern,
+ * NU sync render-time invocation.
+ *
+ * Returns null cand calendar rest day OR pipeline hard halt OR engine
+ * throws (fail-silent).
  */
-export function getTodayWorkout(): PlannedWorkoutOutput | null {
+export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
   try {
-    return composePlannedWorkoutToday();
+    return await composePlannedWorkoutToday();
   } catch (e) {
     console.warn('[engineWrappers] getTodayWorkout failed:', e);
     return null;

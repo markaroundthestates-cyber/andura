@@ -3,10 +3,39 @@
 // router) pentru izolare fără Node 25 undici AbortSignal mismatch în data
 // router fetch lifecycle. Prod în router.tsx folosește createBrowserRouter.
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+
+// Phase 6 task_02 Option C: mock async getTodayWorkout returns Phase 5
+// fixture pentru Workout sub-screen heading /Bench Press/i assertion.
+// WorkoutPreview heading /Push/i served via workoutTitle fallback (uses
+// hardcoded fallback "Push (piept si umeri)" when workout is null until
+// useEffect resolves). Per DECISIONS.md §D027.
+vi.mock('../lib/engineWrappers', async () => {
+  const actual = await vi.importActual<typeof import('../lib/engineWrappers')>(
+    '../lib/engineWrappers'
+  );
+  return {
+    ...actual,
+    getTodayWorkout: vi.fn(async () => ({
+      workoutTitle: 'Push (piept si umeri)',
+      exerciseCount: 5,
+      estimatedDuration: 50,
+      intensityMod: 'normal' as const,
+      volumeKg: 12450,
+      exercises: [
+        { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
+        { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
+        { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
+        { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
+        { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
+      ],
+    })),
+  };
+});
+
 import { ProtectedRoute } from '../routes/ProtectedRoute';
 import { Layout } from '../routes/Layout';
 import { Splash } from '../routes/screens/Splash';
@@ -158,7 +187,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     { path: '/app/antrenor/post-summary', Component: PostSummary, heading: /Sesiune/i },
   ];
 
-  it.each(stubs)('renders $heading stub la $path', ({ path, Component, heading }) => {
+  it.each(stubs)('renders $heading stub la $path', async ({ path, Component, heading }) => {
     render(
       <MemoryRouter initialEntries={[path]}>
         <Routes>
@@ -166,7 +195,11 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
+    // Phase 6 task_02 Option C: Workout + WorkoutPreview async pipeline —
+    // wait for loading state resolve. Per DECISIONS.md §D027.
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
+    });
   });
 });
 

@@ -2,9 +2,33 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+// Phase 6 task_02 Option C — mock async getTodayWorkout returns Phase 5
+// fixture (title 'Push (piept si umeri)' + Bench Press exIdx 0 / Overhead
+// Press exIdx 1 pentru exercises breakdown name lookup). Per DECISIONS.md
+// §D027. Without mock, real pipeline emits 'Antrenament azi' default title.
+const PHASE_5_FIXTURE = {
+  workoutTitle: 'Push (piept si umeri)',
+  exerciseCount: 5,
+  estimatedDuration: 50,
+  intensityMod: 'normal' as const,
+  volumeKg: 12450,
+  exercises: [
+    { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
+    { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
+    { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
+    { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
+    { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
+  ],
+};
+
+vi.mock('../../../lib/engineWrappers', () => ({
+  getTodayWorkout: vi.fn(async () => PHASE_5_FIXTURE),
+}));
+
 import { PostRpe } from '../../../routes/screens/antrenor/PostRpe';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 
@@ -96,6 +120,11 @@ describe('PostRpe — submit pipeline', () => {
     seedSession();
   });
 
+  // Phase 6 task_02 Option C: handleSubmit async (awaits getTodayWorkout).
+  // setLastRating runs sync pre-await; other state updates (finishSession +
+  // incrementStreak + navigate) post-await. Use waitFor pentru post-await
+  // assertions. Per DECISIONS.md §D027.
+
   it('Usoara click → setLastRating="usoara"', () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Usoara/i }));
@@ -114,24 +143,30 @@ describe('PostRpe — submit pipeline', () => {
     expect(useWorkoutStore.getState().lastRating).toBe('grea');
   });
 
-  it('submit clears history via finishSession', () => {
+  it('submit clears history via finishSession', async () => {
     renderPostRpe();
     expect(Object.keys(useWorkoutStore.getState().history).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().history).toEqual({});
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().history).toEqual({});
+    });
   });
 
-  it('submit increments streak (5 → 6)', () => {
+  it('submit increments streak (5 → 6)', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().streak).toBe(6);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().streak).toBe(6);
+    });
   });
 
-  it('submit sets lastSession cu title + meta + ts', () => {
+  it('submit sets lastSession cu title + meta + ts', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
     const ls = useWorkoutStore.getState().lastSession;
-    expect(ls).not.toBeNull();
     expect(ls?.title).toBe('Push (piept si umeri)');
     expect(ls?.meta).toMatch(/5 seturi/);
     expect(ls?.meta).toMatch(/min/);
@@ -139,78 +174,95 @@ describe('PostRpe — submit pipeline', () => {
     expect(typeof ls?.ts).toBe('number');
   });
 
-  it('summary meta volume computed correctly (3*22.5*10 + 22.5*8 + 17.5*8 + 17.5*8 = 1135)', () => {
+  it('summary meta volume computed correctly (3*22.5*10 + 22.5*8 + 17.5*8 + 17.5*8 = 1135)', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
-    // volume = 22.5*10 + 22.5*10 + 22.5*8 + 17.5*8 + 17.5*8 = 225 + 225 + 180 + 140 + 140 = 910
-    expect(meta).toMatch(/910 kg/);
+    await waitFor(() => {
+      const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
+      expect(meta).toMatch(/910 kg/);
+    });
   });
 
-  it('summary meta duration ~30 min', () => {
+  it('summary meta duration ~30 min', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
-    expect(meta).toMatch(/30 min/);
+    await waitFor(() => {
+      const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
+      expect(meta).toMatch(/30 min/);
+    });
   });
 
-  it('finishSession payload populates numeric sets field (task_10 §D)', () => {
+  it('finishSession payload populates numeric sets field (task_10 §D)', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().lastSession?.sets).toBe(5);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession?.sets).toBe(5);
+    });
   });
 
-  it('finishSession payload populates numeric durationMin field', () => {
+  it('finishSession payload populates numeric durationMin field', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().lastSession?.durationMin).toBe(30);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession?.durationMin).toBe(30);
+    });
   });
 
-  it('finishSession payload populates numeric volumeKg field', () => {
+  it('finishSession payload populates numeric volumeKg field', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().lastSession?.volumeKg).toBe(910);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession?.volumeKg).toBe(910);
+    });
   });
 
-  it('task_03: finishSession payload populates exercises breakdown', () => {
+  it('task_03: finishSession payload populates exercises breakdown', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    const exercises = useWorkoutStore.getState().lastSession?.exercises;
-    expect(exercises).toBeDefined();
-    expect(exercises?.length).toBe(2); // exIdx 0 + 1 din seeded history
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession?.exercises?.length).toBe(2);
+    });
   });
 
-  it('task_03: exercises breakdown computes totalVolume per exercise', () => {
+  it('task_03: exercises breakdown computes totalVolume per exercise', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    const exercises = useWorkoutStore.getState().lastSession?.exercises;
-    // exIdx 0: 22.5*10 + 22.5*10 + 22.5*8 = 450 + 180 = 630
-    expect(exercises?.[0].totalVolume).toBe(630);
-    // exIdx 1: 17.5*8 + 17.5*8 = 280
-    expect(exercises?.[1].totalVolume).toBe(280);
+    await waitFor(() => {
+      const exercises = useWorkoutStore.getState().lastSession?.exercises;
+      // exIdx 0: 22.5*10 + 22.5*10 + 22.5*8 = 450 + 180 = 630
+      expect(exercises?.[0].totalVolume).toBe(630);
+      // exIdx 1: 17.5*8 + 17.5*8 = 280
+      expect(exercises?.[1].totalVolume).toBe(280);
+    });
   });
 
-  it('task_03: peakOneRM uses Epley max across sets', () => {
+  it('task_03: peakOneRM uses Epley max across sets', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    const exercises = useWorkoutStore.getState().lastSession?.exercises;
-    // Bench Press peak: 22.5kg × 10 reps = 22.5 * (1+10/30) = 30 kg 1RM
-    expect(exercises?.[0].peakOneRM).toBe(30);
+    await waitFor(() => {
+      const exercises = useWorkoutStore.getState().lastSession?.exercises;
+      // Bench Press peak: 22.5kg × 10 reps = 22.5 * (1+10/30) = 30 kg 1RM
+      expect(exercises?.[0].peakOneRM).toBe(30);
+    });
   });
 
-  it('navigates la /app/antrenor/post-summary after submit', () => {
+  it('navigates la /app/antrenor/post-summary after submit', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(screen.getByTestId('probe')).toHaveAttribute(
-      'data-pathname',
-      '/app/antrenor/post-summary'
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute(
+        'data-pathname',
+        '/app/antrenor/post-summary'
+      );
+    });
   });
 
-  it('phase resets la idle (via finishSession)', () => {
+  it('phase resets la idle (via finishSession)', async () => {
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
-    expect(useWorkoutStore.getState().phase).toBe('idle');
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().phase).toBe('idle');
+    });
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
   });
 });

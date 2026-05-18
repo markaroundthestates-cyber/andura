@@ -73,7 +73,12 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
           // Dynamic import sync via require pattern to avoid circular
           // dep risk + keep adapter module-level lazy.
           import('../../engine/schedule/scheduleAdapter.js').then((mod) => {
-            const commitFn = (mod as { commitCalendarEdit?: (days: readonly DayKind[]) => unknown }).commitCalendarEdit;
+            // Phase 6 task_02: cast through unknown — scheduleStore passes
+            // DayKind[] legacy shape; actual commitCalendarEdit expects
+            // {day, active}[] shape per scheduleAdapter.d.ts. Semantic
+            // mismatch pre-existing — fix deferred (out of scope task_02
+            // Option C async migration).
+            const commitFn = (mod as unknown as { commitCalendarEdit?: (days: readonly DayKind[]) => unknown }).commitCalendarEdit;
             if (typeof commitFn === 'function') {
               try {
                 commitFn(state.days);

@@ -3,8 +3,30 @@
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+// Phase 6 task_02 Option C — mock async getTodayWorkout returns Phase 5
+// fixture preserve existing exercise-name assertions. Per DECISIONS.md §D027.
+const PHASE_5_FIXTURE = {
+  workoutTitle: 'Push (piept si umeri)',
+  exerciseCount: 5,
+  estimatedDuration: 50,
+  intensityMod: 'normal' as const,
+  volumeKg: 12450,
+  exercises: [
+    { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
+    { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
+    { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
+    { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
+    { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
+  ],
+};
+
+vi.mock('../../lib/engineWrappers', () => ({
+  getTodayWorkout: vi.fn(async () => PHASE_5_FIXTURE),
+}));
+
 import { SessionPill } from '../../components/SessionPill';
 import { useWorkoutStore } from '../../stores/workoutStore';
 
@@ -101,26 +123,31 @@ describe('SessionPill — content render', () => {
     resetStore();
   });
 
-  it('renders exercise name + elapsed min for active session', () => {
+  it('renders exercise name + elapsed min for active session', async () => {
     useWorkoutStore.setState({
       phase: 'logging',
       sessionStart: Date.now() - 5 * 60 * 1000, // 5 min ago
       exIdx: 0,
     });
     renderPill('/app/antrenor');
-    const pill = screen.getByTestId('session-pill');
-    expect(pill.textContent).toMatch(/Bench Press/i);
-    expect(pill.textContent).toMatch(/5 min/);
+    // Phase 6 task_02 Option C async: await getTodayWorkout resolve
+    await waitFor(() => {
+      const pill = screen.getByTestId('session-pill');
+      expect(pill.textContent).toMatch(/Bench Press/i);
+    });
+    expect(screen.getByTestId('session-pill').textContent).toMatch(/5 min/);
   });
 
-  it('exIdx advance reflects în pill exercise name', () => {
+  it('exIdx advance reflects în pill exercise name', async () => {
     useWorkoutStore.setState({
       phase: 'logging',
       sessionStart: Date.now(),
       exIdx: 1, // Overhead Press
     });
     renderPill('/app/antrenor');
-    expect(screen.getByTestId('session-pill').textContent).toMatch(/Overhead Press/i);
+    await waitFor(() => {
+      expect(screen.getByTestId('session-pill').textContent).toMatch(/Overhead Press/i);
+    });
   });
 
   it('aria-label="Reia sesiunea curenta" preserved (mockup verbatim)', () => {

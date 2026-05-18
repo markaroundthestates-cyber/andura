@@ -19,6 +19,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Play, ChevronRight } from 'lucide-react';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { getTodayWorkout } from '../lib/engineWrappers';
+import type { PlannedWorkoutOutput } from '../lib/engineWrappers';
 import { gotoPath } from '../lib/navigation';
 
 const WORKOUT_PATH = gotoPath('workout');
@@ -32,6 +33,12 @@ export function SessionPill(): JSX.Element | null {
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
 
   const [elapsedMin, setElapsedMin] = useState(0);
+
+  // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
+  // during loading; pill displays "Sesiune" label while pending. Pill still
+  // renders (active session). On resolve, planned updates → re-render with
+  // real exercise name. Per DECISIONS.md §D027.
+  const [planned, setPlanned] = useState<PlannedWorkoutOutput | null>(null);
 
   // Live elapsed update 1Hz cand active sessionStart present.
   useEffect(() => {
@@ -47,6 +54,14 @@ export function SessionPill(): JSX.Element | null {
     return () => clearInterval(interval);
   }, [sessionStart]);
 
+  useEffect(() => {
+    let cancelled = false;
+    getTodayWorkout().then((p) => {
+      if (!cancelled) setPlanned(p);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
   // Anti-duplicate route guard.
   if (location.pathname === WORKOUT_PATH) return null;
 
@@ -58,8 +73,7 @@ export function SessionPill(): JSX.Element | null {
   if (!active && !paused) return null;
 
   // Phase 4 demo: derive workout title + exercise name din planned aggregate.
-  // Fallback "Sesiune" cand engine returns null.
-  const planned = getTodayWorkout();
+  // Fallback "Sesiune" cand engine returns null or still loading.
   const currentExerciseName =
     planned?.exercises[Math.min(exIdx, (planned?.exercises.length ?? 1) - 1)]?.name ?? 'Sesiune';
 

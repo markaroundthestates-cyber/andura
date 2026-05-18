@@ -6,11 +6,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 
+// Phase 6 task_02 Option C: async getTodayWorkout returns Promise<null>.
+// WorkoutPreview useEffect awaits — initial render shows fallback values
+// (workout state initialized null pre-resolve). Per DECISIONS.md §D027.
 vi.mock('../../../lib/engineWrappers', () => ({
   getReadiness: vi.fn(() => null),
   getFatigue: vi.fn(() => null),
   getPRDelta: vi.fn(() => null),
-  getTodayWorkout: vi.fn(() => null),
+  getTodayWorkout: vi.fn(async () => null),
 }));
 
 import { WorkoutPreview } from '../../../routes/screens/antrenor/WorkoutPreview';

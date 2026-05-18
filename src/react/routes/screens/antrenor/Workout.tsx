@@ -24,7 +24,7 @@
 //   - mockup andura-clasic.html screen-workout wv2 reference
 
 import type { JSX } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -67,29 +67,31 @@ export function Workout(): JSX.Element {
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
 
-  // Phase 4 task_17: wire engineWrappers.getTodayWorkout planned aggregate;
-  // empty array cand null (no planned workout today / engine throw).
-  // useMemo stable reference pe re-render (planned changes doar la session
-  // start, NU per-frame).
-  const exercises = useMemo<readonly PlannedExercise[]>(() => {
-    const planned = getTodayWorkout();
-    return planned?.exercises ?? [];
+  // Phase 6 task_02 Option C: async getTodayWorkout — 3-state useState pattern
+  // per DECISIONS.md §D027 (null=loading, []=empty/rest day, [...]=session).
+  const [exercises, setExercises] = useState<readonly PlannedExercise[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getTodayWorkout().then((planned) => {
+      if (!cancelled) setExercises(planned?.exercises ?? []);
+    });
+    return () => { cancelled = true; };
   }, []);
 
-  const hasWorkout = exercises.length > 0;
+  const hasWorkout = exercises !== null && exercises.length > 0;
 
   // Bound exIdx în caz session state contamination (NU index past array).
-  // Cand hasWorkout=false (empty exercises array), safeExIdx + currentExercise
-  // remain undefined-guarded la render time (empty state branch); body of
-  // component preserves invariants for both states.
-  const safeExIdx = hasWorkout ? Math.min(exIdx, exercises.length - 1) : 0;
-  const currentExercise = hasWorkout
+  // 3-state guard: exercises===null → loading state; [] → empty state branch;
+  // [...] → session UI branch. safeExIdx + currentExercise defensive-default
+  // for loading/empty states.
+  const safeExIdx = hasWorkout && exercises !== null ? Math.min(exIdx, exercises.length - 1) : 0;
+  const currentExercise = hasWorkout && exercises !== null
     ? exercises[safeExIdx]
     : { id: '', name: '', sets: 0, targetReps: 0, targetKg: 0, restSec: 0 };
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
     hasWorkout && currentSetIdx + 1 >= currentExercise.sets;
-  const isLastExercise = hasWorkout && safeExIdx + 1 >= exercises.length;
+  const isLastExercise = hasWorkout && exercises !== null && safeExIdx + 1 >= exercises.length;
 
   const [kgInput, setKgInput] = useState<number>(currentExercise.targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
@@ -319,7 +321,22 @@ export function Workout(): JSX.Element {
     navigate(gotoPath('antrenor'));
   }
 
-  const nextExercise = exercises[safeExIdx + 1];
+  // Phase 6 task_02 Option C: loading state pe async pipeline resolve
+  // (exercises===null → 8-adapter chain pending). Per DECISIONS.md §D027.
+  // Early return must precede exercises[index] access — TS strict guard.
+  if (exercises === null) {
+    return (
+      <section
+        className="bg-paper min-h-screen p-6 flex flex-col items-center justify-center text-center"
+        data-testid="workout"
+        data-phase="loading"
+      >
+        <p className="text-sm text-ink2" data-testid="workout-loading">
+          Se incarca antrenamentul...
+        </p>
+      </section>
+    );
+  }
 
   // Phase 4 task_17: empty state cand getTodayWorkout returns null (engine
   // throw / DB unavailable / no planned workout today). Render simple
@@ -349,6 +366,9 @@ export function Workout(): JSX.Element {
       </section>
     );
   }
+
+  // Past empty/loading guard — exercises is non-null array.
+  const nextExercise = exercises[safeExIdx + 1];
 
   return (
     <section

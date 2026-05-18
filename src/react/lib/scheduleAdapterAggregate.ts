@@ -1,84 +1,110 @@
-// ══ SCHEDULE ADAPTER AGGREGATE — React-side Pure-Function Composer ═══════
-// Phase 5 task_05 — UI-side aggregate composer pentru planned workout.
-// Composes real engine calls available (scheduleAdapter.getCalendarOverride
-// + getMissingEquipment + mapDateToIndex) cu PHASE_4_DEMO_PUSH baseline
-// pentru exercise template. ZERO mutation src/engine/* per ADR 026 §9 +
-// orchestrator §7 invariant.
+// ══ SCHEDULE ADAPTER AGGREGATE — Phase 6 task_02 Real Wire Async ═════════
+// Per DECISIONS.md §D027 STRATEGY LOCKED V1 Option C big-bang async migration.
+// Phase 5 task_05 PHASE_5_BASELINE_PUSH stub eliminated. Real pipeline
+// invocation via scheduleAdapter.getDailyWorkout(userState, now) async
+// (Phase 6 task_01 LANDED runPipeline 8-adapter consumer + sessionBuilder
+// delegate).
 //
-// Phase 6+ replaces PHASE_4_DEMO_PUSH cu real Periodization Engine #1 +
-// Goal Template lookup + Specialization Engine #6 priorities + Warmup
-// Engine #7 prefix + Deload Engine #8 week-4 trigger când engine API
-// exposes React-friendly surfaces.
+// Returns null when:
+//   - Calendar override rest day (selectedDays[dayIdx].active === false)
+//   - Pipeline hard halt (Periodization or downstream emit hard error)
+//   - getDailyWorkout throws (D4 contract surface defensive)
 //
-// Current composition steps (Phase 5 task_05):
-//   1. mapDateToIndex → dayIdx 0-6 (L Ma Mi J V S D)
-//   2. getCalendarOverride → rest day check; null → return null (rest day)
-//   3. baseExercises din PHASE_4_DEMO_PUSH (Phase 5 stub)
-//   4. getMissingEquipment filter — exclude exercises requiring missing eq
-//      (best-effort name match — Phase 6+ uses real equipment metadata)
-//   5. Compose PlannedWorkoutOutput
+// Returns PlannedWorkoutOutput shape when training day + pipeline complete.
+// Async signature consumed via useState + useEffect loading pattern în 5
+// React consumers (SessionPill / Workout / WorkoutPreview / PostRpe /
+// coachDirectorAggregate).
 
-import { mapDateToIndex, getCalendarOverride, getMissingEquipment } from '../../engine/schedule/scheduleAdapter.js';
+import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
+import { useWorkoutStore } from '../stores/workoutStore';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 
-// Phase 5 stub baseline — Phase 6+ replaces cu Periodization + Goal Template
-// + Specialization engine compose pipeline.
-const PHASE_5_BASELINE_PUSH: readonly PlannedExercise[] = [
-  { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 10, targetKg: 22.5, restSec: 90 },
-  { id: 'overhead-press', name: 'Overhead Press', sets: 4, targetReps: 8, targetKg: 17.5, restSec: 120 },
-  { id: 'incline-db', name: 'Incline DB', sets: 3, targetReps: 12, targetKg: 14, restSec: 75 },
-  { id: 'lateral-raise', name: 'Lateral Raise', sets: 3, targetReps: 15, targetKg: 6, restSec: 60 },
-  { id: 'tricep-pushdown', name: 'Tricep Pushdown', sets: 3, targetReps: 12, targetKg: 25, restSec: 60 },
-];
-
-// Best-effort equipment exclusion — Phase 6+ uses real equipment metadata
-// per exercise (exercise.requiredEquipment[]). Phase 5 fallback: simple
-// substring match exercise.name vs missing list.
-function exerciseUsesEquipment(
-  exercise: PlannedExercise,
-  missingEqIds: readonly string[]
-): boolean {
-  const nameLower = exercise.name.toLowerCase();
-  return missingEqIds.some((eqId) => {
-    const eqLower = eqId.toLowerCase();
-    return nameLower.includes(eqLower);
-  });
+/**
+ * Build minimal userState aggregate consumed by getDailyWorkout pipeline.
+ * Primary-source slice fields verified (anti-recurrence D027 §5):
+ *   - user: useOnboardingStore.data Big 6 (age/sex/goal/frequency/experience/weight)
+ *   - recentSessions: useWorkoutStore.sessionsHistory (cumulative LastSessionSummary[])
+ *   - weights/profileTier/flags/meta defensive empty — buildEngineContext
+ *     handles missing fields per src/coach/orchestrator/contextBuilder.js:42-58.
+ *
+ * Tier resolution Phase 6+ deferred (profileTier:null = engine downstream
+ * fallback baseline T0 logic preserved). NU fabricate fields care nu există
+ * în stores (slip cause D027 §5).
+ */
+function buildUserStateForPipeline(): {
+  user: object;
+  recentSessions: ReadonlyArray<unknown>;
+  weights: object;
+  profileTier: null;
+  flags: object;
+  meta: object;
+} {
+  const onboardingData = useOnboardingStore.getState().data;
+  const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
+  return {
+    user: {
+      age: onboardingData.age,
+      sex: onboardingData.sex,
+      goal: onboardingData.goal,
+      frequency: onboardingData.frequency,
+      experience: onboardingData.experience,
+      weight: onboardingData.weight,
+    },
+    recentSessions: sessionsHistory ?? [],
+    weights: {},
+    profileTier: null,
+    flags: {},
+    meta: {},
+  };
 }
 
-// Baseline Phase 5 stub values matching mockup wv2 reference Push session.
-// Phase 6+ engine wire replaces cu real Periodization output cu live
-// duration/volume estimates per actual mesocycle phase + spec config.
-const BASELINE_DURATION_MIN = 50;
-const BASELINE_VOLUME_KG = 12450;
+/**
+ * Map engine exercise (sessionBuilder output `{ name, sets }`) to
+ * PlannedExercise consumer shape. Engine emits only name + sets count;
+ * targetReps/targetKg/restSec derived defensive defaults V1 (Phase 7+
+ * wires Bayesian Nutrition + DP recommendations per-exercise).
+ */
+function toPlannedExercise(engineEx: { name: string; sets: number }, idx: number): PlannedExercise {
+  const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return {
+    id: `${slug}-${idx}`,
+    name: engineEx.name,
+    sets: engineEx.sets,
+    targetReps: 10,
+    targetKg: 20,
+    restSec: 90,
+  };
+}
 
 /**
- * Phase 5 task_05: aggregate composer. Calendar rest day check + missing
- * equipment filter applied real prin scheduleAdapter engine calls; exercise
- * template din PHASE_5_BASELINE_PUSH stub Phase 6+ replace.
- *
- * Returns null cand calendar rest day (consumer renders empty state).
+ * Phase 6 task_02 real wire. Async pipeline consumer — caller (5 consumers
+ * React) handles loading state via useState + useEffect pattern. Returns
+ * null pe rest day OR pipeline hard halt OR thrown exception (fail-silent).
  */
-export function composePlannedWorkoutToday(now: Date = new Date()): PlannedWorkoutOutput | null {
+export async function composePlannedWorkoutToday(
+  now: Date = new Date(),
+): Promise<PlannedWorkoutOutput | null> {
   try {
-    const dayIdx = mapDateToIndex(now);
-    const override = getCalendarOverride(now);
-    // Daca calendar override prezent + dayIdx valid + ziua = 'rest' → rest day.
-    if (override !== null && override[dayIdx] === 'rest') {
-      return null;
-    }
-
-    const missingEqIds = getMissingEquipment();
-    const filtered = PHASE_5_BASELINE_PUSH.filter(
-      (ex) => !exerciseUsesEquipment(ex, missingEqIds)
+    const userState = buildUserStateForPipeline();
+    const plan = await getDailyWorkout(userState, now);
+    if (plan === null) return null;
+    const exercises = (plan.exercises ?? []).map(toPlannedExercise);
+    // Deload engine emits intensity_modifier object always (IDLE state =
+    // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
+    // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'
+    // via Energy Adjustment composite output.
+    const mod = plan.intensityModifier as { rir_increment?: number; intensity_pct_decrement?: number } | null;
+    const hasActiveDeload = mod !== null && (
+      (mod.rir_increment ?? 0) > 0 || (mod.intensity_pct_decrement ?? 0) > 0
     );
-
     return {
-      workoutTitle: 'Push (piept si umeri)',
-      exerciseCount: filtered.length,
-      estimatedDuration: BASELINE_DURATION_MIN,
-      intensityMod: 'normal',
-      exercises: filtered.slice(),
-      volumeKg: BASELINE_VOLUME_KG,
+      workoutTitle: plan.workoutTitle || 'Antrenament azi',
+      exerciseCount: exercises.length,
+      estimatedDuration: plan.estimatedDurationMin || 50,
+      intensityMod: hasActiveDeload ? 'minus' : 'normal',
+      exercises,
+      volumeKg: plan.volumeKg || 0,
     };
   } catch (e) {
     console.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);
