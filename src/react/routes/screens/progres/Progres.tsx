@@ -12,6 +12,9 @@ import { Scale, Ruler } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
+import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
+import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
+import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 
 export function Progres(): JSX.Element {
   const navigate = useNavigate();
@@ -28,6 +31,11 @@ export function Progres(): JSX.Element {
     >
       <h1 className="text-2xl font-semibold text-ink mb-1">Progres</h1>
       <p className="text-sm text-ink2 mb-6">Logheaza periodic - estimari calibrate.</p>
+
+      {/* Phase 6 task_22 dashboard strips */}
+      <TDEEStrip />
+      <FatigueStrip />
+      <HeatMapWeekly />
 
       {/* Log weight CTA */}
       <button
