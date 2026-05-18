@@ -4,7 +4,7 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D026
+latest_entry: D028
 total_entries: 28
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
@@ -78,6 +78,7 @@ D024 | 2026-05-17 | UX | Pre-Beta wording RO Co-CTO autonomous compose OK Daniel
 D025 | 2026-05-18 | STRATEGY | Phase 5 BATCH 20-task LANDED 22 commits 4290 PASS engine adapters Phase 6 foundations polish | LOCKED V1 | DECISIONS.md §D025
 D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027
 D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4303→4522 PASS (+219) + TS strict maximal | LOCKED V1 | DECISIONS.md §D026
+D028 | 2026-05-19 | STRATEGY | React entry swap LANDED andura.app/ vanilla→React production + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
 
 ---
 
@@ -397,6 +398,61 @@ Phase 6 BATCH 24-task autonomous run LANDED end-to-end. Closes Pre-Beta LOCK 2 R
 #### §5 Anti-recurrence carry-forward
 
 D027 §5 engine API grep primary-source mandatory invariant. Task_05/06/07/08 sketches v1 fabricated APIs (CoachDirector.run / computeAdherenceScore / store fields invented) — corectate inline §1 fiecare task. Future BATCH drafting: §AR.21 grep evidence ÎNAINTE de a scrie spec §B implementation references.
+
+---
+
+### D028 — STRATEGY — React entry swap LANDED andura.app/ vanilla→React production
+
+**Date:** 2026-05-19
+**Category:** STRATEGY (production entry tipping moment)
+**Status:** LOCKED V1
+**Source:** Daniel CEO directive 2026-05-19 deploy React production post Phase 6 BATCH closure D026
+**Cross-refs:** [[DECISIONS.md §D015 vanilla legacy strategy "până React LANDED"]], [[DECISIONS.md §D016 nav 6→4 EXCLUSIV React]], [[DECISIONS.md §D026 Phase 6 BATCH closure Pre-Beta LOCK 2]]
+**Backup tags:** `pre-react-entry-swap-2026-05-19` (HEAD `fb0b10b` pre-swap restore point)
+
+#### §1 Context
+
+D015 strategic pivot 2026-05-16: lansăm Andura Clasic pe React mockup direct, vanilla `index.html` 6 taburi rămâne legacy live `andura.app/` **până React migration LANDED**. D016 PROC: bottom nav 6→4 + screen architecture restructure se face EXCLUSIV în React build, NU în vanilla. D026 (2026-05-19) closes Pre-Beta LOCK 2 React Andura Clasic build — Phase 1-6 cumulative LANDED end-to-end (engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4522 PASS + TS strict maximal `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes`).
+
+2026-05-19 deploy production tipping moment: React build feature-complete per D026 LANDED criteria, momentul logic per D015 conditional "până React migration LANDED" pentru swap vanilla→React la entry main `andura.app/`.
+
+#### §2 Decision
+
+Swap vanilla `index.html` → React build la `andura.app/` entry point production. Vanilla NU șters — preserved în repo `index-vanilla-legacy.html` ca backup imutabil + sursă reference, exclus din build active. Engine reuse layer (`src/engine/*` + `src/schema/*` + `src/coach/*`) invariant — consumat de React wrappers (`src/react/lib/*Aggregate.ts`) per D026 §1.
+
+#### §3 Implementation
+
+Option 1 rename pattern (per ADR proposal Daniel CEO directive):
+
+1. **`git mv index.html → index-vanilla-legacy.html`** — vanilla preserved în repo backup, NU mai entry build
+2. **`git mv react-test.html → index.html`** — React shell devine entry main
+3. **`vite.config.js`** — `rollupOptions.input` reduced la single `main: 'index.html'` (remove `'react-test': 'react-test.html'` entry parallel)
+4. **`src/main.tsx`** — error message updated `'Root element #root not found in react-test.html'` → `'Root element #root not found in index.html'`
+5. **`tailwind.config.js`** — content scan path `'./react-test.html'` → `'./index.html'`
+
+Build verification: `npm run build` produces `dist/index.html` cu React shell `#root` + script `/assets/main-*.js` cu vendor-react chunk (NU mai vanilla 642KB `main-*.js` bundle). PWA SW + manifest invariant. Tests verde mandatory `npm run test:run` pre-commit husky hook.
+
+#### §4 Rollback path
+
+Instant rollback prin `git revert <swap-commit-sha>` restores vanilla entry exact state. Redeploy GH Pages workflow auto-trigger pe push main reverts live `andura.app/` la vanilla 6 taburi în ~2-3min. Backup tag `pre-react-entry-swap-2026-05-19` permite hard reset point alternative.
+
+#### §5 Vanilla preservation policy
+
+- **`index-vanilla-legacy.html`** preserved în repo, NU deploy-at, NU touch (frozen reference + emergency rollback content source)
+- **`src/pages/*.js`** vanilla legacy (`weight.js`, `dashboard.js`, `coach.js`, `plan.js`, `settings.js`, `auth.js`, `idle.js`, `authShell.js`) — preserved în repo orfan dar reusable engine code via React `src/react/lib/*Aggregate.ts` wrappers per D026 §1 engine pipeline real wire 8/8
+- **`src/engine/*.js`** + **`src/coach/*.js`** + **`src/schema/*.js`** — preserved invariant, consumate de React wrappers (active)
+- **NU șterse**: vanilla source code rămâne canonical reference + engine reuse layer
+
+#### §6 Impact
+
+- **Live `andura.app/`**: React build 4 taburi (Antrenor/Progres/Istoric/Cont) + screen-based `goto()` routing 50+ screens + PWA SW + medical disclaimer + auth + engine pipeline real wire
+- **Vanilla legacy live**: ELIMINATED — `andura.app/` NU mai servește vanilla 6 taburi paradigmă veche (Coach/Dashboard/Greutate/Program/Plan/Setari, page-based `sp()`)
+- **DNS + Hosting**: invariant (GitHub Pages custom domain `andura.app` per CNAME + workflow `.github/workflows/deploy.yml` auto-trigger push main)
+- **Build artifacts**: `dist/index.html` = React shell minimal + `dist/assets/main-*.js` chunked (vendor-react/data/state/icons split per Phase 5 task_20)
+
+#### §7 Risk
+
+Minimal — reversibil 100% prin git revert + GH Pages auto-redeploy. Zero downtime expected (GH Pages atomic publish). PWA SW `cleanupOutdatedCaches: true` + `registerType: 'autoUpdate'` (per `vite.config.js` VitePWA config) ensures clients cu cached vanilla SW invalidates + fetches React fresh on next visit + UpdatePrompt component prompt user pentru reload.
 
 ---
 
