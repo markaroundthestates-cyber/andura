@@ -11,7 +11,7 @@ import './styles/global.css';
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
-  throw new Error('Root element #root not found in react-test.html');
+  throw new Error('Root element #root not found in index.html');
 }
 
 createRoot(rootEl).render(

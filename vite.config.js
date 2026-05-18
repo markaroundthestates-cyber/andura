@@ -67,7 +67,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
-        'react-test': 'react-test.html',
       },
       output: {
         manualChunks: {
