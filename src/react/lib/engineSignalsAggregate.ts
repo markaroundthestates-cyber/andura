@@ -1,10 +1,16 @@
 // ══ ENGINE SIGNALS AGGREGATE — Adherence + Energy + Vitality React Bundle ═
-// Phase 5 task_10 — bundle 3 engine signals în 1 React-side helper pentru
-// consume by aaFriction dynamic thresholds + Antrenor home cards.
-// ZERO src/engine/* mutation per orchestrator §7. Composes existing engine
-// wrapper exports + fallback baseline când engine API absent.
+// Phase 5 task_10 → Phase 6 task_08 real wire. Bundle 3 engine signals în
+// 1 React-side helper pentru consume by aaFriction dynamic thresholds
+// (Workout.handleLogSet task_07) + Antrenor home cards.
+//
+// Phase 6 task_08: adherenceScore real wired via getAdherenceOutput engine
+// (4-component score: kcal + protein + workout + weight, DB-backed via
+// coachDecisionLog). BASELINE_ADHERENCE constant ELIMINATED — sole baseline
+// fallback path este în getAdherenceOutput defensive (engine throws).
+//
+// ZERO src/engine/* mutation per orchestrator §7.
 
-import { getReadiness, getFatigue } from './engineWrappers';
+import { getReadiness, getFatigue, getAdherenceOutput } from './engineWrappers';
 
 export interface EngineSignals {
   vitalityScore: number; // 0-100 (higher = better recovery)
@@ -14,37 +20,39 @@ export interface EngineSignals {
   source: 'engine' | 'baseline';
 }
 
-// Baseline values mid-range cand engine absent. Phase 6+ replaces cu real
-// engine outputs (Vitality Engine #5 + Adherence Engine #4 + Energy
-// Adjustment Engine #3 readiness ratio).
+// Vitality baseline preserved Phase 5 (inverse fatigue proxy când engine
+// absent). Phase 7+ wires Vitality Layer engine direct (suflet-andura).
 const BASELINE_VITALITY = 50;
-const BASELINE_ADHERENCE = 50;
 
 /**
- * Aggregate Adherence + Energy + Vitality signals în 1 helper. Phase 5
- * task_10 best-effort compose — uses readiness verdict pentru energy
- * direction; vitality + adherence baseline pending Phase 6+ engine wire.
+ * Aggregate Adherence + Energy + Vitality signals în 1 helper.
+ * - vitalityScore: inverse fatigue score (high fatigue = low vitality)
+ * - adherenceScore: real Adherence Engine via getAdherenceOutput task_08
+ * - energyDirection: derived din readiness verdict score thresholds
+ * - source: 'engine' cand orice component fed real engine output
  */
 export function getEngineSignals(): EngineSignals {
   const readiness = getReadiness();
   const fatigue = getFatigue();
+  const adherence = getAdherenceOutput();
   let energyDirection: EngineSignals['energyDirection'] = 'flat';
   if (readiness !== null) {
     if (readiness.score >= 80) energyDirection = 'up';
     else if (readiness.score < 50) energyDirection = 'down';
   }
-  // Vitality proxy: inverse fatigue score (high fatigue = low vitality).
-  // Bounded mid range când fatigue absent.
   const vitalityScore =
     fatigue !== null && typeof fatigue.score === 'number'
       ? Math.max(0, Math.min(100, 100 - fatigue.score))
       : BASELINE_VITALITY;
-  // Adherence proxy: streak-derived (Phase 5 task_10 fallback baseline).
-  const adherenceScore = BASELINE_ADHERENCE;
+  // Phase 6 task_08: real adherence din getAdherenceScore engine
+  const adherenceScore = adherence.score;
+  // source: 'engine' cand orice composer non-baseline
+  const anyEngine =
+    readiness !== null || fatigue !== null || adherence.source === 'engine';
   return {
     vitalityScore,
     adherenceScore,
     energyDirection,
-    source: readiness !== null || fatigue !== null ? 'engine' : 'baseline',
+    source: anyEngine ? 'engine' : 'baseline',
   };
 }

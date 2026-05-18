@@ -301,6 +301,50 @@ export async function getNutritionTargetsToday(
   }
 }
 
+// ── Adherence Engine wrapper (Phase 6 task_08) ──────────────────────────
+//
+// Anti-recurrence engine API verify (sketch v1 fabricated):
+// - Sketch invented `computeAdherenceScore(userState)` plain-number return —
+//   real export este `getAdherenceScore()` (sync, ZERO args, DB-backed via
+//   DB.get + coachDecisionLog.readActiveForDate today).
+// - Return shape este `{score: number 0-100, color: string, label: string}` —
+//   NU plain number.
+// - Score combination: +25 kcal logged + +25 protein>=150 + +30 workout
+//   compliance (CDL primary / logs fallback) + +20 weight logged.
+
+export interface AdherenceOutput {
+  score: number; // 0-100 clamped invariant
+  source: 'engine' | 'baseline';
+}
+
+const BASELINE_ADHERENCE_OUTPUT: AdherenceOutput = {
+  score: 50,
+  source: 'baseline',
+};
+
+/**
+ * Real wire Adherence Engine. Returns score 0-100 din 4 components
+ * (kcal + protein>=150 + workout compliance + weight). Engine reads DB
+ * localStorage direct + CDL — caller-side ctx NU needed.
+ *
+ * Defensive: typeof score check + clamp 0-100 + baseline fallback când
+ * engine throws (DB unavailable în SSR sau test env fără localStorage mock).
+ */
+export function getAdherenceOutput(): AdherenceOutput {
+  try {
+    const raw = getAdherenceScore();
+    if (!raw || typeof raw !== 'object' || typeof (raw as { score?: unknown }).score !== 'number') {
+      return BASELINE_ADHERENCE_OUTPUT;
+    }
+    const rawScore = (raw as { score: number }).score;
+    const safeScore = Math.max(0, Math.min(100, rawScore));
+    return { score: safeScore, source: 'engine' };
+  } catch (e) {
+    console.warn('[engineWrappers] getAdherenceOutput failed:', e);
+    return BASELINE_ADHERENCE_OUTPUT;
+  }
+}
+
 // ── Patterns Banner + Proactive Alerts composers (Phase 6 task_05) ──────
 //
 // Option B Bugatti per Daniel "quality over speed" 2026-05-18 — composer
