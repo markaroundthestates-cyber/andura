@@ -14,6 +14,20 @@
 //
 // ZERO mutation of engine modules. ZERO new engine methods. Engines unchanged.
 
+import { buildEngineContext } from '../../coach/orchestrator/contextBuilder.js';
+import { runPipeline } from '../../coach/orchestrator/index.js';
+import {
+  periodizationAdapter,
+  goalAdaptationAdapter,
+  energyAdjustmentAdapter,
+  bayesianNutritionAdapter,
+  tempoAdapter,
+  specializationAdapter,
+  warmupAdapter,
+  deloadAdapter,
+} from '../../coach/orchestrator/adapters/index.js';
+import { buildSession } from '../sessionBuilder.js';
+
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
 
@@ -348,4 +362,136 @@ export function translateToEngineEquipment(userIds) {
     for (const eng of mapped) out.add(eng);
   }
   return [...out];
+}
+
+// ── Daily workout pipeline consumer (Phase 6 task_01) ────────────────────
+// Engine equipment domain — sessionBuilder.EQUIP_MAP target set. Filter
+// pipeline `available` set by subtracting translated missing equipment.
+const ENGINE_EQUIPMENT_DOMAIN = Object.freeze([
+  'matrix_cable',
+  'bailib_stack',
+  'pec_deck',
+  'leg_machine',
+  'leg_press_plates',
+  'dumbbell',
+]);
+
+// Day-of-week → session type V1 deterministic mapping per mockup convention
+// (L=Push, M=Pull, M2=Picioare, J=Umeri/brate, V=Full Upper, S=Push, D=Pull).
+// Engine pipeline blueprint outputs orthogonal — session type drives only
+// sessionBuilder exercise template selection (delegated downstream).
+const DAY_TO_SESSION_TYPE = Object.freeze([
+  'PUSH',           // L (0)
+  'PULL',           // M (1)
+  'UPPER_PICIOARE', // M2 (2)
+  'UMERI_BRATE',    // J (3)
+  'FULL_UPPER',     // V (4)
+  'PUSH',           // S (5)
+  'PULL',           // D (6)
+]);
+
+/**
+ * Compose today's workout plan — invoke 8-engine pipeline §42.10 sequential
+ * strict + aggregate blueprints by engine id + delegate exercise selection
+ * to sessionBuilder.
+ *
+ * Returns null when:
+ *   - Calendar override marks today as a rest day (`selectedDays[dayIdx].active === false`)
+ *   - Pipeline emits a hard halt (e.g. Periodization fails — downstream cannot proceed)
+ *   - runPipeline throws unexpectedly (D4 contract violation insurance)
+ *
+ * Returns a unified WorkoutPlan when training day + pipeline complete.
+ *
+ * @param {object} [userState] - { user, recentSessions, weights, profileTier, flags, meta }
+ * @param {Date} [now=new Date()] - injected for deterministic testing
+ * @returns {Promise<{
+ *   type: 'training',
+ *   sessionType: string,
+ *   warmup: object|null,
+ *   exercises: Array<{name: string, sets: number}>,
+ *   intensityModifier: object|null,
+ *   volumeTargets: object|null,
+ *   specializationTarget: string|null,
+ *   deloadState: string,
+ *   estimatedDurationMin: number,
+ *   volumeKg: number,
+ *   workoutTitle: string,
+ * }|null>}
+ */
+export async function getDailyWorkout(userState, now = new Date()) {
+  const date = (now instanceof Date && !isNaN(now.getTime())) ? now : new Date();
+  const dayIdx = mapDateToIndex(date);
+
+  // Rest day check via calendar override
+  const override = getCalendarOverride(date);
+  if (override && Array.isArray(override.selectedDays)) {
+    const dayConfig = override.selectedDays[dayIdx];
+    if (dayConfig && dayConfig.active === false) {
+      return null;
+    }
+  }
+
+  // Compute available equipment (engine domain) by subtracting missing
+  const missingUserIds = getMissingEquipment();
+  const missingEngineIds = new Set(translateToEngineEquipment(missingUserIds));
+  const availableEngineIds = ENGINE_EQUIPMENT_DOMAIN.filter(id => !missingEngineIds.has(id));
+
+  // Build EngineContext + invoke 8-adapter pipeline sequential strict
+  const ctx = buildEngineContext(userState);
+  const adapters = [
+    periodizationAdapter,
+    goalAdaptationAdapter,
+    energyAdjustmentAdapter,
+    bayesianNutritionAdapter,
+    tempoAdapter,
+    specializationAdapter,
+    warmupAdapter,
+    deloadAdapter,
+  ];
+
+  let results;
+  try {
+    results = await runPipeline(ctx, adapters);
+  } catch {
+    return null;
+  }
+
+  if (!Array.isArray(results) || results.length === 0) return null;
+
+  // Hard halt detection — first hard error short-circuits pipeline downstream
+  const hardError = results.find(r => r && r.ok === false && r.error && r.error.severity === 'hard');
+  if (hardError) return null;
+
+  // Aggregate engine blueprints by engine id (output.meta carries blueprint payload)
+  const blueprints = {};
+  for (const r of results) {
+    if (r && r.ok === true && r.output && typeof r.output.id === 'string') {
+      blueprints[r.output.id] = r.output.meta || {};
+    }
+  }
+
+  // sessionBuilder ctx: equipment available + weak groups derived from
+  // Specialization target_muscle_group (single-element list for prioritization)
+  const sessionType = DAY_TO_SESSION_TYPE[dayIdx] || 'FULL_UPPER';
+  const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
+  const sessionCtx = {
+    equipment: { available: availableEngineIds },
+    weakGroups: specializationTarget ? [specializationTarget] : [],
+  };
+
+  const session = buildSession(sessionType, sessionCtx);
+
+  return {
+    type: 'training',
+    sessionType,
+    warmup: blueprints.warmup || null,
+    exercises: session && Array.isArray(session.exercises) ? session.exercises : [],
+    intensityModifier: blueprints.deload?.intensity_modifier ?? null,
+    volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
+    specializationTarget,
+    deloadState: blueprints.deload?.deload_state ?? 'IDLE',
+    estimatedDurationMin: 50,
+    volumeKg: 0,
+    workoutTitle: 'Antrenament azi',
+  };
 }
