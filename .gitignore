@@ -32,3 +32,6 @@ reports/mutation/mutation.html
 # Pattern Untitled* = Obsidian Cmd+N untitled scratch
 /Untitled*.md
 /Untitled*.canvas
+
+# Smart Environment cache — per-machine tool state, never commit
+.smart-env/
