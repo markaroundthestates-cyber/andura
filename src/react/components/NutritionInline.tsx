@@ -19,12 +19,14 @@
 //     Engine calibreaza din date reale."
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pencil, Check } from 'lucide-react';
 import { useNutritionStore } from '../stores/nutritionStore';
+import { getNutritionTargetTodayReal } from '../lib/bayesianNutritionAggregate';
+import type { NutritionTarget } from '../lib/bayesianNutritionAggregate';
 
-// Engine auto-target stubs Phase 4 (mockup verbatim defaults).
-// Phase 5+ wire real Bayesian Nutrition Inference engine output.
+// Phase 6 task_04 baseline preserved sync render fallback (engine async
+// resolve replaces these on mount). Mockup verbatim wv2 L1812/L1825.
 const AUTO_KCAL_TARGET = 2640;
 const AUTO_PROTEIN_TARGET = 180;
 
@@ -47,8 +49,22 @@ export function NutritionInline(): JSX.Element {
   const [kcalDraft, setKcalDraft] = useState<string>('');
   const [proteinDraft, setProteinDraft] = useState<string>('');
 
-  const displayKcal = entry?.kcal ?? AUTO_KCAL_TARGET;
-  const displayProtein = entry?.protein ?? AUTO_PROTEIN_TARGET;
+  // Phase 6 task_04 real wire — async getNutritionTargetTodayReal. Engine
+  // output overrides mockup baseline on resolve; manual log priority preserved
+  // via aggregate. Per DECISIONS.md §D027.
+  const [engineTarget, setEngineTarget] = useState<NutritionTarget | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getNutritionTargetTodayReal(dateISO).then((t) => {
+      if (!cancelled) setEngineTarget(t);
+    });
+    return () => { cancelled = true; };
+  }, [dateISO]);
+
+  const autoKcal = engineTarget?.kcalTarget ?? AUTO_KCAL_TARGET;
+  const autoProtein = engineTarget?.proteinTarget ?? AUTO_PROTEIN_TARGET;
+  const displayKcal = entry?.kcal ?? autoKcal;
+  const displayProtein = entry?.protein ?? autoProtein;
 
   function startKcalEdit(): void {
     setKcalDraft(String(displayKcal));
