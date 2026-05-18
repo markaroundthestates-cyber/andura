@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-18
 schema_version: 1
-latest_entry: D025
-total_entries: 25
+latest_entry: D027
+total_entries: 27
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -76,6 +76,7 @@ D022 | 2026-05-17 | STRATEGY | Phase 4 BATCH task_13-22 LANDED 10-task atomic 14
 D023 | 2026-05-17 | PROC | MCP filesystem write_file MANDATORY vault Windows emoji paths verify list_directory | LOCKED V1 | DECISIONS.md §D023
 D024 | 2026-05-17 | UX | Pre-Beta wording RO Co-CTO autonomous compose OK Daniel review post-Beta a-z | LOCKED V1 | DECISIONS.md §D024
 D025 | 2026-05-18 | STRATEGY | Phase 5 BATCH 20-task LANDED 22 commits 4290 PASS engine adapters Phase 6 foundations polish | LOCKED V1 | DECISIONS.md §D025
+D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027
 
 ---
 
@@ -281,6 +282,44 @@ Restructure 6→4 + screen architecture full migration = se face EXCLUSIV în Re
 - Bugatti craft peak — refactor later NEVER happens, ZERO compromise
 - Gigel Test mandatory pre-feature decisions React build (orice paradigm shift verificat mockup spec compliance)
 - Daniel Gates production + Bugatti audit nuclear pre-launch invariant
+
+---
+
+### D027 — STRATEGY — Phase 6 task_02 Option C big-bang async migration React consumers
+
+**Date:** 2026-05-18
+**Category:** STRATEGY (architectural truth-reflection over cache facade)
+**Status:** LOCKED V1
+**Source:** Daniel CEO chat verbatim 2026-05-18 "da facem C" post Co-CTO pivot challenge "care e quality real"
+**Cross-refs:** [[DECISIONS.md §D025 Phase 5 BATCH closure]], [[📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md]], [[📥_inbox/phase-6-tasks/ORCHESTRATOR.md §5 fail-stop]]
+**Backup tag:** pre-phase6-task-02-2026-05-18 @ `c64e692` (task_02 NU committed, tree clean revert target)
+
+#### §1 Context
+
+Phase 6 BATCH 24-task autonomous run. Task #1.A deloadAdapter batch 8 ULTIM LANDED `810c783` + task_01 scheduleAdapter.getDailyWorkout backend consumer LANDED `c64e692` (4318 PASS +28 cumulative vs Phase 5 close 4290). Task_02 (scheduleAdapterAggregate React real wire) fail-stop per ORCHESTRATOR §5 — sketch §B asuma "1 fișier 1 commit", CC dry-run discovery ~80-120 test cascade + 5 React consumer async migration scope materially beyond sketch.
+
+#### §2 Decision
+
+Option C big-bang async migration React consumers. NU Option A split (atomization same cascade) sau Option B sync-cached facade (CC recomandare inițială + Co-CTO agreed greșit). Daniel pivot challenge "care e quality real" → Co-CTO pivot la C cu motivare onestă.
+
+#### §3 Rationale
+
+- Engine pipeline ESTE async (~100-300ms calculate). React trebuie reflecte adevăr arhitectural, NU să-l ascundă cache facade.
+- Cache trucaj = datorie tehnică (invalidare bugs viitoare: date change midnight + log update + settings change).
+- Bugatti audit nuclear Phase 8 pre-Launch = workaround-uri = red flags.
+- Loading state "se incarca..." explicit = UX onest. Cold flash din cache = magic ascuns perceptibil Maria 65 phone slab Romania 3G.
+- Orizont 2-3 ani Daniel = datorie crește exponențial dacă lași.
+
+#### §4 Impact
+
+- task_02 sketch REWRITE noul chat cu scope Option C explicit (§A grep primary-source stores + §B 5 consumers async + §C ~100 test rewrite enumerate + §D multi-commit budget per ORCHESTRATOR §2 multi-block clauză)
+- Est durată CC task_02: 3-5h autonomous Opus
+- BATCH 24 total durată estimată ~dublu față inițială
+- task_03-24 sketches intact, verify drift pe parcurs (high-risk task_06 patterns banner + task_22/23 dashboard data sources, low-risk Cont sub-screens mockup parity)
+
+#### §5 Anti-recurrence
+
+Co-CTO sketch §A grep primary-source mandatory pre-spec. Specific: stores Zustand exports (slice names + field shapes) verify ÎNAINTE de a scrie buildXState helpers. Slip 2026-05-18 task_02: am scris `workoutStore.userProfile / exerciseWeights / profileTier / weeksElapsed` — NU există. CC corectat dry-run la `useOnboardingStore.data` actual. Cause: skip grep sub autonomy pressure BATCH drafting fast. PROC future: §AR.21 grep evidence inline reiterated mandatory.
 
 ---
 
