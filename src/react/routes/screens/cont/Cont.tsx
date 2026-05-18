@@ -5,6 +5,9 @@
 // Mockup verbatim copy preserved (andura-clasic.html#L1839+).
 
 import type { JSX } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { gotoPath } from '../../../lib/navigation';
+import type { GotoScreen } from '../../../lib/navigation';
 import {
   User,
   Bell,
@@ -28,6 +31,7 @@ interface ContRow {
   label: string;
   Icon: typeof User;
   danger?: boolean;
+  target?: GotoScreen;
 }
 
 interface ContSection {
@@ -41,31 +45,31 @@ const SECTIONS: readonly ContSection[] = [
   {
     title: 'Cont',
     rows: [
-      { id: 'profile', label: 'Profil & tinte', Icon: User },
-      { id: 'notifications', label: 'Notificari', Icon: Bell },
-      { id: 'subscription', label: 'Abonament', Icon: Sparkles },
+      { id: 'profile', label: 'Profil & tinte', Icon: User, target: 'settings-profile' },
+      { id: 'notifications', label: 'Notificari', Icon: Bell, target: 'settings-notifications' },
+      { id: 'subscription', label: 'Abonament', Icon: Sparkles, target: 'settings-subscription' },
     ],
   },
   {
     title: 'General',
     rows: [
-      { id: 'appearance', label: 'Aspect', Icon: Palette },
+      { id: 'appearance', label: 'Aspect', Icon: Palette, target: 'settings-appearance' },
       { id: 'aparate-lipsa', label: 'Aparate lipsa', Icon: XOctagon },
-      { id: 'prefs', label: 'Setari', Icon: SlidersHorizontal },
+      { id: 'prefs', label: 'Setari', Icon: SlidersHorizontal, target: 'settings-prefs' },
     ],
   },
   {
     title: 'Date & confidentialitate',
     rows: [
-      { id: 'privacy', label: 'Politica de confidentialitate', Icon: ShieldCheck },
-      { id: 'terms', label: 'Termeni si conditii', Icon: FileText },
-      { id: 'export', label: 'Descarca datele tale (JSON)', Icon: Download },
+      { id: 'privacy', label: 'Politica de confidentialitate', Icon: ShieldCheck, target: 'settings-privacy' },
+      { id: 'terms', label: 'Termeni si conditii', Icon: FileText, target: 'settings-terms' },
+      { id: 'export', label: 'Descarca datele tale (JSON)', Icon: Download, target: 'settings-export' },
     ],
   },
   {
     title: 'Deconectare/Stergere',
     danger: true,
-    rows: [{ id: 'danger', label: 'Deconectare/Stergere', Icon: AlertTriangle, danger: true }],
+    rows: [{ id: 'danger', label: 'Deconectare/Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
   },
   {
     title: 'Ajutor',
@@ -79,6 +83,10 @@ const SECTIONS: readonly ContSection[] = [
 ];
 
 export function Cont(): JSX.Element {
+  const navigate = useNavigate();
+  const handleRowClick = (target: GotoScreen | undefined): void => {
+    if (target) navigate(gotoPath(target));
+  };
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="cont-home">
       <h1 className="text-2xl font-semibold text-ink mb-4">Cont</h1>
@@ -113,7 +121,9 @@ export function Cont(): JSX.Element {
                   key={row.id}
                   type="button"
                   data-testid={`cont-row-${row.id}`}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brick' : 'text-ink'}`}
+                  onClick={() => handleRowClick(row.target)}
+                  disabled={!row.target}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left disabled:opacity-50 disabled:cursor-not-allowed ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brick' : 'text-ink'}`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                   <span className="flex-1 text-sm">{row.label}</span>

@@ -36,7 +36,11 @@ export type GotoScreen =
   | 'schedule-override'
   | 'post-rpe' | 'post-summary'
   // Phase 4 Progres sub-screens (task_16)
-  | 'log-weight' | 'body-data';
+  | 'log-weight' | 'body-data'
+  // Phase 6 Cont sub-screens (task_09-17)
+  | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
+  | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
+  | 'settings-terms' | 'settings-export' | 'settings-danger';
 
 /**
  * Map mockup screen name la React Router path.
@@ -78,6 +82,17 @@ export function gotoPath(screen: GotoScreen): string {
   // Phase 4 Progres sub-screens (task_16, nested sub /app/progres)
   if (screen === 'log-weight' || screen === 'body-data') {
     return `/app/progres/${screen}`;
+  }
+
+  // Phase 6 Cont sub-screens (task_09-17, nested sub /app/cont)
+  if (
+    screen === 'settings-profile' || screen === 'settings-notifications' ||
+    screen === 'settings-subscription' || screen === 'settings-appearance' ||
+    screen === 'settings-prefs' || screen === 'settings-privacy' ||
+    screen === 'settings-terms' || screen === 'settings-export' ||
+    screen === 'settings-danger'
+  ) {
+    return `/app/cont/${screen}`;
   }
 
   // Exhaustive fallback (TS catches missing cases at compile)

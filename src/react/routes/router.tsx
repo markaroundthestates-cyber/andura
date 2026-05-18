@@ -27,6 +27,7 @@ import { BodyData } from './screens/progres/BodyData';
 import { Istoric } from './screens/istoric/Istoric';
 import { IstoricDetail } from './screens/istoric/IstoricDetail';
 import { Cont } from './screens/cont/Cont';
+import { SettingsProfile } from './screens/cont/SettingsProfile';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -74,7 +75,13 @@ export const router = createBrowserRouter([
           { path: ':sessionId', element: <IstoricDetail /> },
         ],
       },
-      { path: 'cont', element: <Cont /> },
+      {
+        path: 'cont',
+        children: [
+          { index: true, element: <Cont /> },
+          { path: 'settings-profile', element: <SettingsProfile /> },
+        ],
+      },
     ],
   },
 ]);
