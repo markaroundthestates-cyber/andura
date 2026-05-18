@@ -173,4 +173,49 @@ GH Pages auto-redeploy ~2-3min restores vanilla 6 taburi live. PWA SW `cleanupOu
 
 ---
 
-🦫 **Deploy React production LANDED andura.app/ per D028 LOCKED V1. Pre-Beta LOCK 2 React Andura Clasic build LIVE end-to-end. Daniel manual gates next: smoke production a-z + Bugatti audit pre-Launch.**
+## §4 Handover distribute cluster — D028 + D029 LANDED DECISIONS.md
+
+Per `📥_inbox/PROMPT_CC_handover_distribute_2026-05-19.md` §1-§5 (consumed + archived).
+
+### D028 category corection STRATEGY → PROC
+
+D028 ADR scrisă în deploy cluster ca STRATEGY (production entry tipping moment angle). HANDOVER §6 + PROMPT_CC distribute §1 codifică categoria oficială **PROC** (entry swap rename pattern + rollback path + vanilla preservation policy — procedural lock NU strategic pivot, strategy = D015 pivot original). Catalog + detailed `### D028 — PROC —` + frontmatter status `LOCKED V1 PERMANENT` updated DECISIONS.md.
+
+### D029 PROC NEW — Bugatti Audit Nuclear procedure
+
+LOCKED V1 PERMANENT 2026-05-19 per Daniel CEO directive verbatim *"FULL AUDIT. Fiecare linie cod citita, fiecare virgula, TOT pe latest commit LANDED. 20000 ore I don't care"* + *"absolut full"* + *"ruleaze neintrerupt pana nu il opresc eu"*.
+
+- **§1 Mode** continuous neîntrerupt multi-noapte CC autonomous Opus MAX thinking budget. NU auto-terminate post §1-§24 primary — auto-iterative deep-dive secondary CRITICAL/HIGH → tertiary MED/LOW → quaternary NIT until Daniel STOP
+- **§2 Stop trigger UNIC** Daniel explicit STOP/caveman/stai/Ctrl+C/"termina" (ZERO bandwidth/iteration/time auto-stop)
+- **§3 Scope** ALL on HEAD post `deploy-react-production-2026-05-19` tag (`caaae99`): ~100k LOC source + ~250k+ total tests+docs+mockups
+- **§4 Procedure** §1-§25 per `PROMPT_CC_audit_nuclear_full_2026-05-19.md` (source line-by-line + tests + TS strict + Security 16 sub + Performance 15 sub + A11y WCAG 2.1 AA 13 sub + UX flows 13 sub + Engine 20 sub + Compliance 14 sub + LOCK chain-of-trust + i18n RO + Data integrity + Error handling + State machine + Cross-browser + PWA spec + Telemetry + Documentation + Visual regression + Bundle + Git hygiene + Refactor-NEVER + Self-correction + Production readiness % weighted + Procedure meta)
+- **§5 Output** log-only `📤_outbox/audit-nuclear-2026-05-19/` (findings-§N.md per category cu severity CRITICAL/HIGH/MED/LOW/NIT + SUMMARY.md aggregate matrix + production readiness % weighted final score + `_progress.md` checkpoint resume capable)
+- **§6 Trigger** Daniel manual paste — NU auto-launch
+- **§7 Risk** log-only ZERO modificare cod, bandwidth mitigated via `_progress.md` checkpoint
+
+### Frontmatter DECISIONS.md
+
+`latest_entry: D028` → `D029` + `total_entries: 28` → `29`.
+
+---
+
+## §5 Inbox archive + V6 minor structural update
+
+### Inbox cleanup git mv → `📥_inbox/_CONSUMED/`
+
+- `HANDOVER_2026-05-19_phase-6-landed-deploy-audit-prep.md` (consumed full §1-§8 narrative cluster context)
+- `PROMPT_CC_handover_distribute_2026-05-19.md` (consumed full §1-§5 execution)
+
+### Inbox PĂSTRAT (pending Daniel manual paste)
+
+- **`📥_inbox/PROMPT_CC_audit_nuclear_full_2026-05-19.md`** — Daniel paste când e gata să lanseze audit nuclear. NU archive automat. Sesiune CC dedicated, paralel OK cu Daniel Gates smoke production manual (smoke CEO focus telefon, audit CC altă sesiune concurrent).
+
+### V6 minor structural append (preserve invariant)
+
+`01-vision/PROJECT_INSTRUCTIONS_V6.md` post-2026-05-19 STRUCTURAL UPDATES section (delta append-only, NU rewrite full):
+- React v3 LANDED live (NU mai "React v3 future" per line 5 stale) — cross-refs D015 → D026 → D028
+- Bugatti Audit Nuclear procedure D029 LOCKED V1 PROC definition + trigger mechanism
+
+---
+
+🦫 **Deploy React production LANDED + D028/D029 LOCKED V1 distribute LANDED. Handover archive complete. Inbox ready pentru Daniel manual paste audit nuclear. Pre-Beta milestones rămase: Daniel Gates smoke production manual + Bugatti audit nuclear iterative + fix combined backlog → Beta launch.**

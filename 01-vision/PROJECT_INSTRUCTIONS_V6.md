@@ -98,4 +98,11 @@ MCP timeout 4min ≠ failure — verify filesystem-side înainte assume crash.
 
 ---
 
+## POST-2026-05-19 STRUCTURAL UPDATES (V6 invariant preserved, append-only delta)
+
+- **React v3 = LANDED live** `andura.app/` (NU mai "React v3 future" per line 5). Per [[DECISIONS.md §D015]] strategic pivot 2026-05-16 → [[DECISIONS.md §D026]] Phase 6 BATCH 24-task LANDED Pre-Beta LOCK 2 → [[DECISIONS.md §D028]] React entry swap LANDED 2026-05-19 (vanilla preserved `index-vanilla-legacy.html` backup NU deploy-at). Branch active: `feature/v3-react-clasic` merged main; `feature/v2-vanilla-port` archive-quality NU mai primește vanilla port additions post-D015.
+- **Bugatti Audit Nuclear procedure** LOCKED V1 PROC per [[DECISIONS.md §D029]] = continuous neîntrerupt multi-noapte CC autonomous Opus MAX log-only quality-asymptotic until Daniel explicit STOP. Trigger: Daniel manual paste `📥_inbox/PROMPT_CC_audit_nuclear_full_2026-05-19.md`. Output `📤_outbox/audit-nuclear-2026-05-19/`. Paralel cu Daniel Gates smoke production manual OK (smoke CEO focus, audit CC altă sesiune concurrent).
+
+---
+
 🦫 **PROJECT INSTRUCTIONS V6 = Co-CTO operational protocol. Bugatti craft. ANDURA_PRIMER.md FIRST read §CC.2 startup. Wiki radical archived 99-archive/. DECISIONS.md SSOT singular live. Maintained per substantive vault structural change.**

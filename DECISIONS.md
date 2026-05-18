@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D028
-total_entries: 28
+latest_entry: D029
+total_entries: 29
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -78,7 +78,8 @@ D024 | 2026-05-17 | UX | Pre-Beta wording RO Co-CTO autonomous compose OK Daniel
 D025 | 2026-05-18 | STRATEGY | Phase 5 BATCH 20-task LANDED 22 commits 4290 PASS engine adapters Phase 6 foundations polish | LOCKED V1 | DECISIONS.md §D025
 D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027
 D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4303→4522 PASS (+219) + TS strict maximal | LOCKED V1 | DECISIONS.md §D026
-D028 | 2026-05-19 | STRATEGY | React entry swap LANDED andura.app/ vanilla→React production + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
+D028 | 2026-05-19 | PROC | React entry swap LANDED andura.app/ vanilla→React production Option 1 rename + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
+D029 | 2026-05-19 | PROC | Bugatti Audit Nuclear procedure continuous neîntrerupt multi-noapte Opus MAX log-only quality-asymptotic until Daniel STOP | LOCKED V1 | DECISIONS.md §D029
 
 ---
 
@@ -401,12 +402,12 @@ D027 §5 engine API grep primary-source mandatory invariant. Task_05/06/07/08 sk
 
 ---
 
-### D028 — STRATEGY — React entry swap LANDED andura.app/ vanilla→React production
+### D028 — PROC — React entry swap LANDED andura.app/ vanilla→React production
 
 **Date:** 2026-05-19
-**Category:** STRATEGY (production entry tipping moment)
-**Status:** LOCKED V1
-**Source:** Daniel CEO directive 2026-05-19 deploy React production post Phase 6 BATCH closure D026
+**Category:** PROC (entry swap rename pattern + rollback path + vanilla preservation policy)
+**Status:** LOCKED V1 PERMANENT
+**Source:** Daniel CEO directive 2026-05-19 deploy React production post Phase 6 BATCH closure D026 + Co-CTO Bugatti craft Option 4 + 1 combined verdict
 **Cross-refs:** [[DECISIONS.md §D015 vanilla legacy strategy "până React LANDED"]], [[DECISIONS.md §D016 nav 6→4 EXCLUSIV React]], [[DECISIONS.md §D026 Phase 6 BATCH closure Pre-Beta LOCK 2]]
 **Backup tags:** `pre-react-entry-swap-2026-05-19` (HEAD `fb0b10b` pre-swap restore point)
 
@@ -453,6 +454,52 @@ Instant rollback prin `git revert <swap-commit-sha>` restores vanilla entry exac
 #### §7 Risk
 
 Minimal — reversibil 100% prin git revert + GH Pages auto-redeploy. Zero downtime expected (GH Pages atomic publish). PWA SW `cleanupOutdatedCaches: true` + `registerType: 'autoUpdate'` (per `vite.config.js` VitePWA config) ensures clients cu cached vanilla SW invalidates + fetches React fresh on next visit + UpdatePrompt component prompt user pentru reload.
+
+---
+
+### D029 — PROC — Bugatti Audit Nuclear procedure continuous neîntrerupt multi-noapte
+
+**Date:** 2026-05-19
+**Category:** PROC (audit procedure NEW LOCK pre-Launch nuclear gate definition)
+**Status:** LOCKED V1 PERMANENT
+**Source:** Daniel CEO directive 2026-05-19 verbatim *"FULL AUDIT. Fiecare linie cod citita, fiecare virgula, TOT pe latest commit LANDED. 20000 ore I don't care"* + *"absolut full"* + *"ruleaze neintrerupt pana nu il opresc eu"* + *"da tu prompt de 1000 nopti audit nuclear daca e cazul"* + *"high effort sau max?"* → Co-CTO verdict Opus MAX thinking budget
+**Cross-refs:** [[DECISIONS.md §D026 Phase 6 BATCH closure Pre-Beta LOCK 2]], [[DECISIONS.md §D028 React entry swap LANDED]], [[📥_inbox/PROMPT_CC_audit_nuclear_full_2026-05-19.md §1-§25]], [[📥_inbox/_CONSUMED/HANDOVER_2026-05-19_phase-6-landed-deploy-audit-prep.md §3-§4]]
+**Supersede:** NU (NEW process LOCK pre-Launch — extension PRIMER §6 #2 Bugatti audit nuclear definition)
+
+#### §1 Mode
+
+Continuous neîntrerupt multi-noapte CC autonomous, Opus EXCLUSIVELY MAX thinking budget. NU auto-terminate post primary §1-§24 pass — auto-iterative deep-dive infinit-iterative post §24 → secondary CRITICAL/HIGH → tertiary MED/LOW → quaternary NIT polish — until Daniel explicit STOP/caveman/stai/Ctrl+C.
+
+#### §2 Stop trigger UNIC
+
+Daniel explicit STOP signal (verbatim STOP / caveman / stai / Ctrl+C / "termina"). ZERO alt mechanism auto-terminate (NU bandwidth, NU iteration count, NU coverage %, NU time-bound). Quality-asymptotic per *"20000 ore I don't care"* directive.
+
+#### §3 Scope
+
+ALL on HEAD post `deploy-react-production-2026-05-19` tag (`caaae99` merge commit):
+- ~100k LOC source (`src/**` cu engine + react + coach + util + schema + storage + pages legacy)
+- ~250k+ total cu tests (251 test files 4522 PASS) + docs (DECISIONS.md + ANDURA_PRIMER.md + 03-decisions/_FROZEN ADRs + 04-architecture/mockups DESIGN MASTER + 07-meta/karpathy-skills-ref + restul vault).
+
+#### §4 Procedure §1-§25 (per PROMPT_CC_audit_nuclear_full_2026-05-19.md)
+
+§1 Source code line-by-line + §2 Tests 251 files + §3 TS strict + §4 Security 16 sub + §5 Performance 15 sub + §6 A11y WCAG 2.1 AA 13 sub + §7 UX flows E2E 13 sub + §8 Engine correctness 20 sub + §9 Compliance 14 sub + §10 LOCK V1 chain-of-trust + §11 i18n RO conventions + §12 Data integrity migration + §13 Error handling cross-cutting + §14 State machine integrity + §15 Cross-browser + §16 PWA spec compliance + §17 Telemetry observability + §18 Documentation + §19 Visual regression pixel parity + §20 Bundle build artifact + §21 Git hygiene + §22 Refactor-later-NEVER scan + §23 Self-correction loop verify + §24 Production readiness final % weighted score + §25 Procedure meta (continuous neîntrerupt loop §1→§24 + secondary/tertiary/quaternary iterative + auto-restart capability via `_progress.md`).
+
+#### §5 Output structure
+
+Log-only backlog NU auto-fix NU commit:
+- `📤_outbox/audit-nuclear-2026-05-19/findings-§N.md` per category cu severity classification (CRITICAL / HIGH / MED / LOW / NIT)
+- `📤_outbox/audit-nuclear-2026-05-19/SUMMARY.md` aggregate severity matrix + production readiness % weighted final score
+- `📤_outbox/audit-nuclear-2026-05-19/_progress.md` checkpoint resume capable post crash sau Ctrl+C explicit Daniel
+
+Daniel decide fix combined backlog smoke #7 per PRIMER §6 cluster (smoke production findings + audit findings combined → fix → Beta launch).
+
+#### §6 Trigger
+
+Daniel manual paste `📥_inbox/PROMPT_CC_audit_nuclear_full_2026-05-19.md` în sesiune CC dedicated (separate de Daniel Gates smoke production manual — paralel OK, smoke CEO focus telefon + audit CC autonomous concurrent altă sesiune). NU auto-launch — explicit Daniel decision when să demareze.
+
+#### §7 Risk
+
+Audit log-only ZERO modificare cod. Findings backlog informativ, fix-uri separat cluster post-audit. Single risk: bandwidth CC autonomous exhaust pre-Daniel STOP — mitigated prin `_progress.md` checkpoint + resume capability post crash sau context reset.
 
 ---
 
