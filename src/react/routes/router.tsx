@@ -35,6 +35,7 @@ import { SettingsPrefs } from './screens/cont/SettingsPrefs';
 import { SettingsPrivacy } from './screens/cont/SettingsPrivacy';
 import { SettingsTerms } from './screens/cont/SettingsTerms';
 import { SettingsExport } from './screens/cont/SettingsExport';
+import { SettingsDanger } from './screens/cont/SettingsDanger';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -94,6 +95,7 @@ export const router = createBrowserRouter([
           { path: 'settings-privacy', element: <SettingsPrivacy /> },
           { path: 'settings-terms', element: <SettingsTerms /> },
           { path: 'settings-export', element: <SettingsExport /> },
+          { path: 'settings-danger', element: <SettingsDanger /> },
         ],
       },
     ],
