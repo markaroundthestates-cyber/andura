@@ -50,7 +50,7 @@ function parseMeta(meta: string | undefined): ParsedMeta {
   return {
     sets: setsMatch ? Number(setsMatch[1]) : 0,
     dur: durMatch ? Number(durMatch[1]) : 0,
-    volume: volMatch ? Number(volMatch[1].replace(/\s/g, '')) : 0,
+    volume: volMatch && volMatch[1] ? Number(volMatch[1].replace(/\s/g, '')) : 0,
   };
 }
 

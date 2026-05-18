@@ -118,7 +118,7 @@ describe('WorkoutPreview — duration + volume estimates', () => {
 
     renderPreview({ intensityMod: 'plus' });
     const plusTexts = screen.getAllByTestId('preview-volume');
-    const plusKg = parseInt(plusTexts[plusTexts.length - 1].textContent?.replace(/\D/g, '') ?? '0', 10);
+    const plusKg = parseInt(plusTexts[plusTexts.length - 1]!.textContent?.replace(/\D/g, '') ?? '0', 10);
 
     expect(plusKg).toBeGreaterThan(minusKg);
   });

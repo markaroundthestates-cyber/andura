@@ -95,6 +95,7 @@ export function detectAggressiveLoad(
   if (setHistory.length === 0) return { trigger: false };
 
   const last = setHistory[setHistory.length - 1];
+  if (last === undefined) return { trigger: false };
 
   // 1. fast_sets — insufficient recovery between sets
   if (newSet.timestamp - last.timestamp < thresholds.fastSetsIntervalMs) {

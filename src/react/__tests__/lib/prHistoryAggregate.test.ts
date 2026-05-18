@@ -65,8 +65,8 @@ describe('getPRHistoryAll', () => {
     });
     const prs = getPRHistoryAll();
     expect(prs).toHaveLength(2);
-    expect(prs[0].exerciseId).toBe('row'); // newest first
-    expect(prs[1].exerciseId).toBe('bench');
+    expect(prs[0]!.exerciseId).toBe('row'); // newest first
+    expect(prs[1]!.exerciseId).toBe('bench');
   });
 
   it('skips non-PR sets', () => {

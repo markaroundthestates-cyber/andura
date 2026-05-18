@@ -87,8 +87,8 @@ describe('NutritionInline — edit mode kcal', () => {
     fireEvent.click(screen.getByTestId('nutri-save'));
     const log = useNutritionStore.getState().dailyLog;
     expect(log).toHaveLength(1);
-    expect(log[0].kcal).toBe(2000);
-    expect(log[0].protein).toBeNull();
+    expect(log[0]!.kcal).toBe(2000);
+    expect(log[0]!.protein).toBeNull();
   });
 
   it('Save NU commits cand value out of range (kcal > 9999)', () => {
@@ -114,7 +114,7 @@ describe('NutritionInline — edit mode protein', () => {
     fireEvent.click(screen.getByTestId('nutri-save'));
     const log = useNutritionStore.getState().dailyLog;
     expect(log).toHaveLength(1);
-    expect(log[0].protein).toBe(150);
+    expect(log[0]!.protein).toBe(150);
   });
 });
 
@@ -127,8 +127,8 @@ describe('NutritionInline — both edit', () => {
     fireEvent.change(screen.getByTestId('nutri-protein-input'), { target: { value: '160' } });
     fireEvent.click(screen.getByTestId('nutri-save'));
     const log = useNutritionStore.getState().dailyLog;
-    expect(log[0].kcal).toBe(2100);
-    expect(log[0].protein).toBe(160);
+    expect(log[0]!.kcal).toBe(2100);
+    expect(log[0]!.protein).toBe(160);
   });
 });
 

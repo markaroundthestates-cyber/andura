@@ -245,7 +245,7 @@ describe('engineWrappers — getTodayWorkout (Phase 6 task_02 Option C real wire
     if (w !== null) {
       expect(Array.isArray(w.exercises)).toBe(true);
       if (w.exercises.length > 0) {
-        const ex = w.exercises[0];
+        const ex = w.exercises[0]!;
         expect(typeof ex.id).toBe('string');
         expect(typeof ex.name).toBe('string');
         expect(typeof ex.sets).toBe('number');

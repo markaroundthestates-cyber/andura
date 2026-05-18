@@ -136,7 +136,7 @@ describe('workoutStore — state machine transitions', () => {
   it('logSet appends entry la history per exIdx', () => {
     useWorkoutStore.getState().logSet(0, { kg: 22.5, reps: 10, rating: 'potrivit' });
     expect(useWorkoutStore.getState().history[0]).toHaveLength(1);
-    expect(useWorkoutStore.getState().history[0][0].kg).toBe(22.5);
+    expect(useWorkoutStore.getState().history[0]![0]!.kg).toBe(22.5);
   });
 
   it('logSet multiple appends preserva order', () => {
@@ -144,7 +144,7 @@ describe('workoutStore — state machine transitions', () => {
     useWorkoutStore.getState().logSet(0, { kg: 22.5, reps: 8, rating: 'potrivit' });
     useWorkoutStore.getState().logSet(0, { kg: 25, reps: 6, rating: 'greu' });
     expect(useWorkoutStore.getState().history[0]).toHaveLength(3);
-    expect(useWorkoutStore.getState().history[0][2].rating).toBe('greu');
+    expect(useWorkoutStore.getState().history[0]![2]!.rating).toBe('greu');
   });
 
   it('logSet izolat per exIdx (multi-exercise flow)', () => {

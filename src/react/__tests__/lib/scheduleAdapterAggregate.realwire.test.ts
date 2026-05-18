@@ -91,7 +91,7 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
     if (out!.exercises.length > 0) {
-      const ex = out!.exercises[0];
+      const ex = out!.exercises[0]!;
       expect(typeof ex.id).toBe('string');
       expect(typeof ex.name).toBe('string');
       expect(typeof ex.sets).toBe('number');

@@ -131,5 +131,5 @@ export function coachPick(
     seed !== undefined
       ? Math.abs(seed) % pool.length
       : Math.floor(Math.random() * pool.length);
-  return pool[idx];
+  return pool[idx] ?? '';
 }

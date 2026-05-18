@@ -38,7 +38,7 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
       { type: 'protein_deficit', severity: 'warning', message: 'Proteine sub target' },
     ] as unknown as ReturnType<typeof runProactiveChecks>);
     const alerts = getProactiveAlerts();
-    expect(alerts[0].severity).toBe('warn');
+    expect(alerts[0]!.severity).toBe('warn');
   });
 
   it('severity mapping: info → info', () => {
@@ -46,7 +46,7 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
       { type: 'inactivity', severity: 'info', message: 'Reia ritmul' },
     ] as unknown as ReturnType<typeof runProactiveChecks>);
     const alerts = getProactiveAlerts();
-    expect(alerts[0].severity).toBe('info');
+    expect(alerts[0]!.severity).toBe('info');
   });
 
   it('severity mapping: success → info collapse (NU urgent UI bias)', () => {
@@ -54,7 +54,7 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
       { type: 'streak_milestone', severity: 'success', message: 'Streak 7 zile' },
     ] as unknown as ReturnType<typeof runProactiveChecks>);
     const alerts = getProactiveAlerts();
-    expect(alerts[0].severity).toBe('info');
+    expect(alerts[0]!.severity).toBe('info');
   });
 
   it('severity mapping: unknown → info default', () => {
@@ -62,7 +62,7 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
       { type: 'mystery', severity: 'cosmic' as unknown as 'warning', message: 'Whatever' },
     ] as unknown as ReturnType<typeof runProactiveChecks>);
     const alerts = getProactiveAlerts();
-    expect(alerts[0].severity).toBe('info');
+    expect(alerts[0]!.severity).toBe('info');
   });
 
   it('id generation: type_index unique per alert', () => {
@@ -83,14 +83,14 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
     vi.mocked(runProactiveChecks).mockReturnValue([
       { type: 'pr_opportunity', severity: 'success', message: 'Zi de PR azi' },
     ] as unknown as ReturnType<typeof runProactiveChecks>);
-    expect(getProactiveAlerts()[0].text).toBe('Zi de PR azi');
+    expect(getProactiveAlerts()[0]!.text).toBe('Zi de PR azi');
   });
 
   it('missing message → empty string defensive', () => {
     vi.mocked(runProactiveChecks).mockReturnValue([
       { type: 'unknown', severity: 'info' } as unknown as ReturnType<typeof runProactiveChecks>[number],
     ] as unknown as ReturnType<typeof runProactiveChecks>);
-    expect(getProactiveAlerts()[0].text).toBe('');
+    expect(getProactiveAlerts()[0]!.text).toBe('');
   });
 
   it('ctx pass-through to engine', () => {

@@ -230,9 +230,9 @@ describe('PostRpe — submit pipeline', () => {
     await waitFor(() => {
       const exercises = useWorkoutStore.getState().lastSession?.exercises;
       // exIdx 0: 22.5*10 + 22.5*10 + 22.5*8 = 450 + 180 = 630
-      expect(exercises?.[0].totalVolume).toBe(630);
+      expect(exercises?.[0]!.totalVolume).toBe(630);
       // exIdx 1: 17.5*8 + 17.5*8 = 280
-      expect(exercises?.[1].totalVolume).toBe(280);
+      expect(exercises?.[1]!.totalVolume).toBe(280);
     });
   });
 
@@ -242,7 +242,7 @@ describe('PostRpe — submit pipeline', () => {
     await waitFor(() => {
       const exercises = useWorkoutStore.getState().lastSession?.exercises;
       // Bench Press peak: 22.5kg × 10 reps = 22.5 * (1+10/30) = 30 kg 1RM
-      expect(exercises?.[0].peakOneRM).toBe(30);
+      expect(exercises?.[0]!.peakOneRM).toBe(30);
     });
   });
 

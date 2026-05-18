@@ -93,9 +93,9 @@ describe('LogWeight — persist', () => {
     fireEvent.click(screen.getByTestId('weight-save'));
     const log = useProgresStore.getState().weightLog;
     expect(log).toHaveLength(1);
-    expect(log[0].kg).toBe(78.5);
-    expect(log[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(typeof log[0].ts).toBe('number');
+    expect(log[0]!.kg).toBe(78.5);
+    expect(log[0]!.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(typeof log[0]!.ts).toBe('number');
   });
 
   it('Save navigates back to /app/progres', () => {

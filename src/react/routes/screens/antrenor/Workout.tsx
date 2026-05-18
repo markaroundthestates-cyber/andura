@@ -86,9 +86,10 @@ export function Workout(): JSX.Element {
   // [...] → session UI branch. safeExIdx + currentExercise defensive-default
   // for loading/empty states.
   const safeExIdx = hasWorkout && exercises !== null ? Math.min(exIdx, exercises.length - 1) : 0;
-  const currentExercise = hasWorkout && exercises !== null
+  const defaultExercise: PlannedExercise = { id: '', name: '', sets: 0, targetReps: 0, targetKg: 0, restSec: 0 };
+  const currentExercise: PlannedExercise = (hasWorkout && exercises !== null
     ? exercises[safeExIdx]
-    : { id: '', name: '', sets: 0, targetReps: 0, targetKg: 0, restSec: 0 };
+    : undefined) ?? defaultExercise;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
     hasWorkout && currentSetIdx + 1 >= currentExercise.sets;

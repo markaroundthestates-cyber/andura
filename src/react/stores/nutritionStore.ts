@@ -48,7 +48,10 @@ function upsertEntry(
     ];
   }
   const next = [...log];
-  next[idx] = { ...next[idx], ...patch, ts: baseTs };
+  const existing = next[idx];
+  if (existing) {
+    next[idx] = { ...existing, ...patch, ts: baseTs };
+  }
   return next;
 }
 

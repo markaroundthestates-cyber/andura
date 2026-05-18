@@ -85,7 +85,7 @@ describe('getCoachToday — Option B enrich 8-field aggregate', () => {
     ]);
     const out = await getCoachToday();
     expect(out.patternsBanner).toHaveLength(1);
-    expect(out.patternsBanner[0].id).toBe('STAGNATION');
+    expect(out.patternsBanner[0]!.id).toBe('STAGNATION');
   });
 
   it('alerts propagates din getProactiveAlerts cu severity mapping', async () => {
@@ -94,7 +94,7 @@ describe('getCoachToday — Option B enrich 8-field aggregate', () => {
     ]);
     const out = await getCoachToday();
     expect(out.alerts).toHaveLength(1);
-    expect(out.alerts[0].severity).toBe('warn');
+    expect(out.alerts[0]!.severity).toBe('warn');
   });
 
   it('prWallRecent slice top 3 sorted desc by sessionTs', async () => {
@@ -106,9 +106,9 @@ describe('getCoachToday — Option B enrich 8-field aggregate', () => {
     ]);
     const out = await getCoachToday();
     expect(out.prWallRecent).toHaveLength(3);
-    expect(out.prWallRecent[0].sessionTs).toBe(3000);
-    expect(out.prWallRecent[1].sessionTs).toBe(2000);
-    expect(out.prWallRecent[2].sessionTs).toBe(1000);
+    expect(out.prWallRecent[0]!.sessionTs).toBe(3000);
+    expect(out.prWallRecent[1]!.sessionTs).toBe(2000);
+    expect(out.prWallRecent[2]!.sessionTs).toBe(1000);
   });
 
   it('prWallRecent empty cand getPRHistoryAll returns []', async () => {

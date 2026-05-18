@@ -36,9 +36,9 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     });
     const banners = getPatternsBanner();
     expect(banners).toHaveLength(1);
-    expect(banners[0].id).toBe('STAGNATION');
-    expect(banners[0].severity).toBe('warn');
-    expect(banners[0].text).toMatch(/3 saptamani/);
+    expect(banners[0]!.id).toBe('STAGNATION');
+    expect(banners[0]!.severity).toBe('warn');
+    expect(banners[0]!.text).toMatch(/3 saptamani/);
   });
 
   it('STAGNATION banner NU triggered cand maxStagnationWeeks < 2', () => {
@@ -53,9 +53,9 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     vi.mocked(getAdherenceScore).mockReturnValue({ score: 35, color: 'var(--accent2)', label: 'Slab' });
     const banners = getPatternsBanner();
     expect(banners).toHaveLength(1);
-    expect(banners[0].id).toBe('LOW_ADHERENCE');
-    expect(banners[0].severity).toBe('info');
-    expect(banners[0].text).toMatch(/Adherenta scazuta/);
+    expect(banners[0]!.id).toBe('LOW_ADHERENCE');
+    expect(banners[0]!.severity).toBe('info');
+    expect(banners[0]!.text).toMatch(/Adherenta scazuta/);
   });
 
   it('LOW_ADHERENCE banner NU triggered cand score >= 50', () => {
@@ -71,8 +71,8 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     vi.mocked(getAdherenceScore).mockReturnValue({ score: 30, color: 'var(--accent2)', label: 'Slab' });
     const banners = getPatternsBanner();
     expect(banners).toHaveLength(2);
-    expect(banners[0].id).toBe('STAGNATION');
-    expect(banners[1].id).toBe('LOW_ADHERENCE');
+    expect(banners[0]!.id).toBe('STAGNATION');
+    expect(banners[1]!.id).toBe('LOW_ADHERENCE');
   });
 
   it('defensive: stagnationDetector throws → graceful empty banner skip', () => {

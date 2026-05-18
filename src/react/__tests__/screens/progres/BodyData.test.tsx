@@ -72,11 +72,11 @@ describe('BodyData — partial entry support', () => {
     fireEvent.click(screen.getByTestId('body-data-save'));
     const data = useProgresStore.getState().bodyData;
     expect(data).toHaveLength(1);
-    expect(data[0].waistCm).toBe(85);
-    expect(data[0].bicepsCm).toBe(35);
-    expect(data[0].chestCm).toBeUndefined();
-    expect(data[0].hipsCm).toBeUndefined();
-    expect(data[0].thighCm).toBeUndefined();
+    expect(data[0]!.waistCm).toBe(85);
+    expect(data[0]!.bicepsCm).toBe(35);
+    expect(data[0]!.chestCm).toBeUndefined();
+    expect(data[0]!.hipsCm).toBeUndefined();
+    expect(data[0]!.thighCm).toBeUndefined();
   });
 
   it('Save navigates back to /app/progres', () => {
@@ -96,7 +96,7 @@ describe('BodyData — full entry', () => {
     fireEvent.change(screen.getByTestId('bd-bicepsCm'), { target: { value: '35' } });
     fireEvent.change(screen.getByTestId('bd-thighCm'), { target: { value: '58' } });
     fireEvent.click(screen.getByTestId('body-data-save'));
-    const data = useProgresStore.getState().bodyData[0];
+    const data = useProgresStore.getState().bodyData[0]!;
     expect(data.waistCm).toBe(85);
     expect(data.chestCm).toBe(102);
     expect(data.hipsCm).toBe(95);

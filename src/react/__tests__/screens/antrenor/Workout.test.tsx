@@ -189,8 +189,8 @@ describe('Workout — state machine logging → rest', async () => {
     expect(hist).toHaveLength(1);
     // Phase 4 task_14: timestamp auto-stamped by logSet — match partial
     // pentru backward compat assertion intent (kg/reps/rating).
-    expect(hist[0]).toMatchObject({ kg: 25, reps: 8, rating: 'greu' });
-    expect(typeof hist[0].timestamp).toBe('number');
+    expect(hist![0]).toMatchObject({ kg: 25, reps: 8, rating: 'greu' });
+    expect(typeof hist![0]!.timestamp).toBe('number');
   });
 
   it('skip rest button transitions phase back la logging', async () => {
