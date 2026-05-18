@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-16
+last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D016
-total_entries: 16
+latest_entry: D028
+total_entries: 28
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -67,6 +67,18 @@ D013 | 2026-05-16 | REGLAJ | Pre-Beta LOCK 1 100% complete + deploy main 2026-05
 D014 | 2026-05-16 | PROC | Branch divergence reconcile main ↔ feature/v2-vanilla-port strategy: merge feature → main -X theirs (prefer feature on conflicts) post 3 possibly-orphan items verified absorbed. History preserved via merge graph; feature content canonical post-merge. Investigation: INVESTIGATION_2026-05-16_main_vs_feature.md | LOCKED V1 | DECISIONS.md §D014
 D015 | 2026-05-16 | STRATEGY | STRAT PIVOT Pre-Beta NU vanilla port — lansăm Andura Clasic pe React mockup andura-clasic.html DESIGN MASTER direct. Supersedes part of D-LEGACY-049 Port-First-Then-React Step 1 vanilla port closure (păstrăm Step 2 React migration). Backend LOCK 1 100% (lib 657, Big 11 8/8, Calendar engine, kcal floor, BATCH 2 Antrenor, auth, tests 3743 PASS) reusable React migration. Vanilla index.html 6 taburi = LEGACY până React LANDED | LOCKED V1 | DECISIONS.md §D015
 D016 | 2026-05-16 | PROC | Bottom nav 6→4 (Antrenor/Progres/Istoric/Cont) + screen architecture 50+ screens goto()-based restructure se face EXCLUSIV în React build pe spec mockup, NU în vanilla index.html + src/pages/*.js legacy. Eliminăm double-work non-Bugatti. Implementation path next chat (React stack + state mgmt + routing + backend reuse) | LOCKED V1 | DECISIONS.md §D016
+D017 | 2026-05-16 | STRATEGY | Phase 1 React Foundation LANDED Vite+React19+TS+Zustand+Tailwind extend Batch 1 scaffold | LOCKED V1 | DECISIONS.md §D017
+D018 | 2026-05-16 | STRATEGY | Phase 2 Routing Skeleton LANDED C hybrid + slice mic + Layout+BottomNav+ProtectedRoute+nav helper | LOCKED V1 | DECISIONS.md §D018
+D019 | 2026-05-16 | PROC | Track 5 NEW E2E Playwright disclaimer dismiss helper backlog (23 fails LOCK 4 Medical Disclaimer pre-test) | LOCKED V1 | DECISIONS.md §D019
+D020 | 2026-05-16 | ARCH | Test paradigm split Phase 2+ MemoryRouter jsdom tests + createBrowserRouter prod (Node 25 AbortSignal mismatch) | LOCKED V1 | DECISIONS.md §D020
+D021 | 2026-05-17 | STRATEGY | Phase 3 Antrenor LANDED 9-task atomic React tab parity mockup + 14 sub-screens nested goto() | LOCKED V1 | DECISIONS.md §D021
+D022 | 2026-05-17 | STRATEGY | Phase 4 BATCH task_13-22 LANDED 10-task atomic 14 commits 4209 PASS WORDING backlog 22 items | LOCKED V1 | DECISIONS.md §D022
+D023 | 2026-05-17 | PROC | MCP filesystem write_file MANDATORY vault Windows emoji paths verify list_directory | LOCKED V1 | DECISIONS.md §D023
+D024 | 2026-05-17 | UX | Pre-Beta wording RO Co-CTO autonomous compose OK Daniel review post-Beta a-z | LOCKED V1 | DECISIONS.md §D024
+D025 | 2026-05-18 | STRATEGY | Phase 5 BATCH 20-task LANDED 22 commits 4290 PASS engine adapters Phase 6 foundations polish | LOCKED V1 | DECISIONS.md §D025
+D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027
+D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4303→4522 PASS (+219) + TS strict maximal | LOCKED V1 | DECISIONS.md §D026
+D028 | 2026-05-19 | STRATEGY | React entry swap LANDED andura.app/ vanilla→React production + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
 
 ---
 
@@ -272,6 +284,175 @@ Restructure 6→4 + screen architecture full migration = se face EXCLUSIV în Re
 - Bugatti craft peak — refactor later NEVER happens, ZERO compromise
 - Gigel Test mandatory pre-feature decisions React build (orice paradigm shift verificat mockup spec compliance)
 - Daniel Gates production + Bugatti audit nuclear pre-launch invariant
+
+---
+
+### D027 — STRATEGY — Phase 6 task_02 Option C big-bang async migration React consumers
+
+**Date:** 2026-05-18
+**Category:** STRATEGY (architectural truth-reflection over cache facade)
+**Status:** LOCKED V1
+**Source:** Daniel CEO chat verbatim 2026-05-18 "da facem C" post Co-CTO pivot challenge "care e quality real"
+**Cross-refs:** [[DECISIONS.md §D025 Phase 5 BATCH closure]], [[📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md]], [[📥_inbox/phase-6-tasks/ORCHESTRATOR.md §5 fail-stop]]
+**Backup tag:** pre-phase6-task-02-2026-05-18 @ `c64e692` (task_02 NU committed, tree clean revert target)
+
+#### §1 Context
+
+Phase 6 BATCH 24-task autonomous run. Task #1.A deloadAdapter batch 8 ULTIM LANDED `810c783` + task_01 scheduleAdapter.getDailyWorkout backend consumer LANDED `c64e692` (4318 PASS +28 cumulative vs Phase 5 close 4290). Task_02 (scheduleAdapterAggregate React real wire) fail-stop per ORCHESTRATOR §5 — sketch §B asuma "1 fișier 1 commit", CC dry-run discovery ~80-120 test cascade + 5 React consumer async migration scope materially beyond sketch.
+
+#### §2 Decision
+
+Option C big-bang async migration React consumers. NU Option A split (atomization same cascade) sau Option B sync-cached facade (CC recomandare inițială + Co-CTO agreed greșit). Daniel pivot challenge "care e quality real" → Co-CTO pivot la C cu motivare onestă.
+
+#### §3 Rationale
+
+- Engine pipeline ESTE async (~100-300ms calculate). React trebuie reflecte adevăr arhitectural, NU să-l ascundă cache facade.
+- Cache trucaj = datorie tehnică (invalidare bugs viitoare: date change midnight + log update + settings change).
+- Bugatti audit nuclear Phase 8 pre-Launch = workaround-uri = red flags.
+- Loading state "se incarca..." explicit = UX onest. Cold flash din cache = magic ascuns perceptibil Maria 65 phone slab Romania 3G.
+- Orizont 2-3 ani Daniel = datorie crește exponențial dacă lași.
+
+#### §4 Impact
+
+- task_02 sketch REWRITE noul chat cu scope Option C explicit (§A grep primary-source stores + §B 5 consumers async + §C ~100 test rewrite enumerate + §D multi-commit budget per ORCHESTRATOR §2 multi-block clauză)
+- Est durată CC task_02: 3-5h autonomous Opus
+- BATCH 24 total durată estimată ~dublu față inițială
+- task_03-24 sketches intact, verify drift pe parcurs (high-risk task_06 patterns banner + task_22/23 dashboard data sources, low-risk Cont sub-screens mockup parity)
+
+#### §5 Anti-recurrence
+
+Co-CTO sketch §A grep primary-source mandatory pre-spec. Specific: stores Zustand exports (slice names + field shapes) verify ÎNAINTE de a scrie buildXState helpers. Slip 2026-05-18 task_02: am scris `workoutStore.userProfile / exerciseWeights / profileTier / weeksElapsed` — NU există. CC corectat dry-run la `useOnboardingStore.data` actual. Cause: skip grep sub autonomy pressure BATCH drafting fast. PROC future: §AR.21 grep evidence inline reiterated mandatory.
+
+---
+
+### D026 — STRATEGY — Phase 6 BATCH 24-task LANDED end-to-end
+
+**Date:** 2026-05-19
+**Category:** STRATEGY (BATCH closure milestone)
+**Status:** LOCKED V1
+**Source:** Phase 6 BATCH autonomous execution per ORCHESTRATOR.md (D027 LOCKED V1 Option C cascade + Option B composer parallel)
+**Cross-refs:** [[DECISIONS.md §D025 Phase 5 BATCH closure]], [[DECISIONS.md §D027 task_02 Option C STRATEGY]], [[📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md]]
+**Backup tags:** `pre-phase6-task-01-2026-05-18` → `pre-phase6-task-24-2026-05-19` (24 incremental + milestone `phase-6-batch-landed-2026-05-19`)
+
+#### §1 Scope
+
+Phase 6 BATCH 24-task autonomous run LANDED end-to-end. Closes Pre-Beta LOCK 2 React Andura Clasic build (per D015 strategic pivot 2026-05-16). Pipeline §42.10 engine real wire 8/8 + Cont Tab 9 sub-screens + polish pre-Beta 7-task cluster.
+
+#### §2 Sub-totals (24-task split)
+
+**Engine pipeline real wire 8/8 (task_01-08):**
+1. task_01 `scheduleAdapter.getDailyWorkout` backend consumer runPipeline 8 adapters + sessionBuilder delegate (`c64e692`)
+2. task_02 `scheduleAdapterAggregate` Option C async cascade — sync→async signature propagation 5 React consumers (`31cc523`) per D027 STRATEGY
+3. task_03 `engineWrappers.getNutritionTargetsToday` async BN engine wrapper Kalman posterior.mu + LOCK 8 floor 1200 (`f5424a2`)
+4. task_04 `bayesianNutritionAggregate` async real wire BN engine (`d7b04c7`)
+5. task_05 `engineWrappers.getPatternsBanner` + `getProactiveAlerts` Option B composer pure-function engines (`85fb559`)
+6. task_06 `coachDirectorAggregate` 8-field enrich + 3 NEW Antrenor components (PatternsBanner + PRWallRecent + AlertsBanner) (`ba3fa93`)
+7. task_07 Workout.tsx aaFriction engine signals end-to-end wire (`db100d9`)
+8. task_08 Adherence Engine real wire `getAdherenceOutput` + `engineSignalsAggregate` BASELINE_ADHERENCE eliminated (`9914735`)
+
+**Cont sub-screens 9/9 (task_09-17):**
+9. task_09 SettingsProfile Big 6 edit (`2432d90`)
+10. task_10 SettingsNotifications toggle + frequency + days + time (`f47f851`)
+11. task_11 SettingsSubscription Beta gratuit info (`3ea0af9`)
+12. task_12 SettingsAppearance theme + nav style (`ba3d0aa`)
+13. task_13 SettingsPrefs units + week start + locale (`c764b9c`)
+14. task_14 SettingsPrivacy data export + telemetry opt-in (`03878ce`)
+15. task_15 SettingsTerms T&C + Medical Disclaimer 2-tab (`19b65a5`)
+16. task_16 SettingsExport local JSON download user data (`ad26465`)
+17. task_17 SettingsDanger logout + reset + delete cont confirm modals (`bd31e1f`)
+
+**Polish pre-Beta 7/7 (task_18-24):**
+18. task_18 TS `noUncheckedIndexedAccess` strict flag enable + 83 errors fixed granular (`6f44207`)
+19. task_19 TS `exactOptionalPropertyTypes` strict flag enable — surprise 0 errors (codebase already explicit) (`8b64369`)
+20. task_20 ErrorBoundary + Suspense wrap Outlet Layout root (`f47a170`)
+21. task_21 vite-plugin-pwa service worker offline + UpdatePrompt component (`e4ca6eb`)
+22. task_22 Progres full dashboard TDEEStrip + FatigueStrip + HeatMapWeekly (`c5aef59`)
+23. task_23 Istoric enrich streak stats grid + PR Wall full list (`c493445`)
+24. task_24 D026 STRATEGY closure + milestone tag (this commit)
+
+#### §3 Tests delta cumulative
+
+- Phase 5 baseline: 4290 PASS
+- Phase 6 task #1.A precedent (`810c783`): 4303 PASS (+13)
+- Phase 6 BATCH start: 4303 PASS
+- Phase 6 task_01: 4318 (+15)
+- Phase 6 task_02: 4332 (+14)
+- Phase 6 task_03: 4343 (+11)
+- Phase 6 task_04: 4348 (+5)
+- Phase 6 task_05: 4370 (+22)
+- Phase 6 task_06: 4396 (+26)
+- Phase 6 task_07: 4404 (+8)
+- Phase 6 task_08: 4417 (+13)
+- Phase 6 task_09-17 (Cont sub-screens): cumulative +~80 tests
+- Phase 6 task_18-23 (polish): cumulative +~25 tests
+- **Phase 6 final: 4522 PASS (+219 vs Phase 5 baseline 4303, +232 vs Phase 5 close 4290)**
+- TS strict 0 errors invariant (both `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes` enabled)
+
+#### §4 Carry-forward Phase 7
+
+- **Daniel Gates smoke production manual** (Firebase + PWA + telefon Android primary, single comprehensive gate a-z per PRIMER §4 sequencing)
+- **Bugatti Full Audit pre-Launch nuclear gate** (CC autonomous candidate post smoke findings — fiecare linie cod + fiecare virgula latest commit LANDED)
+- **Fix ALL issues surfaced** (combined smoke + Bugatti audit backlog)
+- **Beta launch**
+
+#### §5 Anti-recurrence carry-forward
+
+D027 §5 engine API grep primary-source mandatory invariant. Task_05/06/07/08 sketches v1 fabricated APIs (CoachDirector.run / computeAdherenceScore / store fields invented) — corectate inline §1 fiecare task. Future BATCH drafting: §AR.21 grep evidence ÎNAINTE de a scrie spec §B implementation references.
+
+---
+
+### D028 — STRATEGY — React entry swap LANDED andura.app/ vanilla→React production
+
+**Date:** 2026-05-19
+**Category:** STRATEGY (production entry tipping moment)
+**Status:** LOCKED V1
+**Source:** Daniel CEO directive 2026-05-19 deploy React production post Phase 6 BATCH closure D026
+**Cross-refs:** [[DECISIONS.md §D015 vanilla legacy strategy "până React LANDED"]], [[DECISIONS.md §D016 nav 6→4 EXCLUSIV React]], [[DECISIONS.md §D026 Phase 6 BATCH closure Pre-Beta LOCK 2]]
+**Backup tags:** `pre-react-entry-swap-2026-05-19` (HEAD `fb0b10b` pre-swap restore point)
+
+#### §1 Context
+
+D015 strategic pivot 2026-05-16: lansăm Andura Clasic pe React mockup direct, vanilla `index.html` 6 taburi rămâne legacy live `andura.app/` **până React migration LANDED**. D016 PROC: bottom nav 6→4 + screen architecture restructure se face EXCLUSIV în React build, NU în vanilla. D026 (2026-05-19) closes Pre-Beta LOCK 2 React Andura Clasic build — Phase 1-6 cumulative LANDED end-to-end (engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4522 PASS + TS strict maximal `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes`).
+
+2026-05-19 deploy production tipping moment: React build feature-complete per D026 LANDED criteria, momentul logic per D015 conditional "până React migration LANDED" pentru swap vanilla→React la entry main `andura.app/`.
+
+#### §2 Decision
+
+Swap vanilla `index.html` → React build la `andura.app/` entry point production. Vanilla NU șters — preserved în repo `index-vanilla-legacy.html` ca backup imutabil + sursă reference, exclus din build active. Engine reuse layer (`src/engine/*` + `src/schema/*` + `src/coach/*`) invariant — consumat de React wrappers (`src/react/lib/*Aggregate.ts`) per D026 §1.
+
+#### §3 Implementation
+
+Option 1 rename pattern (per ADR proposal Daniel CEO directive):
+
+1. **`git mv index.html → index-vanilla-legacy.html`** — vanilla preserved în repo backup, NU mai entry build
+2. **`git mv react-test.html → index.html`** — React shell devine entry main
+3. **`vite.config.js`** — `rollupOptions.input` reduced la single `main: 'index.html'` (remove `'react-test': 'react-test.html'` entry parallel)
+4. **`src/main.tsx`** — error message updated `'Root element #root not found in react-test.html'` → `'Root element #root not found in index.html'`
+5. **`tailwind.config.js`** — content scan path `'./react-test.html'` → `'./index.html'`
+
+Build verification: `npm run build` produces `dist/index.html` cu React shell `#root` + script `/assets/main-*.js` cu vendor-react chunk (NU mai vanilla 642KB `main-*.js` bundle). PWA SW + manifest invariant. Tests verde mandatory `npm run test:run` pre-commit husky hook.
+
+#### §4 Rollback path
+
+Instant rollback prin `git revert <swap-commit-sha>` restores vanilla entry exact state. Redeploy GH Pages workflow auto-trigger pe push main reverts live `andura.app/` la vanilla 6 taburi în ~2-3min. Backup tag `pre-react-entry-swap-2026-05-19` permite hard reset point alternative.
+
+#### §5 Vanilla preservation policy
+
+- **`index-vanilla-legacy.html`** preserved în repo, NU deploy-at, NU touch (frozen reference + emergency rollback content source)
+- **`src/pages/*.js`** vanilla legacy (`weight.js`, `dashboard.js`, `coach.js`, `plan.js`, `settings.js`, `auth.js`, `idle.js`, `authShell.js`) — preserved în repo orfan dar reusable engine code via React `src/react/lib/*Aggregate.ts` wrappers per D026 §1 engine pipeline real wire 8/8
+- **`src/engine/*.js`** + **`src/coach/*.js`** + **`src/schema/*.js`** — preserved invariant, consumate de React wrappers (active)
+- **NU șterse**: vanilla source code rămâne canonical reference + engine reuse layer
+
+#### §6 Impact
+
+- **Live `andura.app/`**: React build 4 taburi (Antrenor/Progres/Istoric/Cont) + screen-based `goto()` routing 50+ screens + PWA SW + medical disclaimer + auth + engine pipeline real wire
+- **Vanilla legacy live**: ELIMINATED — `andura.app/` NU mai servește vanilla 6 taburi paradigmă veche (Coach/Dashboard/Greutate/Program/Plan/Setari, page-based `sp()`)
+- **DNS + Hosting**: invariant (GitHub Pages custom domain `andura.app` per CNAME + workflow `.github/workflows/deploy.yml` auto-trigger push main)
+- **Build artifacts**: `dist/index.html` = React shell minimal + `dist/assets/main-*.js` chunked (vendor-react/data/state/icons split per Phase 5 task_20)
+
+#### §7 Risk
+
+Minimal — reversibil 100% prin git revert + GH Pages auto-redeploy. Zero downtime expected (GH Pages atomic publish). PWA SW `cleanupOutdatedCaches: true` + `registerType: 'autoUpdate'` (per `vite.config.js` VitePWA config) ensures clients cu cached vanilla SW invalidates + fetches React fresh on next visit + UpdatePrompt component prompt user pentru reload.
 
 ---
 

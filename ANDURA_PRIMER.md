@@ -146,6 +146,13 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Backup tag pushed: `pre-react-pivot-codify-2026-05-16` @ HEAD post deploy reconcile
 - Next chat: React stack tactical (Vite vs Next.js, state mgmt Zustand vs Context, routing migration, backend reuse plan)
 
+**2026-05-16 Phase 1 + Phase 2 React Andura Clasic build LANDED (chat ACASĂ evening):**
+- Phase 1 Foundation LANDED via 5 atomic commits (Vite + React 19 + TS + Zustand + Tailwind PostCSS extend Batch 1 scaffold existing, NU folder paralel). Tests 3750 PASS (3743 vanilla + 7 React foundation). Backup tag `pre-phase-1-react-foundation-2026-05-16` + milestone `phase-1-foundation-landed-2026-05-16` pushed origin. Per `DECISIONS.md §D017`.
+- Phase 2 Routing Skeleton LANDED via 5 atomic commits (C hybrid routing + slice mic + Layout `<Outlet />` + BottomNav 4 taburi LOCKED V1 + ProtectedRoute auth gate + 4 placeholder tabs + 3 top-level stubs + `gotoPath()` exhaustive type-safe + `createBrowserRouter` data router prod). Tests 3769 PASS (3750 baseline + 19 routing). Backup `pre-phase-2-routing-skeleton-2026-05-16` + milestone `phase-2-routing-skeleton-landed-2026-05-16` pushed. Per `DECISIONS.md §D018`.
+- Phase 3 Antrenor tab full screens awaiting next chat (workout state machine + 8 sub-screens + backend integration real engines + F2/F4/F6/F8/F10/F11 features parity mockup).
+- Track 5 NEW backlog E2E Playwright disclaimer dismiss helper (23 fails pre-existing LOCK 4 Medical Disclaimer NU pre-test setup). Fix la Bugatti audit nuclear pre-Launch gate. Per `DECISIONS.md §D019`.
+- Test paradigm split locked Phase 2+ (MemoryRouter jsdom tests + createBrowserRouter prod — Node 25 AbortSignal mismatch react-router v6.28 data router fetch lifecycle). Per `DECISIONS.md §D020`.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -167,15 +174,24 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - LOCK 10 diacritics strip decision
 - LOCK 9 aaFrictionModal wording potential review
 
-**Track 4 — React Andura Clasic build (NEW post D015 2026-05-16) — Pre-Beta LOCK 2 path:**
-- Strategic stack discussion (React + Vite vs Next.js — Daniel preference, mockup currently Tailwind CDN → PostCSS build)
-- State management: Zustand (lightweight) vs React Context + custom hooks vs alternative — Daniel preference
-- Routing migration screen-based mockup `goto()` 50+ screens → React Router DOM v6+ routes
-- Backend layer reuse plan: import direct din `src/engine/*` (scheduleAdapter + bayesianNutrition + weaknessDetector + fatigueIndex + prEngine + deviationMemory + coachDirector etc.) — preserve test coverage vitest 3743 PASS
-- UI components extraction mockup HTML+CSS+demo JS → React components + Tailwind classes (Tailwind PostCSS build)
-- Test strategy: vitest + jsdom React Testing Library local + Playwright E2E live andura.app smoke + Daniel Gates production manual
-- Pre-Beta LOCK 2 = React Andura Clasic full build pe mockup spec, Bugatti craft, ZERO timing argumente decizie
-- Daniel Gates + Bugatti audit nuclear pre-launch invariant păstrate
+**Track 4 — React Andura Clasic build (per D015 2026-05-16) — Pre-Beta LOCK 2 path:**
+- ✅ Phase 1 Foundation LANDED 2026-05-16 (per `DECISIONS.md §D017`)
+- ✅ Phase 2 Routing Skeleton LANDED 2026-05-16 (per `DECISIONS.md §D018`)
+- Phase 3 Antrenor tab full screens NEXT (workout state machine în single route Zustand + 8 sub-screens energy-check/energy-cause/workout-preview/ceva-nu-merge/pain-button/equipment-swap/aparate-lipsa/schedule-override + post-rpe/post-summary, integration backend `src/engine/*` real engines Bayesian/Fatigue/Specialization/Mode Detection, F2/F4/F6/F8/F10/F11 features parity mockup, extend `GotoScreen` union sub-screens convention LOCK)
+- Phase 4 Progres tab (dashboard + log-weight)
+- Phase 5 Istoric tab (timeline + PR wall + drill-downs)
+- Phase 6 Cont tab (settings + 8 sub-screens)
+- Phase 7 Daniel Gates production smoke manual single comprehensive gate a-z
+- Phase 8 Bugatti audit nuclear pre-Launch gate
+- Phase 9 Beta launch
+
+**Track 5 — E2E Playwright disclaimer dismiss helper backlog (NEW post 2026-05-16 chat ACASĂ QA discovery) — Bugatti audit nuclear pre-Launch gate:**
+- 23 E2E Playwright tests fail pre-existing pe `feature/v2-vanilla-port` baseline (regression LOCK 4 Medical Disclaimer Modal `ecd71a7` D-LEGACY-060 NU pre-test setup)
+- Pattern fail consistent: `<div role="dialog" id="medical-disclaimer-overlay">` intercepts pointer events → click pe `.nb` (vanilla `sp()` nav) timeout 15s/5s
+- Tactical fix: helper `dismissMedicalDisclaimerIfPresent(page)` la beginning fiecărui spec E2E SAU global `beforeEach` în `playwright.config.js`
+- NU bloochează React build path forward (vitest 3769 PASS local separat de Playwright E2E)
+- Fix la Phase 8 Bugatti audit nuclear pre-Launch gate (combined cu alte audit findings)
+- Per `DECISIONS.md §D019`
 
 **End-state final gate sequencing (Daniel CEO directive verbatim):**
 1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16) — backend layer reusable React

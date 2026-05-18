@@ -10,7 +10,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     silent: 'passed-only',
-    include: ['src/**/*.test.{js,ts}'],
+    include: ['src/**/*.test.{js,ts,tsx}'],
+    setupFiles: ['./src/react/__tests__/setup.ts'],
     poolOptions: {
       threads: { execArgv },
       forks: { execArgv },

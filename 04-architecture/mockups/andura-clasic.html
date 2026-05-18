@@ -71,7 +71,7 @@
 
   /* Persona-aware text scaling */
   .persona-maria { --body: 18px; --small: 16px; --display: 36px; --tight: -0.01em; }
-  .persona-gigica { --body: 15px; --small: 13px; --display: 28px; --tight: -0.02em; }
+  .persona-gigel { --body: 15px; --small: 13px; --display: 28px; --tight: -0.02em; }
   .persona-marius { --body: 14px; --small: 12px; --display: 26px; --tight: -0.025em; }
 
   .body-text { font-size: var(--body); }
@@ -368,9 +368,9 @@
   }
 </style>
 </head>
-<body class="persona-gigica">
+<body class="persona-gigel">
 
-<!-- Persona switcher REMOVED (V1 LOCKED). Persona se detecteaza automat din onboarding signals (varsta + obiectiv + frecventa). Body porneste pe persona-gigica default. -->
+<!-- Persona switcher REMOVED (V1 LOCKED). Persona se detecteaza automat din onboarding signals (varsta + obiectiv + frecventa). Body porneste pe persona-gigel default. -->
 
 <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
   <div class="phone" id="phone">
@@ -3005,7 +3005,7 @@
   const personaBtns = document.querySelectorAll('.persona-pill button');
   personaBtns.forEach(b => b.addEventListener('click', () => {
     const p = b.dataset.persona;
-    document.body.classList.remove('persona-maria', 'persona-gigica', 'persona-marius');
+    document.body.classList.remove('persona-maria', 'persona-gigel', 'persona-marius');
     document.body.classList.add('persona-' + p);
     personaBtns.forEach(x => x.classList.toggle('active', x === b));
   }));

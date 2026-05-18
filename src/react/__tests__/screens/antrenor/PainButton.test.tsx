@@ -1,0 +1,144 @@
+// ══ PAIN BUTTON TESTS — task_06 §B region + intensity + CDL stub state ════
+// MemoryRouter jsdom paradigm per D020.
+
+import type { JSX } from 'react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { PainButton } from '../../../routes/screens/antrenor/PainButton';
+
+function LocationProbe(): JSX.Element {
+  const loc = useLocation();
+  const s = (loc.state ?? null) as Record<string, unknown> | null;
+  return (
+    <div data-testid="probe" data-pathname={loc.pathname}>
+      {s ? JSON.stringify(s) : 'no-state'}
+    </div>
+  );
+}
+
+function renderPainButton() {
+  return render(
+    <MemoryRouter initialEntries={['/app/antrenor/pain-button']}>
+      <Routes>
+        <Route path="/app/antrenor/pain-button" element={<PainButton />} />
+        <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+        <Route path="/app/antrenor" element={<LocationProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+describe('PainButton — render', () => {
+  it('renders heading "Unde te doare?"', () => {
+    renderPainButton();
+    expect(
+      screen.getByRole('heading', { name: /Unde te doare/i, level: 1 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders helper copy "Coach evita exercitii"', () => {
+    renderPainButton();
+    expect(screen.getByText(/Coach evita exercitii/i)).toBeInTheDocument();
+  });
+
+  it('renders 15 region buttons', () => {
+    renderPainButton();
+    const regionGroup = screen.getByRole('list', { name: /Zone corp/i });
+    const regionButtons = regionGroup.querySelectorAll('button[data-region]');
+    expect(regionButtons.length).toBe(15);
+  });
+
+  it('renders 3 intensity buttons (Usor / Mediu / Sever)', () => {
+    renderPainButton();
+    expect(screen.getByRole('button', { name: /Usor/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Mediu/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Sever/i })).toBeInTheDocument();
+  });
+
+  it('renders Continue + Exit buttons', () => {
+    renderPainButton();
+    expect(screen.getByTestId('pain-continue')).toBeInTheDocument();
+    expect(screen.getByTestId('pain-exit')).toBeInTheDocument();
+  });
+});
+
+describe('PainButton — selection state', () => {
+  it('Continue disabled cand no region selected', () => {
+    renderPainButton();
+    expect(screen.getByTestId('pain-continue')).toBeDisabled();
+  });
+
+  it('Continue enabled cand region selected', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByRole('button', { name: /^Umar stang$/i }));
+    expect(screen.getByTestId('pain-continue')).not.toBeDisabled();
+  });
+
+  it('region button aria-pressed reflects selection', () => {
+    renderPainButton();
+    const lombar = screen.getByRole('button', { name: /^Lombar$/i });
+    expect(lombar).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(lombar);
+    expect(lombar).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('intensity defaults la 1 (Usor)', () => {
+    renderPainButton();
+    expect(screen.getByRole('button', { name: /Usor/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+  });
+
+  it('intensity selection toggles aria-pressed', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByRole('button', { name: /Sever/i }));
+    expect(screen.getByRole('button', { name: /Sever/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: /Usor/i })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+  });
+});
+
+describe('PainButton — navigation flow', () => {
+  it('Continue propagates painContext + intensityMod=minus la workout-preview', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByRole('button', { name: /^Genunchi drept$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Mediu/i }));
+    fireEvent.click(screen.getByTestId('pain-continue'));
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
+    expect(probe.textContent).toContain('"region":"genunchi-drept"');
+    expect(probe.textContent).toContain('"intensity":2');
+    expect(probe.textContent).toContain('"intensityMod":"minus"');
+  });
+
+  it('Exit navigates la /app/antrenor', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByTestId('pain-exit'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor'
+    );
+  });
+
+  it('Continue no-op cand region nu selectata', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByTestId('pain-continue'));
+    // Should NOT navigate; probe should not render (still on pain-button).
+    expect(screen.queryByTestId('probe')).not.toBeInTheDocument();
+  });
+});
+
+describe('PainButton — Romanian no-diacritics rule (D-LEGACY-064)', () => {
+  it('no diacritics in UI rendered text', () => {
+    const { container } = renderPainButton();
+    const text = container.textContent ?? '';
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});
