@@ -31,6 +31,7 @@ import { SettingsProfile } from './screens/cont/SettingsProfile';
 import { SettingsNotifications } from './screens/cont/SettingsNotifications';
 import { SettingsSubscription } from './screens/cont/SettingsSubscription';
 import { SettingsAppearance } from './screens/cont/SettingsAppearance';
+import { SettingsPrefs } from './screens/cont/SettingsPrefs';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -86,6 +87,7 @@ export const router = createBrowserRouter([
           { path: 'settings-notifications', element: <SettingsNotifications /> },
           { path: 'settings-subscription', element: <SettingsSubscription /> },
           { path: 'settings-appearance', element: <SettingsAppearance /> },
+          { path: 'settings-prefs', element: <SettingsPrefs /> },
         ],
       },
     ],
