@@ -30,6 +30,7 @@ import { Cont } from './screens/cont/Cont';
 import { SettingsProfile } from './screens/cont/SettingsProfile';
 import { SettingsNotifications } from './screens/cont/SettingsNotifications';
 import { SettingsSubscription } from './screens/cont/SettingsSubscription';
+import { SettingsAppearance } from './screens/cont/SettingsAppearance';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
           { path: 'settings-profile', element: <SettingsProfile /> },
           { path: 'settings-notifications', element: <SettingsNotifications /> },
           { path: 'settings-subscription', element: <SettingsSubscription /> },
+          { path: 'settings-appearance', element: <SettingsAppearance /> },
         ],
       },
     ],
