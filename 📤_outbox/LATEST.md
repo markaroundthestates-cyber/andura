@@ -1,113 +1,75 @@
-# Phase 6 ORCHESTRATOR — Fail-Stop §5 Issue Report
+# D027 Distribute — Phase 6 task_02 Option C STRATEGY LOCKED V1
 
-**Date:** 2026-05-18 chat batch 24-task autonomous run
+**Date:** 2026-05-18 chat distribute D027 SSOT append
 **Branch:** `feature/v3-react-clasic`
-**HEAD:** `c64e692` (Phase 6 task_01 LANDED clean)
-**Tests:** 4318 PASS / TS 0 errors (baseline post task_01 preserved)
-**Status:** STOPPED mid-task_02 per ORCHESTRATOR §5 protocol — `git restore` reverted all task_02 mutations, working tree clean
+**HEAD:** `1190b57` push origin success (`49dd2a3..1190b57`)
+**Model:** Opus EXCLUSIVELY
+**Scope:** ZERO `src/` mutation. ZERO sketches inbox mutation. ZERO V6 update. Handover narrative preserved `📥_inbox/` pentru noul chat consume.
 
 ---
 
-## §0 Tasks landed
+## §0 Status
 
-| # | Task | SHA | Tests delta | Backup tag |
-|---|------|-----|-------------|------------|
-| 01 | `scheduleAdapter.getDailyWorkout` consumer runPipeline 8 adapters | `c64e692` | +15 (4303→4318) | `pre-phase6-task-01-2026-05-18` |
+**D027 append complete.** DECISIONS.md SSOT updated atomic single-commit per PROMPT_CC §0-§3. Pre-commit hook verde 4318/4318 PASS (vitest run 56.43s) + TS 0 errors preserved (NU touched `src/`). Push origin success `feature/v3-react-clasic`. Handover `📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md` + sketches `📥_inbox/phase-6-tasks/task_02_*.md` intact pentru noul chat REWRITE Option C scope + relansare BATCH.
 
-§1.A precedent (`810c783` deloadAdapter 8/8 ULTIM) + Phase 6 task_01 = engine pipeline TOTAL real wire backend-side §42.10 COMPLETE. Consumer `scheduleAdapter.getDailyWorkout` invokes `runPipeline` 8 adapters + delegates sessionBuilder. Tests 15/15 PASS (rest day, training day, hard halt, blueprint aggregate, sessionBuilder delegate, equipment filter, defensive null/undefined/empty userState).
+## §1 Commit SHA + DECISIONS.md delta
 
-## §1 Task_02 fail diagnosis (Bugatti craft strict halt)
+**SHA:** `1190b57`
+**Message:** `chore(decisions): D027 Phase 6 task_02 Option C STRATEGY LOCKED V1`
+**Delta:** `1 file changed, 41 insertions(+), 2 deletions(-)`
+**Changes:**
+- Frontmatter `latest_entry: D025 → D027` + `total_entries: 25 → 27` (D026 reserved task_24 BATCH closure ulterior, NU acum)
+- CURRENT DECISIONS table row append after D025 (line 79): `D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration React consumers — sync→async signature propagation + loading state explicit + test rewrite ~80-120 assertions | LOCKED V1 | DECISIONS.md §D027`
+- D027 body section §1 Context + §2 Decision + §3 Rationale + §4 Impact + §5 Anti-recurrence appended after D016 body (line 288) cu structure parity D015/D016 (Date + Category + Status + Source + Cross-refs + Backup tag header block)
 
-Sketch acceptance criteria #3 + #4:
-- `getTodayWorkout()` async signature propagated
-- Workout + WorkoutPreview + Antrenor home consumers updated cu loading state
+## §2 Frontmatter update verify
 
-Scope substantially exceeds sketch coverage. Direct + transitive consumers of `getTodayWorkout`:
-- `src/react/components/SessionPill.tsx:62` (sync render-time call)
-- `src/react/routes/screens/antrenor/Workout.tsx:75` (`useMemo` sync call)
-- `src/react/routes/screens/antrenor/WorkoutPreview.tsx:86` (sync render-time call)
-- `src/react/routes/screens/antrenor/PostRpe.tsx:68` (mid-handler sync call)
-- `src/react/lib/coachDirectorAggregate.ts:38` (`getCoachToday` composer, sync)
+```yaml
+last_updated: 2026-05-18
+schema_version: 1
+latest_entry: D027
+total_entries: 27
+```
 
-**Tests directly affected (sketch undercount):**
+Verified via `grep -n "^D027\|latest_entry\|total_entries\|### D027" DECISIONS.md`:
+- Line 7: `latest_entry: D027`
+- Line 8: `total_entries: 27`
+- Line 79: D027 entry CURRENT DECISIONS table row
+- Line 288: `### D027 — STRATEGY — Phase 6 task_02 Option C big-bang async migration React consumers` body section header
 
-| Test file | Failure cause | Tests broken |
-|-----------|---------------|--------------|
-| `src/react/__tests__/lib/engineWrappers.test.ts` | 5 tests hardcode Phase 5 baseline shape (`'Bench Press'`, `exerciseCount=5`, `volumeKg=12450`) — real pipeline returns `'Lat Pulldown'`/`'Cable Row'` per day-of-week mapping with `volumeKg=0` V1 default | 5/5 of getTodayWorkout describe |
-| `src/react/__tests__/lib/coachDirectorAggregate.test.ts` | Mock `vi.fn(() => {...})` sync; needs `Promise.resolve(...)`; all `it` async + await | 5/6 |
-| `src/react/__tests__/screens/antrenor/Workout.test.tsx` | 53 tests hardcode `'Bench Press'`, `'Ex 1/5'`, `'Set 1/4'`, `kg-input=22.5`, `reps-input=10` — real PUSH template emits 6 different exercises sets=3 not 4, default targetKg=20 not 22.5; PLUS 50+ tests need `await waitFor` post-loading-state | 46/53 verified failing in dry-run |
-| `src/react/__tests__/screens/antrenor/WorkoutPreview.test.tsx` | Mock pattern sync→async; 1 mock line | minimal cascades |
-| `src/react/__tests__/screens/antrenor/Antrenor.test.tsx` | Mock pattern sync→async | minimal |
-| `src/react/__tests__/screens/antrenor/PostSummary.test.tsx` (39 tests) | Indirect via session breakdown using `planned.exercises` | not verified yet |
-| `src/react/__tests__/components/SessionPill.test.tsx` | Mock pattern sync→async | minimal |
+## §3 Next chat instruction
 
-**Total impact estimate:** ~80-120 test assertions to rewrite — many asserting hardcoded Phase 5 baseline values that diverge from real pipeline output. Plus 5 consumer components require sync→async refactor (useEffect+useState) plus loading state copy + tests.
+**Trigger:** "Salut Acasă" → §CC.2 startup standard + Daniel paste prompt.
 
-Materially beyond §B sketch scope ("Phase 5 task_05 PHASE_5_BASELINE_PUSH stub replaced cu getDailyWorkout"). Sketch §C noted "Verify actual signature; adjust call shape" for sessionBuilder — but the cascading async signature impact on React consumers + test surface was NOT scoped.
+**Acțiuni noul chat:**
 
-## §2 What was attempted (since reverted)
+1. **§CC.2 startup standard** — read ANDURA_PRIMER §1-§8 + DECISIONS.md head 50 (acum D027 LOCKED V1 acolo după CC append) + `📤_outbox/LATEST.md` curent + `📥_inbox/HANDOVER_2026-05-18_phase-6-task-02-option-c-pivot.md` complete §1-§8
 
-Dry-run partial implementation (`git restore` reverted all 12 modified files):
-1. Rewrote `src/react/lib/scheduleAdapterAggregate.ts` — deleted `PHASE_5_BASELINE_PUSH`, made `composePlannedWorkoutToday` async, wired `getDailyWorkout`, added `buildUserStateForPipeline` reading `useOnboardingStore.data` + `useWorkoutStore.sessionsHistory` (stores `userProfile`/`exerciseWeights`/`profileTier`/`weeksElapsed` referenced în sketch §A do NOT exist — adapted to actual stores)
-2. Made `getTodayWorkout()` async in `engineWrappers.ts`
-3. Updated 5 consumers (SessionPill / Workout / WorkoutPreview / PostRpe / coachDirectorAggregate) cu `useState<PlannedWorkoutOutput|null>` + `useEffect` async resolve pattern
-4. Updated `coachDirectorAggregate.test.ts` (6 tests rewritten async)
-5. Updated `engineWrappers.test.ts` getTodayWorkout describe block (5 tests rewritten — shape-only assertions)
-6. Updated `Antrenor.test.tsx` + `WorkoutPreview.test.tsx` mocks (sync→async)
-7. Started updating `Workout.test.tsx` empty-state cluster (3 tests added `await waitFor`)
+2. **Rescrie `📥_inbox/phase-6-tasks/task_02_schedule_adapter_aggregate_real_wire.md`** cu Option C scope corect per D027 §4:
+   - §A `buildUserStateForPipeline` grep primary-source `useOnboardingStore.data` + `useWorkoutStore.sessionsHistory` actual slice fields (NU userProfile/exerciseWeights/profileTier/weeksElapsed inventate — slip codificat D027 §5 anti-recurrence)
+   - §B propagare async 5 consumers explicit: `SessionPill` + `Workout` + `WorkoutPreview` + `PostRpe` + `coachDirectorAggregate` cu `useState<T|null>` + `useEffect` + `LoadingSkeleton` fallback Phase 5 task_19
+   - §C ~80-120 test rewrite explicit listed: `engineWrappers.test.ts` getTodayWorkout 5 + `Workout.test.tsx` 46/53 + `WorkoutPreview` + `Antrenor` + `SessionPill` + `PostSummary` 39 indirect + `coachDirectorAggregate.test.ts` 6 async
+   - §D multi-commit budget OK în task_02 (1 task = 4-6 commits atomic per consumer-cluster) per ORCHESTRATOR §2 "multiple atomic single-concern IF spec §B explicit multi-block" — invoca clauza explicit aici
+   - Est durată CC: 3-5h autonomous Opus
 
-Vitest dry run after partial migration:
-- `engineWrappers.test.ts`: 0/5 getTodayWorkout tests passing (had not yet been updated — Phase 5 baseline assertions)
-- `coachDirectorAggregate.test.ts`: passing after rewrite
-- `Workout.test.tsx`: **46/53 tests failing** (loading-state guard + hardcoded baseline assertions)
+3. **Verifică similar hallucination risk în task_03-24 pre-relansare BATCH:**
+   - high-risk task_06 patterns banner data shape (PatternsBanner store consumption)
+   - high-risk task_22 + task_23 dashboard data sources (sessionsHistory + nutritionStore aggregate)
+   - low-risk Cont sub-screens (mockup verbatim parity, no store invention)
 
-Per ORCHESTRATOR §5 ("STOP batch — NU continua task urmatorul"): halted before commit; `git restore` reverted all 12 modified files to clean HEAD (`c64e692`). Note: `git reset --hard <backup-tag>` blocked by local permission settings → fallback `git restore` per-file (semantically equivalent for tracked file revert).
-
-## §3 Root cause — sketch under-scope
-
-Sketch treats task_02 as a single-file refactor (`scheduleAdapterAggregate.ts` + 1 commit). In reality it's a **cross-cutting async-signature migration** that ripples through:
-- 5 React consumer components (sync render-time → useState/useEffect loading)
-- 6+ test files (sync mocks → async mocks + waitFor patterns)
-- ~80-120 hardcoded test assertions tied to Phase 5 baseline exercise data (real pipeline returns different exercises/sets/kg values per day-of-week)
-
-§2 Atomic commit discipline ("1 task = 1 commit cumulative SAU multiple atomic single-concern commits IF spec §B explicit multi-block") — sketch §B is a single block, so atomic single commit expected. Yet scope demands multi-block treatment, OR splitting.
-
-## §4 Recommendations Daniel fresh chat
-
-**Option A — Split task_02 into 3-4 sub-tasks:**
-- task_02a — scheduleAdapterAggregate async + Workout.tsx consumer + Workout test full rewrite (sets=3 not 4, target* defaults differ from baseline, loading state in 50+ tests)
-- task_02b — WorkoutPreview consumer + tests
-- task_02c — SessionPill / PostRpe consumers + tests
-- task_02d — coachDirectorAggregate + engineWrappers tests rewrite
-
-Update ORCHESTRATOR.md inbox before re-running.
-
-**Option B — Reduce task_02 scope: sync-cached facade pattern.** Implementation:
-- Module-level `cache = new Map<dateKey, PlannedWorkoutOutput | null>`
-- `composePlannedWorkoutToday(now)` SYNC — returns `cache.get(dateKey)` if present; on miss kicks off background `getDailyWorkout(...)` via fire-and-forget + populates cache; returns last-known cache value (null on cold)
-- Expose `prewarmComposeToday(now)` async for app-startup eager warm (Layout root effect)
-- ALL existing consumers + tests retain sync contract → ZERO cascade
-- `PHASE_5_BASELINE_PUSH` deleted ✅
-- Trade-off: first render shows null until cache warm; UX skeleton already exists Phase 5 task_19
-- engineWrappers.test.ts getTodayWorkout tests: rewrite 5 tests for new shape (baseline → pipeline output) — bounded ~30min work
-
-**Option C — Accept big-bang async migration as 1 task** but allocate multiple commits within task_02 + budget ~3-5h for test rewrites. Update sketch ACK to enumerate cascade explicitly.
-
-Co-CTO recommendation: **Option B** — sync-cached facade. Achieves "real engine wire" goal without invasive sync→async propagation through React tree + test surface. Aligns Karpathy §3 surgical (minimum mutation surface). Matches sketch §C "Verify actual signature; adjust call shape conform existing export" precedent for buildSession adaptation.
-
-## §5 Backup tags pushed origin
-
-- `pre-phase6-task-01-2026-05-18` (origin)
-- `pre-phase6-task-02-2026-05-18` (origin) ← reset target IF Daniel chooses git reset; current HEAD `c64e692` is exactly this tag
-
-## §6 Task 01 intermediate report archived
-
-`📤_outbox/_archive/2026-05/01_TASK_01.md` — Phase 6 task_01 LANDED raport (15 tests +, TS 0 errors, scheduleAdapter.getDailyWorkout consumer 8-adapter pipeline + sessionBuilder delegate, deviation note pe buildSession signature adaptation).
-
-## §7 Phase 7 carry-forward (post-batch resolution)
-
-Once task_02 scope-resolved + remaining 22 tasks landed: Daniel Gates smoke production + Bugatti audit nuclear pre-Launch path per ORCHESTRATOR §8.
+4. **Relansare BATCH din task_02 rescris** — task_03-24 rămân intact în `📥_inbox/phase-6-tasks/` (sub-rescriere unde necesar pe drum). Post task_02 LANDED → CC archive handover narrative `📥_inbox/HANDOVER_2026-05-18_*.md` → `99-archive/handovers/2026-05/` + archive PROMPT_CC distribute paired.
 
 ---
 
-🦫 **Fail-stop §5 protocol honored: NU partial commits, NU `--no-verify` bypass, NU skip teste. Bugatti craft strict. Daniel intervene fresh chat → analyze + decide §4 options.**
+## §Constraints honored
+
+- ZERO `src/` mutation (vitest 4318/4318 PASS preserved — NU touched test files)
+- ZERO sketches inbox mutation (`📥_inbox/phase-6-tasks/` intact)
+- ZERO V6 update (`01-vision/PROJECT_INSTRUCTIONS_V6.md` NU touched)
+- ZERO archive handover narrative (rămâne `📥_inbox/` till noul chat consume + archive post Option C task_02 rescris)
+- NO_DIACRITICS_RULE preserved (DECISIONS.md technical pur, no UI strings — body section §3 "se incarca..." literal NU diacritized)
+- Pre-commit hook verde mandatory respectat — ZERO `--no-verify` bypass
+
+---
+
+🦫 **D027 LOCKED V1 catalog SSOT singular. Bugatti craft preserved end-to-end. Handover narrative rămâne `📥_inbox/` till noul chat citește + rescrie task_02 Option C + arhivează post-LANDED. ZERO `src/` touched. Push origin clean `feature/v3-react-clasic` HEAD `1190b57`.**
