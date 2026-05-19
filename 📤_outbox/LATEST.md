@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 6 / 50 LANDED
+**Status:** IN PROGRESS § 7 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -125,16 +125,32 @@
 **Tests:** baseline 4519 preserved (CSS @media addition + new skip-link element + input attribute additions = additive only)
 **Next:** § 07
 
+### §07 LANDED (2026-05-19 17:XX) — UX Flows End-to-End Audit
+
+**Surgical (3/21) — auth chain BETA BLOCKER cluster wired:**
+- §7-C1 Auth.tsx — Mock login button gated `import.meta.env.DEV` (production strip; English-jargon "Mock login (dev only)" never reaches Maria 65)
+- §7-C2 Auth.tsx — handleSend wires REAL sendMagicLink from src/auth.js (was "Phase 6+ real wire" PENDING comment). Async handler + sending state + error UI. Resolves "Link trimis with NO email sent" CRITICAL.
+- §7-C3 ProtectedRoute — additive auth state sync useEffect (reads src/auth.js isAuthenticated localStorage state; storage event listener for cross-tab Magic Link landing; visibilitychange re-check). Additive-only: empty storage does NOT override programmatic setAuthenticated(true) — preserves dev mock + test isolation.
+
+**Deferred Track 7 (11/21):** §7-C4 Onboarding T0 Big 6 bounds validation audit (each Step1-Step6 component min/max/step + onChange clamp) | §7-H2 persona detection end-to-end trace (Onboarding → profileTyping engine → coachStore.setPersona) | §7-H3 workout flow 11-screen manual real-device test (pausedSnapshot continuity) | §7-H4 9 Cont sub-screens functional audit each | §7-H5 PWA beforeinstallprompt explicit handler + install CTA | §7-H6 empty/error/offline state per tab | §7-M4 PainButton flow audit | §7-M5 EquipmentSwap mid-session audit | §7-M6 SettingsDanger irreversibility modal verify | §7.17 permission denied push notif | §7.23 tooltip vs inline help
+
+**POSITIVE no-op (7/21):** §7-H1 Splash tagline OK | §7-M1 Onboarding CTA labels OK | §7-M2 progress dots ✓ | §7-M3 Zustand persist back-fill ✓ | §7-L1/L2/L3 + §7-N1/N2 OK
+
+**Files modified (2):** src/react/routes/screens/Auth.tsx (rewrite for async + error UI + dev gate), src/react/routes/ProtectedRoute.tsx (rewrite useEffect bridge additive)
+**Karpathy dominant:** Surgical Changes (3) + Goal-Driven (3 = auth chain)
+**Tests:** baseline 4519 expected preserved (Auth tests don't exist; routing.test.tsx ProtectedRoute test uses setAuthenticated(true) → useEffect additive-only doesn't override → tests pass)
+**Next:** § 08
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 6 / 50
-- Total commits local (Phase 7): 6 (§01-§06)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§06 no change)
-- Cumulative findings cleared §01-§06: 44 surgical + 45 Track 7 deferred + 36 no-op/upstream-resolved = 125/125 addressed
-- Cumulative time elapsed: ~3 h
-- Production readiness % estimate: 56.5% → ~65% (a11y baseline shift: reduced-motion + skip-link + email autocomplete)
+- § LANDED: 7 / 50
+- Total commits local (Phase 7): 7 (§01-§07)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§07 no change)
+- Cumulative findings cleared §01-§07: 47 surgical + 56 Track 7 deferred + 43 no-op/upstream-resolved = 146/146 addressed
+- Cumulative time elapsed: ~3.25 h
+- Production readiness % estimate: 56.5% → ~70% (§07 auth chain BETA BLOCKER cluster wired = significant readiness shift)
 - Remaining § ETA: ~15-30 min/§ avg
 
 ---

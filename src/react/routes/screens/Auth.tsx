@@ -1,6 +1,7 @@
-// ══ AUTH — Magic Link Email Entry Phase 5 task_16 ════════════════════════
-// Email input + "Trimite link" CTA + mock fallback. Production Phase 6+
-// wires backend Magic Link endpoint (src/auth/sendMagicLink.js existing).
+// ══ AUTH — Magic Link Email Entry Phase 5 task_16 + §07 audit wire ════════
+// §7-C1 audit fix — mock login gated import.meta.env.DEV only (production strip)
+// §7-C2 audit fix — handleSend wires REAL sendMagicLink from src/auth.js
+//   (resolved Phase 6+ "Phase 6+ real wire" comment; auth flow now functional)
 // React-side flow stays minimal (anti-paternalism + auth invariant: 0
 // password, only email magic link).
 
@@ -9,6 +10,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
+import { sendMagicLink } from '../../../auth.js';
 
 function isValidEmail(s: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -19,18 +21,28 @@ export function Auth(): JSX.Element {
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSend(): void {
-    if (!isValidEmail(email)) return;
-    // Phase 6+ real wire: import sendMagicLink from '../../auth/sendMagicLink.js'.
-    // Phase 5 task_16 React-side flow scaffolded — confirmation message shown.
-    setSent(true);
+  async function handleSend(): Promise<void> {
+    if (!isValidEmail(email) || sending) return;
+    setSending(true);
+    setError(null);
+    const result = await sendMagicLink(email);
+    setSending(false);
+    if (result.ok) {
+      setSent(true);
+    } else {
+      setError(result.error || 'network_error');
+    }
   }
 
   function handleMockLogin(): void {
     setAuthenticated(true);
     navigate('/onboarding/1');
   }
+
+  const showMockLogin = import.meta.env.DEV;
 
   return (
     <section
@@ -87,21 +99,32 @@ export function Auth(): JSX.Element {
             />
             <button
               type="button"
-              onClick={handleSend}
-              disabled={!isValidEmail(email)}
+              onClick={() => { void handleSend(); }}
+              disabled={!isValidEmail(email) || sending}
               data-testid="auth-send"
               className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold disabled:opacity-50"
             >
-              Trimite link
+              {sending ? 'Se trimite…' : 'Trimite link'}
             </button>
-            <button
-              type="button"
-              onClick={handleMockLogin}
-              data-testid="auth-mock"
-              className="w-full mt-3 py-2 text-ink2 text-xs underline"
-            >
-              Mock login (Phase 5 dev)
-            </button>
+            {error && (
+              <p
+                className="mt-3 text-sm text-danger text-center"
+                data-testid="auth-error"
+                role="alert"
+              >
+                Nu am putut trimite linkul. Reincearca.
+              </p>
+            )}
+            {showMockLogin && (
+              <button
+                type="button"
+                onClick={handleMockLogin}
+                data-testid="auth-mock"
+                className="w-full mt-3 py-2 text-ink2 text-xs underline"
+              >
+                Mock login (dev only)
+              </button>
+            )}
           </>
         )}
       </div>

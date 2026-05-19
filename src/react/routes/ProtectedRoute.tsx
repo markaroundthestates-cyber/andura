@@ -1,13 +1,18 @@
-// ══ PROTECTED ROUTE — Auth Gate Phase 2 Stub ══════════════════════════════
-// Phase 2 stub: redirect la /auth dacă !isAuthenticated. Phase 3+ wire real
-// Firebase Magic Link state + onboarding gate (T0 Big 6 hard typing).
+// ══ PROTECTED ROUTE — Auth Gate Phase 2 Stub + §7-C3 audit wire ═══════════
+// §7-C3 audit fix — bridge vanilla auth state (src/auth.js localStorage tokens
+// persisted by Magic Link flow) → React appStore.isAuthenticated. Storage
+// event listener handles multi-tab + Magic Link landing sync. Replaces "Phase 2
+// stub" passive check with reactive auth-state subscriber.
 //
 // Cross-refs:
 //   - DECISIONS.md §D015 + §D016 + Co-CTO LOCK Phase 2 routing C hybrid
+//   - src/auth.js — getAuthState() reads firebase-id-token + firebase-uid localStorage
 
 import type { JSX, ReactNode } from 'react';
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
+import { isAuthenticated as readAuthFromStorage } from '../../auth.js';
 
 interface Props {
   children: ReactNode;
@@ -15,6 +20,31 @@ interface Props {
 
 export function ProtectedRoute({ children }: Props): JSX.Element {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+
+  // §7-C3 audit fix — reactive auth state sync ADDITIVE only:
+  // 1. On mount: if storage has valid auth (Magic Link landed prior session),
+  //    set appStore true. Empty storage does NOT override programmatic
+  //    setAuthenticated(true) — preserves dev mock login + test isolation.
+  // 2. Storage event: react to other-tab Magic Link landing.
+  // 3. Visibility change: re-check on tab focus.
+  // SignOut path: explicit setAuthenticated(false) call by signOut handler.
+  useEffect(() => {
+    const sync = (): void => {
+      const fromStorage = readAuthFromStorage();
+      if (fromStorage && !isAuthenticated) {
+        setAuthenticated(true);
+      }
+    };
+    sync();
+    window.addEventListener('storage', sync);
+    document.addEventListener('visibilitychange', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      document.removeEventListener('visibilitychange', sync);
+    };
+  }, [isAuthenticated, setAuthenticated]);
+
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
