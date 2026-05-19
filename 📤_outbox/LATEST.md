@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 1 / 50 LANDED
+**Status:** IN PROGRESS § 2 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -58,17 +58,30 @@
 **Karpathy dominant:** Surgical Changes (15) + Simplicity First (4) + Think Before Coding (2) + Goal-Driven (1)
 **Next:** § 02 starting now
 
+### §02 LANDED (2026-05-19 15:XX) — Test Files Audit
+
+**Surgical (5/18):** §2-C1 playwright webServer + env-gated baseURL (local http://localhost:4173 default, PLAYWRIGHT_BASE_URL opt-in for live prod qa-report.yml flow) | §2-C2 vitest testTimeout/hookTimeout/retry/passWithNoTests + coverage thresholds (60/55/50/60 initial floor, Track 7 ratchet) + include scope | §2-H1 Playwright CI retries 2 + workers 2 + fullyParallel | §2-H2 smoke.spec.js vanilla legacy suppression flags removed (D028 inert post-React swap) | §2-H3 setup.ts fake-indexeddb/auto + RTL cleanup afterEach (console.error→throw deferred Track 7 cascade risk)
+
+**Deferred Track 7 (6/18):** §2-H4 Antrenor.integration.test.tsx new file (engine-real path coverage) | §2-H5 Stryker mutation CI integration | §2-M1 time-mock comprehensive audit | §2-M4 tests/ folder consolidation | §2-M6 D019 disclaimer dismiss helper (Track 5 backlog) | §2-C2-ratchet coverage threshold raise post measurement
+
+**No-op (7/18):** §2-M2 NIT naming via ESLint plugin (defer Track 7) | §2-M3 confirmed acceptable | §2-M5 pyramid acceptable | §2-L1/L2/L3 OK | §2-N1/N2 OK
+
+**Files modified (4):** playwright.config.js, vitest.config.js, src/react/__tests__/setup.ts, tests/smoke.spec.js
+**Karpathy dominant:** Surgical Changes (3) + Goal-Driven (2)
+**Tests:** baseline 4519 (post §01); §02 changes config-tier only, no test additions; expect ≥4519 PASS post commit
+**Next:** § 03
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 1 / 50
-- Total commits local (Phase 7): 1 (§01)
-- Cumulative tests delta: 4522 baseline → 4519 (-3 App.tsx render tests removed with §1-H1 deleted component, foundation.test.tsx Zustand smoke preserved)
-- Cumulative findings cleared: 22 / 698 surgical + 5 deferred Track 7 = 27 / 27 §01 addressed
-- Cumulative time elapsed: ~1 h (chat ACASĂ start 2026-05-19 14:00)
-- Production readiness % estimate: 56.5% → ~58% (§01 surgical fixes baseline shift est., conservative)
-- Remaining § ETA: TBD post §02-§05 calibration
+- § LANDED: 2 / 50
+- Total commits local (Phase 7): 2 (§01 + §02)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3 App.tsx tests removed; §02 config-tier no change)
+- Cumulative findings cleared: 27 surgical + 11 deferred Track 7 = 38/45 from §01+§02 addressed
+- Cumulative time elapsed: ~1.5 h (chat ACASĂ start 2026-05-19 14:00)
+- Production readiness % estimate: 56.5% → ~59% (§01+§02 surgical fixes baseline shift est., conservative)
+- Remaining § ETA: TBD post §03-§05 calibration
 
 ---
 

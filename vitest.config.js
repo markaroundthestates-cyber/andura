@@ -5,6 +5,8 @@ import { defineConfig } from 'vitest/config';
 const nodeMajor = parseInt(process.version.slice(1).split('.')[0]);
 const execArgv = nodeMajor >= 25 ? ['--no-webstorage'] : [];
 
+// §2-C2 audit fix — testTimeout/hookTimeout/retry/passWithNoTests + coverage
+// thresholds (initial low floor — ratchet Track 7 post coverage measurement).
 export default defineConfig({
   test: {
     environment: 'jsdom',
@@ -12,6 +14,13 @@ export default defineConfig({
     silent: 'passed-only',
     include: ['src/**/*.test.{js,ts,tsx}'],
     setupFiles: ['./src/react/__tests__/setup.ts'],
+    // §2-C2 — explicit timeouts (default 5000ms causes slow CI nondeterminism).
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    // §2-C2 — retry 1 on flake (vitest 1.0+ default 0; flake masquerade as fail).
+    retry: 1,
+    // §2-C2 — fail when test file has no tests (silent pass mask removed).
+    passWithNoTests: false,
     poolOptions: {
       threads: { execArgv },
       forks: { execArgv },
@@ -20,6 +29,8 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: './coverage',
+      // §2-C2 — explicit include (was implicit, may over-include build artifacts).
+      include: ['src/engine/**', 'src/coach/**', 'src/react/**', 'src/util/**'],
       exclude: [
         'node_modules/**',
         'src/__tests__/**',
@@ -27,11 +38,21 @@ export default defineConfig({
         'src/**/*.spec.js',
         'src/**/__tests__/**',
         'src/**/__snapshots__/**',
+        'src/_legacy-vanilla/**',
         'dist/**',
         'tests/**',
         'coverage/**',
         '**/*.config.js',
+        '**/*.d.ts',
       ],
+      // §2-C2 — coverage thresholds at LOW initial floor (Track 7 ratchet
+      // post coverage measurement). Prevents silent coverage regression.
+      thresholds: {
+        lines: 60,
+        functions: 55,
+        branches: 50,
+        statements: 60,
+      },
     },
-  }
+  },
 });

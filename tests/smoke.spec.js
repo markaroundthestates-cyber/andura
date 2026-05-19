@@ -1,14 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Smoke tests', () => {
-  test.beforeEach(async ({ page }) => {
-    // AA friction modal + onboarding overlay are suppressed for smoke tests so
-    // their backdrops never intercept UI clicks (smoke isn't validating those flows).
-    await page.addInitScript(() => {
-      window._suppressAAFrictionModal = true;
-      window._suppressOnboardingOverlay = true;
-    });
-  });
+  // §2-H2 audit fix — vanilla legacy suppression flags removed (D028 React entry
+  // swap rendered _suppressAAFrictionModal + _suppressOnboardingOverlay inert;
+  // React build doesn't consume them, modals only render conditionally post-set).
+  // Smoke tests pass on landing without flags. React-equivalent suppression =
+  // Track 5 D019 disclaimer dismiss helper (when wired).
 
   test('app loads in under 5 seconds', async ({ page }) => {
     const start = Date.now();
