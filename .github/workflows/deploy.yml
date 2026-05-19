@@ -29,9 +29,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
-      - run: npm install
+      # §33-C1 + §20-H1 + §20-H2 audit fix — npm ci (deterministic from lockfile)
+      # + typecheck + vitest gate BEFORE build/deploy. Production never ships
+      # broken code. Pre-Beta launch hardening.
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:run
       - run: npm run build
 
       - uses: peaceiris/actions-gh-pages@v3

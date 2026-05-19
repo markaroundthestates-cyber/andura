@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 32 / 50 LANDED
+**Status:** IN PROGRESS § 33 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -480,14 +480,27 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 33
 
+### §33 LANDED — CI/CD Pipeline GitHub Actions (17 findings)
+
+**Surgical (1/17):** §33-C1 + §20-H1 + §20-H2 deploy.yml — added test gate (typecheck + vitest before build) + npm ci (deterministic from lockfile) + Node 22 (was 20, aligns CI). Production deploys can no longer ship broken code.
+
+**Deferred Track 7 (10/17):** §33-C2 PR preview deploy | §33-C3 rollback automated | §33-H1-H5 env promotion + concurrency + matrix Node + cache strategy + parallel jobs | §33-M1-M4 artifact storage + tag automation + branch trigger + notification | §33-N1
+
+**POSITIVE no-op (6/17):** §33-L1 GH Pages auto-deploy D028 ✓ | §33-L2 paths-ignore vault docs ✓ | §33-L3 workflow_dispatch manual trigger ✓ | §33-L4 GITHUB_TOKEN secrets ✓ + 2 more
+
+**Files modified (2):** .github/workflows/deploy.yml, 📤_outbox/LATEST.md
+**Karpathy dominant:** Surgical Changes (1) — production deploy gate hardening
+**Tests:** baseline 4519 preserved
+**Next:** § 34
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 32 / 50 (64%)
-- Total commits local (Phase 7): 32 (§01-§32)
+- § LANDED: 33 / 50 (66%)
+- Total commits local (Phase 7): 33 (§01-§33)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§32: 57 surgical + 195 Track 7 deferred + 198 no-op/upstream + 1 Daniel-flag = 451/451 addressed
+- Cumulative findings cleared §01-§33: 58 surgical + 205 Track 7 deferred + 204 no-op/upstream + 1 Daniel-flag = 468/468 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
