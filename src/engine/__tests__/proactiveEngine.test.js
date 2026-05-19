@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
-  checkProteinDeficit, checkSleepDebt, checkPROpportunity,
+  checkProteinDeficit, checkSleepDebt,
   checkTrainingStreak, checkKcalDeficit, checkInactivity,
-  checkHydration, checkWeightTrend, runProactiveChecks,
+  checkHydration, runProactiveChecks,
 } from '../proactiveEngine.js';
 
 const today = new Date().toLocaleDateString('sv');

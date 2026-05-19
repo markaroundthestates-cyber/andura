@@ -11,7 +11,6 @@ import {
   getWeekLabel,
   getState,
   WEEK_POLICY,
-  LINEAR_BLOCK_KEY,
 } from '../linearBlock.js';
 import { getDeloadSkipWarning } from '../progressionMatrix.js';
 

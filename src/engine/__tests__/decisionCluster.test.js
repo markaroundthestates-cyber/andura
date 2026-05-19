@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { DecisionCluster, decisionCluster } from '../decisionCluster.js';
-import { createDimensionResult, ACTIONS, STAGES } from '../dimensionContract.js';
+import { createDimensionResult, ACTIONS } from '../dimensionContract.js';
 
 const rec = (overrides = {}) => ({
   action: ACTIONS.REDUCE_VOLUME,

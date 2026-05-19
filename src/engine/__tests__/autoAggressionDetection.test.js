@@ -11,7 +11,6 @@ import {
   _detectHyperfocusAmplifier,
   _computeCompositeFatigue,
   _computeTier,
-  _isoWeek,
 } from '../autoAggressionDetection.js';
 import {
   dateOffset,

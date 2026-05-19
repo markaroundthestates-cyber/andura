@@ -151,8 +151,8 @@ describe('Golden Master — Pain Discomfort Button (§36.38 + EXT-1 LOCKED V1)',
       painKey: 'discomfort_specific',
       userOverride: true,
     });
-    // ts is dynamic — strip for stable snapshot
-    const { ts, ...stable } = entry;
+    // ts is dynamic — strip for stable snapshot (renamed _ts pentru ESLint varsIgnorePattern)
+    const { ts: _ts, ...stable } = entry;
     captureSnapshot('pain_override_entry', stable);
   });
 });

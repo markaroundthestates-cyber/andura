@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { absenceProbabilityByDay, getHighRiskDays, predictToday } from '../predictionEngine.js';
 
 // Create logs with sessions on specific days of week
