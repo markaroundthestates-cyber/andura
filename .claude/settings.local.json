@@ -11,7 +11,8 @@
       "Bash(ls \"C:/Users/Daniel/OneDrive/\" 2>&1 | head -20)",
       "Bash(powershell -Command \"\\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents\\\\salafull'\\).Attributes\")",
       "Bash(powershell -Command \"\\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents'\\).FullName; \\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents'\\).LinkType; \\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents\\\\salafull'\\).FullName\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(find /c/Users/Daniel -name \"obsidian-git\" -path \"*plugins*\" -type d 2>/dev/null | head -10)"
     ]
   }
 }
