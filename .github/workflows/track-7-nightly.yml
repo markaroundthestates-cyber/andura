@@ -14,6 +14,11 @@ permissions:
   contents: read
   issues: write  # Stagehand creates GitHub Issues pe anomaly detection
 
+# Workflow-level env applies la stryker-mutation-engine + stagehand-exploration.
+env:
+  # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
+  HUSKY: '0'
+
 jobs:
   # Track 7 §7.6 — Stryker mutation testing engine fast-check verification
   # Gates mutation score ≥75% per master spec §1.7 (currently informative-only;

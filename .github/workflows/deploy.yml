@@ -21,6 +21,11 @@ on:
 permissions:
   contents: write
 
+# Workflow-level env applies la deploy + lighthouse-live + checkly-deploy jobs.
+env:
+  # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
+  HUSKY: '0'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

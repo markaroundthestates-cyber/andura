@@ -40,6 +40,12 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Workflow-level env applies la TOATE jobs.
+env:
+  # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128
+  # caused by husky v9 git hook installation în CI ephemeral runner.
+  HUSKY: '0'
+
 jobs:
   validate:
     name: Validate (typecheck + unit + build)
@@ -51,6 +57,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
+      - name: 'Diagnostic: git + husky + env (root cause surface)'
+        run: |
+          echo "=== Git binary ==="
+          which git || echo "git NOT în PATH"
+          git --version || echo "git --version FAILED"
+          echo ""
+          echo "=== Node binary ==="
+          which node && node --version
+          echo ""
+          echo "=== Husky env vars ==="
+          env | grep -i husky || echo "(no HUSKY env vars)"
+          echo ""
+          echo "=== Git-related env vars ==="
+          env | grep -iE "^(GIT|GH_|GITHUB)" | head -10 || echo "(none relevant)"
+          echo ""
+          echo "=== package.json prepare script ==="
+          node -e "console.log(JSON.stringify(require('./package.json').scripts.prepare))"
 
       - run: npm ci --ignore-scripts
 

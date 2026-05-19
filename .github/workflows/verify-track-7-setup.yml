@@ -29,6 +29,10 @@ permissions:
   # deployments / discussions / id-token / issues / models / packages / pages /
   # pull-requests / repository-projects / security-events / statuses.
 
+# Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
+env:
+  HUSKY: '0'
+
 jobs:
   verify:
     name: Verify Daniel-action items complete

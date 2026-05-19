@@ -11,6 +11,10 @@ permissions:
   pull-requests: write
   issues: write
 
+# Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
+env:
+  HUSKY: '0'
+
 jobs:
   qa:
     runs-on: ubuntu-latest
