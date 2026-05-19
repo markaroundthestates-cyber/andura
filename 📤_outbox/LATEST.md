@@ -1,6 +1,6 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 3 / 10 LANDED
+**Status:** IN PROGRESS § 4 / 10 LANDED
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
@@ -94,17 +94,52 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ---
 
+## §7.4 LANDED (2026-05-19 20:15) — Bundle budget + code health gates (size-limit + depcheck + madge + jscpd + license-checker)
+
+- **Commit (local):** `8f6a996` `feat(track-7-§7.4): bundle budget + code health gates (size-limit, depcheck, madge, jscpd, license-checker)`
+- **New config files (42 lines):**
+  - `.size-limit.json` — 3 gzip budgets: main ≤100 KB / vendor ≤150 KB / CSS ≤30 KB
+  - `.jscpd.json` — duplication threshold 5% / minLines 30 / minTokens 50; ignore _legacy-vanilla + __snapshots__ + tests/golden-master + tests/simulation
+- **Infra:**
+  - 6 new npm scripts: `size` / `size:why` / `depcheck` / `madge:circular` / `jscpd` / `licenses`
+  - +8 devDeps: size-limit ^12.1.0 + @size-limit/preset-app ^12.1.0 + depcheck ^1.4.7 + madge ^8.0.0 + jscpd ^4.2.3 + license-checker ^25.0.1 + firebase-admin ^13.6.0 (was transitive — pinned explicit recovery) + @testing-library/dom ^10.4.1 (was transitive — pinned explicit recovery)
+- **Karpathy dominant:** Goal-Driven (per-PR gates config-ready pentru §7.6 CI augment) + Surgical (config-only changes, ZERO source code or test changes; existing 4546 PASS preserved)
+- **Deviations from spec:**
+  - Install required `--legacy-peer-deps` (madge@8 peerOptional typescript ^5.4.4 vs project typescript ^6.0.3 — madge CLI tool only, peer optional, doesn't affect runtime)
+  - --legacy-peer-deps re-resolution DROPPED 2 previously-transitive deps (firebase-admin + @testing-library/dom) — recovered via explicit-install pins în same commit
+  - 8 transitive vulnerabilities reported (4 low + 4 moderate) — triage assigned to §7.6 Snyk + npm audit workflow
+- **Anomalii:**
+  - First `npm i -D` attempt failed eresolve madge peer TS conflict → retry with `--legacy-peer-deps`
+  - Initial install dropped firebase-admin + @testing-library/dom → pre-commit hook tsc check broke (Progres.test.tsx `screen`/`fireEvent` missing + auth.setup.ts firebase-admin module missing) → recovered via explicit install
+- **Next:** §7.5 starting now — @langwatch/scenario coach voice persona scenarios + judge criteria anti-paternalism
+
+---
+
 ## Cumulative status (refresh per phase)
 
-- **§ LANDED:** 3 / 10 (30%)
-- **Total commits local:** 5 §9 First Actions + 1 §7.1 + 1 §7.1-LATEST + 1 §7.2 + 1 §7.2-LATEST + 1 §7.3 = 10 commits since baseline `17b0bba`
+- **§ LANDED:** 4 / 10 (40%)
+- **Total commits local:** 5 §9 First Actions + 1 §7.1 + 1 §7.1-LATEST + 1 §7.2 + 1 §7.2-LATEST + 1 §7.3 + 1 §7.3-LATEST + 1 §7.4 = 12 commits since baseline `17b0bba`
 - **Commits pushed origin:** 5 (§9 First Actions + chore-auto pre-existing) — §7.1+ local only
 - **Cumulative Vitest tests:** 4519 → 4546 (+27) preserved
 - **Cumulative Vitest test files:** 251 → 254 (+3)
 - **Cumulative Playwright tests:** 103 → 117 (+14)
 - **Cumulative Playwright test files:** 19 → 23 (+4)
-- **Production readiness % estimate:** ~60% (Vitest invariants + Playwright skeleton + axe-core + visual regression skeleton + Lighthouse CI config; full ratchet §7.4+ bundle/code-health)
-- **Remaining ETA:** ~4-5 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
+- **Production readiness % estimate:** ~62% (Vitest invariants + Playwright skeleton + axe-core + visual regression skeleton + Lighthouse CI config + bundle/health gates config; full ratchet on first §7.6 CI run gating PRs)
+- **Remaining ETA:** ~3-5 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
+
+---
+
+## Daniel action items (gathered per phase deferrals — for §7.6+ CI augment + secrets pipeline)
+
+- **Firebase Admin Service Account JSON** → upload to GitHub Secrets as `FIREBASE_SERVICE_ACCOUNT` (used by §7.2 auth.setup.ts + §7.7 Checkly)
+- **Playwright test UID** → GitHub Secret `PLAYWRIGHT_AUTH_TEST_UID` (test account provisioned în Firebase Auth)
+- **Checkly account + token** → `CHECKLY_API_KEY` + `CHECKLY_ACCOUNT_ID` GitHub Secrets pentru §7.7 synthetic prod every-5min
+- **Browserbase account + token** → `BROWSERBASE_API_KEY` + `BROWSERBASE_PROJECT_ID` GitHub Secrets pentru §7.8 Stagehand exploration nightly
+- **Snyk token** → `SNYK_TOKEN` GitHub Secret pentru §7.6 vulnerability scan
+- **GitHub branch protection `main`** → require Track 7 CI status checks + linear history + no force-push (per master spec §9)
+- **Firebase Console manual** → Authorized domains `andura.app` + localhost + Firestore rules publish parity
+- **Visual regression baselines** → first CI run pe Ubuntu Linux generates via `--update-snapshots` artifact → Daniel review + commit baselines (Windows-generated baselines won't match CI Linux fonts)
+- **8 npm audit vulnerabilities triage** → 4 low + 4 moderate transitive from §7.4 install — Snyk action will surface în PR; Daniel decision npm audit fix vs manual upgrade case-by-case
 
 ---
 
