@@ -6,7 +6,8 @@
     "coverage/",
     "test-results/",
     ".git",
-    "📤_outbox/"
+    "📤_outbox/",
+    "📥_inbox/"
   ],
   "alwaysUpdateLinks": true,
   "showUnsupportedFiles": true
