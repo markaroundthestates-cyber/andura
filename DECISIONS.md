@@ -80,6 +80,7 @@ D027 | 2026-05-18 | STRATEGY | Phase 6 task_02 Option C big-bang async migration
 D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline real wire 8/8 + Cont sub-screens 9/9 + polish pre-Beta 7/7 + 4303→4522 PASS (+219) + TS strict maximal | LOCKED V1 | DECISIONS.md §D026
 D028 | 2026-05-19 | PROC | React entry swap LANDED andura.app/ vanilla→React production Option 1 rename + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
 D029 | 2026-05-19 | PROC | Bugatti Audit Nuclear procedure continuous neîntrerupt multi-noapte Opus MAX log-only quality-asymptotic until Daniel STOP | LOCKED V1 | DECISIONS.md §D029
+D030 | 2026-05-19 | PROC | Obsidian Git plugin fix anti-recurrence — autoCommitOnlyStaged=true + autoSave=0 + autoPull=0 + autoPullOnBoot=false (root cause b1bd099 mass-delete propagation) | LOCKED V1 | DECISIONS.md §D030
 
 ---
 
