@@ -16,6 +16,12 @@ on:
 permissions:
   contents: read
   actions: read
+  # §2 labels API requires `issues: read` scope (labels live under issues namespace
+  # per GitHub REST API docs). Without this, gh api labels returns 403 silently +
+  # all 6 expected labels marked false-positive MISSING.
+  issues: read
+  # §3 + §4 rulesets + permissions API require `administration: read`.
+  administration: read
 
 jobs:
   verify:
@@ -23,7 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      # Bumped v4 → v5 (Node 24 — silences Node 20 deprecation warning per
+      # https://github.blog/changelog/2024-... actions/checkout migration).
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
 
       - name: '§1 GitHub Secrets — verify 9 expected names present'
         env:
@@ -57,13 +67,39 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LABELS=$(gh api "repos/${{ github.repository }}/labels" --paginate --jq '.[].name' | sort)
-          for l in exploration-anomaly nightly-stagehand severity-p0 severity-p1 severity-p2 severity-p3; do
-            if echo "$LABELS" | grep -qx "$l"; then
-              echo "✅ $l"
+          # Fetch labels (no --paginate — andura repo has ~15 labels << 30 default page)
+          # Capture exit code explicit pentru detect silent failures
+          set +e
+          LABELS=$(gh api "repos/${{ github.repository }}/labels" --jq '.[].name')
+          GH_EXIT=$?
+          set -e
+
+          if [ "$GH_EXIT" -ne 0 ]; then
+            echo "❌ gh api labels exited $GH_EXIT — permissions issue OR API unreachable"
+            echo "::error::gh api labels failed (exit $GH_EXIT)"
+            exit 1
+          fi
+
+          # Defensive debug — see exactly what gh returned
+          LABEL_COUNT=$(echo "$LABELS" | grep -c .)
+          echo "DEBUG: gh api returned $LABEL_COUNT labels"
+          echo "DEBUG: full list:"
+          echo "$LABELS" | sed 's/^/  - /'
+          echo ""
+
+          if [ "$LABEL_COUNT" -eq 0 ]; then
+            echo "❌ Empty labels response — likely permissions error (need issues: read)"
+            echo "::error::Empty labels response — check workflow permissions"
+            exit 1
+          fi
+
+          # Daniel pattern verbatim: grep ^X$ pentru exact line match
+          for L in exploration-anomaly nightly-stagehand severity-p0 severity-p1 severity-p2 severity-p3; do
+            if echo "$LABELS" | grep -q "^${L}$"; then
+              echo "✅ $L"
             else
-              echo "❌ $l MISSING"
-              echo "::error::Missing label: $l"
+              echo "❌ Missing: $L"
+              echo "::error::Missing label: $L"
             fi
           done
 
