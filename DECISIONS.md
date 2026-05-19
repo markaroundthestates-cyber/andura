@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D031
-total_entries: 31
+latest_entry: D032
+total_entries: 32
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -82,6 +82,7 @@ D028 | 2026-05-19 | PROC | React entry swap LANDED andura.app/ vanilla→React p
 D029 | 2026-05-19 | PROC | Bugatti Audit Nuclear procedure continuous neîntrerupt multi-noapte Opus MAX log-only quality-asymptotic until Daniel STOP | LOCKED V1 | DECISIONS.md §D029
 D030 | 2026-05-19 | PROC | Obsidian Git plugin fix anti-recurrence — autoCommitOnlyStaged=true + autoSave=0 + autoPull=0 + autoPullOnBoot=false (root cause b1bd099 mass-delete propagation) | LOCKED V1 | DECISIONS.md §D030
 D031 | 2026-05-19 | PROC | Phase 7 Findings FIX procedure continuous neîntrerupt Opus exclusively per § atomic commit, push manual final §50 SAU Daniel trigger, mirror D029 reverse | LOCKED V1 | DECISIONS.md §D031
+D032 | 2026-05-19 | PROC | Track 7 Automated Testing procedure continuous neîntrerupt Opus exclusively per phase atomic commit, push manual final §7.10 SAU Daniel trigger, mirror D031 = 3-tier defense (Tier 1 in-repo Vitest+Playwright+visual+Lighthouse+fast-check+@langwatch/scenario+Stryker+axe+bundle+health / Tier 2 Checkly synthetic prod / Tier 3 Stagehand exploration nightly monitoring scope per WebTestBench arXiv 2603.25226) + persona-driven engine deterministic verification ADR 030 D1-D5 8/8 adapters | LOCKED V1 | DECISIONS.md §D032 + 08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md
 
 ---
 

@@ -163,6 +163,12 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Backup tag `pre-phase-7-findings-fix-2026-05-19` at HEAD `f40ebbc` pushed origin (single conscious safety net)
 - Production readiness target: 56.5% → ≥85% post §50 LANDED. Stop trigger UNIC: Daniel STOP explicit.
 
+**2026-05-19 evening Track 7 Automated Testing kickoff (chat ACASĂ post-Phase-7-LANDED):**
+- D032 LOCKED procedure 3-tier defense + persona-driven engine mocks (per `DECISIONS.md §D032` + `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md`)
+- Backup tag `pre-track-7-automated-testing-2026-05-19` pushed origin
+- Target: smoke Daniel manual pre-Beta clean (audit-vs-UX gap close 75%→≥90% via Tier 1 in-repo + Tier 2 Checkly synthetic + Tier 3 Stagehand exploration)
+- ETA ~5-8 zile lucrătoare CC autonomous neîntrerupt Opus exclusively
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -210,6 +216,21 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Production readiness target: 56.5% → ≥85% post §50
 - Stop trigger UNIC Daniel STOP explicit
 - Started 2026-05-19 birou Daniel chat ACASĂ, baseline HEAD `f40ebbc` (NU `b705c3f` audit-time — src/ identical, recovery commits + D030 + Stop hook fix preserved)
+
+**Track 7 — Automated Testing 3-tier defense (per `DECISIONS.md §D032` + `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md`) — IN PROGRESS § 0/10 (starting 2026-05-19 evening):**
+- §7.1 Vitest persona fixtures + engine golden master + fast-check property invariants
+- §7.2 Playwright E2E React 4-tab + `@nearform/playwright-firebase` auth fixture + Magic Link spec
+- §7.3 Visual regression `toHaveScreenshot()` + Lighthouse CI 12+ + axe-core a11y WCAG 2.1 AA
+- §7.4 Bundle budget size-limit + depcheck + madge + jscpd + license-checker + Snyk + npm audit
+- §7.5 @langwatch/scenario coach voice persona scenarios + judge criteria anti-paternalism
+- §7.6 Stryker mutation nightly engine ≥75% + deploy.yml CI augment
+- §7.7 Checkly synthetic prod every-5min EU CDN + Slack alert routing
+- §7.8 Stagehand exploration nightly (Browserbase) → GitHub Issues queue (monitoring scope NU gating)
+- §7.9 Vanilla legacy E2E delete (48 obsolete tests cleanup)
+- §7.10 Production readiness Lighthouse live verify + Daniel manual smoke single comprehensive cap-coadă
+- Push manual final §7.10 LANDED (NU per phase, preserve `f40ebbc` Stop hook anti-recurrence)
+- Tests baseline 4519 → target ~4719+ (~200 new tests)
+- Stop trigger UNIC Daniel STOP explicit
 
 **End-state final gate sequencing (Daniel CEO directive verbatim):**
 1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16) — backend layer reusable React
