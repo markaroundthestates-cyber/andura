@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 21 / 50 LANDED
+**Status:** IN PROGRESS § 22 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -368,14 +368,26 @@
 **Tests:** baseline 4519 preserved (pre-commit gate addition; typecheck must pass for this very commit)
 **Next:** § 22
 
+### §22 LANDED (2026-05-19 21:XX) — Refactor-Later-NEVER Scan
+
+**Resolved upstream §01 (3/12):** §22-H1 vanilla src/pages legacy → §1-H2 Track 7 | §22-H2 App.tsx dead → §1-H1 done ✓ | §22-M1 TODO concentrated vanilla + observationFilter → §1-M2 done (React side ZERO TODO ✓)
+
+**Deferred Track 7 (2/12):** §22-M3 jscpd code duplication % audit | §22-M4 madge circular imports detect (covered §20-M4 cluster)
+
+**POSITIVE no-op (7/12):** §22-M2 magic numbers named constants ✓ (FOURTEEN_DAYS_MS, COPY, REASON_LABEL all declared) | §22-L1 ZERO TODO/FIXME src/react/ ✓ | §22-L2 ZERO debugger statements ✓ | §22-L3 ZERO console.log src/react/ ✓ | §22-L4 + §22-N1/N2 OK
+
+**Files modified:** 0 (refactor scan = mostly upstream resolved + cluster POSITIVE confirmation)
+**Tests:** baseline 4519 preserved
+**Next:** § 23
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 21 / 50 (42%)
-- Total commits local (Phase 7): 21 (§01-§21)
+- § LANDED: 22 / 50 (44%)
+- Total commits local (Phase 7): 22 (§01-§22)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§21: 57 surgical + 126 Track 7 deferred + 137 no-op/upstream + 1 Daniel-flag = 321/321 addressed
+- Cumulative findings cleared §01-§22: 57 surgical + 128 Track 7 deferred + 147 no-op/upstream + 1 Daniel-flag = 333/333 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
