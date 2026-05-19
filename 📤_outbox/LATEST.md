@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 13 / 50 LANDED
+**Status:** IN PROGRESS § 14 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -243,14 +243,26 @@
 **Tests:** baseline 4519 preserved (additive captureException + window.addEventListener)
 **Next:** § 14
 
+### §14 LANDED (2026-05-19 19:XX) — State Machine Integrity Audit
+
+**Resolved upstream (1/12):** §14-C1 WorkoutState discriminated union → §3-H2 Track 7 (cluster)
+
+**Deferred Track 7 (7/12):** §14-H1 Zustand persist cross-tab sync verify | §14-H2 pausedSnapshot E2E pause-resume.spec.js | §14-H3 mode detection event listener cleanup audit (per useEffect + react-hooks/exhaustive-deps via §1-C4 ratchet) | §14-M1 SessionPill conditional verify | §14-M2 dead states unreachable (depends §14-C1) | §14-M3 BroadcastChannel evaluate | §14-M5 Mermaid FSM visualization doc
+
+**Resolved upstream §12 (1/12):** §14-M4 last-write-wins → §12-H3
+
+**POSITIVE no-op (3/12):** §14-L1 useEffect cleanup pattern correct ✓ | §14-L2 Zustand persist configured ✓ | §14-N1 OK
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 15
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 13 / 50 (26%)
-- Total commits local (Phase 7): 13 (§01-§13)
+- § LANDED: 14 / 50 (28%)
+- Total commits local (Phase 7): 14 (§01-§14)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§13: 51 surgical + 85 Track 7 deferred + 74 no-op/upstream + 1 Daniel-flag = 211/211 addressed
+- Cumulative findings cleared §01-§14: 51 surgical + 92 Track 7 deferred + 79 no-op/upstream + 1 Daniel-flag = 223/223 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
