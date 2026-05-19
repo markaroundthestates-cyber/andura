@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 11 / 50 LANDED
+**Status:** IN PROGRESS § 12 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -207,19 +207,40 @@
 
 **Total findings addressed §01-§10:** 177 (48 surgical + 63 Track 7 + 65 no-op/upstream + 1 Daniel-flag).
 
+### §11 LANDED (2026-05-19 19:XX) — i18n / Localization Audit (backfilled post-edit-fail)
+
+**Track 7 deferred (8/10 — i18n infrastructure cluster):** §11-C1 DST transition tests | §11-H1 FOURTEEN_DAYS_MS calendar-aware diff | §11-H2 date-fns install + migration | §11-H3 Intl.PluralRules + pluralRo helper | §11-M1 Intl.NumberFormat('ro-RO') | §11-M2 decimal separator parsing | §11-M3 Monday-first verify | §11-M4 thousands separator
+
+**POSITIVE no-op (2/10):** §11-L1 html lang=ro ✓ | §11-L2 Inter font RO glyph ✓
+
+**Files modified:** 0 | **Tests:** baseline 4519 preserved | **Next:** § 12
+
+### §12 LANDED (2026-05-19 19:XX) — Data Integrity / Migration Audit
+
+**Track 7 deferred (8/12 — data integrity cluster):** §12-C1 Dexie v1→v2 migration test policy + 08-workflows/dexie-migration-policy.md | §12-C2 IndexedDB quota handling (navigator.storage.estimate + QuotaExceededError catch + UX banner) | §12-H1 Tier 0/1/2 terminology alignment dexieMigration.ts comments vs §35 spec | §12-H2 CDL append-only runtime enforcement wrapper + invariant test | §12-H3 cross-tab IDB lock policy doc + test scenario | §12-M1 jsdom fail-silent verify production behavior | §12-M3 rollback migration safety | §12-M5 wv2-* non-breaking verify
+
+**Covered §26/§39 (2/12):** §12-M2 Firebase backup → §26 | §12-M4 Schema 657 → §39
+
+**POSITIVE no-op (2/12):** §12-L1 Dexie + fake-indexeddb installed ✓ | §12-L2 CDL ADR 011 architectural primitive documented ✓
+
+**Files modified:** 0 (data integrity cluster Track 7 — coordinated quota + migration + tier alignment work)
+**Karpathy dominant:** Think Before Coding (quota) + Goal-Driven (CDL append-only invariant)
+**Tests:** baseline 4519 preserved
+**Next:** § 13
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 11 / 50 (22%)
-- Total commits local (Phase 7): 11 (§01-§11)
+- § LANDED: 12 / 50 (24%)
+- Total commits local (Phase 7): 12 (§01-§12)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§11: 48 surgical + 71 Track 7 deferred + 67 no-op/upstream + 1 Daniel-flag = 187/187 addressed
-- Cumulative time elapsed: ~4.25 h
+- Cumulative findings cleared §01-§12: 48 surgical + 79 Track 7 deferred + 69 no-op/upstream + 1 Daniel-flag = 197/197 addressed
+- Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
 - Remaining § ETA: ~10-25 min/§ avg
-- Push status: 11 commits local + 1 backup tag pushed. Push origin manual final §50 SAU Daniel trigger.
+- Push status: 12 commits local + 1 backup tag pushed. Push origin manual final §50 SAU Daniel trigger.
 
 ---
 
