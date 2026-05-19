@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 29 / 50 LANDED
+**Status:** IN PROGRESS § 30 / 50 LANDED — 60% MILESTONE
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -450,14 +450,25 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 30
 
+### §30 LANDED — Onboarding T0 Anti-Bias (11 findings) — 60% MILESTONE
+
+**Resolved upstream §07+§13 (3/11):** §30-C1 Big 6 bounds → §7-C4 + §13-H1 Track 7 | §30-H1 persona detection E2E → §7-H2 Track 7 | §30-H2 force-typing eliminated → §9-L2 ABSOLUTE preserved ✓
+
+**Deferred Track 7 (5/11):** §30-M1 ADR 014 hard typing implementation audit | §30-M2 ADR 017 demographic prior lookup verify | §30-M3 completion celebration component | §30-M4 resume incomplete onboarding path | §30-H3 persona conflict edge case
+
+**POSITIVE no-op (3/11):** §30-L1 skip logic anti-paternalism preserved ✓ | §30-L2 back nav preserves Zustand persist ✓ | §30-L3 anti-RE free-text DROP V1 ✓
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **60% milestone — §01-§30 LANDED**
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 29 / 50 (58%)
-- Total commits local (Phase 7): 29 (§01-§29)
+- § LANDED: 30 / 50 (60% — MILESTONE)
+- Total commits local (Phase 7): 30 (§01-§30)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§29: 57 surgical + 175 Track 7 deferred + 183 no-op/upstream + 1 Daniel-flag = 416/416 addressed
+- Cumulative findings cleared §01-§30: 57 surgical + 180 Track 7 deferred + 189 no-op/upstream + 1 Daniel-flag = 427/427 addressed
+- Production readiness: ~75%
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
