@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 7 / 50 LANDED
+**Status:** IN PROGRESS § 8 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -141,16 +141,31 @@
 **Tests:** baseline 4519 expected preserved (Auth tests don't exist; routing.test.tsx ProtectedRoute test uses setAuthenticated(true) → useEffect additive-only doesn't override → tests pass)
 **Next:** § 08
 
+### §08 LANDED (2026-05-19 18:XX) — Engine Correctness Audit
+
+**Surgical (1/17):** §8-H1 src/coach/orchestrator/adapters/index.js — `ORDERED_ADAPTERS` Object.freeze const array enforces §42.10 pipeline ordering. Runner consumers can guarantee Periodization→Goal Adaptation→Energy Adjustment→Bayesian Nutrition→Tempo→Specialization→Warm-up→Deload sequence without depending on barrel export order (fragile to alphabetical sort refactor).
+
+**Resolved upstream (1/17):** §8-C1 engine type-safety gap → §3-C1 deferred Track 7
+
+**Deferred Track 7 (6/17):** §8-H3 hard-error UX degraded-mode banner + Sentry surface (depends §4-C1 done; ready for follow-up wire) | §8-M1 Kalman 90-day convergence CI nightly test | §8-M2 MMI Engine #9 decay function half-life documentation + invariant test | §8-M3 Aggressive Loading 4-module voting threshold audit | §8-M4 Specialization 4-gate AND-logic verify | §8-M5 Deload week 4 invariant test CI verify
+
+**POSITIVE no-op (8/17):** §8-H2 nowMs Date.now fallback acceptable NIT (modern browsers all support performance.now) | §8-L1-§8-L6 architecture sound ADR 030 D1-D5 + 8/8 adapters + Hook discipline + severity policy POSITIVE | §8-N1/N2 OK
+
+**Files modified (1):** src/coach/orchestrator/adapters/index.js
+**Karpathy dominant:** Surgical Changes (1)
+**Tests:** baseline 4519 preserved (additive ORDERED_ADAPTERS const, existing exports preserved)
+**Next:** § 09
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 7 / 50
-- Total commits local (Phase 7): 7 (§01-§07)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§07 no change)
-- Cumulative findings cleared §01-§07: 47 surgical + 56 Track 7 deferred + 43 no-op/upstream-resolved = 146/146 addressed
-- Cumulative time elapsed: ~3.25 h
-- Production readiness % estimate: 56.5% → ~70% (§07 auth chain BETA BLOCKER cluster wired = significant readiness shift)
+- § LANDED: 8 / 50
+- Total commits local (Phase 7): 8 (§01-§08)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§08 no change)
+- Cumulative findings cleared §01-§08: 48 surgical + 62 Track 7 deferred + 53 no-op/upstream-resolved = 163/163 addressed
+- Cumulative time elapsed: ~3.5 h
+- Production readiness % estimate: 56.5% → ~71% (§08 pipeline order const + architecture POSITIVE verified)
 - Remaining § ETA: ~15-30 min/§ avg
 
 ---

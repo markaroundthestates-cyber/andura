@@ -21,11 +21,41 @@
 // See: 03-decisions/_FROZEN/030-adapter-design-pattern.md §2.1 D1
 //      03-decisions/_FROZEN/026-offline-coaching-decision-tree-exhaustive.md §42.10 + §1.10
 
-export { periodizationAdapter } from './periodizationAdapter.js';
-export { goalAdaptationAdapter } from './goalAdaptationAdapter.js';
-export { energyAdjustmentAdapter } from './energyAdjustmentAdapter.js';
-export { bayesianNutritionAdapter } from './bayesianNutritionAdapter.js';
-export { tempoAdapter } from './tempoAdapter.js';
-export { specializationAdapter } from './specializationAdapter.js';
-export { warmupAdapter } from './warmupAdapter.js';
-export { deloadAdapter } from './deloadAdapter.js';
+import { periodizationAdapter } from './periodizationAdapter.js';
+import { goalAdaptationAdapter } from './goalAdaptationAdapter.js';
+import { energyAdjustmentAdapter } from './energyAdjustmentAdapter.js';
+import { bayesianNutritionAdapter } from './bayesianNutritionAdapter.js';
+import { tempoAdapter } from './tempoAdapter.js';
+import { specializationAdapter } from './specializationAdapter.js';
+import { warmupAdapter } from './warmupAdapter.js';
+import { deloadAdapter } from './deloadAdapter.js';
+
+export { periodizationAdapter };
+export { goalAdaptationAdapter };
+export { energyAdjustmentAdapter };
+export { bayesianNutritionAdapter };
+export { tempoAdapter };
+export { specializationAdapter };
+export { warmupAdapter };
+export { deloadAdapter };
+
+/**
+ * §8-H1 audit fix — pipeline ordering enforced via explicit ORDERED_ADAPTERS
+ * array, NU barrel export order (fragile to refactor / alphabetical sort).
+ * Runner SHOULD consume this array to guarantee §42.10 prescriptive sequence.
+ * Adding engine #9 = append here + add adapter export above.
+ *
+ * Ordering invariant: Periodization → Goal Adaptation → Energy Adjustment →
+ * Bayesian Nutrition → Tempo → Specialization → Warm-up → Deload
+ * (per ADR 026 §42.10 + ADR 030 §2.1 D1 LOCKED V1).
+ */
+export const ORDERED_ADAPTERS = Object.freeze([
+  periodizationAdapter,
+  goalAdaptationAdapter,
+  energyAdjustmentAdapter,
+  bayesianNutritionAdapter,
+  tempoAdapter,
+  specializationAdapter,
+  warmupAdapter,
+  deloadAdapter,
+]);
