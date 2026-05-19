@@ -1,6 +1,6 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 2 / 10 LANDED
+**Status:** IN PROGRESS § 3 / 10 LANDED
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
@@ -78,17 +78,33 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ---
 
+## §7.3 LANDED (2026-05-19 20:00) — Visual regression toHaveScreenshot + Lighthouse CI 12+ config
+
+- **Commit (local):** `1957b6f` `feat(track-7-§7.3): visual regression toHaveScreenshot + Lighthouse CI 12+ config`
+- **New files (121 lines):**
+  - `lighthouserc.js` — Lighthouse CI 12+ mobile preset + devtools throttling + 3 runs median anti-flake + 'lighthouse:no-pwa' preset thresholds (perf≥85 / a11y≥95 / best-practices≥90 / SEO≥90; FCP<1800 / LCP<2500 / CLS<0.1 / TBT<200)
+  - `tests/visual-regression.spec.ts` (3 tests) — Playwright toHaveScreenshot() native: animations disabled + caret hide + maxDiffPixelRatio 0.02; iPhone 14 + iPhone SE + iPad Air viewports; dynamic content masking
+- **Infra:**
+  - `package.json` scripts: `lighthouse` / `lighthouse:live` / `visual:update` + @lhci/cli ^0.15.1 devDep
+- **Karpathy dominant:** Goal-Driven (foundation pentru §7.6 CI deploy.yml gate) + Simplicity First (Playwright built-in toHaveScreenshot, NU plugin, ZERO config sprawl)
+- **Deviations from spec:**
+  - SKIPPED baseline generation pre-commit — CI Ubuntu Linux font rendering differs from local Windows, baselines must be generated în CI environment via first deploy.yml run with `--update-snapshots` artifact upload OR Daniel local CI-matched Docker
+  - SKIPPED axe-core duplicate integration — already done în §7.2 magic-link + smoke-react
+- **Next:** §7.4 starting now — Bundle budget size-limit + depcheck + madge + jscpd + license-checker + Snyk
+
+---
+
 ## Cumulative status (refresh per phase)
 
-- **§ LANDED:** 2 / 10 (20%)
-- **Total commits local:** 5 §9 First Actions + 1 §7.1 + 1 §7.1-LATEST + 1 §7.2 = 8 commits since baseline `17b0bba`
+- **§ LANDED:** 3 / 10 (30%)
+- **Total commits local:** 5 §9 First Actions + 1 §7.1 + 1 §7.1-LATEST + 1 §7.2 + 1 §7.2-LATEST + 1 §7.3 = 10 commits since baseline `17b0bba`
 - **Commits pushed origin:** 5 (§9 First Actions + chore-auto pre-existing) — §7.1+ local only
-- **Cumulative Vitest tests:** 4519 → 4546 (+27)
+- **Cumulative Vitest tests:** 4519 → 4546 (+27) preserved
 - **Cumulative Vitest test files:** 251 → 254 (+3)
-- **Cumulative Playwright tests:** 103 → 114 (+11)
-- **Cumulative Playwright test files:** 19 → 22 (+3)
-- **Production readiness % estimate:** ~58% (Vitest invariants + Playwright skeleton + axe-core a11y instrumentation; full ratchet starts §7.4+ bundle/code-health gates)
-- **Remaining ETA:** ~4-6 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
+- **Cumulative Playwright tests:** 103 → 117 (+14)
+- **Cumulative Playwright test files:** 19 → 23 (+4)
+- **Production readiness % estimate:** ~60% (Vitest invariants + Playwright skeleton + axe-core + visual regression skeleton + Lighthouse CI config; full ratchet §7.4+ bundle/code-health)
+- **Remaining ETA:** ~4-5 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
 
 ---
 
