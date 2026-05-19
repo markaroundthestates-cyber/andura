@@ -12,7 +12,12 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     silent: 'passed-only',
-    include: ['src/**/*.test.{js,ts,tsx}'],
+    include: [
+      'src/**/*.test.{js,ts,tsx}',
+      // Track 7 §7.1+ — engine fixtures, invariants, golden master tests
+      // (tests/e2e/, tests/*.spec.js stay in Playwright runner via npm run test)
+      'tests/engine/**/*.test.{js,ts}',
+    ],
     setupFiles: ['./src/react/__tests__/setup.ts'],
     // §2-C2 — explicit timeouts (default 5000ms causes slow CI nondeterminism).
     testTimeout: 10000,

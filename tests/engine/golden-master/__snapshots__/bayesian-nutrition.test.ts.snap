@@ -1,0 +1,130 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Bayesian Nutrition — golden master snapshots > personaGigelT0 cold-start (zero history, no observations) 1`] = `
+{
+  "blueprint": {
+    "blueprint_signals": [
+      "isolation_graceful_degradation_compound_below_3",
+      "kalman_ewma_fallback_active",
+      "profile_typing_flap_suppressed",
+    ],
+    "confidence_interval": {
+      "lower": -0.98,
+      "upper": 0.98,
+    },
+    "likelihood_probabilities": {
+      "deficit_likelihood": 0.158655,
+      "maintenance_likelihood": 0.682689,
+      "surplus_likelihood": 0.158655,
+    },
+    "passive_mode_active": false,
+    "posterior": {
+      "ci_lower": -0.98,
+      "ci_upper": 0.98,
+      "mu": 0,
+      "observations_count": 0,
+      "sigma": 0.5,
+    },
+    "prior": {
+      "mu": 0,
+      "sigma": 0.5,
+    },
+    "ui_tier": "TIER_1_SILENT",
+  },
+  "confidence": "low",
+  "id": "bayesianNutrition",
+  "recommendations": [],
+  "signals": [
+    "isolation_graceful_degradation_compound_below_3",
+    "kalman_ewma_fallback_active",
+    "profile_typing_flap_suppressed",
+  ],
+  "tier": "MED",
+}
+`;
+
+exports[`Bayesian Nutrition — golden master snapshots > personaMaria65T3 conservative 90-day (maintain, seed 2026) 1`] = `
+{
+  "blueprint": {
+    "blueprint_signals": [
+      "isolation_graceful_degradation_compound_below_3",
+      "kalman_ewma_fallback_active",
+      "profile_typing_flap_suppressed",
+    ],
+    "confidence_interval": {
+      "lower": -0.044115,
+      "upper": 0.035649,
+    },
+    "likelihood_probabilities": {
+      "deficit_likelihood": 0.214183,
+      "maintenance_likelihood": 0.672295,
+      "surplus_likelihood": 0.113522,
+    },
+    "passive_mode_active": false,
+    "posterior": {
+      "ci_lower": -0.044115,
+      "ci_upper": 0.035649,
+      "mu": -0.004233,
+      "observations_count": 20,
+      "sigma": 0.020348,
+    },
+    "prior": {
+      "mu": 0,
+      "sigma": 0.5,
+    },
+    "ui_tier": "TIER_1_SILENT",
+  },
+  "confidence": "medium",
+  "id": "bayesianNutrition",
+  "recommendations": [],
+  "signals": [
+    "isolation_graceful_degradation_compound_below_3",
+    "kalman_ewma_fallback_active",
+    "profile_typing_flap_suppressed",
+  ],
+  "tier": "MED",
+}
+`;
+
+exports[`Bayesian Nutrition — golden master snapshots > personaMariusT2 mature 30-day history (cut goal, seed 1337) 1`] = `
+{
+  "blueprint": {
+    "blueprint_signals": [
+      "isolation_graceful_degradation_compound_below_3",
+      "kalman_ewma_fallback_active",
+      "profile_typing_flap_suppressed",
+    ],
+    "confidence_interval": {
+      "lower": -0.080078,
+      "upper": 0.0253,
+    },
+    "likelihood_probabilities": {
+      "deficit_likelihood": 0.507518,
+      "maintenance_likelihood": 0.470731,
+      "surplus_likelihood": 0.021752,
+    },
+    "passive_mode_active": false,
+    "posterior": {
+      "ci_lower": -0.080078,
+      "ci_upper": 0.0253,
+      "mu": -0.027389,
+      "observations_count": 20,
+      "sigma": 0.026882,
+    },
+    "prior": {
+      "mu": 0,
+      "sigma": 0.5,
+    },
+    "ui_tier": "TIER_1_SILENT",
+  },
+  "confidence": "medium",
+  "id": "bayesianNutrition",
+  "recommendations": [],
+  "signals": [
+    "isolation_graceful_degradation_compound_below_3",
+    "kalman_ewma_fallback_active",
+    "profile_typing_flap_suppressed",
+  ],
+  "tier": "MED",
+}
+`;
