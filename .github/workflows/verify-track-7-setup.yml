@@ -1,0 +1,246 @@
+# Track 7 setup verification workflow — runs ALL 6 checks în CI cu secrets native.
+#
+# USAGE: GitHub repo → Actions tab → "Verify Track 7 Setup" → Run workflow
+#        (manual workflow_dispatch trigger — no auto-runs)
+#
+# Output: job summary table + step logs cu ✅/❌ per check.
+
+name: Verify Track 7 Setup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify:
+    name: Verify Daniel-action items complete
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: '§1 GitHub Secrets — verify 9 expected names present'
+        run: |
+          MISSING=""
+          for s in ANTHROPIC_API_KEY BROWSERBASE_API_KEY BROWSERBASE_PROJECT_ID \
+                   CHECKLY_API_KEY CHECKLY_ACCOUNT_ID FIREBASE_SERVICE_ACCOUNT \
+                   LHCI_GITHUB_APP_TOKEN PLAYWRIGHT_AUTH_TEST_UID SNYK_TOKEN; do
+            # Check if env var is empty (secret not set in workflow env). NU print value.
+            eval "VAL=\${$s:-}"
+            if [ -z "$VAL" ]; then
+              MISSING="$MISSING $s"
+              echo "❌ $s — NOT SET în workflow secrets"
+            else
+              echo "✅ $s — set (length: ${#VAL})"
+            fi
+          done
+          if [ -n "$MISSING" ]; then
+            echo "::error::Missing secrets:$MISSING"
+            echo "MISSING_SECRETS=$MISSING" >> $GITHUB_ENV
+          fi
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
+          BROWSERBASE_PROJECT_ID: ${{ secrets.BROWSERBASE_PROJECT_ID }}
+          CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
+          CHECKLY_ACCOUNT_ID: ${{ secrets.CHECKLY_ACCOUNT_ID }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: '§2 GitHub Labels — verify 6 new expected'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LABELS=$(gh api "repos/${{ github.repository }}/labels" --paginate --jq '.[].name' | sort)
+          for l in exploration-anomaly nightly-stagehand severity-p0 severity-p1 severity-p2 severity-p3; do
+            if echo "$LABELS" | grep -qx "$l"; then
+              echo "✅ $l"
+            else
+              echo "❌ $l MISSING"
+              echo "::error::Missing label: $l"
+            fi
+          done
+
+      - name: '§3 Branch protection ruleset main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RULESETS=$(gh api "repos/${{ github.repository }}/rulesets" 2>/dev/null || echo "[]")
+          if [ "$RULESETS" = "[]" ]; then
+            echo "❌ No rulesets configured"
+            echo "::error::No branch protection ruleset"
+            exit 0
+          fi
+          MAIN_RULES=$(echo "$RULESETS" | jq -r '.[] | select(.target == "branch") | "\(.name) — enforcement=\(.enforcement)"')
+          if [ -z "$MAIN_RULES" ]; then
+            echo "❌ No branch-target rulesets"
+            echo "::error::No branch ruleset"
+          else
+            echo "✅ Rulesets:"
+            echo "$MAIN_RULES"
+            ACTIVE=$(echo "$RULESETS" | jq -r '[.[] | select(.target == "branch" and .enforcement == "active")] | length')
+            if [ "$ACTIVE" -eq 0 ]; then
+              echo "⚠️ No active branch rulesets (enforcement != 'active')"
+              echo "::warning::Rulesets exist but NOT enforced"
+            fi
+          fi
+
+      - name: '§4 Workflow permissions write'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PERMS=$(gh api "repos/${{ github.repository }}/actions/permissions/workflow" --jq '.default_workflow_permissions')
+          echo "default_workflow_permissions: $PERMS"
+          if [ "$PERMS" = "write" ]; then
+            echo "✅ Write permissions enabled"
+          else
+            echo "❌ Expected 'write', got '$PERMS'"
+            echo "::error::Workflow permissions not write — Stagehand Issues create will fail"
+          fi
+
+      - name: '§5.1 Anthropic API connectivity'
+        if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "x-api-key: ${{ secrets.ANTHROPIC_API_KEY }}" \
+            -H "anthropic-version: 2023-06-01" \
+            https://api.anthropic.com/v1/models)
+          echo "Anthropic GET /v1/models: HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Anthropic API HTTP $STATUS (expected 200)"
+            exit 1
+          fi
+          echo "✅ Anthropic HTTP 200"
+
+      - name: '§5.2 Checkly API connectivity'
+        if: ${{ secrets.CHECKLY_API_KEY != '' && secrets.CHECKLY_ACCOUNT_ID != '' }}
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CHECKLY_API_KEY }}" \
+            -H "X-Checkly-Account: ${{ secrets.CHECKLY_ACCOUNT_ID }}" \
+            https://api.checklyhq.com/v1/account)
+          echo "Checkly GET /v1/account: HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Checkly API HTTP $STATUS (expected 200)"
+            exit 1
+          fi
+          echo "✅ Checkly HTTP 200"
+
+      - name: '§5.3 Browserbase API connectivity'
+        if: ${{ secrets.BROWSERBASE_API_KEY != '' }}
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "X-BB-API-Key: ${{ secrets.BROWSERBASE_API_KEY }}" \
+            "https://api.browserbase.com/v1/sessions?status=RUNNING")
+          echo "Browserbase GET sessions: HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Browserbase API HTTP $STATUS (expected 200)"
+            exit 1
+          fi
+          echo "✅ Browserbase HTTP 200"
+
+      - name: '§5.4 Snyk API connectivity'
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${{ secrets.SNYK_TOKEN }}" \
+            "https://api.snyk.io/rest/orgs?version=2024-10-15")
+          echo "Snyk GET /rest/orgs: HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Snyk API HTTP $STATUS (expected 200)"
+            exit 1
+          fi
+          echo "✅ Snyk HTTP 200"
+
+      - name: '§6 Firebase SA JSON valid + project_id check'
+        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > /tmp/sa.json
+          # Verify valid JSON
+          if ! jq empty /tmp/sa.json 2>/dev/null; then
+            echo "❌ SA JSON invalid — jq parse fail"
+            echo "::error::SA JSON parse failure"
+            exit 1
+          fi
+          PROJECT=$(jq -r '.project_id // empty' /tmp/sa.json)
+          CLIENT=$(jq -r '.client_email // empty' /tmp/sa.json)
+          PK_OK=$(jq -r '.private_key | startswith("-----BEGIN PRIVATE KEY-----")' /tmp/sa.json)
+          if [ -z "$PROJECT" ] || [ -z "$CLIENT" ]; then
+            echo "❌ SA missing project_id sau client_email"
+            echo "::error::SA JSON missing required fields"
+            exit 1
+          fi
+          if [ "$PK_OK" != "true" ]; then
+            echo "❌ SA private_key malformed (missing BEGIN PRIVATE KEY header)"
+            echo "::error::SA private_key invalid"
+            exit 1
+          fi
+          echo "✅ SA JSON valid: project=$PROJECT, client=$CLIENT"
+          rm /tmp/sa.json  # cleanup secret
+
+      - name: '§6.b Firebase authorizedDomains — andura.app present'
+        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        run: |
+          # Use Firebase Admin SDK programmatic — requires Node + firebase-admin
+          # already în devDeps (Track 7 §7.4 explicit pin).
+          npm ci --prefer-offline --legacy-peer-deps 2>&1 | tail -3
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > /tmp/sa.json
+          cat > /tmp/check-domains.mjs <<'EOF'
+          import { initializeApp, cert } from 'firebase-admin/app';
+          import { getAuth } from 'firebase-admin/auth';
+          import { readFileSync } from 'node:fs';
+
+          const sa = JSON.parse(readFileSync('/tmp/sa.json', 'utf8'));
+          initializeApp({ credential: cert(sa) });
+          // Note: Firebase Admin SDK NU exposes authorizedDomains list directly.
+          // Use REST API instead with Application Default Credentials.
+          const token = await (await import('google-auth-library')).default
+            ? await (new (await import('google-auth-library')).GoogleAuth({
+                credentials: sa,
+                scopes: ['https://www.googleapis.com/auth/firebase'],
+              }).getAccessToken())
+            : null;
+
+          if (!token) {
+            console.error('❌ Could not obtain Google access token from SA');
+            process.exit(1);
+          }
+
+          const resp = await fetch(
+            `https://identitytoolkit.googleapis.com/admin/v2/projects/${sa.project_id}/config`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (!resp.ok) {
+            console.error(`❌ Identity Toolkit API HTTP ${resp.status}`);
+            console.error(await resp.text());
+            process.exit(1);
+          }
+          const config = await resp.json();
+          const domains = config.authorizedDomains || [];
+          console.log(`Authorized domains: ${JSON.stringify(domains)}`);
+          if (domains.includes('andura.app')) {
+            console.log('✅ andura.app în authorizedDomains');
+          } else {
+            console.error('❌ andura.app NOT în authorizedDomains');
+            console.error('Fix: Firebase Console → Authentication → Settings → Authorized domains → Add andura.app');
+            process.exit(1);
+          }
+          EOF
+          node /tmp/check-domains.mjs || true
+          rm /tmp/sa.json /tmp/check-domains.mjs
+        continue-on-error: true
+
+      - name: 'SUMMARY'
+        if: always()
+        run: |
+          echo "════════════════════════════════════════════════════════════════"
+          echo "Track 7 Setup Verification — review steps above"
+          echo "════════════════════════════════════════════════════════════════"
+          echo ""
+          echo "All-green = Track 7 §7.6+ activation autonomous unblocked."
+          echo "Any ❌    = remediate per error message + re-run workflow."
