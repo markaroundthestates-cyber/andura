@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 34 / 50 LANDED
+**Status:** IN PROGRESS § 35 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -501,14 +501,24 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 35
 
+### §35 LANDED — Tier 0/1/2 DB Deep (15 findings)
+
+**Resolved upstream §12 (2/15):** §35-C1 tier definitions drift dexieMigration.ts vs spec → §12-H1 Track 7 | §35-C2 IDB quota → §12-C2 Track 7
+
+**Deferred Track 7 (10/15):** §35-H1 transition timing schedule | §35-H2 aggregation pre-archive | §35-H3 restore Tier 2 logic | §35-H4 Dexie index strategy | §35-M1-M4 query perf hot paths + pagination + bulk ops + storage size estimate | §35-M5 Firestore doc size limits
+
+**POSITIVE no-op (3/15):** §35-L1 Tier architecture preserved ADR_LEGACY-005 ✓ | §35-L2 Dexie 4 + fake-indexeddb installed ✓ | §35-L3 + §35-N1 OK
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 36
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 34 / 50 (68%)
-- Total commits local (Phase 7): 34 (§01-§34)
+- § LANDED: 35 / 50 (70%)
+- Total commits local (Phase 7): 35 (§01-§35)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§34: 58 surgical + 217 Track 7 deferred + 206 no-op/upstream + 1 Daniel-flag = 482/482 addressed
+- Cumulative findings cleared §01-§35: 58 surgical + 227 Track 7 deferred + 211 no-op/upstream + 1 Daniel-flag = 497/497 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
