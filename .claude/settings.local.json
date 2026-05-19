@@ -7,7 +7,10 @@
       "Bash(npx tsc *)",
       "Bash(git rm *)",
       "Bash(xargs -0 git checkout 778016c --)",
-      "Bash(git ls-tree *)"
+      "Bash(git ls-tree *)",
+      "Bash(ls \"C:/Users/Daniel/OneDrive/\" 2>&1 | head -20)",
+      "Bash(powershell -Command \"\\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents\\\\salafull'\\).Attributes\")",
+      "Bash(powershell -Command \"\\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents'\\).FullName; \\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents'\\).LinkType; \\(Get-Item 'C:\\\\Users\\\\Daniel\\\\Documents\\\\salafull'\\).FullName\")"
     ]
   }
 }
