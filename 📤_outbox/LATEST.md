@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 16 / 50 LANDED
+**Status:** IN PROGRESS § 17 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -285,14 +285,30 @@
 **Tests:** baseline 4519 preserved
 **Next:** § 17
 
+### §17 LANDED (2026-05-19 20:XX) — Telemetry / Observability Audit
+
+**Resolved upstream §01+§04+§05 (5/13):** §17-C1 Sentry init → §4-C1 ✓ | §17-M2 Sentry Firebase filter → §4-C5 done ✓ | §17-M3 logs PII strip → §1-C2 console drop ✓ | §17-H1 WebVitals → §5-C4 Track 7 | §17-H4 perf regression alert → §5-C4 Track 7
+
+**Reclassified POSITIVE (1/13):** §17-H2 k-anonymity k=5 → server-side aggregation via FieldValue.increment counters IS the k-anonymity defense (no per-event PII emit); §4-L2 Firestore HasOnly enumerated keys protects further ✓
+
+**Resolved upstream / covered (1/13):** §17-H3 incident response runbook → §34 deep
+
+**Deferred Track 7 (2/13):** §17-M1 telemetryOptIn verify SettingsPrivacy.tsx implementation reads flag before emit | §17-M4 uptime monitoring external (Pingdom/UptimeRobot)
+
+**POSITIVE no-op (4/13):** §17-L1 Sentry deps installed ✓ | §17-L2 telemetry counter limited keys ✓ | §17-L3 vitest silent passed-only ✓ | §17-N1 OK
+
+**Files modified:** 0 (telemetry observability cluster ~70% resolved upstream §01+§04; remainder = Track 7)
+**Tests:** baseline 4519 preserved
+**Next:** § 18
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 16 / 50 (32%)
-- Total commits local (Phase 7): 16 (§01-§16)
+- § LANDED: 17 / 50 (34%)
+- Total commits local (Phase 7): 17 (§01-§17)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§16: 52 surgical + 102 Track 7 deferred + 95 no-op/upstream + 1 Daniel-flag = 252/252 addressed
+- Cumulative findings cleared §01-§17: 52 surgical + 104 Track 7 deferred + 108 no-op/upstream + 1 Daniel-flag = 265/265 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
