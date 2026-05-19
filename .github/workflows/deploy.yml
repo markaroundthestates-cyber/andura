@@ -66,13 +66,13 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         continue-on-error: true
 
-  # Track 7 §7.7 — Checkly synthetic prod deploy refresh
-  # (gated on Daniel CHECKLY_API_KEY + CHECKLY_ACCOUNT_ID per
-  # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A.1)
+  # Track 7 §7.7 + §7.6-activate — Checkly synthetic prod deploy refresh.
+  # CHECKLY_API_KEY + CHECKLY_ACCOUNT_ID uploaded by Daniel + verified GREEN
+  # per SETUP_VERIFICATION.md. Job-level if-condition removed since secrets
+  # always present. continue-on-error preserved la step pentru robustness.
   checkly-deploy:
     needs: deploy
     runs-on: ubuntu-latest
-    if: ${{ secrets.CHECKLY_API_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

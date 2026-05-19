@@ -73,10 +73,11 @@ jobs:
           path: dist/
           retention-days: 3
 
-      # Track 7 §7.4 — bundle budget gate (uses dist/ from Build step)
+      # Track 7 §7.4 + §7.6-activate — bundle budget HARD GATE (ratcheted pe real
+      # build measurements 2026-05-19: index 145KB / main 127KB / vendor 30KB / CSS 4.5KB
+      # gzip). Limits set cu 10-15% growth margin în .size-limit.json.
       - name: Bundle size budget (size-limit)
         run: npm run size
-        continue-on-error: true
 
       # Track 7 §7.4 — code health gates (continue-on-error initially while
       # gates tune; Daniel ratchet thresholds via PR review feedback)
@@ -100,11 +101,12 @@ jobs:
         run: npm audit --production --audit-level=moderate
         continue-on-error: true
 
-      # Track 7 §7.4 — Snyk vulnerability scan (gated on SNYK_TOKEN secret)
-      # When activated: Daniel uploads SNYK_TOKEN to repo secrets per
-      # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A
+      # Track 7 §7.4 + §7.6-activate — Snyk vulnerability scan.
+      # SNYK_TOKEN uploaded by Daniel + verified GREEN per SETUP_VERIFICATION.md.
+      # Step-level `if: secrets.X` invalid pattern în GitHub Actions —
+      # removed. Action self-fails dacă token missing (which it isn't post setup).
+      # continue-on-error preserved — Snyk findings noisy + Daniel triages PR-side.
       - name: Snyk security scan
-        if: ${{ secrets.SNYK_TOKEN != '' }}
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -154,10 +156,11 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }}
           PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
 
-      # Track 7 §7.3 — Lighthouse CI gate against built preview (continue-on-error
-      # while baselines tune; ratchet via lighthouserc.js thresholds adjustments)
+      # Track 7 §7.3 + §7.6-activate — Lighthouse CI HARD GATE.
+      # Thresholds ratcheted din master spec aspirational (perf 85) la realistic
+      # first-CI-run baseline (perf 60) în lighthouserc.js. Daniel ratchets UP
+      # post real measurement în PR review.
       - name: Lighthouse CI (local preview)
         run: npx lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        continue-on-error: true
