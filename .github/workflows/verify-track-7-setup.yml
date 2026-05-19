@@ -20,8 +20,14 @@ permissions:
   # per GitHub REST API docs). Without this, gh api labels returns 403 silently +
   # all 6 expected labels marked false-positive MISSING.
   issues: read
-  # §3 + §4 rulesets + permissions API require `administration: read`.
-  administration: read
+  # §3 rulesets + §4 actions/permissions/workflow endpoints require admin scope
+  # token (PAT cu admin:repo). Default GITHUB_TOKEN auto-provisioned cu Actions
+  # does NOT include admin scope per docs. Per Daniel directive Bugatti
+  # simplicity → §3+§4 fallback la manual visual verify (Daniel screenshots).
+  # NOTE: `administration: read` NU este valid GitHub Actions permission key —
+  # valid keys per docs (2024-10): actions / attestations / checks / contents /
+  # deployments / discussions / id-token / issues / models / packages / pages /
+  # pull-requests / repository-projects / security-events / statuses.
 
 jobs:
   verify:
@@ -103,42 +109,31 @@ jobs:
             fi
           done
 
-      - name: '§3 Branch protection ruleset main'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: '§3 Branch protection ruleset main (MANUAL — admin scope required)'
         run: |
-          RULESETS=$(gh api "repos/${{ github.repository }}/rulesets" 2>/dev/null || echo "[]")
-          if [ "$RULESETS" = "[]" ]; then
-            echo "❌ No rulesets configured"
-            echo "::error::No branch protection ruleset"
-            exit 0
-          fi
-          MAIN_RULES=$(echo "$RULESETS" | jq -r '.[] | select(.target == "branch") | "\(.name) — enforcement=\(.enforcement)"')
-          if [ -z "$MAIN_RULES" ]; then
-            echo "❌ No branch-target rulesets"
-            echo "::error::No branch ruleset"
-          else
-            echo "✅ Rulesets:"
-            echo "$MAIN_RULES"
-            ACTIVE=$(echo "$RULESETS" | jq -r '[.[] | select(.target == "branch" and .enforcement == "active")] | length')
-            if [ "$ACTIVE" -eq 0 ]; then
-              echo "⚠️ No active branch rulesets (enforcement != 'active')"
-              echo "::warning::Rulesets exist but NOT enforced"
-            fi
-          fi
+          echo "⚠️ SKIPPED automated check — endpoint requires PAT admin:repo scope"
+          echo "Default GITHUB_TOKEN auto-provisioned cu Actions has NO admin scope."
+          echo ""
+          echo "Manual verify (Daniel visual confirmed via Settings → Rules screenshots):"
+          echo "  1. GitHub repo → Settings → Rules"
+          echo "  2. Active ruleset for main branch present"
+          echo "  3. Enforcement = 'Active' (NOT 'Disabled' sau 'Evaluate')"
+          echo "  4. Rules include: pull_request required + status checks required"
+          echo ""
+          echo "Manual confirmation logged în 📤_outbox/SETUP_VERIFICATION.md §3"
 
-      - name: '§4 Workflow permissions write'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: '§4 Workflow permissions write (MANUAL — admin scope required)'
         run: |
-          PERMS=$(gh api "repos/${{ github.repository }}/actions/permissions/workflow" --jq '.default_workflow_permissions')
-          echo "default_workflow_permissions: $PERMS"
-          if [ "$PERMS" = "write" ]; then
-            echo "✅ Write permissions enabled"
-          else
-            echo "❌ Expected 'write', got '$PERMS'"
-            echo "::error::Workflow permissions not write — Stagehand Issues create will fail"
-          fi
+          echo "⚠️ SKIPPED automated check — endpoint requires PAT admin:repo scope"
+          echo "Default GITHUB_TOKEN auto-provisioned cu Actions has NO admin scope."
+          echo ""
+          echo "Manual verify (Daniel visual confirmed via Settings → Actions → General screenshots):"
+          echo "  1. GitHub repo → Settings → Actions → General"
+          echo "  2. Workflow permissions section"
+          echo "  3. 'Read and write permissions' radio selected (NOT 'Read repository contents')"
+          echo "  4. 'Allow GitHub Actions to create and approve pull requests' checkbox state"
+          echo ""
+          echo "Manual confirmation logged în 📤_outbox/SETUP_VERIFICATION.md §4"
 
       - name: '§5.1 Anthropic API connectivity'
         env:
