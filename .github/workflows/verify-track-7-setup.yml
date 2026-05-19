@@ -4,6 +4,9 @@
 #        (manual workflow_dispatch trigger — no auto-runs)
 #
 # Output: job summary table + step logs cu ✅/❌ per check.
+#
+# IMPORTANT: GitHub Actions does NOT permit `secrets` context în `if:` conditions.
+# All secret-gated checks use env var injection + shell `[ -n "$VAR" ]` pattern.
 
 name: Verify Track 7 Setup
 
@@ -23,24 +26,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: '§1 GitHub Secrets — verify 9 expected names present'
-        run: |
-          MISSING=""
-          for s in ANTHROPIC_API_KEY BROWSERBASE_API_KEY BROWSERBASE_PROJECT_ID \
-                   CHECKLY_API_KEY CHECKLY_ACCOUNT_ID FIREBASE_SERVICE_ACCOUNT \
-                   LHCI_GITHUB_APP_TOKEN PLAYWRIGHT_AUTH_TEST_UID SNYK_TOKEN; do
-            # Check if env var is empty (secret not set in workflow env). NU print value.
-            eval "VAL=\${$s:-}"
-            if [ -z "$VAL" ]; then
-              MISSING="$MISSING $s"
-              echo "❌ $s — NOT SET în workflow secrets"
-            else
-              echo "✅ $s — set (length: ${#VAL})"
-            fi
-          done
-          if [ -n "$MISSING" ]; then
-            echo "::error::Missing secrets:$MISSING"
-            echo "MISSING_SECRETS=$MISSING" >> $GITHUB_ENV
-          fi
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
@@ -51,6 +36,22 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          MISSING=""
+          for s in ANTHROPIC_API_KEY BROWSERBASE_API_KEY BROWSERBASE_PROJECT_ID \
+                   CHECKLY_API_KEY CHECKLY_ACCOUNT_ID FIREBASE_SERVICE_ACCOUNT \
+                   LHCI_GITHUB_APP_TOKEN PLAYWRIGHT_AUTH_TEST_UID SNYK_TOKEN; do
+            eval "VAL=\${$s:-}"
+            if [ -z "$VAL" ]; then
+              MISSING="$MISSING $s"
+              echo "❌ $s — NOT SET în workflow secrets"
+            else
+              echo "✅ $s — set (length: ${#VAL})"
+            fi
+          done
+          if [ -n "$MISSING" ]; then
+            echo "::error::Missing secrets:$MISSING"
+          fi
 
       - name: '§2 GitHub Labels — verify 6 new expected'
         env:
@@ -104,10 +105,15 @@ jobs:
           fi
 
       - name: '§5.1 Anthropic API connectivity'
-        if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "⚠️ ANTHROPIC_API_KEY not set — skipping"
+            exit 0
+          fi
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -H "x-api-key: ${{ secrets.ANTHROPIC_API_KEY }}" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
             -H "anthropic-version: 2023-06-01" \
             https://api.anthropic.com/v1/models)
           echo "Anthropic GET /v1/models: HTTP $STATUS"
@@ -118,11 +124,17 @@ jobs:
           echo "✅ Anthropic HTTP 200"
 
       - name: '§5.2 Checkly API connectivity'
-        if: ${{ secrets.CHECKLY_API_KEY != '' && secrets.CHECKLY_ACCOUNT_ID != '' }}
+        env:
+          CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
+          CHECKLY_ACCOUNT_ID: ${{ secrets.CHECKLY_ACCOUNT_ID }}
         run: |
+          if [ -z "$CHECKLY_API_KEY" ] || [ -z "$CHECKLY_ACCOUNT_ID" ]; then
+            echo "⚠️ CHECKLY_API_KEY or CHECKLY_ACCOUNT_ID not set — skipping"
+            exit 0
+          fi
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.CHECKLY_API_KEY }}" \
-            -H "X-Checkly-Account: ${{ secrets.CHECKLY_ACCOUNT_ID }}" \
+            -H "Authorization: Bearer $CHECKLY_API_KEY" \
+            -H "X-Checkly-Account: $CHECKLY_ACCOUNT_ID" \
             https://api.checklyhq.com/v1/account)
           echo "Checkly GET /v1/account: HTTP $STATUS"
           if [ "$STATUS" != "200" ]; then
@@ -132,10 +144,15 @@ jobs:
           echo "✅ Checkly HTTP 200"
 
       - name: '§5.3 Browserbase API connectivity'
-        if: ${{ secrets.BROWSERBASE_API_KEY != '' }}
+        env:
+          BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
         run: |
+          if [ -z "$BROWSERBASE_API_KEY" ]; then
+            echo "⚠️ BROWSERBASE_API_KEY not set — skipping"
+            exit 0
+          fi
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -H "X-BB-API-Key: ${{ secrets.BROWSERBASE_API_KEY }}" \
+            -H "X-BB-API-Key: $BROWSERBASE_API_KEY" \
             "https://api.browserbase.com/v1/sessions?status=RUNNING")
           echo "Browserbase GET sessions: HTTP $STATUS"
           if [ "$STATUS" != "200" ]; then
@@ -145,10 +162,15 @@ jobs:
           echo "✅ Browserbase HTTP 200"
 
       - name: '§5.4 Snyk API connectivity'
-        if: ${{ secrets.SNYK_TOKEN != '' }}
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "⚠️ SNYK_TOKEN not set — skipping"
+            exit 0
+          fi
           STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -H "Authorization: token ${{ secrets.SNYK_TOKEN }}" \
+            -H "Authorization: token $SNYK_TOKEN" \
             "https://api.snyk.io/rest/orgs?version=2024-10-15")
           echo "Snyk GET /rest/orgs: HTTP $STATUS"
           if [ "$STATUS" != "200" ]; then
@@ -158,13 +180,18 @@ jobs:
           echo "✅ Snyk HTTP 200"
 
       - name: '§6 Firebase SA JSON valid + project_id check'
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > /tmp/sa.json
-          # Verify valid JSON
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "⚠️ FIREBASE_SERVICE_ACCOUNT not set — skipping"
+            exit 0
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
           if ! jq empty /tmp/sa.json 2>/dev/null; then
             echo "❌ SA JSON invalid — jq parse fail"
             echo "::error::SA JSON parse failure"
+            rm -f /tmp/sa.json
             exit 1
           fi
           PROJECT=$(jq -r '.project_id // empty' /tmp/sa.json)
@@ -173,66 +200,87 @@ jobs:
           if [ -z "$PROJECT" ] || [ -z "$CLIENT" ]; then
             echo "❌ SA missing project_id sau client_email"
             echo "::error::SA JSON missing required fields"
+            rm -f /tmp/sa.json
             exit 1
           fi
           if [ "$PK_OK" != "true" ]; then
             echo "❌ SA private_key malformed (missing BEGIN PRIVATE KEY header)"
             echo "::error::SA private_key invalid"
+            rm -f /tmp/sa.json
             exit 1
           fi
           echo "✅ SA JSON valid: project=$PROJECT, client=$CLIENT"
-          rm /tmp/sa.json  # cleanup secret
+          rm -f /tmp/sa.json
+
+      - name: 'Setup Node pentru §6.b firebase-admin check'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 'Install firebase-admin (npm ci legacy-peer-deps)'
+        run: npm ci --prefer-offline --legacy-peer-deps 2>&1 | tail -5
 
       - name: '§6.b Firebase authorizedDomains — andura.app present'
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          # Use Firebase Admin SDK programmatic — requires Node + firebase-admin
-          # already în devDeps (Track 7 §7.4 explicit pin).
-          npm ci --prefer-offline --legacy-peer-deps 2>&1 | tail -3
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > /tmp/sa.json
-          cat > /tmp/check-domains.mjs <<'EOF'
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "⚠️ FIREBASE_SERVICE_ACCOUNT not set — skipping"
+            exit 0
+          fi
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > /tmp/sa.json
+          cat > /tmp/check-domains.mjs <<'EOSCRIPT'
           import { initializeApp, cert } from 'firebase-admin/app';
-          import { getAuth } from 'firebase-admin/auth';
           import { readFileSync } from 'node:fs';
 
-          const sa = JSON.parse(readFileSync('/tmp/sa.json', 'utf8'));
-          initializeApp({ credential: cert(sa) });
-          // Note: Firebase Admin SDK NU exposes authorizedDomains list directly.
-          // Use REST API instead with Application Default Credentials.
-          const token = await (await import('google-auth-library')).default
-            ? await (new (await import('google-auth-library')).GoogleAuth({
-                credentials: sa,
-                scopes: ['https://www.googleapis.com/auth/firebase'],
-              }).getAccessToken())
-            : null;
+          try {
+            const sa = JSON.parse(readFileSync('/tmp/sa.json', 'utf8'));
+            const app = initializeApp({ credential: cert(sa) });
 
-          if (!token) {
-            console.error('❌ Could not obtain Google access token from SA');
-            process.exit(1);
-          }
+            // firebase-admin credential exposes getAccessToken() — uses default
+            // GCP scopes including Identity Toolkit Admin API access.
+            const tokenResult = await app.options.credential.getAccessToken();
+            if (!tokenResult || !tokenResult.access_token) {
+              console.error('❌ Could not obtain access token from SA credential');
+              process.exit(2);
+            }
 
-          const resp = await fetch(
-            `https://identitytoolkit.googleapis.com/admin/v2/projects/${sa.project_id}/config`,
-            { headers: { Authorization: `Bearer ${token}` } },
-          );
-          if (!resp.ok) {
-            console.error(`❌ Identity Toolkit API HTTP ${resp.status}`);
-            console.error(await resp.text());
-            process.exit(1);
+            const resp = await fetch(
+              `https://identitytoolkit.googleapis.com/admin/v2/projects/${sa.project_id}/config`,
+              { headers: { Authorization: `Bearer ${tokenResult.access_token}` } },
+            );
+            if (!resp.ok) {
+              const body = await resp.text();
+              console.error(`❌ Identity Toolkit API HTTP ${resp.status}`);
+              console.error(body.slice(0, 500));
+              process.exit(3);
+            }
+            const config = await resp.json();
+            const domains = config.authorizedDomains || [];
+            console.log(`Authorized domains: ${JSON.stringify(domains)}`);
+            if (domains.includes('andura.app')) {
+              console.log('✅ andura.app în authorizedDomains');
+              process.exit(0);
+            } else {
+              console.error('❌ andura.app NOT în authorizedDomains');
+              console.error('Fix: Firebase Console → Authentication → Settings → Authorized domains → Add andura.app');
+              process.exit(4);
+            }
+          } catch (err) {
+            console.error('❌ Firebase Admin check threw:', err?.message || err);
+            process.exit(5);
           }
-          const config = await resp.json();
-          const domains = config.authorizedDomains || [];
-          console.log(`Authorized domains: ${JSON.stringify(domains)}`);
-          if (domains.includes('andura.app')) {
-            console.log('✅ andura.app în authorizedDomains');
-          } else {
-            console.error('❌ andura.app NOT în authorizedDomains');
-            console.error('Fix: Firebase Console → Authentication → Settings → Authorized domains → Add andura.app');
-            process.exit(1);
-          }
-          EOF
-          node /tmp/check-domains.mjs || true
-          rm /tmp/sa.json /tmp/check-domains.mjs
+          EOSCRIPT
+          if node /tmp/check-domains.mjs; then
+            echo "✅ Firebase authorizedDomains check PASS"
+          else
+            EXIT_CODE=$?
+            echo "⚠️ Firebase authorizedDomains check returned exit $EXIT_CODE"
+            echo "Manual fallback: Firebase Console → Authentication → Settings → Authorized domains → verify andura.app present"
+            echo "::warning::Firebase authorizedDomains automated check failed — manual verify needed"
+          fi
+          rm -f /tmp/sa.json /tmp/check-domains.mjs
         continue-on-error: true
 
       - name: 'SUMMARY'
