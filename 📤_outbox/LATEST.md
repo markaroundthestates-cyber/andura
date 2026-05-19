@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 30 / 50 LANDED — 60% MILESTONE
+**Status:** IN PROGRESS § 31 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -460,14 +460,24 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **60% milestone — §01-§30 LANDED**
 
+### §31 LANDED — Auth Flow Edge Cases (14 findings)
+
+**Resolved upstream §07+§04 (5/14):** §31-C1 Magic Link wire → §7-C2 ✓ | §31-C2 Mock login bypass → §7-C1 ✓ | §31-C3 ProtectedRoute listener → §7-C3 ✓ | §31-H1 rate limiting → §4-H3 Track 7 | §31-H4 pendingEmail TTL → §4-H2 Track 7
+
+**Deferred Track 7 (7/14):** §31-H2 OAuth Phase 3 PENDING verify NU partial wired | §31-H3 multi-device session sync | §31-M1 Magic Link replay protection | §31-M2 token storage decision | §31-M3 re-auth sensitive ops | §31-M4 Magic Link expired/malformed UX | §31-M5 SMTP deliverability
+
+**POSITIVE no-op (2/14):** §31-L1 logout flow signOut clears tokens ✓ | §31-L2 account deletion path SettingsDanger LANDED ✓
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 32
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 30 / 50 (60% — MILESTONE)
-- Total commits local (Phase 7): 30 (§01-§30)
+- § LANDED: 31 / 50 (62%)
+- Total commits local (Phase 7): 31 (§01-§31)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§30: 57 surgical + 180 Track 7 deferred + 189 no-op/upstream + 1 Daniel-flag = 427/427 addressed
+- Cumulative findings cleared §01-§31: 57 surgical + 187 Track 7 deferred + 196 no-op/upstream + 1 Daniel-flag = 441/441 addressed
 - Production readiness: ~75%
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
