@@ -32,9 +32,28 @@ export default defineConfig({
   },
   reporter: 'list',
   projects: [
+    // Track 7 §7.2 — auth setup project (generates storageState if Firebase
+    // Admin SA env present; otherwise gracefully skip + main project runs
+    // unauthenticated specs).
+    {
+      name: 'setup',
+      testMatch: /tests[\\/]auth\.setup\.ts$/,
+    },
     {
       name: 'all',
       testDir: './tests',
+      // Exclude Vitest-only directories (tests/engine/ + tests/fixtures/) +
+      // auth.setup.ts (owned by 'setup' project). Playwright + Vitest co-exist
+      // under tests/ post Track 7 §7.1 — testIgnore preserves separation.
+      testIgnore: [
+        'tests/engine/**',
+        'tests/fixtures/**',
+        'tests/auth.setup.ts',
+      ],
+      // 'setup' must succeed (or skip) before main suite runs.
+      dependencies: ['setup'],
+      // Authenticated specs read this via test-level `use: { storageState }`
+      // override — default 'all' project stays unauthenticated.
     },
   ],
 });
