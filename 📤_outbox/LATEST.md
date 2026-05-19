@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 4 / 50 LANDED
+**Status:** IN PROGRESS § 5 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -97,17 +97,30 @@
 **Tests:** baseline 4519 expected preserved (env-var fallbacks preserve test behavior; auth tests unchanged)
 **Next:** § 05
 
+### §05 LANDED (2026-05-19 16:XX) — Performance Audit
+
+**Already resolved upstream §01-§04 (4/20):** §5-H1 stale dist/index.html → §1-C1 done | §5-H4 console.* strip → §1-C2 done | §5-H5 dist manifest dupes → §1-H6 done | §5-H6 dist sw.js dupe → §1-H6 done
+
+**Deferred Track 7 (8/20):** §5-C1 bundle 432KB → 100KB code-split + tree-shake (multi-file refactor) | §5-C2 Dexie vendor-data 1-byte chunk drift (depends §1-H2 vanilla quarantine) | §5-C3 React.lazy() per route (router.tsx 30+ screens convert named→thenable wrap) | §5-C4 web-vitals + Lighthouse CI infrastructure | §5-H2 useMemo/useCallback audit (selective) | §5-H3 dynamic import adapters (audit candidates) | §5-M5 chunkSizeWarningLimit lower (post-§5-C3 dependency) | §5-L3 detached DOM hunt manual post-Beta
+
+**POSITIVE no-op (8/20):** §5-M1 vendor-react 72KB OK | §5-M2 vendor-icons 21KB lucide tree-shake OK | §5-M3 zustand 655B OK | §5-M4 CSS 17KB Tailwind purge OK | §5-L1 sourcemap:false OK | §5-L2 Suspense ready OK | §5-N1 modulepreload auto-inject OK | §5-N2 registerSW.js 134B OK
+
+**Files modified:** 0 (all surgical fixes resolved §01-§04 upstream OR deferred Track 7)
+**Karpathy dominant:** Surgical Changes (existed §01-§04) + Goal-Driven (Track 7 prep)
+**Tests:** baseline 4519 preserved (no code changes §05)
+**Next:** § 06
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 4 / 50
-- Total commits local (Phase 7): 4 (§01-§04)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§04 no change)
-- Cumulative findings cleared §01-§04: 41 surgical + 27 Track 7 deferred + 15 no-op = 83/83 addressed
-- Cumulative time elapsed: ~2.5 h
-- Production readiness % estimate: 56.5% → ~63% (CSP + Sentry wire + env var migration = security observability shift)
-- Remaining § ETA: ~15-30 min/§ avg post calibration
+- § LANDED: 5 / 50
+- Total commits local (Phase 7): 5 (§01-§05)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§05 no change)
+- Cumulative findings cleared §01-§05: 41 surgical + 35 Track 7 deferred + 27 no-op/upstream-resolved = 103/103 addressed
+- Cumulative time elapsed: ~2.75 h
+- Production readiness % estimate: 56.5% → ~63% (§05 no-op shift; Track 7 perf cluster sized)
+- Remaining § ETA: ~15-30 min/§ avg
 
 ---
 
