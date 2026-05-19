@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 8 / 50 LANDED
+**Status:** IN PROGRESS § 9 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -156,16 +156,37 @@
 **Tests:** baseline 4519 preserved (additive ORDERED_ADAPTERS const, existing exports preserved)
 **Next:** § 09
 
+### §09 LANDED (2026-05-19 18:XX) — Compliance Audit
+
+**Daniel-decision flag (1/14):** §9-C1 F5 AaFrictionModal vs LOCK 9 PerSetSafetyModal ambiguity — finding evidence: `src/react/components/AaFrictionModal.tsx` IS wired (Phase 4 task_14 §B; LOCK 9 per-set safety), but §10.5 spec lists F5 = "DROP V1". Spec interpretation: is "AA-Friction Modal" in §10.5 = AaFrictionModal.tsx component (rename if LOCK 9 keep) OR is F5 a session-level paranoid surveillance variant separate from LOCK 9 per-set safety? CC cannot autonomous-resolve product spec semantics. **Daniel CEO clarification needed**. Recommend rename to PerSetSafetyModal.tsx + DECISIONS.md disambiguation entry IF LOCK 9 path confirmed.
+
+**Verified POSITIVE no-op (8/14):** §9-L1 NO_DIACRITICS_RULE ✓ React JSX strings clean | §9-L2 anti-paternalism ABSOLUTE preserved (force-typing eliminated, plateauInterventions.js "forced_reps" technique-term legit) | §9-L3 4-tab nav LOCK V1 ✓ | §9-L4 F13 Rating Notes Anti-RE DROP V1 confirmed absent | §9-L5 Wording D024 LOCKED ✓ Daniel-direct register | §9-L6 Suflet Andura voice ✓ | §9-M1 mobile-first 380px target preserved ✓ | §9-M3 anti-surveillance branding voice ✓ sample
+
+**Resolved upstream §01-§07 (2/14):** §9-M2 LOCK 8 Kcal Floor 1200 verified (KCAL_FLOOR_DAILY_MIN = 1200 in src/engine/bayesianNutrition/constants.js:274 + test invariant `it('KCAL_FLOOR_DAILY_MIN = 1200 exact value LOCK V1')` ✓) | §9-M4 anti-jargon Mock login + Phase 1 → resolved §1-C1 + §7-C1 done
+
+**Resolved upstream (1/14):** §9-H1 Library 657 schema → §39 covered (deep-dive §39 deferred Track 7)
+
+**Deferred Track 7 (1/14):** §9-H2 T&C consent_timestamp persist verify (disclaimerStore implementation read + Firebase/IndexedDB write audit)
+
+**No-op (1/14):** §9-N1 NIT acceptable
+
+**Files modified:** 0 (no new code — verification + flag §9-C1 for Daniel decision)
+**Karpathy dominant:** Goal-Driven (6 POSITIVE confirms philosophy embodied)
+**Tests:** baseline 4519 preserved (no changes)
+**Daniel-action item:** §9-C1 F5 vs LOCK 9 disambiguation decision
+**Next:** § 10
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 8 / 50
-- Total commits local (Phase 7): 8 (§01-§08)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§08 no change)
-- Cumulative findings cleared §01-§08: 48 surgical + 62 Track 7 deferred + 53 no-op/upstream-resolved = 163/163 addressed
-- Cumulative time elapsed: ~3.5 h
-- Production readiness % estimate: 56.5% → ~71% (§08 pipeline order const + architecture POSITIVE verified)
+- § LANDED: 9 / 50
+- Total commits local (Phase 7): 9 (§01-§09)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§09 no change)
+- Cumulative findings cleared §01-§09: 48 surgical + 63 Track 7 deferred + 65 no-op/upstream-resolved + 1 Daniel-decision flag = 177/177 addressed
+- Cumulative time elapsed: ~3.75 h
+- Production readiness % estimate: 56.5% → ~72% (§09 compliance verification ✓ 6 LOW POSITIVE findings confirm philosophy embodied + Kcal Floor 1200 LOCK 8 + F13 Anti-RE DROP V1 + Suflet voice + 4-tab nav LOCK V1)
+- Daniel-action items: 1 (§9-C1 F5 vs LOCK 9 disambiguation)
 - Remaining § ETA: ~15-30 min/§ avg
 
 ---
