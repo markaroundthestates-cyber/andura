@@ -1,0 +1,67 @@
+# Track 7 §7.6 + §7.8 — nightly cron workflows
+# Stryker mutation testing engine + Stagehand exploration monitoring.
+# Per master spec §5 deploy.yml verbatim test-mutation-nightly + nightly-exploration jobs.
+
+name: Track 7 Nightly Quality Monitor
+
+on:
+  schedule:
+    # Daily 03:00 UTC = 06:00 EEST (Romania morning Daniel review)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write  # Stagehand creates GitHub Issues pe anomaly detection
+
+jobs:
+  # Track 7 §7.6 — Stryker mutation testing engine fast-check verification
+  # Gates mutation score ≥75% per master spec §1.7 (currently informative-only;
+  # ratchet to error gate post first clean baseline).
+  stryker-mutation-engine:
+    name: Stryker Mutation Engine
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run Stryker mutation engine subset
+        run: npm run mutation:engine
+        continue-on-error: true
+      - name: Upload Stryker HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stryker-mutation-report
+          path: reports/mutation/
+          retention-days: 30
+
+  # Track 7 §7.8 — Stagehand exploration nightly monitoring scope
+  # (NU gating per WebTestBench arXiv 2603.25226 — exploration scope only)
+  # Gated on Daniel uploading BROWSERBASE_API_KEY + ANTHROPIC_API_KEY per
+  # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A.2+§A.3
+  stagehand-exploration:
+    name: Stagehand Persona Exploration
+    runs-on: ubuntu-latest
+    if: ${{ secrets.BROWSERBASE_API_KEY != '' && secrets.ANTHROPIC_API_KEY != '' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run Stagehand persona exploration
+        run: npm run exploration
+        env:
+          BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
+          BROWSERBASE_PROJECT_ID: ${{ secrets.BROWSERBASE_PROJECT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # GITHUB_TOKEN auto-provided by Actions runner pentru issue create
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true

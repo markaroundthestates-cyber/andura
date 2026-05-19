@@ -57,6 +57,10 @@ jobs:
       - name: TypeScript Type Check
         run: npm run typecheck
 
+      - name: ESLint
+        run: npm run lint
+        continue-on-error: true
+
       - name: Unit Tests (vitest)
         run: npm run test:run
 
@@ -68,6 +72,43 @@ jobs:
           name: dist
           path: dist/
           retention-days: 3
+
+      # Track 7 §7.4 — bundle budget gate (uses dist/ from Build step)
+      - name: Bundle size budget (size-limit)
+        run: npm run size
+        continue-on-error: true
+
+      # Track 7 §7.4 — code health gates (continue-on-error initially while
+      # gates tune; Daniel ratchet thresholds via PR review feedback)
+      - name: Unused deps detector (depcheck)
+        run: npm run depcheck
+        continue-on-error: true
+
+      - name: Circular imports detector (madge)
+        run: npm run madge:circular
+        continue-on-error: true
+
+      - name: Code duplication detector (jscpd)
+        run: npm run jscpd
+        continue-on-error: true
+
+      - name: License compliance summary (license-checker)
+        run: npm run licenses
+        continue-on-error: true
+
+      - name: NPM security audit
+        run: npm audit --production --audit-level=moderate
+        continue-on-error: true
+
+      # Track 7 §7.4 — Snyk vulnerability scan (gated on SNYK_TOKEN secret)
+      # When activated: Daniel uploads SNYK_TOKEN to repo secrets per
+      # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A
+      - name: Snyk security scan
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
   e2e-smoke:
     name: E2E Smoke Tests
@@ -101,6 +142,22 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run E2E smoke tests
-        run: npx playwright test tests/e2e/smoke --reporter=line
-        timeout-minutes: 10
+      # Track 7 §7.9 — vanilla legacy tests/e2e/smoke/ deleted; Track 7 §7.2 NEW
+      # specs (magic-link + smoke-react) + §7.3 (visual-regression) replace it.
+      - name: Run E2E smoke tests (Track 7 §7.2 + §7.3)
+        run: npx playwright test tests/smoke-react.spec.ts tests/magic-link.spec.ts tests/visual-regression.spec.ts tests/e2e/v2-4-taburi-smoke.spec.js --reporter=line
+        timeout-minutes: 15
+        env:
+          # Track 7 §7.2 — auth.setup activates when SA env set (Daniel uploads
+          # FIREBASE_SERVICE_ACCOUNT + PLAYWRIGHT_AUTH_TEST_UID per
+          # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A+§C)
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }}
+          PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
+
+      # Track 7 §7.3 — Lighthouse CI gate against built preview (continue-on-error
+      # while baselines tune; ratchet via lighthouserc.js thresholds adjustments)
+      - name: Lighthouse CI (local preview)
+        run: npx lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        continue-on-error: true
