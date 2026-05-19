@@ -2,6 +2,11 @@
   "name": "andura",
   "version": "2.0.0",
   "type": "module",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=20 <26"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

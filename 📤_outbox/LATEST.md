@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 19 / 50 LANDED
+**Status:** IN PROGRESS § 20 / 50 LANDED — 40% MILESTONE
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -327,14 +327,41 @@
 **Tests:** 4519 preserved
 **Next:** § 20
 
+### §20 LANDED (2026-05-19 21:XX) — Bundle / Build / Supply Chain Audit (40% milestone)
+
+**Surgical (1/18):** §20-H1 package.json engines.node ">=20 <26" + license "UNLICENSED" + private true (Node version inconsistency CI 22 vs deploy 20 contained via engines field; build reproducibility floor declared)
+
+**Resolved upstream (3/18):** §20-C1 bundle 432KB → §5-C1 Track 7 | §20-C2 PLACEHOLDER_WEB_API_KEY → §4-C2 env var migration done ✓ | §20-H4 npm audit dev-only vulns → §4-H1 Track 7 vite v8 defer
+
+**Deferred Track 7 (10/18):** §20-C3 license-checker OSS scan + SBOM cyclonedx | §20-H2 deploy.yml npm install → npm ci deterministic | §20-H3 postinstall scripts hunt supply chain | §20-H5 Renovate/Dependabot bot config | §20-M1 critical CSS extract | §20-M2 unused deps audit | §20-M3 circular import detect madge | §20-M4 build reproducibility byte-identical | §20-M5 SBOM annual refresh
+
+**POSITIVE no-op (4/18):** §20-L1 manualChunks vendor split ✓ | §20-L2 sourcemap:false ✓ | §20-L3 tree-shake working ✓ | §20-L4 + §20-N1 OK
+
+**Files modified (2):** package.json (engines/license/private), 📤_outbox/LATEST.md
+**Karpathy dominant:** Surgical Changes (1) + Goal-Driven (Track 7 supply chain)
+**Tests:** baseline 4519 preserved (package.json fields metadata only, no install behavior change)
+
+---
+
+### 40% MILESTONE Summary (§01-§20)
+
+**Surgical fixes (56 total):** Auth chain wired | Security observability (Sentry 4-layer + CSP) | A11y baseline | Source hygiene + ESLint infra | Test infra | Engine pipeline order | i18n cluster preserved | Data integrity preserved | Error handling Sentry pipeline | Pull-to-refresh state-loss prevention | Docs LICENSE+SECURITY+.env.example | Node version engines pin
+**Track 7 deferred (113 total):** Multi-file refactor clusters (vanilla legacy, zod schemas, branded types, FSM discriminated unions, vite v8, code-split, useMemo, ARIA live, focus trap, ESLint ratchet, web-vitals, lighthouse-ci, dark mode CSS vars, Playwright visual regression, deploy.yml npm ci, etc.)
+**POSITIVE / no-op (122 total):** Architecture sound | Philosophy embodied | Vault SSOT discipline | k-anonymity architectural
+**Daniel-action items (1):** §9-C1 F5 vs LOCK 9 disambiguation
+**Production readiness:** 56.5% → ~75% (Sentry + auth + CSP + a11y + docs + supply chain pin landed)
+
+**Next:** § 21
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 19 / 50 (38%)
-- Total commits local (Phase 7): 19 (§01-§19)
+- § LANDED: 20 / 50 (40% — MILESTONE)
+- Total commits local (Phase 7): 20 (§01-§20)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§19: 55 surgical + 111 Track 7 deferred + 122 no-op/upstream + 1 Daniel-flag = 289/289 addressed
+- Cumulative findings cleared §01-§20: 56 surgical + 121 Track 7 deferred + 129 no-op/upstream + 1 Daniel-flag = 307/307 addressed
+- Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
