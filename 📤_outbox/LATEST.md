@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 3 / 50 LANDED
+**Status:** IN PROGRESS § 4 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -84,17 +84,30 @@
 **Tests:** baseline 4519 preserved (type-system polish, no runtime change)
 **Next:** § 04
 
+### §04 LANDED (2026-05-19 16:XX) — Security Audit
+
+**Surgical (8/24):** §4-C1 main.tsx initSentry wire (React production observability) | §4-C3+C4+C17+C23+C27+C28+C29 index.html CSP + X-Content-Type-Options nosniff + Referrer-Policy (defense-in-depth meta tags batch) | §4-C5 sentry.js Firebase filter REMOVED (errors tagged source='firebase' for queryability not dropped) + console.log debug strip | §4-H4 firebase.js VITE_FIREBASE_RTDB_URL env var (preserves hardcoded fallback) | §4-H5 sentry.js VITE_SENTRY_DSN env var | §4-C2 auth.js VITE_FIREBASE_API_KEY env var (preserves window + PLACEHOLDER fallback chain)
+
+**Deferred Track 7 (8/24):** §4-C6 Firestore rules drift detection CI integration (firebase CLI deploy OR nightly diff cron) | §4-H1 vite v5→v8 major upgrade (defer per finding own recommendation: dev-only vulns, post-Beta) | §4-H2 pendingEmail TTL 1h auto-expire (auth.js test surface change) | §4-H3 Magic Link 30s throttle (auth.js test surface change) | §4-H6 SRI / self-host fonts (covered §1-H4 deferred chain) | §4-M2 Firebase Console authorized domains manual audit | §4-M3 IndexedDB quota handling | §4-M6 refresh token rotation audit src/auth.js signOut Firebase revoke call verify
+
+**No-op (8/24):** §4-H7 SW scope (covered §1-H6 deletion) | §4-M1 clean (verified zero dangerouslySetInnerHTML React side) | §4-M4 CSRF moot (REST + ID-token-in-query architecture) | §4-M5 cache no-store POSITIVE | §4-L1 device-id Math.random LOW positive | §4-L2 Firestore HasOnly POSITIVE | §4-L3 RTDB rules POSITIVE | §4-N1 covered §1-C2 | §4-N2 OK
+
+**Files modified (5):** index.html, src/util/sentry.js, src/main.tsx, src/firebase.js, src/auth.js
+**Karpathy dominant:** Surgical Changes (4) + Goal-Driven (3) + Think Before Coding (1)
+**Tests:** baseline 4519 expected preserved (env-var fallbacks preserve test behavior; auth tests unchanged)
+**Next:** § 05
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 3 / 50
-- Total commits local (Phase 7): 3 (§01 + §02 + §03)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02 + §03 config/polish no change)
-- Cumulative findings cleared §01+§02+§03: 33 surgical + 19 Track 7 deferred + 7 no-op = 59/59 addressed
-- Cumulative time elapsed: ~2 h
-- Production readiness % estimate: 56.5% → ~60% (conservative est.)
-- Remaining § ETA: TBD post §05 calibration
+- § LANDED: 4 / 50
+- Total commits local (Phase 7): 4 (§01-§04)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§04 no change)
+- Cumulative findings cleared §01-§04: 41 surgical + 27 Track 7 deferred + 15 no-op = 83/83 addressed
+- Cumulative time elapsed: ~2.5 h
+- Production readiness % estimate: 56.5% → ~63% (CSP + Sentry wire + env var migration = security observability shift)
+- Remaining § ETA: ~15-30 min/§ avg post calibration
 
 ---
 

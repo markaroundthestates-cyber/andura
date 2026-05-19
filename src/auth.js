@@ -17,10 +17,12 @@ const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
 const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
 
 // Web API key (public, embeddable per Firebase docs — not a secret).
-// NOTE: pulled from Firebase Console → Project settings → Web API Key.
-// Daniel: replace 'PLACEHOLDER_WEB_API_KEY' with the real key pre-launch
+// §4-C2 audit fix — VITE_FIREBASE_API_KEY env var preferred (build-time inject);
+// preserves window.__FIREBASE_API_KEY runtime fallback + PLACEHOLDER final default.
+// Daniel: set VITE_FIREBASE_API_KEY in deploy env OR replace placeholder pre-launch
 // publish (per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02).
-export const FIREBASE_API_KEY = (typeof window !== 'undefined' && window.__FIREBASE_API_KEY)
+export const FIREBASE_API_KEY = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_API_KEY)
+  || (typeof window !== 'undefined' && window.__FIREBASE_API_KEY)
   || 'PLACEHOLDER_WEB_API_KEY';
 
 // Storage keys (single source of truth, used in tests + signOut).

@@ -4,7 +4,10 @@ import { toast } from './ui/ui.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
 
-export const FIREBASE_URL = 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
+// §4-H4 audit fix — env-var with hardcoded fallback (preserves single-env Pre-Beta
+// while enabling staging/prod env split Phase 7+ without source change).
+export const FIREBASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_RTDB_URL)
+  || 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
 
 // Legacy literal — preserved as migration source for Daniel's pre-Beta
 // account ONLY. Per §AMENDMENT 2026-05-04.4 + §56.4.1, post-auth Daniel,

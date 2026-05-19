@@ -7,7 +7,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './react/routes/router';
+import { initSentry } from './util/sentry.js';
 import './styles/global.css';
+
+// §4-C1 audit fix — Sentry production observability wired into React entry.
+// initSentry no-ops on localhost/test; safe to call unconditionally here.
+initSentry();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
