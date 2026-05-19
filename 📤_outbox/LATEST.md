@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 24 / 50 LANDED
+**Status:** IN PROGRESS § 25 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -404,14 +404,22 @@
 **Tests:** baseline 4519 preserved
 **Next:** § 25
 
+### §25 LANDED — API Contract Firebase REST (9 findings)
+
+**Deferred Track 7 (7/9):** §25-H1 Retry-After header respect 429/503 | §25-H2 AbortController timeout 15s fbGet/fbSet | §25-H3 idempotency keys POST push retry duplicate | §25-M1 REST versioning | §25-M2 circuit breaker | §25-M3 optimistic concurrency | §25-M4 mock fidelity vs prod
+
+**POSITIVE no-op (2/9):** §25-L1 ADR 002 REST not SDK rationale ✓ | §25-L2 cache no-store fbGet ✓ (§4-M5)
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 26
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 24 / 50 (48%)
-- Total commits local (Phase 7): 24 (§01-§24)
+- § LANDED: 25 / 50 (50% — HALFWAY)
+- Total commits local (Phase 7): 25 (§01-§25)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§24: 57 surgical + 134 Track 7 deferred + 160 no-op/upstream + 1 Daniel-flag = 352/352 addressed
+- Cumulative findings cleared §01-§25: 57 surgical + 141 Track 7 deferred + 162 no-op/upstream + 1 Daniel-flag = 361/361 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
