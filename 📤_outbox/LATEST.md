@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 2 / 50 LANDED
+**Status:** IN PROGRESS § 3 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -71,17 +71,30 @@
 **Tests:** baseline 4519 (post §01); §02 changes config-tier only, no test additions; expect ≥4519 PASS post commit
 **Next:** § 03
 
+### §03 LANDED (2026-05-19 16:XX) — TypeScript Strict Audit
+
+**Surgical (1/14):** §3-M1 SettingsProfile.tsx Goal[]/Frequency[]/Experience[] → `Array<keyof typeof X_LABELS>` (more accurate utility type pattern, matches Onboarding.tsx convention)
+
+**Deferred Track 7 (8/14):** §3-C1 incremental checkJs migration 231 engine .js files | §3-C2 zod runtime validation install + ~10 boundary schemas | §3-H1 branded types UserUid/ExerciseId/SessionId + consumer propagation | §3-H2 WorkoutState discriminated union refactor + consumers | §3-H3 scheduleAdapter TS migration | §3-M2 exhaustiveness audit each switch | §3-M3 const assertions inventory | §3-L3 .d.ts companions top-10 engines
+
+**No-op (5/14):** §3-M4 generic constraints sample OK | §3-L1 POSITIVE finding (import type discipline verified) | §3-L2 vite-env.d.ts OK | §3-N1/N2 style consistent
+
+**Files modified (1):** src/react/routes/screens/cont/SettingsProfile.tsx
+**Karpathy dominant:** Surgical Changes (1)
+**Tests:** baseline 4519 preserved (type-system polish, no runtime change)
+**Next:** § 04
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 2 / 50
-- Total commits local (Phase 7): 2 (§01 + §02)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3 App.tsx tests removed; §02 config-tier no change)
-- Cumulative findings cleared: 27 surgical + 11 deferred Track 7 = 38/45 from §01+§02 addressed
-- Cumulative time elapsed: ~1.5 h (chat ACASĂ start 2026-05-19 14:00)
-- Production readiness % estimate: 56.5% → ~59% (§01+§02 surgical fixes baseline shift est., conservative)
-- Remaining § ETA: TBD post §03-§05 calibration
+- § LANDED: 3 / 50
+- Total commits local (Phase 7): 3 (§01 + §02 + §03)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02 + §03 config/polish no change)
+- Cumulative findings cleared §01+§02+§03: 33 surgical + 19 Track 7 deferred + 7 no-op = 59/59 addressed
+- Cumulative time elapsed: ~2 h
+- Production readiness % estimate: 56.5% → ~60% (conservative est.)
+- Remaining § ETA: TBD post §05 calibration
 
 ---
 

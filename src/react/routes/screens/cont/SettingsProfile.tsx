@@ -138,7 +138,8 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              {(Object.keys(GOAL_LABELS) as Goal[]).map((g) => (
+              {/* §3-M1 audit fix — Array<keyof typeof X_LABELS> more accurate than X[] */}
+              {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((g) => (
                 <option key={g} value={g}>{GOAL_LABELS[g]}</option>
               ))}
             </select>
@@ -151,7 +152,7 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              {(Object.keys(FREQUENCY_LABELS) as Frequency[]).map((f) => (
+              {(Object.keys(FREQUENCY_LABELS) as Array<keyof typeof FREQUENCY_LABELS>).map((f) => (
                 <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>
               ))}
             </select>
@@ -164,7 +165,7 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              {(Object.keys(EXPERIENCE_LABELS) as Experience[]).map((x) => (
+              {(Object.keys(EXPERIENCE_LABELS) as Array<keyof typeof EXPERIENCE_LABELS>).map((x) => (
                 <option key={x} value={x}>{EXPERIENCE_LABELS[x]}</option>
               ))}
             </select>
