@@ -6,95 +6,17 @@
   "hideUnresolved": true,
   "showOrphans": false,
   "collapse-color-groups": true,
-  "colorGroups": [
-    {
-      "query": "path:\"wiki/summaries/handover-2026-05-14\" OR path:\"wiki/concepts/pre-beta-full-scope-lock-v2\" OR path:\"wiki/concepts/medical-safety-disclaimer-t-c-mandatory\" OR path:\"wiki/concepts/kcal-floor-1200-engine-filter\" OR path:\"wiki/concepts/aggressive-loading-warning-tier-aware\" OR path:\"wiki/concepts/handover-protocol-f3-8-amendment-no-verify-post-timeout\"",
-      "color": {
-        "a": 1,
-        "rgb": 13072639
-      }
-    },
-    {
-      "query": "path:\"00-index\" OR path:\"03-decisions\"",
-      "color": {
-        "a": 1,
-        "rgb": 13696981
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/adrs\"",
-      "color": {
-        "a": 1,
-        "rgb": 8453008
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/features\"",
-      "color": {
-        "a": 1,
-        "rgb": 6291312
-      }
-    },
-    {
-      "query": "path:\"wiki/concepts\"",
-      "color": {
-        "a": 1,
-        "rgb": 4194639
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/engines\"",
-      "color": {
-        "a": 1,
-        "rgb": 4194639
-      }
-    },
-    {
-      "query": "path:\"wiki/entities/specs\"",
-      "color": {
-        "a": 1,
-        "rgb": 4194639
-      }
-    },
-    {
-      "query": "path:\"wiki/summaries\"",
-      "color": {
-        "a": 1,
-        "rgb": 2083381
-      }
-    },
-    {
-      "query": "path:\"wiki/sources\"",
-      "color": {
-        "a": 1,
-        "rgb": 2070575
-      }
-    },
-    {
-      "query": "path:\"📥_inbox\"",
-      "color": {
-        "a": 1,
-        "rgb": 16737971
-      }
-    },
-    {
-      "query": "path:\"📤_outbox/_archive\"",
-      "color": {
-        "a": 1,
-        "rgb": 999445
-      }
-    }
-  ],
-  "collapse-display": false,
+  "colorGroups": [],
+  "collapse-display": true,
   "showArrow": false,
-  "textFadeMultiplier": -2,
-  "nodeSizeMultiplier": 0.916666666666667,
-  "lineSizeMultiplier": 0.380729166666667,
-  "collapse-forces": false,
-  "centerStrength": 0.401041666666667,
-  "repelStrength": 9.79166666666667,
-  "linkStrength": 0.328125,
-  "linkDistance": 436,
-  "scale": 0.22920135941748884,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.1316872427983536,
   "close": true
 }
