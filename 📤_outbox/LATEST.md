@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 5 / 50 LANDED
+**Status:** IN PROGRESS § 6 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -110,16 +110,31 @@
 **Tests:** baseline 4519 preserved (no code changes §05)
 **Next:** § 06
 
+### §06 LANDED (2026-05-19 17:XX) — Accessibility WCAG 2.1 AA Audit
+
+**Surgical (3/22):** §6-C1 global.css prefers-reduced-motion vestibular safety (WCAG 2.3.3) | §6-C2 Layout.tsx skip-to-content link (WCAG 2.4.1 Bypass Blocks Level A, NO_DIACRITICS preserved) | §6-C3 Auth.tsx email input autoComplete="email" + inputMode="email" (WCAG 1.3.5 Identify Input Purpose; Maria 65 + password manager autofill)
+
+**Resolved upstream (3/22):** §6-H1 outline:none vanilla legacy not shipped ✓ | §6-H2 contrast token system → §1-C3 done | §6-H5 persona-only Antrenor → §1-H3 done (Layout hoist)
+
+**Deferred Track 7 (10/22):** §6-H3 ARIA live regions audit + add per banner/notification | §6-H4 focus trap + restore on modal close (useFocusTrap hook OR react-focus-lock library) | §6-H6 BottomNav tap spacing 8px verify mockup parity | §6-H7 zoom 200% reflow test + e2e regression | §6-M1 screen reader RO NVDA narration live | §6-M2 heading hierarchy axe scan | §6-M3 form labels + error association audit (multi-form) | §6-M4 color blind palette deuteranopia/protanopia simulate | §6-M6 plain language B1 RO review (D024 Daniel post-Beta a-z gate covers) | §6-C3-extended autoComplete bday/sex/given-name for Onboarding T0 Big 6 forms (defer multi-screen sweep)
+
+**POSITIVE no-op (6/22):** §6-M5 ADHD UI no autoplay/blink ✓ | §6-L1 html lang=ro ✓ | §6-L2 BottomNav aria-label + aria-current ✓ | §6-L3 MedicalDisclaimerModal role+aria-modal ✓ | §6-L4 Lucide icons aria-hidden ✓ | §6-N1/N2 OK
+
+**Files modified (3):** src/styles/global.css, src/react/routes/Layout.tsx, src/react/routes/screens/Auth.tsx
+**Karpathy dominant:** Surgical Changes (3)
+**Tests:** baseline 4519 preserved (CSS @media addition + new skip-link element + input attribute additions = additive only)
+**Next:** § 07
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 5 / 50
-- Total commits local (Phase 7): 5 (§01-§05)
-- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§05 no change)
-- Cumulative findings cleared §01-§05: 41 surgical + 35 Track 7 deferred + 27 no-op/upstream-resolved = 103/103 addressed
-- Cumulative time elapsed: ~2.75 h
-- Production readiness % estimate: 56.5% → ~63% (§05 no-op shift; Track 7 perf cluster sized)
+- § LANDED: 6 / 50
+- Total commits local (Phase 7): 6 (§01-§06)
+- Cumulative tests delta: 4522 baseline → 4519 (§01 -3; §02-§06 no change)
+- Cumulative findings cleared §01-§06: 44 surgical + 45 Track 7 deferred + 36 no-op/upstream-resolved = 125/125 addressed
+- Cumulative time elapsed: ~3 h
+- Production readiness % estimate: 56.5% → ~65% (a11y baseline shift: reduced-motion + skip-link + email autocomplete)
 - Remaining § ETA: ~15-30 min/§ avg
 
 ---

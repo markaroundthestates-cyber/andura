@@ -24,8 +24,16 @@ export function Layout(): JSX.Element {
   const persona = useCoachStore((s) => s.persona);
   return (
     <div className={`min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
+      {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
+          NO_DIACRITICS rule preserved ("continut" not "conținut"). */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-brick focus:text-paper focus:px-4 focus:py-2 focus:rounded focus:z-[100]"
+      >
+        Sari la continut
+      </a>
       <UpdatePrompt />
-      <main className="flex-1 pb-16">
+      <main id="main-content" className="flex-1 pb-16">
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
             <Outlet />

@@ -72,9 +72,13 @@ export function Auth(): JSX.Element {
             >
               Email
             </label>
+            {/* §6-C3 audit fix — autoComplete="email" enables browser/password-manager
+                autofill (Maria 65 typing relief; 1Password/Bitwarden Magic Link suggest). */}
             <input
               id="auth-email"
               type="email"
+              autoComplete="email"
+              inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="numele@email.com"
