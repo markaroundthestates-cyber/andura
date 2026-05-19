@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 14 / 50 LANDED
+**Status:** IN PROGRESS § 15 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -255,14 +255,29 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 15
 
+### §15 LANDED (2026-05-19 20:XX) — Cross-Browser Compatibility Audit
+
+**Surgical (1/14):** §15-M4 global.css `overscroll-behavior: contain` on html/body (prevents Android Chrome pull-to-refresh reload mid-workout → state loss unless paused; gesture isolation defense)
+
+**Resolved upstream §01+§06 (3/14):** §15-C1 viewport-fit=cover → §1-C1 index.html rewrite ✓ | §15-H1 prefers-reduced-motion → §6-C1 ✓ | §15-H2 theme-color → §1-C1 ✓
+
+**Deferred Track 7 (5/14):** §15-H3 Webview detection (FB/IG in-app browser auth flow) — UX banner OR auto-detect + Chrome redirect | §15-M2 Caniuse Android 12+ React 19/Dexie 4/Workbox 7 verify | §15-M3 landscape CSS optimize | §15-M5 Web Share + Clipboard API fallbacks (future feature) | §15.x safe-area env() utility class wide adoption
+
+**POSITIVE no-op (5/14):** §15-M1 polyfills absent intentional (modern browsers only) ✓ | §15-L1 Android Chrome primary target ✓ | §15-L2 iOS deferred PERMANENT D015 ✓ | §15-L3 PWA standalone manifest ✓ | §15-N1/N2 OK
+
+**Files modified (2):** src/styles/global.css, 📤_outbox/LATEST.md
+**Karpathy dominant:** Surgical Changes (1)
+**Tests:** baseline 4519 preserved
+**Next:** § 16
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 14 / 50 (28%)
-- Total commits local (Phase 7): 14 (§01-§14)
+- § LANDED: 15 / 50 (30%)
+- Total commits local (Phase 7): 15 (§01-§15)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§14: 51 surgical + 92 Track 7 deferred + 79 no-op/upstream + 1 Daniel-flag = 223/223 addressed
+- Cumulative findings cleared §01-§15: 52 surgical + 97 Track 7 deferred + 87 no-op/upstream + 1 Daniel-flag = 237/237 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)

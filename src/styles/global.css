@@ -66,6 +66,10 @@ html, body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* §15-M4 audit fix — prevent Android Chrome pull-to-refresh reload mid-workout
+     (state loss unless paused). overscroll-behavior: contain stops scroll
+     chain propagation to browser-level pull-to-refresh gesture. */
+  overscroll-behavior: contain;
 }
 
 #root {
