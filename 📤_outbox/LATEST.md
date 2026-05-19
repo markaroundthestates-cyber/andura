@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 18 / 50 LANDED
+**Status:** IN PROGRESS § 19 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -315,14 +315,26 @@
 **Tests:** baseline 4519 preserved
 **Next:** § 19
 
+### §19 LANDED (2026-05-19 20:XX) — Visual Regression / Pixel Parity Audit
+
+**Resolved upstream §01 (1/12):** §19-H1 color tokens drift Tailwind ↔ CSS vars → §1-C3 done ✓
+
+**Deferred Track 7 (4/12):** §19-C1 Playwright toHaveScreenshot visual regression suite + baseline screenshots | §19-H2 mockup andura-clasic.html DESIGN MASTER pixel-parity manual side-by-side per screen | §19-H3 dark mode tokens (SettingsAppearance LANDED toggle exists; CSS var override [data-theme="dark"] missing) | §19-M4 LoadingSkeleton visual parity verify
+
+**POSITIVE no-op (7/12):** §19-M1 animation curves consistent Tailwind defaults ✓ | §19-M2 border-radius tokens consistent ✓ | §19-M3 4px/8px spacing rhythm Tailwind ✓ | §19-L1/L2/L3 + §19-N1 OK
+
+**Files modified:** 0
+**Tests:** 4519 preserved
+**Next:** § 20
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 18 / 50 (36%)
-- Total commits local (Phase 7): 18 (§01-§18)
+- § LANDED: 19 / 50 (38%)
+- Total commits local (Phase 7): 19 (§01-§19)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§18: 55 surgical + 107 Track 7 deferred + 114 no-op/upstream + 1 Daniel-flag = 277/277 addressed
+- Cumulative findings cleared §01-§19: 55 surgical + 111 Track 7 deferred + 122 no-op/upstream + 1 Daniel-flag = 289/289 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
