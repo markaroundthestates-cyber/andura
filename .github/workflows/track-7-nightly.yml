@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Run Stryker mutation engine subset
         run: npm run mutation:engine
         continue-on-error: true
@@ -55,7 +55,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Run Stagehand persona exploration
         run: npm run exploration
         env:

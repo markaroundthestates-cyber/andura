@@ -34,7 +34,7 @@ jobs:
       # §33-C1 + §20-H1 + §20-H2 audit fix — npm ci (deterministic from lockfile)
       # + typecheck + vitest gate BEFORE build/deploy. Production never ships
       # broken code. Pre-Beta launch hardening.
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run typecheck
       - run: npm run test:run
       - run: npm run build
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Wait for GitHub Pages propagation
         run: sleep 45
       - name: Lighthouse CI live URL
@@ -79,7 +79,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Checkly deploy (synthetic monitor refresh)
         run: npx checkly deploy --force
         env:
