@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 20 / 50 LANDED — 40% MILESTONE
+**Status:** IN PROGRESS § 21 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -353,14 +353,29 @@
 
 **Next:** § 21
 
+### §21 LANDED (2026-05-19 21:XX) — Git Hygiene Audit
+
+**Surgical (1/14):** §21-H1 .husky/pre-commit — added `npm run typecheck` BEFORE lint + test (TS errors blocked pre-commit; tsc --noEmit ~3-5s overhead acceptable)
+
+**Manual GitHub-action (3/14):** §21-C1 branch protection rules `main` (require PR review OR admin bypass + status checks + linear history + restrict push to Daniel admin) | §21-H4 commit signing GPG verify Daniel git config | §21.x repo secrets verify
+
+**Deferred Track 7 (5/14):** §21-H2 commitlint @commitlint/config-conventional + husky commit-msg hook | §21-H3 tag conventions doc 08-workflows/tag-conventions.md | §21-M1 .gitignore hygiene audit | §21-M2 secrets in history scan trufflehog | §21-M3 submodules + Git LFS evaluate
+
+**POSITIVE no-op (5/14):** §21-L1 husky installed ✓ | §21-L2 lockfile committed ✓ | §21-L3 conventional commits mostly compliant ✓ | §21-L4 tag conventions consistent ✓ | §21-N1 OK
+
+**Files modified (2):** .husky/pre-commit, 📤_outbox/LATEST.md
+**Karpathy dominant:** Surgical Changes (1)
+**Tests:** baseline 4519 preserved (pre-commit gate addition; typecheck must pass for this very commit)
+**Next:** § 22
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 20 / 50 (40% — MILESTONE)
-- Total commits local (Phase 7): 20 (§01-§20)
+- § LANDED: 21 / 50 (42%)
+- Total commits local (Phase 7): 21 (§01-§21)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§20: 56 surgical + 121 Track 7 deferred + 129 no-op/upstream + 1 Daniel-flag = 307/307 addressed
+- Cumulative findings cleared §01-§21: 57 surgical + 126 Track 7 deferred + 137 no-op/upstream + 1 Daniel-flag = 321/321 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
