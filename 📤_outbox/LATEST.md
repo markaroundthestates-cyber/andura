@@ -1,6 +1,6 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 1 / 10 LANDED
+**Status:** IN PROGRESS § 2 / 10 LANDED
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
@@ -54,15 +54,41 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ---
 
+## §7.2 LANDED (2026-05-19 19:50) — Playwright E2E React 4-tab + auth setup + Magic Link skeleton + axe-core a11y
+
+- **Commit (local):** `f2d38e7` `feat(track-7-§7.2): Playwright E2E React 4-tab + auth setup + Magic Link skeleton + axe-core a11y`
+- **Playwright tests delta:** 103 → 114 (**+11 / -0**) total Playwright suite
+- **New files (309 lines):**
+  - `tests/auth.setup.ts` — Firebase Admin SA → custom token → storageState; env-gated graceful skip when GOOGLE_APPLICATION_CREDENTIALS + PLAYWRIGHT_AUTH_TEST_UID absent (1 test in [setup] project)
+  - `tests/magic-link.spec.ts` (3 tests) — Magic Link UI smoke auth-state-independent: email entry reachable / send-button network intercept / axe-core WCAG 2.1 AA zero critical+serious
+  - `tests/smoke-react.spec.ts` (7 tests) — React 4-tab smoke: homepage bottom-nav presence + console errors capture / 4 tabs nav (auth-gated) / PWA offline SW cache / homepage axe-core WCAG 2.1 AA
+- **Infra:**
+  - `package.json`: +@axe-core/playwright ^4.11.3, +@nearform/playwright-firebase ^1.2.9 (transitive: firebase-admin)
+  - `playwright.config.js`: NEW 'setup' project + 'all' dependencies ['setup'] + testIgnore tests/engine/** for Vitest/Playwright co-existence
+- **Karpathy dominant:** Goal-Driven (E2E skeleton structure pentru §7.6 CI deploy.yml augment) + Surgical (additive only, existing v2-4-taburi-smoke.spec.js + scenarios/* untouched)
+- **Deviations from spec:**
+  - SKIPPED full Firebase Admin sign-in wiring (deferred §7.6 CI secrets pipeline — token stored localStorage as marker only)
+  - SKIPPED Antrenor 14 sub-screens detail tests (skeleton 4-tab first, sub-screens iterative §7.3+ with visual regression baselines)
+  - SKIPPED multi-browser config (Chromium/Firefox/WebKit/Mobile) — single Chromium default, multi-browser §7.6
+  - SKIPPED Magic Link prod gate `andura.app` real — §7.7 Checkly Tier 2 synthetic prod owns this
+  - eslint-disable wait-for-timeout antipattern AVOIDED — used `page.waitForRequest` deterministic
+- **Anomalii:**
+  - Playwright initial config conflict: testDir './tests' auto-discovered Vitest tests under tests/engine/ → Symbol redefine error (@vitest/expect vs @playwright/test). Resolution: testIgnore patterns în 'all' project.
+- **Next:** §7.3 starting now — Visual regression `toHaveScreenshot()` + Lighthouse CI 12+ (axe-core a11y already integrated în §7.2)
+
+---
+
 ## Cumulative status (refresh per phase)
 
-- **§ LANDED:** 1 / 10 (10%)
-- **Total commits local:** 5 §9 First Actions + 1 §7.1 = 6 commits since baseline `17b0bba`
+- **§ LANDED:** 2 / 10 (20%)
+- **Total commits local:** 5 §9 First Actions + 1 §7.1 + 1 §7.1-LATEST + 1 §7.2 = 8 commits since baseline `17b0bba`
 - **Commits pushed origin:** 5 (§9 First Actions + chore-auto pre-existing) — §7.1+ local only
-- **Cumulative tests:** 4519 → 4546 (+27)
-- **Cumulative test files:** 251 → 254 (+3)
-- **Production readiness % estimate:** ~57% (post Phase 7 LANDED + §7.1 measurement-only adapters; full ratchet starts §7.4+ bundle/code-health gates)
-- **Remaining ETA:** ~4-7 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
+- **Cumulative Vitest tests:** 4519 → 4546 (+27)
+- **Cumulative Vitest test files:** 251 → 254 (+3)
+- **Cumulative Playwright tests:** 103 → 114 (+11)
+- **Cumulative Playwright test files:** 19 → 22 (+3)
+- **Production readiness % estimate:** ~58% (Vitest invariants + Playwright skeleton + axe-core a11y instrumentation; full ratchet starts §7.4+ bundle/code-health gates)
+- **Remaining ETA:** ~4-6 zile lucrătoare CC autonomous Opus exclusively per § atomic commit
 
 ---
 
