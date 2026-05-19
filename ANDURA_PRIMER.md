@@ -2,7 +2,7 @@
 title: ANDURA_PRIMER.md — Singular Briefing Fresh Chat Instant Onboard
 type: ssot-primer
 status: live
-last_updated: 2026-05-16
+last_updated: 2026-05-19
 authority: Daniel CEO directive 2026-05-16 chat ACASĂ — "vreau la next chat sa stii ce e andura, ce face, cum functioneaza si ce trebuie sa fie. Sa stii unde am ramas, ce e de facut si ce vreau eu"
 purpose: §CC.2 startup primary read — fresh chat instant comprehensive context complete
 maintained_by: handover automatic update post-LANDED + Daniel CEO directive
@@ -153,6 +153,16 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Track 5 NEW backlog E2E Playwright disclaimer dismiss helper (23 fails pre-existing LOCK 4 Medical Disclaimer NU pre-test setup). Fix la Bugatti audit nuclear pre-Launch gate. Per `DECISIONS.md §D019`.
 - Test paradigm split locked Phase 2+ (MemoryRouter jsdom tests + createBrowserRouter prod — Node 25 AbortSignal mismatch react-router v6.28 data router fetch lifecycle). Per `DECISIONS.md §D020`.
 
+**2026-05-19 disaster recovery + Phase 7 Findings FIX kickoff (chat ACASĂ via `claude rc` birou Daniel):**
+- Phase 3 Antrenor + Phase 4-6 BATCH 13-22 / 20-task / 24-task ALL LANDED prior (per `DECISIONS.md §D021-§D027`)
+- React entry swap LANDED `andura.app/` vanilla→React production (per `DECISIONS.md §D028`)
+- Audit Nuclear FULL V3 LANDED 5-pass log-only Opus MAX, 698 findings aggregate (73 CRIT + 167 HIGH + 234 MED + 178 LOW + 46 NIT), production readiness 56.5%, Beta BLOCKED (per `DECISIONS.md §D029`)
+- Obsidian Sync delete-race incident `b1bd099` mass-deleted 700 files → recovered via `22942ed` + `786dcbb` restore commits + Obsidian Git plugin config fix `D030` (autoCommitOnlyStaged=true + autoSave=0 + autoPull=0 + autoPullOnBoot=false anti-recurrence permanent)
+- Stop hook auto-push removed `f40ebbc` (anti-recurrence b1bd099 propagation, push origin = act conștient Daniel-triggered only)
+- **D031 LOCKED procedure Phase 7 Findings FIX continuous neîntrerupt** Opus exclusively per § atomic commit, push manual final §50 SAU Daniel trigger
+- Backup tag `pre-phase-7-findings-fix-2026-05-19` at HEAD `f40ebbc` pushed origin (single conscious safety net)
+- Production readiness target: 56.5% → ≥85% post §50 LANDED. Stop trigger UNIC: Daniel STOP explicit.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -192,6 +202,14 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - NU bloochează React build path forward (vitest 3769 PASS local separat de Playwright E2E)
 - Fix la Phase 8 Bugatti audit nuclear pre-Launch gate (combined cu alte audit findings)
 - Per `DECISIONS.md §D019`
+
+**Track 6 — Phase 7 Findings FIX continuous neîntrerupt (per `DECISIONS.md §D031` + `§D029` audit findings spec):**
+- ALL 73 CRITICAL + 167 HIGH + 234 MED + LOW negative + NIT cheap fix per finding file
+- 50 § sequential §01→§50, atomic commit per §
+- Push manual final §50 LANDED (NU per §, preserve `f40ebbc` Stop hook anti-recurrence)
+- Production readiness target: 56.5% → ≥85% post §50
+- Stop trigger UNIC Daniel STOP explicit
+- Started 2026-05-19 birou Daniel chat ACASĂ, baseline HEAD `f40ebbc` (NU `b705c3f` audit-time — src/ identical, recovery commits + D030 + Stop hook fix preserved)
 
 **End-state final gate sequencing (Daniel CEO directive verbatim):**
 1. ✅ Pre-Beta LOCK 1 100% complete (achieved 2026-05-16) — backend layer reusable React

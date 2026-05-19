@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D029
-total_entries: 29
+latest_entry: D031
+total_entries: 31
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -81,6 +81,7 @@ D026 | 2026-05-19 | STRATEGY | Phase 6 BATCH 24-task LANDED — engine pipeline 
 D028 | 2026-05-19 | PROC | React entry swap LANDED andura.app/ vanilla→React production Option 1 rename + vanilla preserved index-vanilla-legacy.html backup | LOCKED V1 | DECISIONS.md §D028
 D029 | 2026-05-19 | PROC | Bugatti Audit Nuclear procedure continuous neîntrerupt multi-noapte Opus MAX log-only quality-asymptotic until Daniel STOP | LOCKED V1 | DECISIONS.md §D029
 D030 | 2026-05-19 | PROC | Obsidian Git plugin fix anti-recurrence — autoCommitOnlyStaged=true + autoSave=0 + autoPull=0 + autoPullOnBoot=false (root cause b1bd099 mass-delete propagation) | LOCKED V1 | DECISIONS.md §D030
+D031 | 2026-05-19 | PROC | Phase 7 Findings FIX procedure continuous neîntrerupt Opus exclusively per § atomic commit, push manual final §50 SAU Daniel trigger, mirror D029 reverse | LOCKED V1 | DECISIONS.md §D031
 
 ---
 
