@@ -1,13 +1,12 @@
 {
   "livePreview": false,
   "userIgnoreFilters": [
-    "📤_outbox/",
     "node_modules/",
     "dist/",
     "coverage/",
     "test-results/",
     ".git",
-    "📥_inbox/"
+    "📤_outbox/"
   ],
   "alwaysUpdateLinks": true,
   "showUnsupportedFiles": true
