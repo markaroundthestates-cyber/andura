@@ -2,30 +2,44 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Andura — Clasic (React build Phase 1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#c8412e" />
+  <meta name="description" content="Andura - coach AI personal pentru sala, facut in Romania. Antrenament cu cap." />
+  <meta name="color-scheme" content="light" />
+  <!-- §4-C3 + §4-C4 + §4-C27/28/29 + §4-C17/23 audit fix: defense-in-depth headers.
+       GH Pages has no custom HTTP headers → meta http-equiv where applicable.
+       'unsafe-inline' tolerated initial (Tailwind injects style) — Track 7 nonce migration. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <title>Andura</title>
   <style>
-    :root {
-      color-scheme: dark;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    body {
+    /* §1-C1 audit fix: replace dark FOUC inline with cream warm light shell
+       matching Tailwind --paper token. App-level CSS hydrates via main.tsx. */
+    html, body {
       margin: 0;
-      padding: 24px;
-      background: #0a0a0a;
-      color: #e8e8e8;
+      padding: 0;
+      background: #faf7f1;
+      color: #1a1815;
+      font-family: 'Inter', system-ui, sans-serif;
       min-height: 100vh;
     }
     #root {
-      max-width: 600px;
-      margin: 40px auto;
+      min-height: 100vh;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-DhUhC8l-.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/vendor-react-Dr5FLEDc.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-state-BeI4iLF4.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-icons-BusRyph_.js">
-  <link rel="stylesheet" crossorigin href="/assets/main-Berm-M5j.css">
+  <script type="module" crossorigin src="/assets/main-uuYFYkzQ.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-react-BDPONypa.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-state-B18lfrka.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-icons-vovfnsyh.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-Dddd-Zu_.css">
 <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 <body>
   <div id="root"></div>
