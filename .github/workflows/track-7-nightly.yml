@@ -18,6 +18,8 @@ permissions:
 env:
   # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
   HUSKY: '0'
+  # Force Node 24 internal runtime pentru JS-based actions (silence Node 20 warnings).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   # Track 7 §7.6 — Stryker mutation testing engine fast-check verification

@@ -45,6 +45,10 @@ env:
   # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128
   # caused by husky v9 git hook installation în CI ephemeral runner.
   HUSKY: '0'
+  # Force Node 24 internal runtime pentru ALL JS-based actions (v4-pinned
+  # actions still defaulting Node 20 → deprecation warnings). Per GitHub
+  # Actions migration guide 2024-2026.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   validate:

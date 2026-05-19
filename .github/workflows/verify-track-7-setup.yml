@@ -30,8 +30,10 @@ permissions:
   # pull-requests / repository-projects / security-events / statuses.
 
 # Skip husky `prepare` lifecycle script — bypasses /usr/bin/git exit 128.
+# Force Node 24 internal runtime pentru JS-based actions (silence Node 20 warnings).
 env:
   HUSKY: '0'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   verify:
