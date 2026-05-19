@@ -5,9 +5,11 @@ dist/
 
 # Security audit files — contain vulnerability details, do not publish
 docs/AUDIT_BULLETPROOF_*.md
-# Obsidian plugins (keep local only, don't pollute indexing)
+# Obsidian plugins + UI state (keep local only, don't pollute indexing)
 .obsidian/plugins/
 .obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
 .obsidian/cache/
 
 # Playwright test artifacts (auto-generated, not source)
