@@ -1,6 +1,6 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 9 / 10 LANDED — 90% (§7.10 final smoke gated on Daniel manual setup per `📥_inbox/SETUP_DANIEL_TRACK_7.md`)
+**Status:** IN PROGRESS § 9.5 / 10 LANDED — 95% (§7.6 FULL ACTIVATION ✅ verified 2026-05-19 evening; §7.10 final smoke awaiting Daniel mobile manual)
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
@@ -143,15 +143,15 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ## Cumulative status (refresh per phase)
 
-- **§ LANDED:** 9 / 10 (90%) — Daniel re-engaged 2026-05-19 evening: §7.9 cleanup + §7.4 audit fix + §7.6 CI augment + §7.7 Checkly + §7.8 Stagehand + §7.10 prep ALL LANDED ca skeleton ready-to-activate
+- **§ LANDED:** 9.5 / 10 (95%) — §7.6 FULL ACTIVATION verified GREEN via verify-track-7-setup.yml iter 4. Only §7.10 Daniel mobile manual smoke remaining.
 - **Total commits local since baseline `17b0bba`:** ~22 commits (5 §9 First Actions + 14 phase commits §7.1-§7.10-prep + auto-commits + LATEST checkpoints + SETUP)
 - **Commits pushed origin:** 5 §9 First Actions only — §7.1-§7.10-prep local only (preserve D030 anti-recurrence, manual push at Daniel trigger sau §7.10 final smoke PASS)
 - **Cumulative Vitest tests:** 4519 → 4547 (+28 = 27 §7.1 + 1 §7.5 sanity) baseline preserved
 - **Cumulative Vitest test files:** 251 → 255 (+4: §7.1 fixtures + invariants + golden master + §7.5 coach scenarios)
 - **Cumulative Playwright tests:** 103 → ~17 (massive React-focused reduction post §7.9 cleanup)
 - **Cumulative Playwright test files:** 19 → ~7 (auth.setup + magic-link + smoke-react + visual-regression + v2-4-taburi survivor + __checks__/critical-paths Checkly + tests/coach-scenarios coach-voice)
-- **Production readiness % estimate:** ~75% (Track 7 90% LANDED ca skeleton ready-to-activate; Daniel manual setup unlocks remaining 10% pentru §7.10 final smoke PASS)
-- **Remaining ETA:** Daniel-blocked (~3-4 ore manual setup pe SETUP_DANIEL_TRACK_7.md A+B+C → CI green → Daniel mobile smoke ~30-45 min → §7.10 LANDED)
+- **Production readiness % estimate:** ~85% (Track 7 95% LANDED + all CI gates active + Firebase auth functional; final +15% post Daniel mobile smoke validates UX layer)
+- **Remaining ETA:** Daniel-blocked (~30-45 min mobile smoke pe TRACK_7_FINAL_SMOKE_CHECKLIST.md §4 → CC autonomous §6+§7 finalize tag + push + cleanup)
 
 ---
 
@@ -238,7 +238,41 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ---
 
-## §7.10 BLOCKED on Daniel manual setup (per `📥_inbox/SETUP_DANIEL_TRACK_7.md`)
+## §7.6 FULL ACTIVATION ✅ (2026-05-19 evening Daniel manual setup complete)
+
+Per `📤_outbox/SETUP_VERIFICATION.md` — verify workflow iter 4 LANDED GREEN:
+
+- ✅ §1 GitHub Secrets 9/9 uploaded (ANTHROPIC + CHECKLY×2 + BROWSERBASE×2 + FIREBASE_SA + LHCI + PLAYWRIGHT_UID + SNYK)
+- ✅ §2 GitHub Labels 6/6 (exploration-anomaly + nightly-stagehand + severity-p0/p1/p2/p3)
+- ✅ §3 Branch ruleset main active (Daniel screenshots confirmed Settings → Rules)
+- ✅ §4 Workflow permissions write (Daniel screenshots confirmed Settings → Actions → General)
+- ✅ §5.1 Anthropic API HTTP 200 (GET /v1/models)
+- ✅ §5.2 Checkly API HTTP 200 (GET /v1/checks?limit=1 — corrected from /v1/account 404)
+- ✅ §5.3 Browserbase API HTTP 200 (GET /v1/sessions?status=RUNNING)
+- ✅ §5.4 Snyk API HTTP 200 (GET /rest/orgs)
+- ✅ §6 Firebase SA JSON valid + project_id + private_key BEGIN header
+- ✅ §6.b Firebase andura.app în authorizedDomains (firebase-admin programmatic via Identity Toolkit API)
+
+**Verify workflow iterations** (`📤_outbox/SETUP_VERIFICATION.md` cap-coadă):
+- iter 1 → iter 6 = 6 fix commits (secrets context shell-only / checkout v5 / issues permissions / administration scope removal / Checkly endpoint / git 128 via targeted firebase-admin)
+- Final commit `c08b666` ALL GREEN Daniel confirmed
+
+**Activated workflows:**
+- `ci.yml` validate + e2e-smoke + lighthouse — all gates now have native secret access
+- `deploy.yml` lighthouse-live + checkly-deploy — post-deploy hooks active
+- `track-7-nightly.yml` stryker-mutation-engine + stagehand-exploration — daily 03:00 UTC cron live
+
+**Activated tests:**
+- `tests/auth.setup.ts` — Firebase Admin SA live, storageState generation functional
+- `tests/magic-link.spec.ts` + `tests/smoke-react.spec.ts` — Playwright Magic Link + 4-tab smoke
+- `tests/visual-regression.spec.ts` — baselines pending first CI run cu --update-snapshots
+- `tests/engine/coach-scenarios/coach-voice.scenarios.test.ts` — skeleton (D.1 disambiguation pending)
+- `__checks__/critical-paths.spec.ts` — Checkly synthetic prod ready pentru `npx checkly deploy`
+- `scripts/nightly-exploration.mjs` — Stagehand persona exploration nightly ready
+
+---
+
+## §7.10 awaiting Daniel mobile manual smoke (per `📤_outbox/TRACK_7_FINAL_SMOKE_CHECKLIST.md`)
 
 ### §7.6 deploy.yml CI augment requires:
 - Firebase Admin SA JSON → `FIREBASE_SERVICE_ACCOUNT` GitHub Secret
