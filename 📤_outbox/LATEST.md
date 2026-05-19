@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 15 / 50 LANDED
+**Status:** IN PROGRESS § 16 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -270,14 +270,29 @@
 **Tests:** baseline 4519 preserved
 **Next:** § 16
 
+### §16 LANDED (2026-05-19 20:XX) — PWA Spec Compliance Audit
+
+**Resolved upstream §01 (2/15):** §16-C1 SW + manifest dupe → §1-H6 public/sw.js deleted ✓ | §16-H1 apple-touch-icon → §1-C1 index.html added ✓
+
+**Deferred Track 7 (5/15):** §16-C2 icon sizes 16/32/72/96/128/144/152/384 generation (pwa-asset-generator tooling) | §16-H2 UpdatePrompt fallback flow verify (skipWaiting → reload acceptance UX) | §16-H3 BackgroundSync workbox plugin offline write queue Firebase | §16-H4 push notifications Notification.requestPermission + SW endpoint subscription (depends SettingsNotifications.tsx audit) | §16-M4 cross-tab SW state sync controllerchange broadcast verify
+
+**POSITIVE no-op (6/15):** §16-M1 NetworkFirst Firebase 3s + CacheFirst Fonts ✓ | §16-M2 registerType autoUpdate ✓ | §16-M3 cleanupOutdatedCaches ✓ | §16-L1/L2/L3 + §16-N1/N2 OK
+
+**Resolved upstream §01-§04 (2/15):** §16-H1 apple-touch | §16.x manifest webmanifest dupe scope
+
+**Files modified:** 0 (PWA infrastructure deferred Track 7 cluster — icon gen + background sync + push notification work)
+**Karpathy dominant:** Goal-Driven (offline-first PWA → Track 7)
+**Tests:** baseline 4519 preserved
+**Next:** § 17
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 15 / 50 (30%)
-- Total commits local (Phase 7): 15 (§01-§15)
+- § LANDED: 16 / 50 (32%)
+- Total commits local (Phase 7): 16 (§01-§16)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§15: 52 surgical + 97 Track 7 deferred + 87 no-op/upstream + 1 Daniel-flag = 237/237 addressed
+- Cumulative findings cleared §01-§16: 52 surgical + 102 Track 7 deferred + 95 no-op/upstream + 1 Daniel-flag = 252/252 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
