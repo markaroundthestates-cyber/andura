@@ -65,17 +65,20 @@ test.describe('Andura production critical paths (Checkly synthetic)', () => {
   });
 
   test('3. Antrenor tab navigation reachable', async ({ page }) => {
-    await page.goto('/antrenor');
-    // Page should load without 404; check for some Antrenor-specific element
-    // OR fallback to body content sanity check
+    // Subscribe pageerror BEFORE navigation pentru capture early errors
+    const errors: string[] = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    // waitUntil 'networkidle' = deterministic wait pentru full load, NO
+    // arbitrary waitForTimeout (eslint-plugin-playwright NU instalat în Checkly
+    // context — Checkly runner is independent from local Playwright suite).
+    await page.goto('/antrenor', { waitUntil: 'networkidle', timeout: 15000 });
+
     const bodyText = await page.locator('body').innerText();
     expect(bodyText.length, 'Antrenor route returns content').toBeGreaterThan(50);
 
-    // Verify NO critical JavaScript errors în console
-    const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
-    await page.waitForTimeout(2000); // eslint-disable-line playwright/no-wait-for-timeout
-    expect(errors.filter((e) => !/favicon|sourcemap/i.test(e))).toEqual([]);
+    const fatal = errors.filter((e) => !/favicon|sourcemap/i.test(e));
+    expect(fatal, fatal.join('\n')).toEqual([]);
   });
 
   test('4. PWA Service Worker registered + installable manifest', async ({ page }) => {
