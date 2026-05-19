@@ -1,6 +1,6 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 5 / 10 LANDED — chat session checkpoint (50% milestone)
+**Status:** IN PROGRESS § 9 / 10 LANDED — 90% (§7.10 final smoke gated on Daniel manual setup per `📥_inbox/SETUP_DANIEL_TRACK_7.md`)
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
@@ -143,19 +143,102 @@ Pre-flight cleanup + D032 vault writes + push origin + backup tag — baseline c
 
 ## Cumulative status (refresh per phase)
 
-- **§ LANDED:** 5 / 10 (50%) — chat session milestone (chat ends here pending Daniel re-engage with secrets + decisions for §7.6+)
-- **Total commits local:** 5 §9 First Actions + 8 phase commits (§7.1 + §7.1-LATEST + §7.2 + §7.2-LATEST + §7.3 + §7.3-LATEST + §7.4 + §7.4-LATEST) + §7.5 + this §7.5-LATEST = 15 commits since baseline `17b0bba`
-- **Commits pushed origin:** 5 (§9 First Actions + chore-auto pre-existing) — §7.1+ local only
-- **Cumulative Vitest tests:** 4519 → 4547 (+28 = 27 §7.1 + 1 §7.5 sanity)
-- **Cumulative Vitest test files:** 251 → 255 (+4: §7.1 3 files + §7.5 coach-scenarios)
-- **Cumulative Playwright tests:** 103 → 117 (+14 since §7.2/§7.3)
-- **Cumulative Playwright test files:** 19 → 23 (+4)
-- **Production readiness % estimate:** ~63% (50% Track 7 LANDED + §7.5 coach-scenarios skeleton + Daniel-action gating dependencies for §7.6+)
-- **Remaining ETA:** ~3-4 zile lucrătoare CC autonomous Opus exclusively per § atomic commit pentru §7.6-§7.10 (CI surgery + Checkly + Stagehand + vanilla cleanup + final smoke)
+- **§ LANDED:** 9 / 10 (90%) — Daniel re-engaged 2026-05-19 evening: §7.9 cleanup + §7.4 audit fix + §7.6 CI augment + §7.7 Checkly + §7.8 Stagehand + §7.10 prep ALL LANDED ca skeleton ready-to-activate
+- **Total commits local since baseline `17b0bba`:** ~22 commits (5 §9 First Actions + 14 phase commits §7.1-§7.10-prep + auto-commits + LATEST checkpoints + SETUP)
+- **Commits pushed origin:** 5 §9 First Actions only — §7.1-§7.10-prep local only (preserve D030 anti-recurrence, manual push at Daniel trigger sau §7.10 final smoke PASS)
+- **Cumulative Vitest tests:** 4519 → 4547 (+28 = 27 §7.1 + 1 §7.5 sanity) baseline preserved
+- **Cumulative Vitest test files:** 251 → 255 (+4: §7.1 fixtures + invariants + golden master + §7.5 coach scenarios)
+- **Cumulative Playwright tests:** 103 → ~17 (massive React-focused reduction post §7.9 cleanup)
+- **Cumulative Playwright test files:** 19 → ~7 (auth.setup + magic-link + smoke-react + visual-regression + v2-4-taburi survivor + __checks__/critical-paths Checkly + tests/coach-scenarios coach-voice)
+- **Production readiness % estimate:** ~75% (Track 7 90% LANDED ca skeleton ready-to-activate; Daniel manual setup unlocks remaining 10% pentru §7.10 final smoke PASS)
+- **Remaining ETA:** Daniel-blocked (~3-4 ore manual setup pe SETUP_DANIEL_TRACK_7.md A+B+C → CI green → Daniel mobile smoke ~30-45 min → §7.10 LANDED)
 
 ---
 
-## §7.6-§7.10 BLOCKED on Daniel inputs (chat session ends here pre-§7.6)
+## §7.6-§7.9 LANDED (2026-05-19 evening Daniel re-engage)
+
+### §7.9 LANDED — vanilla legacy E2E cleanup
+- **Commit:** `b4d1950` `feat(track-7-§7.9): vanilla legacy E2E cleanup — delete 20 obsolete files`
+- **DELETED 20 files (~1800 lines):**
+  - 10 tests/e2e/scenarios/*.spec.js (admin-prefill, bf-live-update, calibration-ui, coach-screen, cut-rep-display, data-integrity, readiness, rest-timer, session-logs-persist, week2-ui)
+  - 1 tests/e2e/smoke/critical-paths.spec.js (legacy GitHub Pages vanilla)
+  - 2 tests/e2e/fixtures/ (sessions.js + users.js — consumed only by deleted specs)
+  - 3 tests/e2e/helpers/ (assertions.js + setup.js + storage.js)
+  - 4 root specs (integration + regression + smoke + visual — all vanilla `.nb` selectors)
+- **KEEPS:** tests/e2e/v2-4-taburi-smoke.spec.js (V2/V1 fallback) + all Track 7 NEW + tests/golden-master/ + tests/simulation/ (separate node-based systems)
+- **Playwright tests:** 117 → ~17 (massive React-focused E2E baseline reduction)
+
+### §7.4-fix LANDED — npm audit safe patches
+- **Commit:** `d801426` `fix(track-7-§7.4-audit): npm audit fix safe patch bumps (brace-expansion + ws)`
+- **Safe patches:** brace-expansion 5.0.5→5.0.6 + ws 8.20.0→8.20.1 (both transitive devDep-only)
+- **Remaining:** 14 vulns (12 low + 2 moderate) require `--force` semver-major — DEFERRED to Daniel case-by-case (D.3 SETUP)
+
+### §7.6 LANDED — deploy.yml + ci.yml + nightly workflow augment
+- **Commit:** `acb05e3` `feat(track-7-§7.6): deploy.yml + ci.yml augment skeleton + nightly workflow (Stryker+Stagehand) — placeholder secret refs ready-to-activate`
+- **`.github/workflows/ci.yml` augmented:**
+  - validate job: +lint + size + depcheck + madge:circular + jscpd + licenses + npm audit + Snyk (all `continue-on-error: true` initially)
+  - e2e-smoke job: fixed broken `tests/e2e/smoke/` path → now references Track 7 §7.2+§7.3 specs + v2-4-taburi survivor + auth.setup env vars
+  - +Lighthouse CI step
+- **`.github/workflows/deploy.yml` augmented:**
+  - lighthouse-live job: post-deploy Lighthouse vs live andura.app
+  - checkly-deploy job: gated on CHECKLY_API_KEY secret
+- **NEW `.github/workflows/track-7-nightly.yml`:**
+  - Daily 03:00 UTC cron (06:00 EEST Romania morning)
+  - stryker-mutation-engine job: full mutation report upload (30-day retention)
+  - stagehand-exploration job: gated on BROWSERBASE_API_KEY + ANTHROPIC_API_KEY
+- **`package.json` scripts:** test:smoke / test:e2e / test:e2e:smoke updated post-§7.9; +test:engine + mutation:engine + exploration
+
+### §7.7 LANDED — Checkly synthetic prod skeleton
+- **Commit:** `10d43ca` `feat(track-7-§7.7): Checkly synthetic prod config + critical paths skeleton — ready-to-activate`
+- **NEW checkly.config.ts:** defineConfig projectName 'Andura PWA' + frequency 5min EU CDN (2 locations) + Romania CDN proximity + cost note: 5min × 2 locations = ~8,640/lună exceeds Free Hobby 1,500 — recommend 30min OR upgrade $40/mo
+- **NEW __checks__/critical-paths.spec.ts (4 active + 3 future tests):**
+  - Active (no auth): homepage 4 taburi / Magic Link UI / Antrenor tab nav / PWA SW + manifest
+  - Future (auth-gated): AaFriction LOCK 9 / LockExercises LOCK 4 / Engine API Firestore latency
+- **Slack alert routing:** Daniel configures în Checkly UI (NU în code — sensitive webhook)
+
+### §7.8 LANDED — Stagehand persona exploration template
+- **Commit:** `a1491a7` `feat(track-7-§7.8): Stagehand persona exploration nightly template — ready-to-activate`
+- **NEW scripts/nightly-exploration.mjs (186 lines):**
+  - ESM .mjs Node 22+ native (no transpile)
+  - Activation guard: silent exit when env absent
+  - Dynamic imports @browserbasehq/stagehand + zod (lazy install)
+  - 3 personas mirror §7.1: Gigel T0 / Marius T2 / Maria 65 T3
+  - Anomaly schema zod: 10 types × 4 severity levels P0-P3
+  - GitHub Issues queue auto-create cu labels exploration-anomaly + severity-* + nightly-stagehand
+  - Stagehand actions stagehand.act() persona + stagehand.extract() schema-constrained
+  - Romanian persona prompting + Magic Link login fallback
+
+### §7.10 prep LANDED — final smoke checklist + tag finalize script
+- **Commit:** `103d50e` `chore(track-7-§7.10-prep): final smoke checklist + tag finalize script`
+- **NEW 📤_outbox/TRACK_7_FINAL_SMOKE_CHECKLIST.md (174 lines):**
+  - §0 Pre-conditions verify (13 CC autonomous checks)
+  - §1 Tier 1 CI status (7 GitHub Actions jobs GREEN)
+  - §2 Tier 2 Checkly 24h synthetic baseline
+  - §3 Tier 3 Stagehand overnight queue
+  - §4 Daniel mobile manual smoke (7 sections × ~50 checkboxes pe 4 taburi cap-coadă)
+  - §5 Final sign-off CEO directive verbal confirmation
+  - §6 Final commit + tag + push pipeline (ready-to-run bash)
+  - §7 Post-§7.10 cleanup (consume prompts + archive LATEST + update primer)
+- **NEW scripts/track-7-finalize.sh (79 lines):**
+  - Pre-checks: baseline tag exists + WT clean + tag uniqueness
+  - Stats summary diff since baseline
+  - Annotated tag `track-7-automated-testing-landed-YYYY-MM-DD`
+  - Output Daniel next-steps push instructions
+
+### SETUP_DANIEL_TRACK_7.md LANDED — comprehensive manual setup checklist
+- **Commit:** `d88bb00` `docs(setup): SETUP_DANIEL_TRACK_7.md — comprehensive manual setup checklist`
+- **NEW 📥_inbox/SETUP_DANIEL_TRACK_7.md (269 lines):**
+  - Dependency graph A→C→CI / B→live auth / D parallel
+  - Section A: 5 accounts (~60-90 min)
+  - Section B: Firebase Console manual (~30-45 min)
+  - Section C: GitHub Repo Settings (~30 min) — branch protection + 11 secrets + 6 labels + permissions
+  - Section D: 5 CEO decisions pending (F5/LOCK 9 / Firebase API / npm audit / Checkly cost / visual baselines)
+  - Section E: 7-step activation test sequence
+  - Section F: Status tracker table
+
+---
+
+## §7.10 BLOCKED on Daniel manual setup (per `📥_inbox/SETUP_DANIEL_TRACK_7.md`)
 
 ### §7.6 deploy.yml CI augment requires:
 - Firebase Admin SA JSON → `FIREBASE_SERVICE_ACCOUNT` GitHub Secret
