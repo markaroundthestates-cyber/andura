@@ -34,7 +34,7 @@ jobs:
         continue-on-error: true
       - name: Upload Stryker HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: stryker-mutation-report
           path: reports/mutation/
