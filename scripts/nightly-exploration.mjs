@@ -35,6 +35,7 @@ try {
 } catch (err) {
   console.error(
     '[nightly-exploration] @browserbasehq/stagehand + zod NOT installed. Run: npm i -D @browserbasehq/stagehand zod',
+    err,
   );
   process.exit(1);
 }

@@ -82,7 +82,6 @@ for (const [source, targets] of wikilinks) {
         );
       }
       // Basename match across vault (Obsidian shortest-path mode)
-      const basename = path.basename(cleanTarget);
 
       for (const c of candidates) {
         if (fs.existsSync(c)) { resolved = true; break; }
@@ -125,7 +124,7 @@ for (const f of wikiFiles) {
   inboundCount.set(f, 0);
 }
 
-for (const [source, targets] of wikilinks) {
+for (const [, targets] of wikilinks) {
   for (const t of targets) {
     const cleanTarget = t.target.split('#')[0];
     if (!cleanTarget) continue;

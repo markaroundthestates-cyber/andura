@@ -8,7 +8,6 @@
 // Goal: find [text](path.md) → candidates to convert to [[wikilink]]
 
 const fs = require('fs');
-const path = require('path');
 
 const allMdFiles = fs.readFileSync('tmp_faza2d_files.txt', 'utf8')
   .split('\n')
@@ -31,7 +30,7 @@ for (const file of wikiLayer) {
   let content;
   try {
     content = fs.readFileSync(file, 'utf8');
-  } catch (e) {
+  } catch {
     continue;
   }
 

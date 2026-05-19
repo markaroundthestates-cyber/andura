@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 /*
  * strip-diacritics.js
@@ -97,7 +96,7 @@ function walkDir(absDir, exts, files) {
   let entries;
   try {
     entries = fs.readdirSync(absDir, { withFileTypes: true });
-  } catch (err) {
+  } catch {
     return;
   }
   for (const entry of entries) {

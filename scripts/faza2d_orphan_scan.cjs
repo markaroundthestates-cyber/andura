@@ -8,8 +8,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = process.cwd();
-
 // Read pre-built file list (UTF-8 to preserve emojis)
 const allMdFiles = fs.readFileSync('tmp_faza2d_files.txt', 'utf8')
   .split('\n')
@@ -50,7 +48,7 @@ const contentCache = {};
 for (const f of allMdFiles) {
   try {
     contentCache[f] = fs.readFileSync(f, 'utf8');
-  } catch (e) {
+  } catch {
     contentCache[f] = '';
   }
 }

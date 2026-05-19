@@ -36,7 +36,7 @@ async function main() {
     getFirestore = fsMod.getFirestore;
     getAuth = authMod.getAuth;
   } catch (err) {
-    console.error('[admin-cleanup] firebase-admin not installed. Run: npm install --save-dev firebase-admin');
+    console.error('[admin-cleanup] firebase-admin not installed. Run: npm install --save-dev firebase-admin', err);
     process.exit(1);
   }
 
@@ -114,7 +114,7 @@ async function cleanupArchivedData({ db }) {
         deleted++;
       }
     }
-  } catch (err) {
+  } catch {
     // _archived/anonymous/items collection may not exist — silent
   }
 
