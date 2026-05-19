@@ -56,6 +56,9 @@ export function Antrenor(): JSX.Element {
   const resumeSession = useWorkoutStore((s) => s.resumeSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const schedContext = useCoachStore((s) => s.schedContext);
+  // §1-H3 audit fix: persona wrapper ALSO hoisted to Layout.tsx so all 4 tabs
+  // inherit persona scaling. Antrenor section keeps local class for explicit
+  // testid contract + redundant inheritance harmless (same class chain).
   const persona = useCoachStore((s) => s.persona);
   const reactivateDismissed = useCoachStore((s) => s.reactivateDismissed);
   const dismissReactivate = useCoachStore((s) => s.dismissReactivate);

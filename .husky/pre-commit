@@ -1,1 +1,6 @@
+# §1-C4 audit fix — pre-commit gate adds ESLint lint pass after vitest.
+# Initial mode = non-blocking (warn-only). Lint output surfaces issues for
+# Daniel review but does NOT block commits pre-Beta. Track 7 backlog: ratchet
+# rules → error level by category, enable blocking mode.
 npm run test:run
+npm run lint --silent || echo "[lint] non-blocking warnings present — see eslint output, ratchet roadmap Track 7"

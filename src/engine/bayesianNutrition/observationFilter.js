@@ -103,7 +103,11 @@ export function getKcalFloorInformativeMessage() {
   );
 }
 
-// TODO(CEO-review): wording draft batch 2026-05-16 TASK 7 pending Daniel review.
+// §1-M2 audit fix — TODO converted to D024 reference. Wording draft batch
+// 2026-05-16 TASK 7 falls under D024 LOCKED V1 (Pre-Beta wording RO Co-CTO
+// autonomous compose OK, Daniel review post-Beta a-z gate). See also §47.5
+// engine SoT voice wording backlog. NOT a deferred task in code — review-time
+// queue tracked in vault.
 /**
  * Count-aware UI trigger wording for CSV/JSON IMPORT context — detecting N
  * zile sub kcal floor in batch import operation.

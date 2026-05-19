@@ -1,29 +1,10 @@
-// ══ FOUNDATION SMOKE — React Andura Clasic Phase 1 verify ═════════════════
-// Validates App renders, Tailwind clases applied, Zustand store wires.
+// ══ FOUNDATION SMOKE — React Andura Clasic Zustand store verify ═══════════
+// §1-H1 audit fix companion — App.tsx deleted (dead Phase 1 placeholder).
+// App render tests removed; useAppStore Zustand smoke preserved (foundation
+// store wiring still relevant for §17 telemetry + §35 DB Tier 0/1/2 chain).
 
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { App } from '../../App';
 import { useAppStore } from '../stores/appStore';
-
-describe('Foundation smoke — App render', () => {
-  it('renders Andura Clasic heading', () => {
-    render(<App />);
-    expect(screen.getByText(/Andura Clasic/i)).toBeInTheDocument();
-  });
-
-  it('renders Phase 1 Foundation marker', () => {
-    render(<App />);
-    expect(screen.getByText(/Phase 1 Foundation LANDED/i)).toBeInTheDocument();
-  });
-
-  it('applies Tailwind clase bg-paper la main', () => {
-    const { container } = render(<App />);
-    const mainEl = container.querySelector('main');
-    expect(mainEl).not.toBeNull();
-    expect(mainEl?.className).toMatch(/bg-paper/);
-  });
-});
 
 describe('Foundation smoke — Zustand store', () => {
   it('useAppStore initial state correct', () => {

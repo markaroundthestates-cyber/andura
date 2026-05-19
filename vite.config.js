@@ -12,6 +12,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   base: '/',
+  // §1-C2 audit fix: strip console.*/debugger in production bundles (data privacy
+  // + DevTools-driven perf cost + anti-surveillance branding §43.8). Dev mode
+  // preserves console (drop is build-only via esbuild minify step).
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   plugins: [
     react(),
     VitePWA({

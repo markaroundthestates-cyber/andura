@@ -2,23 +2,31 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Andura — Clasic (React build Phase 1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#c8412e" />
+  <meta name="description" content="Andura - coach AI personal pentru sala, facut in Romania. Antrenament cu cap." />
+  <meta name="color-scheme" content="light" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <title>Andura</title>
   <style>
-    :root {
-      color-scheme: dark;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    body {
+    /* §1-C1 audit fix: replace dark FOUC inline with cream warm light shell
+       matching Tailwind --paper token. App-level CSS hydrates via main.tsx. */
+    html, body {
       margin: 0;
-      padding: 24px;
-      background: #0a0a0a;
-      color: #e8e8e8;
+      padding: 0;
+      background: #faf7f1;
+      color: #1a1815;
+      font-family: 'Inter', system-ui, sans-serif;
       min-height: 100vh;
     }
     #root {
-      max-width: 600px;
-      margin: 40px auto;
+      min-height: 100vh;
     }
   </style>
 </head>

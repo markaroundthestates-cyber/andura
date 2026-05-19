@@ -274,15 +274,10 @@ export async function getNutritionTargetsToday(
   userState?: object,
 ): Promise<NutritionTargetsEngine> {
   try {
-    const ctx = (userState ?? {}) as object;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await evaluateBN(ctx as any) as {
-      tier?: string;
-      confidence?: string;
-      meta?: {
-        nutrition_inference_metadata?: { posterior?: { mu?: number } };
-      };
-    };
+    // §1-M1 audit fix: bayesianNutrition.d.ts sibling declares BayesianNutritionContext +
+    // BayesianNutritionResult shapes; `as any` cast removed (Phase 4 task_11 §A pattern).
+    const ctx = (userState ?? {}) as Parameters<typeof evaluateBN>[0];
+    const result = await evaluateBN(ctx);
     if (!result || result.tier === 'none') return BASELINE_NUTRITION;
     const mu = result.meta?.nutrition_inference_metadata?.posterior?.mu;
     if (!Number.isFinite(mu)) return BASELINE_NUTRITION;
