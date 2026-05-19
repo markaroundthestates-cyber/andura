@@ -1,11 +1,12 @@
 // ══ ERROR BOUNDARY — Phase 5 task_19 Per-Route Fallback UI ═══════════════
 // React Error Boundary catches unhandled component render errors. Renders
-// fallback UI cu "Inapoi la Antrenor" + reload option. Logs error la
-// console.error pentru dev visibility. Phase 6+ wires Sentry sau similar
-// telemetry pipeline.
+// fallback UI cu "Inapoi la Antrenor" + reload option.
+// §13-C1 + §4-C1 audit fix — wires Sentry captureException with componentStack
+// extra (was console.error only — invisible to production observability).
 
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { captureException } from '../../util/sentry.js';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -28,7 +29,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // §13-C1 audit fix — surface to Sentry (production observability) +
+    // preserve console for dev. Sentry no-ops on localhost (sentry.js gate).
     console.error('[ErrorBoundary] caught render error:', error, errorInfo);
+    captureException(error, {
+      tags: { source: 'react-error-boundary' },
+      extra: { componentStack: errorInfo.componentStack },
+    });
   }
 
   handleReset = (): void => {

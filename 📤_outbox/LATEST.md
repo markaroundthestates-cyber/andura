@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 12 / 50 LANDED
+**Status:** IN PROGRESS § 13 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -228,14 +228,29 @@
 **Tests:** baseline 4519 preserved
 **Next:** § 13
 
+### §13 LANDED (2026-05-19 19:XX) — Error Handling Cross-Cutting Audit
+
+**Surgical (3/14):** §13-C1 ErrorBoundary.tsx → wires captureException with source tag + componentStack extra (was console.error only, invisible production) | §13-H3 main.tsx unhandledrejection global handler (async errors escaping React tree) | §13-H4 main.tsx window.error global handler (sync errors third-party scripts)
+
+**Resolved upstream (1/14):** §13-M2 retry strategy vanilla auth.js 3-attempt backoff ✓ → React Auth.tsx wires sendMagicLink (§7-C2 done)
+
+**Deferred Track 7 (6/14):** §13-H1 Big 6 form bounds (§7-C4 dup) | §13-H2 submit double-click protection cross-form audit | §13-M1 Toast central component + useToast hook + ARIA live | §13-M3 offline banner runtime UX | §13-M6 optimistic UI rollback on Firebase write fail | §13-M5 verify
+
+**POSITIVE no-op (4/14):** §13-L1/L2 + §13-N1 + §13-M5 anti-RE F13 DROP V1 confirmed
+
+**Files modified (2):** src/react/components/ErrorBoundary.tsx, src/main.tsx
+**Karpathy dominant:** Surgical Changes (3)
+**Tests:** baseline 4519 preserved (additive captureException + window.addEventListener)
+**Next:** § 14
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 12 / 50 (24%)
-- Total commits local (Phase 7): 12 (§01-§12)
+- § LANDED: 13 / 50 (26%)
+- Total commits local (Phase 7): 13 (§01-§13)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§12: 48 surgical + 79 Track 7 deferred + 69 no-op/upstream + 1 Daniel-flag = 197/197 addressed
+- Cumulative findings cleared §01-§13: 51 surgical + 85 Track 7 deferred + 74 no-op/upstream + 1 Daniel-flag = 211/211 addressed
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
 - Daniel-action items: 1 (§9-C1 F5 vs LOCK 9)
