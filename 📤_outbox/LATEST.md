@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 26 / 50 LANDED
+**Status:** IN PROGRESS § 27 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -420,14 +420,22 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 27
 
+### §27 LANDED — Pricing/Monetization (10 findings)
+
+**Deferred Track 7 (6/10):** §27-H1 pricing strategy doc 08-workflows | §27-M2 Stripe SDK + payment integration | §27-M3 tax handling ANAF | §27-M4 trial period + refund policy | §27-M5 invoicing RO | §27-N1 NIT
+
+**POSITIVE no-op (4/10):** §27-M1 Free Beta scope SettingsSubscription ✓ | §27-L1/L2/L3 OK
+
+**Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 28
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 26 / 50 (52%)
-- Total commits local (Phase 7): 26 (§01-§26)
+- § LANDED: 27 / 50 (54%)
+- Total commits local (Phase 7): 27 (§01-§27)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§26: 57 surgical + 152 Track 7 deferred + 164 no-op/upstream + 1 Daniel-flag = 374/374 addressed
+- Cumulative findings cleared §01-§27: 57 surgical + 158 Track 7 deferred + 168 no-op/upstream + 1 Daniel-flag = 384/384 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
