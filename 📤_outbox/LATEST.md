@@ -1,6 +1,6 @@
 # Phase 7 Findings FIX Continuous — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 27 / 50 LANDED
+**Status:** IN PROGRESS § 28 / 50 LANDED
 **Started:** 2026-05-19 14:46 (HEAD `9804955` post §12-A vault writes + §12-A.ext settings perms commit; baseline tag `pre-phase-7-findings-fix-2026-05-19` pushed origin)
 **Audit baseline reference:** HEAD `b705c3f` (`git diff src/ b705c3f..HEAD` = EMPTY, source semantically identical, recovery commits + D030 + Stop hook fix preserved)
 **Procedure:** D031 LOCKED V1 (Phase 7 Findings FIX continuous neîntrerupt Opus exclusively per § atomic commit)
@@ -428,14 +428,26 @@
 
 **Files modified:** 0 | **Tests:** 4519 preserved | **Next:** § 28
 
+### §28 LANDED — GDPR Legal Compliance (19 findings)
+
+**Resolved upstream §09 (1/19):** §28-H4 consent timestamps → §9-H2 Track 7
+
+**Deferred Track 7 (12/19):** §28-C1 Privacy Policy SettingsTerms.tsx review | §28-C2 T&C same | §28-C3 right-to-erasure SettingsDanger.tsx E2E wipe verify (localStorage + Dexie + Firebase REST accounts:delete + user/{uid} + backup purge) | §28-C4 data breach response runbook 08-workflows/data-breach-response.md (detect + triage + contain + ANSPDCP 72h + user notify + RCA) | §28-H1 DPA Google Firebase processor document acceptance | §28-H3 DSR handler runbook | §28-H5 age verification minors <16 parental consent OR raise min to 16 | §28-H6 Medical data Art. 9 Privacy Policy boundary clarify | §28-M1 cookie banner ePrivacy if cookies used | §28-M2 ROPA Record of Processing Activities | §28-M3 DPO designation (likely N/A solo) | §28-M4-M6 various
+
+**POSITIVE no-op (6/19):** §28-H2 data residency EU region europe-west1 ✓ | §28-L1 SettingsExport (access right) LANDED ✓ | §28-L2 SettingsDanger (erasure) LANDED ✓ | §28-L3 SettingsProfile (rectification) LANDED ✓ + privacy by design (local-first §4-L3) + data minimization (LOCK 4 Medical Disclaimer + F13 DROP V1) ✓
+
+**Files modified:** 0 (GDPR compliance cluster Track 7 — doc work + functional E2E verify + Privacy Policy review)
+**Tests:** baseline 4519 preserved
+**Next:** § 29
+
 ---
 
 ## Cumulative status (refresh per §)
 
-- § LANDED: 27 / 50 (54%)
-- Total commits local (Phase 7): 27 (§01-§27)
+- § LANDED: 28 / 50 (56%)
+- Total commits local (Phase 7): 28 (§01-§28)
 - Cumulative tests delta: 4522 baseline → 4519
-- Cumulative findings cleared §01-§27: 57 surgical + 158 Track 7 deferred + 168 no-op/upstream + 1 Daniel-flag = 384/384 addressed
+- Cumulative findings cleared §01-§28: 57 surgical + 170 Track 7 deferred + 175 no-op/upstream + 1 Daniel-flag = 403/403 addressed
 - Production readiness: ~75%
 - Cumulative time elapsed: ~4.5 h
 - Production readiness % estimate: ~72%
