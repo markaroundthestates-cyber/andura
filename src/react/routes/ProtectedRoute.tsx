@@ -12,6 +12,7 @@ import type { JSX, ReactNode } from 'react';
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import { isAuthenticated as readAuthFromStorage } from '../../auth.js';
 
 interface Props {
@@ -21,6 +22,10 @@ interface Props {
 export function ProtectedRoute({ children }: Props): JSX.Element {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  // §A015 audit fix (NC§31-H1..H4) — T0 hard typing gate: redirect /onboarding/1
+  // dacă user authenticated dar onboarding NU completed. Prevents engine T0
+  // baseline pollution + skip-onboarding bypass attempts.
+  const onboardingCompleted = useOnboardingStore((s) => s.completed);
 
   // §7-C3 audit fix — reactive auth state sync ADDITIVE only:
   // 1. On mount: if storage has valid auth (Magic Link landed prior session),
@@ -47,6 +52,9 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
+  }
+  if (!onboardingCompleted) {
+    return <Navigate to="/onboarding/1" replace />;
   }
   return <>{children}</>;
 }

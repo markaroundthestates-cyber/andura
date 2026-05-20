@@ -57,6 +57,7 @@ import { Progres } from '../routes/screens/progres/Progres';
 import { Istoric } from '../routes/screens/istoric/Istoric';
 import { Cont } from '../routes/screens/cont/Cont';
 import { useAppStore } from '../stores/appStore';
+import { useOnboardingStore } from '../stores/onboardingStore';
 
 function renderAt(initialPath: string) {
   return render(
@@ -110,6 +111,7 @@ describe('Routing — top-level screens', () => {
 describe('Routing — ProtectedRoute redirect', () => {
   beforeEach(() => {
     useAppStore.getState().setAuthenticated(false);
+    useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
   });
 
   it('redirects la /auth daca !isAuthenticated', () => {
@@ -117,10 +119,18 @@ describe('Routing — ProtectedRoute redirect', () => {
     expect(screen.getByText('Autentificare')).toBeInTheDocument();
   });
 
-  it('renders Antrenor daca isAuthenticated', () => {
+  it('renders Antrenor daca isAuthenticated + onboarding completed', () => {
     useAppStore.getState().setAuthenticated(true);
     renderAt('/app/antrenor');
     expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    useAppStore.getState().setAuthenticated(false);
+  });
+
+  it('§A015 redirects la /onboarding/1 daca authenticated dar !onboarding completed', () => {
+    useAppStore.getState().setAuthenticated(true);
+    useOnboardingStore.setState({ completed: false, completedAt: null });
+    renderAt('/app/antrenor');
+    expect(screen.getByText(/Pasul 1 din 7/i)).toBeInTheDocument();
     useAppStore.getState().setAuthenticated(false);
   });
 });
@@ -128,6 +138,7 @@ describe('Routing — ProtectedRoute redirect', () => {
 describe('Routing — BottomNav active tab', () => {
   beforeEach(() => {
     useAppStore.getState().setAuthenticated(true);
+    useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
   });
 
   it('Antrenor tab activ la /app/antrenor', () => {
@@ -206,6 +217,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
 describe('Routing — Phase 3 Antrenor nested routes integration', () => {
   beforeEach(() => {
     useAppStore.getState().setAuthenticated(true);
+    useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
   });
 
   function renderNested(initialPath: string) {
