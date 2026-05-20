@@ -49,12 +49,13 @@ jobs:
 
   # Track 7 §7.8 — Stagehand exploration nightly monitoring scope
   # (NU gating per WebTestBench arXiv 2603.25226 — exploration scope only)
-  # Gated on Daniel uploading BROWSERBASE_API_KEY + ANTHROPIC_API_KEY per
-  # 📥_inbox/SETUP_DANIEL_TRACK_7.md §A.2+§A.3
+  # Step-level secrets check via env+shell (job-level `if: secrets.X != ''`
+  # antipattern în step-level invalid GitHub Actions per docs; per Daniel
+  # iter 8 same fix ca iter 1 verify workflow). Job always runs; activation
+  # gated by shell check pe BROWSERBASE_API_KEY + ANTHROPIC_API_KEY.
   stagehand-exploration:
     name: Stagehand Persona Exploration
     runs-on: ubuntu-latest
-    if: ${{ secrets.BROWSERBASE_API_KEY != '' && secrets.ANTHROPIC_API_KEY != '' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
@@ -62,8 +63,21 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: 'Check secrets gating (env+shell pattern, NOT if: secrets.X)'
+        env:
+          BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$BROWSERBASE_API_KEY" ] || [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "⚠️ BROWSERBASE_API_KEY or ANTHROPIC_API_KEY not set — skipping exploration job"
+            echo "SKIP_EXPLORATION=1" >> $GITHUB_ENV
+          else
+            echo "✅ Secrets present — exploration job will run"
+          fi
       - run: npm ci --ignore-scripts
+        if: env.SKIP_EXPLORATION != '1'
       - name: Run Stagehand persona exploration
+        if: env.SKIP_EXPLORATION != '1'
         run: npm run exploration
         env:
           BROWSERBASE_API_KEY: ${{ secrets.BROWSERBASE_API_KEY }}
