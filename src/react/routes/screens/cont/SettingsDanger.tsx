@@ -48,6 +48,11 @@ export function SettingsDanger(): JSX.Element {
   const [confirm, setConfirm] = useState<ConfirmAction>(null);
 
   function handleLogoutConfirmed(): void {
+    // §A007-FIX audit-blocker: authSignOut() MUST clear firebase-* tokens
+    // ALSO. Without it, ProtectedRoute reactive useEffect (storage event +
+    // visibilitychange) detects tokens still present + reverts logout on
+    // next focus → broken UX + security risk (logout claim violated).
+    authSignOut();
     setAuthenticated(false);
     setConfirm(null);
     navigate('/auth');
@@ -70,6 +75,9 @@ export function SettingsDanger(): JSX.Element {
       return;
     }
     wipeAllLocalData();
+    // §A007-FIX audit-blocker: authSignOut() needed pe success path too —
+    // wipeAllLocalData strips wv2-* keys but NU firebase-* tokens.
+    authSignOut();
     setAuthenticated(false);
     setConfirm(null);
     navigate('/auth');

@@ -63,12 +63,22 @@ describe('SettingsDanger — render + actions', () => {
     expect(screen.getByText(/Te poti reconecta oricand/i)).toBeInTheDocument();
   });
 
-  it('logout confirm accept → setAuthenticated false + navigate /auth', () => {
+  it('logout confirm accept → setAuthenticated false + navigate /auth + tokens wiped', () => {
+    // §A007-FIX security audit-blocker regression test — tokens MUST be
+    // cleared by authSignOut(), not just appStore flag. Else ProtectedRoute
+    // reactive sync detects localStorage tokens + reverts logout.
+    localStorage.setItem('firebase-id-token', 'TEST_TOKEN');
+    localStorage.setItem('firebase-uid', 'TEST_UID');
+    localStorage.setItem('firebase-refresh-token', 'TEST_REFRESH');
     renderScreen();
     fireEvent.click(screen.getByTestId('danger-logout'));
     fireEvent.click(screen.getByTestId('danger-confirm-accept'));
     expect(useAppStore.getState().isAuthenticated).toBe(false);
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    // CRITICAL: tokens cleared (anti-revert)
+    expect(localStorage.getItem('firebase-id-token')).toBeNull();
+    expect(localStorage.getItem('firebase-uid')).toBeNull();
+    expect(localStorage.getItem('firebase-refresh-token')).toBeNull();
   });
 
   it('logout confirm cancel closes modal NU logs out', () => {
@@ -111,13 +121,19 @@ describe('SettingsDanger — render + actions', () => {
     expect(screen.getByText(/Datele \+ contul vor fi sterse/)).toBeInTheDocument();
   });
 
-  it('delete confirm accept wipes + logout + navigates /auth', () => {
+  it('delete confirm accept wipes + logout + navigates /auth + tokens wiped', () => {
+    // §A007-FIX regression — delete success path must also clear tokens
+    // (wipeAllLocalData strips wv2-* but not firebase-*).
+    localStorage.setItem('firebase-id-token', 'TEST_TOKEN');
+    localStorage.setItem('firebase-uid', 'TEST_UID');
     renderScreen();
     fireEvent.click(screen.getByTestId('danger-delete'));
     fireEvent.click(screen.getByTestId('danger-confirm-accept'));
     expect(useAppStore.getState().isAuthenticated).toBe(false);
     expect(useWorkoutStore.getState().streak).toBe(0);
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    expect(localStorage.getItem('firebase-id-token')).toBeNull();
+    expect(localStorage.getItem('firebase-uid')).toBeNull();
   });
 
   it('back navigates la /app/cont', () => {
