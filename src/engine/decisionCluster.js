@@ -179,7 +179,7 @@ export class DecisionCluster {
     // Stable sort: ties broken by input order (registry order at registration time).
     // V8 stable sort guarantee per ECMA-2019. Determinism contract guarantee (ADR 018 §2).
     gateRecs.sort((a, b) => b.rec.priority - a.rec.priority);
-    const [winner, ...rest] = gateRecs;
+    const winner = gateRecs[0];
 
     // Build short-circuit session: preserve baseSession metadata, mark gated.
     const session = {

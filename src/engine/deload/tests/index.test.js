@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
 import {
   DELOAD_STATE,
-  TRIGGER_SOURCE,
+  TRIGGER_SOURCE as _TRIGGER_SOURCE,
   NOTIFICATION_TIER,
   WORDING_RO,
   SCHEMA_CONSTANTS,

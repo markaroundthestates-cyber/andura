@@ -243,7 +243,7 @@ export class CoachDirector {
             : exercise.recommendation.technique;
         }
       }
-    } catch (e) {
+    } catch {
       for (const exercise of session.exercises) {
         if (!exercise.recommendation) {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);

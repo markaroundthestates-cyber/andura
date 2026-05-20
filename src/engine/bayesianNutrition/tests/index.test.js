@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
-import { UI_TIER, CALIBRATION_TIERS } from '../constants.js';
+import { UI_TIER, CALIBRATION_TIERS as _CALIBRATION_TIERS } from '../constants.js';
 
 const buildPeriodConstraint = (phase = 'LOAD') => Object.freeze({
   intensity_pct_1rm: { floor: 0.70, ceiling: 0.85 },

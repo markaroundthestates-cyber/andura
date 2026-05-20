@@ -7,7 +7,7 @@ import {
 import {
   DELOAD_STATE,
   TRIGGER_SOURCE,
-  GOAL_PHASE,
+  GOAL_PHASE as _GOAL_PHASE,
   SCHEMA_CONSTANTS,
 } from '../constants.js';
 

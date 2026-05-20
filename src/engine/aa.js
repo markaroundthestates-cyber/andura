@@ -1,6 +1,6 @@
 // ══ AA ENGINE — Auto-Adjust (3-session pattern) ═════════════
 import { DB } from '../db.js';
-import { COMPOUND_EX } from '../constants.js';
+import { COMPOUND_EX as _COMPOUND_EX } from '../constants.js';
 import { DP } from './dp.js';
 
 export const AA = {

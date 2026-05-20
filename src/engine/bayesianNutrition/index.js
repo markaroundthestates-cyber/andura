@@ -55,7 +55,7 @@ import {
 import {
   SCHEMA_CONSTANTS,
   UI_TIER,
-  CALIBRATION_TIERS,
+  CALIBRATION_TIERS as _CALIBRATION_TIERS,
 } from './constants.js';
 import { filterKcalFloorObservations } from './observationFilter.js';
 

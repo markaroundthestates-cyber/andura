@@ -21,7 +21,7 @@ import {
   realWorkoutEntry,
   deviationEntry,
   skipEntry,
-  scenarioVolumeCreep,
+  scenarioVolumeCreep as _scenarioVolumeCreep,
   scenarioClean,
   scenarioSprinter,
   scenarioMarathon,

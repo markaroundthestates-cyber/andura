@@ -10,7 +10,7 @@ import {
   computePersonalizedLandmarks,
 } from '../volumeLandmarks.js';
 import {
-  VOLUME_METRIC_WEIGHTS,
+  VOLUME_METRIC_WEIGHTS as _VOLUME_METRIC_WEIGHTS,
   VOLUME_LANDMARKS,
   MOVEMENT_CATEGORY,
 } from '../constants.js';

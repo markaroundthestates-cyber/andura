@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evaluate, evaluateAction, RULES } from '../ruleEngine.js';
+import { evaluate, evaluateAction, RULES as _RULES } from '../ruleEngine.js';
 
 describe('ruleEngine', () => {
   it('returns normal action when no rules fire', () => {
