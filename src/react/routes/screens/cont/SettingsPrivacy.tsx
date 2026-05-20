@@ -92,6 +92,58 @@ export function SettingsPrivacy(): JSX.Element {
           GDPR · K-anonimat 5+. Nici un identificator personal in metrici
           (varsta in grup, NU exact). Poti revoca oricand.
         </p>
+
+        {/* §A025 audit fix (NC§28-C1) — Privacy Policy live content GDPR. */}
+        <article
+          data-testid="privacy-policy-content"
+          className="mt-6 pt-5 border-t border-line text-sm text-ink leading-relaxed"
+        >
+          <h2 className="text-base font-semibold mb-3">Politica de confidentialitate</h2>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Ce date colectam</h3>
+          <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
+            <li>Profil onboarding: varsta, gen, obiectiv, frecventa, experienta, greutate (Big 6)</li>
+            <li>Sesiuni antrenament: exercitii, seturi, kg, reps, durata, RPE</li>
+            <li>Indicatori biometrici opt-in: greutate corp, masuratori (talie, brate, picioare)</li>
+            <li>Email pentru Magic Link (autentificare optionala fara parola)</li>
+          </ul>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Cum sunt folosite</h3>
+          <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
+            <li>Personalizare antrenamente (volum, intensitate, frecventa pe baza Big 6)</li>
+            <li>Engine recomandari (readiness, fatigue, PR detection — local pe telefon)</li>
+            <li>Backup optional Firebase RTDB (criptat in transit HTTPS) doar daca esti autentificat</li>
+            <li>ZERO publicitate · ZERO vanzare date · ZERO third-party trackers</li>
+          </ul>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Drepturile tale GDPR</h3>
+          <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
+            <li><strong>Acces + portabilitate:</strong> exporta toate datele JSON din Cont &gt; Descarca date</li>
+            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare &amp; stergere &gt; Sterge cont</li>
+            <li><strong>Rectificare:</strong> editeaza profilul direct in Cont &gt; Profil</li>
+            <li><strong>Opozitie telemetrie:</strong> toggle telemetrie anonima sus (default OFF)</li>
+            <li><strong>Limitare procesare:</strong> dezactiveaza backup Firebase (deconectare cont)</li>
+          </ul>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Stocare + retentie</h3>
+          <p className="text-sm text-ink2 mb-3">
+            Datele se stocheaza local-first pe telefonul tau (localStorage + IndexedDB).
+            Backup-ul Firebase RTDB (optional) pastreaza copie pana stergi contul.
+            ZERO copie pe servere terte. Stergerea = imediata + permanenta.
+          </p>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>
+          <p className="text-sm text-ink2 mb-3">
+            Pentru intrebari sau reclamatii GDPR: <a href="mailto:privacy@andura.app" className="text-brick underline">privacy@andura.app</a>.
+            Drept de reclamatie la Autoritatea Nationala de Supraveghere a
+            Prelucrarii Datelor cu Caracter Personal (ANSPDCP).
+          </p>
+
+          <p className="text-xs text-ink2 mt-4">
+            Versiune Beta · Actualizat 2026-05-20. Operator date: Andura PWA solo
+            developer Daniel. Date stocate UE (Firebase eu-central-1).
+          </p>
+        </article>
       </div>
     </section>
   );

@@ -34,6 +34,20 @@ describe('SettingsPrivacy — render + toggles', () => {
     expect(screen.getByRole('heading', { name: 'Confidentialitate', level: 1 })).toBeInTheDocument();
   });
 
+  it('§A025 GDPR Privacy Policy live content section present', () => {
+    renderScreen();
+    expect(screen.getByTestId('privacy-policy-content')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Politica de confidentialitate/i })).toBeInTheDocument();
+    // GDPR sections all 5
+    expect(screen.getByRole('heading', { name: /Ce date colectam/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Cum sunt folosite/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Drepturile tale GDPR/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Stocare \+ retentie/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Contact \+ reclamatii/i })).toBeInTheDocument();
+    // Contact email present
+    expect(screen.getByText(/privacy@andura\.app/i)).toBeInTheDocument();
+  });
+
   it('renders data export toggle + default true', () => {
     renderScreen();
     expect(screen.getByTestId('privacy-data-export-toggle')).toHaveAttribute('aria-checked', 'true');
