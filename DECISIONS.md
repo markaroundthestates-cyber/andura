@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-20
 schema_version: 1
-latest_entry: D041
-total_entries: 41
+latest_entry: D044
+total_entries: 44
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -92,6 +92,9 @@ D038 | 2026-05-20 | PROC | Co-CTO chat ZERO create_file pe paths cross-device (a
 D039 | 2026-05-20 | PROC | chore-auto Stop hook DISABLED PERMANENT in .claude/settings.json (disableAllHooks: true) + Andura/ gitignore belt+suspenders anti-f1c79dd recurrence | LOCKED V1 | DECISIONS.md §D039
 D040 | 2026-05-20 | TECH | .github/workflows/deploy.yml build step env vars injection mandatory VITE_FIREBASE_* (Magic Link blocker regression iter 9.5 fix) — GitHub Secrets VITE_FIREBASE_API_KEY + VITE_FIREBASE_RTDB_URL Daniel-action | LOCKED V1 | DECISIONS.md §D040
 D041 | 2026-05-20 | REGLAJ | Production readiness % rapoarte Co-CTO = estimat compound NU re-audit verifiable. Real measurement = re-run audit nuclear pe HEAD curent (Phase 8 Bugatti pre-Launch gate). Anti-inflatie: format raport include "Estimate (not measured): X%, Last measured: Y% @ <audit_date>" | LOCKED V1 | DECISIONS.md §D041
+D042 | 2026-05-20 | STRATEGY | Pre-Beta launch GATE = ZERO bug-uri outstanding (~900 cunoscute live → 0). Daniel CEO directive verbatim birou 2026-05-20: "Pana nu reducem nr la 0, nu avem beta" | LOCKED V1 | DECISIONS.md §D042
+D043 | 2026-05-20 | STRATEGY | Pre-Beta gate procedure = iterative loop fix → audit nuclear → scan automated systems (Track 7 + tot ce avem) → fix → repeat până convergence ZERO findings dual-source, apoi Daniel manual live smoke single comprehensive gate → validare finala Beta launch | LOCKED V1 | DECISIONS.md §D043
+D044 | 2026-05-20 | PROC | Iter 1 Mass Fix Orchestrator design LANDED — 340 atomic tasks (NU 450-550 predecessor estimate) across 28 BATCH-uri Karpathy-driven 5 clusters (A Surgical 180 / B Simplicity 50 / C Think-Before 80 / D Goal-Driven 30 / E Paradigm Daniel 20 deferred). Wave 1 critical path 4 BATCH-uri ~12-15h (Auth chain + index.html+CSP+Sentry + Coach engine wire + ConfirmModal+7uses). Wave 2 parallel-safe 20 BATCH-uri ~3-5 calendar days hybrid 2-3 sessions. Wave 3 paradigm Daniel sessions. Iter 1 EXIT audit ~12-15h. Pareto closure projection ~58% of ~890 findings single iter → iter 2 residual ~50% scope. Total Beta gate path ~25-39 calendar days. ETA codified D041 anti-inflation. NU follow predecessor CONSUMED plan (Daniel directive verbatim "gandeste fresh") | LOCKED V1 | DECISIONS.md §D044 + 📥_inbox/iter-1-mass-fix/ORCHESTRATOR.md + _MASTER_BACKLOG.md + _DAG.md + _BATCH_INDEX.md
 
 ---
 
@@ -515,4 +518,142 @@ Audit log-only ZERO modificare cod. Findings backlog informativ, fix-uri separat
 
 ---
 
-🦫 **DECISIONS.md SSOT singular live post 2026-05-15 reglaj. Append-only. Wiki/ + 03-decisions/_FROZEN/ + CLAUDE.md root schema FROZEN. Karpathy 4 principii core philosophy [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4 invariant.**
+### D042 — STRATEGY — Pre-Beta launch GATE = ZERO bug-uri outstanding
+
+**Date:** 2026-05-20
+**Category:** STRATEGY (CEO-level gate definition pre-Launch)
+**Status:** LOCKED V1 ABSOLUTE
+**Source:** Daniel CEO directive verbatim chat birou 2026-05-20: *"900 buguri live. Pana nu reducem nr la 0, nu avem beta."*
+**Cross-refs:** [[DECISIONS.md §D-LEGACY-051 Pre-Beta FULL Scope LOCK V2]], [[DECISIONS.md §D029 Bugatti Audit Nuclear procedure]], [[DECISIONS.md §D031 Phase 7 Findings FIX procedure]], [[DECISIONS.md §D041 anti-inflation discipline]], [[📤_outbox/audit-nuclear-2026-05-19/SUMMARY.md]], [[📤_outbox/mockup-vs-prod-parity-2026-05-20/SUMMARY.md]]
+
+#### §1 Context
+
+Post-audit Mockup vs Prod Parity LANDED 2026-05-20 birou (per D029 procedure extension dedicated visual parity scope). Cumulative bug-uri/findings known live:
+- **Audit Nuclear D029** (2026-05-19 HEAD `b705c3f`): 698 findings raw (73 CRIT + 167 HIGH + 234 MED + 178 LOW + 46 NIT)
+- **Phase 7 Findings FIX D031** (LANDED `05d0859`): 58 surgical closed → 640 outstanding din nuclear
+- **Audit Mockup vs Prod Parity** (2026-05-20): 263 findings raw (42 CRIT + 93 HIGH + 59 MED + 39 LOW + 17 NIT)
+- **Cumulative outstanding total: ~900 bug-uri live** (640 + 263, overlap minimal post §19 D029 doar 12 findings vs 263 mockup specific deep)
+
+#### §2 Decision
+
+Pre-Beta launch GATE = ZERO bug-uri outstanding cunoscute live. NU 85% readiness, NU 95% readiness, NU "acceptable threshold". Bugatti craft absolute = 0/0 known bugs ÎNAINTE Beta launch.
+
+#### §3 Implications
+
+**Toate fix waves Tier 1/2/3 + Track 7 deferred backlog (~405 findings) + Pass 4 polish (~22) + Mockup audit findings noi (~263) = MANDATORY pre-Beta launch.** ZERO carry-forward post-Beta "refactor later". D-LEGACY-051 Pre-Beta FULL Scope LOCK V2 reinforced + measurable.
+
+End-state final gate sequencing (per ANDURA_PRIMER.md §6) updated:
+1. ✅ Pre-Beta LOCK 1 100% complete (D013 2026-05-16)
+2. ✅ Deploy main reconcile (D014 2026-05-16)
+3. ✅ Strategic React pivot LOCK V1 (D015 + D016)
+4. ✅ Pre-Beta LOCK 2 React Andura Clasic build (D017-D028 Phase 1-6 LANDED)
+5. ✅ Phase 7 Findings FIX 58 surgical (D031 LANDED `05d0859`)
+6. ✅ Track 7 Automated Testing infrastructure (D032 LANDED 9.99/10)
+7. ✅ Audit Nuclear D029 LANDED + Audit Mockup vs Prod Parity 2026-05-20 LANDED
+8. **Fix ALL ~900 outstanding bug-uri → 0** (D042 gate)
+9. Daniel Gates smoke production manual post-fix (single comprehensive gate a-z, Firebase + PWA + telefon)
+10. Bugatti Full Audit pre-Launch nuclear gate re-run measure post-fix readiness (Phase 8 verify 0/0 confirmed)
+11. Fix ALL surfaced gate 10 (if any)
+12. **Beta launch**
+
+#### §4 Rationale Bugatti
+
+Beta = first impression irreversible. 50 testeri Beta find 50 bug-uri = brand damage permanent. Quality > Speed strict orizont 2-3 ani. "Refactor later NEVER happens" reinforced. Daniel solo bootstrap = ZERO timing argumente decizie. Anti-paternalism ABSOLUTE preserved (per ADR 013 §AMENDED) — engineering quality NU user-facing.
+
+#### §5 Anti-inflation discipline (D041)
+
+Raport progres = measured count `findings.closed / findings.total`. NU compound estimate. Format mandatory:
+- `Audit Nuclear D029: closed 58/698 = 8.3% (post Phase 7 fix `05d0859`)`
+- `Audit Mockup vs Prod: closed 0/263 = 0%`
+- `Cumulative outstanding: 900 → target 0`
+- `Beta gate met: NO until 0/0`
+
+#### §6 Stop trigger
+
+Gate met = count outstanding = 0. NU Daniel CEO discretion mid-process. NU bandwidth pressure. NU timing deadline. Daniel STOP override possible doar dacă decizie strategică NEW supersedes D042 (e.g., scope reduction Beta MVP Daniel CEO directive explicit).
+
+---
+
+### D043 — STRATEGY — Pre-Beta gate procedure iterative convergence loop dual-source
+
+**Date:** 2026-05-20
+**Category:** STRATEGY (CEO-level procedure definition pre-Launch, extension D042)
+**Status:** LOCKED V1 ABSOLUTE
+**Source:** Daniel CEO directive verbatim chat birou 2026-05-20: *"Dupa fix -> audit nuclear -> scan iar cu tot ce avem ca sisteme automate si track 7 -> fix -> audit nuclear -> etc... pana nu se mai gasesc nimic la audit nuclear si la sisteme automate. Abia atunci face daniel live smoke si da validarea finala ca beta launch"*
+**Cross-refs:** [[DECISIONS.md §D042 ZERO bug gate]], [[DECISIONS.md §D029 Bugatti Audit Nuclear procedure]], [[DECISIONS.md §D031 Phase 7 Findings FIX procedure]], [[DECISIONS.md §D032 Track 7 Automated Testing 3-tier defense]], [[DECISIONS.md §D041 anti-inflation discipline]], [[ANDURA_PRIMER.md §4 end-state]]
+
+#### §1 Context
+
+D042 LOCKED V1 stabilit gate-ul ZERO bug-uri outstanding pre-Beta launch. D043 codifies PROCEDURA explicită prin care se atinge convergence-ul. Pattern Phase 7 Findings FIX D031 a demonstrat single-pass surgical fix (58 closed din 698) NU e sufficient — lasă ~640 outstanding + audit-uri suplimentare (Mockup vs Prod parity 263 noi) au revelat divergențe noi necaptate de Audit Nuclear D029 inițial. Convergence necesită LOOP iterativ.
+
+#### §2 Loop procedure
+
+Iterație N (start N=1):
+
+1. **Fix** — CC autonomous Opus close ALL outstanding findings from previous iteration (Audit Nuclear backlog + Track 7 deferred + Audit Mockup vs Prod backlog + ad-hoc bug-uri operaționale). Per D031 procedure (atomic commit per finding, continuous neîntrerupt, push manual final). Per D023 MCP write_file mandatory.
+2. **Audit Nuclear re-run** — CC autonomous Opus MAX, log-only, per D029 procedure (continuous neîntrerupt multi-noapte, §1-§50 + secondary/tertiary/quaternary/quinary passes până STOP). HEAD curent post-fix iter N.
+3. **Scan Automated Systems** — ALL Track 7 sisteme + orice altceva disponibil:
+   - Tier 1 in-repo: Vitest + Playwright E2E + visual regression (`toHaveScreenshot()`) + Lighthouse CI + axe-core a11y WCAG 2.1 AA + fast-check property invariants + @langwatch/scenario coach voice + Stryker mutation + bundle size-limit + depcheck + madge + jscpd + license-checker + Snyk + npm audit
+   - Tier 2 synthetic prod: Checkly EU locations 2x 30min critical paths
+   - Tier 3 nightly exploration: Stagehand Browserbase persona-driven
+   - Plus Pass 5 Playwright screenshots compare mockup vs prod per CRIT
+4. **Aggregate findings dual-source** — union audit nuclear + automated systems findings. Dedupe overlap. New backlog iter N+1.
+5. **Iterație N+1** — GOTO step 1 dacă backlog > 0. EXIT loop dacă backlog = 0 dual-source.
+
+#### §3 Convergence criterion
+
+**EXIT loop = ZERO findings dual-source simultan:**
+- Audit Nuclear pe HEAD curent: 0 findings (toate §1-§50 + secondary-quinary passes)
+- Track 7 automated systems pe HEAD curent: 0 failures (Vitest + Playwright + Lighthouse + Snyk + axe-core + Stryker + visual regression + property invariants + Checkly + Stagehand all GREEN)
+
+Mixed convergence (1 source 0, 1 source > 0) = NU exit. Continue iter N+1 fix on non-zero source.
+
+#### §4 Daniel final smoke gate (post-convergence)
+
+Doar după EXIT criteria §3 met, Daniel face:
+- Live smoke production manual Android primary (post deploy `main` curent reconcile)
+- Firebase auth Magic Link + onboarding T0 Big 6 + Antrenor session full flow + Progres tab + Istoric tab + Cont tab + workout session paused/resumed + PWA install/offline/background sync + GDPR data export + delete cont
+- Single comprehensive a-z gate (NU intermediate gates 95% / 90% / smoke parțial)
+- Per ANDURA_PRIMER.md §4 sequencing Bugatti Full Audit pre-Launch nuclear gate (Daniel CEO scope: *"FULL AUDIT. Fiecare linie cod citita, fiecare virgula, TOT pe latest commit LANDED. 20000 ore I don't care"*)
+
+#### §5 Beta launch trigger
+
+Daniel CEO explicit validation post-smoke = GREEN cumulative dual-source convergence + GREEN smoke manual a-z + GREEN Bugatti audit nuclear final → Beta launch.
+
+Dacă smoke surfaces NEW findings (e.g., real-world UX issues NU captate de audit nuclear sau Track 7), iter N+1 declarat — GOTO §2 step 1 fresh loop.
+
+#### §6 Anti-recurrence enforcement
+
+- **NU short-circuit loop** — Co-CTO NU poate propune skip audit nuclear sau skip automated scan ca "unnecessary" pe rațiune Daniel comfort sau Bugatti craft optimization. Loop = mandatory full both passes.
+- **NU Daniel discretion mid-iteration** — D042 + D043 LOCK gate = measurable convergence, NU CEO discretion. Daniel STOP override possible doar dacă decizie strategică NEW supersedes D042/D043 (e.g., scope reduction MVP).
+- **NU "acceptable threshold" —** Beta gate = 0 dual-source absolute, NU 95% / 99% / "close enough". Bugatti craft strict orizont 2-3 ani.
+- **Iteration count NU bounded** — cât trebuie până convergence. Daniel solo bootstrap + CC autonomous parallel = sustainable rate. Quality > Speed strict.
+
+#### §7 Estimated iteration count
+
+Based pe Phase 7 Findings FIX D031 closure rate (58/698 single pass cu Karpathy Surgical Changes dominant 50+ findings):
+- Iter 1 (curent): ~900 outstanding (640 nuclear + 263 mockup) + Track 7 deferred ~405
+- Iter 2 estimated: post iter 1 fix all → audit re-run probabil surfaces 50-150 NEW findings (regressions + edge cases + arch shifts post-fix) + Track 7 scan surfaces ~30-80 NEW failures
+- Iter 3 estimated: ~20-50 NEW findings residual
+- Iter 4 estimated: ~5-15 NEW findings polish
+- Iter 5 estimated: 0 dual-source convergence ACHIEVED
+
+ETA total: **~3-5 iterații, ~3-6 luni calendar** Daniel solo + CC autonomous parallel sustainable rate (per D041 anti-inflation: estimat NU compound, real measurement per iteration). Variabilitate driven by Track 7 multi-file refactor cluster ~405 findings (cea mai mare necunoscută).
+
+#### §8 Output structure per iteration
+
+```
+📤_outbox/iter-<N>-pre-beta-convergence/
+├── fix-step-1/                # CC autonomous Phase 7-style commits log
+├── audit-nuclear-step-2/      # CC autonomous D029-style findings log
+├── scan-automated-step-3/     # Track 7 systems aggregate reports
+├── _aggregate-findings.md     # union dedupe dual-source
+├── _convergence-check.md      # 0 / non-zero verdict per source
+└── _next-iter-decision.md     # CONTINUE iter N+1 OR EXIT loop
+```
+
+EXIT loop = `iter-<N>-final-convergence/_pre-smoke-state.md` LANDED → Daniel smoke gate trigger.
+
+---
+
+🦦 **DECISIONS.md SSOT singular live post 2026-05-15 reglaj. Append-only. Wiki/ + 03-decisions/_FROZEN/ + CLAUDE.md root schema FROZEN. Karpathy 4 principii core philosophy [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4 invariant.**
