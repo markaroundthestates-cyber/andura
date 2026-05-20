@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
-import { ADJUSTMENT_DIRECTION, EMOJI_STATE, MEDICAL_REFERRAL_COPY } from '../constants.js';
+import { ADJUSTMENT_DIRECTION, EMOJI_STATE as _EMOJI_STATE, MEDICAL_REFERRAL_COPY } from '../constants.js';
 
 const buildPeriodConstraint = (phase = 'LOAD', deloadWindow = null) => Object.freeze({
   intensity_pct_1rm: { floor: 0.70, ceiling: 0.85 },

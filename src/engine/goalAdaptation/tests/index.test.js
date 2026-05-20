@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
-import { PHASES, PUSHBACK_TIERS, TEMPLATE_IDS } from '../constants.js';
+import { PHASES, PUSHBACK_TIERS as _PUSHBACK_TIERS, TEMPLATE_IDS } from '../constants.js';
 
 const buildCtx = ({
   persona,

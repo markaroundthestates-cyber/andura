@@ -77,7 +77,7 @@ export function computeRepRangeModifier({ templateId, phase, mode }) {
  * @param {'estetica'|'forta'|'none'} input.mode
  * @returns {[number, number]}
  */
-export function computeRirTargetModifier({ templateId, phase, mode }) {
+export function computeRirTargetModifier({ templateId, phase: _phase, mode }) {
   const base = TEMPLATE_BASE_MODIFIERS[templateId];
   if (!base) return [1, 2]; // defensive default
   const baseRir = base.rir;
@@ -131,7 +131,7 @@ export function computeRestTimeModifier({ templateId, phase, mode }) {
  * @param {'estetica'|'forta'|'none'} input.mode
  * @returns {{volumeMul: number, intensityMul: number, ceilingApplied: string[]}}
  */
-export function computeModePhaseMultipliers({ phase, mode }) {
+export function computeModePhaseMultipliers({ phase: _phase, mode }) {
   const modeMod = MODE_OVERLAY[mode] ?? MODE_OVERLAY.none;
   const ceilingApplied = [];
 

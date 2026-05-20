@@ -1,6 +1,6 @@
 // ══ DP ENGINE — Double Progression ══════════════════════════
 import { DB } from '../db.js';
-import { COMPOUND_EX, EX_SETS, EX_REPS, TARGET_DATE } from '../constants.js';
+import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 
@@ -153,7 +153,7 @@ export const DP = {
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const [rMin, rMax] = range;
     const maxKg = this.MAX_KG[ex] || null;
-    const capStrategy = this.WEIGHT_CAP_STRATEGY[ex] || null;
+    const _capStrategy = this.WEIGHT_CAP_STRATEGY[ex] || null;
 
     // No history → start conservative
     if (!state.logs.length) {
@@ -325,7 +325,7 @@ export const DP = {
     return '🟢 Confortabil';
   },
 
-  getSmartRecommendation(ex, readinessScore, muscleState) {
+  getSmartRecommendation(ex, readinessScore, _muscleState) {
     const base = this.recommend(ex);
     let result = { ...base };
     result.intensityLabel = this.getIntensityLabel(result.rir ?? 2);

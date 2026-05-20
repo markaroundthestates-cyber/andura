@@ -5,7 +5,7 @@ import {
   TRIGGER_SOURCE as _TRIGGER_SOURCE,
   NOTIFICATION_TIER,
   WORDING_RO,
-  SCHEMA_CONSTANTS,
+  SCHEMA_CONSTANTS as _SCHEMA_CONSTANTS,
 } from '../constants.js';
 
 const buildPeriodConstraint = (phase = 'LOAD', deloadWindow = null) => Object.freeze({

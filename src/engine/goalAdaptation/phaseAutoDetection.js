@@ -20,7 +20,7 @@ import {
   DELOAD_KCAL_BONUS,
   MACRO_BANDS,
   TEMPLATE_IDS,
-  SEX,
+  SEX as _SEX,
 } from './constants.js';
 import { detectRecompSubPhase } from './templates.js';
 
@@ -145,7 +145,7 @@ export function applyDeloadKcalOverride(baseMultiplier, isDeloadWeek) {
  * @param {ReadonlyArray<Object>} [input.recentSessions]
  * @returns {{phase: import('./types.js').NutritionPhase, signals: string[]}}
  */
-export function detectPhase({ goalId, templateId, user, recentSessions }) {
+export function detectPhase({ goalId: _goalId, templateId, user, recentSessions }) {
   const signals = [];
 
   // 1. RECOMP sub-phase detection prima (Tonifiere/Slabire context)
