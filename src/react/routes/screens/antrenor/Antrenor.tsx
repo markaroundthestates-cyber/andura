@@ -119,7 +119,10 @@ export function Antrenor(): JSX.Element {
       <PatternsBanner banners={coach?.patternsBanner ?? []} />
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
-      {schedContext === 'workout' ? (
+      {/* §A002 audit fix (MP-pass2-coachrest-01..02): engine-driven isRestDay
+          routing — prefer coach.isRestDay (engine signal) when aggregate
+          loaded, fallback coachStore.schedContext (user override mechanism). */}
+      {(coach !== null ? !coach.isRestDay : schedContext === 'workout') ? (
         <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
       ) : (
         <CoachRestCard onLightSession={handleStart} onOverride={handleStart} />

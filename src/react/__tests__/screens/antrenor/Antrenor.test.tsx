@@ -114,6 +114,23 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByText(/6 exercitii/i)).toBeInTheDocument();
   });
 
+  it('§A002 engine-driven isRestDay wins over schedContext fallback', async () => {
+    // schedContext='workout' default, but engine signals isRestDay=true →
+    // CoachRestCard wins (engine-driven primary, store fallback only).
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: null,
+      fatigue: null,
+      plannedWorkout: null,
+      isRestDay: true,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      source: 'engine',
+    });
+    renderAntrenor();
+    expect(await screen.findByText(/Zi de recuperare activa/i)).toBeInTheDocument();
+  });
+
   it('renders CoachRestCard cand schedContext=rest', () => {
     useCoachStore.getState().setSchedContext('rest');
     renderAntrenor();
