@@ -8,7 +8,8 @@
 //   firebase-uid                Firebase user uid (stable)
 //   firebase-refresh-token      Refresh token (long-lived)
 //   firebase-id-token-expiry    Unix ms expiry (for proactive refresh)
-//   firebase-magic-link-email   Pending email awaiting magic link verification
+//   firebase-magic-link-email          Pending email awaiting magic link verification
+//   firebase-magic-link-email-expiry   §4-H2 audit fix — TTL expiry timestamp (1h after sendMagicLink)
 //
 // Per-uid path migration runs ONCE post first auth (see migrations/
 // 2026-05-02-auth-path-migration.js).
@@ -27,12 +28,18 @@ export const FIREBASE_API_KEY = (typeof import.meta !== 'undefined' && import.me
 
 // Storage keys (single source of truth, used in tests + signOut).
 export const AUTH_STORAGE_KEYS = Object.freeze({
-  idToken:      'firebase-id-token',
-  uid:          'firebase-uid',
-  refreshToken: 'firebase-refresh-token',
-  expiry:       'firebase-id-token-expiry',
-  pendingEmail: 'firebase-magic-link-email',
+  idToken:            'firebase-id-token',
+  uid:                'firebase-uid',
+  refreshToken:       'firebase-refresh-token',
+  expiry:             'firebase-id-token-expiry',
+  pendingEmail:       'firebase-magic-link-email',
+  pendingEmailExpiry: 'firebase-magic-link-email-expiry', // §4-H2 audit fix — TTL anti-stale pendingEmail
 });
+
+// §4-H2 audit fix — pendingEmail TTL window after sendMagicLink. Stale values
+// auto-cleared on next getPendingEmail() read. Mitigates shared-device leak
+// (attacker w/ later access can't enumerate prior magic-link recipients).
+export const PENDING_EMAIL_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 // ── Magic Link flow ─────────────────────────────────────────────────────
 
@@ -74,6 +81,7 @@ export async function sendMagicLink(email, continueUrl) {
       });
       if (r.ok) {
         _setItem(AUTH_STORAGE_KEYS.pendingEmail, email);
+        _setItem(AUTH_STORAGE_KEYS.pendingEmailExpiry, String(Date.now() + PENDING_EMAIL_TTL_MS)); // §4-H2 audit fix
         return { ok: true, email };
       }
       // 4xx = deterministic failure, NU retry (per §56.13 retry semantic).
@@ -115,6 +123,7 @@ export async function verifyMagicLink(email, oobCode) {
     }
     _persistAuth(data);
     _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+    _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry); // §4-H2 audit fix
     return { ok: true, uid: data.localId };
   } catch (err) {
     return { ok: false, error: err?.message || 'network_error' };
@@ -273,9 +282,29 @@ export function signOut() {
   _removeItem(AUTH_STORAGE_KEYS.refreshToken);
   _removeItem(AUTH_STORAGE_KEYS.expiry);
   _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+  _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry); // §4-H2 audit fix
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
     try { window.dispatchEvent(new Event('andura:signedout')); } catch {}
   }
+}
+
+/**
+ * §4-H2 audit fix — read pendingEmail honoring TTL window. Returns email
+ * if `pendingEmailExpiry` > now, else clears both keys + returns null.
+ * Migrates legacy entries lacking expiry by treating them as stale.
+ *
+ * @returns {string|null}
+ */
+export function getPendingEmail() {
+  const email = _getItem(AUTH_STORAGE_KEYS.pendingEmail);
+  if (!email) return null;
+  const expiry = Number(_getItem(AUTH_STORAGE_KEYS.pendingEmailExpiry));
+  if (!Number.isFinite(expiry) || expiry <= Date.now()) {
+    _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+    _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry);
+    return null;
+  }
+  return email;
 }
 
 /**

@@ -9,7 +9,7 @@ import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
-import { verifyMagicLink, parseMagicLinkUrl, AUTH_STORAGE_KEYS } from '../../../auth.js';
+import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail } from '../../../auth.js';
 
 export function AuthCallback(): JSX.Element {
   const navigate = useNavigate();
@@ -21,14 +21,8 @@ export function AuthCallback(): JSX.Element {
 
     async function run(): Promise<void> {
       const { oobCode, email: urlEmail } = parseMagicLinkUrl(window.location.search);
-      let email = urlEmail;
-      if (!email && typeof localStorage !== 'undefined') {
-        try {
-          email = localStorage.getItem(AUTH_STORAGE_KEYS.pendingEmail);
-        } catch {
-          email = null;
-        }
-      }
+      // §4-H2 audit fix — getPendingEmail honors 1h TTL (anti-stale shared-device leak).
+      const email = urlEmail || getPendingEmail();
       if (!oobCode || !email) {
         if (!cancelled) {
           setError('missing_params');
