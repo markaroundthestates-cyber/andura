@@ -8,6 +8,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { Layout } from './Layout';
 import { Splash } from './screens/Splash';
 import { Auth } from './screens/Auth';
+import { AuthCallback } from './screens/AuthCallback';
 import { Onboarding } from './screens/Onboarding';
 import { Antrenor } from './screens/antrenor/Antrenor';
 import { EnergyCheck } from './screens/antrenor/EnergyCheck';
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
   { path: '/auth', element: <Auth /> },
   { path: '/auth/reactivate', element: <Auth /> },
+  { path: '/auth-callback', element: <AuthCallback /> },
   { path: '/onboarding/:step', element: <Onboarding /> },
   {
     path: '/app',
