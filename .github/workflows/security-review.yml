@@ -1,0 +1,32 @@
+name: Security Review
+
+# Andura PWA — AI-powered security review pe PR via anthropics/claude-code-security-review.
+# Diff-aware scanning, HIGH-confidence only (>80% threshold). React/Angular XSS exclusion.
+# Pre-Beta gate: critical for auth surface changes (Magic Link + onboarding gate + freshness).
+
+permissions:
+  pull-requests: write  # comment findings on PR
+  contents: read
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # manual trigger Daniel CEO
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+
+      - uses: anthropics/claude-code-security-review@main
+        with:
+          comment-pr: true
+          upload-results: true
+          claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
+          claude-model: claude-opus-4-1-20250805
+          exclude-directories: 'node_modules,dist,.obsidian,99-archive,📥_inbox,📤_outbox'
