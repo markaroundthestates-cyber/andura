@@ -35,6 +35,7 @@ export const AUTH_STORAGE_KEYS = Object.freeze({
   pendingEmail:       'firebase-magic-link-email',
   pendingEmailExpiry: 'firebase-magic-link-email-expiry', // §4-H2 audit fix — TTL anti-stale pendingEmail
   lastMagicLinkSent:  'firebase-magic-link-last-sent',    // §4-H3 audit fix — throttle timestamp
+  lastAuthAt:         'firebase-last-auth-at',            // §A016 audit fix — re-auth freshness gate
 });
 
 // §4-H2 audit fix — pendingEmail TTL window after sendMagicLink. Stale values
@@ -46,6 +47,11 @@ export const PENDING_EMAIL_TTL_MS = 60 * 60 * 1000; // 1 hour
 // anti-quota-exhaustion). Firebase Identity Toolkit quota lockout legitimate users
 // dacă attacker spams. UI button disabled state via getMagicLinkCooldownMs().
 export const MAGIC_LINK_THROTTLE_MS = 30 * 1000; // 30 seconds
+
+// §A016 audit fix — recent-auth freshness window for destructive actions
+// (account-delete, sensitive cont changes). Token may be valid 1h dar action
+// destructiv cere proof-of-presence recent → require re-auth dacă > window.
+export const AUTH_FRESHNESS_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
 // ── Magic Link flow ─────────────────────────────────────────────────────
 
@@ -294,6 +300,7 @@ export function signOut() {
   _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
   _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry); // §4-H2 audit fix
   _removeItem(AUTH_STORAGE_KEYS.lastMagicLinkSent);  // §4-H3 audit fix — allow immediate Magic Link re-login post signOut
+  _removeItem(AUTH_STORAGE_KEYS.lastAuthAt);         // §A016 audit fix — clear freshness marker on sign out
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
     try { window.dispatchEvent(new Event('andura:signedout')); } catch {}
   }
@@ -354,6 +361,22 @@ function _persistAuth(data) {
   if (Number.isFinite(expiresInSec) && expiresInSec > 0) {
     _setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() + expiresInSec * 1000));
   }
+  // §A016 audit fix — track last fresh auth event for destructive action gate.
+  _setItem(AUTH_STORAGE_KEYS.lastAuthAt, String(Date.now()));
+}
+
+/**
+ * §A016 audit fix — checks whether the user's auth event is within freshness
+ * window for destructive actions. Returns true daca lastAuthAt found AND
+ * Date.now() - lastAuthAt <= AUTH_FRESHNESS_WINDOW_MS. False altfel (stale or
+ * missing → caller must trigger re-Magic-Link flow).
+ *
+ * @returns {boolean}
+ */
+export function isAuthFresh() {
+  const lastAuthAt = Number(_getItem(AUTH_STORAGE_KEYS.lastAuthAt));
+  if (!Number.isFinite(lastAuthAt) || lastAuthAt <= 0) return false;
+  return (Date.now() - lastAuthAt) <= AUTH_FRESHNESS_WINDOW_MS;
 }
 
 function _isValidEmail(s) {

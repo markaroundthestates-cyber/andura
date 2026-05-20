@@ -37,6 +37,8 @@ beforeEach(() => {
   });
   localStorage.clear();
   localStorage.setItem('wv2-test-key', 'sample');
+  // §A016 freshness — set fresh auth pentru default test suite (delete path).
+  localStorage.setItem('firebase-last-auth-at', String(Date.now()));
 });
 
 describe('SettingsDanger — render + actions', () => {
@@ -127,5 +129,30 @@ describe('SettingsDanger — render + actions', () => {
   it('no diacritics in UI text', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  it('§A016 stale auth aborts delete + forces re-auth redirect', () => {
+    // Simulate stale auth (lastAuthAt > 5min ago).
+    localStorage.setItem('firebase-last-auth-at', String(Date.now() - 6 * 60 * 1000));
+    renderScreen();
+    fireEvent.click(screen.getByTestId('danger-delete'));
+    fireEvent.click(screen.getByTestId('danger-confirm-accept'));
+    // Data NOT wiped (reauth required before destructive proceed).
+    expect(useWorkoutStore.getState().streak).toBe(5);
+    // Forced to /auth cu reason param.
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/auth',
+    );
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
+  });
+
+  it('§A016 missing lastAuthAt (NU set) also aborts delete', () => {
+    localStorage.removeItem('firebase-last-auth-at');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('danger-delete'));
+    fireEvent.click(screen.getByTestId('danger-confirm-accept'));
+    expect(useWorkoutStore.getState().streak).toBe(5);
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
   });
 });

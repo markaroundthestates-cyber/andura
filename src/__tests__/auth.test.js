@@ -11,6 +11,8 @@ import {
   refreshIdToken,
   signOut,
   isAuthenticated,
+  isAuthFresh,
+  AUTH_FRESHNESS_WINDOW_MS,
   AUTH_STORAGE_KEYS,
 } from '../auth.js';
 
@@ -180,5 +182,40 @@ describe('auth — token state + refresh', () => {
     Object.values(AUTH_STORAGE_KEYS).forEach(k => {
       expect(localStorage.getItem(k)).toBeNull();
     });
+  });
+});
+
+describe('auth — §A016 freshness gate for destructive actions', () => {
+  beforeEach(() => { _resetStorage(); });
+
+  it('isAuthFresh returns false când lastAuthAt missing', () => {
+    expect(isAuthFresh()).toBe(false);
+  });
+
+  it('isAuthFresh returns true imediat după lastAuthAt set', () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.lastAuthAt, String(Date.now()));
+    expect(isAuthFresh()).toBe(true);
+  });
+
+  it('isAuthFresh returns false când lastAuthAt > window ago', () => {
+    localStorage.setItem(
+      AUTH_STORAGE_KEYS.lastAuthAt,
+      String(Date.now() - AUTH_FRESHNESS_WINDOW_MS - 1000),
+    );
+    expect(isAuthFresh()).toBe(false);
+  });
+
+  it('isAuthFresh returns true când lastAuthAt exact la marginea window', () => {
+    localStorage.setItem(
+      AUTH_STORAGE_KEYS.lastAuthAt,
+      String(Date.now() - AUTH_FRESHNESS_WINDOW_MS + 100),
+    );
+    expect(isAuthFresh()).toBe(true);
+  });
+
+  it('signOut clears lastAuthAt', () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.lastAuthAt, String(Date.now()));
+    signOut();
+    expect(localStorage.getItem(AUTH_STORAGE_KEYS.lastAuthAt)).toBeNull();
   });
 });

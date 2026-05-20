@@ -15,6 +15,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { isAuthFresh, signOut as authSignOut } from '../../../../auth.js';
 
 type ConfirmAction = null | 'reset' | 'delete' | 'logout';
 
@@ -59,6 +60,15 @@ export function SettingsDanger(): JSX.Element {
   }
 
   function handleDeleteConfirmed(): void {
+    // §A016 audit fix — destructive action gate: require recent re-auth.
+    // If lastAuthAt > 5min ago, abort + force re-Magic-Link before retry.
+    if (!isAuthFresh()) {
+      authSignOut();
+      setAuthenticated(false);
+      setConfirm(null);
+      navigate('/auth?reason=reauth_required_for_delete');
+      return;
+    }
     wipeAllLocalData();
     setAuthenticated(false);
     setConfirm(null);
