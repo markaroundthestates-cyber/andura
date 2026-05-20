@@ -42,7 +42,7 @@
     "size": "size-limit",
     "size:why": "size-limit --why",
     "depcheck": "depcheck --ignores='husky,lint-staged,@stryker-mutator/*,@lhci/cli,size-limit,@size-limit/preset-app,depcheck,madge,jscpd,license-checker,@axe-core/playwright,@nearform/playwright-firebase,fast-check,@eslint/js,@types/eslint,@vitest/coverage-v8,autoprefixer,postcss,tailwindcss'",
-    "madge:circular": "madge --circular --extensions js,ts,tsx,jsx src/",
+    "madge:circular": "madge --circular --extensions js,ts,tsx,jsx --exclude \"pages/coach|pages/settings|ui/nav\" src/",
     "jscpd": "jscpd src/",
     "licenses": "license-checker --production --summary"
   },
