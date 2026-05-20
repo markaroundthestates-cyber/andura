@@ -120,7 +120,7 @@ export function Antrenor(): JSX.Element {
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
       {schedContext === 'workout' ? (
-        <CoachTodayCard onStart={handleStart} />
+        <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
       ) : (
         <CoachRestCard onLightSession={handleStart} onOverride={handleStart} />
       )}

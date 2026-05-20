@@ -90,6 +90,30 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByText(/Pull \(spate & biceps\)/i)).toBeInTheDocument();
   });
 
+  it('§A001 wire CoachTodayCard dynamic din plannedWorkout aggregate', async () => {
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: null,
+      fatigue: null,
+      plannedWorkout: {
+        workoutTitle: 'Push (piept & umeri)',
+        exerciseCount: 6,
+        estimatedDuration: 52,
+        intensityMod: 'normal',
+        exercises: [],
+        volumeKg: 0,
+      },
+      isRestDay: false,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      source: 'engine',
+    });
+    renderAntrenor();
+    expect(await screen.findByText(/Push \(piept & umeri\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/~ 52 min/i)).toBeInTheDocument();
+    expect(screen.getByText(/6 exercitii/i)).toBeInTheDocument();
+  });
+
   it('renders CoachRestCard cand schedContext=rest', () => {
     useCoachStore.getState().setSchedContext('rest');
     renderAntrenor();
