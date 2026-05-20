@@ -45,7 +45,7 @@ describe('SettingsPrivacy — render + toggles', () => {
     expect(screen.getByRole('heading', { name: /Stocare \+ retentie/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Contact \+ reclamatii/i })).toBeInTheDocument();
     // Contact email present
-    expect(screen.getByText(/privacy@andura\.app/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/privacy@andura\.app/i).length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders data export toggle + default true', () => {

@@ -129,7 +129,11 @@ export function SettingsPrivacy(): JSX.Element {
           <p className="text-sm text-ink2 mb-3">
             Datele se stocheaza local-first pe telefonul tau (localStorage + IndexedDB).
             Backup-ul Firebase RTDB (optional) pastreaza copie pana stergi contul.
-            ZERO copie pe servere terte. Stergerea = imediata + permanenta.
+            ZERO copie pe servere terte. <strong>Stergerea de pe device =
+            imediata.</strong> Datele Firebase RTDB (daca esti autentificat)
+            se sterg separat — pentru request explicit scrie la
+            <a href="mailto:privacy@andura.app" className="text-brick underline">{' '}privacy@andura.app</a>{' '}
+            (raspuns &lt;72h per GDPR Art. 17).
           </p>
 
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>
