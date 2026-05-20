@@ -34,12 +34,18 @@ export const AUTH_STORAGE_KEYS = Object.freeze({
   expiry:             'firebase-id-token-expiry',
   pendingEmail:       'firebase-magic-link-email',
   pendingEmailExpiry: 'firebase-magic-link-email-expiry', // §4-H2 audit fix — TTL anti-stale pendingEmail
+  lastMagicLinkSent:  'firebase-magic-link-last-sent',    // §4-H3 audit fix — throttle timestamp
 });
 
 // §4-H2 audit fix — pendingEmail TTL window after sendMagicLink. Stale values
 // auto-cleared on next getPendingEmail() read. Mitigates shared-device leak
 // (attacker w/ later access can't enumerate prior magic-link recipients).
 export const PENDING_EMAIL_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+// §4-H3 audit fix — minimum interval between sendMagicLink attempts (anti-spam,
+// anti-quota-exhaustion). Firebase Identity Toolkit quota lockout legitimate users
+// dacă attacker spams. UI button disabled state via getMagicLinkCooldownMs().
+export const MAGIC_LINK_THROTTLE_MS = 30 * 1000; // 30 seconds
 
 // ── Magic Link flow ─────────────────────────────────────────────────────
 
@@ -57,6 +63,10 @@ export const PENDING_EMAIL_TTL_MS = 60 * 60 * 1000; // 1 hour
  */
 export async function sendMagicLink(email, continueUrl) {
   if (!_isValidEmail(email)) return { ok: false, error: 'invalid_email' };
+  // §4-H3 audit fix — 30s throttle between send attempts (anti-spam + anti-quota-exhaustion).
+  const cooldownMs = getMagicLinkCooldownMs();
+  if (cooldownMs > 0) return { ok: false, error: 'throttle_cooldown', cooldownMs };
+  _setItem(AUTH_STORAGE_KEYS.lastMagicLinkSent, String(Date.now()));
   const url = `${AUTH_BASE}/accounts:sendOobCode?key=${FIREBASE_API_KEY}`;
   const body = {
     requestType: 'EMAIL_SIGNIN',
@@ -283,9 +293,24 @@ export function signOut() {
   _removeItem(AUTH_STORAGE_KEYS.expiry);
   _removeItem(AUTH_STORAGE_KEYS.pendingEmail);
   _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry); // §4-H2 audit fix
+  _removeItem(AUTH_STORAGE_KEYS.lastMagicLinkSent);  // §4-H3 audit fix — allow immediate Magic Link re-login post signOut
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
     try { window.dispatchEvent(new Event('andura:signedout')); } catch {}
   }
+}
+
+/**
+ * §4-H3 audit fix — returns ms remaining until next sendMagicLink call allowed,
+ * or 0 if no active cooldown. UI button can disable + show countdown.
+ *
+ * @returns {number} milliseconds remaining (0 = no cooldown)
+ */
+export function getMagicLinkCooldownMs() {
+  const lastSent = Number(_getItem(AUTH_STORAGE_KEYS.lastMagicLinkSent));
+  if (!Number.isFinite(lastSent) || lastSent <= 0) return 0;
+  const elapsed = Date.now() - lastSent;
+  if (elapsed >= MAGIC_LINK_THROTTLE_MS) return 0;
+  return MAGIC_LINK_THROTTLE_MS - elapsed;
 }
 
 /**
