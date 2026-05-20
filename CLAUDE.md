@@ -66,9 +66,10 @@ amendments:
 2. Read `ANDURA_PRIMER.md` §1-§8 complete (singular briefing instant onboard 7-criterii: ce e Andura + ce face + cum funcționează + ce trebuie să fie + unde am rămas + ce e de făcut + ce vrea Daniel)
 3. Read `DECISIONS.md` head 50 lines (SSOT singular live catalog + recent decizii)
 4. Read `📤_outbox/LATEST.md` (current state CC autonomous last task)
-5. Read targeted section per topic recent identified (on-demand)
-6. Output §CC.3 format: `Aligned. Last LOCKED [DECISIONS.md §<ID>]. Mid-flight [if any]. Next P1 [task]. Drift [silent flag if any].`
-7. Direct execute P1 autonomous, ZERO "Continuăm?"
+5. Read `CHAT_STATE.md` (live Claude chat conversation continuity — last 5-7 exchanges + open questions + mid-flight context + next P1, picks up unde Claude chat anterior a rămas)
+6. Read targeted section per topic recent identified (on-demand)
+7. Output §CC.3 format: `Aligned. Last LOCKED [DECISIONS.md §<ID>]. Mid-flight [if any]. Next P1 [task]. Drift [silent flag if any].`
+8. Direct execute P1 autonomous, ZERO "Continuăm?"
 
 ### §F3.8 handover ("fă handover" trigger SAU bw ~25%)
 
@@ -88,6 +89,7 @@ amendments:
 - **`ANDURA_PRIMER.md`** = singular briefing fresh chat instant onboard §1-§8 (mandatory §CC.2 step 2)
 - **`DECISIONS.md`** = SSOT singular live decizii append-only (D001-D045+ LOCKED V1, frontmatter `latest_entry` tracks current)
 - **`📤_outbox/LATEST.md`** = CC autonomous last raport (mandatory §CC.2 step 4)
+- **`CHAT_STATE.md`** = live Claude chat conversation continuity, cross-CC-session pick-up (mandatory §CC.2 step 5) — distinct de LATEST.md (CC task report) + HANDOVER files (end-of-chat narrative) + PRIMER §5 (substantial milestones)
 - **`📥_inbox/`** = Daniel inputs + Claude chat narrative handovers + `_CONSUMED/` archive
 - **`04-architecture/mockups/andura-clasic.html`** = DESIGN MASTER mockup (single source UI parity)
 - **`07-meta/karpathy-skills-ref/CLAUDE.md`** §1-§4 = Karpathy 4 principii core philosophy MANDATORY read pre-task tactical
@@ -125,6 +127,7 @@ Daniel prompt implies vault state change → update these automatically pentru S
 - **`DECISIONS.md`** → append LOCKED V1 entry pentru decizii noi strategic (NEVER re-open existing per D007 supersede rule literal match)
 - **`ANDURA_PRIMER.md` §5 "Unde am rămas"** → 1 line micro-append pentru substantial state change (phase/iter LANDED, milestone, paradigm shift, design phase completion)
 - **`📤_outbox/LATEST.md`** → CC autonomous task report state când CC completes work
+- **`CHAT_STATE.md`** → live Claude chat continuity post substantive exchange (auto-update per Q&A round sau explicit "update CHAT_STATE" trigger)
 - **Frontmatter sync** (e.g., DECISIONS.md `latest_entry` + `total_entries`) când append decizie nouă
 
 **Verify-first protocol (anti-hallucination per regula #1):**
