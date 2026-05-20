@@ -169,6 +169,14 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Target: smoke Daniel manual pre-Beta clean (audit-vs-UX gap close 75%→≥90% via Tier 1 in-repo + Tier 2 Checkly synthetic + Tier 3 Stagehand exploration)
 - ETA ~5-8 zile lucrătoare CC autonomous neîntrerupt Opus exclusively
 
+**2026-05-19 → 2026-05-20 Track 7 Automated Testing 9.5/10 LANDED 95% (chat ACASĂ extended ~3-4h + iter 7 debug overnight):**
+- §9 First Actions + §7.1-§7.9 + §7.6 REAL activation LANDED `bda24bc` (de-skeleton + ratchet thresholds pe real `npm run build` + wire activated)
+- Verify workflow GREEN iter 4 — Daniel manual setup complete (9/9 GitHub Secrets + 6 Issues labels + Branch protection main bypass admin Always + Workflow permissions Read/Write + Firebase Authorized domains add `andura.app` + Firebase SA JSON + Playwright test user + Anthropic + Browserbase $20/mo + Checkly Free + Snyk + Lighthouse GitHub App)
+- D033-D037 LOCKED V1 — 5 strategic decizii Daniel CEO yes-all (PerSetSafetyModal rename + npm audit case-by-case + branch bypass admin + §7.6 REAL activation + Browserbase paid Option A)
+- CI iter 7 debug în progres (HUSKY=0 root cause git 128 + 10 unused-vars src/ tests + FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 env global + ESLint config `varsIgnorePattern: '^_'`)
+- §7.10 mobile manual smoke Daniel = ultim 5-10% (Android/iOS andura.app prod 4 taburi + Magic Link login post-Firebase domains fix)
+- Branch `track-7-automated-testing` pushed origin + merged la main via bypass admin
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -217,18 +225,22 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Stop trigger UNIC Daniel STOP explicit
 - Started 2026-05-19 birou Daniel chat ACASĂ, baseline HEAD `f40ebbc` (NU `b705c3f` audit-time — src/ identical, recovery commits + D030 + Stop hook fix preserved)
 
-**Track 7 — Automated Testing 3-tier defense (per `DECISIONS.md §D032` + `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md`) — IN PROGRESS § 0/10 (starting 2026-05-19 evening):**
-- §7.1 Vitest persona fixtures + engine golden master + fast-check property invariants
-- §7.2 Playwright E2E React 4-tab + `@nearform/playwright-firebase` auth fixture + Magic Link spec
-- §7.3 Visual regression `toHaveScreenshot()` + Lighthouse CI 12+ + axe-core a11y WCAG 2.1 AA
-- §7.4 Bundle budget size-limit + depcheck + madge + jscpd + license-checker + Snyk + npm audit
-- §7.5 @langwatch/scenario coach voice persona scenarios + judge criteria anti-paternalism
-- §7.6 Stryker mutation nightly engine ≥75% + deploy.yml CI augment
-- §7.7 Checkly synthetic prod every-5min EU CDN + Slack alert routing
-- §7.8 Stagehand exploration nightly (Browserbase) → GitHub Issues queue (monitoring scope NU gating)
-- §7.9 Vanilla legacy E2E delete (48 obsolete tests cleanup)
-- §7.10 Production readiness Lighthouse live verify + Daniel manual smoke single comprehensive cap-coadă
+**Track 7 — Automated Testing 3-tier defense (per `DECISIONS.md §D032` + `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md`) — 9.5/10 LANDED 95% (post §7.6 REAL activation 2026-05-19):**
+- ✅ §7.1 Vitest persona fixtures + engine golden master + fast-check property invariants LANDED `33d9aea`
+- ✅ §7.2 Playwright E2E React 4-tab + `@nearform/playwright-firebase` auth fixture + Magic Link spec LANDED `f2d38e7`
+- ✅ §7.3 Visual regression `toHaveScreenshot()` + Lighthouse CI 12+ + axe-core a11y WCAG 2.1 AA LANDED `1957b6f`
+- ✅ §7.4 Bundle budget size-limit + depcheck + madge + jscpd + license-checker + Snyk + npm audit LANDED `8f6a996` + npm audit safe patches `d801426`
+- ✅ §7.5 Coach voice scenarios skeleton LANDED `ecf320a` (@langwatch/scenario DEFERRED — Andura engine-based NU LLM; D033 PerSetSafetyModal rename unblocks activation)
+- ✅ §7.6 deploy.yml + ci.yml + track-7-nightly.yml augment LANDED `acb05e3` + REAL activation `bda24bc` (de-skeleton + ratchet + wire — D036)
+- ✅ §7.7 Checkly synthetic prod config + critical paths skeleton LANDED `10d43ca` — Free Hobby tier 30min × 2 EU locations
+- ✅ §7.8 Stagehand persona exploration nightly template LANDED `a1491a7` — Browserbase Developer $20/mo paid Option A (D037)
+- ✅ §7.9 Vanilla legacy E2E cleanup — 20 files deleted LANDED `b4d1950` (Playwright 117 → ~17 React-focused)
+- ⏳ §7.10 Production readiness — CI iter 7 GREEN gate → Daniel mobile manual smoke single comprehensive cap-coadă (~30-45 min)
 - Push manual final §7.10 LANDED (NU per phase, preserve `f40ebbc` Stop hook anti-recurrence)
+- 9/9 GitHub Secrets uploaded + verify workflow GREEN iter 4
+- Branch protection `main` Active cu bypass admin "Always" (D035 — solo dev pre-Beta pragmatic)
+- D033-D037 LOCKED V1 (5 strategic decizii Daniel CEO yes-all)
+- Production readiness estimate: 56.5% baseline → ~85% post §7.6 REAL activation → target ≥90% post §7.10 LANDED
 - Tests baseline 4519 → target ~4719+ (~200 new tests)
 - Stop trigger UNIC Daniel STOP explicit
 

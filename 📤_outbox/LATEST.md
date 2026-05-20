@@ -1,13 +1,55 @@
 # Track 7 Automated Testing Implementation — Running Checkpoint Log
 
-**Status:** IN PROGRESS § 9.5 / 10 LANDED — 95% (§7.6 FULL ACTIVATION ✅ verified 2026-05-19 evening; §7.10 final smoke awaiting Daniel mobile manual)
+**Status:** IN PROGRESS § 9.5 / 10 LANDED — 95% (§7.6 REAL ACTIVATION ✅ + CI iter 7 fix LANDED 2026-05-19 → 2026-05-20; handover distribute LANDED 2026-05-20 morning via `claude rc` birou; §7.10 final smoke awaiting Daniel mobile manual)
 **Started:** 2026-05-19 19:00 (HEAD pre `17b0bba` chore-auto; baseline tag `pre-track-7-automated-testing-2026-05-19` pushed origin @ `f1da8de`)
 **Procedure:** D032 LOCKED V1 — Track 7 Automated Testing continuous neîntrerupt Opus exclusively
 **Source spec:** `08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md` (cap-coadă §0-§9 read)
 **Goal:** smoke Daniel manual pre-Beta ZERO surprize — audit-vs-UX gap close 75%→≥90% via 3-tier defense (Tier 1 in-repo + Tier 2 Checkly synthetic prod + Tier 3 Stagehand exploration)
 **Model:** Opus 4.7 EXCLUSIVELY (anti-fallback policy NEVER downgrade)
 **Stop trigger UNIC:** Daniel STOP explicit
-**Push status:** §9 First Actions push origin LANDED (5 commits + backup tag). Phase commits §7.1+ local only — manual push at §7.10 milestone SAU Daniel trigger.
+**Push status:** ALL Track 7 commits pushed pe `main` (bypass admin "Always" per D035). 19+ Track 7 commits + 5 iter-7 CI debug commits + 5 D035-D037 distribute commits LANDED origin. Tag `pre-track-7-automated-testing-2026-05-19` pushed origin.
+
+---
+
+## 📋 Handover Distribute 2026-05-20 morning LANDED (post Daniel `claude rc` birou re-engage)
+
+Per `📥_inbox/_CONSUMED/PROMPT_CC_handover_distribute_2026-05-19_track-7-debug.md`:
+
+- **DECISIONS.md D033-D037 LANDED** (5 entries, header `latest_entry: D032` → `D037`, `total_entries: 32` → `37`):
+  - D033 UX: AaFrictionModal → PerSetSafetyModal rename Track 7 §7.5 LOCK 9 disambiguation (D.1 yes-all)
+  - D034 PROC: npm audit case-by-case per Snyk PR review policy NU `--force` blind (D.3 yes-all)
+  - D035 PROC: Branch protection main bypass admin "Always" config solo dev pre-Beta — Daniel push-back legitim
+  - D036 TECH: Track 7 §7.6 deploy.yml de-skeleton + ratchet + wire activated LANDED `bda24bc` (real implementation post Daniel push-back chore-claim halucinare)
+  - D037 COST: Browserbase Developer $20/mo paid Option A full §7.8 activate confirmed (Daniel decision against Co-CTO recommendation defer)
+- **ANDURA_PRIMER.md §5 + §6 refreshed**:
+  - §5 append 2026-05-19→2026-05-20 paragraph cu Track 7 9.5/10 LANDED + verify GREEN iter 4 + D033-D037 strategic + CI iter 7 debug în progres
+  - §6 Track 7 entry refresh: 9/10 phases LANDED cu SHA commits + ✅/⏳ markers + D035-D037 cross-refs
+- **HANDOVER + PROMPT_CC archived** → `📥_inbox/_CONSUMED/` (HANDOVER_2026-05-19_track-7-setup-complete-ci-debug.md + PROMPT_CC_handover_distribute_2026-05-19_track-7-debug.md cu suffix pentru disambiguate older 2026-05-19 prompt)
+
+---
+
+## ⚠️ CI iter 7 verify status (Daniel-action — gh CLI local NU instalat)
+
+CC cannot autonomously verify CI iter 7 results — `which gh` returns "no gh" în Daniel's git-bash env. Required steps Daniel manual:
+1. GitHub UI → Actions tab → check latest run `1abf029` (iter 7 push):
+   - validate job → diagnostic step output (which git, env grep husky, package.json prepare)
+   - HUSKY=0 fix git 128 → expected ✅
+   - npm ci --ignore-scripts (preserved iter 6) → expected ✅
+   - typecheck + lint (0 unused-vars warnings post commit 2) → expected ✅
+   - test:run + build → expected ✅
+   - size HARD GATE (post real ratchet) → expected ✅
+   - Lighthouse pe e2e-smoke job only manual/cron trigger — NOT pe push runs
+2. Paste verdict (GREEN per step / FAIL cu error message) la chat OR la LATEST.md "CI iter 7 verdict" section below
+
+**Alternative for autonomous verify:** Daniel install `gh` CLI (`winget install GitHub.cli`) → CC can query `gh run view <RUN_ID> --log-failed` directly următoarea iter.
+
+### CI iter 7 verdict (Daniel fills post check)
+
+```
+[Paste gh run view output OR Actions UI screenshot summary]
+```
+
+---
 
 ---
 

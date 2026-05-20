@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-19
 schema_version: 1
-latest_entry: D032
-total_entries: 32
+latest_entry: D037
+total_entries: 37
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -83,6 +83,11 @@ D029 | 2026-05-19 | PROC | Bugatti Audit Nuclear procedure continuous neîntreru
 D030 | 2026-05-19 | PROC | Obsidian Git plugin fix anti-recurrence — autoCommitOnlyStaged=true + autoSave=0 + autoPull=0 + autoPullOnBoot=false (root cause b1bd099 mass-delete propagation) | LOCKED V1 | DECISIONS.md §D030
 D031 | 2026-05-19 | PROC | Phase 7 Findings FIX procedure continuous neîntrerupt Opus exclusively per § atomic commit, push manual final §50 SAU Daniel trigger, mirror D029 reverse | LOCKED V1 | DECISIONS.md §D031
 D032 | 2026-05-19 | PROC | Track 7 Automated Testing procedure continuous neîntrerupt Opus exclusively per phase atomic commit, push manual final §7.10 SAU Daniel trigger, mirror D031 = 3-tier defense (Tier 1 in-repo Vitest+Playwright+visual+Lighthouse+fast-check+@langwatch/scenario+Stryker+axe+bundle+health / Tier 2 Checkly synthetic prod / Tier 3 Stagehand exploration nightly monitoring scope per WebTestBench arXiv 2603.25226) + persona-driven engine deterministic verification ADR 030 D1-D5 8/8 adapters | LOCKED V1 | DECISIONS.md §D032 + 08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md
+D033 | 2026-05-19 | UX | AaFrictionModal → PerSetSafetyModal rename Track 7 §7.5 LOCK 9 disambiguation — resolve F5 vs LOCK 9 component overlap per master spec §9-C1 CEO directive (D.1 yes-all). Preserves wording anti-paternalism + per-set safety RIR 0 trigger semantics. @langwatch/scenario coach voice scenarios skeleton activation unblocked | LOCKED V1 | DECISIONS.md §D033 + 08-workflows/TRACK_7_AUTOMATED_TESTING_MASTER_SPEC.md §9-C1 + tests/engine/coach-scenarios/coach-voice.scenarios.test.ts
+D034 | 2026-05-19 | PROC | npm audit case-by-case per Snyk PR review policy NU `--force` blind — vulnerability triage Daniel CEO decision pe Snyk PR surfacing (14 transitive vulns remaining post §7.4 init; brace-expansion + ws safe patches applied iter 1). `--force` breaking-changes deferred until per-vuln impact assessed (D.3 yes-all) | LOCKED V1 | DECISIONS.md §D034 + .github/workflows/ci.yml Snyk step
+D035 | 2026-05-19 | PROC | Branch protection main bypass admin "Always" config solo dev pre-Beta — rules păstrate force push block + deletion restrict + linear history pentru safety. Strict PR-only mode post-Beta când multiple contributors / real users / audit trail mandatory. Daniel push-back legitim PR rigid overkill solo + CC autonomous = pragmatic Bugatti | LOCKED V1 | DECISIONS.md §D035
+D036 | 2026-05-19 | TECH | Track 7 §7.6 deploy.yml de-skeleton + ratchet thresholds + wire activated workflows LANDED `bda24bc` (real implementation post Daniel push-back chore-claim halucinare). Hard gates Bundle size + Lighthouse perf + Snyk vuln. Ratchet pe real `npm run build` measurements (size +13-34% margin: index 145.73/165 KB / main 127.58/145 KB / vendor-react 24.80/30 KB / vendor-icons 4.79/6 KB / CSS 4.47/6 KB) + Lighthouse 0.60 first-baseline realistic (Daniel ratchets UP în PR review post real measurement) | LOCKED V1 | DECISIONS.md §D036 + .github/workflows/ci.yml + deploy.yml + track-7-nightly.yml + .size-limit.json + lighthouserc.js
+D037 | 2026-05-19 | COST | Browserbase Developer $20/mo paid Option A full §7.8 activate confirmed (Daniel decision against Co-CTO recommendation defer save cost). §7.8 Stagehand exploration nightly OPERATIONAL pe `bb_live_*` cu 25 concurrent browsers + 100 browser hours/lună budget. Anthropic API $20 EUR credits separate (NU Max x20 plan-based — cloud Stagehand needs separate API key per Anthropic billing model June 15 change Agent SDK $200/lună dedicated credit auto-applied) | LOCKED V1 | DECISIONS.md §D037 + scripts/nightly-exploration.mjs + .github/workflows/track-7-nightly.yml
 
 ---
 
