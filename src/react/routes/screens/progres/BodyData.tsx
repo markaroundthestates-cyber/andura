@@ -117,7 +117,7 @@ export function BodyData(): JSX.Element {
               max={250}
               inputMode="decimal"
               data-testid={`bd-${field.key}`}
-              className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2 text-base text-ink"
+              className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
             />
           </div>
         ))}
@@ -135,7 +135,7 @@ export function BodyData(): JSX.Element {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             data-testid="bd-date-input"
-            className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2 text-base text-ink"
+            className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
           />
         </div>
 

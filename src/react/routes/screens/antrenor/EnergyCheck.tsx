@@ -57,7 +57,7 @@ export function EnergyCheck(): JSX.Element {
             onClick={() => handleSelect(opt)}
             data-energy-level={opt.level}
             data-intensity={opt.intensity}
-            className="energy-btn flex items-center gap-4 p-4 rounded-xl border border-[var(--line-strong)] bg-paper2 hover:bg-paper transition"
+            className="energy-btn flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition"
           >
             <span className="text-3xl" aria-hidden="true">
               {opt.emoji}

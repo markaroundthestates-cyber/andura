@@ -71,7 +71,7 @@ export function Onboarding(): JSX.Element {
             type="button"
             onClick={back}
             data-testid="onb-back"
-            className="px-5 py-3 bg-paper2 border border-[var(--line-strong)] text-ink rounded-xl text-sm font-semibold"
+            className="px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
           >
             Inapoi
           </button>
@@ -112,7 +112,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         min={14}
         max={99}
         data-testid="onb-age-input"
-        className="w-full p-4 border border-[var(--line-strong)] rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
     </>
   );
@@ -130,7 +130,7 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
             onClick={() => onChange(v)}
             data-testid={`onb-sex-${v}`}
             aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-[var(--line-strong)] text-ink'}`}
+            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{v === 'm' ? 'Barbat' : 'Femeie'}</span>
           </button>
@@ -159,7 +159,7 @@ function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): 
             onClick={() => onChange(v)}
             data-testid={`onb-goal-${v}`}
             aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-[var(--line-strong)] text-ink'}`}
+            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{GOAL_LABELS[v]}</span>
           </button>
@@ -182,7 +182,7 @@ function Step4({ value, onChange }: OptionStepProps<'2' | '3' | '4' | '5'>): JSX
             onClick={() => onChange(v)}
             data-testid={`onb-freq-${v}`}
             aria-pressed={value === v}
-            className={`p-4 rounded-xl border ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-[var(--line-strong)] text-ink'}`}
+            className={`p-4 rounded-xl border ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="text-2xl font-bold font-mono">{v}</span>
             <span className="block text-xs mt-1">pe saptamana</span>
@@ -210,7 +210,7 @@ function Step5({ value, onChange }: OptionStepProps<'incepator' | 'intermediar' 
             onClick={() => onChange(v)}
             data-testid={`onb-exp-${v}`}
             aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-[var(--line-strong)] text-ink'}`}
+            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{labels[v]}</span>
           </button>
@@ -234,7 +234,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         min={30}
         max={250}
         data-testid="onb-weight-input"
-        className="w-full p-4 border border-[var(--line-strong)] rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
       <p className="text-xs text-ink2 mt-2 text-center">kg</p>
     </>

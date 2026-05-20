@@ -82,7 +82,7 @@ export function LogWeight(): JSX.Element {
             max={250}
             inputMode="decimal"
             data-testid="weight-kg-input"
-            className="w-full p-4 border border-[var(--line-strong)] rounded-2xl text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
+            className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
           />
         </div>
 
@@ -99,7 +99,7 @@ export function LogWeight(): JSX.Element {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             data-testid="weight-date-input"
-            className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2 text-base text-ink"
+            className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
           />
         </div>
 

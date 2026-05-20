@@ -95,7 +95,7 @@ export function Auth(): JSX.Element {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="numele@email.com"
               data-testid="auth-email-input"
-              className="w-full p-4 mb-4 border border-[var(--line-strong)] rounded-xl bg-paper2 text-base"
+              className="w-full p-4 mb-4 border border-lineStrong rounded-xl bg-paper2 text-base"
             />
             <button
               type="button"

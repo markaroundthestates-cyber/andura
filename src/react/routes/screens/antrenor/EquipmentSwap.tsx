@@ -74,7 +74,7 @@ export function EquipmentSwap(): JSX.Element {
               className={
                 isBusy
                   ? 'flex items-center justify-between p-4 rounded-xl border bg-brick/10 border-brick'
-                  : 'flex items-center justify-between p-4 rounded-xl border bg-paper2 border-[var(--line-strong)]'
+                  : 'flex items-center justify-between p-4 rounded-xl border bg-paper2 border-lineStrong'
               }
             >
               <span className="text-base font-medium text-ink">{e.name}</span>

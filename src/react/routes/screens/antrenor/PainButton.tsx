@@ -105,7 +105,7 @@ export function PainButton(): JSX.Element {
               className={
                 selected
                   ? 'p-3 rounded-xl border bg-brick text-paper border-brick'
-                  : 'p-3 rounded-xl border bg-paper2 border-[var(--line-strong)] text-ink'
+                  : 'p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
               }
             >
               <span className="text-sm font-medium">{r.label}</span>
@@ -129,7 +129,7 @@ export function PainButton(): JSX.Element {
                 className={
                   selected
                     ? 'flex-1 py-3 rounded-xl border bg-brick text-paper border-brick'
-                    : 'flex-1 py-3 rounded-xl border bg-paper2 border-[var(--line-strong)] text-ink'
+                    : 'flex-1 py-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
                 }
               >
                 <span className="text-base font-medium">{INTENSITY_LABELS[lvl]}</span>

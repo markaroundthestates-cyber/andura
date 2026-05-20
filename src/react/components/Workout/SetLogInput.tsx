@@ -36,7 +36,7 @@ export function SetLogInput({
           value={kg}
           onChange={(e) => onKgChange(Number(e.target.value))}
           data-testid="kg-input"
-          className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2"
+          className="w-full p-3 border border-lineStrong rounded-xl bg-paper2"
         />
       </div>
       <div className="flex-1">
@@ -49,7 +49,7 @@ export function SetLogInput({
           value={reps}
           onChange={(e) => onRepsChange(Number(e.target.value))}
           data-testid="reps-input"
-          className="w-full p-3 border border-[var(--line-strong)] rounded-xl bg-paper2"
+          className="w-full p-3 border border-lineStrong rounded-xl bg-paper2"
         />
       </div>
     </div>

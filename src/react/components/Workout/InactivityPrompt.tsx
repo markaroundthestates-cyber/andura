@@ -62,7 +62,7 @@ export function InactivityPrompt({
           type="button"
           onClick={onSaveExit}
           data-testid="inactivity-save-exit"
-          className="bg-transparent border border-[var(--line-strong)] text-ink2 rounded-lg py-2.5 px-3.5 text-sm font-medium"
+          className="bg-transparent border border-lineStrong text-ink2 rounded-lg py-2.5 px-3.5 text-sm font-medium"
         >
           Salveaza si iesi
         </button>

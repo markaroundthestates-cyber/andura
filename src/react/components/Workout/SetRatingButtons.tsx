@@ -40,7 +40,7 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element
             type="button"
             onClick={() => onRate(opt.rating)}
             data-rating={opt.rating}
-            className="flex-1 py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink"
+            className="flex-1 py-3 bg-paper2 border border-lineStrong rounded-xl text-ink"
           >
             {opt.label}
           </button>

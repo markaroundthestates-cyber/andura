@@ -97,7 +97,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.age ?? ''}
               onChange={(e) => update('age', e.target.value ? Number(e.target.value) : null)}
               data-testid="profile-age-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-[var(--line-strong)] rounded-lg bg-paper text-ink font-mono text-sm"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-lg bg-paper text-ink font-mono text-sm"
             />
           </FieldRow>
           <FieldRow label="Greutate (kg)">
@@ -109,7 +109,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.weight ?? ''}
               onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
               data-testid="profile-weight-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-[var(--line-strong)] rounded-lg bg-paper text-ink font-mono text-sm"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-lg bg-paper text-ink font-mono text-sm"
             />
           </FieldRow>
           <FieldRow label="Gen" isLast>
@@ -117,7 +117,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.sex ?? ''}
               onChange={(e) => update('sex', (e.target.value || null) as Sex | null)}
               data-testid="profile-sex-select"
-              className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
+              className="px-2.5 py-1.5 border border-lineStrong rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
               <option value="m">Masculin</option>
@@ -135,7 +135,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.goal ?? ''}
               onChange={(e) => update('goal', (e.target.value || null) as Goal | null)}
               data-testid="profile-goal-select"
-              className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
+              className="px-2.5 py-1.5 border border-lineStrong rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
               {/* §3-M1 audit fix — Array<keyof typeof X_LABELS> more accurate than X[] */}
@@ -149,7 +149,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.frequency ?? ''}
               onChange={(e) => update('frequency', (e.target.value || null) as Frequency | null)}
               data-testid="profile-frequency-select"
-              className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
+              className="px-2.5 py-1.5 border border-lineStrong rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
               {(Object.keys(FREQUENCY_LABELS) as Array<keyof typeof FREQUENCY_LABELS>).map((f) => (
@@ -162,7 +162,7 @@ export function SettingsProfile(): JSX.Element {
               value={draft.experience ?? ''}
               onChange={(e) => update('experience', (e.target.value || null) as Experience | null)}
               data-testid="profile-experience-select"
-              className="px-2.5 py-1.5 border border-[var(--line-strong)] rounded-lg bg-paper text-ink text-sm"
+              className="px-2.5 py-1.5 border border-lineStrong rounded-lg bg-paper text-ink text-sm"
             >
               <option value="">—</option>
               {(Object.keys(EXPERIENCE_LABELS) as Array<keyof typeof EXPERIENCE_LABELS>).map((x) => (

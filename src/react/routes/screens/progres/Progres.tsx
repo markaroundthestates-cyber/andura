@@ -68,7 +68,7 @@ export function Progres(): JSX.Element {
         type="button"
         onClick={() => navigate(gotoPath('body-data'))}
         data-testid="cta-body-data"
-        className="w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-[var(--line-strong)] text-ink rounded-xl text-base font-semibold"
+        className="w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
       >
         <Ruler className="w-5 h-5" aria-hidden="true" />
         Masuratori corp

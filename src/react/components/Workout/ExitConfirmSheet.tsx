@@ -58,7 +58,7 @@ export function ExitConfirmSheet({
           type="button"
           onClick={() => onChoose('pause')}
           data-testid="exit-pause"
-          className="w-full py-3 bg-paper2 border border-[var(--line-strong)] rounded-xl text-ink text-base font-semibold mb-2"
+          className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold mb-2"
         >
           Salveaza si reia mai tarziu
         </button>

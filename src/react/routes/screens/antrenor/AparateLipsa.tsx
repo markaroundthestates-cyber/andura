@@ -82,7 +82,7 @@ export function AparateLipsa(): JSX.Element {
                   className={
                     selected
                       ? 'p-3 rounded-xl border bg-brick/10 border-brick text-ink'
-                      : 'p-3 rounded-xl border bg-paper2 border-[var(--line-strong)] text-ink'
+                      : 'p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
                   }
                 >
                   <span className="text-sm">{item}</span>

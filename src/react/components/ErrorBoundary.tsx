@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               type="button"
               onClick={this.handleReload}
               data-testid="error-reload"
-              className="px-5 py-3 bg-paper2 border border-[var(--line-strong)] text-ink rounded-xl text-sm font-semibold"
+              className="px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
             >
               Reincarca
             </button>

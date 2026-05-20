@@ -62,7 +62,7 @@ export function EnergyCause(): JSX.Element {
             type="button"
             onClick={() => handleSelect(cause)}
             data-cause={cause}
-            className="cause-btn p-4 rounded-xl border border-[var(--line-strong)] bg-paper2 text-ink hover:bg-paper transition"
+            className="cause-btn p-4 rounded-xl border border-lineStrong bg-paper2 text-ink hover:bg-paper transition"
           >
             <span className="text-sm font-medium">{cause}</span>
           </button>

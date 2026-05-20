@@ -62,7 +62,7 @@ export function ScheduleOverride(): JSX.Element {
             type="button"
             onClick={() => handleSelect(opt.kind)}
             data-override-kind={opt.kind}
-            className="flex flex-col items-start gap-1 p-4 rounded-xl border border-[var(--line-strong)] bg-paper2 hover:bg-paper transition text-left"
+            className="flex flex-col items-start gap-1 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
           >
             <span className="text-base font-medium text-ink">{opt.label}</span>
             <span className="text-sm text-ink2">{opt.description}</span>
