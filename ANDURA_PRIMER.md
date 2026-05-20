@@ -2,7 +2,7 @@
 title: ANDURA_PRIMER.md — Singular Briefing Fresh Chat Instant Onboard
 type: ssot-primer
 status: live
-last_updated: 2026-05-19
+last_updated: 2026-05-20
 authority: Daniel CEO directive 2026-05-16 chat ACASĂ — "vreau la next chat sa stii ce e andura, ce face, cum functioneaza si ce trebuie sa fie. Sa stii unde am ramas, ce e de facut si ce vreau eu"
 purpose: §CC.2 startup primary read — fresh chat instant comprehensive context complete
 maintained_by: handover automatic update post-LANDED + Daniel CEO directive
@@ -186,9 +186,13 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - Production readiness Co-CTO estimate 95-96% — Daniel push-back acknowledged inflation. Real ~75-85% per `DECISIONS.md §D041`. Phase 8 Bugatti audit nuclear pre-Launch gate measure real
 - Setup birou: `C:\Users\DanielMazilu\Documents\salafull\` mirror acasă (clone Andura + vault Obsidian combined) + Obsidian Sync Selective excluderi 7 foldere (`node_modules`, `dist`, `coverage`, `test-results`, `__checks__`, `.git`, `reports`) anti-D030 recurrence + 2 vault Documents/ parent removed
 
+**2026-05-20 evening ACASĂ:** Iter 1 Mass Fix V2 design LANDED. D045 LOCKED V1 supersedes D044 (v1 stale-baseline halucinație ignorat ~58 Phase 7 LANDED). V2 = 4 mega-Waves architecture (Wave A Critical/Coach/ConfirmModal/Bundle/GDPR ~40 + Wave B Surgical text+polish ~150 + Wave C Components+MISSING+vanilla archive ~80 + Wave D Goal-driven multi-file refactor ~35) = ~305 atomic tasks. Cluster E paradigm Daniel ~20 deferred. ETA ~85-110h CC Opus = ~11-15 calendar days iter 1. Artefacte: `📥_inbox/iter-1-mass-fix-v2/` (ORCHESTRATOR + _MASTER_BACKLOG + _DAG + _progress + 4 PROMPT_CC mega-prompts Wave A/B/C/D). Pending Daniel CEO approve → trigger Wave A.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
+
+**P1 NEXT:** Daniel CEO approve V2 design `📥_inbox/iter-1-mass-fix-v2/ORCHESTRATOR.md` + `_MASTER_BACKLOG.md` + sample `PROMPT_CC_iter1_wave_a_critical_real.md` → post-approve paste Wave A prompt in NEW CC session ACASĂ → ~12-16h autonomous execution → ~40 tasks LANDED Wave A → trigger Wave B/C/D sequential or hybrid parallel per `_DAG.md §2`. Iter 1 EXIT audit post all Waves → Daniel CEO decide CONTINUE iter 2 or EXIT loop convergence.
 
 **Pre-Beta LOCK 1 100% complete ✅ (verified chat 2026-05-16 ACASĂ + deploy main same day post branch reconcile):**
 - library 657 ex ✅ LANDED
