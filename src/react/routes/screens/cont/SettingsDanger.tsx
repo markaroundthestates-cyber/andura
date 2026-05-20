@@ -6,7 +6,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, LogOut, RotateCcw, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, LogOut, RotateCcw, Trash2 } from 'lucide-react';
 import { useAppStore } from '../../../stores/appStore';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useNutritionStore } from '../../../stores/nutritionStore';
@@ -14,6 +14,7 @@ import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 
 type ConfirmAction = null | 'reset' | 'delete';
 
@@ -126,45 +127,21 @@ export function SettingsDanger(): JSX.Element {
         </p>
       </div>
 
-      {confirm !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Confirmare actiune"
-          data-testid="danger-confirm-modal"
-          className="fixed inset-0 bg-ink/40 flex items-end sm:items-center justify-center z-50"
-        >
-          <div className="bg-paper w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-5 h-5 text-brick" aria-hidden="true" />
-              <h2 className="text-base font-semibold text-ink">Confirma actiunea</h2>
-            </div>
-            <p className="text-sm text-ink2 mb-4 leading-snug">
-              {confirm === 'reset'
-                ? 'Toate datele tale locale vor fi sterse. Aceasta actiune nu poate fi anulata.'
-                : 'Datele + contul vor fi sterse. Aceasta actiune nu poate fi anulata.'}
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setConfirm(null)}
-                data-testid="danger-confirm-cancel"
-                className="flex-1 py-2.5 border border-line rounded-xl text-sm text-ink"
-              >
-                Anuleaza
-              </button>
-              <button
-                type="button"
-                onClick={confirm === 'reset' ? handleResetConfirmed : handleDeleteConfirmed}
-                data-testid="danger-confirm-accept"
-                className="flex-1 py-2.5 bg-brick text-paper rounded-xl text-sm font-semibold"
-              >
-                {confirm === 'reset' ? 'Reseteaza' : 'Sterge cont'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* §A004 + §A008 audit fix: ConfirmModal shared (extracted inline). */}
+      <ConfirmModal
+        open={confirm !== null}
+        title="Confirma actiunea"
+        body={
+          confirm === 'reset'
+            ? 'Toate datele tale locale vor fi sterse. Aceasta actiune nu poate fi anulata.'
+            : 'Datele + contul vor fi sterse. Aceasta actiune nu poate fi anulata.'
+        }
+        confirmCta={confirm === 'reset' ? 'Reseteaza' : 'Sterge cont'}
+        destructive
+        onConfirm={confirm === 'reset' ? handleResetConfirmed : handleDeleteConfirmed}
+        onCancel={() => setConfirm(null)}
+        testIdPrefix="danger-confirm"
+      />
     </section>
   );
 }
