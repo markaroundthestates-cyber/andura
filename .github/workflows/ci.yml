@@ -57,30 +57,56 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Daniel iter 8 diagnostic: remove `cache: npm` to test hypothesis că
+      # setup-node@v5 npm cache restore triggers git op sub the hood. If git 128
+      # disappears post-removal, root cause confirmed.
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: npm
 
-      - name: 'Diagnostic: git + husky + env (root cause surface)'
+      - name: 'REAL Diagnostic: git 128 root cause surface (iter 8 deep)'
         run: |
-          echo "=== Git binary ==="
-          which git || echo "git NOT în PATH"
-          git --version || echo "git --version FAILED"
+          set +e
+          echo "═══════════════════════════════════════════════════════════"
+          echo "=== Git binary path + version ==="
+          which git
+          git --version
           echo ""
-          echo "=== Node binary ==="
+          echo "=== Git config user (CI auto-set) ==="
+          git config --global --get user.email
+          git config --global --get user.name
+          git config --global --list | head -20
+          echo ""
+          echo "=== Node + npm versions ==="
           which node && node --version
+          which npm && npm --version
           echo ""
-          echo "=== Husky env vars ==="
-          env | grep -i husky || echo "(no HUSKY env vars)"
+          echo "=== Husky + Git + Node + NPM env vars (sorted) ==="
+          env | sort | grep -iE "^(HUSKY|GIT|GH_|GITHUB|NODE|NPM)" | head -30
           echo ""
-          echo "=== Git-related env vars ==="
-          env | grep -iE "^(GIT|GH_|GITHUB)" | head -10 || echo "(none relevant)"
+          echo "=== .npmrc content ==="
+          cat .npmrc 2>/dev/null || echo "(no .npmrc)"
+          echo ""
+          echo "=== package-lock.json HEAD 20 lines (check for git+ urls) ==="
+          head -20 package-lock.json
           echo ""
           echo "=== package.json prepare script ==="
-          node -e "console.log(JSON.stringify(require('./package.json').scripts.prepare))"
+          node -e "console.log('prepare:', JSON.stringify(require('./package.json').scripts.prepare))"
+          echo ""
+          echo "=== Working dir state ==="
+          pwd
+          ls -la .husky 2>/dev/null | head -5 || echo "(no .husky dir)"
+          echo "═══════════════════════════════════════════════════════════"
+          set -e
 
-      - run: npm ci --ignore-scripts
+      # Daniel iter 8 alternative: `npm install` instead of `npm ci` to drop
+      # lockfile strictness (diagnostic — restore `npm ci` post root cause found).
+      # --no-audit + --no-fund + --no-progress: silence noise
+      # --prefer-offline: use cache where possible (we removed setup-node cache,
+      #   so falls back to fresh download — still slower than ci but more lenient)
+      # --legacy-peer-deps: handled by .npmrc, redundant flag for explicit
+      - name: 'npm install (lenient — iter 8 diagnostic alternative la npm ci)'
+        run: npm install --no-audit --no-fund --no-progress --legacy-peer-deps
 
       - name: TypeScript Type Check
         run: npm run typecheck
