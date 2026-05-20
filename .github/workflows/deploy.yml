@@ -44,7 +44,13 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run typecheck
       - run: npm run test:run
+      # iter 9.5 fix — VITE_FIREBASE_API_KEY + VITE_FIREBASE_RTDB_URL injected
+      # at build time. Bundle production was shipping with 'PLACEHOLDER_WEB_API_KEY'
+      # literal causing Magic Link 400 errors (anti-recurrence #2026-05-20 birou).
       - run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_URL }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
