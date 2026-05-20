@@ -52,11 +52,29 @@ describe('SettingsDanger — render + actions', () => {
     expect(screen.getByTestId('danger-delete')).toBeInTheDocument();
   });
 
-  it('logout click → setAuthenticated false + navigate /auth', () => {
+  it('logout click opens confirm modal (§A007 non-destructive gate)', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('danger-logout'));
+    expect(screen.getByTestId('danger-confirm-modal')).toBeInTheDocument();
+    // Modal title ends with "?" — distinguishes from button text "Iesi din cont"
+    expect(screen.getByRole('heading', { name: /Iesi din cont\?/i })).toBeInTheDocument();
+    expect(screen.getByText(/Te poti reconecta oricand/i)).toBeInTheDocument();
+  });
+
+  it('logout confirm accept → setAuthenticated false + navigate /auth', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('danger-logout'));
+    fireEvent.click(screen.getByTestId('danger-confirm-accept'));
     expect(useAppStore.getState().isAuthenticated).toBe(false);
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+  });
+
+  it('logout confirm cancel closes modal NU logs out', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('danger-logout'));
+    fireEvent.click(screen.getByTestId('danger-confirm-cancel'));
+    expect(screen.queryByTestId('danger-confirm-modal')).not.toBeInTheDocument();
+    expect(useAppStore.getState().isAuthenticated).toBe(true);
   });
 
   it('reset click opens confirm modal', () => {

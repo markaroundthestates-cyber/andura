@@ -16,7 +16,7 @@ import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 
-type ConfirmAction = null | 'reset' | 'delete';
+type ConfirmAction = null | 'reset' | 'delete' | 'logout';
 
 function wipeAllLocalData(): void {
   try {
@@ -46,8 +46,9 @@ export function SettingsDanger(): JSX.Element {
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
   const [confirm, setConfirm] = useState<ConfirmAction>(null);
 
-  function handleLogout(): void {
+  function handleLogoutConfirmed(): void {
     setAuthenticated(false);
+    setConfirm(null);
     navigate('/auth');
   }
 
@@ -83,7 +84,7 @@ export function SettingsDanger(): JSX.Element {
         <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => setConfirm('logout')}
             data-testid="danger-logout"
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
           >
@@ -127,18 +128,28 @@ export function SettingsDanger(): JSX.Element {
         </p>
       </div>
 
-      {/* §A004 + §A008 audit fix: ConfirmModal shared (extracted inline). */}
+      {/* §A004 + §A007 + §A008 audit fix: ConfirmModal shared (3 use sites). */}
       <ConfirmModal
         open={confirm !== null}
-        title="Confirma actiunea"
+        title={confirm === 'logout' ? 'Iesi din cont?' : 'Confirma actiunea'}
         body={
           confirm === 'reset'
             ? 'Toate datele tale locale vor fi sterse. Aceasta actiune nu poate fi anulata.'
-            : 'Datele + contul vor fi sterse. Aceasta actiune nu poate fi anulata.'
+            : confirm === 'delete'
+            ? 'Datele + contul vor fi sterse. Aceasta actiune nu poate fi anulata.'
+            : 'Datele raman pe telefon. Te poti reconecta oricand.'
         }
-        confirmCta={confirm === 'reset' ? 'Reseteaza' : 'Sterge cont'}
-        destructive
-        onConfirm={confirm === 'reset' ? handleResetConfirmed : handleDeleteConfirmed}
+        confirmCta={
+          confirm === 'reset' ? 'Reseteaza' : confirm === 'delete' ? 'Sterge cont' : 'Iesi'
+        }
+        destructive={confirm !== 'logout'}
+        onConfirm={
+          confirm === 'reset'
+            ? handleResetConfirmed
+            : confirm === 'delete'
+            ? handleDeleteConfirmed
+            : handleLogoutConfirmed
+        }
         onCancel={() => setConfirm(null)}
         testIdPrefix="danger-confirm"
       />
