@@ -118,6 +118,24 @@ Karpathy 4 principii MANDATORY pre-task tactical. Install Pack 12 LANDED 2026-05
 
 `git push` = act conștient Daniel-triggered manual ONLY. Branch can be ahead origin/main N commits — that's fine, NU push automatic. Stop hook auto-push removed `f40ebbc` (anti-recurrence b1bd099 mass-delete propagation).
 
+### SSOT auto-sync (Andura vault — no explicit prompt needed)
+
+Daniel prompt implies vault state change → update these automatically pentru SSOT consistency, even fără explicit "update X" instruction:
+
+- **`DECISIONS.md`** → append LOCKED V1 entry pentru decizii noi strategic (NEVER re-open existing per D007 supersede rule literal match)
+- **`ANDURA_PRIMER.md` §5 "Unde am rămas"** → 1 line micro-append pentru substantial state change (phase/iter LANDED, milestone, paradigm shift, design phase completion)
+- **`📤_outbox/LATEST.md`** → CC autonomous task report state când CC completes work
+- **Frontmatter sync** (e.g., DECISIONS.md `latest_entry` + `total_entries`) când append decizie nouă
+
+**Verify-first protocol (anti-hallucination per regula #1):**
+- Read current SSOT file state via filesystem BEFORE editing (anti-stale-baseline)
+- Confirm state change is REAL via vault read sau git verify (NU conversational mention)
+- IF Daniel mentions speculative/uncertain state (NU LANDED) → defer + ask
+
+**Each SSOT update = separate atomic Bugatti single-concern commit.** NU push (D031 invariant). NU bundle cu unrelated work.
+
+**Anti-overreach lesson** (chat 1 HANDOVER §5 2026-05-20): NU edit `DECISIONS.md` + `LATEST.md` + `PRIMER.md` concurrent cu unrelated execution work BEFORE verify state change real LANDED. Aggregate scribe at handover end-of-chat (§F3.8), NU per-message overreach.
+
 ---
 
 <!-- gitnexus:start -->
