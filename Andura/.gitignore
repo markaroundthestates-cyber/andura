@@ -1,0 +1,37 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+
+# Security audit files — contain vulnerability details, do not publish
+docs/AUDIT_BULLETPROOF_*.md
+# Obsidian plugins (keep local only, don't pollute indexing)
+.obsidian/plugins/
+.obsidian/workspace.json
+.obsidian/cache/
+
+# Playwright test artifacts (auto-generated, not source)
+test-results/
+
+# Vitest coverage reports (auto-generated, not source)
+coverage/
+
+# Firebase Admin SDK service account credentials — secret, NEVER commit (§56.14.A)
+firebase-service-account.json
+scripts/firebase-service-account.json
+
+# Stryker mutation testing reports (auto-generated)
+reports/mutation/.stryker-tmp/
+.stryker-tmp/
+# HTML viewer regenerable din mutation.json — keep repo lean (~7 MB saved)
+reports/mutation/mutation.html
+
+# Obsidian daily notes + scratch files at vault root (auto-generated, never commit)
+# Pattern YYYY-MM-DD.md = Obsidian Daily Notes default
+/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
+# Pattern Untitled* = Obsidian Cmd+N untitled scratch
+/Untitled*.md
+/Untitled*.canvas
+
+# Smart Environment cache — per-machine tool state, never commit
+.smart-env/

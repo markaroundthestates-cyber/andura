@@ -1,0 +1,114 @@
+// ══ EQUIPMENT SWAP TESTS — task_07 §A toggle list + cascade stub ═════════
+// MemoryRouter jsdom paradigm per D020.
+
+import type { JSX } from 'react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { EquipmentSwap } from '../../../routes/screens/antrenor/EquipmentSwap';
+
+function LocationProbe(): JSX.Element {
+  const loc = useLocation();
+  const s = (loc.state ?? null) as Record<string, unknown> | null;
+  return (
+    <div data-testid="probe" data-pathname={loc.pathname}>
+      {s ? JSON.stringify(s) : 'no-state'}
+    </div>
+  );
+}
+
+function renderSwap() {
+  return render(
+    <MemoryRouter initialEntries={['/app/antrenor/equipment-swap']}>
+      <Routes>
+        <Route path="/app/antrenor/equipment-swap" element={<EquipmentSwap />} />
+        <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+describe('EquipmentSwap — render', () => {
+  it('renders heading "Aparate ocupate?"', () => {
+    renderSwap();
+    expect(
+      screen.getByRole('heading', { name: /Aparate ocupate/i, level: 1 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders 5 equipment items toate default Liber', () => {
+    renderSwap();
+    const items = screen.getAllByRole('button').filter((b) =>
+      b.hasAttribute('data-equipment-id')
+    );
+    expect(items.length).toBe(5);
+    items.forEach((b) => {
+      expect(b).toHaveAttribute('data-status', 'available');
+      expect(b).toHaveAttribute('aria-pressed', 'false');
+      expect(b.textContent).toMatch(/Liber/);
+    });
+  });
+
+  it('renders Continue button', () => {
+    renderSwap();
+    expect(screen.getByTestId('equipment-continue')).toBeInTheDocument();
+  });
+});
+
+describe('EquipmentSwap — toggle behavior', () => {
+  it('click toggles available → busy', () => {
+    renderSwap();
+    const bench = screen.getByRole('button', { name: /Bench press/i });
+    expect(bench).toHaveAttribute('data-status', 'available');
+    fireEvent.click(bench);
+    expect(bench).toHaveAttribute('data-status', 'busy');
+    expect(bench).toHaveAttribute('aria-pressed', 'true');
+    expect(bench.textContent).toMatch(/Ocupat/);
+  });
+
+  it('click toggles busy → available (round-trip)', () => {
+    renderSwap();
+    const smith = screen.getByRole('button', { name: /Smith machine/i });
+    fireEvent.click(smith);
+    expect(smith).toHaveAttribute('data-status', 'busy');
+    fireEvent.click(smith);
+    expect(smith).toHaveAttribute('data-status', 'available');
+  });
+
+  it('toggling one item nu afecteaza altele', () => {
+    renderSwap();
+    const lat = screen.getByRole('button', { name: /Lat pulldown/i });
+    const cable = screen.getByRole('button', { name: /Cable row/i });
+    fireEvent.click(lat);
+    expect(lat).toHaveAttribute('data-status', 'busy');
+    expect(cable).toHaveAttribute('data-status', 'available');
+  });
+});
+
+describe('EquipmentSwap — navigation flow', () => {
+  it('Continue cu zero busy propagates empty array', () => {
+    renderSwap();
+    fireEvent.click(screen.getByTestId('equipment-continue'));
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
+    expect(probe.textContent).toContain('"busy":[]');
+  });
+
+  it('Continue cu 2 busy propagates ids', () => {
+    renderSwap();
+    fireEvent.click(screen.getByRole('button', { name: /Bench press/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Leg press/i }));
+    fireEvent.click(screen.getByTestId('equipment-continue'));
+    const probe = screen.getByTestId('probe');
+    expect(probe.textContent).toContain('"bench"');
+    expect(probe.textContent).toContain('"leg-press"');
+  });
+});
+
+describe('EquipmentSwap — Romanian no-diacritics rule (D-LEGACY-064)', () => {
+  it('no diacritics in UI rendered text', () => {
+    const { container } = renderSwap();
+    const text = container.textContent ?? '';
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});

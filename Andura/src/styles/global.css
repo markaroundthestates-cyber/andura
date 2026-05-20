@@ -1,0 +1,50 @@
+/* ══ ANDURA CLASIC GLOBAL STYLES — React Build Phase 1 Foundation ═════════
+   CSS variables verbatim parity mockup 04-architecture/mockups/andura-clasic.html
+   Per DECISIONS.md §D015 + §D016 + LOCKED V1 mockup as DESIGN MASTER.
+   Vanilla src/styles/main.css preserved (vanilla legacy live andura.app).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* WCAG audit batch v2 Path 2a — Clasic :root architectural lift (2026-05-10).
+   Token tonal hierarchy (cream warm light theme) — fix --ink-3 muted text WCAG SC 1.4.3 4.5:1 AA
+   (was hardcoded var(--ink-3) 137× contrast 3.56:1 FAIL → now #6e6862 token contrast ~5.13:1 PASS).
+   Other tokens consolidate hardcoded hex (385 total occurrences) → systematic single-source-of-truth.
+   Bg context: phone bg --paper var(--paper) L=0.930 (light cream — INVERSE polarity vs Luxury/Brain Coach dark themes).
+   Cumulative LOCKED V1 ~707-709 PRESERVED (mockup polish meta-tooling NU additive). */
+:root {
+  --paper: #faf7f1;     /* Phone bg cream primary L=0.930 (light theme inverse polarity) */
+  --paper-2: #f3ede1;   /* Secondary surface cream variant L≈0.855 */
+  --ink: #1a1815;       /* Primary text dark L=0.0042 → 17.94:1 vs paper ✅ AAA */
+  --ink-2: #3a342d;     /* Secondary text L=0.0347 → 11.57:1 vs paper ✅ AAA */
+  --ink-3: #6e6862;     /* Muted text L=0.141 → 5.13:1 vs paper ✅ AA (was var(--ink-3) 3.56:1 ❌ FAIL — WCAG fix) */
+  --line: #e7e0d0;      /* Decorative border on cream — 1.23:1 vs paper (decorative interpretation pure dividers/hairlines/info-card frames per WCAG v4 cross-skin --line split classification 2026-05-10) */
+  --line-strong: #9a8770; /* WCAG v4 batch 2026-05-10 — interactive UI essential boundary RGB(154,135,112) L=0.254 → 3.23:1 vs paper #faf7f1 PASS SC 1.4.11 non-text 3:1 minimum. Used by .btn-ghost/.energy-btn/.cause-btn/.sw/.theme-card + form input borders + auth-skip-btn + checkbox labels — all interactive UI essential boundaries. Tonal hierarchy preserved: --ink-3 (L=0.141) < --line-strong (L=0.254) < --line (L=0.748). Warm taupe Clasic clinical character preserved (R>G>B). */
+  --brick: #c8412e;     /* Accent brick red Clasic signature */
+}
+
+/* Persona-aware text scaling (verbatim mockup) */
+.persona-maria { --body: 18px; --small: 16px; --display: 36px; --tight: -0.01em; }
+.persona-gigel { --body: 15px; --small: 13px; --display: 28px; --tight: -0.02em; }
+.persona-marius { --body: 14px; --small: 12px; --display: 26px; --tight: -0.025em; }
+
+.body-text { font-size: var(--body); }
+.small-text { font-size: var(--small); }
+.display-text { font-size: var(--display); letter-spacing: var(--tight); }
+
+/* Base resets parity mockup body/html — adapted for React app shell (NU phone scaffold mockup dark frame) */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper, #faf7f1);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  color: var(--ink, #1a1815);
+}
