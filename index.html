@@ -20,6 +20,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <title>Andura</title>
+  <!-- SPA GitHub Pages redirect decode (Rafael Pedicini pattern spa-github-pages).
+       Pereche cu public/404.html: 404.html encode URL → query string,
+       acest script decode + history.replaceState înainte React Router mount.
+       Critical pentru Magic Link callback /auth-callback?oobCode=XXX (Firebase). -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
   <style>
     /* §1-C1 audit fix: replace dark FOUC inline with cream warm light shell
        matching Tailwind --paper token. App-level CSS hydrates via main.tsx. */
@@ -35,11 +51,11 @@
       min-height: 100vh;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-CgDGdZON.js"></script>
+  <script type="module" crossorigin src="/assets/main-BdqENAZz.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/vendor-react-BDPONypa.js">
   <link rel="modulepreload" crossorigin href="/assets/vendor-state-B18lfrka.js">
   <link rel="modulepreload" crossorigin href="/assets/vendor-icons-vovfnsyh.js">
-  <link rel="stylesheet" crossorigin href="/assets/main-Dddd-Zu_.css">
+  <link rel="stylesheet" crossorigin href="/assets/main-8mcjsKTC.css">
 <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
 <body>
   <div id="root"></div>

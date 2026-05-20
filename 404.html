@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Andura</title>
+  <!-- SPA GitHub Pages fallback (Rafael Pedicini pattern spa-github-pages).
+       GitHub Pages servește 404.html pentru orice path nematch.
+       Script-ul preserve URL path + query + hash în query string al rădăcinii,
+       index.html mounted-script decoded URL back + history.replaceState.
+       Soluție pentru BrowserRouter (createBrowserRouter prod per D020) +
+       Magic Link callback /auth-callback?oobCode=XXX&apiKey=YYY&... (Firebase). -->
+  <script type="text/javascript">
+    // pathSegmentsToKeep=0 pentru root domain andura.app (NU subpath)
+    var pathSegmentsToKeep = 0;
+    var l = window.location;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.hash
+    );
+  </script>
+</head>
+<body>
+  <p style="font-family: sans-serif; padding: 20px; color: #1a1815; background: #faf7f1;">Se incarca...</p>
+</body>
+</html>
