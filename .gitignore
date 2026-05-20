@@ -37,3 +37,8 @@ reports/mutation/mutation.html
 
 # Smart Environment cache — per-machine tool state, never commit
 .smart-env/
+
+# Andura/ recursive vault clone — sandbox/mirror, NEVER commit (D023/D030
+# anti-recurrence). Caused f1c79dd disaster pre-revert; gitignore preserved
+# post-cleanup to prevent re-fire of any auto-commit hook on this path.
+Andura/
