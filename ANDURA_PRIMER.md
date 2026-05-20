@@ -177,6 +177,15 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - §7.10 mobile manual smoke Daniel = ultim 5-10% (Android/iOS andura.app prod 4 taburi + Magic Link login post-Firebase domains fix)
 - Branch `track-7-automated-testing` pushed origin + merged la main via bypass admin
 
+**2026-05-20 birou Track 7 iter 8/9/9.5 LANDED + f1c79dd disaster recovery + Magic Link blocker fix (chat ACASĂ → birou mirror setup):**
+- Iter 8 lessons learned: Co-CTO CC raport halucinare commits (SHA-uri inventate, raport pur fără cod) — strict anti-recurrence enforced iter 9+
+- Iter 9 LANDED 3 commits real verified reflog: `a2f4f8e` depcheck fix + `5818949` madge concession + `157d1a1` 10 unused-vars cleanup (per `DECISIONS.md §D026` extension)
+- f1c79dd chore-auto Stop hook disaster (953 files / 276,832 deletions recursive Andura/ vault clone) + revert chain LANDED `2f3b17a` (hook off + Andura/ gitignore) + `7f6a507` (Revert f1c79dd) per `DECISIONS.md §D039`
+- Magic Link blocker iter 9.5: `src/auth.js:25` FIREBASE_API_KEY fallback PLACEHOLDER_WEB_API_KEY → bundle production broken Magic Link 400 errors. Fix `deploy.yml` env injection LANDED per `DECISIONS.md §D040`
+- CI iter 9 verdict GREEN: ci.yml run #594 + deploy.yml run #636 SUCCESS
+- Production readiness Co-CTO estimate 95-96% — Daniel push-back acknowledged inflation. Real ~75-85% per `DECISIONS.md §D041`. Phase 8 Bugatti audit nuclear pre-Launch gate measure real
+- Setup birou: `C:\Users\DanielMazilu\Documents\salafull\` mirror acasă (clone Andura + vault Obsidian combined) + Obsidian Sync Selective excluderi 7 foldere (`node_modules`, `dist`, `coverage`, `test-results`, `__checks__`, `.git`, `reports`) anti-D030 recurrence + 2 vault Documents/ parent removed
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
@@ -235,12 +244,13 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 - ✅ §7.7 Checkly synthetic prod config + critical paths skeleton LANDED `10d43ca` — Free Hobby tier 30min × 2 EU locations
 - ✅ §7.8 Stagehand persona exploration nightly template LANDED `a1491a7` — Browserbase Developer $20/mo paid Option A (D037)
 - ✅ §7.9 Vanilla legacy E2E cleanup — 20 files deleted LANDED `b4d1950` (Playwright 117 → ~17 React-focused)
-- ⏳ §7.10 Production readiness — CI iter 7 GREEN gate → Daniel mobile manual smoke single comprehensive cap-coadă (~30-45 min)
+- ✅ §7.6 iter 8 LANDED + iter 9 LANDED + iter 9.5 deploy.yml env injection LANDED (all CI green, 0 errors, cosmetic warnings only)
+- ⏳ §7.10 Daniel mobile manual smoke awaiting Firebase secrets upload (`VITE_FIREBASE_API_KEY` + `VITE_FIREBASE_RTDB_URL` GitHub Secrets) + redeploy
 - Push manual final §7.10 LANDED (NU per phase, preserve `f40ebbc` Stop hook anti-recurrence)
 - 9/9 GitHub Secrets uploaded + verify workflow GREEN iter 4
 - Branch protection `main` Active cu bypass admin "Always" (D035 — solo dev pre-Beta pragmatic)
-- D033-D037 LOCKED V1 (5 strategic decizii Daniel CEO yes-all)
-- Production readiness estimate: 56.5% baseline → ~85% post §7.6 REAL activation → target ≥90% post §7.10 LANDED
+- D033-D041 LOCKED V1 (9 strategic decizii Daniel CEO yes-all + iter 8/9/9.5 lessons learned)
+- Production readiness real ~75-85% estimate, target measure via Phase 8 Bugatti audit nuclear post-smoke (per D041 anti-inflation discipline; Co-CTO compound estimate 95-96% acknowledged inflation)
 - Tests baseline 4519 → target ~4719+ (~200 new tests)
 - Stop trigger UNIC Daniel STOP explicit
 

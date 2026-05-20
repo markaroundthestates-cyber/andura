@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-19
+last_updated: 2026-05-20
 schema_version: 1
-latest_entry: D037
-total_entries: 37
+latest_entry: D041
+total_entries: 41
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -88,6 +88,10 @@ D034 | 2026-05-19 | PROC | npm audit case-by-case per Snyk PR review policy NU `
 D035 | 2026-05-19 | PROC | Branch protection main bypass admin "Always" config solo dev pre-Beta — rules păstrate force push block + deletion restrict + linear history pentru safety. Strict PR-only mode post-Beta când multiple contributors / real users / audit trail mandatory. Daniel push-back legitim PR rigid overkill solo + CC autonomous = pragmatic Bugatti | LOCKED V1 | DECISIONS.md §D035
 D036 | 2026-05-19 | TECH | Track 7 §7.6 deploy.yml de-skeleton + ratchet thresholds + wire activated workflows LANDED `bda24bc` (real implementation post Daniel push-back chore-claim halucinare). Hard gates Bundle size + Lighthouse perf + Snyk vuln. Ratchet pe real `npm run build` measurements (size +13-34% margin: index 145.73/165 KB / main 127.58/145 KB / vendor-react 24.80/30 KB / vendor-icons 4.79/6 KB / CSS 4.47/6 KB) + Lighthouse 0.60 first-baseline realistic (Daniel ratchets UP în PR review post real measurement) | LOCKED V1 | DECISIONS.md §D036 + .github/workflows/ci.yml + deploy.yml + track-7-nightly.yml + .size-limit.json + lighthouserc.js
 D037 | 2026-05-19 | COST | Browserbase Developer $20/mo paid Option A full §7.8 activate confirmed (Daniel decision against Co-CTO recommendation defer save cost). §7.8 Stagehand exploration nightly OPERATIONAL pe `bb_live_*` cu 25 concurrent browsers + 100 browser hours/lună budget. Anthropic API $20 EUR credits separate (NU Max x20 plan-based — cloud Stagehand needs separate API key per Anthropic billing model June 15 change Agent SDK $200/lună dedicated credit auto-applied) | LOCKED V1 | DECISIONS.md §D037 + scripts/nightly-exploration.mjs + .github/workflows/track-7-nightly.yml
+D038 | 2026-05-20 | PROC | Co-CTO chat ZERO create_file pe paths cross-device (acasa vs birou MCP server config diferit) — filesystem:write_file + verify listing immediate post-write mandatory anti-halucinare false-positive | LOCKED V1 | DECISIONS.md §D038
+D039 | 2026-05-20 | PROC | chore-auto Stop hook DISABLED PERMANENT in .claude/settings.json (disableAllHooks: true) + Andura/ gitignore belt+suspenders anti-f1c79dd recurrence | LOCKED V1 | DECISIONS.md §D039
+D040 | 2026-05-20 | TECH | .github/workflows/deploy.yml build step env vars injection mandatory VITE_FIREBASE_* (Magic Link blocker regression iter 9.5 fix) — GitHub Secrets VITE_FIREBASE_API_KEY + VITE_FIREBASE_RTDB_URL Daniel-action | LOCKED V1 | DECISIONS.md §D040
+D041 | 2026-05-20 | REGLAJ | Production readiness % rapoarte Co-CTO = estimat compound NU re-audit verifiable. Real measurement = re-run audit nuclear pe HEAD curent (Phase 8 Bugatti pre-Launch gate). Anti-inflatie: format raport include "Estimate (not measured): X%, Last measured: Y% @ <audit_date>" | LOCKED V1 | DECISIONS.md §D041
 
 ---
 
