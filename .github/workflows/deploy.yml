@@ -1,5 +1,40 @@
 name: Deploy to GitHub Pages
 
+# ═══════════════════════════════════════════════════════════════════════
+# §A033 audit fix (NC§34-C3) — ROLLBACK PROCEDURE
+# ═══════════════════════════════════════════════════════════════════════
+# Quick rollback dacă deploy production breaks:
+#
+# Option 1 — Revert last commit (FAST, recommended P0/P1):
+#   git revert HEAD
+#   git push origin main
+#   → triggers fresh deploy of previous state (~3-5 min propagation)
+#
+# Option 2 — Revert specific commit by hash:
+#   git revert <commit-hash>
+#   git push origin main
+#
+# Option 3 — Hard reset main to last known good (LAST RESORT, requires
+# force-push acceptance — Daniel manual decision; pierdes commits ulterioare):
+#   git reset --hard <last-good-hash>
+#   git push --force-with-lease origin main
+#   → Daniel verify backup tag exists before force-push
+#
+# Option 4 — Manual emergency restore via gh-pages branch (when main blocked):
+#   1. Pe gh-pages branch find last known good commit
+#   2. Force-push gh-pages directly to that commit
+#   3. Site recovers <1min (no rebuild needed)
+#
+# Verify post-rollback:
+#   - `npm run healthcheck` → all 4 checks green
+#   - Sentry dashboard → error rate dropped
+#   - GitHub Actions → fresh deploy job succeeded
+#   - Daniel manual smoke: Magic Link login + Antrenor home render
+#
+# Post-incident: write entry în 06-sessions-log/INCIDENT_<date>.md
+# (cross-ref 08-workflows/PROD_OPS_RUNBOOK.md §2 decision tree).
+# ═══════════════════════════════════════════════════════════════════════
+
 on:
   push:
     branches: [main]
