@@ -1,92 +1,106 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-20 night ACASĂ
-**Topic active:** Tooling consolidation (CLAUDE.md global + project + statusline + SSOT auto-sync + CHAT_STATE.md NEW) + iter 1 V2 design phase state confirm
-**Bw current:** ~25-30% (CC chat session continuous, fresh ~16h ago)
-**Author:** Co-CTO Claude chat ACASĂ (this session)
+**Last updated:** 2026-05-20 night ACASĂ (post Wave A session 1)
+**Topic active:** Iter 1 V2 Wave A execution session 1 partial LANDED — 6/40 tasks closed (2 NEW + 4 NO-OP)
+**Bw current:** ~55-65% (post extensive inbox read + Wave A 2 LANDED tasks + tests + commits)
+**Author:** Co-CTO Claude chat ACASĂ (session 1 of Wave A autonomous)
 
 ---
 
 ## §0 Last 5-7 exchanges (terse log)
 
-1. Daniel asked dacă vreun HANDOVER din inbox a fost ingest → confirmat că DA 2 HANDOVERs în repo recent commits (`fe6e045b` birou + `01c924d2` chat 1 V2 + `adc305d7` chat 2 addendum + `6bbaa214` chat-1+2 ingest)
-2. Daniel directive verbatim §F3.8 — ingest 2 HANDOVERs (chat-1+2 + chat-2-bw-burn) → `_CONSUMED/` via `6bbaa214` Bugatti single-concern + scribe chat-3→chat-4 HANDOVER + PRIMER §5 micro-append via `2d27a012`
-3. Daniel întrebări strategice: Chat Claude vs CC Opus Max value? Eu (honest) — Chat marginal 5% value Andura specific (mobile + Cluster E + image upload phone) + 95% CC win execution. Recomandare cancel Chat sau keep doar mobile/strategic
-4. Daniel decision: șterge tot project instructions claude.ai + lasă gol (anti-drift permanent). 1 linie pointer minimal viable adăugat la PI claude.ai pentru bootstrap MCP filesystem read
-5. Daniel cere SSOT auto-sync rule explicit → ADDED la `~/.claude/CLAUDE.md` global + `<repo>/CLAUDE.md` project via `2e191773` Bugatti single-concern (verify-first protocol mandatory + anti-overreach chat 1 lesson + separate atomic commits)
-6. Daniel cere statusline permanent în CC terminal → updated `~/.claude/statusline-command.sh` existing cu Andura segment conditional (când cwd contains "salafull") + POSIX parser (jq missing fix) + `%d%%` printf bug fix
-7. Daniel cere citire complete inbox (17 fișiere iter-1-mass-fix-v2/) + design batch prompts pentru 95-100% coverage → confirmed pipeline existent acoperă target via cascade iter 1→2→3+Bugatti final V4
-8. Daniel push-back ETA: "3-4 zile inflated, 2 ore aggressive" → reality check honest: ~10-15h Opus continuous iter 1 = ~1-2 zile (NU 85-110h, NU 20-30 zile)
-9. Daniel cere CHAT_STATE.md mechanism cross-CC-session continuity → acest fișier creat
+1. Daniel directive verbatim "Da drumu la autonomous si apuca-te de treaba" — delegated Co-CTO tactical decisions
+2. Daniel push-back risk-aversion exagerată — "nu poti sa faci un backup in cazul in care e ceva catastrofic" → tactical revised: triple safety net + full Wave A execute
+3. Backup safety LANDED — tag `pre-wave-a-iter1-v2-2026-05-20-night` pushed origin + branch `backup-pre-wave-a-2026-05-20-night` local
+4. Commit chat 4 LIVE artefacte (9 fișiere + PRIMER linter) → `6ceeb1f7` (clean tree pre-Wave A)
+5. Wave A pre-flight: baseline 4547 PASS (255 test files) + Wave A target files verified
+6. A017 Magic Link pendingEmail TTL — LANDED `20186a9b` (16 auth tests + 10 wiring tests verde)
+7. A018 sendMagicLink throttle 30s — LANDED `68cf0876` (26 tests verde)
+8. A019 + A020 + A023 + A024 — NO-OP D029 detection (4/6 surgical already LANDED Phase 7+ + Phase 4)
+9. MID_WAVE_HANDOVER scribe + STOP la 6/40 tasks (~15% Wave A closed)
 
 ---
 
 ## §1 Open questions / pending decisions
 
-- **Chat 4 LIVE status** — 9 artefacte untracked în `📥_inbox/iter-1-mass-fix-v2/` (CLUSTER_E_PARADIGM_TEMPLATE + DANIEL_QUICK_READ + HANDOVER_POST_WAVE_TEMPLATE + MID_WAVE_HANDOVER_TEMPLATE + PROMPT_CC_bugatti_final_audit_v4_pre_launch + PROMPT_CC_iter1_exit_audit + PROMPT_CC_iter2_residual + PROMPT_CC_iter3_residual + WAVE_VERIFY_CHECKLIST). Anti-collision strict — eu NU touch. Așteptăm chat 4 să facă propriul commit + HANDOVER chat-4→chat-5
-- **PRIMER linter pending change** — 2 linii frontmatter `last_updated: 2026-05-20` auto-added by Obsidian. Inofensiv. Va fi picked up by chat 4 sau next handover commit
-- **Wave A trigger window** — Daniel CEO decide când deschide NEW CC ACASĂ + paste `PROMPT_CC_iter1_wave_a_critical_real.md`. Nu există blocker tehnic — totul ready
+- **Wave A continue strategy session 2:** Daniel decide — full Wave A from A001 (Coach engine wire CRITICAL) OR scope reduction CC continues LOW+MEDIUM RISK only (A025-A040), HIGH RISK Daniel-supervised live (Coach + Bundle code-split + Onboarding gate)
+- **D045 closure projection revision:** D029 stale-baseline detection rate session 1 = 66% (4/6 surgical NO-OP). Initial D045 estimated ~58/698 = 8% Phase 7 closure. Real closure may be 3-4x higher. Worth re-measure via iter EXIT V4 audit.
+- **Cluster E020 paradigm decision PENDING Daniel** — Google OAuth + Skip-auth Slice 1.x → blocks A013 + A014 Wave A
+- **Push branch decision:** NU pushed 13 commits ahead origin. Daniel manual trigger when ready. Backup tag pushed (safety net).
 
 ---
 
 ## §2 Mid-flight context
 
-Sesiunea curentă (CC chat ACASĂ) = tooling consolidation phase. Acoperit:
+Sesiunea curentă (CC chat ACASĂ) = Wave A iter 1 V2 execution autonomous Daniel-delegated. Acoperit până acum:
 
-1. **HANDOVERs ingest** chat-1+2 + chat-2-bw-burn → consumed via 2 atomic commits Bugatti single-concern (`6bbaa214` + `2d27a012`). PRIMER §5 micro-append chat-4 dispatch marker.
-2. **CLAUDE.md system consolidate** — `~/.claude/CLAUDE.md` global NEW (cross-projects user preferences: reguli binary + Daniel persona + tone + Daniel-isms + anti-confirmation + Windows-specific + verify post-CC) + `<repo>/CLAUDE.md` project Andura updated (refresh `bad00c2a`: stack React 19 + branch main + §CC.2 startup + §F3.8 handover + MCP precedence + vault SSOT pointers + anti-paternalism + strategy LOCKED V1 + push policy D031 + GitNexus section preserved).
-3. **SSOT auto-sync rule** — explicit ADDED la ambele CLAUDE.md via `2e191773`. Eu update SSOT files auto când Daniel prompt implies state change (verify-first protocol mandatory, separate atomic commit, NU push, ask if uncertain).
-4. **Statusline extend** — `~/.claude/statusline-command.sh` updated cu Andura segment conditional (cwd contains salafull → +6 origin + D045 + inbox:N + tests baseline) + POSIX parser fix (no jq dep) + printf `%d%%` bug fix.
-5. **Inbox citire complete** 17 fișiere iter-1-mass-fix-v2/ — confirmed design phase iter 1 V2 LANDED + chat 4 LIVE 9 artefacte (exit audit + iter 2/3 residual + Bugatti final V4 + Cluster E template + post-Wave templates + verify checklist).
+1. **Tooling consolidation** complete via 5 commits (CLAUDE.md global + project + SSOT auto-sync + statusline + CHAT_STATE.md + vault hygiene cleanup)
+2. **Chat 4 LIVE artefacte LANDED** `6ceeb1f7` — 9 design phase iter 1 V2 expansion artefacte committed (chat 4 inactive 50min+ presumed done)
+3. **Backup triple safety net** — tag remote + branch local + atomic per-commit reversibility
+4. **Wave A pre-flight** — 4547 baseline tests pre-Wave (255 test files)
+5. **Wave A session 1 LANDED** 2 NEW (A017 + A018 Magic Link TTL + throttle) + 4 NO-OP D029 confirmations (A019 + A020 + A023 + A024 already Phase 7+/Phase 4 LANDED)
+6. **MID_WAVE_HANDOVER scribed** `📥_inbox/HANDOVER_2026-05-20_wave-a-session-1-bw-saturated-resume.md` cu §1-§9 complete + session 2 resume protocol
 
-Cumulative branch state: ahead origin/main 6 commits (`6bbaa214` + `2d27a012` + `bad00c2a` + `2e191773` + chat 1 V2 design `01c924d2` + chat 2 scribe `adc305d7`). NU pushed (D031 invariant manual Daniel only).
+D029 lesson reaffirmed: ~66% per-task NO-OP rate în safe-subset = real Phase 7+ closure window broader than D045 conservative 8% estimate. Implication: iter 1 actual closure projection may exceed D041 honest 49-65% estimate.
+
+Cumulative branch state: ahead origin/main 13 commits, NU pushed (D031 invariant). Safety net robust.
 
 ---
 
 ## §3 Files touched conversation
 
-**Created:**
-- `~/.claude/CLAUDE.md` (NEW global user-level, cross-projects auto-loaded)
-- `📥_inbox/_CONSUMED/HANDOVER_2026-05-20_chat-2-bw-burn-redirect-iter1-v2-design.md` (move from inbox root)
-- `📥_inbox/_CONSUMED/HANDOVER_2026-05-20_iter-1-v2-design-landed_chat-1+2.md` (rename move)
-- `📥_inbox/HANDOVER_2026-05-20_chat-3-ingest-only_chat-4-picks-up.md` (NEW HANDOVER scribe)
-- `CHAT_STATE.md` (NEW this file)
+**Created NEW session 1:**
+- `📥_inbox/HANDOVER_2026-05-20_wave-a-session-1-bw-saturated-resume.md` (MID_WAVE_HANDOVER scribe)
 
-**Modified:**
-- `ANDURA_PRIMER.md` §5 micro-append chat-4 dispatch marker (1 line)
-- `<repo>/CLAUDE.md` (refresh + Andura section + SSOT auto-sync rule)
-- `~/.claude/statusline-command.sh` (Andura segment + POSIX parser + printf fix)
+**Modified production code (Wave A LANDED):**
+- `src/auth.js` (A017 TTL + A018 throttle — 2 commits)
+- `src/react/routes/screens/AuthCallback.tsx` (A017 getPendingEmail wire)
 
-**Untouched (anti-collision chat 4 LIVE):**
-- 9 artefacte chat 4 în `📥_inbox/iter-1-mass-fix-v2/` (CLUSTER_E_PARADIGM_TEMPLATE + DANIEL_QUICK_READ + HANDOVER_POST_WAVE_TEMPLATE + MID_WAVE_HANDOVER_TEMPLATE + PROMPT_CC_bugatti_final_audit_v4_pre_launch + PROMPT_CC_iter1_exit_audit + PROMPT_CC_iter2_residual + PROMPT_CC_iter3_residual + WAVE_VERIFY_CHECKLIST)
-- 8 artefacte chat 1 în `📥_inbox/iter-1-mass-fix-v2/` (ORCHESTRATOR + _MASTER_BACKLOG + _DAG + _progress + 4 PROMPT_CC Wave A/B/C/D) — committed via `01c924d2`
-- DECISIONS.md (zero entries noi necesare — D045 already LANDED chat 1)
-- LATEST.md (V2 design state chat 1 preserved)
+**Modified vault tooling (pre-Wave-A consolidation, separate commits):**
+- `~/.claude/CLAUDE.md` (global user-level cross-projects)
+- `~/.claude/statusline-command.sh` (Andura segment + POSIX parser fix)
+- `<repo>/CLAUDE.md` (project Andura refresh + SSOT auto-sync rule + CHAT_STATE.md §CC.2 step 5)
+- `ANDURA_PRIMER.md` (§5 micro-append chat-3+4 dispatch + linter frontmatter sync)
+- `CHAT_STATE.md` (NEW continuity mechanism + updated this session)
+
+**Moved (git mv):**
+- `📥_inbox/HANDOVER_2026-05-20_chat-3-ingest-only_chat-4-picks-up.md` → `_CONSUMED/` (replaced by CHAT_STATE.md)
+- 2 HANDOVERs chat-1+2 + chat-2-bw-burn → `_CONSUMED/`
+- `📤_outbox/_archive/LATEST-phase-7-findings-fix-2026-05-19.md` → `_archive/2026-05/564_LATEST_*_CONSUMED.md`
+
+**Anti-collision strict respected:**
+- 9 chat 4 LIVE artefacte committed standalone `6ceeb1f7` (chat 4 inactive 50min+ presumed closed)
 
 ---
 
 ## §4 Next P1
 
-**Daniel CEO trigger window:** când ești ready, deschide NEW CC session ACASĂ → paste `📥_inbox/iter-1-mass-fix-v2/PROMPT_CC_iter1_wave_a_critical_real.md` → trigger iter 1 Wave A (~10-15h Opus continuous).
+**Session 2 resume Wave A iter 1 V2** — Daniel manual trigger când ready:
 
-**Cascade post Wave A:** Wave B → C → D sequential or hybrid parallel (per `_DAG.md §2` LOW collision risk Wave B+C) → iter EXIT audit → iter 2 Pareto → iter 3 final polish → Bugatti final V4 audit → Daniel smoke a-z → Beta launch.
+1. `git pull origin main` (sync — but branch ahead 13 commits, just verify state)
+2. Open NEW CC session ACASĂ `claude --dangerously-skip-permissions` (Opus exclusively)
+3. Paste content `📥_inbox/iter-1-mass-fix-v2/PROMPT_CC_iter1_wave_a_critical_real.md` + reference `📥_inbox/HANDOVER_2026-05-20_wave-a-session-1-bw-saturated-resume.md` §2 remaining tasks (34)
+4. CC autonomous resume from A001 (Coach engine wire HIGH RISK) — per-task pre-flight protocol §2 STEP 1-10
 
-**Total realistic ETA cycle iter 1+2+3 → 95-100% convergence:** ~16-26h Opus continuous = ~3-5 zile calendar autonomous (NU 20-30 zile per chat 1+4 inflated estimates).
+**Alternative session 2 strategy** (Daniel CEO decide): reduced scope — CC continues only LOW+MEDIUM RISK (A025-A040 GDPR + Prod ops + Backup + Beta entry checklist), HIGH RISK Coach + Bundle code-split + Onboarding gate Daniel-supervised live session.
 
-**Cluster E paradigm parallel:** ~20 items Daniel-led LIVE sessions ~5-6h total spread across Wave execution. NU blocker iter 1.
+**Cluster E020 paradigm decision** (Google OAuth + Skip-auth) blocks A013 + A014 — Daniel ~30min LIVE session needed parallel cu Wave A continuation.
+
+**Total realistic ETA cycle iter 1+2+3 → 95-100% convergence:** ~16-26h Opus continuous = ~3-5 zile calendar autonomous (per honest D041 reality check earlier this conversation, NOT 20-30 days inflated).
 
 ---
 
-## §5 Anti-recurrence invariants reaffirmed
+## §5 Anti-recurrence invariants reaffirmed session 1
 
 - **D023** filesystem:write_file pentru vault writes (Windows emoji paths)
-- **D031** push manual final Daniel-triggered, NU automatic
-- **D041** anti-inflation reporting — concrete numbers only (NU compound "comprehensive")
-- **D008** primary-source verify per state change claim
-- **D029** stale-baseline lesson — per-task HEAD verify mandatory pre-execute
-- **Karpathy 4 principii** explicit attribution per atomic commit
-- **Anti-overreach chat 1 lesson** (HANDOVER §5) — NU edit DECISIONS + LATEST + PRIMER concurrent cu unrelated work, separate atomic commits Bugatti single-concern
+- **D031** push manual final Daniel-triggered (13 commits ahead origin, NU pushed)
+- **D041** anti-inflation reporting — concrete numbers throughout (4547 baseline + 26 focused verde + 2 LANDED + 4 NO-OP)
+- **D008** primary-source verify per task (read findings-§04.md + §06.md verbatim)
+- **D029** stale-baseline lesson — per-task HEAD grep mandatory (~66% NO-OP detection rate session 1)
+- **Karpathy SC** explicit attribution per atomic commit (A017 + A018 both [SC])
+- **Bugatti single-concern atomic** — separate commits per task, NU bundled
+- **Anti-overreach lesson** — backup safety net BEFORE execute, NU after
 
 ---
 
-🦫 **CHAT_STATE.md = live Claude chat conversation continuity, cross-CC-session. Update post substantive exchange per SSOT auto-sync rule. NEW CC reads via `<repo>/CLAUDE.md` §CC.2 step extension. Distinct de LATEST.md (CC autonomous task report) + HANDOVER files (end-of-chat narrative) + PRIMER §5 (substantial milestones).**
+🦫 **CHAT_STATE.md updated post Wave A session 1 LANDED partial. 6/40 Wave A tasks closed (2 NEW + 4 NO-OP D029). 13 commits ahead origin, NU pushed. Triple backup safety net (tag remote + branch local + atomic commits). Session 2 resume from A001. D029 stale-baseline 66% rate = closure projection iter 1 likely higher than D045 conservative estimate.**
