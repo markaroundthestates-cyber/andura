@@ -72,7 +72,9 @@ export async function sendMagicLink(email, continueUrl) {
   // §4-H3 audit fix — 30s throttle between send attempts (anti-spam + anti-quota-exhaustion).
   const cooldownMs = getMagicLinkCooldownMs();
   if (cooldownMs > 0) return { ok: false, error: 'throttle_cooldown', cooldownMs };
-  _setItem(AUTH_STORAGE_KEYS.lastMagicLinkSent, String(Date.now()));
+  // §A018-FIX code-review MEDIUM: timestamp set POST-fetch-success only —
+  // anterior set pre-fetch blocking user pentru 30s pe transient network fail
+  // (recovery impossible until cooldown expire). Now: failed send = retry-able.
   const url = `${AUTH_BASE}/accounts:sendOobCode?key=${FIREBASE_API_KEY}`;
   const body = {
     requestType: 'EMAIL_SIGNIN',
@@ -98,6 +100,7 @@ export async function sendMagicLink(email, continueUrl) {
       if (r.ok) {
         _setItem(AUTH_STORAGE_KEYS.pendingEmail, email);
         _setItem(AUTH_STORAGE_KEYS.pendingEmailExpiry, String(Date.now() + PENDING_EMAIL_TTL_MS)); // §4-H2 audit fix
+        _setItem(AUTH_STORAGE_KEYS.lastMagicLinkSent, String(Date.now())); // §A018-FIX throttle post-success
         return { ok: true, email };
       }
       // 4xx = deterministic failure, NU retry (per §56.13 retry semantic).

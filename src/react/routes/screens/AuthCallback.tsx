@@ -9,7 +9,7 @@ import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
-import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail } from '../../../auth.js';
+import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, AUTH_STORAGE_KEYS } from '../../../auth.js';
 
 export function AuthCallback(): JSX.Element {
   const navigate = useNavigate();
@@ -36,6 +36,13 @@ export function AuthCallback(): JSX.Element {
         setAuthenticated(true);
         navigate('/app/antrenor', { replace: true });
       } else {
+        // §AuthCallback-FIX code-review MEDIUM: clear pendingEmail on verify-fail
+        // (anti-stale-leak shared-device scenario — failed verify means oobCode
+        // invalid/expired/replayed, pendingEmail no longer trusted).
+        try {
+          localStorage.removeItem(AUTH_STORAGE_KEYS.pendingEmail);
+          localStorage.removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry);
+        } catch {}
         setError(result.error || 'verify_failed');
         navigate(`/auth?error=${encodeURIComponent(result.error || 'verify_failed')}`, { replace: true });
       }

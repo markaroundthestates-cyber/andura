@@ -14,11 +14,11 @@
 const https = require('https');
 const dns = require('dns').promises;
 
+// §healthcheck-FIX code-review MEDIUM: NO hardcoded DSN. Env-only; skip
+// Sentry check if env missing (CI runs without secret valid scenario).
 const TARGET = process.env.ANDURA_TARGET_HOST || 'andura.app';
-const FIREBASE_RTDB_URL = process.env.VITE_FIREBASE_RTDB_URL
-  || 'https://andura-default-rtdb.europe-west1.firebasedatabase.app';
-const SENTRY_DSN = process.env.VITE_SENTRY_DSN
-  || 'https://dcbb183e8d98e95c6cd8b2c3c49b2427@o4511269200068608.ingest.de.sentry.io/4511269203869776';
+const FIREBASE_RTDB_URL = process.env.VITE_FIREBASE_RTDB_URL || '';
+const SENTRY_DSN = process.env.VITE_SENTRY_DSN || '';
 const TIMEOUT_MS = 10_000;
 
 const checks = [];
@@ -75,6 +75,10 @@ async function checkHttps() {
 }
 
 async function checkFirebaseRtdb() {
+  if (!FIREBASE_RTDB_URL) {
+    record('Firebase RTDB reachable', false, 'VITE_FIREBASE_RTDB_URL env missing');
+    return;
+  }
   // Anonymous ping — read RTDB root URL. Will return 401 if rules deny anonymous,
   // which still means RTDB is reachable (Firebase up).
   const result = await httpGet(`${FIREBASE_RTDB_URL}/.json?shallow=true`);
@@ -87,6 +91,10 @@ async function checkFirebaseRtdb() {
 }
 
 async function checkSentry() {
+  if (!SENTRY_DSN) {
+    record('Sentry DSN responsive', false, 'VITE_SENTRY_DSN env missing');
+    return;
+  }
   // Sentry DSN parse — extract host from format
   // https://<key>@<host>/<project_id>
   try {

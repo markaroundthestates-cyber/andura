@@ -31,21 +31,29 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
   // 1. On mount: if storage has valid auth (Magic Link landed prior session),
   //    set appStore true. Empty storage does NOT override programmatic
   //    setAuthenticated(true) — preserves dev mock login + test isolation.
-  // 2. Storage event: react to other-tab Magic Link landing.
+  // 2. Storage event: react to other-tab Magic Link landing OR signOut.
   // 3. Visibility change: re-check on tab focus.
-  // SignOut path: explicit setAuthenticated(false) call by signOut handler.
+  // 4. §ProtectedRoute-FIX code-review MEDIUM: bidirectional sync —
+  //    storage event + andura:signedout listener catches cross-tab logout
+  //    (storage event NU fires în the tab dispatching the change → need
+  //    explicit andura:signedout for same-tab + signOut() dispatch).
   useEffect(() => {
     const sync = (): void => {
       const fromStorage = readAuthFromStorage();
       if (fromStorage && !isAuthenticated) {
         setAuthenticated(true);
       }
+      // NU set false când !fromStorage — preserves programmatic mock login
+      // pentru tests + dev (per §7-C3 audit invariant).
     };
+    const onSignedOut = (): void => setAuthenticated(false);
     sync();
     window.addEventListener('storage', sync);
+    window.addEventListener('andura:signedout', onSignedOut);
     document.addEventListener('visibilitychange', sync);
     return () => {
       window.removeEventListener('storage', sync);
+      window.removeEventListener('andura:signedout', onSignedOut);
       document.removeEventListener('visibilitychange', sync);
     };
   }, [isAuthenticated, setAuthenticated]);
