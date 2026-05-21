@@ -2,22 +2,22 @@
 // Per mockup andura-clasic.html L2125-2137 (#screen-confirm-reset-coach).
 // Universal destructive drill-down pattern (mockup §11 LOCKED V1).
 //
-// Placeholder action — AI coach incremental learning state NU exists in
-// production yet. Mockup parity preserved: button navigate back. Avoids
-// Gigel confusion (NU triggers phantom action). Real wipe defers iter 3
-// when accelerated learning state persisted.
+// Wipes coach AI learning state (CDL tiers + pattern learning + accelerated
+// learning logs + aa cooldowns) via `coachReset.resetCoachState()`. Preserves
+// workout logs, weight logs, user profile, phase-log (mockup verbatim
+// "Datele tale de antrenament raman intacte. Ireversibil.").
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, RefreshCcw } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { resetCoachState } from '../../../../util/coachReset.js';
 
 export function ResetCoachConfirm(): JSX.Element {
   const navigate = useNavigate();
 
   function handleConfirm(): void {
-    // TODO iter 3: wipe acceleratedLearning state + reset coach AI insights.
-    // Placeholder = navigate back. AI coach incremental state NU persisted yet.
+    resetCoachState();
     navigate(gotoPath('settings-prefs'));
   }
 
