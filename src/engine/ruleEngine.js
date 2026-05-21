@@ -17,18 +17,31 @@ export const RULES = {
 };
 
 /**
- * @param {object} ctx - CoachContext (readiness, isInCut, fatigueIndex, stagnationWeeks,
+ * @typedef {Object} CoachCtxRuleEngine
+ * @property {{score?: number | null}} [readiness]
+ * @property {boolean} [isInCut]
+ * @property {number} [fatigueIndex]
+ * @property {number} [stagnationWeeks]
+ * @property {Array<string>} [weakGroups]
+ * @property {Array<{type?: string}>} [patterns]
+ * @property {number} [missedSessions]
+ */
+
+/**
+ * @param {CoachCtxRuleEngine} ctx - CoachContext (readiness, isInCut, fatigueIndex, stagnationWeeks,
  *                        weakGroups, patterns, missedSessions)
- * @returns {{ action: string, trace: Array, winner: object|null, overridden: Array }}
+ * @returns {{ action: string, trace: Array<any>, winner: any|null, overridden: Array<any> }}
  */
 export function evaluate(ctx) {
+  /** @type {Array<{id: string, priority: number, action: string, reason: string, data?: any}>} */
   const fired = [];
 
   // Priority 100 — REST: readiness critically low
-  if (ctx.readiness?.score !== null && ctx.readiness?.score < READINESS_LOW) {
+  const readinessScore = ctx.readiness?.score;
+  if (readinessScore != null && readinessScore < READINESS_LOW) {
     fired.push({
       ...RULES.REST_DAY,
-      reason: `readiness=${ctx.readiness.score} < ${READINESS_LOW}`,
+      reason: `readiness=${readinessScore} < ${READINESS_LOW}`,
     });
   }
 
@@ -91,7 +104,7 @@ export function evaluate(ctx) {
   }
 
   // Priority 30 — PATTERN_EARLY_END: early-stop patterns detected
-  const earlyEndPattern = ctx.patterns?.find(p => p.type === 'EARLY_END' || p.type === 'early_end' || p.type === 'session_short');
+  const earlyEndPattern = ctx.patterns?.find((p) => p.type === 'EARLY_END' || p.type === 'early_end' || p.type === 'session_short');
   if (earlyEndPattern) {
     fired.push({
       ...RULES.PATTERN_EARLY_END,
@@ -108,6 +121,10 @@ export function evaluate(ctx) {
   fired.sort((a, b) => b.priority - a.priority);
   const [winner, ...rest] = fired;
 
+  if (!winner) {
+    return { action: 'normal', trace: [], winner: null, overridden: [] };
+  }
+
   return {
     action: winner.action,
     winner,
@@ -118,6 +135,7 @@ export function evaluate(ctx) {
 
 /**
  * Convenience: evaluate and return just the action string.
+ * @param {CoachCtxRuleEngine} ctx
  */
 export function evaluateAction(ctx) {
   return evaluate(ctx).action;

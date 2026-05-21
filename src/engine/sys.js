@@ -10,15 +10,17 @@ export const SYS = {
   get AGE() { return getUserConfig().bio.age; },
 
   getCurrentKg() {
-    const ws = DB.get('weights') || {};
+    /** @type {Record<string, number>} */
+    const ws = /** @type {any} */ (DB.get('weights')) || {};
     const dates = Object.keys(ws).sort((a,b) => a.localeCompare(b));
     if (!dates.length) return this.START_KG;
-    return ws[dates[dates.length-1]];
+    const lastKey = dates[dates.length-1];
+    return (lastKey && ws[lastKey]) ?? this.START_KG;
   },
 
   getBF() {
-    const override = DB.get('bf-override');
-    if (override !== null && override !== undefined) return parseFloat(override);
+    const override = /** @type {string | number | null} */ (DB.get('bf-override'));
+    if (override !== null && override !== undefined) return parseFloat(String(override));
 
     const kg = this.getCurrentKg();
     const kgLost = this.START_KG - kg;
@@ -37,11 +39,12 @@ export const SYS = {
   },
 
   estimateTDEE() {
-    const ws = DB.get('weights') || {};
+    /** @type {Record<string, number>} */
+    const ws = /** @type {any} */ (DB.get('weights')) || {};
     let dates = Object.keys(ws).sort((a, b) => a.localeCompare(b));
 
     // Foloseste greutati din momentul schimbarii fazei (sau ultimele 14 zile)
-    const phaseChangeDate = DB.get('phase-change-date');
+    const phaseChangeDate = /** @type {string | null} */ (DB.get('phase-change-date'));
     if (phaseChangeDate) {
       const filtered = dates.filter(d => d >= phaseChangeDate);
       if (filtered.length >= 4) dates = filtered;
@@ -65,10 +68,14 @@ export const SYS = {
       return Math.round(bmr * 1.55);
     }
 
-    const w1 = ws[dates[0]], w2 = ws[dates[dates.length-1]];
+    const firstKey = dates[0];
+    const lastKey = dates[dates.length-1];
+    if (!firstKey || !lastKey) return KCAL_TARGET;
+    const w1 = ws[firstKey] ?? 0;
+    const w2 = ws[lastKey] ?? 0;
     const kgLost = w1 - w2;
-    const currentKcal = DB.get('current-kcal') || KCAL_TARGET;
-    const daysElapsed = Math.max(1, Math.round((new Date(dates[dates.length-1]) - new Date(dates[0])) / 86400000));
+    const currentKcal = /** @type {number} */ (DB.get('current-kcal')) || KCAL_TARGET;
+    const daysElapsed = Math.max(1, Math.round((new Date(lastKey).getTime() - new Date(firstKey).getTime()) / 86400000));
     const dailyDeficit = (kgLost * 7700) / daysElapsed;
     return Math.round(Math.max(KCAL_TARGET, Math.min(3500, currentKcal + dailyDeficit)));
   },
@@ -113,7 +120,7 @@ export const SYS = {
     const tdee = this.estimateTDEE();
 
     // Manual phase override → calculeaza kcal pentru faza respectiva, indiferent de data
-    const phaseOverride = DB.get('phase-override');
+    const phaseOverride = /** @type {string | null} */ (DB.get('phase-override'));
     if (phaseOverride && phaseOverride !== 'AUTO') {
       switch(phaseOverride) {
         case 'CUT':         return Math.round(tdee * 0.82);
@@ -134,11 +141,13 @@ export const SYS = {
     }
   },
 
+  /** @param {number} targetBF */
   kgAtBF(targetBF) {
     const lbm = this.getLBM();
     return Math.round((lbm / (1 - targetBF/100)) * 10) / 10;
   },
 
+  /** @param {number} targetKg */
   weeksToKg(targetKg) {
     const current = this.getCurrentKg();
     const diff = current - targetKg;
@@ -147,12 +156,17 @@ export const SYS = {
     return Math.ceil(diff / 0.5);
   },
 
+  /**
+   * @param {Date} date
+   * @param {number} weeks
+   */
   addWeeks(date, weeks) {
     const d = new Date(date);
     d.setDate(d.getDate() + weeks * 7);
     return d;
   },
 
+  /** @param {Date} date */
   fmtDate(date) {
     return date.toLocaleDateString('ro-RO', {day:'numeric', month:'short', year:'numeric'});
   },
@@ -199,7 +213,7 @@ export const SYS = {
     // Summer peak always shown
     const summerPeak = new Date(now.getFullYear(), 5, 15);
     if (now < summerPeak) {
-      const weeksToSummer = Math.round((summerPeak - now) / (7*86400000));
+      const weeksToSummer = Math.round((summerPeak.getTime() - now.getTime()) / (7*86400000));
       const projectedBF = Math.max(5, bf - weeksToSummer * 0.25);
       checkpoints.push({
         type: 'season',
@@ -230,6 +244,7 @@ export const SYS = {
   },
 
   // Tempo recommendations per exercise and phase
+  /** @param {string} exName */
   getTempo(exName) {
     const phase = this.getPhase();
     const isCompound = ['DB Shoulder Press','Incline DB Press','Flat DB Press','Lat Pulldown','Cable Row','Chest-Supported Row','Romanian Deadlift','Leg Press'].includes(exName);
@@ -245,6 +260,11 @@ export const SYS = {
   },
 
   // Special techniques recommendation
+  /**
+   * @param {string} exName
+   * @param {number} setNumber
+   * @param {number} totalSets
+   */
   getTechniques(exName, setNumber, totalSets) {
     const phase = this.getPhase();
     const techniques = [];
@@ -268,8 +288,9 @@ export const SYS = {
 
   // OFF day quest
   getOffDayQuest() {
-    const streaks = DB.get('step-streaks') || {count:0, lastDate:'', totalDays:0};
-    const stepsToday = DB.get('steps-today') || 0;
+    /** @type {{count: number, lastDate: string, totalDays: number}} */
+    const streaks = /** @type {any} */ (DB.get('step-streaks')) || {count:0, lastDate:'', totalDays:0};
+    const stepsToday = /** @type {number} */ (DB.get('steps-today')) || 0;
     const target = 8000;
     const pct = Math.min(100, Math.round(stepsToday/target*100));
 

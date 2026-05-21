@@ -51,35 +51,52 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Calf Raises':           'dumbbell',
 };
 
+/** @param {string} exerciseName */
 function getList(exerciseName) {
-  const equipType = EXERCISE_EQUIPMENT_MAP[exerciseName] || 'bailib_stack';
-  return EQUIPMENT_WEIGHTS[equipType] || EQUIPMENT_WEIGHTS['bailib_stack'];
+  const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
+  const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
+  const equipType = exMap[exerciseName] || 'bailib_stack';
+  return equipWeights[equipType] || equipWeights['bailib_stack'] || [];
 }
 
+/**
+ * @param {number} current
+ * @param {string} exerciseName
+ */
 export function getNextWeight(current, exerciseName) {
   const list = getList(exerciseName);
-  const idx = list.findIndex(w => w >= current);
-  if (idx === -1) return list[list.length - 1];
-  if (list[idx] === current) return list[Math.min(idx + 1, list.length - 1)];
-  return list[idx];
+  const idx = list.findIndex((w) => w >= current);
+  if (idx === -1) return list[list.length - 1] ?? current;
+  if (list[idx] === current) return list[Math.min(idx + 1, list.length - 1)] ?? current;
+  return list[idx] ?? current;
 }
 
+/**
+ * @param {number} current
+ * @param {string} exerciseName
+ */
 export function getPrevWeight(current, exerciseName) {
   const list = getList(exerciseName);
-  const idx = list.findIndex(w => w >= current);
-  if (idx <= 0) return list[0];
-  return list[idx - 1];
+  const idx = list.findIndex((w) => w >= current);
+  if (idx <= 0) return list[0] ?? current;
+  return list[idx - 1] ?? current;
 }
 
+/**
+ * @param {number} weight
+ * @param {string} exerciseName
+ */
 export function roundToEquipmentWeight(weight, exerciseName) {
   const list = getList(exerciseName);
   return list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
-  );
+  , list[0] ?? weight);
 }
 
+/** @param {string} exerciseName */
 export function getEquipmentType(exerciseName) {
-  return EXERCISE_EQUIPMENT_MAP[exerciseName] || 'bailib_stack';
+  const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
+  return exMap[exerciseName] || 'bailib_stack';
 }
 
 
