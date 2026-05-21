@@ -101,7 +101,7 @@ function buildRowHtml(exerciseName, index) {
     </div>`;
 }
 
-function markRowExhausted(rowEl, exerciseName) {
+function markRowExhausted(rowEl, _exerciseName) {
   if (!rowEl) return;
   rowEl.dataset.exhausted = 'true';
   rowEl.style.opacity = '0.5';

@@ -1,13 +1,13 @@
 // ══ DASHBOARD PAGE ═══════════════════════════════════════════
-import { DB, $, tod, todDate, fmt, cleanEx } from '../db.js';
-import { PROG, KCAL_TARGET, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, DTOT } from '../constants.js';
+import { DB, $, tod, todDate, cleanEx } from '../db.js';
+import { PROG, PROT_TARGET, SW_KG, TW_KG, TARGET_DATE, START_DATE, DTOT } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
 import { getTrend, initW } from './weight.js';
 import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getRealityCheck } from '../engine/reality.js';
 import { getAdherenceScore } from '../engine/adherence.js';
-import { getTodayReadiness, saveReadiness, READINESS_LABELS } from '../engine/readiness.js';
+import { getTodayReadiness, READINESS_LABELS } from '../engine/readiness.js';
 import { analyzeFromCDL } from '../engine/patternLearning.js';
 
 const SW = SW_KG, TW = TW_KG, SD2 = START_DATE;
@@ -92,7 +92,7 @@ export function renderDash(){
   const tgt=Math.round((SW-(SW-TW)*Math.min(1,Math.max(0,Math.round((new Date()-SD2)/86400000))/DTOT))*10)/10;
   const now=new Date();
   const dayMap=[6,0,1,2,3,4,5],tp=PROG[dayMap[now.getDay()]]||PROG[0];
-  const sysKcal=SYS.getKcalTarget(),sysPhase=SYS.getPhase();
+  const sysKcal=SYS.getKcalTarget();
   const kcals=DB.get('kcals')||{};
   const todayKcal=kcals[today]!==undefined?kcals[today]:sysKcal;
   const kcalColor=todayKcal>(sysKcal+200)?'var(--accent2)':todayKcal<(sysKcal-200)?'var(--accent3)':'var(--green)';

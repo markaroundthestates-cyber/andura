@@ -20,7 +20,6 @@
 // state.js:29 pre-stubbed enum 'workout' contract + existing engine ADRs
 // preserved unchanged).
 
-import { DB } from '../../db.js';
 import { EX_SETS } from '../../constants.js';
 import { state } from '../../state.js';
 import { DP } from '../../engine/dp.js';

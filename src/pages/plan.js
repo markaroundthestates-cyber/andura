@@ -2,7 +2,6 @@
 import { DB, $, tod, cleanEx } from '../db.js';
 import { PROG, KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
-import { calculateFatigueScore } from '../engine/fatigue.js';
 import { getDisplayTime } from './coach.js';
 import { toast } from '../ui/ui.js';
 import { renderUnifiedHistory } from './weight.js';
