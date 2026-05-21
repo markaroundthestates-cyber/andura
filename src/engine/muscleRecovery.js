@@ -35,13 +35,15 @@ const PARTIAL_THRESHOLD  = 12;
 
 /**
  * Build per-group recovery state map.
- * @param {Array} logs — workout logs (db.js logs shape)
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs — workout logs (db.js logs shape)
  * @returns {{[group:string]: 'recovered'|'partial'|'fatigued'}}
  */
 export function getRecoveryByGroup(logs) {
-  const headState = getMuscleState(logs);
+  const headState = /** @type {Record<string, number>} */ (getMuscleState(logs));
+  /** @type {{[group:string]: 'recovered'|'partial'|'fatigued'}} */
   const groupState = {};
-  for (const [group, heads] of Object.entries(GROUP_HEAD_MAP)) {
+  const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
+  for (const [group, heads] of Object.entries(headMap)) {
     if (heads.length === 0) {
       groupState[group] = 'recovered';
       continue;
@@ -56,17 +58,19 @@ export function getRecoveryByGroup(logs) {
 
 /**
  * Days since last session targeting a given group.
- * @param {Array} logs
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
  * @param {string} group
  * @returns {number|null} — null if never trained
  */
 export function daysSinceGroup(logs, group) {
-  const heads = new Set(GROUP_HEAD_MAP[group] || []);
+  const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
+  const heads = new Set(headMap[group] || []);
   if (heads.size === 0) return null;
   let latest = 0;
+  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
   for (const log of logs || []) {
     if (log.baseline || !log.ex) continue;
-    const muscles = EXERCISE_MUSCLES[log.ex];
+    const muscles = exMap[log.ex];
     if (!muscles) continue;
     const touchesGroup = [...(muscles.primary || []), ...(muscles.secondary || [])]
       .some(h => heads.has(h));
@@ -83,7 +87,7 @@ export function daysSinceGroup(logs, group) {
  * equal distribution (~16-17% target each). Lagging = group < 60% of average
  * peer group volume across last 14 days.
  *
- * @param {Object} profile — { logs: Array, lookbackDays?: 14 }
+ * @param {{ logs?: Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>, lookbackDays?: number } | null | undefined} profile — { logs: Array, lookbackDays?: 14 }
  * @returns {Array<{group: string, label: string, ratio: number, sets: number}>}
  *   Sorted by ratio ascending (most lagging first).
  */
@@ -92,22 +96,26 @@ export function getLaggingMuscles(profile) {
   const lookbackDays = profile?.lookbackDays ?? 14;
   const cutoff = Date.now() - lookbackDays * MS_PER_DAY;
 
+  const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
+  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
+  /** @type {Record<string, number>} */
   const setsPerGroup = {};
-  for (const g of Object.keys(GROUP_HEAD_MAP)) setsPerGroup[g] = 0;
+  for (const g of Object.keys(headMap)) setsPerGroup[g] = 0;
 
   for (const log of logs) {
     if (log.baseline || !log.ex) continue;
     const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
     if (ts < cutoff) continue;
-    const muscles = EXERCISE_MUSCLES[log.ex];
+    const muscles = exMap[log.ex];
     if (!muscles) continue;
+    /** @type {Set<string>} */
     const touched = new Set();
     for (const head of muscles.primary || []) {
-      for (const [g, heads] of Object.entries(GROUP_HEAD_MAP)) {
+      for (const [g, heads] of Object.entries(headMap)) {
         if (heads.includes(head)) touched.add(g);
       }
     }
-    touched.forEach(g => { setsPerGroup[g] += 1; });
+    touched.forEach(g => { setsPerGroup[g] = (setsPerGroup[g] ?? 0) + 1; });
   }
 
   // Only consider groups user actually trains (sets > 0 across any group)
@@ -115,13 +123,14 @@ export function getLaggingMuscles(profile) {
   if (activeGroups.length < 2) return [];
 
   const avg = activeGroups.reduce((a, [, s]) => a + s, 0) / activeGroups.length;
+  const labels = /** @type {Record<string, string>} */ (GROUP_LABELS_RO);
   const lagging = [];
   for (const [group, sets] of activeGroups) {
     const ratio = avg > 0 ? sets / avg : 1;
     if (ratio < 0.6) {
       lagging.push({
         group,
-        label: GROUP_LABELS_RO[group] || group,
+        label: labels[group] || group,
         ratio: parseFloat(ratio.toFixed(3)),
         sets,
       });

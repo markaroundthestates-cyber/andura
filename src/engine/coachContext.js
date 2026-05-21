@@ -72,6 +72,7 @@ export function buildCoachContext() {
   };
 }
 
+/** @param {number | null} readinessScore */
 function calculateVolumeMultiplier(readinessScore) {
   if (readinessScore === null) return 1.0;
   if (readinessScore >= READINESS_PR)   return 1.1;
@@ -92,8 +93,10 @@ function getTodayReadinessScore() {
     if (val === null || val === undefined) return null;
     if (typeof val === 'object' && val.score !== undefined) return val.score;
     // Format real: numar 1–5 → convertit in scor 0–100
+    /** @type {Record<number, number>} */
     const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
-    return Math.max(10, Math.min(100, 60 + (readinessPoints[val] ?? 0)));
+    const key = /** @type {number} */ (val);
+    return Math.max(10, Math.min(100, 60 + (readinessPoints[key] ?? 0)));
   } catch { return null; }
 }
 
@@ -104,8 +107,10 @@ function getTodayReadinessEmoji() {
     const val = all[todayDate];
     if (!val) return '😐';
     if (typeof val === 'object' && val.emoji) return val.emoji;
+    /** @type {Record<number, string>} */
     const emojiMap = { 5: '🔥', 4: '😊', 3: '😐', 2: '😕', 1: '😴' };
-    return emojiMap[val] || '😐';
+    const key = /** @type {number} */ (val);
+    return emojiMap[key] || '😐';
   } catch { return '😐'; }
 }
 
@@ -203,8 +208,10 @@ export function extractSessionDates(logs) {
   return Array.from(set).sort();
 }
 
+/** @param {number} n */
 function getLastNSessions(n) {
   const logs = getAllLogs();
+  /** @type {Record<string, Array<any>>} */
   const byDate = {};
   for (const log of logs) {
     const date = log.date;
@@ -213,26 +220,32 @@ function getLastNSessions(n) {
     byDate[date].push(log);
   }
   const dates = Object.keys(byDate).sort().reverse().slice(0, n);
-  return dates.map(d => ({ date: d, logs: byDate[d] }));
+  return dates.map(d => ({ date: d, logs: byDate[d] ?? [] }));
 }
 
 // ── Weight helpers ─────────────────────────────────────────────────────────
 
 function getCurrentWeight() {
   try {
+    /** @type {Record<string, number>} */
     const weights = JSON.parse(localStorage.getItem('weights') || '{}');
     const dates = Object.keys(weights).sort().reverse();
-    return dates.length > 0 ? weights[dates[0]] : getUserConfig().bio.currentKgFallback;
-  } catch { return getUserConfig().bio.currentKgFallback; }
+    const firstDate = dates[0];
+    return (dates.length > 0 && firstDate) ? weights[firstDate] : /** @type {any} */ (getUserConfig()).bio.currentKgFallback;
+  } catch { return /** @type {any} */ (getUserConfig()).bio.currentKgFallback; }
 }
 
 function getBodyweightTrend7d() {
   try {
+    /** @type {Record<string, number>} */
     const weights = JSON.parse(localStorage.getItem('weights') || '{}');
     const dates = Object.keys(weights).sort().reverse().slice(0, 7);
     if (dates.length < 2) return 0;
-    const oldest = weights[dates[dates.length - 1]];
-    const newest = weights[dates[0]];
+    const oldestKey = dates[dates.length - 1];
+    const newestKey = dates[0];
+    if (!oldestKey || !newestKey) return 0;
+    const oldest = weights[oldestKey] ?? 0;
+    const newest = weights[newestKey] ?? 0;
     return newest - oldest;
   } catch { return 0; }
 }
@@ -277,6 +290,7 @@ function _getRealCDLEntryCount() {
   } catch { return 0; }
 }
 
+/** @param {{type?: string, earlyEndRate?: number, adherenceRate?: number, deviationRate?: number}} pattern */
 function _deriveCDLConfidence(pattern) {
   switch (pattern.type) {
     case 'EARLY_END':    return (pattern.earlyEndRate ?? 0) / 100;
@@ -290,10 +304,11 @@ function _deriveCDLConfidence(pattern) {
 function _buildCDLPatterns() {
   const realCDLCount = _getRealCDLEntryCount();
   const patternsSuppressed = realCDLCount < CALIBRATION_LEVELS.INITIAL.minSessions;
+  /** @type {Array<any>} */
   let patterns = [];
   if (!patternsSuppressed) {
     try {
-      patterns = analyzeFromCDL({ windowDays: 30 }).map(p => ({
+      patterns = analyzeFromCDL({ windowDays: 30 }).map((/** @type {any} */ p) => ({
         ...p,
         confidence: p.confidence ?? _deriveCDLConfidence(p),
       }));

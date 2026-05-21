@@ -13,9 +13,26 @@ export interface ReadinessVerdict {
   canPR: boolean;
 }
 
+export const READINESS_PR: number;
+export const READINESS_HIGH: number;
+export const READINESS_MED: number;
+export const READINESS_LOW: number;
+
+export const READINESS_LABELS: Record<string, string>;
+
+export function getReadinessScore(
+  readinessInput: number | null | undefined,
+  kcalYesterday: number | null | undefined,
+  protYesterday: number | null | undefined,
+  targetKcal: number | null | undefined,
+  targetProt: number | null | undefined
+): number;
+
 export function getReadinessVerdict(
   score: number | null,
   opts?: { isInCut?: boolean }
 ): ReadinessVerdict;
 
+export function saveReadiness(value: number): void;
+export function getTodayReadiness(): number | null;
 export function getComputedReadinessScore(): number | null;

@@ -3,17 +3,21 @@ import { DB } from '../db.js';
 
 
 export function calculateFatigueScore() {
-  const logs = DB.get('logs') || [];
-  const wb = DB.get('wellbeing') || {};
+  /** @type {Array<{baseline?: boolean, session?: string, ts?: number, notes?: string[], rpe?: number}>} */
+  const logs = /** @type {any} */ (DB.get('logs')) || [];
+  /** @type {Record<string, {sleep?: number}>} */
+  const wb = /** @type {any} */ (DB.get('wellbeing')) || {};
 
   // Grupeaza ultimele 4 sesiuni
+  /** @type {Record<string, Array<{baseline?: boolean, session?: string, ts?: number, notes?: string[], rpe?: number}>>} */
   const sessions = {};
-  logs.filter(l => !l.baseline && l.session).forEach(l => {
-    if (!sessions[l.session]) sessions[l.session] = [];
-    sessions[l.session].push(l);
+  logs.filter((l) => !l.baseline && l.session).forEach((l) => {
+    const key = l.session ?? '';
+    if (!sessions[key]) sessions[key] = [];
+    sessions[key].push(l);
   });
   const last4 = Object.values(sessions)
-    .sort((a,b) => b[0].ts - a[0].ts)
+    .sort((a,b) => (b[0]?.ts ?? 0) - (a[0]?.ts ?? 0))
     .slice(0, 4);
 
   if (last4.length < 2) {
@@ -22,7 +26,7 @@ export function calculateFatigueScore() {
   }
 
   // ── Semnale ──────────────────────────────────────────────────────────────
-  const allNotes = last4.flatMap(s => s.flatMap(l => l.notes || []));
+  const allNotes = last4.flatMap(s => s.flatMap((l) => l.notes || []));
   const sleepBad  = allNotes.filter(n => n === 'sleep').length;
   const fatigue   = allNotes.filter(n => n === 'fatigue').length;
   const formBad   = allNotes.filter(n => n === 'form').length;
@@ -30,12 +34,12 @@ export function calculateFatigueScore() {
 
   // RPE mediu din ultimele 4 sesiuni (top sets)
   const sessionRPEs = last4.map(s => {
-    const rpes = s.filter(l=>l.rpe).map(l=>l.rpe).sort((a,b)=>b-a).slice(0,2);
+    const rpes = s.filter((l) => l.rpe).map((l) => /** @type {number} */ (l.rpe)).sort((a,b)=>b-a).slice(0,2);
     return rpes.length ? rpes.reduce((a,b)=>a+b,0)/rpes.length : 7;
   });
   const avgRPE = sessionRPEs.reduce((a,b)=>a+b,0) / sessionRPEs.length;
   const rpeRising = sessionRPEs.length >= 3 &&
-    sessionRPEs[0] > sessionRPEs[sessionRPEs.length-1] + 0.6;
+    (sessionRPEs[0] ?? 0) > (sessionRPEs[sessionRPEs.length-1] ?? 0) + 0.6;
 
   // Somn din wellbeing (ultimele 4 zile)
   const recentDates = Object.keys(wb).sort().reverse().slice(0, 4);
