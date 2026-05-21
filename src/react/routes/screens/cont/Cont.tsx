@@ -76,7 +76,7 @@ const SECTIONS: readonly ContSection[] = [
     rows: [
       { id: 'support', label: 'Suport', Icon: LifeBuoy },
       { id: 'ceva-nu-merge', label: 'Ceva nu merge', Icon: AlertOctagon },
-      { id: 'about', label: 'Despre Andura', Icon: Info },
+      { id: 'about', label: 'Despre Andura', Icon: Info, target: 'settings-about' },
       { id: 'faq', label: 'FAQ', Icon: HelpCircle },
     ],
   },

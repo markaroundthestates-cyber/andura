@@ -58,6 +58,7 @@ const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then
 const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
 const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
 const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((m) => ({ default: m.SettingsDanger })));
+const SettingsAbout = lazy(() => import('./screens/cont/SettingsAbout').then((m) => ({ default: m.SettingsAbout })));
 // §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
 const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
 const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
@@ -153,6 +154,7 @@ export const router = createBrowserRouter([
           { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
           { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
           { path: 'settings-danger', element: <LazyRoute><SettingsDanger /></LazyRoute> },
+          { path: 'settings-about', element: <LazyRoute><SettingsAbout /></LazyRoute> },
           // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
           { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
           { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },
