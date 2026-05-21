@@ -41,21 +41,21 @@ interface IntensityBanner {
 function bannerFor(intensityMod: IntensityMod): IntensityBanner {
   if (intensityMod === 'plus') {
     return {
-      bg: '#e7f0e2',
-      border: '#bdd9b3',
+      bg: 'var(--status-success-bg)',
+      border: 'var(--status-success-border)',
       msg: 'Coach urca intensitatea +15%. Mai grele cu o haltera, 1 rep in plus.',
     };
   }
   if (intensityMod === 'minus') {
     return {
-      bg: '#fbe3df',
-      border: '#e8b2a8',
+      bg: 'var(--status-danger-bg)',
+      border: 'var(--status-danger-border)',
       msg: 'Coach reduce intensitatea -20%. Mai usor azi, focus pe forma.',
     };
   }
   return {
-    bg: '#fdf3df',
-    border: '#e8d59a',
+    bg: 'var(--status-neutral-bg)',
+    border: 'var(--status-neutral-border)',
     msg: 'Sesiune normala - baseline. Coach ajusteaza in timpul sesiunii daca apare ceva.',
   };
 }

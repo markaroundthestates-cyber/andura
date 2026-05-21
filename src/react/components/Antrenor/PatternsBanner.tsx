@@ -21,11 +21,12 @@ export function PatternsBanner({ banners }: PatternsBannerProps): JSX.Element | 
           data-pattern-id={b.id}
           data-severity={b.severity}
           role="status"
-          className={`flex items-start gap-2.5 p-3 rounded-xl border ${
+          className="flex items-start gap-2.5 p-3 rounded-xl border"
+          style={
             b.severity === 'warn'
-              ? 'bg-[#fdf3df] border-[#e8d59a]'
-              : 'bg-paper2 border-line'
-          }`}
+              ? { background: 'var(--status-neutral-bg)', borderColor: 'var(--status-neutral-border)' }
+              : { background: 'var(--paper-2)', borderColor: 'var(--line)' }
+          }
         >
           {b.severity === 'warn' ? (
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />

@@ -33,6 +33,22 @@
     --succ: #3d7a4a;      /* Success green */
     --warn: #c89321;      /* Warning amber */
     --danger: #c8412e;    /* Danger (alias brick) */
+
+    /* Status banner tints (B009 light theme) — soft warm pastel layer for
+       intensity/pattern/alert/rest banners. Pair bg+border+text via vars
+       so dark theme can swap inverted polarity tints in one place. */
+    --status-success-bg: #e7f0e2;
+    --status-success-border: #bdd9b3;
+    --status-success-text: #1d4528;
+    --status-danger-bg: #fbe3df;
+    --status-danger-border: #e8b2a8;
+    --status-danger-text: #6b2418;
+    --status-neutral-bg: #fdf3df;
+    --status-neutral-border: #e8d59a;
+    --status-neutral-text: #6b5a1e;
+    --status-info-bg: #fdeeea;
+    --status-info-border: #f0c8be;
+    --status-info-text: #6b2418;
   }
 
   /* Dark theme — inverse polarity. Warm-neutral palette preserves Clasic
@@ -54,6 +70,21 @@
     --succ: #5a9d68;       /* Brighter success on dark */
     --warn: #e8b048;       /* Brighter warning on dark */
     --danger: #e85a44;     /* Danger (alias brick-dark variant) */
+
+    /* Status banner tints (B009 dark theme) — muted dark-tone variants
+       keeping hue identity while ensuring AA text contrast vs paper-dark. */
+    --status-success-bg: #1f3527;
+    --status-success-border: #2e4d39;
+    --status-success-text: #b5d9be;
+    --status-danger-bg: #3a1f1c;
+    --status-danger-border: #5a2e29;
+    --status-danger-text: #f0b8ad;
+    --status-neutral-bg: #3a3322;
+    --status-neutral-border: #5a4e30;
+    --status-neutral-text: #e8d99a;
+    --status-info-bg: #3a2422;
+    --status-info-border: #5a3329;
+    --status-info-text: #f0b8ad;
   }
 }
 

@@ -21,13 +21,14 @@ export function AlertsBanner({ alerts }: AlertsBannerProps): JSX.Element | null 
           data-alert-id={a.id}
           data-severity={a.severity}
           role={a.severity === 'urgent' ? 'alert' : 'status'}
-          className={`flex items-start gap-2.5 p-3 rounded-xl border ${
+          className="flex items-start gap-2.5 p-3 rounded-xl border"
+          style={
             a.severity === 'urgent'
-              ? 'bg-[#fbe3df] border-[#e8b2a8]'
+              ? { background: 'var(--status-danger-bg)', borderColor: 'var(--status-danger-border)' }
               : a.severity === 'warn'
-              ? 'bg-[#fdf3df] border-[#e8d59a]'
-              : 'bg-paper2 border-line'
-          }`}
+              ? { background: 'var(--status-neutral-bg)', borderColor: 'var(--status-neutral-border)' }
+              : { background: 'var(--paper-2)', borderColor: 'var(--line)' }
+          }
         >
           {a.severity === 'urgent' || a.severity === 'warn' ? (
             <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />

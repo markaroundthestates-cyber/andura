@@ -17,11 +17,17 @@ export function CoachRestCard({ onLightSession, onOverride }: Props): JSX.Elemen
   return (
     <div
       className="rounded-2xl p-4 mb-2.5 border"
-      style={{ background: '#f5ebd0', borderColor: '#e6d49a' }}
+      style={{
+        background: 'var(--status-neutral-bg)',
+        borderColor: 'var(--status-neutral-border)',
+      }}
       role="region"
       aria-label="Coach-ul recomanda azi - recuperare"
     >
-      <div className="text-xs font-semibold tracking-wider uppercase" style={{ color: '#8a6d1f' }}>
+      <div
+        className="text-xs font-semibold tracking-wider uppercase"
+        style={{ color: 'var(--status-neutral-text)' }}
+      >
         Coach-ul recomanda azi
       </div>
       <div className="text-xl font-bold mt-1 tracking-tight text-ink flex items-center gap-2.5">

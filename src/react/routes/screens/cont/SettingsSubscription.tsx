@@ -30,7 +30,10 @@ export function SettingsSubscription(): JSX.Element {
       </header>
 
       <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col items-center text-center">
-        <div className="w-22 h-22 rounded-full bg-[#fdeeea] flex items-center justify-center mb-5 p-5">
+        <div
+          className="w-22 h-22 rounded-full flex items-center justify-center mb-5 p-5"
+          style={{ background: 'var(--status-info-bg)' }}
+        >
           <Sparkles className="w-9 h-9 text-brick" aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-bold text-ink mb-2">In curand</h2>
