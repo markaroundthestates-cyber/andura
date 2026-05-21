@@ -40,13 +40,14 @@ import { tier1All } from './db.js';
  *   - Non-rotatable keys: returns Tier 0 only (no Tier 1 lookup).
  *
  * @param {string} key - localStorage key
- * @returns {Promise<Array<object>>}
+ * @returns {Promise<unknown[]>}
  */
 export async function getTieredArrayAsync(key) {
   const tier0 = _safeArray(DB.get(key));
-  const storeName = ROTATABLE_KEYS[key];
+  const storeName = (/** @type {Record<string, string>} */ (ROTATABLE_KEYS))[key];
   if (!storeName) return tier0;
 
+  /** @type {unknown[]} */
   let tier1 = [];
   try {
     tier1 = await tier1All(storeName);
@@ -62,12 +63,16 @@ export async function getTieredArrayAsync(key) {
  * behavior explicitly + array-typed return (vs DB.get's union).
  *
  * @param {string} key
- * @returns {Array<object>}
+ * @returns {unknown[]}
  */
 export function getTier0Array(key) {
   return _safeArray(DB.get(key));
 }
 
+/**
+ * @param {unknown} v
+ * @returns {unknown[]}
+ */
 function _safeArray(v) {
   return Array.isArray(v) ? v : [];
 }

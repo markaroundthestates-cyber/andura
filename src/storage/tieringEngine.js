@@ -107,13 +107,17 @@ export function estimateTier0Bytes() {
  * §B022 audit fix (REVIEW-A036-A038 M-§A036-02) — count stuck-hot entries
  * fara `ts` for telemetry; rotateOnce surfaces via Sentry breadcrumb daca > 0.
  *
- * @param {Array<{ ts?: number, date?: string }>} entries
+ * @typedef {{ ts?: number, date?: string, [k: string]: unknown }} TierEntry
+ *
+ * @param {TierEntry[]} entries
  * @param {number} [now=Date.now()]
  * @param {number} [ageLimitMs=TIER0_AGE_LIMIT_MS]
- * @returns {{ hot: Array, cold: Array, stuckHotEntries: number }}
+ * @returns {{ hot: TierEntry[], cold: TierEntry[], stuckHotEntries: number }}
  */
 export function classifyByAge(entries, now = Date.now(), ageLimitMs = TIER0_AGE_LIMIT_MS) {
+  /** @type {TierEntry[]} */
   const hot = [];
+  /** @type {TierEntry[]} */
   const cold = [];
   let stuckHotEntries = 0;
   if (!Array.isArray(entries)) return { hot, cold, stuckHotEntries };
@@ -164,16 +168,19 @@ function _resolveTs(entry) {
  * degradation: if Web Locks API unavailable (legacy browser, test env),
  * runs without lock (accept low-prob race risk).
  *
- * @param {object} [opts]
- * @param {object} [opts.db=DB] - DB sink override (testing)
- * @param {Function} [opts.bulkWriter=tier1Bulk] - Tier 1 write fn
- * @param {Function} [opts.eventLogger=logMigrationEvent] - audit append fn
- * @param {{ captureException?: Function }} [opts.sentry]
- * @param {number} [opts.now=Date.now()]
- * @param {number} [opts.ageLimitMs=TIER0_AGE_LIMIT_MS]
- * @param {Array<number>} [opts.retryBackoffMs=RETRY_BACKOFF_MS] - retry delays (testing fast)
- * @param {boolean} [opts.skipLock=false] - bypass Web Locks (testing only)
- * @returns {Promise<{ rotated: number, perKey: Array, errors: Array }>}
+ * @typedef {{
+ *   db?: { get: (k: string) => unknown, set: (k: string, v: unknown) => void },
+ *   bulkWriter?: Function,
+ *   eventLogger?: Function,
+ *   sentry?: { captureException?: Function },
+ *   now?: number,
+ *   ageLimitMs?: number,
+ *   retryBackoffMs?: number[],
+ *   skipLock?: boolean
+ * }} RotateOpts
+ *
+ * @param {RotateOpts} [opts]
+ * @returns {Promise<{ rotated: number, perKey: unknown[], errors: unknown[] }>}
  */
 export async function rotateOnce(opts = {}) {
   // §B025 audit fix — Web Locks API cross-tab serialization. Graceful fallback
@@ -191,6 +198,9 @@ export async function rotateOnce(opts = {}) {
   return _rotateOnceUnlocked(opts);
 }
 
+/**
+ * @param {RotateOpts} [opts]
+ */
 async function _rotateOnceUnlocked(opts = {}) {
   const db = opts.db ?? DB;
   const bulkWriter = opts.bulkWriter ?? tier1Bulk;
@@ -275,9 +285,9 @@ async function _rotateOnceUnlocked(opts = {}) {
  *
  * @param {Function} writer - bulk write fn (storeName, entries) → { written }
  * @param {string} storeName
- * @param {Array} entries
+ * @param {unknown[]} entries
  * @param {{ captureException?: Function }} sentry
- * @param {Array<number>} [backoffMs=RETRY_BACKOFF_MS] - delay schedule between attempts
+ * @param {number[]} [backoffMs=RETRY_BACKOFF_MS] - delay schedule between attempts
  * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
 async function _writeWithRetry(writer, storeName, entries, sentry, backoffMs = RETRY_BACKOFF_MS) {
@@ -291,7 +301,8 @@ async function _writeWithRetry(writer, storeName, entries, sentry, backoffMs = R
       lastErr = err;
     }
     if (attempt < backoffMs.length) {
-      await _sleep(backoffMs[attempt]);
+      const delay = backoffMs[attempt] ?? 0;
+      await _sleep(delay);
     }
   }
   _safeSentry(sentry, lastErr, {
@@ -301,6 +312,7 @@ async function _writeWithRetry(writer, storeName, entries, sentry, backoffMs = R
   return { ok: false, reason: _stringifyErr(lastErr) };
 }
 
+/** @param {number} ms */
 function _sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
@@ -372,12 +384,21 @@ export function stopAutoBackup() {
 
 // ── Internal helpers ────────────────────────────────────────────────────────
 
+/**
+ * @param {{ captureException?: Function } | null | undefined} sentry
+ * @param {unknown} err
+ * @param {object} ctx
+ */
 function _safeSentry(sentry, err, ctx) {
   if (!sentry?.captureException) return;
   try { sentry.captureException(err, ctx); }
   catch { /* swallow — never die from monitoring */ }
 }
 
+/**
+ * @param {unknown} err
+ * @returns {string}
+ */
 function _stringifyErr(err) {
   if (!err) return 'unknown';
   if (err instanceof Error) return err.message || err.toString();

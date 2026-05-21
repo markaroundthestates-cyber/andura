@@ -263,7 +263,8 @@ export async function tier1Delete(storeName, ids) {
 export async function logMigrationEvent(event) {
   const db = getDb();
   const ts = Date.now();
-  return db.table(STORES.MIGRATION_EVENTS).add({ ts, ...event });
+  const id = await db.table(STORES.MIGRATION_EVENTS).add({ ts, ...event });
+  return Number(id);
 }
 
 /**
@@ -298,6 +299,7 @@ export async function wipeUserDB(uid) {
  */
 export async function getStorageStats() {
   const db = getDb();
+  /** @type {Record<string, number>} */
   const counts = {};
   for (const store of Object.values(STORES)) {
     try {

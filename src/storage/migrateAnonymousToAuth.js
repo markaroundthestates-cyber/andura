@@ -112,6 +112,7 @@ export async function migrateAnonymousToAuth({ anonymousUuid, authUid }) {
 
   const source = _openWithSchema(sourceDb);
   const target = _openWithSchema(targetDb);
+  /** @type {Record<string, number>} */
   const stores_migrated = {};
   let total_records = 0;
 
