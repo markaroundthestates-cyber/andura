@@ -55,12 +55,12 @@ declare global {
     /** Firebase-side sync suppression flag (set during local-init / migrations). */
     _suppressFirebaseSync?: boolean;
 
-    /** Director engine cache map (window-scoped lifetime per session). */
-    _directorCache?: Map<string, unknown>;
+    /** Director engine cache map (window-scoped lifetime per session). Includes invalidate() method for downstream consumers. */
+    _directorCache?: Map<string, unknown> & { invalidate: () => void };
 
-    /** Manual sync trigger from dev console. */
-    syncToFirebase?: () => Promise<void>;
-    syncFromFirebase?: () => Promise<void>;
+    /** Manual sync trigger from dev console. Returns boolean indicating whether sync succeeded. */
+    syncToFirebase?: () => Promise<boolean>;
+    syncFromFirebase?: () => Promise<boolean>;
 
     /** Tombstones manual GC trigger from dev console. */
     gcTombstones?: () => number;

@@ -63,12 +63,14 @@ function getDeviceId() {
 // Appends `?auth=<idToken>` when an idToken is provided. Per Firebase docs,
 // REST endpoints accept the idToken as query param for per-uid rule
 // enforcement. Token is fetched proactively (auto-refresh inside getIdToken).
+/** @param {string} fullPath */
 async function _buildUrl(fullPath) {
   const token = await getIdToken().catch(() => null);
   const auth = token ? `?auth=${encodeURIComponent(token)}` : '';
   return `${FIREBASE_URL}/${fullPath}.json${auth}`;
 }
 
+/** @param {string} path */
 async function fbGet(path) {
   try {
     const url = await _buildUrl(path);
@@ -78,6 +80,7 @@ async function fbGet(path) {
   } catch { return null; }
 }
 
+/** @param {string} path @param {unknown} data */
 async function fbSet(path, data) {
   try {
     const url = await _buildUrl(path);
@@ -90,6 +93,7 @@ async function fbSet(path, data) {
   } catch { return false; }
 }
 
+/** @param {string} path */
 async function fbRemove(path) {
   try {
     const url = await _buildUrl(path);
@@ -100,16 +104,18 @@ async function fbRemove(path) {
 
 // Exposed so dataCleanup.js + auth migration runner can issue auth-aware
 // raw requests without re-implementing the URL builder.
+/** @param {string} fullPath */
 export async function buildAuthUrl(fullPath) {
   return _buildUrl(fullPath);
 }
 
+/** @param {ReadonlyArray<string>|null|undefined} keys */
 export async function clearFirebaseKeys(keys) {
   if (!keys || keys.length === 0) return;
   const userPath = getUserPath();
   if (!userPath) return;
   const results = await Promise.allSettled(
-    keys.map(async key => {
+    keys.map(async (/** @type {string} */ key) => {
       const ok = await fbRemove(`${userPath}/${key}`);
       if (ok) console.log(`[Firebase] Removed key: ${key}`);
       else console.warn(`[Firebase] Failed to remove key: ${key}`);
@@ -127,6 +133,7 @@ export async function syncToFirebase() {
       console.log('[Firebase] syncToFirebase: no auth + no fallback, skipping');
       return false;
     }
+    /** @type {Record<string, unknown>} */
     const payload = {};
     SYNC_KEYS.forEach(k => {
       const v = DB.get(k);
@@ -195,7 +202,7 @@ export async function syncFromFirebase() {
       applyTombstoneFilterToAll();
     } catch (e) {
       // Tombstones module is optional during transition — non-fatal.
-      console.warn('[Firebase] tombstone filter skipped:', e?.message);
+      console.warn('[Firebase] tombstone filter skipped:', e instanceof Error ? e.message : e);
     }
 
     // Warn about unknown remote keys so schema drift is visible
@@ -206,6 +213,7 @@ export async function syncFromFirebase() {
   } catch (e) { console.warn('Firebase load failed:', e); return false; }
 }
 
+/** @type {ReturnType<typeof setTimeout> | null} */
 let _syncTimer = null;
 const _origSet = DB.set.bind(DB);
 
@@ -215,19 +223,21 @@ const _origSet = DB.set.bind(DB);
 // Direct calls to window._directorCache.invalidate() from other modules bypass both (intentional).
 let _suppressed = false;
 let _pendingInvalidation = false;
+/** @type {ReturnType<typeof setTimeout> | null} */
 let _invalidateTimer = null;
 const INVALIDATE_DEBOUNCE_MS = 250;
 
 export function scheduleInvalidation() {
   if (!window._directorCache) return;
   if (_suppressed) { _pendingInvalidation = true; return; }
-  clearTimeout(_invalidateTimer);
+  if (_invalidateTimer) clearTimeout(_invalidateTimer);
   _invalidateTimer = setTimeout(() => {
     _invalidateTimer = null;
     if (window._directorCache) window._directorCache.invalidate();
   }, INVALIDATE_DEBOUNCE_MS);
 }
 
+/** @param {() => any} fn */
 export function suppressInvalidations(fn) {
   const wasSuppressed = _suppressed;
   _suppressed = true;
@@ -247,13 +257,13 @@ DB.set = function(key, val) {
     scheduleInvalidation();
   }
   if (SYNC_KEYS.includes(key) && !window._suppressFirebaseSync) {
-    clearTimeout(_syncTimer);
+    if (_syncTimer) clearTimeout(_syncTimer);
     _syncTimer = setTimeout(syncToFirebase, 3000);
   }
 };
 
 // Expose suppressInvalidations on DB for call-site convenience.
-DB.suppressInvalidations = suppressInvalidations;
+/** @type {any} */ (DB).suppressInvalidations = suppressInvalidations;
 
 export async function initFirebaseSync() {
   const synced = await syncFromFirebase();
