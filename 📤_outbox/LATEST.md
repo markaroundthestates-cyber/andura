@@ -1,115 +1,120 @@
-# Wave A iter 1 V2 — 95% LANDED Autonomous Overnight Co-CTO Cycle
+# Wave B-2 Autonomous Iter 2 — 23 fixes + 1 hygiene LANDED autonomous Co-CTO
 
-**Status:** Wave A LANDED ~95% (38/40) autonomous overnight 2026-05-20 night → 2026-05-21 morning. Pre-Beta gate GO conditional pe 5 Daniel decisions.
-**Last LANDED:** Wave A iter 1 V2 + audit cycle + iter 2 plan + .d.ts stubs prep + Wave B/C/D D029 sample + Bugatti V4 DEFER notice
-**Procedure:** D042 + D043 LOCKED V1 ABSOLUTE — Beta gate ZERO bug-uri dual-source convergence
+**Status:** Wave B-2 LANDED 100% autonomous (23/23 effective tasks + 1 hygiene .obsidian ignore). Cluster 1+2+3+4+5 complete. Cluster 6 EXIT raport (acest file).
+**Last LANDED:** D048 throttle accepted-risk doc append.
+**Procedure:** D042+D043+D046+D047 LOCKED V1 ABSOLUTE — Beta gate ZERO bug-uri dual-source convergence + ConfirmModal RIP-OUT correction.
 **Model:** Opus 4.7 EXCLUSIVELY
-**Stop trigger UNIC:** Daniel STOP explicit (current: continuous mode autonomous per Daniel directive "Nu te opresti singur")
-**Branch:** main, **~46 commits ahead origin/main NU pushed** (D031 invariant Daniel manual final)
+**Stop trigger UNIC:** Daniel STOP explicit
+**Branch:** main, **66 commits ahead origin/main NU pushed** (D031 invariant Daniel manual final)
 
 ---
 
-## §1 Wave A Iter 1 V2 closure 95%
+## §1 Wave B-2 Iter 2 autonomous closure 100%
 
-### NEW LANDED (18 tasks)
-- A001 CoachTodayCard dynamic workoutTitle+duration+exerciseCount wire `b69a9540`
-- A002 engine-driven isRestDay routing `b882c0d4`
-- A003 ConfirmModal shared NEW + 11 tests `2bbdbdc3`
-- A004+A008 SettingsDanger inline → ConfirmModal refactor `15ee9d60` (-29 LOC)
-- A007 logout non-destructive confirm gate `d5203d02`
-- A007-BLOCKER fix authSignOut() in logout + delete `fc3e6cc9` (catched by gsd-security-auditor!)
-- A015 ProtectedRoute onboarding gate `e384a90e`
-- A016 account-delete re-auth freshness 5min `3f05f8ce`
-- A017 Magic Link pendingEmail TTL 1h (session 1)
-- A018 sendMagicLink throttle 30s (session 1) + A018-FIX timing
-- A021 border-[var(--line-strong)] → border-lineStrong 37 instances `fe2893a7`
-- A025 + A025-FIX GDPR Privacy Policy live content + honest erasure claim
-- A031 PROD_OPS_RUNBOOK.md `5070ab88`
-- A032 healthcheck.cjs script
-- A033 deploy.yml rollback procedure
-- A034 BACKUP_DR_RUNBOOK.md `51695436`
-- A035 test-restore.cjs script
-- A040 BETA_ENTRY_CRITERIA.md `39f944db`
+### Cluster 1: Code-review LOW (9 fixes effective, B013 MOOT D047)
+- B011 FIREBASE_API_KEY startup assert prevents silent placeholder leak `16a7c18f`
+- B012 CoachTodayCard quote PERMANENT DESIGN ELEMENT doc `fdc889ef`
+- B014 path aliases @auth + @routes + @stores + @components + @lib `e1166b50`
+- B015 SettingsDanger wipeAllLocalData console.warn DEV-only wrap `c3850927`
+- B016 test-restore hostname check wire (was intent-only comment) `cf3f9d64`
+- B017 healthcheck Firebase RTDB content-type validate (anti hijack/proxy) `0b2af2e2`
+- B018 Antrenor extract showWorkoutCard ternary readability `d062f804`
+- B019 buildGoogleSignInUrl nonce CSPRNG (replaces Math.random) `472675f1`
+- B020 AuthCallback single navigate path missing_params `d1c87b1f`
 
-### NO-OP D029 detection (12 tasks)
-A019 + A020 + A023 + A024 + A026 + A027 + A028 + A029 + A030 + A037 (missing engine) + A039 (covered by existing scripts)
+### Cluster 2: A036 Tier MEDIUM (5 fixes)
+- B021 migrateAnonymousToAuth → closeDb invariant documented `8192c9a9`
+- B022 tieringEngine stuckHotEntries telemetry + Sentry breadcrumb `d38fe8bc`
+- B023 tier2Stub caller contract Promise<object> await requirement `65f553c3`
+- B024 scheduleStore saveWeekly Sentry capture (was 3 silent catches) `1fb54c17`
+- B025 rotateOnce Web Locks API cross-tab serialization `39af3a81`
 
-### Audit-only (2 tasks)
-A036 PASS_WITH_NITS (DB Tier mapping) + A038 BLOCKER (Kalman processNoise undocumented + feature flag OFF → EWMA fallback)
+### Cluster 3: A038 Kalman MEDIUM independent (6 fixes)
+- B028 validateKalmanState defensive helper for persisted state `501e4969`
+- B030 computeR2 filter valid pairs NU substitute 0 (real-world gaps) `7abd6c53`
+- B031 evaluateR2Gate strict > intentional per ADR 026 spec doc `9317d766`
+- B032 ISRAETEL_BASELINES primary source citation + audit caveat `d0ad3c69`
+- B033 MOVEMENT_CATEGORY RO aliases pentru Big 11 Library 657 `981f2f1b`
+- B034 KCAL_FLOOR persona-aware variant post-Beta deferred doc `2ead8929`
 
-### MEDIUM fixes preventive (4)
-sendMagicLink throttle pre-fetch timing + AuthCallback pendingEmail verify-fail cleanup + ProtectedRoute andura:signedout listener + healthcheck hardcoded DSN removed
+### Cluster 4: UI 6-pillar nits (2 fixes effective, B035 MOOT D047)
+- B036 SettingsPrivacy toggle invisible hit area expand Maria 65 44px `64ffc9ed`
+- B037 CoachTodayCard --coach-lora + --coach-meta tokens + Lucide icons `3e47fe27`
 
-### Tooling additions (3)
-Playwright MCP `.mcp.json` + claude-code-security-review skill `.claude/commands/` + GitHub workflow `.github/workflows/security-review.yml`
+### Cluster 5: DECISIONS throttle accepted-risk doc (1 fix)
+- B040 D048 Magic Link 30s throttle accepted-risk + Firebase quota DiD `c671cdb9`
 
-### A022a iter 2 prep (2)
-src/db.d.ts + src/constants.d.ts type stubs
-
----
-
-## §2 Quality gates summary (autonomous overnight cycle)
-
-| Gate | Verdict | Findings |
-|---|---|---|
-| `/security-review` skill (38-commit diff) | PASS | 0 HIGH/MEDIUM (>=8 confidence) |
-| gsd-security-auditor (8 threats) | PASS post-A007-fix | 5 PASS + 2 PARTIAL + 1 BLOCKER FIXED |
-| gsd-code-reviewer (10 files Wave A) | PASS_WITH_NITS | 0 CRITICAL + 4 MEDIUM (all FIXED) + 10 LOW (iter 2) |
-| gsd-ui-auditor (6 components 6-pillar) | GO | 4 PASS + 2 PASS_WITH_NITS + 0 FAIL |
-| gsd-code-reviewer engine math A036+A038 | A036 PASS, A038 BLOCKER | Daniel decizia Kalman/EWMA |
-| gsd-pattern-mapper (A005-A010) | Recommendations | 4 UI placements documented |
-| gsd-planner (iter 2) | PLAN LANDED | 38 atomic tasks |
+### Hygiene fix (1, bundled cu B022)
+- .obsidian/** ESLint ignore — Obsidian Sync drag plugin colored-tags TS-only rule pre-commit hook blocker. Per D030 setup expansion.
 
 ---
 
-## §3 5 BLOCKED Daniel decisions (vezi `📥_inbox/MORNING_HANDOVER_2026-05-21.md` §3)
+## §2 Cluster Totals
 
-1. ConfirmModal A005-A010 paradigm (drill-down vs shared modal)
-2. Cluster E020 Google OAuth + Skip-auth Slice 1.x
-3. A011-A012 Bundle code-split live timing
-4. A038 Kalman Bayesian Nutrition V1 (Beta sau defer + EWMA fallback acceptabil V1?)
-5. A021-A022 LARGE refactor iter 2 scope (A022 split deja documented + .d.ts prep landed)
+| Cluster | Tasks Effective | Karpathy Dominant | Status |
+|---|---|---|---|
+| 1 LOW | 9/9 (B013 MOOT D047) | SC + SF | ✅ DONE |
+| 2 A036 MED | 5/5 | SC | ✅ DONE |
+| 3 A038 MED | 6/6 | SC + SF + GD | ✅ DONE |
+| 4 UI nits | 2/2 (B035 MOOT D047) | SC | ✅ DONE |
+| 5 DECISIONS | 1/1 | SF | ✅ DONE |
+| **TOTAL** | **23/23** | **SC dominant** | **✅ 100%** |
 
----
-
-## §4 Iter EXIT V4 audit re-measure
-
-D045 conservative estimate: **8%** Phase 7 closure pre-Wave-A
-Reality post Wave A overnight: **~24%** iter 1 cumulative (3x higher)
-Wave A alone: **95%** Wave A LANDED autonomous ceiling
-
-Real pace observed: **~5-8 min/task** (chat 4 estimate 30min/task = 3-5x inflated)
-
-Honest projection iter 1 + iter 2 + iter 3 → CONVERGENCE EXIT: ~30-50h Opus continuous + Daniel CEO decisions cycle.
+Pre-Beta gate progress: Wave A 95% LANDED + Wave B-2 100% LANDED = ~32% iter 1+2 cumulative closure projected (post measurement EXIT V5 audit pending iter 2 finish).
 
 ---
 
-## §5 Audit reports outbox
+## §3 Iter 2 remaining (Daniel-supervised pending)
 
-Full data în `📤_outbox/wave-a-audit-engine/`:
-- ITER_EXIT_V4_REPORT.md (Wave A audit re-measure)
-- SECURITY.md (8 threats audited)
-- UI-REVIEW.md (6-pillar visual)
-- CODE-REVIEW.md (10 files fresh-eyes)
-- REVIEW-A036-A038.md (engine math)
-- PATTERNS.md (A005-A010 placement recommendations)
-- A021-SCOPE.md (D029 detection — already 95% migrated)
-- A022-SCOPE.md (TS strict 6 atomic sub-tasks split)
-- WAVE_BCD_D029_SAMPLE.md (iter 2 prep)
-- BUGATTI_V4_DRY_RUN_DEFER.md (prerequisite gate NOT met, defer post iter 3 convergence)
+**Wave B-1 BLOCKED-on-Daniel (10 RIP-OUT migrate + drill-down):**
+- B001-B011 ConfirmModal A003 RIP-OUT + uniform drill-down screens (D047 LOCKED V1, ~5-8h HIGH RISK security-critical Daniel-supervised iter 2)
+- B005+B006 Cluster E020 OAuth + Skip-auth (D046 §3.2, ~2-4h iter 2)
+- B007+B008 Bundle code-split live supervised (D046 §3.3, ~2-3h Daniel-prezent ASAP-saptamana)
+- B009+B010 A021+A022 Tailwind ↔ CSS vars + TS strict (D046 §3.5, ~6-10h supervised iter 2)
+- B026+B027+B029 A038 Kalman Beta scope (D046 §3.4, ~12-20h dev + simulator iter 2 sau iter 3)
+- B038 ConfirmModal paradigm task superseded by D047 RIP-OUT
+- B039 GDPR Tier 1+2 wipe (D-6 pending Daniel verdict)
+- B013 + B035 MOOT post D047 RIP-OUT
 
-Iter 2 plan în `📥_inbox/iter-2-mass-fix-v2/ITER_2_PLAN.md` (38 atomic tasks structured).
-
----
-
-## §6 Lessons learned overnight
-
-1. **Subagents = real value NU doar paralelism** — gsd-security-auditor catched §A007 BLOCKER
-2. **D029 stale-baseline ~30%** Wave A NO-OP detection rate (vs D045 conservative 8%)
-3. **Honest pace ~5-8 min/task** confirmed (chat 4 inflated 3-5x corrected)
-4. **Paralelism gain doc-writers ~30x** vs sequential
-5. **Anti-overreach respected** — skipped HIGH RISK A011-A012 + product UI + Cluster E + ZERO catastrofa overnight
+**Minor pending Daniel decisions:**
+- D-1b Goal type 4 → 6 expansion (B003 sub-decision)
+- D-6 GDPR implement vs amend Privacy Policy
+- D-7 Wave structure preference
 
 ---
 
-🦫 **Wave A iter 1 V2 95% LANDED autonomous Co-CTO overnight. Pre-Beta gate GO conditional. 46+ commits ahead origin/main NU pushed (D031 invariant). Backup tag intact. MORNING_HANDOVER Daniel review-ready. Iter 2 plan structured 38 atomic tasks. 5 Daniel decisions surfaced. Continuous mode active per "Nu te opresti singur".**
+## §4 Pre-commit hook learnings cycle
+
+1. `.obsidian/plugins/colored-tags/main.js` ESLint TS rule reference (`@typescript-eslint/no-explicit-any`) broke pre-commit. Fixed via ignore addition (B022-prep hygiene).
+2. Test `classifyByAge` shape contract `{hot, cold}` → `{hot, cold, stuckHotEntries}` required test update (additive — B022 bundle).
+3. TypeScript 7.0 deprecation `baseUrl` → removed, paths resolve relative to tsconfig.json without baseUrl (B014 retry).
+4. Relative import path 2-up NU 3-up din `src/react/stores/` → `src/util/sentry.js` (B024 retry).
+
+ZERO destructive ops cycle. ZERO push (D031). ZERO --no-verify bypass.
+
+---
+
+## §5 Lessons learned Wave B-2
+
+1. **Pace ~5-8 min/task confirmed** — 23 atomic commits autonomous ~3-4h cumulative (matches Wave A overnight pace).
+2. **Pre-commit hook health** — first cycle commit cycle revealed Obsidian Sync drag drift (.obsidian plugins not ignored). Hygiene fix bundled cu B022.
+3. **Karpathy SC dominant** — 19/23 surgical changes (single-file, scope-bound). SF rare (defensive infrastructure). GD rare (B025 Web Locks).
+4. **Doc-only fixes 7/23** — pre-Beta substrate substantial documentation upgrade (D041 anti-inflation visible: code+doc both).
+5. **ZERO test regressions post-commit** — 4570+ tests stable.
+
+---
+
+## §6 Next P1 — Daniel-side trigger
+
+Wave B-2 PLATEAU — autonomous-safe tasks exhausted. Wave B-1 needs Daniel:
+- A003 RIP-OUT supervised session (HIGH RISK security-critical logout/delete migrate)
+- Bundle live supervised ASAP-saptamana
+- Cluster E OAuth + Skip-auth implementation
+- Kalman simulator calibrate (iter 2 sau iter 3)
+- A021+A022 LARGE refactor supervised checkpoints
+
+Push branch decision — 66 commits ahead origin/main, NU pushed (D031 invariant Daniel manual).
+
+---
+
+🦫 **Wave B-2 iter 2 autonomous 100% LANDED 2026-05-21 morning Co-CTO. 23 atomic Bugatti single-concern commits. ZERO regressions, ZERO destructive ops, ZERO push. Pre-Beta substrate hardened — Sentry breadcrumb visibility + Web Locks cross-tab safety + Kalman R² real-world weigh-in gaps + RO movement aliases + Maria 65 44px tap targets + CSPRNG nonce + path aliases forward-compat infra. Cluster 1+2+3+4+5 ✅ done. Wave B-1 supervised pending Daniel trigger. PLATEAU mode stand-by.**
