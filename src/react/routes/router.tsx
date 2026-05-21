@@ -56,6 +56,10 @@ const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then
 const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
 const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
 const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((m) => ({ default: m.SettingsDanger })));
+// §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
+const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
+const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
+const ResetDataConfirm = lazy(() => import('./screens/cont/ResetDataConfirm').then((m) => ({ default: m.ResetDataConfirm })));
 
 /**
  * §B007 — Suspense wrapper pentru lazy sub-screens. Fallback minimal spinner
@@ -141,6 +145,10 @@ export const router = createBrowserRouter([
           { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
           { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
           { path: 'settings-danger', element: <LazyRoute><SettingsDanger /></LazyRoute> },
+          // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
+          { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
+          { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },
+          { path: 'reset-data-confirm', element: <LazyRoute><ResetDataConfirm /></LazyRoute> },
         ],
       },
     ],
