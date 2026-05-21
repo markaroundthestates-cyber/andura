@@ -26,6 +26,18 @@ export const FIREBASE_API_KEY = (typeof import.meta !== 'undefined' && import.me
   || (typeof window !== 'undefined' && window.__FIREBASE_API_KEY)
   || 'PLACEHOLDER_WEB_API_KEY';
 
+// §B011 audit fix (CODE-REVIEW L-1) — startup assert: fail fast dacă placeholder
+// leaked în prod build. Iter 9.5 lesson (D040): silent fallback masked broken
+// Magic Link weeks. Visible boot-time error > silent 400s downstream.
+if (FIREBASE_API_KEY === 'PLACEHOLDER_WEB_API_KEY') {
+  const isProd = typeof import.meta !== 'undefined' && import.meta.env?.PROD === true;
+  const msg = '[auth] FIREBASE_API_KEY = PLACEHOLDER_WEB_API_KEY — Magic Link will fail. Set VITE_FIREBASE_API_KEY build env var (per D040 deploy.yml injection).';
+  if (isProd) {
+    throw new Error(msg);
+  }
+  if (typeof console !== 'undefined') console.warn(msg);
+}
+
 // Storage keys (single source of truth, used in tests + signOut).
 export const AUTH_STORAGE_KEYS = Object.freeze({
   idToken:            'firebase-id-token',
