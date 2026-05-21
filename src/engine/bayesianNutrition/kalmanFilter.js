@@ -145,6 +145,44 @@ export function isKalmanFeatureFlagEnabled(flags) {
 }
 
 /**
+ * Validate a persisted KalmanState shape (loaded from IndexedDB sau localStorage).
+ *
+ * §B028 audit fix (REVIEW-A036-A038 M-§A038-01) — defensive validation for
+ * corrupt persisted state (mu="NaN" string, sigma negative, NaN/Infinity).
+ * Without explicit validate, `kalmanUpdate1D` defaults mu→0 silent → catastrophic
+ * recommendations (e.g., target 0 kg → engine cere user pierde 80 kg overnight).
+ * Caller should prompt re-calibration UI dacă valid=false.
+ *
+ * @param {unknown} state
+ * @returns {{ valid: boolean, reason?: string }}
+ */
+export function validateKalmanState(state) {
+  if (state === null || state === undefined) {
+    return { valid: false, reason: 'state_null_or_undefined' };
+  }
+  if (typeof state !== 'object') {
+    return { valid: false, reason: 'state_not_object' };
+  }
+  const s = /** @type {Record<string, unknown>} */ (state);
+  if (!Number.isFinite(s.mu)) {
+    return { valid: false, reason: 'mu_not_finite' };
+  }
+  if (!Number.isFinite(s.sigma)) {
+    return { valid: false, reason: 'sigma_not_finite' };
+  }
+  if (typeof s.sigma === 'number' && s.sigma < 0) {
+    return { valid: false, reason: 'sigma_negative' };
+  }
+  if (s.r2 !== undefined && !Number.isFinite(s.r2)) {
+    return { valid: false, reason: 'r2_not_finite' };
+  }
+  if (s.ewmaFallbackActive !== undefined && typeof s.ewmaFallbackActive !== 'boolean') {
+    return { valid: false, reason: 'ewmaFallbackActive_not_boolean' };
+  }
+  return { valid: true };
+}
+
+/**
  * Run full Kalman 1D filter cu fallback chain:
  *   1. Feature flag check → if disabled, EWMA fallback
  *   2. Kalman update → compute R²
