@@ -17,11 +17,15 @@ const USER_DATA_KEYS = [
   'current-kcal', 'phase-override', 'onboarding-done',
 ];
 
+/** @typedef {{ key: string, date: string, timestamp: number }} BackupIndexEntry */
+/** @typedef {{ restored: boolean, date?: string, keysRestored?: number, reason?: string }} RestoreResult */
+
 /**
  * Determina daca trebuie creat un backup azi.
  * @returns {boolean}
  */
 export function shouldCreateDailyBackup() {
+  /** @type {BackupIndexEntry[]} */
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
   if (index.length === 0) return true;
   const lastDate = index[index.length - 1]?.date;
@@ -31,13 +35,14 @@ export function shouldCreateDailyBackup() {
 
 /**
  * Creeaza un backup zilnic si il stocheaza.
- * @returns {{ key: string, date: string, size: number }}
+ * @returns {{ key: string, date: string, size: number } | null}
  */
 export function createDailyBackup() {
   const today = tod();
   const ts = Date.now();
   const key = `${BACKUP_PREFIX}${ts}`;
 
+  /** @type {Record<string, unknown>} */
   const data = {};
   for (const k of USER_DATA_KEYS) {
     const v = DB.get(k);
@@ -55,6 +60,7 @@ export function createDailyBackup() {
   }
 
   // Update index
+  /** @type {BackupIndexEntry[]} */
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
   index.push({ key, date: today, timestamp: ts });
   DB.set(BACKUP_INDEX_KEY, index);
@@ -67,6 +73,7 @@ export function createDailyBackup() {
  * Elimina backup-urile mai vechi decat MAX_BACKUPS.
  */
 export function pruneOldBackups() {
+  /** @type {BackupIndexEntry[]} */
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
   if (index.length <= MAX_BACKUPS) return;
 
@@ -80,9 +87,10 @@ export function pruneOldBackups() {
 
 /**
  * Returneaza lista backup-urilor disponibile, cronologic DESC.
- * @returns {Array<{ key, date, timestamp }>}
+ * @returns {BackupIndexEntry[]}
  */
 export function listBackups() {
+  /** @type {BackupIndexEntry[]} */
   const index = DB.get(BACKUP_INDEX_KEY) ?? [];
   return [...index].sort((a, b) => b.timestamp - a.timestamp);
 }
@@ -90,7 +98,7 @@ export function listBackups() {
 /**
  * Restaureaza dintr-un backup (dupa key sau numarul de zile in urma).
  * @param {string|number} keyOrDaysAgo - key direct sau numar de zile (1=ieri, 3=3 zile, etc.)
- * @returns {{ restored: boolean, date: string, keysRestored: number }}
+ * @returns {RestoreResult}
  */
 export function restoreFromBackup(keyOrDaysAgo) {
   let key;

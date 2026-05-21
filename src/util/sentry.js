@@ -10,6 +10,7 @@ const DEFAULT_SENTRY_DSN = 'https://dcbb183e8d98e95c6cd8b2c3c49b2427@o4511269200
 const SENTRY_DSN = import.meta.env?.VITE_SENTRY_DSN || DEFAULT_SENTRY_DSN;
 
 let _initialized = false;
+/** @type {typeof import('@sentry/browser') | null} */
 let _Sentry = null;
 
 export async function initSentry() {
@@ -45,10 +46,11 @@ export async function initSentry() {
 
     // Manual testing surface (production console drop §1-C2 leaves window vars
     // intact — accessed via DevTools console even in prod build).
-    window.Sentry = _Sentry;
+    const Sentry = _Sentry;
+    window.Sentry = Sentry;
     window.testSentry = (msg = 'Manual test from Andura console') => {
       if (!_initialized) return;
-      _Sentry.captureMessage(msg, 'info');
+      Sentry.captureMessage(msg, 'info');
     };
   } catch {
     // Sentry init failure = best-effort fallback (silent). Errors still
@@ -58,10 +60,14 @@ export async function initSentry() {
 
 /**
  * Capture an exception manually from critical paths.
+ *
+ * @param {unknown} error
+ * @param {{ tags?: Record<string, unknown>, extra?: Record<string, unknown>, [k: string]: unknown }} [context]
  */
 export function captureException(error, context = {}) {
   if (!_initialized || !_Sentry) return;
-  _Sentry.withScope(scope => {
+  const Sentry = _Sentry;
+  Sentry.withScope(/** @param {import('@sentry/browser').Scope} scope */ (scope) => {
     if (context.tags && typeof context.tags === 'object') {
       for (const [k, v] of Object.entries(context.tags)) scope.setTag(k, String(v));
     }
@@ -71,6 +77,6 @@ export function captureException(error, context = {}) {
     for (const [k, v] of Object.entries(context)) {
       if (k !== 'tags' && k !== 'extra') scope.setExtra(k, v);
     }
-    _Sentry.captureException(error);
+    Sentry.captureException(error);
   });
 }

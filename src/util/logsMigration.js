@@ -4,6 +4,8 @@
 
 import { DB, todTs } from '../db.js';
 
+/** @typedef {{ ts?: number, date?: string, [k: string]: unknown }} LogEntry */
+
 const MIGRATION_FLAG = 'migration-utc-to-local-v1';
 
 export function migrateLogsUtcToLocal() {
@@ -11,8 +13,10 @@ export function migrateLogsUtcToLocal() {
     return { skipped: true, reason: 'already-migrated' };
   }
 
+  /** @type {LogEntry[]} */
   const logs = DB.get('logs') || [];
   let modified = 0;
+  /** @type {string | null} */
   let backupKey = null;
 
   if (logs.length > 0) {
@@ -32,8 +36,10 @@ export function migrateLogsUtcToLocal() {
   }
 
   // Also migrate CDL entries (coach-decisions)
+  /** @type {LogEntry[]} */
   const cdl = DB.get('coach-decisions') || [];
   let cdlModified = 0;
+  /** @type {string | null} */
   let cdlBackupKey = null;
 
   if (cdl.length > 0) {
