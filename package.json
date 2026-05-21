@@ -34,6 +34,7 @@
     "prepare": "husky",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
+    "typecheck:strict-js": "tsc --noEmit --project tsconfig.checkjs.json",
     "lint": "eslint . --max-warnings=9999",
     "lint:fix": "eslint . --fix --max-warnings=9999",
     "lighthouse": "lhci autorun",

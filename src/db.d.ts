@@ -5,27 +5,25 @@
 // Mirrors src/db.js JSDoc-implicit signatures. Generic <T> on DB.get/set
 // for callers to narrow at use site.
 
-declare module './db' {
-  export const DB: {
-    get<T = unknown>(key: string): T | null;
-    set<T = unknown>(key: string, value: T): void;
-  };
+export const DB: {
+  get<T = unknown>(key: string): T | null;
+  set<T = unknown>(key: string, value: T): void;
+};
 
-  /** Generic `document.getElementById` shorthand. Returns null when absent. */
-  export function $(id: string): HTMLElement | null;
+/** Generic `document.getElementById` shorthand. Returns null when absent. */
+export function $(id: string): HTMLElement | null;
 
-  /** Current local date as YYYY-MM-DD (sv locale, NOT UTC). */
-  export function tod(): string;
+/** Current local date as YYYY-MM-DD (sv locale, NOT UTC). */
+export function tod(): string;
 
-  /** Convert timestamp (ms or ISO) to local date YYYY-MM-DD. */
-  export function todTs(ts: number | string): string;
+/** Convert timestamp (ms or ISO) to local date YYYY-MM-DD. */
+export function todTs(ts: number | string): string;
 
-  /** Local date for arbitrary Date object as YYYY-MM-DD. */
-  export function todDate(d: Date): string;
+/** Local date for arbitrary Date object as YYYY-MM-DD. */
+export function todDate(d: Date): string;
 
-  /** Format ISO string to ro-RO short date (e.g. "12 mai"). */
-  export function fmt(s: string): string;
+/** Format ISO string to ro-RO short date (e.g. "12 mai"). */
+export function fmt(s: string): string;
 
-  /** Strip exercise name suffix variants (wide/neutral/rope/cable/drop/pump). */
-  export function cleanEx(n: string): string;
-}
+/** Strip exercise name suffix variants (wide/neutral/rope/cable/drop/pump). */
+export function cleanEx(n: string): string;
