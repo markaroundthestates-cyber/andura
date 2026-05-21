@@ -9,6 +9,8 @@
     "src/storage/**/*.js",
     "src/engine/calibration.js",
     "src/engine/calibrationReconciliation.js",
+    "src/engine/bayesianNutrition/**/*.js",
+    "src/engine/tempo/**/*.js",
     "src/global.d.ts",
     "src/db.d.ts",
     "src/constants.d.ts"
@@ -19,6 +21,10 @@
     "src/migrations/__tests__/**",
     "src/migrations/tests/**",
     "src/storage/__tests__/**",
-    "src/storage/tests/**"
+    "src/storage/tests/**",
+    "src/engine/bayesianNutrition/__tests__/**",
+    "src/engine/bayesianNutrition/tests/**",
+    "src/engine/tempo/__tests__/**",
+    "src/engine/tempo/tests/**"
   ]
 }

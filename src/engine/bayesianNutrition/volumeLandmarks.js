@@ -156,8 +156,8 @@ export function countCompoundObservations(recentSessions, windowDays = VOLUME_LA
     const daysAgo = Number(session.daysAgo);
     if (!Number.isFinite(daysAgo) || daysAgo > windowDays) continue;
     const movements = Array.isArray(session.movements) ? session.movements : [];
-    const hasCompound = movements.some((m) => {
-      if (!m) return false;
+    const hasCompound = movements.some((/** @type {{ movementId?: string } | null} */ m) => {
+      if (!m || !m.movementId) return false;
       const cat = resolveMovementCategory(m.movementId);
       return cat === MOVEMENT_CATEGORY.LOWER_COMPOUND || cat === MOVEMENT_CATEGORY.UPPER_COMPOUND;
     });
@@ -219,7 +219,7 @@ export function computePersonalizedLandmarks({ muscleGroup, movementCategory, re
   }
 
   // Isolation: graceful degradation 0.3× cand compound observations < 3
-  const { factor } = computeIsolationDegradation(recentSessions);
+  const { factor } = computeIsolationDegradation(recentSessions ?? []);
   return {
     mev:               baseline.MEV * factor,
     mav:               baseline.MAV * factor,

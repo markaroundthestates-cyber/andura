@@ -40,9 +40,10 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * @returns {number}
  */
 export function computeMoodScore({ energyReadiness, emoji, sleepSelfReport }) {
+  /** @type {number[]} */
   const components = [];
 
-  if (Number.isFinite(energyReadiness) && energyReadiness >= 0 && energyReadiness <= 1) {
+  if (energyReadiness != null && Number.isFinite(energyReadiness) && energyReadiness >= 0 && energyReadiness <= 1) {
     components.push(energyReadiness);
   }
 
@@ -53,13 +54,13 @@ export function computeMoodScore({ energyReadiness, emoji, sleepSelfReport }) {
     else if (e === 'red' || e === '🔴') components.push(0.0);
   }
 
-  if (Number.isFinite(sleepSelfReport) && sleepSelfReport >= 0 && sleepSelfReport <= 1) {
+  if (sleepSelfReport != null && Number.isFinite(sleepSelfReport) && sleepSelfReport >= 0 && sleepSelfReport <= 1) {
     components.push(sleepSelfReport);
   }
 
   if (components.length === 0) return 0.5; // neutral default
-  const sum = components.reduce((s, v) => s + v, 0);
-  return sum / components.length;
+  const sum = components.reduce((s, v) => (s ?? 0) + (v ?? 0), 0);
+  return (sum ?? 0) / components.length;
 }
 
 /**
@@ -75,7 +76,7 @@ export function computeMoodScore({ energyReadiness, emoji, sleepSelfReport }) {
 export function resolveProfileTypingThreshold({ tier, adaptiveValue }) {
   if (tier === CALIBRATION_TIERS.T0) return PROFILE_TYPING.t0Default;
   // T1, T2 — adaptive 0.55-0.85 (clamp)
-  if (Number.isFinite(adaptiveValue)) {
+  if (adaptiveValue != null && Number.isFinite(adaptiveValue)) {
     return Math.min(
       PROFILE_TYPING.t1PlusMax,
       Math.max(PROFILE_TYPING.t1PlusMin, adaptiveValue),
@@ -199,7 +200,7 @@ export function evaluateAntiSpam({ nowMs, lastPromptMs, promptCountThisYear }) {
   }
 
   // 28 zile rolling cooldown
-  if (Number.isFinite(lastPromptMs)) {
+  if (lastPromptMs != null && Number.isFinite(lastPromptMs)) {
     const days = Math.floor((Number(nowMs) - lastPromptMs) / DAY_MS);
     if (days < ANTI_SPAM.cooldownDays) {
       blockedReasons.push('rolling_28d_cooldown');

@@ -46,7 +46,8 @@ export function resolveTier(ctx) {
  * @returns {{prior: number, input: number}}
  */
 export function strongPriorSlope(tier) {
-  return STRONG_PRIOR_SLOPE[tier] ?? STRONG_PRIOR_SLOPE.T0;
+  const map = /** @type {Record<string, { prior: number, input: number }>} */ (STRONG_PRIOR_SLOPE);
+  return map[tier] ?? /** @type {{ prior: number, input: number }} */ (STRONG_PRIOR_SLOPE.T0);
 }
 
 /**
@@ -59,8 +60,8 @@ export function strongPriorSlope(tier) {
  * @returns {import('./types.js').Prior}
  */
 export function initPriorFromDemographic({ demographicMu, demographicSigma }) {
-  const mu = Number.isFinite(demographicMu) ? demographicMu : 0;
-  const sigma = Number.isFinite(demographicSigma) && demographicSigma > 0 ? demographicSigma : 1.0;
+  const mu = Number.isFinite(demographicMu) ? /** @type {number} */ (demographicMu) : 0;
+  const sigma = demographicSigma != null && Number.isFinite(demographicSigma) && demographicSigma > 0 ? demographicSigma : 1.0;
   return {
     mu,
     sigma,

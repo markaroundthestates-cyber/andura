@@ -58,7 +58,7 @@ export function filterKcalFloorObservations(observations) {
   }
 
   let excludedCount = 0;
-  const filtered = observations.filter((obs) => {
+  const filtered = observations.filter((/** @type {{ kcalDaily?: number } | null} */ obs) => {
     if (obs == null) return false;
     const kcalDaily = obs.kcalDaily;
     if (kcalDaily == null) return true; // pass-through obs fara kcalDaily field
