@@ -87,8 +87,19 @@ export function resolveMovementCategory(movementId) {
   if (typeof movementId !== 'string') return MOVEMENT_CATEGORY.ISOLATION;
   const m = movementId.toLowerCase().replace(/[\s-]/g, '_');
 
-  const lowerCompound = ['squat', 'deadlift', 'hip_thrust', 'leg_press', 'lunge'];
-  const upperCompound = ['bench', 'bench_press', 'overhead_press', 'ohp', 'row', 'pull_up', 'pullup', 'chin_up', 'dip'];
+  // §B033 audit fix (REVIEW-A036-A038 L-§A038-02) — EN substrings + RO aliases
+  // pentru Big 11 Library 657 RO migration. Default ISOLATION conservative
+  // when neither pattern matches.
+  const lowerCompound = [
+    'squat', 'deadlift', 'hip_thrust', 'leg_press', 'lunge',
+    // RO aliases:
+    'genuflexiun', 'indreptar', 'presa_picioare', 'presa_sold', 'fandari', 'fandare',
+  ];
+  const upperCompound = [
+    'bench', 'bench_press', 'overhead_press', 'ohp', 'row', 'pull_up', 'pullup', 'chin_up', 'dip',
+    // RO aliases:
+    'impins_piept', 'impins_deasupra', 'presa_militara', 'ramat', 'vasla', 'tractiun', 'flotari_paralele',
+  ];
 
   if (lowerCompound.some((id) => m.includes(id))) return MOVEMENT_CATEGORY.LOWER_COMPOUND;
   if (upperCompound.some((id) => m.includes(id))) return MOVEMENT_CATEGORY.UPPER_COMPOUND;
