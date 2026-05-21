@@ -123,10 +123,11 @@ describe('SettingsProfile — interactions', () => {
   });
 
   it('changing goal propagates pe save', () => {
+    // §B003/D-1b — use new 'slabire' value (was 'definire' pre-mockup parity).
     renderScreen();
-    fireEvent.change(screen.getByTestId('profile-goal-select'), { target: { value: 'definire' } });
+    fireEvent.change(screen.getByTestId('profile-goal-select'), { target: { value: 'slabire' } });
     fireEvent.click(screen.getByTestId('settings-profile-save'));
-    expect(useOnboardingStore.getState().data.goal).toBe('definire');
+    expect(useOnboardingStore.getState().data.goal).toBe('slabire');
   });
 });
 

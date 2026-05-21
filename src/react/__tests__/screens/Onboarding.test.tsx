@@ -50,9 +50,10 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.sex).toBe('m');
   });
 
-  it('step 3 goal options 4 choices', () => {
+  it('step 3 goal options 6 choices (mockup L863-869 parity)', () => {
     renderAt(3);
-    ['masa', 'forta', 'definire', 'sanatate'].forEach((g) => {
+    // §B003/D-1b audit fix — extended 4→6: auto + forta + masa + slabire + mentenanta + longevitate.
+    ['auto', 'forta', 'masa', 'slabire', 'mentenanta', 'longevitate'].forEach((g) => {
       expect(screen.getByTestId(`onb-goal-${g}`)).toBeInTheDocument();
     });
   });

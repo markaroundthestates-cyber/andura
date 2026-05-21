@@ -140,11 +140,16 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   );
 }
 
-const GOAL_LABELS: Record<'masa' | 'forta' | 'definire' | 'sanatate', string> = {
-  masa: 'Masa musculara',
+// §B003/D-1b audit fix — Goal labels 6 values per mockup andura-clasic.html
+// L863-869. Auto = default (engine alege singur). Slabire (was 'definire'),
+// Longevitate (was 'sanatate'). Mentenanta + Auto = NEW.
+const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' | 'longevitate', string> = {
+  auto: 'Auto · Coach-ul alege',
   forta: 'Forta',
-  definire: 'Definire',
-  sanatate: 'Sanatate generala',
+  masa: 'Masa musculara',
+  slabire: 'Slabire',
+  mentenanta: 'Mentenanta',
+  longevitate: 'Longevitate / Sanatate',
 };
 
 function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): JSX.Element {

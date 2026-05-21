@@ -15,11 +15,14 @@ import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
 
+// §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
-  masa: 'Masa',
+  auto: 'Auto',
   forta: 'Forta',
-  definire: 'Definire',
-  sanatate: 'Sanatate',
+  masa: 'Masa',
+  slabire: 'Slabire',
+  mentenanta: 'Mentenanta',
+  longevitate: 'Longevitate',
 };
 
 const FREQUENCY_LABELS: Record<Frequency, string> = {
