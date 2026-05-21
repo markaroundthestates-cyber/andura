@@ -2,22 +2,37 @@
 // Per mockup andura-clasic.html L2140-2152 (#screen-confirm-schimba-faza).
 // Universal destructive drill-down pattern (mockup §11 LOCKED V1).
 //
-// Placeholder action — phase engine integration defers iter 3 (no production
-// phase state machine exists yet). Mockup parity preserved: button shows
-// "Functia este in dezvoltare" feedback + navigate back. Avoids Gigel
-// confusion (NU triggers phantom action).
+// Manual phase override per pattern parity src/pages/plan.js legacy
+// setPhaseOverride. Radio selector AUTO/CUT/MAINTENANCE/BULK/STRENGTH +
+// persists DB.set('phase-override') + phase-change-date + phase-log entry.
+// Engine TDEE/volume/progression recalibrate next session via existing
+// DB.get('phase-override') consumers (dp.js, modals.js, reality.js, etc.).
 
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, GitBranch } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { setPhaseOverride, getPhaseOverride } from '../../../../util/phaseOverride.js';
+import { SYS } from '../../../../engine/sys.js';
+
+type PhaseOption = 'AUTO' | 'CUT' | 'MAINTENANCE' | 'BULK' | 'STRENGTH';
+
+const PHASE_OPTIONS: ReadonlyArray<{ value: PhaseOption; label: string; hint: string }> = [
+  { value: 'AUTO',        label: 'Auto-detect',  hint: 'Coach decide pe baza progresului' },
+  { value: 'CUT',         label: 'Cut',          hint: 'Deficit caloric (slabire grasime)' },
+  { value: 'MAINTENANCE', label: 'Mentinere',    hint: 'Greutate stabila, calibrare' },
+  { value: 'BULK',        label: 'Bulk',         hint: 'Surplus caloric (masa musculara)' },
+  { value: 'STRENGTH',    label: 'Forta',        hint: 'Usor surplus, focus performanta' },
+];
 
 export function SchimbaFazaConfirm(): JSX.Element {
   const navigate = useNavigate();
+  const initial: PhaseOption = (getPhaseOverride() as PhaseOption | null) ?? 'AUTO';
+  const [selected, setSelected] = useState<PhaseOption>(initial);
 
   function handleConfirm(): void {
-    // TODO iter 3: dispatch phase engine recalibrate (TDEE + volume + progression).
-    // Placeholder = navigate back. Phase state machine NU exists yet pre-Beta.
+    const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
+    setPhaseOverride(selected, tdee);
     navigate(gotoPath('settings-prefs'));
   }
 
@@ -46,12 +61,39 @@ export function SchimbaFazaConfirm(): JSX.Element {
         </div>
         <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Schimbi faza activa manual? Aceasta reseteaza unele calibrari. Continui?
+          Schimbi faza activa manual? Coach-ul va recalibra TDEE, volum si
+          progresie pe baza noii faze.
         </p>
-        <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Coach-ul va recalibra TDEE, volum si progresie pe baza noii faze.
+        <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-sm">
           Datele istorice raman intacte.
         </p>
+
+        <div className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden">
+          {PHASE_OPTIONS.map((opt, idx) => {
+            const isSelected = selected === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                data-testid={`phase-${opt.value.toLowerCase()}`}
+                onClick={() => setSelected(opt.value)}
+                className={`w-full flex items-center px-4 py-3 text-left ${
+                  idx < PHASE_OPTIONS.length - 1 ? 'border-b border-line' : ''
+                } ${isSelected ? 'text-brick' : 'text-ink'}`}
+              >
+                <div className="flex-1">
+                  <p className={`text-sm ${isSelected ? 'font-semibold' : 'font-medium'}`}>
+                    {opt.label}
+                  </p>
+                  <p className="text-xs text-ink2 mt-0.5">{opt.hint}</p>
+                </div>
+                {isSelected && <span aria-hidden="true">•</span>}
+              </button>
+            );
+          })}
+        </div>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
           <button

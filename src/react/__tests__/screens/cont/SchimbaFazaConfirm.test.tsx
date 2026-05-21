@@ -1,10 +1,14 @@
-// B001/D047 Stage 3 — SchimbaFazaConfirm drill-down tests (placeholder action).
+// B001/D047 Stage 3 — SchimbaFazaConfirm drill-down tests.
 
 import type { JSX } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SchimbaFazaConfirm } from '../../../routes/screens/cont/SchimbaFazaConfirm';
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -28,10 +32,35 @@ describe('SchimbaFazaConfirm — B001 drill-down', () => {
     expect(screen.getByRole('heading', { name: /Schimba faza manual/i, level: 1 })).toBeInTheDocument();
   });
 
-  it('confirm navigates back settings-prefs (placeholder iter 3)', () => {
+  it('shows 5 phase options (radio selector)', () => {
     renderScreen();
+    expect(screen.getByTestId('phase-auto')).toBeInTheDocument();
+    expect(screen.getByTestId('phase-cut')).toBeInTheDocument();
+    expect(screen.getByTestId('phase-maintenance')).toBeInTheDocument();
+    expect(screen.getByTestId('phase-bulk')).toBeInTheDocument();
+    expect(screen.getByTestId('phase-strength')).toBeInTheDocument();
+  });
+
+  it('confirm with CUT selected persists phase-override + navigates back', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('phase-cut'));
     fireEvent.click(screen.getByTestId('schimba-faza-confirm-accept'));
+
+    expect(JSON.parse(localStorage.getItem('phase-override') || 'null')).toBe('CUT');
+    expect(localStorage.getItem('phase-change-date')).not.toBeNull();
+    const log = JSON.parse(localStorage.getItem('phase-log') || '[]');
+    expect(log.length).toBeGreaterThanOrEqual(1);
+    expect(log[log.length - 1].phase).toBe('CUT');
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/cont/settings-prefs');
+  });
+
+  it('confirm with AUTO clears existing override', () => {
+    localStorage.setItem('phase-override', JSON.stringify('BULK'));
+    renderScreen();
+    fireEvent.click(screen.getByTestId('phase-auto'));
+    fireEvent.click(screen.getByTestId('schimba-faza-confirm-accept'));
+
+    expect(JSON.parse(localStorage.getItem('phase-override') || 'undefined')).toBeNull();
   });
 
   it('cancel navigates back settings-prefs', () => {
