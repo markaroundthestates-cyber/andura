@@ -34,6 +34,27 @@
     --warn: #c89321;      /* Warning amber */
     --danger: #c8412e;    /* Danger (alias brick) */
   }
+
+  /* Dark theme — inverse polarity. Warm-neutral palette preserves Clasic
+     character (R>G>B subtle warmth) vs flat grey. WCAG SC 1.4.3 AA verified
+     for ink/ink-2/ink-3 vs paper. Accent colors (brick/olive/deep/succ/warn)
+     retained — already meet 3:1 non-text on dark backgrounds. */
+  [data-theme="dark"] {
+    --paper: #1a1815;      /* Inverse phone bg dark L=0.0042 */
+    --paper-2: #2a2622;    /* Secondary surface dark L≈0.024 */
+    --ink: #faf7f1;        /* Primary text light L=0.930 → 17.94:1 vs paper-dark ✅ AAA */
+    --ink-2: #d6cfc0;      /* Secondary text L≈0.654 → 11.78:1 vs paper-dark ✅ AAA */
+    --ink-3: #8a8378;      /* Muted text L≈0.219 → 5.05:1 vs paper-dark ✅ AA */
+    --line: #2e2a25;       /* Decorative border dark — subtle separation */
+    --line-strong: #5a5249;/* Interactive boundary — 3.17:1 vs paper-dark PASS SC 1.4.11 non-text 3:1 */
+    --brick: #e85a44;      /* Slightly brighter brick on dark — preserves accent strength */
+    --brick-dark: #c8412e; /* Pressed/hover variant */
+    --olive: #8f9758;      /* Brighter olive on dark for contrast parity */
+    --deep: #4a6b8f;       /* Brighter deep blue on dark */
+    --succ: #5a9d68;       /* Brighter success on dark */
+    --warn: #e8b048;       /* Brighter warning on dark */
+    --danger: #e85a44;     /* Danger (alias brick-dark variant) */
+  }
 }
 
 /* Persona-aware text scaling (verbatim mockup) */

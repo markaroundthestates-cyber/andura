@@ -8,7 +8,11 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './react/routes/router';
 import { initSentry, captureException } from './util/sentry.js';
+import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
 import './styles/global.css';
+
+// Apply persisted theme synchronously pre-mount to prevent FOUC flash.
+applyInitialTheme();
 
 // §4-C1 audit fix — Sentry production observability wired into React entry.
 // initSentry no-ops on localhost/test; safe to call unconditionally here.
@@ -39,6 +43,7 @@ createRoot(rootEl).render(
     {/* Opt-in to React Router v7 future flag — wraps state updates in
         React.startTransition for smoother concurrent rendering. Silences
         the deprecation warning logged on every nav in v6.28+. */}
+    <ThemeSync />
     <RouterProvider router={router} future={{ v7_startTransition: true }} />
   </StrictMode>
 );

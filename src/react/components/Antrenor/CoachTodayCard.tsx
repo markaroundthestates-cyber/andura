@@ -35,7 +35,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="bg-ink text-paper rounded-2xl p-4 mb-2.5"
+      className="bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-2.5"
       role="region"
       aria-label="Coach-ul recomanda azi"
     >
