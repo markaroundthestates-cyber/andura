@@ -18,6 +18,7 @@ function renderScreen() {
       <Routes>
         <Route path="/app/cont/settings-prefs" element={<SettingsPrefs />} />
         <Route path="/app/cont" element={<LocationProbe />} />
+        <Route path="/app/cont/redo-onboarding-confirm" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
   );
@@ -68,6 +69,18 @@ describe('SettingsPrefs — render + interactions', () => {
     renderScreen();
     fireEvent.click(screen.getByRole('button', { name: /Inapoi/i }));
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/cont');
+  });
+
+  // §B002 D047 Stage 3 — Avansat section drill-down
+  it('Avansat section renders Refa onboarding button', () => {
+    renderScreen();
+    expect(screen.getByTestId('advanced-redo-onboarding')).toBeInTheDocument();
+  });
+
+  it('Refa onboarding navigates la /app/cont/redo-onboarding-confirm', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('advanced-redo-onboarding'));
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/cont/redo-onboarding-confirm');
   });
 
   it('no diacritics in UI text', () => {
