@@ -77,7 +77,7 @@ export const AUTH_FRESHNESS_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
  *
  * @param {string} email
  * @param {string} [continueUrl] - default: `${window.location.origin}/auth-callback`
- * @returns {Promise<{ ok: boolean, email?: string, error?: string }>}
+ * @returns {Promise<{ ok: boolean, email?: string, error?: string, cooldownMs?: number }>}
  */
 export async function sendMagicLink(email, continueUrl) {
   if (!_isValidEmail(email)) return { ok: false, error: 'invalid_email' };
@@ -121,10 +121,10 @@ export async function sendMagicLink(email, continueUrl) {
       lastError = data?.error?.message || `http_${r.status}`;
       if (r.status < 500) return { ok: false, error: lastError };
     } catch (err) {
-      lastError = err?.message || 'network_error';
+      lastError = (err instanceof Error ? err.message : null) || 'network_error';
     }
     if (attempt < MAX_ATTEMPTS - 1) {
-      await new Promise(resolve => setTimeout(resolve, BACKOFF_MS[attempt]));
+      await new Promise(resolve => setTimeout(resolve, BACKOFF_MS[attempt] ?? 250));
     }
   }
   return { ok: false, error: lastError };
@@ -157,7 +157,7 @@ export async function verifyMagicLink(email, oobCode) {
     _removeItem(AUTH_STORAGE_KEYS.pendingEmailExpiry); // §4-H2 audit fix
     return { ok: true, uid: data.localId };
   } catch (err) {
-    return { ok: false, error: err?.message || 'network_error' };
+    return { ok: false, error: (err instanceof Error ? err.message : null) || 'network_error' };
   }
 }
 
@@ -238,7 +238,7 @@ export async function signInWithGoogleIdToken(googleIdToken) {
     _persistAuth(data);
     return { ok: true, uid: data.localId };
   } catch (err) {
-    return { ok: false, error: err?.message || 'network_error' };
+    return { ok: false, error: (err instanceof Error ? err.message : null) || 'network_error' };
   }
 }
 
@@ -272,7 +272,7 @@ export async function getIdToken(skewMs = 60_000) {
   if (auth.expiry && (auth.expiry - now) > skewMs) return auth.idToken;
   // Stale or near-stale → refresh.
   const refreshed = await refreshIdToken();
-  return refreshed.ok ? refreshed.idToken : null;
+  return refreshed.ok && refreshed.idToken ? refreshed.idToken : null;
 }
 
 /**
@@ -303,7 +303,7 @@ export async function refreshIdToken() {
     });
     return { ok: true, idToken: data.id_token };
   } catch (err) {
-    return { ok: false, error: err?.message || 'network_error' };
+    return { ok: false, error: (err instanceof Error ? err.message : null) || 'network_error' };
   }
 }
 
@@ -370,6 +370,7 @@ export function isAuthenticated() {
 
 // ── internals ───────────────────────────────────────────────────────────
 
+/** @param {Record<string, any>} data */
 function _persistAuth(data) {
   // Firebase identitytoolkit returns: { idToken, refreshToken, localId, expiresIn }
   // expiresIn is seconds (string in REST response).
@@ -398,6 +399,7 @@ export function isAuthFresh() {
   return (Date.now() - lastAuthAt) <= AUTH_FRESHNESS_WINDOW_MS;
 }
 
+/** @param {unknown} s */
 function _isValidEmail(s) {
   if (typeof s !== 'string') return false;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
@@ -410,16 +412,19 @@ function _origin() {
   return 'https://andura.local';
 }
 
+/** @param {string} k */
 function _getItem(k) {
   try { return typeof localStorage !== 'undefined' ? localStorage.getItem(k) : null; }
   catch { return null; }
 }
 
+/** @param {string} k @param {string} v */
 function _setItem(k, v) {
   try { if (typeof localStorage !== 'undefined') localStorage.setItem(k, v); }
   catch {}
 }
 
+/** @param {string} k */
 function _removeItem(k) {
   try { if (typeof localStorage !== 'undefined') localStorage.removeItem(k); }
   catch {}
