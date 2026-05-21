@@ -158,6 +158,12 @@ function _resolveTs(entry) {
  * Idempotent — re-running with no cold entries = no-op. Failure on one key
  * does NOT abort other keys (each independent transaction).
  *
+ * §B025 audit fix (REVIEW-A036-A038 M-§A036-05) — wraps body in
+ * `navigator.locks.request('andura-tiering', ...)` to prevent cross-tab race
+ * (Tab A read snapshot + Tab B write + Tab A overwrite = data loss). Graceful
+ * degradation: if Web Locks API unavailable (legacy browser, test env),
+ * runs without lock (accept low-prob race risk).
+ *
  * @param {object} [opts]
  * @param {object} [opts.db=DB] - DB sink override (testing)
  * @param {Function} [opts.bulkWriter=tier1Bulk] - Tier 1 write fn
@@ -166,9 +172,26 @@ function _resolveTs(entry) {
  * @param {number} [opts.now=Date.now()]
  * @param {number} [opts.ageLimitMs=TIER0_AGE_LIMIT_MS]
  * @param {Array<number>} [opts.retryBackoffMs=RETRY_BACKOFF_MS] - retry delays (testing fast)
+ * @param {boolean} [opts.skipLock=false] - bypass Web Locks (testing only)
  * @returns {Promise<{ rotated: number, perKey: Array, errors: Array }>}
  */
 export async function rotateOnce(opts = {}) {
+  // §B025 audit fix — Web Locks API cross-tab serialization. Graceful fallback
+  // if unavailable (legacy browser, test env jsdom). opts.skipLock for tests
+  // that intentionally exercise body without the lock wrapper.
+  const skipLock = opts.skipLock === true;
+  const hasLocks = !skipLock
+    && typeof navigator !== 'undefined'
+    && typeof navigator.locks?.request === 'function';
+  if (hasLocks) {
+    return navigator.locks.request('andura-tiering', { mode: 'exclusive' }, async () => {
+      return _rotateOnceUnlocked(opts);
+    });
+  }
+  return _rotateOnceUnlocked(opts);
+}
+
+async function _rotateOnceUnlocked(opts = {}) {
   const db = opts.db ?? DB;
   const bulkWriter = opts.bulkWriter ?? tier1Bulk;
   const eventLogger = opts.eventLogger ?? logMigrationEvent;
