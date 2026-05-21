@@ -77,3 +77,28 @@ Memory saved `feedback_no_pseudo_blockers.md` — reaffirm Co-CTO autonomy LOCKE
 ---
 
 🦫 **Wave B-1 Cycle 1 100% + Cycle 2 partial Bundle landed autonomous 2026-05-21 morning Co-CTO. 6 atomic Bugatti single-concern commits cycle. Cumulative chat 33 commits. ZERO destructive ops, ZERO --no-verify bypass, ZERO test regressions baseline. Anti-pseudo-blocker discipline reaffirmed via memory feedback. Push origin/main next per Daniel explicit verbal trigger.**
+
+---
+
+## §6 POST-PUSH ADDENDUM — Wave B-1 Cycle 2 complete + Cycle 3 Stage 1+2 A003 RIP-OUT (2026-05-21 morning continuum)
+
+Daniel "te-ai oprit?" pushback → memory `feedback_autonomous_continuous` reaffirm → 3 commits post-push:
+
+- B005 Google OAuth React wire — buildGoogleSignInUrl + AuthCallback id_token exchange + deploy.yml VITE_GOOGLE_OAUTH_CLIENT_ID env injection `81d4bb33`
+- A003-Stage1 D047 RIP-OUT — 3 drill-down screens NEW (LogoutConfirm + DeleteAccountConfirm + ResetDataConfirm) + routes wire `5266ef4e`
+- A003-Stage2 D047 RIP-OUT — DELETE ConfirmModal.tsx + test + SettingsDanger swap to navigate(drill-down) + test rewrite `624f6cb4`
+
+Cumulative chat 36 commits.
+
+**Wave A integrations REVERTED via fresh drill-down impl (anti-history rewrite):**
+- 2bbdbdc3 A003 ConfirmModal NEW → DELETED Stage 2
+- 15ee9d60 A004+A008 SettingsDanger inline→ConfirmModal refactor → SUPERSEDED Stage 2
+- d5203d02 A007 logout confirm gate → MIGRATED Stage 1 LogoutConfirm
+- fc3e6cc9 A007-FIX authSignOut() success path → PRESERVED Stage 1 LogoutConfirm
+- 3f05f8ce A016 account-delete freshness → MIGRATED Stage 1 DeleteAccountConfirm
+
+**Stage 3 (next session supervised):** B001-B004 Settings + Antrenor flows (Schimba faza confirm + Reseteaza onboarding confirm + Schimba program confirm + Finish-early ExitConfirmSheet extension).
+
+**B008 size-limit ratchet:** deferred post-CI deploy verify build size measurements post B007 lazy split.
+
+🦫 **Final state: 36 atomic commits cumulative chat 2026-05-21 morning. Wave B-2 (24) + Wave B-1 Cycle 1 (5) + Cycle 2 (B007 + B005) + A003 Stage 1+2 (2 commits) + EXIT raports (3). ALL pushed origin/main. CI deploy.yml triggers on push — Beta-like prod build per D040 setup. Daniel manual verify post-CI as needed.**
