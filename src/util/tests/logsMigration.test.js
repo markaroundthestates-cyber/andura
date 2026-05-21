@@ -32,10 +32,7 @@ const MIGRATION_FLAG = 'migration-utc-to-local-v1';
 beforeEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
-  // Reset DB mock storage
-  const mod = vi.importMock('../../db.js');
-  // Use localStorage directly since DB mock uses a closure
-  // Re-setup the internal mockStorage via DB.get/set spies
+  // DB mock storage is reset via localStorage.clear above (closure backs onto localStorage).
 });
 
 afterEach(() => {

@@ -1,6 +1,6 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test si debugging ═══════
-import { FIREBASE_URL, getUserPath, buildAuthUrl, scheduleInvalidation } from '../firebase.js';
-import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, getAllDynamicKeys } from './dataRegistry.js';
+import { getUserPath, buildAuthUrl, scheduleInvalidation } from '../firebase.js';
+import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS } from './dataRegistry.js';
 
 // Re-export for backward compat (tests and other importers)
 export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS };
@@ -77,7 +77,7 @@ export function restoreFromBackup(jsonString) {
   let backup;
   try {
     backup = JSON.parse(jsonString);
-  } catch (e) {
+  } catch {
     alert('Fisierul nu este un JSON valid.');
     return false;
   }
@@ -303,7 +303,7 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
   });
 
   localStorage.clear();
-  try { sessionStorage.clear(); } catch (e) { /* ignore */ }
+  try { sessionStorage.clear(); } catch { /* ignore */ }
 
   Object.entries(preserved).forEach(([k, v]) => localStorage.setItem(k, v));
 

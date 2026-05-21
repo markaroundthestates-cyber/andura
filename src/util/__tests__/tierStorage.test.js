@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { classifyLogs, aggregateLogs, archiveLogs, getTierBoundaries } from '../tierStorage.js';
 
 // Mock DB to prevent localStorage access in tests
@@ -41,7 +41,7 @@ describe('classifyLogs', () => {
 
   it('places 6-month-old logs in aggregate tier', () => {
     const logs = [makeLog(180)];
-    const { live, aggregate, archive } = classifyLogs(logs, now);
+    const { live, aggregate } = classifyLogs(logs, now);
     expect(aggregate).toHaveLength(1);
     expect(live).toHaveLength(0);
   });

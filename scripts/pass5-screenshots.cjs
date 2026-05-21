@@ -92,7 +92,6 @@ async function captureMockup(browser) {
       }, screen);
       await page.waitForTimeout(350);
       const phone = await page.$('#phone');
-      const target = phone || page;
       const outPath = path.join(OUTDIR, fileName);
       if (phone) {
         await phone.screenshot({ path: outPath });

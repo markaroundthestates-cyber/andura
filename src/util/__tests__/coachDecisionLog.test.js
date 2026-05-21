@@ -12,13 +12,11 @@ import {
   writeProposed,
   populateOutcome,
   readActiveForDate,
-  readAllActive,
   readSupersedeChain,
   computeMatchScore,
   demoteToTier2,
   demoteToTier3,
   STORAGE_KEYS,
-  RESERVED_RATIONALE_IDS,
 } from '../coachDecisionLog.js';
 
 beforeEach(() => {
@@ -224,10 +222,10 @@ describe('readActiveForDate', () => {
     vi.useFakeTimers();
     const t0 = Date.now();
     vi.setSystemTime(t0);
-    const e1 = writeProposed(makeEntry({ context: { calibrationLevel: 'INITIAL' } }));
+    writeProposed(makeEntry({ context: { calibrationLevel: 'INITIAL' } }));
 
     vi.setSystemTime(t0 + 30 * 60 * 1000);
-    const e2 = writeProposed(makeEntry({ context: { calibrationLevel: 'PERSONALIZING' } }));
+    writeProposed(makeEntry({ context: { calibrationLevel: 'PERSONALIZING' } }));
 
     vi.setSystemTime(t0 + 60 * 60 * 1000);
     const e3 = writeProposed(makeEntry({ context: { calibrationLevel: 'PERSONALIZED' } }));

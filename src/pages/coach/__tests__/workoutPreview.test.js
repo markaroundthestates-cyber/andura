@@ -219,12 +219,7 @@ describe('workoutPreview — "Nu vreau" handler', () => {
   });
 
   it('refusal counter reaching threshold triggers refusal-counter-modal', () => {
-    // Pre-seed counter at threshold-1.
-    for (let i = 0; i < REFUSAL_COUNTER_THRESHOLD - 1; i++) {
-      // Use scheduleAdapter incrementRefusal directly to bypass UI.
-      const adapter = require ? null : null;
-    }
-    // Instead, simulate via direct localStorage seed.
+    // Pre-seed counter at threshold-1 via direct localStorage seed below.
     localStorage.setItem('wv2-refusal-counter', JSON.stringify({ 'Cable Curl': REFUSAL_COUNTER_THRESHOLD - 1 }));
 
     showWorkoutPreview({ exercises: ['Cable Curl'] });

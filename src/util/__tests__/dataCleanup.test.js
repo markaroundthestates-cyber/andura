@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
+import { resetTestData, fullReset, USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, cleanDuplicateLogs } from '../dataCleanup.js';
 
 describe('DataCleanup — Firebase aware', () => {
   beforeEach(() => {

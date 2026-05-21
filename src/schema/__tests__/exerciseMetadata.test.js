@@ -1236,7 +1236,7 @@ describe('§22 ADR ANATOMICAL_CLASSIFICATION_V1 fese canonical migration', () =>
   });
 
   it('secondary tags array values all canonical V1', () => {
-    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+    Object.entries(EXERCISE_METADATA).forEach(([, meta]) => {
       if (Array.isArray(meta.muscle_target_secondary)) {
         meta.muscle_target_secondary.forEach(tag => {
           expect(CANONICAL_V1.has(tag)).toBe(true);

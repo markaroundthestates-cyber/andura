@@ -53,7 +53,7 @@ export function createDailyBackup() {
 
   try {
     localStorage.setItem(key, JSON.stringify(backup));
-  } catch (e) {
+  } catch {
     // Storage full — prune first then retry
     pruneOldBackups();
     try { localStorage.setItem(key, JSON.stringify(backup)); } catch { return null; }

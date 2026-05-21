@@ -43,7 +43,7 @@ function httpGet(urlString, method = 'GET') {
     let url;
     try {
       url = new URL(urlString);
-    } catch (e) {
+    } catch {
       resolve({ ok: false, error: 'invalid_url' });
       return;
     }
