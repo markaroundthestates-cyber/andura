@@ -134,6 +134,10 @@ const TIER_ORDER = ['COLD_START', 'INITIAL', 'DEVELOPING', 'PERSONALIZING', 'PER
 /**
  * Apply inactivity decay: -1 tier per 60 inactive days, floor at INITIAL.
  * COLD_START is unaffected (separate cold-start path).
+ *
+ * @param {string} currentLevel
+ * @param {number} daysSinceLastSession
+ * @returns {string}
  */
 export function _applyInactivityDecay(currentLevel, daysSinceLastSession) {
   if (currentLevel === 'COLD_START') return 'COLD_START';
@@ -142,15 +146,22 @@ export function _applyInactivityDecay(currentLevel, daysSinceLastSession) {
   const currentIdx = TIER_ORDER.indexOf(currentLevel);
   if (currentIdx === -1) return currentLevel;
   const newIdx = Math.max(1, currentIdx - decayLevels); // 1 = INITIAL floor
-  return TIER_ORDER[newIdx];
+  return TIER_ORDER[newIdx] ?? 'INITIAL';
 }
 
 /**
+ * @typedef {{ session?: string|number, date?: string|number, ts?: number, baseline?: boolean, [k: string]: unknown }} CalibLog
+ * @typedef {{ allLogs?: CalibLog[], allSessions?: unknown[], [k: string]: unknown }} CalibCtx
+ *
  * Detect calibration level from log history.
  * Uses unique session count (by session ID or date) and first-session age.
  * Applies inactivity decay (ADR 012): -1 tier per 60 inactive days, floor INITIAL.
+ *
+ * @param {CalibCtx} ctx
+ * @returns {(typeof CALIBRATION_LEVELS)[keyof typeof CALIBRATION_LEVELS]}
  */
 export function detectCalibrationLevel(ctx) {
+  /** @type {CalibLog[]} */
   const allLogs = ctx.allLogs ?? [];
 
   // Count unique sessions — a session = unique session timestamp or workout date
@@ -165,13 +176,14 @@ export function detectCalibrationLevel(ctx) {
   const sessionsCount = ctx.allSessions?.length ?? sessionKeys.size;
 
   // First session date
+  /** @type {Date[]} */
   const dates = allLogs
     .map(l => {
       const raw = l.date || l.ts;
       const d = raw ? new Date(raw) : null;
       return d && !isNaN(d.getTime()) ? d : null;
     })
-    .filter(Boolean);
+    .filter(/** @returns {d is Date} */ (d) => Boolean(d));
   const firstDate = dates.length > 0
     ? new Date(Math.min(...dates.map(d => d.getTime())))
     : new Date();
@@ -190,6 +202,7 @@ export function detectCalibrationLevel(ctx) {
 
   // ADR 012: apply inactivity decay using most-recent non-baseline log date
   // Uses already-computed `dates` array (handles both l.date and l.ts fields).
+  /** @type {Date[]} */
   const nonBaselineDates = allLogs
     .filter(l => !l.baseline)
     .map(l => {
@@ -197,18 +210,24 @@ export function detectCalibrationLevel(ctx) {
       const d = raw ? new Date(raw) : null;
       return d && !isNaN(d.getTime()) ? d : null;
     })
-    .filter(Boolean);
+    .filter(/** @returns {d is Date} */ (d) => Boolean(d));
   if (nonBaselineDates.length > 0) {
     const lastDate = new Date(Math.max(...nonBaselineDates.map(d => d.getTime())));
     const daysSince = Math.floor((Date.now() - lastDate.getTime()) / MS_PER_DAY);
     levelName = _applyInactivityDecay(levelName, daysSince);
   }
 
-  return CALIBRATION_LEVELS[levelName];
+  return /** @type {(typeof CALIBRATION_LEVELS)[keyof typeof CALIBRATION_LEVELS]} */ (
+    (/** @type {Record<string, unknown>} */ (CALIBRATION_LEVELS))[levelName]
+  );
 }
 
 /**
  * Whether a recalibration run is due based on tier frequency and last run timestamp.
+ *
+ * @param {{ recalibrationFrequency?: string }} level
+ * @param {string|number|Date|null|undefined} lastRecalibration
+ * @returns {boolean}
  */
 export function shouldRecalibrate(level, lastRecalibration) {
   if (!lastRecalibration) return true;
@@ -234,6 +253,10 @@ export const contextSelectionEnabled = false;
 /**
  * Filter logs to the rolling window defined for the level.
  * Only OPTIMIZED (6 months) currently has a window; others return all logs.
+ *
+ * @param {CalibLog[]} logs
+ * @param {{ rollingWindowMonths?: number }} level
+ * @returns {CalibLog[]}
  */
 export function applyRollingWindow(logs, level) {
   if (!level.rollingWindowMonths) return logs;

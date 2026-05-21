@@ -23,7 +23,13 @@
 
 import { detectT0ToT1AdvanceTrigger } from './acceleratedLearning.js';
 
-// Internal helper isolates the static import from computeEngineTierWithAccelerated.
+/**
+ * @typedef {{ yo_yo_detected?: boolean, aa_high_events?: Array<{ event_id?: string, [k: string]: unknown }>, frustration_markers_count?: number, plateau_streaks_weeks?: number }} CalibObservations
+ *
+ * Internal helper isolates the static import from computeEngineTierWithAccelerated.
+ * @param {unknown[]} cdlEntries
+ * @returns {boolean}
+ */
 function _detectT0ToT1AdvanceFromLog(cdlEntries) {
   return detectT0ToT1AdvanceTrigger(cdlEntries).shouldAdvance;
 }
@@ -126,7 +132,7 @@ export function computeEngineTier(sessionCount) {
  *
  * @pure
  * @param {number} sessionCount
- * @param {Array} cdlEntries - 'aggressive-loading-log' entries (enriched)
+ * @param {unknown[]} cdlEntries - 'aggressive-loading-log' entries (enriched)
  * @returns {'T0' | 'T1' | 'T2'}
  */
 export function computeEngineTierWithAccelerated(sessionCount, cdlEntries) {
@@ -145,16 +151,16 @@ export function computeEngineTierWithAccelerated(sessionCount, cdlEntries) {
  *
  * Defensive: unknown enums treated as COLD_START (idx 0). NEVER throws.
  *
- * @param {string} a
- * @param {string} b
+ * @param {string | undefined | null} a
+ * @param {string | undefined | null} b
  * @returns {string} The later (more progressed) of a, b
  */
 export function maxConfidence(a, b) {
-  const idxA = CONFIDENCE_ORDER.indexOf(a);
-  const idxB = CONFIDENCE_ORDER.indexOf(b);
+  const idxA = a != null ? CONFIDENCE_ORDER.indexOf(a) : -1;
+  const idxB = b != null ? CONFIDENCE_ORDER.indexOf(b) : -1;
   const safeA = idxA < 0 ? 0 : idxA;
   const safeB = idxB < 0 ? 0 : idxB;
-  return CONFIDENCE_ORDER[Math.max(safeA, safeB)];
+  return CONFIDENCE_ORDER[Math.max(safeA, safeB)] ?? 'COLD_START';
 }
 
 /**
@@ -169,6 +175,7 @@ export function maxConfidence(a, b) {
  * @returns {Record<string, number>}
  */
 export function mergeVersionVector(va, vb) {
+  /** @type {Record<string, number>} */
   const merged = {};
   const a = va ?? {};
   const b = vb ?? {};
@@ -187,9 +194,9 @@ export function mergeVersionVector(va, vb) {
  *   - `frustration_markers_count`: MAX (running counter, never decreases)
  *   - `plateau_streaks_weeks`: MAX (running counter, never decreases)
  *
- * @param {object | undefined} oa
- * @param {object | undefined} ob
- * @returns {object}
+ * @param {CalibObservations | null | undefined} oa
+ * @param {CalibObservations | null | undefined} ob
+ * @returns {CalibObservations}
  */
 export function mergeObservations(oa, ob) {
   return {
@@ -227,11 +234,19 @@ export function mergeObservations(oa, ob) {
  *     `reconcile(B, A)` produce equivalent canonical states modulo
  *     `last_updated` (which always reflects reconciliation time).
  *
- * @param {object} branchA - calibration_state from device A
- * @param {object} branchB - calibration_state from device B
- * @param {object} [opts]
- * @param {number} [opts.now=Date.now()] - Override timestamp (testing)
- * @returns {object} Canonical merged calibration_state
+ * @typedef {{
+ *   engine_tier?: string,
+ *   calibration_confidence?: string,
+ *   version_vector?: Record<string, number>,
+ *   last_updated?: string,
+ *   session_count?: number,
+ *   observations?: CalibObservations
+ * }} CalibrationState
+ *
+ * @param {CalibrationState | null | undefined} branchA - calibration_state from device A
+ * @param {CalibrationState | null | undefined} branchB - calibration_state from device B
+ * @param {{ now?: number }} [opts]
+ * @returns {CalibrationState} Canonical merged calibration_state
  */
 export function reconcile(branchA, branchB, opts = {}) {
   const now = opts.now ?? Date.now();
@@ -271,11 +286,10 @@ export function reconcile(branchA, branchB, opts = {}) {
  *
  * Returns a NEW state object (immutable update); does not mutate input.
  *
- * @param {object} state - existing calibration_state
+ * @param {CalibrationState} state - existing calibration_state
  * @param {string} deviceId - stable per-device UUID
- * @param {object} [opts]
- * @param {number} [opts.now=Date.now()]
- * @returns {object} Updated calibration_state with bumped VV
+ * @param {{ now?: number }} [opts]
+ * @returns {CalibrationState} Updated calibration_state with bumped VV
  */
 export function bumpVersion(state, deviceId, opts = {}) {
   if (!state || !deviceId) return state;
@@ -296,6 +310,8 @@ export function bumpVersion(state, deviceId, opts = {}) {
 /**
  * Dedupe AA HIGH events by `event_id` (preferred) or stringified body fallback.
  * Order preserved (first occurrence wins).
+ *
+ * @param {Array<{ event_id?: string, [k: string]: unknown } | null | undefined>} events
  */
 function _dedupeAaEvents(events) {
   const seen = new Set();
@@ -313,6 +329,8 @@ function _dedupeAaEvents(events) {
 
 /**
  * Coerce to safe non-negative number. Defensive against undefined/null/NaN.
+ * @param {unknown} v
+ * @returns {number}
  */
 function _safeNum(v) {
   const n = Number(v);

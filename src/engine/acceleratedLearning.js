@@ -30,21 +30,26 @@ const DISTINCT_EXERCISES_REQUIRED = 3;
  *   - repsAchieved === targetReps (full target hit)
  *   - RPE <= 8 (acceptable effort, not max-out grind)
  *
+ * @typedef {{ type?: string, repsAchieved?: number, targetReps?: number, RPE?: number, exerciseName?: string, ts?: number, deviation_pct?: number, [k: string]: unknown }} AcLogEntry
+ *
  * @pure
- * @param {Array} entries
- * @returns {Array}
+ * @param {unknown[]} entries
+ * @returns {AcLogEntry[]}
  */
 function _filterLegitimatePattern(entries) {
   if (!Array.isArray(entries)) return [];
-  return entries.filter(e =>
-    e &&
-    e.type === OVERRIDE_TYPE &&
-    typeof e.repsAchieved === 'number' &&
-    typeof e.targetReps === 'number' &&
-    e.repsAchieved === e.targetReps &&
-    typeof e.RPE === 'number' &&
-    e.RPE <= RPE_ACCEPTABLE_MAX
-  );
+  return /** @type {AcLogEntry[]} */ (entries.filter(/** @returns {x is AcLogEntry} */ (x) => {
+    const e = /** @type {AcLogEntry} */ (x);
+    return Boolean(
+      e &&
+      e.type === OVERRIDE_TYPE &&
+      typeof e.repsAchieved === 'number' &&
+      typeof e.targetReps === 'number' &&
+      e.repsAchieved === e.targetReps &&
+      typeof e.RPE === 'number' &&
+      e.RPE <= RPE_ACCEPTABLE_MAX
+    );
+  }));
 }
 
 /**
@@ -54,7 +59,7 @@ function _filterLegitimatePattern(entries) {
  * exercise (newest first) all meet legitimate pattern criteria.
  *
  * @pure
- * @param {Array} entries - CDL aggressive-loading-log entries (newest first OR mixed; sorted internally by ts)
+ * @param {unknown[]} entries - CDL aggressive-loading-log entries (newest first OR mixed; sorted internally by ts)
  * @param {string} exerciseName
  * @returns {{shouldUpgradeBaseline: boolean, upgradedDeviationPct: number, samplesUsed: number}}
  */
@@ -85,17 +90,18 @@ export function detectAcceleratedLearningTrigger(entries, exerciseName) {
  * override entries (pattern crosses domains, not just one anomaly exercise).
  *
  * @pure
- * @param {Array} entries - CDL aggressive-loading-log entries
+ * @param {unknown[]} entries - CDL aggressive-loading-log entries
  * @returns {{shouldAdvance: boolean, distinctExercisesWithPattern: number}}
  */
 export function detectT0ToT1AdvanceTrigger(entries) {
   const legitimate = _filterLegitimatePattern(entries);
 
+  /** @type {Record<string, number>} */
   const groupedByExercise = {};
   for (const e of legitimate) {
-    if (!e.exerciseName) continue;
+    if (!e || !e.exerciseName) continue;
     if (!groupedByExercise[e.exerciseName]) groupedByExercise[e.exerciseName] = 0;
-    groupedByExercise[e.exerciseName]++;
+    groupedByExercise[e.exerciseName] = (groupedByExercise[e.exerciseName] ?? 0) + 1;
   }
 
   let distinct = 0;

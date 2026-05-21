@@ -51,28 +51,35 @@ export const EXERCISE_MUSCLES = {
   'Calf Raises':            { primary: ['calf'], secondary: [] },
 };
 
+/**
+ * @typedef {{ baseline?: boolean, ex?: string, w?: number, ts?: number, date?: string, rpe?: number, [k: string]: unknown }} MuscleLog
+ *
+ * @param {MuscleLog[]} logs
+ * @returns {Record<string, number>}
+ */
 export function getMuscleState(logs) {
   const now = Date.now();
+  /** @type {Record<string, number>} */
   const state = {};
   Object.keys(MUSCLE_HEADS).forEach(m => { state[m] = 0; });
 
   const recentLogs = (logs || []).filter(l => !l.baseline && l.ex && l.w);
   recentLogs.forEach(l => {
-    const ms = EXERCISE_MUSCLES[l.ex];
+    const ms = (/** @type {Record<string, { primary: string[], secondary: string[] }>} */ (EXERCISE_MUSCLES))[l.ex ?? ''];
     if (!ms) return;
-    const logTime = l.ts || new Date(l.date).getTime();
+    const logTime = l.ts || new Date(l.date ?? '').getTime();
     const rpeContrib = l.rpe ? Math.min(l.rpe / 10, 1) : 0.7;
-    ms.primary.forEach(m => {
-      const recovH = MUSCLE_HEADS[m]?.recoveryHours || 48;
+    ms.primary.forEach(/** @param {string} m */ (m) => {
+      const recovH = (/** @type {Record<string, { recoveryHours: number, label: string }>} */ (MUSCLE_HEADS))[m]?.recoveryHours || 48;
       const hoursAgo = (now - logTime) / MS_PER_HOUR;
       const decay = Math.exp(-hoursAgo / recovH);
-      state[m] = Math.min(100, state[m] + 15 * 1.5 * rpeContrib * decay);
+      state[m] = Math.min(100, (state[m] ?? 0) + 15 * 1.5 * rpeContrib * decay);
     });
-    ms.secondary.forEach(m => {
-      const recovH = MUSCLE_HEADS[m]?.recoveryHours || 48;
+    ms.secondary.forEach(/** @param {string} m */ (m) => {
+      const recovH = (/** @type {Record<string, { recoveryHours: number, label: string }>} */ (MUSCLE_HEADS))[m]?.recoveryHours || 48;
       const hoursAgo = (now - logTime) / MS_PER_HOUR;
       const decay = Math.exp(-hoursAgo / recovH);
-      state[m] = Math.min(100, state[m] + 15 * 1.0 * rpeContrib * decay);
+      state[m] = Math.min(100, (state[m] ?? 0) + 15 * 1.0 * rpeContrib * decay);
     });
   });
 
