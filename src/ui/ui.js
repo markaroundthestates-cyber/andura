@@ -3,6 +3,10 @@ import { $ } from '../db.js';
 import { state } from '../state.js';
 
 // ── Toast ────────────────────────────────────────────────────
+/**
+ * @param {string} msg
+ * @param {string} [color]
+ */
 export function toast(msg, color = 'var(--accent)') {
   const t = $('toast'); if (!t) return;
   t.textContent = msg;
@@ -13,12 +17,19 @@ export function toast(msg, color = 'var(--accent)') {
 }
 
 // ── Audio ────────────────────────────────────────────────────
+/** @type {AudioContext | null} */
 let audioCtx = null;
+/** @param {number | number[]} pattern */
 function vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
 
 export function beep(freq = 880, dur = 0.15, vol = 0.3) {
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) {
+      const Ctor = window.AudioContext
+        || /** @type {typeof AudioContext | undefined} */ (/** @type {any} */ (window).webkitAudioContext);
+      if (!Ctor) return;
+      audioCtx = new Ctor();
+    }
     const o = audioCtx.createOscillator(), g = audioCtx.createGain();
     o.connect(g); g.connect(audioCtx.destination);
     o.frequency.value = freq; o.type = 'sine';
@@ -33,6 +44,7 @@ export function beepAlert() {
   for (let i = 0; i < 3; i++) setTimeout(() => { beep(1100, .12, .5); vibrate([200]); }, i * 200);
 }
 
+/** @param {string} txt */
 export function speak(txt) {
   if (state.isMuted || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
@@ -42,9 +54,15 @@ export function speak(txt) {
 }
 
 // ── Coach Flash ──────────────────────────────────────────────
+/**
+ * @param {'up'|'ok'|'dn'|string} type
+ * @param {string} title
+ * @param {string} sub
+ */
 export function showCoachFlash(type, title, sub) {
   const flash = $('flash'), ft = $('flash-title'), fs = $('flash-sub');
   if (!flash) return;
+  /** @type {Record<string, string>} */
   const colors = { up: 'var(--green)', ok: 'var(--accent)', dn: 'var(--red)' };
   const color = colors[type] || 'var(--accent)';
   flash.style.display = 'block';
@@ -62,6 +80,12 @@ export function hidePauseScreen() { const el = $('pause-screen'); if (el) el.sty
 // showFlashFeedback — here to avoid circular with DP engine
 // Called from coach.js which has DP imported already
 // Kept as pass-through — coach.js will use showCoachFlash directly
+/**
+ * @param {number} rpe
+ * @param {number} kg
+ * @param {string} ex
+ * @param {{ getIncrement: (ex: string) => number, roundToStep: (kg: number, ex: string) => number } | null | undefined} DP
+ */
 export function showFlashFeedback(rpe, kg, ex, DP) {
   if (!DP) return; // called without DP context — skip
   const inc = DP.getIncrement(ex);

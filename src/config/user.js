@@ -32,6 +32,10 @@ export function getUserConfig() {
   return USER_DEFAULTS;
 }
 
+/**
+ * @param {Record<string, unknown>} patch
+ * @returns {Record<string, unknown>}
+ */
 export function updateUserConfig(patch) {
   const current = getUserConfig();
   const updated = { ...current, ...patch };
