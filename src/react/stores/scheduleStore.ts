@@ -68,7 +68,25 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
         // (Tier 1 storage) — engine pick up override on next pipeline run.
         // ZERO src/engine/* mutation per orchestrator §7; uses existing
         // scheduleAdapter.commitCalendarEdit export.
+        //
+        // §B024 audit fix (REVIEW-A036-A038 M-§A036-04) — replace triple
+        // silent fail with Sentry breadcrumb capture pe fiecare nivel. UX
+        // sticks with optimistic editMode:false (NU regress to error UI
+        // Phase 4 stub paradigm) DAR forensic visibility surfaces in prod.
         const state = get();
+        const captureSafely = (err: unknown, op: string): void => {
+          try {
+            void import('../../util/sentry.js').then((mod) => {
+              const fn = (mod as { captureException?: (e: unknown, ctx?: unknown) => void }).captureException;
+              if (typeof fn === 'function') {
+                fn(err instanceof Error ? err : new Error(String(err)), {
+                  tags: { component: 'scheduleStore', op },
+                  extra: { dayCount: state.days.length },
+                });
+              }
+            }).catch(() => { /* sentry import fail = swallow (defense-in-depth limit) */ });
+          } catch { /* sync swallow */ }
+        };
         try {
           // Dynamic import sync via require pattern to avoid circular
           // dep risk + keep adapter module-level lazy.
@@ -82,14 +100,15 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
             if (typeof commitFn === 'function') {
               try {
                 commitFn(state.days);
-              } catch {
-                /* fail silent — Engine #2 consumes localStorage; daca
-                   write fails state.days remains în memory store. */
+              } catch (err) {
+                captureSafely(err, 'commitCalendarEdit_throw');
               }
+            } else {
+              captureSafely(new Error('commitCalendarEdit missing on scheduleAdapter module'), 'commit_fn_missing');
             }
-          }).catch(() => { /* fail silent */ });
-        } catch {
-          /* fail silent invariant per orchestrator §7 wrapper guard */
+          }).catch((err) => { captureSafely(err, 'dynamic_import_fail'); });
+        } catch (err) {
+          captureSafely(err, 'sync_wrapper_throw');
         }
         set({ editMode: false });
       },
