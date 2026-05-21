@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
 **Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 10 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR Art. 20 + §28-H5 GDPR Art. 8 + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** §28-H5 age 14→16 GDPR Art. 8 RO parental consent compliance (`8764eb75`).
-**Branch:** main, **47 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Last LANDED:** SettingsSupport NEW Suport static screen + mailto contact + Cont row wire (`ab87dc00`).
+**Branch:** main, **51 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -31,6 +31,10 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 23. **NEW `59ace191`** — BottomNav compact style toggle wire (settingsStore.bottomNavStyle now applied)
 24. **NEW `8764eb75`** — §28-H5 age min 14→16 GDPR Art. 8 RO parental consent compliance
 25. **NEW `ff22cdba`** — PRIMER §5 chat 2 evening continuation milestone append
+26. **NEW `3154275f`** — LATEST.md sync 47 commits ahead
+27. **NEW `d2dfcdd9`** — ScheduleStore partialize editMode out of localStorage (avoid stale-edit ghost)
+28. **NEW `77575a0f`** — SettingsAbout NEW Despre Andura static screen + Cont row wire + 6 tests
+29. **NEW `ab87dc00`** — SettingsSupport NEW Suport static screen + mailto contact + Cont row wire
 
 ---
 
