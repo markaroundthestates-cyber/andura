@@ -9,7 +9,7 @@
 
 import type { JSX } from 'react';
 import { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from '../components/BottomNav';
 import { SessionPill } from '../components/SessionPill';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -17,11 +17,23 @@ import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { UpdatePrompt } from '../components/UpdatePrompt';
 import { useCoachStore } from '../stores/coachStore';
 
+// S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
+// BottomNav so Gigel doesn't accidentally exit mid-set. Pause/exit only via
+// X button on the workout screen. Pre-session screens (energy-check,
+// workout-preview) still show nav.
+const IN_SESSION_ROUTES: ReadonlySet<string> = new Set([
+  '/app/antrenor/workout',
+  '/app/antrenor/post-rpe',
+  '/app/antrenor/post-summary',
+]);
+
 export function Layout(): JSX.Element {
   // §1-H3 audit fix: hoist persona wrapper from Antrenor.tsx → Layout.tsx so all
   // 4 tabs + nested sub-screens inherit persona-aware text scaling (Maria 65
   // needs large text app-wide, not only on Antrenor home).
   const persona = useCoachStore((s) => s.persona);
+  const pathname = useLocation().pathname;
+  const inSession = IN_SESSION_ROUTES.has(pathname);
   return (
     <div className={`min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
       {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
@@ -33,7 +45,7 @@ export function Layout(): JSX.Element {
         Sari la continut
       </a>
       <UpdatePrompt />
-      <main id="main-content" className="flex-1 pb-16">
+      <main id="main-content" className={`flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
             <Outlet />
@@ -41,7 +53,7 @@ export function Layout(): JSX.Element {
         </ErrorBoundary>
       </main>
       <SessionPill />
-      <BottomNav />
+      {!inSession && <BottomNav />}
     </div>
   );
 }
