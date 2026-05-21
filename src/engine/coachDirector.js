@@ -58,16 +58,17 @@ const ENGINE_CONSUME_WEIGHTED_SECONDARY = Object.freeze(['specialization']);
  * effects). Unknown engineId returns frozen empty map (NU throw — defensive
  * fallback per ADR_ENGINE_REFACTOR Co-CTO discipline).
  *
- * @param {Array<Object>} exercises - Session exercises (each with
+ * @param {Array<Record<string, any>> | null | undefined} exercises - Session exercises (each with
  *   muscle_target_primary string + optional muscle_target_secondary string[])
  * @param {string} engineId - 'muscleRecovery' | 'periodization' |
  *   'weaknessDetector' | 'specialization'
- * @returns {Object<string, number>} Big 11 group → weighted score map (frozen)
+ * @returns {Readonly<Record<string, number>>} Big 11 group → weighted score map (frozen)
  */
 export function aggregateGroupScoresPerEngine(exercises, engineId) {
   if (!Array.isArray(exercises)) return Object.freeze({});
   if (typeof engineId !== 'string' || engineId.length === 0) return Object.freeze({});
 
+  /** @type {Record<string, number>} */
   const scores = {};
 
   if (ENGINE_CONSUME_PRIMARY_ONLY.includes(engineId)) {
@@ -78,6 +79,7 @@ export function aggregateGroupScoresPerEngine(exercises, engineId) {
       scores[primary] = (scores[primary] || 0) + 1.0;
     }
   } else if (ENGINE_CONSUME_WEIGHTED_SECONDARY.includes(engineId)) {
+    /** @type {Set<string>} */
     const targetGroups = new Set();
     for (const ex of exercises) {
       if (!ex || typeof ex !== 'object') continue;
@@ -94,7 +96,7 @@ export function aggregateGroupScoresPerEngine(exercises, engineId) {
       let total = 0;
       for (const ex of exercises) {
         if (!ex || typeof ex !== 'object') continue;
-        total += computeWeightedGroupScore(ex, group);
+        total += computeWeightedGroupScore(/** @type {any} */ (ex), group);
       }
       if (total > 0) scores[group] = total;
     }
@@ -112,7 +114,9 @@ export class CoachDirector {
    * weighted via `aggregateGroupScoresPerEngine(exercises, 'specialization')`).
    * Pipeline §42.10 dispatch order preserved invariant ADR-026 §9.
    */
+  /** @param {string} sessionType */
   async buildSession(sessionType) {
+    /** @type {Record<string, any>} */
     const ctx = buildCoachContext();
 
     if (!ctx.readiness.isSet) {
@@ -126,7 +130,7 @@ export class CoachDirector {
 
     // ── Calibration level detection ────────────────────────────────────────
     const allLogs = ctx.allLogs ?? [];
-    const calibration = detectCalibrationLevel(ctx);
+    const calibration = /** @type {Record<string, any>} */ (detectCalibrationLevel(ctx));
     ctx.calibrationLevel = calibration;
     console.log('[CoachDirector] Calibration:', calibration.name);
 
@@ -137,7 +141,7 @@ export class CoachDirector {
       ctx.patterns = [];
     } else if (calibration.patternMinConfidence != null) {
       ctx.patterns = (ctx.patterns || []).filter(
-        p => (p.confidence ?? 0.5) >= calibration.patternMinConfidence
+        (/** @type {{confidence?: number}} */ p) => (p.confidence ?? 0.5) >= calibration.patternMinConfidence
       );
     }
 
@@ -195,16 +199,17 @@ export class CoachDirector {
         weights: (() => { try { return JSON.parse(localStorage.getItem('weights') ?? '{}'); } catch { return {}; } })(),
         kcals: (() => { try { return JSON.parse(localStorage.getItem('kcals') ?? '{}'); } catch { return {}; } })(),
         waters: (() => { try { return JSON.parse(localStorage.getItem('waters') ?? '{}'); } catch { return {}; } })(),
-        logs: ctx.recentLogs?.flatMap(s => s.logs ?? []) ?? [],
+        logs: ctx.recentLogs?.flatMap((/** @type {{logs?: any[]}} */ s) => s.logs ?? []) ?? [],
       });
     } catch { /* proactive checks are non-blocking */ }
 
+    /** @type {Record<string, any>} */
     let session = buildSession(sessionType, ctx);
 
     // ── Resolve equipment alternatives ────────────────────────────────────
     const unavailableEquipment = ctx.equipment?.unavailable ?? [];
     if (unavailableEquipment.length > 0) {
-      session.exercises = session.exercises.map(ex => {
+      session.exercises = session.exercises.map((/** @type {Record<string, any>} */ ex) => {
         const resolved = resolveExercise(ex.name, unavailableEquipment);
         if (resolved.isAlternative) {
           return { ...ex, name: resolved.exercise, isAlternative: true, original: resolved.original };
@@ -214,7 +219,7 @@ export class CoachDirector {
     }
 
     try {
-      for (const exercise of session.exercises) {
+      for (const exercise of /** @type {Array<Record<string, any>>} */ (session.exercises)) {
         if (dpModule.DP && dpModule.DP.getSmartRecommendation) {
           const dpRec = dpModule.DP.getSmartRecommendation(exercise.name, ctx.readiness.score, null);
           if (dpRec.status === 'INIT') {
@@ -244,7 +249,7 @@ export class CoachDirector {
         }
       }
     } catch {
-      for (const exercise of session.exercises) {
+      for (const exercise of /** @type {Array<Record<string, any>>} */ (session.exercises)) {
         if (!exercise.recommendation) {
           const lastLog = getLastLogFromContext(exercise.name, ctx.recentLogs);
           const baseWeight = lastLog ? (lastLog.w ?? 20) : 20;
@@ -261,12 +266,12 @@ export class CoachDirector {
     if (_useClusterForAA) {
       try {
         const baseSessionForAA = session;
-        const activeDims = getActiveDimensions(ctx, { flags: { aa_via_cluster: true } });
+        const activeDims = getActiveDimensions(/** @type {any} */ (ctx), { flags: { aa_via_cluster: true } });
         const aaEntries = activeDims.filter(d => d.id === AA_DIMENSION_ID);
         if (aaEntries.length > 0) {
           const dimInput = { ctx, cdl: [], userProfile: ctx.user ?? {}, flags: { aa_via_cluster: true } };
           const results = await Promise.all(
-            aaEntries.map(d => Promise.resolve(d.module.analyze(dimInput)))
+            aaEntries.map(d => Promise.resolve(/** @type {any} */ (d.module).analyze(dimInput)))
           );
           const cluster = new DecisionCluster();
           const { session: clusterSession, trace } = await cluster.execute(
@@ -278,8 +283,9 @@ export class CoachDirector {
       } catch (err) {
         console.error('[CoachDirector] AA cluster route failed — falling back to legacy:', err);
         try {
-          if (typeof window !== 'undefined' && window.Sentry?.captureException) {
-            window.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'aa_cluster_route' } });
+          const w = /** @type {any} */ (typeof window !== 'undefined' ? window : null);
+          if (w && w.Sentry?.captureException) {
+            w.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'aa_cluster_route' } });
           }
         } catch (_) { /* swallow */ }
         session = this.applyAAAdjustments(session, ctx);
@@ -287,7 +293,7 @@ export class CoachDirector {
     } else {
       session = this.applyAAAdjustments(session, ctx);
     }
-    session = realityEngine.validate(session, ctx);
+    session = /** @type {Record<string, any>} */ (realityEngine.validate(session, ctx)) ?? session;
     session = this.applyPatterns(session, ctx);
 
     session.calibrationLevel  = ctx.calibrationLevel;
@@ -349,10 +355,10 @@ export class CoachDirector {
         sessionType,
         rationale: _rationale,
         exercises: Array.isArray(session?.exercises)
-          ? session.exercises.map(e => e?.name).filter(Boolean)
+          ? session.exercises.map((/** @type {Record<string, any>} */ e) => e?.name).filter(Boolean)
           : [],
         proposedSets: Array.isArray(session?.exercises)
-          ? session.exercises.reduce((sum, e) => sum + (e?.sets || 0), 0)
+          ? session.exercises.reduce((/** @type {number} */ sum, /** @type {Record<string, any>} */ e) => sum + (e?.sets || 0), 0)
           : 0,
         volumeMultiplier: ctx.readiness?.volumeMultiplier ?? 1.0,
         notes: ''
@@ -365,11 +371,12 @@ export class CoachDirector {
       });
       cdlEntryId = written.id;
     } catch (err) {
-      cdlWriteError = err.message || String(err);
+      cdlWriteError = (err instanceof Error ? err.message : null) || String(err);
       console.error('[CoachDirector] CDL write failed (degraded mode):', err);
       try {
-        if (typeof window !== 'undefined' && window.Sentry?.captureException) {
-          window.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'cdl_write' } });
+        const w = /** @type {any} */ (typeof window !== 'undefined' ? window : null);
+        if (w && w.Sentry?.captureException) {
+          w.Sentry.captureException(err, { tags: { component: 'coachDirector', op: 'cdl_write' } });
         }
       } catch (_) { /* swallow Sentry errors */ }
     }
@@ -382,6 +389,10 @@ export class CoachDirector {
     return session;
   }
 
+  /**
+   * @param {Record<string, any>} session
+   * @param {Record<string, any>} ctx
+   */
   applyAAAdjustments(session, ctx) {
     const aa = ctx.autoAggression;
     if (!aa || aa.tier === 'none' || aa.tier === 'LOW') return session;
@@ -405,7 +416,7 @@ export class CoachDirector {
     };
 
     // Anti-overreach default — volume reduction 30%
-    session.exercises = session.exercises.map(e => ({
+    session.exercises = session.exercises.map((/** @type {Record<string, any>} */ e) => ({
       ...e,
       aaOriginalSets: e.sets,  // preserve pentru override restore (ADR 014 §5, TASK #7)
       sets: Math.max(2, Math.floor((e.sets || 3) * 0.7)),
@@ -415,9 +426,13 @@ export class CoachDirector {
     return session;
   }
 
+  /**
+   * @param {Record<string, any>} session
+   * @param {Record<string, any>} ctx
+   */
   applyPatterns(session, ctx) {
     if (!ctx.patterns || ctx.patterns.length === 0) return session;
-    for (const pattern of ctx.patterns) {
+    for (const pattern of /** @type {Array<Record<string, any>>} */ (ctx.patterns)) {
       if (pattern.type === 'EARLY_END' && (pattern.earlyEndRate >= 60 || (pattern.confidence ?? 0) > 0.6)) {
         const originalCount = session.exercises.length;
         const newCount = Math.max(3, Math.ceil(originalCount * 0.8));
@@ -441,9 +456,9 @@ export class CoachDirector {
    * Light mobility ~15 min session — NO lifts. Used when user picks
    * `chooseScheduleOverride('sesiune-usoara')`.
    *
-   * @param {object} profile - user profile (unused today, reserved for future)
-   * @param {object} ctx - coach context (unused today, reserved for future)
-   * @returns {{ type, durationMin, exercises, isMobility, intent }}
+   * @param {Record<string, any> | null | undefined} _profile - user profile (unused today, reserved for future)
+   * @param {Record<string, any> | null | undefined} _ctx - coach context (unused today, reserved for future)
+   * @returns {{ type: string, durationMin: number, exercises: Array<Record<string, any>>, isMobility: boolean, intent: string }}
    */
   buildLightMobility(_profile, _ctx) {
     return {
@@ -466,10 +481,10 @@ export class CoachDirector {
    * volume across the remaining sessions this week (up to 2). Returns the
    * adjustment plan — caller applies on next buildSession() calls.
    *
-   * @param {object} profile
-   * @param {object} ctx
+   * @param {Record<string, any> | null | undefined} _profile
+   * @param {Record<string, any> | null | undefined} _ctx
    * @param {string} skippedDay - day label ('luni','marti', etc.)
-   * @returns {{ skippedDay, adjustments: Array<{day, volumeBoostPct}>, note }}
+   * @returns {{ skippedDay: string, adjustments: Array<{day: string, volumeBoostPct: number}>, note: string }}
    */
   rebalanceWeekAfterSkip(_profile, _ctx, skippedDay) {
     const week = ['luni','marti','miercuri','joi','vineri','sambata','duminica'];
@@ -498,15 +513,15 @@ export class CoachDirector {
    * Low intensity (70% kg target), reduced sets (max 2 per ex), recovery-aware.
    * Used when user picks `chooseScheduleOverride('vreau-antrenez')`.
    *
-   * @param {object} profile
-   * @param {object} ctx
+   * @param {Record<string, any> | null | undefined} _profile
+   * @param {Record<string, any> | null | undefined} ctx
    * @param {string} alternativeType - 'PUSH' | 'PULL' | 'UMERI_BRATE' | etc.
-   * @returns {{ type, exercises, isSafeRestDay, intensityFactor, intent }}
+   * @returns {{ type: string, exercises: Array<Record<string, any>>, isSafeRestDay: boolean, intensityFactor: number, intent: string }}
    */
   generateSafeSessionForRestDay(_profile, ctx, alternativeType) {
     const baseType = (alternativeType || 'UMERI_BRATE').toUpperCase();
     const base = buildSession(baseType, ctx || {});
-    const exercises = (base.exercises || []).slice(0, 4).map(e => ({
+    const exercises = (base.exercises || []).slice(0, 4).map((/** @type {Record<string, any>} */ e) => ({
       ...e,
       sets: Math.min(2, e.sets || 2),
       isSafeRestDay: true,
@@ -523,40 +538,54 @@ export class CoachDirector {
 
 export const coachDirector = new CoachDirector();
 
+/**
+ * @param {string} exerciseName
+ * @param {Array<{logs?: Array<{ex?: string, w?: number}>}> | null | undefined} recentLogs
+ */
 function getLastLogFromContext(exerciseName, recentLogs) {
   if (!recentLogs || !recentLogs.length) return null;
   for (const session of recentLogs) {
-    const log = (session.logs || []).find(l => l.ex === exerciseName);
+    const log = (session.logs || []).find((l) => l.ex === exerciseName);
     if (log) return log;
   }
   return null;
 }
 
+/**
+ * @param {string} exerciseName
+ * @param {Array<{logs?: Array<{ex?: string}>}> | null | undefined} recentLogs
+ */
 function _hasRecentLog(exerciseName, recentLogs) {
   if (!recentLogs || !recentLogs.length) return false;
   for (const session of recentLogs) {
-    if ((session.logs || []).some(l => l.ex === exerciseName)) return true;
+    if ((session.logs || []).some((l) => l.ex === exerciseName)) return true;
   }
   return false;
 }
 
+/** @param {Array<{session?: number}> | null | undefined} allLogs */
 function _computeDaysSinceLastSession(allLogs) {
   if (!Array.isArray(allLogs) || allLogs.length === 0) return null;
-  const sessionTimestamps = [...new Set(allLogs.map(l => l.session).filter(Boolean))];
+  const sessionTimestamps = /** @type {number[]} */ ([...new Set(allLogs.map((l) => l.session).filter(Boolean))]);
   if (sessionTimestamps.length === 0) return null;
   const lastTs = Math.max(...sessionTimestamps);
   return Math.floor((Date.now() - lastTs) / MS_PER_DAY);
 }
 
+/** @param {Array<{session?: number, ex?: string}> | null | undefined} allLogs */
 function _computeLastSessionType(allLogs) {
   if (!Array.isArray(allLogs) || allLogs.length === 0) return null;
+  /** @type {Record<string, Set<string>>} */
   const bySession = {};
   for (const l of allLogs) {
     if (!l.session || !l.ex) continue;
-    bySession[l.session] = bySession[l.session] || new Set();
-    bySession[l.session].add(l.ex);
+    const key = String(l.session);
+    bySession[key] = bySession[key] || new Set();
+    bySession[key].add(l.ex);
   }
   const sortedTs = Object.keys(bySession).sort((a, b) => Number(b) - Number(a));
   if (sortedTs.length === 0) return null;
-  return inferSessionType([...bySession[sortedTs[0]]]);
+  const firstKey = sortedTs[0];
+  if (!firstKey || !bySession[firstKey]) return null;
+  return inferSessionType([...bySession[firstKey]]);
 }

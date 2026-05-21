@@ -15,8 +15,21 @@
  *            ADR 014 (when published — schema profile-history + reconciliation prompts UI)
  */
 
+/**
+ * @typedef {Object} PtCdlEntry
+ * @property {string} [date]
+ * @property {number} [ts]
+ * @property {boolean} [synthetic]
+ * @property {string} [type]
+ * @property {Record<string, any>} [outcome]
+ * @property {Record<string, any>} [context]
+ */
+
+/** @typedef {{ daysWithHyperfocus?: number, hoursInApp7d?: number } | null | undefined} PtHyperfocusData */
+
 // ── ISO week (same algorithm as autoAggressionDetection.js — independent, NOT imported) ──
 
+/** @param {string | number | Date} date */
 function _isoWeekLocal(date) {
   const d = typeof date === 'string' ? new Date(date) : new Date(date);
   const thursday = new Date(d);
@@ -24,7 +37,7 @@ function _isoWeekLocal(date) {
   const jan4 = new Date(thursday.getFullYear(), 0, 4);
   const startOfWeek1 = new Date(jan4);
   startOfWeek1.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
-  const week = Math.floor((thursday - startOfWeek1) / (7 * 86400000)) + 1;
+  const week = Math.floor((thursday.getTime() - startOfWeek1.getTime()) / (7 * 86400000)) + 1;
   return `${thursday.getFullYear()}-W${String(week).padStart(2, '0')}`;
 }
 
@@ -35,6 +48,10 @@ function _isoWeekLocal(date) {
  * HIGH: ≥3 signature markers AND zero counter-markers
  * MEDIUM: 2 signature markers AND ≤1 counter-marker
  * LOW: <2 signature markers OR ≥2 counter-markers
+ */
+/**
+ * @param {number | Array<any>} signatureMarkers
+ * @param {number | Array<any>} counterMarkers
  */
 export function _computeConfidence(signatureMarkers, counterMarkers) {
   const sig = typeof signatureMarkers === 'number' ? signatureMarkers : (signatureMarkers?.length ?? 0);
@@ -51,10 +68,11 @@ export function _computeConfidence(signatureMarkers, counterMarkers) {
  * <12 sessions → insufficient_data; 0 sessions → stale_self_report.
  * Returns { insufficient, stale, sessionCount }.
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _hasInsufficientData(cdlEntries) {
   const entries = cdlEntries ?? [];
   const sessionCount = entries.filter(
-    e => e.outcome?.executed === true || e.outcome?.executed === 'partial'
+    (e) => e.outcome?.executed === true || e.outcome?.executed === 'partial'
   ).length;
 
   if (sessionCount === 0) return { insufficient: true, stale: true, sessionCount: 0 };
@@ -64,24 +82,30 @@ export function _hasInsufficientData(cdlEntries) {
 
 // ── Reusable micro-helpers ────────────────────────────────────────────────────
 
+/** @param {Array<PtCdlEntry>} entries */
 function _volumeCreepEntries(entries) {
   return entries.filter(
-    e => (e.outcome?.executed === true || e.outcome?.executed === 'partial') &&
+    (e) => (e.outcome?.executed === true || e.outcome?.executed === 'partial') &&
          e.outcome?.deviation === true &&
          (e.outcome?.actualSets ?? 0) > (e.outcome?.proposedSets ?? 0)
   );
 }
 
+/** @param {Array<PtCdlEntry>} workouts */
 function _hasFrustrationPattern(workouts) {
   for (let i = 0; i < workouts.length; i++) {
-    const rating = workouts[i].outcome?.rating;
+    const cur = workouts[i];
+    if (!cur?.date) continue;
+    const rating = cur.outcome?.rating;
     if (!(typeof rating === 'number' && rating <= 2)) continue;
-    const windowEnd = new Date(workouts[i].date);
+    const windowEnd = new Date(cur.date);
     windowEnd.setDate(windowEnd.getDate() + 14);  // 14-day frustration window (ADR 013 signal #3)
     for (let j = i; j < workouts.length; j++) {
-      if (new Date(workouts[j].date) > windowEnd) break;
-      if (workouts[j].outcome?.deviation === true &&
-          (workouts[j].outcome?.actualSets ?? 0) > (workouts[j].outcome?.proposedSets ?? 0)) {
+      const e = workouts[j];
+      if (!e?.date) continue;
+      if (new Date(e.date) > windowEnd) break;
+      if (e.outcome?.deviation === true &&
+          (e.outcome?.actualSets ?? 0) > (e.outcome?.proposedSets ?? 0)) {
         return true;
       }
     }
@@ -89,18 +113,20 @@ function _hasFrustrationPattern(workouts) {
   return false;
 }
 
+/** @param {Array<PtCdlEntry>} entries */
 function _hasRecoveryDebt(entries) {
+  /** @type {Record<string, number>} */
   const byWeek = {};
   for (const entry of entries) {
     if (!entry.date) continue;
     const week = _isoWeekLocal(entry.date);
     if (!byWeek[week]) byWeek[week] = 0;
-    if (entry.outcome?.executed === false && entry.outcome?.rest_marked === true) byWeek[week]++;
+    if (entry.outcome?.executed === false && entry.outcome?.rest_marked === true) byWeek[week] = (byWeek[week] ?? 0) + 1;
   }
   const sortedWeeks = Object.keys(byWeek).sort();
   let streak = 0;
   for (const week of sortedWeeks) {
-    if (byWeek[week] < 2) {  // <2 rest days threshold (ADR 013 §5)
+    if ((byWeek[week] ?? 0) < 2) {  // <2 rest days threshold (ADR 013 §5)
       streak++;
       if (streak >= 3) return true;
     } else {
@@ -110,18 +136,22 @@ function _hasRecoveryDebt(entries) {
   return false;
 }
 
+/** @param {Array<PtCdlEntry>} entries */
 function _hasCalorieAcceleration(entries) {
   const withKcal = entries
-    .filter(e => typeof e.context?.kcal_target === 'number')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => typeof e.context?.kcal_target === 'number')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
   for (let i = 0; i < withKcal.length; i++) {
-    const anchor = new Date(withKcal[i].date);
+    const anchorEntry = withKcal[i];
+    if (!anchorEntry?.date) continue;
+    const anchor = new Date(anchorEntry.date);
     const cutoff = new Date(anchor);
     cutoff.setDate(anchor.getDate() + 7);  // 7-day rolling window (ADR 013 signal #2)
-    const win = withKcal.filter(e => { const d = new Date(e.date); return d >= anchor && d <= cutoff; });
+    const win = withKcal.filter((e) => { if (!e.date) return false; const d = new Date(e.date); return d >= anchor && d <= cutoff; });
     if (win.length < 2) continue;
-    if (Math.max(...win.map(e => e.context.kcal_target)) -
-        Math.min(...win.map(e => e.context.kcal_target)) > 300) return true;  // >300 kcal threshold
+    const kcals = win.map((e) => e.context?.kcal_target).filter((v) => typeof v === 'number');
+    if (kcals.length < 2) continue;
+    if (Math.max(...kcals) - Math.min(...kcals) > 300) return true;  // >300 kcal threshold
   }
   return false;
 }
@@ -133,11 +163,15 @@ function _hasCalorieAcceleration(entries) {
  * recovery debt 3+ weeks, calorie acceleration.
  * Returns count of matched signature markers (0–5).
  */
+/**
+ * @param {Array<PtCdlEntry> | null | undefined} cdlEntries
+ * @param {PtHyperfocusData} [hyperfocusData]
+ */
 export function _matchSprinterSignature(cdlEntries, hyperfocusData) {
   const entries = cdlEntries ?? [];
   const workouts = entries
-    .filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
 
   let count = 0;
 
@@ -164,11 +198,12 @@ export function _matchSprinterSignature(cdlEntries, hyperfocusData) {
  * rating stable (no low ratings).
  * Returns count of matched signature markers (0–4).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _matchMarathonSignature(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
   if (executed.length === 0) return 0;
-  const nonRest = entries.filter(e => e.outcome?.rest_marked !== true);
+  const nonRest = entries.filter((e) => e.outcome?.rest_marked !== true);
 
   let count = 0;
 
@@ -179,11 +214,11 @@ export function _matchMarathonSignature(cdlEntries) {
   if (_volumeCreepEntries(entries).length <= 1) count++;
 
   // Marker 3: rest days planned (≥2 rest_marked=true — low recovery debt indicator)
-  const restDays = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const restDays = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
   if (restDays >= 2) count++;
 
   // Marker 4: rating stable (no frustration spikes ≤2)
-  const hasLowRating = executed.some(e => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
+  const hasLowRating = executed.some((e) => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
   if (!hasLowRating) count++;
 
   return count;
@@ -194,12 +229,17 @@ export function _matchMarathonSignature(cdlEntries) {
  * zero rest_marked, frustration ABSENT (high-commitment phase), hyperfocus intense.
  * Returns count of matched signature markers (0–5).
  */
+/**
+ * @param {Array<PtCdlEntry> | null | undefined} cdlEntries
+ * @param {PtHyperfocusData} [hyperfocusData]
+ */
 export function _matchYoyoSignature(cdlEntries, hyperfocusData) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
   if (executed.length === 0) return 0;
-  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
-  const firstDate = sorted.length > 0 ? new Date(sorted[0].date) : null;
+  const sorted = [...entries].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
+  const firstEntry = sorted[0];
+  const firstDate = firstEntry?.date ? new Date(firstEntry.date) : null;
 
   let count = 0;
 
@@ -207,7 +247,8 @@ export function _matchYoyoSignature(cdlEntries, hyperfocusData) {
   if (firstDate) {
     const twoWeekCutoff = new Date(firstDate);
     twoWeekCutoff.setDate(firstDate.getDate() + 14);
-    const earlyDeviations = sorted.filter(e => {
+    const earlyDeviations = sorted.filter((e) => {
+      if (!e.date) return false;
       const d = new Date(e.date);
       return d <= twoWeekCutoff &&
              (e.outcome?.executed === true || e.outcome?.executed === 'partial') &&
@@ -221,11 +262,11 @@ export function _matchYoyoSignature(cdlEntries, hyperfocusData) {
   if (_hasCalorieAcceleration(entries)) count++;
 
   // Marker 3: ZERO rest_marked=true (pure all-in, no recovery acknowledgment)
-  const restDays = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const restDays = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
   if (restDays === 0) count++;
 
   // Marker 4: frustration ABSENT — no low ratings (high-commitment phase, no frustration yet)
-  const hasLowRating = executed.some(e => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
+  const hasLowRating = executed.some((e) => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
   if (!hasLowRating) count++;
 
   // Marker 5: hyperfocus INTENSE (≥4 days/week threshold)
@@ -239,16 +280,17 @@ export function _matchYoyoSignature(cdlEntries, hyperfocusData) {
  * low impulsivity (≤1 unreasoned creep), stable ratings.
  * Returns count of matched signature markers (0–4).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _matchStrategicSignature(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
   if (executed.length === 0) return 0;
 
   let count = 0;
 
   // Marker 1: conscious deviations — deviation=true WITH deviationReason logged
   const consciousDeviations = executed.filter(
-    e => e.outcome?.deviation === true &&
+    (e) => e.outcome?.deviation === true &&
          e.outcome?.deviationReason != null &&
          e.outcome?.deviationReason !== ''
   );
@@ -256,7 +298,7 @@ export function _matchStrategicSignature(cdlEntries) {
 
   // Marker 2: reasoned early-stops — earlyStop=true WITH earlyStopReason logged
   const reasonedStops = executed.filter(
-    e => e.outcome?.earlyStop === true &&
+    (e) => e.outcome?.earlyStop === true &&
          e.outcome?.earlyStopReason != null &&
          e.outcome?.earlyStopReason !== ''
   );
@@ -264,14 +306,14 @@ export function _matchStrategicSignature(cdlEntries) {
 
   // Marker 3: low impulsivity — ≤1 impulsive (no-reason) volume creep
   const impulsiveCreep = executed.filter(
-    e => e.outcome?.deviation === true &&
+    (e) => e.outcome?.deviation === true &&
          (e.outcome?.actualSets ?? 0) > (e.outcome?.proposedSets ?? 0) &&
          (e.outcome?.deviationReason == null || e.outcome?.deviationReason === '')
   );
   if (impulsiveCreep.length <= 1) count++;
 
   // Marker 4: stable ratings (no frustration spikes ≤2)
-  const hasLowRating = executed.some(e => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
+  const hasLowRating = executed.some((e) => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
   if (!hasLowRating) count++;
 
   return count;
@@ -283,11 +325,12 @@ export function _matchStrategicSignature(cdlEntries) {
  * Counter-markers for Sprinter profile.
  * Counter: high consistency WITH planned rest (contradicts Sprinter's burst/no-rest pattern).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _counterMarkersSprinter(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
-  const nonRest = entries.filter(e => e.outcome?.rest_marked !== true);
-  const restDays = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const nonRest = entries.filter((e) => e.outcome?.rest_marked !== true);
+  const restDays = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
 
   const markers = [];
   if (nonRest.length > 0 &&
@@ -302,6 +345,7 @@ export function _counterMarkersSprinter(cdlEntries) {
  * Counter-markers for Marathon profile.
  * Counter: frequent volume creep (contradicts Marathon's low-deviation steady pattern).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _counterMarkersMarathon(cdlEntries) {
   const entries = cdlEntries ?? [];
   const markers = [];
@@ -316,10 +360,11 @@ export function _counterMarkersMarathon(cdlEntries) {
  * Counter-markers for Yo-yo profile.
  * Counter: sustained intensity with rhythm (contradicts all-in/drop pattern).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _counterMarkersYoyo(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
-  const restDays = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const restDays = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
 
   const markers = [];
   if (restDays >= 2 && executed.length >= 6) {  // sustained rhythm = rest present + enough sessions
@@ -332,12 +377,13 @@ export function _counterMarkersYoyo(cdlEntries) {
  * Counter-markers for Strategic profile.
  * Counter: impulsive volume creep without reason logged (contradicts Strategic's conscious deviation).
  */
+/** @param {Array<PtCdlEntry> | null | undefined} cdlEntries */
 export function _counterMarkersStrategic(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
 
   const impulsiveCreep = executed.filter(
-    e => e.outcome?.deviation === true &&
+    (e) => e.outcome?.deviation === true &&
          (e.outcome?.actualSets ?? 0) > (e.outcome?.proposedSets ?? 0) &&
          (e.outcome?.deviationReason == null || e.outcome?.deviationReason === '')
   );
@@ -356,7 +402,7 @@ export function _counterMarkersStrategic(cdlEntries) {
  * Used in confidence calculation + "Detalii" drill-down in reconciliation prompt.
  *
  * @param {string} profile - 'Sprinter' | 'Marathon' | 'Yo-yo' | 'Strategic'
- * @param {Array} cdlEntries
+ * @param {Array<PtCdlEntry>} cdlEntries
  * @returns {string[]} - list of counter-marker descriptions matched
  */
 export function computeCounterMarkers(profile, cdlEntries) {
@@ -373,25 +419,26 @@ export function computeCounterMarkers(profile, cdlEntries) {
  * Detect YO-YO_RISK preventive: 3-4 weeks all-in (volume aggressive + zero rest_marked + zero frustration).
  * Triggers BEFORE drop pattern manifests — preventive intervention (ADR 013 §YO-YO_RISK).
  *
- * @param {Array} cdlEntries
+ * @param {Array<PtCdlEntry> | null | undefined} cdlEntries
  * @returns {boolean}
  */
 export function detectYoyoRisk(cdlEntries) {
   const entries = cdlEntries ?? [];
-  const executed = entries.filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial');
+  const executed = entries.filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial');
 
   // Condition 1: zero rest_marked=true days (all-in, no recovery acknowledgment)
-  const restDays = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const restDays = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
   if (restDays > 0) return false;
 
   // Condition 2: volume aggressive (≥2 deviation entries with actual > proposed)
   if (_volumeCreepEntries(entries).length < 2) return false;
 
   // Condition 3: zero frustration (no low ratings ≤2 — high-commitment phase still present)
-  const hasLowRating = executed.some(e => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
+  const hasLowRating = executed.some((e) => typeof e.outcome?.rating === 'number' && e.outcome.rating <= 2);
   if (hasLowRating) return false;
 
   // Condition 4: spans ≥3 ISO weeks (sustained all-in, not a one-week spike)
+  /** @type {Record<string, boolean>} */
   const byWeek = {};
   for (const e of executed) {
     if (e.date) byWeek[_isoWeekLocal(e.date)] = true;
@@ -405,9 +452,9 @@ export function detectYoyoRisk(cdlEntries) {
  * Behavioral inference from CDL only (no self-report).
  * Used when source='behavioral' or for reconciliation comparison.
  *
- * @param {Array} cdlEntries - last 4-6 weeks (caller filters window)
- * @param {object} [hyperfocusData]
- * @returns {{ primary, confidence, signature, dataPoints, sessionCount }}
+ * @param {Array<PtCdlEntry> | null | undefined} cdlEntries - last 4-6 weeks (caller filters window)
+ * @param {PtHyperfocusData} [hyperfocusData]
+ * @returns {{ primary: string | null, confidence: string, signature: Record<string, number>, dataPoints: string[], sessionCount: number }}
  */
 export function inferBehavioralProfile(cdlEntries, hyperfocusData) {
   const entries = cdlEntries ?? [];
@@ -433,21 +480,24 @@ export function inferBehavioralProfile(cdlEntries, hyperfocusData) {
   ].sort((a, b) => b.score - a.score);
 
   // Tie at top → null (insufficient discrimination)
-  const primary = ranked[0].score > 0 && ranked[0].score > ranked[1].score
-    ? ranked[0].profile
-    : (ranked[0].score > 0 ? ranked[0].profile : null);
+  const top = ranked[0];
+  const second = ranked[1];
+  const primary = top && top.score > 0 && (!second || top.score > second.score)
+    ? top.profile
+    : null;
 
   const counterMarkers = primary ? computeCounterMarkers(primary, entries) : [];
-  const primarySigCount = primary ? ranked[0].score : 0;
+  const primarySigCount = primary && top ? top.score : 0;
   const confidence = primary ? _computeConfidence(primarySigCount, counterMarkers.length) : 'low';
 
   // Build human-readable data points for reconciliation prompt
+  /** @type {string[]} */
   const dataPoints = [];
   const creepCount = _volumeCreepEntries(entries).length;
   if (creepCount > 0) dataPoints.push(`Volume creep: ${creepCount} sesiuni`);
-  const restCount = entries.filter(e => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
+  const restCount = entries.filter((e) => e.outcome?.executed === false && e.outcome?.rest_marked === true).length;
   if (restCount > 0) dataPoints.push(`Rest days: ${restCount}`);
-  if ((hyperfocusData?.daysWithHyperfocus ?? 0) >= 4) {
+  if (hyperfocusData && (hyperfocusData.daysWithHyperfocus ?? 0) >= 4) {
     dataPoints.push(`Hyperfocus: ${hyperfocusData.daysWithHyperfocus} zile/sapt`);
   }
 
@@ -457,9 +507,9 @@ export function inferBehavioralProfile(cdlEntries, hyperfocusData) {
 /**
  * Determine reconciliation action based on self-report vs behavioral.
  *
- * @param {object} selfReport - { primary, secondary, confidence, ... }
- * @param {object} behavioral - return value of inferBehavioralProfile
- * @param {Array} [previousReconciliations] - past reconciliation events (from profile-history, caller-provided)
+ * @param {{primary?: string, secondary?: string, confidence?: string} | null | undefined} selfReport - { primary, secondary, confidence, ... }
+ * @param {ReturnType<typeof inferBehavioralProfile> | null | undefined} behavioral - return value of inferBehavioralProfile
+ * @param {Array<any>} [previousReconciliations] - past reconciliation events (from profile-history, caller-provided)
  * @returns {'match_silent'|'match_first_prompt'|'mismatch_high'|'mismatch_lowmed'|'insufficient'|'stale'}
  */
 export function reconciliationAction(selfReport, behavioral, previousReconciliations = []) {
@@ -483,12 +533,8 @@ export function reconciliationAction(selfReport, behavioral, previousReconciliat
 /**
  * Main entry — analyze profile from self-report + behavioral data.
  *
- * @param {object} opts
- * @param {object|null} opts.selfReport - { primary, secondary, confidence, scores, flags } from Q1-Q5, or null
- * @param {Array} opts.cdlEntries - CDL entries last 4-6 weeks (caller filters window)
- * @param {object} [opts.hyperfocusData] - optional, passed-through for amplifier
- * @param {Array} [opts.previousReconciliations] - past reconciliation events (profile-history, caller-provided)
- * @returns {{ primary, secondary, confidence, source, selfReport, behavioral, reconciliation, riskFlags, reasoning }}
+ * @param {{ selfReport: {primary?: string, secondary?: string, confidence?: string} | null, cdlEntries: Array<PtCdlEntry>, hyperfocusData?: PtHyperfocusData, previousReconciliations?: Array<any> }} opts
+ * @returns {{ primary: string | null, secondary: string | null, confidence: string, source: string, selfReport: any, behavioral: any, reconciliation: any, riskFlags: string[], reasoning: string }}
  */
 export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previousReconciliations = [] }) {
   const entries = cdlEntries ?? [];
@@ -515,7 +561,7 @@ export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previou
   }
 
   // Behavioral only (no self-report)
-  if (!selfReport) {
+  if (!selfReport && behavioral) {
     return {
       primary: behavioral.primary,
       secondary: null,
@@ -530,9 +576,9 @@ export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previou
   }
 
   // Self-report only (no behavioral or insufficient behavioral data)
-  if (!behavioral || !behavioral.primary || behavioral.sessionCount < 12) {
+  if (selfReport && (!behavioral || !behavioral.primary || behavioral.sessionCount < 12)) {
     return {
-      primary: selfReport.primary,
+      primary: selfReport.primary ?? null,
       secondary: selfReport.secondary ?? null,
       confidence: selfReport.confidence ?? 'low',
       source: 'self-report',
@@ -544,12 +590,25 @@ export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previou
     };
   }
 
-  // Both available — reconcile
+  // Both available — reconcile (selfReport + behavioral both truthy at this point)
+  if (!selfReport || !behavioral) {
+    return {
+      primary: null,
+      secondary: null,
+      confidence: 'low',
+      source: 'self-report',
+      selfReport: null,
+      behavioral: null,
+      reconciliation: null,
+      riskFlags,
+      reasoning: 'No data available for profile inference.',
+    };
+  }
   const isMatch = selfReport.primary === behavioral.primary;
 
   return {
-    primary: isMatch ? selfReport.primary : behavioral.primary,
-    secondary: isMatch ? null : selfReport.primary,
+    primary: (isMatch ? selfReport.primary : behavioral.primary) ?? null,
+    secondary: (isMatch ? null : selfReport.primary) ?? null,
     confidence: behavioral.confidence,
     source: 'reconciled',
     selfReport,
