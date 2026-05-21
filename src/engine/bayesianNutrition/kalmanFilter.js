@@ -120,6 +120,13 @@ export function ewmaUpdate({ previousMu, observation, alpha }) {
  * Fail (R² <= 0.85) → revert EWMA fallback recommended.
  * Pass (R² > 0.85)  → Kalman 1D OK to proceed.
  *
+ * §B031 audit fix (REVIEW-A036-A038 M-§A038-04) — STRICT `>` (NU `>=`)
+ * intentional per ADR 026 §9.4.2 Cluster B2 Caveat 2 spec verbatim "R²>0.85".
+ * Float precision boundary (e.g., 0.8500000001 passes vs 0.85 fails) =
+ * conservative gate — prefer EWMA fallback dacă marginal. Test
+ * `kalmanFilter.test.js:84-86` verifies spec verbatim match. NU change la `>=`
+ * fără ADR amendment.
+ *
  * @param {number} r2
  * @returns {{passed: boolean, ewmaFallbackRecommended: boolean}}
  */
