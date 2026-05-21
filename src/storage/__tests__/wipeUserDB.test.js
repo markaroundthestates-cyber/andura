@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import Dexie from 'dexie';
-import { wipeUserDB, DB_NAME_PREFIX, _resetNamespaceCache, closeDb, STORES, tier1Bulk } from '../db.js';
+import { wipeUserDB, DB_NAME_PREFIX, _resetNamespaceCache, closeDb } from '../db.js';
 
 const TEST_UID = 'testuidwipe12345';
 

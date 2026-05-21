@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock DB to avoid real localStorage
 const mockStorage = {};
@@ -27,7 +27,6 @@ vi.stubGlobal('localStorage', localStorageMock);
 import {
   shouldCreateDailyBackup,
   createDailyBackup,
-  pruneOldBackups,
   listBackups,
   restoreFromBackup,
 } from '../autoBackup.js';
