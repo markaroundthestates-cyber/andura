@@ -55,10 +55,7 @@ export const ENGINE_ID = 'tempo';
 /**
  * Compute confidence level per ctx data completeness signals.
  *
- * @param {Object} input
- * @param {boolean} input.hasPeriodizationConstraint
- * @param {boolean} input.hasMovementContext
- * @param {boolean} input.hasTierResolved
+ * @param {{ hasPeriodizationConstraint: boolean, hasMovementContext: boolean, hasTierResolved: boolean }} input
  * @returns {'low'|'medium'|'high'}
  */
 function computeConfidence({
@@ -79,11 +76,13 @@ function computeConfidence({
  * Resolve calibration tier from ctx — defensive normalization per ADR 009 +
  * §9.5.3 Cluster C5 verbatim.
  *
- * @param {Object} [ctx]
+ * @param {unknown} [ctx]
  * @returns {string|null} 'T0' | 'T1' | 'T2' or null daca unresolvable
  */
 function resolveTier(ctx) {
-  const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
+  const safeCtx = /** @type {{ profileTier?: string }} */ (
+    ctx && typeof ctx === 'object' ? ctx : {}
+  );
   const declared = typeof safeCtx.profileTier === 'string' ? safeCtx.profileTier : null;
   if (declared === CALIBRATION_TIERS.T0
     || declared === CALIBRATION_TIERS.T1
@@ -96,12 +95,15 @@ function resolveTier(ctx) {
 /**
  * Resolve movement category from ctx fallback chain.
  *
- * @param {Object} [meta]
+ * @param {unknown} [meta]
  * @returns {string} 'compound' | 'isolation'
  */
 function resolveMovementCategory(meta) {
-  const declared = typeof meta?.movementCategory === 'string'
-    ? meta.movementCategory.toLowerCase()
+  const safeMeta = /** @type {{ movementCategory?: string }} */ (
+    meta && typeof meta === 'object' ? meta : {}
+  );
+  const declared = typeof safeMeta.movementCategory === 'string'
+    ? safeMeta.movementCategory.toLowerCase()
     : null;
   if (declared === MOVEMENT_CATEGORY.ISOLATION) return MOVEMENT_CATEGORY.ISOLATION;
   return MOVEMENT_CATEGORY.COMPOUND; // safe default
@@ -130,12 +132,16 @@ function resolveMovementCategory(meta) {
 export async function evaluate(ctx) {
   /** @type {string[]} */
   const signals = [];
-  /** @type {Object} */
+  /** @type {Record<string, unknown>} */
   const trace = {};
 
   // Defensive ctx unpacking — total function semantics per ADR 018 §2.
-  const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
-  const meta = safeCtx.meta && typeof safeCtx.meta === 'object' ? safeCtx.meta : {};
+  const safeCtx = /** @type {Record<string, any>} */ (
+    ctx && typeof ctx === 'object' ? ctx : {}
+  );
+  const meta = /** @type {Record<string, any>} */ (
+    safeCtx.meta && typeof safeCtx.meta === 'object' ? safeCtx.meta : {}
+  );
   const recentSessions = Array.isArray(safeCtx.recentSessions) ? safeCtx.recentSessions : [];
 
   // Cluster C5 — Tier resolution per ADR 009 + §9.5.3 verbatim.
