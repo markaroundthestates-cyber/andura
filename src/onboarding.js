@@ -1,6 +1,5 @@
 // ══ ONBOARDING + BASELINE ════════════════════════════════════
 import { DB, tod } from './db.js';
-import { DP } from './engine/dp.js';
 import { toast } from './ui/ui.js';
 import { renderCoachIdle } from './pages/coach.js';
 import { renderDash } from './pages/dashboard.js';

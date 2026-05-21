@@ -80,7 +80,7 @@ export function createAuthScreen(opts = {}) {
               try {
                 const url = buildGoogleSignInUrl(googleClientId);
                 window.location.assign(url);
-              } catch (err) {
+              } catch {
                 _toast(COPY.errorSendFailed);
               }
             }

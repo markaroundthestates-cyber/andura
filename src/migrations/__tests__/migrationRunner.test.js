@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { runMigrations, getEntryVersion, LARGE_MIGRATION_THRESHOLD } from '../migrationRunner.js';
 import { MIGRATIONS } from '../MIGRATIONS.js';
 

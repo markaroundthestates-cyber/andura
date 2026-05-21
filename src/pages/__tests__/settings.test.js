@@ -151,7 +151,7 @@ describe('UX-2 post-logout redirect home — onSignedOut callback', () => {
   it('logout flow invokes onSignedOut after splash via scheduler', async () => {
     const onSignedOut = vi.fn();
     let scheduledCb = null;
-    const scheduler = vi.fn((cb, ms) => { scheduledCb = cb; return 1; });
+    const scheduler = vi.fn((cb, _ms) => { scheduledCb = cb; return 1; });
     renderSettingsPage({ root, doc: document, onSignedOut, scheduler });
 
     // Click Deconectare → step1 opens
@@ -182,7 +182,7 @@ describe('UX-2 post-logout redirect home — onSignedOut callback', () => {
   it('delete account flow invokes onSignedOut after splash via scheduler', async () => {
     const onSignedOut = vi.fn();
     let scheduledCb = null;
-    const scheduler = vi.fn((cb, ms) => { scheduledCb = cb; return 1; });
+    const scheduler = vi.fn((cb, _ms) => { scheduledCb = cb; return 1; });
     renderSettingsPage({ root, doc: document, onSignedOut, scheduler });
 
     // Click Sterge cont → delete modal opens
