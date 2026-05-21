@@ -270,20 +270,75 @@ function mapBNConfidence(c: unknown): number {
  * Returns baseline fallback dacă engine throws sau tier 'none' (T0 fresh
  * user pre-observation).
  */
+/**
+ * Read user manual phase override (B001 SchimbaFazaConfirm). Returns null
+ * when AUTO or absent. When present, derive kcalTarget from current TDEE
+ * estimate + phase multiplier (CUT 0.82 / BULK 1.08 / STRENGTH 1.05 /
+ * MAINTENANCE 1.00). Persists across days — separate from per-day phase-log.
+ *
+ * Surfaces visible feedback "you picked CUT → reduced kcal target today"
+ * without waiting for Bayesian inference observation accumulation.
+ */
+const PHASE_MULTIPLIERS: Record<string, number> = {
+  CUT: 0.82,
+  BULK: 1.08,
+  MAINTENANCE: 1.0,
+  STRENGTH: 1.05,
+};
+function getPhaseOverrideKcalToday(): number | null {
+  try {
+    const phaseRaw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as
+      | string
+      | null;
+    if (!phaseRaw || phaseRaw === 'AUTO') return null;
+    const multiplier = PHASE_MULTIPLIERS[phaseRaw];
+    if (multiplier === undefined) return null;
+    // Try today's phase-log entry first (snapshot at change-time, deterministic)
+    const todayISO = new Date().toLocaleDateString('sv');
+    const phaseLog = JSON.parse(localStorage.getItem('phase-log') ?? '[]') as Array<{
+      date: string;
+      kcalTarget: number;
+    }>;
+    const todayEntry = phaseLog.find((e) => e.date === todayISO);
+    if (todayEntry) return Math.max(todayEntry.kcalTarget, KCAL_FLOOR_DAILY_MIN);
+    // Fallback: derive from baseline kcal * multiplier when no log for today
+    // (user picked phase earlier, days later → still apply override).
+    const baseKcal = BASELINE_NUTRITION.kcalTarget;
+    return Math.max(Math.round(baseKcal * multiplier), KCAL_FLOOR_DAILY_MIN);
+  } catch {
+    return null;
+  }
+}
+
 export async function getNutritionTargetsToday(
   userState?: object,
 ): Promise<NutritionTargetsEngine> {
+  const phaseKcal = getPhaseOverrideKcalToday();
   try {
     // §1-M1 audit fix: bayesianNutrition.d.ts sibling declares BayesianNutritionContext +
     // BayesianNutritionResult shapes; `as any` cast removed (Phase 4 task_11 §A pattern).
     const ctx = (userState ?? {}) as Parameters<typeof evaluateBN>[0];
     const result = await evaluateBN(ctx);
-    if (!result || result.tier === 'none') return BASELINE_NUTRITION;
+    if (!result || result.tier === 'none') {
+      if (phaseKcal !== null) {
+        return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
+      }
+      return BASELINE_NUTRITION;
+    }
     const mu = result.meta?.nutrition_inference_metadata?.posterior?.mu;
-    if (!Number.isFinite(mu)) return BASELINE_NUTRITION;
+    if (!Number.isFinite(mu)) {
+      if (phaseKcal !== null) {
+        return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
+      }
+      return BASELINE_NUTRITION;
+    }
     const safeKcal = Math.max(mu as number, KCAL_FLOOR_DAILY_MIN);
+    // B001 phase override priority — user explicit pick beats Bayesian estimate.
+    // Bayesian engine continues to learn from logged kcal; phase override
+    // gives immediate feedback while engine observations accumulate.
+    const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
     return {
-      kcalTarget: Math.round(safeKcal),
+      kcalTarget: finalKcal,
       proteinTargetG: BASELINE_NUTRITION.proteinTargetG,
       fatG: BASELINE_NUTRITION.fatG,
       carbsG: BASELINE_NUTRITION.carbsG,
@@ -292,6 +347,9 @@ export async function getNutritionTargetsToday(
     };
   } catch (e) {
     console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
+    if (phaseKcal !== null) {
+      return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
+    }
     return BASELINE_NUTRITION;
   }
 }
