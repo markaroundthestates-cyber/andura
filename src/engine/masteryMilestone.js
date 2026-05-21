@@ -136,6 +136,7 @@ export function resetCounters(storage) {
   try { s.removeItem(STORAGE_KEY); } catch {}
 }
 
+/** @param {Storage | null | undefined} override */
 function _resolve(override) {
   if (override) return override;
   try { return typeof localStorage !== 'undefined' ? localStorage : null; }

@@ -35,6 +35,11 @@ export const SIMILARITY_RATIO = {
   'default': 0.9
 };
 
+/**
+ * @param {string} target
+ * @param {string} source
+ */
 export function getSimilarityMultiplier(target, source) {
-  return SIMILARITY_RATIO[target + '_' + source] || SIMILARITY_RATIO.default;
+  const ratios = /** @type {Record<string, number>} */ (SIMILARITY_RATIO);
+  return ratios[target + '_' + source] || ratios['default'] || 0.9;
 }

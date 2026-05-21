@@ -20,15 +20,16 @@ const PRIORITY_MED = 65;
 /** Stage 3 ENHANCEMENT priority for HIGH-tier blocker (ADR 004 critical-band). */
 const PRIORITY_HIGH = 95;
 
+/** @param {unknown} signals */
 function _coerceSignals(signals) {
   if (!Array.isArray(signals)) return [];
-  return signals.filter(s => typeof s === 'string');
+  return signals.filter((s) => typeof s === 'string');
 }
 
 /**
  * Pure analyze() per Dimension contract (ADR 018 §2).
  *
- * @param {{ ctx: object }} input - DimensionInput
+ * @param {{ ctx?: { autoAggression?: { tier?: string, signals?: any, escalating?: boolean, amplified?: boolean, amplifierReason?: string } } } | null | undefined} input - DimensionInput
  * @returns {import('../dimensionContract.js').DimensionResult}
  */
 export function analyze(input) {

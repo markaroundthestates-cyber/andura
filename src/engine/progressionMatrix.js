@@ -122,6 +122,7 @@ export function getDeloadSkipWarning() {
   return 'Saptamana de deload a trecut neutilizata. Sesiunea de azi merge mai bine la RPE 6-7 — corpul recupereaza in miscare, nu doar in repaus.';
 }
 
+/** @param {unknown} profileType */
 function _isSprinter(profileType) {
   if (typeof profileType !== 'string') return false;
   return profileType.trim().toLowerCase() === 'sprinter';

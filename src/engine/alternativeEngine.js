@@ -57,10 +57,11 @@ function equipmentFor(exerciseName) {
  * @returns {string[]}
  */
 export function getAlternatives(exerciseName, unavailableEquipment = []) {
-  const unavailLower = unavailableEquipment.map(e => e.toLowerCase());
-  const alternatives = ALTERNATIVES[exerciseName] ?? [];
+  const unavailLower = unavailableEquipment.map((e) => e.toLowerCase());
+  const altMap = /** @type {Record<string, string[]>} */ (ALTERNATIVES);
+  const alternatives = altMap[exerciseName] ?? [];
 
-  return alternatives.filter(alt => {
+  return alternatives.filter((alt) => {
     const equip = equipmentFor(alt);
     if (!equip) return true; // bodyweight or unknown — assume available
     return !unavailLower.some(u => u.includes(equip) || equip.includes(u));
@@ -70,8 +71,8 @@ export function getAlternatives(exerciseName, unavailableEquipment = []) {
 /**
  * Daca exercitiul original necesita echipament indisponibil, returneaza prima alternativa.
  * @param {string} exerciseName
- * @param {string[]} unavailableEquipment
- * @returns {{ exercise: string, isAlternative: boolean }}
+ * @param {string[]} [unavailableEquipment]
+ * @returns {{ exercise: string, isAlternative: boolean, noAlt?: boolean, original?: string }}
  */
 export function resolveExercise(exerciseName, unavailableEquipment = []) {
   const requiredEquip = equipmentFor(exerciseName);
@@ -84,5 +85,5 @@ export function resolveExercise(exerciseName, unavailableEquipment = []) {
   const alts = getAlternatives(exerciseName, unavailableEquipment);
   if (alts.length === 0) return { exercise: exerciseName, isAlternative: false, noAlt: true };
 
-  return { exercise: alts[0], isAlternative: true, original: exerciseName };
+  return { exercise: alts[0] ?? exerciseName, isAlternative: true, original: exerciseName };
 }

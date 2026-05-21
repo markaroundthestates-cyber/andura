@@ -32,7 +32,7 @@ export function buildCoachContext() {
     const d = new Date(e.date);
     return d >= _aaCutoff;
   });
-  const autoAggression = aggregateAutoAggression(_recentCDLForAA);
+  const autoAggression = aggregateAutoAggression(/** @type {any} */ (_recentCDLForAA));
 
   return {
     user: {

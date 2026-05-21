@@ -17,9 +17,9 @@
  * @typedef {Object} CoachContextSnapshot
  * @property {string|object} [calibrationLevel] - ADR 009 tier
  * @property {object} [readiness]
- * @property {Array} [allLogs]
- * @property {Array} [recentLogs]
- * @property {Array} [patterns]
+ * @property {Array<any>} [allLogs]
+ * @property {Array<any>} [recentLogs]
+ * @property {Array<any>} [patterns]
  * @property {object} [autoAggression]
  * // ...other ctx fields per coachContext.js (open-ended)
  *

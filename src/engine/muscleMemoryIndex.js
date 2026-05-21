@@ -31,7 +31,7 @@ export const MMI_LOOKUP_TABLE = Object.freeze({
  * Lookup MMI bucket for a given pause duration in months.
  * @pure
  * @param {number} pauseMonths
- * @returns {Object|null} bucket entry or null when under threshold / invalid
+ * @returns {{minMonths: number, maxMonths: number, startMultiplier: number, boostMultiplier: number, boostWeeksDuration: number} | null} bucket entry or null when under threshold / invalid
  */
 export function getMmiBucketForPauseMonths(pauseMonths) {
   if (typeof pauseMonths !== 'number' || !Number.isFinite(pauseMonths)) return null;
