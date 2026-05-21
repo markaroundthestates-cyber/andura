@@ -64,6 +64,8 @@ const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConf
 const ResetDataConfirm = lazy(() => import('./screens/cont/ResetDataConfirm').then((m) => ({ default: m.ResetDataConfirm })));
 // §B002 D047 Stage 3 — Avansat section drill-downs
 const RedoOnboardingConfirm = lazy(() => import('./screens/cont/RedoOnboardingConfirm').then((m) => ({ default: m.RedoOnboardingConfirm })));
+const SchimbaFazaConfirm = lazy(() => import('./screens/cont/SchimbaFazaConfirm').then((m) => ({ default: m.SchimbaFazaConfirm })));
+const ResetCoachConfirm = lazy(() => import('./screens/cont/ResetCoachConfirm').then((m) => ({ default: m.ResetCoachConfirm })));
 
 /**
  * §B007 — Suspense wrapper pentru lazy sub-screens. Fallback minimal spinner
@@ -157,6 +159,8 @@ export const router = createBrowserRouter([
           { path: 'reset-data-confirm', element: <LazyRoute><ResetDataConfirm /></LazyRoute> },
           // §B002 D047 Stage 3 — Avansat section drill-downs
           { path: 'redo-onboarding-confirm', element: <LazyRoute><RedoOnboardingConfirm /></LazyRoute> },
+          { path: 'schimba-faza-confirm', element: <LazyRoute><SchimbaFazaConfirm /></LazyRoute> },
+          { path: 'reset-coach-confirm', element: <LazyRoute><ResetCoachConfirm /></LazyRoute> },
         ],
       },
     ],

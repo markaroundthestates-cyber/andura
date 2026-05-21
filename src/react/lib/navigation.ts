@@ -44,7 +44,7 @@ export type GotoScreen =
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
   // §B002 D047 Stage 3 — Avansat section drill-downs
-  | 'redo-onboarding-confirm'
+  | 'redo-onboarding-confirm' | 'schimba-faza-confirm' | 'reset-coach-confirm'
   // §B004 D047 Stage 3 — Workout exit drill-down
   | 'finish-early-confirm';
 
@@ -105,7 +105,8 @@ export function gotoPath(screen: GotoScreen): string {
   // §D047 RIP-OUT drill-down confirm screens (nested sub /app/cont)
   if (
     screen === 'logout-confirm' || screen === 'delete-account-confirm' ||
-    screen === 'reset-data-confirm' || screen === 'redo-onboarding-confirm'
+    screen === 'reset-data-confirm' || screen === 'redo-onboarding-confirm' ||
+    screen === 'schimba-faza-confirm' || screen === 'reset-coach-confirm'
   ) {
     return `/app/cont/${screen}`;
   }
