@@ -39,8 +39,8 @@ export function distributeSets(totalSetsLeft, daysLeft, maxSetsPerDay = 20) {
 
 /**
  * Calculeaza cate seturi au fost completate saptamana curenta.
- * @param {Array} logs
- * @param {number} targetSetsPerWeek
+ * @param {Array<{ ts?: number, date?: string }>} logs
+ * @param {number} [targetSetsPerWeek]
  * @returns {{ completedSets: number, targetSets: number, deficit: number }}
  */
 export function weeklySetDeficit(logs, targetSetsPerWeek = 45) {
@@ -52,7 +52,7 @@ export function weeklySetDeficit(logs, targetSetsPerWeek = 45) {
   startOfWeek.setDate(now.getDate() - daysSinceMon);
   startOfWeek.setHours(0, 0, 0, 0);
 
-  const completedSets = logs.filter(l => {
+  const completedSets = logs.filter((l) => {
     const ts = l.ts ?? (l.date ? new Date(l.date).getTime() : null);
     return ts && ts >= startOfWeek.getTime();
   }).length;
@@ -66,12 +66,8 @@ export function weeklySetDeficit(logs, targetSetsPerWeek = 45) {
 
 /**
  * Recompileaza planul saptamanal dupa un skip sau drop de readiness.
- * @param {object} params
- * @param {Array} params.logs - loguri complete
- * @param {number} params.readinessScore - readiness azi
- * @param {number} params.targetSetsPerWeek
- * @param {Date}   params.now
- * @returns {{ recommendation: string, distributedSets: number[], daysLeft: number, deficit: number }}
+ * @param {{ logs?: Array<{ ts?: number, date?: string }>, readinessScore?: number, targetSetsPerWeek?: number, now?: Date }} [params]
+ * @returns {{ recommendation: string, distributedSets: number[], daysLeft: number, deficit: number, completedSets?: number }}
  */
 export function recompileWeek({ logs = [], readinessScore = 70, targetSetsPerWeek = 45, now = new Date() } = {}) {
   const { deficit, completedSets } = weeklySetDeficit(logs, targetSetsPerWeek);

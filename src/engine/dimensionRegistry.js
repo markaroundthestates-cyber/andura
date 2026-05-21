@@ -98,10 +98,8 @@ export const CALIBRATION_TIER_ORDER = [
  *     `featureFlags.isEnabled(flagId, ctx.userId)` per ADR 018 §5 + DP-6
  *     (per-user hash bucketing).
  *
- * @param {object} ctx - CoachContext snapshot (uses ctx.calibrationLevel + ctx.userId)
- * @param {object} [opts]
- * @param {object} [opts.flags] - Explicit flag map { flagId: boolean } — testing override
- * @param {Array<DimensionRegistryEntry>} [opts.dimensions] - Override registry (testing)
+ * @param {{ calibrationLevel?: any, userId?: string } | null | undefined} ctx - CoachContext snapshot (uses ctx.calibrationLevel + ctx.userId)
+ * @param {{ flags?: Record<string, boolean>, dimensions?: Array<DimensionRegistryEntry> }} [opts]
  * @returns {Array<DimensionRegistryEntry>}
  */
 export function getActiveDimensions(ctx, opts = {}) {
@@ -211,13 +209,18 @@ export function assertValidRegistry(dimensions = DIMENSIONS) {
   }
 }
 
+/** @param {unknown} level */
 function _normalizeCalibrationName(level) {
   if (!level) return null;
   if (typeof level === 'string') return _normalizeTierName(level);
-  if (typeof level === 'object' && typeof level.name === 'string') return _normalizeTierName(level.name);
+  if (typeof level === 'object' && level !== null) {
+    const obj = /** @type {{ name?: string }} */ (level);
+    if (typeof obj.name === 'string') return _normalizeTierName(obj.name);
+  }
   return null;
 }
 
+/** @param {unknown} name */
 function _normalizeTierName(name) {
   return String(name).toUpperCase();
 }

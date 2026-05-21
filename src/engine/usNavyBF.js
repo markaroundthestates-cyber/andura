@@ -6,23 +6,20 @@
 //
 // Used as alternative to caliper / DEXA when only tape measurements available.
 
+/** @param {number} n */
 const LOG10 = (n) => Math.log(n) / Math.LN10;
 
 /**
  * Estimate body-fat percentage via US Navy method (metric form).
- * @param {object} m
- * @param {'M'|'F'|'male'|'female'} m.sex
- * @param {number} m.height_cm
- * @param {number} m.neck_cm
- * @param {number} m.waist_cm
- * @param {number} [m.hip_cm] - required for female
+ * @param {{sex?: string, height_cm?: number, neck_cm?: number, waist_cm?: number, hip_cm?: number}} [m]
  * @returns {number|null} BF% rounded to 1 decimal, or null when inputs invalid
  */
 export function estimateBF_USNavy({ sex, height_cm, neck_cm, waist_cm, hip_cm } = {}) {
   if (!height_cm || !neck_cm || !waist_cm) return null;
   if (height_cm <= 0 || neck_cm <= 0 || waist_cm <= 0) return null;
 
-  const isFemale = sex === 'F' || sex === 'female' || sex === 'f';
+  const sexLower = typeof sex === 'string' ? sex.toLowerCase() : '';
+  const isFemale = sexLower === 'f' || sexLower === 'female';
 
   let bf;
   if (isFemale) {
@@ -48,10 +45,7 @@ export function estimateBF_USNavy({ sex, height_cm, neck_cm, waist_cm, hip_cm } 
  * Project target weight given current weight + BF% and a target BF%.
  * Assumes LBM constant — only fat mass changes.
  *
- * @param {object} p
- * @param {number} p.currentKg
- * @param {number} p.currentBF - 0-100
- * @param {number} p.targetBF  - 0-100
+ * @param {{currentKg?: number, currentBF?: number, targetBF?: number}} [p]
  * @returns {number|null} target weight kg rounded to 1 decimal, or null on invalid input
  */
 export function projectWeightAtTargetBF({ currentKg, currentBF, targetBF } = {}) {

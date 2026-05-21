@@ -85,7 +85,7 @@ export function getCycleWeek(opts = {}) {
   const today = opts.today || new Date();
   const start = _parseIsoDate(state.cycleStartDate);
   if (!start) return 1;
-  const daysElapsed = Math.max(0, Math.floor((_dateOnly(today) - start) / ONE_DAY_MS));
+  const daysElapsed = Math.max(0, Math.floor((_dateOnly(today) - start.getTime()) / ONE_DAY_MS));
   return ((daysElapsed % 35) >>> 0) >= 0
     ? Math.floor((daysElapsed % 35) / 7) + 1
     : 1;
@@ -105,11 +105,12 @@ export function isDeloadWeek(opts = {}) {
  * Returns the policy for the current week.
  *
  * @param {{ today?: Date, storage?: Storage }} [opts]
- * @returns {{ phase: 'load'|'deload', volumeMul: number, intensityMul: number, week: number }}
+ * @returns {{ phase: string, volumeMul: number, intensityMul: number, week: number }}
  */
 export function getWeekPolicy(opts = {}) {
   const week = getCycleWeek(opts);
-  const policy = WEEK_POLICY[week] || WEEK_POLICY[1];
+  const policies = /** @type {Record<number, {phase: string, volumeMul: number, intensityMul: number}>} */ (WEEK_POLICY);
+  const policy = policies[week] || policies[1] || { phase: 'load', volumeMul: 1.0, intensityMul: 1.0 };
   return { ...policy, week };
 }
 
@@ -123,7 +124,8 @@ export function markDeloadSkipped(opts = {}) {
   const s = _resolve(opts.storage);
   if (!s) return;
   const now = typeof opts.now === 'number' ? opts.now : Date.now();
-  const state = getState(s) || { cycleStartDate: _toIsoDate(new Date(now)) };
+  /** @type {{ cycleStartDate: string, deloadSkippedAt: number | null }} */
+  const state = getState(s) || { cycleStartDate: _toIsoDate(new Date(now)), deloadSkippedAt: null };
   state.deloadSkippedAt = now;
   try { s.setItem(LINEAR_BLOCK_KEY, JSON.stringify(state)); } catch {}
 }
@@ -175,6 +177,7 @@ export function getWeekLabel(opts = {}) {
 
 // ── internals ───────────────────────────────────────────────────────────
 
+/** @param {Date} d */
 function _toIsoDate(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -182,16 +185,23 @@ function _toIsoDate(d) {
   return `${y}-${m}-${day}`;
 }
 
+/** @param {unknown} s */
 function _parseIsoDate(s) {
   if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
-  const [y, m, d] = s.split('-').map(Number);
+  const parts = s.split('-').map(Number);
+  const y = parts[0];
+  const m = parts[1];
+  const d = parts[2];
+  if (y == null || m == null || d == null) return null;
   return new Date(y, m - 1, d);
 }
 
+/** @param {Date} d */
 function _dateOnly(d) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
+/** @param {Storage | null | undefined} override */
 function _resolve(override) {
   if (override) return override;
   try { return typeof localStorage !== 'undefined' ? localStorage : null; }

@@ -19,21 +19,23 @@ import { DIMENSION_ID as AA_DIMENSION_ID } from './autoAggressionDimension.js';
 /**
  * Translate cluster output to legacy applyAAAdjustments shape.
  *
- * @param {object} clusterSession - Session returned by DecisionCluster.execute().session
- * @param {object} originalBaseSession - The session passed into the cluster (pre-AA)
- * @returns {object} Session with legacy aaWarning/aaBlocked fields (and exercise mutation for HIGH)
+ * @param {Record<string, any> | null | undefined} clusterSession - Session returned by DecisionCluster.execute().session
+ * @param {Record<string, any> | null | undefined} originalBaseSession - The session passed into the cluster (pre-AA)
+ * @returns {Record<string, any>} Session with legacy aaWarning/aaBlocked fields (and exercise mutation for HIGH)
  */
 export function aaClusterOutputToLegacyShape(clusterSession, originalBaseSession) {
-  const warnings = Array.isArray(clusterSession?.warnings) ? clusterSession.warnings : [];
-  const aa = warnings.find(w => w?.source === AA_DIMENSION_ID);
+  const warnings = /** @type {Array<{source?: string, aaTier?: string, level?: string, signals?: any, escalating?: boolean, requiresFrictionConfirmation?: boolean}>} */
+    (Array.isArray(clusterSession?.warnings) ? clusterSession.warnings : []);
+  const aa = warnings.find((w) => w?.source === AA_DIMENSION_ID);
 
   // No AA recommendation fired → return base unchanged (matches legacy
   // `applyAAAdjustments` early-return for tier none/LOW which returns the
   // session reference unchanged).
-  if (!aa) return originalBaseSession;
+  if (!aa) return originalBaseSession ?? {};
 
   if (aa.aaTier === 'MED') {
-    const next = { ...originalBaseSession };
+    /** @type {Record<string, any>} */
+    const next = { ...(originalBaseSession ?? {}) };
     next.aaWarning = {
       level: aa.level,
       signals: aa.signals,
@@ -43,17 +45,18 @@ export function aaClusterOutputToLegacyShape(clusterSession, originalBaseSession
   }
 
   if (aa.aaTier === 'HIGH') {
-    const next = { ...originalBaseSession };
+    /** @type {Record<string, any>} */
+    const next = { ...(originalBaseSession ?? {}) };
     next.aaBlocked = {
       level: aa.level,
       signals: aa.signals,
       escalating: aa.escalating,
       requiresFrictionConfirmation: aa.requiresFrictionConfirmation === true,
     };
-    const exercises = Array.isArray(originalBaseSession?.exercises)
-      ? originalBaseSession.exercises
-      : [];
-    next.exercises = exercises.map(e => ({
+    const exercises = /** @type {Array<{sets?: number} & Record<string, any>>} */ (
+      Array.isArray(originalBaseSession?.exercises) ? originalBaseSession.exercises : []
+    );
+    next.exercises = exercises.map((e) => ({
       ...e,
       aaOriginalSets: e.sets,
       sets: Math.max(2, Math.floor((e.sets || 3) * 0.7)),
@@ -63,5 +66,5 @@ export function aaClusterOutputToLegacyShape(clusterSession, originalBaseSession
   }
 
   // Unknown aaTier in payload (defensive) → no mutation.
-  return originalBaseSession;
+  return originalBaseSession ?? {};
 }

@@ -49,7 +49,8 @@ const CATEGORIZE_FALLBACK = 'isolation';
 export function getThresholdForTierAndCategory(tier, category) {
   const safeTier = VALID_TIERS.includes(tier) ? tier : FALLBACK_TIER;
   const safeCategory = VALID_CATEGORIES.includes(category) ? category : FALLBACK_CATEGORY;
-  return AGGRESSIVE_LOADING_THRESHOLDS[safeTier][safeCategory];
+  const thresholds = /** @type {Record<string, Record<string, number>>} */ (AGGRESSIVE_LOADING_THRESHOLDS);
+  return thresholds[safeTier]?.[safeCategory] ?? 0.2;
 }
 
 /**
@@ -61,7 +62,7 @@ export function getThresholdForTierAndCategory(tier, category) {
  * extension. Today uses tier as authority.
  *
  * @pure
- * @param {object|null|undefined} metadata - exercise metadata entry
+ * @param {{ category?: string, tier?: number } | null | undefined} metadata - exercise metadata entry
  * @returns {'compound' | 'isolation'}
  */
 export function categorizeExercise(metadata) {

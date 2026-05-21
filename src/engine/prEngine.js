@@ -46,18 +46,21 @@ export function detectPR(exercise, set, history) {
   const maxVolume = prior.reduce((m, e) => Math.max(m, Number(e.w) * Number(e.reps)), 0);
   const setVolume = w * reps;
 
+  /** @typedef {{ ex?: string, w?: number, reps?: number, baseline?: boolean }} HistoryEntry */
+
   // 1. weight PR — strict greater than max weight ever logged.
   if (w > maxWeight) {
     const prevBest = prior.reduce(
+      /** @param {HistoryEntry | null} best @param {HistoryEntry} e */
       (best, e) => (!best || Number(e.w) > Number(best.w)) ? e : best,
-      null,
+      /** @type {HistoryEntry | null} */ (null),
     );
     return { type: 'weight', kg: w, reps, prevBest };
   }
 
   // 2. reps PR — same-or-heavier weight, strictly more reps than any prior
   //    at >= this weight (including this weight tier exactly).
-  const sameOrHeavier = prior.filter(e => Number(e.w) >= w);
+  const sameOrHeavier = prior.filter((e) => Number(e.w) >= w);
   if (sameOrHeavier.length) {
     const maxRepsAtWeight = sameOrHeavier.reduce(
       (m, e) => Math.max(m, Number(e.reps)),
@@ -65,8 +68,9 @@ export function detectPR(exercise, set, history) {
     );
     if (reps > maxRepsAtWeight) {
       const prevBest = sameOrHeavier.reduce(
+        /** @param {HistoryEntry | null} best @param {HistoryEntry} e */
         (best, e) => (!best || Number(e.reps) > Number(best.reps)) ? e : best,
-        null,
+        /** @type {HistoryEntry | null} */ (null),
       );
       return { type: 'reps', kg: w, reps, prevBest };
     }
@@ -75,11 +79,12 @@ export function detectPR(exercise, set, history) {
   // 3. volume PR — strict greater than max single-set volume.
   if (setVolume > maxVolume) {
     const prevBest = prior.reduce(
+      /** @param {HistoryEntry | null} best @param {HistoryEntry} e */
       (best, e) => {
         const v = Number(e.w) * Number(e.reps);
         return (!best || v > (Number(best.w) * Number(best.reps))) ? e : best;
       },
-      null,
+      /** @type {HistoryEntry | null} */ (null),
     );
     return { type: 'volume', kg: w, reps, prevBest };
   }
@@ -116,7 +121,7 @@ export function formatPRMessage(detection, exercise) {
  *
  * @param {string} exercise
  * @param {{ w: number, reps: number }} set
- * @param {Array} history
+ * @param {Array<{ ex?: string, w?: number, reps?: number, baseline?: boolean }>} history
  * @returns {{ isPR: boolean, type?: string, message?: string, detection?: object }}
  */
 export function evaluateSetForPR(exercise, set, history) {
