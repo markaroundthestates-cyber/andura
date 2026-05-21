@@ -14,6 +14,21 @@
  * Reference: Israetel 2017 Renaissance Periodization (canonical hypertrophy
  * landmarks). Per §9.4 Cluster 3 verbatim.
  *
+ * §B032 audit fix (REVIEW-A036-A038 L-§A038-01) — primary source citation
+ * pentru cross-check audit:
+ *   - Israetel et al. (2017). "Scientific Principles of Hypertrophy Training" +
+ *     "Renaissance Periodization Volume Landmarks" blog series.
+ *   - URL: https://renaissanceperiodization.com/training-volume-landmarks-muscle-growth
+ *   - Numbers reflect intermediate-to-advanced trainee target zones (MEV =
+ *     Minimum Effective Volume, MAV = Maximum Adaptive Volume, MRV = Maximum
+ *     Recoverable Volume).
+ *
+ * Audit observation L-§A038-01: glutes MRV=16 conservative vs RP published
+ * 16-22+; deliberate Andura V1 choice (Maria 65 + Gigel base safer cap; can
+ * uplift post-Beta via PERSONA_MODIFIERS amplification). Reviewer caveat
+ * preserved: numbers plausible vs literature general knowledge dar verbatim
+ * cross-reference cu publicat source pending Daniel external review.
+ *
  * @type {Readonly<Object<string, {MEV: number, MAV: number, MRV: number}>>}
  */
 export const ISRAETEL_BASELINES = Object.freeze({
