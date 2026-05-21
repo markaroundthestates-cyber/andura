@@ -77,6 +77,10 @@ export default [
       'test-results/**',
       '*.config.js',
       '*.config.ts',
+      // §B022-prep hygiene — Obsidian vault plugins (3rd party JS, NU Andura source).
+      // Per D030 setup; some plugins (colored-tags) reference TS-only rules pre-loaded
+      // which break pre-commit hook ESLint scan. Exclude entire .obsidian/ tree.
+      '.obsidian/**',
     ],
   },
   {

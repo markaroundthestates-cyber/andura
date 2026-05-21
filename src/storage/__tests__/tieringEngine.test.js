@@ -83,9 +83,10 @@ describe('classifyByAge', () => {
   });
 
   it('returns empty hot/cold for non-array input', () => {
-    expect(classifyByAge(null)).toEqual({ hot: [], cold: [] });
-    expect(classifyByAge(undefined)).toEqual({ hot: [], cold: [] });
-    expect(classifyByAge('string')).toEqual({ hot: [], cold: [] });
+    // §B022 audit fix — shape now includes stuckHotEntries telemetry counter.
+    expect(classifyByAge(null)).toEqual({ hot: [], cold: [], stuckHotEntries: 0 });
+    expect(classifyByAge(undefined)).toEqual({ hot: [], cold: [], stuckHotEntries: 0 });
+    expect(classifyByAge('string')).toEqual({ hot: [], cold: [], stuckHotEntries: 0 });
   });
 
   it('respects custom ageLimitMs param', () => {

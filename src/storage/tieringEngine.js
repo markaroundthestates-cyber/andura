@@ -104,24 +104,33 @@ export function estimateTier0Bytes() {
  *
  * Entries WITHOUT a recognizable timestamp field (`ts` or `date` parsable as
  * Date) are treated as hot — defensive, NU le mut accidental fara context.
+ * §B022 audit fix (REVIEW-A036-A038 M-§A036-02) — count stuck-hot entries
+ * fara `ts` for telemetry; rotateOnce surfaces via Sentry breadcrumb daca > 0.
  *
  * @param {Array<{ ts?: number, date?: string }>} entries
  * @param {number} [now=Date.now()]
  * @param {number} [ageLimitMs=TIER0_AGE_LIMIT_MS]
- * @returns {{ hot: Array, cold: Array }}
+ * @returns {{ hot: Array, cold: Array, stuckHotEntries: number }}
  */
 export function classifyByAge(entries, now = Date.now(), ageLimitMs = TIER0_AGE_LIMIT_MS) {
   const hot = [];
   const cold = [];
-  if (!Array.isArray(entries)) return { hot, cold };
+  let stuckHotEntries = 0;
+  if (!Array.isArray(entries)) return { hot, cold, stuckHotEntries };
   const cutoff = now - ageLimitMs;
 
   for (const entry of entries) {
     const ts = _resolveTs(entry);
-    if (ts == null || ts >= cutoff) hot.push(entry);
-    else cold.push(entry);
+    if (ts == null) {
+      hot.push(entry);
+      stuckHotEntries++;
+    } else if (ts >= cutoff) {
+      hot.push(entry);
+    } else {
+      cold.push(entry);
+    }
   }
-  return { hot, cold };
+  return { hot, cold, stuckHotEntries };
 }
 
 /**
@@ -186,9 +195,20 @@ export async function rotateOnce(opts = {}) {
       continue;
     }
 
-    const { hot, cold } = classifyByAge(entries, now, ageLimitMs);
+    const { hot, cold, stuckHotEntries } = classifyByAge(entries, now, ageLimitMs);
+    // §B022 audit fix — telemetry stuck-hot (no `ts`) entries breadcrumb.
+    // Entries fara timestamp raman in Tier 0 in infinit (defensive HOT default).
+    // Sentry warn daca count > 0 — upstream bug likely (e.g., legacy localStorage
+    // pre-2026-04 schema), surface for forensic root-cause analysis.
+    if (stuckHotEntries > 0) {
+      _safeSentry(sentry, new Error(`stuckHotEntries in ${tier0Key}: ${stuckHotEntries}`), {
+        tags: { component: 'tieringEngine', op: 'classify_stuck_hot', key: tier0Key },
+        extra: { stuckHotEntries, totalEntries: entries.length },
+        level: 'warning',
+      });
+    }
     if (cold.length === 0) {
-      perKey.push({ key: tier0Key, store: storeName, rotated: 0 });
+      perKey.push({ key: tier0Key, store: storeName, rotated: 0, stuckHotEntries });
       continue;
     }
 
@@ -210,7 +230,7 @@ export async function rotateOnce(opts = {}) {
     }
 
     totalRotated += cold.length;
-    perKey.push({ key: tier0Key, store: storeName, rotated: cold.length });
+    perKey.push({ key: tier0Key, store: storeName, rotated: cold.length, stuckHotEntries });
 
     // Audit trail (non-blocking — eat errors so audit fail doesn't break rotation)
     try {
