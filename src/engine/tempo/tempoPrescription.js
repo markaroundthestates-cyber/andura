@@ -167,8 +167,8 @@ export function composeTempoPrescription({
   const notationResult = resolveTempoNotation({ periodizationPhase, energyDirection });
   const introBundle = composePreSetIntro({
     notation: notationResult.notation,
-    cueText,
-    persona,
+    cueText: cueText ?? '',
+    persona: persona ?? 'gigel',
   });
   const timing = resolveCueDeliveryTiming({
     userInitiatedTapToExpand,
@@ -179,7 +179,7 @@ export function composeTempoPrescription({
     notation:         notationResult.notation,
     preSetIntro:      introBundle.preSetIntro,
     reactiveExpanded: introBundle.reactiveExpanded,
-    timing,
+    timing:           /** @type {import('./types.js').CueDeliveryTiming} */ (timing),
     rationale:        notationResult.rationale,
   };
 }

@@ -103,9 +103,9 @@ export function getTopCompoundOverride(movementId) {
  * @returns {string} Cue text RO native
  */
 export function resolveCueText({ movementId, movementCategory }) {
-  const override = getTopCompoundOverride(movementId);
+  const override = getTopCompoundOverride(movementId ?? '');
   if (override) return override;
-  return getBaseCue(movementCategory);
+  return getBaseCue(movementCategory ?? '');
 }
 
 /**
@@ -149,7 +149,7 @@ export function applyPersonaTone({ cueText, persona }) {
  * @returns {string} 'maria' | 'gigica' | 'marius'
  */
 export function resolvePersona(ctx) {
-  const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
+  const safeCtx = /** @type {{ meta?: { persona?: string } }} */ (ctx && typeof ctx === 'object' ? ctx : {});
   const meta = safeCtx.meta && typeof safeCtx.meta === 'object' ? safeCtx.meta : {};
   const declared = typeof meta.persona === 'string' ? meta.persona.toLowerCase() : null;
   if (declared === PERSONA.MARIA) return PERSONA.MARIA;
@@ -168,7 +168,8 @@ export function resolvePersona(ctx) {
  * @returns {string} 'minimal' | 'rich' | 'adaptive'
  */
 export function resolveCueDepth(tier) {
-  return CUE_DEPTH_BY_TIER[tier] ?? CUE_DEPTH_BY_TIER.T0;
+  const map = /** @type {Record<string, string>} */ (CUE_DEPTH_BY_TIER);
+  return map[tier] ?? CUE_DEPTH_BY_TIER.T0;
 }
 
 /**
@@ -184,8 +185,8 @@ export function resolveCueDepth(tier) {
  */
 export function composeFormCue({ movementId, movementCategory, persona, tier }) {
   const rawCue = resolveCueText({ movementId, movementCategory });
-  const tonedCue = applyPersonaTone({ cueText: rawCue, persona });
-  const depth = resolveCueDepth(tier);
+  const tonedCue = applyPersonaTone({ cueText: rawCue, persona: persona ?? 'gigica' });
+  const depth = resolveCueDepth(tier ?? 'T0');
 
   return {
     cueText:    tonedCue,
@@ -193,7 +194,7 @@ export function composeFormCue({ movementId, movementCategory, persona, tier }) 
                   ? MOVEMENT_CATEGORY.ISOLATION
                   : MOVEMENT_CATEGORY.COMPOUND,
     movementId: typeof movementId === 'string' ? movementId : '',
-    persona,
-    depth,
+    persona:    /** @type {import('./types.js').Persona} */ (persona ?? 'gigica'),
+    depth:      /** @type {import('./types.js').CueDepth} */ (depth),
   };
 }

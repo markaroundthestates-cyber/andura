@@ -50,7 +50,8 @@ import {
  */
 export function resolveMindMuscleByTier(tier) {
   if (typeof tier !== 'string') return MIND_MUSCLE_ACTIVATION_BY_TIER.T0;
-  return MIND_MUSCLE_ACTIVATION_BY_TIER[tier] ?? MIND_MUSCLE_ACTIVATION_BY_TIER.T0;
+  const map = /** @type {Record<string, boolean>} */ (MIND_MUSCLE_ACTIVATION_BY_TIER);
+  return map[tier] ?? MIND_MUSCLE_ACTIVATION_BY_TIER.T0;
 }
 
 /**
@@ -211,7 +212,7 @@ export function composeMindMuscleState({
 
   return {
     active,
-    suppressionMode:        suppression.mode,
+    suppressionMode:        /** @type {import('./types.js').SuppressionMode} */ (suppression.mode),
     acquiredExplicit:       explicit,
     acquiredImplicit:       implicitResult.acquiredImplicit,
     suppressedForMovement:  suppression.suppressed,

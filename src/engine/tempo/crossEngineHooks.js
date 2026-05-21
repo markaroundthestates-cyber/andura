@@ -159,8 +159,8 @@ export function detectRirMismatchSilentTelemetry({
   rirActual,
 }) {
   const formBreakdown = userReportedFormBreakdown === true;
-  const expected = Number.isFinite(rirMatrixExpected) ? rirMatrixExpected : null;
-  const actual = Number.isFinite(rirActual) ? rirActual : null;
+  const expected = (rirMatrixExpected != null && Number.isFinite(rirMatrixExpected)) ? rirMatrixExpected : null;
+  const actual = (rirActual != null && Number.isFinite(rirActual)) ? rirActual : null;
   // Mismatch = form breakdown reported AND RIR actual significantly diverges from expected.
   // V1 conservative: form_breakdown == true AND |actual - expected| >= 1 RIR.
   const divergence = (expected !== null && actual !== null) ? Math.abs(actual - expected) : 0;
