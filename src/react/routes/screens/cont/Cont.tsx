@@ -77,7 +77,7 @@ const SECTIONS: readonly ContSection[] = [
       { id: 'support', label: 'Suport', Icon: LifeBuoy, target: 'settings-support' },
       { id: 'ceva-nu-merge', label: 'Ceva nu merge', Icon: AlertOctagon },
       { id: 'about', label: 'Despre Andura', Icon: Info, target: 'settings-about' },
-      { id: 'faq', label: 'FAQ', Icon: HelpCircle },
+      { id: 'faq', label: 'FAQ', Icon: HelpCircle, target: 'settings-faq' },
     ],
   },
 ];

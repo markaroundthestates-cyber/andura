@@ -41,7 +41,7 @@ export type GotoScreen =
   | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
   | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
   | 'settings-terms' | 'settings-export' | 'settings-danger'
-  | 'settings-about' | 'settings-support'
+  | 'settings-about' | 'settings-support' | 'settings-faq'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
   // §B002 D047 Stage 3 — Avansat section drill-downs
@@ -99,7 +99,7 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'settings-prefs' || screen === 'settings-privacy' ||
     screen === 'settings-terms' || screen === 'settings-export' ||
     screen === 'settings-danger' || screen === 'settings-about' ||
-    screen === 'settings-support'
+    screen === 'settings-support' || screen === 'settings-faq'
   ) {
     return `/app/cont/${screen}`;
   }
