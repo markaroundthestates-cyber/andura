@@ -39,14 +39,20 @@ export function remapTierId(oldId) {
  * @param {object} entry - CDL entry
  * @returns {object} migrated entry (runner sets schemaVersion=2)
  */
+/**
+ * @typedef {{ context?: { calibrationLevel?: unknown }, calibrationLevel?: unknown, [k: string]: unknown }} MigEntry
+ *
+ * @param {unknown} entry
+ * @returns {unknown}
+ */
 export function migrate(entry) {
   if (!entry || typeof entry !== 'object') return entry;
 
   // calibrationLevel may live on entry.context (primary) or entry root (legacy
   // shape per ADR 011 §context snapshot evolution). Handle both defensively.
-  const next = { ...entry };
+  const next = /** @type {MigEntry} */ ({ ...entry });
   if (next.context && typeof next.context === 'object') {
-    next.context = _remapLevelField(next.context);
+    next.context = _remapLevelField(/** @type {{ calibrationLevel?: unknown, [k: string]: unknown }} */ (next.context));
   }
   // Some early CDL shapes also carried calibrationLevel at the entry root.
   if ('calibrationLevel' in next && typeof next.calibrationLevel === 'object') {
@@ -55,6 +61,9 @@ export function migrate(entry) {
   return next;
 }
 
+/**
+ * @param {{ calibrationLevel?: unknown, [k: string]: unknown }} ctx
+ */
 function _remapLevelField(ctx) {
   const lvl = ctx.calibrationLevel;
   if (lvl == null) return ctx;
@@ -63,10 +72,14 @@ function _remapLevelField(ctx) {
   return { ...ctx, calibrationLevel: _remapLevelObject(lvl) };
 }
 
+/**
+ * @param {unknown} lvl
+ */
 function _remapLevelObject(lvl) {
   if (!lvl || typeof lvl !== 'object') return lvl;
-  if (typeof lvl.id !== 'number') return lvl;
-  return { ...lvl, id: remapTierId(lvl.id) };
+  const obj = /** @type {{ id?: unknown, [k: string]: unknown }} */ (lvl);
+  if (typeof obj.id !== 'number') return lvl;
+  return { ...obj, id: remapTierId(obj.id) };
 }
 
 /**

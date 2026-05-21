@@ -37,12 +37,15 @@ export function getEntryVersion(entry) {
  *     migration-ul / key-ul urmator.
  *   - Non-array entries la storageKey → log warning + skip (defensive).
  *
- * @param {object} [opts]
- * @param {Array} [opts.migrations=MIGRATIONS] - Override migration list (testing)
- * @param {object} [opts.db=DB] - Override DB sink (testing)
- * @param {{ captureException?: Function }} [opts.sentry] - Override Sentry sink
- * @param {{ log?: Function, warn?: Function, error?: Function }} [opts.logger=console]
- * @returns {{ migrationsRun: number, totalEntriesMigrated: number, perMigration: Array, errors: Array }}
+ * @typedef {{ fromVersion: number, toVersion: number, description: string, storageKeys: string[], migrate: (entry: unknown) => unknown }} MigrationDef
+ *
+ * @param {{
+ *   migrations?: MigrationDef[],
+ *   db?: { get: (k: string) => unknown, set: (k: string, v: unknown) => void },
+ *   sentry?: { captureException?: Function },
+ *   logger?: { log?: Function, warn?: Function, error?: Function }
+ * }} [opts]
+ * @returns {{ migrationsRun: number, totalEntriesMigrated: number, perMigration: unknown[], errors: unknown[] }}
  */
 export function runMigrations(opts = {}) {
   const migrations = opts.migrations ?? MIGRATIONS;
@@ -160,12 +163,21 @@ export function runMigrations(opts = {}) {
   return { migrationsRun: sorted.length, totalEntriesMigrated, perMigration, errors };
 }
 
+/**
+ * @param {{ captureException?: Function } | null | undefined} sentry
+ * @param {unknown} err
+ * @param {object} ctx
+ */
 function _safeSentry(sentry, err, ctx) {
   if (!sentry?.captureException) return;
   try { sentry.captureException(err, ctx); }
   catch { /* swallow Sentry errors so runner never dies from monitoring */ }
 }
 
+/**
+ * @param {unknown} err
+ * @returns {string}
+ */
 function _stringifyError(err) {
   if (!err) return 'unknown';
   if (err instanceof Error) return err.message || err.toString();

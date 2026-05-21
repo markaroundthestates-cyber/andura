@@ -5,12 +5,15 @@
   },
   "include": [
     "src/util/**/*.js",
+    "src/migrations/**/*.js",
     "src/global.d.ts",
     "src/db.d.ts",
     "src/constants.d.ts"
   ],
   "exclude": [
     "src/util/__tests__/**",
-    "src/util/tests/**"
+    "src/util/tests/**",
+    "src/migrations/__tests__/**",
+    "src/migrations/tests/**"
   ]
 }

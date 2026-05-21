@@ -29,7 +29,7 @@ export function isMigrated(storage) {
     if (!raw) return false;
     const parsed = JSON.parse(raw);
     const auth = getAuthState();
-    return auth?.uid && parsed?.uid === auth.uid;
+    return Boolean(auth?.uid && parsed?.uid === auth.uid);
   } catch {
     return false;
   }
@@ -63,7 +63,7 @@ export function markMigrated(uid, stats, storage) {
  */
 export async function runAuthPathMigration(opts = {}) {
   const fetcher = opts.fetch || (typeof fetch !== 'undefined' ? fetch : null);
-  const storage = opts.storage || (typeof localStorage !== 'undefined' ? localStorage : null);
+  const storage = /** @type {Storage | undefined} */ (opts.storage || (typeof localStorage !== 'undefined' ? localStorage : undefined));
   if (!fetcher) return { status: 'failed', error: 'no_fetch' };
 
   const auth = getAuthState();
@@ -134,7 +134,8 @@ export async function runAuthPathMigration(opts = {}) {
     markMigrated(auth.uid, { reason: 'migrated', sourceKeyCount }, storage);
     return { status: 'migrated', uid: auth.uid, sourceKeys: sourceKeyCount, destKeys: verifyKeyCount };
   } catch (err) {
-    return { status: 'failed', uid: auth.uid, error: err?.message || 'unknown' };
+    const msg = err instanceof Error ? err.message : String(err);
+    return { status: 'failed', uid: auth.uid, error: msg || 'unknown' };
   }
 }
 

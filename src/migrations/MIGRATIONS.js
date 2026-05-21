@@ -64,7 +64,7 @@
 
 import { TIER_5_TO_6_MIGRATION } from './2026-05-02-tier-5-to-6.js';
 
-/** @type {Array<{ fromVersion: number, toVersion: number, description: string, storageKeys: string[], migrate: (entry: object) => object }>} */
+/** @type {Array<{ fromVersion: number, toVersion: number, description: string, storageKeys: string[], migrate: (entry: unknown) => unknown }>} */
 export const MIGRATIONS = [
   // v1 → v2: 5-tier → 6-tier id renumber (DEVELOPING inserted at id 2).
   // Per ADR 009 §AMENDMENT D1 (RESOLVED 2026-04-30 evening). Defensive: most
