@@ -7,6 +7,7 @@
 import type { JSX } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Activity, BarChart3, Clock, User } from 'lucide-react';
+import { useSettingsStore } from '../stores/settingsStore';
 
 type Tab = 'antrenor' | 'progres' | 'istoric' | 'cont';
 
@@ -26,6 +27,8 @@ const TABS: readonly TabConfig[] = [
 export function BottomNav(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
+  const navStyle = useSettingsStore((s) => s.bottomNavStyle);
+  const compact = navStyle === 'compact';
 
   const isActive = (tab: Tab): boolean =>
     location.pathname === `/app/${tab}` ||
@@ -33,8 +36,11 @@ export function BottomNav(): JSX.Element {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-paper border-t border-line flex justify-around items-center h-16 z-50"
+      className={`fixed bottom-0 left-0 right-0 bg-paper border-t border-line flex justify-around items-center z-50 ${
+        compact ? 'h-12' : 'h-16'
+      }`}
       aria-label="Navigare principala"
+      data-nav-style={navStyle}
     >
       {TABS.map(({ id, label, Icon }) => {
         const active = isActive(id);
@@ -43,12 +49,14 @@ export function BottomNav(): JSX.Element {
             key={id}
             type="button"
             onClick={() => navigate(`/app/${id}`)}
-            className={`flex flex-col items-center justify-center gap-1 flex-1 h-full text-xs font-medium transition-colors ${
+            className={`flex ${
+              compact ? 'flex-row gap-1.5' : 'flex-col gap-1'
+            } items-center justify-center flex-1 h-full text-xs font-medium transition-colors ${
               active ? 'text-brick' : 'text-ink2'
             }`}
             aria-current={active ? 'page' : undefined}
           >
-            <Icon size={20} aria-hidden="true" />
+            <Icon size={compact ? 16 : 20} aria-hidden="true" />
             <span>{label}</span>
           </button>
         );
