@@ -1,5 +1,5 @@
 // ══ FIREBASE SYNC ═══════════════════════════════════════════
-import { DB, tod } from './db.js';
+import { DB } from './db.js';
 import { toast } from './ui/ui.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
@@ -166,7 +166,6 @@ export async function syncFromFirebase() {
     const remote = await fbGet(userPath);
     if (!remote) return false;
 
-    const today = tod();
     suppressInvalidations(() => {
       SYNC_KEYS.forEach(k => {
         if (remote[k] == null) return;

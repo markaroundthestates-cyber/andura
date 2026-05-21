@@ -245,7 +245,7 @@ async function init() {
     if (onboardingDone && !isAuthenticated()) {
       mountAuthBanner({
         googleClientId: window.__GOOGLE_CLIENT_ID,
-        onAuthSuccess: ({ uid }) => {
+        onAuthSuccess: ({ uid: _uid }) => {
           // Post-auth success — trigger Daniel legacy path migration.
           // Idempotent: no-op for non-Daniel users sau already-migrated.
           runAuthPathMigration().catch(err => {

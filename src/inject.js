@@ -1,5 +1,5 @@
 // ══ INJECT BASELINE + MFP ════════════════════════════════════
-import { DB, tod, todDate } from './db.js';
+import { DB, todDate } from './db.js';
 
 
 export function injectBaseline() {
@@ -13,8 +13,7 @@ export function injectBaseline() {
   const t = Date.now();
   const d = new Date(); d.setDate(d.getDate() - 3);
   const baseDate = todDate(d);
-  const logs = [];
-  
+
   const baseline = [
     {date:baseDate,ex:'Lat Pulldown',w:64,sets:1,reps:'8',rpe:8,ts:t-0,session:t-86400000,baseline:true},
     {date:baseDate,ex:'Lat Pulldown',w:64,sets:1,reps:'8',rpe:8,ts:t-1000,session:t-86400000,baseline:true},
