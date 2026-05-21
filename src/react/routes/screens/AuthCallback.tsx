@@ -9,7 +9,15 @@ import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
-import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, AUTH_STORAGE_KEYS } from '../../../auth.js';
+import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, signInWithGoogleIdToken, AUTH_STORAGE_KEYS } from '../../../auth.js';
+
+// §B005/D-2 audit fix — Google OAuth fragment parse helper. Google returns
+// `#id_token=<jwt>&access_token=...&...` în URL hash post-redirect.
+function parseGoogleIdToken(hash: string): string | null {
+  if (!hash || !hash.startsWith('#')) return null;
+  const params = new URLSearchParams(hash.slice(1));
+  return params.get('id_token');
+}
 
 export function AuthCallback(): JSX.Element {
   const navigate = useNavigate();
@@ -20,6 +28,25 @@ export function AuthCallback(): JSX.Element {
     let cancelled = false;
 
     async function run(): Promise<void> {
+      // §B005/D-2 audit fix — Google OAuth return path detection. If URL hash
+      // contains `id_token`, exchange via signInWithGoogleIdToken (Firebase REST
+      // accounts:signInWithIdp). Else fall through to Magic Link oobCode flow.
+      const googleIdToken = parseGoogleIdToken(window.location.hash);
+      if (googleIdToken) {
+        const result = await signInWithGoogleIdToken(googleIdToken);
+        if (cancelled) return;
+        if (result.ok) {
+          // Clear hash from URL pre-navigate (avoid token leak via referrer header).
+          window.history.replaceState(null, '', window.location.pathname);
+          setAuthenticated(true);
+          navigate('/app/antrenor', { replace: true });
+          return;
+        }
+        setError(result.error || 'google_verify_failed');
+        navigate(`/auth?error=${encodeURIComponent(result.error || 'google_verify_failed')}`, { replace: true });
+        return;
+      }
+
       const { oobCode, email: urlEmail } = parseMagicLinkUrl(window.location.search);
       // §4-H2 audit fix — getPendingEmail honors 1h TTL (anti-stale shared-device leak).
       const email = urlEmail || getPendingEmail();

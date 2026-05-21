@@ -86,6 +86,11 @@ jobs:
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_URL }}
+          # §B005/D-2 audit fix — Google OAuth client ID (optional pre-Daniel-setup).
+          # Build succeeds dacă secret missing; Auth.tsx hides Google button gracefully.
+          # Daniel: configure Google Cloud Console OAuth client + Firebase Authentication
+          # Sign-in providers → Google + add VITE_GOOGLE_OAUTH_CLIENT_ID GitHub Secret.
+          VITE_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_OAUTH_CLIENT_ID }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
