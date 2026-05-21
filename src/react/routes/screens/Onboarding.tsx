@@ -109,7 +109,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         value={value ?? ''}
         onChange={(e) => onChange(Number(e.target.value))}
         placeholder="ex. 32"
-        min={14}
+        min={16}
         max={99}
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"

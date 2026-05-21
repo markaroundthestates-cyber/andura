@@ -95,7 +95,7 @@ export function SettingsProfile(): JSX.Element {
           <FieldRow label="Varsta">
             <input
               type="number"
-              min={14}
+              min={16}
               max={100}
               value={draft.age ?? ''}
               onChange={(e) => update('age', e.target.value ? Number(e.target.value) : null)}
