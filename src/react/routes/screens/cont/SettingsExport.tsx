@@ -16,7 +16,7 @@ import { gotoPath } from '../../../lib/navigation';
 
 interface ExportPayload {
   exportedAt: string;
-  schemaVersion: 1;
+  schemaVersion: 2;
   stores: {
     onboarding: ReturnType<typeof useOnboardingStore.getState>;
     workout: ReturnType<typeof useWorkoutStore.getState>;
@@ -25,6 +25,13 @@ interface ExportPayload {
     schedule: ReturnType<typeof useScheduleStore.getState>;
   };
   tier0Keys: Record<string, string | null>;
+  // §28-M4 GDPR Art. 20 — Tier 1 IDB stores (cdl/logs/applied_patterns
+  // archived sessions >90 days). Optional: empty arrays if IDB unavailable.
+  tier1: {
+    cdl: unknown[];
+    logs: unknown[];
+    appliedPatterns: unknown[];
+  };
 }
 
 function collectTier0Keys(): Record<string, string | null> {
@@ -42,10 +49,26 @@ function collectTier0Keys(): Record<string, string | null> {
   return keys;
 }
 
-function buildExportPayload(): ExportPayload {
+async function collectTier1(): Promise<ExportPayload['tier1']> {
+  const empty = { cdl: [], logs: [], appliedPatterns: [] };
+  try {
+    const dbModule = await import('../../../../storage/db.js');
+    const [cdl, logs, appliedPatterns] = await Promise.all([
+      dbModule.tier1All(dbModule.STORES.CDL_TIER1).catch(() => []),
+      dbModule.tier1All(dbModule.STORES.LOGS_TIER1).catch(() => []),
+      dbModule.tier1All(dbModule.STORES.APPLIED_PATTERNS_TIER1).catch(() => []),
+    ]);
+    return { cdl, logs, appliedPatterns };
+  } catch {
+    return empty;
+  }
+}
+
+async function buildExportPayload(): Promise<ExportPayload> {
+  const tier1 = await collectTier1();
   return {
     exportedAt: new Date().toISOString(),
-    schemaVersion: 1,
+    schemaVersion: 2,
     stores: {
       onboarding: useOnboardingStore.getState(),
       workout: useWorkoutStore.getState(),
@@ -54,6 +77,7 @@ function buildExportPayload(): ExportPayload {
       schedule: useScheduleStore.getState(),
     },
     tier0Keys: collectTier0Keys(),
+    tier1,
   };
 }
 
@@ -79,9 +103,9 @@ export function SettingsExport(): JSX.Element {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [size, setSize] = useState<number>(0);
 
-  function handleExport(): void {
+  async function handleExport(): Promise<void> {
     try {
-      const payload = buildExportPayload();
+      const payload = await buildExportPayload();
       const json = JSON.stringify(payload, null, 2);
       const filename = `andura-export-${new Date().toISOString().slice(0, 10)}.json`;
       triggerDownload(filename, json);
@@ -129,7 +153,7 @@ export function SettingsExport(): JSX.Element {
 
         <button
           type="button"
-          onClick={handleExport}
+          onClick={() => { void handleExport(); }}
           data-testid="settings-export-trigger"
           className="w-full py-3 bg-brick text-paper rounded-xl text-base font-semibold flex items-center justify-center gap-2"
         >

@@ -2,7 +2,7 @@
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsExport } from '../../../routes/screens/cont/SettingsExport';
 
@@ -47,7 +47,7 @@ describe('SettingsExport — render + download flow', () => {
     expect(screen.getByTestId('settings-export-trigger')).toBeInTheDocument();
   });
 
-  it('export click triggers download + shows success status', () => {
+  it('export click triggers download + shows success status', async () => {
     // Mock URL.createObjectURL + click handler
     const createObjectURL = vi.fn(() => 'blob:mock');
     const revokeObjectURL = vi.fn();
@@ -56,19 +56,19 @@ describe('SettingsExport — render + download flow', () => {
 
     renderScreen();
     fireEvent.click(screen.getByTestId('settings-export-trigger'));
-    expect(createObjectURL).toHaveBeenCalled();
+    await waitFor(() => expect(createObjectURL).toHaveBeenCalled());
     expect(screen.getByTestId('settings-export-success')).toBeInTheDocument();
     expect(screen.getByTestId('settings-export-success').textContent).toMatch(/Fisier descarcat/);
   });
 
-  it('export error path renders error status', () => {
+  it('export error path renders error status', async () => {
     Object.defineProperty(URL, 'createObjectURL', {
       value: () => { throw new Error('blob fail'); },
       configurable: true,
     });
     renderScreen();
     fireEvent.click(screen.getByTestId('settings-export-trigger'));
-    expect(screen.getByTestId('settings-export-error')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('settings-export-error')).toBeInTheDocument());
   });
 
   it('back navigates la /app/cont', () => {
