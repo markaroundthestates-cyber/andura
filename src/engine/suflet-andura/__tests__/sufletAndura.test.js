@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  RIR_MATRIX, rirToIntensity, getTargetRirRange,
+  rirToIntensity, getTargetRirRange,
   MODES, isValidMode, getDefaultMode,
   detectBiasDrift,
-  TIER_LEVELS, detectTier, isFeatureEnabledForTier,
+  detectTier, isFeatureEnabledForTier,
   cascadeArbitrate,
   detectOutlier, onGoalShift, OUTLIER_FILTER_CONFIG,
 } from '../index.js';

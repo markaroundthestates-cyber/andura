@@ -10,9 +10,6 @@ import {
   detectInjuryDisabled,
 } from '../crossEngineHooks.js';
 import {
-  PERIODIZATION_PHASE,
-  GOAL_PHASE,
-  ENERGY_DIRECTION,
   SCHEMA_CONSTANTS,
 } from '../constants.js';
 
@@ -50,7 +47,7 @@ describe('consumeFrozenConstraint — Hook D1 read-only anti-cascade §1.10', ()
 
   it('Anti-cascade — input frozen object NU mutated', () => {
     const constraint = Object.freeze({ phase: 'LOAD', deload_window: null });
-    const r = consumeFrozenConstraint(constraint);
+    consumeFrozenConstraint(constraint);
     expect(Object.isFrozen(constraint)).toBe(true);
     // Returned signal is metadata-only; original constraint unchanged
     expect(constraint.phase).toBe('LOAD');

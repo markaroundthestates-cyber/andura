@@ -10,7 +10,7 @@
 // Function needed for single migrate). Multi-tenant bulk migration uses
 // the Cloud Function spec'd in MULTI_TENANT_AUTH_MIGRATION_SPEC.md (post-V1).
 
-import { FIREBASE_URL, LEGACY_USER_PATH, buildAuthUrl } from '../firebase.js';
+import { LEGACY_USER_PATH, buildAuthUrl } from '../firebase.js';
 import { getAuthState } from '../auth.js';
 
 const MIGRATION_FLAG_KEY = 'auth-migration-2026-05-02-done';

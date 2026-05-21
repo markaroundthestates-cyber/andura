@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
 import {
-  CALIBRATION_TIERS,
   WARMUP_STATE,
   SCHEMA_CONSTANTS,
 } from '../constants.js';

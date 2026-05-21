@@ -7,8 +7,6 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  CALENDAR_OVERRIDE_KEY,
-  MISSING_EQUIPMENT_KEY,
   getDailyWorkout,
   commitCalendarEdit,
   setMissingEquipment,

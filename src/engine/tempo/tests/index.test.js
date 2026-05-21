@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
-import { CUE_DELIVERY_TIMING, TEMPO_NOTATION } from '../constants.js';
+import { TEMPO_NOTATION } from '../constants.js';
 import { assertValidDimensionResult } from '../../dimensionContract.js';
 
 const buildPeriodConstraint = (phase = 'LOAD') => Object.freeze({
