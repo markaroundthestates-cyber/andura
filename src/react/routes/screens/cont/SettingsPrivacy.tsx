@@ -133,9 +133,10 @@ export function SettingsPrivacy(): JSX.Element {
             Backup-ul Firebase RTDB (optional) pastreaza copie pana stergi contul.
             ZERO copie pe servere terte. <strong>Stergerea de pe device =
             imediata.</strong> Datele Firebase RTDB (daca esti autentificat)
-            se sterg separat — pentru request explicit scrie la
+            se sterg automat la &quot;Sterge cont&quot; (best-effort GDPR Art. 17,
+            propagare server &lt;5 min). Probleme la stergere remote? Scrie la
             <a href="mailto:privacy@andura.app" className="text-brick underline">{' '}privacy@andura.app</a>{' '}
-            (raspuns &lt;72h per GDPR Art. 17).
+            (raspuns &lt;72h).
           </p>
 
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>

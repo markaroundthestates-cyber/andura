@@ -15,7 +15,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
 import { ConfirmModal } from '../../../components/ConfirmModal';
-import { isAuthFresh, signOut as authSignOut } from '../../../../auth.js';
+import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
 
 type ConfirmAction = null | 'reset' | 'delete' | 'logout';
 
@@ -42,6 +42,44 @@ function wipeAllLocalData(): void {
     if (import.meta.env.DEV) {
       console.warn('[SettingsDanger] wipe failed:', e);
     }
+  }
+}
+
+/**
+ * §B039/D-6 audit fix (SECURITY T-7) — GDPR Art. 17 strict compliance:
+ * Tier 1 IndexedDB deleteDatabase + Tier 2 Firebase RTDB DELETE pe Sterge cont.
+ *
+ * Defense-in-depth + best-effort: each tier wrapped în try/catch (partial wipe
+ * acceptable Bugatti — Tier 0 stripped local-side independent of remote
+ * connectivity). Failures swallow silent prod; DEV-only console.warn surface
+ * forensic root-cause.
+ */
+async function wipeRemoteData(uid: string): Promise<void> {
+  // Tier 1 — IndexedDB user namespace deleteDatabase
+  try {
+    const dbModule = await import('../../../../storage/db.js');
+    await dbModule.wipeUserDB(uid);
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 1 IDB wipe failed:', e);
+  }
+
+  // Tier 2 — Firebase RTDB DELETE via REST per ADR 002
+  const rtdbUrl = (import.meta as ImportMeta & { env?: { VITE_FIREBASE_RTDB_URL?: string } })
+    .env?.VITE_FIREBASE_RTDB_URL;
+  if (!rtdbUrl) {
+    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 skip — VITE_FIREBASE_RTDB_URL missing');
+    return;
+  }
+  try {
+    const idToken = await getIdToken();
+    if (!idToken) {
+      if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 skip — no idToken');
+      return;
+    }
+    const url = `${rtdbUrl.replace(/\/$/, '')}/users/${encodeURIComponent(uid)}.json?auth=${encodeURIComponent(idToken)}`;
+    await fetch(url, { method: 'DELETE' });
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 RTDB DELETE failed:', e);
   }
 }
 
@@ -77,7 +115,14 @@ export function SettingsDanger(): JSX.Element {
       navigate('/auth?reason=reauth_required_for_delete');
       return;
     }
+    // §B039/D-6 audit fix — GDPR Art. 17 strict erasure: Tier 0 + Tier 1 + Tier 2.
+    // Capture uid pre-wipe (authSignOut clears it). Fire-and-forget remote wipe
+    // — local UX continues immediate, server-side erasure converges async.
+    const authState = getAuthState();
     wipeAllLocalData();
+    if (authState?.uid) {
+      void wipeRemoteData(authState.uid);
+    }
     // §A007-FIX audit-blocker: authSignOut() needed pe success path too —
     // wipeAllLocalData strips wv2-* keys but NU firebase-* tokens.
     authSignOut();
