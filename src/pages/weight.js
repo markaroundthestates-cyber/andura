@@ -1,5 +1,5 @@
 // ══ WEIGHT PAGE ══════════════════════════════════════════════
-import { DB, $, tod, todDate, todTs, fmt } from '../db.js';
+import { DB, $, tod, todDate, fmt } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { SYS } from '../engine/sys.js';
 import { toast } from '../ui/ui.js';
@@ -26,7 +26,7 @@ export function renderWeight(){
   syncLogDateUI();
   initW();initKcal();initProt();initWater();initSuppl();syncW();
   // Check if weight already saved today
-  const ws=DB.get('weights')||{},dates=Object.keys(ws).sort(),trend=getTrend();
+  const ws=DB.get('weights')||{},trend=getTrend();
   const todayW=ws[getLogDate()];
   if(todayW&&state.logDateOffset ===0){lockWeight(todayW);}
   else{unlockWeight();}
@@ -288,15 +288,16 @@ export function exportCSV() {
 }
 
 export function exportJSON() {
-  const keys = ['logs','weights','kcals','prots','waters','wellbeing',
-    'suppl-list','suppl-taken-v2','step-streaks','steps-today','closed-days',
-    'photos','onboarding-done','muted','bf-override','phase-override',
-    'current-kcal','aa-cooldown','phase-log'];
+  /** @type {Record<string, unknown>} */
   const data = {version: 'andura-v1', exported: new Date().toISOString()};
+  /** @type {string[]} */
   const allKeys = [];
-  for(let i=0; i<localStorage.length; i++) allKeys.push(localStorage.key(i));
+  for(let i=0; i<localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k) allKeys.push(k);
+  }
   allKeys.forEach(k => {
-    try { data[k] = JSON.parse(localStorage.getItem(k)); } catch(e) { data[k] = localStorage.getItem(k); }
+    try { data[k] = JSON.parse(localStorage.getItem(k)); } catch { data[k] = localStorage.getItem(k); }
   });
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
@@ -427,7 +428,7 @@ async function importMFPMeasurementCSV(text) {
   if (window.renderDash) window.renderDash();
 }
 
-async function importMFPZip(file) {
+async function importMFPZip(_file) {
   // ZIP import requires JSZip — not available, show informative message
   toast('⚠ Import ZIP: foloseste CSV individual din MFP Export', 'var(--accent2)');
 }

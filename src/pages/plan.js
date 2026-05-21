@@ -10,7 +10,6 @@ import { renderDash } from './dashboard.js';
 export function renderPlan() {
   const bf = SYS.getBF();
   const phase = SYS.getPhase();
-  const kg = SYS.getCurrentKg();
   const lbm = SYS.getLBM();
   const tdee = SYS.estimateTDEE();
   const kcal = SYS.getKcalTarget();

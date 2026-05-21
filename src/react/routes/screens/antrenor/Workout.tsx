@@ -31,7 +31,6 @@ import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
-import { formatMMSS } from '../../../lib/format';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
