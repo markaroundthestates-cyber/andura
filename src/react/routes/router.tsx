@@ -38,6 +38,8 @@ const AparateLipsa = lazy(() => import('./screens/antrenor/AparateLipsa').then((
 const ScheduleOverride = lazy(() => import('./screens/antrenor/ScheduleOverride').then((m) => ({ default: m.ScheduleOverride })));
 const PostRpe = lazy(() => import('./screens/antrenor/PostRpe').then((m) => ({ default: m.PostRpe })));
 const PostSummary = lazy(() => import('./screens/antrenor/PostSummary').then((m) => ({ default: m.PostSummary })));
+// §B004 D047 Stage 3 — Workout exit drill-down
+const FinishEarlyConfirm = lazy(() => import('./screens/antrenor/FinishEarlyConfirm').then((m) => ({ default: m.FinishEarlyConfirm })));
 
 // §B007 lazy — Progres sub-screens (2 routes)
 const LogWeight = lazy(() => import('./screens/progres/LogWeight').then((m) => ({ default: m.LogWeight })));
@@ -117,6 +119,8 @@ export const router = createBrowserRouter([
           { path: 'schedule-override', element: <LazyRoute><ScheduleOverride /></LazyRoute> },
           { path: 'post-rpe', element: <LazyRoute><PostRpe /></LazyRoute> },
           { path: 'post-summary', element: <LazyRoute><PostSummary /></LazyRoute> },
+          // §B004 D047 Stage 3 — Workout exit drill-down
+          { path: 'finish-early-confirm', element: <LazyRoute><FinishEarlyConfirm /></LazyRoute> },
         ],
       },
       {

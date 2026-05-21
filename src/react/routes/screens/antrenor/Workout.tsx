@@ -321,7 +321,7 @@ export function Workout(): JSX.Element {
     setPhase('logging');
   }
 
-  function handleExit(action: 'continue' | 'pause' | 'discard'): void {
+  function handleExit(action: 'continue' | 'pause' | 'discard' | 'finish-early'): void {
     if (action === 'continue') {
       setExitSheetOpen(false);
       return;
@@ -329,6 +329,14 @@ export function Workout(): JSX.Element {
     if (action === 'pause') {
       pauseSession();
       navigate(gotoPath('antrenor'));
+      return;
+    }
+    if (action === 'finish-early') {
+      // §B004 D047 Stage 3 — drill-down friction layer before partial-finish.
+      // FinishEarlyConfirm → navigate post-rpe → PostRpe submit builds summary
+      // din byDay logat pana acum (NU pierzi progresul).
+      setExitSheetOpen(false);
+      navigate(gotoPath('finish-early-confirm'));
       return;
     }
     discardSession();

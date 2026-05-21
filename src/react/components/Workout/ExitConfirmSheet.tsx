@@ -15,7 +15,7 @@
 
 import type { JSX } from 'react';
 
-export type ExitAction = 'continue' | 'pause' | 'discard';
+export type ExitAction = 'continue' | 'pause' | 'discard' | 'finish-early';
 
 interface ExitConfirmSheetProps {
   open: boolean;
@@ -61,6 +61,14 @@ export function ExitConfirmSheet({
           className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold mb-2"
         >
           Salveaza si reia mai tarziu
+        </button>
+        <button
+          type="button"
+          onClick={() => onChoose('finish-early')}
+          data-testid="exit-finish-early"
+          className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold mb-2"
+        >
+          Termina mai devreme
         </button>
         <button
           type="button"

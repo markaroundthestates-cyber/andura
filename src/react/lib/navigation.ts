@@ -44,7 +44,9 @@ export type GotoScreen =
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
   // §B002 D047 Stage 3 — Avansat section drill-downs
-  | 'redo-onboarding-confirm';
+  | 'redo-onboarding-confirm'
+  // §B004 D047 Stage 3 — Workout exit drill-down
+  | 'finish-early-confirm';
 
 /**
  * Map mockup screen name la React Router path.
@@ -78,7 +80,8 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'ceva-nu-merge' || screen === 'pain-button' ||
     screen === 'equipment-swap' || screen === 'aparate-lipsa' ||
     screen === 'schedule-override' ||
-    screen === 'post-rpe' || screen === 'post-summary'
+    screen === 'post-rpe' || screen === 'post-summary' ||
+    screen === 'finish-early-confirm'
   ) {
     return `/app/antrenor/${screen}`;
   }
