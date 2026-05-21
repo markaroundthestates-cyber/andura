@@ -111,13 +111,13 @@ export function computeR2(observed, predicted) {
  * @returns {{mu: number, sigma: number}}
  */
 export function kalmanUpdate1D({ previousState, observation, processNoise, measurementNoise }) {
-  const muPrev = Number.isFinite(previousState?.mu) ? previousState.mu : 0;
-  const sigmaPrev = Number.isFinite(previousState?.sigma) && previousState.sigma > 0
+  const muPrev = previousState && Number.isFinite(previousState.mu) ? previousState.mu : 0;
+  const sigmaPrev = previousState && Number.isFinite(previousState.sigma) && previousState.sigma > 0
     ? previousState.sigma : 1.0;
   const obs = Number.isFinite(observation) ? observation : muPrev;
-  const Q = Number.isFinite(processNoise) && processNoise > 0
+  const Q = (processNoise != null && Number.isFinite(processNoise) && processNoise > 0)
     ? processNoise : KALMAN_DEFAULTS.metabolicAdaptationKcalPerKgLbm * 0.01; // scaled
-  const R = Number.isFinite(measurementNoise) && measurementNoise > 0
+  const R = (measurementNoise != null && Number.isFinite(measurementNoise) && measurementNoise > 0)
     ? measurementNoise : 1.0;
 
   // Prediction
@@ -147,7 +147,7 @@ export function kalmanUpdate1D({ previousState, observation, processNoise, measu
 export function ewmaUpdate({ previousMu, observation, alpha }) {
   const prev = Number.isFinite(previousMu) ? previousMu : 0;
   const obs = Number.isFinite(observation) ? observation : prev;
-  const a = Number.isFinite(alpha) && alpha >= 0 && alpha <= 1
+  const a = (alpha != null && Number.isFinite(alpha) && alpha >= 0 && alpha <= 1)
     ? alpha : KALMAN_DEFAULTS.ewmaAlphaDefault;
   return a * obs + (1 - a) * prev;
 }
@@ -275,7 +275,7 @@ export function runKalmanWithFallback({
 
   // Run Kalman update
   const kalmanState = kalmanUpdate1D({ previousState, observation });
-  const r2 = computeR2(recentObserved, recentPredicted);
+  const r2 = computeR2(recentObserved ?? [], recentPredicted ?? []);
   const gate = evaluateR2Gate(r2);
 
   if (gate.ewmaFallbackRecommended) {
