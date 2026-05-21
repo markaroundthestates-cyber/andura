@@ -64,10 +64,7 @@ export const ENGINE_ID = 'bayesianNutrition';
 /**
  * Compute confidence level based on ctx data completeness.
  *
- * @param {Object} input
- * @param {boolean} input.hasObservations
- * @param {boolean} input.hasPriorSource
- * @param {boolean} input.hasPeriodizationConstraint
+ * @param {{ hasObservations: boolean, hasPriorSource: boolean, hasPeriodizationConstraint: boolean }} input
  * @returns {'low'|'medium'|'high'}
  */
 function computeConfidence({ hasObservations, hasPriorSource, hasPeriodizationConstraint }) {
@@ -113,8 +110,7 @@ function normalCdf(x) {
  * yields deficit (negative kcal delta) vs surplus (positive) vs maintenance
  * (within ±sigma band).
  *
- * @param {Object} input
- * @param {{mu: number, sigma: number}} input.posterior
+ * @param {{ posterior: {mu: number, sigma: number} }} input
  * @returns {import('./types.js').LikelihoodProbabilities}
  */
 function computeLikelihoodProbabilities({ posterior }) {
@@ -175,9 +171,7 @@ function computeConfidenceInterval(posterior) {
  *   Tier 2 banner (informational) cand stable inference + signal user
  *   NU blocking modal (Maria 65 autonomy preserve)
  *
- * @param {Object} input
- * @param {boolean} input.disagreementFlagged
- * @param {boolean} input.passiveModeActive
+ * @param {{ disagreementFlagged: boolean, passiveModeActive: boolean }} input
  * @returns {import('./types.js').UiTier}
  */
 function resolveUiTier({ disagreementFlagged, passiveModeActive }) {
@@ -209,15 +203,23 @@ function resolveUiTier({ disagreementFlagged, passiveModeActive }) {
 export async function evaluate(ctx) {
   /** @type {string[]} */
   const signals = [];
-  /** @type {Object} */
+  /** @type {Record<string, unknown>} */
   const trace = {};
 
   // Defensive ctx unpacking — total function semantics
-  const safeCtx = ctx && typeof ctx === 'object' ? ctx : {};
-  const user = safeCtx.user && typeof safeCtx.user === 'object' ? safeCtx.user : {};
+  const safeCtx = /** @type {Record<string, any>} */ (
+    ctx && typeof ctx === 'object' ? ctx : {}
+  );
+  const user = /** @type {Record<string, any>} */ (
+    safeCtx.user && typeof safeCtx.user === 'object' ? safeCtx.user : {}
+  );
   const recentSessions = Array.isArray(safeCtx.recentSessions) ? safeCtx.recentSessions : [];
-  const meta = safeCtx.meta && typeof safeCtx.meta === 'object' ? safeCtx.meta : {};
-  const flags = safeCtx.flags && typeof safeCtx.flags === 'object' ? safeCtx.flags : {};
+  const meta = /** @type {Record<string, any>} */ (
+    safeCtx.meta && typeof safeCtx.meta === 'object' ? safeCtx.meta : {}
+  );
+  const flags = /** @type {Record<string, boolean>} */ (
+    safeCtx.flags && typeof safeCtx.flags === 'object' ? safeCtx.flags : {}
+  );
 
   // Periodization Constraint Object Hook (consumed read-only frozen)
   const periodizationConstraint = meta.periodizationConstraint || null;
@@ -272,7 +274,9 @@ export async function evaluate(ctx) {
     citationSource: kcalFloorFilterResult.citationSource,
     floorMin:       kcalFloorFilterResult.floorMin,
   };
-  const observations = kcalFloorFilterResult.filtered;
+  const observations = /** @type {Array<{weightDelta?: number, adherenceRate?: number, reportedEnergyMood?: number, timestampMs?: number}>} */ (
+    /** @type {unknown} */ (kcalFloorFilterResult.filtered)
+  );
   const obsCount = observations.length;
   let sampleMean = prior.mu;
   let sampleVariance = prior.sigma * prior.sigma;
@@ -340,7 +344,9 @@ export async function evaluate(ctx) {
       ci_lower:            ci.lower,
       ci_upper:            ci.upper,
     },
-    observations: observationsForSchema,
+    observations: /** @type {Array<import('./types.js').Observation>} */ (
+      /** @type {unknown} */ (observationsForSchema)
+    ),
     confidence_interval: ci,
   };
 

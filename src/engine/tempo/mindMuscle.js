@@ -49,9 +49,9 @@ import {
  * @returns {boolean}
  */
 export function resolveMindMuscleByTier(tier) {
-  if (typeof tier !== 'string') return MIND_MUSCLE_ACTIVATION_BY_TIER.T0;
+  if (typeof tier !== 'string') return MIND_MUSCLE_ACTIVATION_BY_TIER.T0 ?? false;
   const map = /** @type {Record<string, boolean>} */ (MIND_MUSCLE_ACTIVATION_BY_TIER);
-  return map[tier] ?? MIND_MUSCLE_ACTIVATION_BY_TIER.T0;
+  return map[tier] ?? MIND_MUSCLE_ACTIVATION_BY_TIER.T0 ?? false;
 }
 
 /**
