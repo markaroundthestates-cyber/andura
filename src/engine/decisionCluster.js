@@ -37,9 +37,9 @@ import { RESERVED_RATIONALE_IDS } from '../util/coachDecisionLog.js';
  *
  * @typedef {Object} ClusterTrace
  * @property {boolean} shortCircuited
- * @property {Object} stages
- * @property {Array} errors
- * @property {Array} stageMismatches
+ * @property {Record<string, any>} stages
+ * @property {Array<any>} errors
+ * @property {Array<any>} stageMismatches
  */
 
 /** Default no-op logger. */
@@ -79,12 +79,15 @@ export class DecisionCluster {
 
     for (let i = 0; i < settled.length; i++) {
       const s = settled[i];
+      if (!s) continue;
       if (s.status === 'rejected') {
-        errors.push({ index: i, reason: this._stringifyError(s.reason) });
-        this._reportError(s.reason, { index: i, op: 'dimension_promise_rejected' });
+        const rejected = /** @type {PromiseRejectedResult} */ (s);
+        errors.push({ index: i, reason: this._stringifyError(rejected.reason) });
+        this._reportError(rejected.reason, { index: i, op: 'dimension_promise_rejected' });
         continue;
       }
-      const result = s.value;
+      const fulfilled = /** @type {PromiseFulfilledResult<any>} */ (s);
+      const result = fulfilled.value;
       if (result == null) {
         errors.push({ index: i, reason: 'null or undefined dimension result' });
         this._reportError(new Error('null dimension result'), { index: i, op: 'dimension_null' });
@@ -105,7 +108,7 @@ export class DecisionCluster {
 
     // ── Stage 1 GATE ──
     const gateOutcome = this._runGateStage(validated, baseSession);
-    if (gateOutcome.shortCircuit) {
+    if (gateOutcome.shortCircuit && gateOutcome.session) {
       return {
         session: gateOutcome.session,
         trace: {
@@ -156,8 +159,14 @@ export class DecisionCluster {
    *
    * @private
    */
+  /**
+   * @param {Array<any>} validated
+   * @param {Record<string, any>} baseSession
+   */
   _runGateStage(validated, baseSession) {
+    /** @type {Array<{source: string, rec: any}>} */
     const gateRecs = [];
+    /** @type {Array<{source: string, rec: any}>} */
     const overriddenByGate = [];
 
     for (const result of validated) {
@@ -180,6 +189,13 @@ export class DecisionCluster {
     // V8 stable sort guarantee per ECMA-2019. Determinism contract guarantee (ADR 018 §2).
     gateRecs.sort((a, b) => b.rec.priority - a.rec.priority);
     const winner = gateRecs[0];
+    if (!winner) {
+      return {
+        shortCircuit: false,
+        session: null,
+        trace: { fired: [], winner: null, overridden: [] },
+      };
+    }
 
     // Build short-circuit session: preserve baseSession metadata, mark gated.
     const session = {
@@ -218,17 +234,26 @@ export class DecisionCluster {
    *
    * @private
    */
+  /**
+   * @param {Array<any>} validated
+   * @param {Record<string, any>} baseSession
+   */
   _runAdjustmentStage(validated, baseSession) {
+    /** @type {Record<string, any>} */
     let session = baseSession;
+    /** @type {Array<{source: string, action: string, priority: number, rationale?: string}>} */
     const fired = [];
     let composedVolumeMultiplier = 1;
+    /** @type {number | null} */
     let composedSetsCap = null;
 
     // Collect all ADJUSTMENT-stage recs across dimensions
+    /** @type {Array<{source: string, rec: any}>} */
     const adjustments = [];
     for (const result of validated) {
       for (const rec of result.recommendations) {
-        const stage = ACTION_STAGE_MAP[rec.action] ?? STAGES.ADJUSTMENT;
+        const stageMap = /** @type {Record<string, string>} */ (ACTION_STAGE_MAP);
+        const stage = stageMap[rec.action] ?? STAGES.ADJUSTMENT;
         if (stage === STAGES.ADJUSTMENT) {
           adjustments.push({ source: result.id, rec });
         }
@@ -281,14 +306,22 @@ export class DecisionCluster {
    *
    * @private
    */
+  /**
+   * @param {Array<any>} validated
+   * @param {Record<string, any>} baseSession
+   */
   _runEnhancementStage(validated, baseSession) {
+    /** @type {Record<string, any>} */
     let session = baseSession;
+    /** @type {Array<{source: string, action: string, priority: number, rationale?: string}>} */
     const fired = [];
 
+    /** @type {Array<{source: string, rec: any}>} */
     const enhancements = [];
     for (const result of validated) {
       for (const rec of result.recommendations) {
-        const stage = ACTION_STAGE_MAP[rec.action];
+        const stageMap = /** @type {Record<string, string>} */ (ACTION_STAGE_MAP);
+        const stage = stageMap[rec.action];
         if (stage === STAGES.ENHANCEMENT) {
           enhancements.push({ source: result.id, rec });
         }
@@ -327,6 +360,10 @@ export class DecisionCluster {
    *
    * @private
    */
+  /**
+   * @param {Record<string, any>} session
+   * @param {Record<string, any>} rec
+   */
   _applyAdjustment(session, rec) {
     switch (rec.action) {
       case ACTIONS.REDUCE_VOLUME:
@@ -357,6 +394,11 @@ export class DecisionCluster {
    * Unknown action verbs are logged + ignored.
    *
    * @private
+   */
+  /**
+   * @param {Record<string, any>} session
+   * @param {Record<string, any>} rec
+   * @param {string} source
    */
   _applyEnhancement(session, rec, source) {
     switch (rec.action) {
@@ -396,18 +438,24 @@ export class DecisionCluster {
    *
    * @private
    */
+  /**
+   * @param {Array<any>} validated
+   * @param {Map<string, any>} entryById
+   */
   _validateStages(validated, entryById) {
+    /** @type {Array<{dimensionId: string, declaredStage: string, action: string, expectedStage: string | null}>} */
     const mismatches = [];
     for (const result of validated) {
       const entry = entryById.get(result.id);
       if (!entry) continue;
       for (const rec of result.recommendations) {
         if (!isActionStageCompatible(rec.action, entry.stage)) {
+          const stageMap = /** @type {Record<string, string>} */ (ACTION_STAGE_MAP);
           const m = {
             dimensionId: result.id,
             declaredStage: entry.stage,
             action: rec.action,
-            expectedStage: ACTION_STAGE_MAP[rec.action] ?? null,
+            expectedStage: stageMap[rec.action] ?? null,
           };
           mismatches.push(m);
           const msg = `[DecisionCluster] Stage mismatch: dimension '${result.id}' declared '${entry.stage}' but emitted action '${rec.action}' (expected stage '${m.expectedStage}')`;
@@ -425,7 +473,7 @@ export class DecisionCluster {
   // Utilities
   // ─────────────────────────────────────────────────────────────────────
 
-  /** @private */
+  /** @param {Record<string, any> | null | undefined} session @private */
   _cloneSession(session) {
     if (!session || typeof session !== 'object') return {};
     const cloned = { ...session };
@@ -437,7 +485,7 @@ export class DecisionCluster {
     return cloned;
   }
 
-  /** @private */
+  /** @param {Record<string, any>} rec @private */
   _cloneRec(rec) {
     return {
       action: rec.action,
@@ -447,20 +495,20 @@ export class DecisionCluster {
     };
   }
 
-  /** @private */
+  /** @param {unknown} payload @private */
   _clonePayload(payload) {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return {};
     return { ...payload };
   }
 
-  /** @private */
+  /** @param {unknown} err @private */
   _stringifyError(err) {
     if (!err) return 'unknown';
     if (err instanceof Error) return err.message || err.toString();
     return String(err);
   }
 
-  /** @private */
+  /** @param {unknown} err @param {Record<string, any>} ctx @private */
   _reportError(err, ctx) {
     this.logger.error?.('[DecisionCluster] dimension error:', err, ctx);
     if (this.sentry?.captureException) {
@@ -500,7 +548,7 @@ export function clusterTraceToRationale(trace) {
       winnerId: winner?.source ?? RESERVED_RATIONALE_IDS.NO_RULE_FIRED,
       winnerPriority: winner?.priority ?? null,
       overridden: (trace.stages?.GATE?.overridden ?? [])
-        .map(o => o?.source)
+        .map((/** @type {{source?: string}} */ o) => o?.source)
         .filter(Boolean),
     };
   }

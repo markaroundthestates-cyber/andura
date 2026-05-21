@@ -4,19 +4,28 @@ import { KCAL_TARGET } from '../constants.js';
 import { tod, todDate, todTs } from '../db.js';
 import { READINESS_PR, READINESS_MED } from './readiness.js';
 
+/** @typedef {Record<string, number>} DateMap */
+/** @typedef {Record<string, number | {score?: number} | null>} ReadinessMap */
+/** @typedef {Array<{baseline?: boolean, ex?: string, date?: string, ts?: number, rpe?: number, w?: number, reps?: number}>} PaLog */
+/** @typedef {Record<string, number>} HourCounts */
+/** @typedef {{warning?: number, info?: number, success?: number}} SeverityOrderMap */
+
 /**
  * Check 1: Deficit de proteina.
  * Tinta: 2.2g/kg corp. Alerta daca media ultimelor 3 zile e sub 80% din tinta.
  */
+/**
+ * @param {DateMap | null | undefined} prots
+ * @param {number | null | undefined} bodyweightKg
+ */
 export function checkProteinDeficit(prots, bodyweightKg) {
   if (!prots || !bodyweightKg) return null;
-  const today = tod();
   const last3 = Array.from({ length: 3 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
-  const values = last3.map(d => prots[d]).filter(v => v !== undefined && v !== null);
+  const values = last3.map((d) => prots[d]).filter((v) => v !== undefined && v !== null);
   if (values.length === 0) return null;
   const avgProt = values.reduce((a, b) => a + Number(b), 0) / values.length;
   const target = bodyweightKg * 2.2;
@@ -36,6 +45,7 @@ export function checkProteinDeficit(prots, bodyweightKg) {
  * Check 2: Sleep debt proxy — readiness trend descrescator.
  * 3+ zile consecutive cu readiness < 60.
  */
+/** @param {ReadinessMap | null | undefined} readiness */
 export function checkSleepDebt(readiness) {
   if (!readiness) return null;
   const last5 = Array.from({ length: 5 }, (_, i) => {
@@ -51,7 +61,7 @@ export function checkSleepDebt(readiness) {
     .filter(v => v !== null);
 
   if (values.length < 3) return null;
-  const consecutiveLow = values.slice(0, 3).every(v => v < READINESS_MED);
+  const consecutiveLow = values.slice(0, 3).every((v) => v != null && v < READINESS_MED);
   if (consecutiveLow) {
     return {
       type: 'sleep_debt',
@@ -66,6 +76,10 @@ export function checkSleepDebt(readiness) {
 /**
  * Check 3: Oportunitate PR — readiness >= 85 si nu a mai fost PR in 14 zile.
  */
+/**
+ * @param {ReadinessMap | null | undefined} readiness
+ * @param {Array<{baseline?: boolean, ex?: string, ts?: number, isPR?: boolean}> | null | undefined} logs
+ */
 export function checkPROpportunity(readiness, logs) {
   if (!readiness || !logs) return null;
   const today = tod();
@@ -77,7 +91,7 @@ export function checkPROpportunity(readiness, logs) {
 
   // Check last PR
   const twoWeeksAgo = Date.now() - 14 * 24 * 3600 * 1000;
-  const recentPR = logs.some(l => l.isPR && (l.ts ?? 0) > twoWeeksAgo);
+  const recentPR = logs.some((l) => l.isPR && (l.ts ?? 0) > twoWeeksAgo);
   if (!recentPR) {
     return {
       type: 'pr_opportunity',
@@ -93,19 +107,25 @@ export function checkPROpportunity(readiness, logs) {
  * Check 4: Grupe musculare neantronate 5+ zile.
  * Computes daysSinceLast from logs directly (getMuscleState returns {muscle:0-100}).
  */
+/**
+ * @param {PaLog | null | undefined} logs
+ * @param {Record<string, any> | null | undefined} muscleState
+ * @param {Record<string, string[]> | null | undefined} muscleExercises
+ */
 export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
   if (!logs || logs.length === 0) return null;
   if (!muscleExercises) return null;
 
   const now = Date.now();
+  /** @type {Record<string, number>} */
   const daysSinceLast = {};
 
   for (const [muscle, exercises] of Object.entries(muscleExercises)) {
-    const relevant = logs.filter(l => exercises.includes(l.ex) && !l.baseline);
+    const relevant = logs.filter((l) => l.ex && exercises.includes(l.ex) && !l.baseline);
     if (relevant.length === 0) {
       daysSinceLast[muscle] = Infinity;
     } else {
-      const lastTs = Math.max(...relevant.map(l => l.ts || new Date(l.date).getTime()));
+      const lastTs = Math.max(...relevant.map((l) => l.ts || (l.date ? new Date(l.date).getTime() : 0)));
       daysSinceLast[muscle] = (now - lastTs) / 86400000;
     }
   }
@@ -128,10 +148,11 @@ export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
 /**
  * Check 5: Streak de antrenament — motivational.
  */
+/** @param {PaLog | null | undefined} logs */
 export function checkTrainingStreak(logs) {
   if (!logs || logs.length === 0) return null;
   const days = new Set(
-    logs.map(l => {
+    logs.map((l) => {
       const ts = l.ts ?? (l.date ? new Date(l.date).getTime() : null);
       return ts ? todTs(ts) : null;
     }).filter(Boolean)
@@ -159,15 +180,18 @@ export function checkTrainingStreak(logs) {
 /**
  * Check 6: Kcal sub tinta (KCAL_TARGET) — prea mult deficit.
  */
+/**
+ * @param {DateMap | null | undefined} kcals
+ * @param {number | null | undefined} currentKcalTarget
+ */
 export function checkKcalDeficit(kcals, currentKcalTarget) {
   if (!kcals || !currentKcalTarget) return null;
-  const today = tod();
   const last3 = Array.from({ length: 3 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
-  const values = last3.map(d => kcals[d]).filter(v => v !== undefined && v !== null);
+  const values = last3.map((d) => kcals[d]).filter((v) => v !== undefined && v !== null);
   if (values.length === 0) return null;
   const avgKcal = values.reduce((a, b) => a + Number(b), 0) / values.length;
   if (avgKcal < KCAL_TARGET) {
@@ -184,6 +208,7 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
 /**
  * Check 7: Sesiune planificata dar ore de varf depasite.
  */
+/** @param {Record<number, number> | null | undefined} peakHours */
 export function checkPeakHours(peakHours) {
   if (!peakHours || Object.keys(peakHours).length === 0) return null;
   const hour = new Date().getHours();
@@ -202,6 +227,10 @@ export function checkPeakHours(peakHours) {
 /**
  * Check 8: Greutate corporala in crestere la CUT.
  */
+/**
+ * @param {DateMap | null | undefined} weights
+ * @param {boolean | null | undefined} isInCut
+ */
 export function checkWeightTrend(weights, isInCut) {
   if (!isInCut || !weights) return null;
   const last7 = Array.from({ length: 7 }, (_, i) => {
@@ -209,7 +238,7 @@ export function checkWeightTrend(weights, isInCut) {
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
-  const values = last7.map(d => weights[d]).filter(v => v !== undefined && v !== null).map(Number);
+  const values = last7.map((d) => weights[d]).filter((v) => v !== undefined && v !== null).map(Number);
   if (values.length < 4) return null;
   const firstHalf = values.slice(Math.floor(values.length / 2));
   const secondHalf = values.slice(0, Math.floor(values.length / 2));
@@ -229,9 +258,10 @@ export function checkWeightTrend(weights, isInCut) {
 /**
  * Check 9: Nu s-a antrenat 4+ zile.
  */
+/** @param {PaLog | null | undefined} logs */
 export function checkInactivity(logs) {
   if (!logs || logs.length === 0) return null;
-  const lastTs = Math.max(...logs.map(l => l.ts ?? 0).filter(Boolean));
+  const lastTs = Math.max(...logs.map((l) => l.ts ?? 0).filter(Boolean));
   if (!lastTs) return null;
   const daysSinceLast = (Date.now() - lastTs) / (24 * 3600 * 1000);
   if (daysSinceLast >= 4) {
@@ -248,6 +278,7 @@ export function checkInactivity(logs) {
 /**
  * Check 10: Hidratare insuficienta (waters < 2L).
  */
+/** @param {DateMap | null | undefined} waters */
 export function checkHydration(waters) {
   if (!waters) return null;
   const today = tod();
@@ -265,15 +296,17 @@ export function checkHydration(waters) {
 
 /**
  * Ruleaza toate cele 10 verificari si returneaza alertele active.
- * @param {object} ctx - CoachContext + extra fields
- * @returns {Array} alerts sorted by severity (warning first, then info, then success)
+ * @param {Record<string, any> | null | undefined} ctx - CoachContext + extra fields
+ * @returns {Array<any>} alerts sorted by severity (warning first, then info, then success)
  */
 export function runProactiveChecks(ctx) {
+  /** @type {Record<string, any>} */
+  const safe = ctx ?? {};
   const {
     prots, weights, kcals, waters, readiness, logs,
-    muscleState, isInCut, peakHours, workoutSkips,
+    muscleState, isInCut, peakHours,
     user,
-  } = ctx ?? {};
+  } = safe;
 
   const bodyweightKg = user?.weight ?? weights?.[tod()] ?? null;
   const currentKcalTarget = user?.kcalTarget ?? null;
@@ -282,7 +315,7 @@ export function runProactiveChecks(ctx) {
     checkProteinDeficit(prots, bodyweightKg),
     checkSleepDebt(readiness),
     checkPROpportunity(readiness, logs),
-    checkRecoveryGroups(logs, muscleState),
+    checkRecoveryGroups(logs, muscleState, safe.muscleExercises),
     checkTrainingStreak(logs),
     checkKcalDeficit(kcals, currentKcalTarget),
     checkPeakHours(peakHours),
@@ -291,8 +324,9 @@ export function runProactiveChecks(ctx) {
     checkHydration(waters),
   ];
 
+  /** @type {Record<string, number>} */
   const SEVERITY_ORDER = { warning: 0, info: 1, success: 2 };
-  return checks
-    .filter(Boolean)
-    .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
+  const filtered = /** @type {Array<{severity?: string}>} */ (checks.filter(Boolean));
+  return filtered
+    .sort((a, b) => (SEVERITY_ORDER[a.severity ?? ''] ?? 9) - (SEVERITY_ORDER[b.severity ?? ''] ?? 9));
 }

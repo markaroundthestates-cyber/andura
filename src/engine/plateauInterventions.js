@@ -2,6 +2,21 @@
 // Fiecare interventie are: id, label, efficacy (0-1), when (conditii),
 // apply (functie care modifica sesiunea).
 
+/**
+ * @typedef {Object} PlateauCtx
+ * @property {number} stagnationWeeks
+ * @property {boolean} [isInCut]
+ * @property {{score?: number}} [readiness]
+ * @property {number} [sessionFrequency]
+ */
+
+/**
+ * @typedef {Record<string, any>} PlateauExercise
+ */
+
+/** @typedef {{ id: string, label: string, efficacy: number, when: (ctx: PlateauCtx) => boolean, apply: (exercise: PlateauExercise) => PlateauExercise }} PlateauIntervention */
+
+/** @type {Array<PlateauIntervention>} */
 export const INTERVENTIONS = [
   {
     id: 'drop_set',
@@ -42,7 +57,7 @@ export const INTERVENTIONS = [
     id: 'intensity_bump',
     label: 'Intensitate +2.5kg',
     efficacy: 0.68,
-    when: ctx => ctx.stagnationWeeks >= 6 && ctx.readiness?.score >= 75,
+    when: ctx => ctx.stagnationWeeks >= 6 && (ctx.readiness?.score ?? 0) >= 75,
     apply: exercise => {
       const rec = exercise.recommendation ?? {};
       const newKg = (rec.kg ?? rec.weight ?? 20) + 2.5;
@@ -156,8 +171,8 @@ export const INTERVENTIONS = [
 
 /**
  * Returneaza interventiile aplicabile in contextul dat, sortate dupa eficacitate.
- * @param {object} ctx - cu stagnationWeeks, isInCut, readiness, sessionFrequency
- * @returns {Array} interventiile aplicabile sortate DESC efficacy
+ * @param {PlateauCtx} ctx - cu stagnationWeeks, isInCut, readiness, sessionFrequency
+ * @returns {Array<PlateauIntervention>} interventiile aplicabile sortate DESC efficacy
  */
 export function getApplicableInterventions(ctx) {
   return INTERVENTIONS
@@ -167,13 +182,14 @@ export function getApplicableInterventions(ctx) {
 
 /**
  * Aplica cea mai eficienta interventie la un exercitiu.
- * @param {object} exercise
- * @param {object} ctx
- * @returns {{ exercise: object, intervention: object|null }}
+ * @param {PlateauExercise} exercise
+ * @param {PlateauCtx} ctx
+ * @returns {{ exercise: PlateauExercise, intervention: PlateauIntervention | null }}
  */
 export function applyBestIntervention(exercise, ctx) {
   const applicable = getApplicableInterventions(ctx);
   if (applicable.length === 0) return { exercise, intervention: null };
   const best = applicable[0];
+  if (!best) return { exercise, intervention: null };
   return { exercise: best.apply(exercise), intervention: best };
 }
