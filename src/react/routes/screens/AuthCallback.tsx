@@ -25,7 +25,8 @@ export function AuthCallback(): JSX.Element {
       const email = urlEmail || getPendingEmail();
       if (!oobCode || !email) {
         if (!cancelled) {
-          setError('missing_params');
+          // §B020 audit fix (CODE-REVIEW L-10) — single navigate path. Remove setError
+          // (would cause 1-frame error UI flash pre-navigate). /auth route reads ?error.
           navigate('/auth?error=missing_params', { replace: true });
         }
         return;
