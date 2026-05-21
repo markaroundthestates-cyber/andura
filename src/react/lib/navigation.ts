@@ -40,7 +40,9 @@ export type GotoScreen =
   // Phase 6 Cont sub-screens (task_09-17)
   | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
   | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
-  | 'settings-terms' | 'settings-export' | 'settings-danger';
+  | 'settings-terms' | 'settings-export' | 'settings-danger'
+  // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
+  | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm';
 
 /**
  * Map mockup screen name la React Router path.
@@ -91,6 +93,14 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'settings-prefs' || screen === 'settings-privacy' ||
     screen === 'settings-terms' || screen === 'settings-export' ||
     screen === 'settings-danger'
+  ) {
+    return `/app/cont/${screen}`;
+  }
+
+  // §D047 RIP-OUT drill-down confirm screens (nested sub /app/cont)
+  if (
+    screen === 'logout-confirm' || screen === 'delete-account-confirm' ||
+    screen === 'reset-data-confirm'
   ) {
     return `/app/cont/${screen}`;
   }

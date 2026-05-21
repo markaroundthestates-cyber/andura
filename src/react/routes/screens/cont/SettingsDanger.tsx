@@ -1,135 +1,17 @@
 // ══ SETTINGS DANGER — Phase 6 task_17 Cont Sub-Screen ════════════════════
-// Delete account + Reset all data + Logout. Cascade destructive actions
-// behind confirm steps. ZERO server-side delete V1 (Phase 7+ Firebase
-// wipe + Tier 1/2 server-side erasure when auth/account scheme defined).
+// §D047 RIP-OUT Stage 2 (2026-05-21 morning) — replaced ConfirmModal modal
+// paradigm cu uniform drill-down screens per Daniel CEO LOCKED V1 +
+// mockup andura-clasic.html parity. ConfirmModal A003 deleted, 3 drill-down
+// screens NEW (LogoutConfirm + DeleteAccountConfirm + ResetDataConfirm)
+// handle actions. SettingsDanger acum = simple list page navigating drill-down.
 
 import type { JSX } from 'react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, LogOut, RotateCcw, Trash2 } from 'lucide-react';
-import { useAppStore } from '../../../stores/appStore';
-import { useWorkoutStore } from '../../../stores/workoutStore';
-import { useNutritionStore } from '../../../stores/nutritionStore';
-import { useOnboardingStore } from '../../../stores/onboardingStore';
-import { useSettingsStore } from '../../../stores/settingsStore';
-import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
-import { ConfirmModal } from '../../../components/ConfirmModal';
-import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
-
-type ConfirmAction = null | 'reset' | 'delete' | 'logout';
-
-function wipeAllLocalData(): void {
-  try {
-    // Reset all stores (workoutStore.reset preserves history per Phase 4 spec —
-    // additional resetStreak + history wipe needed pentru complete erasure).
-    useWorkoutStore.getState().reset();
-    useWorkoutStore.getState().resetStreak();
-    useWorkoutStore.setState({ lastSession: null, sessionsHistory: [] });
-    useNutritionStore.getState().reset();
-    useOnboardingStore.getState().reset();
-    useSettingsStore.getState().reset();
-    useScheduleStore.getState().resetWeekly();
-    // Wipe Tier 0 wv2-* localStorage keys
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('wv2-')) keysToRemove.push(key);
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
-  } catch (e) {
-    // §B015 audit fix (CODE-REVIEW L-5) — DEV-only console output, prod silent.
-    if (import.meta.env.DEV) {
-      console.warn('[SettingsDanger] wipe failed:', e);
-    }
-  }
-}
-
-/**
- * §B039/D-6 audit fix (SECURITY T-7) — GDPR Art. 17 strict compliance:
- * Tier 1 IndexedDB deleteDatabase + Tier 2 Firebase RTDB DELETE pe Sterge cont.
- *
- * Defense-in-depth + best-effort: each tier wrapped în try/catch (partial wipe
- * acceptable Bugatti — Tier 0 stripped local-side independent of remote
- * connectivity). Failures swallow silent prod; DEV-only console.warn surface
- * forensic root-cause.
- */
-async function wipeRemoteData(uid: string): Promise<void> {
-  // Tier 1 — IndexedDB user namespace deleteDatabase
-  try {
-    const dbModule = await import('../../../../storage/db.js');
-    await dbModule.wipeUserDB(uid);
-  } catch (e) {
-    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 1 IDB wipe failed:', e);
-  }
-
-  // Tier 2 — Firebase RTDB DELETE via REST per ADR 002
-  const rtdbUrl = (import.meta as ImportMeta & { env?: { VITE_FIREBASE_RTDB_URL?: string } })
-    .env?.VITE_FIREBASE_RTDB_URL;
-  if (!rtdbUrl) {
-    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 skip — VITE_FIREBASE_RTDB_URL missing');
-    return;
-  }
-  try {
-    const idToken = await getIdToken();
-    if (!idToken) {
-      if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 skip — no idToken');
-      return;
-    }
-    const url = `${rtdbUrl.replace(/\/$/, '')}/users/${encodeURIComponent(uid)}.json?auth=${encodeURIComponent(idToken)}`;
-    await fetch(url, { method: 'DELETE' });
-  } catch (e) {
-    if (import.meta.env.DEV) console.warn('[SettingsDanger] Tier 2 RTDB DELETE failed:', e);
-  }
-}
 
 export function SettingsDanger(): JSX.Element {
   const navigate = useNavigate();
-  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
-  const [confirm, setConfirm] = useState<ConfirmAction>(null);
-
-  function handleLogoutConfirmed(): void {
-    // §A007-FIX audit-blocker: authSignOut() MUST clear firebase-* tokens
-    // ALSO. Without it, ProtectedRoute reactive useEffect (storage event +
-    // visibilitychange) detects tokens still present + reverts logout on
-    // next focus → broken UX + security risk (logout claim violated).
-    authSignOut();
-    setAuthenticated(false);
-    setConfirm(null);
-    navigate('/auth');
-  }
-
-  function handleResetConfirmed(): void {
-    wipeAllLocalData();
-    setConfirm(null);
-    navigate('/');
-  }
-
-  function handleDeleteConfirmed(): void {
-    // §A016 audit fix — destructive action gate: require recent re-auth.
-    // If lastAuthAt > 5min ago, abort + force re-Magic-Link before retry.
-    if (!isAuthFresh()) {
-      authSignOut();
-      setAuthenticated(false);
-      setConfirm(null);
-      navigate('/auth?reason=reauth_required_for_delete');
-      return;
-    }
-    // §B039/D-6 audit fix — GDPR Art. 17 strict erasure: Tier 0 + Tier 1 + Tier 2.
-    // Capture uid pre-wipe (authSignOut clears it). Fire-and-forget remote wipe
-    // — local UX continues immediate, server-side erasure converges async.
-    const authState = getAuthState();
-    wipeAllLocalData();
-    if (authState?.uid) {
-      void wipeRemoteData(authState.uid);
-    }
-    // §A007-FIX audit-blocker: authSignOut() needed pe success path too —
-    // wipeAllLocalData strips wv2-* keys but NU firebase-* tokens.
-    authSignOut();
-    setAuthenticated(false);
-    setConfirm(null);
-    navigate('/auth');
-  }
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-danger">
@@ -150,7 +32,7 @@ export function SettingsDanger(): JSX.Element {
         <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           <button
             type="button"
-            onClick={() => setConfirm('logout')}
+            onClick={() => navigate(gotoPath('logout-confirm'))}
             data-testid="danger-logout"
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
           >
@@ -163,7 +45,7 @@ export function SettingsDanger(): JSX.Element {
 
           <button
             type="button"
-            onClick={() => setConfirm('reset')}
+            onClick={() => navigate(gotoPath('reset-data-confirm'))}
             data-testid="danger-reset"
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
           >
@@ -176,7 +58,7 @@ export function SettingsDanger(): JSX.Element {
 
           <button
             type="button"
-            onClick={() => setConfirm('delete')}
+            onClick={() => navigate(gotoPath('delete-account-confirm'))}
             data-testid="danger-delete"
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-brick"
           >
@@ -189,36 +71,11 @@ export function SettingsDanger(): JSX.Element {
         </div>
 
         <p className="text-xs text-ink2 leading-snug">
-          Stergerea conturilor remote (Firebase backup) este programata
-          Phase 7+. Acum reset/stergere afecteaza doar datele locale.
+          §B039/D-6 GDPR Art. 17: la &quot;Sterge cont&quot;, datele locale +
+          backup Firebase RTDB se sterg automat (best-effort, propagare
+          server &lt;5 min).
         </p>
       </div>
-
-      {/* §A004 + §A007 + §A008 audit fix: ConfirmModal shared (3 use sites). */}
-      <ConfirmModal
-        open={confirm !== null}
-        title={confirm === 'logout' ? 'Iesi din cont?' : 'Confirma actiunea'}
-        body={
-          confirm === 'reset'
-            ? 'Toate datele tale locale vor fi sterse. Aceasta actiune nu poate fi anulata.'
-            : confirm === 'delete'
-            ? 'Datele + contul vor fi sterse. Aceasta actiune nu poate fi anulata.'
-            : 'Datele raman pe telefon. Te poti reconecta oricand.'
-        }
-        confirmCta={
-          confirm === 'reset' ? 'Reseteaza' : confirm === 'delete' ? 'Sterge cont' : 'Iesi'
-        }
-        destructive={confirm !== 'logout'}
-        onConfirm={
-          confirm === 'reset'
-            ? handleResetConfirmed
-            : confirm === 'delete'
-            ? handleDeleteConfirmed
-            : handleLogoutConfirmed
-        }
-        onCancel={() => setConfirm(null)}
-        testIdPrefix="danger-confirm"
-      />
     </section>
   );
 }
