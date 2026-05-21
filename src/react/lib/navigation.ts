@@ -42,7 +42,9 @@ export type GotoScreen =
   | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
   | 'settings-terms' | 'settings-export' | 'settings-danger'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
-  | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm';
+  | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
+  // §B002 D047 Stage 3 — Avansat section drill-downs
+  | 'redo-onboarding-confirm';
 
 /**
  * Map mockup screen name la React Router path.
@@ -100,7 +102,7 @@ export function gotoPath(screen: GotoScreen): string {
   // §D047 RIP-OUT drill-down confirm screens (nested sub /app/cont)
   if (
     screen === 'logout-confirm' || screen === 'delete-account-confirm' ||
-    screen === 'reset-data-confirm'
+    screen === 'reset-data-confirm' || screen === 'redo-onboarding-confirm'
   ) {
     return `/app/cont/${screen}`;
   }
