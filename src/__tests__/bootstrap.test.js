@@ -32,7 +32,7 @@ beforeEach(() => {
   consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-  // eslint-disable-next-line no-undef
+   
   delete globalThis.window?.__forceRotation;
 });
 
