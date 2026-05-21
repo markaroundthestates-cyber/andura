@@ -46,8 +46,15 @@ export const STRONG_PRIOR_SLOPE = Object.freeze({
 /**
  * Hall 2008 metabolic adaptation literature defaults per Cluster B2 Caveat 1.
  *
+ * §B026 audit fix (REVIEW-A036-A038 C-§A038-01) — processNoise (Q) derivation:
+ *   Q default = 22 × 0.01 = 0.22 kg/day variance
+ *   Bridge factor 0.01 = empirical (see kalmanFilter.js cap-fisier comment).
+ *
  * Forbes equation: ~22 kcal/kg LBM lost per metabolic adaptation rate.
- * Reference: Hall 2008 NIH metabolic adaptation literature canonical.
+ * Citations: Hall (2008) Int J Obes 32:573 + Hall (2011) Lancet 378:826
+ * + Forbes (2000) Ann NY Acad Sci 904.
+ *
+ * Pre-Beta calibration gate per Caveat 2: 90-day simulator R²>0.85 test.
  *
  * @type {Readonly<{
  *   metabolicAdaptationKcalPerKgLbm: number,

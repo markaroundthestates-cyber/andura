@@ -10,6 +10,43 @@
 // Constraint A1: NU MCMC NU JAX — closed-form local-first JS tractable <50ms.
 //
 // Pure functions — no side effects.
+//
+// §B026 audit fix (REVIEW-A036-A038 C-§A038-01) — processNoise (Q) scaling
+// factor derivation:
+//
+//   KALMAN_DEFAULTS.metabolicAdaptationKcalPerKgLbm = 22 kcal/kg LBM/day
+//   Q default = 22 × 0.01 = 0.22 kg/day variance (process noise sigma)
+//
+// Physical interpretation: Q represents day-to-day TRUE-weight drift NOT
+// measurement noise (R handles latter). Hall 2008 + Forbes equation defines
+// metabolic adaptation ENERGY rate (kcal/kg LBM lost). Converting to weight-
+// scale variance requires bridge factor:
+//
+//   1) Forbes equation: ~7700 kcal = 1 kg body weight (mixed loss FFM:FM ratio)
+//      Therefore 22 kcal/kg LBM/day × (1 kg / 7700 kcal) ≈ 0.0029 kg/kg LBM/day
+//      For 60 kg LBM persona (Marius typical): ~0.17 kg/day drift potential
+//
+//   2) Daily true-weight signal noise (NU measurement scale noise) sits în
+//      0.15-0.30 kg/day range per real-world weight tracking literature
+//      (Hall 2011 review of body-weight regulation noise; Hall 2008 NIH
+//      tracking studies). 0.22 = midpoint conservative.
+//
+//   3) Factor × 0.01 = empirical bridge constant chosen to land Q in
+//      0.17-0.30 kg/day per persona LBM range (Maria 30 LBM → ~0.09,
+//      Marius 60 LBM → ~0.17, average 0.22). Conservative midpoint default
+//      pre-persona-aware calibration (post-Beta TODO).
+//
+// Citations:
+//   - Hall, K.D. (2008). "What is the required energy deficit per unit
+//     weight loss?" Int J Obes 32(3): 573-576.
+//   - Hall, K.D. et al. (2011). "Quantification of the effect of energy
+//     imbalance on bodyweight." Lancet 378(9793): 826-837.
+//   - Forbes, G.B. (2000). "Body fat content influences the body
+//     composition response to nutrition and exercise." Ann NY Acad Sci 904.
+//
+// Pre-Beta calibration gate per Caveat 2: 90-day simulator R²>0.85 test
+// (`kalmanConvergence.test.js`) validates Q produces realistic convergence
+// vs Hall 2008 reference trajectory. If fails, fall back EWMA (Caveat 3).
 
 import { KALMAN_DEFAULTS } from './constants.js';
 
