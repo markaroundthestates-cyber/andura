@@ -196,12 +196,16 @@ export function parseMagicLinkUrl(search) {
 export function buildGoogleSignInUrl(googleClientId, continueUrl) {
   if (!googleClientId) throw new Error('googleClientId required');
   const redirect = continueUrl || `${_origin()}/auth-callback`;
+  // §B019 audit fix (CODE-REVIEW L-9) — CSPRNG nonce (16 bytes hex = 32 char).
+  // Node 20+ + browser + jsdom = crypto global. Replaces Math.random ~4 byte entropy.
+  const nonceBytes = crypto.getRandomValues(new Uint8Array(16));
+  const nonce = Array.from(nonceBytes, (b) => b.toString(16).padStart(2, '0')).join('');
   const params = new URLSearchParams({
     client_id: googleClientId,
     redirect_uri: redirect,
     response_type: 'id_token',
     scope: 'openid email profile',
-    nonce: Math.random().toString(36).slice(2),
+    nonce,
   });
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }
