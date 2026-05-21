@@ -8,7 +8,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail } from 'lucide-react';
+import { Mail, FlaskConical } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink } from '../../../auth.js';
 
@@ -19,6 +19,7 @@ function isValidEmail(s: string): boolean {
 export function Auth(): JSX.Element {
   const navigate = useNavigate();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const setSkipAuth = useAppStore((s) => s.setSkipAuth);
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -39,6 +40,14 @@ export function Auth(): JSX.Element {
 
   function handleMockLogin(): void {
     setAuthenticated(true);
+    navigate('/onboarding/1');
+  }
+
+  // §B006/D-2 audit fix — Skip-auth "test drive" paradigm Slice 1.x.
+  // Maria 65 friction-low entry: try app local-only fără Magic Link.
+  // Data stays Tier 0; future "Iesi din modul test" → /auth real.
+  function handleSkipAuth(): void {
+    setSkipAuth(true);
     navigate('/onboarding/1');
   }
 
@@ -115,6 +124,18 @@ export function Auth(): JSX.Element {
                 Nu am putut trimite linkul. Reincearca.
               </p>
             )}
+
+            {/* §B006/D-2 Skip-auth Slice 1.x — Maria 65 test drive entry */}
+            <button
+              type="button"
+              onClick={handleSkipAuth}
+              data-testid="auth-skip"
+              className="w-full mt-3 py-3 border border-lineStrong rounded-xl text-sm text-ink2 flex items-center justify-center gap-2"
+            >
+              <FlaskConical className="w-4 h-4" aria-hidden="true" />
+              Incearca fara cont
+            </button>
+
             {showMockLogin && (
               <button
                 type="button"

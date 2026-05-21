@@ -21,6 +21,7 @@ interface Props {
 
 export function ProtectedRoute({ children }: Props): JSX.Element {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const isSkipAuth = useAppStore((s) => s.isSkipAuth);
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
   // §A015 audit fix (NC§31-H1..H4) — T0 hard typing gate: redirect /onboarding/1
   // dacă user authenticated dar onboarding NU completed. Prevents engine T0
@@ -58,7 +59,10 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
     };
   }, [isAuthenticated, setAuthenticated]);
 
-  if (!isAuthenticated) {
+  // §B006/D-2 audit fix — Skip-auth mode bypasses Magic Link gate (Maria 65
+  // test drive paradigm Slice 1.x). Onboarding still mandatory for engine T0.
+  const passesAuthGate = isAuthenticated || isSkipAuth;
+  if (!passesAuthGate) {
     return <Navigate to="/auth" replace />;
   }
   if (!onboardingCompleted) {
