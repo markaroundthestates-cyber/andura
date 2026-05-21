@@ -1,7 +1,7 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-21 morning ACASĂ chat 1 NEW (post §CC.2 startup + Daniel CEO 5 BLOCKED resolved D046 LOCKED V1)
-**Topic active:** Iter 2 unblocked — D046 LOCKED V1 5 decisions REVERSE 4 + SAME 1. Iter 2 scope expanded: A038 Kalman FIX+FLIP-ON + Cluster E Beta + A021-A022 iter 2 LARGE refactor + Bundle supervised ASAP saptamana. ConfirmModal paradigm drill-down per mockup (REVERSE PATTERNS recommandation reuse).
+**Last updated:** 2026-05-21 morning ACASĂ chat 1 (post D047 RIP-OUT correction D046 §3.1)
+**Topic active:** Iter 2 unblocked D046 + D047 RIP-OUT correction — A003 ConfirmModal RIP-OUT + uniform drill-down screens Bugatti consistency Daniel-supervised iter 2. Scope expansion B001-B004 → B001-B011 (~5-8h HIGH RISK security-critical logout/delete migrate).
 **Bw current:** 7% (1M context)
 **Author:** Co-CTO Claude chat ACASĂ NEW (post overnight wrap + Daniel morning trigger)
 
@@ -18,21 +18,23 @@
 **Chat 1 NEW 2026-05-21 morning ACASĂ:**
 5. Daniel "salut. acasa" — §CC.2 startup triggered → PRIMER+DECISIONS+LATEST+CHAT_STATE read
 6. Daniel "deci avem 95% di 900+ bugs fixed?" — clarificat NU: 95% = Wave A only (38/40), iter 1 cumulative ~24%, total iter 1 plan ~305 tasks D029 698 findings consolidated
-7. Daniel **5 decizii LOCKED §3.1-§3.5:** ConfirmModal SAME drill-down per mockup REVERSE PATTERNS reuse + OAuth Cluster E REVERSE Beta include + Bundle SAME supervised ASAP-saptamana + Kalman REVERSE FIX+FLIP-ON pre-Beta + A021-A022 REVERSE iter 2 LARGE refactor
-8. Cascade SSOT execute: D046 LOCKED V1 + frontmatter + CHAT_STATE + MORNING_HANDOVER §3 RESOLVED + ITER_2_PLAN §6 RESOLVED + PRIMER §5 micro-append
+7. Daniel **5 decizii LOCKED §3.1-§3.5:** ConfirmModal SAME drill-down per mockup + OAuth Cluster E REVERSE Beta include + Bundle SAME supervised ASAP-saptamana + Kalman REVERSE FIX+FLIP-ON pre-Beta + A021-A022 REVERSE iter 2 LARGE refactor
+8. Cascade SSOT execute: D046 LOCKED V1 commit `a2b84ade` + frontmatter + CHAT_STATE + MORNING_HANDOVER §3 RESOLVED + ITER_2_PLAN §6 RESOLVED + PRIMER §5 micro-append
+9. Eu surface clarificare §3.1 ambiguity: A003 stays-system-level vs full rip-out → Daniel verdict **"RIP-OUT A003 + uniform drill-down"** Bugatti consistency
+10. D047 LOCKED V1 correction D046 §3.1 + cascade SSOT update (scope expansion B001-B004 → B001-B011 HIGH RISK supervised iter 2 ~5-8h)
 
 ---
 
 ## §1 Open questions / pending decisions Daniel
 
-**ALL 5 BLOCKED RESOLVED via D046 LOCKED V1 (2026-05-21 morning):**
-- ✅ §3.1 ConfirmModal — SAME aliniat drill-down per mockup (REVERSE PATTERNS reuse recommandation; A003 component stays integrated logout/delete system-level destructive actions, B001-B004 = drill-down NEW screens per mockup)
+**ALL 5 BLOCKED RESOLVED via D046 LOCKED V1 + D047 RIP-OUT correction (2026-05-21 morning):**
+- ✅ §3.1 ConfirmModal — D047 RIP-OUT A003 complet + uniform drill-down screens TOATE destructive actions Bugatti consistency (REVERSE PATTERNS reuse + REVERSE eu interpretation D046 stays-system-level). Scope expansion B001-B004 → B001-B011: 4 drill-down original + 4 RIP-OUT migrate logout/delete/account-delete + 3 NEW screens architecture. ~5-8h HIGH RISK security-critical Daniel-supervised iter 2.
 - ✅ §3.2 OAuth Cluster E020 — REVERSE include Beta scope iter 2 (~2-4h dev + Firebase Google OAuth provider + Skip-auth state)
 - ✅ §3.3 Bundle A011-A012 — SAME supervised, timing ASAP-saptamana NU end-of-iter defer (Block 2-3h Daniel-prezent)
 - ✅ §3.4 Kalman A038 — REVERSE FIX+FLIP-ON pre-Beta (processNoise origin documented + Hall 2008 citation + simulator persona calibrate + flag ON + 2 CRIT+4 MED+3 LOW fix, ~12-20h dev)
 - ✅ §3.5 A021-A022 — REVERSE include iter 2 (Tailwind ↔ CSS vars + TS strict, ~6-10h supervised, A022 split 6 subtasks documented)
 
-**1 open question CLARIFICARE Daniel:** ConfirmModal A003 component LANDED Wave A (logout/delete confirm gate) — interpret "NO change" §3.1 ca stays-in-use system-level + drill-down NEW pentru per-screen-flow B001-B004? Sau ConfirmModal rip-out complet inclusiv logout/delete migrate la drill-down screens?
+**3 minor pending Daniel:** D-1b Goal expand 4→6, D-6 GDPR implement vs amend, D-7 Wave structure preference (default Co-CTO tactical singur dacă NU surface explicit).
 
 ---
 
@@ -97,26 +99,27 @@ MORNING_HANDOVER în `📥_inbox/MORNING_HANDOVER_2026-05-21.md` (Daniel review-
 
 ## §4 Next P1 — Iter 2 unblocked, autonomous safe tasks ready
 
-**Post D046 LOCKED V1, autonomous-safe tasks ready START** (NU blocked Daniel-supervised):
+**Post D046+D047 LOCKED V1, autonomous-safe tasks ready START** (NU blocked Daniel-supervised):
 1. **B011-B020** (10 LOW code-review iter 2 backlog) — ne-blocate, ~3-5h autonomous
 2. **B021-B025** (5 A036 MEDIUM Tier independent) — ne-blocate, ~2-3h autonomous
 3. **B028 + B030-B034** (6 A038 MEDIUM Kalman independent of Beta flag decision) — ne-blocate
-4. **B035-B037** (3 UI nits autonomous) — ne-blocate
+4. **B035-B037** (3 UI nits autonomous) — ne-blocate (B035 ConfirmModal tap targets MOOT post D047 RIP-OUT)
 5. **B040** (DECISIONS.md throttle accepted-risk doc) — ne-blocat
 
-**Total Wave B-2 autonomous ~25 tasks ~4-7h CC Opus** per ITER_2_PLAN.md §4 paradigm.
+**Total Wave B-2 autonomous ~24 tasks ~4-7h CC Opus** per ITER_2_PLAN.md §4 paradigm (1 task MOOT post D047).
 
-**Daniel-supervised pending:**
+**Daniel-supervised pending iter 2:**
+- **B001-B011 RIP-OUT + uniform drill-down migrate** (HIGH RISK security-critical logout/delete, ~5-8h supervised NEW post D047)
 - B007+B008 Bundle code-split live session ASAP-saptamana (when Daniel programam)
 - B026+B027+B029 Kalman simulator R²>0.85 + processNoise calibrate (Daniel review post-implementation)
 - B009+B010 A021+A022 LARGE refactor supervised checkpoints
 
 **Daniel decisions remaining minor:**
-- ConfirmModal §3.1 clarification (A003 stays system-level vs full rip-out — vezi §1 above)
 - D-1b Goal type expansion (B003 sub-decision, 4→6 vs map 4 + suppress)
-- D-7 Wave structure preference (parallel B-1 + B-2 vs sequential)
+- D-6 GDPR Tier 1+2 wipe (implement ~30-60 min vs amend Privacy Policy)
+- D-7 Wave structure preference (parallel B-1 + B-2 vs sequential — default Co-CTO tactical)
 
-**Push branch decision** — 46+ commits ahead origin/main (D031 invariant Daniel manual).
+**Push branch decision** — 47+ commits ahead origin/main (D031 invariant Daniel manual).
 
 ---
 

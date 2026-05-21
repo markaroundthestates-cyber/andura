@@ -159,13 +159,21 @@ Wave A observed: ~3.5h cumulative real time pentru 36 effective closures = **~5-
 
 ## §6 Pre-execution Daniel decisions checklist → **5 RESOLVED 2026-05-21 morning (D046 LOCKED V1)** + 3 remaining minor
 
-### D-1: ConfirmModal UI placement paradigm — ✅ **RESOLVED: drill-down per mockup (SAME aliniat)**
-**Daniel verdict 2026-05-21 morning:** SAME aliniat drill-down screens per mockup. Paradigm consistency D-LEGACY-2026-05-11. NO change.
-- **REVERSE PATTERNS.md HIGH recommendation** (ConfirmModal reuse) → drill-down strict mockup parity ELECTED
-- **B001+B002+B003+B004 scope updated:** drill-down NEW screens (~16 extra files per PATTERNS option b)
-- **B038 paradigm task** scope: drill-down per mockup explicit (NU DECISIONS.md modal LOCK V1 append — D046 supersedes B038 task purpose)
-- **A003 ConfirmModal component:** stays integrated logout/delete system-level destructive actions (Wave A LANDED) — NU rip-out
-- **Open clarificare Daniel:** A003 stays system-level vs migrate logout/delete drill-down too (vezi CHAT_STATE.md §1)
+### D-1: ConfirmModal UI placement paradigm — ✅ **RESOLVED D047 CORRECTION: RIP-OUT A003 + uniform drill-down**
+**Daniel verdict 2026-05-21 morning + CORRECTION:** RIP-OUT A003 ConfirmModal complet + ALL destructive actions migrate drill-down screens uniformly Bugatti consistency NU mix paradigms.
+- **REVERSE PATTERNS.md** (reuse recommendation) + REVERSE eu mis-interpretation D046 §3.1 (stays-system-level)
+- **D047 LOCKED V1** correction D046 §3.1 (umbrella D046 §3.2-§3.5 rămân binding)
+- **B001+B002+B003+B004 → B001-B011 scope expansion:**
+  - 4 drill-down original screens (B001-B004 Settings + Antrenor flows per mockup)
+  - 4 RIP-OUT migrate screens (B005r LogoutConfirm + B006r DeleteAccountConfirm + B007r-B008r Settings actions Wave A reversal)
+  - 3 NEW architecture (B009r routes wire + B010r tests + B011r GotoScreen union extend)
+- **Code work scope:**
+  - RIP `src/react/components/ConfirmModal.tsx` + `ConfirmModal.test.tsx` 11 tests
+  - REVERT Wave A integrations: `15ee9d60` A004+A008 + `d5203d02` A007 + `fc3e6cc9` A007-fix + `3f05f8ce` A016 SettingsDanger logout/delete usage
+  - NEW LogoutConfirm.tsx + DeleteAccountConfirm.tsx drill-down screens
+  - A007 security pattern (authSignOut() token clear) **preserved** în NEW LogoutConfirm.tsx
+- **Effort:** ~5-8h dev HIGH RISK security-critical flows Daniel-supervised iter 2 (NU autonomous)
+- **B038 paradigm task** scope: drill-down per mockup explicit (D047 supersedes B038 modal LOCK option)
 
 ### D-1b: Goal type expansion (PATTERNS §A009 sub-decision) — ⏳ **DEFERRED Daniel clarificare**
 - **Options stand:** (a) Goal type 4 → 6 per mockup vs (b) keep 4 + map+suppress UI rows

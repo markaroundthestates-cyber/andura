@@ -50,13 +50,19 @@ Fix landed `fc3e6cc9`: `authSignOut()` call în logout success path + delete suc
 
 ## §3 DECIZII TINE BLOCATE → **ALL 5 RESOLVED 2026-05-21 morning** (D046 LOCKED V1)
 
-### 3.1 ConfirmModal A005-A010 UI placement paradigm — ✅ **SAME aliniat drill-down per mockup**
-**Daniel verdict:** SAME, aliniat: drill-down screens per mockup. Paradigm consistency cu Daniel D-LEGACY 2026-05-11. NO change.
-- **Interpretare:** drill-down paradigm reaffirmed = NEW screen files per mockup, NU shared ConfirmModal reuse (REVERSE PATTERNS.md HIGH recommendation)
-- **A003 ConfirmModal component** stays integrated logout/delete system-level destructive actions (Wave A LANDED)
-- **B001+B002+B003+B004 ITER_2_PLAN** scope = drill-down NEW screens, NU shared ConfirmModal wire
-- **B038 paradigm task** = drill-down per mockup explicit (NU DECISIONS.md modal LOCK V1 append)
-- **Open clarificare:** A003 stays system-level vs full rip-out logout/delete migrate drill-down — vezi CHAT_STATE.md §1
+### 3.1 ConfirmModal — ✅ **CORRECTED D047 RIP-OUT A003 + uniform drill-down**
+**Daniel verdict initial:** "SAME, aliniat: drill-down screens per mockup. NO change."
+**Eu mis-interpretation D046 §3.1:** A003 stays system-level logout/delete + drill-down doar B001-B004.
+**Daniel CORRECTION 2026-05-21:** **RIP-OUT A003 + uniform drill-down** — TOATE destructive actions migrate drill-down screens Bugatti consistency NU mix paradigms.
+- **D047 LOCKED V1** correction D046 §3.1 (D046 §3.2-§3.5 rămân binding)
+- **Scope code work iter 2 expansion:**
+  - RIP `src/react/components/ConfirmModal.tsx` + 11 tests
+  - REVERT Wave A integrations: `15ee9d60` A004+A008 + `d5203d02` A007 + `fc3e6cc9` A007-fix + `3f05f8ce` A016 SettingsDanger logout/delete
+  - NEW drill-down screens: LogoutConfirm.tsx + DeleteAccountConfirm.tsx + B001-B004 Settings variants
+  - Routes wire + tests + extend GotoScreen union sub-screens convention
+  - A007 security fix pattern (authSignOut() call) preserved în NEW LogoutConfirm.tsx
+- **Estimated:** ~5-8h dev HIGH RISK security-critical Daniel-supervised iter 2 NU autonomous
+- **B001-B004 → B001-B011** scope: 4 drill-down original + 4 RIP-OUT migrate + 3 NEW screens architecture
 
 ### 3.2 Cluster E020 paradigm — ✅ **REVERSE include Beta scope iter 2**
 **Daniel verdict:** REVERSE, INCLUDE pre-Beta. Skip-auth (Maria 65 test drive paradigm) + Google OAuth (Gigel/Marius low friction) = auth functionality completă, NU optional. Cluster E020 Slice 1.x în scope LOCKED V1. Magic Link singur = MVP paradigm, NU FULL.
