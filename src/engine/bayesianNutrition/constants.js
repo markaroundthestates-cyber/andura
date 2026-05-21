@@ -269,6 +269,15 @@ export const PERFORMANCE_BUDGET = Object.freeze({
  * log original transparency NU mutate; engine exclude din invatare + UI
  * informeaza scientific anchored citation source citable.
  *
+ * §B034 audit fix (REVIEW-A036-A038 L-§A038-03) — single global floor 1200
+ * deliberate V1 conservative choice. Acknowledge persona variant deferred
+ * post-Beta: WHO 1200 = female generic baseline; Marius 25 young athletic
+ * could go lower short-term cut (clinical PSMF protocols 800-1000), Maria 65
+ * sub-1200 categoric dangerous. Persona-aware variants (e.g.,
+ * `KCAL_FLOOR_BY_PERSONA = { maria: 1200, gigica: 1100, marius: 1000 }`)
+ * post-Beta feature pending Daniel clinical consultation + safety review.
+ * V1 single floor = conservative safe default ALL personas pre-Beta.
+ *
  * @type {number}
  */
 export const KCAL_FLOOR_DAILY_MIN = 1200;
