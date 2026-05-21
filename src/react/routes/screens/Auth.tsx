@@ -86,7 +86,7 @@ export function Auth(): JSX.Element {
           Autentificare
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
-          Iti trimitem un link pe email. Tap-il sa intri în cont.
+          Iti trimitem un link pe email. Tap-il sa intri in cont.
         </p>
 
         {sent ? (
