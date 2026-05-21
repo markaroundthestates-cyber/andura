@@ -12,6 +12,50 @@
 
 import { DB } from '../db.js';
 
+/**
+ * @typedef {{ readinessScore?: number, weakGroups?: string[], calibrationLevel?: string|null, isInCut?: boolean|null, predictionToday?: { isHighRisk?: boolean } | null, [k: string]: unknown }} CdlContext
+ *
+ * @typedef {{ sessionType?: string|null, exercises?: string[], proposedSets?: number, rationale?: { winnerId?: string }, [k: string]: unknown }} CdlProposed
+ *
+ * @typedef {{ executed?: boolean|'partial'|null, deviation?: boolean|null, matchScore?: number|null, actualSessionType?: string, actualExercises?: string[], actualSets?: number, [k: string]: unknown }} CdlOutcome
+ *
+ * @typedef {{
+ *   id: string,
+ *   ts: number,
+ *   date: string,
+ *   synthetic?: boolean,
+ *   superseded?: boolean,
+ *   supersedes?: string|null,
+ *   context: CdlContext,
+ *   proposed: CdlProposed,
+ *   outcome?: CdlOutcome | null,
+ *   ext?: { modalDismisses?: Array<{ modalId: string, ts: number, dismissed: true }> },
+ *   [k: string]: unknown
+ * }} CdlEntry
+ *
+ * @typedef {{
+ *   id: string,
+ *   ts: number,
+ *   date: string,
+ *   synthetic?: boolean,
+ *   superseded?: boolean,
+ *   calibrationLevel: string|null,
+ *   isInCut: boolean|null,
+ *   sessionType: string|null,
+ *   winnerId: string|null,
+ *   executed: boolean|'partial'|null,
+ *   deviation: boolean|null,
+ *   matchScore: number|null
+ * }} CdlAggregate
+ *
+ * @typedef {{
+ *   count: number,
+ *   executedRate: number,
+ *   avgMatchScore: number|null,
+ *   deviationRate: number
+ * }} CdlTier3Bucket
+ */
+
 export const STORAGE_KEYS = Object.freeze({
   TIER_1: 'coach-decisions',
   TIER_2: 'coach-decisions-aggregate',
@@ -30,10 +74,19 @@ const TIER_2_WINDOW_MS = 365 * 86400000;
 
 // ── Private helpers ──────────────────────────────────────────────────────────
 
+/**
+ * @param {CdlEntry} entry
+ * @returns {boolean}
+ */
 function isActive(entry) {
   return entry.superseded !== true;
 }
 
+/**
+ * @param {CdlContext | null | undefined} oldCtx
+ * @param {CdlContext | null | undefined} newCtx
+ * @returns {boolean}
+ */
 function isKeyContextChanged(oldCtx, newCtx) {
   // Legacy/migrated entries (e.g., Tier-2 aggregates re-promoted, or older
   // schema versions) may have a missing context object. Treat as "changed"
@@ -53,6 +106,11 @@ function isKeyContextChanged(oldCtx, newCtx) {
   return false;
 }
 
+/**
+ * @param {string} date
+ * @param {number} ts
+ * @returns {string}
+ */
 function generateEntryId(date, ts) {
   const d = new Date(ts);
   const hh = String(d.getHours()).padStart(2, '0');
@@ -63,6 +121,11 @@ function generateEntryId(date, ts) {
   return `cd_${date}_${hh}${mm}_${rand}`;
 }
 
+/**
+ * @param {string[]} a
+ * @param {string[]} b
+ * @returns {number}
+ */
 function jaccard(a, b) {
   const setA = new Set(a);
   const setB = new Set(b);
@@ -77,8 +140,8 @@ function jaccard(a, b) {
 
 /**
  * Write a new proposed CDL entry with idempotency check.
- * @param {object} entry - { date, context, proposed }
- * @returns {object} The active entry for that date (new or existing if idempotent)
+ * @param {{ date: string, context: CdlContext, proposed: CdlProposed }} entry
+ * @returns {CdlEntry} The active entry for that date (new or existing if idempotent)
  */
 export function writeProposed(entry) {
   if (
@@ -90,6 +153,7 @@ export function writeProposed(entry) {
     throw new Error('writeProposed: invalid entry — date (YYYY-MM-DD), context (object), proposed (object) required');
   }
 
+  /** @type {CdlEntry[]} */
   const all = DB.get(STORAGE_KEYS.TIER_1) ?? [];
   const existing = all.find(e => e.date === entry.date && isActive(e));
 
@@ -131,7 +195,13 @@ export function writeProposed(entry) {
  * @returns {object} The updated entry
  * @throws if no entry exists or outcome already set
  */
+/**
+ * @param {string} date
+ * @param {CdlOutcome} outcome
+ * @returns {CdlEntry}
+ */
 export function populateOutcome(date, outcome) {
+  /** @type {CdlEntry[]} */
   const entries = DB.get(STORAGE_KEYS.TIER_1) ?? [];
   const target = entries
     .filter(e => e.date === date && isActive(e))
@@ -153,9 +223,10 @@ export function populateOutcome(date, outcome) {
 /**
  * Read most recent non-superseded entry for date.
  * @param {string} date - YYYY-MM-DD
- * @returns {object|null}
+ * @returns {CdlEntry | null}
  */
 export function readActiveForDate(date) {
+  /** @type {CdlEntry[]} */
   const entries = DB.get(STORAGE_KEYS.TIER_1) ?? [];
   const matches = entries
     .filter(e => e.date === date && isActive(e))
@@ -165,10 +236,11 @@ export function readActiveForDate(date) {
 
 /**
  * Read all non-superseded active entries, optionally filtered.
- * @param {function} [filterFn]
- * @returns {object[]}
+ * @param {(e: CdlEntry) => boolean} [filterFn]
+ * @returns {CdlEntry[]}
  */
 export function readAllActive(filterFn) {
+  /** @type {CdlEntry[]} */
   const entries = DB.get(STORAGE_KEYS.TIER_1) ?? [];
   const active = entries.filter(isActive);
   return filterFn ? active.filter(filterFn) : active;
@@ -177,10 +249,12 @@ export function readAllActive(filterFn) {
 /**
  * Audit-only: return supersede chain for entryId (oldest → newest).
  * @param {string} entryId
- * @returns {object[]}
+ * @returns {CdlEntry[]}
  */
 export function readSupersedeChain(entryId) {
+  /** @type {CdlEntry[]} */
   const entries = DB.get(STORAGE_KEYS.TIER_1) ?? [];
+  /** @type {Record<string, CdlEntry>} */
   const byId = {};
   for (const e of entries) byId[e.id] = e;
 
@@ -189,7 +263,9 @@ export function readSupersedeChain(entryId) {
   if (!start) return [];
 
   // Walk backward to find the oldest in the chain
+  /** @type {CdlEntry[]} */
   const chain = [];
+  /** @type {CdlEntry | null | undefined} */
   let cursor = start;
   while (cursor) {
     chain.unshift(cursor);
@@ -216,8 +292,8 @@ export function readSupersedeChain(entryId) {
  * Compute matchScore between proposed and actual session.
  * GATE: returns null + deviation=true when sessionType differs.
  * Otherwise: 0.6 × volumeRatio + 0.4 × exerciseOverlap (Jaccard).
- * @param {object} proposed - { sessionType, exercises, proposedSets }
- * @param {object} actual - { actualSessionType, actualExercises, actualSets }
+ * @param {CdlProposed} proposed - { sessionType, exercises, proposedSets }
+ * @param {CdlOutcome} actual - { actualSessionType, actualExercises, actualSets }
  * @returns {{ matchScore: number|null, deviation: boolean }}
  */
 export function computeMatchScore(proposed, actual) {
@@ -240,9 +316,10 @@ export function computeMatchScore(proposed, actual) {
 /**
  * Demote entries older than 180 days from Tier 1 to Tier 2 aggregate.
  * Transactional: failed demotion preserves Tier 1 entry.
- * @returns {{ demoted: number, errors: array }}
+ * @returns {{ demoted: number, errors: string[] }}
  */
 export function demoteToTier2() {
+  /** @type {CdlEntry[]} */
   const entries = DB.get(STORAGE_KEYS.TIER_1) ?? [];
   const cutoff = Date.now() - TIER_1_WINDOW_MS;
 
@@ -266,6 +343,7 @@ export function demoteToTier2() {
     matchScore: e.outcome?.matchScore ?? null,
   }));
 
+  /** @type {CdlAggregate[]} */
   const existingTier2 = DB.get(STORAGE_KEYS.TIER_2) ?? [];
 
   try {
@@ -273,7 +351,8 @@ export function demoteToTier2() {
     DB.set(STORAGE_KEYS.TIER_1, remaining);
   } catch (err) {
     DB.set(STORAGE_KEYS.TIER_1, entries);
-    return { demoted: 0, errors: [err.message] };
+    const msg = err instanceof Error ? err.message : String(err);
+    return { demoted: 0, errors: [msg] };
   }
 
   return { demoted: toDemote.length, errors: [] };
@@ -281,9 +360,10 @@ export function demoteToTier2() {
 
 /**
  * Demote Tier 2 entries older than 1 year to Tier 3 monthly archive.
- * @returns {{ demoted: number, errors: array }}
+ * @returns {{ demoted: number, errors: string[] }}
  */
 export function demoteToTier3() {
+  /** @type {CdlAggregate[]} */
   const tier2 = DB.get(STORAGE_KEYS.TIER_2) ?? [];
   const cutoff = Date.now() - TIER_2_WINDOW_MS;
 
@@ -293,6 +373,7 @@ export function demoteToTier3() {
   if (toDemote.length === 0) return { demoted: 0, errors: [] };
 
   // Group by YYYY-MM_sessionType
+  /** @type {Record<string, CdlAggregate[]>} */
   const groups = {};
   for (const e of toDemote) {
     const month = new Date(e.ts).toISOString().slice(0, 7);
@@ -302,6 +383,7 @@ export function demoteToTier3() {
     groups[key].push(e);
   }
 
+  /** @type {Record<string, CdlTier3Bucket>} */
   const tier3 = DB.get(STORAGE_KEYS.TIER_3) ?? {};
 
   for (const [key, groupEntries] of Object.entries(groups)) {
@@ -310,7 +392,7 @@ export function demoteToTier3() {
     const deviationCount = groupEntries.filter(e => e.deviation === true).length;
     const withScore = groupEntries.filter(e => typeof e.matchScore === 'number');
     const avgMatchScore = withScore.length > 0
-      ? withScore.reduce((sum, e) => sum + e.matchScore, 0) / withScore.length
+      ? withScore.reduce((sum, e) => sum + (e.matchScore ?? 0), 0) / withScore.length
       : null;
 
     if (tier3[key]) {
@@ -348,7 +430,8 @@ export function demoteToTier3() {
     DB.set(STORAGE_KEYS.TIER_2, remaining);
   } catch (err) {
     DB.set(STORAGE_KEYS.TIER_2, tier2);
-    return { demoted: 0, errors: [err.message] };
+    const msg = err instanceof Error ? err.message : String(err);
+    return { demoted: 0, errors: [msg] };
   }
 
   return { demoted: toDemote.length, errors: [] };
