@@ -38,7 +38,10 @@ function wipeAllLocalData(): void {
     }
     keysToRemove.forEach((k) => localStorage.removeItem(k));
   } catch (e) {
-    console.warn('[SettingsDanger] wipe failed:', e);
+    // §B015 audit fix (CODE-REVIEW L-5) — DEV-only console output, prod silent.
+    if (import.meta.env.DEV) {
+      console.warn('[SettingsDanger] wipe failed:', e);
+    }
   }
 }
 
