@@ -4,6 +4,15 @@
 // "merge anonymous data" branch — alternative branch is "discard + start
 // fresh" handled by Settings UI flow, not this module).
 //
+// §B021 audit fix (REVIEW-A036-A038 M-§A036-01) — HARD CONTRACT documented:
+// migrateAnonymousToAuth() MUST close the active db singleton + reset namespace
+// cache before returning, so subsequent getDb() calls open `andura_<auth.uid>`
+// fresh, NU stale `andura_anonymous_<deviceId>`. Implementation: `finally` block
+// (lines 166-170 below) calls `closeDb()` + `_resetNamespaceCache()`
+// unconditionally. Test coverage: see `src/storage/__tests__/migrateAnonymousToAuth.test.js`
+// beforeEach (lines 27-29) asserts cache-reset pattern. Any new caller of
+// migrate logic MUST preserve this teardown invariant.
+//
 // Pattern (atomic in-spirit, idempotent):
 //   1. Open source `andura_anonymous_<deviceId>` DB
 //   2. Bulk read all stores

@@ -100,6 +100,12 @@ function _sanitizeNamespace(raw) {
  * Final DB name = `${DB_NAME_PREFIX}_${getNamespace()}` = `andura_<uid>` post-Auth
  * sau `andura_anonymous_<deviceId>` pre-Auth.
  *
+ * §B021 audit fix (REVIEW-A036-A038 M-§A036-01) — Module-level `_namespace`
+ * cache invalidates exclusively via `closeDb()` or `_resetNamespaceCache()`.
+ * Anonymous → Auth migration callers MUST invoke `closeDb()` post-migration
+ * (handled în `migrateAnonymousToAuth.js` finally block lines 166-170);
+ * skipping = stale namespace risk = writes to wrong DB. Documented hard contract.
+ *
  * @returns {string}
  */
 export function getNamespace() {
