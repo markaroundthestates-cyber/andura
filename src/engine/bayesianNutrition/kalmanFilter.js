@@ -49,6 +49,7 @@
 // vs Hall 2008 reference trajectory. If fails, fall back EWMA (Caveat 3).
 
 import { KALMAN_DEFAULTS } from './constants.js';
+import { isEnabled as isFeatureFlagEnabled } from '../../util/featureFlags.js';
 
 /**
  * Compute R² (coefficient of determination) for Kalman validation gate.
@@ -178,14 +179,23 @@ export function evaluateR2Gate(r2) {
 /**
  * Check feature flag `bayesian_kalman_v1` per Cluster B2 Caveat 3.
  *
- * Caller passes flags from ctx; defensive default = false (EWMA fallback).
+ * §B027/D-4 audit fix (D046 §3.4 FLIP-ON pre-Beta) — when caller passes flags
+ * arg explicit, that wins (test isolation + per-call override). When no arg
+ * passed (undefined), fallback to global featureFlags.isEnabled — D046 §3.4
+ * verdict enabled bayesian_kalman_v1 100% rollout production default true.
  *
  * @param {{[key: string]: boolean}} [flags]
  * @returns {boolean}
  */
 export function isKalmanFeatureFlagEnabled(flags) {
-  if (!flags || typeof flags !== 'object') return false;
-  return flags[KALMAN_DEFAULTS.ewmaFallbackFlag] === true;
+  // Caller passed flags arg explicit → preserve original defensive semantics
+  // (test/per-call isolation pattern).
+  if (arguments.length > 0) {
+    if (!flags || typeof flags !== 'object') return false;
+    return flags[KALMAN_DEFAULTS.ewmaFallbackFlag] === true;
+  }
+  // No explicit flags arg → global featureFlags (production default flip ON).
+  return isFeatureFlagEnabled(KALMAN_DEFAULTS.ewmaFallbackFlag);
 }
 
 /**

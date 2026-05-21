@@ -245,6 +245,16 @@ export const FLAGS = Object.freeze({
   // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
   // Faza 4 smoke validation orchestrated path comportament corect.
   warmup_via_orchestrator: { rollout: 0, default: false },
+
+  // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
+  // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
+  // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'
+  // must be REAL working NU OFF+EWMA fallback false-FULL". processNoise
+  // Hall 2008 derivation documented B026 commit + 90-day convergence
+  // simulator R²>0.85 test B029 commit. Default 100% rollout pre-Beta.
+  // Existing isKalmanFeatureFlagEnabled API preserved (caller-provided
+  // flags arg takes precedence — test isolation + per-call override OK).
+  bayesian_kalman_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
