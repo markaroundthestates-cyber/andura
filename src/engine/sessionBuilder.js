@@ -45,17 +45,19 @@ const MUSCLE_GROUP_EXERCISES = {
  * Weakness-prioritized ordering. Does NOT add missing exercises.
  *
  * @param {string} sessionType - 'PUSH' | 'PULL' | 'UMERI_BRATE' | 'UPPER_PICIOARE' | 'FULL_UPPER'
- * @param {object} ctx - coach context with ctx.equipment.available and optionally ctx.weakGroups
+ * @param {{ equipment?: { available?: string[] }, weakGroups?: string[] } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
 export function buildSession(sessionType, ctx) {
-  const names = EXERCISES_BY_TYPE[sessionType] || EXERCISES_BY_TYPE['FULL_UPPER'];
+  const byType = /** @type {Record<string, string[]>} */ (EXERCISES_BY_TYPE);
+  const equipMap = /** @type {Record<string, string>} */ (EQUIP_MAP);
+  const names = byType[sessionType] || byType['FULL_UPPER'] || [];
   const available = ctx?.equipment?.available ?? [];
-  const filtered = names.filter(n => available.includes(EQUIP_MAP[n]));
-  let exercises = filtered.map(name => ({ name, sets: 3 }));
+  const filtered = names.filter((n) => available.includes(equipMap[n] ?? ''));
+  let exercises = filtered.map((name) => ({ name, sets: 3 }));
 
-  if (contextSelectionEnabled && ctx?.weakGroups?.length > 0) {
-    exercises = prioritizeWeakGroups(exercises, ctx.weakGroups);
+  if (contextSelectionEnabled && (ctx?.weakGroups?.length ?? 0) > 0) {
+    exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
   }
 
   return { type: sessionType, exercises };
@@ -64,14 +66,17 @@ export function buildSession(sessionType, ctx) {
 /**
  * Reorder exercises so weak-group exercises appear in the first 2 positions.
  * Does NOT add exercises not already in the list.
+ * @param {Array<{name: string, sets: number}>} exercises
+ * @param {Array<string>} weakGroups
  */
 export function prioritizeWeakGroups(exercises, weakGroups) {
+  const muscleMap = /** @type {Record<string, string[]>} */ (MUSCLE_GROUP_EXERCISES);
   const weakExerciseNames = new Set(
-    weakGroups.flatMap(g => MUSCLE_GROUP_EXERCISES[g] ?? [])
+    weakGroups.flatMap((g) => muscleMap[g] ?? [])
   );
 
-  const weak = exercises.filter(e => weakExerciseNames.has(e.name));
-  const rest = exercises.filter(e => !weakExerciseNames.has(e.name));
+  const weak = exercises.filter((e) => weakExerciseNames.has(e.name));
+  const rest = exercises.filter((e) => !weakExerciseNames.has(e.name));
 
   // Place weak exercises first (up to 2 positions), then the rest
   return [...weak.slice(0, 2), ...rest, ...weak.slice(2)];

@@ -39,12 +39,12 @@ import {
  * byGroup, ratio, average1RM}`. V1 Top-1 (Q3=A) extracts first element of
  * sorted weakGroups list (already weakest first per detector).
  *
- * @param {Array} logs                                - Workout logs (caller-provided)
+ * @param {Array<{ex?: string, w?: number, reps?: number | string}>} [logs] - Workout logs (caller-provided)
  * @returns {{
  *   topWeakGroup: string|null,
  *   topRatio: number|null,
  *   weakGroupsAll: string[],
- *   ratios: Object<string, number>,
+ *   ratios: Record<string, number>,
  *   rationale: string,
  * }}
  */
@@ -62,7 +62,7 @@ export function consumeWeaknessDetectorSignal(logs) {
 
   const detection = detectWeakGroups(safeLogs);
   const weak = Array.isArray(detection.weakGroups) ? detection.weakGroups : [];
-  const ratios = (detection.ratio && typeof detection.ratio === 'object') ? detection.ratio : {};
+  const ratios = /** @type {Record<string, number>} */ ((detection.ratio && typeof detection.ratio === 'object') ? detection.ratio : {});
 
   if (weak.length === 0) {
     return {
@@ -77,7 +77,8 @@ export function consumeWeaknessDetectorSignal(logs) {
   // C4.4 Big 11 specialization scope filter per ADR_ENGINE_REFACTOR §3.4 LOCK V1:
   // 8 of 11 eligible — exclude picioare-quads / picioare-hamstrings / gambe
   // (anatomical conflict V1 — compound shared CNS + isolation trivial impact).
-  const eligibleWeak = weak.filter(g => ELIGIBLE_GROUPS_SPECIALIZATION_BIG11.includes(g));
+  const eligibleGroups = /** @type {string[]} */ (ELIGIBLE_GROUPS_SPECIALIZATION_BIG11);
+  const eligibleWeak = weak.filter((g) => eligibleGroups.includes(g));
 
   if (eligibleWeak.length === 0) {
     return {
@@ -90,8 +91,18 @@ export function consumeWeaknessDetectorSignal(logs) {
   }
 
   // Top-1 V1 (Q3=A simplicity — top-N parallel defer v1.5) from eligible scope
-  const topGroup = eligibleWeak[0];
-  const topRatio = Number.isFinite(ratios[topGroup]) ? ratios[topGroup] : null;
+  const topGroup = eligibleWeak[0] ?? '';
+  if (!topGroup) {
+    return {
+      topWeakGroup:  null,
+      topRatio:      null,
+      weakGroupsAll: [],
+      ratios,
+      rationale:     'detector_no_eligible_top_group',
+    };
+  }
+  const topRatioRaw = ratios[topGroup];
+  const topRatio = (typeof topRatioRaw === 'number' && Number.isFinite(topRatioRaw)) ? topRatioRaw : null;
 
   return {
     topWeakGroup:  topGroup,
@@ -140,8 +151,8 @@ export function computeWeightedGroupScore(exerciseMeta, targetGroup) {
  * full logs. Detector run twice; signals compared. Convergent = same top-1.
  *
  * @param {Object} input
- * @param {Array} [input.lifetimeLogs]              - Full lifetime workout logs
- * @param {Array} [input.recentLogs]                - Last-12-sessions subset (caller filters)
+ * @param {Array<{ex?: string, w?: number, reps?: number | string}>} [input.lifetimeLogs]
+ * @param {Array<{ex?: string, w?: number, reps?: number | string}>} [input.recentLogs]
  * @returns {{
  *   consensusAligned: boolean,
  *   recentTopGroup: string|null,
@@ -251,8 +262,8 @@ export function reconcileWeaknessTarget({ engineObjective, userOverride }) {
  * cooldown check + application strategy.
  *
  * @param {Object} input
- * @param {Array} [input.lifetimeLogs]
- * @param {Array} [input.recentLogs]
+ * @param {Array<{ex?: string, w?: number, reps?: number | string}>} [input.lifetimeLogs]
+ * @param {Array<{ex?: string, w?: number, reps?: number | string}>} [input.recentLogs]
  * @param {string|null} [input.userOverrideGroup]
  * @returns {import('./types.js').WeaknessSignal}
  */

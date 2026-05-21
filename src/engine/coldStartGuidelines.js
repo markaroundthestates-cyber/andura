@@ -25,12 +25,19 @@ const BASE_WEIGHTS = {
 
 const EXPERIENCE_MULTIPLIER = { beginner: 0.7, intermediate: 1.0, advanced: 1.3 };
 
+/**
+ * @param {string} exerciseName
+ * @param {string} experience
+ */
 function suggestStartWeight(exerciseName, experience) {
-  const base = BASE_WEIGHTS[exerciseName] ?? 10;
-  const mult = EXPERIENCE_MULTIPLIER[experience] ?? 1.0;
+  const baseMap = /** @type {Record<string, number>} */ (BASE_WEIGHTS);
+  const multMap = /** @type {Record<string, number>} */ (EXPERIENCE_MULTIPLIER);
+  const base = baseMap[exerciseName] ?? 10;
+  const mult = multMap[experience] ?? 1.0;
   return Math.round(base * mult);
 }
 
+/** @type {Record<string, Record<string, Array<{name: string, sets: number, reps: string}>>>} */
 const EXERCISE_BANK = {
   PUSH: {
     beginner: [
@@ -109,8 +116,8 @@ const EXERCISE_BANK = {
 };
 
 // Fallback for session types not in bank
-EXERCISE_BANK.UPPER_PICIOARE = EXERCISE_BANK.PULL;
-EXERCISE_BANK.FULL_UPPER     = EXERCISE_BANK.PULL;
+EXERCISE_BANK['UPPER_PICIOARE'] = EXERCISE_BANK['PULL'] ?? {};
+EXERCISE_BANK['FULL_UPPER']     = EXERCISE_BANK['PULL'] ?? {};
 EXERCISE_BANK.LEGS = {
   beginner:     [
     { name: 'Leg Press',     sets: 3, reps: '10-12' },
@@ -132,20 +139,22 @@ EXERCISE_BANK.LEGS = {
 /**
  * Generate a cold start session based on onboarding data.
  * Returns a session with coldStart=true and exercise weights from population priors.
+ * @param {string} sessionType
+ * @param {{ experience?: string, goal?: string }} [onboardingData]
  */
 export function generateColdStartSession(sessionType, onboardingData = {}) {
   const experience = onboardingData.experience ?? 'beginner';
   const goal       = onboardingData.goal ?? 'cut';
 
-  const bank = EXERCISE_BANK[sessionType] ?? EXERCISE_BANK.PULL;
-  const exercises = (bank[experience] ?? bank.beginner ?? []).map(ex => {
+  const bank = EXERCISE_BANK[sessionType] ?? EXERCISE_BANK['PULL'] ?? {};
+  const exercises = (bank[experience] ?? bank['beginner'] ?? []).map((ex) => {
     const weight = suggestStartWeight(ex.name, experience);
     let reps = ex.reps;
 
     // Cap rep range for CUT — isolation capped at 10, floor at 6
     if (goal === 'cut' && typeof reps === 'string') {
       const [min, max] = reps.split('-').map(Number);
-      reps = `${Math.min(Math.max(6, min), 10)}-${Math.min(10, max)}`;
+      reps = `${Math.min(Math.max(6, min ?? 6), 10)}-${Math.min(10, max ?? 10)}`;
     }
 
     return {
