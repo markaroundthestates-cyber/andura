@@ -3,6 +3,13 @@
 // Firestore via REST API (ADR 002 — REST not SDK). Lazy fetch on-demand only
 // (e.g., user views "all-time progress" chart → fetch Tier 2 batch).
 //
+// §B023 audit fix (REVIEW-A036-A038 M-§A036-03) — CALLER CONTRACT MANDATORY:
+// All tier2Push/Fetch/Stats fns return Promise<object> — callers MUST await OR
+// chain .then(). Sync-style invocation (`tier2Push(...)` no await) will break
+// silently when real implementation lands (Promise drift not detectable
+// without ESLint @typescript-eslint/no-floating-promises rule — TS migration
+// will enable per B010 iter 2 LARGE refactor). Pre-TS: visual audit only.
+//
 // ── Status ──────────────────────────────────────────────────────────────────
 //
 // **DEFERRED post-launch v1 + Pro tier launch.** Firebase Firestore costs at
