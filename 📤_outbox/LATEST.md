@@ -1,8 +1,8 @@
-# A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR ART. 20 + B009 STATUS TINTS — chat 2 cumulative 2026-05-21 evening
+# A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 7 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** B009 status banner tints CSS vars + dark theme adapt (`bcd78c79`).
-**Branch:** main, **41 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 10 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR Art. 20 + §28-H5 GDPR Art. 8 + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
+**Last LANDED:** §28-H5 age 14→16 GDPR Art. 8 RO parental consent compliance (`8764eb75`).
+**Branch:** main, **47 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -27,6 +27,10 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 19. **NEW `32065785`** — LATEST.md sync handover
 20. **NEW `230f15d7`** — §28-M4 SettingsExport include Tier 1 IDB sessions (GDPR Art. 20 full portability)
 21. **NEW `bcd78c79`** — B009 status banner tints CSS vars + dark theme adapt (5 components migrated WorkoutPreview + PatternsBanner + AlertsBanner + CoachRestCard + SettingsSubscription)
+22. **NEW `93dd026f`** — Cont row Aparate lipsa target wire (previously disabled with no nav)
+23. **NEW `59ace191`** — BottomNav compact style toggle wire (settingsStore.bottomNavStyle now applied)
+24. **NEW `8764eb75`** — §28-H5 age min 14→16 GDPR Art. 8 RO parental consent compliance
+25. **NEW `ff22cdba`** — PRIMER §5 chat 2 evening continuation milestone append
 
 ---
 
