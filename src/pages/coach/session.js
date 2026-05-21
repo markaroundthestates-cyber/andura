@@ -363,7 +363,7 @@ export function confirmEarlyStop(reason) {
 }
 
 export function releaseWakeLock() {
-  try { if (wakeLockRef.current) { wakeLockRef.current.release(); wakeLockRef.current = null; } } catch (e) {}
+  try { if (wakeLockRef.current) { wakeLockRef.current.release(); wakeLockRef.current = null; } } catch {}
 }
 
 export async function requestWakeLock() {
@@ -371,5 +371,5 @@ export async function requestWakeLock() {
     if ('wakeLock' in navigator) {
       wakeLockRef.current = await navigator.wakeLock.request('screen');
     }
-  } catch (e) { /* Wake Lock not available — silently ignore */ }
+  } catch { /* Wake Lock not available — silently ignore */ }
 }

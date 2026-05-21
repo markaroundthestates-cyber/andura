@@ -165,7 +165,7 @@ export async function renderCoachIdle(){
       try {
         _dirSession = await coachDirector.buildSession(tp.t.toUpperCase());
         sessionCache.set(_dirSession);
-      } catch(e) {
+      } catch {
         _dirSession = null;
         sessionCache.invalidate();
       }

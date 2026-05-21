@@ -36,7 +36,7 @@ export function beep(freq = 880, dur = 0.15, vol = 0.3) {
     g.gain.setValueAtTime(vol, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
     o.start(); o.stop(audioCtx.currentTime + dur);
-  } catch (e) {}
+  } catch {}
 }
 
 export function beepDone() { beep(660, .1); setTimeout(() => beep(880, .2), 120); vibrate([50]); }

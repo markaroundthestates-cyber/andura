@@ -1,5 +1,5 @@
 import { DB, tod } from '../../db.js';
-import { PROG, TARGET_DATE } from '../../constants.js';
+import { TARGET_DATE } from '../../constants.js';
 import { toast } from '../../ui/ui.js';
 import { saveReadiness, READINESS_LABELS } from '../../engine/readiness.js';
 import { updateExCard } from './logging.js';
@@ -43,8 +43,6 @@ export function showSkipModal() {
   const modal = document.createElement('div');
   modal.id = 'skip-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:8000;display:flex;align-items:flex-end;justify-content:center';
-  const dayMap = [6,0,1,2,3,4,5];
-  const tp = PROG ? PROG[dayMap[new Date().getDay()]] : null;
   modal.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-width:500px;padding:24px 20px 36px">
     <div style="font-size:15px;font-weight:700;margin-bottom:16px">De ce sari azi?</div>
     ${['Obosit / recuperare insuficienta','Lipsa timp','Durere / accidentare','Alt motiv'].map((reason) =>

@@ -11,7 +11,6 @@
 //
 // Pattern parity aparateLipsa.js modal (bottom-sheet overlay, z-index 8000).
 
-import { state } from '../../state.js';
 import {
   toggleSkippedExercise,
   resetRefusalCounter,
