@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
 **Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 10 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR Art. 20 + §28-H5 GDPR Art. 8 + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** SettingsFaq NEW FAQ accordion screen + 7 Q&A + Cont row wire (`4706328d`).
-**Branch:** main, **53 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Last LANDED:** gitignore smoke screenshots + .planning + .playwright-mcp artifacts (`282a4aef`).
+**Branch:** main, **58 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -37,6 +37,11 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 29. **NEW `ab87dc00`** — SettingsSupport NEW Suport static screen + mailto contact + Cont row wire
 30. **NEW `5a98a2eb`** — LATEST.md sync 51 commits ahead
 31. **NEW `4706328d`** — SettingsFaq NEW FAQ accordion screen + 7 Q&A across 3 sections + Suport CTA link + Cont row wire
+32. **NEW `a2974865`** — LATEST.md sync 53 commits ahead
+33. **NEW `f2ace25f`** — PRIMER §5 chat 2 night final wrap milestone
+34. **NEW `187528de`** — B001 phase override wire into Progres nutrition target (CUT → 2165 kcal live verified)
+35. **NEW `f672fbd2`** — Test coverage NEW for SettingsSupport + SettingsFaq (14 tests)
+36. **NEW `282a4aef`** — gitignore smoke screenshots + planning artifacts
 
 ---
 
