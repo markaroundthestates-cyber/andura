@@ -122,6 +122,13 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     {
       name: 'wv2-schedule-store',
       storage: createJSONStorage(() => localStorage),
+      // editMode is session-scope only — never persist so user returns out of
+      // edit mode after navigating away mid-edit (avoid stale-edit-state ghost
+      // on next visit). Days + weekStart still persist for offline coach use.
+      partialize: (state) => ({
+        weekStartISO: state.weekStartISO,
+        days: state.days,
+      }),
     }
   )
 );
