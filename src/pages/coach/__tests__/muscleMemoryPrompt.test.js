@@ -111,7 +111,8 @@ describe('showMuscleMemoryPrompt() — DOM contract', () => {
   });
 
   it('second invocation removes prior modal (no stacking)', async () => {
-    const p1 = showMuscleMemoryPrompt({ pauseMonths: 8 });
+    // p1 promise intentionally not held — DOM replaced by p2; single-in-flight invariant
+    showMuscleMemoryPrompt({ pauseMonths: 8 });
     expect(document.querySelectorAll('#mmi-prompt-modal').length).toBe(1);
 
     const p2 = showMuscleMemoryPrompt({ pauseMonths: 14 });

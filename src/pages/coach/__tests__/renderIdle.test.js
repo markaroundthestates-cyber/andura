@@ -3,7 +3,7 @@
  * Tests: shouldShowPatternBanner, formatPatternMessage, ctx.patterns suppression flow
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
 // ── Mock all heavy renderIdle dependencies ─────────────────────────────────
 vi.mock('../../../db.js', () => ({

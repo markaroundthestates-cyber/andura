@@ -21,7 +21,7 @@ vi.mock('../modals.js', () => ({
 }));
 
 vi.mock('../painButton.js', () => ({
-  showPainButton: vi.fn((exerciseName) => {
+  showPainButton: vi.fn((_exerciseName) => {
     const modal = document.createElement('div');
     modal.id = 'pain-button-modal';
     modal.innerHTML = '<button class="pain-altceva-toggle"></button><div class="pain-altceva-panel" style="display:none"></div>';

@@ -147,7 +147,9 @@ describe('showAggressiveLoadingModal() — DOM contract + override 1-tap', () =>
   });
 
   it('second invocation removes prior modal (no stacking)', async () => {
-    const p1 = showAggressiveLoadingModal({
+    // p1 promise intentionally not held — its DOM is replaced by p2 below
+    // (forcibly removed). Test verifies single-in-flight invariant of caller pattern.
+    showAggressiveLoadingModal({
       tier: 'T0', actualKg: 60, recommendedKg: 40, deviationPct: 0.50,
     });
     const overlays1 = document.querySelectorAll('#aggressive-loading-modal');

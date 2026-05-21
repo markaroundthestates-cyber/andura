@@ -55,7 +55,7 @@ vi.mock('../../../constants.js', () => ({
 }));
 
 // Real CDL + db (jsdom localStorage)
-import { writeProposed, readActiveForDate, STORAGE_KEYS } from '../../../util/coachDecisionLog.js';
+import { writeProposed, readActiveForDate } from '../../../util/coachDecisionLog.js';
 import { state } from '../../../state.js';
 import { endSession, cancelWorkout } from '../session.js';
 import { tod } from '../../../db.js';

@@ -21,7 +21,6 @@ vi.mock('../../../engine/readiness.js', () => ({
 
 import {
   showEnergyCheck,
-  selectEnergyState,
   showEnergyCause,
   selectEnergyCause,
   ENERGY_STATES,
