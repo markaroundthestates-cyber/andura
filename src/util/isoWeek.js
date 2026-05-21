@@ -6,6 +6,9 @@
  * Throws on null, undefined, or unparseable input.
  *
  * Algorithm: Thursday rule (week containing first Thursday of year is week 1).
+ *
+ * @param {string | number | Date} date
+ * @returns {string}
  */
 export function isoWeek(date) {
   if (date === null || date === undefined) throw new Error(`isoWeek: invalid date input: ${date}`);
@@ -19,6 +22,6 @@ export function isoWeek(date) {
   const startOfWeek1 = new Date(jan4);
   startOfWeek1.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
 
-  const week = Math.floor((thursday - startOfWeek1) / (7 * 86400000)) + 1;
+  const week = Math.floor((thursday.getTime() - startOfWeek1.getTime()) / (7 * 86400000)) + 1;
   return `${thursday.getFullYear()}-W${String(week).padStart(2, '0')}`;
 }

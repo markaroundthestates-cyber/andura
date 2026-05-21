@@ -40,7 +40,7 @@ export const EVENTS = Object.freeze({
  * @returns {boolean}
  */
 export function isKnownEvent(eventName) {
-  return Object.values(EVENTS).includes(eventName);
+  return /** @type {string[]} */ (Object.values(EVENTS)).includes(eventName);
 }
 
 /**
@@ -69,12 +69,12 @@ export function buildIncrementPayload(eventName) {
  * @param {string} eventName
  * @param {object} [opts]
  * @param {string} [opts.projectId]
- * @param {(url: string, init: object) => Promise<Response>} [opts.fetchImpl]   test injection
+ * @param {((url: string, init: object) => Promise<Response>) | null} [opts.fetchImpl]   test injection
  * @returns {Promise<{ ok: boolean, error?: string }>}
  */
 export async function trackEvent(eventName, {
   projectId = FIREBASE_PROJECT_ID_DEFAULT,
-  fetchImpl = (typeof fetch !== 'undefined' ? fetch : null),
+  fetchImpl = /** @type {((url: string, init: object) => Promise<Response>) | null} */ (typeof fetch !== 'undefined' ? fetch : null),
 } = {}) {
   if (!isKnownEvent(eventName)) {
     if (typeof console !== 'undefined') console.warn(`[telemetry] Unknown event: ${eventName}`);
@@ -108,6 +108,7 @@ export async function trackEvent(eventName, {
     return { ok: true };
   } catch (err) {
     if (typeof console !== 'undefined') console.warn(`[telemetry] Failed to track ${eventName}:`, err);
-    return { ok: false, error: err?.message || 'network_error' };
+    const msg = err instanceof Error ? err.message : 'network_error';
+    return { ok: false, error: msg };
   }
 }

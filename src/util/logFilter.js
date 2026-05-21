@@ -2,7 +2,16 @@
 // Used by cleanFakeLogs() in coach.js.
 // No DOM, no DB — safe to import anywhere.
 
+/**
+ * @typedef {{ baseline?: boolean, session?: string|number, earlyStop?: boolean, [k: string]: unknown }} LogEntry
+ */
+
+/**
+ * @param {LogEntry[]} logs
+ * @returns {LogEntry[]}
+ */
 export function filterValidLogs(logs) {
+  /** @type {Record<string, LogEntry[]>} */
   const sessions = {};
   logs.filter(l => !l.baseline).forEach(l => {
     const key = String(l.session);

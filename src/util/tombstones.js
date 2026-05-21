@@ -69,7 +69,7 @@ export function markTombstone(entryId, key, opts = {}) {
   const map = getTombstones(s);
   map[id] = {
     deletedAt: typeof opts.now === 'number' ? opts.now : Date.now(),
-    key: key || null,
+    key: key || '',
     source: opts.source || 'local',
   };
   try { s.setItem(TOMBSTONES_KEY, JSON.stringify(map)); } catch {}
@@ -113,9 +113,9 @@ export function isTombstoned(entryId, storage, now) {
  * entries removed. Treats `entry.ts` (preferred) or `entry.id` as the
  * tombstone key.
  *
- * @param {Array<object>} entries
+ * @param {Array<{ ts?: number|string, id?: number|string, [k: string]: unknown }>} entries
  * @param {Storage} [storage]
- * @returns {Array<object>}
+ * @returns {Array<{ ts?: number|string, id?: number|string, [k: string]: unknown }>}
  */
 export function applyTombstoneFilter(entries, storage) {
   if (!Array.isArray(entries) || entries.length === 0) return entries || [];
@@ -148,6 +148,7 @@ export function applyTombstoneFilterToAll(storage) {
   if (Object.keys(map).length === 0) return { filtered: 0, keysTouched: [] };
 
   let filteredTotal = 0;
+  /** @type {string[]} */
   const keysTouched = [];
   TS_INDEXED_KEYS.forEach(key => {
     let arr;
@@ -248,6 +249,10 @@ export function gcTombstones(storage, now) {
   return removed;
 }
 
+/**
+ * @param {Storage} [override]
+ * @returns {Storage | null}
+ */
 function _resolve(override) {
   if (override) return override;
   try { return typeof localStorage !== 'undefined' ? localStorage : null; }

@@ -4,6 +4,9 @@
     "checkJs": true
   },
   "include": [
-    "src/util/**/*.js"
+    "src/util/**/*.js",
+    "src/global.d.ts",
+    "src/db.d.ts",
+    "src/constants.d.ts"
   ]
 }
