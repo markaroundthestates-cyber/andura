@@ -6,121 +6,88 @@
 
 # Andura — Personal AI Coach
 
-A personal AI coach with real contextual reasoning, persistent memory, and adaptive decisions.
+A personal AI coach with real contextual reasoning, persistent memory, and adaptive decisions. Production: **[andura.app](https://andura.app)** (live since 2026-05-19, D028).
+
+---
+
+## Stack
+
+React 19 + Vite 5 + TypeScript + Tailwind 3 + Vitest 3 + RTL + React Router DOM 6.28 + Zustand + Firebase REST (per ADR 002) + IndexedDB Dexie + PWA. ZERO Firebase SDK — REST per `firebase.js`. Local-first invariant: data lives on device first; backup optional.
 
 ---
 
 ## Architecture
 
-### Coach Brain v3
+### Engine pipeline (ADR 030)
+
+The 8-engine + MMI compose pipeline runs each session:
 
 ```
-coachDirector.js       — orchestrator (buildSession, CDL write)
-├── ruleEngine.js      — priority-ordered decision rules
-├── coachContext.js    — full context snapshot (allLogs, CDL patterns, calibration tier)
-├── sessionBuilder.js  — session exercise selection (weakness-aware)
-├── dp.js              — Double Progression engine
-├── aa.js              — Auto Adjust engine (notes-only mode)
-├── alternativeEngine.js — equipment substitution
-├── patternLearning.js — pattern analysis via CDL (analyzeFromCDL)
-├── adherence.js       — CDL-sourced adherence scoring
-└── calibration.js     — tier detection + ADR 012 inactivity decay
+coachDirector.buildSession(ctx)
+├── Phase Auto-Detection (goalAdaptation/phaseAutoDetection)
+├── Tempo + Periodization (tempo + periodization)
+├── Volume Landmarks (bayesianNutrition/volumeLandmarks)
+├── Readiness + Fatigue (readiness + fatigue)
+├── Pattern Learning (CDL-backed analyzeFromCDL)
+├── Plateau Interventions (plateauInterventions)
+├── DP Recommend → AA Apply → Accelerated Learning Upgrade
+├── Decision Cluster (consensus 4-module voting)
+└── MMI Engine #9 (last-pass identity coherence gate)
 ```
 
 ### Coach Decision Log (CDL) — ADR 011
 
-Primary architectural primitive for pattern detection and decision audit.
+Append-only persistent log of session-level coach decisions. Tier 0 localStorage (180d) → Tier 1 IndexedDB (1y) → Tier 2 archive monthly aggregates.
 
-- `coachDecisionLog.js` — primitive: write/read/populate CDL entries
+- `coachDecisionLog.js` — write/read/populate primitives + supersede chain
 - `cdlBackfill.js` — synthetic entries from historical logs
-- CDL replaces `applied-patterns` as source-of-truth for patterns (TASK #30 — 9/10 done)
+- Primary source for `patternLearning.analyzeFromCDL`, `adherence`, accelerated learning
 
 ### Storage
 
-- Primary: `localStorage` (fast, local-first)
-- Sync: Firebase REST (not SDK) — keys listed in `firebase.js::SYNC_KEYS`
-- Tier storage: Live (90 days) / Aggregate (1 year) / Archive (forever) — `tierStorage.js`
-- Registry: `dataRegistry.js` — central key registry for Full Reset + cleanup
+- **Tier 0**: `localStorage` (wv2-* prefix Zustand stores + Big 6 onboarding + CDL recent 180d)
+- **Tier 1**: `IndexedDB` (Dexie per-uid `andura_<uid>`) for CDL >180d + logs >180d
+- **Tier 2**: Aggregate monthly rollups (archive)
+- **Sync** (optional): Firebase RTDB `users/<uid>` per ADR 002, encrypted in transit HTTPS
 
 ---
 
-## Engine list
-
-| Engine | File | Status |
-|---|---|---|
-| Double Progression | `engine/dp.js` | ✅ Active |
-| Auto Adjust | `engine/aa.js` | ✅ Active (notes-only) |
-| Pattern Learning | `engine/patternLearning.js` | ✅ CDL-backed |
-| Adherence | `engine/adherence.js` | ✅ CDL-backed |
-| Calibration | `engine/calibration.js` | ✅ + ADR 012 decay |
-| Alternative Engine | `engine/alternativeEngine.js` | ✅ Active |
-| Weakness Detector | `engine/weaknessDetector.js` | ✅ Active |
-| Stagnation Detector | `engine/stagnationDetector.js` | ✅ Active |
-| Prediction Engine | `engine/predictionEngine.js` | ✅ Active |
-| Plateau Interventions | `engine/plateauInterventions.js` | ✅ Active |
-| Rule Engine | `engine/ruleEngine.js` | ✅ Active |
-| Proactive Engine | `engine/proactiveEngine.js` | ✅ Active |
-| Why Engine | `engine/whyEngine.js` | ✅ Active |
-| analyzeFromCDL | `engine/patternLearning.js` | ✅ Primary pattern source |
-
----
-
-## Tests
-
-**422/422 passing** (snapshot 2026-04-26)
+## Build + test
 
 ```bash
-npm run test:run     # run all tests
-npm run test         # watch mode
-npm run build        # Vite production build
+npm install
+npm run dev          # Vite dev server :5173
+npm run test:run     # Vitest run-mode (full suite)
+npm run typecheck    # tsc --noEmit
+npm run typecheck:strict-js  # checkJs on src/ JS modules
+npm run lint         # ESLint
+npm run build        # Production bundle + PWA service worker
 ```
 
-Test files: 34 test files across `src/**/__tests__/` and `src/**/tests/`
+**Test baseline:** 4616 PASS / 7 todo / 0 FAIL across 263 test files (~55s). TypeScript strict mode 0 errors. ESLint 0 warnings.
 
 ---
 
-## ADR Index
+## Recent ADRs
 
 | ADR | Decision |
 |---|---|
-| 001 | Local-first storage (localStorage + Firebase sync) |
+| 001 | Local-first storage |
 | 002 | Firebase REST not SDK |
-| 003 | Double Progression engine |
-| 004 | Rule Engine numeric priorities |
-| 005 | Vanilla JS + Vite (no framework) |
-| 006 | Three-Tier Log Storage |
-| 007 | Firebase open rules (pre-auth) |
-| 008 | Vitest + Playwright testing |
-| 009 | Calibration Tiers |
-| 010 | No Anthropic trademark in public material |
-| 011 | Coach Decision Log (CDL) as architectural primitive |
-| 012 | Calibration Tier Decay on Inactivity (linear -1/60 days) |
+| 011 | Coach Decision Log (CDL) primitive |
+| 020 | Dexie.js for IndexedDB |
+| 024 | Phase auto-detection (NU user pick at onboarding) |
+| 026 | Bayesian Nutrition Engine §9.2 |
+| 030 | 8-engine compose pipeline |
+| 033 | MMI Engine #9 |
 
-Full ADRs: `03-decisions/`
-
----
-
-## Current State (2026-04-26)
-
-| Metric | Value |
-|---|---|
-| Tests | 422/422 passing |
-| Open bugs | 0 |
-| TASK #30 (CDL) | 9/10 done (30.9 deferred — see AUDIT_30_9_BLOCKED_STATE.md) |
-| Coverage | 64% modules have direct tests (see COVERAGE_AUDIT_2026-04-26.md) |
-| Build | ✅ green |
-
-**Phases:**
-- FAZA 1 — Engine Bulletproof ✅
-- FAZA 2 — Bug Fixes + Reliability ✅
-- FAZA 3 — Infrastructure + Observability ⏳
-- FAZA 4 — Features (parametric programs, injury, health export) ⏳
+Plus D001-D048 LOCKED V1 in [DECISIONS.md](./DECISIONS.md) for ongoing decisions catalog.
 
 ---
 
 ## Vault
 
-Docs: `00-index/INDEX_MASTER.md` — full navigation  
-Findings: `05-findings-tracker/FINDINGS_MASTER.md`  
-Decisions: `03-decisions/DECISION_LOG.md`  
-Sessions: `06-sessions-log/HANDOVER_GLOBAL_*.md`
+- [DECISIONS.md](./DECISIONS.md) — SSOT singular decisions log
+- [ANDURA_PRIMER.md](./ANDURA_PRIMER.md) — onboarding briefing for fresh sessions
+- [07-meta/karpathy-skills-ref/CLAUDE.md](./07-meta/karpathy-skills-ref/CLAUDE.md) — 4 core principii
+- [99-archive/wiki-pre-2026-05-15/](./99-archive/wiki-pre-2026-05-15/) — FROZEN deep-substance reference
