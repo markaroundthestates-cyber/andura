@@ -29,8 +29,22 @@ declare global {
 
     /** Auto-backup exposed for UI access. */
     listBackups?: () => Array<{ key: string, date: string, timestamp: number }>;
-    restoreFromBackup?: (keyOrDaysAgo: string | number) => { restored: boolean, date?: string, keysRestored?: number, reason?: string };
+    // Note: restoreFromBackup has 2 overlapping signatures (autoBackup keyOrDaysAgo / dataCleanup jsonString).
+    // Loose Function type to accept both; callers know which signature is live at runtime.
+    restoreFromBackup?: Function;
     createDailyBackup?: () => { key: string, date: string, size: number } | null;
+
+    /** CDL backfill exposed for owner dev console. */
+    runBackfill?: (opts?: { dryRun?: boolean, force?: boolean }) => { entriesCreated: number, errors: unknown[], skipped: unknown[] };
+    getValidationSamples?: (count?: number) => unknown[];
+
+    /** Data cleanup exposed for dev console. */
+    resetTestData?: (opts?: { clearFirebase?: boolean, reload?: boolean }) => Promise<unknown>;
+    fullReset?: (opts?: { clearFirebase?: boolean, reload?: boolean }) => Promise<unknown>;
+    inspectStorage?: () => unknown;
+    resetButKeepRealLogs?: (opts?: { reload?: boolean }) => Promise<unknown>;
+    createAutoBackup?: () => unknown;
+    restoreLastBackup?: () => unknown;
 
     /** Admin prefill localStorage owner data — dev/validation only. */
     adminPrefillAll?: () => { kcalsDays: number; protsDays: number; weightsDays: number };

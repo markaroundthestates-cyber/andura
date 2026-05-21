@@ -25,8 +25,15 @@ const LEGS_MUSCLES = new Set([
   'quad', 'hamstring', 'glute', 'calf', 'lower_back',
 ]);
 
+/** @typedef {{ ts?: number, session?: number|string, ex?: string, w?: number, reps?: number, [k: string]: unknown }} CdlLogEntry */
+/** @typedef {{ synthetic?: boolean, [k: string]: unknown }} CdlEntry */
+
+/**
+ * @param {string} name
+ * @returns {'PUSH'|'PULL'|'LEGS'|null}
+ */
 function getExerciseCategory(name) {
-  const entry = EXERCISE_MUSCLES[name];
+  const entry = /** @type {Record<string, { primary?: string[] }>} */ (EXERCISE_MUSCLES)[name];
   if (!entry || !entry.primary) return null;
   for (const muscle of entry.primary) {
     if (PUSH_MUSCLES.has(muscle)) return 'PUSH';
@@ -66,14 +73,14 @@ export function inferSessionType(exercises) {
   if (known / exercises.length < 0.5) return 'MIXED';
 
   const dominant = Object.entries(cats).find(([, count]) => count / known > 0.7);
-  return dominant ? dominant[0] : 'MIXED';
+  return dominant ? /** @type {'PUSH'|'PULL'|'LEGS'} */ (dominant[0]) : 'MIXED';
 }
 
 /**
  * Reconstruct context retrospectively for a session timestamp.
  * Fields not reconstructible → null, partial: true.
  * @param {number} sessionTs
- * @param {object[]} allLogs
+ * @param {CdlLogEntry[]} allLogs
  * @returns {object}
  */
 export function reconstructContext(sessionTs, allLogs) {
@@ -95,19 +102,19 @@ export function reconstructContext(sessionTs, allLogs) {
   else if (sessionsCount < 40) calibrationLevel = 'PERSONALIZING';
   else calibrationLevel = 'PERSONALIZED';
 
-  const sortedPriorTs = [...priorSessionTs].sort((a, b) => a - b);
+  const sortedPriorTs = /** @type {number[]} */ ([...priorSessionTs].map(Number).sort((a, b) => a - b));
   const lastSessionTs = sortedPriorTs.length > 0
-    ? sortedPriorTs[sortedPriorTs.length - 1]
+    ? sortedPriorTs[sortedPriorTs.length - 1] ?? null
     : null;
 
-  const daysSinceLastSession = lastSessionTs
+  const daysSinceLastSession = typeof lastSessionTs === 'number'
     ? (sessionTs - lastSessionTs) / 86400000
     : null;
 
   let lastSessionType = null;
-  if (lastSessionTs) {
+  if (typeof lastSessionTs === 'number') {
     const lastLogs = allLogs.filter(l => l.session === lastSessionTs);
-    const lastExercises = [...new Set(lastLogs.map(l => l.ex).filter(Boolean))];
+    const lastExercises = [...new Set(lastLogs.map(l => l.ex).filter(/** @returns {x is string} */ (x) => Boolean(x)))];
     lastSessionType = lastExercises.length > 0 ? inferSessionType(lastExercises) : null;
   }
 
@@ -127,11 +134,11 @@ export function reconstructContext(sessionTs, allLogs) {
 
 /**
  * Synthesize outcome from session logs. Synthetic = assumes executed match.
- * @param {object[]} sessionLogs
+ * @param {CdlLogEntry[]} sessionLogs
  * @returns {object}
  */
 export function synthesizeOutcome(sessionLogs) {
-  const exercises = [...new Set(sessionLogs.map(l => l.ex).filter(Boolean))];
+  const exercises = [...new Set(sessionLogs.map(l => l.ex).filter(/** @returns {x is string} */ (x) => Boolean(x)))];
   const actualSets = sessionLogs.length;
   const timestamps = sessionLogs.map(l => l.ts ?? 0).filter(t => t > 0);
   const completedAt = timestamps.length > 0 ? Math.max(...timestamps) : 0;
@@ -160,15 +167,17 @@ export function synthesizeOutcome(sessionLogs) {
 /**
  * Main backfill entry point. Iterates sessions grouped by `session` ts,
  * generates synthetic CDL entries.
- * @param {object} opts
- * @param {boolean} [opts.dryRun=false]
- * @param {boolean} [opts.force=false]
- * @returns {{ entriesCreated: number, errors: array, skipped: array }}
+ * @param {{ dryRun?: boolean, force?: boolean }} [opts]
+ * @returns {{ entriesCreated: number, errors: unknown[], skipped: unknown[] }}
  */
 export function runBackfill({ dryRun = false, force = false } = {}) {
+  /** @type {CdlLogEntry[]} */
   const logs = DB.get('logs') ?? [];
+  /** @type {CdlEntry[]} */
   let existingEntries = DB.get(CDL_KEY) ?? [];
+  /** @type {unknown[]} */
   const skipped = [];
+  /** @type {unknown[]} */
   const errors = [];
   let entriesCreated = 0;
 
@@ -180,6 +189,7 @@ export function runBackfill({ dryRun = false, force = false } = {}) {
     existingEntries = existingEntries.filter(e => e.synthetic !== true);
   }
 
+  /** @type {Record<string, CdlLogEntry[]>} */
   const bySession = {};
   for (const log of logs) {
     if (!log.session) {
@@ -190,15 +200,16 @@ export function runBackfill({ dryRun = false, force = false } = {}) {
       skipped.push({ sessionTs: log.session, reason: 'invalid format', sessionData: log });
       continue;
     }
-    bySession[log.session] = bySession[log.session] || [];
-    bySession[log.session].push(log);
+    const skey = String(log.session);
+    bySession[skey] = bySession[skey] || [];
+    bySession[skey].push(log);
   }
 
   const sessionTsList = Object.keys(bySession).map(Number).sort((a, b) => a - b);
 
   for (const ts of sessionTsList) {
-    const sessionLogs = bySession[ts];
-    const exercises = [...new Set(sessionLogs.map(l => l.ex).filter(Boolean))];
+    const sessionLogs = bySession[String(ts)] ?? [];
+    const exercises = [...new Set(sessionLogs.map(l => l.ex).filter(/** @returns {x is string} */ (x) => Boolean(x)))];
 
     if (exercises.length === 0) {
       skipped.push({ sessionTs: ts, reason: 'no exercises' });
@@ -238,7 +249,9 @@ export function runBackfill({ dryRun = false, force = false } = {}) {
       if (!dryRun) existingEntries.push(syntheticEntry);
       entriesCreated++;
     } catch (err) {
-      errors.push({ sessionTs: ts, error: err.message, stack: err.stack });
+      const msg = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack : undefined;
+      errors.push({ sessionTs: ts, error: msg, stack });
     }
   }
 
@@ -250,16 +263,22 @@ export function runBackfill({ dryRun = false, force = false } = {}) {
 /**
  * Return random sample of synthetic entries for Daniel manual review.
  * @param {number} [count=10]
- * @returns {object[]}
+ * @returns {CdlEntry[]}
  */
 export function getValidationSamples(count = 10) {
+  /** @type {CdlEntry[]} */
   const all = DB.get(CDL_KEY) ?? [];
   const synthetic = all.filter(e => e.synthetic === true);
   const arr = [...synthetic];
   // Fisher-Yates shuffle
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    const tmp = arr[i];
+    const swap = arr[j];
+    if (tmp !== undefined && swap !== undefined) {
+      arr[i] = swap;
+      arr[j] = tmp;
+    }
   }
   return arr.slice(0, count);
 }

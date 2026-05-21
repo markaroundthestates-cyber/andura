@@ -9,7 +9,10 @@ export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS };
 // Removes truly duplicate log entries — defined as two entries with the exact
 // same timestamp. Legitimate multi-set data (same exercise, different ts) is preserved.
 
+/** @typedef {{ ts?: number, [k: string]: unknown }} LogEntry */
+
 export function cleanDuplicateLogs() {
+  /** @type {LogEntry[]} */
   let logs;
   try {
     logs = JSON.parse(localStorage.getItem('logs') || '[]');
@@ -31,9 +34,11 @@ export function cleanDuplicateLogs() {
 // ── Auto-Backup / Restore ──────────────────────────────────────────────────
 
 export function createAutoBackup() {
+  /** @type {Record<string, string | null>} */
   const data = {};
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
+    if (k === null) continue;
     data[k] = localStorage.getItem(k);
   }
   const backup = { timestamp: new Date().toISOString(), version: 'auto-full-reset', data };
@@ -50,20 +55,24 @@ export function createAutoBackup() {
     a.click();
     setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
   } catch (e) {
-    console.warn('[DataCleanup] Download failed:', e.message);
+    console.warn('[DataCleanup] Download failed:', e instanceof Error ? e.message : String(e));
   }
 
   // Save in localStorage for quick restore (best-effort — may fail on size limit)
   try {
     localStorage.setItem('last-backup', json);
   } catch (e) {
-    console.warn('[DataCleanup] last-backup save failed (storage quota):', e.message);
+    console.warn('[DataCleanup] last-backup save failed (storage quota):', e instanceof Error ? e.message : String(e));
   }
 
   console.log('[DataCleanup] Auto-backup created:', Object.keys(data).length, 'keys');
   return backup;
 }
 
+/**
+ * @param {string} jsonString
+ * @returns {boolean}
+ */
 export function restoreFromBackup(jsonString) {
   let backup;
   try {
@@ -79,8 +88,8 @@ export function restoreFromBackup(jsonString) {
 
   window._suppressFirebaseSync = true;
   localStorage.clear();
-  Object.entries(backup.data).forEach(([k, v]) => {
-    try { localStorage.setItem(k, v); } catch (e) { console.warn('[DataCleanup] restore key failed:', k, e.message); }
+  Object.entries(/** @type {Record<string, string>} */ (backup.data)).forEach(([k, v]) => {
+    try { localStorage.setItem(k, v); } catch (e) { console.warn('[DataCleanup] restore key failed:', k, e instanceof Error ? e.message : String(e)); }
   });
   console.log('[DataCleanup] Restored', Object.keys(backup.data).length, 'keys from backup', backup.timestamp || '');
   setTimeout(() => { window.location.reload(); }, 500);
@@ -96,6 +105,9 @@ export function restoreLastBackup() {
   return restoreFromBackup(raw);
 }
 
+/**
+ * @param {{ clearFirebase?: boolean, reload?: boolean }} [options]
+ */
 export async function resetTestData(options = {}) {
   const { clearFirebase = true, reload = true } = options;
 
@@ -132,7 +144,7 @@ export async function resetTestData(options = {}) {
         }
       }
     } catch (err) {
-      console.warn('[DataCleanup] Firebase cleanup failed:', err.message);
+      console.warn('[DataCleanup] Firebase cleanup failed:', err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -153,6 +165,9 @@ export async function resetTestData(options = {}) {
   return { cleared: TEST_RESIDUE_KEYS.length, firebase: clearFirebase };
 }
 
+/**
+ * @param {{ clearFirebase?: boolean, reload?: boolean }} [options]
+ */
 export async function fullReset(options = {}) {
   const { clearFirebase = true, reload = true } = options;
 
@@ -162,7 +177,7 @@ export async function fullReset(options = {}) {
   try {
     createAutoBackup();
   } catch (err) {
-    console.warn('[DataCleanup] Auto-backup failed:', err.message);
+    console.warn('[DataCleanup] Auto-backup failed:', err instanceof Error ? err.message : String(err));
     if (!confirm('Backup a esuat. Continui oricum cu Full Reset?')) return;
   }
 
@@ -170,8 +185,9 @@ export async function fullReset(options = {}) {
   console.log('[DataCleanup] Firebase sync suppressed');
 
   // Save values to preserve across the clear
+  /** @type {Record<string, string>} */
   const preserved = {};
-  PRESERVE_ON_RESET_KEYS.forEach(k => {
+  PRESERVE_ON_RESET_KEYS.forEach((/** @type {string} */ k) => {
     const v = localStorage.getItem(k);
     if (v !== null) preserved[k] = v;
   });
@@ -188,7 +204,7 @@ export async function fullReset(options = {}) {
     sessionStorage.clear();
     console.log('[DataCleanup] sessionStorage cleared');
   } catch (e) {
-    console.warn('[DataCleanup] sessionStorage clear failed:', e.message);
+    console.warn('[DataCleanup] sessionStorage clear failed:', e instanceof Error ? e.message : String(e));
   }
 
   console.log('[DataCleanup] All local storage cleared');
@@ -208,7 +224,7 @@ export async function fullReset(options = {}) {
         console.log('[DataCleanup] No user path, skipping Firebase reset');
       }
     } catch (err) {
-      console.warn('[DataCleanup] Firebase full reset failed:', err.message);
+      console.warn('[DataCleanup] Firebase full reset failed:', err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -220,7 +236,7 @@ export async function fullReset(options = {}) {
       console.log('[DataCleanup] Service workers unregistered:', registrations.length);
     }
   } catch (e) {
-    console.warn('[DataCleanup] SW unregister failed:', e.message);
+    console.warn('[DataCleanup] SW unregister failed:', e instanceof Error ? e.message : String(e));
   }
 
   // Clear all caches (Cache API)
@@ -231,7 +247,7 @@ export async function fullReset(options = {}) {
       console.log('[DataCleanup] Cache API cleared:', cacheKeys.length, 'caches');
     }
   } catch (e) {
-    console.warn('[DataCleanup] Cache clear failed:', e.message);
+    console.warn('[DataCleanup] Cache clear failed:', e instanceof Error ? e.message : String(e));
   }
 
   // Clear IndexedDB databases
@@ -239,6 +255,7 @@ export async function fullReset(options = {}) {
     if (indexedDB && typeof indexedDB.databases === 'function') {
       const dbs = await indexedDB.databases();
       await Promise.all(dbs.map(db => new Promise((res) => {
+        if (!db.name) { res(undefined); return; }
         const req = indexedDB.deleteDatabase(db.name);
         req.onsuccess = res;
         req.onerror = res;
@@ -247,7 +264,7 @@ export async function fullReset(options = {}) {
       console.log('[DataCleanup] IndexedDB cleared:', dbs.length, 'databases');
     }
   } catch (e) {
-    console.warn('[DataCleanup] IndexedDB clear failed:', e.message);
+    console.warn('[DataCleanup] IndexedDB clear failed:', e instanceof Error ? e.message : String(e));
   }
 
   scheduleInvalidation();
@@ -263,6 +280,9 @@ export async function fullReset(options = {}) {
   return { cleared: 'all', firebase: clearFirebase };
 }
 
+/**
+ * @param {{ reload?: boolean }} [options]
+ */
 export async function resetButKeepRealLogs(options = { reload: true }) {
   console.log('[DataCleanup] Soft reset — keeping real workout logs and daily tracking');
   window._suppressFirebaseSync = true;
@@ -275,6 +295,7 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
     'current-kcal', 'phase-override', 'onboarding-done'
   ];
 
+  /** @type {Record<string, string>} */
   const preserved = {};
   KEEP_KEYS.forEach(k => {
     const v = localStorage.getItem(k);
@@ -300,10 +321,12 @@ export async function resetButKeepRealLogs(options = { reload: true }) {
 }
 
 export function inspectStorage() {
+  /** @type {{ userData: Record<string, string>, testResidue: Record<string, string>, unknown: Record<string, string> }} */
   const report = { userData: {}, testResidue: {}, unknown: {} };
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
+    if (key === null) continue;
     const value = localStorage.getItem(key);
     const size = value ? value.length : 0;
 
@@ -364,11 +387,13 @@ export function restoreRealLogs({ merge = true } = {}) {
   ];
 
   try {
+    /** @type {LogEntry[]} */
     const existing = JSON.parse(localStorage.getItem('logs') ?? '[]');
+    /** @type {LogEntry[]} */
     let finalLogs;
 
     if (merge) {
-      const existingTs = new Set(existing.map(l => l.ts));
+      const existingTs = new Set(existing.map(/** @param {LogEntry} l */ (l) => l.ts));
       const newEntries = REAL_LOGS.filter(l => !existingTs.has(l.ts));
       finalLogs = [...existing, ...newEntries].sort((a, b) => (b.ts || 0) - (a.ts || 0));
     } else {
@@ -382,8 +407,9 @@ export function restoreRealLogs({ merge = true } = {}) {
     console.log(`[DataCleanup] restoreRealLogs: ${REAL_LOGS.length} entries restored (merge=${merge}). Total logs: ${finalLogs.length}`);
     return { restored: REAL_LOGS.length, total: finalLogs.length, merge };
   } catch (e) {
-    console.error('[DataCleanup] restoreRealLogs failed:', e.message);
-    return { restored: 0, error: e.message };
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[DataCleanup] restoreRealLogs failed:', msg);
+    return { restored: 0, error: msg };
   }
 }
 

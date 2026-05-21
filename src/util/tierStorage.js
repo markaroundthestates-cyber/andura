@@ -25,17 +25,24 @@ export function getTierBoundaries(now = NOW()) {
   return { liveCutoff, aggregateCutoff };
 }
 
+/** @typedef {{ ts?: number, date?: string, w?: number, ex?: string, session?: string|number, [k: string]: unknown }} TierLogEntry */
+/** @typedef {{ sets: number, totalWeight: number, exercises: Set<string> }} DayAccum */
+/** @typedef {{ totalSets: number, exercises: Record<string, number> }} MonthAccum */
+
 /**
  * Clasifica un array de intrari logs pe tiers.
- * @param {Array} logs - fiecare cu { ts } sau { date }
+ * @param {TierLogEntry[]} logs - fiecare cu { ts } sau { date }
  * @param {Date} now
- * @returns {{ live: Array, aggregate: Array, archive: Array }}
+ * @returns {{ live: TierLogEntry[], aggregate: TierLogEntry[], archive: TierLogEntry[] }}
  */
 export function classifyLogs(logs, now = NOW()) {
   const { liveCutoff, aggregateCutoff } = getTierBoundaries(now);
 
+  /** @type {TierLogEntry[]} */
   const live = [];
+  /** @type {TierLogEntry[]} */
   const aggregate = [];
+  /** @type {TierLogEntry[]} */
   const archive = [];
 
   for (const log of logs ?? []) {
@@ -51,10 +58,11 @@ export function classifyLogs(logs, now = NOW()) {
 
 /**
  * Agregeaza logs vechi (90d-1yr) in sumar zilnic.
- * @param {Array} logs
- * @returns {Object} { 'YYYY-MM-DD': { sets: N, avgWeight: N, exercises: [...] } }
+ * @param {TierLogEntry[]} logs
+ * @returns {Record<string, { sets: number, avgWeight: number, exercises: string[] }>}
  */
 export function aggregateLogs(logs) {
+  /** @type {Record<string, DayAccum>} */
   const byDay = {};
   for (const log of logs ?? []) {
     const ts = log.ts ?? (log.date ? new Date(log.date).getTime() : null);
@@ -63,8 +71,9 @@ export function aggregateLogs(logs) {
     if (!byDay[day]) byDay[day] = { sets: 0, totalWeight: 0, exercises: new Set() };
     byDay[day].sets++;
     byDay[day].totalWeight += Number(log.w ?? 0);
-    byDay[day].exercises.add(log.ex ?? '');
+    byDay[day].exercises.add(String(log.ex ?? ''));
   }
+  /** @type {Record<string, { sets: number, avgWeight: number, exercises: string[] }>} */
   const result = {};
   for (const [day, data] of Object.entries(byDay)) {
     result[day] = {
@@ -78,11 +87,13 @@ export function aggregateLogs(logs) {
 
 /**
  * Arhiveaza logs > 1 an in sumar lunar.
- * @param {Array} logs
- * @returns {Object} { 'YYYY-MM': { sessions: N, totalSets: N, topExercises: [...] } }
+ * @param {TierLogEntry[]} logs
+ * @returns {Record<string, { sessions: number, totalSets: number, topExercises: string[] }>}
  */
 export function archiveLogs(logs) {
+  /** @type {Record<string, MonthAccum>} */
   const byMonth = {};
+  /** @type {Record<string, Set<string>>} */
   const sessionsByMonth = {};
 
   for (const log of logs ?? []) {
@@ -98,10 +109,11 @@ export function archiveLogs(logs) {
     byMonth[month].totalSets++;
     sessionsByMonth[month].add(sessionKey);
 
-    const ex = log.ex ?? '';
+    const ex = String(log.ex ?? '');
     if (ex) byMonth[month].exercises[ex] = (byMonth[month].exercises[ex] ?? 0) + 1;
   }
 
+  /** @type {Record<string, { sessions: number, totalSets: number, topExercises: string[] }>} */
   const result = {};
   for (const [month, data] of Object.entries(byMonth)) {
     const topExercises = Object.entries(data.exercises)
@@ -119,7 +131,7 @@ export function archiveLogs(logs) {
 
 /**
  * Salveaza tiers in localStorage (optimizat: doar live e stocat complet).
- * @param {Array} logs
+ * @param {TierLogEntry[]} logs
  */
 export function saveTiers(logs) {
   const { live, aggregate, archive } = classifyLogs(logs);
@@ -130,10 +142,10 @@ export function saveTiers(logs) {
 
 /**
  * Citeste doar logs live (ultimele 90 zile) — fast path pentru UI.
- * @returns {Array}
+ * @returns {TierLogEntry[]}
  */
 export function getLiveLogs() {
-  return DB.get(TIER_KEYS.live) ?? [];
+  return /** @type {TierLogEntry[] | null} */ (DB.get(TIER_KEYS.live)) ?? [];
 }
 
 /**
