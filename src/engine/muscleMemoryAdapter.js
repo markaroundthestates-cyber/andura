@@ -37,10 +37,10 @@ import {
  *   _mmiBucket: <bucket reference>
  *
  * @pure (idempotent — ADR 018 §2)
- * @param {Object} recommendation - {kg, ...} from upstream pipeline
+ * @param {{kg?: number} & Record<string, any>} recommendation - {kg, ...} from upstream pipeline
  * @param {string} exerciseName
- * @param {Object|null} mmiContext - {userChoice, pauseMonths, peakPrePauseKgPerExercise, weeksSinceResume}
- * @param {Object} dpEngine - DP reference for roundToStep
+ * @param {{userChoice?: string, pauseMonths?: number, peakPrePauseKgPerExercise?: Record<string, number>, weeksSinceResume?: number} | null | undefined} mmiContext
+ * @param {{ roundToStep?: (kg: number, ex: string) => number } | null | undefined} dpEngine - DP reference for roundToStep
  * @returns {Object}
  */
 export function applyMuscleMemoryUpgrade(recommendation, exerciseName, mmiContext, dpEngine) {
@@ -60,11 +60,12 @@ export function applyMuscleMemoryUpgrade(recommendation, exerciseName, mmiContex
     return recommendation;
   }
 
-  const mmiStart = computeMmiStartingWeight(peakKg, mmiContext.pauseMonths);
+  const pauseMonths = mmiContext.pauseMonths ?? 0;
+  const mmiStart = computeMmiStartingWeight(peakKg, pauseMonths);
   if (!mmiStart) return recommendation;
 
   const weeks = typeof mmiContext.weeksSinceResume === 'number' ? mmiContext.weeksSinceResume : 0;
-  const boost = computeMmiBoostMultiplier(weeks, mmiContext.pauseMonths);
+  const boost = computeMmiBoostMultiplier(weeks, pauseMonths);
   const targetKg = mmiStart.startKg * boost;
 
   const roundedKg = dpEngine && typeof dpEngine.roundToStep === 'function'
@@ -96,7 +97,7 @@ export function applyMuscleMemoryUpgrade(recommendation, exerciseName, mmiContex
  *     peakPrePauseKgPerExercise: { '<exName>': <kg>, ... }
  *   }
  *
- * @param {Object} db - DB reference exposing .get(key)
+ * @param {{ get?: (key: string) => unknown } | null | undefined} db - DB reference exposing .get(key)
  * @returns {Object|null}
  */
 export function readMmiState(db) {

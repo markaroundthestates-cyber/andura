@@ -25,10 +25,10 @@ import { detectAcceleratedLearningTrigger } from './acceleratedLearning.js';
  * → same output. No internal state, no Date.now / Math.random.
  *
  * @pure
- * @param {Object} recommendation - {kg, ...} from DP.recommend / AA.applyTo
+ * @param {{kg?: number} & Record<string, any>} recommendation - {kg, ...} from DP.recommend / AA.applyTo
  * @param {string} exerciseName
- * @param {Array} cdlEntries - 'aggressive-loading-log' entries (enriched)
- * @param {Object} dpEngine - DP reference for roundToStep (optional)
+ * @param {Array<any>} cdlEntries - 'aggressive-loading-log' entries (enriched)
+ * @param {{ roundToStep?: (kg: number, ex: string) => number } | null | undefined} dpEngine - DP reference for roundToStep (optional)
  * @returns {Object} recommendation upgraded OR original (when no trigger)
  */
 export function applyAcceleratedLearningUpgrade(recommendation, exerciseName, cdlEntries, dpEngine) {
@@ -65,8 +65,8 @@ export function applyAcceleratedLearningUpgrade(recommendation, exerciseName, cd
  * I/O boundary helper — read CDL log from DB.
  * Encapsulated for testability + single seam between pure adapter and DB layer.
  *
- * @param {Object} db - DB reference exposing .get(key)
- * @returns {Array} entries or [] when missing/invalid
+ * @param {{ get?: (key: string) => unknown } | null | undefined} db - DB reference exposing .get(key)
+ * @returns {Array<any>} entries or [] when missing/invalid
  */
 export function readAggressiveLoadingLog(db) {
   if (!db || typeof db.get !== 'function') return [];

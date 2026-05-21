@@ -14,8 +14,16 @@ export const READINESS_LABELS = {
   5: { emoji: '🔥', label: 'Excelent', sub: 'Ready to crush it' },
 };
 
+/**
+ * @param {number | null | undefined} readinessInput
+ * @param {number | null | undefined} kcalYesterday
+ * @param {number | null | undefined} protYesterday
+ * @param {number | null | undefined} targetKcal
+ * @param {number | null | undefined} targetProt
+ */
 export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, targetKcal, targetProt) {
   if (readinessInput == null) return null;
+  /** @type {Record<number, number>} */
   const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
   let score = 60 + (readinessPoints[readinessInput] ?? 0);
 
@@ -33,6 +41,10 @@ export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, 
   return Math.max(10, Math.min(100, Math.round(score)));
 }
 
+/**
+ * @param {number | null | undefined} score
+ * @param {{ isInCut?: boolean }} [opts]
+ */
 export function getReadinessVerdict(score, { isInCut = false } = {}) {
   if (score == null) return { label: null, color: 'var(--text3)', volumeMultiplier: 1.0, canPR: false };
   if (isInCut) {
@@ -52,14 +64,17 @@ export function getReadinessVerdict(score, { isInCut = false } = {}) {
   }
 }
 
+/** @param {number} value */
 export function saveReadiness(value) {
-  const all = DB.get('readiness') || {};
+  /** @type {Record<string, number>} */
+  const all = /** @type {any} */ (DB.get('readiness')) || {};
   all[tod()] = Number(value);
   DB.set('readiness', all);
 }
 
 export function getTodayReadiness() {
-  const all = DB.get('readiness') || {};
+  /** @type {Record<string, number>} */
+  const all = /** @type {any} */ (DB.get('readiness')) || {};
   return all[tod()] ?? null;
 }
 
@@ -68,8 +83,10 @@ export function getComputedReadinessScore() {
   if (r == null) return null;
   const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
   const yDate = todDate(yesterday);
-  const kcals = DB.get('kcals') || {};
-  const prots = DB.get('prots') || {};
+  /** @type {Record<string, number>} */
+  const kcals = /** @type {any} */ (DB.get('kcals')) || {};
+  /** @type {Record<string, number>} */
+  const prots = /** @type {any} */ (DB.get('prots')) || {};
   // KCAL_TARGET and PROT_TARGET imported directly from constants.js
   return getReadinessScore(r, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
 }

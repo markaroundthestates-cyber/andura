@@ -30,6 +30,7 @@ const LOCALE_STORAGE_KEY = 'sf.locale';
 const DEFAULT_LOCALE = 'ro';
 const FALLBACK_LOCALE = 'en';
 
+/** @type {'ro' | 'en' | null} */
 let _cachedLocale = null;
 
 // ── Public: t(key, vars?) ───────────────────────────────────────────────────
@@ -45,10 +46,11 @@ export function t(key, vars = {}) {
   if (typeof key !== 'string' || key.length === 0) return '';
 
   const locale = getCurrentLocale();
+  const bundles = /** @type {Record<string, any>} */ (BUNDLES);
 
   // Try current locale → fallback locale → key string itself
-  const found = _resolve(BUNDLES[locale], key)
-    ?? _resolve(BUNDLES[FALLBACK_LOCALE], key)
+  const found = _resolve(bundles[locale], key)
+    ?? _resolve(bundles[FALLBACK_LOCALE], key)
     ?? null;
 
   if (found == null) {
@@ -71,13 +73,14 @@ export function t(key, vars = {}) {
  */
 export function getCurrentLocale() {
   if (_cachedLocale) return _cachedLocale;
+  const bundles = /** @type {Record<string, any>} */ (BUNDLES);
 
   // 1. localStorage override (user explicit choice)
   try {
     const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(LOCALE_STORAGE_KEY) : null;
-    if (stored && BUNDLES[stored]) {
-      _cachedLocale = stored;
-      return stored;
+    if (stored && bundles[stored]) {
+      _cachedLocale = /** @type {'ro' | 'en'} */ (stored);
+      return _cachedLocale;
     }
   } catch { /* private mode etc — ignore */ }
 
@@ -86,9 +89,9 @@ export function getCurrentLocale() {
     const nav = typeof navigator !== 'undefined' ? navigator.language : null;
     if (nav) {
       const prefix = String(nav).slice(0, 2).toLowerCase();
-      if (BUNDLES[prefix]) {
-        _cachedLocale = prefix;
-        return prefix;
+      if (bundles[prefix]) {
+        _cachedLocale = /** @type {'ro' | 'en'} */ (prefix);
+        return _cachedLocale;
       }
     }
   } catch { /* ignore */ }
@@ -107,7 +110,8 @@ export function getCurrentLocale() {
  * @returns {boolean} true daca applied, false daca unsupported
  */
 export function setLocale(locale) {
-  if (!BUNDLES[locale]) return false;
+  const bundles = /** @type {Record<string, any>} */ (BUNDLES);
+  if (!bundles[locale]) return false;
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(LOCALE_STORAGE_KEY, locale);
@@ -131,14 +135,17 @@ export function _resetI18nCache() {
  * @returns {object | null}
  */
 export function _getBundle(locale) {
-  return BUNDLES[locale] ?? null;
+  const bundles = /** @type {Record<string, any>} */ (BUNDLES);
+  return bundles[locale] ?? null;
 }
 
 // ── Internal: dotted-path resolver ──────────────────────────────────────────
 
+/** @param {unknown} obj @param {string} path */
 function _resolve(obj, path) {
   if (!obj || typeof obj !== 'object' || typeof path !== 'string') return null;
   const parts = path.split('.');
+  /** @type {any} */
   let cur = obj;
   for (const part of parts) {
     if (cur == null || typeof cur !== 'object') return null;
@@ -149,9 +156,10 @@ function _resolve(obj, path) {
 
 // ── Internal: var interpolation `{name}` ────────────────────────────────────
 
+/** @param {string} str @param {Record<string, string | number> | null | undefined} vars */
 function _interpolate(str, vars) {
   if (!vars || typeof vars !== 'object') return str;
-  return str.replace(/\{(\w+)\}/g, (match, key) => {
+  return str.replace(/\{(\w+)\}/g, (/** @type {string} */ match, /** @type {string} */ key) => {
     return Object.prototype.hasOwnProperty.call(vars, key)
       ? String(vars[key])
       : match;

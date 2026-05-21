@@ -7,24 +7,32 @@ export function getAdherenceScore() {
   const today = tod();
   const dayOfWeek = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
 
-  const kcals = DB.get('kcals') || {};
-  const prots = DB.get('prots') || {};
-  const ws = DB.get('weights') || {};
-  const logs = DB.get('logs') || [];
+  /** @type {Record<string, number>} */
+  const kcals = /** @type {any} */ (DB.get('kcals')) || {};
+  /** @type {Record<string, number>} */
+  const prots = /** @type {any} */ (DB.get('prots')) || {};
+  /** @type {Record<string, number>} */
+  const ws = /** @type {any} */ (DB.get('weights')) || {};
+  /** @type {Array<{date?: string, baseline?: boolean, ex?: string}>} */
+  const logs = /** @type {any} */ (DB.get('logs')) || [];
 
   // Map JS getDay() to PROG index
   // PROG: [0]=Luni(Mon), [1]=Marti(Tue), [2]=Mie(Wed), [3]=Joi(Thu),
   //        [4]=Vineri(Fri), [5]=Sambata(Sat), [6]=Duminica(Sun)
+  /** @type {number[]} */
   const dayMap = [6, 0, 1, 2, 3, 4, 5]; // JS 0(Sun)→PROG[6], JS 1(Mon)→PROG[0], etc.
-  const progDay = PROG[dayMap[dayOfWeek]];
+  const progIdx = dayMap[dayOfWeek] ?? 0;
+  const prog = /** @type {ReadonlyArray<{t?: string}>} */ (/** @type {unknown} */ (PROG));
+  const progDay = prog[progIdx];
 
   let score = 0;
 
+  const prot = prots[today];
   // +25p: kcal logged today
   if (kcals[today] !== undefined) score += 25;
 
   // +25p: protein >= 150g
-  if (prots[today] !== undefined && prots[today] >= 150) score += 25;
+  if (prot !== undefined && prot >= 150) score += 25;
 
   // +30p: workout compliance — CDL primary, logs fallback
   if (progDay && progDay.t === 'off') {
@@ -34,14 +42,14 @@ export function getAdherenceScore() {
     const cdlEntry = coachDecisionLog.readActiveForDate(today);
     if (cdlEntry?.outcome) {
       // CDL has populated outcome → use it (binary in legacy pillar)
-      const executed = cdlEntry.outcome.executed;
+      const executed = /** @type {any} */ (cdlEntry.outcome).executed;
       if (executed === true || executed === 'partial') {
         score += 30;
       }
       // executed === false → 0p (skipped)
     } else {
       // No CDL entry (cold start, pre-30.4, session in progress) → fallback logs
-      const todayLogs = logs.filter(l => l.date === today && !l.baseline && l.ex !== '__early_stop__');
+      const todayLogs = logs.filter((l) => l.date === today && !l.baseline && l.ex !== '__early_stop__');
       if (todayLogs.length > 0) score += 30;
     }
   }
@@ -104,7 +112,7 @@ export function computeAdherence({ windowDays = 30 } = {}) {
   let deviated = 0;
 
   for (const e of entries) {
-    const o = e.outcome;
+    const o = /** @type {{deviation?: boolean, executed?: boolean | 'partial'}} */ (e.outcome ?? {});
     if (o.deviation === true) {
       deviated++;
       // Deviation NOT counted as adherence — separate metric
