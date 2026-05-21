@@ -43,6 +43,10 @@ export const DP = {
   },
 
   // Rotunjeste greutatea la cea mai apropiata valoare din lista reala a echipamentului
+  /**
+   * @param {number} kg
+   * @param {string} ex
+   */
   roundToStep(kg, ex) {
     return roundToEquipmentWeight(kg, ex);
   },
@@ -88,56 +92,86 @@ export const DP = {
   // In CUT: isolation exercises with rMax in 11-15 range cap at 10 reps.
   // Covers 10-12 and 12-15 ranges (Lateral Raises, Rear Delt Fly, etc.).
   // High-rep leg exercises (15-20) are intentionally excluded.
+  /**
+   * @param {string} ex
+   * @param {boolean} isInCut
+   */
   getPhaseAwareRepRange(ex, isInCut) {
-    const range = this.REP_RANGES[ex] || [8, 12];
+    const ranges = /** @type {Record<string, number[]>} */ (this.REP_RANGES);
+    const range = ranges[ex] || [8, 12];
     if (!isInCut) return range;
     const [rMin, rMax] = range;
-    if (rMax > 10 && rMax <= 15 && !COMPOUND_EX.includes(ex)) return [Math.min(rMin, 10), 10];
+    if (rMax != null && rMax > 10 && rMax <= 15 && !COMPOUND_EX.includes(ex)) return [Math.min(rMin ?? 8, 10), 10];
     return range;
   },
 
+  /** @param {string} ex */
   getIncrement(ex) {
     // Incrementul = 1 treapta pe echipamentul exercitiului
-    return this.WEIGHT_STEPS[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
+    const steps = /** @type {Record<string, number>} */ (this.WEIGHT_STEPS);
+    return steps[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
   },
 
   // Get last N logs for exercise
+  /**
+   * @param {string} ex
+   * @param {number} [n]
+   */
   getLogs(ex, n=10) {
-    const logs = DB.get('logs') || [];
-    return logs.filter(l => l.ex === ex && l.w).slice(0, n);
+    /** @type {Array<{ex?: string, w?: number, reps?: number | string, rpe?: number}>} */
+    const logs = /** @type {any} */ (DB.get('logs')) || [];
+    return logs.filter((l) => l.ex === ex && l.w).slice(0, n);
   },
 
   // Get progression state for exercise
+  /** @param {string} ex */
   getState(ex) {
     const logs = this.getLogs(ex, 6);
-    if (!logs.length) return { stage:'INIT', level:0, logs:[] };
+    if (!logs.length) return {
+      stage: 'INIT', level: 0, logs: [],
+      lastW: 0, lastReps: 8, lastRPE: 7,
+      isStagnant: false, atTopReps: false,
+      range: [8, 12], rMin: 8, rMax: 12,
+      currentSets: 3, extraSets: 0,
+    };
 
-    const range = this.REP_RANGES[ex] || [8,12];
+    const ranges = /** @type {Record<string, number[]>} */ (this.REP_RANGES);
+    const range = ranges[ex] || [8,12];
     const [rMin, rMax] = range;
-    const lastW = logs[0].w;
-    const lastReps = parseInt(logs[0].reps) || rMin;
-    const lastRPE = logs[0].rpe || 7;
+    const lastLog = logs[0];
+    if (!lastLog) return {
+      stage: 'INIT', level: 0, logs: [],
+      lastW: 0, lastReps: 8, lastRPE: 7,
+      isStagnant: false, atTopReps: false,
+      range: [8, 12], rMin: 8, rMax: 12,
+      currentSets: 3, extraSets: 0,
+    };
+    const lastW = lastLog.w ?? 0;
+    const lastReps = typeof lastLog.reps === 'string' ? parseInt(lastLog.reps) : (lastLog.reps ?? (rMin ?? 8));
+    const lastRPE = lastLog.rpe || 7;
 
     // Check stagnation (same weight last 3+ sessions)
-    const last3W = logs.slice(0,3).map(l=>l.w);
+    const last3W = logs.slice(0,3).map((l) => l.w);
     const isStagnant = last3W.length >= 3 && last3W.every(w => w === last3W[0]);
 
     // Check if at top of rep range consistently
-    const last3Reps = logs.slice(0,3).map(l=>parseInt(l.reps)||rMin);
-    const atTopReps = last3Reps.every(r => r >= rMax);
+    const last3Reps = logs.slice(0,3).map((l) => typeof l.reps === 'string' ? (parseInt(l.reps) || (rMin ?? 8)) : (l.reps ?? (rMin ?? 8)));
+    const atTopReps = last3Reps.every((r) => r >= (rMax ?? 12));
 
     // How many sets at +1 volume
-    const currentSets = EX_SETS[ex] || 3;
-    const extraSets = DB.get(`ex-extra-sets-${ex}`) || 0;
+    const exSets = /** @type {Record<string, number>} */ (EX_SETS);
+    const currentSets = exSets[ex] || 3;
+    const extraSets = /** @type {number} */ (DB.get(`ex-extra-sets-${ex}`)) || 0;
 
     return {
       lastW, lastReps, lastRPE, isStagnant, atTopReps,
-      range, rMin, rMax, currentSets, extraSets,
+      range, rMin: rMin ?? 8, rMax: rMax ?? 12, currentSets, extraSets,
       logs
     };
   },
 
   // MAIN RECOMMENDATION FUNCTION
+  /** @param {string} ex */
   recommend(ex) {
     const result = this._recommendRaw(ex);
     // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
@@ -145,15 +179,19 @@ export const DP = {
     return result;
   },
 
+  /** @param {string} ex */
   _recommendRaw(ex) {
     const state = this.getState(ex);
     const inc = this.getIncrement(ex);
-    const phaseOverride = DB.get('phase-override') || 'AUTO';
+    const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const isInCut = phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
-    const [rMin, rMax] = range;
-    const maxKg = this.MAX_KG[ex] || null;
-    const _capStrategy = this.WEIGHT_CAP_STRATEGY[ex] || null;
+    const rMin = range[0] ?? 8;
+    const rMax = range[1] ?? 12;
+    const maxKgs = /** @type {Record<string, number>} */ (this.MAX_KG);
+    const maxKg = maxKgs[ex] || null;
+    const capStrats = /** @type {Record<string, string>} */ (this.WEIGHT_CAP_STRATEGY);
+    const _capStrategy = capStrats[ex] || null;
 
     // No history → start conservative
     if (!state.logs.length) {
@@ -233,7 +271,7 @@ export const DP = {
     }
 
     // Stage 3: STAGNATION — add 1 set (max once)
-    if (isStagnant && extraSets === 0) {
+    if (isStagnant && typeof extraSets === 'number' && extraSets === 0) {
       DB.set(`ex-extra-sets-${ex}`, 1);
       return {
         kg: lastW, repsTarget: rMax, rir: 2,
@@ -246,9 +284,9 @@ export const DP = {
     }
 
     // Stage 4: TECHNIQUE — drop set (max 1/workout, already tracked)
-    if (isStagnant && extraSets >= 1) {
+    if (isStagnant && typeof extraSets === 'number' && extraSets >= 1) {
       // Drop set nu in CUT — in deficit mentii greutatea, straight sets cu executie perfecta
-      const phaseOverride = DB.get('phase-override') || 'AUTO';
+      const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
       const isInCut = phaseOverride === 'CUT' ||
         (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
       if (isInCut) {
@@ -284,24 +322,29 @@ export const DP = {
   }, // end _recommendRaw
 
   // In-session RPE correction: if 2 sets RPE 10 → drop weight now
+  /**
+   * @param {string} ex
+   * @param {number[]} recentRPEs
+   * @param {number[]} recentReps
+   */
   checkInSessionAdjust(ex, recentRPEs, recentReps) {
     const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
-    const phOv = DB.get('phase-override') || 'AUTO';
+    const phOv = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, inCut);
-    const [, rMax] = range;
+    const rMax = range[1] ?? 12;
 
     // No history yet — can't adjust
     if (!dpState.lastW) return { adjust: false };
 
     // Prea greu: 2× RPE 10 → scade imediat
-    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r >= 10)) {
+    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every((r) => r >= 10)) {
       const newKg = getPrevWeight(dpState.lastW, ex);
       return { adjust: true, dir: 'down', newKg, msg: `Greutatea este prea mare · Trecem la ${newKg} kg pentru urmatorul set` };
     }
     // Prea usor: 2× Easy (RPE ≤6.5) si reps > rMax → creste imediat
-    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every(r => r <= 6.5)) {
+    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every((r) => r <= 6.5)) {
       const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
       if (lastReps >= rMax) {
         const newKg = this.roundToStep(dpState.lastW + inc, ex);
@@ -312,12 +355,14 @@ export const DP = {
   },
 
   // Returns phase-aware rep range for ex.
+  /** @param {string} ex */
   getRepsRange(ex) {
-    const phOv = DB.get('phase-override') || 'AUTO';
+    const phOv = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
     return this.getPhaseAwareRepRange(ex, inCut);
   },
 
+  /** @param {number} rir */
   getIntensityLabel(rir) {
     if (rir <= 1) return '🔴 La limita';
     if (rir <= 2) return '🟠 Greu';
@@ -325,8 +370,14 @@ export const DP = {
     return '🟢 Confortabil';
   },
 
+  /**
+   * @param {string} ex
+   * @param {number | null} readinessScore
+   * @param {any} _muscleState
+   */
   getSmartRecommendation(ex, readinessScore, _muscleState) {
     const base = this.recommend(ex);
+    /** @type {Record<string, any>} */
     let result = { ...base };
     result.intensityLabel = this.getIntensityLabel(result.rir ?? 2);
 
@@ -340,13 +391,15 @@ export const DP = {
     }
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
-    const phOv2 = DB.get('phase-override') || 'AUTO';
+    const phOv2 = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const inCut2 = phOv2 === 'CUT' || (phOv2 === 'AUTO' && new Date() < TARGET_DATE);
     const range = this.getPhaseAwareRepRange(ex, inCut2);
     const [rMin, rMax] = range;
-    const rTarget = result.repsTarget || rMin;
-    const rLow = Math.max(rMin, rTarget - 1);
-    const rHigh = Math.min(rMax + 2, rTarget + 1);
+    const rMinSafe = rMin ?? 8;
+    const rMaxSafe = rMax ?? 12;
+    const rTarget = result.repsTarget || rMinSafe;
+    const rLow = Math.max(rMinSafe, rTarget - 1);
+    const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);
     result.repsRange = `${rLow}–${rHigh}`;
 
     return result;
@@ -356,6 +409,10 @@ export const DP = {
 // ── Estimare greutate initiala pentru exercitii fara istoric ──────────────────
 // Cauta exercitii similare cu istoric si aplica un multiplicator conservativ.
 
+/**
+ * @param {string} exerciseName
+ * @param {{ recentLogs?: Array<any> } | null | undefined} ctx
+ */
 export function getInitialRecommendation(exerciseName, ctx) {
   const recentLogs = (ctx && ctx.recentLogs) || [];
 
@@ -370,7 +427,8 @@ export function getInitialRecommendation(exerciseName, ctx) {
     };
   }
 
-  const similarList = SIMILAR_EXERCISES[exerciseName] || [];
+  const similar = /** @type {Record<string, string[]>} */ (SIMILAR_EXERCISES);
+  const similarList = similar[exerciseName] || [];
 
   for (const similarName of similarList) {
     const lastLog = _findLastLog(similarName, recentLogs);
@@ -413,16 +471,22 @@ export function getInitialRecommendation(exerciseName, ctx) {
   };
 }
 
+/**
+ * @param {string} name
+ * @param {Array<{logs?: Array<{ex?: string, w?: number, reps?: number | string}>}>} recentLogs
+ */
 function _findLastLog(name, recentLogs) {
   for (const session of recentLogs) {
     const logs = session.logs || [];
-    const log = logs.find(l => l.ex === name);
+    const log = logs.find((l) => l.ex === name);
     if (log) return { weight: log.w, reps: log.reps };
   }
   return null;
 }
 
+/** @param {string} exerciseName */
 function _minWeightForExercise(exerciseName) {
+  /** @type {Record<string, string>} */
   const equipMap = {
     'Cable Curl': 'matrix_cable', 'Preacher Curl': 'matrix_cable',
     'Hammer Curl': 'dumbbell', 'Overhead Triceps': 'matrix_cable',
@@ -430,6 +494,7 @@ function _minWeightForExercise(exerciseName) {
     'Face Pulls': 'matrix_cable', 'Lateral Raises (cable)': 'matrix_cable',
     'Cable Fly': 'matrix_cable', 'Leg Press': 'leg_press_plates'
   };
+  /** @type {Record<string, number>} */
   const minByEquip = {
     'dumbbell': 7, 'matrix_cable': 5, 'bailib_stack': 5,
     'pec_deck': 18, 'leg_machine': 10, 'leg_press_plates': 20
