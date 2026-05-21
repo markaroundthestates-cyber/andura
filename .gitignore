@@ -45,3 +45,10 @@ reports/mutation/mutation.html
 # anti-recurrence). Caused f1c79dd disaster pre-revert; gitignore preserved
 # post-cleanup to prevent re-fire of any auto-commit hook on this path.
 Andura/
+
+# Smoke screenshots from live Playwright MCP testing (auto-generated)
+smoke-*.png
+.playwright-mcp/
+
+# .planning/ — local agent planning artifacts
+.planning/
