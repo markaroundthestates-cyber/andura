@@ -54,7 +54,7 @@ const SECTIONS: readonly ContSection[] = [
     title: 'General',
     rows: [
       { id: 'appearance', label: 'Aspect', Icon: Palette, target: 'settings-appearance' },
-      { id: 'aparate-lipsa', label: 'Aparate lipsa', Icon: XOctagon },
+      { id: 'aparate-lipsa', label: 'Aparate lipsa', Icon: XOctagon, target: 'aparate-lipsa' },
       { id: 'prefs', label: 'Setari', Icon: SlidersHorizontal, target: 'settings-prefs' },
     ],
   },
