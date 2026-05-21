@@ -12,6 +12,16 @@
 
 import { isoWeek } from '../util/isoWeek.js';
 import { MS_PER_DAY } from '../constants.js';
+
+/**
+ * @typedef {Object} AaCdlEntry
+ * @property {string} [date]
+ * @property {number} [ts]
+ * @property {boolean} [synthetic]
+ * @property {{ executed?: boolean | 'partial', deviation?: boolean, actualSets?: number, proposedSets?: number, setsRPE?: Array<number>, rating?: number, sessionDurationMin?: number, restMarked?: boolean }} [outcome]
+ * @property {{ kcal_target?: number }} [context]
+ * @property {string} [type]
+ */
 export { isoWeek as _isoWeek };
 
 // ── Tier computation ──────────────────────────────────────────────────────────
@@ -19,6 +29,7 @@ export { isoWeek as _isoWeek };
 /**
  * Map signal count → severity tier.
  * 0→'none', 1→'LOW', 2-3→'MED', 4-5→'HIGH' (starting calibration, ADR 013 §5)
+ * @param {number} signalCount
  */
 export function _computeTier(signalCount) {
   if (signalCount <= 0) return 'none';
@@ -34,6 +45,7 @@ export function _computeTier(signalCount) {
  * Primary: outcome.setsRPE — ≥50% of rated sets at RPE ≥9 (Hard/Very Hard).
  * Fallback: outcome.rating ≤2 proxy (pre-setsRPE entries, per ADR 013 reconsideration trigger #5).
  * Sets without RPE are excluded from the denominator.
+ * @param {AaCdlEntry | null | undefined} entry
  */
 export function _computeCompositeFatigue(entry) {
   const outcome = entry?.outcome;
@@ -41,9 +53,9 @@ export function _computeCompositeFatigue(entry) {
 
   const setsRPE = outcome.setsRPE;
   if (Array.isArray(setsRPE) && setsRPE.length > 0) {
-    const rated = setsRPE.filter(r => typeof r === 'number');
+    const rated = setsRPE.filter((r) => typeof r === 'number');
     if (rated.length === 0) return false;
-    const hardCount = rated.filter(r => r >= 9).length;  // RPE 9=Hard, 10=Very Hard
+    const hardCount = rated.filter((r) => r >= 9).length;  // RPE 9=Hard, 10=Very Hard
     return hardCount / rated.length >= 0.5;
   }
 
@@ -61,10 +73,11 @@ export function _computeCompositeFatigue(entry) {
  * "Consecutive" = adjacent executed sessions, no break in streak.
  * Starting threshold: 3 sessions / 21 days (ADR 013 empirical calibration table).
  */
+/** @param {Array<AaCdlEntry>} entries */
 export function _detectVolumeCreep(entries) {
   const workouts = entries
-    .filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
 
   if (workouts.length < 3) return false;
 
@@ -72,14 +85,18 @@ export function _detectVolumeCreep(entries) {
   let streakLen = 0;
 
   for (let i = 0; i < workouts.length; i++) {
-    const isCreep = workouts[i].outcome?.deviation === true &&
-                    (workouts[i].outcome?.actualSets ?? 0) > (workouts[i].outcome?.proposedSets ?? 0);
+    const cur = workouts[i];
+    if (!cur) continue;
+    const isCreep = cur.outcome?.deviation === true &&
+                    (cur.outcome?.actualSets ?? 0) > (cur.outcome?.proposedSets ?? 0);
 
     if (isCreep) {
       if (streakLen === 0) streakStart = i;
       streakLen++;
       if (streakLen >= 3) {
-        const spanDays = (new Date(workouts[i].date) - new Date(workouts[streakStart].date)) / MS_PER_DAY;
+        const startEntry = workouts[streakStart];
+        if (!startEntry) continue;
+        const spanDays = (new Date(cur.date ?? '').getTime() - new Date(startEntry.date ?? '').getTime()) / MS_PER_DAY;
         if (spanDays <= 21) return true;  // 21-day anti-stale window
       }
     } else {
@@ -94,26 +111,32 @@ export function _detectVolumeCreep(entries) {
  * within any 7-day rolling window. Starting threshold: 300 kcal (ADR 013 empirical calibration).
  * Reads context.kcal_target across CDL entries.
  */
+/** @param {Array<AaCdlEntry>} entries */
 export function _detectCalorieAcceleration(entries) {
   const withKcal = entries
-    .filter(e => typeof e.context?.kcal_target === 'number')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => typeof e.context?.kcal_target === 'number')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
 
   if (withKcal.length < 2) return false;
 
   for (let i = 0; i < withKcal.length; i++) {
-    const anchor = new Date(withKcal[i].date);
+    const anchorEntry = withKcal[i];
+    if (!anchorEntry?.date) continue;
+    const anchor = new Date(anchorEntry.date);
     const cutoff = new Date(anchor);
     cutoff.setDate(anchor.getDate() + 7);
 
-    const window = withKcal.filter(e => {
+    const window = withKcal.filter((e) => {
+      if (!e.date) return false;
       const d = new Date(e.date);
       return d >= anchor && d <= cutoff;
     });
     if (window.length < 2) continue;
 
-    const maxKcal = Math.max(...window.map(e => e.context.kcal_target));
-    const minKcal = Math.min(...window.map(e => e.context.kcal_target));
+    const kcals = window.map((e) => e.context?.kcal_target).filter((v) => typeof v === 'number');
+    if (kcals.length < 2) continue;
+    const maxKcal = Math.max(...kcals);
+    const minKcal = Math.min(...kcals);
     if (maxKcal - minKcal > 300) return true;  // >300 kcal drop threshold
   }
   return false;
@@ -124,23 +147,28 @@ export function _detectCalorieAcceleration(entries) {
  * followed by volume creep in same or next session within 14-day window.
  * Window: 14-day rolling (anti-reactive at <14d, anti-stale at >14d).
  */
+/** @param {Array<AaCdlEntry>} entries */
 export function _detectFrustrationMarkers(entries) {
   const workouts = entries
-    .filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
 
   for (let i = 0; i < workouts.length; i++) {
-    const rating = workouts[i].outcome?.rating;
+    const anchorEntry = workouts[i];
+    if (!anchorEntry?.date) continue;
+    const rating = anchorEntry.outcome?.rating;
     const isLowRating = typeof rating === 'number' && rating <= 2;
     if (!isLowRating) continue;
 
-    const windowEnd = new Date(workouts[i].date);
+    const windowEnd = new Date(anchorEntry.date);
     windowEnd.setDate(windowEnd.getDate() + 14);  // 14-day forward window
 
     for (let j = i; j < workouts.length; j++) {
-      if (new Date(workouts[j].date) > windowEnd) break;
-      const hasCreep = workouts[j].outcome?.deviation === true &&
-                       (workouts[j].outcome?.actualSets ?? 0) > (workouts[j].outcome?.proposedSets ?? 0);
+      const e = workouts[j];
+      if (!e?.date) continue;
+      if (new Date(e.date) > windowEnd) break;
+      const hasCreep = e.outcome?.deviation === true &&
+                       (e.outcome?.actualSets ?? 0) > (e.outcome?.proposedSets ?? 0);
       if (hasCreep) return true;
     }
   }
@@ -152,33 +180,37 @@ export function _detectFrustrationMarkers(entries) {
  * + zero early-stops + no volume reduction (recovery not acknowledged).
  * Window: 7-day rolling snapshot.
  */
+/** @param {Array<AaCdlEntry>} entries */
 export function _detectIgnoreRecovery(entries) {
   const workouts = entries
-    .filter(e => e.outcome?.executed === true || e.outcome?.executed === 'partial')
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .filter((e) => e.outcome?.executed === true || e.outcome?.executed === 'partial')
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
 
   if (workouts.length < 2) return false;
 
   for (let i = 0; i < workouts.length; i++) {
-    const anchor = new Date(workouts[i].date);
+    const anchorEntry = workouts[i];
+    if (!anchorEntry?.date) continue;
+    const anchor = new Date(anchorEntry.date);
     const cutoff = new Date(anchor);
     cutoff.setDate(anchor.getDate() + 7);
 
-    const window = workouts.filter(e => {
+    const window = workouts.filter((e) => {
+      if (!e.date) return false;
       const d = new Date(e.date);
       return d >= anchor && d < cutoff;
     });
     if (window.length < 2) continue;
 
-    const fatigueSessions = window.filter(e => _computeCompositeFatigue(e));
+    const fatigueSessions = window.filter((e) => _computeCompositeFatigue(e));
     if (fatigueSessions.length < 2) continue;
 
     // Condition: no early-stop (would indicate recovery was acknowledged)
-    if (window.some(e => e.outcome?.earlyStop === true)) continue;
+    if (window.some((e) => /** @type {any} */ (e.outcome)?.earlyStop === true)) continue;
 
     // Condition: volume not dropped in fatigue sessions (user keeps pushing)
     const volumeDropped = fatigueSessions.some(
-      e => (e.outcome?.actualSets ?? 0) < (e.outcome?.proposedSets ?? 0)
+      (e) => (e.outcome?.actualSets ?? 0) < (e.outcome?.proposedSets ?? 0)
     );
     if (volumeDropped) continue;
 
@@ -194,7 +226,9 @@ export function _detectIgnoreRecovery(entries) {
  * Singular recovery debt = noise for aggressive profiles (ADR 013 §1).
  * Threshold: <2 rest days / 3 weeks (ADR 013 empirical calibration).
  */
+/** @param {Array<AaCdlEntry>} entries */
 export function _detectRecoveryDebt(entries) {
+  /** @type {Record<string, number>} */
   const byWeek = {};
 
   for (const entry of entries) {
@@ -202,8 +236,8 @@ export function _detectRecoveryDebt(entries) {
     const week = isoWeek(entry.date);
     if (!byWeek[week]) byWeek[week] = 0;
     // Only count explicit rest_marked=true on non-executed days (per ADR 011 rest semantics)
-    if (entry.outcome?.executed === false && entry.outcome?.rest_marked === true) {
-      byWeek[week]++;
+    if (entry.outcome?.executed === false && /** @type {any} */ (entry.outcome)?.rest_marked === true) {
+      byWeek[week] = (byWeek[week] ?? 0) + 1;
     }
   }
 
@@ -212,7 +246,7 @@ export function _detectRecoveryDebt(entries) {
 
   let streak = 0;
   for (const week of sortedWeeks) {
-    if (byWeek[week] < 2) {  // <2 rest days threshold
+    if ((byWeek[week] ?? 0) < 2) {  // <2 rest days threshold
       streak++;
       if (streak >= 3) return true;
     } else {
@@ -228,6 +262,7 @@ export function _detectRecoveryDebt(entries) {
  * Starting threshold: 4 days (ADR 013 empirical calibration reconsideration trigger #7).
  * Returns { amplified, reason } for attachment to AA output.
  */
+/** @param {{ daysWithHyperfocus?: number, hoursInApp7d?: number } | null | undefined} hyperfocusData */
 export function _detectHyperfocusAmplifier(hyperfocusData) {
   if (!hyperfocusData) return { amplified: false, reason: null };
   const { daysWithHyperfocus = 0 } = hyperfocusData;
@@ -244,18 +279,20 @@ export function _detectHyperfocusAmplifier(hyperfocusData) {
  * Compute escalation flag: MED tier sustained in 2+ consecutive ISO weeks.
  * Reads outcome.autoAggression.tier from CDL entries.
  *
- * @param {object[]} cdlEntries
+ * @param {Array<AaCdlEntry & { outcome?: { autoAggression?: { tier?: string, signals?: string[], amplified?: boolean, amplifierReason?: string } } }>} cdlEntries
  * @returns {boolean}
  */
 export function computeEscalation(cdlEntries) {
-  const withAA = (cdlEntries ?? []).filter(e => e.outcome?.autoAggression?.tier != null);
+  const withAA = (cdlEntries ?? []).filter((e) => /** @type {any} */ (e.outcome)?.autoAggression?.tier != null);
   if (withAA.length < 1) return false;
 
+  /** @type {Record<string, Array<string>>} */
   const byWeek = {};
   for (const entry of withAA) {
+    if (!entry.date) continue;
     const week = isoWeek(entry.date);
     if (!byWeek[week]) byWeek[week] = [];
-    byWeek[week].push(entry.outcome.autoAggression.tier);
+    byWeek[week]?.push(/** @type {any} */ (entry.outcome).autoAggression.tier);
   }
 
   const sortedWeeks = Object.keys(byWeek).sort();
@@ -263,7 +300,8 @@ export function computeEscalation(cdlEntries) {
 
   let streak = 0;
   for (const week of sortedWeeks) {
-    const hasMedOrHigher = byWeek[week].some(t => t === 'MED' || t === 'HIGH');
+    const tiers = byWeek[week] ?? [];
+    const hasMedOrHigher = tiers.some((t) => t === 'MED' || t === 'HIGH');
     if (hasMedOrHigher) {
       streak++;
       if (streak >= 2) return true;
@@ -278,30 +316,32 @@ export function computeEscalation(cdlEntries) {
  * Aggregate AA signals across CDL entries for buildSession context (read-side snapshot).
  * Used by coachContext to build ctx.autoAggression for intervention layer + banner UI.
  *
- * @param {object[]} cdlEntries - CDL entries (typically last 30d, filtered by caller)
+ * @param {Array<AaCdlEntry>} cdlEntries - CDL entries (typically last 30d, filtered by caller)
  * @returns {{ signals: string[], tier: string, escalating: boolean, amplified: boolean, amplifierReason: string|null, riskFlags: string[] }}
  */
 export function aggregateAutoAggression(cdlEntries) {
+  /** @type {{ signals: string[], tier: string, escalating: boolean, amplified: boolean, amplifierReason: string|null, riskFlags: string[] }} */
   const empty = { signals: [], tier: 'none', escalating: false, amplified: false, amplifierReason: null, riskFlags: [] };
   if (!cdlEntries || cdlEntries.length === 0) return empty;
 
-  const real = cdlEntries.filter(e => !e.synthetic && e.outcome != null);
+  const real = cdlEntries.filter((e) => !e.synthetic && e.outcome != null);
   if (real.length === 0) return empty;
 
+  /** @type {Set<string>} */
   const signalSet = new Set();
   for (const entry of real) {
-    const aa = entry.outcome?.autoAggression;
+    const aa = /** @type {any} */ (entry.outcome)?.autoAggression;
     if (!aa || aa.tier === 'none') continue;
     for (const s of (aa.signals ?? [])) signalSet.add(s);
   }
 
   const signals = [...signalSet];
   const tier = _computeTier(signals.length);
-  const escalating = computeEscalation(real);
+  const escalating = computeEscalation(/** @type {any} */ (real));
 
-  const amplifiedEntry = real.find(e => e.outcome?.autoAggression?.amplified === true);
+  const amplifiedEntry = real.find((e) => /** @type {any} */ (e.outcome)?.autoAggression?.amplified === true);
   const amplified = amplifiedEntry != null;
-  const amplifierReason = amplified ? (amplifiedEntry.outcome.autoAggression.amplifierReason ?? null) : null;
+  const amplifierReason = amplified && amplifiedEntry ? (/** @type {any} */ (amplifiedEntry.outcome).autoAggression.amplifierReason ?? null) : null;
 
   return { signals, tier, escalating, amplified, amplifierReason, riskFlags: [] };
 }
@@ -313,14 +353,11 @@ export function aggregateAutoAggression(cdlEntries) {
  * Recovery debt (signal #5) only counted when ≥1 other signal also fires
  * (singular recovery debt = noise for aggressive profiles, ADR 013 §1).
  *
- * @param {object} opts
- * @param {object} opts.currentEntry - CDL entry being finalized (outcome populated, no autoAggression yet)
- * @param {object[]} [opts.recentEntries] - last 30d CDL entries, excl. current
- * @param {object} [opts.hyperfocusData] - { hoursInApp7d, daysWithHyperfocus } from analytics
+ * @param {{ currentEntry: AaCdlEntry, recentEntries?: Array<AaCdlEntry>, hyperfocusData?: { daysWithHyperfocus?: number, hoursInApp7d?: number } | null }} opts
  * @returns {{ tier: string, signals: string[], escalating: boolean, amplified: boolean, amplifierReason: string|null, riskFlags: string[] }}
  */
 export function detectAutoAggression({ currentEntry, recentEntries = [], hyperfocusData = null }) {
-  const allEntries = [...(recentEntries ?? []), currentEntry].filter(Boolean);
+  const allEntries = /** @type {Array<AaCdlEntry>} */ ([...(recentEntries ?? []), currentEntry].filter(Boolean));
 
   const volumeCreep       = _detectVolumeCreep(allEntries);
   const calorieAccel      = _detectCalorieAcceleration(allEntries);
@@ -332,16 +369,17 @@ export function detectAutoAggression({ currentEntry, recentEntries = [], hyperfo
   const otherCount = [volumeCreep, calorieAccel, frustration, ignoreRecovery].filter(Boolean).length;
   const recoveryDebt = rawRecoveryDebt && otherCount >= 1;
 
-  const signals = [
+  /** @type {string[]} */
+  const signals = /** @type {string[]} */ ([
     volumeCreep     && 'volume_creep',
     calorieAccel    && 'calorie_acceleration',
     frustration     && 'frustration',
     ignoreRecovery  && 'ignore_recovery',
     recoveryDebt    && 'recovery_debt',
-  ].filter(Boolean);
+  ].filter(Boolean));
 
   const tier = _computeTier(signals.length);
-  const escalating = computeEscalation(recentEntries ?? []);
+  const escalating = computeEscalation(/** @type {any} */ (recentEntries ?? []));
   const { amplified, reason: amplifierReason } = _detectHyperfocusAmplifier(hyperfocusData);
 
   return { tier, signals, escalating, amplified, amplifierReason, riskFlags: [] };
