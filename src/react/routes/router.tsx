@@ -2,41 +2,84 @@
 // Top-level NU bottom nav: /, /auth, /auth/reactivate, /onboarding/:step
 // Nested per-tab cu bottom nav: /app/{antrenor,progres,istoric,cont}
 // Phase 3 Antrenor sub-screens nested sub /app/antrenor/<screen>.
+//
+// §B007/D-3 audit fix (D046 §3.3) — Bundle code-split via React.lazy() pentru
+// non-critical sub-routes. Critical path stays eager (Splash, Auth, Onboarding,
+// 4 tab home Antrenor/Progres/Istoric/Cont, Layout/ProtectedRoute wrap).
+// Sub-screens (Antrenor 11 + Cont 9 + Progres 2 + Istoric detail 1 = 23
+// total) load on-demand via dynamic import. Maria 65 3G LCP improved.
 
+import { lazy, Suspense } from 'react';
+import type { JSX, ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Layout } from './Layout';
+
+// Critical path — eager (always loaded — splash + auth + onboarding mandatory
+// pre-protected; 4 tab home page is bottom-nav primary entry).
 import { Splash } from './screens/Splash';
 import { Auth } from './screens/Auth';
 import { AuthCallback } from './screens/AuthCallback';
 import { Onboarding } from './screens/Onboarding';
 import { Antrenor } from './screens/antrenor/Antrenor';
-import { EnergyCheck } from './screens/antrenor/EnergyCheck';
-import { EnergyCause } from './screens/antrenor/EnergyCause';
-import { WorkoutPreview } from './screens/antrenor/WorkoutPreview';
-import { Workout } from './screens/antrenor/Workout';
-import { CevaNuMerge } from './screens/antrenor/CevaNuMerge';
-import { PainButton } from './screens/antrenor/PainButton';
-import { EquipmentSwap } from './screens/antrenor/EquipmentSwap';
-import { AparateLipsa } from './screens/antrenor/AparateLipsa';
-import { ScheduleOverride } from './screens/antrenor/ScheduleOverride';
-import { PostRpe } from './screens/antrenor/PostRpe';
-import { PostSummary } from './screens/antrenor/PostSummary';
 import { Progres } from './screens/progres/Progres';
-import { LogWeight } from './screens/progres/LogWeight';
-import { BodyData } from './screens/progres/BodyData';
 import { Istoric } from './screens/istoric/Istoric';
-import { IstoricDetail } from './screens/istoric/IstoricDetail';
 import { Cont } from './screens/cont/Cont';
-import { SettingsProfile } from './screens/cont/SettingsProfile';
-import { SettingsNotifications } from './screens/cont/SettingsNotifications';
-import { SettingsSubscription } from './screens/cont/SettingsSubscription';
-import { SettingsAppearance } from './screens/cont/SettingsAppearance';
-import { SettingsPrefs } from './screens/cont/SettingsPrefs';
-import { SettingsPrivacy } from './screens/cont/SettingsPrivacy';
-import { SettingsTerms } from './screens/cont/SettingsTerms';
-import { SettingsExport } from './screens/cont/SettingsExport';
-import { SettingsDanger } from './screens/cont/SettingsDanger';
+
+// §B007 lazy — Antrenor sub-screens (workout flow, 11 routes)
+const EnergyCheck = lazy(() => import('./screens/antrenor/EnergyCheck').then((m) => ({ default: m.EnergyCheck })));
+const EnergyCause = lazy(() => import('./screens/antrenor/EnergyCause').then((m) => ({ default: m.EnergyCause })));
+const WorkoutPreview = lazy(() => import('./screens/antrenor/WorkoutPreview').then((m) => ({ default: m.WorkoutPreview })));
+const Workout = lazy(() => import('./screens/antrenor/Workout').then((m) => ({ default: m.Workout })));
+const CevaNuMerge = lazy(() => import('./screens/antrenor/CevaNuMerge').then((m) => ({ default: m.CevaNuMerge })));
+const PainButton = lazy(() => import('./screens/antrenor/PainButton').then((m) => ({ default: m.PainButton })));
+const EquipmentSwap = lazy(() => import('./screens/antrenor/EquipmentSwap').then((m) => ({ default: m.EquipmentSwap })));
+const AparateLipsa = lazy(() => import('./screens/antrenor/AparateLipsa').then((m) => ({ default: m.AparateLipsa })));
+const ScheduleOverride = lazy(() => import('./screens/antrenor/ScheduleOverride').then((m) => ({ default: m.ScheduleOverride })));
+const PostRpe = lazy(() => import('./screens/antrenor/PostRpe').then((m) => ({ default: m.PostRpe })));
+const PostSummary = lazy(() => import('./screens/antrenor/PostSummary').then((m) => ({ default: m.PostSummary })));
+
+// §B007 lazy — Progres sub-screens (2 routes)
+const LogWeight = lazy(() => import('./screens/progres/LogWeight').then((m) => ({ default: m.LogWeight })));
+const BodyData = lazy(() => import('./screens/progres/BodyData').then((m) => ({ default: m.BodyData })));
+
+// §B007 lazy — Istoric detail (1 route, sessionId)
+const IstoricDetail = lazy(() => import('./screens/istoric/IstoricDetail').then((m) => ({ default: m.IstoricDetail })));
+
+// §B007 lazy — Cont sub-screens (9 settings routes)
+const SettingsProfile = lazy(() => import('./screens/cont/SettingsProfile').then((m) => ({ default: m.SettingsProfile })));
+const SettingsNotifications = lazy(() => import('./screens/cont/SettingsNotifications').then((m) => ({ default: m.SettingsNotifications })));
+const SettingsSubscription = lazy(() => import('./screens/cont/SettingsSubscription').then((m) => ({ default: m.SettingsSubscription })));
+const SettingsAppearance = lazy(() => import('./screens/cont/SettingsAppearance').then((m) => ({ default: m.SettingsAppearance })));
+const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m) => ({ default: m.SettingsPrefs })));
+const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then((m) => ({ default: m.SettingsPrivacy })));
+const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
+const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
+const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((m) => ({ default: m.SettingsDanger })));
+
+/**
+ * §B007 — Suspense wrapper pentru lazy sub-screens. Fallback minimal spinner
+ * cu paper background match (NU layout shift, NU flash white). Maria 65
+ * friction-low: ~50-100ms typical chunk load 3G median.
+ */
+function LazyRoute({ children }: { children: ReactNode }): JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen bg-paper text-ink2 flex items-center justify-center"
+          data-testid="lazy-route-fallback"
+          aria-live="polite"
+          role="status"
+        >
+          <div className="w-8 h-8 rounded-full border-4 border-line border-t-brick animate-spin" aria-hidden="true" />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   { path: '/', element: <Splash /> },
@@ -57,47 +100,47 @@ export const router = createBrowserRouter([
         path: 'antrenor',
         children: [
           { index: true, element: <Antrenor /> },
-          { path: 'energy-check', element: <EnergyCheck /> },
-          { path: 'energy-cause', element: <EnergyCause /> },
-          { path: 'workout-preview', element: <WorkoutPreview /> },
-          { path: 'workout', element: <Workout /> },
-          { path: 'ceva-nu-merge', element: <CevaNuMerge /> },
-          { path: 'pain-button', element: <PainButton /> },
-          { path: 'equipment-swap', element: <EquipmentSwap /> },
-          { path: 'aparate-lipsa', element: <AparateLipsa /> },
-          { path: 'schedule-override', element: <ScheduleOverride /> },
-          { path: 'post-rpe', element: <PostRpe /> },
-          { path: 'post-summary', element: <PostSummary /> },
+          { path: 'energy-check', element: <LazyRoute><EnergyCheck /></LazyRoute> },
+          { path: 'energy-cause', element: <LazyRoute><EnergyCause /></LazyRoute> },
+          { path: 'workout-preview', element: <LazyRoute><WorkoutPreview /></LazyRoute> },
+          { path: 'workout', element: <LazyRoute><Workout /></LazyRoute> },
+          { path: 'ceva-nu-merge', element: <LazyRoute><CevaNuMerge /></LazyRoute> },
+          { path: 'pain-button', element: <LazyRoute><PainButton /></LazyRoute> },
+          { path: 'equipment-swap', element: <LazyRoute><EquipmentSwap /></LazyRoute> },
+          { path: 'aparate-lipsa', element: <LazyRoute><AparateLipsa /></LazyRoute> },
+          { path: 'schedule-override', element: <LazyRoute><ScheduleOverride /></LazyRoute> },
+          { path: 'post-rpe', element: <LazyRoute><PostRpe /></LazyRoute> },
+          { path: 'post-summary', element: <LazyRoute><PostSummary /></LazyRoute> },
         ],
       },
       {
         path: 'progres',
         children: [
           { index: true, element: <Progres /> },
-          { path: 'log-weight', element: <LogWeight /> },
-          { path: 'body-data', element: <BodyData /> },
+          { path: 'log-weight', element: <LazyRoute><LogWeight /></LazyRoute> },
+          { path: 'body-data', element: <LazyRoute><BodyData /></LazyRoute> },
         ],
       },
       {
         path: 'istoric',
         children: [
           { index: true, element: <Istoric /> },
-          { path: ':sessionId', element: <IstoricDetail /> },
+          { path: ':sessionId', element: <LazyRoute><IstoricDetail /></LazyRoute> },
         ],
       },
       {
         path: 'cont',
         children: [
           { index: true, element: <Cont /> },
-          { path: 'settings-profile', element: <SettingsProfile /> },
-          { path: 'settings-notifications', element: <SettingsNotifications /> },
-          { path: 'settings-subscription', element: <SettingsSubscription /> },
-          { path: 'settings-appearance', element: <SettingsAppearance /> },
-          { path: 'settings-prefs', element: <SettingsPrefs /> },
-          { path: 'settings-privacy', element: <SettingsPrivacy /> },
-          { path: 'settings-terms', element: <SettingsTerms /> },
-          { path: 'settings-export', element: <SettingsExport /> },
-          { path: 'settings-danger', element: <SettingsDanger /> },
+          { path: 'settings-profile', element: <LazyRoute><SettingsProfile /></LazyRoute> },
+          { path: 'settings-notifications', element: <LazyRoute><SettingsNotifications /></LazyRoute> },
+          { path: 'settings-subscription', element: <LazyRoute><SettingsSubscription /></LazyRoute> },
+          { path: 'settings-appearance', element: <LazyRoute><SettingsAppearance /></LazyRoute> },
+          { path: 'settings-prefs', element: <LazyRoute><SettingsPrefs /></LazyRoute> },
+          { path: 'settings-privacy', element: <LazyRoute><SettingsPrivacy /></LazyRoute> },
+          { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
+          { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
+          { path: 'settings-danger', element: <LazyRoute><SettingsDanger /></LazyRoute> },
         ],
       },
     ],
