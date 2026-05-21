@@ -12,7 +12,16 @@
 // dynamic quote candidate post-Beta (cross-ref future MMI Engine #9 extension).
 
 import type { JSX } from 'react';
+import { Clock, Layers } from 'lucide-react';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
+
+// §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
+// hex literals → CSS custom properties. Tailwind extend in `tailwind.config.js`
+// pentru future bg-coach-lora / text-coach-meta utility classes; pe loc CSS vars
+// inline preserve fallback. Quote color = "lora" (warm gold accent line), meta
+// color = "meta" (sub-text gray-warm).
+const COACH_LORA_COLOR = 'var(--coach-lora, #e8d9b8)';
+const COACH_META_COLOR = 'var(--coach-meta, #a8a09a)';
 
 interface Props {
   onStart: () => void;
@@ -36,13 +45,19 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <div className="text-xl font-bold mt-1 tracking-tight">{title}</div>
       <div
         className="font-serif italic mt-1.5 leading-relaxed text-sm"
-        style={{ color: '#e8d9b8' }}
+        style={{ color: COACH_LORA_COLOR }}
       >
         &bdquo;Pectoralii recupereaza din marti &middot; spatele e gata.&rdquo;
       </div>
-      <div className="flex gap-3.5 mt-3.5 text-sm" style={{ color: '#a8a09a' }}>
-        <span className="flex items-center gap-1.5">~ {duration} min</span>
-        <span className="flex items-center gap-1.5">{exerciseCount} exercitii</span>
+      <div className="flex gap-3.5 mt-3.5 text-sm" style={{ color: COACH_META_COLOR }}>
+        <span className="flex items-center gap-1.5">
+          <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+          ~ {duration} min
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+          {exerciseCount} exercitii
+        </span>
       </div>
       <button
         type="button"
