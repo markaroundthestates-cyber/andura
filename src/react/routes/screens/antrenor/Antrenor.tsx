@@ -84,6 +84,10 @@ export function Antrenor(): JSX.Element {
     !reactivateDismissed &&
     pausedSnapshot === null;
 
+  // §B018 audit fix (CODE-REVIEW L-8) — extract ternary readability:
+  // engine signal preferred when aggregate loaded, fallback user override (§A002).
+  const showWorkoutCard = coach !== null ? !coach.isRestDay : schedContext === 'workout';
+
   const handleStart = (): void => {
     navigate(gotoPath('energy-check'));
   };
@@ -119,10 +123,10 @@ export function Antrenor(): JSX.Element {
       <PatternsBanner banners={coach?.patternsBanner ?? []} />
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
-      {/* §A002 audit fix (MP-pass2-coachrest-01..02): engine-driven isRestDay
-          routing — prefer coach.isRestDay (engine signal) when aggregate
-          loaded, fallback coachStore.schedContext (user override mechanism). */}
-      {(coach !== null ? !coach.isRestDay : schedContext === 'workout') ? (
+      {/* §A002 audit fix + §B018 extract: engine-driven isRestDay routing —
+          prefer coach.isRestDay (engine signal) when aggregate loaded, fallback
+          coachStore.schedContext (user override mechanism). */}
+      {showWorkoutCard ? (
         <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
       ) : (
         <CoachRestCard onLightSession={handleStart} onOverride={handleStart} />
