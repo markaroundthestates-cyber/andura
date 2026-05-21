@@ -36,6 +36,9 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    {/* Opt-in to React Router v7 future flag — wraps state updates in
+        React.startTransition for smoother concurrent rendering. Silences
+        the deprecation warning logged on every nav in v6.28+. */}
+    <RouterProvider router={router} future={{ v7_startTransition: true }} />
   </StrictMode>
 );

@@ -9,7 +9,11 @@
   <!-- §4-C3 + §4-C4 + §4-C27/28/29 + §4-C17/23 audit fix: defense-in-depth headers.
        GH Pages has no custom HTTP headers → meta http-equiv where applicable.
        'unsafe-inline' tolerated initial (Tailwind injects style) — Track 7 nonce migration. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <!-- Note: 'frame-ancestors' + X-Frame-Options are intentionally omitted — both
+       directives are ignored when delivered via <meta> (browsers log console errors).
+       True clickjacking protection requires HTTP headers, which GH Pages cannot set.
+       Accepted-risk pre-Beta; revisit when migrating to a host that supports custom headers. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="manifest" href="/manifest.json" />

@@ -256,7 +256,7 @@ function Step7({ data }: { data: OnboardingData }): JSX.Element {
         <div className="flex justify-between text-sm"><span className="text-ink2">Sex</span><span className="text-ink font-medium">{data.sex === 'm' ? 'Barbat' : data.sex === 'f' ? 'Femeie' : '-'}</span></div>
         <div className="flex justify-between text-sm"><span className="text-ink2">Obiectiv</span><span className="text-ink font-medium">{data.goal ? GOAL_LABELS[data.goal] : '-'}</span></div>
         <div className="flex justify-between text-sm"><span className="text-ink2">Frecventa</span><span className="text-ink font-medium">{data.frequency ? `${data.frequency}/sapt` : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Experienta</span><span className="text-ink font-medium">{data.experience ?? '-'}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-ink2">Experienta</span><span className="text-ink font-medium">{data.experience ? data.experience.charAt(0).toUpperCase() + data.experience.slice(1) : '-'}</span></div>
         <div className="flex justify-between text-sm"><span className="text-ink2">Greutate</span><span className="text-ink font-medium">{data.weight ? `${data.weight} kg` : '-'}</span></div>
       </div>
     </>
