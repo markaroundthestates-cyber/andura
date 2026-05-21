@@ -1,8 +1,8 @@
-# A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV — chat 2 cumulative 2026-05-21 evening
+# A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR ART. 20 + B009 STATUS TINTS — chat 2 cumulative 2026-05-21 evening
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 5 LANDED iter 3 fixes from smoke findings. Co-CTO autonomous ZERO interruption.
-**Last LANDED:** Workout BottomNav hide on in-session routes anti-misclick (`5a311ee4`).
-**Branch:** main, **37 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 7 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
+**Last LANDED:** B009 status banner tints CSS vars + dark theme adapt (`bcd78c79`).
+**Branch:** main, **41 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -24,6 +24,9 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 16. **NEW `4fe2379e`** — Auth.tsx fix "în" diacritic regression D-LEGACY-064
 17. **NEW `4fa1887f`** — Dark theme wire: themeSync.ts + [data-theme="dark"] WCAG palette + main.tsx applyInitialTheme + CoachTodayCard dark: override + tailwind darkMode config
 18. **NEW `5a311ee4`** — Layout hide BottomNav on in-session routes (workout/post-rpe/post-summary) anti-misclick
+19. **NEW `32065785`** — LATEST.md sync handover
+20. **NEW `230f15d7`** — §28-M4 SettingsExport include Tier 1 IDB sessions (GDPR Art. 20 full portability)
+21. **NEW `bcd78c79`** — B009 status banner tints CSS vars + dark theme adapt (5 components migrated WorkoutPreview + PatternsBanner + AlertsBanner + CoachRestCard + SettingsSubscription)
 
 ---
 
