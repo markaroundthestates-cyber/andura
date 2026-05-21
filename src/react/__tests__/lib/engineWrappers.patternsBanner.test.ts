@@ -21,7 +21,15 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(detectGlobalStagnation).mockReturnValue({ maxStagnationWeeks: 0, byExercise: {} });
   vi.mocked(getAdherenceScore).mockReturnValue({ score: 75, color: 'var(--accent)', label: 'OK' });
-  useWorkoutStore.setState({ sessionsHistory: [] });
+  // Seed 3 dummy sessions to pass LOW_ADHERENCE gate. Tests that target the
+  // fresh-user gate override sessionsHistory inside the it() block.
+  useWorkoutStore.setState({
+    sessionsHistory: [
+      { ts: 1, title: 's1', meta: '' },
+      { ts: 2, title: 's2', meta: '' },
+      { ts: 3, title: 's3', meta: '' },
+    ],
+  });
 });
 
 describe('engineWrappers — getPatternsBanner Option B composer', () => {
@@ -84,6 +92,31 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     // STAGNATION skipped, LOW_ADHERENCE still emit
     expect(banners.find((b) => b.id === 'STAGNATION')).toBeUndefined();
     expect(banners.find((b) => b.id === 'LOW_ADHERENCE')).toBeDefined();
+  });
+
+  it('Gigel-friendly: LOW_ADHERENCE gated until ≥3 sessions logged', () => {
+    // Fresh user with 0-2 sessions: even with low adherence score, no banner
+    vi.mocked(getAdherenceScore).mockReturnValue({ score: 10, color: 'r', label: 'Slab' });
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
+
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { ts: 1, title: 's', meta: '' },
+        { ts: 2, title: 's', meta: '' },
+      ],
+    });
+    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
+
+    // User with ≥3 sessions: banner fires
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { ts: 1, title: 's', meta: '' },
+        { ts: 2, title: 's', meta: '' },
+        { ts: 3, title: 's', meta: '' },
+      ],
+    });
+    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeDefined();
   });
 
   it('defensive: adherence throws → graceful empty banner skip', () => {

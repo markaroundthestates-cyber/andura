@@ -415,6 +415,7 @@ export interface PatternBanner {
 
 const STAGNATION_WEEKS_THRESHOLD = 2; // 2+ consecutive weeks → banner
 const LOW_ADHERENCE_THRESHOLD = 50;   // adherence < 50 → banner
+const LOW_ADHERENCE_MIN_SESSIONS_GATE = 3; // Gigel-friendly: fresh user (<3 sessions) sees no adherence-low banner
 
 /**
  * Composer Option B Bugatti — patterns banner via pure-function engines
@@ -459,19 +460,25 @@ export function getPatternsBanner(): PatternBanner[] {
     console.warn('[engineWrappers] getPatternsBanner STAGNATION failed:', e);
   }
 
-  // Pattern 2: LOW_ADHERENCE via adherence engine
+  // Pattern 2: LOW_ADHERENCE via adherence engine (gated on user with
+  // history — fresh T0 user with 0-2 sessions sees ZERO adherence pattern
+  // since "adherence" requires a baseline to fall below. Gigel-friendly:
+  // first-time user sees encouragement, not "you slacked").
   try {
-    const adherence = getAdherenceScore();
-    // Engine returns {score, color, label}; defensive number-only legacy fallback
-    const score = typeof adherence === 'object' && adherence !== null
-      ? (adherence as { score?: number }).score
-      : (typeof adherence === 'number' ? adherence : null);
-    if (typeof score === 'number' && score < LOW_ADHERENCE_THRESHOLD) {
-      banners.push({
-        id: 'LOW_ADHERENCE',
-        severity: 'info',
-        text: 'Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta.',
-      });
+    const sessionCount = useWorkoutStore.getState().sessionsHistory.length;
+    if (sessionCount >= LOW_ADHERENCE_MIN_SESSIONS_GATE) {
+      const adherence = getAdherenceScore();
+      // Engine returns {score, color, label}; defensive number-only legacy fallback
+      const score = typeof adherence === 'object' && adherence !== null
+        ? (adherence as { score?: number }).score
+        : (typeof adherence === 'number' ? adherence : null);
+      if (typeof score === 'number' && score < LOW_ADHERENCE_THRESHOLD) {
+        banners.push({
+          id: 'LOW_ADHERENCE',
+          severity: 'info',
+          text: 'Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta.',
+        });
+      }
     }
   } catch (e) {
     console.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
