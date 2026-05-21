@@ -22,6 +22,11 @@ import { KALMAN_DEFAULTS } from './constants.js';
  *
  * Returns 0 cand insufficient data sau SS_tot=0 (defensive total function).
  *
+ * §B030 audit fix (REVIEW-A036-A038 M-§A038-03) — filter invalid pairs
+ * (missed weigh-ins, scale glitches NaN). Substituting 0 distorts SS_tot /
+ * yMean. Excluding bad indices preserves statistical validity. Return 0 dacă
+ * valid pairs < 2 (insufficient data for R² computation).
+ *
  * @param {ReadonlyArray<number>} observed
  * @param {ReadonlyArray<number>} predicted
  * @returns {number}
@@ -30,12 +35,19 @@ export function computeR2(observed, predicted) {
   if (!Array.isArray(observed) || !Array.isArray(predicted)) return 0;
   if (observed.length !== predicted.length || observed.length === 0) return 0;
 
-  const yMean = observed.reduce((s, v) => s + (Number.isFinite(v) ? v : 0), 0) / observed.length;
+  // §B030 — filter valid pairs first; NU substitute 0 for NaN.
+  const valid = [];
+  for (let i = 0; i < observed.length; i += 1) {
+    if (Number.isFinite(observed[i]) && Number.isFinite(predicted[i])) {
+      valid.push([observed[i], predicted[i]]);
+    }
+  }
+  if (valid.length < 2) return 0;
+
+  const yMean = valid.reduce((s, [y]) => s + y, 0) / valid.length;
   let ssRes = 0;
   let ssTot = 0;
-  for (let i = 0; i < observed.length; i += 1) {
-    const y = Number.isFinite(observed[i]) ? observed[i] : 0;
-    const yhat = Number.isFinite(predicted[i]) ? predicted[i] : 0;
+  for (const [y, yhat] of valid) {
     ssRes += (y - yhat) ** 2;
     ssTot += (y - yMean) ** 2;
   }
