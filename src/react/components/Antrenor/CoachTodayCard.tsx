@@ -5,6 +5,11 @@
 // §A001 audit fix (MP-pass2-coachtoday-01..03): wire workoutTitle + duration
 // + exerciseCount din PlannedWorkoutOutput. Fallback mockup stub cand
 // workout=null (loading state pre-aggregate or T0 baseline).
+//
+// §B012 audit fix (CODE-REVIEW L-2) — italic quote line 36 ("Pectoralii
+// recupereaza...") = PERMANENT DESIGN ELEMENT mockup parity, NU engine-driven
+// micro-coaching V1. Per mockup andura-clasic.html#L750 verbatim. Engine-driven
+// dynamic quote candidate post-Beta (cross-ref future MMI Engine #9 extension).
 
 import type { JSX } from 'react';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
