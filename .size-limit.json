@@ -2,31 +2,31 @@
   {
     "name": "main entry (index)",
     "path": "dist/assets/index-*.js",
-    "limit": "165 KB",
+    "limit": "150 KB",
     "gzip": true
   },
   {
     "name": "main chunk (app code)",
     "path": "dist/assets/main-*.js",
-    "limit": "145 KB",
+    "limit": "120 KB",
     "gzip": true
   },
   {
     "name": "vendor (react)",
     "path": "dist/assets/vendor-react-*.js",
-    "limit": "30 KB",
+    "limit": "26 KB",
     "gzip": true
   },
   {
     "name": "vendor (icons)",
     "path": "dist/assets/vendor-icons-*.js",
-    "limit": "6 KB",
+    "limit": "5.5 KB",
     "gzip": true
   },
   {
     "name": "CSS total",
     "path": "dist/assets/*.css",
-    "limit": "6 KB",
+    "limit": "5 KB",
     "gzip": true
   }
 ]
