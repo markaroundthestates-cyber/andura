@@ -48,39 +48,44 @@ Fix landed `fc3e6cc9`: `authSignOut()` call în logout success path + delete suc
 
 ---
 
-## §3 DECIZII TINE BLOCATE (5 itemi)
+## §3 DECIZII TINE BLOCATE → **ALL 5 RESOLVED 2026-05-21 morning** (D046 LOCKED V1)
 
-### 3.1 ConfirmModal A005-A010 UI placement paradigm (4 confirms)
-`gsd-pattern-mapper` recommendation (`📤_outbox/wave-a-audit-engine/PATTERNS.md`):
-- §A005 schimba-faza → SettingsPrefs.tsx Avansat section + ConfirmModal (HIGH)
-- §A006 reseteaza-onboarding → SettingsPrefs.tsx + ConfirmModal + navigate (HIGH)
-- §A009 schimba-program → Antrenor.tsx section + ConfirmModal (MEDIUM — **contradicts mockup drill-down paradigm Daniel 2026-05-11 §1**)
-- §A010 finish-early → ExitConfirmSheet extension 3→4 options (HIGH)
+### 3.1 ConfirmModal A005-A010 UI placement paradigm — ✅ **SAME aliniat drill-down per mockup**
+**Daniel verdict:** SAME, aliniat: drill-down screens per mockup. Paradigm consistency cu Daniel D-LEGACY 2026-05-11. NO change.
+- **Interpretare:** drill-down paradigm reaffirmed = NEW screen files per mockup, NU shared ConfirmModal reuse (REVERSE PATTERNS.md HIGH recommendation)
+- **A003 ConfirmModal component** stays integrated logout/delete system-level destructive actions (Wave A LANDED)
+- **B001+B002+B003+B004 ITER_2_PLAN** scope = drill-down NEW screens, NU shared ConfirmModal wire
+- **B038 paradigm task** = drill-down per mockup explicit (NU DECISIONS.md modal LOCK V1 append)
+- **Open clarificare:** A003 stays system-level vs full rip-out logout/delete migrate drill-down — vezi CHAT_STATE.md §1
 
-**Decizia ta:** confirm via shared ConfirmModal Bugatti-consistency SAU drill-down screen per mockup explicit (16 new files vs 0)?
+### 3.2 Cluster E020 paradigm — ✅ **REVERSE include Beta scope iter 2**
+**Daniel verdict:** REVERSE, INCLUDE pre-Beta. Skip-auth (Maria 65 test drive paradigm) + Google OAuth (Gigel/Marius low friction) = auth functionality completă, NU optional. Cluster E020 Slice 1.x în scope LOCKED V1. Magic Link singur = MVP paradigm, NU FULL.
+- **Cost:** ~2-4h dev + Firebase OAuth provider Google Cloud Console + Skip-auth state mgmt + E2E tests
+- **Schedule:** iter 2 Wave B-1 sequential post Daniel decisions commit
+- **Tasks:** B005 + B006
 
-### 3.2 Cluster E020 paradigm — Google OAuth + Skip-auth
-A013 + A014 blocked Slice 1.x decizie. Per CLUSTER_E_PARADIGM_TEMPLATE.md.
+### 3.3 A011-A012 Bundle code-split — ✅ **SAME supervised ASAP-saptamana**
+**Daniel verdict:** SAME supervised, timing ASAP pre-Beta. Block 2-3h Daniel-prezent, programare cât mai curând în săptămână — NU end-of-iter defer.
+- **Tasks:** B007 + B008
+- **Action item:** Daniel programam live session 2-3h windowed săptămâna curentă
 
-**Decizia ta:** include în Beta sau defer post-launch?
+### 3.4 A038 Kalman BLOCKER — ✅ **REVERSE FIX + FLIP ON pre-Beta**
+**Daniel verdict:** REVERSE, FIX + FLIP ON pre-Beta. PRIMER §2 claim "Kalman filter adaptive TDEE (NU 2000 kcal hardcoded)" = trebuie working real, NU formal-LOCKED cu flag OFF + EWMA fallback dominant. "Engine adaptive TDEE" feature OFF în Beta = false FULL.
+- **Fix scope:** document processNoise=22*0.01 origin + calibrate via simulator (4-8h pe persona trajectories Marius/Maria/Gigel) + flip flag ON + 2 CRITICAL + 4 MEDIUM + 3 LOW findings rezolvate (REVIEW-A036-A038.md)
+- **Total:** ~12-20h dev + simulator test combined
+- **Schedule:** iter 2 sau iter 3
+- **Tasks:** B026 + B027 + B029 unblock + B028 + B030-B034 autonomous independent
 
-### 3.3 A011-A012 Bundle code-split CRITICAL
-432KB → ≤145KB main bundle target Maria 65 3G LCP. **Daniel-supervised live recommended** (HIGH RISK — am skipped strict overnight).
+### 3.5 A021-A022 LARGE refactor — ✅ **REVERSE include iter 2 pre-Beta**
+**Daniel verdict:** REVERSE, INCLUDE iter 2 pre-Beta. Bugatti "fiecare linie cod citită" pre-Launch audit nuclear = substrate trebuie clean (TS strict + Tailwind consistent). "Refactor later NEVER happens" rule ACTIVĂ pre-Beta. .d.ts stubs Wave A iter 2 prep = stepping stone NU finish line.
+- **Cost:** ~6-10h supervised combined
+- **A022 split:** 6 atomic subtasks deja documented WAVE_BCD_D029_SAMPLE.md
+- **Wave B/C/D blend incremental**, iter 2 finalizează
+- **Tasks:** B009 + B010
 
-**Decizia ta:** când programam live session?
+---
 
-### 3.4 A038 Kalman BLOCKER (engine math)
-- processNoise = 22 * 0.01 magic value undocumented
-- bayesian_kalman_v1 feature flag default OFF → EWMA fallback dominant ~3-obs memory NU 90-day adaptation
-- 2 CRITICAL findings, 4 MEDIUM, 3 LOW (per REVIEW-A036-A038.md)
-
-**Decizia ta:** Bayesian Nutrition V1 part of Beta SAU defer post-launch + EWMA fallback acceptabil pentru V1?
-
-### 3.5 A021-A022 LARGE refactor
-- A021 Tailwind ↔ CSS vars migration (multi-file ~3-5h)
-- A022 TypeScript strict mode .js files (~3-5h, 231 files surface)
-
-**Decizia ta:** iter 2 scope sau defer post-Beta?
+**SSOT cascade landed:** D046 LOCKED V1 DECISIONS.md + CHAT_STATE.md §1 RESOLVED + ITER_2_PLAN.md §6 RESOLVED + PRIMER §5 micro-append.
 
 ---
 

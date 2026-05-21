@@ -1,35 +1,38 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-21 morning ACASĂ (autonomous overnight 12h cycle complete, Daniel asleep, post Co-CTO handover wrap)
-**Topic active:** Wave A iter 1 V2 95% LANDED. 5 BLOCKED Daniel decisions surfaced. Iter 2 plan + tooling + audits all done. CC NEW handover ready.
-**Bw current:** post auto-compact cycles, 1M context window
-**Author:** Co-CTO Claude chat ACASĂ (autonomous overnight cycle wrap)
+**Last updated:** 2026-05-21 morning ACASĂ chat 1 NEW (post §CC.2 startup + Daniel CEO 5 BLOCKED resolved D046 LOCKED V1)
+**Topic active:** Iter 2 unblocked — D046 LOCKED V1 5 decisions REVERSE 4 + SAME 1. Iter 2 scope expanded: A038 Kalman FIX+FLIP-ON + Cluster E Beta + A021-A022 iter 2 LARGE refactor + Bundle supervised ASAP saptamana. ConfirmModal paradigm drill-down per mockup (REVERSE PATTERNS recommandation reuse).
+**Bw current:** 7% (1M context)
+**Author:** Co-CTO Claude chat ACASĂ NEW (post overnight wrap + Daniel morning trigger)
 
 ---
 
 ## §0 Last exchanges Daniel↔Co-CTO (terse log)
 
+**Chat overnight wrap (recap istoric):**
 1. Daniel "esti inca tanar... merg la somn... Vreau sa rulezi autonomous ca un adevarat cto"
-2. Daniel "1M token window NU 200k" — scope upward
-3. Daniel "Nu te opresti singur. Auto-compact handles"
-4. Wave A autonomous overnight execute: 18 NEW + 12 NO-OP + 4 MEDIUM fixes + 3 tooling + 2 audit-only = 38/40 (95%)
-5. gsd-security-auditor catched BLOCKER §A007 logout missing authSignOut → fix landed `fc3e6cc9`
-6. /security-review skill PASS pe 38-commit diff (zero new HIGH/MEDIUM)
-7. Daniel "tu de ce te-ai oprit random?" — slip eu interpretat greșit skill end-rule. Resume autonomous.
-8. Daniel "ce mai ai de facut" — listă status concretă.
-9. Daniel "fa autonomous alea de ai zis, dupa handover CC nou + sync chat new + inbox cleanup"
-10. Execute: A022a stubs + Wave BCD D029 sample + Bugatti V4 DEFER + LATEST refresh + PRIMER §5 micro-append + CHAT_STATE refresh + handover scribe
+2. Daniel "Nu te opresti singur. Auto-compact handles"
+3. Wave A autonomous overnight execute: 18 NEW + 12 NO-OP + 4 MEDIUM fixes + 3 tooling + 2 audit-only = 38/40 (95%)
+4. gsd-security-auditor catched BLOCKER §A007 logout missing authSignOut → fix landed `fc3e6cc9`
+
+**Chat 1 NEW 2026-05-21 morning ACASĂ:**
+5. Daniel "salut. acasa" — §CC.2 startup triggered → PRIMER+DECISIONS+LATEST+CHAT_STATE read
+6. Daniel "deci avem 95% di 900+ bugs fixed?" — clarificat NU: 95% = Wave A only (38/40), iter 1 cumulative ~24%, total iter 1 plan ~305 tasks D029 698 findings consolidated
+7. Daniel **5 decizii LOCKED §3.1-§3.5:** ConfirmModal SAME drill-down per mockup REVERSE PATTERNS reuse + OAuth Cluster E REVERSE Beta include + Bundle SAME supervised ASAP-saptamana + Kalman REVERSE FIX+FLIP-ON pre-Beta + A021-A022 REVERSE iter 2 LARGE refactor
+8. Cascade SSOT execute: D046 LOCKED V1 + frontmatter + CHAT_STATE + MORNING_HANDOVER §3 RESOLVED + ITER_2_PLAN §6 RESOLVED + PRIMER §5 micro-append
 
 ---
 
 ## §1 Open questions / pending decisions Daniel
 
-5 BLOCKED items (vezi `📥_inbox/MORNING_HANDOVER_2026-05-21.md` §3):
-- §A005-A010 ConfirmModal paradigm
-- §A013-A014 Cluster E Slice 1.x
-- §A011-A012 Bundle CRITICAL live
-- §A038 Kalman Beta/defer
-- §A021-A022 LARGE refactor (A021 LANDED autonomous, A022 split documented + .d.ts prep landed)
+**ALL 5 BLOCKED RESOLVED via D046 LOCKED V1 (2026-05-21 morning):**
+- ✅ §3.1 ConfirmModal — SAME aliniat drill-down per mockup (REVERSE PATTERNS reuse recommandation; A003 component stays integrated logout/delete system-level destructive actions, B001-B004 = drill-down NEW screens per mockup)
+- ✅ §3.2 OAuth Cluster E020 — REVERSE include Beta scope iter 2 (~2-4h dev + Firebase Google OAuth provider + Skip-auth state)
+- ✅ §3.3 Bundle A011-A012 — SAME supervised, timing ASAP-saptamana NU end-of-iter defer (Block 2-3h Daniel-prezent)
+- ✅ §3.4 Kalman A038 — REVERSE FIX+FLIP-ON pre-Beta (processNoise origin documented + Hall 2008 citation + simulator persona calibrate + flag ON + 2 CRIT+4 MED+3 LOW fix, ~12-20h dev)
+- ✅ §3.5 A021-A022 — REVERSE include iter 2 (Tailwind ↔ CSS vars + TS strict, ~6-10h supervised, A022 split 6 subtasks documented)
+
+**1 open question CLARIFICARE Daniel:** ConfirmModal A003 component LANDED Wave A (logout/delete confirm gate) — interpret "NO change" §3.1 ca stays-in-use system-level + drill-down NEW pentru per-screen-flow B001-B004? Sau ConfirmModal rip-out complet inclusiv logout/delete migrate la drill-down screens?
 
 ---
 
@@ -92,14 +95,28 @@ MORNING_HANDOVER în `📥_inbox/MORNING_HANDOVER_2026-05-21.md` (Daniel review-
 
 ---
 
-## §4 Next P1 — Daniel CEO morning review
+## §4 Next P1 — Iter 2 unblocked, autonomous safe tasks ready
 
-1. **Read MORNING_HANDOVER_2026-05-21.md** (5-10 min, narrative concise)
-2. **Decide 5 BLOCKED items §3** (PATTERNS.md + ITER_2_PLAN.md available)
-3. **Iter 2 trigger** post decisions (or partial — defer items post-Beta acceptable)
-4. **Push branch decision** — 46+ commits ahead origin/main (D031 invariant Daniel manual)
+**Post D046 LOCKED V1, autonomous-safe tasks ready START** (NU blocked Daniel-supervised):
+1. **B011-B020** (10 LOW code-review iter 2 backlog) — ne-blocate, ~3-5h autonomous
+2. **B021-B025** (5 A036 MEDIUM Tier independent) — ne-blocate, ~2-3h autonomous
+3. **B028 + B030-B034** (6 A038 MEDIUM Kalman independent of Beta flag decision) — ne-blocate
+4. **B035-B037** (3 UI nits autonomous) — ne-blocate
+5. **B040** (DECISIONS.md throttle accepted-risk doc) — ne-blocat
 
-**Continuous mode autonomous = AT PLATEAU.** Nothing safe-autonomous remaining without Daniel decisions. Stand-by until trigger.
+**Total Wave B-2 autonomous ~25 tasks ~4-7h CC Opus** per ITER_2_PLAN.md §4 paradigm.
+
+**Daniel-supervised pending:**
+- B007+B008 Bundle code-split live session ASAP-saptamana (when Daniel programam)
+- B026+B027+B029 Kalman simulator R²>0.85 + processNoise calibrate (Daniel review post-implementation)
+- B009+B010 A021+A022 LARGE refactor supervised checkpoints
+
+**Daniel decisions remaining minor:**
+- ConfirmModal §3.1 clarification (A003 stays system-level vs full rip-out — vezi §1 above)
+- D-1b Goal type expansion (B003 sub-decision, 4→6 vs map 4 + suppress)
+- D-7 Wave structure preference (parallel B-1 + B-2 vs sequential)
+
+**Push branch decision** — 46+ commits ahead origin/main (D031 invariant Daniel manual).
 
 ---
 

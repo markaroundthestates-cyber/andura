@@ -157,69 +157,53 @@ Wave A observed: ~3.5h cumulative real time pentru 36 effective closures = **~5-
 
 ---
 
-## §6 Pre-execution Daniel decisions checklist
+## §6 Pre-execution Daniel decisions checklist → **5 RESOLVED 2026-05-21 morning (D046 LOCKED V1)** + 3 remaining minor
 
-**5 critical Daniel CEO decisions blocked Iter 2 Wave B-1 start:**
+### D-1: ConfirmModal UI placement paradigm — ✅ **RESOLVED: drill-down per mockup (SAME aliniat)**
+**Daniel verdict 2026-05-21 morning:** SAME aliniat drill-down screens per mockup. Paradigm consistency D-LEGACY-2026-05-11. NO change.
+- **REVERSE PATTERNS.md HIGH recommendation** (ConfirmModal reuse) → drill-down strict mockup parity ELECTED
+- **B001+B002+B003+B004 scope updated:** drill-down NEW screens (~16 extra files per PATTERNS option b)
+- **B038 paradigm task** scope: drill-down per mockup explicit (NU DECISIONS.md modal LOCK V1 append — D046 supersedes B038 task purpose)
+- **A003 ConfirmModal component:** stays integrated logout/delete system-level destructive actions (Wave A LANDED) — NU rip-out
+- **Open clarificare Daniel:** A003 stays system-level vs migrate logout/delete drill-down too (vezi CHAT_STATE.md §1)
 
-### D-1: ConfirmModal UI placement paradigm (PATTERNS §A005-A010)
-- **Options:**
-  - (a) **ConfirmModal reuse Bugatti consistency** — 4 wire sites, ZERO new files, contradicts mockup drill-down 2026-05-11 §1 → append D046 LOCK V1 modal paradigm in DECISIONS.md superseding mockup directive
-  - (b) **Drill-down strict mockup parity** — 4 NEW screen files + 4 routes + 4 test files ~16 extra files
-- **Tradeoff:** consistency + faster ship (a) vs mockup parity (b)
-- **PATTERNS.md recommendation:** (a) ConfirmModal reuse — HIGH confidence
-- **Affects tasks:** B001 + B002 + B003 + B004 + B038
+### D-1b: Goal type expansion (PATTERNS §A009 sub-decision) — ⏳ **DEFERRED Daniel clarificare**
+- **Options stand:** (a) Goal type 4 → 6 per mockup vs (b) keep 4 + map+suppress UI rows
+- **Engine impact pending:** phase recalculation hook on goal switch — verify engine pipeline support pre commit B003 scope
 
-### D-1b: Goal type expansion (PATTERNS §A009 sub-decision)
-- **Options:**
-  - (a) Extend Goal type 4 (masa/forta/definire/sanatate) → 6 (auto/forta/masa/slabire/mentenanta/longevitate) per mockup line 863-869
-  - (b) Keep 4 + map mockup auto→default + suppress mentenanta/longevitate UI rows
-- **Engine impact:** option (a) requires phase recalculation hook on goal switch — verify engine pipeline support
-- **Affects task:** B003
+### D-2: Cluster E020 OAuth + Skip-auth — ✅ **RESOLVED: REVERSE include Beta**
+**Daniel verdict:** REVERSE, INCLUDE pre-Beta. Skip-auth (Maria 65 test drive paradigm) + Google OAuth (Gigel/Marius low friction) = auth FULL paradigm, NU Magic Link singur MVP.
+- **Cost:** ~2-4h dev + Firebase OAuth provider Google Cloud Console + Skip-auth state mgmt + E2E tests
+- **Schedule:** iter 2 Wave B-1
+- **Tasks B005 + B006 UNBLOCKED**
 
-### D-2: Cluster E020 OAuth + Skip-auth Slice 1.x (ITER_EXIT §A013+§A014)
-- **Options:**
-  - (a) Include in Beta (Google OAuth + Skip-auth dev parad live pe Beta)
-  - (b) Defer post-Beta launch (Magic Link only V1)
-- **Tradeoff:** broader auth UX (a) vs simpler ship Beta (b)
-- **Affects tasks:** B005 + B006
+### D-3: Bundle code-split A011-A012 timing — ✅ **RESOLVED: SAME supervised ASAP-saptamana**
+**Daniel verdict:** SAME supervised live, timing ASAP-saptamana NU end-of-iter defer. Block 2-3h Daniel-prezent.
+- **Schedule:** Daniel programam live session 2-3h windowed săptămâna curentă
+- **Tasks B007 + B008 ARMED** for Daniel-trigger live session
 
-### D-3: Bundle code-split A011-A012 timing (ITER_EXIT §A011+§A012)
-- **Options:**
-  - (a) Pre-Beta MANDATORY live supervised session — Maria 65 LCP 3G priority HIGH
-  - (b) Post-Beta first-week launch follow-up
-- **Tradeoff:** Maria 65 perception bar pre-Beta (a) vs faster ship (b)
-- **Recommendation:** (a) MANDATORY — Maria 65 Gigel Test fail on 432KB 3G LCP
-- **Affects tasks:** B007 + B008
+### D-4: A038 Kalman BLOCKER — ✅ **RESOLVED: REVERSE FIX + FLIP ON pre-Beta**
+**Daniel verdict:** REVERSE, FIX + FLIP ON pre-Beta. PRIMER §2 brand-promise "Kalman adaptive TDEE NU 2000 kcal hardcoded" must be REAL working, NU OFF+EWMA fallback false-FULL.
+- **Fix scope:** processNoise=22*0.01 origin documented + Hall 2008 citation + calibrate simulator persona Marius/Maria/Gigel + flip flag ON + 2 CRIT+4 MED+3 LOW REVIEW-A036-A038 fixed
+- **Total:** ~12-20h dev + simulator combined
+- **Schedule:** iter 2 sau iter 3
+- **Tasks B026+B027+B029 UNBLOCKED** (Bayesian V1 Beta scope); B028+B030-B034 already autonomous independent
 
-### D-4: A038 Kalman BLOCKER (REVIEW-A036-A038.md C-01+C-02)
-- **Options:**
-  - (a) Include Bayesian Nutrition V1 in Beta — requires processNoise derivation + Hall 2008 citation + 90-day simulator R²>0.85 test (B026+B027+B029 ~6-10h CC Opus)
-  - (b) Defer Bayesian Nutrition post-Beta — Kalman OFF feature flag default + EWMA fallback dominant ~3-obs memory acceptable V1 + doc explicit cap-comment kalmanFilter.js
-- **Tradeoff:** Beta nutrition recommendations quality (a) vs faster ship + Kalman validated post-Beta real user data (b)
-- **Affects tasks:** B026 + B027 + B029 (BLOCKED if Beta) + B028 + B030-B034 (autonomous regardless)
+### D-5: A021-A022 LARGE refactor scope — ✅ **RESOLVED: REVERSE include iter 2**
+**Daniel verdict:** REVERSE, INCLUDE iter 2 pre-Beta. Bugatti "fiecare linie cod citită" pre-Launch nuclear gate = substrate trebuie clean (TS strict + Tailwind consistent). "Refactor later NEVER happens" rule activă. A022a .d.ts stubs = stepping stone NU finish.
+- **Cost:** ~6-10h supervised combined
+- **A022 split** = 6 atomic subtasks deja documented WAVE_BCD_D029_SAMPLE.md
+- **Wave B/C/D blend incremental**, iter 2 finalizează
+- **Tasks B009 + B010 UNBLOCKED** for iter 2 scope execution
 
-### D-5: A021-A022 LARGE refactor scope (ITER_EXIT §A021+§A022)
-- **Options:**
-  - (a) Iter 2 scope (Tailwind ↔ CSS vars migration ~30 files + TypeScript strict .js → .ts ~231 files = ~6-10h CC Opus combined)
-  - (b) Defer post-Beta launch — pre-Beta acceptable cu hybrid (current state)
-- **Tradeoff:** maintenance cleanliness (a) vs faster Beta ship (b)
-- **Recommendation:** (b) defer — LARGE refactor risk-prone pre-Beta launch; post-Beta cycle safer
-- **Affects tasks:** B009 + B010
-
-### D-6: GDPR Tier 1+2 wipe implementation (SECURITY T-7)
-- **Options:**
-  - (a) Implement IndexedDB deleteDatabase + Firebase RTDB DELETE pre-Beta (~30-60 min)
-  - (b) Amend Privacy Policy disclose "client-side only V1, server-side erasure Phase 7+" (~10-15 min)
-- **Tradeoff:** GDPR Art. 17 strict compliance (a) vs honest disclosure (b)
-- **Recommendation:** (a) implement — pre-Beta acceptable expand, ~30-60 min, eliminates GDPR exposure
+### D-6: GDPR Tier 1+2 wipe implementation (SECURITY T-7) — ⏳ **PENDING Daniel verdict**
+- **Options stand:** (a) Implement IDB deleteDatabase + RTDB DELETE (~30-60 min) vs (b) Amend Privacy Policy honest disclosure (~10-15 min)
+- **Recommendation:** (a) implement — pre-Beta acceptable expand, eliminates GDPR exposure
 - **Affects task:** B039
 
-### D-7: Iter 2 Wave structure preference
-- **Options:**
-  - (a) Wave B-2 autonomous FIRST (warmup LOW+MEDIUM 25 tasks), then Wave B-1 Daniel-decisions blockers
-  - (b) Wave B-1 Daniel-decisions FIRST (post §6 commit), then Wave B-2 autonomous
-  - (c) Parallel Wave B-1 + Wave B-2 (if Daniel live supervised Bundle session + autonomous concurrent)
-- **Recommendation:** (c) parallel — maximizes throughput; Daniel supervises Bundle live in 1 window, CC executes autonomous Wave B-2 background
+### D-7: Iter 2 Wave structure preference — ⏳ **PENDING Daniel verdict** (or default Co-CTO autonomous tactical)
+- **Default recommendation:** (c) parallel — Daniel supervises Bundle live in 1 window, CC executes autonomous Wave B-2 background
+- Per Co-CTO autonomy LOCKED V1, eu pot decide tactical singur dacă Daniel NU surface preferință explicit
 
 ---
 
