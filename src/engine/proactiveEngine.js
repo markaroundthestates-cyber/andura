@@ -157,7 +157,6 @@ export function checkTrainingStreak(logs) {
       return ts ? todTs(ts) : null;
     }).filter(Boolean)
   );
-  const sorted = [...days].sort().reverse();
   let streak = 0;
   const today = new Date();
   for (let i = 0; ; i++) {

@@ -9,7 +9,7 @@
 // ZERO mutation algorithm semantics per §4.1 (FATIGUED/PARTIAL thresholds
 // preserved; aggregation preserved; refactor = taxonomy expansion only).
 
-import { EXERCISE_MUSCLES, MUSCLE_HEADS, getMuscleState } from './muscleMap.js';
+import { EXERCISE_MUSCLES, getMuscleState } from './muscleMap.js';
 import { MS_PER_DAY } from '../constants.js';
 import {
   GROUP_HEAD_MAP_BIG11,

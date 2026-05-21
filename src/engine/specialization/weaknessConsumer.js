@@ -24,7 +24,6 @@
 
 import { detectWeakGroups } from '../weaknessDetector.js';
 import {
-  CONSENSUS_WINDOW_SESSIONS,
   TOP_N_DISCIPLINE,
   WEAKNESS_THRESHOLD_RATIO,
   ELIGIBLE_GROUPS_SPECIALIZATION_BIG11,

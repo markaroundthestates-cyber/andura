@@ -10,7 +10,6 @@
 // All functions PURE — no Date.now, no Math.random, no side effects.
 
 import {
-  WEEK_PHASES,
   DELOAD_MULTIPLIERS,
   MARIUS_5_1_THRESHOLDS,
   ANTI_ABUSE,

@@ -536,7 +536,7 @@ export function reconciliationAction(selfReport, behavioral, previousReconciliat
  * @param {{ selfReport: {primary?: string, secondary?: string, confidence?: string} | null, cdlEntries: Array<PtCdlEntry>, hyperfocusData?: PtHyperfocusData, previousReconciliations?: Array<any> }} opts
  * @returns {{ primary: string | null, secondary: string | null, confidence: string, source: string, selfReport: any, behavioral: any, reconciliation: any, riskFlags: string[], reasoning: string }}
  */
-export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previousReconciliations = [] }) {
+export function analyzeProfile({ selfReport, cdlEntries, hyperfocusData, previousReconciliations: _previousReconciliations = [] }) {
   const entries = cdlEntries ?? [];
 
   const behavioral = entries.length > 0

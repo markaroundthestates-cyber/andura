@@ -18,7 +18,6 @@
 // Pure functions — no side effects.
 
 import {
-  PERSONA,
   PERSONA_DURATION,
   GOAL_PHASE,
   PERIODIZATION_PHASE,

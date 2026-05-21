@@ -9,7 +9,7 @@
  * @param {string} exerciseName
  * @returns {{ skipExercise: boolean, alternatives: string[], message: string }}
  */
-export function handleEquipmentBusy(exerciseName) {
+export function handleEquipmentBusy(_exerciseName) {
   // Re-export from alternative-finder to keep single-source-of-truth
   // (consumes EXERCISE_METADATA via getValidAlternatives)
   return {

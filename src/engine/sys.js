@@ -1,6 +1,6 @@
 // ══ SYS ENGINE — TDEE / Phases / BF% ═══════════════════════
 import { DB } from '../db.js';
-import { SW_KG, TW_KG, START_DATE, TARGET_DATE, KCAL_TARGET } from '../constants.js';
+import { TARGET_DATE, KCAL_TARGET } from '../constants.js';
 import { getUserConfig } from '../config/user.js';
 
 export const SYS = {

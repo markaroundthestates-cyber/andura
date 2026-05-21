@@ -30,7 +30,6 @@
 // Pure functions — no side effects.
 
 import {
-  CALIBRATION_TIERS,
   MIND_MUSCLE_ACTIVATION_BY_TIER,
   SUPPRESSION_MODE,
   SUPPRESSION_MODE_BY_TIER,
