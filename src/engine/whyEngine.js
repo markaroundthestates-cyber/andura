@@ -33,8 +33,8 @@ import { t } from '../i18n/index.js';
  * Priority ladder:
  *   recovery > progression_up > progression_down > hold (default)
  *
- * @param {object} rec - exercise.recommendation
- * @param {object} ctx - CoachContext
+ * @param {Record<string, any> | null | undefined} rec - exercise.recommendation
+ * @param {Record<string, any> | null | undefined} ctx - CoachContext
  * @returns {'progression_up' | 'progression_down' | 'hold' | 'recovery'}
  */
 export function selectVerdict(rec, ctx) {
@@ -62,13 +62,14 @@ export function selectVerdict(rec, ctx) {
 /**
  * Generate human-readable explanation pentru recommendation.
  *
- * @param {object} exercise - { name, recommendation: { kg, status, ... } }
- * @param {object} ctx - CoachContext { readiness, isInCut, ... }
+ * @param {Record<string, any> | string | null | undefined} exercise - { name, recommendation: { kg, status, ... } }
+ * @param {Record<string, any> | null | undefined} ctx - CoachContext { readiness, isInCut, ... }
  * @returns {{ summary: string, verdict: string, reasons: Array<{ text: string }> }}
  */
 export function explainRecommendation(exercise, ctx) {
-  const rec = exercise?.recommendation ?? {};
-  const name = exercise?.name ?? (typeof exercise === 'string' ? exercise : '');
+  const exObj = typeof exercise === 'object' && exercise !== null ? exercise : {};
+  const rec = exObj.recommendation ?? {};
+  const name = exObj.name ?? (typeof exercise === 'string' ? exercise : '');
   const verdict = selectVerdict(rec, ctx);
 
   const summary = t(`why.categorical.${verdict}`, { exercise: name });
@@ -85,12 +86,17 @@ export function explainRecommendation(exercise, ctx) {
 /**
  * Shorthand: returneaza doar summary string (categorical wording).
  */
+/**
+ * @param {Record<string, any> | string | null | undefined} exercise
+ * @param {Record<string, any> | null | undefined} ctx
+ */
 export function whySummary(exercise, ctx) {
   return explainRecommendation(exercise, ctx).summary;
 }
 
 // ── Internal helpers ────────────────────────────────────────────────────────
 
+/** @param {unknown} v */
 function _toFiniteNumber(v) {
   const n = Number(v);
   return Number.isFinite(n) ? n : null;

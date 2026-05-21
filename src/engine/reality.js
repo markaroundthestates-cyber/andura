@@ -10,25 +10,38 @@ const EXERCISE_TO_EQUIPMENT = {
   'Pec Deck': 'pec_deck',
 };
 
+/**
+ * @param {number} weight
+ * @param {string} exercise
+ * @param {boolean} [preferLower]
+ */
 export function roundToEquipment(weight, exercise, preferLower = false) {
-  const equipKey = EXERCISE_TO_EQUIPMENT[exercise];
-  if (!equipKey || !EQUIPMENT_WEIGHTS[equipKey]) return weight;
-  const validWeights = EQUIPMENT_WEIGHTS[equipKey];
+  const exMap = /** @type {Record<string, string>} */ (EXERCISE_TO_EQUIPMENT);
+  const equipKey = exMap[exercise];
+  const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
+  if (!equipKey || !equipWeights[equipKey]) return weight;
+  const validWeights = equipWeights[equipKey] ?? [];
   if (preferLower) {
-    const lower = validWeights.filter(w => w <= weight);
-    if (lower.length > 0) return lower[lower.length - 1];
-    return validWeights[0];
+    const lower = validWeights.filter((w) => w <= weight);
+    if (lower.length > 0) return lower[lower.length - 1] ?? weight;
+    return validWeights[0] ?? weight;
   }
   return validWeights.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
-  );
+  , validWeights[0] ?? weight);
 }
 
+/** @param {string} exerciseName */
 export function getEquipmentForExercise(exerciseName) {
-  return EXERCISE_TO_EQUIPMENT[exerciseName] || null;
+  const exMap = /** @type {Record<string, string>} */ (EXERCISE_TO_EQUIPMENT);
+  return exMap[exerciseName] || null;
 }
 
 export const realityEngine = {
+  /**
+   * @param {Record<string, any> | null | undefined} session
+   * @param {Record<string, any>} ctx
+   */
   validate(session, ctx) {
     if (!session || !session.exercises) return session;
     for (const exercise of session.exercises) {
@@ -43,7 +56,7 @@ export const realityEngine = {
       // Tine greutatea cand readiness < 60 — nu creste in zile proaste
       if (ctx.readiness.score !== null && ctx.readiness.score < 60) {
         const lastLog = findLastLogForExercise(exercise.name, ctx.recentLogs);
-        if (lastLog && exercise.recommendation.weight > lastLog.weight) {
+        if (lastLog && lastLog.weight != null && exercise.recommendation.weight > lastLog.weight) {
           exercise.recommendation.weight = lastLog.weight;
           exercise.recommendation.heldDueToReadiness = true;
         }
@@ -58,10 +71,14 @@ export const realityEngine = {
   }
 };
 
+/**
+ * @param {string} exerciseName
+ * @param {Array<{logs?: Array<{ex?: string, w?: number}>}>} recentLogs
+ */
 function findLastLogForExercise(exerciseName, recentLogs) {
   for (const session of recentLogs) {
     // Suporta format test (exercise/weight) si format real (ex/w)
-    const log = session.logs.find(l => l.ex === exerciseName);
+    const log = session.logs?.find((l) => l.ex === exerciseName);
     if (log) return { weight: log.w, ...log };
   }
   return null;
@@ -79,11 +96,12 @@ export function getRealityCheck() {
     };
   }
 
-  const ws = DB.get('weights') || {};
+  /** @type {Record<string, number>} */
+  const ws = /** @type {any} */ (DB.get('weights')) || {};
   const dates = Object.keys(ws).sort().slice(-8);
   if (dates.length < 4) return null;
 
-  const vals = dates.map(d => ws[d]);
+  const vals = dates.map((d) => ws[d] ?? 0);
   const n = vals.length;
   const sumX = n * (n - 1) / 2;
   const sumY = vals.reduce((a, b) => a + b, 0);
@@ -98,11 +116,14 @@ export function getRealityCheck() {
   // than the first by more than 0.05 kg (noise threshold).
   // This avoids false plateaus when the user simply hasn't logged every day.
   if (dates.length >= 4) {
+    const firstDate = dates[0];
+    const lastDate = dates[dates.length - 1];
+    if (!firstDate || !lastDate) return null;
     const spanDays = Math.round(
-      (new Date(dates[dates.length - 1]) - new Date(dates[0])) / 86400000
+      (new Date(lastDate).getTime() - new Date(firstDate).getTime()) / 86400000
     );
     if (spanDays >= 7) {
-      const firstVal = vals[0];
+      const firstVal = vals[0] ?? 0;
       const allNonDecreasing = vals.every(v => v >= firstVal - 0.05);
       if (allNonDecreasing) {
         return {
