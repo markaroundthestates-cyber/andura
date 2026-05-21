@@ -57,7 +57,12 @@ function httpGet(urlString, method = 'GET') {
       },
       (res) => {
         res.resume();
-        resolve({ ok: res.statusCode >= 200 && res.statusCode < 400, status: res.statusCode });
+        // §B017 audit fix (CODE-REVIEW L-7) — expose content-type pentru Firebase RTDB validate.
+        resolve({
+          ok: res.statusCode >= 200 && res.statusCode < 400,
+          status: res.statusCode,
+          contentType: res.headers['content-type'] || '',
+        });
       },
     );
     req.on('error', (err) => resolve({ ok: false, error: err.message }));
@@ -82,12 +87,16 @@ async function checkFirebaseRtdb() {
   // Anonymous ping — read RTDB root URL. Will return 401 if rules deny anonymous,
   // which still means RTDB is reachable (Firebase up).
   const result = await httpGet(`${FIREBASE_RTDB_URL}/.json?shallow=true`);
-  const reachable = result.status === 200 || result.status === 401 || result.status === 403;
-  record(
-    'Firebase RTDB reachable',
-    reachable,
-    result.status ? `status ${result.status}` : result.error,
-  );
+  const statusOk = result.status === 200 || result.status === 401 || result.status === 403;
+  // §B017 audit fix (CODE-REVIEW L-7) — validate content-type. Firebase RTDB always
+  // returns JSON (even 401/403 error bodies). Generic HTTP response = domain hijack
+  // or proxy intercept, NU true Firebase reachable.
+  const contentTypeOk = /json/i.test(result.contentType || '');
+  const reachable = statusOk && contentTypeOk;
+  const details = result.status
+    ? `status ${result.status}${!contentTypeOk ? ` (NU JSON content-type: ${result.contentType || '<missing>'})` : ''}`
+    : result.error;
+  record('Firebase RTDB reachable', reachable, details);
 }
 
 async function checkSentry() {
