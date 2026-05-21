@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { fileURLToPath, URL } from 'node:url';
 
 // Phase 5 task_20 — bundle optimization + manual chunks pentru vendor split
 // + production minify defaults.
@@ -17,6 +18,17 @@ export default defineConfig({
   // preserves console (drop is build-only via esbuild minify step).
   esbuild: {
     drop: ['console', 'debugger'],
+  },
+  // §B014 audit fix (CODE-REVIEW L-4) — path aliases pentru import readability.
+  // Forward-compat: existing imports (relative) keep working; new code can use @-prefix.
+  resolve: {
+    alias: {
+      '@auth': fileURLToPath(new URL('./src/auth.js', import.meta.url)),
+      '@routes': fileURLToPath(new URL('./src/react/routes', import.meta.url)),
+      '@stores': fileURLToPath(new URL('./src/react/stores', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/react/components', import.meta.url)),
+      '@lib': fileURLToPath(new URL('./src/react/lib', import.meta.url)),
+    },
   },
   plugins: [
     react(),

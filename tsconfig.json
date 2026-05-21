@@ -21,7 +21,15 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    "paths": {
+      "@auth": ["./src/auth.js"],
+      "@routes/*": ["./src/react/routes/*"],
+      "@stores/*": ["./src/react/stores/*"],
+      "@components/*": ["./src/react/components/*"],
+      "@lib/*": ["./src/react/lib/*"]
+    }
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
