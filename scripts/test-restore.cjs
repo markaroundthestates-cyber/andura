@@ -15,6 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const args = process.argv.slice(2);
 const uidArg = args.find((a) => a.startsWith('--uid='));
@@ -30,6 +31,13 @@ if (!TEST_UID) {
 // SAFETY GATE — refuse production
 if (process.env.NODE_ENV === 'production') {
   console.error('ERROR: refuses to run cu NODE_ENV=production (destructive wipe).');
+  process.exit(1);
+}
+
+// §B016 audit fix (CODE-REVIEW L-6) — wire hostname check per line 14 comment.
+const hostname = os.hostname().toLowerCase();
+if (hostname === 'andura.app' || hostname.includes('andura-prod') || hostname.includes('andura-live')) {
+  console.error(`ERROR: refuses to run pe production-like host (hostname=${hostname}).`);
   process.exit(1);
 }
 
