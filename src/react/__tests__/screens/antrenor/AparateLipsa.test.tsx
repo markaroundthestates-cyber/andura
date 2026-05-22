@@ -29,26 +29,17 @@ function renderLipsa() {
 }
 
 describe('AparateLipsa — render', () => {
-  it('renders heading "Ce aparate lipsesc?"', () => {
+  it('renders heading "Aparate lipsa" verbatim mockup', () => {
     renderLipsa();
     expect(
-      screen.getByRole('heading', { name: /Ce aparate lipsesc/i, level: 1 })
+      screen.getByRole('heading', { name: /^Aparate lipsa$/i, level: 1 })
     ).toBeInTheDocument();
   });
 
-  it('renders 3 categories', () => {
+  it('renders flat 10 checkbox list per Slice 1.7 mockup naming', () => {
     renderLipsa();
-    expect(screen.getByText('Greutati libere')).toBeInTheDocument();
-    expect(screen.getByText('Aparate')).toBeInTheDocument();
-    expect(screen.getByText('Cardio')).toBeInTheDocument();
-  });
-
-  it('renders 12 total items (4 + 5 + 3)', () => {
-    renderLipsa();
-    const itemButtons = screen.getAllByRole('button').filter((b) =>
-      b.hasAttribute('data-item')
-    );
-    expect(itemButtons.length).toBe(12);
+    const checkboxes = screen.getAllByRole('checkbox');
+    expect(checkboxes.length).toBe(10);
   });
 
   it('renders Save button', () => {
@@ -56,42 +47,50 @@ describe('AparateLipsa — render', () => {
     expect(screen.getByTestId('aparate-save')).toBeInTheDocument();
   });
 
-  it('default toate items NU sunt selected', () => {
+  it('default toate items NU sunt checked', () => {
     renderLipsa();
-    const itemButtons = screen.getAllByRole('button').filter((b) =>
-      b.hasAttribute('data-item')
-    );
-    itemButtons.forEach((b) => {
-      expect(b).toHaveAttribute('aria-pressed', 'false');
+    const checkboxes = screen.getAllByRole('checkbox');
+    checkboxes.forEach((cb) => {
+      expect(cb).not.toBeChecked();
     });
+  });
+
+  it('renders verbatim mockup item labels (Slice 1.7)', () => {
+    renderLipsa();
+    expect(screen.getByLabelText('Banca inclinata')).toBeInTheDocument();
+    expect(screen.getByLabelText('Banca plana')).toBeInTheDocument();
+    expect(screen.getByLabelText('Bara halterelor')).toBeInTheDocument();
+    expect(screen.getByLabelText('Gantere')).toBeInTheDocument();
+    expect(screen.getByLabelText('Power rack / Smith machine')).toBeInTheDocument();
+    expect(screen.getByLabelText('Banda elastica')).toBeInTheDocument();
   });
 });
 
 describe('AparateLipsa — toggle Set behavior', () => {
-  it('click adauga item la missing set', () => {
+  it('check adauga item la missing set', () => {
     renderLipsa();
-    const smith = screen.getByRole('button', { name: /^Smith$/i });
-    fireEvent.click(smith);
-    expect(smith).toHaveAttribute('aria-pressed', 'true');
+    const gantere = screen.getByLabelText('Gantere');
+    fireEvent.click(gantere);
+    expect(gantere).toBeChecked();
   });
 
-  it('click second time scoate din set (round-trip)', () => {
+  it('check second time scoate din set (round-trip)', () => {
     renderLipsa();
-    const bicicleta = screen.getByRole('button', { name: /Bicicleta/i });
-    fireEvent.click(bicicleta);
-    expect(bicicleta).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(bicicleta);
-    expect(bicicleta).toHaveAttribute('aria-pressed', 'false');
+    const banda = screen.getByLabelText('Banda elastica');
+    fireEvent.click(banda);
+    expect(banda).toBeChecked();
+    fireEvent.click(banda);
+    expect(banda).not.toBeChecked();
   });
 
-  it('toggling items across categories independent', () => {
+  it('toggling multiple items independent', () => {
     renderLipsa();
-    const haltere = screen.getByRole('button', { name: /Haltere mari/i });
-    const legPress = screen.getByRole('button', { name: /Leg press/i });
-    fireEvent.click(haltere);
+    const banca = screen.getByLabelText('Banca inclinata');
+    const legPress = screen.getByLabelText('Leg press');
+    fireEvent.click(banca);
     fireEvent.click(legPress);
-    expect(haltere).toHaveAttribute('aria-pressed', 'true');
-    expect(legPress).toHaveAttribute('aria-pressed', 'true');
+    expect(banca).toBeChecked();
+    expect(legPress).toBeChecked();
   });
 });
 
@@ -104,14 +103,14 @@ describe('AparateLipsa — navigation flow', () => {
     expect(probe.textContent).toContain('"missingEquipment":[]');
   });
 
-  it('Save cu 2 items propagates names', () => {
+  it('Save cu 2 items propagates ids', () => {
     renderLipsa();
-    fireEvent.click(screen.getByRole('button', { name: /Bara olimpica/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Hack squat/i }));
+    fireEvent.click(screen.getByLabelText('Bara halterelor'));
+    fireEvent.click(screen.getByLabelText('Leg press'));
     fireEvent.click(screen.getByTestId('aparate-save'));
     const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('Bara olimpica');
-    expect(probe.textContent).toContain('Hack squat');
+    expect(probe.textContent).toContain('bara-halterelor');
+    expect(probe.textContent).toContain('leg-press');
   });
 });
 
