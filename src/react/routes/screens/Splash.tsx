@@ -15,7 +15,7 @@ export function Splash(): JSX.Element {
       className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-6 text-center"
       data-testid="splash"
     >
-      <div className="w-20 h-20 rounded-3xl bg-ink text-paper flex items-center justify-center text-4xl font-bold mb-6 tracking-tight">
+      <div className="w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold mb-6 tracking-tight">
         A
       </div>
       <h1 className="text-3xl font-bold text-ink mb-2 tracking-tight font-serif">
