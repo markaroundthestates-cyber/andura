@@ -20,6 +20,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Clock, Layers, TrendingUp } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
@@ -116,11 +117,17 @@ export function WorkoutPreview(): JSX.Element {
     navigate(gotoPath('workout'));
   }
 
+  // F-workout-preview/T2 — Hero card dark idiom mirror CoachTodayCard L36-61
+  // (bg-ink text-paper rounded-2xl + brick eyebrow + chips). DIFFERENT vs
+  // CoachTodayCard: eyebrow "Sesiunea de azi" + 3 chips (duration / count /
+  // volume) + NO embedded CTA (separate "Incepe antrenament" stays below).
+  // Mockup parity andura-clasic.html#L924-932.
+  const exerciseCount = workout?.exerciseCount ?? 5;
+
   return (
     <section className="p-6 bg-paper" data-testid="workout-preview">
-      <h1 className="text-2xl font-semibold text-ink mb-2">{title}</h1>
       <div
-        className="preview-intensity-banner p-3 rounded-xl border mb-6"
+        className="preview-intensity-banner p-3 rounded-xl border mb-4"
         data-intensity={intensityMod}
         role="status"
         aria-label="Intensitate sesiune"
@@ -128,20 +135,29 @@ export function WorkoutPreview(): JSX.Element {
       >
         <p className="text-base text-ink">{banner.msg}</p>
       </div>
-      <div className="flex gap-3 mb-6">
-        <div
-          className="flex-1 p-4 rounded-xl bg-paper2 border border-line"
-          data-testid="preview-duration"
-        >
-          <p className="text-sm text-ink2">Durata estimata</p>
-          <p className="text-2xl font-semibold text-ink">~ {duration} min</p>
+      <div
+        className="bg-ink text-paper rounded-2xl p-4 mb-4"
+        data-testid="preview-hero"
+        role="region"
+        aria-label="Sesiunea de azi"
+      >
+        <div className="text-xs font-semibold tracking-wider uppercase text-brick">
+          Sesiunea de azi
         </div>
-        <div
-          className="flex-1 p-4 rounded-xl bg-paper2 border border-line"
-          data-testid="preview-volume"
-        >
-          <p className="text-sm text-ink2">Tonaj total</p>
-          <p className="text-2xl font-semibold text-ink">{formatVolume(volume)} kg</p>
+        <h1 className="text-xl font-bold mt-1 tracking-tight text-paper">{title}</h1>
+        <div className="flex gap-3.5 mt-2 text-sm text-ink3">
+          <span className="flex items-center gap-1.5" data-testid="preview-duration">
+            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+            ~ {duration} min
+          </span>
+          <span className="flex items-center gap-1.5" data-testid="preview-exercise-count">
+            <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+            {exerciseCount} exercitii
+          </span>
+          <span className="flex items-center gap-1.5" data-testid="preview-volume">
+            <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
+            {formatVolume(volume)} kg
+          </span>
         </div>
       </div>
       {coachLine && (
