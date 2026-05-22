@@ -17,6 +17,7 @@ import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { UpdatePrompt } from '../components/UpdatePrompt';
 import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
+import { ToastViewport } from '../components/Toast';
 import { useCoachStore } from '../stores/coachStore';
 
 // S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
@@ -58,6 +59,7 @@ export function Layout(): JSX.Element {
       </main>
       <SessionPill />
       {!inSession && <BottomNav />}
+      <ToastViewport />
     </div>
   );
 }
