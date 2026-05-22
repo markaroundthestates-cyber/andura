@@ -8,14 +8,21 @@
 // real via engineWrappers.getTodayWorkout când scheduleAdapter aggregate
 // disponibil).
 //
+// PAR-009 SubHeader consume — mockup andura-clasic.html L1027 sub-header
+// verbatim title "Schimba echipament" sticky top + back-btn. Body h1
+// 'Aparate ocupate?' regresat h2 (single h1 SubHeader pattern parity
+// CevaNuMerge/EnergyCause/PainButton/AparateLipsa).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-038 Smart Routing Equipment v2 cascade
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics rule
+//   - mockup andura-clasic.html#L1026-1041 screen-equipment-swap
 
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 export type EquipmentStatus = 'available' | 'busy';
 
@@ -54,9 +61,19 @@ export function EquipmentSwap(): JSX.Element {
     });
   }
 
+  function handleBack(): void {
+    navigate(-1);
+  }
+
   return (
-    <section className="p-6 bg-paper" data-testid="equipment-swap">
-      <h1 className="text-2xl font-semibold text-ink mb-2">Aparate ocupate?</h1>
+    <section className="bg-paper min-h-screen flex flex-col" data-testid="equipment-swap">
+      <SubHeader
+        title="Schimba echipament"
+        onBack={handleBack}
+        testIdBack="equipment-swap-back"
+      />
+      <div className="p-6 flex-1">
+      <h2 className="text-2xl font-semibold text-ink mb-2">Aparate ocupate?</h2>
       <p className="text-base text-ink2 mb-6">
         Marcheaza ce e ocupat. Coach gaseste alternative.
       </p>
@@ -99,6 +116,7 @@ export function EquipmentSwap(): JSX.Element {
       >
         Continui adaptat
       </button>
+      </div>
     </section>
   );
 }

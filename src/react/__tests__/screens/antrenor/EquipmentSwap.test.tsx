@@ -29,11 +29,23 @@ function renderSwap() {
 }
 
 describe('EquipmentSwap — render', () => {
-  it('renders heading "Aparate ocupate?"', () => {
+  it('renders SubHeader title "Schimba echipament" (mockup L1027 verbatim)', () => {
     renderSwap();
     expect(
-      screen.getByRole('heading', { name: /Aparate ocupate/i, level: 1 })
+      screen.getByRole('heading', { name: /Schimba echipament/i, level: 1 })
     ).toBeInTheDocument();
+  });
+
+  it('renders body sub-heading "Aparate ocupate?" (h2)', () => {
+    renderSwap();
+    expect(
+      screen.getByRole('heading', { name: /Aparate ocupate/i, level: 2 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders SubHeader back button (PAR-009)', () => {
+    renderSwap();
+    expect(screen.getByTestId('equipment-swap-back')).toBeInTheDocument();
   });
 
   it('renders 5 equipment items toate default Liber', () => {
