@@ -1,6 +1,6 @@
-// ══ SET RATING BUTTONS — Workout 3-Button Rating Component ═══════════════
+// SET RATING BUTTONS - Workout 3-Button Rating Component
 // Phase 4 task_12 §A extract din Workout.tsx rating buttons (~lines 213-237
-// prior). Pure presentational — 3 buttons RO (Usor / Potrivit / Greu) cu
+// prior). Pure presentational - 3 buttons RO (Usor / Potrivit / Greu) cu
 // data-rating attribute preserved.
 //
 // Stateless: parent Workout.tsx owns handleLogSet pipeline (logSet store
@@ -9,6 +9,11 @@
 //
 // data-testid + data-rating preserved verbatim pentru Workout.test.tsx 38
 // baseline tests preserve.
+//
+// Mockup parity (andura-clasic.html L1493-1511 wv2-rating-row traffic-light
+// dot + label pattern). Emoji is aria-hidden decorative - preserves
+// existing accessible name "Usor"/"Potrivit"/"Greu" for Workout.test
+// ^Usor$ exact-match regex assertions.
 
 import type { JSX } from 'react';
 
@@ -20,13 +25,18 @@ interface SetRatingButtonsProps {
 
 interface RatingOption {
   rating: SetRating;
+  emoji: string;
   label: string;
 }
 
+const GREEN = '\u{1F7E2}';
+const YELLOW = '\u{1F7E1}';
+const RED = '\u{1F534}';
+
 const RATING_OPTIONS: readonly RatingOption[] = [
-  { rating: 'usor', label: 'Usor' },
-  { rating: 'potrivit', label: 'Potrivit' },
-  { rating: 'greu', label: 'Greu' },
+  { rating: 'usor', emoji: GREEN, label: 'Usor' },
+  { rating: 'potrivit', emoji: YELLOW, label: 'Potrivit' },
+  { rating: 'greu', emoji: RED, label: 'Greu' },
 ];
 
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element {
@@ -40,9 +50,10 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element
             type="button"
             onClick={() => onRate(opt.rating)}
             data-rating={opt.rating}
-            className="flex-1 py-3 bg-paper2 border border-lineStrong rounded-xl text-ink"
+            className="flex-1 flex flex-col items-center gap-1 py-3 bg-paper2 border border-lineStrong rounded-xl text-ink"
           >
-            {opt.label}
+            <span className="text-xl" aria-hidden="true">{opt.emoji}</span>
+            <span>{opt.label}</span>
           </button>
         ))}
       </div>
