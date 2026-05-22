@@ -3,7 +3,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { SVGCountdownRing } from '../../../components/Workout/SVGCountdownRing';
+import { SVGCountdownRing, getRingColor } from '../../../components/Workout/SVGCountdownRing';
 
 describe('SVGCountdownRing - mockup parity L1517-1522', () => {
   it('renders 2 SVG circles (track + progress)', () => {
@@ -66,8 +66,9 @@ describe('SVGCountdownRing - mockup parity L1517-1522', () => {
     expect(actual).toBeCloseTo(expected, 2);
   });
 
-  it('uses CSS var --brick pentru progress stroke (substrate B009 NU hardcoded)', () => {
-    render(<SVGCountdownRing totalSec={120} remainingSec={60} />);
+  it('uses CSS var --brick pentru progress stroke pe normal state (substrate B009)', () => {
+    // remainingSec=120 of total=120 → progressRatio=0 → normal state → --brick.
+    render(<SVGCountdownRing totalSec={120} remainingSec={120} />);
     expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('var(--brick)');
   });
 
@@ -80,7 +81,112 @@ describe('SVGCountdownRing - mockup parity L1517-1522', () => {
     render(<SVGCountdownRing totalSec={120} remainingSec={60} />);
     expect(screen.getByTestId('rest-ring-progress').getAttribute('style')).toContain('stroke-dashoffset 350ms linear');
   });
+});
 
+describe('SVGCountdownRing - F-workout-09 color states + last-10% pulse', () => {
+  // getRingColor pure-function thresholds — independent test fixture.
+  it('getRingColor returns --brick pe normal state (progressRatio < 0.7)', () => {
+    expect(getRingColor(0)).toBe('var(--brick)');
+    expect(getRingColor(0.5)).toBe('var(--brick)');
+    expect(getRingColor(0.69)).toBe('var(--brick)');
+  });
+
+  it('getRingColor returns --warn pe warning state (0.7 <= progressRatio < 0.9)', () => {
+    expect(getRingColor(0.7)).toBe('var(--warn)');
+    expect(getRingColor(0.8)).toBe('var(--warn)');
+    expect(getRingColor(0.89)).toBe('var(--warn)');
+  });
+
+  it('getRingColor returns urgent hex pe last-10% (progressRatio >= 0.9)', () => {
+    expect(getRingColor(0.9)).toBe('#ff4757');
+    expect(getRingColor(0.95)).toBe('#ff4757');
+    expect(getRingColor(1)).toBe('#ff4757');
+  });
+
+  it('ring stroke is --brick at start (full ring, progressRatio 0)', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={120} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('var(--brick)');
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('normal');
+  });
+
+  it('ring stroke transitions la --warn cand remaining drops sub 30% (progressRatio >= 0.7)', () => {
+    // totalSec=120, remainingSec=30 → progressRatio = 1 - 30/120 = 0.75 → warning.
+    render(<SVGCountdownRing totalSec={120} remainingSec={30} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('var(--warn)');
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('warning');
+  });
+
+  it('ring stroke transitions la urgent red cand remaining drops sub 10% (progressRatio >= 0.9)', () => {
+    // totalSec=120, remainingSec=10 → progressRatio = 1 - 10/120 ≈ 0.917 → urgent.
+    render(<SVGCountdownRing totalSec={120} remainingSec={10} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('#ff4757');
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('urgent');
+  });
+
+  it('pulse animation activates pe urgent state (last 10%)', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={5} />);
+    const styleAttr = screen.getByTestId('rest-ring-progress').getAttribute('style') ?? '';
+    expect(styleAttr).toContain('pulse-urgent');
+  });
+
+  it('pulse animation absent pe normal state', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={120} />);
+    const styleAttr = screen.getByTestId('rest-ring-progress').getAttribute('style') ?? '';
+    // Animation literal 'none' set when not urgent.
+    expect(styleAttr).toContain('animation: none');
+    expect(styleAttr).not.toContain('pulse-urgent');
+  });
+
+  it('pulse animation absent pe warning state (0.7 <= progressRatio < 0.9)', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={30} />);
+    const styleAttr = screen.getByTestId('rest-ring-progress').getAttribute('style') ?? '';
+    expect(styleAttr).not.toContain('pulse-urgent');
+  });
+
+  it('pulse keyframe definition present in scoped style', () => {
+    const { container } = render(<SVGCountdownRing totalSec={120} remainingSec={5} />);
+    const style = container.querySelector('style');
+    expect(style?.textContent).toContain('@keyframes pulse-urgent');
+  });
+
+  it('stroke color transition declared (smooth state change 250ms)', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={30} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('style')).toContain('stroke 250ms ease-out');
+  });
+
+  it('reduced-motion guard disables both transition AND pulse animation', () => {
+    const { container } = render(<SVGCountdownRing totalSec={120} remainingSec={5} />);
+    const style = container.querySelector('style');
+    expect(style?.textContent).toContain('prefers-reduced-motion: reduce');
+    expect(style?.textContent).toContain('transition: none');
+    expect(style?.textContent).toContain('animation: none');
+  });
+
+  it('threshold boundary — exactly 30% remaining (progressRatio = 0.7) → warning', () => {
+    // totalSec=100, remainingSec=30 → progressRatio = 0.7 exact → warning bucket.
+    render(<SVGCountdownRing totalSec={100} remainingSec={30} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('warning');
+  });
+
+  it('threshold boundary — exactly 10% remaining (progressRatio = 0.9) → urgent', () => {
+    // totalSec=100, remainingSec=10 → progressRatio = 0.9 exact → urgent bucket.
+    render(<SVGCountdownRing totalSec={100} remainingSec={10} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('urgent');
+  });
+
+  it('threshold boundary — 31% remaining stays normal (not warning)', () => {
+    // totalSec=100, remainingSec=31 → progressRatio = 0.69 < 0.7 → normal.
+    render(<SVGCountdownRing totalSec={100} remainingSec={31} />);
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('normal');
+  });
+
+  it('rest-ring-track stroke stays --overlay-soft regardless of state (track invariant)', () => {
+    render(<SVGCountdownRing totalSec={120} remainingSec={5} />);
+    expect(screen.getByTestId('rest-ring-track').getAttribute('stroke')).toBe('var(--overlay-soft)');
+  });
+});
+
+describe('SVGCountdownRing - mockup parity baseline preserved', () => {
   it('exposes role timer + aria-label pentru a11y screen readers', () => {
     render(<SVGCountdownRing totalSec={120} remainingSec={75} />);
     const timer = screen.getByRole('timer');
