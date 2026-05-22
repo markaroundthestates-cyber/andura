@@ -31,3 +31,41 @@ describe('isoWeek — ISO 8601 Thursday rule', () => {
     expect(() => isoWeek(null)).toThrow();
   });
 });
+
+// §11-C1 audit fix — DST transition coverage (audit nuclear V3 SUMMARY §11).
+// Romania DST forward: ultima duminica martie 02:00 → 03:00.
+// Romania DST back: ultima duminica octombrie 03:00 → 02:00.
+// Risk: date arithmetic in isoWeek (setDate) crossing DST could shift by 1h
+// → potential off-by-one la week-boundary check daca Date interpretation
+// uses local clock. Tests verify weeks remain stable across transition.
+describe('isoWeek — DST transition stability', () => {
+  it('2026-03-29 (DST spring-forward Sunday) → 2026-W13', () => {
+    expect(isoWeek('2026-03-29')).toBe('2026-W13');
+  });
+
+  it('2026-03-30 (Monday post-DST-forward) → 2026-W14', () => {
+    expect(isoWeek('2026-03-30')).toBe('2026-W14');
+  });
+
+  it('2026-10-25 (DST fall-back Sunday) → 2026-W43', () => {
+    expect(isoWeek('2026-10-25')).toBe('2026-W43');
+  });
+
+  it('2026-10-26 (Monday post-DST-back) → 2026-W44', () => {
+    expect(isoWeek('2026-10-26')).toBe('2026-W44');
+  });
+
+  it('week stays continuous across DST forward (W13 → W14 single increment)', () => {
+    const sun = isoWeek('2026-03-29');
+    const mon = isoWeek('2026-03-30');
+    expect(sun).toBe('2026-W13');
+    expect(mon).toBe('2026-W14');
+  });
+
+  it('week stays continuous across DST back (W43 → W44 single increment)', () => {
+    const sun = isoWeek('2026-10-25');
+    const mon = isoWeek('2026-10-26');
+    expect(sun).toBe('2026-W43');
+    expect(mon).toBe('2026-W44');
+  });
+});
