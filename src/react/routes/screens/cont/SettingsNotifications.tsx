@@ -177,6 +177,7 @@ export function SettingsNotifications(): JSX.Element {
             value={time}
             disabled={!enabled}
             onChange={(e) => setNotificationTime(e.target.value || '18:00')}
+            aria-label="Ora reminder zilnic"
             data-testid="notif-time-input"
             className="w-full px-3 py-2 border border-lineStrong rounded-lg bg-paper text-ink font-mono text-base disabled:opacity-50"
           />
