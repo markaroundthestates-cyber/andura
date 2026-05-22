@@ -91,7 +91,7 @@ export function Onboarding(): JSX.Element {
 
 interface NumericStepProps {
   value: number | null;
-  onChange: (v: number) => void;
+  onChange: (v: number | null) => void;
 }
 
 interface OptionStepProps<T extends string> {
@@ -107,7 +107,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
       <input
         type="number"
         value={value ?? ''}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
         placeholder="ex. 32"
         min={16}
         max={99}
@@ -245,7 +245,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
       <input
         type="number"
         value={value ?? ''}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
         placeholder="ex. 78"
         step="0.1"
         min={30}

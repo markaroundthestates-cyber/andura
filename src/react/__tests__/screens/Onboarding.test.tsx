@@ -78,6 +78,31 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.weight).toBe(78);
   });
 
+  // §LOW-1 REVIEW-chat3 fresh-eyes — empty input must clear to null,
+  // not silently save 0 (Number("")=0 garbage data). Mirror SettingsProfile
+  // pattern (cont/SettingsProfile.tsx:103, 117).
+  it('step 1 cleared age input persists null (not 0)', () => {
+    useOnboardingStore.setState({
+      data: { age: 32, sex: null, goal: null, frequency: null, experience: null, weight: null },
+      completed: false,
+      completedAt: null,
+    });
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '' } });
+    expect(useOnboardingStore.getState().data.age).toBeNull();
+  });
+
+  it('step 6 cleared weight input persists null (not 0)', () => {
+    useOnboardingStore.setState({
+      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: 78 },
+      completed: false,
+      completedAt: null,
+    });
+    renderAt(6);
+    fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '' } });
+    expect(useOnboardingStore.getState().data.weight).toBeNull();
+  });
+
   it('step 7 summary cu data finalized', () => {
     useOnboardingStore.setState({
       data: {
