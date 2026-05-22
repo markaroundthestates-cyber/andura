@@ -30,6 +30,14 @@ import { getRecoveryByGroup, GROUP_LABELS_RO_BIG11 } from '../../engine/muscleRe
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
+// §48-H1 audit fix — adapter integrity instrumentation. Every catch path
+// emits Sentry alert with source='engine-adapter-fallback' tag + adapter
+// name extra. Risk addressed (§48.5): silent divergence when engine returns
+// malformed shape → adapter swallows + returns null/baseline → UI shows
+// stale defaults forever. Sentry alert breaks the silence in production;
+// localhost no-ops via initSentry hostname gate. Cross-ref §13-C1 Sentry
+// wire (ErrorBoundary precedent) + ADR-ENGINE-MATH-LOCKED-VALUES §1-§5.
+import { captureException } from '../../util/sentry.js';
 
 // ── Output types simplified pentru React consumption ─────────────────────
 
@@ -124,6 +132,9 @@ export function getReadiness(opts: { isInCut?: boolean } = {}): ReadinessOutput 
     };
   } catch (e) {
     console.warn('[engineWrappers] getReadiness failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getReadiness' },
+    });
     return null;
   }
 }
@@ -155,6 +166,9 @@ export function getFatigue(): FatigueOutput | null {
     };
   } catch (e) {
     console.warn('[engineWrappers] getFatigue failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getFatigue' },
+    });
     return null;
   }
 }
@@ -204,6 +218,10 @@ export function getPRDelta(
     };
   } catch (e) {
     console.warn('[engineWrappers] getPRDelta failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getPRDelta' },
+      extra: { exercise },
+    });
     return null;
   }
 }
@@ -226,6 +244,9 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
     return await composePlannedWorkoutToday();
   } catch (e) {
     console.warn('[engineWrappers] getTodayWorkout failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getTodayWorkout' },
+    });
     return null;
   }
 }
@@ -355,6 +376,9 @@ export async function getNutritionTargetsToday(
     };
   } catch (e) {
     console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getNutritionTargetsToday' },
+    });
     if (phaseKcal !== null) {
       return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
     }
@@ -402,6 +426,9 @@ export function getAdherenceOutput(): AdherenceOutput {
     return { score: safeScore, source: 'engine' };
   } catch (e) {
     console.warn('[engineWrappers] getAdherenceOutput failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getAdherenceOutput' },
+    });
     return BASELINE_ADHERENCE_OUTPUT;
   }
 }
@@ -466,6 +493,9 @@ export function getPatternsBanner(): PatternBanner[] {
     }
   } catch (e) {
     console.warn('[engineWrappers] getPatternsBanner STAGNATION failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getPatternsBanner', pattern: 'STAGNATION' },
+    });
   }
 
   // Pattern 2: LOW_ADHERENCE via adherence engine (gated on user with
@@ -490,6 +520,9 @@ export function getPatternsBanner(): PatternBanner[] {
     }
   } catch (e) {
     console.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getPatternsBanner', pattern: 'LOW_ADHERENCE' },
+    });
   }
 
   return banners;
@@ -529,6 +562,9 @@ export function getProactiveAlerts(ctx: object = {}): ProactiveAlert[] {
     }));
   } catch (e) {
     console.warn('[engineWrappers] getProactiveAlerts failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getProactiveAlerts' },
+    });
     return [];
   }
 }
@@ -588,6 +624,9 @@ export function getCoachRestReason(): CoachRestReason | null {
     return { fatiguedGroups: topFatigued, readinessScore: readiness };
   } catch (e) {
     console.warn('[engineWrappers] getCoachRestReason failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getCoachRestReason' },
+    });
     return null;
   }
 }
@@ -633,6 +672,9 @@ export function getLaggingSignal(): string | null {
     return `${label} sub-volum ${STAGNATION_WEEKS_LAGGING_DEFAULT} sapt - focus azi pe sesiune.`;
   } catch (e) {
     console.warn('[engineWrappers] getLaggingSignal failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getLaggingSignal' },
+    });
     return null;
   }
 }
