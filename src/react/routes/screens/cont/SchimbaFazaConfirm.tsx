@@ -68,23 +68,19 @@ export function SchimbaFazaConfirm(): JSX.Element {
           Datele istorice raman intacte.
         </p>
 
-        {/* §6-M3 a11y: role="radiogroup" + aria-label so screen readers
-            announce the radio set semantic (5 mutually exclusive phase
-            options). aria-required reinforces user must pick one. */}
-        <div
-          className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden"
-          role="radiogroup"
-          aria-label="Selecteaza faza activa"
-          aria-required="true"
-        >
+        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
+            pattern toggle select state. role=radiogroup necesita arrow-key
+            handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
+            user benefit pre-Beta. Screen reader anunta "button, [label],
+            pressed/not pressed" perfect valid pentru toggle. */}
+        <div className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden">
           {PHASE_OPTIONS.map((opt, idx) => {
             const isSelected = selected === opt.value;
             return (
               <button
                 key={opt.value}
                 type="button"
-                role="radio"
-                aria-checked={isSelected}
+                aria-pressed={isSelected}
                 data-testid={`phase-${opt.value.toLowerCase()}`}
                 onClick={() => setSelected(opt.value)}
                 className={`w-full flex items-center px-4 py-3 text-left ${

@@ -49,14 +49,13 @@ export function SettingsAppearance(): JSX.Element {
           Cum arata Andura pentru tine.
         </p>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="appearance-theme-label">
+        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
+            toggle pattern. Vezi SchimbaFazaConfirm + Onboarding pentru
+            rationale full. */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Tema
         </p>
-        <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
-          role="radiogroup"
-          aria-labelledby="appearance-theme-label"
-        >
+        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           {THEME_OPTIONS.map((opt, idx) => {
             const Icon = opt.Icon;
             const selected = theme === opt.value;
@@ -65,8 +64,7 @@ export function SettingsAppearance(): JSX.Element {
                 key={opt.value}
                 type="button"
                 data-testid={`theme-${opt.value}`}
-                role="radio"
-                aria-checked={selected}
+                aria-pressed={selected}
                 onClick={() => setTheme(opt.value)}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-left ${idx < THEME_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
@@ -78,14 +76,10 @@ export function SettingsAppearance(): JSX.Element {
           })}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="appearance-navstyle-label">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Bara de jos
         </p>
-        <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden"
-          role="radiogroup"
-          aria-labelledby="appearance-navstyle-label"
-        >
+        <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
             const selected = navStyle === opt.value;
             return (
@@ -93,8 +87,7 @@ export function SettingsAppearance(): JSX.Element {
                 key={opt.value}
                 type="button"
                 data-testid={`nav-style-${opt.value}`}
-                role="radio"
-                aria-checked={selected}
+                aria-pressed={selected}
                 onClick={() => setBottomNavStyle(opt.value)}
                 className={`w-full flex items-center px-4 py-3 text-left ${idx < NAV_STYLE_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >

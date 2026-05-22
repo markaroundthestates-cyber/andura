@@ -127,21 +127,19 @@ export function SettingsNotifications(): JSX.Element {
         )}
         <div className="mb-4" />{/* spacer keeping rhythm post permission warning */}
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="notif-freq-label">
+        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
+            toggle pattern. Day picker mai jos pastreaza role="group" +
+            aria-labelledby (multi-select valid, NOT mutually exclusive). */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Frecventa
         </p>
-        <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
-          role="radiogroup"
-          aria-labelledby="notif-freq-label"
-        >
+        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           {FREQUENCY_OPTIONS.map((opt, idx) => (
             <button
               key={opt.value}
               type="button"
               data-testid={`notif-freq-${opt.value}`}
-              aria-checked={frequency === opt.value}
-              role="radio"
+              aria-pressed={frequency === opt.value}
               disabled={!enabled}
               onClick={() => setNotificationFrequency(opt.value)}
               className={`w-full flex items-center justify-between px-4 py-3 text-left text-sm ${idx < FREQUENCY_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${frequency === opt.value ? 'text-brick font-semibold' : 'text-ink'} disabled:opacity-50`}

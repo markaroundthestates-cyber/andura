@@ -48,7 +48,7 @@ describe('SettingsNotifications — render + interactions', () => {
 
   it('frequency radio 3 options + default zilnic selected', () => {
     renderScreen();
-    expect(screen.getByTestId('notif-freq-zilnic')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId('notif-freq-zilnic')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('notif-freq-saptamanal')).toBeInTheDocument();
     expect(screen.getByTestId('notif-freq-off')).toBeInTheDocument();
   });

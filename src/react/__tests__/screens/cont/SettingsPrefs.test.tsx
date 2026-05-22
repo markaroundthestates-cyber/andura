@@ -37,8 +37,8 @@ describe('SettingsPrefs — render + interactions', () => {
 
   it('renders kg/lb radios + default kg', () => {
     renderScreen();
-    expect(screen.getByTestId('unit-kg')).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByTestId('unit-lb')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('unit-kg')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('unit-lb')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('unit lb click → store updated', () => {
@@ -49,8 +49,8 @@ describe('SettingsPrefs — render + interactions', () => {
 
   it('renders week start L/D + default L', () => {
     renderScreen();
-    expect(screen.getByTestId('week-start-L')).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByTestId('week-start-D')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('week-start-L')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('week-start-D')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('week start D click → store updated', () => {

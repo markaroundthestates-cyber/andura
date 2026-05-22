@@ -36,9 +36,9 @@ describe('SettingsAppearance — render + interactions', () => {
 
   it('renders 3 theme options + default light selected', () => {
     renderScreen();
-    expect(screen.getByTestId('theme-light')).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByTestId('theme-dark')).toHaveAttribute('aria-checked', 'false');
-    expect(screen.getByTestId('theme-auto')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('theme-light')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('theme-dark')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('theme-auto')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('theme click → store updated', () => {
@@ -49,8 +49,8 @@ describe('SettingsAppearance — render + interactions', () => {
 
   it('renders 2 nav style options + default comfortable selected', () => {
     renderScreen();
-    expect(screen.getByTestId('nav-style-comfortable')).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByTestId('nav-style-compact')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('nav-style-comfortable')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('nav-style-compact')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('nav style click → store updated', () => {

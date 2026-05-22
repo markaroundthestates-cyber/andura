@@ -125,17 +125,20 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
 function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   return (
     <>
-      <h1 id="onb-sex-label" className="text-2xl font-semibold text-ink mb-6">Cum te identifici?</h1>
-      {/* §6-M3 a11y: mutually exclusive selection → role=radiogroup + radio */}
-      <div className="flex flex-col gap-3" role="radiogroup" aria-labelledby="onb-sex-label">
+      <h1 className="text-2xl font-semibold text-ink mb-6">Cum te identifici?</h1>
+      {/* §6-M3 revert per Karpathy SF — aria-pressed valid pattern toggle
+          select state pe <button>. role=radiogroup necesita arrow-key
+          handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
+          user benefit pre-Beta. Screen reader anunta "button, [label],
+          pressed/not pressed" perfect valid. */}
+      <div className="flex flex-col gap-3">
         {(['m', 'f'] as const).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             data-testid={`onb-sex-${v}`}
-            role="radio"
-            aria-checked={value === v}
+            aria-pressed={value === v}
             className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{v === 'm' ? 'Barbat' : 'Femeie'}</span>
@@ -161,16 +164,15 @@ const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' |
 function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): JSX.Element {
   return (
     <>
-      <h1 id="onb-goal-label" className="text-2xl font-semibold text-ink mb-6">Ce vrei sa obtii?</h1>
-      <div className="flex flex-col gap-3" role="radiogroup" aria-labelledby="onb-goal-label">
+      <h1 className="text-2xl font-semibold text-ink mb-6">Ce vrei sa obtii?</h1>
+      <div className="flex flex-col gap-3">
         {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             data-testid={`onb-goal-${v}`}
-            role="radio"
-            aria-checked={value === v}
+            aria-pressed={value === v}
             className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{GOAL_LABELS[v]}</span>
@@ -184,17 +186,18 @@ function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): 
 function Step4({ value, onChange }: OptionStepProps<'2' | '3' | '4' | '5'>): JSX.Element {
   return (
     <>
-      <h1 id="onb-freq-label" className="text-2xl font-semibold text-ink mb-2">Cat de des te antrenezi?</h1>
+      <h1 className="text-2xl font-semibold text-ink mb-2">Cat de des te antrenezi?</h1>
       <p className="text-sm text-ink2 mb-6">Sesiuni pe saptamana.</p>
-      <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-labelledby="onb-freq-label">
+      {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
+          numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
+      <div className="grid grid-cols-2 gap-3">
         {(['2', '3', '4', '5'] as const).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             data-testid={`onb-freq-${v}`}
-            role="radio"
-            aria-checked={value === v}
+            aria-pressed={value === v}
             aria-label={`${v} sesiuni pe saptamana`}
             className={`p-4 rounded-xl border ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
@@ -215,16 +218,15 @@ function Step5({ value, onChange }: OptionStepProps<'incepator' | 'intermediar' 
   } as const;
   return (
     <>
-      <h1 id="onb-exp-label" className="text-2xl font-semibold text-ink mb-6">Cata experienta ai?</h1>
-      <div className="flex flex-col gap-3" role="radiogroup" aria-labelledby="onb-exp-label">
+      <h1 className="text-2xl font-semibold text-ink mb-6">Cata experienta ai?</h1>
+      <div className="flex flex-col gap-3">
         {(Object.keys(labels) as Array<keyof typeof labels>).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             data-testid={`onb-exp-${v}`}
-            role="radio"
-            aria-checked={value === v}
+            aria-pressed={value === v}
             className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{labels[v]}</span>

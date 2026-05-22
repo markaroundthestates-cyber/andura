@@ -42,14 +42,13 @@ export function SettingsPrefs(): JSX.Element {
       </header>
 
       <div className="flex-1 overflow-y-auto p-5">
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="prefs-units-label">
+        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
+            toggle pattern. Vezi SchimbaFazaConfirm + Onboarding pentru
+            rationale full. */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Unitati
         </p>
-        <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
-          role="radiogroup"
-          aria-labelledby="prefs-units-label"
-        >
+        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           {UNIT_OPTIONS.map((opt, idx) => {
             const selected = unit === opt.value;
             return (
@@ -57,8 +56,7 @@ export function SettingsPrefs(): JSX.Element {
                 key={opt.value}
                 type="button"
                 data-testid={`unit-${opt.value}`}
-                role="radio"
-                aria-checked={selected}
+                aria-pressed={selected}
                 onClick={() => setUnitSystem(opt.value)}
                 className={`w-full flex items-center px-4 py-3 text-left ${idx < UNIT_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
@@ -69,14 +67,10 @@ export function SettingsPrefs(): JSX.Element {
           })}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="prefs-weekstart-label">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Inceput saptamana
         </p>
-        <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
-          role="radiogroup"
-          aria-labelledby="prefs-weekstart-label"
-        >
+        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           {WEEK_START_OPTIONS.map((opt, idx) => {
             const selected = weekStart === opt.value;
             return (
@@ -84,8 +78,7 @@ export function SettingsPrefs(): JSX.Element {
                 key={opt.value}
                 type="button"
                 data-testid={`week-start-${opt.value}`}
-                role="radio"
-                aria-checked={selected}
+                aria-pressed={selected}
                 onClick={() => setWeekStart(opt.value)}
                 className={`w-full flex items-center px-4 py-3 text-left ${idx < WEEK_START_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
