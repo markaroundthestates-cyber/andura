@@ -20,7 +20,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Clock, Layers, TrendingUp, Flame } from 'lucide-react';
+import { Clock, Layers, TrendingUp, Flame, Dumbbell } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
@@ -76,6 +76,23 @@ function volumeFor(intensityMod: IntensityMod): number {
 function formatVolume(kg: number): string {
   return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
 }
+
+// F-workout-preview/T4 — Hardcoded mockup demo fallback exercise list cand
+// engine emits 0 exercises (rest day handled upstream null; this guards
+// pipeline edge: sessionBuilder returns empty array on context mismatch).
+// Verbatim mockup andura-clasic.html#L945-984 — 5 exercises Push session
+// (incline DB press / military / lateral / triceps cable / abdominal plank).
+interface FallbackExercise {
+  name: string;
+  detail: string;
+}
+const FALLBACK_EXERCISES: FallbackExercise[] = [
+  { name: 'Impins inclinat cu gantere',  detail: '4 seturi - 22.5 kg - 8-10 reps' },
+  { name: 'Impins militar sezand',       detail: '4 seturi - 20 kg - 8-10 reps' },
+  { name: 'Ridicari laterale',           detail: '3 seturi - 8 kg - 12-15 reps' },
+  { name: 'Extensii triceps la cablu',   detail: '3 seturi - 15 kg - 10-12 reps' },
+  { name: 'Plansa abdominala',           detail: '3 seturi - 45 sec' },
+];
 
 export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
@@ -178,6 +195,49 @@ export function WorkoutPreview(): JSX.Element {
           </span>
         </div>
       )}
+      {/* F-workout-preview/T4 — Exercise list 5 numbered. Mockup parity
+          andura-clasic.html#L941-985. Renders engine exercises cand
+          available; falls back hardcoded mockup demo cand engine emits
+          empty array (defensive — getTodayWorkout returns null for
+          rest/halt; this guards sessionBuilder edge case 0 exercises).
+          Each row: numbered badge + name + detail (sets/reps) + dumbbell icon. */}
+      <div className="settings-section text-xs uppercase tracking-wider text-ink3 font-semibold mb-2">
+        Exercitii
+      </div>
+      <ul
+        className="rounded-xl bg-paper2 border border-line divide-y divide-line mb-4"
+        data-testid="preview-exercise-list"
+      >
+        {(workout?.exercises && workout.exercises.length > 0
+          ? workout.exercises.map((ex, i) => ({
+              key: ex.id,
+              name: ex.name,
+              detail: `${ex.sets} seturi - ${ex.targetKg} kg - ${ex.targetReps} reps`,
+              idx: i,
+            }))
+          : FALLBACK_EXERCISES.map((ex, i) => ({
+              key: `fallback-${i}`,
+              name: ex.name,
+              detail: ex.detail,
+              idx: i,
+            }))
+        ).map((item) => (
+          <li
+            key={item.key}
+            className="flex items-center gap-3 p-3"
+            data-testid="preview-exercise-row"
+          >
+            <div className="w-8 h-8 rounded-lg bg-paper border border-line flex items-center justify-center font-mono font-bold text-ink2 text-sm flex-shrink-0">
+              {item.idx + 1}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-ink truncate">{item.name}</div>
+              <div className="text-xs text-ink3 font-mono mt-0.5">{item.detail}</div>
+            </div>
+            <Dumbbell className="w-4 h-4 text-ink3 flex-shrink-0" aria-hidden="true" />
+          </li>
+        ))}
+      </ul>
       {coachLine && (
         <p
           className="coach-quote text-base text-ink2 italic font-serif mb-6"
