@@ -279,7 +279,7 @@ export function SettingsNotifications(): JSX.Element {
           Coaching
         </p>
         <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden"
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
           data-testid="notif-events-coaching"
         >
           {NOTIF_EVENTS_COACHING.map((ev, idx) => (
@@ -292,6 +292,23 @@ export function SettingsNotifications(): JSX.Element {
               isLast={idx === NOTIF_EVENTS_COACHING.length - 1}
             />
           ))}
+        </div>
+
+        {/* §F-pass2-settings-notif-03 (MED Wave 7 2026-05-23) — Quiet hours
+            display per mockup L1961-1964 ("Ore de liniste" section + "Nu
+            deranja 22:00 — 07:00" info row). V1 read-only info, NU picker
+            interactive (mockup uses info-row pattern, not time-range picker). */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+          Ore de liniste
+        </p>
+        <div
+          className="bg-paper2 border border-line rounded-xl px-4 py-3"
+          data-testid="notif-quiet-hours"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ink">Nu deranja</span>
+            <span className="text-sm text-ink2 font-mono">22:00 — 07:00</span>
+          </div>
         </div>
       </div>
     </section>

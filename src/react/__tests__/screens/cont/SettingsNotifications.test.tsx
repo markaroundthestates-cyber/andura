@@ -160,6 +160,21 @@ describe('SettingsNotifications — §F-pass2-settings-notif-02 per-event toggle
   });
 });
 
+describe('SettingsNotifications — §F-pass2-settings-notif-03 quiet hours display', () => {
+  it('renders "Ore de liniste" section heading', () => {
+    renderScreen();
+    expect(screen.getByText(/Ore de liniste/)).toBeInTheDocument();
+  });
+
+  it('renders quiet hours info row cu "Nu deranja" label + "22:00 — 07:00" range', () => {
+    renderScreen();
+    const block = screen.getByTestId('notif-quiet-hours');
+    expect(block).toBeInTheDocument();
+    expect(block.textContent).toMatch(/Nu deranja/);
+    expect(block.textContent).toMatch(/22:00\s*—\s*07:00/);
+  });
+});
+
 describe('SettingsNotifications — §32-H2 permission ladder', () => {
   const originalNotif = (globalThis as { Notification?: unknown }).Notification;
 
