@@ -1,8 +1,12 @@
 // ══ RESUME SESSION CARD — Mid-Session Recovery ════════════════════════════
 // Per mockup andura-clasic.html#L794 resume-session-card.
 // Rendered conditional pe workoutStore.pausedSnapshot !== null.
+//
+// §F-pass2-resume-01 (MED Wave 7 2026-05-23) — PlayCircle brick icon 24x24
+// left of content per mockup L796 verbatim (visual call-to-action affordance).
 
 import type { JSX } from 'react';
+import { PlayCircle } from 'lucide-react';
 import type { PausedSession } from '../../stores/workoutStore';
 
 interface Props {
@@ -21,6 +25,11 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
       onClick={onResume}
     >
       <div className="flex items-center gap-3">
+        <PlayCircle
+          className="w-6 h-6 text-brick flex-shrink-0"
+          aria-hidden="true"
+          data-testid="resume-session-icon"
+        />
         <div className="flex-1">
           <div className="text-xs font-bold tracking-wider uppercase text-brick">Reia sesiunea</div>
           <div className="font-bold text-ink mt-0.5">{snapshot.title}</div>
