@@ -1,8 +1,8 @@
 // Phase 6 task_10 — SettingsNotifications sub-screen tests.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsNotifications } from '../../../routes/screens/cont/SettingsNotifications';
 import { useSettingsStore } from '../../../stores/settingsStore';
@@ -97,5 +97,68 @@ describe('SettingsNotifications — render + interactions', () => {
   it('no diacritics in UI text', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('SettingsNotifications — §32-H2 permission ladder', () => {
+  const originalNotif = (globalThis as { Notification?: unknown }).Notification;
+
+  afterEach(() => {
+    if (originalNotif === undefined) {
+      delete (globalThis as { Notification?: unknown }).Notification;
+    } else {
+      (globalThis as { Notification?: unknown }).Notification = originalNotif;
+    }
+  });
+
+  function mockNotification(permission: 'default' | 'granted' | 'denied', requestResult?: 'granted' | 'denied'): { request: ReturnType<typeof vi.fn> } {
+    const request = vi.fn(() => Promise.resolve(requestResult ?? permission));
+    (globalThis as { Notification?: unknown }).Notification = Object.assign(
+      function (): void {},
+      { permission, requestPermission: request },
+    );
+    return { request };
+  }
+
+  it('toggle-on with default permission triggers requestPermission', async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    const { request } = mockNotification('default', 'granted');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    await waitFor(() => expect(request).toHaveBeenCalled());
+    await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(true));
+  });
+
+  it('toggle-on + denied permission does NOT enable store flag', async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    mockNotification('default', 'denied');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    await waitFor(() => {
+      expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
+    });
+  });
+
+  it('already-granted: toggle works without re-prompt', () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    const { request } = mockNotification('granted');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    expect(request).not.toHaveBeenCalled();
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(true);
+  });
+
+  it('denied permission + enabled store flag shows warning banner', () => {
+    useSettingsStore.setState({ notificationsEnabled: true });
+    mockNotification('denied');
+    renderScreen();
+    expect(screen.getByTestId('notif-permission-warning')).toBeInTheDocument();
+  });
+
+  it('unsupported (no Notification API) shows italic note when enabled', () => {
+    useSettingsStore.setState({ notificationsEnabled: true });
+    delete (globalThis as { Notification?: unknown }).Notification;
+    renderScreen();
+    expect(screen.getByTestId('notif-unsupported-warning')).toBeInTheDocument();
   });
 });
