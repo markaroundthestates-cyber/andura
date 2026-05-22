@@ -40,10 +40,29 @@ beforeEach(() => {
   localStorage.clear();
 });
 
+// Minimal JWT fake helper for tests (display-only, NU signature validation).
+function fakeJwt(payload: Record<string, unknown>): string {
+  const b64 = (s: string): string => btoa(s).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const head = b64(JSON.stringify({ alg: 'none', typ: 'JWT' }));
+  const body = b64(JSON.stringify(payload));
+  return `${head}.${body}.sig`;
+}
+
 describe('SettingsProfile — render', () => {
   it('renders heading "Profil & tinte"', () => {
     renderScreen();
     expect(screen.getByRole('heading', { name: /Profil & tinte/i, level: 1 })).toBeInTheDocument();
+  });
+
+  it('§F-cont-01 avatar initial defaults la "A" daca unauthenticated', () => {
+    renderScreen();
+    expect(screen.getByTestId('settings-profile-initial').textContent).toBe('A');
+  });
+
+  it('§F-cont-01 avatar initial wired din id_token JWT', () => {
+    localStorage.setItem('firebase-id-token', fakeJwt({ email: 'daniel@andura.app', name: 'Daniel' }));
+    renderScreen();
+    expect(screen.getByTestId('settings-profile-initial').textContent).toBe('D');
   });
 
   it('renders back button cu aria-label "Inapoi"', () => {

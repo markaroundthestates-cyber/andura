@@ -15,6 +15,7 @@ import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { getUserProfileDisplay } from './userProfile';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -43,6 +44,9 @@ export function SettingsProfile(): JSX.Element {
   const navigate = useNavigate();
   const data = useOnboardingStore((s) => s.data);
   const setField = useOnboardingStore((s) => s.setField);
+  // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
+  // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
+  const profile = getUserProfileDisplay();
 
   // Draft state pentru edit apoi save commit (avoid live store thrash)
   const [draft, setDraft] = useState<OnboardingData>(data);
@@ -77,8 +81,11 @@ export function SettingsProfile(): JSX.Element {
 
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex flex-col items-center gap-2.5 pt-2 pb-5">
-          <div className="w-20 h-20 rounded-full bg-brick text-paper flex items-center justify-center text-3xl font-semibold">
-            A
+          <div
+            className="w-20 h-20 rounded-full bg-brick text-paper flex items-center justify-center text-3xl font-semibold"
+            data-testid="settings-profile-initial"
+          >
+            {profile.initial}
           </div>
         </div>
 
@@ -128,6 +135,11 @@ export function SettingsProfile(): JSX.Element {
           </SelectRow>
         </div>
 
+        {/* §F-pass2-settings-profile-05 HIGH-BETA chat 4 Co-CTO decision: KEEP
+            Antrenament section (Obiectiv + Frecventa + Experienta) onboarding
+            fields surface in profile edit — value > strict mockup parity. User
+            can change goal/frequency/experience post-onboarding without redoing
+            full onboarding flow. Mockup omission is mockup drift, NU prod bug. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Antrenament
         </p>
