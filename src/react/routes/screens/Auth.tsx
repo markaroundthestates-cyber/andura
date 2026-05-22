@@ -108,10 +108,10 @@ export function Auth(): JSX.Element {
         )}
 
         <h1 className="text-2xl font-semibold text-ink mb-2 text-center">
-          Autentificare
+          Intra in cont
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
-          Iti trimitem un link pe email. Tap-il sa intri in cont.
+          Un tap cu Google. Fara parola, fara link pe email.
         </p>
 
         {sent ? (

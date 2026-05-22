@@ -97,7 +97,7 @@ describe('Routing — top-level screens', () => {
 
   it('renders Auth la /auth', () => {
     renderAt('/auth');
-    expect(screen.getByText('Autentificare')).toBeInTheDocument();
+    expect(screen.getByText('Intra in cont')).toBeInTheDocument();
   });
 
   it('renders Onboarding step la /onboarding/3', () => {
@@ -116,7 +116,7 @@ describe('Routing — ProtectedRoute redirect', () => {
 
   it('redirects la /auth daca !isAuthenticated', () => {
     renderAt('/app/antrenor');
-    expect(screen.getByText('Autentificare')).toBeInTheDocument();
+    expect(screen.getByText('Intra in cont')).toBeInTheDocument();
   });
 
   it('renders Antrenor daca isAuthenticated + onboarding completed', () => {
