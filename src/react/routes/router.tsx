@@ -4,10 +4,14 @@
 // Phase 3 Antrenor sub-screens nested sub /app/antrenor/<screen>.
 //
 // §B007/D-3 audit fix (D046 §3.3) — Bundle code-split via React.lazy() pentru
-// non-critical sub-routes. Critical path stays eager (Splash, Auth, Onboarding,
-// 4 tab home Antrenor/Progres/Istoric/Cont, Layout/ProtectedRoute wrap).
+// non-critical sub-routes. 4 tab home stays eager (Antrenor/Progres/Istoric/
+// Cont, Layout/ProtectedRoute wrap = bottom-nav primary entry).
 // Sub-screens (Antrenor 11 + Cont 9 + Progres 2 + Istoric detail 1 = 23
 // total) load on-demand via dynamic import. Maria 65 3G LCP improved.
+//
+// ROUTE_LAZY_LOAD_INVESTIGATION chat 5 HIGH ROI #1 — Splash + Auth +
+// AuthCallback + Onboarding lazy (one-time-entry flow per session, NU primary
+// daily tab). Main bundle shrink ~15-25 KB raw / ~6-10 KB gzip estimated.
 
 import { lazy, Suspense } from 'react';
 import type { JSX, ReactNode } from 'react';
@@ -15,16 +19,18 @@ import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Layout } from './Layout';
 
-// Critical path — eager (always loaded — splash + auth + onboarding mandatory
-// pre-protected; 4 tab home page is bottom-nav primary entry).
-import { Splash } from './screens/Splash';
-import { Auth } from './screens/Auth';
-import { AuthCallback } from './screens/AuthCallback';
-import { Onboarding } from './screens/Onboarding';
+// 4 tab home eager (bottom-nav primary entry — daily-use Antrenor/Progres/
+// Istoric/Cont). ProtectedRoute wraps, redirect anon → /auth lazy chunk.
 import { Antrenor } from './screens/antrenor/Antrenor';
 import { Progres } from './screens/progres/Progres';
 import { Istoric } from './screens/istoric/Istoric';
 import { Cont } from './screens/cont/Cont';
+
+// ROUTE_LAZY_LOAD_INVESTIGATION chat 5 HIGH ROI #1 — one-time-entry flow lazy
+const Splash = lazy(() => import('./screens/Splash').then((m) => ({ default: m.Splash })));
+const Auth = lazy(() => import('./screens/Auth').then((m) => ({ default: m.Auth })));
+const AuthCallback = lazy(() => import('./screens/AuthCallback').then((m) => ({ default: m.AuthCallback })));
+const Onboarding = lazy(() => import('./screens/Onboarding').then((m) => ({ default: m.Onboarding })));
 
 // §B007 lazy — Antrenor sub-screens (workout flow, 11 routes)
 const EnergyCheck = lazy(() => import('./screens/antrenor/EnergyCheck').then((m) => ({ default: m.EnergyCheck })));
@@ -106,11 +112,11 @@ function LazyRoute({ children }: { children: ReactNode }): JSX.Element {
 }
 
 export const router = createBrowserRouter([
-  { path: '/', element: <Splash /> },
-  { path: '/auth', element: <Auth /> },
-  { path: '/auth/reactivate', element: <Auth /> },
-  { path: '/auth-callback', element: <AuthCallback /> },
-  { path: '/onboarding/:step', element: <Onboarding /> },
+  { path: '/', element: <LazyRoute><Splash /></LazyRoute> },
+  { path: '/auth', element: <LazyRoute><Auth /></LazyRoute> },
+  { path: '/auth/reactivate', element: <LazyRoute><Auth /></LazyRoute> },
+  { path: '/auth-callback', element: <LazyRoute><AuthCallback /></LazyRoute> },
+  { path: '/onboarding/:step', element: <LazyRoute><Onboarding /></LazyRoute> },
   {
     path: '/app',
     element: (
