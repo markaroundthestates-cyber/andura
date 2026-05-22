@@ -30,8 +30,12 @@ declare global {
     /** Auto-backup exposed for UI access. */
     listBackups?: () => Array<{ key: string, date: string, timestamp: number }>;
     // Note: restoreFromBackup has 2 overlapping signatures (autoBackup keyOrDaysAgo / dataCleanup jsonString).
-    // Loose Function type to accept both; callers know which signature is live at runtime.
-    restoreFromBackup?: Function;
+    // Typed union expresses both call shapes; callers know which signature is live at runtime.
+    // - autoBackup.js: (keyOrDaysAgo: string | number) => { restored: boolean, reason?: string, date?: string, keysRestored?: number }
+    // - dataCleanup.js: (jsonString: string) => boolean
+    restoreFromBackup?:
+      | ((keyOrDaysAgo: string | number) => { restored: boolean; reason?: string; date?: string; keysRestored?: number })
+      | ((jsonString: string) => boolean);
     createDailyBackup?: () => { key: string, date: string, size: number } | null;
 
     /** CDL backfill exposed for owner dev console. */
