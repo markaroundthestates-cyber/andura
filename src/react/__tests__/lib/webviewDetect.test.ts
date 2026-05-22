@@ -34,6 +34,22 @@ describe('detectWebView — userAgent pattern recognition', () => {
     expect(detectWebView(ua)).toBe('twitter');
   });
 
+  // §MED-2 audit fix — X rebrand + anchor twitter token coverage.
+  it('detects X-app WebView via com.twitter.android package marker', () => {
+    const ua = 'Mozilla/5.0 (Linux; Android 14; SM-S908B) AppleWebKit/537.36 com.twitter.android/10.50.0';
+    expect(detectWebView(ua)).toBe('twitter');
+  });
+
+  it('detects modern X-app WebView via XApp/ token', () => {
+    const ua = 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 XApp/10.50.0';
+    expect(detectWebView(ua)).toBe('twitter');
+  });
+
+  it('does NOT detect twitter for Chrome UA with random "twitter" in path on Android', () => {
+    const ua = 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36 /share/twitter/url';
+    expect(detectWebView(ua)).toBeNull();
+  });
+
   it('detects TikTok WebView via musical_ly marker', () => {
     const ua = 'Mozilla/5.0 ... musical_ly_30.0.0';
     expect(detectWebView(ua)).toBe('tiktok');

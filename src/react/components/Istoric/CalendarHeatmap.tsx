@@ -18,6 +18,9 @@
 
 import { useState, type JSX } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSessionsByDate, localKey } from '../../lib/useSessionsByDate';
+import { deriveSessionRating } from '../../lib/sessionRating';
+import type { SessionRating } from '../../lib/sessionRating';
 
 const CAL_MONTHS = [
   'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
@@ -26,10 +29,26 @@ const CAL_MONTHS = [
 
 const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
 
+// Maps derived rating to tier class. Null (no rating in legacy session) →
+// l2 normal fallback per spec §2.2 (matches mockup heat[]=2 placeholder).
+function ratingToTierClass(rating: SessionRating | null): string {
+  if (rating === 'usor') return 'l1';
+  if (rating === 'greu') return 'l3';
+  return 'l2'; // potrivit OR null fallback
+}
+
+function tierBgClass(tier: string): string {
+  if (tier === 'l1') return 'bg-heatUsor';
+  if (tier === 'l2') return 'bg-heatNormal';
+  if (tier === 'l3') return 'bg-heatGreu';
+  return 'bg-paper2'; // zi libera
+}
+
 export function CalendarHeatmap(): JSX.Element {
   const today = new Date();
   const [calY, setCalY] = useState(today.getFullYear());
   const [calM, setCalM] = useState(today.getMonth()); // 0-indexed
+  const sessionsByDate = useSessionsByDate(calY, calM);
 
   const navMonth = (delta: -1 | 1): void => {
     let m = calM + delta;
@@ -39,6 +58,24 @@ export function CalendarHeatmap(): JSX.Element {
     setCalY(y);
     setCalM(m);
   };
+
+  // Monday-first offset: JS getDay() returns 0=Sun..6=Sat. App convention
+  // Monday-first → (getDay() + 6) % 7 yields 0=Mon..6=Sun.
+  const firstOfMonth = new Date(calY, calM, 1);
+  const monOffset = (firstOfMonth.getDay() + 6) % 7;
+  const daysInMonth = new Date(calY, calM + 1, 0).getDate();
+
+  // Build day cells array: leading empties + actual day numbers.
+  const cells: Array<{ day: number | null; rating: SessionRating | null; key: string | null }> = [];
+  for (let i = 0; i < monOffset; i++) {
+    cells.push({ day: null, rating: null, key: null });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${calY}-${String(calM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const session = sessionsByDate.get(key);
+    const rating = session ? deriveSessionRating(session) : null;
+    cells.push({ day: d, rating: session ? rating : null, key });
+  }
 
   return (
     <section
@@ -81,6 +118,46 @@ export function CalendarHeatmap(): JSX.Element {
             {lbl}
           </div>
         ))}
+      </div>
+
+      <div
+        className="grid grid-cols-7 gap-1"
+        role="grid"
+        aria-label={`${CAL_MONTHS[calM]} ${calY}`}
+        data-testid="cal-grid"
+      >
+        {cells.map((cell, idx) => {
+          if (cell.day === null) {
+            return (
+              <div
+                key={`empty-${idx}`}
+                aria-hidden="true"
+                className="aspect-square"
+                data-testid={`cal-cell-empty-${idx}`}
+              />
+            );
+          }
+          const hasSession = sessionsByDate.has(cell.key ?? '');
+          const tier = hasSession ? ratingToTierClass(cell.rating) : 'zi-libera';
+          const bg = tierBgClass(tier);
+          // Text color tuned for contrast: l1 light bg uses dark text;
+          // l2/l3 medium-dark green uses ink (11.57:1 / improvement vs mockup white 5.43:1 / 2.69:1).
+          let textCls = 'text-ink3';
+          if (tier === 'l1') textCls = 'text-[#2f5b34]'; // 7.92:1 AAA
+          else if (tier === 'l2' || tier === 'l3') textCls = 'text-ink font-semibold';
+          return (
+            <div
+              key={`day-${cell.day}`}
+              role="gridcell"
+              data-testid={`cal-cell-${cell.day}`}
+              data-tier={tier}
+              data-date={cell.key}
+              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls}`}
+            >
+              {cell.day}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
