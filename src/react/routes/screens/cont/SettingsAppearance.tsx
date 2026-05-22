@@ -49,10 +49,14 @@ export function SettingsAppearance(): JSX.Element {
           Cum arata Andura pentru tine.
         </p>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="appearance-theme-label">
           Tema
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          role="radiogroup"
+          aria-labelledby="appearance-theme-label"
+        >
           {THEME_OPTIONS.map((opt, idx) => {
             const Icon = opt.Icon;
             const selected = theme === opt.value;
@@ -74,10 +78,14 @@ export function SettingsAppearance(): JSX.Element {
           })}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="appearance-navstyle-label">
           Bara de jos
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden"
+          role="radiogroup"
+          aria-labelledby="appearance-navstyle-label"
+        >
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
             const selected = navStyle === opt.value;
             return (

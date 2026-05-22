@@ -42,10 +42,14 @@ export function SettingsPrefs(): JSX.Element {
       </header>
 
       <div className="flex-1 overflow-y-auto p-5">
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="prefs-units-label">
           Unitati
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          role="radiogroup"
+          aria-labelledby="prefs-units-label"
+        >
           {UNIT_OPTIONS.map((opt, idx) => {
             const selected = unit === opt.value;
             return (
@@ -65,10 +69,14 @@ export function SettingsPrefs(): JSX.Element {
           })}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="prefs-weekstart-label">
           Inceput saptamana
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          role="radiogroup"
+          aria-labelledby="prefs-weekstart-label"
+        >
           {WEEK_START_OPTIONS.map((opt, idx) => {
             const selected = weekStart === opt.value;
             return (
