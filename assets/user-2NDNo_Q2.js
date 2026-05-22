@@ -1,0 +1,1 @@
+const e={bio:{name:"Daniel",height:183,age:30,startBF:23,startKg:111.4,currentKgFallback:110.4,targetKg:101.5},targets:{kcal:2e3,protein:180,phaseTargetDate:"2026-07-20"},firebase:{userPath:"users/daniel"}};function r(){const t=localStorage.getItem("sf.userConfig");if(t)try{return{...e,...JSON.parse(t)}}catch{return e}return e}export{r as g};
