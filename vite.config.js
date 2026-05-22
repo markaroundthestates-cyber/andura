@@ -34,6 +34,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Perf chat 5 (LIGHTHOUSE-PERF-AUDIT) — eliminate 952ms render-block
+      // on registerSW.js. Default 'auto' injects <script src="/registerSW.js">
+      // in <head> blocking render. 'script-defer' adds defer attribute so
+      // browser keeps parsing HTML in parallel, SW registration runs post
+      // DOMContentLoaded. Maria 65 mobile 3G LCP improvement ~1s estimated.
+      injectRegister: 'script-defer',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'Andura',
