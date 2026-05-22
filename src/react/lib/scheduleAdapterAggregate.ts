@@ -33,12 +33,12 @@ import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
  * în stores (slip cause D027 §5).
  */
 function buildUserStateForPipeline(): {
-  user: object;
+  user: Record<string, unknown>;
   recentSessions: ReadonlyArray<unknown>;
-  weights: object;
+  weights: Record<string, unknown>;
   profileTier: null;
-  flags: object;
-  meta: object;
+  flags: Record<string, unknown>;
+  meta: Record<string, unknown>;
 } {
   const onboardingData = useOnboardingStore.getState().data;
   const sessionsHistory = useWorkoutStore.getState().sessionsHistory;

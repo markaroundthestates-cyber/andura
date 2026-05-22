@@ -21,10 +21,10 @@ export interface CalendarOverride {
 export interface WorkoutPlan {
   type: 'training';
   sessionType: string;
-  warmup: object | null;
+  warmup: Record<string, unknown> | null;
   exercises: ReadonlyArray<{ name: string; sets: number }>;
-  intensityModifier: object | null;
-  volumeTargets: object | null;
+  intensityModifier: Record<string, unknown> | null;
+  volumeTargets: Record<string, unknown> | null;
   specializationTarget: string | null;
   deloadState: string;
   estimatedDurationMin: number;
@@ -52,6 +52,6 @@ export function resetRefusalCounter(exerciseName: string): void;
 export function translateToEngineEquipment(userIds: string[]): string[];
 
 export function getDailyWorkout(
-  userState?: object,
+  userState?: Record<string, unknown>,
   now?: Date,
 ): Promise<WorkoutPlan | null>;

@@ -14,6 +14,7 @@
 
 import { useNutritionStore } from '../stores/nutritionStore';
 import { getNutritionTargetsToday } from './engineWrappers';
+import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
 
 export interface NutritionTarget {
   kcalTarget: number;
@@ -35,7 +36,7 @@ export interface NutritionTarget {
  */
 export async function getNutritionTargetTodayReal(
   dateISO: string,
-  userState?: object,
+  userState?: BayesianNutritionContext,
 ): Promise<NutritionTarget> {
   // Priority 1: manual log full override
   const entry = useNutritionStore.getState().getDaily(dateISO);

@@ -23,6 +23,7 @@ import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/rea
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
+import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
@@ -506,7 +507,7 @@ function getPhaseOverrideKcalToday(): number | null {
 }
 
 export async function getNutritionTargetsToday(
-  userState?: object,
+  userState?: BayesianNutritionContext,
 ): Promise<NutritionTargetsEngine> {
   const phaseKcal = getPhaseOverrideKcalToday();
   try {
@@ -717,7 +718,7 @@ const SEVERITY_MAP: Record<string, ProactiveAlert['severity']> = {
  * Returns mapped UI shape (severity normalize 3-tier). Defensive try/catch
  * graceful empty array fallback per orchestrator §7.
  */
-export function getProactiveAlerts(ctx: object = {}): ProactiveAlert[] {
+export function getProactiveAlerts(ctx: Record<string, unknown> = {}): ProactiveAlert[] {
   try {
     const raw = runProactiveChecks(ctx);
     if (!Array.isArray(raw)) return [];

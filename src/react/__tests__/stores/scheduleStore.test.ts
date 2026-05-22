@@ -15,7 +15,7 @@ import {
 const MONDAY_2026_05_18 = new Date(2026, 4, 18); // dayIdx 0 (L)
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M)
 
-function buildUserState(): object {
+function buildUserState(): Record<string, unknown> {
   return {
     user: { gender: 'M', age: 30, level: 'intermediate', goal: 'hypertrophy' },
     recentSessions: [],
