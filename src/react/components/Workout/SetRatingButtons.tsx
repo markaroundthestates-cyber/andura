@@ -14,6 +14,10 @@
 // dot + label pattern). Emoji is aria-hidden decorative - preserves
 // existing accessible name "Usor"/"Potrivit"/"Greu" for Workout.test
 // ^Usor$ exact-match regex assertions.
+//
+// §F-pass2-setrating-02 (LOW chat5) — heading swap "Cum a fost setul?" →
+// "Cum a fost?" mockup verbatim andura-clasic.html#L1493 (brevity per
+// Daniel reglaj 2026-05-12 §coach-rating-row).
 
 import type { JSX } from 'react';
 
@@ -42,7 +46,7 @@ const RATING_OPTIONS: readonly RatingOption[] = [
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element {
   return (
     <>
-      <p className="text-base text-ink mb-3">Cum a fost setul?</p>
+      <p className="text-base text-ink mb-3">Cum a fost?</p>
       <div className="flex gap-3" role="list" aria-label="Rating set">
         {RATING_OPTIONS.map((opt) => (
           <button
