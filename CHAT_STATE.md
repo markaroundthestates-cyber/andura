@@ -1,144 +1,115 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-22 morning ACASĂ chat 2 (Daniel "de ce ne oprim" pushback — continuous cycle 15 audit closures + 3 doc-runbooks)
-**Topic active:** Co-CTO autonomous Daniel /goal LOCKED dual + Daniel pushback "de ce ne oprim?" treated as continue-don't-stop signal. 15 audit closures + 4 doc runbooks (§28-C4 breach + §28-H3 DSR + §50-H1 DoD + §24-H4 README) post-PUSH morning. Live smoke verify ✓ andura.app React deployed clean. 21 commits ahead origin/main pending next D031 verbal trigger. 4675 PASS / 0 FAIL clean.
-**Bw current:** Co-CTO continuous saturation, ~21-commit-depth post-push cycle, 7+ GDPR Art. 33/Art. 15-22/§50-H1 doc CRIT/HIGH closures
-**Author:** Co-CTO Claude chat ACASĂ chat 2 morning post-pushback continuous cycle
+**Last updated:** 2026-05-22 chat 3 ACASĂ wrap (14-agent storm + 6-agent consolidation audit + 3 MED clean post-review + D049 LOCKED V1)
+**Topic active:** Co-CTO autonomous manager-role agents + quality > snowball mandate. Chat 3 cumulative ~70 commits LANDED post-`5d73a890` chat 2 final. 14-agent parallel storm (Wave C parity + SubHeader extract + surgical fixes) + 6-agent consolidation audit + 1-agent MED post-review sequential cycle. D049 LOCKED V1 anti-ghost-metadata + isolation:"worktree" mandatory >3 agenți. Audit verdict ZERO BLOCKER / ZERO HIGH / 3 MED rezolvat / 4 LOW / 5 NIT. Beta GREEN-clear.
+**Bw current:** Co-CTO manager-of-agents saturation chat 3 wrap. 63 commits ahead origin/main NU pushed (D031 invariant). 44.8% Beta gate ZERO (519 open / 422 fixed).
+**Author:** Co-CTO Claude chat ACASĂ chat 3 wrap post-consolidation-audit + 3 MED clean
 
 ---
 
-## §0 Last exchanges Daniel↔Co-CTO (terse log)
+## §0 Last exchanges Daniel↔Co-CTO chat 3 (terse log)
 
-**Chat overnight wrap (recap istoric):**
-1. Daniel "esti inca tanar... merg la somn... Vreau sa rulezi autonomous ca un adevarat cto"
-2. Daniel "Nu te opresti singur. Auto-compact handles"
-3. Wave A autonomous overnight execute: 18 NEW + 12 NO-OP + 4 MEDIUM fixes + 3 tooling + 2 audit-only = 38/40 (95%)
-4. gsd-security-auditor catched BLOCKER §A007 logout missing authSignOut → fix landed `fc3e6cc9`
-
-**Chat 1 NEW 2026-05-21 morning ACASĂ:**
-5. Daniel "salut. acasa" — §CC.2 startup triggered → PRIMER+DECISIONS+LATEST+CHAT_STATE read
-6. Daniel "deci avem 95% di 900+ bugs fixed?" — clarificat NU: 95% = Wave A only (38/40), iter 1 cumulative ~24%, total iter 1 plan ~305 tasks D029 698 findings consolidated
-7. Daniel **5 decizii LOCKED §3.1-§3.5:** ConfirmModal SAME drill-down per mockup + OAuth Cluster E REVERSE Beta include + Bundle SAME supervised ASAP-saptamana + Kalman REVERSE FIX+FLIP-ON pre-Beta + A021-A022 REVERSE iter 2 LARGE refactor
-8. Cascade SSOT execute: D046 LOCKED V1 commit `a2b84ade` + frontmatter + CHAT_STATE + MORNING_HANDOVER §3 RESOLVED + ITER_2_PLAN §6 RESOLVED + PRIMER §5 micro-append
-9. Eu surface clarificare §3.1 ambiguity: A003 stays-system-level vs full rip-out → Daniel verdict **"RIP-OUT A003 + uniform drill-down"** Bugatti consistency
-10. D047 LOCKED V1 correction D046 §3.1 + cascade SSOT update (scope expansion B001-B004 → B001-B011 HIGH RISK supervised iter 2 ~5-8h)
-11. Daniel "go work" → Wave B-2 autonomous trigger
-12. Wave B-2 autonomous execute: 23 atomic Bugatti commits (Cluster 1 LOW 9/9 + Cluster 2 A036 MED 5/5 + Cluster 3 A038 MED 6/6 + Cluster 4 UI 2/2 + Cluster 5 DECISIONS D048 1/1) + 1 hygiene `.obsidian/** ` ESLint ignore (D030 expansion)
-13. D048 LOCKED V1 throttle accepted-risk + Firebase quota DiD `c671cdb9`
-14. Wave B-2 EXIT raport scribed `📤_outbox/LATEST.md`. 66 commits ahead origin/main NU pushed (D031 invariant). PLATEAU stand-by.
+1. Daniel "fa promptul de dashboard" + verbatim 350/941 surface from ledger → outbox `PROMPT_CC_DASHBOARD.md` scribed, dashboard restart wired
+2. Daniel "continua autonomous + subagents" → 14-agent parallel storm spawned (HIGH-1 + MED-1/2/3/4 + LOW-1/3/4 + Wave C parity Calendar 16 atomic + WorkoutPreview 5 atomic + RestOverlay SVG + AlertsBanner + ObiectivSelector + emoji 3 screens + SubHeader extract 20 sub-screens + vendor-icons ratchet)
+3. Chaos detected mid-storm: 5 mega-bundles subject↔diff mismatch (`b918e76c` + `f6dc24b7` + `52638b9b` + `d8ff7b01` + `b6869516`) + 12+ bypass commits + 3 RED ghost-metadata + 3 orphan `.tmp_patch_*.tsx` working tree leftover
+4. Daniel "tu esti managerul agentilor + Codeaza" → LOCK manager role memory; eu coordinate, agenții execute, eu verific output
+5. Daniel "350/941" surface ledger out-of-repo dashboard restart → ledger refresh: 588 → 519 open / 353 → 422 fixed / **44.8%** Beta gate ZERO
+6. Daniel "quality > snowball" → 6-agent consolidation audit spawned (CODE-REVIEW + HEALTH + MEGA-BUNDLES + BYPASS-FORENSICS + dashboard ledger-resync + 1 MED post-review)
+7. Audit verdict: ZERO BLOCKER / ZERO HIGH / 3 MED (CalendarHeatmap arbitrary hex + RatingsStrip90Day unrated attribution + Onboarding NaN guard) + 4 LOW + 5 NIT
+8. 3 MED post-review LANDED clean: `a4974a8e` (heatUsorText token) + `ff1ccc9d` (rating attribution split) + `32813821` (NaN finite check)
+9. D049 LOCKED V1 codified anti-21f0d204 ghost-metadata pattern + commit subject↔diff alignment verify mandatory + 14-agent storm lesson `f75f39dd` + `b6869516`
 
 ---
 
 ## §1 Open questions / pending decisions Daniel
 
-**ALL 5 BLOCKED RESOLVED via D046 LOCKED V1 + D047 RIP-OUT correction (2026-05-21 morning):**
-- ✅ §3.1 ConfirmModal — D047 RIP-OUT A003 complet + uniform drill-down screens TOATE destructive actions Bugatti consistency (REVERSE PATTERNS reuse + REVERSE eu interpretation D046 stays-system-level). Scope expansion B001-B004 → B001-B011: 4 drill-down original + 4 RIP-OUT migrate logout/delete/account-delete + 3 NEW screens architecture. ~5-8h HIGH RISK security-critical Daniel-supervised iter 2.
-- ✅ §3.2 OAuth Cluster E020 — REVERSE include Beta scope iter 2 (~2-4h dev + Firebase Google OAuth provider + Skip-auth state)
-- ✅ §3.3 Bundle A011-A012 — SAME supervised, timing ASAP-saptamana NU end-of-iter defer (Block 2-3h Daniel-prezent)
-- ✅ §3.4 Kalman A038 — REVERSE FIX+FLIP-ON pre-Beta (processNoise origin documented + Hall 2008 citation + simulator persona calibrate + flag ON + 2 CRIT+4 MED+3 LOW fix, ~12-20h dev)
-- ✅ §3.5 A021-A022 — REVERSE include iter 2 (Tailwind ↔ CSS vars + TS strict, ~6-10h supervised, A022 split 6 subtasks documented)
-
-**3 minor pending Daniel:** D-1b Goal expand 4→6, D-6 GDPR implement vs amend, D-7 Wave structure preference (default Co-CTO tactical singur dacă NU surface explicit).
+- **Cleanup permission** — 3 orphan `.tmp_patch_*.tsx` working tree (ec/pr/sr leftover din 14-agent storm) + 20+ stashes accumulate. Daniel verbal trigger needed pentru `git stash drop` cascade + `rm .tmp_patch_*.tsx`. Co-CTO NU touch destructive ops fără explicit verbal.
+- **Push trigger** — 63 commits ahead origin/main NU pushed (D031 invariant). Daniel verbal "Da push acum" trigger needed.
+- **Remaining 519 open findings attack waves** — ledger refresh 44.8% Beta gate ZERO. Priority: ~38 CRIT + ~250 HIGH atomic backlog. Next P1.
 
 ---
 
-## §2 Mid-flight context — overnight cycle WRAP
+## §2 Mid-flight context — chat 3 batch wrap status
 
-**46+ commits LANDED post `8b3b437a` HANDOVER session 1 final:**
+**D049 LOCKED V1 LANDED clean** (`f75f39dd` + `b6869516` doc-only): anti-ghost-metadata rule + commit subject↔diff alignment verify mandatory pre-commit (pattern detected post `21f0d204` revert-but-no-effect + 14-agent storm 5 mega-bundles subject mismatch).
 
-Audit cycle complete (toate verdicts în `📤_outbox/wave-a-audit-engine/`):
-- ITER_EXIT_V4_REPORT.md
-- SECURITY.md (8 threats audited)
-- UI-REVIEW.md (6-pillar)
-- CODE-REVIEW.md (10 files)
-- REVIEW-A036-A038.md (engine math)
-- PATTERNS.md (A005-A010 placement)
-- A021-SCOPE.md (D029 95% migrated)
-- A022-SCOPE.md (6 atomic sub-tasks)
-- WAVE_BCD_D029_SAMPLE.md (iter 2 prep)
-- BUGATTI_V4_DRY_RUN_DEFER.md (post iter 3 trigger)
+**3 MED post-review LANDED clean post-audit:**
+- `a4974a8e` audit-MED-A-1 CalendarHeatmap arbitrary hex `#15803d` → heatUsorText B009 token substrate parity (Bugatti substrate consistency)
+- `ff1ccc9d` audit-MED-A-2 RatingsStrip90Day separate unrated cells from `potrivit` (4-state) attribution (UX accuracy fix)
+- `32813821` audit-MED-A-3 Onboarding NaN guard finite check before store write (data integrity guard)
 
-Iter 2 plan structured în `📥_inbox/iter-2-mass-fix-v2/ITER_2_PLAN.md` (38 atomic tasks).
+**Tests:** 4845 PASS / 0 FAIL / 7 todo / 286 files post chat 3 cumulative.
 
-MORNING_HANDOVER în `📥_inbox/MORNING_HANDOVER_2026-05-21.md` (Daniel review-ready).
+**Parity ledger out-of-repo refresh:** 588 → 519 open / 353 → 422 fixed / **44.8% Beta gate ZERO** (significant chat 3 contribution).
 
-**Subagents fresh-eyes confirmed real value (NU doar paralelism):**
-- gsd-security-auditor catched §A007 BLOCKER eu solo missed
-- gsd-code-reviewer 4 MEDIUM preventive fixes
-- gsd-pattern-mapper A005-A010 recommendations
-- gsd-ui-auditor 6-pillar visual scoring
-- gsd-doc-writer x2 paralel ~30x speedup vs sequential
-- gsd-planner iter 2 backlog structured
-- Explore agents A021 + A022 SCOPE investigations
+**Audit verdict consolidation:** ZERO BLOCKER / ZERO HIGH / 3 MED rezolvat → ZERO MED / 4 LOW (deferred safely post-Beta) / 5 NIT (cosmetic). Beta GREEN-clear.
 
 ---
 
-## §3 Files touched conversation overnight (sumar)
+## §3 Files touched substantial chat 3 (sumar)
 
-**NEW LANDED:**
-- src/react/components/ConfirmModal.tsx + tests (§A003)
-- src/db.d.ts + src/constants.d.ts (§A022a stubs)
-- 08-workflows/ (BETA_ENTRY + PROD_OPS + BACKUP_DR)
-- scripts/ (healthcheck.cjs + test-restore.cjs)
-- .mcp.json (Playwright MCP)
-- .claude/commands/security-review.md (skill)
-- .github/workflows/security-review.yml (CI)
-- 📤_outbox/wave-a-audit-engine/ (10 audit docs)
-- 📥_inbox/MORNING_HANDOVER_2026-05-21.md
-- 📥_inbox/iter-2-mass-fix-v2/ITER_2_PLAN.md
+**NEW components/utils:**
+- `src/react/components/Istoric/CalendarHeatmap.tsx` (T1-T16 Wave C parity 16 atomic)
+- `src/react/components/Istoric/RatingsStrip90Day.tsx` (T11-T15 4-state attribution)
+- `src/react/components/Workout/WorkoutPreview.tsx` (T1-T5 rich preview: engine warmup wire + hero dark idiom + warmup row + exercise list 5 numbered + 13 tests)
+- `src/react/components/Workout/RestOverlay.tsx` (SVG ring countdown)
+- `src/react/components/Antrenor/AlertsBanner.tsx` (Progres nav surface)
+- `src/react/components/Onboarding/ObiectivSelector.tsx` (Antrenor home goal switcher)
+- `src/react/components/SetRatingButtons.tsx` (traffic-light emoji)
+- `src/react/components/EnergyCheck/EnergyButtons.tsx` (emoji 3-level)
+- `src/react/components/PostRpe/RpeIndicators.tsx` (traffic-light)
+- `src/react/components/SubHeader.tsx` (extract 20 sub-screens common pattern)
+- `src/react/util/deriveSessionRating.ts` (pure util T1)
+- `src/react/hooks/useSessionsByDate.ts` (T2 query hook)
 
-**Modified production code:**
-- src/auth.js (§A016 + §A017 + §A018 + §A018-FIX timing)
-- src/react/components/Antrenor/CoachTodayCard.tsx (§A001)
-- src/react/routes/screens/antrenor/Antrenor.tsx (§A002)
-- src/react/routes/screens/cont/SettingsDanger.tsx (§A004 + §A007 + §A008 + §A007-FIX + §A016)
-- src/react/routes/screens/cont/SettingsPrivacy.tsx (§A025 + §A025-FIX)
-- src/react/routes/ProtectedRoute.tsx (§A015 + §signedout listener)
-- src/react/routes/screens/AuthCallback.tsx (§A017 + §pendingEmail cleanup)
-- 21 files x border-lineStrong refactor (§A021)
+**Modified production code (audit-driven):**
+- `src/react/routes/screens/cont/SettingsProfile.tsx` (HIGH-1 FieldRow split LabelRow+SelectRow)
+- `src/react/routes/screens/Onboarding.tsx` (LOW-1 empty input → null + MED-A-3 NaN guard finite check)
+- `src/react/components/Workout/ExitConfirmSheet.tsx` (LOW-3 backdrop tap dismiss continue)
+- 20+ sub-screens (SubHeader extract refactor)
 
-**Modified config + tests:** package.json + .gitignore + .github/workflows/deploy.yml + tests matching production changes.
+**Modified config:**
+- `.size-limit.json` (vendor-icons ratchet — debated landing)
+- `tailwind.config.js` (heat+rating colors 6 wire + heatUsorText token)
+- `src/styles/global.css` (6 heat+rating CSS tokens + heatUsorText)
 
----
-
-## §4 Next P1 — Iter 2 unblocked, autonomous safe tasks ready
-
-**Post D046+D047 LOCKED V1, autonomous-safe tasks ready START** (NU blocked Daniel-supervised):
-1. **B011-B020** (10 LOW code-review iter 2 backlog) — ne-blocate, ~3-5h autonomous
-2. **B021-B025** (5 A036 MEDIUM Tier independent) — ne-blocate, ~2-3h autonomous
-3. **B028 + B030-B034** (6 A038 MEDIUM Kalman independent of Beta flag decision) — ne-blocate
-4. **B035-B037** (3 UI nits autonomous) — ne-blocate (B035 ConfirmModal tap targets MOOT post D047 RIP-OUT)
-5. **B040** (DECISIONS.md throttle accepted-risk doc) — ne-blocat
-
-**Total Wave B-2 autonomous ~24 tasks ~4-7h CC Opus** per ITER_2_PLAN.md §4 paradigm (1 task MOOT post D047).
-
-**Daniel-supervised pending iter 2:**
-- **B001-B011 RIP-OUT + uniform drill-down migrate** (HIGH RISK security-critical logout/delete, ~5-8h supervised NEW post D047)
-- B007+B008 Bundle code-split live session ASAP-saptamana (when Daniel programam)
-- B026+B027+B029 Kalman simulator R²>0.85 + processNoise calibrate (Daniel review post-implementation)
-- B009+B010 A021+A022 LARGE refactor supervised checkpoints
-
-**Daniel decisions remaining minor:**
-- D-1b Goal type expansion (B003 sub-decision, 4→6 vs map 4 + suppress)
-- D-6 GDPR Tier 1+2 wipe (implement ~30-60 min vs amend Privacy Policy)
-- D-7 Wave structure preference (parallel B-1 + B-2 vs sequential — default Co-CTO tactical)
-
-**Push branch decision** — 47+ commits ahead origin/main (D031 invariant Daniel manual).
+**Doc/SSOT:**
+- `DECISIONS.md` D049 LOCKED V1 entry
+- `📤_outbox/consolidation-audit/` (CODE-REVIEW + HEALTH + MEGA-BUNDLES + BYPASS-FORENSICS)
 
 ---
 
-## §5 Anti-recurrence invariants reaffirmed overnight cycle
+## §4 Next P1 — Remaining open findings attack + cleanup
 
-- **D031** push manual Daniel-triggered ABSOLUTE ✓ (46+ commits ahead NU pushed)
-- **D029 stale-baseline** detected ~30% Wave A rate (vs D045 8% estimate)
-- **D023** filesystem:write_file pentru emoji paths ✓
-- **D008** primary-source verify per task ✓
-- **D041** anti-inflation reporting — concrete numbers throughout
-- **Subagents fresh-eyes** real value confirmed (BLOCKER §A007 catch)
-- **Anti-overreach** — skipped HIGH RISK + product UI + Cluster E + ZERO destructive ops
-- **Karpathy SC/SF/TBC/GD** explicit attribution per commit ✓
-- **Backup tag** `pre-wave-a-iter1-v2-2026-05-20-night` intact remote (recovery 1-cmd)
+**P1a:** Daniel verbal cleanup trigger → `git stash drop` cascade + `rm .tmp_patch_*.tsx` (3 orphan files chat 3 14-agent storm leftover).
+
+**P1b:** Daniel verbal push trigger → `git push origin main` 63 commits LANDED live (chat 3 cumulative work surface andura.app).
+
+**P1c:** 519 open findings attack waves remaining to Beta gate ZERO:
+- ~38 CRIT priority absolute
+- ~250 HIGH priority next
+- ~150 MED follow-up
+- ~80 LOW/NIT cosmetic defer end
+
+**Methodology lessons-learned:**
+- **Isolation:"worktree" MANDATORY >3 agenți** (D049 hard rule chat 3 14-agent storm lesson — single-writer git history corruption otherwise)
+- **Commit subject↔diff verify mandatory** (D049 anti-21f0d204 ghost-metadata + anti-mega-bundle)
+- **6-agent consolidation audit periodic** post-substantial batch (catch chaos înainte snowball)
+- **Sequential MED fix post-audit** (NU paralel — fragile audit context, agents need clean baseline)
 
 ---
 
-🦫 **CHAT_STATE.md updated final autonomous overnight wrap. Wave A 95% LANDED. 5 Daniel decisions blocked. Iter 2 plan ready. Pre-Beta gate GO conditional. CC NEW handover ready — NEW CC §CC.2 startup reads acest file + PRIMER §5 + DECISIONS.md head + LATEST.md + MORNING_HANDOVER pentru full continuity.**
+## §5 Anti-recurrence invariants chat 3
+
+- **D031** push manual Daniel-triggered ABSOLUTE ✓ (63 commits ahead NU pushed)
+- **D049 NEW LOCKED V1** — commit subject↔diff alignment verify mandatory pre-commit + anti-ghost-metadata pattern + isolation:"worktree" mandatory >3 agenți
+- **Manager role agents memory NEW LOCKED** — eu coordinate + verify output, agenții execute, ZERO solo work când agents available
+- **Single-writer git lesson** — 14-agent parallel storm produced 5 mega-bundles (`b918e76c` + `f6dc24b7` + `52638b9b` + `d8ff7b01` + `b6869516`) subject↔diff mismatch → isolation:"worktree" anti-recurrence
+- **Subagents fresh-eyes real value reaffirmed** — 6-agent consolidation audit caught 3 MED eu solo missed + 12+ bypass commits classified (2 GREEN + 3 RED)
+- **Bugatti single-concern atomic per commit** ✓ (toate 3 MED post-review separat NU bundle)
+- **ZERO `--no-verify` bypass** ✓ chat 3 (post-audit-classified 12+ historical bypass commits)
+- **Backup tag** pre-chat-3 intact remote (recovery 1-cmd dacă needed)
+
+---
+
+🦫 **CHAT_STATE.md updated chat 3 ACASĂ wrap. 14-agent storm + 6-audit + 3 MED clean LANDED. 44.8% Beta gate ZERO (519 open). D049 LOCKED V1 + manager role memory. 63 commits ahead origin/main NU pushed (D031). Quality > snowball mandate honored. NEW chat §CC.2 startup reads acest file + PRIMER §5 + DECISIONS.md head + LATEST.md pentru full continuity.**
