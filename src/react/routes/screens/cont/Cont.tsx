@@ -105,8 +105,10 @@ export function Cont(): JSX.Element {
         className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3"
         data-testid="cont-account-card"
       >
+        {/* §F-cont-07 (LOW chat5) — avatar dimensions 48x48 → 52x52 +
+            text 20px → 22px mockup andura-clasic.html#L1845 (font-size:22). */}
         <div
-          className="w-12 h-12 rounded-full bg-brick text-paper flex items-center justify-center text-xl font-semibold"
+          className="w-[52px] h-[52px] rounded-full bg-brick text-paper flex items-center justify-center text-[22px] font-semibold"
           data-testid="cont-account-initial"
         >
           {profile.initial}
