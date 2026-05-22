@@ -77,13 +77,12 @@ test.describe('React 4-tab smoke (public routes only — no auth required)', () 
     expect.soft(fatal, fatal.join('\n')).toHaveLength(0);
   });
 
-  test.skip(
-    !process.env['GOOGLE_APPLICATION_CREDENTIALS'],
-    'requires Firebase Admin SA for authenticated 4-tab walk-through',
-  );
-
   for (const tab of TABS) {
     test(`navigate to ${tab} tab — render check (auth-gated)`, async ({ page }) => {
+      test.skip(
+        !process.env['GOOGLE_APPLICATION_CREDENTIALS'],
+        'requires Firebase Admin SA for authenticated 4-tab walk-through',
+      );
       await page.goto('/');
       await dismissMedicalDisclaimerIfPresent(page);
       const reached = await navToTab(page, tab);
