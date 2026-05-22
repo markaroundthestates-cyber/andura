@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { OfflineBanner } from '../../components/OfflineBanner';
 
@@ -11,7 +11,7 @@ function setOffline(value: boolean): void {
   Object.defineProperty(navigator, 'onLine', { value: !value, configurable: true });
 }
 
-describe('OfflineBanner — §13-M3 network status banner', () => {
+describe('OfflineBanner — §13-M3 + §36-M5/M6 network status banner', () => {
   it('renders nothing when online', () => {
     setOffline(false);
     render(<OfflineBanner />);
@@ -38,17 +38,10 @@ describe('OfflineBanner — §13-M3 network status banner', () => {
     expect(screen.getByTestId('offline-banner')).toBeInTheDocument();
   });
 
-  it('hides banner when online event fires', () => {
+  it('offline banner has data-state="offline"', () => {
     setOffline(true);
     render(<OfflineBanner />);
-    expect(screen.getByTestId('offline-banner')).toBeInTheDocument();
-
-    act(() => {
-      setOffline(false);
-      window.dispatchEvent(new Event('online'));
-    });
-
-    expect(screen.queryByTestId('offline-banner')).not.toBeInTheDocument();
+    expect(screen.getByTestId('offline-banner')).toHaveAttribute('data-state', 'offline');
   });
 
   it('aria-live polite for screen readers', () => {
@@ -63,5 +56,56 @@ describe('OfflineBanner — §13-M3 network status banner', () => {
     setOffline(true);
     const { container } = render(<OfflineBanner />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('OfflineBanner — §36-M6 reconnect transient feedback', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('shows reconnected banner on offline -> online edge then hides after 3s', () => {
+    setOffline(true);
+    render(<OfflineBanner />);
+    expect(screen.getByTestId('offline-banner')).toHaveAttribute('data-state', 'offline');
+
+    act(() => {
+      setOffline(false);
+      window.dispatchEvent(new Event('online'));
+    });
+    const banner = screen.getByTestId('offline-banner');
+    expect(banner).toHaveAttribute('data-state', 'reconnected');
+    expect(banner.textContent).toMatch(/Reconectat/i);
+
+    // After 3s flash → banner hidden
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(screen.queryByTestId('offline-banner')).not.toBeInTheDocument();
+  });
+
+  it('reconnected banner has no diacritics', () => {
+    setOffline(true);
+    const { container } = render(<OfflineBanner />);
+
+    act(() => {
+      setOffline(false);
+      window.dispatchEvent(new Event('online'));
+    });
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  it('initial mount online (no prior offline) does NOT show reconnected banner', () => {
+    setOffline(false);
+    render(<OfflineBanner />);
+
+    act(() => {
+      window.dispatchEvent(new Event('online'));
+    });
+    // Pure 'online' → null
+    expect(screen.queryByTestId('offline-banner')).not.toBeInTheDocument();
   });
 });
