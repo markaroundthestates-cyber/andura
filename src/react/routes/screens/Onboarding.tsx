@@ -190,7 +190,8 @@ const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' |
 function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-6">Ce vrei sa obtii?</h1>
+      <h1 className="text-2xl font-semibold text-ink mb-2">Ce vrei sa obtii?</h1>
+      <p className="text-sm text-ink2 mb-6">Alegi unul. Poti schimba mai tarziu.</p>
       <div className="flex flex-col gap-3">
         {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((v) => (
           <button
