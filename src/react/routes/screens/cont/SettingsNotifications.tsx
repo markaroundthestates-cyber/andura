@@ -3,6 +3,14 @@
 // (L1942-1966). Toggle preferences + frecventa + zile active + ora.
 // UI-only V1 — ZERO actual notification dispatch (Phase 7+ service worker
 // + Notification API permissions flow).
+//
+// §F-pass2-settings-notif-02 HIGH-BETA chat 4 Co-CTO ADDITIVE decision —
+// Mockup paradigm: domain-grouped per-event toggles (Antrenament + Coaching +
+// Ore de liniste). Prod paradigm: master toggle + frequency picker + days.
+// Resolution: KEEP existing functional global controls (frequency/days/time/
+// permission API) AND adauga per-event domain section per mockup parity.
+// Per-event toggles persist localStorage direct (wv2-notif-event-*) — NU via
+// useSettingsStore (cross-ownership boundary). Functional > strict parity.
 
 import { useEffect, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +34,48 @@ const FREQUENCY_OPTIONS: ReadonlyArray<{ value: NotificationFrequency; label: st
   { value: 'off', label: 'Dezactivat' },
 ];
 
+// §F-pass2-settings-notif-02 — per-event domain toggles mockup parity.
+// Mockup andura-clasic.html L1948-1959 verbatim 5 toggles + 2 domain groups.
+interface NotifEvent {
+  key: string;            // localStorage key suffix (wv2-notif-event-${key})
+  testId: string;         // data-testid for tests
+  title: string;          // Mockup row title (bold)
+  desc: string;           // Mockup small-text description
+  defaultOn: boolean;     // Mockup default toggle state
+}
+const NOTIF_EVENTS_ANTRENAMENT: ReadonlyArray<NotifEvent> = [
+  { key: 'session-reminder', testId: 'notif-event-session-reminder',
+    title: 'Reamintire sesiune', desc: 'Cu 30 min inainte de fereastra ta', defaultOn: true },
+  { key: 'rest-timer', testId: 'notif-event-rest-timer',
+    title: 'Pauza intre seturi', desc: 'Sunet scurt cand expira', defaultOn: true },
+  { key: 'session-missed', testId: 'notif-event-session-missed',
+    title: 'Sarit sedinta', desc: 'Intreaba cum te simti', defaultOn: false },
+];
+const NOTIF_EVENTS_COACHING: ReadonlyArray<NotifEvent> = [
+  { key: 'daily-coach', testId: 'notif-event-daily-coach',
+    title: 'Mesaj zilnic de la antrenor', desc: '07:30 · text scurt', defaultOn: true },
+  { key: 'weekly-summary', testId: 'notif-event-weekly-summary',
+    title: 'Sumar saptamanal', desc: 'Duminica seara', defaultOn: true },
+];
+
+function readNotifEventEnabled(key: string, defaultOn: boolean): boolean {
+  try {
+    if (typeof localStorage === 'undefined') return defaultOn;
+    const raw = localStorage.getItem(`wv2-notif-event-${key}`);
+    if (raw === null) return defaultOn;
+    return raw === '1';
+  } catch {
+    return defaultOn;
+  }
+}
+
+function writeNotifEventEnabled(key: string, value: boolean): void {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(`wv2-notif-event-${key}`, value ? '1' : '0');
+  } catch {}
+}
+
 export function SettingsNotifications(): JSX.Element {
   const navigate = useNavigate();
   const enabled = useSettingsStore((s) => s.notificationsEnabled);
@@ -44,6 +94,25 @@ export function SettingsNotifications(): JSX.Element {
   useEffect(() => {
     setPermission(readPermission());
   }, []);
+
+  // §F-pass2-settings-notif-02 — per-event domain toggle state. localStorage
+  // hydrate on mount, write on each toggle. Persisted in-ownership (not via
+  // settingsStore — cross-cluster boundary).
+  const allEvents = [...NOTIF_EVENTS_ANTRENAMENT, ...NOTIF_EVENTS_COACHING];
+  const [eventStates, setEventStates] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    for (const ev of allEvents) {
+      init[ev.key] = readNotifEventEnabled(ev.key, ev.defaultOn);
+    }
+    return init;
+  });
+  function toggleEvent(key: string): void {
+    setEventStates((prev) => {
+      const next = !prev[key];
+      writeNotifEventEnabled(key, next);
+      return { ...prev, [key]: next };
+    });
+  }
 
   async function handleToggle(): Promise<void> {
     // If turning ON + permission default → request browser permission first.
@@ -172,7 +241,7 @@ export function SettingsNotifications(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Ora reminder
         </p>
-        <div className="bg-paper2 border border-line rounded-xl p-4">
+        <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
           <input
             type="time"
             value={time}
@@ -183,7 +252,85 @@ export function SettingsNotifications(): JSX.Element {
             className="w-full px-3 py-2 border border-lineStrong rounded-lg bg-paper text-ink font-mono text-base disabled:opacity-50"
           />
         </div>
+
+        {/* §F-pass2-settings-notif-02 HIGH-BETA chat 4 — per-event domain
+            toggles mockup parity andura-clasic.html L1948-1959. KEEP global
+            controls above (Co-CTO functional value > strict mockup parity). */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+          Antrenament
+        </p>
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          data-testid="notif-events-antrenament"
+        >
+          {NOTIF_EVENTS_ANTRENAMENT.map((ev, idx) => (
+            <NotifEventRow
+              key={ev.key}
+              event={ev}
+              checked={eventStates[ev.key] ?? ev.defaultOn}
+              onToggle={() => toggleEvent(ev.key)}
+              disabled={!enabled}
+              isLast={idx === NOTIF_EVENTS_ANTRENAMENT.length - 1}
+            />
+          ))}
+        </div>
+
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+          Coaching
+        </p>
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden"
+          data-testid="notif-events-coaching"
+        >
+          {NOTIF_EVENTS_COACHING.map((ev, idx) => (
+            <NotifEventRow
+              key={ev.key}
+              event={ev}
+              checked={eventStates[ev.key] ?? ev.defaultOn}
+              onToggle={() => toggleEvent(ev.key)}
+              disabled={!enabled}
+              isLast={idx === NOTIF_EVENTS_COACHING.length - 1}
+            />
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+// §F-pass2-settings-notif-02 — per-event toggle row component. Mirror
+// SettingsPrivacy ToggleRow pattern (44x44 tap target Maria 65 friendly).
+interface NotifEventRowProps {
+  event: NotifEvent;
+  checked: boolean;
+  disabled: boolean;
+  isLast: boolean;
+  onToggle: () => void;
+}
+
+function NotifEventRow({ event, checked, disabled, isLast, onToggle }: NotifEventRowProps): JSX.Element {
+  return (
+    <div
+      className={`flex items-start gap-3 px-4 py-3.5 ${isLast ? '' : 'border-b border-line'} ${disabled ? 'opacity-50' : ''}`}
+    >
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-ink mb-0.5">{event.title}</p>
+        <p className="text-xs text-ink2 leading-snug">{event.desc}</p>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={event.title}
+        data-testid={event.testId}
+        disabled={disabled}
+        onClick={onToggle}
+        className={`flex-shrink-0 w-12 h-6 rounded-full transition relative before:absolute before:-inset-2.5 before:content-[''] disabled:cursor-not-allowed ${checked ? 'bg-brick' : 'bg-line'}`}
+      >
+        <span
+          className={`absolute top-0.5 w-5 h-5 rounded-full bg-paper transition ${checked ? 'left-6' : 'left-0.5'}`}
+        />
+      </button>
+    </div>
   );
 }

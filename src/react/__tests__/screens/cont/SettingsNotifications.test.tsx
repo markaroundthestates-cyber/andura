@@ -110,6 +110,56 @@ describe('SettingsNotifications — render + interactions', () => {
   });
 });
 
+describe('SettingsNotifications — §F-pass2-settings-notif-02 per-event toggles', () => {
+  it('renders Antrenament domain section cu 3 per-event toggles', () => {
+    renderScreen();
+    const section = screen.getByTestId('notif-events-antrenament');
+    expect(section).toBeInTheDocument();
+    expect(screen.getByTestId('notif-event-session-reminder')).toBeInTheDocument();
+    expect(screen.getByTestId('notif-event-rest-timer')).toBeInTheDocument();
+    expect(screen.getByTestId('notif-event-session-missed')).toBeInTheDocument();
+  });
+
+  it('renders Coaching domain section cu 2 per-event toggles', () => {
+    renderScreen();
+    expect(screen.getByTestId('notif-events-coaching')).toBeInTheDocument();
+    expect(screen.getByTestId('notif-event-daily-coach')).toBeInTheDocument();
+    expect(screen.getByTestId('notif-event-weekly-summary')).toBeInTheDocument();
+  });
+
+  it('per-event toggles default mockup parity: session-reminder ON, rest-timer ON, session-missed OFF', () => {
+    renderScreen();
+    expect(screen.getByTestId('notif-event-session-reminder')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId('notif-event-rest-timer')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId('notif-event-session-missed')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('notif-event-daily-coach')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId('notif-event-weekly-summary')).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('per-event toggle persists state via localStorage', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-event-session-missed'));
+    expect(localStorage.getItem('wv2-notif-event-session-missed')).toBe('1');
+    fireEvent.click(screen.getByTestId('notif-event-session-reminder'));
+    expect(localStorage.getItem('wv2-notif-event-session-reminder')).toBe('0');
+  });
+
+  it('per-event hydrate citeste din localStorage on mount', () => {
+    localStorage.setItem('wv2-notif-event-session-reminder', '0');
+    localStorage.setItem('wv2-notif-event-weekly-summary', '0');
+    renderScreen();
+    expect(screen.getByTestId('notif-event-session-reminder')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('notif-event-weekly-summary')).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('per-event toggles disabled cand master toggle off', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle')); // disable master
+    expect(screen.getByTestId('notif-event-session-reminder')).toBeDisabled();
+    expect(screen.getByTestId('notif-event-daily-coach')).toBeDisabled();
+  });
+});
+
 describe('SettingsNotifications — §32-H2 permission ladder', () => {
   const originalNotif = (globalThis as { Notification?: unknown }).Notification;
 
