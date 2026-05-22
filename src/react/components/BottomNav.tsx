@@ -36,7 +36,7 @@ export function BottomNav(): JSX.Element {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 bg-paper border-t border-line flex justify-around items-center gap-0.5 z-50 ${
+      className={`fixed bottom-0 left-0 right-0 bg-paper border-t border-line flex justify-around items-center gap-2 z-50 ${
         compact ? 'h-12' : 'h-16'
       }`}
       aria-label="Navigare principala"
