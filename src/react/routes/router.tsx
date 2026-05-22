@@ -40,14 +40,22 @@ const PostRpe = lazy(() => import('./screens/antrenor/PostRpe').then((m) => ({ d
 const PostSummary = lazy(() => import('./screens/antrenor/PostSummary').then((m) => ({ default: m.PostSummary })));
 // §B004 D047 Stage 3 — Workout exit drill-down
 const FinishEarlyConfirm = lazy(() => import('./screens/antrenor/FinishEarlyConfirm').then((m) => ({ default: m.FinishEarlyConfirm })));
+// PARITY-CONFIRM-MODALS Wave 2f — program change drill-down (PAR-003)
+const ProgramChangeConfirm = lazy(() => import('./screens/antrenor/ProgramChangeConfirm').then((m) => ({ default: m.ProgramChangeConfirm })));
 
 // §B007 lazy — Progres sub-screens (2 routes)
 const LogWeight = lazy(() => import('./screens/progres/LogWeight').then((m) => ({ default: m.LogWeight })));
 const BodyData = lazy(() => import('./screens/progres/BodyData').then((m) => ({ default: m.BodyData })));
 const WeightLogList = lazy(() => import('./screens/progres/WeightLogList').then((m) => ({ default: m.WeightLogList })));
 
+// PARITY-MISSING-SCREENS Wave 2e — Weight Timeline (PAR-004)
+const WeightTimeline = lazy(() => import('./screens/progres/WeightTimeline').then((m) => ({ default: m.WeightTimeline })));
+
 // §B007 lazy — Istoric detail (1 route, sessionId)
 const IstoricDetail = lazy(() => import('./screens/istoric/IstoricDetail').then((m) => ({ default: m.IstoricDetail })));
+
+// PARITY-MISSING-SCREENS Wave 2e — PR Wall full-screen (PAR-001)
+const PrWall = lazy(() => import('./screens/istoric/PrWall').then((m) => ({ default: m.PrWall })));
 
 // §B007 lazy — Cont sub-screens (9 settings routes)
 const SettingsProfile = lazy(() => import('./screens/cont/SettingsProfile').then((m) => ({ default: m.SettingsProfile })));
@@ -62,6 +70,8 @@ const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((
 const SettingsAbout = lazy(() => import('./screens/cont/SettingsAbout').then((m) => ({ default: m.SettingsAbout })));
 const SettingsSupport = lazy(() => import('./screens/cont/SettingsSupport').then((m) => ({ default: m.SettingsSupport })));
 const SettingsFaq = lazy(() => import('./screens/cont/SettingsFaq').then((m) => ({ default: m.SettingsFaq })));
+// PARITY-MISSING-SCREENS Wave 2e — Themes palette picker (PAR-002)
+const SettingsThemes = lazy(() => import('./screens/cont/SettingsThemes').then((m) => ({ default: m.SettingsThemes })));
 // §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
 const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
 const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
@@ -127,6 +137,8 @@ export const router = createBrowserRouter([
           { path: 'post-summary', element: <LazyRoute><PostSummary /></LazyRoute> },
           // §B004 D047 Stage 3 — Workout exit drill-down
           { path: 'finish-early-confirm', element: <LazyRoute><FinishEarlyConfirm /></LazyRoute> },
+          // PARITY-CONFIRM-MODALS Wave 2f — program change drill-down (PAR-003)
+          { path: 'program-change-confirm', element: <LazyRoute><ProgramChangeConfirm /></LazyRoute> },
         ],
       },
       {
@@ -136,12 +148,17 @@ export const router = createBrowserRouter([
           { path: 'log-weight', element: <LazyRoute><LogWeight /></LazyRoute> },
           { path: 'body-data', element: <LazyRoute><BodyData /></LazyRoute> },
           { path: 'weight-log-list', element: <LazyRoute><WeightLogList /></LazyRoute> },
+          // PARITY-MISSING-SCREENS Wave 2e — Weight Timeline (PAR-004)
+          { path: 'weight-timeline', element: <LazyRoute><WeightTimeline /></LazyRoute> },
         ],
       },
       {
         path: 'istoric',
         children: [
           { index: true, element: <Istoric /> },
+          // PARITY-MISSING-SCREENS Wave 2e — static path BEFORE :sessionId
+          // so 'pr-wall' nu match-uieste param (Karpathy SC ordering).
+          { path: 'pr-wall', element: <LazyRoute><PrWall /></LazyRoute> },
           { path: ':sessionId', element: <LazyRoute><IstoricDetail /></LazyRoute> },
         ],
       },
@@ -161,6 +178,8 @@ export const router = createBrowserRouter([
           { path: 'settings-about', element: <LazyRoute><SettingsAbout /></LazyRoute> },
           { path: 'settings-support', element: <LazyRoute><SettingsSupport /></LazyRoute> },
           { path: 'settings-faq', element: <LazyRoute><SettingsFaq /></LazyRoute> },
+          // PARITY-MISSING-SCREENS Wave 2e — Themes palette picker (PAR-002)
+          { path: 'settings-themes', element: <LazyRoute><SettingsThemes /></LazyRoute> },
           // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
           { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
           { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },

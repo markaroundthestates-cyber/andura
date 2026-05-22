@@ -47,7 +47,11 @@ export type GotoScreen =
   // §B002 D047 Stage 3 — Avansat section drill-downs
   | 'redo-onboarding-confirm' | 'schimba-faza-confirm' | 'reset-coach-confirm'
   // §B004 D047 Stage 3 — Workout exit drill-down
-  | 'finish-early-confirm';
+  | 'finish-early-confirm'
+  // PARITY-CONFIRM-MODALS Wave 2f — program change drill-down (PAR-003)
+  | 'program-change-confirm'
+  // PARITY-MISSING-SCREENS Wave 2e — 3 NEW screens (PAR-001/002/004)
+  | 'pr-wall' | 'settings-themes' | 'weight-timeline';
 
 /**
  * Map mockup screen name la React Router path.
@@ -82,7 +86,8 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'equipment-swap' || screen === 'aparate-lipsa' ||
     screen === 'schedule-override' ||
     screen === 'post-rpe' || screen === 'post-summary' ||
-    screen === 'finish-early-confirm'
+    screen === 'finish-early-confirm' ||
+    screen === 'program-change-confirm'
   ) {
     return `/app/antrenor/${screen}`;
   }
@@ -92,6 +97,10 @@ export function gotoPath(screen: GotoScreen): string {
     return `/app/progres/${screen}`;
   }
 
+  // PARITY-MISSING-SCREENS Wave 2e — Progres + Istoric standalone sub-screens
+  if (screen === 'weight-timeline') return '/app/progres/weight-timeline';
+  if (screen === 'pr-wall') return '/app/istoric/pr-wall';
+
   // Phase 6 Cont sub-screens (task_09-17, nested sub /app/cont)
   if (
     screen === 'settings-profile' || screen === 'settings-notifications' ||
@@ -99,7 +108,8 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'settings-prefs' || screen === 'settings-privacy' ||
     screen === 'settings-terms' || screen === 'settings-export' ||
     screen === 'settings-danger' || screen === 'settings-about' ||
-    screen === 'settings-support' || screen === 'settings-faq'
+    screen === 'settings-support' || screen === 'settings-faq' ||
+    screen === 'settings-themes'
   ) {
     return `/app/cont/${screen}`;
   }
