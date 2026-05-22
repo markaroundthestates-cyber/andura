@@ -129,15 +129,61 @@ NU backup (regenerable):
 
 ## §7 RTO + RTPO targets
 
-**Recovery Time Objective (RTO):** ≤ 24h restore for catastrophic Firebase outage scenario.
+### §7.1 Restore SLA targets per scenario (LOCKED V1)
+
+| Scenario | SLA target | Mechanism |
+|----------|-----------|-----------|
+| User fresh device restore | **≤ 30s active** | Magic Link re-auth → Tier 1 auto-sync (per §4) |
+| User account restore from backup | **≤ 30 min** | Daniel manual JSON re-import per user uid (rare event) |
+| Single-user data corruption rollback | **≤ 30 min** | Selective JSON re-import users/{uid}/ subtree |
+| Catastrophic project loss (full RTDB) | **≤ 4h** | Firebase Console re-import + Cloudflare env redeploy |
+| Catastrophic project loss (grace expired) | **≤ 24h** | New Firebase project bootstrap + full reimport + all users re-auth |
+
+### §7.2 Standard RTO + RPO
+
+**Recovery Time Objective (RTO):** ≤ 24h restore for catastrophic Firebase outage scenario (upper bound).
 **Recovery Point Objective (RPO):** ≤ 24h data loss tolerance (matches daily Tier 1 export cadence).
 
-**Realistic expectations:**
+**Stretch targets post-Beta:**
+- RTO ≤ 4h once Daniel adopts Firebase Cloud Function scheduled backup (§2 cadence rationale)
+- RPO ≤ 1h once incremental export adopted (current full-snapshot daily acceptable Beta scale)
+
+### §7.3 Realistic expectations
+
 - Firebase RTDB SLA = 99.95% uptime → ~4.4h/year planned downtime tolerance
 - Magic Link delivery dependent on email provider (Gmail/Outlook typical <60s)
 - Cloudflare CDN cached static assets accessible even cu Firebase outage (UI shell loads, data unavailable until RTDB back)
 
 **Solo-founder cap:** Daniel NU 24/7 on-call. If catastrophic incident outside business hours, recovery starts next business day. Beta users informed via `andura.app` status banner (post-Beta consider statuspage.io subscription).
+
+**SLA enforcement:** quarterly test-restore cycle §6 measures actual restore time vs <30min target — log result în `~/Documents/andura-backups/_log.txt`. Fail = investigate before next milestone.
+
+### §7.4 Conflict resolution post-restore (LOCKED V1)
+
+**Policy:** **last-write-wins** by canonical Firebase RTDB timestamp `users/{uid}/_meta/updatedAt` (Tier 1 always authoritative over restore JSON).
+
+**Rationale (solo-founder model):**
+- Daniel sole operator pre-Beta → restore events expected RARE (<1/year)
+- Beta ≤50 users → conflict between restore data + post-backup user activity also rare
+- Implicit prompt-user-on-conflict would require UI flow + edge-case state machine = over-engineering pre-Beta
+- Tier 1 RTDB write timestamp = authoritative source of truth (already standardized via `serverTimestamp()` on every write)
+
+**Decision matrix:**
+
+| Restore trigger | Source data | Conflict resolution |
+|-----------------|-------------|---------------------|
+| User lost phone (Magic Link re-auth §4) | Tier 1 server canonical | No conflict possible — fresh device pulls server state |
+| Daniel restore from backup JSON | Backup file (older) vs live RTDB (newer) | **Live RTDB wins** — backup discarded unless explicit Daniel "rewind" decision |
+| Daniel rewind user-state to backup point | Backup file (intentional) vs live RTDB | **Backup wins** — Daniel manual override flagged în `_log.txt` cu rationale |
+| Tier 2 IndexedDB stale post Magic Link | IndexedDB cache vs Tier 1 server | **Server wins** — IndexedDB clears + lazy-fetches fresh on next session view |
+
+**Operator override:** Daniel can force backup-wins (rare rewind scenario, e.g., reversing buggy engine writes) by:
+1. Note backup JSON path + reason în `_log.txt` cu prefix `REWIND: <reason>`
+2. Firebase Console > Import JSON to `users/{uid}/` subtree (overwrite)
+3. Notify affected user (likely Daniel test account only pre-Beta) of state reset
+4. Tier 2 IndexedDB clears automatically on next user session (server-truth re-fetch)
+
+**Future post-Beta:** if multi-device active simultaneous-edit scenarios emerge, revisit policy via ADR for vector-clock or CRDT-lite per `users/{uid}/sessions/`. Pre-Beta = last-write-wins sufficient.
 
 ## §8 DR scenarios + recovery plans
 
