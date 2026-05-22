@@ -35,6 +35,13 @@ export default {
         danger: 'var(--danger)',
         overlayStrong: 'var(--overlay-strong)',
         overlaySoft: 'var(--overlay-soft)',
+        // F-istoric-01 + F-istoric-03 signature feature tokens
+        heatUsor: 'var(--heat-usor)',
+        heatNormal: 'var(--heat-normal)',
+        heatGreu: 'var(--heat-greu)',
+        heatRecovery: 'var(--heat-recovery)',
+        heatRecoveryBorder: 'var(--heat-recovery-border)',
+        ratingUsor: 'var(--rating-usor)',
       },
     },
   },
