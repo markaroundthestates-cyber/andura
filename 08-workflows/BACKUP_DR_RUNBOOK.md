@@ -28,10 +28,24 @@ Tier 1 Firebase RTDB = canonical truth. Tier 2 IndexedDB = local archive. Tier 0
 
 Auth tokens (`firebase-id-token`, `firebase-uid`, `firebase-refresh-token`) NU se backup — restore via Magic Link re-auth (see §4).
 
-## §2 Firebase RTDB daily export (Tier 1)
+## §2 Firebase RTDB backup schedule (Tier 1)
 
-**Frequency:** daily manual via Firebase Console. NU cron (Daniel solo, no infra justify scheduler).
-**Retention:** 7 daily + 4 weekly + 12 monthly = ~23 backups rolling. Store in `~/Documents/andura-backups/` (separate drive recommended quarterly).
+**Schedule (LOCKED V1):**
+- **Daily** — manual export 09:00-10:00 EET Daniel routine (calendar reminder recurring)
+- **Weekly** — Sunday 22:00 EET extended verification (file size delta check + integrity validate)
+- **Monthly** — first Sunday quarterly off-site copy to external drive
+
+**Cadence rationale:** daily manual NU cron — Daniel solo bootstrap, Beta scale ≤50 users → infra scheduler over-engineered. Post-Beta revisit cron via Firebase Cloud Function `scheduled-backup-rtdb` (placeholder ADR future).
+
+**Retention policy (rolling window):**
+- **7 daily** — last week granular recovery
+- **4 weekly** — last month medium-grain
+- **12 monthly** — last year coarse-grain
+- **Total** ~23 backups disk footprint ~25-50MB rolling (Tier 1 export typical 1-2MB)
+
+**Pruning rule:** oldest daily >7 days → promote to weekly slot OR delete if weekly slot full. Daniel manual prune monthly during routine.
+
+**Storage location:** `~/Documents/andura-backups/` primary. Quarterly off-site mirror to external drive (separate physical media, ransomware isolation per §8.3).
 
 **Steps:**
 1. Browse `https://console.firebase.google.com/`

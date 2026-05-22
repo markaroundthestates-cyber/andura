@@ -107,6 +107,21 @@
        stronger backdrop to keep modal visually separated from page bg. */
     --overlay-strong: rgb(0 0 0 / 0.75);
     --overlay-soft: rgb(0 0 0 / 0.5);
+
+    /* §29-H1 audit fix — Istoric heatmap tokens dark-theme parity. Audit F S1
+       finding: 7 tokens declared only in :root, missing in [data-theme="dark"]
+       (heat tier hues + recovery + rating-usor + heat-usor-text from MED-A-1).
+       Dark variants: desaturated + slightly brighter greens to maintain visual
+       tier ordering (usor=lightest, greu=deepest) over paper-dark L=0.0042.
+       Text token --heat-usor-text recalculated for AA contrast over dark heat-usor.
+       Tonal hierarchy preserved: heat-usor (lightest) < heat-normal < heat-greu. */
+    --heat-usor: #2a4a30;             /* L1 tier dark — desaturated deep green L=0.054 */
+    --heat-usor-text: #b5d9be;        /* L1 tier text dark — 8.43:1 AAA over heat-usor dark */
+    --heat-normal: #4a7a55;           /* L2 tier dark — mid green L=0.158 */
+    --heat-greu: #6b9d72;             /* L3 tier dark — brighter green L=0.295 (inverse polarity: deeper=brighter on dark) */
+    --heat-recovery: #3a3322;         /* Recovery tier dark — muted amber-brown L=0.034 */
+    --heat-recovery-border: #5a4e30;  /* Recovery border dark — visible boundary 3:1 vs paper-dark */
+    --rating-usor: #5a9d68;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
   }
 }
 
