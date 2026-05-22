@@ -177,3 +177,60 @@ describe('DP.recommend pipeline — accelerated learning ON path', () => {
     expect(upgraded.kg).toBe(baseline.kg);
   });
 });
+
+// ══ §23-H1 LOOP CLOSE TRAJECTORY ════════════════════════════════════════════
+// LOCK 9 invariant: "engine I'm wrong se vindeca in 2-3 sesiuni".
+// Simulates the activation trajectory: session 1 = override only (no trigger),
+// session 2 = second override (trigger fires, baseline upgrades).
+describe('DP.recommend pipeline — LOCK 9 loop close trajectory (§23-H1)', () => {
+  it('session 1 override alone → no upgrade; session 2 override → baseline upgraded (2-session self-correct)', () => {
+    seedExerciseHistory('Flat Barbell Bench', [60, 60, 60]);
+
+    // Session 1: user logs one aggressive override → not enough to trigger
+    DB.set('aggressive-loading-log', [
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.25, ts: 1 }),
+    ]);
+    const baseline = AA.applyTo(DP.recommend('Flat Barbell Bench'), 'Flat Barbell Bench');
+    const afterSession1 = applyAcceleratedLearningUpgrade(
+      baseline,
+      'Flat Barbell Bench',
+      readAggressiveLoadingLog(DB),
+      DP
+    );
+    expect(afterSession1._acceleratedLearningApplied).toBeUndefined();
+    expect(afterSession1.kg).toBe(baseline.kg);
+
+    // Session 2: second override at same exercise (newer ts) → engine self-corrects
+    DB.set('aggressive-loading-log', [
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.25, ts: 2 }),
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.25, ts: 1 }),
+    ]);
+    const afterSession2 = applyAcceleratedLearningUpgrade(
+      baseline,
+      'Flat Barbell Bench',
+      readAggressiveLoadingLog(DB),
+      DP
+    );
+    expect(afterSession2._acceleratedLearningApplied).toBe(true);
+    expect(afterSession2._upgradePct).toBeCloseTo(0.25, 5);
+    expect(afterSession2.kg).toBeGreaterThan(baseline.kg);
+  });
+
+  it('uses ONLY the 2 newest legitimate overrides — older overrides do not poison the signal', () => {
+    seedExerciseHistory('Flat Barbell Bench', [60, 60, 60]);
+    DB.set('aggressive-loading-log', [
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.10, ts: 5 }),
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.10, ts: 4 }),
+      legitEntry({ ex: 'Flat Barbell Bench', dev: 0.80, ts: 1 }),  // very old, should be ignored
+    ]);
+    const baseline = AA.applyTo(DP.recommend('Flat Barbell Bench'), 'Flat Barbell Bench');
+    const upgraded = applyAcceleratedLearningUpgrade(
+      baseline,
+      'Flat Barbell Bench',
+      readAggressiveLoadingLog(DB),
+      DP
+    );
+    expect(upgraded._acceleratedLearningApplied).toBe(true);
+    expect(upgraded._upgradePct).toBeCloseTo(0.10, 5);  // newer pair avg, NOT polluted by 0.80
+  });
+});
