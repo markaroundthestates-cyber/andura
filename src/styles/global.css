@@ -49,6 +49,11 @@
     --status-info-bg: #fdeeea;
     --status-info-border: #f0c8be;
     --status-info-text: #6b2418;
+
+    /* Modal/sheet backdrop overlays (B009 closure) — theme-aware alpha so
+       dark theme can dial up opacity for proper paper-bg separation. */
+    --overlay-strong: rgb(0 0 0 / 0.6);   /* blocking modals (AaFriction, Disclaimer) */
+    --overlay-soft: rgb(0 0 0 / 0.3);     /* bottom sheets (ExitConfirmSheet) */
   }
 
   /* Dark theme — inverse polarity. Warm-neutral palette preserves Clasic
@@ -85,6 +90,11 @@
     --status-info-bg: #3a2422;
     --status-info-border: #5a3329;
     --status-info-text: #f0b8ad;
+
+    /* Dark theme overlay: dial up alpha — paper-dark already low-luma, need
+       stronger backdrop to keep modal visually separated from page bg. */
+    --overlay-strong: rgb(0 0 0 / 0.75);
+    --overlay-soft: rgb(0 0 0 / 0.5);
   }
 }
 

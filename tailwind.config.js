@@ -33,6 +33,8 @@ export default {
         succ: 'var(--succ)',
         warn: 'var(--warn)',
         danger: 'var(--danger)',
+        overlayStrong: 'var(--overlay-strong)',
+        overlaySoft: 'var(--overlay-soft)',
       },
     },
   },

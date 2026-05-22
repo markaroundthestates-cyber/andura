@@ -68,7 +68,7 @@ export function AaFrictionModal({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-6"
+      className="fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
       data-testid="aa-friction-backdrop"
       // Backdrop NU dismiss tap — LOCK 9 blocking safety gate.
     >

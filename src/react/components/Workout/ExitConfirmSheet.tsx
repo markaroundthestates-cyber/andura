@@ -33,7 +33,7 @@ export function ExitConfirmSheet({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 bg-black/30 flex items-end justify-center z-50"
+      className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
       data-testid="exit-sheet-backdrop"
     >
       <div
