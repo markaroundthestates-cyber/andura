@@ -39,24 +39,47 @@ export async function initSentry() {
         if (msg.includes('Firebase') || msg.includes('firebasedatabase')) {
           event.tags = { ...(event.tags || {}), source: 'firebase' };
         }
-        // §17-M3 audit fix — PII strip pass on exception messages + breadcrumbs.
-        // Firebase uid is a 28-char alphanumeric — scrub to '<UID>' to keep
-        // event groupability while removing personally-identifying info.
+        // §17-M3 + §S2.1 audit fix — PII strip pass.
+        // Firebase uid is a 28-char alphanumeric. Earlier broad pattern
+        // /\b[A-Za-z0-9]{28}\b/g destroyed Vite chunk hashes in source-map
+        // refs (e.g., webpack:///./src/abc...xyz.js) — now anchored to
+        // explicit uid contexts: uid=/userId=/user_id= prefix, OR Firebase
+        // REST URL path /users/<uid>.
+        /**
+         * @param {unknown} s
+         * @returns {unknown}
+         */
         const scrubMsg = (s) => {
           if (typeof s !== 'string') return s;
-          let out = s.replace(/\b[A-Za-z0-9]{28}\b/g, '<UID>');
-          out = out.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
+          let out = s.replace(/\b(uid|userId|user_id)[=:\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
+          out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
+          // Email: \b prefix prevents stripping preceding word
+          // (e.g., 'User user@example.com' kept 'User' instead of consuming it).
+          out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
           return out;
         };
         if (event.exception?.values) {
           for (const ex of event.exception.values) {
-            if (ex.value) ex.value = scrubMsg(ex.value);
+            if (ex.value) ex.value = /** @type {string} */ (scrubMsg(ex.value));
           }
         }
-        if (event.message) event.message = scrubMsg(event.message);
+        if (event.message) event.message = /** @type {string} */ (scrubMsg(event.message));
+        // §S2.1 — request.url + user channels populated by default Sentry
+        // browser integrations. Auth-callback URL carries oobCode + email
+        // continueUrl reflection; user.email / user.id populated by any
+        // setUser call.
+        if (event.request?.url) event.request.url = /** @type {string} */ (scrubMsg(event.request.url));
+        if (event.user?.email) event.user.email = '<EMAIL>';
+        if (event.user?.username) event.user.username = '<EMAIL>';
+        if (event.user?.id) event.user.id = '<UID>';
         if (Array.isArray(event.breadcrumbs)) {
           for (const bc of event.breadcrumbs) {
-            if (bc.message) bc.message = scrubMsg(bc.message);
+            if (bc.message) bc.message = /** @type {string} */ (scrubMsg(bc.message));
+            // §S2.1 — breadcrumb.data.url is where Sentry default fetch
+            // integration parks every fbGet/fbSet URL (uid in /users/ path).
+            if (bc.data && typeof bc.data === 'object' && typeof bc.data.url === 'string') {
+              bc.data.url = /** @type {string} */ (scrubMsg(bc.data.url));
+            }
           }
         }
         return event;

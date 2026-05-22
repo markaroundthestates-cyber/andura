@@ -1,4 +1,4 @@
-// §17-M3 audit fix — Sentry beforeSend PII strip pattern verification.
+// §17-M3 + §S2.1 audit fix — Sentry beforeSend PII strip pattern verification.
 // Tests the scrubMsg logic standalone (Sentry init not invoked here —
 // production-only guard prevents test env init).
 
@@ -6,41 +6,62 @@ import { describe, it, expect } from 'vitest';
 
 // Re-implement scrubber inline (matches sentry.js beforeSend body) so we
 // test the regex patterns without triggering Sentry initialization in jsdom.
+// Anti-drift verification of the EXACT production source lives in
+// sentryBeforeSend.test.js (extracts scrubMsg verbatim via regex from src).
 function scrubMsg(s) {
   if (typeof s !== 'string') return s;
-  let out = s.replace(/\b[A-Za-z0-9]{28}\b/g, '<UID>');
-  out = out.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
+  let out = s.replace(/\b(uid|userId|user_id)[=:\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
+  out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
+  out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
   return out;
 }
 
-describe('Sentry PII strip — Firebase uid 28-char pattern', () => {
-  it('replaces 28-char alphanumeric uid with <UID>', () => {
+describe('Sentry PII strip — Firebase uid context-anchored pattern', () => {
+  it('replaces uid= with <UID>', () => {
     const uid = 'abcDEF1234567890XYZabcde9876';
     expect(uid.length).toBe(28);
-    expect(scrubMsg(`User ${uid} failed`)).toBe('User <UID> failed');
+    expect(scrubMsg(`uid=${uid} failed`)).toBe('uid=<UID> failed');
   });
 
-  it('replaces multiple uids in same message', () => {
-    const uid1 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-    const uid2 = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbb';
-    expect(scrubMsg(`${uid1} -> ${uid2}`)).toBe('<UID> -> <UID>');
+  it('replaces userId: variant case-insensitive', () => {
+    const uid = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    expect(scrubMsg(`userId: ${uid} oops`)).toBe('userId=<UID> oops');
   });
 
-  it('does NOT replace shorter strings (27 chars)', () => {
+  it('replaces /users/<uid> path (Firebase REST URL)', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    const url = `https://andura-default-rtdb.europe-west1.firebasedatabase.app/users/${uid}/sessions.json`;
+    expect(scrubMsg(url))
+      .toBe('https://andura-default-rtdb.europe-west1.firebasedatabase.app/users/<UID>/sessions.json');
+  });
+
+  it('does NOT scrub bare 28-char string lacking uid context (anti-Vite-hash collision)', () => {
+    // Vite chunk hash example in source-map ref — must be preserved.
+    const viteRef = 'webpack:///./src/abcDEFGHIJ1234567890XYZ.js';
+    expect(scrubMsg(viteRef)).toBe(viteRef);
+  });
+
+  it('does NOT scrub random 28-char alphanumeric in arbitrary context', () => {
+    const random = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa'; // 28 chars but no uid prefix
+    expect(scrubMsg(`token ${random} payload`)).toBe(`token ${random} payload`);
+  });
+
+  it('does NOT replace shorter strings (27 chars) with uid prefix', () => {
     const short = 'aaaaaaaaaaaaaaaaaaaaaaaaaaa'; // 27
-    expect(scrubMsg(`${short} test`)).toBe(`${short} test`);
-  });
-
-  it('does NOT replace longer strings (29 chars)', () => {
-    const long = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaa'; // 29
-    expect(scrubMsg(`${long} test`)).toBe(`${long} test`);
+    expect(scrubMsg(`uid=${short} test`)).toBe(`uid=${short} test`);
   });
 });
 
-describe('Sentry PII strip — email pattern', () => {
+describe('Sentry PII strip — email pattern (word-boundary anchored)', () => {
   it('replaces standard email with <EMAIL>', () => {
     expect(scrubMsg('User maziludanielconstantin90@gmail.com failed'))
       .toBe('User <EMAIL> failed');
+  });
+
+  it('preserves preceding word (word-boundary fix)', () => {
+    // Pre-fix bug: regex without \b prefix stripped "User" along with email
+    // ('User user@example.com' -> '<EMAIL>').
+    expect(scrubMsg('User user@example.com')).toBe('User <EMAIL>');
   });
 
   it('replaces email with subdomain', () => {
@@ -70,9 +91,15 @@ describe('Sentry PII strip — edge cases', () => {
     expect(scrubMsg('')).toBe('');
   });
 
-  it('combined uid + email in one message', () => {
+  it('combined uid context + email in one message', () => {
     const uid = 'abcDEF1234567890XYZabcde9876';
-    expect(scrubMsg(`${uid} sent to user@example.com`))
-      .toBe('<UID> sent to <EMAIL>');
+    expect(scrubMsg(`uid=${uid} sent to user@example.com`))
+      .toBe('uid=<UID> sent to <EMAIL>');
+  });
+
+  it('combined URL path + email scrub', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`/users/${uid} from alice@host.com`))
+      .toBe('/users/<UID> from <EMAIL>');
   });
 });
