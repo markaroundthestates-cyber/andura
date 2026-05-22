@@ -70,11 +70,27 @@ async function _buildUrl(fullPath) {
   return `${FIREBASE_URL}/${fullPath}.json${auth}`;
 }
 
+// §25-H2 audit fix — Firebase REST fetch wrap cu AbortController timeout.
+// Mobile / spotty wifi → fetch can hang indefinitely (no default timeout in
+// browser fetch API). 15s window generous pentru RTDB ops (typical < 1s)
+// without blocking UI for users on flaky networks. Aborted request rejects
+// fetch promise → existing try/catch in fbGet/fbSet/fbRemove returns
+// graceful null/false (no error toast spam, no UI lock).
+export const FIREBASE_FETCH_TIMEOUT_MS = 15_000;
+
+/** @param {RequestInfo|URL} url @param {RequestInit} [init] */
+async function _fbFetch(url, init) {
+  // AbortSignal.timeout is supported in Node 20+ + all modern browsers (per
+  // baseline `node>=20` in package.json engines + PWA target browsers).
+  const signal = AbortSignal.timeout(FIREBASE_FETCH_TIMEOUT_MS);
+  return fetch(url, { ...(init || {}), signal });
+}
+
 /** @param {string} path */
 async function fbGet(path) {
   try {
     const url = await _buildUrl(path);
-    const r = await fetch(url, { cache: 'no-store' });
+    const r = await _fbFetch(url, { cache: 'no-store' });
     if (!r.ok) return null;
     return await r.json();
   } catch { return null; }
@@ -84,7 +100,7 @@ async function fbGet(path) {
 async function fbSet(path, data) {
   try {
     const url = await _buildUrl(path);
-    const r = await fetch(url, {
+    const r = await _fbFetch(url, {
       method: 'PUT',
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' }
@@ -97,7 +113,7 @@ async function fbSet(path, data) {
 async function fbRemove(path) {
   try {
     const url = await _buildUrl(path);
-    const r = await fetch(url, { method: 'DELETE' });
+    const r = await _fbFetch(url, { method: 'DELETE' });
     return r.ok;
   } catch { return false; }
 }
