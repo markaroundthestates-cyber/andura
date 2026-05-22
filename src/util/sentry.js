@@ -39,6 +39,26 @@ export async function initSentry() {
         if (msg.includes('Firebase') || msg.includes('firebasedatabase')) {
           event.tags = { ...(event.tags || {}), source: 'firebase' };
         }
+        // §17-M3 audit fix — PII strip pass on exception messages + breadcrumbs.
+        // Firebase uid is a 28-char alphanumeric — scrub to '<UID>' to keep
+        // event groupability while removing personally-identifying info.
+        const scrubMsg = (s) => {
+          if (typeof s !== 'string') return s;
+          let out = s.replace(/\b[A-Za-z0-9]{28}\b/g, '<UID>');
+          out = out.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
+          return out;
+        };
+        if (event.exception?.values) {
+          for (const ex of event.exception.values) {
+            if (ex.value) ex.value = scrubMsg(ex.value);
+          }
+        }
+        if (event.message) event.message = scrubMsg(event.message);
+        if (Array.isArray(event.breadcrumbs)) {
+          for (const bc of event.breadcrumbs) {
+            if (bc.message) bc.message = scrubMsg(bc.message);
+          }
+        }
         return event;
       },
     });
