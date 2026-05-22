@@ -17,6 +17,7 @@ export function PRNotificationBanner({ prHit }: Props): JSX.Element | null {
     <div
       className="bg-brick text-paper rounded-lg p-3 mb-4 text-center"
       role="status"
+      aria-live="polite"
       aria-label="PR detectat"
     >
       <div className="font-bold text-sm uppercase tracking-wider">PR sesiunea trecuta</div>

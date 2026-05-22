@@ -17,6 +17,7 @@ export function ReadinessVerdict({ readiness }: Props): JSX.Element | null {
     <div
       className="text-sm text-ink2 mb-4 text-center"
       role="status"
+      aria-live="polite"
       aria-label="Verdict readiness"
     >
       <span className="font-semibold" style={{ color: readiness.color }}>

@@ -21,6 +21,7 @@ export function PatternsBanner({ banners }: PatternsBannerProps): JSX.Element | 
           data-pattern-id={b.id}
           data-severity={b.severity}
           role="status"
+          aria-live="polite"
           className="flex items-start gap-2.5 p-3 rounded-xl border"
           style={
             b.severity === 'warn'
