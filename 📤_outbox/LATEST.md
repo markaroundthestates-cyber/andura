@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 6 audit polish (§6-H6 BottomNav tap gap + §11-C1 DST tests + §28-H6/M2 Privacy Policy Art. 9 + sub-processors + §36-M3 DNS prefetch + §15-H3 WebView detect banner + §17-M3 Sentry PII strip). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** §17-M3 Sentry beforeSend PII strip uid + email patterns (`a306438d`).
-**Branch:** main, **8 commits ahead origin/main** (BottomNav + DST tests + Privacy + LATEST + DNS + WebView + LATEST sync + Sentry PII) — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 11 audit polish post-PUSH (§6-H6 BottomNav tap + §11-C1 DST tests + §28-H6/M2 Privacy + §36-M3 DNS prefetch + §15-H3 WebView + §17-M3 Sentry PII + §6-M3 FieldRow label/aria + §6-M3 radiogroup wrappers x4 + §24-H4 README setup). Co-CTO autonomous Daniel "de ce ne oprim" pushback honored — continuous work cycle.
+**Last LANDED:** §24-H4 README local dev setup section + env vars inventory (`98488486`).
+**Branch:** main, **16 commits ahead origin/main** — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -63,6 +63,13 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 55. **NEW `7ab71625`** — §15-H3 Auth WebView detection banner FB/IG/Twitter/TikTok/Snapchat + 12 NEW tests
 56. **NEW `a937e665`** — CHAT_STATE + LATEST.md sync 5 audit closures cycle
 57. **NEW `a306438d`** — §17-M3 Sentry beforeSend PII strip uid + email patterns
+58. **NEW `d6d91d2d`** — LATEST.md sync 6 audit polish + Sentry PII
+59. **NEW `658db170`** — §6-M3 SettingsProfile FieldRow `<span>`→`<label>` + 11 NEW Sentry PII strip tests
+60. **NEW `cfdd3093`** — §6-M3 Onboarding age + weight aria-label
+61. **NEW `af3f083d`** — §6-M3 SettingsNotifications time input aria-label
+62. **NEW `fcf523b4`** — §6-M3 radiogroup wrappers phase + frequency + day picker
+63. **NEW `298c5e6c`** — §6-M3 radiogroup wrappers Appearance theme/nav + Prefs units/weekstart
+64. **NEW `98488486`** — §24-H4 README local dev setup section + env vars inventory
 
 ---
 
@@ -72,7 +79,7 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 |---|---|---|---|
 | TS strict errors | 873 | **0** | **-873 (100%)** |
 | Lint warnings | 88 | **0** | **-88 (100%)** |
-| Test PASS | 4578 | **4664** | **+86 new unit tests** |
+| Test PASS | 4578 | **4675** | **+97 new unit tests** |
 | Test FAIL | 0 | **0** | preserved |
 | Source files cleaned (A022) | 0 | **75+** | substrate full |
 | Live smoke console errors | 1 | **0** | clean |
