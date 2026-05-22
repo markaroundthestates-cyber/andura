@@ -22,13 +22,20 @@ const MS_PER_DAY = 86_400_000;
 const WEEKS = 13;
 const WINDOW_DAYS = 90;
 
-type Counts = { usor: number; potrivit: number; greu: number; total: number };
+// MED-A-2 fix CODE-REVIEW chat3: separate `unrated` bucket from `potrivit`.
+// Sessions with `deriveSessionRating === null` (legacy/empty exercises field)
+// previously inflated `potrivit` silently — engines (Bayesian Nutrition,
+// Adherence) read counts + Gigel sees "8 potrivit" pe care nu le-a evaluat.
+// `total` reflects only RATED sessions (excludes unrated) — footer copy stays
+// honest. `unrated` cell paints distinct lighter taupe via bg-line.
+type Counts = { usor: number; potrivit: number; greu: number; unrated: number; total: number };
 
 function ratingBgClass(rating: SessionRating | null): string {
   if (rating === 'usor') return 'bg-ratingUsor';
   if (rating === 'greu') return 'bg-brick';
-  // potrivit + null fallback (legacy session no rating) → taupe categorical.
-  return 'bg-lineStrong';
+  if (rating === 'potrivit') return 'bg-lineStrong';
+  // null → unrated (legacy session no rating) — distinct lighter taupe.
+  return 'bg-line';
 }
 
 interface ComputedBuckets {
@@ -41,7 +48,7 @@ export function computeBuckets(
   now: number = Date.now(),
 ): ComputedBuckets {
   const weeks: Array<Array<SessionRating | null>> = Array.from({ length: WEEKS }, () => []);
-  const counts: Counts = { usor: 0, potrivit: 0, greu: 0, total: 0 };
+  const counts: Counts = { usor: 0, potrivit: 0, greu: 0, unrated: 0, total: 0 };
   const windowStart = now - WINDOW_DAYS * MS_PER_DAY;
   for (const session of sessionsHistory) {
     if (session.ts < windowStart || session.ts > now) continue;
@@ -51,10 +58,12 @@ export function computeBuckets(
     const colIdx = (WEEKS - 1) - weekIdx;
     const rating = deriveSessionRating(session as Parameters<typeof deriveSessionRating>[0]);
     weeks[colIdx]?.push(rating);
-    counts.total++;
-    if (rating === 'usor') counts.usor++;
-    else if (rating === 'greu') counts.greu++;
-    else counts.potrivit++; // null + potrivit both go to potrivit bucket per spec fallback
+    // MED-A-2: null → counts.unrated (NOT potrivit). `total` includes only
+    // explicitly rated sessions so footer + aggregate stay honest.
+    if (rating === 'usor') { counts.usor++; counts.total++; }
+    else if (rating === 'greu') { counts.greu++; counts.total++; }
+    else if (rating === 'potrivit') { counts.potrivit++; counts.total++; }
+    else counts.unrated++;
   }
   return { weeks, counts };
 }
@@ -88,7 +97,8 @@ export function RatingsStrip90Day(): JSX.Element {
                   key={ci}
                   className={`block h-[7px] rounded-[2px] ${ratingBgClass(rating)}`}
                   data-testid={`rh-cell-${idx}-${ci}`}
-                  data-rating={rating ?? 'unknown'}
+                  data-rating={rating ?? 'unrated'}
+                  title={rating === null ? 'Fara rating' : undefined}
                   aria-hidden="true"
                 />
               ))}

@@ -102,3 +102,28 @@ describe('RatingsStrip90Day — accessibility', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+// MED-A-2 CODE-REVIEW chat3: legacy session (exercises:[]) → rating null
+// must NOT inflate potrivit count. Honest aggregate + total excludes unrated.
+describe('RatingsStrip90Day — unrated attribution (MED-A-2)', () => {
+  it('session with rating=null (empty exercises) counted as unrated NOT potrivit', () => {
+    // deriveSessionRating returns null when exercises field empty/missing.
+    const buckets = computeBuckets([
+      { ts: Date.now() - 5 * MS_PER_DAY, exercises: [] },
+    ]);
+    expect(buckets.counts.potrivit).toBe(0);
+    expect(buckets.counts.unrated).toBe(1);
+    expect(buckets.counts.total).toBe(0); // total = explicitly rated only
+  });
+
+  it('mixed rated + unrated → counts honest (potrivit=1, unrated=2, total=1)', () => {
+    const buckets = computeBuckets([
+      { ts: Date.now() - 5 * MS_PER_DAY, exercises: [{ sets: [{ rating: 'potrivit' }] }] },
+      { ts: Date.now() - 10 * MS_PER_DAY, exercises: [] },
+      { ts: Date.now() - 20 * MS_PER_DAY, exercises: [] },
+    ]);
+    expect(buckets.counts.potrivit).toBe(1);
+    expect(buckets.counts.unrated).toBe(2);
+    expect(buckets.counts.total).toBe(1);
+  });
+});
