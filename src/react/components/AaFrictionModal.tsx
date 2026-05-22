@@ -1,19 +1,11 @@
-// ══ AA FRICTION MODAL — LOCK 9 Per-Set Safety Acknowledge ════════════════
-// Phase 4 task_14 §B — blocking centered modal cand aaFrictionDetect
+// AA FRICTION MODAL - LOCK 9 Per-Set Safety Acknowledge
+// Phase 4 task_14 sectionB - blocking centered modal cand aaFrictionDetect
 // triggers pre-set. User must choose Continui oricum sau Pauza 30s. Backdrop
 // NU dismiss (LOCK 9 safety gate strict).
 //
-// WORDING DISCIPLINE Phase 4: per-set context wording absent în mockup
-// verbatim (mockup aaFrictionModal.js scope = session-level reduce plan
-// pattern, different from per-set fast/jump/spike detection task_14 spec).
-// Placeholders used pentru Daniel CEO wording review pre-Beta. RAPORT §6
-// WORDING BACKLOG flag.
-//
 // Cross-refs:
-//   - DECISIONS.md §D-LEGACY-040 LOCK 9 anti-aggressive loading safety
+//   - DECISIONS.md sectionD-LEGACY-040 LOCK 9 anti-aggressive loading safety
 //   - mockup andura-clasic.html line 105-127 .session-pill style precedent
-//     (centered modal NU bottom sheet — V1 LOCKED zero-modals exception
-//     pentru safety blocking gate confirmed pre-Beta SC)
 
 import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
@@ -23,14 +15,10 @@ import type { AggressiveReason } from '../lib/aaFrictionDetect';
 interface AaFrictionModalProps {
   open: boolean;
   reason: AggressiveReason | null;
-  onAcknowledge: () => void; // Pauza 30s — accept safety advice
-  onForceContinue: () => void; // Continui oricum — override
+  onAcknowledge: () => void;
+  onForceContinue: () => void;
 }
 
-// Phase 5 task_02 wording autonomous compose per D024 LOCKED V1. Daniel CEO
-// review post-Beta a-z. Anti-paternalism strict: observe pattern + verify
-// form (NU "esti obosit/te doare/te oprim" forced framing). Pauza concret
-// time-bounded; Continui = user agency override preserved.
 const COPY = {
   title: 'Stai un pic',
   body: 'Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.',
@@ -51,16 +39,35 @@ export function AaFrictionModal({
   onForceContinue,
 }: AaFrictionModalProps): JSX.Element | null {
   const pauseRef = useRef<HTMLButtonElement | null>(null);
+  const continueRef = useRef<HTMLButtonElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // §6-H4 focus management: open → focus primary safety CTA (Pauza 30s);
-  // close → restore previous focus. NO Escape close (LOCK 9 blocking
-  // safety gate — user MUST choose Pauza sau Continui explicit).
+  // sectionMED-3 audit fix (REVIEW-chat3 fresh-eyes): Tab/Shift+Tab focus
+  // trap cycles between Pauza (first) and Continui (last). WAI-ARIA dialog
+  // modal-trap contract - keyboard users NU pot Tab afara in workout UI
+  // behind backdrop. NO Escape handler (preserve LOCK 9 blocking intent -
+  // user MUST choose Pauza sau Continui explicit).
   useEffect(() => {
     if (!open) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
     pauseRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key !== 'Tab') return;
+      const first = pauseRef.current;
+      const last = continueRef.current;
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onKey);
     return () => {
+      document.removeEventListener('keydown', onKey);
       previousFocusRef.current?.focus();
     };
   }, [open]);
@@ -70,7 +77,6 @@ export function AaFrictionModal({
     <div
       className="fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
       data-testid="aa-friction-backdrop"
-      // Backdrop NU dismiss tap — LOCK 9 blocking safety gate.
     >
       <div
         className="bg-paper rounded-2xl p-6 w-full max-w-md"
@@ -111,6 +117,7 @@ export function AaFrictionModal({
           {COPY.buttonPause}
         </button>
         <button
+          ref={continueRef}
           type="button"
           onClick={onForceContinue}
           data-testid="aa-friction-continue"

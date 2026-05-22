@@ -121,7 +121,7 @@ export function CalendarHeatmap(): JSX.Element {
       </div>
 
       <div
-        className="grid grid-cols-7 gap-1"
+        className="grid grid-cols-7 gap-1 mb-2.5"
         role="grid"
         aria-label={`${CAL_MONTHS[calM]} ${calY}`}
         data-testid="cal-grid"
@@ -158,6 +158,35 @@ export function CalendarHeatmap(): JSX.Element {
             </div>
           );
         })}
+      </div>
+
+      <div
+        className="flex items-center gap-3.5 flex-wrap"
+        data-testid="cal-legend"
+      >
+        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+          <span className="inline-block w-3 h-3 rounded-sm bg-heatGreu" aria-hidden="true" />
+          Greu
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+          <span className="inline-block w-3 h-3 rounded-sm bg-heatNormal" aria-hidden="true" />
+          Normal
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+          <span className="inline-block w-3 h-3 rounded-sm bg-heatUsor" aria-hidden="true" />
+          Usor
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+          <span
+            className="inline-block w-3 h-3 rounded-sm bg-heatRecovery border border-heatRecoveryBorder"
+            aria-hidden="true"
+          />
+          Recuperare
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+          <span className="inline-block w-3 h-3 rounded-sm bg-paper2" aria-hidden="true" />
+          Zi libera
+        </span>
       </div>
     </section>
   );
