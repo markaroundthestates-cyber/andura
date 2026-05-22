@@ -159,7 +159,7 @@ export function CalendarHeatmap(): JSX.Element {
           // Text color tuned for contrast: l1 light bg uses dark text;
           // l2/l3 medium-dark green uses ink (11.57:1 / improvement vs mockup white 5.43:1 / 2.69:1).
           let textCls = 'text-ink3';
-          if (tier === 'l1') textCls = 'text-[#2f5b34]'; // 7.92:1 AAA
+          if (tier === 'l1') textCls = 'text-heatUsorText'; // 7.92:1 AAA via --heat-usor-text token
           else if (tier === 'l2' || tier === 'l3') textCls = 'text-ink font-semibold';
           const isToday = cell.key === todayKey;
           const isFuture = cell.key !== null && cell.key > todayKey;

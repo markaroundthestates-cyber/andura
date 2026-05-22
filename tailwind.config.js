@@ -37,6 +37,7 @@ export default {
         overlaySoft: 'var(--overlay-soft)',
         // F-istoric-01 + F-istoric-03 signature feature tokens
         heatUsor: 'var(--heat-usor)',
+        heatUsorText: 'var(--heat-usor-text)',
         heatNormal: 'var(--heat-normal)',
         heatGreu: 'var(--heat-greu)',
         heatRecovery: 'var(--heat-recovery)',

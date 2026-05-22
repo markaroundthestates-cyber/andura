@@ -60,6 +60,7 @@
        categorical bucket. Each used 2+ times across signature feature → Bugatti craft
        justifies vault addition (vs hardcoded hex sprinkled across 2 components). */
     --heat-usor: #d4e6cb;             /* L1 tier — usor sessions (light green) */
+    --heat-usor-text: #2f5b34;        /* L1 tier text — 7.92:1 AAA over heat-usor */
     --heat-normal: #7fb185;           /* L2 tier — normal sessions (medium green) */
     --heat-greu: #3d7a4a;             /* L3 tier — greu sessions (deep green) */
     --heat-recovery: #f5ebd0;         /* Recovery tier reserved V2 deload flag */
