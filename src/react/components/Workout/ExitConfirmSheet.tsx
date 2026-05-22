@@ -35,12 +35,14 @@ export function ExitConfirmSheet({
     <div
       className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
       data-testid="exit-sheet-backdrop"
+      onClick={() => onChoose('continue')}
     >
       <div
         className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
         data-testid="exit-sheet"
         role="dialog"
         aria-label="Iesi din sesiune"
+        onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-base font-bold text-ink mb-2">Iesi din sesiune?</h2>
         <p className="text-sm text-ink2 mb-4">
