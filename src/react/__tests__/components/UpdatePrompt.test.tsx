@@ -6,12 +6,12 @@ import { render, screen } from '@testing-library/react';
 import { UpdatePrompt } from '../../components/UpdatePrompt';
 
 describe('UpdatePrompt — fallback when virtual:pwa-register unavailable', () => {
-  it('renders null când needRefresh false (default fallback in jsdom)', () => {
+  it('renders null cand needRefresh false (default fallback in jsdom)', () => {
     const { container } = render(<UpdatePrompt />);
     expect(container.firstChild).toBeNull();
   });
 
-  it('NU throws on mount în jsdom (virtual module import gated)', () => {
+  it('NU throws on mount in jsdom (virtual module import gated)', () => {
     expect(() => render(<UpdatePrompt />)).not.toThrow();
   });
 

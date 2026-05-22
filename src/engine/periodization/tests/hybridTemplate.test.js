@@ -107,7 +107,7 @@ describe('clusterWeightForGroup — Hybrid routing helper', () => {
   it('returns 0.50 for pull cluster + spate group', () => {
     expect(clusterWeightForGroup('pull', 'spate')).toBe(0.50);
   });
-  it('returns 0 when group absent în cluster (legs+piept)', () => {
+  it('returns 0 when group absent in cluster (legs+piept)', () => {
     expect(clusterWeightForGroup('legs', 'piept')).toBe(0);
   });
   it('returns 0 when cluster unknown', () => {

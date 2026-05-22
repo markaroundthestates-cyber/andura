@@ -17,12 +17,12 @@ describe('dexieMigration — scaffold smoke', () => {
     expect(typeof clearArchive).toBe('function');
   });
 
-  it('getArchivedSessions returns empty array în jsdom no-IDB env (fail-silent)', async () => {
+  it('getArchivedSessions returns empty array in jsdom no-IDB env (fail-silent)', async () => {
     const result = await getArchivedSessions();
     expect(Array.isArray(result)).toBe(true);
   });
 
-  it('archiveSession does not throw în jsdom no-IDB env (fail-silent)', async () => {
+  it('archiveSession does not throw in jsdom no-IDB env (fail-silent)', async () => {
     const session: LastSessionSummary = {
       title: 'Push',
       meta: 'x',
@@ -31,7 +31,7 @@ describe('dexieMigration — scaffold smoke', () => {
     await expect(archiveSession(session)).resolves.toBeUndefined();
   });
 
-  it('clearArchive does not throw în jsdom no-IDB env', async () => {
+  it('clearArchive does not throw in jsdom no-IDB env', async () => {
     await expect(clearArchive()).resolves.toBeUndefined();
   });
 });
@@ -41,7 +41,7 @@ describe('aggregateSessionsByWeek — §35-H1 pre-archive compression', () => {
     expect(aggregateSessionsByWeek([])).toEqual({});
   });
 
-  it('groups sessions într-o singura saptamana ISO', () => {
+  it('groups sessions intr-o singura saptamana ISO', () => {
     // 2026-05-18 Monday + 2026-05-21 Thursday = same ISO week
     const sessions: LastSessionSummary[] = [
       { title: 'Push', meta: '', ts: Date.UTC(2026, 4, 18), sets: 5, durationMin: 50, volumeKg: 1000 },

@@ -138,7 +138,7 @@ describe('SessionPill — content render', () => {
     expect(screen.getByTestId('session-pill').textContent).toMatch(/5 min/);
   });
 
-  it('exIdx advance reflects în pill exercise name', async () => {
+  it('exIdx advance reflects in pill exercise name', async () => {
     useWorkoutStore.setState({
       phase: 'logging',
       sessionStart: Date.now(),
@@ -225,13 +225,13 @@ describe('SessionPill — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     resetStore();
   });
 
-  it('no diacritics în active label', () => {
+  it('no diacritics in active label', () => {
     useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
     const { container } = renderPill('/app/antrenor');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  it('no diacritics în paused label', () => {
+  it('no diacritics in paused label', () => {
     useWorkoutStore.setState({
       phase: 'idle',
       pausedSnapshot: {

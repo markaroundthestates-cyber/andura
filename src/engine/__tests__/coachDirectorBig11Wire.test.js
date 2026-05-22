@@ -117,7 +117,7 @@ describe('aggregateGroupScoresPerEngine — pure-function discipline ADR-026 §9
   });
 });
 
-describe('translateGroupToRO — post-C4.5 cap-coadă cleanup verify Big 6 EN fallback DEPRECATED', () => {
+describe('translateGroupToRO — post-C4.5 cap-coada cleanup verify Big 6 EN fallback DEPRECATED', () => {
   it('Big 11 RO canonical V1 SSOT preserved (piept → Piept)', () => {
     expect(translateGroupToRO('piept')).toBe('Piept');
   });

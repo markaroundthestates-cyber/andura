@@ -154,7 +154,7 @@ describe('getCoachToday — Option B enrich 8-field aggregate', () => {
     expect(result).toBeInstanceOf(Promise);
   });
 
-  it('readiness/fatigue null când engines return null', async () => {
+  it('readiness/fatigue null cand engines return null', async () => {
     vi.mocked(getReadiness).mockReturnValueOnce(null);
     vi.mocked(getFatigue).mockReturnValueOnce(null);
     const out = await getCoachToday();

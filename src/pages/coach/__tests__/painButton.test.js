@@ -153,7 +153,7 @@ describe('selectPainOption — engine mapping + DB log', () => {
     expect(log[0].uiKey).toBe('joint_discomfort');
   });
 
-  it('NO medical claim wording în UI (anti-paternalism §ADR_PAIN)', () => {
+  it('NO medical claim wording in UI (anti-paternalism §ADR_PAIN)', () => {
     showPainButton();
     const text = document.getElementById('pain-button-modal').textContent.toLowerCase();
     expect(text).not.toContain('doctor');

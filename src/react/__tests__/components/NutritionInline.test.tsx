@@ -119,7 +119,7 @@ describe('NutritionInline — edit mode protein', () => {
 });
 
 describe('NutritionInline — both edit', () => {
-  it('Save commits both edits în single click', () => {
+  it('Save commits both edits in single click', () => {
     render(<NutritionInline />);
     fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
     fireEvent.click(screen.getByTestId('nutri-protein-edit'));

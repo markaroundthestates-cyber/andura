@@ -201,7 +201,7 @@ describe('Workout — state machine logging → rest', async () => {
     expect(useWorkoutStore.getState().phase).toBe('logging');
   });
 
-  it('set history renders previous sets în log zone', async () => {
+  it('set history renders previous sets in log zone', async () => {
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
     fireEvent.click(screen.getByTestId('rest-skip'));

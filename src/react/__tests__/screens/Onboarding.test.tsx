@@ -143,7 +143,7 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().completed).toBe(false);
   });
 
-  it('no diacritics în UI text', () => {
+  it('no diacritics in UI text', () => {
     const { container } = renderAt(3);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });

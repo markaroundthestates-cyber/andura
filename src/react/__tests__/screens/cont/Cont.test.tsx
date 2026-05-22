@@ -90,7 +90,7 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.getByTestId('cont-row-danger').className).toMatch(/text-brick/);
   });
 
-  it('no diacritics în UI text', () => {
+  it('no diacritics in UI text', () => {
     const { container } = renderCont();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });

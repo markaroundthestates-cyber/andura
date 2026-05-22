@@ -473,7 +473,7 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR greutate/);
   });
 
-  it('banner shows negative deltaKg fără double-sign', () => {
+  it('banner shows negative deltaKg fara double-sign', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Squat', deltaKg: -5, type: 'reps' },
@@ -484,7 +484,7 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     expect(detail.textContent).not.toMatch(/\+-5/);
   });
 
-  it('volume PR type rendered în banner enrichment label', () => {
+  it('volume PR type rendered in banner enrichment label', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Deadlift', deltaKg: 10, type: 'volume' },

@@ -188,16 +188,16 @@ describe('auth — token state + refresh', () => {
 describe('auth — §A016 freshness gate for destructive actions', () => {
   beforeEach(() => { _resetStorage(); });
 
-  it('isAuthFresh returns false când lastAuthAt missing', () => {
+  it('isAuthFresh returns false cand lastAuthAt missing', () => {
     expect(isAuthFresh()).toBe(false);
   });
 
-  it('isAuthFresh returns true imediat după lastAuthAt set', () => {
+  it('isAuthFresh returns true imediat dupa lastAuthAt set', () => {
     localStorage.setItem(AUTH_STORAGE_KEYS.lastAuthAt, String(Date.now()));
     expect(isAuthFresh()).toBe(true);
   });
 
-  it('isAuthFresh returns false când lastAuthAt > window ago', () => {
+  it('isAuthFresh returns false cand lastAuthAt > window ago', () => {
     localStorage.setItem(
       AUTH_STORAGE_KEYS.lastAuthAt,
       String(Date.now() - AUTH_FRESHNESS_WINDOW_MS - 1000),
@@ -205,7 +205,7 @@ describe('auth — §A016 freshness gate for destructive actions', () => {
     expect(isAuthFresh()).toBe(false);
   });
 
-  it('isAuthFresh returns true când lastAuthAt exact la marginea window', () => {
+  it('isAuthFresh returns true cand lastAuthAt exact la marginea window', () => {
     localStorage.setItem(
       AUTH_STORAGE_KEYS.lastAuthAt,
       String(Date.now() - AUTH_FRESHNESS_WINDOW_MS + 100),

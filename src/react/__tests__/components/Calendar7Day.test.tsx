@@ -25,7 +25,7 @@ describe('Calendar7Day — render', () => {
     }
   });
 
-  it('renders day labels în order L Ma Mi J V S D', () => {
+  it('renders day labels in order L Ma Mi J V S D', () => {
     render(<Calendar7Day />);
     expect(screen.getByTestId('calendar-day-0')).toHaveAttribute('data-day', 'L');
     expect(screen.getByTestId('calendar-day-1')).toHaveAttribute('data-day', 'Ma');
@@ -91,7 +91,7 @@ describe('Calendar7Day — edit mode', () => {
     expect(useScheduleStore.getState().editMode).toBe(true);
   });
 
-  it('day buttons enabled în edit mode', () => {
+  it('day buttons enabled in edit mode', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     for (let i = 0; i < 7; i++) {
@@ -99,7 +99,7 @@ describe('Calendar7Day — edit mode', () => {
     }
   });
 
-  it('toggleDay flips training ↔ rest în edit mode', () => {
+  it('toggleDay flips training ↔ rest in edit mode', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     fireEvent.click(screen.getByTestId('calendar-day-1')); // rest → training
@@ -127,7 +127,7 @@ describe('Calendar7Day — edit mode', () => {
     expect(useScheduleStore.getState().editMode).toBe(false);
   });
 
-  it('edit toggle în edit mode acts as Save (idempotent)', () => {
+  it('edit toggle in edit mode acts as Save (idempotent)', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     fireEvent.click(screen.getByTestId('calendar-edit-toggle'));

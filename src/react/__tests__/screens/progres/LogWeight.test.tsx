@@ -79,7 +79,7 @@ describe('LogWeight — validation', () => {
     expect(screen.getByTestId('weight-save')).toBeDisabled();
   });
 
-  it('Save enabled when kg în range 30-250', () => {
+  it('Save enabled when kg in range 30-250', () => {
     renderLogWeight();
     fireEvent.change(screen.getByTestId('weight-kg-input'), { target: { value: '78.5' } });
     expect(screen.getByTestId('weight-save')).not.toBeDisabled();
@@ -105,7 +105,7 @@ describe('LogWeight — persist', () => {
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/progres');
   });
 
-  it('Cancel navigates back fără persist', () => {
+  it('Cancel navigates back fara persist', () => {
     renderLogWeight();
     fireEvent.change(screen.getByTestId('weight-kg-input'), { target: { value: '80' } });
     fireEvent.click(screen.getByTestId('weight-cancel'));

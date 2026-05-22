@@ -160,7 +160,7 @@ describe('consumeWeaknessDetectorSignal — C4.4 eligible scope filter (8 of 11)
   });
 });
 
-describe('translateGroupToRO — Big 11 RO canonical V1 SSOT (post-C4.5 cap-coadă cleanup)', () => {
+describe('translateGroupToRO — Big 11 RO canonical V1 SSOT (post-C4.5 cap-coada cleanup)', () => {
   it('Big 11 NEW: antebrate → Antebrate', () => {
     expect(translateGroupToRO('antebrate')).toBe('Antebrate');
   });
@@ -181,19 +181,19 @@ describe('translateGroupToRO — Big 11 RO canonical V1 SSOT (post-C4.5 cap-coad
     expect(translateGroupToRO('picioare-hamstrings')).toBe('Ischiogambieri');
   });
 
-  it('post-C4.5 cap-coadă cleanup: chest → Chest (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
+  it('post-C4.5 cap-coada cleanup: chest → Chest (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
     expect(translateGroupToRO('chest')).toBe('Chest');
   });
 
-  it('post-C4.5 cap-coadă cleanup: back → Back (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
+  it('post-C4.5 cap-coada cleanup: back → Back (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
     expect(translateGroupToRO('back')).toBe('Back');
   });
 
-  it('post-C4.5 cap-coadă cleanup: shoulders → Shoulders (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
+  it('post-C4.5 cap-coada cleanup: shoulders → Shoulders (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
     expect(translateGroupToRO('shoulders')).toBe('Shoulders');
   });
 
-  it('post-C4.5 cap-coadă cleanup: legs → Legs (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
+  it('post-C4.5 cap-coada cleanup: legs → Legs (capitalizeGroup fallback NU map entry — Big 6 EN deprecated)', () => {
     expect(translateGroupToRO('legs')).toBe('Legs');
   });
 });

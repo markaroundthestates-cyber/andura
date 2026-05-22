@@ -25,7 +25,7 @@ describe('sufletAndura — anatomical agnostic invariant Big 11 wire compatible'
     expect(fnSource).not.toMatch(/['"](piept|spate|umeri|biceps|triceps|antebrate|fese|gambe)['"]/);
   });
 
-  it('TIER_LEVELS taxonomy-independent (NU contain group keys în labels/requirements)', () => {
+  it('TIER_LEVELS taxonomy-independent (NU contain group keys in labels/requirements)', () => {
     for (const tier of Object.values(TIER_LEVELS)) {
       // Romanian-language labels may incidentally contain "chest" substring (e.g. "chestionar"
       // means "questionnaire") — that's NOT a Big 6 group key reference. We assert no

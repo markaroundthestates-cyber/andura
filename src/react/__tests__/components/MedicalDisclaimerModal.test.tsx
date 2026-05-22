@@ -42,7 +42,7 @@ describe('MedicalDisclaimerModal — LOCK 4', () => {
     expect(modal).toHaveAttribute('aria-modal', 'true');
   });
 
-  it('no diacritics în body copy', () => {
+  it('no diacritics in body copy', () => {
     const { container } = render(
       <MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} />,
     );
