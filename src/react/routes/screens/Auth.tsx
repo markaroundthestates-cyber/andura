@@ -8,9 +8,10 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, FlaskConical } from 'lucide-react';
+import { Mail, FlaskConical, ExternalLink } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
+import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
 
 // §B005/D-2 audit fix — Google OAuth client ID from build-time env. Daniel
 // configures via GitHub Secrets + Google Cloud Console OAuth provider enable.
@@ -75,6 +76,11 @@ export function Auth(): JSX.Element {
 
   const showGoogle = GOOGLE_OAUTH_CLIENT_ID !== '';
   const showMockLogin = import.meta.env.DEV;
+  // §15-H3 audit fix — detect FB/IG/etc. WebView. Magic Link click opens
+  // default browser (Chrome) → localStorage scope different → auth state
+  // does NOT sync back to WebView → user stuck în loop. Banner warns to
+  // open în Chrome directly.
+  const webViewSource = detectWebView();
 
   return (
     <section
@@ -82,6 +88,25 @@ export function Auth(): JSX.Element {
       data-testid="auth"
     >
       <div className="w-full max-w-sm">
+        {webViewSource && (
+          <div
+            data-testid="auth-webview-warning"
+            role="status"
+            className="flex items-start gap-2 p-3 mb-4 rounded-xl border"
+            style={{
+              background: 'var(--status-info-bg)',
+              borderColor: 'var(--status-info-border)',
+            }}
+          >
+            <ExternalLink className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
+            <p className="text-xs text-ink2 leading-relaxed">
+              Esti in browser-ul {webViewLabel(webViewSource)}. Magic Link-ul
+              functioneaza mai bine daca deschizi <strong>andura.app</strong> in
+              Chrome (meniu &middot;&middot;&middot; &gt; Deschide in Chrome).
+            </p>
+          </div>
+        )}
+
         <h1 className="text-2xl font-semibold text-ink mb-2 text-center">
           Autentificare
         </h1>
