@@ -126,3 +126,55 @@ describe('LogWeight — D-LEGACY-064 no-diacritics', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+describe('LogWeight — A11Y HIGH chat5 form aria attributes', () => {
+  it('kg input has aria-required + required attr', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('date input has aria-required + required attr', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-date-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('kg input NO aria-invalid pe initial empty state', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(screen.queryByTestId('weight-kg-error')).not.toBeInTheDocument();
+  });
+
+  it('kg input NO aria-invalid pe valid value 78.5', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input');
+    fireEvent.change(input, { target: { value: '78.5' } });
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('weight-kg-error')).not.toBeInTheDocument();
+  });
+
+  it('kg input aria-invalid + aria-describedby + error mesaj cand kg < 30', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input');
+    fireEvent.change(input, { target: { value: '20' } });
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'weight-kg-error');
+    const err = screen.getByTestId('weight-kg-error');
+    expect(err).toHaveAttribute('id', 'weight-kg-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/Kg trebuie intre 30 si 250/);
+  });
+
+  it('kg input aria-invalid cand kg > 250', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input');
+    fireEvent.change(input, { target: { value: '300' } });
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('weight-kg-error').textContent).toMatch(/30 si 250/);
+  });
+});

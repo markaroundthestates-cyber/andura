@@ -60,8 +60,9 @@ describe('SetLogInput — editable mode (default, backward compat)', () => {
 
   it('label htmlFor association matches input id (a11y)', () => {
     renderInput();
-    const kgLabel = screen.getByText('Kg');
-    const repsLabel = screen.getByText('Reps');
+    // A11Y HIGH chat5 — label text now "Kg *" / "Reps *" pentru required marker
+    const kgLabel = screen.getByText('Kg *');
+    const repsLabel = screen.getByText('Reps *');
     expect(kgLabel).toHaveAttribute('for', 'kg-input');
     expect(repsLabel).toHaveAttribute('for', 'reps-input');
   });
@@ -198,5 +199,65 @@ describe('SetLogInput — §F-pass2-setloginput-02 post-log mode (readonly + edi
     renderInput({ mode: 'post-log' });
     const block = screen.getByTestId('setlog-postlog');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(block.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => {
+  it('kg input has aria-required + required', () => {
+    renderInput();
+    const input = screen.getByTestId('kg-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('reps input has aria-required + required', () => {
+    renderInput();
+    const input = screen.getByTestId('reps-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('kg + reps NO aria-invalid pe valid props 22.5/10', () => {
+    renderInput({ kg: 22.5, reps: 10 });
+    expect(screen.getByTestId('kg-input')).not.toHaveAttribute('aria-invalid');
+    expect(screen.getByTestId('reps-input')).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('kg-input-error')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('reps-input-error')).not.toBeInTheDocument();
+  });
+
+  it('kg input aria-invalid + error cand kg < 1 (0 default)', () => {
+    renderInput({ kg: 0, reps: 10 });
+    const input = screen.getByTestId('kg-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'kg-input-error');
+    const err = screen.getByTestId('kg-input-error');
+    expect(err).toHaveAttribute('id', 'kg-input-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/Kg trebuie intre 1 si 500/);
+  });
+
+  it('kg input aria-invalid cand kg > 500', () => {
+    renderInput({ kg: 600, reps: 10 });
+    expect(screen.getByTestId('kg-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('kg-input-error').textContent).toMatch(/1 si 500/);
+  });
+
+  it('reps input aria-invalid + error cand reps < 1', () => {
+    renderInput({ kg: 22.5, reps: 0 });
+    const input = screen.getByTestId('reps-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'reps-input-error');
+    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/Repetari intre 1 si 100/);
+  });
+
+  it('reps input aria-invalid cand reps > 100', () => {
+    renderInput({ kg: 22.5, reps: 150 });
+    expect(screen.getByTestId('reps-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/1 si 100/);
+  });
+
+  it('editable mode error text no diacritics', () => {
+    const { container } = renderInput({ kg: 0, reps: 0 });
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });

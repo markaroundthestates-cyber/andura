@@ -117,9 +117,15 @@ interface OptionStepProps<T extends string> {
 }
 
 function Step1({ value, onChange }: NumericStepProps): JSX.Element {
+  // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
+  // doar daca value e ne-null + out-of-range (NU initial empty). WCAG SC
+  // 3.3.1 + 3.3.3.
+  const error = value !== null && (value < 16 || value > 99)
+    ? 'Varsta intre 16 si 99 ani.'
+    : null;
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-2">Ce varsta ai?</h1>
+      <h1 id="onb-step1-heading" className="text-2xl font-semibold text-ink mb-2">Ce varsta ai?</h1>
       <p className="text-sm text-ink2 mb-6">Ajustam programul pe varsta ta.</p>
       <input
         type="number"
@@ -137,6 +143,10 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         placeholder="ex. 32"
         min={16}
         max={99}
+        required
+        aria-required="true"
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? 'onb-age-error' : undefined}
         inputMode="numeric"
         autoComplete="off"
         enterKeyHint="next"
@@ -144,6 +154,16 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
+      {error && (
+        <p
+          id="onb-age-error"
+          role="alert"
+          data-testid="onb-age-error"
+          className="mt-2 text-sm text-danger text-center"
+        >
+          {error}
+        </p>
+      )}
     </>
   );
 }
@@ -265,6 +285,11 @@ function Step5({ value, onChange }: OptionStepProps<'incepator' | 'intermediar' 
 }
 
 function Step6({ value, onChange }: NumericStepProps): JSX.Element {
+  // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
+  // doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
+  const error = value !== null && (value < 30 || value > 250)
+    ? 'Kg trebuie intre 30 si 250.'
+    : null;
   return (
     <>
       <h1 className="text-2xl font-semibold text-ink mb-2">Cat cantaresti?</h1>
@@ -284,6 +309,10 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         step="0.1"
         min={30}
         max={250}
+        required
+        aria-required="true"
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? 'onb-weight-error' : undefined}
         inputMode="decimal"
         autoComplete="off"
         enterKeyHint="done"
@@ -292,6 +321,16 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
       <p className="text-xs text-ink2 mt-2 text-center">kg</p>
+      {error && (
+        <p
+          id="onb-weight-error"
+          role="alert"
+          data-testid="onb-weight-error"
+          className="mt-2 text-sm text-danger text-center"
+        >
+          {error}
+        </p>
+      )}
     </>
   );
 }

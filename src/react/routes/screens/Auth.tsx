@@ -151,13 +151,20 @@ export function Auth(): JSX.Element {
               htmlFor="auth-email"
               className="block text-sm text-ink2 font-medium mb-2"
             >
-              Email
+              Email *
             </label>
             {/* §6-C3 audit fix — autoComplete="email" enables browser/password-manager
-                autofill (Maria 65 typing relief; 1Password/Bitwarden Magic Link suggest). */}
+                autofill (Maria 65 typing relief; 1Password/Bitwarden Magic Link suggest).
+                A11Y HIGH chat5 fix — aria-required + aria-invalid + aria-describedby
+                pe input pentru screen reader Maria/Gigel: focus input invalid auzeau
+                doar "Email" fara motiv. WCAG SC 3.3.1 + SC 3.3.3. */}
             <input
               id="auth-email"
               type="email"
+              required
+              aria-required="true"
+              aria-invalid={error ? 'true' : undefined}
+              aria-describedby={error ? 'auth-email-error' : undefined}
               autoComplete="email"
               inputMode="email"
               value={email}
@@ -177,6 +184,7 @@ export function Auth(): JSX.Element {
             </button>
             {error && (
               <p
+                id="auth-email-error"
                 className="mt-3 text-sm text-danger text-center"
                 data-testid="auth-error"
                 role="alert"

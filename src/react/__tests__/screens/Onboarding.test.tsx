@@ -148,3 +148,79 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
+  it('step 1 age input has aria-required + required', () => {
+    renderAt(1);
+    const input = screen.getByTestId('onb-age-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('step 1 age input NO aria-invalid pe initial empty', () => {
+    renderAt(1);
+    const input = screen.getByTestId('onb-age-input');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('onb-age-error')).not.toBeInTheDocument();
+  });
+
+  it('step 1 age input NO aria-invalid pe valid value 32', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '32' } });
+    const input = screen.getByTestId('onb-age-input');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('onb-age-error')).not.toBeInTheDocument();
+  });
+
+  it('step 1 age input aria-invalid + error cand value < 16', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '10' } });
+    const input = screen.getByTestId('onb-age-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'onb-age-error');
+    const err = screen.getByTestId('onb-age-error');
+    expect(err).toHaveAttribute('id', 'onb-age-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/Varsta intre 16 si 99/);
+  });
+
+  it('step 1 age input aria-invalid cand value > 99', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '120' } });
+    expect(screen.getByTestId('onb-age-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('onb-age-error').textContent).toMatch(/16 si 99/);
+  });
+
+  it('step 6 weight input has aria-required + required', () => {
+    renderAt(6);
+    const input = screen.getByTestId('onb-weight-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('step 6 weight input NO aria-invalid pe valid 78', () => {
+    renderAt(6);
+    fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '78' } });
+    expect(screen.getByTestId('onb-weight-input')).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('onb-weight-error')).not.toBeInTheDocument();
+  });
+
+  it('step 6 weight input aria-invalid + error cand value < 30', () => {
+    renderAt(6);
+    fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '20' } });
+    const input = screen.getByTestId('onb-weight-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'onb-weight-error');
+    const err = screen.getByTestId('onb-weight-error');
+    expect(err).toHaveAttribute('id', 'onb-weight-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/Kg trebuie intre 30 si 250/);
+  });
+
+  it('step 6 weight input aria-invalid cand value > 250', () => {
+    renderAt(6);
+    fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '300' } });
+    expect(screen.getByTestId('onb-weight-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('onb-weight-error').textContent).toMatch(/30 si 250/);
+  });
+});

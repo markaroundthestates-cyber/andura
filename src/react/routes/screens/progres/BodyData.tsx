@@ -60,6 +60,19 @@ export function BodyData(): JSX.Element {
     setValues((prev) => ({ ...prev, [key]: val }));
   }
 
+  // A11Y HIGH chat5 — surface range validation error per field pentru screen
+  // reader Maria/Gigel. Partial entry OK (NU all required), deci error doar
+  // cand user typed value out-of-range 20-250 cm. WCAG SC 3.3.1 + 3.3.3.
+  function fieldError(key: FieldKey): string | null {
+    const v = values[key];
+    if (v === '') return null;
+    const n = Number(v);
+    if (!Number.isFinite(n) || n < 20 || n > 250) {
+      return 'Valoare intre 20 si 250 cm.';
+    }
+    return null;
+  }
+
   // Partial entry OK — save passes only filled numeric fields.
   const hasAnyValue = Object.values(values).some((v) => v !== '' && Number(v) > 0);
 
@@ -99,28 +112,43 @@ export function BodyData(): JSX.Element {
       </header>
 
       <div className="flex flex-col gap-4 flex-1">
-        {MEASURE_FIELDS.map((field) => (
-          <div key={field.key}>
-            <label
-              htmlFor={`bd-${field.key}`}
-              className="text-sm text-ink2 font-medium block mb-1"
-            >
-              {field.label} (cm)
-            </label>
-            <input
-              id={`bd-${field.key}`}
-              type="number"
-              value={values[field.key]}
-              onChange={(e) => setField(field.key, e.target.value)}
-              step="0.1"
-              min={20}
-              max={250}
-              inputMode="decimal"
-              data-testid={`bd-${field.key}`}
-              className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
-            />
-          </div>
-        ))}
+        {MEASURE_FIELDS.map((field) => {
+          const err = fieldError(field.key);
+          return (
+            <div key={field.key}>
+              <label
+                htmlFor={`bd-${field.key}`}
+                className="text-sm text-ink2 font-medium block mb-1"
+              >
+                {field.label} (cm)
+              </label>
+              <input
+                id={`bd-${field.key}`}
+                type="number"
+                aria-invalid={err ? 'true' : undefined}
+                aria-describedby={err ? `bd-${field.key}-error` : undefined}
+                value={values[field.key]}
+                onChange={(e) => setField(field.key, e.target.value)}
+                step="0.1"
+                min={20}
+                max={250}
+                inputMode="decimal"
+                data-testid={`bd-${field.key}`}
+                className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
+              />
+              {err && (
+                <p
+                  id={`bd-${field.key}-error`}
+                  role="alert"
+                  data-testid={`bd-${field.key}-error`}
+                  className="mt-2 text-sm text-danger"
+                >
+                  {err}
+                </p>
+              )}
+            </div>
+          );
+        })}
 
         <div>
           <label

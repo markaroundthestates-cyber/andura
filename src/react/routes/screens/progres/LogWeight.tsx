@@ -35,6 +35,15 @@ export function LogWeight(): JSX.Element {
   const kgNum = Number(kg);
   const valid = kg !== '' && kgNum >= 30 && kgNum <= 250 && date !== '';
 
+  // A11Y HIGH chat5 — surface validation error inline pentru screen reader
+  // Maria/Gigel users. Show only daca user typed value out-of-range (NU pe
+  // empty initial state, NU pe valid input). WCAG SC 3.3.1 + 3.3.3.
+  const kgError =
+    kg !== '' && (!Number.isFinite(kgNum) || kgNum < 30 || kgNum > 250)
+      ? 'Kg trebuie intre 30 si 250.'
+      : null;
+  const dateError = date === '' ? 'Data este obligatorie.' : null;
+
   function handleSave(): void {
     if (!valid) return;
     addWeightEntry({ kg: kgNum, date });
@@ -69,11 +78,15 @@ export function LogWeight(): JSX.Element {
             htmlFor="weight-kg"
             className="text-sm text-ink2 font-medium block mb-2"
           >
-            Greutate (kg)
+            Greutate (kg) *
           </label>
           <input
             id="weight-kg"
             type="number"
+            required
+            aria-required="true"
+            aria-invalid={kgError ? 'true' : undefined}
+            aria-describedby={kgError ? 'weight-kg-error' : undefined}
             value={kg}
             onChange={(e) => setKg(e.target.value)}
             placeholder="ex. 78.5"
@@ -84,6 +97,16 @@ export function LogWeight(): JSX.Element {
             data-testid="weight-kg-input"
             className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
           />
+          {kgError && (
+            <p
+              id="weight-kg-error"
+              role="alert"
+              data-testid="weight-kg-error"
+              className="mt-2 text-sm text-danger"
+            >
+              {kgError}
+            </p>
+          )}
         </div>
 
         <div>
@@ -91,16 +114,30 @@ export function LogWeight(): JSX.Element {
             htmlFor="weight-date"
             className="text-sm text-ink2 font-medium block mb-2"
           >
-            Data
+            Data *
           </label>
           <input
             id="weight-date"
             type="date"
+            required
+            aria-required="true"
+            aria-invalid={dateError ? 'true' : undefined}
+            aria-describedby={dateError ? 'weight-date-error' : undefined}
             value={date}
             onChange={(e) => setDate(e.target.value)}
             data-testid="weight-date-input"
             className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
           />
+          {dateError && (
+            <p
+              id="weight-date-error"
+              role="alert"
+              data-testid="weight-date-error"
+              className="mt-2 text-sm text-danger"
+            >
+              {dateError}
+            </p>
+          )}
         </div>
 
         <p className="text-sm text-ink2 leading-relaxed">

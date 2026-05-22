@@ -118,33 +118,79 @@ export function SetLogInput({
 
   // Default 'editable' — backward-compat behavior preserved verbatim Phase 4
   // task_12. Existing Workout.tsx callsite compiles fara modificare.
+  //
+  // A11Y HIGH chat5 fix — aria-required + aria-invalid + aria-describedby
+  // pe kg/reps inputs pentru screen reader Maria/Gigel. Bounds: kg 1-500
+  // (gym sanity max bench world record ~325kg), reps 1-100. Show error
+  // doar cand value out-of-range typed (NU initial 0 default). WCAG SC
+  // 3.3.1 + SC 3.3.3.
+  const kgError =
+    !Number.isFinite(kg) || kg < 1 || kg > 500
+      ? 'Kg trebuie intre 1 si 500.'
+      : null;
+  const repsError =
+    !Number.isFinite(reps) || reps < 1 || reps > 100
+      ? 'Repetari intre 1 si 100.'
+      : null;
   return (
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-          Kg
+          Kg *
         </label>
         <input
           id="kg-input"
           type="number"
+          required
+          aria-required="true"
+          aria-invalid={kgError ? 'true' : undefined}
+          aria-describedby={kgError ? 'kg-input-error' : undefined}
+          min={1}
+          max={500}
           value={kg}
           onChange={(e) => onKgChange(Number(e.target.value))}
           data-testid="kg-input"
           className="w-full p-3 border border-lineStrong rounded-xl bg-paper2"
         />
+        {kgError && (
+          <p
+            id="kg-input-error"
+            role="alert"
+            data-testid="kg-input-error"
+            className="mt-1 text-xs text-danger"
+          >
+            {kgError}
+          </p>
+        )}
       </div>
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="reps-input">
-          Reps
+          Reps *
         </label>
         <input
           id="reps-input"
           type="number"
+          required
+          aria-required="true"
+          aria-invalid={repsError ? 'true' : undefined}
+          aria-describedby={repsError ? 'reps-input-error' : undefined}
+          min={1}
+          max={100}
           value={reps}
           onChange={(e) => onRepsChange(Number(e.target.value))}
           data-testid="reps-input"
           className="w-full p-3 border border-lineStrong rounded-xl bg-paper2"
         />
+        {repsError && (
+          <p
+            id="reps-input-error"
+            role="alert"
+            data-testid="reps-input-error"
+            className="mt-1 text-xs text-danger"
+          >
+            {repsError}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -111,3 +111,38 @@ describe('BodyData — D-LEGACY-064 no-diacritics', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+describe('BodyData — A11Y HIGH chat5 form aria attributes', () => {
+  it('measurement fields NO aria-invalid pe initial empty (partial-entry-OK)', () => {
+    renderBodyData();
+    expect(screen.getByTestId('bd-waistCm')).not.toHaveAttribute('aria-invalid');
+    expect(screen.getByTestId('bd-chestCm')).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('bd-waistCm-error')).not.toBeInTheDocument();
+  });
+
+  it('measurement field NO aria-invalid pe valid value', () => {
+    renderBodyData();
+    fireEvent.change(screen.getByTestId('bd-waistCm'), { target: { value: '85' } });
+    expect(screen.getByTestId('bd-waistCm')).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('bd-waistCm-error')).not.toBeInTheDocument();
+  });
+
+  it('measurement field aria-invalid + error mesaj cand value < 20', () => {
+    renderBodyData();
+    fireEvent.change(screen.getByTestId('bd-waistCm'), { target: { value: '5' } });
+    const input = screen.getByTestId('bd-waistCm');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'bd-waistCm-error');
+    const err = screen.getByTestId('bd-waistCm-error');
+    expect(err).toHaveAttribute('id', 'bd-waistCm-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/intre 20 si 250 cm/);
+  });
+
+  it('measurement field aria-invalid cand value > 250', () => {
+    renderBodyData();
+    fireEvent.change(screen.getByTestId('bd-chestCm'), { target: { value: '300' } });
+    expect(screen.getByTestId('bd-chestCm')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('bd-chestCm-error').textContent).toMatch(/20 si 250 cm/);
+  });
+});

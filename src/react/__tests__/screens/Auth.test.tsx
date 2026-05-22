@@ -6,9 +6,12 @@
 //   2. WebView banner ABSENT for standard Chrome.
 //   3. Banner has role="status" + visible platform name.
 //   4. Banner does NOT block Magic Link form rendering.
+//
+// A11Y HIGH chat5 extension — email input aria-required + aria-invalid +
+// aria-describedby coverage (WCAG SC 3.3.1 + 3.3.3).
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Auth } from '../../routes/screens/Auth';
 
@@ -114,5 +117,41 @@ describe('Auth — no diacritics in WebView banner copy', () => {
     );
     const { container } = renderAuth();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('Auth — A11Y HIGH chat5 form aria attributes', () => {
+  it('email input has aria-required="true"', () => {
+    renderAuth();
+    const input = screen.getByTestId('auth-email-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('email input NO aria-invalid pe initial render (no error state)', () => {
+    renderAuth();
+    const input = screen.getByTestId('auth-email-input');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('email input aria-invalid + aria-describedby cand sendMagicLink fail', async () => {
+    const authModule = await import('../../../auth.js');
+    const sendMagicLink = vi.mocked(authModule.sendMagicLink);
+    sendMagicLink.mockResolvedValueOnce({ ok: false, error: 'network_error' });
+    renderAuth();
+    const input = screen.getByTestId('auth-email-input');
+    fireEvent.change(input, { target: { value: 'test@example.com' } });
+    fireEvent.click(screen.getByTestId('auth-send'));
+    await waitFor(() => {
+      expect(screen.getByTestId('auth-error')).toBeInTheDocument();
+    });
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'auth-email-error');
+    const errMsg = screen.getByTestId('auth-error');
+    expect(errMsg).toHaveAttribute('id', 'auth-email-error');
+    expect(errMsg).toHaveAttribute('role', 'alert');
+    // restore default behavior pentru next tests
+    sendMagicLink.mockResolvedValue({ ok: true });
   });
 });
