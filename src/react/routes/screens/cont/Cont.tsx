@@ -96,7 +96,9 @@ export function Cont(): JSX.Element {
   const displayEmail = profile.email || 'Profilul tau Andura';
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="cont-home">
-      <h1 className="text-2xl font-semibold text-ink mb-4">Cont</h1>
+      {/* §F-cont-08 (LOW chat5) — title font-weight 600 → 700 mockup
+          andura-clasic.html#L1841 (font-weight:700). */}
+      <h1 className="text-2xl font-bold text-ink mb-4">Cont</h1>
 
       {/* Account card (header) — Phase 6+ wires user profile data real */}
       <div
