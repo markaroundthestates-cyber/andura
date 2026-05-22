@@ -181,6 +181,15 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       name: 'wv2-onboarding-store',
       storage: createJSONStorage(() => localStorage),
       version: 2,
+      // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
+      // fields (NU actions). Match appStore + scheduleStore + workoutStore
+      // existing pattern. data + completed + completedAt persisted; actions
+      // (setField/finalize/reset) excluded pentru defense-in-depth.
+      partialize: (state) => ({
+        data: state.data,
+        completed: state.completed,
+        completedAt: state.completedAt,
+      }) as Partial<OnboardingState & OnboardingActions>,
       migrate: (persistedState: unknown, version: number): OnboardingState => {
         // §B003 migration v1 → v2: Goal 4→6 expansion legacy aliases.
         const state = persistedState as Partial<OnboardingState> & { data?: { goal?: unknown } };

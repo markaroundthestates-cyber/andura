@@ -69,6 +69,13 @@ export const useNutritionStore = create<NutritionState & NutritionActions>()(
     {
       name: 'wv2-nutrition-store',
       storage: createJSONStorage(() => localStorage),
+      // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
+      // fields (NU actions). Match appStore + scheduleStore + workoutStore
+      // existing pattern. dailyLog single data slice; actions excluded from
+      // serialization pentru defense-in-depth.
+      partialize: (state) => ({
+        dailyLog: state.dailyLog,
+      }) as Partial<NutritionState & NutritionActions>,
     }
   )
 );

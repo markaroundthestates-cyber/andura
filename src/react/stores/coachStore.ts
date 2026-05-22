@@ -42,6 +42,15 @@ export const useCoachStore = create<CoachState & CoachActions>()(
     {
       name: 'wv2-coach-store',
       storage: createJSONStorage(() => localStorage),
+      // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
+      // fields (NU actions). Match appStore + scheduleStore + workoutStore
+      // existing pattern. Removes future bug surface unde action functions
+      // ar putea accidental serialize via persist default full-state.
+      partialize: (state) => ({
+        schedContext: state.schedContext,
+        persona: state.persona,
+        reactivateDismissed: state.reactivateDismissed,
+      }) as Partial<CoachState & CoachActions>,
     }
   )
 );

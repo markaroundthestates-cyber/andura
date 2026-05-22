@@ -83,6 +83,24 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
     {
       name: 'wv2-settings-store',
       storage: createJSONStorage(() => localStorage),
+      // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
+      // fields (NU actions). Match appStore + scheduleStore + workoutStore
+      // existing pattern. Toate user preferences persistate; actions
+      // excluded pentru defense-in-depth.
+      partialize: (state) => ({
+        theme: state.theme,
+        notificationsEnabled: state.notificationsEnabled,
+        notificationFrequency: state.notificationFrequency,
+        notificationDays: state.notificationDays,
+        notificationTime: state.notificationTime,
+        unitSystem: state.unitSystem,
+        weekStart: state.weekStart,
+        telemetryOptIn: state.telemetryOptIn,
+        dataExportConsent: state.dataExportConsent,
+        bottomNavStyle: state.bottomNavStyle,
+        acceptedDisclaimer: state.acceptedDisclaimer,
+        acceptedDisclaimerAt: state.acceptedDisclaimerAt,
+      }) as Partial<SettingsState & SettingsActions>,
     },
   ),
 );

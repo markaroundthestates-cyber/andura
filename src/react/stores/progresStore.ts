@@ -52,6 +52,14 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
     {
       name: 'wv2-progres-store',
       storage: createJSONStorage(() => localStorage),
+      // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
+      // fields (NU actions). Match appStore + scheduleStore + workoutStore
+      // existing pattern. weightLog + bodyData persisted; actions excluded
+      // from serialization pentru defense-in-depth.
+      partialize: (state) => ({
+        weightLog: state.weightLog,
+        bodyData: state.bodyData,
+      }) as Partial<ProgresState & ProgresActions>,
     }
   )
 );
