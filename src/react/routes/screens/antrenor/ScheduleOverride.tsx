@@ -55,7 +55,7 @@ export function ScheduleOverride(): JSX.Element {
       <p className="text-base text-ink2 mb-6">
         Coach respecta. Doar azi - maine reia planul.
       </p>
-      <div className="flex flex-col gap-3" role="list">
+      <div className="flex flex-col gap-3">
         {OVERRIDE_OPTIONS.map((opt) => (
           <button
             key={opt.kind}

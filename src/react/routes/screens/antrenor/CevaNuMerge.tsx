@@ -44,9 +44,9 @@ export function CevaNuMerge(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper" data-testid="ceva-nu-merge">
-      <h1 id="ceva-label" className="text-2xl font-semibold text-ink mb-2">Ceva nu merge azi?</h1>
+      <h1 className="text-2xl font-semibold text-ink mb-2">Ceva nu merge azi?</h1>
       <p className="text-base text-ink2 mb-6">Spune-mi ce e si ajustez sesiunea.</p>
-      <div className="flex flex-col gap-3" role="list" aria-labelledby="ceva-label">
+      <div className="flex flex-col gap-3">
         {PROBLEM_OPTIONS.map((opt) => {
           const Icon = opt.Icon;
           return (

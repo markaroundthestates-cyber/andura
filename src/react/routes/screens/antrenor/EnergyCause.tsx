@@ -51,11 +51,11 @@ export function EnergyCause(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper" data-testid="energy-cause">
-      <h1 id="energy-cause-label" className="text-2xl font-semibold text-ink mb-2">De ce te simti asa?</h1>
+      <h1 className="text-2xl font-semibold text-ink mb-2">De ce te simti asa?</h1>
       <p className="text-base text-ink2 mb-6">
         Optional. Coach ajusteaza in functie de cauza.
       </p>
-      <div className="grid grid-cols-2 gap-3" role="list" aria-labelledby="energy-cause-label">
+      <div className="grid grid-cols-2 gap-3">
         {CAUSE_OPTIONS.map((cause) => (
           <button
             key={cause}
