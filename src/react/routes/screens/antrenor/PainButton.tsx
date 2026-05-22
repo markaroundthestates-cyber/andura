@@ -10,16 +10,25 @@
 // pentru Continue button (disabled cand region null), but "Salveaza si iesi"
 // always vizibil ca escape hatch — NU forteaza completion.
 //
+// HIGH-GAMMA §F-pain-button-02: coach reassurance toast on confirm + closing
+// italic safety messaging per mockup andura-clasic.html L1017-1021 verbatim
+// "Siguranta e pe primul loc. Am ajustat restul sesiunii." toast + "Daca nu
+// se potriveste niciuna, opreste sesiunea si consulta un medic." italic.
+// Mandatory safety cues — NOT paternalistic per anti-paternalism D-LEGACY-061
+// (informative, NU prescriptive).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-035 Pain/Discomfort Button CDL override
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics rule
+//   - mockup andura-clasic.html#L1011-1023 screen-pain-button
 
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
+import { toast } from '../../../lib/toast';
 
 export type BodyRegion =
   | 'gat'
@@ -76,6 +85,11 @@ export function PainButton(): JSX.Element {
 
   function handleContinue(): void {
     if (!region) return;
+    // §F-pain-button-02 reassurance toast — verbatim mockup L1017-1019.
+    toast.show({
+      message: 'Siguranta e pe primul loc. Am ajustat restul sesiunii.',
+      variant: 'success',
+    });
     navigate(gotoPath('workout-preview'), {
       state: { painContext: { region, intensity }, intensityMod: 'minus' },
     });
@@ -156,6 +170,15 @@ export function PainButton(): JSX.Element {
       >
         Salveaza si iesi
       </button>
+      {/* §F-pain-button-02 closing italic — verbatim mockup L1021. Safety
+          cue NU paternalistic per D-LEGACY-061 (informativ daca presets nu se
+          potrivesc). Lora serif italic matches mockup typography. */}
+      <p
+        className="mt-6 text-sm text-ink3 italic font-serif leading-relaxed"
+        data-testid="pain-medical-cue"
+      >
+        Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.
+      </p>
     </section>
   );
 }
