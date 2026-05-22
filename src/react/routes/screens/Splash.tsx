@@ -18,11 +18,13 @@ export function Splash(): JSX.Element {
       <div className="w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold mb-6 tracking-tight">
         A
       </div>
-      <h1 className="text-3xl font-bold text-ink mb-2 tracking-tight font-serif">
+      <h1 className="text-[42px] font-bold text-ink mb-2 tracking-tight font-serif">
         Andura
       </h1>
-      <p className="text-sm text-ink2 mb-8 max-w-xs">
-        Antrenament cu cap. Facut in Romania.
+      <p className="text-lg text-ink2 mb-8 max-w-xs">
+        Antrenorul tau personal,
+        <br />
+        fara zgomot.
       </p>
       <button
         type="button"
@@ -42,6 +44,12 @@ export function Splash(): JSX.Element {
           Am deja cont
         </button>
       )}
+      <p
+        className="mt-8 text-[11px] text-ink3 max-w-xs leading-relaxed"
+        data-testid="splash-trust-footer"
+      >
+        Facut in Romania &middot; Datele tale raman ale tale
+      </p>
     </section>
   );
 }
