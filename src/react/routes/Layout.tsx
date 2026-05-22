@@ -15,6 +15,7 @@ import { SessionPill } from '../components/SessionPill';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { UpdatePrompt } from '../components/UpdatePrompt';
+import { InstallPrompt } from '../components/InstallPrompt';
 import { useCoachStore } from '../stores/coachStore';
 
 // S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
@@ -45,6 +46,7 @@ export function Layout(): JSX.Element {
         Sari la continut
       </a>
       <UpdatePrompt />
+      {!inSession && <InstallPrompt />}
       <main id="main-content" className={`flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
