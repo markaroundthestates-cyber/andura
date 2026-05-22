@@ -64,6 +64,16 @@ export default defineConfig({
               cacheName: 'firebase-cache',
               networkTimeoutSeconds: 3,
               expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
+              // §36-H1 audit fix — Queued operations replay on reconnect.
+              // BackgroundSync scaffold registered pe Firebase RTDB writes
+              // (PUT/POST/DELETE). Soft dep §36-C1 — full sync conflict
+              // resolution depends on CRIT wave resolution. See §36-C1.
+              // Workbox BackgroundSync plugin retries failed writes when
+              // browser detects network restored (max 24h queue lifetime).
+              backgroundSync: {
+                name: 'firebase-write-queue',
+                options: { maxRetentionTime: 24 * 60 }, // minutes
+              },
             },
           },
           {

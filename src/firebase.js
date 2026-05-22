@@ -1,5 +1,13 @@
 // ══ FIREBASE SYNC ═══════════════════════════════════════════
 //
+// §35-H4 audit note — Andura uses Firebase Realtime Database (RTDB), NOT
+// Firestore. Limits: per-node max payload 256MB (RTDB) — NOT Firestore 1MB/doc.
+// `users/{uid}` whole-tree PUT in syncToFirebase below stays well under
+// realistic per-user volumes (~10-100KB typical SYNC_KEYS payload). Tier 2
+// archive (>180d) deferred per ADR 020 + tier2Stub.js — when shipped, archive
+// path WILL use Firestore (per ADR 002 REST) — at that point document size
+// limit 1MB/doc applies; mitigation via sub-collection chunking per uid.
+//
 // §25-H3 audit fix — Idempotency keys NA for Firebase RTDB REST architecture.
 // Rationale: RTDB PUT to a path is idempotent by design (last-write-wins per
 // Firebase docs, the path itself is the unique resource identifier — repeating
@@ -85,12 +93,14 @@ async function _buildUrl(fullPath) {
   return `${FIREBASE_URL}/${fullPath}.json${auth}`;
 }
 
-// §25-H2 audit fix — Firebase REST fetch wrap cu AbortController timeout.
-// Mobile / spotty wifi → fetch can hang indefinitely (no default timeout in
-// browser fetch API). 15s window generous pentru RTDB ops (typical < 1s)
-// without blocking UI for users on flaky networks. Aborted request rejects
-// fetch promise → existing try/catch in fbGet/fbSet/fbRemove returns
-// graceful null/false (no error toast spam, no UI lock).
+// §25-H2 + §36-H3 audit fix — Firebase REST fetch wrap cu AbortController
+// timeout. Mobile / spotty wifi / 3G partial connectivity → fetch can hang
+// indefinitely (no default timeout in browser fetch API). 15s window generous
+// pentru RTDB ops (typical < 1s) without blocking UI for users on flaky
+// networks. Aborted request rejects fetch promise → existing try/catch in
+// fbGet/fbSet/fbRemove returns graceful null/false (no error toast spam, no
+// UI lock). Per §36-H3 audit verify: AbortSignal.timeout configured pe TOATE
+// fetch paths through _fbFetch wrapper — no direct fetch() bypassing this.
 export const FIREBASE_FETCH_TIMEOUT_MS = 15_000;
 
 /** @param {RequestInfo|URL} url @param {RequestInit} [init] */
@@ -99,6 +109,50 @@ async function _fbFetch(url, init) {
   // baseline `node>=20` in package.json engines + PWA target browsers).
   const signal = AbortSignal.timeout(FIREBASE_FETCH_TIMEOUT_MS);
   return fetch(url, { ...(init || {}), signal });
+}
+
+// §36-H2 audit fix — Long offline duration graceful reconnect. After multi-day
+// offline period, local Dexie writes accumulate → bulk sync needed on
+// reconnect with timeout risk. Helper splits an array of operations into
+// chunks (default 25) + sequential await with partial-fail tracking. Callers
+// (future BackgroundSync handler per §36-H1 + §36-C1) use this to push
+// accumulated writes incremental without single-shot timeout.
+//
+// Returns { ok, fail, errors } summary — caller decides retry strategy
+// (typically exponential backoff per ADR 020 §Open Items 3 — 3 attempts).
+export const SYNC_CHUNK_SIZE = 25;
+
+/**
+ * Bulk-sync helper: invoke `pushFn` over `items` chunked by SYNC_CHUNK_SIZE.
+ * Sequential await per-chunk (NOT parallel — RTDB write contention avoided).
+ * Partial fail recovery: failed items recorded în errors[], caller can retry.
+ *
+ * @template T
+ * @param {ReadonlyArray<T>} items
+ * @param {(item: T) => Promise<boolean>} pushFn
+ * @param {number} [chunkSize]
+ * @returns {Promise<{ ok: number, fail: number, errors: T[] }>}
+ */
+export async function bulkSync(items, pushFn, chunkSize = SYNC_CHUNK_SIZE) {
+  let ok = 0;
+  let fail = 0;
+  /** @type {T[]} */
+  const errors = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    const chunk = items.slice(i, i + chunkSize);
+    const results = await Promise.allSettled(chunk.map(item => pushFn(item)));
+    results.forEach((r, idx) => {
+      const item = chunk[idx];
+      if (item === undefined) return;
+      if (r.status === 'fulfilled' && r.value === true) {
+        ok += 1;
+      } else {
+        fail += 1;
+        errors.push(item);
+      }
+    });
+  }
+  return { ok, fail, errors };
 }
 
 /** @param {string} path */
