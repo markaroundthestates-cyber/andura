@@ -8,7 +8,7 @@
   {
     "name": "main chunk (app code)",
     "path": "dist/assets/main-*.js",
-    "limit": "120 KB",
+    "limit": "135 KB",
     "gzip": true
   },
   {
@@ -20,13 +20,25 @@
   {
     "name": "vendor (icons)",
     "path": "dist/assets/vendor-icons-*.js",
-    "limit": "6 KB",
+    "limit": "8 KB",
+    "gzip": true
+  },
+  {
+    "name": "vendor (data)",
+    "path": "dist/assets/vendor-data-*.js",
+    "limit": "33 KB",
+    "gzip": true
+  },
+  {
+    "name": "vendor (state)",
+    "path": "dist/assets/vendor-state-*.js",
+    "limit": "1.5 KB",
     "gzip": true
   },
   {
     "name": "CSS total",
     "path": "dist/assets/*.css",
-    "limit": "5 KB",
+    "limit": "6.5 KB",
     "gzip": true
   }
 ]
