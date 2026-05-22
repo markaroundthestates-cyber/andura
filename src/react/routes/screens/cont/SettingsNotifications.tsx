@@ -4,12 +4,19 @@
 // UI-only V1 — ZERO actual notification dispatch (Phase 7+ service worker
 // + Notification API permissions flow).
 
-import type { JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { NotificationFrequency } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
+
+type NotifPermission = 'default' | 'granted' | 'denied' | 'unsupported';
+
+function readPermission(): NotifPermission {
+  if (typeof Notification === 'undefined') return 'unsupported';
+  return Notification.permission;
+}
 
 const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
 const FREQUENCY_OPTIONS: ReadonlyArray<{ value: NotificationFrequency; label: string }> = [
@@ -28,6 +35,33 @@ export function SettingsNotifications(): JSX.Element {
   const setNotificationFrequency = useSettingsStore((s) => s.setNotificationFrequency);
   const toggleNotificationDay = useSettingsStore((s) => s.toggleNotificationDay);
   const setNotificationTime = useSettingsStore((s) => s.setNotificationTime);
+
+  // §32-H2 graceful permission ladder: read browser permission state +
+  // request on user toggle-active gesture. Gigel-friendly: don't request
+  // on mount (paternalism), only when user explicitly enables notifications.
+  const [permission, setPermission] = useState<NotifPermission>(readPermission);
+  useEffect(() => {
+    setPermission(readPermission());
+  }, []);
+
+  async function handleToggle(): Promise<void> {
+    // If turning ON + permission default → request browser permission first.
+    if (!enabled && permission === 'default') {
+      try {
+        const result = await Notification.requestPermission();
+        setPermission(result);
+        if (result === 'granted') {
+          toggleNotifications();
+        }
+        // result === 'denied' → don't enable store toggle; user can manually
+        // adjust browser settings later.
+      } catch {
+        // permission API throw → defensive no-op
+      }
+      return;
+    }
+    toggleNotifications();
+  }
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-notifications">
@@ -49,7 +83,7 @@ export function SettingsNotifications(): JSX.Element {
           Alegi cand sa primesti imboldiri. Nimic intruziv.
         </p>
 
-        <div className="bg-paper2 border border-line rounded-xl p-4 mb-4 flex items-center justify-between">
+        <div className="bg-paper2 border border-line rounded-xl p-4 mb-2 flex items-center justify-between">
           <span className="text-sm text-ink">Notificari active</span>
           <button
             type="button"
@@ -57,7 +91,7 @@ export function SettingsNotifications(): JSX.Element {
             aria-checked={enabled}
             aria-label="Activeaza notificari"
             data-testid="notif-master-toggle"
-            onClick={toggleNotifications}
+            onClick={() => { void handleToggle(); }}
             className={`w-12 h-6 rounded-full transition relative ${enabled ? 'bg-brick' : 'bg-line'}`}
           >
             <span
@@ -65,6 +99,33 @@ export function SettingsNotifications(): JSX.Element {
             />
           </button>
         </div>
+
+        {permission === 'denied' && enabled && (
+          <div
+            data-testid="notif-permission-warning"
+            role="status"
+            className="flex items-start gap-2 p-3 rounded-xl border mb-4"
+            style={{
+              background: 'var(--status-neutral-bg)',
+              borderColor: 'var(--status-neutral-border)',
+            }}
+          >
+            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
+            <p className="text-xs text-ink2 leading-relaxed">
+              Browser-ul blocheaza notificarile. Acceseaza setarile site-ului
+              (lacatel langa URL) si activeaza permisiunile.
+            </p>
+          </div>
+        )}
+        {permission === 'unsupported' && enabled && (
+          <p
+            data-testid="notif-unsupported-warning"
+            className="text-xs text-ink2 mb-4 italic"
+          >
+            Browser-ul nu suporta notificari push.
+          </p>
+        )}
+        <div className="mb-4" />{/* spacer keeping rhythm post permission warning */}
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Frecventa
