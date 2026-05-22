@@ -173,6 +173,9 @@ export function Auth(): JSX.Element {
               data-testid="auth-email-input"
               className="w-full p-4 mb-4 border border-lineStrong rounded-xl bg-paper2 text-base"
             />
+            {/* §F-auth-09 (LOW chat5) — CTA text "Trimite link" → "Trimite
+                link de intrare" mockup verbatim andura-clasic.html#L450 (full
+                intent phrase: clear what link does pre-Beta). */}
             <button
               type="button"
               onClick={() => { void handleSend(); }}
@@ -180,7 +183,7 @@ export function Auth(): JSX.Element {
               data-testid="auth-send"
               className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold disabled:opacity-50"
             >
-              {sending ? 'Se trimite…' : 'Trimite link'}
+              {sending ? 'Se trimite…' : 'Trimite link de intrare'}
             </button>
             {error && (
               <p
