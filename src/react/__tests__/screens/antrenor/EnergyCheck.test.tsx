@@ -30,11 +30,23 @@ function renderEnergyCheck() {
 }
 
 describe('EnergyCheck — render', () => {
-  it('renders heading "Cum te simti azi?"', () => {
+  it('renders SubHeader title "Cum te simti?" (mockup L879 verbatim)', () => {
     renderEnergyCheck();
     expect(
-      screen.getByRole('heading', { name: /Cum te simti azi/i, level: 1 })
+      screen.getByRole('heading', { name: /^Cum te simti\?$/i, level: 1 })
     ).toBeInTheDocument();
+  });
+
+  it('renders body sub-heading "Cum te simti azi?" (h2)', () => {
+    renderEnergyCheck();
+    expect(
+      screen.getByRole('heading', { name: /Cum te simti azi/i, level: 2 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders SubHeader back button (PAR-009)', () => {
+    renderEnergyCheck();
+    expect(screen.getByTestId('energy-check-back')).toBeInTheDocument();
   });
 
   it('renders 5 energy options', () => {

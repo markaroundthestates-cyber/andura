@@ -12,6 +12,13 @@
 // report), bucketed visually to mockup 3-state Excelent/Normal/Obosit
 // color metaphor by intensity. Emoji is aria-hidden decorative.
 //
+// PAR-009 SubHeader consume — mockup andura-clasic.html L879 sub-header
+// verbatim title "Cum te simti?" sticky top + back-btn. Body h1 "Cum te simti
+// azi?" regresat h2 (single h1 SubHeader pattern parity CevaNuMerge/EnergyCause).
+// Mockup short form "Cum te simti?" vs current verbose "Cum te simti azi?"
+// preserve in body for user familiarity (no breaking semantic test on body
+// text).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-021 Energy Adjustment ±15% range
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -21,6 +28,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 export type EnergyLevel = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
 export type IntensityMod = 'plus' | 'normal' | 'minus';
@@ -56,9 +64,19 @@ export function EnergyCheck(): JSX.Element {
     }
   }
 
+  function handleBack(): void {
+    navigate(-1);
+  }
+
   return (
-    <section className="p-6 bg-paper" data-testid="energy-check">
-      <h1 className="text-2xl font-semibold text-ink mb-6">Cum te simti azi?</h1>
+    <section className="bg-paper min-h-screen flex flex-col" data-testid="energy-check">
+      <SubHeader
+        title="Cum te simti?"
+        onBack={handleBack}
+        testIdBack="energy-check-back"
+      />
+      <div className="p-6 flex-1">
+      <h2 className="text-2xl font-semibold text-ink mb-6">Cum te simti azi?</h2>
       <div className="flex flex-col gap-3">
         {ENERGY_OPTIONS.map((opt) => (
           <button
@@ -75,6 +93,7 @@ export function EnergyCheck(): JSX.Element {
             <span className="text-base font-medium text-ink">{opt.label}</span>
           </button>
         ))}
+      </div>
       </div>
     </section>
   );

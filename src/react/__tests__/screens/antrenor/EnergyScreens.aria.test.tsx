@@ -89,11 +89,12 @@ describe('EnergyCheck — no role="list" + heading sufficient', () => {
     expect(container.querySelector('[aria-labelledby]')).toBeNull();
   });
 
-  it('h1 heading present + announces section', () => {
+  it('h1 heading present + announces section (SubHeader title PAR-009)', () => {
     const { container } = renderEnergyCheck();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Cum te simti azi/);
+    // Single h1 = SubHeader title verbatim mockup L879.
+    expect(h1?.textContent).toMatch(/^Cum te simti\?$/);
   });
 });
 

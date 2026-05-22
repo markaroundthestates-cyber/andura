@@ -185,7 +185,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
   const stubs = [
     // task_05 rewrite: EnergyCheck real heading; EnergyCause + WorkoutPreview
     // still placeholder until subsequent task_05 commits.
-    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /Cum te simti azi/i },
+    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /^Cum te simti\?$/i },
     { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /De ce te simti asa/i },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
@@ -250,7 +250,9 @@ describe('Routing — Phase 3 Antrenor nested routes integration', () => {
 
   it('renders EnergyCheck cu Layout (bottom nav) la /app/antrenor/energy-check', () => {
     renderNested('/app/antrenor/energy-check');
-    expect(screen.getByRole('heading', { name: /Cum te simti azi/i, level: 1 })).toBeInTheDocument();
+    // PAR-009: single h1 = SubHeader title 'Cum te simti?' verbatim mockup L879.
+    // Body sub-heading 'Cum te simti azi?' regresat la h2.
+    expect(screen.getByRole('heading', { name: /^Cum te simti\?$/i, level: 1 })).toBeInTheDocument();
     const antrenorButton = screen.getByRole('button', { name: /Antrenor/i });
     expect(antrenorButton).toHaveAttribute('aria-current', 'page');
   });
