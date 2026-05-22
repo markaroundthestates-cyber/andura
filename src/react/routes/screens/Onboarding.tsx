@@ -114,6 +114,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         inputMode="numeric"
         autoComplete="off"
         enterKeyHint="next"
+        aria-label="Varsta in ani"
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
@@ -244,6 +245,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         inputMode="decimal"
         autoComplete="off"
         enterKeyHint="done"
+        aria-label="Greutate in kilograme"
         data-testid="onb-weight-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
