@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback (a11y inputs/aria-live/modal focus/OfflineBanner/InstallPrompt PWA/Loguri greutate/Gigel adherence gate/pluralRo). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** 5 NEW tests §32-H2 notification permission ladder (`83665208`).
-**Branch:** main, **0 commits ahead origin/main — PUSHED 2026-05-22 morning Daniel verbal trigger post observing live UX vechi pe andura.app**. GH Actions deploy.yml ~2-3min activates new features live.
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback (a11y inputs/aria-live/modal focus/OfflineBanner/InstallPrompt PWA/Loguri greutate/Gigel adherence gate/pluralRo) + post-deploy verify smoke ✓ + 3 audit polish (§6-H6 BottomNav tap gap + §11-C1 DST tests + §28-H6/M2 Privacy Policy Art. 9 + sub-processors). Co-CTO autonomous ZERO interruption.
+**Last LANDED:** §28-H6 SettingsPrivacy Art. 9 medical boundary + sub-processor list + region typo fix (`abb94305`).
+**Branch:** main, **3 commits ahead origin/main** (ac76bda7 BottomNav gap + 8d462117 DST tests + abb94305 Privacy Art. 9) — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -56,6 +56,9 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 48. **NEW `3924abbc`** — LATEST.md header bump 72 commits
 49. **NEW `5ae4ff36`** — Notification.requestPermission graceful permission ladder (§32-H2)
 50. **NEW `83665208`** — 5 NEW tests permission ladder (4646 PASS)
+51. **NEW `ac76bda7`** — §6-H6 BottomNav add gap-0.5 tap target spacing WCAG 2.5.5
+52. **NEW `8d462117`** — §11-C1 isoWeek DST transition tests Romania spring+fall (+6 tests)
+53. **NEW `abb94305`** — §28-H6/M2 SettingsPrivacy Art. 9 medical boundary + sub-processor list + region fix
 
 ---
 
@@ -65,7 +68,7 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 |---|---|---|---|
 | TS strict errors | 873 | **0** | **-873 (100%)** |
 | Lint warnings | 88 | **0** | **-88 (100%)** |
-| Test PASS | 4578 | **4596** | **+18 new unit tests** |
+| Test PASS | 4578 | **4652** | **+74 new unit tests** |
 | Test FAIL | 0 | **0** | preserved |
 | Source files cleaned (A022) | 0 | **75+** | substrate full |
 | Live smoke console errors | 1 | **0** | clean |
