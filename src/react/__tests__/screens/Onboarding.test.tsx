@@ -214,7 +214,7 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     const err = screen.getByTestId('onb-weight-error');
     expect(err).toHaveAttribute('id', 'onb-weight-error');
     expect(err).toHaveAttribute('role', 'alert');
-    expect(err.textContent).toMatch(/Kg trebuie intre 30 si 250/);
+    expect(err.textContent).toMatch(/Kg intre 30 si 250/);
   });
 
   it('step 6 weight input aria-invalid cand value > 250', () => {

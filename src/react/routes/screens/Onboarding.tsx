@@ -288,7 +288,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
   // doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
   const error = value !== null && (value < 30 || value > 250)
-    ? 'Kg trebuie intre 30 si 250.'
+    ? 'Kg intre 30 si 250.'
     : null;
   return (
     <>

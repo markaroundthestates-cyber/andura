@@ -126,7 +126,7 @@ export function SetLogInput({
   // 3.3.1 + SC 3.3.3.
   const kgError =
     !Number.isFinite(kg) || kg < 1 || kg > 500
-      ? 'Kg trebuie intre 1 si 500.'
+      ? 'Kg intre 1 si 500.'
       : null;
   const repsError =
     !Number.isFinite(reps) || reps < 1 || reps > 100

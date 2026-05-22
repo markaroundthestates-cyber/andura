@@ -65,7 +65,7 @@ describe('ExitConfirmSheet - a11y modal contract (W4 chat 5 HIGH)', () => {
     );
   });
 
-  it('focus auto pe primary Continui sesiunea button la open', () => {
+  it('focus auto pe primary Continua sesiunea button la open', () => {
     render(
       <ExitConfirmSheet
         open={true}

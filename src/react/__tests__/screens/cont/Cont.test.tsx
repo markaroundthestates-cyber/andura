@@ -85,7 +85,7 @@ describe('Cont landing — Phase 5 task_13', () => {
     });
   });
 
-  it('Deconectare/Stergere section + row marked danger', () => {
+  it('Deconectare & Stergere section + row marked danger', () => {
     renderCont();
     expect(screen.getByTestId('cont-row-danger').className).toMatch(/text-brick/);
   });

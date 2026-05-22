@@ -167,7 +167,7 @@ describe('LogWeight — A11Y HIGH chat5 form aria attributes', () => {
     const err = screen.getByTestId('weight-kg-error');
     expect(err).toHaveAttribute('id', 'weight-kg-error');
     expect(err).toHaveAttribute('role', 'alert');
-    expect(err.textContent).toMatch(/Kg trebuie intre 30 si 250/);
+    expect(err.textContent).toMatch(/Kg intre 30 si 250/);
   });
 
   it('kg input aria-invalid cand kg > 250', () => {

@@ -40,9 +40,9 @@ export function LogWeight(): JSX.Element {
   // empty initial state, NU pe valid input). WCAG SC 3.3.1 + 3.3.3.
   const kgError =
     kg !== '' && (!Number.isFinite(kgNum) || kgNum < 30 || kgNum > 250)
-      ? 'Kg trebuie intre 30 si 250.'
+      ? 'Kg intre 30 si 250.'
       : null;
-  const dateError = date === '' ? 'Data este obligatorie.' : null;
+  const dateError = date === '' ? 'Data necesara.' : null;
 
   function handleSave(): void {
     if (!valid) return;

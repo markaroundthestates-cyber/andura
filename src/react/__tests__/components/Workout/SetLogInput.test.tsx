@@ -233,7 +233,7 @@ describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => 
     const err = screen.getByTestId('kg-input-error');
     expect(err).toHaveAttribute('id', 'kg-input-error');
     expect(err).toHaveAttribute('role', 'alert');
-    expect(err.textContent).toMatch(/Kg trebuie intre 1 si 500/);
+    expect(err.textContent).toMatch(/Kg intre 1 si 500/);
   });
 
   it('kg input aria-invalid cand kg > 500', () => {

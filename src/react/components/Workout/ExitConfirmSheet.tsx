@@ -13,7 +13,7 @@
 // W4-AUDIT-DEEPER chat 5 HIGH a11y DIM 3 KEYBOARD fix:
 //   - aria-modal="true" + aria-labelledby (sister MedicalDisclaimerModal +
 //     AaFrictionModal pattern parity)
-//   - useEffect focus auto pe primary "Continui sesiunea" la open
+//   - useEffect focus auto pe primary "Continua sesiunea" la open
 //   - useEffect Escape key → onChoose('continue') (safe close — sheet
 //     dismiss handler same path as backdrop tap)
 //   - Focus trap minimal — Tab cycles first ↔ last button (continue =
@@ -111,7 +111,7 @@ export function ExitConfirmSheet({
           data-testid="exit-continue"
           className="w-full py-3 bg-ink text-paper rounded-xl text-base font-semibold mb-2"
         >
-          Continui sesiunea
+          Continua sesiunea
         </button>
         <button
           type="button"

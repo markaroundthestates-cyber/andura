@@ -1,6 +1,6 @@
 // ══ CONT — Tab 4 of 4 Phase 5 task_13 Landing ════════════════════════════
 // Phase 5 task_13 MVP scope: sections list mockup wv2 parity (Cont / General
-// / Date & confidentialitate / Deconectare/Stergere / Ajutor). Sub-screens
+// / Date & confidentialitate / Deconectare & Stergere / Ajutor). Sub-screens
 // Phase 6+ implementation (task_13 §3 hint Karpathy §4 simplicity).
 // Mockup verbatim copy preserved (andura-clasic.html#L1839+).
 
@@ -68,9 +68,9 @@ const SECTIONS: readonly ContSection[] = [
     ],
   },
   {
-    title: 'Deconectare/Stergere',
+    title: 'Deconectare & Stergere',
     danger: true,
-    rows: [{ id: 'danger', label: 'Deconectare/Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
+    rows: [{ id: 'danger', label: 'Deconectare & Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
   },
   {
     title: 'Ajutor',
