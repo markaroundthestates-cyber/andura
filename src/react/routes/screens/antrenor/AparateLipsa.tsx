@@ -14,6 +14,10 @@
 // Aparat cablu / Power rack / Leg press / Aparat extensii / Aparat tractiuni /
 // Banda elastica.
 //
+// PAR-009 SubHeader consume — mockup andura-clasic.html L1051 sub-header
+// verbatim "Aparate lipsa" sticky top + back-btn. Body h1 'Aparate lipsa'
+// eliminat (single h1 SubHeader pattern parity CevaNuMerge/EnergyCause).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-038 Smart Routing Equipment v2 cascade
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics rule
@@ -23,6 +27,7 @@ import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 interface EquipmentItem {
   id: string;
@@ -63,9 +68,18 @@ export function AparateLipsa(): JSX.Element {
     });
   }
 
+  function handleBack(): void {
+    navigate(-1);
+  }
+
   return (
-    <section className="p-6 bg-paper" data-testid="aparate-lipsa">
-      <h1 className="text-2xl font-semibold text-ink mb-2">Aparate lipsa</h1>
+    <section className="bg-paper min-h-screen flex flex-col" data-testid="aparate-lipsa">
+      <SubHeader
+        title="Aparate lipsa"
+        onBack={handleBack}
+        testIdBack="aparate-lipsa-back"
+      />
+      <div className="p-6 flex-1">
       <p className="text-base text-ink2 mb-3">
         Bifeaza aparatele pe care <strong>nu le ai</strong>. Coach-ul va
         alege exercitii alternative si nu le va propune in viitor.
@@ -110,6 +124,7 @@ export function AparateLipsa(): JSX.Element {
       >
         Salveaza setarea
       </button>
+      </div>
     </section>
   );
 }

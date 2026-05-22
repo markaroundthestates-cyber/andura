@@ -36,6 +36,11 @@ describe('AparateLipsa — render', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders SubHeader back button (PAR-009)', () => {
+    renderLipsa();
+    expect(screen.getByTestId('aparate-lipsa-back')).toBeInTheDocument();
+  });
+
   it('renders flat 10 checkbox list per Slice 1.7 mockup naming', () => {
     renderLipsa();
     const checkboxes = screen.getAllByRole('checkbox');
