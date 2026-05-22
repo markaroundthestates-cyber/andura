@@ -10,10 +10,11 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -68,18 +69,11 @@ export function SettingsProfile(): JSX.Element {
       className="bg-paper min-h-screen flex flex-col"
       data-testid="settings-profile"
     >
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="Inapoi"
-          data-testid="settings-profile-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Profil & tinte</h1>
-      </header>
+      <SubHeader
+        title="Profil & tinte"
+        onBack={handleBack}
+        testIdBack="settings-profile-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex flex-col items-center gap-2.5 pt-2 pb-5">

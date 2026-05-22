@@ -5,8 +5,9 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mail, MessageSquare, ChevronRight } from 'lucide-react';
+import { Mail, MessageSquare, ChevronRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 const SUPPORT_EMAIL = 'support@andura.app';
 const SUPPORT_WHATSAPP_HOURS = 'L-V · 09:00-18:00';
@@ -16,18 +17,11 @@ export function SettingsSupport(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-support">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-support-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Suport</h1>
-      </header>
+      <SubHeader
+        title="Suport"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-support-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-relaxed">

@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { History, ChevronRight, Flame, Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
+import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
+import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -65,6 +67,12 @@ export function Istoric(): JSX.Element {
           <p className="text-xs text-ink2">PR-uri</p>
         </div>
       </div>
+
+      {/* F-istoric-01 signature: month-navigable calendar heatmap */}
+      <CalendarHeatmap />
+
+      {/* F-istoric-03 signature: 90-day ratings strip + categorical aggregate */}
+      <RatingsStrip90Day />
 
       {/* Phase 6 task_23: PR Wall full list */}
       {prHistory.length > 0 && (

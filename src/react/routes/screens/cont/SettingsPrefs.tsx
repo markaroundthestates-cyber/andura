@@ -4,10 +4,11 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw, ChevronRight, RefreshCcw, GitBranch } from 'lucide-react';
+import { RotateCcw, ChevronRight, RefreshCcw, GitBranch } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 const UNIT_OPTIONS: ReadonlyArray<{ value: 'kg' | 'lb'; label: string }> = [
   { value: 'kg', label: 'Kilograme (kg)' },
@@ -28,18 +29,11 @@ export function SettingsPrefs(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-prefs">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-prefs-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Setari</h1>
-      </header>
+      <SubHeader
+        title="Setari"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-prefs-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid

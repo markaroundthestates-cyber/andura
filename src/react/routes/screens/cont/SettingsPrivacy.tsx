@@ -5,9 +5,10 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 interface ToggleRowProps {
   testId: string;
@@ -52,18 +53,11 @@ export function SettingsPrivacy(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-privacy">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-privacy-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Confidentialitate</h1>
-      </header>
+      <SubHeader
+        title="Confidentialitate"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-privacy-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex items-center gap-2.5 mb-4">

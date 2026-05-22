@@ -7,8 +7,9 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Gift } from 'lucide-react';
+import { Sparkles, Gift } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 export function SettingsSubscription(): JSX.Element {
   const navigate = useNavigate();
@@ -16,18 +17,11 @@ export function SettingsSubscription(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-subscription">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-subscription-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Abonament</h1>
-      </header>
+      <SubHeader
+        title="Abonament"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-subscription-back"
+      />
 
       <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col items-center text-center">
         <div
