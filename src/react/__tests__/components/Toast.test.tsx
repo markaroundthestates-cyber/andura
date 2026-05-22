@@ -101,3 +101,45 @@ describe('ToastViewport - §32-H1', () => {
     expect(btn.getAttribute('aria-label') ?? '').not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
   });
 });
+
+describe('ToastViewport - §32-H3 critical safety notifications', () => {
+  it('critical does NOT auto-dismiss after 10s', () => {
+    render(<ToastViewport />);
+    act(() => {
+      toast.show({ message: 'Confirma stergere cont', variant: 'critical' });
+    });
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+    expect(screen.getByText('Confirma stergere cont')).toBeInTheDocument();
+  });
+
+  it('critical default NO close button rendered (dismissible=false)', () => {
+    render(<ToastViewport />);
+    act(() => {
+      toast.show({ message: 'Disclaimer medical', variant: 'critical' });
+    });
+    expect(screen.getByText('Disclaimer medical')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /inchide notificare/i })).not.toBeInTheDocument();
+  });
+
+  it('critical aria-live=assertive + role=alert', () => {
+    render(<ToastViewport />);
+    let id = '';
+    act(() => {
+      id = toast.show({ message: 'Disclaimer medical', variant: 'critical' });
+    });
+    const card = screen.getByTestId(`toast-${id}`);
+    expect(card).toHaveAttribute('aria-live', 'assertive');
+    expect(card).toHaveAttribute('role', 'alert');
+  });
+
+  it('critical with explicit dismissible=true shows close button', () => {
+    render(<ToastViewport />);
+    let id = '';
+    act(() => {
+      id = toast.show({ message: 'opt-in', variant: 'critical', dismissible: true });
+    });
+    expect(screen.getByTestId(`toast-${id}-dismiss`)).toBeInTheDocument();
+  });
+});

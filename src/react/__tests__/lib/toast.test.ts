@@ -20,28 +20,29 @@ describe('toast store - §32-H1 global pattern', () => {
     toast.show({ message: 'm', variant: 'info' });
     const snap = toast.getSnapshot();
     expect(snap).toHaveLength(1);
-    expect(snap[0].variant).toBe('info');
-    expect(snap[0].dismissible).toBe(true);
-    expect(snap[0].durationMs).toBe(3000);
+    const first = snap[0]!;
+    expect(first.variant).toBe('info');
+    expect(first.dismissible).toBe(true);
+    expect(first.durationMs).toBe(3000);
   });
 
   it('success variant defaults: dismissible=true, durationMs=3000', () => {
     toast.show({ message: 'm', variant: 'success' });
-    const snap = toast.getSnapshot();
-    expect(snap[0].durationMs).toBe(3000);
-    expect(snap[0].dismissible).toBe(true);
+    const first = toast.getSnapshot()[0]!;
+    expect(first.durationMs).toBe(3000);
+    expect(first.dismissible).toBe(true);
   });
 
   it('error variant defaults: dismissible=true, durationMs=0 (manual)', () => {
     toast.show({ message: 'm', variant: 'error' });
-    const snap = toast.getSnapshot();
-    expect(snap[0].durationMs).toBe(0);
-    expect(snap[0].dismissible).toBe(true);
+    const first = toast.getSnapshot()[0]!;
+    expect(first.durationMs).toBe(0);
+    expect(first.dismissible).toBe(true);
   });
 
   it('warning variant: manual-dismiss (durationMs=0)', () => {
     toast.show({ message: 'm', variant: 'warning' });
-    expect(toast.getSnapshot()[0].durationMs).toBe(0);
+    expect(toast.getSnapshot()[0]!.durationMs).toBe(0);
   });
 
   it('dismiss() removes item by id', () => {
@@ -83,11 +84,50 @@ describe('toast store - §32-H1 global pattern', () => {
 
   it('explicit dismissible=false override allowed', () => {
     toast.show({ message: 'stuck', variant: 'info', dismissible: false });
-    expect(toast.getSnapshot()[0].dismissible).toBe(false);
+    expect(toast.getSnapshot()[0]!.dismissible).toBe(false);
   });
 
   it('explicit durationMs override allowed', () => {
     toast.show({ message: 'long', variant: 'info', durationMs: 10_000 });
-    expect(toast.getSnapshot()[0].durationMs).toBe(10_000);
+    expect(toast.getSnapshot()[0]!.durationMs).toBe(10_000);
+  });
+});
+
+describe('toast store - §32-H3 critical safety notifications', () => {
+  it('critical variant defaults: dismissible=false + durationMs=0', () => {
+    toast.show({ message: 'safety', variant: 'critical' });
+    const first = toast.getSnapshot()[0]!;
+    expect(first.variant).toBe('critical');
+    expect(first.dismissible).toBe(false);
+    expect(first.durationMs).toBe(0);
+  });
+
+  it('critical preserved when overflow evicts non-critical', () => {
+    toast.show({ message: 'safety', variant: 'critical' });
+    toast.show({ message: 'info1', variant: 'info' });
+    toast.show({ message: 'info2', variant: 'info' });
+    const snap = toast.getSnapshot();
+    expect(snap).toHaveLength(2);
+    expect(snap.some((t) => t.variant === 'critical')).toBe(true);
+  });
+
+  it('critical eviction order: oldest info evicted before critical', () => {
+    toast.show({ message: 'info-old', variant: 'info' });
+    toast.show({ message: 'safety', variant: 'critical' });
+    toast.show({ message: 'info-new', variant: 'info' });
+    const snap = toast.getSnapshot();
+    expect(snap).toHaveLength(2);
+    expect(snap.map((t) => t.message)).toContain('safety');
+    expect(snap.map((t) => t.message)).not.toContain('info-old');
+  });
+
+  it('explicit dismissible=true override allowed for critical', () => {
+    toast.show({ message: 'opt-in', variant: 'critical', dismissible: true });
+    expect(toast.getSnapshot()[0]!.dismissible).toBe(true);
+  });
+
+  it('explicit durationMs override allowed for critical', () => {
+    toast.show({ message: 'timed', variant: 'critical', durationMs: 5000 });
+    expect(toast.getSnapshot()[0]!.durationMs).toBe(5000);
   });
 });

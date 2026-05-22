@@ -12,12 +12,16 @@
 //   - 'success' auto-dismiss 3000ms
 //   - 'warning' manual-dismiss (auto disabled per spec)
 //   - 'error'   manual-dismiss (auto disabled per spec)
+//   - 'critical' §32-H3 — manual-dismiss + dismissible=false default.
+//                 Used for safety notifications: medical disclaimer hit,
+//                 account deletion confirmation, etc. User MUST act on
+//                 paired CTA (modal/banner) — toast itself can't be closed.
 //
-// Max 2 simultaneous toasts visible — oldest evicted on overflow.
+// Max 2 simultaneous toasts visible — oldest non-critical evicted first.
 
 import type { ReactNode } from 'react';
 
-export type ToastVariant = 'info' | 'success' | 'warning' | 'error';
+export type ToastVariant = 'info' | 'success' | 'warning' | 'error' | 'critical';
 
 export interface ToastInput {
   message: ReactNode;
@@ -52,12 +56,14 @@ function emit(): void {
 
 function defaultDuration(variant: ToastVariant): number {
   // §32-H1 spec: info/success auto 3s; errors/warnings manual.
-  if (variant === 'warning' || variant === 'error') return 0;
+  // §32-H3: critical also manual (never auto-dismiss).
+  if (variant === 'warning' || variant === 'error' || variant === 'critical') return 0;
   return DEFAULT_DURATION_MS;
 }
 
-function defaultDismissible(_variant: ToastVariant): boolean {
-  return true;
+function defaultDismissible(variant: ToastVariant): boolean {
+  // §32-H3: critical safety notifications NU dismissable by default.
+  return variant !== 'critical';
 }
 
 function show(input: ToastInput): string {
@@ -73,10 +79,16 @@ function show(input: ToastInput): string {
     durationMs,
     createdAt: Date.now(),
   };
-  // Cap visible — evict oldest on overflow.
+  // Cap visible — §32-H3: evict oldest NON-critical first; only if all
+  // remaining are critical, evict the oldest overall.
   const next = [...items, item];
   if (next.length > MAX_VISIBLE) {
-    next.shift();
+    const evictIdx = next.findIndex((t) => t.variant !== 'critical');
+    if (evictIdx >= 0 && evictIdx < next.length - 1) {
+      next.splice(evictIdx, 1);
+    } else {
+      next.shift();
+    }
   }
   items = next;
   emit();

@@ -1,11 +1,15 @@
-// ══ TOAST VIEWPORT — §32-H1 global notification UI ═══════════════════════
+// ══ TOAST VIEWPORT — §32-H1 / §32-H3 global notification UI ══════════════
 // Renders all active toasts from `toast` store (lib/toast.ts). Mount once at
 // app root (Layout). Single source of truth — ZERO ad-hoc toast snippets.
 //
 // Accessibility:
 //   - role="status" aria-live="polite" for info/success/warning
-//   - role="alert"  aria-live="assertive" for error
+//   - role="alert"  aria-live="assertive" for error/critical
 //   - dismiss button has aria-label "Inchide notificare"
+//
+// §32-H3: critical safety toasts (medical disclaimer hit, account-delete
+// confirmation, etc.) have dismissible=false default — NO close button
+// rendered; user MUST act on paired CTA modal/banner.
 //
 // Placement: bottom-center fixed, above BottomNav (z-50).
 // Auto-dismiss: per item durationMs (0 = manual only).
@@ -26,6 +30,8 @@ function variantIcon(variant: ToastVariant): JSX.Element {
       return <AlertTriangle className="w-4 h-4 text-brick" aria-hidden="true" />;
     case 'error':
       return <AlertCircle className="w-4 h-4 text-brick" aria-hidden="true" />;
+    case 'critical':
+      return <AlertCircle className="w-4 h-4 text-brick" aria-hidden="true" />;
     case 'info':
     default:
       return <Info className="w-4 h-4 text-brick" aria-hidden="true" />;
@@ -33,7 +39,8 @@ function variantIcon(variant: ToastVariant): JSX.Element {
 }
 
 function variantRole(variant: ToastVariant): { role: 'status' | 'alert'; live: 'polite' | 'assertive' } {
-  if (variant === 'error') {
+  // §32-H3: critical safety notifications announced assertive (interrupts SR).
+  if (variant === 'error' || variant === 'critical') {
     return { role: 'alert', live: 'assertive' };
   }
   return { role: 'status', live: 'polite' };
