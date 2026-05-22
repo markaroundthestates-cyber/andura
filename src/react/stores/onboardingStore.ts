@@ -51,7 +51,7 @@ export interface OnboardingData {
 export const ONBOARDING_BOUNDS = {
   age: { min: 16, max: 99 },
   weight: { min: 30, max: 250 },
-} as const;
+} as const satisfies Record<'age' | 'weight', { min: number; max: number }>;
 
 /**
  * Two-tier validation strategy pentru §30-C1 fix:

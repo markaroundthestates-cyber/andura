@@ -30,9 +30,11 @@ export function weekStartIso(d: Date = new Date()): string {
 
 // Phase 4 default schedule: 4 training + 3 rest (L=training, Ma=rest, Mi=training,
 // J=rest, V=training, S=training, D=rest) — common pattern (3-4 sessions/week).
-const DEFAULT_WEEK: WeekDays = [
+// `satisfies WeekDays` validates 7-tuple shape while preserving literal types
+// (TS 4.9+ idiom — supersedes redundant `: WeekDays` + `as const` pairing).
+const DEFAULT_WEEK = [
   'training', 'rest', 'training', 'rest', 'training', 'training', 'rest',
-] as const;
+] as const satisfies WeekDays;
 
 export interface ScheduleState {
   weekStartISO: string;
