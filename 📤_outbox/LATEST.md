@@ -42,6 +42,17 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 34. **NEW `187528de`** — B001 phase override wire into Progres nutrition target (CUT → 2165 kcal live verified)
 35. **NEW `f672fbd2`** — Test coverage NEW for SettingsSupport + SettingsFaq (14 tests)
 36. **NEW `282a4aef`** — gitignore smoke screenshots + planning artifacts
+37. **NEW `22eed024`** — README.md §18-C1 refresh React stack + ADR 030 pipeline
+38. **NEW `1fcc92ee`** — CHAT_STATE chat 2 night final closure
+39. **NEW `009354b6`** — LOW_ADHERENCE gate Gigel-friendly ≥3 sessions (UX)
+40. **NEW `e10285ec`** — WeightLogList NEW Loguri greutate screen + Progres history nav
+41. **NEW `70b696a5`** — InstallPrompt NEW PWA beforeinstallprompt (§7-H5)
+42. **NEW `cb6d4afd`** — autoComplete + inputMode + enterKeyHint a11y inputs (§6-C3)
+43. **NEW `793d824a`** — OfflineBanner NEW network status (§13-M3)
+44. **NEW `1c5bc840`** — chore lint cleanup
+45. **NEW `2eb826ae`** — aria-live banners WCAG 4.1.3 (§6-H3)
+46. **NEW `a362aedf`** — Modal focus management WCAG 2.4.3 (§6-H4)
+47. **NEW `3b40301e`** — pluralRo + PostSummary streak (§11-H3)
 
 ---
 
