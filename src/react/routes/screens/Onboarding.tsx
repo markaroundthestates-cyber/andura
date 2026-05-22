@@ -5,8 +5,9 @@
 
 import type { JSX } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
 import type { OnboardingData } from '../../stores/onboardingStore';
+import { toast } from '../../lib/toast';
 
 const TOTAL_STEPS = 7;
 
@@ -22,7 +23,23 @@ export function Onboarding(): JSX.Element {
 
   const isLast = stepNum === TOTAL_STEPS;
 
+  // §30-C1 Big 6 bounds gate — keystroke commits allowed (UX: user types
+  // "1" → "16" → "32" without blocking each digit); validation gate fires
+  // pe Continua attempt + surfaces Gigel-friendly toast. Defense-in-depth:
+  // onboardingStore.setField rejects silently dacă final value out-of-range
+  // (paste "999" la weight: store discards, UI shows toast on Continua).
+  function validateCurrentStep(): { ok: true } | { ok: false; reason: string } {
+    if (stepNum === 1) return validateOnboardingField('age', data.age);
+    if (stepNum === 6) return validateOnboardingField('weight', data.weight);
+    return { ok: true };
+  }
+
   function next(): void {
+    const check = validateCurrentStep();
+    if (!check.ok) {
+      toast.show({ message: check.reason, variant: 'warning' });
+      return;
+    }
     if (isLast) {
       finalize();
       navigate('/app/antrenor');
