@@ -7,7 +7,7 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, FlaskConical, ExternalLink, ArrowLeft } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
@@ -226,6 +226,23 @@ export function Auth(): JSX.Element {
             )}
           </>
         )}
+
+        {/* §F-auth-07 HIGH-ALFA — Terms + privacy acceptance footer per
+            mockup L479-481. Legal compliance: implicit consent on continue. */}
+        <p
+          className="mt-6 text-xs text-ink3 text-center leading-relaxed"
+          data-testid="auth-terms-footer"
+        >
+          Continuand accepti{' '}
+          <Link to="/app/cont/settings-terms" className="underline">
+            Termenii
+          </Link>{' '}
+          si{' '}
+          <Link to="/app/cont/settings-privacy" className="underline">
+            Confidentialitatea
+          </Link>
+          . Nu folosim datele tale pentru reclame.
+        </p>
       </div>
     </section>
   );
