@@ -11,6 +11,10 @@
 //
 // Pattern: vi.mock sentry helper module + spy captureException + force
 // engine throw → assert helper called with adapter + source tags.
+//
+// ENGINE-DEEPER-AUDIT chat 5 extension: 6 adapter paths missing witness
+// coverage. Extended la 11 adapter labels (12 witnesses — getPatternsBanner
+// has 2 catch paths STAGNATION + LOW_ADHERENCE).
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -39,12 +43,38 @@ vi.mock('../../../engine/proactiveEngine.js', () => ({
   runProactiveChecks: vi.fn(),
 }));
 
+vi.mock('../../lib/scheduleAdapterAggregate', () => ({
+  composePlannedWorkoutToday: vi.fn(),
+}));
+
+vi.mock('../../../engine/bayesianNutrition/index.js', () => ({
+  evaluate: vi.fn(),
+}));
+
+vi.mock('../../../engine/stagnationDetector.js', () => ({
+  detectGlobalStagnation: vi.fn(),
+}));
+
+vi.mock('../../../engine/muscleRecovery.js', () => ({
+  getRecoveryByGroup: vi.fn(),
+  GROUP_LABELS_RO_BIG11: {},
+}));
+
+vi.mock('../../../engine/weaknessDetector.js', () => ({
+  detectWeakGroups: vi.fn(),
+}));
+
 import {
   getReadiness,
   getFatigue,
   getPRDelta,
   getAdherenceOutput,
   getProactiveAlerts,
+  getTodayWorkout,
+  getNutritionTargetsToday,
+  getPatternsBanner,
+  getCoachRestReason,
+  getLaggingSignal,
 } from '../../lib/engineWrappers';
 import { captureException } from '../../../util/sentry.js';
 import { getComputedReadinessScore } from '../../../engine/readiness.js';
@@ -52,10 +82,35 @@ import { calculateFatigueScore } from '../../../engine/fatigue.js';
 import { detectPR } from '../../../engine/prEngine.js';
 import { getAdherenceScore } from '../../../engine/adherence.js';
 import { runProactiveChecks } from '../../../engine/proactiveEngine.js';
+import { composePlannedWorkoutToday } from '../../lib/scheduleAdapterAggregate';
+import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.js';
+import { detectGlobalStagnation } from '../../../engine/stagnationDetector.js';
+import { getRecoveryByGroup } from '../../../engine/muscleRecovery.js';
+import { detectWeakGroups } from '../../../engine/weaknessDetector.js';
+import { useWorkoutStore } from '../../stores/workoutStore';
+
+// Helper: seed workoutStore cu N sessions (minimal shape, exercises with 1
+// set each). Gates getPatternsBanner LOW_ADHERENCE try-block (needs 3+
+// sessions) + provides flatten input pentru STAGNATION/CoachRest/Lagging.
+function seedSessions(count: number) {
+  const sessions = Array.from({ length: count }, (_, i) => ({
+    sessionId: `s${i}`,
+    date: '2026-05-23',
+    exercises: [
+      {
+        exerciseName: 'Bench Press',
+        sets: [{ kg: 100, reps: 5, timestamp: Date.now() }],
+      },
+    ],
+  }));
+  // @ts-expect-error — partial session shape suficient pentru flatten loops
+  useWorkoutStore.setState({ sessionsHistory: sessions });
+}
 
 describe('engineWrappers §48-H1 Sentry instrumentation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useWorkoutStore.setState({ sessionsHistory: [] });
   });
 
   it('getReadiness catch: captureException called cu source + adapter tags', () => {
@@ -122,6 +177,118 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
       expect.any(Error),
       expect.objectContaining({
         tags: { source: 'engine-adapter-fallback', adapter: 'getProactiveAlerts' },
+      }),
+    );
+  });
+
+  // ── ENGINE-DEEPER-AUDIT chat 5 extension (6 missing adapter paths) ─────
+
+  it('getTodayWorkout catch: captureException called cu adapter tag', async () => {
+    vi.mocked(composePlannedWorkoutToday).mockImplementation(() => {
+      throw new Error('today workout boom');
+    });
+    expect(await getTodayWorkout()).toBeNull();
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: { source: 'engine-adapter-fallback', adapter: 'getTodayWorkout' },
+      }),
+    );
+  });
+
+  it('getNutritionTargetsToday catch: captureException called cu adapter tag', async () => {
+    vi.mocked(evaluateBN).mockImplementation(() => {
+      throw new Error('bn boom');
+    });
+    const out = await getNutritionTargetsToday({});
+    // Returns BASELINE_NUTRITION fallback — verify capture invoked.
+    expect(out.source).toBe('baseline');
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getNutritionTargetsToday',
+        },
+      }),
+    );
+  });
+
+  it('getPatternsBanner STAGNATION catch: captureException called cu pattern tag', () => {
+    seedSessions(1); // flatten loop input
+    vi.mocked(detectGlobalStagnation).mockImplementation(() => {
+      throw new Error('stagnation boom');
+    });
+    // adherence sub-block gated pe 3+ sessions — count=1 short-circuits, only
+    // STAGNATION catch fires.
+    expect(getPatternsBanner()).toEqual([]);
+    expect(captureException).toHaveBeenCalledTimes(1);
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getPatternsBanner',
+          pattern: 'STAGNATION',
+        },
+      }),
+    );
+  });
+
+  it('getPatternsBanner LOW_ADHERENCE catch: captureException called cu pattern tag', () => {
+    seedSessions(3); // satisface LOW_ADHERENCE_MIN_SESSIONS_GATE
+    // STAGNATION sub-block returns benign zero-stagnation → guard < threshold, no banner, no capture
+    vi.mocked(detectGlobalStagnation).mockReturnValue({
+      maxStagnationWeeks: 0,
+      byExercise: {},
+    });
+    vi.mocked(getAdherenceScore).mockImplementation(() => {
+      throw new Error('adherence sub-engine boom');
+    });
+    expect(getPatternsBanner()).toEqual([]);
+    expect(captureException).toHaveBeenCalledTimes(1);
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getPatternsBanner',
+          pattern: 'LOW_ADHERENCE',
+        },
+      }),
+    );
+  });
+
+  it('getCoachRestReason catch: captureException called cu adapter tag', () => {
+    seedSessions(1); // flatten input
+    vi.mocked(getRecoveryByGroup).mockImplementation(() => {
+      throw new Error('recovery boom');
+    });
+    expect(getCoachRestReason()).toBeNull();
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getCoachRestReason',
+        },
+      }),
+    );
+  });
+
+  it('getLaggingSignal catch: captureException called cu adapter tag', () => {
+    seedSessions(1);
+    vi.mocked(detectWeakGroups).mockImplementation(() => {
+      throw new Error('weakness boom');
+    });
+    expect(getLaggingSignal()).toBeNull();
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getLaggingSignal',
+        },
       }),
     );
   });
