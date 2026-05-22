@@ -2495,3 +2495,75 @@ describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomo
     expect(Object.keys(EXERCISE_METADATA).length).toBeGreaterThanOrEqual(657);
   });
 });
+
+// ══ §39-H1 + §39-H2 Schema invariant + fallback_cascade exempt audit ═══════
+// Per ADR-ENGINE-MATH-LOCKED-VALUES §6 + §7. Refactor guard — prevents silent
+// entry loss + silent field shape drift across deploys.
+describe('Schema Invariant §39-H1 + §39-H2 (ADR-ENGINE-MATH-LOCKED-VALUES §6-§7)', () => {
+  // §39-H1 — Count + field shape invariant
+  it('§39-H1 cumulative count exact 657 (Pre-Beta LOCK 2 invariant)', () => {
+    expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
+  });
+
+  it('§39-H1 every entry has muscle_target_primary in 11 canonical RO enum', () => {
+    const canonical = new Set([
+      'piept', 'spate', 'umeri', 'biceps', 'triceps', 'antebrate', 'core',
+      'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe',
+    ]);
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      expect(canonical.has(meta.muscle_target_primary), `entry "${name}" muscle_target_primary "${meta.muscle_target_primary}"`).toBe(true);
+    });
+  });
+
+  it('§39-H1 every entry has equipment_type in 6 canonical enum', () => {
+    const canonical = new Set(['barbell', 'bodyweight', 'cable', 'dumbbell', 'machine', 'band']);
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      expect(canonical.has(meta.equipment_type), `entry "${name}" equipment_type "${meta.equipment_type}"`).toBe(true);
+    });
+  });
+
+  it('§39-H1 every entry has force_demand in 3 canonical enum', () => {
+    const canonical = new Set(['low', 'medium', 'high']);
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      expect(canonical.has(meta.force_demand), `entry "${name}" force_demand "${meta.force_demand}"`).toBe(true);
+    });
+  });
+
+  it('§39-H1 every entry has tier in {1,2,3}', () => {
+    Object.values(EXERCISE_METADATA).forEach((meta) => {
+      expect([1, 2, 3]).toContain(meta.tier);
+    });
+  });
+
+  it('§39-H1 every entry has equipment_alternatives Array (V1 ranking path)', () => {
+    Object.entries(EXERCISE_METADATA).forEach(([name, meta]) => {
+      expect(Array.isArray(meta.equipment_alternatives), `entry "${name}" equipment_alternatives not Array`).toBe(true);
+    });
+  });
+
+  // §39-H2 — Fallback cascade exempt entries audit
+  it('§39-H2 fallback_cascade exempt count = 26 (V1 baseline preserved per Bundle 6.0.1-6.0.7 §9 invariant)', () => {
+    const exempt = Object.entries(EXERCISE_METADATA).filter(([, m]) => !m.fallback_cascade);
+    expect(exempt.length).toBe(26);
+  });
+
+  it('§39-H2 all 26 V1 baseline exempt entries are from preserved canonical roster', () => {
+    const expectedExempt = new Set([
+      'DB Shoulder Press', 'Incline DB Press', 'Flat DB Press', 'Flat Barbell Bench',
+      'Lat Pulldown', 'Cable Row', 'Chest-Supported Row', 'Romanian Deadlift', 'Leg Press',
+      'Lateral Raises', 'Lateral Raises (cable)', 'Rear Delt Fly', 'Rear Delt Cable',
+      'Pec Deck / Cable Fly', 'Cable Fly', 'Incline DB Curl', 'Bayesian Curl',
+      'Cable Curl', 'Preacher Curl', 'Hammer Curl', 'Overhead Triceps', 'Pushdown',
+      'Leg Curl', 'Leg Extension', 'Face Pulls', 'Calf Raises',
+    ]);
+    const exempt = Object.entries(EXERCISE_METADATA).filter(([, m]) => !m.fallback_cascade);
+    exempt.forEach(([name]) => {
+      expect(expectedExempt.has(name), `exempt entry "${name}" not in V1 baseline roster — investigate`).toBe(true);
+    });
+  });
+
+  it('§39-H2 631 Bundle 6.0.1-6.0.7 NEW entries all have fallback_cascade populated', () => {
+    const populated = Object.values(EXERCISE_METADATA).filter(m => m.fallback_cascade);
+    expect(populated.length).toBe(631);
+  });
+});

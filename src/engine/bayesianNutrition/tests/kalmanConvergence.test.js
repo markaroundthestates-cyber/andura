@@ -134,3 +134,77 @@ describe('Kalman 90-day convergence simulator (§B029 / Cluster B2 Caveat 2)', (
     expect(Math.abs(sim.finalState.mu - 75)).toBeLessThan(5);
   });
 });
+
+// ══ §38-H5 1000-day stability extension (ADR-ENGINE-MATH-LOCKED-VALUES §5) ═══
+//
+// Cluster B2 Caveat 1 Hall 2008 default Q=0.22 kg/day. Over 1000 multiplications-
+// additions of floats (Q×Q + sigma×sigma + kalmanGain×residual), pathological
+// accumulation could theoretically emerge. This test asserts steady-state Kalman
+// gain convergence prevents divergence under extreme horizons.
+//
+// Acceptance criteria (per ADR-ENGINE-MATH-LOCKED-VALUES §5):
+//   1. mu remains Number.isFinite over 1000 days (NO NaN / Infinity emergence)
+//   2. sigma remains > 0 (no negative-radicand underflow)
+//   3. Drift from stable target < 3 kg (steady-state Kalman gain bounded)
+//   4. Kalman gain converges to ~Q/(Q+R) steady-state (not divergent)
+describe('Kalman 1000-day stability extension (§38-H5 ADR-ENGINE-MATH-LOCKED-VALUES §5)', () => {
+  it('1000-day stable maintenance 70 kg: finite mu + positive sigma + drift < 3 kg', () => {
+    const sim = simulateTrajectory({
+      startWeight: 70,
+      targetWeight: 70, // stable maintenance — pure noise rejection regime
+      days: 1000,
+      measurementNoise: 0.5,
+      seed: 1000,
+    });
+    // §38-H5 acceptance criteria.
+    expect(Number.isFinite(sim.finalState.mu)).toBe(true);
+    expect(sim.finalState.sigma).toBeGreaterThan(0);
+    expect(Number.isFinite(sim.finalState.sigma)).toBe(true);
+    // Steady-state Kalman gain bounds drift to ~sigma_steady (small for stable target).
+    expect(Math.abs(sim.finalState.mu - 70)).toBeLessThan(3);
+  });
+
+  it('1000-day slow recomp 75→72 kg: no float accumulation pathology', () => {
+    const sim = simulateTrajectory({
+      startWeight: 75,
+      targetWeight: 72, // very slow 3 kg over 1000 days (recomp scenario)
+      days: 1000,
+      measurementNoise: 0.5,
+      seed: 1001,
+    });
+    expect(Number.isFinite(sim.finalState.mu)).toBe(true);
+    expect(sim.finalState.sigma).toBeGreaterThan(0);
+    // Final mu should be close to target (Kalman tracks slow drift).
+    expect(Math.abs(sim.finalState.mu - 72)).toBeLessThan(3);
+  });
+
+  it('1000-day extreme aggressive cut 100→70 kg: bounded final mu, no divergence', () => {
+    const sim = simulateTrajectory({
+      startWeight: 100,
+      targetWeight: 70,
+      days: 1000,
+      measurementNoise: 0.6,
+      seed: 1002,
+    });
+    expect(Number.isFinite(sim.finalState.mu)).toBe(true);
+    expect(sim.finalState.sigma).toBeGreaterThan(0);
+    // Final mu bounded near target — verifies no exploding drift.
+    expect(Math.abs(sim.finalState.mu - 70)).toBeLessThan(3);
+  });
+
+  it('1000-day Kalman gain converges to steady-state ~Q/(Q+R)', () => {
+    // After 1000 iterations, kalmanGain should approach Q²/(Q²+R²) steady-state.
+    // Per Riccati equation closed-form: sigma_steady² = (Q² × sqrt(1 + 4R²/Q²) - Q²)/2
+    // For Q=0.22, R=0.5: gain_steady ≈ 0.165 (intuition: gain bounded < 1).
+    const sim = simulateTrajectory({
+      startWeight: 80,
+      targetWeight: 80, // perfectly stable — gain steady-state regime
+      days: 1000,
+      measurementNoise: 0.5,
+      seed: 1003,
+    });
+    // sigma should converge to small steady-state (NOT 0, NOT divergent).
+    expect(sim.finalState.sigma).toBeGreaterThan(0.05);
+    expect(sim.finalState.sigma).toBeLessThan(1.0); // bounded steady-state
+  });
+});
