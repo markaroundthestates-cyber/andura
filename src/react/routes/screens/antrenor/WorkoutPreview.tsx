@@ -20,7 +20,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Clock, Layers, TrendingUp } from 'lucide-react';
+import { Clock, Layers, TrendingUp, Flame } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
@@ -160,6 +160,24 @@ export function WorkoutPreview(): JSX.Element {
           </span>
         </div>
       </div>
+      {/* F-workout-preview/T3 — Warmup row. Mockup andura-clasic.html#L935-939
+          FIX 1 (2026-05-11) adaptive per main lift + recovery state. Renders
+          ONLY cand engine emits warmup blueprint (workout.warmup != null).
+          Idiom mirror intensity banner L122-130: flex+items-center+gap+padded
+          +rounded+border+bg-paper2 + italic-Lora coach-quote font. */}
+      {workout?.warmup && (
+        <div
+          className="flex items-center gap-2.5 p-3 rounded-xl border border-line bg-paper2 mb-4"
+          data-testid="preview-warmup-row"
+          role="region"
+          aria-label="Incalzire azi"
+        >
+          <Flame className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
+          <span className="coach-quote font-serif italic text-ink2 text-sm flex-1 leading-relaxed">
+            {workout.warmup.line}
+          </span>
+        </div>
+      )}
       {coachLine && (
         <p
           className="coach-quote text-base text-ink2 italic font-serif mb-6"
