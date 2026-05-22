@@ -26,12 +26,17 @@
 //   `salafull_users_daniel` becomes orphan post-rename — harmless given
 //   data also exists in localStorage Tier 0 + Firebase RTDB.
 //
-// ── Schema (v1, initial) ────────────────────────────────────────────────────
+// ── Schema (v1 initial, v2 scaffold) ────────────────────────────────────────
 //
 //   cdl_tier1          — CDL entries archived from Tier 0 (>30d age)
 //   logs_tier1         — workout logs archived from Tier 0 (>30d age)
 //   applied_patterns_tier1 — pattern detection cache (long-tail history)
 //   migration_events   — audit trail of rotation events (when, what, count)
+//
+// v2 (SUB-CHAT5-005 scaffold) — additive `status` index pe migration_events
+// + upgrade hook backfill 'success' pe existing records. Demonstrates Dexie
+// schema-versioning pattern pentru post-Beta first real bump (operators NU
+// "figure out under pressure"). See `_defineSchema` JSDoc pentru rules.
 //
 // Schema bumps follow Dexie convention `db.version(N).stores({...}).upgrade(...)`
 // aligned with ADR 018 §4 schema versioning pattern (orchestration in
@@ -55,7 +60,7 @@ import { getAuthState } from '../auth.js';
 // ── Constants ───────────────────────────────────────────────────────────────
 
 /** Schema version — bump on store/index changes, register `upgrade()` hook. */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 /** DB name prefix — final form: `<PREFIX>_<namespace>` (per §56.1.4 LOCKED V1). */
 export const DB_NAME_PREFIX = 'andura';
@@ -150,6 +155,27 @@ export function _resetNamespaceCache() {
  * Apply schema definition for a Dexie instance. Pulled out for reuse on test
  * doubles + future schema bumps (each version + upgrade chained).
  *
+ * SUB-CHAT5-005 fix (W3-D-SUBSTRATE audit chat 5) — Dexie v2 migration scaffold
+ * pattern. V1 = initial schema. V2 = additive `status` index pe migration_events
+ * + upgrade hook backfill 'success' pe existing records. Reference pentru
+ * post-Beta first real bump operators (NU "figure out under pressure"):
+ *
+ *   1. Append `.version(N+1).stores({...})` cu store schema string updated.
+ *      Stores omise = inherit din versiune anterioara (Dexie semantics).
+ *   2. Chain `.upgrade(tx => ...)` daca needs backfill records existing.
+ *      Tx scoped la version transition; tx.<storeName>.toCollection().modify()
+ *      iterates batch + applies in-place patch.
+ *   3. Bump `SCHEMA_VERSION` constant + update `migrateAnonymousToAuth.js`
+ *      `_openWithSchema` parallel (duplication tracked, intentional, NU drift).
+ *   4. Add test `db.test.js` exercise upgrade path verify records contain new
+ *      field + index queryable (`db.table(X).where('newIdx').equals(val)`).
+ *
+ * Bugatti rules:
+ *   - Additive only — never remove indexes/stores within single bump (multi-
+ *     version chain `.version(N-1)` preserved for upgrade replay safety).
+ *   - Backfill MUST be idempotent (re-run safe — checks if field already set).
+ *   - Upgrade hook errors → Dexie aborts; user stays on v1 (no partial state).
+ *
  * @param {Dexie} db
  */
 function _defineSchema(db) {
@@ -161,6 +187,21 @@ function _defineSchema(db) {
     [STORES.LOGS_TIER1]: 'id, ts, ex, session',
     [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
     [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
+  });
+  // v2 — SUB-CHAT5-005 scaffold example. Additive `status` index pe
+  // migration_events pentru future filtering events by outcome. Existing
+  // records backfilled cu 'success' default (assumption: pre-v2 events
+  // were all completed-OK rotations, no recorded failure mode pre-bump).
+  // Pattern reference pentru post-Beta first real schema bump operators.
+  db.version(2).stores({
+    [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status',
+  }).upgrade(tx => {
+    return tx.table(STORES.MIGRATION_EVENTS).toCollection().modify(rec => {
+      // Idempotent backfill — re-run safe via existence check.
+      if (rec.status === undefined) {
+        rec.status = 'success';
+      }
+    });
   });
 }
 

@@ -78,7 +78,70 @@ describe('storage/db — schema definition', () => {
   });
 
   it('exports SCHEMA_VERSION constant', () => {
-    expect(SCHEMA_VERSION).toBe(1);
+    expect(SCHEMA_VERSION).toBe(2);
+  });
+});
+
+// ── SUB-CHAT5-005 v2 upgrade scaffold tests ────────────────────────────────
+// Demonstrates Dexie schema-versioning pattern post-Beta first bump.
+// V2 = additive `status` index pe migration_events + backfill 'success' pe
+// existing records via upgrade hook. Tests verify:
+//   1. Fresh v2 DB has status indexable
+//   2. Pre-existing v1 records gain status='success' on auto-upgrade
+//   3. Re-running upgrade is idempotent (no double-mutation)
+
+describe('storage/db — v2 migration scaffold (SUB-CHAT5-005)', () => {
+  it('v2 fresh DB allows status index queries pe migration_events', async () => {
+    await logMigrationEvent({ kind: 'rotation', count: 5, status: 'success' });
+    await logMigrationEvent({ kind: 'rotation', count: 3, status: 'partial' });
+    const db = getDb();
+    const successOnly = await db.table(STORES.MIGRATION_EVENTS).where('status').equals('success').toArray();
+    expect(successOnly).toHaveLength(1);
+    expect(successOnly[0].count).toBe(5);
+  });
+
+  it('v1→v2 upgrade backfills status="success" pe existing records', async () => {
+    // Simulate pre-existing v1 DB cu records absent `status` field.
+    const v1Db = new Dexie(DEFAULT_DB_NAME);
+    v1Db.version(1).stores({
+      [STORES.CDL_TIER1]: 'id, ts, date',
+      [STORES.LOGS_TIER1]: 'id, ts, ex, session',
+      [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
+      [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
+    });
+    await v1Db.open();
+    await v1Db.table(STORES.MIGRATION_EVENTS).add({ ts: 1000, kind: 'rotation', count: 7 });
+    await v1Db.table(STORES.MIGRATION_EVENTS).add({ ts: 2000, kind: 'rotation', count: 9 });
+    v1Db.close();
+
+    // Reopen via production getDb() — triggers v1→v2 upgrade automatic.
+    const db = getDb();
+    await db.open();
+    const events = await db.table(STORES.MIGRATION_EVENTS).toArray();
+    expect(events).toHaveLength(2);
+    expect(events.every(e => e.status === 'success')).toBe(true);
+  });
+
+  it('upgrade backfill is idempotent — re-run does NOT mutate already-set status', async () => {
+    // Pre-existing records with explicit status (e.g., 'partial') preserved
+    // through upgrade hook idempotency check (`if (rec.status === undefined)`).
+    const v1Db = new Dexie(DEFAULT_DB_NAME);
+    v1Db.version(1).stores({
+      [STORES.CDL_TIER1]: 'id, ts, date',
+      [STORES.LOGS_TIER1]: 'id, ts, ex, session',
+      [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
+      [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
+    });
+    await v1Db.open();
+    // v1 record cu status manually set (edge case — pre-bump caller knew schema future)
+    await v1Db.table(STORES.MIGRATION_EVENTS).add({ ts: 1000, kind: 'rotation', status: 'partial' });
+    v1Db.close();
+
+    const db = getDb();
+    await db.open();
+    const events = await db.table(STORES.MIGRATION_EVENTS).toArray();
+    expect(events).toHaveLength(1);
+    expect(events[0].status).toBe('partial'); // preserved, NOT overwritten cu 'success'
   });
 });
 

@@ -61,6 +61,19 @@ function _openWithSchema(dbName) {
     [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
     [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
   });
+  // v2 (SUB-CHAT5-005 lockstep — mirror db.js _defineSchema). Additive
+  // `status` index pe migration_events + backfill 'success'. Duplication
+  // intentional per file header §49-54 — both schemas MUST be updated
+  // in lockstep pentru migration runner cross-DB schema consistency.
+  db.version(2).stores({
+    [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status',
+  }).upgrade(tx => {
+    return tx.table(STORES.MIGRATION_EVENTS).toCollection().modify(rec => {
+      if (rec.status === undefined) {
+        rec.status = 'success';
+      }
+    });
+  });
   return db;
 }
 
