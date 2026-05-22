@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
+import { pluralRo } from '../../../lib/pluralRo';
 import { gotoPath } from '../../../lib/navigation';
 import type { SessionRating } from './PostRpe';
 
@@ -190,7 +191,7 @@ export function PostSummary(): JSX.Element {
       >
         <p className="text-sm text-ink2 mb-1">Streak</p>
         <p className="text-2xl font-bold text-brick">
-          {streak} {streak === 1 ? 'sesiune' : 'sesiuni'}
+          {pluralRo(streak, 'sesiune', 'sesiuni')}
         </p>
       </div>
 
