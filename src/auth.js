@@ -98,9 +98,15 @@ export async function sendMagicLink(email, continueUrl) {
   // Per §56.13: max 3 attempts (1 initial + 2 retries) cu backoff 250/500ms.
   // Retry only on network errors (caught exception) sau HTTP 5xx. NU retry
   // pe 4xx (invalid email, quota, etc — failures deterministic).
+  // §25-H1 audit fix: 429 Too Many Requests = retryable cu Retry-After respect.
+  // Server-provided Retry-After (seconds OR HTTP-date) clamp to MAX_RETRY_AFTER_MS
+  // pentru anti-DoS — un server malicios poate cere ore. Pe lipsa header → backoff
+  // default.
   const MAX_ATTEMPTS = 3;
   const BACKOFF_MS = [250, 500];
   let lastError = 'network_error';
+  /** @type {number|null} */
+  let retryAfterMs = null;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
@@ -115,16 +121,23 @@ export async function sendMagicLink(email, continueUrl) {
         _setItem(AUTH_STORAGE_KEYS.lastMagicLinkSent, String(Date.now())); // §A018-FIX throttle post-success
         return { ok: true, email };
       }
-      // 4xx = deterministic failure, NU retry (per §56.13 retry semantic).
-      // 5xx = transient, retry.
+      // 4xx (NOT 429) = deterministic failure, NU retry (per §56.13 retry semantic).
+      // 429 + 5xx = transient, retry. §25-H1: read Retry-After header if 429.
       const data = await r.json().catch(() => ({}));
       lastError = data?.error?.message || `http_${r.status}`;
-      if (r.status < 500) return { ok: false, error: lastError };
+      if (r.status === 429) {
+        retryAfterMs = parseRetryAfter(r.headers.get('Retry-After'));
+      } else if (r.status < 500) {
+        return { ok: false, error: lastError };
+      }
     } catch (err) {
       lastError = (err instanceof Error ? err.message : null) || 'network_error';
     }
     if (attempt < MAX_ATTEMPTS - 1) {
-      await new Promise(resolve => setTimeout(resolve, BACKOFF_MS[attempt] ?? 250));
+      // §25-H1: Retry-After server hint preempts default backoff when present.
+      const delay = retryAfterMs != null ? retryAfterMs : (BACKOFF_MS[attempt] ?? 250);
+      retryAfterMs = null; // reset per attempt
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
   return { ok: false, error: lastError };
@@ -369,6 +382,37 @@ export function isAuthenticated() {
 }
 
 // ── internals ───────────────────────────────────────────────────────────
+
+// §25-H1 audit fix — Retry-After header parsing per RFC 7231 §7.1.3.
+// Two valid formats: delta-seconds (e.g. "120") or HTTP-date (e.g. "Wed, 21
+// Oct 2015 07:28:00 GMT"). Clamp to MAX cap pentru anti-DoS (malicious server
+// poate cere ore). Min 0. Returns null pentru header lipsa / invalid.
+export const MAX_RETRY_AFTER_MS = 60 * 1000; // 60s upper bound
+
+/** @param {string|null|undefined} headerVal @returns {number|null} */
+export function parseRetryAfter(headerVal) {
+  if (!headerVal || typeof headerVal !== 'string') return null;
+  const trimmed = headerVal.trim();
+  if (!trimmed) return null;
+  // Try delta-seconds first (most common Firebase / Google APIs).
+  // Accept only digits (no leading sign) — RFC 7231 delta-seconds = unsigned int.
+  if (/^\d+(\.\d+)?$/.test(trimmed)) {
+    const seconds = Number(trimmed);
+    if (Number.isFinite(seconds) && seconds >= 0) {
+      return Math.min(seconds * 1000, MAX_RETRY_AFTER_MS);
+    }
+  }
+  // Fallback HTTP-date — must look like a date (letter or comma), nu plain
+  // numeric input care Date.parse trateaza as year (eg "-5" → year -5).
+  if (!/[a-zA-Z,]/.test(trimmed)) return null;
+  const dateMs = Date.parse(trimmed);
+  if (Number.isFinite(dateMs)) {
+    const deltaMs = dateMs - Date.now();
+    if (deltaMs <= 0) return 0;
+    return Math.min(deltaMs, MAX_RETRY_AFTER_MS);
+  }
+  return null;
+}
 
 /** @param {Record<string, any>} data */
 function _persistAuth(data) {
