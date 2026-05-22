@@ -27,6 +27,7 @@ import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
 import { getRecoveryByGroup, GROUP_LABELS_RO_BIG11 } from '../../engine/muscleRecovery.js';
+import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 
@@ -587,6 +588,51 @@ export function getCoachRestReason(): CoachRestReason | null {
     return { fatiguedGroups: topFatigued, readinessScore: readiness };
   } catch (e) {
     console.warn('[engineWrappers] getCoachRestReason failed:', e);
+    return null;
+  }
+}
+
+// ── Lagging Signal composer (§F-pass2-coachtoday-04 audit fix) ───────────
+//
+// Wires CoachTodayCard hidden mockup `coach-today-lagging` block (L747)
+// to weaknessDetector engine. Returns RO sentence cand top-1 weak group
+// detected (1RM ratio < 0.8 vs avg), null otherwise. T0 fresh user with
+// <2 muscle groups logged → null (engine returns weakGroups=[]).
+
+const STAGNATION_WEEKS_LAGGING_DEFAULT = 2; // mockup verbatim "sub-volum 2 sapt"
+
+/**
+ * Composer §F-pass2-coachtoday-04 — extract top weak muscle group as RO
+ * sentence for CoachTodayCard italic line below WHY quote. Null cand no
+ * weakness detected (T0 fresh / balanced training).
+ *
+ * Defensive: engine throws → null fallback graceful.
+ */
+export function getLaggingSignal(): string | null {
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
+    for (const session of sessions) {
+      if (!session.exercises) continue;
+      for (const ex of session.exercises) {
+        for (const set of ex.sets) {
+          logs.push({
+            ex: ex.exerciseName,
+            ts: set.timestamp,
+            w: set.kg,
+            reps: set.reps,
+          });
+        }
+      }
+    }
+    const { weakGroups } = detectWeakGroups(logs);
+    if (!weakGroups || weakGroups.length === 0) return null;
+    const topWeak = weakGroups[0];
+    if (topWeak === undefined) return null;
+    const label = GROUP_LABELS_RO_BIG11[topWeak] ?? topWeak;
+    return `${label} sub-volum ${STAGNATION_WEEKS_LAGGING_DEFAULT} sapt - focus azi pe sesiune.`;
+  } catch (e) {
+    console.warn('[engineWrappers] getLaggingSignal failed:', e);
     return null;
   }
 }

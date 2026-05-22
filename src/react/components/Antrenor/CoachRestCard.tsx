@@ -6,6 +6,10 @@
 // engine (muscleRecovery.getRecoveryByGroup + readiness.getComputedReadiness
 // Score via coachDirectorAggregate.restReason). Fallback mockup parity copy
 // cand restReason=null (T0 fresh user fără sesiuni logged).
+//
+// §F-pass2-coachrest-02 (HIGH-EPSILON 2026-05-22) — dynamic duration prop
+// replaces hardcoded "~ 15 min mobilitate". Default 15 preserves mockup L763
+// verbatim cand caller omits (T0 fresh / no plan yet).
 
 import type { JSX } from 'react';
 import type { CoachRestReason } from '../../lib/engineWrappers';
@@ -14,6 +18,9 @@ interface Props {
   onLightSession: () => void;
   onOverride: () => void;
   restReason?: CoachRestReason | null;
+  // §F-pass2-coachrest-02 — dynamic duration from rest session plan; default
+  // 15 mockup verbatim cand caller omits.
+  durationMinutes?: number;
 }
 
 /**
@@ -36,7 +43,12 @@ function composeCoachLine(restReason: CoachRestReason | null | undefined): strin
   return `${groupsPart}${readinessPart}.`;
 }
 
-export function CoachRestCard({ onLightSession, onOverride, restReason }: Props): JSX.Element {
+export function CoachRestCard({
+  onLightSession,
+  onOverride,
+  restReason,
+  durationMinutes = 15,
+}: Props): JSX.Element {
   const coachLine = composeCoachLine(restReason ?? null);
   return (
     <div
@@ -61,7 +73,9 @@ export function CoachRestCard({ onLightSession, onOverride, restReason }: Props)
         &bdquo;{coachLine}&rdquo;
       </div>
       <div className="flex gap-3.5 mt-3.5 text-sm text-ink2">
-        <span className="flex items-center gap-1.5">~ 15 min mobilitate</span>
+        <span className="flex items-center gap-1.5" data-testid="coach-rest-duration">
+          ~ {durationMinutes} min mobilitate
+        </span>
         <span className="flex items-center gap-1.5">optional</span>
       </div>
       <button

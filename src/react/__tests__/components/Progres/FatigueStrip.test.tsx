@@ -25,7 +25,9 @@ describe('FatigueStrip', () => {
     expect(screen.getByTestId('fatigue-empty')).toBeInTheDocument();
   });
 
-  it('renders score + label cand fatigue present', () => {
+  it('renders score (/10 scale) + label cand fatigue present', () => {
+    // §F-pass2-fatiguestrip-01 — display converted to /10 (engine score 45 → 5/10
+    // post Math.round(45 / 10)). Mockup L1720 verbatim "6/10" intuitive Gigel.
     vi.mocked(getFatigue).mockReturnValueOnce({
       score: 45,
       key: 'MODERATE_FATIGUE',
@@ -36,7 +38,7 @@ describe('FatigueStrip', () => {
       detail: 'Astazi mentinem greutatile.',
     });
     render(<FatigueStrip />);
-    expect(screen.getByText(/45\/100/)).toBeInTheDocument();
+    expect(screen.getByText(/5\/10/)).toBeInTheDocument();
     expect(screen.getByText(/Pas mai conservator/)).toBeInTheDocument();
   });
 

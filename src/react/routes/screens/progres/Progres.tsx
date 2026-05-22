@@ -1,6 +1,9 @@
 // PROGRES PARITY F-progres-07
 // F-progres-07 MOCKUP-PARITY (2026-05-22): Alerte azi 3-row banner added
 // per mockup L1768-1774. Reuses Antrenor AlertsBanner + getCoachToday aggregate.
+//
+// §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — Oboseala + Calorii baza
+// BMR 2-col grid mockup L1717. Daniel LOCKED V1 single number NU visual bar.
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
@@ -11,6 +14,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
+import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
@@ -39,7 +43,13 @@ export function Progres(): JSX.Element {
       <h1 className="text-2xl font-semibold text-ink mb-1">Progres</h1>
       <p className="text-sm text-ink2 mb-6">Logheaza periodic - estimari calibrate.</p>
       <TDEEStrip />
-      <FatigueStrip />
+      {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
+          Oboseala + Calorii baza BMR per mockup L1717. Daniel LOCKED V1
+          "single number NU visual bar" preserved per-strip layout. */}
+      <div className="grid grid-cols-2 gap-2" data-testid="fatigue-bmr-grid">
+        <FatigueStrip />
+        <BMRStrip />
+      </div>
       <HeatMapWeekly />
       {alerts.length > 0 && (
         <h2 data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mt-4 mb-2">

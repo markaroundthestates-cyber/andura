@@ -11,6 +11,11 @@
 //   - full-week edits allowed (no forward-only restriction)
 //   - NO validation (0/7 valid both extremes)
 //
+// §F-pass2-calendar-01 (HIGH-EPSILON 2026-05-22) — title swap mockup L830
+// "Program de antrenament" CENTRAT (Daniel reglaj 2026-05-12 push-back
+// §coach-follows-body). Edit pencil pinned absolute right to preserve
+// centered title visual axis per mockup parity.
+//
 // Cross-refs: DECISIONS.md §D-LEGACY-076 Calendar V1 ephemeral
 
 import type { JSX } from 'react';
@@ -55,16 +60,19 @@ export function Calendar7Day(): JSX.Element {
       data-testid="calendar-7day"
       data-edit-mode={editMode ? 'true' : 'false'}
     >
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-ink2 uppercase tracking-wide">
-          Saptamana
+      <div className="relative flex items-center justify-center mb-2">
+        <p
+          data-testid="calendar-title"
+          className="text-base font-semibold text-ink text-center"
+        >
+          Program de antrenament
         </p>
         <button
           type="button"
           onClick={handleToggleEdit}
           data-testid="calendar-edit-toggle"
           aria-label={editMode ? 'Salveaza' : 'Editeaza'}
-          className="p-1.5 rounded-full text-ink2"
+          className="absolute right-0 p-1.5 rounded-full text-ink2"
         >
           {editMode ? (
             <Check className="w-4 h-4" aria-hidden="true" />
