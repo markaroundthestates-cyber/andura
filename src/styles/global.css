@@ -123,6 +123,19 @@
     --heat-recovery-border: #5a4e30;  /* Recovery border dark — visible boundary 3:1 vs paper-dark */
     --rating-usor: #5a9d68;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
   }
+
+  /* W4-AUDIT-DEEPER chat 5 CRIT a11y DIM 3 KEYBOARD — global focus-visible.
+     Tailwind preflight elimina default outline pe button:focus. ZERO focus
+     indicator across buttons/inputs/anchors pre-fix. Maria 65 + Gigel cu
+     keyboard = focus invisible = unusable. Brick outline 2px + offset 2px
+     pentru clear keyboard signal. Border-radius inherit ca outline urmeze
+     elementul (button rounded etc). Dark theme inherits --brick swap
+     automat via [data-theme="dark"] block (brighter brick on dark). */
+  :focus-visible {
+    outline: 2px solid var(--brick);
+    outline-offset: 2px;
+    border-radius: inherit;
+  }
 }
 
 /* Persona-aware text scaling (verbatim mockup) */
