@@ -73,6 +73,16 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
         // silent fail with Sentry breadcrumb capture pe fiecare nivel. UX
         // sticks with optimistic editMode:false (NU regress to error UI
         // Phase 4 stub paradigm) DAR forensic visibility surfaces in prod.
+        //
+        // SUBSTRATE-ZETA fix chat 5 (2026-05-23): shape bridge la boundary
+        // resolves Phase 6 task_02 semantic mismatch. scheduleStore native
+        // shape = DayKind[] strings ('training'|'rest'), scheduleAdapter
+        // expects {day, active}[] objects per scheduleAdapter.d.ts §11-13.
+        // Pre-fix passing DayKind[] caused `dayConfig.active` evaluation
+        // pe string 'training' = undefined, never === false → rest day
+        // calendar overrides silently no-op via React UI path (Calendar7Day
+        // toggle → saveWeekly → engine misread). Transform shape here NU
+        // bend adapter inward (Bugatti audit recommendation).
         const state = get();
         const captureSafely = (err: unknown, op: string): void => {
           try {
@@ -87,19 +97,26 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
             }).catch(() => { /* sentry import fail = swallow (defense-in-depth limit) */ });
           } catch { /* sync swallow */ }
         };
+        // Day key canon match scheduleAdapter.js:37 DAY_LABELS + .d.ts:11
+        // CalendarOverrideDay['day'] union — NU UI display labels (L/Ma/Mi/J)
+        // diverge intentional: storage canon stable cross-store/engine.
+        const DAY_KEYS = ['L', 'M', 'M2', 'J', 'V', 'S', 'D'] as const;
+        const dayConfigs = state.days.map((kind, idx) => ({
+          day: DAY_KEYS[idx] ?? 'L', // idx bounded 0..6 (WeekDays tuple len 7), fallback defensive only
+          active: kind === 'training',
+        }));
         try {
           // Dynamic import sync via require pattern to avoid circular
           // dep risk + keep adapter module-level lazy.
           import('../../engine/schedule/scheduleAdapter.js').then((mod) => {
-            // Phase 6 task_02: cast through unknown — scheduleStore passes
-            // DayKind[] legacy shape; actual commitCalendarEdit expects
-            // {day, active}[] shape per scheduleAdapter.d.ts. Semantic
-            // mismatch pre-existing — fix deferred (out of scope task_02
-            // Option C async migration).
-            const commitFn = (mod as unknown as { commitCalendarEdit?: (days: readonly DayKind[]) => unknown }).commitCalendarEdit;
+            const commitFn = (mod as unknown as {
+              commitCalendarEdit?: (
+                days: ReadonlyArray<{ day: string; active: boolean }>,
+              ) => unknown;
+            }).commitCalendarEdit;
             if (typeof commitFn === 'function') {
               try {
-                commitFn(state.days);
+                commitFn(dayConfigs);
               } catch (err) {
                 captureSafely(err, 'commitCalendarEdit_throw');
               }
