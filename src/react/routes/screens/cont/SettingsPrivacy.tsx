@@ -139,6 +139,27 @@ export function SettingsPrivacy(): JSX.Element {
             (raspuns &lt;72h).
           </p>
 
+          {/* §28-H6 audit fix — Medical data Art. 9 special category boundary. */}
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Date sensibile (GDPR Art. 9)</h3>
+          <p className="text-sm text-ink2 mb-3">
+            Andura este o aplicatie de <strong>fitness</strong>, NU un
+            dispozitiv medical. Datele de greutate corporala, masuratori sau
+            durere raportate prin Pain Button au caracter strict
+            <strong> sportiv</strong>, NU medical. Nu colectam diagnostice,
+            tratamente, retete sau alte categorii speciale GDPR Art. 9. Daca
+            ai conditii medicale, consulta intai medicul (vezi
+            <strong>{' '}Disclaimer medical</strong> in T&amp;C).
+          </p>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">Sub-procesatori</h3>
+          <p className="text-sm text-ink2 mb-3">
+            Pentru a oferi serviciul, folosim doi sub-procesatori:{' '}
+            <strong>Google Firebase</strong> (autentificare + backup RTDB,
+            regiune europe-west1 EU) si <strong>Sentry</strong> (monitorizare
+            erori app, opt-in telemetrie anonima). ZERO terti analytics,
+            ZERO advertising, ZERO data brokers.
+          </p>
+
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>
           <p className="text-sm text-ink2 mb-3">
             Pentru intrebari sau reclamatii GDPR: <a href="mailto:privacy@andura.app" className="text-brick underline">privacy@andura.app</a>.
@@ -147,8 +168,8 @@ export function SettingsPrivacy(): JSX.Element {
           </p>
 
           <p className="text-xs text-ink2 mt-4">
-            Versiune Beta · Actualizat 2026-05-20. Operator date: Andura PWA solo
-            developer Daniel. Date stocate UE (Firebase eu-central-1).
+            Versiune Beta · Actualizat 2026-05-22. Operator date: Andura PWA solo
+            developer Daniel. Date stocate UE (Firebase europe-west1).
           </p>
         </article>
       </div>
