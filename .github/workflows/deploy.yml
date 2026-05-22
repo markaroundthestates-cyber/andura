@@ -34,6 +34,20 @@ name: Deploy to GitHub Pages
 # Post-incident: write entry în 06-sessions-log/INCIDENT_<date>.md
 # (cross-ref 08-workflows/PROD_OPS_RUNBOOK.md §2 decision tree).
 # ═══════════════════════════════════════════════════════════════════════
+#
+# §33-H1 audit fix (action version pin policy) — Solo founder pragmatism:
+# - All actions pinned to @v<major> tag (current latest verified 2026-05-22).
+# - Supply chain hardening = Dependabot grouped updates (.github/dependabot.yml).
+# - Full SHA-pin defer post-Beta (requires periodic SHA refresh ops; major-tag
+#   + Dependabot covers known-CVE window pre-Beta scale).
+# Decision: PROD_OPS_RUNBOOK §3 lists rollback options; major-tag + Dependabot
+# trade-off documented for re-evaluation post-Beta at multi-developer scale.
+#
+# §33-H2 audit fix (rollback workflow_dispatch) — Manual `workflow_dispatch`
+# trigger below supports inputs.ref for deploying any tag/SHA via Actions UI
+# (Actions tab → "Deploy to GitHub Pages" → Run workflow → branch/tag/sha).
+# Complements PROD_OPS_RUNBOOK §3 rollback procedures.
+# ═══════════════════════════════════════════════════════════════════════
 
 on:
   push:
@@ -51,7 +65,15 @@ on:
       - '📥_inbox/**'
       - '📤_outbox/**'
       - '**.md'
+  # §33-H2 audit fix — workflow_dispatch with explicit ref input for rollback
+  # to specific tag/SHA without git revert dance. Actions tab → Run workflow
+  # → enter target ref (branch/tag/sha) → fresh deploy from that ref.
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to deploy (branch/tag/sha; default = current branch HEAD)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -67,7 +89,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # §33-H2 audit fix — checkout configurable ref. Push trigger uses default
+      # (current branch HEAD); workflow_dispatch can pass explicit ref to deploy
+      # any tag/SHA. Empty string falls back to default branch HEAD.
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
 
       - uses: actions/setup-node@v5
         with:
@@ -97,6 +124,54 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
+
+  # §33-H4 audit fix — post-deploy smoke health check against live andura.app.
+  # Runs after gh-pages publish + propagation; curls root URL + verifies 200.
+  # Fail = §33-H5 notify-on-failure triggers; Daniel manually rollbacks via §3
+  # of PROD_OPS_RUNBOOK. Pre-Beta scale; post-Beta switch to scripts/healthcheck.cjs
+  # (A032 PENDING) for richer multi-endpoint smoke.
+  post-deploy-smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for GitHub Pages propagation
+        run: sleep 60
+      - name: Smoke check andura.app root
+        run: |
+          STATUS=$(curl -fsS -o /dev/null -w "%{http_code}" https://andura.app/ || echo "FAIL")
+          echo "andura.app HTTP status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Post-deploy smoke FAIL — andura.app returned HTTP $STATUS (expected 200)"
+            echo "::error::Investigate via PROD_OPS_RUNBOOK §3 rollback procedure"
+            exit 1
+          fi
+          echo "Post-deploy smoke PASS — andura.app HTTP 200"
+
+  # §33-H5 audit fix — deploy notification on failure (deploy job OR smoke fail).
+  # Slack incoming webhook (DEPLOY_SLACK_WEBHOOK_URL secret optional; missing = skip).
+  # Daniel solo founder = Slack DM channel pentru ops alerts; pre-Beta cost zero
+  # (Slack free tier). Success notifications muted (Daniel manual andura.app
+  # check post-push is faster); fail notifications loud.
+  notify-on-failure:
+    needs: [deploy, post-deploy-smoke]
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Slack webhook notify
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.DEPLOY_SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "DEPLOY_SLACK_WEBHOOK_URL not configured — skipping Slack notify"
+            echo "Daniel manual check via Actions tab + andura.app smoke"
+            exit 0
+          fi
+          PAYLOAD=$(printf '{"text":":rotating_light: Andura deploy FAILED — run %s — investigate PROD_OPS_RUNBOOK §3 rollback"}' \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}")
+          curl -fsS -X POST -H 'Content-Type: application/json' \
+            -d "$PAYLOAD" "$SLACK_WEBHOOK_URL" \
+            && echo "Slack notify sent" \
+            || echo "Slack notify failed (non-blocking)"
 
   # Track 7 §7.6 — post-deploy Lighthouse against live andura.app
   # (gated on Daniel uploading LHCI_GITHUB_APP_TOKEN per

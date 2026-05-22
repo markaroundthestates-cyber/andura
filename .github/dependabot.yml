@@ -1,0 +1,26 @@
+# §33-H1 audit fix — Dependabot grouped updates pentru GitHub Actions supply
+# chain hardening. Major-tag pin policy în workflow files relies on Dependabot
+# to surface CVE patches + minor version bumps via PR. Daniel reviews + merges.
+#
+# Pre-Beta scale: weekly cadence sufficient. Post-Beta consider daily for
+# critical-CVE response time reduction.
+#
+# Reference: 08-workflows/PROD_OPS_RUNBOOK.md §3 rollback, deploy.yml header §33-H1.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Bucharest"
+    groups:
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps-actions)"
+      include: "scope"
