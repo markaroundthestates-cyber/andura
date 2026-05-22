@@ -191,3 +191,78 @@ describe('Purity invariants', () => {
     expect(() => { 'use strict'; MMI_LOOKUP_TABLE.thresholdMonthsMin = 1; }).toThrow();
   });
 });
+
+// ══ §23-H3 BOOST DECAY RE-RESUME CAP STABILITY ══════════════════════════════
+// ADR 033 §32.1 invariant: boost active weeks 0..2 then decays to 1.0 forever.
+// Sweeps the full trajectory + asserts the cap holds stable across all buckets.
+describe('§23-H3 boost decay trajectory + re-resume cap stability', () => {
+  it('bucket 1 (6-12 mo): boost 1.25× sustained weeks 0-2, decays to 1.0 from week 3 onward', () => {
+    const trajectory = [];
+    for (let w = 0; w <= 10; w += 1) {
+      trajectory.push(computeMmiBoostMultiplier(w, 8));
+    }
+    // Weeks 0,1,2 boosted 1.25; weeks 3-10 decayed to 1.0
+    expect(trajectory.slice(0, 3)).toEqual([1.25, 1.25, 1.25]);
+    expect(trajectory.slice(3)).toEqual([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]);
+  });
+
+  it('bucket 2 (12-24 mo): boost 1.10× sustained weeks 0-2, decays to 1.0 from week 3', () => {
+    const trajectory = [];
+    for (let w = 0; w <= 5; w += 1) {
+      trajectory.push(computeMmiBoostMultiplier(w, 18));
+    }
+    expect(trajectory).toEqual([1.10, 1.10, 1.10, 1.0, 1.0, 1.0]);
+  });
+
+  it('bucket 3 (24+ mo): no boost — multiplier 1.0 stable across entire trajectory', () => {
+    const trajectory = [];
+    for (let w = 0; w <= 10; w += 1) {
+      trajectory.push(computeMmiBoostMultiplier(w, 36));
+    }
+    expect(trajectory.every(m => m === 1.0)).toBe(true);
+  });
+
+  it('starting weight cap stable — peak × startMultiplier independent of week (decay only affects boost)', () => {
+    // The "cap" = peak × startMultiplier (ceiling pe re-resume), boost multiplies on top
+    // temporary. After boost decays, returned kg = peak × startMultiplier (stable forever).
+    const peak = 100;
+    const pauseMonths = 8;  // bucket 1, startMultiplier 0.80, boost 1.25 weeks 0-2
+
+    // Effective weight = startKg × boostMultiplier; cap (post-boost) = 80
+    const startKg = computeMmiStartingWeight(peak, pauseMonths).startKg;
+    expect(startKg).toBeCloseTo(80, 5);  // cap
+
+    // Trajectory: weeks 0-2 boosted = 100; weeks 3+ = 80 stable forever (cap)
+    const effectiveWeights = [];
+    for (let w = 0; w <= 8; w += 1) {
+      effectiveWeights.push(startKg * computeMmiBoostMultiplier(w, pauseMonths));
+    }
+    expect(effectiveWeights[0]).toBeCloseTo(100, 5);  // 80 × 1.25
+    expect(effectiveWeights[2]).toBeCloseTo(100, 5);  // last boost week
+    // Weeks 3+ all equal to cap (80) — stable, no drift
+    for (let w = 3; w <= 8; w += 1) {
+      expect(effectiveWeights[w]).toBeCloseTo(80, 5);
+    }
+  });
+
+  it('boost decay is idempotent — repeated calls same week return same multiplier (no internal state)', () => {
+    // §23-H3 stability invariant: multiplier is pure, NU drift across invocations
+    for (let w = 0; w <= 10; w += 1) {
+      const a = computeMmiBoostMultiplier(w, 8);
+      const b = computeMmiBoostMultiplier(w, 8);
+      const c = computeMmiBoostMultiplier(w, 8);
+      expect(a).toBe(b);
+      expect(b).toBe(c);
+    }
+  });
+
+  it('post-boost cap immune to peak edge cases (very high peak does NOT unlock unbounded growth)', () => {
+    // Even peak=500 → cap=400 (500×0.80), boost peak=500 (500×0.80×1.25), then back to 400
+    const peak = 500;
+    const startKg = computeMmiStartingWeight(peak, 8).startKg;
+    expect(startKg).toBeCloseTo(400, 5);
+    expect(startKg * computeMmiBoostMultiplier(0, 8)).toBeCloseTo(500, 5);  // boost week, NU exceed peak
+    expect(startKg * computeMmiBoostMultiplier(3, 8)).toBeCloseTo(400, 5);  // post-decay cap
+    expect(startKg * computeMmiBoostMultiplier(100, 8)).toBeCloseTo(400, 5);  // far future, still cap
+  });
+});
