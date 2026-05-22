@@ -146,10 +146,10 @@ describe('ScheduleOverride — no role="list" + heading sufficient', () => {
     expect(container.querySelector('[aria-labelledby]')).toBeNull();
   });
 
-  it('h1 heading present + announces section', () => {
+  it('h1 heading present + announces section (SubHeader title PAR-009)', () => {
     const { container } = renderScheduleOverride();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Vrei alt antrenament azi/);
+    expect(h1?.textContent).toMatch(/Schimbi planul de azi/);
   });
 });

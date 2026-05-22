@@ -29,11 +29,23 @@ function renderOverride() {
 }
 
 describe('ScheduleOverride — render', () => {
-  it('renders heading "Vrei alt antrenament azi?"', () => {
+  it('renders SubHeader title "Schimbi planul de azi?" (mockup L1107 verbatim)', () => {
     renderOverride();
     expect(
-      screen.getByRole('heading', { name: /Vrei alt antrenament azi/i, level: 1 })
+      screen.getByRole('heading', { name: /Schimbi planul de azi/i, level: 1 })
     ).toBeInTheDocument();
+  });
+
+  it('renders body sub-heading "Vrei alt antrenament azi?" (h2)', () => {
+    renderOverride();
+    expect(
+      screen.getByRole('heading', { name: /Vrei alt antrenament azi/i, level: 2 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders SubHeader back button (PAR-009)', () => {
+    renderOverride();
+    expect(screen.getByTestId('schedule-override-back')).toBeInTheDocument();
   });
 
   it('renders helper copy "Coach respecta. Doar azi"', () => {

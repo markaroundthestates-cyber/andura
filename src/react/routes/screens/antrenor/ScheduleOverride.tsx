@@ -9,13 +9,20 @@
 //   mobility → 'normal' (low-intensity routine, NU coach reduce — different
 //   semantic, scheduleAdapter routes la mobility template) / cardio → 'normal'
 //
+// PAR-009 SubHeader consume — mockup andura-clasic.html L1107 sub-header
+// verbatim "Schimbi planul de azi?" sticky top + back-btn. Body h1
+// 'Vrei alt antrenament azi?' regresat h2 (single h1 SubHeader pattern
+// parity). Mockup body L1108-1119 has only `<p>` helper copy after header.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-076 Calendar V1 ephemeral override
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics rule
+//   - mockup andura-clasic.html#L1106-1152 screen-schedule-override
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 import type { IntensityMod } from './EnergyCheck';
 
 export type OverrideKind = 'easier' | 'harder' | 'different-muscle' | 'mobility' | 'cardio';
@@ -49,9 +56,19 @@ export function ScheduleOverride(): JSX.Element {
     });
   }
 
+  function handleBack(): void {
+    navigate(-1);
+  }
+
   return (
-    <section className="p-6 bg-paper" data-testid="schedule-override">
-      <h1 className="text-2xl font-semibold text-ink mb-2">Vrei alt antrenament azi?</h1>
+    <section className="bg-paper min-h-screen flex flex-col" data-testid="schedule-override">
+      <SubHeader
+        title="Schimbi planul de azi?"
+        onBack={handleBack}
+        testIdBack="schedule-override-back"
+      />
+      <div className="p-6 flex-1">
+      <h2 className="text-2xl font-semibold text-ink mb-2">Vrei alt antrenament azi?</h2>
       <p className="text-base text-ink2 mb-6">
         Coach respecta. Doar azi - maine reia planul.
       </p>
@@ -68,6 +85,7 @@ export function ScheduleOverride(): JSX.Element {
             <span className="text-sm text-ink2">{opt.description}</span>
           </button>
         ))}
+      </div>
       </div>
     </section>
   );
