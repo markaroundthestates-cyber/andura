@@ -52,6 +52,26 @@ Append-only persistent log of session-level coach decisions. Tier 0 localStorage
 
 ---
 
+## Local development setup
+
+**Prerequisites (§24-H4 audit fix):**
+- Node.js 22.x (matches deploy.yml `setup-node@v4` `node-version: 22`)
+- npm 10.x (bundled with Node 22)
+- Git for Windows / macOS / Linux
+
+**Optional env vars** (build-time, baked into bundle via Vite):
+- `VITE_FIREBASE_API_KEY` — Firebase REST Web API Key (Identity Toolkit / Magic Link). Defaults to placeholder if unset (Magic Link broken).
+- `VITE_FIREBASE_RTDB_URL` — Firebase RTDB url (Tier 2 backup). Defaults to project hardcode if unset.
+- `VITE_GOOGLE_OAUTH_CLIENT_ID` — Google OAuth Client ID. Optional; button hidden if unset.
+- `VITE_SENTRY_DSN` — Sentry ingest URL. Defaults to project DSN if unset.
+- `VITE_APP_VERSION` — version string for Sentry release tag. Defaults to `2.0.0`.
+
+Use `.env.local` (gitignored) for local overrides:
+```
+VITE_FIREBASE_API_KEY=AIzaSy...
+VITE_FIREBASE_RTDB_URL=https://your-rtdb.europe-west1.firebasedatabase.app
+```
+
 ## Build + test
 
 ```bash
@@ -64,7 +84,7 @@ npm run lint         # ESLint
 npm run build        # Production bundle + PWA service worker
 ```
 
-**Test baseline:** 4616 PASS / 7 todo / 0 FAIL across 263 test files (~55s). TypeScript strict mode 0 errors. ESLint 0 warnings.
+**Test baseline:** 4664+ PASS / 7 todo / 0 FAIL across 270+ test files (~58s). TypeScript strict mode 0 errors. ESLint 0 warnings.
 
 ---
 
