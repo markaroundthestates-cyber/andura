@@ -31,6 +31,9 @@ reports/mutation/.stryker-tmp/
 # HTML viewer regenerable din mutation.json — keep repo lean (~7 MB saved)
 reports/mutation/mutation.html
 
+# jscpd code duplicate analysis reports (auto-generated)
+reports/jscpd/
+
 # Obsidian daily notes + scratch files at vault root (auto-generated, never commit)
 # Pattern YYYY-MM-DD.md = Obsidian Daily Notes default
 /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
