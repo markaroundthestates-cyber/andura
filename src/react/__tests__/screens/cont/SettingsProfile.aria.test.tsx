@@ -1,11 +1,10 @@
-// §6-M3 audit gap — SettingsProfile FieldRow IMPLICIT LABEL coverage.
-// Existing SettingsProfile.test.tsx (16 tests) verifies inputs render with
-// correct values but does NOT test the §6-M3 fix benefit: that wrapping
-// <label> binds the visible row text to the input/select implicitly.
-//
-// Behavioral assertion: getByLabelText('Varsta') should resolve to the
-// number input (WCAG 1.3.1 + 4.1.2 — screen reader announces "Varsta" when
-// focus lands on input).
+// §6-M3 + §HIGH-1 audit coverage — SettingsProfile LabelRow + SelectRow.
+// LabelRow (inputs): implicit <label> wrap — getByLabelText resolves via
+// nesting. SelectRow (selects, §HIGH-1 REVIEW-chat3-fresh-eyes split):
+// explicit htmlFor/id binding sibling pattern — getByLabelText still
+// resolves but DOM has no LABEL ancestor (avoids Android Chrome double-
+// toggle on label click re-dispatch). WCAG 1.3.1 + 4.1.2 preserved both
+// ways.
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -45,7 +44,7 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-describe('SettingsProfile — FieldRow implicit <label> binding (§6-M3 a11y)', () => {
+describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-1)', () => {
   it('Varsta label binds to number input (getByLabelText resolves)', () => {
     renderScreen();
     const input = screen.getByLabelText('Varsta') as HTMLInputElement;
@@ -91,10 +90,10 @@ describe('SettingsProfile — FieldRow implicit <label> binding (§6-M3 a11y)', 
     expect(sel.value).toBe('intermediar');
   });
 
-  it('FieldRow uses real <label> element (not <span>) — DOM verification', () => {
+  it('LabelRow uses real <label> element wrapping input — DOM verification', () => {
     renderScreen();
     const input = screen.getByLabelText('Varsta');
-    // Walk up to nearest LABEL ancestor — must exist.
+    // Walk up to nearest LABEL ancestor — must exist (implicit wrap pattern).
     let parent: HTMLElement | null = input.parentElement;
     let foundLabel = false;
     while (parent) {
@@ -105,5 +104,55 @@ describe('SettingsProfile — FieldRow implicit <label> binding (§6-M3 a11y)', 
       parent = parent.parentElement;
     }
     expect(foundLabel).toBe(true);
+  });
+
+  // §HIGH-1 NEW — SelectRow htmlFor/id sibling binding (no nesting).
+  // Android Chrome label click on nested <select> can re-dispatch causing
+  // native dropdown to flicker open/close. Sibling pattern avoids that.
+
+  it('SelectRow uses sibling htmlFor/id binding — no LABEL ancestor for selects (§HIGH-1)', () => {
+    renderScreen();
+    const selectIds = [
+      'profile-sex-select',
+      'profile-goal-select',
+      'profile-frequency-select',
+      'profile-experience-select',
+    ];
+    selectIds.forEach((id) => {
+      const sel = document.getElementById(id);
+      expect(sel).not.toBeNull();
+      expect(sel?.tagName).toBe('SELECT');
+      // Walk up to verify NO LABEL ancestor wraps the <select>.
+      let parent: HTMLElement | null = sel?.parentElement ?? null;
+      let foundLabel = false;
+      while (parent) {
+        if (parent.tagName === 'LABEL') {
+          foundLabel = true;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+      expect(foundLabel).toBe(false);
+    });
+  });
+
+  it('SelectRow label htmlFor matches select id for all 4 selects (§HIGH-1)', () => {
+    renderScreen();
+    const pairs: Array<{ label: string; id: string }> = [
+      { label: 'Gen', id: 'profile-sex-select' },
+      { label: 'Obiectiv', id: 'profile-goal-select' },
+      { label: 'Frecventa', id: 'profile-frequency-select' },
+      { label: 'Experienta', id: 'profile-experience-select' },
+    ];
+    pairs.forEach(({ label, id }) => {
+      // Find the <label> element whose textContent matches the row label.
+      const labelEls = Array.from(document.querySelectorAll('label')) as HTMLLabelElement[];
+      const match = labelEls.find((el) => el.textContent === label);
+      expect(match, `<label> with text "${label}" not found`).toBeDefined();
+      expect(match?.htmlFor).toBe(id);
+      // Sanity: the bound select exists and has the expected id.
+      const sel = document.getElementById(id);
+      expect(sel?.tagName).toBe('SELECT');
+    });
   });
 });

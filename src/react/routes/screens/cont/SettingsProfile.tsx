@@ -86,7 +86,7 @@ export function SettingsProfile(): JSX.Element {
           Date personale
         </p>
         <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
-          <FieldRow label="Varsta">
+          <LabelRow label="Varsta">
             <input
               type="number"
               min={16}
@@ -98,8 +98,8 @@ export function SettingsProfile(): JSX.Element {
               data-testid="profile-age-input"
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-lg bg-paper text-ink font-mono text-sm"
             />
-          </FieldRow>
-          <FieldRow label="Greutate (kg)">
+          </LabelRow>
+          <LabelRow label="Greutate (kg)">
             <input
               type="number"
               min={30}
@@ -112,9 +112,10 @@ export function SettingsProfile(): JSX.Element {
               data-testid="profile-weight-input"
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-lg bg-paper text-ink font-mono text-sm"
             />
-          </FieldRow>
-          <FieldRow label="Gen" isLast>
+          </LabelRow>
+          <SelectRow label="Gen" htmlFor="profile-sex-select" isLast>
             <select
+              id="profile-sex-select"
               value={draft.sex ?? ''}
               onChange={(e) => update('sex', (e.target.value || null) as Sex | null)}
               data-testid="profile-sex-select"
@@ -124,15 +125,16 @@ export function SettingsProfile(): JSX.Element {
               <option value="m">Masculin</option>
               <option value="f">Feminin</option>
             </select>
-          </FieldRow>
+          </SelectRow>
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Antrenament
         </p>
         <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
-          <FieldRow label="Obiectiv">
+          <SelectRow label="Obiectiv" htmlFor="profile-goal-select">
             <select
+              id="profile-goal-select"
               value={draft.goal ?? ''}
               onChange={(e) => update('goal', (e.target.value || null) as Goal | null)}
               data-testid="profile-goal-select"
@@ -144,9 +146,10 @@ export function SettingsProfile(): JSX.Element {
                 <option key={g} value={g}>{GOAL_LABELS[g]}</option>
               ))}
             </select>
-          </FieldRow>
-          <FieldRow label="Frecventa">
+          </SelectRow>
+          <SelectRow label="Frecventa" htmlFor="profile-frequency-select">
             <select
+              id="profile-frequency-select"
               value={draft.frequency ?? ''}
               onChange={(e) => update('frequency', (e.target.value || null) as Frequency | null)}
               data-testid="profile-frequency-select"
@@ -157,9 +160,10 @@ export function SettingsProfile(): JSX.Element {
                 <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>
               ))}
             </select>
-          </FieldRow>
-          <FieldRow label="Experienta" isLast>
+          </SelectRow>
+          <SelectRow label="Experienta" htmlFor="profile-experience-select" isLast>
             <select
+              id="profile-experience-select"
               value={draft.experience ?? ''}
               onChange={(e) => update('experience', (e.target.value || null) as Experience | null)}
               data-testid="profile-experience-select"
@@ -170,7 +174,7 @@ export function SettingsProfile(): JSX.Element {
                 <option key={x} value={x}>{EXPERIENCE_LABELS[x]}</option>
               ))}
             </select>
-          </FieldRow>
+          </SelectRow>
         </div>
 
         <button
@@ -197,17 +201,17 @@ export function SettingsProfile(): JSX.Element {
   );
 }
 
-interface FieldRowProps {
+interface LabelRowProps {
   label: string;
   isLast?: boolean;
   children: JSX.Element;
 }
 
-function FieldRow({ label, isLast, children }: FieldRowProps): JSX.Element {
-  // §6-M3 audit fix — use real <label> for implicit input association
-  // (WCAG 1.3.1 + 4.1.2). <label> wrapping <input>/<select> binds them
-  // programmatically without needing htmlFor/id pair. Screen readers
-  // announce the field name when focus lands on the input.
+function LabelRow({ label, isLast, children }: LabelRowProps): JSX.Element {
+  // §6-M3 audit fix — implicit <label> wrap for INPUT children (WCAG 1.3.1 +
+  // 4.1.2). Wrapping <label> binds the row text to the input without needing
+  // htmlFor/id pair. Safe for <input> because label click focuses the input
+  // (no double-dispatch concerns on Android Chrome).
   return (
     <label
       className={`flex items-center justify-between px-4 py-3 ${
@@ -217,5 +221,31 @@ function FieldRow({ label, isLast, children }: FieldRowProps): JSX.Element {
       <span className="text-sm text-ink">{label}</span>
       {children}
     </label>
+  );
+}
+
+interface SelectRowProps {
+  label: string;
+  htmlFor: string;
+  isLast?: boolean;
+  children: JSX.Element;
+}
+
+function SelectRow({ label, htmlFor, isLast, children }: SelectRowProps): JSX.Element {
+  // §HIGH-1 audit fix (REVIEW-chat3-fresh-eyes) — explicit htmlFor/id binding
+  // pentru SELECT children. NU folosim <label> wrap pentru selects deoarece pe
+  // Android Chrome label click se poate re-dispatch la primul labelable
+  // descendant — pe rand <select> poate cauza native dropdown sa pulseze
+  // open/close (double-toggle). Sibling pattern <label htmlFor> + <select id>
+  // pastreaza accessible name (WCAG 1.3.1 + 4.1.2) fara nesting risc.
+  return (
+    <div
+      className={`flex items-center justify-between px-4 py-3 ${
+        isLast ? '' : 'border-b border-line'
+      }`}
+    >
+      <label htmlFor={htmlFor} className="text-sm text-ink">{label}</label>
+      {children}
+    </div>
   );
 }
