@@ -7,7 +7,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, RotateCcw, Trash2 } from 'lucide-react';
+import { LogOut, RotateCcw, Trash2, AlertTriangle } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 
@@ -23,6 +23,26 @@ export function SettingsDanger(): JSX.Element {
       />
 
       <div className="flex-1 overflow-y-auto p-5">
+        {/* §F-pass2-settings-danger-01 HIGH-BETA chat 4 — cream warning banner cu
+            alert-triangle + safety messaging. Mockup andura-clasic.html L2104-2107
+            verbatim copy: "Actiunile de mai jos afecteaza contul tau. Citeste cu
+            atentie pe pagina de confirmare inainte sa le executi." */}
+        <div
+          data-testid="danger-warning-banner"
+          role="status"
+          className="flex items-start gap-3 p-3.5 rounded-2xl border mb-4"
+          style={{
+            background: 'var(--status-danger-bg, #fdeeea)',
+            borderColor: 'var(--status-danger-border, #f0d5cf)',
+          }}
+        >
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-brick" aria-hidden="true" />
+          <p className="text-sm text-ink2 leading-snug m-0">
+            Actiunile de mai jos afecteaza contul tau. Citeste cu atentie pe
+            pagina de confirmare inainte sa le executi.
+          </p>
+        </div>
+
         <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
           <button
             type="button"

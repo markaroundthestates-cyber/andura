@@ -54,6 +54,14 @@ describe('SettingsDanger — D047 RIP-OUT navigation list', () => {
     expect(screen.getByTestId('danger-delete')).toBeInTheDocument();
   });
 
+  it('§F-pass2-settings-danger-01 cream warning banner present cu alert-triangle + safety copy', () => {
+    renderScreen();
+    const banner = screen.getByTestId('danger-warning-banner');
+    expect(banner).toBeInTheDocument();
+    expect(banner.textContent).toMatch(/Actiunile de mai jos afecteaza contul tau/i);
+    expect(banner.textContent).toMatch(/Citeste cu atentie pe pagina de confirmare/i);
+  });
+
   it('logout button navigates la /app/cont/logout-confirm drill-down', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('danger-logout'));
