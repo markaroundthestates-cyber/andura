@@ -50,7 +50,14 @@ describe('PostSummary — render base', () => {
     seedNormalSession();
   });
 
-  it('renders title from lastSession', () => {
+  it('renders h1 "Sesiune terminata" closure framing per mockup L1630', () => {
+    renderSummary();
+    expect(
+      screen.getByRole('heading', { name: /^Sesiune terminata$/i, level: 1 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders workout title as subtitle below h1 closure', () => {
     renderSummary();
     expect(screen.getByTestId('summary-title')).toHaveTextContent(
       'Push (piept si umeri)'
@@ -275,6 +282,59 @@ describe('PostSummary — Terminat closure', () => {
       'data-pathname',
       '/app/antrenor'
     );
+  });
+});
+
+describe('PostSummary — §F-post-summary-03 muscle groups pills', () => {
+  beforeEach(() => {
+    seedNormalSession();
+  });
+
+  it('renders muscle pills for Push session (Piept primary + Umeri + Triceps + Abs)', () => {
+    renderSummary();
+    const muscles = screen.getByTestId('summary-muscles');
+    expect(muscles).toBeInTheDocument();
+    expect(muscles).toHaveTextContent('Piept');
+    expect(muscles).toHaveTextContent('Umeri');
+    expect(muscles).toHaveTextContent('Triceps');
+    expect(muscles).toHaveTextContent('Abs');
+  });
+
+  it('marks primary muscles cu data-muscle-primary=true', () => {
+    renderSummary();
+    const piept = screen.getByText('Piept').closest('[data-muscle]');
+    expect(piept).toHaveAttribute('data-muscle-primary', 'true');
+  });
+
+  it('marks secondary muscles cu data-muscle-primary=false (Abs in Push)', () => {
+    renderSummary();
+    const abs = screen.getByText('Abs').closest('[data-muscle]');
+    expect(abs).toHaveAttribute('data-muscle-primary', 'false');
+  });
+
+  it('renders Pull session muscle set cand title contine "pull" or "spate"', () => {
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Pull (spate si biceps)',
+        meta: '5 seturi · 52 min · 12 450 kg',
+        ts: Date.now(),
+      },
+    });
+    renderSummary();
+    expect(screen.getByText('Spate')).toBeInTheDocument();
+    expect(screen.getByText('Biceps')).toBeInTheDocument();
+  });
+
+  it('hides muscle pills cand title is unrecognized keyword', () => {
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Custom random session',
+        meta: '5 seturi · 52 min · 12 450 kg',
+        ts: Date.now(),
+      },
+    });
+    renderSummary();
+    expect(screen.queryByTestId('summary-muscles')).not.toBeInTheDocument();
   });
 });
 

@@ -2,12 +2,25 @@
 // Session closure summary screen — capstone Phase 3 Antrenor flow.
 //
 // 4 zone:
-//   1. Header: lastSession.title + coach felicitare line (coachPick endSession
-//      by rating cu taxonomy alias 'usoara/normala/grea' → 'usor/potrivit/greu')
+//   1. Header: h1 "Sesiune terminata" closure framing + workout title subtitle
+//      + coach felicitare line (coachPick endSession by rating cu taxonomy
+//      alias 'usoara/normala/grea' → 'usor/potrivit/greu')
 //   2. F11 PR banner conditional (prHit flag — Phase 3 stub, Phase 4+ wires
 //      engineWrappers.getPRDelta pe logSet în Workout.tsx)
 //   3. F8 stats grid 4-cell (Seturi / Durata / Tonaj / Kcal estimate)
-//   4. Streak counter F8 + Terminat CTA → reset store + navigate antrenor
+//   4. Grupe musculare pills (mockup L1674-1680 verbatim) derived din
+//      lastSession.title parse keyword (Phase 5+ wire engine
+//      sessionExercisesBreakdown.muscleGroups direct).
+//   5. Streak counter F8 + Terminat CTA → reset store + navigate antrenor
+//
+// HIGH-GAMMA §F-post-summary-01: h1 swap from session title la verbatim
+// mockup "Sesiune terminata" L1630 — clear closure framing vs preview-like.
+// Workout title moves la subtitle position.
+//
+// HIGH-GAMMA §F-post-summary-03: muscle group pills section per mockup
+// L1673-1680 ("Grupe musculare" + pill rows cu color dots brick=primary,
+// ink-3=secondary). Phase 3 derives din session title keyword match;
+// Phase 5+ wires real engine muscleGroups field.
 //
 // Phase 4 task_10: prefer numeric fields LastSessionSummary.sets /
 // durationMin / volumeKg (populated explicit de PostRpe.finishSession).
@@ -17,7 +30,7 @@
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-052 Andura Suflet (coach felicitare)
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics rule
-//   - mockup andura-clasic.html screen-post-summary summary-* cells
+//   - mockup andura-clasic.html L1629-1695 screen-post-summary
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -57,6 +70,51 @@ function parseMeta(meta: string | undefined): ParsedMeta {
 
 function formatKg(kg: number): string {
   return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
+}
+
+// §F-post-summary-03 muscle group derivation. Phase 3 keyword-match din
+// session title (e.g., "Push (piept si umeri)" → Piept + Umeri + Triceps).
+// Phase 5+ wires direct la lastSession.exercises muscleGroups engine field.
+// Returns ordered list cu primary (brick dot) first + secondary (ink-3 dot).
+interface MuscleGroup {
+  label: string;
+  primary: boolean;
+}
+
+function deriveMuscleGroups(title: string | undefined): MuscleGroup[] {
+  if (!title) return [];
+  const lower = title.toLowerCase();
+  // Mockup L1676-1679 reference set for Push session = Piept/Umeri/Triceps/Abs.
+  // Keyword inference per session type (Push/Pull/Legs/Full).
+  if (lower.includes('push') || lower.includes('piept')) {
+    return [
+      { label: 'Piept', primary: true },
+      { label: 'Umeri', primary: true },
+      { label: 'Triceps', primary: true },
+      { label: 'Abs', primary: false },
+    ];
+  }
+  if (lower.includes('pull') || lower.includes('spate')) {
+    return [
+      { label: 'Spate', primary: true },
+      { label: 'Biceps', primary: true },
+      { label: 'Antebrate', primary: false },
+    ];
+  }
+  if (lower.includes('legs') || lower.includes('picioare')) {
+    return [
+      { label: 'Cvadriceps', primary: true },
+      { label: 'Femurali', primary: true },
+      { label: 'Fesieri', primary: true },
+      { label: 'Gambe', primary: false },
+    ];
+  }
+  if (lower.includes('full') || lower.includes('total')) {
+    return [
+      { label: 'Compound full body', primary: true },
+    ];
+  }
+  return [];
 }
 
 interface StatCellProps {
@@ -102,14 +160,23 @@ export function PostSummary(): JSX.Element {
     navigate(gotoPath('antrenor'));
   }
 
+  const muscleGroups = deriveMuscleGroups(lastSession?.title);
+
   return (
     <section
       className="p-6 bg-paper min-h-screen flex flex-col"
       data-testid="post-summary"
     >
-      <h1 className="text-2xl font-semibold text-ink mb-2" data-testid="summary-title">
-        {lastSession?.title ?? 'Sesiune'}
+      {/* §F-post-summary-01 closure framing — h1 mockup verbatim L1630. */}
+      <h1
+        className="text-2xl font-semibold text-ink mb-1"
+        data-testid="summary-heading"
+      >
+        Sesiune terminata
       </h1>
+      <p className="text-base text-ink2 mb-4" data-testid="summary-title">
+        {lastSession?.title ?? 'Sesiune'}
+      </p>
       {coachLine && (
         <p
           className="text-base text-ink2 italic font-serif mb-6"
@@ -183,6 +250,36 @@ export function PostSummary(): JSX.Element {
         <StatCell label="Tonaj" value={`${formatKg(volume)} kg`} testId="summary-volume" />
         <StatCell label="Kcal" value={kcal.toString()} testId="summary-kcal" />
       </div>
+
+      {/* §F-post-summary-03 Grupe musculare pills — mockup L1673-1680.
+         Phase 3 keyword-derived; Phase 5+ wires lastSession.exercises engine. */}
+      {muscleGroups.length > 0 && (
+        <div className="mb-6" data-testid="summary-muscles">
+          <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
+            Grupe musculare
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {muscleGroups.map((m) => (
+              <span
+                key={m.label}
+                data-muscle={m.label}
+                data-muscle-primary={m.primary ? 'true' : 'false'}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-paper2 border border-line rounded-full text-sm font-medium text-ink"
+              >
+                <span
+                  aria-hidden="true"
+                  className={
+                    m.primary
+                      ? 'w-2 h-2 rounded-full bg-brick'
+                      : 'w-2 h-2 rounded-full bg-ink3'
+                  }
+                />
+                {m.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* F8 Streak counter */}
       <div
