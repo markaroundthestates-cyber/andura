@@ -13,18 +13,21 @@
 // 88b4b64c — role=radiogroup necesita arrow-key handling roving tabIndex
 // pre-Beta inutil; aria-pressed pattern proven across Onboarding Step 2-5).
 //
-// Selectarea actualizeaza useOnboardingStore.data.goal direct (single source
-// truth pentru Big 6; SettingsProfile foloseste acelasi store). Schimbarea
-// e immediate (NO confirm modal V1 — mockup pickProgram() does the same
-// instant `is-active` toggle; F-confirm-program-change e separate scope).
+// PARITY-CONFIRM-MODALS Wave 2f (PAR-003): pick() navigates la drill-down
+// `program-change-confirm` cu route state (pendingGoal + label + sub) per
+// mockup L3211-3220 `pickProgram` → `goto('confirm-program-change')`.
+// Confirm screen commits goal pe accept; cancel = no-op (back fara setField).
+// Same-row click = no-op (mockup L3212 `is-active` guard preserved).
 //
 // Tap target >=44px (p-3 + min-h-[44px] — Maria 65 WCAG 2.5.5).
 
 import type { JSX } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck, HeartPulse } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
+import { gotoPath } from '../../lib/navigation';
 
 interface ObiectivOption {
   id: Goal;
@@ -44,14 +47,23 @@ const OPTIONS: readonly ObiectivOption[] = [
 ];
 
 export function ObiectivSelector(): JSX.Element {
+  const navigate = useNavigate();
   const goal = useOnboardingStore((s) => s.data.goal);
-  const setField = useOnboardingStore((s) => s.setField);
 
   // Default Auto cand goal nu e setat (mockup L864 data-program="auto" is-active).
   const activeGoal: Goal = goal ?? 'auto';
 
   function pick(g: Goal): void {
-    setField('goal', g);
+    // Same-row no-op guard (mockup L3212 is-active check).
+    if (g === activeGoal) return;
+    const opt = OPTIONS.find((o) => o.id === g);
+    navigate(gotoPath('program-change-confirm'), {
+      state: {
+        pendingGoal: g,
+        pendingLabel: opt?.title ?? g,
+        pendingSub: opt?.sub ?? '',
+      },
+    });
   }
 
   return (
