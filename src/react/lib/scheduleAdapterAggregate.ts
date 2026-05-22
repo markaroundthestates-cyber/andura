@@ -98,6 +98,16 @@ export async function composePlannedWorkoutToday(
     const hasActiveDeload = mod !== null && (
       (mod.rir_increment ?? 0) > 0 || (mod.intensity_pct_decrement ?? 0) > 0
     );
+    // F-workout-preview/T1 — Engine Warm-up blueprint surface. Engine emits
+    // duration_min (5-10 adaptive) + ui_label "Incalzire ~X min" via
+    // src/engine/warmup/index.js:289-300. Map to consumer-friendly {line,
+    // durationMin}. Null when ui_label missing/empty (defensive guard).
+    const warmupRaw = plan.warmup as { duration_min?: number; ui_label?: string } | null;
+    const warmupLine = typeof warmupRaw?.ui_label === 'string' ? warmupRaw.ui_label : '';
+    const warmupDuration = typeof warmupRaw?.duration_min === 'number' ? warmupRaw.duration_min : 0;
+    const warmup = warmupRaw !== null && warmupLine.length > 0
+      ? { line: warmupLine, durationMin: warmupDuration }
+      : null;
     return {
       workoutTitle: plan.workoutTitle || 'Antrenament azi',
       exerciseCount: exercises.length,
@@ -105,6 +115,7 @@ export async function composePlannedWorkoutToday(
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
       exercises,
       volumeKg: plan.volumeKg || 0,
+      warmup,
     };
   } catch (e) {
     console.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);

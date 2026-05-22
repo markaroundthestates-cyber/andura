@@ -89,6 +89,12 @@ export interface PlannedWorkoutOutput {
   intensityMod: 'plus' | 'normal' | 'minus';
   exercises: PlannedExercise[]; // Phase 4 task_10 — rich aggregate Workout/WorkoutPreview consume
   volumeKg: number; // Phase 4 task_10 — estimated total tonnage planned
+  // F-workout-preview/T1 — Engine Warm-up §9.7 blueprint surface (duration_min +
+  // ui_label "Incalzire ~X min"). Null cand engine emits insufficient ctx OR
+  // warmup blueprint absent (rest day / pipeline halt → composer returns null
+  // entire output; never reaches this field). Consumer WorkoutPreview renders
+  // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
+  warmup?: { line: string; durationMin: number } | null;
 }
 
 // ── Wrappers cu try/catch fallback safe ──────────────────────────────────
