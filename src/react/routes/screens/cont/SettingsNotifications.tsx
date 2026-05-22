@@ -127,10 +127,14 @@ export function SettingsNotifications(): JSX.Element {
         )}
         <div className="mb-4" />{/* spacer keeping rhythm post permission warning */}
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="notif-freq-label">
           Frecventa
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div
+          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          role="radiogroup"
+          aria-labelledby="notif-freq-label"
+        >
           {FREQUENCY_OPTIONS.map((opt, idx) => (
             <button
               key={opt.value}
@@ -148,10 +152,15 @@ export function SettingsNotifications(): JSX.Element {
           ))}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="notif-days-label">
           Zile active
         </p>
-        <div className="flex gap-1.5 mb-4" data-testid="notif-day-picker">
+        <div
+          className="flex gap-1.5 mb-4"
+          data-testid="notif-day-picker"
+          role="group"
+          aria-labelledby="notif-days-label"
+        >
           {DAY_LABELS.map((label, idx) => (
             <button
               key={label}

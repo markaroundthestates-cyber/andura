@@ -68,7 +68,15 @@ export function SchimbaFazaConfirm(): JSX.Element {
           Datele istorice raman intacte.
         </p>
 
-        <div className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden">
+        {/* §6-M3 a11y: role="radiogroup" + aria-label so screen readers
+            announce the radio set semantic (5 mutually exclusive phase
+            options). aria-required reinforces user must pick one. */}
+        <div
+          className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden"
+          role="radiogroup"
+          aria-label="Selecteaza faza activa"
+          aria-required="true"
+        >
           {PHASE_OPTIONS.map((opt, idx) => {
             const isSelected = selected === opt.value;
             return (
