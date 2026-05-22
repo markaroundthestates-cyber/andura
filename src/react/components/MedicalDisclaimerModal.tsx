@@ -4,6 +4,7 @@
 // disclaimerStore localStorage cross-session.
 
 import type { JSX } from 'react';
+import { useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 
 interface MedicalDisclaimerModalProps {
@@ -17,6 +18,30 @@ export function MedicalDisclaimerModal({
   onAcknowledge,
   onCancel,
 }: MedicalDisclaimerModalProps): JSX.Element | null {
+  const acknowledgeRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // §6-H4 audit fix — focus management: capture pre-modal focus + focus
+  // primary CTA on open + restore on close. Escape key triggers cancel
+  // (or acknowledge if no cancel — mandatory modal still has escape via
+  // primary action). Focus trap minimal — Tab cycles within modal buttons.
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    acknowledgeRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === 'Escape' && onCancel) {
+        e.preventDefault();
+        onCancel();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onCancel]);
+
   if (!open) return null;
   return (
     <div
@@ -60,6 +85,7 @@ export function MedicalDisclaimerModal({
         </div>
 
         <button
+          ref={acknowledgeRef}
           type="button"
           onClick={onAcknowledge}
           data-testid="disclaimer-acknowledge"

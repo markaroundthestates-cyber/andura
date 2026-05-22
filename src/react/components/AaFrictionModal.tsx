@@ -16,6 +16,7 @@
 //     pentru safety blocking gate confirmed pre-Beta SC)
 
 import type { JSX } from 'react';
+import { useEffect, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import type { AggressiveReason } from '../lib/aaFrictionDetect';
 
@@ -49,6 +50,21 @@ export function AaFrictionModal({
   onAcknowledge,
   onForceContinue,
 }: AaFrictionModalProps): JSX.Element | null {
+  const pauseRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // §6-H4 focus management: open → focus primary safety CTA (Pauza 30s);
+  // close → restore previous focus. NO Escape close (LOCK 9 blocking
+  // safety gate — user MUST choose Pauza sau Continui explicit).
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    pauseRef.current?.focus();
+    return () => {
+      previousFocusRef.current?.focus();
+    };
+  }, [open]);
+
   if (!open) return null;
   return (
     <div
@@ -86,6 +102,7 @@ export function AaFrictionModal({
           </p>
         )}
         <button
+          ref={pauseRef}
           type="button"
           onClick={onAcknowledge}
           data-testid="aa-friction-pause"
