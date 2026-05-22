@@ -6,8 +6,9 @@
 
 import { useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, HelpCircle, ChevronRight, ChevronDown } from 'lucide-react';
+import { HelpCircle, ChevronRight, ChevronDown } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 interface FaqItem {
   q: string;
@@ -75,18 +76,11 @@ export function SettingsFaq(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-faq">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-faq-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">FAQ</h1>
-      </header>
+      <SubHeader
+        title="FAQ"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-faq-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-relaxed">

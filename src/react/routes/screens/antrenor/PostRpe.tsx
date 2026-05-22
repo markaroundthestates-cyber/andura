@@ -1,14 +1,20 @@
-// ══ POST-RPE — Phase 3 task_09 §A Rewrite Stub → Real ════════════════════
+// POST-RPE - Phase 3 task_09 §A Rewrite Stub -> Real
 // Post-session RPE rating (la finalul ultimului exercitiu, before summary).
-// 3-button RO: Usoara / Normala / Grea (workoutStore.lastRating taxonomy —
-// distinct de per-set rating 'usor/potrivit/greu' which lives în
+// 3-button RO: Usoara / Normala / Grea (workoutStore.lastRating taxonomy -
+// distinct de per-set rating 'usor/potrivit/greu' which lives in
 // ExerciseHistoryEntry).
+//
+// Mockup parity (andura-clasic.html L1593-1626 traffic-light per rating):
+// usor -> green (U+1F7E2), potrivit -> yellow (U+1F7E1), greu -> red
+// (U+1F534). Mockup 'usor/potrivit/greu' labels; React component uses
+// 'usoara/normala/grea' SessionRating taxonomy - semantic 1:1 map. Emoji
+// is aria-hidden decorative - preserves accessible name for tests.
 //
 // Submit pipeline:
 //   1. workoutStore.setLastRating(rating)
 //   2. Compute session summary (sets / volume / duration min)
 //   3. workoutStore.finishSession(summary) clears history + sets lastSession
-//   4. workoutStore.incrementStreak() (NU în PostSummary, avoid double-inc)
+//   4. workoutStore.incrementStreak() (NU in PostSummary, avoid double-inc)
 //   5. navigate('/app/antrenor/post-summary')
 //
 // Cross-refs:
@@ -29,14 +35,19 @@ export type SessionRating = 'usoara' | 'normala' | 'grea';
 
 interface RatingOption {
   rating: SessionRating;
+  emoji: string;
   label: string;
   description: string;
 }
 
+const GREEN = '\u{1F7E2}';
+const YELLOW = '\u{1F7E1}';
+const RED = '\u{1F534}';
+
 const RATING_OPTIONS: readonly RatingOption[] = [
-  { rating: 'usoara', label: 'Usoara', description: 'Aveam mai mult in rezerva' },
-  { rating: 'normala', label: 'Normala', description: 'Solid, echilibrat' },
-  { rating: 'grea', label: 'Grea', description: 'M-am dus la limita' },
+  { rating: 'usoara', emoji: GREEN, label: 'Usoara', description: 'Aveam mai mult in rezerva' },
+  { rating: 'normala', emoji: YELLOW, label: 'Normala', description: 'Solid, echilibrat' },
+  { rating: 'grea', emoji: RED, label: 'Grea', description: 'M-am dus la limita' },
 ];
 
 function formatKg(kg: number): string {
@@ -62,16 +73,10 @@ export function PostRpe(): JSX.Element {
         ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
         : 0;
 
-    // Phase 6 task_02 Option C: async getTodayWorkout awaited mid-handler.
-    // Fallback hardcoded cand engineWrappers returns null (rest day or halt).
-    // Per DECISIONS.md §D027.
     const planned = await getTodayWorkout();
     const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
-    // Phase 5 task_03: compute per-exercise breakdown din history Record
-    // keyed by exIdx → planned.exercises[idx] name lookup. SessionsHistory
-    // archive granular pentru IstoricDetail render breakdown table.
     const exercises: SessionExerciseBreakdown[] = Object.entries(history)
       .map(([exIdxStr, sets]) => {
         const exIdx = Number(exIdxStr);
@@ -128,10 +133,13 @@ export function PostRpe(): JSX.Element {
             type="button"
             onClick={() => { void handleSubmit(opt.rating); }}
             data-rating={opt.rating}
-            className="flex flex-col items-start gap-1 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
+            className="flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
           >
-            <span className="text-base font-medium text-ink">{opt.label}</span>
-            <span className="text-sm text-ink2">{opt.description}</span>
+            <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
+            <span className="flex flex-col items-start gap-1">
+              <span className="text-base font-medium text-ink">{opt.label}</span>
+              <span className="text-sm text-ink2">{opt.description}</span>
+            </span>
           </button>
         ))}
       </div>
