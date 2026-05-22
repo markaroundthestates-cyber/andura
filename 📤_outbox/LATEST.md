@@ -1,177 +1,117 @@
-# A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 CLOSURE + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
+# CHAT 3 2026-05-22 — 14-AGENT STORM + CONSOLIDATION AUDIT + 3 MED CLEAN POST-REVIEW
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 15 audit polish post-PUSH (§6-H6 BottomNav tap + §11-C1 DST tests + §28-H6/M2 Privacy + §36-M3 DNS prefetch + §15-H3 WebView + §17-M3 Sentry PII + §6-M3 a11y x6 + §24-H4 README setup + §28-C4 breach response + §28-H3 DSR + §50-H1 DoD + Cont row wire + **B009 FINAL CLOSURE overlay tokens 3 modal backdrops migrated**). Co-CTO autonomous Daniel "de ce ne oprim" pushback honored — continuous work cycle.
-**Last LANDED:** B009 closure overlay tokens (`8df606cf`).
-**Branch:** main, **25 commits ahead origin/main** — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
+**Status:** **4845 PASS / 0 FAIL / 286 suites / 7 todo**. HEAD `32813821`. **63 commits ahead origin/main** NU pushed (D031 invariant).
+**Branch:** main
 **Model:** Opus 4.7 EXCLUSIVELY
-**Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
+**Mandate (Daniel verbatim):** *"quality > snowball"* + *"tu esti managerul agentilor + Codeaza"* — Co-CTO manager-of-agents role LOCKED memory. Eu coordinate + verify output. Agenții execute. ZERO solo work când agents available.
 
 ---
 
-## §1 Chat 2 cumulative 37 commits
+## §1 Cumulative ~70 commits chat 3 grouped
 
-### Pre-mandate (9 commits)
-A022e final 3 + A022g transitive + 2 docs.
+### A. Surgical audit fixes (post-review + initial batch, ~16 commits)
+- `4ea21a94` audit-§HIGH-1 SettingsProfile FieldRow → LabelRow + SelectRow split (a11y separation of concerns)
+- `f4980329` audit-§LOW-1 Onboarding empty input → null instead of 0 (data integrity)
+- `40c7946e` audit-§LOW-3 ExitConfirmSheet backdrop tap dismiss continue (UX expectation match)
+- `a4974a8e` audit-MED-A-1 CalendarHeatmap arbitrary hex `#15803d` → heatUsorText token B009 substrate parity
+- `ff1ccc9d` audit-MED-A-2 RatingsStrip90Day separate unrated cells from potrivit attribution (4-state)
+- `32813821` audit-MED-A-3 Onboarding NaN guard finite check before store write
+- Plus MED-1/2/3/4 + LOW-4 + emoji 3 screens (SetRatingButtons + PostRpe + EnergyCheck)
 
-### Post-mandate A022f attack (10 batches, ~870 errors closed)
-muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reality (71) → sys+ruleEngine+responseProfile+weights (85) → dp (43) → patternLearning+autoAggression (93) → 5 small (67) → readiness+adherence+accelerated+muscleMemory+i18n (58) → 7 small (47) → 8 micro (18) → proactiveEngine+plateauInterventions+decisionCluster (122) → profileTyping+coachDirector (213).
+### B. Wave C signature parity (~24 commits atomic)
+- **Calendar heatmap T1-T16** (`b918e76c` → `579dd1a8`): pure util deriveSessionRating + useSessionsByDate hook + 6 heat+rating CSS tokens + tailwind wire + CalendarHeatmap scaffold + month nav + grid render + Monday offset + tier paint + 5-tier legend + aria-label per cell + aria-live month + today highlight + future-date muted + aggregate row + footer + wire Istoric + 3 test suites (CalendarHeatmap 8 + RatingsStrip90Day 8 + sessionRating + useSessionsByDate)
+- **WorkoutPreview rich T1-T5** (`5191ac96` → `33e0b394`): engine warmup wire + hero card dark idiom + warmup row coach line + exercise list 5 numbered + 13 new test cases
+- **RestOverlay SVG ring countdown** (incremental Workout polish)
+- **AlertsBanner Progres nav** surface
+- **ObiectivSelector Antrenor home** goal switcher
+- **Emoji indicators 3 screens** (EnergyCheck + PostRpe + SetRatingButtons traffic-light)
 
-### Live smoke + iter 3 polish (13 commits)
-1-12: prior milestone batch (lint cleanup + initial smoke fixes)
-13. `031cb53f` LATEST.md final closure raport
-14. **NEW `166fd695`** — B011 ResetCoachConfirm wire `resetCoachState` util (16 keys + aa-cooldown-* prefix wipe, preserve user data)
-15. **NEW `7e677ad6`** — B001 SchimbaFazaConfirm wire `setPhaseOverride` util (5-phase radio: AUTO/CUT/MAINTENANCE/BULK/STRENGTH + phase-change-date + phase-log)
-16. **NEW `4fe2379e`** — Auth.tsx fix "în" diacritic regression D-LEGACY-064
-17. **NEW `4fa1887f`** — Dark theme wire: themeSync.ts + [data-theme="dark"] WCAG palette + main.tsx applyInitialTheme + CoachTodayCard dark: override + tailwind darkMode config
-18. **NEW `5a311ee4`** — Layout hide BottomNav on in-session routes (workout/post-rpe/post-summary) anti-misclick
-19. **NEW `32065785`** — LATEST.md sync handover
-20. **NEW `230f15d7`** — §28-M4 SettingsExport include Tier 1 IDB sessions (GDPR Art. 20 full portability)
-21. **NEW `bcd78c79`** — B009 status banner tints CSS vars + dark theme adapt (5 components migrated WorkoutPreview + PatternsBanner + AlertsBanner + CoachRestCard + SettingsSubscription)
-22. **NEW `93dd026f`** — Cont row Aparate lipsa target wire (previously disabled with no nav)
-23. **NEW `59ace191`** — BottomNav compact style toggle wire (settingsStore.bottomNavStyle now applied)
-24. **NEW `8764eb75`** — §28-H5 age min 14→16 GDPR Art. 8 RO parental consent compliance
-25. **NEW `ff22cdba`** — PRIMER §5 chat 2 evening continuation milestone append
-26. **NEW `3154275f`** — LATEST.md sync 47 commits ahead
-27. **NEW `d2dfcdd9`** — ScheduleStore partialize editMode out of localStorage (avoid stale-edit ghost)
-28. **NEW `77575a0f`** — SettingsAbout NEW Despre Andura static screen + Cont row wire + 6 tests
-29. **NEW `ab87dc00`** — SettingsSupport NEW Suport static screen + mailto contact + Cont row wire
-30. **NEW `5a98a2eb`** — LATEST.md sync 51 commits ahead
-31. **NEW `4706328d`** — SettingsFaq NEW FAQ accordion screen + 7 Q&A across 3 sections + Suport CTA link + Cont row wire
-32. **NEW `a2974865`** — LATEST.md sync 53 commits ahead
-33. **NEW `f2ace25f`** — PRIMER §5 chat 2 night final wrap milestone
-34. **NEW `187528de`** — B001 phase override wire into Progres nutrition target (CUT → 2165 kcal live verified)
-35. **NEW `f672fbd2`** — Test coverage NEW for SettingsSupport + SettingsFaq (14 tests)
-36. **NEW `282a4aef`** — gitignore smoke screenshots + planning artifacts
-37. **NEW `22eed024`** — README.md §18-C1 refresh React stack + ADR 030 pipeline
-38. **NEW `1fcc92ee`** — CHAT_STATE chat 2 night final closure
-39. **NEW `009354b6`** — LOW_ADHERENCE gate Gigel-friendly ≥3 sessions (UX)
-40. **NEW `e10285ec`** — WeightLogList NEW Loguri greutate screen + Progres history nav
-41. **NEW `70b696a5`** — InstallPrompt NEW PWA beforeinstallprompt (§7-H5)
-42. **NEW `cb6d4afd`** — autoComplete + inputMode + enterKeyHint a11y inputs (§6-C3)
-43. **NEW `793d824a`** — OfflineBanner NEW network status (§13-M3)
-44. **NEW `1c5bc840`** — chore lint cleanup
-45. **NEW `2eb826ae`** — aria-live banners WCAG 4.1.3 (§6-H3)
-46. **NEW `a362aedf`** — Modal focus management WCAG 2.4.3 (§6-H4)
-47. **NEW `3b40301e`** — pluralRo + PostSummary streak (§11-H3)
-48. **NEW `3924abbc`** — LATEST.md header bump 72 commits
-49. **NEW `5ae4ff36`** — Notification.requestPermission graceful permission ladder (§32-H2)
-50. **NEW `83665208`** — 5 NEW tests permission ladder (4646 PASS)
-51. **NEW `ac76bda7`** — §6-H6 BottomNav add gap-0.5 tap target spacing WCAG 2.5.5
-52. **NEW `8d462117`** — §11-C1 isoWeek DST transition tests Romania spring+fall (+6 tests)
-53. **NEW `abb94305`** — §28-H6/M2 SettingsPrivacy Art. 9 medical boundary + sub-processor list + region fix
-54. **NEW `47402e8e`** — §36-M3 index.html DNS prefetch hints Firebase + Sentry (~50-100ms shaved cold cache)
-55. **NEW `7ab71625`** — §15-H3 Auth WebView detection banner FB/IG/Twitter/TikTok/Snapchat + 12 NEW tests
-56. **NEW `a937e665`** — CHAT_STATE + LATEST.md sync 5 audit closures cycle
-57. **NEW `a306438d`** — §17-M3 Sentry beforeSend PII strip uid + email patterns
-58. **NEW `d6d91d2d`** — LATEST.md sync 6 audit polish + Sentry PII
-59. **NEW `658db170`** — §6-M3 SettingsProfile FieldRow `<span>`→`<label>` + 11 NEW Sentry PII strip tests
-60. **NEW `cfdd3093`** — §6-M3 Onboarding age + weight aria-label
-61. **NEW `af3f083d`** — §6-M3 SettingsNotifications time input aria-label
-62. **NEW `fcf523b4`** — §6-M3 radiogroup wrappers phase + frequency + day picker
-63. **NEW `298c5e6c`** — §6-M3 radiogroup wrappers Appearance theme/nav + Prefs units/weekstart
-64. **NEW `98488486`** — §24-H4 README local dev setup section + env vars inventory
-65. **NEW `f685c47a`** — LATEST + CHAT_STATE sync 11 audit closures cycle
-66. **NEW `ee4b23d8`** — §28-C4 DATA_BREACH_RESPONSE.md runbook GDPR Art. 33/34 (CRIT closure)
-67. **NEW `7af097e6`** — §28-H3 DSR_HANDLER.md runbook GDPR Art. 15-22 manual path
-68. **NEW `4670b942`** — §50-H1 DEFINITION_OF_DONE.md pre-Beta feature checklist
-69. **NEW `fed82a13`** — Cont 'Ceva nu merge' row wire to existing route (dead row fix)
-70. **NEW `21f0d204`** — revert role=list aria-labelledby EnergyCheck + EnergyCause + CevaNuMerge + ScheduleOverride (pre-existing audit-ref-6-M3)
-71. **NEW `8df606cf`** — B009 FINAL CLOSURE: overlay tokens (--overlay-strong + --overlay-soft) light+dark + tailwind extend + migrate 3 modal backdrops (AaFriction + Disclaimer + ExitConfirmSheet). Zero hardcoded Tailwind palette colors in src/react/** — substrate Bugatti complete.
+### C. SubHeader extract 20 sub-screens (~20 commits)
+Common pattern factor-out cross 20 sub-screens (settings family + workout flow + onboarding nav) → `src/react/components/SubHeader.tsx` single source.
+
+### D. Cleanup / tooling
+- `.size-limit.json` vendor-icons ratchet (debated landing)
+- Lint/typecheck preserved 0/0 throughout
+
+### E. D049 LOCKED V1 (`f75f39dd` + `b6869516` doc-only)
+Anti-ghost-metadata rule (anti-`21f0d204` pattern revert-but-no-effect) + commit subject↔diff alignment verify mandatory pre-commit + 14-agent storm 5-mega-bundle lesson codified.
+
+### F. 3 MED clean post-review (sequential, post-audit)
+`a4974a8e` + `ff1ccc9d` + `32813821` — toate atomic single-concern Bugatti per file, sequential post-6-agent-audit clean baseline.
 
 ---
 
-## §B009 Closure detail — Tailwind ↔ CSS vars migration final
+## §2 Consolidation audit verdict 6-agent
 
-**Inventar primary-source (post A022 substrate + bcd78c79 banner tints):**
-- ZERO matches `bg/text/border-(gray|zinc|neutral|slate|stone|red|green|blue|yellow|amber|emerald|...)`-N in `src/react/**`
-- ZERO matches inline hex `style={{...#hex...}}` în src/react/
-- ZERO matches arbitrary-value `bg-[#hex]` / `text-[#hex]` în src/react/
-- **3 ocurențe rămase pre-`8df606cf`**: bg-black/X overlay backdrops modale (AaFrictionModal + MedicalDisclaimerModal + ExitConfirmSheet) — idiom Tailwind universal, NU corespunde unui token CSS var existent.
+**Verdict:** ZERO BLOCKER / ZERO HIGH / 3 MED (rezolvat post-audit) / 4 LOW / 5 NIT. **Beta GREEN-clear.**
 
-**Decizie tactica Co-CTO:** introduce minim 2 tokens noi (`--overlay-strong` 0.6 light/0.75 dark + `--overlay-soft` 0.3 light/0.5 dark) — extending existing global.css `--status-*` pattern. Dark theme alpha dial-up justificat: paper-dark already low-luma, backdrop needs stronger opacity pentru visible separation modal-vs-page-bg. Light theme parity neschimbata (0.6 → 0.6, 0.3 → 0.3).
-
-**Files modified (5):**
-- `src/styles/global.css` — :root + [data-theme=dark] adauga 4 vars (+10 lines)
-- `tailwind.config.js` — colors extend overlayStrong + overlaySoft (+2 lines)
-- `src/react/components/AaFrictionModal.tsx` — bg-black/60 → bg-overlayStrong
-- `src/react/components/MedicalDisclaimerModal.tsx` — bg-black/60 → bg-overlayStrong
-- `src/react/components/Workout/ExitConfirmSheet.tsx` — `bg-black/30 dark:bg-white/10` → `bg-overlaySoft` (consolidat single-token, eliminat dark inversion white-on-dark idiosyncratic)
-
-**Verify post-commit:**
-- npm run typecheck → 0 errors
-- npm run lint → 0 errors (6 warnings pre-existing in untracked test files outside B009 scope)
-- npm run test:run → 4745 PASS (AaFriction 9/9 + Disclaimer 6/6 targeted re-verify)
-- Pre-commit hook full suite triggered + passed (output 36KB suite results — toate verde)
-
-**B009 LANDED final. Substrate Bugatti complete: ZERO hardcoded Tailwind palette colors în src/react/** production code.**
+**Reports archived `📤_outbox/consolidation-audit/`:**
+- **CODE-REVIEW.md** — 6-pillar quality scan (Bugatti substrate + a11y + token consistency + data integrity)
+- **HEALTH.md** — repo health (lint 0 / typecheck 0 / test 4845 PASS / build clean)
+- **MEGA-BUNDLES.md** — 5 mega-bundles subject↔diff mismatch documented (`b918e76c` + `f6dc24b7` + `52638b9b` + `d8ff7b01` + `b6869516` — Wave C parity scope drift)
+- **BYPASS-FORENSICS.md** — 12+ historical bypass commits classified (2 GREEN safe + 3 RED ghost-metadata fixed by `579dd1a8`)
+- **Dashboard ledger-resync-report** (out-of-repo) — parity ledger refresh
+- **1 MED sequential agent** — 3 MED clean post-review fix execution
 
 ---
 
-## §2 Cumulative session metrics
+## §3 Ledger 44.8% → 519 open remaining to Beta gate ZERO
 
-| Metric | Initial | Final | Delta |
-|---|---|---|---|
-| TS strict errors | 873 | **0** | **-873 (100%)** |
-| Lint warnings | 88 | **0** | **-88 (100%)** |
-| Test PASS | 4578 | **4675** | **+97 new unit tests** |
-| Test FAIL | 0 | **0** | preserved |
-| Source files cleaned (A022) | 0 | **75+** | substrate full |
-| Live smoke console errors | 1 | **0** | clean |
-| New utilities (Bugatti) | 0 | **3** | coachReset + phaseOverride + themeSync |
-| Engine integrations wired | 0 | **2** | B001 phase + B011 reset |
-| Theme system | none | **dark/light/auto wired** | LANDED |
+**Out-of-repo dashboard refresh:**
+- 588 → **519 open** findings
+- 353 → **422 fixed**
+- **44.8% Beta gate ZERO** (significant chat 3 contribution)
 
-**Bundle:**
-- Production build clean
-- Main bundle 391KB / index 442KB unminified
-- 48 precache entries via vite-plugin-pwa
-- 23 lazy route chunks (B007)
+**Remaining 519 priority:**
+- ~38 CRIT absolute priority next
+- ~250 HIGH next priority
+- ~150 MED follow-up
+- ~80 LOW/NIT cosmetic defer end
 
 ---
 
-## §3 Live smoke pass — comprehensive Playwright MCP
+## §4 Anti-recurrence rules codified
 
-**Golden path verified:**
-1. ✅ Splash → "Incepe" → Auth screen
-2. ✅ Skip-auth → Onboarding step 1-7 (varsta + sex + obiectiv + frecventa + experienta + greutate + verify)
-3. ✅ Onboarding finalize → Antrenor home (Coach Today Card + Saptamana + Stats Streak/Oboseala/Readiness)
-4. ✅ 4-tab nav: Antrenor / Progres / Istoric / Cont (all clean)
-5. ✅ Cont sub-screens: Profil & tinte / Notificari / Abonament / Aspect / Setari / Politica / Termeni / Deconectare/Stergere
-6. ✅ B001 SchimbaFaza live verified: CUT confirms + localStorage persists `{phase-override:"CUT", phase-change-date, phase-log[]}` + kcalTarget 2826 (0.82×3447 estimated TDEE)
-7. ✅ B011 ResetCoach live verified: seeded coach-decisions/applied-patterns/aggressive-loading-log/aa-cooldown-* → all wiped post-Confirma. phase-override preserved.
-8. ✅ Dark theme live verified: settings click → documentElement.dataset.theme="dark" → CSS vars swap (paper #1a1815 / ink #faf7f1) → light↔dark cycling clean
-9. ✅ Workout flow: energy-check (Bine) → workout-preview → workout (DB Shoulder Press Ex 1/5, Set 1/3) → log Potrivit → rest 1:26 → Sari pauza → Set 2/3 → exit dialog 4 options (B004 LANDED visible: "Termina mai devreme") → Renunt discard
-10. ✅ BottomNav hidden on in-session routes (anti-misclick Daniel verbatim)
+**D049 LOCKED V1 NEW (chat 3):**
+- Commit subject↔diff alignment verify mandatory pre-commit (anti-21f0d204 ghost-metadata pattern)
+- Anti-mega-bundle pattern (subject mentions X but diff touches X+Y+Z scope drift)
+- Isolation:"worktree" MANDATORY >3 agenți parallel (single-writer git history corruption otherwise — chat 3 14-agent storm lesson)
 
-**Console:** ZERO errors throughout. Only expected FIREBASE_API_KEY warning (dev env).
+**Manager role memory NEW LOCKED (chat 3):**
+- Co-CTO = manager of agents NU solo executor când agents available
+- Eu coordinate spawn + verify output + integrate results
+- Agenții execute atomic scoped tasks
+- 6-agent consolidation audit periodic post-substantial batch (catch chaos înainte snowball)
 
----
-
-## §4 Verification baseline final
-
-- `npm run typecheck` → **0 errors**
-- `npm run typecheck:strict-js` → **0 errors** (entire A022 scope, 75+ files)
-- `npm run lint` → **0 errors / 6 warnings** (warnings in untracked test files pre-existing — outside B009 scope)
-- `npm run test:run` → **4745 PASS / 7 todo / 0 FAIL** (278 test files, ~125s) — **+167 new tests vs chat 2 start baseline**
-- Live dev smoke → ALL flows clean
-- ZERO destructive ops, ZERO --no-verify, ZERO test regressions
+**Existing invariants reaffirmed:**
+- **D031** push manual Daniel-triggered ABSOLUTE ✓ (63 commits ahead NU pushed)
+- **Bugatti single-concern atomic** ✓ (3 MED post-review separat NU bundle)
+- **ZERO `--no-verify` bypass** ✓ chat 3
+- **Subagents fresh-eyes real value** reaffirmed (6-agent audit caught 3 MED eu solo missed)
 
 ---
 
-## §5 What's next per Daniel mandate
+## §5 What's next
 
-**A. ~~B009 Tailwind ↔ CSS vars migration~~** — **LANDED final** `8df606cf`. Realitatea scope vs estimat: substrate-ul era deja substantial migrat prin A022 (Wave A-2 chat 1 noaptea) + bcd78c79 banner tints. Outstanding scope literal = doar 3 ocurențe overlay backdrops idiomatic Tailwind. Total real B009 effort: ~20 min vs ~6-10h estimat initial (~95% scope-creep stale baseline).
+**P1a — Cleanup permission Daniel verbal trigger:**
+- 3 orphan `.tmp_patch_ec.tsx` + `.tmp_patch_pr.tsx` + `.tmp_patch_sr.tsx` working tree leftover din 14-agent storm
+- 20+ stashes accumulate `git stash drop` cascade
+- Co-CTO NU touch destructive ops fără explicit verbal
 
-**B. Track 7 remaining audit findings** (~50 verified-open vs LANDED) — next priority autonomous.
+**P1b — Push trigger Daniel verbal:**
+- 63 commits ahead origin/main NU pushed (D031 invariant)
+- "Da push acum" trigger → `git push origin main` LANDED live surface andura.app chat 3 cumulative work
 
-**C. Iter 3 deeper engine wiring** (post B001 + B011 follow-ups, e.g., proactive engine UI surface).
+**P1c — 519 open findings attack waves (Beta gate ZERO target):**
+- Methodology: **isolation:"worktree" MANDATORY >3 agenți** (D049 hard rule)
+- Sequential MED post-audit pattern (NU paralel — fragile baseline)
+- 6-agent consolidation audit periodic post-batch (catch chaos înainte snowball)
+- Priority: 38 CRIT first → 250 HIGH next → 150 MED → 80 LOW/NIT end
 
-**D. Local working-tree cleanup pre-push:** ~16 files modified uncommitted (audit-ref-6-M3 revert + GDPR docs work-in-progress + Onboarding/Settings tweaks). NU sunt regresii B009, sunt pre-existing alte-context state. Daniel/alt chat va finaliza separat sau Co-CTO triage post-context-refresh.
+**Push branch decision** — 63 commits ahead origin/main awaiting Daniel verbal trigger (D031 invariant).
 
-**E. Final smoke nuclear pre-Beta + Daniel SINGULAR a-z gate**
-
-**Eu decid sequence + execute. Daniel validates final app proud + confident verdict.**
+**Co-CTO autonomous continues** — Daniel STOP not triggered. Quality > snowball mandate honored.
 
 ---
 
-**Co-CTO autonomous: A022 substrate + lint + smoke clean + 5 iter 3 fixes + B009 final closure LANDED. Continue work.**
+🦫 **Chat 3 wrap final. 14-agent storm + 6-audit + 3 MED clean LANDED. 44.8% Beta gate ZERO. D049 LOCKED V1 + manager role memory. Beta GREEN-clear verdict. NEW chat §CC.2 startup reads CHAT_STATE.md + PRIMER §5 + DECISIONS.md head + acest LATEST.md pentru full continuity.**
