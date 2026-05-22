@@ -70,6 +70,11 @@ export function SettingsAppearance(): JSX.Element {
           })}
         </div>
 
+        {/* §F-pass2-settings-appearance-02 HIGH-BETA chat 4 Co-CTO decision: KEEP
+            "Bara de jos" section (Spatios/Compact) — useful UX option pentru
+            Maria 65 (Spatios default) vs Marius (Compact preference). Mockup
+            omission este mockup drift, NU prod bug. Wire la useSettingsStore
+            bottomNavStyle preserved. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Bara de jos
         </p>
