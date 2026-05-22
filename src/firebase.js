@@ -1,4 +1,19 @@
 // ══ FIREBASE SYNC ═══════════════════════════════════════════
+//
+// §25-H3 audit fix — Idempotency keys NA for Firebase RTDB REST architecture.
+// Rationale: RTDB PUT to a path is idempotent by design (last-write-wins per
+// Firebase docs, the path itself is the unique resource identifier — repeating
+// the same PUT does not duplicate writes, only overwrites the same node with
+// the same payload). DELETE is similarly path-based + idempotent. POST (push)
+// auto-generates push IDs server-side, so client retry could in theory create
+// dupes — but Andura sync flow uses PUT exclusively (syncToFirebase writes
+// `users/{uid}` as whole-tree update, syncFromFirebase reads only, dataCleanup
+// uses DELETE). Identity Toolkit endpoints (signInWithIdp, sendOobCode) accept
+// no idempotency-key header per their OpenAPI spec, and any retry produces
+// the same outcome (existing token returned OR another magic link mailed —
+// throttled separately by lastMagicLinkSent §4-H3). No client-side idempotency
+// keys required.
+//
 import { DB } from './db.js';
 import { toast } from './ui/ui.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
