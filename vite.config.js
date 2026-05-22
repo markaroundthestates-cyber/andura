@@ -40,7 +40,7 @@ export default defineConfig({
         short_name: 'Andura',
         description: 'Coach AI personal pentru sala — facut in Romania',
         theme_color: '#c8412e',
-        background_color: '#f5f0e8',
+        background_color: '#faf7f1',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
