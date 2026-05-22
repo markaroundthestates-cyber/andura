@@ -50,15 +50,27 @@ export const GROUP_LABELS_RO_BIG11 = {
 };
 
 /**
- * DECAY_RATE_HOURS_BIG11 — Differential decay rates per cluster (hours)
- * Per ADR_ENGINE_REFACTOR §3.2 research-backed:
- *   - Schoenfeld et al. 2016 MPS meta-analysis (MPS elevated 24-48h post-training)
- *   - Helms et al. 2018 Renaissance Periodization MEV/MAV/MRV framework
- *   - Schoenfeld 2017 (large compound ~48-72h DOMS + neural fatigue)
+ * DECAY_RATE_HOURS_BIG11 — REFERENCE TABLE ONLY, NU runtime SoT.
  *
- * Published reference table — consumed downstream for cross-engine reference
- * + future enhancement. Existing recovery algorithm (threshold on
- * getMuscleState aggregate) preserved invariant per §4.1 ZERO mutation.
+ * Published cluster-level recovery rates (Schoenfeld et al. 2016 MPS
+ * meta-analysis, Helms et al. 2018 Renaissance Periodization MEV/MAV/MRV,
+ * Schoenfeld 2017 DOMS + neural fatigue) per ADR_ENGINE_REFACTOR §3.2.
+ *
+ * Runtime decay algorithm (getMuscleState in muscleMap.js) uses
+ * MUSCLE_HEADS[head].recoveryHours (head-level granularity, intentionally
+ * different values). Examples of intentional divergence:
+ *   - picioare-quads cluster=60h here vs MUSCLE_HEADS.quad=96h (runtime)
+ *   - gambe cluster=24h here vs MUSCLE_HEADS.calf=48h (runtime)
+ *   - biceps cluster=24h here vs MUSCLE_HEADS.bi_long=48h (runtime)
+ *
+ * DO NOT modify this constant expecting runtime impact — has ZERO effect on
+ * actual recovery calculations. For runtime decay changes edit MUSCLE_HEADS
+ * in muscleMap.js. Kept here for: future-enhancement reference, audit
+ * citation traceability, cross-engine cluster-level documentation.
+ *
+ * Per ENGINE-DEEPER-AUDIT chat 5 MED dual-SoT finding (2026-05-23).
+ * §4.1 ZERO mutation invariant preserved — existing recovery algorithm
+ * (threshold on getMuscleState aggregate) untouched.
  */
 export const DECAY_RATE_HOURS_BIG11 = {
   piept:                  48,

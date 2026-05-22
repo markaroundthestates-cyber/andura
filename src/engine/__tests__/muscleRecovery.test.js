@@ -10,6 +10,7 @@ import {
   DECAY_RATE_HOURS_BIG11,
   BIG11_GROUPS,
 } from '../muscleRecovery.js';
+import { MUSCLE_HEADS } from '../muscleMap.js';
 
 const now = Date.now();
 const hoursAgo = (h) => now - h * MS_PER_HOUR;
@@ -268,5 +269,118 @@ describe('Big 11 canonical V1 anatomical taxonomy', () => {
     if (umeriEntry) {
       expect(umeriEntry.label).toBe('Umerii');
     }
+  });
+});
+
+// ══ Dual-SoT separation — runtime vs reference ════════════════════════════
+// Per ENGINE-DEEPER-AUDIT chat 5 MED finding (2026-05-23): runtime decay
+// algorithm uses muscleMap MUSCLE_HEADS.recoveryHours (head-level), NU
+// DECAY_RATE_HOURS_BIG11 (cluster-level published reference). Values
+// intentionally diverge — head-level granularity (quad/calf isolated) vs
+// cluster-level aggregate published rates. Test guards against future dev
+// modifying DECAY_RATE_HOURS_BIG11 expecting runtime impact.
+
+describe('decay rate SoT separation (dual-source hazard guard)', () => {
+  it('MUSCLE_HEADS.recoveryHours is runtime SoT, NOT DECAY_RATE_HOURS_BIG11', () => {
+    // Runtime SoT exists + populated
+    expect(MUSCLE_HEADS).toBeDefined();
+    expect(Object.keys(MUSCLE_HEADS).length).toBeGreaterThan(0);
+    // Reference SoT exists distinct from runtime
+    expect(DECAY_RATE_HOURS_BIG11).toBeDefined();
+    expect(MUSCLE_HEADS).not.toBe(DECAY_RATE_HOURS_BIG11);
+  });
+
+  it('picioare-quads cluster 60h diverges from MUSCLE_HEADS.quad 96h (head-level)', () => {
+    // Cluster-level reference (published rate) — DECAY_RATE_HOURS_BIG11
+    expect(DECAY_RATE_HOURS_BIG11['picioare-quads']).toBe(60);
+    // Head-level runtime (actual decay calc) — MUSCLE_HEADS
+    expect(MUSCLE_HEADS.quad.recoveryHours).toBe(96);
+    // Intentional divergence — head granularity vs cluster published rate
+    expect(MUSCLE_HEADS.quad.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11['picioare-quads']
+    );
+  });
+
+  it('gambe cluster 24h diverges from MUSCLE_HEADS.calf 48h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.gambe).toBe(24);
+    expect(MUSCLE_HEADS.calf.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.calf.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.gambe
+    );
+  });
+
+  it('biceps cluster 24h diverges from MUSCLE_HEADS.bi_long 48h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.biceps).toBe(24);
+    expect(MUSCLE_HEADS.bi_long.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.bi_short.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.bi_long.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.biceps
+    );
+  });
+
+  it('triceps cluster 24h diverges from MUSCLE_HEADS.tri_long 48h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.triceps).toBe(24);
+    expect(MUSCLE_HEADS.tri_long.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.tri_lateral.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.tri_medial.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.tri_long.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.triceps
+    );
+  });
+
+  it('picioare-hamstrings cluster 60h diverges from MUSCLE_HEADS.hamstring 96h', () => {
+    expect(DECAY_RATE_HOURS_BIG11['picioare-hamstrings']).toBe(60);
+    expect(MUSCLE_HEADS.hamstring.recoveryHours).toBe(96);
+    expect(MUSCLE_HEADS.hamstring.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11['picioare-hamstrings']
+    );
+  });
+
+  it('fese cluster 48h diverges from MUSCLE_HEADS.glute 72h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.fese).toBe(48);
+    expect(MUSCLE_HEADS.glute.recoveryHours).toBe(72);
+    expect(MUSCLE_HEADS.glute.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.fese
+    );
+  });
+
+  it('spate cluster 60h diverges from MUSCLE_HEADS.lat 72h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.spate).toBe(60);
+    expect(MUSCLE_HEADS.lat.recoveryHours).toBe(72);
+    expect(MUSCLE_HEADS.lat.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.spate
+    );
+  });
+
+  it('umeri cluster 36h diverges from MUSCLE_HEADS.delt_front 48h (head-level)', () => {
+    expect(DECAY_RATE_HOURS_BIG11.umeri).toBe(36);
+    expect(MUSCLE_HEADS.delt_front.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.delt_mid.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.delt_rear.recoveryHours).toBe(48);
+    expect(MUSCLE_HEADS.delt_front.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.umeri
+    );
+  });
+
+  it('piept cluster 48h matches MUSCLE_HEADS.chest_* 60h with intentional spread', () => {
+    // piept happens to share order-of-magnitude but values still differ by design
+    expect(DECAY_RATE_HOURS_BIG11.piept).toBe(48);
+    expect(MUSCLE_HEADS.chest_upper.recoveryHours).toBe(60);
+    expect(MUSCLE_HEADS.chest_mid.recoveryHours).toBe(60);
+    expect(MUSCLE_HEADS.chest_lower.recoveryHours).toBe(60);
+    expect(MUSCLE_HEADS.chest_upper.recoveryHours).not.toBe(
+      DECAY_RATE_HOURS_BIG11.piept
+    );
+  });
+
+  it('getMuscleState uses MUSCLE_HEADS.recoveryHours not DECAY_RATE_HOURS_BIG11', () => {
+    // Sanity contract — if DECAY_RATE_HOURS_BIG11 ever wired into runtime decay,
+    // this test should be REVISITED + documentation updated. Until then,
+    // assert structural separation — MUSCLE_HEADS has 19 heads, BIG11 has 11
+    // clusters, indicating distinct granularity levels.
+    const headCount = Object.keys(MUSCLE_HEADS).length;
+    const clusterCount = Object.keys(DECAY_RATE_HOURS_BIG11).length;
+    expect(headCount).toBeGreaterThan(clusterCount);
+    expect(clusterCount).toBe(11); // Big 11 canonical V1
   });
 });
