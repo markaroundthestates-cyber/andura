@@ -210,14 +210,18 @@ interface FieldRowProps {
 }
 
 function FieldRow({ label, isLast, children }: FieldRowProps): JSX.Element {
+  // §6-M3 audit fix — use real <label> for implicit input association
+  // (WCAG 1.3.1 + 4.1.2). <label> wrapping <input>/<select> binds them
+  // programmatically without needing htmlFor/id pair. Screen readers
+  // announce the field name when focus lands on the input.
   return (
-    <div
+    <label
       className={`flex items-center justify-between px-4 py-3 ${
         isLast ? '' : 'border-b border-line'
       }`}
     >
       <span className="text-sm text-ink">{label}</span>
       {children}
-    </div>
+    </label>
   );
 }
