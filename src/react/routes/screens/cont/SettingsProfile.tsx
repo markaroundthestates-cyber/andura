@@ -97,6 +97,8 @@ export function SettingsProfile(): JSX.Element {
               type="number"
               min={16}
               max={100}
+              inputMode="numeric"
+              autoComplete="off"
               value={draft.age ?? ''}
               onChange={(e) => update('age', e.target.value ? Number(e.target.value) : null)}
               data-testid="profile-age-input"
@@ -109,6 +111,8 @@ export function SettingsProfile(): JSX.Element {
               min={30}
               max={250}
               step={0.1}
+              inputMode="decimal"
+              autoComplete="off"
               value={draft.weight ?? ''}
               onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
               data-testid="profile-weight-input"

@@ -111,6 +111,9 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         placeholder="ex. 32"
         min={16}
         max={99}
+        inputMode="numeric"
+        autoComplete="off"
+        enterKeyHint="next"
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
@@ -238,6 +241,9 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         step="0.1"
         min={30}
         max={250}
+        inputMode="decimal"
+        autoComplete="off"
+        enterKeyHint="done"
         data-testid="onb-weight-input"
         className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
       />
