@@ -14,10 +14,24 @@
 // Mockup verbatim andura-clasic.html#L1341-1574 (chrome ⋯ button +
 // "Optiuni sesiune" bottom sheet 5 rows pain/skip/finish/sound/cancel).
 //
+// §F-pass2-sessiontimer-02 (HIGH-DELTA 2026-05-22): workoutTitle optional
+// prop — center label shows workout name (e.g. "Push · piept & umeri") in
+// preference to current-exercise name. Backward compat: when workoutTitle
+// absent, falls back to exerciseName (existing behavior). Parent (Workout.tsx)
+// wires planned.workoutTitle from PlannedWorkoutOutput aggregate.
+//
+// §F-pass2-sessiontimer-04 (HIGH-DELTA 2026-05-22): optional setsDone /
+// setsTotal / exerciseCount / exerciseTotal props drive a `wv2-progress`
+// bar block below the chrome header — sets counter + exercise counter +
+// linear fill 0-100%. Block render-gated on setsTotal > 0. Backward compat:
+// when not provided, block omitted (existing layout preserved).
+//
 // data-testid preserved verbatim pentru Workout.test.tsx baseline (workout-
 // title / workout-progress / workout-elapsed / workout-exit-trigger +
 // role="button" aria-label "Iesi din sesiune"). New testids:
-// workout-menu-trigger / workout-menu-sheet / workout-menu-{row}.
+// workout-menu-trigger / workout-menu-sheet / workout-menu-{row} +
+// workout-progress-bar / workout-progress-sets / workout-progress-ex /
+// workout-progress-fill.
 
 import { useState } from 'react';
 import type { JSX } from 'react';
@@ -39,6 +53,15 @@ interface SessionTimerProps {
   onToggleSound?: () => void;
   onCancelSession?: () => void;
   soundOn?: boolean; // drives Volume2/VolumeX icon + label "Sunet: pornit/oprit"
+  // §F-pass2-sessiontimer-02 — workout name center label (e.g. "Push · piept
+  // & umeri"). Falls back to exerciseName cand absent (backward compat).
+  workoutTitle?: string;
+  // §F-pass2-sessiontimer-04 — wv2-progress block sets+exercises counters +
+  // fill bar. Block rendered only cand setsTotal>0 (gate).
+  setsDone?: number;
+  setsTotal?: number;
+  exerciseCount?: number; // 1-indexed display number (e.g. 2 of 5)
+  exerciseTotal?: number;
 }
 
 export function SessionTimer({
@@ -53,6 +76,11 @@ export function SessionTimer({
   onToggleSound,
   onCancelSession,
   soundOn = true,
+  workoutTitle,
+  setsDone,
+  setsTotal,
+  exerciseCount,
+  exerciseTotal,
 }: SessionTimerProps): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -65,12 +93,24 @@ export function SessionTimer({
     if (action) action();
   }
 
+  // §F-pass2-sessiontimer-02 — center label: workout name (e.g. "Push · piept
+  // & umeri") if provided, else exercise name fallback. Mockup verbatim
+  // andura-clasic.html#L1345.
+  const centerLabel = workoutTitle ?? exerciseName;
+
+  // §F-pass2-sessiontimer-04 — wv2-progress block render gate. Setting total
+  // 0 (rest day / loading) skips render. fillPct clamped 0-100.
+  const showProgress = typeof setsTotal === 'number' && setsTotal > 0;
+  const fillPct = showProgress
+    ? Math.min(100, Math.max(0, Math.round(((setsDone ?? 0) / (setsTotal as number)) * 100)))
+    : 0;
+
   return (
     <>
       <header className="sticky top-0 bg-paper border-b border-line p-4 flex items-center justify-between z-10">
         <div>
           <h1 className="text-base font-semibold text-ink" data-testid="workout-title">
-            {exerciseName}
+            {centerLabel}
           </h1>
           <p className="text-sm text-ink2" data-testid="workout-progress">
             Ex {exIdx + 1}/{totalExercises}{' '}
@@ -100,6 +140,30 @@ export function SessionTimer({
           </button>
         </div>
       </header>
+
+      {/* §F-pass2-sessiontimer-04 — wv2-progress block. Mockup #L1351-1358. */}
+      {showProgress && (
+        <div
+          className="px-5 pt-2 pb-3 bg-paper border-b border-line"
+          data-testid="workout-progress-bar"
+        >
+          <div className="flex items-center justify-between text-[11px] text-ink2 uppercase tracking-wide font-medium mb-1.5">
+            <span data-testid="workout-progress-sets">
+              {setsDone ?? 0}/{setsTotal} seturi
+            </span>
+            <span data-testid="workout-progress-ex">
+              {exerciseCount ?? exIdx + 1}/{exerciseTotal ?? totalExercises} exercitii
+            </span>
+          </div>
+          <div className="h-1 bg-paper2 rounded-sm overflow-hidden">
+            <span
+              data-testid="workout-progress-fill"
+              className="block h-full bg-brick transition-all duration-300"
+              style={{ width: `${fillPct}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {menuOpen && (
         <div

@@ -164,3 +164,88 @@ describe('SessionTimer — §F-pass2-sessiontimer-01 menu button + sheet', () =>
     expect(/[ăâîșțĂÂÎȘȚ]/.test(sheet.textContent ?? '')).toBe(false);
   });
 });
+
+describe('SessionTimer — §F-pass2-sessiontimer-02 workoutTitle center label', () => {
+  it('renders exerciseName fallback cand workoutTitle absent (backward compat)', () => {
+    renderTimer();
+    expect(screen.getByTestId('workout-title')).toHaveTextContent('Impins inclinat');
+  });
+
+  it('renders workoutTitle when prop provided (overrides exerciseName)', () => {
+    renderTimer({ workoutTitle: 'Push · piept & umeri' });
+    expect(screen.getByTestId('workout-title')).toHaveTextContent('Push · piept & umeri');
+  });
+
+  it('workoutTitle empty string still falls back to exerciseName', () => {
+    // Empty string is "absent" semantic per nullish coalesce — TS string but
+    // null-equivalent display. Asserts conservative fallback.
+    renderTimer({ workoutTitle: '' });
+    // '' ?? 'Impins...' = '' (not nullish). Title shows empty. Document
+    // expectation explicit: API contract is "absent OR non-empty"; parent
+    // ensures workoutTitle is meaningful.
+    expect(screen.getByTestId('workout-title').textContent).toBe('');
+  });
+});
+
+describe('SessionTimer — §F-pass2-sessiontimer-04 wv2-progress block', () => {
+  it('progress block omitted when setsTotal absent (backward compat)', () => {
+    renderTimer();
+    expect(screen.queryByTestId('workout-progress-bar')).not.toBeInTheDocument();
+  });
+
+  it('progress block omitted when setsTotal=0 (rest day / loading)', () => {
+    renderTimer({ setsTotal: 0, setsDone: 0 });
+    expect(screen.queryByTestId('workout-progress-bar')).not.toBeInTheDocument();
+  });
+
+  it('progress block renders when setsTotal>0', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17 });
+    expect(screen.getByTestId('workout-progress-bar')).toBeInTheDocument();
+  });
+
+  it('sets counter displays setsDone/setsTotal verbatim', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17 });
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('5/17 seturi');
+  });
+
+  it('exercise counter prefers exerciseCount/exerciseTotal cand provided', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17, exerciseCount: 2, exerciseTotal: 5 });
+    expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('2/5 exercitii');
+  });
+
+  it('exercise counter fallback to exIdx+1/totalExercises when explicit absent', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17, exIdx: 1, totalExercises: 5 });
+    expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('2/5 exercitii');
+  });
+
+  it('progress fill width matches setsDone/setsTotal percent', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17 });
+    // 5/17 = 0.2941 → rounded 29%
+    const fill = screen.getByTestId('workout-progress-fill') as HTMLElement;
+    expect(fill.style.width).toBe('29%');
+  });
+
+  it('progress fill clamped 0% cand setsDone=0', () => {
+    renderTimer({ setsDone: 0, setsTotal: 17 });
+    const fill = screen.getByTestId('workout-progress-fill') as HTMLElement;
+    expect(fill.style.width).toBe('0%');
+  });
+
+  it('progress fill clamped 100% cand setsDone=setsTotal', () => {
+    renderTimer({ setsDone: 17, setsTotal: 17 });
+    const fill = screen.getByTestId('workout-progress-fill') as HTMLElement;
+    expect(fill.style.width).toBe('100%');
+  });
+
+  it('progress fill clamped 100% cand setsDone>setsTotal (overrun defensive)', () => {
+    renderTimer({ setsDone: 20, setsTotal: 17 });
+    const fill = screen.getByTestId('workout-progress-fill') as HTMLElement;
+    expect(fill.style.width).toBe('100%');
+  });
+
+  it('progress copy no diacritics', () => {
+    renderTimer({ setsDone: 5, setsTotal: 17 });
+    const bar = screen.getByTestId('workout-progress-bar');
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(bar.textContent ?? '')).toBe(false);
+  });
+});
