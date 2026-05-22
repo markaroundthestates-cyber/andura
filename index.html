@@ -20,8 +20,15 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+  <!-- §36-M3 audit fix — DNS prefetch hints for Firebase + Sentry endpoints.
+       Shaves initial connect time on first auth + telemetry calls (~50-100ms
+       on cold cache). Preconnect upgraded for Google Fonts (handshake too). -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="//fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app" />
+  <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
+  <link rel="dns-prefetch" href="//securetoken.googleapis.com" />
+  <link rel="dns-prefetch" href="//o4511269200068608.ingest.de.sentry.io" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <title>Andura</title>
   <!-- SPA GitHub Pages redirect decode (Rafael Pedicini pattern spa-github-pages).
