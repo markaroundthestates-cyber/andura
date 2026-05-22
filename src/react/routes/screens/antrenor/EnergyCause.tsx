@@ -10,6 +10,13 @@
 // pattern shared cu Auth/CevaNuMerge per mockup andura-clasic.html L901
 // .sub-header (back-btn + h2 title sticky top). SubHeader created HIGH-ALFA.
 //
+// HIGH-GAMMA §F-energy-cause-02: Lucide icons per cause — mockup
+// andura-clasic.html L905-908 verbatim icon mapping (wind/moon/alert-circle/
+// more-horizontal). Co-CTO §F-energy-cause-01 decision KEEP prod 6 granular
+// (finer signal pentru engine vs mockup 4 — Marius gap reglaj). Icon
+// vocabulary extended la 6 cu Utensils/Dumbbell/Thermometer pentru
+// Mancat/Antrenament/Boala mockup-absent.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -18,17 +25,31 @@
 
 import type { JSX } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  Moon,
+  Utensils,
+  Wind,
+  Dumbbell,
+  Thermometer,
+  MoreHorizontal,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import type { EnergyLevel, IntensityMod } from './EnergyCheck';
 
-const CAUSE_OPTIONS: readonly string[] = [
-  'Dormit putin',
-  'Mancat putin',
-  'Stres mental',
-  'Antrenament greu ieri',
-  'Boala sau racit',
-  'Altceva',
+interface CauseOption {
+  label: string;
+  Icon: LucideIcon;
+}
+
+const CAUSE_OPTIONS: readonly CauseOption[] = [
+  { label: 'Dormit putin', Icon: Moon },
+  { label: 'Mancat putin', Icon: Utensils },
+  { label: 'Stres mental', Icon: Wind },
+  { label: 'Antrenament greu ieri', Icon: Dumbbell },
+  { label: 'Boala sau racit', Icon: Thermometer },
+  { label: 'Altceva', Icon: MoreHorizontal },
 ];
 
 interface EnergyCauseLocationState {
@@ -70,15 +91,16 @@ export function EnergyCause(): JSX.Element {
           Optional. Coach ajusteaza in functie de cauza.
         </p>
         <div className="grid grid-cols-2 gap-3">
-          {CAUSE_OPTIONS.map((cause) => (
+          {CAUSE_OPTIONS.map(({ label, Icon }) => (
             <button
-              key={cause}
+              key={label}
               type="button"
-              onClick={() => handleSelect(cause)}
-              data-cause={cause}
-              className="cause-btn p-4 rounded-xl border border-lineStrong bg-paper2 text-ink hover:bg-paper transition"
+              onClick={() => handleSelect(label)}
+              data-cause={label}
+              className="cause-btn flex items-center gap-3 p-4 rounded-xl border border-lineStrong bg-paper2 text-ink hover:bg-paper transition text-left"
             >
-              <span className="text-sm font-medium">{cause}</span>
+              <Icon className="w-4 h-4 text-ink2 flex-shrink-0" aria-hidden="true" />
+              <span className="text-sm font-medium">{label}</span>
             </button>
           ))}
         </div>
