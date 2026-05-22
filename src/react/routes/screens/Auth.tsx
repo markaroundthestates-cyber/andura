@@ -8,7 +8,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, FlaskConical, ExternalLink } from 'lucide-react';
+import { Mail, FlaskConical, ExternalLink, ArrowLeft } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
 import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
@@ -84,9 +84,21 @@ export function Auth(): JSX.Element {
 
   return (
     <section
-      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-6"
+      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-6 relative"
       data-testid="auth"
     >
+      {/* §F-auth-05 HIGH-ALFA — back button to splash per mockup L423-424.
+          Inline anchor (NOT SubHeader sticky pattern) matches the centered
+          Auth body layout; SubHeader reserved for Settings/Confirms screens. */}
+      <button
+        type="button"
+        onClick={() => navigate('/')}
+        aria-label="Inapoi"
+        data-testid="auth-back-splash"
+        className="absolute top-4 left-4 p-2 text-ink2"
+      >
+        <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+      </button>
       <div className="w-full max-w-sm">
         {webViewSource && (
           <div
