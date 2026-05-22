@@ -125,6 +125,15 @@ export function TDEEStrip(): JSX.Element {
           )}
         </div>
       </div>
+      {/* §F-pass2-tdeestrip-03 (MED Wave 7 2026-05-23) — italic explainer copy
+          per mockup L1713 verbatim. Sets user expectation: engine auto-calculates,
+          logging optional for calibration. */}
+      <p
+        className="text-xs text-ink3 mt-2.5 leading-snug italic"
+        data-testid="tdee-explainer"
+      >
+        Engine calculeaza auto. Loghezi optional pentru calibrare reala.
+      </p>
     </section>
   );
 }

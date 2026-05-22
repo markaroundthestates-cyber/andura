@@ -46,4 +46,13 @@ describe('TDEEStrip', () => {
     const { container } = render(<TDEEStrip />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  it('§F-pass2-tdeestrip-03 italic explainer copy present (mockup L1713)', () => {
+    render(<TDEEStrip />);
+    const explainer = screen.getByTestId('tdee-explainer');
+    expect(explainer).toBeInTheDocument();
+    expect(explainer.textContent).toMatch(/Engine calculeaza auto/);
+    expect(explainer.textContent).toMatch(/Loghezi optional pentru calibrare reala/);
+    expect(explainer.className).toMatch(/italic/);
+  });
 });
