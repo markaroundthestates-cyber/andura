@@ -2,9 +2,11 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+import * as engineWrappers from '../../../lib/engineWrappers';
+import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 
 // Phase 6 task_02 Option C: async getTodayWorkout returns Promise<null>.
 // WorkoutPreview useEffect awaits — initial render shows fallback values
@@ -146,5 +148,151 @@ describe('WorkoutPreview — Romanian no-diacritics rule (D-LEGACY-064)', () => 
     const { container } = renderPreview({ intensityMod: 'minus' });
     const text = container.textContent ?? '';
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});
+
+// ══ F-workout-preview T5 — Rich content (hero / warmup / exercise list) ════
+//
+// Mock engine output helpers — emulate getTodayWorkout returning either
+// engine PlannedWorkoutOutput (rich aggregate) or null (fallback).
+const mockedGetTodayWorkout = vi.mocked(engineWrappers.getTodayWorkout);
+
+function makeWorkout(
+  overrides: Partial<PlannedWorkoutOutput> = {},
+): PlannedWorkoutOutput {
+  return {
+    workoutTitle: 'Pull (spate si biceps)',
+    exerciseCount: 3,
+    estimatedDuration: 48,
+    intensityMod: 'normal',
+    exercises: [
+      { id: 'ex-1', name: 'Trageri verticale', sets: 4, targetReps: 8, targetKg: 60, restSec: 120 },
+      { id: 'ex-2', name: 'Ramat cu bara',      sets: 3, targetReps: 10, targetKg: 50, restSec: 90 },
+      { id: 'ex-3', name: 'Curl haltera',       sets: 3, targetReps: 12, targetKg: 12, restSec: 60 },
+    ],
+    volumeKg: 8400,
+    warmup: { line: 'Incalzire ~7 min', durationMin: 7 },
+    ...overrides,
+  };
+}
+
+describe('WorkoutPreview — hero card (T2)', () => {
+  beforeEach(() => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+  });
+
+  it('renders hero card with eyebrow "Sesiunea de azi"', () => {
+    renderPreview();
+    const hero = screen.getByTestId('preview-hero');
+    expect(hero).toBeInTheDocument();
+    expect(hero.textContent).toMatch(/Sesiunea de azi/i);
+  });
+
+  it('hero exposes role=region with aria-label "Sesiunea de azi"', () => {
+    renderPreview();
+    expect(
+      screen.getByRole('region', { name: /Sesiunea de azi/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('hero renders 3 chips: duration + exercise-count + volume', () => {
+    renderPreview({ intensityMod: 'normal' });
+    expect(screen.getByTestId('preview-duration')).toBeInTheDocument();
+    expect(screen.getByTestId('preview-exercise-count')).toBeInTheDocument();
+    expect(screen.getByTestId('preview-volume')).toBeInTheDocument();
+  });
+
+  it('exercise-count chip renders fallback 5 exercitii cand workout null', () => {
+    renderPreview();
+    expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/5\s*exercitii/i);
+  });
+
+  it('exercise-count chip wires engine workout.exerciseCount', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({ exerciseCount: 7 }));
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/7\s*exercitii/i);
+    });
+  });
+});
+
+describe('WorkoutPreview — warmup row (T3)', () => {
+  beforeEach(() => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+  });
+
+  it('warmup row NOT rendered cand workout null (no engine data)', () => {
+    renderPreview();
+    expect(screen.queryByTestId('preview-warmup-row')).not.toBeInTheDocument();
+  });
+
+  it('warmup row NOT rendered cand workout.warmup is null', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({ warmup: null }));
+    renderPreview();
+    // Wait for engine settle; row still absent
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-hero')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('preview-warmup-row')).not.toBeInTheDocument();
+  });
+
+  it('warmup row renders engine ui_label cand workout.warmup non-null', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      warmup: { line: 'Incalzire ~8 min', durationMin: 8 },
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const row = screen.getByTestId('preview-warmup-row');
+      expect(row).toBeInTheDocument();
+      expect(row.textContent).toMatch(/Incalzire\s*~?8\s*min/i);
+    });
+  });
+
+  it('warmup row exposes role=region with aria-label "Incalzire azi"', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout());
+    renderPreview();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('region', { name: /Incalzire azi/i }),
+      ).toBeInTheDocument();
+    });
+  });
+});
+
+describe('WorkoutPreview — exercise list (T4)', () => {
+  beforeEach(() => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+  });
+
+  it('renders fallback 5 exercise rows cand workout null', () => {
+    renderPreview();
+    const rows = screen.getAllByTestId('preview-exercise-row');
+    expect(rows).toHaveLength(5);
+  });
+
+  it('fallback row 1 shows mockup-parity "Impins inclinat cu gantere"', () => {
+    renderPreview();
+    const list = screen.getByTestId('preview-exercise-list');
+    expect(list.textContent).toMatch(/Impins inclinat cu gantere/i);
+  });
+
+  it('renders engine exercises cand workout.exercises non-empty (3 rows)', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout());
+    renderPreview();
+    await waitFor(() => {
+      const rows = screen.getAllByTestId('preview-exercise-row');
+      expect(rows).toHaveLength(3);
+    });
+  });
+
+  it('engine row renders exercise name + sets/reps/kg detail', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout());
+    renderPreview();
+    await waitFor(() => {
+      const list = screen.getByTestId('preview-exercise-list');
+      expect(list.textContent).toMatch(/Trageri verticale/i);
+      expect(list.textContent).toMatch(/4\s*seturi/i);
+      expect(list.textContent).toMatch(/60\s*kg/i);
+    });
   });
 });
