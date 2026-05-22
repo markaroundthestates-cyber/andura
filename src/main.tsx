@@ -9,14 +9,31 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './react/routes/router';
 import { initSentry, captureException } from './util/sentry.js';
 import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
+import { useSettingsStore } from './react/stores/settingsStore';
 import './styles/global.css';
 
 // Apply persisted theme synchronously pre-mount to prevent FOUC flash.
 applyInitialTheme();
 
-// §4-C1 audit fix — Sentry production observability wired into React entry.
-// initSentry no-ops on localhost/test; safe to call unconditionally here.
-initSentry();
+// §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
+// GDPR Art. 7 consent gate. Sentry init pornit DOAR daca user opt-in
+// explicit via SettingsPrivacy "Telemetrie anonima" toggle (default FALSE
+// per settingsStore §51). Pre-fix unconditional call ignora consent =
+// drift fata de PrivacyPolicy claim "Implicit oprit" (SettingsPrivacy
+// L81 + L120). Subscribe lazy-init pe toggle false->true pentru a porni
+// Sentry mid-session dupa opt-in. NOTE: NU putem un-init Sentry runtime
+// (Sentry SDK limit) — daca user revoca post-init, scope ramane active
+// duration session, dar NO new envelopes envoit post-toggle false
+// inseamna user trebuie reload pentru full disable (TODO future:
+// Sentry.close()).
+if (useSettingsStore.getState().telemetryOptIn) {
+  initSentry();
+}
+useSettingsStore.subscribe((state, prevState) => {
+  if (state.telemetryOptIn && !prevState.telemetryOptIn) {
+    initSentry();
+  }
+});
 
 // §13-H3 + §13-H4 audit fix — global async + sync error handlers route to
 // Sentry. Catches errors escaping React ErrorBoundary tree (third-party
