@@ -8,7 +8,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scale, Ruler } from 'lucide-react';
+import { Scale, Ruler, History } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
@@ -49,18 +49,23 @@ export function Progres(): JSX.Element {
       </button>
 
       {lastWeight && (
-        <div
-          className="p-4 mb-4 bg-paper2 border border-line rounded-xl"
+        <button
+          type="button"
+          onClick={() => navigate(gotoPath('weight-log-list'))}
           data-testid="last-weight-card"
+          className="w-full text-left p-4 mb-4 bg-paper2 border border-line rounded-xl flex items-center gap-3"
         >
-          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-            Ultima cantarire
-          </p>
-          <p className="text-2xl font-bold text-ink mt-1 font-mono">
-            {lastWeight.kg} kg
-          </p>
-          <p className="text-sm text-ink2">{lastWeight.date}</p>
-        </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">
+              Ultima cantarire
+            </p>
+            <p className="text-2xl font-bold text-ink mt-1 font-mono">
+              {lastWeight.kg} kg
+            </p>
+            <p className="text-sm text-ink2">{lastWeight.date}</p>
+          </div>
+          <History className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
+        </button>
       )}
 
       {/* Body data CTA */}

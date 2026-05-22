@@ -36,7 +36,7 @@ export type GotoScreen =
   | 'schedule-override'
   | 'post-rpe' | 'post-summary'
   // Phase 4 Progres sub-screens (task_16)
-  | 'log-weight' | 'body-data'
+  | 'log-weight' | 'body-data' | 'weight-log-list'
   // Phase 6 Cont sub-screens (task_09-17)
   | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
   | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
@@ -88,7 +88,7 @@ export function gotoPath(screen: GotoScreen): string {
   }
 
   // Phase 4 Progres sub-screens (task_16, nested sub /app/progres)
-  if (screen === 'log-weight' || screen === 'body-data') {
+  if (screen === 'log-weight' || screen === 'body-data' || screen === 'weight-log-list') {
     return `/app/progres/${screen}`;
   }
 

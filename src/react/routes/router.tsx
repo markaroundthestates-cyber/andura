@@ -44,6 +44,7 @@ const FinishEarlyConfirm = lazy(() => import('./screens/antrenor/FinishEarlyConf
 // §B007 lazy — Progres sub-screens (2 routes)
 const LogWeight = lazy(() => import('./screens/progres/LogWeight').then((m) => ({ default: m.LogWeight })));
 const BodyData = lazy(() => import('./screens/progres/BodyData').then((m) => ({ default: m.BodyData })));
+const WeightLogList = lazy(() => import('./screens/progres/WeightLogList').then((m) => ({ default: m.WeightLogList })));
 
 // §B007 lazy — Istoric detail (1 route, sessionId)
 const IstoricDetail = lazy(() => import('./screens/istoric/IstoricDetail').then((m) => ({ default: m.IstoricDetail })));
@@ -134,6 +135,7 @@ export const router = createBrowserRouter([
           { index: true, element: <Progres /> },
           { path: 'log-weight', element: <LazyRoute><LogWeight /></LazyRoute> },
           { path: 'body-data', element: <LazyRoute><BodyData /></LazyRoute> },
+          { path: 'weight-log-list', element: <LazyRoute><WeightLogList /></LazyRoute> },
         ],
       },
       {
