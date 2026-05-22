@@ -99,14 +99,11 @@ jobs:
           echo "═══════════════════════════════════════════════════════════"
           set -e
 
-      # Daniel iter 8 alternative: `npm install` instead of `npm ci` to drop
-      # lockfile strictness (diagnostic — restore `npm ci` post root cause found).
-      # --no-audit + --no-fund + --no-progress: silence noise
-      # --prefer-offline: use cache where possible (we removed setup-node cache,
-      #   so falls back to fresh download — still slower than ci but more lenient)
-      # --legacy-peer-deps: handled by .npmrc, redundant flag for explicit
-      - name: 'npm install (lenient — iter 8 diagnostic alternative la npm ci)'
-        run: npm install --no-audit --no-fund --no-progress --legacy-peer-deps
+      # §33-C3 audit fix — restored npm ci deterministic install (was `npm install`
+      # iter 8 diagnostic). deploy.yml uses same npm ci --ignore-scripts pattern
+      # (line 79). HUSKY=0 + --ignore-scripts bypasses husky prepare git 128.
+      - name: 'npm ci (deterministic from lockfile)'
+        run: npm ci --no-audit --no-fund --no-progress --ignore-scripts
 
       - name: TypeScript Type Check
         run: npm run typecheck
