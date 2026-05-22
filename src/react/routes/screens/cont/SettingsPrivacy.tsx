@@ -115,7 +115,7 @@ export function SettingsPrivacy(): JSX.Element {
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Drepturile tale GDPR</h3>
           <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
             <li><strong>Acces + portabilitate:</strong> exporta toate datele JSON din Cont &gt; Descarca date</li>
-            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare &amp; stergere &gt; Sterge cont</li>
+            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare &amp; stergere &gt; Sterge contul</li>
             <li><strong>Rectificare:</strong> editeaza profilul direct in Cont &gt; Profil</li>
             <li><strong>Opozitie telemetrie:</strong> toggle telemetrie anonima sus (default OFF)</li>
             <li><strong>Limitare procesare:</strong> dezactiveaza backup Firebase (deconectare cont)</li>
@@ -127,7 +127,7 @@ export function SettingsPrivacy(): JSX.Element {
             Backup-ul Firebase RTDB (optional) pastreaza copie pana stergi contul.
             ZERO copie pe servere terte. <strong>Stergerea de pe device =
             imediata.</strong> Datele Firebase RTDB (daca esti autentificat)
-            se sterg automat la &quot;Sterge cont&quot; (best-effort GDPR Art. 17,
+            se sterg automat la &quot;Sterge contul&quot; (best-effort GDPR Art. 17,
             propagare server &lt;5 min). Probleme la stergere remote? Scrie la
             <a href="mailto:privacy@andura.app" className="text-brick underline">{' '}privacy@andura.app</a>{' '}
             (raspuns &lt;72h).

@@ -4,6 +4,8 @@
 
 **Ultima actualizare:** 2 mai 2026 (post Sprint 4.x Batch B Auth Migration + Memory Paradox hotfix + Foundation 1/2/4 + SafetyBanner wiring)
 **Total findings:** 135 unice (+5 din Sprint 4.x Batch A audit 2026-05-02)
+
+> **SSOT pointer (2026-05-23 chat 5):** Historical 135-finding catalog pre-audit-nuclear-2026-05-19. Current SoT = out-of-repo dashboard ledger (53.98% closure 168+ commits ahead origin/main) + `📤_outbox/audit-nuclear-2026-05-19/` 698-finding catalog + `📤_outbox/mockup-vs-prod-parity-2026-05-20/` 263-finding catalog. NU refresh full content — preserve historical baseline.
 **Surse istorice (consolidate, accesibile prin git history):** AUDIT_GENERAL_23APR (83) + AUDIT_COACH_JS_24APR (42) + QA live 24 apr seară (3 noi) + QA_MANUAL_25APR_POSTFIX (2 noi) + OPUS_NUCLEAR_AUDIT_25APR (7 arhitecturale) + E2E pre-existing scan 27 apr (2 noi). Source files removed in vault cleanup 2026-04-30 (info catalogată aici + DECISION_LOG; recuperare prin `git log --all --full-history -- "02-audit/<file>"`).
 
 ---

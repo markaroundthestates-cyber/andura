@@ -78,14 +78,14 @@ export function SettingsDanger(): JSX.Element {
           >
             <Trash2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Sterge cont</p>
+              <p className="text-sm font-medium">Sterge contul</p>
               <p className="text-xs text-ink2">Datele + cont sterse permanent.</p>
             </div>
           </button>
         </div>
 
         <p className="text-xs text-ink2 leading-snug">
-          §B039/D-6 GDPR Art. 17: la &quot;Sterge cont&quot;, datele locale +
+          §B039/D-6 GDPR Art. 17: la &quot;Sterge contul&quot;, datele locale +
           backup Firebase RTDB se sterg automat (best-effort, propagare
           server &lt;5 min).
         </p>

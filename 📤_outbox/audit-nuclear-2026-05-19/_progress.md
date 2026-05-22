@@ -5,6 +5,8 @@
 **Model:** Opus MAX thinking budget
 **Procedure:** D029 LOCKED V1 — log-only ZERO auto-fix ZERO commit, multi-noapte CONTINUOUS NEÎNTRERUPT auto-loop §1→§50 + secondary→quinary
 
+> **SSOT pointer (2026-05-23 chat 5):** Audit-nuclear pass 5/5 closed 2026-05-19 — historical baseline. Current ledger state = 53.98% closure 168+ commits ahead origin/main (dashboard ledger SoT). Cross-ref `📤_outbox/recon/LEDGER_SYNC_chat4_report.md` + DECISIONS.md `latest_entry`.
+
 ## Pass tracker
 
 - [x] PRIMARY pass §1-§50 — COMPLETE (50/50)
