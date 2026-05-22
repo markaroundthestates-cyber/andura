@@ -11,6 +11,7 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
+import { gotoPath } from '../../../lib/navigation';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -74,13 +75,24 @@ export function Istoric(): JSX.Element {
       {/* F-istoric-03 signature: 90-day ratings strip + categorical aggregate */}
       <RatingsStrip90Day />
 
-      {/* Phase 6 task_23: PR Wall full list */}
+      {/* Phase 6 task_23: PR Wall full list. PAR-001 Wave 2e — "Vezi toate"
+          link drill la /app/istoric/pr-wall standalone screen. */}
       {prHistory.length > 0 && (
         <section className="mb-6" data-testid="istoric-pr-wall">
-          <h2 className="text-base font-semibold text-ink mb-2 flex items-center gap-2">
-            <Trophy className="w-4 h-4" aria-hidden="true" />
-            Recorduri ({prHistory.length})
-          </h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-base font-semibold text-ink flex items-center gap-2">
+              <Trophy className="w-4 h-4" aria-hidden="true" />
+              Recorduri ({prHistory.length})
+            </h2>
+            <button
+              type="button"
+              onClick={() => navigate(gotoPath('pr-wall'))}
+              data-testid="istoric-pr-wall-see-all"
+              className="text-sm font-semibold text-brick"
+            >
+              Vezi toate
+            </button>
+          </div>
           <ul className="flex flex-col gap-2">
             {prHistory.map((pr, idx) => (
               <li

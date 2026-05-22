@@ -8,7 +8,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scale, Ruler, History } from 'lucide-react';
+import { Scale, Ruler, History, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
@@ -79,6 +79,18 @@ export function Progres(): JSX.Element {
             <p className="text-sm text-ink2">{lastWeight.date}</p>
           </div>
           <History className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
+        </button>
+      )}
+      {/* PAR-004 Wave 2e — Weight Timeline drill-down (chart view). */}
+      {lastWeight && (
+        <button
+          type="button"
+          onClick={() => navigate(gotoPath('weight-timeline'))}
+          data-testid="cta-weight-timeline"
+          className="w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
+        >
+          <LineChart className="w-5 h-5" aria-hidden="true" />
+          Vezi trend greutate
         </button>
       )}
       <button
