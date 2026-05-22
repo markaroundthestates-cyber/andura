@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 11 audit polish post-PUSH (§6-H6 BottomNav tap + §11-C1 DST tests + §28-H6/M2 Privacy + §36-M3 DNS prefetch + §15-H3 WebView + §17-M3 Sentry PII + §6-M3 FieldRow label/aria + §6-M3 radiogroup wrappers x4 + §24-H4 README setup). Co-CTO autonomous Daniel "de ce ne oprim" pushback honored — continuous work cycle.
-**Last LANDED:** §24-H4 README local dev setup section + env vars inventory (`98488486`).
-**Branch:** main, **16 commits ahead origin/main** — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 15 audit polish post-PUSH (§6-H6 BottomNav tap + §11-C1 DST tests + §28-H6/M2 Privacy + §36-M3 DNS prefetch + §15-H3 WebView + §17-M3 Sentry PII + §6-M3 a11y x6 + §24-H4 README setup + §28-C4 breach response + §28-H3 DSR + §50-H1 DoD + Cont row wire). Co-CTO autonomous Daniel "de ce ne oprim" pushback honored — continuous work cycle.
+**Last LANDED:** Cont 'Ceva nu merge' row wire (`fed82a13`).
+**Branch:** main, **21 commits ahead origin/main** — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -70,6 +70,11 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 62. **NEW `fcf523b4`** — §6-M3 radiogroup wrappers phase + frequency + day picker
 63. **NEW `298c5e6c`** — §6-M3 radiogroup wrappers Appearance theme/nav + Prefs units/weekstart
 64. **NEW `98488486`** — §24-H4 README local dev setup section + env vars inventory
+65. **NEW `f685c47a`** — LATEST + CHAT_STATE sync 11 audit closures cycle
+66. **NEW `ee4b23d8`** — §28-C4 DATA_BREACH_RESPONSE.md runbook GDPR Art. 33/34 (CRIT closure)
+67. **NEW `7af097e6`** — §28-H3 DSR_HANDLER.md runbook GDPR Art. 15-22 manual path
+68. **NEW `4670b942`** — §50-H1 DEFINITION_OF_DONE.md pre-Beta feature checklist
+69. **NEW `fed82a13`** — Cont 'Ceva nu merge' row wire to existing route (dead row fix)
 
 ---
 
