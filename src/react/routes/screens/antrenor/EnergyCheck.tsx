@@ -48,8 +48,8 @@ export function EnergyCheck(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper" data-testid="energy-check">
-      <h1 className="text-2xl font-semibold text-ink mb-6">Cum te simti azi?</h1>
-      <div className="flex flex-col gap-3" role="list">
+      <h1 id="energy-check-label" className="text-2xl font-semibold text-ink mb-6">Cum te simti azi?</h1>
+      <div className="flex flex-col gap-3" role="list" aria-labelledby="energy-check-label">
         {ENERGY_OPTIONS.map((opt) => (
           <button
             key={opt.level}
