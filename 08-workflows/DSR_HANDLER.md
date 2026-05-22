@@ -21,7 +21,7 @@ ticket creation needed. Document this when responding to confused users:
 | **Right to erasure** (Art. 17) | Cont > Deconectare & stergere > Sterge cont | Tier 0 + Tier 1 IDB + Tier 2 RTDB DELETE (§B039 LANDED) |
 | **Right to portability** (Art. 20) | Cont > Descarca date | JSON export §28-M4 |
 | **Right to object** telemetry (Art. 21) | Cont > Confidentialitate > toggle | Telemetry opt-in default OFF |
-| **Right to restrict processing** (Art. 18) | Cont > Deconectare | Logout suspends backup sync |
+| **Right to restrict processing** (Art. 18) | Cont > Deconectare | Logout opreste autentificarea -> backup-urile noi nu se mai pot scrie (Firebase REST require auth token). Datele existente locale pe device raman intacte. |
 
 Response template (RO):
 > Buna! Pentru cererea ta poti folosi direct in aplicatie:
@@ -132,5 +132,6 @@ Subsequent requests within same year:
 - In-app implementations:
   - `src/react/routes/screens/cont/SettingsExport.tsx` (Access + Portability)
   - `src/react/routes/screens/cont/DeleteAccountConfirm.tsx` (Erasure)
-  - `src/react/routes/screens/cont/SettingsPrivacy.tsx` (Object/Restrict)
+  - `src/react/routes/screens/cont/SettingsPrivacy.tsx` (Object — telemetry toggle Art. 21)
+  - `src/react/routes/screens/cont/LogoutConfirm.tsx` (Restrict — Art. 18 via auth revocation)
 - `08-workflows/DATA_BREACH_RESPONSE.md` — breach notify path (related)

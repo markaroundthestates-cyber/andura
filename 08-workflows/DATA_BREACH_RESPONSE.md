@@ -52,11 +52,11 @@ Capture in `BREACH_LOG_YYYY-MM-DD.md` (gitignored — sensitive):
 - Likely cause (config drift, dependency CVE, leaked secret, etc.)
 - Active vs contained (still ongoing exfiltration vs already stopped)
 
-Severity classification (drives notification path):
-- **LOW** — single user, NU sensitive data, contained immediately → log only
-- **MED** — single user OR aggregate non-sensitive, ANSPDCP notify only
-- **HIGH** — multiple users OR sensitive (body weight, measurements) → ANSPDCP + user notify
-- **CRITICAL** — credentials leaked OR special category data → ANSPDCP + ALL users + emergency rotation
+Severity classification (drives notification path per Art. 33/34 risk presumption):
+- **LOW** — near-miss / no PII access / contained pre-exposure (e.g., rule misconfig caught by audit before any read) → log only + internal review. Art. 33 derogation "unlikely to result in a risk to rights and freedoms" applies.
+- **MED** — single user data accessed unauthorized → ANSPDCP notify (Art. 33) + user notify (Art. 34 high-risk presumption when an identified data subject is directly affected). Art. 33 derogation does NOT apply when an actual user's data was exposed.
+- **HIGH** — multiple users OR sensitive data (body weight, body measurements Art. 9 adjacency) → ANSPDCP notify (Art. 33) + ALL affected users notify (Art. 34) + emergency containment.
+- **CRITICAL** — credentials leaked OR special category data (Art. 9 health) OR ongoing exfiltration → emergency rotation + ANSPDCP notify within 24h + ALL users notify + public security notice on andura.app/security-notice.
 
 ### Phase 3 — Contain (T+0 to T+24h)
 
@@ -69,7 +69,7 @@ Action chain by cause:
 4. Notify users to sign back in
 
 **Firebase rules misconfig:**
-1. Edit `firebase.rules` to lock down → `firebase deploy --only database`
+1. Edit `database.rules.json` (RTDB) and/or `firestore.rules` (Firestore) to lock down → `firebase deploy --only database` (RTDB) or `firebase deploy --only firestore:rules` (Firestore)
 2. Audit access logs Firebase Console > Database > Usage
 3. Snapshot leaked data scope from logs
 
@@ -101,10 +101,12 @@ ANSPDCP notification form (Romanian DPA):
 If full info NOT available at 72h → submit phased: initial notice + follow-up
 within reasonable delay (Art. 33(4)).
 
-### Phase 5 — Notify users (T+0 to T+72h for HIGH+CRITICAL)
+### Phase 5 — Notify users (T+0 to T+72h for MED+HIGH+CRITICAL)
 
 GDPR Art. 34: notify affected users WITHOUT undue delay when breach likely to
-result in HIGH RISK to rights and freedoms.
+result in HIGH RISK to rights and freedoms. Andura policy: presume high risk
+whenever an identified user's data was exposed (MED and above), absent
+strong evidence to the contrary.
 
 Notification mechanism options (in order of preference):
 1. **In-app banner** — UpdatePrompt-style modal next time user opens Andura
@@ -143,7 +145,7 @@ Before opening Beta to 50 testers:
 - [x] CSP active (script-src/style-src/connect-src restrictive) §4-C3 LANDED
 - [x] HTTPS-only (GH Pages enforces) §4-C9 LANDED
 - [x] Auth fresh-gate destructive ops (re-auth required) §A016 LANDED
-- [ ] Firebase RTDB rules deployed (firebase.rules NOT auto-deployed by deploy.yml)
+- [ ] Firebase RTDB rules deployed (`database.rules.json` NOT auto-deployed by deploy.yml; Firestore rules `firestore.rules` same gap)
 - [ ] `npm audit` CI gate (currently manual)
 - [ ] ANSPDCP submission template pre-drafted
 - [ ] User notification email template pre-drafted RO

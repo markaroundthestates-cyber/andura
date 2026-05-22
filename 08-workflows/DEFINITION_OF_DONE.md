@@ -60,7 +60,7 @@
 - [ ] Destructive ops require fresh auth (`isAuthFresh()` check §A016).
 - [ ] PII never logged to console.log/info/warn/error (Sentry beforeSend §17-M3 strips uid/email defensively).
 - [ ] No `dangerouslySetInnerHTML` without explicit XSS justification.
-- [ ] Firebase RTDB rules updated if new data path written (firebase.rules).
+- [ ] Firebase RTDB rules updated if new data path written (`database.rules.json`; Firestore equivalent `firestore.rules`).
 
 ## §7 Performance
 
@@ -125,8 +125,8 @@ For specific feature types, ADDITIONAL items apply:
 - [ ] Golden-master parity test legacy ↔ orchestrated zero-behavior-change strict
 
 **New Firebase write path:**
-- [ ] `firebase.rules` updated locking down read/write
-- [ ] Deploy rules: `firebase deploy --only database`
+- [ ] `database.rules.json` (RTDB) and/or `firestore.rules` (Firestore) updated locking down read/write
+- [ ] Deploy rules: `firebase deploy --only database` (RTDB) and/or `firebase deploy --only firestore:rules` (Firestore)
 - [ ] Tier 2 retention policy documented (sync 26-M3 backup retention)
 
 ---
