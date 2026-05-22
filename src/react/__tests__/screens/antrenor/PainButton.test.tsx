@@ -30,11 +30,23 @@ function renderPainButton() {
 }
 
 describe('PainButton — render', () => {
-  it('renders heading "Unde te doare?"', () => {
+  it('renders SubHeader title "Ma doare ceva" (mockup L1013 verbatim)', () => {
     renderPainButton();
     expect(
-      screen.getByRole('heading', { name: /Unde te doare/i, level: 1 })
+      screen.getByRole('heading', { name: /Ma doare ceva/i, level: 1 })
     ).toBeInTheDocument();
+  });
+
+  it('renders body sub-heading "Unde te doare?" (h2)', () => {
+    renderPainButton();
+    expect(
+      screen.getByRole('heading', { name: /Unde te doare/i, level: 2 })
+    ).toBeInTheDocument();
+  });
+
+  it('renders SubHeader back button (PAR-009)', () => {
+    renderPainButton();
+    expect(screen.getByTestId('pain-button-back')).toBeInTheDocument();
   });
 
   it('renders helper copy "Coach evita exercitii"', () => {

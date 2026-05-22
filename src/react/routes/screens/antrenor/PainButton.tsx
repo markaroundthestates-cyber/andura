@@ -17,6 +17,10 @@
 // Mandatory safety cues — NOT paternalistic per anti-paternalism D-LEGACY-061
 // (informative, NU prescriptive).
 //
+// PAR-009 SubHeader consume — mockup andura-clasic.html L1013 sub-header
+// verbatim title "Ma doare ceva" sticky top + back-btn. Body h1 "Unde te doare?"
+// regresat la h2 (single h1 SubHeader pattern parity CevaNuMerge/EnergyCause).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-035 Pain/Discomfort Button CDL override
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
@@ -29,6 +33,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
+import { SubHeader } from '../../../components/SubHeader';
 
 export type BodyRegion =
   | 'gat'
@@ -99,11 +104,21 @@ export function PainButton(): JSX.Element {
     navigate(gotoPath('antrenor'));
   }
 
+  function handleBack(): void {
+    navigate(-1);
+  }
+
   const continueDisabled = region === null;
 
   return (
-    <section className="p-6 bg-paper" data-testid="pain-button">
-      <h1 className="text-2xl font-semibold text-ink mb-2">Unde te doare?</h1>
+    <section className="bg-paper min-h-screen flex flex-col" data-testid="pain-button">
+      <SubHeader
+        title="Ma doare ceva"
+        onBack={handleBack}
+        testIdBack="pain-button-back"
+      />
+      <div className="p-6 flex-1">
+      <h2 className="text-2xl font-semibold text-ink mb-2">Unde te doare?</h2>
       <p className="text-base text-ink2 mb-6">Coach evita exercitii care irita zona.</p>
 
       <div className="grid grid-cols-2 gap-3 mb-6" role="list" aria-label="Zone corp">
@@ -179,6 +194,7 @@ export function PainButton(): JSX.Element {
       >
         Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.
       </p>
+      </div>
     </section>
   );
 }
