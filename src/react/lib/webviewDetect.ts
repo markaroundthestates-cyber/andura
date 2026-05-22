@@ -1,11 +1,12 @@
 // ══ WEBVIEW DETECTION — §15-H3 audit fix (cross-browser compatibility) ════
-// Detects in-app browsers (Facebook, Instagram, Twitter, TikTok, Snapchat)
+// Detects in-app browsers (Facebook, Instagram, Twitter/X, TikTok, Snapchat)
 // where Magic Link auth flow breaks: link click → opens default browser
 // (Chrome) → localStorage scope different → user lands fresh w/o auth state.
 //
 // Strategy: surface banner on Auth screen asking user to open in Chrome.
 // Detection patterns sourced from real-world userAgent samples (Meta WebView
-// includes FBAN/FBAV, Instagram includes Instagram/, Twitter TwitterAndroid).
+// includes FBAN/FBAV, Instagram includes Instagram/, Twitter/X TwitterAndroid
+// or com.twitter.android package, modern X app uses XApp/ token).
 //
 // Implementation note: NOT exhaustive — userAgent strings can be spoofed.
 // Best-effort detection for the most common scenarios. False negatives OK
@@ -23,7 +24,10 @@ export function detectWebView(userAgent: string = typeof navigator !== 'undefine
   const ua = userAgent.toLowerCase();
   if (ua.includes('fban/') || ua.includes('fbav/') || ua.includes('fb_iab')) return 'facebook';
   if (ua.includes('instagram')) return 'instagram';
-  if (ua.includes('twitter') && ua.includes('android')) return 'twitter';
+  // §MED-2 audit fix — anchor twitter token (avoid Chrome UA with random
+  // "twitter" word + "android" false positive); add X rebrand patterns:
+  // com.twitter.android package id + modern XApp/ token.
+  if (ua.includes('twitterandroid') || ua.includes('com.twitter.android') || ua.includes('xapp/')) return 'twitter';
   if (ua.includes('musical_ly') || ua.includes('tiktok')) return 'tiktok';
   if (ua.includes('snapchat')) return 'snapchat';
   return null;
