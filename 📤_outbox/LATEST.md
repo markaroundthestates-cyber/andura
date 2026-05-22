@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 10 LANDED iter 3 fixes from smoke findings + audit nuclear closures (§28-M4 GDPR Art. 20 + §28-H5 GDPR Art. 8 + B009 dark theme status tints). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** gitignore smoke screenshots + .planning + .playwright-mcp artifacts (`282a4aef`).
-**Branch:** main, **58 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback (a11y inputs/aria-live/modal focus/OfflineBanner/InstallPrompt PWA/Loguri greutate/Gigel adherence gate/pluralRo). Co-CTO autonomous ZERO interruption.
+**Last LANDED:** pluralRo Romanian plural rules + PostSummary streak wire (`3b40301e`).
+**Branch:** main, **71 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
