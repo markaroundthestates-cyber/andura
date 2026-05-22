@@ -29,6 +29,21 @@ const CAL_MONTHS = [
 
 const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
 
+const MONTHS_GENITIV = [
+  'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie',
+  'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie',
+] as const;
+
+// Rating word for aria-label: aligns with mockup tier semantics (no diacritics
+// per D-LEGACY-064). null fallback "antrenament prezent" (no rating known).
+function ratingWord(rating: SessionRating | null, hasSession: boolean): string {
+  if (!hasSession) return 'zi libera';
+  if (rating === 'usor') return 'antrenament usor';
+  if (rating === 'greu') return 'antrenament greu';
+  if (rating === 'potrivit') return 'antrenament potrivit';
+  return 'antrenament prezent';
+}
+
 // Maps derived rating to tier class. Null (no rating in legacy session) →
 // l2 normal fallback per spec §2.2 (matches mockup heat[]=2 placeholder).
 function ratingToTierClass(rating: SessionRating | null): string {
@@ -145,6 +160,7 @@ export function CalendarHeatmap(): JSX.Element {
           let textCls = 'text-ink3';
           if (tier === 'l1') textCls = 'text-[#2f5b34]'; // 7.92:1 AAA
           else if (tier === 'l2' || tier === 'l3') textCls = 'text-ink font-semibold';
+          const ariaLabel = `${cell.day} ${MONTHS_GENITIV[calM]} ${calY}, ${ratingWord(cell.rating, hasSession)}`;
           return (
             <div
               key={`day-${cell.day}`}
@@ -152,12 +168,22 @@ export function CalendarHeatmap(): JSX.Element {
               data-testid={`cal-cell-${cell.day}`}
               data-tier={tier}
               data-date={cell.key}
+              aria-label={ariaLabel}
               className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls}`}
             >
               {cell.day}
             </div>
           );
         })}
+      </div>
+
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        data-testid="cal-month-announce"
+      >
+        Calendarul afiseaza {CAL_MONTHS[calM]} {calY}
       </div>
 
       <div
