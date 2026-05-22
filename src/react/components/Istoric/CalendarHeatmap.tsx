@@ -64,6 +64,7 @@ export function CalendarHeatmap(): JSX.Element {
   const [calY, setCalY] = useState(today.getFullYear());
   const [calM, setCalM] = useState(today.getMonth()); // 0-indexed
   const sessionsByDate = useSessionsByDate(calY, calM);
+  const todayKey = localKey(today.getTime());
 
   const navMonth = (delta: -1 | 1): void => {
     let m = calM + delta;
@@ -160,7 +161,12 @@ export function CalendarHeatmap(): JSX.Element {
           let textCls = 'text-ink3';
           if (tier === 'l1') textCls = 'text-[#2f5b34]'; // 7.92:1 AAA
           else if (tier === 'l2' || tier === 'l3') textCls = 'text-ink font-semibold';
-          const ariaLabel = `${cell.day} ${MONTHS_GENITIV[calM]} ${calY}, ${ratingWord(cell.rating, hasSession)}`;
+          const isToday = cell.key === todayKey;
+          const isFuture = cell.key !== null && cell.key > todayKey;
+          const todayCls = isToday ? 'ring-2 ring-brick' : '';
+          const futureCls = isFuture ? 'opacity-50' : '';
+          const labelSuffix = isToday ? ' (azi)' : isFuture ? ', data viitoare' : '';
+          const ariaLabel = `${cell.day} ${MONTHS_GENITIV[calM]} ${calY}, ${ratingWord(cell.rating, hasSession)}${labelSuffix}`;
           return (
             <div
               key={`day-${cell.day}`}
@@ -168,8 +174,11 @@ export function CalendarHeatmap(): JSX.Element {
               data-testid={`cal-cell-${cell.day}`}
               data-tier={tier}
               data-date={cell.key}
+              data-today={isToday ? 'true' : undefined}
+              data-future={isFuture ? 'true' : undefined}
               aria-label={ariaLabel}
-              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls}`}
+              aria-disabled={isFuture ? 'true' : undefined}
+              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls} ${todayCls} ${futureCls}`.trim()}
             >
               {cell.day}
             </div>

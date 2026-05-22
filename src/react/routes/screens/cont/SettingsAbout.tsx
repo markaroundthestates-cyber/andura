@@ -4,8 +4,9 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 const APP_VERSION = 'v1.0.0';
 const APP_BUILD = '2026.05.22';
@@ -15,18 +16,11 @@ export function SettingsAbout(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-about">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-about-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Despre Andura</h1>
-      </header>
+      <SubHeader
+        title="Despre Andura"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-about-back"
+      />
 
       <div className="flex-1 overflow-y-auto px-6 py-6 text-center">
         <div className="w-20 h-20 rounded-2xl bg-ink text-paper flex items-center justify-center text-3xl font-bold mx-auto mb-5 tracking-tight">

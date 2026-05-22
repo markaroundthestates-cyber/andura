@@ -98,6 +98,10 @@ export function Workout(): JSX.Element {
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
   const [elapsed, setElapsed] = useState(0);
   const [restCountdown, setRestCountdown] = useState(0);
+  // F-pass2-restoverlay-01 — initial rest total seconds at moment rest phase
+  // entered (drives SVGCountdownRing progress ratio). Reset alongside
+  // setRestCountdown so ring shows full track at rest entry.
+  const [restInitialSec, setRestInitialSec] = useState(0);
   const [exitSheetOpen, setExitSheetOpen] = useState(false);
   // Phase 4 task_14: LOCK 9 aaFrictionModal state — pending rating cand
   // triggered + reason pentru REASON_LABEL display în modal.
@@ -251,6 +255,7 @@ export function Workout(): JSX.Element {
       return;
     }
     setRestCountdown(currentExercise.restSec);
+    setRestInitialSec(currentExercise.restSec);
     setPhase('rest');
   }
 
@@ -311,6 +316,7 @@ export function Workout(): JSX.Element {
       // override countdown la 30s here. Last set of exercise scenarios
       // (transition / post-rpe navigate) NU touch rest — no-op.
       setRestCountdown(30);
+      setRestInitialSec(30);
     }
   }
 
@@ -446,7 +452,11 @@ export function Workout(): JSX.Element {
       )}
 
       {phase === 'rest' && (
-        <RestOverlay countdownSec={restCountdown} onSkip={handleSkipRest} />
+        <RestOverlay
+          countdownSec={restCountdown}
+          initialRestSec={restInitialSec}
+          onSkip={handleSkipRest}
+        />
       )}
 
       {/* Transition phase */}

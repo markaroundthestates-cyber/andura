@@ -1,24 +1,32 @@
-// ══ REST OVERLAY — Workout Phase=Rest Fixed Overlay Component ════════════
+// REST OVERLAY - Workout Phase=Rest Fixed Overlay Component
 // Phase 4 task_12 §A extract din Workout.tsx phase=rest conditional. Pure
-// presentational — countdown timer + Sari pauza skip button.
+// presentational — countdown timer ring + Sari pauza skip button.
+//
+// F-pass2-restoverlay-01 (2026-05-22): replaced text-6xl numeric display with
+// SVGCountdownRing per mockup andura-clasic.html L1517-1522 signature parity.
 //
 // Stateless: parent Workout.tsx owns countdown state (interval decrement
 // effect + auto-advance la phase=logging cand reaches 0) + onSkip handler
 // (setRestCountdown(0) + setPhase('logging')).
 //
-// data-testid preserved verbatim (rest-overlay / rest-countdown / rest-skip)
-// + role="dialog" aria-label "Pauza activa" pentru Workout.test.tsx baseline
-// preserve.
+// data-testid preserved verbatim — rest-overlay (root) / rest-countdown (now
+// inherited by SVGCountdownRing wrapper) / rest-skip + role="dialog"
+// aria-label "Pauza activa" pentru Workout.test.tsx baseline preserve.
 
 import type { JSX } from 'react';
-import { formatMMSS } from '../../lib/format';
+import { SVGCountdownRing } from './SVGCountdownRing';
 
 interface RestOverlayProps {
   countdownSec: number;
+  initialRestSec: number;
   onSkip: () => void;
 }
 
-export function RestOverlay({ countdownSec, onSkip }: RestOverlayProps): JSX.Element {
+export function RestOverlay({
+  countdownSec,
+  initialRestSec,
+  onSkip,
+}: RestOverlayProps): JSX.Element {
   return (
     <div
       className="fixed inset-0 bg-paper/95 flex flex-col items-center justify-center z-50"
@@ -26,13 +34,11 @@ export function RestOverlay({ countdownSec, onSkip }: RestOverlayProps): JSX.Ele
       role="dialog"
       aria-label="Pauza activa"
     >
-      <p className="text-sm text-ink2 mb-2">Pauza</p>
-      <p
-        className="text-6xl font-bold text-ink font-mono"
-        data-testid="rest-countdown"
-      >
-        {formatMMSS(countdownSec)}
-      </p>
+      <p className="text-sm text-ink2 mb-4">Pauza</p>
+      <SVGCountdownRing
+        totalSec={initialRestSec}
+        remainingSec={countdownSec}
+      />
       <button
         type="button"
         onClick={onSkip}
