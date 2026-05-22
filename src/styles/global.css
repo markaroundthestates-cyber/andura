@@ -54,6 +54,17 @@
        dark theme can dial up opacity for proper paper-bg separation. */
     --overlay-strong: rgb(0 0 0 / 0.6);   /* blocking modals (AaFriction, Disclaimer) */
     --overlay-soft: rgb(0 0 0 / 0.3);     /* bottom sheets (ExitConfirmSheet) */
+
+    /* Istoric heatmap signature tokens — F-istoric-01 + F-istoric-03 (signature feature).
+       Semantic NOT decorative palette: heat-* = calendar tier scale, rating-* = 90-day
+       categorical bucket. Each used 2+ times across signature feature → Bugatti craft
+       justifies vault addition (vs hardcoded hex sprinkled across 2 components). */
+    --heat-usor: #d4e6cb;             /* L1 tier — usor sessions (light green) */
+    --heat-normal: #7fb185;           /* L2 tier — normal sessions (medium green) */
+    --heat-greu: #3d7a4a;             /* L3 tier — greu sessions (deep green) */
+    --heat-recovery: #f5ebd0;         /* Recovery tier reserved V2 deload flag */
+    --heat-recovery-border: #e6d49a;  /* Recovery tier border reserved V2 */
+    --rating-usor: #a4cfa9;           /* 90-day strip categorical green (distinct from heat-usor) */
   }
 
   /* Dark theme — inverse polarity. Warm-neutral palette preserves Clasic

@@ -80,6 +80,16 @@ describe('SettingsNotifications — render + interactions', () => {
     expect(useSettingsStore.getState().notificationTime).toBe('19:30');
   });
 
+  it('§LOW-4 time input empty change preserves current value (no force reset 18:00)', () => {
+    renderScreen();
+    const input = screen.getByTestId('notif-time-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '07:00' } });
+    expect(useSettingsStore.getState().notificationTime).toBe('07:00');
+    // Simulate mid-edit blank state (Android keyboards can produce empty).
+    fireEvent.change(input, { target: { value: '' } });
+    expect(useSettingsStore.getState().notificationTime).toBe('07:00');
+  });
+
   it('disable master toggle → freq + days + time disabled', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
