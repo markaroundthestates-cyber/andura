@@ -16,6 +16,9 @@
 // §coach-follows-body). Edit pencil pinned absolute right to preserve
 // centered title visual axis per mockup parity.
 //
+// §F-pass2-calendar-05 (LOW chat5) — edit hint copy added cand editMode
+// active. Mockup verbatim andura-clasic.html#L856 (calendar-edit-hint).
+//
 // Cross-refs: DECISIONS.md §D-LEGACY-076 Calendar V1 ephemeral
 
 import type { JSX } from 'react';
@@ -120,14 +123,22 @@ export function Calendar7Day(): JSX.Element {
         })}
       </div>
       {editMode && (
-        <button
-          type="button"
-          onClick={handleSave}
-          data-testid="calendar-save"
-          className="w-full mt-3 py-2 bg-brick text-paper rounded-lg text-sm font-semibold"
-        >
-          Salveaza
-        </button>
+        <>
+          <p
+            data-testid="calendar-edit-hint"
+            className="mt-3 text-xs text-ink2 text-center"
+          >
+            Modifica zilele de antrenament in care esti disponibil.
+          </p>
+          <button
+            type="button"
+            onClick={handleSave}
+            data-testid="calendar-save"
+            className="w-full mt-3 py-2 bg-brick text-paper rounded-lg text-sm font-semibold"
+          >
+            Salveaza
+          </button>
+        </>
       )}
     </div>
   );

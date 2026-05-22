@@ -120,6 +120,23 @@ describe('Calendar7Day — edit mode', () => {
     expect(screen.getByTestId('calendar-save')).toBeInTheDocument();
   });
 
+  // §F-pass2-calendar-05 (LOW chat5) — edit hint copy mockup verbatim
+  // andura-clasic.html#L856 visible doar cand editMode true.
+  it('edit hint hidden cand locked state', () => {
+    render(<Calendar7Day />); // editMode=false default
+    expect(screen.queryByTestId('calendar-edit-hint')).not.toBeInTheDocument();
+  });
+
+  it('edit hint visible cand edit mode + mockup copy verbatim', () => {
+    useScheduleStore.setState({ editMode: true });
+    render(<Calendar7Day />);
+    const hint = screen.getByTestId('calendar-edit-hint');
+    expect(hint).toBeInTheDocument();
+    expect(hint).toHaveTextContent(
+      'Modifica zilele de antrenament in care esti disponibil.'
+    );
+  });
+
   it('Save click commits + exits edit mode', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
