@@ -107,6 +107,7 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [],
+      restReason: null,
       source: 'baseline',
     });
   });
@@ -131,6 +132,7 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
         { id: 'stagnation_1', text: 'Greutatile stau pe loc de 3 saptamani', severity: 'info' },
         { id: 'weakness_2', text: 'Umerii ramasi in urma', severity: 'info' },
       ],
+      restReason: null,
       source: 'engine',
     });
     renderProgres();
@@ -150,6 +152,7 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [{ id: 'a_0', text: 'alpha', severity: 'warn' }],
+      restReason: null,
       source: 'engine',
     });
     renderProgres();

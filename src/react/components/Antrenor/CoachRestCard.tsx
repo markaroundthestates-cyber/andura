@@ -2,18 +2,42 @@
 // Per mockup andura-clasic.html#L758 coach-rest-card.
 // Rendered cand coachStore.schedContext === 'rest'.
 //
-// Phase 3 stub: static recovery message. Phase 5+ va wire din
-// coachDirector.buildSession() restDay reason (lagging muscle group +
-// readiness score).
+// §F-pass2-coachrest-01 audit fix — wire fatiguedGroups + readinessScore din
+// engine (muscleRecovery.getRecoveryByGroup + readiness.getComputedReadiness
+// Score via coachDirectorAggregate.restReason). Fallback mockup parity copy
+// cand restReason=null (T0 fresh user fără sesiuni logged).
 
 import type { JSX } from 'react';
+import type { CoachRestReason } from '../../lib/engineWrappers';
 
 interface Props {
   onLightSession: () => void;
   onOverride: () => void;
+  restReason?: CoachRestReason | null;
 }
 
-export function CoachRestCard({ onLightSession, onOverride }: Props): JSX.Element {
+/**
+ * Compose coach line din restReason. Fallback mockup verbatim cand null
+ * (T0 fresh). Output NO_DIACRITICS_RULE compliant per Andura RO style.
+ */
+function composeCoachLine(restReason: CoachRestReason | null | undefined): string {
+  if (!restReason) {
+    return 'Pectoralii si picioarele inca recupereaza · readiness 32/100.';
+  }
+  const { fatiguedGroups, readinessScore } = restReason;
+  const groupsPart =
+    fatiguedGroups.length === 0
+      ? 'Muschii recupereaza'
+      : `${fatiguedGroups.join(' si ')} inca recupereaza`;
+  const readinessPart =
+    readinessScore === null
+      ? ''
+      : ` · readiness ${readinessScore}/100`;
+  return `${groupsPart}${readinessPart}.`;
+}
+
+export function CoachRestCard({ onLightSession, onOverride, restReason }: Props): JSX.Element {
+  const coachLine = composeCoachLine(restReason ?? null);
   return (
     <div
       className="rounded-2xl p-4 mb-2.5 border"
@@ -34,7 +58,7 @@ export function CoachRestCard({ onLightSession, onOverride }: Props): JSX.Elemen
         Zi de recuperare activa
       </div>
       <div className="font-serif italic mt-1.5 leading-relaxed text-sm text-ink2">
-        &bdquo;Pectoralii si picioarele inca recupereaza &middot; readiness 32/100.&rdquo;
+        &bdquo;{coachLine}&rdquo;
       </div>
       <div className="flex gap-3.5 mt-3.5 text-sm text-ink2">
         <span className="flex items-center gap-1.5">~ 15 min mobilitate</span>

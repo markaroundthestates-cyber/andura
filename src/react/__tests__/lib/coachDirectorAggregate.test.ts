@@ -15,6 +15,7 @@ vi.mock('../../lib/engineWrappers', () => ({
   })),
   getPatternsBanner: vi.fn(() => []),
   getProactiveAlerts: vi.fn(() => []),
+  getCoachRestReason: vi.fn(() => null),
 }));
 
 vi.mock('../../lib/prHistoryAggregate', () => ({
@@ -28,6 +29,7 @@ import {
   getTodayWorkout,
   getPatternsBanner,
   getProactiveAlerts,
+  getCoachRestReason,
 } from '../../lib/engineWrappers';
 import { getPRHistoryAll } from '../../lib/prHistoryAggregate';
 
@@ -45,6 +47,7 @@ beforeEach(() => {
   });
   vi.mocked(getPatternsBanner).mockReturnValue([]);
   vi.mocked(getProactiveAlerts).mockReturnValue([]);
+  vi.mocked(getCoachRestReason).mockReturnValue(null);
   vi.mocked(getPRHistoryAll).mockReturnValue([]);
 });
 

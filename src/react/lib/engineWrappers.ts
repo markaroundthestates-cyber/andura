@@ -26,6 +26,7 @@ import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js'
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
+import { getRecoveryByGroup, GROUP_LABELS_RO_BIG11 } from '../../engine/muscleRecovery.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 
@@ -528,5 +529,64 @@ export function getProactiveAlerts(ctx: object = {}): ProactiveAlert[] {
   } catch (e) {
     console.warn('[engineWrappers] getProactiveAlerts failed:', e);
     return [];
+  }
+}
+
+// ── Coach Rest Reason composer (§F-pass2-coachrest-01 audit fix) ─────────
+//
+// Wires CoachRestCard de la hardcoded "Pectoralii si picioarele inca
+// recupereaza" la engine-driven via muscleRecovery.getRecoveryByGroup +
+// readiness score. Fallback null cand zero data (T0 fresh) → CoachRestCard
+// renders generic recovery message.
+
+export interface CoachRestReason {
+  fatiguedGroups: string[]; // RO display labels (e.g. ["Pieptul", "Quadricepsul"])
+  readinessScore: number | null; // 0-100, null cand readiness NU logged
+}
+
+const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach line
+
+/**
+ * Composer §F-pass2-coachrest-01 — extract fatigued muscle groups + readiness
+ * score for CoachRestCard wire. Reads workoutStore sessionsHistory →
+ * getRecoveryByGroup → filter 'fatigued' → map RO labels.
+ *
+ * Returns null cand readiness null AND zero fatigued groups (T0 fresh user).
+ * Defensive: engine throws → null fallback graceful.
+ */
+export function getCoachRestReason(): CoachRestReason | null {
+  try {
+    const readiness = getComputedReadinessScore();
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    // Flatten sessions.exercises.sets → logs shape {ex, ts, w, reps} same as
+    // getPatternsBanner STAGNATION composer above.
+    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
+    for (const session of sessions) {
+      if (!session.exercises) continue;
+      for (const ex of session.exercises) {
+        for (const set of ex.sets) {
+          logs.push({
+            ex: ex.exerciseName,
+            ts: set.timestamp,
+            w: set.kg,
+            reps: set.reps,
+          });
+        }
+      }
+    }
+    const groupState = getRecoveryByGroup(logs);
+    const fatigued: string[] = [];
+    for (const [group, state] of Object.entries(groupState)) {
+      if (state === 'fatigued') {
+        const label = GROUP_LABELS_RO_BIG11[group] ?? group;
+        fatigued.push(label);
+      }
+    }
+    const topFatigued = fatigued.slice(0, MAX_FATIGUED_GROUPS_DISPLAY);
+    if (readiness === null && topFatigued.length === 0) return null;
+    return { fatiguedGroups: topFatigued, readinessScore: readiness };
+  } catch (e) {
+    console.warn('[engineWrappers] getCoachRestReason failed:', e);
+    return null;
   }
 }

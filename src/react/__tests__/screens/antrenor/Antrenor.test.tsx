@@ -106,6 +106,7 @@ describe('Antrenor home — base render', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [],
+      restReason: null,
       source: 'engine',
     });
     renderAntrenor();
@@ -125,6 +126,7 @@ describe('Antrenor home — base render', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [],
+      restReason: null,
       source: 'engine',
     });
     renderAntrenor();
@@ -313,6 +315,7 @@ describe('Antrenor home — F4 readiness verdict', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [],
+      restReason: null,
       source: 'engine',
     });
     renderAntrenor();
@@ -344,6 +347,7 @@ describe('Antrenor home — F4 readiness verdict', () => {
       patternsBanner: [],
       prWallRecent: [],
       alerts: [],
+      restReason: null,
       source: 'engine',
     });
     renderAntrenor();

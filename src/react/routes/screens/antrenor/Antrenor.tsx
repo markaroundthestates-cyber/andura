@@ -130,7 +130,11 @@ export function Antrenor(): JSX.Element {
       {showWorkoutCard ? (
         <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
       ) : (
-        <CoachRestCard onLightSession={handleStart} onOverride={handleStart} />
+        <CoachRestCard
+          onLightSession={handleStart}
+          onOverride={handleStart}
+          restReason={coach?.restReason ?? null}
+        />
       )}
 
       <Calendar7Day />

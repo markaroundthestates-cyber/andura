@@ -20,6 +20,7 @@ import type {
   PlannedWorkoutOutput,
   PatternBanner,
   ProactiveAlert,
+  CoachRestReason,
 } from './engineWrappers';
 import {
   getReadiness,
@@ -27,6 +28,7 @@ import {
   getTodayWorkout,
   getPatternsBanner,
   getProactiveAlerts,
+  getCoachRestReason,
 } from './engineWrappers';
 import { getPRHistoryAll } from './prHistoryAggregate';
 import type { PRRecord } from './prHistoryAggregate';
@@ -41,6 +43,9 @@ export interface CoachTodayOutput {
   patternsBanner: PatternBanner[];
   prWallRecent: PRRecord[];
   alerts: ProactiveAlert[];
+  // §F-pass2-coachrest-01 audit fix — engine-driven rest reason for CoachRestCard
+  // wire. Null cand zero data (T0 fresh) → CoachRestCard renders generic message.
+  restReason: CoachRestReason | null;
   source: 'engine' | 'baseline';
 }
 
@@ -67,13 +72,15 @@ export async function getCoachToday(
     .sort((a, b) => b.sessionTs - a.sessionTs)
     .slice(0, PR_WALL_RECENT_LIMIT);
   const alerts = getProactiveAlerts({});
+  const restReason = isRestDay ? getCoachRestReason() : null;
   const hasEngineData =
     readiness !== null ||
     fatigue !== null ||
     plannedWorkout !== null ||
     patternsBanner.length > 0 ||
     prWallRecent.length > 0 ||
-    alerts.length > 0;
+    alerts.length > 0 ||
+    restReason !== null;
   return {
     readiness,
     fatigue,
@@ -82,6 +89,7 @@ export async function getCoachToday(
     patternsBanner,
     prWallRecent,
     alerts,
+    restReason,
     source: hasEngineData ? 'engine' : 'baseline',
   };
 }
