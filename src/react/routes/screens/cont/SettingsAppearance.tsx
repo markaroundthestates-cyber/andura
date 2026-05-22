@@ -6,10 +6,11 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon, MonitorCog } from 'lucide-react';
+import { Sun, Moon, MonitorCog } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { Theme } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 const THEME_OPTIONS: ReadonlyArray<{ value: Theme; label: string; Icon: typeof Sun }> = [
   { value: 'light', label: 'Luminos', Icon: Sun },
@@ -31,18 +32,11 @@ export function SettingsAppearance(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-appearance">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-appearance-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Aspect</h1>
-      </header>
+      <SubHeader
+        title="Aspect"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-appearance-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">

@@ -5,9 +5,10 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Scale } from 'lucide-react';
+import { Scale } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
@@ -32,18 +33,11 @@ export function WeightLogList(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="weight-log-list">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('progres'))}
-          aria-label="Inapoi"
-          data-testid="weight-log-list-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Loguri greutate</h1>
-      </header>
+      <SubHeader
+        title="Loguri greutate"
+        onBack={() => navigate(gotoPath('progres'))}
+        testIdBack="weight-log-list-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-xs text-ink2 mb-4 leading-relaxed">

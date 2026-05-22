@@ -6,13 +6,14 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 interface ExportPayload {
   exportedAt: string;
@@ -118,18 +119,11 @@ export function SettingsExport(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-export">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('cont'))}
-          aria-label="Inapoi"
-          data-testid="settings-export-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Descarca datele tale</h1>
-      </header>
+      <SubHeader
+        title="Descarca datele tale"
+        onBack={() => navigate(gotoPath('cont'))}
+        testIdBack="settings-export-back"
+      />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink leading-relaxed mb-4">

@@ -8,9 +8,10 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
+import { SubHeader } from '../../../components/SubHeader';
 
 export function RedoOnboardingConfirm(): JSX.Element {
   const navigate = useNavigate();
@@ -26,18 +27,11 @@ export function RedoOnboardingConfirm(): JSX.Element {
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="redo-onboarding-confirm">
-      <header className="flex items-center gap-3 p-4 border-b border-line bg-paper sticky top-0 z-10">
-        <button
-          type="button"
-          onClick={handleCancel}
-          aria-label="Inapoi"
-          data-testid="redo-onboarding-confirm-back"
-          className="p-2 -ml-2 text-ink"
-        >
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-        </button>
-        <h1 className="text-xl font-semibold text-ink">Refa onboarding</h1>
-      </header>
+      <SubHeader
+        title="Refa onboarding"
+        onBack={handleCancel}
+        testIdBack="redo-onboarding-confirm-back"
+      />
 
       <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col items-center text-center">
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
