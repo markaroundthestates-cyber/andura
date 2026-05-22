@@ -80,6 +80,11 @@ export function SettingsDanger(): JSX.Element {
             <div className="flex-1">
               <p className="text-sm font-medium">Sterge contul</p>
               <p className="text-xs text-ink2">Datele + cont sterse permanent.</p>
+              {/* §F-pass2-settings-danger-03 (MED Wave 7 2026-05-23) — mockup
+                  L2115 grace period communication reduces accidental delete fear. */}
+              <p className="text-xs text-ink3 mt-0.5" data-testid="danger-delete-grace">
+                30 zile gratie pentru recuperare
+              </p>
             </div>
           </button>
         </div>

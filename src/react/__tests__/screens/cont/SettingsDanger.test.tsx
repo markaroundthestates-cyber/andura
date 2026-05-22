@@ -90,4 +90,11 @@ describe('SettingsDanger — D047 RIP-OUT navigation list', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  it('§F-pass2-settings-danger-03 "Sterge contul" arata sub-text grace 30 zile (mockup L2115)', () => {
+    renderScreen();
+    const grace = screen.getByTestId('danger-delete-grace');
+    expect(grace).toBeInTheDocument();
+    expect(grace.textContent).toMatch(/30 zile gratie pentru recuperare/);
+  });
 });
