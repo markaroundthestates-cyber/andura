@@ -9,22 +9,19 @@ function makeSession(
   ratings: Array<'usor' | 'potrivit' | 'greu'>,
   hasExercises = true,
 ): LastSessionSummary {
-  return {
-    title: 'T',
-    meta: '',
-    ts: 0,
-    exercises: hasExercises
-      ? [
-          {
-            exerciseId: 'ex',
-            exerciseName: 'Ex',
-            sets: ratings.map((rating) => ({ kg: 100, reps: 5, rating, timestamp: 0 })),
-            totalVolume: 500,
-            peakOneRM: 100,
-          },
-        ]
-      : undefined,
-  };
+  const base: LastSessionSummary = { title: 'T', meta: '', ts: 0 };
+  if (hasExercises) {
+    base.exercises = [
+      {
+        exerciseId: 'ex',
+        exerciseName: 'Ex',
+        sets: ratings.map((rating) => ({ kg: 100, reps: 5, rating, timestamp: 0 })),
+        totalVolume: 500,
+        peakOneRM: 100,
+      },
+    ];
+  }
+  return base;
 }
 
 describe('deriveSessionRating', () => {
