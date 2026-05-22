@@ -10,10 +10,22 @@
 // Conditional render via `open` prop INSIDE JSX (NU early-return null per
 // task_12 §A item 5 spec preserve pattern current Workout.tsx).
 //
-// data-testid + role="dialog" aria-label "Iesi din sesiune" preserved
-// verbatim pentru Workout.test.tsx 38 baseline tests preserve.
+// W4-AUDIT-DEEPER chat 5 HIGH a11y DIM 3 KEYBOARD fix:
+//   - aria-modal="true" + aria-labelledby (sister MedicalDisclaimerModal +
+//     AaFrictionModal pattern parity)
+//   - useEffect focus auto pe primary "Continui sesiunea" la open
+//   - useEffect Escape key → onChoose('continue') (safe close — sheet
+//     dismiss handler same path as backdrop tap)
+//   - Focus trap minimal — Tab cycles first ↔ last button (continue =
+//     first, discard = last)
+//   - previousFocusRef restore focus la invoker on close
+//   - Backdrop tap preserved 'continue' (bottom-sheet UX convention,
+//     'continue' IS safe close — handleExit Workout.tsx setExitSheetOpen
+//     false + return, NU destructive). Test ExitConfirmSheet LOW-3
+//     preserve backdrop tap = continue semantic.
 
 import type { JSX } from 'react';
+import { useEffect, useRef } from 'react';
 
 export type ExitAction = 'continue' | 'pause' | 'discard' | 'finish-early';
 
@@ -30,6 +42,44 @@ export function ExitConfirmSheet({
   totalExercises,
   onChoose,
 }: ExitConfirmSheetProps): JSX.Element | null {
+  const continueRef = useRef<HTMLButtonElement | null>(null);
+  const discardRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // W4-AUDIT-DEEPER chat 5 HIGH a11y — focus management + Escape close +
+  // focus trap. Pattern parity sister AaFrictionModal/MedicalDisclaimerModal.
+  // Continue = primary safe action — auto focus + Tab trap first/last cycle.
+  // Escape → continue (safe close, same path backdrop tap).
+  useEffect(() => {
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    continueRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onChoose('continue');
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const first = continueRef.current;
+      const last = discardRef.current;
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onChoose]);
+
   if (!open) return null;
   return (
     <div
@@ -41,14 +91,21 @@ export function ExitConfirmSheet({
         className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
         data-testid="exit-sheet"
         role="dialog"
-        aria-label="Iesi din sesiune"
+        aria-modal="true"
+        aria-labelledby="exit-sheet-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-base font-bold text-ink mb-2">Iesi din sesiune?</h2>
+        <h2
+          id="exit-sheet-title"
+          className="text-base font-bold text-ink mb-2"
+        >
+          Iesi din sesiune?
+        </h2>
         <p className="text-sm text-ink2 mb-4">
           Ai facut {exIdx}/{totalExercises} exercitii. Cum continui?
         </p>
         <button
+          ref={continueRef}
           type="button"
           onClick={() => onChoose('continue')}
           data-testid="exit-continue"
@@ -73,6 +130,7 @@ export function ExitConfirmSheet({
           Termina mai devreme
         </button>
         <button
+          ref={discardRef}
           type="button"
           onClick={() => onChoose('discard')}
           data-testid="exit-discard"
