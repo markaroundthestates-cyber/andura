@@ -17,7 +17,7 @@ import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Play, ChevronRight } from 'lucide-react';
-import { useWorkoutStore } from '../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode } from '../stores/workoutStore';
 import { getTodayWorkout } from '../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../lib/engineWrappers';
 import { gotoPath } from '../lib/navigation';
@@ -27,10 +27,23 @@ const WORKOUT_PATH = gotoPath('workout');
 export function SessionPill(): JSX.Element | null {
   const location = useLocation();
   const navigate = useNavigate();
+  // §44-C1 — derive tagged WorkoutModeView inline via getCurrentMode pure
+  // selector. Subscribe to primitive fields (stable refs) — calling
+  // getCurrentMode at Zustand selector level returns new object identity each
+  // render and triggers infinite re-render loop. Pattern: subscribe to inputs,
+  // compute tagged view in render body.
   const phase = useWorkoutStore((s) => s.phase);
   const exIdx = useWorkoutStore((s) => s.exIdx);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
+  const lastSession = useWorkoutStore((s) => s.lastSession);
+  const mode = getCurrentMode({
+    phase,
+    sessionStart,
+    pausedSnapshot,
+    lastSession,
+    exIdx,
+  });
 
   const [elapsedMin, setElapsedMin] = useState(0);
 
@@ -40,19 +53,21 @@ export function SessionPill(): JSX.Element | null {
   // real exercise name. Per DECISIONS.md §D027.
   const [planned, setPlanned] = useState<PlannedWorkoutOutput | null>(null);
 
-  // Live elapsed update 1Hz cand active sessionStart present.
+  // Live elapsed update 1Hz cand mode=active|resting (live session).
+  const liveSessionStart =
+    mode.kind === 'active' || mode.kind === 'resting' ? mode.sessionStart : null;
   useEffect(() => {
-    if (sessionStart === null) {
+    if (liveSessionStart === null) {
       setElapsedMin(0);
       return;
     }
     const update = (): void => {
-      setElapsedMin(Math.floor((Date.now() - sessionStart) / 60000));
+      setElapsedMin(Math.floor((Date.now() - liveSessionStart) / 60000));
     };
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
-  }, [sessionStart]);
+  }, [liveSessionStart]);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,10 +80,26 @@ export function SessionPill(): JSX.Element | null {
   // Anti-duplicate route guard.
   if (location.pathname === WORKOUT_PATH) return null;
 
-  // Active session pill.
-  const active = phase !== 'idle' && sessionStart !== null;
-  // Paused pill (resume hatch).
-  const paused = !active && pausedSnapshot !== null;
+  // §44-C1 exhaustive switch on tagged mode — render only for active/resting
+  // (live session pill) sau paused (resume hatch). idle + finished → null.
+  let active = false;
+  let paused = false;
+  switch (mode.kind) {
+    case 'active':
+    case 'resting':
+      active = true;
+      break;
+    case 'paused':
+      paused = true;
+      break;
+    case 'idle':
+    case 'finished':
+      break;
+    default: {
+      const _exhaustive: never = mode;
+      void _exhaustive;
+    }
+  }
 
   if (!active && !paused) return null;
 

@@ -93,6 +93,62 @@ export interface WorkoutState {
   streak: number;
 }
 
+// ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
+// Pure-function selector `getCurrentMode(state)` derives a tagged variant out
+// of the existing WorkoutState shape (zero breaking change to consumers care
+// still field-access direct). 5 mutually exclusive modes per audit §44:
+//   idle      → no active session + no paused snapshot + no lastSession
+//   active    → sessionStart set (phase logging|rating|transition)
+//   resting   → sessionStart set + phase=rest
+//   paused    → pausedSnapshot present, sessionStart null
+//   finished  → lastSession present + idle + no paused (postSession surface)
+// Exhaustiveness compiler check via `switch` on .kind cu `default: never`.
+export type WorkoutMode = 'idle' | 'active' | 'resting' | 'paused' | 'finished';
+
+export type WorkoutModeView =
+  | { kind: 'idle' }
+  | { kind: 'active'; sessionStart: number; exIdx: number; phase: WorkoutPhase }
+  | { kind: 'resting'; sessionStart: number; exIdx: number }
+  | { kind: 'paused'; snapshot: PausedSession }
+  | { kind: 'finished'; lastSession: LastSessionSummary };
+
+// Minimum-fields shape accepted de getCurrentMode (avoid over-binding la
+// WorkoutState complet). Consumers pot pass-in literal subscriptions individual
+// din primitive selectors — stable refs, NU object-identity churn per render.
+export interface WorkoutModeInputs {
+  phase: WorkoutPhase;
+  sessionStart: number | null;
+  pausedSnapshot: PausedSession | null;
+  lastSession: LastSessionSummary | null;
+  exIdx: number;
+}
+
+// Derive current mode from minimum WorkoutState slice. Priority order:
+//   1. active session (sessionStart !== null) → resting if phase=rest else active
+//   2. paused snapshot (no live session)
+//   3. finished (lastSession present, no live, no paused)
+//   4. idle (default)
+export function getCurrentMode(state: WorkoutModeInputs): WorkoutModeView {
+  if (state.sessionStart !== null) {
+    if (state.phase === 'rest') {
+      return { kind: 'resting', sessionStart: state.sessionStart, exIdx: state.exIdx };
+    }
+    return {
+      kind: 'active',
+      sessionStart: state.sessionStart,
+      exIdx: state.exIdx,
+      phase: state.phase,
+    };
+  }
+  if (state.pausedSnapshot !== null) {
+    return { kind: 'paused', snapshot: state.pausedSnapshot };
+  }
+  if (state.lastSession !== null) {
+    return { kind: 'finished', lastSession: state.lastSession };
+  }
+  return { kind: 'idle' };
+}
+
 export interface WorkoutActions {
   startSession: (sessionStart: number) => void;
   pauseSession: () => void;

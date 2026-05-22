@@ -28,7 +28,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
@@ -50,12 +50,19 @@ const FOURTEEN_DAYS_MS = 14 * 86400000;
 
 export function Antrenor(): JSX.Element {
   const navigate = useNavigate();
+  // §44-C1 — derive tagged WorkoutModeView inline (subscribe primitives, compute
+  // in render). pausedSnap gates ResumeSessionCard + showReactivate + CTA hide.
+  const phase = useWorkoutStore((s) => s.phase);
+  const exIdx = useWorkoutStore((s) => s.exIdx);
+  const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
   const streak = useWorkoutStore((s) => s.streak);
   const prHit = useWorkoutStore((s) => s.prHit);
   const resumeSession = useWorkoutStore((s) => s.resumeSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
+  const mode = getCurrentMode({ phase, sessionStart, pausedSnapshot, lastSession, exIdx });
+  const pausedSnap = mode.kind === 'paused' ? mode.snapshot : null;
   const schedContext = useCoachStore((s) => s.schedContext);
   // §1-H3 audit fix: persona wrapper ALSO hoisted to Layout.tsx so all 4 tabs
   // inherit persona scaling. Antrenor section keeps local class for explicit
@@ -83,7 +90,7 @@ export function Antrenor(): JSX.Element {
     lastSession !== null &&
     Date.now() - lastSession.ts > FOURTEEN_DAYS_MS &&
     !reactivateDismissed &&
-    pausedSnapshot === null;
+    pausedSnap === null;
 
   // §B018 audit fix (CODE-REVIEW L-8) — extract ternary readability:
   // engine signal preferred when aggregate loaded, fallback user override (§A002).
@@ -105,9 +112,9 @@ export function Antrenor(): JSX.Element {
     >
       <h1 className="text-2xl font-semibold text-ink mb-4">Antrenor</h1>
 
-      {pausedSnapshot && (
+      {pausedSnap && (
         <ResumeSessionCard
-          snapshot={pausedSnapshot}
+          snapshot={pausedSnap}
           onResume={resumeSession}
           onDiscard={discardSession}
         />
@@ -150,7 +157,7 @@ export function Antrenor(): JSX.Element {
       <PRNotificationBanner prHit={prHit} />
       <PRWallRecent records={coach?.prWallRecent ?? []} />
 
-      {!pausedSnapshot && (
+      {!pausedSnap && (
         <button
           type="button"
           onClick={handleStart}

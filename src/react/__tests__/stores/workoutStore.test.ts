@@ -2,7 +2,8 @@
 // Per spec task_02 §4 A — pure-function actions + persist middleware.
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useWorkoutStore } from '../../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode } from '../../stores/workoutStore';
+import type { WorkoutMode } from '../../stores/workoutStore';
 
 function resetStore(): void {
   useWorkoutStore.setState({
@@ -210,6 +211,180 @@ describe('workoutStore — reset', () => {
     expect(useWorkoutStore.getState().prHit).toBe(false);
     expect(useWorkoutStore.getState().lastRating).toBeNull();
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
+  });
+});
+
+describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
+  beforeEach(resetStore);
+
+  // Helper to derive mode from current store snapshot.
+  function modeNow(): ReturnType<typeof getCurrentMode> {
+    const s = useWorkoutStore.getState();
+    return getCurrentMode({
+      phase: s.phase,
+      sessionStart: s.sessionStart,
+      pausedSnapshot: s.pausedSnapshot,
+      lastSession: s.lastSession,
+      exIdx: s.exIdx,
+    });
+  }
+
+  it('idle mode default — no session + no paused + no lastSession', () => {
+    expect(modeNow().kind).toBe('idle');
+  });
+
+  it('active mode after startSession (phase=logging)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    const mode = modeNow();
+    expect(mode.kind).toBe('active');
+    if (mode.kind === 'active') {
+      expect(mode.phase).toBe('logging');
+      expect(typeof mode.sessionStart).toBe('number');
+    }
+  });
+
+  it('resting mode when phase=rest cu sessionStart live', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().setPhase('rest');
+    expect(modeNow().kind).toBe('resting');
+  });
+
+  it('active mode for rating phase (intermediate FSM state)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().setPhase('rating');
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('active mode for transition phase (between exercises)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().setPhase('transition');
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('paused mode after pauseSession captures snapshot', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession();
+    const mode = modeNow();
+    expect(mode.kind).toBe('paused');
+    if (mode.kind === 'paused') {
+      expect(mode.snapshot).not.toBeNull();
+    }
+  });
+
+  it('finished mode after finishSession + idle + no paused', () => {
+    useWorkoutStore.getState().finishSession({
+      title: 'Push',
+      meta: '5 seturi · 52 min · 12 450 kg',
+      ts: Date.now(),
+    });
+    const mode = modeNow();
+    expect(mode.kind).toBe('finished');
+    if (mode.kind === 'finished') {
+      expect(mode.lastSession.title).toBe('Push');
+    }
+  });
+
+  it('active takes priority over paused snapshot (resumeSession flow)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().resumeSession();
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('paused takes priority over lastSession', () => {
+    useWorkoutStore.setState({
+      lastSession: { title: 'Pull', meta: '4 seturi', ts: 100 },
+      pausedSnapshot: {
+        title: 'Push',
+        meta: 'ex 2',
+        exIdx: 1,
+        setIdx: 0,
+        phase: 'logging',
+        history: {},
+        sessionStart: Date.now() - 60000,
+      },
+      sessionStart: null,
+      phase: 'idle',
+    });
+    expect(modeNow().kind).toBe('paused');
+  });
+
+  // Transition matrix invariants — every (fromMode, action) → toMode pair
+  // enforced. Failed transitions = invalid state machine (audit §14.3 dead
+  // states defense).
+  it('transition matrix — idle → startSession → active', () => {
+    expect(modeNow().kind).toBe('idle');
+    useWorkoutStore.getState().startSession(Date.now());
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('transition matrix — active → setPhase(rest) → resting', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().setPhase('rest');
+    expect(modeNow().kind).toBe('resting');
+  });
+
+  it('transition matrix — resting → setPhase(logging) → active', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().setPhase('rest');
+    useWorkoutStore.getState().setPhase('logging');
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('transition matrix — active → pauseSession → paused', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession();
+    expect(modeNow().kind).toBe('paused');
+  });
+
+  it('transition matrix — paused → resumeSession → active', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().resumeSession();
+    expect(modeNow().kind).toBe('active');
+  });
+
+  it('transition matrix — active → finishSession → finished', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().finishSession({
+      title: 'Pull',
+      meta: '4 seturi',
+      ts: Date.now(),
+    });
+    expect(modeNow().kind).toBe('finished');
+  });
+
+  it('transition matrix — active → discardSession → idle', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().discardSession();
+    expect(modeNow().kind).toBe('idle');
+  });
+
+  it('transition matrix — paused → discardSession → idle', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().discardSession();
+    expect(modeNow().kind).toBe('idle');
+  });
+
+  it('exhaustive switch compiles cu default: never (compile-time guarantee)', () => {
+    // Pure-function exhaustiveness probe — switch on kind covers all 5
+    // variants; default: never branch unreachable. Failing TS strict typecheck
+    // = added new variant fără update consumers.
+    const probe = (m: ReturnType<typeof getCurrentMode>): WorkoutMode => {
+      switch (m.kind) {
+        case 'idle': return 'idle';
+        case 'active': return 'active';
+        case 'resting': return 'resting';
+        case 'paused': return 'paused';
+        case 'finished': return 'finished';
+        default: {
+          const _never: never = m;
+          return _never;
+        }
+      }
+    };
+    expect(probe({ kind: 'idle' })).toBe('idle');
   });
 });
 

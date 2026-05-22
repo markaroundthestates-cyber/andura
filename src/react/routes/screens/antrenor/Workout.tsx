@@ -26,7 +26,7 @@
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
@@ -55,10 +55,14 @@ type SetRating = ExerciseHistoryEntry['rating'];
 
 export function Workout(): JSX.Element {
   const navigate = useNavigate();
+  // §44-C1 — primitive subscriptions feed getCurrentMode tagged FSM view.
+  // Mount-init gates on mode.kind=idle (pre-start condition).
   const exIdx = useWorkoutStore((s) => s.exIdx);
   const phase = useWorkoutStore((s) => s.phase);
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
+  const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
+  const lastSession = useWorkoutStore((s) => s.lastSession);
   const startSession = useWorkoutStore((s) => s.startSession);
   const logSet = useWorkoutStore((s) => s.logSet);
   const setPhase = useWorkoutStore((s) => s.setPhase);
@@ -115,8 +119,18 @@ export function Workout(): JSX.Element {
   const [inactivityPromptOpen, setInactivityPromptOpen] = useState(false);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
+  // §44-C1: idle mode === no live session + no paused snapshot + no lastSession
+  // priority. Resume case is mode=paused — Antrenor calls resumeSession() before
+  // navigate, so mount-time mode is active (sessionStart populated).
   useEffect(() => {
-    if (phase === 'idle') startSession(Date.now());
+    const mountMode = getCurrentMode({
+      phase,
+      sessionStart,
+      pausedSnapshot,
+      lastSession,
+      exIdx,
+    });
+    if (mountMode.kind === 'idle') startSession(Date.now());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
