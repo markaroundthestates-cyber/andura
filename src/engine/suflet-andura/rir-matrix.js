@@ -1,6 +1,19 @@
 // ══ RIR MATRIX ADAPTIVE — 4-tier intensity scoring ════════════════════════════
 // LOCKED V1 per ADR_RIR_MATRIX_ADAPTIVE_v1 + §36.58 wording (4 intensity labels).
 // Cross-ref: §36.16-§36.26 SUFLET ANDURA + §36.28-§36.35 SELF-CORRECTION.
+//
+// Single source of truth for RIR semantic. RIR↔RPE conceptual identity
+// (RIR + RPE ≈ 10) is NOT encoded as a runtime lookup table — RIR_MATRIX
+// boundaries below ARE the authoritative semantic. Consumers using "RPE"
+// strings (e.g., src/engine/dp.js "RPE 10") apply the conceptual identity
+// directly (RPE 10 == RIR 0 == LIMIT).
+//
+// Citation: Helms, E. R., Cronin, J., Storey, A., & Zourdos, M. C. (2016).
+// "Application of the Repetitions in Reserve-Based Rating of Perceived
+// Exertion Scale for Resistance Training." Strength & Conditioning Journal
+// 38(4): 42-49.
+//
+// Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §2.
 
 /**
  * @typedef {Object} IntensityVerdict

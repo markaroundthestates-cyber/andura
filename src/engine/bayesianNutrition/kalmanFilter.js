@@ -9,6 +9,9 @@
 //
 // Constraint A1: NU MCMC NU JAX — closed-form local-first JS tractable <50ms.
 //
+// Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §5 — Kalman drift analysis +
+// 1000-day stability validation extension + steady-state gain convergence.
+//
 // Pure functions — no side effects.
 //
 // §B026 audit fix (REVIEW-A036-A038 C-§A038-01) — processNoise (Q) scaling

@@ -1,6 +1,15 @@
 // ══ PAIN BUTTON §36.38 — Pain/Discomfort Reporting ════════════════════════════
 // LOCKED V1 per §36.38 Chat C — anti-paternalism + Gigel test risk.
 // NU "self-diagnostic medical" — optiuni neutre observabile.
+//
+// Branching matrix (3-tier intensity → engine action):
+//   discomfort_general (Usor)   → suggest_alternative
+//   discomfort_specific (Mediu) → reduce_volume
+//   doms_severe (Sever)         → skip
+//
+// NO automated "consult doctor" cue emitted from any intensity level —
+// MedicalDisclaimerModal pre-onboarding gate is the single source for
+// medical-cue UI text. Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §8 + §10.
 
 /** @type {{ key: string, label: string, level: 'general'|'specific'|'technical' }[]} */
 export const PAIN_OPTIONS = [

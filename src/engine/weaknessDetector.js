@@ -1,12 +1,24 @@
 // ══ WEAKNESS DETECTOR — Brzycki 1RM per muscle group ════════════════════
 // Calculeaza 1RM estimat (formula Brzycki) pentru fiecare grupa musculara
 // si identifica grupele cu 1RM relativ cel mai scazut fata de restul.
+//
+// Brzycki vs Epley choice: see ADR-ENGINE-MATH-LOCKED-VALUES §1. Brzycki
+// linear-in-reps, accuracy zone 1-10 reps (Brzycki 1993); Andura targets
+// gym lifters intermediate range (5-12 reps typical hypertrophy/strength).
+// Citation: Brzycki, M. (1993). "Strength testing—predicting a one-rep max
+// from reps-to-fatigue." J Phys Ed Recreation & Dance 64(1): 88-90.
 
 import { EXERCISE_MUSCLES } from './muscleMap.js';
 
 /**
  * Brzycki formula: 1RM = weight × (36 / (37 - reps))
- * Valid pentru reps 1-10. Returneaza null daca reps > 12.
+ *
+ * Valid pentru reps 1-12 (per Brzycki 1993 accuracy zone + Mayhew reviewer
+ * convergence). Returneaza null daca reps outside [1, 12] OR weight/reps
+ * falsy/undefined. Edge case reps=37 (divisor zero) impossible per pre-guard.
+ *
+ * Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §1.
+ *
  * @param {number | undefined} weight
  * @param {number | undefined} reps
  */

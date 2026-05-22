@@ -8,6 +8,11 @@
 // Pure functions — no DB / DOM deps. Inputs: logs array. Testable in vacuum.
 // ZERO mutation algorithm semantics per §4.1 (FATIGUED/PARTIAL thresholds
 // preserved; aggregation preserved; refactor = taxonomy expansion only).
+//
+// Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §9 — Pain CDL + Recovery Engine
+// wire-through documented; recovery state thresholds (FATIGUED=35, PARTIAL=12)
+// + volume redistribution multipliers (recovered=1.00, partial=0.80,
+// fatigued=0.60) cataloged for cross-engine audit gate.
 
 import { EXERCISE_MUSCLES, getMuscleState } from './muscleMap.js';
 import { MS_PER_DAY } from '../constants.js';

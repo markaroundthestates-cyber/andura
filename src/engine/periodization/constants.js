@@ -7,6 +7,9 @@
 //
 // ZERO fabrication beyond §9.1 spec. ZERO Date.now / Math.random — all values
 // static per ADR 018 §2 deterministic contract.
+//
+// Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §3 — Israetel MEV/MAV/MRV citation
+// catalog + persona/goal/recovery multiplier rationale.
 
 /**
  * Israetel 11 grupuri musculare baseline MEV/MAV/MRV (sets/week).

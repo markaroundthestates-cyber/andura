@@ -10,6 +10,9 @@
 //
 // ZERO fabrication beyond §9.3 spec. ZERO Date.now / Math.random — all values
 // static per ADR 018 §2 deterministic contract.
+//
+// Cross-ref: ADR-ENGINE-MATH-LOCKED-VALUES §4 — Energy ±15% asymmetric
+// thresholds + UP gating + yo-yo anti-flap + cascade prevention rationale.
 
 /**
  * Emoji 3-state holistic input (Cluster 2 §9.3.2 Q1=C hibrid + Q15=C):
