@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 // sentryBeforeSend.test.js (extracts scrubMsg verbatim via regex from src).
 function scrubMsg(s) {
   if (typeof s !== 'string') return s;
-  let out = s.replace(/\b(uid|userId|user_id)[=:\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
+  let out = s.replace(/\b(uid|userId|user_id)["':=\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
   out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
   out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
   return out;
@@ -49,6 +49,35 @@ describe('Sentry PII strip — Firebase uid context-anchored pattern', () => {
   it('does NOT replace shorter strings (27 chars) with uid prefix', () => {
     const short = 'aaaaaaaaaaaaaaaaaaaaaaaaaaa'; // 27
     expect(scrubMsg(`uid=${short} test`)).toBe(`uid=${short} test`);
+  });
+});
+
+describe('Sentry PII strip — §MED-1 JSON-quoted uid coverage', () => {
+  it('redacts JSON-encoded uid payload (Sentry breadcrumb data path)', () => {
+    // Sentry fetch integration parks request bodies as JSON in breadcrumb.data.
+    // Pre-fix regex /[=:\s/]/ excluded " so '"uid":"<28chars>"' leaked through.
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`{"uid":"${uid}"}`)).toBe('{"uid=<UID>"}');
+  });
+
+  it('redacts JSON-encoded userId with extra whitespace', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`{ "userId" : "${uid}" }`)).toBe('{ "userId=<UID>" }');
+  });
+
+  it('redacts single-quoted uid pattern (JS object literal serialization)', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`{'uid':'${uid}'}`)).toBe("{'uid=<UID>'}");
+  });
+
+  it('REGRESSION — uid=<uid> (legacy = separator) still works', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`uid=${uid} failed`)).toBe('uid=<UID> failed');
+  });
+
+  it('REGRESSION — userId: <uid> (legacy : separator) still works', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(scrubMsg(`userId: ${uid} oops`)).toBe('userId=<UID> oops');
   });
 });
 

@@ -43,6 +43,7 @@ import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificatio
 import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { PRWallRecent } from '../../../components/Antrenor/PRWallRecent';
+import { ObiectivSelector } from '../../../components/Antrenor/ObiectivSelector';
 import { Calendar7Day } from '../../../components/Calendar7Day';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
@@ -133,6 +134,12 @@ export function Antrenor(): JSX.Element {
       )}
 
       <Calendar7Day />
+
+      {/* F-antrenor-03 parity per MOCKUP-PARITY-chat3 §2.2 + §4 P4.
+          Mockup L862-870 "Programe (6 obiective V1 LOCK)" — sits right after
+          Calendar7Day, before stats. Daniel "6 obiective V1 LOCK" decizie:
+          user can pick goal din Antrenor home, NU doar din SettingsProfile. */}
+      <ObiectivSelector />
 
       <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
       <ReadinessVerdict readiness={readiness} />

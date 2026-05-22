@@ -39,19 +39,22 @@ export async function initSentry() {
         if (msg.includes('Firebase') || msg.includes('firebasedatabase')) {
           event.tags = { ...(event.tags || {}), source: 'firebase' };
         }
-        // §17-M3 + §S2.1 audit fix — PII strip pass.
+        // §17-M3 + §S2.1 + §MED-1 audit fix — PII strip pass.
         // Firebase uid is a 28-char alphanumeric. Earlier broad pattern
         // /\b[A-Za-z0-9]{28}\b/g destroyed Vite chunk hashes in source-map
         // refs (e.g., webpack:///./src/abc...xyz.js) — now anchored to
         // explicit uid contexts: uid=/userId=/user_id= prefix, OR Firebase
         // REST URL path /users/<uid>.
+        // §MED-1 (REVIEW-chat3) — char class extended with " and ' to cover
+        // JSON-serialized payloads in Sentry breadcrumb data (e.g., fetch
+        // integration parks request bodies as JSON: '"uid":"<28chars>"').
         /**
          * @param {unknown} s
          * @returns {unknown}
          */
         const scrubMsg = (s) => {
           if (typeof s !== 'string') return s;
-          let out = s.replace(/\b(uid|userId|user_id)[=:\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
+          let out = s.replace(/\b(uid|userId|user_id)["':=\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
           out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
           // Email: \b prefix prevents stripping preceding word
           // (e.g., 'User user@example.com' kept 'User' instead of consuming it).

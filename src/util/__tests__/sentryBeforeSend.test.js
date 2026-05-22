@@ -172,4 +172,11 @@ describe('Sentry beforeSend — behavioral scrub via production source extractio
     expect(prodScrubMsg(null)).toBeNull();
     expect(prodScrubMsg(42)).toBe(42);
   });
+
+  it('PROD scrubMsg redacts JSON-quoted uid (§MED-1 breadcrumb data leak fix)', () => {
+    // Sentry fetch integration parks fbSet/fbUpdate JSON bodies in
+    // breadcrumb.data.body — pre-fix char class missed " between : and uid.
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    expect(prodScrubMsg(`{"uid":"${uid}"}`)).toBe('{"uid=<UID>"}');
+  });
 });

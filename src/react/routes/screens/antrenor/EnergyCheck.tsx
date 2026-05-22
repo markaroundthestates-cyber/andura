@@ -1,10 +1,16 @@
-// ══ ENERGY CHECK — Phase 3 task_05 §A Rewrite Stub → Real ════════════════
+// ENERGY CHECK - Phase 3 task_05 §A Rewrite Stub -> Real
 // Per spec §2 A energy check 5-option emoji selector + flow routing.
 // Mockup andura-clasic.html#L878-897 reference (3-state); spec extends la
 // 5-option (Excelent / Bine / Normal / Slabit / Obosit) cu intensity 'plus'
-// / 'normal' / 'minus' map. Slabit + Obosit → energy-cause; restul → direct
-// workout-preview. Intensity propagated via location.state pentru Phase 3
-// izolare flow (Phase 4+ trece la workoutStore intensity slice).
+// / 'normal' / 'minus' map. Slabit + Obosit -> energy-cause; restul ->
+// direct workout-preview. Intensity propagated via location.state pentru
+// Phase 3 izolare flow (Phase 4+ trece la workoutStore intensity slice).
+//
+// Mockup parity (andura-clasic.html L878-897 traffic-light per intensity
+// bucket): plus = green (U+1F7E2), normal = yellow (U+1F7E1), minus = red
+// (U+1F534). 5-option spec extension preserved (intent: granular self-
+// report), bucketed visually to mockup 3-state Excelent/Normal/Obosit
+// color metaphor by intensity. Emoji is aria-hidden decorative.
 //
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-021 Energy Adjustment ±15% range
@@ -26,12 +32,16 @@ interface EnergyOption {
   intensity: IntensityMod;
 }
 
+const GREEN = '\u{1F7E2}';
+const YELLOW = '\u{1F7E1}';
+const RED = '\u{1F534}';
+
 const ENERGY_OPTIONS: readonly EnergyOption[] = [
-  { level: 'excelent', emoji: '💪', label: 'Excelent', intensity: 'plus' },
-  { level: 'bine', emoji: '⚡', label: 'Bine', intensity: 'normal' },
-  { level: 'normal', emoji: '😊', label: 'Normal', intensity: 'normal' },
-  { level: 'slabit', emoji: '🌱', label: 'Slabit', intensity: 'minus' },
-  { level: 'obosit', emoji: '😴', label: 'Obosit', intensity: 'minus' },
+  { level: 'excelent', emoji: GREEN, label: 'Excelent', intensity: 'plus' },
+  { level: 'bine', emoji: YELLOW, label: 'Bine', intensity: 'normal' },
+  { level: 'normal', emoji: YELLOW, label: 'Normal', intensity: 'normal' },
+  { level: 'slabit', emoji: RED, label: 'Slabit', intensity: 'minus' },
+  { level: 'obosit', emoji: RED, label: 'Obosit', intensity: 'minus' },
 ];
 
 export function EnergyCheck(): JSX.Element {
