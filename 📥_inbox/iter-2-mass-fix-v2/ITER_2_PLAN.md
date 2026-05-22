@@ -213,6 +213,16 @@ Wave A observed: ~3.5h cumulative real time pentru 36 effective closures = **~5-
 - **Default recommendation:** (c) parallel — Daniel supervises Bundle live in 1 window, CC executes autonomous Wave B-2 background
 - Per Co-CTO autonomy LOCKED V1, eu pot decide tactical singur dacă Daniel NU surface preferință explicit
 
+### D-8 + D-9 + D-10: Paradigm deferrals (3 chat 3 MOCKUP-PARITY CRIT findings) — ⏳ **PENDING Daniel CEO single-session decisions** — **see PARADIGM_DEFERRALS.md**
+- **D-8 §F-ceva-nu-merge-01:** Options count 5 (prod) vs 2 (mockup) paradigm — strip-3 vs keep-5 vs hybrid-3
+- **D-9 §F-equipment-swap-01:** Global 5-item toggle (prod) vs per-exercise 4 alternatives (mockup) — per-exercise pivot vs keep-global vs hybrid both paradigms
+- **D-10 §F-pain-button-01:** 15-region × 3-intensity matrix (prod) vs 3 functional pain types (mockup) — 3-type pivot vs keep-region+intensity vs hybrid
+- **Verified primary source 2026-05-22** — all 3 REAL-OPEN paradigm divergences confirmed (NU false-open)
+- **Precedent:** D046 + D047 pattern (Daniel CEO solely decides UX paradigms per D-LEGACY-079 Co-CTO autonomy tactical NU UX paradigm scope)
+- **Tasks affected:** ITER_2_PLAN.md backlog NOT yet contains B-tasks for these 3 findings — post-decisions Co-CTO generates B041-B043 (or similar) per Daniel verdicts pivot/keep/hybrid scope
+- **Reading time Daniel:** ~30-45 min PARADIGM_DEFERRALS.md single session 3 decisions batch
+- **Co-CTO recommendations surfaced neutral:** §F-ceva-nu-merge-01 = Option B keep-5 + update mockup; §F-equipment-swap-01 = Option A per-exercise pivot mockup-aligned; §F-pain-button-01 = Option A 3-type pivot mockup-aligned
+
 ---
 
 ## §7 Anti-hallucination guards
