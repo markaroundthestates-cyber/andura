@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
 **Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback (a11y inputs/aria-live/modal focus/OfflineBanner/InstallPrompt PWA/Loguri greutate/Gigel adherence gate/pluralRo). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** pluralRo Romanian plural rules + PostSummary streak wire (`3b40301e`).
-**Branch:** main, **71 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
+**Last LANDED:** 5 NEW tests §32-H2 notification permission ladder (`83665208`).
+**Branch:** main, **74 commits ahead origin/main NOT pushed** (D031 invariant — awaiting Daniel verbal trigger).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -53,6 +53,9 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 45. **NEW `2eb826ae`** — aria-live banners WCAG 4.1.3 (§6-H3)
 46. **NEW `a362aedf`** — Modal focus management WCAG 2.4.3 (§6-H4)
 47. **NEW `3b40301e`** — pluralRo + PostSummary streak (§11-H3)
+48. **NEW `3924abbc`** — LATEST.md header bump 72 commits
+49. **NEW `5ae4ff36`** — Notification.requestPermission graceful permission ladder (§32-H2)
+50. **NEW `83665208`** — 5 NEW tests permission ladder (4646 PASS)
 
 ---
 
