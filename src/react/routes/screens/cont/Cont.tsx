@@ -8,6 +8,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import type { GotoScreen } from '../../../lib/navigation';
+import { getUserProfileDisplay } from './userProfile';
 import {
   User,
   Bell,
@@ -87,6 +88,12 @@ export function Cont(): JSX.Element {
   const handleRowClick = (target: GotoScreen | undefined): void => {
     if (target) navigate(gotoPath(target));
   };
+  // §F-cont-01/02/03 user-wire fix (HIGH-BETA chat 4) — read avatar initial +
+  // name + email from id_token JWT claims (single source of truth post Magic
+  // Link verify). Unauthenticated fallback preserves generic placeholders.
+  const profile = getUserProfileDisplay();
+  const displayName = profile.name || 'Utilizator';
+  const displayEmail = profile.email || 'Profilul tau Andura';
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="cont-home">
       <h1 className="text-2xl font-semibold text-ink mb-4">Cont</h1>
@@ -96,12 +103,15 @@ export function Cont(): JSX.Element {
         className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3"
         data-testid="cont-account-card"
       >
-        <div className="w-12 h-12 rounded-full bg-brick text-paper flex items-center justify-center text-xl font-semibold">
-          A
+        <div
+          className="w-12 h-12 rounded-full bg-brick text-paper flex items-center justify-center text-xl font-semibold"
+          data-testid="cont-account-initial"
+        >
+          {profile.initial}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-ink">Utilizator</p>
-          <p className="text-sm text-ink2 truncate">Profilul tau Andura</p>
+          <p className="font-semibold text-ink" data-testid="cont-account-name">{displayName}</p>
+          <p className="text-sm text-ink2 truncate" data-testid="cont-account-email">{displayEmail}</p>
         </div>
       </div>
 
