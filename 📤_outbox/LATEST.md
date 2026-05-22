@@ -1,8 +1,8 @@
 # A022 + SMOKE LIVE COMPREHENSIVE + B001/B011 ENGINE + DARK THEME + WORKOUT NAV + GDPR x2 + B009 STATUS TINTS + BOTTOM NAV COMPACT + APARATE LIPSA WIRE — chat 2 cumulative 2026-05-21 → 2026-05-22 night
 
-**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 5 audit polish (§6-H6 BottomNav tap gap + §11-C1 DST tests + §28-H6/M2 Privacy Policy Art. 9 + sub-processors + §36-M3 DNS prefetch + §15-H3 WebView detect banner). Co-CTO autonomous ZERO interruption.
-**Last LANDED:** §15-H3 Auth WebView detection banner FB/IG/Twitter/TikTok/Snapchat + helper + 12 NEW tests (`7ab71625`).
-**Branch:** main, **6 commits ahead origin/main** (ac76bda7 BottomNav + 8d462117 DST + abb94305 Privacy + e014e502 LATEST sync + 47402e8e DNS prefetch + 7ab71625 WebView) — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
+**Status:** A022 SUBSTRATE 100% + ALL lint clean + comprehensive live smoke pass + 20+ LANDED iter 3 fixes + 8 audit closures post-Daniel "20%" pushback + post-deploy verify smoke ✓ + 6 audit polish (§6-H6 BottomNav tap gap + §11-C1 DST tests + §28-H6/M2 Privacy Policy Art. 9 + sub-processors + §36-M3 DNS prefetch + §15-H3 WebView detect banner + §17-M3 Sentry PII strip). Co-CTO autonomous ZERO interruption.
+**Last LANDED:** §17-M3 Sentry beforeSend PII strip uid + email patterns (`a306438d`).
+**Branch:** main, **8 commits ahead origin/main** (BottomNav + DST tests + Privacy + LATEST + DNS + WebView + LATEST sync + Sentry PII) — push pending Daniel verbal trigger D031 invariant. Last push: 2026-05-22 morning (75 commits LANDED live).
 **Model:** Opus 4.7 EXCLUSIVELY
 **Mandate:** Daniel "FACI toate bugs functionale, faci audit dupa, faci si paritate pe app ca inainte" + "nu te opresti pana nu zic eu STOP SAU e perfecta aplicatia". Co-CTO autonomous FULL — tactical + strategic + iter scope + Wave decisions = EU CTO decide.
 
@@ -61,6 +61,8 @@ muscleRecovery+fatigue+coachContext (51) → aa+predictionEngine+whyEngine+reali
 53. **NEW `abb94305`** — §28-H6/M2 SettingsPrivacy Art. 9 medical boundary + sub-processor list + region fix
 54. **NEW `47402e8e`** — §36-M3 index.html DNS prefetch hints Firebase + Sentry (~50-100ms shaved cold cache)
 55. **NEW `7ab71625`** — §15-H3 Auth WebView detection banner FB/IG/Twitter/TikTok/Snapchat + 12 NEW tests
+56. **NEW `a937e665`** — CHAT_STATE + LATEST.md sync 5 audit closures cycle
+57. **NEW `a306438d`** — §17-M3 Sentry beforeSend PII strip uid + email patterns
 
 ---
 
