@@ -107,7 +107,16 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
       <input
         type="number"
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
+        // MED-A-3 fix CODE-REVIEW chat3: paste of non-numeric ("abc") yields
+        // truthy `e.target.value` + `Number("abc")=NaN` → NaN propagates to
+        // store, corrupting Big 6 + downstream engine math silently. Guard
+        // with Number.isFinite check before commit.
+        onChange={(e) => {
+          const v = e.target.value;
+          if (!v) return onChange(null);
+          const n = Number(v);
+          onChange(Number.isFinite(n) ? n : null);
+        }}
         placeholder="ex. 32"
         min={16}
         max={99}
@@ -245,7 +254,14 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
       <input
         type="number"
         value={value ?? ''}
-        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
+        // MED-A-3 fix CODE-REVIEW chat3: see Step1 commentary — NaN guard
+        // before commit la store. Number.isFinite(NaN) === false → null.
+        onChange={(e) => {
+          const v = e.target.value;
+          if (!v) return onChange(null);
+          const n = Number(v);
+          onChange(Number.isFinite(n) ? n : null);
+        }}
         placeholder="ex. 78"
         step="0.1"
         min={30}

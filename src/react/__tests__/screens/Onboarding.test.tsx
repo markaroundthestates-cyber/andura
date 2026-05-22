@@ -103,6 +103,16 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.weight).toBeNull();
   });
 
+  // §MED-A-3 CODE-REVIEW chat3: non-numeric paste ("abc") in type=number
+  // input could leak NaN to store. LOW-1 ternary `value ? Number(value) : null`
+  // still passed NaN when value="abc" (truthy + Number("abc")=NaN). Guard with
+  // Number.isFinite check before store commit.
+  it('step 1 non-numeric paste in age input persists null (not NaN)', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: 'abc' } });
+    expect(useOnboardingStore.getState().data.age).toBeNull();
+  });
+
   it('step 7 summary cu data finalized', () => {
     useOnboardingStore.setState({
       data: {
