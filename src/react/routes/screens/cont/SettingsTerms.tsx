@@ -78,8 +78,18 @@ export function SettingsTerms(): JSX.Element {
               </li>
             </ul>
             <p className="text-xs text-ink2 mt-4">
-              Versiune Beta · Actualizat 2026-05-18. Tot textul complet
-              disponibil online la andura.app/terms.
+              Versiune Beta &middot; Actualizat 2026-05-18. Tot textul
+              complet disponibil online la{' '}
+              <a
+                href="https://andura.app/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-brick"
+                data-testid="terms-tc-live-link"
+              >
+                andura.app/terms
+              </a>
+              .
             </p>
           </article>
         ) : (
