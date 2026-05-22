@@ -1,8 +1,12 @@
 // ══ REACTIVATE CARD — Win-Back Inactive >14 Zile ══════════════════════════
 // Per mockup andura-clasic.html#L812 reactivate-card.
 // Rendered conditional pe lastSession age > 14 zile + NOT dismissed.
+//
+// §F-pass2-reactivate-01 (MED Wave 7 2026-05-23) — Hand brick icon 20x20
+// left of title per mockup L814 verbatim (visual warmth before win-back copy).
 
 import type { JSX } from 'react';
+import { Hand } from 'lucide-react';
 import type { LastSessionSummary } from '../../stores/workoutStore';
 
 interface Props {
@@ -20,6 +24,11 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
       aria-label="Bun venit inapoi"
     >
       <div className="flex items-center gap-2.5 mb-1.5">
+        <Hand
+          className="w-5 h-5 text-brick flex-shrink-0"
+          aria-hidden="true"
+          data-testid="reactivate-icon"
+        />
         <div className="font-bold text-ink text-base">Bun venit inapoi</div>
       </div>
       <div className="text-sm text-ink2 leading-relaxed">
