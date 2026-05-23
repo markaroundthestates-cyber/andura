@@ -92,7 +92,7 @@ export function SettingsFaq(): JSX.Element {
             <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
               {section.title}
             </p>
-            <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+            <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
               {section.items.map((item, idx) => {
                 const id = `${section.title}-${idx}`;
                 const open = openId === id;

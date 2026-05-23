@@ -132,7 +132,7 @@ export function SettingsExport(): JSX.Element {
           + nutritie + setari + calendar.
         </p>
 
-        <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
             Continut export
           </p>

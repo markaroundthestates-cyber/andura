@@ -43,7 +43,7 @@ export function SettingsDanger(): JSX.Element {
           </p>
         </div>
 
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <button
             type="button"
             onClick={() => navigate(gotoPath('logout-confirm'))}

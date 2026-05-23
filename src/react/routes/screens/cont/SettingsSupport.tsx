@@ -32,7 +32,7 @@ export function SettingsSupport(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Contacteaza-ne
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <a
             href={`mailto:${SUPPORT_EMAIL}`}
             data-testid="support-email"
@@ -61,7 +61,7 @@ export function SettingsSupport(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Trimite-ne un mesaj
         </p>
-        <div className="bg-paper2 border border-line rounded-xl p-4">
+        <div className="bg-paper2 border border-line rounded-[14px] p-4">
           <p className="text-xs text-ink2 mb-3 leading-relaxed">
             Bug, idee, feedback — scrie liber. Ajunge direct la noi.
           </p>
