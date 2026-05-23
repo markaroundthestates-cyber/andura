@@ -165,3 +165,84 @@ Bugatti audit pace continuous chat 5 + push trigger LANDED + Firebase LIVE = cha
 Chat 6 = D076 main scribe verify → worktree cleanup verbal trigger Daniel → Bugatti walkthrough nuclear pre-Beta launch verbal trigger Daniel → continue polish saturation residual minor. Spawn parallel la discreție batch > 3 worktree mandatory + concurrency cap 4-5 strict.
 
 Te-aștept fresh chat. Drum bun, tataie. 60 commits + Firebase LIVE = chat 5 closure clean.
+
+---
+
+## §9 — SUPPLEMENT post-push Wave 19-20 (append 2026-05-23 chat 5 final)
+
+După scribe-ul §1-§8 mai sus, Daniel a zis `mai baga ma agenti ce faci?` repetat → continuare batch parallel Wave 19-20 înainte de handover-final + push. Listez aici ce a aterizat în plus + cele 2 D049 violations surface transparent + restoration commits.
+
+### Wave 19 — quad-agent parallel + 1 extra (5 commits LANDED + 1 REJECTED)
+
+1. **Worktree cleanup investigation** — REJECTED Daniel pre-spawn (skipped per directive ambiguity)
+2. **Pre-Beta walkthrough prep** `7a2f3d08` — **D049 VIOLATION** swept 5 files (PRIMER + CHAT_STATE + LATEST + WORKTREE_CLEANUP_PLAN + PRE_BETA_WALKTHROUGH_PREP) in one commit due to index-lock contention during 3-min pre-commit hook + parallel sibling agents staging. Subject claims `pre-beta-walkthrough-prep-chat5` but diff includes 4 unrelated. Verdict report content valid (READY-WITH-CAUTION + 17 itemized gaps). NU pushed (D031 invariant).
+3. **Pass 17 shadow tokens** `212d4784` — 6 files: 5 React + tailwind.config custom shadow tokens (subtle/card/prompt/modal/overlay) sourced D015 mockup canonical. Pre-commit GREEN first try.
+4. **Maria 65 a11y retest** `b48708e1` — 292 LOC report. Verdict READY-WITH-CAUTION. Tap target <44px ~24 violations cross SubHeader 20+ screens. Low-contrast text-ink3 31 sites. Focus ring gaps 2 dialog (InactivityPrompt + RestOverlay). Cognitive load minimal (Andura Suflet voice + post-D047 drill-down).
+5. **Engine pipeline integration test audit** `f8caba8e` — 228 LOC. 20 engine surfaces (8 orchestrator + 11 React + MMI #9). Coverage gaps 3 HIGH / 4 MED / 4 LOW. Top HIGH-1 MMI `DP.recommend → AA.applyTo → applyMuscleMemoryUpgrade` LAST-in-chain ordering ADR-033 §32.1 fără integration witness. HIGH-2 `applyMmiCapToWorkout` fără try/catch (Sentry attribution wrong). HIGH-3 Orchestrator parity tests don't check downstream CO consumption.
+6. **D-LEGACY-064 diacritics deep scan** `ef1fc7cd` — 349 LOC. Verdict **CLEAN ZERO violations**. 241 raw diacritic line-matches = all în source comments / JSDoc / regex character classes (no-diacritics enforcement). ~60+ test guardrails regression coverage future drift. Remediation NONE REQUIRED pre-Beta.
+
+### Wave 20 — 2 investigation agents parallel
+
+7. **Visual regression policy** `1778f246` — 511 LOC. Preferred **Option C — Defer to post-Beta + scaffolding preserve** (~15 min impl): gitignore snapshots + remove `tests/visual-regression.spec.ts` from CI line 201 + spec header policy annotation. Anti-paternalism absolute LOCKED V1 contradicts VR PR gates (intermediate review). Pass 17 + 18 in-flight = baselines premature regenerate. 5 open questions Daniel rezolvă §7.
+8. **Docs freshness audit** `2b0426b9` — 278 LOC. **D049 VIOLATION (sibling sweep)** — agent's report file landed in commit subject `doc(visual-regression-policy-chat5)` due to parallel sibling commit consume. Substantive content fine: 41 docs audited (39 `08-workflows/` + 11 `04-architecture/` + 11 root). FRESH 44% + MINOR 22% + MAJOR 22% + CRITICAL 12%. Top CRITICAL-STALE: `PORT_FIRST_STEP_1_PARADIGM_V1.md` + `REACT_MIGRATION_STATE_MAPPING_V1.md` (pre-D015 paradigm implied active) + `PRE_LAUNCH_CHECKLIST_V1.md` (missing andura-v2 ref + 12+ pre-D015 paradigm refs) + `HANDOVER_VERIFICATION_CHECKLIST.md` (DEPRECATED top banner but wiki body implies active) + `ROOT_NAV_V2_29_5_7_AMENDMENT.md` (broken mockup link). Cumulative refresh effort ~6-10h.
+
+### D049 violations chat 5 — transparent acknowledgement
+
+2 D049 ghost-metadata violations encountered chat 5 Wave 19-20, both NU pushed (D031 invariant preserved):
+- **`7a2f3d08`** Pre-Beta walkthrough swept 5 files (4 unrelated + 1 own)
+- **`2b0426b9`** Visual regression policy commit msg + Docs freshness file mixed (sibling agent sweep)
+
+Root cause: parallel agents on SSOT-adjacent files during 3-min pre-commit hook window. Anti-recurrence: D049 LOCKED V1 reminds `git commit -o -m '...' -- <path>` mandatory + verify `git status --short` before commit shows ONLY own file. Recurrence count = 3 total cumulative chat history (chat 3 14-agent storm + chat 5 ×2). D049 LOCKED V1 + chat 4 concurrency cap 4-5 LOCK insufficient against worktree-shared `.git/index.lock` + pre-commit hook serial queue contention.
+
+### SSOT restoration commits post-D049 sweep
+
+Pre-Beta walkthrough D049 sweep reverted PRIMER + CHAT_STATE + LATEST to pre-push state. Re-applied via 3 atomic restoration commits manager-of-agents direct:
+- `320dad98` CHAT_STATE restore post-D049 sweep
+- `49574e39` PRIMER §5 restore post-D049 sweep
+- `586ed279` LATEST.md restore post-D049 sweep
+
+### Wave 18 polish + outbox closure final 3 commits (post-Wave 20)
+
+- `1fff5db7` Bundle size audit chat 5 (218 LOC, agent worktree commit never landed pre-handover, applied direct main)
+- `6e3a1f39` Test brittleness audit chat 5 (417 LOC, same pattern agent worktree never landed)
+- `b6c4fa07` Pass 18 color tokens 3 src (HeatMapWeekly succ token + SettingsDanger danger bg/border mockup canonical + WeightTimeline line+brick tokens replace inline hex)
+
+### Final state pre-push final
+
+- **HEAD:** post `586ed279` (LATEST restore) + 1 supplement commit + push
+- **Ahead origin:** ~18+ commits ready push trigger Daniel verbal "Si push"
+- **Tests:** 5713+ PASS preserved across all 6 sequential commits chat 5 final batch
+- **Pre-commit hook:** GREEN every commit (typecheck + lint + vitest 5713 PASS)
+
+### Wave 19-20 outputs cumulative chat 5
+
+| Output | Path | LOC | Verdict |
+|---|---|---|---|
+| Pre-Beta walkthrough prep | `📤_outbox/PRE_BETA_WALKTHROUGH_PREP_chat5.md` | 338 | READY-WITH-CAUTION |
+| Pass 17 shadow polish | `src/react/components/*` + `tailwind.config.js` | 6 files | LANDED clean |
+| Maria 65 a11y retest | `📤_outbox/A11Y_MARIA65_RETEST_chat5.md` | 292 | READY-WITH-CAUTION |
+| Engine pipeline integration audit | `📤_outbox/ENGINE_PIPELINE_INTEGRATION_TEST_AUDIT_chat5.md` | 228 | 3 HIGH gaps |
+| D-LEGACY-064 diacritics scan | `📤_outbox/D_LEGACY_064_DIACRITICS_DEEP_SCAN_chat5.md` | 349 | CLEAN |
+| Visual regression policy | `📤_outbox/VISUAL_REGRESSION_POLICY_chat5.md` | 511 | Option C preferred |
+| Docs freshness audit | `📤_outbox/DOCS_FRESHNESS_AUDIT_chat5.md` | 278 | 12% CRITICAL |
+| Bundle size audit | `📤_outbox/BUNDLE_SIZE_AUDIT_chat5.md` | 218 | D053 compliance verdict |
+| Test brittleness audit | `📤_outbox/TEST_BRITTLENESS_AUDIT_chat5.md` | 417 | Hotspots surfaced |
+| Pass 18 color tokens | 3 src files | 8 lines | Mockup canonical |
+
+### Chat 6 starting points enriched
+
+§5 above acoperă cele de bază. Supplement Wave 19-20 adds:
+- **Pre-Beta walkthrough prep** ready-to-consume document `📤_outbox/PRE_BETA_WALKTHROUGH_PREP_chat5.md` (18-dim gate matrix + 3-persona flow walk + 17 gap surface) → Daniel uses to drive walkthrough timing decision
+- **Engine pipeline HIGH 3 gaps** (MMI chain ordering + applyMmiCapToWorkout try/catch + Constraint Object downstream test) candidate Wave 21+ fix work
+- **Maria 65 a11y HIGH 4** items (SubHeader back btn expand + CoachTodayCard primary CTA min-h-[44px] + focus trap InactivityPrompt + RestOverlay + Auth/Splash text-link → button wrap) candidate Wave 21+ pre-Beta polish
+- **Docs freshness CRITICAL 5** items refresh effort ~3h (PORT_FIRST + REACT_MIGRATION_STATE + PRE_LAUNCH_CHECKLIST + HANDOVER_VERIFICATION + ROOT_NAV_V2)
+- **Visual regression Option C** implementation ~15 min când Daniel approves
+- **D076 main scribe + D049 violations** documented complete (no further action)
+
+### Closing post-Wave-20
+
+Chat 5 final batch +9 commits (2 outbox + 1 polish + 3 SSOT restore + 1 supplement + 2 prior visual regression). 6 cumulative sub-waves chat 5 (Wave 8-20). 2 D049 violations transparent surface (worktree-shared `.git/index.lock` + pre-commit hook serial queue contention pattern). Quality preserved Bugatti — every commit pre-commit hook GREEN, every test PASS, every D031 invariant preserved.
+
+Daniel verbal trigger "Si push" final = push acum origin/main ~19 commits ahead chat 5 supplement final batch.
+
+Te-aștept fresh chat 6. Drum bun. Chat 5 closed clean final.
