@@ -196,9 +196,9 @@ NU backup (regenerable):
 **Recovery:**
 1. Firebase Console > Recently Deleted Projects (30-day grace period)
 2. Restore project within grace window
-3. If grace expired: create new Firebase project > import last Tier 1 JSON backup via Console > Realtime Database > Import JSON
+3. If grace expired: create new Firebase project > import last Tier 1 JSON backup via Console > Realtime Database > Import JSON. Post-import deploy security rules via CLI: `npm run firebase:deploy:rules:dry` (validate syntax + project alias match `fittracker-c34e8` per `.firebaserc`) > `npm run firebase:deploy:rules` (push `firestore.rules` + `database.rules.json` live). Verify Console Firestore + Realtime Database rules match repo SSOT (see §11).
 4. Update `VITE_FIREBASE_API_KEY` + `VITE_FIREBASE_RTDB_URL` în Cloudflare Pages env > redeploy
-5. All users must re-auth Magic Link (new project = new uid namespace, NOT compatible cu old uids unless manual migration)
+5. All users must re-auth Magic Link (new project = new uid namespace, NOT compatible cu old uids unless manual migration). New project requires rules deploy via CLI (NU Console manual paste — drift risk vs repo SSOT).
 
 **Worst case:** complete data loss for any user activity post last backup (≤24h per RPO).
 
@@ -265,7 +265,28 @@ Quick scan = audit trail. NU automation — solo-founder lean.
 - `08-workflows/PROD_OPS_RUNBOOK.md` — A031 parallel sibling, deploy + healthcheck procedures
 - `08-workflows/BETA_ENTRY_CRITERIA.md` — §1 §26 Backup/DR closure gate
 - `scripts/test-restore.cjs` — A035 NEW automated verification helper
+- `scripts/deploy-rules.cjs` — Firebase rules CLI wrapper (pre-flight + dry-run + project alias verify per `15e44eea`)
+- `firebase.json` — Firestore + Realtime Database rules paths config
+- `.firebaserc` — Firebase project alias `fittracker-c34e8`
+- `firestore.rules` — Firestore security rules SSOT
+- `database.rules.json` — Realtime Database security rules SSOT
+- `package.json` npm scripts — `firebase:deploy:rules` (live push) + `firebase:deploy:rules:dry` (pre-flight validate)
 - `src/auth.js` — Magic Link restore implementation (`verifyMagicLink` L155, `parseMagicLinkUrl` L184, `_persistAuth` L418)
 - `src/util/tierStorage.js` — Tier 2 90-day rotation logic
 - `DECISIONS.md` §D045 — Tier 2 90-day rolling rotation V1 LOCKED
 - ADR §35-C1 — Tier 0/1/2 architecture canonical reference
+
+## §11 Security rules deploy procedure
+
+Firebase Firestore + Realtime Database security rules pushed via CLI wrapper (`scripts/deploy-rules.cjs`, introduced `15e44eea` 2026-05-23). Rules SSOT lives în repo (`firestore.rules` + `database.rules.json`) — Console manual edit = drift risk, AVOID.
+
+**Steps:**
+1. Pre-flight: `npm run firebase:deploy:rules:dry`
+   - Verify rules syntax valid
+   - Verify project alias match `fittracker-c34e8` per `.firebaserc`
+2. Live deploy: `npm run firebase:deploy:rules`
+3. Console verify: Firestore Rules tab + Realtime Database Rules tab match repo SSOT post-deploy
+
+**When triggered:**
+- Post catastrophic restore §8.1 (new project bootstrap requires rules push)
+- Post any `firestore.rules` / `database.rules.json` edit (pre-merge to `main`)
