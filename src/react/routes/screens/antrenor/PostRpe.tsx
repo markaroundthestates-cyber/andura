@@ -150,6 +150,17 @@ export function PostRpe(): JSX.Element {
           </button>
         ))}
       </div>
+      {/* §F-post-rpe-04 (MED chat5 Wave 15) — footer gratitude + explainer
+          mockup andura-clasic.html#L1624 verbatim. Andura Suflet warmth
+          (D-LEGACY-052) — recunoaste valoarea contribution Gigel/Marius
+          fara paternalism. Pozitionat post-rating ca anchor recognition. */}
+      <p
+        className="mt-6 text-xs text-ink3 text-center leading-relaxed"
+        data-testid="post-rpe-footer"
+      >
+        Raspunsul tau e singurul input pe care nu-l putem deduce singuri.
+        Multumim.
+      </p>
     </section>
   );
 }

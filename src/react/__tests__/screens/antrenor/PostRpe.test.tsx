@@ -115,6 +115,15 @@ describe('PostRpe — render', () => {
     expect(screen.getByText(/Solid, echilibrat/i)).toBeInTheDocument();
     expect(screen.getByText(/M-am dus la limita/i)).toBeInTheDocument();
   });
+
+  it('renders footer gratitude mockup verbatim', () => {
+    // §F-post-rpe-04 — footer gratitude + explainer mockup verbatim
+    // andura-clasic.html#L1624 (Andura Suflet recognition warmth).
+    renderPostRpe();
+    expect(screen.getByTestId('post-rpe-footer')).toHaveTextContent(
+      /singurul input pe care nu-l putem deduce/i
+    );
+  });
 });
 
 describe('PostRpe — submit pipeline', () => {
