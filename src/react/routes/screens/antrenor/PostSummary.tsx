@@ -299,7 +299,7 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="mt-auto w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+        className="mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         Terminat
       </button>

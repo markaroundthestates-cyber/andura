@@ -112,7 +112,7 @@ export function EquipmentSwap(): JSX.Element {
         type="button"
         onClick={handleContinue}
         data-testid="equipment-continue"
-        className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+        className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         Continui adaptat
       </button>
