@@ -27,9 +27,17 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '../../../stores/workoutStore';
-import type { SessionExerciseBreakdown } from '../../../stores/workoutStore';
+import type {
+  SessionExerciseBreakdown,
+  LogEntry,
+} from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
+import {
+  enrichExercisesWithPR,
+  refreshPRRecordsFromLogs,
+} from '../../../lib/prRecordsWriteback';
+import { DB } from '../../../../db.js';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
 
@@ -77,7 +85,7 @@ export function PostRpe(): JSX.Element {
     const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
-    const exercises: SessionExerciseBreakdown[] = Object.entries(history)
+    const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)
       .map(([exIdxStr, sets]) => {
         const exIdx = Number(exIdxStr);
         const planEx = planned?.exercises[exIdx];
@@ -106,6 +114,13 @@ export function PostRpe(): JSX.Element {
       })
       .filter((bd) => bd.sets.length > 0);
 
+    // CRIT #3 + MED #8 shape-check audit chat 5 — enrich exercises cu isPR
+    // flag per set before finishSession persists. detectPR runs vs prior
+    // DB.get('logs') accumulator. PR Wall (prHistoryAggregate) now surfaces
+    // real PRs from React production path.
+    const priorLogs = (DB.get<LogEntry[]>('logs') ?? []) as LogEntry[];
+    const exercises = enrichExercisesWithPR(exercisesBase, priorLogs);
+
     finishSession({
       title,
       meta,
@@ -116,6 +131,13 @@ export function PostRpe(): JSX.Element {
       exercises,
     });
     incrementStreak();
+
+    // CRIT #3 — after finishSession persists new logs (workoutStore writeback),
+    // refresh pr-records hash from full logs scan. MMI Engine #9
+    // buildSilentMmiContext consumes DB.get('pr-records') — was permanent
+    // null pre-shim. Returning users 6+mo now receive baseline weight cap
+    // protection in React production path.
+    refreshPRRecordsFromLogs();
 
     navigate(gotoPath('post-summary'));
   }
