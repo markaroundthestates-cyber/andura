@@ -119,7 +119,7 @@ export function Auth(): JSX.Element {
           </div>
         )}
 
-        <h1 className="text-2xl font-semibold text-ink mb-2 text-center">
+        <h1 className="text-2xl font-bold text-ink mb-2 text-center">
           Intra in cont
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
