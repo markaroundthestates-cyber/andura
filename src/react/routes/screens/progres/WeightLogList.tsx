@@ -10,7 +10,10 @@ import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 
-const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+// Romanian month abbreviations no-diacritics. Matches Istoric.tsx +
+// IstoricDetail.tsx MONTHS_RO ('noi' nu 'nov') pentru cross-screen consistency
+// — D-LEGACY-064 + mockup parity convention.
+const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'];
 
 function formatDateRO(iso: string): string {
   // iso: "2026-05-21" → "21 mai"

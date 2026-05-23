@@ -15,7 +15,10 @@ import { Award, ChevronRight } from 'lucide-react';
 import { getPRHistoryAll } from '../../../lib/prHistoryAggregate';
 import { SubHeader } from '../../../components/SubHeader';
 
-const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+// Romanian month abbreviations no-diacritics. Matches sister Istoric.tsx +
+// IstoricDetail.tsx MONTHS_RO ('noi' nu 'nov') pentru cross-screen consistency
+// pe Istoric domain — D-LEGACY-064 + mockup parity.
+const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'];
 
 function formatPrDate(ts: number): string {
   const d = new Date(ts);
