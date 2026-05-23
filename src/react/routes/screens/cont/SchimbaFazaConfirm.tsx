@@ -54,11 +54,15 @@ export function SchimbaFazaConfirm(): JSX.Element {
           <GitBranch className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
+        {/* Body paragraphs split per mockup andura-clasic.html L2146-2147
+            verbatim — restored "Aceasta reseteaza unele calibrari. Continui?"
+            warning lost in prior copy + merged "Datele istorice raman intacte."
+            into second paragraph cu coach recalibrare. */}
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Schimbi faza activa manual? Coach-ul va recalibra TDEE, volum si
-          progresie pe baza noii faze.
+          Schimbi faza activa manual? Aceasta reseteaza unele calibrari. Continui?
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-sm">
+          Coach-ul va recalibra TDEE, volum si progresie pe baza noii faze.
           Datele istorice raman intacte.
         </p>
 
