@@ -80,11 +80,13 @@ Scenario: user phone lost/stolen/broken → new device → restore engine state.
 3. Open Andura > tap **Cont** tab > **Login cu Magic Link**
 4. Enter same email used previously
 5. Open email > tap Magic Link > auto-redirect `andura.app/auth-callback?oobCode=...`
-6. App detects `oobCode` via `parseMagicLinkUrl()` (`src/auth.js:156`) > calls `verifyMagicLink()` (`src/auth.js:127`) > `_persistAuth()` stores new tokens
+6. App detects `oobCode` via `parseMagicLinkUrl()` (`src/auth.js:184`) > calls `verifyMagicLink()` (`src/auth.js:155`) > `_persistAuth()` (`src/auth.js:418`) stores new tokens
 7. Engine state auto-syncs from Firebase RTDB `users/{uid}/` Tier 1 canonical
-8. Tier 2 IndexedDB rebuilds locally as user navigates (lazy fetch + cache)
+8. Tier 2 IndexedDB rebuilds locally as user navigates (lazy fetch + cache). **Note:** Dexie chunk lazy-loaded post `11b66d89` (vendor-data SW exclude) — first Tier 2 IndexedDB write requires network connection. Maria 65 offline post-Magic-Link = Dexie unavailable until network restored.
 
 **Expected restore time:** ~30 seconds active (Magic Link email arrival + tap + redirect). NO data loss for Tier 1 (canonical server source). Tier 2 historical 90-day window restores progressively as user views Sesiuni tab.
+
+**Edge case — replayed/expired token:** if user taps Magic Link twice (consumed) sau link expirat (>1h Firebase default), `verifyMagicLink()` (`src/auth.js:155`) throws + UI surfaces error. Recovery = tap **Login cu Magic Link** again pentru fresh oobCode. NU threatens backup integrity (Tier 1 server unchanged) — pure auth retry flow. Test în §6 quarterly cycle.
 
 **Daniel test cycle:** quarterly wipe-and-restore Daniel test device. Checklist §6.
 
@@ -95,6 +97,7 @@ CRITICAL (Tier 1 Firebase RTDB):
 - `users/{uid}/sessions/` — workout sessions log canonical
 - `users/{uid}/PRs/` — personal records all exercises
 - `users/{uid}/engineState/` — readiness, fatigue, MMI, 8 engines + #9 MMI pipeline state
+- `users/{uid}/mmi-state/userChoice` — anti-paternalism MMI silent cap preference (`accepted`/`refused`/null). Marius post-pauza 6+ months `refused` override MUST survive restore (else baseline weight reset re-prompts user). Critical per `53b97dff` MMI silent cap wire.
 - `users/{uid}/settings/` — preferences, notifications, theme
 - `users/{uid}/onboarding/` — T0-T3 tier classification + answers
 
@@ -114,7 +117,7 @@ NU backup (regenerable):
 **Goal:** verify backup pipeline actually works end-to-end.
 
 **Checklist (10 items):**
-1. Export Tier 1 Firebase RTDB JSON fresh (per §2)
+1. Export Tier 1 Firebase RTDB JSON fresh (per §2). **Optional automation:** invoke `node scripts/test-restore.cjs <backup-path>` (A035 helper) to simulate Tier 0 wipe + Tier 1+2 preserve scenario before live device test. Script verifies restore semantics without touching prod RTDB.
 2. Open second device (sau Chrome Incognito) NOT logged in
 3. Navigate `andura.app` > install PWA > tap **Login cu Magic Link**
 4. Enter Daniel test email > receive Magic Link < 60s
@@ -217,7 +220,7 @@ NU backup (regenerable):
 **Recovery:**
 1. Disconnect dev machine network IMMEDIATELY (anti-spread)
 2. Source code recovery: `git clone https://github.com/{daniel}/{andura-repo}` to clean machine (GitHub = off-site canonical)
-3. Backup recovery: external drive Tier 1 + Tier 2 JSON files (quarterly off-site per §2)
+3. Backup recovery: external drive Tier 1 + Tier 2 JSON files (quarterly off-site per §2). **Font assets:** `npm install` via `package.json` recovers `@fontsource-variable/inter` Latin subset dep (`d73efe4a` self-host shift) — `public/fonts/` directory empty by design, fonts loaded din `node_modules` via `src/styles/global.css:26` @font-face. ZERO manual disk asset restore needed.
 4. Production unaffected (Firebase + Cloudflare separate from dev machine)
 5. Rotate any secrets that may have been în plaintext on dev machine (`.env.local`, Firebase API keys)
 
@@ -232,6 +235,18 @@ NU backup (regenerable):
 5. Firebase backend unaffected — only CDN/hosting layer impacted
 
 **Tip:** keep alternate provider account dormant pre-configured pentru emergency cutover < 2h.
+
+### §8.5 Forensic limitations — Sentry consent gate
+
+**Context:** Sentry telemetry gated pe `useSettingsStore.getState().telemetryOptIn` (default FALSE per §51 + commit `a1d56306`). `src/main.tsx:29-36` skips `initSentry()` when user NU opted in.
+
+**Impact post-incident:**
+- Pre-opt-in users = ZERO Sentry breadcrumbs + ZERO captured exceptions for incident reconstruction
+- Daniel solo-founder default state = telemetry OFF until explicit opt-in via Setări tab
+- Forensic investigation relies pe Tier 1 RTDB writes (`users/{uid}/_meta/updatedAt` timeline) + Daniel `_log.txt` manual entries + Firebase Console audit trail only
+- NU Sentry-side stack traces, NU client breadcrumbs disponibile pentru opted-out users
+
+**Mitigation:** Daniel personal test account = opt-in Sentry recommended pre-Beta (canary forensic coverage). Beta users opt-out by default GDPR-compliant — investigations cap la server-side signals.
 
 ## §9 Backup verification log
 
@@ -250,7 +265,7 @@ Quick scan = audit trail. NU automation — solo-founder lean.
 - `08-workflows/PROD_OPS_RUNBOOK.md` — A031 parallel sibling, deploy + healthcheck procedures
 - `08-workflows/BETA_ENTRY_CRITERIA.md` — §1 §26 Backup/DR closure gate
 - `scripts/test-restore.cjs` — A035 NEW automated verification helper
-- `src/auth.js` — Magic Link restore implementation (`verifyMagicLink` §1-127, `_persistAuth` §354)
+- `src/auth.js` — Magic Link restore implementation (`verifyMagicLink` L155, `parseMagicLinkUrl` L184, `_persistAuth` L418)
 - `src/util/tierStorage.js` — Tier 2 90-day rotation logic
 - `DECISIONS.md` §D045 — Tier 2 90-day rolling rotation V1 LOCKED
 - ADR §35-C1 — Tier 0/1/2 architecture canonical reference
