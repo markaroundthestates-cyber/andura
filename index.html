@@ -13,16 +13,36 @@
        directives are ignored when delivered via <meta> (browsers log console errors).
        True clickjacking protection requires HTTP headers, which GH Pages cannot set.
        Accepted-risk pre-Beta; revisit when migrating to a host that supports custom headers. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <link rel="manifest" href="/manifest.json" />
+  <!-- PWA manifest auto-injected by vite-plugin-pwa as /manifest.webmanifest.
+       Single SoT: vite.config.js `VitePWA({manifest:...})`. -->
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <!-- §15-N2 audit fix (NIT chat 5 Wave 22) — iOS Safari PWA hints. Without
+       these, "Add to Home Screen" on iPhone opens app in regular Safari shell
+       (URL bar + bottom toolbar visible) instead of standalone PWA mode.
+       'apple-mobile-web-app-capable' enables standalone display on iOS,
+       'apple-mobile-web-app-status-bar-style=default' surfaces light status
+       bar matching cream paper background (#faf7f1). Maria 65 iPhone install
+       flow now matches Android Add-to-Home parity. -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Andura" />
+  <!-- §36-M3 audit fix — DNS prefetch hints for Firebase + Sentry endpoints.
+       Shaves initial connect time on first auth + telemetry calls (~50-100ms
+       on cold cache). Google Fonts preconnect removed post self-host (2026-05-23). -->
+  <link rel="dns-prefetch" href="//fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app" />
+  <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
+  <link rel="dns-prefetch" href="//securetoken.googleapis.com" />
+  <link rel="dns-prefetch" href="//o4511269200068608.ingest.de.sentry.io" />
+  <!-- Self-host Inter Variable Latin subset @font-face declared in
+       src/styles/global.css (font-display: swap). Bundled via Vite from
+       @fontsource-variable/inter (Latin slice ~48 KB). Preload omis post
+       chat 5 FONT_SUBSET_LATIN_FIX — hash dynamic + global.css critical
+       CSS path already discovers @font-face declaration pre-paint. -->
   <title>Andura</title>
   <!-- SPA GitHub Pages redirect decode (Rafael Pedicini pattern spa-github-pages).
        Pereche cu public/404.html: 404.html encode URL → query string,
@@ -55,12 +75,12 @@
       min-height: 100vh;
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-BO-VhO5g.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/vendor-react-3rYwAoSV.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-state-CCC5uXmq.js">
-  <link rel="modulepreload" crossorigin href="/assets/vendor-icons-Cm73zQHj.js">
-  <link rel="stylesheet" crossorigin href="/assets/main-PqAVnbP7.css">
-<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <script type="module" crossorigin src="/assets/main-CBNPNhEF.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/vendor-react-Bd9VgUUf.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-state-TcNlap4a.js">
+  <link rel="modulepreload" crossorigin href="/assets/vendor-icons-kIcmzHyk.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-D6j9Jg12.css">
+<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js" defer></script></head>
 <body>
   <div id="root"></div>
 </body>
