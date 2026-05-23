@@ -9,6 +9,11 @@
 // §F-pass2-setloginput-01 + §F-pass2-setloginput-02 (HIGH-DELTA 2026-05-22):
 // adaugat `mode` prop cu 3 stari Daniel 2026-05-12 directive `doar tinta
 // inainte de Logheaza`:
+//
+// §F-pass2-setloginput-03 (LOW chat5 Wave 10) — labels editable mode swap
+// "Kg"/"Reps" English -> "kg"/"Repetari" Romanian mockup verbatim
+// andura-clasic.html#L1380 (wv2-target-simple "10 repetari 22.5 kg" form
+// intuitive lowercase units + Romanian full word).
 //   - 'editable' (default) — paradigma curenta (backward compat), inputs
 //     vizibile always. Existing callsites (Workout.tsx) compile fara
 //     modificare. Default value preserves Phase 4 task_12 behavior.
@@ -136,7 +141,7 @@ export function SetLogInput({
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-          Kg *
+          kg *
         </label>
         <input
           id="kg-input"
@@ -165,7 +170,7 @@ export function SetLogInput({
       </div>
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="reps-input">
-          Reps *
+          Repetari *
         </label>
         <input
           id="reps-input"

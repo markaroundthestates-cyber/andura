@@ -60,9 +60,11 @@ describe('SetLogInput — editable mode (default, backward compat)', () => {
 
   it('label htmlFor association matches input id (a11y)', () => {
     renderInput();
-    // A11Y HIGH chat5 — label text now "Kg *" / "Reps *" pentru required marker
-    const kgLabel = screen.getByText('Kg *');
-    const repsLabel = screen.getByText('Reps *');
+    // A11Y HIGH chat5 — label text required marker. §F-pass2-setloginput-03
+    // (LOW chat5 Wave 10) Romanian-first labels mockup verbatim: lowercase
+    // "kg *" + "Repetari *" replacing English "Kg" / "Reps".
+    const kgLabel = screen.getByText('kg *');
+    const repsLabel = screen.getByText('Repetari *');
     expect(kgLabel).toHaveAttribute('for', 'kg-input');
     expect(repsLabel).toHaveAttribute('for', 'reps-input');
   });
