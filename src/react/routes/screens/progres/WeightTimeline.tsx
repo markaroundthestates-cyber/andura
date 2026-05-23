@@ -230,7 +230,7 @@ export function WeightTimeline(): JSX.Element {
           type="button"
           onClick={() => navigate(gotoPath('weight-log-list'))}
           data-testid="weight-timeline-logs-cta"
-          className="w-full flex items-center gap-3 p-4 bg-paper2 border border-line rounded-xl text-left"
+          className="w-full flex items-center gap-3 p-4 bg-paper2 border border-lineStrong rounded-xl text-left"
         >
           <List className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
           <span className="flex-1 text-sm font-semibold text-ink">Loguri recente</span>
