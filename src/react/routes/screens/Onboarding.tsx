@@ -57,7 +57,7 @@ export function Onboarding(): JSX.Element {
       className="min-h-screen bg-paper text-ink flex flex-col p-6"
       data-testid={`onboarding-step-${stepNum}`}
     >
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-8">
         {Array.from({ length: TOTAL_STEPS }, (_, i) => (
           <div
             key={i}
