@@ -10,6 +10,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { DB, todTs } from '../../db.js';
 
 export type WorkoutPhase = 'logging' | 'rating' | 'rest' | 'transition' | 'idle';
 
@@ -74,6 +75,85 @@ export interface LastSessionSummary {
   volumeKg?: number;
   // Phase 5 task_03: per-exercise breakdown pentru IstoricDetail.
   exercises?: SessionExerciseBreakdown[];
+}
+
+// ── Logs writeback shim (CRIT #2 shape-check audit chat 5) ─────────────────
+// Post-D028 vanilla retire → React-side workoutStore.finishSession never
+// persists logs to DB. Engine adapters (readiness/fatigue/adherence/MMI/
+// stagnationDetector) consume DB.get('logs') → permanent input-starved.
+//
+// Per-set flat schema matches legacy src/pages/coach/logging.js:195 engine
+// consumer contract (NOT session-aggregate — engines filter by l.session +
+// l.ex + l.w). Cap 5000 entries matches legacy logging.js:198 convention.
+// Newest-first (unshift) preserves dp.getLogs slice(0, n) recency assumption.
+//
+// Cross-refs:
+//   - src/engine/fatigue.js#calculateFatigueScore reads l.session + l.ts
+//   - src/engine/dp.js#getLogs reads l.ex + l.w slice top N recent
+//   - src/engine/prEngine.js#detectPR reads l.ex + l.w + l.reps
+export interface LogEntry {
+  date: string;
+  ex: string;
+  w: number;
+  kg: number;
+  set: number;
+  sets: number;
+  reps: string;
+  ts: number;
+  session: number;
+  isPR?: boolean;
+}
+
+export const LOGS_MAX = 5000;
+
+export function buildLogEntriesFromSummary(
+  summary: LastSessionSummary,
+  sessionStart: number
+): LogEntry[] {
+  const entries: LogEntry[] = [];
+  const exercises = summary.exercises ?? [];
+  for (const ex of exercises) {
+    let setIdx = 0;
+    for (const s of ex.sets) {
+      setIdx += 1;
+      const ts = s.timestamp;
+      entries.push({
+        date: todTs(ts),
+        ex: ex.exerciseName,
+        w: s.kg,
+        kg: s.kg,
+        set: setIdx,
+        sets: 1,
+        reps: String(s.reps),
+        ts,
+        session: sessionStart,
+        ...(s.isPR ? { isPR: true } : {}),
+      });
+    }
+  }
+  return entries;
+}
+
+export function persistSessionLogs(
+  summary: LastSessionSummary,
+  sessionStart: number | null
+): void {
+  if (sessionStart == null) return;
+  try {
+    const newEntries = buildLogEntriesFromSummary(summary, sessionStart);
+    if (newEntries.length === 0) return;
+    const existing = DB.get<LogEntry[]>('logs') ?? [];
+    // Newest-first: prepend new entries reversed so chronologically-latest set
+    // ends up at index 0 (matches legacy unshift loop order). New entries
+    // already iterated exIdx ascending + setIdx ascending; reverse to get
+    // latest-set-first within session.
+    const merged = [...newEntries.slice().reverse(), ...existing].slice(0, LOGS_MAX);
+    DB.set('logs', merged);
+  } catch {
+    // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
+    // missing logs (return 'DATE INSUFICIENTE' baseline). Preserves zero-
+    // throw render contract Zustand action boundary.
+  }
 }
 
 export interface WorkoutState {
@@ -236,17 +316,26 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         }),
 
       finishSession: (summary) =>
-        set((s) => ({
-          phase: 'idle',
-          sessionStart: null,
-          lastSession: summary,
-          // Phase 4 task_21: append la sessionsHistory cumulative list
-          // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
-          sessionsHistory: [...s.sessionsHistory, summary],
-          exIdx: 0,
-          setIdx: 0,
-          history: {},
-        })),
+        set((s) => {
+          // CRIT #2 shape-check audit chat 5 — persist per-set logs to DB so
+          // engine adapters (readiness/fatigue/adherence/MMI/stagnationDetector)
+          // receive real session history from React production path. Pure
+          // side-effect at action boundary per ADR 026 §9 (engines read DB
+          // synchronously; localStorage write is sync). Soft-fail inside
+          // persistSessionLogs preserves zero-throw render contract.
+          persistSessionLogs(summary, s.sessionStart);
+          return {
+            phase: 'idle' as WorkoutPhase,
+            sessionStart: null,
+            lastSession: summary,
+            // Phase 4 task_21: append la sessionsHistory cumulative list
+            // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
+            sessionsHistory: [...s.sessionsHistory, summary],
+            exIdx: 0,
+            setIdx: 0,
+            history: {},
+          };
+        }),
 
       setPhase: (phase) => set({ phase }),
 
