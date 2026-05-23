@@ -62,10 +62,10 @@ describe('EnergyCause — render', () => {
     expect(skip).toHaveTextContent(/Sari peste/i);
   });
 
-  it('renders helper copy "Optional. Coach ajusteaza"', () => {
+  it('renders helper copy "Alege una. Coach-ul foloseste raspunsul"', () => {
     renderEnergyCause();
-    expect(screen.getByText(/Optional/i)).toBeInTheDocument();
-    expect(screen.getByText(/Coach ajusteaza/i)).toBeInTheDocument();
+    expect(screen.getByText(/Alege una/i)).toBeInTheDocument();
+    expect(screen.getByText(/Coach-ul foloseste raspunsul/i)).toBeInTheDocument();
   });
 });
 

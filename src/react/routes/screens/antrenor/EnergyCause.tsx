@@ -22,6 +22,12 @@
 // "ce e mai greu" vs prod generic "De ce te simti asa"). Semantic mai
 // precis: intreaba cauza dificultatii, NU starea emotionala.
 //
+// §F-energy-cause-05 (MED chat5 Wave 13) — body intro mockup verbatim
+// "Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea."
+// mockup andura-clasic.html#L903. Prod avea "Optional. Coach ajusteaza in
+// functie de cauza." Mockup pozitiv (instructional + behavior trigger) vs
+// prod technical-warning. Aliniaza tone Suflet Andura voice warm-direct.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -93,7 +99,7 @@ export function EnergyCause(): JSX.Element {
       />
       <div className="p-6 flex-1">
         <p className="text-base text-ink2 mb-6">
-          Optional. Coach ajusteaza in functie de cauza.
+          Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea.
         </p>
         <div className="grid grid-cols-2 gap-3">
           {CAUSE_OPTIONS.map(({ label, Icon }) => (
