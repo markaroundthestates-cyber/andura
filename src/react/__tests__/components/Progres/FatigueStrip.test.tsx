@@ -1,4 +1,8 @@
 // Phase 6 task_22 — FatigueStrip Progres dashboard tests.
+//
+// §F-pass2-fatiguestrip-03 (MED chat5 Wave 11) — value standalone mockup
+// L1720 + sub-label below mockup L1721 (NU inline span). Tests updated
+// to match split structure: testid `fatigue-sub-label` for label paragraph.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -28,6 +32,9 @@ describe('FatigueStrip', () => {
   it('renders score (/10 scale) + label cand fatigue present', () => {
     // §F-pass2-fatiguestrip-01 — display converted to /10 (engine score 45 → 5/10
     // post Math.round(45 / 10)). Mockup L1720 verbatim "6/10" intuitive Gigel.
+    // §F-pass2-fatiguestrip-03 — value standalone (text-xl mono) + sub-label
+    // separate paragraph testid `fatigue-sub-label`. Use textContent match
+    // because "5" + "/10" sunt în elemente separate (span nested în p).
     vi.mocked(getFatigue).mockReturnValueOnce({
       score: 45,
       key: 'MODERATE_FATIGUE',
@@ -38,8 +45,30 @@ describe('FatigueStrip', () => {
       detail: 'Astazi mentinem greutatile.',
     });
     render(<FatigueStrip />);
-    expect(screen.getByText(/5\/10/)).toBeInTheDocument();
-    expect(screen.getByText(/Pas mai conservator/)).toBeInTheDocument();
+    const strip = screen.getByTestId('fatigue-strip');
+    expect(strip.textContent).toMatch(/5\/10/);
+    const subLabel = screen.getByTestId('fatigue-sub-label');
+    expect(subLabel.textContent).toBe('Pas mai conservator');
+  });
+
+  it('§F-pass2-fatiguestrip-03 sub-label paragraph separate de value (mockup L1721)', () => {
+    vi.mocked(getFatigue).mockReturnValueOnce({
+      score: 75,
+      key: 'HIGH_FATIGUE',
+      label: 'Azi mergem mai bland',
+      icon: '',
+      color: '',
+      recommend: 'deload',
+      detail: '',
+    });
+    render(<FatigueStrip />);
+    const subLabel = screen.getByTestId('fatigue-sub-label');
+    expect(subLabel.tagName).toBe('P');
+    expect(subLabel.textContent).toBe('Azi mergem mai bland');
+    // Value paragraph SHOULD NOT contain label (split assertion).
+    const valueText = subLabel.previousElementSibling?.textContent ?? '';
+    expect(valueText).toMatch(/\/10$/);
+    expect(valueText).not.toContain('Azi mergem mai bland');
   });
 
   it('renders detail cand fatigue.detail prezent', () => {

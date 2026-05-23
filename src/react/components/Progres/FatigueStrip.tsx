@@ -6,6 +6,13 @@
 // from engine 0-100 to mockup-parity 0-10 (intuitive Gigel scan, mockup L1720
 // verbatim "6/10"). Engine signal unchanged; UI render only. Per Karpathy SF
 // Math.round(score / 10) preserves precision sufficient for visual ladder.
+//
+// §F-pass2-fatiguestrip-03 (MED chat5 Wave 11) — sub-label restructure mockup
+// L1720-1721 verbatim pattern: value standalone (mono "6/10") + descriptive
+// sub-label below (NU inline span lipit cu separator). Engine label text
+// preserved verbatim ("Azi mergem mai bland" / "Pas mai conservator" / etc) —
+// fatigue.js #L66-L92 deja emite Romanian human-friendly wording, NU jargon.
+// Mono font on numeric value reinforces 'metric snapshot' visual semantics.
 
 import type { JSX } from 'react';
 import { Activity } from 'lucide-react';
@@ -29,11 +36,17 @@ export function FatigueStrip(): JSX.Element {
         </p>
         {fatigue ? (
           <>
-            <p className="text-xl font-bold text-ink">
-              {scoreOutOfTen}/10
-              <span className="text-sm font-normal text-ink2 ml-2">
-                · {fatigue.label}
-              </span>
+            {/* §F-pass2-fatiguestrip-03 — value standalone mono mockup
+               L1720; sub-label deplasat pe linie noua mockup L1721. */}
+            <p className="text-xl font-bold text-ink font-mono tracking-tight">
+              {scoreOutOfTen}
+              <span className="text-sm font-normal text-ink2">/10</span>
+            </p>
+            <p
+              className="text-xs text-ink2 mt-0.5"
+              data-testid="fatigue-sub-label"
+            >
+              {fatigue.label}
             </p>
             {fatigue.detail && (
               <p className="text-xs text-ink2 mt-0.5" data-testid="fatigue-detail">
