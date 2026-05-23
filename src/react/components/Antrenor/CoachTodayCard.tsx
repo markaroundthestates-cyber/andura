@@ -37,6 +37,7 @@ import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
 import { gotoPath } from '../../lib/navigation';
+import { useWorkoutStore } from '../../stores/workoutStore';
 
 // §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
 // hex literals → CSS custom properties. Tailwind extend in `tailwind.config.js`
@@ -80,6 +81,17 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // group → fallback safe generic non-claim line via coachPick('preview').
   // Memoized: engine call runs once per mount, NU per render. Optional-
   // chained call tolerates partial engineWrappers mocks (Antrenor.test).
+  //
+  // MED-CODE-20 chat5 (2026-05-23) — useMemo deps [sessionsHistory, todayDate]
+  // pentru recompute cand user finishes workout mid-day (sessionsHistory
+  // append) sau day rollover (date string slice change). Prior `[]` empty
+  // deps locked engine result la mount — user trains la 09:00, returns post-
+  // workout 14:00 → recovery state changed dar quote stays stale.
+  // getCoachTodayQuote() reads useWorkoutStore.getState().sessionsHistory
+  // imperative (NU subscription), so dep array must trigger recompute via
+  // Zustand selector subscription pe sessionsHistory.
+  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  const todayDate = new Date().toISOString().slice(0, 10);
   const coachQuote = useMemo<string>(() => {
     try {
       const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;
@@ -94,7 +106,14 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     // pattern; pool entries are non-claim general motivation (NO muscle
     // recovery claims).
     return coachPick('preview', undefined, 0);
-  }, []);
+    // MED-CODE-20 — sessionsHistory + todayDate sunt SIGNAL deps intentional
+    // (NU direct references in body). getCoachTodayQuote() reads
+    // useWorkoutStore.getState().sessionsHistory imperative inside engine
+    // wrapper; deps array trigger recompute via Zustand subscription +
+    // date rollover signal. eslint-disable warranted — exhaustive-deps
+    // lint cannot see indirect engine getState() read pattern.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionsHistory, todayDate]);
   // §F-pass2-coachtoday-04 — memo lagging signal so weaknessDetector engine
   // call NU runs every render. Null cand T0 fresh / balanced training.
   // Namespace-imported with optional-chained access: tolerates partial mocks
