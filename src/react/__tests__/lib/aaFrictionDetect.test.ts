@@ -46,6 +46,32 @@ describe('detectAggressiveLoad — fast_sets pattern', () => {
       reason: 'fast_sets',
     });
   });
+
+  // LOW-CODE-08 — edge case timestamp=0 guard (Maria 65 fresh install +
+  // legacy data fallback h.timestamp ?? 0 + test fixtures default).
+  it('NU trigger fast_sets cand last.timestamp=0 (no real baseline)', () => {
+    const history: SetSample[] = [{ kg: 20, reps: 10, timestamp: 0 }];
+    const newSet: SetSample = { kg: 20, reps: 10, timestamp: T0 };
+    // Without guard: T0 - 0 = T0 >> 30s → no false negative.
+    // With guard: explicit skip cand last.timestamp=0 (no baseline available).
+    expect(detectAggressiveLoad(history, newSet).reason).not.toBe('fast_sets');
+  });
+
+  it('NU trigger fast_sets cand both timestamps=0 (test fixture defaults)', () => {
+    const history: SetSample[] = [{ kg: 20, reps: 10, timestamp: 0 }];
+    const newSet: SetSample = { kg: 20, reps: 10, timestamp: 0 };
+    // Without guard: 0 - 0 = 0 < 30s → FALSE POSITIVE trigger.
+    // With guard: skip — neither set has real timestamp.
+    expect(detectAggressiveLoad(history, newSet).trigger).toBe(false);
+  });
+
+  it('NU trigger fast_sets cand newSet.timestamp=0 (clock unset)', () => {
+    const history: SetSample[] = [{ kg: 20, reps: 10, timestamp: T0 }];
+    const newSet: SetSample = { kg: 20, reps: 10, timestamp: 0 };
+    // Without guard: 0 - T0 = negative << 30s → FALSE POSITIVE trigger.
+    // With guard: skip — newSet timestamp invalid.
+    expect(detectAggressiveLoad(history, newSet).trigger).toBe(false);
+  });
 });
 
 describe('detectAggressiveLoad — kg_jump pattern', () => {

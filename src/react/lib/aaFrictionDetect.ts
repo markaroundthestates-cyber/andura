@@ -97,8 +97,15 @@ export function detectAggressiveLoad(
   const last = setHistory[setHistory.length - 1];
   if (last === undefined) return { trigger: false };
 
-  // 1. fast_sets — insufficient recovery between sets
-  if (newSet.timestamp - last.timestamp < thresholds.fastSetsIntervalMs) {
+  // 1. fast_sets — insufficient recovery between sets.
+  // Guard: skip cand last.timestamp <= 0 (no real baseline — legacy/fresh
+  // install/test fixture default 0). Symmetric cu last.kg>0 / last.reps>0
+  // guards below. LOW-CODE-08 fix.
+  if (
+    last.timestamp > 0 &&
+    newSet.timestamp > 0 &&
+    newSet.timestamp - last.timestamp < thresholds.fastSetsIntervalMs
+  ) {
     return { trigger: true, reason: 'fast_sets' };
   }
 
