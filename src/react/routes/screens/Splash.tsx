@@ -1,6 +1,10 @@
 // ══ SPLASH — Landing screen Phase 5 task_15 ══════════════════════════════
 // Wordmark + tagline + CTA primary. Routes la auth (anon) sau antrenor
 // (auth). Wording autonomous compose D024 LOCKED V1.
+//
+// §F-splash-06 (LOW chat5 Wave 10) — padding asimetric mockup verbatim
+// 48/28/32 (pt-12 px-7 pb-8) per andura-clasic.html#L403 (mai mult top,
+// custom horizontal). Aliniaza ritmul vertical splash cu intentia mockup.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +16,7 @@ export function Splash(): JSX.Element {
 
   return (
     <section
-      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-6 text-center"
+      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center pt-12 px-7 pb-8 text-center"
       data-testid="splash"
     >
       <div className="w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold mb-6 tracking-tight">
