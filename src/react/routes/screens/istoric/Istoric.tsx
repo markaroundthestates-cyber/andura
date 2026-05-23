@@ -74,7 +74,9 @@ export function Istoric(): JSX.Element {
       className="p-6 bg-paper min-h-screen"
       data-testid="istoric-home"
     >
-      <h1 className="text-2xl font-semibold text-ink mb-6">Istoric</h1>
+      {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 → 700
+          mockup andura-clasic.html#L1157 (font-weight:700). */}
+      <h1 className="text-2xl font-bold text-ink mb-6">Istoric</h1>
 
       {/* Phase 6 task_23: streak stats summary */}
       <div
