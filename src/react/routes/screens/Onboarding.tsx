@@ -125,7 +125,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
     : null;
   return (
     <>
-      <h1 id="onb-step1-heading" className="text-2xl font-semibold text-ink mb-2">Ce varsta ai?</h1>
+      <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">Ce varsta ai?</h1>
       <p className="text-sm text-ink2 mb-6">Ajustam programul pe varsta ta.</p>
       <input
         type="number"
@@ -171,7 +171,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
 function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-6">Cum te identifici?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">Cum te identifici?</h1>
       {/* §6-M3 revert per Karpathy SF — aria-pressed valid pattern toggle
           select state pe <button>. role=radiogroup necesita arrow-key
           handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
@@ -210,7 +210,7 @@ const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' |
 function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-2">Ce vrei sa obtii?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Ce vrei sa obtii?</h1>
       <p className="text-sm text-ink2 mb-6">Alegi unul. Poti schimba mai tarziu.</p>
       <div className="flex flex-col gap-3">
         {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((v) => (
@@ -233,7 +233,7 @@ function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): 
 function Step4({ value, onChange }: OptionStepProps<'2' | '3' | '4' | '5'>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-2">Cat de des te antrenezi?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Cat de des te antrenezi?</h1>
       <p className="text-sm text-ink2 mb-6">Sesiuni pe saptamana.</p>
       {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
           numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
@@ -265,7 +265,7 @@ function Step5({ value, onChange }: OptionStepProps<'incepator' | 'intermediar' 
   } as const;
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-6">Cata experienta ai?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">Cata experienta ai?</h1>
       <div className="flex flex-col gap-3">
         {(Object.keys(labels) as Array<keyof typeof labels>).map((v) => (
           <button
@@ -292,7 +292,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
     : null;
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-2">Cat cantaresti?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Cat cantaresti?</h1>
       <p className="text-sm text-ink2 mb-6">Calculam volum + tonaj real.</p>
       <input
         type="number"
@@ -338,7 +338,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
 function Step7({ data }: { data: OnboardingData }): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink mb-2">Verifica datele</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Verifica datele</h1>
       <p className="text-sm text-ink2 mb-6">Poti reveni oricand sa schimbi.</p>
       <div className="bg-paper2 border border-line rounded-xl p-4 space-y-2" data-testid="onb-summary">
         <div className="flex justify-between text-sm"><span className="text-ink2">Varsta</span><span className="text-ink font-medium">{data.age ?? '-'}</span></div>
