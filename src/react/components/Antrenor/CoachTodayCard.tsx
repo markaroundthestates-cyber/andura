@@ -18,6 +18,13 @@
 // wrapper memoized. Override link navigates internally - Antrenor.tsx
 // untouched (HIGH-GAMMA territory same wave 2c). Namespace import + optional-
 // chained call tolerates partial mocks in sibling tests.
+//
+// §F-pass2-coachtoday-07 (LOW chat5 Wave 10) — radial brick gradient
+// decoration top-right corner mockup L742 verbatim. 140x140 cerc absolute
+// pozitionat -30/-30 cu radial-gradient brick 35% opacity → transparent
+// 70%. Subtle warmth highlight pe ink card (decorative-only, NU semantic).
+// Content z-relative pentru a sta deasupra gradient (overflow-hidden taie
+// la border-radius).
 
 import type { JSX } from 'react';
 import { useMemo } from 'react';
@@ -70,16 +77,28 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-2.5"
+      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-2.5"
       role="region"
       aria-label="Coach-ul recomanda azi"
     >
-      <div className="text-xs font-semibold tracking-wider uppercase text-brick">
+      {/* §F-pass2-coachtoday-07 (LOW chat5 Wave 10) — decorative radial brick
+         gradient mockup L742 verbatim. aria-hidden + presentation-only div,
+         dark-theme hidden (background swap negates warmth intent). */}
+      <div
+        aria-hidden="true"
+        data-testid="coach-today-gradient"
+        className="absolute -top-[30px] -right-[30px] w-[140px] h-[140px] rounded-full pointer-events-none dark:hidden"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(200,65,46,0.35), transparent 70%)',
+        }}
+      />
+      <div className="relative text-xs font-semibold tracking-wider uppercase text-brick">
         Coach-ul recomanda azi
       </div>
-      <div className="text-xl font-bold mt-1 tracking-tight">{title}</div>
+      <div className="relative text-xl font-bold mt-1 tracking-tight">{title}</div>
       <div
-        className="font-serif italic mt-1.5 leading-relaxed text-sm"
+        className="relative font-serif italic mt-1.5 leading-relaxed text-sm"
         style={{ color: COACH_LORA_COLOR }}
       >
         &bdquo;Pectoralii recupereaza din marti &middot; spatele e gata.&rdquo;
@@ -87,13 +106,13 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       {laggingSignal && (
         <div
           data-testid="coach-today-lagging"
-          className="font-serif italic mt-1.5 leading-relaxed text-xs pt-1.5 border-t border-dashed"
+          className="relative font-serif italic mt-1.5 leading-relaxed text-xs pt-1.5 border-t border-dashed"
           style={{ color: COACH_LAGGING_COLOR, borderColor: 'rgba(246,200,154,0.3)' }}
         >
           &bdquo;{laggingSignal}&rdquo;
         </div>
       )}
-      <div className="flex gap-3.5 mt-3.5 text-sm" style={{ color: COACH_META_COLOR }}>
+      <div className="relative flex gap-3.5 mt-3.5 text-sm" style={{ color: COACH_META_COLOR }}>
         <span className="flex items-center gap-1.5">
           <Clock className="w-3.5 h-3.5" aria-hidden="true" />
           ~ {duration} min
@@ -106,11 +125,11 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <button
         type="button"
         onClick={onStart}
-        className="w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
+        className="relative w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
       >
         Incepe sesiunea
       </button>
-      <div className="text-center mt-2.5">
+      <div className="relative text-center mt-2.5">
         <button
           type="button"
           onClick={handleOverride}
