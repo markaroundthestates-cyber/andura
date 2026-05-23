@@ -4,6 +4,11 @@
 //
 // §F-pass2-resume-01 (MED Wave 7 2026-05-23) — PlayCircle brick icon 24x24
 // left of content per mockup L796 verbatim (visual call-to-action affordance).
+//
+// §F-pass2-resume-02 (LOW chat5 Wave 11) — background warm cream #fdf6e8
+// per mockup L795 verbatim (urgent-friendly accent vs default paper2 neutral).
+// Tailwind arbitrary value `bg-[#fdf6e8]` on light theme; `dark:bg-paper2`
+// preserves dark fallback (cream tint loses contrast pe dark surfaces).
 
 import type { JSX } from 'react';
 import { PlayCircle } from 'lucide-react';
@@ -19,10 +24,15 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
   const minutesAgo = Math.max(1, Math.floor((Date.now() - snapshot.sessionStart) / 60000));
   return (
     <div
-      className="bg-paper2 border border-brick rounded-xl p-4 mb-4 cursor-pointer"
+      // §F-pass2-resume-02 — mockup L795 verbatim warm cream urgent-friendly
+      // tint #fdf6e8 (light) cu dark fallback paper2 (cream tint loses contrast
+      // pe dark surfaces). Tailwind arbitrary value preserves dark: prefix
+      // selector specificity superior la inline style.
+      className="bg-[#fdf6e8] dark:bg-paper2 border border-brick rounded-xl p-4 mb-4 cursor-pointer"
       role="region"
       aria-label="Reia sesiunea"
       onClick={onResume}
+      data-testid="resume-session-card"
     >
       <div className="flex items-center gap-3">
         <PlayCircle

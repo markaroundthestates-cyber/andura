@@ -1,5 +1,8 @@
 // §F-pass2-resume-01 (MED Wave 7 2026-05-23) — ResumeSessionCard tests
 // covering PlayCircle brick icon parity mockup andura-clasic.html L796.
+//
+// §F-pass2-resume-02 (LOW chat5 Wave 11) — extend tests cu cream warm bg
+// class verification + data-testid root scope. Mockup L795 verbatim.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -57,6 +60,13 @@ describe('ResumeSessionCard — render', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Renunta' }));
     expect(onDiscard).toHaveBeenCalled();
     expect(onResume).not.toHaveBeenCalled();
+  });
+
+  it('§F-pass2-resume-02 warm cream bg #fdf6e8 (mockup L795 light theme)', () => {
+    render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
+    const root = screen.getByTestId('resume-session-card');
+    expect(root.className).toContain('bg-[#fdf6e8]');
+    expect(root.className).toContain('dark:bg-paper2');
   });
 
   it('no diacritics in UI text', () => {
