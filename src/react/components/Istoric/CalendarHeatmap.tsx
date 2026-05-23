@@ -52,6 +52,16 @@ function ratingToTierClass(rating: SessionRating | null): string {
   return 'l2'; // potrivit OR null fallback
 }
 
+// Multi-session same-day aggregator (Marius perf AM+PM). Severity-first
+// tiebreak aligns w/ deriveSessionRating: greu > potrivit > usor > null.
+// Null returned only when all sessions return null (all legacy / no sets).
+function aggregateDayRating(ratings: Array<SessionRating | null>): SessionRating | null {
+  if (ratings.some((r) => r === 'greu')) return 'greu';
+  if (ratings.some((r) => r === 'potrivit')) return 'potrivit';
+  if (ratings.some((r) => r === 'usor')) return 'usor';
+  return null;
+}
+
 function tierBgClass(tier: string): string {
   if (tier === 'l1') return 'bg-heatUsor';
   if (tier === 'l2') return 'bg-heatNormal';
@@ -88,9 +98,11 @@ export function CalendarHeatmap(): JSX.Element {
   }
   for (let d = 1; d <= daysInMonth; d++) {
     const key = `${calY}-${String(calM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    const session = sessionsByDate.get(key);
-    const rating = session ? deriveSessionRating(session) : null;
-    cells.push({ day: d, rating: session ? rating : null, key });
+    const sessions = sessionsByDate.get(key);
+    const rating = sessions
+      ? aggregateDayRating(sessions.map((s) => deriveSessionRating(s)))
+      : null;
+    cells.push({ day: d, rating: sessions ? rating : null, key });
   }
 
   return (
