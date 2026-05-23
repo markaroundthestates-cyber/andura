@@ -225,6 +225,8 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 **2026-05-22 chat 3 FINAL** = 14-agent storm + 6-audit consolidation + Wave C parity (Calendar+WorkoutPreview+RestOverlay+Splash F-splash-05) + D049 LOCKED V1 anti-ghost-metadata + 5+10-agent CRIT/HIGH attack wave + 6 audit deferrals (§24-H1 FEATURE_FLAGS + §24-H3 ENVIRONMENT_STRATEGY + §27-H1 PRICING + §28-H1 DPA_FIREBASE + §28-H2 DATA_RESIDENCY + §28-H4 CONSENT_MGMT + §32 Toast viewport) + cleanup recovery catastrofic `dce78e2e` orphan-script destruction (soft-reset + 6 atomic Bugatti clean post-recovery). **4930 PASS / 0 FAIL / 7 todo / 292 files** post chat 3 FINAL. **+94 commits ahead origin/main** NU pushed (D031 invariant). Ledger 422+/941 fixed (44.8%+ Beta gate ZERO, pending LEDGER-FINAL-PROMOTE agent paralel refresh ~440-460). **Manager-role LOCKED + dashboard auto-start LOCKED + trust-agents-Opus-max-capable LOCKED** memories (manager rar lucrează direct, agents = executor Opus 4.7, dashboard pornește background main session §CC.2 step 7 NEW).
 
+**2026-05-23 chat 5 wrap** — 49+ commits cumulative: 5/5 nuclear audits LANDED + code review v2 closed + DRIFT 1/2/3 resolved Option A/B + Pass 4-12 polish saturation. Pre-Beta verdict READY-WITH-DANIEL-2-HARD (push + walkthrough). D050-D075 LOCK batch.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
