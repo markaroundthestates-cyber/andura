@@ -115,6 +115,38 @@ export interface PlannedWorkoutOutput {
   warmup?: { line: string; durationMin: number } | null;
 }
 
+// ── Shared helpers ───────────────────────────────────────────────────────
+
+/**
+ * Flatten workoutStore sessionsHistory → engine logs shape {ex, ts, w, reps}.
+ * Shared helper extracted from 3x duplication (getPatternsBanner STAGNATION +
+ * getCoachRestReason + getLaggingSignal) per code review nuclear chat 5 HIGH-4
+ * DRY fix. Drift risk eliminated: single canonical mapping for engine consumers
+ * (detectGlobalStagnation / getRecoveryByGroup / detectWeakGroups).
+ *
+ * Defensive: session.exercises optional (backward compat pre-Phase-5-task-03
+ * persisted sessions fără breakdown). Skips sessions cu exercises absent.
+ */
+function flattenSessionsToEngineLogs(
+  sessions: ReadonlyArray<{ exercises?: ReadonlyArray<{ exerciseName: string; sets: ReadonlyArray<{ kg: number; reps: number; timestamp: number }> }> }>,
+): Array<{ ex: string; ts: number; w: number; reps: number }> {
+  const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
+  for (const session of sessions) {
+    if (!session.exercises) continue;
+    for (const ex of session.exercises) {
+      for (const set of ex.sets) {
+        logs.push({
+          ex: ex.exerciseName,
+          ts: set.timestamp,
+          w: set.kg,
+          reps: set.reps,
+        });
+      }
+    }
+  }
+  return logs;
+}
+
 // ── Wrappers cu try/catch fallback safe ──────────────────────────────────
 
 /**
@@ -635,21 +667,7 @@ export function getPatternsBanner(): PatternBanner[] {
   // Pattern 1: STAGNATION via stagnationDetector
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
-    // Flatten sessions.exercises.sets → logs shape {ex, ts, w, reps}
-    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
-    for (const session of sessions) {
-      if (!session.exercises) continue;
-      for (const ex of session.exercises) {
-        for (const set of ex.sets) {
-          logs.push({
-            ex: ex.exerciseName,
-            ts: set.timestamp,
-            w: set.kg,
-            reps: set.reps,
-          });
-        }
-      }
-    }
+    const logs = flattenSessionsToEngineLogs(sessions);
     const stag = detectGlobalStagnation(logs);
     if (stag && stag.maxStagnationWeeks >= STAGNATION_WEEKS_THRESHOLD) {
       banners.push({
@@ -762,22 +780,7 @@ export function getCoachRestReason(): CoachRestReason | null {
   try {
     const readiness = getComputedReadinessScore();
     const sessions = useWorkoutStore.getState().sessionsHistory;
-    // Flatten sessions.exercises.sets → logs shape {ex, ts, w, reps} same as
-    // getPatternsBanner STAGNATION composer above.
-    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
-    for (const session of sessions) {
-      if (!session.exercises) continue;
-      for (const ex of session.exercises) {
-        for (const set of ex.sets) {
-          logs.push({
-            ex: ex.exerciseName,
-            ts: set.timestamp,
-            w: set.kg,
-            reps: set.reps,
-          });
-        }
-      }
-    }
+    const logs = flattenSessionsToEngineLogs(sessions);
     const groupState = getRecoveryByGroup(logs);
     const fatigued: string[] = [];
     for (const [group, state] of Object.entries(groupState)) {
@@ -817,20 +820,7 @@ const STAGNATION_WEEKS_LAGGING_DEFAULT = 2; // mockup verbatim "sub-volum 2 sapt
 export function getLaggingSignal(): string | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
-    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
-    for (const session of sessions) {
-      if (!session.exercises) continue;
-      for (const ex of session.exercises) {
-        for (const set of ex.sets) {
-          logs.push({
-            ex: ex.exerciseName,
-            ts: set.timestamp,
-            w: set.kg,
-            reps: set.reps,
-          });
-        }
-      }
-    }
+    const logs = flattenSessionsToEngineLogs(sessions);
     const { weakGroups } = detectWeakGroups(logs);
     if (!weakGroups || weakGroups.length === 0) return null;
     const topWeak = weakGroups[0];
