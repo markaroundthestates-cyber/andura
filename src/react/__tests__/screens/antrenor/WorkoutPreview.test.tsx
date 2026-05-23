@@ -262,6 +262,58 @@ describe('WorkoutPreview — warmup row (T3)', () => {
   });
 });
 
+describe('WorkoutPreview — FALLBACK guard (loading + error + empty)', () => {
+  // gsd-ui-auditor chat 5 Wave 8 — FALLBACK guard pentru edge cases:
+  // (1) loading state expune aria-busy pana resolve; (2) promise rejection
+  // surfaces error banner cu role=alert; (3) engine null (rest day or
+  // wrapper safe-catch) renders mockup demo fallback (already covered T4).
+  it('section exposes aria-busy=true while getTodayWorkout pending', () => {
+    let resolvePromise: (value: PlannedWorkoutOutput | null) => void = () => {};
+    mockedGetTodayWorkout.mockImplementation(
+      () => new Promise<PlannedWorkoutOutput | null>((res) => { resolvePromise = res; }),
+    );
+    renderPreview();
+    expect(screen.getByTestId('workout-preview')).toHaveAttribute('aria-busy', 'true');
+    // No error banner during loading
+    expect(screen.queryByTestId('preview-error-banner')).not.toBeInTheDocument();
+    // Resolve so cleanup setState fires
+    resolvePromise(null);
+  });
+
+  it('section flips aria-busy=false after getTodayWorkout resolves null', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('workout-preview')).toHaveAttribute('aria-busy', 'false');
+    });
+  });
+
+  it('renders error banner cand getTodayWorkout promise rejects', async () => {
+    mockedGetTodayWorkout.mockRejectedValue(new Error('engine pipeline boom'));
+    renderPreview();
+    await waitFor(() => {
+      const banner = screen.getByTestId('preview-error-banner');
+      expect(banner).toBeInTheDocument();
+      expect(banner).toHaveAttribute('role', 'alert');
+      expect(banner.textContent).toMatch(/Nu am putut incarca/i);
+    });
+    // Fallback content still renders so Gigel can proceed
+    expect(screen.getAllByTestId('preview-exercise-row')).toHaveLength(5);
+    expect(
+      screen.getByRole('button', { name: /Confirma, incep/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('no error banner on happy path (engine resolves null)', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('workout-preview')).toHaveAttribute('aria-busy', 'false');
+    });
+    expect(screen.queryByTestId('preview-error-banner')).not.toBeInTheDocument();
+  });
+});
+
 describe('WorkoutPreview — exercise list (T4)', () => {
   beforeEach(() => {
     mockedGetTodayWorkout.mockResolvedValue(null);

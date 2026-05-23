@@ -104,12 +104,31 @@ export function WorkoutPreview(): JSX.Element {
   // while pipeline pending; preview still renders cu hardcoded fallback values
   // (durationFor/volumeFor/'Push (piept si umeri)') pana resolve. Per
   // DECISIONS.md §D027.
+  //
+  // FALLBACK guard (gsd-ui-auditor chat 5 Wave 8): explicit loading + error
+  // state machine. engineWrappers.getTodayWorkout already catches engine throws
+  // internally + returns null (engineWrappers.ts L412-418), but defense-in-
+  // depth `.catch` here ensures promise rejection NEVER leaves UI silently
+  // stuck on fallback without AT signal. `aria-busy` exposes loading to screen
+  // readers; error banner surfaces rare upstream catch failure to Gigel.
   const [workout, setWorkout] = useState<PlannedWorkoutOutput | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
   useEffect(() => {
     let cancelled = false;
-    getTodayWorkout().then((w) => {
-      if (!cancelled) setWorkout(w);
-    });
+    getTodayWorkout()
+      .then((w) => {
+        if (!cancelled) {
+          setWorkout(w);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
     return () => { cancelled = true; };
   }, []);
   const title = workout?.workoutTitle ?? 'Push (piept si umeri)';
@@ -142,7 +161,31 @@ export function WorkoutPreview(): JSX.Element {
   const exerciseCount = workout?.exerciseCount ?? 5;
 
   return (
-    <section className="p-6 bg-paper" data-testid="workout-preview">
+    <section
+      className="p-6 bg-paper"
+      data-testid="workout-preview"
+      aria-busy={loading}
+    >
+      {/* FALLBACK guard error banner (gsd-ui-auditor chat 5 Wave 8) — visible
+          only when getTodayWorkout promise rejects past wrapper safe-catch.
+          Fallback content below still renders (5 mockup exercises + default
+          duration/volume) so Gigel can still start a session. */}
+      {error && (
+        <div
+          className="p-3 rounded-xl border mb-4"
+          data-testid="preview-error-banner"
+          role="alert"
+          aria-live="assertive"
+          style={{
+            background: 'var(--status-danger-bg)',
+            borderColor: 'var(--status-danger-border)',
+          }}
+        >
+          <p className="text-base text-ink">
+            Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.
+          </p>
+        </div>
+      )}
       <div
         className="preview-intensity-banner p-3 rounded-xl border mb-4"
         data-intensity={intensityMod}
