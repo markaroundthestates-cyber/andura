@@ -34,7 +34,7 @@ export function ResetCoachConfirm(): JSX.Element {
         testIdBack="reset-coach-confirm-back"
       />
 
-      <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col items-center text-center">
+      <div className="flex-1 overflow-y-auto pt-2 px-6 pb-6 flex flex-col items-center text-center">
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <RefreshCcw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>

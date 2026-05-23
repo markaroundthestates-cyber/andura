@@ -88,7 +88,7 @@ export function ExitConfirmSheet({
       onClick={() => onChoose('continue')}
     >
       <div
-        className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
+        className="bg-paper rounded-t-2xl pt-4 px-6 pb-6 w-full max-w-md"
         data-testid="exit-sheet"
         role="dialog"
         aria-modal="true"
