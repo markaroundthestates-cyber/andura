@@ -147,11 +147,18 @@ export function Auth(): JSX.Element {
           </div>
         ) : (
           <>
+            {/* §F-auth-08 (MED chat5 Wave 12) — label + placeholder localization
+                per mockup andura-clasic.html#L446-447 verbatim. Label "Email
+                (primesti un link)" inline hint elimina nevoia explainer pentru
+                Gigel/Maria 65 ("ce primesc daca dau email?" raspuns inline).
+                Placeholder ".tau@email.ro" → semnal RO localization clar pentru
+                user roman (anchor cultural + auth Romanian-first). Required
+                attribute preserved invariant (HTML5 validation + aria-required). */}
             <label
               htmlFor="auth-email"
               className="block text-sm text-ink2 font-medium mb-2"
             >
-              Email *
+              Email (primesti un link)
             </label>
             {/* §6-C3 audit fix — autoComplete="email" enables browser/password-manager
                 autofill (Maria 65 typing relief; 1Password/Bitwarden Magic Link suggest).
@@ -169,7 +176,7 @@ export function Auth(): JSX.Element {
               inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="numele@email.com"
+              placeholder="numele.tau@email.ro"
               data-testid="auth-email-input"
               className="w-full p-4 mb-4 border border-lineStrong rounded-xl bg-paper2 text-base"
             />
