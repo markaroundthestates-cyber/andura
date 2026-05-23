@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 # §1-C4 + §21-H1 audit fix — pre-commit gate runs typecheck → lint → vitest.
 # ESLint warn-only initial mode (warn-only, non-blocking; Track 7 ratchet).
 # Typecheck via `tsc --noEmit` blocks on TS errors (fast: ~3-5s).
