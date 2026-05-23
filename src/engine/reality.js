@@ -1,5 +1,5 @@
 // ══ REALITY CHECK ENGINE ════════════════════════════════════
-import { DB, tod } from '../db.js';
+import { DB, tod, todDate } from '../db.js';
 import { SYS } from './sys.js';
 import { KCAL_TARGET, TARGET_DATE } from '../constants.js';
 import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../config/weights.js';
@@ -87,7 +87,13 @@ function findLastLogForExercise(exerciseName, recentLogs) {
 export function getRealityCheck() {
   const today = tod();
   const phaseOverride = DB.get('phase-override');
-  if (today < TARGET_DATE.toISOString().slice(0, 10) && !phaseOverride) {
+  // CRIT-2 fix (code-review chat 5): both comparison sides must use LOCAL
+  // YYYY-MM-DD format. `tod()` returns local date via toLocaleDateString('sv');
+  // matching `todDate(TARGET_DATE)` avoids UTC vs local skew in EEST/EET
+  // (Romania UTC+2/+3) where ISO/UTC date can lag local date by 1 day in
+  // the 00:00–03:00 local window. See db.js:9-20 warning ("NEVER use
+  // toISOString() for 'today' date in production — UTC bug at midnight").
+  if (today < todDate(TARGET_DATE) && !phaseOverride) {
     return {
       type: 'fixed',
       icon: '✅',

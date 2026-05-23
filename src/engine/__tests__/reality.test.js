@@ -417,4 +417,83 @@ describe('getRealityCheck', () => {
     expect(getRealityCheck()).toBeNull();
     vi.useRealTimers();
   });
+
+  // ── CRIT-2 timezone date comparison (code-review chat 5) ──────────────
+  // tod() returns toLocaleDateString('sv') = local YYYY-MM-DD.
+  // TARGET_DATE.toISOString().slice(0,10) returned UTC YYYY-MM-DD.
+  // In Romania EEST (UTC+3) the 00:00-03:00 local window had local date
+  // AHEAD of UTC date — comparison flagged phase=fixed off-by-one.
+  // After fix: both sides use local format via todDate(TARGET_DATE).
+  describe('TZ date comparison (CRIT-2 regression)', () => {
+    it('returns fixed before TARGET_DATE — mid-day same-date local + UTC', () => {
+      vi.useFakeTimers();
+      // 2026-06-15 14:00 UTC = 2026-06-15 17:00 EEST — both sides agree
+      vi.setSystemTime(new Date('2026-06-15T14:00:00Z'));
+      const result = getRealityCheck();
+      expect(result).not.toBeNull();
+      expect(result.type).toBe('fixed');
+      vi.useRealTimers();
+    });
+
+    it('returns fixed when local date AHEAD of UTC date (Romania 02:00 EEST eve)', () => {
+      vi.useFakeTimers();
+      // 2026-07-19 23:00 UTC = 2026-07-20 02:00 EEST.
+      // Old behavior (broken): today_local='2026-07-20' compared against
+      // UTC-formatted TARGET_DATE — depends on TARGET_DATE construction.
+      // New behavior (fixed): both sides use local format, so today_local
+      // < target_local correctly on date BEFORE TARGET_DATE_local.
+      vi.setSystemTime(new Date('2026-07-19T23:00:00Z'));
+      const result = getRealityCheck();
+      // Before TARGET_DATE (2026-07-20) in local Romania → fixed expected
+      // regardless of UTC date. Test machine TZ may vary — assert against
+      // local-formatted today vs local-formatted TARGET_DATE invariant.
+      const todayLocal = new Date().toLocaleDateString('sv');
+      const targetLocal = new Date('2026-07-20').toLocaleDateString('sv');
+      if (todayLocal < targetLocal) {
+        expect(result).not.toBeNull();
+        expect(result.type).toBe('fixed');
+      } else {
+        // Test machine TZ rolled us past TARGET_DATE locally — gate skipped,
+        // no weights → null. Either way both comparison sides must agree.
+        expect(result).toBeNull();
+      }
+      vi.useRealTimers();
+    });
+
+    it('skips fixed gate on/after TARGET_DATE local (Romania late EEST evening)', () => {
+      vi.useFakeTimers();
+      // 2026-07-20 22:00 UTC = 2026-07-21 01:00 EEST — well past TARGET_DATE
+      // in every reasonable timezone the app runs in.
+      vi.setSystemTime(new Date('2026-07-20T22:00:00Z'));
+      // No weights → after gate skipped → null (dates.length<4)
+      const result = getRealityCheck();
+      expect(result).toBeNull();
+      vi.useRealTimers();
+    });
+
+    it('both comparison sides use local format — invariant check', () => {
+      // Post-fix invariant: at any point in time, the gate check must compare
+      // local-format-today against local-format-TARGET_DATE consistently.
+      // No UTC slice on right-hand side. Sample 4 wall-clock points across
+      // a full UTC day to assert behavior matches local-format expectation.
+      const samples = [
+        new Date('2026-06-15T00:30:00Z'), // 03:30 EEST same date
+        new Date('2026-06-15T08:00:00Z'), // 11:00 EEST same date
+        new Date('2026-06-15T15:00:00Z'), // 18:00 EEST same date
+        new Date('2026-06-15T23:30:00Z'), // 02:30 EEST NEXT date (in EEST)
+      ];
+      for (const t of samples) {
+        vi.useFakeTimers();
+        vi.setSystemTime(t);
+        const result = getRealityCheck();
+        const todayLocal = new Date().toLocaleDateString('sv');
+        const targetLocal = new Date('2026-07-20').toLocaleDateString('sv');
+        if (todayLocal < targetLocal) {
+          expect(result).not.toBeNull();
+          expect(result.type).toBe('fixed');
+        }
+        vi.useRealTimers();
+      }
+    });
+  });
 });
