@@ -27,6 +27,7 @@ import { Progres } from './screens/progres/Progres';
 import { Istoric } from './screens/istoric/Istoric';
 import { Cont } from './screens/cont/Cont';
 
+// LOCK V1 D060 — PWA quadruple optimization §2 AuthCluster lazy (DECISIONS.md §D060)
 // ROUTE_LAZY_LOAD_INVESTIGATION chat 5 HIGH ROI #1 — one-time-entry flow lazy
 const Splash = lazy(() => import('./screens/Splash').then((m) => ({ default: m.Splash })));
 const Auth = lazy(() => import('./screens/Auth').then((m) => ({ default: m.Auth })));

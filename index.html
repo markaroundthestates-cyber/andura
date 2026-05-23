@@ -38,11 +38,13 @@
   <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
   <link rel="dns-prefetch" href="//securetoken.googleapis.com" />
   <link rel="dns-prefetch" href="//o4511269200068608.ingest.de.sentry.io" />
-  <!-- Self-host Inter Variable Latin subset @font-face declared in
+  <!-- LOCK V1 D061 — font self-host Latin subset 344→48KB (DECISIONS.md §D061).
+       Self-host Inter Variable Latin subset @font-face declared in
        src/styles/global.css (font-display: swap). Bundled via Vite from
        @fontsource-variable/inter (Latin slice ~48 KB). Preload omis post
        chat 5 FONT_SUBSET_LATIN_FIX — hash dynamic + global.css critical
-       CSS path already discovers @font-face declaration pre-paint. -->
+       CSS path already discovers @font-face declaration pre-paint.
+       CSP font-src 'self' tighten ZERO Google Fonts dependency (line above). -->
   <title>Andura</title>
   <!-- SPA GitHub Pages redirect decode (Rafael Pedicini pattern spa-github-pages).
        Pereche cu public/404.html: 404.html encode URL → query string,

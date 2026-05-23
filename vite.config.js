@@ -34,6 +34,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // LOCK V1 D060 — PWA quadruple optimization (defer + lazy + precache + modulepreload) (DECISIONS.md §D060)
       // Perf chat 5 (LIGHTHOUSE-PERF-AUDIT) — eliminate 952ms render-block
       // on registerSW.js. Default 'auto' injects <script src="/registerSW.js">
       // in <head> blocking render. 'script-defer' adds defer attribute so
@@ -60,6 +61,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // LOCK V1 D060 — PWA quadruple optimization §3 SW precache excludes (DECISIONS.md §D060)
         // Perf chat 5 HIGH ROI #3 (ROUTE_LAZY_LOAD_INVESTIGATION) — exclude
         // Sentry chunk din precache install. Sentry lazy import pe opt-in
         // telemetry only (src/util/sentry.js:26 await import('@sentry/browser')).

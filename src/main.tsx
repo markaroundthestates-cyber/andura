@@ -65,6 +65,7 @@ createRoot(rootEl).render(
   </StrictMode>
 );
 
+// LOCK V1 D060 + D064 — PWA quadruple optimization §4 modulepreload + hash-agnostic requestIdleCallback pattern (DECISIONS.md §D060 + §D064)
 // Perf chat 5 MODULEPRELOAD-CRITICAL-CHUNKS-FIX (Lighthouse post-lazy
 // opportunity #1) — preload Splash + Auth lazy chunks post-FCP idle.
 // Vite default genereaza modulepreload pentru vendor chunks (react/state/

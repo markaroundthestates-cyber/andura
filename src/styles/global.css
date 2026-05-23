@@ -11,7 +11,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Self-host Inter Variable Latin subset (chat 5 perf audit 2026-05-23).
+/* LOCK V1 D061 — font self-host Latin subset 344→48KB (DECISIONS.md §D061)
+   Self-host Inter Variable Latin subset (chat 5 perf audit 2026-05-23).
    FONT_SUBSET_LATIN_FIX: prior full Variable WOFF2 = 344 KB transfer
    regressed LCP 2.1s → 3.9s + Lighthouse Perf 97 → 86. @fontsource-variable
    /inter ships per-subset WOFF2 files (Latin-only ~48 KB) cu unicode-range
@@ -140,7 +141,8 @@
     --rating-usor: #5a9d68;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
   }
 
-  /* W4-AUDIT-DEEPER chat 5 CRIT a11y DIM 3 KEYBOARD — global focus-visible.
+  /* LOCK V1 D056 — focus-visible global outline WCAG SC 2.4.7 (DECISIONS.md §D056)
+     W4-AUDIT-DEEPER chat 5 CRIT a11y DIM 3 KEYBOARD — global focus-visible.
      Tailwind preflight elimina default outline pe button:focus. ZERO focus
      indicator across buttons/inputs/anchors pre-fix. Maria 65 + Gigel cu
      keyboard = focus invisible = unusable. Brick outline 2px + offset 2px
