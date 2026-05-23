@@ -6,17 +6,18 @@
 // File/export name preserved pentru import-stability (Progres.tsx + tests).
 //
 // Data source: progresStore.weightLog last 7 entries. Empty state cand <2
-// entries (delta need 2 puncte). Drill-down → weight-log-list (Istoric).
+// entries (delta need 2 puncte). Snapshot NON-interactive (NO drill, doar
+// vizibil per mockup L1730 explicit intent — sibling last-weight-card in
+// Progres.tsx handles drill to weight-log-list).
 // Co-CTO LOCK 2026-05-22: brick bar token + bottom-anchored heights 32-62
 // per mockup mini-chart visual rhythm.
+// DRIFT-3 fix 2026-05-23: button drill → p non-interactive (mockup parity).
 //
 // SSOT: 04-architecture/mockups/andura-clasic.html:1730-1749
 // Parity finding: 📤_outbox/mockup-vs-prod-parity-2026-05-20/findings-pass2-progres-components.md §F-pass2-heatmap-01
 
 import type { JSX } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useProgresStore } from '../../stores/progresStore';
-import { gotoPath } from '../../lib/navigation';
 
 interface WeightBar {
   kg: number;
@@ -38,7 +39,6 @@ function buildBars(weightLog: Array<{ kg: number; ts: number }>): WeightBar[] {
 }
 
 export function HeatMapWeekly(): JSX.Element {
-  const navigate = useNavigate();
   const weightLog = useProgresStore((s) => s.weightLog);
   const bars = buildBars(weightLog);
   const last7 = weightLog.slice(-7);
@@ -97,14 +97,12 @@ export function HeatMapWeekly(): JSX.Element {
           Nu ai logat greutate inca.
         </p>
       )}
-      <button
-        type="button"
-        onClick={() => navigate(gotoPath('weight-log-list'))}
-        data-testid="weight-snapshot-drill"
-        className="text-xs text-ink2 mt-2 text-left hover:text-ink"
+      <p
+        data-testid="weight-snapshot-hint"
+        className="text-xs text-ink2 mt-2"
       >
-        Pentru analiza profunda <span className="font-semibold">Istoric &rsaquo; Greutate &amp; BF</span>
-      </button>
+        Pentru analiza profunda &rarr; vezi <span className="font-semibold">Istoric &rsaquo; Greutate &amp; BF</span>
+      </p>
     </section>
   );
 }

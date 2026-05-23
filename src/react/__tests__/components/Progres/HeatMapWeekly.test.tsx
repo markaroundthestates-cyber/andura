@@ -2,25 +2,16 @@
 // Rebuilt 2026-05-22: paradigm align mockup L1730-1749 (weight bars, NU volume heatmap).
 // File/export name HeatMapWeekly preserved pentru import-stability.
 
-import type { JSX } from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { useProgresStore } from '../../../stores/progresStore';
-
-function LocationProbe(): JSX.Element {
-  const loc = useLocation();
-  return <div data-testid="probe" data-pathname={loc.pathname} />;
-}
 
 function renderComponent() {
   return render(
     <MemoryRouter initialEntries={['/app/progres']}>
-      <Routes>
-        <Route path="/app/progres" element={<HeatMapWeekly />} />
-        <Route path="/app/progres/weight-log-list" element={<LocationProbe />} />
-      </Routes>
+      <HeatMapWeekly />
     </MemoryRouter>
   );
 }
@@ -119,16 +110,22 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     expect(screen.queryByTestId('weight-snapshot-delta')).not.toBeInTheDocument();
   });
 
-  it('drill button navigates /app/progres/weight-log-list', () => {
+  it('renders snapshot hint as non-interactive p (DRIFT-3 mockup parity)', () => {
     renderComponent();
-    fireEvent.click(screen.getByTestId('weight-snapshot-drill'));
-    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/progres/weight-log-list');
+    const hint = screen.getByTestId('weight-snapshot-hint');
+    expect(hint).toBeInTheDocument();
+    expect(hint.tagName).toBe('P');
   });
 
-  it('drill button copy references Istoric > Greutate & BF', () => {
+  it('does NOT render drill button (mockup L1730 NO drill, doar vizibil)', () => {
     renderComponent();
-    expect(screen.getByTestId('weight-snapshot-drill')).toHaveTextContent(/Istoric/i);
-    expect(screen.getByTestId('weight-snapshot-drill')).toHaveTextContent(/Greutate/i);
+    expect(screen.queryByTestId('weight-snapshot-drill')).not.toBeInTheDocument();
+  });
+
+  it('hint copy references Istoric > Greutate & BF', () => {
+    renderComponent();
+    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Istoric/i);
+    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Greutate/i);
   });
 
   it('container has aria-label', () => {
