@@ -127,14 +127,28 @@ export function Auth(): JSX.Element {
         </p>
 
         {sent ? (
+          /* §F-auth-10 (MED chat5 Wave 16) — Magic Link sent UI mockup
+              andura-clasic.html#L467-476 verbatim aliniat. 64x64 circle
+              paper-2 background + mail icon brick 28px (mockup L468-470).
+              Title "Verifica emailul" warm (vs prior terse "Link trimis").
+              Subtitle "Ti-am trimis linkul pe {email}. Deschide-l de pe
+              acest telefon." anchoreaza cross-device hint critic Magic Link
+              UX (Maria 65: deschide email pe alt device → link 404). Pastrez
+              expira-15-min info + Schimba-emailul back btn (prod-extra
+              utile NU in mockup demo). */
           <div
             className="bg-paper2 border border-line rounded-2xl p-6 text-center"
             data-testid="auth-sent"
           >
-            <Mail className="w-10 h-10 mx-auto mb-3 text-brick" aria-hidden="true" />
-            <p className="text-base font-semibold text-ink mb-1">Link trimis</p>
+            <div className="w-16 h-16 rounded-full bg-paper mx-auto mb-3 flex items-center justify-center">
+              <Mail className="w-7 h-7 text-brick" aria-hidden="true" />
+            </div>
+            <p className="text-xl font-semibold text-ink mb-2">Verifica emailul</p>
+            <p className="text-sm text-ink2 mb-1">
+              Ti-am trimis linkul pe <strong className="text-ink">{email}</strong>.
+            </p>
             <p className="text-sm text-ink2 mb-4">
-              Verifica casuta {email}. Linkul expira in 15 min.
+              Deschide-l de pe acest telefon. Linkul expira in 15 min.
             </p>
             <button
               type="button"
