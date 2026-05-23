@@ -734,6 +734,66 @@
           <h1 style="font-size:26px; font-weight:700; color:var(--ink); margin:2px 0 4px; letter-spacing:-0.02em;">Antrenor</h1>
           <div class="coach-quote small-text" style="color:var(--ink-2); margin-bottom:16px;">Cine te ghideaza in sala.</div>
 
+          <!-- D050 LOCK V1 — Phase 6 prod-extras blessed divergence (mockup v1.1 amend 2026-05-23).
+               7 React components engine-wired in prod ratified ca blessed divergence layer.
+               Mockup precedence preserved — divergence cataloged DECISIONS.md §D050. -->
+
+          <!-- PatternsBanner (Phase 6 prod-extras) — conditional STAGNATION + LOW_ADHERENCE banners
+               din coachDirectorAggregate.banners. Returns null daca banners.length === 0.
+               Source: src/react/components/Antrenor/PatternsBanner.tsx -->
+          <div data-testid="patterns-banner" data-d050-ref="phase-6-prod-extras" style="display:none; flex-direction:column; gap:8px; margin-bottom:16px;">
+            <div data-pattern-id="STAGNATION" data-severity="warn" role="status" aria-live="polite" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border-radius:12px; background:#fdf3df; border:1px solid #e8d59a;">
+              <i data-lucide="alert-circle" style="width:16px; height:16px; margin-top:2px; flex-shrink:0; color:var(--ink);"></i>
+              <p class="small-text" style="color:var(--ink); line-height:1.4; margin:0;">Greutatile stau pe loc de 3 saptamani — Coach-ul ajusteaza programul.</p>
+            </div>
+          </div>
+
+          <!-- AlertsBanner (Phase 6 prod-extras) — ProactiveAlert[] din coachDirectorAggregate.alerts.
+               Severity 3-tier urgent/warn/info. ARIA role=alert pentru urgent (injury-risk safety).
+               Source: src/react/components/Antrenor/AlertsBanner.tsx -->
+          <div data-testid="alerts-banner" data-d050-ref="phase-6-prod-extras" style="display:none; flex-direction:column; gap:8px; margin-bottom:16px;">
+            <div data-alert-id="PAIN_URGENT" data-severity="urgent" role="alert" aria-live="assertive" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border-radius:12px; background:#fdeeea; border:1px solid #c8412e;">
+              <i data-lucide="alert-triangle" style="width:16px; height:16px; margin-top:2px; flex-shrink:0; color:var(--ink);"></i>
+              <p class="small-text" style="color:var(--ink); line-height:1.4; margin:0;">Durerea persista — Coach-ul recomanda sa amani sesiunea.</p>
+            </div>
+          </div>
+
+          <!-- StatsGrid (Phase 6 prod-extras) — F10 3-cell compact: Streak + Fatigue + Readiness.
+               Always-render snapshot near top home. Source: src/react/components/Antrenor/StatsGrid.tsx -->
+          <div role="region" aria-label="Statistici - streak, oboseala, energie" data-d050-ref="phase-6-prod-extras" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px;">
+            <div style="background:var(--paper-2); border-radius:10px; padding:12px; text-align:center;">
+              <div class="small-text" style="color:var(--ink-2); text-transform:uppercase; letter-spacing:0.06em;">Streak</div>
+              <div data-testid="stats-streak" style="font-size:24px; font-weight:700; color:var(--ink); margin-top:4px;">7</div>
+              <div class="small-text" style="color:var(--ink-2); margin-top:2px;">zile</div>
+            </div>
+            <div style="background:var(--paper-2); border-radius:10px; padding:12px; text-align:center;">
+              <div class="small-text" style="color:var(--ink-2); text-transform:uppercase; letter-spacing:0.06em;">Oboseala</div>
+              <div data-testid="stats-fatigue" style="font-size:24px; font-weight:700; color:var(--ink); margin-top:4px;">6</div>
+              <div class="small-text" style="color:var(--ink-2); margin-top:2px;">medie</div>
+            </div>
+            <div style="background:var(--paper-2); border-radius:10px; padding:12px; text-align:center;">
+              <div class="small-text" style="color:var(--ink-2); text-transform:uppercase; letter-spacing:0.06em;">Readiness</div>
+              <div data-testid="stats-readiness" style="font-size:24px; font-weight:700; color:var(--ink); margin-top:4px;">72</div>
+              <div class="small-text" style="color:var(--ink-2); margin-top:2px;">buna</div>
+            </div>
+          </div>
+
+          <!-- ReadinessVerdict (Phase 6 prod-extras) — F4 pre-session core coach value verdict.
+               Returns null daca readiness null. Position above main workout card pentru context.
+               Source: src/react/components/Antrenor/ReadinessVerdict.tsx -->
+          <div role="status" aria-live="polite" aria-label="Verdict readiness" data-d050-ref="phase-6-prod-extras" style="display:none; font-size:14px; color:var(--ink-2); margin-bottom:16px; text-align:center;">
+            <span style="font-weight:600; color:#3d7a4a;">Gata de antrenament</span>
+            <span style="color:var(--ink-2);"> (72/100 - poti incerca PR)</span>
+          </div>
+
+          <!-- PRNotificationBanner (Phase 6 prod-extras) — F11 PR notification post-session flag.
+               Conditional render dacă workoutStore.prHit true. Position post-readiness pre-workout-card.
+               Source: src/react/components/Antrenor/PRNotificationBanner.tsx -->
+          <div role="status" aria-live="polite" aria-label="PR detectat" data-d050-ref="phase-6-prod-extras" style="display:none; background:#c8412e; color:var(--paper); border-radius:10px; padding:12px; margin-bottom:16px; text-align:center;">
+            <div style="font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.06em;">PR sesiunea trecuta</div>
+            <div class="small-text" style="opacity:0.9; margin-top:4px;">Felicitari - record nou.</div>
+          </div>
+
           <!-- Coach-ul recomanda azi (adaptive — NU template calendar fix).
                Daniel review 2026-05-12 §coach-follows-body Q1: dual variant workout/rest, NU stat demo.
                Rest day apare frecvent in viata reala (readiness <40, grupele sub-recovery, sapt incarcata).
@@ -856,6 +916,31 @@
             <p class="calendar-edit-hint" hidden>Modifica zilele de antrenament in care esti disponibil.</p>
 
             <button type="button" class="calendar-save" hidden data-action="save-calendar" onclick="saveCalendarEdit()">Salveaza</button>
+          </section>
+
+          <!-- PRWallRecent (Phase 6 prod-extras) — Antrenor home slice top-3 most-recent PR records
+               din coachDirectorAggregate.prWallRecent (Phase 5 task_11 PR history aggregate).
+               Returns null daca records.length === 0. Position near bottom home pre-Programe.
+               Source: src/react/components/Antrenor/PRWallRecent.tsx — D050 LOCK V1 -->
+          <section data-testid="pr-wall-recent" data-d050-ref="phase-6-prod-extras" style="display:none; margin-bottom:16px;">
+            <h2 style="font-size:16px; font-weight:600; color:var(--ink); margin:0 0 8px; display:flex; align-items:center; gap:8px;">
+              <i data-lucide="trophy" style="width:16px; height:16px;"></i>
+              Recorduri recente
+            </h2>
+            <ul style="display:flex; flex-direction:column; gap:8px; list-style:none; padding:0; margin:0;">
+              <li data-testid="pr-record-0" style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px; background:var(--paper-2); border:1px solid var(--line);">
+                <span class="small-text" style="font-weight:500; color:var(--ink);">Impins inclinat cu gantere</span>
+                <span class="small-text" style="color:var(--ink-2);">22.5 kg x 8 (~28 kg 1RM)</span>
+              </li>
+              <li data-testid="pr-record-1" style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px; background:var(--paper-2); border:1px solid var(--line);">
+                <span class="small-text" style="font-weight:500; color:var(--ink);">Indreptari cu haltera</span>
+                <span class="small-text" style="color:var(--ink-2);">90 kg x 5 (~104 kg 1RM)</span>
+              </li>
+              <li data-testid="pr-record-2" style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px; background:var(--paper-2); border:1px solid var(--line);">
+                <span class="small-text" style="font-weight:500; color:var(--ink);">Tractiuni</span>
+                <span class="small-text" style="color:var(--ink-2);">+10 kg x 6 (~94 kg 1RM)</span>
+              </li>
+            </ul>
           </section>
 
           <!-- Programe (6 obiective V1 LOCK — Auto + 5 specific. Auto = default. Restructure post-Gigel-test 2026-05-11: 'Tonifiere' → 'Masa musculara' (jargon → clar), added 'Mentenanta' (was missing for eutrophic stable), Longevitate+Sanatate generala consolidate → 'Longevitate / Sanatate'. -->
@@ -1832,6 +1917,39 @@
             <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.4;">Auto target din engine. Apasa <i data-lucide="pencil" style="width:11px; height:11px; vertical-align:-1px;"></i> daca vrei sa loghezi manual.</p>
           </div>
           <p class="small-text" style="color:var(--ink-3); margin-top:10px; text-align:center; line-height:1.5;">Auto target engine + manual log optional + CSV batch import. Engine calibreaza din date reale.</p>
+
+          <!-- D050 LOCK V1 — Phase 6 prod-extras blessed divergence (mockup v1.1 amend 2026-05-23). -->
+          <!-- BodyData (Phase 4 task_16 §B Body Measurements) — measurements list standard fitness
+               app pattern. Mockup wv2 NU has dedicated screen-body-data section din spec §B (NEW screen
+               Phase 4). 5-field taxonomy: talie/piept/sold/biceps/coapsa. Partial entries OK.
+               Source: src/react/routes/screens/progres/BodyData.tsx -->
+          <div class="settings-section" style="margin-top:18px;">Masuratori corp</div>
+          <div data-testid="body-data-section" data-d050-ref="phase-6-prod-extras" style="background:white; border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label for="body-data-waist" class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Talie (cm)</label>
+                <input type="number" id="body-data-waist" min="20" max="250" inputmode="numeric" placeholder="—" style="width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:16px;"/>
+              </div>
+              <div>
+                <label for="body-data-chest" class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Piept (cm)</label>
+                <input type="number" id="body-data-chest" min="20" max="250" inputmode="numeric" placeholder="—" style="width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:16px;"/>
+              </div>
+              <div>
+                <label for="body-data-hips" class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Sold (cm)</label>
+                <input type="number" id="body-data-hips" min="20" max="250" inputmode="numeric" placeholder="—" style="width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:16px;"/>
+              </div>
+              <div>
+                <label for="body-data-biceps" class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Biceps (cm)</label>
+                <input type="number" id="body-data-biceps" min="20" max="250" inputmode="numeric" placeholder="—" style="width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:16px;"/>
+              </div>
+              <div style="grid-column:1 / -1;">
+                <label for="body-data-thigh" class="small-text" style="color:var(--ink-3); text-transform:uppercase; font-weight:600; letter-spacing:0.06em;">Coapsa (cm)</label>
+                <input type="number" id="body-data-thigh" min="20" max="250" inputmode="numeric" placeholder="—" style="width:100%; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:16px;"/>
+              </div>
+            </div>
+            <button class="btn-brick" style="width:100%; margin-top:12px;" onclick="saveBodyData()"><i data-lucide="save"></i> Salveaza masuratorile</button>
+            <p class="small-text" style="color:var(--ink-3); margin-top:8px; line-height:1.4; text-align:center;">Logare partiala OK — completeaza doar campurile pe care le ai. Range 20-250 cm validare.</p>
+          </div>
         </div>
       </div>
 
