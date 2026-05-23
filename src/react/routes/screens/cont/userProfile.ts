@@ -37,7 +37,7 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
     // base64url → base64 (replace -/_, pad =)
     const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
     const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
-    const decoded = typeof atob !== 'undefined' ? atob(padded) : Buffer.from(padded, 'base64').toString('binary');
+    const decoded = atob(padded);
     return JSON.parse(decoded) as Record<string, unknown>;
   } catch {
     return null;
