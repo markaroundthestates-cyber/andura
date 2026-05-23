@@ -138,18 +138,6 @@ export const AA = {
       };
     }
 
-    // Forma slaba repetata → scade
-    if (recovery.formIssue && logs.filter((l) => (l.notes||[]).includes('form')).length >= 2) {
-      const newW = Math.max(1, Math.round((lastW - inc) * 2) / 2);
-      DB.set('aa-cooldown-' + ex, Date.now());
-      return {
-        action: 'DECREASE',
-        newKg: newW,
-        reason: `⚠️ Forma slaba repetata → scad ${inc}kg pentru executie corecta`,
-        color: 'var(--accent2)'
-      };
-    }
-
     return null;
   },
 
