@@ -29,7 +29,7 @@ function buildUserState(): Record<string, unknown> {
 function resetStore(): void {
   useScheduleStore.setState({
     weekStartISO: weekStartIso(MONDAY_2026_05_18),
-    days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as unknown as WeekDays,
+    days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as const satisfies WeekDays,
     editMode: false,
   });
 }
@@ -88,7 +88,7 @@ describe('scheduleStore — initial state + actions', () => {
 describe('scheduleStore — saveWeekly shape bridge (SUBSTRATE-ZETA)', () => {
   it('persists {day, active}[] shape la localStorage (NU DayKind[] strings)', async () => {
     useScheduleStore.setState({
-      days: ['training', 'rest', 'training', 'training', 'rest', 'rest', 'training'] as unknown as WeekDays,
+      days: ['training', 'rest', 'training', 'training', 'rest', 'rest', 'training'] as const satisfies WeekDays,
       editMode: true,
     });
     useScheduleStore.getState().saveWeekly();
@@ -124,7 +124,7 @@ describe('scheduleStore — saveWeekly shape bridge (SUBSTRATE-ZETA)', () => {
 
   it('active boolean reflects training/rest mapping correct', async () => {
     useScheduleStore.setState({
-      days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as unknown as WeekDays,
+      days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as const satisfies WeekDays,
       editMode: true,
     });
     useScheduleStore.getState().saveWeekly();
@@ -151,7 +151,7 @@ describe('scheduleStore — saveWeekly end-to-end engine integration', () => {
     // Setup: mark Monday rest, restul training
     useScheduleStore.setState({
       weekStartISO: weekStartIso(MONDAY_2026_05_18),
-      days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as unknown as WeekDays,
+      days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as const satisfies WeekDays,
       editMode: true,
     });
     useScheduleStore.getState().saveWeekly();
@@ -170,7 +170,7 @@ describe('scheduleStore — saveWeekly end-to-end engine integration', () => {
   it('training day override via saveWeekly → getDailyWorkout returns plan pe training day', async () => {
     useScheduleStore.setState({
       weekStartISO: weekStartIso(MONDAY_2026_05_18),
-      days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as unknown as WeekDays,
+      days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as const satisfies WeekDays,
       editMode: true,
     });
     useScheduleStore.getState().saveWeekly();

@@ -60,9 +60,21 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
         set((s) => {
           if (idx < 0 || idx > 6) return s;
           if (!s.editMode) return s; // locked default
-          const next = [...s.days] as DayKind[];
-          next[idx] = next[idx] === 'training' ? 'rest' : 'training';
-          return { days: next as unknown as WeekDays };
+          // Tuple-preserving map: indexed kind flip pe idx match, restul pass-through.
+          // Returns proper 7-tuple via spread into WeekDays shape — ZERO double cast
+          // escape hatch. TS infers readonly tuple via spread of WeekDays source.
+          const flip = (k: DayKind): DayKind => (k === 'training' ? 'rest' : 'training');
+          const [d0, d1, d2, d3, d4, d5, d6] = s.days;
+          const nextDays: WeekDays = [
+            idx === 0 ? flip(d0) : d0,
+            idx === 1 ? flip(d1) : d1,
+            idx === 2 ? flip(d2) : d2,
+            idx === 3 ? flip(d3) : d3,
+            idx === 4 ? flip(d4) : d4,
+            idx === 5 ? flip(d5) : d5,
+            idx === 6 ? flip(d6) : d6,
+          ];
+          return { days: nextDays };
         }),
       saveWeekly: () => {
         // Phase 5 task_08: dispatch Engine #2 Goal Adaptation via real
