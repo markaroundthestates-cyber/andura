@@ -651,7 +651,26 @@ export interface PatternBanner {
   text: string; // RO wording NO_DIACRITICS_RULE
 }
 
-const STAGNATION_WEEKS_THRESHOLD = 2; // 2+ consecutive weeks → banner
+/**
+ * MED-CODE-24 fix: shared stagnation business rule constant.
+ *
+ * Business rule: 2+ consecutive weeks of flat 1RM progression per exercise
+ * triggers stagnation surfacing (banner pattern + lagging coach line copy).
+ * Source: PRIMER §2 MODIFY simplified spec + andura-clasic.html mockup
+ * L747 "sub-volum 2 sapt" + L763 STAGNATION banner verbatim copy.
+ *
+ * Use sites (consistency invariant — change here propagates everywhere):
+ *   1. getPatternsBanner STAGNATION gate (line ~654)
+ *      `stag.maxStagnationWeeks >= STAGNATION_WEEKS_THRESHOLD`
+ *   2. getLaggingSignal coach copy interpolation (line ~840)
+ *      "sub-volum ${STAGNATION_WEEKS_THRESHOLD} sapt"
+ *
+ * Exported pentru test invariant assertions + future composer reuse.
+ * NU schimba fără update DECISIONS.md (impacts user-visible thresholds +
+ * mockup copy parity).
+ */
+export const STAGNATION_WEEKS_THRESHOLD = 2;
+
 const LOW_ADHERENCE_THRESHOLD = 50;   // adherence < 50 → banner
 const LOW_ADHERENCE_MIN_SESSIONS_GATE = 3; // Gigel-friendly: fresh user (<3 sessions) sees no adherence-low banner
 
@@ -820,7 +839,10 @@ export function getCoachRestReason(): CoachRestReason | null {
 // detected (1RM ratio < 0.8 vs avg), null otherwise. T0 fresh user with
 // <2 muscle groups logged → null (engine returns weakGroups=[]).
 
-const STAGNATION_WEEKS_LAGGING_DEFAULT = 2; // mockup verbatim "sub-volum 2 sapt"
+// MED-CODE-24 fix: reuse shared STAGNATION_WEEKS_THRESHOLD (declared above).
+// Prior STAGNATION_WEEKS_LAGGING_DEFAULT inline literal `2` represented same
+// business rule scattered across module — drift risk when rule changes.
+// Mockup verbatim "sub-volum 2 sapt" preserved via interpolation.
 
 /**
  * Composer §F-pass2-coachtoday-04 — extract top weak muscle group as RO
@@ -838,7 +860,7 @@ export function getLaggingSignal(): string | null {
     const topWeak = weakGroups[0];
     if (topWeak === undefined) return null;
     const label = GROUP_LABELS_RO_BIG11[topWeak] ?? topWeak;
-    return `${label} sub-volum ${STAGNATION_WEEKS_LAGGING_DEFAULT} sapt - focus azi pe sesiune.`;
+    return `${label} sub-volum ${STAGNATION_WEEKS_THRESHOLD} sapt - focus azi pe sesiune.`;
   } catch (e) {
     console.warn('[engineWrappers] getLaggingSignal failed:', e);
     captureException(e, {

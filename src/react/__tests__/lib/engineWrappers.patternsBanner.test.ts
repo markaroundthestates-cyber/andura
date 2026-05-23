@@ -12,7 +12,10 @@ vi.mock('../../../engine/adherence.js', () => ({
   getAdherenceScore: vi.fn(() => ({ score: 75, color: 'var(--accent)', label: 'OK' })),
 }));
 
-import { getPatternsBanner } from '../../lib/engineWrappers';
+import {
+  getPatternsBanner,
+  STAGNATION_WEEKS_THRESHOLD,
+} from '../../lib/engineWrappers';
 import { detectGlobalStagnation } from '../../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../../engine/adherence.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -176,5 +179,28 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
       w: 100,
       reps: 5,
     });
+  });
+
+  // MED-CODE-24 fix: exported constant invariant + use-site consistency
+  // (anti-drift guard). Prior magic-number `2` scattered across STAGNATION
+  // banner gate + lagging coach copy → single shared rule now.
+  it('STAGNATION_WEEKS_THRESHOLD exported constant = 2 (business rule invariant)', () => {
+    expect(STAGNATION_WEEKS_THRESHOLD).toBe(2);
+  });
+
+  it('STAGNATION banner gate uses STAGNATION_WEEKS_THRESHOLD (no magic number)', () => {
+    // Boundary: maxStagnationWeeks === THRESHOLD → banner fires
+    vi.mocked(detectGlobalStagnation).mockReturnValue({
+      maxStagnationWeeks: STAGNATION_WEEKS_THRESHOLD,
+      byExercise: {},
+    });
+    expect(getPatternsBanner().find((b) => b.id === 'STAGNATION')).toBeDefined();
+
+    // Below threshold → no banner
+    vi.mocked(detectGlobalStagnation).mockReturnValue({
+      maxStagnationWeeks: STAGNATION_WEEKS_THRESHOLD - 1,
+      byExercise: {},
+    });
+    expect(getPatternsBanner().find((b) => b.id === 'STAGNATION')).toBeUndefined();
   });
 });
