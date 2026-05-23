@@ -7,6 +7,7 @@
 
 import type { JSX } from 'react';
 import type { ReadinessOutput, FatigueOutput } from '../../lib/engineWrappers';
+import { pluralRo } from '../../lib/pluralRo';
 
 interface Props {
   streak: number;
@@ -15,6 +16,9 @@ interface Props {
 }
 
 export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
+  // §MED-CODE-23 — reuse pluralRo helper (RO paucal: 1 zi / 2-19 zile / 20+ de zile).
+  // Strip count prefix to preserve 2-line visual (big number + small label below).
+  const streakLabel = pluralRo(streak, 'zi', 'zile').slice(String(streak).length + 1);
   return (
     <div
       className="grid grid-cols-3 gap-2 mb-4"
@@ -26,7 +30,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
         <div className="text-2xl font-bold text-ink mt-1" data-testid="stats-streak">
           {streak}
         </div>
-        <div className="text-xs text-ink2 mt-0.5">{streak === 1 ? 'zi' : 'zile'}</div>
+        <div className="text-xs text-ink2 mt-0.5" data-testid="stats-streak-label">{streakLabel}</div>
       </div>
       <div className="bg-paper2 rounded-lg p-3 text-center">
         <div className="text-xs text-ink2 uppercase tracking-wider">Oboseala</div>
