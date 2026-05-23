@@ -470,6 +470,10 @@ export function Workout(): JSX.Element {
           countdownSec={restCountdown}
           initialRestSec={restInitialSec}
           onSkip={handleSkipRest}
+          // §F-pass2-restoverlay-03 (MED Wave 11) — pass current exercise
+          // name pentru contextual cue "Pauza · {name} recupereaza" mockup
+          // pattern. Empty fallback when ai un workout fara nume (defensive).
+          currentExerciseName={currentExercise.name}
         />
       )}
 

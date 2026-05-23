@@ -5,6 +5,12 @@
 // F-pass2-restoverlay-01 (2026-05-22): replaced text-6xl numeric display with
 // SVGCountdownRing per mockup andura-clasic.html L1517-1522 signature parity.
 //
+// §F-pass2-restoverlay-03 (MED chat5 Wave 11) — contextual cue extension
+// mockup pattern "Pauza · {currentExercise} recupereaza". Optional prop
+// currentExerciseName surfaced sub "Pauza" header; rendered DOAR cand
+// non-empty. Stateless preserve — parent Workout.tsx passes
+// currentExercise.name (mockup L1515 next-exercise context hint).
+//
 // Stateless: parent Workout.tsx owns countdown state (interval decrement
 // effect + auto-advance la phase=logging cand reaches 0) + onSkip handler
 // (setRestCountdown(0) + setPhase('logging')).
@@ -20,12 +26,16 @@ interface RestOverlayProps {
   countdownSec: number;
   initialRestSec: number;
   onSkip: () => void;
+  // §F-pass2-restoverlay-03 — optional current exercise context. Cand
+  // non-empty, renders sub-label "{name} recupereaza" pentru contextual cue.
+  currentExerciseName?: string;
 }
 
 export function RestOverlay({
   countdownSec,
   initialRestSec,
   onSkip,
+  currentExerciseName,
 }: RestOverlayProps): JSX.Element {
   return (
     <div
@@ -34,7 +44,16 @@ export function RestOverlay({
       role="dialog"
       aria-label="Pauza activa"
     >
-      <p className="text-sm text-ink2 mb-4">Pauza</p>
+      <p className="text-sm text-ink2 mb-1">Pauza</p>
+      {currentExerciseName && (
+        <p
+          className="text-xs text-ink2 italic mb-4"
+          data-testid="rest-context-line"
+        >
+          {currentExerciseName} recupereaza
+        </p>
+      )}
+      {!currentExerciseName && <div className="mb-4" aria-hidden="true" />}
       <SVGCountdownRing
         totalSec={initialRestSec}
         remainingSec={countdownSec}
