@@ -246,6 +246,18 @@ export function WorkoutPreview(): JSX.Element {
           „{coachLine}"
         </p>
       )}
+      {/* §F-workout-preview-04 (MED chat5 Wave 14) — closing italic note
+          mockup andura-clasic.html#L991 verbatim (anti-paternalism reassurance):
+          "Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere,
+          oboseala, set greu. Nu trebuie sa stii dinainte tot." Pozitionat
+          INAINTE de CTA per mockup ordine (small-text italic ink-3). */}
+      <p
+        className="text-sm text-ink3 italic leading-relaxed mt-3.5 mb-4"
+        data-testid="preview-closing-note"
+      >
+        Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere,
+        oboseala, set greu. Nu trebuie sa stii dinainte tot.
+      </p>
       {/* §F-workout-preview-05 (HIGH chat5 Wave 15) — CTA mockup verbatim
           andura-clasic.html#L993-995 (confirmation framing + check icon):
           "Incepe antrenament" → "Confirma, incep" + Check icon prefix.
