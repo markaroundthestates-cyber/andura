@@ -186,7 +186,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     // task_05 rewrite: EnergyCheck real heading; EnergyCause + WorkoutPreview
     // still placeholder until subsequent task_05 commits.
     { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /^Cum te simti\?$/i },
-    { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /De ce te simti asa/i },
+    { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /Ce e mai greu azi/i },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
     { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /Ce nu merge/i },

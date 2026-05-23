@@ -17,6 +17,11 @@
 // vocabulary extended la 6 cu Utensils/Dumbbell/Thermometer pentru
 // Mancat/Antrenament/Boala mockup-absent.
 //
+// §F-energy-cause-04 (MED chat5 Wave 13) — header text mockup verbatim
+// "Ce e mai greu azi?" mockup andura-clasic.html#L900 (specific contextual
+// "ce e mai greu" vs prod generic "De ce te simti asa"). Semantic mai
+// precis: intreaba cauza dificultatii, NU starea emotionala.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -82,7 +87,7 @@ export function EnergyCause(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="energy-cause">
       <SubHeader
-        title="De ce te simti asa?"
+        title="Ce e mai greu azi?"
         onBack={handleBack}
         testIdBack="energy-cause-back"
       />

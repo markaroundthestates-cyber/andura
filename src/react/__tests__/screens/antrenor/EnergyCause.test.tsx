@@ -38,10 +38,10 @@ function renderEnergyCause(
 }
 
 describe('EnergyCause — render', () => {
-  it('renders heading "De ce te simti asa?"', () => {
+  it('renders heading "Ce e mai greu azi?"', () => {
     renderEnergyCause();
     expect(
-      screen.getByRole('heading', { name: /De ce te simti asa/i, level: 1 })
+      screen.getByRole('heading', { name: /Ce e mai greu azi/i, level: 1 })
     ).toBeInTheDocument();
   });
 

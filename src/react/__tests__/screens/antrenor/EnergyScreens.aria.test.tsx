@@ -113,7 +113,7 @@ describe('EnergyCause — no role="list" + heading sufficient', () => {
     const { container } = renderEnergyCause();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/De ce te simti asa/);
+    expect(h1?.textContent).toMatch(/Ce e mai greu azi/);
   });
 });
 
