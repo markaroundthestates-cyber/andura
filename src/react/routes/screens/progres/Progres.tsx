@@ -4,6 +4,11 @@
 //
 // §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — Oboseala + Calorii baza
 // BMR 2-col grid mockup L1717. Daniel LOCKED V1 single number NU visual bar.
+//
+// §F-progres-01 (MED chat5 Wave 13) — subtitle mockup verbatim "Body
+// composition · estimari calibrate." mockup andura-clasic.html#L1699.
+// Repositioneaza Progres tab ca body composition focus (vs prod logging-
+// focused) — alineaza UX intent mockup. Mid-dot Unicode U+00B7 (·).
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
@@ -41,7 +46,7 @@ export function Progres(): JSX.Element {
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="progres-home">
       <h1 className="text-2xl font-semibold text-ink mb-1">Progres</h1>
-      <p className="text-sm text-ink2 mb-6">Logheaza periodic - estimari calibrate.</p>
+      <p className="text-sm text-ink2 mb-6">Body composition &middot; estimari calibrate.</p>
       <TDEEStrip />
       {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
           Oboseala + Calorii baza BMR per mockup L1717. Daniel LOCKED V1

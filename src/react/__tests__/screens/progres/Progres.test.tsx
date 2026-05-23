@@ -48,7 +48,7 @@ describe('Progres landing', () => {
   it('renders heading + tagline', () => {
     renderProgres();
     expect(screen.getByRole('heading', { name: /^Progres$/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/Logheaza periodic/i)).toBeInTheDocument();
+    expect(screen.getByText(/Body composition/i)).toBeInTheDocument();
   });
 
   it('renders Log weight CTA + Body data CTA', () => {
