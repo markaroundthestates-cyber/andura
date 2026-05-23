@@ -82,7 +82,7 @@ All 74 agent worktrees `locked claude agent agent-<id> (pid 5412)`. pid 5412 = C
    - `git worktree prune` final sweep
    - `git branch -D worktree-agent-*` cleanup branches (if needed)
 
-**Disk size:** `du -sh .claude/worktrees/` background scan running — likely multi-GB given 74 worktree count × Andura src/.
+**Disk size:** `du -sh .claude/worktrees/` = **3.7G** across 74 agent worktrees (~50MB/worktree mean).
 
 ---
 
