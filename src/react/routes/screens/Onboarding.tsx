@@ -152,7 +152,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         enterKeyHint="next"
         aria-label="Varsta in ani"
         data-testid="onb-age-input"
-        className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
       />
       {error && (
         <p
@@ -318,7 +318,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         enterKeyHint="done"
         aria-label="Greutate in kilograme"
         data-testid="onb-weight-input"
-        className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
       />
       <p className="text-xs text-ink2 mt-2 text-center">kg</p>
       {error && (

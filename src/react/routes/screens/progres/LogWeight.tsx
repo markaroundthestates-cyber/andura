@@ -95,7 +95,7 @@ export function LogWeight(): JSX.Element {
             max={250}
             inputMode="decimal"
             data-testid="weight-kg-input"
-            className="w-full p-4 border border-lineStrong rounded-2xl text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
+            className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
           />
           {kgError && (
             <p
