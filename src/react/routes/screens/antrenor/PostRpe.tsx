@@ -38,6 +38,7 @@ import {
   refreshPRRecordsFromLogs,
 } from '../../../lib/prRecordsWriteback';
 import { DB } from '../../../../db.js';
+import { toast } from '../../../lib/toast';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
 
@@ -81,8 +82,22 @@ export function PostRpe(): JSX.Element {
         ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
         : 0;
 
+    // HIGH-CODE-06 fix (code review v2 chat 5): Bugatti truth — NU persist
+    // hardcoded fallback title la sessionsHistory cand planned workout null.
+    // Maria 65 antreneaza picioare → engine fault → Istoric forever showed
+    // 'Push (piept si umeri)' lie. Reject finishSession entirely + show
+    // error toast + navigate back la Antrenor. Data integrity > UX flow.
     const planned = await getTodayWorkout();
-    const title = planned?.workoutTitle ?? 'Push (piept si umeri)';
+    if (planned === null || !planned.workoutTitle) {
+      toast.show({
+        message:
+          'Datele sesiunii lipsesc. Sesiunea NU a fost salvata in Istoric. Reincearca dupa ce reincarci pagina.',
+        variant: 'error',
+      });
+      navigate(gotoPath('antrenor'));
+      return;
+    }
+    const title = planned.workoutTitle;
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
     const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)

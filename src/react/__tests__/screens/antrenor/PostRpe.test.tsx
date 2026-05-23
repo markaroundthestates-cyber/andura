@@ -31,6 +31,8 @@ vi.mock('../../../lib/engineWrappers', () => ({
 
 import { PostRpe } from '../../../routes/screens/antrenor/PostRpe';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { getTodayWorkout } from '../../../lib/engineWrappers';
+import { toast } from '../../../lib/toast';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -275,6 +277,98 @@ describe('PostRpe — submit pipeline', () => {
       expect(useWorkoutStore.getState().phase).toBe('idle');
     });
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
+  });
+});
+
+// HIGH-CODE-06 fix (code review v2 chat 5): Bugatti truth violation.
+// PostRpe.tsx:77 hardcoded fallback 'Push (piept si umeri)' was persisted
+// la sessionsHistory cand getTodayWorkout() returns null. Maria 65 picioare
+// → engine fault → Istoric forever 'Push' lie. Fix Option A: reject
+// finishSession + error toast + navigate back. NU persist data minciuna.
+describe('PostRpe — HIGH-CODE-06 reject null workout (Bugatti truth)', () => {
+  beforeEach(() => {
+    seedSession();
+    // Reset sessionsHistory (NU touched de seedSession, persisted via zustand)
+    // pentru assertion clean baseline pe test cu mock null.
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    toast.clear();
+    // Reset to default Phase 5 fixture so other describe blocks unaffected.
+    vi.mocked(getTodayWorkout).mockResolvedValue(PHASE_5_FIXTURE);
+  });
+
+  it('does NOT persist hardcoded "Push (piept si umeri)" title when getTodayWorkout returns null', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
+    renderPostRpe();
+    const beforeHistoryLen = useWorkoutStore.getState().sessionsHistory.length;
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      // Submit completed (navigated away) — either successfully or via error path.
+      expect(useWorkoutStore.getState().sessionsHistory.length).toBe(beforeHistoryLen);
+    });
+    // Critical assertion: NO entry with hardcoded fallback title persisted.
+    const titles = useWorkoutStore
+      .getState()
+      .sessionsHistory.map((s) => s.title);
+    expect(titles).not.toContain('Push (piept si umeri)');
+    // lastSession also NU set (finishSession never called).
+    expect(useWorkoutStore.getState().lastSession).toBeNull();
+  });
+
+  it('shows error toast when getTodayWorkout returns null', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      const items = toast.getSnapshot();
+      expect(items.length).toBeGreaterThan(0);
+      expect(items[0]!.variant).toBe('error');
+    });
+  });
+
+  it('navigates back to /app/antrenor (NU post-summary) when workout null', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
+    render(
+      <MemoryRouter initialEntries={['/app/antrenor/post-rpe']}>
+        <Routes>
+          <Route path="/app/antrenor/post-rpe" element={<PostRpe />} />
+          <Route path="/app/antrenor/post-summary" element={<LocationProbe />} />
+          <Route path="/app/antrenor" element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute(
+        'data-pathname',
+        '/app/antrenor'
+      );
+    });
+  });
+
+  it('does NOT increment streak when workout null (rejected submit)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
+    const beforeStreak = useWorkoutStore.getState().streak;
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      const items = toast.getSnapshot();
+      expect(items.length).toBeGreaterThan(0);
+    });
+    expect(useWorkoutStore.getState().streak).toBe(beforeStreak);
+  });
+
+  it('does NOT clear history when workout null (data preserved for retry)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
+    renderPostRpe();
+    const beforeHistory = useWorkoutStore.getState().history;
+    expect(Object.keys(beforeHistory).length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      const items = toast.getSnapshot();
+      expect(items.length).toBeGreaterThan(0);
+    });
+    // History NU cleared — user can retry sau salveaza data ulterior.
+    expect(Object.keys(useWorkoutStore.getState().history).length).toBeGreaterThan(0);
   });
 });
 
