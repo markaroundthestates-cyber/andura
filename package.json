@@ -101,6 +101,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "@sentry/browser": "^10.49.0",
     "date-fns": "^4.2.1",
     "dexie": "^4.4.2",

@@ -11,19 +11,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Self-host Inter Variable WOFF2 — eliminate Google Fonts 843ms render-block.
-   Per FONT_SELF_HOST_INVESTIGATION chat 5 Option A (2026-05-23).
-   Single variable font file covers wght axis 100-900 (future-proof vs
-   existing 400/500/600/700 static usage). font-display: swap preserves
-   FOUT pattern parity with prior Google Fonts behavior.
-   Source: rsms.me/inter canonical. Same-origin caching via Workbox precache. */
+/* Self-host Inter Variable Latin subset (chat 5 perf audit 2026-05-23).
+   FONT_SUBSET_LATIN_FIX: prior full Variable WOFF2 = 344 KB transfer
+   regressed LCP 2.1s → 3.9s + Lighthouse Perf 97 → 86. @fontsource-variable
+   /inter ships per-subset WOFF2 files (Latin-only ~48 KB) cu unicode-range
+   hints — browser fetches DOAR Latin slice pentru D-LEGACY-064 no-diacritics
+   RO UI. Family ramane 'Inter' (zero blast radius pe Tailwind/inline refs).
+   font-display: swap preserves FOUT parity. */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/InterVariable.woff2') format('woff2-variations'),
-       url('/fonts/InterVariable.woff2') format('woff2');
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* WCAG audit batch v2 Path 2a — Clasic :root architectural lift (2026-05-10).
