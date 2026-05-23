@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-23
 schema_version: 1
-latest_entry: D073
-total_entries: 73
+latest_entry: D074
+total_entries: 74
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -124,6 +124,7 @@ D070 | 2026-05-23 | REGLAJ | BACKUP_DR_RUNBOOK chat 5 polish + cross-system anti
 D071 | 2026-05-23 | ENG | Lighthouse truly-final peak match recovery cycle 64→97→86→95→97 — post-overnight final closure Lighthouse mobile 3G Maria 65 iterative recovery cycle. 64 pre-overnight baseline red zone → 97 post quadruple D060 single-line peak → 86 post font regression D061 initial iteration full Inter Variable 344 KB pre-subset → 95 post Latin subset filter D061 final -86% bundle → 97 truly-final cumulative + modulepreload tuning + critical CSS (peak match single-line). Iterative non-linear optimization expect intermediate regression + recovery + tuning. Empirical measurement primary Lighthouse CI run per iteration. Anti-regression discipline intermediate regression surface optimization opportunity. Pre-Beta target ≥90 beat at 97 truly-final + sustained baseline. Future ratchet UP per D036 §7.6 (next 95 floor, 97 target). | LOCKED V1 | DECISIONS.md §D071 + D060 + D061 + D064 + D036
 D072 | 2026-05-23 | REGLAJ | Pre-Beta gate matrix 11 PASS / 3 YELLOW / 1 INFO singular verdict primary-source-grounded — post-overnight final closure 15 gate dimensions evaluated cumulative state: bug count (D042) + test coverage (D067 89.82%+) + Lighthouse (D071 97) + WCAG a11y (D056) + GDPR consent (D055) + bundle budget (D053) + Zustand partialize (D054) + PWA manifest SoT (D057) + Sentry instrument (D063) + i18n compliance (D058+D065) + engine pipeline (D066) + font self-host (D061) + perf quadruple (D060) + modulepreload (D064) + dead code (D069). VERIFY_FINAL_CHAT5_STATE.md singular pre-Beta launch gate document `📤_outbox/`. 3 YELLOW non-blocking caution (MMI UI prompt D066 + UI wording §P2 + dates format §P4). 1 INFO post-Beta defer perf optimization §P7/§P12. Daniel CEO Bugatti audit nuclear gate trigger post D050-D073 LOCK acknowledge + §P-items strategic decisions. | LOCKED V1 | DECISIONS.md §D072 + 📤_outbox/VERIFY_FINAL_CHAT5_STATE.md
 D073 | 2026-05-23 | REGLAJ | Vault docs ~4100+ LOC trail comprehensive singular reference point pattern — post-overnight final closure cumulative work substantial vault docs trail ~4100+ LOC. 23+ outbox files `📤_outbox/` + 4 inbox handovers `📥_inbox/HANDOVER_<date>_<topic>.md` chat 1-5 narrative scribe end-of-chat (§F3.8) + master index `📤_outbox/MASTER_INDEX_CHAT5.md` cross-reference + decisions draft `📤_outbox/DECISIONS_CHAT5_DRAFT.md` 23 LOCK candidates + 1 PROPOSAL partial-closure + 15 §P-items strategic surface + investigation reports targeted (AA-DEAD-CODE + FIREBASE-RULES-PREP + LEDGER-SYNC-FINAL-FINAL). Singular reference point master index = Daniel CEO + chat 6 startup baseline navigation aid §CC.2 step 4-5. D062 periodic cleanup pattern preserved batch periodic + Daniel verbal trigger anti-overreach. | LOCKED V1 | DECISIONS.md §D073 + 📤_outbox/MASTER_INDEX_CHAT5.md + D062
+D074 | 2026-05-23 | REGLAJ | D063 wording scope clarification — React wrappers ONLY, NOT orchestrator pipeline adapters — gsd-eval-auditor chat 5 surfaced conflation: D063 LOCKED V1 "Sentry adapter coverage 11/11 + anti-drift test" wording interpreted broadly ca include both React wrappers + orchestrator pipeline adapters. Clarification: D063 scope = React wrappers `src/react/lib/engineWrappers.ts` ONLY = canonical Big 11 React adapter layer 11/11 captureException instrumented. Out of scope post-Beta deferred candidate: orchestrator pipeline adapters `src/coach/orchestrator/adapters/*` = 0/8 Sentry instrumented currently (8 .js adapters: bayesianNutrition + deload + energyAdjustment + goalAdaptation + periodization + specialization + tempo + warmup) = separate Beta-launch decision. Anti-drift test `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` (commit ad82ab65 Wave 12 BLOCKER 2 closure) scope = React wrappers only per D063 strict wording. NO supersede of D063 — scope precision NOT decision change (D007 append-only invariant respected). | LOCKED V1 | DECISIONS.md §D074 + §D063 + src/coach/orchestrator/adapters/* + src/react/lib/engineWrappers.ts + src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts
 
 ---
 
@@ -1791,6 +1792,54 @@ Chat 5 + overnight Wave 7-22 + post-overnight final closure cumulative work subs
 #### §5 Rationale Bugatti
 
 Vault docs trail = reproducible context + visible audit baseline + Daniel CEO strategic decision support. Singular reference point = navigation aid + cumulative summary integration + chat 6 startup context. Comprehensive documentation = invisible quality (most users NU notice but future-self + Daniel CEO + chat 6 instance benefit). "Refactor later NEVER happens" = documentation trail at boundary now substantial-work cycle complete, NU cumulative debt explode future. D062 periodic cleanup pattern preserved = batch periodic + active surface respect.
+
+---
+
+### D074 — REGLAJ — D063 wording scope clarification (React wrappers ONLY, NOT orchestrator pipeline adapters)
+
+**Date:** 2026-05-23 (chat 5 post-overnight scope precision)
+**Category:** REGLAJ (system reglare SSOT scope clarification anti-conflation)
+**Status:** LOCKED V1
+**Source:** gsd-eval-auditor chat 5 finding — D063 LOCKED V1 "Sentry adapter coverage 11/11 + anti-drift test" wording interpreted broadly ca include both React wrappers + orchestrator pipeline adapters layers (conflation 2 distinct adapter surfaces)
+**Cross-refs:** [[DECISIONS.md §D063 engine adapter Sentry coverage 100% anti-drift]] + [[DECISIONS.md §D007 supersede enforcement append-only]] + `src/react/lib/engineWrappers.ts` + `src/coach/orchestrator/adapters/*` + `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` (commit ad82ab65)
+
+#### §1 Context
+
+D063 LOCKED V1 §2 wording "Engine adapter Sentry coverage 100% test instrument anti-drift" + "11/11 adapters (Big 11 pipeline) wrapped" was interpreted broadly by gsd-eval-auditor chat 5 ca potentially include BOTH adapter layers ce există în codebase:
+
+- **Layer 1 — React wrappers** = `src/react/lib/engineWrappers.ts` (Big 11 canonical React adapter surface) = 11/11 `captureException()` instrumented + 12 capture sites (11 adapters + getPatternsBanner STAGNATION/LOW_ADHERENCE extra path) ✓
+- **Layer 2 — Orchestrator pipeline adapters** = `src/coach/orchestrator/adapters/*.js` (8 files: bayesianNutritionAdapter + deloadAdapter + energyAdjustmentAdapter + goalAdaptationAdapter + periodizationAdapter + specializationAdapter + tempoAdapter + warmupAdapter) = 0/8 Sentry instrumented (verified grep ZERO Sentry references)
+
+Two adapter surfaces conflated = SSOT precision drift surface. D063 wording strict refers to Big 11 React adapter layer ONLY (canonical user-facing instrumentation gate). Orchestrator pipeline adapters = separate concern, separate Beta decision.
+
+#### §2 Decision
+
+**D063 scope clarification LOCKED V1**. Precision wording:
+
+- **D063 scope = React wrappers ONLY** = `src/react/lib/engineWrappers.ts` Big 11 canonical adapter layer = 11/11 `captureException()` instrumented = anti-drift CI gate enforced
+- **Out of scope (post-Beta deferred candidate)** = orchestrator pipeline adapters `src/coach/orchestrator/adapters/*` = 0/8 Sentry instrumented currently = separate Beta-launch decision
+- **Anti-drift test scope** = `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` (commit ad82ab65 Wave 12 BLOCKER 2 closure) reads `engineWrappers.ts` source + asserts 11 named adapters + 12 capture sites pattern. Scope = React wrappers ONLY per D063 strict wording (test file inline comments lines 14-17 already document this scope)
+- **No supersede of D063** = D074 = scope precision NOT decision change. D007 LOCK V1 append-only invariant respected. D063 status preserved `LOCKED V1`.
+
+#### §3 Implications
+
+- **D063 future citations** = strict React wrappers `src/react/lib/engineWrappers.ts` only. Any future "engine adapter Sentry coverage" claim cross-checks both layers separately.
+- **Orchestrator pipeline adapters 0/8 Sentry** = visible surface for separate post-Beta decision (instrument all 8 OR conscious defer + document risk). NU silently subsumed în D063 wording.
+- **Anti-drift test invariant** = scope React wrappers only. Future orchestrator adapter additions NU break this test (separate concern). IF future decision instrument orchestrator adapters = separate anti-drift test sibling required.
+- **gsd-eval-auditor pattern reinforced** = fresh-eyes audit catches SSOT wording precision drift Co-CTO solo might miss. Spawn proactively post-LANDED pre-Beta quality gates discipline (per Daniel feedback `subagents_fresh_eyes` MEMORY.md).
+- **D007 append-only invariant respected** = D063 NU re-opened (literal status preserved). D074 = clarification addendum sibling, NOT supersede. Pattern template future scope precision corrections without LOCK re-open.
+
+#### §4 Empirical evidence
+
+- **React wrappers verified 11/11** = `src/react/lib/engineWrappers.ts` grep `captureException` = 12 sites (11 adapters + getPatternsBanner extra path per witness suite line 17)
+- **Orchestrator adapters verified 0/8** = `src/coach/orchestrator/adapters/*` grep `Sentry` = ZERO matches across 8 .js files
+- **Anti-drift test scope verified** = `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` lines 14-17 inline comments document scope (React engineWrappers only, orchestrator separate post-Beta concern)
+- **Commit hash verified** = `ad82ab65 test(sentry-adapter-anti-drift-gate): create assert_all_adapters_instrumented [BLOCKER FIX]` via `git log --oneline` per anti-drift test file path
+- **D007 invariant preserved** = D063 status remains `LOCKED V1` (NU re-opened, NU supersede)
+
+#### §5 Rationale Bugatti
+
+SSOT precision = future-self trust contract. D063 broad wording = future Co-CTO interpretation drift surface (chat 6+ might assume orchestrator adapters also instrumented). gsd-eval-auditor caught conflation = fresh-eyes value reinforced (per `subagents_fresh_eyes` feedback). Scope clarification addendum (NOT supersede) respects D007 append-only invariant while delivering precision. Bugatti craft = explicit boundaries documented now NU silent assumption future. "Refactor later NEVER happens" = scope precision at boundary now SSOT correction cycle, NU cumulative ambiguity explode future. Pattern template = future scope precision corrections without LOCK re-open trigger (D-NEW addendum sibling pattern).
 
 ---
 
