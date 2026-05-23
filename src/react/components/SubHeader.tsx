@@ -24,6 +24,13 @@
 //   - DECISIONS.md §D-LEGACY-064 Romanian no-diacritics (aria-label "Inapoi")
 //   - mockup andura-clasic.html L2958 .sub-header { display:flex; gap:12px; padding:14px 16px 8px }
 //   - mockup andura-clasic.html L2960 .back-btn { width:40px; height:40px }
+//
+// §F-pass4-fontweight-01 (LOW chat5 Wave 19) — title font-weight 600 → 700
+// per mockup andura-clasic.html#L2959 verbatim `.sub-header h2 { font-weight:700 }`.
+// Cross-screen impact ~30+ sub-screens consume SubHeader — single change aligns
+// title weight cu mockup pattern (vs prior font-semibold 600 prod default).
+// Visual hierarchy preserved: SubHeader title bolder = clearer top-of-screen
+// anchor pentru Maria 65 + Gigel readable scan.
 
 import type { JSX, ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
@@ -55,7 +62,7 @@ export function SubHeader({
         <ArrowLeft className="w-5 h-5" aria-hidden="true" />
       </button>
       <h1
-        className={`text-xl font-semibold ${danger ? 'text-brick' : 'text-ink'}`}
+        className={`text-xl font-bold ${danger ? 'text-brick' : 'text-ink'}`}
       >
         {title}
       </h1>
