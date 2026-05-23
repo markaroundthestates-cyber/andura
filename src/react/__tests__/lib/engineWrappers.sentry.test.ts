@@ -57,6 +57,7 @@ vi.mock('../../../engine/stagnationDetector.js', () => ({
 
 vi.mock('../../../engine/muscleRecovery.js', () => ({
   getRecoveryByGroup: vi.fn(),
+  daysSinceGroup: vi.fn(),
   GROUP_LABELS_RO_BIG11: {},
 }));
 
@@ -75,6 +76,7 @@ import {
   getPatternsBanner,
   getCoachRestReason,
   getLaggingSignal,
+  getCoachTodayQuote,
 } from '../../lib/engineWrappers';
 import { captureException } from '../../../util/sentry.js';
 import { getComputedReadinessScore } from '../../../engine/readiness.js';
@@ -291,6 +293,30 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
         },
       }),
     );
+  });
+
+  it('getCoachTodayQuote catch: captureException called cu adapter tag', () => {
+    seedSessions(1);
+    vi.mocked(getRecoveryByGroup).mockImplementation(() => {
+      throw new Error('recovery boom');
+    });
+    expect(getCoachTodayQuote()).toBeNull();
+    expect(captureException).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        tags: {
+          source: 'engine-adapter-fallback',
+          adapter: 'getCoachTodayQuote',
+        },
+      }),
+    );
+  });
+
+  it('getCoachTodayQuote T0 fresh (no logs): returns null without engine call', () => {
+    // Clear sessions — no logs flattened → early return null, NU engine call.
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    expect(getCoachTodayQuote()).toBeNull();
+    expect(getRecoveryByGroup).not.toHaveBeenCalled();
   });
 
   it('no engine throw: captureException NOT called (happy path)', () => {

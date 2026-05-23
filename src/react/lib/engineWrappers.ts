@@ -27,7 +27,11 @@ import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/in
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
-import { getRecoveryByGroup, GROUP_LABELS_RO_BIG11 } from '../../engine/muscleRecovery.js';
+import {
+  getRecoveryByGroup,
+  daysSinceGroup,
+  GROUP_LABELS_RO_BIG11,
+} from '../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import {
   applyMuscleMemoryUpgrade,
@@ -831,6 +835,83 @@ export function getLaggingSignal(): string | null {
     console.warn('[engineWrappers] getLaggingSignal failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getLaggingSignal' },
+    });
+    return null;
+  }
+}
+
+// ── Coach Today Quote composer (HIGH-CODE-03 chat5 Bugatti truth fix) ────
+//
+// Replaces CoachTodayCard hardcoded "Pectoralii recupereaza din marti ·
+// spatele e gata." (mockup L750 verbatim) with engine-driven dynamic line
+// reflecting REAL muscle recovery state. Bugatti truth: NU minciuni
+// user-side. Coach claims about pectorals only when pectorals were actually
+// trained recently AND have recovered.
+//
+// Strategy:
+//   - Find top 1 recovered group cu recent training (1-14 days ago).
+//   - Find top 1 fresh/ready group (recovered status, optional days context).
+//   - Format RO sentence: `"${recoveredLabel} recupereaza din ${dayLabel}."`
+//   - Returns null cand T0 fresh user (no sessions) OR no group both recently
+//     trained AND recovered → caller renders safe generic fallback.
+//
+// Day label rules (RO no-diacritics):
+//   - 1 day = "ieri"
+//   - 2-6 days = "${N} zile"
+//   - 7+ days = "saptamana trecuta"
+
+export interface CoachTodayQuote {
+  recoveredLabel: string; // RO display label (e.g., "Pectoralii", "Spatele")
+  daysSince: number; // 1..N days since last trained
+}
+
+const COACH_TODAY_QUOTE_MAX_DAYS = 14; // beyond this, group not "recently trained"
+
+/**
+ * Composer HIGH-CODE-03 — extract one recovered + recently-trained group as
+ * dynamic coach quote source for CoachTodayCard. Engine-truth: returns null
+ * cand no group qualifies (T0 fresh / all groups stale or fatigued) → caller
+ * renders safe generic non-claim line via coachPick('preview').
+ *
+ * Defensive: engine throws → null fallback graceful + Sentry captured.
+ */
+export function getCoachTodayQuote(): CoachTodayQuote | null {
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
+    for (const session of sessions) {
+      if (!session.exercises) continue;
+      for (const ex of session.exercises) {
+        for (const set of ex.sets) {
+          logs.push({
+            ex: ex.exerciseName,
+            ts: set.timestamp,
+            w: set.kg,
+            reps: set.reps,
+          });
+        }
+      }
+    }
+    if (logs.length === 0) return null;
+    const groupState = getRecoveryByGroup(logs);
+    // Iterate groups; pick first recovered group cu daysSince in window.
+    let best: { group: string; days: number } | null = null;
+    for (const [group, state] of Object.entries(groupState)) {
+      if (state !== 'recovered') continue;
+      const days = daysSinceGroup(logs, group);
+      if (days === null) continue;
+      if (days < 1 || days > COACH_TODAY_QUOTE_MAX_DAYS) continue;
+      if (best === null || days < best.days) {
+        best = { group, days };
+      }
+    }
+    if (best === null) return null;
+    const label = GROUP_LABELS_RO_BIG11[best.group] ?? best.group;
+    return { recoveredLabel: label, daysSince: best.days };
+  } catch (e) {
+    console.warn('[engineWrappers] getCoachTodayQuote failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getCoachTodayQuote' },
     });
     return null;
   }

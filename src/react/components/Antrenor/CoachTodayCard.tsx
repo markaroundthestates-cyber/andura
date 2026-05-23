@@ -6,10 +6,13 @@
 // + exerciseCount din PlannedWorkoutOutput. Fallback mockup stub cand
 // workout=null (loading state pre-aggregate or T0 baseline).
 //
-// §B012 audit fix (CODE-REVIEW L-2) — italic quote line 36 ("Pectoralii
-// recupereaza...") = PERMANENT DESIGN ELEMENT mockup parity, NU engine-driven
-// micro-coaching V1. Per mockup andura-clasic.html#L750 verbatim. Engine-driven
-// dynamic quote candidate post-Beta (cross-ref future MMI Engine #9 extension).
+// HIGH-CODE-03 chat5 (2026-05-23) — italic quote line wired engine-driven via
+// getCoachTodayQuote() composer. Replaces prior hardcoded "Pectoralii
+// recupereaza din marti · spatele e gata." (Bugatti truth violation: claim
+// shown to ALL users regardless of training). Now: real recovered group +
+// days-since label. Safe generic fallback via coachPick('preview') cand engine
+// emits null (T0 fresh / no qualifying group). Supersedes §B012 mockup-parity
+// preserve note (Bugatti truth > mockup verbatim — Gigel filter wins).
 //
 // §F-pass2-coachtoday-04 + §F-pass2-coachtoday-06 (HIGH-EPSILON 2026-05-22) —
 // Lagging weakness signal extension (mockup L747 coach-today-lagging hidden
@@ -32,6 +35,7 @@ import { useNavigate } from 'react-router-dom';
 import { Clock, Layers } from 'lucide-react';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
+import { coachPick } from '../../lib/coachVoice';
 import { gotoPath } from '../../lib/navigation';
 
 // §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
@@ -53,11 +57,39 @@ interface Props {
   workout?: PlannedWorkoutOutput | null;
 }
 
+// HIGH-CODE-03 — day-label RO no-diacritics formatter. 1=ieri, 2-6=N zile,
+// 7+=saptamana trecuta. Pure function (testable inline).
+function formatDaysSinceRo(days: number): string {
+  if (days <= 1) return 'ieri';
+  if (days <= 6) return `${days} zile`;
+  return 'saptamana trecuta';
+}
+
 export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   const navigate = useNavigate();
   const title = workout?.workoutTitle ?? 'Pull (spate & biceps)';
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
+  // HIGH-CODE-03 chat5 — engine-driven quote replaces hardcoded muscle-group
+  // claim. Composer returns null cand T0 fresh / no qualifying recovered
+  // group → fallback safe generic non-claim line via coachPick('preview').
+  // Memoized: engine call runs once per mount, NU per render. Optional-
+  // chained call tolerates partial engineWrappers mocks (Antrenor.test).
+  const coachQuote = useMemo<string>(() => {
+    try {
+      const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;
+      if (dynamic !== null) {
+        const dayLabel = formatDaysSinceRo(dynamic.daysSince);
+        return `${dynamic.recoveredLabel} recupereaza din ${dayLabel} - hai sa o facem curat.`;
+      }
+    } catch {
+      // fall through to generic fallback
+    }
+    // Safe non-claim generic — deterministic seed 0 mirrors WorkoutPreview
+    // pattern; pool entries are non-claim general motivation (NO muscle
+    // recovery claims).
+    return coachPick('preview', undefined, 0);
+  }, []);
   // §F-pass2-coachtoday-04 — memo lagging signal so weaknessDetector engine
   // call NU runs every render. Null cand T0 fresh / balanced training.
   // Namespace-imported with optional-chained access: tolerates partial mocks
@@ -100,8 +132,9 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <div
         className="relative font-serif italic mt-1.5 leading-relaxed text-sm"
         style={{ color: COACH_LORA_COLOR }}
+        data-testid="coach-today-quote"
       >
-        &bdquo;Pectoralii recupereaza din marti &middot; spatele e gata.&rdquo;
+        &bdquo;{coachQuote}&rdquo;
       </div>
       {laggingSignal && (
         <div
