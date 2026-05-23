@@ -15,6 +15,8 @@ vi.mock('../../../engine/bayesianNutrition/index.js', () => ({
 
 import { getNutritionTargetsToday } from '../../lib/engineWrappers';
 import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.js';
+// NIT-CODE-06 — typed mock builder. See CODE_STYLE.md §"Test mock typing".
+import { createMockBNResult } from '../../../test-utils/createMockContext';
 
 const BASELINE = {
   kcalTarget: 2640,
@@ -31,24 +33,21 @@ beforeEach(() => {
 
 describe('engineWrappers — getNutritionTargetsToday', () => {
   it('returns engine kcalTarget cand evaluate succeeds + tier MED + confidence high', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      confidence: 'high',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {
-        nutrition_inference_metadata: {
-          posterior: { mu: 2850, sigma: 100, observations_count: 5, ci_lower: 2700, ci_upper: 3000 },
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        confidence: 'high',
+        meta: {
+          nutrition_inference_metadata: {
+            posterior: { mu: 2850, sigma: 100, observations_count: 5, ci_lower: 2700, ci_upper: 3000 },
+          },
+          likelihood_probabilities: {},
+          profile_typing: {},
+          ui_tier: 'MED',
+          passive_mode_active: false,
+          signals: [],
         },
-        likelihood_probabilities: {},
-        profile_typing: {},
-        ui_tier: 'MED',
-        passive_mode_active: false,
-        signals: [],
-      },
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+      }),
+    );
     const r = await getNutritionTargetsToday({});
     expect(r.source).toBe('engine');
     expect(r.kcalTarget).toBe(2850);
@@ -65,32 +64,20 @@ describe('engineWrappers — getNutritionTargetsToday', () => {
   });
 
   it('enforces LOCK 8 floor 1200 cand posterior.mu < 1200', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      confidence: 'medium',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {
-        nutrition_inference_metadata: { posterior: { mu: 800 } },
-      },
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        meta: { nutrition_inference_metadata: { posterior: { mu: 800 } } },
+      }),
+    );
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(1200);
     expect(r.source).toBe('engine');
   });
 
   it('tier "none" → baseline fallback (T0 fresh user pre-observation)', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'none',
-      confidence: 'low',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {},
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({ tier: 'none', confidence: 'low', meta: {} }),
+    );
     const r = await getNutritionTargetsToday({});
     expect(r).toEqual(BASELINE);
   });
@@ -102,6 +89,8 @@ describe('engineWrappers — getNutritionTargetsToday', () => {
   });
 
   it('engine result missing meta → baseline fallback', async () => {
+    // Negative-path: omit meta entirely — raw cast preserves shape since
+    // builder injects default `meta` (defeating the missing-meta test).
     vi.mocked(evaluateBN).mockResolvedValueOnce({
       id: 'bayesianNutrition',
       tier: 'MED',
@@ -115,75 +104,41 @@ describe('engineWrappers — getNutritionTargetsToday', () => {
   });
 
   it('engine result missing posterior.mu → baseline fallback', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      confidence: 'medium',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {
-        nutrition_inference_metadata: { posterior: {} },
-      },
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        meta: { nutrition_inference_metadata: { posterior: {} } },
+      }),
+    );
     const r = await getNutritionTargetsToday({});
     expect(r).toEqual(BASELINE);
   });
 
   it('confidence mapping: high → 1, medium → 0.5, low → 0.2', async () => {
-    const baseResult = {
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: { nutrition_inference_metadata: { posterior: { mu: 2500 } } },
-    };
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      ...baseResult,
-      confidence: 'high',
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ confidence: 'high' }));
     expect((await getNutritionTargetsToday({})).confidence).toBe(1);
 
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      ...baseResult,
-      confidence: 'medium',
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ confidence: 'medium' }));
     expect((await getNutritionTargetsToday({})).confidence).toBe(0.5);
 
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      ...baseResult,
-      confidence: 'low',
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ confidence: 'low' }));
     expect((await getNutritionTargetsToday({})).confidence).toBe(0.2);
   });
 
   it('undefined userState → defensive defaults, returns baseline OR engine', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'none',
-      confidence: 'low',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {},
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({ tier: 'none', confidence: 'low', meta: {} }),
+    );
     const r = await getNutritionTargetsToday();
     expect(r).toEqual(BASELINE);
   });
 
   it('macros (protein/fat/carbs) preserved baseline cand engine emit kcal (engine NU emit macros)', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      confidence: 'high',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {
-        nutrition_inference_metadata: { posterior: { mu: 3000 } },
-      },
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        confidence: 'high',
+        meta: { nutrition_inference_metadata: { posterior: { mu: 3000 } } },
+      }),
+    );
     const r = await getNutritionTargetsToday({});
     // Engine wires kcal but NU emit macros — baseline macros preserved V1.
     expect(r.proteinTargetG).toBe(180);
@@ -192,17 +147,11 @@ describe('engineWrappers — getNutritionTargetsToday', () => {
   });
 
   it('kcalTarget rounded to integer', async () => {
-    vi.mocked(evaluateBN).mockResolvedValueOnce({
-      id: 'bayesianNutrition',
-      tier: 'MED',
-      confidence: 'medium',
-      signals: [],
-      recommendations: [],
-      trace: {},
-      meta: {
-        nutrition_inference_metadata: { posterior: { mu: 2847.7 } },
-      },
-    } as unknown as Awaited<ReturnType<typeof evaluateBN>>);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        meta: { nutrition_inference_metadata: { posterior: { mu: 2847.7 } } },
+      }),
+    );
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(2848);
     expect(Number.isInteger(r.kcalTarget)).toBe(true);

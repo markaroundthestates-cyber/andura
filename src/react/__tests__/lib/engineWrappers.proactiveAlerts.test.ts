@@ -10,6 +10,9 @@ vi.mock('../../../engine/proactiveEngine.js', () => ({
 
 import { getProactiveAlerts } from '../../lib/engineWrappers';
 import { runProactiveChecks } from '../../../engine/proactiveEngine.js';
+// NIT-CODE-06 — typed mock builder replaces `as unknown as ReturnType<...>`
+// casts spread across test bodies. See CODE_STYLE.md §"Test mock typing".
+import { createMockProactiveAlertList } from '../../../test-utils/createMockContext';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -34,43 +37,55 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
   });
 
   it('severity mapping: warning → warn', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'protein_deficit', severity: 'warning', message: 'Proteine sub target' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'protein_deficit', severity: 'warning', message: 'Proteine sub target' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts[0]!.severity).toBe('warn');
   });
 
   it('severity mapping: info → info', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'inactivity', severity: 'info', message: 'Reia ritmul' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'inactivity', severity: 'info', message: 'Reia ritmul' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts[0]!.severity).toBe('info');
   });
 
   it('severity mapping: success → info collapse (NU urgent UI bias)', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'streak_milestone', severity: 'success', message: 'Streak 7 zile' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'streak_milestone', severity: 'success', message: 'Streak 7 zile' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts[0]!.severity).toBe('info');
   });
 
   it('severity mapping: unknown → info default', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'mystery', severity: 'cosmic' as unknown as 'warning', message: 'Whatever' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    // Negative-path: 'cosmic' is intentionally NOT a valid engine severity —
+    // builder accepts unknown severity strings via base shape `severity: string`.
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'mystery', severity: 'cosmic', message: 'Whatever' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts[0]!.severity).toBe('info');
   });
 
   it('id generation: type_index unique per alert', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'protein_deficit', severity: 'warning', message: 'a' },
-      { type: 'protein_deficit', severity: 'warning', message: 'b' },
-      { type: 'sleep_debt', severity: 'info', message: 'c' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'protein_deficit', severity: 'warning', message: 'a' },
+        { type: 'protein_deficit', severity: 'warning', message: 'b' },
+        { type: 'sleep_debt', severity: 'info', message: 'c' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts.map((a) => a.id)).toEqual([
       'protein_deficit_0',
@@ -80,13 +95,17 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
   });
 
   it('text extracted from alert.message', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'pr_opportunity', severity: 'success', message: 'Zi de PR azi' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'pr_opportunity', severity: 'success', message: 'Zi de PR azi' },
+      ]),
+    );
     expect(getProactiveAlerts()[0]!.text).toBe('Zi de PR azi');
   });
 
   it('missing message → empty string defensive', () => {
+    // Negative-path: alert literal missing `message` field — builder default
+    // would inject 'mock message', so use raw cast pattern here (one-off).
     vi.mocked(runProactiveChecks).mockReturnValue([
       { type: 'unknown', severity: 'info' } as unknown as ReturnType<typeof runProactiveChecks>[number],
     ] as unknown as ReturnType<typeof runProactiveChecks>);
@@ -101,11 +120,13 @@ describe('engineWrappers — getProactiveAlerts wrapper', () => {
   });
 
   it('order preserved (engine sorted: warning first, info, success last)', () => {
-    vi.mocked(runProactiveChecks).mockReturnValue([
-      { type: 'a', severity: 'warning', message: '1' },
-      { type: 'b', severity: 'info', message: '2' },
-      { type: 'c', severity: 'success', message: '3' },
-    ] as unknown as ReturnType<typeof runProactiveChecks>);
+    vi.mocked(runProactiveChecks).mockReturnValue(
+      createMockProactiveAlertList([
+        { type: 'a', severity: 'warning', message: '1' },
+        { type: 'b', severity: 'info', message: '2' },
+        { type: 'c', severity: 'success', message: '3' },
+      ]),
+    );
     const alerts = getProactiveAlerts();
     expect(alerts.map((a) => a.text)).toEqual(['1', '2', '3']);
   });
