@@ -238,6 +238,18 @@ export interface WorkoutActions {
   // explicit marker '(sesiune nedefinita)' NU silent pretend.
   pauseSession: (title: string) => void;
   resumeSession: () => void;
+  /**
+   * Discards the CURRENT in-progress session without persisting to
+   * `sessionsHistory` / `lastSession`. Mid-session abandon path.
+   *
+   * Cleared: `exIdx`, `setIdx`, `phase`, `prHit`, `prData`, `history`,
+   * `sessionStart`, `pausedSnapshot`.
+   *
+   * Preserved: `sessionsHistory`, `streak`, `lastSession`, `lastRating`
+   * (pre-session rating context kept — only the session being abandoned
+   * goes away). See {@link reset} for active-session wipe that also
+   * clears `lastRating`.
+   */
   discardSession: () => void;
   finishSession: (summary: LastSessionSummary) => void;
   setPhase: (phase: WorkoutPhase) => void;
@@ -247,6 +259,23 @@ export interface WorkoutActions {
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   incrementStreak: () => void;
   resetStreak: () => void;
+  /**
+   * Resets ACTIVE-session runtime state only — NOT cumulative history.
+   *
+   * Cleared: `exIdx`, `setIdx`, `phase`, `prHit`, `prData`, `history`,
+   * `sessionStart`, `lastRating`, `pausedSnapshot`.
+   *
+   * Preserved: `sessionsHistory`, `streak`, `lastSession` (cumulative
+   * per-user data persisted across sessions via `partialize`).
+   *
+   * Differs from {@link discardSession} only by also clearing `lastRating`
+   * (semantic: `reset` is a full active-session wipe, `discardSession`
+   * is mid-session abandon — pre-session rating context preserved).
+   *
+   * For full-wipe semantics (Tier 0 erasure) see
+   * `ResetDataConfirm` / `DeleteAccountConfirm`: they pair `reset()` with
+   * `resetStreak()` + raw `setState({ lastSession: null, sessionsHistory: [] })`.
+   */
   reset: () => void;
 }
 

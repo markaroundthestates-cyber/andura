@@ -244,6 +244,63 @@ describe('workoutStore — reset', () => {
     expect(useWorkoutStore.getState().lastRating).toBeNull();
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
   });
+
+  // LOW-CODE-10 semantic clarify: reset() is ACTIVE-session reset only.
+  // sessionsHistory / streak / lastSession are cumulative cross-session
+  // data preserved across resets. Full-wipe is caller responsibility
+  // (see ResetDataConfirm / DeleteAccountConfirm).
+  it('reset PRESERVES sessionsHistory / streak / lastSession (cumulative)', () => {
+    // Clean sessionsHistory upfront (helper `resetStore` clears most fields
+    // but not this cumulative one — kept surgical to LOW-CODE-10 scope).
+    useWorkoutStore.setState({ sessionsHistory: [] });
+
+    useWorkoutStore.getState().finishSession({
+      title: 'Push',
+      meta: '5 seturi · 52 min · 12 450 kg',
+      ts: 123,
+    });
+    useWorkoutStore.getState().incrementStreak();
+    useWorkoutStore.getState().incrementStreak();
+    const before = useWorkoutStore.getState();
+    expect(before.sessionsHistory).toHaveLength(1);
+    expect(before.streak).toBe(2);
+    expect(before.lastSession?.title).toBe('Push');
+
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().reset();
+
+    const after = useWorkoutStore.getState();
+    expect(after.sessionsHistory).toHaveLength(1);
+    expect(after.streak).toBe(2);
+    expect(after.lastSession?.title).toBe('Push');
+  });
+
+  it('discardSession PRESERVES sessionsHistory / streak / lastSession / lastRating', () => {
+    useWorkoutStore.setState({ sessionsHistory: [] });
+
+    useWorkoutStore.getState().finishSession({
+      title: 'Pull',
+      meta: '4 seturi',
+      ts: 1,
+    });
+    useWorkoutStore.getState().incrementStreak();
+    useWorkoutStore.getState().setLastRating('grea');
+
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().logSet(0, { kg: 20, reps: 10, rating: 'usor' });
+    useWorkoutStore.getState().discardSession();
+
+    const after = useWorkoutStore.getState();
+    expect(after.sessionsHistory).toHaveLength(1);
+    expect(after.streak).toBe(1);
+    expect(after.lastSession?.title).toBe('Pull');
+    // discardSession keeps lastRating (pre-session context); reset clears it.
+    expect(after.lastRating).toBe('grea');
+    // current session state cleared.
+    expect(after.history).toEqual({});
+    expect(after.sessionStart).toBeNull();
+    expect(after.phase).toBe('idle');
+  });
 });
 
 describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
