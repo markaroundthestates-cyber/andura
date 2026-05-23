@@ -878,20 +878,7 @@ const COACH_TODAY_QUOTE_MAX_DAYS = 14; // beyond this, group not "recently train
 export function getCoachTodayQuote(): CoachTodayQuote | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
-    const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
-    for (const session of sessions) {
-      if (!session.exercises) continue;
-      for (const ex of session.exercises) {
-        for (const set of ex.sets) {
-          logs.push({
-            ex: ex.exerciseName,
-            ts: set.timestamp,
-            w: set.kg,
-            reps: set.reps,
-          });
-        }
-      }
-    }
+    const logs = flattenSessionsToEngineLogs(sessions);
     if (logs.length === 0) return null;
     const groupState = getRecoveryByGroup(logs);
     // Iterate groups; pick first recovered group cu daysSince in window.
