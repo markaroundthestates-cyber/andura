@@ -11,6 +11,12 @@
 // .sub-header sticky top. SubHeader created HIGH-ALFA cluster. handleBack
 // navigates(-1) for history-natural return.
 //
+// §F-ceva-nu-merge-02 (MED chat5 Wave 12) — title swap "Ceva nu merge azi?"
+// → "Ce nu merge?" mockup verbatim L1001 (`<h2>Ce nu merge?</h2>`). Mockup
+// terse + active voice ("Ce" prompt) > prod verbose interrogativ. Body intro
+// preserved (different finding scope). Tests updated (CevaNuMerge.test.tsx +
+// EnergyScreens.aria.test.tsx + routing.test.tsx).
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-035 Pain/Discomfort Button architecture (CDL override)
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -55,7 +61,7 @@ export function CevaNuMerge(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="ceva-nu-merge">
       <SubHeader
-        title="Ceva nu merge azi?"
+        title="Ce nu merge?"
         onBack={handleBack}
         testIdBack="ceva-nu-merge-back"
       />

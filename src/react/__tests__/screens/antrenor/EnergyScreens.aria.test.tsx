@@ -129,10 +129,11 @@ describe('CevaNuMerge — no role="list" + heading sufficient', () => {
   });
 
   it('h1 heading present + announces section', () => {
+    // §F-ceva-nu-merge-02 (MED chat5 Wave 12) — title mockup verbatim L1001.
     const { container } = renderCevaNuMerge();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Ceva nu merge azi/);
+    expect(h1?.textContent).toMatch(/Ce nu merge/);
   });
 });
 

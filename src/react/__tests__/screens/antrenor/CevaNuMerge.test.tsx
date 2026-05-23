@@ -28,10 +28,11 @@ function renderCevaNuMerge() {
 }
 
 describe('CevaNuMerge — render', () => {
-  it('renders heading "Ceva nu merge azi?"', () => {
+  it('renders heading "Ce nu merge?"', () => {
+    // §F-ceva-nu-merge-02 (MED chat5 Wave 12) — title mockup verbatim L1001.
     renderCevaNuMerge();
     expect(
-      screen.getByRole('heading', { name: /Ceva nu merge azi/i, level: 1 })
+      screen.getByRole('heading', { name: /Ce nu merge/i, level: 1 })
     ).toBeInTheDocument();
   });
 
