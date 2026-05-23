@@ -169,7 +169,7 @@ export function PostSummary(): JSX.Element {
     >
       {/* §F-post-summary-01 closure framing — h1 mockup verbatim L1630. */}
       <h1
-        className="text-2xl font-semibold text-ink mb-1"
+        className="text-2xl font-bold text-ink mb-1"
         data-testid="summary-heading"
       >
         Sesiune terminata

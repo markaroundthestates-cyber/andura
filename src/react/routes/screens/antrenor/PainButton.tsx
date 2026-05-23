@@ -118,7 +118,7 @@ export function PainButton(): JSX.Element {
         testIdBack="pain-button-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-semibold text-ink mb-2">Unde te doare?</h2>
+      <h2 className="text-2xl font-bold text-ink mb-2">Unde te doare?</h2>
       <p className="text-base text-ink2 mb-6">Coach evita exercitii care irita zona.</p>
 
       <div className="grid grid-cols-2 gap-3 mb-6" role="list" aria-label="Zone corp">

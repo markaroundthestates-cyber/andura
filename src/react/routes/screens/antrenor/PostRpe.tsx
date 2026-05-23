@@ -159,7 +159,7 @@ export function PostRpe(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper" data-testid="post-rpe">
-      <h1 className="text-2xl font-semibold text-ink mb-2">Cum a fost sesiunea?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Cum a fost sesiunea?</h1>
       {/* §F-post-rpe-01 (HIGH chat5 Wave 15) — coach quote Lora italic mockup
           andura-clasic.html#L1596 verbatim. Product personality signal Andura
           Suflet (D-LEGACY-052) — engine-transparent framing ("calibreaza

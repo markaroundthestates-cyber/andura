@@ -108,7 +108,7 @@ export function BodyData(): JSX.Element {
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="text-2xl font-semibold text-ink">Masuratori corp</h1>
+        <h1 className="text-2xl font-bold text-ink">Masuratori corp</h1>
       </header>
 
       <div className="flex flex-col gap-4 flex-1">

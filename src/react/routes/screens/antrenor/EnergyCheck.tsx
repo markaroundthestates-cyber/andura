@@ -84,7 +84,7 @@ export function EnergyCheck(): JSX.Element {
         testIdBack="energy-check-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-semibold text-ink mb-2">Cum te simti azi?</h2>
+      <h2 className="text-2xl font-bold text-ink mb-2">Cum te simti azi?</h2>
       <p className="text-base text-ink2 mb-6">
         Coach-ul ajusteaza intensitatea pe baza energiei tale.
       </p>

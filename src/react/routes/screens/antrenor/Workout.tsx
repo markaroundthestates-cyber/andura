@@ -398,7 +398,7 @@ export function Workout(): JSX.Element {
         data-testid="workout"
         data-phase="empty"
       >
-        <h1 className="text-2xl font-semibold text-ink mb-2">
+        <h1 className="text-2xl font-bold text-ink mb-2">
           Astazi e zi de odihna
         </h1>
         <p className="text-sm text-ink2 mb-6" data-testid="workout-empty-body">

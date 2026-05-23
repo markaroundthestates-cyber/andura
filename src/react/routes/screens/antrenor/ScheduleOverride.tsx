@@ -68,7 +68,7 @@ export function ScheduleOverride(): JSX.Element {
         testIdBack="schedule-override-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-semibold text-ink mb-2">Vrei alt antrenament azi?</h2>
+      <h2 className="text-2xl font-bold text-ink mb-2">Vrei alt antrenament azi?</h2>
       <p className="text-base text-ink2 mb-6">
         Coach respecta. Doar azi - maine reia planul.
       </p>
