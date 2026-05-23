@@ -74,12 +74,26 @@ export function Antrenor(): JSX.Element {
   // Phase 6 task_06: single source coach aggregate consume async pipeline.
   // Per DECISIONS.md §D027 Option C cascade + Option B composer pure-function
   // engines (NU CoachDirector.buildSession side-effects pollution).
+  //
+  // HIGH-CODE-07 (code-review v2 chat 5 post-Wave 10): defense-in-depth
+  // .catch on getCoachToday promise. Engine wrappers already safe-catch
+  // internally + return null fallbacks, dar promise rejection past wrapper
+  // would leave UI silently stuck (console error + stale baseline render).
+  // Pattern mirror WorkoutPreview Wave 11 fallback guard (f81e2716):
+  // visible error banner role=alert + fallback engine-null baseline still
+  // renders (CoachRestCard cu restReason=null, baseline stats) so Gigel
+  // can still tap Incepe antrenament.
   const [coach, setCoach] = useState<CoachTodayOutput | null>(null);
+  const [coachError, setCoachError] = useState<boolean>(false);
   useEffect(() => {
     let cancelled = false;
-    getCoachToday().then((c) => {
-      if (!cancelled) setCoach(c);
-    });
+    getCoachToday()
+      .then((c) => {
+        if (!cancelled) setCoach(c);
+      })
+      .catch(() => {
+        if (!cancelled) setCoachError(true);
+      });
     return () => { cancelled = true; };
   }, []);
 
@@ -113,6 +127,29 @@ export function Antrenor(): JSX.Element {
       {/* §F-pass4-fontweight-01 (LOW chat5) — title font-weight 600 → 700 mockup
           andura-clasic.html#L734 (font-weight:700). */}
       <h1 className="text-2xl font-bold text-ink mb-4">Antrenor</h1>
+
+      {/* HIGH-CODE-07 defense-in-depth error banner (code-review v2 chat 5
+          post-Wave 10) — visible only when getCoachToday promise rejects past
+          wrapper safe-catch. Fallback baseline content still renders below
+          (CoachRestCard or CoachTodayCard cu coach=null defaults) so Gigel
+          can still proceed to start sesiunea. Pattern mirror WorkoutPreview
+          Wave 11 (f81e2716). */}
+      {coachError && (
+        <div
+          className="p-3 rounded-xl border mb-4"
+          data-testid="antrenor-error-banner"
+          role="alert"
+          aria-live="assertive"
+          style={{
+            background: 'var(--status-danger-bg)',
+            borderColor: 'var(--status-danger-border)',
+          }}
+        >
+          <p className="text-base text-ink">
+            Nu am putut incarca recomandarile coach-ului. Poti incepe sesiunea oricum.
+          </p>
+        </div>
+      )}
 
       {pausedSnap && (
         <ResumeSessionCard

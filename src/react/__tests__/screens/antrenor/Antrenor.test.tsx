@@ -420,6 +420,44 @@ describe('Antrenor home — navigation', () => {
   });
 });
 
+describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => {
+  // HIGH-CODE-07 (code-review v2 chat 5 post-Wave 10): getCoachToday().then
+  // chain lacked .catch — engine throw past wrapper would silently swallow
+  // rejection (React unhandled rejection → console error + stale baseline).
+  // Fix mirror WorkoutPreview Wave 11 fallback guard (f81e2716):
+  // visible error banner role=alert + baseline fallback still renders.
+  beforeEach(() => {
+    resetStores();
+    vi.mocked(getReadiness).mockReturnValue(null);
+    vi.mocked(getFatigue).mockReturnValue(null);
+  });
+
+  it('renders error banner cand getCoachToday promise rejects', async () => {
+    vi.mocked(getCoachToday).mockRejectedValueOnce(new Error('engine pipeline boom'));
+    renderAntrenor();
+    const banner = await screen.findByTestId('antrenor-error-banner');
+    expect(banner).toBeInTheDocument();
+    expect(banner).toHaveAttribute('role', 'alert');
+    expect(banner.textContent).toMatch(/Nu am putut incarca/i);
+  });
+
+  it('fallback baseline content still renders pe promise reject (Gigel proceed)', async () => {
+    vi.mocked(getCoachToday).mockRejectedValueOnce(new Error('engine pipeline boom'));
+    renderAntrenor();
+    await screen.findByTestId('antrenor-error-banner');
+    // CTA Incepe antrenament + heading still present so user can proceed.
+    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Incepe antrenament/i })).toBeInTheDocument();
+  });
+
+  it('no error banner on happy path (engine resolves)', async () => {
+    renderAntrenor();
+    // Wait one microtask for default resolved mock to flush.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(screen.queryByTestId('antrenor-error-banner')).not.toBeInTheDocument();
+  });
+});
+
 describe('Antrenor home — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   beforeEach(() => {
     resetStores();
