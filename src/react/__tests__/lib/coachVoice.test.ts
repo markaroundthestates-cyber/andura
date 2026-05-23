@@ -2,7 +2,7 @@
 // Per spec task_03 §4 B — deterministic seed + diacritics rule.
 
 import { describe, it, expect } from 'vitest';
-import { coachPick, COACH_VOICE } from '../../lib/coachVoice';
+import { coachPick, COACH_VOICE, COACH_VOICE_SAFE_FALLBACK } from '../../lib/coachVoice';
 
 describe('COACH_VOICE library shape', () => {
   it('preset bucket non-empty', () => {
@@ -68,19 +68,41 @@ describe('coachPick — deterministic seed', () => {
   });
 });
 
-describe('coachPick — fallback', () => {
-  it('endSession fara rating returns empty string', () => {
-    expect(coachPick('endSession')).toBe('');
+describe('coachPick — fallback (LOW-CODE-11 fix: safe fallback NU empty string)', () => {
+  it('SAFE_FALLBACK constant is non-empty string', () => {
+    expect(COACH_VOICE_SAFE_FALLBACK).toBeTruthy();
+    expect(typeof COACH_VOICE_SAFE_FALLBACK).toBe('string');
+    expect(COACH_VOICE_SAFE_FALLBACK.length).toBeGreaterThan(0);
   });
 
-  it('endSession cu rating necunoscut TypeScript prevent at compile — runtime empty', () => {
+  it('endSession fara rating returns safe fallback (NU empty string)', () => {
+    const result = coachPick('endSession');
+    expect(result).toBe(COACH_VOICE_SAFE_FALLBACK);
+    expect(result).not.toBe('');
+  });
+
+  it('endSession cu rating necunoscut returns safe fallback (NU empty string)', () => {
     // @ts-expect-error testing runtime fallback on invalid rating
-    expect(coachPick('endSession', 'usoara', 0)).toBe('');
+    const result = coachPick('endSession', 'usoara', 0);
+    expect(result).toBe(COACH_VOICE_SAFE_FALLBACK);
+    expect(result).not.toBe('');
   });
 
-  it('category necunoscuta returns empty string', () => {
+  it('category necunoscuta returns safe fallback (NU empty string)', () => {
     // @ts-expect-error testing runtime fallback on invalid category
-    expect(coachPick('unknown-cat', undefined, 0)).toBe('');
+    const result = coachPick('unknown-cat', undefined, 0);
+    expect(result).toBe(COACH_VOICE_SAFE_FALLBACK);
+    expect(result).not.toBe('');
+  });
+
+  it('SAFE_FALLBACK respects no-diacritics rule (D-LEGACY-064)', () => {
+    expect(/[ăâîșțĂÂÎȘȚşţŞŢ]/.test(COACH_VOICE_SAFE_FALLBACK)).toBe(false);
+  });
+
+  it('known categories return library pool item (NU safe fallback)', () => {
+    const result = coachPick('preset', undefined, 0);
+    expect(result).not.toBe(COACH_VOICE_SAFE_FALLBACK);
+    expect(COACH_VOICE.preset).toContain(result);
   });
 });
 

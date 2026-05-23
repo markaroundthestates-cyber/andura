@@ -9,6 +9,12 @@
 // normalized: diacritics stripped la ASCII; em-dash converted la standard
 // hyphen `-` pentru consistency.
 //
+// LOW-CODE-11 fix (code review v2 chat 5): unknown category / missing rating
+// no longer returns '' empty string (silent blank UI). Instead returns
+// SAFE_FALLBACK non-claim neutral line + Sentry capture pentru observability
+// (engine-adapter-fallback precedent §48-H1). Catches future drift când
+// caller passes typo'd / stale category name.
+//
 // Cross-refs:
 //   - mockup andura-clasic.html#L3796-3848 COACH_VOICE + coachPick
 //   - DECISIONS.md §D-LEGACY-052 Andura Suflet
@@ -96,6 +102,48 @@ export type CoachVoiceFlatCategory =
 export type CoachVoiceEndSessionRating = 'usor' | 'potrivit' | 'greu';
 
 /**
+ * LOW-CODE-11 fix — non-claim neutral line returned când caller passes
+ * unknown category / missing endSession rating. Better decat '' empty string
+ * (silent blank UI) — Gigel sees content always. Sentry capture instrumented
+ * separately la fallback path pentru observability (engine-adapter-fallback
+ * precedent §48-H1).
+ *
+ * Wording chosen pre-action neutral (NO outcome claim "ai prins ritmul" /
+ * "esti bun") safe across all phases (idle/rest/transition/postRPE/preview).
+ */
+export const COACH_VOICE_SAFE_FALLBACK = 'Pregateste-te de antrenament.';
+
+/**
+ * Lazy Sentry capture — defers @sentry/browser import, no test-time impact
+ * (initSentry hostname gate no-ops localhost + MODE='test'). Fire-and-forget.
+ *
+ * @param {string} reason - 'unknown-category' | 'missing-endsession-rating' | 'empty-pool'
+ * @param {string} category - Raw category value passed (may be invalid runtime)
+ * @param {string | undefined} rating - Raw rating value (relevant pentru endSession)
+ */
+function captureCoachPickFallback(
+  reason: 'unknown-category' | 'missing-endsession-rating' | 'empty-pool',
+  category: string,
+  rating: string | undefined
+): void {
+  // Dynamic import — avoids pulling Sentry through library imports in tests.
+  // Failure-tolerant (catch swallow): coachPick must never throw, NU break UI.
+  import('../../util/sentry.js')
+    .then((mod) => {
+      mod.captureException(
+        new Error(`coachPick fallback: ${reason} (category="${category}", rating="${rating ?? 'undefined'}")`),
+        {
+          tags: { source: 'coach-voice-fallback', reason },
+          extra: { category, rating },
+        }
+      );
+    })
+    .catch(() => {
+      // Sentry unavailable — silent (NU spam console în production).
+    });
+}
+
+/**
  * Pure-function selector — deterministic cu seed (Phase 3 task_05+ pot pasa
  * seed pentru reproducibility tests). Default Math.random() = side-effect la
  * I/O boundary (caller responsibility per ADR 026 §9).
@@ -104,8 +152,9 @@ export type CoachVoiceEndSessionRating = 'usor' | 'potrivit' | 'greu';
  *   coachPick('endSession', 'usor', seed?) → COACH_VOICE.endSession.usor[idx]
  *   coachPick('preset' | 'rest' | ..., undefined, seed?) → flat pool [idx]
  *
- * Returns empty string '' daca category necunoscut sau pool gol (mockup
- * fidelity — NU throw, just empty defaultable UI).
+ * LOW-CODE-11 fix: returns COACH_VOICE_SAFE_FALLBACK (NU '' empty string)
+ * când category necunoscut / endSession lipseste rating / pool gol. Sentry
+ * captures fallback path pentru observability (catches stale caller drift).
  */
 export function coachPick(
   category: CoachVoiceFlatCategory | 'endSession',
@@ -113,10 +162,15 @@ export function coachPick(
   seed?: number
 ): string {
   let pool: readonly string[] = [];
+  let fallbackReason: 'unknown-category' | 'missing-endsession-rating' | 'empty-pool' | null = null;
 
   if (category === 'endSession') {
-    if (!rating) return '';
-    pool = COACH_VOICE.endSession[rating] ?? [];
+    if (!rating) {
+      fallbackReason = 'missing-endsession-rating';
+    } else {
+      pool = COACH_VOICE.endSession[rating] ?? [];
+      if (pool.length === 0) fallbackReason = 'unknown-category';
+    }
   } else if (
     category === 'preset' || category === 'postUsor' ||
     category === 'postPotrivit' || category === 'postGreu' ||
@@ -124,12 +178,19 @@ export function coachPick(
     category === 'reflectie' || category === 'preview'
   ) {
     pool = COACH_VOICE[category];
+    if (pool.length === 0) fallbackReason = 'empty-pool';
+  } else {
+    fallbackReason = 'unknown-category';
   }
 
-  if (pool.length === 0) return '';
+  if (fallbackReason !== null) {
+    captureCoachPickFallback(fallbackReason, String(category), rating);
+    return COACH_VOICE_SAFE_FALLBACK;
+  }
+
   const idx =
     seed !== undefined
       ? Math.abs(seed) % pool.length
       : Math.floor(Math.random() * pool.length);
-  return pool[idx] ?? '';
+  return pool[idx] ?? COACH_VOICE_SAFE_FALLBACK;
 }
