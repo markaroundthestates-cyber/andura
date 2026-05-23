@@ -68,7 +68,18 @@ export default defineConfig({
         // opt-in primesc precache install fara reason; SW runtime cache still
         // serves Sentry on-demand cand initSentry trigger-uie import.
         // Maria 65 mobile 3G install UX: -145 KB gzip first install.
-        globIgnores: ['**/assets/index-*.js'],
+        //
+        // Perf chat 5 VENDOR_DATA_LAZY_INVESTIGATION — extend pattern Sentry
+        // pentru vendor-data chunk (Dexie ~32 KB gzip). Dexie lazy import doar
+        // din DeleteAccountConfirm + SettingsExport (destructive actions).
+        // Users care NU sterg cont la primul touch primesc precache fara
+        // reason; SW runtime cache still serves Dexie on-demand prin
+        // NetworkFirst cand action destructive trigger import.
+        // Maria 65 + Gigel first-install: -32 KB gzip install UX.
+        globIgnores: [
+          '**/assets/index-*.js',
+          '**/assets/vendor-data-*.js',
+        ],
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
         runtimeCaching: [
