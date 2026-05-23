@@ -1,5 +1,8 @@
 // §F-pass2-reactivate-01 (MED Wave 7 2026-05-23) — ReactivateCard tests
 // covering Hand brick icon parity mockup andura-clasic.html L814.
+//
+// §F-pass2-reactivate-02 (LOW chat5 Wave 10) — border-lineStrong (warm
+// taupe interactive boundary) verbatim mockup `var(--line-strong)` L812.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -59,5 +62,15 @@ describe('ReactivateCard — render', () => {
       <ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />,
     );
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  it('§F-pass2-reactivate-02 border-lineStrong (warm taupe) mockup L812', () => {
+    const { container } = render(
+      <ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />,
+    );
+    const card = container.querySelector('[role="region"][aria-label="Bun venit inapoi"]');
+    expect(card).not.toBeNull();
+    expect(card?.className).toMatch(/border-lineStrong/);
+    expect(card?.className).not.toMatch(/\bborder-line\b/);
   });
 });

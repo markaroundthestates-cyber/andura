@@ -4,6 +4,11 @@
 //
 // §F-pass2-reactivate-01 (MED Wave 7 2026-05-23) — Hand brick icon 20x20
 // left of title per mockup L814 verbatim (visual warmth before win-back copy).
+//
+// §F-pass2-reactivate-02 (LOW chat5 Wave 10) — border-lineStrong (warm
+// taupe interactive boundary --line-strong #9a8770) replaces border-line
+// (decorative thin #e7e0d0) per mockup L812 verbatim `var(--line-strong)`
+// 1.5px boundary. Conditional card visibility > faint decorative line.
 
 import type { JSX } from 'react';
 import { Hand } from 'lucide-react';
@@ -19,7 +24,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
   const daysAgo = Math.floor((Date.now() - lastSession.ts) / 86400000);
   return (
     <div
-      className="bg-paper border border-line rounded-xl p-4 mb-4"
+      className="bg-paper border border-lineStrong rounded-xl p-4 mb-4"
       role="region"
       aria-label="Bun venit inapoi"
     >
