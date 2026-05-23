@@ -64,3 +64,27 @@ createRoot(rootEl).render(
     <RouterProvider router={router} future={{ v7_startTransition: true }} />
   </StrictMode>
 );
+
+// Perf chat 5 MODULEPRELOAD-CRITICAL-CHUNKS-FIX (Lighthouse post-lazy
+// opportunity #1) — preload Splash + Auth lazy chunks post-FCP idle.
+// Vite default genereaza modulepreload pentru vendor chunks (react/state/
+// icons), NU pentru React.lazy() dynamic imports — browser blocheaza pe
+// chunk fetch la Suspense resolve ~150-300ms primul navigate.
+//
+// requestIdleCallback dupa mount = chunks descarcate parallel cu render
+// initial, gata la React Suspense resolve (instant route swap). Fallback
+// setTimeout pentru Safari < 16.4 fara rIC. ZERO impact LCP (fetch idle,
+// nu blocheaza main thread). Maria 65 mobile 3G first-paint -100-150ms
+// estimated. Hash-agnostic via Vite resolved import URL (NU fragile
+// hard-coded path).
+const preloadCriticalChunks = (): void => {
+  // Splash = first-paint pe /, Auth = next-likely pentru anon users
+  void import('./react/routes/screens/Splash');
+  void import('./react/routes/screens/Auth');
+};
+if ('requestIdleCallback' in window) {
+  window.requestIdleCallback(preloadCriticalChunks, { timeout: 2000 });
+} else {
+  // Safari < 16.4 fallback — 200ms post-mount approximates idle
+  setTimeout(preloadCriticalChunks, 200);
+}
