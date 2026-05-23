@@ -1,5 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
-import { EVENTS, isKnownEvent, buildIncrementPayload, trackEvent } from '../telemetry.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { EVENTS, isKnownEvent, buildIncrementPayload, trackEvent, isTelemetryEnabled } from '../telemetry.js';
+import { useSettingsStore } from '../../react/stores/settingsStore';
+
+// §MED-1 SECURITY-AUDIT-NUCLEAR chat 5 — trackEvent now gated on
+// telemetryOptIn (default FALSE). Existing path tests need opt-in TRUE pre-test
+// pentru a exersa cod post-gate. Reset post-test mentine izolare.
+beforeEach(() => {
+  useSettingsStore.getState().reset();
+  useSettingsStore.getState().setTelemetryOptIn(true);
+});
+
+afterEach(() => {
+  useSettingsStore.getState().reset();
+});
 
 describe('§56.15 EVENTS — allowed keys subset (sync cu firestore.rules)', () => {
   const expectedKeys = [
@@ -66,5 +79,102 @@ describe('trackEvent — silent fail (telemetry MUST NOT block app flow)', () =>
     expect(r.ok).toBe(false);
     expect(r.error).toBe('http_403');
     localStorage.clear();
+  });
+});
+
+// §MED-1 SECURITY-AUDIT-NUCLEAR chat 5 — GDPR consent gate parity per
+// Privacy Policy "Opozitie telemetrie" wording. trackEvent MUST return
+// early cu zero writes cand telemetryOptIn=false. Mirror Sentry gate
+// pattern (main.tsx §SECURITY-HIGH-1). Tests verifica gate + toggle parity.
+describe('§MED-1 trackEvent — telemetryOptIn consent gate parity', () => {
+  it('isTelemetryEnabled default FALSE per settingsStore §51 DEFAULTS', () => {
+    useSettingsStore.getState().reset();
+    expect(isTelemetryEnabled()).toBe(false);
+  });
+
+  it('isTelemetryEnabled TRUE dupa setTelemetryOptIn(true)', () => {
+    useSettingsStore.getState().reset();
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    expect(isTelemetryEnabled()).toBe(true);
+  });
+
+  it('trackEvent cu telemetryOptIn=FALSE → ok=false + error=opt_out, ZERO fetch', async () => {
+    useSettingsStore.getState().reset(); // opt-in default FALSE
+    const fetchImpl = vi.fn();
+    const r = await trackEvent(EVENTS.AUTH_SIGNIN_SUCCESS, { fetchImpl });
+    expect(r.ok).toBe(false);
+    expect(r.error).toBe('opt_out');
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('trackEvent cu telemetryOptIn=TRUE → fetch invocat (gate pass)', async () => {
+    useSettingsStore.getState().reset();
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    localStorage.setItem('firebase-id-token', 'fake-token');
+    localStorage.setItem('firebase-uid', 'fake-uid');
+    localStorage.setItem('firebase-id-token-expiry', String(Date.now() + 5 * 60_000));
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+    const r = await trackEvent(EVENTS.AUTH_SIGNIN_SUCCESS, { fetchImpl });
+    expect(r.ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // Firestore PATCH endpoint contine fieldPath
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(url).toContain('auth_signin_success');
+    expect(init.method).toBe('PATCH');
+    localStorage.clear();
+  });
+
+  it('trackEvent gate respecta toggle mid-session TRUE→FALSE (re-init-safe)', async () => {
+    useSettingsStore.getState().reset();
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    localStorage.setItem('firebase-id-token', 'fake-token');
+    localStorage.setItem('firebase-uid', 'fake-uid');
+    localStorage.setItem('firebase-id-token-expiry', String(Date.now() + 5 * 60_000));
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+
+    // Prima chemare: opt-in TRUE → fetch invocat
+    const r1 = await trackEvent(EVENTS.ONBOARDING_STARTED, { fetchImpl });
+    expect(r1.ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+
+    // User revoca consent mid-session
+    useSettingsStore.getState().setTelemetryOptIn(false);
+
+    // A doua chemare: opt-in FALSE → ZERO fetch (gate blocheaza)
+    const r2 = await trackEvent(EVENTS.ONBOARDING_COMPLETED, { fetchImpl });
+    expect(r2.ok).toBe(false);
+    expect(r2.error).toBe('opt_out');
+    expect(fetchImpl).toHaveBeenCalledTimes(1); // unchanged
+
+    localStorage.clear();
+  });
+
+  it('trackEvent gate respecta toggle mid-session FALSE→TRUE (opt-in lazy)', async () => {
+    useSettingsStore.getState().reset(); // FALSE default
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+
+    // Prima chemare: opt-in FALSE → gate blocheaza
+    const r1 = await trackEvent(EVENTS.AUTH_REQUIRED_HIT, { fetchImpl });
+    expect(r1.error).toBe('opt_out');
+    expect(fetchImpl).not.toHaveBeenCalled();
+
+    // User opt-in via SettingsPrivacy toggle
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    localStorage.setItem('firebase-id-token', 'fake-token');
+    localStorage.setItem('firebase-uid', 'fake-uid');
+    localStorage.setItem('firebase-id-token-expiry', String(Date.now() + 5 * 60_000));
+
+    // A doua chemare: opt-in TRUE → fetch invocat (gate pass)
+    const r2 = await trackEvent(EVENTS.AUTH_REQUIRED_HIT, { fetchImpl });
+    expect(r2.ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+
+    localStorage.clear();
+  });
+
+  it('gate precedes isKnownEvent check — opt-out blocheaza chiar pentru unknown event', async () => {
+    useSettingsStore.getState().reset();
+    const r = await trackEvent('not_an_event');
+    expect(r.error).toBe('opt_out'); // gate first, unknown_event nu se ajunge
   });
 });

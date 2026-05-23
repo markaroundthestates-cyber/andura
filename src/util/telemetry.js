@@ -1,7 +1,13 @@
 // ══ TELEMETRY — aggregate anonymous counters Firestore (§56.15 LOCKED V1) ══
 // Per `06-sessions-log/_FROZEN/HANDOVER_AUTH_FLOW_2026-04-30_evening.md` §56.15 +
-// §64.8 (ZERO opt-out toggle, GDPR-safe by design FieldValue.increment counters,
+// §64.8 (GDPR-safe by design FieldValue.increment counters whitelist 13 keys,
 // ZERO PII).
+//
+// §MED-1 SECURITY-AUDIT-NUCLEAR chat 5 — Privacy Policy wording-implementation
+// alignment. PrivacyPolicy "Opozitie telemetrie" toggle (settingsStore
+// telemetryOptIn, default FALSE) implies user opt-out → ZERO writes regardless
+// of GDPR-safe whitelist technicality. Gate trackEvent on isTelemetryEnabled()
+// pentru parity. Mirror Sentry initSentry gate pattern (main.tsx §SECURITY-HIGH-1).
 //
 // Usage:
 //   import { trackEvent, EVENTS } from './util/telemetry.js';
@@ -10,6 +16,7 @@
 // Telemetry NEVER blocks app flow — silent fail on network/auth errors.
 
 import { getIdToken } from '../auth.js';
+import { useSettingsStore } from '../react/stores/settingsStore';
 
 const FIREBASE_PROJECT_ID_DEFAULT = 'fittracker-c34e8';
 const TELEMETRY_DOC_PATH = '_telemetry/global';
@@ -41,6 +48,28 @@ export const EVENTS = Object.freeze({
  */
 export function isKnownEvent(eventName) {
   return /** @type {string[]} */ (Object.values(EVENTS)).includes(eventName);
+}
+
+/**
+ * GDPR consent gate per Privacy Policy "Opozitie telemetrie" wording.
+ * Reads current settingsStore state — re-init-safe (no cached value), respects
+ * mid-session toggle changes (false→true→false). Default FALSE per
+ * settingsStore §51 (telemetryOptIn DEFAULTS).
+ *
+ * §MED-1 SECURITY-AUDIT-NUCLEAR chat 5 — even though telemetry payload is
+ * whitelist-only + FieldValue.increment GDPR-safe by design, user opt-out
+ * MUST result in zero writes for wording-implementation alignment.
+ *
+ * @returns {boolean} true if user opted-in pentru telemetry writes
+ */
+export function isTelemetryEnabled() {
+  try {
+    return useSettingsStore.getState().telemetryOptIn === true;
+  } catch {
+    // Defensive: store unavailable (e.g., SSR, test isolation pre-mount) →
+    // treat as opt-out (privacy-safe default).
+    return false;
+  }
 }
 
 /**
@@ -76,6 +105,13 @@ export async function trackEvent(eventName, {
   projectId = FIREBASE_PROJECT_ID_DEFAULT,
   fetchImpl = /** @type {((url: string, init: object) => Promise<Response>) | null} */ (typeof fetch !== 'undefined' ? fetch : null),
 } = {}) {
+  // §MED-1 SECURITY-AUDIT-NUCLEAR chat 5 — GDPR consent gate parity per
+  // Privacy Policy "Opozitie telemetrie" wording. Even though telemetry is
+  // whitelist-only + FieldValue.increment GDPR-safe, user opt-out should
+  // result in zero writes for wording-implementation alignment. Mirror
+  // Sentry initSentry gate pattern (main.tsx §SECURITY-HIGH-1).
+  if (!isTelemetryEnabled()) return { ok: false, error: 'opt_out' };
+
   if (!isKnownEvent(eventName)) {
     if (typeof console !== 'undefined') console.warn(`[telemetry] Unknown event: ${eventName}`);
     return { ok: false, error: 'unknown_event' };
