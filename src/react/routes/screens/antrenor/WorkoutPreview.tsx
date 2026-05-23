@@ -147,6 +147,7 @@ export function WorkoutPreview(): JSX.Element {
         className="preview-intensity-banner p-3 rounded-xl border mb-4"
         data-intensity={intensityMod}
         role="status"
+        aria-live="polite"
         aria-label="Intensitate sesiune"
         style={{ background: banner.bg, borderColor: banner.border }}
       >

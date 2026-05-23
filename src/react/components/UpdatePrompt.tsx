@@ -56,6 +56,7 @@ export function UpdatePrompt(): JSX.Element | null {
   return (
     <div
       role="status"
+      aria-live="polite"
       aria-label="Versiune noua disponibila"
       data-testid="update-prompt"
       className="fixed top-2 left-2 right-2 z-50 bg-paper2 border border-line rounded-xl shadow-lg p-3 flex items-center gap-3"

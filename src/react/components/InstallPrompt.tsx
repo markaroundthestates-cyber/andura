@@ -62,6 +62,7 @@ export function InstallPrompt(): JSX.Element | null {
     <div
       data-testid="install-prompt"
       role="region"
+      aria-live="polite"
       aria-label="Instaleaza Andura"
       className="fixed bottom-20 left-3 right-3 z-40 bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
     >
