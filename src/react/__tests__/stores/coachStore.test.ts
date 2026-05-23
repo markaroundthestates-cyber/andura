@@ -7,7 +7,7 @@ import { useCoachStore } from '../../stores/coachStore';
 function resetStore(): void {
   useCoachStore.setState({
     schedContext: 'workout',
-    persona: 'gigel',
+    persona: 'gigica',
     reactivateDismissed: false,
   });
   localStorage.clear();
@@ -20,8 +20,8 @@ describe('coachStore — initial state defaults', () => {
     expect(useCoachStore.getState().schedContext).toBe('workout');
   });
 
-  it('default persona = gigel', () => {
-    expect(useCoachStore.getState().persona).toBe('gigel');
+  it('default persona = gigica', () => {
+    expect(useCoachStore.getState().persona).toBe('gigica');
   });
 
   it('default reactivateDismissed = false', () => {
@@ -57,10 +57,10 @@ describe('coachStore — setPersona', () => {
     expect(useCoachStore.getState().persona).toBe('marius');
   });
 
-  it('setPersona gigel (default reset)', () => {
+  it('setPersona gigica (default reset)', () => {
     useCoachStore.getState().setPersona('marius');
-    useCoachStore.getState().setPersona('gigel');
-    expect(useCoachStore.getState().persona).toBe('gigel');
+    useCoachStore.getState().setPersona('gigica');
+    expect(useCoachStore.getState().persona).toBe('gigica');
   });
 });
 

@@ -168,7 +168,7 @@ export function composeTempoPrescription({
   const introBundle = composePreSetIntro({
     notation: notationResult.notation,
     cueText: cueText ?? '',
-    persona: persona ?? 'gigel',
+    persona: persona ?? 'gigica',
   });
   const timing = resolveCueDeliveryTiming({
     userInitiatedTapToExpand,

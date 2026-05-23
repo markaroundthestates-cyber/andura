@@ -13,7 +13,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type SchedContext = 'workout' | 'rest';
-export type Persona = 'maria' | 'gigel' | 'marius';
+export type Persona = 'maria' | 'gigica' | 'marius';
 
 export interface CoachState {
   schedContext: SchedContext;
@@ -32,7 +32,7 @@ export const useCoachStore = create<CoachState & CoachActions>()(
   persist(
     (set) => ({
       schedContext: 'workout',
-      persona: 'gigel',
+      persona: 'gigica',
       reactivateDismissed: false,
       setSchedContext: (schedContext) => set({ schedContext }),
       setPersona: (persona) => set({ persona }),

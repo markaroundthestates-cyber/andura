@@ -157,7 +157,7 @@
 /* Persona-aware text scaling (verbatim mockup) */
 @layer components {
   .persona-maria { --body: 18px; --small: 16px; --display: 36px; --tight: -0.01em; }
-  .persona-gigel { --body: 15px; --small: 13px; --display: 28px; --tight: -0.02em; }
+  .persona-gigica { --body: 15px; --small: 13px; --display: 28px; --tight: -0.02em; }
   .persona-marius { --body: 14px; --small: 12px; --display: 26px; --tight: -0.025em; }
 
   .body-text { font-size: var(--body); }

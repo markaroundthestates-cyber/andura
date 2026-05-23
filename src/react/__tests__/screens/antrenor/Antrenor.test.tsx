@@ -51,7 +51,7 @@ function resetStores(): void {
   });
   useCoachStore.setState({
     schedContext: 'workout',
-    persona: 'gigel',
+    persona: 'gigica',
     reactivateDismissed: false,
   });
   localStorage.clear();
@@ -382,9 +382,9 @@ describe('Antrenor home — persona variant', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('persona-gigel CSS class applied default', () => {
+  it('persona-gigica CSS class applied default', () => {
     renderAntrenor();
-    expect(screen.getByTestId('antrenor-home')).toHaveClass('persona-gigel');
+    expect(screen.getByTestId('antrenor-home')).toHaveClass('persona-gigica');
   });
 
   it('persona-maria CSS class applied cand persona=maria', () => {
