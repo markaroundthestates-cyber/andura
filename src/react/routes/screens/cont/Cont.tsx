@@ -121,8 +121,13 @@ export function Cont(): JSX.Element {
 
       {SECTIONS.map((section) => (
         <div key={section.title} className="mb-4" data-testid={`cont-section-${section.title.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '')}`}>
+          {/* §F-cont-06 (LOW chat5 Wave 15) — section heading tokens align
+              mockup .settings-section andura-clasic.html:2870 verbatim:
+              font-size 11px + letter-spacing 0.08em + color var(--ink-3).
+              Prior: text-xs (12px) + tracking-wide (0.025em) + text-ink2.
+              Danger sections keep text-brick highlight invariant. */}
           <p
-            className={`text-xs uppercase tracking-wide font-semibold mb-2 ${section.danger ? 'text-brick' : 'text-ink2'}`}
+            className={`text-[11px] uppercase tracking-[0.08em] font-semibold mb-2 ${section.danger ? 'text-brick' : 'text-ink3'}`}
           >
             {section.title}
           </p>
