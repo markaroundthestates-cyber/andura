@@ -4,8 +4,8 @@ type: ssot-decisions
 status: live
 last_updated: 2026-05-23
 schema_version: 1
-latest_entry: D074
-total_entries: 74
+latest_entry: D076
+total_entries: 75
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -125,6 +125,7 @@ D071 | 2026-05-23 | ENG | Lighthouse truly-final peak match recovery cycle 64→
 D072 | 2026-05-23 | REGLAJ | Pre-Beta gate matrix 11 PASS / 3 YELLOW / 1 INFO singular verdict primary-source-grounded — post-overnight final closure 15 gate dimensions evaluated cumulative state: bug count (D042) + test coverage (D067 89.82%+) + Lighthouse (D071 97) + WCAG a11y (D056) + GDPR consent (D055) + bundle budget (D053) + Zustand partialize (D054) + PWA manifest SoT (D057) + Sentry instrument (D063) + i18n compliance (D058+D065) + engine pipeline (D066) + font self-host (D061) + perf quadruple (D060) + modulepreload (D064) + dead code (D069). VERIFY_FINAL_CHAT5_STATE.md singular pre-Beta launch gate document `📤_outbox/`. 3 YELLOW non-blocking caution (MMI UI prompt D066 + UI wording §P2 + dates format §P4). 1 INFO post-Beta defer perf optimization §P7/§P12. Daniel CEO Bugatti audit nuclear gate trigger post D050-D073 LOCK acknowledge + §P-items strategic decisions. | LOCKED V1 | DECISIONS.md §D072 + 📤_outbox/VERIFY_FINAL_CHAT5_STATE.md
 D073 | 2026-05-23 | REGLAJ | Vault docs ~4100+ LOC trail comprehensive singular reference point pattern — post-overnight final closure cumulative work substantial vault docs trail ~4100+ LOC. 23+ outbox files `📤_outbox/` + 4 inbox handovers `📥_inbox/HANDOVER_<date>_<topic>.md` chat 1-5 narrative scribe end-of-chat (§F3.8) + master index `📤_outbox/MASTER_INDEX_CHAT5.md` cross-reference + decisions draft `📤_outbox/DECISIONS_CHAT5_DRAFT.md` 23 LOCK candidates + 1 PROPOSAL partial-closure + 15 §P-items strategic surface + investigation reports targeted (AA-DEAD-CODE + FIREBASE-RULES-PREP + LEDGER-SYNC-FINAL-FINAL). Singular reference point master index = Daniel CEO + chat 6 startup baseline navigation aid §CC.2 step 4-5. D062 periodic cleanup pattern preserved batch periodic + Daniel verbal trigger anti-overreach. | LOCKED V1 | DECISIONS.md §D073 + 📤_outbox/MASTER_INDEX_CHAT5.md + D062
 D074 | 2026-05-23 | REGLAJ | D063 wording scope clarification — React wrappers ONLY, NOT orchestrator pipeline adapters — gsd-eval-auditor chat 5 surfaced conflation: D063 LOCKED V1 "Sentry adapter coverage 11/11 + anti-drift test" wording interpreted broadly ca include both React wrappers + orchestrator pipeline adapters. Clarification: D063 scope = React wrappers `src/react/lib/engineWrappers.ts` ONLY = canonical Big 11 React adapter layer 11/11 captureException instrumented. Out of scope post-Beta deferred candidate: orchestrator pipeline adapters `src/coach/orchestrator/adapters/*` = 0/8 Sentry instrumented currently (8 .js adapters: bayesianNutrition + deload + energyAdjustment + goalAdaptation + periodization + specialization + tempo + warmup) = separate Beta-launch decision. Anti-drift test `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` (commit ad82ab65 Wave 12 BLOCKER 2 closure) scope = React wrappers only per D063 strict wording. NO supersede of D063 — scope precision NOT decision change (D007 append-only invariant respected). | LOCKED V1 | DECISIONS.md §D074 + §D063 + src/coach/orchestrator/adapters/* + src/react/lib/engineWrappers.ts + src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts
+D076 | 2026-05-23 | ARCH | Phase 6 prod-extras blessed divergence ratify (DRIFT-1 Option B amend) — 7 React components engine-wired in production absent din mockup andura-clasic.html pre-amend: PatternsBanner + AlertsBanner + StatsGrid + ReadinessVerdict + PRNotificationBanner + PRWallRecent (Antrenor home) + BodyData (Progres tab). Ratify divergence ca blessed Phase 6 prod-extras layer. Mockup amended v1.1 cu component sections pentru reflect prod (commit `8dfe36e3` 2026-05-23). DECISIONS LOCK ratify path STRENGTHENS mockup authority NU erodes (D015 LOCK V1 amendment precedent preserved). Engine value preservation rationale: Marius signal-richness (StatsGrid + ReadinessVerdict + PR pipeline) + AlertsBanner urgent injury-risk safety floor + PatternsBanner stagnation surfacing (Big 11 patternLearning consumer) + PRNotificationBanner real PR detection from CRIT shape #2/#3 LANDED. Removing all 7 = HIGH-cost regression (BodyData persistence loss + Marius signal degradation + AlertsBanner safety gate loss). Quality long-horizon mandate (Daniel verbatim "10x mai mult timp acum") + Bugatti craft preserves built features + mockup amendment precedent via DECISIONS LOCK strengthens D015 authority pattern. Replaces prior `7eeb050e` D050 collision attempt. | LOCKED V1 | DECISIONS.md §D076 + 04-architecture/mockups/andura-clasic.html v1.1 (commit 8dfe36e3) + 📤_outbox/DRIFT_1_PARADIGM_INVESTIGATION_chat5.md
 
 ---
 
@@ -1840,6 +1841,65 @@ Two adapter surfaces conflated = SSOT precision drift surface. D063 wording stri
 #### §5 Rationale Bugatti
 
 SSOT precision = future-self trust contract. D063 broad wording = future Co-CTO interpretation drift surface (chat 6+ might assume orchestrator adapters also instrumented). gsd-eval-auditor caught conflation = fresh-eyes value reinforced (per `subagents_fresh_eyes` feedback). Scope clarification addendum (NOT supersede) respects D007 append-only invariant while delivering precision. Bugatti craft = explicit boundaries documented now NU silent assumption future. "Refactor later NEVER happens" = scope precision at boundary now SSOT correction cycle, NU cumulative ambiguity explode future. Pattern template = future scope precision corrections without LOCK re-open trigger (D-NEW addendum sibling pattern).
+
+---
+
+### D076 — ARCH — Phase 6 prod-extras blessed divergence (DRIFT-1 Option B mockup v1.1 amend)
+
+**Date:** 2026-05-23 (chat 5 DRIFT-1 paradigm investigation closure)
+**Category:** ARCH (mockup vs prod parity ratify — divergence cataloged blessed)
+**Status:** LOCKED V1
+**Source:** Co-CTO autonomous decision DRIFT-1 Option B per `📤_outbox/DRIFT_1_PARADIGM_INVESTIGATION_chat5.md` gsd-subagent read-only investigation
+**Cross-refs:** [[DECISIONS.md §D015 React Andura Clasic on mockup DESIGN MASTER]], [[DECISIONS.md §D026 Phase 6 BATCH closure]], [[04-architecture/mockups/andura-clasic.html v1.1 commit 8dfe36e3]], [[D-LEGACY-091 Mockup vs prod distinction permanent rule]], replaces prior `7eeb050e` D050 collision attempt
+
+#### §1 What
+
+7 React components engine-wired in production absent din mockup `andura-clasic.html` pre-amend:
+
+| Component | Tab | Path | Purpose |
+|-----------|-----|------|---------|
+| PatternsBanner | Antrenor home | `src/react/components/Antrenor/PatternsBanner.tsx` | STAGNATION + LOW_ADHERENCE banners (Phase 6 task_06 Option B UI consumer Big 11 patternLearning) |
+| AlertsBanner | Antrenor home | `src/react/components/Antrenor/AlertsBanner.tsx` | ProactiveAlert[] severity 3-tier urgent/warn/info (injury-risk safety floor) |
+| StatsGrid | Antrenor home | `src/react/components/Antrenor/StatsGrid.tsx` | F10 3-cell compact: Streak + Fatigue + Readiness |
+| ReadinessVerdict | Antrenor home | `src/react/components/Antrenor/ReadinessVerdict.tsx` | F4 pre-session core coach value verdict |
+| PRNotificationBanner | Antrenor home | `src/react/components/Antrenor/PRNotificationBanner.tsx` | F11 PR notification post-session flag (CRIT shape #2/#3 real PR detection) |
+| PRWallRecent | Antrenor home | `src/react/components/Antrenor/PRWallRecent.tsx` | Top-3 most-recent PR records (Phase 5 task_11 PR history aggregate) |
+| BodyData | Progres tab | `src/react/routes/screens/progres/BodyData.tsx` | Phase 4 task_16 §B Body Measurements 5-field standard |
+
+#### §2 Decision
+
+Ratify divergence ca **blessed Phase 6 prod-extras layer**. Mockup amended v1.1 (commit `8dfe36e3` 2026-05-23) cu component sections pentru reflect prod current state.
+
+**Mockup precedence preserved + STRENGTHENED** via DECISIONS LOCK ratify path — strengthens mockup authority NU erodes (D015 LOCK V1 amendment precedent preserved). DECISIONS-driven amend preferred over silent prod drift sau revoke mockup.
+
+#### §3 Why — Engine value preservation rationale
+
+Removing 7 components = HIGH-cost regression. Per persona Bugatti filter:
+
+- **Marius (performant la sala)**: signal-richness via StatsGrid + ReadinessVerdict + PR pipeline (PRWallRecent + PRNotificationBanner) — keeps Marius engaged data-driven feedback loop
+- **AlertsBanner injury-risk safety floor**: urgent severity ARIA pentru pain/discomfort signals — D-LEGACY-035 Pain/Discomfort Button architecture CDL override pattern invariant
+- **PatternsBanner stagnation surfacing**: Big 11 patternLearning consumer — STAGNATION 3-saptamani plateau detect + LOW_ADHERENCE adherence drift
+- **PRNotificationBanner real PR detection**: CRIT shape #2/#3 LANDED PR pipeline engine wire — removing breaks downstream user-facing PR notification
+- **BodyData persistence**: Phase 4 task_16 §B implementation — removing = data loss user body measurements
+
+#### §4 Why amend path NU strict mockup-paradigm restore
+
+- **Quality long-horizon mandate** (Daniel verbatim feedback `quality_long_horizon` MEMORY.md "prefer sa petrecem de 10 ori mai mult timp acum sa il facem bine") — Bugatti craft preserves built engine-wired features NU rip-out for paradigm purity
+- **Mockup amendment precedent via DECISIONS LOCK** = strengthens D015 authority pattern (LOCK ratify = canonical) NU erodes
+- **Engine value preservation** > paradigm purity when divergence delivers user/safety value
+- **D-LEGACY-091 mockup vs prod distinction permanent rule** preserved — divergence allowed when blessed via DECISIONS LOCK
+
+#### §5 Out of scope
+
+Future paradigm questions of similar shape decided via this precedent (NU prematurely revoke mockup authority — amend path preferred). Pattern template = future divergence surface → investigation report + Co-CTO Option A/B/C → DECISIONS LOCK ratify amend OR revoke explicit, NU silent drift.
+
+#### §6 Source investigation
+
+`📤_outbox/DRIFT_1_PARADIGM_INVESTIGATION_chat5.md` — gsd subagent read-only DRIFT-1 paradigm investigation surface 7 components Phase 6 prod-extras + 3 options A (strict mockup restore) / B (amend mockup + ratify LOCK) / C (defer post-Beta investigation) → Co-CTO Option B selected per quality long-horizon + engine value preservation rationale.
+
+#### §7 Replaces prior collision attempt
+
+Prior commit `7eeb050e` "D050 LOCK V1 Phase 6 prod-extras blessed divergence" landed on agent worktree branch — collision cu D050 PROC `git commit -o -m -- <paths>` pattern LANDED on main DECISIONS.md (different content). D076 = correct sequential append next post-D075 ratifying same decision content. D050 main entry status preserved LOCKED V1 (NU re-opened per D007 invariant).
 
 ---
 
