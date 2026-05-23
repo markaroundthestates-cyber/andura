@@ -123,8 +123,15 @@ export function PostRpe(): JSX.Element {
   return (
     <section className="p-6 bg-paper" data-testid="post-rpe">
       <h1 className="text-2xl font-semibold text-ink mb-2">Cum a fost sesiunea?</h1>
-      <p className="text-base text-ink2 mb-6">
-        Coach calibreaza pentru data viitoare.
+      {/* §F-post-rpe-01 (HIGH chat5 Wave 15) — coach quote Lora italic mockup
+          andura-clasic.html#L1596 verbatim. Product personality signal Andura
+          Suflet (D-LEGACY-052) — engine-transparent framing ("calibreaza
+          sesiunea de maine") substitueste subtitle plain anterior. */}
+      <p
+        className="coach-quote text-base text-ink2 italic font-serif mb-6 leading-relaxed"
+        data-testid="post-rpe-intro"
+      >
+        „Raspunsul tau calibreaza sesiunea de maine. O singura intrebare."
       </p>
       <div className="flex flex-col gap-3" role="list">
         {RATING_OPTIONS.map((opt) => (

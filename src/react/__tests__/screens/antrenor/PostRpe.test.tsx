@@ -86,9 +86,11 @@ describe('PostRpe — render', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders helper copy "Coach calibreaza"', () => {
+  it('renders coach quote intro mockup verbatim', () => {
+    // §F-post-rpe-01 — coach quote Lora italic mockup verbatim
+    // andura-clasic.html#L1596 (engine-transparent framing).
     renderPostRpe();
-    expect(screen.getByText(/Coach calibreaza/i)).toBeInTheDocument();
+    expect(screen.getByTestId('post-rpe-intro')).toHaveTextContent(/calibreaza sesiunea de maine/i);
   });
 
   it('renders 3 rating options cu data-rating', () => {
