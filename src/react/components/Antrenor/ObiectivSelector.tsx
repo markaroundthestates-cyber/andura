@@ -75,7 +75,7 @@ export function ObiectivSelector(): JSX.Element {
       <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
         Obiectiv
       </p>
-      <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+      <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
         {OPTIONS.map((opt, i) => {
           const selected = activeGoal === opt.id;
           const isLast = i === OPTIONS.length - 1;

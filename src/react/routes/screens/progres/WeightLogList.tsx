@@ -58,7 +58,7 @@ export function WeightLogList(): JSX.Element {
             </p>
           </div>
         ) : (
-          <ul className="bg-paper2 border border-line rounded-xl overflow-hidden">
+          <ul className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
             {sorted.map((entry, idx) => (
               <li
                 key={`${entry.date}-${entry.ts}`}

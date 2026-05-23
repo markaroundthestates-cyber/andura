@@ -71,7 +71,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
             handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
             user benefit pre-Beta. Screen reader anunta "button, [label],
             pressed/not pressed" perfect valid pentru toggle. */}
-        <div className="w-full max-w-sm bg-paper2 border border-line rounded-xl overflow-hidden">
+        <div className="w-full max-w-sm bg-paper2 border border-line rounded-[14px] overflow-hidden">
           {PHASE_OPTIONS.map((opt, idx) => {
             const isSelected = selected === opt.value;
             return (
