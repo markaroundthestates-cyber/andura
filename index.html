@@ -21,6 +21,16 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+  <!-- §15-N2 audit fix (NIT chat 5 Wave 22) — iOS Safari PWA hints. Without
+       these, "Add to Home Screen" on iPhone opens app in regular Safari shell
+       (URL bar + bottom toolbar visible) instead of standalone PWA mode.
+       'apple-mobile-web-app-capable' enables standalone display on iOS,
+       'apple-mobile-web-app-status-bar-style=default' surfaces light status
+       bar matching cream paper background (#faf7f1). Maria 65 iPhone install
+       flow now matches Android Add-to-Home parity. -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Andura" />
   <!-- §36-M3 audit fix — DNS prefetch hints for Firebase + Sentry endpoints.
        Shaves initial connect time on first auth + telemetry calls (~50-100ms
        on cold cache). Google Fonts preconnect removed post self-host (2026-05-23). -->
