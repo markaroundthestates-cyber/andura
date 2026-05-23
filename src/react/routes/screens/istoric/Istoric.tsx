@@ -3,6 +3,12 @@
 // Phase 6 task_23: streak stats summary card + PR Wall full list +
 // existing list preserved. Drill-down navigate /app/istoric/:sessionId
 // (IstoricDetail Phase 5 task_03 LANDED).
+//
+// §F-istoric-08 (LOW chat5 Wave 14) — date format Romanian weekday no-diacritics
+// per mockup andura-clasic.html#L2162-2178 (azi/marti/duminica/vineri/miercuri).
+// Manual weekday + month map (NU Intl.DateTimeFormat — locale ICU emite
+// diacritice marti/sambata violand D-LEGACY-064). Format "<Weekday> · <DD>
+// <mon>" pentru cititor casnic; numeric DD.MM.YYYY retras (jargon-numeric).
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,12 +19,41 @@ import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 import { gotoPath } from '../../../lib/navigation';
 
+// §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
+// Sunday-first index (Date.getDay() returns 0=Sunday). Mockup uses
+// lowercase relative weekday (azi/marti/duminica) — preservam consistency
+// jos-case per mockup L2162-2178.
+const WEEKDAYS_RO = [
+  'duminica',
+  'luni',
+  'marti',
+  'miercuri',
+  'joi',
+  'vineri',
+  'sambata',
+] as const;
+
+const MONTHS_RO = [
+  'ian',
+  'feb',
+  'mar',
+  'apr',
+  'mai',
+  'iun',
+  'iul',
+  'aug',
+  'sep',
+  'oct',
+  'noi',
+  'dec',
+] as const;
+
 function formatDate(ts: number): string {
   const d = new Date(ts);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
-  return `${day}.${month}.${year}`;
+  const weekday = WEEKDAYS_RO[d.getDay()];
+  const day = d.getDate();
+  const month = MONTHS_RO[d.getMonth()];
+  return `${weekday} · ${day} ${month}`;
 }
 
 export function Istoric(): JSX.Element {
