@@ -52,7 +52,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
             type="button"
             onClick={handleConfirm}
             data-testid="redo-onboarding-confirm-accept"
-            className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+            className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
             Confirma actiunea
           </button>
@@ -60,7 +60,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
             type="button"
             onClick={handleCancel}
             data-testid="redo-onboarding-confirm-cancel"
-            className="w-full py-4 border border-lineStrong rounded-xl text-base font-medium text-ink2"
+            className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
             Anuleaza
           </button>

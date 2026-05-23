@@ -77,7 +77,7 @@ export function ProgramChangeConfirm(): JSX.Element {
             type="button"
             onClick={handleConfirm}
             data-testid="program-change-confirm-accept"
-            className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+            className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
             Confirma schimbarea
           </button>
@@ -85,7 +85,7 @@ export function ProgramChangeConfirm(): JSX.Element {
             type="button"
             onClick={handleCancel}
             data-testid="program-change-confirm-cancel"
-            className="w-full py-4 border border-lineStrong rounded-xl text-base font-medium text-ink2"
+            className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
             Anuleaza
           </button>
