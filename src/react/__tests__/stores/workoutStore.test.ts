@@ -61,7 +61,7 @@ describe('workoutStore — lifecycle actions', () => {
   it('pauseSession captures snapshot cu sessionStart prezent', () => {
     useWorkoutStore.getState().startSession(Date.now());
     useWorkoutStore.getState().logSet(0, { kg: 20, reps: 10, rating: 'usor' });
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Picioare');
     const snap = useWorkoutStore.getState().pausedSnapshot;
     expect(snap).not.toBeNull();
     expect(snap?.history[0]).toHaveLength(1);
@@ -69,20 +69,52 @@ describe('workoutStore — lifecycle actions', () => {
 
   it('pauseSession transitions phase la idle + clears sessionStart', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     expect(useWorkoutStore.getState().phase).toBe('idle');
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
   });
 
   it('pauseSession no-op snapshot daca sessionStart null', () => {
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
+  });
+
+  // HIGH-CODE-05 truth assertions — title preserved NU hardcoded 'Push' lie.
+  it('pauseSession preserves actual workout title din caller (Maria 65 picioare)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('Picioare');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('Picioare');
+  });
+
+  it('pauseSession preserves Pull title (NU hardcoded Push)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('Pull');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('Pull');
+  });
+
+  it('pauseSession does NOT persist hardcoded Push when title is real', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('Spate si biceps');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).not.toBe('Push');
+  });
+
+  it('pauseSession empty title → explicit marker (sesiune nedefinita) NU Push lie', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('(sesiune nedefinita)');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).not.toBe('Push');
+  });
+
+  it('pauseSession whitespace-only title → explicit marker (sesiune nedefinita)', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('   ');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('(sesiune nedefinita)');
   });
 
   it('resumeSession restores from pausedSnapshot', () => {
     useWorkoutStore.getState().startSession(Date.now());
     useWorkoutStore.getState().logSet(0, { kg: 20, reps: 10, rating: 'usor' });
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     useWorkoutStore.getState().resumeSession();
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
     expect(useWorkoutStore.getState().history[0]).toHaveLength(1);
@@ -263,7 +295,7 @@ describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
 
   it('paused mode after pauseSession captures snapshot', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     const mode = modeNow();
     expect(mode.kind).toBe('paused');
     if (mode.kind === 'paused') {
@@ -286,7 +318,7 @@ describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
 
   it('active takes priority over paused snapshot (resumeSession flow)', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     useWorkoutStore.getState().resumeSession();
     expect(modeNow().kind).toBe('active');
   });
@@ -333,13 +365,13 @@ describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
 
   it('transition matrix — active → pauseSession → paused', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     expect(modeNow().kind).toBe('paused');
   });
 
   it('transition matrix — paused → resumeSession → active', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     useWorkoutStore.getState().resumeSession();
     expect(modeNow().kind).toBe('active');
   });
@@ -362,7 +394,7 @@ describe('workoutStore — §44-C1 getCurrentMode discriminated union', () => {
 
   it('transition matrix — paused → discardSession → idle', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     useWorkoutStore.getState().discardSession();
     expect(modeNow().kind).toBe('idle');
   });
@@ -427,7 +459,7 @@ describe('workoutStore — §44-H1 FSM full transition matrix table', () => {
         break;
       case 'paused':
         useWorkoutStore.getState().startSession(Date.now());
-        useWorkoutStore.getState().pauseSession();
+        useWorkoutStore.getState().pauseSession('Push');
         break;
       case 'finished':
         useWorkoutStore
@@ -505,7 +537,7 @@ describe('workoutStore — §44-H1 FSM full transition matrix table', () => {
         store.setPhase('logging');
         return;
       case 'pauseSession':
-        store.pauseSession();
+        store.pauseSession('Push');
         return;
       case 'resumeSession':
         store.resumeSession();
@@ -560,7 +592,7 @@ describe('workoutStore — §44-H2 dead-state invariants (no-op defensive)', () 
 
   it('pauseSession no-op cand sessionStart null (idle source)', () => {
     const before = useWorkoutStore.getState();
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     const after = useWorkoutStore.getState();
     expect(after.pausedSnapshot).toBe(before.pausedSnapshot);
     expect(modeNow().kind).toBe('idle');
@@ -596,7 +628,7 @@ describe('workoutStore — §44-H2 dead-state invariants (no-op defensive)', () 
 
   it('discardSession during paused clears snapshot + reaches idle', () => {
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     expect(modeNow().kind).toBe('paused');
     useWorkoutStore.getState().discardSession();
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
@@ -616,9 +648,9 @@ describe('workoutStore — §44-H2 dead-state invariants (no-op defensive)', () 
     // pause-pause sequence destroys the snapshot. UX caller should guard
     // against re-entry (idempotent caller responsibility, NU store-internal).
     useWorkoutStore.getState().startSession(Date.now());
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     expect(useWorkoutStore.getState().pausedSnapshot).not.toBeNull();
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     // Snapshot wiped by second pause (sessionStart was null).
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
     // Mode falls back to idle (no live + no snapshot + no lastSession).
@@ -656,7 +688,7 @@ describe('workoutStore — §44-H3 5-moduri action coverage per source', () => {
         break;
       case 'paused':
         useWorkoutStore.getState().startSession(Date.now());
-        useWorkoutStore.getState().pauseSession();
+        useWorkoutStore.getState().pauseSession('Push');
         break;
       case 'finished':
         useWorkoutStore
@@ -686,7 +718,7 @@ describe('workoutStore — §44-H3 5-moduri action coverage per source', () => {
 
     it(`from ${source} — pauseSession leaves state in a valid mode`, () => {
       enterMode(source);
-      expect(() => useWorkoutStore.getState().pauseSession()).not.toThrow();
+      expect(() => useWorkoutStore.getState().pauseSession('Push')).not.toThrow();
       expect(validKinds.has(modeAfter())).toBe(true);
     });
 
@@ -758,7 +790,7 @@ describe('workoutStore — persist middleware partialize', () => {
   it('persist write contains pausedSnapshot dupa pauseSession', async () => {
     useWorkoutStore.getState().startSession(Date.now());
     useWorkoutStore.getState().logSet(0, { kg: 20, reps: 10, rating: 'usor' });
-    useWorkoutStore.getState().pauseSession();
+    useWorkoutStore.getState().pauseSession('Push');
     await new Promise((r) => setTimeout(r, 20));
     const raw = localStorage.getItem('wv2-workout-store');
     const parsed = JSON.parse(raw!);

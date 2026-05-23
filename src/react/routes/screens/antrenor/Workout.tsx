@@ -74,10 +74,17 @@ export function Workout(): JSX.Element {
   // Phase 6 task_02 Option C: async getTodayWorkout — 3-state useState pattern
   // per DECISIONS.md §D027 (null=loading, []=empty/rest day, [...]=session).
   const [exercises, setExercises] = useState<readonly PlannedExercise[] | null>(null);
+  // HIGH-CODE-05 fix: capture real workoutTitle pentru pauseSession truth.
+  // Empty string default cand engine null/loading → store fallback la
+  // '(sesiune nedefinita)' explicit marker NU 'Push' lie.
+  const [workoutTitle, setWorkoutTitle] = useState<string>('');
   useEffect(() => {
     let cancelled = false;
     getTodayWorkout().then((planned) => {
-      if (!cancelled) setExercises(planned?.exercises ?? []);
+      if (!cancelled) {
+        setExercises(planned?.exercises ?? []);
+        setWorkoutTitle(planned?.workoutTitle ?? '');
+      }
     });
     return () => { cancelled = true; };
   }, []);
@@ -346,7 +353,8 @@ export function Workout(): JSX.Element {
       return;
     }
     if (action === 'pause') {
-      pauseSession();
+      // HIGH-CODE-05 fix: pass real workoutTitle NU hardcoded 'Push' lie.
+      pauseSession(workoutTitle);
       navigate(gotoPath('antrenor'));
       return;
     }
@@ -513,7 +521,8 @@ export function Workout(): JSX.Element {
         open={inactivityPromptOpen}
         onContinue={bumpActivity}
         onSaveExit={() => {
-          pauseSession();
+          // HIGH-CODE-05 fix: pass real workoutTitle NU hardcoded 'Push' lie.
+          pauseSession(workoutTitle);
           navigate(gotoPath('antrenor'));
         }}
       />

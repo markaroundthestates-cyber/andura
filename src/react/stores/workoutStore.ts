@@ -231,7 +231,12 @@ export function getCurrentMode(state: WorkoutModeInputs): WorkoutModeView {
 
 export interface WorkoutActions {
   startSession: (sessionStart: number) => void;
-  pauseSession: () => void;
+  // HIGH-CODE-05 fix: title preserved from caller (real workout name) NU
+  // hardcoded 'Push' lie. Maria 65 antreneaza picioare → pauzeaza → resume
+  // → vede 'Push' was Bugatti truth violation. Caller (Workout.tsx) reads
+  // getTodayWorkout().workoutTitle and passes here. Empty string fallback
+  // explicit marker '(sesiune nedefinita)' NU silent pretend.
+  pauseSession: (title: string) => void;
   resumeSession: () => void;
   discardSession: () => void;
   finishSession: (summary: LastSessionSummary) => void;
@@ -272,22 +277,29 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           history: {},
         }),
 
-      pauseSession: () =>
-        set((s) => ({
-          pausedSnapshot: s.sessionStart
-            ? {
-                title: 'Push',
-                meta: `ex ${s.exIdx + 1}`,
-                exIdx: s.exIdx,
-                setIdx: s.setIdx,
-                phase: s.phase,
-                history: s.history,
-                sessionStart: s.sessionStart,
-              }
-            : null,
-          phase: 'idle',
-          sessionStart: null,
-        })),
+      // HIGH-CODE-05 fix: title preserved from caller (real workout name)
+      // NU hardcoded 'Push' lie. Empty/whitespace title → explicit marker
+      // '(sesiune nedefinita)' (Bugatti truth — NU silent fallback la 'Push').
+      // Caller (Workout.tsx) reads getTodayWorkout().workoutTitle.
+      pauseSession: (title) =>
+        set((s) => {
+          const safeTitle = title.trim() === '' ? '(sesiune nedefinita)' : title;
+          return {
+            pausedSnapshot: s.sessionStart
+              ? {
+                  title: safeTitle,
+                  meta: `ex ${s.exIdx + 1}`,
+                  exIdx: s.exIdx,
+                  setIdx: s.setIdx,
+                  phase: s.phase,
+                  history: s.history,
+                  sessionStart: s.sessionStart,
+                }
+              : null,
+            phase: 'idle',
+            sessionStart: null,
+          };
+        }),
 
       resumeSession: () =>
         set((s) =>
