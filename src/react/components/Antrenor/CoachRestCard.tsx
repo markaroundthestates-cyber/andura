@@ -10,6 +10,14 @@
 // §F-pass2-coachrest-02 (HIGH-EPSILON 2026-05-22) — dynamic duration prop
 // replaces hardcoded "~ 15 min mobilitate". Default 15 preserves mockup L763
 // verbatim cand caller omits (T0 fresh / no plan yet).
+//
+// MED-FIX chat5 (2026-05-23) — fallback null path replaced hardcoded
+// "Pectoralii si picioarele inca recupereaza · readiness 32/100." (Bugatti
+// truth violation: muscle-group claim + fake numeric readiness shown la T0
+// fresh users regardless of training history). Now: generic non-claim line
+// "Astazi e zi de recuperare - corpul are nevoie de odihna." Sibling pattern
+// la HIGH-3 CoachTodayCard 74650a5f. Supersedes "mockup verbatim cand null"
+// preserve note (Bugatti truth > mockup verbatim - Gigel filter wins).
 
 import type { JSX } from 'react';
 import type { CoachRestReason } from '../../lib/engineWrappers';
@@ -24,12 +32,14 @@ interface Props {
 }
 
 /**
- * Compose coach line din restReason. Fallback mockup verbatim cand null
- * (T0 fresh). Output NO_DIACRITICS_RULE compliant per Andura RO style.
+ * Compose coach line din restReason. Generic non-claim fallback cand null
+ * (T0 fresh): NO muscle-group claim, NO fake readiness number - Bugatti
+ * truth invariant per MED-FIX chat5. Output NO_DIACRITICS_RULE compliant
+ * per Andura RO style.
  */
 function composeCoachLine(restReason: CoachRestReason | null | undefined): string {
   if (!restReason) {
-    return 'Pectoralii si picioarele inca recupereaza · readiness 32/100.';
+    return 'Astazi e zi de recuperare - corpul are nevoie de odihna.';
   }
   const { fatiguedGroups, readinessScore } = restReason;
   const groupsPart =
