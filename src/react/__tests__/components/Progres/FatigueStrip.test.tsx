@@ -94,4 +94,33 @@ describe('FatigueStrip', () => {
     const { container } = render(<FatigueStrip />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  it('§DRIFT-2 (chat5) mockup literal — NO lucide icons rendered (mockup L1716-1721 zero icons)', () => {
+    vi.mocked(getFatigue).mockReturnValueOnce({
+      score: 45,
+      key: 'MODERATE_FATIGUE',
+      label: 'Pas mai conservator',
+      icon: '',
+      color: '',
+      recommend: 'reduce',
+      detail: '',
+    });
+    const { container } = render(<FatigueStrip />);
+    // lucide-react SVGs carry `lucide` class — assert ZERO present in card.
+    const lucideSvgs = container.querySelectorAll('svg.lucide');
+    expect(lucideSvgs.length).toBe(0);
+    // Defense in depth: no <svg> at all în fatigue card per mockup literal.
+    const allSvgs = container.querySelectorAll('svg');
+    expect(allSvgs.length).toBe(0);
+  });
+
+  it('§DRIFT-2 (chat5) mockup literal — bg-white + rounded-[14px] tokens applied', () => {
+    render(<FatigueStrip />);
+    const strip = screen.getByTestId('fatigue-strip');
+    expect(strip.className).toContain('bg-white');
+    expect(strip.className).toContain('rounded-[14px]');
+    // Anti-regression: ZERO mockup-divergent tokens.
+    expect(strip.className).not.toContain('bg-paper2');
+    expect(strip.className).not.toContain('rounded-2xl');
+  });
 });

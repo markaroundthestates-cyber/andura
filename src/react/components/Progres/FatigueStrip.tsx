@@ -13,9 +13,14 @@
 // preserved verbatim ("Azi mergem mai bland" / "Pas mai conservator" / etc) —
 // fatigue.js #L66-L92 deja emite Romanian human-friendly wording, NU jargon.
 // Mono font on numeric value reinforces 'metric snapshot' visual semantics.
+//
+// §DRIFT-2 (chat5 2026-05-23) — Option A mockup literal restore. Mockup
+// L1716-1721 verbatim: background:white, border-radius:14px (NU 16px Tailwind
+// rounded-2xl default), NU icon prefix. Removed lucide Activity icon (mockup
+// has ZERO icons in fatigue card), bg-paper2 → bg-white, rounded-2xl →
+// rounded-[14px]. D015 LOCK V1 DESIGN MASTER authority preserved.
 
 import type { JSX } from 'react';
-import { Activity } from 'lucide-react';
 import { getFatigue } from '../../lib/engineWrappers';
 
 export function FatigueStrip(): JSX.Element {
@@ -26,10 +31,9 @@ export function FatigueStrip(): JSX.Element {
   return (
     <section
       data-testid="fatigue-strip"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+      className="bg-white border border-line rounded-[14px] p-4 mb-4"
       aria-label="Stare oboseala"
     >
-      <Activity className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           Oboseala azi
