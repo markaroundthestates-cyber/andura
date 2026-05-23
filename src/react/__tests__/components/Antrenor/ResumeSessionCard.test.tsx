@@ -11,7 +11,7 @@ import type { PausedSession } from '../../../stores/workoutStore';
 
 function makeSnapshot(overrides: Partial<PausedSession> = {}): PausedSession {
   return {
-    title: 'Push · piept & umeri',
+    title: 'Push · piept si umeri',
     meta: '5 seturi · 32 min',
     exIdx: 1,
     setIdx: 0,
@@ -25,7 +25,7 @@ function makeSnapshot(overrides: Partial<PausedSession> = {}): PausedSession {
 describe('ResumeSessionCard — render', () => {
   it('renders title from snapshot', () => {
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
-    expect(screen.getByText('Push · piept & umeri')).toBeInTheDocument();
+    expect(screen.getByText('Push · piept si umeri')).toBeInTheDocument();
   });
 
   it('renders meta line "Oprit la ex 2 · acum 18 min"', () => {

@@ -43,7 +43,7 @@ function renderPreview(
 }
 
 describe('WorkoutPreview — base render', () => {
-  it('renders fallback heading "Push (piept & umeri)" cand engine returns null', () => {
+  it('renders fallback heading "Push (piept si umeri)" cand engine returns null', () => {
     renderPreview();
     expect(
       screen.getByRole('heading', { name: /Push/i, level: 1 })

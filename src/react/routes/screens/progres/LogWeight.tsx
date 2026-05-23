@@ -4,7 +4,7 @@
 //   - Field: "Greutate (kg)" placeholder "ex. 78.5" min=30 max=250 step=0.1
 //   - Field: "Data" date input
 //   - Helper: "Inregistrarea este salvata local. Vei vedea evolutia in
-//     Greutate & BF."
+//     Greutate si BF."
 //   - Button primary: "Salveaza"
 //   - Button secondary: "Anuleaza"
 //
@@ -141,7 +141,7 @@ export function LogWeight(): JSX.Element {
         </div>
 
         <p className="text-sm text-ink2 leading-relaxed">
-          Inregistrarea este salvata local. Vei vedea evolutia in Greutate & BF.
+          Inregistrarea este salvata local. Vei vedea evolutia in Greutate si BF.
         </p>
 
         <div className="flex-1" />

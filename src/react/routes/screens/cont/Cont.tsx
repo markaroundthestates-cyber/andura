@@ -1,6 +1,6 @@
 // ══ CONT — Tab 4 of 4 Phase 5 task_13 Landing ════════════════════════════
 // Phase 5 task_13 MVP scope: sections list mockup wv2 parity (Cont / General
-// / Date & confidentialitate / Deconectare & Stergere / Ajutor). Sub-screens
+// / Date si confidentialitate / Deconectare si Stergere / Ajutor). Sub-screens
 // Phase 6+ implementation (task_13 §3 hint Karpathy §4 simplicity).
 // Mockup verbatim copy preserved (andura-clasic.html#L1839+).
 
@@ -46,7 +46,7 @@ const SECTIONS: readonly ContSection[] = [
   {
     title: 'Cont',
     rows: [
-      { id: 'profile', label: 'Profil & tinte', Icon: User, target: 'settings-profile' },
+      { id: 'profile', label: 'Profil si tinte', Icon: User, target: 'settings-profile' },
       { id: 'notifications', label: 'Notificari', Icon: Bell, target: 'settings-notifications' },
       { id: 'subscription', label: 'Abonament', Icon: Sparkles, target: 'settings-subscription' },
     ],
@@ -60,7 +60,7 @@ const SECTIONS: readonly ContSection[] = [
     ],
   },
   {
-    title: 'Date & confidentialitate',
+    title: 'Date si confidentialitate',
     rows: [
       { id: 'privacy', label: 'Politica de confidentialitate', Icon: ShieldCheck, target: 'settings-privacy' },
       { id: 'terms', label: 'Termeni si conditii', Icon: FileText, target: 'settings-terms' },
@@ -68,9 +68,9 @@ const SECTIONS: readonly ContSection[] = [
     ],
   },
   {
-    title: 'Deconectare & Stergere',
+    title: 'Deconectare si Stergere',
     danger: true,
-    rows: [{ id: 'danger', label: 'Deconectare & Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
+    rows: [{ id: 'danger', label: 'Deconectare si Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
   },
   {
     title: 'Ajutor',

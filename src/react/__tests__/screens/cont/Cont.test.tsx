@@ -66,8 +66,8 @@ describe('Cont landing — Phase 5 task_13', () => {
     renderCont();
     expect(screen.getByTestId('cont-section-cont')).toBeInTheDocument();
     expect(screen.getByTestId('cont-section-general')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-date-confidentialitate')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-deconectare-stergere')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-date-si-confidentialitate')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-deconectare-si-stergere')).toBeInTheDocument();
     expect(screen.getByTestId('cont-section-ajutor')).toBeInTheDocument();
   });
 
@@ -85,7 +85,7 @@ describe('Cont landing — Phase 5 task_13', () => {
     });
   });
 
-  it('Deconectare & Stergere section + row marked danger', () => {
+  it('Deconectare si Stergere section + row marked danger', () => {
     renderCont();
     expect(screen.getByTestId('cont-row-danger').className).toMatch(/text-brick/);
   });

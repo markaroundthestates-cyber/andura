@@ -137,7 +137,7 @@ export function SettingsExport(): JSX.Element {
             Continut export
           </p>
           <ul className="text-sm text-ink space-y-1.5">
-            <li>• Profil & Big 6 (varsta, gen, obiectiv, frecventa, experienta, greutate)</li>
+            <li>• Profil si Big 6 (varsta, gen, obiectiv, frecventa, experienta, greutate)</li>
             <li>• Istoric sesiuni (toate antrenamentele logate)</li>
             <li>• Nutritie zilnica (kcal + proteine)</li>
             <li>• Preferinte (tema, unitati, notificari)</li>

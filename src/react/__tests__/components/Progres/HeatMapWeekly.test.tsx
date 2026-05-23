@@ -122,7 +122,7 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     expect(screen.queryByTestId('weight-snapshot-drill')).not.toBeInTheDocument();
   });
 
-  it('hint copy references Istoric > Greutate & BF', () => {
+  it('hint copy references Istoric > Greutate si BF', () => {
     renderComponent();
     expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Istoric/i);
     expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Greutate/i);

@@ -34,7 +34,7 @@ export function SettingsTerms(): JSX.Element {
           className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-1.5 ${active === 'tc' ? 'text-brick border-b-2 border-brick' : 'text-ink2'}`}
         >
           <FileText className="w-4 h-4" aria-hidden="true" />
-          T&amp;C
+          Termeni
         </button>
         <button
           type="button"

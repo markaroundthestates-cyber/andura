@@ -49,9 +49,9 @@ function fakeJwt(payload: Record<string, unknown>): string {
 }
 
 describe('SettingsProfile — render', () => {
-  it('renders heading "Profil & tinte"', () => {
+  it('renders heading "Profil si tinte"', () => {
     renderScreen();
-    expect(screen.getByRole('heading', { name: /Profil & tinte/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Profil si tinte/i, level: 1 })).toBeInTheDocument();
   });
 
   it('§F-cont-01 avatar initial defaults la "A" daca unauthenticated', () => {

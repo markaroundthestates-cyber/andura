@@ -1,7 +1,7 @@
 // ══ WEIGHT SNAPSHOT 7-DAY — Progres mockup parity §F-pass2-heatmap-01 ══════
 // Rebuilt 2026-05-22: paradigm align mockup L1730-1749 (andura-clasic.html).
 // Mockup = WEIGHT snapshot 7 zile cu mini-chart 7 vertical bars + delta kg
-// + drill link Istoric › Greutate & BF. Prior V1 = VOLUME heatmap (Phase 6
+// + drill link Istoric › Greutate si BF. Prior V1 = VOLUME heatmap (Phase 6
 // task_22) — paradigm divergence Co-CTO fix, rebuild as weight chart.
 // File/export name preserved pentru import-stability (Progres.tsx + tests).
 //
@@ -101,7 +101,7 @@ export function HeatMapWeekly(): JSX.Element {
         data-testid="weight-snapshot-hint"
         className="text-xs text-ink2 mt-2"
       >
-        Pentru analiza profunda &rarr; vezi <span className="font-semibold">Istoric &rsaquo; Greutate &amp; BF</span>
+        Pentru analiza profunda &rarr; vezi <span className="font-semibold">Istoric &rsaquo; Greutate si BF</span>
       </p>
     </section>
   );

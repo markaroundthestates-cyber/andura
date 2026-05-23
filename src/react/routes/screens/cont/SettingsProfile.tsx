@@ -74,7 +74,7 @@ export function SettingsProfile(): JSX.Element {
       data-testid="settings-profile"
     >
       <SubHeader
-        title="Profil & tinte"
+        title="Profil si tinte"
         onBack={handleBack}
         testIdBack="settings-profile-back"
       />

@@ -17,7 +17,7 @@ export function SettingsDanger(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-danger">
       <SubHeader
-        title="Deconectare & stergere"
+        title="Deconectare si stergere"
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-danger-back"
       />

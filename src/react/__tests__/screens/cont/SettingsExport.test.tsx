@@ -35,7 +35,7 @@ describe('SettingsExport — render + download flow', () => {
 
   it('renders content list cu 5 categorii export', () => {
     renderScreen();
-    expect(screen.getByText(/Profil & Big 6/)).toBeInTheDocument();
+    expect(screen.getByText(/Profil si Big 6/)).toBeInTheDocument();
     expect(screen.getByText(/Istoric sesiuni/)).toBeInTheDocument();
     expect(screen.getByText(/Nutritie zilnica/)).toBeInTheDocument();
     expect(screen.getByText(/Preferinte/)).toBeInTheDocument();

@@ -11,10 +11,10 @@ import { SubHeader } from '../../components/SubHeader';
 describe('SubHeader — shared sub-screen header', () => {
   it('renders title as h1 level 1', () => {
     render(
-      <SubHeader title="Profil & tinte" onBack={() => {}} testIdBack="x-back" />
+      <SubHeader title="Profil si tinte" onBack={() => {}} testIdBack="x-back" />
     );
     expect(
-      screen.getByRole('heading', { name: /Profil & tinte/i, level: 1 })
+      screen.getByRole('heading', { name: /Profil si tinte/i, level: 1 })
     ).toBeInTheDocument();
   });
 

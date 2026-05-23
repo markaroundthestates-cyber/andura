@@ -15,7 +15,7 @@
 // "Optiuni sesiune" bottom sheet 5 rows pain/skip/finish/sound/cancel).
 //
 // §F-pass2-sessiontimer-02 (HIGH-DELTA 2026-05-22): workoutTitle optional
-// prop — center label shows workout name (e.g. "Push · piept & umeri") in
+// prop — center label shows workout name (e.g. "Push · piept si umeri") in
 // preference to current-exercise name. Backward compat: when workoutTitle
 // absent, falls back to exerciseName (existing behavior). Parent (Workout.tsx)
 // wires planned.workoutTitle from PlannedWorkoutOutput aggregate.

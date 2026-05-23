@@ -59,7 +59,7 @@ export function SettingsAbout(): JSX.Element {
           </div>
           <div className="flex justify-between items-center px-4 py-3">
             <span className="text-sm text-ink2">Echipa</span>
-            <span className="text-sm text-ink font-medium">Daniel &amp; co.</span>
+            <span className="text-sm text-ink font-medium">Daniel si echipa</span>
           </div>
         </div>
 

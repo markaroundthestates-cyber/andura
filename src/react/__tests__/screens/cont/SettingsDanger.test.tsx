@@ -42,7 +42,7 @@ beforeEach(() => {
 });
 
 describe('SettingsDanger — D047 RIP-OUT navigation list', () => {
-  it('renders heading "Deconectare & stergere"', () => {
+  it('renders heading "Deconectare si stergere"', () => {
     renderScreen();
     expect(screen.getByRole('heading', { name: /Deconectare/i, level: 1 })).toBeInTheDocument();
   });

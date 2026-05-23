@@ -11,7 +11,7 @@ import type { LastSessionSummary } from '../../../stores/workoutStore';
 
 function makeLastSession(daysAgo = 17): LastSessionSummary {
   return {
-    title: 'Pull · spate & biceps',
+    title: 'Pull · spate si biceps',
     meta: '5 seturi · 48 min',
     ts: Date.now() - daysAgo * 86400000,
   };

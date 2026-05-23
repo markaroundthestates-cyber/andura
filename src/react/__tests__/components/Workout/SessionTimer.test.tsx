@@ -172,8 +172,8 @@ describe('SessionTimer — §F-pass2-sessiontimer-02 workoutTitle center label',
   });
 
   it('renders workoutTitle when prop provided (overrides exerciseName)', () => {
-    renderTimer({ workoutTitle: 'Push · piept & umeri' });
-    expect(screen.getByTestId('workout-title')).toHaveTextContent('Push · piept & umeri');
+    renderTimer({ workoutTitle: 'Push · piept si umeri' });
+    expect(screen.getByTestId('workout-title')).toHaveTextContent('Push · piept si umeri');
   });
 
   it('workoutTitle empty string still falls back to exerciseName', () => {

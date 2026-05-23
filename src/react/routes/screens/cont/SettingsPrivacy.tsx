@@ -115,7 +115,7 @@ export function SettingsPrivacy(): JSX.Element {
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Drepturile tale GDPR</h3>
           <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
             <li><strong>Acces + portabilitate:</strong> exporta toate datele JSON din Cont &gt; Descarca date</li>
-            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare &amp; stergere &gt; Sterge contul</li>
+            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare si stergere &gt; Sterge contul</li>
             <li><strong>Rectificare:</strong> editeaza profilul direct in Cont &gt; Profil</li>
             <li><strong>Opozitie telemetrie:</strong> toggle telemetrie anonima sus (default OFF)</li>
             <li><strong>Limitare procesare:</strong> dezactiveaza backup Firebase (deconectare cont)</li>
@@ -142,7 +142,7 @@ export function SettingsPrivacy(): JSX.Element {
             <strong> sportiv</strong>, NU medical. Nu colectam diagnostice,
             tratamente, retete sau alte categorii speciale GDPR Art. 9. Daca
             ai conditii medicale, consulta intai medicul (vezi
-            <strong>{' '}Disclaimer medical</strong> in T&amp;C).
+            <strong>{' '}Disclaimer medical</strong> in Termeni si conditii).
           </p>
 
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Sub-procesatori</h3>
