@@ -83,7 +83,7 @@ export function PrWall(): JSX.Element {
           >
             <Award className="w-12 h-12 text-ink2 mb-3" aria-hidden="true" />
             <p className="text-sm text-ink2 max-w-xs">
-              Niciun record inca. Primul tau PR apare aici dupa o sesiune in care depasesti un maxim.
+              Nu ai recorduri inca. Primul tau PR apare aici dupa o sesiune in care depasesti un maxim.
             </p>
           </div>
         ) : (

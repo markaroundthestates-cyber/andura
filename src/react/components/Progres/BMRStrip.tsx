@@ -69,7 +69,7 @@ export function BMRStrip(): JSX.Element {
           </p>
         ) : (
           <p className="text-sm text-ink2" data-testid="bmr-empty">
-            Completeaza profilul pentru estimare.
+            Nu ai profilul complet inca. Estimarea apare dupa ce completezi datele.
           </p>
         )}
       </div>

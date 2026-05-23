@@ -27,6 +27,8 @@ describe('FatigueStrip', () => {
   it('renders empty state cand getFatigue null', () => {
     render(<FatigueStrip />);
     expect(screen.getByTestId('fatigue-empty')).toBeInTheDocument();
+    // Pass 10 canonical "Nu ai X inca" prefix
+    expect(screen.getByTestId('fatigue-empty')).toHaveTextContent(/Nu ai destule sesiuni inca/i);
   });
 
   it('renders score (/10 scale) + label cand fatigue present', () => {

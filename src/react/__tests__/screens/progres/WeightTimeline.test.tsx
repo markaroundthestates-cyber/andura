@@ -55,6 +55,9 @@ describe('WeightTimeline — Greutate trend screen', () => {
     renderScreen();
     expect(screen.getByTestId('weight-timeline-kpi-empty')).toBeInTheDocument();
     expect(screen.getByTestId('weight-timeline-chart-empty')).toBeInTheDocument();
+    // Pass 10 canonical "Nu ai X inca" prefix
+    expect(screen.getByTestId('weight-timeline-kpi-empty')).toHaveTextContent(/Nu ai loguri/i);
+    expect(screen.getByTestId('weight-timeline-chart-empty')).toHaveTextContent(/Nu ai loguri inca/i);
   });
 
   it('KPI shows latest weight + delta', () => {

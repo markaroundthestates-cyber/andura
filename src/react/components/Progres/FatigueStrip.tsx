@@ -60,7 +60,7 @@ export function FatigueStrip(): JSX.Element {
           </>
         ) : (
           <p className="text-sm text-ink2" data-testid="fatigue-empty">
-            Logheaza 2+ sesiuni pentru o estimare.
+            Nu ai destule sesiuni inca. Estimarea apare dupa 2+ sesiuni.
           </p>
         )}
       </div>

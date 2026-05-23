@@ -94,7 +94,7 @@ export function HeatMapWeekly(): JSX.Element {
         </div>
       ) : (
         <p className="text-xs text-ink2 mt-1" data-testid="weight-snapshot-empty">
-          Nu ai logat greutate inca.
+          Nu ai loguri inca. Snapshot-ul apare aici dupa prima cantarire.
         </p>
       )}
       <p

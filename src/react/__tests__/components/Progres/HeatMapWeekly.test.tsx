@@ -30,6 +30,8 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
   it('renders empty state cand weightLog empty', () => {
     renderComponent();
     expect(screen.getByTestId('weight-snapshot-empty')).toBeInTheDocument();
+    // Pass 10 canonical "Nu ai X inca" + anticipatory follow-up
+    expect(screen.getByText(/Nu ai loguri inca/i)).toBeInTheDocument();
   });
 
   it('hides bars chart cand weightLog empty', () => {

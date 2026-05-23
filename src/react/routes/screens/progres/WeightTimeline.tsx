@@ -146,7 +146,7 @@ export function WeightTimeline(): JSX.Element {
           </p>
           {latest === undefined ? (
             <p className="text-sm text-ink2 mt-2" data-testid="weight-timeline-kpi-empty">
-              Niciun log in interval.
+              Nu ai loguri in interval inca.
             </p>
           ) : (
             <>
@@ -186,7 +186,7 @@ export function WeightTimeline(): JSX.Element {
               className="text-sm text-ink2 text-center py-8"
               data-testid="weight-timeline-chart-empty"
             >
-              Logheaza greutati pentru a vedea trendul.
+              Nu ai loguri inca. Trendul apare aici dupa ce inregistrezi greutati.
             </p>
           ) : (
             <svg
