@@ -146,7 +146,7 @@ export function Cont(): JSX.Element {
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                   <span className="flex-1 text-sm">{row.label}</span>
-                  <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+                  <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
                 </button>
               );
             })}

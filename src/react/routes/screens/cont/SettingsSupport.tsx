@@ -43,7 +43,7 @@ export function SettingsSupport(): JSX.Element {
               <p className="text-sm font-medium">Email</p>
               <p className="text-xs text-ink2 truncate">{SUPPORT_EMAIL}</p>
             </div>
-            <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </a>
           <div
             data-testid="support-whatsapp"

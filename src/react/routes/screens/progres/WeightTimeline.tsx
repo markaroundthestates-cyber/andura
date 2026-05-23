@@ -237,7 +237,7 @@ export function WeightTimeline(): JSX.Element {
           <span className="text-xs text-ink2 mr-1 font-mono">
             {weightLog.length} {weightLog.length === 1 ? 'inregistrare' : 'inregistrari'}
           </span>
-          <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
+          <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
         </button>
       </div>
     </section>

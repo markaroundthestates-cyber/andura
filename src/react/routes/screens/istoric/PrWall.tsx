@@ -103,7 +103,7 @@ export function PrWall(): JSX.Element {
                     {pr.kg} kg x {pr.reps} reps - {formatPrDate(pr.sessionTs)}
                   </p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
+                <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
               </li>
             ))}
           </ul>

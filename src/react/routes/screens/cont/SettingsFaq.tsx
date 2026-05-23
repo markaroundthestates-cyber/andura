@@ -108,9 +108,9 @@ export function SettingsFaq(): JSX.Element {
                       <HelpCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                       <span className="flex-1 text-sm font-medium">{item.q}</span>
                       {open ? (
-                        <ChevronDown className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+                        <ChevronDown className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+                        <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
                       )}
                     </button>
                     {open && (

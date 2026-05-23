@@ -110,7 +110,7 @@ export function SettingsAppearance(): JSX.Element {
           >
             <Palette className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <span className="flex-1 text-sm">Teme</span>
-            <ChevronRight className="w-4 h-4 text-ink2" aria-hidden="true" />
+            <ChevronRight className="w-5 h-5 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -182,7 +182,7 @@ export function Istoric(): JSX.Element {
                     </p>
                     <p className="text-sm text-ink2 mt-0.5">{session.meta}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
+                  <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
                 </button>
               </li>
             );

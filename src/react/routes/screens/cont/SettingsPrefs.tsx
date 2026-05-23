@@ -112,7 +112,7 @@ export function SettingsPrefs(): JSX.Element {
               <p className="text-sm font-medium">Reseteaza coach</p>
               <p className="text-xs text-ink2">Reporneste invatarea AI de la zero</p>
             </div>
-            <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -125,7 +125,7 @@ export function SettingsPrefs(): JSX.Element {
               <p className="text-sm font-medium">Refa onboarding</p>
               <p className="text-xs text-ink2">Reia configurarea initiala</p>
             </div>
-            <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -138,7 +138,7 @@ export function SettingsPrefs(): JSX.Element {
               <p className="text-sm font-medium">Schimba faza manual</p>
               <p className="text-xs text-ink2">Reseteaza unele calibrari</p>
             </div>
-            <ChevronRight className="w-4 h-4 flex-shrink-0 text-ink2" aria-hidden="true" />
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
         </div>
       </div>
