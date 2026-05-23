@@ -48,6 +48,7 @@
 
 import { ok, err } from '../result.js';
 import { evaluate as evaluateEnergyAdjustment, ENGINE_ID } from '../../../engine/energyAdjustment/index.js';
+import { captureException } from '../../../util/sentry.js';
 
 /**
  * Energy Adjustment adapter — implements `EngineAdapter` contract per ADR 030 D2.
@@ -128,6 +129,11 @@ export const energyAdjustmentAdapter = Object.freeze({
     } catch (cause) {
       // Engine spec says NEVER throws but D4 violation insurance per §3.6 taxonomy.
       // ENGINE_THREW → 'hard' severity (downstream cannot trust upstream constraint).
+      // Sentry capture per D063/D074 orchestrator pipeline adapter coverage —
+      // production observability when engine totality contract violated.
+      captureException(cause, {
+        tags: { source: 'orchestrator-adapter-fallback', adapter: 'energyAdjustment' },
+      });
       return err({
         code: 'ENGINE_THREW',
         message: cause instanceof Error ? cause.message : String(cause),

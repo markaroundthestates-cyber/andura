@@ -107,6 +107,7 @@
 
 import { ok, err } from '../result.js';
 import { evaluate as evaluateWarmup, ENGINE_ID } from '../../../engine/warmup/index.js';
+import { captureException } from '../../../util/sentry.js';
 
 /**
  * Warm-up adapter — implements `EngineAdapter` contract per ADR 030 D2.
@@ -190,6 +191,11 @@ export const warmupAdapter = Object.freeze({
     } catch (cause) {
       // Engine spec says NEVER throws but D4 violation insurance per §3.6 taxonomy.
       // ENGINE_THREW → 'hard' severity (downstream cannot trust upstream constraint).
+      // Sentry capture per D063/D074 orchestrator pipeline adapter coverage —
+      // production observability when engine totality contract violated.
+      captureException(cause, {
+        tags: { source: 'orchestrator-adapter-fallback', adapter: 'warmup' },
+      });
       return err({
         code: 'ENGINE_THREW',
         message: cause instanceof Error ? cause.message : String(cause),

@@ -78,6 +78,7 @@
 
 import { ok, err } from '../result.js';
 import { evaluate as evaluateDeload, ENGINE_ID } from '../../../engine/deload/index.js';
+import { captureException } from '../../../util/sentry.js';
 
 /**
  * Deload adapter — implements `EngineAdapter` contract per ADR 030 D2.
@@ -159,6 +160,11 @@ export const deloadAdapter = Object.freeze({
       // Engine spec says NEVER throws but D4 violation insurance per §3.6
       // taxonomy. ENGINE_THREW → 'hard' severity (Deload terminal — halt has
       // no downstream impact dar fail-safe preserved Bugatti craft).
+      // Sentry capture per D063/D074 orchestrator pipeline adapter coverage —
+      // production observability when engine totality contract violated.
+      captureException(cause, {
+        tags: { source: 'orchestrator-adapter-fallback', adapter: 'deload' },
+      });
       return err({
         code: 'ENGINE_THREW',
         message: cause instanceof Error ? cause.message : String(cause),

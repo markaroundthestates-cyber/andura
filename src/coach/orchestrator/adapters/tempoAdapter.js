@@ -75,6 +75,7 @@
 
 import { ok, err } from '../result.js';
 import { evaluate as evaluateTempo, ENGINE_ID } from '../../../engine/tempo/index.js';
+import { captureException } from '../../../util/sentry.js';
 
 /**
  * Tempo adapter — implements `EngineAdapter` contract per ADR 030 D2.
@@ -158,6 +159,11 @@ export const tempoAdapter = Object.freeze({
     } catch (cause) {
       // Engine spec says NEVER throws but D4 violation insurance per §3.6 taxonomy.
       // ENGINE_THREW → 'hard' severity (downstream cannot trust upstream constraint).
+      // Sentry capture per D063/D074 orchestrator pipeline adapter coverage —
+      // production observability when engine totality contract violated.
+      captureException(cause, {
+        tags: { source: 'orchestrator-adapter-fallback', adapter: 'tempo' },
+      });
       return err({
         code: 'ENGINE_THREW',
         message: cause instanceof Error ? cause.message : String(cause),

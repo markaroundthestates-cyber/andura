@@ -39,6 +39,7 @@
 
 import { ok, err } from '../result.js';
 import { evaluate as evaluateGoalAdaptation, ENGINE_ID } from '../../../engine/goalAdaptation/index.js';
+import { captureException } from '../../../util/sentry.js';
 
 /**
  * Goal Adaptation adapter — implements `EngineAdapter` contract per ADR 030 D2.
@@ -109,6 +110,11 @@ export const goalAdaptationAdapter = Object.freeze({
       return ok({ ...engineResult });
     } catch (cause) {
       // Engine spec says NEVER throws but D4 violation insurance per §3.6 taxonomy.
+      // Sentry capture per D063/D074 orchestrator pipeline adapter coverage —
+      // production observability when engine totality contract violated.
+      captureException(cause, {
+        tags: { source: 'orchestrator-adapter-fallback', adapter: 'goalAdaptation' },
+      });
       return err({
         code: 'ENGINE_THREW',
         message: cause instanceof Error ? cause.message : String(cause),
