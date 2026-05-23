@@ -18,6 +18,7 @@ import type { JSX, ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Layout } from './Layout';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
 // 4 tab home eager (bottom-nav primary entry — daily-use Antrenor/Progres/
 // Istoric/Cont). ProtectedRoute wraps, redirect anon → /auth lazy chunk.
@@ -88,24 +89,13 @@ const SchimbaFazaConfirm = lazy(() => import('./screens/cont/SchimbaFazaConfirm'
 const ResetCoachConfirm = lazy(() => import('./screens/cont/ResetCoachConfirm').then((m) => ({ default: m.ResetCoachConfirm })));
 
 /**
- * §B007 — Suspense wrapper pentru lazy sub-screens. Fallback minimal spinner
- * cu paper background match (NU layout shift, NU flash white). Maria 65
- * friction-low: ~50-100ms typical chunk load 3G median.
+ * §B007 — Suspense wrapper pentru lazy sub-screens. Fallback = canonical
+ * LoadingSkeleton (single source cross-app, unified pulse-bar pattern). Maria
+ * 65 friction-low: ~50-100ms typical chunk load 3G median, no layout shift.
  */
 function LazyRoute({ children }: { children: ReactNode }): JSX.Element {
   return (
-    <Suspense
-      fallback={
-        <div
-          className="min-h-screen bg-paper text-ink2 flex items-center justify-center"
-          data-testid="lazy-route-fallback"
-          aria-live="polite"
-          role="status"
-        >
-          <div className="w-8 h-8 rounded-full border-4 border-line border-t-brick animate-spin" aria-hidden="true" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LoadingSkeleton testId="lazy-route-fallback" />}>
       {children}
     </Suspense>
   );
