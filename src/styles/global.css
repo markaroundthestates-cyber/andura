@@ -11,6 +11,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-host Inter Variable WOFF2 — eliminate Google Fonts 843ms render-block.
+   Per FONT_SELF_HOST_INVESTIGATION chat 5 Option A (2026-05-23).
+   Single variable font file covers wght axis 100-900 (future-proof vs
+   existing 400/500/600/700 static usage). font-display: swap preserves
+   FOUT pattern parity with prior Google Fonts behavior.
+   Source: rsms.me/inter canonical. Same-origin caching via Workbox precache. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/InterVariable.woff2') format('woff2-variations'),
+       url('/fonts/InterVariable.woff2') format('woff2');
+}
+
 /* WCAG audit batch v2 Path 2a — Clasic :root architectural lift (2026-05-10).
    Token tonal hierarchy (cream warm light theme) — fix --ink-3 muted text WCAG SC 1.4.3 4.5:1 AA
    (was hardcoded var(--ink-3) 137× contrast 3.56:1 FAIL → now #6e6862 token contrast ~5.13:1 PASS).

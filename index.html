@@ -13,7 +13,7 @@
        directives are ignored when delivered via <meta> (browsers log console errors).
        True clickjacking protection requires HTTP headers, which GH Pages cannot set.
        Accepted-risk pre-Beta; revisit when migrating to a host that supports custom headers. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <!-- PWA manifest auto-injected by vite-plugin-pwa as /manifest.webmanifest.
@@ -23,14 +23,15 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
   <!-- §36-M3 audit fix — DNS prefetch hints for Firebase + Sentry endpoints.
        Shaves initial connect time on first auth + telemetry calls (~50-100ms
-       on cold cache). Preconnect upgraded for Google Fonts (handshake too). -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+       on cold cache). Google Fonts preconnect removed post self-host (2026-05-23). -->
   <link rel="dns-prefetch" href="//fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app" />
   <link rel="dns-prefetch" href="//identitytoolkit.googleapis.com" />
   <link rel="dns-prefetch" href="//securetoken.googleapis.com" />
   <link rel="dns-prefetch" href="//o4511269200068608.ingest.de.sentry.io" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <!-- Self-host Inter Variable preload (chat 5 perf audit Option A 2026-05-23).
+       Eliminates 843ms Google Fonts render-block. font-display: swap declared
+       in src/styles/global.css @font-face block. -->
+  <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <title>Andura</title>
   <!-- SPA GitHub Pages redirect decode (Rafael Pedicini pattern spa-github-pages).
        Pereche cu public/404.html: 404.html encode URL → query string,
