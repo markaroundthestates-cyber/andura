@@ -102,7 +102,7 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
-    "@sentry/browser": "^10.49.0",
+    "@sentry/browser": "10.53.1",
     "date-fns": "^4.2.1",
     "dexie": "^4.4.2",
     "lucide-react": "^1.16.0",
