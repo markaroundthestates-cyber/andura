@@ -60,6 +60,15 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Perf chat 5 HIGH ROI #3 (ROUTE_LAZY_LOAD_INVESTIGATION) — exclude
+        // Sentry chunk din precache install. Sentry lazy import pe opt-in
+        // telemetry only (src/util/sentry.js:26 await import('@sentry/browser')).
+        // Rollup default chunk name pentru dynamic imports fara name = 'index'
+        // → assets/index-<hash>.js = Sentry chunk (~145 KB gzip). Users care NU
+        // opt-in primesc precache install fara reason; SW runtime cache still
+        // serves Sentry on-demand cand initSentry trigger-uie import.
+        // Maria 65 mobile 3G install UX: -145 KB gzip first install.
+        globIgnores: ['**/assets/index-*.js'],
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
         runtimeCaching: [
