@@ -1,8 +1,32 @@
 // ══ DATABASE + UTILS ════════════════════════════════════════
 
+import { captureException } from './util/sentry.js';
+
+/**
+ * Tier 0 localStorage wrapper.
+ *
+ * `set` returns `{ok: true}` on success or `{ok: false, error: 'quota_exceeded', key}`
+ * when `QuotaExceededError` is thrown by `localStorage.setItem` (Safari/iOS PWA 5MB
+ * cap, Maria 65 long-session edge). Unknown errors bubble per existing contract.
+ * Existing callers ignore the return value (fire-and-forget) — non-breaking.
+ *
+ * MED-CODE-22 (code review v2 chat 5) — prior version silently crashed the React
+ * tree on quota exhaustion. Sentry capture wired pentru production observability.
+ */
 export const DB = {
   get: k => { try { return JSON.parse(localStorage.getItem(k) || 'null') } catch { return null } },
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+  set: (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+      return { ok: true };
+    } catch (err) {
+      if (err && err.name === 'QuotaExceededError') {
+        try { captureException(err, { tags: { component: 'DB.set', key: k } }); } catch { /* swallow Sentry failure */ }
+        return { ok: false, error: 'quota_exceeded', key: k };
+      }
+      throw err;
+    }
+  }
 };
 
 export const $ = id => document.getElementById(id);
