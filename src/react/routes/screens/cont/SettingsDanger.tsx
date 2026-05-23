@@ -32,8 +32,8 @@ export function SettingsDanger(): JSX.Element {
           role="status"
           className="flex items-start gap-3 p-3.5 rounded-2xl border mb-4"
           style={{
-            background: 'var(--status-danger-bg, #fdeeea)',
-            borderColor: 'var(--status-danger-border, #f0d5cf)',
+            background: 'var(--status-danger-bg, #fbe3df)',
+            borderColor: 'var(--status-danger-border, #e8b2a8)',
           }}
         >
           <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-brick" aria-hidden="true" />

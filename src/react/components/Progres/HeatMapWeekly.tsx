@@ -73,7 +73,7 @@ export function HeatMapWeekly(): JSX.Element {
             className="text-xs font-medium"
             data-testid="weight-snapshot-delta"
             data-delta-sign={deltaSign}
-            style={{ color: delta < 0 ? '#3d7a4a' : delta > 0 ? 'var(--brick)' : 'var(--ink-2)' }}
+            style={{ color: delta < 0 ? 'var(--succ)' : delta > 0 ? 'var(--brick)' : 'var(--ink-2)' }}
           >
             {delta < 0 ? '↓' : delta > 0 ? '↑' : '='} {Math.abs(delta)} kg / {last7.length}z
           </p>

@@ -196,13 +196,13 @@ export function WeightTimeline(): JSX.Element {
               role="img"
               aria-label="Trend greutate"
             >
-              <line x1="0" y1={chartH / 4} x2={chartW} y2={chartH / 4} stroke="#f0e8d8" strokeWidth="1" />
-              <line x1="0" y1={chartH / 2} x2={chartW} y2={chartH / 2} stroke="#f0e8d8" strokeWidth="1" />
-              <line x1="0" y1={(3 * chartH) / 4} x2={chartW} y2={(3 * chartH) / 4} stroke="#f0e8d8" strokeWidth="1" />
+              <line x1="0" y1={chartH / 4} x2={chartW} y2={chartH / 4} stroke="var(--line)" strokeWidth="1" />
+              <line x1="0" y1={chartH / 2} x2={chartW} y2={chartH / 2} stroke="var(--line)" strokeWidth="1" />
+              <line x1="0" y1={(3 * chartH) / 4} x2={chartW} y2={(3 * chartH) / 4} stroke="var(--line)" strokeWidth="1" />
               {chart.points.length > 1 && (
                 <polyline
                   fill="none"
-                  stroke="#c8412e"
+                  stroke="var(--brick)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -215,7 +215,7 @@ export function WeightTimeline(): JSX.Element {
                   cx={p.x}
                   cy={p.y}
                   r={idx === chart.points.length - 1 ? 6 : 4}
-                  fill="#c8412e"
+                  fill="var(--brick)"
                   stroke={idx === chart.points.length - 1 ? 'white' : undefined}
                   strokeWidth={idx === chart.points.length - 1 ? 2 : undefined}
                   data-testid={`weight-timeline-chart-dot-${idx}`}
