@@ -106,7 +106,7 @@ export function Antrenor(): JSX.Element {
 
   return (
     <section
-      className={`p-4 bg-paper persona-${persona}`}
+      className={`pt-4 px-5 pb-6 bg-paper persona-${persona}`}
       data-testid="antrenor-home"
       aria-label="Antrenor home"
     >
