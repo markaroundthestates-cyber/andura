@@ -62,10 +62,6 @@ declare global {
     /** Director engine cache map (window-scoped lifetime per session). Includes invalidate() method for downstream consumers. */
     _directorCache?: Map<string, unknown> & { invalidate: () => void };
 
-    /** Manual sync trigger from dev console. Returns boolean indicating whether sync succeeded. */
-    syncToFirebase?: () => Promise<boolean>;
-    syncFromFirebase?: () => Promise<boolean>;
-
     /** Tombstones manual GC trigger from dev console. */
     gcTombstones?: () => number;
 

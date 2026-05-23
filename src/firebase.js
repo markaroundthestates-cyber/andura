@@ -358,6 +358,3 @@ export async function initFirebaseSync() {
     toast('☁ Date sincronizate', 'var(--green)');
   }
 }
-
-window.syncToFirebase = syncToFirebase;
-window.syncFromFirebase = syncFromFirebase;
