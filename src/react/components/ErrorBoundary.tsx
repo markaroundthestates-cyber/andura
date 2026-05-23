@@ -67,7 +67,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               type="button"
               onClick={this.handleReset}
               data-testid="error-reset"
-              className="px-5 py-3 bg-brick text-paper rounded-xl text-sm font-semibold"
+              className="px-5 py-3 bg-brick text-paper rounded-[14px] text-sm font-semibold"
             >
               Incearca din nou
             </button>

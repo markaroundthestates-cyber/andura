@@ -193,7 +193,7 @@ export function SettingsProfile(): JSX.Element {
           type="button"
           onClick={handleSave}
           data-testid="settings-profile-save"
-          className="w-full mt-3 py-3 bg-brick text-paper rounded-xl text-base font-semibold flex items-center justify-center gap-2"
+          className="w-full mt-3 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Check className="w-4 h-4" aria-hidden="true" />
           Confirma editare

@@ -400,7 +400,7 @@ export function Workout(): JSX.Element {
           type="button"
           onClick={() => navigate(gotoPath('antrenor'))}
           data-testid="workout-empty-back"
-          className="px-6 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
+          className="px-6 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           Inapoi
         </button>

@@ -97,7 +97,7 @@ export function Onboarding(): JSX.Element {
           type="button"
           onClick={next}
           data-testid="onb-next"
-          className="flex-1 px-5 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
+          className="flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           {isLast ? 'Gata' : 'Continua'}
         </button>

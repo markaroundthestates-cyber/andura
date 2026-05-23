@@ -174,7 +174,7 @@ export function BodyData(): JSX.Element {
           onClick={handleSave}
           disabled={!hasAnyValue}
           data-testid="body-data-save"
-          className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold disabled:opacity-50"
+          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
         >
           Salveaza
         </button>

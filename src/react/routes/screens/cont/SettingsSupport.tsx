@@ -68,7 +68,7 @@ export function SettingsSupport(): JSX.Element {
           <a
             href={`mailto:${SUPPORT_EMAIL}?subject=Andura%20feedback&body=Descrie%20problema%20sau%20ideea%20ta...`}
             data-testid="support-feedback-mailto"
-            className="w-full block py-3 bg-brick text-paper rounded-xl text-base font-semibold text-center"
+            className="w-full block py-3 bg-brick text-paper rounded-[14px] text-base font-semibold text-center"
           >
             Deschide email
           </a>

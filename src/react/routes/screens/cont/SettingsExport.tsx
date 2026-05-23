@@ -149,7 +149,7 @@ export function SettingsExport(): JSX.Element {
           type="button"
           onClick={() => { void handleExport(); }}
           data-testid="settings-export-trigger"
-          className="w-full py-3 bg-brick text-paper rounded-xl text-base font-semibold flex items-center justify-center gap-2"
+          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
           Descarca JSON

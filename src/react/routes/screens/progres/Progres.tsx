@@ -68,7 +68,7 @@ export function Progres(): JSX.Element {
         type="button"
         onClick={() => navigate(gotoPath('log-weight'))}
         data-testid="cta-log-weight"
-        className="w-full flex items-center gap-3 p-4 mb-3 bg-brick text-paper rounded-xl text-base font-semibold"
+        className="w-full flex items-center gap-3 p-4 mb-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         <Scale className="w-5 h-5" aria-hidden="true" />
         Logheaza greutate azi

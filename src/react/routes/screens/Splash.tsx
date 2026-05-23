@@ -61,7 +61,7 @@ export function Splash(): JSX.Element {
           type="button"
           onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
           data-testid="splash-cta"
-          className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           {isAuthenticated ? 'Continua' : 'Incepe'}
         </button>

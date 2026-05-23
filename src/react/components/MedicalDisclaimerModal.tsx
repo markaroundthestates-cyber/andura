@@ -89,7 +89,7 @@ export function MedicalDisclaimerModal({
           type="button"
           onClick={onAcknowledge}
           data-testid="disclaimer-acknowledge"
-          className="w-full py-3 bg-brick text-paper rounded-xl text-base font-semibold mb-2"
+          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold mb-2"
         >
           Am inteles, continui
         </button>

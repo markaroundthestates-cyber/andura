@@ -62,7 +62,7 @@ export function RestOverlay({
         type="button"
         onClick={onSkip}
         data-testid="rest-skip"
-        className="mt-6 px-6 py-3 bg-brick text-paper rounded-xl text-base font-semibold"
+        className="mt-6 px-6 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         Sari pauza
       </button>

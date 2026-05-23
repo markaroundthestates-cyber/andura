@@ -86,7 +86,7 @@ export function IstoricDetail(): JSX.Element {
           type="button"
           onClick={handleBack}
           data-testid="istoric-detail-back-missing"
-          className="px-4 py-2 bg-brick text-paper rounded-xl text-sm font-semibold"
+          className="px-4 py-2 bg-brick text-paper rounded-[14px] text-sm font-semibold"
         >
           Inapoi la Istoric
         </button>
