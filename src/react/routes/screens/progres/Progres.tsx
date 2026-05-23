@@ -45,7 +45,9 @@ export function Progres(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="progres-home">
-      <h1 className="text-2xl font-semibold text-ink mb-1">Progres</h1>
+      {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 -> 700
+          mockup andura-clasic.html#L1700 (font-weight:700). */}
+      <h1 className="text-2xl font-bold text-ink mb-1">Progres</h1>
       <p className="text-sm text-ink2 mb-6">Body composition &middot; estimari calibrate.</p>
       <TDEEStrip />
       {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
