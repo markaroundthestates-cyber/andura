@@ -85,6 +85,23 @@ describe('PostSummary — render base', () => {
     expect(screen.getByTestId('summary-finish')).toBeInTheDocument();
     expect(screen.getByTestId('summary-finish')).toHaveTextContent(/Terminat/i);
   });
+
+  it('§F-post-summary-06 stats grid order Durata/Seturi logate/Volum total/Kcal estimate', () => {
+    renderSummary();
+    const grid = screen.getByTestId('summary-stats-grid');
+    const cells = grid.querySelectorAll('[data-testid^="summary-"]');
+    const testids = Array.from(cells).map((c) => c.getAttribute('data-testid'));
+    expect(testids).toEqual([
+      'summary-duration',
+      'summary-sets',
+      'summary-volume',
+      'summary-kcal',
+    ]);
+    expect(screen.getByTestId('summary-duration')).toHaveTextContent('Durata');
+    expect(screen.getByTestId('summary-sets')).toHaveTextContent('Seturi logate');
+    expect(screen.getByTestId('summary-volume')).toHaveTextContent('Volum total');
+    expect(screen.getByTestId('summary-kcal')).toHaveTextContent('Kcal estimate');
+  });
 });
 
 describe('PostSummary — stats parsing', () => {

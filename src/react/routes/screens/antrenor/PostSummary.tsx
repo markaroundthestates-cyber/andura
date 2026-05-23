@@ -243,12 +243,15 @@ export function PostSummary(): JSX.Element {
         </div>
       )}
 
-      {/* F8 stats grid 4-cell */}
+      {/* F8 stats grid 4-cell — §F-post-summary-06 (LOW chat5 Wave 10) ordine
+         + labels mockup verbatim L1654-1671: Durata / Seturi logate / Volum
+         total / Kcal estimate (mockup ordine reflects Gigel scan-flow timp →
+         volum efort → estimate calorii). */}
       <div className="grid grid-cols-2 gap-3 mb-6" data-testid="summary-stats-grid">
-        <StatCell label="Seturi" value={sets.toString()} testId="summary-sets" />
         <StatCell label="Durata" value={`${dur} min`} testId="summary-duration" />
-        <StatCell label="Tonaj" value={`${formatKg(volume)} kg`} testId="summary-volume" />
-        <StatCell label="Kcal" value={kcal.toString()} testId="summary-kcal" />
+        <StatCell label="Seturi logate" value={sets.toString()} testId="summary-sets" />
+        <StatCell label="Volum total" value={`${formatKg(volume)} kg`} testId="summary-volume" />
+        <StatCell label="Kcal estimate" value={kcal.toString()} testId="summary-kcal" />
       </div>
 
       {/* §F-post-summary-03 Grupe musculare pills — mockup L1673-1680.
