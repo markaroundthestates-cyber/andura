@@ -27,6 +27,6 @@ jobs:
         with:
           comment-pr: true
           upload-results: true
-          claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
+          claude-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude-model: claude-opus-4-1-20250805
           exclude-directories: 'node_modules,dist,.obsidian,99-archive,📥_inbox,📤_outbox'
