@@ -87,7 +87,11 @@ describe('Antrenor home — base render', () => {
 
   it('renders CoachTodayCard cand schedContext=workout', () => {
     renderAntrenor();
-    expect(screen.getByText(/Pull \(spate & biceps\)/i)).toBeInTheDocument();
+    // MED-CODE-21 chat5 — generic non-claim fallback (no hardcoded
+    // muscle-group claim, no '&' per D-LEGACY-064).
+    expect(screen.getByText(/Antrenamentul de azi/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Pull \(spate/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/&/)).not.toBeInTheDocument();
   });
 
   it('§A001 wire CoachTodayCard dynamic din plannedWorkout aggregate', async () => {
@@ -95,7 +99,7 @@ describe('Antrenor home — base render', () => {
       readiness: null,
       fatigue: null,
       plannedWorkout: {
-        workoutTitle: 'Push (piept & umeri)',
+        workoutTitle: 'Push (piept si umeri)',
         exerciseCount: 6,
         estimatedDuration: 52,
         intensityMod: 'normal',
@@ -110,7 +114,7 @@ describe('Antrenor home — base render', () => {
       source: 'engine',
     });
     renderAntrenor();
-    expect(await screen.findByText(/Push \(piept & umeri\)/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Push \(piept si umeri\)/i)).toBeInTheDocument();
     expect(screen.getByText(/~ 52 min/i)).toBeInTheDocument();
     expect(screen.getByText(/6 exercitii/i)).toBeInTheDocument();
   });

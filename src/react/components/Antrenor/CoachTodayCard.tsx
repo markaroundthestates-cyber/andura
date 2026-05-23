@@ -67,7 +67,12 @@ function formatDaysSinceRo(days: number): string {
 
 export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   const navigate = useNavigate();
-  const title = workout?.workoutTitle ?? 'Pull (spate & biceps)';
+  // MED-CODE-21 chat5 — generic non-claim fallback. Prior 'Pull (spate &
+  // biceps)' was Bugatti truth violation (hardcoded muscle-group claim shown
+  // to ALL users regardless of actual plan) + D-LEGACY-064 violation (& vs
+  // 'si'). Same pattern ca HIGH-CODE-03 quote engine-wire (Wave 9 74650a5f) —
+  // here render-only fallback so generic copy suffices.
+  const title = workout?.workoutTitle ?? 'Antrenamentul de azi';
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
   // HIGH-CODE-03 chat5 — engine-driven quote replaces hardcoded muscle-group
