@@ -28,6 +28,14 @@
 // functie de cauza." Mockup pozitiv (instructional + behavior trigger) vs
 // prod technical-warning. Aliniaza tone Suflet Andura voice warm-direct.
 //
+// §F-energy-cause-03 (MED chat5 Wave 19) — layout vertical stack mockup
+// verbatim andura-clasic.html#L904 (flex-direction:column; gap:10px;).
+// Prod avea grid 2-col compact (mai dens vizual pe ecran). Mockup full-
+// width single-column = scan-pattern mai lent dar etichete mai lizibile
+// + buton mai larg pentru thumb-reach Maria 65. Gigel Test: vertical scan
+// natural cititor (sus-jos), tap mai sigur cu buton wide. Aliniaza
+// taxonomy display cu mockup-intent UX.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-010 anti-force-typing
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -101,7 +109,7 @@ export function EnergyCause(): JSX.Element {
         <p className="text-base text-ink2 mb-6">
           Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea.
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-2.5">
           {CAUSE_OPTIONS.map(({ label, Icon }) => (
             <button
               key={label}
