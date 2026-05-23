@@ -121,16 +121,23 @@ export async function trackEvent(eventName, {
   try {
     const idToken = await getIdToken().catch(() => null);
     if (!idToken) return { ok: false, error: 'no_auth' };
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${TELEMETRY_DOC_PATH}?updateMask.fieldPaths=${encodeURIComponent(eventName)}`;
+    // Firestore REST `documents:commit` endpoint = singular path care suporta
+    // updateTransforms (PATCH `documents.patch` accepta DOAR `fields`, NU
+    // fieldTransforms → fix MED-CODE-26: payload PATCH cu fields:{} era no-op
+    // silent, counters NEVER incremented since trackEvent wire LANDED).
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:commit`;
+    const docName = `projects/${projectId}/databases/(default)/documents/${TELEMETRY_DOC_PATH}`;
+    const { transforms } = buildIncrementPayload(eventName);
     const payload = {
-      fields: {},
-      // Firestore REST API uses `writes[].transform.fieldTransforms` shape;
-      // standard PATCH path with updateMask.fieldPaths increments via
-      // dedicated commit endpoint — kept simple here cu fieldTransforms
-      // documented in payload helper. Server-side rules validate keys.
+      writes: [
+        {
+          update: { name: docName, fields: {} },
+          updateTransforms: transforms,
+        },
+      ],
     };
     const r = await fetchImpl(url, {
-      method: 'PATCH',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${idToken}`,

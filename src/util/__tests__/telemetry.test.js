@@ -119,8 +119,10 @@ describe('§MED-1 trackEvent — telemetryOptIn consent gate parity', () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     // Firestore PATCH endpoint contine fieldPath
     const [url, init] = fetchImpl.mock.calls[0];
-    expect(url).toContain('auth_signin_success');
-    expect(init.method).toBe('PATCH');
+    expect(url).toMatch(/documents:commit$/);
+    expect(init.method).toBe('POST');
+    const body = JSON.parse(init.body);
+    expect(body.writes[0].updateTransforms[0].fieldPath).toBe('auth_signin_success');
     localStorage.clear();
   });
 
@@ -176,5 +178,55 @@ describe('§MED-1 trackEvent — telemetryOptIn consent gate parity', () => {
     useSettingsStore.getState().reset();
     const r = await trackEvent('not_an_event');
     expect(r.error).toBe('opt_out'); // gate first, unknown_event nu se ajunge
+  });
+});
+
+describe('trackEvent — Firestore commit payload shape (MED-CODE-26 fix)', () => {
+  beforeEach(() => {
+    useSettingsStore.getState().reset();
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    localStorage.setItem('firebase-id-token', 'fake-token');
+    localStorage.setItem('firebase-uid', 'fake-uid');
+    localStorage.setItem('firebase-id-token-expiry', String(Date.now() + 5 * 60_000));
+  });
+  afterEach(() => {
+    localStorage.clear();
+    useSettingsStore.getState().reset();
+  });
+
+  it('uses :commit endpoint POST cu writes[].updateTransforms', async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+    const r = await trackEvent(EVENTS.MERGE_FORK_TELEFON, { fetchImpl });
+    expect(r.ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledOnce();
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(url).toMatch(/documents:commit$/);
+    expect(init.method).toBe('POST');
+    const body = JSON.parse(init.body);
+    expect(body.writes).toHaveLength(1);
+    expect(body.writes[0].updateTransforms).toEqual([
+      { fieldPath: 'merge_fork_telefon', increment: { integerValue: '1' } },
+    ]);
+    expect(body.writes[0].update.name).toMatch(/_telemetry\/global$/);
+    expect(body.writes[0].update.fields).toEqual({});
+  });
+
+  it('fieldPath matches event key pentru each whitelisted event', async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+    for (const eventName of Object.values(EVENTS)) {
+      fetchImpl.mockClear();
+      await trackEvent(eventName, { fetchImpl });
+      const body = JSON.parse(fetchImpl.mock.calls[0][1].body);
+      expect(body.writes[0].updateTransforms[0].fieldPath).toBe(eventName);
+      expect(body.writes[0].updateTransforms[0].increment.integerValue).toBe('1');
+    }
+  });
+
+  it('unknown event NU triggers fetch (whitelist gate precedes write)', async () => {
+    const fetchImpl = vi.fn(async () => ({ ok: true, status: 200 }));
+    const r = await trackEvent('not_whitelisted_evil', { fetchImpl });
+    expect(r.ok).toBe(false);
+    expect(r.error).toBe('unknown_event');
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });
