@@ -20,7 +20,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Clock, Layers, TrendingUp, Flame, Dumbbell } from 'lucide-react';
+import { Clock, Layers, TrendingUp, Flame, Dumbbell, Check } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
@@ -246,12 +246,19 @@ export function WorkoutPreview(): JSX.Element {
           „{coachLine}"
         </p>
       )}
+      {/* §F-workout-preview-05 (HIGH chat5 Wave 15) — CTA mockup verbatim
+          andura-clasic.html#L993-995 (confirmation framing + check icon):
+          "Incepe antrenament" → "Confirma, incep" + Check icon prefix.
+          Confirmation tone reduces accidental tap pe preview screen +
+          intent-acknowledgement pattern reglaj Daniel 2026-05-12 §preview-cta. */}
       <button
         type="button"
         onClick={handleStart}
-        className="w-full py-4 bg-brick text-paper rounded-xl text-base font-semibold"
+        data-testid="preview-start-cta"
+        className="w-full flex items-center justify-center gap-2 py-4 bg-brick text-paper rounded-xl text-base font-semibold"
       >
-        Incepe antrenament
+        <Check className="w-5 h-5" aria-hidden="true" />
+        Confirma, incep
       </button>
     </section>
   );

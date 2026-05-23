@@ -51,8 +51,10 @@ describe('WorkoutPreview — base render', () => {
   });
 
   it('renders Start antrenament CTA', () => {
+    // §F-workout-preview-05 (HIGH chat5 Wave 15) — CTA mockup verbatim
+    // "Confirma, incep" + Check icon (confirmation framing andura-clasic.html#L993).
     renderPreview();
-    expect(screen.getByRole('button', { name: /Incepe antrenament/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Confirma, incep/i })).toBeInTheDocument();
   });
 
   it('renders intensity banner cu role=status', () => {
@@ -134,8 +136,9 @@ describe('WorkoutPreview — duration + volume estimates', () => {
 
 describe('WorkoutPreview — navigation', () => {
   it('Start antrenament navigates la /app/antrenor/workout', () => {
+    // §F-workout-preview-05 — CTA "Confirma, incep" mockup verbatim.
     renderPreview({ intensityMod: 'normal' });
-    fireEvent.click(screen.getByRole('button', { name: /Incepe antrenament/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
     expect(screen.getByTestId('probe')).toHaveAttribute(
       'data-pathname',
       '/app/antrenor/workout'
