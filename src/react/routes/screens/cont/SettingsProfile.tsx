@@ -92,7 +92,7 @@ export function SettingsProfile(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Date personale
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <LabelRow label="Varsta">
             <input
               type="number"
@@ -143,7 +143,7 @@ export function SettingsProfile(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Antrenament
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <SelectRow label="Obiectiv" htmlFor="profile-goal-select">
             <select
               id="profile-goal-select"

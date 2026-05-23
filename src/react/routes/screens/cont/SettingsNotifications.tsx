@@ -196,7 +196,7 @@ export function SettingsNotifications(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Frecventa
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {FREQUENCY_OPTIONS.map((opt, idx) => (
             <button
               key={opt.value}
@@ -260,7 +260,7 @@ export function SettingsNotifications(): JSX.Element {
           Antrenament
         </p>
         <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
           data-testid="notif-events-antrenament"
         >
           {NOTIF_EVENTS_ANTRENAMENT.map((ev, idx) => (
@@ -279,7 +279,7 @@ export function SettingsNotifications(): JSX.Element {
           Coaching
         </p>
         <div
-          className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4"
+          className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
           data-testid="notif-events-coaching"
         >
           {NOTIF_EVENTS_COACHING.map((ev, idx) => (

@@ -131,7 +131,7 @@ export function Cont(): JSX.Element {
           >
             {section.title}
           </p>
-          <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+          <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
             {section.rows.map((row, idx) => {
               const Icon = row.Icon;
               const isLast = idx === section.rows.length - 1;

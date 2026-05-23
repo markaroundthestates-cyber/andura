@@ -49,7 +49,7 @@ export function SettingsAppearance(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Tema
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {THEME_OPTIONS.map((opt, idx) => {
             const Icon = opt.Icon;
             const selected = theme === opt.value;
@@ -78,7 +78,7 @@ export function SettingsAppearance(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Bara de jos
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
             const selected = navStyle === opt.value;
             return (
@@ -101,7 +101,7 @@ export function SettingsAppearance(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mt-4 mb-2">
           Paleta
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           <button
             type="button"
             data-testid="settings-themes-link"

@@ -42,7 +42,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Unitati
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {UNIT_OPTIONS.map((opt, idx) => {
             const selected = unit === opt.value;
             return (
@@ -64,7 +64,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Inceput saptamana
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {WEEK_START_OPTIONS.map((opt, idx) => {
             const selected = weekStart === opt.value;
             return (
@@ -100,7 +100,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Avansat
         </p>
-        <div className="bg-paper2 border border-line rounded-xl overflow-hidden">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           <button
             type="button"
             onClick={() => navigate(gotoPath('reset-coach-confirm'))}
