@@ -5,18 +5,52 @@
 // — only LastSessionSummary aggregate saved; per-exercise sets cleared on
 // finishSession). Phase 6+ adds per-exercise drill-down când history
 // persisted la sessionsHistory aggregate (currently scope: aggregate only).
+//
+// §F-istoric-08 (LOW chat5 Wave 14) — date format Romanian weekday cross-screen
+// consistency cu Istoric.tsx list (mockup andura-clasic.html#L2162-2178
+// azi/marti/duminica). Manual map (NU Intl.DateTimeFormat — locale ICU emite
+// diacritice marti/sambata violand D-LEGACY-064). Format "<Weekday> · <DD>
+// <mon>" pentru cititor casnic; numeric DD.MM.YYYY retras (jargon-numeric).
 
 import type { JSX } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, History } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 
+// §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
+// Sunday-first index (Date.getDay() returns 0=Sunday). Mirror Istoric.tsx
+// list pentru cross-screen consistency.
+const WEEKDAYS_RO = [
+  'duminica',
+  'luni',
+  'marti',
+  'miercuri',
+  'joi',
+  'vineri',
+  'sambata',
+] as const;
+
+const MONTHS_RO = [
+  'ian',
+  'feb',
+  'mar',
+  'apr',
+  'mai',
+  'iun',
+  'iul',
+  'aug',
+  'sep',
+  'oct',
+  'noi',
+  'dec',
+] as const;
+
 function formatDate(ts: number): string {
   const d = new Date(ts);
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
-  return `${day}.${month}.${year}`;
+  const weekday = WEEKDAYS_RO[d.getDay()];
+  const day = d.getDate();
+  const month = MONTHS_RO[d.getMonth()];
+  return `${weekday} · ${day} ${month}`;
 }
 
 function formatTime(ts: number): string {
