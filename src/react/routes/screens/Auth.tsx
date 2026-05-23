@@ -245,6 +245,20 @@ export function Auth(): JSX.Element {
               <FlaskConical className="w-4 h-4" aria-hidden="true" />
               Incearca fara cont
             </button>
+            {/* §F-auth-04 sub-gap (MED chat5 Wave 16) — Skip-auth risk-note
+                mockup andura-clasic.html#L462-464 verbatim. Anchoreaza
+                consimtamint informat Maria 65: datele local-only,
+                pierdere posibila (telefon resetat / cache sters / reinstall).
+                Bugatti UX safety: anti-paternalism + transparenta inainte de
+                onboarding T0 commit. Asociat F-auth-04 LANDED ledger
+                (B006 button) — closing gap risk-note dintr-acelasi mockup. */}
+            <p
+              className="mt-2 text-xs text-ink3 leading-relaxed text-center"
+              data-testid="auth-skip-risk-note"
+            >
+              Datele se salveaza doar pe acest dispozitiv. Risti sa le pierzi
+              (telefon resetat, browser cache sters, app reinstalat).
+            </p>
 
             {showMockLogin && (
               <button
