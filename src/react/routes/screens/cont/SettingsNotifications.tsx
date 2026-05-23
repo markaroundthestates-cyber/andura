@@ -19,6 +19,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import type { NotificationFrequency } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Toggle } from '../../../components/Toggle';
 
 type NotifPermission = 'default' | 'granted' | 'denied' | 'unsupported';
 
@@ -148,19 +149,12 @@ export function SettingsNotifications(): JSX.Element {
 
         <div className="bg-paper2 border border-line rounded-xl p-4 mb-2 flex items-center justify-between">
           <span className="text-sm text-ink">Notificari active</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={enabled}
-            aria-label="Activeaza notificari"
-            data-testid="notif-master-toggle"
-            onClick={() => { void handleToggle(); }}
-            className={`w-12 h-6 rounded-full transition relative ${enabled ? 'bg-brick' : 'bg-line'}`}
-          >
-            <span
-              className={`absolute top-0.5 w-5 h-5 rounded-full bg-paper transition ${enabled ? 'left-6' : 'left-0.5'}`}
-            />
-          </button>
+          <Toggle
+            checked={enabled}
+            onToggle={() => { void handleToggle(); }}
+            ariaLabel="Activeaza notificari"
+            testId="notif-master-toggle"
+          />
         </div>
 
         {permission === 'denied' && enabled && (
@@ -334,20 +328,13 @@ function NotifEventRow({ event, checked, disabled, isLast, onToggle }: NotifEven
         <p className="text-sm font-semibold text-ink mb-0.5">{event.title}</p>
         <p className="text-xs text-ink2 leading-snug">{event.desc}</p>
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={event.title}
-        data-testid={event.testId}
+      <Toggle
+        checked={checked}
+        onToggle={onToggle}
+        ariaLabel={event.title}
+        testId={event.testId}
         disabled={disabled}
-        onClick={onToggle}
-        className={`flex-shrink-0 w-12 h-6 rounded-full transition relative before:absolute before:-inset-2.5 before:content-[''] disabled:cursor-not-allowed ${checked ? 'bg-brick' : 'bg-line'}`}
-      >
-        <span
-          className={`absolute top-0.5 w-5 h-5 rounded-full bg-paper transition ${checked ? 'left-6' : 'left-0.5'}`}
-        />
-      </button>
+      />
     </div>
   );
 }

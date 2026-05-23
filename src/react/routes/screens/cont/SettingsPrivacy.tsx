@@ -9,7 +9,10 @@ import { ShieldCheck } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Toggle } from '../../../components/Toggle';
 
+// Pass 9 polish — ToggleRow shell wraps shared <Toggle> per mockup parity
+// (.sw canonical L2973-2976). Toggle button extracted la components/Toggle.
 interface ToggleRowProps {
   testId: string;
   title: string;
@@ -25,21 +28,12 @@ function ToggleRow({ testId, title, desc, checked, onToggle }: ToggleRowProps): 
         <p className="text-sm font-medium text-ink mb-0.5">{title}</p>
         <p className="text-xs text-ink2 leading-snug">{desc}</p>
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={title}
-        data-testid={testId}
-        onClick={onToggle}
-        className={`flex-shrink-0 w-12 h-6 rounded-full transition relative before:absolute before:-inset-2.5 before:content-[''] ${checked ? 'bg-brick' : 'bg-line'}`}
-      >
-        {/* §B036 audit fix (UI-REVIEW #3) — invisible hit area expand via before:
-            pseudo (-inset-2.5 = +10px ALL sides → 68×44px tap target ≥44 Maria 65). */}
-        <span
-          className={`absolute top-0.5 w-5 h-5 rounded-full bg-paper transition ${checked ? 'left-6' : 'left-0.5'}`}
-        />
-      </button>
+      <Toggle
+        checked={checked}
+        onToggle={onToggle}
+        ariaLabel={title}
+        testId={testId}
+      />
     </div>
   );
 }
