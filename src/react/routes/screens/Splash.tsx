@@ -5,6 +5,12 @@
 // §F-splash-06 (LOW chat5 Wave 10) — padding asimetric mockup verbatim
 // 48/28/32 (pt-12 px-7 pb-8) per andura-clasic.html#L403 (mai mult top,
 // custom horizontal). Aliniaza ritmul vertical splash cu intentia mockup.
+//
+// §F-splash-08 (MED chat5 Wave 12) — wordmark Inter sans (NU Lora serif).
+// Mockup andura-clasic.html#L408 nu seteaza font-family (inherit body
+// Inter); prod avea font-serif override → Lora redenderat la h1. Sterg
+// font-serif → brand identity sans-serif aliniat mockup. Tracking-tight
+// + font-bold preserva fidelitatea Inter wordmark.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +28,7 @@ export function Splash(): JSX.Element {
       <div className="w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold mb-6 tracking-tight">
         A
       </div>
-      <h1 className="text-[42px] font-bold text-ink mb-2 tracking-tight font-serif">
+      <h1 className="text-[42px] font-bold text-ink mb-2 tracking-tight">
         Andura
       </h1>
       <p className="text-lg text-ink2 mb-8 max-w-xs">
