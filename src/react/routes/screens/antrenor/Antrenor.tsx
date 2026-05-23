@@ -110,7 +110,9 @@ export function Antrenor(): JSX.Element {
       data-testid="antrenor-home"
       aria-label="Antrenor home"
     >
-      <h1 className="text-2xl font-semibold text-ink mb-4">Antrenor</h1>
+      {/* §F-pass4-fontweight-01 (LOW chat5) — title font-weight 600 → 700 mockup
+          andura-clasic.html#L734 (font-weight:700). */}
+      <h1 className="text-2xl font-bold text-ink mb-4">Antrenor</h1>
 
       {pausedSnap && (
         <ResumeSessionCard
