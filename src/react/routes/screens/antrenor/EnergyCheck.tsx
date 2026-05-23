@@ -19,6 +19,14 @@
 // preserve in body for user familiarity (no breaking semantic test on body
 // text).
 //
+// §F-energy-check-04 (MED chat5 Wave 19) — body intro coach transparency
+// per mockup andura-clasic.html#L881 "Coach-ul ajusteaza intensitatea pe
+// baza energiei tale." Prod 5-state extends mockup 3-state (Excelent/Bine/
+// Normal/Slabit/Obosit traffic-light bucketed plus/normal/minus) — omit
+// "3 stari simple" mockup hint (inaccurate vs prod 5-option granularity);
+// preserve universal transparency signal "Coach-ul ajusteaza intensitatea
+// pe baza energiei tale." Anti-paternalism positioning Suflet Andura.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-021 Energy Adjustment ±15% range
 //   - DECISIONS.md §D-LEGACY-061 anti-paternalism
@@ -76,7 +84,10 @@ export function EnergyCheck(): JSX.Element {
         testIdBack="energy-check-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-semibold text-ink mb-6">Cum te simti azi?</h2>
+      <h2 className="text-2xl font-semibold text-ink mb-2">Cum te simti azi?</h2>
+      <p className="text-base text-ink2 mb-6">
+        Coach-ul ajusteaza intensitatea pe baza energiei tale.
+      </p>
       <div className="flex flex-col gap-3">
         {ENERGY_OPTIONS.map((opt) => (
           <button
