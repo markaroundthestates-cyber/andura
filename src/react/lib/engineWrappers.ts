@@ -719,13 +719,21 @@ export function getPatternsBanner(): PatternBanner[] {
 
 // ── Proactive Alerts wrapper ────────────────────────────────────────────
 
+export type ProactiveAlertSeverity = 'info' | 'warn' | 'urgent';
+
 export interface ProactiveAlert {
   id: string;
   text: string;
-  severity: 'info' | 'warn' | 'urgent';
+  severity: ProactiveAlertSeverity;
 }
 
-const SEVERITY_MAP: Record<string, ProactiveAlert['severity']> = {
+// LOW-CODE-13 fix — typed SEVERITY_MAP + named DEFAULT centralize magic
+// constants previously scattered (inline `'info'` literal in lookup fallback).
+// Engine severity strings ('warning' | 'info' | 'success') → UI 3-tier
+// (ProactiveAlertSeverity). 'success' collapses to 'info' (NU urgent UI bias).
+// Unknown/missing engine severity → DEFAULT_PROACTIVE_ALERT_SEVERITY ('info').
+const DEFAULT_PROACTIVE_ALERT_SEVERITY: ProactiveAlertSeverity = 'info';
+const SEVERITY_MAP: Record<string, ProactiveAlertSeverity> = {
   warning: 'warn',
   info: 'info',
   success: 'info', // success collapses to info în UI (NU urgent)
@@ -747,7 +755,7 @@ export function getProactiveAlerts(ctx: Record<string, unknown> = {}): Proactive
     return raw.map((alert, idx) => ({
       id: `${alert?.type ?? 'unknown'}_${idx}`,
       text: alert?.message ?? '',
-      severity: SEVERITY_MAP[alert?.severity] ?? 'info',
+      severity: SEVERITY_MAP[alert?.severity] ?? DEFAULT_PROACTIVE_ALERT_SEVERITY,
     }));
   } catch (e) {
     console.warn('[engineWrappers] getProactiveAlerts failed:', e);
