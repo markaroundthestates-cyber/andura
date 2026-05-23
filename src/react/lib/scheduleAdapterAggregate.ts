@@ -108,13 +108,19 @@ export async function composePlannedWorkoutToday(
     const warmup = warmupRaw !== null && warmupLine.length > 0
       ? { line: warmupLine, durationMin: warmupDuration }
       : null;
+    // LOW-CODE-09 fix: nullish coalescing (??) NU falsy (||) — preserve
+    // legitimate 0/empty engine values (volumeKg=0 valid, estimatedDurationMin=0
+    // valid if engine ever emits, workoutTitle='' indicates shape mismatch
+    // surfaced explicit). Engine emits concrete defaults
+    // src/engine/schedule/scheduleAdapter.js:493-495 → fallback rarely fires;
+    // when it does, signals null/undefined NU coerced 0/empty.
     return {
-      workoutTitle: plan.workoutTitle || 'Antrenament azi',
+      workoutTitle: plan.workoutTitle ?? 'Antrenament azi',
       exerciseCount: exercises.length,
-      estimatedDuration: plan.estimatedDurationMin || 50,
+      estimatedDuration: plan.estimatedDurationMin ?? 50,
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
       exercises,
-      volumeKg: plan.volumeKg || 0,
+      volumeKg: plan.volumeKg ?? 0,
       warmup,
     };
   } catch (e) {

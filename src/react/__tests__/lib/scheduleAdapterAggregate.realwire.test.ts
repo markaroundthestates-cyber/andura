@@ -183,3 +183,104 @@ describe('scheduleAdapterAggregate — week boundary + storage key safety', () =
     expect(getWeekStartIso(TUESDAY_2026_05_19)).toBe('2026-05-18');
   });
 });
+
+// LOW-CODE-09 — nullish coalescing preserves legitimate 0/empty engine values
+// (anti-falsy-coercion silent shape mismatch). Mocks getDailyWorkout pentru
+// scenarii sintetice care altfel pe pipeline real nu apar (engine emits
+// concrete defaults src/engine/schedule/scheduleAdapter.js:493-495).
+describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-09', () => {
+  const STUB_PLAN_BASE = {
+    type: 'training' as const,
+    sessionType: 'FULL_UPPER',
+    warmup: null,
+    exercises: [] as Array<{ name: string; sets: number }>,
+    intensityModifier: null,
+    volumeTargets: null,
+    specializationTarget: null,
+    deloadState: 'IDLE',
+  };
+
+  it('preserves volumeKg=0 from engine (NOT coerced to fallback)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      estimatedDurationMin: 50,
+      volumeKg: 0,
+      workoutTitle: 'Antrenament azi',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.volumeKg).toBe(0);
+  });
+
+  it('preserves estimatedDuration=0 from engine when explicitly emitted (NOT coerced to 50)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      estimatedDurationMin: 0,
+      volumeKg: 100,
+      workoutTitle: 'Antrenament azi',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.estimatedDuration).toBe(0);
+  });
+
+  it('preserves volumeKg=0 + estimatedDuration=42 + workoutTitle non-empty simultaneously', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      estimatedDurationMin: 42,
+      volumeKg: 0,
+      workoutTitle: 'Antrenament Push',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.volumeKg).toBe(0);
+    expect(out!.estimatedDuration).toBe(42);
+    expect(out!.workoutTitle).toBe('Antrenament Push');
+  });
+
+  it('falls back to "Antrenament azi" when engine workoutTitle null (NU empty string coerce)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      estimatedDurationMin: 50,
+      volumeKg: 0,
+      // @ts-expect-error — sintetic null testeaza null path; engine real
+      // garanteaza string non-null per scheduleAdapter.js:495.
+      workoutTitle: null,
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.workoutTitle).toBe('Antrenament azi');
+  });
+
+  it('falls back to 50 when engine estimatedDurationMin null/undefined (NU 0 coerce)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      // @ts-expect-error — sintetic undefined testeaza nullish path
+      estimatedDurationMin: undefined,
+      volumeKg: 0,
+      workoutTitle: 'Antrenament azi',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.estimatedDuration).toBe(50);
+  });
+
+  it('falls back to 0 when engine volumeKg null/undefined (idempotent for 0 case)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      estimatedDurationMin: 50,
+      // @ts-expect-error — sintetic undefined testeaza nullish path
+      volumeKg: undefined,
+      workoutTitle: 'Antrenament azi',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.volumeKg).toBe(0);
+  });
+});
