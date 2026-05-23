@@ -11,6 +11,11 @@ export interface PRRecord {
   exerciseName: string;
   kg: number;
   reps: number;
+  // MED-CODE-19 fix 2026-05-23: per-set Epley estimate (kg * (1 + reps/30)),
+  // NU ex.peakOneRM (exercise-level max across ALL sets in session). Display
+  // surface "{kg} kg x {reps} (~{X} kg 1RM)" reads as THIS set's 1RM →
+  // semantic must match value. Prior bug = data integrity user-facing
+  // (multi-set exercises showed inflated peak instead of actual set 1RM).
   oneRMEstimate: number;
   sessionTs: number;
   sessionTitle: string;
@@ -24,6 +29,12 @@ export interface StreakStats {
 }
 
 const MS_PER_DAY = 86_400_000;
+
+/** Epley 1RM estimate: kg * (1 + reps/30), 1 decimal precision. */
+function setOneRMEstimate(kg: number, reps: number): number {
+  if (kg <= 0 || reps <= 0) return 0;
+  return Math.round(kg * (1 + reps / 30) * 10) / 10;
+}
 
 /** Extract all PR records din sessionsHistory cu exercises breakdown. */
 export function getPRHistoryAll(): PRRecord[] {
@@ -39,7 +50,7 @@ export function getPRHistoryAll(): PRRecord[] {
             exerciseName: ex.exerciseName,
             kg: set.kg,
             reps: set.reps,
-            oneRMEstimate: ex.peakOneRM,
+            oneRMEstimate: setOneRMEstimate(set.kg, set.reps),
             sessionTs: session.ts,
             sessionTitle: session.title,
           });

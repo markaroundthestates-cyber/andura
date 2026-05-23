@@ -69,6 +69,47 @@ describe('getPRHistoryAll', () => {
     expect(prs[1]!.exerciseId).toBe('bench');
   });
 
+  it('MED-CODE-19: oneRMEstimate is per-set Epley NU exercise-level peak', () => {
+    // Multi-set scenario unde PR set este NU peak set — exercise has 2 PR
+    // sets, dar peakOneRM = max across all sets (different from each set's
+    // own 1RM). Bug pre-fix: ALL PR records got ex.peakOneRM (wrong).
+    // Post-fix: each PR record reflects its OWN set's Epley 1RM.
+    const now = Date.now();
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Push',
+          meta: 'x',
+          ts: now,
+          exercises: [
+            {
+              exerciseId: 'bench',
+              exerciseName: 'Bench Press',
+              sets: [
+                // 50 kg x 5 → Epley = 50 * (1 + 5/30) = 58.3
+                { kg: 50, reps: 5, rating: 'greu', timestamp: now, isPR: true },
+                // 60 kg x 3 → Epley = 60 * (1 + 3/30) = 66.0 (peak)
+                { kg: 60, reps: 3, rating: 'greu', timestamp: now, isPR: true },
+              ],
+              totalVolume: 430,
+              peakOneRM: 66.0, // exercise-level peak = max set (60x3)
+            },
+          ],
+        },
+      ],
+    });
+    const prs = getPRHistoryAll();
+    expect(prs).toHaveLength(2);
+    // PR record for 50x5 set must reflect its OWN 1RM (58.3), NU peakOneRM (66.0).
+    const pr50 = prs.find((p) => p.kg === 50 && p.reps === 5);
+    expect(pr50).toBeDefined();
+    expect(pr50!.oneRMEstimate).toBeCloseTo(58.3, 1);
+    // PR record for 60x3 happens to match peak (degenerate). Verify per-set value.
+    const pr60 = prs.find((p) => p.kg === 60 && p.reps === 3);
+    expect(pr60).toBeDefined();
+    expect(pr60!.oneRMEstimate).toBeCloseTo(66.0, 1);
+  });
+
   it('skips non-PR sets', () => {
     useWorkoutStore.setState({
       sessionsHistory: [
