@@ -52,7 +52,7 @@ export function CoachRestCard({
   const coachLine = composeCoachLine(restReason ?? null);
   return (
     <div
-      className="rounded-2xl p-4 mb-2.5 border"
+      className="rounded-[18px] p-[18px] mb-2.5 border"
       style={{
         background: 'var(--status-neutral-bg)',
         borderColor: 'var(--status-neutral-border)',

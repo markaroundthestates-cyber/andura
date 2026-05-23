@@ -77,7 +77,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-2.5"
+      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-[18px] p-[18px] mb-2.5"
       role="region"
       aria-label="Coach-ul recomanda azi"
     >
