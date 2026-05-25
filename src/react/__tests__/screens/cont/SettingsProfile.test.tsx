@@ -186,6 +186,40 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
   });
 });
 
+describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04)', () => {
+  it('renders Tinte personale section heading', () => {
+    renderScreen();
+    expect(screen.getByText('Tinte personale')).toBeInTheDocument();
+  });
+
+  it('renders greutate tinta + pana in inputs', () => {
+    renderScreen();
+    expect(screen.getByTestId('profile-target-weight-input')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-target-month-input')).toBeInTheDocument();
+  });
+
+  it('ETA hidden until luna tinta selected', () => {
+    renderScreen();
+    expect(screen.queryByTestId('profile-target-eta')).toBeNull();
+  });
+
+  it('ETA derivat din luna tinta viitoare', () => {
+    renderScreen();
+    // Luna tinta 18 luni in viitor — ETA pozitiv, deterministic indiferent de data.
+    const now = new Date();
+    const future = new Date(now.getFullYear(), now.getMonth() + 18, 1);
+    const ym = `${future.getFullYear()}-${String(future.getMonth() + 1).padStart(2, '0')}`;
+    fireEvent.change(screen.getByTestId('profile-target-month-input'), { target: { value: ym } });
+    expect(screen.getByTestId('profile-target-eta').textContent).toMatch(/Estimat in ~18 luni/);
+  });
+
+  it('ETA ascuns pentru luna tinta din trecut', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-target-month-input'), { target: { value: '2000-01' } });
+    expect(screen.queryByTestId('profile-target-eta')).toBeNull();
+  });
+});
+
 describe('SettingsProfile — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   it('no diacritics in UI rendered text', () => {
     const { container } = renderScreen();

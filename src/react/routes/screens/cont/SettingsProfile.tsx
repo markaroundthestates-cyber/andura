@@ -2,9 +2,10 @@
 // Mockup verbatim source: 04-architecture/mockups/andura-clasic.html
 // #screen-settings-profile (L2016-2057). Big 6 edit reads/writes
 // useOnboardingStore.data. Avatar initial + body composition section
-// (§F-pass2-settings-profile-03 mockup parity, local form state V1 —
-// onboardingStore NU are talie/gat/inaltime; persistence Phase 7+ cand
-// store extinde).
+// (§F-pass2-settings-profile-03) + targets section (§F-pass2-settings-
+// profile-04) mockup parity. Composition + targets = local form state V1 —
+// onboardingStore NU are talie/gat/inaltime/greutate-tinta; persistence
+// Phase 7+ cand store extinde.
 //
 // Sub-screen pattern Phase 6: sub-header back btn + heading + scroll body.
 
@@ -72,6 +73,13 @@ export function SettingsProfile(): JSX.Element {
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
   const bfAuto = estimateBF_USNavy(bfArgs);
+
+  // §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
+  // Greutate tinta + luna tinta ("Pana in") → ETA luni ramase. Local form
+  // state V1 (NU persistat — onboardingStore NU are aceste campuri).
+  const [targetWeight, setTargetWeight] = useState('');
+  const [targetMonth, setTargetMonth] = useState(''); // YYYY-MM din <input month>
+  const etaLabel = monthsUntil(targetMonth);
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -249,6 +257,46 @@ export function SettingsProfile(): JSX.Element {
           Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
         </p>
 
+        {/* §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
+            Greutate tinta + "Pana in" month picker → ETA luni ramase. Local
+            form state V1 — persistence Phase 7+ cand store extinde. */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+          Tinte personale
+        </p>
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-1">
+          <LabelRow label="Greutate tinta (kg)">
+            <input
+              type="number"
+              min={30}
+              max={250}
+              step={0.1}
+              inputMode="decimal"
+              autoComplete="off"
+              value={targetWeight}
+              onChange={(e) => setTargetWeight(e.target.value)}
+              data-testid="profile-target-weight-input"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            />
+          </LabelRow>
+          <LabelRow label="Pana in" isLast>
+            <input
+              type="month"
+              value={targetMonth}
+              onChange={(e) => setTargetMonth(e.target.value)}
+              data-testid="profile-target-month-input"
+              className="w-36 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-[13px]"
+            />
+          </LabelRow>
+        </div>
+        {etaLabel && (
+          <p
+            className="text-xs text-ink3 mb-4 px-1 leading-snug"
+            data-testid="profile-target-eta"
+          >
+            {etaLabel}
+          </p>
+        )}
+
         {/* §F-pass2-settings-profile-05 HIGH-BETA chat 4 Co-CTO decision: KEEP
             Antrenament section (Obiectiv + Frecventa + Experienta) onboarding
             fields surface in profile edit — value > strict mockup parity. User
@@ -325,6 +373,25 @@ export function SettingsProfile(): JSX.Element {
       </div>
     </section>
   );
+}
+
+/**
+ * §F-pass2-settings-profile-04 — ETA label din luna tinta ("Pana in").
+ * Input month = 'YYYY-MM'. Returneaza un text Gigel-friendly cu lunile ramase
+ * pana la luna tinta, sau null cand gol / data trecuta / invalid.
+ */
+function monthsUntil(targetMonth: string): string | null {
+  if (!targetMonth) return null;
+  const match = /^(\d{4})-(\d{2})$/.exec(targetMonth);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]); // 1-12
+  if (month < 1 || month > 12) return null;
+  const now = new Date();
+  const diff = (year - now.getFullYear()) * 12 + (month - 1 - now.getMonth());
+  if (diff < 0) return null;
+  if (diff === 0) return 'Tinta luna aceasta';
+  return `Estimat in ~${diff} ${diff === 1 ? 'luna' : 'luni'}`;
 }
 
 interface LabelRowProps {
