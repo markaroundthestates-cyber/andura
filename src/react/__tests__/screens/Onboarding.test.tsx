@@ -28,7 +28,7 @@ describe('Onboarding — Big 6 hard typing', () => {
   it('renders step 1 varsta input', () => {
     renderAt(1);
     expect(screen.getByTestId('onboarding-step-1')).toBeInTheDocument();
-    expect(screen.getByText(/Ce varsta ai/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cati ani ai/i)).toBeInTheDocument();
     expect(screen.getByTestId('onb-age-input')).toBeInTheDocument();
   });
 

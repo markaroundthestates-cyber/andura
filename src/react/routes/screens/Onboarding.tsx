@@ -5,8 +5,17 @@
 
 import type { JSX } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+  Sparkles,
+  Dumbbell,
+  Flame,
+  TrendingDown,
+  ShieldCheck,
+  HeartPulse,
+  Check,
+} from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
-import type { OnboardingData } from '../../stores/onboardingStore';
+import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
 import { toast } from '../../lib/toast';
 
 const TOTAL_STEPS = 8;
@@ -83,19 +92,35 @@ export function Onboarding(): JSX.Element {
       className="min-h-screen bg-paper text-ink flex flex-col p-6"
       data-testid={`onboarding-step-${stepNum}`}
     >
+      {/* MED — round DOTS per mockup andura-clasic.html L489-498 (.progress-dot
+          8px circle; current = brick + scale, done = brick, pending = line) +
+          "N din TOTAL" counter at row end. Replaces prior thin-bar fill. */}
       <div className="flex items-center gap-2 mb-8">
-        {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-          <div
-            key={i}
-            data-testid={`progress-dot-${i + 1}`}
-            data-active={i + 1 <= stepNum ? 'true' : 'false'}
-            className={`flex-1 h-1 rounded-full ${i + 1 <= stepNum ? 'bg-brick' : 'bg-line'}`}
-          />
-        ))}
+        <div className="flex-1 flex items-center gap-1.5">
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+            <div
+              key={i}
+              data-testid={`progress-dot-${i + 1}`}
+              data-active={i + 1 <= stepNum ? 'true' : 'false'}
+              className={`w-2 h-2 rounded-full ${
+                i + 1 === stepNum
+                  ? 'bg-ink scale-150'
+                  : i + 1 < stepNum
+                    ? 'bg-brick'
+                    : 'bg-line'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-xs text-ink3 font-medium">
+          {stepNum} din {TOTAL_STEPS}
+        </span>
       </div>
 
-      <p className="text-xs text-ink2 uppercase tracking-wide mb-2">
-        Pasul {stepNum} din {TOTAL_STEPS}
+      {/* MED — brick uppercase "Pasul N" kicker above the step heading per
+          mockup L502 (color #c8412e, uppercase, tracking-wide). */}
+      <p className="text-xs text-brick font-semibold uppercase tracking-wide mb-1">
+        Pasul {stepNum}
       </p>
 
       {stepNum === 1 && <Step1 value={data.age} onChange={(v) => setField('age', v)} />}
@@ -152,8 +177,8 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
     : null;
   return (
     <>
-      <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">Ce varsta ai?</h1>
-      <p className="text-sm text-ink2 mb-6">Ajustam programul pe varsta ta.</p>
+      <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">Cati ani ai?</h1>
+      <p className="text-sm text-ink2 mb-6">Ne ajuta sa adaptam intensitatea si recuperarea.</p>
       <input
         type="number"
         value={value ?? ''}
@@ -181,7 +206,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
       />
-      {error && (
+      {error ? (
         <p
           id="onb-age-error"
           role="alert"
@@ -190,6 +215,9 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         >
           {error}
         </p>
+      ) : (
+        // MED — helper line per mockup L565 "Intre 16 si 99 ani".
+        <p className="mt-2 text-xs text-ink3 text-center">Intre 16 si 99 ani</p>
       )}
     </>
   );
@@ -198,7 +226,8 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
 function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-6">Cum te identifici?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Sex biologic</h1>
+      <p className="text-sm text-ink2 mb-6">Influenteaza estimarea TDEE si ratele de recuperare.</p>
       {/* §6-M3 revert per Karpathy SF — aria-pressed valid pattern toggle
           select state pe <button>. role=radiogroup necesita arrow-key
           handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
@@ -214,7 +243,7 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
             aria-pressed={value === v}
             className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
-            <span className="font-medium">{v === 'm' ? 'Barbat' : 'Femeie'}</span>
+            <span className="font-medium">{v === 'm' ? 'Barbat (M)' : 'Femeie (F)'}</span>
           </button>
         ))}
       </div>
@@ -223,10 +252,12 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
 }
 
 // §B003/D-1b audit fix — Goal labels 6 values per mockup andura-clasic.html
-// L863-869. Auto = default (engine alege singur). Slabire (was 'definire'),
+// L507-531. Auto = default (engine alege singur). Slabire (was 'definire'),
 // Longevitate (was 'sanatate'). Mentenanta + Auto = NEW.
-const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' | 'longevitate', string> = {
-  auto: 'Auto · Coach-ul alege',
+type GoalKey = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' | 'longevitate';
+
+const GOAL_LABELS: Record<GoalKey, string> = {
+  auto: 'Auto',
   forta: 'Forta',
   masa: 'Masa musculara',
   slabire: 'Slabire',
@@ -234,78 +265,165 @@ const GOAL_LABELS: Record<'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' |
   longevitate: 'Longevitate / Sanatate',
 };
 
-function Step3({ value, onChange }: OptionStepProps<keyof typeof GOAL_LABELS>): JSX.Element {
+// HIGH chat6 — enriched goal rows per mockup L507-531: lucide icon + grey
+// descriptive subtitle pe fiecare optiune. Auto pre-recomandat (brick border
+// + "recomandat" badge + check affordance) restored din mockup parity strip.
+const GOAL_OPTIONS: Array<{
+  key: GoalKey;
+  Icon: typeof Sparkles;
+  subtitle: string;
+}> = [
+  { key: 'auto', Icon: Sparkles, subtitle: 'Coach-ul alege singur, se adapteaza in timp' },
+  { key: 'forta', Icon: Dumbbell, subtitle: 'Greutati mari, mai putine repetari' },
+  { key: 'masa', Icon: Flame, subtitle: 'Cresti musculatura vizibil' },
+  { key: 'slabire', Icon: TrendingDown, subtitle: 'Pierzi grasime, pastrezi muschi' },
+  { key: 'mentenanta', Icon: ShieldCheck, subtitle: 'Pastrezi forma actuala' },
+  { key: 'longevitate', Icon: HeartPulse, subtitle: 'Fit pe termen lung, fara efort extrem' },
+];
+
+function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
   return (
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">Ce vrei sa obtii?</h1>
       <p className="text-sm text-ink2 mb-6">Alegi unul. Poti schimba mai tarziu.</p>
       <div className="flex flex-col gap-3">
-        {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onChange(v)}
-            data-testid={`onb-goal-${v}`}
-            aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
-          >
-            <span className="font-medium">{GOAL_LABELS[v]}</span>
-          </button>
-        ))}
+        {GOAL_OPTIONS.map(({ key, Icon, subtitle }) => {
+          const selected = value === key;
+          // "Auto" recomandat: brick border cand neselectat inca (idle hint),
+          // brick fill cand selectat (consistent cu restul optiunilor).
+          const isAuto = key === 'auto';
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onChange(key)}
+              data-testid={`onb-goal-${key}`}
+              aria-pressed={selected}
+              className={`flex items-center gap-3 p-4 rounded-xl border text-left ${
+                selected
+                  ? 'bg-brick text-paper border-brick'
+                  : isAuto
+                    ? 'bg-paper2 border-2 border-brick text-ink'
+                    : 'bg-paper2 border-lineStrong text-ink'
+              }`}
+            >
+              <Icon
+                className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-paper' : isAuto ? 'text-brick' : 'text-ink2'}`}
+                aria-hidden="true"
+              />
+              <span className="flex-1">
+                <span className="block font-medium">
+                  {GOAL_LABELS[key]}
+                  {isAuto && (
+                    <span
+                      className={`ml-2 text-xs font-semibold ${selected ? 'text-paper' : 'text-brick'}`}
+                      data-testid="onb-goal-auto-badge"
+                    >
+                      recomandat
+                    </span>
+                  )}
+                </span>
+                <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
+                  {subtitle}
+                </span>
+              </span>
+              {selected && (
+                <Check
+                  className="w-5 h-5 flex-shrink-0 text-paper"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
     </>
   );
 }
 
-function Step4({ value, onChange }: OptionStepProps<'2' | '3' | '4' | '5'>): JSX.Element {
+// HIGH chat6 — enriched frequency rows per mockup L710-723: circular number
+// bubble + label + grey subtitle (recuperare guidance). Option set 2/3/4/5
+// preserved (testids + aria-labels invariant), converted din grid → vertical
+// stack-row pattern matching mockup.
+const FREQ_OPTIONS: Array<{ value: Frequency; label: string; subtitle: string }> = [
+  { value: '2', label: '2 zile', subtitle: 'Minim, recuperare ampla' },
+  { value: '3', label: '3 zile', subtitle: 'Incepem usor, recuperare ampla' },
+  { value: '4', label: '4 zile', subtitle: 'Ritm echilibrat' },
+  { value: '5', label: '5 zile', subtitle: 'Volum mare, atentie la recuperare' },
+];
+
+function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
   return (
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">Cat de des te antrenezi?</h1>
-      <p className="text-sm text-ink2 mb-6">Sesiuni pe saptamana.</p>
+      <p className="text-sm text-ink2 mb-6">Zile pe saptamana in care poti sa te antrenezi.</p>
       {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
           numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
-      <div className="grid grid-cols-2 gap-3">
-        {(['2', '3', '4', '5'] as const).map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onChange(v)}
-            data-testid={`onb-freq-${v}`}
-            aria-pressed={value === v}
-            aria-label={`${v} sesiuni pe saptamana`}
-            className={`p-4 rounded-xl border ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
-          >
-            <span className="text-2xl font-bold font-mono">{v}</span>
-            <span className="block text-xs mt-1">pe saptamana</span>
-          </button>
-        ))}
+      <div className="flex flex-col gap-3">
+        {FREQ_OPTIONS.map(({ value: v, label, subtitle }) => {
+          const selected = value === v;
+          return (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onChange(v)}
+              data-testid={`onb-freq-${v}`}
+              aria-pressed={selected}
+              aria-label={`${v} sesiuni pe saptamana`}
+              className={`flex items-center gap-3 p-4 rounded-xl border text-left ${selected ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
+            >
+              <span
+                className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center font-bold font-mono ${selected ? 'bg-paper text-brick' : 'bg-paper text-ink2'}`}
+                aria-hidden="true"
+              >
+                {v}
+              </span>
+              <span className="flex-1">
+                <span className="block font-medium">{label}</span>
+                <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
+                  {subtitle}
+                </span>
+              </span>
+            </button>
+          );
+        })}
       </div>
     </>
   );
 }
 
-function Step5({ value, onChange }: OptionStepProps<'incepator' | 'intermediar' | 'avansat'>): JSX.Element {
-  const labels = {
-    incepator: 'Incepator',
-    intermediar: 'Intermediar',
-    avansat: 'Avansat',
-  } as const;
+// HIGH chat6 — enriched experience rows: label + grey descriptive subtitle
+// matching goal/frequency enriched pattern (mockup stack-row convention).
+const EXP_OPTIONS: Array<{ value: Experience; label: string; subtitle: string }> = [
+  { value: 'incepator', label: 'Incepator', subtitle: 'Sub un an de antrenament constant' },
+  { value: 'intermediar', label: 'Intermediar', subtitle: '1-3 ani, tehnica de baza solida' },
+  { value: 'avansat', label: 'Avansat', subtitle: 'Peste 3 ani, antrenament structurat' },
+];
+
+function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-6">Cata experienta ai?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">Cata experienta ai?</h1>
+      <p className="text-sm text-ink2 mb-6">Calibram volumul si progresia de start.</p>
       <div className="flex flex-col gap-3">
-        {(Object.keys(labels) as Array<keyof typeof labels>).map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onChange(v)}
-            data-testid={`onb-exp-${v}`}
-            aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
-          >
-            <span className="font-medium">{labels[v]}</span>
-          </button>
-        ))}
+        {EXP_OPTIONS.map(({ value: v, label, subtitle }) => {
+          const selected = value === v;
+          return (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onChange(v)}
+              data-testid={`onb-exp-${v}`}
+              aria-pressed={selected}
+              className={`p-4 rounded-xl border text-left ${selected ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
+            >
+              <span className="block font-medium">{label}</span>
+              <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
+                {subtitle}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </>
   );
@@ -347,8 +465,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         data-testid="onb-weight-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
       />
-      <p className="text-xs text-ink2 mt-2 text-center">kg</p>
-      {error && (
+      {error ? (
         <p
           id="onb-weight-error"
           role="alert"
@@ -357,6 +474,9 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         >
           {error}
         </p>
+      ) : (
+        // MED — helper line per mockup L647 pattern ("Intre N si N kg").
+        <p className="text-xs text-ink3 mt-2 text-center">Intre 30 si 250 kg</p>
       )}
     </>
   );
@@ -403,8 +523,7 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
         data-testid="onb-height-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
       />
-      <p className="text-xs text-ink2 mt-2 text-center">cm</p>
-      {error && (
+      {error ? (
         <p
           id="onb-height-error"
           role="alert"
@@ -413,6 +532,9 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
         >
           {error}
         </p>
+      ) : (
+        // MED — helper line per mockup L620 pattern ("Intre N si N cm").
+        <p className="text-xs text-ink3 mt-2 text-center">Intre 120 si 230 cm</p>
       )}
     </>
   );
