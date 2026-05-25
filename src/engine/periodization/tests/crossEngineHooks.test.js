@@ -99,6 +99,15 @@ describe('emitConstraintObject — §9.6 immutable Constraint Object', () => {
     }
   });
 
+  it('sub-MEV target → floor clamped NU peste ceiling (E-01, paritate intensity)', () => {
+    // Maria + sanatate: chest MAV 14 × 0.50 × 0.50 ≈ 3.5 → 4 sets, sub MEV 8.
+    const co = emitConstraintObject({ ...baseInput, volumeMap: { chest: 4 } });
+    const corridor = co.volume_per_muscle.chest;
+    expect(corridor.floor).toBeLessThanOrEqual(corridor.ceiling);
+    expect(corridor.ceiling).toBe(4); // deliberate sub-MEV target preserved
+    expect(corridor.floor).toBe(4);   // floor lowered to ceiling, NU forced to MEV 8
+  });
+
   it('volume ceiling capped at MRV (over-spec input clamped)', () => {
     const co = emitConstraintObject({
       ...baseInput,

@@ -28,15 +28,20 @@ import { HARD_CAP_INTENSITY_PCT_1RM, ISRAETEL_BASELINES } from './constants.js';
  * @returns {import('./types.js').ConstraintObject}
  */
 export function emitConstraintObject({ phase, volumeMap, intensityCorridor, deloadWindow }) {
-  // Volume corridor per muscle: floor = MEV, ceiling = min(target × 1.0, MRV)
-  // The orchestrated volume target serves as ceiling (engine downstream may
-  // reduce within corridor); MEV serves as floor (Goal Adaptation NU below).
+  // Volume corridor per muscle: ceiling = min(target × 1.0, MRV), floor = MEV
+  // clamped NU peste ceiling. The orchestrated volume target serves as ceiling
+  // (engine downstream may reduce within corridor); MEV serves as floor (Goal
+  // Adaptation NU below) EXCEPT sub-MEV target where floor = ceiling.
   /** @type {Object<string, {floor: number, ceiling: number}>} */
   const volumePerMuscle = {};
   for (const [muscle, sets] of Object.entries(volumeMap || {})) {
     const baseline = ISRAETEL_BASELINES[muscle];
-    const floor = baseline ? baseline.MEV : 0;
+    const floorRaw = baseline ? baseline.MEV : 0;
     const ceiling = Math.min(Number(sets) || 0, baseline ? baseline.MRV : Number(sets) || 0);
+    // E-01: floor NU peste ceiling (paritate enforceHardCapIntensity:72).
+    // Sub-MEV target (sanatate/longevitate varstnic) ramane ceiling real, NU
+    // suprascris la MEV — pastreaza tinta mica = safety Maria 65.
+    const floor = Math.min(floorRaw, ceiling);
     volumePerMuscle[muscle] = Object.freeze({ floor, ceiling });
   }
 
