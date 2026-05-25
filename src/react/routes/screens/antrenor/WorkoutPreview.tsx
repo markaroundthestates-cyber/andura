@@ -210,11 +210,15 @@ export function WorkoutPreview(): JSX.Element {
         role="region"
         aria-label="Sesiunea de azi"
       >
-        <div className="text-xs font-semibold tracking-wider uppercase text-brick">
+        {/* a11y contrast: on bg-ink (dark in light theme) text-brick was 3.59:1
+            and text-ink3 chips 3.22:1 (< AA 4.5:1). Swapped to text-paper2 (an
+            existing token), ~15:1 vs bg-ink in BOTH themes. Eyebrow stays
+            distinct via uppercase/tracking/weight, not color. */}
+        <div className="text-xs font-semibold tracking-wider uppercase text-paper2">
           Sesiunea de azi
         </div>
         <h1 className="text-xl font-bold mt-1 tracking-tight text-paper">{title}</h1>
-        <div className="flex gap-3.5 mt-2 text-sm text-ink3">
+        <div className="flex gap-3.5 mt-2 text-sm text-paper2">
           <span className="flex items-center gap-1.5" data-testid="preview-duration">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
             ~ {duration} min

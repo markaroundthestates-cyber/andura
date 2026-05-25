@@ -77,7 +77,10 @@ export function EquipmentSwap(): JSX.Element {
       <p className="text-base text-ink2 mb-6">
         Marcheaza ce e ocupat. Coach gaseste alternative.
       </p>
-      <div className="flex flex-col gap-2 mb-6" role="list" aria-label="Echipamente">
+      {/* No role="list": children are <button>s (not valid role="listitem"),
+          which makes a screen reader announce an empty list. The "Aparate
+          ocupate?" heading already labels the group (parity §6-M3 revert). */}
+      <div className="flex flex-col gap-2 mb-6">
         {equipment.map((e) => {
           const isBusy = e.status === 'busy';
           return (

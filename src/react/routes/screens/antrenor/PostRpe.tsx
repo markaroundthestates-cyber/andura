@@ -170,7 +170,10 @@ export function PostRpe(): JSX.Element {
       >
         „Raspunsul tau calibreaza sesiunea de maine. O singura intrebare."
       </p>
-      <div className="flex flex-col gap-3" role="list">
+      {/* No role="list": children are <button>s (not valid role="listitem"),
+          which makes a screen reader announce an empty list. The "Cum a fost
+          sesiunea?" heading already labels the group (parity §6-M3 revert). */}
+      <div className="flex flex-col gap-3">
         {RATING_OPTIONS.map((opt) => (
           <button
             key={opt.rating}

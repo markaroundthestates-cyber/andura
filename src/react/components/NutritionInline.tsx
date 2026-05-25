@@ -129,6 +129,7 @@ export function NutritionInline(): JSX.Element {
                 min={0}
                 max={9999}
                 inputMode="numeric"
+                aria-label="Kcal"
                 data-testid="nutri-kcal-input"
                 className="w-full p-2 border border-lineStrong rounded-xl bg-paper text-base font-mono"
               />
@@ -171,6 +172,7 @@ export function NutritionInline(): JSX.Element {
                 min={0}
                 max={500}
                 inputMode="numeric"
+                aria-label="Proteine (g)"
                 data-testid="nutri-protein-input"
                 className="w-full p-2 border border-lineStrong rounded-xl bg-paper text-base font-mono"
               />

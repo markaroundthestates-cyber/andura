@@ -47,7 +47,10 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element
   return (
     <>
       <p className="text-base text-ink mb-3">Cum a fost?</p>
-      <div className="flex gap-3" role="list" aria-label="Rating set">
+      {/* No role="list": children are <button>s (not valid role="listitem"),
+          which makes a screen reader announce an empty list. The "Cum a fost?"
+          heading already labels the group (parity §6-M3 EnergyScreens revert). */}
+      <div className="flex gap-3">
         {RATING_OPTIONS.map((opt) => (
           <button
             key={opt.rating}
