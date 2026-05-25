@@ -2,7 +2,8 @@
 // Phase 4 task_12 §A extract din Workout.tsx ~lines 196-222. Pure
 // presentational — sticky header cu workout title + Ex N/M progress +
 // elapsed MM:SS + X close button + ⋯ menu button (mockup parity §F-pass2-
-// sessiontimer-01 2026-05-22).
+// sessiontimer-01 2026-05-22). Sound row render-gated pe onToggleSound
+// (ascuns pana exista subsistem audio — decizie Daniel parity LOW).
 //
 // Stateless WRT parent (exIdx/elapsed/exitSheetOpen owned upstream). Menu
 // sheet open/close = internal local state (self-contained, no parent wire
@@ -12,7 +13,8 @@
 // callsites compile fara breaking change.
 //
 // Mockup verbatim andura-clasic.html#L1341-1574 (chrome ⋯ button +
-// "Optiuni sesiune" bottom sheet 5 rows pain/skip/finish/sound/cancel).
+// "Optiuni sesiune" bottom sheet pain/skip/finish/cancel; sound row gated pe
+// onToggleSound — ascuns pana exista subsistem audio).
 //
 // §F-pass2-sessiontimer-02 (HIGH-DELTA 2026-05-22): workoutTitle optional
 // prop — center label shows workout name (e.g. "Push · piept si umeri") in
@@ -221,24 +223,30 @@ export function SessionTimer({
               </span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => handleAction(onToggleSound)}
-              data-testid="workout-menu-sound"
-              className="w-full flex items-center gap-3 px-3 py-3 text-left text-ink rounded-lg hover:bg-paper2"
-            >
-              {soundOn ? (
-                <Volume2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-              ) : (
-                <VolumeX className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-              )}
-              <span className="flex-1">
-                <span className="block text-sm font-semibold">
-                  {soundOn ? 'Sunet: pornit' : 'Sunet: oprit'}
+            {/* Parity LOW (decizie Daniel): randul Sunet e ascuns pana exista
+                un subsistem audio/vibratie real. Render-gated pe onToggleSound
+                — Workout.tsx NU il paseaza intentionat (ar fi toggle fals).
+                Cand un parent wireaza un handler real, randul reapare. */}
+            {onToggleSound && (
+              <button
+                type="button"
+                onClick={() => handleAction(onToggleSound)}
+                data-testid="workout-menu-sound"
+                className="w-full flex items-center gap-3 px-3 py-3 text-left text-ink rounded-lg hover:bg-paper2"
+              >
+                {soundOn ? (
+                  <Volume2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                ) : (
+                  <VolumeX className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                )}
+                <span className="flex-1">
+                  <span className="block text-sm font-semibold">
+                    {soundOn ? 'Sunet: pornit' : 'Sunet: oprit'}
+                  </span>
+                  <span className="block text-xs text-ink2">Vibratie + ding la finalul pauzei</span>
                 </span>
-                <span className="block text-xs text-ink2">Vibratie + ding la finalul pauzei</span>
-              </span>
-            </button>
+              </button>
+            )}
 
             <button
               type="button"

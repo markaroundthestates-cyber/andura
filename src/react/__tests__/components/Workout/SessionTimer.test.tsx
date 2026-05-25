@@ -52,15 +52,23 @@ describe('SessionTimer — §F-pass2-sessiontimer-01 menu button + sheet', () =>
     expect(screen.queryByTestId('workout-menu-sheet')).not.toBeInTheDocument();
   });
 
-  it('tap menu trigger opens sheet with 5 action rows', () => {
+  it('tap menu trigger opens sheet with 4 action rows (sound gated, ascuns default)', () => {
+    // Parity LOW (decizie Daniel) — randul Sunet e gated pe onToggleSound.
+    // Workout.tsx NU il paseaza (NU exista subsistem audio) → ascuns in prod.
     renderTimer();
     fireEvent.click(screen.getByTestId('workout-menu-trigger'));
     expect(screen.getByTestId('workout-menu-sheet')).toBeInTheDocument();
     expect(screen.getByTestId('workout-menu-pain')).toBeInTheDocument();
     expect(screen.getByTestId('workout-menu-skip')).toBeInTheDocument();
     expect(screen.getByTestId('workout-menu-finish-early')).toBeInTheDocument();
-    expect(screen.getByTestId('workout-menu-sound')).toBeInTheDocument();
+    expect(screen.queryByTestId('workout-menu-sound')).not.toBeInTheDocument();
     expect(screen.getByTestId('workout-menu-cancel')).toBeInTheDocument();
+  });
+
+  it('sound row reapare cand onToggleSound wired (subsistem audio viitor)', () => {
+    renderTimer({ onToggleSound: vi.fn() });
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(screen.getByTestId('workout-menu-sound')).toBeInTheDocument();
   });
 
   it('aria-expanded updates true cand sheet open', () => {
@@ -115,13 +123,14 @@ describe('SessionTimer — §F-pass2-sessiontimer-01 menu button + sheet', () =>
   });
 
   it('sound label "Sunet: pornit" cand soundOn=true (default)', () => {
-    renderTimer();
+    // onToggleSound necesar acum pentru a randa randul (gated parity LOW).
+    renderTimer({ onToggleSound: vi.fn() });
     fireEvent.click(screen.getByTestId('workout-menu-trigger'));
     expect(screen.getByTestId('workout-menu-sound')).toHaveTextContent('Sunet: pornit');
   });
 
   it('sound label "Sunet: oprit" cand soundOn=false', () => {
-    renderTimer({ soundOn: false });
+    renderTimer({ soundOn: false, onToggleSound: vi.fn() });
     fireEvent.click(screen.getByTestId('workout-menu-trigger'));
     expect(screen.getByTestId('workout-menu-sound')).toHaveTextContent('Sunet: oprit');
   });
