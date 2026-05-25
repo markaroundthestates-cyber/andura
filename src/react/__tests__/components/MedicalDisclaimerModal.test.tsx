@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MedicalDisclaimerModal } from '../../components/MedicalDisclaimerModal';
 
 describe('MedicalDisclaimerModal — LOCK 4', () => {
@@ -47,5 +47,57 @@ describe('MedicalDisclaimerModal — LOCK 4', () => {
       <MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} />,
     );
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  // RE-U-02 — focus-trap (gate obligatoriu mereu-montat via U-01).
+  it('focus auto pe acknowledge button la open', () => {
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} />);
+    expect(document.activeElement).toBe(screen.getByTestId('disclaimer-acknowledge'));
+  });
+
+  it('gate obligatoriu (fara onCancel) — Tab nu scapa, ramane pe acknowledge', () => {
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} />);
+    const ack = screen.getByTestId('disclaimer-acknowledge');
+    expect(document.activeElement).toBe(ack);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
+    expect(document.activeElement).toBe(ack);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(ack);
+  });
+
+  it('cu onCancel — Tab pe last (cancel) cicleaza la first (acknowledge)', () => {
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} onCancel={vi.fn()} />);
+    const ack = screen.getByTestId('disclaimer-acknowledge');
+    const cancel = screen.getByTestId('disclaimer-cancel');
+    act(() => {
+      cancel.focus();
+    });
+    expect(document.activeElement).toBe(cancel);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
+    expect(document.activeElement).toBe(ack);
+  });
+
+  it('cu onCancel — Shift+Tab pe first (acknowledge) cicleaza la last (cancel)', () => {
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} onCancel={vi.fn()} />);
+    const ack = screen.getByTestId('disclaimer-acknowledge');
+    const cancel = screen.getByTestId('disclaimer-cancel');
+    // Auto-focus pe acknowledge (first). Shift+Tab → last (cancel).
+    expect(document.activeElement).toBe(ack);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(cancel);
+  });
+
+  it('Escape inert cand gate obligatoriu (fara onCancel) — niciun callback', () => {
+    const onAck = vi.fn();
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={onAck} />);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onAck).not.toHaveBeenCalled();
+  });
+
+  it('Escape declanseaza onCancel cand prezent', () => {
+    const onCancel = vi.fn();
+    render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} onCancel={onCancel} />);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 });

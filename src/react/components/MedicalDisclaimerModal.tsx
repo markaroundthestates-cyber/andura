@@ -7,6 +7,11 @@ import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 
+// RE-U-02 — U-01 a promovat acest modal la gate obligatoriu mereu-montat in
+// Layout (open=!acceptedDisclaimer, fara onCancel). Sister ExitConfirmSheet are
+// focus-trap real first<->last; acesta avea doar Escape (mort fara onCancel) si
+// niciun handler Tab — focusul scapa in app-ul din spate pe un gate safety/legal.
+
 interface MedicalDisclaimerModalProps {
   open: boolean;
   onAcknowledge: () => void;
@@ -19,12 +24,14 @@ export function MedicalDisclaimerModal({
   onCancel,
 }: MedicalDisclaimerModalProps): JSX.Element | null {
   const acknowledgeRef = useRef<HTMLButtonElement | null>(null);
+  const cancelRef = useRef<HTMLButtonElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // §6-H4 audit fix — focus management: capture pre-modal focus + focus
-  // primary CTA on open + restore on close. Escape key triggers cancel
-  // (or acknowledge if no cancel — mandatory modal still has escape via
-  // primary action). Focus trap minimal — Tab cycles within modal buttons.
+  // §6-H4 + RE-U-02 — focus management: capture pre-modal focus + focus primary
+  // CTA on open + restore on close. Escape triggers cancel doar cand onCancel
+  // exista (gate obligatoriu in Layout NU are onCancel → Escape inert, corect).
+  // Focus-trap real (model ExitConfirmSheet): Tab cicleaza acknowledge<->cancel;
+  // cand onCancel lipseste (un singur buton focusabil), Tab ramane pe acknowledge.
   useEffect(() => {
     if (!open) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
@@ -33,6 +40,21 @@ export function MedicalDisclaimerModal({
       if (e.key === 'Escape' && onCancel) {
         e.preventDefault();
         onCancel();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const first = acknowledgeRef.current;
+      // cancelRef.current null cand gate obligatoriu (onCancel absent) → last
+      // colapseaza pe acknowledge: un singur element focusabil, Tab nu scapa.
+      const last = cancelRef.current ?? acknowledgeRef.current;
+      if (!first) return;
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
       }
     }
     document.addEventListener('keydown', onKey);
@@ -95,6 +117,7 @@ export function MedicalDisclaimerModal({
         </button>
         {onCancel && (
           <button
+            ref={cancelRef}
             type="button"
             onClick={onCancel}
             data-testid="disclaimer-cancel"
