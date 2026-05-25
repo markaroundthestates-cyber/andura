@@ -420,6 +420,18 @@ export function Workout(): JSX.Element {
     setPhase('logging');
   }
 
+  // P-05 (MED) — ⋯ menu "Sari exercitiul curent". Daca e ultimul exercitiu →
+  // post-rpe (finish, ca last set); altfel advanceExercise (next, fara
+  // penalizare per copy mockup). bumpActivity reseteaza inactivity watch.
+  function handleSkipExercise(): void {
+    bumpActivity();
+    if (isLastExercise) {
+      navigate(gotoPath('post-rpe'));
+      return;
+    }
+    advanceExercise();
+  }
+
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
   // reflects live state. Engine null → why.unavailable fallback copy.
@@ -507,6 +519,12 @@ export function Workout(): JSX.Element {
   // Past empty/loading guard — exercises is non-null array.
   const nextExercise = exercises[safeExIdx + 1];
 
+  // P-11 (LOW) — global progress (SessionTimer wv2-progress block, construit dar
+  // necablat). setsTotal = sum planned sets; setsDone = total seturi logate;
+  // exercise counter 1-indexed. Render-gated pe setsTotal>0 (component side).
+  const setsTotal = exercises.reduce((acc, ex) => acc + ex.sets, 0);
+  const setsDone = Object.values(history).reduce((acc, sets) => acc + sets.length, 0);
+
   return (
     <section
       className="bg-paper min-h-screen relative"
@@ -519,6 +537,19 @@ export function Workout(): JSX.Element {
         totalExercises={exercises.length}
         elapsedSec={elapsed}
         onExit={() => setExitSheetOpen(true)}
+        // P-05 (MED) — wire ⋯ menu actions (SessionTimer construit dar necablat):
+        // pain → pain-button, skip → advance/finish, finish-early → drill-down,
+        // cancel → discard + Antrenor. onToggleSound nelegat intentionat (NU
+        // exista subsistem sunet/vibratie de comutat — ar fi buton fals).
+        onPain={() => navigate(gotoPath('pain-button'))}
+        onSkipExercise={handleSkipExercise}
+        onFinishEarly={() => navigate(gotoPath('finish-early-confirm'))}
+        onCancelSession={() => handleExit('discard')}
+        // P-11 (LOW) — global progress bar (seturi cumulate + exercitiu curent).
+        setsDone={setsDone}
+        setsTotal={setsTotal}
+        exerciseCount={safeExIdx + 1}
+        exerciseTotal={exercises.length}
       />
 
       {/* Log zone */}

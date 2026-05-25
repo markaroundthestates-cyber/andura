@@ -61,6 +61,9 @@ function renderWorkout() {
         {/* §F-workout-03 — in-workout substitution row targets. */}
         <Route path="/app/antrenor/equipment-swap" element={<LocationProbe />} />
         <Route path="/app/antrenor/ceva-nu-merge" element={<LocationProbe />} />
+        {/* P-05 — ⋯ menu action targets. */}
+        <Route path="/app/antrenor/pain-button" element={<LocationProbe />} />
+        <Route path="/app/antrenor/finish-early-confirm" element={<LocationProbe />} />
         <Route path="/app/antrenor" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
@@ -638,6 +641,82 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     fireEvent.click(screen.getByTestId('wv2-why-trigger'));
     const modal = screen.getByTestId('why-modal');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(modal.textContent ?? '')).toBe(false);
+  });
+});
+
+// P-05 (MED) — ⋯ menu actions wired din Workout (SessionTimer construit dar
+// necablat anterior). pain/skip/finish-early/cancel au target real.
+describe('Workout — session menu actions wired (P-05)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('menu "Ma doare ceva" navigheaza la pain-button', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    fireEvent.click(screen.getByTestId('workout-menu-pain'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/pain-button'
+    );
+  });
+
+  it('menu "Sari exercitiul" advanseaza la urmatorul (exIdx 0 → 1)', async () => {
+    await renderWorkoutAndWait();
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    fireEvent.click(screen.getByTestId('workout-menu-skip'));
+    expect(useWorkoutStore.getState().exIdx).toBe(1);
+  });
+
+  it('menu "Termina mai devreme" navigheaza la finish-early-confirm', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    fireEvent.click(screen.getByTestId('workout-menu-finish-early'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/finish-early-confirm'
+    );
+  });
+
+  it('menu "Anuleaza sesiunea" discard + navigheaza Antrenor', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    fireEvent.click(screen.getByTestId('workout-menu-cancel'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor'
+    );
+    expect(useWorkoutStore.getState().sessionStart).toBeNull();
+  });
+});
+
+// P-11 (LOW) — global progress bar wired din Workout. Fixture = 5 exercitii,
+// seturi 4+4+3+3+3 = 17 total. La start 0 seturi logate, exercitiu 1/5.
+describe('Workout — global progress bar wired (P-11)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('progress bar randat (setsTotal>0)', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('workout-progress-bar')).toBeInTheDocument();
+  });
+
+  it('seturi cumulate 0/17 la start', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('0/17 seturi');
+  });
+
+  it('exercitiu curent 1/5 la start', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('1/5 exercitii');
+  });
+
+  it('setsDone creste dupa logare set (0 → 1)', async () => {
+    await renderWorkoutAndWait();
+    logSet('Potrivit'); // logheaza primul set Bench Press
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
   });
 });
 
