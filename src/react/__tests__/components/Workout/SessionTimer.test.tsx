@@ -7,7 +7,7 @@
 // stopPropagation guard, sound icon swap soundOn true/false.
 
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 
 function renderTimer(overrides: Partial<Parameters<typeof SessionTimer>[0]> = {}) {
@@ -15,7 +15,10 @@ function renderTimer(overrides: Partial<Parameters<typeof SessionTimer>[0]> = {}
     exerciseName: 'Impins inclinat',
     exIdx: 1,
     totalExercises: 5,
-    elapsedSec: 95,
+    // Perf isolation: SessionTimer now takes the raw sessionStart epoch ms and
+    // the <SessionElapsed> leaf inside ticks it. Default null = clock at 0:00
+    // (no live session) for the presentational tests below.
+    sessionStart: null as number | null,
     onExit: vi.fn(),
     ...overrides,
   };
@@ -23,11 +26,27 @@ function renderTimer(overrides: Partial<Parameters<typeof SessionTimer>[0]> = {}
 }
 
 describe('SessionTimer — header baseline', () => {
-  it('renders exercise name + progress + elapsed MM:SS', () => {
+  it('renders exercise name + progress + elapsed 0:00 (no live session)', () => {
     renderTimer();
     expect(screen.getByTestId('workout-title')).toHaveTextContent('Impins inclinat');
     expect(screen.getByTestId('workout-progress')).toHaveTextContent(/Ex 2\/5/);
-    expect(screen.getByTestId('workout-elapsed')).toHaveTextContent(/1:35/);
+    expect(screen.getByTestId('workout-elapsed')).toHaveTextContent('0:00');
+  });
+
+  it('elapsed leaf ticks from sessionStart (1:35 at 95s)', () => {
+    // Frozen fake clock (no real drift): sessionStart 94s back, advance one
+    // 1000ms tick → interval reads exactly 95s delta → leaf shows 1:35. Proves
+    // the elapsed text derives from sessionStart via the <SessionElapsed> leaf.
+    vi.useFakeTimers();
+    try {
+      renderTimer({ sessionStart: Date.now() - 94_000 });
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.getByTestId('workout-elapsed')).toHaveTextContent('1:35');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('exit trigger fires onExit', () => {

@@ -35,16 +35,21 @@
 // workout-progress-bar / workout-progress-sets / workout-progress-ex /
 // workout-progress-fill.
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import type { JSX } from 'react';
 import { X, MoreHorizontal, AlertCircle, SkipForward, Flag, Volume2, VolumeX, XCircle } from 'lucide-react';
-import { formatMMSS } from '../../lib/format';
+import { SessionElapsed } from './SessionElapsed';
 
 interface SessionTimerProps {
   exerciseName: string;
   exIdx: number; // 0-indexed
   totalExercises: number;
-  elapsedSec: number;
+  // Perf isolation: was `elapsedSec: number` (recomputed in Workout.tsx every
+  // second → whole-subtree re-render). Now the raw session start epoch ms, a
+  // value that changes only at session start/discard. The per-second tick lives
+  // in the <SessionElapsed> leaf rendered below, so SessionTimer (React.memo)
+  // does NOT reconcile each second.
+  sessionStart: number | null;
   onExit: () => void;
   // §F-pass2-sessiontimer-01 — optional menu action handlers. Defaults noop
   // so existing Workout.tsx callsite compiles fara modificare (parent
@@ -66,11 +71,11 @@ interface SessionTimerProps {
   exerciseTotal?: number;
 }
 
-export function SessionTimer({
+function SessionTimerImpl({
   exerciseName,
   exIdx,
   totalExercises,
-  elapsedSec,
+  sessionStart,
   onExit,
   onPain,
   onSkipExercise,
@@ -116,7 +121,7 @@ export function SessionTimer({
           </h1>
           <p className="text-sm text-ink2" data-testid="workout-progress">
             Ex {exIdx + 1}/{totalExercises}{' '}
-            <span data-testid="workout-elapsed">· {formatMMSS(elapsedSec)}</span>
+            <SessionElapsed startedAt={sessionStart} />
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -266,3 +271,10 @@ export function SessionTimer({
     </>
   );
 }
+
+// Perf isolation: memoized so the header chrome reconciles only when its own
+// props change (exercise/title/progress/handlers). The per-second elapsed tick
+// is owned by the <SessionElapsed> leaf inside, NOT a SessionTimer prop, so
+// memo holds across every clock tick. Parent (Workout) passes stable
+// useCallback handlers + the raw sessionStart timestamp to keep this effective.
+export const SessionTimer = memo(SessionTimerImpl);

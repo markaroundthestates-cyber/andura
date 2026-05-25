@@ -24,7 +24,7 @@
 //   - mockup andura-clasic.html screen-workout wv2 reference
 
 import type { JSX } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Hand, HelpCircle } from 'lucide-react';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
@@ -129,7 +129,9 @@ export function Workout(): JSX.Element {
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
-  const [elapsed, setElapsed] = useState(0);
+  // Perf isolation: the per-second elapsed clock no longer lives here (it drove
+  // a whole-subtree re-render once a second). It now lives in the
+  // <SessionElapsed> leaf inside SessionTimer, fed the raw sessionStart.
   const [restCountdown, setRestCountdown] = useState(0);
   // F-pass2-restoverlay-01 — initial rest total seconds at moment rest phase
   // entered (drives SVGCountdownRing progress ratio). Reset alongside
@@ -183,14 +185,10 @@ export function Workout(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Session timer — increments per second cand sessionStart set.
-  useEffect(() => {
-    if (sessionStart === null) return;
-    const interval = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - sessionStart) / 1000));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [sessionStart]);
+  // Session timer — extracted to <SessionElapsed> leaf (perf isolation). The
+  // 1Hz tick used to setElapsed here, re-rendering the whole active-session
+  // subtree once a second; it is now confined to the leaf rendered by the
+  // memoized SessionTimer.
 
   // Rest countdown — auto-advance la logging când reaches 0.
   useEffect(() => {
@@ -309,10 +307,12 @@ export function Workout(): JSX.Element {
     };
   }, [whyText]);
 
-  const bumpActivity = (): void => {
+  // useCallback: referenced by handlers passed to memoized SessionTimer; only
+  // touches stable state setters so the empty dep array is correct + stable.
+  const bumpActivity = useCallback((): void => {
     setLastActivityAt(Date.now());
     setInactivityPromptOpen(false);
-  };
+  }, []);
 
   function performLogSet(rating: SetRating): void {
     logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
@@ -429,14 +429,15 @@ export function Workout(): JSX.Element {
   // P-05 (MED) — ⋯ menu "Sari exercitiul curent". Daca e ultimul exercitiu →
   // post-rpe (finish, ca last set); altfel advanceExercise (next, fara
   // penalizare per copy mockup). bumpActivity reseteaza inactivity watch.
-  function handleSkipExercise(): void {
+  // useCallback: passed to memoized SessionTimer — stable ref keeps memo intact.
+  const handleSkipExercise = useCallback((): void => {
     bumpActivity();
     if (isLastExercise) {
       navigate(gotoPath('post-rpe'));
       return;
     }
     advanceExercise();
-  }
+  }, [bumpActivity, isLastExercise, navigate, advanceExercise]);
 
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
@@ -456,7 +457,9 @@ export function Workout(): JSX.Element {
     setWhyText(summary ?? 'Explicatia e temporar indisponibila. Recomandarea ramane valida.');
   }
 
-  function handleExit(action: 'continue' | 'pause' | 'discard' | 'finish-early'): void {
+  // useCallback: passed to memoized SessionTimer (onCancelSession) + ExitConfirmSheet
+  // + InactivityPrompt — stable ref keeps the memoized header intact.
+  const handleExit = useCallback((action: 'continue' | 'pause' | 'discard' | 'finish-early'): void => {
     if (action === 'continue') {
       setExitSheetOpen(false);
       return;
@@ -477,7 +480,17 @@ export function Workout(): JSX.Element {
     }
     discardSession();
     navigate(gotoPath('antrenor'));
-  }
+  }, [pauseSession, workoutTitle, navigate, discardSession]);
+
+  // Stable callbacks for the memoized SessionTimer header (perf isolation).
+  // Hooks declared above the loading/empty early returns so order is stable.
+  const handleOpenExitSheet = useCallback((): void => setExitSheetOpen(true), []);
+  const handleGoPain = useCallback((): void => navigate(gotoPath('pain-button')), [navigate]);
+  const handleGoFinishEarly = useCallback(
+    (): void => navigate(gotoPath('finish-early-confirm')),
+    [navigate]
+  );
+  const handleCancelSession = useCallback((): void => handleExit('discard'), [handleExit]);
 
   // Phase 6 task_02 Option C: loading state pe async pipeline resolve
   // (exercises===null → 8-adapter chain pending). Per DECISIONS.md §D027.
@@ -544,16 +557,16 @@ export function Workout(): JSX.Element {
         exerciseName={currentExercise.name}
         exIdx={safeExIdx}
         totalExercises={exercises.length}
-        elapsedSec={elapsed}
-        onExit={() => setExitSheetOpen(true)}
+        sessionStart={sessionStart}
+        onExit={handleOpenExitSheet}
         // P-05 (MED) — wire ⋯ menu actions (SessionTimer construit dar necablat):
         // pain → pain-button, skip → advance/finish, finish-early → drill-down,
         // cancel → discard + Antrenor. onToggleSound nelegat intentionat (NU
         // exista subsistem sunet/vibratie de comutat — ar fi buton fals).
-        onPain={() => navigate(gotoPath('pain-button'))}
+        onPain={handleGoPain}
         onSkipExercise={handleSkipExercise}
-        onFinishEarly={() => navigate(gotoPath('finish-early-confirm'))}
-        onCancelSession={() => handleExit('discard')}
+        onFinishEarly={handleGoFinishEarly}
+        onCancelSession={handleCancelSession}
         // P-11 (LOW) — global progress bar (seturi cumulate + exercitiu curent).
         setsDone={setsDone}
         setsTotal={setsTotal}
