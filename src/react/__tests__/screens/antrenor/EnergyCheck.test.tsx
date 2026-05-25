@@ -2,10 +2,14 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { EnergyCheck } from '../../../routes/screens/antrenor/EnergyCheck';
+import {
+  getComputedReadinessScore,
+  getTodayReadiness,
+} from '../../../../engine/readiness.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -113,6 +117,59 @@ describe('EnergyCheck — navigation flow', () => {
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/energy-cause');
     expect(probe.textContent).toContain('"intensityMod":"minus"');
     expect(probe.textContent).toContain('"energyLevel":"obosit"');
+  });
+});
+
+describe('EnergyCheck — readiness write (C2 engine wire)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('getComputedReadinessScore is null BEFORE any selection (starved baseline)', () => {
+    expect(getComputedReadinessScore()).toBeNull();
+  });
+
+  it('selecting an option makes getComputedReadinessScore non-null', () => {
+    renderEnergyCheck();
+    expect(getComputedReadinessScore()).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Bine/i }));
+    expect(getComputedReadinessScore()).not.toBeNull();
+    expect(typeof getComputedReadinessScore()).toBe('number');
+  });
+
+  it('maps the 5 options to readiness 1-5 (Excelent=5 .. Obosit=1)', () => {
+    const cases: ReadonlyArray<[RegExp, number]> = [
+      [/Excelent/i, 5],
+      [/Bine/i, 4],
+      [/Normal/i, 3],
+      [/Slabit/i, 2],
+      [/Obosit/i, 1],
+    ];
+    for (const [name, expected] of cases) {
+      localStorage.clear();
+      const { unmount } = renderEnergyCheck();
+      fireEvent.click(screen.getByRole('button', { name }));
+      expect(getTodayReadiness()).toBe(expected);
+      unmount();
+    }
+  });
+
+  it('higher readiness yields a higher computed score (monotonic wire)', () => {
+    localStorage.clear();
+    const a = renderEnergyCheck();
+    fireEvent.click(screen.getByRole('button', { name: /Obosit/i }));
+    const lowScore = getComputedReadinessScore();
+    a.unmount();
+
+    localStorage.clear();
+    const b = renderEnergyCheck();
+    fireEvent.click(screen.getByRole('button', { name: /Excelent/i }));
+    const highScore = getComputedReadinessScore();
+    b.unmount();
+
+    expect(lowScore).not.toBeNull();
+    expect(highScore).not.toBeNull();
+    expect(highScore!).toBeGreaterThan(lowScore!);
   });
 });
 

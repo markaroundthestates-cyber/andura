@@ -37,6 +37,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { saveReadiness } from '../../../../engine/readiness.js';
 
 export type EnergyLevel = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
 export type IntensityMod = 'plus' | 'normal' | 'minus';
@@ -46,6 +47,13 @@ interface EnergyOption {
   emoji: string;
   label: string;
   intensity: IntensityMod;
+  // 1-5 readiness value persisted per-UID via saveReadiness (engine
+  // readiness.js#getComputedReadinessScore read-side: StatsGrid /
+  // ReadinessVerdict / energyDirection / rest gates). Maps the 5 self-report
+  // options to the engine readinessPoints scale (1=Epuizat .. 5=Excelent,
+  // readiness.js#READINESS_LABELS). Pre-fix EnergyCheck wrote ONLY navigation
+  // location.state → saveReadiness had ZERO React callers → score permanent null.
+  readiness: 1 | 2 | 3 | 4 | 5;
 }
 
 const GREEN = '\u{1F7E2}';
@@ -53,17 +61,22 @@ const YELLOW = '\u{1F7E1}';
 const RED = '\u{1F534}';
 
 const ENERGY_OPTIONS: readonly EnergyOption[] = [
-  { level: 'excelent', emoji: GREEN, label: 'Excelent', intensity: 'plus' },
-  { level: 'bine', emoji: YELLOW, label: 'Bine', intensity: 'normal' },
-  { level: 'normal', emoji: YELLOW, label: 'Normal', intensity: 'normal' },
-  { level: 'slabit', emoji: RED, label: 'Slabit', intensity: 'minus' },
-  { level: 'obosit', emoji: RED, label: 'Obosit', intensity: 'minus' },
+  { level: 'excelent', emoji: GREEN, label: 'Excelent', intensity: 'plus', readiness: 5 },
+  { level: 'bine', emoji: YELLOW, label: 'Bine', intensity: 'normal', readiness: 4 },
+  { level: 'normal', emoji: YELLOW, label: 'Normal', intensity: 'normal', readiness: 3 },
+  { level: 'slabit', emoji: RED, label: 'Slabit', intensity: 'minus', readiness: 2 },
+  { level: 'obosit', emoji: RED, label: 'Obosit', intensity: 'minus', readiness: 1 },
 ];
 
 export function EnergyCheck(): JSX.Element {
   const navigate = useNavigate();
 
   function handleSelect(option: EnergyOption): void {
+    // Persist self-report to the engine readiness store (per-UID) so the read
+    // side (getComputedReadinessScore) is no longer starved. ADD to the
+    // existing navigation flow — location.state is still consumed downstream
+    // (WorkoutPreview banner + energy-cause routing), NOT removed.
+    saveReadiness(option.readiness);
     const state = { energyLevel: option.level, intensityMod: option.intensity };
     if (option.intensity === 'minus') {
       navigate(gotoPath('energy-cause'), { state });
