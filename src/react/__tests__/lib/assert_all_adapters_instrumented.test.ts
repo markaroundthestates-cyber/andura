@@ -45,9 +45,12 @@ const REQUIRED_ADAPTERS = [
   'getCoachRestReason',
   'getLaggingSignal',
   'getCoachTodayQuote',
+  // §F-workout-05 — why-exercise explainer adapter (whyEngine wrap) added
+  // post-D063; instrumented identically (captureException + source tag).
+  'getWhyExerciseSummary',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 12; // 11 adapters + getPatternsBanner extra sub-path
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 13; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');

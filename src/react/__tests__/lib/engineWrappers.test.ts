@@ -6,6 +6,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('../../../engine/readiness.js', () => ({
   getComputedReadinessScore: vi.fn(),
   getReadinessVerdict: vi.fn(),
+  // §F-workout-05 — whyEngine.js (consumed by getWhyExerciseSummary) imports
+  // READINESS_MED from readiness.js for its recovery-verdict gate; the mock must
+  // expose it (real value 55) or whySummary throws on the undefined import.
+  READINESS_MED: 55,
 }));
 
 vi.mock('../../../engine/fatigue.js', () => ({
@@ -21,6 +25,7 @@ import {
   getFatigue,
   getPRDelta,
   getTodayWorkout,
+  getWhyExerciseSummary,
 } from '../../lib/engineWrappers';
 import { getComputedReadinessScore, getReadinessVerdict } from '../../../engine/readiness.js';
 import { calculateFatigueScore } from '../../../engine/fatigue.js';
@@ -224,6 +229,43 @@ describe('engineWrappers — getPRDelta', () => {
     expect(r?.type).toBe('volume');
     expect(r?.deltaKg).toBe(0); // same weight, NU kg increase
     expect(r?.oneRMEstimate).toBe(75); // 50 * (1 + 15/30) = 75
+  });
+});
+
+describe('engineWrappers — getWhyExerciseSummary (§F-workout-05)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns progression_up categorical string cand rec.kg > lastWeight', () => {
+    vi.mocked(getComputedReadinessScore).mockReturnValue(80); // above recovery gate
+    const s = getWhyExerciseSummary({ name: 'Bench Press', recommendationKg: 25, lastWeightKg: 22.5 });
+    expect(typeof s).toBe('string');
+    expect(s).toContain('Bench Press'); // exercise interpolated
+    expect((s ?? '').length).toBeGreaterThan(0);
+  });
+
+  it('returns recovery categorical string cand readiness sub gate (override)', () => {
+    vi.mocked(getComputedReadinessScore).mockReturnValue(20); // below READINESS_MED
+    const s = getWhyExerciseSummary({ name: 'Squat', recommendationKg: 60, lastWeightKg: 60 });
+    expect(s).toContain('Squat');
+  });
+
+  it('handles null lastWeight (first set — hold/default verdict)', () => {
+    vi.mocked(getComputedReadinessScore).mockReturnValue(70);
+    const s = getWhyExerciseSummary({ name: 'Deadlift', recommendationKg: 100, lastWeightKg: null });
+    expect(typeof s).toBe('string');
+    expect(s).toContain('Deadlift');
+  });
+
+  it('returns null + warn daca engine throws', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.mocked(getComputedReadinessScore).mockImplementation(() => {
+      throw new Error('DB unavailable');
+    });
+    expect(getWhyExerciseSummary({ name: 'Bench', recommendationKg: 50 })).toBeNull();
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 });
 

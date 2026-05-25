@@ -22,6 +22,7 @@
 import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/readiness.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
+import { whySummary } from '../../engine/whyEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
@@ -265,6 +266,46 @@ export function getPRDelta(
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getPRDelta' },
       extra: { exercise },
+    });
+    return null;
+  }
+}
+
+// ── Why-Exercise explainer wrapper (§F-workout-05 audit fix) ─────────────
+//
+// Wires the in-workout "why this exercise?" help-circle (mockup openWhyExercise
+// andura-clasic.html#L1449) to src/engine/whyEngine.js#whySummary. The engine
+// emits a single categorical RO sentence (verdict-based: progression_up/down /
+// hold / recovery), ZERO leak markers / numerice per its v2 lock. Mirrors the
+// vanilla src/pages/coach/modals.js#showWhyForExercise context build but kept
+// minimal: readiness score (recovery verdict gate) + recommendation kg vs
+// lastWeight (progression direction). Returns null cand engine throws — caller
+// renders the why.unavailable i18n fallback.
+
+export interface WhyExerciseInput {
+  name: string;
+  recommendationKg: number;
+  lastWeightKg?: number | null;
+}
+
+export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
+  try {
+    const score = getComputedReadinessScore();
+    const exercise = {
+      name: input.name,
+      recommendation: {
+        kg: input.recommendationKg,
+        lastWeight: input.lastWeightKg ?? null,
+      },
+    };
+    const ctx = { readiness: { score } };
+    const summary = whySummary(exercise, ctx);
+    return typeof summary === 'string' && summary.length > 0 ? summary : null;
+  } catch (e) {
+    console.warn('[engineWrappers] getWhyExerciseSummary failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getWhyExerciseSummary' },
+      extra: { exercise: input.name },
     });
     return null;
   }

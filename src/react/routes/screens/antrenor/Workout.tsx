@@ -26,11 +26,11 @@
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Hand } from 'lucide-react';
+import { Users, Hand, HelpCircle } from 'lucide-react';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
-import { getTodayWorkout, getPRDelta } from '../../../lib/engineWrappers';
+import { getTodayWorkout, getPRDelta, getWhyExerciseSummary } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
@@ -136,6 +136,10 @@ export function Workout(): JSX.Element {
   // is purely the inner log-zone UI. Reset per new set via effect below.
   const [setLogged, setSetLogged] = useState(false);
   const [editing, setEditing] = useState(false);
+  // §F-workout-05 — "why this exercise?" help-circle (mockup openWhyExercise
+  // andura-clasic.html#L1449). Null = closed; string = whyEngine summary shown
+  // in a bottom-sheet explainer. Built on tap so it reflects current readiness.
+  const [whyText, setWhyText] = useState<string | null>(null);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   // §44-C1: idle mode === no live session + no paused snapshot + no lastSession
@@ -367,6 +371,21 @@ export function Workout(): JSX.Element {
     setPhase('logging');
   }
 
+  // §F-workout-05 — open the why-exercise explainer. Builds engine context on
+  // tap (current readiness + recommendation kg vs last logged kg) so the verdict
+  // reflects live state. Engine null → why.unavailable fallback copy.
+  function handleOpenWhy(): void {
+    bumpActivity();
+    const sets = history[safeExIdx] ?? [];
+    const lastWeightKg = sets.length > 0 ? sets[sets.length - 1]!.kg : null;
+    const summary = getWhyExerciseSummary({
+      name: currentExercise.name,
+      recommendationKg: currentExercise.targetKg,
+      lastWeightKg,
+    });
+    setWhyText(summary ?? 'Explicatia e temporar indisponibila. Recomandarea ramane valida.');
+  }
+
   function handleExit(action: 'continue' | 'pause' | 'discard' | 'finish-early'): void {
     if (action === 'continue') {
       setExitSheetOpen(false);
@@ -456,6 +475,27 @@ export function Workout(): JSX.Element {
       {/* Log zone */}
       {(phase === 'logging' || phase === 'idle' || phase === 'rating') && (
         <div className="p-6" data-testid="log-zone">
+          {/* §F-workout-05 — current exercise name + "why this exercise?"
+              help-circle (mockup andura-clasic.html#L1447-1451 wv2-exname →
+              openWhyExercise). Surfaces whyEngine categorical explainer. */}
+          <div className="mb-4" data-testid="wv2-exname">
+            <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-1">
+              Exercitiul curent
+            </p>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-ink">{currentExercise.name}</h2>
+              <button
+                type="button"
+                onClick={handleOpenWhy}
+                aria-label="De ce acest exercitiu?"
+                data-testid="wv2-why-trigger"
+                className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-paper2 border border-lineStrong text-ink2"
+              >
+                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12
               Slice 1.7, mockup andura-clasic.html#L1457-1460 wv2-ex-actions).
               "Aparat ocupat" → EquipmentSwap; "Nu vreau" → CevaNuMerge picker. */}
@@ -585,6 +625,40 @@ export function Workout(): JSX.Element {
           navigate(gotoPath('antrenor'));
         }}
       />
+
+      {/* §F-workout-05 — why-exercise explainer bottom sheet. Mockup
+          andura-clasic.html#L1449 openWhyExercise → whyEngine categorical
+          summary. Backdrop tap or "Am inteles" closes. */}
+      {whyText !== null && (
+        <div
+          className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+          data-testid="why-modal-backdrop"
+          onClick={() => setWhyText(null)}
+        >
+          <div
+            className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
+            data-testid="why-modal"
+            role="dialog"
+            aria-label="De ce acest exercitiu?"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-base font-semibold text-ink mb-3">
+              De ce {currentExercise.name}?
+            </h2>
+            <p className="text-sm text-ink2 leading-relaxed mb-5" data-testid="why-modal-text">
+              {whyText}
+            </p>
+            <button
+              type="button"
+              onClick={() => setWhyText(null)}
+              data-testid="why-modal-dismiss"
+              className="w-full p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
+            >
+              Am inteles
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

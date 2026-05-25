@@ -37,12 +37,15 @@ vi.mock('../../../lib/engineWrappers', async () => {
     // assertions; per-test override via mockResolvedValueOnce(null) pentru empty
     // state tests.
     getTodayWorkout: vi.fn(async () => PHASE_5_FIXTURE),
+    // §F-workout-05 — why-exercise explainer; default categorical summary,
+    // per-test override (e.g. null → why.unavailable fallback copy).
+    getWhyExerciseSummary: vi.fn(() => 'Pastram greutatea azi. Esti intr-o zona de consolidare.'),
   };
 });
 
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
-import { getPRDelta, getTodayWorkout } from '../../../lib/engineWrappers';
+import { getPRDelta, getTodayWorkout, getWhyExerciseSummary } from '../../../lib/engineWrappers';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -522,6 +525,65 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
       'data-pathname',
       '/app/antrenor/ceva-nu-merge'
     );
+  });
+});
+
+describe('Workout — why-exercise help button (F-workout-05)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('renders help-circle trigger next to exercise name', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('wv2-exname')).toHaveTextContent('Bench Press');
+    expect(screen.getByTestId('wv2-why-trigger')).toHaveAttribute(
+      'aria-label',
+      'De ce acest exercitiu?'
+    );
+  });
+
+  it('why modal closed by default', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
+  });
+
+  it('tap help-circle opens modal cu whyEngine summary', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(getWhyExerciseSummary).toHaveBeenCalledWith({
+      name: 'Bench Press',
+      recommendationKg: 22.5,
+      lastWeightKg: null,
+    });
+    expect(screen.getByTestId('why-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('why-modal-text')).toHaveTextContent(
+      'zona de consolidare'
+    );
+    expect(screen.getByTestId('why-modal')).toHaveTextContent('De ce Bench Press?');
+  });
+
+  it('"Am inteles" closes modal', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(screen.getByTestId('why-modal')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('why-modal-dismiss'));
+    expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
+  });
+
+  it('engine null → why.unavailable fallback copy', async () => {
+    vi.mocked(getWhyExerciseSummary).mockReturnValueOnce(null);
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(screen.getByTestId('why-modal-text')).toHaveTextContent(
+      /Explicatia e temporar indisponibila/
+    );
+  });
+
+  it('no diacritics in why modal', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    const modal = screen.getByTestId('why-modal');
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(modal.textContent ?? '')).toBe(false);
   });
 });
 
