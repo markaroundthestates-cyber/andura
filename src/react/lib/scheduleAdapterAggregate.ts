@@ -26,6 +26,7 @@ import { DP } from '../../engine/dp.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
+import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 
 // ── RO onboarding → EN engine vocabulary (CRIT C1) ─────────────────────────
 // Onboarding stores experience/goal as RO strings (onboardingStore Experience
@@ -79,6 +80,14 @@ export interface EngineSession extends LastSessionSummary {
   // Overlaid by buildUserStateForPipeline from the Pain CDL (goalAdaptation
   // push-back reads recentSessions[*].injury). NU set by toEngineSession.
   injury?: boolean;
+  // Overlaid by buildUserStateForPipeline from the persisted energyEmoji
+  // (deload isEnergyDownSustained reads recentSessions[*].energyDirection ==
+  // 'DOWN'). NU set by toEngineSession (builder-layer only).
+  energyDirection?: string;
+  // Overlaid by buildUserStateForPipeline from the session timeline modulo 4
+  // (mesocycle isMariusDualSignalGreen requires weeks 1-4 present). NU set by
+  // toEngineSession (builder-layer only).
+  weekIdx?: number;
 }
 
 const RATING_TO_RIR: Readonly<Record<string, number>> = {
@@ -200,33 +209,170 @@ export function deriveInjurySignal(
   return { active, affectedGroups: [...groups] };
 }
 
+// ── Builder-layer signal completion (energyDirection / weekIdx / bf / phase) ──
+// Every helper below is PURE. They feed the SINGLE buildUserStateForPipeline
+// overlay so the live engines that read recentSessions[*] / user / meta stop
+// running on defaults. All degrade safe-absent (engines Number.isFinite /
+// typeof-guard every field) → conservative baseline when a source is missing.
+
+// energyEmoji (persisted traffic-light) → deload ENERGY_DIRECTION vocabulary
+// (deload/constants.js: {UP,DOWN,NONE}). green->UP, yellow->NONE, red->DOWN.
+// ONE persisted source (energyEmoji on the summary), the deload word derived at
+// the boundary — NOT a third persisted copy.
+const EMOJI_TO_DIRECTION: Readonly<Record<string, string>> = {
+  green: 'UP',
+  yellow: 'NONE',
+  red: 'DOWN',
+};
+
+// 4-week mesocycle cycle length (mesocycle.isMariusDualSignalGreen requires
+// weeks 1,2,3,4 present). Matches generator weekIdx = (i % 4) + 1.
+const MESOCYCLE_WEEKS = 4;
+
 /**
- * Build minimal userState aggregate consumed by getDailyWorkout pipeline.
- * Primary-source slice fields verified (anti-recurrence D027 §5):
- *   - user: useOnboardingStore.data Big 6 (age/sex/goal/frequency/experience/weight)
- *   - recentSessions: useWorkoutStore.sessionsHistory (cumulative LastSessionSummary[])
- *   - weights/profileTier/flags/meta defensive empty — buildEngineContext
- *     handles missing fields per src/coach/orchestrator/contextBuilder.js:42-58.
- *
- * Tier resolution Phase 6+ deferred (profileTier:null = engine downstream
- * fallback baseline T0 logic preserved). NU fabricate fields care nu există
- * în stores (slip cause D027 §5).
+ * Earliest session timestamp = training start anchor. undefined when no
+ * sessions yet (a brand-new user has no training history). Pure.
  */
-function buildUserStateForPipeline(): {
+function trainingStartTs(
+  sessions: ReadonlyArray<LastSessionSummary>,
+): number | undefined {
+  let earliest = Infinity;
+  for (const s of sessions) {
+    const ts = Number(s?.ts);
+    if (Number.isFinite(ts) && ts < earliest) earliest = ts;
+  }
+  return Number.isFinite(earliest) ? earliest : undefined;
+}
+
+/**
+ * Derive a session's mesocycle weekIdx (1-4) from its age relative to the
+ * training start, modulo the 4-week cycle. No stateful counter — survives gaps
+ * honestly (a break advances the modulo, matching real mesocycle drift).
+ * undefined when the start anchor is unknown (single/no-timeline). Pure.
+ */
+function deriveWeekIdx(
+  sessionTs: number,
+  startTs: number | undefined,
+  now: number,
+): number | undefined {
+  if (!Number.isFinite(sessionTs) || startTs === undefined) return undefined;
+  const ts = Math.min(sessionTs, now);
+  const weeksSinceStart = Math.floor((ts - startTs) / (7 * MS_PER_DAY));
+  if (!Number.isFinite(weeksSinceStart) || weeksSinceStart < 0) return undefined;
+  return (weeksSinceStart % MESOCYCLE_WEEKS) + 1;
+}
+
+/**
+ * Estimate body-fat as a FRACTION (0.0-1.0) from BMI/age/sex via Deurenberg
+ * 1991: BF% = 1.20·BMI + 0.23·age − 10.8·sex − 5.4 (sex: male=1, female=0).
+ * The percent is divided by 100 → FRACTION, because the engine thresholds are
+ * fractional (bfPctHighMale 0.25); a raw percent would false-positive every
+ * user (CRITICAL trap). Clamp [0.03, 0.60]. undefined when any input missing →
+ * engine sees absent → no false BF-high risk (computeRiskScore guards
+ * Number.isFinite(bf) && bf > 0). Population estimate, fitness-not-medicine —
+ * NOT a body-composition measurement. Pure.
+ *
+ * @param input weight (kg), height (cm), age (years), sex ('m'|'f')
+ */
+export function estimateBfFraction(input: {
+  weight?: number | null;
+  height?: number | null;
+  age?: number | null;
+  sex?: string | null;
+}): number | undefined {
+  const weight = Number(input.weight);
+  const heightCm = Number(input.height);
+  const age = Number(input.age);
+  if (
+    !Number.isFinite(weight) || weight <= 0 ||
+    !Number.isFinite(heightCm) || heightCm <= 0 ||
+    !Number.isFinite(age) || age <= 0 ||
+    typeof input.sex !== 'string'
+  ) {
+    return undefined;
+  }
+  const heightM = heightCm / 100;
+  const bmi = weight / (heightM * heightM);
+  const sexFactor = input.sex.toLowerCase() === 'm' ? 1 : 0;
+  const bfPercent = 1.2 * bmi + 0.23 * age - 10.8 * sexFactor - 5.4;
+  const fraction = bfPercent / 100; // percent → FRACTION (engine thresholds are fractional)
+  if (!Number.isFinite(fraction)) return undefined;
+  return Math.min(0.6, Math.max(0.03, fraction));
+}
+
+/**
+ * Profile tier from onboarding experience (specialization Gate 2 reads T1+).
+ * incepator->T0 (calibration-window noise), intermediar->T1, avansat->T2. null
+ * when experience missing → engine resolveTier returns null → conservative
+ * baseline (specialization stays gated). Pure.
+ */
+function tierForExperience(experience: unknown): 'T0' | 'T1' | 'T2' | null {
+  switch (experience) {
+    case 'incepator':
+      return 'T0';
+    case 'intermediar':
+      return 'T1';
+    case 'avansat':
+      return 'T2';
+    default:
+      return null;
+  }
+}
+
+/**
+ * Onboarding goal → nutrition phase (BULK/CUT/MAINTAIN), consistent with
+ * goalAdaptation basePhaseForGoal/basePhaseForTemplate semantics. Specialization
+ * Gate 3 activates on BULK/RECOMP; push-back/RECOMP detection read it. RECOMP is
+ * a runtime sub-phase (detected from bf/trainingWeeks downstream), not a base
+ * onboarding goal → the builder emits BULK/CUT/MAINTAIN only. null/auto ->
+ * undefined (let the engine auto-detect; meta.goalPhase absent = conservative).
+ * Pure.
+ */
+function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefined {
+  switch (goal) {
+    case 'forta':
+    case 'masa':
+      return 'BULK';
+    case 'slabire':
+      return 'CUT';
+    case 'mentenanta':
+    case 'longevitate':
+      return 'MAINTAIN';
+    default:
+      return undefined; // 'auto' / null → engine auto-detect
+  }
+}
+
+/**
+ * Build the userState aggregate consumed by getDailyWorkout pipeline.
+ * Primary-source slice fields verified (anti-recurrence D027 §5):
+ *   - user: useOnboardingStore.data Big 6 + height (age/sex/goal/frequency/
+ *     experience/weight/height), plus bfPct (Deurenberg estimate, FRACTION) +
+ *     trainingWeeks (from the session timeline). Both estimated at the builder —
+ *     NO new onboarding question (honors D078 minimal onboarding); both degrade
+ *     safe-absent (Number.isFinite guarded downstream).
+ *   - recentSessions: useWorkoutStore.sessionsHistory (newest-first), each mapped
+ *     through the PURE toEngineSession then a SINGLE builder-layer overlay that
+ *     stamps injury / energyDirection / weekIdx (the signal fields engines read
+ *     off recentSessions[*] that toEngineSession cannot honestly derive alone).
+ *   - meta: painButtonActive/painAffectedGroups (injury gate) + persona/goalPhase
+ *     (specialization Gate 1/3). profileTier (Gate 2) is a top-level field.
+ *
+ * Every overlay/estimate is sourced from already-persisted data → ZERO migration
+ * (derived fields materialize on the next pipeline run). NU fabricate fields care
+ * nu există în stores (slip cause D027 §5): absent source → field omitted →
+ * engine conservative baseline.
+ */
+export function buildUserStateForPipeline(): {
   user: Record<string, unknown>;
   recentSessions: ReadonlyArray<unknown>;
   weights: Record<string, unknown>;
-  profileTier: null;
+  profileTier: string | null;
   flags: Record<string, unknown>;
   meta: Record<string, unknown>;
 } {
   const onboardingData = useOnboardingStore.getState().data;
-  const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
-  // sessionsHistory appends newest-tail (workoutStore.finishSession); engine
-  // recentSessions consumers slice(0, N) expecting newest-first (types.js:17
-  // "ordered desc by date" + mesocycle.js:99/triggerHierarchy.js:246 trailing
-  // window). Reverse to newest-first, then map each through toEngineSession so
-  // the pipeline reads real rir/daysAgo signal instead of zero-signal raw.
+  const sessionsHistory = useWorkoutStore.getState().sessionsHistory ?? [];
   const now = Date.now();
   // Live injury safety signal from the Pain CDL channel (DB('pain-cdl')) — the
   // honest persisted source PainButton writes. Feeds BOTH pipeline injury gates
@@ -234,19 +380,57 @@ function buildUserStateForPipeline(): {
   //   - specialization Gate 4 reads meta.painButtonActive + meta.painAffectedGroups
   //   - goalAdaptation push-back reads recentSessions[*].injury + .daysAgo
   const injury = deriveInjurySignal(DB.get<PainCdlEntryRead[]>(PAIN_CDL_KEY), now);
-  // Stamp injury:true on sessions inside the lookback window so the push-back
-  // recent-injury check fires (it reads recentSessions[*].injury, NU meta). The
-  // pure toEngineSession transform stays injury-free (no honest summary source);
-  // the stamp is an explicit builder-layer overlay sourced from the Pain CDL.
-  const recentSessions = (sessionsHistory ?? [])
+  // Training start anchor (earliest session ts) — shared by weekIdx + trainingWeeks.
+  const startTs = trainingStartTs(sessionsHistory);
+  // sessionsHistory appends newest-tail (workoutStore.finishSession); engine
+  // recentSessions consumers slice(0, N) expecting newest-first (types.js:17
+  // "ordered desc by date" + mesocycle.js:99/triggerHierarchy.js:246 trailing
+  // window). Reverse to newest-first, map each through the PURE toEngineSession,
+  // then a SINGLE builder-layer overlay stamps the signal fields that have no
+  // honest per-summary source (injury / energyDirection / weekIdx). One overlay
+  // map — NU stack a second/third .map(). toEngineSession stays injury/energy/
+  // weekIdx-free (purity contract test).
+  const recentSessions = sessionsHistory
     .slice()
     .reverse()
     .map((s) => toEngineSession(s, now))
-    .map((s) =>
-      injury.active && s.daysAgo <= INJURY_LOOKBACK_DAYS
-        ? { ...s, injury: true }
-        : s,
-    );
+    .map((s) => {
+      const overlay: Partial<EngineSession> = {};
+      // injury:true on sessions inside the lookback window → push-back recent-
+      // injury check (reads recentSessions[*].injury, NU meta).
+      if (injury.active && s.daysAgo <= INJURY_LOOKBACK_DAYS) overlay.injury = true;
+      // energyDirection from the persisted energyEmoji → deload isEnergyDownSustained.
+      const direction =
+        typeof s.energyEmoji === 'string' ? EMOJI_TO_DIRECTION[s.energyEmoji] : undefined;
+      if (direction !== undefined) overlay.energyDirection = direction;
+      // weekIdx from the session timeline modulo 4 → mesocycle dual-signal.
+      const weekIdx = deriveWeekIdx(Number(s.ts), startTs, now);
+      if (weekIdx !== undefined) overlay.weekIdx = weekIdx;
+      return Object.keys(overlay).length > 0 ? { ...s, ...overlay } : s;
+    });
+  // bfPct as a FRACTION (Deurenberg) — engine thresholds are fractional; a raw
+  // percent would false-positive every user (CRITICAL trap, fact 10).
+  const bfPct = estimateBfFraction({
+    weight: onboardingData.weight,
+    height: onboardingData.height,
+    age: onboardingData.age,
+    sex: onboardingData.sex,
+  });
+  // trainingWeeks from the first-session date (0 when no sessions — a brand-new
+  // user IS a newbie). Feeds templates.isNewbieEffect (<=12 weeks).
+  const trainingWeeks =
+    startTs === undefined
+      ? 0
+      : Math.max(0, Math.floor((now - startTs) / (7 * MS_PER_DAY)));
+  // Specialization meta wire (was unset → blocked at Gate 1 persona for EVERY
+  // real user). persona = canonical age-based resolvePersonaId (reused, NOT
+  // reinvented); profileTier from experience (Gate 2 reads T1+); goalPhase from
+  // goal (Gate 3 activates BULK/RECOMP). Absent inputs → conservative baseline.
+  const persona = resolvePersonaId(
+    onboardingData.age !== null ? { age: onboardingData.age } : {},
+  );
+  const profileTier = tierForExperience(onboardingData.experience);
+  const goalPhase = goalPhaseForGoal(onboardingData.goal);
   return {
     user: {
       age: onboardingData.age,
@@ -255,17 +439,25 @@ function buildUserStateForPipeline(): {
       frequency: onboardingData.frequency,
       experience: onboardingData.experience,
       weight: onboardingData.weight,
+      height: onboardingData.height,
+      // Degrade safe-absent: only set when the estimate/timeline is real.
+      ...(bfPct !== undefined ? { bfPct } : {}),
+      trainingWeeks,
     },
     recentSessions,
     weights: {},
-    profileTier: null,
+    // Gate 2 tier (specialization resolveTier reads top-level profileTier).
+    profileTier,
     flags: {},
-    // painButtonActive + painAffectedGroups = specialization injury gate input
-    // (activationGating Gate 4). Empty/false when no recent Pain CDL report →
-    // engine treats absent as no-injury (conservative baseline preserved).
     meta: {
+      // painButtonActive + painAffectedGroups = specialization injury gate input
+      // (activationGating Gate 4) — PRESERVED from the injury wire.
       painButtonActive: injury.active,
       painAffectedGroups: injury.affectedGroups,
+      // persona (Gate 1) + goalPhase (Gate 3). Omit goalPhase when undefined
+      // (goal 'auto'/null) → engine auto-detect, NU a fabricated phase.
+      persona,
+      ...(goalPhase !== undefined ? { goalPhase } : {}),
     },
   };
 }

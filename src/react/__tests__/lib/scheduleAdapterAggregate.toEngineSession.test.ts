@@ -100,9 +100,12 @@ describe('toEngineSession — rir derivation from per-set ratings', () => {
 });
 
 describe('toEngineSession — Bugatti truth (no fabricated fields)', () => {
-  it('does NOT fabricate energy / injury / weekIdx (no honest store source)', () => {
+  it('does NOT fabricate energy / energyDirection / injury / weekIdx (no honest store source)', () => {
+    // These are builder-layer overlays (buildUserStateForPipeline), never set by
+    // the pure transform — the overlay stamps them, toEngineSession must not.
     const out = toEngineSession(summary({ exercises: breakdown(['greu']) }), NOW);
     expect('energy' in out).toBe(false);
+    expect('energyDirection' in out).toBe(false);
     expect('injury' in out).toBe(false);
     expect('weekIdx' in out).toBe(false);
   });
