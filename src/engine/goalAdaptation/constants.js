@@ -265,7 +265,7 @@ export const PUSHBACK_TIERS = Object.freeze({
  *
  * @type {Readonly<{
  *   bfPctHighMale: number, bfPctHighFemale: number,
- *   ageOlder: number, ageOlderRiskAge: number,
+ *   ageOlder: number,
  *   injuryWindowDays: number,
  *   tier2Threshold: number, tier3Threshold: number,
  *   tier3MaxConservativeVolMul: number, tier3MaxConservativeIntensityCap: number,
@@ -275,7 +275,6 @@ export const PUSHBACK_RISK_THRESHOLDS = Object.freeze({
   bfPctHighMale:        0.25,
   bfPctHighFemale:      0.32,
   ageOlder:             60,
-  ageOlderRiskAge:      55,
   injuryWindowDays:     6 * 7, // 6 sapt
   tier2Threshold:       1,
   tier3Threshold:       2,
