@@ -117,6 +117,22 @@ export default defineConfig({
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
+          // §S-13 audit fix (AUDIT-3) — same-origin /assets/*.js runtime cache.
+          // globIgnores excludes index-*.js (Sentry) + vendor-data-*.js (Dexie)
+          // from precache, but nothing runtime-cached them either → they failed
+          // to load offline. Dexie offline-fail breaks Tier 1 IndexedDB (the
+          // export + delete flows lazy-import vendor-data) — notable for a
+          // local-first PWA. StaleWhileRevalidate makes any /assets/*.js chunk
+          // available offline after first fetch while still updating in the
+          // background on the next online load.
+          {
+            urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/assets\/.*\.js$/.test(url.pathname),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'app-assets-js',
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
         ],
       },
       devOptions: { enabled: false },
