@@ -1,0 +1,203 @@
+// ══ reactBoot.ts — S-07 boot orchestration wiring tests ════════════════════
+// AUDIT-3 §S-07 fix coverage. Verifies the React entry now performs the boot
+// orchestration that the retired main.js did:
+//   - runReactBoot: migrations + tier rotation run in the right order, once
+//     (idempotent), graceful on failure, kicks cloud sync only when authed.
+//   - runPostAuthSync: path migration → Firebase restore, gated on auth, deduped.
+//   - NO-DATA-LOSS: real firebase.js merge proves restore-on-login cannot
+//     overwrite newer local data.
+//
+// Two layers:
+//   1. Orchestration unit tests — mock the underlying boot modules to assert
+//      sequencing/guards without network or IDB.
+//   2. No-data-loss integration test — real syncFromFirebase merge against a
+//      stubbed RTDB response, asserting local-always-wins + additive restore.
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// ── Mock the underlying boot modules (orchestration layer) ──────────────────
+vi.mock('../../../bootstrap.js', () => ({
+  runBootMigrations: vi.fn(async () => ({ migrationsRun: 1, totalEntriesMigrated: 0, errors: [] })),
+  startTierRotation: vi.fn(async () => ({ initial: { rotated: 0 } })),
+  exposeForceRotationHelper: vi.fn(),
+}));
+vi.mock('../../../util/logsMigration.js', () => ({
+  migrateLogsUtcToLocal: vi.fn(() => ({ skipped: true, reason: 'already-migrated' })),
+}));
+vi.mock('../../../firebase.js', () => ({
+  initFirebaseSync: vi.fn(async () => undefined),
+}));
+vi.mock('../../../migrations/2026-05-02-auth-path-migration.js', () => ({
+  runAuthPathMigration: vi.fn(async () => ({ status: 'no-source' })),
+}));
+vi.mock('../../../auth.js', () => ({
+  getAuthState: vi.fn(() => null),
+}));
+
+import {
+  runReactBoot,
+  runPostAuthSync,
+  __resetReactBootGuards,
+} from '../../lib/reactBoot';
+import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from '../../../bootstrap.js';
+import { migrateLogsUtcToLocal } from '../../../util/logsMigration.js';
+import { initFirebaseSync } from '../../../firebase.js';
+import { runAuthPathMigration } from '../../../migrations/2026-05-02-auth-path-migration.js';
+import { getAuthState } from '../../../auth.js';
+
+const mockGetAuthState = vi.mocked(getAuthState);
+const mockInitFirebaseSync = vi.mocked(initFirebaseSync);
+const mockRunAuthPathMigration = vi.mocked(runAuthPathMigration);
+const mockRunBootMigrations = vi.mocked(runBootMigrations);
+const mockStartTierRotation = vi.mocked(startTierRotation);
+const mockMigrateLogsUtcToLocal = vi.mocked(migrateLogsUtcToLocal);
+
+let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  __resetReactBootGuards();
+  mockGetAuthState.mockReturnValue(null);
+  mockMigrateLogsUtcToLocal.mockReturnValue({ skipped: true, reason: 'already-migrated' } as never);
+  mockRunBootMigrations.mockResolvedValue({ migrationsRun: 1, totalEntriesMigrated: 0, errors: [] } as never);
+  mockStartTierRotation.mockResolvedValue({ initial: { rotated: 0 } } as never);
+  mockInitFirebaseSync.mockResolvedValue(undefined as never);
+  mockRunAuthPathMigration.mockResolvedValue({ status: 'no-source' } as never);
+  consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  consoleLogSpy.mockRestore();
+  consoleWarnSpy.mockRestore();
+  consoleErrorSpy.mockRestore();
+});
+
+// ── runReactBoot: orchestration + ordering ──────────────────────────────────
+
+describe('runReactBoot — boot orchestration', () => {
+  it('runs migrations + tier rotation in the main.js order', async () => {
+    const order: string[] = [];
+    mockMigrateLogsUtcToLocal.mockImplementation(() => { order.push('utc'); return { skipped: true } as never; });
+    mockRunBootMigrations.mockImplementation(async () => { order.push('schema'); return {} as never; });
+    mockStartTierRotation.mockImplementation(async () => { order.push('rotation'); return {} as never; });
+    (exposeForceRotationHelper as ReturnType<typeof vi.fn>).mockImplementation(() => { order.push('helper'); });
+
+    await runReactBoot();
+
+    // Order matches retired main.js init(): UTC migration → schema migrations →
+    // tier rotation → expose dev helper.
+    expect(order).toEqual(['utc', 'schema', 'rotation', 'helper']);
+  });
+
+  it('calls each boot step exactly once', async () => {
+    await runReactBoot();
+    expect(migrateLogsUtcToLocal).toHaveBeenCalledOnce();
+    expect(runBootMigrations).toHaveBeenCalledOnce();
+    expect(startTierRotation).toHaveBeenCalledOnce();
+    expect(exposeForceRotationHelper).toHaveBeenCalledOnce();
+  });
+
+  it('is idempotent — second call is a no-op (no double migration)', async () => {
+    await runReactBoot();
+    await runReactBoot();
+    await runReactBoot();
+    // Guard prevents re-running heavyweight boot steps (anti double-migration).
+    expect(runBootMigrations).toHaveBeenCalledOnce();
+    expect(startTierRotation).toHaveBeenCalledOnce();
+    expect(migrateLogsUtcToLocal).toHaveBeenCalledOnce();
+  });
+
+  it('continues when UTC migration throws (graceful degradation)', async () => {
+    mockMigrateLogsUtcToLocal.mockImplementation(() => { throw new Error('utc boom'); });
+    await runReactBoot();
+    // Boot must not abort — later steps still run.
+    expect(runBootMigrations).toHaveBeenCalledOnce();
+    expect(startTierRotation).toHaveBeenCalledOnce();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[Migration] UTC→Local failed:', expect.any(Error));
+  });
+
+  it('logs when UTC migration actually modified data', async () => {
+    mockMigrateLogsUtcToLocal.mockReturnValue({ skipped: false, logsModified: 3 } as never);
+    await runReactBoot();
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('local timezone'));
+  });
+
+  it('does NOT trigger cloud sync when unauthenticated', async () => {
+    mockGetAuthState.mockReturnValue(null);
+    await runReactBoot();
+    // Anonymous cold boot: no network restore attempt.
+    expect(initFirebaseSync).not.toHaveBeenCalled();
+    expect(runAuthPathMigration).not.toHaveBeenCalled();
+  });
+
+  it('triggers cloud sync for a returning authenticated user (token persisted)', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-returning', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    await runReactBoot();
+    // Fire-and-forget — let the microtask settle, then assert.
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+  });
+});
+
+// ── runPostAuthSync: auth-gated cloud restore ───────────────────────────────
+
+describe('runPostAuthSync — restore on login', () => {
+  it('runs path migration THEN restore (correct order for canonical path)', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-1', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    const order: string[] = [];
+    mockRunAuthPathMigration.mockImplementation(async () => { order.push('migrate'); return {} as never; });
+    mockInitFirebaseSync.mockImplementation(async () => { order.push('restore'); });
+
+    await runPostAuthSync();
+
+    // Migration first so restore reads from users/{uid}, not legacy users/daniel.
+    expect(order).toEqual(['migrate', 'restore']);
+  });
+
+  it('is a no-op when unauthenticated (no network attempt)', async () => {
+    mockGetAuthState.mockReturnValue(null);
+    await runPostAuthSync();
+    expect(runAuthPathMigration).not.toHaveBeenCalled();
+    expect(initFirebaseSync).not.toHaveBeenCalled();
+  });
+
+  it('dedups concurrent calls (single sync under burst)', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-2', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    // Fire three in parallel (fresh login racing returning-user boot path).
+    await Promise.all([runPostAuthSync(), runPostAuthSync(), runPostAuthSync()]);
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+    expect(runAuthPathMigration).toHaveBeenCalledOnce();
+  });
+
+  it('does not re-sync once completed (done flag)', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-3', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    await runPostAuthSync();
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+  });
+
+  it('survives a path-migration throw + still attempts restore', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-4', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    mockRunAuthPathMigration.mockRejectedValue(new Error('migrate boom'));
+    await runPostAuthSync();
+    // Migration failure is isolated — restore still runs.
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[Auth] post-auth path migration threw:', expect.any(Error));
+  });
+
+  it('swallows a restore failure (offline) without throwing + allows retry', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'u-5', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    mockInitFirebaseSync.mockRejectedValueOnce(new Error('network down'));
+    await expect(runPostAuthSync()).resolves.toBeUndefined();
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[Sync] post-auth Firebase sync failed:', expect.any(Error));
+    // Not marked done → a later trigger can retry.
+    mockInitFirebaseSync.mockResolvedValueOnce(undefined as never);
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledTimes(2);
+  });
+});

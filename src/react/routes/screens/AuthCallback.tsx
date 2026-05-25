@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, signInWithGoogleIdToken, AUTH_STORAGE_KEYS } from '../../../auth.js';
+import { runPostAuthSync } from '../../lib/reactBoot';
 
 // §B005/D-2 audit fix — Google OAuth fragment parse helper. Google returns
 // `#id_token=<jwt>&access_token=...&...` în URL hash post-redirect.
@@ -39,6 +40,11 @@ export function AuthCallback(): JSX.Element {
           // Clear hash from URL pre-navigate (avoid token leak via referrer header).
           window.history.replaceState(null, '', window.location.pathname);
           setAuthenticated(true);
+          // §S-07 audit fix — fresh login on a (possibly new) device: pull the
+          // user's RTDB backup + run the legacy path migration. Fire-and-forget
+          // (restore is additive, local-always-wins merge — see reactBoot.ts) so
+          // the user lands on the app immediately while sync runs in background.
+          void runPostAuthSync();
           navigate('/app/antrenor', { replace: true });
           return;
         }
@@ -62,6 +68,9 @@ export function AuthCallback(): JSX.Element {
       if (cancelled) return;
       if (result.ok) {
         setAuthenticated(true);
+        // §S-07 audit fix — see Google path above. Pull cloud backup + path
+        // migration post Magic Link verify, fire-and-forget.
+        void runPostAuthSync();
         navigate('/app/antrenor', { replace: true });
       } else {
         // §AuthCallback-FIX code-review MEDIUM: clear pendingEmail on verify-fail

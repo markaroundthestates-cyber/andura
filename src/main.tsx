@@ -10,6 +10,7 @@ import { router } from './react/routes/router';
 import { initSentry, captureException } from './util/sentry.js';
 import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
 import { useSettingsStore } from './react/stores/settingsStore';
+import { runReactBoot } from './react/lib/reactBoot';
 import './styles/global.css';
 
 // Apply persisted theme synchronously pre-mount to prevent FOUC flash.
@@ -49,6 +50,15 @@ window.addEventListener('error', (event) => {
     captureException(event.error, { tags: { source: 'window.error' } });
   }
 });
+
+// §S-07 audit fix (AUDIT-3) — wire boot orchestration into the React entry.
+// The D028 vanilla→React swap left schema migrations + tier rotation + cloud
+// restore wired only into the retired src/main.js. Fire-and-forget here so
+// migrations + tier rotation run eagerly + a returning authenticated user's
+// cloud backup is pulled, WITHOUT blocking first paint (graceful degradation
+// per ADR 018 §4). See src/react/lib/reactBoot.ts for the no-data-loss
+// invariants. Fresh-login restore is triggered separately in AuthCallback.
+void runReactBoot();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
