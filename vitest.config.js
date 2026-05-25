@@ -47,7 +47,17 @@ export default defineConfig({
       reporter: ['text', 'json-summary', 'html'],
       reportsDirectory: './coverage',
       // §2-C2 — explicit include (was implicit, may over-include build artifacts).
-      include: ['src/engine/**', 'src/coach/**', 'src/react/**', 'src/util/**'],
+      // Widened to gate auth/firebase/storage against regression (existing tests
+      // cover them; coverage include makes the gate enforce).
+      include: [
+        'src/engine/**',
+        'src/coach/**',
+        'src/react/**',
+        'src/util/**',
+        'src/auth.js',
+        'src/firebase.js',
+        'src/storage/**',
+      ],
       exclude: [
         'node_modules/**',
         'src/__tests__/**',
