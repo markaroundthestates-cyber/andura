@@ -157,6 +157,17 @@ export async function callOracle(ctx, opts = {}) {
 
   if (opts.delayMs) await sleep(opts.delayMs);
 
+  // Newer Opus (4.7+) reject the `temperature` param ("deprecated for this
+  // model" -> HTTP 400). Omit it for those; it defaults to deterministic-enough
+  // for this categorical judging task. Older models keep temperature:0.
+  const rejectsTemperature = /claude-opus-4-(7|8|9)\b/.test(model);
+  const body = {
+    model,
+    max_tokens: opts.maxTokens || 700,
+    messages: [{ role: 'user', content: prompt }],
+  };
+  if (!rejectsTemperature) body.temperature = 0;
+
   let resp;
   try {
     resp = await fetch(API_URL, {
@@ -166,12 +177,7 @@ export async function callOracle(ctx, opts = {}) {
         'x-api-key': process.env.ANTHROPIC_API_KEY,
         'anthropic-version': ANTHROPIC_VERSION,
       },
-      body: JSON.stringify({
-        model,
-        max_tokens: opts.maxTokens || 700,
-        temperature: 0,
-        messages: [{ role: 'user', content: prompt }],
-      }),
+      body: JSON.stringify(body),
     });
   } catch (e) {
     return { ok: false, error: `fetch failed: ${e.message}` };

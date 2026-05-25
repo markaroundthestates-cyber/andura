@@ -39,10 +39,15 @@ export const COMPARATORS = {
     return { agree: catEq(av, cv), anduraValue: av, claudeValue: cv };
   },
   // Deload depth — +-10pp band.
+  // Semantic-equivalence: when there is no deload, the engine reports depthPct 0
+  // while the oracle abstains with null. Both mean "no deload depth", so treat
+  // oracle null as agreement when engine depth is 0 (or deloadState is IDLE).
   deloadDepth(a, c) {
     const av = a.deload && a.deload.depthPct;
     const cv = c.deloadDepthPct;
     if (av == null && cv == null) return { agree: true, anduraValue: av, claudeValue: cv };
+    const anduraNoDeload = av === 0 || (a.deload && a.deload.deloadState === 'IDLE');
+    if (cv == null && anduraNoDeload) return { agree: true, anduraValue: av, claudeValue: cv };
     return { agree: within(av, cv, 10), anduraValue: av, claudeValue: cv };
   },
   // Mesocycle phase — categorical exact.
@@ -64,10 +69,15 @@ export const COMPARATORS = {
     return { agree: catEq(av, cv), anduraValue: av, claudeValue: cv };
   },
   // Progression / energy adjustment direction — categorical (up/hold/down).
+  // Semantic-equivalence: engine vocab is UP/DOWN/NONE; oracle emits up/down/hold.
+  // Engine `NONE` and oracle `hold` are the SAME neutral state (no load nudge),
+  // just different tokens for the shared concept. Treat them as equivalent.
   adjustmentDirection(a, c) {
     const av = a.energy && a.energy.adjustmentDirection;
     const cv = c.adjustmentDirection;
-    return { agree: catEq(av, cv), anduraValue: av, claudeValue: cv };
+    const isNeutral = (v) => v != null && ['none', 'hold'].includes(String(v).toLowerCase());
+    const agree = (isNeutral(av) && isNeutral(cv)) || catEq(av, cv);
+    return { agree, anduraValue: av, claudeValue: cv };
   },
   // TDEE direction — derived from likelihood probabilities argmax vs oracle.
   tdeeDirection(a, c) {
