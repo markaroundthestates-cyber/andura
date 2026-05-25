@@ -10,7 +10,9 @@
 // Variants:
 //   - 'info'    auto-dismiss 3000ms (§32-H1 spec)
 //   - 'success' auto-dismiss 3000ms
-//   - 'warning' manual-dismiss (auto disabled per spec)
+//   - 'warning' auto-dismiss 5000ms (E2E-02 fix — transient validation hints
+//                must NOT persist forever / survive navigation; longer than
+//                info so the message is readable before it clears)
 //   - 'error'   manual-dismiss (auto disabled per spec)
 //   - 'critical' §32-H3 — manual-dismiss + dismissible=false default.
 //                 Used for safety notifications: medical disclaimer hit,
@@ -45,6 +47,9 @@ type Listener = (items: readonly ToastItem[]) => void;
 
 const MAX_VISIBLE = 2;
 const DEFAULT_DURATION_MS = 3000;
+// E2E-02: warnings are transient validation hints — auto-dismiss after a
+// slightly longer window than info so they don't pin to the screen forever.
+const WARNING_DURATION_MS = 5000;
 
 let items: ToastItem[] = [];
 const listeners = new Set<Listener>();
@@ -55,9 +60,11 @@ function emit(): void {
 }
 
 function defaultDuration(variant: ToastVariant): number {
-  // §32-H1 spec: info/success auto 3s; errors/warnings manual.
+  // §32-H1 spec: info/success auto 3s; errors manual.
   // §32-H3: critical also manual (never auto-dismiss).
-  if (variant === 'warning' || variant === 'error' || variant === 'critical') return 0;
+  // E2E-02: warning auto-dismisses 5s (transient hint, not a persistent state).
+  if (variant === 'error' || variant === 'critical') return 0;
+  if (variant === 'warning') return WARNING_DURATION_MS;
   return DEFAULT_DURATION_MS;
 }
 

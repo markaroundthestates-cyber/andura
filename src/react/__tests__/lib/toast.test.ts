@@ -40,9 +40,9 @@ describe('toast store - §32-H1 global pattern', () => {
     expect(first.dismissible).toBe(true);
   });
 
-  it('warning variant: manual-dismiss (durationMs=0)', () => {
+  it('warning variant: auto-dismiss after 5000ms (E2E-02 — not pinned forever)', () => {
     toast.show({ message: 'm', variant: 'warning' });
-    expect(toast.getSnapshot()[0]!.durationMs).toBe(0);
+    expect(toast.getSnapshot()[0]!.durationMs).toBe(5000);
   });
 
   it('dismiss() removes item by id', () => {
