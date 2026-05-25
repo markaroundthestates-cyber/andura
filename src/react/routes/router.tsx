@@ -4,10 +4,15 @@
 // Phase 3 Antrenor sub-screens nested sub /app/antrenor/<screen>.
 //
 // §B007/D-3 audit fix (D046 §3.3) — Bundle code-split via React.lazy() pentru
-// non-critical sub-routes. 4 tab home stays eager (Antrenor/Progres/Istoric/
-// Cont, Layout/ProtectedRoute wrap = bottom-nav primary entry).
-// Sub-screens (Antrenor 11 + Cont 9 + Progres 2 + Istoric detail 1 = 23
-// total) load on-demand via dynamic import. Maria 65 3G LCP improved.
+// non-critical sub-routes. Sub-screens (Antrenor 11 + Cont 9 + Progres 2 +
+// Istoric detail 1 = 23 total) load on-demand via dynamic import. Maria 65 3G
+// LCP improved.
+//
+// BUNDLE-CI-RED perf-infra — 4 tab home (Antrenor/Progres/Istoric/Cont) flipped
+// eager → lazy. Eager-importing them shipped tab code in the main chunk at
+// first paint, pushing main-*.js +5.5KB over the 135KB gzip budget. They sit
+// behind ProtectedRoute (anon redirect → /auth) so they never render before
+// the Splash/Auth lazy chunks anyway. Lazy split returns main under budget.
 //
 // ROUTE_LAZY_LOAD_INVESTIGATION chat 5 HIGH ROI #1 — Splash + Auth +
 // AuthCallback + Onboarding lazy (one-time-entry flow per session, NU primary
@@ -19,13 +24,15 @@ import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Layout } from './Layout';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
-// 4 tab home eager (bottom-nav primary entry — daily-use Antrenor/Progres/
+// 4 tab home lazy (bottom-nav primary entry — daily-use Antrenor/Progres/
 // Istoric/Cont). ProtectedRoute wraps, redirect anon → /auth lazy chunk.
-import { Antrenor } from './screens/antrenor/Antrenor';
-import { Progres } from './screens/progres/Progres';
-import { Istoric } from './screens/istoric/Istoric';
-import { Cont } from './screens/cont/Cont';
+// BUNDLE-CI-RED perf-infra — split out of main chunk (was eager, +5.5KB over budget).
+const Antrenor = lazy(() => import('./screens/antrenor/Antrenor').then((m) => ({ default: m.Antrenor })));
+const Progres = lazy(() => import('./screens/progres/Progres').then((m) => ({ default: m.Progres })));
+const Istoric = lazy(() => import('./screens/istoric/Istoric').then((m) => ({ default: m.Istoric })));
+const Cont = lazy(() => import('./screens/cont/Cont').then((m) => ({ default: m.Cont })));
 
 // LOCK V1 D060 — PWA quadruple optimization §2 AuthCluster lazy (DECISIONS.md §D060)
 // ROUTE_LAZY_LOAD_INVESTIGATION chat 5 HIGH ROI #1 — one-time-entry flow lazy
@@ -102,12 +109,29 @@ function LazyRoute({ children }: { children: ReactNode }): JSX.Element {
   );
 }
 
+/**
+ * ERRORBOUNDARY-COVERAGE perf-infra — top-level routes (Splash / Auth /
+ * AuthCallback / Onboarding) render OUTSIDE Layout, so they were not covered by
+ * Layout's ErrorBoundary (which only wraps the /app Outlet). A render crash at
+ * first contact (pre-auth / onboarding) showed a white screen. Wrapping each in
+ * the same ErrorBoundary gives them the fallback UI too. /app sub-routes keep
+ * Layout's single boundary (no double-wrap) — only the unprotected entry routes
+ * gain coverage here.
+ */
+function TopLevelRoute({ children }: { children: ReactNode }): JSX.Element {
+  return (
+    <ErrorBoundary>
+      <LazyRoute>{children}</LazyRoute>
+    </ErrorBoundary>
+  );
+}
+
 export const router = createBrowserRouter([
-  { path: '/', element: <LazyRoute><Splash /></LazyRoute> },
-  { path: '/auth', element: <LazyRoute><Auth /></LazyRoute> },
-  { path: '/auth/reactivate', element: <LazyRoute><Auth /></LazyRoute> },
-  { path: '/auth-callback', element: <LazyRoute><AuthCallback /></LazyRoute> },
-  { path: '/onboarding/:step', element: <LazyRoute><Onboarding /></LazyRoute> },
+  { path: '/', element: <TopLevelRoute><Splash /></TopLevelRoute> },
+  { path: '/auth', element: <TopLevelRoute><Auth /></TopLevelRoute> },
+  { path: '/auth/reactivate', element: <TopLevelRoute><Auth /></TopLevelRoute> },
+  { path: '/auth-callback', element: <TopLevelRoute><AuthCallback /></TopLevelRoute> },
+  { path: '/onboarding/:step', element: <TopLevelRoute><Onboarding /></TopLevelRoute> },
   {
     path: '/app',
     element: (
@@ -116,11 +140,11 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Antrenor /> },
+      { index: true, element: <LazyRoute><Antrenor /></LazyRoute> },
       {
         path: 'antrenor',
         children: [
-          { index: true, element: <Antrenor /> },
+          { index: true, element: <LazyRoute><Antrenor /></LazyRoute> },
           { path: 'energy-check', element: <LazyRoute><EnergyCheck /></LazyRoute> },
           { path: 'energy-cause', element: <LazyRoute><EnergyCause /></LazyRoute> },
           { path: 'workout-preview', element: <LazyRoute><WorkoutPreview /></LazyRoute> },
@@ -141,7 +165,7 @@ export const router = createBrowserRouter([
       {
         path: 'progres',
         children: [
-          { index: true, element: <Progres /> },
+          { index: true, element: <LazyRoute><Progres /></LazyRoute> },
           { path: 'log-weight', element: <LazyRoute><LogWeight /></LazyRoute> },
           { path: 'body-data', element: <LazyRoute><BodyData /></LazyRoute> },
           { path: 'weight-log-list', element: <LazyRoute><WeightLogList /></LazyRoute> },
@@ -152,7 +176,7 @@ export const router = createBrowserRouter([
       {
         path: 'istoric',
         children: [
-          { index: true, element: <Istoric /> },
+          { index: true, element: <LazyRoute><Istoric /></LazyRoute> },
           // PARITY-MISSING-SCREENS Wave 2e — static path BEFORE :sessionId
           // so 'pr-wall' nu match-uieste param (Karpathy SC ordering).
           { path: 'pr-wall', element: <LazyRoute><PrWall /></LazyRoute> },
@@ -162,7 +186,7 @@ export const router = createBrowserRouter([
       {
         path: 'cont',
         children: [
-          { index: true, element: <Cont /> },
+          { index: true, element: <LazyRoute><Cont /></LazyRoute> },
           { path: 'settings-profile', element: <LazyRoute><SettingsProfile /></LazyRoute> },
           { path: 'settings-notifications', element: <LazyRoute><SettingsNotifications /></LazyRoute> },
           { path: 'settings-subscription', element: <LazyRoute><SettingsSubscription /></LazyRoute> },
