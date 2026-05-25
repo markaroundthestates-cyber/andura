@@ -104,9 +104,12 @@ describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
     //   - `buildSilentMmiContext`: DB.get failure → null cap context fallback
     //   - `getPhaseOverrideKcalToday`: localStorage JSON parse failure → null
     //      (silent override absent, baseline pipeline preserved)
+    //   - `readPainCdl`: DB.get('pain-cdl') failure → undefined (recovery falls
+    //      back to log-only state, conservative baseline — NU engine-adapter-fallback)
     const PRIVATE_HELPERS_NO_SENTRY = [
       'buildSilentMmiContext',
       'getPhaseOverrideKcalToday',
+      'readPainCdl',
     ];
 
     const lines = source.split(/\r?\n/);

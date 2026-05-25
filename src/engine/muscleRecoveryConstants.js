@@ -90,3 +90,36 @@ export const DECAY_RATE_HOURS_BIG11 = {
  * BIG11_GROUPS — Ordered canonical V1 list for iteration + cascade routing
  */
 export const BIG11_GROUPS = Object.keys(GROUP_HEAD_MAP_BIG11);
+
+/**
+ * PAIN_REGION_GROUP_MAP — PainButton BodyRegion -> Big 11 canonical group(s).
+ * Wires ADR-ENGINE-MATH-LOCKED-VALUES section 9 Pain CDL -> Recovery
+ * consumption: a reported pain region escalates the recovery state of the
+ * muscle group(s) anatomically loaded by movement of that region (NU the joint
+ * itself — the Big 11 taxonomy is muscle-based, joints map to prime movers).
+ *
+ * Region IDs verbatim from PainButton.tsx BodyRegion union (15 regions).
+ * Multi-group entries (cot/genunchi) reflect joints crossed by two groups:
+ *   - cot (elbow): biceps (flexor) + triceps (extensor)
+ *   - genunchi (knee): picioare-quads (extensor) + picioare-hamstrings (flexor)
+ * gat (neck) -> umeri: umeri group includes rear_delt_trap (upper-trap head).
+ * incheietura (wrist) -> antebrate (forearm placeholder group, antebrate=[]).
+ * sold (hip) -> fese (gluteal prime mover).  glezna (ankle) -> gambe (calf).
+ */
+export const PAIN_REGION_GROUP_MAP = {
+  'gat':                   ['umeri'],
+  'umar-stang':            ['umeri'],
+  'umar-drept':            ['umeri'],
+  'piept':                 ['piept'],
+  'spate':                 ['spate'],
+  'lombar':                ['spate'],
+  'cot-stang':             ['biceps', 'triceps'],
+  'cot-drept':             ['biceps', 'triceps'],
+  'incheietura-stanga':    ['antebrate'],
+  'incheietura-dreapta':   ['antebrate'],
+  'sold':                  ['fese'],
+  'genunchi-stang':        ['picioare-quads', 'picioare-hamstrings'],
+  'genunchi-drept':        ['picioare-quads', 'picioare-hamstrings'],
+  'glezna-stanga':         ['gambe'],
+  'glezna-dreapta':        ['gambe'],
+};

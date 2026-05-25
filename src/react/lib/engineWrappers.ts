@@ -840,6 +840,29 @@ export interface CoachRestReason {
 
 const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach line
 
+// Pain CDL read (ADR-ENGINE-MATH-LOCKED-VALUES section 9, item 43-H2). I/O
+// boundary: read the append-only pain CDL persisted by PainButton
+// (DB('pain-cdl')) so getRecoveryByGroup can escalate the recovery state of a
+// muscle group with a recently-reported pain region. Engine core stays pure —
+// the data is passed in as an argument. Soft-fail -> undefined (recovery falls
+// back to log-only state, conservative baseline).
+const PAIN_CDL_KEY = 'pain-cdl';
+
+interface PainCdlEntry {
+  type?: string;
+  region?: string;
+  intensity?: 1 | 2 | 3;
+  ts?: number;
+}
+
+function readPainCdl(): PainCdlEntry[] | undefined {
+  try {
+    return (DB.get(PAIN_CDL_KEY) as PainCdlEntry[] | null) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Composer §F-pass2-coachrest-01 — extract fatigued muscle groups + readiness
  * score for CoachRestCard wire. Reads workoutStore sessionsHistory →
@@ -853,7 +876,7 @@ export function getCoachRestReason(): CoachRestReason | null {
     const readiness = getComputedReadinessScore();
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
-    const groupState = getRecoveryByGroup(logs);
+    const groupState = getRecoveryByGroup(logs, readPainCdl());
     const fatigued: string[] = [];
     for (const [group, state] of Object.entries(groupState)) {
       if (state === 'fatigued') {
@@ -951,7 +974,7 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
     if (logs.length === 0) return null;
-    const groupState = getRecoveryByGroup(logs);
+    const groupState = getRecoveryByGroup(logs, readPainCdl());
     // Iterate groups; pick first recovered group cu daysSince in window.
     let best: { group: string; days: number } | null = null;
     for (const [group, state] of Object.entries(groupState)) {

@@ -10,6 +10,7 @@ import {
   DECAY_RATE_HOURS_BIG11,
   BIG11_GROUPS,
 } from '../muscleRecovery.js';
+import { PAIN_REGION_GROUP_MAP } from '../muscleRecoveryConstants.js';
 import { MUSCLE_HEADS } from '../muscleMap.js';
 
 const now = Date.now();
@@ -382,5 +383,92 @@ describe('decay rate SoT separation (dual-source hazard guard)', () => {
     const clusterCount = Object.keys(DECAY_RATE_HOURS_BIG11).length;
     expect(headCount).toBeGreaterThan(clusterCount);
     expect(clusterCount).toBe(11); // Big 11 canonical V1
+  });
+});
+
+// ══ Pain CDL -> Recovery escalation (item 43-H2 / ADR section 9 consumption) ══
+// muscleRecovery now CONSUMES the append-only pain CDL persisted by PainButton
+// (DB('pain-cdl')). A recent pain region escalates the recovery state of the
+// mapped Big 11 group(s) so future sessions adapt volume. Section 8 intensity->
+// action + section 9 volume multipliers anchor the mapping: sever->fatigued
+// (0.60x), usor/mediu->partial (0.80x). Escalation only RAISES state.
+const painEntry = (region, intensity, ts = now) => ({ type: 'pain', region, intensity, ts });
+
+describe('getRecoveryByGroup pain CDL escalation (43-H2)', () => {
+  it('no painEntries arg -> identical to log-only baseline (backward compatible)', () => {
+    const logs = [{ ex: 'Incline DB Press', w: 30, reps: 8, rpe: 9, ts: daysAgo(6) }];
+    expect(getRecoveryByGroup(logs)).toEqual(getRecoveryByGroup(logs, undefined));
+    expect(getRecoveryByGroup(logs, [])).toEqual(getRecoveryByGroup(logs));
+  });
+
+  it('sever (3) pain on piept escalates a recovered group to fatigued', () => {
+    const state = getRecoveryByGroup([], [painEntry('piept', 3)]);
+    expect(state.piept).toBe('fatigued');
+  });
+
+  it('usor (1) pain escalates a recovered group to partial (not fatigued)', () => {
+    const state = getRecoveryByGroup([], [painEntry('spate', 1)]);
+    expect(state.spate).toBe('partial');
+  });
+
+  it('mediu (2) pain escalates a recovered group to partial', () => {
+    const state = getRecoveryByGroup([], [painEntry('umar-stang', 2)]);
+    expect(state.umeri).toBe('partial');
+  });
+
+  it('cot pain escalates BOTH biceps and triceps (multi-group joint)', () => {
+    const state = getRecoveryByGroup([], [painEntry('cot-drept', 3)]);
+    expect(state.biceps).toBe('fatigued');
+    expect(state.triceps).toBe('fatigued');
+  });
+
+  it('genunchi pain escalates BOTH picioare-quads and picioare-hamstrings', () => {
+    const state = getRecoveryByGroup([], [painEntry('genunchi-stang', 2)]);
+    expect(state['picioare-quads']).toBe('partial');
+    expect(state['picioare-hamstrings']).toBe('partial');
+  });
+
+  it('incheietura pain escalates antebrate (empty-heads group still escalates)', () => {
+    const state = getRecoveryByGroup([], [painEntry('incheietura-dreapta', 3)]);
+    expect(state.antebrate).toBe('fatigued');
+  });
+
+  it('escalation only RAISES — usor pain does NOT downgrade an already-fatigued group', () => {
+    const logs = [
+      { ex: 'Incline DB Press', w: 30, reps: 8, rpe: 9, ts: hoursAgo(2) },
+      { ex: 'Flat DB Press',    w: 32, reps: 8, rpe: 9, ts: hoursAgo(2) },
+      { ex: 'Pec Deck / Cable Fly', w: 20, reps: 10, rpe: 8, ts: hoursAgo(2) },
+    ];
+    expect(getRecoveryByGroup(logs).piept).toBe('fatigued');
+    const state = getRecoveryByGroup(logs, [painEntry('piept', 1)]);
+    expect(state.piept).toBe('fatigued');
+  });
+
+  it('stale pain (older than recency window) does NOT escalate', () => {
+    const state = getRecoveryByGroup([], [painEntry('piept', 3, daysAgo(10))]);
+    expect(state.piept).toBe('recovered');
+  });
+
+  it('only affects mapped group(s), leaves others at log-only state', () => {
+    const state = getRecoveryByGroup([], [painEntry('glezna-stanga', 3)]);
+    expect(state.gambe).toBe('fatigued');
+    expect(state.piept).toBe('recovered');
+    expect(state.biceps).toBe('recovered');
+  });
+
+  it('ignores non-pain entries + unknown regions (defensive)', () => {
+    const state = getRecoveryByGroup([], [
+      { type: 'override', region: 'piept', intensity: 3, ts: now },
+      painEntry('zona-inexistenta', 3),
+    ]);
+    expect(state.piept).toBe('recovered');
+  });
+
+  it('PAIN_REGION_GROUP_MAP covers all 15 PainButton regions -> valid Big 11 groups', () => {
+    const regions = Object.keys(PAIN_REGION_GROUP_MAP);
+    expect(regions.length).toBe(15);
+    for (const groups of Object.values(PAIN_REGION_GROUP_MAP)) {
+      for (const g of groups) expect(BIG11_GROUPS).toContain(g);
+    }
   });
 });

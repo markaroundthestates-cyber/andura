@@ -30,6 +30,13 @@ export interface LogEntry {
   date?: string;
 }
 
+export interface PainCdlEntry {
+  type?: string;
+  region?: string;
+  intensity?: 1 | 2 | 3;
+  ts?: number;
+}
+
 export interface LaggingMuscle {
   group: string;
   label: string;
@@ -41,8 +48,12 @@ export const GROUP_LABELS_RO_BIG11: Record<string, string>;
 export const GROUP_HEAD_MAP_BIG11: Record<string, string[]>;
 export const DECAY_RATE_HOURS_BIG11: number;
 export const BIG11_GROUPS: readonly string[];
+export const PAIN_REGION_GROUP_MAP: Record<string, string[]>;
 
-export function getRecoveryByGroup(logs: LogEntry[]): Record<string, RecoveryState>;
+export function getRecoveryByGroup(
+  logs: LogEntry[],
+  painEntries?: PainCdlEntry[]
+): Record<string, RecoveryState>;
 export function daysSinceGroup(logs: LogEntry[], group: string): number | null;
 export function getLaggingMuscles(
   profile: { logs?: LogEntry[]; lookbackDays?: number } | null | undefined
