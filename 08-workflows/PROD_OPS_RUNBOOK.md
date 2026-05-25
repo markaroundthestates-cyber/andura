@@ -239,6 +239,36 @@ npm run lighthouse:live    # LHCI against andura.app
 # + browser smoke: open https://andura.app în incognito, login Magic Link, complete 1 workout
 ```
 
+### §5.5 Build-time + bundle regression tracking
+
+Ce EXISTA azi (NU inventa tooling absent):
+
+| Semnal | Unde ruleaza | Unde apare alerta |
+|--------|--------------|-------------------|
+| **Bundle size budget** (`size-limit`) | `.github/workflows/ci.yml:130` HARD GATE pe push/PR (`npm run size`) | CI job `validate` red dacă orice chunk depaseste budget `.size-limit.json`. Step name "Bundle size budget (size-limit)" |
+| **Build duration** | GitHub Actions afiseaza durata per step nativ (`Build` + `Bundle size budget`) | Actions tab → run → step timing. ZERO `time` step explicit + ZERO threshold-alert pe durata (regresie de viteza build = vizual, NU gated) |
+| **Lighthouse CI** (perf/LCP/TBT) | `ci.yml` e2e-smoke (dispatch/cron) + `deploy.yml` `lighthouse-live` post-deploy | LHCI assertion fail (ratchet D036 §7.6); GitHub App comment dacă `LHCI_GITHUB_APP_TOKEN` set |
+| **Deploy fail notify** | `deploy.yml` `notify-on-failure` (deploy OR smoke fail) | Slack webhook `DEPLOY_SLACK_WEBHOOK_URL` (optional; missing = skip → Daniel manual Actions check) |
+
+**Budget governance:** `.size-limit.json` = 7 chunks gated (index 150 / main 135 /
+vendor-react 26 / vendor-icons 8 / vendor-data 33 / vendor-state 1.5 / CSS 6.5 KB
+gzip). Praguri ratchet UP-only cu rationale documentat per chunk — NU silent raise
+(D053 LOCKED V1 + D036 §7.6). Anti-inflatie: re-masurare reala, NU estimat (D041).
+
+**Cand un chunk depaseste budget:**
+1. CI red → `npm run size` local reproduce
+2. Diagnoza `npm run size:why` (size-limit --why, treemap per chunk)
+3. Decizie: shrink (code-split/lazy/tree-shake) SAU raise budget cu rationale
+   in comment `.size-limit.json` (pattern D053). ZERO silent raise.
+
+**Build artifact:** `ci.yml` upload `dist/` artifact (retention 3 zile) pentru
+inspectie manuala post-run dacă suspect regresie size/structura.
+
+**Gap cunoscut (NU blocker pre-Beta):** ZERO threshold-alert pe build *time*
+(doar bundle *size* gated). Per cluster-4 §33-M4 — bundle-size gate D036 acopera
+cresterea artefactului; build-duration regression = observabil in Actions UI, NU
+automat-alertat. Post-Beta candidate dacă build time devine problema reala.
+
 ---
 
 ## §6 Daniel contact + escalation
