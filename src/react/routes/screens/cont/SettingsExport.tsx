@@ -14,6 +14,19 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { USER_DATA_KEYS, CDL_KEYS } from '../../../../util/dataRegistry.js';
+
+// S-02 audit fix (AUDIT-3 §S-02 HIGH, GDPR Art. 20) — unprefixed legacy keys
+// written via src/db.js + engine wrappers are NOT wv2-* prefixed, so the
+// wv2-only Tier 0 collection silently omitted them. Canonical user-data set
+// (training/nutrition + CDL coach-decisions) from dataRegistry SSOT + pain-cdl
+// (written by engineWrappers, absent from the registry lists). Auth keys are
+// intentionally excluded — never export firebase-* tokens (S-04 concern).
+const LEGACY_DATA_KEYS: readonly string[] = [
+  ...USER_DATA_KEYS,
+  ...CDL_KEYS,
+  'pain-cdl',
+];
 
 interface ExportPayload {
   exportedAt: string;
@@ -43,6 +56,13 @@ function collectTier0Keys(): Record<string, string | null> {
       if (key && key.startsWith('wv2-')) {
         keys[key] = localStorage.getItem(key);
       }
+    }
+    // S-02 — also pull canonical unprefixed legacy data keys (coach-decisions,
+    // flat logs, pr-records, pain-cdl, cdl-patterns, ...) so "toate datele tale"
+    // is true. Only present keys are included (null skipped).
+    for (const key of LEGACY_DATA_KEYS) {
+      const val = localStorage.getItem(key);
+      if (val !== null) keys[key] = val;
     }
   } catch {
     // localStorage unavailable — return empty
