@@ -38,6 +38,12 @@ function wipeAllLocalData(): void {
     // this is full account deletion (nothing to preserve, unlike fullReset
     // which keeps device-id), clear the entire localStorage namespace.
     localStorage.clear();
+    // RE-S-02 audit fix (REAUDIT-3 MED) — persist the sync-suppression window
+    // ACROSS the clear (window._suppressFirebaseSync is set pre-wipe but does
+    // not survive a page load). Mirrors fullReset (dataCleanup.js:209): set the
+    // marker AFTER localStorage.clear() so a stale/empty syncToFirebase cannot
+    // recreate users/{uid} and the next boot's syncFromFirebase short-circuits.
+    localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {
     if (import.meta.env.DEV) console.warn('[DeleteAccountConfirm] wipe failed:', e);
   }
@@ -88,6 +94,14 @@ export function DeleteAccountConfirm(): JSX.Element {
     // Fix: AWAIT wipeRemoteData() to completion (cloud DELETE issued with a
     // still-valid token) BEFORE authSignOut() clears the tokens. A timeout
     // fallback guarantees a hung network can't trap the user on this screen.
+    //
+    // RE-S-02 audit fix (REAUDIT-3 MED) — every other destructive wipe flow
+    // (dataCleanup.js fullReset/resetTestData/resetButKeepRealLogs) sets the
+    // sync-suppression flag before clearing; the delete path did not. Set it
+    // up-front so the firebase.js DB.set override (firebase.js:359) does not
+    // schedule a 3s debounced syncToFirebase during the store resets — closing
+    // the stale-empty-push window that RE-S-01's reorder would otherwise reopen.
+    window._suppressFirebaseSync = true;
     const authState = getAuthState();
     if (authState?.uid) {
       await Promise.race([

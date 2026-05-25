@@ -77,6 +77,8 @@ beforeEach(() => {
   // tests (RE-S-01 tests install per-case implementations).
   vi.mocked(wipeUserDB).mockReset();
   vi.mocked(wipeUserDB).mockResolvedValue({ deleted: true, dbName: 'andura_user_test' });
+  // RE-S-02 — clear the cross-test Firebase-sync suppression window flag.
+  delete (window as { _suppressFirebaseSync?: boolean })._suppressFirebaseSync;
 });
 
 describe('DeleteAccountConfirm — D047 drill-down', () => {
@@ -264,5 +266,36 @@ describe('DeleteAccountConfirm — RE-S-01 remote wipe ordering', () => {
     });
     // Local erasure + sign-out still completed despite the hung wipe.
     expect(localStorage.getItem(AUTH_KEYS.idToken)).toBeNull();
+  });
+});
+
+// ── RE-S-02 (MED) — delete path sets the Firebase sync-suppression guards ─────
+// Every other destructive wipe (dataCleanup.js) sets _suppressFirebaseSync +
+// __suppressFirebaseSyncUntil before/around the clear; the delete path did not,
+// leaving a stale-empty-push window once RE-S-01 deferred sign-out. These
+// assert both guards are now set so a pending/next-boot syncToFirebase cannot
+// recreate users/{uid}.
+describe('DeleteAccountConfirm — RE-S-02 sync suppression', () => {
+  function seedAuth() {
+    localStorage.setItem('firebase-uid', 'uid-supp-7');
+    localStorage.setItem('firebase-id-token', 'tok');
+    localStorage.setItem('firebase-id-token-expiry', String(Date.now() + 3_600_000));
+  }
+
+  it('sets _suppressFirebaseSync + __suppressFirebaseSyncUntil (future) on confirm', async () => {
+    seedAuth();
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    });
+
+    // In-memory guard blocks the DB.set 3s debounce + syncFromFirebase.
+    expect((window as { _suppressFirebaseSync?: boolean })._suppressFirebaseSync).toBe(true);
+    // Persisted guard survives localStorage.clear() (set AFTER the clear) and
+    // blocks the next boot's restore for its window.
+    const until = Number(localStorage.getItem('__suppressFirebaseSyncUntil'));
+    expect(until).toBeGreaterThan(Date.now());
   });
 });
