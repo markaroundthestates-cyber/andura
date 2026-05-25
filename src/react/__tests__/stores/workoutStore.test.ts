@@ -2,7 +2,12 @@
 // Per spec task_02 §4 A — pure-function actions + persist middleware.
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useWorkoutStore, getCurrentMode } from '../../stores/workoutStore';
+import {
+  useWorkoutStore,
+  getCurrentMode,
+  diffCalendarDays,
+  nextStreak,
+} from '../../stores/workoutStore';
 import type { WorkoutMode } from '../../stores/workoutStore';
 
 function resetStore(): void {
@@ -17,6 +22,7 @@ function resetStore(): void {
     pausedSnapshot: null,
     lastSession: null,
     streak: 0,
+    lastStreakDate: null,
     sessionContext: null,
   });
   localStorage.clear();
@@ -210,23 +216,91 @@ describe('workoutStore — state machine transitions', () => {
 describe('workoutStore — streak', () => {
   beforeEach(resetStore);
 
-  it('incrementStreak +1', () => {
-    useWorkoutStore.getState().incrementStreak();
+  // Fixed clock points (UTC midnight) pentru determinism U-05 day-boundary.
+  const DAY1 = Date.parse('2026-05-20T08:00:00Z');
+  const DAY1_LATER = Date.parse('2026-05-20T20:00:00Z'); // aceeasi zi
+  const DAY2 = Date.parse('2026-05-21T08:00:00Z'); // ziua urmatoare
+  const DAY4 = Date.parse('2026-05-23T08:00:00Z'); // gap > 1 zi
+
+  it('incrementStreak primul = 1', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
     expect(useWorkoutStore.getState().streak).toBe(1);
   });
 
-  it('incrementStreak cumulativ', () => {
-    useWorkoutStore.getState().incrementStreak();
-    useWorkoutStore.getState().incrementStreak();
-    useWorkoutStore.getState().incrementStreak();
-    expect(useWorkoutStore.getState().streak).toBe(3);
+  // U-05 (HIGH) — 2 sesiuni in aceeasi zi NU dubleaza streak (no-op same day).
+  it('incrementStreak aceeasi zi = no-op (NU 2 zile consecutive)', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
+    useWorkoutStore.getState().incrementStreak(DAY1_LATER);
+    expect(useWorkoutStore.getState().streak).toBe(1);
   });
 
-  it('resetStreak zero', () => {
-    useWorkoutStore.getState().incrementStreak();
-    useWorkoutStore.getState().incrementStreak();
+  // U-05 (HIGH) — zile consecutive cresc streak +1 per zi.
+  it('incrementStreak zile consecutive = +1 per zi (1 → 2)', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
+    useWorkoutStore.getState().incrementStreak(DAY2);
+    expect(useWorkoutStore.getState().streak).toBe(2);
+  });
+
+  // U-05 (HIGH) — gap > 1 zi reseteaza streak la 1 (NU pastreaza vechiul).
+  it('incrementStreak gap > 1 zi = reset la 1', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
+    useWorkoutStore.getState().incrementStreak(DAY2);
+    expect(useWorkoutStore.getState().streak).toBe(2);
+    useWorkoutStore.getState().incrementStreak(DAY4); // skip DAY3 → gap
+    expect(useWorkoutStore.getState().streak).toBe(1);
+  });
+
+  it('incrementStreak stocheaza lastStreakDate ISO zi', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
+    expect(useWorkoutStore.getState().lastStreakDate).toBe('2026-05-20');
+  });
+
+  it('resetStreak zero + lastStreakDate null', () => {
+    useWorkoutStore.getState().incrementStreak(DAY1);
+    useWorkoutStore.getState().incrementStreak(DAY2);
     useWorkoutStore.getState().resetStreak();
     expect(useWorkoutStore.getState().streak).toBe(0);
+    expect(useWorkoutStore.getState().lastStreakDate).toBeNull();
+  });
+});
+
+// U-05 (HIGH) — pure day-boundary helpers (determinism, no store).
+describe('workoutStore — nextStreak / diffCalendarDays (U-05)', () => {
+  it('diffCalendarDays consecutive = 1', () => {
+    expect(diffCalendarDays('2026-05-20', '2026-05-21')).toBe(1);
+  });
+
+  it('diffCalendarDays aceeasi zi = 0', () => {
+    expect(diffCalendarDays('2026-05-20', '2026-05-20')).toBe(0);
+  });
+
+  it('diffCalendarDays gap = N zile', () => {
+    expect(diffCalendarDays('2026-05-20', '2026-05-25')).toBe(5);
+  });
+
+  it('diffCalendarDays peste granita de luna', () => {
+    expect(diffCalendarDays('2026-05-31', '2026-06-01')).toBe(1);
+  });
+
+  it('nextStreak lastStreakDate null = 1', () => {
+    expect(nextStreak(0, null, '2026-05-20')).toBe(1);
+    expect(nextStreak(7, null, '2026-05-20')).toBe(1);
+  });
+
+  it('nextStreak aceeasi zi = prevStreak (no-op)', () => {
+    expect(nextStreak(3, '2026-05-20', '2026-05-20')).toBe(3);
+  });
+
+  it('nextStreak ziua urmatoare = +1', () => {
+    expect(nextStreak(3, '2026-05-20', '2026-05-21')).toBe(4);
+  });
+
+  it('nextStreak gap > 1 zi = 1', () => {
+    expect(nextStreak(9, '2026-05-20', '2026-05-25')).toBe(1);
+  });
+
+  it('nextStreak data viitoare/corupta = 1 (defensiv)', () => {
+    expect(nextStreak(5, '2026-05-25', '2026-05-20')).toBe(1); // negative delta
   });
 });
 
@@ -260,8 +334,9 @@ describe('workoutStore — reset', () => {
       meta: '5 seturi · 52 min · 12 450 kg',
       ts: 123,
     });
-    useWorkoutStore.getState().incrementStreak();
-    useWorkoutStore.getState().incrementStreak();
+    // U-05: streak set direct (test = reset PRESERVES cumulative, NU increment
+    // day-logic). 2 incrementStreak() in aceeasi zi ar fi no-op post day-boundary.
+    useWorkoutStore.setState({ streak: 2 });
     const before = useWorkoutStore.getState();
     expect(before.sessionsHistory).toHaveLength(1);
     expect(before.streak).toBe(2);

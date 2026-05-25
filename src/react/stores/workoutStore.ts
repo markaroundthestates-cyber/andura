@@ -174,6 +174,32 @@ export function persistSessionLogs(
   }
 }
 
+// ── U-05 streak day-boundary helpers ────────────────────────────────────────
+// `next` streak from prior state: same calendar day → unchanged (no double-
+// count pe 2 sesiuni/zi), exact next day → +1, gap > 1 day OR no prior streak
+// → reset la 1. ISO day-keys via todTs (toLocaleDateString('sv'), tz-safe per
+// useSessionsByDate.ts). Pure + exported pentru test determinism.
+export function diffCalendarDays(fromIso: string, toIso: string): number {
+  // ISO day "YYYY-MM-DD" parsed as UTC midnight → integer day delta, DST-safe.
+  const from = Date.parse(`${fromIso}T00:00:00Z`);
+  const to = Date.parse(`${toIso}T00:00:00Z`);
+  if (!Number.isFinite(from) || !Number.isFinite(to)) return Number.NaN;
+  return Math.round((to - from) / 86_400_000);
+}
+
+export function nextStreak(
+  prevStreak: number,
+  lastStreakDate: string | null,
+  todayIso: string,
+): number {
+  if (lastStreakDate === null) return 1;
+  const delta = diffCalendarDays(lastStreakDate, todayIso);
+  if (!Number.isFinite(delta) || delta < 0) return 1; // corrupt/future date → reset
+  if (delta === 0) return prevStreak; // aceeasi zi → no-op
+  if (delta === 1) return prevStreak + 1; // ziua urmatoare → +1
+  return 1; // gap > 1 zi → reset la 1
+}
+
 export interface WorkoutState {
   exIdx: number;
   setIdx: number;
@@ -189,6 +215,11 @@ export interface WorkoutState {
   // tab list view + detail navigation. Reverse-chrono append (newest tail).
   sessionsHistory: LastSessionSummary[];
   streak: number;
+  // U-05 (HIGH) — ISO day (YYYY-MM-DD) of last streak increment. Persisted.
+  // null = niciun streak inca. Day-boundary logic: aceeasi zi = no-op, ziua
+  // urmatoare = +1, gap > 1 zi = reset la 1. Fara asta "streak" era doar
+  // numar total sesiuni (2 sesiuni/zi = "2 zile consecutive" minciuna).
+  lastStreakDate: string | null;
   // U-03 (HIGH) — runtime-only session intensity/pain context (NU persistat).
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
@@ -281,7 +312,10 @@ export interface WorkoutActions {
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).
   setSessionContext: (ctx: SessionContext | null) => void;
-  incrementStreak: () => void;
+  // U-05 (HIGH) — day-boundary streak. `now` injectabil (default Date.now())
+  // pentru determinism test. Aceeasi zi = no-op, ziua urmatoare = +1, gap > 1
+  // zi (sau primul streak) = reset la 1.
+  incrementStreak: (now?: number) => void;
   resetStreak: () => void;
   /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.
@@ -318,6 +352,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       lastSession: null,
       sessionsHistory: [],
       streak: 0,
+      lastStreakDate: null,
       sessionContext: null,
 
       startSession: (sessionStart) =>
@@ -434,9 +469,17 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // ca sa NU se scurga la sesiunea urmatoare (intrare directa Antrenor).
       setSessionContext: (ctx) => set({ sessionContext: ctx }),
 
-      incrementStreak: () => set((s) => ({ streak: s.streak + 1 })),
+      // U-05 (HIGH) — day-boundary streak. Aceeasi zi calendaristica = no-op
+      // (2 sesiuni/zi NU = 2 zile), ziua urmatoare = +1, gap > 1 zi = reset 1.
+      // `now` injectabil pentru test determinism. lastStreakDate persistat.
+      incrementStreak: (now = Date.now()) =>
+        set((s) => {
+          const todayIso = todTs(now);
+          const updated = nextStreak(s.streak, s.lastStreakDate, todayIso);
+          return { streak: updated, lastStreakDate: todayIso };
+        }),
 
-      resetStreak: () => set({ streak: 0 }),
+      resetStreak: () => set({ streak: 0, lastStreakDate: null }),
 
       reset: () =>
         set({
@@ -456,13 +499,15 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       name: 'wv2-workout-store',
       storage: createJSONStorage(() => localStorage),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
-      // streak (NU sessionStart runtime-only). Phase 4 task_21 adds history
-      // pentru Istoric tab persistent browse.
+      // streak + lastStreakDate (NU sessionStart/sessionContext runtime-only).
+      // Phase 4 task_21 adds history pentru Istoric tab persistent browse.
+      // U-05: lastStreakDate persistat ca day-boundary sa supravietuiasca reload.
       partialize: (state) => ({
         pausedSnapshot: state.pausedSnapshot,
         lastSession: state.lastSession,
         sessionsHistory: state.sessionsHistory,
         streak: state.streak,
+        lastStreakDate: state.lastStreakDate,
       }) as Partial<WorkoutState & WorkoutActions>,
     }
   )

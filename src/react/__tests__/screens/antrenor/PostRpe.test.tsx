@@ -166,11 +166,27 @@ describe('PostRpe — submit pipeline', () => {
   });
 
   it('submit increments streak (5 → 6)', async () => {
+    // U-05 — day-boundary streak: streak creste DOAR daca ultima zi = ieri
+    // (consecutiva). Seed lastStreakDate = ieri ca submit-ul de azi sa fie +1.
+    const yesterdayIso = new Date(Date.now() - 86_400_000).toLocaleDateString('sv');
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: yesterdayIso });
     renderPostRpe();
     fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
     await waitFor(() => {
       expect(useWorkoutStore.getState().streak).toBe(6);
     });
+  });
+
+  // U-05 (HIGH) — 2 sesiuni in aceeasi zi NU dubleaza streak (no-op same day).
+  it('submit aceeasi zi = streak no-op (NU dubleaza)', async () => {
+    const todayIso = new Date().toLocaleDateString('sv');
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: todayIso });
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    expect(useWorkoutStore.getState().streak).toBe(5);
   });
 
   it('submit sets lastSession cu title + meta + ts', async () => {
