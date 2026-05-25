@@ -46,7 +46,10 @@ export function Splash(): JSX.Element {
           <h1 className="text-[42px] font-bold text-ink mb-2 tracking-tight">
             Andura
           </h1>
-          <p className="text-lg text-ink2 max-w-xs">
+          {/* Tagline = coach-quote per mockup andura-clasic.html#L409
+              (font-family Lora, font-style italic). Distinct de wordmark h1
+              (F-splash-08 ramane Inter sans). */}
+          <p className="font-serif italic text-lg text-ink2 max-w-xs">
             Antrenorul tau personal,
             <br />
             fara zgomot.
