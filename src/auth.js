@@ -65,6 +65,28 @@ export const MAGIC_LINK_THROTTLE_MS = 30 * 1000; // 30 seconds
 // destructiv cere proof-of-presence recent → require re-auth dacă > window.
 export const AUTH_FRESHNESS_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
+// auth fetch timeout — mirrors firebase.js `_fbFetch` (FIREBASE_FETCH_TIMEOUT_MS).
+// Raw fetch has no default timeout: a hung mobile socket on a flaky 3G/wifi link
+// wedges sign-in forever. AbortSignal.timeout aborts after the window → fetch
+// rejects → existing try/catch returns graceful { ok:false } (sendMagicLink retry
+// loop treats the abort as a transient network error + backs off per §56.13).
+// 15s generous for Identity Toolkit ops (typical < 1s) without UI lock.
+export const AUTH_FETCH_TIMEOUT_MS = 15_000;
+
+/**
+ * Thin fetch wrapper adding an AbortSignal timeout to every auth REST call
+ * (parity cu firebase.js `_fbFetch`). AbortSignal.timeout is supported in
+ * Node 20+ + all PWA target browsers (package.json engines `node>=20`).
+ *
+ * @param {RequestInfo|URL} url
+ * @param {RequestInit} [init]
+ * @returns {Promise<Response>}
+ */
+function _authFetch(url, init) {
+  const signal = AbortSignal.timeout(AUTH_FETCH_TIMEOUT_MS);
+  return fetch(url, { ...(init || {}), signal });
+}
+
 // ── Magic Link flow ─────────────────────────────────────────────────────
 
 /**
@@ -110,7 +132,7 @@ export async function sendMagicLink(email, continueUrl) {
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
-      const r = await fetch(url, {
+      const r = await _authFetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -156,7 +178,7 @@ export async function verifyMagicLink(email, oobCode) {
   if (!email || !oobCode) return { ok: false, error: 'missing_input' };
   const url = `${AUTH_BASE}/accounts:signInWithEmailLink?key=${FIREBASE_API_KEY}`;
   try {
-    const r = await fetch(url, {
+    const r = await _authFetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, oobCode }),
@@ -234,7 +256,7 @@ export async function signInWithGoogleIdToken(googleIdToken) {
   if (!googleIdToken) return { ok: false, error: 'missing_id_token' };
   const url = `${AUTH_BASE}/accounts:signInWithIdp?key=${FIREBASE_API_KEY}`;
   try {
-    const r = await fetch(url, {
+    const r = await _authFetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -323,7 +345,7 @@ export async function refreshIdToken() {
 async function _doRefresh(refreshToken) {
   const url = `${TOKEN_BASE}/token?key=${FIREBASE_API_KEY}`;
   try {
-    const r = await fetch(url, {
+    const r = await _authFetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}`,
