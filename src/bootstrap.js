@@ -10,7 +10,14 @@
 // the underlying modules + console diagnostics for dev visibility.
 
 import { runMigrations } from './migrations/index.js';
-import { initAutoBackup, rotateOnce } from './storage/tieringEngine.js';
+
+// DEXIE-EAGER-ON-BOOT perf-infra — tieringEngine.js statically imports Dexie
+// (storage/db.js → `import Dexie`), so a static import here pulled the ~32KB
+// vendor-data (Dexie) chunk onto every anonymous cold-start critical path —
+// contradicting the vite.config claim that Dexie is lazy (destructive-action
+// only). startTierRotation + the dev helper now dynamically `import()` the
+// tiering module so Dexie loads off the boot path (still runs the ADR 020
+// no-data-loss rotation, just lazily). The import is cached after first call.
 
 /**
  * Run pending schema migrations (ADR 018 §4 eager, before any engine read).
@@ -44,6 +51,8 @@ export async function runBootMigrations() {
  */
 export async function startTierRotation(opts) {
   try {
+    // Lazy import keeps Dexie off the cold-start critical path (see header).
+    const { initAutoBackup } = await import('./storage/tieringEngine.js');
     const result = await initAutoBackup(opts);
     const rotated = result?.initial?.rotated;
     if (rotated > 0) {
@@ -66,6 +75,8 @@ export async function startTierRotation(opts) {
 export function exposeForceRotationHelper() {
   if (typeof window === 'undefined') return;
   window.__forceRotation = async () => {
+    // Lazy import keeps Dexie off the cold-start critical path (see header).
+    const { rotateOnce } = await import('./storage/tieringEngine.js');
     const result = await rotateOnce();
     console.log('[Storage] Forced rotation result:', result);
     return result;
