@@ -120,6 +120,25 @@ describe('Auth — no diacritics in WebView banner copy', () => {
   });
 });
 
+describe('Auth — P-01 button hierarchy (Google primary)', () => {
+  // Test env: VITE_GOOGLE_OAUTH_CLIENT_ID unset → showGoogle false. In this
+  // graceful-degradation state email-send must stay PRIMARY (brick) so the
+  // screen is not left without a primary CTA. (Google-present path = Google
+  // btn-brick first child per JSX; env const frozen at module load, not
+  // toggleable in-test without refactor.)
+  it('email-send is primary brick CTA when Google hidden (graceful degradation)', () => {
+    renderAuth();
+    expect(screen.getByTestId('auth-send').className).toMatch(/bg-brick/);
+  });
+
+  it('email input precedes skip button in DOM order', () => {
+    renderAuth();
+    const email = screen.getByTestId('auth-email-input');
+    const skip = screen.getByTestId('auth-skip');
+    expect(email.compareDocumentPosition(skip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});
+
 describe('Auth — §F-auth-06 "sau" separator dividers', () => {
   it('renders "sau" divider before Skip-auth path', () => {
     renderAuth();
