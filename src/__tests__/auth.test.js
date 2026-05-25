@@ -171,6 +171,43 @@ describe('auth — token state + refresh', () => {
     expect(res.error).toBe('no_refresh_token');
   });
 
+  it('§S-09 dedups concurrent refreshes into a single network call', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    // Defer fetch resolution so all three callers overlap while in-flight.
+    let resolveFetch;
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () => new Promise((resolve) => { resolveFetch = resolve; })
+    );
+    const p1 = refreshIdToken();
+    const p2 = refreshIdToken();
+    const p3 = refreshIdToken();
+    resolveFetch({
+      ok: true,
+      json: async () => ({ id_token: 'NEW', refresh_token: 'RT2', user_id: 'uid-1', expires_in: '3600' }),
+    });
+    const [r1, r2, r3] = await Promise.all([p1, p2, p3]);
+    // Single POST despite three concurrent callers (burst collapse).
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(r1).toEqual({ ok: true, idToken: 'NEW' });
+    expect(r2).toEqual({ ok: true, idToken: 'NEW' });
+    expect(r3).toEqual({ ok: true, idToken: 'NEW' });
+  });
+
+  it('§S-09 in-flight promise clears so a later refresh fetches again', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ id_token: 'NEW', refresh_token: 'RT2', user_id: 'uid-1', expires_in: '3600' }),
+    });
+    await refreshIdToken();
+    await refreshIdToken();
+    // Sequential (non-overlapping) refreshes each fetch — cache only dedups
+    // while pending, never permanently.
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
   it('signOut clears all auth state', () => {
     localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
     localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'IDT');

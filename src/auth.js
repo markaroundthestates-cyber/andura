@@ -288,14 +288,39 @@ export async function getIdToken(skewMs = 60_000) {
   return refreshed.ok && refreshed.idToken ? refreshed.idToken : null;
 }
 
+// §S-09 audit fix (AUDIT-3) — in-flight refresh dedup. Without this, an app
+// resume after long background flushes many queued writes/telemetry at once,
+// each calling getIdToken → refreshIdToken, firing several parallel refresh
+// POSTs. Firebase refresh-token rotation can invalidate older tokens and the
+// parallel _persistAuth writes race. Memoizing the single in-flight promise
+// collapses the burst into one network call; all callers share its result.
+/** @type {Promise<{ ok: boolean, idToken?: string, error?: string }> | null} */
+let _refreshInFlight = null;
+
 /**
- * Force-refresh the ID token using the stored refresh token.
+ * Force-refresh the ID token using the stored refresh token. Concurrent calls
+ * share a single in-flight network request (§S-09) — the promise is cached
+ * while pending and cleared once it settles.
  *
  * @returns {Promise<{ ok: boolean, idToken?: string, error?: string }>}
  */
 export async function refreshIdToken() {
   const refreshToken = _getItem(AUTH_STORAGE_KEYS.refreshToken);
   if (!refreshToken) return { ok: false, error: 'no_refresh_token' };
+  // Share the in-flight refresh across concurrent callers (single POST).
+  if (_refreshInFlight) return _refreshInFlight;
+  _refreshInFlight = _doRefresh(refreshToken).finally(() => { _refreshInFlight = null; });
+  return _refreshInFlight;
+}
+
+/**
+ * Internal: the actual token-refresh network call. Split out so the public
+ * `refreshIdToken` can wrap it with in-flight dedup without changing behavior.
+ *
+ * @param {string} refreshToken
+ * @returns {Promise<{ ok: boolean, idToken?: string, error?: string }>}
+ */
+async function _doRefresh(refreshToken) {
   const url = `${TOKEN_BASE}/token?key=${FIREBASE_API_KEY}`;
   try {
     const r = await fetch(url, {
