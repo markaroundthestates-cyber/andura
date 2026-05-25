@@ -142,6 +142,59 @@ describe('Auth — §F-auth-06 "sau" separator dividers', () => {
   });
 });
 
+describe('Auth — U-09 legal docs accessible pre-auth (inline modal)', () => {
+  it('Termeni + Confidentialitate are buttons (NU Link gated /app/cont)', () => {
+    renderAuth();
+    expect(screen.getByTestId('auth-terms-link').tagName).toBe('BUTTON');
+    expect(screen.getByTestId('auth-privacy-link').tagName).toBe('BUTTON');
+  });
+
+  it('modal absent until a footer link is clicked', () => {
+    renderAuth();
+    expect(screen.queryByTestId('auth-legal-modal')).not.toBeInTheDocument();
+  });
+
+  it('Termeni click opens dialog with terms content + live link', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-terms-link'));
+    const modal = screen.getByTestId('auth-legal-modal');
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveAttribute('role', 'dialog');
+    expect(modal).toHaveAttribute('aria-modal', 'true');
+    expect(modal.textContent).toMatch(/recomandari, NU prescriptii medicale/i);
+    expect(screen.getByTestId('auth-legal-live-link')).toHaveAttribute('href', 'https://andura.app/terms');
+  });
+
+  it('Confidentialitate click opens dialog with privacy content', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-privacy-link'));
+    const modal = screen.getByTestId('auth-legal-modal');
+    expect(modal.textContent).toMatch(/Datele tale raman pe telefon/i);
+    expect(modal.textContent).toMatch(/ZERO publicitate/i);
+  });
+
+  it('close button dismisses the modal', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-terms-link'));
+    fireEvent.click(screen.getByTestId('auth-legal-close'));
+    expect(screen.queryByTestId('auth-legal-modal')).not.toBeInTheDocument();
+  });
+
+  it('Escape key dismisses the modal', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-terms-link'));
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('auth-legal-modal')).not.toBeInTheDocument();
+  });
+
+  it('backdrop click dismisses the modal', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-privacy-link'));
+    fireEvent.click(screen.getByTestId('auth-legal-backdrop'));
+    expect(screen.queryByTestId('auth-legal-modal')).not.toBeInTheDocument();
+  });
+});
+
 describe('Auth — A11Y HIGH chat5 form aria attributes', () => {
   it('email input has aria-required="true"', () => {
     renderAuth();

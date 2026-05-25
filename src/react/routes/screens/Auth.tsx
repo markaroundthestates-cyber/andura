@@ -6,9 +6,9 @@
 // password, only email magic link).
 
 import type { JSX } from 'react';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, FlaskConical, ExternalLink, ArrowLeft } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, FlaskConical, ExternalLink, ArrowLeft, X } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
 import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
@@ -33,6 +33,12 @@ export function Auth(): JSX.Element {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // U-09 — legal doc inline modal pe Auth (Termeni/Confidentialitate erau
+  // link-uri catre /app/cont/* gated de ProtectedRoute → bounce pe /auth
+  // inainte ca Gigel sa poata citi ce accepta). Modal local-readable + link
+  // text complet andura.app. NU duplica tot textul GDPR (SSOT ramane ecranele
+  // Cont + andura.app/terms) — doar puncte-cheie consimtamant.
+  const [legalDoc, setLegalDoc] = useState<'terms' | 'privacy' | null>(null);
 
   async function handleSend(): Promise<void> {
     if (!isValidEmail(email) || sending) return;
@@ -301,22 +307,147 @@ export function Auth(): JSX.Element {
         )}
 
         {/* §F-auth-07 HIGH-ALFA — Terms + privacy acceptance footer per
-            mockup L479-481. Legal compliance: implicit consent on continue. */}
+            mockup L479-481. Legal compliance: implicit consent on continue.
+            U-09 — butoane care deschid modal inline (NU Link catre /app/cont/*
+            gated; acelea faceau bounce pe /auth inainte de citire). */}
         <p
           className="mt-6 text-xs text-ink3 text-center leading-relaxed"
           data-testid="auth-terms-footer"
         >
           Continuand accepti{' '}
-          <Link to="/app/cont/settings-terms" className="underline">
+          <button
+            type="button"
+            onClick={() => setLegalDoc('terms')}
+            data-testid="auth-terms-link"
+            className="underline"
+          >
             Termenii
-          </Link>{' '}
+          </button>{' '}
           si{' '}
-          <Link to="/app/cont/settings-privacy" className="underline">
+          <button
+            type="button"
+            onClick={() => setLegalDoc('privacy')}
+            data-testid="auth-privacy-link"
+            className="underline"
+          >
             Confidentialitatea
-          </Link>
+          </button>
           . Nu folosim datele tale pentru reclame.
         </p>
       </div>
+
+      {/* U-09 — modal inline legal accesibil pre-auth. */}
+      <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />
     </section>
+  );
+}
+
+// U-09 — Legal doc modal inline pe Auth. Puncte-cheie consimtamant (NU tot
+// textul GDPR: SSOT complet = ecrane Cont + andura.app/terms). Focus capture
+// + restore + Escape, aliniat cu pattern-ul MedicalDisclaimerModal.
+function LegalModal({
+  doc,
+  onClose,
+}: {
+  doc: 'terms' | 'privacy' | null;
+  onClose: () => void;
+}): JSX.Element | null {
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!doc) return;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      previousFocusRef.current?.focus();
+    };
+  }, [doc, onClose]);
+
+  if (!doc) return null;
+  const isTerms = doc === 'terms';
+  return (
+    <div
+      className="fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
+      data-testid="auth-legal-backdrop"
+      onClick={onClose}
+    >
+      <div
+        className="bg-paper rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto"
+        data-testid="auth-legal-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-legal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 id="auth-legal-title" className="text-base font-bold text-ink">
+            {isTerms ? 'Termeni si conditii' : 'Confidentialitate'}
+          </h2>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Inchide"
+            data-testid="auth-legal-close"
+            className="p-1 text-ink2"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        {isTerms ? (
+          <div className="text-sm text-ink2 space-y-2.5">
+            <p>Andura este un coach de antrenament local-first. Folosind app accepti:</p>
+            <ul className="list-disc pl-5 space-y-1.5">
+              <li>Andura ofera recomandari, NU prescriptii medicale.</li>
+              <li>Esti responsabil de propria siguranta in sala.</li>
+              <li>Backup-ul Firebase e optional si cripteaza datele in transit (HTTPS).</li>
+              <li>Telemetria anonima e opt-in (implicit oprita), k-anonimat 5+ GDPR.</li>
+              <li>Andura e in Beta gratuita; functii pot fi schimbate pana la V1.</li>
+            </ul>
+          </div>
+        ) : (
+          <div className="text-sm text-ink2 space-y-2.5">
+            <p>Datele tale raman pe telefon. Tu controlezi ce iese de aici.</p>
+            <ul className="list-disc pl-5 space-y-1.5">
+              <li>Colectam doar profilul + sesiunile + biometrici opt-in + email Magic Link.</li>
+              <li>Folosite pentru personalizarea antrenamentelor, local pe telefon.</li>
+              <li>ZERO publicitate, ZERO vanzare date, ZERO third-party trackers.</li>
+              <li>Acces, export, stergere, rectificare oricand din ecranul Cont.</li>
+            </ul>
+          </div>
+        )}
+
+        <p className="text-xs text-ink2 mt-4">
+          Textul complet:{' '}
+          <a
+            href="https://andura.app/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="auth-legal-live-link"
+            className="underline text-brick"
+          >
+            andura.app/terms
+          </a>
+          {!isTerms && (
+            <>
+              {' '}&middot; intrebari GDPR:{' '}
+              <a href="mailto:privacy@andura.app" className="underline text-brick">
+                privacy@andura.app
+              </a>
+            </>
+          )}
+        </p>
+      </div>
+    </div>
   );
 }
