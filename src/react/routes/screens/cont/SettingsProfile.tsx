@@ -143,7 +143,7 @@ export function SettingsProfile(): JSX.Element {
             <input
               type="number"
               min={16}
-              max={100}
+              max={99}
               inputMode="numeric"
               autoComplete="off"
               value={draft.age ?? ''}
