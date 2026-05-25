@@ -48,15 +48,20 @@ describe('SettingsExport — render + download flow', () => {
   });
 
   it('export click triggers download + shows success status', async () => {
-    // Mock URL.createObjectURL + click handler
+    // Mock URL.createObjectURL + anchor click. jsdom does NOT implement
+    // <a download> navigation, so a real anchor.click() logs "Not implemented:
+    // navigation" and can flake under --coverage. Stub the click to keep this
+    // deterministic — we only assert the download was wired, not navigation.
     const createObjectURL = vi.fn(() => 'blob:mock');
     const revokeObjectURL = vi.fn();
     Object.defineProperty(URL, 'createObjectURL', { value: createObjectURL, configurable: true });
     Object.defineProperty(URL, 'revokeObjectURL', { value: revokeObjectURL, configurable: true });
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 
     renderScreen();
     fireEvent.click(screen.getByTestId('settings-export-trigger'));
     await waitFor(() => expect(createObjectURL).toHaveBeenCalled());
+    expect(clickSpy).toHaveBeenCalled();
     expect(screen.getByTestId('settings-export-success')).toBeInTheDocument();
     expect(screen.getByTestId('settings-export-success').textContent).toMatch(/Fisier descarcat/);
   });
@@ -91,6 +96,7 @@ describe('SettingsExport — render + download flow', () => {
       });
     Object.defineProperty(URL, 'createObjectURL', { value: vi.fn(() => 'blob:mock'), configurable: true });
     Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), configurable: true });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom no-nav
 
     renderScreen();
     fireEvent.click(screen.getByTestId('settings-export-trigger'));
@@ -121,6 +127,7 @@ describe('SettingsExport — render + download flow', () => {
       });
     Object.defineProperty(URL, 'createObjectURL', { value: vi.fn(() => 'blob:mock'), configurable: true });
     Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), configurable: true });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom no-nav
 
     renderScreen();
     fireEvent.click(screen.getByTestId('settings-export-trigger'));
