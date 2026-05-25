@@ -2,9 +2,15 @@
 // Per spec §2 B pain region selector + intensity (1=usor / 2=mediu / 3=sever)
 // + propagation pain context la workout-preview via location.state.
 //
-// CDL override pattern (D-LEGACY-035): pain context Phase 3 propagated via
-// location.state. Phase 4+ wires real CDL append-only log (engine layer
-// reads context, avoid exercitii care irita zona).
+// CDL override pattern (D-LEGACY-035 + ADR-ENGINE-MATH-LOCKED-VALUES §9 §43-H2):
+// pain context propagated synchron via location.state (in-session adapt) AND
+// persisted append-only to DB('pain-cdl') so the Recovery Engine reads it on
+// subsequent sessions (engine layer adapts volume per muscle group, avoid
+// exercitii care irita zona). Prior version only propagated location.state
+// (ephemeral) — nothing survived navigation, so muscleRecovery could never
+// adapt future sessions. Persistence shim mirrors workoutStore logs writeback
+// (commit 31f56293 persistSessionLogs): soft-fail at I/O boundary, newest-first
+// unshift, rolling cap. Engines stay pure (ADR 026) — Date.now read here.
 //
 // Anti-force-typing (D-LEGACY-010 §AMENDED): region selection mandatory
 // pentru Continue button (disabled cand region null), but "Salveaza si iesi"
@@ -34,6 +40,7 @@ import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
+import { DB } from '../../../../db.js';
 
 export type BodyRegion =
   | 'gat'
@@ -83,6 +90,36 @@ const INTENSITY_LABELS: Record<PainIntensity, string> = {
   3: 'Sever',
 };
 
+// ── Pain CDL append-only persistence (ADR §9 §43-H2) ───────────────────────
+// DB('pain-cdl') key — append-only log the Recovery Engine reads next session.
+// Cap matches legacy pain-button-log rolling window (src/pages/coach/
+// painButton.js:43 PAIN_NOTES_WINDOW = 90).
+export const PAIN_CDL_KEY = 'pain-cdl';
+export const PAIN_CDL_MAX = 90;
+
+export interface PainCdlEntry {
+  type: 'pain';
+  region: BodyRegion;
+  intensity: PainIntensity;
+  ts: number;
+}
+
+/**
+ * Append a pain report to the append-only CDL store (newest-first). Soft-fails
+ * at the I/O boundary (storage quota / SSR jsdom) preserving the zero-throw
+ * render contract — mirrors workoutStore persistSessionLogs (commit 31f56293).
+ */
+export function persistPainCdl(region: BodyRegion, intensity: PainIntensity): void {
+  try {
+    const entry: PainCdlEntry = { type: 'pain', region, intensity, ts: Date.now() };
+    const existing = DB.get<PainCdlEntry[]>(PAIN_CDL_KEY) ?? [];
+    DB.set(PAIN_CDL_KEY, [entry, ...existing].slice(0, PAIN_CDL_MAX));
+  } catch {
+    // Soft-fail — recovery path tolerates missing pain CDL (conservative
+    // baseline). Never block the safety-toast + navigation render path.
+  }
+}
+
 export function PainButton(): JSX.Element {
   const navigate = useNavigate();
   const [region, setRegion] = useState<BodyRegion | null>(null);
@@ -90,6 +127,9 @@ export function PainButton(): JSX.Element {
 
   function handleContinue(): void {
     if (!region) return;
+    // §43-H2: persist pain to append-only CDL so Recovery Engine adapts future
+    // sessions (not just this one via location.state).
+    persistPainCdl(region, intensity);
     // §F-pain-button-02 reassurance toast — verbatim mockup L1017-1019.
     toast.show({
       message: 'Siguranta e pe primul loc. Am ajustat restul sesiunii.',

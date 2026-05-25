@@ -2,10 +2,17 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { PainButton } from '../../../routes/screens/antrenor/PainButton';
+import {
+  PainButton,
+  persistPainCdl,
+  PAIN_CDL_KEY,
+  PAIN_CDL_MAX,
+  type PainCdlEntry,
+} from '../../../routes/screens/antrenor/PainButton';
+import { DB } from '../../../../db.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -152,5 +159,70 @@ describe('PainButton — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     const { container } = renderPainButton();
     const text = container.textContent ?? '';
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});
+
+// §43-H2 — pain persisted to append-only CDL so Recovery Engine reads it next
+// session (was ephemeral location.state only). Recovery path reads via
+// DB.get(PAIN_CDL_KEY).
+describe('PainButton — pain CDL persistence (§43-H2)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('Continue persists a {type:pain, region, intensity, ts} entry to DB(pain-cdl)', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByRole('button', { name: /^Lombar$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Sever/i }));
+    fireEvent.click(screen.getByTestId('pain-continue'));
+
+    // Read back via the same DB key the recovery path reads.
+    const log = DB.get<PainCdlEntry[]>(PAIN_CDL_KEY);
+    expect(Array.isArray(log)).toBe(true);
+    expect(log!.length).toBe(1);
+    const entry = log![0]!;
+    expect(entry.type).toBe('pain');
+    expect(entry.region).toBe('lombar');
+    expect(entry.intensity).toBe(3);
+    expect(typeof entry.ts).toBe('number');
+    expect(entry.ts).toBeGreaterThan(0);
+  });
+
+  it('does NOT persist when no region selected (Continue no-op)', () => {
+    renderPainButton();
+    fireEvent.click(screen.getByTestId('pain-continue'));
+    expect(DB.get(PAIN_CDL_KEY)).toBeNull();
+  });
+
+  it('appends newest-first (recovery reads most recent at index 0)', () => {
+    persistPainCdl('umar-stang', 1);
+    persistPainCdl('genunchi-drept', 2);
+    const log = DB.get<PainCdlEntry[]>(PAIN_CDL_KEY)!;
+    expect(log.length).toBe(2);
+    expect(log[0]!.region).toBe('genunchi-drept'); // latest first
+    expect(log[1]!.region).toBe('umar-stang');
+  });
+
+  it('caps the rolling window at PAIN_CDL_MAX entries', () => {
+    const seeded: PainCdlEntry[] = Array.from({ length: PAIN_CDL_MAX }, (_, i) => ({
+      type: 'pain',
+      region: 'spate',
+      intensity: 1,
+      ts: i,
+    }));
+    DB.set(PAIN_CDL_KEY, seeded);
+    persistPainCdl('lombar', 3);
+    const log = DB.get<PainCdlEntry[]>(PAIN_CDL_KEY)!;
+    expect(log.length).toBe(PAIN_CDL_MAX);
+    expect(log[0]!.region).toBe('lombar'); // newest kept
+  });
+
+  it('soft-fails without throwing when DB write is unavailable', () => {
+    const original = DB.set;
+    DB.set = () => {
+      throw new Error('quota');
+    };
+    expect(() => persistPainCdl('piept', 2)).not.toThrow();
+    DB.set = original;
   });
 });
