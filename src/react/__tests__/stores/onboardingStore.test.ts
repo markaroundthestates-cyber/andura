@@ -297,6 +297,46 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(true);
   });
+
+  // U-02 (CRIT) — click-through gol: toate Big 6 null NU completeaza.
+  // validateOnboardingField trece null → fara guard explicit, all-null ar fi
+  // marcat completed:true cu demografice null (engine NaN downstream).
+  it('refuses finalize cu toate Big 6 null (click-through gol)', () => {
+    // resetStore deja seteaza all-null — finalize direct
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(false);
+    expect(useOnboardingStore.getState().completedAt).toBeNull();
+  });
+
+  it('refuses finalize cu un singur field null (sex lipsa)', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 32,
+        sex: null,
+        goal: 'forta',
+        frequency: '3',
+        experience: 'avansat',
+        weight: 78,
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(false);
+  });
+
+  it('refuses finalize cu numeric prezent dar enum null (goal lipsa)', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 32,
+        sex: 'm',
+        goal: null,
+        frequency: '3',
+        experience: 'avansat',
+        weight: 78,
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(false);
+  });
 });
 
 describe('onboardingStore — reset clears bounds state', () => {

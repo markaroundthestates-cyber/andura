@@ -28,9 +28,24 @@ export function Onboarding(): JSX.Element {
   // pe Continua attempt + surfaces Gigel-friendly toast. Defense-in-depth:
   // onboardingStore.setField rejects silently dacă final value out-of-range
   // (paste "999" la weight: store discards, UI shows toast on Continua).
+  //
+  // U-02 (CRIT) — block click-through gol: fiecare pas cere selectie/valoare
+  // inainte de Continua (sex/goal/frecventa/experienta null → blocat). Fara
+  // asta Gigel trecea 6 pasi fara input → finalize cu Big 6 null. finalize
+  // are guard propriu (store) ca safety net defense-in-depth.
   function validateCurrentStep(): { ok: true } | { ok: false; reason: string } {
-    if (stepNum === 1) return validateOnboardingField('age', data.age);
-    if (stepNum === 6) return validateOnboardingField('weight', data.weight);
+    if (stepNum === 1) {
+      if (data.age === null) return { ok: false, reason: 'Completeaza varsta.' };
+      return validateOnboardingField('age', data.age);
+    }
+    if (stepNum === 2 && data.sex === null) return { ok: false, reason: 'Alege o optiune.' };
+    if (stepNum === 3 && data.goal === null) return { ok: false, reason: 'Alege un obiectiv.' };
+    if (stepNum === 4 && data.frequency === null) return { ok: false, reason: 'Alege frecventa.' };
+    if (stepNum === 5 && data.experience === null) return { ok: false, reason: 'Alege nivelul.' };
+    if (stepNum === 6) {
+      if (data.weight === null) return { ok: false, reason: 'Completeaza greutatea.' };
+      return validateOnboardingField('weight', data.weight);
+    }
     return { ok: true };
   }
 
@@ -41,8 +56,15 @@ export function Onboarding(): JSX.Element {
       return;
     }
     if (isLast) {
+      // U-02 (CRIT) — navigate DOAR daca finalize a reusit. finalize respinge
+      // daca vreun Big 6 e null/out-of-range (stale state sau acces direct
+      // /onboarding/7). Fara verificare, user ar ajunge in app ne-onboarded.
       finalize();
-      navigate('/app/antrenor');
+      if (useOnboardingStore.getState().completed) {
+        navigate('/app/antrenor');
+      } else {
+        toast.show({ message: 'Completeaza toti pasii inainte de a continua.', variant: 'warning' });
+      }
     } else {
       navigate(`/onboarding/${stepNum + 1}`);
     }

@@ -129,11 +129,46 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(summary.textContent).toMatch(/Masa musculara/);
   });
 
-  it('step 7 Gata navigates antrenor + finalizes', () => {
+  it('step 7 Gata navigates antrenor + finalizes (Big 6 valid)', () => {
+    // U-02 (CRIT) — finalize cere Big 6 complet. Date valide → completeaza.
+    useOnboardingStore.setState({
+      data: {
+        age: 32, sex: 'm', goal: 'masa', frequency: '3',
+        experience: 'intermediar', weight: 78,
+      },
+      completed: false,
+      completedAt: null,
+    });
     renderAt(7);
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(true);
     expect(screen.getByTestId('antrenor')).toBeInTheDocument();
+  });
+
+  // U-02 (CRIT) — click-through gol (Big 6 null) NU completeaza onboarding.
+  it('step 7 Gata cu Big 6 null NU finalizeaza (no click-through gol)', () => {
+    renderAt(7);
+    fireEvent.click(screen.getByTestId('onb-next'));
+    expect(useOnboardingStore.getState().completed).toBe(false);
+    expect(screen.queryByTestId('antrenor')).not.toBeInTheDocument();
+  });
+
+  // U-02 (CRIT) — pas 2 fara selectie sex blocheaza Continua (toast).
+  it('step 2 fara selectie sex blocheaza Continua', () => {
+    renderAt(2);
+    fireEvent.click(screen.getByTestId('onb-next'));
+    // Ramane pe pas 2 (sex null → blocat, no navigate)
+    expect(screen.getByTestId('onboarding-step-2')).toBeInTheDocument();
+  });
+
+  // U-02 (CRIT) — dupa selectie sex, Continua trece (navigate pas 3).
+  it('step 2 cu sex selectat permite Continua', () => {
+    renderAt(2);
+    fireEvent.click(screen.getByTestId('onb-sex-m'));
+    fireEvent.click(screen.getByTestId('onb-next'));
+    expect(useOnboardingStore.getState().data.sex).toBe('m');
+    // Navigat catre pas 3 (sex valid → no block)
+    expect(screen.queryByTestId('onboarding-step-2')).not.toBeInTheDocument();
   });
 
   it('step 2 Inapoi navigates step 1', () => {

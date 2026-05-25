@@ -164,12 +164,18 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
         set((s) => ({ data: { ...s.data, [key]: value } }));
       },
       finalize: () => {
-        // §30-C1 finalize gate — verify all Big 6 fields within bounds before
-        // marking onboarding complete. Refuses silently dacă any field out-
-        // of-range (UI Continua gate already shown toast); engines downstream
-        // see only valid `completed: true` snapshots.
+        // §30-C1 finalize gate — verify all Big 6 fields present + within
+        // bounds before marking onboarding complete. Refuses silently dacă any
+        // field out-of-range (UI Continua gate already shown toast); engines
+        // downstream see only valid `completed: true` snapshots.
+        //
+        // U-02 (CRIT) — click-through gol guard: validateOnboardingField trece
+        // `null` (short-circuit linia 90) → all-null Big 6 ar fi completat
+        // onboarding fals (engines primesc demografice null → NaN). Respinge
+        // explicit orice field null INAINTE de range-check.
         const { data } = useOnboardingStore.getState();
         for (const key of Object.keys(data) as Array<keyof OnboardingData>) {
+          if (data[key] === null) return;
           const result = validateOnboardingField(key, data[key]);
           if (!result.ok) return;
         }
