@@ -162,7 +162,7 @@ export function WorkoutPreview(): JSX.Element {
 
   return (
     <section
-      className="p-6 bg-paper"
+      className="pt-2 px-5 pb-6 bg-paper"
       data-testid="workout-preview"
       aria-busy={loading}
     >
@@ -194,7 +194,7 @@ export function WorkoutPreview(): JSX.Element {
         aria-label="Intensitate sesiune"
         style={{ background: banner.bg, borderColor: banner.border }}
       >
-        <p className="text-base text-ink">{banner.msg}</p>
+        <p className="text-base font-medium text-ink">{banner.msg}</p>
       </div>
       <div
         className="bg-ink text-paper rounded-2xl p-4 mb-4"

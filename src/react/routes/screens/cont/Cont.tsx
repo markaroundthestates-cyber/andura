@@ -95,7 +95,7 @@ export function Cont(): JSX.Element {
   const displayName = profile.name || 'Utilizator';
   const displayEmail = profile.email || 'Profilul tau Andura';
   return (
-    <section className="p-6 bg-paper min-h-screen" data-testid="cont-home">
+    <section className="pt-4 px-5 pb-6 bg-paper min-h-screen" data-testid="cont-home">
       {/* §F-cont-08 (LOW chat5) — title font-weight 600 → 700 mockup
           andura-clasic.html#L1841 (font-weight:700). */}
       <h1 className="text-2xl font-bold text-ink mb-4">Cont</h1>
