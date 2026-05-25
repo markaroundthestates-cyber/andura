@@ -33,7 +33,12 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // §S-12 audit fix (AUDIT-3) — 'prompt' (not 'autoUpdate'). autoUpdate
+      // silently skipWaiting+clientsClaim → SW could swap assets mid-session
+      // without consent (anti Maria 65 anti-paternalism). 'prompt' keeps the
+      // new SW waiting until the user taps "Actualizeaza" in UpdatePrompt,
+      // which drives the reload via registerSW({ onNeedRefresh }).
+      registerType: 'prompt',
       // LOCK V1 D060 — PWA quadruple optimization (defer + lazy + precache + modulepreload) (DECISIONS.md §D060)
       // Perf chat 5 (LIGHTHOUSE-PERF-AUDIT) — eliminate 952ms render-block
       // on registerSW.js. Default 'auto' injects <script src="/registerSW.js">

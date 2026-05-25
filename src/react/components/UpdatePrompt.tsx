@@ -1,56 +1,52 @@
 // ══ UPDATE PROMPT — Phase 6 task_21 PWA Service Worker New Version ═══════
-// Detects new SW version via vite-plugin-pwa virtual module + surfaces
-// banner cu "Actualizeaza" CTA. ZERO auto-reload (user explicit consent —
-// Maria 65 anti-paternalism, NU rip mid-action).
+// Detects a new SW version via vite-plugin-pwa + surfaces a banner with an
+// "Actualizeaza" CTA. ZERO auto-reload — the user explicitly consents (Maria 65
+// anti-paternalism, NU rip mid-action).
 //
-// jsdom test environment: virtual module unavailable → safe fallback to
-// noop hook (returns needRefresh=false always). Defensive try/catch on
-// dynamic import.
+// §S-12 audit fix (AUDIT-3) — prior wiring was contradictory + dead. vite.config
+// used registerType:'autoUpdate' (Workbox silently skipWaiting+clientsClaim, no
+// event) while this component listened for a custom 'sw-updated' event that
+// NOTHING dispatched → banner never showed AND the SW could swap mid-session
+// silently (opposite of the stated intent). Fix: vite.config → registerType:
+// 'prompt' + this component drives the banner from the real vite-plugin-pwa
+// `registerSW({ onNeedRefresh })` callback, which fires when a new SW is waiting.
+//
+// jsdom test environment: `virtual:pwa-register` is a Vite-injected virtual
+// module absent on disk, so the dynamic import rejects → caught → the no-op
+// fallback persists (banner never shows in tests, mount never throws).
 
-/// <reference types="vite-plugin-pwa/react" />
+/// <reference types="vite-plugin-pwa/client" />
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 
-interface RegisterSWReturn {
-  needRefresh: [boolean, (v: boolean) => void];
-  offlineReady: [boolean, (v: boolean) => void];
-  updateServiceWorker: (reloadPage?: boolean) => Promise<void>;
-}
-
-// Stub fallback când virtual:pwa-register/react NU disponibil (test/SSR).
-const FALLBACK: RegisterSWReturn = {
-  needRefresh: [false, () => {}],
-  offlineReady: [false, () => {}],
-  updateServiceWorker: async () => {},
-};
-
 export function UpdatePrompt(): JSX.Element | null {
-  const [state, setState] = useState<RegisterSWReturn>(FALLBACK);
+  const [needRefresh, setNeedRefresh] = useState(false);
+  // The reload trigger returned by registerSW (no-op until a SW registers).
+  const [updateSW, setUpdateSW] = useState<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
-    // Phase 6 task_21 V1: passive listener pentru SW update event.
-    // Production: vite-plugin-pwa registers SW + dispatches 'sw-updated'
-    // event. Test/jsdom: NU dispatch → fallback no-op preserved.
-    function handleUpdate(): void {
-      setState((prev) => ({
-        ...prev,
-        needRefresh: [true, prev.needRefresh[1]],
-        updateServiceWorker: async (reload?: boolean) => {
-          if (reload && typeof window !== 'undefined') {
-            window.location.reload();
-          }
-        },
-      }));
-    }
-    if (typeof window !== 'undefined') {
-      window.addEventListener('sw-updated', handleUpdate);
-      return () => window.removeEventListener('sw-updated', handleUpdate);
-    }
-    return undefined;
+    let cancelled = false;
+    // Dynamic import so jsdom/SSR (no virtual module) degrades gracefully —
+    // registerType:'prompt' means Workbox waits for our explicit reload.
+    import('virtual:pwa-register')
+      .then(({ registerSW }) => {
+        if (cancelled) return;
+        const update = registerSW({
+          // Fires when a new SW is installed + waiting. We surface the banner
+          // instead of reloading — the user taps "Actualizeaza" to apply.
+          onNeedRefresh() {
+            if (!cancelled) setNeedRefresh(true);
+          },
+        });
+        setUpdateSW(() => update);
+      })
+      .catch(() => {
+        // Virtual module unavailable (test/SSR) — fallback no-op, banner hidden.
+      });
+    return () => { cancelled = true; };
   }, []);
 
-  const [needRefresh] = state.needRefresh;
   if (!needRefresh) return null;
 
   return (
@@ -68,7 +64,7 @@ export function UpdatePrompt(): JSX.Element | null {
       </div>
       <button
         type="button"
-        onClick={() => { void state.updateServiceWorker(true); }}
+        onClick={() => { void updateSW?.(); }}
         data-testid="update-prompt-cta"
         className="px-3 py-1.5 bg-brick text-paper rounded-lg text-xs font-semibold"
       >

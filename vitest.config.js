@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
 
 // --no-webstorage disables the Node-level Web Storage API (added in Node 25+)
 // so jsdom can mock it correctly. Flag only exists on Node 25+, so guard it.
@@ -8,6 +9,17 @@ const execArgv = nodeMajor >= 25 ? ['--no-webstorage'] : [];
 // §2-C2 audit fix — testTimeout/hookTimeout/retry/passWithNoTests + coverage
 // thresholds (initial low floor — ratchet Track 7 post coverage measurement).
 export default defineConfig({
+  // §S-12 — resolve the Vite-injected `virtual:pwa-register` module to a stub
+  // in the test build (VitePWA plugin does not run under vitest, so the virtual
+  // specifier is otherwise unresolvable by Vite import-analysis). See
+  // src/react/__tests__/stubs/pwa-register-stub.ts.
+  resolve: {
+    alias: {
+      'virtual:pwa-register': fileURLToPath(
+        new URL('./src/react/__tests__/stubs/pwa-register-stub.ts', import.meta.url)
+      ),
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
