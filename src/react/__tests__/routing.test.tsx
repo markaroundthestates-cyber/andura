@@ -58,6 +58,7 @@ import { Istoric } from '../routes/screens/istoric/Istoric';
 import { Cont } from '../routes/screens/cont/Cont';
 import { useAppStore } from '../stores/appStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { useSettingsStore } from '../stores/settingsStore';
 
 function renderAt(initialPath: string) {
   return render(
@@ -139,6 +140,9 @@ describe('Routing — BottomNav active tab', () => {
   beforeEach(() => {
     useAppStore.getState().setAuthenticated(true);
     useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
+    // U-01 — Layout now mounts the disclaimer gate; pre-accept so nav-tab
+    // assertions are not shadowed by the modal CTA "Am inteles, continui".
+    useSettingsStore.setState({ acceptedDisclaimer: true });
   });
 
   it('Antrenor tab activ la /app/antrenor', () => {
@@ -218,6 +222,8 @@ describe('Routing — Phase 3 Antrenor nested routes integration', () => {
   beforeEach(() => {
     useAppStore.getState().setAuthenticated(true);
     useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
+    // U-01 — Layout disclaimer gate pre-accept (see BottomNav block above).
+    useSettingsStore.setState({ acceptedDisclaimer: true });
   });
 
   function renderNested(initialPath: string) {

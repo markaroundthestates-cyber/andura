@@ -18,7 +18,9 @@ import { UpdatePrompt } from '../components/UpdatePrompt';
 import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { ToastViewport } from '../components/Toast';
+import { MedicalDisclaimerModal } from '../components/MedicalDisclaimerModal';
 import { useCoachStore } from '../stores/coachStore';
+import { useSettingsStore } from '../stores/settingsStore';
 
 // S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
 // BottomNav so Gigel doesn't accidentally exit mid-set. Pause/exit only via
@@ -37,6 +39,14 @@ export function Layout(): JSX.Element {
   const persona = useCoachStore((s) => s.persona);
   const pathname = useLocation().pathname;
   const inSession = IN_SESSION_ROUTES.has(pathname);
+  // U-01 audit fix (AUDIT-2 §U-01 CRIT) — Medical Disclaimer LOCK 4 gate was
+  // built but never mounted; acceptDisclaimer() had zero non-test callers.
+  // Mount here so the gate covers the entire authenticated app (post auth +
+  // onboarding via ProtectedRoute) before any training flow. Mandatory modal
+  // (no cancel) — acknowledge persists acceptedDisclaimer in settingsStore
+  // (partialize) so it does not reappear each load.
+  const acceptedDisclaimer = useSettingsStore((s) => s.acceptedDisclaimer);
+  const acceptDisclaimer = useSettingsStore((s) => s.acceptDisclaimer);
   return (
     <div className={`min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
       {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
@@ -60,6 +70,10 @@ export function Layout(): JSX.Element {
       <SessionPill />
       {!inSession && <BottomNav />}
       <ToastViewport />
+      <MedicalDisclaimerModal
+        open={!acceptedDisclaimer}
+        onAcknowledge={acceptDisclaimer}
+      />
     </div>
   );
 }

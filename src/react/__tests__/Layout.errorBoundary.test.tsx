@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from '../routes/Layout';
 import { useAppStore } from '../stores/appStore';
+import { useSettingsStore } from '../stores/settingsStore';
 
 // Throw on render
 function Bomb(): JSX.Element {
@@ -30,6 +31,10 @@ function renderAt(path: string, screenEl: JSX.Element) {
 
 beforeEach(() => {
   useAppStore.getState().setAuthenticated(true);
+  // U-01 — disclaimer gate now mounted in Layout; pre-accept so these
+  // chrome/error-boundary tests assert their intended subject (modal would
+  // otherwise overlay + steal focus).
+  useSettingsStore.setState({ acceptedDisclaimer: true });
 });
 
 describe('Layout — ErrorBoundary + Suspense wrap Outlet (Phase 6 task_20)', () => {
