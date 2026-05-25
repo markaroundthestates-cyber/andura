@@ -50,6 +50,12 @@ describe('NutritionInline — render mockup verbatim', () => {
     expect(screen.getByText(/Auto target engine \+ manual log optional/i)).toBeInTheDocument();
   });
 
+  // U-08 — footer NU promite "CSV batch import" (feature inexistent in MVP).
+  it('footer NU mentioneaza CSV batch import (feature inexistent)', () => {
+    const { container } = render(<NutritionInline />);
+    expect(container.textContent ?? '').not.toMatch(/CSV/i);
+  });
+
   it('Save button hidden cand no edit active', () => {
     render(<NutritionInline />);
     expect(screen.queryByTestId('nutri-save')).not.toBeInTheDocument();

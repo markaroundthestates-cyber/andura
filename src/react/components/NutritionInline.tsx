@@ -15,8 +15,9 @@
 //   - Helper: "Auto target din engine. Apasa pencil daca vrei sa loghezi
 //     manual."
 //   - Sub-helper: "Auto din engine" per chip
-//   - Footer: "Auto target engine + manual log optional + CSV batch import.
-//     Engine calibreaza din date reale."
+//   - Footer: "Auto target engine + manual log optional. Engine calibreaza
+//     din date reale." (U-08: removed false "CSV batch import" claim — no
+//     such feature in MVP per nutritionStore header)
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
@@ -205,7 +206,7 @@ export function NutritionInline(): JSX.Element {
         </p>
       </div>
       <p className="text-xs text-ink2 text-center leading-relaxed">
-        Auto target engine + manual log optional + CSV batch import. Engine calibreaza din date reale.
+        Auto target engine + manual log optional. Engine calibreaza din date reale.
       </p>
     </div>
   );
