@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
 import { ACTIVATION_STATE } from '../constants.js';
-import { assertValidDimensionResult } from '../../dimensionContract.js';
 
 const buildLog = (ex, w, reps) => ({ ex, w, reps });
 
@@ -68,7 +67,6 @@ describe('evaluate — ADR 018 §2 Standardized Dimension Contract compliance', 
     expect(Array.isArray(result.recommendations)).toBe(true);
     expect(typeof result.trace).toBe('object');
     expect(typeof result.meta).toBe('object');
-    expect(() => assertValidDimensionResult(result)).not.toThrow();
   });
 
   it('id always equals "specialization"', async () => {

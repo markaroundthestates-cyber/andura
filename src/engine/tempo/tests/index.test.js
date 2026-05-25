@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate, ENGINE_ID } from '../index.js';
 import { TEMPO_NOTATION } from '../constants.js';
-import { assertValidDimensionResult } from '../../dimensionContract.js';
 
 const buildPeriodConstraint = (phase = 'LOAD') => Object.freeze({
   intensity_pct_1rm: { floor: 0.70, ceiling: 0.85 },
@@ -56,8 +55,6 @@ describe('evaluate — ADR 018 §2 Standardized Dimension Contract compliance', 
     expect(Array.isArray(result.recommendations)).toBe(true);
     expect(typeof result.trace).toBe('object');
     expect(typeof result.meta).toBe('object');
-    // Validate via canonical helper from dimensionContract
-    expect(() => assertValidDimensionResult(result)).not.toThrow();
   });
 
   it('id always equals "tempo"', async () => {

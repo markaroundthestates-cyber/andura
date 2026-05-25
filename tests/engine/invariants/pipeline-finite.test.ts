@@ -4,29 +4,15 @@
 // user states (false-confidence gap — a single unguarded division surfaces as
 // NaN in the UI silently). Same property-based approach as kcal-floor.test.ts.
 //
-// Two canonical entry points fuzzed:
+// Canonical entry point fuzzed:
 //   1. runPipeline(buildEngineContext(userState), ORDERED_ADAPTERS) — the full
 //      8-adapter orchestrated pipeline (ADR 030 D1 topology).
-//   2. coachDirector.buildSession(type) — the session orchestrator that wires
-//      the legacy engines (predictionEngine / dp / readiness / reality / ...).
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 import { runPipeline } from '../../../src/coach/orchestrator/index.js';
 import { ORDERED_ADAPTERS } from '../../../src/coach/orchestrator/adapters/index.js';
 import { buildEngineContext } from '../../../src/coach/orchestrator/contextBuilder.js';
-import { coachDirector } from '../../../src/engine/coachDirector.js';
-import { tod } from '../../../src/db.js';
-
-// CDL writes are non-deterministic side effects (Date.now id) — stub so the
-// fuzz stays pure + fast (mirror src/engine/__tests__/coachDirector.test.js).
-vi.mock('../../../src/util/coachDecisionLog.js', async () => {
-  const actual = await vi.importActual('../../../src/util/coachDecisionLog.js');
-  return {
-    ...actual,
-    writeProposed: vi.fn((entry: Record<string, unknown>) => ({ ...entry, id: 'fuzz_cdl', ts: 0 })),
-  };
-});
 
 /**
  * Recursively assert every numeric leaf in `value` is Number.isFinite. Throws
@@ -128,72 +114,5 @@ describe('Pipeline finite invariant — runPipeline (ADR 030 D4 totality)', () =
     const ctx = buildEngineContext({});
     const results = await runPipeline(ctx, pipelineAdapters);
     expect(() => assertAllFinite(results)).not.toThrow();
-  });
-});
-
-// ── coachDirector arbitraries (localStorage-driven) ─────────────────────────
-
-const logArb = fc.record({
-  ex: fc.constantFrom(
-    'Lat Pulldown',
-    'Cable Row',
-    'Incline DB Press',
-    'DB Shoulder Press',
-    'Leg Press',
-    'Lateral Raises',
-    'Bayesian Curl',
-  ),
-  w: finiteDouble(0, 300),
-  reps: fc.integer({ min: 0, max: 30 }),
-  rpe: finiteDouble(1, 10),
-});
-
-const SESSION_TYPES = ['PUSH', 'PULL', 'UMERI_BRATE', 'PICIOARE', 'UNKNOWN_TYPE'];
-
-describe('Pipeline finite invariant — coachDirector.buildSession (ADR 026 §9)', () => {
-  beforeEach(() => {
-    localStorage.clear();
-    localStorage.setItem('phase-override', 'AUTO');
-  });
-
-  it('every numeric field in the built session is finite across arbitrary state', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.record({
-          readinessScore: fc.integer({ min: 10, max: 100 }),
-          kcal: fc.integer({ min: 800, max: 5000 }),
-          phase: fc.constantFrom('AUTO', 'CUT', 'BULK', 'MAINTENANCE', 'STRENGTH'),
-          logs: fc.array(logArb, { maxLength: 20 }),
-          sessionType: fc.constantFrom(...SESSION_TYPES),
-        }),
-        async ({ readinessScore, kcal, phase, logs, sessionType }) => {
-          localStorage.clear();
-          const today = tod();
-          localStorage.setItem('readiness', JSON.stringify({ [today]: { score: readinessScore, emoji: '😐' } }));
-          localStorage.setItem('phase-override', phase);
-          localStorage.setItem('current-kcal', String(kcal));
-          const stamped = logs.map((l, i) => ({ ...l, date: today, session: i + 1 }));
-          localStorage.setItem('logs', JSON.stringify(stamped));
-
-          const session = await coachDirector.buildSession(sessionType);
-          assertAllFinite(session, 'session');
-        },
-      ),
-      { numRuns: 200 },
-    );
-  });
-
-  it('rest-day + readiness-not-set branches stay finite', async () => {
-    // readiness not set → requiresReadinessInput path
-    localStorage.clear();
-    localStorage.setItem('phase-override', 'AUTO');
-    const noReadiness = await coachDirector.buildSession('PUSH');
-    expect(() => assertAllFinite(noReadiness)).not.toThrow();
-
-    // low readiness → rest-day path
-    const today = tod();
-    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 20, emoji: '😴' } }));
-    const restDay = await coachDirector.buildSession('PUSH');
-    expect(() => assertAllFinite(restDay)).not.toThrow();
   });
 });

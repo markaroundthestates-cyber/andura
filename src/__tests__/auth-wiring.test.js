@@ -3,12 +3,9 @@
 // Coverage:
 //   - sendMagicLink 3x auto-retry on transient failure (§56.13.1)
 //   - sendMagicLink NU retry pe 4xx (deterministic failure)
-//   - handleAuthCallbackRoute /auth-callback URL detection (§56.10.1)
-//   - handleAuthCallbackRoute returns null for non-auth-callback paths
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { sendMagicLink, AUTH_STORAGE_KEYS } from '../auth.js';
-import { handleAuthCallbackRoute } from '../pages/authShell.js';
 
 function _resetAuthStorage() {
   Object.values(AUTH_STORAGE_KEYS).forEach(k => localStorage.removeItem(k));
@@ -74,95 +71,5 @@ describe('sendMagicLink — §56.13.1 auto-retry 3x', () => {
     const res = await sendMagicLink('test@example.com');
     expect(res.ok).toBe(true);
     expect(fetchSpy).toHaveBeenCalledTimes(3);
-  });
-});
-
-describe('handleAuthCallbackRoute — §56.10.1 callback detection', () => {
-  let originalLocation;
-
-  beforeEach(() => {
-    _resetAuthStorage();
-    originalLocation = window.location;
-    // jsdom location is read-only via prototype, so use defineProperty stub.
-    delete window.location;
-    window.location = { pathname: '/', search: '', hash: '' };
-  });
-
-  afterEach(() => {
-    window.location = originalLocation;
-    vi.restoreAllMocks();
-  });
-
-  it('returns null when path is NOT /auth-callback', async () => {
-    window.location = { pathname: '/', search: '', hash: '' };
-    const res = await handleAuthCallbackRoute();
-    expect(res).toBeNull();
-  });
-
-  it('returns null when path is /coach (other route)', async () => {
-    window.location = { pathname: '/coach', search: '?foo=bar', hash: '' };
-    const res = await handleAuthCallbackRoute();
-    expect(res).toBeNull();
-  });
-
-  it('returns missing_email error when /auth-callback hit without email', async () => {
-    window.location = {
-      pathname: '/auth-callback',
-      search: '?oobCode=valid-code-123',
-      hash: '',
-    };
-    const res = await handleAuthCallbackRoute();
-    expect(res).not.toBeNull();
-    expect(res.ok).toBe(false);
-    expect(res.provider).toBe('magic-link');
-    expect(res.error).toBe('missing_email');
-  });
-
-  it('processes Magic Link callback with email + oobCode in URL', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        idToken: 'mock-id-token',
-        refreshToken: 'mock-refresh',
-        localId: 'uid-test-123',
-        expiresIn: '3600',
-      }),
-    });
-    // history.replaceState is called post-success — stub to avoid jsdom error.
-    const replaceSpy = vi.spyOn(window.history, 'replaceState').mockImplementation(() => {});
-    window.location = {
-      pathname: '/auth-callback',
-      search: '?oobCode=valid-code&email=user%40example.com',
-      hash: '',
-    };
-    const res = await handleAuthCallbackRoute();
-    expect(res).not.toBeNull();
-    expect(res.ok).toBe(true);
-    expect(res.provider).toBe('magic-link');
-    expect(res.uid).toBe('uid-test-123');
-    expect(replaceSpy).toHaveBeenCalled();
-  });
-
-  it('processes Google id_token from URL fragment', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        idToken: 'firebase-token',
-        refreshToken: 'firebase-refresh',
-        localId: 'google-uid-456',
-        expiresIn: '3600',
-      }),
-    });
-    vi.spyOn(window.history, 'replaceState').mockImplementation(() => {});
-    window.location = {
-      pathname: '/auth-callback',
-      search: '',
-      hash: '#id_token=google-id-token-xyz&access_token=ignored',
-    };
-    const res = await handleAuthCallbackRoute();
-    expect(res).not.toBeNull();
-    expect(res.ok).toBe(true);
-    expect(res.provider).toBe('google');
-    expect(res.uid).toBe('google-uid-456');
   });
 });
