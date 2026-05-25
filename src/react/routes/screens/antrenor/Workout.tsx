@@ -435,13 +435,16 @@ export function Workout(): JSX.Element {
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
   // reflects live state. Engine null → why.unavailable fallback copy.
+  // RE-U-03 — paseaza targetKg ADAPTAT (U-03 intensityMod -20%/+15%), NU
+  // baseline-ul currentExercise.targetKg, ca explainerul sa fie consistent cu
+  // tinta afisata in SetLogInput (kgInput) pe sesiuni adaptate.
   function handleOpenWhy(): void {
     bumpActivity();
     const sets = history[safeExIdx] ?? [];
     const lastWeightKg = sets.length > 0 ? sets[sets.length - 1]!.kg : null;
     const summary = getWhyExerciseSummary({
       name: currentExercise.name,
-      recommendationKg: currentExercise.targetKg,
+      recommendationKg: targetKg,
       lastWeightKg,
     });
     setWhyText(summary ?? 'Explicatia e temporar indisponibila. Recomandarea ramane valida.');

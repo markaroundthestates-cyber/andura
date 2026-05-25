@@ -606,6 +606,20 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
   });
 
+  // RE-U-03 — why-modal recommendationKg = targetKg ADAPTAT (U-03), NU baseline.
+  // Pe sesiune minus, Bench Press 22.5 → 18 (-20%) — explainerul consistent cu
+  // tinta din SetLogInput (kgInput), nu cu recomandarea ne-adaptata.
+  it('why-modal primeste targetKg adaptat pe sesiune minus (22.5 → 18)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(getWhyExerciseSummary).toHaveBeenCalledWith({
+      name: 'Bench Press',
+      recommendationKg: 18,
+      lastWeightKg: null,
+    });
+  });
+
   // U-04 (MED) — focus management paritate ExitConfirmSheet (WCAG 2.1.1/2.4.3).
   it('why modal are aria-modal true', async () => {
     await renderWorkoutAndWait();
