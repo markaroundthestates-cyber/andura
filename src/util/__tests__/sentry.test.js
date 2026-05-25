@@ -279,6 +279,26 @@ describe('beforeSend hook — PII scrub aplicat la event fields', () => {
     expect(result.request.url).toBe('https://rtdb/users/<UID>/sessions.json');
   });
 
+  it('§S-08 scrub event.request.url cu ?auth=<jwt> token (RTDB leak)', () => {
+    const jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjMifQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW';
+    const event = {
+      request: { url: `https://rtdb/users/${UID}/sessions.json?auth=${jwt}` },
+    };
+    const result = beforeSend(event);
+    expect(result.request.url).toBe('https://rtdb/users/<UID>/sessions.json?auth=[REDACTED]');
+  });
+
+  it('§S-08 scrub breadcrumb.data.url cu &auth=<jwt> (fetch integration leak)', () => {
+    const jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjMifQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW';
+    const event = {
+      breadcrumbs: [
+        { data: { url: `https://rtdb/x.json?print=pretty&auth=${jwt}` } },
+      ],
+    };
+    const result = beforeSend(event);
+    expect(result.breadcrumbs[0].data.url).toBe('https://rtdb/x.json?print=pretty&auth=[REDACTED]');
+  });
+
   it('scrub event.user.email cu placeholder', () => {
     const event = { user: { email: 'user@example.com' } };
     const result = beforeSend(event);

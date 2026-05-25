@@ -12,6 +12,7 @@ function scrubMsg(s) {
   if (typeof s !== 'string') return s;
   let out = s.replace(/\b(uid|userId|user_id)["':=\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
   out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
+  out = out.replace(/([?&]auth=)[^&\s"'<]+/gi, '$1[REDACTED]');
   out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');
   return out;
 }
@@ -78,6 +79,45 @@ describe('Sentry PII strip — §MED-1 JSON-quoted uid coverage', () => {
   it('REGRESSION — userId: <uid> (legacy : separator) still works', () => {
     const uid = 'abcDEF1234567890XYZabcde9876';
     expect(scrubMsg(`userId: ${uid} oops`)).toBe('userId=<UID> oops');
+  });
+});
+
+describe('Sentry PII strip — §S-08 auth= JWT token (RTDB URL leak)', () => {
+  // Realistic Firebase idToken shape: header.payload.signature (base64url),
+  // contains '.', '-', '_' chars. _buildUrl appends ?auth=<encoded token>.
+  const JWT = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImFiYyJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+
+  it('redacts ?auth=<jwt> in RTDB GET URL', () => {
+    const url = `https://andura-default-rtdb.europe-west1.firebasedatabase.app/users/abc.json?auth=${JWT}`;
+    expect(scrubMsg(url))
+      .toBe('https://andura-default-rtdb.europe-west1.firebasedatabase.app/users/abc.json?auth=[REDACTED]');
+  });
+
+  it('redacts &auth=<jwt> when preceded by another query param', () => {
+    const url = `https://rtdb/users/x.json?print=pretty&auth=${JWT}`;
+    expect(scrubMsg(url)).toBe('https://rtdb/users/x.json?print=pretty&auth=[REDACTED]');
+  });
+
+  it('redacts auth= token but preserves trailing query params', () => {
+    const url = `https://rtdb/x.json?auth=${JWT}&shallow=true`;
+    expect(scrubMsg(url)).toBe('https://rtdb/x.json?auth=[REDACTED]&shallow=true');
+  });
+
+  it('redacts percent-encoded token value (encodeURIComponent output)', () => {
+    // encodeURIComponent may emit %2F etc.; token chars consumed up to delimiter.
+    const url = 'https://rtdb/x.json?auth=eyJhbGci%2BzI1NiJ9.payload.sig';
+    expect(scrubMsg(url)).toBe('https://rtdb/x.json?auth=[REDACTED]');
+  });
+
+  it('NON-REGRESSION — /users/<uid> AND ?auth= both redacted in one URL', () => {
+    const uid = 'abcDEF1234567890XYZabcde9876';
+    const url = `https://rtdb/users/${uid}/sessions.json?auth=${JWT}`;
+    expect(scrubMsg(url)).toBe('https://rtdb/users/<UID>/sessions.json?auth=[REDACTED]');
+  });
+
+  it('leaves URLs without auth= untouched', () => {
+    const url = 'https://rtdb/users/x.json?shallow=true';
+    expect(scrubMsg(url)).toBe('https://rtdb/users/x.json?shallow=true');
   });
 });
 

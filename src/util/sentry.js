@@ -56,6 +56,12 @@ export async function initSentry() {
           if (typeof s !== 'string') return s;
           let out = s.replace(/\b(uid|userId|user_id)["':=\s/]+([A-Za-z0-9]{28})\b/gi, '$1=<UID>');
           out = out.replace(/\/users\/[A-Za-z0-9]{28}\b/g, '/users/<UID>');
+          // §S-08 (audit) — Firebase RTDB REST URLs carry the auth idToken (JWT)
+          // as ?auth=<jwt> / &auth=<jwt> query param (_buildUrl in firebase.js).
+          // Sentry fetch integration parks these full URLs in request.url +
+          // breadcrumb.data.url, leaking the bearer token. Redact the token
+          // value (kept prefix for queryability) up to next query delimiter.
+          out = out.replace(/([?&]auth=)[^&\s"'<]+/gi, '$1[REDACTED]');
           // Email: \b prefix prevents stripping preceding word
           // (e.g., 'User user@example.com' kept 'User' instead of consuming it).
           out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');

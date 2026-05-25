@@ -179,4 +179,16 @@ describe('Sentry beforeSend — behavioral scrub via production source extractio
     const uid = 'abcDEF1234567890XYZabcde9876';
     expect(prodScrubMsg(`{"uid":"${uid}"}`)).toBe('{"uid=<UID>"}');
   });
+
+  it('PROD scrubMsg redacts ?auth=<jwt> RTDB token (§S-08 leak fix)', () => {
+    const jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjMifQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW';
+    expect(prodScrubMsg(`https://rtdb/users/x.json?auth=${jwt}`))
+      .toBe('https://rtdb/users/x.json?auth=[REDACTED]');
+  });
+
+  it('PROD scrubMsg redacts &auth= AND keeps trailing param (§S-08)', () => {
+    const jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjMifQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW';
+    expect(prodScrubMsg(`https://rtdb/x.json?print=pretty&auth=${jwt}&shallow=true`))
+      .toBe('https://rtdb/x.json?print=pretty&auth=[REDACTED]&shallow=true');
+  });
 });
