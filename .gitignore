@@ -34,6 +34,11 @@ reports/mutation/mutation.html
 # jscpd code duplicate analysis reports (auto-generated)
 reports/jscpd/
 
+# Coach Brain Eval run artifacts (auto-generated per run, NU committed)
+reports/coach-brain-eval/*.json
+reports/coach-brain-eval/*.md
+reports/coach-brain-eval/.oracle-cache.json
+
 # Obsidian daily notes + scratch files at vault root (auto-generated, never commit)
 # Pattern YYYY-MM-DD.md = Obsidian Daily Notes default
 /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
