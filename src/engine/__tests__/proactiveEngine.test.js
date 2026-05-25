@@ -106,6 +106,13 @@ describe('checkInactivity', () => {
     const logs = [{ ex: 'Bench', ts: Date.now() - 86400000 }];
     expect(checkInactivity(logs)).toBeNull();
   });
+
+  it('returns null when logs lack usable ts (no Infinity leak)', () => {
+    // Logs present but no ts → Math.max() of empty list is -Infinity. Must
+    // return null, never an alert with daysSinceLast: Infinity.
+    const logs = [{ ex: 'Bench', date: '2026-05-01' }, { ex: 'Row', reps: 8 }];
+    expect(checkInactivity(logs)).toBeNull();
+  });
 });
 
 describe('checkHydration', () => {

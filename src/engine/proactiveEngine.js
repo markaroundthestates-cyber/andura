@@ -261,7 +261,8 @@ export function checkWeightTrend(weights, isInCut) {
 export function checkInactivity(logs) {
   if (!logs || logs.length === 0) return null;
   const lastTs = Math.max(...logs.map((l) => l.ts ?? 0).filter(Boolean));
-  if (!lastTs) return null;
+  // No usable ts (empty filter → Math.max() === -Infinity) → cannot compute.
+  if (!Number.isFinite(lastTs) || lastTs <= 0) return null;
   const daysSinceLast = (Date.now() - lastTs) / (24 * 3600 * 1000);
   if (daysSinceLast >= 4) {
     return {
