@@ -186,7 +186,7 @@ export function SettingsExport(): JSX.Element {
         )}
         {status === 'error' && (
           <p
-            className="text-sm text-brick text-center mt-3"
+            className="text-sm text-brickdark text-center mt-3"
             role="alert"
             data-testid="settings-export-error"
           >

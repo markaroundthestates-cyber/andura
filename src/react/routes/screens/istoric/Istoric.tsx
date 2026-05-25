@@ -126,7 +126,7 @@ export function Istoric(): JSX.Element {
               type="button"
               onClick={() => navigate(gotoPath('pr-wall'))}
               data-testid="istoric-pr-wall-see-all"
-              className="text-sm font-semibold text-brick"
+              className="text-sm font-semibold text-brickdark"
             >
               Vezi toate
             </button>

@@ -51,7 +51,7 @@ export function SettingsSubscription(): JSX.Element {
           type="button"
           onClick={() => setNotified(true)}
           data-testid="subscription-notify-cta"
-          className="text-sm text-brick font-semibold underline disabled:no-underline"
+          className="text-sm text-brickdark font-semibold underline disabled:no-underline"
           disabled={notified}
         >
           {notified ? 'Te anuntam cand e gata' : 'Anunta-ma cand e gata'}

@@ -127,7 +127,7 @@ export function Cont(): JSX.Element {
               Prior: text-xs (12px) + tracking-wide (0.025em) + text-ink2.
               Danger sections keep text-brick highlight invariant. */}
           <p
-            className={`text-[11px] uppercase tracking-[0.08em] font-semibold mb-2 ${section.danger ? 'text-brick' : 'text-ink3'}`}
+            className={`text-[11px] uppercase tracking-[0.08em] font-semibold mb-2 ${section.danger ? 'text-brickdark' : 'text-ink3'}`}
           >
             {section.title}
           </p>
@@ -142,7 +142,7 @@ export function Cont(): JSX.Element {
                   data-testid={`cont-row-${row.id}`}
                   onClick={() => handleRowClick(row.target)}
                   disabled={!row.target}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left disabled:opacity-50 disabled:cursor-not-allowed ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brick' : 'text-ink'}`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left disabled:opacity-50 disabled:cursor-not-allowed ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brickdark' : 'text-ink'}`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                   <span className="flex-1 text-sm">{row.label}</span>
