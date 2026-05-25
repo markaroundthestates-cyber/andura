@@ -13,7 +13,20 @@ import {
 } from '../../../engine/schedule/scheduleAdapter.js';
 
 const MONDAY_2026_05_18 = new Date(2026, 4, 18); // dayIdx 0 (L)
-const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M)
+
+// saveWeekly() -> commitCalendarEdit() persista override-ul keyed pe new Date()
+// intern (saptamana CURENTA). getCalendarOverride invalideaza orice override
+// din saptamana anterioara (Reset Luni natural). Pentru testele end-to-end care
+// fac round-trip saveWeekly -> readback, foloseste Luni/Marti din saptamana
+// curenta ca week-key sa fie consistent — deterministic indiferent de data
+// reala (altfel false-fail weekly dupa 2026-05-18).
+function currentWeekDay(dayIdx: number): Date {
+  const monday = new Date(`${weekStartIso(new Date())}T00:00:00`);
+  monday.setDate(monday.getDate() + dayIdx);
+  return monday;
+}
+const CURRENT_WEEK_MONDAY = currentWeekDay(0); // dayIdx 0 (L)
+const CURRENT_WEEK_TUESDAY = currentWeekDay(1); // dayIdx 1 (M)
 
 function buildUserState(): Record<string, unknown> {
   return {
@@ -148,9 +161,9 @@ describe('scheduleStore — saveWeekly shape bridge (SUBSTRATE-ZETA)', () => {
 
 describe('scheduleStore — saveWeekly end-to-end engine integration', () => {
   it('rest day override via saveWeekly → getDailyWorkout returns null pe rest day', async () => {
-    // Setup: mark Monday rest, restul training
+    // Setup: mark Monday rest, restul training (saptamana curenta — vezi nota)
     useScheduleStore.setState({
-      weekStartISO: weekStartIso(MONDAY_2026_05_18),
+      weekStartISO: weekStartIso(CURRENT_WEEK_MONDAY),
       days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as const satisfies WeekDays,
       editMode: true,
     });
@@ -158,18 +171,18 @@ describe('scheduleStore — saveWeekly end-to-end engine integration', () => {
     await waitForLocalStorageWrite(CALENDAR_OVERRIDE_KEY);
 
     // Sanity: override persisted cu shape correct
-    const override = getCalendarOverride(MONDAY_2026_05_18);
+    const override = getCalendarOverride(CURRENT_WEEK_MONDAY);
     expect(override).not.toBeNull();
     expect(override!.selectedDays[0]).toEqual({ day: 'L', active: false });
 
     // End-to-end: getDailyWorkout pe Monday respecta rest day override
-    const plan = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const plan = await getDailyWorkout(buildUserState(), CURRENT_WEEK_MONDAY);
     expect(plan).toBeNull();
   });
 
   it('training day override via saveWeekly → getDailyWorkout returns plan pe training day', async () => {
     useScheduleStore.setState({
-      weekStartISO: weekStartIso(MONDAY_2026_05_18),
+      weekStartISO: weekStartIso(CURRENT_WEEK_MONDAY),
       days: ['rest', 'training', 'training', 'training', 'training', 'training', 'rest'] as const satisfies WeekDays,
       editMode: true,
     });
@@ -177,11 +190,11 @@ describe('scheduleStore — saveWeekly end-to-end engine integration', () => {
     await waitForLocalStorageWrite(CALENDAR_OVERRIDE_KEY);
 
     // Tuesday = active training in override
-    const override = getCalendarOverride(TUESDAY_2026_05_19);
+    const override = getCalendarOverride(CURRENT_WEEK_TUESDAY);
     expect(override).not.toBeNull();
     expect(override!.selectedDays[1]).toEqual({ day: 'M', active: true });
 
-    const plan = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
+    const plan = await getDailyWorkout(buildUserState(), CURRENT_WEEK_TUESDAY);
     expect(plan).not.toBeNull();
     expect(plan!.type).toBe('training');
   });
