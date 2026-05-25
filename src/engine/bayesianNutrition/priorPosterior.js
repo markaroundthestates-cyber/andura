@@ -107,9 +107,13 @@ export function conjugateUpdate({ prior, sampleMean, sampleVariance, observation
   const priorPrecision = 1 / (priorSigma * priorSigma);
   const likelihoodPrecision = 1 / sampleVar;
 
-  // Strong Prior tier slope blend: weight prior_precision and likelihood_precision
-  const weightedPriorPrec = priorPrecision * slopePrior * 2; // ×2 normalization slope sums to 1
-  const weightedLikelihoodPrec = n * likelihoodPrecision * slopeInput * 2;
+  // Strong Prior tier slope blend: weight prior_precision and likelihood_precision.
+  // E-03: slope-urile sunt deja o partitie valida (prior + input = 1.0), deci NU
+  // se aplica factor scalar global. ×2 anterior ingusta sigma cu √2 (CI ~29% prea
+  // ingust) fara baza statistica si fara directiva ADR. Update conjugat ponderat
+  // standard = priorPrec×w_prior + N×likPrec×w_input, w_prior + w_input = 1.
+  const weightedPriorPrec = priorPrecision * slopePrior;
+  const weightedLikelihoodPrec = n * likelihoodPrecision * slopeInput;
 
   const posteriorPrecision = weightedPriorPrec + weightedLikelihoodPrec;
   if (posteriorPrecision <= 0 || !Number.isFinite(posteriorPrecision)) {
