@@ -16,11 +16,17 @@ import { SubHeader } from '../../../components/SubHeader';
 export function LogoutConfirm(): JSX.Element {
   const navigate = useNavigate();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const setSkipAuth = useAppStore((s) => s.setSkipAuth);
 
   function handleConfirm(): void {
     // §A007 audit fix preserved — clear firebase-* tokens before navigate.
     authSignOut();
     setAuthenticated(false);
+    // U-14 audit fix (AUDIT-2 §U-14 LOW) — also reset skip-auth so a user who
+    // entered via "Incearca fara cont" actually exits to /auth. Without this,
+    // isSkipAuth (persisted) stayed true → passesAuthGate kept passing and
+    // ProtectedRoute let them back in, making logout a no-op for skip-auth.
+    setSkipAuth(false);
     navigate('/auth');
   }
 

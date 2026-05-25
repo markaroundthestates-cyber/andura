@@ -5,6 +5,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LogoutConfirm } from '../../../routes/screens/cont/LogoutConfirm';
+import { useAppStore } from '../../../stores/appStore';
 
 vi.mock('../../../../auth.js', () => ({
   signOut: vi.fn(() => {
@@ -33,6 +34,7 @@ function renderScreen() {
 
 beforeEach(() => {
   localStorage.clear();
+  useAppStore.setState({ isSkipAuth: false, isAuthenticated: false });
 });
 
 describe('LogoutConfirm — D047 drill-down', () => {
@@ -54,6 +56,14 @@ describe('LogoutConfirm — D047 drill-down', () => {
     fireEvent.click(screen.getByTestId('logout-confirm-accept'));
     expect(localStorage.getItem('firebase-id-token')).toBeNull();
     expect(localStorage.getItem('firebase-uid')).toBeNull();
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+  });
+
+  it('U-14 confirm resets isSkipAuth so skip-auth user truly exits', () => {
+    useAppStore.setState({ isSkipAuth: true, isAuthenticated: false });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('logout-confirm-accept'));
+    expect(useAppStore.getState().isSkipAuth).toBe(false);
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
   });
 
