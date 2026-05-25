@@ -100,6 +100,21 @@ describe('evaluate — integration end-to-end §9.2 ADR 026', () => {
     expect(result.trace.templateId).toBe(TEMPLATE_IDS.sanatate_generala);
   });
 
+  it('Slabire goal → CUT phase + slabire template + sub-1.0 kcal multiplier (deficit)', async () => {
+    const result = await evaluate(buildCtx({
+      persona: 'gigica', goal: 'Slabire', age: 35, bfPct: 0.18, sex: 'male',
+      trainingWeeks: 100, kg: 90, tdeeKcal: 2400,
+      recentSessions: [{ daysAgo: 3 }],
+    }));
+    // Goal-vocabulary gap fix: 'Slabire' now routes to slabire template → CUT.
+    expect(result.trace.goalId).toBe('slabire');
+    expect(result.trace.templateId).toBe(TEMPLATE_IDS.slabire);
+    expect(result.meta.phase).toBe(PHASES.CUT);
+    // Deficit machinery reached: conservative CUT multiplier 0.82 (modest, NU aggressive).
+    expect(result.meta.kcal_target_delta_pct).toBeLessThan(1.0);
+    expect(result.meta.kcal_target_delta_pct).toBeCloseTo(0.82, 5);
+  });
+
   it('Hipertrofie newbie → RECOMP sub-phase auto-detected', async () => {
     const result = await evaluate(buildCtx({
       persona: 'marius', goal: 'hipertrofie', age: 25,

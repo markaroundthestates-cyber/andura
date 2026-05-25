@@ -18,6 +18,9 @@ describe('resolveTemplateId — §9.2.2 Cluster 2 + ADR 024 §1.2 enumerare', ()
   it('recompozitie → tonifiere_definire (sub-phase auto-detected separate)', () => {
     expect(resolveTemplateId('recompozitie')).toBe(TEMPLATE_IDS.tonifiere_definire);
   });
+  it('slabire → slabire (CUT-focused template, deficit path)', () => {
+    expect(resolveTemplateId('slabire')).toBe(TEMPLATE_IDS.slabire);
+  });
   it('longevitate → longevitate', () => {
     expect(resolveTemplateId('longevitate')).toBe(TEMPLATE_IDS.longevitate);
   });

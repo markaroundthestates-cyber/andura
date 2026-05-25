@@ -39,6 +39,7 @@ export const GOAL_TO_TEMPLATE = Object.freeze({
   forta:        TEMPLATE_IDS.forta_dezvoltare,
   hipertrofie:  TEMPLATE_IDS.tonifiere_definire,
   recompozitie: TEMPLATE_IDS.tonifiere_definire,
+  slabire:      TEMPLATE_IDS.slabire,
   longevitate:  TEMPLATE_IDS.longevitate,
   sanatate:     TEMPLATE_IDS.sanatate_generala,
 });

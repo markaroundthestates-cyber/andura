@@ -50,7 +50,7 @@ export function resolvePersonaId(user) {
  * (Forta → forta, Recompozitie → recompozitie, Sanatate → sanatate).
  *
  * @param {{goal?: string}} [user]
- * @returns {'hipertrofie'|'forta'|'recompozitie'|'longevitate'|'sanatate'}
+ * @returns {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'longevitate'|'sanatate'}
  */
 export function resolveGoalId(user) {
   if (!user || typeof user.goal !== 'string') return 'hipertrofie';
@@ -61,6 +61,7 @@ export function resolveGoalId(user) {
   if (g.startsWith('hipertrofie') || g.startsWith('hypertrophy')) return 'hipertrofie';
   if (g.startsWith('forta') || g.startsWith('forta') || g.startsWith('strength')) return 'forta';
   if (g.startsWith('recompozit') || g.startsWith('recomp')) return 'recompozitie';
+  if (g.startsWith('slabire') || g.startsWith('weight') || g.startsWith('fat-loss') || g.startsWith('fat loss')) return 'slabire';
   if (g.startsWith('longevitate') || g.startsWith('longevity')) return 'longevitate';
   if (g.startsWith('sanatate') || g.startsWith('sanatate') || g.startsWith('health')) return 'sanatate';
   return 'hipertrofie';

@@ -66,6 +66,11 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
     expect(resolveGoalId({ goal: 'sanatate' })).toBe('sanatate');
     expect(resolveGoalId({ goal: 'health' })).toBe('sanatate');
   });
+  it('slabire diacritic-insensitive + weight-loss aliases', () => {
+    expect(resolveGoalId({ goal: 'Slabire' })).toBe('slabire');
+    expect(resolveGoalId({ goal: 'slabire' })).toBe('slabire');
+    expect(resolveGoalId({ goal: 'weight-loss' })).toBe('slabire');
+  });
   it('default hipertrofie when missing or unknown', () => {
     expect(resolveGoalId({})).toBe('hipertrofie');
     expect(resolveGoalId({ goal: 'foo' })).toBe('hipertrofie');
