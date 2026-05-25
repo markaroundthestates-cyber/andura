@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsProfile } from '../../../routes/screens/cont/SettingsProfile';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { toast } from '../../../lib/toast';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -38,6 +39,7 @@ beforeEach(() => {
     completedAt: Date.now(),
   });
   localStorage.clear();
+  toast.clear();
 });
 
 // Minimal JWT fake helper for tests (display-only, NU signature validation).
@@ -217,6 +219,58 @@ describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04)', 
     renderScreen();
     fireEvent.change(screen.getByTestId('profile-target-month-input'), { target: { value: '2000-01' } });
     expect(screen.queryByTestId('profile-target-eta')).toBeNull();
+  });
+});
+
+describe('SettingsProfile — U-12 Big 6 range gate on save (AUDIT-2 §U-12 HIGH)', () => {
+  it('rejects out-of-range age on save — store unchanged + toast + no saved status', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-age-input'), { target: { value: '8' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    // store keeps prior valid value (31 din beforeEach), NU 8
+    expect(useOnboardingStore.getState().data.age).toBe(31);
+    expect(screen.queryByTestId('settings-profile-saved')).toBeNull();
+    const items = toast.getSnapshot();
+    expect(items.some((t) => t.variant === 'warning' && /Varsta intre 16 si 99/.test(String(t.message)))).toBe(true);
+  });
+
+  it('rejects out-of-range weight on save — store unchanged + toast', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '999' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.weight).toBe(81);
+    expect(screen.queryByTestId('settings-profile-saved')).toBeNull();
+    const items = toast.getSnapshot();
+    expect(items.some((t) => t.variant === 'warning' && /Greutate intre 30 si 250/.test(String(t.message)))).toBe(true);
+  });
+
+  it('rejects age above max (100) on save — boundary 99 enforced', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-age-input'), { target: { value: '100' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.age).toBe(31);
+    expect(screen.queryByTestId('settings-profile-saved')).toBeNull();
+  });
+
+  it('accepts in-range edits on save — store updated + saved status + no warning toast', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-age-input'), { target: { value: '40' } });
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '85' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.age).toBe(40);
+    expect(useOnboardingStore.getState().data.weight).toBe(85);
+    expect(screen.getByTestId('settings-profile-saved')).toBeInTheDocument();
+    expect(toast.getSnapshot().length).toBe(0);
+  });
+
+  it('does not commit ANY field when one field is out-of-range (atomic abort)', () => {
+    renderScreen();
+    // valid sex change + invalid age → whole save aborts, sex NOT committed
+    fireEvent.change(screen.getByTestId('profile-sex-select'), { target: { value: 'f' } });
+    fireEvent.change(screen.getByTestId('profile-age-input'), { target: { value: '5' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.sex).toBe('m');
+    expect(useOnboardingStore.getState().data.age).toBe(31);
   });
 });
 

@@ -13,9 +13,10 @@ import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
+import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
@@ -87,6 +88,22 @@ export function SettingsProfile(): JSX.Element {
   }
 
   function handleSave(): void {
+    // U-12 audit fix (AUDIT-2 §U-12 HIGH) — apply same range gate as Onboarding
+    // before committing edited Big 6. SettingsProfile bypassed §30-C1 bounds:
+    // setField only rejects NaN/Infinity/<=0 (isSafeOnboardingValue), NOT range,
+    // so paste age=8 / weight=999 reached engines via the edit path. Validate
+    // age + weight here (numeric Big 6 fields with bounds) and surface a
+    // Gigel-friendly toast on out-of-range, aborting the save.
+    const ageCheck = validateOnboardingField('age', draft.age);
+    if (!ageCheck.ok) {
+      toast.show({ message: ageCheck.reason, variant: 'warning' });
+      return;
+    }
+    const weightCheck = validateOnboardingField('weight', draft.weight);
+    if (!weightCheck.ok) {
+      toast.show({ message: weightCheck.reason, variant: 'warning' });
+      return;
+    }
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
       setField(key, draft[key]);
     });
