@@ -6,7 +6,7 @@
 
 import type { JSX } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Activity, BarChart3, Clock, User } from 'lucide-react';
+import { Dumbbell, Activity, CalendarDays, User } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
 
 type Tab = 'antrenor' | 'progres' | 'istoric' | 'cont';
@@ -18,9 +18,9 @@ interface TabConfig {
 }
 
 const TABS: readonly TabConfig[] = [
-  { id: 'antrenor', label: 'Antrenor', Icon: Activity },
-  { id: 'progres', label: 'Progres', Icon: BarChart3 },
-  { id: 'istoric', label: 'Istoric', Icon: Clock },
+  { id: 'antrenor', label: 'Antrenor', Icon: Dumbbell },
+  { id: 'progres', label: 'Progres', Icon: Activity },
+  { id: 'istoric', label: 'Istoric', Icon: CalendarDays },
   { id: 'cont', label: 'Cont', Icon: User },
 ];
 
