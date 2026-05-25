@@ -24,12 +24,13 @@ function wipeAllLocalData(): void {
     useOnboardingStore.getState().reset();
     useSettingsStore.getState().reset();
     useScheduleStore.getState().resetWeekly();
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('wv2-')) keysToRemove.push(key);
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
+    // S-01 audit fix (AUDIT-3 §S-01 CRIT, GDPR Art. 17) — account delete must
+    // erase ALL local data. The prior wv2-* prefix loop left ~38 unprefixed
+    // legacy keys on device (logs/weights/coach-decisions/pr-records/pain-cdl/
+    // device-id/tombstones/...) written via src/db.js + engine wrappers. Since
+    // this is full account deletion (nothing to preserve, unlike fullReset
+    // which keeps device-id), clear the entire localStorage namespace.
+    localStorage.clear();
   } catch (e) {
     if (import.meta.env.DEV) console.warn('[DeleteAccountConfirm] wipe failed:', e);
   }

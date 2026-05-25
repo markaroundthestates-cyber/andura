@@ -71,6 +71,30 @@ describe('DeleteAccountConfirm — D047 drill-down', () => {
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
   });
 
+  it('S-01 — confirm wipes unprefixed legacy keys (GDPR Art. 17, zero PII residue)', () => {
+    // Legacy keys written by src/db.js + engine wrappers, NOT wv2-* prefixed.
+    // Prior wv2-only loop left these on device after "delete account".
+    const legacyKeys = [
+      'logs', 'weights', 'coach-decisions', 'pr-records', 'pain-cdl',
+      'cdl-patterns', 'applied-patterns', 'readiness', 'device-id',
+      'onboarding-done', 'tombstones', 'session-burns', 'step-streaks',
+    ];
+    legacyKeys.forEach((k) => localStorage.setItem(k, 'legacy-value'));
+    localStorage.setItem('wv2-settings-store', 'data');
+    localStorage.setItem('wv2-workout-store', 'data');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+    // All user-data keys (legacy + wv2 store snapshots) erased.
+    legacyKeys.forEach((k) => expect(localStorage.getItem(k)).toBeNull());
+    expect(localStorage.getItem('wv2-settings-store')).toBeNull();
+    expect(localStorage.getItem('wv2-workout-store')).toBeNull();
+    // Only allowed residual = wv2-app-store, re-persisted by the logged-out
+    // auth transition (setAuthenticated(false)). It holds NO PII — partialize
+    // persists only { isSkipAuth: boolean } (see appStore.ts:54).
+    const residual = Object.keys(localStorage).filter((k) => k !== 'wv2-app-store');
+    expect(residual).toEqual([]);
+  });
+
   it('A016 — confirm cu auth NU fresh forces re-auth redirect', () => {
     isFreshSpy.mockReturnValue(false);
     renderScreen();
