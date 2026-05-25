@@ -129,9 +129,18 @@ export function evaluateUpGating({ recentSessions, periodizationPhase, stagnatio
     reasons.push('up_blocked_insufficient_consecutive_green');
   }
 
-  // Condition 2: no recovery red flags trailing window
+  // Condition 2: no recovery red flags trailing window. E-13: distinge cauza
+  // reala — semnal insuficient (< fereastra) vs red prezent — wording corect
+  // pentru audit CDL (ambele blocheaza UP conservativ).
   if (!hasNoRecoveryRedFlags(recentSessions)) {
-    reasons.push('up_blocked_recovery_red_in_window');
+    const windowEntries = Array.isArray(recentSessions)
+      ? recentSessions.filter((s) => s && typeof s.energy === 'string').slice(0, UP_GATING_CONDITIONS.recoveryRedWindow)
+      : [];
+    if (windowEntries.length < UP_GATING_CONDITIONS.recoveryRedWindow) {
+      reasons.push('up_blocked_recovery_signal_insufficient');
+    } else {
+      reasons.push('up_blocked_recovery_red_in_window');
+    }
   }
 
   // Condition 3: no stagnation markers (orchestrator-level signal)

@@ -178,6 +178,19 @@ describe('evaluateUpGating — §9.3.3 Q7=B asymmetric UP gating cumulative', ()
     expect(r.passed).toBe(false);
     expect(r.reasons).toContain('up_blocked_recovery_red_in_window');
   });
+  it('insufficient recovery signal (< window) emits distinct reason, NOT red_in_window (E-13)', () => {
+    // Only 2 sessions, NO red present — cauza e semnal insuficient, NU red.
+    const r = evaluateUpGating({
+      recentSessions: [
+        { energyEmoji: 'green', energy: 'green' },
+        { energyEmoji: 'green', energy: 'green' },
+      ],
+      periodizationPhase: 'LOAD',
+    });
+    expect(r.passed).toBe(false);
+    expect(r.reasons).toContain('up_blocked_recovery_signal_insufficient');
+    expect(r.reasons).not.toContain('up_blocked_recovery_red_in_window');
+  });
 });
 
 describe('computeAdjustmentDirection — §9.3.3 full integration bidirectional asymmetric', () => {
