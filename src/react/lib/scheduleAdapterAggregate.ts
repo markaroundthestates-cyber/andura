@@ -17,8 +17,86 @@
 
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { useWorkoutStore } from '../stores/workoutStore';
+import type { LastSessionSummary } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { MS_PER_DAY } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
+
+// ── recentSessions engine-shape transform (SHAPE audit Gap HIGH #1) ────────
+// LastSessionSummary (UI/persist shape) carries display + numeric session
+// fields but NONE of the per-session signal fields engine consumers read off
+// recentSessions[*]. Passing summaries raw made periodization/deload/
+// energyAdjustment/goalAdaptation dual-signal logic permanently run zero-
+// signal baseline (verified: mesocycle.js:93-122 isMariusDualSignalGreen reads
+// .rir/.weekIdx; goalAdaptation/pushBackTiers.js:76 + templates.js:49 read
+// .daysAgo/.injury; bayesianNutrition/profileTyping.js:129 +
+// volumeLandmarks.js:156 read .daysAgo).
+//
+// toEngineSession derives ONLY fields that have an honest source in the
+// summary itself (Bugatti truth + D027 §5 anti-fabrication — NU inventa fields
+// care nu exista in store):
+//   - daysAgo: floor((now - ts) / day) — exact from summary.ts.
+//   - rir: mode per-set rating mapped usor→3 / potrivit→2 / greu→1 (matches
+//     SHAPE audit table + suflet rir-matrix.js HEAVY/CHALLENGING/COMFORTABLE
+//     rirMin bands). Real per-session effort signal from exercises[*].sets[*].
+// energy / injury / weekIdx are NOT derived: energy needs a per-session
+// readiness-emoji not captured on the summary, injury is the pain CDL channel
+// (separate write path), weekIdx needs a mesocycle anchor absent from the
+// store. Engines treat these absent fields as "insufficient data" → conservative
+// baseline (no false-positive extension/deload). Deriving them from nothing
+// would feed wrong signal — strictly worse than absent.
+export interface EngineSession extends LastSessionSummary {
+  daysAgo: number;
+  rir?: number;
+}
+
+const RATING_TO_RIR: Readonly<Record<string, number>> = {
+  usor: 3,
+  potrivit: 2,
+  greu: 1,
+};
+
+/**
+ * Derive the dominant (mode) per-set rating across a session's exercises,
+ * mapped to a baseline RIR. Returns undefined when the summary carries no
+ * per-set breakdown (pre-Phase-5 persisted sessions) — engines skip rir-less
+ * entries rather than assume a value.
+ */
+function deriveSessionRir(summary: LastSessionSummary): number | undefined {
+  const counts: Record<string, number> = {};
+  for (const ex of summary.exercises ?? []) {
+    for (const s of ex.sets) {
+      counts[s.rating] = (counts[s.rating] ?? 0) + 1;
+    }
+  }
+  let topRating: string | null = null;
+  let topCount = 0;
+  for (const [rating, n] of Object.entries(counts)) {
+    if (n > topCount) {
+      topCount = n;
+      topRating = rating;
+    }
+  }
+  if (topRating === null) return undefined;
+  return RATING_TO_RIR[topRating];
+}
+
+/**
+ * Pure transform: LastSessionSummary → engine recentSessions[*] shape.
+ * Additive — preserves all original summary fields; layers derived signal
+ * fields the engine pipeline consumes. `now` injectable for testability
+ * (engines stay pure; Date read happens here at the adapter boundary).
+ */
+export function toEngineSession(
+  summary: LastSessionSummary,
+  now: number = Date.now(),
+): EngineSession {
+  const daysAgo = Math.max(0, Math.floor((now - summary.ts) / MS_PER_DAY));
+  const rir = deriveSessionRir(summary);
+  return rir === undefined
+    ? { ...summary, daysAgo }
+    : { ...summary, daysAgo, rir };
+}
 
 /**
  * Build minimal userState aggregate consumed by getDailyWorkout pipeline.
@@ -42,6 +120,16 @@ function buildUserStateForPipeline(): {
 } {
   const onboardingData = useOnboardingStore.getState().data;
   const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
+  // sessionsHistory appends newest-tail (workoutStore.finishSession); engine
+  // recentSessions consumers slice(0, N) expecting newest-first (types.js:17
+  // "ordered desc by date" + mesocycle.js:99/triggerHierarchy.js:246 trailing
+  // window). Reverse to newest-first, then map each through toEngineSession so
+  // the pipeline reads real rir/daysAgo signal instead of zero-signal raw.
+  const now = Date.now();
+  const recentSessions = (sessionsHistory ?? [])
+    .slice()
+    .reverse()
+    .map((s) => toEngineSession(s, now));
   return {
     user: {
       age: onboardingData.age,
@@ -51,7 +139,7 @@ function buildUserStateForPipeline(): {
       experience: onboardingData.experience,
       weight: onboardingData.weight,
     },
-    recentSessions: sessionsHistory ?? [],
+    recentSessions,
     weights: {},
     profileTier: null,
     flags: {},
