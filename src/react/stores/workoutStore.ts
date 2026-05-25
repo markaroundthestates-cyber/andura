@@ -120,9 +120,35 @@ export interface LogEntry {
   ts: number;
   session: number;
   isPR?: boolean;
+  // Per-set numeric RPE derived from the coarse per-set rating (RATING_TO_RPE).
+  // Optional — backward compat with pre-migration logs (no source rating on
+  // them). dp.getState reads `lastLog.rpe || 7`; fatigue reads `l.rpe` (top-2
+  // avg/session) — both default neutral 7 when absent (no crash, no fabrication).
+  rpe?: number;
 }
 
 export const LOGS_MAX = 5000;
+
+// ── Per-set coarse rating → numeric RPE (engine signal restoration) ─────────
+// The React per-set flow captures only a coarse rating ('usor'/'potrivit'/
+// 'greu', ExerciseHistoryEntry.rating) — no numeric RPE. The live engines that
+// read DB('logs') (dp.getState lastRPE, fatigue avgRPE) therefore fell to the
+// default 7 forever. Map each set's OWN coarse rating to a calibrated RPE via
+// the canonical RIR↔RPE identity (RIR+RPE≈10; usor→RIR3 / potrivit→RIR2 /
+// greu→RIR1, see scheduleAdapterAggregate RATING_TO_RIR):
+//   - potrivit → 7.5: fatigue-neutral ((avgRPE-7.5) term = 0) + dp default-equiv
+//   - usor     → 6.5: below neutral, pulls fatigue down, well under increase gate
+//   - greu     → 8.5: above neutral, raises fatigue, but stays UNDER dp's
+//                     lastRPE>=9 TOO-HEAVY cliff (a single honest hard set must
+//                     not auto-flag over-conservative). Literal 10-RIR (=9) would
+//                     trip that cliff on every greu set — too aggressive.
+// Per-set stamp from each set's own rating — NU propagate one session rating
+// onto all sets, NU fabricate per-set variation.
+const RATING_TO_RPE: Readonly<Record<'usor' | 'potrivit' | 'greu', number>> = {
+  usor: 6.5,
+  potrivit: 7.5,
+  greu: 8.5,
+};
 
 // U-11 (MED) — rolling cap pe sessionsHistory (persistat integral cu exercises
 // breakdown per sesiune). Fara cap creste nelimitat → pe orizont 2-3 ani user
@@ -156,6 +182,9 @@ export function buildLogEntriesFromSummary(
         ts,
         session: sessionStart,
         ...(s.isPR ? { isPR: true } : {}),
+        // Per-set RPE from this set's OWN coarse rating (spread-conditional keeps
+        // the entry clean when rating absent on a legacy breakdown).
+        ...(s.rating ? { rpe: RATING_TO_RPE[s.rating] } : {}),
       });
     }
   }

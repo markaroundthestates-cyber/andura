@@ -14,6 +14,8 @@ import {
 } from '../../stores/workoutStore';
 import type { LastSessionSummary, LogEntry } from '../../stores/workoutStore';
 import { DB } from '../../../db.js';
+import { DP } from '../../../engine/dp.js';
+import { calculateFatigueScore } from '../../../engine/fatigue.js';
 
 const T0 = new Date('2026-05-23T10:00:00').getTime();
 
@@ -123,6 +125,137 @@ describe('workoutStore — buildLogEntriesFromSummary', () => {
     const entries = buildLogEntriesFromSummary(summary, T0);
     const nonPr = entries.find((e) => e.ex === 'Bench Press' && e.set === 1);
     expect('isPR' in (nonPr ?? {})).toBe(false);
+  });
+});
+
+describe('workoutStore — per-set RPE derivation (GAP #1: dp + fatigue signal)', () => {
+  beforeEach(resetStore);
+
+  it('stamps rpe per set from each set OWN coarse rating (6.5/7.5/8.5)', () => {
+    const summary: LastSessionSummary = {
+      title: 'Push',
+      meta: 'x',
+      ts: T0,
+      exercises: [
+        {
+          exerciseId: 'bench-press',
+          exerciseName: 'Bench Press',
+          sets: [
+            { kg: 30, reps: 10, rating: 'usor', timestamp: T0 + 1000 },
+            { kg: 30, reps: 10, rating: 'potrivit', timestamp: T0 + 2000 },
+            { kg: 30, reps: 8, rating: 'greu', timestamp: T0 + 3000 },
+          ],
+          totalVolume: 840,
+          peakOneRM: 38,
+        },
+      ],
+    };
+    const entries = buildLogEntriesFromSummary(summary, T0);
+    expect(entries.map((e) => e.rpe)).toEqual([6.5, 7.5, 8.5]);
+  });
+
+  it('omits rpe when a breakdown set carries no rating (legacy shape)', () => {
+    const summary = {
+      title: 'X',
+      meta: 'y',
+      ts: T0,
+      exercises: [
+        {
+          exerciseId: 'x',
+          exerciseName: 'X',
+          // rating intentionally absent (pre-rating legacy breakdown set).
+          sets: [{ kg: 30, reps: 10, timestamp: T0 + 1000 }],
+          totalVolume: 300,
+          peakOneRM: 40,
+        },
+      ],
+    } as unknown as LastSessionSummary;
+    const entries = buildLogEntriesFromSummary(summary, T0);
+    expect('rpe' in (entries[0] ?? {})).toBe(false);
+  });
+
+  // Real-path proof (not theater): the stamped rpe reaches dp.getState.lastRPE
+  // (was the hardcoded 7 default), so the progression brain reads real intensity.
+  it('all-greu session → DP.getState(ex).lastRPE === 8.5 (not the 7 default)', () => {
+    const summary: LastSessionSummary = {
+      title: 'Push',
+      meta: 'x',
+      ts: T0,
+      exercises: [
+        {
+          exerciseId: 'bench-press',
+          exerciseName: 'Bench Press',
+          sets: [
+            { kg: 40, reps: 8, rating: 'greu', timestamp: T0 + 1000 },
+            { kg: 40, reps: 8, rating: 'greu', timestamp: T0 + 2000 },
+          ],
+          totalVolume: 640,
+          peakOneRM: 50,
+        },
+      ],
+    };
+    persistSessionLogs(summary, T0);
+    expect(DP.getState('Bench Press').lastRPE).toBe(8.5);
+  });
+
+  it('all-usor session → DP.getState(ex).lastRPE === 6.5 (control, < neutral)', () => {
+    const summary: LastSessionSummary = {
+      title: 'Push',
+      meta: 'x',
+      ts: T0,
+      exercises: [
+        {
+          exerciseId: 'bench-press',
+          exerciseName: 'Bench Press',
+          sets: [
+            { kg: 40, reps: 12, rating: 'usor', timestamp: T0 + 1000 },
+            { kg: 40, reps: 12, rating: 'usor', timestamp: T0 + 2000 },
+          ],
+          totalVolume: 960,
+          peakOneRM: 56,
+        },
+      ],
+    };
+    persistSessionLogs(summary, T0);
+    expect(DP.getState('Bench Press').lastRPE).toBe(6.5);
+  });
+
+  // fatigue.js reads l.rpe (top-2 avg/session); needs >=2 sessions. Mostly-greu
+  // raises avgRPE above the all-potrivit (7.5 neutral) control → signal is live.
+  it('mostly-greu sessions → fatigue avgRPE > 7.5 vs all-potrivit neutral control', () => {
+    const session = (start: number, rating: 'potrivit' | 'greu'): LastSessionSummary => ({
+      title: 'Push',
+      meta: 'x',
+      ts: start + 60000,
+      exercises: [
+        {
+          exerciseId: 'bench-press',
+          exerciseName: 'Bench Press',
+          sets: [
+            { kg: 40, reps: 8, rating, timestamp: start + 1000 },
+            { kg: 40, reps: 8, rating, timestamp: start + 2000 },
+          ],
+          totalVolume: 640,
+          peakOneRM: 50,
+        },
+      ],
+    });
+
+    // Control: 3 all-potrivit sessions → every set rpe 7.5 → avgRPE neutral 7.5.
+    persistSessionLogs(session(T0, 'potrivit'), T0);
+    persistSessionLogs(session(T0 + 2 * 86400000, 'potrivit'), T0 + 2 * 86400000);
+    persistSessionLogs(session(T0 + 4 * 86400000, 'potrivit'), T0 + 4 * 86400000);
+    const controlAvg = calculateFatigueScore()?.avgRPE;
+    expect(controlAvg).toBeCloseTo(7.5, 5);
+
+    // Treatment: 3 all-greu sessions → every set rpe 8.5 → avgRPE rises.
+    localStorage.clear();
+    persistSessionLogs(session(T0, 'greu'), T0);
+    persistSessionLogs(session(T0 + 2 * 86400000, 'greu'), T0 + 2 * 86400000);
+    persistSessionLogs(session(T0 + 4 * 86400000, 'greu'), T0 + 4 * 86400000);
+    const treatmentAvg = calculateFatigueScore()?.avgRPE;
+    expect(treatmentAvg).toBeGreaterThan(7.5);
+    expect(treatmentAvg).toBeGreaterThan(controlAvg ?? 0);
   });
 });
 
