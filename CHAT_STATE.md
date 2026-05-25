@@ -1,62 +1,49 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-25 chat 6 wrap (birou via `claude rc` → continuare ACASĂ pe ACELAȘI PC, deschidere normală)
-**Topic active:** Quality-full cycle LOCKED (D077). Triaj forensic 410 open → 21 real-open reale din zgomot. Wave-1 (7 fixuri funcționale) + wave-2 (6 fixuri) INTEGRATE pe main, suita 5775 verde. Next = wave-3 follow-up-uri → onboarding decizie → audit nuclear fresh → ciclul D077 până flawless.
-**Bw current:** Chat 6 wrap. **~14 commits ahead origin/main, NU pushed** (D031, același PC acasă → commiturile-s local). Tests **5775 PASS / 0 FAIL**.
-**Author:** Co-CTO chat 6 birou RC
+**Last updated:** 2026-05-26 — run autonom overnight (CC terminal) wrap. Daniel a plecat la somn cu "ruleaza tot ce trebuie, task dupa task, nu te opri... step after step... sper sa nu te gasesc stand degeaba dimineata."
+**Topic active:** **CYCLE-4 EXTREME-QUALITY-READY.** Engine->UI complet cablat (creierul primeste inputuri reale live, dovedit E2E). Toate axele verzi. Dead-code arhivat. D080 lockat. Coach Brain Eval = regression guard pe main.
+**State:** main `2cfcf527`, **4271 teste PASS / 0 FAIL** + tsc + eslint clean. NU pushed (D031, acelasi PC). Buget API: ~$9 din $42 — **ROTEAZA CHEIA** (e in transcript).
+**Author:** Co-CTO overnight autonomous run
 
 ---
 
-## §0 Last exchanges Daniel↔Co-CTO chat 6
-
-1. Daniel "Salut Acasă" → §CC.2 startup (dashboard pornit apoi închis la cererea lui — era pe RC, localhost:4747 inaccesibil remote)
-2. Daniel a corectat verdict-ul prematur "READY-WITH-DANIEL" → reafirmă **0 findings → audit → fix → repeat → flawless → ABIA atunci Daniel + Beta** + **D077** (anti-RE + security audits finale)
-3. "cati agenti vrei tu... get to work" → triaj forensic 410 cu 5 agenți → 275 fixed / 101 stale / 21 real-open / 13 needs-daniel
-4. Wave-1 (4 executori) → 7 fixuri funcționale + time-bomb scheduleStore fixat → cherry-pick pe main, 5755 verde
-5. "baga taskuri scurte... in 1h inchid CC aici si deschid acasa" → wave-2 (4 executori task-uri scurte) + WRAP în 1h cu handover
-6. Wave-2 agenți blocked (off baza veche 38d1e01b) → salvare cp pe main → 5775 verde
-7. Daniel "acasa deschid normal, sunt pe code rc la birou" → **același PC → NU push** (D031)
+## §0 Ce s-a facut overnight (cap-coada, autonom)
+1. Daniel "fa-ti un workflow... step after step, nu te opri" + a dat cheia API ($42) pt oracle -> run autonom complet peste noapte.
+2. **Cycle-3:** 11 audituri (security/dead-code/coverage/parity/a11y/live-E2E/engine-wiring/perf/deps/Coach-Brain-Eval) -> fix-wave 5 worktree-uri -> integrat (22 commits, 62e06b3a).
+3. **Cycle-4 PIVOT — engine-wiring keystone:** creierul rula pe defaults (20kg hardcodat, readiness/persona nicaieri). FIXAT: dp.recommend conduce greutatile, EnergyCheck->saveReadiness->engine, persona/tier/goalPhase/bfPct(fractie)/weekIdx/trainingWeeks cablate. **Dovedit E2E:** user cu istoric->55kg, cold-start->variaza pe experienta (30/21kg).
+4. **Re-audit cycle-4 — toate verzi:** a11y READY · parity READY (2 CRIT nume-EN rezolvate) · engine-input CLOSED · live-E2E (brain adapts) · security Beta-ready · coverage 91.5%.
+5. **Coach Brain Eval:** 50k/0 violari + oracle Opus 4.7 pe 900 scenarii = 76.5% string-match dar **ZERO bug engine** (gap = artefacte vocabular + erori aritmetice ale ORACOLULUI + alegeri defendabile). Engine matches/beats Claude. Teza validata + live.
+6. **Dead-code:** 114 fisiere insula vanilla arhivate -> 0 cod mort src/. **SSOT:** D080 + PRIMER §5. **Curatenie:** 139 worktree-uri stale (toate cele 146 branch-uri pastrate). Eval-harness integrat pe main (27 self-teste, regression guard).
 
 ---
 
-## §1 Open questions / pending Daniel
-
-- **Onboarding Step-1 paradigm** (F-onboarding-02/03, singura NEEDS_DANIEL substanțială) — Big 6 field-set: include `inaltime`+`medical` (ca mockup) sau păstrezi prod age-first? Cascade engines + GDPR consent. **Lean Co-CTO:** adaugă doar `inaltime` (chiar trebuie pentru BF% US Navy), fără reorder complet.
-- **12 needs-Daniel deferred post-Beta:** pricing/ANAF/TVA ×3, SHA-pin actions, wording D024, change-freeze, doc-precision energy ±%, schedule edit policy, UI-judgment minor (calendar Ma/Mi, PR banner, motion curves). Detalii: `andura-dashboard/data/triage/cluster-*-verdict.md`.
-- **Push** — deferred (același PC, commiturile local). Daniel verbal trigger când vrea pe origin.
-- **Cleanup worktrees** (9 sesiune + ~76 vechi) + stashes — post-Beta verbal trigger.
+## §1 Open questions / pending Daniel — CELE 4 GATE-URI
+- **G1 Push** origin (D031 — main e mult inaintea origin, decizia ta verbala).
+- **G2 Smoke a-z live** (telefonul tau + Firebase real + judecata UX CEO — ABIA acum intri sa vezi produsul, per D080).
+- **G3 Google OAuth** — config Firebase/GCP console (checklist 6 pasi gata: `cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`; codul e gata env-gated, lipseste doar `VITE_GOOGLE_OAUTH_CLIENT_ID` + console).
+- **G4 Beta GO** (decizia ta).
+- **Intrebare:** "9 blockers" — nu exista lista canonica de 9 in SSOT (framing legacy; gate real = D042/D043/D077). Te-ai referit la ceva anume?
+- Post-Beta: TWA->Play Store; pricing/ANAF; optional oracle re-run ~$9 pe generatorul fixat (numar mai curat, diminishing).
 
 ---
 
 ## §2 Mid-flight la wrap
-
-- Wave-2 batch 2 (Auth + TDEE + docs, 3 commits) era în pre-commit hook la momentul wrap-ului. Verifică `git log` la startup — dacă cele 3 (auth-separators, tdee-current-vs-tinta, governance docs) au landat. Dacă nu, sunt în working tree, re-commit.
-- SSOT post-wrap: PRIMER §5 micro-append + LATEST.md + D077 în DECISIONS.md — finalizate la wrap (verifică).
+NIMIC mid-flight. Arcul a aterizat curat — 0 agenti la wrap, main verde, totul committed (NU pushed). 3 .snap golden-master raman M din CRLF churn (zero content diff) + `.obsidian/community-plugins.json` (pre-existent).
 
 ---
 
 ## §3 NEXT P1 — de unde continui
-
-1. **Wave-3 follow-up-uri** (parity-closed-dar-wire-pending + perf):
-   - `43-H2` muscleRecovery să **consume** pain-cdl (region→muscle-group mapping, engine-side)
-   - **Persistență profil** — extinde `onboardingStore` cu composition+targets (incl. `inaltime` pt BF%); atenție FSM tests
-   - `35-M2` Istoric virtualization · `F-pass4-fontweight-02` + `F-pass4-spacing-01` polish · `35-H3` Tier-2 archive
-2. **Onboarding paradigm** (§1) — execută lean sau confirmă cu Daniel
-3. **Audit nuclear FRESH pe latest** (nu ledger acumulat) → ciclul D077: fix tot → repeat → 0 findings → anti-RE + security → Daniel + Beta
-
-**Lecții chat 6** (vezi handover narrative §5): worktree-uri pornesc de pe HEAD vechi (origin) → integrare via cp+commit pe main; dezamorsează time-bomb pe main înainte de a lansa agenți; anti-fabricare + zero --no-verify păstrate.
+Produsul e **extreme-quality-ready** (endpoint-ul autonom atins — tot ce era autonom e facut). Urmatorul = **cele 4 gate-uri Daniel** (§1), necesita Daniel. Sesiune noua/Daniel: porneste direct cu gate-urile (push? smoke? OAuth console?) SAU directie noua.
 
 ---
 
 ## §4 Cross-refs
-
-- [[📥_inbox/HANDOVER_2026-05-25_chat6-triage-410-wave1-2-fixes.md]] — narrative complet chat 6
-- [[DECISIONS.md §D077]] — quality cycle extins (iterate→0 + anti-RE + security audits) LOCK V1
-- [[ANDURA_PRIMER.md §5]] — micro-append chat 6
-- [[📤_outbox/LATEST.md]] — raport CC chat 6
-- `andura-dashboard/data/triage/cluster-{1..5}-verdict.md` — verdict-uri triaj 410 (per-finding cu dovadă)
-- `andura-dashboard/scripts/{partition-open-triage,aggregate-triage}.js` — tooling reutilizabil
+- `📥_inbox/audit-fresh-2026-05-25/cycle3/CYCLE4-CONVERGENCE-SUMMARY.md` — verdict per-axa + extreme-quality-ready
+- `.../OAUTH-ENABLEMENT-CHECKLIST.md` — pasii G3 pt Daniel · `.../POST-CYCLE4-ROADMAP.md` — arcul la Beta
+- `.../ORACLE-AUTOMATED.md` (76.5% + 0 bug engine) · `.../ENGINE-INPUT-REVERIFY.md` (4 gaps closed) · `.../LIVE-E2E-REAUDIT.md` (brain adapts)
+- [[DECISIONS.md §D080]] — mandat extreme-quality + whole-arc autonom · [[ANDURA_PRIMER.md §5]] — milestone cycle-4
+- main HEAD `2cfcf527` (4271 verde, NEPUSHED)
 
 ---
 
-🦫 **CHAT_STATE chat 6 wrap. Triaj 410/410 (21 real-open din zgomot) + wave-1 (7) + wave-2 (6) INTEGRATE, suita 5775 verde. ~14 commits ahead origin NU pushed (același PC). Next: wave-3 follow-uri → onboarding → audit nuclear fresh → ciclul D077 până flawless. Sesiune nouă: §CC.2 "Salut Acasă" citește acest fișier + HANDOVER chat6 + PRIMER §5 + DECISIONS D077 head + LATEST.**
+🦫 **Overnight autonomous run wrap. Cycle-4 EXTREME-QUALITY-READY: creierul functioneaza live (dovedit E2E), toate axele verzi, oracle-validat (0 bug engine), 114 dead-files arhivate, D080 lockat, eval-harness = regression guard pe main. main 2cfcf527, 4271 verde, NU pushed. Ramane = cele 4 gate-uri Daniel (push/smoke/OAuth-console/GO). Buget $9/$42, ROTEAZA CHEIA.**
