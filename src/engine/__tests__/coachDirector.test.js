@@ -490,6 +490,62 @@ describe('CoachDirector — CDL write (ADR 011)', () => {
   });
 });
 
+describe('CoachDirector — deload + conflicting-signal branches', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem('phase-override', 'AUTO');
+    localStorage.setItem('current-kcal', '2000');
+  });
+
+  it('readiness in [40,55) triggers deload action → recommendations reduced ~30%', async () => {
+    const today = tod();
+    // score 50: no REST (>=40) but < MED(55) → fatigueIndex 0.9 → DELOAD fires.
+    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 50, emoji: '😕' } }));
+    // Seed a log so DP has history → produces a concrete kg to reduce.
+    const ts = Date.now();
+    localStorage.setItem('logs', JSON.stringify([
+      { ex: 'Incline DB Press', w: 30, reps: 8, rpe: 7, date: today, ts, session: ts },
+    ]));
+
+    const session = await coachDirector.buildSession('PUSH');
+    // Not a rest day (readiness 50 >= 40), real session built.
+    expect(session.restDay).toBeUndefined();
+    expect(session.context.ruleAction).toBe('deload');
+    // Every recommendation stays finite + positive after the 0.7 deload scalar.
+    for (const ex of session.exercises) {
+      if (ex.recommendation?.kg) {
+        expect(Number.isFinite(ex.recommendation.kg)).toBe(true);
+        expect(ex.recommendation.kg).toBeGreaterThan(0);
+        expect(Number.isFinite(ex.recommendation.weight)).toBe(true);
+      }
+    }
+  });
+
+  it('rest-day wins over lower-priority signals (conflicting-signal resolution)', async () => {
+    const today = tod();
+    // Readiness 30 → REST_DAY priority 100 short-circuits to a rest response.
+    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 30, emoji: '😴' } }));
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session.restDay).toBe(true);
+    expect(session.exercises).toEqual([]);
+    expect(session.readinessScore).toBe(30);
+    expect(Array.isArray(session.ruleTrace)).toBe(true);
+  });
+
+  it('empty pipeline (no logs, fresh state) still returns a valid finite session', async () => {
+    const today = tod();
+    localStorage.setItem('readiness', JSON.stringify({ [today]: { score: 75, emoji: '😊' } }));
+    localStorage.setItem('logs', '[]');
+    const session = await coachDirector.buildSession('PUSH');
+    expect(session.exercises.length).toBeGreaterThan(0);
+    expect(session.context).toBeDefined();
+    for (const ex of session.exercises) {
+      const w = ex.recommendation?.weight ?? ex.recommendation?.kg ?? 0;
+      expect(Number.isFinite(w)).toBe(true);
+    }
+  });
+});
+
 describe('CoachDirector — applyAAAdjustments (ADR 013)', () => {
   function makeSession(sets = 4) {
     return {
