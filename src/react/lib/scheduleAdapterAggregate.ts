@@ -22,6 +22,28 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { MS_PER_DAY } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
+import { DP } from '../../engine/dp.js';
+import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
+
+// ── RO onboarding → EN engine vocabulary (CRIT C1) ─────────────────────────
+// Onboarding stores experience/goal as RO strings (onboardingStore Experience
+// 'incepator'|'intermediar'|'avansat'; Goal 'masa'|'slabire'|...). The engine
+// cold-start guideline keys on EN buckets (beginner|intermediate|advanced /
+// 'cut'). A naive RO pass silently falls to the x1.0 multiplier default — a
+// real bug (avansat would get intermediate weights). Map explicitly at the
+// adapter boundary so RO strings NEVER enter the engine.
+const EXPERIENCE_RO_TO_EN: Readonly<Record<string, string>> = {
+  incepator: 'beginner',
+  intermediar: 'intermediate',
+  avansat: 'advanced',
+};
+
+function experienceToEngine(experience: unknown): string {
+  if (typeof experience === 'string' && experience in EXPERIENCE_RO_TO_EN) {
+    return EXPERIENCE_RO_TO_EN[experience] as string;
+  }
+  return 'beginner'; // conservative default (lowest start-weight multiplier)
+}
 
 // ── recentSessions engine-shape transform (SHAPE audit Gap HIGH #1) ────────
 // LastSessionSummary (UI/persist shape) carries display + numeric session
@@ -148,27 +170,60 @@ function buildUserStateForPipeline(): {
   };
 }
 
+// DP.recommend return slice we read for the planned target (kg + repsTarget).
+// DP emits a richer object (status/statusLabel/...) but the planner only needs
+// the prescriptive numbers. `kg` already rounded to the equipment step inside
+// DP.recommend; `repsTarget` is phase-aware (DP reads phase-override for CUT).
+interface DpRecommendation {
+  kg?: number;
+  repsTarget?: number;
+}
+
 /**
  * Map engine exercise (sessionBuilder output `{ name, sets }`) to
- * PlannedExercise consumer shape. Engine emits only name + sets count;
- * targetReps/targetKg/restSec derived defensive defaults V1 (Phase 7+
- * wires Bayesian Nutrition + DP recommendations per-exercise).
+ * PlannedExercise consumer shape. Engine emits only name + sets count; the
+ * prescriptive targetKg/targetReps come from the DP progressive-overload brain
+ * (CRIT C1 — was hardcoded targetKg:20 / targetReps:10 for every exercise).
+ *
+ *   - User WITH logged history (DP.getLogs(name) non-empty): targetKg/
+ *     targetReps from DP.recommend(name) — the real double-progression output
+ *     keyed on the ENGLISH canonical name.
+ *   - NEW user / cold start (no logs): targetKg from suggestStartWeight(name,
+ *     experienceEn) population prior; targetReps from DP's phase-aware INIT
+ *     repsTarget (rMin, CUT-capped via phase-override).
  *
  * CRIT parity: the engine name is an English canonical key (PR records,
- * alternativeEngine maps). The `id` slug stays derived from it so engine
- * identity is preserved, while `name`/`sub` carry the Romanian display form
- * (Romanian-first app) via exerciseDisplay.toExerciseDisplay.
+ * alternativeEngine maps, DP REP_RANGES). The `id` slug + the DP/cold-start
+ * lookups all use that English name; only `name`/`sub` carry the Romanian
+ * display form (Romanian-first app) via exerciseDisplay.toExerciseDisplay.
  */
-function toPlannedExercise(engineEx: { name: string; sets: number }, idx: number): PlannedExercise {
+function toPlannedExercise(
+  engineEx: { name: string; sets: number },
+  idx: number,
+  experienceEn: string,
+): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
+  // English canonical name — DP records + cold-start guideline key on it.
+  const rec = DP.recommend(engineEx.name) as DpRecommendation | null;
+  const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
+  const targetReps =
+    rec && typeof rec.repsTarget === 'number' ? rec.repsTarget : 10;
+  // With history → DP weight (double-progression). Cold start → population
+  // prior scaled by experience (DP INIT default 20/10 is too coarse for a new
+  // user; suggestStartWeight is per-exercise calibrated).
+  const targetKg = hasHistory
+    ? rec && typeof rec.kg === 'number'
+      ? rec.kg
+      : suggestStartWeight(engineEx.name, experienceEn)
+    : suggestStartWeight(engineEx.name, experienceEn);
   return {
     id: `${slug}-${idx}`,
     name: display.name,
     ...(display.sub !== undefined ? { sub: display.sub } : {}),
     sets: engineEx.sets,
-    targetReps: 10,
-    targetKg: 20,
+    targetReps,
+    targetKg,
     restSec: 90,
   };
 }
@@ -185,7 +240,14 @@ export async function composePlannedWorkoutToday(
     const userState = buildUserStateForPipeline();
     const plan = await getDailyWorkout(userState, now);
     if (plan === null) return null;
-    const exercises = (plan.exercises ?? []).map(toPlannedExercise);
+    // RO onboarding experience → EN engine bucket once (cold-start weight
+    // scaling). RO strings never reach the engine (CRIT C1 map above).
+    const experienceEn = experienceToEngine(
+      useOnboardingStore.getState().data.experience,
+    );
+    const exercises = (plan.exercises ?? []).map((ex, idx) =>
+      toPlannedExercise(ex, idx, experienceEn),
+    );
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
     // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'

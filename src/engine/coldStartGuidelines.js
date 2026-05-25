@@ -26,10 +26,16 @@ const BASE_WEIGHTS = {
 const EXPERIENCE_MULTIPLIER = { beginner: 0.7, intermediate: 1.0, advanced: 1.3 };
 
 /**
+ * Population-prior start weight for an exercise scaled by experience.
+ * Exported for the React scheduleAdapter cold-start path (new user, no
+ * logged history) — keyed on the ENGLISH canonical exercise name + the
+ * English experience bucket (beginner|intermediate|advanced). RO onboarding
+ * strings must be mapped to English BEFORE calling (a naive RO pass falls to
+ * the x1.0 multiplier default).
  * @param {string} exerciseName
  * @param {string} experience
  */
-function suggestStartWeight(exerciseName, experience) {
+export function suggestStartWeight(exerciseName, experience) {
   const baseMap = /** @type {Record<string, number>} */ (BASE_WEIGHTS);
   const multMap = /** @type {Record<string, number>} */ (EXPERIENCE_MULTIPLIER);
   const base = baseMap[exerciseName] ?? 10;

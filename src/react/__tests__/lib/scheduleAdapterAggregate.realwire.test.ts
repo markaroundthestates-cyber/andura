@@ -20,6 +20,8 @@ import {
   commitCalendarEdit,
   getWeekStartIso,
 } from '../../../engine/schedule/scheduleAdapter.js';
+import { DB } from '../../../db.js';
+import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL session)
 const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L, PUSH session)
@@ -282,5 +284,98 @@ describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
     expect(out!.volumeKg).toBe(0);
+  });
+});
+
+// ── C1: weights from the DP brain (no longer hardcoded 20 / 10) ────────────
+// TUESDAY 2026-05-19 = PULL session (sessionBuilder PULL_DAY_PLAN includes
+// 'Lat Pulldown' EN canonical). Tests prove:
+//   - logged-history user gets a DP-derived weight (NOT the old hardcode 20)
+//   - cold-start user gets a per-exercise population prior scaled by experience
+//   - the EN canonical name keys DP/cold-start (RO display never leaks into the
+//     engine lookup)
+describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
+  function findByEnSlug(
+    exercises: ReadonlyArray<{ id: string; targetKg: number; targetReps: number }>,
+    enName: string,
+  ): { id: string; targetKg: number; targetReps: number } | undefined {
+    const slug = enName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return exercises.find((e) => e.id.startsWith(`${slug}-`));
+  }
+
+  it('logged-history exercise gets a DP weight, NOT the old hardcoded 20', async () => {
+    // Seed real per-set logs for Lat Pulldown (English canonical key DP reads).
+    // 3 sessions at 56 kg below top reps → DP CONSOLIDATE holds last weight,
+    // snapped to the equipment stack (bailib_stack 56 -> 55).
+    DB.set('logs', [
+      { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 1000 },
+      { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 2000 },
+      { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 3000 },
+    ]);
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
+    expect(lat).toBeDefined();
+    // Real DP output (55, equipment-rounded) — proves the brain is wired, NOT
+    // the dead 20 default NOR the cold-start prior (30 for this exercise).
+    expect(lat!.targetKg).toBe(55);
+    expect(lat!.targetKg).not.toBe(20);
+    expect(lat!.targetKg).not.toBe(suggestStartWeight('Lat Pulldown', 'intermediate'));
+    // DP repsTarget (11) wired too, not the old hardcoded 10.
+    expect(lat!.targetReps).toBe(11);
+  });
+
+  it('cold-start (no logs) uses suggestStartWeight scaled by experience', async () => {
+    // No logs → cold-start path. Intermediate Lat Pulldown prior = 30 * 1.0.
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
+    expect(lat).toBeDefined();
+    expect(lat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'intermediate'));
+    expect(lat!.targetKg).toBe(30);
+  });
+
+  it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'incepator', weight: 75, height: 175 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const begOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const begLat = findByEnSlug(begOut!.exercises, 'Lat Pulldown');
+
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'avansat', weight: 75, height: 175 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const advOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const advLat = findByEnSlug(advOut!.exercises, 'Lat Pulldown');
+
+    expect(begLat).toBeDefined();
+    expect(advLat).toBeDefined();
+    // beginner 30*0.7=21, advanced 30*1.3=39 — RO strings mapped to EN buckets,
+    // NOT silently falling to the x1.0 default (which would tie them).
+    expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
+    expect(begLat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'beginner'));
+    expect(advLat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'advanced'));
+  });
+
+  it('preserves Romanian display name + sub while wiring engine weight', async () => {
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
+    expect(lat).toBeDefined();
+    // id stays English-canonical slug (engine identity) while the user-facing
+    // exercise carries the RO display (exro base preserved through C1 merge).
+    const full = out!.exercises.find((e) => e.id === lat!.id) as { name: string } | undefined;
+    expect(full).toBeDefined();
+    expect(typeof full!.name).toBe('string');
+    expect(full!.name.length).toBeGreaterThan(0);
   });
 });
