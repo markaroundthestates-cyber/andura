@@ -48,6 +48,42 @@ import { Calendar7Day } from '../../../components/Calendar7Day';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
 
+// Header date line per mockup andura-clasic.html#L733 ("Joi, 7 mai · 18:30").
+// Manual RO weekday/month no-diacritics map (NU Intl.DateTimeFormat — locale
+// ICU emite diacritice Marti/Sambata violand D-LEGACY-064), mirror Istoric.tsx.
+const HEADER_WEEKDAYS_RO = [
+  'Duminica',
+  'Luni',
+  'Marti',
+  'Miercuri',
+  'Joi',
+  'Vineri',
+  'Sambata',
+] as const;
+const HEADER_MONTHS_RO = [
+  'ian',
+  'feb',
+  'mar',
+  'apr',
+  'mai',
+  'iun',
+  'iul',
+  'aug',
+  'sep',
+  'oct',
+  'noi',
+  'dec',
+] as const;
+
+function formatHeaderDate(now: Date): string {
+  const weekday = HEADER_WEEKDAYS_RO[now.getDay()];
+  const day = now.getDate();
+  const month = HEADER_MONTHS_RO[now.getMonth()];
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  return `${weekday}, ${day} ${month} · ${hh}:${mm}`;
+}
+
 export function Antrenor(): JSX.Element {
   const navigate = useNavigate();
   // §44-C1 — derive tagged WorkoutModeView inline (subscribe primitives, compute
@@ -124,9 +160,17 @@ export function Antrenor(): JSX.Element {
       data-testid="antrenor-home"
       aria-label="Antrenor home"
     >
+      {/* Header date line per mockup andura-clasic.html#L733. */}
+      <p className="text-ink2 text-sm" data-testid="antrenor-header-date">
+        {formatHeaderDate(new Date())}
+      </p>
       {/* §F-pass4-fontweight-01 (LOW chat5) — title font-weight 600 → 700 mockup
           andura-clasic.html#L734 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-4">Antrenor</h1>
+      <h1 className="text-2xl font-bold text-ink mt-0.5">Antrenor</h1>
+      {/* Serif subtitle per mockup andura-clasic.html#L735 (coach-quote). */}
+      <p className="font-serif italic text-ink2 text-sm mb-4">
+        Cine te ghideaza in sala.
+      </p>
 
       {/* HIGH-CODE-07 defense-in-depth error banner (code-review v2 chat 5
           post-Wave 10) — visible only when getCoachToday promise rejects past
