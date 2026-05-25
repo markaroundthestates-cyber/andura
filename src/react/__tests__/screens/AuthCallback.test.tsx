@@ -108,6 +108,24 @@ describe('AuthCallback — initial loading state render', () => {
     expect(screen.getByText('Te conectam...')).toBeInTheDocument();
     expect(screen.getByText('Asteapta o secunda.')).toBeInTheDocument();
   });
+
+  // U-16 — spinner se invarte in loading (animate-spin prezent).
+  it('spinner has animate-spin in loading state', () => {
+    stubLocation('?oobCode=abc&email=test%40example.com');
+    renderCallback();
+    expect(screen.getByTestId('auth-callback-spinner').className).toMatch(/animate-spin/);
+  });
+
+  // U-16 — status region role=status + aria-live anunta tranzitia la
+  // screen reader (WCAG SC 4.1.3).
+  it('status region has role=status + aria-live=polite', () => {
+    stubLocation('?oobCode=abc&email=test%40example.com');
+    renderCallback();
+    const status = screen.getByRole('status');
+    expect(status).toBeInTheDocument();
+    expect(status).toHaveAttribute('aria-live', 'polite');
+    expect(status).toHaveTextContent('Te conectam...');
+  });
 });
 
 describe('AuthCallback — Magic Link success path', () => {

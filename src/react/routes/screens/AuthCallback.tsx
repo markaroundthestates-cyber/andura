@@ -96,13 +96,23 @@ export function AuthCallback(): JSX.Element {
       className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-6 text-center"
       data-testid="auth-callback"
     >
-      <div className="w-12 h-12 rounded-full border-4 border-line border-t-brick animate-spin mb-4" aria-hidden="true" />
-      <p className="text-base font-semibold text-ink mb-1">
-        {error ? 'Eroare la verificare' : 'Te conectam...'}
-      </p>
-      <p className="text-sm text-ink2">
-        {error ? 'Te redirectionam catre login.' : 'Asteapta o secunda.'}
-      </p>
+      {/* U-16 — spinner doar in loading; pe eroare un cerc static (spinner
+          care se invarte + "Eroare" = semnal mixt pentru Gigel). */}
+      <div
+        className={`w-12 h-12 rounded-full border-4 border-line border-t-brick mb-4${error ? '' : ' animate-spin'}`}
+        data-testid="auth-callback-spinner"
+        aria-hidden="true"
+      />
+      {/* U-16 — role=status + aria-live anunta tranzitia loading -> eroare la
+          screen reader (altfel schimbarea de text e silentioasa). */}
+      <div role="status" aria-live="polite">
+        <p className="text-base font-semibold text-ink mb-1">
+          {error ? 'Eroare la verificare' : 'Te conectam...'}
+        </p>
+        <p className="text-sm text-ink2">
+          {error ? 'Te redirectionam catre login.' : 'Asteapta o secunda.'}
+        </p>
+      </div>
     </section>
   );
 }
