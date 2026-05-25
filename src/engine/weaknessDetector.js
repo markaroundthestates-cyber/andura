@@ -47,17 +47,27 @@ function _headToGroup(head) {
 }
 
 /**
- * Gaseste ultima intrare per exercitiu din logs.
- * Suporta campurile ex/exercise, w/weight, reps.
- * @param {Array<{ex?: string, w?: number, reps?: number | string}>} logs
+ * Gaseste ultima intrare per exercitiu din logs (cea cu ts maxim).
+ * Suporta campurile ex/exercise, w/weight, reps, ts.
+ * E-05: pastreaza intrarea cu ts maxim per exercitiu — robust indiferent de
+ * ordinea logs (anterior pastra prima aparitie, presupunand ordine most-recent-
+ * first nedocumentata; ordine oldest-first ar fi selectat date stale).
+ * @param {Array<{ex?: string, w?: number, reps?: number | string, ts?: number}>} logs
  */
 function getLastLogPerExercise(logs) {
-  /** @type {Map<string, {ex?: string, w?: number, reps?: number | string}>} */
+  /** @type {Map<string, {ex?: string, w?: number, reps?: number | string, ts?: number}>} */
   const byEx = new Map();
   for (const log of logs) {
     const ex = log.ex;
     if (!ex) continue;
-    if (!byEx.has(ex)) byEx.set(ex, log);
+    const existing = byEx.get(ex);
+    if (!existing) {
+      byEx.set(ex, log);
+      continue;
+    }
+    const ts = Number.isFinite(log.ts) ? /** @type {number} */ (log.ts) : -Infinity;
+    const existingTs = Number.isFinite(existing.ts) ? /** @type {number} */ (existing.ts) : -Infinity;
+    if (ts > existingTs) byEx.set(ex, log);
   }
   return byEx;
 }

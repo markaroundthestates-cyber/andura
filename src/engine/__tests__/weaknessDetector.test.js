@@ -51,6 +51,18 @@ describe('compute1RMByGroup', () => {
     const result = compute1RMByGroup([]);
     expect(result.size).toBe(0);
   });
+
+  it('picks max-ts entry per exercise regardless of log order (E-05)', () => {
+    // Same exercise twice: stale low-weight (old ts) + recent high-weight (new ts).
+    const stale = { ex: 'Bench Press', w: 40, reps: 8, ts: 1000 };
+    const recent = { ex: 'Bench Press', w: 100, reps: 8, ts: 5000 };
+    const oldestFirst = compute1RMByGroup([stale, recent]);
+    const recentFirst = compute1RMByGroup([recent, stale]);
+    // Order-independent: both must use the recent (higher ts) log => identical 1RM.
+    expect(oldestFirst.get('piept')).toBe(recentFirst.get('piept'));
+    // And must reflect the recent heavy log (100kg), NOT the stale 40kg.
+    expect(oldestFirst.get('piept')).toBeGreaterThan(brzycki1RM(40, 8));
+  });
 });
 
 describe('detectWeakGroups', () => {
