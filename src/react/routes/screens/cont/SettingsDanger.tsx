@@ -79,12 +79,13 @@ export function SettingsDanger(): JSX.Element {
             <Trash2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-sm font-medium">Sterge contul</p>
-              <p className="text-xs text-ink2">Datele + cont sterse permanent.</p>
-              {/* §F-pass2-settings-danger-03 (MED Wave 7 2026-05-23) — mockup
-                  L2115 grace period communication reduces accidental delete fear. */}
-              <p className="text-xs text-ink3 mt-0.5" data-testid="danger-delete-grace">
-                30 zile gratie pentru recuperare
-              </p>
+              {/* U-06 audit fix (AUDIT-2 §U-06 HIGH) — removed the "30 zile
+                  gratie pentru recuperare" sub-text: it was a false promise.
+                  The React delete flow (DeleteAccountConfirm) does an immediate
+                  hard wipe; no soft-delete / grace period is wired (the 30-day
+                  schema in auth.js belongs to the retired vanilla path). Copy
+                  now matches reality = immediate irreversible deletion. */}
+              <p className="text-xs text-ink2">Datele + cont sterse permanent, imediat.</p>
             </div>
           </button>
         </div>

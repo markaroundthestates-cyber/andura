@@ -91,10 +91,13 @@ describe('SettingsDanger — D047 RIP-OUT navigation list', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  it('§F-pass2-settings-danger-03 "Sterge contul" arata sub-text grace 30 zile (mockup L2115)', () => {
-    renderScreen();
-    const grace = screen.getByTestId('danger-delete-grace');
-    expect(grace).toBeInTheDocument();
-    expect(grace.textContent).toMatch(/30 zile gratie pentru recuperare/);
+  it('U-06 "Sterge contul" copy reflects immediate deletion, NU 30-zile grace (false promise removed)', () => {
+    const { container } = renderScreen();
+    // Grace promise removed — React flow does immediate hard delete.
+    expect(screen.queryByTestId('danger-delete-grace')).not.toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/30 zile gratie/);
+    // Truthful copy present.
+    const del = screen.getByTestId('danger-delete');
+    expect(del.textContent).toMatch(/sterse permanent, imediat/);
   });
 });
