@@ -59,37 +59,43 @@ export function InstallPrompt(): JSX.Element | null {
   if (dismissed || !deferredEvent) return null;
 
   return (
-    <div
-      data-testid="install-prompt"
-      role="region"
-      aria-live="polite"
-      aria-label="Instaleaza Andura"
-      className="fixed bottom-20 left-3 right-3 z-40 bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
-    >
-      <div className="w-10 h-10 rounded-lg bg-brick/10 flex items-center justify-center flex-shrink-0">
-        <Download className="w-5 h-5 text-brick" aria-hidden="true" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-ink">Instaleaza Andura</p>
-        <p className="text-xs text-ink2">Acces rapid din ecranul de start.</p>
-      </div>
-      <button
-        type="button"
-        onClick={() => { void handleInstall(); }}
-        data-testid="install-prompt-accept"
-        className="px-3 py-2 bg-brick text-paper rounded-lg text-xs font-semibold"
+    // E2E-01: outer fixed layer spans left-3/right-3 but is pointer-events-none
+    // so its (mostly transparent) footprint does NOT intercept taps on content
+    // beneath (e.g. Istoric session rows). Only the visible card re-enables
+    // pointer events. Mirrors the ToastViewport overlay idiom (Toast.tsx).
+    <div className="fixed bottom-20 left-3 right-3 z-40 pointer-events-none">
+      <div
+        data-testid="install-prompt"
+        role="region"
+        aria-live="polite"
+        aria-label="Instaleaza Andura"
+        className="pointer-events-auto bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
       >
-        Instaleaza
-      </button>
-      <button
-        type="button"
-        onClick={handleDismiss}
-        data-testid="install-prompt-dismiss"
-        aria-label="Inchide"
-        className="p-2 text-ink2"
-      >
-        <X className="w-4 h-4" aria-hidden="true" />
-      </button>
+        <div className="w-10 h-10 rounded-lg bg-brick/10 flex items-center justify-center flex-shrink-0">
+          <Download className="w-5 h-5 text-brick" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-ink">Instaleaza Andura</p>
+          <p className="text-xs text-ink2">Acces rapid din ecranul de start.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => { void handleInstall(); }}
+          data-testid="install-prompt-accept"
+          className="px-3 py-2 bg-brick text-paper rounded-lg text-xs font-semibold"
+        >
+          Instaleaza
+        </button>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          data-testid="install-prompt-dismiss"
+          aria-label="Inchide"
+          className="p-2 text-ink2"
+        >
+          <X className="w-4 h-4" aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 }
