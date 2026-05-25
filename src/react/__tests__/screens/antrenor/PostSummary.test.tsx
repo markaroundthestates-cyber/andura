@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { PostSummary } from '../../../routes/screens/antrenor/PostSummary';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useCoachStore } from '../../../stores/coachStore';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -202,27 +203,36 @@ describe('PostSummary — numeric fields direct consumption (task_10 §D)', () =
   });
 });
 
-describe('PostSummary — F8 streak counter', () => {
+describe('PostSummary — §F-post-summary-02 streak inline row', () => {
   beforeEach(() => {
     seedNormalSession();
   });
 
-  it('renders streak count 12', () => {
+  it('renders streak count 12 in inline row cu flama + incurajare', () => {
     renderSummary();
-    expect(screen.getByTestId('summary-streak')).toHaveTextContent('12');
+    const row = screen.getByTestId('summary-streak');
+    expect(row).toHaveTextContent('12');
+    expect(row).toHaveTextContent('🔥');
+    expect(row).toHaveTextContent('zile consecutive');
+    expect(row).toHaveTextContent('mentine ritmul!');
   });
 
-  it('uses plural "sesiuni" cand streak > 1', () => {
+  it('uses plural "zile consecutive" cand streak > 1', () => {
     renderSummary();
-    expect(screen.getByTestId('summary-streak')).toHaveTextContent('sesiuni');
+    expect(screen.getByTestId('summary-streak')).toHaveTextContent('zile consecutive');
   });
 
-  it('uses singular "sesiune" cand streak = 1', () => {
+  it('uses singular "zi consecutiva" cand streak = 1', () => {
     useWorkoutStore.setState({ streak: 1 });
     renderSummary();
     const text = screen.getByTestId('summary-streak').textContent ?? '';
-    expect(text).toMatch(/1\s+sesiune/);
-    expect(text).not.toMatch(/sesiuni/);
+    expect(text).toMatch(/1\s+zi consecutiva/);
+    expect(text).not.toMatch(/zile/);
+  });
+
+  it('is NOT a card (inline row, NU label "Streak")', () => {
+    renderSummary();
+    expect(screen.getByTestId('summary-streak').textContent).not.toMatch(/Streak/);
   });
 });
 
@@ -515,5 +525,67 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     useWorkoutStore.setState({ prHit: false });
     renderSummary();
     expect(screen.queryByTestId('summary-pr-detail')).not.toBeInTheDocument();
+  });
+});
+
+describe('PostSummary — §F-post-summary-04 Detaliu Marius persona-gated', () => {
+  beforeEach(() => {
+    seedNormalSession();
+    useCoachStore.setState({ persona: 'gigica' });
+  });
+
+  it('section HIDDEN cand persona != marius', () => {
+    renderSummary();
+    expect(screen.queryByTestId('summary-marius-detail')).not.toBeInTheDocument();
+  });
+
+  it('section VISIBLE cand persona=marius cu Tonaj sesiune', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    renderSummary();
+    const block = screen.getByTestId('summary-marius-detail');
+    expect(block).toHaveTextContent('Detaliu Marius');
+    expect(screen.getByTestId('marius-tonaj')).toHaveTextContent('12 450 kg');
+  });
+
+  it('renders Densitate (volume / durata) cand dur > 0', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    renderSummary();
+    // 12450 / 52 = 239.4 → round → 239
+    expect(screen.getByTestId('marius-densitate')).toHaveTextContent('239 kg/min');
+  });
+
+  it('Densitate HIDDEN cand durata = 0', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    useWorkoutStore.setState({
+      lastSession: { title: 'Push', meta: '', ts: Date.now(), volumeKg: 5000, durationMin: 0 },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-marius-detail')).toBeInTheDocument();
+    expect(screen.queryByTestId('marius-densitate')).not.toBeInTheDocument();
+  });
+
+  it('1RM est HIDDEN cand prData absent', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    renderSummary();
+    expect(screen.queryByTestId('marius-1rm')).not.toBeInTheDocument();
+  });
+
+  it('1RM est VISIBLE cu exercise + delta cand prData.oneRMEstimate present', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Impins', deltaKg: 0.6, type: 'weight', oneRMEstimate: 33.4 },
+    });
+    renderSummary();
+    const oneRm = screen.getByTestId('marius-1rm');
+    expect(oneRm).toHaveTextContent('1RM Impins est.');
+    expect(oneRm).toHaveTextContent('33.4 kg');
+    expect(oneRm).toHaveTextContent('+0.6');
+  });
+
+  it('NU renders RPE mediu (no honest numeric source)', () => {
+    useCoachStore.setState({ persona: 'marius' });
+    renderSummary();
+    expect(screen.getByTestId('summary-marius-detail').textContent).not.toMatch(/RPE/i);
   });
 });

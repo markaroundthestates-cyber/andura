@@ -11,7 +11,9 @@
 //   4. Grupe musculare pills (mockup L1674-1680 verbatim) derived din
 //      lastSession.title parse keyword (Phase 5+ wire engine
 //      sessionExercisesBreakdown.muscleGroups direct).
-//   5. Streak counter F8 + Terminat CTA → reset store + navigate antrenor
+//   5. Streak inline emoji row F8 (§F-post-summary-02 mockup L1730-1735
+//      "🔥 N zile consecutive — mentine ritmul!") + Terminat CTA → reset
+//      store + navigate antrenor
 //
 // HIGH-GAMMA §F-post-summary-01: h1 swap from session title la verbatim
 // mockup "Sesiune terminata" L1630 — clear closure framing vs preview-like.
@@ -21,6 +23,11 @@
 // L1673-1680 ("Grupe musculare" + pill rows cu color dots brick=primary,
 // ink-3=secondary). Phase 3 derives din session title keyword match;
 // Phase 5+ wires real engine muscleGroups field.
+//
+// §F-post-summary-04: persona-gated "Detaliu Marius" section per mockup
+// L1767-1776 (Tonaj / Densitate / 1RM est). Gated coachStore.persona ===
+// 'marius'. Metrici doar din sursa onesta session data — RPE mediu OMIS
+// (nu exista RPE numeric 1-10; ratings sunt calitative usor/potrivit/greu).
 //
 // Phase 4 task_10: prefer numeric fields LastSessionSummary.sets /
 // durationMin / volumeKg (populated explicit de PostRpe.finishSession).
@@ -36,6 +43,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useCoachStore } from '../../../stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
 import { pluralRo } from '../../../lib/pluralRo';
 import { gotoPath } from '../../../lib/navigation';
@@ -140,6 +148,7 @@ export function PostSummary(): JSX.Element {
   const prHit = useWorkoutStore((s) => s.prHit);
   const prData = useWorkoutStore((s) => s.prData);
   const reset = useWorkoutStore((s) => s.reset);
+  const persona = useCoachStore((s) => s.persona);
 
   // Phase 4 task_10: prefer numeric fields cand present (avoid parseMeta
   // regex); fallback la parseMeta(meta) pentru sesiuni persisted pre-
@@ -284,16 +293,64 @@ export function PostSummary(): JSX.Element {
         </div>
       )}
 
-      {/* F8 Streak counter */}
-      <div
-        className="p-4 mb-6 rounded-xl bg-paper2 border border-line text-center"
+      {/* §F-post-summary-04 Detaliu Marius — persona-gated granular metrics
+         per mockup L1767-1776. Doar metrici cu sursa onesta din session data:
+         Tonaj (=volumeKg), Densitate (=volume/durata), 1RM est (prData PR
+         engine output cand present). RPE mediu OMIS — nu exista sursa numerica
+         honest (lastRating + per-set rating sunt calitative, NU RPE 1-10). */}
+      {persona === 'marius' && (
+        <div
+          className="p-4 mb-6 rounded-xl bg-paper2 border border-line"
+          data-testid="summary-marius-detail"
+        >
+          <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
+            Detaliu Marius
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div data-testid="marius-tonaj">
+              <p className="text-sm text-ink2 mb-1">Tonaj sesiune</p>
+              <p className="text-base font-semibold text-ink font-mono">
+                {formatKg(volume)} kg
+              </p>
+            </div>
+            {dur > 0 && (
+              <div data-testid="marius-densitate">
+                <p className="text-sm text-ink2 mb-1">Densitate</p>
+                <p className="text-base font-semibold text-ink font-mono">
+                  {Math.round(volume / dur)} kg/min
+                </p>
+              </div>
+            )}
+            {prData?.oneRMEstimate !== undefined && prData.oneRMEstimate > 0 && (
+              <div data-testid="marius-1rm">
+                <p className="text-sm text-ink2 mb-1">1RM {prData.exercise} est.</p>
+                <p className="text-base font-semibold text-ink font-mono">
+                  {prData.oneRMEstimate} kg
+                  {prData.deltaKg !== 0 && (
+                    <span className="text-xs text-succ ml-1">
+                      {prData.deltaKg > 0 ? '+' : ''}{prData.deltaKg}
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* §F-post-summary-02 Streak — inline emoji row per mockup L1730-1735
+         (NU card). Flame + count + incurajare. pluralRo zi/zile gestioneaza
+         singular (1 zi) + "de" pentru 20+ (20 de zile). */}
+      <p
+        className="flex items-center gap-2 mb-6 text-base text-ink"
         data-testid="summary-streak"
       >
-        <p className="text-sm text-ink2 mb-1">Streak</p>
-        <p className="text-2xl font-bold text-brick">
-          {pluralRo(streak, 'sesiune', 'sesiuni')}
-        </p>
-      </div>
+        <span aria-hidden="true" className="text-xl">🔥</span>
+        <span className="font-semibold">
+          {pluralRo(streak, 'zi consecutiva', 'zile consecutive')}
+        </span>
+        <span className="text-ink2">— mentine ritmul!</span>
+      </p>
 
       <button
         type="button"
