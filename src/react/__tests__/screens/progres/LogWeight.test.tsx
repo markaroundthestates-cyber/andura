@@ -129,6 +129,38 @@ describe('LogWeight — persist', () => {
   });
 });
 
+describe('LogWeight — U-10 upsert by date (no duplicate day rows)', () => {
+  it('re-log same date overwrites entry (single row, latest kg)', () => {
+    useProgresStore.getState().addWeightEntry({ kg: 80, date: '2026-05-25' });
+    useProgresStore.getState().addWeightEntry({ kg: 79.5, date: '2026-05-25' });
+    const log = useProgresStore.getState().weightLog;
+    expect(log).toHaveLength(1);
+    expect(log[0]!.kg).toBe(79.5);
+    expect(log[0]!.date).toBe('2026-05-25');
+  });
+
+  it('different dates append as separate rows', () => {
+    useProgresStore.getState().addWeightEntry({ kg: 80, date: '2026-05-24' });
+    useProgresStore.getState().addWeightEntry({ kg: 79.5, date: '2026-05-25' });
+    const log = useProgresStore.getState().weightLog;
+    expect(log).toHaveLength(2);
+    expect(log.map((e) => e.date)).toEqual(['2026-05-24', '2026-05-25']);
+  });
+
+  it('UI save twice same day yields one entry', () => {
+    renderLogWeight();
+    fireEvent.change(screen.getByTestId('weight-kg-input'), { target: { value: '78.5' } });
+    fireEvent.click(screen.getByTestId('weight-save'));
+    // second log same default date (today)
+    useProgresStore.getState().addWeightEntry({
+      kg: 77,
+      date: useProgresStore.getState().weightLog[0]!.date,
+    });
+    expect(useProgresStore.getState().weightLog).toHaveLength(1);
+    expect(useProgresStore.getState().weightLog[0]!.kg).toBe(77);
+  });
+});
+
 describe('LogWeight — D-LEGACY-064 no-diacritics', () => {
   it('no diacritics in UI rendered text', () => {
     const { container } = renderLogWeight();

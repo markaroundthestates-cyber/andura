@@ -39,10 +39,20 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
     (set) => ({
       weightLog: [],
       bodyData: [],
+      // U-10 — upsert by date (aliniat cu nutritionStore.upsertEntry). Logare
+      // de 2 ori in aceeasi zi suprascrie intrarea zilei in loc sa creeze un
+      // rand duplicat (cantarire dimineata + seara → o singura valoare/zi).
       addWeightEntry: (entry) =>
-        set((s) => ({
-          weightLog: [...s.weightLog, { ...entry, ts: Date.now() }],
-        })),
+        set((s) => {
+          const next = { ...entry, ts: Date.now() };
+          const idx = s.weightLog.findIndex((e) => e.date === entry.date);
+          if (idx === -1) {
+            return { weightLog: [...s.weightLog, next] };
+          }
+          const weightLog = [...s.weightLog];
+          weightLog[idx] = next;
+          return { weightLog };
+        }),
       addBodyDataEntry: (entry) =>
         set((s) => ({
           bodyData: [...s.bodyData, { ...entry, ts: Date.now() }],
