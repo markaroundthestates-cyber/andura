@@ -16,6 +16,7 @@ import { Flame } from 'lucide-react';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useNutritionStore } from '../../stores/nutritionStore';
 
 function todayIso(): string {
   const d = new Date();
@@ -68,6 +69,9 @@ function computeWeekInMesocycle(sessionsCount: number, freqPerWeek: number): num
 export function TDEEStrip(): JSX.Element {
   const [target, setTarget] = useState<NutritionTarget | null>(null);
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  // §F-pass2-tdeestrip-02 — logged kcal today (manual nutrition log). null
+  // cand user n-a logat inca → afisam doar tinta (NU fabricam "current").
+  const loggedKcal = useNutritionStore((s) => s.getDaily(todayIso())?.kcal ?? null);
   // Default 3 sessions/week mid-range when frequency NU known (T0 fresh).
   const phaseLabel = useMemo(() => getCurrentPhaseLabel(), []);
   const weekInMeso = useMemo(
@@ -82,6 +86,15 @@ export function TDEEStrip(): JSX.Element {
     });
     return () => { cancelled = true; };
   }, []);
+
+  // §F-pass2-tdeestrip-02 — current-vs-tinta comparison (mockup L1796
+  // "2 640 kcal · tinta 2 600"). Doar cand exista intake logat manual AND
+  // tinta e engine/baseline genuina (source 'manual' = tinta echo-eaza
+  // valoarea logata → delta 0 meaningless, ascundem comparatia).
+  const showComparison =
+    loggedKcal != null && target != null && target.source !== 'manual';
+  const kcalDelta = showComparison ? loggedKcal - target.kcalTarget : 0;
+  const deltaLabel = kcalDelta >= 0 ? `+${kcalDelta}` : String(kcalDelta);
 
   return (
     <section
@@ -110,14 +123,28 @@ export function TDEEStrip(): JSX.Element {
         <Flame className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            Target azi
+            {showComparison ? 'Azi vs tinta' : 'Target azi'}
           </p>
-          <p className="text-xl font-bold text-ink font-mono">
-            {target?.kcalTarget ?? '—'} kcal
-            <span className="text-sm font-normal text-ink2 ml-2">
-              · {target?.proteinTarget ?? '—'} g proteine
-            </span>
-          </p>
+          {showComparison ? (
+            /* §F-pass2-tdeestrip-02 — intake logat vs tinta (mockup L1796).
+               "{logat} kcal · tinta {target} (delta)". */
+            <p
+              className="text-xl font-bold text-ink font-mono"
+              data-testid="tdee-current-vs-target"
+            >
+              {loggedKcal} kcal
+              <span className="text-sm font-normal text-ink2 ml-2">
+                · tinta {target.kcalTarget} ({deltaLabel})
+              </span>
+            </p>
+          ) : (
+            <p className="text-xl font-bold text-ink font-mono">
+              {target?.kcalTarget ?? '—'} kcal
+              <span className="text-sm font-normal text-ink2 ml-2">
+                · {target?.proteinTarget ?? '—'} g proteine
+              </span>
+            </p>
+          )}
           {target && (
             <p className="text-xs text-ink2 mt-0.5" data-testid="tdee-source">
               {SOURCE_LABELS[target.source]}

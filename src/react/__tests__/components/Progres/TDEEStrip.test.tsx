@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
+import { useNutritionStore } from '../../../stores/nutritionStore';
 
 vi.mock('../../../lib/bayesianNutritionAggregate', () => ({
   getNutritionTargetTodayReal: vi.fn(async () => ({
@@ -12,8 +13,14 @@ vi.mock('../../../lib/bayesianNutritionAggregate', () => ({
   })),
 }));
 
+function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
+  useNutritionStore.getState().reset();
 });
 
 describe('TDEEStrip', () => {
@@ -45,6 +52,38 @@ describe('TDEEStrip', () => {
   it('no diacritics in UI', () => {
     const { container } = render(<TDEEStrip />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  it('§F-pass2-tdeestrip-02 target-only display cand NU exista intake logat', async () => {
+    // store reset in beforeEach → loggedKcal null → comparison hidden.
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByText(/Target azi/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-current-vs-target')).not.toBeInTheDocument();
+  });
+
+  it('§F-pass2-tdeestrip-02 current-vs-tinta cu delta cand intake logat (engine target)', async () => {
+    // Logged 2800 kcal vs engine target 2640 → +160 surplus.
+    useNutritionStore.getState().setDailyKcal(todayIso(), 2800);
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-current-vs-target')).toBeInTheDocument();
+    });
+    const row = screen.getByTestId('tdee-current-vs-target');
+    expect(row.textContent).toMatch(/2800 kcal/);
+    expect(row.textContent).toMatch(/tinta 2640/);
+    expect(row.textContent).toMatch(/\(\+160\)/);
+    expect(screen.getByText(/Azi vs tinta/i)).toBeInTheDocument();
+  });
+
+  it('§F-pass2-tdeestrip-02 negative delta cand sub tinta', async () => {
+    useNutritionStore.getState().setDailyKcal(todayIso(), 2500);
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-current-vs-target')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('tdee-current-vs-target').textContent).toMatch(/\(-140\)/);
   });
 
   it('§F-pass2-tdeestrip-03 italic explainer copy present (mockup L1713)', () => {
